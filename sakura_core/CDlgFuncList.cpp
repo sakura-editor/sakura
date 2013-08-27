@@ -311,7 +311,7 @@ void CDlgFuncList::SetData()
 		case OUTLINE_BOOKMARK:
 			LV_COLUMN col;
 			col.mask = LVCF_TEXT;
-			col.pszText = _T("テキスト");
+			col.pszText = const_cast<TCHAR*>(_T("テキスト"));
 			col.iSubItem = 0;
 			//	Apr. 23, 2005 genta 行番号を左端へ
 			ListView_SetColumn( hwndList, FL_COL_NAME, &col );
@@ -388,20 +388,20 @@ void CDlgFuncList::SetData()
 			//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
 			item.mask = LVIF_TEXT;
-			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = _T("宣言");}else
-			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = _T("関数宣言");}else
-			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = _T("プロシージャ宣言");}else
-			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = _T("関数");}else
-			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = _T("プロシージャ");}else
-			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = _T("■パッケージ仕様部");}else
-			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = _T("■パッケージ本体部");}else
-			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = _T("PROC");}else
-			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = _T("ラベル");}else
-			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = _T("ENDP");}else{
+			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("宣言"));}else
+			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("関数宣言"));}else
+			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("プロシージャ宣言"));}else
+			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("関数"));}else
+			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("プロシージャ"));}else
+			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("■パッケージ仕様部"));}else
+			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("■パッケージ本体部"));}else
+			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("PROC"));}else
+			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("ラベル"));}else
+			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("ENDP"));}else{
 				// Jul 10, 2003  little YOSHI
 				// ここにあったVB関係の処理はSetListVB()メソッドに移動しました。
 
-				item.pszText = _T("");
+				item.pszText = const_cast<TCHAR*>(_T(""));
 			}
 			item.iItem = i;
 			item.iSubItem = FL_COL_REMARK;
@@ -754,12 +754,12 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			// 2002/10/27 frozen ここまで
 				if( htiGlobal == NULL ){
 					TV_INSERTSTRUCT	tvg;
-					
+
 					::ZeroMemory( &tvg, sizeof(tvg));
 					tvg.hParent = TVI_ROOT;
 					tvg.hInsertAfter = TVI_LAST;
 					tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
-					tvg.item.pszText = _T("グローバル");
+					tvg.item.pszText = const_cast<TCHAR*>(_T("グローバル"));
 //					tvg.item.lParam = -1;
 					tvg.item.lParam = nDummylParam;
 					htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
@@ -1225,7 +1225,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.fmt = LVCFMT_LEFT;
 	col.cx = rc.right - rc.left - ( nColWidthArr[1] + nColWidthArr[2] + nColWidthArr[3] ) - nCxVScroll - 8;
 	//	Apr. 23, 2005 genta 行番号を左端へ
-	col.pszText = _T("行 *");
+	col.pszText = const_cast<TCHAR*>(_T("行 *"));
 	col.iSubItem = FL_COL_ROW;
 	ListView_InsertColumn( hwndList, FL_COL_ROW, &col);
 
@@ -1233,7 +1233,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_COL];
-	col.pszText = _T("桁");
+	col.pszText = const_cast<TCHAR*>(_T("桁"));
 	col.iSubItem = FL_COL_COL;
 	ListView_InsertColumn( hwndList, FL_COL_COL, &col);
 
@@ -1241,20 +1241,20 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_NAME];
 	//	Apr. 23, 2005 genta 行番号を左端へ
-	col.pszText = _T("関数名");
+	col.pszText = const_cast<TCHAR*>(_T("関数名"));
 	col.iSubItem = FL_COL_NAME;
 	ListView_InsertColumn( hwndList, FL_COL_NAME, &col);
 
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_REMARK];
-	col.pszText = _T(" ");
+	col.pszText = const_cast<TCHAR*>(_T(" "));
 	col.iSubItem = FL_COL_REMARK;
 	ListView_InsertColumn( hwndList, FL_COL_REMARK, &col);
 
 	/* アウトライン位置とサイズを初期化する */ // 20060201 aroka
-	if( m_lParam != NULL ){
-		CEditView* pcEditView=(CEditView*)m_lParam;
+	CEditView* pcEditView=(CEditView*)m_lParam;
+	if( pcEditView != NULL ){
 		if( m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( WINDOWPLACEMENT );

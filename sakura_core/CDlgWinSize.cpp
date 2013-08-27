@@ -77,7 +77,7 @@ int CDlgWinSize::DoModal(
 	m_eSaveWinPos  = eSaveWinPos;
 	m_nWinSizeType = nWinSizeType;
 	m_rc = rc;
-	(void)CDialog::DoModal( hInstance, hwndParent, IDD_WINPOSSIZE, NULL );
+	(void)CDialog::DoModal( hInstance, hwndParent, IDD_WINPOSSIZE, (LPARAM)NULL );
 	eSaveWinSize = m_eSaveWinSize;
 	eSaveWinPos  = m_eSaveWinPos;
 	nWinSizeType = m_nWinSizeType;

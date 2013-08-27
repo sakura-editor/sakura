@@ -3612,7 +3612,7 @@ BOOL CEditView::GetSelectedData(
 	int				nRowNum;
 	int				nLineNumCols;
 	char*			pszLineNum;
-	char*			pszSpaces = "                    ";
+	const char*		pszSpaces = "                    ";
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );
 	bool			addnl = false;

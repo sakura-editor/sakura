@@ -29,9 +29,9 @@
 */
 
 #include "StdAfx.h"
+#include "CDlgSameColor.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "CDlgSameColor.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_SAMECOLOR,						// OK
@@ -112,7 +112,7 @@ int CDlgSameColor::DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STyp
 	m_pTypes = pTypes;
 	m_cr = cr;
 
-	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, NULL );
+	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, (LPARAM)NULL );
 
 	return TRUE;
 }

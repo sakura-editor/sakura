@@ -1070,13 +1070,13 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 	hDC = ::GetDC( hwnd );
 	if( NULL == hDC )
 		return;
-	hFont = (HFONT)::SendMessage( hwnd, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SendMessage( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = ::SendMessage( hwnd, CB_GETCOUNT, 0, NULL );
+	nItem = ::SendMessage( hwnd, CB_GETCOUNT, 0, (LPARAM)NULL );
 	::GetWindowRect( hwnd, &rc );
 	nWidth = rc.right - rc.left - 8;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = ::SendMessage( hwnd, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		nTextLen = ::SendMessage( hwnd, CB_GETLBTEXTLEN, (WPARAM)iItem, (LPARAM)NULL );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
 			::SendMessage( hwnd, CB_GETLBTEXT, (WPARAM)iItem, (LPARAM)pszText );
@@ -1087,7 +1087,7 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 			delete []pszText;
 		}
 	}
-	::SendMessage( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), NULL );
+	::SendMessage( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), (LPARAM)NULL );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwnd, hDC );
 }

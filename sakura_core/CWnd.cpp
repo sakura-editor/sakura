@@ -26,7 +26,7 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	CWnd* pCWnd;
 
 	if( NULL != gm_pCWnd
-	 && NULL == ::GetWindowLongPtr( hwnd, GWLP_USERDATA ) // Modified by KEITA for WIN64 2003.9.6
+	 && 0 == ::GetWindowLongPtr( hwnd, GWLP_USERDATA ) // Modified by KEITA for WIN64 2003.9.6
 	){
 		pCWnd = gm_pCWnd;
 		/* クラスオブジェクトのポインタを拡張ウィンドウメモリに格納しておく */

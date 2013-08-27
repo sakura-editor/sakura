@@ -338,6 +338,8 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		rc.bottom = po.y;
 	}
 
+	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(_T("お気に入り"));
+
 	for( nTab = 0; NULL != (pRecent = m_aFavoriteInfo[nTab].m_pRecent); nTab++ )
 	{
 		hwndList = GetDlgItem( hwndDlg, m_aFavoriteInfo[nTab].m_nId );
@@ -347,14 +349,14 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 16 / 100;
-		col.pszText  = "お気に入り";
+		col.pszText  = pszFAVORITE_TEXT;
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 79 / 100;
-		col.pszText  = m_aFavoriteInfo[nTab].m_pszCaption;
+		col.pszText  = const_cast<TCHAR*>(m_aFavoriteInfo[nTab].m_pszCaption);
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
@@ -366,7 +368,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 		/* タブ項目追加 */
 		tcitem.mask = TCIF_TEXT;
-		tcitem.pszText = m_aFavoriteInfo[nTab].m_pszCaption;
+		tcitem.pszText = const_cast<TCHAR*>(m_aFavoriteInfo[nTab].m_pszCaption);
 		TabCtrl_InsertItem( hwndTab, nTab, &tcitem );
 	}
 

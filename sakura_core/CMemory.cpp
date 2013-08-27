@@ -1995,7 +1995,7 @@ int CMemory::MemUnicodeToSJIS( char** ppBufSJIS, const char*pBuf, int nBufLen )
 
 
 /* 文字列置換 */
-void CMemory::Replace( char* pszFrom, char* pszTo )
+void CMemory::Replace( const char* pszFrom, const char* pszTo )
 {
 	CMemory		cmemWork;
 	int			nFromLen = strlen( pszFrom );
@@ -2024,7 +2024,7 @@ void CMemory::Replace( char* pszFrom, char* pszTo )
 
 
 /* 文字列置換（日本語考慮版） */
-void CMemory::Replace_j( char* pszFrom, char* pszTo )
+void CMemory::Replace_j( const char* pszFrom, const char* pszTo )
 {
 	CMemory		cmemWork;
 	int			nFromLen = strlen( pszFrom );

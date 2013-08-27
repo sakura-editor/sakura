@@ -85,13 +85,13 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 60 / 100;
-			col.pszText  = _T("置換前");
+			col.pszText  = const_cast<TCHAR*>(_T("置換前"));
 			col.iSubItem = 0;
 			ListView_InsertColumn( hListView, 0, &col );
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 35 / 100;
-			col.pszText  = _T("置換後");
+			col.pszText  = const_cast<TCHAR*>(_T("置換後"));
 			col.iSubItem = 1;
 			ListView_InsertColumn( hListView, 1, &col );
 

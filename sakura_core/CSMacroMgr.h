@@ -51,7 +51,7 @@ const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep.
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
 	int  			m_nFuncID;
-	char *			m_pszFuncName;
+	const char *	m_pszFuncName;
 	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
 	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
 	char *			m_pszData;

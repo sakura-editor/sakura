@@ -1970,7 +1970,7 @@ bool CEditDoc::FormatBackUpPath(
 				//	Jan. 9, 2006 genta VC6‘Îô
 				int idx;
 				for( idx=0; idx<10; ++idx ){
-					folders[idx] = _T("");		// 2009.10.10 aroka	ŠK‘w‚ªó‚¢‚Æ‚«‚É—‚¿‚éƒoƒO‚Ì‘Î‰
+					folders[idx] = const_cast<TCHAR*>(_T(""));		// 2009.10.10 aroka	ŠK‘w‚ªó‚¢‚Æ‚«‚É—‚¿‚éƒoƒO‚Ì‘Î‰
 				}
 				folders[0] = szFname;
 

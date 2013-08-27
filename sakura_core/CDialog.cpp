@@ -66,7 +66,7 @@ CDialog::CDialog()
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
-	m_lParam = NULL;
+	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
 	m_yPos = -1;
@@ -508,13 +508,13 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	hDC = ::GetDC( hwndCtl );
 	if( NULL == hDC )
 		return FALSE;
-	hFont = (HFONT)::SendMessage( hwndCtl, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SendMessage( hwndCtl, WM_GETFONT, 0, (LPARAM)NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = ::SendMessage( hwndCtl, CB_GETCOUNT, 0, NULL );
+	nItem = ::SendMessage( hwndCtl, CB_GETCOUNT, 0, (LPARAM)NULL );
 	::GetWindowRect( hwndCtl, &rc );
 	nWidth = rc.right - rc.left - nMargin;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = ::SendMessage( hwndCtl, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		nTextLen = ::SendMessage( hwndCtl, CB_GETLBTEXTLEN, (WPARAM)iItem, (LPARAM)NULL );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
 			::SendMessage( hwndCtl, CB_GETLBTEXT, iItem, (LPARAM)pszText );
@@ -525,7 +525,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 			delete []pszText;
 		}
 	}
-	::SendMessage( hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + nMargin), NULL );
+	::SendMessage( hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + nMargin), (LPARAM)NULL );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;

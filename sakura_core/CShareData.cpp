@@ -878,7 +878,7 @@ void CShareData::SetKeyNameArrVal(
 	DLLSHAREDATA*	pShareData,
 	int				nIdx,
 	short			nKeyCode,
-	char*			pszKeyName,
+	const char*		pszKeyName,
 	short			nFuncCode_0,
 	short			nFuncCode_1,
 	short			nFuncCode_2,
@@ -1825,7 +1825,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	if( -1 != idx && !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return 0;
 	TCHAR *ptr;
-	TCHAR *pszFile;
+	const TCHAR *pszFile;
 
 	if( -1 == idx ){
 		pszFile = _T("RecKey.mac");
@@ -1838,7 +1838,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 		}
 		return 0;
 	}
-	ptr = pszFile;
+	ptr = const_cast<TCHAR*>(pszFile);
 	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
@@ -2193,9 +2193,9 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 #define _USE_META_ALIAS
 #ifdef _USE_META_ALIAS
 	struct MetaAlias{
-		LPTSTR szAlias;
+		LPCTSTR szAlias;
 		int nLenth;
-		LPTSTR szOrig;
+		LPCTSTR szOrig;
 	};
 	static const MetaAlias AliasList[] = {
 		{  _T("COMDESKTOP"), 10, _T("Common Desktop") },
@@ -4796,7 +4796,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	struct KEYDATAINIT {
 		short			nKeyCode;		//!< Key Code (0 for non-keybord button)
-		TCHAR*			pszKeyName;		//!< Key Name (for display)
+		const TCHAR*	pszKeyName;		//!< Key Name (for display)
 		short			nFuncCode_0;	//!<                      Key
 		short			nFuncCode_1;	//!< Shift +              Key
 		short			nFuncCode_2;	//!<         Ctrl +       Key
@@ -5195,7 +5195,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_nVertLineIdx[i] = 0;
 	}
 
-	static char* pszTypeNameArr[] = {
+	static const char* pszTypeNameArr[] = {
 		"基本",
 		"テキスト",
 		"C/C++",
@@ -5213,7 +5213,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		"リッチテキスト",	//JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね
 		"設定ファイル",		//Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする
 	};
-	static char* pszTypeExts[] = {
+	static const char* pszTypeExts[] = {
 		"",
 		//Nov. 15, 2000 JEPRO PostScriptファイルも読めるようにする
 		//Jan. 12, 2001 JEPRO readme.1st も読めるようにする

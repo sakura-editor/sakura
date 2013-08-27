@@ -75,8 +75,8 @@ public:
 	/*
 	|| 変換関数
 	*/
-	void Replace( char*, char* );	/* 文字列置換 */
-	void Replace_j( char*, char* );	/* 文字列置換（日本語考慮版） */
+	void Replace( const char*, const char* );	/* 文字列置換 */
+	void Replace_j( const char*, const char* );	/* 文字列置換（日本語考慮版） */
 	void ToLower( void );	/* 小文字 */
 	void ToUpper( void );	/* 大文字 */
 

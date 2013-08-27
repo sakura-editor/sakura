@@ -84,7 +84,7 @@ static const DWORD p_helpids1[] = {	//11300
 
 
 //アウトライン解析方法・標準ルール
-TYPE_NAME OlmArr[] = {
+TYPE_NAME<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
 	{ OUTLINE_CPP,		_T("C/C++") },
 	{ OUTLINE_PLSQL,	_T("PL/SQL") },
@@ -101,13 +101,13 @@ TYPE_NAME OlmArr[] = {
 	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 
-TYPE_NAME SmartIndentArr[] = {
+TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	_T("なし") },
 	{ SMARTINDENT_CPP,	_T("C/C++") }
 };
 
 //	Nov. 20, 2000 genta
-TYPE_NAME ImeStateArr[] = {
+TYPE_NAME<int> ImeStateArr[] = {
 	{ 0, _T("標準設定") },
 	{ 1, _T("全角") },
 	{ 2, _T("全角ひらがな") },
@@ -115,7 +115,7 @@ TYPE_NAME ImeStateArr[] = {
 	{ 4, _T("無変換") }
 };
 
-TYPE_NAME ImeSwitchArr[] = {
+TYPE_NAME<int> ImeSwitchArr[] = {
 	{ 0, _T("そのまま") },
 	{ 1, _T("常にON") },
 	{ 2, _T("常にOFF") },
@@ -126,14 +126,14 @@ TYPE_NAME ImeSwitchArr[] = {
 	@sa CLayoutMgr::SetLayoutInfo()
 	@date Oct. 1, 2002 genta 
 */
-TYPE_NAME IndentTypeArr[] = {
+TYPE_NAME<int> IndentTypeArr[] = {
 	{ 0, _T("なし") },
 	{ 1, _T("tx2x") },
 	{ 2, _T("論理行先頭") },
 };
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
-TYPE_NAME WrapMethodArr[] = {
+TYPE_NAME<int> WrapMethodArr[] = {
 	{ WRAP_NO_TEXT_WRAP,	_T("折り返さない") },
 	{ WRAP_SETTING_WIDTH,	_T("指定桁で折り返す") },
 	{ WRAP_WINDOW_WIDTH,	_T("右端で折り返す") },

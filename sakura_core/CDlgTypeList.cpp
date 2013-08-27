@@ -39,7 +39,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingT
 {
 	int	nRet;
 	m_nSettingType = *pnSettingType;
-	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
+	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, (LPARAM)NULL );
 	if( -1 == nRet ){
 		return FALSE;
 	}else{
@@ -48,6 +48,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingT
 	}
 	return nRet;
 }
+
 
 BOOL CDlgTypeList::OnLbnDblclk( int wID )
 {

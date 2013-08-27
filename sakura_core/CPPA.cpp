@@ -471,7 +471,7 @@ void __stdcall CPPA::stdStrFunc(
 	}
 	::VariantClear(&Ret);
 	*Err_CD = Index + 1;
-	*ResultValue = "";
+	*ResultValue = const_cast<char*>("");
 	return;
 }
 

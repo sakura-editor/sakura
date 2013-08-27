@@ -107,7 +107,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		lvc.fmt = LVCFMT_LEFT;
 		lvc.cx = rc.right - rc.left;
-		lvc.pszText = _T("");
+		lvc.pszText = const_cast<TCHAR*>(_T(""));
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 

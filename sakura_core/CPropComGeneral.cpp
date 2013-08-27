@@ -15,6 +15,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "CPropCommon.h"
+#include "CPropTypes.h"
 #include "global.h"
 #include "etc_uty.h"
 #include "Debug.h"
@@ -22,14 +23,7 @@
 #include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-
-// 2009.01.12 nasukoji	オプションの取得・設定用（CPropTypes.cppからコピー）
-struct TYPE_NAME {
-	int		nMethod;
-	char*	pszName;
-};
-
-TYPE_NAME SpecialScrollModeArr[] = {
+TYPE_NAME<int> SpecialScrollModeArr[] = {
 	{ 0,						_T("組み合わせなし") },
 	{ MOUSEFUNCTION_CENTER,		_T("マウス中ボタン") },
 	{ MOUSEFUNCTION_LEFTSIDE,	_T("マウスサイドボタン1") },

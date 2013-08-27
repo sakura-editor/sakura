@@ -58,11 +58,11 @@ BOOL CDicMgr::Search(
 	CRunningTimer cRunningTimer( "CDicMgr::Search" );
 #endif
 	long	i;
-	char*	pszDelimit = " /// ";
+	const char*	pszDelimit = " /// ";
 	char*	pszWork;
 	int		nRes;
 	char*	pszToken;
-	char*	pszKeySeps = ",\0";
+	const char*	pszKeySeps = ",\0";
 
 
 	/* «‘ƒtƒ@ƒCƒ‹ */

@@ -827,8 +827,8 @@ void CEditView::DispRuler( HDC hdc )
 //@@@ 2001.02.03 Start by MIK: ‘SŠp•¶š‚Ì‘ÎŠ‡ŒÊ
 //! ‘SŠpŠ‡ŒÊ‚Ì‘Î‰•\
 const struct ZENKAKKO_T{
-	char *sStr;
-	char *eStr;
+	const char *sStr;
+	const char *eStr;
 } zenkakkoarr[] = {
 	"y", "z",
 	"w", "x",
@@ -849,8 +849,8 @@ const struct ZENKAKKO_T{
 //@@@ 2003.01.06 Start by ai: ”¼Šp•¶š‚Ì‘ÎŠ‡ŒÊ
 //! ”¼ŠpŠ‡ŒÊ‚Ì‘Î‰•\
 const struct HANKAKKO_T{
-	char *sStr;
-	char *eStr;
+	const char *sStr;
+	const char *eStr;
 } hankakkoarr[] = {
 	"(", ")",
 	"[", "]",
@@ -1017,8 +1017,16 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	@retval true ¬Œ÷
 	@retval false ¸”s
 */
-bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-									char* upChar, char* dnChar, int* mode )	// 03/01/08 ai
+// 03/01/08 ai
+bool CEditView::SearchBracketForward(
+	int PosX,
+	int PosY,
+	int* NewX,
+	int* NewY,
+	const char* upChar,
+	const char* dnChar,
+	int* mode
+)
 {
 	CDocLine* ci;
 
@@ -1106,8 +1114,15 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	@retval true ¬Œ÷
 	@retval false ¸”s
 */
-bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-									char* dnChar, char* upChar, int* mode )
+bool CEditView::SearchBracketBackward(
+	int PosX,
+	int PosY,
+	int* NewX,
+	int* NewY,
+	const char* dnChar,
+	const char* upChar,
+	int* mode
+)
 {
 	CDocLine* ci;
 
@@ -1195,10 +1210,15 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	@retval true ¬Œ÷
 	@retval false ¸”s
 */
-bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
-										int*	NewX,	int*	NewY,
-										char*	upChar,	char*	dnChar,
-										int*	mode )
+bool CEditView::SearchBracketForward2(
+	int		PosX,
+	int		PosY,
+	int*	NewX,
+	int*	NewY,
+	const char*	upChar,
+	const char*	dnChar,
+	int*	mode
+)
 {
 	CDocLine* ci;
 
@@ -1282,10 +1302,15 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 	@retval true ¬Œ÷
 	@retval false ¸”s
 */
-bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
-									    int*  NewX,   int*  NewY,
-									    char* dnChar, char* upChar,
-										int*  mode )
+bool CEditView::SearchBracketBackward2(
+	int   PosX,
+	int   PosY,
+	int*  NewX,
+	int*  NewY,
+	const char* dnChar,
+	const char* upChar,
+	int*  mode
+)
 {
 	CDocLine* ci;
 

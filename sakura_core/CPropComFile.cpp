@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 #include "CPropCommon.h"
+#include "CPropTypes.h"
 #include "Debug.h" // 2002/2/10 aroka
 #include "sakura.hh"
 
@@ -42,10 +43,7 @@ static const DWORD p_helpids[] = {	//01310
 	0, 0
 };
 
-struct {
-	EShareMode		nMethod;
-	const TCHAR*	pszName;
-} ShareModeArr[] = {
+TYPE_NAME<EShareMode> ShareModeArr[] = {
 	{ SHAREMODE_NOT_EXCLUSIVE,	_T("ÇµÇ»Ç¢") },
 	{ SHAREMODE_DENY_WRITE,		_T("è„èëÇ´Çã÷é~Ç∑ÇÈ") },
 	{ SHAREMODE_DENY_READWRITE,	_T("ì«Ç›èëÇ´Çã÷é~Ç∑ÇÈ") },

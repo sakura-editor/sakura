@@ -262,13 +262,13 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 54 / 100;
-		col.pszText  = _T("キーワード");
+		col.pszText  = const_cast<TCHAR*>(_T("キーワード"));
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 38 / 100;
-		col.pszText  = _T("色指定");
+		col.pszText  = const_cast<TCHAR*>(_T("色指定"));
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 

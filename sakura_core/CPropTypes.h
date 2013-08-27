@@ -24,8 +24,10 @@ class CPropTypes;
 
 
 #include "CShareData.h"
+//2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
+template <class TYPE>
 struct TYPE_NAME {
-	int				nMethod;
+	TYPE		nMethod;
 	const TCHAR*	pszName;
 };
 

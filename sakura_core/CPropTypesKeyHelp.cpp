@@ -112,19 +112,19 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 25 / 100;
-		col.pszText  = _T("   辞書ファイル");	/* 指定辞書ファイルの使用可否 */
+		col.pszText  = const_cast<TCHAR*>(_T("   辞書ファイル"));	/* 指定辞書ファイルの使用可否 */
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 55 / 100;
-		col.pszText  = _T("辞書の説明");		/* 指定辞書の１行目を取得 */
+		col.pszText  = const_cast<TCHAR*>(_T("辞書の説明"));		/* 指定辞書の１行目を取得 */
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 18 / 100;
-		col.pszText  = _T("パス");				/* 指定辞書ファイルパス */
+		col.pszText  = const_cast<TCHAR*>(_T("パス"));				/* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
@@ -706,9 +706,9 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 			}
 		}/* 結果の確認 */
 		if( (p3==NULL) ||			//カンマが1個足りない
-			(p3==p1) ||				//カンマが2個足りない
+			(p3==p1) //||			//カンマが2個足りない
 			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
-			0 //(NULL!=strstr(p3,","))	//カンマが多すぎる
+			//(NULL!=strstr(p3,","))	//カンマが多すぎる
 		){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -723,16 +723,17 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 		}
 		//Path
 		FILE* fp2;
+		const char* p4 = p2;
 		if( (fp2=_tfopen_absini(p3,"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
-			p2 = "【辞書ファイルが見つかりません】";
+			p4 = "【辞書ファイルが見つかりません】";
 			b_enable_flag = 0;
 		}
 		else
 			fclose(fp2);
 
 		//About
-		if(strlen(p2)>DICT_ABOUT_LEN){
+		if(strlen(p2) > DICT_ABOUT_LEN){
 			ErrorMessage( hwndDlg, _T("辞書の説明は%d文字以内にしてください。\n"), DICT_ABOUT_LEN );
 			++invalid_record;
 			continue;
@@ -740,7 +741,7 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_nUse = b_enable_flag;	// 2007.02.03 genta
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p2);
+		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
 		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, p3);
 		i++;
 	}

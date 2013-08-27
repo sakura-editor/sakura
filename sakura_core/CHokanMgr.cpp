@@ -218,7 +218,7 @@ int CHokanMgr::Search(
 	HWND hwndList;
 	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_WORDS );
 	::SendMessage( hwndList, LB_RESETCONTENT, 0, 0 );
-	char*	pszCR = "\n";
+	const char*	pszCR = "\n";
 	char*	pszWork;
 	char*	pszNext;
 	char*	pszTest;

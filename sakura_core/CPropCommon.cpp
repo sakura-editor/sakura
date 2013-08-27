@@ -146,7 +146,7 @@ BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = (LPDWORD) dwCustColors;
 	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = NULL;
+	cc.lCustData = 0;
 	cc.lpfnHook = NULL;
 	cc.lpTemplateName = NULL;
 	if( FALSE == ::ChooseColor( &cc ) ){
