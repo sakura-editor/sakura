@@ -40,6 +40,7 @@
 #include "CRecent.h"
 #include <string.h>
 #include "my_icmp.h"
+#include <stddef.h>
 
 CRecent::CRecent()
 {
@@ -605,7 +606,7 @@ bool CRecent::EasyCreate( int nRecentType )
 			MAX_MRU,
 			&(m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX),
 			sizeof( EditInfo ),
-			(int)(&((EditInfo*)0)->m_szPath[0]),
+			offsetof(EditInfo, m_szPath),
 			sizeof( ((EditInfo*)0)->m_szPath ),	//_MAX_PATH
 			RECENT_CMP_STRICMP
 		);
@@ -697,7 +698,7 @@ bool CRecent::EasyCreate( int nRecentType )
 			MAX_EDITWINDOWS,
 			NULL,
 			sizeof( m_pShareData->m_sNodes.m_pEditArr[0] ),
-			(int)(&((EditNode*)0)->m_hWnd),
+			offsetof(EditNode, m_hWnd),
 			sizeof( ((EditNode*)0)->m_hWnd ),	//sizeof(HWND)
 			RECENT_CMP_MEMCMP
 		);

@@ -40,7 +40,9 @@ struct OPENFILENAMEZ : public OPENFILENAME {
   DWORD         dwReserved;
   DWORD         FlagsEx;
 };
+#ifndef OPENFILENAME_SIZE_VERSION_400
 #define OPENFILENAME_SIZE_VERSION_400 sizeof(OPENFILENAME)
+#endif
 #endif // (_WIN32_WINNT >= 0x0500)
 
 

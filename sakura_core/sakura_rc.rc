@@ -453,7 +453,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_FONT_ZEN,54,50,65,230,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP,0
     LTEXT           "フォント幅(&P)",IDC_STATIC,14,71,38,8
-    EDITTEXT        IDC_EDIT_FONTWIDTH,54,69,30,12,ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_EDIT_FONTWIDTH,54,69,30,12,ES_AUTOHSCROLL,0
     CONTROL         "Spin5",IDC_SPIN_FONTWIDTH,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,83,69,9,
                     12,0
@@ -501,7 +501,7 @@ BEGIN
                     12,0
     LTEXT           "(mm)",IDC_STATIC,84,192,16,8
     LTEXT           "右(&R)",IDC_STATIC,36,208,17,8
-    EDITTEXT        IDC_EDIT_MARGINRX,54,205,30,12,ES_AUTOHSCROLL,0,
+    EDITTEXT        IDC_EDIT_MARGINRX,54,205,30,12,ES_AUTOHSCROLL,0
     CONTROL         "Spin1",IDC_SPIN_MARGINRX,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,83,205,9,
                     12,0
@@ -683,7 +683,7 @@ BEGIN
     CONTROL         "List1",IDC_LIST_FAVORITE_CMD,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | 
                     WS_BORDER | WS_TABSTOP,25,127,243,79,0
-    PUSHBUTTON      "履歴のクリア(&C)...",IDC_BUTTON_CLEAR,7,211,56,16,0,0,
+    PUSHBUTTON      "履歴のクリア(&C)...",IDC_BUTTON_CLEAR,7,211,56,16,0,0
     DEFPUSHBUTTON   "&OK",IDOK,160,237,50,14,0,0
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,215,237,50,14,0,0
     CONTROL         "Tab1",IDC_TAB_FAVORITE,"SysTabControl32",WS_TABSTOP,3,4,
@@ -2294,25 +2294,6 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_FILEOPEN DLGINIT
-BEGIN
-    IDC_COMBO_CODE, 0x403, 13, 0
-0x4a53, 0x5349, 0x6981, 0x5795, 0x808f, 0x6a81, "\000" 
-    IDC_COMBO_CODE, 0x403, 4, 0
-0x494a, 0x0053, 
-    IDC_COMBO_CODE, 0x403, 4, 0
-0x5545, 0x0043, 
-    IDC_COMBO_CODE, 0x403, 8, 0
-0x6e55, 0x6369, 0x646f, 0x0065, 
-    0
-END
 
 
 #ifndef _MAC

@@ -4666,6 +4666,20 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 #undef PopulateKeyword
 }
 
+//! KEYDATAとほぼ同じ
+struct KEYDATAINIT {
+	short			nKeyCode;		//!< Key Code (0 for non-keybord button)
+	const TCHAR*	pszKeyName;		//!< Key Name (for display)
+	short			nFuncCode_0;	//!<                      Key
+	short			nFuncCode_1;	//!< Shift +              Key
+	short			nFuncCode_2;	//!<         Ctrl +       Key
+	short			nFuncCode_3;	//!< Shift + Ctrl +       Key
+	short			nFuncCode_4;	//!<                Alt + Key
+	short			nFuncCode_5;	//!< Shift +        Alt + Key
+	short			nFuncCode_6;	//!<         Ctrl + Alt + Key
+	short			nFuncCode_7;	//!< Shift + Ctrl + Alt + Key
+};
+
 //	Sep. 14, 2000 JEPRO
 //	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO 殺していたのを修正・復活
 //Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
@@ -4794,18 +4808,6 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
-	struct KEYDATAINIT {
-		short			nKeyCode;		//!< Key Code (0 for non-keybord button)
-		const TCHAR*	pszKeyName;		//!< Key Name (for display)
-		short			nFuncCode_0;	//!<                      Key
-		short			nFuncCode_1;	//!< Shift +              Key
-		short			nFuncCode_2;	//!<         Ctrl +       Key
-		short			nFuncCode_3;	//!< Shift + Ctrl +       Key
-		short			nFuncCode_4;	//!<                Alt + Key
-		short			nFuncCode_5;	//!< Shift +        Alt + Key
-		short			nFuncCode_6;	//!<         Ctrl + Alt + Key
-		short			nFuncCode_7;	//!< Shift + Ctrl + Alt + Key
-	};
 #define _SQL_RUN	F_PLSQL_COMPILE_ON_SQLPLUS
 #define _COPYWITHLINENUM	F_COPYLINESWITHLINENUMBER
 	static KEYDATAINIT	KeyDataInit[] = {

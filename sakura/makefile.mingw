@@ -1,12 +1,30 @@
-ifeq ($(MSYSTEM), MINGW32)
+# Makefile for MinGW32/MinGW-W64
+
+ifeq ($(OS),Windows_NT)
+	ifndef PREFIX
+		PREFIX=
+		RCPREFIX=
+	else
+		ifeq ($(PREFIX),x86_64-w64-mingw32-)
+			RCPREFIX=$(PREFIX)
+		else
+			ifeq ($(PREFIX),i686-w64-mingw32-)
+				RCPREFIX=
+			else
+				RCPREFIX=$(PREFIX)
+			endif
+		endif
+	endif
 else
 	PREFIX=i586-mingw32msvc-
+	RCPREFIX=$(PREFIX)
 endif
 
+HOSTCXX= g++
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RM= rm
-RC= $(PREFIX)windres
+RC= $(RCPREFIX)windres
 SDKDIR= ./sdk
 SRCDIR= ../sakura_core
 OBJDIR= ./Release_gcc
@@ -19,6 +37,27 @@ DEFINES= \
  -D_WIN32_IE=0x400 \
  -DNOMINMAX \
  -DNDEBUG
+
+ifeq ($(PREFIX), i686-w64-mingw32-)
+DEFINES= \
+ -DWIN32 \
+ -DWINVER=0x400 \
+ -D_WIN32_WINNT=0x400 \
+ -D_WIN32_IE=0x501 \
+ -DNOMINMAX \
+ -DNDEBUG
+
+endif
+
+ifeq ($(PREFIX), x86_64-w64-mingw32-)
+DEFINES= \
+ -DWIN32 \
+ -DWINVER=0x501 \
+ -D_WIN32_WINNT=0x501 \
+ -D_WIN32_IE=0x600 \
+ -DNOMINMAX \
+ -DNDEBUG
+endif
 
 CFLAGS= -Os \
  -finput-charset=cp932 -fexec-charset=cp932 \
@@ -185,14 +224,23 @@ OBJS= \
 	$(OBJDIR)/os.o \
 	$(OBJDIR)/sakura_rc.o
 
-all: $(exe)
+RCTOOLDIR=../btool
+RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 
-$(exe): $(OBJDIR) $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LIBS) -mwindows -static
-	$(PREFIX)strip sakura.exe
+all: $(OBJDIR) $(RCTOOL) $(exe)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
+
+$(exe): $(OBJS)
+	$(CXX) -o $@ $(OBJS) $(LIBS) -mwindows -static
+	$(RCPREFIX)strip sakura.exe
+
+$(RCTOOL): $(RCTOOLDIR)/mrc2grc.cpp
+	$(HOSTCXX) $(CXXFLAGS) $(RCTOOLDIR)/mrc2grc.cpp -o $@ -static-libgcc
+
+clean:
+	$(RM) -rf $(exe) $(OBJDIR) $(RCTOOL)
 
 $(OBJDIR)/CAutoSave.o: $(SRCDIR)/CAutoSave.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
@@ -487,11 +535,10 @@ $(OBJDIR)/my_icmp.o: $(SRCDIR)/my_icmp.cpp
 $(OBJDIR)/os.o: $(SRCDIR)/os.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(OBJDIR)/sakura_rc.o: $(SRCDIR)/sakura_rc.res
-	$(RC) -i $< -o $@
-
-clean:
-	$(RM) -rf $(exe) $(OBJDIR)
+$(OBJDIR)/sakura_rc.o: $(SRCDIR)/sakura_rc.rc
+	$(RCTOOL) $< sakura_grc.rc
+	$(RC) -I$(SRCDIR) --language=0411 $(DEFINES) sakura_grc.rc -o $@
+	$(RM) sakura_grc.rc
 
 depend:
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) $(SRCDIR)/*.cpp > depend.mak

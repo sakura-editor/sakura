@@ -292,8 +292,8 @@ enum FunctionAttribute {
 #define F_JUMP				30921	//指定行へジャンプ
 #define F_OUTLINE			30930	//アウトライン解析
 #define F_OUTLINE_TOGGLE	30931	//アウトライン解析(toggle) // 20060201 aroka
-#define F_TAGJUMP			30940	//タグジャンプ機能
-#define F_TAGJUMPBACK		30941	//タグジャンプバック機能
+#define F_TAGJUMP			30940	//タグジャンプ機能//
+#define F_TAGJUMPBACK		30941	//タグジャンプバック機能//
 #define	F_TAGJUMP_LIST		30942	//タグジャンプリスト	//@@@ 2003.04.13 MIK
 #define	F_TAGS_MAKE			30943	//タグファイルの作成	//@@@ 2003.04.13 MIK
 #define	F_DIRECT_TAGJUMP	30944	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
@@ -464,7 +464,8 @@ enum FunctionAttribute {
 //	Windows 95の制約により，WM_COMMANDで使う機能番号として32768以上の値を用いることができません．
 //	メニュー等で使われないマクロ専用のコマンドにはそれ以上の値を割り当てましょう．
 
-//	メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
+//	メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能//
+
 #define F_MENU_NOT_USED_FIRST 32768
 #define F_CHGMOD_EOL          32800		// 入力改行コード指定 2003.06.23 Moca
 #define F_SET_QUOTESTRING     32801		// 共通設定: 引用符の設定	2005.01.29 genta

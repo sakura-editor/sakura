@@ -835,7 +835,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
 		ti.hwnd        = m_hWnd;
 		ti.hinst       = m_hInstance;
-		ti.uId         = (UINT)m_hWnd;
+		ti.uId         = (UINT_PTR)m_hWnd;
 		ti.lpszText    = NULL;
 		ti.rect.left   = 0;
 		ti.rect.top    = 0;
@@ -1116,7 +1116,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// 状態に従ってテキストと背景色を決める
 		COLORREF clrText;
-		COLORREF clrBk;
+		INT_PTR clrBk;
 		if (lpdis->itemState & ODS_SELECTED)
 		{
 			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
@@ -1264,7 +1264,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		ti.cbSize       = sizeof(ti);
 		ti.hwnd         = m_hWnd;
 		ti.hinst        = m_hInstance;
-		ti.uId          = (UINT)m_hWnd;
+		ti.uId          = (UINT_PTR)m_hWnd;
 		ti.lpszText     = pszTip;
 		::SendMessage( m_hwndToolTip, TTM_UPDATETIPTEXT, 0, (LPARAM)&ti );
 	}
@@ -1935,7 +1935,7 @@ void CTabWnd::ForceActiveWindow( HWND hwnd )
 	::SetForegroundWindow( hwnd );
 	::BringWindowToTop( hwnd );
 
-	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)dwTime, 0 );
+	::SystemParametersInfo( SPI_SETFOREGROUNDLOCKTIMEOUT, 0, (LPVOID)(INT_PTR)dwTime, 0 );
 
 	::AttachThreadInput( nId1, nId2, FALSE );
 }

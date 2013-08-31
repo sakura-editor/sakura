@@ -63,8 +63,10 @@ inline T t_max(T t1,T t2)
 #define _strlwr strlwr
 #endif
 
-#if defined(__GNUC__)
-#define __forceinline
+#if defined(__MINGW32__)
+#ifndef __forceinline
+#define __forceinline inline
+#endif
 #include <limits.h>
 #include <ole2.h>
 #include <objbase.h>
@@ -75,6 +77,8 @@ extern "C" unsigned char *   _mbsstr   (const unsigned char *__s1, const unsigne
 #define SCS_CAP_SETRECONVERTSTRING 0x00000004
 #define SCS_QUERYRECONVERTSTRING 0x00020000
 #define SCS_SETRECONVERTSTRING 0x00010000
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#if (GCC_VERSION < 40603)
 typedef struct tagNMKEY
 {
     NMHDR hdr;
@@ -82,6 +86,7 @@ typedef struct tagNMKEY
     UINT  uFlags;
 } NMKEY, FAR *LPNMKEY;
 typedef DWORD HIMC;
+#endif
 #define MONITOR_DEFAULTTONULL       0x00000000
 #define MONITOR_DEFAULTTOPRIMARY    0x00000001
 #define MONITOR_DEFAULTTONEAREST    0x00000002
