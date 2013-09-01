@@ -59,7 +59,7 @@ const int CFileLoad::gm_nBufSizeDef = 32768;
 // const int gm_nBufSizeMin = 1024;
 
 /*! コンストラクタ */
-CFileLoad::CFileLoad( SEncodingConfig& encode )
+CFileLoad::CFileLoad( const SEncodingConfig& encode )
 {
 	m_pEencoding = &encode;
 

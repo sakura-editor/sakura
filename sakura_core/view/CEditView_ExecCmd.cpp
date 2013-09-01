@@ -1,3 +1,25 @@
+/*!	@file
+	@brief 外部コマンドの実行
+
+	@author Norio Nakatani
+	@date	1998/03/13 作成
+	@date   2008/04/13 CEditView.cppから分離
+*/
+/*
+	Copyright (C) 1998-2002, Norio Nakatani
+	Copyright (C) 2000, genta, JEPRO, MIK
+	Copyright (C) 2001, genta, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice, ai, Azumaiya, genta
+	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
+	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
+	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
+	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
+	Copyright (C) 2007, ryoji, じゅうじ, maru
+
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
+*/
+
 #include "StdAfx.h"
 #include "CEditView.h"
 #include "_main/CAppMode.h"
@@ -111,11 +133,10 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	bool	bCurDir = (nFlgOpt & 0x200) == 0x200;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
-	CLayoutInt	nLineFrom(0), nColumnFrom(0);
+	CLayoutPoint ptFrom( 0, 0 );
 	bool bBeforeTextSelected = GetSelectionInfo().IsTextSelected();
 	if (bBeforeTextSelected){
-		nLineFrom   = this->GetSelectionInfo().m_sSelect.GetFrom().y; //m_nSelectLineFrom;
-		nColumnFrom = this->GetSelectionInfo().m_sSelect.GetFrom().x; //m_nSelectColumnFrom;
+		ptFrom = this->GetSelectionInfo().m_sSelect.GetFrom();
 	}
 
 	//子プロセスの標準出力と接続するパイプを作成
@@ -539,7 +560,7 @@ user_cancel:
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
 				GetSelectionInfo().SetSelectArea(
 					CLayoutRange(
-						CLayoutPoint(nColumnFrom, nLineFrom),
+						ptFrom,
 						GetCaret().GetCaretLayoutPos()// CLayoutPoint(m_nCaretPosY, m_nCaretPosX )
 					)
 				);
