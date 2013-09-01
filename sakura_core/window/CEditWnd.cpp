@@ -802,7 +802,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 
 	// 文字コードの指定	2008/6/14 Uchi
 	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValid() ){
-		STypeConfig& types = GetDocument().m_cDocType.GetDocumentAttribute();
+		const STypeConfig& types = GetDocument().m_cDocType.GetDocumentAttribute();
 		ECodeType eDefaultCharCode = types.m_encoding.m_eDefaultCodetype;
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用

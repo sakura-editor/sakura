@@ -103,7 +103,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 							sPos.GetDrawPos().y,
 							pMetrics->GetHankakuWidth(),
 							pMetrics->GetHankakuHeight(),
-							gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
+							gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_sFontAttr.m_bBoldFont,
 							gr.GetCurrentTextForeColor()
 						);
 					}
@@ -115,7 +115,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 						sPos.GetDrawPos().y,
 						nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Areaˆê”t‚É 2013/4/11 Uchi
 						pMetrics->GetHankakuHeight(),
-						gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
+						gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_sFontAttr.m_bBoldFont,
 						gr.GetCurrentTextForeColor()
 					);
 				}

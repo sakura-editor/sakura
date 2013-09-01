@@ -45,8 +45,8 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 		TopErrorMessage( NULL,
 			_T("COpeBlk::AppendOpe() error.\n")
 			_T("ƒoƒO\n")
-			_T("pcOpe->m_nCaretPos_PHY_Before = %d,%d\n")
-			_T("pcOpe->m_nCaretPos_PHY_After = %d,%d\n"),
+			_T("pcOpe->m_ptCaretPos_PHY_Before = %d,%d\n")
+			_T("pcOpe->m_ptCaretPos_PHY_After = %d,%d\n"),
 			pcOpe->m_ptCaretPos_PHY_Before.x,
 			pcOpe->m_ptCaretPos_PHY_Before.y,
 			pcOpe->m_ptCaretPos_PHY_After.x,

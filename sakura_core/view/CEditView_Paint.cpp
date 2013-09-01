@@ -428,12 +428,11 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 
 	//実際に色を設定
 	const ColorInfo& info = m_pTypeData->m_ColorInfoArr[nColorIdx];
-	gr.SetTextForeColor(info.m_colTEXT);
-	gr.SetTextBackColor(info.m_colBACK);
+	gr.SetTextForeColor(info.m_sColorAttr.m_cTEXT);
+	gr.SetTextBackColor(info.m_sColorAttr.m_cBACK);
 	SFONT sFont;
-	sFont.m_bBoldFont = info.m_bBoldFont;
-	sFont.m_bUnderLine = info.m_bUnderLine;
-	sFont.m_hFont = GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+	sFont.m_sFontAttr = info.m_sFontAttr;
+	sFont.m_hFont = GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
 	gr.SetMyFont(sFont);
 }
 
@@ -458,13 +457,12 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 	COLORREF fgcolor = GetTextColorByColorInfo2(info, info2);
 	gr.SetTextForeColor(fgcolor);
 	// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
-	const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
-	COLORREF bkcolor = (nColorIdx == nColorIdx2) ? info3.m_colBACK : GetBackColorByColorInfo2(info, info3);
+	const ColorInfo& info3 = (info2.m_sColorAttr.m_cBACK == m_crBack ? infoBg : info2);
+	COLORREF bkcolor = (nColorIdx == nColorIdx2) ? info3.m_sColorAttr.m_cBACK : GetBackColorByColorInfo2(info, info3);
 	gr.SetTextBackColor(bkcolor);
 	SFONT sFont;
-	sFont.m_bBoldFont = (info.m_colTEXT != info.m_colBACK) ? info.m_bBoldFont : info2.m_bBoldFont;
-	sFont.m_bUnderLine = (info.m_colTEXT != info.m_colBACK) ? info.m_bUnderLine : info2.m_bUnderLine;
-	sFont.m_hFont = GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+	sFont.m_sFontAttr = (info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK) ? info.m_sFontAttr : info2.m_sFontAttr;
+	sFont.m_hFont = GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
 	gr.SetMyFont(sFont);
 }
 
@@ -504,28 +502,28 @@ inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
 
 COLORREF CEditView::GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2)
 {
-	if( info.m_colTEXT != info.m_colBACK ){
-		return info.m_colTEXT;
+	if( info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK ){
+		return info.m_sColorAttr.m_cTEXT;
 	}
 	// 反転表示
-	if( info.m_colBACK == m_crBack ){
-		return  info2.m_colTEXT ^ 0x00FFFFFF;
+	if( info.m_sColorAttr.m_cBACK == m_crBack ){
+		return  info2.m_sColorAttr.m_cTEXT ^ 0x00FFFFFF;
 	}
 	int alpha = 255*30/100; // 30%
-	return MakeColor2(info.m_colTEXT, info2.m_colTEXT, alpha);
+	return MakeColor2(info.m_sColorAttr.m_cTEXT, info2.m_sColorAttr.m_cTEXT, alpha);
 }
 
 COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2)
 {
-	if( info.m_colTEXT != info.m_colBACK ){
-		return info.m_colBACK;
+	if( info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK ){
+		return info.m_sColorAttr.m_cBACK;
 	}
 	// 反転表示
-	if( info.m_colBACK == m_crBack ){
-		return  info2.m_colBACK ^ 0x00FFFFFF;
+	if( info.m_sColorAttr.m_cBACK == m_crBack ){
+		return  info2.m_sColorAttr.m_cBACK ^ 0x00FFFFFF;
 	}
 	int alpha = 255*30/100; // 30%
-	return MakeColor2(info.m_colBACK, info2.m_colBACK, alpha);
+	return MakeColor2(info.m_sColorAttr.m_cBACK, info2.m_sColorAttr.m_cBACK, alpha);
 }
 
 
@@ -663,13 +661,13 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	//	From Here Sep. 7, 2001 genta
 	//	Sep. 23, 2002 genta 行番号非表示でも行番号色の帯があるので隙間を埋める
 	if( GetTextArea().GetTopYohaku() ){
-		if( bTransText && m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK == cTextType.GetBackColor() ){
+		if( bTransText && m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_sColorAttr.m_cBACK == cTextType.GetBackColor() ){
 		}else{
 			rc.left   = 0;
 			rc.top    = GetTextArea().GetRulerHeight();
 			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
 			rc.bottom = GetTextArea().GetAreaTop();
-			gr.SetTextBackColor(m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
+			gr.SetTextBackColor(m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_sColorAttr.m_cBACK);
 			gr.FillMyRectTextBackColor(rc);
 		}
 	}
@@ -948,8 +946,9 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pInfo->pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
 			bool bChange = false;
+			int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 			CColor3Setting cColor;
-			while(pInfo->nPosInLogic < pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL()){
+			while(pInfo->nPosInLogic < nPosTo){
 				//色切替
 				bChange |= pInfo->DoChangeColor(cLineStr, &cColor);
 
@@ -1012,15 +1011,17 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
-		while(pInfo->nPosInLogic < pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL()){
+		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
+		CColor3Setting cColor;
+		CFigureManager* pcFigureManager = CFigureManager::getInstance();
+		while(pInfo->nPosInLogic < nPosTo){
 			//色切替
-			CColor3Setting cColor;
 			if( pInfo->DoChangeColor(cLineStr, &cColor) ){
 				SetCurrentColor3(pInfo->gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
 			//1文字情報取得 $$高速化可能
-			CFigure& cFigure = CFigureManager::getInstance()->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
+			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
 
 			//1文字描画
 			cFigure.DrawImp(pInfo);

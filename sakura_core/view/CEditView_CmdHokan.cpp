@@ -245,7 +245,7 @@ int CEditView::HokanSearchByFile(
 						if( kindPre != CK_ZEN_ETC ) {
 							nWordLenStop = nWordLen;
 						}
-					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
+					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_UDEF ){
 						kindMerge = kindCur;		// ‹L†‚Ån‚Ü‚é’PŒê‚Í§ŒÀ‚ğŠÉ‚ß‚é
 					}else{
 						j -= nCharSize;

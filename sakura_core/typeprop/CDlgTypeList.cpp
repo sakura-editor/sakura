@@ -34,7 +34,8 @@ typedef std::basic_string<TCHAR> tstring;
 #define ACTION_BACKUP_PATH	(_T("\\ShellBackup"))
 
 //関数プロトタイプ
-int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstring destPath);
+int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath);
+int DeleteRegistry(HKEY root, const tstring& path);
 int RegistExt(LPCTSTR sExt, bool bDefProg);
 int UnregistExt(LPCTSTR sExt);
 int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick);
@@ -141,7 +142,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 
 	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int nIdx = List_GetCurSel( hwndList );
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+	const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 	HWND hwndRMenu = GetDlgItem( GetHwnd(), IDC_CHECK_EXT_RMENU );
 	HWND hwndDblClick = GetDlgItem( GetHwnd(), IDC_CHECK_EXT_DBLCLICK );
 
@@ -265,7 +266,7 @@ void CDlgTypeList::SetData( void )
 
 	List_ResetContent( hwndList );	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+		const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 		if( types.m_szTypeExts[0] != _T('\0') ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
 				types.m_szTypeName,	/* タイプ属性：名称 */
@@ -391,7 +392,7 @@ bool CDlgTypeList::InitializeType( void )
 }
 
 /*! 再帰的レジストリコピー */
-int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstring destPath)
+int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath)
 {
 	int errorCode;
 	CRegKey keySrc;
@@ -444,7 +445,7 @@ int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstri
 }
 
 /*! 再帰的レジストリ削除 */
-int DeleteRegistry(HKEY root, const tstring path)
+int DeleteRegistry(HKEY root, const tstring& path)
 {
 	int errorCode;
 	CRegKey keySrc;

@@ -1,25 +1,23 @@
+/*!	@file
+	@brief マウスイベントの処理
+
+	@author Norio Nakatani
+	@date	1998/03/13 作成
+	@date   2008/04/13 CEditView.cppから分離
+*/
 /*
-	Copyright (C) 2008, kobake
+	Copyright (C) 1998-2002, Norio Nakatani
+	Copyright (C) 2000, genta, JEPRO, MIK
+	Copyright (C) 2001, genta, GAE, MIK, hor, asa-o, Stonee, Misaka, novice, YAZAKI
+	Copyright (C) 2002, YAZAKI, hor, aroka, MIK, Moca, minfu, KK, novice, ai, Azumaiya, genta
+	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
+	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
+	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
+	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
+	Copyright (C) 2007, ryoji, じゅうじ, maru
 
-	This software is provided 'as-is', without any express or implied
-	warranty. In no event will the authors be held liable for any damages
-	arising from the use of this software.
-
-	Permission is granted to anyone to use this software for any purpose,
-	including commercial applications, and to alter it and redistribute it
-	freely, subject to the following restrictions:
-
-		1. The origin of this software must not be misrepresented;
-		   you must not claim that you wrote the original software.
-		   If you use this software in a product, an acknowledgment
-		   in the product documentation would be appreciated but is
-		   not required.
-
-		2. Altered source versions must be plainly marked as such,
-		   and must not be misrepresented as being the original software.
-
-		3. This notice may not be removed or altered from any source
-		   distribution.
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
 */
 
 #include "StdAfx.h"
