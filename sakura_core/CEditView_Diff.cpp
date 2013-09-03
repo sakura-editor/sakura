@@ -533,7 +533,7 @@ void CEditView::Command_Diff_Next( void )
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	CLogicPoint ptXY = { 0, m_ptCaretPos_PHY.y };
+	CLogicPoint ptXY = CLogicPoint( 0, m_ptCaretPos_PHY.y );
 	int nYOld_Logic = ptXY.y;
 	int tmp_y;
 
@@ -585,7 +585,7 @@ void CEditView::Command_Diff_Prev( void )
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	CLogicPoint	ptXY = { 0, m_ptCaretPos_PHY.y };
+	CLogicPoint	ptXY = CLogicPoint( 0, m_ptCaretPos_PHY.y );
 	int nYOld_Logic = ptXY.y;
 	int tmp_y;
 

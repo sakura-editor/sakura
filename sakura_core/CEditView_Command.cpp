@@ -1256,7 +1256,7 @@ void CEditView::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection )
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( bSelect ){
 		// 現在のカーソル位置によって選択範囲を変更
-		CLayoutPoint ptCaretPos = { nPosX, m_ptCaretPos.y };
+		CLayoutPoint ptCaretPos = CLayoutPoint( nPosX, m_ptCaretPos.y );
 		ChangeSelectAreaByCurrentCursor( ptCaretPos );
 	}
 }

@@ -3211,7 +3211,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 {
 	const char*		pLine;
 	int				nLineLen;
-	CLayoutPoint 	nPos = { 0, m_ptCaretPos.y };
+	CLayoutPoint 	nPos = CLayoutPoint( 0, m_ptCaretPos.y );
 	int				i;
 	int				nLineCols;
 	int				nScrollLines;
@@ -3317,7 +3317,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	}
 	nScrollLines = MoveCursor( nPos.x, m_ptCaretPos.y + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
 	if( bSelect ){
-		CLayoutPoint ptCaretPos = { nPos.x, m_ptCaretPos.y };
+		CLayoutPoint ptCaretPos = CLayoutPoint( nPos.x, m_ptCaretPos.y );
 		ChangeSelectAreaByCurrentCursor( ptCaretPos );
 	}
 

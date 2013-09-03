@@ -899,7 +899,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void HideCaret_( HWND hwnd );
 
 	// 指定位置または指定範囲がテキストの存在しないエリアかチェックする		// 2008.08.03 nasukoji
-	bool IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo = -1, int nLineTo = -1, bool bSelect = false, bool bBoxSelect = false );
+	bool IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo = CLayoutPoint( -1, -1 ), bool bSelect = false, bool bBoxSelect = false );
 
 private:
 	UINT	m_uMSIMEReconvertMsg;

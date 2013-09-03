@@ -74,7 +74,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	//	To Here 2006.12.03 maru 引数を拡張のため
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
-	CLayoutPoint ptFrom = { 0, 0 };
+	CLayoutPoint ptFrom = CLayoutPoint( 0, 0 );
 	BOOL	bBeforeTextSelected = IsTextSelected();
 	if (bBeforeTextSelected){
 		ptFrom = m_sSelect.m_ptFrom;
@@ -174,7 +174,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	//	コマンドの出力結果と置き換える．
 	//	2007.05.20 maru
 	if((FALSE == bBeforeTextSelected) && bSendStdin && bGetStdout && bToEditWindow){
-		CLayoutRange sRange = { 0, 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount() };
+		CLayoutRange sRange = CLayoutRange( CLayoutPoint( 0, 0 ), CLayoutPoint( 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount()) );
 		SetSelectArea( sRange );
 		DeleteData( true );
 	}

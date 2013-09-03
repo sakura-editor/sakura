@@ -145,6 +145,7 @@ struct EditInfo {
 	: m_nViewTopLine( -1 )
 	, m_nViewLeftCol( -1 )
 	, m_nType( -1 )
+	, m_ptCursor( -1, -1 )
 	, m_bIsModified( false )
 	, m_nCharCode( CODE_AUTODETECT )
 	, m_bIsGrep( false )
@@ -154,8 +155,6 @@ struct EditInfo {
 	, m_nWindowOriginX( CW_USEDEFAULT )	//	2004.05.13 Moca ÅgéwíËñ≥ÇµÅhÇ-1Ç©ÇÁCW_USEDEFAULTÇ…ïœçX
 	, m_nWindowOriginY( CW_USEDEFAULT )
 	{
-		m_ptCursor.x = -1;
-		m_ptCursor.y = -1;
 		m_szPath[0] = '\0';
 		m_szMarkLines[0] = '\0';
 		m_szDocType[0] = '\0';

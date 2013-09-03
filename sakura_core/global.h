@@ -502,16 +502,40 @@ typedef int CLayoutInt;
 struct CLogicPoint {
 	CLogicInt x;
 	CLogicInt y;
+	CLogicPoint()
+	{
+	}
+	CLogicPoint( int _x, int _y)
+	{
+		x = _x;
+		y = _y;
+	}
 };
 
 struct CLayoutPoint {
 	CLayoutInt x;
 	CLayoutInt y;
+	CLayoutPoint()
+	{
+	}
+	CLayoutPoint( int _x, int _y)
+	{
+		x = _x;
+		y = _y;
+	}
 };
 
 struct CLayoutRange {
 	CLayoutPoint m_ptFrom;
 	CLayoutPoint m_ptTo;
+	CLayoutRange()
+	{
+	}
+	CLayoutRange( CLayoutPoint _m_ptFrom, CLayoutPoint _m_ptTo )
+	{
+		m_ptFrom = _m_ptFrom;
+		m_ptTo = _m_ptTo;
+	}
 };
 
 namespace ApiWrap

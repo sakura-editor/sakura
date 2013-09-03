@@ -427,7 +427,7 @@ void CEditView::DeleteData(
 
 	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
 	if( IsTextSelected() ){		// テキストが選択されているか
-		if( IsEmptyArea( m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true, m_bBeginBoxSelect ) ){
+		if( IsEmptyArea( m_sSelect.m_ptFrom, m_sSelect.m_ptTo, true, m_bBeginBoxSelect ) ){
 			// カーソルを選択範囲の左上に移動
 			MoveCursor( ( m_sSelect.m_ptFrom.x < m_sSelect.m_ptTo.x ) ? m_sSelect.m_ptFrom.x : m_sSelect.m_ptTo.x,
 						( m_sSelect.m_ptFrom.y < m_sSelect.m_ptTo.y ) ? m_sSelect.m_ptFrom.y : m_sSelect.m_ptTo.y, bRedraw );
@@ -436,7 +436,7 @@ void CEditView::DeleteData(
 			return;
 		}
 	}else{
-		if( IsEmptyArea( m_ptCaretPos.x, m_ptCaretPos.y ) ){
+		if( IsEmptyArea( m_ptCaretPos ) ){
 			return;
 		}
 	}
@@ -2976,47 +2976,45 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 /*!
 	@brief 指定位置または指定範囲がテキストの存在しないエリアかチェックする
 
-	@param[in] nColmFrom  指定位置または指定範囲開始カラム
-	@param[in] nLineFrom  指定位置または指定範囲開始ライン
-	@param[in] nColmTo    指定範囲終了カラム
-	@param[in] nLineTo    指定範囲終了ライン
+	@param[in] ptFrom     指定位置または指定範囲開始
+	@param[in] ptTo       指定範囲終了
 	@param[in] bSelect    範囲指定
 	@param[in] bBoxSelect 矩形選択
 	
-	@retval TRUE  指定位置または指定範囲内にテキストが存在しない
-			FALSE 指定位置または指定範囲内にテキストが存在する
+	@retval true  指定位置または指定範囲内にテキストが存在しない
+			false 指定位置または指定範囲内にテキストが存在する
 
 	@date 2008.08.03 nasukoji	新規作成
 */
-bool CEditView::IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo, int nLineTo, bool bSelect, bool bBoxSelect )
+bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelect, bool bBoxSelect )
 {
 	bool result;
 
-	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
+	if( bSelect && !bBoxSelect && ptFrom.y != ptTo.y ){	// 複数行の範囲指定
 		// 複数行通常選択した場合、必ずテキストを含む
 		result = false;
 	}else{
 		if( bSelect ){
 			// 範囲の調整
-			if( nLineFrom > nLineTo ){
-				std::swap( nLineFrom, nLineTo );
+			if( ptFrom.y > ptTo.y ){
+				std::swap( ptFrom.y, ptTo.y );
 			}
 
-			if( nColmFrom > nColmTo ){
-				std::swap( nColmFrom, nColmTo );
+			if( ptFrom.x > ptTo.x ){
+				std::swap( ptFrom.x, ptTo.x );
 			}
 		}else{
-			nLineTo = nLineFrom;
+			ptTo.y = ptFrom.y;
 		}
 
 		const CLayout*	pcLayout;
 		int nLineLen;
 
 		result = true;
-		for( int nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
+		for( int nLineNum = ptFrom.y; nLineNum <= ptTo.y; nLineNum++ ){
 			if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) ){
 				// 指定位置に対応する行のデータ内の位置
-				LineColmnToIndex2( pcLayout, nColmFrom, nLineLen );
+				LineColmnToIndex2( pcLayout, ptFrom.x, nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					result = false;		// 指定位置または指定範囲内にテキストがある
 					break;
