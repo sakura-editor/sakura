@@ -318,9 +318,8 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 EColorIndexType CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
 	int						nIndex,
-	bool					bPrev,			// 指定位置の色変更直前まで	2010.06.19 ryoji 追加
-	CColorStrategy**		ppStrategy,		// 2010.03.31 ryoji 追加
-	CColor_Found**		ppStrategyFound	// 2010.03.31 ryoji 追加
+	SColorStrategyInfo* 	pInfo,			// 2010.03.31 ryoji 追加
+	bool					bPrev			// 指定位置の色変更直前まで	2010.06.19 ryoji 追加
 )
 {
 	EColorIndexType eRet = COLORIDX_TEXT;
@@ -329,12 +328,6 @@ EColorIndexType CEditView::GetColorIndex(
 		return COLORIDX_TEXT;
 	}
 
-	/* 論理行データの取得 */
-	DispPos _sPos(0,0); // 注意：この値はダミー。DoChangeColorでの参照位置は不正確
-	SColorStrategyInfo _sInfo;
-	SColorStrategyInfo* pInfo = &_sInfo;
-	pInfo->pcView = this;
-	pInfo->pDispPos=&_sPos;
 	const CLayoutColorInfo* colorInfo;
 	{
 		// 2002/2/10 aroka CMemory変更
@@ -362,7 +355,7 @@ EColorIndexType CEditView::GetColorIndex(
 		pool->NotifyOnStartScanLogic();
 
 
-		// 2009.02.07 ryoji この関数では pInfo->DoChangeColor() で色を調べるだけなので以下の処理は不要
+		// 2009.02.07 ryoji この関数では pInfo->CheckChangeColor() で色を調べるだけなので以下の処理は不要
 		//
 		////############超仮。本当はVisitorを使うべき
 		//class TmpVisitor{
@@ -393,13 +386,12 @@ EColorIndexType CEditView::GetColorIndex(
 	}
 
 	int nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
-	CColor3Setting cColor;
 	while(pInfo->nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->nPosInLogic == nPosTo )
 			break;
 
 		//色切替
-		pInfo->DoChangeColor(cLineStr, &cColor);
+		pInfo->CheckChangeColor(cLineStr);
 
 		//1文字進む
 		pInfo->nPosInLogic += CNativeW::GetSizeOfChar(
@@ -408,9 +400,11 @@ EColorIndexType CEditView::GetColorIndex(
 									pInfo->nPosInLogic
 								);
 	}
+
+	CColor3Setting cColor;
+	pInfo->DoChangeColor(&cColor);
+
 	eRet = pInfo->GetCurrentColor2();
-	if(ppStrategy) *ppStrategy = pInfo->pStrategy;
-	if(ppStrategyFound) *ppStrategyFound = pInfo->pStrategyFound;
 
 	return eRet;
 }
@@ -843,10 +837,6 @@ bool CEditView::DrawLogicLine(
 	pInfo->pDispPos = _pDispPos;
 	pInfo->pcView = this;
 
-//	if( !pcLayout ){
-//		return true;
-//	}
-
 	//CColorStrategyPool初期化
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this);
@@ -864,7 +854,7 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef();
-		EColorIndexType eType = GetColorIndex(pcLayout, 0, true, &pInfo->pStrategy, &pInfo->pStrategyFound);
+		EColorIndexType eType = GetColorIndex(pcLayout, 0, pInfo, true);
 		SetCurrentColor(pInfo->gr, eType);
 	}
 
@@ -929,19 +919,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
 	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
 
-	//color strategy
-#if 0
-// DrawLogicLineのGetColorIndexで呼び出し済み
-	if(pcLayout && pcLayout->GetLogicOffset()==0){
-		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
-		pInfo->pStrategy = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
-		if(pInfo->pStrategy){
-			pInfo->pStrategy->InitStrategyStatus();
-			pInfo->pStrategy->SetStrategyColorInfo(pcLayout->GetColorInfo());
-		}
-		SetCurrentColor(pInfo->gr, pcLayout->GetColorTypePrev());
-	}
-#endif
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
@@ -950,7 +927,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			CColor3Setting cColor;
 			while(pInfo->nPosInLogic < nPosTo){
 				//色切替
-				bChange |= pInfo->DoChangeColor(cLineStr, &cColor);
+				bChange |= pInfo->CheckChangeColor(cLineStr);
 
 				//1文字進む
 				pInfo->nPosInLogic += CNativeW::GetSizeOfChar(
@@ -960,6 +937,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 										);
 			}
 			if( bChange ){
+				pInfo->DoChangeColor(&cColor);
 				SetCurrentColor3(pInfo->gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 		}
@@ -1012,11 +990,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
-		CColor3Setting cColor;
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
 		while(pInfo->nPosInLogic < nPosTo){
 			//色切替
-			if( pInfo->DoChangeColor(cLineStr, &cColor) ){
+			if( pInfo->CheckChangeColor(cLineStr) ){
+				CColor3Setting cColor;
+				pInfo->DoChangeColor(&cColor);
 				SetCurrentColor3(pInfo->gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
