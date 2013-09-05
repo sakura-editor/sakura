@@ -46,13 +46,11 @@ bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
 	return (nPos==0 || !IS_KEYWORD_CHAR(cStr.At(nPos-1)));
 }
 
-/*! 色の切り替え
+/*! 色の切り替え判定
 	@retval true 色の変更あり
-	@retval false 色の変更/なし
-
-	@date 2013.05.11 novice 実際の変更は呼び出し側で行う
+	@retval false 色の変更なし
 */
-bool SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr, CColor3Setting *pcColor)
+bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 {
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this->pcView);
@@ -127,32 +125,32 @@ bool SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr, CColor3Settin
 		}
 	}
 
-	// 色決定
-	if( bChange ){
-		pcColor->eColorIndex = GetCurrentColor();
-		pcColor->eColorIndex2 = GetCurrentColor2();
-		pcColor->eColorIndexBg = m_colorIdxBackLine;
-	}
-
 	return bChange;
 }
 
-EColorIndexType SColorStrategyInfo::GetCurrentColor() const
+/*! 色の切り替え
+
+	@date 2013.05.11 novice 実際の変更は呼び出し側で行う
+*/
+void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 {
 	if(pStrategySelect){
-		return pStrategySelect->GetStrategyColor();
+		m_cIndex.eColorIndex = pStrategySelect->GetStrategyColor();
 	}else if(pStrategyFound){
-		return pStrategyFound->GetStrategyColor();
+		m_cIndex.eColorIndex = pStrategyFound->GetStrategyColor();
+	}else{
+		m_cIndex.eColorIndex = pStrategy->GetStrategyColorSafe();
 	}
-	return pStrategy->GetStrategyColorSafe();
-}
 
-EColorIndexType SColorStrategyInfo::GetCurrentColor2() const
-{
 	if(pStrategyFound){
-		return pStrategyFound->GetStrategyColor();
+		m_cIndex.eColorIndex2 = pStrategyFound->GetStrategyColor();
+	}else{
+		m_cIndex.eColorIndex2 = pStrategy->GetStrategyColorSafe();
 	}
-	return pStrategy->GetStrategyColorSafe();
+
+	m_cIndex.eColorIndexBg = m_colorIdxBackLine;
+
+	*pcColor = m_cIndex;
 }
 
 

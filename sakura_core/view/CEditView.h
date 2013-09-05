@@ -245,7 +245,7 @@ protected:
 
 	//色分け
 public:
-	EColorIndexType GetColorIndex( const CLayout*, int, bool bPrev = false, CColorStrategy** ppStrategy = NULL, CColor_Found** ppStrategyFound = NULL );				/* 指定位置のColorIndexの取得 02/12/13 ai */
+	EColorIndexType GetColorIndex( const CLayout*, int, SColorStrategyInfo* pInfo, bool bPrev = false );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
 	void SetCurrentColor3( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
 	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
