@@ -64,7 +64,6 @@ void CEditView::InsertData_CEditView(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
 #endif
 	const char*	pLine;
@@ -301,10 +300,6 @@ void CEditView::InsertData_CEditView(
 		pcOpe->m_nDataLen = cMem.GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = NULL;				/* 操作に関連するデータ */
 	}
-
-#ifdef _DEBUG
-	gm_ProfileOutput = 0;
-#endif
 }
 
 
@@ -322,7 +317,6 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
 #endif
 	const char*	pLine;
@@ -376,9 +370,6 @@ void CEditView::DeleteData2(
 
 
 end_of_func:;
-#ifdef _DEBUG
-	gm_ProfileOutput = 0;
-#endif
 }
 
 
@@ -395,7 +386,6 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
 #endif
 	const char*	pLine;

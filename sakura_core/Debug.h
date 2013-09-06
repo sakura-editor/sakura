@@ -121,18 +121,6 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
 
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         フラグ等                            //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#ifdef _DEBUG
-	//!	設定している場所はあるが，参照している場所がない変数
-	extern int gm_ProfileOutput;
-#endif
-
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _DEBUG_H_ */
 

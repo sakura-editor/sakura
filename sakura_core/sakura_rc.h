@@ -18,7 +18,7 @@
 #define IDD_PRINTPREVIEWBAR             121
 #define IDD_PRINTSETTING                122
 #define IDD_EXITING                     123
-#define IDD_DEBUG                       124
+//#define IDD_DEBUG                       124
 #define IDD_EXEC                        125
 #define IDD_EXECRUNNING                 126
 #define IDD_HOKAN                       127
@@ -286,7 +286,7 @@
 #define IDC_EDIT_HEAD2                  1239
 #define IDC_EDIT_HEAD3                  1240
 #define IDC_BUTTON_CURRENTFOLDER        1241
-#define IDC_EDIT_DEBUG                  1242
+//#define IDC_EDIT_DEBUG                  1242
 #define IDC_EDIT_FOOT2                  1243
 #define IDC_CHECK_USETRAYICON           1244
 #define IDC_EDIT_FOOT3                  1245

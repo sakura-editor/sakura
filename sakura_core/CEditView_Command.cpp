@@ -2406,9 +2406,6 @@ void CEditView::Command_INSTEXT(
 					bLinePaste? 0: nTextLen,	// ë}ì¸Ç∑ÇÈÉfÅ[É^ÇÃí∑Ç≥
 					true
 				);
-#ifdef _DEBUG
-				gm_ProfileOutput = FALSE;
-#endif
 				if( !bLinePaste )	// 2007.10.04 ryoji
 					goto end_of_func;
 			}

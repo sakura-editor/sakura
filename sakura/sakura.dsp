@@ -141,10 +141,6 @@ SOURCE=..\sakura_core\CDlgCtrlCode.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CDlgDebug.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\CDlgDiff.cpp
 # End Source File
 # Begin Source File
@@ -729,10 +725,6 @@ SOURCE=..\sakura_core\CDlgCompare.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgCtrlCode.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\CDlgDebug.h
 # End Source File
 # Begin Source File
 

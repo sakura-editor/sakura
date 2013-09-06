@@ -89,7 +89,6 @@ OBJS= \
 	$(OBJDIR)/CDlgCancel.o \
 	$(OBJDIR)/CDlgCompare.o \
 	$(OBJDIR)/CDlgCtrlCode.o \
-	$(OBJDIR)/CDlgDebug.o \
 	$(OBJDIR)/CDlgDiff.o \
 	$(OBJDIR)/CDlgExec.o \
 	$(OBJDIR)/CDlgFavorite.o \
@@ -233,8 +232,7 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(exe): $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LIBS) -mwindows -static
-	$(RCPREFIX)strip sakura.exe
+	$(CXX) -o $@ $(OBJS) $(LIBS) -mwindows -static -s
 
 $(RCTOOL): $(RCTOOLDIR)/mrc2grc.cpp
 	$(HOSTCXX) $(CXXFLAGS) $(RCTOOLDIR)/mrc2grc.cpp -o $@ -static-libgcc
@@ -265,8 +263,6 @@ $(OBJDIR)/CDlgCancel.o: $(SRCDIR)/CDlgCancel.cpp
 $(OBJDIR)/CDlgCompare.o: $(SRCDIR)/CDlgCompare.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CDlgCtrlCode.o: $(SRCDIR)/CDlgCtrlCode.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/CDlgDebug.o: $(SRCDIR)/CDlgDebug.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CDlgDiff.o: $(SRCDIR)/CDlgDiff.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

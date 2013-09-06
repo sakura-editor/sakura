@@ -99,7 +99,6 @@ OBJS =\
 	$(OBJDIR)\CDlgCompare.obj \
 	$(OBJDIR)\CDlgCtrlCode.obj \
 	$(OBJDIR)\CDlgDiff.obj \
-	$(OBJDIR)\CDlgDebug.obj \
 	$(OBJDIR)\CDlgExec.obj \
 	$(OBJDIR)\CDlgFavorite.obj \
 	$(OBJDIR)\CDlgFileUpdateQuery.obj \
