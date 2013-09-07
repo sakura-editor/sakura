@@ -34,19 +34,19 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 {
 	int nIdx = pInfo->GetPosInLogic();
 	int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
-						pInfo->pLineOfLogic,
+						pInfo->m_pLineOfLogic,
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
 					);
-	bool bTrans = pInfo->pcView->IsBkBitmap() && CTypeSupport(pInfo->pcView, COLORIDX_TEXT).GetBackColor() == pInfo->gr.GetTextBackColor();
-	pInfo->pcView->GetTextDrawer().DispText(
-		pInfo->gr,
-		pInfo->pDispPos,
-		&pInfo->pLineOfLogic[nIdx],
+	bool bTrans = pInfo->m_pcView->IsBkBitmap() && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == pInfo->m_gr.GetTextBackColor();
+	pInfo->m_pcView->GetTextDrawer().DispText(
+		pInfo->m_gr,
+		pInfo->m_pDispPos,
+		&pInfo->m_pLineOfLogic[nIdx],
 		nLength,
 		bTrans
 	);
-	pInfo->nPosInLogic += nLength;
+	pInfo->m_nPosInLogic += nLength;
 	return true;
 }
 
@@ -61,13 +61,13 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 {
 	bool bTrans = DrawImp_StyleSelect(pInfo);
-	DispPos sPos(*pInfo->pDispPos);	// 現在位置を覚えておく
-	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView, bTrans);	// 空白描画
+	DispPos sPos(*pInfo->m_pDispPos);	// 現在位置を覚えておく
+	DispSpace(pInfo->m_gr, pInfo->m_pDispPos,pInfo->m_pcView, bTrans);	// 空白描画
 	DrawImp_StylePop(pInfo);
 	DrawImp_DrawUnderline(pInfo, sPos);
 	// 1文字前提
-	pInfo->nPosInLogic += CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
-		pInfo->pLineOfLogic,
+	pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
+		pInfo->m_pLineOfLogic,
 		pInfo->GetDocLine()->GetLengthWithoutEOL(),
 		pInfo->GetPosInLogic()
 		);
@@ -78,7 +78,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 {
 	// この DrawImp はここ（基本クラス）でデフォルト動作を実装しているが
 	// 仮想関数なので派生クラス側のオーバーライドで個別に仕様変更可能
-	CEditView* pcView = pInfo->pcView;
+	CEditView* pcView = pInfo->m_pcView;
 
 	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色/選択色）
 	CTypeSupport cCurrentType2(pcView, pInfo->GetCurrentColor2());	// 周辺の色（現在の指定色）
@@ -121,28 +121,28 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 	}
 	//cSpaceType.SetGraphicsState_WhileThisObj(pInfo->gr);
 
-	pInfo->gr.PushTextForeColor(crText);
-	pInfo->gr.PushTextBackColor(crBack);
+	pInfo->m_gr.PushTextForeColor(crText);
+	pInfo->m_gr.PushTextBackColor(crBack);
 	// Figureが下線指定ならこちらで下線を指定。元の色のほうが下線指定なら、DrawImp_DrawUnderlineで下線だけ指定
 	SFONT sFont;
 	sFont.m_sFontAttr.m_bBoldFont = cSpaceType.IsBoldFont() || bBold;
 	sFont.m_sFontAttr.m_bUnderLine = cSpaceType.HasUnderLine();
-	sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
-	pInfo->gr.PushMyFont(sFont);
+	sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+	pInfo->m_gr.PushMyFont(sFont);
 	bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 	return bTrans;
 }
 
 void CFigureSpace::DrawImp_StylePop(SColorStrategyInfo* pInfo)
 {
-	pInfo->gr.PopTextForeColor();
-	pInfo->gr.PopTextBackColor();
-	pInfo->gr.PopMyFont();
+	pInfo->m_gr.PopTextForeColor();
+	pInfo->m_gr.PopTextBackColor();
+	pInfo->m_gr.PopMyFont();
 }
 
 void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPos)
 {
-	CEditView* pcView = pInfo->pcView;
+	CEditView* pcView = pInfo->m_pcView;
 
 	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// 周辺の色
 	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // 選択混合色
@@ -156,15 +156,15 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 		SFONT sFont;
 		sFont.m_sFontAttr.m_bBoldFont = false;
 		sFont.m_sFontAttr.m_bUnderLine = true;
-		sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
-		pInfo->gr.PushMyFont(sFont);
+		sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+		pInfo->m_gr.PushMyFont(sFont);
 
-		int nLength = (Int)(pInfo->pDispPos->GetDrawCol() - sPos.GetDrawCol());
+		int nLength = (Int)(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
 		wchar_t* pszText = new wchar_t[nLength];
 		for( int i = 0; i < nLength; i++ )
 			pszText[i] = L' ';
-		pInfo->pcView->GetTextDrawer().DispText(
-			pInfo->gr,
+		pInfo->m_pcView->GetTextDrawer().DispText(
+			pInfo->m_gr,
 			&sPos,
 			pszText,
 			nLength,
@@ -172,7 +172,7 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 		);
 		delete []pszText;
 
-		pInfo->gr.PopMyFont();
+		pInfo->m_gr.PopMyFont();
 	}
 }
 
