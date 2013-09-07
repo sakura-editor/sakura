@@ -166,8 +166,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 						DispPos _sPos(0,0); // 注意：この値はダミー。CheckChangeColorでの参照位置は不正確
 						SColorStrategyInfo _sInfo;
 						SColorStrategyInfo* pInfo = &_sInfo;
-						pInfo->pDispPos = &_sPos;
-						pInfo->pcView = this;
+						pInfo->m_pDispPos = &_sPos;
+						pInfo->m_pcView = this;
 
 						// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 						// 2009.02.07 ryoji GetColorIndex に渡すインデックスの仕様変更（元はこっちの仕様だった模様）
