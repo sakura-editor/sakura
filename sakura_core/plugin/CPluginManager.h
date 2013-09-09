@@ -47,7 +47,7 @@ public:
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
 	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
-	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstring sZipName, bool bInSearch=false );		//Zipプラグインを追加する
+	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
@@ -61,9 +61,9 @@ public:
 	//pluginsフォルダのパス
 	const tstring GetBaseDir() { return m_sBaseDir; }
 	const tstring GetExePluginDir() { return m_sExePluginDir; }
-	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
-	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
-	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, tstring sZipName, tstring sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
+	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
+	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
+	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, const tstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
 
 	// メンバ変数
 private:

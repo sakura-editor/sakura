@@ -238,7 +238,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlugin( tstring sBaseDir );
+	CPlugin( const tstring& sBaseDir );
 
 	//デストラクタ
 public:

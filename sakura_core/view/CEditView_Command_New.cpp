@@ -669,11 +669,11 @@ end_of_func:;
 
 
 void CEditView::ReplaceData_CEditView(
-	CLayoutRange	sDelRange,			//!< [in]  削除範囲レイアウト単位
-	const wchar_t*	pInsData,			//!< [in]  挿入するデータ
-	CLogicInt		nInsDataLen,		//!< [in]  挿入するデータの長さ
-	bool			bRedraw,
-	COpeBlk*		pcOpeBlk
+	const CLayoutRange&	sDelRange,			//!< [in]  削除範囲レイアウト単位
+	const wchar_t*		pInsData,			//!< [in]  挿入するデータ
+	CLogicInt			nInsDataLen,		//!< [in]  挿入するデータの長さ
+	bool				bRedraw,
+	COpeBlk*			pcOpeBlk
 )
 {
 	int opeSeq;
