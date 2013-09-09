@@ -223,33 +223,6 @@ CEditWnd::CEditWnd()
 , m_posSaveAry( NULL )
 {
 	g_pcEditWnd=this;
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
-
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = NULL;
-	}
-	// 今のところ最大値は固定
-	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
-	m_nEditViewCount = 1;
-	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView(this);
-
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
-
-	//	Dec. 4, 2002 genta
-	InitMenubarMessageFont();
-
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
-
-	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
-	ClearMouseState();
-
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	CreateAccelTbl();
 }
 
 CEditWnd::~CEditWnd()
@@ -629,6 +602,33 @@ HWND CEditWnd::Create(
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = CShareData::getInstance()->GetShareData();
+
+	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
+		m_pcEditViewArr[i] = NULL;
+	}
+	// 今のところ最大値は固定
+	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
+	m_nEditViewCount = 1;
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	m_pcEditViewArr[0] = new CEditView(this);
+
+	m_pcViewFont = new CViewFont(&GetLogfont());
+
+	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
+
+	//	Dec. 4, 2002 genta
+	InitMenubarMessageFont();
+
+	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+
+	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
+	ClearMouseState();
+
+	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	CreateAccelTbl();
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -4661,7 +4661,7 @@ void CEditWnd::CreateAccelTbl( void )
 */
 void CEditWnd::DeleteAccelTbl( void )
 {
-	m_hAccel = m_pShareData->m_sHandles.m_hAccel;
+	m_hAccel = NULL;
 
 	if( m_hAccelWine ){
 		::DestroyAcceleratorTable( m_hAccelWine );

@@ -94,16 +94,14 @@ struct STabGroupInfo{
 // 2007.10.30 kobake IsFuncEnable,IsFuncChecked‚ğFunccode.h‚ÉˆÚ“®
 // 2007.10.30 kobake OnHelp_MenuItem‚ğCEditApp‚ÉˆÚ“®
 class CEditWnd
-: public TSingleInstance<CEditWnd> //###
+: public TSingleton<CEditWnd>
 , public CDocListenerEx
 {
-public:
-	/*
-	||  Constructors
-	*/
+	friend class TSingleton<CEditWnd>;
 	CEditWnd();
 	~CEditWnd();
 
+public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           ì¬                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -38,9 +38,10 @@
 #include "util/module.h"
 #include "util/shell.h"
 
-CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
-: m_hInst(hInst)
+void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 {
+	m_hInst = hInst;
+
 	//ヘルパ作成
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
@@ -63,7 +64,7 @@ CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 	m_pcSMacroMgr = new CSMacroMgr();
 
 	//ウィンドウの作成
-	m_pcEditWnd = new CEditWnd();
+	m_pcEditWnd = CEditWnd::getInstance();
 	m_pcEditWnd->Create( nGroupId );
 
 	//MRU管理
@@ -83,7 +84,6 @@ CEditApp::~CEditApp()
 	delete m_pcSMacroMgr;
 	delete m_pcPropertyManager;
 	delete m_pcMruListener;
-	delete m_pcEditWnd;
 	delete m_pcGrepAgent;
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;
