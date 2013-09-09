@@ -402,11 +402,11 @@ public:
 
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
-		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
-		const wchar_t*	pInsData,			// 挿入するデータ
-		CLogicInt		nInsDataLen,		// 挿入するデータの長さ
-		bool			bRedraw,
-		COpeBlk*		pcOpeBlk
+		const CLayoutRange&	sDelRange,			// 削除範囲。レイアウト単位。
+		const wchar_t*		pInsData,			// 挿入するデータ
+		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
+		bool				bRedraw,
+		COpeBlk*			pcOpeBlk
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
