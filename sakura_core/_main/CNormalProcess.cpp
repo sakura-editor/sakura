@@ -145,7 +145,8 @@ bool CNormalProcess::InitializeProcess()
 		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
 	}
 	// CEditApp‚ðì¬
-	m_pcEditApp = new CEditApp(GetProcessInstance(), nGroupId);
+	m_pcEditApp = CEditApp::getInstance();
+	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetWindow();
 	if( NULL == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
@@ -478,7 +479,6 @@ bool CNormalProcess::MainLoop()
 void CNormalProcess::OnExitProcess()
 {
 	/* ƒvƒ‰ƒOƒCƒ“‰ð•ú */
-	SAFE_DELETE(m_pcEditApp);
 	CPluginManager::getInstance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
 }
 
