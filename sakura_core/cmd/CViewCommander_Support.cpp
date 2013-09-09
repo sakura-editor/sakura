@@ -217,7 +217,7 @@ retry:;
 			_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* 共通設定 プロパティシート */
-			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
+			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PAGENUM_HELPER ) ){
 				return;
 			}
 			goto retry;
@@ -288,7 +288,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				return;
 			}
 			/* 共通設定 プロパティシート */
-			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
+			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PAGENUM_HELPER ) ){
 				return;
 			}
 		}
