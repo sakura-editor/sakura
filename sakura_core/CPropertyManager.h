@@ -32,13 +32,13 @@ class CMenuDrawer;
 
 class CPropertyManager{
 public:
-	CPropertyManager( HWND, CImageListMgr*, CMenuDrawer* );
+	void Create( HWND, CImageListMgr*, CMenuDrawer* );
 
 	/*
 	|| その他
 	*/
-	BOOL OpenPropertySheet( int nPageNum );	/* 共通設定 */
-	BOOL OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );	/* タイプ別設定 */
+	bool OpenPropertySheet( HWND hWnd, int nPageNum );	/* 共通設定 */
+	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* タイプ別設定 */
 
 public:
 	CPropCommon			m_cPropCommon;

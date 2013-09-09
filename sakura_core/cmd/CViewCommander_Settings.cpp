@@ -149,7 +149,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 		}
 		else{
 			/* タイプ別設定 */
-			CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, sResult.cDocumentType );
+			CEditApp::getInstance()->OpenPropertySheetTypes( -1, sResult.cDocumentType );
 		}
 	}
 	return;
@@ -175,7 +175,7 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne ){
 /* タイプ別設定 */
 void CViewCommander::Command_OPTION_TYPE( void )
 {
-	CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
+	CEditApp::getInstance()->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
 }
 
 
@@ -184,7 +184,7 @@ void CViewCommander::Command_OPTION_TYPE( void )
 void CViewCommander::Command_OPTION( void )
 {
 	/* 設定プロパティシート テスト用 */
-	CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( -1/*, -1*/ );
+	CEditApp::getInstance()->OpenPropertySheet( -1 );
 }
 
 

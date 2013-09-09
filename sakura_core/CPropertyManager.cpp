@@ -1,11 +1,33 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include "CPropertyManager.h"
-#include "window/CEditWnd.h"
-#include "CEditApp.h"
 #include "env/DLLSHAREDATA.h"
-#include "macro/CSMacroMgr.h"
+#include "env/CDocTypeManager.h"
 
-CPropertyManager::CPropertyManager( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* menu )
+void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* menu )
 {
 	/* 設定プロパティシートの初期化１ */
 	m_cPropCommon.Create( hwndOwner, pImageList, menu );
@@ -13,12 +35,12 @@ CPropertyManager::CPropertyManager( HWND hwndOwner, CImageListMgr* pImageList, C
 }
 
 /*! 共通設定 プロパティシート */
-BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
+bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
 {
 	// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 	// 共通設定の一時設定領域にSharaDataをコピーする
 	m_cPropCommon.InitData();
-	
+
 	/* プロパティシートの作成 */
 	if( m_cPropCommon.DoPropertySheet( nPageNum ) ){
 
@@ -35,10 +57,7 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		// note: 基本的にここで適用しないで、MYWM_CHANGESETTINGからたどって適用してください。
 		// 自ウィンドウには最後に通知されます。大抵は、OnChangeSetting にあります。
 		// ここでしか適用しないと、ほかのウィンドウが変更されません。
-		
-		if( CEditApp::getInstance() ){
-			CEditApp::getInstance()->m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
-		}
+
 		if( bGroup != (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
 			CAppNodeManager::getInstance()->ResetGroupId();
 		}
@@ -46,12 +65,7 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
-
 		/* 設定変更を反映させる */
-		HWND hWnd = NULL;
-		if( CEditWnd::getInstance() ){
-			hWnd = CEditWnd::getInstance()->GetHwnd();
-		}
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
@@ -61,53 +75,34 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		);
 
 		delete pLock;
-		return TRUE;
+		return true;
 	}else{
-		return FALSE;
+		return false;
 	}
 }
 
 
 
 /*! タイプ別設定 プロパティシート */
-BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
+bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType )
 {
 	STypeConfig& types = CDocTypeManager().GetTypeSetting(nSettingType);
 	m_cPropTypes.SetTypeData( types );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
-	//m_cPropTypes.m_CKeyWordSetMgr = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
-		/* 変更された設定値のコピー */
-		int nTextWrapMethodOld = -1;
-		if( CEditWnd::getInstance() ){
-			nTextWrapMethodOld = CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
-		}
 		// 2013.06.10 Moca 印刷終了まで待機する
 		CShareDataLockCounter* pLock = NULL;
 		CShareDataLockCounter::WaitLock( m_cPropTypes.GetHwndParent(), &pLock );
-		
-		m_cPropTypes.GetTypeData( types );
 
-		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
-		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
-		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
-		if( CEditWnd::getInstance() ){
-			if( nTextWrapMethodOld != CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
-				CEditWnd::getInstance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
-			}
-		}
+		m_cPropTypes.GetTypeData( types );
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
-		HWND hWnd = NULL;
-		if( CEditWnd::getInstance() ){
-			hWnd = CEditWnd::getInstance()->GetHwnd();
-		}
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
@@ -116,9 +111,9 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 		);
 
 		delete pLock;
-		return TRUE;
+		return true;
 	}else{
-		return FALSE;
+		return false;
 	}
 }
 
