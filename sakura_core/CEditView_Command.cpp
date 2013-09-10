@@ -1341,8 +1341,7 @@ void CEditView::Command_WORDLEFT( bool bSelect )
 	int nResult = m_pcEditDoc->m_cLayoutMgr.PrevWord(
 		m_ptCaretPos.y,
 		nIdx,
-		&ptLayoutNew.y,
-		&ptLayoutNew.x,
+		&ptLayoutNew,
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){
@@ -1414,8 +1413,7 @@ try_again:;
 	int nResult = m_pcEditDoc->m_cLayoutMgr.NextWord(
 		nCurLine,
 		nIdx,
-		&ptLayoutNew.y,
-		&ptLayoutNew.x,
+		&ptLayoutNew,
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){

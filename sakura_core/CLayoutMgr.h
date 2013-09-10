@@ -118,10 +118,10 @@ public:
 	int GetMaxTextWidth(void) const { return m_nTextWidth; }	// 2009.08.28 nasukoji	テキスト最大幅を返す
 
 protected:
-	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
+	int PrevOrNextWord( int, int, CLayoutPoint* pptLayoutNew, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
 public:
-	int PrevWord( int nLineNum, int nIdx, int* pnLineNew, int* pnColmNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pnLineNew, pnColmNew, TRUE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
-	int NextWord( int nLineNum, int nIdx, int* pnLineNew, int* pnColmNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pnLineNew, pnColmNew, FALSE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
+	int PrevWord( int nLineNum, int nIdx, CLayoutPoint* pptLayoutNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pptLayoutNew, TRUE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
+	int NextWord( int nLineNum, int nIdx, CLayoutPoint* pptLayoutNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pptLayoutNew, FALSE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
 
 	int SearchWord( int	, int , const char* , ESearchDirection , const SSearchOption& , int* , int* , int* , int*, CBregexp* );	/* 単語検索 */
 	void LogicToLayout( int, int, int*, int* );

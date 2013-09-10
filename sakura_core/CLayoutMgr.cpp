@@ -1056,12 +1056,11 @@ bool CLayoutMgr::WhereCurrentWord(
 
 /* 現在位置の左右の単語の先頭位置を調べる */
 int CLayoutMgr::PrevOrNextWord(
-	int		nLineNum,
-	int		nIdx,
-	int*	pnLineNew,
-	int*	pnColmNew,
-	BOOL	bLEFT,
-	BOOL	bStopsBothEnds
+	int				nLineNum,
+	int				nIdx,
+	CLayoutPoint*	pptLayoutNew,
+	BOOL			bLEFT,
+	BOOL			bStopsBothEnds
 )
 {
 	CLayout*  pLayout = SearchLineByLayoutY( nLineNum );
@@ -1073,7 +1072,7 @@ int CLayoutMgr::PrevOrNextWord(
 	int nRetCode = m_pcDocLineMgr->PrevOrNextWord(
 		pLayout->m_ptLogicPos.y,
 		pLayout->m_ptLogicPos.x + nIdx,
-		pnColmNew,
+		&pptLayoutNew->x,
 		bLEFT,
 		bStopsBothEnds
 	);
@@ -1084,9 +1083,9 @@ int CLayoutMgr::PrevOrNextWord(
 			pLayout,
 			nLineNum,
 			pLayout->m_ptLogicPos.y,
-			*pnColmNew,
-			pnLineNew,
-			pnColmNew
+			pptLayoutNew->x,
+			&pptLayoutNew->y,
+			&pptLayoutNew->x
 		);
 	}
 	return nRetCode;
