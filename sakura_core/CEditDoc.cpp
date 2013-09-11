@@ -144,6 +144,9 @@ CEditDoc::CEditDoc()
 
 CEditDoc::~CEditDoc()
 {
+	delete m_pcPropertyManager;
+	m_pcPropertyManager = NULL;
+
 	for( int i = 0; i < m_nEditViewMaxCount; i++ ){
 		delete m_pcEditViewArr[i];
 		m_pcEditViewArr[i] = NULL;
@@ -301,8 +304,8 @@ BOOL CEditDoc::Create(
 	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_Common.m_sMacro.m_MacroTable, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
-	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, &(pCEditWnd->m_CMenuDrawer) );
-	m_cPropTypes.Create( m_hInstance, m_hWnd );
+	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager->Create( m_hInstance, m_hWnd, pcIcons, &(pCEditWnd->m_CMenuDrawer) );
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
@@ -1394,83 +1397,37 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 
 
 /*! 共通設定 プロパティシート */
-BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
+bool CEditDoc::OpenPropertySheet( int nPageNum )
 {
-	int		i;
-//	BOOL	bModify;
-	
-	// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
-	// 共通設定の一時設定領域にSharaDataをコピーする
-	m_cPropCommon.InitData();
-	
 	/* プロパティシートの作成 */
-	if( m_cPropCommon.DoPropertySheet( nPageNum/*, nActiveItem*/ ) ){
-
-		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
-		// ShareData に 設定を適用・コピーする
-		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
-		BOOL bGroup = (m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin);
-		m_cPropCommon.ApplyData();
-		m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
-		if( bGroup != (m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
-			CShareData::getInstance()->ResetGroupId();
-		}
-
-		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
-
-		/* フォントが変わった */
-		for( i = 0; i < GetAllViewCount(); ++i ){
-			m_pcEditViewArr[i]->m_cTipWnd.ChangeFont( &(m_pShareData->m_Common.m_sHelper.m_lf) );
-		}
-
-		/* 設定変更を反映させる */
-		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
-
-		return TRUE;
-	}else{
-		return FALSE;
+	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_hwndParent, nPageNum );
+	if( bRet ){
+		// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
+		m_pcSMacroMgr->UnloadAll();
 	}
+
+	return bRet;
 }
 
 
 
 /*! タイプ別設定 プロパティシート */
-BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
+bool CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 {
-	m_cPropTypes.SetTypeData( m_pShareData->m_Types[nSettingType] );
-	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
-	//m_cPropTypes.m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+	int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
 
 	/* プロパティシートの作成 */
-	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
-//		/* 変更されたか？ */
-//		if( 0 == memcmp( &m_pShareData->m_Types[nSettingType], &m_cPropTypes.m_Types, sizeof( STypeConfig ) ) ){
-//			/* 無変更 */
-//			return FALSE;
-//		}
-//		/* 変更フラグ(タイプ別設定) のセット */
-//		m_pShareData->m_nTypesModifyArr[nSettingType] = TRUE;
-		/* 変更された設定値のコピー */
-		int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
-		m_cPropTypes.GetTypeData( m_pShareData->m_Types[nSettingType] );
-
+	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_hwndParent, nPageNum, nSettingType );
+	if( bRet ){
 		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
 		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
 		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
-		if( nTextWrapMethodOld != GetDocumentAttribute().m_nTextWrapMethod )		// 設定が変更された
+		if( nTextWrapMethodOld != GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
 			m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
-
-		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
-
-		/* 設定変更を反映させる */
-		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
-
-		return TRUE;
-	}else{
-		return FALSE;
+		}
 	}
+
+	return bRet;
 }
 
 

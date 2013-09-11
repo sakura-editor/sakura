@@ -40,8 +40,7 @@
 #include "CHokanMgr.h"
 #include "CLayoutMgr.h"
 #include "COpeBuf.h"
-#include "CPropCommon.h"
-#include "CPropTypes.h"
+#include "CPropertyManager.h"
 #include "CShareData.h"
 #include "CSplitterWnd.h"
 class CImageListMgr; // 2002/2/10 aroka
@@ -110,8 +109,8 @@ public:
 
 	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
 	void UpdateCaption();	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
-	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
-	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
+	bool OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
+	bool OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
 	std::tstring GetDlgInitialDir();
 	bool OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
@@ -318,14 +317,8 @@ public:
 
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
-//	2004.03.28 Moca 未使用変数削除
 
-//	2004.02.16 Moca メンバから外す
-//	CHOOSEFONT		m_cf;				/* フォント選択ダイアログ用 */
-
-//@@	CProp1			m_cProp1;			/* 設定プロパティシート */
-	CPropCommon		m_cPropCommon;
-	CPropTypes		m_cPropTypes;
+	CPropertyManager* m_pcPropertyManager;	//プロパティ管理
 
 	EShareMode		m_nFileShareModeOld;	/* ファイルの排他制御モード */
 	HANDLE			m_hLockedFile;			/* ロックしているファイルのハンドル */

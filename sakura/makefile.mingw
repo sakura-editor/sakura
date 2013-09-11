@@ -188,6 +188,7 @@ OBJS= \
 	$(OBJDIR)/CPropComToolbar.o \
 	$(OBJDIR)/CPropComWin.o \
 	$(OBJDIR)/CPropCommon.o \
+	$(OBJDIR)/CPropertyManager.o \
 	$(OBJDIR)/CPropTypes.o \
 	$(OBJDIR)/CPropTypesColor.o \
 	$(OBJDIR)/CPropTypesKeyHelp.o \
@@ -463,6 +464,8 @@ $(OBJDIR)/CPropComToolbar.o: $(SRCDIR)/CPropComToolbar.cpp
 $(OBJDIR)/CPropComWin.o: $(SRCDIR)/CPropComWin.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CPropCommon.o: $(SRCDIR)/CPropCommon.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropertyManager.o: $(SRCDIR)/CPropertyManager.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CPropTypes.o: $(SRCDIR)/CPropTypes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

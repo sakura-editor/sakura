@@ -198,6 +198,7 @@ OBJS =\
 	$(OBJDIR)\CPropComTab.obj \
 	$(OBJDIR)\CPropComToolbar.obj \
 	$(OBJDIR)\CPropComWin.obj \
+	$(OBJDIR)\CPropertyManager.obj \
 	$(OBJDIR)\CPropTypes.obj \
 	$(OBJDIR)\CPropTypesColor.obj \
 	$(OBJDIR)\CPropTypesKeyHelp.obj \

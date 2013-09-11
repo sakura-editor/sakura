@@ -541,6 +541,10 @@ SOURCE=..\sakura_core\CPropComWin.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CPropertyManager.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPropTypes.cpp
 # End Source File
 # Begin Source File
@@ -1005,6 +1009,10 @@ SOURCE=..\sakura_core\CProfile.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CPropCommon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CPropertyManager.h
 # End Source File
 # Begin Source File
 
