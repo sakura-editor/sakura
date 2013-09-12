@@ -512,6 +512,19 @@ struct CLogicPoint {
 	}
 };
 
+struct CLogicRange {
+	CLogicPoint m_ptFrom;
+	CLogicPoint m_ptTo;
+	CLogicRange()
+	{
+	}
+	CLogicRange( CLogicPoint _m_ptFrom, CLogicPoint _m_ptTo )
+	{
+		m_ptFrom = _m_ptFrom;
+		m_ptTo = _m_ptTo;
+	}
+};
+
 struct CLayoutPoint {
 	CLayoutInt x;
 	CLayoutInt y;

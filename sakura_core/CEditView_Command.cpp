@@ -2395,10 +2395,7 @@ void CEditView::Command_INSTEXT(
 				// データ置換 削除&挿入にも使える
 				// 行コピーの貼り付けでは選択範囲は削除（後で行頭に貼り付ける）	// 2007.10.04 ryoji
 				ReplaceData_CEditView(
-					m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
-					m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
-					m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
-					m_sSelect.m_ptTo.x,		/* 範囲選択終了桁 */
+					m_sSelect,
 					NULL,					// 削除されたデータのコピー(NULL可能)
 					bLinePaste? "": pszText,	// 挿入するデータ
 					bLinePaste? 0: nTextLen,	// 挿入するデータの長さ
@@ -4927,10 +4924,7 @@ void CEditView::Command_INDENT_TAB( void )
 	//TAB幅分だけスペースインデント
 	if (IsTextSelected() && m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y ) {
 		ReplaceData_CEditView(
-			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
-			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
-			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
-			m_sSelect.m_ptTo.x,		/* 範囲選択終了桁 */
+			m_sSelect,
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			// Sep. 22, 2002 genta TABの最大幅を64に拡張
 			"                                                                ",				/* 挿入するデータ */

@@ -4074,10 +4074,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
-			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
-			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
-			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
-			m_sSelect.m_ptTo.x,		/* 範囲選択終了桁 */
+			m_sSelect,
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),	/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更

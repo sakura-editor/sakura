@@ -691,14 +691,11 @@ public: /* テスト用にアクセス属性を変更 */
 
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
-		int			nDelLineFrom,		// 削除範囲行  From レイアウト行番号
-		int			nDelColmFrom,		// 削除範囲位置From レイアウト行桁位置
-		int			nDelLineTo,			// 削除範囲行  To   レイアウト行番号
-		int			nDelColmTo,			// 削除範囲位置To   レイアウト行桁位置
-		CMemory*	pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
-		const char*	pInsData,			// 挿入するデータ
-		int			nInsDataLen,		// 挿入するデータの長さ
-		bool		bRedraw
+		CLayoutRange	sDelRange,			// 削除範囲レイアウト単位
+		CMemory*		pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
+		const char*		pInsData,			// 挿入するデータ
+		int				nInsDataLen,		// 挿入するデータの長さ
+		bool			bRedraw
 	);
 
 	/* 挿入系 */
