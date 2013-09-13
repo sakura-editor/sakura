@@ -126,7 +126,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	RECT			rcBack;
 	BOOL			bEOF;
 	int				nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
-	int				nCharWidth = m_nCharWidth + TypeDataPtr->m_nColmSpace;
+	int				nCharWidth = m_nCharWidth + TypeDataPtr->m_nColumnSpace;
 	int				nLineTo;
 	int				nX = m_nViewAlignLeft - m_nViewLeftCol * nCharWidth;
 	int				nY;
@@ -408,7 +408,7 @@ bool CEditView::DispLineNew(
 	//	テキスト描画モード
 	const UINT			fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 	const int			nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
-	const int			nCharWidth = m_nCharWidth + TypeDataPtr->m_nColmSpace;
+	const int			nCharWidth = m_nCharWidth + TypeDataPtr->m_nColumnSpace;
 
 	static const char*	pszSPACES = "        ";
 	static const char*	pszZENSPACE	= "□";
@@ -1430,7 +1430,7 @@ end_of_line:;
 					int			nLineLen;
 					const CLayout* pcLayout;
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCount - 1, &nLineLen, &pcLayout );
-					int nLineCols = LineIndexToColmn( pcLayout, nLineLen );
+					int nLineCols = LineIndexToColumn( pcLayout, nLineLen );
 					if( ( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ) ||
 						nLineCols >= nWrapWidth
 					 ){
@@ -1748,7 +1748,7 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 	}
 	nLeftCol = t_max( m_nViewLeftCol, nLeftCol );
 	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-	const int nCharWidth  = m_nCharWidth + typeData.m_nColmSpace;
+	const int nCharWidth  = m_nCharWidth + typeData.m_nColumnSpace;
 	if( nRightCol < 0 ){
 		nRightCol = nWrapWidth;
 	}

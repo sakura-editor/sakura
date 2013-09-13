@@ -94,7 +94,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	/* 現在のマウスカーソル位置→レイアウト位置 */
-	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 
 	// OLEによるドラッグ & ドロップを使う
@@ -102,7 +102,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	if( !tripleClickMode && TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){
 		if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
-			if( xPos < m_nViewAlignLeft - ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
+			if( xPos < m_nViewAlignLeft - ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) ){
 				goto normal_action;
 			}
 			/* 指定カーソル位置が選択エリア内にあるか */
@@ -126,7 +126,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							MoveCursorToPoint( xPos, yPos );
 						}else
 						if( xPos < m_nViewAlignLeft ){
-							MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+							MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ), yPos );
 						}
 					}
 					return;
@@ -180,7 +180,7 @@ normal_action:;
 				MoveCursorToPoint( xPos, yPos );
 			}else
 			if( xPos < m_nViewAlignLeft ){
-				MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+				MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ), yPos );
 			}else{
 				return;
 			}
@@ -284,7 +284,7 @@ normal_action:;
 					MoveCursorToPoint( xPos, yPos );
 				}else
 				if( xPos < m_nViewAlignLeft ){
-					MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+					MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ), yPos );
 				}
 			}
 		}
@@ -299,7 +299,7 @@ normal_action:;
 					MoveCursorToPoint( xPos, yPos );
 				}else
 				if( xPos < m_nViewAlignLeft ){
-					MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+					MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ), yPos );
 				}
 			}
 			/* 現在のカーソル位置から選択を開始する */
@@ -345,16 +345,16 @@ normal_action:;
 				const CLayout* pcLayout;
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptFrom.y, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
+					nIdx = LineColumnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						m_sSelect.m_ptFrom.y, nIdx, &sRange, NULL, NULL )
 					){
 						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
-						sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+						sRange.m_ptFrom.x = LineIndexToColumn( pcLayout, sRange.m_ptFrom.x );
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
-						sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
+						sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
 
 						nWork = IsCurrentPositionSelected(
@@ -371,7 +371,7 @@ normal_action:;
 				}
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptTo.y, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptTo.x );
+					nIdx = LineColumnToIndex( pcLayout, m_sSelect.m_ptTo.x );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						m_sSelect.m_ptTo.y, nIdx,
@@ -379,9 +379,9 @@ normal_action:;
 					){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
-						sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+						sRange.m_ptFrom.x = LineIndexToColumn( pcLayout, sRange.m_ptFrom.x );
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
-						sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
+						sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
 						nWork = IsCurrentPositionSelected(
 							sRange.m_ptFrom.x,	// カーソル位置X
@@ -422,7 +422,7 @@ normal_action:;
 			if( bDrawSwitchOld ){
 				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 				if( pcLayout ){
-					int nColumn = LineIndexToColmn( pcLayout, pcLayout->GetLengthWithoutEOL() );
+					int nColumn = LineIndexToColumn( pcLayout, pcLayout->GetLengthWithoutEOL() );
 					bDrawAfter = (nColumn + SCROLLMARGIN_RIGHT >= m_nViewColNum);
 					if( bDrawAfter ){
 						m_bDrawSWITCH = false;
@@ -547,11 +547,12 @@ BOOL CEditView::CheckTripleClick( int xPos, int yPos )
 	return result;
 }
 
+
 /* マウス右ボタン押下 */
 void CEditView::OnRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
 	/* 現在のマウスカーソル位置→レイアウト位置 */
-	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 	/* 指定カーソル位置が選択エリア内にあるか */
 	if( 0 == IsCurrentPositionSelected(
@@ -599,6 +600,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.11 novice 新規作成
 	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
 */
@@ -657,6 +659,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.10 novice 新規作成
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
 	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
@@ -716,6 +719,7 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.10 novice 新規作成
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
 	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
@@ -799,7 +803,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			}
 		}
 		/* 現在のマウスカーソル位置→レイアウト位置 */
-		int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+		int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 		int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 		int			nUrlLine;	// URLの行(折り返し単位)
 		int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
@@ -881,7 +885,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				nNewY += nLineHeight;
 
 			// カーソルを移動
-			nScrollRowNum = MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) , nNewY );
+			nScrollRowNum = MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) , nNewY );
 
 			// 2007.10.13 nasukoji	2.5クリックによる行単位のドラッグ
 			if( m_dwTripleClickCheck ){
@@ -946,7 +950,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			}
 			const CLayout* pcLayout;
 			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ) ){
-				nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+				nIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 				CLayoutRange sRange;
 
 				/* 現在位置の単語の範囲を調べる */
@@ -955,9 +959,9 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				){
 					/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
-					sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+					sRange.m_ptFrom.x = LineIndexToColumn( pcLayout, sRange.m_ptFrom.x );
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
-					sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
+					sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
 					nWorkF = IsCurrentPositionSelectedTEST(
 						sRange.m_ptFrom.x,	// カーソル位置X
@@ -1610,7 +1614,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		const CLayout* pcLayout;
 		int nLineLen;
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ){
-			LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
+			LineColumnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
 				nCaretPosX_PHY_Old += (m_ptCaretPos.x - nLineLen);
 			}
@@ -1845,7 +1849,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		const CLayout* pcLayout;
 		int nLineLen;
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ){
-			LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
+			LineColumnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
 				nCaretPosX_PHY_Old += (m_ptCaretPos.x - nLineLen);
 			}

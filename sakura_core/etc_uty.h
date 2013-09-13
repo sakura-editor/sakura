@@ -127,7 +127,7 @@ int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca ÅŒã‚Ì•¶š‚ªw’è‚³‚ê‚½•
 int LimitStringLengthB( const char*, int, int, CMemory& );/* ƒf[ƒ^‚ğw’èƒoƒCƒg”ˆÈ“à‚ÉØ‚è‹l‚ß‚é */
 const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
 const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
-void GetLineColm( const char*, int*, int* );
+void GetLineColumn( const char*, int*, int* );
 bool fexist(LPCTSTR pszPath); //!< ƒtƒ@ƒCƒ‹‚Ü‚½‚ÍƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚ê‚Îtrue
 bool IsFilePath( const char*, int*, int*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);

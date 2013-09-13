@@ -755,7 +755,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFind"			, common.m_sSearch.m_bAutoCloseDlgFind );/* 検索ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_sOutline.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_sSearch.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
-	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_sEdit.m_bAutoColmnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
+	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_sEdit.m_bAutoColumnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
 	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"			, common.m_sWindow.m_bScrollBarHorz );/* 水平スクロールバーを使う */
 	
@@ -1112,7 +1112,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 			scan_ints( szKeyData, pszForm, buf );
 			types.m_nIdx                 = buf[ 0];
 			types.m_nMaxLineKetas        = buf[ 1];
-			types.m_nColmSpace           = buf[ 2];
+			types.m_nColumnSpace         = buf[ 2];
 			types.m_nTabSpace            = buf[ 3];
 			types.m_nKeyWordSetIdx[0]    = buf[ 4];
 			types.m_nKeyWordSetIdx[1]    = buf[ 5];
@@ -1131,7 +1131,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 		wsprintf( szKeyData, pszForm,
 			types.m_nIdx,
 			types.m_nMaxLineKetas,
-			types.m_nColmSpace,
+			types.m_nColumnSpace,
 			types.m_nTabSpace,
 			types.m_nKeyWordSetIdx[0],
 			types.m_nKeyWordSetIdx[1],

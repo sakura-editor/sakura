@@ -267,7 +267,7 @@ struct STypeConfig {
 	char				m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
 	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
 	int					m_nMaxLineKetas;				/*!< 折り返し文字数 */
-	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
+	int					m_nColumnSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	int					m_nTabSpace;					/*!< TABの文字数 */
 	BOOL				m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
@@ -544,7 +544,7 @@ struct CommonSetting_Edit
 	TCHAR				m_OpenDialogSelDir[_MAX_PATH];	// 指定フォルダ
 
 	// (ダイアログ項目無し)
-	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
+	BOOL				m_bAutoColumnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
 };
 
 //!ファイルの排他制御モード  2007.10.11 kobake 作成

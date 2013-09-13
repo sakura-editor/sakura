@@ -226,7 +226,7 @@ public:
 		const TCHAR*		pszCodeName,	//	文字コード情報"[SJIS]"とか
 		/* マッチした行の情報 */
 		int			nLine,			//	マッチした行番号
-		int			nColm,			//	マッチした桁番号
+		int			nColumn,		//	マッチした桁番号
 		const char*		pCompareData,	//	行の文字列
 		int			nLineLen,		//	行の文字列の長さ
 		int			nEolCodeLen,	//	EOLの長さ
@@ -457,11 +457,11 @@ protected:
 	void TwoPointToRect( RECT*, int, int, int, int );			/* 2点を対角とする矩形を求める */
 	void DrawSelectArea( void );								/* 指定行の選択領域の描画 */
 	void DrawSelectAreaLine( HDC, int, int, int, int, int );	/* 指定行の選択領域の描画 */
-	int  LineColmnToIndex( const CLayout* pcLayout, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
-	int  LineColmnToIndex( const CDocLine* pcDocLine, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
-	int  LineColmnToIndex2( const CLayout* pcLayout, int nColumn, int& pnLineAllColLen );	/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */		// @@@ 2002.09.28 YAZAKI
-	int  LineIndexToColmn( const CLayout* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
-	int  LineIndexToColmn( const CDocLine* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
+	int  LineColumnToIndex( const CLayout* pcLayout, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
+	int  LineColumnToIndex( const CDocLine* pcDocLine, int nColumn );		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */		// @@@ 2002.09.28 YAZAKI
+	int  LineColumnToIndex2( const CLayout* pcLayout, int nColumn, int& pnLineAllColLen );	/* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */		// @@@ 2002.09.28 YAZAKI
+	int  LineIndexToColumn( const CLayout* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
+	int  LineIndexToColumn( const CDocLine* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int, int nStartColumn );							/* 機能種別によるバッファの変換 */

@@ -344,7 +344,7 @@ void CEditView::ISearchExec(const char* pszText)
 void CEditView::ISearchExec(bool bNext) 
 {
 	//検索を実行する.
-
+	
 	if ( (m_szCurSrchKey[0] == '\0') || (m_nISearchMode == 0)){
 		//ステータスの表示
 		CMemory msg;
@@ -396,7 +396,7 @@ void CEditView::ISearchExec(bool bNext)
 
 	//桁位置からindexに変換
 	CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLine );
-	int nIdx = LineColmnToIndex( pCLayout, nIdx1 );
+	int nIdx = LineColumnToIndex( pCLayout, nIdx1 );
 
 	m_nISearchHistoryCount ++ ;
 

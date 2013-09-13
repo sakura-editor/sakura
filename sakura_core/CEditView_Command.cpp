@@ -1196,7 +1196,7 @@ void CEditView::Command_GOLINETOP(
 		if(0 == nPos) nPosY = nCaretPosY;	/* 物理行の移動なし */
 		
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		nPos = LineIndexToColmn( pcLayout, nPos );
+		nPos = LineIndexToColumn( pcLayout, nPos );
 		if( (m_ptCaretPos.x != nPos) || (m_ptCaretPos.y != nPosY) ){
 			nCaretPosX = nPos;
 			nCaretPosY = nPosY;
@@ -1334,7 +1334,7 @@ void CEditView::Command_WORDLEFT( bool bSelect )
 	}
 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+	nIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の左の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -1354,7 +1354,7 @@ void CEditView::Command_WORDLEFT( bool bSelect )
 		}
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		ptLayoutNew.x = LineIndexToColmn( pcLayout, ptLayoutNew.x );
+		ptLayoutNew.x = LineIndexToColumn( pcLayout, ptLayoutNew.x );
 		/* カーソル移動 */
 		MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
@@ -1406,7 +1406,7 @@ try_again:;
 		}
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+	nIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の右の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -1425,7 +1425,7 @@ try_again:;
 			}
 		}
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		ptLayoutNew.x = LineIndexToColmn( pcLayout, ptLayoutNew.x );
+		ptLayoutNew.x = LineIndexToColumn( pcLayout, ptLayoutNew.x );
 		// カーソル移動
 		MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
@@ -1626,7 +1626,7 @@ void CEditView::Command_DELETE( void )
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 			if( pcLayout ){
 				int nLineLen;
-				LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
+				LineColumnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 				if( nLineLen ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( EOL_NONE != pcLayout->m_cEol ){	// 行終端は改行コードか?
 						Command_INSTEXT( true, "", 0, FALSE );	// カーソル位置まで半角スペース挿入
@@ -1668,7 +1668,7 @@ void CEditView::Command_DELETE_BACK( void )
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 			if( pcLayout ){
 				int nLineLen;
-				int nIdx = LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
+				int nIdx = LineColumnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					// 右からの移動では折り返し末尾文字は削除するが改行は削除しない
 					// 下から（下の行の行頭から）の移動では改行も削除する
@@ -2047,12 +2047,12 @@ void CEditView::Command_DELETE_LINE( void )
 		// フリーカーソルモードでない場合は、カーソル位置を調整する
 		if( !m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 			int nIndex;
-			nIndex = LineColmnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
+			nIndex = LineColumnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
 
 			if (nCaretPosX_OLD > 0) {
 				nCaretPosX_OLD--;
 			} else {
-				nCaretPosX_OLD = LineIndexToColmn( pcLayout, nIndex );
+				nCaretPosX_OLD = LineIndexToColumn( pcLayout, nIndex );
 			}
 		}
 		/* 操作前の位置へカーソルを移動 */
@@ -2168,16 +2168,16 @@ bool CEditView::Command_SELECTWORD( void )
 		return false;	//	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+	nIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の単語の範囲を調べる */
 	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord( m_ptCaretPos.y, nIdx, &sRange, NULL, NULL ) ){
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( sRange.m_ptFrom.y );
-		sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+		sRange.m_ptFrom.x = LineIndexToColumn( pcLayout, sRange.m_ptFrom.x );
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( sRange.m_ptTo.y );
-		sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
+		sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
 		/* 選択範囲の変更 */
 		//	2005.06.24 Moca
@@ -2222,14 +2222,14 @@ void CEditView::Command_PASTE( int option )
 
 	// クリップボードからデータを取得
 	CMemory		cmemClip;
-	bool		bColmnSelect;
+	bool		bColumnSelect;
 	bool		bLineSelect = false;
 	bool		bLineSelectOption = 
 		((option & 0x04) == 0x04) ? TRUE :
 		((option & 0x08) == 0x08) ? FALSE :
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste;
 
-	if( !MyGetClipboardData( cmemClip, &bColmnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
+	if( !MyGetClipboardData( cmemClip, &bColumnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
@@ -2243,15 +2243,15 @@ void CEditView::Command_PASTE( int option )
 		((option & 0x02) == 0x02) ? false :
 		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste;
 
-	bool bAutoColmnPaste = 
+	bool bAutoColumnPaste = 
 		((option & 0x10) == 0x10) ? false :
 		((option & 0x20) == 0x20) ? false :
-		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste != FALSE;
+		m_pShareData->m_Common.m_sEdit.m_bAutoColumnPaste != FALSE;
 
 	// 矩形コピーのテキストは常に矩形貼り付け
-	if( bAutoColmnPaste ){
+	if( bAutoColumnPaste ){
 		// 矩形コピーのデータなら矩形貼り付け
-		if( bColmnSelect ){
+		if( bColumnSelect ){
 			if( m_bBeginBoxSelect ){
 				ErrorBeep();
 				return;
@@ -2384,7 +2384,7 @@ void CEditView::Command_INSTEXT(
 			const CLayout* pcLayout;
 			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptFrom.y, &len, &pcLayout );
 
-			pos = ( line == NULL ) ? 0 : LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
+			pos = ( line == NULL ) ? 0 : LineColumnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 			if( pos >= len &&	//	開始位置が行末より後ろで
 				m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y	//	終了位置が同一行
 				){
@@ -2614,7 +2614,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 			if( bAddLastCR )
 			{
 //				MYTRACE( _T(" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n") );
-				nInsPosX = LineIndexToColmn( pcLayout, nLineLen );
+				nInsPosX = LineIndexToColumn( pcLayout, nLineLen );
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
 					pcOpe = new COpe;
@@ -2792,7 +2792,7 @@ void CEditView::Command_CHAR( char cChar )
 					);
 
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = LineColmnToIndex( pcDocLine, m_ptCaretPos.x );
+					nIdxTo = LineColumnToIndex( pcDocLine, m_ptCaretPos.x );
 					for( nPos = 0; nPos < /*nIdxTo*/nLineLen && nPos < nX; ){
 						// 2005-09-02 D.S.Koba GetSizeOfChar
 						nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -2839,7 +2839,7 @@ end_of_for:;
 						nPos += nCharChars;
 					}
 					if( nPos > 0 ){
-						nPosX = LineIndexToColmn( pcDocLine, nPos );
+						nPosX = LineIndexToColumn( pcDocLine, nPos );
 					}
 					cmemIndent.SetString( pLine, nPos );
 					cmemData += cmemIndent;
@@ -3132,7 +3132,7 @@ void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		nIdx = pCLayout->m_pCDocLine->m_cLine.GetStringLength() + 1;		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
 	} else {
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+		nIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 	}
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
@@ -3315,7 +3315,7 @@ void CEditView::Command_SEARCH_NEXT(
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 // 2002.02.08 hor EOFのみの行からも次検索しても再検索可能に (2/2)
-	nIdx = pcLayout ? LineColmnToIndex( pcLayout, m_ptCaretPos.x ) : 0;
+	nIdx = pcLayout ? LineColumnToIndex( pcLayout, m_ptCaretPos.x ) : 0;
 	if( b0Match ) {
 		// 現在、長さ０でマッチしている場合は物理行で１文字進める(無限マッチ対策)
 		if( nIdx < nLineLen ) {
@@ -5033,8 +5033,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			const char* pLine;
 			if( pcLayout != NULL && NULL != (pLine = pcLayout->GetPtr()) ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pcLayout, rcSel.left );
-				nIdxTo = LineColmnToIndex( pcLayout, rcSel.right );
+				nIdxFrom = LineColumnToIndex( pcLayout, rcSel.left );
+				nIdxTo = LineColumnToIndex( pcLayout, rcSel.right );
 
 				for( i = nIdxFrom; i <= nIdxTo; ++i ){
 					if( pLine[i] == CR || pLine[i] == LF ){
@@ -5055,7 +5055,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			}
 
 			//	Nov. 6, 2002 genta pcLayoutがNULLの場合を考慮
-			nPosX = ( pcLayout == NULL ? 0 : LineIndexToColmn( pcLayout, nDelPos ));
+			nPosX = ( pcLayout == NULL ? 0 : LineIndexToColumn( pcLayout, nDelPos ));
 			nPosY = nLineNum;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
@@ -5407,7 +5407,7 @@ void CEditView::Command_ADDTAIL(
 bool CEditView::Command_TAGJUMP( bool bClose )
 {
 	int			nJumpToLine;
-	int			nJumpToColm;
+	int			nJumpToColumn;
 	char		szJumpToFile[1024];
 	int			nPathLen;
 	int			nBgn;
@@ -5415,7 +5415,7 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
 	nJumpToLine = 0;
-	nJumpToColm = 0;
+	nJumpToColumn = 0;
 
 	/*
 	  カーソル位置変換
@@ -5445,12 +5445,12 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 		if( 0 == memcmp( pLine, "■\"", 3 ) ){
 			if( IsFilePath( &pLine[3], &nBgn, &nPathLen ) ){
 				memcpy( szJumpToFile, &pLine[3 + nBgn], nPathLen );
-				GetLineColm( &pLine[3] + nPathLen, &nJumpToLine, &nJumpToColm );
+				GetLineColumn( &pLine[3] + nPathLen, &nJumpToLine, &nJumpToColumn );
 			}else{
 				goto can_not_tagjump;
 			}
 		}else{
-			GetLineColm( &pLine[2], &nJumpToLine, &nJumpToColm );
+			GetLineColumn( &pLine[2], &nJumpToLine, &nJumpToColumn );
 			nY--;
 
 			for( ; 0 <= nY; nY-- ){
@@ -5492,7 +5492,7 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 			//	Check Path
 			if( IsFilePath( p, &nBgn, &nPathLen ) ){
 				memcpy( szJumpToFile, &p[nBgn], nPathLen );
-				GetLineColm( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColm );
+				GetLineColumn( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
 			}
 			//	Jan. 04, 2001 genta Directoryを対象外にしたので文字列には柔軟に対応
@@ -5510,7 +5510,7 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	if( !TagJumpSub( szJumpToFile, nJumpToLine, nJumpToColm, bClose ) )	//@@@ 2003.04.13
+	if( !TagJumpSub( szJumpToFile, nJumpToLine, nJumpToColumn, bClose ) )	//@@@ 2003.04.13
 		goto can_not_tagjump;
 
 	return true;
@@ -5709,7 +5709,7 @@ next_line:
 bool CEditView::TagJumpSub(
 	const TCHAR*	pszFileName,
 	int				nJumpToLine,	//!< [in] 論理行番号(1開始)。0以下を指定したら行ジャンプはしない。
-	int				nJumpToColm,	//!< [in] 論理行単位の行内の位置(1開始)
+	int				nJumpToColumn,	//!< [in] 論理行単位の行内の位置(1開始)
 	bool			bClose,			//!< [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
 	bool			bRelFromIni
 )
@@ -5767,8 +5767,8 @@ bool CEditView::TagJumpSub(
 		if( 0 < nJumpToLine ){
 			/* カーソルを移動させる */
 			poCaret.y = nJumpToLine - 1;
-			if( 0 < nJumpToColm ){
-				poCaret.x = nJumpToColm - 1;
+			if( 0 < nJumpToColumn ){
+				poCaret.x = nJumpToColumn - 1;
 			}else{
 				poCaret.x = 0;
 			}
@@ -5784,7 +5784,7 @@ bool CEditView::TagJumpSub(
 		bool		bSuccess;
 
 		_tcscpy( inf.m_szPath, szJumpToFile );
-		inf.m_ptCursor.x   = nJumpToColm - 1;
+		inf.m_ptCursor.x   = nJumpToColumn - 1;
 		inf.m_ptCursor.y   = nJumpToLine - 1;
 		inf.m_nViewLeftCol = inf.m_nViewTopLine = -1;
 		inf.m_nCharCode    = CODE_AUTODETECT;
@@ -6790,7 +6790,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(m_sSelect.m_ptFrom.y);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
+			int nIdx = LineColumnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			// 正規表現で選択始点・終点への挿入を記述
 			//	Jun. 6, 2005 かろと
@@ -6999,7 +6999,7 @@ void CEditView::Command_REPLACE_ALL()
 	// ループの外で文字列の長さを特定できるので、一時変数化。
 	char *szREPLACEKEY;			// 置換後文字列。
 	int nREPLACEKEY;			// 置換後文字列の長さ。
-	bool		bColmnSelect;	// 矩形貼り付けを行うかどうか。
+	bool		bColumnSelect;	// 矩形貼り付けを行うかどうか。
 	bool		bLineSelect = false;	// ラインモード貼り付けを行うかどうか
 	CMemory		cmemClip;		// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
@@ -7007,14 +7007,14 @@ void CEditView::Command_REPLACE_ALL()
 	if( nPaste != 0 )
 	{
 		// クリップボードからデータを取得。
-		if ( !MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
+		if ( !MyGetClipboardData( cmemClip, &bColumnSelect, m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
 			ErrorBeep();
 			return;
 		}
 
 		// 矩形貼り付けが許可されていて、クリップボードのデータが矩形選択のとき。
-		if ( m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste == TRUE && bColmnSelect == TRUE )
+		if ( m_pShareData->m_Common.m_sEdit.m_bAutoColumnPaste == TRUE && bColumnSelect == TRUE )
 		{
 			// マウスによる範囲選択中
 			if( m_bBeginSelect )
@@ -7032,7 +7032,7 @@ void CEditView::Command_REPLACE_ALL()
 		else
 		// クリップボードからのデータは普通に扱う。
 		{
-			bColmnSelect = FALSE;
+			bColumnSelect = FALSE;
 		}
 	}
 	else
@@ -7229,7 +7229,7 @@ void CEditView::Command_REPLACE_ALL()
 		/* テキストを貼り付け */
 		if( nPaste )
 		{
-			if ( !bColmnSelect )
+			if ( !bColumnSelect )
 			{
 				/* 本当は Command_INSTEXT を使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため
@@ -7252,7 +7252,7 @@ void CEditView::Command_REPLACE_ALL()
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = rLayoutMgr.SearchLineByLayoutY(m_sSelect.m_ptFrom.y);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
+			int nIdx = LineColumnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			int colDiff = 0;
 			if( !bConsecutiveAll ){	// 一括置換
@@ -9066,7 +9066,7 @@ void CEditView::DelCharForOverwrite( void )
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 	if( NULL != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		int nIdxTo = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+		int nIdxTo = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){
 			bEol = true;	// 現在位置は改行または折り返し以後
 			if( pcLayout->m_cEol != EOL_NONE ){

@@ -137,7 +137,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
 	ctwArg.nLineFrom    = pArg->sDelRange.m_ptFrom.y;								// 編集開始桁
-	ctwArg.nColmFrom    = pArg->sDelRange.m_ptFrom.x;								// 編集開始列
+	ctwArg.nColumnFrom  = pArg->sDelRange.m_ptFrom.x;								// 編集開始列
 	ctwArg.nDelLines    = pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y;	// 削除行なし
 	ctwArg.nAllLinesOld = nWork_nLines;												// 編集前のテキスト行数
 	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;							// 追加文字列の有無

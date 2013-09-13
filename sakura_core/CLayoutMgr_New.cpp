@@ -891,7 +891,7 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 		// 削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
 		// 削除行あり時：最大幅の行を含んで編集した
 		if(( pctwArg->nDelLines < 0  && m_nTextWidth &&
-		     nInsLineNum && pctwArg->nColmFrom && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
+		     nInsLineNum && pctwArg->nColumnFrom && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
 		   ( pctwArg->nDelLines >= 0 && m_nTextWidth &&
 		     pctwArg->nLineFrom <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->nLineFrom + pctwArg->nDelLines ))
 		{

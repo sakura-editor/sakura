@@ -134,7 +134,7 @@ void CEditView::DispLineNumber(
 	COLORREF		colBkColorOld;
 	char			szLineNum[18];
 	int				nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
-	int				nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+	int				nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace;
 	int				nLineCols;
 	UINT			fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 	HPEN			hPen, hPenOld;
@@ -375,7 +375,7 @@ int CEditView::DispText( HDC hdc, int x, int y, const char* pData, int nLength )
 	}
 	RECT	rcClip;
 	int		nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
-	int		nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+	int		nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace;
 	UINT	fuOptions = ETO_CLIPPED | ETO_OPAQUE;
 	rcClip.left = x;
 	rcClip.right = rcClip.left + ( nCharWidth ) * nLength;
@@ -438,7 +438,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
 	int			nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
-	int			nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace;
+	int			nCharWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace;
 	HRGN		hrgnDraw;
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
@@ -627,8 +627,8 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 			return;
 		}
 
-		rc.left = m_nViewAlignLeft + ( m_nOldCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
-		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+		rc.left = m_nViewAlignLeft + ( m_nOldCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) + 1;
+		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace - 1;
 		rc.top = 0;
 		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 
@@ -653,8 +653,8 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 		}
 
 		//新しい位置で描画
-		rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
-		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
+		rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) + 1;
+		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace - 1;
 
 		hRgn = ::CreateRectRgnIndirect( &rc );
 		hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
@@ -699,7 +699,7 @@ void CEditView::DispRuler( HDC hdc )
 		LOGFONT		lf;
 		HFONT		hFont;
  		HFONT		hFontOld;
-		char		szColm[32];
+		char		szColumn[32];
 
 		HPEN		hPen;
 		HPEN		hPenOld;
@@ -748,7 +748,7 @@ void CEditView::DispRuler( HDC hdc )
 		//nToX = m_nViewAlignLeft + m_nViewCx;
 		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 		//	2005.11.10 Moca 1dot足りない
-		nToX = m_nViewAlignLeft + (nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
+		nToX = m_nViewAlignLeft + (nMaxLineSize - m_nViewLeftCol) * ( m_nCharWidth + typeData.m_nColumnSpace ) + 1;
 		if( nToX > m_nViewAlignLeft + m_nViewCx ){
 			nToX = m_nViewAlignLeft + m_nViewCx;
 		}
@@ -768,8 +768,8 @@ void CEditView::DispRuler( HDC hdc )
 			if( 0 == ( (i) % 10 ) ){
 				::MoveToEx( hdc, nX, nY, NULL );
 				::LineTo( hdc, nX, 0/*nY - 8*/ );
-				itoa( (i) / 10, szColm, 10 );
-				::TextOut( hdc, nX + 2 + 0, -1 + 0, szColm, lstrlen( szColm ) );
+				itoa( (i) / 10, szColumn, 10 );
+				::TextOut( hdc, nX + 2 + 0, -1 + 0, szColumn, lstrlen( szColumn ) );
 			}else
 			if( 0 == ( (i) % 5 ) ){
 				::MoveToEx( hdc, nX, nY, NULL );
@@ -778,7 +778,7 @@ void CEditView::DispRuler( HDC hdc )
 				::MoveToEx( hdc, nX, nY, NULL );
 				::LineTo( hdc, nX, nY - 3 );
 			}
-			nX += ( m_nCharWidth + typeData.m_nColmSpace );
+			nX += ( m_nCharWidth + typeData.m_nColumnSpace );
 		}
 		::SetTextColor( hdc, colTextOld );
 		::SelectObject( hdc, hPenOld );
@@ -789,8 +789,8 @@ void CEditView::DispRuler( HDC hdc )
 		 && m_nViewLeftCol + m_nViewColNum + 2 >= m_ptCaretPos.x
 		){
 			//	Aug. 18, 2000 あお
-			rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
-			rc.right = rc.left + m_nCharWidth + typeData.m_nColmSpace - 1;
+			rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + typeData.m_nColumnSpace ) + 1;
+			rc.right = rc.left + m_nCharWidth + typeData.m_nColumnSpace - 1;
 			rc.top = 0;
 			rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
 
@@ -900,7 +900,6 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合
 		return false;
-//	PosX = LineColmnToIndex( cline, len, PosX );	不要
 
 	// 2005-09-02 D.S.Koba GetSizeOfChar
 	nCharSize = CMemory::GetSizeOfChar( cline, len, PosX );

@@ -89,14 +89,14 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	/* 補完ウィンドウの表示位置を算出 */
 	poWin.x = m_nViewAlignLeft
 			 + (m_ptCaretPos.x - m_nViewLeftCol)
-			  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+			  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 	poWin.y = m_nViewAlignTop
 			 + (m_ptCaretPos.y - m_nViewTopLine)
 			  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
 	::ClientToScreen( m_hWnd, &poWin );
 	poWin.x -= (
 		cmemData.GetStringLength()
-		 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
+		 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace )
 	);
 
 	/*	補完ウィンドウを表示
@@ -127,7 +127,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
 		&poWin,
 		m_nCharHeight,
-		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
+		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace,
 		cmemData.GetStringPtr(),
 		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
 		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,

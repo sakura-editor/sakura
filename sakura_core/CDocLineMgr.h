@@ -119,7 +119,7 @@ public:
 		const char* pLine,
 		int			nLineLen,
 		int			nIdx,		//	桁数
-		int*		pnColmNew,	//	見つかった位置
+		int*		pnColumnNew,	//	見つかった位置
 		BOOL		bStopsBothEnds	//	単語の両端で止まる
 	);
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え

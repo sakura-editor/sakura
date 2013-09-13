@@ -1104,7 +1104,7 @@ int CDocLineMgr::SearchNextWordPosition(
 	const char* pLine,
 	int			nLineLen,
 	int			nIdx,		//	桁数
-	int*		pnColmNew,	//	見つかった位置
+	int*		pnColumnNew,	//	見つかった位置
 	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
 {
@@ -1123,7 +1123,7 @@ int CDocLineMgr::SearchNextWordPosition(
 		/* 空白とタブは無視する */
 		if( nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE ){
 			if ( bStopsBothEnds && nCharKind != nCharKindNext ){
-				*pnColmNew = nIdxNext;
+				*pnColumnNew = nIdxNext;
 				return TRUE;
 			}
 			nCharKind = nCharKindNext;
@@ -1131,7 +1131,7 @@ int CDocLineMgr::SearchNextWordPosition(
 		else {
 			int nCharKindMerge = WhatKindOfTwoChars( nCharKind, nCharKindNext );
 			if( nCharKindMerge == CK_NULL ){
-				*pnColmNew = nIdxNext;
+				*pnColumnNew = nIdxNext;
 				return TRUE;
 			}
 			nCharKind = nCharKindMerge;
@@ -1149,7 +1149,7 @@ int CDocLineMgr::SearchNextWordPosition(
 int CDocLineMgr::PrevOrNextWord(
 	int			nLineNum,		//	行数
 	int			nIdx,			//	桁数
-	int*		pnColmNew,		//	見つかった位置
+	int*		pnColumnNew,	//	見つかった位置
 	BOOL		bLEFT,			//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
 	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
@@ -1221,9 +1221,9 @@ int CDocLineMgr::PrevOrNextWord(
 			nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
 			++nCount;
 		}
-		*pnColmNew = nIdxNext;
+		*pnColumnNew = nIdxNext;
 	}else{
-		CDocLineMgr::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColmNew, bStopsBothEnds);
+		CDocLineMgr::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	}
 	return TRUE;
 }

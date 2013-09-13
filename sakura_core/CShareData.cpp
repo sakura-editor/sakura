@@ -770,7 +770,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
 		m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
 		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
-		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
+		m_pShareData->m_Common.m_sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
@@ -5034,7 +5034,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	int i;
 	pShareData->m_Types[nIdx].m_nTextWrapMethod = WRAP_SETTING_WIDTH;	// テキストの折り返し方法		// 2008.05.30 nasukoji
 	pShareData->m_Types[nIdx].m_nMaxLineKetas = MAXLINEKETAS;			/* 折り返し文字数 */
-	pShareData->m_Types[nIdx].m_nColmSpace = 0;					/* 文字と文字の隙間 */
+	pShareData->m_Types[nIdx].m_nColumnSpace = 0;					/* 文字と文字の隙間 */
 	pShareData->m_Types[nIdx].m_nLineSpace = 1;					/* 行間のすきま */
 	pShareData->m_Types[nIdx].m_nTabSpace = 4;					/* TABの文字数 */
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){

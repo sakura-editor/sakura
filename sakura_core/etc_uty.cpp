@@ -1410,7 +1410,7 @@ bool IsLocalDrive( const TCHAR* pszDrive )
 	return true;
 }
 
-void GetLineColm( const char* pLine, int* pnJumpToLine, int* pnJumpToColm )
+void GetLineColumn( const char* pLine, int* pnJumpToLine, int* pnJumpToColumn )
 {
 	int		i;
 	int		j;
@@ -1456,7 +1456,7 @@ void GetLineColm( const char* pLine, int* pnJumpToLine, int* pnJumpToColm )
 				}
 				break;
 			}
-			*pnJumpToColm = atoi( szNumber );
+			*pnJumpToColumn = atoi( szNumber );
 		}
 	}
 	return;

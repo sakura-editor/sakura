@@ -115,7 +115,7 @@ void CEditView::InsertData_CEditView(
 		// 更新が次行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行末への文字入力や文字列貼り付けで現在行は更新されず次行以後が更新される場合もある
 		// 指定された桁に対応する行のデータ内の位置を調べる
-		nIdxFrom = LineColmnToIndex2( pcLayout, nX, nLineAllColLen );
+		nIdxFrom = LineColumnToIndex2( pcLayout, nX, nLineAllColLen );
 		// 行終端より右に挿入しようとした
 		if( nLineAllColLen > 0 ){
 			// 終端直前から挿入位置まで空白を埋める為の処理
@@ -158,7 +158,7 @@ void CEditView::InsertData_CEditView(
 	if( !m_bDoing_UndoRedo && pcOpe ){	// アンドゥ・リドゥの実行中か
 		if( pLine ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				LineIndexToColmn( pcLayout, nIdxFrom ),
+				LineIndexToColumn( pcLayout, nIdxFrom ),
 				nY,
 				&pcOpe->m_ptCaretPos_PHY_Before.x,
 				&pcOpe->m_ptCaretPos_PHY_Before.y
@@ -193,7 +193,7 @@ void CEditView::InsertData_CEditView(
 	// 指定された行のデータ内の位置に対応する桁の位置を調べる
 	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( *pnNewLine, &nLineLen2, &pcLayout );
 	if( pLine2 ){
-		*pnNewPos = LineIndexToColmn( pcLayout, *pnNewPos );
+		*pnNewPos = LineIndexToColumn( pcLayout, *pnNewPos );
 	}
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -339,11 +339,11 @@ void CEditView::DeleteData2(
 	if( NULL == pLine ){
 		goto end_of_func;
 	}
-	nIdxFrom = LineColmnToIndex( pcLayout, nCaretX );
+	nIdxFrom = LineColumnToIndex( pcLayout, nCaretX );
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nOpe = OPE_DELETE;				/* 操作種別 */
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			LineIndexToColmn( pcLayout, nIdxFrom + nDelLen ),
+			LineIndexToColumn( pcLayout, nIdxFrom + nDelLen ),
 			nCaretY,
 			&pcOpe->m_ptCaretPos_PHY_To.x,
 			&pcOpe->m_ptCaretPos_PHY_To.y
@@ -408,7 +408,7 @@ void CEditView::DeleteData(
 	COpe*		pcOpe = NULL;
 	int			i;
 	const CLayout*	pcLayout;
-	int			nSelectColmFrom_Old;
+	int			nSelectColumnFrom_Old;
 	int			nSelectLineFrom_Old;
 
 	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
@@ -447,7 +447,7 @@ void CEditView::DeleteData(
 			m_pcEditDoc->SetModified(true,bRedraw);	//	2002/06/04 YAZAKI 矩形選択を削除したときに変更マークがつかない。
 
 			m_bDrawSWITCH = false;	// 2002.01.25 hor
-			nSelectColmFrom_Old = m_sSelect.m_ptFrom.x;
+			nSelectColumnFrom_Old = m_sSelect.m_ptFrom.x;
 			nSelectLineFrom_Old = m_sSelect.m_ptFrom.y;
 
 			/* 選択範囲のデータを取得 */
@@ -471,8 +471,8 @@ void CEditView::DeleteData(
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxFrom = LineColmnToIndex( pcLayout, rcSel.left  );
-					nIdxTo	 = LineColmnToIndex( pcLayout, rcSel.right );
+					nIdxFrom = LineColumnToIndex( pcLayout, rcSel.left  );
+					nIdxTo	 = LineColumnToIndex( pcLayout, rcSel.right );
 
 					for( i = nIdxFrom; i <= nIdxTo; ++i ){
 						if( pLine[i] == CR || pLine[i] == LF ){
@@ -491,7 +491,7 @@ void CEditView::DeleteData(
 						pcOpe = new COpe;
 						pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2, &pcLayout );
 						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-							LineIndexToColmn( pcLayout, nDelPos ),
+							LineIndexToColumn( pcLayout, nDelPos ),
 							nLineNum + 1,
 							&pcOpe->m_ptCaretPos_PHY_Before.x,
 							&pcOpe->m_ptCaretPos_PHY_Before.y
@@ -547,7 +547,7 @@ void CEditView::DeleteData(
 			}
 			/* 選択エリアの先頭へカーソルを移動 */
 			::UpdateWindow( m_hWnd );
-			MoveCursor( nSelectColmFrom_Old, nSelectLineFrom_Old, bRedraw );
+			MoveCursor( nSelectColumnFrom_Old, nSelectLineFrom_Old, bRedraw );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
@@ -584,7 +584,7 @@ void CEditView::DeleteData(
 		bool bLastLine = ( m_ptCaretPos.y == m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 );
 
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nCurIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+		nCurIdx = LineColumnToIndex( pcLayout, m_ptCaretPos.x );
 //		MYTRACE( _T("nLineLen=%d nCurIdx=%d \n"), nLineLen, nCurIdx);
 		if( nCurIdx == nLineLen && bLastLine ){	/* 全テキストの最後 */
 			goto end_of_func;
@@ -601,7 +601,7 @@ void CEditView::DeleteData(
 		else{
 			nNxtIdx = CMemory::MemCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine;
 			// 指定された行のデータ内の位置に対応する桁の位置を調べる
-			nNxtPos = LineIndexToColmn( pcLayout, nNxtIdx );
+			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}
 
 
@@ -1016,7 +1016,7 @@ void CEditView::ReplaceData_CEditView(
 		//	Jun. 1, 2000 genta
 		//	ちゃんとNULLチェックしましょう
 		if( line ){
-			pos = LineColmnToIndex( pcLayout, sDelRange.m_ptFrom.x );
+			pos = LineColumnToIndex( pcLayout, sDelRange.m_ptFrom.x );
 			//	Jun. 1, 2000 genta
 			//	同一行の行末以降のみが選択されている場合を考慮する
 
@@ -1040,7 +1040,7 @@ void CEditView::ReplaceData_CEditView(
 		//	末尾
 		line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.m_ptTo.y, &len, &pcLayout );
 		if( line ){
-			pos = LineIndexToColmn( pcLayout, len );
+			pos = LineIndexToColumn( pcLayout, len );
 
 			if( sDelRange.m_ptTo.x > pos ){
 				sDelRange.m_ptTo.x = pos;
@@ -2155,7 +2155,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	CLayoutRange sRangeA;
 	CLogicRange sSelectOld;
 
-	int			nColmFrom,nColmTo;
+	int			nColumnFrom,nColumnTo;
 	int			nCF,nCT;
 	int			nCaretPosYOLD;
 	bool		bBeginBoxSelectOld;
@@ -2223,14 +2223,14 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		if( NULL == pLine ) continue;
 		SORTTABLE pst = new SORTDATA;
 		if( bBeginBoxSelectOld ){
-			nColmFrom = LineColmnToIndex( pcDocLine, nCF );
-			nColmTo   = LineColmnToIndex( pcDocLine, nCT );
-			if(nColmTo<nLineLen){	// BOX選択範囲の右端が行内に収まっている場合
+			nColumnFrom = LineColumnToIndex( pcDocLine, nCF );
+			nColumnTo   = LineColumnToIndex( pcDocLine, nCT );
+			if(nColumnTo<nLineLen){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey1.assign( &pLine[nColmFrom], nColmTo-nColmFrom );
+				pst->sKey1.assign( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
 			}
-			else if(nColmFrom<nLineLen){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey1=&pLine[nColmFrom];
+			else if(nColumnFrom<nLineLen){	// BOX選択範囲の右端が行末より右にはみ出している場合
+				pst->sKey1=&pLine[nColumnFrom];
 			}
 			pst->sKey2=pLine;
 		}else{
@@ -2948,7 +2948,7 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 		for( int nLineNum = ptFrom.y; nLineNum <= ptTo.y; nLineNum++ ){
 			if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) ){
 				// 指定位置に対応する行のデータ内の位置
-				LineColmnToIndex2( pcLayout, ptFrom.x, nLineLen );
+				LineColumnToIndex2( pcLayout, ptFrom.x, nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					result = false;		// 指定位置または指定範囲内にテキストがある
 					break;

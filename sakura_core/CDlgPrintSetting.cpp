@@ -680,7 +680,7 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 {
 	int nTimer;
-	int				nEnableColmns;		/* 行あたりの文字数 */
+	int				nEnableColumns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
 	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
 	short			nPaperAllWidth;		/* 用紙幅 */
@@ -710,7 +710,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 		return FALSE;
 	}
 	/* 行あたりの文字数(行番号込み) */
-	nEnableColmns =
+	nEnableColumns =
 		( nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX
 		- ( pPS->m_nPrintDansuu - 1 ) * pPS->m_nPrintDanSpace
 		) / pPS->m_nPrintFontWidth / pPS->m_nPrintDansuu;	/* 印字可能桁数/ページ */
@@ -719,7 +719,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 		( nPaperAllHeight - pPS->m_nPrintMarginTY - pPS->m_nPrintMarginBY ) /
 		( pPS->m_nPrintFontHeight + ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
 
-	::SetDlgItemInt( m_hWnd, IDC_STATIC_ENABLECOLMNS, nEnableColmns, FALSE );
+	::SetDlgItemInt( m_hWnd, IDC_STATIC_ENABLECOLUMNS, nEnableColumns, FALSE );
 	::SetDlgItemInt( m_hWnd, IDC_STATIC_ENABLELINES, nEnableLines, FALSE );
 
 	return TRUE;
