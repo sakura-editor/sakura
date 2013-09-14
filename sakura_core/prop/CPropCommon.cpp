@@ -193,14 +193,13 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 {
 	INT_PTR				nRet;
 	int					nIdx;
-	int					i;
 
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
-	static ComPropSheetInfo ComPropSheetInfoList[] = {
+	static const ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ _T("全般"), 				IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		CPropWin::DlgProc_page },
 		{ _T("メインメニュー"),		IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
@@ -221,22 +220,21 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 		{ _T("プラグイン"),			IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
-	PROPSHEETPAGE		psp[32];
-	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
-		if( ComPropSheetInfoList[i].szTabname != NULL ){
-			PROPSHEETPAGE *p = &psp[nIdx];
-			memset_raw( p, 0, sizeof_raw( *p ) );
-			p->dwSize      = sizeof_raw( *p );
-			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = G_AppInstance();
-			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
-			p->pszIcon     = NULL;
-			p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
-			p->pszTitle    = ComPropSheetInfoList[i].szTabname;
-			p->lParam      = (LPARAM)this;
-			p->pfnCallback = NULL;
-			nIdx++;
-		}
+	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
+	for( nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++ ){
+		assert( ComPropSheetInfoList[nIdx].szTabname != NULL );
+
+		PROPSHEETPAGE *p = &psp[nIdx];
+		memset_raw( p, 0, sizeof_raw( *p ) );
+		p->dwSize      = sizeof_raw( *p );
+		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+		p->hInstance   = G_AppInstance();
+		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[nIdx].resId );
+		p->pszIcon     = NULL;
+		p->pfnDlgProc  = ComPropSheetInfoList[nIdx].DProc;
+		p->pszTitle    = ComPropSheetInfoList[nIdx].szTabname;
+		p->lParam      = (LPARAM)this;
+		p->pfnCallback = NULL;
 	}
 	//	To Here Jun. 2, 2001 genta
 
