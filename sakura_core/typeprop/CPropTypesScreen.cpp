@@ -449,7 +449,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		}
 		Combo_SetCurSel( hwndCombo, nSelPos );
 
-		::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );					// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );				// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
 	}
 
 	//インデント
@@ -541,15 +541,15 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 	//その他
 	{
 		/* 英文ワードラップをする */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap ? TRUE : FALSE );
-		
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_WORDWRAP, m_Types.m_bWordWrap );
+
 		/* 禁則処理 */
 		{	//@@@ 2002.04.08 MIK start
-			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead ? TRUE : FALSE );
-			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail ? TRUE : FALSE );
-			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  ? TRUE : FALSE );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto ? TRUE : FALSE );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-			::CheckDlgButton( hwndDlg, IDC_CHECK_KINSOKUHIDE, m_Types.m_bKinsokuHide ? TRUE : FALSE );	// ぶら下げを隠す			// 2011/11/30 Uchi
+			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUHEAD, m_Types.m_bKinsokuHead );
+			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUTAIL, m_Types.m_bKinsokuTail );
+			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKURET,  m_Types.m_bKinsokuRet  );	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUKUTO, m_Types.m_bKinsokuKuto );	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+			::CheckDlgButtonBool( hwndDlg, IDC_CHECK_KINSOKUHIDE, m_Types.m_bKinsokuHide );	// ぶら下げを隠す			// 2011/11/30 Uchi
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUHEAD ), _countof(m_Types.m_szKinsokuHead) - 1 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUTAIL ), _countof(m_Types.m_szKinsokuTail) - 1 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KINSOKUKUTO ), _countof(m_Types.m_szKinsokuKuto) - 1 );	// 2009.08.07 ryoji
@@ -560,7 +560,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		}	//@@@ 2002.04.08 MIK end
 		
 		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon  ? TRUE : FALSE );
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon );
 	}
 }
 
@@ -633,7 +633,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		m_Types.m_bTabArrow = TabArrowArr[nSelPos].nMethod;		// テキストの折り返し方法
 
 		// SPACEの挿入
-		m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );
+		m_Types.m_bInsSpace = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INS_SPACE );
 	}
 
 	//インデント
@@ -660,7 +660,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
 
 		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
-		m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE ) ? TRUE : FALSE;
+		m_Types.m_bRTrimPrevLine = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_RTRIM_PREVLINE );
 	}
 
 	//アウトライン解析方法
@@ -686,7 +686,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 	//フォント
 	{
 		LOGFONT lf;
-		m_Types.m_bUseTypeFont = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETYPEFONT ) ? true : false;		// タイプ別フォントの使用
+		m_Types.m_bUseTypeFont = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_USETYPEFONT );		// タイプ別フォントの使用
 		if( m_Types.m_bUseTypeFont ){
 			lf = m_Types.m_lf;
 		}
@@ -698,15 +698,15 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 	//その他
 	{
 		/* 英文ワードラップをする */
-		m_Types.m_bWordWrap = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_WORDWRAP ) ? true : false;
+		m_Types.m_bWordWrap = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_WORDWRAP );
 
 		/* 禁則処理 */
 		{	//@@@ 2002.04.08 MIK start
-			m_Types.m_bKinsokuHead = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHEAD ) ? true : false;
-			m_Types.m_bKinsokuTail = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUTAIL ) ? true : false;
-			m_Types.m_bKinsokuRet  = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKURET  ) ? true : false;	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
-			m_Types.m_bKinsokuKuto = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) ? true : false;	// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
-			m_Types.m_bKinsokuHide = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUHIDE ) ? true : false;	// ぶら下げを隠す		// 2011/11/30 Uchi
+			m_Types.m_bKinsokuHead = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUHEAD );
+			m_Types.m_bKinsokuTail = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUTAIL );
+			m_Types.m_bKinsokuRet  = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKURET  );	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+			m_Types.m_bKinsokuKuto = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUKUTO );	// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+			m_Types.m_bKinsokuHide = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_KINSOKUHIDE );	// ぶら下げを隠す		// 2011/11/30 Uchi
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUHEAD, m_Types.m_szKinsokuHead, _countof( m_Types.m_szKinsokuHead ) );
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, _countof( m_Types.m_szKinsokuTail ) );
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto, _countof( m_Types.m_szKinsokuKuto ) );	// 2009.08.07 ryoji
