@@ -1877,19 +1877,6 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return nLineLen;
 
-
-	case MYWM_ADDSTRING:
-		{
-			// TraceOutはMYWM_ADDSTRINGLEN_Wに変更。実質未使用
-			// 共有データ構造体verが変更されたら削除してもOK。それまでは同時起動用にとっておく
-			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
-			// 2010.05.11 Moca wcslenをwcsnlenに変更。m_sWorkBufferの大きさを超えないように
-			int addSize = wcsnlen( pWork, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
-			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, true, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
-			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
-		}
-		return 0L;
-
 	// 2010.05.11 Moca MYWM_ADDSTRINGLEN_Wを追加 NULセーフ
 	case MYWM_ADDSTRINGLEN_W:
 		{
