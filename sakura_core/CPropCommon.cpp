@@ -20,9 +20,10 @@
 */
 
 #include "StdAfx.h"
-#include "CPropCommon.h"
 #include <windows.h>
 #include <commctrl.h>
+#include <assert.h>
+#include "CPropCommon.h"
 #include "global.h"
 #include "etc_uty.h"
 #include "Debug.h"
@@ -173,18 +174,17 @@ struct ComPropSheetInfo {
 /*! プロパティシートの作成
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-INT_PTR CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
+INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 {
 	INT_PTR				nRet;
 	int					nIdx;
-	int					i;
 
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
-	static ComPropSheetInfo ComPropSheetInfoList[] = {
+	static const ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ _T("全般"), 				IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		CPropWin::DlgProc_page },
 
@@ -204,22 +204,21 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ _T("マクロ"),				IDD_PROP_MACRO,		CPropMacro::DlgProc_page },
 	};
 
-	PROPSHEETPAGE		psp[32];
-	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
-		if( ComPropSheetInfoList[i].szTabname != NULL ){
-			PROPSHEETPAGE *p = &psp[nIdx];
-			memset( p, 0, sizeof( *p ) );
-			p->dwSize      = sizeof( *p );
-			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = m_hInstance;
-			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
-			p->pszIcon     = NULL;
-			p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
-			p->pszTitle    = ComPropSheetInfoList[i].szTabname;
-			p->lParam      = (LPARAM)this;
-			p->pfnCallback = NULL;
-			nIdx++;
-		}
+	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
+	for( nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++ ){
+		assert( ComPropSheetInfoList[nIdx].szTabname != NULL );
+
+		PROPSHEETPAGE *p = &psp[nIdx];
+		memset( p, 0, sizeof( *p ) );
+		p->dwSize      = sizeof( *p );
+		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+		p->hInstance   = m_hInstance;
+		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[nIdx].resId );
+		p->pszIcon     = NULL;
+		p->pfnDlgProc  = ComPropSheetInfoList[nIdx].DProc;
+		p->pszTitle    = ComPropSheetInfoList[nIdx].szTabname;
+		p->lParam      = (LPARAM)this;
+		p->pfnCallback = NULL;
 	}
 	//	To Here Jun. 2, 2001 genta
 
@@ -251,7 +250,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		psh.nStartPage = psh.nPages - 1;
 	}
 
-	psh.ppsp = (LPCPROPSHEETPAGE)psp;
+	psh.ppsp = psp;
 	psh.pfnCallback = NULL;
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート

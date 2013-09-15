@@ -21,9 +21,11 @@
 */
 
 #include "StdAfx.h"
-#include "CPropTypes.h"
-#include "Debug.h"
 #include <commctrl.h>
+#include <assert.h>
+#include "CPropTypes.h"
+#include "CEditApp.h"
+#include "Debug.h"
 #include "CDlgOpenFile.h"
 #include "CDlgKeywordSelect.h"
 #include "etc_uty.h"
@@ -32,7 +34,6 @@
 #include "CShareData.h"
 #include "Funccode.h"	//Stonee, 2001/05/18
 #include "CDlgSameColor.h"	// 2006.04.26 ryoji
-#include "CEditApp.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -218,84 +219,50 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 }
 
+struct TypePropSheetInfo {
+	const TCHAR* szTabname;									//!< TABの表示名
+	unsigned int resId;										//!< Property sheetに対応するDialog resource
+	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
+};
+
 // キーワード：タイプ別設定タブ順序(プロパティシート)
 /* プロパティシートの作成 */
 INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 {
 	INT_PTR				nRet;
-	PROPSHEETPAGE		psp[16];
 	int					nIdx;
+
+	// 2001/06/14 Start by asa-o: タイプ別設定に支援タブ追加
+	// 2001.11.17 add start MIK タイプ別設定に正規表現キーワードタブ追加
+	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
+	static const TypePropSheetInfo TypePropSheetInfoList[] = {
+		{ _T("スクリーン"), 		IDD_PROP_SCREEN,	PropTypesScreen },
+		{ _T("カラー"), 			IDD_PROP_COLOR,		PropTypesColor },
+		{ _T("支援"), 				IDD_PROP_SUPPORT,	PropTypesSupport },
+		{ _T("正規表現キーワード"),	IDD_PROP_REGEX,		PropTypesRegex },
+		{ _T("キーワードヘルプ"),	IDD_PROP_KEYHELP,	PropTypesKeyHelp }
+	};
 
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	nIdx = 0;
-	memset( &psp[nIdx], 0, sizeof( psp[nIdx] ) );
-	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
-	psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SCREEN );
-	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = PropTypesScreen;
-	psp[nIdx].pszTitle    = _T("スクリーン");
-	psp[nIdx].lParam      = (LPARAM)this;
-	psp[nIdx].pfnCallback = NULL;
-	nIdx++;
+	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
+	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
+		assert( TypePropSheetInfoList[nIdx].szTabname != NULL );
 
-	memset( &psp[nIdx], 0, sizeof( psp[nIdx] ) );
-	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
-	psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_COLOR );
-	psp[nIdx].pszIcon     = NULL /*MAKEINTRESOURCE( IDI_BORDER) */;
-	psp[nIdx].pfnDlgProc  = PropTypesColor;
-	psp[nIdx].pszTitle    = _T("カラー");
-	psp[nIdx].lParam      = (LPARAM)this;
-	psp[nIdx].pfnCallback = NULL;
-	nIdx++;
-
-	// 2001/06/14 Start by asa-o: タイプ別設定に支援タブ追加
-	memset( &psp[nIdx], 0, sizeof( psp[nIdx] ) );
-	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
-	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SUPPORT );
-	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = PropTypesSupport;
-	psp[nIdx].pszTitle    = _T("支援");
-	psp[nIdx].lParam      = (LPARAM)this;
-	psp[nIdx].pfnCallback = NULL;
-	nIdx++;
-	// 2001/06/14 End
-
-	// 2001.11.17 add start MIK タイプ別設定に正規表現キーワードタブ追加
-	memset( &psp[nIdx], 0, sizeof( psp[nIdx] ) );
-	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
-	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_REGEX );
-	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = PropTypesRegex;
-	psp[nIdx].pszTitle    = _T("正規表現キーワード");
-	psp[nIdx].lParam      = (LPARAM)this;
-	psp[nIdx].pfnCallback = NULL;
-	nIdx++;
-	// 2001.11.17 add end MIK
-
-	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
-	memset( &psp[nIdx], 0, sizeof( psp[nIdx] ) );
-	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
-	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_KEYHELP );
-	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = PropTypesKeyHelp;
-	psp[nIdx].pszTitle    = _T("キーワードヘルプ");
-	psp[nIdx].lParam      = (LPARAM)this;
-	psp[nIdx].pfnCallback = NULL;
-	nIdx++;
-	// 2006.04.10 fon ADD-end
+		PROPSHEETPAGE *p = &psp[nIdx];
+		memset( p, 0, sizeof( *p ) );
+		p->dwSize      = sizeof( *p );
+		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+		p->hInstance   = m_hInstance;
+		p->pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
+		p->pszIcon     = NULL;
+		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
+		p->pszTitle    = TypePropSheetInfoList[nIdx].szTabname;
+		p->lParam      = (LPARAM)this;
+		p->pfnCallback = NULL;
+	}
 
 	PROPSHEETHEADER	psh;
 	memset( &psh, 0, sizeof( psh ) );
@@ -309,7 +276,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = m_hInstance;
 	psh.pszIcon    = NULL;
-	psh.pszCaption = (LPSTR)_T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
+	psh.pszCaption = _T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
@@ -326,7 +293,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	if( psh.nPages - 1 < psh.nStartPage ){
 		psh.nStartPage = psh.nPages - 1;
 	}
-	psh.ppsp = (LPCPROPSHEETPAGE)psp;
+	psh.ppsp = psp;
 	psh.pfnCallback = NULL;
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
