@@ -136,25 +136,6 @@ CEditWnd::CEditWnd()
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
 {
-	m_cEditDoc.m_pcEditWnd = this;
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
-
-	m_pcViewFont = new CViewFont(&m_pShareData->m_Common.m_sView.m_lf);
-
-	memset( m_pszMenubarMessage, ' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
-
-	//	Dec. 4, 2002 genta
-	InitMenubarMessageFont();
-
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
-
-	// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
-	ClearMouseState();
-
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	CreateAccelTbl();
 }
 
 CEditWnd::~CEditWnd()
@@ -486,6 +467,26 @@ HWND CEditWnd::Create(
 
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
+
+	m_cEditDoc.m_pcEditWnd = this;
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = CShareData::getInstance()->GetShareData();
+
+	m_pcViewFont = new CViewFont(&m_pShareData->m_Common.m_sView.m_lf);
+
+	memset( m_pszMenubarMessage, ' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
+
+	//	Dec. 4, 2002 genta
+	InitMenubarMessageFont();
+
+	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+
+	// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
+	ClearMouseState();
+
+	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	CreateAccelTbl();
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -4624,7 +4625,7 @@ void CEditWnd::CreateAccelTbl( void )
 */
 void CEditWnd::DeleteAccelTbl( void )
 {
-	m_hAccel = m_pShareData->m_sHandles.m_hAccel;
+	m_hAccel = NULL;
 
 	if( m_hAccelWine ){
 		::DestroyAcceleratorTable( m_hAccelWine );

@@ -24,9 +24,13 @@
 
 #include "StdAfx.h"
 #include "CEditApp.h"
+#include "CEditWnd.h"
 
-CEditApp::CEditApp()
+void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 {
+	//ウィンドウの作成
+	m_pcEditWnd = CEditWnd::getInstance();
+	m_pcEditWnd->Create( hInst, hwndParent, nGroupId );
 }
 
 CEditApp::~CEditApp()

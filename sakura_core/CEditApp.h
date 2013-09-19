@@ -26,6 +26,7 @@ class CEditApp;
 
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
+class CEditWnd;
 
 #include <windows.h>
 #include "CShareData.h"
@@ -47,14 +48,19 @@ public:
 		return &instance;
 	}
 
+	void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId);
+
 private:
 	// 外から作らせない。
-	CEditApp();
+	CEditApp(){}
 	CEditApp(CEditApp const&);
 	void operator=(CEditApp const&);
 
 public:
 	~CEditApp();
+
+	//ウィンドウ
+	CEditWnd*			m_pcEditWnd;
 };
 
 

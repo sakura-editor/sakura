@@ -17,6 +17,7 @@
 #include "global.h"
 #include "CProcess.h"
 #include "CMigemo.h"
+#include "CEditApp.h"
 class CEditWnd;
 
 /*-----------------------------------------------------------------------
@@ -44,7 +45,7 @@ protected:
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 
 private:
-	CEditWnd*	m_pcEditWnd;
+	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
 };
 
 

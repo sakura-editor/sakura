@@ -66,12 +66,20 @@ struct STabGroupInfo{
 class CEditWnd
 {
 public:
-	/*
-	||  Constructors
-	*/
+	static CEditWnd* getInstance()
+	{
+		static CEditWnd instance;
+
+		return &instance;
+	}
+
+private:
 	CEditWnd();
 	~CEditWnd();
+	CEditWnd(CEditWnd const&);
+	void operator=(CEditWnd const&);
 
+public:
 	/*
 	|| ƒƒ“ƒoŠÖ”
 	*/

@@ -37,16 +37,13 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
-: m_pcEditWnd( 0 )
+: m_pcEditApp( NULL )
 , CProcess( hInstance, lpCmdLine )
 {
 }
 
 CNormalProcess::~CNormalProcess()
 {
-	if( m_pcEditWnd ){
-		delete m_pcEditWnd;
-	}
 }
 
 
@@ -132,10 +129,11 @@ bool CNormalProcess::InitializeProcess()
 	if( m_pShareData->m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
 		nGroupId = CShareData::getInstance()->GetFreeGroupId();
 	}
-	// CEditWndを作成
-	m_pcEditWnd = new CEditWnd;
-	HWND hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, nGroupId );
-	if( NULL == hWnd ){
+	// CEditAppを作成
+	m_pcEditApp = CEditApp::getInstance();
+	m_pcEditApp->Create( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, nGroupId );
+	CEditWnd* pEditWnd = m_pcEditApp->m_pcEditWnd;
+	if( NULL == pEditWnd->m_hWnd ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
@@ -151,16 +149,16 @@ bool CNormalProcess::InitializeProcess()
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
-		m_pcEditWnd->SetDebugModeON();
+		pEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
-		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
+		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 	}
 	else if( bGrepMode ){
 		/* GREP */
 		// 2010.06.16 Moca Grepでもオプション指定を適用
-		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
+		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
@@ -170,10 +168,10 @@ bool CNormalProcess::InitializeProcess()
 			}
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			m_hWnd = hWnd;
+			m_hWnd = pEditWnd->m_hWnd;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->DoGrep(
+			pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->DoGrep(
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
@@ -197,21 +195,21 @@ bool CNormalProcess::InitializeProcess()
 			m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			m_hWnd = hWnd;
+			m_hWnd = pEditWnd->m_hWnd;;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
-			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
-			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
+			_tcscpy( pEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
+			_tcscpy( pEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
+			_tcscpy( pEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
+			int nRet = pEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, pEditWnd->m_hWnd, NULL);
 			if( FALSE != nRet ){
-				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->HandleCommand(F_GREP, true, 0, 0, 0, 0);
+				pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
@@ -222,7 +220,7 @@ bool CNormalProcess::InitializeProcess()
 		bReadOnly = CCommandLine::getInstance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 		if( fi.m_szPath[0] != _T('\0') ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			m_pcEditWnd->OpenDocumentWhenStart(
+			pEditWnd->OpenDocumentWhenStart(
 				fi.m_szPath,
 				fi.m_nCharCode,
 				bReadOnly
@@ -234,9 +232,9 @@ bool CNormalProcess::InitializeProcess()
 			//	未設定＝-1になるようにしたので，安全のため両者が指定されたときだけ
 			//	移動するようにする． || → &&
 			if( ( 0 <= fi.m_nViewTopLine && 0 <= fi.m_nViewLeftCol )
-				&& fi.m_nViewTopLine < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
-				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewTopLine = fi.m_nViewTopLine;
-				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewLeftCol = fi.m_nViewLeftCol;
+				&& fi.m_nViewTopLine < pEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
+				pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewTopLine = fi.m_nViewTopLine;
+				pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewLeftCol = fi.m_nViewLeftCol;
 			}
 
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
@@ -251,7 +249,7 @@ bool CNormalProcess::InitializeProcess()
 				*/
 				int		nPosX;
 				int		nPosY;
-				m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.LogicToLayout(
+				pEditWnd->m_cEditDoc.m_cLayoutMgr.LogicToLayout(
 					fi.m_ptCursor.x,
 					fi.m_ptCursor.y,
 					&nPosX,
@@ -263,21 +261,21 @@ bool CNormalProcess::InitializeProcess()
 				// From Here Mar. 28, 2003 MIK
 				// 改行の真ん中にカーソルが来ないように。
 				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_ptCursor.y );
+				const CDocLine *pTmpDocLine = pEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_ptCursor.y );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) nPosX--;
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->MoveCursor( nPosX, nPosY, true );
-				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX_Prev =
-					m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_ptCaretPos.x;
+				pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->MoveCursor( nPosX, nPosY, true );
+				pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX_Prev =
+					pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_ptCaretPos.x;
 			}
-			m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->RedrawAll();
+			pEditWnd->m_cEditDoc.m_pcEditViewArr[0]->RedrawAll();
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
-			m_pcEditWnd->SetDocumentTypeWhenCreate(
+			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bReadOnly,	// 読み取り専用か
 				nType
@@ -285,30 +283,30 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-	m_hWnd = hWnd;
+	m_hWnd = pEditWnd->m_hWnd;
 
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex]->SetIMECompFormPos();
+	pEditWnd->m_cEditDoc.m_pcEditViewArr[pEditWnd->m_cEditDoc.m_nActivePaneIndex]->SetIMECompFormPos();
 
 	//再描画
-	::InvalidateRect( m_pcEditWnd->m_hWnd, NULL, TRUE );
+	::InvalidateRect( pEditWnd->m_hWnd, NULL, TRUE );
 
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
 
 	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
-	if( hWnd && !( bDebugMode || bGrepMode ) )
-		m_pcEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
+	if( pEditWnd->m_hWnd && !( bDebugMode || bGrepMode ) )
+		pEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 
 
 	// 起動時マクロオプション
 	LPCSTR pszMacro = CCommandLine::getInstance()->GetMacro();
-	if( hWnd  &&  pszMacro  &&  pszMacro[0] != '\0' ){
+	if( pEditWnd->m_hWnd  &&  pszMacro  &&  pszMacro[0] != '\0' ){
 		LPCSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
 		if( pszMacroType == NULL || pszMacroType[0] == '\0' || strcmpi(pszMacroType, "file") == 0 ){
 			pszMacroType = NULL;
 		}
-		CEditView* view = m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
+		CEditView* view = pEditWnd->m_cEditDoc.m_pcEditViewArr[ pEditWnd->m_cEditDoc.m_nActivePaneIndex ];
 		view->HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 
@@ -325,7 +323,7 @@ bool CNormalProcess::InitializeProcess()
 		for( i = 0; i < fileNum; i++ ){
 			// ファイル名差し替え
 			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
-			bool ret = CControlTray::OpenNewEditor2( m_hInstance, hWnd, &openFileInfo, bReadOnly );
+			bool ret = CControlTray::OpenNewEditor2( m_hInstance, pEditWnd->m_hWnd, &openFileInfo, bReadOnly );
 			if( ret == false ){
 				break;
 			}
@@ -334,7 +332,7 @@ bool CNormalProcess::InitializeProcess()
 		CCommandLine::getInstance()->ClearFile();
 	}
 
-	return hWnd ? true : false;
+	return pEditWnd->m_hWnd ? true : false;
 }
 
 /*!
@@ -345,8 +343,8 @@ bool CNormalProcess::InitializeProcess()
 */
 bool CNormalProcess::MainLoop()
 {
-	if( m_pcEditWnd && m_hWnd ){
-		m_pcEditWnd->MessageLoop();	/* メッセージループ */
+	if( m_hWnd ){
+		m_pcEditApp->m_pcEditWnd->MessageLoop();	/* メッセージループ */
 		return true;
 	}
 	return false;
