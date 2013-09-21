@@ -46,6 +46,7 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_WINCAPTION_ACTIVE,			HIDC_WINCAPTION_ACTIVE,			//アクティブ時	//@@@ 2003.06.15 MIK
 	IDC_WINCAPTION_INACTIVE,		HIDC_WINCAPTION_INACTIVE,		//非アクティブ時	//@@@ 2003.06.15 MIK
 	IDC_BUTTON_WINSIZE,				HIDC_BUTTON_WINSIZE,			//位置と大きさの設定	// 2006.08.06 ryoji
+	IDC_COMBO_LANGUAGE,				HIDC_COMBO_LANGUAGE,			//言語選択
 	//	Feb. 11, 2007 genta TAB関連は「タブバー」シートへ移動
 //	IDC_STATIC,						-1,
 	0, 0
@@ -327,6 +328,20 @@ void CPropWin::SetData( HWND hwndDlg )
 	EnableWinPropInput( hwndDlg );
 	//	To Here Sept. 9, 2000
 
+	// 言語選択
+	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
+	Combo_ResetContent( hwndCombo );
+	int nSelPos = 0;
+	int i = 0;
+	for( i = 0; i < CSelectLang::m_psLangInfoList.size(); i++ ){
+		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( i );
+		Combo_InsertString( hwndCombo, i, psLangInfo->szLangName );
+		if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) == 0 ) {
+			nSelPos = i;
+		}
+	}
+	Combo_SetCurSel( hwndCombo, nSelPos );
+
 	return;
 }
 
@@ -420,6 +435,15 @@ int CPropWin::GetData( HWND hwndDlg )
 		_countof( m_Common.m_sWindow.m_szWindowCaptionActive ) );
 	::DlgItem_GetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive,
 		_countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) );
+
+	// 言語選択
+	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
+	int nSelPos = Combo_GetCurSel( hwndCombo );
+	CSelectLang::SELLANG_INFO *psLangInfo = CSelectLang::m_psLangInfoList.at( nSelPos );
+	if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
+		_tcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );
+		CSelectLang::ChangeLang( nSelPos );
+	}
 
 	return TRUE;
 }

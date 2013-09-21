@@ -142,6 +142,9 @@ struct CommonSetting_Window
 
 	//INI内設定のみ
 	int				m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
+
+	//言語選択
+	TCHAR			m_szLanguageDll[MAX_PATH];
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
