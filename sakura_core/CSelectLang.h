@@ -15,11 +15,13 @@
 #define _CSELECTLANG_H_
 
 #include <windows.h>
+#include <vector>
 
 #define MAX_SELLANG_NAME_STR	128		// メッセージリソースの言語名の最大文字列長（サイズは適当）
 
 class CSelectLang
 {
+public:
 	// メッセージリソース用構造体
 	struct SELLANG_INFO {
 		TCHAR szDllName[MAX_PATH];		// メッセージリソースDLLのファイル名
@@ -30,8 +32,11 @@ class CSelectLang
 	};
 
 protected:
-	static LPTSTR m_szDefaultLang;					// メッセージリソースDLL未読み込み時のデフォルト言語
-	static SELLANG_INFO m_sLangInfo;				// メッセージリソースの情報
+	//static LPTSTR m_szDefaultLang;					// メッセージリソースDLL未読み込み時のデフォルト言語
+	static SELLANG_INFO* m_psLangInfo;				// メッセージリソースの情報
+public:
+	typedef std::vector<SELLANG_INFO*> PSELLANG_INFO_LIST;
+	static PSELLANG_INFO_LIST m_psLangInfoList;
 
 public:
 	/*
@@ -48,6 +53,7 @@ public:
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary( SELLANG_INFO& lang );	// メッセージ用リソースDLLをロードする
+	static HINSTANCE ChangeLang( UINT nSelIndex );	// 言語を変更する
 
 protected:
 	/*

@@ -18,8 +18,8 @@
 
 #include <new>
 
-LPTSTR CSelectLang::m_szDefaultLang = NULL;					// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL–¢“Ç‚Ýž‚ÝŽž‚ÌƒfƒtƒHƒ‹ƒgŒ¾Œê
-CSelectLang::SELLANG_INFO CSelectLang::m_sLangInfo = {0};	// ƒƒbƒZ[ƒWƒŠƒ\[ƒX—p\‘¢‘Ì
+CSelectLang::SELLANG_INFO* CSelectLang::m_psLangInfo = NULL;	// ƒƒbƒZ[ƒWƒŠƒ\[ƒX—p\‘¢‘Ì
+CSelectLang::PSELLANG_INFO_LIST CSelectLang::m_psLangInfoList;
 
 /*!
 	@brief ƒfƒXƒgƒ‰ƒNƒ^
@@ -30,20 +30,14 @@ CSelectLang::SELLANG_INFO CSelectLang::m_sLangInfo = {0};	// ƒƒbƒZ[ƒWƒŠƒ\[ƒX—
 */
 CSelectLang::~CSelectLang( void )
 {
-	if( m_sLangInfo.hInstance ){
-		FreeLibrary( m_sLangInfo.hInstance );
-		m_sLangInfo.hInstance = NULL;
+	for (PSELLANG_INFO_LIST::iterator it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
+		if( (*it)->hInstance ){
+			FreeLibrary( (*it)->hInstance );
+			(*it)->hInstance = NULL;
+		}
+		delete *it;
 	}
-
-	m_sLangInfo.szDllName[0] = _T('\0');
-	m_sLangInfo.szLangName[0] = _T('\0');
-	m_sLangInfo.wLangId = 0;
-	m_sLangInfo.bValid = FALSE;
-
-	if( m_szDefaultLang ){
-		delete[] m_szDefaultLang;
-		m_szDefaultLang = NULL;
-	}
+	m_psLangInfoList.clear();
 }
 
 /*!
@@ -57,7 +51,7 @@ CSelectLang::~CSelectLang( void )
 */
 HINSTANCE CSelectLang::getLangRsrcInstance( void )
 {
-	return m_sLangInfo.hInstance;
+	return m_psLangInfo->hInstance;
 }
 
 /*!
@@ -71,7 +65,7 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 */
 LPCTSTR CSelectLang::getDefaultLangString( void )
 {
-	return m_szDefaultLang;
+	return m_psLangInfo->szLangName;
 }
 
 /*!
@@ -88,29 +82,25 @@ LPCTSTR CSelectLang::getDefaultLangString( void )
 */
 HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 {
-	TCHAR szTemp[256];
 	int nCount;
+	SELLANG_INFO *psLangInfo;
 
-	// Œ¾Œêî•ñƒ_ƒCƒAƒƒO‚Å "System default" ‚É•\Ž¦‚·‚é•¶Žš—ñ‚ðì¬‚·‚é
-	nCount = ::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, szTemp, 255 );
+	if ( m_psLangInfoList.size() == 0 ) {
+		// ƒfƒtƒHƒ‹ƒgî•ñ‚ðì¬‚·‚é
+		psLangInfo = new SELLANG_INFO();
+		psLangInfo->hInstance = GetModuleHandle(NULL);
 
-	if( nCount ){
-		if( m_szDefaultLang )
-			delete[] m_szDefaultLang;
+		// Œ¾Œêî•ñƒ_ƒCƒAƒƒO‚Å "System default" ‚É•\Ž¦‚·‚é•¶Žš—ñ‚ðì¬‚·‚é
+		nCount = ::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
 
-		m_szDefaultLang = new TCHAR[nCount + 1];		// ”Ô•º•ª‚ð‰ÁŽZ
-
-		if( m_szDefaultLang ){
-			szTemp[nCount] = _T('\0');
-			_tcscpy( m_szDefaultLang, szTemp );
-			
-		}
+		m_psLangInfoList.push_back( psLangInfo );
 	}
 
-	if( m_sLangInfo.hInstance && m_sLangInfo.hInstance != GetModuleHandle(NULL) ){
+	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
 		// “Ç‚Ýž‚ÝÏ‚Ý‚ÌDLL‚ð‰ð•ú‚·‚é
-		::FreeLibrary( m_sLangInfo.hInstance );
-		m_sLangInfo.hInstance = NULL;
+		::FreeLibrary( m_psLangInfo->hInstance );
+		m_psLangInfo->hInstance = NULL;
+		m_psLangInfo = NULL;
 	}
 
 	//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ð•Û‘¶BŠÖ”‚©‚ç”²‚¯‚é‚Æ‚«‚ÉŽ©“®‚ÅƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Í•œŒ³‚³‚ê‚éB
@@ -126,15 +116,23 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 	while( result ){
 		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//ƒtƒHƒ‹ƒ_‚Å‚È‚¢
 			// ƒoƒbƒtƒ@‚É“o˜^‚·‚éB
-			_tcscpy( m_sLangInfo.szDllName, w32fd.cFileName );
-			m_sLangInfo.hInstance = CSelectLang::LoadLangRsrcLibrary( m_sLangInfo );
+			psLangInfo = new SELLANG_INFO();
+			_tcscpy( psLangInfo->szDllName, w32fd.cFileName );
+			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
 
-			if( m_sLangInfo.hInstance && !m_sLangInfo.bValid ){
-				// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL‚Æ‚µ‚Ä‚Í–³Œø
-				::FreeLibrary( m_sLangInfo.hInstance );
-				m_sLangInfo.hInstance = NULL;
-			}else{
-				break;
+			if( psLangInfo->hInstance ){
+				if ( !psLangInfo->bValid ){
+					// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL‚Æ‚µ‚Ä‚Í–³Œø
+					::FreeLibrary( psLangInfo->hInstance );
+					psLangInfo->hInstance = NULL;
+					delete psLangInfo;
+				} else {
+					// —LŒø‚ÈƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL
+					// ˆê’UDLL‚ð‰ð•ú‚µAŒã‚ÅChangeLang‚ÅÄ“Ç‚Ýž‚Ý‚·‚é
+					m_psLangInfoList.push_back( psLangInfo );
+					::FreeLibrary( psLangInfo->hInstance );
+					psLangInfo->hInstance = NULL;
+				}
 			}
 		}
 
@@ -146,16 +144,16 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		handle = INVALID_HANDLE_VALUE;
 	}
 
-	if( !m_sLangInfo.hInstance ){
+	if( m_psLangInfo == NULL ){
 		// DLL‚ª“Ç‚Ýž‚Ü‚ê‚È‚©‚Á‚½ê‡Aexe‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹‚Æ‚·‚é
-		m_sLangInfo.hInstance = GetModuleHandle(NULL);
-	}else if( m_sLangInfo.bValid ){
+		m_psLangInfo = *m_psLangInfoList.begin();
+	}else if( m_psLangInfo->bValid ){
 		// ƒƒP[ƒ‹‚ðÝ’è
-		SetThreadUILanguage( m_sLangInfo.wLangId );						// Vista / Win7
-		SetThreadLocale(MAKELCID( m_sLangInfo.wLangId, SORT_DEFAULT ));	// Win2000/XP
+		SetThreadUILanguage( m_psLangInfo->wLangId );						// Vista / Win7
+		SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));	// Win2000/XP
 	}
 
-	return m_sLangInfo.hInstance;
+	return m_psLangInfo->hInstance;
 }
 
 /*!
@@ -352,6 +350,34 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 
 	return nRet;
 }
+
+HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
+{
+	if ( m_psLangInfoList.size() <= nIndex || m_psLangInfoList.at( nIndex ) == m_psLangInfo ) {
+		return m_psLangInfo->hInstance;
+	}
+
+	SELLANG_INFO *psLangInfo = m_psLangInfoList.at( nIndex );
+	if ( psLangInfo->hInstance != GetModuleHandle(NULL) ) {
+		psLangInfo->hInstance = LoadLangRsrcLibrary( *psLangInfo );
+		if ( psLangInfo->hInstance == NULL ) {
+			return m_psLangInfo->hInstance;
+		} else if ( !psLangInfo->bValid ) {
+			::FreeLibrary( psLangInfo->hInstance );
+			psLangInfo->hInstance = NULL;
+			return m_psLangInfo->hInstance;
+		}
+	}
+
+	if ( m_psLangInfo->hInstance != GetModuleHandle(NULL) ) {
+		::FreeLibrary( m_psLangInfo->hInstance );
+		m_psLangInfo->hInstance = NULL;
+	}
+	m_psLangInfo = psLangInfo;
+
+	return m_psLangInfo->hInstance;
+}
+
 
 
 /*[EOF]*/

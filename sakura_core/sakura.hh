@@ -663,6 +663,7 @@
 #define HIDC_BUTTON_TYPEOPENEXTHTMLHELP			11545 //外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE			11546 //ビューアを複数起動しない	// 2006.08.06 ryoji
 #define HIDC_CHECK_CHKENTERATEND				11547 //終了時、改行の一致を検査する	// 2013/4/14 Uchi
+#define HIDC_COMBO_LANGUAGE						11548 //言語選択
 #define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji

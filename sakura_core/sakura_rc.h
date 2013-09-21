@@ -726,6 +726,7 @@
 #define IDC_CHECK_SEP_FOLDER            1658
 #define IDC_BUTTON_FOLDER_UP            1659
 #define IDC_CHECK_SUBMENU               1660
+#define IDC_COMBO_LANGUAGE              1661
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -766,7 +767,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1661
+#define _APS_NEXT_CONTROL_VALUE         1662
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
