@@ -264,7 +264,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	
 	// タスクトレイアイコン作成
 	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
-	m_CMenuDrawer.Create( m_hInstance, GetTrayHwnd(), &m_hIcons );
+	m_CMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
