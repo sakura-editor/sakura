@@ -1505,23 +1505,23 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "表示文字コードの指定",IDC_STATIC,3,3,285,113
-    CONTROL         "SJIS,Latin1等で文字コード値をUnicodeで表示する(&S)",
+    GROUPBOX        "Character Code",IDC_STATIC,3,3,285,113
+    CONTROL         "Display Character Code by Unicode when using SJIS, Latin1(&S)",
                     IDC_CHECK_DISP_UNICODE_IN_SJIS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,16,165,10
-    CONTROL         "JISで文字コード値をUnicodeで表示する(&J)",
+    CONTROL         "Display Character Code by Unicode when using JIS(&J)",
                     IDC_CHECK_DISP_UNICODE_IN_JIS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,32,181,10
-    CONTROL         "EUCで文字コード値をUnicodeで表示する(&E)",
+    CONTROL         "Display Character Code by Unicode when using EUC(&E)",
                     IDC_CHECK_DISP_UNICODE_IN_EUC,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,48,181,10
-    CONTROL         "UTF-8およびCESU-8をコードポイントで表示する(&8)",
+    CONTROL         "Display Code Point when using UTF-8, CESU-8(&8)",
                     IDC_CHECK_DISP_UTF8_CODEPOINT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,64,181,10
-    CONTROL         "サロゲートペアをコードポイントで表示する(&P)",
+    CONTROL         "Display Code Point for Surrogate Pair(&P)",
                     IDC_CHECK_DISP_SP_CODEPOINT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,80,181,10
-    CONTROL         "選択文字数を文字単位ではなくバイト単位で表示する(&B)　※高負荷のため非推奨",
+    CONTROL         "Display Character Count by Bytes(&B) * HIGH LOAD",
                     IDC_CHECK_DISP_SELCOUNT_BY_BYTE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,96,274,10
 END
@@ -1532,47 +1532,47 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    CONTROL         "折り返し行に改行を付けてコピー(&C)",
+    CONTROL         "Insert &CR when line-wraps in copied text",
                     IDC_CHECK_ADDCRLFWHENCOPY,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,18,129,10
-    CONTROL         "コピーしたら選択解除(&R)",
+    CONTROL         "Cancel selection after copying(&R)",
                     IDC_CHECK_COPYnDISABLESELECTEDAREA,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,33,94,10
-    CONTROL         "選択なしでコピーを可能にする(&E)",
+    CONTROL         "Selectionless copy copies current lin&e",
                     IDC_CHECK_bEnableNoSelectCopy,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,48,131,10
-    CONTROL         "ラインモード貼り付けを可能にする(&L)",
+    CONTROL         "Pasting a (&L)ine pastes at start of line",
                     IDC_CHECK_bEnableLineModePaste,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,63,131,10
-    CONTROL         "改行コードを変換して貼り付ける(&P)",
+    CONTROL         "Pasting Lines with CR Conversion(&P)",
                     IDC_CHECK_CONVERTEOLPASTE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,79,143,10
-    GROUPBOX        "コピー",IDC_STATIC,3,3,149,96,WS_GROUP
-    CONTROL         "ドラッグ && ドロップ編集する(&D)",IDC_CHECK_DRAGDROP,
+    GROUPBOX        "Copy",IDC_STATIC,3,3,149,96,WS_GROUP
+    CONTROL         "Drag'n'Drop editing(&D)",IDC_CHECK_DRAGDROP,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,119,
                     111,10
-    CONTROL         "ドロップ元にする(&S)",IDC_CHECK_DROPSOURCE,"Button",
+    CONTROL         "Allow other tools to drop(&S)",IDC_CHECK_DROPSOURCE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,134,77,10
-    GROUPBOX        "ドラッグ && ドロップ",IDC_STATIC,3,104,149,50,WS_GROUP
-    CONTROL         "改行コードは上書きしない(&N)",
+    GROUPBOX        "Drag'n'Drop",IDC_STATIC,3,104,149,50,WS_GROUP
+    CONTROL         "Dont overwrite existing line-breaks(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,174,108,10
-    CONTROL         "文字幅に合わせてスペースを詰める(&F)",
+    CONTROL         "Fill Space when Overrite 2-bytes Character with 1-byte(&F)",
                     IDC_CHECK_bOverWriteFixMode,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,190,128,10
-    GROUPBOX        "上書きモード",IDC_STATIC,3,159,149,51,WS_GROUP
-    CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
+    GROUPBOX        "Overwrite Mode",IDC_STATIC,3,159,149,51,WS_GROUP
+    CONTROL         "Clicking selects whole &URL",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,18,94,10
-    GROUPBOX        "クリッカブルURL",IDC_STATIC,156,3,131,35,WS_GROUP
-    CONTROL         "カレントフォルダ(&U)",IDC_RADIO_CURDIR,"Button",
+    GROUPBOX        "URL Selection",IDC_STATIC,156,3,131,35,WS_GROUP
+    CONTROL         "Current Folder(&U)",IDC_RADIO_CURDIR,"Button",
                     BS_AUTORADIOBUTTON,161,54,87,8
-    CONTROL         "最近使ったフォルダ(&M)",IDC_RADIO_MRUDIR,"Button",
+    CONTROL         "Recently Used Folder(&M)",IDC_RADIO_MRUDIR,"Button",
                     BS_AUTORADIOBUTTON,161,69,80,8
-    CONTROL         "指定フォルダ(&F)",IDC_RADIO_SELDIR,"Button",
+    CONTROL         "Specific Folder(&F)",IDC_RADIO_SELDIR,"Button",
                     BS_AUTORADIOBUTTON,161,84,80,8
     EDITTEXT        IDC_EDIT_FILEOPENDIR,161,100,111,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_FILEOPENDIR,273,100,9,12
-    GROUPBOX        "ファイルダイアログの初期位置",IDC_STATIC,156,41,130,79,
+    GROUPBOX        "Initial Folder for File Dialog",IDC_STATIC,156,41,130,79,
                     WS_GROUP
 END
 
@@ -1582,75 +1582,75 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "排他制御(&H)",IDC_STATIC,8,16,48,10
+    LTEXT           "Exclusive(&H)",IDC_STATIC,8,16,48,10
     COMBOBOX        IDC_COMBO_FILESHAREMODE,60,14,84,78,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "更新の監視(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
+    CONTROL         "Watch for updates(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,31,60,10
-    LTEXT           "自動読込時遅延(&A)", IDC_LABEL_AUTOLOAD_DELAY,70,32,62,10
+    LTEXT           "&Autoload Delay", IDC_LABEL_AUTOLOAD_DELAY,70,32,62,10
     EDITTEXT        IDC_EDIT_AUTOLOAD_DELAY,130,30,30,12
     CONTROL         "Spin1",IDC_SPIN_AUTOLOAD_DELAY,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,150,30,9,12
-    CONTROL         "上書き禁止検出時は編集禁止にする(&N)",
+    CONTROL         "Forbid Editing when Detecting Read-Only(&N)",
                     IDC_CHECK_bUneditableIfUnwritable,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,46,144,10
-    GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,163,57,WS_GROUP
-    CONTROL         "無変更でも上書きする(&S)",
+    GROUPBOX        "Exclusive File Control",IDC_STATIC,3,3,163,57,WS_GROUP
+    CONTROL         "Save even if there are no changes(&S)",
                     IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,175,16,96,10
-    CONTROL         "自動的に保存する(&U)",IDC_CHECK_AUTOSAVE,"Button",
+    CONTROL         "Automatically save(&U)",IDC_CHECK_AUTOSAVE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,175,31,84,10
-    LTEXT           "間隔は(&I)",IDC_LABEL_AUTOSAVE,186,47,31,8,NOT WS_GROUP
+    LTEXT           "&Interval is every",IDC_LABEL_AUTOSAVE,186,47,31,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,219,45,30,12
     CONTROL         "Spin1",IDC_SPIN_AUTOBACKUP_INTERVAL,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,266,45,9,12
-    LTEXT           "分ごと",IDC_LABEL_AUTOSAVE2,250,47,21,8,NOT WS_GROUP
-    GROUPBOX        "ファイルの保存",IDC_STATIC,170,3,118,57,WS_GROUP
-    CONTROL         "新規から保存時は全ファイル表示(&O)",
+    LTEXT           "mins",IDC_LABEL_AUTOSAVE2,250,47,21,8,NOT WS_GROUP
+    GROUPBOX        "File Saving...",IDC_STATIC,170,3,118,57,WS_GROUP
+    CONTROL         "When saving a new file display all file types(&O)",
                     IDC_CHECK_NoFilterSaveNew,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,77,133,10
-    CONTROL         "新規以外から保存時は全ファイル表示(&F)",
+    CONTROL         "When saving a file display all file types(&F)",
                     IDC_CHECK_NoFilterSaveFile,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,142,77,142,10
-    GROUPBOX        "「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示",
+    GROUPBOX        "File List display filter for file-dialog",
                     IDC_STATIC,3,65,285,28
-    CONTROL         "ファイルのドロップは「閉じて開く」にする(&L)",
+    CONTROL         "Close existing file when drag'n'drop new one(&L)",
                     IDC_CHECK_bDropFileAndClose,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,110,149,10
-    LTEXT           "ファイルのドロップは一度に&MAX",IDC_LABEL_AUTOSAVE3,18,
+    LTEXT           "Support upto &MAX",IDC_LABEL_AUTOSAVE3,18,
                     126,101,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_nDropFileNumMax,123,124,25,12,ES_AUTOHSCROLL
     CONTROL         "Spin1",IDC_SPIN_nDropFileNumMax,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,179,124,9,
                     12
-    LTEXT           "個までとする",IDC_LABEL_AUTOSAVE4,151,126,41,8,NOT 
+    LTEXT           "files",IDC_LABEL_AUTOSAVE4,151,126,41,8,NOT 
                     WS_GROUP
-    LTEXT           "←注：ドロップファイルは1つのみ有効",IDC_LANEL_NOTE,161,
+    LTEXT           "NB: Only possible to drop 1 file",IDC_LANEL_NOTE,161,
                     111,106,8
-    CONTROL         "ファイルを開いたときにカーソル位置を復元する(&C)",
+    CONTROL         "Restor cursor position on open file(&C)",
                     IDC_CHECK_RestoreCurPosition,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,140,174,10
-    CONTROL         "ファイルを開いたときにブックマークを復元する(&B)",
+    CONTROL         "Restore bookmarks on file open(&B)",
                     IDC_CHECK_RestoreBookmarks,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,155,214,10
-    CONTROL         "ファイルを開いたときにMIMEエンコードされたヘッダをデコードする(&D)",
+    CONTROL         "Decode MIME headers on file open(&D)",
                     IDC_CHECK_AutoMIMEDecode,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,169,231,10
-    CONTROL         "前回と異なる文字コードのとき問い合わせを行う(&Q)",
+    CONTROL         "Display a dialog if char. encoding changes(&Q)",
                     IDC_CHECK_QueryIfCodeChange,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,182,223,13
-    CONTROL         "開こうとしたファイルが存在しないとき警告する(&E)",
+    CONTROL         "Alert if file does not Exist(&E)",
                     IDC_CHECK_AlertIfFileNotExist,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,198,223,10
-    CONTROL         "開こうとしたファイルが大きい場合に警告する(&T)",
+    CONTROL         "Alert if file is overly large(&T)",
                     IDC_CHECK_ALERT_IF_LARGEFILE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,214,167,10
     EDITTEXT        IDC_EDIT_ALERT_FILESIZE,181,212,30,12,ES_AUTOHSCROLL
     CONTROL         "Spin1",IDC_SPIN_ALERT_FILESIZE,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,240,211,9,
                     14
-    LTEXT           "MBから",IDC_STATIC,214,214,25,10
-    GROUPBOX        "ファイルオープン",IDC_STATIC,3,97,285,135,WS_GROUP
+    LTEXT           "MB",IDC_STATIC,214,214,25,10
+    GROUPBOX        "File Open...",IDC_STATIC,3,97,285,135,WS_GROUP
 END
 
 IDD_PROP_FNAME DIALOGEX 0, 0, 293, 240
@@ -1659,22 +1659,22 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "ファイル名の簡易表示(&I)",IDC_STATIC,6,20,282,180
+    GROUPBOX        "Simple Filename Display(&I)",IDC_STATIC,6,20,282,180
     CONTROL         "List1",IDC_LIST_FNAME,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
                     LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,12,35,230,117
-    LTEXT           "置換前(&F)",IDC_STATIC,13,161,37,10
+    LTEXT           "From(&F)",IDC_STATIC,13,161,37,10
     EDITTEXT        IDC_EDIT_FNAME_FROM,50,160,191,13,ES_AUTOHSCROLL
-    LTEXT           "置換後(&R)",IDC_STATIC,13,180,37,10
+    LTEXT           "To(&R)",IDC_STATIC,13,180,37,10
     EDITTEXT        IDC_EDIT_FNAME_TO,50,177,191,13,ES_AUTOHSCROLL
-    PUSHBUTTON      "挿入(&S)",IDC_BUTTON_FNAME_INS,245,123,38,15
-    PUSHBUTTON      "追加(&A)",IDC_BUTTON_FNAME_ADD,245,141,38,15
-    PUSHBUTTON      "更新(&E)",IDC_BUTTON_FNAME_UPD,245,159,38,15
-    PUSHBUTTON      "削除(&D)",IDC_BUTTON_FNAME_DEL,245,177,38,15
-    PUSHBUTTON      "先頭(&T)",IDC_BUTTON_FNAME_TOP,245,43,38,15
-    PUSHBUTTON      "上へ(&U)",IDC_BUTTON_FNAME_UP,245,61,38,15
-    PUSHBUTTON      "下へ(&G)",IDC_BUTTON_FNAME_DOWN,245,79,38,15
-    PUSHBUTTON      "最終(&B)",IDC_BUTTON_FNAME_LAST,245,97,38,15
+    PUSHBUTTON      "Insert(&S)",IDC_BUTTON_FNAME_INS,245,123,38,15
+    PUSHBUTTON      "&Add",IDC_BUTTON_FNAME_ADD,245,141,38,15
+    PUSHBUTTON      "&Edit",IDC_BUTTON_FNAME_UPD,245,159,38,15
+    PUSHBUTTON      "&Del",IDC_BUTTON_FNAME_DEL,245,177,38,15
+    PUSHBUTTON      "&Top",IDC_BUTTON_FNAME_TOP,245,43,38,15
+    PUSHBUTTON      "&Up",IDC_BUTTON_FNAME_UP,245,61,38,15
+    PUSHBUTTON      "Down(&G)",IDC_BUTTON_FNAME_DOWN,245,79,38,15
+    PUSHBUTTON      "&Bottom",IDC_BUTTON_FNAME_LAST,245,97,38,15
 END
 
 IDD_PROP_BACKUP DIALOGEX 0, 0, 293, 240
@@ -1683,68 +1683,68 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "バックアップの作成",IDC_STATIC,3,3,285,207,WS_GROUP
-    CONTROL         "保存時にバックアップを作成する(&K)",IDC_CHECK_BACKUP,
+    GROUPBOX        "Backup Creation",IDC_STATIC,3,3,285,207,WS_GROUP
+    CONTROL         "Create backup during save(&K)",IDC_CHECK_BACKUP,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,16,
                     136,10
 
-    CONTROL         "詳細設定する(&A)",IDC_CHECK_BACKUP_ADVANCED,"Button",
+    CONTROL         "Detailed Settings(&A)",IDC_CHECK_BACKUP_ADVANCED,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,12,32,69,10
     EDITTEXT        IDC_EDIT_BACKUPFILE,24,44,255,13,ES_AUTOHSCROLL
 
-    CONTROL         "拡張子を .bakに変更したもの(1世代 &B)",
+    CONTROL         "Save once as .bak(&B)",
                     IDC_RADIO_BACKUP_TYPE1,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,12,66,142,10
-    CONTROL         "拡張子を連番(.b00～b98)に変更したもの(&G)",
+    CONTROL         "Save repeatedly as (.b00～b98)(&G)",
                     IDC_RADIO_BACKUP_TYPE3,"Button",BS_AUTORADIOBUTTON,12,80,
                     156,10
-    CONTROL         "ファイル名の後ろに保存時の日付・時刻を付加したもの(&E)",
+    CONTROL         "Append backup date/time to file name(&E)",
                     IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON,
                     12,106,204,10
-    CONTROL         "ファイル名の後ろに前回の保存時の日付・時刻を付加したもの(&U)",
+    CONTROL         "Append backup date/time each time to file name(&U)",
                     IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
                     12,120,230,10
-    CONTROL         "元の拡張子を保存(&R)",IDC_CHECK_BACKUP_RETAINEXT,"Button",
+    CONTROL         "Retain original extension(&R)",IDC_CHECK_BACKUP_RETAINEXT,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,66,86,10
-    LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,94,81,8
+    LTEXT           "Number of backups (1-99 &N)",IDC_LABEL_BACKUP_3,22,94,81,8
     EDITTEXT        IDC_EDIT_BACKUP_3,106,92,28,12
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,134,92,9,
                     12
-    CONTROL         "西暦(&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
+    CONTROL         "Yr (&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,132,35,10
-    CONTROL         "月(&M)",IDC_CHECK_BACKUP_MONTH,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Mth(&M)",IDC_CHECK_BACKUP_MONTH,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,60,132,34,10
-    CONTROL         "日(&D)",IDC_CHECK_BACKUP_DAY,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Day(&D)",IDC_CHECK_BACKUP_DAY,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,97,132,34,10
-    CONTROL         "時(&H)",IDC_CHECK_BACKUP_HOUR,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Hr(&H)",IDC_CHECK_BACKUP_HOUR,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,134,132,34,10
-    CONTROL         "分(&I)",IDC_CHECK_BACKUP_MIN,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Min(&I)",IDC_CHECK_BACKUP_MIN,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,171,132,31,10
-    CONTROL         "秒(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Sec(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,205,132,33,10
 
     LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
-    CONTROL         "保存時の日付・時刻を使用",IDC_RADIO_BACKUP_DATETYPE1A,
+    CONTROL         "Use date/time when saving file",IDC_RADIO_BACKUP_DATETYPE1A,
                     "Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,101,10
-    CONTROL         "前回のファイル更新時の日付・時刻を使用",
+    CONTROL         "Use date/time from previous file udpate",
                     IDC_RADIO_BACKUP_DATETYPE2A,"Button",BS_AUTORADIOBUTTON,
                     12,118,149,10
-    LTEXT           "$x : x個上のフォルダ名(0-9)\r* : 拡張子\r\r%Y/%m/%d : 年月日 %y西暦(2桁) \r%H:%M:%S: 時分秒   \r%% : '%'記号\r",
+    LTEXT           "$x : x-th folder above's name (x=0-9)\r* : Extension\r%Y/%m/%d : YMD %y (2 dig. year) \r%H:%M:%S: HMS   \r%% : '%' symbol\r",
                     IDC_LABEL_BACKUP_HELP2,165,75,115,50,SS_SUNKEN
 
-    CONTROL         "指定フォルダに作成する(&P)",IDC_CHECK_BACKUPFOLDER,
+    CONTROL         "Create in folder(&P)",IDC_CHECK_BACKUPFOLDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
-    AUTOCHECKBOX    "リムーバブルメディアのみ(&L)", IDC_CHECK_BACKUP_FOLDER_RM,
+    AUTOCHECKBOX    "Apply for Files on Removable Media(&L)", IDC_CHECK_BACKUP_FOLDER_RM,
                     120, 148, 103, 10
-    LTEXT           "フォルダ名(&F)",IDC_LABEL_BACKUP_4,24,162,47,8
+    LTEXT           "Folder Name(&F)",IDC_LABEL_BACKUP_4,24,162,47,8
     EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,160,195,12,ES_AUTOHSCROLL
     PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,160,9,12
-    CONTROL         "バックアップファイルをごみ箱に放り込む(&X)",
+    CONTROL         "Throw backup file into Recycle Bin(&X)",
                     IDC_CHECK_BACKUP_DUSTBOX,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,12,176,150,10
 
-    CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
+    CONTROL         "Confirm before creating(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,12,196,84,10
 END
 
@@ -1754,30 +1754,30 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    CONTROL         "標準(&S)",IDC_RADIO_DFORM_0,"Button",BS_AUTORADIOBUTTON | 
+    CONTROL         "Standard(&S)",IDC_RADIO_DFORM_0,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,8,18,41,10
-    CONTROL         "カスタム(&C)",IDC_RADIO_DFORM_1,"Button",
+    CONTROL         "Custom(&C)",IDC_RADIO_DFORM_1,"Button",
                     BS_AUTORADIOBUTTON,51,18,52,10
     LTEXT           "&D:",IDC_LABEL_DFORM,106,19,8,8
     EDITTEXT        IDC_EDIT_DFORM,115,17,82,12,ES_AUTOHSCROLL
-    GROUPBOX        "日付書式",IDC_STATIC,3,3,199,35,WS_GROUP
-    LTEXT           "表示例",IDC_STATIC,209,7,27,8,NOT WS_GROUP
+    GROUPBOX        "Date Format",IDC_STATIC,3,3,199,35,WS_GROUP
+    LTEXT           "Example",IDC_STATIC,209,7,27,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_DFORM_EX,209,17,77,12,ES_AUTOHSCROLL | 
                     ES_READONLY | NOT WS_TABSTOP
-    CONTROL         "標準(&N)",IDC_RADIO_TFORM_0,"Button",BS_AUTORADIOBUTTON | 
+    CONTROL         "Standard(&N)",IDC_RADIO_TFORM_0,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,8,58,41,10
-    CONTROL         "カスタム(&U)",IDC_RADIO_TFORM_1,"Button",
+    CONTROL         "Custom(&U)",IDC_RADIO_TFORM_1,"Button",
                     BS_AUTORADIOBUTTON,51,58,52,10
     LTEXT           "&T:",IDC_LABEL_TFORM,106,59,8,8
     EDITTEXT        IDC_EDIT_TFORM,115,57,82,12,ES_AUTOHSCROLL
-    GROUPBOX        "時刻書式",IDC_STATIC,3,43,199,35,WS_GROUP
-    LTEXT           "表示例",IDC_STATIC,209,47,27,8,NOT WS_GROUP
+    GROUPBOX        "Time Format",IDC_STATIC,3,43,199,35,WS_GROUP
+    LTEXT           "Example",IDC_STATIC,209,47,27,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_TFORM_EX,209,57,77,12,ES_AUTOHSCROLL | 
                     ES_READONLY | NOT WS_TABSTOP
-    GROUPBOX        "見出し記号(&R)",IDC_STATIC,3,83,283,52,WS_GROUP
+    GROUPBOX        "Header Numbering(&R)",IDC_STATIC,3,83,283,52,WS_GROUP
     EDITTEXT        IDC_EDIT_MIDASHIKIGOU,8,95,272,31,ES_MULTILINE | 
                     ES_AUTOVSCROLL | WS_VSCROLL | WS_GROUP
-    GROUPBOX        "引用符(&Q)",IDC_STATIC,3,140,283,32,WS_GROUP
+    GROUPBOX        "Quotation Character(&Q)",IDC_STATIC,3,140,283,32,WS_GROUP
     EDITTEXT        IDC_EDIT_INYOUKIGOU,8,152,270,12,ES_AUTOHSCROLL | 
                     WS_GROUP
 END
@@ -1788,29 +1788,29 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    CONTROL         "カーソル位置の文字列をデフォルトの検索文字列にする(&C)",
+    CONTROL         "Use word at current (&C)ursor position as default",
                     IDC_CHECK_bCaretTextForSearch,"Button",BS_AUTOCHECKBOX | 
                     BS_TOP | WS_GROUP | WS_TABSTOP,8,21,204,10
-    CONTROL         "次・前検索で他のビューでの検索条件変更を引き継ぐ(&I)",
+    CONTROL         "Share Search Condition with Editors when Search Up/Down(&I)",
                     IDC_CHECK_INHERIT_KEY_OTHER_VIEW,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,35,204,10
-    LTEXT           "正規表現ライブラリ指定(&L)",IDC_LABEL_REGEXP,8,50,93,10
+    LTEXT           "Regular Expr Lib name(&L)",IDC_LABEL_REGEXP,8,50,93,10
     LTEXT           "",IDC_LABEL_REGEXP_VER,8,62,275,14
     EDITTEXT        IDC_EDIT_REGEXPLIB,110,47,162,13,ES_AUTOHSCROLL
-    GROUPBOX        "検索／置換／Grep",IDC_STATIC,3,7,285,70,WS_GROUP
-    CONTROL         "Grepモードで保存確認する(&V)",
+    GROUPBOX        "Search/Replace/Grep",IDC_STATIC,3,7,285,70,WS_GROUP
+    CONTROL         "Confirm when exiting GREP results(&V)",
                     IDC_CHECK_bGrepExitConfirm,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,94,110,10
-    CONTROL         "リアルタイムで表示する(&R)",IDC_CHECK_GREPREALTIME,
+    CONTROL         "Display (&R)esults in real time(&R)",IDC_CHECK_GREPREALTIME,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,106,101,10
     GROUPBOX        "Grep",IDC_STATIC,3,80,285,42,WS_GROUP
-    CONTROL         "エンターキーでタグジャンプ(&E)",IDC_CHECK_GTJW_RETURN,
+    CONTROL         "Tag Jump using Enter key(&E)",IDC_CHECK_GTJW_RETURN,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,142,
                     109,10
-    CONTROL         "ダブルクリックでタグジャンプ(&W)",
+    CONTROL         "Tag Jump using double-click(&W)",
                     IDC_CHECK_GTJW_LDBLCLK,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,154,115,10
-    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,127,285,46,
+    GROUPBOX        "Tag Jump using Grep results",IDC_STATIC,3,127,285,46,
                     WS_GROUP
 END
 
@@ -1819,22 +1819,22 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "種別(&K)",IDC_LABEL_MENUFUNCKIND,22,4,26,8
+    LTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,22,4,26,8
     COMBOBOX        IDC_COMBO_FUNCKIND,51,2,70,170,CBS_DROPDOWNLIST | 
                     CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
-    LTEXT           "機能(&F)",IDC_LABEL_MENUFUNC,3,18,25,8
+    LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,18,25,8
     LISTBOX         IDC_LIST_FUNC,3,28,124,143,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    LTEXT           "機能に割り当てられているキー(&G)",IDC_LABEL_FUNCtoKEY,6,
+    LTEXT           "Key for assigned function...(&G)",IDC_LABEL_FUNCtoKEY,6,
                     175,113,8,NOT WS_GROUP
     LISTBOX         IDC_LIST_ASSIGNEDKEYS,3,184,124,33,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
                     WS_GROUP | WS_TABSTOP
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,171,2,58,14,
+    PUSHBUTTON      "Import(&I)...",IDC_BUTTON_IMPORT,171,2,58,14,
                     WS_GROUP
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,231,2,58,14
-    LTEXT           "キー(&Y)",IDC_LABEL_KEYKIND,164,18,25,8
+    PUSHBUTTON      "Export(&X)...",IDC_BUTTON_EXPORT,231,2,58,14
+    LTEXT           "Key(&Y)",IDC_LABEL_KEYKIND,164,18,25,8
     LISTBOX         IDC_LIST_KEY,165,28,124,164,LBS_NOINTEGRALHEIGHT | 
                     LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Shift",IDC_CHECK_SHIFT,"Button",BS_AUTOCHECKBOX | 
@@ -1843,13 +1843,13 @@ BEGIN
                     WS_TABSTOP,134,53,25,10
     CONTROL         "A&Lt",IDC_CHECK_ALT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,134,68,25,10
-    LTEXT           "キーに割り当てられている機能",IDC_LABEL_KEYtoFUNC,166,
+    LTEXT           "Assigned Key's Function...",IDC_LABEL_KEYtoFUNC,166,
                     196,120,8
     EDITTEXT        IDC_EDIT_KEYSFUNC,164,205,118,12,ES_AUTOHSCROLL | 
                     ES_READONLY | WS_GROUP | NOT WS_TABSTOP
-    PUSHBUTTON      "割付(&B)",IDC_BUTTON_ASSIGN,132,190,28,14,WS_GROUP
-    PUSHBUTTON      "解除(&R)",IDC_BUTTON_RELEASE,132,204,28,14
-    CONTROL         "ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)(&W)",
+    PUSHBUTTON      "Assign(&B)",IDC_BUTTON_ASSIGN,132,190,28,14,WS_GROUP
+    PUSHBUTTON      "Release(&R)",IDC_BUTTON_RELEASE,132,204,28,14
+    CONTROL         "Create Accelerator for each Window (for Wine)(&W)",
                     IDC_CHECK_ACCELTBL_EACHWIN,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,222,210,10
 END
@@ -1859,36 +1859,36 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "種別(&K)",IDC_LABEL_MENUFUNCKIND,30,4,26,8
+    LTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,30,4,26,8
     COMBOBOX        IDC_COMBO_FUNCKIND,60,2,68,180,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "機能(&F)",IDC_LABEL_MENUFUNC,3,16,25,8,NOT WS_GROUP
+    LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,16,25,8,NOT WS_GROUP
     LISTBOX         IDC_LIST_FUNC,3,27,124,178,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    LTEXT           "選択(&C)",IDC_LABEL_MENUCHOICE,192,4,26,8
+    LTEXT           "Select(&C)",IDC_LABEL_MENUCHOICE,192,4,26,8
     COMBOBOX        IDC_COMBO_MENU,221,2,68,220,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "メニュー名(&N)",IDC_LABEL_MENUNAME,142,16,44,8,NOT 
+    LTEXT           "Menu Name(&N)",IDC_LABEL_MENUNAME,142,16,44,8,NOT 
                     WS_GROUP
     EDITTEXT        IDC_EDIT_MENUNAME,146,27,109,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "設定(&R)",IDC_BUTTON_MENUNAME,258,27,30,14
-    LTEXT           "メニュー(&M)",IDC_LABEL_MENU,142,44,37,8,NOT WS_GROUP
+    PUSHBUTTON      "Set(&R)",IDC_BUTTON_MENUNAME,258,27,30,14
+    LTEXT           "Menu(&M)",IDC_LABEL_MENU,142,44,37,8,NOT WS_GROUP
     LISTBOX         IDC_LIST_RES,164,54,123,151,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    PUSHBUTTON      "削除(&D)",IDC_BUTTON_DELETE,130,62,30,14,WS_GROUP
+    PUSHBUTTON      "Del(&D)",IDC_BUTTON_DELETE,130,62,30,14,WS_GROUP
     PUSHBUTTON      "---(&S)",IDC_BUTTON_INSERTSEPARATOR,130,81,30,14,
                     BS_MULTILINE
     PUSHBUTTON      "→(&A)",IDC_BUTTON_INSERT,130,101,30,14
     PUSHBUTTON      ">>(&B)",IDC_BUTTON_ADD,130,115,30,14,BS_MULTILINE
     PUSHBUTTON      "↑(&U)",IDC_BUTTON_UP,130,135,30,14
     PUSHBUTTON      "↓(&O)",IDC_BUTTON_DOWN,130,149,30,14
-    LTEXT           "↑ダブルクリックでアクセスキー設定可",
+    LTEXT           "↑Double click item to set hot-key",
                     IDC_LABEL_MENUKEYCHANGE,174,208,114,8
-    CONTROL         "サブメニューとして表示(&S)",IDC_CHECK_SUBMENU,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Display as Sub Menu(&S)",IDC_CHECK_SUBMENU,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,164,220,114,8
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,3,208,58,14,
+    PUSHBUTTON      "Import(&I)...",IDC_BUTTON_IMPORT,3,208,58,14,
                     WS_GROUP
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,64,208,58,14
+    PUSHBUTTON      "Export(&X)...",IDC_BUTTON_EXPORT,64,208,58,14
 END
 
 IDD_PROP_KEYWORD DIALOGEX 0, 0, 293, 240
