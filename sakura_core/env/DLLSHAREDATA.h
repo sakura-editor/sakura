@@ -30,7 +30,23 @@
 
 //! どこからでもアクセスできる、共有データアクセサ。2007.10.30 kobake
 struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
+
+//DLLSHAREDATAへの簡易アクセサ
+inline DLLSHAREDATA& GetDllShareData()
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+
+	assert(g_theDLLSHAREDATA);
+	return *g_theDLLSHAREDATA;
+}
+
+//DLLSHAREDATAを確保したら、まずこれを呼ぶ。破棄する前にも呼ぶ。
+inline void SetDllShareData(DLLSHAREDATA* pShareData)
+{
+	extern DLLSHAREDATA* g_theDLLSHAREDATA;
+
+	g_theDLLSHAREDATA = pShareData;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    共有メモリ構成要素                       //
@@ -103,8 +119,6 @@ struct SShare_Version{
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 struct DLLSHAREDATA{
-	void OnInit();
-	
 	// -- -- バージョン -- -- //
 	/*!
 		データ構造 Version	//	Oct. 27, 2000 genta
