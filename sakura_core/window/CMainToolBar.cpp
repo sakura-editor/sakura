@@ -505,14 +505,14 @@ void CMainToolBar::UpdateToolbar( void )
 			Toolbar_EnableButton(
 				m_hwndToolBar,
 				tbb.idCommand,
-				IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
+				IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 
 			// 機能がチェック状態か調べる
 			Toolbar_CheckButton(
 				m_hwndToolBar,
 				tbb.idCommand,
-				IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
+				IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 		}
 	}

@@ -269,8 +269,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_CMenuDrawer; }
-	CEditDoc&		GetDocument();
-	const CEditDoc&	GetDocument() const;
+	CEditDoc*		GetDocument()           { return m_pCEditDoc; }
+	const CEditDoc*	GetDocument() const     { return m_pCEditDoc; }
 
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
@@ -374,6 +374,7 @@ public:
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
+	CEditDoc* 		m_pCEditDoc;
 	CEditView*		m_pcEditViewArr[4];	//!< ビュー 
 	int				m_nEditViewCount;	//!< 有効なビューの数
 	int				m_nEditViewMaxCount;	//!< ビューの最大数=4
