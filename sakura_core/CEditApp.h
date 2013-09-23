@@ -55,7 +55,7 @@ public:
 	//ウィンドウ情報
 	CEditWnd* GetWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
 
-	CEditDoc&		GetDocument(){ return *m_pcEditDoc; }
+	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }
 
 	bool OpenPropertySheet( int nPageNum );
