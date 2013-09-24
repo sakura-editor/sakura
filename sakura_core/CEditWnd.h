@@ -75,11 +75,11 @@ public:
 
 private:
 	CEditWnd();
-	~CEditWnd();
 	CEditWnd(CEditWnd const&);
 	void operator=(CEditWnd const&);
 
 public:
+	~CEditWnd();
 	/*
 	|| ƒƒ“ƒoŠÖ”
 	*/
