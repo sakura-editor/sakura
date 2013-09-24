@@ -326,9 +326,7 @@ void CEditDoc::InitAllView( void )
 //	@date Sep. 29, 2001 genta マクロクラスを渡すように
 //	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 /////////////////////////////////////////////////////////////////////////////
-BOOL CEditDoc::Create(
-	CImageListMgr* pcIcons
- )
+BOOL CEditDoc::Create()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
 

@@ -109,7 +109,8 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
-		int				nGroup				//!< [in] グループID
+		CImageListMgr*	pcIcons,
+		int				nGroup
 	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
 	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得

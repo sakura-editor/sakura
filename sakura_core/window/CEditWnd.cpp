@@ -598,7 +598,8 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	int				nGroup			//!< [in] グループID
+	CImageListMgr*	pcIcons,	//!< [in] Image List
+	int				nGroup		//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
@@ -668,7 +669,8 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::getInstance()->GetIcons() );
+	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );
+	m_cToolbar.Create( pcIcons );
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
