@@ -47,7 +47,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ドキュメントの作成
 	m_pcEditDoc = new CEditDoc(this);
-	m_pcEditDoc->Create( &m_cIcons );
+	m_pcEditDoc->Create();
 
 	//IO管理
 	m_pcLoadAgent = new CLoadAgent();
@@ -65,7 +65,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-	m_pcEditWnd->Create( nGroupId );
+	m_pcEditWnd->Create( &m_cIcons, nGroupId );
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();

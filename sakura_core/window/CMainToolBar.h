@@ -28,10 +28,13 @@
 #include "dlg/CDialog.h"
 
 class CEditWnd;
+class CImageListMgr;
 
 class CMainToolBar{
 public:
 	CMainToolBar(CEditWnd* pOwner);
+
+	void Create( CImageListMgr* pcIcons );
 
 	//作成・破棄
 	void CreateToolBar( void );		//!< ツールバー作成
@@ -73,6 +76,7 @@ private:
 
 	SComboBoxItemDeleter	m_comboDel;
 	CRecentSearch			m_cRecentSearch;
+	CImageListMgr*			m_pcIcons;
 };
 
 #endif /* SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_ */
