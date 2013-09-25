@@ -85,8 +85,13 @@ public:
 	*/
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
-	HWND Create( HINSTANCE, HWND, int nGroup);	/* 作成 */
-
+	//! 作成
+	HWND Create(
+		HINSTANCE,
+		HWND,
+		CImageListMgr*	pcIcons,
+		int nGroup
+	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
 	void _GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo);
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
@@ -237,9 +242,8 @@ public:
 	//	うまくやれば、以下もPrintPreviewへ行きそう
 	//  2006.08.14 Moca DC,BMPをPrintPreviewへ移動
 
-	//	Oct. 12, 2000 genta
-	CImageListMgr	m_cIcons;	//	Image List
-	
+	CImageListMgr*	m_pcIcons;
+
 	/*
 	|| 実装ヘルパ系
 	*/

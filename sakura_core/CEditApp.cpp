@@ -28,9 +28,12 @@
 
 void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 {
+	//ヘルパ作成
+	m_cIcons.Create( hInst );	//	CreateImage List
+
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-	m_pcEditWnd->Create( hInst, hwndParent, nGroupId );
+	m_pcEditWnd->Create( hInst, hwndParent, &m_cIcons, nGroupId );
 }
 
 CEditApp::~CEditApp()

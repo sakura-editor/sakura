@@ -48,7 +48,7 @@ public:
 		return &instance;
 	}
 
-	void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId);
+	void Create(HINSTANCE hInst, HWND hwndParent, int nGroupId);
 
 private:
 	// 外から作らせない。
@@ -61,6 +61,9 @@ public:
 
 	//ウィンドウ
 	CEditWnd*			m_pcEditWnd;
+
+	//GUIオブジェクト
+	CImageListMgr		m_cIcons;					//!< Image List
 };
 
 

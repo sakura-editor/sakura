@@ -23,10 +23,10 @@
 #include "StdAfx.h"
 
 #include <windows.h>
-#include <winuser.h>
 #include <io.h>
 #include <mbctype.h>
 #include <mbstring.h>
+#include "CEditApp.h"
 #include "CShareData.h"
 #include "CRunningTimer.h"
 #include "CControlTray.h"
@@ -458,9 +458,10 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	HINSTANCE	hInstance,		//!< [in] Instance Handle
-	HWND		hwndParent,		//!< [in] 親ウィンドウのハンドル
-	int			nGroup			//!< [in] グループID
+	HINSTANCE		hInstance,	//!< [in] Instance Handle
+	HWND			hwndParent,	//!< [in] 親ウィンドウのハンドル
+	CImageListMgr*	pcIcons,	//!< [in] Image List
+	int				nGroup		//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
@@ -524,12 +525,12 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_cIcons.Create( m_hInstance );
-	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
+	m_pcIcons = pcIcons;
+	m_CMenuDrawer.Create( m_hInstance, m_hWnd, pcIcons );
 
 	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
 	// （m_cEditDoc メンバーの初期化を優先）
-	m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons );
+	m_cEditDoc.Create( m_hInstance, m_hWnd, pcIcons );
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
 
@@ -822,7 +823,7 @@ void CEditWnd::CreateToolBar( void )
 		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0 );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
-		m_cIcons.SetToolBarImages( m_hwndToolBar );
+		m_pcIcons->SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
@@ -4406,12 +4407,12 @@ LPARAM CEditWnd::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
 			int nIconId = ::SendMessage( pnmh->hdr.hwndFrom, TB_GETBITMAP, (WPARAM)pnmh->dwItemSpec, 0 );
 
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_cIcons.cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
+			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_pcIcons->cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			m_cIcons.Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
+			m_pcIcons->Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
 				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}
