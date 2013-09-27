@@ -42,8 +42,8 @@ public:
 
 public:
 	bool	IsOk() { return (psd != NULL); }			// Zip Folderが使用できるか?
-	bool	SetZip(const std::tstring sZipPath);		// Zip File名 設定
-	bool	ChkPluginDef(const std::tstring sDefFile, std::tstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
+	bool	SetZip(const std::tstring& sZipPath);		// Zip File名 設定
+	bool	ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
 	bool	Unzip(const std::tstring sOutPath);			// Zip File 解凍
 };
 #endif	// SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_

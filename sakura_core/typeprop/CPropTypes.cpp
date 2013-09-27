@@ -122,14 +122,13 @@ struct TypePropSheetInfo {
 INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 {
 	INT_PTR				nRet;
-	PROPSHEETPAGE		psp[16];
 	int					nIdx;
 
 	// 2001/06/14 Start by asa-o: タイプ別設定に支援タブ追加
 	// 2001.11.17 add start MIK タイプ別設定に正規表現キーワードタブ追加
 	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
 	// 2013.03.10 aroka ADD-start タイプ別設定に「ウィンドウ」タブを追加
-	static TypePropSheetInfo TypePropSheetInfoList[] = {
+	static const TypePropSheetInfo TypePropSheetInfoList[] = {
 		{ LSW( STR_PROPTYPE_SCREEN ),			IDD_PROP_SCREEN,	PropTypesScreen },
 		{ LSW( STR_PROPTYPE_COLOR ),			IDD_PROP_COLOR,		PropTypesColor },
 		{ LSW( STR_PROPTYPE_WINDOW ),			IDD_PROP_WINDOW,	PropTypesWindow },
@@ -142,17 +141,20 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList) && nIdx < 32 ; nIdx++ ){
-		memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
-		psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
-		psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
-		psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
-		psp[nIdx].pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
-		psp[nIdx].pszIcon     = NULL;
-		psp[nIdx].pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
-		psp[nIdx].pszTitle    = TypePropSheetInfoList[nIdx].sTabname.c_str();
-		psp[nIdx].lParam      = (LPARAM)this;
-		psp[nIdx].pfnCallback = NULL;
+	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
+	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
+
+		PROPSHEETPAGE *p = &psp[nIdx];
+		memset_raw( p, 0, sizeof_raw( *p ) );
+		p->dwSize      = sizeof_raw( *p );
+		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+		p->hInstance   = CSelectLang::getLangRsrcInstance();
+		p->pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
+		p->pszIcon     = NULL;
+		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
+		p->pszTitle    = TypePropSheetInfoList[nIdx].sTabname.c_str();
+		p->lParam      = (LPARAM)this;
+		p->pfnCallback = NULL;
 	}
 
 	PROPSHEETHEADER		psh;

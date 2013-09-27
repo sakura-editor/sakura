@@ -210,7 +210,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 {
 	{
 		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon  ? TRUE : FALSE );
+		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon );
 	}
 
 	//起動時のIME(日本語入力変換)	//Nov. 20, 2000 genta
@@ -374,7 +374,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 {
 	{
 		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? true : false;
+		m_Types.m_bUseDocumentIcon = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_DOCICON );
 	}
 
 	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta

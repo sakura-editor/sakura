@@ -59,7 +59,6 @@
 #include "macro/CCookieManager.h"
 #include "util/design_template.h"
 
-class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
 struct EditInfo; // 20050705 aroka
@@ -85,7 +84,7 @@ public:
 	~CEditDoc();
 
 	//初期化
-	BOOL Create( CImageListMgr* );
+	BOOL Create();
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();

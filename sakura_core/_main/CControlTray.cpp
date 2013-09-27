@@ -269,7 +269,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		CreateTrayIcon( GetTrayHwnd() );
 	}
 
-	m_pcPropertyManager = new CPropertyManager( GetTrayHwnd(), &m_hIcons, &m_CMenuDrawer );
+	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_CMenuDrawer );
 
 	return GetTrayHwnd();
 }
@@ -641,7 +642,7 @@ LRESULT CControlTray::DispatchEvent(
 						if( cDlgTypeList.DoModal( G_AppInstance(), GetTrayHwnd(), &sResult ) ){
 							// ƒ^ƒCƒv•ÊÝ’è
 							CPluginManager::getInstance()->LoadAllPlugin();
-							m_pcPropertyManager->OpenPropertySheetTypes( -1, sResult.cDocumentType );
+							m_pcPropertyManager->OpenPropertySheetTypes( NULL, -1, sResult.cDocumentType );
 							CPluginManager::getInstance()->UnloadAllPlugin();
 						}
 					}
@@ -663,7 +664,7 @@ LRESULT CControlTray::DispatchEvent(
 								m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}
 						}
-						m_pcPropertyManager->OpenPropertySheet(-1);
+						m_pcPropertyManager->OpenPropertySheet( NULL, -1 );
 						CPluginManager::getInstance()->UnloadAllPlugin();
 					}
 					break;

@@ -68,6 +68,7 @@ CShareData::~CShareData()
 {
 	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
+		SetDllShareData( NULL );
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
@@ -125,7 +126,7 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
-		m_pShareData->OnInit();
+		SetDllShareData( m_pShareData );
 
 		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
 		hLangRsrc = m_cSelectLang.InitializeLanguageEnvironment();
@@ -571,7 +572,7 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
-		m_pShareData->OnInit();
+		SetDllShareData( m_pShareData );
 
 		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
@@ -580,6 +581,7 @@ bool CShareData::InitShareData()
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
+			SetDllShareData( NULL );
 			::UnmapViewOfFile( m_pShareData );
 			m_pShareData = NULL;
 			return false;

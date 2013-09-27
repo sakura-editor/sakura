@@ -53,7 +53,7 @@ class CDllPlugin
 {
 	//コンストラクタ
 public:
-	CDllPlugin( tstring sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
+	CDllPlugin( const tstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
 	}
 
 	//デストラクタ

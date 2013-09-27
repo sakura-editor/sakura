@@ -41,11 +41,13 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleInstance<CEditApp>{
-public:
-	//コンストラクタ・デストラクタ
-	CEditApp(HINSTANCE hInst, int);
+class CEditApp : public TSingleton<CEditApp>{
+	friend class TSingleton<CEditApp>;
+	CEditApp(){}
 	virtual ~CEditApp();
+
+public:
+	void Create(HINSTANCE hInst, int);
 
 	//モジュール情報
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
@@ -53,9 +55,11 @@ public:
 	//ウィンドウ情報
 	CEditWnd* GetWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
 
-	CEditDoc&		GetDocument(){ return *m_pcEditDoc; }
+	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }
 
+	bool OpenPropertySheet( int nPageNum );
+	bool OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );
 
 public:
 	HINSTANCE			m_hInst;
@@ -74,7 +78,9 @@ public:
 	//その他ヘルパ
 	CMruListener*		m_pcMruListener;		//MRU管理
 	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
+private:
 	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
+public:
 	CGrepAgent*			m_pcGrepAgent;			//GREPモード
 	CSoundSet			m_cSoundSet;			//サウンド管理
 

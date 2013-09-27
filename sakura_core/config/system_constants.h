@@ -452,6 +452,9 @@
 	タブの閉じるボタン(なし/常に表示/自動表示) 2013.08.01 ryoji
 
 	Version 144:
+	STypeConfig構造体のメンバ変数型変更 2013.09.12 novice
+
+	Version 145:
 	各国語メッセージリソース対応 2013.08.02
 
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
@@ -459,7 +462,7 @@
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		144
+#define N_SHAREDATA_VERSION		145
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -584,7 +587,7 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! カーソル位置取得要求 */
 #define	MYWM_GETCARETPOS	(WM_APP+205)
 
-//! テキスト追加通知(共有データ経由)
+//! 未使用
 //wParam:未使用
 //lParam:未使用
 #define	MYWM_ADDSTRING		(WM_APP+206)
