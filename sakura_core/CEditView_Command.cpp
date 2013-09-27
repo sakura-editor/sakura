@@ -4508,7 +4508,7 @@ BOOL CEditView::Command_FUNCLIST(
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CEditView::Command_SPLIT_V( void )
 {
-	m_pcEditDoc->m_cSplitterWnd.VSplitOnOff();
+	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
@@ -4518,7 +4518,7 @@ void CEditView::Command_SPLIT_V( void )
 /* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 void CEditView::Command_SPLIT_H( void )
 {
-	m_pcEditDoc->m_cSplitterWnd.HSplitOnOff();
+	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
@@ -4528,7 +4528,7 @@ void CEditView::Command_SPLIT_H( void )
 /* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 void CEditView::Command_SPLIT_VH( void )
 {
-	m_pcEditDoc->m_cSplitterWnd.VHSplitOnOff();
+	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
 

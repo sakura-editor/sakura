@@ -230,17 +230,10 @@ public:
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
 	CDropTarget*	m_pcDropTarget;
+	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
+
+	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	CViewFont*		m_pcViewFont;		//!< フォント
-
-
-
-	/* 印刷プレビュー表示情報 */
-	//	必要になったとき（プレビューコマンドを選んだとき）に生成し、必要なくなったら（プレビューコマンドを終了するときに）破棄すること。
-	CPrintPreview*	m_pPrintPreview;
-	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより
-	//	変数を移動
-	//	うまくやれば、以下もPrintPreviewへ行きそう
-	//  2006.08.14 Moca DC,BMPをPrintPreviewへ移動
 
 	CImageListMgr*	m_pcIcons;
 

@@ -702,7 +702,7 @@ void CEditWnd::CreateStatusBar( void )
 	}
 
 	//スプリッターの、サイズボックスの位置を変更
-	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1);
+	m_cSplitterWnd.DoSplit( -1, -1);
 }
 
 
@@ -732,7 +732,7 @@ void CEditWnd::DestroyStatusBar( void )
 		m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 	}
 	//スプリッターの、サイズボックスの位置を変更
-	m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
+	m_cSplitterWnd.DoSplit( -1, -1 );
 }
 
 /* ツールバー作成
@@ -1110,7 +1110,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 	if( bAdjust )
 	{
 		RECT		rc;
-		m_cEditDoc.m_cSplitterWnd.DoSplit( -1, -1 );
+		m_cSplitterWnd.DoSplit( -1, -1 );
 		::GetClientRect( m_hWnd, &rc );
 		::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
@@ -1802,9 +1802,9 @@ LRESULT CEditWnd::DispatchEvent(
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
 			if( 0 == lParam ){
-				nPane = m_cEditDoc.m_cSplitterWnd.GetFirstPane();
+				nPane = m_cSplitterWnd.GetFirstPane();
 			}else{
-				nPane = m_cEditDoc.m_cSplitterWnd.GetLastPane();
+				nPane = m_cSplitterWnd.GetLastPane();
 			}
 			m_cEditDoc.SetActivePane( nPane );
 		}
@@ -2775,21 +2775,21 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-			if( 1 == m_cEditDoc.m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
+			if( 1 == m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
 				pszLabel = "上下に分割";	//Oct. 7, 2000 JEPRO アクセスキーを変更(T→-)
 			}else{
 				pszLabel = "上下分割の解除";
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_V , pszLabel, _T("-") );
 
-			if( 1 == m_cEditDoc.m_cSplitterWnd.GetAllSplitCols() ){ // 2002/2/8 aroka メソッドを通じてアクセス
+			if( 1 == m_cSplitterWnd.GetAllSplitCols() ){ // 2002/2/8 aroka メソッドを通じてアクセス
 				pszLabel = "左右に分割";	//Oct. 7, 2000 JEPRO アクセスキーを変更(Y→I)
 			}else{
 				pszLabel = "左右分割の解除";
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_H , pszLabel, _T("I") );
 //	From Here Sept. 17, 2000 JEPRO	縦横分割の場合も状態によってメニューメッセージが変わるように変更
-			if( (1 < m_cEditDoc.m_cSplitterWnd.GetAllSplitRows()) && (1 < m_cEditDoc.m_cSplitterWnd.GetAllSplitCols()) ){ // 2002/2/8 aroka メソッドを通じてアクセス
+			if( (1 < m_cSplitterWnd.GetAllSplitRows()) && (1 < m_cSplitterWnd.GetAllSplitCols()) ){ // 2002/2/8 aroka メソッドを通じてアクセス
 				pszLabel = "縦横分割の解除";	//Feb. 18, 2001 JEPRO アクセスキー変更(Q→S)
 			}else{
 				pszLabel = "縦横に分割";	//Sept. 17, 2000 jepro 説明に「に」を追加	//Oct. 7, 2000 JEPRO アクセスキーを変更(S→Q)	//Feb. 18, 2001 JEPRO アクセスキーを元に戻した(Q→S)

@@ -286,17 +286,17 @@ BOOL CEditDoc::Create(
 
 	/* 分割フレーム作成 */
 	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
-	m_cSplitterWnd.Create( m_hInstance, m_hwndParent, pCEditWnd );
+	m_pcEditWnd->m_cSplitterWnd.Create( m_hInstance, m_hwndParent, pCEditWnd );
 
 	/* ビュー */
-	m_pcEditViewArr[0]->Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 0, /*FALSE,*/ TRUE  );
+	m_pcEditViewArr[0]->Create( m_hInstance, m_pcEditWnd->m_cSplitterWnd.m_hWnd, this, 0, /*FALSE,*/ TRUE  );
 	m_pcEditViewArr[0]->OnSetFocus();
 
 	/* 子ウィンドウの設定 */
 	hWndArr[0] = m_pcEditViewArr[0]->m_hWnd;
 	hWndArr[1] = NULL;
-	m_cSplitterWnd.SetChildWndArr( hWndArr );
-	m_hWnd = m_cSplitterWnd.m_hWnd;
+	m_pcEditWnd->m_cSplitterWnd.SetChildWndArr( hWndArr );
+	m_hWnd = m_pcEditWnd->m_cSplitterWnd.m_hWnd;
 
 	MY_TRACETIME( cRunningTimer, "View created" );
 
@@ -429,7 +429,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 	switch( LOWORD( nCommand )){
 	case F_PREVWINDOW:	//前のウィンドウ
 		{
-			int nPane = m_cSplitterWnd.GetPrevPane();
+			int nPane = m_pcEditWnd->m_cSplitterWnd.GetPrevPane();
 			if( -1 != nPane ){
 				SetActivePane( nPane );
 			}else{
@@ -439,7 +439,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 		return TRUE;
 	case F_NEXTWINDOW:	//次のウィンドウ
 		{
-			int nPane = m_cSplitterWnd.GetNextPane();
+			int nPane = m_pcEditWnd->m_cSplitterWnd.GetNextPane();
 			if( -1 != nPane ){
 				SetActivePane( nPane );
 			}
@@ -701,8 +701,7 @@ LRESULT CEditDoc::DispatchEvent(
 
 void CEditDoc::OnMove( int x, int y, int nWidth, int nHeight )
 {
-//	m_cSplitterWnd.OnMove( x, y, nWidth, nHeight );
-	::MoveWindow( m_cSplitterWnd.m_hWnd, x, y, nWidth, nHeight, TRUE );
+	::MoveWindow( m_pcEditWnd->m_cSplitterWnd.m_hWnd, x, y, nWidth, nHeight, TRUE );
 
 	return;
 }
@@ -3612,7 +3611,7 @@ void  CEditDoc::SetActivePane( int nIndex )
 
 	m_pcEditViewArr[m_nActivePaneIndex]->RedrawAll();	/* フォーカス移動時の再描画 */
 
-	m_cSplitterWnd.SetActivePane( nIndex );
+	m_pcEditWnd->m_cSplitterWnd.SetActivePane( nIndex );
 
 	if( NULL != m_cDlgFind.m_hWnd ){		/* 「検索」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
@@ -3712,16 +3711,16 @@ BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 
 	if ( m_pcEditViewArr[m_nActivePaneIndex]->DetectWidthOfLineNumberArea( bRedraw ) ){
 		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
-		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+		if ( m_pcEditWnd->m_cSplitterWnd.GetAllSplitCols() == 2 ){
 			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( bRedraw );
 		}
 		else {
 			//	表示されていないので再描画しない
 			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( FALSE );
 		}
-		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+		if ( m_pcEditWnd->m_cSplitterWnd.GetAllSplitRows() == 2 ){
 			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( bRedraw );
-			if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			if ( m_pcEditWnd->m_cSplitterWnd.GetAllSplitCols() == 2 ){
 				m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->DetectWidthOfLineNumberArea( bRedraw );
 			}
 		}
@@ -3951,7 +3950,7 @@ bool CEditDoc::CreateEditViewBySplit(int nViewCount )
 		for( i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
 			m_pcEditViewArr[i] = new CEditView();
-			m_pcEditViewArr[i]->Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, i, FALSE );
+			m_pcEditViewArr[i]->Create( m_hInstance, m_pcEditWnd->m_cSplitterWnd.m_hWnd, this, i, FALSE );
 		}
 		m_nEditViewCount = nViewCount;
 
@@ -3962,7 +3961,7 @@ bool CEditDoc::CreateEditViewBySplit(int nViewCount )
 		}
 		hWndArr.push_back( NULL );
 
-		m_cSplitterWnd.SetChildWndArr( &hWndArr[0] );
+		m_pcEditWnd->m_cSplitterWnd.SetChildWndArr( &hWndArr[0] );
 	}
 	return true;
 }

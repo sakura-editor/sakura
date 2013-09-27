@@ -292,8 +292,6 @@ public:
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
 // To Here 2001.12.03 hor
 
-	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
-
 	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
 	int				m_nEditViewCount;			//!< 有効なビューの数
 	int				m_nEditViewMaxCount;		//!< ビューの最大数=4
