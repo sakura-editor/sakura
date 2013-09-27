@@ -61,7 +61,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	m_pszClassName = _T("CFuncKeyWnd");
 	m_pCEditDoc = NULL;
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < _countof(m_szFuncNameArr); ++i ){
 		wcscpy( m_szFuncNameArr[i], LTEXT("") );

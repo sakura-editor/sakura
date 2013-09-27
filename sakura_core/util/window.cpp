@@ -104,27 +104,24 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
-	CShareData* pInstance = NULL;
-	DLLSHAREDATA* pShareData = NULL;
-	if( (pInstance = CShareData::getInstance()) != NULL && (pShareData = pInstance->GetShareData()) != NULL ){
-		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
-			if( IsSakuraMainWindow( hwnd ) ){
-				if( pShareData->m_sFlags.m_bEditWndChanging )
-					return;	// 切替の最中(busy)は要求を無視する
-				pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
+		if( IsSakuraMainWindow( hwnd ) ){
+			if( pShareData->m_sFlags.m_bEditWndChanging )
+				return;	// 切替の最中(busy)は要求を無視する
+			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
-				// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
-				DWORD_PTR dwResult;
-				::SendMessageTimeout(
-					hwnd,
-					MYWM_TAB_WINDOW_NOTIFY,
-					TWNT_WNDPL_ADJUST,
-					(LPARAM)NULL,
-					SMTO_ABORTIFHUNG | SMTO_BLOCK,
-					10000,
-					&dwResult
-				);
-			}
+			// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
+			DWORD_PTR dwResult;
+			::SendMessageTimeout(
+				hwnd,
+				MYWM_TAB_WINDOW_NOTIFY,
+				TWNT_WNDPL_ADJUST,
+				(LPARAM)NULL,
+				SMTO_ABORTIFHUNG | SMTO_BLOCK,
+				10000,
+				&dwResult
+			);
 		}
 	}
 

@@ -37,10 +37,7 @@
 #define SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_
 
 #include "_main/global.h"
-
-
-
-struct DLLSHAREDATA;
+#include "env/DLLSHAREDATA.h"
 
 class CRecent{
 public:
@@ -77,7 +74,10 @@ public:
 	virtual bool	UpdateView() = 0;
 
 	// 共有メモリアクセス
-	DLLSHAREDATA*	GetShareData();
+	DLLSHAREDATA*	GetShareData()
+	{
+		return &GetDllShareData();
+	}
 };
 
 #include "CRecentImp.h"

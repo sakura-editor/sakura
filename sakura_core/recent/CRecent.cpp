@@ -35,10 +35,4 @@
 
 
 #include "StdAfx.h"
-#include "recent/CRecent.h"
-#include "env/CShareData.h"
 
-DLLSHAREDATA* CRecent::GetShareData()
-{
-	return CShareData::getInstance()->GetShareData();
-}

@@ -46,7 +46,6 @@ protected:
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
 	CShareData&		GetShareData()   { return m_cShareData; }
-	DLLSHAREDATA&	GetDllShareData(){ return *m_cShareData.GetShareData(); }
 	HWND			GetMainWindow() const{ return m_hWnd; }
 
 private:

@@ -605,7 +605,7 @@ HWND CEditWnd::Create(
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
 
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	m_pCEditDoc = CEditApp::getInstance()->GetDocument();
 

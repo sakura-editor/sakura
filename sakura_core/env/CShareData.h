@@ -74,7 +74,6 @@ public:
 	||  Attributes & Operations
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
-	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 
 	
 	//MRU系

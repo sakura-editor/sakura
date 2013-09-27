@@ -128,7 +128,7 @@ CPropCommon::CPropCommon()
 //	long	lPathLen;
 
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
