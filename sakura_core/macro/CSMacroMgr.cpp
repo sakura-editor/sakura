@@ -472,7 +472,7 @@ CSMacroMgr::CSMacroMgr()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CSMacroMgr::CSMacroMgr" );
 	
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();

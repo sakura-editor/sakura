@@ -10,7 +10,7 @@
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+	DLLSHAREDATA* pShareData = &GetDllShareData();
 
 	m_nViewAlignLeft = 0;		/* 表示域の左端座標 */
 	m_nViewAlignLeftCols = 0;	/* 行番号域の桁数 */

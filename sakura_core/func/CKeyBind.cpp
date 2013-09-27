@@ -137,7 +137,7 @@ EFunctionCode CKeyBind::GetFuncCode(
 		}
 	}else{
 		// 2012.12.10 aroka キーコード検索時のループを除去
-		DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+		DLLSHAREDATA* pShareData = &GetDllShareData();
 		return GetFuncCodeAt( pKeyNameArr[pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[nCmd]], nSts, bGetDefFuncCode );
 	}
 	return F_DEFAULT;
@@ -409,7 +409,7 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 		return const_cast<TCHAR*>( to_tchar(sName) );
 	}
 	else {
-		if (!CShareData::getInstance()->GetShareData()->m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
+		if (!GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (p = auto_strchr( sName, sKey[0] )) != NULL) {
 			// 欧文風、使用している文字をアクセスキーに
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
@@ -494,7 +494,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 */
 EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+	DLLSHAREDATA* pShareData = &GetDllShareData();
 	if( pShareData == NULL )
 		return F_DEFAULT;
 

@@ -103,7 +103,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			_stscanf( iniVer, _T("%u.%u.%u.%u"), &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
 		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
-		DLLSHAREDATA* pShareData = pcShare->GetShareData();
+		DLLSHAREDATA* pShareData = &GetDllShareData();
 		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
