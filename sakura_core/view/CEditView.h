@@ -245,7 +245,7 @@ protected:
 
 	//色分け
 public:
-	EColorIndexType GetColorIndex( const CLayout*, int, bool bPrev = false, CColorStrategy** ppStrategy = NULL, CColor_Found** ppStrategyFound = NULL );				/* 指定位置のColorIndexの取得 02/12/13 ai */
+	EColorIndexType GetColorIndex( const CLayout*, int, SColorStrategyInfo* pInfo, bool bPrev = false );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
 	void SetCurrentColor3( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
 	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
@@ -402,11 +402,11 @@ public:
 
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
-		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
-		const wchar_t*	pInsData,			// 挿入するデータ
-		CLogicInt		nInsDataLen,		// 挿入するデータの長さ
-		bool			bRedraw,
-		COpeBlk*		pcOpeBlk
+		const CLayoutRange&	sDelRange,			// 削除範囲。レイアウト単位。
+		const wchar_t*		pInsData,			// 挿入するデータ
+		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
+		bool				bRedraw,
+		COpeBlk*			pcOpeBlk
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。

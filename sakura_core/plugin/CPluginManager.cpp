@@ -117,7 +117,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 
 
 //新規プラグインを追加する(下請け)
-bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginDir\n"));
@@ -178,7 +178,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 
 
 //新規プラグインを追加する(下請け)Zip File
-bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginZip\n"));
@@ -214,7 +214,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 
 
 //Zipプラグインを導入する
-bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstring sZipFile, bool bInSearch )
+bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, bool bInSearch )
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Entry InstZipPlugin\n"));
@@ -255,7 +255,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstri
 }
 
 //Zipプラグインを導入する(下請け)
-bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, tstring sZipFile, tstring sDispName, bool bInSearch, bool& bCancel )
+bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, const tstring& sDispName, bool bInSearch, bool& bCancel )
 {
 	PluginRec*		plugin_table = common.m_sPlugin.m_PluginTable;
 	CZipFile		cZipFile;

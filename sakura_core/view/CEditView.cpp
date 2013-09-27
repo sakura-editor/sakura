@@ -2634,8 +2634,8 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 	@param[in] bSelect    範囲指定
 	@param[in] bBoxSelect 矩形選択
 	
-	@retval TRUE  指定位置または指定範囲内にテキストが存在しない
-			FALSE 指定位置または指定範囲内にテキストが存在する
+	@retval true  指定位置または指定範囲内にテキストが存在しない
+			false 指定位置または指定範囲内にテキストが存在する
 
 	@date 2008.08.03 nasukoji	新規作成
 */

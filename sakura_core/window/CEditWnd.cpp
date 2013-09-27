@@ -224,33 +224,6 @@ CEditWnd::CEditWnd()
 , m_posSaveAry( NULL )
 {
 	g_pcEditWnd=this;
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
-
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = NULL;
-	}
-	// 今のところ最大値は固定
-	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
-	m_nEditViewCount = 1;
-	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView(this);
-
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
-
-	//	Dec. 4, 2002 genta
-	InitMenubarMessageFont();
-
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
-
-	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
-	ClearMouseState();
-
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	CreateAccelTbl();
 }
 
 CEditWnd::~CEditWnd()
@@ -545,7 +518,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			// さらに、タイプを戻して画面を無効化だけしておく（何らかの原因で途中停止した場合にはもとのタイプ色で再描画されるように ← 例えばファイルサイズが大きすぎる警告を出すときなど）
 			// ※ 正攻法とはいえないかもしれないがあちこち手を入れることなく簡潔に済ませられるのでこうしておく
 			CTypeConfig cTypeOld, cTypeNew(-1);
-			cTypeOld = GetDocument().m_cDocType.GetDocumentType();	// 現在のタイプ
+			cTypeOld = GetDocument()->m_cDocType.GetDocumentType();	// 現在のタイプ
 			{
 				EditInfo ei, mruei;
 				CCommandLine::getInstance()->GetEditInfo( &ei );
@@ -564,7 +537,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 					}
 				}
 			}
-			GetDocument().m_cDocType.SetDocumentType( cTypeNew, true, true );	// 仮設定
+			GetDocument()->m_cDocType.SetDocumentType( cTypeNew, true, true );	// 仮設定
 
 			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
 			::SetWindowPos( GetHwnd(), sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
@@ -588,7 +561,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
 
 			// アイドリング開始時にその時点のタイプ別設定色で再描画されるようにしておく
-			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// タイプ戻し
+			GetDocument()->m_cDocType.SetDocumentType( cTypeOld, true, true );	// タイプ戻し
 			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化
 		}
 	}
@@ -626,10 +599,40 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
 HWND CEditWnd::Create(
-	int				nGroup			//!< [in] グループID
+	CImageListMgr*	pcIcons,	//!< [in] Image List
+	int				nGroup		//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = CShareData::getInstance()->GetShareData();
+
+	m_pCEditDoc = CEditApp::getInstance()->GetDocument();
+
+	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
+		m_pcEditViewArr[i] = NULL;
+	}
+	// 今のところ最大値は固定
+	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
+	m_nEditViewCount = 1;
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	m_pcEditViewArr[0] = new CEditView(this);
+
+	m_pcViewFont = new CViewFont(&GetLogfont());
+
+	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
+
+	//	Dec. 4, 2002 genta
+	InitMenubarMessageFont();
+
+	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+
+	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
+	ClearMouseState();
+
+	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	CreateAccelTbl();
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -667,7 +670,8 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::getInstance()->GetIcons() );
+	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );
+	m_cToolbar.Create( pcIcons );
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
@@ -682,7 +686,7 @@ HWND CEditWnd::Create(
 	m_cSplitterWnd.Create( G_AppInstance(), GetHwnd(), this );
 
 	/* ビュー */
-	GetView(0).Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), 0, TRUE  );
+	GetView(0).Create( m_cSplitterWnd.GetHwnd(), GetDocument(), 0, TRUE  );
 	GetView(0).OnSetFocus();
 
 	/* 子ウィンドウの設定 */
@@ -757,7 +761,7 @@ HWND CEditWnd::Create(
 	Timer_ONOFF( true );
 
 	//デフォルトのIMEモード設定
-	GetDocument().m_cDocEditor.SetImeMode( CDocTypeManager().GetTypeSetting(CTypeConfig(0)).m_nImeState );
+	GetDocument()->m_cDocEditor.SetImeMode( CDocTypeManager().GetTypeSetting(CTypeConfig(0)).m_nImeState );
 
 	return GetHwnd();
 }
@@ -773,7 +777,7 @@ void CEditWnd::OpenDocumentWhenStart(
 		::ShowWindow( GetHwnd(), SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		SLoadInfo	sLoadInfo = _sLoadInfo;
-		bool		bReadResult = GetDocument().m_cDocFileOperation.FileLoadWithoutAutoMacro(&sLoadInfo);	// 自動実行マクロは後で別の場所で実行される
+		bool		bReadResult = GetDocument()->m_cDocFileOperation.FileLoadWithoutAutoMacro(&sLoadInfo);	// 自動実行マクロは後で別の場所で実行される
 		if( !bReadResult ){
 			/* ファイルが既に開かれている */
 			if( sLoadInfo.bOpened ){
@@ -795,25 +799,25 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
 	if( nDocumentType.IsValid() ){
-		GetDocument().m_cDocType.SetDocumentType( nDocumentType, true );
+		GetDocument()->m_cDocType.SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
-		GetDocument().m_cDocType.LockDocumentType();
+		GetDocument()->m_cDocType.LockDocumentType();
 	}
 
 	// 文字コードの指定	2008/6/14 Uchi
 	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValid() ){
-		const STypeConfig& types = GetDocument().m_cDocType.GetDocumentAttribute();
+		const STypeConfig& types = GetDocument()->m_cDocType.GetDocumentAttribute();
 		ECodeType eDefaultCharCode = types.m_encoding.m_eDefaultCodetype;
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
 		}
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			GetDocument().SetDocumentEncoding( nCharCode, types.m_encoding.m_bDefaultBom );
-			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
+			GetDocument()->SetDocumentEncoding( nCharCode, types.m_encoding.m_bDefaultBom );
+			GetDocument()->m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
 		}
 		else{
-			GetDocument().SetDocumentEncoding( nCharCode, CCodeTypeName( nCharCode ).IsBomDefOn() );
-			GetDocument().m_cDocEditor.m_cNewLineCode = EOL_CRLF;
+			GetDocument()->SetDocumentEncoding( nCharCode, CCodeTypeName( nCharCode ).IsBomDefOn() );
+			GetDocument()->m_cDocEditor.m_cNewLineCode = EOL_CRLF;
 		}
 	}
 
@@ -822,7 +826,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 
 	if( nDocumentType.IsValid() ){
 		/* 設定変更を反映させる */
-		GetDocument().OnChangeSetting();	// <--- 内部に BlockingHook() 呼び出しがあるので溜まった描画がここで実行される
+		GetDocument()->OnChangeSetting();	// <--- 内部に BlockingHook() 呼び出しがあるので溜まった描画がここで実行される
 	}
 }
 
@@ -982,7 +986,7 @@ void CEditWnd::LayoutFuncKey( void )
 					bSizeBox = false;
 				}
 			}
-			m_CFuncKeyWnd.Open( G_AppInstance(), GetHwnd(), &GetDocument(), bSizeBox );
+			m_CFuncKeyWnd.Open( G_AppInstance(), GetHwnd(), GetDocument(), bSizeBox );
 		}
 	}else{
 		m_CFuncKeyWnd.Close();
@@ -1407,19 +1411,19 @@ LRESULT CEditWnd::DispatchEvent(
 			if( pnmh->code == NM_DBLCLK ){
 				LPNMMOUSE mp = (LPNMMOUSE) lParam;
 				if( mp->dwItemSpec == 6 ){	//	上書き/挿入
-					GetDocument().HandleCommand( F_CHGMOD_INS );
+					GetDocument()->HandleCommand( F_CHGMOD_INS );
 				}
 				else if( mp->dwItemSpec == 5 ){	//	マクロの記録開始・終了
-					GetDocument().HandleCommand( F_RECKEYMACRO );
+					GetDocument()->HandleCommand( F_RECKEYMACRO );
 				}
 				else if( mp->dwItemSpec == 1 ){	//	桁位置→行番号ジャンプ
-					GetDocument().HandleCommand( F_JUMP_DIALOG );
+					GetDocument()->HandleCommand( F_JUMP_DIALOG );
 				}
 				else if( mp->dwItemSpec == 3 ){	//	文字コード→各種コード
 					ShowCodeBox(GetHwnd());
 				}
 				else if( mp->dwItemSpec == 4 ){	//	文字コードセット→文字コードセット指定
-					GetDocument().HandleCommand( F_CHG_CHARSET );
+					GetDocument()->HandleCommand( F_CHG_CHARSET );
 				}
 			}
 			else if( pnmh->code == NM_RCLICK ){
@@ -1643,7 +1647,7 @@ LRESULT CEditWnd::DispatchEvent(
 		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 		/* 編集ファイル情報を格納 */
-		GetDocument().GetEditInfo( pfi );
+		GetDocument()->GetEditInfo( pfi );
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
@@ -1741,10 +1745,10 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 
 			//	Aug, 21, 2000 genta
-			GetDocument().m_cAutoSaveAgent.ReloadAutoSaveParam();
+			GetDocument()->m_cAutoSaveAgent.ReloadAutoSaveParam();
 
-			GetDocument().m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
-			GetDocument().OnChangeSetting();	// ビューに設定変更を反映させる
+			GetDocument()->m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
+			GetDocument()->OnChangeSetting();	// ビューに設定変更を反映させる
 
 			{	// アウトライン解析画面処理
 				bool bAnalyzed = FALSE;
@@ -1765,12 +1769,12 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			break;
 		case PM_CHANGESETTING_FONT:
-			GetDocument().OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
+			GetDocument()->OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
 			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
-					|| GetDocument().m_cDocType.GetDocumentType().GetIndex() == wParam ){
-				GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				GetDocument()->OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			}
 			break;
 		case PM_PRINTSETTING:
@@ -1832,7 +1836,7 @@ LRESULT CEditWnd::DispatchEvent(
 			*/
 			CLogicPoint* ppoCaret = m_pShareData->m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
 			CLayoutPoint ptCaretPos;
-			GetDocument().m_cLayoutMgr.LogicToLayout(
+			GetDocument()->m_cLayoutMgr.LogicToLayout(
 				*ppoCaret,
 				&ptCaretPos
 			);
@@ -1842,7 +1846,7 @@ LRESULT CEditWnd::DispatchEvent(
 			//       2007.08.22現在ではアウトライン解析ダイアログから桁位置0で呼び出される
 			//       パターンしかないので実用上特に問題は無い。
 			if( !bSelect ){
-				const CDocLine *pTmpDocLine = GetDocument().m_cDocLineMgr.GetLine( ppoCaret->GetY2() );
+				const CDocLine *pTmpDocLine = GetDocument()->m_cDocLineMgr.GetLine( ppoCaret->GetY2() );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) ptCaretPos.x--;
 				}
@@ -1864,7 +1868,7 @@ LRESULT CEditWnd::DispatchEvent(
 		*/
 		{
 			CLogicPoint* ppoCaret = m_pShareData->m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
-			GetDocument().m_cLayoutMgr.LayoutToLogic(
+			GetDocument()->m_cLayoutMgr.LayoutToLogic(
 				GetActiveView().GetCaret().GetCaretLayoutPos(),
 				ppoCaret
 			);
@@ -1872,7 +1876,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case MYWM_GETLINEDATA:	/* 行(改行単位)データの要求 */
-		pLine = GetDocument().m_cDocLineMgr.GetLine(CLogicInt(wParam))->GetDocLineStrWithEOL( &nLineLen );
+		pLine = GetDocument()->m_cDocLineMgr.GetLine(CLogicInt(wParam))->GetDocLineStrWithEOL( &nLineLen );
 		if( NULL == pLine ){
 			return 0;
 		}
@@ -1882,19 +1886,6 @@ LRESULT CEditWnd::DispatchEvent(
 			auto_memcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nLineLen );
 		}
 		return nLineLen;
-
-
-	case MYWM_ADDSTRING:
-		{
-			// TraceOutはMYWM_ADDSTRINGLEN_Wに変更。実質未使用
-			// 共有データ構造体verが変更されたら削除してもOK。それまでは同時起動用にとっておく
-			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
-			// 2010.05.11 Moca wcslenをwcsnlenに変更。m_sWorkBufferの大きさを超えないように
-			int addSize = wcsnlen( pWork, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
-			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, true, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
-			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
-		}
-		return 0L;
 
 	// 2010.05.11 Moca MYWM_ADDSTRINGLEN_Wを追加 NULセーフ
 	case MYWM_ADDSTRINGLEN_W:
@@ -2027,7 +2018,7 @@ LRESULT CEditWnd::DispatchEvent(
 int	CEditWnd::OnClose(HWND hWndFrom)
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	int nRet = GetDocument().OnFileClose();
+	int nRet = GetDocument()->OnFileClose();
 	if( !nRet ) return nRet;
 	// パラメータでハンドルを貰う様にしたので検索を削除	2013/4/9 Uchi
 	if (hWndFrom != 0 && IsSakuraMainWindow( hWndFrom )) {
@@ -2145,7 +2136,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			EditInfo checkEditInfo;
 			cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
 			SLoadInfo sLoadInfo(checkEditInfo.m_szPath, checkEditInfo.m_nCharCode, false);
-			GetDocument().m_cDocFileOperation.FileLoad( &sLoadInfo );	//	Oct.  9, 2004 genta 共通関数化
+			GetDocument()->m_cDocFileOperation.FileLoad( &sLoadInfo );	//	Oct.  9, 2004 genta 共通関数化
 		}
 		//最近使ったフォルダ
 		else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
@@ -2158,7 +2149,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 			//「ファイルを開く」ダイアログ
 			SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
-			CDocFileOperation& cDocOp = GetDocument().m_cDocFileOperation;
+			CDocFileOperation& cDocOp = GetDocument()->m_cDocFileOperation;
 			std::vector<std::tstring> files;
 			if( cDocOp.OpenFileDialog(GetHwnd(), pszFolderPath, &sLoadInfo, files) ){
 				sLoadInfo.cFilePath = files[0].c_str();
@@ -2181,7 +2172,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			// コマンドコードによる処理振り分け
 			//	May 19, 2006 genta 上位ビットを渡す
 			//	Jul. 7, 2007 genta 上位ビットを定数に
-			GetDocument().HandleCommand( (EFunctionCode)(wID | 0) );
+			GetDocument()->HandleCommand( (EFunctionCode)(wID | 0) );
 		}
 		break;
 	/* アクセラレータからのメッセージ */
@@ -2196,7 +2187,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 			);
-			GetDocument().HandleCommand( (EFunctionCode)(nFuncCode | FA_FROMKEYBOARD) );
+			GetDocument()->HandleCommand( (EFunctionCode)(nFuncCode | FA_FROMKEYBOARD) );
 		}
 		break;
 	}
@@ -2318,13 +2309,13 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		EFunctionCode	id = (EFunctionCode)::GetMenuItemID(hMenu, nPos);
 		/* 機能が利用可能か調べる */
 		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
-		if( ! IsFuncEnable( &GetDocument(), m_pShareData, id ) ){
+		if( ! IsFuncEnable( GetDocument(), m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_GRAYED;
 			::EnableMenuItem(hMenu, id, fuFlags);
 		}
 
 		/* 機能がチェック状態か調べる */
-		if( IsFuncChecked( &GetDocument(), m_pShareData, id ) ){
+		if( IsFuncChecked( GetDocument(), m_pShareData, id ) ){
 			fuFlags = MF_BYCOMMAND | MF_CHECKED;
 			::CheckMenuItem(hMenu, id, fuFlags);
 		}
@@ -2451,7 +2442,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			break;
 		case F_TOGGLE_KEY_SEARCH:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
 			break;
 		case F_WRAPWINDOWWIDTH:
 			{
@@ -2484,7 +2475,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 						auto_sprintf(
 							szBuf,
 							L"折り返し桁数: %d 桁（指定）",
-							GetDocument().m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
+							GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
 						);
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel, pszKey );
@@ -2755,17 +2746,17 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		else{
 			/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 			//	2005.06.24 Moca
-			if( GetDocument().IsAcceptLoad() ){
+			if( GetDocument()->IsAcceptLoad() ){
 				/* ファイル読み込み */
 				SLoadInfo sLoadInfo(szFile, CODE_AUTODETECT, false);
-				GetDocument().m_cDocFileOperation.FileLoad(&sLoadInfo);
+				GetDocument()->m_cDocFileOperation.FileLoad(&sLoadInfo);
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
 				if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
 					/* ファイル読み込み */
 					SLoadInfo sLoadInfo(szFile, CODE_AUTODETECT, false);
-					GetDocument().m_cDocFileOperation.FileCloseOpen(sLoadInfo);
+					GetDocument()->m_cDocFileOperation.FileCloseOpen(sLoadInfo);
 				}
 				else{
 					/* 編集ウィンドウの上限チェック */
@@ -2947,7 +2938,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		/* 現在の印刷設定 */
 		m_pPrintPreview->SetPrintSetting(
 			&m_pShareData->m_PrintSettingArr[
-				GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting]
+				GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting]
 		);
 
 		//	プリンタの情報を取得。
@@ -3310,13 +3301,13 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 				ReleaseCapture();
 				m_IconClicked = icNone;
 
-				if(GetDocument().m_cDocFile.GetFilePathClass().IsValidPath())
+				if(GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
 				{
 					// 2010.08.22 Moca C:\temp.txt などのtopのファイルがD&Dできないバグの修正
 					CNativeW cmemTitle;
 					CNativeW cmemDir;
-					cmemTitle = to_wchar(GetDocument().m_cDocFile.GetFileName());
-					cmemDir   = to_wchar(GetDocument().m_cDocFile.GetFilePathClass().GetDirPath().c_str());
+					cmemTitle = to_wchar(GetDocument()->m_cDocFile.GetFileName());
+					cmemDir   = to_wchar(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str());
 
 					IDataObject *DataObject;
 					IMalloc *Malloc;
@@ -3347,7 +3338,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 								F.tymed    = TYMED_HGLOBAL;
 
 								STGMEDIUM M;
-								const wchar_t* pFilePath = to_wchar(GetDocument().m_cDocFile.GetFilePath());
+								const wchar_t* pFilePath = to_wchar(GetDocument()->m_cDocFile.GetFilePath());
 								int Len = wcslen(pFilePath);
 								M.tymed          = TYMED_HGLOBAL;
 								M.pUnkForRelease = NULL;
@@ -3493,7 +3484,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	int					nCurrentPrintSetting;
 	int					nLineNumberColumns;
 
-	nCurrentPrintSetting = GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting;
+	nCurrentPrintSetting = GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting;
 	if( m_pPrintPreview ){
 		nLineNumberColumns = GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(); // 印刷プレビュー時は文書の桁数 2013.5.10 aroka
 	}else{
@@ -3511,17 +3502,17 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 
 	if( TRUE == bRes ){
 		/* 現在選択されているページ設定の番号が変更されたか */
-		if( GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
+		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
 		{
 			/* 変更フラグ(タイプ別設定) */
-			GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
+			GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
 		}
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		//	印刷プレビュー時のみ。
 		if ( m_pPrintPreview ){
 			/* 現在の印刷設定 */
-			// m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
+			// m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
 
 			/* 印刷プレビュー スクロールバー初期化 */
 			//m_pPrintPreview->InitPreviewScrollBar();
@@ -4082,7 +4073,7 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 	// 機能文字列の取得 -> tmp -> wszBuf
 	WCHAR tmp[256];
 	size_t nLen;
-	GetDocument().m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) );
+	GetDocument()->m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) );
 	nLen = _wcstotcs(wszBuf, tmp, nBufCount);
 
 	// 機能に対応するキー名の取得(複数)
@@ -4130,21 +4121,21 @@ void CEditWnd::OnEditTimer( void )
 	//	Aug. 29, 2003 wmlhq, ryoji
 	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
 		// ファイルのタイムスタンプのチェック処理
-		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp();
+		GetDocument()->m_cAutoReloadAgent.CheckFileTimeStamp();
 
 #if 0	// 2011.02.11 ryoji 書込禁止の監視を廃止（復活させるなら「更新の監視」付随ではなく別オプションにしてほしい）
 		// ファイル書込可能のチェック処理
-		if(GetDocument().m_cAutoReloadAgent._ToDoChecking()){
-			bool bOld = GetDocument().m_cDocLocker.IsDocWritable();
-			GetDocument().m_cDocLocker.CheckWritable(false);
-			if(bOld != GetDocument().m_cDocLocker.IsDocWritable()){
+		if(GetDocument()->m_cAutoReloadAgent._ToDoChecking()){
+			bool bOld = GetDocument()->m_cDocLocker.IsDocWritable();
+			GetDocument()->m_cDocLocker.CheckWritable(false);
+			if(bOld != GetDocument()->m_cDocLocker.IsDocWritable()){
 				this->UpdateCaption();
 			}
 		}
 #endif
 	}
 
-	GetDocument().m_cAutoSaveAgent.CheckAutoSave();
+	GetDocument()->m_cAutoSaveAgent.CheckAutoSave();
 }
 
 
@@ -4193,7 +4184,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
 			m_pcEditViewArr[i] = new CEditView(this);
-			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), &GetDocument(), i, FALSE );
+			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE );
 		}
 		m_nEditViewCount = nViewCount;
 
@@ -4418,8 +4409,8 @@ BOOL CEditWnd::WrapWindowWidth( int nPane )
 {
 	// 右端で折り返す
 	CLayoutInt nWidth = GetView(nPane).ViewColNumToWrapColNum( GetView(nPane).GetTextArea().m_nViewColNum );
-	if( GetDocument().m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
-		ChangeLayoutParam( false, GetDocument().m_cLayoutMgr.GetTabSpace(), nWidth );
+	if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
+		ChangeLayoutParam( false, GetDocument()->m_cLayoutMgr.GetTabSpace(), nWidth );
 		return TRUE;
 	}
 	return FALSE;
@@ -4433,7 +4424,7 @@ BOOL CEditWnd::UpdateTextWrap( void )
 {
 	// この関数はコマンド実行ごとに処理の最終段階で利用する
 	// （アンドゥ登録＆全ビュー更新のタイミング）
-	if( GetDocument().m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+	if( GetDocument()->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
 		BOOL bWrap = WrapWindowWidth( 0 );	// 右端で折り返す
 		if( bWrap ){
 			// WrapWindowWidth() で追加した更新リージョンで画面更新する
@@ -4470,7 +4461,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 	CLogicPointEx* posSave = SavePhysPosOfAllView();
 
 	//	レイアウトの更新
-	GetDocument().m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
+	GetDocument()->m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
 
 	//	座標の復元
 	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
@@ -4484,7 +4475,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 			GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
-	if( !GetDocument().m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
+	if( !GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 		GetActiveView().GetCaret().ShowCaretPosInfo();	// 2009.07.25 ryoji
 	}
 
@@ -4515,7 +4506,7 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0),this->GetView(i).m_pcTextArea->GetViewTopLine());
-		const CLayout* layoutLine = GetDocument().m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());
+		const CLayout* layoutLine = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());
 		if( layoutLine ){
 			CLogicInt nLineCenter = layoutLine->GetLogicOffset() + layoutLine->GetLengthWithoutEOL() / 2;
 			pptPosArray[i * NUM_OF_POS + 0].x = nLineCenter;
@@ -4526,30 +4517,30 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 		}
 		pptPosArray[i * NUM_OF_POS + 0].ext = CLayoutInt(0);
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 1]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 2]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 3]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 4]
 			);
 		}
-		GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+		GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
 			this->GetView(i).GetCaret().GetCaretLayoutPos(),
 			&pptPosArray[i * NUM_OF_POS + 5]
 		);
@@ -4573,38 +4564,38 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint tmp;
-		GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+		GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 			pptPosArray[i * NUM_OF_POS + 0],
 			&tmp
 		);
 		this->GetView(i).m_pcTextArea->SetViewTopLine(tmp.GetY2());
 
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 1],
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFromPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 2],
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetToPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 3],
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetFromPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 4],
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetToPointer()
 			);
 		}
 		CLayoutPoint ptPosXY;
-		GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+		GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 			pptPosArray[i * NUM_OF_POS + 5],
 			&ptPosXY
 		);
@@ -4614,15 +4605,6 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 	}
 	GetActiveView().GetCaret().ShowCaretPosInfo();
 	delete[] pptPosArray;
-}
-
-CEditDoc& CEditWnd::GetDocument()
-{
-	return CEditApp::getInstance()->GetDocument();
-}
-const CEditDoc& CEditWnd::GetDocument() const
-{
-	return CEditApp::getInstance()->GetDocument();
 }
 
 /*!
@@ -4671,7 +4653,7 @@ void CEditWnd::CreateAccelTbl( void )
 */
 void CEditWnd::DeleteAccelTbl( void )
 {
-	m_hAccel = m_pShareData->m_sHandles.m_hAccel;
+	m_hAccel = NULL;
 
 	if( m_hAccelWine ){
 		::DestroyAcceleratorTable( m_hAccelWine );
@@ -4709,33 +4691,33 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 
 const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 {
-	if( bTempSetting && GetDocument().m_blfCurTemp ){
-		return GetDocument().m_lfCur;
+	if( bTempSetting && GetDocument()->m_blfCurTemp ){
+		return GetDocument()->m_lfCur;
 	}
-	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
-		return GetDocument().m_cDocType.GetDocumentAttribute().m_lf;
+		return GetDocument()->m_cDocType.GetDocumentAttribute().m_lf;
 	}
 	return m_pShareData->m_Common.m_sView.m_lf;
 }
 
 int CEditWnd::GetFontPointSize(bool bTempSetting)
 {
-	if( bTempSetting && GetDocument().m_blfCurTemp ){
-		return GetDocument().m_nPointSizeCur;
+	if( bTempSetting && GetDocument()->m_blfCurTemp ){
+		return GetDocument()->m_nPointSizeCur;
 	}
-	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
-		return GetDocument().m_cDocType.GetDocumentAttribute().m_nPointSize;
+		return GetDocument()->m_cDocType.GetDocumentAttribute().m_nPointSize;
 	}
 	return m_pShareData->m_Common.m_sView.m_nPointSize;
 }
 ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 {
-	if( GetDocument().m_blfCurTemp ){
+	if( GetDocument()->m_blfCurTemp ){
 		return CWM_CACHE_LOCAL;
 	}
-	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	bool bUseTypeFont = GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
 		return CWM_CACHE_LOCAL;
 	}

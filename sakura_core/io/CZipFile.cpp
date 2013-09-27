@@ -66,7 +66,7 @@ CZipFile::~CZipFile() {
 
 
 // Zip File名 設定
-bool CZipFile::SetZip(const std::tstring sZipPath)
+bool CZipFile::SetZip(const std::tstring& sZipPath)
 {
 	HRESULT			hr;
 	VARIANT			var;
@@ -94,7 +94,7 @@ bool CZipFile::SetZip(const std::tstring sZipPath)
 
 
 // ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
-bool CZipFile::ChkPluginDef(const std::tstring sDefFile, std::tstring& sFolderName)
+bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName)
 {
 	HRESULT			hr;
 	VARIANT			vari;

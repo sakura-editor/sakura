@@ -44,7 +44,7 @@ EFunctionCode CPlug::GetFunctionCode() const{
 // CPlugin メンバ関数
 
 //コンストラクタ
-CPlugin::CPlugin( tstring sBaseDir )
+CPlugin::CPlugin( const tstring& sBaseDir )
 	: m_sBaseDir( sBaseDir )
 {
 	m_nCommandCount = 0;

@@ -46,65 +46,63 @@ bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
 	return (nPos==0 || !IS_KEYWORD_CHAR(cStr.At(nPos-1)));
 }
 
-/*! 色の切り替え
+/*! 色の切り替え判定
 	@retval true 色の変更あり
-	@retval false 色の変更/なし
-
-	@date 2013.05.11 novice 実際の変更は呼び出し側で行う
+	@retval false 色の変更なし
 */
-bool SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr, CColor3Setting *pcColor)
+bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 {
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
-	pool->SetCurrentView(this->pcView);
+	pool->SetCurrentView(m_pcView);
 	CColor_Found*  pcFound  = pool->GetFoundStrategy();
 	CColor_Select* pcSelect = pool->GetSelectStrategy();
 	bool bChange = false;
 
 	//選択範囲色終了
-	if(this->pStrategySelect){
-		if(this->pStrategySelect->EndColor(cLineStr,this->GetPosInLogic())){
-			this->pStrategySelect = NULL;
+	if(m_pStrategySelect){
+		if(m_pStrategySelect->EndColor(cLineStr,this->GetPosInLogic())){
+			m_pStrategySelect = NULL;
 			bChange = true;
 		}
 	}
 	//選択範囲色開始
-	if(!this->pStrategySelect){
-		if(pcSelect->BeginColorEx(cLineStr,this->GetPosInLogic(), this->pDispPos->GetLayoutLineRef(), this->GetLayout())){
-			this->pStrategySelect = pcSelect;
+	if(!m_pStrategySelect){
+		if(pcSelect->BeginColorEx(cLineStr,this->GetPosInLogic(), m_pDispPos->GetLayoutLineRef(), this->GetLayout())){
+			m_pStrategySelect = pcSelect;
 			bChange = true;
 		}
 	}
 
 	//検索色終了
-	if(this->pStrategyFound){
-		if(this->pStrategyFound->EndColor(cLineStr,this->GetPosInLogic())){
-			this->pStrategyFound = NULL;
+	if(m_pStrategyFound){
+		if(m_pStrategyFound->EndColor(cLineStr,this->GetPosInLogic())){
+			m_pStrategyFound = NULL;
 			bChange = true;
 		}
 	}
 
 	//検索色開始
-	if(!this->pStrategyFound){
+	if(!m_pStrategyFound){
 		if(pcFound->BeginColor(cLineStr,this->GetPosInLogic())){
-			this->pStrategyFound = pcFound;
+			m_pStrategyFound = pcFound;
 			bChange = true;
 		}
 	}
 
 	//色終了
-	if(this->pStrategy){
-		if(this->pStrategy->EndColor(cLineStr,this->GetPosInLogic())){
-			this->pStrategy = NULL;
+	if(m_pStrategy){
+		if(m_pStrategy->EndColor(cLineStr,this->GetPosInLogic())){
+			m_pStrategy = NULL;
 			bChange = true;
 		}
 	}
 
 	//色開始
-	if(!this->pStrategy){
+	if(!m_pStrategy){
 		int size = pool->GetStrategyCount();
 		for(int i = 0; i < size; i++ ){
 			if(pool->GetStrategy(i)->BeginColor(cLineStr,this->GetPosInLogic())){
-				this->pStrategy = pool->GetStrategy(i);
+				m_pStrategy = pool->GetStrategy(i);
 				bChange = true;
 				break;
 			}
@@ -112,47 +110,47 @@ bool SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr, CColor3Settin
 	}
 
 	//カーソル行背景色
-	CTypeSupport cCaretLineBg(this->pcView, COLORIDX_CARETLINEBG);
+	CTypeSupport cCaretLineBg(m_pcView, COLORIDX_CARETLINEBG);
 	if( cCaretLineBg.IsDisp() ){
 		if(m_colorIdxBackLine==COLORIDX_CARETLINEBG){
-			if( this->pDispPos->GetLayoutLineRef() != this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
+			if( m_pDispPos->GetLayoutLineRef() != m_pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
 				m_colorIdxBackLine = COLORIDX_TEXT;
 				bChange = true;
 			}
 		}else{
-			if( this->pDispPos->GetLayoutLineRef() == this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
+			if( m_pDispPos->GetLayoutLineRef() == m_pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
 				m_colorIdxBackLine = COLORIDX_CARETLINEBG;
 				bChange = true;
 			}
 		}
 	}
 
-	// 色決定
-	if( bChange ){
-		pcColor->eColorIndex = GetCurrentColor();
-		pcColor->eColorIndex2 = GetCurrentColor2();
-		pcColor->eColorIndexBg = m_colorIdxBackLine;
-	}
-
 	return bChange;
 }
 
-EColorIndexType SColorStrategyInfo::GetCurrentColor() const
-{
-	if(pStrategySelect){
-		return pStrategySelect->GetStrategyColor();
-	}else if(pStrategyFound){
-		return pStrategyFound->GetStrategyColor();
-	}
-	return pStrategy->GetStrategyColorSafe();
-}
+/*! 色の切り替え
 
-EColorIndexType SColorStrategyInfo::GetCurrentColor2() const
+	@date 2013.05.11 novice 実際の変更は呼び出し側で行う
+*/
+void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 {
-	if(pStrategyFound){
-		return pStrategyFound->GetStrategyColor();
+	if(m_pStrategySelect){
+		m_cIndex.eColorIndex = m_pStrategySelect->GetStrategyColor();
+	}else if(m_pStrategyFound){
+		m_cIndex.eColorIndex = m_pStrategyFound->GetStrategyColor();
+	}else{
+		m_cIndex.eColorIndex = m_pStrategy->GetStrategyColorSafe();
 	}
-	return pStrategy->GetStrategyColorSafe();
+
+	if(m_pStrategyFound){
+		m_cIndex.eColorIndex2 = m_pStrategyFound->GetStrategyColor();
+	}else{
+		m_cIndex.eColorIndex2 = m_pStrategy->GetStrategyColorSafe();
+	}
+
+	m_cIndex.eColorIndexBg = m_colorIdxBackLine;
+
+	*pcColor = m_cIndex;
 }
 
 

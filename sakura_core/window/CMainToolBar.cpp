@@ -31,6 +31,7 @@
 #include "util/os.h"
 #include "util/tchar_receive.h"
 #include "util/window.h"
+#include "uiparts/CImageListMgr.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -38,7 +39,13 @@ CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 , m_hwndReBar(NULL)
 , m_hwndToolBar(NULL)
 , m_hwndSearchBox(NULL)
+, m_pcIcons(NULL)
 {
+}
+
+void CMainToolBar::Create( CImageListMgr* pcIcons )
+{
+	m_pcIcons = pcIcons;
 }
 
 /*! 検索ボックスでの処理 */
@@ -196,7 +203,7 @@ void CMainToolBar::CreateToolBar( void )
 		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
-		CEditApp::getInstance()->GetIcons().SetToolBarImages( m_hwndToolBar );
+		m_pcIcons->SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
@@ -449,11 +456,11 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
 			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
 
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - CEditApp::getInstance()->GetIcons().cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
+			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_pcIcons->cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			CEditApp::getInstance()->GetIcons().Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
+			m_pcIcons->Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
 				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}
@@ -505,14 +512,14 @@ void CMainToolBar::UpdateToolbar( void )
 			Toolbar_EnableButton(
 				m_hwndToolBar,
 				tbb.idCommand,
-				IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
+				IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 
 			// 機能がチェック状態か調べる
 			Toolbar_CheckButton(
 				m_hwndToolBar,
 				tbb.idCommand,
-				IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
+				IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 		}
 	}

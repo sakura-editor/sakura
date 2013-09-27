@@ -60,10 +60,10 @@ bool CFigure_Eol::Match(const wchar_t* pText) const
 //$$ 高速化可能。
 bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 {
-	CEditView* pcView = pInfo->pcView;
+	CEditView* pcView = pInfo->m_pcView;
 
 	// 改行取得
-	const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef();
+	const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
 	CEol cEol = pcLayout->GetLayoutEol();
 	if(cEol.GetLen()){
 		// CFigureSpace::DrawImp_StyleSelectもどき。選択・検索色を優先する
@@ -100,21 +100,21 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 			crText = pcText->GetTextColor();
 			crBack = pcBack->GetBackColor();
 		}
-		pInfo->gr.PushTextForeColor(crText);
-		pInfo->gr.PushTextBackColor(crBack);
+		pInfo->m_gr.PushTextForeColor(crText);
+		pInfo->m_gr.PushTextBackColor(crBack);
 		bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 		SFONT sFont;
 		sFont.m_sFontAttr.m_bBoldFont = cSpaceType.IsBoldFont() || currentStyle.IsBoldFont();
 		sFont.m_sFontAttr.m_bUnderLine = cSpaceType.HasUnderLine();
-		sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
-		pInfo->gr.PushMyFont(sFont);
+		sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+		pInfo->m_gr.PushMyFont(sFont);
 
-		DispPos sPos(*pInfo->pDispPos);	// 現在位置を覚えておく
-		_DispEOL(pInfo->gr, pInfo->pDispPos, cEol, pcView, bTrans);
+		DispPos sPos(*pInfo->m_pDispPos);	// 現在位置を覚えておく
+		_DispEOL(pInfo->m_gr, pInfo->m_pDispPos, cEol, pcView, bTrans);
 		DrawImp_StylePop(pInfo);
 		DrawImp_DrawUnderline(pInfo, sPos);
 
-		pInfo->nPosInLogic+=cEol.GetLen();
+		pInfo->m_nPosInLogic+=cEol.GetLen();
 	}
 
 	return true;

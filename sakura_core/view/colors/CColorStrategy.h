@@ -87,44 +87,50 @@ struct CColor3Setting {
 };
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo() : sDispPosBegin(0,0), pStrategy(NULL), pStrategyFound(NULL), pStrategySelect(NULL), m_colorIdxBackLine(COLORIDX_TEXT) {}
+	SColorStrategyInfo() : m_sDispPosBegin(0,0), m_pStrategy(NULL), m_pStrategyFound(NULL), m_pStrategySelect(NULL), m_colorIdxBackLine(COLORIDX_TEXT) {
+		m_cIndex.eColorIndex = COLORIDX_TEXT;
+		m_cIndex.eColorIndex2 = COLORIDX_TEXT;
+		m_cIndex.eColorIndexBg = COLORIDX_TEXT;
+	}
 
 	//参照
-	CEditView*	pcView;
-	CGraphics	gr;	//(SColorInfoでは未使用)
+	CEditView*	m_pcView;
+	CGraphics	m_gr;	//(SColorInfoでは未使用)
 
 	//スキャン位置
-	LPCWSTR			pLineOfLogic;
-	CLogicInt		nPosInLogic;
+	LPCWSTR			m_pLineOfLogic;
+	CLogicInt		m_nPosInLogic;
 
 	//描画位置
-	DispPos*		pDispPos;
-	DispPos			sDispPosBegin;
+	DispPos*		m_pDispPos;
+	DispPos			m_sDispPosBegin;
 
 	//色変え
-	CColorStrategy*		pStrategy;
-	CColor_Found*		pStrategyFound;
-	CColor_Select*		pStrategySelect;
+	CColorStrategy*		m_pStrategy;
+	CColor_Found*		m_pStrategyFound;
+	CColor_Select*		m_pStrategySelect;
 	EColorIndexType		m_colorIdxBackLine;
+	CColor3Setting		m_cIndex;
 
 	//! 色の切り替え
-	bool DoChangeColor(const CStringRef& cLineStr, CColor3Setting *pcColor);
-	EColorIndexType GetCurrentColor() const;
-	EColorIndexType GetCurrentColor2() const;
-	EColorIndexType GetCurrentColorBg() const{ return m_colorIdxBackLine; }
+	bool CheckChangeColor(const CStringRef& cLineStr);
+	void DoChangeColor(CColor3Setting *pcColor);
+	EColorIndexType GetCurrentColor() const { return m_cIndex.eColorIndex; }
+	EColorIndexType GetCurrentColor2() const { return m_cIndex.eColorIndex2; }
+	EColorIndexType GetCurrentColorBg() const{ return m_cIndex.eColorIndexBg; }
 
 	//! 現在のスキャン位置
 	CLogicInt GetPosInLogic() const
 	{
-		return nPosInLogic;
+		return m_nPosInLogic;
 	}
 	const CDocLine* GetDocLine() const
 	{
-		return pDispPos->GetLayoutRef()->GetDocLineRef();
+		return m_pDispPos->GetLayoutRef()->GetDocLineRef();
 	}
 	const CLayout* GetLayout() const
 	{
-		return pDispPos->GetLayoutRef();
+		return m_pDispPos->GetLayoutRef();
 	}
 };
 

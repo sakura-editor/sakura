@@ -152,10 +152,10 @@ CPropCommon::~CPropCommon()
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CMenuDrawer* pMenuDrawer )
+void CPropCommon::Create( HWND hwndParent, CImageListMgr* pcIcons, CMenuDrawer* pMenuDrawer )
 {
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
-	m_pcIcons = cIcons;
+	m_pcIcons = pcIcons;
 
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
@@ -193,14 +193,13 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 {
 	INT_PTR				nRet;
 	int					nIdx;
-	int					i;
 
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
-	static ComPropSheetInfo ComPropSheetInfoList[] = {
+	static const ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ LSW( STR_PROPCOMMON_GENERAL ),	IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
 		{ LSW( STR_PROPCOMMON_WINDOW ),		IDD_PROP_WIN,		CPropWin::DlgProc_page },
 		{ LSW( STR_PROPCOMMON_MAINMENU ),	IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
@@ -221,20 +220,20 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 		{ LSW( STR_PROPCOMMON_PLUGIN ),		IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
-	PROPSHEETPAGE		psp[32];
-	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
+	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
+	for( nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++ ){
+
 		PROPSHEETPAGE *p = &psp[nIdx];
 		memset_raw( p, 0, sizeof_raw( *p ) );
 		p->dwSize      = sizeof_raw( *p );
 		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
 		p->hInstance   = CSelectLang::getLangRsrcInstance();
-		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
+		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[nIdx].resId );
 		p->pszIcon     = NULL;
-		p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
-		p->pszTitle    = ComPropSheetInfoList[i].sTabname.c_str();
+		p->pfnDlgProc  = ComPropSheetInfoList[nIdx].DProc;
+		p->pszTitle    = ComPropSheetInfoList[nIdx].sTabname.c_str();
 		p->lParam      = (LPARAM)this;
 		p->pfnCallback = NULL;
-		nIdx++;
 	}
 	//	To Here Jun. 2, 2001 genta
 
