@@ -697,18 +697,6 @@ LRESULT CEditDoc::DispatchEvent(
 	}
 }
 
-
-
-void CEditDoc::OnMove( int x, int y, int nWidth, int nHeight )
-{
-	::MoveWindow( m_pcEditWnd->m_cSplitterWnd.m_hWnd, x, y, nWidth, nHeight, TRUE );
-
-	return;
-}
-
-
-
-
 /*! テキストが選択されているか */
 BOOL CEditDoc::IsTextSelected( void )
 {

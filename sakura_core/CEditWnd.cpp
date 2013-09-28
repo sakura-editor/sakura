@@ -3557,20 +3557,24 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 
 	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
 	{
-		m_cEditDoc.OnMove(
+		::MoveWindow(
+			m_cSplitterWnd.m_hWnd,
 			0,
 			nToolBarHeight + nFuncKeyWndHeight + nTabWndHeight,	//@@@ 2003.05.31 MIK
 			cx,
-			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
+			TRUE
 		);
 	}
 	else
 	{
-		m_cEditDoc.OnMove(
+		::MoveWindow(
+			m_cSplitterWnd.m_hWnd,
 			0,
 			nToolBarHeight + nTabWndHeight,
 			cx,
-			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight	//@@@ 2003.05.31 MIK
+			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
+			TRUE
 		);
 	}
 	//@@@ To 2003.05.31 MIK
