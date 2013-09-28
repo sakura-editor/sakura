@@ -88,17 +88,16 @@ static const TCHAR * MakeDispLabel( SMainMenuWork* );
 // 特別機能
 struct SSpecialFunc	{
 	EFunctionCode	m_nFunc;		// Function
-	const WCHAR* 	m_sName;		// 名前
+	int			 	m_nNameId;		// 名前
 };
 
-extern const	TCHAR*	NAME_SPECIAL_TOP	= _T("特別機能");
 extern const	SSpecialFunc	sSpecialFuncs[] = {
-		{F_WINDOW_LIST,				L"ウィンドウリスト",},
-		{F_FILE_USED_RECENTLY,		L"最近使ったファイル",},
-		{F_FOLDER_USED_RECENTLY,	L"最近使ったフォルダ",},
-		{F_CUSTMENU_LIST,			L"カスタムメニューリスト",},
-		{F_USERMACRO_LIST,			L"登録済みマクロリスト",},
-		{F_PLUGIN_LIST,				L"プラグインコマンドリスト",},
+		{F_WINDOW_LIST,				STR_SPECIAL_FUNC_WINDOW },
+		{F_FILE_USED_RECENTLY,		STR_SPECIAL_FUNC_RECENT_FILE },
+		{F_FOLDER_USED_RECENTLY,	STR_SPECIAL_FUNC_RECENT_FOLDER },
+		{F_CUSTMENU_LIST,			STR_SPECIAL_FUNC_CUST_MENU },
+		{F_USERMACRO_LIST,			STR_SPECIAL_FUNC_MACRO },
+		{F_PLUGIN_LIST,				STR_SPECIAL_FUNC_PLUGIN_CMD },
 };
 extern const int nSpecialFuncsCount = (int)_countof(sSpecialFuncs);
 
@@ -402,7 +401,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndListFunk );
 					for (i = 0; i < _countof(sSpecialFuncs); i++) {
-						List_AddString( hwndListFunk, sSpecialFuncs[i].m_sName );
+						List_AddString( hwndListFunk, LSW( sSpecialFuncs[i].m_nNameId ) );
 					}
 				}
 				else {
@@ -506,7 +505,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							auto_strcpy( szLabel, sSpecialFuncs[nIdxFunc].m_sName );
+							auto_strcpy( szLabel, LSW( sSpecialFuncs[nIdxFunc].m_nNameId ) );
 							eFuncCode = sSpecialFuncs[nIdxFunc].m_nFunc;
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -885,7 +884,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 	m_cLookup.SetCategory2Combo( hwndCombo );
 
 	// 特別機能追加
-	nSpecialFuncsNum = Combo_AddString( hwndCombo, NAME_SPECIAL_TOP );
+	nSpecialFuncsNum = Combo_AddString( hwndCombo, LS( STR_SPECIAL_FUNC ) );
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCombo, 0 );
@@ -940,7 +939,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				if (pFuncWk->m_sName.empty()) {
 					for (j = 0; j < _countof(sSpecialFuncs); j++) {
 						if (pcFunc->m_nFunc == sSpecialFuncs[j].m_nFunc) {
-							pFuncWk->m_sName = RemoveAmpersand( sSpecialFuncs[j].m_sName );
+							pFuncWk->m_sName = RemoveAmpersand( LSW( sSpecialFuncs[j].m_nNameId ) );
 							break;
 						}
 					}

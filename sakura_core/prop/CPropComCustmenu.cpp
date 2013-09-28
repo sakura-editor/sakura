@@ -31,9 +31,8 @@ using namespace std;
 // 特別機能
 struct SSpecialFunc	{
 	EFunctionCode	m_nFunc;		// Function
-	const WCHAR* 	m_sName;		// 名前
+	int			 	m_nNameId;		// 名前
 };
-extern const	TCHAR*	NAME_SPECIAL_TOP;
 extern const	SSpecialFunc	sSpecialFuncs[];
 extern const int nSpecialFuncsCount;
 
@@ -71,7 +70,7 @@ static bool SetSpecialFuncName(EFunctionCode code, wchar_t *ptr)
 	if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
 		for( int k = 0; k < nSpecialFuncsCount; k++ ){
 			if( sSpecialFuncs[k].m_nFunc == code ){
-				auto_strcpy( ptr, sSpecialFuncs[k].m_sName );
+				auto_strcpy( ptr, LSW( sSpecialFuncs[k].m_nNameId ) );
 				return true;
 			}
 		}
@@ -314,7 +313,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndLIST_FUNC );
 					for (i = 0; i < nSpecialFuncsCount; i++) {
-						List_AddString( hwndLIST_FUNC, sSpecialFuncs[i].m_sName );
+						List_AddString( hwndLIST_FUNC, LS( sSpecialFuncs[i].m_nNameId ) );
 					}
 				}
 				else {
@@ -655,7 +654,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
 	// 特別機能追加
-	nSpecialFuncsNum = Combo_AddString( hwndCombo, NAME_SPECIAL_TOP );
+	nSpecialFuncsNum = Combo_AddString( hwndCombo, LS( STR_SPECIAL_FUNC ) );
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある

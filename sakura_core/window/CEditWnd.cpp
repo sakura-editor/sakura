@@ -3639,12 +3639,12 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	if ( cMRUFolder.MenuLength() > 0 )
 	{
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, _T("最近使ったフォルダ"),  _T("") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, LS( STR_SPECIAL_FUNC_RECENT_FILE ),  _T("") );
 	}
 	else 
 	{
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp, _T("最近使ったフォルダ"),  _T("") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp, LS( STR_SPECIAL_FUNC_RECENT_FOLDER ),  _T("") );
 	}
 
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
