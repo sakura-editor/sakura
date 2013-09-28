@@ -46,11 +46,6 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
-/*
-||	Singleton•—
-*/
-CShareData* CShareData::_instance = NULL;
-
 //	CShareData_new2.cpp‚Æ“‡
 //@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®
 CShareData::CShareData()
@@ -88,9 +83,6 @@ CShareData::~CShareData()
 bool CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
-
-	if (CShareData::_instance == NULL)	//	Singleton•—
-		CShareData::_instance = this;
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
