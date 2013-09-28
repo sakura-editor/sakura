@@ -469,6 +469,8 @@ void CAppNodeManager::ResetGroupId()
 
 	@warning この関数はm_pEditArr内の要素へのポインタを返す．
 	m_pEditArrが変更された後ではアクセスしないよう注意が必要．
+
+	@note NULLを返す場合があるので戻り値のチェックが必要です
 */
 EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 {
