@@ -51,25 +51,13 @@ struct DLLSHAREDATA;
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonÇ»Ç«ÇCShareDataÇ©ÇÁCMenuDrawerÇ÷à⁄ìÆÇµÇΩÇ±Ç∆Ç…ÇÊÇÈèCê≥ÅB
 */
-class CShareData
+class CShareData : public TSingleton<CShareData>
 {
-public:
-	/*
-	||	Singletonïó
-	*/
-	static CShareData* getInstance()
-	{
-		return _instance;
-	}
-
-public:
-	/*
-	||  Constructors
-	*/
+	friend class TSingleton<CShareData>;
 	CShareData();
 	~CShareData();
 
-
+public:
 	/*
 	||  Attributes & Operations
 	*/
@@ -107,9 +95,6 @@ protected:
 	void InitToolButtons(DLLSHAREDATA*);
 	void InitTypeConfigs(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
-
-private:
-	static CShareData* _instance;
 
 private:
 	HANDLE			m_hFileMap;

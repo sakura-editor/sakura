@@ -35,6 +35,7 @@ CProcess::CProcess(
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
+	m_pcShareData = CShareData::getInstance();
 }
 
 /*!
@@ -45,7 +46,7 @@ CProcess::CProcess(
 bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
-	if( !m_cShareData.InitShareData() ){
+	if( !GetShareData().InitShareData() ){
 		//	適切なデータを得られなかった
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
 			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
