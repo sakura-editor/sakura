@@ -3995,6 +3995,14 @@ BEGIN
 	STR_ERR_DLGPROPCOMMACRO07	"Macroディレクトリの選択"
 	STR_ERR_DLGPROPCOMMACRO08	"バグ報告お願い"
 
+	// CPropComMainMenu.cpp
+	STR_SPECIAL_FUNC			"特別機能"
+	STR_SPECIAL_FUNC_WINDOW		"ウィンドウリスト"
+	STR_SPECIAL_FUNC_RECENT_FILE	"最近使ったファイル"
+	STR_SPECIAL_FUNC_RECENT_FOLDER	"最近使ったフォルダ"
+	STR_SPECIAL_FUNC_CUST_MENU	"カスタムメニューリスト"
+	STR_SPECIAL_FUNC_MACRO		"登録済みマクロリスト"
+	STR_SPECIAL_FUNC_PLUGIN_CMD	"プラグインコマンドリスト"
 
 	// CPropCommon.cpp
 	STR_PROPCOMMON				"共通設定"

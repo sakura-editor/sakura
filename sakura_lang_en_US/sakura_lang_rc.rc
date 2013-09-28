@@ -3995,6 +3995,14 @@ BEGIN
 	STR_ERR_DLGPROPCOMMACRO07	"Selecy Macro Directory"
 	STR_ERR_DLGPROPCOMMACRO08	"Please report the bug"
 
+	// CPropComMainMenu.cpp
+	STR_SPECIAL_FUNC			"Special Function"
+	STR_SPECIAL_FUNC_WINDOW		"Window List"
+	STR_SPECIAL_FUNC_RECENT_FILE	"Recently Used File"
+	STR_SPECIAL_FUNC_RECENT_FOLDER	"Recently Used Folder"
+	STR_SPECIAL_FUNC_CUST_MENU	"Custom Menus"
+	STR_SPECIAL_FUNC_MACRO		"Registered Macros"
+	STR_SPECIAL_FUNC_PLUGIN_CMD	"Plugin Commands"
 
 	// CPropCommon.cpp
 	STR_PROPCOMMON				"Common Setting"

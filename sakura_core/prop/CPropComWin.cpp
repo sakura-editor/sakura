@@ -332,12 +332,12 @@ void CPropWin::SetData( HWND hwndDlg )
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
 	Combo_ResetContent( hwndCombo );
 	int nSelPos = 0;
-	int i = 0;
-	for( i = 0; i < CSelectLang::m_psLangInfoList.size(); i++ ){
-		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( i );
-		Combo_InsertString( hwndCombo, i, psLangInfo->szLangName );
+	UINT uiIndex = 0;
+	for( uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++ ){
+		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( uiIndex );
+		Combo_InsertString( hwndCombo, uiIndex, psLangInfo->szLangName );
 		if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) == 0 ) {
-			nSelPos = i;
+			nSelPos = uiIndex;
 		}
 	}
 	Combo_SetCurSel( hwndCombo, nSelPos );
