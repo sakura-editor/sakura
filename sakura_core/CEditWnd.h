@@ -214,7 +214,7 @@ public:
 	*/
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
-	CEditDoc		m_cEditDoc;
+	CEditDoc*		m_pcEditDoc;
 	HWND			m_hwndParent;
     HWND			m_hwndReBar;	// Rebar ウィンドウ	//@@@ 2006.06.17 ryoji
     HWND			m_hwndToolBar;

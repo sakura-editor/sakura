@@ -683,7 +683,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 行番号を表示するか */
 	if( m_pPrintSetting->m_bPrintLineNumber ){
 		/* 行番号表示に必要な桁数を計算 */
-		m_nPreview_LineNumberColumns = m_pParentWnd->m_cEditDoc.m_pcEditViewArr[0]->DetectWidthOfLineNumberArea_calculate();
+		m_nPreview_LineNumberColumns = m_pParentWnd->m_pcEditDoc->m_pcEditViewArr[0]->DetectWidthOfLineNumberArea_calculate();
 	}
 	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
 	m_pPrintSetting->m_mdmDevMode.dmPaperSize = m_pPrintSetting->m_nPrintPaperSize;
@@ -752,15 +752,15 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_bPreview_EnableLines = ( m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginTY - m_pPrintSetting->m_nPrintMarginBY ) / ( m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
 
 	/* 印刷用のレイアウト管理情報の初期化 */
-	m_pLayoutMgr_Print->Create( &m_pParentWnd->m_cEditDoc, &m_pParentWnd->m_cEditDoc.m_cDocLineMgr );
+	m_pLayoutMgr_Print->Create( m_pParentWnd->m_pcEditDoc, &m_pParentWnd->m_pcEditDoc->m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
-//	STypeConfig& ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
-	STypeConfig ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
+//	STypeConfig& ref = m_pParentWnd->m_pcEditDoc->GetDocumentAttribute();
+	STypeConfig ref = m_pParentWnd->m_pcEditDoc->GetDocumentAttribute();
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
-	ref.m_nTabSpace =			m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
+	ref.m_nTabSpace =			m_pParentWnd->m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
 
 	//@@@ 2002.09.22 YAZAKI
 	ref.m_cLineComment.CopyTo(0, "", -1);	/* 行コメントデリミタ */
@@ -966,12 +966,12 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	/* プリンタに渡すジョブ名を生成 */
-	if( ! m_pParentWnd->m_cEditDoc.IsValidPath() ){	/* 現在編集中のファイルのパス */
+	if( ! m_pParentWnd->m_pcEditDoc->IsValidPath() ){	/* 現在編集中のファイルのパス */
 		_tcscpy( szJobName, _T("無題") );
 	}else{
 		TCHAR	szFileName[_MAX_FNAME];
 		TCHAR	szExt[_MAX_EXT];
-		_splitpath( m_pParentWnd->m_cEditDoc.GetFilePath(), NULL, NULL, szFileName, szExt );
+		_splitpath( m_pParentWnd->m_pcEditDoc->GetFilePath(), NULL, NULL, szFileName, szExt );
 		wsprintf( szJobName, _T("%s%s"), szFileName, szExt );
 	}
 
@@ -1114,7 +1114,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const RECT& rect, HFONT hFontZen )
 	char      szHeaderWork[1024 + 1];
 	
 	// 左寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
 	Print_DrawLine(
 		hdc,
 		rect.left,
@@ -1126,7 +1126,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const RECT& rect, HFONT hFontZen )
 	);
 
 	// 中央寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
 	Print_DrawLine(
 		hdc,
 		( rect.right + rect.left - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
@@ -1138,7 +1138,7 @@ void CPrintPreview::DrawHeader( HDC hdc, const RECT& rect, HFONT hFontZen )
 	);
 	
 	// 右寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
 	Print_DrawLine(
 		hdc,
 		rect.right - lstrlen( szHeaderWork ) * m_pPrintSetting->m_nPrintFontWidth,
@@ -1159,7 +1159,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const RECT& rect, HFONT hFontZen )
 	char      szFooterWork[1024 + 1];
 	
 	// 左寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
 	//	左寄せx座標
 	Print_DrawLine(
 		hdc,
@@ -1172,7 +1172,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const RECT& rect, HFONT hFontZen )
 	);
 
 	// 中央寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
 	Print_DrawLine(
 		hdc,
 		( rect.right + rect.left - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth) / 2,
@@ -1184,7 +1184,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const RECT& rect, HFONT hFontZen )
 	);
 	
 	// 右寄せ
-	m_pParentWnd->m_cEditDoc.ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
+	m_pParentWnd->m_pcEditDoc->ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
 	Print_DrawLine(
 		hdc,
 		rect.right - lstrlen( szFooterWork ) * m_pPrintSetting->m_nPrintFontWidth,
@@ -1253,7 +1253,7 @@ void CPrintPreview::DrawPageText(
 			if( m_pPrintSetting->m_bPrintLineNumber ){
 				char			szLineNum[64];	//	行番号を入れる。
 				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-				if( m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_bLineNumIsCRLF ){
+				if( m_pParentWnd->m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->m_ptLogicPos.x ){
 						strcpy( szLineNum, " " );
@@ -1267,9 +1267,9 @@ void CPrintPreview::DrawPageText(
 				}
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
-				if( 2 == m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nLineTermType ){
+				if( 2 == m_pParentWnd->m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
 					char szLineTerm[2];
-					wsprintf( szLineTerm, "%c", m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
+					wsprintf( szLineTerm, "%c", m_pParentWnd->m_pcEditDoc->GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
 					strcat( szLineNum, szLineTerm );
 				}
 				else{
@@ -1307,7 +1307,7 @@ void CPrintPreview::DrawPageText(
 
 		// 2006.08.14 Moca 行番号が縦線の場合は1度に引く
 		if( m_pPrintSetting->m_bPrintLineNumber &&
-				1 == m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_nLineTermType ){
+				1 == m_pParentWnd->m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
 			// 縦線は本文と行番号の隙間1桁の中心に作画する(画面作画では、右詰め)
 			::MoveToEx( hdc,
 				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
@@ -1427,7 +1427,7 @@ void CPrintPreview::Print_DrawLine(
 	int			nBgn = 0;	//	TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
 	int			i;			//	pLineの何文字目をスキャン？
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
-	int			nTabSpace = m_pParentWnd->m_cEditDoc.m_cLayoutMgr.GetTabSpace();
+	int			nTabSpace = m_pParentWnd->m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
 
 	for( i = 0; i < nLineLen; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar

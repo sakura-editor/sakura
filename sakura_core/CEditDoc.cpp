@@ -66,8 +66,9 @@
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc()
-: m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
+CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
+: m_pcEditWnd( pcEditWnd )
+, m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_bReadOnly( false )			/* 読み取り専用モード */

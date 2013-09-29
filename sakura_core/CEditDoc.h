@@ -61,7 +61,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CEditDoc();
+	CEditDoc( CEditWnd* pcEditWnd );
 	~CEditDoc();
 
 	/*
