@@ -182,7 +182,6 @@ public:
 	void RegisterPluginCommand( CPlug* id );	//プラグインコマンドをエディタに登録する
 
 	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag );				// 表示の動的選択	2010/5/19 Uchi
-	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag0, bool flag1 );	// 表示の動的選択	2010/5/19 Uchi
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           整形                              //

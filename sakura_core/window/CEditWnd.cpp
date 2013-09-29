@@ -98,7 +98,7 @@
 //		2010/5/19	Uchi
 struct SFuncMenuName {
 	EFunctionCode	eFunc;
-	const WCHAR*	sName[3];		// 選択文字列
+	const WCHAR*	sName[2];		// 選択文字列
 };
 
 static const SFuncMenuName	sFuncMenuName[] = {
@@ -112,11 +112,11 @@ static const SFuncMenuName	sFuncMenuName[] = {
 	{F_TAB_CLOSEOTHER,		{L"このタブ以外を閉じる",			L"このウィンドウ以外を閉じる"}},
 	{F_TOPMOST,				{L"常に手前に表示",					L"常に手前を解除"}},
 	{F_BIND_WINDOW,			{L"グループ化",						L"グループ化を解除"}},
-	{F_SHOWTOOLBAR,			{L"ツールバーを表示",				L"ツールバーを表示",				L"表示中のツールバーを隠す"}},
-	{F_SHOWFUNCKEY,			{L"ファンクションキーを表示",		L"ファンクションキーを表示",		L"表示中のファンクションキーを隠す"}},
-	{F_SHOWTAB,				{L"タブバーを表示",					L"タブバーを表示",					L"表示中のタブバーを隠す"}},
-	{F_SHOWSTATUSBAR,		{L"ステータスバーを表示",			L"ステータスバーを表示",			L"表示中のステータスバーを隠す"}},
-	{F_TOGGLE_KEY_SEARCH,	{L"キーワードヘルプ自動表示",		L"キーワードヘルプ自動表示する",	L"キーワードヘルプ自動表示しない"}},
+	{F_SHOWTOOLBAR,			{L"ツールバーを表示",				L"表示中のツールバーを隠す"}},
+	{F_SHOWFUNCKEY,			{L"ファンクションキーを表示",		L"表示中のファンクションキーを隠す"}},
+	{F_SHOWTAB,				{L"タブバーを表示",					L"表示中のタブバーを隠す"}},
+	{F_SHOWSTATUSBAR,		{L"ステータスバーを表示",			L"表示中のステータスバーを隠す"}},
+	{F_TOGGLE_KEY_SEARCH,	{L"キーワードヘルプ自動表示する",	L"キーワードヘルプ自動表示しない"}},
 };
 
 void ShowCodeBox(HWND hWnd)
@@ -2416,23 +2416,23 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			break;
 		case F_SHOWTOOLBAR:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cToolbar.GetToolbarHwnd() == NULL );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cToolbar.GetToolbarHwnd() );
 			break;
 		case F_SHOWFUNCKEY:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_CFuncKeyWnd.GetHwnd() == NULL );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_CFuncKeyWnd.GetHwnd() );
 			break;
 		case F_SHOWTAB:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cTabWnd.GetHwnd() == NULL );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.GetHwnd() );
 			break;
 		case F_SHOWSTATUSBAR:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cStatusBar.GetStatusHwnd() == NULL );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cStatusBar.GetStatusHwnd() );
 			break;
 		case F_TOGGLE_KEY_SEARCH:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !IsFuncChecked( GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
 			break;
 		case F_WRAPWINDOWWIDTH:
 			{
@@ -2629,20 +2629,8 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 			sName = flag ? sFuncMenuName[i].sName[0] : sFuncMenuName[i].sName[1];
 		}
 	}
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
-}
+	assert( auto_strlen(sName) );
 
-void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag0, bool flag1 )
-{
-	int				i;
-	const WCHAR*	sName;
-
-	sName = L"";
-	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
-		if (sFuncMenuName[i].eFunc == nFunc) {
-			sName = flag0 ? sFuncMenuName[i].sName[0] : (flag1 ? sFuncMenuName[i].sName[1] : sFuncMenuName[i].sName[2]);
-		}
-	}
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
