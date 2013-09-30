@@ -70,19 +70,19 @@ public:
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
 	//! Undo(元に戻す)可能な状態か？ */
-	bool IsEnableUndo( void )
+	bool IsEnableUndo( void ) const
 	{
 		return m_cOpeBuf.IsEnableUndo();
 	}
 
 	//! Redo(やり直し)可能な状態か？
-	bool IsEnableRedo( void )
+	bool IsEnableRedo( void ) const
 	{
 		return m_cOpeBuf.IsEnableRedo();
 	}
 
 	//! クリップボードから貼り付け可能か？
-	bool IsEnablePaste( void )
+	bool IsEnablePaste( void ) const
 	{
 		return CClipboard::HasValidData();
 	}

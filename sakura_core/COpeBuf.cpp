@@ -42,13 +42,13 @@ COpeBuf::~COpeBuf()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* Undoâ¬î\Ç»èÛë‘Ç© */
-bool COpeBuf::IsEnableUndo()
+bool COpeBuf::IsEnableUndo() const
 {
 	return 0 < m_vCOpeBlkArr.size() && 0 < m_nCurrentPointer;
 }
 
 /* Redoâ¬î\Ç»èÛë‘Ç© */
-bool COpeBuf::IsEnableRedo()
+bool COpeBuf::IsEnableRedo() const
 {
 	return 0 < m_vCOpeBlkArr.size() && m_nCurrentPointer < (int)m_vCOpeBlkArr.size();
 }
