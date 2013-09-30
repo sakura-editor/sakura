@@ -195,6 +195,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
+				TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 				//	メニュー文字列の設定
 				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( CB_ERR == nIdx1 ){
@@ -205,7 +206,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				//	Combo Boxも変更 削除＆再登録
 				Combo_DeleteString( hwndCOMBO_MENU, nIdx1 );
 				Combo_InsertString( hwndCOMBO_MENU, nIdx1,
-					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
+					m_cLookup.Custmenu2Name( nIdx1, buf, _countof(buf) ) );
 				// 削除すると選択が解除されるので，元に戻す
 				Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
@@ -649,6 +650,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	HWND		hwndCOMBO_MENU;
 	HWND		hwndCombo;
 	int			i;
+	TCHAR		buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
@@ -662,7 +664,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
-		Combo_AddString( hwndCOMBO_MENU, m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
+		Combo_AddString( hwndCOMBO_MENU, m_cLookup.Custmenu2Name( i, buf, _countof( buf ) ) );
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCOMBO_MENU, 0 );

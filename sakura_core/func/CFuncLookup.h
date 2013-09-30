@@ -75,6 +75,7 @@ public:
 	bool Pos2FuncName( int category, int position, WCHAR* ptr, int bufsize ) const;
 	bool Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const ;
 	const TCHAR* Category2Name( int category ) const;
+	const TCHAR* Custmenu2Name( int index, TCHAR buf[], int bufSize ) const;
 
 	void SetCategory2Combo( HWND hComboBox ) const ;
 	void SetListItem( HWND hListBox, int category ) const;

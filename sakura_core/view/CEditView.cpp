@@ -1570,7 +1570,8 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus 
 				}
 			}
 			if( !bMenuLoop ){
-				const wchar_t * p = GetDllShareData().m_Common.m_sCustomMenu.m_szCustMenuNameArr[nCustIdx];
+				TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
+				const wchar_t * p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, _countof(buf) );
 				wchar_t keys[2];
 				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
 				keys[1] = 0;
