@@ -3616,7 +3616,7 @@ BEGIN
 	STR_ERR_DLGEDITVW6			"■"
 	STR_ERR_DLGEDITVW7			"キーワードの説明をクリップボードにコピー(&K)"
 	STR_ERR_DLGEDITVW8			"キーワード辞書を開く(&J)"
-	STR_ERR_DLGEDITVW9			"%5d 行 %4d 桁"
+	STR_STATUS_ROW_COL			"%5d 行 %4d 桁"
 	STR_INS_MODE_INS			"挿入"
 	STR_INS_MODE_OVR			"上書"
 	STR_ERR_DLGEDITVW12			"\r\n□検索条件  "
@@ -3769,7 +3769,9 @@ BEGIN
 	STR_ERR_DLGEDITWND23		"Unicode"
 	STR_ERR_DLGEDITWND24		"REC"
 	STR_ERR_DLGEDITWND25		"上書"
-
+	STR_WRAP_WIDTH_FULL			"折り返し桁数: %d 桁（最大）"
+	STR_WRAP_WIDTH_WINDOW		"折り返し桁数: %d 桁（右端）"
+	STR_WRAP_WIDTH_FIXED		"折り返し桁数: %d 桁（指定）"
 
 	// CEol.cpp
 
@@ -4194,11 +4196,11 @@ BEGIN
 	STR_ERR_CSHAREDATA08			"アプリデータ\\"
 	STR_ERR_CSHAREDATA09			"印刷設定 %d"
 
-									// Common Prop::Tab/Title bar
+	// Common Prop::Tab/Title bar
 	STR_ERR_CSHAREDATA10			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
-	STR_ERR_CSHAREDATA11			"右クリックメニュー"
-	STR_ERR_CSHAREDATA12			"メニュー%d"
-	STR_ERR_CSHAREDATA13			"タブメニュー"
+	STR_CUSTMENU_RIGHT_CLICK		"右クリックメニュー"
+	STR_CUSTMENU_CUSTOM				"メニュー%d"
+	STR_CUSTMENU_TAB				"タブメニュー"
 	STR_ERR_CSHAREDATA14			"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍"
 	STR_ERR_CSHAREDATA15			"yyyy'年'M'月'd'日('dddd')'"
 	STR_ERR_CSHAREDATA16			"tthh'時'mm'分'ss'秒'"

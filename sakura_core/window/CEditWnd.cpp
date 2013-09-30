@@ -2458,14 +2458,14 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					if( mode == CEditView::TGWRAP_FULL ){
 						auto_sprintf(
 							szBuf,
-							L"折り返し桁数: %d 桁（最大）",
+							LSW( STR_WRAP_WIDTH_FULL ),	//L"折り返し桁数: %d 桁（最大）",
 							MAXLINEKETAS
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
 						auto_sprintf(
 							szBuf,
-							L"折り返し桁数: %d 桁（右端）",
+							LSW( STR_WRAP_WIDTH_WINDOW ),	//L"折り返し桁数: %d 桁（右端）",
 							this->GetActiveView().ViewColNumToWrapColNum(
 								this->GetActiveView().GetTextArea().m_nViewColNum
 							)
@@ -2474,7 +2474,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					else {
 						auto_sprintf(
 							szBuf,
-							L"折り返し桁数: %d 桁（指定）",
+							LSW( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
 							GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
 						);
 					}
