@@ -440,7 +440,7 @@ void CEditDoc::GetEditInfo(
 //	‘‚«Š·‚¦‚ª‹Ö~‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
 //	–ß‚è’l: true: ‹Ö~ / false: ‹–‰Â
 //
-bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand )
+bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 {
 	//	•ÒW‰Â”\‚Ìê‡
 	if( IsEditable() )
