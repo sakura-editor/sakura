@@ -448,9 +448,9 @@ bool CFileNameManager::GetMenuFullLabel(
 		}
 	}else{
 		if( nId == -1 ){
-			wsprintf( szFileName, _T("(–³‘è)"));
+			wsprintf( szFileName, LS( STR_NO_TITLE1 ));
 		}else{
-			wsprintf( szFileName, _T("(–³‘è)%d"), nId);
+			wsprintf( szFileName, _T("%s%d"), LS( STR_NO_TITLE1 ), nId);
 		}
 		pszName = szFileName;
 	}

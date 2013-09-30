@@ -3616,7 +3616,7 @@ BEGIN
 	STR_ERR_DLGEDITVW6			"¡"
 	STR_ERR_DLGEDITVW7			"Copy (&K)eyword description to clipboard"				// Right click menu
 	STR_ERR_DLGEDITVW8			"Open keyword dictionary (&J)"							// Right click menu
-	STR_ERR_DLGEDITVW9			"%5d Ln %4d Col"
+	STR_STATUS_ROW_COL			"%5d Ln %4d Col"
 	STR_INS_MODE_INS			"INS"													// Insert mode
 	STR_INS_MODE_OVR			"OVR"													// Overwrite mode
 	STR_ERR_DLGEDITVW12			"\r\n  Search Conditions  "							// Output from GREP resuilts
@@ -3769,6 +3769,9 @@ BEGIN
 	STR_ERR_DLGEDITWND23		"Unicode"
 	STR_ERR_DLGEDITWND24		"REC"
 	STR_ERR_DLGEDITWND25		"OVR"							// Overwrite mode
+	STR_WRAP_WIDTH_FULL			"Line Wrap Width: %d ColiMaxj"
+	STR_WRAP_WIDTH_WINDOW		"Line Wrap Width: %d ColiWindowj"
+	STR_WRAP_WIDTH_FIXED		"Line Wrap Width: %d ColiFixedj"
 
 
 	// CEol.cpp
@@ -4196,9 +4199,9 @@ BEGIN
 
 									// Common Prop::Tab/Title bar
 	STR_ERR_CSHAREDATA10			"${w?yGrepz$h$:yOutputz$:$f$}${U?(Changed)$}${R?(Read Only)$:(Write Protected)$}${M?yRecording Macroz$}"
-	STR_ERR_CSHAREDATA11			"Right Click Menu"
-	STR_ERR_CSHAREDATA12			"Menu%d"
-	STR_ERR_CSHAREDATA13			"Tab Menu"
+	STR_CUSTMENU_RIGHT_CLICK		"Right Click Menu"
+	STR_CUSTMENU_CUSTOM				"Menu%d"
+	STR_CUSTMENU_TAB				"Tab Menu"
 	STR_ERR_CSHAREDATA14			"‚P‚Q‚R‚S‚T‚U‚V‚W‚X‚Oi(m[uwy¡ £¢¥¤Ÿ›œ˜E¦™š‘æ‡@‡A‡B‡C‡D‡E‡F‡G‡H‡I‡J‡K‡L‡M‡N‡O‡P‡Q‡R‡S‡T‡U‡V‡W‡X‡Y‡Z‡[‡\‡]ˆê“ñOlŒÜ˜Zµ”ª‹ã\ˆë“óQŒŞ"
 	STR_ERR_CSHAREDATA15			"yyyy'Y'M'M'd'D('dddd')'"
 	STR_ERR_CSHAREDATA16			"tthh'H'mm'M'ss'S'"
