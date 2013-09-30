@@ -127,12 +127,12 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		return true;
 	}
 	else if( funccode == F_MENU_RBUTTON ){
-		wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[0], bufsize );
+		Custmenu2Name( 0, ptr, bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return true;
 	}
 	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU ){	// MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
-		wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
+		Custmenu2Name( funccode - F_CUSTMENU_BASE, ptr, bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return true;
 	}
@@ -259,4 +259,37 @@ int CFuncLookup::GetItemCount(int category) const
 		return CJackManager::getInstance()->GetCommandCount();
 	}
 	return 0;
+}
+
+/*!	@brief 番号に対応するカスタムメニュー名称を返す．
+
+	@param index [in] カスタムメニュー番号
+	
+	@return NULL 分類名称．取得に失敗したらNULL．
+*/
+const TCHAR* CFuncLookup::Custmenu2Name( int index, TCHAR buf[], int bufSize ) const
+{
+	if( index < 0 || CUSTMENU_INDEX_FOR_TABWND < index )
+		return NULL;
+
+	// 共通設定で名称を設定していればそれを返す
+	if ( m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ][0] != '\0' ) {
+		return m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ];
+	}
+
+	// 共通設定で未設定の場合、リソースのデフォルト名を返す
+	if( index == 0 ){
+		wcscpyn( buf, LS( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
+		return buf;
+	}
+	else if( index == CUSTMENU_INDEX_FOR_TABWND ){
+		wcscpyn( buf, LS( STR_CUSTMENU_TAB ), bufSize );
+		return buf;
+	}
+	else {
+		wsprintf( buf, LS( STR_CUSTMENU_CUSTOM ), index );
+		return buf;
+	}
+
+	return NULL;
 }

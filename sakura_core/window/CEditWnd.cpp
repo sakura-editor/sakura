@@ -2352,8 +2352,9 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
 			nFlag = MF_BYPOSITION | MF_STRING;
 		}
+		TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 		m_CMenuDrawer.MyAppendMenu( hMenu, nFlag,
-	 		eFunc, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], pszKey );
+			eFunc, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, _countof(buf) ), pszKey );
 	}
 	// マクロ
 	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
@@ -2526,17 +2527,18 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 		}
 		break;
 	case F_CUSTMENU_LIST:			// カスタムメニューリスト
+		TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 		//	右クリックメニュー
 		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
 			 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-		 		F_MENU_RBUTTON, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], L"" );
+				 F_MENU_RBUTTON, GetDocument()->m_cFuncLookup.Custmenu2Name( 0, buf, _countof(buf) ), L"" );
 			bInList = true;
 		}
 		//	カスタムメニュー
 		for( j = 1; j < MAX_CUSTOM_MENU; ++j ){
 			if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
 				 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-			 		F_CUSTMENU_BASE + j, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], L""  );
+			 		F_CUSTMENU_BASE + j, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, _countof(buf) ), L""  );
 				bInList = true;
 			}
 		}
