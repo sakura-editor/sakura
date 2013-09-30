@@ -119,15 +119,14 @@ static const SFuncMenuName	sFuncMenuName[] = {
 	{F_TOGGLE_KEY_SEARCH,	{L"キーワードヘルプ自動表示する",	L"キーワードヘルプ自動表示しない"}},
 };
 
-void ShowCodeBox(HWND hWnd)
+static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 {
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
 	CLogicInt		nLineLen;
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const CEditView* pcView = &pcDoc->m_pcEditWnd->GetActiveView();
+	const CEditView* pcView = &pcEditDoc->m_pcEditWnd->GetActiveView();
 	const CCaret* pcCaret = &pcView->GetCaret();
-	const CLayoutMgr* pLayoutMgr=&pcDoc->m_cLayoutMgr;
+	const CLayoutMgr* pLayoutMgr = &pcEditDoc->m_cLayoutMgr;
 	const wchar_t*	pLine = pLayoutMgr->GetLineStr( pcCaret->GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
 	// -- -- -- -- キャレット位置の文字情報 -> szCaretChar -- -- -- -- //
@@ -1414,7 +1413,7 @@ LRESULT CEditWnd::DispatchEvent(
 					GetDocument()->HandleCommand( F_JUMP_DIALOG );
 				}
 				else if( mp->dwItemSpec == 3 ){	//	文字コード→各種コード
-					ShowCodeBox(GetHwnd());
+					ShowCodeBox( GetHwnd(), GetDocument() );
 				}
 				else if( mp->dwItemSpec == 4 ){	//	文字コードセット→文字コードセット指定
 					GetDocument()->HandleCommand( F_CHG_CHARSET );
