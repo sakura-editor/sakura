@@ -76,10 +76,10 @@ public:
 	/*
 	|| 状態
 	*/
-	BOOL IsTextSelected( void );	/* テキストが選択されているか */
-	bool IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
-	bool IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
-	BOOL IsEnablePaste( void );		/* クリップボードから貼り付け可能か？ */
+	BOOL IsTextSelected( void ) const;		/* テキストが選択されているか */
+	bool IsEnableUndo( void ) const;		/* Undo(元に戻す)可能な状態か？ */
+	bool IsEnableRedo( void ) const;		/* Redo(やり直し)可能な状態か？ */
+	BOOL IsEnablePaste( void ) const;		/* クリップボードから貼り付け可能か？ */
 	void GetEditInfo( EditInfo* );	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
 
 	/* いろいろ */
@@ -126,7 +126,7 @@ public:
 	void  SetNewLineCode(const CEol& t){ m_cNewLineCode = t; }
 
 	//	Aug. 14, 2000 genta
-	bool IsModificationForbidden( int nCommand );
+	bool IsModificationForbidden( int nCommand ) const;
 	bool IsEditable() const { return ( !m_bReadOnly && !( SHAREMODE_NOT_EXCLUSIVE != m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_hLockedFile ) ); }	//!< 編集可能かどうか
 
 	//	Aug. 21, 2000 genta

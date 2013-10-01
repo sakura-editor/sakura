@@ -338,7 +338,7 @@ void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
 //	書き換えが禁止されているかどうか
 //	戻り値: true: 禁止 / false: 許可
 //
-bool CEditDoc::IsModificationForbidden( int nCommand )
+bool CEditDoc::IsModificationForbidden( int nCommand ) const
 {
 	//	編集可能の場合
 	if( IsEditable() )
@@ -699,7 +699,7 @@ LRESULT CEditDoc::DispatchEvent(
 }
 
 /*! テキストが選択されているか */
-BOOL CEditDoc::IsTextSelected( void )
+BOOL CEditDoc::IsTextSelected( void ) const
 {
 	return m_pcEditViewArr[m_nActivePaneIndex]->IsTextSelected();
 }
@@ -1421,7 +1421,7 @@ bool CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 
 
 /* Undo(元に戻す)可能な状態か？ */
-bool CEditDoc::IsEnableUndo( void )
+bool CEditDoc::IsEnableUndo( void ) const
 {
 	return m_cOpeBuf.IsEnableUndo();
 }
@@ -1429,7 +1429,7 @@ bool CEditDoc::IsEnableUndo( void )
 
 
 /*! Redo(やり直し)可能な状態か？ */
-bool CEditDoc::IsEnableRedo( void )
+bool CEditDoc::IsEnableRedo( void ) const
 {
 	return m_cOpeBuf.IsEnableRedo();
 }
@@ -1438,7 +1438,7 @@ bool CEditDoc::IsEnableRedo( void )
 
 
 /*! クリップボードから貼り付け可能か？ */
-BOOL CEditDoc::IsEnablePaste( void )
+BOOL CEditDoc::IsEnablePaste( void ) const
 {
 	UINT uFormatSakuraClip;
 	uFormatSakuraClip = ::RegisterClipboardFormat( "SAKURAClip" );
