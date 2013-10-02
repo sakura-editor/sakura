@@ -144,7 +144,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 //	To Here Sept. 15, 2000 (Oct. 7, 2000 300¨500; Nov. 3, 2000 500¨540)
 	po.y = 0;
 
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 	::GetClientRect( pCEditWnd->GetHwnd(), &rc );
 	po.x = t_min( po.x, rc.right );
 	::ClientToScreen( pCEditWnd->GetHwnd(), &po );

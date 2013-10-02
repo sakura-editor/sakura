@@ -203,7 +203,7 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
 			CEditView* pcEditView = (CEditView*)m_lParam;
-			CEditWnd* pcEditWnd = pcEditView->m_pcEditDoc->m_pcEditWnd;
+			CEditWnd* pcEditWnd = pcEditView->m_pcEditWnd;
 			if( ::GetActiveWindow() == GetHwnd() ){
 				::SetActiveWindow( pcEditWnd->GetHwnd() );
 				BlockingHook( NULL );	// キュー内に溜まっているメッセージを処理
@@ -1528,7 +1528,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
-			if (::GetWindowPlacement( pcEditView->m_pcEditDoc->m_pcEditWnd->GetHwnd(), &cWindowPlacement )){
+			if (::GetWindowPlacement( pcEditView->m_pcEditWnd->GetHwnd(), &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
 				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
 				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;

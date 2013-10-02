@@ -39,8 +39,7 @@
 */
 void CViewCommander::Command_SEARCH_BOX( void )
 {
-	const CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;
-	pCEditWnd->m_cToolbar.SetFocusSearchBox();
+	GetEditWindow()->m_cToolbar.SetFocusSearchBox();
 }
 
 

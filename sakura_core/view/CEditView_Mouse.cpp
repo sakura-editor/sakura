@@ -49,7 +49,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	CMyPoint ptMouse(_xPos,_yPos);
 
 	if( m_bHokan ){
-		m_pcEditDoc->m_pcEditWnd->m_cHokanMgr.Hide();
+		m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
 
@@ -666,17 +666,17 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -836,17 +836,17 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -898,19 +898,19 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
 		// ホイール操作によるページスクロールありをOFF
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
 		// ホイール操作による横スクロールありをOFF
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -1341,14 +1341,14 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		if( bKeyPageScroll ){
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+				m_pcEditWnd->SetHScrollByWheel( TRUE );
 			}
 			// ホイール操作によるページスクロールあり
-			m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
+			m_pcEditWnd->SetPageScrollByWheel( TRUE );
 		}else{
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+				m_pcEditWnd->SetHScrollByWheel( TRUE );
 			}
 		}
 
