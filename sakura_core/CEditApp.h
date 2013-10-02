@@ -53,7 +53,7 @@ public:
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
 
 	//ウィンドウ情報
-	CEditWnd* GetWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
+	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
 
 	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }

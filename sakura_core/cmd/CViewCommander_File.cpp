@@ -295,10 +295,9 @@ void CViewCommander::Command_PRINT( void )
 {
 	// 使っていない処理を削除 2003.05.04 かろと
 	Command_PRINT_PREVIEW();
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷実行 */
-	pCEditWnd->m_pPrintPreview->OnPrint();
+	GetEditWindow()->m_pPrintPreview->OnPrint();
 }
 
 
@@ -306,10 +305,8 @@ void CViewCommander::Command_PRINT( void )
 /* 印刷プレビュー */
 void CViewCommander::Command_PRINT_PREVIEW( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
 	/* 印刷プレビューモードのオン/オフ */
-	pCEditWnd->PrintPreviewModeONOFF();
+	GetEditWindow()->PrintPreviewModeONOFF();
 	return;
 }
 
@@ -318,10 +315,8 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 /* 印刷のページレイアウトの設定 */
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
 	/* 印刷ページ設定 */
-	pCEditWnd->OnPrintPageSetting();
+	GetEditWindow()->OnPrintPageSetting();
 	return;
 }
 
@@ -522,7 +517,7 @@ void CViewCommander::Command_VIEWMODE( void )
 	}
 
 	// 親ウィンドウのタイトルを更新
-	this->GetEditWindow()->UpdateCaption();
+	GetEditWindow()->UpdateCaption();
 }
 
 
@@ -665,7 +660,7 @@ BOOL CViewCommander::Command_PUTFILE(
 	}
 	else {	/* ファイル全体を出力 */
 		HWND		hwndProgress;
-		CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;
+		CEditWnd*	pCEditWnd = GetEditWindow();
 
 		if( NULL != pCEditWnd ){
 			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();

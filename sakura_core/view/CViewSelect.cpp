@@ -629,18 +629,18 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	const CEditView* pView=GetEditView();
 
 	//	o—Í‚³‚ê‚È‚¢‚È‚çŒvZ‚ğÈ—ª
-	if( ! pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
+	if( ! pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
 		return;
 
 	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // æ“ªs‚ªÀİ‚µ‚È‚¢
 		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
 		}else if( m_bSelectingLock ){
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
 		}else{
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
 		}
 		return;
 	}
@@ -824,5 +824,5 @@ void CViewSelect::PrintSelectionInfoMsg() const
 #endif
 	}
 	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
-	pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
+	pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
 }

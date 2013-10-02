@@ -615,9 +615,9 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 void CEditView::SyncScrollV( CLayoutInt line )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 
-		&& m_pcEditDoc->m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01) 
+		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01) 
 	){
-		CEditView&	editView = m_pcEditDoc->m_pcEditWnd->GetView(m_nMyIndex^0x01);
+		CEditView&	editView = m_pcEditWnd->GetView(m_nMyIndex^0x01);
 #if 0
 		//	·•ª‚ð•Û‚Á‚½‚Ü‚ÜƒXƒNƒ[ƒ‹‚·‚éê‡
 		editView.ScrollByV( line );
@@ -642,9 +642,9 @@ void CEditView::SyncScrollV( CLayoutInt line )
 void CEditView::SyncScrollH( CLayoutInt col )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
-		&& m_pcEditDoc->m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
+		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
 	){
-		CEditView&	cEditView = m_pcEditDoc->m_pcEditWnd->GetView(m_nMyIndex^0x02);
+		CEditView&	cEditView = m_pcEditWnd->GetView(m_nMyIndex^0x02);
 		HDC			hdc = ::GetDC( cEditView.GetHwnd() );
 		
 #if 0
