@@ -625,17 +625,17 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -685,17 +685,17 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -745,19 +745,19 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	    m_pcEditWnd->IsPageScrollByWheel() )
 	{
 		// ホイール操作によるページスクロールありをOFF
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		m_pcEditWnd->SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	    m_pcEditWnd->IsHScrollByWheel() )
 	{
 		// ホイール操作による横スクロールありをOFF
-		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		m_pcEditWnd->SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -1046,13 +1046,13 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 			SyncScrollH( ScrollAtH( line ) );
 
 			// ホイール操作による横スクロールあり
-			m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+			m_pcEditWnd->SetHScrollByWheel( TRUE );
 		}else{
 			int line = m_nViewTopLine + (( nScrollCode == SB_LINEUP ) ? -m_nViewRowNum : m_nViewRowNum );
 			SyncScrollV( ScrollAtV( line ) );
 		}
 		// ホイール操作によるページスクロールあり
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
+		m_pcEditWnd->SetPageScrollByWheel( TRUE );
 	}else{
 		/* マウスホイールによるスクロール行数をレジストリから取得 */
 		nRollLineNum = 6;
@@ -1086,7 +1086,7 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 				SyncScrollH( ScrollAtH( m_nViewLeftCol + nCount ) );
 
 				// ホイール操作による横スクロールあり
-				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+				m_pcEditWnd->SetHScrollByWheel( TRUE );
 			}else{
 				SyncScrollV( ScrollAtV( m_nViewTopLine + nCount ) );
 			}
@@ -1808,7 +1808,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessage( m_pcEditDoc->m_pcEditWnd->m_hWnd, WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessage( m_pcEditWnd->m_hWnd, WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける

@@ -37,6 +37,7 @@
 #include "CBregexp.h"
 #include "CEol.h"
 
+class CEditWnd;
 class CEditView;
 
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
@@ -127,7 +128,7 @@ class CEditView
 {
 public:
 	/* Constructors */
-	CEditView();
+	CEditView( CEditWnd* pcEditWnd );
 	~CEditView();
 	/* 初期化系メンバ関数 */
 	BOOL Create(
@@ -348,6 +349,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 	DLLSHAREDATA*	m_pShareData;
 
+	CEditWnd* 		m_pcEditWnd;
 	CEditDoc*		m_pcEditDoc;		/* ドキュメント */
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */

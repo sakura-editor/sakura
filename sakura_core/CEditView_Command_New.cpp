@@ -2566,7 +2566,7 @@ void CEditView::Command_CHGMOD_EOL( EEolType e ){
 */
 void CEditView::Command_WINTOPMOST( LPARAM lparam )
 {
-	m_pcEditDoc->m_pcEditWnd->WindowTopMost( int(lparam) );
+	m_pcEditWnd->WindowTopMost( int(lparam) );
 }
 
 /*!	@brief 引用符の設定
@@ -2590,11 +2590,8 @@ void CEditView::Command_SET_QUOTESTRING( const char* quotestr )
 */
 void CEditView::Command_WINLIST( int nCommandFrom )
 {
-	CEditWnd	*pCEditWnd;
-	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
-
 	//ウィンドウ一覧をポップアップ表示する
-	pCEditWnd->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
+	m_pcEditWnd->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
 	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 
 }
@@ -2710,10 +2707,9 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 	else {	/* ファイル全体を出力 */
 		CFileTime	cfiletime;
 		HWND		hwndProgress;
-		CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
-		
-		if( NULL != pCEditWnd ){
-			hwndProgress = pCEditWnd->m_hwndProgressBar;
+
+		if( NULL != m_pcEditWnd ){
+			hwndProgress = m_pcEditWnd->m_hwndProgressBar;
 		}else{
 			hwndProgress = NULL;
 		}

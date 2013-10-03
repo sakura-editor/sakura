@@ -134,8 +134,9 @@ VOID CALLBACK EditViewTimerProc(
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView()
-: m_cHistory( new CAutoMarkMgr )
+CEditView::CEditView( CEditWnd* pcEditWnd )
+: m_pcEditWnd( pcEditWnd )
+, m_cHistory( new CAutoMarkMgr )
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 {
@@ -151,7 +152,7 @@ BOOL CEditView::Create(
 	BOOL		bShow			//!< 作成時に表示するかどうか
 )
 {
-	m_pcViewFont = pcEditDoc->m_pcEditWnd->m_pcViewFont;
+	m_pcViewFont = m_pcEditWnd->m_pcViewFont;
 
 	m_bDrawSWITCH = true;
 	m_pcDropTarget = new CDropTarget( this );
@@ -600,7 +601,7 @@ LRESULT CEditView::DispatchEvent(
 
 	switch ( uMsg ){
 	case WM_MOUSEWHEEL:
-		if( m_pcEditDoc->m_pcEditWnd->DoMouseWheel( wParam, lParam ) ){
+		if( m_pcEditWnd->DoMouseWheel( wParam, lParam ) ){
 			return 0L;
 		}
 		return OnMOUSEWHEEL( wParam, lParam );
@@ -634,7 +635,7 @@ LRESULT CEditView::DispatchEvent(
 		OnKillFocus();
 
 		// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
-		m_pcEditDoc->m_pcEditWnd->ClearMouseState();
+		m_pcEditWnd->ClearMouseState();
 
 		return 0L;
 	case WM_CHAR:
@@ -941,7 +942,7 @@ LRESULT CEditView::DispatchEvent(
 		// マウスクリックによりバックグラウンドウィンドウがアクティベートされた
 		//	2007.10.08 genta オプション追加
 		if( m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation &&
-		   (! m_pcEditDoc->m_pcEditWnd->IsActiveApp()))
+		   (! m_pcEditWnd->IsActiveApp()))
 		{
 			m_bActivateByMouse = TRUE;		// マウスによるアクティベート
 			return MA_ACTIVATEANDEAT;		// アクティベート後イベントを破棄
@@ -4295,8 +4296,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 //	BOOL		bBool;
 
 
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_CMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
 	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
@@ -4331,7 +4331,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
 //			bBool = ::AppendMenu( hMenu, uFlags, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2 );
-			pCEditWnd->m_CMenuDrawer.MyAppendMenu(
+			m_pcEditWnd->m_CMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2, _T("") );
 
@@ -4400,14 +4400,12 @@ void CEditView::DrawCaretPosInfo( void )
 	int				nLineLen;
 	int				nIdxFrom;
 	int				nCharChars;
-	CEditWnd*		pCEditWnd;
 	const CLayout*	pcLayout;
 	// 2002.05.26 Moca  gm_pszCodeNameArr_2 を使う
 	LPCTSTR pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
 //	2002/04/08 YAZAKI コードの重複を削除
 
 	hwndFrame = ::GetParent( m_hwndParent );
-	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	/* カーソル位置の文字コード */
 //	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen );
 	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
@@ -4454,7 +4452,7 @@ void CEditView::DrawCaretPosInfo( void )
 	}
 
 	/* ステータス情報を書き出す */
-	if( NULL == pCEditWnd->m_hwndStatusBar ){
+	if( NULL == m_pcEditWnd->m_hwndStatusBar ){
 		/* ウィンドウ右上に書き出す */
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加
@@ -4496,7 +4494,7 @@ void CEditView::DrawCaretPosInfo( void )
 		}
 		//	To Here
 		//	Dec. 4, 2002 genta メニューバー表示はCEditWndが行う
-		m_pcEditDoc->m_pcEditWnd->PrintMenubarMessage( szText );
+		m_pcEditWnd->PrintMenubarMessage( szText );
 	}else{
 		/* ステータスバーに状態を書き出す */
 		char	szText_1[64];
@@ -4534,17 +4532,17 @@ void CEditView::DrawCaretPosInfo( void )
 		}else{
 			strcpy( szText_6, "上書" );
 		}
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T("") );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 1 | 0, (LPARAM) (LPINT)szText_1 );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T("") );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 1 | 0, (LPARAM) (LPINT)szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 2 | 0, (LPARAM) (LPINT)nNlTypeName );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 2 | 0, (LPARAM) (LPINT)nNlTypeName );
 		//	To Here
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_3 );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)gm_pszCodeNameArr_1[m_pcEditDoc->m_nCharCode] );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)_T("") );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_6 );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_3 );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)gm_pszCodeNameArr_1[m_pcEditDoc->m_nCharCode] );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)_T("") );
+		::SendMessage( m_pcEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_6 );
 	}
 
 	return;
@@ -4559,11 +4557,11 @@ void CEditView::DrawCaretPosInfo( void )
 void CEditView::PrintSelectionInfoMsg(void)
 {
 	//	出力されないなら計算を省略
-	if( ! m_pcEditDoc->m_pcEditWnd->SendStatusMessage2IsEffective() )
+	if( ! m_pcEditWnd->SendStatusMessage2IsEffective() )
 		return;
 
 	if( ! IsTextSelected() ){
-		m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( "" );
+		m_pcEditWnd->SendStatusMessage2( "" );
 		return;
 	}
 
@@ -4571,7 +4569,7 @@ void CEditView::PrintSelectionInfoMsg(void)
 	//	From here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
 	int nLineCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( m_sSelect.m_ptFrom.y >= nLineCount ){	// 先頭行が実在しない
-		m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( "" );
+		m_pcEditWnd->SendStatusMessage2( "" );
 		return;
 	}
 	int select_line;
@@ -4653,7 +4651,7 @@ void CEditView::PrintSelectionInfoMsg(void)
 		wsprintf( msg, "%d bytes (%d lines) selected.", select_sum, select_line );
 #endif
 	}
-	m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( msg );
+	m_pcEditWnd->SendStatusMessage2( msg );
 }
 
 
@@ -5040,9 +5038,8 @@ DWORD CEditView::DoGrep(
 
 	//	Sep. 10, 2002 genta
 	//	CEditWndに新設した関数を使うように
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
-	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
+	m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
+	m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
 	TCHAR szPath[_MAX_PATH];
 	_tcscpy( szPath, pcmGrepFolder->GetStringPtr() );
@@ -6882,7 +6879,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 */
 void CEditView::SendStatusMessage( const TCHAR* msg )
 {
-	m_pcEditDoc->m_pcEditWnd->SendStatusMessage( msg );
+	m_pcEditWnd->SendStatusMessage( msg );
 }
 
 

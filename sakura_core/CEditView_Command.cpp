@@ -141,8 +141,7 @@ BOOL CEditView::HandleCommand(
 //	}
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( pCEditWnd->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
+	if( m_pcEditWnd->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
 		ErrorBeep();
 		return -1;
 	}
@@ -3006,8 +3005,7 @@ void CEditView::Command_CHGMOD_INS( void )
 */
 void CEditView::Command_SEARCH_BOX( void )
 {
-	const CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
-	pCEditWnd->SetFocusSearchBox();
+	m_pcEditWnd->SetFocusSearchBox();
 }
 
 /* 検索(単語検索ダイアログ) */
@@ -4508,7 +4506,7 @@ BOOL CEditView::Command_FUNCLIST(
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CEditView::Command_SPLIT_V( void )
 {
-	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.VSplitOnOff();
+	m_pcEditWnd->m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
@@ -4518,7 +4516,7 @@ void CEditView::Command_SPLIT_V( void )
 /* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 void CEditView::Command_SPLIT_H( void )
 {
-	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.HSplitOnOff();
+	m_pcEditWnd->m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
@@ -4528,7 +4526,7 @@ void CEditView::Command_SPLIT_H( void )
 /* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 void CEditView::Command_SPLIT_VH( void )
 {
-	m_pcEditDoc->m_pcEditWnd->m_cSplitterWnd.VHSplitOnOff();
+	m_pcEditWnd->m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
 
@@ -4595,8 +4593,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	po.y = 0;
 	::ClientToScreen( m_hWnd, &po );
 
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_CMenuDrawer.ResetContents();
 
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
@@ -4614,12 +4611,12 @@ void CEditView::Command_MENU_ALLFUNC( void )
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
 				//	Oct. 3, 2001 genta
-				pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, _T("") );
+				m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, _T("") );
 			}
 		}
 		//	Oct. 3, 2001 genta
-		pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i), _T("") );
-//		pCEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
+		m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i), _T("") );
+//		m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
 	nId = ::TrackPopupMenu(
@@ -6300,8 +6297,8 @@ void CEditView::Command_BIND_WINDOW( void )
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 		if( !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			m_pcEditDoc->m_pcEditWnd->WindowTopMost(
-				( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+			m_pcEditWnd->WindowTopMost(
+				( (DWORD)::GetWindowLongPtr( m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 			);
 		}
 
@@ -6311,7 +6308,7 @@ void CEditView::Command_BIND_WINDOW( void )
 		CShareData::getInstance()->PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
-			(LPARAM)m_pcEditDoc->m_pcEditWnd->m_hWnd,	//CEditWndのウィンドウハンドル
+			(LPARAM)m_pcEditWnd->m_hWnd,	//CEditWndのウィンドウハンドル
 			m_hWnd);									//自分自身
 		//End 2004.08.27 Kazika
 	}
@@ -7795,8 +7792,7 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	char		szLabel2[300];
 	UINT		uFlags;
 
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_CMenuDrawer.ResetContents();
 	
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
@@ -7830,7 +7826,7 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
-			pCEditWnd->m_CMenuDrawer.MyAppendMenu(
+			m_pcEditWnd->m_CMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2, _T("") );
 		}
@@ -8096,18 +8092,16 @@ end_of_compare:;
 */
 void CEditView::Command_SHOWTOOLBAR( void )
 {
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_hwndToolBar)? TRUE: FALSE);	/* ツールバー表示 */
-	pCEditWnd->LayoutToolBar();
-	pCEditWnd->EndLayoutBars();
+	m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == m_pcEditWnd->m_hwndToolBar)? TRUE: FALSE);	/* ツールバー表示 */
+	m_pcEditWnd->LayoutToolBar();
+	m_pcEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CShareData::getInstance()->PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TOOLBAR,
-		(LPARAM)pCEditWnd->m_hWnd,
-		pCEditWnd->m_hWnd
+		(LPARAM)m_pcEditWnd->m_hWnd,
+		m_pcEditWnd->m_hWnd
 	);
 }
 
@@ -8120,18 +8114,16 @@ void CEditView::Command_SHOWTOOLBAR( void )
 */
 void CEditView::Command_SHOWSTATUSBAR( void )
 {
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_hwndStatusBar)? TRUE: FALSE);	/* ステータスバー表示 */
-	pCEditWnd->LayoutStatusBar();
-	pCEditWnd->EndLayoutBars();
+	m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == m_pcEditWnd->m_hwndStatusBar)? TRUE: FALSE);	/* ステータスバー表示 */
+	m_pcEditWnd->LayoutStatusBar();
+	m_pcEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CShareData::getInstance()->PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_STATUSBAR,
-		(LPARAM)pCEditWnd->m_hWnd,
-		pCEditWnd->m_hWnd
+		(LPARAM)m_pcEditWnd->m_hWnd,
+		m_pcEditWnd->m_hWnd
 	);
 }
 
@@ -8144,18 +8136,16 @@ void CEditView::Command_SHOWSTATUSBAR( void )
 */
 void CEditView::Command_SHOWFUNCKEY( void )
 {
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
-	pCEditWnd->LayoutFuncKey();
-	pCEditWnd->EndLayoutBars();
+	m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == m_pcEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
+	m_pcEditWnd->LayoutFuncKey();
+	m_pcEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
 	CShareData::getInstance()->PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_FUNCKEY,
-		(LPARAM)pCEditWnd->m_hWnd,
-		pCEditWnd->m_hWnd
+		(LPARAM)m_pcEditWnd->m_hWnd,
+		m_pcEditWnd->m_hWnd
 	);
 }
 
@@ -8169,17 +8159,15 @@ void CEditView::Command_SHOWFUNCKEY( void )
  */
 void CEditView::Command_SHOWTAB( void )
 {
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
-	pCEditWnd->LayoutTabBar();
-	pCEditWnd->EndLayoutBars();
+	m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == m_pcEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
+	m_pcEditWnd->LayoutTabBar();
+	m_pcEditWnd->EndLayoutBars();
 
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
-		m_pcEditDoc->m_pcEditWnd->WindowTopMost(
-			( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+		m_pcEditWnd->WindowTopMost(
+			( (DWORD)::GetWindowLongPtr( m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 		);
 	}
 
@@ -8188,8 +8176,8 @@ void CEditView::Command_SHOWTAB( void )
 	CShareData::getInstance()->PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TAB,
-		(LPARAM)pCEditWnd->m_hWnd,
-		pCEditWnd->m_hWnd
+		(LPARAM)m_pcEditWnd->m_hWnd,
+		m_pcEditWnd->m_hWnd
 	);
 }
 //@@@ To Here 2003.06.10 MIK
@@ -8201,10 +8189,9 @@ void CEditView::Command_PRINT( void )
 {
 	// 使っていない処理を削除 2003.05.04 かろと
 	Command_PRINT_PREVIEW();
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷実行 */
-	pCEditWnd->m_pPrintPreview->OnPrint();
+	m_pcEditWnd->m_pPrintPreview->OnPrint();
 }
 
 
@@ -8213,10 +8200,8 @@ void CEditView::Command_PRINT( void )
 /* 印刷プレビュー */
 void CEditView::Command_PRINT_PREVIEW( void )
 {
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-
 	/* 印刷プレビューモードのオン/オフ */
-	pCEditWnd->PrintPreviewModeONOFF();
+	m_pcEditWnd->PrintPreviewModeONOFF();
 	return;
 }
 
@@ -8227,10 +8212,9 @@ void CEditView::Command_PRINT_PREVIEW( void )
 void CEditView::Command_PRINT_PAGESETUP( void )
 {
 	BOOL		bRes;
-	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷ページ設定 */
-	bRes = pCEditWnd->OnPrintPageSetting();
+	bRes = m_pcEditWnd->OnPrintPageSetting();
 	return;
 }
 
@@ -8916,7 +8900,7 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 /* 次のグループ */			// 2007.06.20 ryoji
 void CEditView::Command_NEXTGROUP( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->NextGroup();
@@ -8925,7 +8909,7 @@ void CEditView::Command_NEXTGROUP( void )
 /* 前のグループ */			// 2007.06.20 ryoji
 void CEditView::Command_PREVGROUP( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->PrevGroup();
@@ -8934,7 +8918,7 @@ void CEditView::Command_PREVGROUP( void )
 /* タブを右に移動 */		// 2007.06.20 ryoji
 void CEditView::Command_TAB_MOVERIGHT( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->MoveRight();
@@ -8943,7 +8927,7 @@ void CEditView::Command_TAB_MOVERIGHT( void )
 /* タブを左に移動 */		// 2007.06.20 ryoji
 void CEditView::Command_TAB_MOVELEFT( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->MoveLeft();
@@ -8952,7 +8936,7 @@ void CEditView::Command_TAB_MOVELEFT( void )
 /* 新規グループ */			// 2007.06.20 ryoji
 void CEditView::Command_TAB_SEPARATE( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->Separate();
@@ -8961,7 +8945,7 @@ void CEditView::Command_TAB_SEPARATE( void )
 /* 次のグループに移動 */	// 2007.06.20 ryoji
 void CEditView::Command_TAB_JOINTNEXT( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->JoinNext();
@@ -8970,7 +8954,7 @@ void CEditView::Command_TAB_JOINTNEXT( void )
 /* 前のグループに移動 */	// 2007.06.20 ryoji
 void CEditView::Command_TAB_JOINTPREV( void )
 {
-	CTabWnd* pcTabWnd = &m_pcEditDoc->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &m_pcEditWnd->m_cTabWnd;
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->JoinPrev();

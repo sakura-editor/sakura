@@ -105,7 +105,7 @@ CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
 	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
 	m_nEditViewCount = 1;
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView();
+	m_pcEditViewArr[0] = new CEditView( m_pcEditWnd );
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -3938,7 +3938,7 @@ bool CEditDoc::CreateEditViewBySplit(int nViewCount )
 		int i;
 		for( i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
-			m_pcEditViewArr[i] = new CEditView();
+			m_pcEditViewArr[i] = new CEditView( m_pcEditWnd );
 			m_pcEditViewArr[i]->Create( m_hInstance, m_pcEditWnd->m_cSplitterWnd.m_hWnd, this, i, FALSE );
 		}
 		m_nEditViewCount = nViewCount;
