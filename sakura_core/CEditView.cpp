@@ -3900,16 +3900,12 @@ void CEditView::CopySelectedAllLines(
 void CEditView::ConvSelectedArea( int nFuncCode )
 {
 	CMemory		cmemBuf;
-	int			nNewLine;		/* 挿入された部分の次の位置の行 */
-	int			nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
+
+	CLayoutPoint sPos;
+
 	COpe*		pcOpe = NULL;
-//	BOOL		bBoxSelected;
-//	HDC			hdc;
-//	PAINTSTRUCT	ps;
 	RECT		rcSel;
 
-	int			nPosX;
-	int			nPosY;
 	int			nIdxFrom;
 	int			nIdxTo;
 	int			nLineNum;
@@ -3982,13 +3978,13 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSel.bottom && 0 < nDelLen ){
 				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2, &pcLayout );
-				nPosX = LineIndexToColumn( pcLayout, nDelPos );
-				nPosY =  nLineNum + 1;
+				sPos.x = LineIndexToColumn( pcLayout, nDelPos );
+				sPos.y =  nLineNum + 1;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe = new COpe;
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-						nPosX,
-						nPosY,
+						sPos.x,
+						sPos.y,
 						&pcOpe->m_ptCaretPos_PHY_Before.x,
 						&pcOpe->m_ptCaretPos_PHY_Before.y
 					);
@@ -3999,8 +3995,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				pcMemDeleted = new CMemory;
 				/* 指定位置の指定長データ削除 */
 				DeleteData2(
-					nPosX/*rcSel.left*/,
-					nPosY/*nLineNum + 1*/,
+					sPos.x,
+					sPos.y,
 					nDelLen,
 					pcMemDeleted,
 					pcOpe		/* 編集操作要素 COpe */
@@ -4010,8 +4006,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				cmemBuf.SetNativeData( pcMemDeleted );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-						nPosX,
-						nPosY,
+						sPos.x,
+						sPos.y,
 						&pcOpe->m_ptCaretPos_PHY_After.x,
 						&pcOpe->m_ptCaretPos_PHY_After.y
 					);
@@ -4026,25 +4022,24 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe = new COpe;
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-						nPosX,
-						nPosY,
+						sPos.x,
+						sPos.y,
 						&pcOpe->m_ptCaretPos_PHY_Before.x,
 						&pcOpe->m_ptCaretPos_PHY_Before.y
 					);
 				}
 				/* 現在位置にデータを挿入 */
+				CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
 				InsertData_CEditView(
-					nPosX,
-					nPosY,
+					sPos,
 					cmemBuf.GetStringPtr(),
 					cmemBuf.GetStringLength(),
-					&nNewLine,
-					&nNewPos,
+					&ptLayoutNew,
 					pcOpe,
 					false	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 				);
 				/* カーソルを移動 */
-				MoveCursor( nNewPos, nNewLine, false );
+				MoveCursor( ptLayoutNew.x, ptLayoutNew.y, false );
 				m_nCaretPosX_Prev = m_ptCaretPos.x;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */

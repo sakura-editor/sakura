@@ -2344,8 +2344,6 @@ void CEditView::Command_INSTEXT(
 		return;
 	}
 
-	int				nNewLine;			/* 挿入された部分の次の位置の行 */
-	int				nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	CWaitCursor*	pcWaitCursor;
 	int				i;
@@ -2429,19 +2427,18 @@ void CEditView::Command_INSTEXT(
 		}
 
 		// 現在位置にデータを挿入
+		CLayoutPoint ptLayoutNew; //挿入された部分の次の位置
 		InsertData_CEditView(
-			m_ptCaretPos.x,
-			m_ptCaretPos.y,
+			m_ptCaretPos,
 			pszText,
 			nTextLen,
-			&nNewLine,
-			&nNewPos,
+			&ptLayoutNew,
 			pcOpe,
 			true
 		);
 
 		// 挿入データの最後へカーソルを移動
-		MoveCursor( nNewPos, nNewLine, true );
+		MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( !m_bDoing_UndoRedo ){								/* アンドゥ・リドゥの実行中か */
 			pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
@@ -2515,8 +2512,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 	int				nBgn;
 	int				nPos;
 	int				nCount;
-	int				nNewLine;		// 挿入された部分の次の位置の行
-	int				nNewPos;		// 挿入された部分の次の位置のデータ位置
+	CLayoutPoint	ptLayoutNew;	//挿入された部分の次の位置
 	int				nCurXOld;
 	int				nCurYOld;
 	COpe*			pcOpe = NULL;
@@ -2562,12 +2558,10 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 			/* 現在位置にデータを挿入 */
 			if( nPos - nBgn > 0 ){
 				InsertData_CEditView(
-					nCurXOld,
-					nCurYOld + nCount,
+					CLayoutPoint( nCurXOld, nCurYOld + nCount ),
 					&szPaste[nBgn],
 					nPos - nBgn,
-					&nNewLine,
-					&nNewPos,
+					&ptLayoutNew,
 					pcOpe,
 					false
 				);
@@ -2575,8 +2569,8 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-												nNewPos,
-												nNewLine,
+												ptLayoutNew.x,
+												ptLayoutNew.y,
 												&pcOpe->m_ptCaretPos_PHY_After.x,
 												&pcOpe->m_ptCaretPos_PHY_After.y
 												);
@@ -2626,12 +2620,10 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 				}
 
 				InsertData_CEditView(
-					nInsPosX,
-					m_ptCaretPos.y,
+					CLayoutPoint( nInsPosX, m_ptCaretPos.y ),
 					m_pcEditDoc->GetNewLineCode().GetValue(),
 					m_pcEditDoc->GetNewLineCode().GetLen(),
-					&nNewLine,
-					&nNewPos,
+					&ptLayoutNew,
 					pcOpe,
 					false
 				);
@@ -2639,8 +2631,8 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-													nNewPos,
-													nNewLine,
+													ptLayoutNew.x,
+													ptLayoutNew.y,
 													&pcOpe->m_ptCaretPos_PHY_After.x,
 													&pcOpe->m_ptCaretPos_PHY_After.y
 													);
@@ -2746,8 +2738,6 @@ void CEditView::Command_CHAR( char cChar )
 	int				nCharChars;
 	int				nIdxTo;
 	int				nPosX;
-	int				nNewLine;	/* 挿入された部分の次の位置の行 */
-	int				nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	char			szCurrent[10];
 
@@ -2869,18 +2859,18 @@ end_of_for:;
 	}
 
 
+	CLayoutPoint ptLayoutNew;
 	InsertData_CEditView(
-		m_ptCaretPos.x,
-		m_ptCaretPos.y,
+		m_ptCaretPos,
 		cmemData.GetStringPtr(),
 		cmemData.GetStringLength(),
-		&nNewLine,
-		&nNewPos,
+		&ptLayoutNew,
 		pcOpe,
 		true
 	);
+
 	/* 挿入データの最後へカーソルを移動 */
-	MoveCursor( nNewPos, nNewLine, true );
+	MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
@@ -2927,8 +2917,6 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 	}
 
 	CMemory			cmemData;
-	int				nNewLine;		/* 挿入された部分の次の位置の行 */
-	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	char	sWord[2];
 	//	Oct. 6 ,2002 genta 上下逆転
@@ -2962,10 +2950,11 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 	}
 	//	Oct. 6 ,2002 genta 
-	InsertData_CEditView( m_ptCaretPos.x, m_ptCaretPos.y, &sWord[0], 2, &nNewLine, &nNewPos, pcOpe, true );
+	CLayoutPoint ptLayoutNew;
+	InsertData_CEditView( m_ptCaretPos, &sWord[0], 2, &ptLayoutNew, pcOpe, true );
 
 	/* 挿入データの最後へカーソルを移動 */
-	MoveCursor( nNewPos, nNewLine, true );
+	MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
@@ -4033,8 +4022,6 @@ void CEditView::Command_TYPE_LIST( void )
 void CEditView::Command_DUPLICATELINE( void )
 {
 	COpe*			pcOpe = NULL;
-	int				nNewLine;
-	int				nNewPos;
 	int				bCRLF;
 	int				bAddCRLF;
 	CMemory			cmemBuf;
@@ -4107,13 +4094,12 @@ void CEditView::Command_DUPLICATELINE( void )
 	}
 
 	/* 現在位置にデータを挿入 */
+	CLayoutPoint ptLayoutNew;
 	InsertData_CEditView(
-		m_ptCaretPos.x,
-		m_ptCaretPos.y,
+		m_ptCaretPos,
 		(char*)cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),
-		&nNewLine,
-		&nNewPos,
+		&ptLayoutNew,
 		pcOpe,
 		true
 	);
@@ -4121,8 +4107,8 @@ void CEditView::Command_DUPLICATELINE( void )
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			nNewPos,
-			nNewLine,
+			ptLayoutNew.x,
+			ptLayoutNew.y,
 			&pcOpe->m_ptCaretPos_PHY_After.x,
 			&pcOpe->m_ptCaretPos_PHY_After.y
 		);
@@ -4961,11 +4947,10 @@ void CEditView::Command_INDENT( char cChar )
 void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 {
 	CLayoutRange sSelectOld;		//範囲選択
+	CLayoutPoint ptInserted;		//挿入後の挿入位置
 	CMemory		cMem;
 	CWaitCursor cWaitCursor( m_hWnd );
 	COpe*		pcOpe = NULL;
-	int			nNewLine;			/* 挿入された部分の次の位置の行 */
-	int			nNewPos;			/* 挿入された部分の次の位置のデータ位置 */
 	int			i;
 	CMemory		cmemBuf;
 	RECT		rcSel;
@@ -5065,16 +5050,14 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			}
 			/* 現在位置にデータを挿入 */
 			InsertData_CEditView(
-				rcSel.left/*nPosX*/,
-				nPosY,
+				CLayoutPoint( rcSel.left, nPosY ),
 				pData,		// cmemBuf.GetPtr(),	// 2001.12.03 hor
 				nDataLen,	// cmemBuf.GetStringLength(),		// 2001.12.03 hor
-				&nNewLine,
-				&nNewPos,
+				&ptInserted,
 				pcOpe,
 				false
 			);
-			MoveCursor( nNewPos, nNewLine, false );
+			MoveCursor( ptInserted.x, ptInserted.y, false );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
@@ -5124,7 +5107,6 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		m_sSelect.m_ptFrom.y = rcSel.top;			/* 範囲選択開始行 */
 		m_sSelect.m_ptFrom.x = rcSel.left; 		/* 範囲選択開始桁 */
 		m_sSelect.m_ptTo.y = rcSel.bottom;			/* 範囲選択終了行 */
-	//	m_sSelect.m_ptTo.x = nNewPos;				/* 範囲選択終了桁 */	// 2001.12.03 hor
 		m_sSelect.m_ptTo.x = rcSel.right;			/* 範囲選択終了桁 */	// 2001.12.03 hor
 		m_bBeginBoxSelect = true;
 	}else{
@@ -5163,17 +5145,15 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			}
 			/* 現在位置にデータを挿入 */
 			InsertData_CEditView(
-				0,
-				i,
+				CLayoutPoint( 0, i ),
 				pData,		//	cmemBuf.GetPtr(),	// 2001.12.03 hor
 				nDataLen,	//	cmemBuf.GetStringLength(),	// 2001.12.03 hor
-				&nNewLine,
-				&nNewPos,
+				&ptInserted,
 				pcOpe,
 				false
 			);
 			/* カーソルを移動 */
-			MoveCursor( nNewPos, nNewLine, false );
+			MoveCursor( ptInserted.x, ptInserted.y, false );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
@@ -5355,8 +5335,6 @@ void CEditView::Command_ADDTAIL(
 	int			nDataLen
 )
 {
-	int		nNewLine;					/* 挿入された部分の次の位置の行 */
-	int		nNewPos;					/* 挿入された部分の次の位置のデータ位置 */
 	COpe*	pcOpe = NULL;
 
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
@@ -5369,20 +5347,19 @@ void CEditView::Command_ADDTAIL(
 	}
 
 	/* 現在位置にデータを挿入 */
+	CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
 	InsertData_CEditView(
-		m_ptCaretPos.x,
-		m_ptCaretPos.y,
+		m_ptCaretPos,
 		(char*)pszData,
 		nDataLen,
-		&nNewLine,
-		&nNewPos,
+		&ptLayoutNew,
 		pcOpe,
 		true
 	);
 
 	/* 挿入データの最後へカーソルを移動 */
 	// Sep. 2, 2002 すなふき アンダーラインの表示が残ってしまう問題を修正
-	MoveCursor( nNewPos, nNewLine, true );
+	MoveCursor( ptLayoutNew.x, ptLayoutNew.y, true );
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */

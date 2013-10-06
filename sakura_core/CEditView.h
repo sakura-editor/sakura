@@ -617,14 +617,12 @@ public: /* テスト用にアクセス属性を変更 */
 
 	/* 現在位置にデータを挿入 */
 	void InsertData_CEditView(
-		int			nX,
-		int			nY,
-		const char*	pData,
-		int			nDataLen,
-		int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-		COpe*		pcOpe,				/* 編集操作要素 COpe */
-		bool		bRedraw
+		CLayoutPoint	ptInsertPos,
+		const char*		pData,
+		int				nDataLen,
+		CLayoutPoint*	pptNewPos,	//挿入された部分の次の位置のデータ位置
+		COpe*			pcOpe,		/* 編集操作要素 COpe */
+		bool			bRedraw
 	);
 	void SmartIndent_CPP( char );	/* C/C++スマートインデント処理 */
 	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */

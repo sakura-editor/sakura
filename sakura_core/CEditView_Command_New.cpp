@@ -53,14 +53,12 @@ using namespace std; // 2002/2/3 aroka
 	@date 2002/03/24 YAZAKI bUndo削除
 */
 void CEditView::InsertData_CEditView(
-	int			nX,
-	int			nY,
-	const char*	pData,
-	int			nDataLen,
-	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
-	int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
-	COpe*		pcOpe,				/* 編集操作要素 COpe */
-	bool		bRedraw
+	CLayoutPoint	ptInsertPos,	// [in] 挿入位置
+	const char*		pData,
+	int				nDataLen,
+	CLayoutPoint*	pptNewPos,		// [out] 挿入された部分の次の位置のデータ位置
+	COpe*			pcOpe,			// 編集操作要素 COpe
+	bool			bRedraw
 )
 {
 #ifdef _DEBUG
@@ -82,14 +80,13 @@ void CEditView::InsertData_CEditView(
 	bool			bHintNext = false;	// 更新が次行からになる可能性があることを示唆する
 	bool			bKinsoku;			// 禁則の有無
 
-	*pnNewLine = 0;			/* 挿入された部分の次の位置の行 */
-	*pnNewPos = 0;			/* 挿入された部分の次の位置のデータ位置 */
+	pptNewPos->y = 0;			/* 挿入された部分の次の位置の行 */
+	pptNewPos->x = 0;			/* 挿入された部分の次の位置のデータ位置 */
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
 		DeleteData( bRedraw );
-		nX = m_ptCaretPos.x;
-		nY = m_ptCaretPos.y;
+		ptInsertPos = m_ptCaretPos;
 	}
 
 	//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
@@ -99,7 +96,7 @@ void CEditView::InsertData_CEditView(
 			 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
 			 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nY, &nLineLen, &pcLayout );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.y, &nLineLen, &pcLayout );
 	bool bLineModifiedChange = (pLine)? !pcLayout->m_pCDocLine->IsModifyed(): true;
 
 	nIdxFrom = 0;
@@ -108,28 +105,29 @@ void CEditView::InsertData_CEditView(
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
-		if (pcLayout->m_ptLogicPos.x && bKinsoku){	// 折り返しレイアウト行か？
+		if( pcLayout->m_ptLogicPos.x && bKinsoku ){	// 折り返しレイアウト行か？
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
 		// 更新が次行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行末への文字入力や文字列貼り付けで現在行は更新されず次行以後が更新される場合もある
 		// 指定された桁に対応する行のデータ内の位置を調べる
-		nIdxFrom = LineColumnToIndex2( pcLayout, nX, nLineAllColLen );
+		nIdxFrom = LineColumnToIndex2( pcLayout, ptInsertPos.x, nLineAllColLen );
+
 		// 行終端より右に挿入しようとした
 		if( nLineAllColLen > 0 ){
 			// 終端直前から挿入位置まで空白を埋める為の処理
 			// 行終端が何らかの改行コードか?
 			if( EOL_NONE != pcLayout->m_cEol ){
 				nIdxFrom = nLineLen - 1;
-				for( i = 0; i < nX - nLineAllColLen + 1; ++i ){
+				for( i = 0; i < ptInsertPos.x - nLineAllColLen + 1; ++i ){
 					cMem += ' ';
 				}
 				cMem.AppendString( pData, nDataLen );
 			}
 			else{
 				nIdxFrom = nLineLen;
-				for( i = 0; i < nX - nLineAllColLen; ++i ){
+				for( i = 0; i < ptInsertPos.x - nLineAllColLen; ++i ){
 					cMem += ' ';
 				}
 				cMem.AppendString( pData, nDataLen );
@@ -147,8 +145,8 @@ void CEditView::InsertData_CEditView(
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
-		nLineAllColLen = nX;
-		for( i = 0; i < nX - nIdxFrom; ++i ){
+		nLineAllColLen = ptInsertPos.x;
+		for( i = 0; i < ptInsertPos.x - nIdxFrom; ++i ){
 			cMem += ' ';
 		}
 		cMem.AppendString( pData, nDataLen );
@@ -159,7 +157,7 @@ void CEditView::InsertData_CEditView(
 		if( pLine ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				LineIndexToColumn( pcLayout, nIdxFrom ),
-				nY,
+				ptInsertPos.y,
 				&pcOpe->m_ptCaretPos_PHY_Before.x,
 				&pcOpe->m_ptCaretPos_PHY_Before.y
 			);
@@ -167,7 +165,7 @@ void CEditView::InsertData_CEditView(
 		else{
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				0,
-				nY,
+				ptInsertPos.y,
 				&pcOpe->m_ptCaretPos_PHY_Before.x,
 				&pcOpe->m_ptCaretPos_PHY_Before.y
 			);
@@ -177,41 +175,41 @@ void CEditView::InsertData_CEditView(
 
 	// 文字列挿入
 	m_pcEditDoc->m_cLayoutMgr.InsertData_CLayoutMgr(
-		nY,
+		ptInsertPos.y,
 		nIdxFrom,
 		cMem.GetStringPtr(),
 		cMem.GetStringLength(),
 		&nModifyLayoutLinesOld,
 		&nInsLineNum,
-		pnNewLine,			/* 挿入された部分の次の位置の行 */
-		pnNewPos			/* 挿入された部分の次の位置のデータ位置 */
+		&pptNewPos->y,			/* 挿入された部分の次の位置の行 */
+		&pptNewPos->x			/* 挿入された部分の次の位置のデータ位置 */
 	);
 
 	// メモリが再確保されてアドレスが無効になるので、再度、行データを求める
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nY, &nLineLen );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.y, &nLineLen );
 
 	// 指定された行のデータ内の位置に対応する桁の位置を調べる
-	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( *pnNewLine, &nLineLen2, &pcLayout );
+	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( pptNewPos->y, &nLineLen2, &pcLayout );
 	if( pLine2 ){
-		*pnNewPos = LineIndexToColumn( pcLayout, *pnNewPos );
+		pptNewPos->x = LineIndexToColumn( pcLayout, pptNewPos->x );
 	}
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( *pnNewPos >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
+	if( pptNewPos->x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
 		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
 		 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
-			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pnNewLine, *pnNewPos ) )	//@@@ 2002.04.18
+			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( pptNewPos->y, pptNewPos->x ) )	//@@@ 2002.04.18
 			{
-				*pnNewPos = 0;
-				(*pnNewLine)++;
+				pptNewPos->x = 0;
+				pptNewPos->y++;
 			}
 		}
 		else
 		{
 			// Oct. 7, 2002 YAZAKI
-			*pnNewPos = pcLayout->m_pNext ? pcLayout->m_pNext->GetIndent() : 0;
-			(*pnNewLine)++;
+			pptNewPos->x = pcLayout->m_pNext ? pcLayout->m_pNext->GetIndent() : 0;
+			pptNewPos->y++;
 		}
 	}
 
@@ -229,7 +227,7 @@ void CEditView::InsertData_CEditView(
 	else{
 
 		if( bRedraw ){
-			int nStartLine = nY;
+			int nStartLine = ptInsertPos.y;
 			if( 0 < nInsLineNum ){
 				// スクロールバーの状態を更新する
 				AdjustScrollBars();
@@ -262,8 +260,8 @@ void CEditView::InsertData_CEditView(
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 
-				// 2002.02.25 Mod By KK 次行 (nY - m_nViewTopLine - 1); => (nY - m_nViewTopLine);
-				//ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nY - m_nViewTopLine - 1);
+				// 2002.02.25 Mod By KK 次行 (ptInsertPos.y - m_nViewTopLine - 1); => (ptInsertPos.y - m_nViewTopLine);
+				//ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (ptInsertPos.y - m_nViewTopLine - 1);
 				ps.rcPaint.top = m_nViewAlignTop + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nStartLine - m_nViewTopLine);
 				ps.rcPaint.bottom = ps.rcPaint.top + (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace) * (nModifyLayoutLinesOld);
 
@@ -291,8 +289,8 @@ void CEditView::InsertData_CEditView(
 	if( !m_bDoing_UndoRedo && pcOpe ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nOpe = OPE_INSERT;				/* 操作種別 */
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			*pnNewPos,
-			*pnNewLine,
+			pptNewPos->x,
+			pptNewPos->y,
 			&pcOpe->m_ptCaretPos_PHY_To.x,
 			&pcOpe->m_ptCaretPos_PHY_To.y
 		);
