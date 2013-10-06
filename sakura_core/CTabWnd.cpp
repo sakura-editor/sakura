@@ -873,8 +873,7 @@ void CTabWnd::Close( void )
 			m_hwndToolTip = NULL;
 		}
 
-		::DestroyWindow( m_hWnd );
-		m_hWnd = NULL;
+		this->DestroyWindow();
 	}
 }
 

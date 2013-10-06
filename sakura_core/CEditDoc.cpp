@@ -153,9 +153,6 @@ CEditDoc::~CEditDoc()
 		m_pcEditViewArr[i] = NULL;
 	}
 
-	if( m_hWnd != NULL ){
-		::DestroyWindow( m_hWnd );
-	}
 	/* ファイルの排他ロック解除 */
 	delete m_pcSMacroMgr;
 	DoFileUnlock();

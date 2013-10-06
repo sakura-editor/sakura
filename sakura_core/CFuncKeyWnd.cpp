@@ -183,10 +183,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 /* ウィンドウ クローズ */
 void CFuncKeyWnd::Close( void )
 {
-	if( m_hWnd ){
-		::DestroyWindow( m_hWnd );
-		m_hWnd = NULL;
-	}
+	this->DestroyWindow();
 }
 
 

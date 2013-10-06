@@ -210,4 +210,14 @@ LRESULT CWnd::CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 }
 
 
+/* ウィンドウを破棄 */
+void CWnd::DestroyWindow()
+{
+	if(m_hWnd){
+		::DestroyWindow( m_hWnd );
+		m_hWnd = NULL;
+	}
+}
+
+
 /*[EOF]*/

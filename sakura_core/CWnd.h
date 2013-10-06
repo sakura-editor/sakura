@@ -116,6 +116,8 @@ protected:
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
+	//ウィンドウ標準操作
+	void DestroyWindow();
 
 private: // 2002/2/10 aroka アクセス権変更
 #ifdef _DEBUG
