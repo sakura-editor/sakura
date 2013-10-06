@@ -361,9 +361,6 @@ BOOL CEditView::Create(
 		ShowWindow( GetHwnd(), SW_SHOW );
 	}
 
-	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditWnd->UpdateCaption();
-
 	/* キーボードの現在のリピート間隔を取得 */
 	int nKeyBoardSpeed;
 	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );

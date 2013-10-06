@@ -235,6 +235,7 @@ CEditWnd::~CEditWnd()
 		delete m_pcEditViewArr[i];
 		m_pcEditViewArr[i] = NULL;
 	}
+	m_pcEditView = NULL;
 
 	delete m_pcViewFont;
 	m_pcViewFont = NULL;
@@ -616,6 +617,7 @@ HWND CEditWnd::Create(
 	m_nEditViewCount = 1;
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView(this);
+	m_pcEditView = m_pcEditViewArr[0];
 
 	m_pcViewFont = new CViewFont(&GetLogfont());
 
@@ -4232,6 +4234,7 @@ void  CEditWnd::SetActivePane( int nIndex )
 	/* アクティブなビューを切り替える */
 	int nOldIndex = m_nActivePaneIndex;
 	m_nActivePaneIndex = nIndex;
+	m_pcEditView = m_pcEditViewArr[m_nActivePaneIndex];
 
 	// フォーカスを移動する	// 2007.10.16 ryoji
 	GetView(nOldIndex).CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
@@ -4278,14 +4281,6 @@ void  CEditWnd::SetActivePane( int nIndex )
 
 	return;
 }
-
-
-/* アクティブなペインを取得 */
-int CEditWnd::GetActivePane( void ) const
-{
-	return m_nActivePaneIndex;
-}
-
 
 /** すべてのペインの描画スイッチを設定する
 
