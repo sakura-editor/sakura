@@ -1481,15 +1481,16 @@ BEGIN
                     IDC_CHECK_OpenNewWin,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,24,79,170,10
     GROUPBOX        "Automatic Mode",IDC_STATIC,7,27,280,68
-    CONTROL         "Display Icons(&I)",IDC_CHECK_DispTabIcon,"Button",
+    CONTROL         "Display &Icons",IDC_CHECK_DispTabIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "Fixed Width(&E)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,49,10
-    CONTROL         "Close Button(&X)",IDC_CHECK_DispTabClose,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,146,115,63,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,70,115,59,10
+    LTEXT           "Close Btn(&X)",IDC_STATIC,130,116,68,8
+    COMBOBOX        IDC_CHECK_DispTabClose,173,113,46,80,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Font(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     RTEXT           "Font", IDC_STATIC_TABFONT,102,127,180,17,SS_RIGHT
-    CONTROL         "Sort Tab List(&S)",IDC_CHECK_SortTabList,"Button",
+    CONTROL         "&Sort Tab List",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,129,85,10
     LTEXT           "Title(&T)",IDC_STATIC,15,148,40,10
     EDITTEXT        IDC_TABWND_CAPTION,56,145,226,14,ES_AUTOHSCROLL
