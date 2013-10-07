@@ -824,40 +824,38 @@ void CEditView::DispRuler( HDC hdc )
 }
 
 //======================================================================
-//@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
-//! 全角括弧の対応表
-const struct ZENKAKKO_T{
+struct KAKKO_T{
 	const char *sStr;
 	const char *eStr;
-} zenkakkoarr[] = {
-	"【", "】",
-	"『", "』",
-	"「", "」",
-	"＜", "＞",
-	"≪", "≫",
-	"《", "》",
-	"（", "）",
-	"〈", "〉",
-	"｛", "｝",
-	"〔", "〕",
-	"［", "］",
-	"“", "”",
-	"〝", "〟",
-	NULL, NULL	//終端識別
+};
+//@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
+//! 全角括弧の対応表
+static const KAKKO_T zenkakkoarr[] = {
+	{ "【", "】", },
+	{ "『", "』", },
+	{ "「", "」", },
+	{ "＜", "＞", },
+	{ "≪", "≫", },
+	{ "《", "》", },
+	{ "（", "）", },
+	{ "〈", "〉", },
+	{ "｛", "｝", },
+	{ "〔", "〕", },
+	{ "［", "］", },
+	{ "“", "”", },
+	{ "〝", "〟", },
+	{ NULL, NULL, },	//終端識別
 };
 //@@@ 全角文字の対括弧: End
 //@@@ 2003.01.06 Start by ai: 半角文字の対括弧
 //! 半角括弧の対応表
-const struct HANKAKKO_T{
-	const char *sStr;
-	const char *eStr;
-} hankakkoarr[] = {
-	"(", ")",
-	"[", "]",
-	"{", "}",
-	"<", ">",
-	"｢", "｣",
-	NULL, NULL	//終端識別
+static const KAKKO_T hankakkoarr[] = {
+	{ "(", ")", },
+	{ "[", "]", },
+	{ "{", "}", },
+	{ "<", ">", },
+	{ "｢", "｣", },
+	{ NULL, NULL, },	//終端識別
 };
 //@@@ 半角文字の対括弧: End
 //	Jun. 16, 2000 genta
@@ -872,10 +870,8 @@ const struct HANKAKKO_T{
 	括弧が半角か全角か、及び始まりか終わりかによってこれに続く4つの関数に
 	制御を移す。
 
-	@param LayoutX [in] 検索開始点の物理座標X
-	@param LayoutY [in] 検索開始点の物理座標Y
-	@param NewX [out] 移動先のレイアウト座標X
-	@param NewY [out] 移動先のレイアウト座標Y
+	@param ptLayout [in] 検索開始点の物理座標
+	@param pptLayoutNew [out] 移動先のレイアウト座標
 	@param mode [in/out] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
 						 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる (このbitを参照)
 						 bit2(out) : 見つかった位置         0:後ろ      1:前     (このbitを更新)
@@ -888,54 +884,54 @@ const struct HANKAKKO_T{
 	@date Feb. 03, 2001 MIK 全角括弧に対応
 	@date Sep. 18, 2002 ai modeの追加
 */
-bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, int* mode )
+bool CEditView::SearchBracket(
+	const CLayoutPoint&	ptLayout,
+	CLayoutPoint*		pptLayoutNew,
+	int*				mode
+)
 {
 	int len;	//	行の長さ
 	int nCharSize;	//	（メモリ上の）文字幅
-	int PosX, PosY;	//	物理位置
+	CLogicPoint ptPos;
 
-	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( LayoutX, LayoutY, &PosX, &PosY );
-	const char *cline = m_pcEditDoc->m_cDocLineMgr.GetLineStr( PosY, &len );
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptLayout.x, ptLayout.y, &ptPos.x, &ptPos.y );
+	const char *cline = m_pcEditDoc->m_cDocLineMgr.GetLineStr( ptPos.y, &len );
 
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合
 		return false;
 
 	// 2005-09-02 D.S.Koba GetSizeOfChar
-	nCharSize = CMemory::GetSizeOfChar( cline, len, PosX );
+	nCharSize = CMemory::GetSizeOfChar( cline, len, ptPos.x );
 	m_nCharSize = nCharSize;	// 02/09/18 対括弧の文字サイズ設定 ai
 
 	if( nCharSize == 1 ){	//	1バイト文字
 		// 03/01/06 ai Start
-		int i;
-		const struct HANKAKKO_T *p;
-		p = hankakkoarr;
-		for( i = 0; p->sStr != NULL; i++, p++ )
+		const KAKKO_T *p;
+		for( p = hankakkoarr; p->sStr != NULL; p++ )
 		{
-			if( strncmp(p->sStr, &cline[PosX], 1) == 0 )
+			if( strncmp(p->sStr, &cline[ptPos.x], 1) == 0 )
 			{
-				return SearchBracketForward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 1 );
 			}
-			else if( strncmp(p->eStr, &cline[PosX], 1) == 0 )
+			else if( strncmp(p->eStr, &cline[ptPos.x], 1) == 0 )
 			{
-				return SearchBracketBackward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 1 );
 			}
 		}
 		// 03/01/06 ai End
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
-		int i;
-		const struct ZENKAKKO_T *p;
-		p = zenkakkoarr;
-		for(i = 0; p->sStr != NULL; i++, p++)
+		const KAKKO_T *p;
+		for( p = zenkakkoarr; p->sStr != NULL; p++)
 		{
-			if(strncmp(p->sStr, &cline[PosX], 2) == 0)
+			if( strncmp(p->sStr, &cline[ptPos.x], 2) == 0 )
 			{
-				return SearchBracketForward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );		// modeの追加 02/09/19 ai
+				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 2 );		// modeの追加 02/09/19 ai
 			}
-			else if(strncmp(p->eStr, &cline[PosX], 2) == 0)
+			else if( strncmp(p->eStr, &cline[ptPos.x], 2) == 0 )
 			{
-				return SearchBracketBackward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );	// modeの追加 02/09/19 ai
+				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 2 );	// modeの追加 02/09/19 ai
 			}
 		}
 //@@@ 2001.02.03 End: 全角文字の対括弧
@@ -951,46 +947,42 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
 
-	if( PosX <= 0 ){
-//		::MessageBox( NULL, "NO DATA", "Bracket", MB_OK );
+	if( ptPos.x <= 0 ){
 		return false;	//	前の文字はない
 	}
-	const char *bPos = CMemory::MemCharPrev( cline, PosX, cline + PosX );
-	nCharSize = cline + PosX - bPos;
+
+	const char *bPos = CMemory::MemCharPrev( cline, ptPos.x, cline + ptPos.x );
+	nCharSize = cline + ptPos.x - bPos;
 	m_nCharSize = nCharSize;	// 02/10/01 対括弧の文字サイズ設定 ai
 	if( nCharSize == 1 ){	//	1バイト文字
 		// 03/01/06 ai Start
-		int i;
-		const struct HANKAKKO_T *p;
-		PosX = bPos - cline;
-		p = hankakkoarr;
-		for( i = 0; p->sStr != NULL; i++, p++ )
+		const KAKKO_T* p;
+		ptPos.x = bPos - cline;
+		for( p = hankakkoarr; p->sStr != NULL; p++ )
 		{
-			if( strncmp(p->sStr, &cline[PosX], 1) == 0 )
+			if( strncmp(p->sStr, &cline[ptPos.x], 1) == 0 )
 			{
-				return SearchBracketForward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 1 );
 			}
-			else if( strncmp(p->eStr, &cline[PosX], 1) == 0 )
+			else if( strncmp(p->eStr, &cline[ptPos.x], 1) == 0 )
 			{
-				return SearchBracketBackward( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );
+				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 1 );
 			}
 		}
 		// 03/01/06 ai End
 //@@@ 2001.02.03 Start by MIK: 全角文字の対括弧
 	}else if( nCharSize == 2 ){	// 2バイト文字
-		int i;
-		const struct ZENKAKKO_T *p;
-		PosX = bPos - cline;
-		p = zenkakkoarr;
-		for( i = 0; p->sStr != NULL; i++, p++ )
+		const KAKKO_T *p;
+		ptPos.x = bPos - cline;
+		for( p = zenkakkoarr; p->sStr != NULL; p++ )
 		{
-			if( strncmp(p->sStr, &cline[PosX], 2) == 0 )
+			if( strncmp(p->sStr, &cline[ptPos.x], 2) == 0 )
 			{
-				return SearchBracketForward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );		// modeの追加 02/09/19 ai
+				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 2 );		// modeの追加 02/09/19 ai
 			}
-			else if( strncmp(p->eStr, &cline[PosX], 2) == 0 )
+			else if( strncmp(p->eStr, &cline[ptPos.x], 2) == 0 )
 			{
-				return SearchBracketBackward2( PosX, PosY, NewX, NewY, p->sStr, p->eStr, mode );	// modeの追加 02/09/19 ai
+				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode, 2 );	// modeの追加 02/09/19 ai
 			}
 		}
 //@@@ 2001.02.03 End: 全角文字の対括弧
@@ -1003,69 +995,68 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 
 	@author genta
 
-	@param PosX [in] 検索開始点の物理座標X
-	@param PosY [in] 検索開始点の物理座標Y
-	@param NewX [out] 移動先のレイアウト座標X
-	@param NewY [out] 移動先のレイアウト座標Y
+	@param ptLayout [in] 検索開始点の物理座標
+	@param pptLayoutNew [out] 移動先のレイアウト座標
 	@param upChar [in] 括弧の始まりの文字
 	@param dnChar [in] 括弧を閉じる文字列
 	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
 					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
 					 bit2(out) : 見つかった位置         0:後ろ      1:前
+	@param size [in] 1:半角 2:全角
 
 	@retval true 成功
 	@retval false 失敗
 */
 // 03/01/08 ai
 bool CEditView::SearchBracketForward(
-	int PosX,
-	int PosY,
-	int* NewX,
-	int* NewY,
-	const char* upChar,
-	const char* dnChar,
-	int* mode
+	CLogicPoint		ptPos,
+	CLayoutPoint*	pptLayoutNew,
+	const char*		upChar,
+	const char*		dnChar,
+	int*			mode,
+	int 			size
 )
 {
 	CDocLine* ci;
 
 	int			len;
-	const char	*cPos, *nPos;
-	char		*cline, *lineend;
+	const char* cPos;
+	const char* nPos;
+	const char*	cline;
+	const char* lineend;
 	int			level = 0;
-	int			nCol, nLine, nSearchNum;	// 02/09/19 ai
 
-//	char buf[50];	Debug用
+	CLayoutPoint ptColLine;
+
+	int			nSearchNum;	// 02/09/19 ai
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
-	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos.x, ptPos.y, &ptColLine.x, &ptColLine.y );	// 02/09/19 ai
+	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - ptColLine.y;					// 02/09/19 ai
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.y );
 	cline = ci->m_cLine.GetStringPtr( &len );
 	lineend = cline + len;
-	cPos = cline + PosX;
+	cPos = cline + ptPos.x;
 
 	do {
 		while( cPos < lineend ){
 			nPos = CMemory::MemCharNext( cline, len, cPos );
-			if( nPos - cPos > 1 ){
+			if( nPos - cPos > size ){
 				//	skip
 				cPos = nPos;
 				continue;
 			}
 			// 03/01/08 ai Start
-			if( strncmp(upChar, cPos, 1) == 0 ){
+			if( strncmp(upChar, cPos, size) == 0 ){
 				++level;
 			}
-			else if( strncmp(dnChar, cPos, 1) == 0 ){
+			else if( strncmp(dnChar, cPos, size) == 0 ){
 				--level;
 			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
-				PosX = cPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
-//				wsprintf( buf, "Layout: %d, %d\nPhys: %d, %d", *NewX, *NewY, PosX, PosY );
-//				::MessageBox( NULL, buf, "Bracket", MB_OK );
+				ptPos.x = cPos - cline;
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos.x, ptPos.y, &pptLayoutNew->x, &pptLayoutNew->y );
 				return true;
 				//	Happy Ending
 			}
@@ -1082,7 +1073,7 @@ bool CEditView::SearchBracketForward(
 		// 02/09/19 ai End
 
 		//	次の行へ
-		++PosY;
+		ptPos.y++;
 		ci = ci->m_pNext;	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
@@ -1100,68 +1091,65 @@ bool CEditView::SearchBracketForward(
 
 	@author genta
 
-	@param PosX [in] 検索開始点の物理座標X
-	@param PosY [in] 検索開始点の物理座標Y
-	@param NewX [out] 移動先のレイアウト座標X
-	@param NewY [out] 移動先のレイアウト座標Y
+	@param ptLayout [in] 検索開始点の物理座標
+	@param pptLayoutNew [out] 移動先のレイアウト座標
 	@param upChar [in] 括弧の始まりの文字
 	@param dnChar [in] 括弧を閉じる文字列
 	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
 					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
 					 bit2(out) : 見つかった位置         0:後ろ      1:前
+	@param size [in] 1:半角 2:全角
 
 	@retval true 成功
 	@retval false 失敗
 */
 bool CEditView::SearchBracketBackward(
-	int PosX,
-	int PosY,
-	int* NewX,
-	int* NewY,
-	const char* dnChar,
-	const char* upChar,
-	int* mode
+	CLogicPoint		ptPos,
+	CLayoutPoint*	pptLayoutNew,
+	const char*		dnChar,
+	const char*		upChar,
+	int*			mode,
+	int 			size
 )
 {
 	CDocLine* ci;
 
 	int			len;
-	const char	*cPos, *pPos;
-	char		*cline, *lineend;
+	const char* cPos;
+	const char* pPos;
+	const char*	cline;
 	int			level = 1;
-	int			nCol, nLine, nSearchNum;	// 02/09/19 ai
 
-//	char buf[50];	Debug用
+	CLayoutPoint ptColLine;
+
+	int			nSearchNum;	// 02/09/19 ai
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
-	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos.x, ptPos.y, &ptColLine.x, &ptColLine.y );	// 02/09/19 ai
+	nSearchNum = ptColLine.y - m_nViewTopLine;										// 02/09/19 ai
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.y );
 	cline = ci->m_cLine.GetStringPtr( &len );
-	lineend = cline + len;
-	cPos = cline + PosX;
+	cPos = cline + ptPos.x;
 
 	do {
 		while( cPos > cline ){
 			pPos = CMemory::MemCharPrev( cline, len, cPos );
-			if( cPos - pPos > 1 ){
+			if( cPos - pPos != size ){
 				//	skip
 				cPos = pPos;
 				continue;
 			}
 			// 03/01/08 ai Start
-			if( strncmp(upChar, pPos, 1) == 0 ){
+			if( strncmp(upChar, pPos, size) == 0 ){
 				++level;
 			}
-			else if( strncmp(dnChar, pPos, 1) == 0 ){
+			else if( strncmp(dnChar, pPos, size) == 0 ){
 				--level;
 			}// 03/01/08 ai End
 
 			if( level == 0 ){	//	見つかった！
-				PosX = pPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
-//				wsprintf( buf, "Layout: %d, %d\nPhys: %d, %d", *NewX, *NewY, PosX, PosY );
-//				::MessageBox( NULL, buf, "Bracket", MB_OK );
+				ptPos.x = pPos - cline;
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos.x, ptPos.y, &pptLayoutNew->x, &pptLayoutNew->y );
 				return true;
 				//	Happy Ending
 			}
@@ -1178,7 +1166,7 @@ bool CEditView::SearchBracketBackward(
 		// 02/09/19 ai End
 
 		//	次の行へ
-		--PosY;
+		ptPos.y--;
 		ci = ci->m_pPrev;	//	次のアイテム
 		if( ci == NULL )
 			break;	//	終わりに達した
@@ -1189,189 +1177,6 @@ bool CEditView::SearchBracketBackward(
 
 	return false;
 }
-
-//@@@ 2001.02.03 Start by MIK:
-/*!
-	@brief 全角対括弧の検索:順方向
-
-	@author MIK
-
-	@param PosX [in] 検索開始点の物理座標X
-	@param PosY [in] 検索開始点の物理座標Y
-	@param NewX [out] 移動先のレイアウト座標X
-	@param NewY [out] 移動先のレイアウト座標Y
-	@param upChar [in] 括弧の始まりの文字へのポインタ
-	@param dnChar [in] 括弧を閉じる文字列へのポインタ
-	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
-					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
-					 bit2(out) : 見つかった位置         0:後ろ      1:前
-
-	@retval true 成功
-	@retval false 失敗
-*/
-bool CEditView::SearchBracketForward2(
-	int		PosX,
-	int		PosY,
-	int*	NewX,
-	int*	NewY,
-	const char*	upChar,
-	const char*	dnChar,
-	int*	mode
-)
-{
-	CDocLine* ci;
-
-	int len;
-	const char *cPos, *nPos;
-	char *cline, *lineend;
-	int level = 0;
-	int			nCol, nLine, nSearchNum;	// 02/09/19 ai
-
-	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
-	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_cLine.GetStringPtr( &len );
-	lineend = cline + len;
-	cPos = cline + PosX;
-
-	do {
-		while( cPos < lineend ){
-			nPos = CMemory::MemCharNext( cline, len, cPos );
-			if( nPos - cPos != 2 ){
-				//	skip
-				cPos = nPos;
-				continue;
-			}
-			if( strncmp(upChar, cPos, 2) == 0 ){
-				++level;
-			}
-			else if( strncmp(dnChar, cPos, 2) == 0 ){
-				--level;
-			}
-
-			if( level == 0 ){	//	見つかった！
-				PosX = cPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
-				return true;
-			}
-			cPos = nPos;	//	次の文字へ
-		}
-
-		// 02/09/19 ai Start
-		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
-		{	// 表示領域外を調べないモードで表示領域の終端の場合
-			//SendStatusMessage( "対括弧の検索を中断しました" );
-			break;
-		}
-		// 02/09/19 ai End
-
-		//	次の行へ
-		++PosY;
-		ci = ci->m_pNext;	//	次のアイテム
-		if( ci == NULL )
-			break;	//	終わりに達した
-
-		cline = ci->m_cLine.GetStringPtr( &len );
-		cPos = cline;
-		lineend = cline + len;
-	}while( cline != NULL );
-
-	return false;
-}
-//@@@ 2001.02.03 End
-
-//@@@ 2001.02.03 Start by MIK:
-/*!
-	@brief 全角対括弧の検索:逆方向
-
-	@author MIK
-
-	@param PosX [in] 検索開始点の物理座標X
-	@param PosY [in] 検索開始点の物理座標Y
-	@param NewX [out] 移動先のレイアウト座標X
-	@param NewY [out] 移動先のレイアウト座標Y
-	@param upChar [in] 括弧の始まりの文字へのポインタ
-	@param dnChar [in] 括弧を閉じる文字列へのポインタ
-	@param mode [in] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる (このbitを参照)
-					 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
-					 bit2(out) : 見つかった位置         0:後ろ      1:前
-
-	@retval true 成功
-	@retval false 失敗
-*/
-bool CEditView::SearchBracketBackward2(
-	int   PosX,
-	int   PosY,
-	int*  NewX,
-	int*  NewY,
-	const char* dnChar,
-	const char* upChar,
-	int*  mode
-)
-{
-	CDocLine* ci;
-
-	int len;
-	const char *cPos, *pPos;
-	char *cline, *lineend;
-	int level = 1;
-	int	nCol, nLine, nSearchNum;	// 02/09/19 ai
-
-	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
-	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_cLine.GetStringPtr( &len );
-	lineend = cline + len;
-	cPos = cline + PosX;
-
-	do {
-		while( cPos > cline ){
-			pPos = CMemory::MemCharPrev( cline, len, cPos );
-			if( cPos - pPos != 2 ){
-				//	skip
-				cPos = pPos;
-				continue;
-			}
-			if( strncmp(upChar, pPos, 2) == 0 ){
-				++level;
-			}
-			else if( strncmp(dnChar, pPos, 2) == 0 ){
-				--level;
-			}
-
-			if( level == 0 ){	//	見つかった！
-				PosX = pPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
-				return true;
-			}
-			cPos = pPos;	//	次の文字へ
-		}
-
-		// 02/09/19 ai Start
-		nSearchNum--;
-		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
-		{	// 表示領域外を調べないモードで表示領域の先頭の場合
-			//SendStatusMessage( "対括弧の検索を中断しました" );
-			break;
-		}
-		// 02/09/19 ai End
-
-		//	次の行へ
-		--PosY;
-		ci = ci->m_pPrev;	//	次のアイテム
-		if( ci == NULL )
-			break;	//	終わりに達した
-
-		cline = ci->m_cLine.GetStringPtr( &len );
-		cPos = cline + len;
-	}while( cline != NULL );
-
-	return false;
-}
-//@@@ 2001.02.03 End
 
 //@@@ 2003.01.09 Start by ai:
 /*!
@@ -1388,11 +1193,9 @@ bool CEditView::SearchBracketBackward2(
 */
 bool CEditView::IsBracket( const char *pLine, int x, int size )
 {
-	int	i;
 	if( size == 1 ){
-		const struct HANKAKKO_T *p;
-		p = hankakkoarr;
-		for( i = 0; p->sStr != NULL; i++, p++ )
+		const KAKKO_T *p;
+		for( p = hankakkoarr; p->sStr != NULL; p++ )
 		{
 			if( strncmp( p->sStr, &pLine[x], 1 ) == 0 )
 			{
@@ -1405,9 +1208,8 @@ bool CEditView::IsBracket( const char *pLine, int x, int size )
 		}
 	}
 	else if( size == 2 ) {
-		const struct ZENKAKKO_T *p;
-		p = zenkakkoarr;
-		for( i = 0; p->sStr != NULL; i++, p++ )
+		const KAKKO_T *p;
+		for( p = zenkakkoarr; p->sStr != NULL; p++ )
 		{
 			if( strncmp( p->sStr, &pLine[x], 2 ) == 0 )
 			{

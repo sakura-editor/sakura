@@ -240,17 +240,11 @@ public:
 	);
 	
 	//	Jun. 16, 2000 genta
-	bool  SearchBracket( int PosX, int PosY, int* NewX, int* NewY, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
-	bool  SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
-						const char* upChar, const char* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
-	bool  SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
-						const char* dnChar, const char* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
-//@@@ 2001.02.03 Start by MIK: 全角の対括弧
-	bool  SearchBracketForward2( int PosX, int PosY, int* NewX, int* NewY,
-								 const char* upChar, const char* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
-	bool  SearchBracketBackward2( int PosX, int PosY, int* NewX, int* NewY,
-								 const char* dnChar, const char* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
-//@@@ 2001.02.03 End
+	bool  SearchBracket( const CLayoutPoint& ptLayout, CLayoutPoint* pptLayoutNew, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
+	bool  SearchBracketForward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+						const char* upChar, const char* dnChar, int* mode, int size );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
+	bool  SearchBracketBackward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
+						const char* dnChar, const char* upChar, int* mode, int size );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 
 //	2001/06/18 asa-o
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示

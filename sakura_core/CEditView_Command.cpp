@@ -8808,7 +8808,7 @@ void CEditView::Command_BRACKETPAIR( void )
 	bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる
 	bit2(out) : 見つかった位置         0:後ろ      1:前
 	*/
-	if( SearchBracket( m_ptCaretPos.x, m_ptCaretPos.y, &ptColLine.x, &ptColLine.y, &mode ) ){	// 02/09/18 ai
+	if( SearchBracket( m_ptCaretPos, &ptColLine, &mode ) ){	// 02/09/18 ai
 		//	2005.06.24 Moca
 		//	2006.07.09 genta 表示更新漏れ：新規関数にて対応
 		MoveCursorSelecting( ptColLine.x, ptColLine.y, m_bSelectingLock );

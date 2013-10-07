@@ -6884,8 +6884,6 @@ void CEditView::SendStatusMessage( const TCHAR* msg )
 */
 void CEditView::SetBracketPairPos( bool flag )
 {
-	int	nCol;
-	int	nLine;
 	int	mode;
 
 	// 03/03/06 ai すべて置換、すべて置換後のUndo&Redoがかなり遅い問題に対応
@@ -6905,21 +6903,23 @@ void CEditView::SetBracketPairPos( bool flag )
 	*/
 	mode = 2;
 
+	CLayoutPoint ptColLine;
+
 	if( ( flag == true ) && !IsTextSelected() && !m_bDrawSelectArea
-		&& ( m_bBeginBoxSelect == false ) && SearchBracket( m_ptCaretPos.x, m_ptCaretPos.y, &nCol, &nLine, &mode ) )
+		&& ( m_bBeginBoxSelect == false ) && SearchBracket( m_ptCaretPos, &ptColLine, &mode ) )
 	{
 		// 登録指定(flag=true)			&&
 		// テキストが選択されていない	&&
 		// 選択範囲を描画していない		&&
 		// 矩形範囲選択中でない			&&
 		// 対応する括弧が見つかった		場合
-		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
-			&& ( nLine >= m_nViewTopLine ) && ( nLine <= m_nViewTopLine + m_nViewRowNum ) )
+		if ( ( ptColLine.x >= m_nViewLeftCol ) && ( ptColLine.x <= m_nViewLeftCol + m_nViewColNum )
+			&& ( ptColLine.y >= m_nViewTopLine ) && ( ptColLine.y <= m_nViewTopLine + m_nViewRowNum ) )
 		{
 			// 表示領域内の場合
 
 			// レイアウト位置から物理位置へ変換(強調表示位置を登録)
-			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( nCol, nLine, &m_ptBracketPairPos_PHY.x, &m_ptBracketPairPos_PHY.y );
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptColLine.x, ptColLine.y, &m_ptBracketPairPos_PHY.x, &m_ptBracketPairPos_PHY.y );
 			m_ptBracketCaretPos_PHY.y = m_ptCaretPos_PHY.y;
 			if( 0 == ( mode & 4 ) ){
 				// カーソルの後方文字位置
