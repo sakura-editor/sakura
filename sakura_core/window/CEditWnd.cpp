@@ -2352,7 +2352,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
 			nFlag = MF_BYPOSITION | MF_STRING;
 		}
-		TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
+		WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 		m_CMenuDrawer.MyAppendMenu( hMenu, nFlag,
 			eFunc, GetDocument()->m_cFuncLookup.Custmenu2Name( j, buf, _countof(buf) ), pszKey );
 	}
@@ -2527,7 +2527,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 		}
 		break;
 	case F_CUSTMENU_LIST:			// カスタムメニューリスト
-		TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
+		WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 		//	右クリックメニュー
 		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
 			 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
