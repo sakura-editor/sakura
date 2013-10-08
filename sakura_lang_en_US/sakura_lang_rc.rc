@@ -4030,12 +4030,12 @@ BEGIN
 	STR_PROPCOMMON_STATBAR		"Status Bar"
 
 	// General Settings::File Tab
-	STR_ERR_DLGPROPCOMMON16		"Not used"
-	STR_ERR_DLGPROPCOMMON17		"Middle Button"
-	STR_ERR_DLGPROPCOMMON18		"Side Button 1"
-	STR_ERR_DLGPROPCOMMON19		"Side Button 2"
-	STR_ERR_DLGPROPCOMMON20		"Control Key"
-	STR_ERR_DLGPROPCOMMON21		"Shift Key"
+	STR_PROPC_SCROLL_NO_KEY		"Not used"
+	STR_PROPC_SCROLL_MID_BTN	"Middle Button"
+	STR_PROPC_SCROLL_SIDE_1_BTN	"Side Button 1"
+	STR_PROPC_SCROLL_SIDE_2_BTN	"Side Button 2"
+	STR_PROPC_SCROLL_CTRL_KEY	"Control Key"
+	STR_PROPC_SCROLL_SHIFT_KEY	"Shift Key"
 
 	STR_ERR_DLGPROPCOMMON23		"Please report this bug"
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%s\n"
