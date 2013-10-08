@@ -267,7 +267,7 @@ int CFuncLookup::GetItemCount(int category) const
 	
 	@return NULL 分類名称．取得に失敗したらNULL．
 */
-const TCHAR* CFuncLookup::Custmenu2Name( int index, TCHAR buf[], int bufSize ) const
+const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) const
 {
 	if( index < 0 || CUSTMENU_INDEX_FOR_TABWND < index )
 		return NULL;
@@ -279,15 +279,15 @@ const TCHAR* CFuncLookup::Custmenu2Name( int index, TCHAR buf[], int bufSize ) c
 
 	// 共通設定で未設定の場合、リソースのデフォルト名を返す
 	if( index == 0 ){
-		wcscpyn( buf, LS( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
+		wcscpyn( buf, LSW( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
 		return buf;
 	}
 	else if( index == CUSTMENU_INDEX_FOR_TABWND ){
-		wcscpyn( buf, LS( STR_CUSTMENU_TAB ), bufSize );
+		wcscpyn( buf, LSW( STR_CUSTMENU_TAB ), bufSize );
 		return buf;
 	}
 	else {
-		wsprintf( buf, LS( STR_CUSTMENU_CUSTOM ), index );
+		swprintf( buf, LSW( STR_CUSTMENU_CUSTOM ), index );
 		return buf;
 	}
 

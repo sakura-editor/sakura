@@ -112,7 +112,7 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 }
 
 struct TypePropSheetInfo {
-	std::wstring sTabname;									//!< TABの表示名
+	std::tstring sTabname;									//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -129,12 +129,12 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
 	// 2013.03.10 aroka ADD-start タイプ別設定に「ウィンドウ」タブを追加
 	static const TypePropSheetInfo TypePropSheetInfoList[] = {
-		{ LSW( STR_PROPTYPE_SCREEN ),			IDD_PROP_SCREEN,	PropTypesScreen },
-		{ LSW( STR_PROPTYPE_COLOR ),			IDD_PROP_COLOR,		PropTypesColor },
-		{ LSW( STR_PROPTYPE_WINDOW ),			IDD_PROP_WINDOW,	PropTypesWindow },
-		{ LSW( STR_PROPTYPE_SUPPORT ),			IDD_PROP_SUPPORT,	PropTypesSupport },
-		{ LSW( STR_PROPTYPE_REGEX_KEYWORD ),	IDD_PROP_REGEX,		PropTypesRegex },
-		{ LSW( STR_PROPTYPE_KEYWORD_HELP ),		IDD_PROP_KEYHELP,	PropTypesKeyHelp }
+		{ LS( STR_PROPTYPE_SCREEN ),			IDD_PROP_SCREEN,	PropTypesScreen },
+		{ LS( STR_PROPTYPE_COLOR ),			IDD_PROP_COLOR,		PropTypesColor },
+		{ LS( STR_PROPTYPE_WINDOW ),			IDD_PROP_WINDOW,	PropTypesWindow },
+		{ LS( STR_PROPTYPE_SUPPORT ),			IDD_PROP_SUPPORT,	PropTypesSupport },
+		{ LS( STR_PROPTYPE_REGEX_KEYWORD ),	IDD_PROP_REGEX,		PropTypesRegex },
+		{ LS( STR_PROPTYPE_KEYWORD_HELP ),		IDD_PROP_KEYHELP,	PropTypesKeyHelp }
 	};
 
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
@@ -169,7 +169,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = LSW( STR_PROPTYPE );	//_T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
+	psh.pszCaption = LS( STR_PROPTYPE );	//_T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない

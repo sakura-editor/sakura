@@ -195,7 +195,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
-				TCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
+				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 				//	メニュー文字列の設定
 				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( CB_ERR == nIdx1 ){
@@ -650,7 +650,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	HWND		hwndCOMBO_MENU;
 	HWND		hwndCombo;
 	int			i;
-	TCHAR		buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
+	WCHAR		buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );

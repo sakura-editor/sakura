@@ -179,7 +179,7 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* pcIcons, CMenuDrawer* 
 	保持する構造体
 */
 struct ComPropSheetInfo {
-	std::wstring sTabname;									//!< TABの表示名
+	std::tstring sTabname;									//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -200,24 +200,24 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
 	static const ComPropSheetInfo ComPropSheetInfoList[] = {
-		{ LSW( STR_PROPCOMMON_GENERAL ),	IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_WINDOW ),		IDD_PROP_WIN,		CPropWin::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_MAINMENU ),	IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
-		{ LSW( STR_PROPCOMMON_TOOLBAR ),	IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_TABS ),		IDD_PROP_TAB,		CPropTab::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_STATBAR ),	IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page },	// 文字コード表示指定	2008/6/21	Uchi
-		{ LSW( STR_PROPCOMMON_EDITING ),	IDD_PROP_EDIT,		CPropEdit::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_FILE ),		IDD_PROP_FILE,		CPropFile::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_FILENAME ),	IDD_PROP_FNAME,		CPropFileName::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_BACKUP ),		IDD_PROP_BACKUP,	CPropBackup::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_FORMAT ),		IDD_PROP_FORMAT,	CPropFormat::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_SEARCH ),		IDD_PROP_GREP,		CPropGrep::DlgProc_page },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
-		{ LSW( STR_PROPCOMMON_KEYS ),		IDD_PROP_KEYBIND,	CPropKeybind::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_CUSTMENU ),	IDD_PROP_CUSTMENU,	CPropCustmenu::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_KEYWORD ),	IDD_PROP_KEYWORD,	CPropKeyword::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_SUPPORT ),	IDD_PROP_HELPER,	CPropHelper::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_MACRO ),		IDD_PROP_MACRO,		CPropMacro::DlgProc_page },
-		{ LSW( STR_PROPCOMMON_PLUGIN ),		IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
+		{ LS( STR_PROPCOMMON_GENERAL ),		IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
+		{ LS( STR_PROPCOMMON_WINDOW ),		IDD_PROP_WIN,		CPropWin::DlgProc_page },
+		{ LS( STR_PROPCOMMON_MAINMENU ),	IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
+		{ LS( STR_PROPCOMMON_TOOLBAR ),		IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
+		{ LS( STR_PROPCOMMON_TABS ),		IDD_PROP_TAB,		CPropTab::DlgProc_page },
+		{ LS( STR_PROPCOMMON_STATBAR ),		IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page },	// 文字コード表示指定	2008/6/21	Uchi
+		{ LS( STR_PROPCOMMON_EDITING ),		IDD_PROP_EDIT,		CPropEdit::DlgProc_page },
+		{ LS( STR_PROPCOMMON_FILE ),		IDD_PROP_FILE,		CPropFile::DlgProc_page },
+		{ LS( STR_PROPCOMMON_FILENAME ),	IDD_PROP_FNAME,		CPropFileName::DlgProc_page },
+		{ LS( STR_PROPCOMMON_BACKUP ),		IDD_PROP_BACKUP,	CPropBackup::DlgProc_page },
+		{ LS( STR_PROPCOMMON_FORMAT ),		IDD_PROP_FORMAT,	CPropFormat::DlgProc_page },
+		{ LS( STR_PROPCOMMON_SEARCH ),		IDD_PROP_GREP,		CPropGrep::DlgProc_page },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
+		{ LS( STR_PROPCOMMON_KEYS ),		IDD_PROP_KEYBIND,	CPropKeybind::DlgProc_page },
+		{ LS( STR_PROPCOMMON_CUSTMENU ),	IDD_PROP_CUSTMENU,	CPropCustmenu::DlgProc_page },
+		{ LS( STR_PROPCOMMON_KEYWORD ),		IDD_PROP_KEYWORD,	CPropKeyword::DlgProc_page },
+		{ LS( STR_PROPCOMMON_SUPPORT ),		IDD_PROP_HELPER,	CPropHelper::DlgProc_page },
+		{ LS( STR_PROPCOMMON_MACRO ),		IDD_PROP_MACRO,		CPropMacro::DlgProc_page },
+		{ LS( STR_PROPCOMMON_PLUGIN ),		IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
 	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
@@ -249,7 +249,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = LSW( STR_PROPCOMMON );	//_T("共通設定");
+	psh.pszCaption = LS( STR_PROPCOMMON );	//_T("共通設定");
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
