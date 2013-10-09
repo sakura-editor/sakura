@@ -2877,7 +2877,7 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
 		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
-		nWidth = ViewColNumToWrapColNum( m_pcEditDoc->m_pcEditViewArr[0]->m_nViewColNum );
+		nWidth = ViewColNumToWrapColNum( m_pcEditDoc->GetActiveView().m_nViewColNum );
 		break;
 
 	default:

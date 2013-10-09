@@ -386,9 +386,6 @@ BOOL CEditView::Create(
 		ShowWindow( m_hWnd, SW_SHOW );
 	}
 
-	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditDoc->UpdateCaption();
-
 	/* キーボードの現在のリピート間隔を取得 */
 	int nKeyBoardSpeed;
 	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
@@ -6978,7 +6975,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 	//   アクティブなペインではない )	場合は終了
 	if( bDraw
 	 &&( IsTextSelected() || m_bDrawSelectArea || m_bBeginBoxSelect || !m_bDrawBracketPairFlag
-	 || ( m_pcEditDoc->m_nActivePaneIndex != m_nMyIndex ) ) ){
+	 || ( m_pcEditDoc->GetActivePane() != m_nMyIndex ) ) ){
 		return;
 	}
 
@@ -7062,7 +7059,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 				::SetBkColor( hdc, crBackOld );
 				::SelectObject( hdc, hFontOld );
 
-				if( ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex )
+				if( ( m_pcEditDoc->GetActivePane() == m_nMyIndex )
 					&& ( ( nLine == m_ptCaretPos.y ) || ( nLine - 1 == m_ptCaretPos.y ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					m_cUnderLine.CaretUnderLineON( true );
 				}

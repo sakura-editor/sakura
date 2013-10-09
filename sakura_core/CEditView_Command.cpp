@@ -3011,7 +3011,7 @@ void CEditView::Command_SEARCH_DIALOG( void )
 
 	/* 検索ダイアログの表示 */
 	if( NULL == m_pcEditDoc->m_cDlgFind.m_hWnd ){
-		m_pcEditDoc->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc->m_pcEditViewArr[m_pcEditDoc->m_nActivePaneIndex] );
+		m_pcEditDoc->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)&m_pcEditDoc->GetActiveView() );
 	}
 	else{
 		/* アクティブにする */

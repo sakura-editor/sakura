@@ -87,7 +87,7 @@ public:
 	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 	BOOL HandleCommand( int );
 	void SetActivePane( int );	/* アクティブなペインを設定 */
-	int GetActivePane( void );	/* アクティブなペインを取得 */
+	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */
 	void SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pViewExclude );				/* すべてのペインをRedrawする */
 	void Views_Redraw();				/* Redrawする */
@@ -135,8 +135,8 @@ public:
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
 
 	//	Aug. 31, 2000 genta
-	const CEditView& ActiveView(void) const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
-	CEditView& ActiveView(void) { return *m_pcEditViewArr[m_nActivePaneIndex]; }
+	const CEditView& GetActiveView(void) const { return *m_pcEditView; }
+	CEditView& GetActiveView(void) { return *m_pcEditView; }
 	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
 	int	GetAllViewCount() const { return m_nEditViewCount; }
 
@@ -292,9 +292,10 @@ public:
 // To Here 2001.12.03 hor
 
 	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
+	CEditView*		m_pcEditView;				//!< 有効なビュー
+	int				m_nActivePaneIndex;			//!< 有効なビューのindex
 	int				m_nEditViewCount;			//!< 有効なビューの数
-	int				m_nEditViewMaxCount;		//!< ビューの最大数=4
-	int				m_nActivePaneIndex;			/* アクティブなビュー */
+	const int		m_nEditViewMaxCount;		//!< ビューの最大数=4
 	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
 	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */

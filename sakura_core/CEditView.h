@@ -142,7 +142,7 @@ public:
 	void DestroyScrollBar();	/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	/* 状態 */
 	//<< 2002/03/29 Azumaiya インライン関数化
-	BOOL IsTextSelected( void )		/* テキストが選択されているか */
+	BOOL IsTextSelected( void ) const		/* テキストが選択されているか */
 	{
 		// ジャンプ回数を減らして、一気に判定。
 		// すべてを or 演算した後に、ビット反転して最上位ビット(符号フラグ)を返す。

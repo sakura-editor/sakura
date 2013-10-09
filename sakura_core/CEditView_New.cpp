@@ -90,7 +90,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 			pPs->rcPaint.top,
 			SRCCOPY
 		);
-		if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
+		if ( m_pcEditDoc->GetActivePane() == m_nMyIndex ){
 			/* アクティブペインは、アンダーライン描画 */
 			m_cUnderLine.CaretUnderLineON( true );
 		}
@@ -322,7 +322,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
-	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
+	if ( m_pcEditDoc->GetActivePane() == m_nMyIndex ){
 		/* アクティブペインは、アンダーライン描画 */
 		m_cUnderLine.CaretUnderLineON( true );
 	}

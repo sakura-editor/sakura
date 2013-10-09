@@ -1267,7 +1267,7 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 		}
 	}
 	if( !GetDocumentAttribute().m_bLineNumIsCRLF ){
-		ActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
+		GetActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
 	}
 
 	if( hwndProgress ){
@@ -1389,7 +1389,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 
 		if( SaveFile( GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 			/* キャレットの行桁位置を表示する */
-			m_pcEditViewArr[m_nActivePaneIndex]->DrawCaretPosInfo();
+			GetActiveView().DrawCaretPosInfo();
 			return TRUE;
 		}
 	}
@@ -1447,7 +1447,7 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 {
 	if( SaveFile( filename ) ){
 		/* キャレットの行桁位置を表示する */
-		m_pcEditViewArr[m_nActivePaneIndex]->DrawCaretPosInfo();
+		GetActiveView().DrawCaretPosInfo();
 		OnChangeSetting();	//	タイプ別設定の変更を指示。
 		//	再オープン
 		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
