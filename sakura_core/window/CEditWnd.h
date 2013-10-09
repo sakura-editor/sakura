@@ -378,7 +378,7 @@ private:
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex
 	int				m_nEditViewCount;	//!< 有効なビューの数
-	int				m_nEditViewMaxCount;	//!< ビューの最大数=4
+	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
 
 	//共有データ
 	DLLSHAREDATA*	m_pShareData;

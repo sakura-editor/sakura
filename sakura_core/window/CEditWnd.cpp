@@ -214,6 +214,8 @@ CEditWnd::CEditWnd()
 , m_cToolbar(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nActivePaneIndex( 0 )
+, m_nEditViewCount( 1 )
+, m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
 , m_pcDragSourceView( NULL )
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
@@ -268,7 +270,7 @@ void CEditWnd::OnAfterSave(const SSaveInfo& sSaveInfo)
 	UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
-	this->GetActiveView().GetCaret().ShowCaretPosInfo();
+	GetActiveView().GetCaret().ShowCaretPosInfo();
 }
 
 void CEditWnd::UpdateCaption()
@@ -612,9 +614,6 @@ HWND CEditWnd::Create(
 	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		m_pcEditViewArr[i] = NULL;
 	}
-	// 今のところ最大値は固定
-	m_nEditViewMaxCount = _countof(m_pcEditViewArr);
-	m_nEditViewCount = 1;
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView(this);
 	m_pcEditView = m_pcEditViewArr[0];
@@ -1386,7 +1385,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
 		if( !m_pPrintPreview ){
-			::SetFocus( this->GetActiveView().GetHwnd() );
+			::SetFocus( GetActiveView().GetHwnd() );
 		}
 		lRes = 0;
 
@@ -1595,14 +1594,14 @@ LRESULT CEditWnd::DispatchEvent(
 			CWSHIfObj::List params;
 			CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
 			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-				(*it)->Invoke(&this->GetActiveView(), params);
+				(*it)->Invoke(&GetActiveView(), params);
 			}
 
 			//プラグイン：EditorEndイベント実行
 			plugs.clear();
 			CJackManager::getInstance()->GetUsablePlug( PP_EDITOR_END, 0, &plugs );
 			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-				(*it)->Invoke(&this->GetActiveView(), params);
+				(*it)->Invoke(&GetActiveView(), params);
 			}
 
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
@@ -1950,7 +1949,7 @@ LRESULT CEditWnd::DispatchEvent(
 #if 0
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
 		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
-			this->GetActiveView().GetCaret().ShowEditCaret();
+			GetActiveView().GetCaret().ShowEditCaret();
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 #endif
@@ -2439,7 +2438,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			{
 				CLayoutInt ketas;
 				WCHAR*	pszLabel;
-				CEditView::TOGGLE_WRAP_ACTION mode = this->GetActiveView().GetWrapMode( &ketas );
+				CEditView::TOGGLE_WRAP_ACTION mode = GetActiveView().GetWrapMode( &ketas );
 				if( mode == CEditView::TGWRAP_NONE ){
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , L"", pszKey );
 				}
@@ -2457,8 +2456,8 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 						auto_sprintf(
 							szBuf,
 							L"折り返し桁数: %d 桁（右端）",
-							this->GetActiveView().ViewColNumToWrapColNum(
-								this->GetActiveView().GetTextArea().m_nViewColNum
+							GetActiveView().ViewColNumToWrapColNum(
+								GetActiveView().GetTextArea().m_nViewColNum
 							)
 						);
 					}
@@ -4146,7 +4145,7 @@ LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 		}
 		return 0L;
 	default:
-		return this->GetActiveView().DispatchEvent( hwnd, msg, wParam, lParam );
+		return GetActiveView().DispatchEvent( hwnd, msg, wParam, lParam );
 	}
 }
 
@@ -4206,11 +4205,11 @@ void CEditWnd::Views_RedrawAll()
 	//アクティブ以外を再描画してから…
 	for( int v = 0; v < GetAllViewCount(); ++v ){
 		if( m_nActivePaneIndex != v ){
-			this->GetView(v).RedrawAll();
+			GetView(v).RedrawAll();
 		}
 	}
 	//アクティブを再描画
-	this->GetActiveView().RedrawAll();
+	GetActiveView().RedrawAll();
 }
 
 void CEditWnd::Views_Redraw()
@@ -4239,10 +4238,10 @@ void  CEditWnd::SetActivePane( int nIndex )
 	// フォーカスを移動する	// 2007.10.16 ryoji
 	GetView(nOldIndex).CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
 	if( ::GetActiveWindow() == GetHwnd()
-		&& ::GetFocus() != GetView(m_nActivePaneIndex).GetHwnd() )
+		&& ::GetFocus() != GetActiveView().GetHwnd() )
 	{
 		// ::SetFocus()でフォーカスを切り替える
-		::SetFocus( GetView(m_nActivePaneIndex).GetHwnd() );
+		::SetFocus( GetActiveView().GetHwnd() );
 	}else{
 		// 2010.04.08 ryoji
 		// 起動と同時にエディットボックスにフォーカスのあるダイアログを表示すると当該エディットボックスに
@@ -4253,30 +4252,30 @@ void  CEditWnd::SetActivePane( int nIndex )
 			// アクティブでないときに::SetFocus()するとアクティブになってしまう
 			// （不可視なら可視になる）ので内部的に切り替えるだけにする
 			GetView(nOldIndex).OnKillFocus();
-			GetView(m_nActivePaneIndex).OnSetFocus();
+			GetActiveView().OnSetFocus();
 		}
 	}
 
-	this->GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
+	GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
 
 	m_cSplitterWnd.SetActivePane( nIndex );
 
 	if( NULL != m_cDlgFind.GetHwnd() ){		/* 「検索」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
-		m_cDlgFind.ChangeView( (LPARAM)&this->GetActiveView() );
+		m_cDlgFind.ChangeView( (LPARAM)&GetActiveView() );
 	}
 	if( NULL != m_cDlgReplace.GetHwnd() ){	/* 「置換」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
-		m_cDlgReplace.ChangeView( (LPARAM)&this->GetActiveView() );
+		m_cDlgReplace.ChangeView( (LPARAM)&GetActiveView() );
 	}
 	if( NULL != m_cHokanMgr.GetHwnd() ){	/* 「入力補完」ダイアログ */
 		m_cHokanMgr.Hide();
 		/* モードレス時：検索対象となるビューの変更 */
-		m_cHokanMgr.ChangeView( (LPARAM)&this->GetActiveView() );
+		m_cHokanMgr.ChangeView( (LPARAM)&GetActiveView() );
 	}
 	if( NULL != m_cDlgFuncList.GetHwnd() ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
 		/* モードレス時：現在位置表示の対象となるビューの変更 */
-		m_cDlgFuncList.ChangeView( (LPARAM)&this->GetActiveView() );
+		m_cDlgFuncList.ChangeView( (LPARAM)&GetActiveView() );
 	}
 
 	return;
@@ -4342,28 +4341,28 @@ void CEditWnd::Views_DisableSelectArea(bool bRedraw)
 BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 {
 	if( 1 == GetAllViewCount() ){
-		return this->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+		return GetActiveView().GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
 	}
 	// 以下2,4分割限定
 
-	if ( this->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea( bRedraw ) ){
+	if ( GetActiveView().GetTextArea().DetectWidthOfLineNumberArea( bRedraw ) ){
 		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
 		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-			this->GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+			GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
 		}
 		else {
 			//	表示されていないので再描画しない
-			this->GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
 		}
 		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
-			this->GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+			GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
 			if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
-				this->GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
+				GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
 			}
 		}
 		else {
-			this->GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
-			this->GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
 		}
 		return TRUE;
 	}
@@ -4477,7 +4476,7 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 	CLogicPointEx* pptPosArray = new CLogicPointEx[NUM_OF_VIEW * NUM_OF_POS];
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0),this->GetView(i).m_pcTextArea->GetViewTopLine());
+		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0), GetView(i).m_pcTextArea->GetViewTopLine());
 		const CLayout* layoutLine = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());
 		if( layoutLine ){
 			CLogicInt nLineCenter = layoutLine->GetLogicOffset() + layoutLine->GetLengthWithoutEOL() / 2;
@@ -4488,32 +4487,32 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 			pptPosArray[i * NUM_OF_POS + 0].y = CLogicInt(0);
 		}
 		pptPosArray[i * NUM_OF_POS + 0].ext = CLayoutInt(0);
-		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
-				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom(),
+				GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 1]
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
-				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo(),
+				GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 2]
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
-				this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom(),
+				GetView(i).GetSelectionInfo().m_sSelect.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 3]
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
-				this->GetView(i).GetSelectionInfo().m_sSelect.GetTo(),
+				GetView(i).GetSelectionInfo().m_sSelect.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 4]
 			);
 		}
 		GetDocument()->m_cLayoutMgr.LayoutToLogicEx(
-			this->GetView(i).GetCaret().GetCaretLayoutPos(),
+			GetView(i).GetCaret().GetCaretLayoutPos(),
 			&pptPosArray[i * NUM_OF_POS + 5]
 		);
 	}
@@ -4540,30 +4539,30 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 			pptPosArray[i * NUM_OF_POS + 0],
 			&tmp
 		);
-		this->GetView(i).m_pcTextArea->SetViewTopLine(tmp.GetY2());
+		GetView(i).m_pcTextArea->SetViewTopLine(tmp.GetY2());
 
-		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 1],
-				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFromPointer()
+				GetView(i).GetSelectionInfo().m_sSelectBgn.GetFromPointer()
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 2],
-				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetToPointer()
+				GetView(i).GetSelectionInfo().m_sSelectBgn.GetToPointer()
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 3],
-				this->GetView(i).GetSelectionInfo().m_sSelect.GetFromPointer()
+				GetView(i).GetSelectionInfo().m_sSelect.GetFromPointer()
 			);
 		}
-		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
+		if( GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
 			GetDocument()->m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 4],
-				this->GetView(i).GetSelectionInfo().m_sSelect.GetToPointer()
+				GetView(i).GetSelectionInfo().m_sSelect.GetToPointer()
 			);
 		}
 		CLayoutPoint ptPosXY;
@@ -4571,9 +4570,9 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 			pptPosArray[i * NUM_OF_POS + 5],
 			&ptPosXY
 		);
-		this->GetView(i).GetCaret().MoveCursor( ptPosXY, false ); // 2013.06.05 bScrollをtrue=>falase
-		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
-		this->GetView(i).GetCaret().ShowEditCaret();
+		GetView(i).GetCaret().MoveCursor( ptPosXY, false ); // 2013.06.05 bScrollをtrue=>falase
+		GetView(i).GetCaret().m_nCaretPosX_Prev = GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
+		GetView(i).GetCaret().ShowEditCaret();
 	}
 	GetActiveView().GetCaret().ShowCaretPosInfo();
 	delete[] pptPosArray;
