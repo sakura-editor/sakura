@@ -92,9 +92,9 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), L"ïÅí " );
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), L"ç≈ëÂâª" );
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), L"(ç≈è¨âª)" );
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_NORMAL ) );	//L"ïÅí "
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MAXIMIZE ) );	//L"ç≈ëÂâª"
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MINIMIZE ) );	//L"(ç≈è¨âª)"
 
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SX ), 30000, 0 );
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SY ), 30000, 0 );

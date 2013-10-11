@@ -73,6 +73,7 @@ static const DWORD p_helpids1[] = {	//11300
 };
 
 
+// TODO プラグイン追加のため英語化（TYPE_NAME_ID化）を保留
 //アウトライン解析方法・標準ルール
 TYPE_NAME<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
@@ -91,15 +92,16 @@ TYPE_NAME<EOutlineType> OlmArr[] = {
 	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 
-TYPE_NAME<ETabArrow> TabArrowArr[] = {
-	{ TABARROW_STRING,	_T("文字指定") },
-	{ TABARROW_SHORT,	_T("短い矢印") },
-	{ TABARROW_LONG,	_T("長い矢印") },
+TYPE_NAME_ID<ETabArrow> TabArrowArr[] = {
+	{ TABARROW_STRING,	STR_TAB_SYMBOL_CHARA },			//_T("文字指定")
+	{ TABARROW_SHORT,	STR_TAB_SYMBOL_SHORT_ARROW },	//_T("短い矢印")
+	{ TABARROW_LONG,	STR_TAB_SYMBOL_LONG_ARROW },	//_T("長い矢印")
 };
 
+// TODO プラグイン追加のため英語化（TYPE_NAME_ID化）を保留
 TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	_T("なし") },
-	{ SMARTINDENT_CPP,	_T("C/C++") }
+	{ SMARTINDENT_CPP,	_T("C/C++") },
 };
 
 /*!	2行目以降のインデント方法
@@ -107,17 +109,17 @@ TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	@sa CLayoutMgr::SetLayoutInfo()
 	@date Oct. 1, 2002 genta 
 */
-TYPE_NAME<int> IndentTypeArr[] = {
-	{ 0, _T("なし") },
-	{ 1, _T("tx2x") },
-	{ 2, _T("論理行先頭") },
+TYPE_NAME_ID<int> IndentTypeArr[] = {
+	{ 0, STR_WRAP_INDENT_NONE },	//_T("なし")
+	{ 1, STR_WRAP_INDENT_TX2X },	//_T("tx2x")
+	{ 2, STR_WRAP_INDENT_BOL },		//_T("論理行先頭")
 };
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
-TYPE_NAME<int> WrapMethodArr[] = {
-	{ WRAP_NO_TEXT_WRAP,	_T("折り返さない") },
-	{ WRAP_SETTING_WIDTH,	_T("指定桁で折り返す") },
-	{ WRAP_WINDOW_WIDTH,	_T("右端で折り返す") },
+TYPE_NAME_ID<int> WrapMethodArr[] = {
+	{ WRAP_NO_TEXT_WRAP,	STR_WRAP_METHOD_NO_WRAP },	//_T("折り返さない")
+	{ WRAP_SETTING_WIDTH,	STR_WRAP_METHOD_SPEC_WIDTH },	//_T("指定桁で折り返す")
+	{ WRAP_WINDOW_WIDTH,	STR_WRAP_METHOD_WIN_WIDTH },	//_T("右端で折り返す")
 };
 
 //静的メンバ
@@ -423,7 +425,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
 		for( int i = 0; i < _countof( WrapMethodArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, WrapMethodArr[i].pszName );
+			Combo_InsertString( hwndCombo, i, LS( WrapMethodArr[i].nNameId ) );
 			if( WrapMethodArr[i].nMethod == m_Types.m_nTextWrapMethod ){		// テキストの折り返し方法
 				nSelPos = i;
 			}
@@ -442,7 +444,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
 		for( int i = 0; i < _countof( TabArrowArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, TabArrowArr[i].pszName );
+			Combo_InsertString( hwndCombo, i, LS( TabArrowArr[i].nNameId ) );
 			if( TabArrowArr[i].nMethod == m_Types.m_bTabArrow ){
 				nSelPos = i;
 			}
@@ -481,7 +483,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		Combo_ResetContent( hwndCombo );
 		nSelPos = 0;
 		for( int i = 0; i < _countof( IndentTypeArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, IndentTypeArr[i].pszName );
+			Combo_InsertString( hwndCombo, i, LS( IndentTypeArr[i].nNameId ) );
 			if( IndentTypeArr[i].nMethod == m_Types.m_nIndentLayout ){	/* 折り返しインデント種別 */
 				nSelPos = i;
 			}

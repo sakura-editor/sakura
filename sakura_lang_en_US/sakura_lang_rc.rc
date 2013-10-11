@@ -907,9 +907,9 @@ BEGIN
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,117,93,7,
                     12
     LTEXT           "T&AB Symbol",IDC_STATIC,8,110,56,8,NOT WS_GROUP
-    COMBOBOX        IDC_CHECK_TAB_ARROW,48,108,46,80,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_CHECK_TAB_ARROW,48,108,50,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_EDIT_TABVIEWSTRING,102,108,40,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_TABVIEWSTRING,103,108,40,12,ES_AUTOHSCROLL
     CONTROL         "Insert S&PACE",IDC_CHECK_INS_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,70,123,57,10
     GROUPBOX        "Layout",IDC_STATIC,3,22,145,117
@@ -920,9 +920,9 @@ BEGIN
     LTEXT           "Smart-Indent(&S)",IDC_STATIC,8,169,68,8
     COMBOBOX        IDC_COMBO_SMARTINDENT,82,167,60,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Alternative (&I)ndent Char",IDC_STATIC,8,183,120,8
+    LTEXT           "Alternative Indent Char(&I)",IDC_STATIC,8,183,120,8
     EDITTEXT        IDC_EDIT_INDENTCHARS,38,195,103,12,ES_AUTOHSCROLL
-    LTEXT           "Indent line when press enter(&2)",IDC_STATIC,8,211,75,8
+    LTEXT           "Wrapped Line Indent(&2)",IDC_STATIC,8,211,75,8
     COMBOBOX        IDC_COMBO_INDENTLAYOUT,87,209,54,63,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Trim Blank at end of line(&E)",IDC_CHECK_RTRIM_PREVLINE,
@@ -1584,7 +1584,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
     LTEXT           "Exclusive(&H)",IDC_STATIC,8,16,48,10
-    COMBOBOX        IDC_COMBO_FILESHAREMODE,60,14,84,78,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_FILESHAREMODE,50,14,111,78,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Watch for updates(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,31,60,10
@@ -1710,7 +1710,7 @@ BEGIN
     LTEXT           "Number of backups (1-99 &N)",IDC_LABEL_BACKUP_3,22,94,91,8
     EDITTEXT        IDC_EDIT_BACKUP_3,106,92,28,12
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,144,92,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,164,92,9,
                     12
     CONTROL         "Yr (&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,132,35,10
@@ -1727,7 +1727,7 @@ BEGIN
 
     LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
     CONTROL         "Use date/time when saving file",IDC_RADIO_BACKUP_DATETYPE1A,
-                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,101,10
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,111,10
     CONTROL         "Use date/time from previous file udpate",
                     IDC_RADIO_BACKUP_DATETYPE2A,"Button",BS_AUTORADIOBUTTON,
                     12,118,149,10
@@ -1737,7 +1737,7 @@ BEGIN
     CONTROL         "Create in folder(&P)",IDC_CHECK_BACKUPFOLDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
     AUTOCHECKBOX    "Apply for Files on Removable Media(&L)", IDC_CHECK_BACKUP_FOLDER_RM,
-                    120, 148, 123, 10
+                    120, 148, 133, 10
     LTEXT           "Folder Name(&F)",IDC_LABEL_BACKUP_4,24,162,47,8
     EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,160,195,12,ES_AUTOHSCROLL
     PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,160,9,12
@@ -1820,11 +1820,11 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,12,4,36,8
+    LTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,6,4,39,8
     COMBOBOX        IDC_COMBO_FUNCKIND,51,2,70,170,CBS_DROPDOWNLIST | 
                     CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
-    LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,18,35,8
+    LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,18,41,8
     LISTBOX         IDC_LIST_FUNC,3,28,124,143,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
     LTEXT           "Key for assigned function...(&G)",IDC_LABEL_FUNCtoKEY,6,
@@ -1849,7 +1849,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_KEYSFUNC,164,205,118,12,ES_AUTOHSCROLL | 
                     ES_READONLY | WS_GROUP | NOT WS_TABSTOP
     PUSHBUTTON      "Assign(&B)",IDC_BUTTON_ASSIGN,129,190,34,14,WS_GROUP
-    PUSHBUTTON      "Release(&R)",IDC_BUTTON_RELEASE,129,204,34,14
+    PUSHBUTTON      "&Release",IDC_BUTTON_RELEASE,129,204,34,14
     CONTROL         "Create Accelerator for each Window (for Wine)(&W)",
                     IDC_CHECK_ACCELTBL_EACHWIN,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,222,210,10
@@ -3517,9 +3517,9 @@ BEGIN
 	STR_ERR_DLGTAGMAK1			"Select folder for tag creation"
 
 	// CDlgWinSize.cpp
-	STR_ERR_DLGWINSZ1			"Normal"  // Window Settings &W indow to size
-	STR_ERR_DLGWINSZ2			"Maximize"
-	STR_ERR_DLGWINSZ3			"(Minimize)"
+	STR_DLGWINSZ_NORMAL			"Normal"  // Window Settings &W indow to size
+	STR_DLGWINSZ_MAXIMIZE		"Maximize"
+	STR_DLGWINSZ_MINIMIZE		"(Minimize)"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%s\n file couldnt be opened.\nFile is not valid."
@@ -3575,8 +3575,9 @@ BEGIN
 	STR_ERR_DLGEDITDOC21		"%s\nis currently prohibited from writing by another process."
 	STR_ERR_DLGEDITDOC22		"(NoTitle)"
 
-	STR_ERR_DLGEDITDOC23		"Deny R-W Exclusive Access Mode"														// Dialog title for message 26 below
-	STR_ERR_DLGEDITDOC24		"Deny-Write Exclusive Mode"
+	STR_EXCLU_NO_EXCLUSIVE		"No Exclusive Mode"
+	STR_EXCLU_DENY_WRITE		"Deny Write Access Mode"
+	STR_EXCLU_DENY_READWRITE	"Deny Read-Write Access Mode"
 	STR_ERR_DLGEDITDOC25		"Undefined mode（problem）"
 	STR_ERR_DLGEDITDOC26		"%s\n [%s] could not obtain lock\nThe exclusive lock on the current file is now invalid."
 	STR_ERR_DLGEDITDOC27		"（NoTitle09）"																// Dialog on closing asking if you want to save
@@ -4030,12 +4031,12 @@ BEGIN
 	STR_PROPCOMMON_STATBAR		"Status Bar"
 
 	// General Settings::File Tab
-	STR_PROPC_SCROLL_NO_KEY		"Not used"
-	STR_PROPC_SCROLL_MID_BTN	"Middle Button"
-	STR_PROPC_SCROLL_SIDE_1_BTN	"Side Button 1"
-	STR_PROPC_SCROLL_SIDE_2_BTN	"Side Button 2"
-	STR_PROPC_SCROLL_CTRL_KEY	"Control Key"
-	STR_PROPC_SCROLL_SHIFT_KEY	"Shift Key"
+	STR_SCROLL_WITH_NO_KEY		"Not used"
+	STR_SCROLL_WITH_MID_BTN		"Middle Button"
+	STR_SCROLL_WITH_SIDE_1_BTN	"Side Button 1"
+	STR_SCROLL_WITH_SIDE_2_BTN	"Side Button 2"
+	STR_SCROLL_WITH_CTRL_KEY	"Control Key"
+	STR_SCROLL_WITH_SHIFT_KEY	"Shift Key"
 
 	STR_ERR_DLGPROPCOMMON23		"Please report this bug"
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%s\n"
@@ -4073,8 +4074,11 @@ BEGIN
 	STR_ERR_DLGCPROPTYPES10		"HTML"
 	STR_ERR_DLGCPROPTYPES11		"TeX"
 	STR_ERR_DLGCPROPTYPES12		"Text"			// <-- FIXME CHECK was Nashi
-	STR_ERR_DLGCPROPTYPES13		"None"				// smart indent
-	STR_ERR_DLGCPROPTYPES14		"C/C++"
+	STR_TAB_SYMBOL_CHARA		"Character"
+	STR_TAB_SYMBOL_SHORT_ARROW	"Short Arrow"
+	STR_TAB_SYMBOL_LONG_ARROW	"Long Arrow"
+	STR_SMART_INDENT_NONE		"None"				// smart indent
+	STR_SMART_INDENT_C_CPP		"C/C++"
 	STR_ERR_DLGCPROPTYPES15		"Default"			// ime state
 	STR_ERR_DLGCPROPTYPES16		"Full Height"
 	STR_ERR_DLGCPROPTYPES17		"Full Height Hiragana"
@@ -4083,12 +4087,12 @@ BEGIN
 	STR_ERR_DLGCPROPTYPES20		"Dont Set"			// ime switch
 	STR_ERR_DLGCPROPTYPES21		"Turn On" 
 	STR_ERR_DLGCPROPTYPES22		"Turn Off" 
-	STR_ERR_DLGCPROPTYPES23		"None"				// ident
-	STR_ERR_DLGCPROPTYPES24		"tx2x"
-	STR_ERR_DLGCPROPTYPES25		"prev. line start"
-	STR_ERR_DLGCPROPTYPES26		"Dont LineWrap"		// wrap method
-	STR_ERR_DLGCPROPTYPES27		"Wrap at set col."
-	STR_ERR_DLGCPROPTYPES28		"Wrap at window edge"
+	STR_WRAP_INDENT_NONE		"None"				// ident
+	STR_WRAP_INDENT_TX2X		"tx2x"
+	STR_WRAP_INDENT_BOL			"prev. line start"
+	STR_WRAP_METHOD_NO_WRAP		"Dont LineWrap"		// wrap method
+	STR_WRAP_METHOD_SPEC_WIDTH	"Wrap at set col."
+	STR_WRAP_METHOD_WIN_WIDTH	"Wrap at window edge"
 
 	// File Type Settings Tab names
 	STR_PROPTYPE				"File Type Setting"
