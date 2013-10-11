@@ -164,7 +164,7 @@ BOOL CEditView::HandleCommand(
 		){
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
-			m_pcEditDoc->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, this );
+			m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, this );
 		}
 	}
 
@@ -182,13 +182,13 @@ BOOL CEditView::HandleCommand(
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this,
+		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this,
 			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				m_hwndParent,
 				_T("マクロ %d (%s) の実行に失敗しました。"),
 				nCommand - F_USERMACRO_0,
-				m_pcEditDoc->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
 
@@ -8252,7 +8252,7 @@ void CEditView::Command_RECKEYMACRO( void )
 			_tcscpy( m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		int nSaveResult=m_pcEditDoc->m_pcSMacroMgr->Save(
+		int nSaveResult = m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			m_hInstance,
 			m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName
@@ -8266,7 +8266,7 @@ void CEditView::Command_RECKEYMACRO( void )
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		m_pcEditDoc->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
+		m_pcSMacroMgr->Clear(STAND_KEYMACRO);
 //		m_pcEditDoc->m_CKeyMacroMgr.ClearAll();
 //		m_pShareData->m_CKeyMacroMgr.Clear();
 	}
@@ -8287,7 +8287,7 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
-	if( !m_pcEditDoc->m_pcSMacroMgr->IsSaveOk() ){
+	if( !m_pcSMacroMgr->IsSaveOk() ){
 		//	保存不可
 		ErrorMessage( m_hWnd, _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
 	}
@@ -8321,7 +8321,7 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
-	if ( !m_pcEditDoc->m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, szPath ) ){
+	if ( !m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, szPath ) ){
 		ErrorMessage( m_hWnd, _T("マクロファイルを作成できませんでした。\n\n%s"), szPath );
 	}
 	return;
@@ -8345,7 +8345,7 @@ void CEditView::Command_EXECKEYMACRO( void )
 	if ( m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		BOOL bLoadResult = m_pcEditDoc->m_pcSMacroMgr->Load(
+		BOOL bLoadResult = m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			m_hInstance,
 			m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName,
@@ -8356,7 +8356,7 @@ void CEditView::Command_EXECKEYMACRO( void )
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
-			m_pcEditDoc->m_pcSMacroMgr->Exec( STAND_KEYMACRO, m_hInstance, this, 0 );
+			m_pcSMacroMgr->Exec( STAND_KEYMACRO, m_hInstance, this, 0 );
 		}
 	}
 
@@ -8454,7 +8454,7 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 	if( m_pShareData->m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
 		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent )	/* キーボードマクロを記録中のウィンドウ */
 	){
-		m_pcEditDoc->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, this );
+		m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, this );
 
 		//キーマクロの記録を一時停止する
 		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
@@ -8463,9 +8463,9 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 	}
 
 	//古い一時マクロの退避
-	CMacroManagerBase* oldMacro = m_pcEditDoc->m_pcSMacroMgr->SetTempMacro( NULL );
+	CMacroManagerBase* oldMacro = m_pcSMacroMgr->SetTempMacro( NULL );
 
-	BOOL bLoadResult = m_pcEditDoc->m_pcSMacroMgr->Load(
+	BOOL bLoadResult = m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		m_hInstance,
 		pszPath,
@@ -8475,13 +8475,13 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 		ErrorMessage( m_hWnd, _T("マクロの読み込みに失敗しました。\n\n%s"), pszPath );
 	}
 	else {
-		m_pcEditDoc->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, m_hInstance, this, FA_NONRECORD | FA_FROMMACRO );
+		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, m_hInstance, this, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら開放
-	m_pcEditDoc->m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
+	m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
 	if ( oldMacro != NULL ) {
-		m_pcEditDoc->m_pcSMacroMgr->SetTempMacro( oldMacro );
+		m_pcSMacroMgr->SetTempMacro( oldMacro );
 	}
 
 	// キーマクロ記録中だった場合は再開する

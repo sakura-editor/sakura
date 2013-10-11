@@ -31,6 +31,7 @@
 #include <io.h>
 #include <cderr.h> // Nov. 3, 2005 genta
 #include "CControlTray.h"
+#include "CEditApp.h"
 #include "CEditDoc.h"
 #include "Debug.h"
 #include "Funccode.h"
@@ -124,7 +125,7 @@ CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
 
 	//	Sep, 29, 2001 genta
 	//	マクロ
-	m_pcSMacroMgr = new CSMacroMgr();
+	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
 	
 	//	m_FileTimeの初期化
 	m_FileTime.ClearFILETIME();
@@ -154,7 +155,6 @@ CEditDoc::~CEditDoc()
 	}
 
 	/* ファイルの排他ロック解除 */
-	delete m_pcSMacroMgr;
 	DoFileUnlock();
 }
 

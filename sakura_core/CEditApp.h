@@ -27,6 +27,7 @@ class CEditApp;
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
 class CEditWnd;
+class CSMacroMgr;
 
 #include <windows.h>
 #include "CShareData.h"
@@ -62,6 +63,7 @@ public:
 	//ウィンドウ
 	CEditWnd*			m_pcEditWnd;
 
+	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
 	//GUIオブジェクト
 	CImageListMgr		m_cIcons;					//!< Image List
 };

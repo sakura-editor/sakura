@@ -24,12 +24,16 @@
 
 #include "StdAfx.h"
 #include "CEditApp.h"
+#include "CSMacroMgr.h"
 #include "CEditWnd.h"
 
 void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 {
 	//ヘルパ作成
 	m_cIcons.Create( hInst );	//	CreateImage List
+
+	//マクロ
+	m_pcSMacroMgr = new CSMacroMgr();
 
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();

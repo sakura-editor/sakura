@@ -30,6 +30,7 @@
 #include "Funccode.h"
 #include "CShareData.h"
 #include "CEditDoc.h"
+#include "CEditApp.h"
 #include "CSMacroMgr.h"
 #include "CMarkMgr.h"
 #include "CEditWnd.h"
@@ -947,7 +948,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, in
 				return false;
 			}
 		}else{
-			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
+			return CEditApp::getInstance()->m_pcSMacroMgr->IsSaveOk();
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */

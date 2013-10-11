@@ -28,6 +28,7 @@
 #include <time.h>
 #include <io.h>
 #include <process.h> // _beginthreadex
+#include "CEditApp.h"
 #include "CEditView.h"
 #include "Debug.h"
 #include "CRunningTimer.h"
@@ -140,6 +141,7 @@ CEditView::CEditView( CEditWnd* pcEditWnd )
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 {
+	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
 }
 
 

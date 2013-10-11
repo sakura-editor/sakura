@@ -52,6 +52,7 @@ class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CDocLine;
 class CMigemo;	// 2004.09.14 isearch
+class CSMacroMgr;
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -427,6 +428,8 @@ public: /* テスト用にアクセス属性を変更 */
 	//	Aug. 31, 2000 genta
 	CAutoMarkMgr	*m_cHistory;	//	Jump履歴
 	CRegexKeyword	*m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+
+	CSMacroMgr*		m_pcSMacroMgr;
 
 	/*
 	||  実装ヘルパ関数
