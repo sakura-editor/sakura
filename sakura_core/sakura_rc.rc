@@ -3516,9 +3516,9 @@ BEGIN
 	STR_ERR_DLGTAGMAK1			"タグ作成フォルダの選択"
 
 	// CDlgWinSize.cpp
-	STR_ERR_DLGWINSZ1			"普通"
-	STR_ERR_DLGWINSZ2			"最大化"
-	STR_ERR_DLGWINSZ3			"(最小化)"
+	STR_DLGWINSZ_NORMAL			"普通"
+	STR_DLGWINSZ_MAXIMIZE		"最大化"
+	STR_DLGWINSZ_MINIMIZE		"(最小化)"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%s\nというファイルを開けません。\nファイルが存在しません。"
@@ -3574,8 +3574,9 @@ BEGIN
 	STR_ERR_DLGEDITDOC21		"%s\nは現在他のプロセスによって書込みが禁止されています。"
 	STR_ERR_DLGEDITDOC22		"（無題）"
 
-	STR_ERR_DLGEDITDOC23		"読み書き禁止モード"
-	STR_ERR_DLGEDITDOC24		"書き込み禁止モード"
+	STR_EXCLU_NO_EXCLUSIVE		"しない"
+	STR_EXCLU_DENY_WRITE		"書き込み禁止モード"
+	STR_EXCLU_DENY_READWRITE	"読み書き禁止モード"
 	STR_ERR_DLGEDITDOC25		"未定義のモード（問題があります）"
 	STR_ERR_DLGEDITDOC26		"%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"
 	STR_ERR_DLGEDITDOC27		"（無題）"
@@ -4028,12 +4029,12 @@ BEGIN
 	STR_PROPCOMMON_STATBAR		"ステータスバー"
 
 	// General Settings::File Tab
-	STR_PROPC_SCROLL_NO_KEY		"組み合わせなし"
-	STR_PROPC_SCROLL_MID_BTN	"マウス中ボタン"
-	STR_PROPC_SCROLL_SIDE_1_BTN	"マウスサイドボタン1"
-	STR_PROPC_SCROLL_SIDE_2_BTN	"マウスサイドボタン2"
-	STR_PROPC_SCROLL_CTRL_KEY	"CONTROLキー"
-	STR_PROPC_SCROLL_SHIFT_KEY	"SHIFTキー"
+	STR_SCROLL_WITH_NO_KEY		"組み合わせなし"
+	STR_SCROLL_WITH_MID_BTN		"マウス中ボタン"
+	STR_SCROLL_WITH_SIDE_1_BTN	"マウスサイドボタン1"
+	STR_SCROLL_WITH_SIDE_2_BTN	"マウスサイドボタン2"
+	STR_SCROLL_WITH_CTRL_KEY	"CONTROLキー"
+	STR_SCROLL_WITH_SHIFT_KEY	"SHIFTキー"
 
 	STR_ERR_DLGPROPCOMMON23		"作者に教えて欲しいエラー"
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n"
@@ -4071,8 +4072,11 @@ BEGIN
 	STR_ERR_DLGCPROPTYPES10		"HTML"
 	STR_ERR_DLGCPROPTYPES11		"TeX"
 	STR_ERR_DLGCPROPTYPES12		"テキスト"
-	STR_ERR_DLGCPROPTYPES13		"なし"				// smart indent
-	STR_ERR_DLGCPROPTYPES14		"C/C++"
+	STR_TAB_SYMBOL_CHARA		"文字指定"
+	STR_TAB_SYMBOL_SHORT_ARROW	"短い矢印"
+	STR_TAB_SYMBOL_LONG_ARROW	"長い矢印"
+	STR_SMART_INDENT_NONE		"なし"				// smart indent
+	STR_SMART_INDENT_C_CPP		"C/C++"
 	STR_ERR_DLGCPROPTYPES15		"標準設定"			// ime state
 	STR_ERR_DLGCPROPTYPES16		"全角"
 	STR_ERR_DLGCPROPTYPES17		"全角ひらがな"
@@ -4081,12 +4085,12 @@ BEGIN
 	STR_ERR_DLGCPROPTYPES20		"そのまま"			// ime switch
 	STR_ERR_DLGCPROPTYPES21		"常にON" 
 	STR_ERR_DLGCPROPTYPES22		"常にOFF" 
-	STR_ERR_DLGCPROPTYPES23		"なし"				// ident
-	STR_ERR_DLGCPROPTYPES24		"tx2x"
-	STR_ERR_DLGCPROPTYPES25		"論理行先頭"
-	STR_ERR_DLGCPROPTYPES26		"折り返さない"		// wrap method
-	STR_ERR_DLGCPROPTYPES27		"指定桁で折り返す"
-	STR_ERR_DLGCPROPTYPES28		"右端で折り返す"
+	STR_WRAP_INDENT_NONE		"なし"				// ident
+	STR_WRAP_INDENT_TX2X		"tx2x"
+	STR_WRAP_INDENT_BOL			"論理行先頭"
+	STR_WRAP_METHOD_NO_WRAP		"折り返さない"		// wrap method
+	STR_WRAP_METHOD_SPEC_WIDTH	"指定桁で折り返す"
+	STR_WRAP_METHOD_WIN_WIDTH	"右端で折り返す"
 
 	// File Type Settings Tab names
 	STR_PROPTYPE				"タイプ別設定"
