@@ -144,14 +144,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		handle = INVALID_HANDLE_VALUE;
 	}
 
-	if( m_psLangInfo == NULL ){
-		// DLLが読み込まれなかった場合、exeのインスタンスハンドルとする
-		m_psLangInfo = *m_psLangInfoList.begin();
-	}else if( m_psLangInfo->bValid ){
-		// ロケールを設定
-		SetThreadUILanguage( m_psLangInfo->wLangId );						// Vista / Win7
-		SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));	// Win2000/XP
-	}
+	// この時点ではexeのインスタンスハンドルで起動し、共有メモリ初期化後にChangeLangする
+	m_psLangInfo = *m_psLangInfoList.begin();
 
 	return m_psLangInfo->hInstance;
 }
@@ -374,6 +368,12 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 		m_psLangInfo->hInstance = NULL;
 	}
 	m_psLangInfo = psLangInfo;
+
+	// ロケールを設定
+#ifdef SetThreadUILanguage		// VC2005以前のライブラリに含まれないため
+	SetThreadUILanguage( m_psLangInfo->wLangId );						// Vista / Win7
+#endif
+	SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));	// Win2000/XP
 
 	return m_psLangInfo->hInstance;
 }
