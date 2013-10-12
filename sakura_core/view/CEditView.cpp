@@ -970,6 +970,13 @@ void CEditView::OnSize( int cx, int cy )
 		m_hwndHScrollBar?nCyHScroll:0
 	);
 
+	/* 再描画用メモリＢＭＰ */
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	if( m_hdcCompatDC != NULL ){
+		CreateOrUpdateCompatibleBitmap( cx, cy );
+ 	}
+	// To Here 2007.09.09 Moca
+
 	// 2008.06.06 nasukoji	サイズ変更時の折り返し位置再計算
 	BOOL wrapChanged = FALSE;
 	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
@@ -984,13 +991,6 @@ void CEditView::OnSize( int cx, int cy )
 
 	// キャレットの表示(右・下に隠れていた場合)
 	GetCaret().ShowEditCaret();
-
-	/* 再描画用メモリＢＭＰ */
-	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	if( m_hdcCompatDC != NULL ){
-		CreateOrUpdateCompatibleBitmap( cx, cy );
- 	}
-	// To Here 2007.09.09 Moca
 
 	if( IsBkBitmap() ){
 		EBackgroundImagePos imgPos = m_pTypeData->m_backImgPos;

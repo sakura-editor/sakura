@@ -576,8 +576,8 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 		return;
 	}
 	if( m_hdcCompatDC && NULL == m_hbmpCompatBMP
-		 || (pPs->rcPaint.right - pPs->rcPaint.left) < m_nCompatBMPWidth
-		 || (pPs->rcPaint.bottom - pPs->rcPaint.top) < m_nCompatBMPHeight ){
+		 || m_nCompatBMPWidth < (pPs->rcPaint.right - pPs->rcPaint.left)
+		 || m_nCompatBMPHeight < (pPs->rcPaint.bottom - pPs->rcPaint.top) ){
 		RECT rect;
 		::GetWindowRect( this->GetHwnd(), &rect );
 		CreateOrUpdateCompatibleBitmap( rect.right - rect.left, rect.bottom - rect.top );
