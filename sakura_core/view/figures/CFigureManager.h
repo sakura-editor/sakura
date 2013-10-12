@@ -41,6 +41,7 @@ public:
 
 private:
 	std::vector<CFigure*>	m_vFigures;
+	std::vector<CFigure*>	m_vFiguresDisp;	//!< F•ª‚¯•\Ž¦‘ÎÛ
 };
 
 #endif /* SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_ */

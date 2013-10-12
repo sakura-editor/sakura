@@ -46,6 +46,8 @@ CFigureManager::CFigureManager()
 
 CFigureManager::~CFigureManager()
 {
+	m_vFiguresDisp.clear();
+
 	int size = (int)m_vFigures.size();
 	for(int i = 0; i < size; i++){
 		SAFE_DELETE(m_vFigures[i]);
@@ -56,25 +58,31 @@ CFigureManager::~CFigureManager()
 //$$ 高速化可能
 CFigure& CFigureManager::GetFigure(const wchar_t* pText)
 {
-	int size = (int)m_vFigures.size();
+	int size = (int)m_vFiguresDisp.size();
 	for(int i = 0; i < size; i++){
-		CFigure* pcFigure = m_vFigures[i];
+		CFigure* pcFigure = m_vFiguresDisp[i];
 		if(pcFigure->Match(pText)){
 			return *pcFigure;
 		}
 	}
+
 	assert(0);
-	static CFigure_Text cDummy;
-	return cDummy;
+	return *m_vFiguresDisp.back();
 }
 
 /*! 設定更新
 */
 void CFigureManager::OnChangeSetting(void)
 {
+	m_vFiguresDisp.clear();
+
 	int size = (int)m_vFigures.size();
 	for(int i = 0; i < size; i++){
 		m_vFigures[i]->Update();
+		// 色分け表示対象のみを登録
+		if( m_vFigures[i]->Disp() ){
+			m_vFiguresDisp.push_back(m_vFigures[i]);
+		}
 	}
 }
 

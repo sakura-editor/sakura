@@ -10,7 +10,7 @@
 
 bool CFigure_ZenSpace::Match(const wchar_t* pText) const
 {
-	if(pText[0] == L'Å@' && m_pTypeData->m_ColorInfoArr[COLORIDX_ZENSPACE].m_bDisp){
+	if( pText[0] == L'Å@' ){
 		return true;
 	}
 	return false;

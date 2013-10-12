@@ -10,7 +10,7 @@
 
 bool CFigure_HanSpace::Match(const wchar_t* pText) const
 {
-	if(pText[0] == L' ' && m_pTypeData->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp){
+	if( pText[0] == L' ' ){
 		return true;
 	}
 	return false;
