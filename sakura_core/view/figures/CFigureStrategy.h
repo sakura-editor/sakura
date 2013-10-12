@@ -35,6 +35,9 @@ public:
 	virtual bool DrawImp(SColorStrategyInfo* pInfo) = 0;
 	virtual bool Match(const wchar_t* pText) const = 0;
 
+	//! 色分け表示対象判定
+	virtual bool Disp(void) const = 0;
+
 	//! 設定更新
 	virtual void Update(void)
 	{
@@ -53,6 +56,12 @@ public:
 	{
 		return true;
 	}
+
+	//! 色分け表示対象判定
+	virtual bool Disp(void) const
+	{
+		return true;
+	}
 };
 
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
@@ -63,19 +72,26 @@ protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;
 
+	//! 色分け表示対象判定
+	virtual bool Disp(void) const
+	{
+		EColorIndexType nColorIndex = GetColorIdx();
+		return m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp;
+	}
+
 	virtual void Update(void)
 	{
 		CFigure::Update();
 
 		EColorIndexType nColorIndex = GetColorIdx();
 		if( m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp ){
-			m_nColorIndex = nColorIndex;
+			m_nDispColorIndex = nColorIndex;
 		}else{
-			m_nColorIndex = COLORIDX_TEXT;
+			m_nDispColorIndex = COLORIDX_TEXT;
 		}
 	}
 
-	EColorIndexType GetDispColorIdx(void) const{ return m_nColorIndex; }
+	EColorIndexType GetDispColorIdx(void) const{ return m_nDispColorIndex; }
 
 	// 実装補助
 	bool DrawImp_StyleSelect(SColorStrategyInfo* pInfo);
@@ -83,7 +99,7 @@ protected:
 	void DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos&);
 
 protected:
-	EColorIndexType m_nColorIndex;
+	EColorIndexType m_nDispColorIndex;
 };
 
 #endif /* SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_ */
