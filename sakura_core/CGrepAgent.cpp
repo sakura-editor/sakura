@@ -245,14 +245,16 @@ DWORD CGrepAgent::DoGrep(
 	if( 0 < nWork ){
 		CNativeW cmemWork2;
 		cmemWork2.SetNativeData( *pcmGrepKey );
-		if( FALSE == pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp ){
+		const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+		if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
 			// 2011.11.28 色指定が無効ならエスケープしない
 		}else
-		if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+		if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
+			|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
 			cmemWork2.Replace( L"\\", L"\\\\" );
 			cmemWork2.Replace( L"\'", L"\\\'" );
 			cmemWork2.Replace( L"\"", L"\\\"" );
-		}else{
+		}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
 			cmemWork2.Replace( L"\'", L"\'\'" );
 			cmemWork2.Replace( L"\"", L"\"\"" );
 		}
