@@ -1485,8 +1485,8 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "Fixed Width(&E)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,70,115,59,10
-    LTEXT           "Close Btn(&X)",IDC_STATIC,130,116,68,8
-    COMBOBOX        IDC_CHECK_DispTabClose,173,113,46,80,CBS_DROPDOWNLIST | 
+    LTEXT           "Close Btn(&X)",IDC_STATIC,133,116,68,8
+    COMBOBOX        IDC_CHECK_DispTabClose,176,113,46,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Font(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     RTEXT           "Font", IDC_STATIC_TABFONT,102,127,180,17,SS_RIGHT
@@ -1586,9 +1586,9 @@ BEGIN
     LTEXT           "Exclusive(&H)",IDC_STATIC,8,16,48,10
     COMBOBOX        IDC_COMBO_FILESHAREMODE,50,14,111,78,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Watch for updates(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,31,60,10
-    LTEXT           "&Autoload Delay", IDC_LABEL_AUTOLOAD_DELAY,70,32,62,10
+    CONTROL         "&Watch for updates",IDC_CHECK_bCheckFileTimeStamp,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,31,70,10
+    LTEXT           "&Autoload Delay", IDC_STATIC,80,32,62,10
     EDITTEXT        IDC_EDIT_AUTOLOAD_DELAY,130,30,30,12
     CONTROL         "Spin1",IDC_SPIN_AUTOLOAD_DELAY,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,150,30,9,12
@@ -1601,11 +1601,11 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,175,16,101,10
     CONTROL         "Automatically save(&U)",IDC_CHECK_AUTOSAVE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,175,31,84,10
-    LTEXT           "&Interval is every",IDC_LABEL_AUTOSAVE,186,47,31,8,NOT WS_GROUP
+    LTEXT           "&Interval is every",IDC_STATIC,186,47,31,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,219,45,30,12
     CONTROL         "Spin1",IDC_SPIN_AUTOBACKUP_INTERVAL,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,266,45,9,12
-    LTEXT           "mins",IDC_LABEL_AUTOSAVE2,250,47,21,8,NOT WS_GROUP
+    LTEXT           "mins",IDC_STATIC,250,47,21,8,NOT WS_GROUP
     GROUPBOX        "File Saving...",IDC_STATIC,170,3,118,57,WS_GROUP
     CONTROL         "Display all file types for new file(&O)",
                     IDC_CHECK_NoFilterSaveNew,"Button",BS_AUTOCHECKBOX | 
@@ -1710,7 +1710,7 @@ BEGIN
     LTEXT           "Number of backups (1-99 &N)",IDC_LABEL_BACKUP_3,22,94,91,8
     EDITTEXT        IDC_EDIT_BACKUP_3,106,92,28,12
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,164,92,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,154,92,9,
                     12
     CONTROL         "Yr (&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,132,35,10
@@ -1738,7 +1738,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
     AUTOCHECKBOX    "Apply for Files on Removable Media(&L)", IDC_CHECK_BACKUP_FOLDER_RM,
                     120, 148, 133, 10
-    LTEXT           "Folder Name(&F)",IDC_LABEL_BACKUP_4,24,162,47,8
+    LTEXT           "Folder Name(&F)",IDC_LABEL_BACKUP_4,24,162,87,8
     EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,160,195,12,ES_AUTOHSCROLL
     PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,160,9,12
     CONTROL         "Throw backup file into Recycle Bin(&X)",
