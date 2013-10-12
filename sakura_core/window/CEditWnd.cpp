@@ -3479,18 +3479,23 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	);
 
 	if( TRUE == bRes ){
+		bool bChangePrintSettingNo = false;
 		/* 現在選択されているページ設定の番号が変更されたか */
 		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
 		{
 			/* 変更フラグ(タイプ別設定) */
 			GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
+			bChangePrintSettingNo = true;
 		}
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		//	印刷プレビュー時のみ。
 		if ( m_pPrintPreview ){
 			/* 現在の印刷設定 */
-			// m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
+			// 2013.08.27 印刷設定番号が変更された時に対応できていなかった
+			if( bChangePrintSettingNo ){
+				m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
+			}
 
 			/* 印刷プレビュー スクロールバー初期化 */
 			//m_pPrintPreview->InitPreviewScrollBar();
