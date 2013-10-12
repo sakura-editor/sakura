@@ -76,7 +76,7 @@ void GetDefaultColorInfo(ColorInfo* pColorInfo, int nIndex)
 {
 	ColorInfoBase* p = pColorInfo;
 	*p = ColorInfo_DEFAULT[nIndex].m_sColorInfo; //ColorInfoBase
-	_tcscpy(pColorInfo->m_szName, to_tchar(LSW( ColorInfo_DEFAULT[nIndex].m_nNameId )));
+	_tcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
 	pColorInfo->m_nColorIdx = nIndex;
 }
 
