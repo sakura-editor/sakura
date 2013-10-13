@@ -1090,7 +1090,7 @@ void CEditDoc::SetModified( bool flag, bool redraw)
 
 	m_bIsModified = flag;
 	if( redraw )
-		UpdateCaption();
+		m_pcEditWnd->UpdateCaption();
 }
 // From Here Jan. 22, 2002 genta
 
@@ -1292,7 +1292,7 @@ void CEditDoc::FileClose( void )
 	InitAllView();
 
 	/* 親ウィンドウのタイトルを更新 */
-	UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 	RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
@@ -1332,7 +1332,7 @@ void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bR
 	InitAllView();
 
 	/* 親ウィンドウのタイトルを更新 */
-	UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	/* ファイルを開く */
 	// Mar. 30, 2003 genta

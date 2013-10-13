@@ -164,6 +164,42 @@ CEditWnd::~CEditWnd()
 	delete m_pcEditDoc;
 }
 
+
+
+
+
+/*! 親ウィンドウのタイトルを更新
+
+	@date 2007.03.08 ryoji bKillFocusパラメータを除去
+*/
+void CEditWnd::UpdateCaption()
+{
+	if( !m_pcEditDoc->GetActiveView().m_bDrawSWITCH )return;
+
+	//キャプション文字列の生成 -> pszCap
+	char	pszCap[1024];
+	const CommonSetting_Window& setting = m_pShareData->m_Common.m_sWindow;
+	const char* pszFormat = NULL;
+	if( !IsActiveApp() )	pszFormat = setting.m_szWindowCaptionInactive;
+	else					pszFormat = setting.m_szWindowCaptionActive;
+	m_pcEditDoc->ExpandParameter(
+		pszFormat,
+		pszCap,
+		_countof( pszCap )
+	);
+
+	//キャプション更新
+	::SetWindowText( m_hwndParent, pszCap );
+
+	//@@@ From Here 2003.06.13 MIK
+	//タブウインドウのファイル名を通知
+	m_pcEditDoc->ExpandParameter( m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
+	ChangeFileNameNotify( pszCap, m_pcEditDoc->GetFilePath(), m_pcEditDoc->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	//@@@ To Here 2003.06.13 MIK
+}
+
+
+
 //!< ウィンドウ生成用の矩形を取得
 void CEditWnd::_GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
@@ -1349,7 +1385,7 @@ LRESULT CEditWnd::DispatchEvent(
 			ClearMouseState();
 		} else {
 			// 非アクティブになるときだけキャプション設定(アクティブ時はほかで呼び出される)
-			m_pcEditDoc->UpdateCaption();
+			UpdateCaption();
 		}
 
 		// タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
@@ -1390,7 +1426,7 @@ LRESULT CEditWnd::DispatchEvent(
 //		MYTRACE( _T("WM_SIZE\n") );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
-			m_pcEditDoc->UpdateCaption();
+			UpdateCaption();
 		}
 		return OnSize( wParam, lParam );
 
@@ -3042,7 +3078,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						m_pcEditDoc->InitAllView();
 
 						/* 親ウィンドウのタイトルを更新 */
-						m_pcEditDoc->UpdateCaption();
+						UpdateCaption();
 
 						/* ファイル読み込み */
 							m_pcEditDoc->FileRead(
@@ -3273,7 +3309,7 @@ void CEditWnd::SetDebugModeON()
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
 	m_pcEditDoc->m_bReadOnly = false;		/* 読み取り専用モード */
 	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditDoc->UpdateCaption();
+	UpdateCaption();
 }
 
 // 2005.06.24 Moca
@@ -3283,7 +3319,7 @@ void CEditWnd::SetDebugModeOFF()
 	if( m_pShareData->m_sHandles.m_hwndDebug == m_hWnd ){
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 		m_pcEditDoc->m_bDebugMode = false;
-		m_pcEditDoc->UpdateCaption();
+		UpdateCaption();
 	}
 }
 

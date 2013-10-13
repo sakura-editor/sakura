@@ -1243,7 +1243,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	m_bReadOnly = false;	/* 読み取り専用モード */
 
 	/* 親ウィンドウのタイトルを更新 */
-	UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 end_of_func:;
 
 	if( IsValidPath() &&
@@ -1449,42 +1449,6 @@ BOOL CEditDoc::IsEnablePaste( void ) const
 	}
 	return FALSE;
 }
-
-
-
-
-
-/*! 親ウィンドウのタイトルを更新
-
-	@date 2007.03.08 ryoji bKillFocusパラメータを除去
-*/
-void CEditDoc::UpdateCaption()
-{
-	if( !GetActiveView().m_bDrawSWITCH )return;
-
-	//キャプション文字列の生成 -> pszCap
-	char	pszCap[1024];
-	const char* pszFormat = NULL;
-	if( !m_pcEditWnd->IsActiveApp() )	pszFormat = m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive;
-	else								pszFormat = m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive;
-	ExpandParameter(
-		pszFormat,
-		pszCap,
-		_countof( pszCap )
-	);
-
-	//キャプション更新
-	::SetWindowText( m_hwndParent, pszCap );
-
-	//@@@ From Here 2003.06.13 MIK
-	//タブウインドウのファイル名を通知
-	ExpandParameter( m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
-	m_pcEditWnd->ChangeFileNameNotify( pszCap, m_szFilePath, m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
-	//@@@ To Here 2003.06.13 MIK
-}
-
-
-
 
 /*! バックアップの作成
 	@author genta
@@ -2060,7 +2024,7 @@ void CEditDoc::DoFileLock( void )
 	/* 書込み禁止かどうか調べる */
 	if( -1 == _taccess( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
 		/* 親ウィンドウのタイトルを更新 */
-		UpdateCaption();
+		m_pcEditWnd->UpdateCaption();
 		return;
 	}
 
@@ -2081,7 +2045,7 @@ void CEditDoc::DoFileLock( void )
 			IsValidPath() ? GetFilePath() : _T("(無題)")
 		);
 		/* 親ウィンドウのタイトルを更新 */
-		UpdateCaption();
+		m_pcEditWnd->UpdateCaption();
 		return;
 	}
 
@@ -2123,7 +2087,7 @@ void CEditDoc::DoFileLock( void )
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */
-		UpdateCaption();
+		m_pcEditWnd->UpdateCaption();
 		return;
 	}
 	/* 排他制御しないけどロックされているかのチェックは行う場合 */
@@ -4071,7 +4035,7 @@ void CEditDoc::ReloadCurrentFile(
 	InitAllView();
 
 	/* 親ウィンドウのタイトルを更新 */
-	UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	/* ファイル読み込み */
 	FileRead(

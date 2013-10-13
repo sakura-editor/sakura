@@ -100,6 +100,7 @@ public:
 	void OpenDocumentWhenStart(const char*, ECodeType, bool);	//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
 	void SetDocumentTypeWhenCreate(ECodeType, bool, int = -1);	//!< [in] 文書タイプ．-1のとき強制指定無し．
 
+	void UpdateCaption();
 
 	void MessageLoop( void );								/* メッセージループ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */

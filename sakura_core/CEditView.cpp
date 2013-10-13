@@ -627,7 +627,7 @@ LRESULT CEditView::DispatchEvent(
 		OnSetFocus();
 
 		/* 親ウィンドウのタイトルを更新 */
-		m_pcEditDoc->UpdateCaption();
+		m_pcEditWnd->UpdateCaption();
 
 		return 0L;
 	case WM_KILLFOCUS:
@@ -1075,7 +1075,7 @@ void CEditView::OnSize( int cx, int cy )
 	// To Here 2007.09.09 Moca
 
 	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditDoc->UpdateCaption();	//	[Q] genta 本当に必要？
+	m_pcEditWnd->UpdateCaption();	//	[Q] genta 本当に必要？
 
 	return;
 }
@@ -4714,7 +4714,7 @@ void CEditView::RedrawAll( void )
 	DrawCaretPosInfo();
 
 	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditDoc->UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	//	Jul. 9, 2005 genta	選択範囲の情報をステータスバーへ表示
 	PrintSelectionInfoMsg();

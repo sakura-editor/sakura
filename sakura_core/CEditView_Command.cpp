@@ -7663,7 +7663,7 @@ void CEditView::Command_READONLY( void )
 	m_pcEditDoc->m_bReadOnly = !m_pcEditDoc->m_bReadOnly;
 
 	// 親ウィンドウのタイトルを更新
-	m_pcEditDoc->UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 }
 
 /* ファイルのプロパティ */
@@ -8271,7 +8271,7 @@ void CEditView::Command_RECKEYMACRO( void )
 //		m_pShareData->m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditDoc->UpdateCaption();
+	m_pcEditWnd->UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
 	DrawCaretPosInfo();
