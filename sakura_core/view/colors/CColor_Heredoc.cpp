@@ -68,51 +68,49 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	// <<<HEREDOC_ID
 	// ...
 	// HEREDOC_ID
-	if( m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp ){
-		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
-		 && cStr.At(nPos) == '<' && nPos + 3 < cStr.GetLength()
-		 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
-		){
-			// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
-			const int length = cStr.GetLength();
-			int nPosIdStart = nPos + 3;
-			for(; nPosIdStart < length; nPosIdStart++ ){
-				if(cStr.At(nPosIdStart) != L'\t' && cStr.At(nPosIdStart) != L' '){
-					break;
-				}
+	if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
+	 && cStr.At(nPos) == '<' && nPos + 3 < cStr.GetLength()
+	 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
+	){
+		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
+		const int length = cStr.GetLength();
+		int nPosIdStart = nPos + 3;
+		for(; nPosIdStart < length; nPosIdStart++ ){
+			if(cStr.At(nPosIdStart) != L'\t' && cStr.At(nPosIdStart) != L' '){
+				break;
 			}
-			wchar_t quote = L'\0';
-			if( !(nPosIdStart < length) ){
+		}
+		wchar_t quote = L'\0';
+		if( !(nPosIdStart < length) ){
+			return false;
+		}
+		if( cStr.At(nPosIdStart) == L'\'' || cStr.At(nPosIdStart) == L'"' ){
+			quote = cStr.At(nPosIdStart);
+			nPosIdStart++;
+		}
+		int i = nPosIdStart;
+		for(; i < length; i++ ){
+			if( !(WCODE::IsAZ(cStr.At(i)) || WCODE::Is09(cStr.At(i)) || cStr.At(i) == L'_') ){
+				break;
+			}
+		}
+		if( nPosIdStart == i ){
+			return false;
+		}
+		const int k = i;
+		if( quote != L'\0' ){
+			if( i < length && cStr.At(i) == quote ){
+				i++;
+			}else{
 				return false;
 			}
-			if( cStr.At(nPosIdStart) == L'\'' || cStr.At(nPosIdStart) == L'"' ){
-				quote = cStr.At(nPosIdStart);
-				nPosIdStart++;
-			}
-			int i = nPosIdStart;
-			for(; i < length; i++ ){
-				if( !(WCODE::IsAZ(cStr.At(i)) || WCODE::Is09(cStr.At(i)) || cStr.At(i) == L'_') ){
-					break;
-				}
-			}
-			if( nPosIdStart == i ){
-				return false;
-			}
-			const int k = i;
-			if( quote != L'\0' ){
-				if( i < length && cStr.At(i) == quote ){
-					i++;
-				}else{
-					return false;
-				}
-			}
-			if( i < length && WCODE::IsLineDelimiter(cStr.At(i)) ){
-				m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
-				m_pszId = m_id.c_str();
-				m_nSize = m_id.size();
-				this->m_nCOMMENTEND = length;
-				return true;
-			}
+		}
+		if( i < length && WCODE::IsLineDelimiter(cStr.At(i)) ){
+			m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
+			m_pszId = m_id.c_str();
+			m_nSize = m_id.size();
+			this->m_nCOMMENTEND = length;
+			return true;
 		}
 	}
 	return false;

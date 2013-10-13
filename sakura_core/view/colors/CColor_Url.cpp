@@ -17,7 +17,7 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 
 	int	nUrlLen;
 
-	if( _IsPosKeywordHead(cStr,nPos) && m_pTypeData->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
+	if( _IsPosKeywordHead(cStr,nPos) /* URLを表示する */
 	 && IsURL( cStr.GetPtr() + nPos, cStr.GetLength() - nPos, &nUrlLen )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 	){
 		this->m_nCOMMENTEND = nPos + nUrlLen;

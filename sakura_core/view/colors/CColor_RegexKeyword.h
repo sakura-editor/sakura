@@ -35,6 +35,7 @@ public:
 	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; m_nCOMMENTMODE = ToColorIndexType_RegularExpression(0); }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
+	virtual bool Disp() const { return m_pTypeData->m_bUseRegexKeyword; }
 	virtual void OnStartScanLogic();
 private:
 	int m_nCOMMENTEND;
