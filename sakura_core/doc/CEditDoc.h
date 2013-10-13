@@ -65,7 +65,6 @@ struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
 class CEditApp;
 
-typedef CEditWnd* P_CEditWnd;
 /*!
 	文書関連情報の管理
 
@@ -84,7 +83,7 @@ public:
 	~CEditDoc();
 
 	//初期化
-	BOOL Create();
+	BOOL Create( CEditWnd* pcEditWnd );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();
@@ -119,7 +118,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	P_CEditWnd&		m_pcEditWnd;	//	Sep. 10, 2002
+	CEditWnd*		m_pcEditWnd;	//	Sep. 10, 2002
 
 	//データ構造
 	CDocLineMgr		m_cDocLineMgr;
