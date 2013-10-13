@@ -189,7 +189,7 @@ void CEditWnd::UpdateCaption()
 	);
 
 	//キャプション更新
-	::SetWindowText( m_hwndParent, pszCap );
+	::SetWindowText( m_hWnd, pszCap );
 
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
