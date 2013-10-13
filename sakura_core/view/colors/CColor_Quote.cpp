@@ -74,89 +74,87 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 	if(!cStr.IsValid())return false;
 
 	if( cStr.At(nPos) == m_cQuote ){
-		if( m_pTypeData->m_ColorInfoArr[this->GetStrategyColor()].m_bDisp ){	/* クォーテーション文字列を表示する */
-			m_nCOMMENTEND = -1;
-			int nStringType = m_pTypeData->m_nStringType;
-			bool bPreString = true;
-			/* クォーテーション文字列の終端があるか */
-			switch( nStringType ){
-			case STRING_LITERAL_CPP:
-				if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
-					&& nPos + 1 < cStr.GetLength() ){
-					for( int i = nPos + 1; i < cStr.GetLength(); i++ ){
-						if( cStr.At(i) == '(' ){
-							if( nPos + 1 < i ){
-								m_tag = L')';
-								m_tag.append( cStr.GetPtr()+nPos+1, i - (nPos + 1) );
-								m_tag += L'"';
-							}else{
-								m_tag.assign(L")\"", 2);
-							}
-							m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), i + 1, cStr, false );
-							m_nColorTypeIndex = 1;
-							return true;
-						}
-					}
-				}
-				break;
-			case STRING_LITERAL_HTML:
-				{
-					int i;
-					for(i = nPos - 1; 0 <= i; i--){
-						if( cStr.At(i) != L' ' && cStr.At(i) != L'\t' ){
-							break;
-						}
-					}
-					if( !(0 <= i && cStr.At(i) == L'=') ){
-						bPreString = false;
-					}
-				}
-				break;
-			case STRING_LITERAL_CSHARP:
-				if( 0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"' ){
-					m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, STRING_LITERAL_PLSQL );
-					m_nColorTypeIndex = 2;
-					return true;
-				}
-				break;
-			case STRING_LITERAL_PYTHON:
-				if( nPos + 2 < cStr.GetLength()
-				 && cStr.At(nPos+1) == m_cQuote && cStr.At(nPos+2) == m_cQuote ){
-					m_nCOMMENTEND = Match_QuoteStr( m_szQuote, 3, nPos + 3, cStr, true );
-					m_nColorTypeIndex = 3;
-					return true;
-				}
-				break;
-			}
-			m_bEscapeEnd = false;
-			if( bPreString ){
-				m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, m_nEscapeType, m_pbEscapeEnd );
-				m_nColorTypeIndex = 0;
-			}
-
-			// 「文字列は行内のみ」(C++ Raw String、Pythonのlong string、@""は特別)
-			if( m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd
-					&& m_nCOMMENTEND == cStr.GetLength() ){
-				// 終了文字列がない場合は行末までを色分け
-				if( m_pTypeData->m_bStringEndLine ){
-					// 改行コードを除く
-					if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(cStr.GetLength()-1)) ){
-						if( 1 < cStr.GetLength() && cStr.At(cStr.GetLength()-2) == WCODE::CR
-								&& cStr.At(cStr.GetLength()-1) == WCODE::LF ){
-							m_nCOMMENTEND = cStr.GetLength() - 2;
+		m_nCOMMENTEND = -1;
+		int nStringType = m_pTypeData->m_nStringType;
+		bool bPreString = true;
+		/* クォーテーション文字列の終端があるか */
+		switch( nStringType ){
+		case STRING_LITERAL_CPP:
+			if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
+				&& nPos + 1 < cStr.GetLength() ){
+				for( int i = nPos + 1; i < cStr.GetLength(); i++ ){
+					if( cStr.At(i) == '(' ){
+						if( nPos + 1 < i ){
+							m_tag = L')';
+							m_tag.append( cStr.GetPtr()+nPos+1, i - (nPos + 1) );
+							m_tag += L'"';
 						}else{
-							m_nCOMMENTEND = cStr.GetLength() - 1;
+							m_tag.assign(L")\"", 2);
 						}
+						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), i + 1, cStr, false );
+						m_nColorTypeIndex = 1;
+						return true;
 					}
-					return true;
 				}
-				// 終了文字列がない場合は色分けしない
-				m_nCOMMENTEND = -1;
-				return false;
 			}
-			if( 0 < m_nCOMMENTEND ){
+			break;
+		case STRING_LITERAL_HTML:
+			{
+				int i;
+				for(i = nPos - 1; 0 <= i; i--){
+					if( cStr.At(i) != L' ' && cStr.At(i) != L'\t' ){
+						break;
+					}
+				}
+				if( !(0 <= i && cStr.At(i) == L'=') ){
+					bPreString = false;
+				}
+			}
+			break;
+		case STRING_LITERAL_CSHARP:
+			if( 0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"' ){
+				m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, STRING_LITERAL_PLSQL );
+				m_nColorTypeIndex = 2;
 				return true;
 			}
+			break;
+		case STRING_LITERAL_PYTHON:
+			if( nPos + 2 < cStr.GetLength()
+			 && cStr.At(nPos+1) == m_cQuote && cStr.At(nPos+2) == m_cQuote ){
+				m_nCOMMENTEND = Match_QuoteStr( m_szQuote, 3, nPos + 3, cStr, true );
+				m_nColorTypeIndex = 3;
+				return true;
+			}
+			break;
+		}
+		m_bEscapeEnd = false;
+		if( bPreString ){
+			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos + 1, cStr, m_nEscapeType, m_pbEscapeEnd );
+			m_nColorTypeIndex = 0;
+		}
+
+		// 「文字列は行内のみ」(C++ Raw String、Pythonのlong string、@""は特別)
+		if( m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd
+				&& m_nCOMMENTEND == cStr.GetLength() ){
+			// 終了文字列がない場合は行末までを色分け
+			if( m_pTypeData->m_bStringEndLine ){
+				// 改行コードを除く
+				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(cStr.GetLength()-1)) ){
+					if( 1 < cStr.GetLength() && cStr.At(cStr.GetLength()-2) == WCODE::CR
+							&& cStr.At(cStr.GetLength()-1) == WCODE::LF ){
+						m_nCOMMENTEND = cStr.GetLength() - 2;
+					}else{
+						m_nCOMMENTEND = cStr.GetLength() - 1;
+					}
+				}
+				return true;
+			}
+			// 終了文字列がない場合は色分けしない
+			m_nCOMMENTEND = -1;
+			return false;
+		}
+		if( 0 < m_nCOMMENTEND ){
+			return true;
 		}
 	}
 	return false;

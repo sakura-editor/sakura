@@ -32,6 +32,7 @@ public:
 	//色替え
 	virtual void InitStrategyStatus(){ }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
+	virtual bool Disp() const { return true; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 
 	virtual bool BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt, const CLayout*);
@@ -53,6 +54,7 @@ public:
 	//色替え
 	virtual void InitStrategyStatus(){ } //############要検証
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
+	virtual bool Disp() const { return true; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 	//イベント
 	virtual void OnStartScanLogic();
