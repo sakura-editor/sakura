@@ -130,6 +130,7 @@ DEF_NOTIFY(BeforeClose)
 CDocListener::CDocListener(CDocSubject* pcDoc)
 {
 	if(pcDoc==NULL)pcDoc = CEditDoc::GetInstance(0); //$$ ƒCƒ“ƒ`ƒL
+	assert( pcDoc );
 	Listen(pcDoc);
 }
 

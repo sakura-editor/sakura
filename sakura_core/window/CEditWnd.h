@@ -109,6 +109,7 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
+		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
