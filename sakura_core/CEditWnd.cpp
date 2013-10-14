@@ -2757,12 +2757,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
-						int nActive = m_pcEditDoc->GetActivePane();
 						sprintf(
 							szBuf,
 							"折り返し桁数: %d 桁（右端）",
-							m_pcEditDoc->m_pcEditViewArr[nActive]->ViewColNumToWrapColNum(
-								m_pcEditDoc->m_pcEditViewArr[nActive]->m_nViewColNum
+							m_pcEditDoc->GetActiveView().ViewColNumToWrapColNum(
+								m_pcEditDoc->GetActiveView().m_nViewColNum
 							)
 						);
 					}
@@ -2995,7 +2994,7 @@ STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 
 	// ファイルドロップをアクティブビューで処理する
 	*pdwEffect &= DROPEFFECT_LINK;
-	return m_pcEditDoc->m_pcEditViewArr[m_pcEditDoc->GetActivePane()]->PostMyDropFiles( pDataObject );
+	return m_pcEditDoc->GetActiveView().PostMyDropFiles( pDataObject );
 }
 
 /* ファイルがドロップされた */

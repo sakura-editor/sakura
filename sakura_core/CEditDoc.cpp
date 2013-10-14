@@ -698,7 +698,7 @@ LRESULT CEditDoc::DispatchEvent(
 /*! テキストが選択されているか */
 BOOL CEditDoc::IsTextSelected( void ) const
 {
-	return m_pcEditViewArr[m_nActivePaneIndex]->IsTextSelected();
+	return GetActiveView().IsTextSelected();
 }
 
 
