@@ -15,6 +15,7 @@
 #include "CSelectLang.h"
 #include "util/os.h"
 #include "util/module.h"
+#include "_os/COsVersionInfo.h"
 
 #include <new>
 
@@ -370,10 +371,21 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	m_psLangInfo = psLangInfo;
 
 	// ロケールを設定
-#ifdef SetThreadUILanguage		// VC2005以前のライブラリに含まれないため
-	SetThreadUILanguage( m_psLangInfo->wLangId );						// Vista / Win7
-#endif
-	SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));	// Win2000/XP
+	// SetThreadUILanguageの呼び出しを試みる
+	bool isSuccess = false;
+	if( COsVersionInfo()._IsWinVista_or_later() ) {
+		HMODULE hDll = LoadLibrary( _T("kernel32") );
+		if ( hDll ) {
+			typedef short (CALLBACK* SetThreadUILanguageType)(LANGID);
+			SetThreadUILanguageType _SetThreadUILanguage = (SetThreadUILanguageType)
+					GetProcAddress(hDll, "SetThreadUILanguage");
+			isSuccess = _SetThreadUILanguage && _SetThreadUILanguage( m_psLangInfo->wLangId );
+			FreeLibrary( hDll );
+		}
+	}
+	if ( !isSuccess ) {
+		SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));
+	}
 
 	return m_psLangInfo->hInstance;
 }
