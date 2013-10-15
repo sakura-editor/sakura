@@ -1,6 +1,15 @@
 //Microsoft Developer Studio generated resource script.
 //
-#include "sakura_lang.h"
+#define SAKURA_LANG_RESOURCE
+
+#ifndef SAKURA_LANG_RESOURCE
+	#include "sakura_rc.h"
+	#include "Funccode_define.h"
+	#include "svnrev.h"
+	#include "String_define.h"
+#else
+	#include "sakura_lang.h"
+#endif
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -2585,6 +2594,7 @@ END
 
 #endif    // !_MAC
 
+#ifndef SAKURA_LANG_RESOURCE
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2639,6 +2649,8 @@ IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR DISCARDABLE "../resource/auto_scroll_up_lef
 IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR DISCARDABLE "../resource/auto_scroll_up_right.cur"
 IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR DISCARDABLE "../resource/auto_scroll_down_left.cur"
 IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR DISCARDABLE "../resource/auto_scroll_down_right.cur"
+
+#endif	// ! SAKURA_LANG_RESOURCE
 
 /////////////////////////////////////////////////////////////////////////////
 //
