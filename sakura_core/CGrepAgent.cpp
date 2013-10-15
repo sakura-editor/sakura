@@ -241,7 +241,7 @@ DWORD CGrepAgent::DoGrep(
 
 	/* 最後にテキストを追加 */
 	CNativeW	cmemWork;
-	cmemMessage.AppendString( L"\r\n□検索条件  " );
+	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
 		CNativeW cmemWork2;
 		cmemWork2.SetNativeData( *pcmGrepKey );
@@ -260,13 +260,13 @@ DWORD CGrepAgent::DoGrep(
 		cmemWork.AppendNativeData( cmemWork2 );
 		cmemWork.AppendString( L"\"\r\n" );
 	}else{
-		cmemWork.AppendString( L"「ファイル検索」\r\n" );
+		cmemWork.AppendString( LSW( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
 	cmemMessage += cmemWork;
 
 
 
-	cmemMessage.AppendString( L"検索対象   " );
+	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
@@ -277,7 +277,7 @@ DWORD CGrepAgent::DoGrep(
 
 
 	cmemMessage.AppendString( L"\r\n" );
-	cmemMessage.AppendString( L"フォルダ   " );
+	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	cmemWork.SetStringT( pcmGrepFolder->GetStringPtr() );
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
@@ -287,37 +287,37 @@ DWORD CGrepAgent::DoGrep(
 
 	const wchar_t*	pszWork;
 	if( sGrepOption.bGrepSubFolder ){
-		pszWork = L"    (サブフォルダも検索)\r\n";
+		pszWork = LSW( STR_GREP_SUBFOLDER_YES );	//L"    (サブフォルダも検索)\r\n"
 	}else{
-		pszWork = L"    (サブフォルダを検索しない)\r\n";
+		pszWork = LSW( STR_GREP_SUBFOLDER_NO );	//L"    (サブフォルダを検索しない)\r\n"
 	}
 	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( sSearchOption.bWordOnly ){
 		/* 単語単位で探す */
-			cmemMessage.AppendString( L"    (単語単位で探す)\r\n" );
+			cmemMessage.AppendString( LSW( STR_GREP_COMPLETE_WORD ) );	//L"    (単語単位で探す)\r\n"
 		}
 
 		if( sSearchOption.bLoHiCase ){
-			pszWork = L"    (英大文字小文字を区別する)\r\n";
+			pszWork = LSW( STR_GREP_CASE_SENSITIVE );	//L"    (英大文字小文字を区別する)\r\n"
 		}else{
-			pszWork = L"    (英大文字小文字を区別しない)\r\n";
+			pszWork = LSW( STR_GREP_IGNORE_CASE );	//L"    (英大文字小文字を区別しない)\r\n"
 		}
 		cmemMessage.AppendString( pszWork );
 
 		if( sSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
-			cmemMessage.AppendString( L"    (正規表現:" );
+			cmemMessage.AppendString( LSW( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
 			cmemMessage.AppendStringT( cRegexp.GetVersionT() );
 			cmemMessage.AppendString( L")\r\n" );
 		}
 	}
 
 	if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
-		cmemMessage.AppendString( L"    (文字コードセットの自動判別)\r\n" );
+		cmemMessage.AppendString( LSW( STR_GREP_CHARSET_AUTODETECT ) );	//L"    (文字コードセットの自動判別)\r\n"
 	}else if(IsValidCodeType(sGrepOption.nGrepCharSet)){
-		cmemMessage.AppendString( L"    (文字コードセット：" );
+		cmemMessage.AppendString( LSW( STR_GREP_CHARSET ) );	//L"    (文字コードセット："
 		cmemMessage.AppendStringT( CCodeTypeName(sGrepOption.nGrepCharSet).Normal() );
 		cmemMessage.AppendString( L")\r\n" );
 	}
@@ -325,14 +325,14 @@ DWORD CGrepAgent::DoGrep(
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( sGrepOption.bGrepOutputLine ){
 		/* 該当行 */
-			pszWork = L"    (一致した行を出力)\r\n";
+			pszWork = LSW( STR_GREP_SHOW_MATCH_LINE );	//L"    (一致した行を出力)\r\n"
 		}else{
-			pszWork = L"    (一致した箇所のみ出力)\r\n";
+			pszWork = LSW( STR_GREP_SHOW_MATCH_AREA );	//L"    (一致した箇所のみ出力)\r\n"
 		}
 		cmemMessage.AppendString( pszWork );
 
 		if( sGrepOption.bGrepOutputFileOnly ){
-			pszWork = L"    (ファイル毎最初のみ検索)\r\n";
+			pszWork = LSW( STR_GREP_SHOW_FIRST_MATCH );	//L"    (ファイル毎最初のみ検索)\r\n"
 			cmemMessage.AppendString( pszWork );
 		}
 	}
@@ -393,12 +393,12 @@ DWORD CGrepAgent::DoGrep(
 		nGrepTreeResult += nTreeRet;
 	}
 	if( -1 == nGrepTreeResult ){
-		const wchar_t* p = L"中断しました。\r\n";
+		const wchar_t* p = LSW( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
 		pcViewDst->GetCommander().Command_ADDTAIL( p, -1 );
 	}
 	{
 		WCHAR szBuffer[128];
-		auto_sprintf( szBuffer, L"%d 個が検索されました。\r\n", nHitCount );
+		auto_sprintf( szBuffer, LSW( STR_GREP_MATCH_COUNT ), nHitCount );	//L"%d 個が検索されました。\r\n"
 		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #ifdef _DEBUG
 		auto_sprintf( szBuffer, L"処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
