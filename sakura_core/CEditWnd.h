@@ -180,9 +180,33 @@ public:
 
 	void WindowTopMost( int ); // 2004.09.21 Moca
 
+	LRESULT Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	bool CreateEditViewBySplit(int);
+	void InitAllViews();
+	void Views_Redraw();
+	void SetActivePane( int );	/* アクティブなペインを設定 */
+	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
+	void SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
+	void RedrawAllViews( CEditView* pcViewExclude );				/* すべてのペインをRedrawする */
+	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
+	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
+	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
+	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
+	void ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineKetas );
+	//	Aug. 14, 2005 genta
+	int* SavePhysPosOfAllView();
+	void RestorePhysPosOfAllView( int* posary );
+	// 互換BMPによる画面バッファ 2007.09.09 Moca
+	void Views_DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
+
 	void SetFocusSearchBox( void ) const;			/* ツールバー検索ボックスへフォーカスを移動 */	// 2006.06.04 yukihane
 	void SetDebugModeON( void );	/* デバッグモニタモードに設定 */
 	void SetDebugModeOFF( void );
+
+	const CEditView& GetActiveView() const { return *m_pcEditView; }
+	CEditView& GetActiveView() { return *m_pcEditView; }
+	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
+	int	GetAllViewCount() const { return m_nEditViewCount; }
 	enum EIconClickStatus{
 		icNone,
 		icDown,
@@ -237,6 +261,12 @@ public:
 	CViewFont*		m_pcViewFont;		//!< フォント
 
 	CImageListMgr*	m_pcIcons;
+
+	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
+	CEditView*		m_pcEditView;				//!< 有効なビュー
+	int				m_nActivePaneIndex;			//!< 有効なビューのindex
+	int				m_nEditViewCount;			//!< 有効なビューの数
+	int				m_nEditViewMaxCount;		//!< ビューの最大数=4
 
 	/*
 	|| 実装ヘルパ系

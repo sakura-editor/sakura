@@ -3011,7 +3011,7 @@ void CEditView::Command_SEARCH_DIALOG( void )
 
 	/* 検索ダイアログの表示 */
 	if( NULL == m_pcEditDoc->m_cDlgFind.m_hWnd ){
-		m_pcEditDoc->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)&m_pcEditDoc->GetActiveView() );
+		m_pcEditDoc->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)&m_pcEditWnd->GetActiveView() );
 	}
 	else{
 		/* アクティブにする */
@@ -8601,7 +8601,7 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 		return;	// 折り返し桁は元のまま
 	}
 
-	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
+	m_pcEditWnd->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
 
 
 	//	Aug. 14, 2005 genta 共通設定へは反映させない

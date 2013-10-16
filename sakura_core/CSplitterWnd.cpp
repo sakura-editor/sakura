@@ -269,7 +269,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	if( 0 != nVertical || 0 != nHorizontal ){
 		// 分割指示。まだ未作成なら2つ目以降のビューを作成します
 		// 今のところは分割数に関係なく4つまで一度に作ります。
-		pCEditWnd->m_pcEditDoc->CreateEditViewBySplit(2*2);
+		pCEditWnd->CreateEditViewBySplit(2*2);
 	}
 	/*
 	|| ファンクションキーを下に表示している場合はサイズボックスを表示しない

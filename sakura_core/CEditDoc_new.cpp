@@ -1228,53 +1228,6 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 	return;
 }
 
-/*!	レイアウトパラメータの変更
-
-	具体的にはタブ幅と折り返し位置を変更する．
-	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
-
-	@date 2005.08.14 genta 新規作成
-	@date 2008.06.18 ryoji レイアウト変更途中はカーソル移動の画面スクロールを見せない（画面のちらつき抑止）
-*/
-void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize )
-{
-	HWND		hwndProgress = NULL;
-	if( bShowProgress && NULL != m_pcEditWnd ){
-		hwndProgress = m_pcEditWnd->m_hwndProgressBar;
-		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
-	}
-
-	if( hwndProgress ){
-		::ShowWindow( hwndProgress, SW_SHOW );
-	}
-
-	//	座標の保存
-	int* posSave = SavePhysPosOfAllView();
-
-	//	レイアウトの更新
-	m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineSize );
-
-	//	座標の復元
-	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
-	SetDrawSwitchOfAllViews( false );
-	RestorePhysPosOfAllView( posSave );
-	SetDrawSwitchOfAllViews( true );
-
-	for( int i = 0; i < GetAllViewCount(); i++ ){
-		if( m_pcEditViewArr[i]->m_hWnd ){
-			InvalidateRect( m_pcEditViewArr[i]->m_hWnd, NULL, TRUE );
-			m_pcEditViewArr[i]->AdjustScrollBars();	// 2008.06.18 ryoji
-		}
-	}
-	if( !GetDocumentAttribute().m_bLineNumIsCRLF ){
-		GetActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
-	}
-
-	if( hwndProgress ){
-		::ShowWindow( hwndProgress, SW_HIDE );
-	}
-}
-
 /* 閉じて(無題)
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
@@ -1389,7 +1342,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 
 		if( SaveFile( GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 			/* キャレットの行桁位置を表示する */
-			GetActiveView().DrawCaretPosInfo();
+			m_pcEditWnd->GetActiveView().DrawCaretPosInfo();
 			return TRUE;
 		}
 	}
@@ -1447,7 +1400,7 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 {
 	if( SaveFile( filename ) ){
 		/* キャレットの行桁位置を表示する */
-		GetActiveView().DrawCaretPosInfo();
+		m_pcEditWnd->GetActiveView().DrawCaretPosInfo();
 		OnChangeSetting();	//	タイプ別設定の変更を指示。
 		//	再オープン
 		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
@@ -1457,18 +1410,4 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 	return FALSE;
 }
 
-
-/*!
-	CEditViewの画面バッファを削除
-	@date 2007.09.09 Moca 新規作成
-*/
-void CEditDoc::DeleteCompatibleBitmap()
-{
-	// CEditView群へ転送する
-	for( int i = 0; i < GetAllViewCount(); i++ ){
-		if( m_pcEditViewArr[i]->m_hWnd ){
-			m_pcEditViewArr[i]->DeleteCompatibleBitmap();
-		}
-	}
-}
 /*[EOF]*/

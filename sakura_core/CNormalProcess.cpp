@@ -171,7 +171,7 @@ bool CNormalProcess::InitializeProcess()
 			m_hWnd = pEditWnd->m_hWnd;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			pEditWnd->m_pcEditDoc->GetActiveView().DoGrep(
+			pEditWnd->GetActiveView().DoGrep(
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
@@ -209,7 +209,7 @@ bool CNormalProcess::InitializeProcess()
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, pEditWnd->m_hWnd, NULL);
 			if( FALSE != nRet ){
-				pEditWnd->m_pcEditDoc->GetActiveView().HandleCommand(F_GREP, true, 0, 0, 0, 0);
+				pEditWnd->GetActiveView().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
@@ -233,8 +233,8 @@ bool CNormalProcess::InitializeProcess()
 			//	移動するようにする． || → &&
 			if( ( 0 <= fi.m_nViewTopLine && 0 <= fi.m_nViewLeftCol )
 				&& fi.m_nViewTopLine < pEditWnd->m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
-				pEditWnd->m_pcEditDoc->GetActiveView().m_nViewTopLine = fi.m_nViewTopLine;
-				pEditWnd->m_pcEditDoc->GetActiveView().m_nViewLeftCol = fi.m_nViewLeftCol;
+				pEditWnd->GetActiveView().m_nViewTopLine = fi.m_nViewTopLine;
+				pEditWnd->GetActiveView().m_nViewLeftCol = fi.m_nViewLeftCol;
 			}
 
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
@@ -267,11 +267,11 @@ bool CNormalProcess::InitializeProcess()
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				pEditWnd->m_pcEditDoc->GetActiveView().MoveCursor( nPosX, nPosY, true );
-				pEditWnd->m_pcEditDoc->GetActiveView().m_nCaretPosX_Prev =
-					pEditWnd->m_pcEditDoc->GetActiveView().m_ptCaretPos.x;
+				pEditWnd->GetActiveView().MoveCursor( nPosX, nPosY, true );
+				pEditWnd->GetActiveView().m_nCaretPosX_Prev =
+					pEditWnd->GetActiveView().m_ptCaretPos.x;
 			}
-			pEditWnd->m_pcEditDoc->GetActiveView().RedrawAll();
+			pEditWnd->GetActiveView().RedrawAll();
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
@@ -286,7 +286,7 @@ bool CNormalProcess::InitializeProcess()
 	m_hWnd = pEditWnd->m_hWnd;
 
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	pEditWnd->m_pcEditDoc->GetActiveView().SetIMECompFormPos();
+	pEditWnd->GetActiveView().SetIMECompFormPos();
 
 	//再描画
 	::InvalidateRect( pEditWnd->m_hWnd, NULL, TRUE );
@@ -306,7 +306,7 @@ bool CNormalProcess::InitializeProcess()
 		if( pszMacroType == NULL || pszMacroType[0] == '\0' || strcmpi(pszMacroType, "file") == 0 ){
 			pszMacroType = NULL;
 		}
-		CEditView* view = &pEditWnd->m_pcEditDoc->GetActiveView();
+		CEditView* view = &pEditWnd->GetActiveView();
 		view->HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 

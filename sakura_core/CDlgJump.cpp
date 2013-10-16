@@ -19,6 +19,7 @@
 #include "CDlgJump.h"
 #include "etc_uty.h"
 #include "Debug.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
@@ -183,7 +184,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
 			CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-			pCEditDoc->GetActiveView().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ジャンプコマンド発行
+			pCEditDoc->m_pcEditWnd->GetActiveView().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ジャンプコマンド発行
 		}
 		return TRUE;
 	case IDCANCEL:

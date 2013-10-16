@@ -727,7 +727,7 @@ LRESULT CEditView::DispatchEvent(
 		// 2007.10.12 genta フォーカス移動のため，OnLBUTTONDBLCLKより移動
 		if(m_bActivateByMouse){
 			/* アクティブなペインを設定 */
-			m_pcEditDoc->SetActivePane( m_nMyIndex );
+			m_pcEditWnd->SetActivePane( m_nMyIndex );
 			// カーソルをクリック位置へ移動する
 			OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );	
 			// 2007.10.02 nasukoji
@@ -908,7 +908,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case MYWM_SETACTIVEPANE:
-		m_pcEditDoc->SetActivePane( m_nMyIndex );
+		m_pcEditWnd->SetActivePane( m_nMyIndex );
 		::PostMessage( m_hwndParent, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
 		return 0L;
 
@@ -955,7 +955,7 @@ LRESULT CEditView::DispatchEvent(
 			if( hwndCursorPos == m_hWnd ){
 				// ビュー上にマウスがあるので SetActivePane() を直接呼び出す
 				// （個別のマウスメッセージが届く前にアクティブペインを設定しておく）
-				m_pcEditDoc->SetActivePane( m_nMyIndex );
+				m_pcEditWnd->SetActivePane( m_nMyIndex );
 			}else if( (m_pcsbwVSplitBox && hwndCursorPos == m_pcsbwVSplitBox->m_hWnd)
 						|| (m_pcsbwHSplitBox && hwndCursorPos == m_pcsbwHSplitBox->m_hWnd) ){
 				// 2010.01.19 ryoji
@@ -1060,7 +1060,7 @@ void CEditView::OnSize( int cx, int cy )
 	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
 		if( m_nMyIndex == 0 ){	// 左上隅のビューのサイズ変更時のみ処理する
 			// 右端で折り返すモードなら右端で折り返す	// 2008.06.08 ryoji
-			wrapChanged = m_pcEditDoc->WrapWindowWidth( 0 );
+			wrapChanged = m_pcEditWnd->WrapWindowWidth( 0 );
 		}
 	}
 
@@ -3547,9 +3547,9 @@ int CEditView::ScrollAtH( int nPos )
 void CEditView::SyncScrollV( int line )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0
-		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x01)
+		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01)
 	) {
-		CEditView*	pcEditView = m_pcEditDoc->m_pcEditViewArr[m_nMyIndex^0x01];
+		CEditView*	pcEditView = m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x01];
 #if 0
 		//	差分を保ったままスクロールする場合
 		pcEditView -> ScrollByV( line );
@@ -3574,9 +3574,9 @@ void CEditView::SyncScrollV( int line )
 void CEditView::SyncScrollH( int col )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
-		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x02)
+		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
 	) {
-		CEditView*	pcEditView = m_pcEditDoc->m_pcEditViewArr[m_nMyIndex^0x02];
+		CEditView*	pcEditView = m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x02];
 		HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 		
 #if 0
@@ -5151,9 +5151,9 @@ DWORD CEditView::DoGrep(
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	m_bDrawSWITCH = false;
-	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
-		m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
-	m_pcEditDoc->SetDrawSwitchOfAllViews( 0 != m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
+	if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新
+		m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
+	m_pcEditWnd->SetDrawSwitchOfAllViews( 0 != m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
 
 
 	int nGrepTreeResult = DoGrepTree(
@@ -5210,11 +5210,11 @@ DWORD CEditView::DoGrep(
 	}
 
 	/* 表示処理ON/OFF */
-	m_pcEditDoc->SetDrawSwitchOfAllViews( true );
+	m_pcEditWnd->SetDrawSwitchOfAllViews( true );
 
 	/* 再描画 */
-	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-		m_pcEditDoc->RedrawAllViews( NULL );
+	if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		m_pcEditWnd->RedrawAllViews( NULL );
 
 	return nHitCount;
 }
@@ -5428,7 +5428,7 @@ int CEditView::DoGrepTree(
 			}
 
 			/* 表示設定をチェック */
-			m_pcEditDoc->SetDrawSwitchOfAllViews(
+			m_pcEditWnd->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 
@@ -5522,8 +5522,8 @@ int CEditView::DoGrepTree(
 						if( 0 < cmemMessage.GetStringLength() ){
 							Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 							Command_GOFILEEND( false );
-							if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-								m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+							if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+								m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 							cmemMessage.SetString( _T("") );
 						}
 						nWork = 0;
@@ -5561,8 +5561,8 @@ int CEditView::DoGrepTree(
 	if( 0 < cmemMessage.GetStringLength() ){
 		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		Command_GOFILEEND( false );
-		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
-			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新
+			m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );
 	}
 
@@ -5589,7 +5589,7 @@ int CEditView::DoGrepTree(
 				goto cancel_return;
 			}
 			/* 表示設定をチェック */
-			m_pcEditDoc->SetDrawSwitchOfAllViews(
+			m_pcEditWnd->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 
@@ -5664,7 +5664,7 @@ error_return:;
 	if( 0 < cmemMessage.GetStringLength() ){
 		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		Command_GOFILEEND( false );
-		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
+		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新
 			cmemMessage.GetStringPtr( &nWork );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );
 	}
@@ -5875,7 +5875,7 @@ int CEditView::DoGrepFile(
 				return -1;
 			}
 			//	2003.06.23 Moca 表示設定をチェック
-			m_pcEditDoc->SetDrawSwitchOfAllViews(
+			m_pcEditWnd->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
@@ -6977,7 +6977,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 	//   アクティブなペインではない )	場合は終了
 	if( bDraw
 	 &&( IsTextSelected() || m_bDrawSelectArea || m_bBeginBoxSelect || !m_bDrawBracketPairFlag
-	 || ( m_pcEditDoc->GetActivePane() != m_nMyIndex ) ) ){
+	 || ( m_pcEditWnd->GetActivePane() != m_nMyIndex ) ) ){
 		return;
 	}
 
@@ -7061,7 +7061,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 				::SetBkColor( hdc, crBackOld );
 				::SelectObject( hdc, hFontOld );
 
-				if( ( m_pcEditDoc->GetActivePane() == m_nMyIndex )
+				if( ( m_pcEditWnd->GetActivePane() == m_nMyIndex )
 					&& ( ( nLine == m_ptCaretPos.y ) || ( nLine - 1 == m_ptCaretPos.y ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					m_cUnderLine.CaretUnderLineON( true );
 				}
@@ -7680,8 +7680,8 @@ void CEditView::SetUndoBuffer( bool bPaintLineNumber )
 			 && m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
 				RedrawLineNumber();	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
 
-			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+			if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 		}
 		else{
 			delete m_pcOpeBlk;

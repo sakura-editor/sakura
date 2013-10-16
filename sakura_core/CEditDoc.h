@@ -71,7 +71,6 @@ public:
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();
-	bool CreateEditViewBySplit( int );	/* ビューの分割分のウィンドウ作成要求 */
 
 	/*
 	|| 状態
@@ -82,18 +81,8 @@ public:
 	BOOL IsEnablePaste( void ) const;		/* クリップボードから貼り付け可能か？ */
 	void GetEditInfo( EditInfo* );	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
 
-	/* いろいろ */
-	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */
 	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 	BOOL HandleCommand( int );
-	void SetActivePane( int );	/* アクティブなペインを設定 */
-	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */
-	void SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
-	void RedrawAllViews( CEditView* pViewExclude );				/* すべてのペインをRedrawする */
-	void Views_Redraw();				/* Redrawする */
-	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
-	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
-	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	BOOL FileRead( /*const*/ TCHAR* , BOOL*, ECodeType, bool, bool );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, EEolType cEolType );
@@ -134,11 +123,6 @@ public:
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
 
 	//	Aug. 31, 2000 genta
-	const CEditView& GetActiveView(void) const { return *m_pcEditView; }
-	CEditView& GetActiveView(void) { return *m_pcEditView; }
-	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
-	int	GetAllViewCount() const { return m_nEditViewCount; }
-
 	CEditView* GetDragSourceView() const { return m_pcDragSourceView; }
 	void SetDragSourceView( CEditView* pcDragSourceView ) { m_pcDragSourceView = pcDragSourceView; }
 
@@ -214,18 +198,11 @@ public:
 	const char* ExParam_SkipCond(const char* pszSource, int part);
 	int ExParam_Evaluate( const char* pCond );
 
-	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
-	void ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineSize );
-	
 	//	Oct. 2, 2005 genta 挿入モードの設定
 	bool IsInsMode() const { return m_bInsMode; }
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
 	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
-
-	// 2007.09.09 Moca 互換BMPによる画面バッファ 
-	void DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
-
 
 protected:
 	int				m_nSettingType;
@@ -290,11 +267,6 @@ public:
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
 // To Here 2001.12.03 hor
 
-	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
-	CEditView*		m_pcEditView;				//!< 有効なビュー
-	int				m_nActivePaneIndex;			//!< 有効なビューのindex
-	int				m_nEditViewCount;			//!< 有効なビューの数
-	const int		m_nEditViewMaxCount;		//!< ビューの最大数=4
 	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
 	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */
@@ -354,10 +326,6 @@ protected:
 	void DoFileUnlock( void );	/* ファイルの排他ロック解除 */
 	//char			m_pszCaption[1024];	//@@@ YAZAKI
 	
-	//	Aug. 14, 2005 genta
-	int* SavePhysPosOfAllView(void);
-	void RestorePhysPosOfAllView( int* posary );
-
 	// 2005.11.21 aroka
 	// 2008.11.23 nasukoji	パスが長すぎる場合への対応
 	bool FormatBackUpPath( char* szNewPath, size_t dwSize, const char* target_file );	/* バックアップパスの作成 */

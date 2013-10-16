@@ -27,6 +27,7 @@
 #include "etc_uty.h"
 #include "global.h"
 #include "CDlgDiff.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "CEditView.h"
 #include "CDocLine.h"
@@ -413,7 +414,7 @@ finish:
 	if( pi.hThread  ) CloseHandle( pi.hThread  );
 
 	//分割したビューも更新
-	m_pcEditDoc->Views_Redraw();
+	m_pcEditWnd->Views_Redraw();
 
 	return;
 }
@@ -637,7 +638,7 @@ void CEditView::Command_Diff_Reset( void )
 	m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
 	//分割したビューも更新
-	m_pcEditDoc->Views_Redraw();
+	m_pcEditWnd->Views_Redraw();
 	return;
 }
 

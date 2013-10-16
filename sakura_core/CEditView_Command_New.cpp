@@ -220,7 +220,7 @@ void CEditView::InsertData_CEditView(
 
 	// 再描画
 	// 行番号表示に必要な幅を設定
-	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
+	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		// キャレットの表示・更新
 		ShowEditCaret();
 	}
@@ -526,7 +526,7 @@ void CEditView::DeleteData(
 			m_bDrawSWITCH = true;	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
-			if ( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
+			if ( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 				/* キャレットの表示・更新 */
 				ShowEditCaret();
 			}
@@ -799,14 +799,14 @@ void CEditView::Command_UNDO( void )
 		DispRuler( hdc );
 		::ReleaseDC( m_hWnd, hdc );
 		/* 行番号表示に必要な幅を設定 */
-		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
+		if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 
 	}
 
@@ -965,14 +965,14 @@ void CEditView::Command_REDO( void )
 		::ReleaseDC( m_hWnd, hdc );
 
 		/* 行番号表示に必要な幅を設定 */
-		if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
+		if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
 		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 	}
 
 	m_nCaretPosX_Prev = m_ptCaretPos.x;	// 2007.10.11 ryoji 追加
@@ -1120,7 +1120,7 @@ void CEditView::ReplaceData_CEditView(
 	}
 
 	/* 行番号表示に必要な幅を設定 */
-	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
+	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 	}
@@ -1894,7 +1894,7 @@ void CEditView::Command_BOOKMARK_SET(void)
 		if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookmarked());
 	}
 	// 2002.01.16 hor 分割したビューも更新
-	m_pcEditDoc->Views_Redraw();
+	m_pcEditWnd->Views_Redraw();
 	return;
 }
 
@@ -1985,7 +1985,7 @@ void CEditView::Command_BOOKMARK_RESET(void)
 {
 	m_pcEditDoc->m_cDocLineMgr.ResetAllBookMark();
 	// 2002.01.16 hor 分割したビューも更新
-	m_pcEditDoc->Views_Redraw();
+	m_pcEditWnd->Views_Redraw();
 }
 
 
@@ -2002,7 +2002,7 @@ void CEditView::Command_BOOKMARK_PATTERN( void )
 		&m_CurRegexp							// 正規表現コンパイルデータ
 	);
 	// 2002.01.16 hor 分割したビューも更新
-	m_pcEditDoc->Views_Redraw();
+	m_pcEditWnd->Views_Redraw();
 	return;
 }
 
@@ -2877,7 +2877,7 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
 		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
-		nWidth = ViewColNumToWrapColNum( m_pcEditDoc->GetActiveView().m_nViewColNum );
+		nWidth = ViewColNumToWrapColNum( m_pcEditWnd->GetActiveView().m_nViewColNum );
 		break;
 
 	default:
@@ -2890,12 +2890,12 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	m_pcEditDoc->m_bTextWrapMethodCurTemp = !( m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
 
 	// 折り返し位置を変更
-	m_pcEditDoc->ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
+	m_pcEditWnd->ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 		m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
-		m_pcEditDoc->RedrawAllViews( NULL );				// スクロールバーの更新が必要なので再表示を実行する
+		m_pcEditWnd->RedrawAllViews( NULL );				// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		m_pcEditDoc->m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 	}

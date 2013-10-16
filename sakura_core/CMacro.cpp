@@ -28,6 +28,7 @@
 #include "CEditView.h" //2002/2/10 aroka
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "etc_uty.h" //2002/2/10 aroka
+#include "CEditWnd.h"
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "Debug.h"
 #include "OleTypes.h" //2003-02-21 鬼
@@ -975,7 +976,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-			View->m_pcEditDoc->ChangeLayoutParam(
+			View->m_pcEditWnd->ChangeLayoutParam(
 				false, 
 				varCopy.Data.iVal,
 				View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
@@ -985,7 +986,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP && varCopy.Data.iVal ){
 				// 最大幅の再算出時に各行のレイアウト長の計算も行う
 				View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
-				View->m_pcEditDoc->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+				View->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
 			}
 		}
 		return true;
@@ -1077,7 +1078,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod );
-			View->m_pcEditDoc->ChangeLayoutParam(
+			View->m_pcEditWnd->ChangeLayoutParam(
 				false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace(),
 				varCopy.Data.iVal

@@ -26,6 +26,7 @@
 #include <io.h>
 #include <mbctype.h>
 #include <mbstring.h>
+#include <assert.h>
 #include "CEditApp.h"
 #include "CShareData.h"
 #include "CRunningTimer.h"
@@ -132,6 +133,9 @@ CEditWnd::CEditWnd()
 , m_nCurrentFocus( 0 )
 , m_bIsActiveApp( false )
 , m_IconClicked(icNone) //by 鬼(2)
+, m_nActivePaneIndex( 0 )
+, m_nEditViewCount( 1 )
+, m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
@@ -142,6 +146,12 @@ CEditWnd::~CEditWnd()
 {
 	delete m_pPrintPreview;
 	m_pPrintPreview = NULL;
+
+	for( int i = 0; i < m_nEditViewMaxCount; i++ ){
+		delete m_pcEditViewArr[i];
+		m_pcEditViewArr[i] = NULL;
+	}
+	m_pcEditView = NULL;
 
 	delete m_pcViewFont;
 	m_pcViewFont = NULL;
@@ -174,7 +184,7 @@ CEditWnd::~CEditWnd()
 */
 void CEditWnd::UpdateCaption()
 {
-	if( !m_pcEditDoc->GetActiveView().m_bDrawSWITCH )return;
+	if( !GetActiveView().m_bDrawSWITCH )return;
 
 	//キャプション文字列の生成 -> pszCap
 	char	pszCap[1024];
@@ -512,6 +522,13 @@ HWND CEditWnd::Create(
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
+	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
+		m_pcEditViewArr[i] = NULL;
+	}
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	m_pcEditViewArr[0] = new CEditView( this );
+	m_pcEditView = m_pcEditViewArr[0];
+
 	m_pcViewFont = new CViewFont(&m_pShareData->m_Common.m_sView.m_lf);
 
 	memset( m_pszMenubarMessage, ' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
@@ -569,6 +586,19 @@ HWND CEditWnd::Create(
 	// 各種バーよりも先に m_pcEditDoc->Create() を実行しておく	// 2007.01.30 ryoji
 	// （m_pcEditDoc メンバーの初期化を優先）
 	m_pcEditDoc->Create( m_hInstance, m_hWnd, pcIcons );
+
+	/* 分割フレーム作成 */
+	m_cSplitterWnd.Create( m_hInstance, m_hWnd, this );
+
+	/* ビュー */
+	m_pcEditViewArr[0]->Create( m_hInstance, m_cSplitterWnd.m_hWnd, m_pcEditDoc, 0, TRUE  );
+	m_pcEditViewArr[0]->OnSetFocus();
+
+	/* 子ウィンドウの設定 */
+	HWND		hWndArr[2];
+	hWndArr[0] = m_pcEditViewArr[0]->m_hWnd;
+	hWndArr[1] = NULL;
+	m_cSplitterWnd.SetChildWndArr( hWndArr );
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
 
@@ -1153,7 +1183,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
-		m_pcEditDoc->GetActiveView().SetIMECompFormPos();
+		GetActiveView().SetIMECompFormPos();
 	}
 }
 
@@ -1252,7 +1282,7 @@ LRESULT CEditWnd::DispatchEvent(
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
 	case WM_SHOWWINDOW:
 		if( !wParam ){
-			m_pcEditDoc->DeleteCompatibleBitmap();
+			Views_DeleteCompatibleBitmap();
 		}
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 
@@ -1360,10 +1390,10 @@ LRESULT CEditWnd::DispatchEvent(
 		return OnPaint( hwnd, uMsg, wParam, lParam );
 
 	case WM_PASTE:
-		return m_pcEditDoc->GetActiveView().HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
+		return GetActiveView().HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return m_pcEditDoc->GetActiveView().HandleCommand( F_COPY, true, 0, 0, 0, 0 );
+		return GetActiveView().HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 
 	case WM_HELP:
 		lphi = (LPHELPINFO) lParam;
@@ -1463,7 +1493,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_IME_COMPOSITION:
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
-			return m_pcEditDoc->DispatchEvent( hwnd, uMsg, wParam, lParam );
+			return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
@@ -1475,7 +1505,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_ENTERMENULOOP:
 	case MYWM_IME_REQUEST:   /*  再変換対応 by minfu 2002.03.27  */ // 20020331 aroka
 		/* メッセージの配送 */
-		return m_pcEditDoc->DispatchEvent( hwnd, uMsg, wParam, lParam );
+		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_EXITMENULOOP:
 //		MYTRACE( _T("WM_EXITMENULOOP\n") );
@@ -1483,7 +1513,7 @@ LRESULT CEditWnd::DispatchEvent(
 			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T(""));
 		}
 		/* メッセージの配送 */
-		return m_pcEditDoc->DispatchEvent( hwnd, uMsg, wParam, lParam );
+		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_SETFOCUS:
 //		MYTRACE( _T("WM_SETFOCUS\n") );
@@ -1492,7 +1522,7 @@ LRESULT CEditWnd::DispatchEvent(
 		m_nTimerCount = 9;
 
 		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
-		::SetFocus( m_pcEditDoc->GetActiveView().m_hWnd );
+		::SetFocus( GetActiveView().m_hWnd );
 		lRes = 0;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -1758,13 +1788,13 @@ LRESULT CEditWnd::DispatchEvent(
 				bool b1;
 				bool b2;
 				b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
-				for( i = 0; i < m_pcEditDoc->GetAllViewCount(); i++ )
+				for( i = 0; i < GetAllViewCount(); i++ )
 				{
-					b2 = (m_pcEditDoc->m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
+					b2 = (m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
 					if( b1 != b2 )		/* 水平スクロールバーを使う */
 					{
-						m_pcEditDoc->m_pcEditViewArr[i]->DestroyScrollBar();
-						m_pcEditDoc->m_pcEditViewArr[i]->CreateScrollBar();
+						m_pcEditViewArr[i]->DestroyScrollBar();
+						m_pcEditViewArr[i]->CreateScrollBar();
 					}
 				}
 			}
@@ -1844,7 +1874,7 @@ LRESULT CEditWnd::DispatchEvent(
 			}else{
 				nPane = m_cSplitterWnd.GetLastPane();
 			}
-			m_pcEditDoc->SetActivePane( nPane );
+			SetActivePane( nPane );
 		}
 		return 0L;
 
@@ -1859,7 +1889,7 @@ LRESULT CEditWnd::DispatchEvent(
 			bool bSelect = (0!= (lParam & 1));
 			if( lParam & 2 ){
 				// 現在の状態をKEEP
-				bSelect = m_pcEditDoc->GetActiveView().m_bSelectingLock;
+				bSelect = GetActiveView().m_bSelectingLock;
 			}
 			
 			ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
@@ -1890,7 +1920,7 @@ LRESULT CEditWnd::DispatchEvent(
 			//	2006.07.09 genta 選択範囲を考慮して移動
 			//	MoveCursorの位置調整機能があるので，最終行以降への
 			//	移動指示の調整もMoveCursorにまかせる
-			m_pcEditDoc->GetActiveView().MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
+			GetActiveView().MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
 
@@ -1905,8 +1935,8 @@ LRESULT CEditWnd::DispatchEvent(
 		*/
 		{
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				m_pcEditDoc->GetActiveView().m_ptCaretPos.x,
-				m_pcEditDoc->GetActiveView().m_ptCaretPos.y,
+				GetActiveView().m_ptCaretPos.x,
+				GetActiveView().m_ptCaretPos.y,
 				(int*)&ppoCaret->x,
 				(int*)&ppoCaret->y
 			);
@@ -1927,8 +1957,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_ADDSTRING:
-		m_pcEditDoc->GetActiveView().HandleCommand( F_ADDTAIL, true, (LPARAM)m_pShareData->m_sWorkBuffer.m_szWork, (LPARAM)lstrlen( m_pShareData->m_sWorkBuffer.m_szWork ), 0, 0 );
-		m_pcEditDoc->GetActiveView().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
+		GetActiveView().HandleCommand( F_ADDTAIL, true, (LPARAM)m_pShareData->m_sWorkBuffer.m_szWork, (LPARAM)lstrlen( m_pShareData->m_sWorkBuffer.m_szWork ), 0, 0 );
+		GetActiveView().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
 		return 0L;
 
 	//タブウインドウ	//@@@ 2003.05.31 MIK
@@ -1983,7 +2013,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
 		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
-			m_pcEditDoc->GetActiveView().ShowEditCaret();
+			GetActiveView().ShowEditCaret();
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
@@ -2027,7 +2057,7 @@ LRESULT CEditWnd::DispatchEvent(
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
-			return m_pcEditDoc->DispatchEvent( hwnd, uMsg, wParam, lParam );
+			return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}
 // >> by aroka
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -2150,7 +2180,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		else{
 			//ビューにフォーカスを移動しておく
 			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
-				::SetFocus( m_pcEditDoc->GetActiveView().m_hWnd );
+				::SetFocus( GetActiveView().m_hWnd );
 				//検索ボックスを更新	// 2010/6/6 Uchi
 				AcceptSharedSearchKey();
 			}
@@ -2166,7 +2196,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		{
 			//ビューにフォーカスを移動しておく
 			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
-				::SetFocus( m_pcEditDoc->GetActiveView().m_hWnd );
+				::SetFocus( GetActiveView().m_hWnd );
 
 			int nFuncCode = CKeyBind::GetFuncCode(
 				wID,
@@ -2741,7 +2771,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			//	Jan.  8, 2006 genta 共通関数化
 			{
 				int width;
-				CEditView::TOGGLE_WRAP_ACTION mode = m_pcEditDoc->GetActiveView().GetWrapMode( width );
+				CEditView::TOGGLE_WRAP_ACTION mode = GetActiveView().GetWrapMode( width );
 				if( mode == CEditView::TGWRAP_NONE ){
 					pszLabel = "折り返し桁数";
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , pszLabel, _T("W") );
@@ -2760,8 +2790,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						sprintf(
 							szBuf,
 							"折り返し桁数: %d 桁（右端）",
-							m_pcEditDoc->GetActiveView().ViewColNumToWrapColNum(
-								m_pcEditDoc->GetActiveView().m_nViewColNum
+							GetActiveView().ViewColNumToWrapColNum(
+								GetActiveView().m_nViewColNum
 							)
 						);
 					}
@@ -2994,7 +3024,7 @@ STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 
 	// ファイルドロップをアクティブビューで処理する
 	*pdwEffect &= DROPEFFECT_LINK;
-	return m_pcEditDoc->GetActiveView().PostMyDropFiles( pDataObject );
+	return GetActiveView().PostMyDropFiles( pDataObject );
 }
 
 /* ファイルがドロップされた */
@@ -3824,7 +3854,7 @@ LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 	if( m_pPrintPreview ){
 		return m_pPrintPreview->OnMouseWheel( wParam, lParam );
 	}
-	return m_pcEditDoc->DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
+	return Views_DispatchEvent( m_hWnd, WM_MOUSEWHEEL, wParam, lParam );
 }
 
 /** マウスホイール処理
@@ -4130,10 +4160,10 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				AcceptSharedSearchKey();
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
-				::SetFocus( m_pcEditDoc->GetActiveView().m_hWnd );
+				::SetFocus( GetActiveView().m_hWnd );
 
 				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
-				m_pcEditDoc->GetActiveView().m_ptSrchStartPos_PHY = m_pcEditDoc->GetActiveView().m_ptCaretPos_PHY;
+				GetActiveView().m_ptSrchStartPos_PHY = GetActiveView().m_ptCaretPos_PHY;
 				// 02/07/28 ai end
 
 				//次を検索
@@ -4560,7 +4590,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		::GetCursorPos( &pt );	// マウスカーソル位置に変更
 	}
 	else {
-		::GetWindowRect( m_pcEditDoc->GetActiveView().m_hWnd, &rc );
+		::GetWindowRect( GetActiveView().m_hWnd, &rc );
 		pt.x = rc.right - 150;
 		if( pt.x < rc.left )
 			pt.x = rc.left;
@@ -4619,6 +4649,443 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 	return 0L;
 }
 
+
+/*!
+	CEditViewの画面バッファを削除
+	@date 2007.09.09 Moca 新規作成
+*/
+void CEditWnd::Views_DeleteCompatibleBitmap()
+{
+	// CEditView群へ転送する
+	for( int i = 0; i < GetAllViewCount(); i++ ){
+		if( m_pcEditViewArr[i]->m_hWnd ){
+			m_pcEditViewArr[i]->DeleteCompatibleBitmap();
+		}
+	}
+}
+
+LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch( msg ){
+	case WM_ENTERMENULOOP:
+	case WM_EXITMENULOOP:
+		{
+			int i;
+			for( i = 0; i < GetAllViewCount(); i++ ){
+				m_pcEditViewArr[i]->DispatchEvent( hwnd, msg, wParam, lParam );
+			}
+		}
+		return 0L;
+	default:
+		return GetActiveView().DispatchEvent( hwnd, msg, wParam, lParam );
+	}
+}
+
+/*
+	分割指示。2つ目以降のビューを作る
+	@param nViewCount  既存のビューも含めたビューの合計要求数
+*/
+bool CEditWnd::CreateEditViewBySplit(int nViewCount )
+{
+	if( m_nEditViewMaxCount < nViewCount ){
+		return false;
+	}
+	if( GetAllViewCount() < nViewCount ){
+		int i;
+		for( i = GetAllViewCount(); i < nViewCount; i++ ){
+			assert( NULL == m_pcEditViewArr[i] );
+			m_pcEditViewArr[i] = new CEditView( this );
+			m_pcEditViewArr[i]->Create( m_hInstance, m_cSplitterWnd.m_hWnd, m_pcEditDoc, i, FALSE );
+		}
+		m_nEditViewCount = nViewCount;
+
+		std::vector<HWND> hWndArr;
+		hWndArr.reserve(nViewCount + 1);
+		for( i = 0; i < nViewCount; i++ ){
+			hWndArr.push_back( m_pcEditViewArr[i]->m_hWnd );
+		}
+		hWndArr.push_back( NULL );
+
+		m_cSplitterWnd.SetChildWndArr( &hWndArr[0] );
+	}
+	return true;
+}
+
+/*
+	ビューの再初期化
+	@date 2010.04.10 CEditDoc::InitAllViewから移動
+*/
+void CEditWnd::InitAllViews()
+{
+	int i;
+
+	/* 先頭へカーソルを移動 */
+	for( i = 0; i < GetAllViewCount(); ++i ){
+		//	Apr. 1, 2001 genta
+		// 移動履歴の消去
+		m_pcEditViewArr[i]->m_cHistory->Flush();
+
+		/* 現在の選択範囲を非選択状態に戻す */
+		m_pcEditViewArr[i]->DisableSelectArea( false );
+
+		m_pcEditViewArr[i]->OnChangeSetting();
+		m_pcEditViewArr[i]->MoveCursor( 0, 0, true );
+		m_pcEditViewArr[i]->m_nCaretPosX_Prev = 0;
+	}
+}
+
+void CEditWnd::Views_Redraw()
+{
+	//アクティブ以外を再描画してから…
+	for( int v = 0; v < GetAllViewCount(); ++v ){
+		if( m_nActivePaneIndex != v ){
+			m_pcEditViewArr[v]->Redraw();
+		}
+	}
+	//アクティブを再描画
+	GetActiveView().Redraw();
+}
+
+
+/* アクティブなペインを設定 */
+void  CEditWnd::SetActivePane( int nIndex )
+{
+	/* アクティブなビューを切り替える */
+	int nOldIndex = m_nActivePaneIndex;
+	m_nActivePaneIndex = nIndex;
+	m_pcEditView = m_pcEditViewArr[m_nActivePaneIndex];
+
+	// フォーカスを移動する	// 2007.10.16 ryoji
+	m_pcEditViewArr[nOldIndex]->m_cUnderLine.CaretUnderLineOFF( true );	//	2002/05/11 YAZAKI
+	if( ::GetActiveWindow() == m_hWnd
+		&& ::GetFocus() != m_pcEditViewArr[m_nActivePaneIndex]->m_hWnd )
+	{
+		// ::SetFocus()でフォーカスを切り替える
+		::SetFocus( m_pcEditViewArr[m_nActivePaneIndex]->m_hWnd );
+	}else{
+		// 2010.04.08 ryoji
+		// 起動直後にエディットボックスにフォーカスのあるダイアログを表示する場合にキャレットが消える問題の修正
+		// （例: -GREPDLGオプションで起動するとGREPダイアログのキャレットが消えている）
+		// この問題を修正するのため、内部的な切り替え動作をするのはアクティブペインが替わるときだけにした．
+		if( m_nActivePaneIndex != nOldIndex ){
+			// アクティブでないときに::SetFocus()するとアクティブになってしまう
+			// （不可視なら可視になる）ので内部的に切り替えるだけにする
+			m_pcEditViewArr[nOldIndex]->OnKillFocus();
+			m_pcEditViewArr[m_nActivePaneIndex]->OnSetFocus();
+		}
+	}
+
+	GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
+
+	m_cSplitterWnd.SetActivePane( nIndex );
+
+	if( NULL != m_pcEditDoc->m_cDlgFind.m_hWnd ){		/* 「検索」ダイアログ */
+		/* モードレス時：検索対象となるビューの変更 */
+		m_pcEditDoc->m_cDlgFind.ChangeView( (LPARAM)&GetActiveView() );
+	}
+	if( NULL != m_pcEditDoc->m_cDlgReplace.m_hWnd ){	/* 「置換」ダイアログ */
+		/* モードレス時：検索対象となるビューの変更 */
+		m_pcEditDoc->m_cDlgReplace.ChangeView( (LPARAM)&GetActiveView() );
+	}
+	if( NULL != m_pcEditDoc->m_cHokanMgr.m_hWnd ){	/* 「入力補完」ダイアログ */
+		m_pcEditDoc->m_cHokanMgr.Hide();
+		/* モードレス時：検索対象となるビューの変更 */
+		m_pcEditDoc->m_cHokanMgr.ChangeView( (LPARAM)&GetActiveView() );
+	}
+	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
+		/* モードレス時：現在位置表示の対象となるビューの変更 */
+		m_pcEditDoc->m_cDlgFuncList.ChangeView( (LPARAM)&GetActiveView() );
+	}
+
+	return;
+}
+
+/** すべてのペインの描画スイッチを設定する
+
+	@param bDraw [in] 描画スイッチの設定値
+
+	@date 2008.06.08 ryoji 新規作成
+*/
+void CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
+{
+	int i;
+	CEditView* pView;
+
+	for( i = 0; i < GetAllViewCount(); i++ ){
+		pView = m_pcEditViewArr[i];
+		pView->m_bDrawSWITCH = bDraw;
+	}
+}
+
+
+/** すべてのペインをRedrawする
+
+	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
+
+	@param pcViewExclude [in] Redrawから除外するビュー
+
+	@date 2007.07.22 ryoji スクロールバーの状態更新を追加
+	@date 2008.06.08 ryoji pcViewExclude パラメータ追加
+*/
+void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
+{
+	int i;
+	CEditView* pcView;
+
+	for( i = 0; i < GetAllViewCount(); i++ ){
+		pcView = m_pcEditViewArr[i];
+		if( pcView == pcViewExclude )
+			continue;
+		if( i == m_nActivePaneIndex ){
+			pcView->RedrawAll();
+		}else{
+			pcView->Redraw();
+			pcView->AdjustScrollBars();
+		}
+	}
+}
+
+
+/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
+BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
+{
+	if( 1 == GetAllViewCount() ){
+		return m_pcEditViewArr[m_nActivePaneIndex]->DetectWidthOfLineNumberArea( bRedraw );
+	}
+	// 以下2,4分割限定
+
+	if ( m_pcEditViewArr[m_nActivePaneIndex]->DetectWidthOfLineNumberArea( bRedraw ) ){
+		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
+		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( bRedraw );
+		}
+		else {
+			//	表示されていないので再描画しない
+			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( FALSE );
+		}
+		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
+			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( bRedraw );
+			if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
+				m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->DetectWidthOfLineNumberArea( bRedraw );
+			}
+		}
+		else {
+			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( FALSE );
+			m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->DetectWidthOfLineNumberArea( FALSE );
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+
+/** 右端で折り返す
+	@param nViewColNum	[in] 右端で折り返すペインの番号
+	@retval 折り返しを変更したかどうか
+	@date 2008.06.08 ryoji 新規作成
+*/
+BOOL CEditWnd::WrapWindowWidth( int nPane )
+{
+	// 右端で折り返す
+	int nWidth = m_pcEditViewArr[nPane]->ViewColNumToWrapColNum( m_pcEditViewArr[nPane]->m_nViewColNum );
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
+		ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/** 折り返し方法関連の更新
+	@retval 画面更新したかどうか
+	@date 2008.06.10 ryoji 新規作成
+*/
+BOOL CEditWnd::UpdateTextWrap( void )
+{
+	// この関数はコマンド実行ごとに処理の最終段階で利用する
+	// （アンドゥ登録＆全ビュー更新のタイミング）
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ){
+		BOOL bWrap = WrapWindowWidth( 0 );	// 右端で折り返す
+		if( bWrap ){
+			// WrapWindowWidth() で追加した更新リージョンで画面更新する
+			for( int i = 0; i < GetAllViewCount(); i++ ){
+				::UpdateWindow( m_pcEditViewArr[i]->m_hWnd );
+			}
+		}
+		return bWrap;	// 画面更新＝折り返し変更
+	}
+	return FALSE;	// 画面更新しなかった
+}
+
+/*!	レイアウトパラメータの変更
+
+	具体的にはタブ幅と折り返し位置を変更する．
+	現在のドキュメントのレイアウトのみを変更し，共通設定は変更しない．
+
+	@date 2005.08.14 genta 新規作成
+	@date 2008.06.18 ryoji レイアウト変更途中はカーソル移動の画面スクロールを見せない（画面のちらつき抑止）
+*/
+void CEditWnd::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineKetas )
+{
+	HWND		hwndProgress = NULL;
+	if( bShowProgress && NULL != this ){
+		hwndProgress = this->m_hwndProgressBar;
+		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+	}
+
+	//	座標の保存
+	int* posSave = SavePhysPosOfAllView();
+
+	//	レイアウトの更新
+	m_pcEditDoc->m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineKetas );
+
+	//	座標の復元
+	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
+	SetDrawSwitchOfAllViews( false );
+	RestorePhysPosOfAllView( posSave );
+	SetDrawSwitchOfAllViews( true );
+
+	for( int i = 0; i < GetAllViewCount(); i++ ){
+		if( m_pcEditViewArr[i]->m_hWnd ){
+			InvalidateRect( m_pcEditViewArr[i]->m_hWnd, NULL, TRUE );
+			m_pcEditViewArr[i]->AdjustScrollBars();	// 2008.06.18 ryoji
+		}
+	}
+	if( !m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
+		GetActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
+	}
+}
+
+
+/*!
+	レイアウトの変更に先立って，全てのViewの座標を物理座標に変換して保存する．
+
+	@return データを保存した配列へのポインタ
+
+	@note 取得した値はレイアウト変更後にCEditWnd::RestorePhysPosOfAllViewへ渡す．
+	渡し忘れるとメモリリークとなる．
+
+	@date 2005.08.11 genta 新規作成
+*/
+int* CEditWnd::SavePhysPosOfAllView()
+{
+	const int NUM_OF_VIEW = GetAllViewCount();
+	const int NUM_OF_POS = 5;
+	const int XY = 2;
+	
+	int* posary = new int[ NUM_OF_VIEW * NUM_OF_POS * XY ];
+	
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+			m_pcEditViewArr[i]->m_ptCaretPos.x,
+			m_pcEditViewArr[i]->m_ptCaretPos.y,
+			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
+			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ]
+		);
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y,
+				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ]
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y,
+				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ]
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
+				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y,
+				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ]
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+				m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
+				m_pcEditViewArr[i]->m_sSelect.m_ptTo.y,
+				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
+				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ]
+			);
+		}
+	}
+	return posary;
+}
+
+
+/*!	座標の復元
+
+	CEditWnd::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
+
+	@date 2005.08.11 genta 新規作成
+*/
+void CEditWnd::RestorePhysPosOfAllView( int* posary )
+{
+	const int NUM_OF_VIEW = GetAllViewCount();
+	const int NUM_OF_POS = 5;
+	const int XY = 2;
+
+	for( int i = 0; i < NUM_OF_VIEW; ++i ){
+		int		nPosX;
+		int		nPosY;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
+			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ],
+			&nPosX,
+			&nPosY
+		);
+		m_pcEditViewArr[i]->MoveCursor( nPosX, nPosY, true );
+		m_pcEditViewArr[i]->m_nCaretPosX_Prev = m_pcEditViewArr[i]->m_ptCaretPos.x;
+
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ],
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ],
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ],
+				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
+				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y
+			);
+		}
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
+				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ],
+				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
+				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.y
+			);
+		}
+	}
+	delete[] posary;
+}
 
 /*!
 	@brief マウスの状態をクリアする（ホイールスクロール有無状態をクリア）

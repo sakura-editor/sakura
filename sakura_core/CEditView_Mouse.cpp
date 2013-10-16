@@ -145,7 +145,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					m_pcEditDoc->SetDragSourceView( NULL );
 //					MYTRACE( _T("dwEffects=%d\n"), dwEffects );
 					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
-						m_pcEditDoc->SetActivePane( m_nMyIndex );
+						m_pcEditWnd->SetActivePane( m_nMyIndex );
 						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
@@ -1391,7 +1391,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	}
 
 	/* 自分をアクティブペインにする */
-	m_pcEditDoc->SetActivePane( m_nMyIndex );
+	m_pcEditWnd->SetActivePane( m_nMyIndex );
 
 	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
 	m_ptCaretPos_DragEnter.x = m_ptCaretPos.x;
