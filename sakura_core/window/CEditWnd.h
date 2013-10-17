@@ -270,8 +270,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_CMenuDrawer; }
-	CEditDoc*		GetDocument()           { return m_pCEditDoc; }
-	const CEditDoc*	GetDocument() const     { return m_pCEditDoc; }
+	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
+	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditView; }
@@ -374,7 +374,7 @@ public:
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
-	CEditDoc* 		m_pCEditDoc;
+	CEditDoc* 		m_pcEditDoc;
 	CEditView*		m_pcEditViewArr[4];	//!< ビュー
 	CEditView*		m_pcEditView;		//!< 有効なビュー
 	int				m_nActivePaneIndex;	//!< 有効なビューのindex

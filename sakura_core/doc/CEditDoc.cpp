@@ -314,17 +314,11 @@ void CEditDoc::InitAllView( void )
 
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//	CEditDoc::Create
-//	BOOL Create(HINSTANCE hInstance, HWND hwndParent)
-//
-//	説明
-//	  ウィンドウの作成等
-//
-//	@date Sep. 29, 2001 genta マクロクラスを渡すように
-//	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-/////////////////////////////////////////////////////////////////////////////
+/*! ウィンドウの作成等
+
+	@date 2001.09.29 genta マクロクラスを渡すように
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+*/
 BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );

@@ -610,7 +610,7 @@ HWND CEditWnd::Create(
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	m_pCEditDoc = pcEditDoc;
+	m_pcEditDoc = pcEditDoc;
 
 	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		m_pcEditViewArr[i] = NULL;
