@@ -23,6 +23,7 @@
 #include "CDlgDiff.h"
 #include "etc_uty.h"
 #include "Debug.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "global.h"
 #include "Funccode.h"
@@ -237,7 +238,7 @@ void CDlgDiff::SetData( void )
 				pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
-				if ( pEditNode[i].m_hWnd == pCEditDoc->m_hwndParent )
+				if ( pEditNode[i].m_hWnd == pCEditDoc->m_pcEditWnd->m_hWnd )
 				{
 					// 同じ形式にしておく。ただしアクセスキー番号はなし
 					CShareData::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1 );

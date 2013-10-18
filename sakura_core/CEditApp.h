@@ -22,8 +22,6 @@
 		   distribution.
 */
 
-class CEditApp;
-
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
 class CEditWnd;
@@ -59,6 +57,9 @@ private:
 
 public:
 	~CEditApp();
+
+	//ドキュメント
+	CEditDoc*			m_pcEditDoc;
 
 	//ウィンドウ
 	CEditWnd*			m_pcEditWnd;

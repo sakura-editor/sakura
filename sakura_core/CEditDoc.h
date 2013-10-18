@@ -61,13 +61,13 @@ public:
 	/*
 	||  Constructors
 	*/
-	CEditDoc( CEditWnd* pcEditWnd );
+	CEditDoc();
 	~CEditDoc();
 
 	/*
 	||  初期化系メンバ関数
 	*/
-	BOOL Create( HINSTANCE, HWND, CImageListMgr* );
+	BOOL Create( HINSTANCE, CEditWnd* pcEditWnd, CImageListMgr* );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();
@@ -244,7 +244,6 @@ public:
 	bool			m_bDebugMode;				/* デバッグモニタモード */
 	bool			m_bGrepMode;				/* Grepモードか */
 	TCHAR			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
-	HWND			m_hWnd;						/* 編集ウィンドウハンドル（CSplitterWndが管理） */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
 public:
 	void			MakeFuncList_C( CFuncInfoArr*,bool bVisibleMemberFunc = true );		/* C/C++関数リスト作成 */
@@ -280,7 +279,6 @@ public:
 	||  メンバ変数
 	*/
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
-	HWND			m_hwndParent;		/* 親ウィンドウ（CEditWndが管理）ハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 

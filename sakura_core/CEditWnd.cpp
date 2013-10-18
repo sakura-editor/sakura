@@ -170,8 +170,6 @@ CEditWnd::~CEditWnd()
 	DeleteAccelTbl();
 
 	m_hWnd = NULL;
-
-	delete m_pcEditDoc;
 }
 
 
@@ -508,6 +506,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 HWND CEditWnd::Create(
 	HINSTANCE		hInstance,	//!< [in] Instance Handle
 	HWND			hwndParent,	//!< [in] 親ウィンドウのハンドル
+	CEditDoc*		pcEditDoc,
 	CImageListMgr*	pcIcons,	//!< [in] Image List
 	int				nGroup		//!< [in] グループID
 )
@@ -517,10 +516,10 @@ HWND CEditWnd::Create(
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 
-	m_pcEditDoc = new CEditDoc( this );
-
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
+
+	m_pcEditDoc = pcEditDoc;
 
 	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		m_pcEditViewArr[i] = NULL;
@@ -582,10 +581,6 @@ HWND CEditWnd::Create(
 	//イメージ、ヘルパなどの作成
 	m_pcIcons = pcIcons;
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, pcIcons );
-
-	// 各種バーよりも先に m_pcEditDoc->Create() を実行しておく	// 2007.01.30 ryoji
-	// （m_pcEditDoc メンバーの初期化を優先）
-	m_pcEditDoc->Create( m_hInstance, m_hWnd, pcIcons );
 
 	/* 分割フレーム作成 */
 	m_cSplitterWnd.Create( m_hInstance, m_hWnd, this );
@@ -3372,7 +3367,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		m_pPrintPreview = NULL;	//	NULLか否かで、プリントプレビューモードか判断するため。
 
 		/*	通常モードに戻す	*/
-		::ShowWindow( m_pcEditDoc->m_hWnd, SW_SHOW );
+		::ShowWindow( m_cSplitterWnd.m_hWnd, SW_SHOW );
 		::ShowWindow( hwndToolBar, SW_SHOW );	// 2006.06.17 ryoji
 		::ShowWindow( m_hwndStatusBar, SW_SHOW );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_SHOW );
@@ -3395,7 +3390,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::DestroyMenu( hMenu );
 		::DrawMenuBar( m_hWnd );
 
-		::ShowWindow( m_pcEditDoc->m_hWnd, SW_HIDE );
+		::ShowWindow( m_cSplitterWnd.m_hWnd, SW_HIDE );
 		::ShowWindow( hwndToolBar, SW_HIDE );	// 2006.06.17 ryoji
 		::ShowWindow( m_hwndStatusBar, SW_HIDE );
 		::ShowWindow( m_CFuncKeyWnd.m_hWnd, SW_HIDE );

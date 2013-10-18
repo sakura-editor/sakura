@@ -89,6 +89,7 @@ public:
 	HWND Create(
 		HINSTANCE,
 		HWND,
+		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int nGroup
 	);

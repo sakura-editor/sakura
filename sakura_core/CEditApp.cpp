@@ -32,16 +32,22 @@ void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 	//ヘルパ作成
 	m_cIcons.Create( hInst );	//	CreateImage List
 
+	//ドキュメントの作成
+	m_pcEditDoc = new CEditDoc();
+
 	//マクロ
 	m_pcSMacroMgr = new CSMacroMgr();
 
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-	m_pcEditWnd->Create( hInst, hwndParent, &m_cIcons, nGroupId );
+
+	m_pcEditDoc->Create( hInst, m_pcEditWnd, &m_cIcons );
+	m_pcEditWnd->Create( hInst, hwndParent, m_pcEditDoc, &m_cIcons, nGroupId );
 }
 
 CEditApp::~CEditApp()
 {
+	delete m_pcEditDoc;
 }
 
 

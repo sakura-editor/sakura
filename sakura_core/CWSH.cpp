@@ -25,6 +25,7 @@
 #include "CMacro.h"
 #include "CSMacroMgr.h"
 #include "CEditView.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "etc_uty.h"
 #include "os.h"
@@ -340,7 +341,7 @@ public:
 	virtual HRESULT __stdcall GetWindow(
 	    /* [out] */ HWND *phwnd)
 	{
-		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditDoc->m_hWnd;
+		*phwnd = reinterpret_cast<CEditView*>(m_Client->m_Data)->m_pcEditWnd->m_cSplitterWnd.m_hWnd;
 		return S_OK;
 	}
 

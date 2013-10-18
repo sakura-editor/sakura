@@ -57,7 +57,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	int		i;
 	LOGFONT	lf;
 	m_pszClassName = _T("CFuncKeyWnd");
-	m_pCEditDoc = NULL;
+	m_pcEditDoc = NULL;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_nCurrentKeyState = -1;
@@ -113,7 +113,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
-	m_pCEditDoc = pCEditDoc;
+	m_pcEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
 	m_hwndSizeBox = NULL;
 	m_nCurrentKeyState = -1;
@@ -332,7 +332,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 					_tcscpy( m_szFuncNameArr[i], _T("") );
 				}else{
 					//	Oct. 2, 2001 genta
-					m_pCEditDoc->m_cFuncLookup.Funccode2Name(
+					m_pcEditDoc->m_cFuncLookup.Funccode2Name(
 						m_nFuncCodeArr[i],
 						m_szFuncNameArr[i],
 						_countof(m_szFuncNameArr[i]) - 1
@@ -349,7 +349,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		m_nTimerCount = 0;
 		/* 機能が利用可能か調べる */
 		for( i = 0; i < _countof(	m_szFuncNameArr ); ++i ){
-			if( IsFuncEnable( (CEditDoc*)m_pCEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
+			if( IsFuncEnable( (CEditDoc*)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
 				::EnableWindow( m_hwndButtonArr[i], TRUE );
 			}else{
 				::EnableWindow( m_hwndButtonArr[i], FALSE );

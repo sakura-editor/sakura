@@ -3884,7 +3884,7 @@ void CEditView::Command_FONT( void )
 #else
 	bool bFixedFont = true;
 #endif
-	if( MySelectFont( &cLogfont, &nPointSize, m_pcEditDoc->m_hWnd, bFixedFont ) ){
+	if( MySelectFont( &cLogfont, &nPointSize, m_pcEditWnd->m_cSplitterWnd.m_hWnd, bFixedFont ) ){
 		m_pShareData->m_Common.m_sView.m_lf = cLogfont;
 		m_pShareData->m_Common.m_sView.m_nPointSize = nPointSize;
 
@@ -4563,6 +4563,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 
 	UINT	uFlags;
 	POINT	po;
+	RECT	rc;
 	HMENU	hMenu;
 	HMENU	hMenuPopUp;
 	int		i;
@@ -4577,7 +4578,13 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	po.x = 540;
 //	To Here Sept. 15, 2000 (Oct. 7, 2000 300→500; Nov. 3, 2000 500→540)
 	po.y = 0;
-	::ClientToScreen( m_hWnd, &po );
+
+	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
+	::GetClientRect( pCEditWnd->m_hWnd, &rc );
+	po.x = t_min( po.x, rc.right );
+	::ClientToScreen( pCEditWnd->m_hWnd, &po );
+	::GetWindowRect( pCEditWnd->m_cSplitterWnd.m_hWnd, &rc );
+	po.y = rc.top;
 
 	m_pcEditWnd->m_CMenuDrawer.ResetContents();
 
@@ -5694,7 +5701,7 @@ bool CEditView::TagJumpSub(
 	TagJump	tagJump;
 
 	// 参照元ウィンドウ保存
-	tagJump.hwndReferer = m_pcEditDoc->m_hwndParent;
+	tagJump.hwndReferer = m_pcEditWnd->m_hWnd;
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
@@ -6233,7 +6240,7 @@ open_c:;
 		(int*)&tagJump.point.x,
 		(int*)&tagJump.point.y
 	);
-	tagJump.hwndReferer = m_pcEditDoc->m_hwndParent;
+	tagJump.hwndReferer = m_pcEditWnd->m_hWnd;
 	// タグジャンプ情報の保存
 	CShareData::getInstance()->PushTagJump(&tagJump);
 	return TRUE;
@@ -6335,7 +6342,7 @@ void CEditView::Command_CASCADE( void )
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+			if( pEditNodeArr[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 				current_win_index = i;
 				continue;
 			}
@@ -6467,9 +6474,9 @@ void CEditView::Command_TILE_H( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+			if( pEditNodeArr[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = m_pcEditDoc->m_hwndParent;
+				phwndArr[0] = m_pcEditWnd->m_hWnd;
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].m_hWnd;
@@ -6523,9 +6530,9 @@ void CEditView::Command_TILE_V( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+			if( pEditNodeArr[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = m_pcEditDoc->m_hwndParent;
+				phwndArr[0] = m_pcEditWnd->m_hWnd;
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].m_hWnd;
@@ -7892,7 +7899,7 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( m_pcEditDoc->m_hWnd, cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
+	SetClipboardText( m_pcEditWnd->m_cSplitterWnd.m_hWnd, cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }
 
 /* ファイル内容比較 */
@@ -8949,14 +8956,14 @@ void CEditView::Command_TAB_CLOSEOTHER( void )
 	if( 0 >= nCount )return;
 
 	for( int i = 0; i < nCount; i++ ){
-		if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+		if( pEditNode[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 			pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
 			nGroup = pEditNode[i].m_nGroup;
 		}
 	}
 
 	//終了要求を出す
-	CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+	CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditWnd->m_hWnd );
 	delete []pEditNode;
 	return;
 }
@@ -8974,7 +8981,7 @@ void CEditView::Command_TAB_CLOSELEFT( void )
 		if( 0 >= nCount )return;
 
 		for( int i = 0; i < nCount; i++ ){
-			if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+			if( pEditNode[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
 				nGroup = pEditNode[i].m_nGroup;
 				bSelfFound = TRUE;
@@ -8984,7 +8991,7 @@ void CEditView::Command_TAB_CLOSELEFT( void )
 		}
 
 		//終了要求を出す
-		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditWnd->m_hWnd );
 		delete []pEditNode;
 	}
 	return;
@@ -9003,7 +9010,7 @@ void CEditView::Command_TAB_CLOSERIGHT( void )
 		if( 0 >= nCount )return;
 
 		for( int i = 0; i < nCount; i++ ){
-			if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+			if( pEditNode[i].m_hWnd == m_pcEditWnd->m_hWnd ){
 				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
 				nGroup = pEditNode[i].m_nGroup;
 				bSelfFound = TRUE;
@@ -9013,7 +9020,7 @@ void CEditView::Command_TAB_CLOSERIGHT( void )
 		}
 
 		//終了要求を出す
-		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditWnd->m_hWnd );
 		delete []pEditNode;
 	}
 	return;

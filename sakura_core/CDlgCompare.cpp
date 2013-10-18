@@ -20,6 +20,7 @@
 #include "CDlgCompare.h"
 #include "etc_uty.h"
 #include "Debug.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "global.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
@@ -144,7 +145,7 @@ void CDlgCompare::SetData( void )
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ƒtƒ@ƒCƒ‹–¼‚Å”äŠr‚·‚é‚Æ(–³‘è)‚¾‚Á‚½‚Æ‚«‚É–â‘è“¯Žm‚Ì”äŠr‚ª‚Å‚«‚È‚¢
-			if (pEditNodeArr[i].m_hWnd == pCEditDoc->m_hwndParent){
+			if (pEditNodeArr[i].m_hWnd == pCEditDoc->m_pcEditWnd->m_hWnd){
 				// 2010.07.30 Ž©•ª‚Ì–¼‘O‚à‚±‚±‚©‚çÝ’è‚·‚é
 				CShareData::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1 );
 				::SetDlgItemText( m_hWnd, IDC_STATIC_COMPARESRC, szMenu );

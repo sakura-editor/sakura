@@ -1182,7 +1182,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 	/* 「ファイルを開く」ダイアログ */
 	if( filename == NULL ){
 		pszPath[0] = '\0';
-		if( !OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
 			return;
 		}
 	}
@@ -1192,7 +1192,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 		//	同一ファイルを複数開くことがある．
 		if( ! GetLongFileName( filename, pszPath )){
 			//	ファイル名の変換に失敗
-			OkMessage( m_hWnd,
+			OkMessage( m_pcEditWnd->m_hWnd,
 				_T("ファイル名の変換に失敗しました [%s]"), filename );
 			return;
 		}
@@ -1222,7 +1222,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 				strcpy( pszPath, szFile2 );
 			}
 			/* 新たな編集ウィンドウを起動 */
-			CControlTray::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
+			CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, pszPath, nCharCode, bReadOnly );
 		}
 	}
 	return;
@@ -1273,7 +1273,7 @@ void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bR
 
 	if( filename == NULL ){
 		pszPath[0] = '\0';
-		if( !OpenFileDialog( m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
 			return;
 		}
 	}
@@ -1331,7 +1331,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 			if( warnbeep ){
 				ErrorBeep();
 				TopErrorMessage(
-					m_hWnd,
+					m_pcEditWnd->m_hWnd,
 					_T("%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n")
 					_T("名前を付けて保存をすればいいと思います。"),
 					IsValidPath() ? GetFilePath() : _T("(無題)")
@@ -1375,7 +1375,7 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 		if( m_bReadOnly && strcmp( szPath, GetFilePath()) == 0 ){
 			ErrorBeep();
 			TopErrorMessage(
-				m_hWnd,
+				m_pcEditWnd->m_hWnd,
 				_T("読み取り専用モードでは同一ファイルへの上書き保存はできません。")
 			);
 		}

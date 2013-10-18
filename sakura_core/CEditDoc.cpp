@@ -67,9 +67,8 @@
 	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
-: m_pcEditWnd( pcEditWnd )
-, m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
+CEditDoc::CEditDoc()
+: m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_bReadOnly( false )			/* 読み取り専用モード */
@@ -79,7 +78,6 @@ CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
 , m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )	/* ファイルの排他制御モード */
 , m_hLockedFile( INVALID_HANDLE_VALUE )	/* ロックしているファイルのハンドル */
 , m_hInstance( NULL )
-, m_hWnd( NULL )
 , m_eWatchUpdate( CEditDoc::WU_QUERY )
 , m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
 , m_nSettingType( 0 )	// Sep. 11, 2002 genta
@@ -100,6 +98,7 @@ CEditDoc::CEditDoc( CEditWnd* pcEditWnd )
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
+
 	// レイアウト情報の変更
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
@@ -231,41 +230,29 @@ void CEditDoc::InitAllView( void )
 
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//	CEditDoc::Create
-//	BOOL Create(HINSTANCE hInstance, HWND hwndParent)
-//
-//	説明
-//	  ウィンドウの作成等
-//
-//	@date Sep. 29, 2001 genta マクロクラスを渡すように
-//	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-/////////////////////////////////////////////////////////////////////////////
+/*! ウィンドウの作成等
+
+	@date 2001.09.29 genta マクロクラスを渡すように
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+*/
 BOOL CEditDoc::Create(
 	HINSTANCE hInstance,
-	HWND hwndParent,
+	CEditWnd* pcEditWnd,
 	CImageListMgr* pcIcons
  )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
 
-	CEditWnd*	pCEditWnd;
 	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
 
-	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	m_hWnd = m_pcEditWnd->m_hWnd;
-
-	MY_TRACETIME( cRunningTimer, "View created" );
+	m_pcEditWnd = pcEditWnd;
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_Common.m_sMacro.m_MacroTable, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
 	m_pcPropertyManager = new CPropertyManager();
-	m_pcPropertyManager->Create( m_hInstance, m_hWnd, pcIcons, &(pCEditWnd->m_CMenuDrawer) );
+	m_pcPropertyManager->Create( m_hInstance, m_pcEditWnd->m_hWnd, pcIcons, &(pcEditWnd->m_CMenuDrawer) );
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
@@ -393,7 +380,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			if( -1 != nPane ){
 				m_pcEditWnd->SetActivePane( nPane );
 			}else{
-				CControlTray::ActiveNextWindow(m_hwndParent);
+				CControlTray::ActiveNextWindow(m_pcEditWnd->m_hWnd);
 			}
 		}
 		return TRUE;
@@ -404,7 +391,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				m_pcEditWnd->SetActivePane( nPane );
 			}
 			else{
-				CControlTray::ActivePrevWindow(m_hwndParent);
+				CControlTray::ActivePrevWindow(m_pcEditWnd->m_hWnd);
 			}
 		}
 		return TRUE;
@@ -524,7 +511,7 @@ BOOL CEditDoc::OnFileClose()
 	int			nRet;
 	int			nBool;
 	HWND		hwndMainFrame;
-	hwndMainFrame = m_hWnd;
+	hwndMainFrame = m_pcEditWnd->m_hWnd;
 
 	//	Mar. 30, 2003 genta サブルーチンにまとめた
 	AddToMRU();
@@ -680,7 +667,7 @@ BOOL CEditDoc::FileRead(
 	EditInfo		fi;
 //	EditInfo*		pfi;
 	HWND			hwndProgress;
-	CWaitCursor		cWaitCursor( m_hWnd );
+	CWaitCursor		cWaitCursor( m_pcEditWnd->m_hWnd );
 	BOOL			bIsExistInMRU;
 	int				nRet;
 	BOOL			bFileIsExist;
@@ -717,7 +704,7 @@ BOOL CEditDoc::FileRead(
 				nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 				bReadOnly = false;
 //				::ShowWindow( m_hWnd, SW_SHOW );
-				if( !OpenFileDialog( m_hWnd, pszPath, pszPathNew, &nCharCode, &bReadOnly ) ){
+				if( !OpenFileDialog( m_pcEditWnd->m_hWnd, pszPath, pszPathNew, &nCharCode, &bReadOnly ) ){
 					delete [] pszPathNew;
 					return FALSE;
 				}
@@ -747,7 +734,7 @@ BOOL CEditDoc::FileRead(
 		if( hTest == INVALID_HANDLE_VALUE ){
 			// 読み込みアクセス権がない
 			ErrorMessage(
-				m_hWnd,
+				m_pcEditWnd->m_hWnd,
 				_T("\'%s\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
 				pszPath
 			 );
@@ -768,7 +755,7 @@ BOOL CEditDoc::FileRead(
 	bRet = TRUE;
 	if( NULL == pszPath ){
 		MYMESSAGEBOX(
-			m_hWnd,
+			m_pcEditWnd->m_hWnd,
 			MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
 			_T("バグじゃぁあああ！！！"),
 			_T("CEditDoc::FileRead()\n\nNULL == pszPath\n【対処】エラーの出た状況を作者に連絡してくださいね。")
@@ -829,7 +816,7 @@ BOOL CEditDoc::FileRead(
 		} else {
 			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
 			if( CODE_NONE == m_nCharCode ){
-				TopWarningMessage( m_hWnd,
+				TopWarningMessage( m_pcEditWnd->m_hWnd,
 					_T("%s\n文字コードの判別処理でエラーが発生しました。"),
 					pszPath
 				);
@@ -856,7 +843,7 @@ BOOL CEditDoc::FileRead(
 			if( pszCodeNameOld != NULL ){
 				ConfirmBeep();
 				nRet = MYMESSAGEBOX(
-					m_hWnd,
+					m_pcEditWnd->m_hWnd,
 					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 					_T("文字コード情報"),
 					_T("%s\n")
@@ -885,7 +872,7 @@ BOOL CEditDoc::FileRead(
 				}
 			}else{
 				MYMESSAGEBOX(
-					m_hWnd,
+					m_pcEditWnd->m_hWnd,
 					MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
 					_T("バグじゃぁあああ！！！"),
 					_T("【対処】エラーの出た状況を作者に連絡してください。")
@@ -937,7 +924,7 @@ BOOL CEditDoc::FileRead(
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
 		//	Jul. 26, 2003 ryoji BOM引数追加
-		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
+		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_pcEditWnd->m_hWnd, hwndProgress,
 			m_nCharCode, &m_FileTime, m_pShareData->m_Common.m_sFile.GetAutoMIMEdecode(), &m_bBomExist ) ){
 			//	Sep. 10, 2002 genta
 			SetFilePathAndIcon( _T("") );
@@ -957,7 +944,7 @@ BOOL CEditDoc::FileRead(
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
 			TopInfoMessage(
-				m_hwndParent,
+				m_pcEditWnd->m_hWnd,
 				_T("%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
@@ -1138,7 +1125,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 			return FALSE;
 		case 3: //	ファイルエラー
 			if( IDYES != ::MYMESSAGEBOX(
-				m_hWnd,
+				m_pcEditWnd->m_hWnd,
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				_T("ファイル保存"),
 				_T("バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．")
@@ -1148,9 +1135,9 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 		}
 	}
 
-	CWaitCursor cWaitCursor( m_hWnd );
+	CWaitCursor cWaitCursor( m_pcEditWnd->m_hWnd );
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_hWnd, hwndProgress,
+	if( FALSE == m_cDocLineMgr.WriteFile( pszPath, m_pcEditWnd->m_hWnd, hwndProgress,
 		m_nCharCode, &m_FileTime, cEol , m_bBomExist ) ){
 		bRet = FALSE;
 		goto end_of_func;
@@ -1305,7 +1292,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	/* ダイアログを表示 */
 	m_cDlgOpenFile.Create(
 		m_hInstance,
-		m_hWnd,
+		m_pcEditWnd->m_hWnd,
 		szDefaultWildCard,
 		GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),		//	最近のファイル
@@ -1322,7 +1309,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 bool CEditDoc::OpenPropertySheet( int nPageNum )
 {
 	/* プロパティシートの作成 */
-	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_hwndParent, nPageNum );
+	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_pcEditWnd->m_hWnd, nPageNum );
 	if( bRet ){
 		// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
 		m_pcSMacroMgr->UnloadAll();
@@ -1339,7 +1326,7 @@ bool CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 	int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
 
 	/* プロパティシートの作成 */
-	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_hwndParent, nPageNum, nSettingType );
+	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_pcEditWnd->m_hWnd, nPageNum, nSettingType );
 	if( bRet ){
 		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
 		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
@@ -1424,7 +1411,7 @@ int CEditDoc::MakeBackUp(
 	TCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
 	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
-			m_hWnd,
+			m_pcEditWnd->m_hWnd,
 			_T("バックアップ先のパス作成中にエラーになりました。\n")
 			_T("パスが長すぎるか不正な書式です。\n")
 			_T("バックアップを作成せずに上書き保存してよろしいですか？")
@@ -1446,7 +1433,7 @@ int CEditDoc::MakeBackUp(
 		ConfirmBeep();
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
-				m_hWnd,
+				m_pcEditWnd->m_hWnd,
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 				_T("バックアップ作成の確認"),
 				_T("変更される前に、バックアップファイルを作成します。\n")
@@ -1463,7 +1450,7 @@ int CEditDoc::MakeBackUp(
 		}
 		else{	//@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX(
-				m_hWnd,
+				m_pcEditWnd->m_hWnd,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				_T("バックアップ作成の確認"),
 				_T("変更される前に、バックアップファイルを作成します。\n")
@@ -1525,7 +1512,7 @@ int CEditDoc::MakeBackUp(
 			//	ファイル名をセット
 			wsprintf( pBase, _T("%02d"), i );
 			if( ::DeleteFile( szPath ) == 0 ){
-				::MessageBox( m_hWnd, szPath, _T("削除失敗"), MB_OK );
+				::MessageBox( m_pcEditWnd->m_hWnd, szPath, _T("削除失敗"), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -1552,7 +1539,7 @@ int CEditDoc::MakeBackUp(
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
 				//	失敗した場合
 				//	後で考える
-				::MessageBox( m_hWnd, szPath, _T("移動失敗"), MB_OK );
+				::MessageBox( m_pcEditWnd->m_hWnd, szPath, _T("移動失敗"), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -1589,7 +1576,7 @@ int CEditDoc::MakeBackUp(
 			_tcscpy(szDustPath, szPath);
 			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');
 			SHFILEOPSTRUCT	fos;
-			fos.hwnd   = m_hWnd;
+			fos.hwnd   = m_pcEditWnd->m_hWnd;
 			fos.wFunc  = FO_DELETE;
 			fos.pFrom  = szDustPath;
 			fos.pTo    = NULL;
@@ -1977,7 +1964,7 @@ void CEditDoc::DoFileLock( void )
 	CloseHandle( hLockedFile );
 	if( INVALID_HANDLE_VALUE == hLockedFile ){
 		TopWarningMessage(
-			m_hWnd,
+			m_pcEditWnd->m_hWnd,
 			_T("%s\nは現在他のプロセスによって書込みが禁止されています。"),
 			IsValidPath() ? GetFilePath() : _T("(無題)")
 		);
@@ -2018,7 +2005,7 @@ void CEditDoc::DoFileLock( void )
 			break;
 		}
 		TopWarningMessage(
-			m_hWnd,
+			m_pcEditWnd->m_hWnd,
 			_T("%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
 			IsValidPath() ? GetFilePath() : _T("(無題)"),
 			pszMode
@@ -3520,7 +3507,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && m_eWatchUpdate != WU_NONE
 	 && m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_NOT_EXCLUSIVE	/* ファイルの排他制御モード */
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
-	 && hwndActive == m_hwndParent
+	 && hwndActive == m_pcEditWnd->m_hWnd
 	 && IsValidPath()
 	 && ( !m_FileTime.IsZero() ) 	/* 現在編集中のファイルのタイムスタンプ */
 
@@ -3556,7 +3543,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 				CDlgFileUpdateQuery dlg( GetFilePath(), IsModified() );
 				int result = dlg.DoModal(
 					m_hInstance,
-					m_hWnd,
+					m_pcEditWnd->m_hWnd,
 					IDD_FILEUPDATEQUERY,
 					0
 				);
@@ -3673,7 +3660,7 @@ void CEditDoc::SetImeMode( int mode )
 	DWORD	conv, sent;
 	HIMC	hIme;
 
-	hIme = ImmGetContext( m_hwndParent );
+	hIme = ImmGetContext( m_pcEditWnd->m_hWnd );
 
 	//	最下位ビットはIME自身のOn/Off制御
 	if( ( mode & 3 ) == 2 ){
@@ -3704,7 +3691,7 @@ void CEditDoc::SetImeMode( int mode )
 	if( ( mode & 3 ) == 1 ){
 		ImmSetOpenStatus( hIme, TRUE );
 	}
-	ImmReleaseContext( m_hwndParent, hIme );
+	ImmReleaseContext( m_pcEditWnd->m_hWnd, hIme );
 }
 //	To Here Nov. 20, 2000 genta
 
@@ -4265,7 +4252,7 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 			return 2;
 		}
 	case 'M': // $M キーボードマクロの記録中
-		if( m_pShareData->m_sFlags.m_bRecordingKeyMacro && m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
+		if( m_pShareData->m_sFlags.m_bRecordingKeyMacro && m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_pcEditWnd->m_hWnd ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
@@ -4285,7 +4272,7 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 			return 1;
 		}
 	case 'I': // $I アイコン化されているか
-		if( ::IsIconic( m_hwndParent )){
+		if( ::IsIconic( m_pcEditWnd->m_hWnd )){
 			return 0;
 		} else {
  			return 1;

@@ -670,7 +670,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 		CFileTime	cFileTime;
 		return (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile( 
 			filename, 
-			m_pcEditDoc->m_hWnd,
+			m_pcEditWnd->m_hWnd,
 			NULL,
 			m_pcEditDoc->m_nCharCode,
 			&cFileTime,
