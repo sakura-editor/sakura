@@ -47,6 +47,7 @@ void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 
 CEditApp::~CEditApp()
 {
+	delete m_pcSMacroMgr;
 	delete m_pcEditDoc;
 }
 
