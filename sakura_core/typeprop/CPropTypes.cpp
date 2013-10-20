@@ -165,7 +165,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
 
 	// JEPROtest Sept. 30, 2000 タイプ別設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
-	psh.dwFlags    = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
+	psh.dwFlags    = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/ | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
