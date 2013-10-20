@@ -96,8 +96,6 @@ public:
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
 	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
-	bool OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
-	bool OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
 	std::tstring GetDlgInitialDir();
 	bool OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */

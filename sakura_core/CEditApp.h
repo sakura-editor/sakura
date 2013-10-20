@@ -26,6 +26,7 @@
 #define _CEDITAPP_H_
 class CEditWnd;
 class CSMacroMgr;
+class CPropertyManager;
 
 #include <windows.h>
 #include "CShareData.h"
@@ -57,6 +58,8 @@ private:
 
 public:
 	~CEditApp();
+	bool OpenPropertySheet( int nPageNum );
+	bool OpenPropertySheetTypes( int nPageNum, int nSettingType );
 
 	//ドキュメント
 	CEditDoc*			m_pcEditDoc;
@@ -65,6 +68,9 @@ public:
 	CEditWnd*			m_pcEditWnd;
 
 	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
+private:
+	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
+
 	//GUIオブジェクト
 	CImageListMgr		m_cIcons;					//!< Image List
 };

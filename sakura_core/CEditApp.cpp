@@ -43,13 +43,53 @@ void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 
 	m_pcEditDoc->Create( hInst, m_pcEditWnd, &m_cIcons );
 	m_pcEditWnd->Create( hInst, hwndParent, m_pcEditDoc, &m_cIcons, nGroupId );
+
+	//プロパティ管理
+	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager->Create(
+		hInst,
+		m_pcEditWnd->m_hWnd,
+		&m_cIcons,
+		&m_pcEditWnd->m_CMenuDrawer
+	);
 }
 
 CEditApp::~CEditApp()
 {
 	delete m_pcSMacroMgr;
+	delete m_pcPropertyManager;
 	delete m_pcEditDoc;
 }
 
+/*! 共通設定 プロパティシート */
+bool CEditApp::OpenPropertySheet( int nPageNum )
+{
+	/* プロパティシートの作成 */
+	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_pcEditWnd->m_hWnd, nPageNum );
+	if( bRet ){
+		// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
+		m_pcSMacroMgr->UnloadAll();
+	}
+
+	return bRet;
+}
+
+/*! タイプ別設定 プロパティシート */
+bool CEditApp::OpenPropertySheetTypes( int nPageNum, int nSettingType )
+{
+	int nTextWrapMethodOld = m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod;
+
+	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_pcEditWnd->m_hWnd, nPageNum, nSettingType );
+	if( bRet ){
+		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
+		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
+		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
+		if( nTextWrapMethodOld != m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
+			m_pcEditDoc->m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
+		}
+	}
+
+	return bRet;
+}
 
 /*[EOF]*/

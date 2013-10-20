@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <io.h>
 #include <mbstring.h>
+#include "CEditApp.h"
 #include "CEditView.h"
 #include "Debug.h"
 #include "Funccode.h"
@@ -3978,7 +3979,7 @@ void CEditView::Command_SETFONTSIZE( int fontSize, int shift )
 void CEditView::Command_OPTION( void )
 {
 	/* 設定プロパティシート テスト用 */
-	m_pcEditDoc->OpenPropertySheet( -1/*, -1*/ );
+	CEditApp::getInstance()->OpenPropertySheet( -1 );
 }
 
 
@@ -3987,7 +3988,7 @@ void CEditView::Command_OPTION( void )
 /* タイプ別設定 */
 void CEditView::Command_OPTION_TYPE( void )
 {
-	m_pcEditDoc->OpenPropertySheetTypes( -1, m_pcEditDoc->GetDocumentType() );
+	CEditApp::getInstance()->OpenPropertySheetTypes( -1, m_pcEditDoc->GetDocumentType() );
 }
 
 
@@ -4009,7 +4010,7 @@ void CEditView::Command_TYPE_LIST( void )
 		}
 		else{
 			/* タイプ別設定 */
-			m_pcEditDoc->OpenPropertySheetTypes( -1, nSettingType );
+			CEditApp::getInstance()->OpenPropertySheetTypes( -1, nSettingType );
 		}
 	}
 	return;
@@ -4653,7 +4654,7 @@ retry:;
 			_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* 共通設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
+			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
 				return;
 			}
 			goto retry;
@@ -4719,7 +4720,7 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 				return;
 			}
 			/* 共通設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
+			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
 				return;
 			}
 		}

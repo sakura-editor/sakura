@@ -20,6 +20,7 @@
 */
 #include "StdAfx.h"
 #include "CEditView.h"
+#include "CEditApp.h"
 #include "CEditDoc.h"
 #include "Debug.h"
 #include "etc_uty.h"
@@ -192,7 +193,7 @@ retry:;
 			_T("補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* タイプ別設定 プロパティシート */
-			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
+			if( !CEditApp::getInstance()->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
 				return;
 			}
 			goto retry;

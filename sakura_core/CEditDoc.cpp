@@ -135,9 +135,6 @@ CEditDoc::CEditDoc()
 
 CEditDoc::~CEditDoc()
 {
-	delete m_pcPropertyManager;
-	m_pcPropertyManager = NULL;
-
 	/* ファイルの排他ロック解除 */
 	DoFileUnlock();
 }
@@ -249,10 +246,6 @@ BOOL CEditDoc::Create(
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_Common.m_sMacro.m_MacroTable, &m_pShareData->m_Common );
-
-	/* 設定プロパティシートの初期化１ */
-	m_pcPropertyManager = new CPropertyManager();
-	m_pcPropertyManager->Create( m_hInstance, m_pcEditWnd->m_hWnd, pcIcons, &(pcEditWnd->m_CMenuDrawer) );
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
@@ -1300,46 +1293,6 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	);
 	return m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
 }
-
-
-
-
-
-/*! 共通設定 プロパティシート */
-bool CEditDoc::OpenPropertySheet( int nPageNum )
-{
-	/* プロパティシートの作成 */
-	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_pcEditWnd->m_hWnd, nPageNum );
-	if( bRet ){
-		// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
-		m_pcSMacroMgr->UnloadAll();
-	}
-
-	return bRet;
-}
-
-
-
-/*! タイプ別設定 プロパティシート */
-bool CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
-{
-	int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
-
-	/* プロパティシートの作成 */
-	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_pcEditWnd->m_hWnd, nPageNum, nSettingType );
-	if( bRet ){
-		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
-		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
-		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
-		if( nTextWrapMethodOld != GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
-			m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
-		}
-	}
-
-	return bRet;
-}
-
-
 
 /* Undo(元に戻す)可能な状態か？ */
 bool CEditDoc::IsEnableUndo( void ) const
