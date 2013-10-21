@@ -129,8 +129,8 @@ BOOL CEditView::HandleCommand(
 	TranslateCommand_grep( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 	TranslateCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 
-	//	Aug, 14. 2000 genta
-	if( m_pcEditDoc->IsModificationForbidden( nCommand ) ){
+	// 2013.09.23 novice 機能が利用可能か調べる
+	if( !IsFuncEnable( m_pcEditDoc, m_pShareData, nCommand ) ){
 		return TRUE;
 	}
 
