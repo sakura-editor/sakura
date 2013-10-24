@@ -56,13 +56,13 @@ void CUnicode::GetEol(CMemory* pcmemEol, EEolType eEolType)
 		int nLen;
 	}
 	aEolTable[EOL_TYPE_NUM] = {
-		L"",			0 * sizeof(wchar_t),	// EOL_NONE
-		L"\x0d\x0a",	2 * sizeof(wchar_t),	// EOL_CRLF
-		L"\x0a",		1 * sizeof(wchar_t),	// EOL_LF
-		L"\x0d",		1 * sizeof(wchar_t),	// EOL_CR
-		L"\x85",		1 * sizeof(wchar_t),	// EOL_NEL
-		L"\u2028",		1 * sizeof(wchar_t),	// EOL_LS
-		L"\u2029",		1 * sizeof(wchar_t),	// EOL_PS
+		{ L"",			0 * sizeof(wchar_t) },	// EOL_NONE
+		{ L"\x0d\x0a",	2 * sizeof(wchar_t) },	// EOL_CRLF
+		{ L"\x0a",		1 * sizeof(wchar_t) },	// EOL_LF
+		{ L"\x0d",		1 * sizeof(wchar_t) },	// EOL_CR
+		{ L"\x85",		1 * sizeof(wchar_t) },	// EOL_NEL
+		{ L"\u2028",	1 * sizeof(wchar_t) },	// EOL_LS
+		{ L"\u2029",	1 * sizeof(wchar_t) },	// EOL_PS
 	};
 	pcmemEol->SetRawData(aEolTable[eEolType].pData,aEolTable[eEolType].nLen);
 }
