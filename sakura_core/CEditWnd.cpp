@@ -1229,7 +1229,6 @@ LRESULT CEditWnd::DispatchEvent(
 )
 {
 	int					nRet;
-	int					idCtrl;
 	LPNMHDR				pnmh;
 	LPTOOLTIPTEXT		lptip;
 	int					nPane;
@@ -1247,8 +1246,6 @@ LRESULT CEditWnd::DispatchEvent(
 	int					nItemWidth;
 	int					nItemHeight;
 	UINT				uItem;
-	UINT				fuFlags;
-	HMENU				hmenu;
 	LRESULT				lRes;
 
 	switch( uMsg ){
@@ -1286,8 +1283,6 @@ LRESULT CEditWnd::DispatchEvent(
 			return 1;
 		}
 		uItem = (UINT) LOWORD(wParam);		// menu item or submenu index
-		fuFlags = (UINT) HIWORD(wParam);	// menu flags
-		hmenu = (HMENU) lParam;				// handle to menu clicked
 		{
 			/* メニュー機能のテキストをセット */
 			CMemory		cmemWork;
@@ -1532,7 +1527,6 @@ LRESULT CEditWnd::DispatchEvent(
 		return lRes;
 
 	case WM_NOTIFY:
-		idCtrl = (int) wParam;
 		pnmh = (LPNMHDR) lParam;
 		//	From Here Feb. 15, 2004 genta 
 		//	ステータスバーのダブルクリックでモード切替ができるようにする
@@ -2245,7 +2239,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	int			nPos;
 	UINT		fuFlags;
 	int			i;
-	BOOL		bRet;
 	int			nRowNum;
 	HMENU		hMenuPopUp;
 	HMENU		hMenuPopUp_2;
@@ -2260,7 +2253,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.ResetContents();
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW			, _T(""), _T("N") );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW_NEWWINDOW, _T(""), _T("M") );
@@ -2351,7 +2344,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.ResetContents();
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 			//	Aug. 19. 2003 genta アクセスキー表記を統一
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_UNDO		, _T(""), _T("U") );
@@ -2502,7 +2495,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「変換」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOLOWER				, _T(""), _T("L") );			//Sept. 10, 2000 jepro キャプションを英語から変更
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOUPPER				, _T(""), _T("U") );			//Sept. 10, 2000 jepro キャプションを英語から変更
@@ -2556,7 +2549,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「検索」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_DIALOG	, _T(""), _T("F") );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SEARCH_NEXT		, _T(""), _T("N") );				//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
@@ -2615,7 +2608,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「オプション」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
 			if( !m_pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
@@ -2695,7 +2688,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「ウィンドウ」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
 //	From Here Sept. 17, 2000 JEPRO
@@ -2834,7 +2827,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「ウィンドウ」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
 			if( 1 == m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
@@ -2928,7 +2921,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 「ヘルプ」メニュー */
 			cMenuItems = ::GetMenuItemCount( hMenu );
 			for( i = cMenuItems - 1; i >= 0; i-- ){
-				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O") );				//Sept. 7, 2000 jepro キャプションを「ヘルプ目次」から変更	Oct. 13, 2000 JEPRO アクセスキーを「トレイ右ボタン」のために変更(C→O)
@@ -3439,10 +3432,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	int			nFuncKeyWndHeight;
 	int			nTabWndHeight;	//タブウインドウ	//@@@ 2003.05.31 MIK
 	RECT		rc, rcClient;
-	int			nCxHScroll;
-	int			nCyHScroll;
-	int			nCxVScroll;
-	int			nCyVScroll;
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる
 //	変数削除
 
@@ -3483,10 +3472,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
-	nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
-	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
-	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
-	nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
 	hwndToolBar = (NULL != m_hwndReBar)? m_hwndReBar: m_hwndToolBar;
@@ -3660,12 +3645,11 @@ LRESULT CEditWnd::OnPaint(
 	LPARAM			lParam 	// second message parameter
 )
 {
-	HDC				hdc;
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
 		PAINTSTRUCT		ps;
-		hdc = ::BeginPaint( hwnd, &ps );
+		::BeginPaint( hwnd, &ps );
 		::EndPaint( hwnd, &ps );
 		return 0L;
 	}
@@ -3704,10 +3688,8 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 	if(m_IconClicked != icNone)
 		return 0;
 
-	WPARAM		fwKeys;
 	int			xPos;
 	int			yPos;
-	fwKeys = wParam;		// key flags
 	xPos = LOWORD(lParam);	// horizontal position of cursor
 	yPos = HIWORD(lParam);	// vertical position of cursor
 	m_nDragPosOrgX = xPos;

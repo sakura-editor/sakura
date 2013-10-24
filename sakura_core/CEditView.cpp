@@ -595,8 +595,8 @@ LRESULT CEditView::DispatchEvent(
 )
 {
 	HDC			hdc;
-	int			nPosX;
-	int			nPosY;
+//	int			nPosX;
+//	int			nPosY;
 
 	switch ( uMsg ){
 	case WM_MOUSEWHEEL:
@@ -901,8 +901,8 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case MYWM_DOSPLIT:
-		nPosX = (int)wParam;
-		nPosY = (int)lParam;
+//		nPosX = (int)wParam;
+//		nPosY = (int)lParam;
 //		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
 		::SendMessage( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
 		return 0L;
@@ -2650,7 +2650,6 @@ BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
 */
 int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCaretMarginRate, int dx )
 {
-	const char*		pLine;
 	int				nLineLen;
 	const CLayout*	pcLayout;
 
@@ -2667,7 +2666,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 		nNewY = 0;
 	}else{
 		/* 移動先の行のデータを取得 */
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
+		m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
 
 		int nColWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace;
 		int nPosX = 0;
@@ -2707,13 +2706,6 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 //			  || m_bDragMode /* OLE DropTarget */
 			  || ( m_bDragMode && m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
-// From 2001.12.21 hor
-//				if( nNewY + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
-//					pLine[ nLineLen - 1 ] != '\n' && pLine[ nLineLen - 1 ] != '\r'
-//				){
-//					nPosX = LineIndexToColumn( pLine, nLineLen, nLineLen );
-//				}else{
-// To 2001.12.21 hor
 					nPosX = nNewX;
 					//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 					if( nPosX < 0 ){
@@ -3914,7 +3906,6 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	int			nDelLenNext;
 	const char*	pLine;
 	int			nLineLen;
-	const char*	pLine2;
 	int			nLineLen2;
 	int			i;
 	CMemory*	pcMemDeleted;
@@ -3976,7 +3967,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			nDelPos = nDelPosNext;
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSel.bottom && 0 < nDelLen ){
-				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2, &pcLayout );
+				m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + 1, &nLineLen2, &pcLayout );
 				sPos.x = LineIndexToColumn( pcLayout, nDelPos );
 				sPos.y =  nLineNum + 1;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -4389,7 +4380,6 @@ void CEditView::DrawCaretPosInfo( void )
 	}
 
 	char			szText[64];
-	HWND			hwndFrame;
 	unsigned char*	pLine;
 	int				nLineLen;
 	int				nIdxFrom;
@@ -4399,7 +4389,6 @@ void CEditView::DrawCaretPosInfo( void )
 	LPCTSTR pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
 //	2002/04/08 YAZAKI コードの重複を削除
 
-	hwndFrame = ::GetParent( m_hwndParent );
 	/* カーソル位置の文字コード */
 //	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen );
 	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );

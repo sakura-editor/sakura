@@ -265,12 +265,8 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	int		i;
-	WORD	wNotifyCode;
-	WORD	wID;
 	HWND	hwndCtl;
 
-	wNotifyCode = HIWORD(wParam);	// notification code
-	wID = LOWORD(wParam);			// item, control, or accelerator identifier
 	hwndCtl = (HWND) lParam;		// handle of control
 //	switch( wNotifyCode ){
 //	case BN_PUSHED:
@@ -395,10 +391,8 @@ int CFuncKeyWnd::CalcButtonSize( void )
 {
 	int			nButtonNum;
 	RECT		rc;
-	int			nCxHScroll;
 	int			nCyHScroll;
 	int			nCxVScroll;
-	int			nCyVScroll;
 	::GetWindowRect( m_hWnd, &rc );
 
 	nButtonNum = _countof( m_hwndButtonArr );
@@ -408,10 +402,8 @@ int CFuncKeyWnd::CalcButtonSize( void )
 		nCxVScroll = 0;
 	}else{
 		/* サイズボックスの位置、サイズ変更 */
-		nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
-		nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 		::MoveWindow( m_hwndSizeBox,  rc.right - rc.left - nCxVScroll, rc.bottom - rc.top - nCyHScroll, nCxVScroll, nCyHScroll, TRUE );
 //		::MoveWindow( m_hwndSizeBox,  0, 0, nCxVScroll, nCyHScroll, TRUE );
 

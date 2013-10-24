@@ -1614,7 +1614,7 @@ bool CEditDoc::FormatBackUpPath(
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
 		time_t	ltime;
-		struct	tm *today, *gmt;
+		struct	tm *today;
 		TCHAR	szTime[64];
 		TCHAR	szForm[64];
 
@@ -1633,7 +1633,6 @@ bool CEditDoc::FormatBackUpPath(
 			_tzset();
 			_strdate( szTime );
 			time( &ltime );				/* システム時刻を得ます */
-			gmt = gmtime( &ltime );		/* 万国標準時に変換する */
 			today = localtime( &ltime );/* 現地時間に変換する */
 
 			_tcscpy( szForm, _T("") );

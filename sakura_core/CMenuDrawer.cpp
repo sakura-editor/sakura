@@ -888,14 +888,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	HFONT		hFontOld;
 	int			nIndentLeft;
 	int			nIndentRight;
-	int			nTextTopMargin;
 	HBRUSH		hBrush;
 	RECT		rcText;
 	int			nBkModeOld;
 
 	nIndentLeft = 26;
 	nIndentRight = 8;
-	nTextTopMargin = 3;
 
 //@@@ 2002.01.03 YAZAKI 極力メンバ関数を使用するように。
 	nItemIndex = Find( (int)lpdis->itemID );
@@ -1227,12 +1225,10 @@ TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	TCHAR				chUser;
-	UINT				fuFlag;
 	HMENU				hmenu;
 	MENUITEMINFO		mii;
 	int i;
 	chUser = (TCHAR) LOWORD(wParam);	// character code
-	fuFlag = (UINT) HIWORD(wParam);		// menu flag
 	hmenu = (HMENU) lParam;				// handle to menu
 //	MYTRACE( _T("::GetMenuItemCount( %xh )==%d\n"), hmenu, ::GetMenuItemCount( hmenu ) );
 

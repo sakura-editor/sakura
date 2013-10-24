@@ -80,7 +80,6 @@ INT_PTR CPropWin::DispatchEvent(
 // From Here Sept. 9, 2000 JEPRO
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 // To Here Sept. 9, 2000
 
 	NMHDR*		pNMHDR;
@@ -199,7 +198,6 @@ INT_PTR CPropWin::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:

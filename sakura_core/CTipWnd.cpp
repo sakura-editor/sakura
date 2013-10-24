@@ -49,8 +49,7 @@ CTipWnd::~CTipWnd()
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* ウィンドウクラス作成 */
-	ATOM atWork;
-	atWork = RegisterWC(
+	RegisterWC(
 		hInstance,
 		/* WNDCLASS用 */
 		NULL,// Handle to the class icon.

@@ -70,8 +70,6 @@ void CEditView::SetIMECompFormPos( void )
 	COMPOSITIONFORM	CompForm;
 	HIMC			hIMC = ::ImmGetContext( m_hWnd );
 	POINT			point;
-	HWND			hwndFrame;
-	hwndFrame = ::GetParent( m_hwndParent );
 
 	::GetCaretPos( &point );
 	CompForm.dwStyle = CFS_POINT;
@@ -117,8 +115,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	//行の中で再変換の注目する文節とする文字列の開始位置、終了位置、長さ（対象文字列）
 	int			nSelectedIndex, nSelectedEndIndex, nSelectedLen;
 	
-	int			nSelectColumnFrom;
-	int			nSelectLineFrom, nSelectLineTo;
+	int			nSelectLineTo;
 	
 	DWORD		dwReconvTextLen;
 	DWORD		dwCompStrOffset, dwCompStrLen;
@@ -136,9 +133,6 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	
 	if( IsTextSelected() ){
 		//テキストが選択されているとき
-		nSelectColumnFrom = m_sSelect.m_ptFrom.x;
-		nSelectLineFrom   = m_sSelect.m_ptFrom.y;
-		
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, &nSelectedIndex, &nCurrentLine);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, &nSelectedEndIndex, &nSelectLineTo);
 		

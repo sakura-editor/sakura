@@ -77,10 +77,7 @@ INT_PTR CPropHelper::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -99,7 +96,6 @@ INT_PTR CPropHelper::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -212,9 +208,7 @@ INT_PTR CPropHelper::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 //		switch( idCtrl ){
 //		case ???????:
 //			return 0L;

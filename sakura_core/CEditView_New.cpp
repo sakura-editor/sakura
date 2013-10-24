@@ -124,7 +124,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	int				nTop;
 	RECT			rc;
 	RECT			rcBack;
-	BOOL			bEOF;
 	int				nLineHeight = m_nCharHeight + TypeDataPtr->m_nLineSpace;
 	int				nCharWidth = m_nCharWidth + TypeDataPtr->m_nColumnSpace;
 	int				nLineTo;
@@ -200,7 +199,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 
 
 	nTop = pPs->rcPaint.top;
-	bEOF = FALSE;
 //	i = m_nViewTopLine;
 
 	if( 0 > nTop - m_nViewAlignTop ){
@@ -251,11 +249,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 				bSelected
 			) ){
 				pPs->rcPaint.bottom += nLineHeight;	/* EOFÄ•`‰æ‘Î‰ */
-				bEOF = TRUE;
 				break;
 			}
 			if( NULL == pcLayout ){
-				bEOF = TRUE;
 				break;
 			}
 		}

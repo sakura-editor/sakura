@@ -170,7 +170,6 @@ BOOL CRegexKeyword::RegexKeySetTypes( STypeConfig *pTypesPtr )
 BOOL CRegexKeyword::RegexKeyCompile( void )
 {
 	int	i;
-	int	matched;
 	static const char dummy[2] = "\0";
 	struct RegexKeywordInfo	*rp;
 
@@ -219,7 +218,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 		if( RegexKeyCheckSyntax( rp->m_szKeyword ) == TRUE )
 		{
 			m_szMsg[0] = '\0';
-			matched = BMatch(rp->m_szKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);
+			BMatch(rp->m_szKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);
 
 			if( m_szMsg[0] == '\0' )	//エラーがないかチェックする
 			{

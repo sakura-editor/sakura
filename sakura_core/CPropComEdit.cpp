@@ -69,10 +69,7 @@ INT_PTR CPropEdit::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 //	int			nVal;
 //	LPDRAWITEMSTRUCT pDis;
 
@@ -91,7 +88,6 @@ INT_PTR CPropEdit::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -128,9 +124,7 @@ INT_PTR CPropEdit::DispatchEvent(
 		break;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 			OnHelp( hwndDlg, IDD_PROP_EDIT );

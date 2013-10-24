@@ -111,8 +111,6 @@ INT_PTR CPropKeybind::DispatchEvent(
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 	static HWND	hwndCombo;
 	static HWND	hwndFuncList;
 	static HWND	hwndKeyList;
@@ -164,9 +162,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 //			OnHelp( hwndDlg, IDD_PROP1P5 );		// Sept. 9, 2000 JEPRO é¿ç€ÇÃIDñºÇ…ïœçX

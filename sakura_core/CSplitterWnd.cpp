@@ -916,7 +916,6 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 {
 
 	int		nHit;
-	HCURSOR	hcurOld;	/* もとのマウスカーソル */
 	RECT	rc;
 	int		xPos;
 	int		yPos;
@@ -927,13 +926,13 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	nHit = HitTestSplitter( xPos, yPos );
 	switch( nHit ){
 	case 1:
-		hcurOld = ::SetCursor( ::LoadCursor( NULL, IDC_SIZENS ) );
+		::SetCursor( ::LoadCursor( NULL, IDC_SIZENS ) );
 		break;
 	case 2:
-		hcurOld = ::SetCursor( ::LoadCursor( NULL, IDC_SIZEWE ) );
+		::SetCursor( ::LoadCursor( NULL, IDC_SIZEWE ) );
 		break;
 	case 3:
-		hcurOld = ::SetCursor( ::LoadCursor( NULL, IDC_SIZEALL ) );
+		::SetCursor( ::LoadCursor( NULL, IDC_SIZEALL ) );
 		break;
 	}
 	if( 0 != m_bDragging ){		/* 分割バーをドラッグ中か */

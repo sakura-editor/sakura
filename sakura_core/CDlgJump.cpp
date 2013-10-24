@@ -73,12 +73,10 @@ int CDlgJump::DoModal(
 // CDlgPrintSetting.cppのOnNotifyとOnSpin及びCpropComFile.cppのDispatchEvent_p2内のcase WM_NOTIFYを参考にした
 BOOL CDlgJump::OnNotify( WPARAM wParam, LPARAM lParam )
 {
-	NMHDR*			pNMHDR;
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	int				nData;
 	idCtrl = (int)wParam;
-	pNMHDR = (NMHDR*)lParam;
 	pMNUD  = (NM_UPDOWN*)lParam;
 /* スピンコントロールの処理 */
 	switch( idCtrl ){

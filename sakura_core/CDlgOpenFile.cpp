@@ -69,11 +69,9 @@ BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 */
 LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	int						idCtrl;
-	OFNOTIFY*				pofn;
+//	OFNOTIFY*				pofn;
 	WORD					wNotifyCode;
 	WORD					wID;
-	HWND					hwndCtl;
 	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
@@ -85,7 +83,6 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
 		wID = LOWORD(wParam);			// item, control, or accelerator identifier
-		hwndCtl = (HWND) lParam;		// handle of control
 		switch( wNotifyCode ){
 //			break;
 		/* ボタン／チェックボックスがクリックされた */
@@ -103,8 +100,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		}
 		break;
 	case WM_NOTIFY:
-		idCtrl = (int) wParam;
-		pofn = (OFNOTIFY*) lParam;
+//		pofn = (OFNOTIFY*) lParam;
 //		MYTRACE( _T("=========WM_NOTIFY=========\n") );
 //		MYTRACE( _T("pofn->hdr.hwndFrom=%xh\n"), pofn->hdr.hwndFrom );
 //		MYTRACE( _T("pofn->hdr.idFrom=%xh(%d)\n"), pofn->hdr.idFrom, pofn->hdr.idFrom );
@@ -144,7 +140,6 @@ UINT_PTR CALLBACK OFNHookProc(
 	int						i;
 	int						nSize;
 	OFNOTIFY*				pofn;
-	int						idCtrl;
 	LRESULT					lRes;
 	WORD					wNotifyCode;
 	WORD					wID;
@@ -152,9 +147,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	HWND					hwndFilebox;	// 2005.11.02 ryoji
 	int						nIdx;
 	int						nIdxSel;
-	int						fwSizeType;
 	int						nWidth;
-	int						nHeight;
 	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
 
 	//	From Here	Feb. 9, 2001 genta
@@ -182,9 +175,7 @@ UINT_PTR CALLBACK OFNHookProc(
 //		MYTRACE( _T("WM_MOVE 2\n") );
 		break;
 	case WM_SIZE:
-		fwSizeType = wParam;		// resizing flag
 		nWidth = LOWORD(lParam);	// width of client area
-		nHeight = HIWORD(lParam);	// height of client area
 
 		/* 「開く」ダイアログのサイズと位置 */
 		hwndFrame = ::GetParent( hdlg );
@@ -315,7 +306,6 @@ UINT_PTR CALLBACK OFNHookProc(
 		return FALSE;
 
 	case WM_NOTIFY:
-		idCtrl = (int) wParam;
 		pofn = (OFNOTIFY*) lParam;
 //		MYTRACE( _T("=========WM_NOTIFY=========\n") );
 //		MYTRACE( _T("pofn->hdr.hwndFrom=%xh\n"), pofn->hdr.hwndFrom );
@@ -524,7 +514,6 @@ UINT_PTR CALLBACK OFNHookProc(
 CDlgOpenFile::CDlgOpenFile()
 {
 	/* メンバの初期化 */
-	long	lPathLen;
 
 	m_nCharCode = CODE_AUTODETECT;	/* 文字コード *//* 文字コード自動判別 */
 
@@ -543,7 +532,7 @@ CDlgOpenFile::CDlgOpenFile()
 	TCHAR	szFile[_MAX_PATH + 1];
 	TCHAR	szDrive[_MAX_DRIVE];
 	TCHAR	szDir[_MAX_DIR];
-	lPathLen = ::GetModuleFileName(
+	::GetModuleFileName(
 		NULL,
 		szFile, _countof( szFile )
 	);

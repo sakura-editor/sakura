@@ -777,7 +777,6 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /* マウス移動のメッセージ処理 */
 void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 {
-	int			nScrollRowNum;
 	POINT		po;
 	const char*	pLine;
 	int			nLineLen;
@@ -814,7 +813,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		if( m_bDragMode ){
 			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
-				nScrollRowNum = MoveCursorToPoint( xPos , yPos );
+				MoveCursorToPoint( xPos , yPos );
 			}
 		}
 		else{
@@ -867,7 +866,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
 	if( m_bBeginBoxSelect ){	/* 矩形範囲選択中 */
 		/* 座標指定によるカーソル移動 */
-		nScrollRowNum = MoveCursorToPoint( xPos , yPos );
+		MoveCursorToPoint( xPos , yPos );
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
@@ -885,7 +884,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				nNewY += nLineHeight;
 
 			// カーソルを移動
-			nScrollRowNum = MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) , nNewY );
+			MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) , nNewY );
 
 			// 2007.10.13 nasukoji	2.5クリックによる行単位のドラッグ
 			if( m_dwTripleClickCheck ){
@@ -918,12 +917,12 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 						);
 
 						// カーソルを次の物理行頭へ移動する
-						nScrollRowNum = MoveCursor( nCaretPosX, nCaretPosY, true );
+						MoveCursor( nCaretPosX, nCaretPosY, true );
 					}
 				}
 			}
 		}else{
-			nScrollRowNum = MoveCursorToPoint( xPos , yPos );
+			MoveCursorToPoint( xPos , yPos );
 		}
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
@@ -1016,18 +1015,18 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 */
 LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 {
-	WORD	fwKeys;
+//	WORD	fwKeys;
 	short	zDelta;
-	short	xPos;
-	short	yPos;
+//	short	xPos;
+//	short	yPos;
 	int		i;
 	int		nScrollCode;
 	int		nRollLineNum;
 
-	fwKeys = LOWORD(wParam);			// key flags
+//	fwKeys = LOWORD(wParam);			// key flags
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
-	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
-	yPos = (short) HIWORD(lParam);		// vertical position of pointer
+//	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
+//	yPos = (short) HIWORD(lParam);		// vertical position of pointer
 //	MYTRACE( _T("CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n"), fwKeys, zDelta, xPos, yPos );
 
 	if( 0 < zDelta ){

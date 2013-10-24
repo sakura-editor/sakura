@@ -56,8 +56,6 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 //	WORD		wID;
 //	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 //	int			nVal;
 //    LPDRAWITEMSTRUCT pDis;
 
@@ -73,9 +71,7 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 		return TRUE;
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 //		switch( idCtrl ){
 //		default:
 			switch( pNMHDR->code ){

@@ -323,14 +323,6 @@ void CEditView::DeleteData2(
 	int			nModifyLayoutLinesOld;
 	int			nModifyLayoutLinesNew;
 	int			nDeleteLayoutLines;
-	int			bLastLine;
-
-	/* 最後の行にカーソルがあるかどうか */
-	if( nCaretY == m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 ){
-		bLastLine = 1;
-	}else{
-		bLastLine = 0;
-	}
 
 	const CLayout* pcLayout;
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCaretY, &nLineLen, &pcLayout );
@@ -1267,7 +1259,6 @@ void CEditView::SmartIndent_CPP( char cChar )
 	int			nCPY;
 	COpe*		pcOpe = NULL;
 	int			nWork;
-	CDocLine*	pCDocLine = NULL;
 	int			nCharChars;
 	int			nSrcLen;
 	char		pszSrc[1024];
@@ -1308,7 +1299,6 @@ void CEditView::SmartIndent_CPP( char cChar )
 			sRangeA.m_ptTo.x = 0;
 			sRangeA.m_ptTo.y = m_ptCaretPos_PHY.y;
 		}else{
-			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_ptCaretPos_PHY.y );
 
 
 			//	nWorkに処理の基準桁位置を設定する

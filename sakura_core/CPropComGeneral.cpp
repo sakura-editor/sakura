@@ -300,7 +300,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 /* ダイアログデータの設定 General */
 void CPropGeneral::SetData( HWND hwndDlg )
 {
-	BOOL	bRet;
 
 	/* カーソルのタイプ 0=win 1=dos  */
 	if( 0 == m_Common.m_sGeneral.GetCaretType() ){
@@ -331,7 +330,7 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_EXITCONFIRM, m_Common.m_sGeneral.m_bExitConfirm );
 
 	/* キーリピート時のスクロール行数 */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, m_Common.m_sGeneral.m_nRepeatedScrollLineNum, FALSE );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, m_Common.m_sGeneral.m_nRepeatedScrollLineNum, FALSE );
 
 	/* キーリピート時のスクロールを滑らかにするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_sGeneral.m_nRepeatedScroll_Smooth );
@@ -369,10 +368,10 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_sWindow.m_bUseCompatibleBMP );
 
 	/* ファイルの履歴MAX */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_sGeneral.m_nMRUArrNum_MAX, FALSE );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_sGeneral.m_nMRUArrNum_MAX, FALSE );
 
 	/* フォルダの履歴MAX */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, FALSE );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, FALSE );
 
 	/* タスクトレイを使う */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_sGeneral.m_bUseTaskTray );

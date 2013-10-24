@@ -511,13 +511,11 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 {
-	bool	bret;
-
 	switch( LOWORD( wParam ) )
 	{
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bret = RefreshList();
+		RefreshList();
 		::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, m_szMsg );
 		return TRUE;
 		//break;

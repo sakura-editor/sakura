@@ -585,7 +585,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
-	int				nSelectedLine;
 	TV_INSERTSTRUCT	tvis;
 	const TCHAR*	pPos;
     TCHAR           szLabel[64+6];  // Jan. 07, 2001 genta クラス名エリアの拡大
@@ -814,7 +813,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
 				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
 				bSelected = TRUE;
-				nSelectedLine = i;
 				htiSelected = htiItem;
 			}else
 			if( i > 0 &&
@@ -822,7 +820,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
 				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
 				bSelected = TRUE;
-				nSelectedLine = i - 1;
 				htiSelected = htiItemOld;
 			}
 		}

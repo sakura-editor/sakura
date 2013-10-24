@@ -1881,8 +1881,6 @@ void CMemory::UnicodeToSJIS( void )
 {
 	char*			pBufUnicode;
 	int				nBufUnicodeLen;
-	unsigned char*	pBuf;
-	pBuf = (unsigned char*)m_pData;
 //	BOM‚Ìíœ‚Í‚±‚±‚Å‚Í‚µ‚È‚¢‚æ‚¤‚É•ÏX
 //	ŒÄ‚Ño‚µ‘¤‚Å‘Îˆ‚µ‚Ä‚­‚¾‚³‚¢ 2002/08/30 Moca
 		nBufUnicodeLen = CMemory::MemUnicodeToSJIS( &pBufUnicode, m_pData, m_nDataLen );

@@ -137,7 +137,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
 	static HWND			hwndCombo;
 	static HWND			hwndFuncList;
@@ -199,7 +198,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );

@@ -2737,7 +2737,6 @@ void CEditView::Command_CHAR( char cChar )
 	CMemory			cmemIndent;
 	int				nPos;
 	int				nCharChars;
-	int				nIdxTo;
 	int				nPosX;
 	COpe*			pcOpe = NULL;
 	char			szCurrent[10];
@@ -2782,8 +2781,8 @@ void CEditView::Command_CHAR( char cChar )
 					);
 
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = LineColumnToIndex( pcDocLine, m_ptCaretPos.x );
-					for( nPos = 0; nPos < /*nIdxTo*/nLineLen && nPos < nX; ){
+					LineColumnToIndex( pcDocLine, m_ptCaretPos.x );
+					for( nPos = 0; nPos < nLineLen && nPos < nX; ){
 						// 2005-09-02 D.S.Koba GetSizeOfChar
 						nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
 
@@ -5550,7 +5549,6 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 	int		nMatch;						//一致数
 	CDlgTagJumpList	cDlgTagJumpList;	//タグジャンプリスト
 	FILE	*fp;
-	bool	bNoTag = true;
 	int		nLoop;
 
 	//現在カーソル位置のキーを取得する。
@@ -5579,7 +5577,6 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 			fp = fopen( szTagFile, _T("r") );
 			if( fp )
 			{
-				bNoTag = false;
 				nMatch = 0;
 				while( fgets( szLineData, _countof( szLineData ), fp ) )
 				{
@@ -6152,13 +6149,11 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 {
 //From Here Feb. 7, 2001 JEPRO 追加
 	int		i;
-	BOOL	bwantopen_c;
 //To Here Feb. 7, 2001
 
 	/* 編集中ファイルの拡張子を調べる */
 	for( i = 0; i < file_extno; i++ ){
 		if( CheckEXT( m_pcEditDoc->GetFilePath(), file_ext[i] ) ){
-			bwantopen_c = TRUE;
 			goto open_c;
 		}
 	}
@@ -8196,10 +8191,8 @@ void CEditView::Command_PRINT_PREVIEW( void )
 /* 印刷のページレイアウトの設定 */
 void CEditView::Command_PRINT_PAGESETUP( void )
 {
-	BOOL		bRes;
-
 	/* 印刷ページ設定 */
-	bRes = m_pcEditWnd->OnPrintPageSetting();
+	m_pcEditWnd->OnPrintPageSetting();
 	return;
 }
 
