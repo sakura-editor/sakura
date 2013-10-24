@@ -143,7 +143,7 @@ public:
 public:
 	void PushMyFont(HFONT hFont)
 	{
-		SFONT sFont = { false, false, hFont };
+		SFONT sFont = { { false, false }, hFont };
 		PushMyFont(sFont);
 	}
 	void PushMyFont(const SFONT& sFont);

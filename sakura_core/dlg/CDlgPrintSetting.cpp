@@ -737,14 +737,14 @@ const struct {
 	int minval;
 	int maxval;
 } sDataRange[] = {
-	IDC_EDIT_FONTHEIGHT,7,	200,	//!< 1/10mm
-	IDC_EDIT_LINESPACE,	0,	150,	//!< %
-	IDC_EDIT_DANSUU,	1,	4,
-	IDC_EDIT_DANSPACE,	0,	30,		//!< mm
-	IDC_EDIT_MARGINTY,	0,	50,		//!< mm
-	IDC_EDIT_MARGINBY,	0,	50,		//!< mm
-	IDC_EDIT_MARGINLX,	0,	50,		//!< mm
-	IDC_EDIT_MARGINRX,	0,	50,		//!< mm
+	{ IDC_EDIT_FONTHEIGHT,	7,	200},	//!< 1/10mm
+	{ IDC_EDIT_LINESPACE,	0,	150},	//!< %
+	{ IDC_EDIT_DANSUU,		1,	4  },
+	{ IDC_EDIT_DANSPACE,	0,	30 },	//!< mm
+	{ IDC_EDIT_MARGINTY,	0,	50 },	//!< mm
+	{ IDC_EDIT_MARGINBY,	0,	50 },	//!< mm
+	{ IDC_EDIT_MARGINLX,	0,	50 },	//!< mm
+	{ IDC_EDIT_MARGINRX,	0,	50 },	//!< mm
 };
 
 /* スピンコントロールの処理 */

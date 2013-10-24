@@ -364,20 +364,20 @@ BOOL IsURL(
 	};
 	static const struct _url_table_t	url_table[] = {
 		/* アルファベット順 */
-		L"file://",		7,	false, /* 1 */
-		L"ftp://",		6,	false, /* 2 */
-		L"gopher://",	9,	false, /* 3 */
-		L"http://",		7,	false, /* 4 */
-		L"https://",	8,	false, /* 5 */
-		L"mailto:",		7,	true,  /* 6 */
-		L"news:",		5,	false, /* 7 */
-		L"nntp://",		7,	false, /* 8 */
-		L"prospero://",	11,	false, /* 9 */
-		L"telnet://",	9,	false, /* 10 */
-		L"tp://",		5,	false, /* 11 */	//2004.02.02
-		L"ttp://",		6,	false, /* 12 */	//2004.02.02
-		L"wais://",		7,	false, /* 13 */
-		L"{",			0,	false  /* 14 */  /* '{' is 'z'+1 : terminate */
+		{ L"file://",		7,	false }, /* 1 */
+		{ L"ftp://",		6,	false }, /* 2 */
+		{ L"gopher://",		9,	false }, /* 3 */
+		{ L"http://",		7,	false }, /* 4 */
+		{ L"https://",		8,	false }, /* 5 */
+		{ L"mailto:",		7,	true  }, /* 6 */
+		{ L"news:",			5,	false }, /* 7 */
+		{ L"nntp://",		7,	false }, /* 8 */
+		{ L"prospero://",	11,	false }, /* 9 */
+		{ L"telnet://",		9,	false }, /* 10 */
+		{ L"tp://",			5,	false }, /* 11 */	//2004.02.02
+		{ L"ttp://",		6,	false }, /* 12 */	//2004.02.02
+		{ L"wais://",		7,	false }, /* 13 */
+		{ L"{",				0,	false }  /* 14 */  /* '{' is 'z'+1 : terminate */
 	};
 
 /* テーブルの保守性を高めるための定義 */
