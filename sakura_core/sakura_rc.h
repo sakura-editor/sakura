@@ -624,7 +624,7 @@
 #define IDC_CHECK_PRIOR_CESU8           1558
 #define IDC_CHECK_DISP_SELCOUNT_BY_BYTE 1559
 #define IDC_EDIT_KINSOKUKUTO            1560
-#define IDC_CHECK_ACCELTBL_EACHWIN      1561
+//#define IDC_CHECK_ACCELTBL_EACHWIN      1561
 #define IDC_CHECK_MacroOnOpened         1562
 #define IDC_CHECK_MacroOnTypeChanged    1563
 #define IDC_CHECK_MacroOnSave           1564

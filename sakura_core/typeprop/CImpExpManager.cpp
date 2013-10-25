@@ -994,7 +994,6 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 	}
 	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrUsed;
-	m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = sKeyBind.m_bCreateAccelTblEachWin;
 	memcpy_raw( m_Common.m_sKeyBind.m_VKeyToKeyNameArr, sKeyBind.m_VKeyToKeyNameArr, sizeof_raw(sKeyBind.m_VKeyToKeyNameArr) );
 
 	return true;
