@@ -964,9 +964,6 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
-	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), sKeyBind.m_bCreateAccelTblEachWin );
-
 	if( cProfile.IsReadingMode() ){ 
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
 			bOldVer = true;

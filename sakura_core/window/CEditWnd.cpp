@@ -4600,13 +4600,15 @@ void CEditWnd::ClearMouseState( void )
 
 /*! ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 	@date 2009.08.15 Hidetaka Sakai, nasukoji
+	@date 2013.10.19 novice 共有メモリの代わりにWine実行判定処理を呼び出す
+
 	@note Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
-	      m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
+	      IsWine()によりプロセス毎にアクセラレータテーブルが作成されるようになる
 	      ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
 */
 void CEditWnd::CreateAccelTbl( void )
 {
-	if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){
+	if( IsWine() ){
 		m_hAccelWine = CKeyBind::CreateAccerelator(
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
