@@ -175,6 +175,7 @@ OBJS =\
 	$(OBJDIR)\COpe.obj \
 	$(OBJDIR)\COpeBlk.obj \
 	$(OBJDIR)\COpeBuf.obj \
+	$(OBJDIR)\COsVersionInfo.obj \
 	$(OBJDIR)\CPPA.obj \
 	$(OBJDIR)\CPPAMacroMgr.obj \
 	$(OBJDIR)\CPrint.obj \

@@ -57,7 +57,6 @@ static const DWORD p_helpids[] = {	//10700
 	IDC_LABEL_KEYKIND,				-1,
 	IDC_LABEL_FUNCtoKEY,			-1,
 	IDC_LABEL_KEYtoFUNC,			-1,
-	IDC_CHECK_ACCELTBL_EACHWIN,		HIDC_CHECK_ACCELTBL_EACHWIN,	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -450,9 +449,6 @@ void CPropKeybind::SetData( HWND hwndDlg )
 		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 	}
 
-	// 2009.08.15 nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ACCELTBL_EACHWIN, m_Common.m_sKeyBind.m_bCreateAccelTblEachWin );
-
 	return;
 }
 
@@ -463,8 +459,6 @@ int CPropKeybind::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_KEYBOARD;
-	// 2009.08.15 nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ACCELTBL_EACHWIN );
 
 	return TRUE;
 }

@@ -35,13 +35,6 @@
 class CProcess;
 
 
-// COsVersionInfoの内部static変数の定義
-//	初期化はIsValidVersion()で行う
-//	_os/COsVersionInfo.cppを作るべきか?
-BOOL	 		COsVersionInfo::m_bSuccess;
-OSVERSIONINFO	COsVersionInfo::m_cOsVersionInfo;
-
-
 /*!
 	@brief プロセスクラスを生成する
 	

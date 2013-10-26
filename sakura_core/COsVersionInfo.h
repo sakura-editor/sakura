@@ -55,11 +55,7 @@ class COsVersionInfo {
 public:
 	// 初期化を行う(引数はダミー)
 	// 呼出は基本1回のみ
-	COsVersionInfo( bool pbStart ) {
-		memset( &m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
-		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
-		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
-	}
+	COsVersionInfo( bool pbStart );
 
 	// 通常のコンストラクタ
 	// 何もしない
@@ -175,10 +171,22 @@ public:
 		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
+
+	/*! Wine上で実行されているかを調べる
+
+		@retval true run in Wine
+
+		@date 2013.10.19 novice
+	*/
+	bool _IsWine(){
+		return m_bWine;
+	}
+
 protected:
 	// Classはstatic(全クラス共有)変数以外持たない
 	static BOOL m_bSuccess;
 	static OSVERSIONINFO m_cOsVersionInfo;
+	static bool m_bWine;
 };
 
 
@@ -245,6 +253,10 @@ inline bool IsWinMe() {
 #else
 	return COsVersionInfo()._IsWinMe();
 #endif
+}
+
+inline bool IsWine() {
+	return COsVersionInfo()._IsWine();
 }
 
 #endif

@@ -597,7 +597,7 @@
 #define IDC_COMBO_WHEEL_PAGESCROLL      1556
 #define IDC_COMBO_DEFAULT_CODETYPE      1557
 #define IDC_EDIT_KINSOKUKUTO            1560
-#define IDC_CHECK_ACCELTBL_EACHWIN      1561
+//#define IDC_CHECK_ACCELTBL_EACHWIN      1561
 #define IDC_CHECK_MacroOnOpened         1562
 #define IDC_CHECK_MacroOnTypeChanged    1563
 #define IDC_CHECK_MacroOnSave           1564

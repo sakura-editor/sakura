@@ -313,10 +313,13 @@ struct ARRHEAD {
 
 	Version 112:
 	Backup Removable Media 対応
+
+	Version 113:
+	m_bCreateAccelTblEachWin削除 2013.10.19 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 112;
+const unsigned int uShareDataVersion = 113;
 
 /*
 ||	Singleton風
@@ -792,8 +795,6 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 		m_pShareData->m_Common.m_sWindow.m_bMenuWChar = FALSE;		/* メニューの字化け対策を行う(Win2K以降のみ) */
-
-		m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */

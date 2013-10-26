@@ -165,6 +165,7 @@ OBJS= \
 	$(OBJDIR)/COpe.o \
 	$(OBJDIR)/COpeBlk.o \
 	$(OBJDIR)/COpeBuf.o \
+	$(OBJDIR)/COsVersionInfo.o \
 	$(OBJDIR)/CPPA.o \
 	$(OBJDIR)/CPPAMacroMgr.o \
 	$(OBJDIR)/CPrint.o \
@@ -418,6 +419,8 @@ $(OBJDIR)/COpe.o: $(SRCDIR)/COpe.cpp
 $(OBJDIR)/COpeBlk.o: $(SRCDIR)/COpeBlk.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/COpeBuf.o: $(SRCDIR)/COpeBuf.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/COsVersionInfo.o: $(SRCDIR)/COsVersionInfo.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CPPA.o: $(SRCDIR)/CPPA.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

@@ -780,8 +780,6 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAlertIfLargeFile"			, common.m_sFile.m_bAlertIfLargeFile ); // 開こうとしたファイルが大きい場合に警告する
 	cProfile.IOProfileData( pszSecName, "nAlertFileSize"   			, common.m_sFile.m_nAlertFileSize );    // 警告を開始するファイルサイズ(MB単位)
 
-	cProfile.IOProfileData( pszSecName, "bCreateAccelTblEachWin"	, common.m_sKeyBind.m_bCreateAccelTblEachWin);	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
-	
 	/* 「開く」ダイアログのサイズと位置 */
 	const char* pszKeyName = "rcOpenDialog";
 	const char* pszForm = "%d,%d,%d,%d";

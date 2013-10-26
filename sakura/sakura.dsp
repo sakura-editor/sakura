@@ -449,6 +449,10 @@ SOURCE=..\sakura_core\COpeBuf.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\COsVersionInfo.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPPA.cpp
 # End Source File
 # Begin Source File
@@ -1121,6 +1125,10 @@ SOURCE=..\sakura_core\OleTypes.h
 # Begin Source File
 
 SOURCE=..\sakura_core\os.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\RegKey.h
 # End Source File
 # Begin Source File
 

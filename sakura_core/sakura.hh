@@ -470,7 +470,7 @@
 #define HIDC_LIST_FUNC_KEYBIND					10750 //機能一覧
 #define HIDC_LIST_KEY							10751 //キー一覧
 #define HIDC_LIST_ASSIGNEDKEYS					10752 //機能に割り当てられているキー
-#define HIDC_CHECK_ACCELTBL_EACHWIN				10760 //ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// nasukoji 2009.08.11
+//#define HIDC_CHECK_ACCELTBL_EACHWIN				10760 //ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// nasukoji 2009.08.11
 #define HIDC_BUTTON_ADDSET						10800 //キーワードセット追加
 #define HIDC_BUTTON_DELSET						10801 //キーワードセット削除
 #define HIDC_BUTTON_ADDKEYWORD					10802 //キーワード追加
