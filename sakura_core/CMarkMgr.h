@@ -62,9 +62,8 @@ public:
 		//	constructor
 		CMark( const CLogicPoint& pt ) : m_ptLogic(pt) { }
 
-		int GetLineNo(void) const { return m_ptLogic.y; }
-		int GetPos(void) const { return m_ptLogic.x; }
-		void SetPosition(const CLogicPoint& pt) { m_ptLogic=pt; }
+		CLogicPoint GetPosition() const { return m_ptLogic; }
+		void SetPosition(const CLogicPoint& pt) { m_ptLogic = pt; }
 
 		bool IsValid(void) const { return true; }
 
@@ -73,10 +72,6 @@ public:
 
 	private:
 		CLogicPoint m_ptLogic;
-		/*
-		int	m_line;		//!<	該当行番号: 行番号は論理行で数える
-		int m_pos;		//!<	該当桁位置
-		*/
 	};
 
 	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
