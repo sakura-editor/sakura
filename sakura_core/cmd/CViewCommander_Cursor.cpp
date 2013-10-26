@@ -861,7 +861,7 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
-			CLogicPoint(m_pCommanderView->m_cHistory->GetCurrent().GetPos(), m_pCommanderView->m_cHistory->GetCurrent().GetLineNo()),
+			m_pCommanderView->m_cHistory->GetCurrent().GetPosition(),
 			&pt
 		);
 		//	2006.07.09 genta 選択を考慮
@@ -880,7 +880,7 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
-			CLogicPoint(m_pCommanderView->m_cHistory->GetCurrent().GetPos(), m_pCommanderView->m_cHistory->GetCurrent().GetLineNo()),
+			m_pCommanderView->m_cHistory->GetCurrent().GetPosition(),
 			&pt
 		);
 		//	2006.07.09 genta 選択を考慮
