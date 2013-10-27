@@ -35,10 +35,10 @@
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_hFontSearchBox(NULL)
-, m_hwndReBar(NULL)
 , m_hwndToolBar(NULL)
+, m_hwndReBar(NULL)
 , m_hwndSearchBox(NULL)
+, m_hFontSearchBox(NULL)
 , m_pcIcons(NULL)
 {
 }

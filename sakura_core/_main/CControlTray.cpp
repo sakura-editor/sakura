@@ -177,12 +177,12 @@ static LRESULT CALLBACK CControlTrayWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
 //	Apr. 24, 2001 genta
-: m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
-, m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
+: m_pcPropertyManager(NULL)
 , m_hInstance( NULL )
 , m_hWnd( NULL )
+, m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_nCurSearchKeySequence(-1)
-, m_pcPropertyManager(NULL)
+, m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();

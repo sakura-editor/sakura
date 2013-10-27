@@ -806,8 +806,8 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 CTabWnd::CTabWnd()
 : CWnd(_T("::CTabWnd"))
-, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_eDragState( DRAG_NONE )
+, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_bHovering( FALSE )	//	2006.02.01 ryoji
 , m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
