@@ -139,10 +139,10 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							|| ( SHAREMODE_NOT_EXCLUSIVE != m_pcEditDoc->m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_pcEditDoc->m_hLockedFile )	// 上書き禁止
 						)? DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
-					m_pcEditDoc->SetDragSourceView( this );
+					m_pcEditWnd->SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					m_pcEditDoc->SetDragSourceView( NULL );
+					m_pcEditWnd->SetDragSourceView( NULL );
 //					MYTRACE( _T("dwEffects=%d\n"), dwEffects );
 					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditWnd->SetActivePane( m_nMyIndex );
@@ -1420,7 +1420,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
-	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
 
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
@@ -1495,7 +1495,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
 	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
 	bBoxData = m_bDragBoxData;
 
@@ -1896,7 +1896,7 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 
-	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
 
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
@@ -1919,7 +1919,7 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 
 bool CEditView::IsDragSource( void )
 {
-	return ( this == m_pcEditDoc->GetDragSourceView() );
+	return ( this == m_pcEditWnd->GetDragSourceView() );
 }
 
 /*[EOF]*/

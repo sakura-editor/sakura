@@ -129,13 +129,14 @@ CEditWnd::CEditWnd()
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 , m_pszLastCaption( NULL )
 , m_hwndSearchBox( NULL )
-, m_fontSearchBox( NULL )
+, m_hFontSearchBox( NULL )
 , m_nCurrentFocus( 0 )
 , m_bIsActiveApp( false )
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nActivePaneIndex( 0 )
 , m_nEditViewCount( 1 )
 , m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
+, m_pcDragSourceView( NULL )
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
@@ -990,10 +991,10 @@ void CEditWnd::CreateToolBar( void )
 							lf.lfQuality		= DEFAULT_QUALITY;
 							lf.lfPitchAndFamily	= FF_MODERN | DEFAULT_PITCH;
 							_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
-							m_fontSearchBox = ::CreateFontIndirect( &lf );
-							if( m_fontSearchBox )
+							m_hFontSearchBox = ::CreateFontIndirect( &lf );
+							if( m_hFontSearchBox )
 							{
-								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
+								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_hFontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
 							//入力長制限
@@ -1059,10 +1060,10 @@ void CEditWnd::DestroyToolBar( void )
 	{
 		if( m_hwndSearchBox )
 		{
-			if( m_fontSearchBox )
+			if( m_hFontSearchBox )
 			{
-				::DeleteObject( m_fontSearchBox );
-				m_fontSearchBox = NULL;
+				::DeleteObject( m_hFontSearchBox );
+				m_hFontSearchBox = NULL;
 			}
 
 			::DestroyWindow( m_hwndSearchBox );

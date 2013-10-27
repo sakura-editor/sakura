@@ -208,6 +208,10 @@ public:
 	CEditView& GetActiveView() { return *m_pcEditView; }
 	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
 	int	GetAllViewCount() const { return m_nEditViewCount; }
+
+	CEditView* GetDragSourceView() const { return m_pcDragSourceView; }
+	void SetDragSourceView( CEditView* pcDragSourceView ) { m_pcDragSourceView = pcDragSourceView; }
+
 	enum EIconClickStatus{
 		icNone,
 		icDown,
@@ -259,6 +263,7 @@ public:
 	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
+	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
 	CViewFont*		m_pcViewFont;		//!< フォント
 
 	CImageListMgr*	m_pcIcons;
@@ -267,7 +272,7 @@ public:
 	CEditView*		m_pcEditView;				//!< 有効なビュー
 	int				m_nActivePaneIndex;			//!< 有効なビューのindex
 	int				m_nEditViewCount;			//!< 有効なビューの数
-	int				m_nEditViewMaxCount;		//!< ビューの最大数=4
+	const int		m_nEditViewMaxCount;		//!< ビューの最大数=4
 
 	/*
 	|| 実装ヘルパ系
@@ -280,7 +285,7 @@ private:
 	EIconClickStatus	m_IconClicked;
 
 	HWND	m_hwndSearchBox;
-	HFONT	m_fontSearchBox;
+	HFONT	m_hFontSearchBox;
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
 	bool	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji

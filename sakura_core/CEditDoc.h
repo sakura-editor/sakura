@@ -120,10 +120,6 @@ public:
 	void	CheckAutoSave(void);
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
 
-	//	Aug. 31, 2000 genta
-	CEditView* GetDragSourceView() const { return m_pcDragSourceView; }
-	void SetDragSourceView( CEditView* pcDragSourceView ) { m_pcDragSourceView = pcDragSourceView; }
-
 	//	Nov. 20, 2000 genta
 	void SetImeMode(int mode);	//	IME状態の設定
 
@@ -264,8 +260,6 @@ public:
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
 // To Here 2001.12.03 hor
 
-	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
-//	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
 	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */
 	CDlgReplace		m_cDlgReplace;				/* 「置換」ダイアログ */
 	CDlgJump		m_cDlgJump;					/* 「指定行へジャンプ」ダイアログ */
