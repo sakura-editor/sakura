@@ -8846,9 +8846,9 @@ void CEditView::Command_JUMPHIST_PREV( void )
 		if( ! m_cHistory->PrevValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("PrevValid"), MB_OK );
 		}
+		CLogicPoint ptLogic = m_cHistory->GetCurrent().GetPosition();
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-			m_cHistory->GetCurrent().GetPos(),
-			m_cHistory->GetCurrent().GetLine(),
+			ptLogic.x, ptLogic.y,
 			&x, &y
 		);
 		//	2006.07.09 genta 選択を考慮
@@ -8864,9 +8864,9 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 		if( ! m_cHistory->NextValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("NextValid"), MB_OK );
 		}
+		CLogicPoint ptLogic = m_cHistory->GetCurrent().GetPosition();
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-			m_cHistory->GetCurrent().GetPos(),
-			m_cHistory->GetCurrent().GetLine(),
+			ptLogic.x, ptLogic.y,
 			&x, &y
 		);
 		//	2006.07.09 genta 選択を考慮

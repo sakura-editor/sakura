@@ -34,7 +34,6 @@
 
 #pragma warning(disable: 4786)
 #include <vector>
-#include <string>
 
 using namespace std;
 
@@ -63,21 +62,18 @@ public:
 	class CMark {
 	public:
 		//	constructor
-		CMark( int x, int y ) : m_pos(x), m_line(y) { }
+		CMark( const CLogicPoint& pt ) : m_ptLogic(pt) { }
 
-		int GetLine(void) const { return m_line; }
-		int GetPos(void) const { return m_pos; }
-		void SetPosition(int x, int y) { m_pos = x; m_line = y; }
-
+		CLogicPoint GetPosition() const { return m_ptLogic; }
+		void SetPosition(const CLogicPoint& pt) { m_ptLogic = pt; }
 
 		bool IsValid(void) const { return true; }
 
-		bool operator==(CMark &r) const { return m_line == r.m_line; }
-		bool operator!=(CMark &r) const { return m_line != r.m_line; }
+		bool operator==(CMark &r) const { return m_ptLogic.y == r.m_ptLogic.y; }
+		bool operator!=(CMark &r) const { return m_ptLogic.y != r.m_ptLogic.y; }
 
 	private:
-		int	m_line;		//!<	該当行番号: 行番号は論理行で数える
-		int m_pos;		//!<	該当桁位置
+		CLogicPoint m_ptLogic;
 	};
 
 	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class

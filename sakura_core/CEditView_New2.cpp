@@ -1229,11 +1229,11 @@ bool CEditView::IsBracket( const char *pLine, int x, int size )
 //!	現在のカーソル行位置を履歴に登録する
 void CEditView::AddCurrentLineToHistory( void )
 {
-	int PosX, PosY;	//	物理位置（改行単位の計算）
+	CLogicPoint ptPos;
 
-	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_ptCaretPos.x, m_ptCaretPos.y, &PosX, &PosY );
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_ptCaretPos.x, m_ptCaretPos.y, &ptPos.x, &ptPos.y );
 
-	CMarkMgr::CMark m( PosX, PosY );
+	CMarkMgr::CMark m( ptPos );
 	m_cHistory->Add( m );
 
 }
