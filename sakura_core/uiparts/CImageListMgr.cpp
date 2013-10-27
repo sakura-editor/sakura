@@ -31,8 +31,8 @@ const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 /*! コンストラクタ */
 CImageListMgr::CImageListMgr()
 	: m_cx( 16 ), m_cy( 16 )
-	, m_hIconBitmap( NULL )
 	, m_cTrans( RGB( 0, 0, 0 ))
+	, m_hIconBitmap( NULL )
 	, m_nIconCount( MAX_TOOLBAR_ICON_COUNT )
 {
 }

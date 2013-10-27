@@ -139,16 +139,16 @@ VOID CALLBACK EditViewTimerProc(
 CEditView::CEditView(CEditWnd* pcEditWnd)
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_pcEditWnd(pcEditWnd)
+, m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cParser(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cCommander(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cViewSelect(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_AT_ImmSetReconvertString(NULL)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_nWheelDelta(0)
 , m_eWheelScroll(F_0)
-, m_nAutoScrollMode(0)
 , m_nMousePouse(0)
+, m_nAutoScrollMode(0)
+, m_AT_ImmSetReconvertString(NULL)
 {
 }
 

@@ -70,12 +70,12 @@ struct EditInfo {
 	// Mar. 7, 2002 genta
 	// Constructor ämé¿Ç…èâä˙âªÇ∑ÇÈÇΩÇﬂ
 	EditInfo()
-	: m_nViewTopLine( -1 )
-	, m_nViewLeftCol( -1 )
+	: m_nCharCode( CODE_AUTODETECT )
 	, m_nType( -1 )
+	, m_nViewTopLine( -1 )
+	, m_nViewLeftCol( -1 )
 	, m_ptCursor(CLogicInt(-1), CLogicInt(-1))
 	, m_bIsModified( false )
-	, m_nCharCode( CODE_AUTODETECT )
 	, m_bIsGrep( false )
 	, m_bIsDebug( false )
 	, m_nWindowSizeX( -1 )

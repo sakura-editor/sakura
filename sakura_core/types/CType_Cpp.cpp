@@ -147,7 +147,7 @@ public:
 	CCppPreprocessMng(void) :
 		// 2007.12.15 genta : m_bitpatternを0にしないと，
 		// いきなり#elseが現れたときにパターンがおかしくなる
-		m_stackptr( 0 ), m_bitpattern( 0 ), m_enablebuf( 0 ), m_maxnestlevel( 32 ), m_ismultiline( false )
+		m_ismultiline( false ), m_maxnestlevel( 32 ), m_stackptr( 0 ), m_bitpattern( 0 ), m_enablebuf( 0 )
 	{}
 
 	CLogicInt ScanLine(const wchar_t*, CLogicInt);
