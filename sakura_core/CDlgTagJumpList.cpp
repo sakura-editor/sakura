@@ -103,14 +103,14 @@ static const TCHAR *p_extentions[] = {
 
 
 CDlgTagJumpList::CDlgTagJumpList()
-	: m_cList( 100 ),
-	  m_nIndex( -1 ),
-	  m_nLoop( -1 ),
+	: m_nIndex( -1 ),
 	  m_pszFileName( NULL ),
 	  m_pszKeyword( NULL ),
+	  m_nLoop( -1 ),
+	  m_cList( 100 ),
+	  m_nTimerId( 0 ),
 	  m_bTagJumpICase( FALSE ),
-	  m_bTagJumpAnyWhere( FALSE ),
-	  m_nTimerId( 0 )
+	  m_bTagJumpAnyWhere( FALSE )
 {
 }
 

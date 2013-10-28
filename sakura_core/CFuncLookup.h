@@ -53,7 +53,7 @@ public:
 	// 2007.11.02 ryoji à¯êîïœçXÅiCSMacroMgr->MacroRecÅj
 //	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
 //		: m_pMacroRec( pMacroRec ), m_hInstance( hInst ), m_pCommon( pCom ) {}
-	CFuncLookup() : m_pMacroRec( NULL ), m_hInstance( NULL ) {}
+	CFuncLookup() : m_hInstance( NULL ), m_pMacroRec( NULL ) {}
 
 	void Init( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom ){
 		m_pMacroRec = pMacroRec;

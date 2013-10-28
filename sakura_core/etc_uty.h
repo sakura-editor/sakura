@@ -262,21 +262,7 @@ int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//バージョン番号の比
 
 int getCtrlKeyState();
 
-/*! 相対パスか判定する
-	@author Moca
-	@date 2003.06.23
-*/
-inline bool _IS_REL_PATH(const char* path)
-{
-	bool ret = true;
-	if( ( 'A' <= path[0] && path[0] <= 'Z' || 'a' <= path[0] && path[0] <= 'z' )
-		&& path[1] == ':' && path[2] == '\\'
-		|| path[0] == '\\' && path[1] == '\\'
-		 ){
-		ret = false;
-	}
-	return ret;
-}
+bool _IS_REL_PATH(const TCHAR* path);
 
 // 2005.11.26 aroka
 bool IsLocalDrive( const TCHAR* pszDrive );

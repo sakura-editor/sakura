@@ -201,7 +201,7 @@ private:
 	ITypeInfo *m_TypeInfo;
 	ULONG m_RefCount;
 public:
-	CWSHSite(CWSHClient *AClient): m_RefCount(0), m_Client(AClient)
+	CWSHSite(CWSHClient *AClient): m_Client(AClient), m_RefCount(0)
 	{
 	}
 
@@ -391,7 +391,7 @@ HRESULT STDMETHODCALLTYPE CInterfaceObjectTypeInfo::GetNames(
 
 //スクリプトに渡されるオブジェクト
 CInterfaceObject::CInterfaceObject(CWSHClient *AOwner): ImplementsIUnknown<IDispatch>(), 
-				m_Methods(), m_TypeInfo(NULL), m_Owner(AOwner)
+				m_TypeInfo(NULL), m_Methods(), m_Owner(AOwner)
 { 
 };
 
@@ -509,7 +509,7 @@ void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, 
 }
 
 CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
-				m_Engine(NULL), m_Data(AData), m_OnError(AErrorHandler), m_Valid(false)
+				m_Engine(NULL), m_OnError(AErrorHandler), m_Data(AData), m_Valid(false)
 { 
 	m_InterfaceObject = new CInterfaceObject(this);
 	m_InterfaceObject->AddRef();

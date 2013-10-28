@@ -311,6 +311,22 @@ BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
 	}
 }
 
+/*! 相対パスか判定する
+	@author Moca
+	@date 2003.06.23
+*/
+bool _IS_REL_PATH(const TCHAR* path)
+{
+	bool ret = true;
+	if( ( _T('A') <= path[0] && path[0] <= _T('Z') || _T('a') <= path[0] && path[0] <= _T('z') )
+		&& path[1] == _T(':') && path[2] == _T('\\')
+		|| path[0] == _T('\\') && path[1] == _T('\\')
+		 ){
+		ret = false;
+	}
+	return ret;
+}
+
 /*!
 	空白を含むファイル名を考慮したトークンの分割
 	
@@ -545,20 +561,20 @@ BOOL IsURL(
 	};
 	static const struct _url_table_t	url_table[] = {
 		/* アルファベット順 */
-		"file://",		7,	false, /* 1 */
-		"ftp://",		6,	false, /* 2 */
-		"gopher://",	9,	false, /* 3 */
-		"http://",		7,	false, /* 4 */
-		"https://",		8,	false, /* 5 */
-		"mailto:",		7,	true,  /* 6 */
-		"news:",		5,	false, /* 7 */
-		"nntp://",		7,	false, /* 8 */
-		"prospero://",	11,	false, /* 9 */
-		"telnet://",	9,	false, /* 10 */
-		"tp://",		5,	false, /* 11 */	//2004.02.02
-		"ttp://",		6,	false, /* 12 */	//2004.02.02
-		"wais://",		7,	false, /* 13 */
-		"{",			0,	false  /* 14 */  /* '{' is 'z'+1 : terminate */
+		{ "file://",	7,	false }, /* 1 */
+		{ "ftp://",		6,	false }, /* 2 */
+		{ "gopher://",	9,	false }, /* 3 */
+		{ "http://",	7,	false }, /* 4 */
+		{ "https://",	8,	false }, /* 5 */
+		{ "mailto:",	7,	true  }, /* 6 */
+		{ "news:",		5,	false }, /* 7 */
+		{ "nntp://",	7,	false }, /* 8 */
+		{ "prospero://",11,	false }, /* 9 */
+		{ "telnet://",	9,	false }, /* 10 */
+		{ "tp://",		5,	false }, /* 11 */	//2004.02.02
+		{ "ttp://",		6,	false }, /* 12 */	//2004.02.02
+		{ "wais://",	7,	false }, /* 13 */
+		{ "{",			0,	false }  /* 14 */  /* '{' is 'z'+1 : terminate */
 	};
 
 /* テーブルの保守性を高めるための定義 */

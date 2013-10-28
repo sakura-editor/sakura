@@ -118,28 +118,28 @@ LRESULT CALLBACK CEditWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
 : m_hWnd( NULL )
-, m_bDragMode( false )
 , m_hwndParent( NULL )
 , m_hwndReBar( NULL )	// 2006.06.17 ryoji
 , m_hwndToolBar( NULL )
 , m_hwndStatusBar( NULL )
 , m_hwndProgressBar( NULL )
-, m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
-, m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-, m_pszLastCaption( NULL )
-, m_hwndSearchBox( NULL )
-, m_hFontSearchBox( NULL )
-, m_nCurrentFocus( 0 )
-, m_bIsActiveApp( false )
-, m_IconClicked(icNone) //by 鬼(2)
+, m_pcDragSourceView( NULL )
 , m_nActivePaneIndex( 0 )
 , m_nEditViewCount( 1 )
 , m_nEditViewMaxCount( _countof(m_pcEditViewArr) )	// 今のところ最大値は固定
-, m_pcDragSourceView( NULL )
+, m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
+, m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
+, m_hwndSearchBox( NULL )
+, m_hFontSearchBox( NULL )
+, m_bIsActiveApp( false )
+, m_pszLastCaption( NULL )
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
+, m_nCurrentFocus( 0 )
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
+, m_bDragMode( false )
+, m_IconClicked(icNone) //by 鬼(2)
 {
 }
 
@@ -213,7 +213,7 @@ void CEditWnd::UpdateCaption()
 void CEditWnd::_GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
 	/* ウィンドウサイズ継承 */
-	
+
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_sWindow.m_nWinSizeCX;
@@ -234,7 +234,7 @@ void CEditWnd::_GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int&
 	}
 
 	/* ウィンドウ位置指定 */
-	
+
 	nWinOX = CW_USEDEFAULT;
 	nWinOY = 0;
 	// ウィンドウ位置固定

@@ -39,10 +39,10 @@ class CMemoryIterator
 	const int m_nTabSpace;
 public:
 	CMemoryIterator( const T* pcT, int nTabSpace )
-		: m_pLine( pcT ? pcT->GetPtr() : NULL ),
+		: m_nIndent( pcT ? pcT->GetIndent() : 0 ),
+		  m_pLine( pcT ? pcT->GetPtr() : NULL ),
 		  m_nLineLen( pcT ? pcT->GetLength() : 0 ),
-		  m_nTabSpace( nTabSpace ),
-		  m_nIndent( pcT ? pcT->GetIndent() : 0 )
+		  m_nTabSpace( nTabSpace )
 	{
 		first();
 	}

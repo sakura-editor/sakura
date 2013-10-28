@@ -153,6 +153,7 @@ public:
 	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
+	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }	// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
 	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
 	void ClearMouseState( void );		// 2009.01.12 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
 	//! 自アプリがアクティブかどうか	// 2007.03.08 ryoji
@@ -239,6 +240,11 @@ public:
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 
+	void	ProcSearchBox( MSG* );	//検索(ボックス)
+
+	//	Jul. 21, 2003 genta ToolBarのOwner Draw
+	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
+
 	/*
 	|| メンバ変数
 	*/
@@ -255,7 +261,6 @@ public:
 	CFuncKeyWnd		m_CFuncKeyWnd;
 	CTabWnd			m_cTabWnd;		//タブウインドウ	//@@@ 2003.05.31 MIK
 	CMenuDrawer		m_CMenuDrawer;
-	int				m_nWinSizeType;	/* サイズ変更のタイプ */
 	bool			m_bDragMode;
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
@@ -274,43 +279,30 @@ public:
 	int				m_nEditViewCount;			//!< 有効なビューの数
 	const int		m_nEditViewMaxCount;		//!< ビューの最大数=4
 
-	/*
-	|| 実装ヘルパ系
-	*/
 private:
 	UINT			m_uMSIMEReconvertMsg;
 	UINT			m_uATOKReconvertMsg;
 
-
-	EIconClickStatus	m_IconClicked;
-
 	HWND	m_hwndSearchBox;
 	HFONT	m_hFontSearchBox;
-	void	ProcSearchBox( MSG* );	//検索(ボックス)
-	int		m_nCurrentFocus;
-	bool	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
-	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
+	bool	m_bIsActiveApp;	//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	LPTSTR	m_pszLastCaption;
+	LPTSTR	m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
+	int 	m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
+	int		m_nCurrentFocus;	//!< 現在のフォーカス情報
+	int		m_nWinSizeType;	//!< サイズ変更のタイプ
 	BOOL	m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
 	BOOL	m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
 	HACCEL	m_hAccelWine;		//!< ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
 	HACCEL	m_hAccel;			//!< アクセラレータテーブル(共有 or ウィンドウ毎)
 
-	//	Jul. 21, 2003 genta ToolBarのOwner Draw
-	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
+	HFONT		m_hFontCaretPosInfo;	//!< キャレットの行桁位置表示用フォント
+	int			m_nCaretPosInfoCharWidth;	//!< キャレットの行桁位置表示用フォントの幅
+	int			m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
+	int			m_pnCaretPosInfoDx[64];	// 文字列描画用文字幅配列
 
-	//	Dec. 4, 2002 genta
-	//	メニューバーへのメッセージ表示機能をCEditWndより移管
-	HFONT		m_hFontCaretPosInfo;	/*!< キャレットの行桁位置表示用フォント */
-	int			m_nCaretPosInfoCharWidth;	/*!< キャレットの行桁位置表示用フォントの幅 */
-	int			m_nCaretPosInfoCharHeight;	/*!< キャレットの行桁位置表示用フォントの高さ */
-	int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
-
-	LPTSTR		m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
-	LPTSTR		m_pszLastCaption;
-	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
-
-public:
-	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }	// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
+	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
+	EIconClickStatus	m_IconClicked;
 
 };
 

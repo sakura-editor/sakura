@@ -138,8 +138,8 @@ VOID CALLBACK EditViewTimerProc(
 CEditView::CEditView( CEditWnd* pcEditWnd )
 : m_pcEditWnd( pcEditWnd )
 , m_cHistory( new CAutoMarkMgr )
-, m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
+, m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 {
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
 }

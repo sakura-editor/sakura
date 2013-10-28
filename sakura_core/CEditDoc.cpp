@@ -68,21 +68,21 @@
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
 CEditDoc::CEditDoc()
-: m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
+: m_nSettingType( 0 )	// Sep. 11, 2002 genta
+, m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
+, m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
+, m_bInsMode( true )	// Oct. 2, 2005 genta
+, m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
 , m_bReadOnly( false )			/* 読み取り専用モード */
 , m_bDebugMode( false )			/* デバッグモニタモード */
 , m_bGrepMode( false )			/* Grepモードか */
+, m_hInstance( NULL )
 , m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
 , m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )	/* ファイルの排他制御モード */
 , m_hLockedFile( INVALID_HANDLE_VALUE )	/* ロックしているファイルのハンドル */
-, m_hInstance( NULL )
 , m_eWatchUpdate( CEditDoc::WU_QUERY )
-, m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
-, m_nSettingType( 0 )	// Sep. 11, 2002 genta
-, m_bInsMode( true )	// Oct. 2, 2005 genta
-, m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 

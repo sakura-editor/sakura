@@ -142,12 +142,12 @@ struct EditInfo {
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
 	EditInfo()
-	: m_nViewTopLine( -1 )
-	, m_nViewLeftCol( -1 )
+	: m_nCharCode( CODE_AUTODETECT )
 	, m_nType( -1 )
+	, m_nViewTopLine( -1 )
+	, m_nViewLeftCol( -1 )
 	, m_ptCursor( -1, -1 )
 	, m_bIsModified( false )
-	, m_nCharCode( CODE_AUTODETECT )
 	, m_bIsGrep( false )
 	, m_bIsDebug( false )
 	, m_nWindowSizeX( -1 )
@@ -204,10 +204,10 @@ struct ColorInfo {
 
 //! 色設定(保存用)
 struct ColorInfoIni {
-	const char*	m_pszName;			//!< 色名
-	bool		m_bDisp;			//!< 色分け/表示 をする
-	SFontAttr	m_sFontAttr;		//!< フォント属性
-	SColorAttr	m_sColorAttr;		//!< 色属性
+	const TCHAR*	m_pszName;			//!< 色名
+	bool			m_bDisp;			//!< 色分け/表示 をする
+	SFontAttr		m_sFontAttr;		//!< フォント属性
+	SColorAttr		m_sColorAttr;		//!< 色属性
 };
 
 //@@@ 2001.11.17 add start MIK

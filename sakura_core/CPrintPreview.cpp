@@ -50,15 +50,15 @@ CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンタ情報 2003.05.02 かろと
 	コントロールも作成する。
 */
 CPrintPreview::CPrintPreview(CEditWnd* pParentWnd ) :
-	m_nPreview_Zoom( 100 ),			/* 印刷プレビュー倍率 */
-	m_nPreviewVScrollPos( 0 ),
-	m_nPreviewHScrollPos( 0 ),
-	m_nCurPageNum( 0 ),				/* 現在のページ */
 	m_pParentWnd( pParentWnd ),
 	m_hdcCompatDC( NULL ),			// 再描画用コンパチブルDC
 	m_hbmpCompatBMP( NULL ),		// 再描画用メモリBMP
 	m_hbmpCompatBMPOld( NULL ),		// 再描画用メモリBMP(OLD)
-	m_nbmpCompatScale( COMPAT_BMP_BASE )
+	m_nbmpCompatScale( COMPAT_BMP_BASE ),
+	m_nPreviewVScrollPos( 0 ),
+	m_nPreviewHScrollPos( 0 ),
+	m_nPreview_Zoom( 100 ),			/* 印刷プレビュー倍率 */
+	m_nCurPageNum( 0 )				/* 現在のページ */
 {
 	/* 印刷用のレイアウト情報の作成 */
 	m_pLayoutMgr_Print = new CLayoutMgr;
