@@ -49,6 +49,16 @@ COsVersionInfo::COsVersionInfo( bool pbStart )
 	m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 	m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
 
+#ifdef USE_SSE2
+ 		int data[4];
+#ifdef __MINGW32__
+		__cpuid(1, data[0], data[1], data[2], data[3]);
+#else
+		__cpuid(data, 1);
+#endif
+		m_bSSE2 = (data[3] & (1<<26)) != 0;
+#endif
+
 	CRegKey reg;
 	if( ERROR_SUCCESS == reg.Open(HKEY_CURRENT_USER, _T("Software\\Wine\\Debug"), KEY_READ)  ){
 		m_bWine = true;
