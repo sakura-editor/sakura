@@ -438,8 +438,7 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 */
 CLayout* CLayoutMgr::CreateLayout(
 	CDocLine*		pCDocLine,
-	int				nLine,
-	int				nOffset,
+	CLogicPoint		ptLogicPos,
 	int				nLength,
 	EColorIndexType	nTypePrev,
 	int				nIndent,
@@ -449,8 +448,7 @@ CLayout* CLayoutMgr::CreateLayout(
 	CLayout* pLayout = new CLayout;
 	pLayout->m_pCDocLine = pCDocLine;
 
-	pLayout->m_ptLogicPos.y = nLine;
-	pLayout->m_ptLogicPos.x = nOffset;
+	pLayout->m_ptLogicPos = ptLogicPos;
 	pLayout->m_nLength = nLength;
 	pLayout->m_nTypePrev = nTypePrev;
 	pLayout->m_nIndent = nIndent;
@@ -511,13 +509,12 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen, const CLayout** p
 	@date 2002/4/27 MIK
 */
 bool CLayoutMgr::IsEndOfLine(
-	int nLine,
-	int nPos
+	const CLayoutPoint& ptLinePos
 )
 {
 	const CLayout* pLayout;
 
-	if( NULL == ( pLayout = SearchLineByLayoutY( nLine )	) )
+	if( NULL == ( pLayout = SearchLineByLayoutY( ptLinePos.y )	) )
 	{
 		return false;
 	}
@@ -525,7 +522,7 @@ bool CLayoutMgr::IsEndOfLine(
 	if( EOL_NONE == pLayout->m_cEol.GetType() )
 	{	/* この行に改行はない */
 		/* この行の最後か？ */
-		if( nPos == pLayout->m_nLength ) return true;
+		if( ptLinePos.x == pLayout->m_nLength ) return true;
 	}
 
 	return false;
@@ -691,8 +688,8 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
-	ctwArg.nLineFrom    = nLineNum;			// 編集開始行
-	ctwArg.nColumnFrom  = nDelPos;			// 編集開始桁
+	ctwArg.ptLayout.y   = nLineNum;			// 編集開始行
+	ctwArg.ptLayout.x   = nDelPos;			// 編集開始桁
 	ctwArg.nDelLines    = 0;				// 削除行は1行
 	ctwArg.nAllLinesOld = nAllLinesOld;		// 編集前のテキスト行数
 	ctwArg.bInsData     = FALSE;			// 追加文字列なし
@@ -868,8 +865,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
-	ctwArg.nLineFrom    = nLineNum;			// 編集開始行
-	ctwArg.nColumnFrom  = nInsPos;			// 編集開始桁
+	ctwArg.ptLayout.y   = nLineNum;			// 編集開始行
+	ctwArg.ptLayout.x   = nInsPos;			// 編集開始桁
 	ctwArg.nDelLines    = -1;				// 削除行なし
 	ctwArg.nAllLinesOld = nAllLinesOld;		// 編集前のテキスト行数
 	ctwArg.bInsData     = TRUE;				// 追加文字列あり

@@ -70,17 +70,13 @@ class CMemory; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
 
 struct DocLineReplaceArg {
-	int			nDelLineFrom;		//!< 削除範囲行  From 改行単位の行番号 0開始)
-	int			nDelPosFrom;		//!< 削除範囲位置From 改行単位の行頭からのバイト位置 0開始)
-	int			nDelLineTo;			//!< 削除範囲行  To   改行単位の行番号 0開始)
-	int			nDelPosTo;			//!< 削除範囲位置To   改行単位の行頭からのバイト位置 0開始)
-	CMemory*	pcmemDeleted;		//!< 削除されたデータを保存
-	int			nDeletedLineNum;	//!< 削除した行の総数
-	const char*	pInsData;			//!< 挿入するデータ
-	int			nInsDataLen;		//!< 挿入するデータの長さ
-	int			nInsLineNum;		//!< 挿入によって増えた行の数
-	int			nNewLine;			//!< 挿入された部分の次の位置の行
-	int			nNewPos;			//!< 挿入された部分の次の位置のデータ位置
+	CLogicRange		sDelRange;			//!< [in] 削除範囲。ロジック単位。
+	CMemory*		pcmemDeleted;		//!< 削除されたデータを保存
+	int				nDeletedLineNum;	//!< 削除した行の総数
+	const char*		pInsData;			//!< 挿入するデータ
+	int				nInsDataLen;		//!< 挿入するデータの長さ
+	int				nInsLineNum;		//!< 挿入によって増えた行の数
+	CLogicPoint		ptNewPos;			//!< [out] 挿入された部分の次の位置
 };
 
 /*-----------------------------------------------------------------------

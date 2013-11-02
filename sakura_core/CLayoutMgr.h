@@ -41,25 +41,21 @@ struct STypeConfig;// 2005.11.20 Moca
 
 struct LayoutReplaceArg {
 	CLayoutRange	sDelRange;			//!< [in]削除範囲。レイアウト単位。
-	CMemory*	pcmemDeleted;			//!< 削除されたデータ
-	const char*	pInsData;				//!< 挿入するデータ
-	int			nInsDataLen;			//!< 挿入するデータの長さ
-
-	int			nAddLineNum;			//!< 再描画ヒント レイアウト行の増減
-	int			nModLineFrom;			//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
-	int			nModLineTo;				//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
-
-	int			nNewLine;				//!< 挿入された部分の次の位置の行(レイアウト行)
-	int			nNewPos;				//!< 挿入された部分の次の位置のデータ位置(レイアウト桁位置)
+	CMemory*		pcmemDeleted;		//!< [out]削除されたデータ
+	const char*		pInsData;			//!< [in/out]挿入するデータ
+	int				nInsDataLen;		//!< 挿入するデータの長さ
+	int				nAddLineNum;		//!< [out] 再描画ヒント レイアウト行の増減
+	int				nModLineFrom;		//!< [out] 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
+	int				nModLineTo;			//!< [out] 再描画ヒント 変更されたレイアウト行To(レイアウト行の増減が0のとき使う)
+	CLayoutPoint	ptLayoutNew;		//!< [out]挿入された部分の次の位置の位置(レイアウト桁位置, レイアウト行)
 };
 
 // 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
 struct CalTextWidthArg {
-	int  nLineFrom;				//!< 編集開始行
-	int  nColumnFrom;			//!< 編集開始桁
-	int  nDelLines;				//!< 削除に関係する行数 - 1（負数の時削除なし）
-	int  nAllLinesOld;			//!< 編集前のテキスト行数
-	BOOL bInsData;				//!< 追加文字列あり
+	CLayoutPoint	ptLayout;			//!< 編集開始位置
+	int				nDelLines;			//!< 削除に関係する行数 - 1（負数の時削除なし）
+	int				nAllLinesOld;		//!< 編集前のテキスト行数
+	BOOL			bInsData;			//!< 追加文字列あり
 };
 
 
@@ -91,7 +87,7 @@ public:
 	int GetLineCount( void ) { return m_nLines; }	/* 全物理行数を返す */
 	const char* GetLineStr( int , int* );	/* 指定された物理行のデータへのポインタとその長さを返す */
 	const char* GetLineStr( int , int*, const CLayout** );	/* 指定された物理行のデータへのポインタとその長さを返す */
-	bool IsEndOfLine( int nLine, int nPos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
+	bool IsEndOfLine( const CLayoutPoint& ptLinePos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
 	CLayout* SearchLineByLayoutY( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	bool WhereCurrentWord( int , int , CLayoutRange*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 	//	Sep. 23, 2002 genta
@@ -229,7 +225,7 @@ private:
 	*/
 	//@@@ 2002.09.23 YAZAKI
 	// 2009.08.15 nasukoji	nPosX引数追加
-	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, EColorIndexType nTypePrev, int nIndent, int nPosX );
+	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, int nLength, EColorIndexType nTypePrev, int nIndent, int nPosX );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 

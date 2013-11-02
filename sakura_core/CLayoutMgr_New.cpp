@@ -165,7 +165,7 @@ void CLayoutMgr::_DoLayout(
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+							AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -217,7 +217,7 @@ void CLayoutMgr::_DoLayout(
 						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
 						){
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+							AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -272,7 +272,7 @@ void CLayoutMgr::_DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2 + nCharChars3;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
@@ -299,7 +299,7 @@ void CLayoutMgr::_DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
@@ -320,7 +320,7 @@ void CLayoutMgr::_DoLayout(
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 				int nCharChars2 = GetActualTabSpace( nPosX );
 				if( nPosX + nCharChars2 > nMaxLineSize ){
-					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+					AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 					m_nLineTypeBot = nCOMMENTMODE;
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
@@ -344,7 +344,7 @@ void CLayoutMgr::_DoLayout(
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+							AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -364,7 +364,7 @@ void CLayoutMgr::_DoLayout(
 			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
 				nCOMMENTMODE = COLORIDX_TEXT;
 			}
-			AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+			AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 			m_nLineTypeBot = nCOMMENTMODE;
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 		}
@@ -539,7 +539,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -603,7 +603,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -666,7 +666,7 @@ int CLayoutMgr::DoLayout_Range(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -706,7 +706,7 @@ int CLayoutMgr::DoLayout_Range(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -741,7 +741,7 @@ int CLayoutMgr::DoLayout_Range(
 						(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 					}
 					else {
-						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 					}
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -776,7 +776,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -810,7 +810,7 @@ int CLayoutMgr::DoLayout_Range(
 				(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 			}
 			else {
-				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
+				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint( nBgn, nCurLine ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 			}
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -891,25 +891,25 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 		// 削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
 		// 削除行あり時：最大幅の行を含んで編集した
 		if(( pctwArg->nDelLines < 0  && m_nTextWidth &&
-		     nInsLineNum && pctwArg->nColumnFrom && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
+		     nInsLineNum && pctwArg->ptLayout.x && m_nTextWidthMaxLine == pctwArg->ptLayout.y )||
 		   ( pctwArg->nDelLines >= 0 && m_nTextWidth &&
-		     pctwArg->nLineFrom <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->nLineFrom + pctwArg->nDelLines ))
+		     pctwArg->ptLayout.y <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->ptLayout.y + pctwArg->nDelLines ))
 		{
 			// 全ラインを走査する
 			nCalTextWidthLinesFrom = -1;
 			nCalTextWidthLinesTo   = -1;
 		}else if( nInsLineNum || pctwArg->bInsData ){		// 追加削除行 または 追加文字列あり
 			// 追加削除行のみを走査する
-			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
+			nCalTextWidthLinesFrom = pctwArg->ptLayout.y;
 
 			// 最終的に編集された行数（3行削除2行追加なら2行追加）
 			// 　1行がMAXLINEKETASを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
 			// 　不要なので計算を省くためこのままとする。
 			int nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : 0);
-			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : 0);
+			nCalTextWidthLinesTo   = pctwArg->ptLayout.y + ((nEditLines > 0) ? nEditLines : 0);
 
 			// 最大幅の行が上下するのを計算
-			if( m_nTextWidth && nInsLineNum && m_nTextWidthMaxLine >= pctwArg->nLineFrom )
+			if( m_nTextWidth && nInsLineNum && m_nTextWidthMaxLine >= pctwArg->ptLayout.y )
 				m_nTextWidthMaxLine += nInsLineNum;
 		}else{
 			// 最大幅以外の行を改行を含まずに（1行内で）編集した

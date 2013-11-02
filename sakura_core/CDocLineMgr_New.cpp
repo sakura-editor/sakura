@@ -71,11 +71,10 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	HWND		hwndCancel = NULL;	//	初期化
 	HWND		hwndProgress = NULL;	//	初期化
 
-	pArg->nNewLine = pArg->nDelLineFrom;
-	pArg->nNewPos =  pArg->nDelPosFrom;
+	pArg->ptNewPos = pArg->sDelRange.m_ptFrom;
 
 	/* 大量のデータを操作するとき */
-	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom || 1024000 < pArg->nInsDataLen ){
+	if( 3000 < pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y || 1024000 < pArg->nInsDataLen ){
 		/* 進捗ダイアログの表示 */
 		pCDlgCancel = new CDlgCancel;
 		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
@@ -86,9 +85,9 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	}
 
 	// From Here Feb. 08, 2008 genta 削除バッファをあらかじめ確保する
-	pCDocLine = GetLine( pArg->nDelLineFrom );
+	pCDocLine = GetLine( pArg->sDelRange.m_ptFrom.y );
 	nWorkLen = 0;
-	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
+	for( i = pArg->sDelRange.m_ptFrom.y; i <= pArg->sDelRange.m_ptTo.y && NULL != pCDocLine; i++ ){
 		nWorkLen += pCDocLine->m_cLine.GetStringLength();
 		pCDocLine = pCDocLine->m_pNext;
 	}
@@ -98,21 +97,21 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	// 削除データの取得のループ
 	/* 前から処理していく */
 	/* 現在行の情報を得る */
-	pCDocLine = GetLine( pArg->nDelLineFrom );
-	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
+	pCDocLine = GetLine( pArg->sDelRange.m_ptFrom.y );
+	for( i = pArg->sDelRange.m_ptFrom.y; i <= pArg->sDelRange.m_ptTo.y && NULL != pCDocLine; i++ ){
 		pLine = pCDocLine->m_cLine.GetStringPtr(); // 2002/2/10 aroka CMemory変更
 		nLineLen = pCDocLine->m_cLine.GetStringLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
 		/* 現在行の削除開始位置を調べる */
-		if( i == pArg->nDelLineFrom ){
-			nWorkPos = pArg->nDelPosFrom;
+		if( i == pArg->sDelRange.m_ptFrom.y ){
+			nWorkPos = pArg->sDelRange.m_ptFrom.x;
 		}else{
 			nWorkPos = 0;
 		}
 		/* 現在行の削除データ長を調べる */
-		if( i == pArg->nDelLineTo ){
-			nWorkLen = pArg->nDelPosTo - nWorkPos;
+		if( i == pArg->sDelRange.m_ptTo.y ){
+			nWorkLen = pArg->sDelRange.m_ptTo.x - nWorkPos;
 		}else{
 			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
@@ -128,7 +127,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 				_T("0 > nWorkLen\nnWorkLen=%d\n")
 				_T("i=%d\n")
 				_T("pArg->nDelLineTo=%d"),
-				nWorkLen, i, pArg->nDelLineTo
+				nWorkLen, i, pArg->sDelRange.m_ptTo.y
 			);
 		}
 
@@ -149,7 +148,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 				_T("pLine != pCDocLine->m_pLine->GetPtr() =%d\n")
 				_T("i=%d\n")
 				_T("pArg->nDelLineTo=%d"),
-				pLine, i, pArg->nDelLineTo
+				pLine, i, pArg->sDelRange.m_ptTo.y
 			);
 		}
 
@@ -167,8 +166,8 @@ next_line:;
 		m_pCodePrevRefer = pCDocLine;
 
 		if( NULL != hwndCancel){
-			if( 0 != (i - pArg->nDelLineFrom) && ( 0 == ((i - pArg->nDelLineFrom) % 32)) ){
-				nProgress = (i - pArg->nDelLineFrom) * 100 / (pArg->nDelLineTo - pArg->nDelLineFrom) / 2;
+			if( 0 != (i - pArg->sDelRange.m_ptFrom.y) && ( 0 == ((i - pArg->sDelRange.m_ptFrom.y) % 32)) ){
+				nProgress = (i - pArg->sDelRange.m_ptFrom.y) * 100 / (pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y) / 2;
 				::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
 
 			}
@@ -177,27 +176,27 @@ next_line:;
 
 
 	/* 現在行の情報を得る */
-	pCDocLine = GetLine( pArg->nDelLineTo );
-	i = pArg->nDelLineTo;
-	if( 0 < pArg->nDelLineTo && NULL == pCDocLine ){
-		pCDocLine = GetLine( pArg->nDelLineTo - 1 );
+	pCDocLine = GetLine( pArg->sDelRange.m_ptTo.y );
+	i = pArg->sDelRange.m_ptTo.y;
+	if( 0 < pArg->sDelRange.m_ptTo.y && NULL == pCDocLine ){
+		pCDocLine = GetLine( pArg->sDelRange.m_ptTo.y - 1 );
 		i--;
 	}
 	/* 後ろから処理していく */
-	for( ; i >= pArg->nDelLineFrom && NULL != pCDocLine; i-- ){
+	for( ; i >= pArg->sDelRange.m_ptFrom.y && NULL != pCDocLine; i-- ){
 		pLine = pCDocLine->m_cLine.GetStringPtr(); // 2002/2/10 aroka CMemory変更
 		nLineLen = pCDocLine->m_cLine.GetStringLength(); // 2002/2/10 aroka CMemory変更
 		pCDocLinePrev = pCDocLine->m_pPrev;
 		pCDocLineNext = pCDocLine->m_pNext;
 		/* 現在行の削除開始位置を調べる */
-		if( i == pArg->nDelLineFrom ){
-			nWorkPos = pArg->nDelPosFrom;
+		if( i == pArg->sDelRange.m_ptFrom.y ){
+			nWorkPos = pArg->sDelRange.m_ptFrom.x;
 		}else{
 			nWorkPos = 0;
 		}
 		/* 現在行の削除データ長を調べる */
-		if( i == pArg->nDelLineTo ){
-			nWorkLen = pArg->nDelPosTo - nWorkPos;
+		if( i == pArg->sDelRange.m_ptTo.y ){
+			nWorkLen = pArg->sDelRange.m_ptTo.x - nWorkPos;
 		}else{
 			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
@@ -276,8 +275,8 @@ prev_line:;
 		m_pCodePrevRefer = pCDocLine;
 
 		if( NULL != hwndCancel){
-			if( 0 != (pArg->nDelLineTo - i) && ( 0 == ((pArg->nDelLineTo - i) % 32) ) ){
-				nProgress = (pArg->nDelLineTo - i) * 100 / (pArg->nDelLineTo - pArg->nDelLineFrom) / 2 + 50;
+			if( 0 != (pArg->sDelRange.m_ptTo.y - i) && ( 0 == ((pArg->sDelRange.m_ptTo.y - i) % 32) ) ){
+				nProgress = (pArg->sDelRange.m_ptTo.y - i) * 100 / (pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y) / 2 + 50;
 				::SendMessage( hwndProgress, PBM_SETPOS, nProgress, 0 );
 			}
 		}
@@ -289,13 +288,13 @@ prev_line:;
 		goto end_of_func;
 	}
 	nAllLinesOld = m_nLines;
-	pArg->nNewLine = pArg->nDelLineFrom;	/* 挿入された部分の次の位置の行 */
-	pArg->nNewPos  = 0;	/* 挿入された部分の次の位置のデータ位置 */
+	pArg->ptNewPos.y = pArg->sDelRange.m_ptFrom.y;	/* 挿入された部分の次の位置の行 */
+	pArg->ptNewPos.x = 0;	/* 挿入された部分の次の位置のデータ位置 */
 
 	/* 挿入データを行終端で区切った行数カウンタ */
 	nCount = 0;
 	pArg->nInsLineNum = 0;
-	pCDocLine = GetLine( pArg->nDelLineFrom );
+	pCDocLine = GetLine( pArg->sDelRange.m_ptFrom.y );
 
 
 
@@ -310,8 +309,8 @@ prev_line:;
 
 		// 2002/2/10 aroka 何度も GetPtr を呼ばない
 		pLine = pCDocLine->m_cLine.GetStringPtr( &nLineLen );
-		cmemPrevLine.SetString( pLine, pArg->nDelPosFrom );
-		cmemNextLine.SetString( &pLine[pArg->nDelPosFrom], nLineLen - pArg->nDelPosFrom );
+		cmemPrevLine.SetString( pLine, pArg->sDelRange.m_ptFrom.x );
+		cmemNextLine.SetString( &pLine[pArg->sDelRange.m_ptFrom.x], nLineLen - pArg->sDelRange.m_ptFrom.x );
 
 		cEOLTypeNext = pCDocLine->m_cEol;
 	}
@@ -382,7 +381,7 @@ prev_line:;
 
 			/* 挿入データを行終端で区切った行数カウンタ */
 			++nCount;
-			++(pArg->nNewLine);	/* 挿入された部分の次の位置の行 */
+			++(pArg->ptNewPos.y);	/* 挿入された部分の次の位置の行 */
 			if( NULL != hwndCancel ){
 				if( 0 != pArg->nInsDataLen && ( 0 == (nPos % 1024) ) ){
 					nProgress = nPos * 100 / pArg->nInsDataLen;
@@ -429,7 +428,7 @@ prev_line:;
 			}
 			pCDocLine = NULL;
 			++m_nLines;
-			pArg->nNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
+			pArg->ptNewPos.x = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
 		}
 		else{
 			/* 挿入データを行終端で区切った行数カウンタ */
@@ -440,7 +439,7 @@ prev_line:;
 				pCDocLine->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
 
 				pCDocLine = pCDocLine->m_pNext;
-				pArg->nNewPos = cmemPrevLine.GetStringLength() + nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
+				pArg->ptNewPos.x = cmemPrevLine.GetStringLength() + nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
 			}
 			else{
 				pCDocLineNew = new CDocLine;
@@ -453,7 +452,7 @@ prev_line:;
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
 
 				++m_nLines;
-				pArg->nNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
+				pArg->ptNewPos.x = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
 			}
 		}
 	}

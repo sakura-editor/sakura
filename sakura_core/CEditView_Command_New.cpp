@@ -199,7 +199,7 @@ void CEditView::InsertData_CEditView(
 		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
 		 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
-			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( pptNewPos->y, pptNewPos->x ) )	//@@@ 2002.04.18
+			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pptNewPos ) )	//@@@ 2002.04.18
 			{
 				pptNewPos->x = 0;
 				pptNewPos->y++;
@@ -1137,7 +1137,7 @@ void CEditView::ReplaceData_CEditView(
 				// 文書末が改行なし→ありに変化したら				// 2009.11.11 ryoji
 				// EOFのみ行が追加になるので、1行余分に描画する。
 				// （文書末が改行あり→なしに変化する場合の末尾EOF消去は描画関数側で行われる）
-				int nAddLine = ( LRArg.nNewLine > LRArg.sDelRange.m_ptTo.y )? 1: 0;
+				int nAddLine = ( LRArg.ptLayoutNew.y > LRArg.sDelRange.m_ptTo.y )? 1: 0;
 
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
@@ -1197,8 +1197,8 @@ void CEditView::ReplaceData_CEditView(
 		// 2009.07.18 ryoji レイアウトは変化するのに以前のsDelRange.m_ptFrom.x,sDelRange.m_ptFrom.yからLayoutToLogicで計算していたバグを修正
 		pcOpe->m_ptCaretPos_PHY_Before = ptDelFrom_PHY;
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			LRArg.nNewPos,
-			LRArg.nNewLine,
+			LRArg.ptLayoutNew.x,
+			LRArg.ptLayoutNew.y,
 			&pcOpe->m_ptCaretPos_PHY_To.x,
 			&pcOpe->m_ptCaretPos_PHY_To.y
 		);
@@ -1214,8 +1214,8 @@ void CEditView::ReplaceData_CEditView(
 
 	// 挿入直後位置へカーソルを移動
 	MoveCursor(
-		LRArg.nNewPos,		// 挿入された部分の次の位置のデータ位置(レイアウト桁位置)
-		LRArg.nNewLine,		// 挿入された部分の次の位置の行(レイアウト行)
+		LRArg.ptLayoutNew.x,		// 挿入された部分の次の位置のデータ位置(レイアウト桁位置)
+		LRArg.ptLayoutNew.y,		// 挿入された部分の次の位置の行(レイアウト行)
 		bRedraw
 	);
 	m_nCaretPosX_Prev = m_ptCaretPos.x;

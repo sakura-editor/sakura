@@ -29,20 +29,13 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	LayoutReplaceArg*	pArg
 )
 {
-	int	nxFrom;
-	int	nyFrom;
-	int	nxTo;
-	int	nyTo;
-	int nLineWork;
-
 	int	nWork_nLines = m_nLines;	//変更前の全行数の保存	@@@ 2002.04.19 MIK
 
 	/* 置換先頭位置のレイアウト情報 */
-	CLayout* pLayout = (CLayout*)SearchLineByLayoutY( pArg->sDelRange.m_ptFrom.y );
 	EColorIndexType nCurrentLineType = COLORIDX_DEFAULT;
-	CLayout* pLayoutWork = pLayout;
-	nLineWork = pArg->sDelRange.m_ptFrom.y;
+	int nLineWork = pArg->sDelRange.m_ptFrom.y;
 
+	CLayout* pLayoutWork = (CLayout*)SearchLineByLayoutY( pArg->sDelRange.m_ptFrom.y );
 	if( pLayoutWork ){
 		while( 0 != pLayoutWork->m_ptLogicPos.x ){
 			pLayoutWork = pLayoutWork->m_pPrev;
@@ -57,33 +50,30 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置) →
 	||  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	LayoutToLogic( pArg->sDelRange.m_ptFrom.x, pArg->sDelRange.m_ptFrom.y, &nxFrom, &nyFrom );
-	LayoutToLogic( pArg->sDelRange.m_ptTo.x, pArg->sDelRange.m_ptTo.y, &nxTo, &nyTo );
+	CLogicPoint ptFrom;
+	CLogicPoint ptTo;
+	LayoutToLogic( pArg->sDelRange.m_ptFrom.x, pArg->sDelRange.m_ptFrom.y, &ptFrom.x, &ptFrom.y );
+	LayoutToLogic( pArg->sDelRange.m_ptTo.x, pArg->sDelRange.m_ptTo.y, &ptTo.x, &ptTo.y );
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
 	  Fromの位置へテキストを挿入する
 	*/
 	DocLineReplaceArg DLRArg;
-	DLRArg.nDelLineFrom = nyFrom;			// 削除範囲行  From 改行単位の行番号 0開始)
-	DLRArg.nDelPosFrom = nxFrom;			// 削除範囲位置From 改行単位の行頭からのバイト位置 0開始)
-	DLRArg.nDelLineTo = nyTo;				// 削除範囲行  To   改行単位の行番号 0開始)
-	DLRArg.nDelPosTo = nxTo;				// 削除範囲位置To   改行単位の行頭からのバイト位置 0開始)
+	DLRArg.sDelRange.m_ptFrom = ptFrom;			// 削除範囲From 0開始)
+	DLRArg.sDelRange.m_ptTo = ptTo;				// 削除範囲To   0開始)
 	DLRArg.pcmemDeleted = pArg->pcmemDeleted;	// 削除されたデータを保存
 	DLRArg.pInsData = pArg->pInsData;			// 挿入するデータ
 	DLRArg.nInsDataLen = pArg->nInsDataLen;		// 挿入するデータの長さ
 	m_pcDocLineMgr->ReplaceData(
 		&DLRArg
 	);
-	pArg->nNewLine = DLRArg.nNewLine;			/* 挿入された部分の次の位置の行 */
-	pArg->nNewPos = DLRArg.nNewPos;				/* 挿入された部分の次の位置のデータ位置 */
 
 
 	/*--- 変更された行のレイアウト情報を再生成 ---*/
 	/* 論理行の指定範囲に該当するレイアウト情報を削除して */
 	/* 削除した範囲の直前のレイアウト情報のポインタを返す */
 
-	int nAllLinesOld = m_nLines;
 	int	nModifyLayoutLinesOld = 0;
 	CLayout* pLayoutPrev;
 	int nWork;
@@ -94,9 +84,9 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		pLayoutPrev = DeleteLayoutAsLogical(
 			pLayoutWork,
 			nLineWork,
-			nyFrom,
-			nyFrom + nWork,
-			nyFrom, nxFrom,
+			ptFrom.y,
+			ptFrom.y + nWork,
+			ptFrom.y, ptFrom.x,
 			&nModifyLayoutLinesOld
 		);
 
@@ -136,8 +126,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
-	ctwArg.nLineFrom    = pArg->sDelRange.m_ptFrom.y;								// 編集開始桁
-	ctwArg.nColumnFrom  = pArg->sDelRange.m_ptFrom.x;								// 編集開始列
+	ctwArg.ptLayout     = pArg->sDelRange.m_ptFrom;									// 編集開始位置
 	ctwArg.nDelLines    = pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y;	// 削除行なし
 	ctwArg.nAllLinesOld = nWork_nLines;												// 編集前のテキスト行数
 	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;							// 追加文字列の有無
@@ -147,7 +136,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nModLineTo = DoLayout_Range(
 		pLayoutPrev,
 		nRowNum,
-		nyFrom, nxFrom,
+		ptFrom.y, ptFrom.x,
 		nCurrentLineType,
 		&ctwArg,
 		&nAddInsLineNum
@@ -159,8 +148,8 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nModLineFrom = pArg->sDelRange.m_ptFrom.y;	/* 再描画ヒント 変更されたレイアウト行From */
 	pArg->nModLineTo += ( pArg->nModLineFrom - 1 ) ;	/* 再描画ヒント 変更されたレイアウト行To */
 
-	/* レイアウト位置への変換 */
-	LogicToLayout( pArg->nNewPos, pArg->nNewLine, &pArg->nNewPos, &pArg->nNewLine );
+	//2007.10.18 kobake LayoutReplaceArg::ptLayoutNewはここで算出するのが正しい
+	LogicToLayout( DLRArg.ptNewPos.x, DLRArg.ptNewPos.y, &pArg->ptLayoutNew.x, &pArg->ptLayoutNew.y );
 }
 
 
