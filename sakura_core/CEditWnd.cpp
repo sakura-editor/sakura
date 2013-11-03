@@ -73,6 +73,31 @@
 //	定義を削除
 
 
+//	状況によりメニューの表示を変えるコマンドリスト(SetMenuFuncSelで使用)
+//		2010/5/19	Uchi
+struct SFuncMenuName {
+	int				eFunc;
+	const TCHAR*	sName[2];		// 選択文字列
+};
+
+static const SFuncMenuName	sFuncMenuName[] = {
+	{F_RECKEYMACRO,			{_T("キーマクロの記録開始"),			_T("キーマクロの記録終了")}},
+	{F_SAVEKEYMACRO,		{_T("キーマクロの保存"),				_T("キーマクロの記録終了&&保存")}},
+	{F_LOADKEYMACRO,		{_T("キーマクロの読み込み"),			_T("キーマクロの記録終了&&読み込み")}},
+	{F_EXECKEYMACRO,		{_T("キーマクロの実行"),				_T("キーマクロの記録終了&&実行")}},
+	{F_SPLIT_V,				{_T("上下に分割"),						_T("上下分割の解除")}},
+	{F_SPLIT_H,				{_T("左右に分割"),						_T("左右分割の解除")}},
+	{F_SPLIT_VH,			{_T("縦横に分割"),						_T("縦横分割の解除")}},
+	{F_TAB_CLOSEOTHER,		{_T("このタブ以外を閉じる"),			_T("このウィンドウ以外を閉じる")}},
+	{F_TOPMOST,				{_T("常に手前に表示"),					_T("常に手前を解除")}},
+	{F_BIND_WINDOW,			{_T("グループ化"),						_T("グループ化を解除")}},
+	{F_SHOWTOOLBAR,			{_T("ツールバーを表示"),				_T("表示中のツールバーを隠す")}},
+	{F_SHOWFUNCKEY,			{_T("ファンクションキーを表示"),		_T("表示中のファンクションキーを隠す")}},
+	{F_SHOWTAB,				{_T("タブバーを表示"),					_T("表示中のタブバーを隠す")}},
+	{F_SHOWSTATUSBAR,		{_T("ステータスバーを表示"),			_T("表示中のステータスバーを隠す")}},
+	{F_TOGGLE_KEY_SEARCH,	{_T("キーワードヘルプ自動表示する"),	_T("キーワードヘルプ自動表示しない")}},
+};
+
 /*! サブクラス化したツールバーのウィンドウプロシージャ
 	@author ryoji
 	@date 2006.09.06 ryoji
@@ -2606,19 +2631,18 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-			if( !m_pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, _T(""), _T("R") );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, _T(""), _T("M") );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, _T(""), _T("A") );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, _T(""), _T("D") );
-			}else{
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, _T(""), _T("R") );
-				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, _T(""), _T("M") );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, _T(""), _T("A") );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECKEYMACRO, _T(""), _T("D") );
-			}
-			
+			SetMenuFuncSel( hMenu, F_RECKEYMACRO, _T("R"),
+				!m_pShareData->m_sFlags.m_bRecordingKeyMacro );
+
+			SetMenuFuncSel( hMenu, F_SAVEKEYMACRO, _T("M"),
+				!m_pShareData->m_sFlags.m_bRecordingKeyMacro );
+
+			SetMenuFuncSel( hMenu, F_LOADKEYMACRO, _T("A"),
+				!m_pShareData->m_sFlags.m_bRecordingKeyMacro );
+
+			SetMenuFuncSel( hMenu, F_EXECKEYMACRO, _T("D"),
+				!m_pShareData->m_sFlags.m_bRecordingKeyMacro );
+
 			//	From Here Sep. 14, 2001 genta
 			//「登録済みマクロ」ポップアップ
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
@@ -2686,48 +2710,17 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-//	From Here Sept. 17, 2000 JEPRO
-//	やはりWin標準に合わせてチェックマークだけで表示／非表示を判断するようにした方がいいので変更
-			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-				pszLabel = "ツールバーを表示";				//これのみ表示
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel, _T("T") );	//これのみ
-				pszLabel = "ファンクションキーを表示";		//これのみ表示
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel, _T("K") );	//これのみ
-				pszLabel = "タブバーを表示";		//これのみ表示	//@@@ 2003.06.10 MIK	// 2007.02.13 ryoji 「タブ」→「タブバー」
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel, _T("") );	//これのみ	//@@@ 2003.06.10 MIK
-				pszLabel = "ステータスバーを表示";			//これのみ表示
-//	To Here Sept.17, 2000 JEPRO
-//	From Here Oct. 28, 2000 JEPRO
-//	3つボタンのアイコンができたことに伴い表示／非表示のメッセージを変えるように再び変更
-			}else{
-				if( m_hwndToolBar == NULL ){
-					pszLabel = "ツールバーを表示";			//これのみ表示
-				}else{
-					pszLabel = "表示中のツールバーを隠す";			//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
-				}
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTOOLBAR, pszLabel, _T("T") );	//これのみ
-				if( NULL == m_CFuncKeyWnd.m_hWnd ){
-					pszLabel = "ファンクションキーを表示";	//これのみ表示
-				}else{
-					pszLabel = "表示中のファンクションキーを隠す";	//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
-				}
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWFUNCKEY, pszLabel, _T("K") );	//これのみ
-				//@@@ 2003.06.10 MIK
-				if( NULL == m_cTabWnd.m_hWnd ){
-					pszLabel = "タブバーを表示";	//これのみ表示	// 2007.02.13 ryoji 「タブ」→「タブバー」
-				}else{
-					pszLabel = "表示中のタブバーを隠す";	// 2007.02.13 ryoji 「タブ」→「タブバー」
-				}
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWTAB, pszLabel, _T("M") );	//これのみ
-				if( m_hwndStatusBar == NULL ){
-					pszLabel = "ステータスバーを表示";		//これのみ表示
-				}else{
-					pszLabel = "表示中のステータスバーを隠す";		//Sept. 9, 2000 jepro キャプションに「表示中の」を追加
-				}
-			}
-//	To Here Oct. 28, 2000
+			SetMenuFuncSel( hMenu, F_SHOWTOOLBAR, _T("T"),
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_hwndToolBar );
 
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SHOWSTATUSBAR, pszLabel, _T("S") );
+			SetMenuFuncSel( hMenu, F_SHOWFUNCKEY, _T("K"),
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_CFuncKeyWnd.m_hWnd );
+
+			SetMenuFuncSel( hMenu, F_SHOWTAB, _T("M"),
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.m_hWnd );
+
+			SetMenuFuncSel( hMenu, F_SHOWSTATUSBAR, _T("S"),
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.m_hWnd );
 
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T("") );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST		, _T(""), _T("L") );	//Sept. 13, 2000 JEPRO 設定より上に移動
@@ -2796,16 +2789,10 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			// Feb. 28, 2004 genta 編集メニューから移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CHGMOD_INS	, _T(""), _T("I") );	//Nov. 9, 2000 JEPRO アクセスキー付与
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_READONLY	, _T(""), _T("R") );
-			if ( FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-				pszLabel = "キーワードヘルプ自動表示";
-			}
-			else if( IsFuncChecked( m_pcEditDoc, m_pShareData, F_TOGGLE_KEY_SEARCH ) ){
-				pszLabel = "キーワードヘルプ自動表示しない";
-			}
-			else {
-				pszLabel = "キーワードヘルプ自動表示する";
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOGGLE_KEY_SEARCH, pszLabel, _T("H") );
+
+			SetMenuFuncSel( hMenu, F_TOGGLE_KEY_SEARCH, _T("H"),
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !IsFuncChecked( m_pcEditDoc, m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+
 			hMenuPopUp = ::CreatePopupMenu();
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, "入力改行コード指定(&CRLF)", _T("") ); // 入力改行コード指定(CRLF)
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF, "入力改行コード指定(&LF)", _T("") ); // 入力改行コード指定(LF)
@@ -2825,35 +2812,22 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-			if( 1 == m_cSplitterWnd.GetAllSplitRows() ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "上下に分割";	//Oct. 7, 2000 JEPRO アクセスキーを変更(T→-)
-			}else{
-				pszLabel = "上下分割の解除";
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_V , pszLabel, _T("-") );
+			SetMenuFuncSel( hMenu, F_SPLIT_V, _T("-"),
+				m_cSplitterWnd.GetAllSplitRows() == 1 );
 
-			if( 1 == m_cSplitterWnd.GetAllSplitCols() ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "左右に分割";	//Oct. 7, 2000 JEPRO アクセスキーを変更(Y→I)
-			}else{
-				pszLabel = "左右分割の解除";
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_H , pszLabel, _T("I") );
-//	From Here Sept. 17, 2000 JEPRO	縦横分割の場合も状態によってメニューメッセージが変わるように変更
-			if( (1 < m_cSplitterWnd.GetAllSplitRows()) && (1 < m_cSplitterWnd.GetAllSplitCols()) ){ // 2002/2/8 aroka メソッドを通じてアクセス
-				pszLabel = "縦横分割の解除";	//Feb. 18, 2001 JEPRO アクセスキー変更(Q→S)
-			}else{
-				pszLabel = "縦横に分割";	//Sept. 17, 2000 jepro 説明に「に」を追加	//Oct. 7, 2000 JEPRO アクセスキーを変更(S→Q)	//Feb. 18, 2001 JEPRO アクセスキーを元に戻した(Q→S)
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SPLIT_VH , pszLabel, _T("S") );
-//	To Here Sept. 17, 2000
+			SetMenuFuncSel( hMenu, F_SPLIT_H, _T("I"),
+				m_cSplitterWnd.GetAllSplitCols() == 1 );
+
+			SetMenuFuncSel( hMenu, F_SPLIT_VH, _T("S"),
+				m_cSplitterWnd.GetAllSplitRows() == 1 || m_cSplitterWnd.GetAllSplitCols() == 1 );
+
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T("") );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, _T(""), _T("C") );			//Feb. 18, 2001 JEPRO アクセスキー変更(O→C)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, _T(""), _T("Q") );		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, _T(""), _T("O") );	// 2009.12.26 syat タブの操作メニューから移動
-			}else{
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, _T(""), _T("O") );	// 2009.12.26 syat タブの操作メニューから移動
-			}
+
+			SetMenuFuncSel( hMenu, F_TAB_CLOSEOTHER, _T("O"),
+				m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != 0 );
+
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T("") );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, _T(""), _T("N") );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, _T(""), _T("P") );
@@ -2862,20 +2836,15 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_CASCADE			, _T(""), _T("E") );		//Oct. 7, 2000 JEPRO アクセスキー変更(C→E)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_V			, _T(""), _T("H") );	//Sept. 13, 2000 JEPRO 分割に合わせてメニューの左右と上下を入れ替えた //Oct. 7, 2000 JEPRO アクセスキー変更(V→H)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TILE_H			, _T(""), _T("T") );	//Oct. 7, 2000 JEPRO アクセスキー変更(H→T)
-			if( (DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST ){
-				pszLabel = "常に手前を解除";
-			}else{
-				pszLabel = "常に手前に表示";
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TOPMOST, pszLabel, _T("F") ); //2004.09.21 Moca	// 2007.06.20 ryoji アクセスキー追加
+
+			SetMenuFuncSel( hMenu, F_TOPMOST, _T("F"),
+				((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST) == 0 );
 
 			hMenuPopUp = ::CreatePopupMenu();	// 2007.06.20 ryoji
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-				pszLabel = "グループ化を解除";
-			}else{
-				pszLabel = "グループ化";
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW, pszLabel, _T("B") );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」	// 2007.06.20 ryoji 「グループ化」
+
+			SetMenuFuncSel( hMenu, F_BIND_WINDOW, _T("B"),
+				!m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd || m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin );
+
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T("") );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE		, _T(""), _T("G") );	// 2007.06.20 ryoji
 			//2009.12.26 syat 「このタブ以外を閉じる」は「このウィンドウ以外を閉じる」と兼用とし、ウィンドウメニュー直下へ移動。
@@ -2959,6 +2928,26 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	}
 
 	return;
+}
+
+
+
+//	フラグにより表示文字列の選択をする。
+//		2010/5/19	Uchi
+void CEditWnd::SetMenuFuncSel( HMENU hMenu, int nFunc, const TCHAR* sKey, bool flag )
+{
+	int				i;
+	const TCHAR*	sName;
+
+	sName = _T("");
+	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
+		if (sFuncMenuName[i].eFunc == nFunc) {
+			sName = flag ? sFuncMenuName[i].sName[0] : sFuncMenuName[i].sName[1];
+		}
+	}
+	assert( _tcslen(sName) );
+
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
 

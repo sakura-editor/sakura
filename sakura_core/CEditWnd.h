@@ -142,6 +142,7 @@ public:
 	void InitMenubarMessageFont(void);
 	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 	LRESULT PopupWinList( bool bMousePos );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon	// 2007.02.28 ryoji フルパス指定のパラメータを削除
+	void SetMenuFuncSel( HMENU hMenu, int nFunc, const TCHAR* sKey, bool flag );				// 表示の動的選択	2010/5/19 Uchi
 	void LayoutToolBar( void );			/* ツールバーの配置処理 */			// 2006.12.19 ryoji
 	void LayoutFuncKey( void );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
 	void LayoutTabBar( void );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
