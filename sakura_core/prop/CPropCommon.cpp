@@ -124,8 +124,26 @@ INT_PTR CPropCommon::DlgProc2(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CPropCommon::CPropCommon()
 {
-//	int		i;
-//	long	lPathLen;
+	{
+		assert( sizeof(CPropGeneral)   - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropWin)       - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropMainMenu)  - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropToolbar)   - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropTab)       - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropStatusbar) - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropEdit)      - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropFile)      - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropFileName)  - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropBackup)    - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropFormat)    - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropGrep)      - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropKeybind)   - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropCustmenu)  - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropKeyword)   - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropHelper)    - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropMacro)     - sizeof(CPropCommon) == 0 );
+		assert( sizeof(CPropPlugin)    - sizeof(CPropCommon) == 0 );
+	}
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
