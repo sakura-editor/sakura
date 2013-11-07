@@ -130,6 +130,8 @@ public:
 
 	// 2005.01.13 MIK セット数増加
 	int				m_Types_nKeyWordSetIdx[MAX_TYPES][MAX_KEYWORDSET_PER_TYPE];
+	HFONT			m_hKeywordHelpFont;		//!< キーワードヘルプ フォント ハンドル
+	HFONT			m_hTabFont;				//!< タブ フォント ハンドル
 
 protected:
 	/*
@@ -332,8 +334,6 @@ protected:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	//!< ダイアログデータの設定
 	int  GetData( HWND );	//!< ダイアログデータの取得
-
-	HFONT	m_hKeywordHelpFont;		// キーワードヘルプ フォント ハンドル
 };
 
 //==============================================================
@@ -392,8 +392,6 @@ protected:
 
 private:
 	void EnableTabPropInput(HWND hwndDlg);
-
-	HFONT	m_hTabFont;		// タブ フォント ハンドル
 };
 
 //==============================================================
