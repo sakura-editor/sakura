@@ -785,6 +785,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_SHOWTAB( void );			/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	void Command_SHOWSTATUSBAR( void );		/* ステータスバーの表示/非表示 */
 	void Command_TYPE_LIST( void );			/* タイプ別設定一覧 */
+	void Command_CHANGETYPE( int nTypePlusOne );	// タイプ別設定一時適用
 	void Command_OPTION_TYPE( void );		/* タイプ別設定 */
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */

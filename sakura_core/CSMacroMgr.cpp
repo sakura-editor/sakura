@@ -254,6 +254,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_SHOWTAB,					"ShowTab",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タブの表示 */	//@@@ 2003.06.10 MIK
 	{F_SHOWSTATUSBAR,			"ShowStatusbar",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ステータスバーの表示 */
 	{F_TYPE_LIST,				"TypeList",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定一覧 */
+	{F_CHANGETYPE,				"ChangeType",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タイプ別設定一時適用 2013.05.02
 	{F_OPTION_TYPE,				"OptionType",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定 */
 	{F_OPTION,					"OptionCommon",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定 */
 	{F_FONT,					"SelectFont",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォント設定 */

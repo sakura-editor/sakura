@@ -474,6 +474,8 @@ enum FunctionAttribute {
 #define F_INSFILE             32804 	// キャレット位置にファイル挿入 2006.12.10 maru
 #define F_TEXTWRAPMETHOD      32805		// テキストの折り返し方法			// 2008.05.30 nasukoji
 
+#define F_CHANGETYPE          32812		// タイプ別設定一時適用
+
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
 #define F_GETFILENAME     40001 /* 編集中のファイル名を取得する */

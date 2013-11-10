@@ -520,6 +520,7 @@ BOOL CEditView::HandleCommand(
 	case F_SHOWTAB:			Command_SHOWTAB();break;		/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:	Command_SHOWSTATUSBAR();break;	/* ステータスバーの表示/非表示 */
 	case F_TYPE_LIST:		Command_TYPE_LIST();break;		/* タイプ別設定一覧 */
+	case F_CHANGETYPE:		Command_CHANGETYPE((int)lparam1);break;		// タイプ別設定一時適用
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
@@ -4003,9 +4004,7 @@ void CEditView::Command_TYPE_LIST( void )
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
 		if( nSettingType & PROP_TEMPCHANGE_FLAG ){
-			m_pcEditDoc->SetDocumentType( nSettingType & ~PROP_TEMPCHANGE_FLAG, true );
-			m_pcEditDoc->LockDocumentType();
-			m_pcEditDoc->OnChangeType();
+			HandleCommand( F_CHANGETYPE, true, (LPARAM)(nSettingType & ~PROP_TEMPCHANGE_FLAG) + 1, 0, 0, 0 );
 		}
 		else{
 			/* タイプ別設定 */
@@ -4016,6 +4015,20 @@ void CEditView::Command_TYPE_LIST( void )
 }
 
 
+
+/*! タイプ別設定一時適用 */
+void CEditView::Command_CHANGETYPE( int nTypePlusOne )
+{
+	int type = nTypePlusOne - 1;
+	if( nTypePlusOne == 0 ){
+		type = m_pcEditDoc->GetDocumentType();
+	}
+	if( type>=0 && type<MAX_TYPES ){
+		m_pcEditDoc->SetDocumentType( type, true );
+		m_pcEditDoc->LockDocumentType();
+		m_pcEditDoc->OnChangeType();
+	}
+}
 
 
 /* 行の二重化(折り返し単位) */
