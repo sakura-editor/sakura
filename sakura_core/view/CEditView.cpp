@@ -2552,7 +2552,6 @@ void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 void CEditView::AddCurrentLineToHistory( void )
 {
 	CLogicPoint ptPos;
-	//int PosX, PosY;	//	物理位置（改行単位の計算）
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptPos );
 

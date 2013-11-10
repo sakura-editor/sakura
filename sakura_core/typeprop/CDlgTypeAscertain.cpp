@@ -34,9 +34,6 @@
 #include "sakura.hh"
 #include "sakura_rc.h"
 
-//内部使用定数
-static const int PROP_TEMPCHANGE_FLAG = 0x10000;
-
 // タイプ別設定インポート確認 CDlgTypeAscertain.cpp
 const DWORD p_helpids[] = {
 	IDC_COMBO_COLORS,		HIDC_COMBO_COLORS,		//色指定
