@@ -149,7 +149,7 @@ struct STypeConfig{
 	bool				m_backImgScrollY;				
 	POINT				m_backImgPosOffset;				
 
-	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 false=折り返し単位／true=改行単位 */
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
 	wchar_t				m_cLineTermChar;				/*!< 行番号区切り文字 */
 	CLayoutInt			m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
