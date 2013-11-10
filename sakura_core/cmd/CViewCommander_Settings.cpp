@@ -157,8 +157,9 @@ void CViewCommander::Command_TYPE_LIST( void )
 
 
 
-/*! タイプ説設定一時適用 */
-void CViewCommander::Command_CHANGETYPE( int nTypePlusOne ){
+/*! タイプ別設定一時適用 */
+void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
+{
 	CTypeConfig type = CTypeConfig(nTypePlusOne - 1);
 	if( nTypePlusOne == 0 ){
 		type = GetDocument()->m_cDocType.GetDocumentType();
