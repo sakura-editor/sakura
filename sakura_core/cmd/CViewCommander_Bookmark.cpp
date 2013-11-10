@@ -78,7 +78,7 @@ void CViewCommander::Command_JUMP( void )
 	nLineNum = GetEditWindow()->m_cDlgJump.m_nLineNum;
 
 	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if( GetDllShareData().m_bLineNumIsCRLF_ForJump ){
 			if( CLogicInt(0) >= nLineNum ){
 				nLineNum = CLogicInt(1);
@@ -119,7 +119,7 @@ void CViewCommander::Command_JUMP( void )
 	int	nLineCount; //$$ 単位混在
 	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( !GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){ //レイアウト単位
 		/*
 		  カーソル位置変換

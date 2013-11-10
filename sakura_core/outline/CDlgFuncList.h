@@ -81,7 +81,7 @@ public:
 	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	int				m_nListType;		/* 一覧の種類 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
-	int				m_bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool			m_bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );

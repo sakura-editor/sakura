@@ -403,7 +403,7 @@ void CTextDrawer::DispLineNumber(
 		int nLineCols;
 		int nLineNumCols;
 		{
-			/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if( pTypes->m_bLineNumIsCRLF ){
 				/* 論理行番号表示モード */
 				if( NULL == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
