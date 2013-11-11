@@ -31,6 +31,8 @@
 #include "CDlgGrep.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2002/2/10 aroka
 
+class CPropertyManager;
+
 //!	常駐部の管理
 /*!
 	タスクトレイアイコンの管理，タスクトレイメニューのアクション，
@@ -107,6 +109,7 @@ protected:
 	*/
 private:
 	CMenuDrawer		m_CMenuDrawer;
+	CPropertyManager*	m_pcPropertyManager;
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;

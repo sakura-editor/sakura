@@ -16,14 +16,17 @@
 #include "StdAfx.h"
 #include <windows.h>
 #include <commctrl.h>
-#include "sakura_rc.h"
 #include "CDlgTypeList.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 #include "etc_uty.h"
 #include "Debug.h"
 #include "Funccode.h"	//Stonee, 2001/03/12
 
+//内部使用定数
+static const int PROP_TEMPCHANGE_FLAG = 0x10000;
+
 // タイプ別設定一覧 CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12700
 	IDC_BUTTON_TEMPCHANGE,	HIDC_TL_BUTTON_TEMPCHANGE,	//一時適用
 	IDOK,					HIDOK_TL,					//設定
@@ -35,18 +38,21 @@ const DWORD p_helpids[] = {	//12700
 };	//@@@ 2002.01.07 add end MIK
 
 /* モーダルダイアログの表示 */
-int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSettingType )
+int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult )
 {
 	int	nRet;
-	m_nSettingType = *pnSettingType;
+	m_nSettingType = psResult->cDocumentType;
+	m_bEnableTempChange = psResult->bTempChange;
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, (LPARAM)NULL );
 	if( -1 == nRet ){
 		return FALSE;
-	}else{
-		*pnSettingType = nRet;
+	}
+	else{
+		//結果
+		psResult->cDocumentType = (nRet & ~PROP_TEMPCHANGE_FLAG);
+		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
 		return TRUE;
 	}
-	return nRet;
 }
 
 
@@ -56,8 +62,11 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 	case IDC_LIST_TYPES:
 		//	Nov. 29, 2000	genta
 		//	動作変更: 指定タイプの設定ダイアログ→一時的に別の設定を適用
-		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
-			| PROP_TEMPCHANGE_FLAG );
+		::EndDialog(
+			m_hWnd,
+			::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
+			| PROP_TEMPCHANGE_FLAG
+		);
 		return TRUE;
 	}
 	return FALSE;
@@ -74,8 +83,11 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	//	Nov. 29, 2000	From Here	genta
 	//	適用する型の一時的変更
 	case IDC_BUTTON_TEMPCHANGE:
-		::EndDialog( m_hWnd, ::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
-			| PROP_TEMPCHANGE_FLAG );
+		::EndDialog(
+			m_hWnd,
+			::SendMessage( GetDlgItem( m_hWnd, IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 )
+			| PROP_TEMPCHANGE_FLAG
+		);
 		return TRUE;
 	//	Nov. 29, 2000	To Here
 	case IDOK:
@@ -126,6 +138,7 @@ void CDlgTypeList::SetData( void )
 	::ReleaseDC( hwndList, hDC );
 	::SendMessage( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0L );
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType, (LPARAM)0 );
+	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_TEMPCHANGE ), m_bEnableTempChange );
 	return;
 }
 

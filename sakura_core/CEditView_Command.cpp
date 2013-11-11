@@ -3997,18 +3997,19 @@ void CEditView::Command_OPTION_TYPE( void )
 /* タイプ別設定一覧 */
 void CEditView::Command_TYPE_LIST( void )
 {
-	CDlgTypeList	cDlgTypeList;
-	int				nSettingType;
-	nSettingType = m_pcEditDoc->GetDocumentType();
-	if( cDlgTypeList.DoModal( m_hInstance, m_hWnd, &nSettingType ) ){
+	CDlgTypeList			cDlgTypeList;
+	CDlgTypeList::SResult	sResult;
+	sResult.cDocumentType = m_pcEditDoc->GetDocumentType();
+	sResult.bTempChange = true;
+	if( cDlgTypeList.DoModal( m_hInstance, m_hWnd, &sResult ) ){
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
-		if( nSettingType & PROP_TEMPCHANGE_FLAG ){
-			HandleCommand( F_CHANGETYPE, true, (LPARAM)(nSettingType & ~PROP_TEMPCHANGE_FLAG) + 1, 0, 0, 0 );
+		if( sResult.bTempChange ){
+			HandleCommand( F_CHANGETYPE, true, (LPARAM)sResult.cDocumentType + 1, 0, 0, 0 );
 		}
 		else{
 			/* タイプ別設定 */
-			CEditApp::getInstance()->OpenPropertySheetTypes( -1, nSettingType );
+			CEditApp::getInstance()->OpenPropertySheetTypes( -1, sResult.cDocumentType );
 		}
 	}
 	return;

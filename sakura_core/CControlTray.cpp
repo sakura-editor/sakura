@@ -31,6 +31,8 @@
 #include <io.h>
 #include "CControlTray.h"
 #include "CEditApp.h"
+#include "CPropertyManager.h"
+#include "CDlgTypeList.h"
 #include "Debug.h"
 #include "CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
@@ -143,7 +145,8 @@ static LRESULT CALLBACK CControlTrayWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
 //	Apr. 24, 2001 genta
-: m_hInstance( NULL )
+: m_pcPropertyManager(NULL)
+, m_hInstance( NULL )
 , m_hWnd( NULL )
 , m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
@@ -162,6 +165,7 @@ CControlTray::CControlTray()
 
 CControlTray::~CControlTray()
 {
+	delete m_pcPropertyManager;
 	return;
 }
 
@@ -232,6 +236,9 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	if( m_hWnd ){
 		CreateTrayIcon( m_hWnd );
 	}
+
+	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager->Create( hInstance, m_hWnd, &m_hIcons, &m_CMenuDrawer );
 
 	return m_hWnd;
 }
@@ -583,6 +590,23 @@ LRESULT CControlTray::DispatchEvent(
 					/* 外部HTMLヘルプ */
 					{
 //						CEditView::Command_EXTHTMLHELP();
+					}
+					break;
+				case F_TYPE_LIST:	// タイプ別設定一覧
+					{
+						CDlgTypeList			cDlgTypeList;
+						CDlgTypeList::SResult	sResult;
+						sResult.cDocumentType = 0;
+						sResult.bTempChange = false;
+						if( cDlgTypeList.DoModal( m_hInstance, m_hWnd, &sResult ) ){
+							// タイプ別設定
+							m_pcPropertyManager->OpenPropertySheetTypes( NULL, -1, sResult.cDocumentType );
+						}
+					}
+					break;
+				case F_OPTION:	// 共通設定
+					{
+						m_pcPropertyManager->OpenPropertySheet( NULL, -1 );
 					}
 					break;
 				case F_ABOUT:
@@ -1421,6 +1445,9 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T("ヘルプ目次"), _T("O"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T("ヘルプキーワード検索"), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T(""), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T("タイプ別設定一覧..."), _T("L"), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T("共通設定..."), _T("C"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T(""), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T("バージョン情報"), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T(""), FALSE );

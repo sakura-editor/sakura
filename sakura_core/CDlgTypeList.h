@@ -17,9 +17,8 @@ class CDlgTypeList;
 #ifndef _CDLGTYPELIST_H_
 #define _CDLGTYPELIST_H_
 
-const int PROP_TEMPCHANGE_FLAG = 0x10000;
-
 #include "CDialog.h"
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -29,18 +28,23 @@ const int PROP_TEMPCHANGE_FLAG = 0x10000;
 class CDlgTypeList : public CDialog
 {
 public:
-	int DoModal( HINSTANCE, HWND, int* );	/* モーダルダイアログの表示 */
+	struct SResult{
+		int	cDocumentType;	//!< 文書種類
+		bool			bTempChange;	//!< 旧PROP_TEMPCHANGE_FLAG
+	};
 
-	int				m_nSettingType;
+	int DoModal( HINSTANCE, HWND, SResult* );	/* モーダルダイアログの表示 */
+
 protected:
-	/*
-	||  実装ヘルパ関数
-	*/
+	//  実装ヘルパ関数
 	BOOL OnLbnDblclk( int );
 	BOOL OnBnClicked( int );
 	void SetData();	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
+private:
+	int				m_nSettingType;
+	bool m_bEnableTempChange;				//一時適用の有効化
 };
 
 
