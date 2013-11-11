@@ -191,6 +191,14 @@ INT_PTR CALLBACK PropTypesKeyHelp(
 
 CPropTypes::CPropTypes()
 {
+	{
+		assert( sizeof(CPropTypesScreen)  - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesColor)   - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesSupport) - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesRegex)   - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
+	}
+
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
