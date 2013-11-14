@@ -1989,7 +1989,7 @@ int CEditView::DetectWidthOfLineNumberArea_calculate( void )
 	int			i;
 	int			nAllLines;
 	int			nWork;
-	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		nAllLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}else{
 		nAllLines = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
@@ -4401,7 +4401,7 @@ void CEditView::DrawCaretPosInfo( void )
 	//	To Here
 
 	int nPosX, nPosY;
-	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if (pcLayout && pcLayout->m_ptLogicPos.x){
 			char* pLine = pcLayout->m_pCDocLine->GetPtr();
 			int nLineLen = m_ptCaretPos_PHY.x;

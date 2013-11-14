@@ -1554,7 +1554,7 @@ void CShareData::ShareData_IO_Other( CProfile& cProfile )
 	}
 
 	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
-	cProfile.IOProfileData( pszSecName, "bLineNumIsCRLF"	, m_pShareData->m_bLineNumIsCRLF );
+	cProfile.IOProfileData( pszSecName, "bLineNumIsCRLF"	, m_pShareData->m_bLineNumIsCRLF_ForJump );
 	
 	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 	cProfile.IOProfileData( pszSecName, "nDiffFlgOpt"	, m_pShareData->m_nDiffFlgOpt );

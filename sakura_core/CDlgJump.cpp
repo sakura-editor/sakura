@@ -59,12 +59,8 @@ int CDlgJump::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	LPARAM		lParam
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//	BOOL		bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 )
 {
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	return CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
 }
 
@@ -145,8 +141,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_PLSQL_E1 ), TRUE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_PLSQLBLOCKS ), TRUE );
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-			m_pShareData->m_bLineNumIsCRLF = TRUE;
+			m_pShareData->m_bLineNumIsCRLF_ForJump = true;
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), FALSE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), FALSE );
 		}else{
@@ -159,9 +154,8 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), TRUE );
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), TRUE );
 		}
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-		if( m_pShareData->m_bLineNumIsCRLF ){
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
+		if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 			::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_LAYOUT, FALSE );
 			::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_CRLF, TRUE );
 		}else{
@@ -234,8 +228,7 @@ void CDlgJump::SetData( void )
 			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				wsprintf( szText, _T("%d 行  %s  パッケージ仕様部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
@@ -247,8 +240,7 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}
 			else{
@@ -257,8 +249,7 @@ void CDlgJump::SetData( void )
 			nPLSQLBlockNum++;
 		}
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				wsprintf( szText, _T("%d 行  %s  パッケージ本体部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
@@ -270,8 +261,7 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndexCurSel = nIndex = ::SendMessage( hwndCtrl, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)szText );
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				nWorkLine = cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
@@ -300,8 +290,7 @@ void CDlgJump::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_EDIT_PLSQL_E1 ), TRUE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_PLSQLBLOCKS ), TRUE );
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-		m_pShareData->m_bLineNumIsCRLF = TRUE;
+		m_pShareData->m_bLineNumIsCRLF_ForJump = true;
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), FALSE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), FALSE );
 	}else{
@@ -314,9 +303,8 @@ void CDlgJump::SetData( void )
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ), TRUE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_LINENUM_CRLF ), TRUE );
 	}
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-	if( m_pShareData->m_bLineNumIsCRLF ){
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
+	if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 		::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_LAYOUT, FALSE );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_LINENUM_CRLF, TRUE );
 	}else{
@@ -335,12 +323,11 @@ int CDlgJump::GetData( void )
 {
 	BOOL	pTranslated;
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_LINENUM_LAYOUT ) ){
-		m_pShareData->m_bLineNumIsCRLF = FALSE;
+		m_pShareData->m_bLineNumIsCRLF_ForJump = false;
 	}else{
-		m_pShareData->m_bLineNumIsCRLF = TRUE;
+		m_pShareData->m_bLineNumIsCRLF_ForJump = true;
 	}
 
 	/* PL/SQLソースの有効行か */

@@ -793,7 +793,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, TRUE );
 	}
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( !m_Types.m_bLineNumIsCRLF ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_LAYOUT, TRUE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, FALSE );
@@ -958,11 +958,11 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	}else{
 		m_Types.m_nStringType = 1;
 	}
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINENUM_LAYOUT ) ){
-		m_Types.m_bLineNumIsCRLF = FALSE;
+		m_Types.m_bLineNumIsCRLF = false;
 	}else{
-		m_Types.m_bLineNumIsCRLF = TRUE;
+		m_Types.m_bLineNumIsCRLF = true;
 	}
 
 	/* セット名コンボボックスの値セット */

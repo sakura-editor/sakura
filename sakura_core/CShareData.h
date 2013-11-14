@@ -285,7 +285,7 @@ struct STypeConfig {
 	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
 	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
 
-	int					m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 false=折り返し単位／true=改行単位 */
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
 	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
 	int					m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
@@ -1019,7 +1019,7 @@ struct DLLSHAREDATA {
 
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
-	BOOL						m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+	bool						m_bLineNumIsCRLF_ForJump;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
 

@@ -24,12 +24,13 @@
 
 #include "StdAfx.h"
 #include "CDlgFuncList.h"
+#include "CFuncInfo.h"
+#include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "etc_uty.h"
 #include "os.h"
 #include "Debug.h"
 #include "CEditView.h"
 #include "Funccode.h"		//Stonee, 2001/03/12
-#include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "CEditWnd.h"	//	2006/2/11 aroka 追加
@@ -130,7 +131,7 @@ CDlgFuncList::CDlgFuncList()
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	m_nSortCol = 0;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(1列目) */
-	m_bLineNumIsCRLF = FALSE;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	m_bLineNumIsCRLF = false;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
 	m_nSortType = 0;
 	m_cFuncInfo = NULL;			/* 現在の関数情報 */
@@ -178,14 +179,14 @@ HWND CDlgFuncList::DoModeless(
 	CLayoutInt		nCurLine,
 	CLayoutInt		nCurCol,
 	int				nListType,
-	int				bLineNumIsCRLF		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool			bLineNumIsCRLF		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 )
 {
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
 	m_nListType = nListType;			/* 一覧の種類 */
-	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 
 	// 2007.04.18 genta : 「フォーカスを移す」と「自動的に閉じる」がチェックされている場合に
 	// ダブルクリックを行うと，trueのまま残ってしまうので，ウィンドウを開いたときにリセットする．
@@ -354,7 +355,7 @@ void CDlgFuncList::SetData()
 			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
-			/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
 				wsprintf( szText, _T("%d"), pcFuncInfo->m_nFuncLineCRLF );
 			}else{
@@ -368,7 +369,7 @@ void CDlgFuncList::SetData()
 			ListView_InsertItem( hwndList, &item);
 
 			// 2010.03.17 syat 桁追加
-			/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			if(m_bLineNumIsCRLF ){
 				wsprintf( szText, _T("%d"), pcFuncInfo->m_nFuncColCRLF );
 			}else{
@@ -908,7 +909,7 @@ void CDlgFuncList::SetListVB (void)
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
 			wsprintf( szText, _T("%d"), pcFuncInfo->m_nFuncLineCRLF );
 		}else{
@@ -922,7 +923,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_InsertItem( hwndList, &item);
 
 		// 2010.03.17 syat 桁追加
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if(m_bLineNumIsCRLF ){
 			wsprintf( szText, _T("%d"), pcFuncInfo->m_nFuncColCRLF );
 		}else{

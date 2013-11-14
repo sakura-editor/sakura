@@ -3687,8 +3687,8 @@ void CEditView::Command_JUMP( void )
 	nLineNum = m_pcEditDoc->m_cDlgJump.m_nLineNum;
 
 	if( !m_pcEditDoc->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( m_pShareData->m_bLineNumIsCRLF ){
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
+		if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 			if( 0 >= nLineNum ){
 				nLineNum = 1;
 			}
@@ -3731,7 +3731,7 @@ void CEditView::Command_JUMP( void )
 	int	nLineCount;
 	nLineCount = m_pcEditDoc->m_cDlgJump.m_nPLSQL_E1 - 1;
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( !m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
 		/*
 		  カーソル位置変換
@@ -4489,7 +4489,7 @@ BOOL CEditView::Command_FUNCLIST(
 			m_ptCaretPos.y + 1,
 			m_ptCaretPos.x + 1,
 			nOutlineType,
-			m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
 	}else{
 		/* アクティブにする */

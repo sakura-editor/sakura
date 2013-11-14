@@ -197,7 +197,7 @@ void CEditView::DispLineNumber(
 
 //	if( m_pcEditDoc->GetDocumentAttribute().m_bDispLINE ){	/* 行番号表示／非表示 */
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[/*nColorIndex*/COLORIDX_GYOU].m_bDisp ){	/* 行番号表示／非表示 */
-		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
 			/* 論理行番号表示モード */
 			if( NULL == pcLayout || 0 != pcLayout->m_ptLogicPos.x ){

@@ -18,14 +18,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgFuncList;
-
 #ifndef _CDLGFUNCLIST_H_
 #define _CDLGFUNCLIST_H_
 
 #include <windows.h>
 #include "CDialog.h"
-#include "CFuncInfo.h"
+
+class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 
 
@@ -41,7 +40,7 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int );/* モードレスダイアログの表示 */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, bool );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
 	
 	/*! 現在の種別と同じなら
@@ -55,7 +54,7 @@ public:
 	int				m_nSortCol;			/* ソートする列番号 */
 	int				m_nListType;		/* 一覧の種類 */
 	CMemory			m_cmemClipText;		/* クリップボードコピー用テキスト */
-	int				m_bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool			m_bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );

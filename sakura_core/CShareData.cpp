@@ -316,10 +316,13 @@ struct ARRHEAD {
 
 	Version 113:
 	m_bCreateAccelTblEachWin削除 2013.10.19 novice
+
+	Version 114:
+	m_bLineNumIsCRLF_ForJump BOOL->boolに変更 2013.11.10 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 113;
+const unsigned int uShareDataVersion = 114;
 
 /*
 ||	Singleton風
@@ -833,7 +836,7 @@ bool CShareData::InitShareData()
 		// 2004.06.22 Moca タグジャンプの先頭
 		m_pShareData->m_sTagJump.m_TagJumpTop = 0;
 		m_pShareData->m_nExecFlgOpt = 1;	/* 外部コマンド実行の「標準出力を得る」 */	// 2006.12.03 maru オプションの拡張のため
-		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
+		m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 
 		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 
@@ -5149,7 +5152,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_sColorAttr	= ColorInfo_DEFAULT[i].m_sColorAttr;
 		strcpy( pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
 	}
-	pShareData->m_Types[nIdx].m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	pShareData->m_Types[nIdx].m_bLineNumIsCRLF = true;				/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	pShareData->m_Types[nIdx].m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
 	pShareData->m_Types[nIdx].m_cLineTermChar = ':';					/* 行番号区切り文字 */
 	pShareData->m_Types[nIdx].m_bWordWrap = FALSE;					/* 英文ワードラップをする */

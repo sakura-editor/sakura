@@ -82,7 +82,7 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 		{
 			AddIntParam( pcEditView->m_pcEditDoc->m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_bLineNumIsCRLF		? 0x01 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_bLineNumIsCRLF_ForJump		? 0x01 : 0x00;
 			lFlag |= pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
 			AddIntParam( lFlag );
 		}
@@ -446,7 +446,7 @@ void CMacro::HandleCommand(
 		{
 			pcEditView->m_pcEditDoc->m_cDlgJump.m_nLineNum = atoi(Argument[0]);	//ジャンプ先
 			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 1; // デフォルト1
-			pcEditView->m_pShareData->m_bLineNumIsCRLF = lFlag & 0x01 ? 1 : 0;
+			pcEditView->m_pShareData->m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
 			pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0 );	//	標準
 		}
