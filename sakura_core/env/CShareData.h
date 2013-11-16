@@ -54,30 +54,17 @@ struct DLLSHAREDATA;
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-class CShareData
+class CShareData : public TSingleton<CShareData>
 {
-public:
-	/*
-	||	Singleton風
-	*/
-	static CShareData* getInstance()
-	{
-		return _instance;
-	}
-
-public:
-	/*
-	||  Constructors
-	*/
+	friend class TSingleton<CShareData>;
 	CShareData();
 	~CShareData();
 
-
+public:
 	/*
 	||  Attributes & Operations
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
-	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 
 	
 	//MRU系
@@ -113,10 +100,7 @@ protected:
 	void InitPopupMenu(DLLSHAREDATA*);
 
 private:
-	static CShareData* _instance;
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-
-private:
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
 	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）

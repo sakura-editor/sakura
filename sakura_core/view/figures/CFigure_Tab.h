@@ -31,6 +31,10 @@ class CFigure_Tab : public CFigureSpace{
 public:
 	//traits
 	bool Match(const wchar_t* pText) const;
+	bool Disp(void) const
+	{
+		return true;
+	}
 
 	//action
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;

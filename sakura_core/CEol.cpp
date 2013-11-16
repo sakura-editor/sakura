@@ -57,13 +57,13 @@ struct SEolDefinition{
 	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
 };
 static const SEolDefinition g_aEolTable[] = {
-	_T("‰üs–³"),	L"",			"",			0,
-	_T("CRLF"),		L"\x0d\x0a",	"\x0d\x0a",	2,
-	_T("LF"),		L"\x0a",		"\x0a",		1,
-	_T("CR"),		L"\x0d",		"\x0d",		1,
-	_T("NEL"),		L"\x85",		"",			1,
-	_T("LS"),		L"\u2028",		"",			1,
-	_T("PS"),		L"\u2029",		"",			1,
+	{ _T("‰üs–³"),	L"",			"",			0 },
+	{ _T("CRLF"),	L"\x0d\x0a",	"\x0d\x0a",	2 },
+	{ _T("LF"),		L"\x0a",		"\x0a",		1 },
+	{ _T("CR"),		L"\x0d",		"\x0d",		1 },
+	{ _T("NEL"),	L"\x85",		"",			1 },
+	{ _T("LS"),		L"\u2028",		"",			1 },
+	{ _T("PS"),		L"\u2029",		"",			1 },
 };
 
 
@@ -77,13 +77,13 @@ struct SEolDefinitionForUniFile{
 	bool StartsWithWB(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
 };
 static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
-	"",					"", 					0,
-	"\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4,
-	"\x0a\x00",			"\x00\x0a",				2,
-	"\x0d\x00",			"\x00\x0d",				2,
-	"\x85\x00",			"\x00\x85",				2,
-	"\x28\x20",			"\x20\x28",				2,
-	"\x29\x20",			"\x20\x29",				2,
+	{ "",					"", 					0 },
+	{ "\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4 },
+	{ "\x0a\x00",			"\x00\x0a",				2 },
+	{ "\x0d\x00",			"\x00\x0d",				2 },
+	{ "\x85\x00",			"\x00\x85",				2 },
+	{ "\x28\x20",			"\x20\x28",				2 },
+	{ "\x29\x20",			"\x20\x29",				2 },
 };
 
 

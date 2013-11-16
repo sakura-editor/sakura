@@ -36,7 +36,7 @@
 */
 void CViewCommander::Command_SHOWTOOLBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
@@ -59,7 +59,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 */
 void CViewCommander::Command_SHOWFUNCKEY( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
@@ -85,7 +85,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
  */
 void CViewCommander::Command_SHOWTAB( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.GetHwnd())? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
@@ -94,8 +94,8 @@ void CViewCommander::Command_SHOWTAB( void )
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
-		GetDocument()->m_pcEditWnd->WindowTopMost(
-			( (DWORD)::GetWindowLongPtr( GetDocument()->m_pcEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+		GetEditWindow()->WindowTopMost(
+			( (DWORD)::GetWindowLongPtr( GetEditWindow()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 		);
 	}
 
@@ -117,7 +117,7 @@ void CViewCommander::Command_SHOWTAB( void )
 */
 void CViewCommander::Command_SHOWSTATUSBAR( void )
 {
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
 	GetDllShareData().m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_cStatusBar.GetStatusHwnd())? TRUE: FALSE);	/* ステータスバー表示 */
 	pCEditWnd->LayoutStatusBar();
@@ -157,8 +157,9 @@ void CViewCommander::Command_TYPE_LIST( void )
 
 
 
-/*! タイプ説設定一時適用 */
-void CViewCommander::Command_CHANGETYPE( int nTypePlusOne ){
+/*! タイプ別設定一時適用 */
+void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
+{
 	CTypeConfig type = CTypeConfig(nTypePlusOne - 1);
 	if( nTypePlusOne == 0 ){
 		type = GetDocument()->m_cDocType.GetDocumentType();
@@ -249,7 +250,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
 	static const INT sizeTable[] = { 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 36*10, 48*10, 72*10 };
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
-		: GetDocument()->m_pcEditWnd->GetLogfont( mode == 2 ));
+		: GetEditWindow()->GetLogfont( mode == 2 ));
 	INT nPointSize;
 
 	// TrueTypeのみ対応
@@ -267,7 +268,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	} else if( 0 != shift ) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
 		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
-			: GetDocument()->m_pcEditWnd->GetFontPointSize( mode == 2 ));
+			: GetEditWindow()->GetFontPointSize( mode == 2 ));
 
 		// フォントの拡大or縮小するためのサイズ検索
 		int i;
@@ -433,7 +434,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
-		pcDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+		GetEditWindow()->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 	}

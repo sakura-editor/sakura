@@ -10,7 +10,7 @@
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+	DLLSHAREDATA* pShareData = &GetDllShareData();
 
 	m_nViewAlignLeft = 0;		/* 表示域の左端座標 */
 	m_nViewAlignLeftCols = 0;	/* 行番号域の桁数 */
@@ -204,7 +204,7 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate() const
 
 	int nAllLines; //$$ 単位混在
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}

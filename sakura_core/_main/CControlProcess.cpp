@@ -99,7 +99,7 @@ bool CControlProcess::InitializeProcess()
 	UINT unIndex;
 	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
 		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
-		if ( _tcsncmp(CProcess::GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
+		if ( _tcsncmp(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;
 		}

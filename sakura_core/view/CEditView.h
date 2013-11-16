@@ -482,11 +482,6 @@ public:
 						const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
 	bool  SearchBracketBackward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
 						const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
-//@@@ 2001.02.03 Start by MIK: 全角の対括弧
-	bool  SearchBracketForward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-								 const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
-	bool  SearchBracketBackward2( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-								  const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 	void DrawBracketPair( bool );								/* 対括弧の強調表示 02/09/18 ai */
 	bool IsBracket( const wchar_t*, CLogicInt, CLogicInt );					/* 括弧判定 03/01/09 ai */
 

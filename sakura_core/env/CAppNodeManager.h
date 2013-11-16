@@ -43,6 +43,8 @@ struct EditNode {
 
 	HWND GetHwnd() const{ return GetSafeHwnd(); }
 	HWND GetSafeHwnd() const{ if(this)return m_hWnd; else return NULL; }
+	int GetId() const{ return GetSafeId(); }
+	int GetSafeId() const{ if(this)return m_nId; else return 0; }
 	CAppNodeGroupHandle GetGroup() const;
 	bool IsTopInGroup() const;
 };

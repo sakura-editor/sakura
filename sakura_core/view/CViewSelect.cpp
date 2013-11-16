@@ -629,18 +629,18 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	const CEditView* pView=GetEditView();
 
 	//	出力されないなら計算を省略
-	if( ! pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
+	if( ! pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
 		return;
 
 	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // 先頭行が実在しない
 		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
 		}else if( m_bSelectingLock ){
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
 		}else{
-			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
 		}
 		return;
 	}
@@ -676,7 +676,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		CViewSelect* thiz = const_cast<CViewSelect*>( this );	// const外しthis
 
 		// 共通設定・選択文字数を文字単位ではなくバイト単位で表示する
-		BOOL bCountByByteCommon = CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispSelCountByByte;
+		BOOL bCountByByteCommon = GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte;
 		BOOL bCountByByte = ( pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
 								bCountByByteCommon :
 								pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
@@ -824,5 +824,5 @@ void CViewSelect::PrintSelectionInfoMsg() const
 #endif
 	}
 	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
-	pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
+	pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
 }

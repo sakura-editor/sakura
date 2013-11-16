@@ -1859,9 +1859,6 @@ BEGIN
                     ES_READONLY | WS_GROUP | NOT WS_TABSTOP
     PUSHBUTTON      "Assign(&B)",IDC_BUTTON_ASSIGN,129,190,34,14,WS_GROUP
     PUSHBUTTON      "&Release",IDC_BUTTON_RELEASE,129,204,34,14
-    CONTROL         "Create Accelerator for each Window (for Wine)(&W)",
-                    IDC_CHECK_ACCELTBL_EACHWIN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,222,210,10
 END
 
 IDD_PROP_CUSTMENU DIALOGEX 0, 0, 293, 240

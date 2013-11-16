@@ -31,8 +31,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-	int DoModal( HINSTANCE, HWND, LPARAM/* , BOOL */);	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	int			m_nLineNum;		/*!< 行番号 */
 	BOOL		m_bPLSQL;		/*!< PL/SQLソースの有効行か */

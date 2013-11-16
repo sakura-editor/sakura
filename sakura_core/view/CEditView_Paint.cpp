@@ -569,15 +569,15 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 			pPs->rcPaint.top,
 			SRCCOPY
 		);
-		if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
+		if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
 			/* アクティブペインは、アンダーライン描画 */
 			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 		}
 		return;
 	}
 	if( m_hdcCompatDC && NULL == m_hbmpCompatBMP
-		 || (pPs->rcPaint.right - pPs->rcPaint.left) < m_nCompatBMPWidth
-		 || (pPs->rcPaint.bottom - pPs->rcPaint.top) < m_nCompatBMPHeight ){
+		 || m_nCompatBMPWidth < (pPs->rcPaint.right - pPs->rcPaint.left)
+		 || m_nCompatBMPHeight < (pPs->rcPaint.bottom - pPs->rcPaint.top) ){
 		RECT rect;
 		::GetWindowRect( this->GetHwnd(), &rect );
 		CreateOrUpdateCompatibleBitmap( rect.right - rect.left, rect.bottom - rect.top );
@@ -798,7 +798,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
-	if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
+	if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
 		/* アクティブペインは、アンダーライン描画 */
 		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 	}

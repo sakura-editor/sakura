@@ -45,17 +45,17 @@ bool CMigemo::InitDllImp()
 	//	static‚É‚µ‚Ä‚Í‚¢‚¯‚È‚¢‚ç‚µ‚¢
 	
 	const ImportTable table[] = {
-		&m_migemo_open              ,"migemo_open"              ,
-		&m_migemo_close             ,"migemo_close"             ,
-		&m_migemo_query             ,"migemo_query"             ,
-		&m_migemo_release           ,"migemo_release"           ,
-		&m_migemo_set_operator      ,"migemo_set_operator"      ,
-		&m_migemo_get_operator      ,"migemo_get_operator"      ,
-		&m_migemo_setproc_char2int  ,"migemo_setproc_char2int"  ,
-		&m_migemo_setproc_int2char  ,"migemo_setproc_int2char"  ,
-		&m_migemo_load              ,"migemo_load"              ,
-		&m_migemo_is_enable         ,"migemo_is_enable"         ,     
-		NULL, 0
+		{ &m_migemo_open              ,"migemo_open"              },
+		{ &m_migemo_close             ,"migemo_close"             },
+		{ &m_migemo_query             ,"migemo_query"             },
+		{ &m_migemo_release           ,"migemo_release"           },
+		{ &m_migemo_set_operator      ,"migemo_set_operator"      },
+		{ &m_migemo_get_operator      ,"migemo_get_operator"      },
+		{ &m_migemo_setproc_char2int  ,"migemo_setproc_char2int"  },
+		{ &m_migemo_setproc_int2char  ,"migemo_setproc_int2char"  },
+		{ &m_migemo_load              ,"migemo_load"              },
+		{ &m_migemo_is_enable         ,"migemo_is_enable"         },
+		{ NULL, 0                                                 }
 	};
 	
 	if( ! RegisterEntries(table) ){
@@ -103,7 +103,7 @@ LPCTSTR CMigemo::GetDllNameImp(int nIndex)
 	if(nIndex==0){
 		TCHAR* szDll;
 		static TCHAR szDllName[_MAX_PATH];
-		szDll = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDll;
+		szDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
 
 		if(szDll[0] == _T('\0')){
 			GetInidir( szDllName, _T("migemo.dll") );
@@ -276,7 +276,7 @@ int CMigemo::migemo_load_all()
 {
 	if( !migemo_is_enable()){
 		
-		TCHAR* szDict = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDict;
+		TCHAR* szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
 		TCHAR path[MAX_PATH];
 		//char path2[MAX_PATH];
 		TCHAR *ppath;

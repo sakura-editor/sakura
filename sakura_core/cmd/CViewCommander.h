@@ -33,14 +33,12 @@ class CCaret;
 class CEditWnd;
 class CColorStrategy;
 class CColorStrategyPool;
+class CSMacroMgr;
 #include "CEol.h"
 
 class CViewCommander{
 public:
-	CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
-	{
-		m_bPrevCommand = 0;
-	}
+	CViewCommander(CEditView* pEditView);
 
 public:
 	//外部依存
@@ -54,6 +52,7 @@ public:
 
 private:
 	CEditView*		m_pCommanderView;
+	CSMacroMgr*		m_pcSMacroMgr;
 
 public:
 	/* キーリピート状態 */

@@ -41,8 +41,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
-: m_pcEditApp( NULL )
-, CProcess( hInstance, lpCmdLine )
+: CProcess( hInstance, lpCmdLine )
+, m_pcEditApp( NULL )
 {
 }
 
@@ -87,7 +87,7 @@ bool CNormalProcess::InitializeProcess()
 	UINT i;
 	for ( i = 0; i < CSelectLang::m_psLangInfoList.size(); i++ ) {
 		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( i );
-		if ( _tcsncmp(CProcess::GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
+		if ( _tcsncmp(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( i );
 			break;
 		}
@@ -116,7 +116,7 @@ bool CNormalProcess::InitializeProcess()
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
-				CLogicPoint& pt = *CProcess::GetDllShareData().m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
+				CLogicPoint& pt = *GetDllShareData().m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
 				if( fi.m_ptCursor.x < 0 ){
 					//	桁の指定が無い場合
 					::SendMessageAny( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
@@ -157,7 +157,7 @@ bool CNormalProcess::InitializeProcess()
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
-	CEditWnd* pEditWnd = m_pcEditApp->GetWindow();
+	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 	if( NULL == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );
@@ -473,7 +473,7 @@ bool CNormalProcess::InitializeProcess()
 bool CNormalProcess::MainLoop()
 {
 	if( GetMainWindow() ){
-		m_pcEditApp->GetWindow()->MessageLoop();	/* メッセージループ */
+		m_pcEditApp->GetEditWindow()->MessageLoop();	/* メッセージループ */
 		return true;
 	}
 	return false;

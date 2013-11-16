@@ -77,7 +77,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
-		pShareData = CShareData::getInstance()->GetShareData();
+		pShareData = &GetDllShareData();
 		::GetWindowRect( hwnd, &pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 //		MYTRACE( _T("WM_MOVE 1\n") );
 		break;
@@ -549,7 +549,7 @@ CDlgOpenFile::CDlgOpenFile()
 	m_hWnd = NULL;			/* このダイアログのハンドル */
 
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	/* OPENFILENAMEの初期化 */
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji

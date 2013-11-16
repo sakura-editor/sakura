@@ -50,7 +50,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			_tcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		int nSaveResult=CEditApp::getInstance()->m_pcSMacroMgr->Save(
+		int nSaveResult = m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
@@ -64,12 +64,12 @@ void CViewCommander::Command_RECKEYMACRO( void )
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		CEditApp::getInstance()->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
+		m_pcSMacroMgr->Clear(STAND_KEYMACRO);
 //		GetDocument()->m_CKeyMacroMgr.ClearAll();
 //		GetDllShareData().m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
-	this->GetEditWindow()->UpdateCaption();
+	GetEditWindow()->UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
 	GetCaret().ShowCaretPosInfo();
@@ -84,7 +84,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
-	if( !CEditApp::getInstance()->m_pcSMacroMgr->IsSaveOk() ){
+	if( !m_pcSMacroMgr->IsSaveOk() ){
 		//	保存不可
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
 	}
@@ -118,7 +118,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
-	if ( !CEditApp::getInstance()->m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
+	if ( !m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), szPath );
 	}
 	return;
@@ -184,7 +184,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		BOOL bLoadResult = CEditApp::getInstance()->m_pcSMacroMgr->Load(
+		BOOL bLoadResult = m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
@@ -195,7 +195,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
-			CEditApp::getInstance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
+			m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
 		}
 	}
 	return;
@@ -254,7 +254,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
 	){
 		LPARAM lparams[] = {(LPARAM)pszPath, 0, 0, 0};
-		CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, lparams, m_pCommanderView );
+		m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, lparams, m_pCommanderView );
 
 		//キーマクロの記録を一時停止する
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
@@ -263,9 +263,9 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	}
 
 	//古い一時マクロの退避
-	CMacroManagerBase* oldMacro = CEditApp::getInstance()->m_pcSMacroMgr->SetTempMacro( NULL );
+	CMacroManagerBase* oldMacro = m_pcSMacroMgr->SetTempMacro( NULL );
 
-	BOOL bLoadResult = CEditApp::getInstance()->m_pcSMacroMgr->Load(
+	BOOL bLoadResult = m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		G_AppInstance(),
 		pszPath,
@@ -275,13 +275,13 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロの読み込みに失敗しました。\n\n%ts"), pszPath );
 	}
 	else {
-		CEditApp::getInstance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
+		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら開放
-	CEditApp::getInstance()->m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
+	m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
 	if ( oldMacro != NULL ) {
-		CEditApp::getInstance()->m_pcSMacroMgr->SetTempMacro( oldMacro );
+		m_pcSMacroMgr->SetTempMacro( oldMacro );
 	}
 
 	// キーマクロ記録中だった場合は再開する

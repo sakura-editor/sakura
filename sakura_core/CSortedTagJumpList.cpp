@@ -35,10 +35,10 @@
 	@date 2005.04.23 genta ŠÇ—”‚ÌÅ‘å’l‚ğw’è‚·‚éˆø”’Ç‰Á
 */
 CSortedTagJumpList::CSortedTagJumpList(int max)
-	: m_MAX_TAGJUMPLIST( max ),
-	  m_pTagjump( NULL ),
+	: m_pTagjump( NULL ),
 	  m_nCount( 0 ),
-	  m_bOverflow( false )
+	  m_bOverflow( false ),
+	  m_MAX_TAGJUMPLIST( max )
 {
 	// id==0 ‚ğ ‹ó•¶š—ñ‚É‚·‚é
 	m_baseDirArr.push_back(_T(""));

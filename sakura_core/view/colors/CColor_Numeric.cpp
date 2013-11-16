@@ -18,7 +18,7 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 
 	int	nnn;
 
-	if( _IsPosKeywordHead(cStr,nPos) && m_pTypeData->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
+	if( _IsPosKeywordHead(cStr,nPos)
 		&& (nnn = IsNumber(cStr, nPos)) > 0 )		/* 半角数字を表示する */
 	{
 		/* キーワード文字列の終端をセットする */

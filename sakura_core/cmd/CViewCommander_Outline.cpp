@@ -170,7 +170,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			poCaret.GetX2() + CLayoutInt(1),
 			nOutlineType,
 			nListType,
-			GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+			GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
 	}else{
 		/* アクティブにする */

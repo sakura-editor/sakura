@@ -1856,9 +1856,6 @@ BEGIN
                     ES_READONLY | WS_GROUP | NOT WS_TABSTOP
     PUSHBUTTON      "割付(&B)",IDC_BUTTON_ASSIGN,132,190,28,14,WS_GROUP
     PUSHBUTTON      "解除(&R)",IDC_BUTTON_RELEASE,132,204,28,14
-    CONTROL         "ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)(&W)",
-                    IDC_CHECK_ACCELTBL_EACHWIN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,222,210,10
 END
 
 IDD_PROP_CUSTMENU DIALOGEX 0, 0, 293, 240

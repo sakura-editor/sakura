@@ -49,8 +49,8 @@ class COutlineIfObj : public CWSHIfObj {
 public:
 	COutlineIfObj( CFuncInfoArr& cFuncInfoArr )
 		: CWSHIfObj( L"Outline", false )
-		, m_cFuncInfoArr( cFuncInfoArr )
 		, m_nListType( OUTLINE_PLUGIN )
+		, m_cFuncInfoArr( cFuncInfoArr )
 	{
 	}
 

@@ -26,16 +26,16 @@
 CSplitterWnd::CSplitterWnd()
 : CWnd(_T("::CSplitterWnd"))
 , m_pszClassName(_T("SplitterWndClass"))	/* クラス名 */
-, m_nActivePane(0)					/* アクティブなペイン 0-3 */
+, m_pCEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
 , m_nVSplitPos(0)					/* 垂直分割位置 */
 , m_nHSplitPos(0)					/* 水平分割位置 */
+, m_nChildWndCount(0)
 , m_bDragging(0)						/* 分割バーをドラッグ中か */
 , m_nDragPosX(0)						/* ドラッグ位置Ｘ */
 , m_nDragPosY(0)						/* ドラッグ位置Ｙ */
-, m_nChildWndCount(0)
-, m_pCEditWnd(NULL)
+, m_nActivePane(0)					/* アクティブなペイン 0-3 */
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();

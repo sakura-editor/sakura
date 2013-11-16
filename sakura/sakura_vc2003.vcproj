@@ -2211,6 +2211,9 @@
 					RelativePath="..\sakura_core\_os\CDropTarget.h">
 				</File>
 				<File
+					RelativePath="..\sakura_core\_os\COsVersionInfo.cpp">
+				</File>
+				<File
 					RelativePath="..\sakura_core\_os\COsVersionInfo.h">
 				</File>
 				<File

@@ -552,25 +552,25 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 		// 削除行あり時：最大幅の行を含んで編集した
 
 		if(( pctwArg->nDelLines < CLayoutInt(0)  && Int(m_nTextWidth) &&
-		     Int(nInsLineNum) && Int(pctwArg->nColumnFrom) && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
+		     Int(nInsLineNum) && Int(pctwArg->ptLayout.x) && m_nTextWidthMaxLine == pctwArg->ptLayout.y )||
 		   ( pctwArg->nDelLines >= CLayoutInt(0) && Int(m_nTextWidth) &&
-		     pctwArg->nLineFrom <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->nLineFrom + pctwArg->nDelLines ))
+		     pctwArg->ptLayout.y <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->ptLayout.y + pctwArg->nDelLines ))
 		{
 			// 全ラインを走査する
 			nCalTextWidthLinesFrom = -1;
 			nCalTextWidthLinesTo   = -1;
 		}else if( Int(nInsLineNum) || Int(pctwArg->bInsData) ){		// 追加削除行 または 追加文字列あり
 			// 追加削除行のみを走査する
-			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
+			nCalTextWidthLinesFrom = pctwArg->ptLayout.y;
 
 			// 最終的に編集された行数（3行削除2行追加なら2行追加）
 			// 　1行がMAXLINEKETASを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
 			// 　不要なので計算を省くためこのままとする。
 			CLayoutInt nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : CLayoutInt(0));
-			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : CLayoutInt(0));
+			nCalTextWidthLinesTo   = pctwArg->ptLayout.y + ((nEditLines > 0) ? nEditLines : CLayoutInt(0));
 
 			// 最大幅の行が上下するのを計算
-			if( Int(m_nTextWidth) && Int(nInsLineNum) && m_nTextWidthMaxLine >= pctwArg->nLineFrom )
+			if( Int(m_nTextWidth) && Int(nInsLineNum) && m_nTextWidthMaxLine >= pctwArg->ptLayout.y )
 				m_nTextWidthMaxLine += nInsLineNum;
 		}else{
 			// 最大幅以外の行を改行を含まずに（1行内で）編集した

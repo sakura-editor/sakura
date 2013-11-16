@@ -405,7 +405,6 @@ struct CommonSetting_KeyBind
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100+1];		/* キー割り当て表 */ // 未割り当てキーコード用にダミーを追加
 	BYTE				m_VKeyToKeyNameArr[256];	// キーコード→割り当て表インデックス // 2012.11.25 aroka
-	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 };
 
 

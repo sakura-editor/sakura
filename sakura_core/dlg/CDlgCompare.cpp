@@ -217,19 +217,23 @@ int CDlgCompare::GetData( void )
 	EditInfo*		pfi;
 	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
 	nItem = List_GetCurSel( hwndList );
-	*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
-	/* トレイからエディタへの編集ファイル名要求通知 */
-	::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-	pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+	if( LB_ERR == nItem ){
+		return FALSE;
+	}else{
+		*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
+		/* トレイからエディタへの編集ファイル名要求通知 */
+		::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
+		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-	// 2010.07.30 パス名はやめて表示名に変更
-	int nId = CAppNodeManager::getInstance()->GetEditNode( *m_phwndCompareWnd )->m_nId;
-	CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1 );
+		// 2010.07.30 パス名はやめて表示名に変更
+		int nId = CAppNodeManager::getInstance()->GetEditNode( *m_phwndCompareWnd )->GetId();
+		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1 );
+	
+		/* 左右に並べて表示 */
+		m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );
 
-	/* 左右に並べて表示 */
-	m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );
-
-	return TRUE;
+		return TRUE;
+	}
 }
 
 //@@@ 2002.01.18 add start

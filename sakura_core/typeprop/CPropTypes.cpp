@@ -83,6 +83,15 @@ GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropTypesKeyHelp)
 
 CPropTypes::CPropTypes()
 {
+	{
+		assert( sizeof(CPropTypesScreen)  - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesWindow)  - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesColor)   - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesSupport) - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesRegex)   - sizeof(CPropTypes) == 0 );
+		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
+	}
+
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &(GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr);
 
@@ -159,7 +168,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 
 	PROPSHEETHEADER		psh;
 	memset_raw( &psh, 0, sizeof_raw( psh ) );
-	
+
 	//	Jun. 29, 2002 こおり
 	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
