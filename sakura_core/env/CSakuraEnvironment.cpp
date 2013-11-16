@@ -456,11 +456,12 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	現在実行しているマクロファイルパスの取得
 			{
 				// 実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効 / STAND_KEYMACRO:標準マクロ)
-				switch( CEditApp::getInstance()->m_pcSMacroMgr->GetCurrentIdx() ){
+				CSMacroMgr* pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
+				switch( pcSMacroMgr->GetCurrentIdx() ){
 				case INVALID_MACRO_IDX:
 					break;
 				case TEMP_KEYMACRO:
-					q = wcs_pushT( q, q_max - q, CEditApp::getInstance()->m_pcSMacroMgr->GetFile(TEMP_KEYMACRO) );
+					q = wcs_pushT( q, q_max - q, pcSMacroMgr->GetFile(TEMP_KEYMACRO) );
 					break;
 				case STAND_KEYMACRO:
 					{
@@ -471,7 +472,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				default:
 					{
 						TCHAR szMacroFilePath[_MAX_PATH * 2];
-						int n = CShareData::getInstance()->GetMacroFilename( CEditApp::getInstance()->m_pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
+						int n = CShareData::getInstance()->GetMacroFilename( pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
 						if ( 0 < n ){
 							q = wcs_pushT( q, q_max - q, szMacroFilePath );
 						}

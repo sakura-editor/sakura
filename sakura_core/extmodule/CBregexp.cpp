@@ -606,14 +606,11 @@ bool InitRegexp(
 )
 {
 	//	From Here 2007.08.12 genta
-	CShareData* pInstance = NULL;
-	DLLSHAREDATA* pShareData = NULL;
-	
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+
 	LPCTSTR RegexpDll = _T("");
-	
-	if( (pInstance = CShareData::getInstance()) != NULL && (pShareData = pInstance->GetShareData()) != NULL ){
-		RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
-	}
+
+	RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	//	To Here 2007.08.12 genta
 
 	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);

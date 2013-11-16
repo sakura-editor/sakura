@@ -28,7 +28,7 @@
 CMRUFolder::CMRUFolder()
 {
 	//	初期化。
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 }
 
 /*	デストラクタ	*/

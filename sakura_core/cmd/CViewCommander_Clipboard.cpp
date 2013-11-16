@@ -1031,7 +1031,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	}
 	cmemClip.AppendString(L"</pre>", 6);
 
-	CClipboard cClipboard(GetDocument()->m_pcEditWnd->GetHwnd());
+	CClipboard cClipboard( GetEditWindow()->GetHwnd() );
 	if(!cClipboard){
 		return;
 	}

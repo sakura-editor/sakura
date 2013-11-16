@@ -272,7 +272,6 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	if( bDraw ){
 		CEditWnd::getInstance()->Views_RedrawAll(); //ƒrƒ…[Ä•`‰æ
 		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
-		//m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
 	}
 	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);

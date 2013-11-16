@@ -8,8 +8,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CFile::CFile(LPCTSTR pszPath)
-: m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )
-, m_hLockedFile( INVALID_HANDLE_VALUE )
+: m_hLockedFile( INVALID_HANDLE_VALUE )
+, m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )
 {
 	if(pszPath){
 		SetFilePath(pszPath);

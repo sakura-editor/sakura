@@ -109,6 +109,7 @@ public:
 	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
 	HWND Create(
+		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
@@ -182,7 +183,6 @@ public:
 	void RegisterPluginCommand( CPlug* id );	//プラグインコマンドをエディタに登録する
 
 	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag );				// 表示の動的選択	2010/5/19 Uchi
-	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag0, bool flag1 );	// 表示の動的選択	2010/5/19 Uchi
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           整形                              //
@@ -249,7 +249,7 @@ public:
 	void Views_RedrawAll();
 	void Views_Redraw();
 	void SetActivePane( int );	/* アクティブなペインを設定 */
-	int GetActivePane( void ) const;	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
+	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
 	bool SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pcViewExclude );				/* すべてのペインをRedrawする */
 	void Views_DisableSelectArea(bool bRedraw);
@@ -270,12 +270,12 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_CMenuDrawer; }
-	CEditDoc*		GetDocument()           { return m_pCEditDoc; }
-	const CEditDoc*	GetDocument() const     { return m_pCEditDoc; }
+	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
+	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
 	//ビュー
-	const CEditView&	GetActiveView() const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
-	CEditView&			GetActiveView()       { return *m_pcEditViewArr[m_nActivePaneIndex]; }
+	const CEditView&	GetActiveView() const { return *m_pcEditView; }
+	CEditView&			GetActiveView()       { return *m_pcEditView; }
 	const CEditView&    GetView(int n) const { return *m_pcEditViewArr[n]; }
 	CEditView&          GetView(int n)       { return *m_pcEditViewArr[n]; }
 	bool                IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
@@ -359,7 +359,6 @@ public:
 	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
-	int				m_nActivePaneIndex;	//!< アクティブなビュー
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
 	CViewFont*		m_pcViewFont;		//!< フォント
 
@@ -375,10 +374,12 @@ public:
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
-	CEditDoc* 		m_pCEditDoc;
-	CEditView*		m_pcEditViewArr[4];	//!< ビュー 
+	CEditDoc* 		m_pcEditDoc;
+	CEditView*		m_pcEditViewArr[4];	//!< ビュー
+	CEditView*		m_pcEditView;		//!< 有効なビュー
+	int				m_nActivePaneIndex;	//!< 有効なビューのindex
 	int				m_nEditViewCount;	//!< 有効なビューの数
-	int				m_nEditViewMaxCount;	//!< ビューの最大数=4
+	const int		m_nEditViewMaxCount;//!< ビューの最大数=4
 
 	//共有データ
 	DLLSHAREDATA*	m_pShareData;

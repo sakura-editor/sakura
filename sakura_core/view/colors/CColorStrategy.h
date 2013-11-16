@@ -147,6 +147,7 @@ public:
 	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = NULL){};
 	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
+	virtual bool Disp() const = 0;
 	//イベント
 	virtual void OnStartScanLogic(){}
 
@@ -187,8 +188,8 @@ class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 public:
 
 	//取得
-	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategies[nIndex]; }
-	int				GetStrategyCount() const{ return (int)m_vStrategies.size(); }
+	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategiesDisp[nIndex]; }
+	int				GetStrategyCount() const{ return (int)m_vStrategiesDisp.size(); }
 	CColorStrategy*	GetStrategyByColor(EColorIndexType eColor) const;
 
 	//特定取得
@@ -214,6 +215,7 @@ public:
 
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
+	std::vector<CColorStrategy*>	m_vStrategiesDisp;	//!< 色分け表示対象
 	CColor_Found*					m_pcFoundStrategy;
 	CColor_Select*					m_pcSelectStrategy;
 

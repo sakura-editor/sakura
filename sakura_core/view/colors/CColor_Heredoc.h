@@ -33,6 +33,7 @@ public:
 	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
 	virtual void SetStrategyColorInfo(const CLayoutColorInfo*);
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
+	virtual bool Disp() const { return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 private:
 	std::wstring m_id;

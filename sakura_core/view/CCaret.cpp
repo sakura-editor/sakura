@@ -104,8 +104,8 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
 , m_pEditDoc(pEditDoc)
 , m_ptCaretPos_Layout(0,0)
-, m_sizeCaret(0,0)				// キャレットのサイズ
 , m_ptCaretPos_Logic(0,0)			// カーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
+, m_sizeCaret(0,0)				// キャレットのサイズ
 , m_cUnderLine(pEditView)
 {
 	m_nCaretPosX_Prev = CLayoutInt(0);		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */

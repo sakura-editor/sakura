@@ -255,7 +255,7 @@ void CAppNodeGroupHandle::DeleteEditWndList( HWND hWnd )
 */
 BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, BOOL bCheckConfirm, HWND hWndFrom )
 {
-	if( bCheckConfirm && CShareData::getInstance()->GetShareData()->m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
+	if( bCheckConfirm && GetDllShareData().m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
 		int nCloseCount = 0;
 
 		/* クローズ対象ウィンドウの数を調べる */
@@ -469,6 +469,8 @@ void CAppNodeManager::ResetGroupId()
 
 	@warning この関数はm_pEditArr内の要素へのポインタを返す．
 	m_pEditArrが変更された後ではアクセスしないよう注意が必要．
+
+	@note NULLを返す場合があるので戻り値のチェックが必要です
 */
 EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 {
@@ -800,8 +802,8 @@ int CAppNodeManager::GetFreeGroupId( void )
 HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 {
 	HWND	hWnd = NULL;
-	if ( CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd
-		&& !CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
+	if ( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
+		&& !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 		int			i;
 		int			nGroup = 0;
 		bool		bFound = false;

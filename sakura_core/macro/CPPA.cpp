@@ -75,7 +75,7 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
-	info.m_pShareData = CShareData::getInstance()->GetShareData();
+	info.m_pShareData = &GetDllShareData();
 	info.m_bError = false;			//	2003.06.01 Moca
 	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta

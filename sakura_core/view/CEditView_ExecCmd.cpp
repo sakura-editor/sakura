@@ -40,7 +40,7 @@
 class OutputAdapter
 {
 public:
-	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_view(view),m_bWindow(bToEditWindow)
+	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_bWindow(bToEditWindow), m_view(view)
 		,pcCodeBase(CCodeFactory::CreateCodeBase(CODE_UTF8,0))
 	{
 		m_pCShareData = CShareData::getInstance();

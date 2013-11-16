@@ -34,6 +34,12 @@
 #include "CEditApp.h"
 #include "plugin/CJackManager.h"
 
+CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
+{
+	m_bPrevCommand = 0;
+	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
+}
+
 
 /*!
 	コマンドコードによる処理振り分け
@@ -75,8 +81,8 @@ BOOL CViewCommander::HandleCommand(
 	m_pCommanderView->TranslateCommand_grep( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 	m_pCommanderView->TranslateCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 
-	//	Aug, 14. 2000 genta
-	if( GetDocument()->IsModificationForbidden( nCommand ) ){
+	// 2013.09.23 novice 機能が利用可能か調べる
+	if( !IsFuncEnable( GetDocument(), &GetDllShareData(), nCommand ) ){
 		return TRUE;
 	}
 
@@ -88,8 +94,7 @@ BOOL CViewCommander::HandleCommand(
 //	}
 	/* 印刷プレビューモードか */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	if( pCEditWnd->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
+	if( GetEditWindow()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand ){
 		ErrorBeep();
 		return -1;
 	}
@@ -113,7 +118,7 @@ BOOL CViewCommander::HandleCommand(
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 			LPARAM lparams[] = {lparam1, lparam2, lparam3, lparam4};
-			CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparams, m_pCommanderView );
+			m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparams, m_pCommanderView );
 		}
 	}
 
@@ -131,13 +136,13 @@ BOOL CViewCommander::HandleCommand(
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !CEditApp::getInstance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
+		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
 			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
 				_T("マクロ %d (%ts) の実行に失敗しました。"),
 				nCommand - F_USERMACRO_0,
-				CEditApp::getInstance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
 		return TRUE;

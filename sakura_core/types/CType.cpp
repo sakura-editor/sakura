@@ -207,7 +207,7 @@ void _DefaultConfig(STypeConfig* pType)
 		POINT pt ={0,0};
 		pType->m_backImgPosOffset = pt;
 	}
-	pType->m_bLineNumIsCRLF = true;					// 行番号の表示 FALSE=折り返し単位／TRUE=改行単位
+	pType->m_bLineNumIsCRLF = true;					// 行番号の表示 false=折り返し単位／true=改行単位
 	pType->m_nLineTermType = 1;						// 行番号区切り 0=なし 1=縦線 2=任意
 	pType->m_cLineTermChar = L':';					// 行番号区切り文字
 	pType->m_bWordWrap = false;						// 英文ワードラップをする

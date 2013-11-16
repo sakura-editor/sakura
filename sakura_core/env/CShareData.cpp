@@ -47,11 +47,6 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
-/*
-||	Singleton風
-*/
-CShareData* CShareData::_instance = NULL;
-
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 CShareData::CShareData()
@@ -89,9 +84,6 @@ CShareData::~CShareData()
 bool CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
-
-	if (CShareData::_instance == NULL)	//	Singleton風
-		CShareData::_instance = this;
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
@@ -483,8 +475,6 @@ bool CShareData::InitShareData()
 		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
-
-		m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
 		// [ステータスバー]タブ
 		// 表示文字コードの指定		2008/6/21	Uchi

@@ -71,7 +71,7 @@
 #define TAB_MARGIN_RIGHT	DpiScaleX(47)
 
 //#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
-#define TAB_FONT_HEIGHT		abs(CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_lf.lfHeight)
+#define TAB_FONT_HEIGHT		abs(GetDllShareData().m_Common.m_sTabBar.m_lf.lfHeight)
 #define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
 #define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
 
@@ -806,8 +806,8 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 CTabWnd::CTabWnd()
 : CWnd(_T("::CTabWnd"))
-, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_eDragState( DRAG_NONE )
+, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_bHovering( FALSE )	//	2006.02.01 ryoji
 , m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
@@ -819,7 +819,7 @@ CTabWnd::CTabWnd()
 {
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;

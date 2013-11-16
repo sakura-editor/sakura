@@ -63,21 +63,7 @@ class COsVersionInfo {
 public:
 	// 初期化を行う(引数はダミー)
 	// 呼出は基本1回のみ
-	COsVersionInfo( bool pbStart ) {
-		memset_raw( &m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
-		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
-		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
-
-#ifdef USE_SSE2
- 		int data[4];
-#ifdef __MINGW32__
-		__cpuid(1, data[0], data[1], data[2], data[3]);
-#else
-		__cpuid(data, 1);
-#endif
-		m_bSSE2 = (data[3] & (1<<26)) != 0;
-#endif
-	}
+	COsVersionInfo( bool pbStart );
 
 	// 通常のコンストラクタ
 	// 何もしない
@@ -203,6 +189,16 @@ public:
 	}
 #endif
 
+	/*! Wine上で実行されているかを調べる
+
+		@retval true run in Wine
+
+		@date 2013.10.19 novice
+	*/
+	bool _IsWine(){
+		return m_bWine;
+	}
+
 protected:
 	// Classはstatic(全クラス共有)変数以外持たない
 	static BOOL m_bSuccess;
@@ -210,6 +206,7 @@ protected:
 #ifdef USE_SSE2
 	static bool m_bSSE2;
 #endif
+	static bool m_bWine;
 };
 
 
@@ -276,6 +273,10 @@ inline bool IsWinMe() {
 #else
 	return COsVersionInfo()._IsWinMe();
 #endif
+}
+
+inline bool IsWine() {
+	return COsVersionInfo()._IsWine();
 }
 
 #endif

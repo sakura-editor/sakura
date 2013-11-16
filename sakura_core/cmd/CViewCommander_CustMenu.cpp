@@ -86,8 +86,7 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 {
 	HMENU		hMenu;
 
-	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->GetMenuDrawer().ResetContents();
+	GetEditWindow()->GetMenuDrawer().ResetContents();
 
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = GetDocument()->m_cFuncLookup;

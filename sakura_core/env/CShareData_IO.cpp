@@ -103,7 +103,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			_stscanf( iniVer, _T("%u.%u.%u.%u"), &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
 		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
-		DLLSHAREDATA* pShareData = pcShare->GetShareData();
+		DLLSHAREDATA* pShareData = &GetDllShareData();
 		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
@@ -964,9 +964,6 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 	bool	bOldVer = false;
 	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
-
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
-	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), sKeyBind.m_bCreateAccelTblEachWin );
 
 	if( cProfile.IsReadingMode() ){ 
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {

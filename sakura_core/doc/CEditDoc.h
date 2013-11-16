@@ -65,7 +65,6 @@ struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
 class CEditApp;
 
-typedef CEditWnd* P_CEditWnd;
 /*!
 	文書関連情報の管理
 
@@ -84,7 +83,7 @@ public:
 	~CEditDoc();
 
 	//初期化
-	BOOL Create();
+	BOOL Create( CEditWnd* pcEditWnd );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	void Clear();
@@ -96,7 +95,7 @@ public:
 	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
 	bool		GetDocumentBomExist() const;				//!< ドキュメントのBOM付加を取得
 	void		SetDocumentEncoding(ECodeType eCharCode, bool bBom);	//!< ドキュメントの文字コードを設定
-	bool IsModificationForbidden( EFunctionCode nCommand );	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
+	bool IsModificationForbidden( EFunctionCode nCommand ) const;	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
 
@@ -119,7 +118,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	P_CEditWnd&		m_pcEditWnd;	//	Sep. 10, 2002
+	CEditWnd*		m_pcEditWnd;	//	Sep. 10, 2002
 
 	//データ構造
 	CDocLineMgr		m_cDocLineMgr;

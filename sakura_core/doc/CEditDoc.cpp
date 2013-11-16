@@ -92,13 +92,12 @@
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
 CEditDoc::CEditDoc(CEditApp* pcApp)
-: m_pcEditWnd(pcApp->m_pcEditWnd)
-, m_nCommandExecNum( 0 )			/* コマンド実行回数 */
-, m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+: m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
@@ -315,20 +314,16 @@ void CEditDoc::InitAllView( void )
 
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//	CEditDoc::Create
-//	BOOL Create(HINSTANCE hInstance, HWND hwndParent)
-//
-//	説明
-//	  ウィンドウの作成等
-//
-//	@date Sep. 29, 2001 genta マクロクラスを渡すように
-//	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-/////////////////////////////////////////////////////////////////////////////
-BOOL CEditDoc::Create()
+/*! ウィンドウの作成等
+
+	@date 2001.09.29 genta マクロクラスを渡すように
+	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
+*/
+BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
+
+	m_pcEditWnd = pcEditWnd;
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( GetDllShareData().m_Common.m_sMacro.m_MacroTable, &GetDllShareData().m_Common );
@@ -440,7 +435,7 @@ void CEditDoc::GetEditInfo(
 //	書き換えが禁止されているかどうか
 //	戻り値: true: 禁止 / false: 許可
 //
-bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand )
+bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 {
 	//	編集可能の場合
 	if( IsEditable() )

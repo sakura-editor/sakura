@@ -111,13 +111,9 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 */
 void CViewCommander::Command_WINLIST( int nCommandFrom )
 {
-	CEditWnd	*pCEditWnd;
-	pCEditWnd = GetDocument()->m_pcEditWnd;
-
 	//ウィンドウ一覧をポップアップ表示する
-	pCEditWnd->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
+	GetEditWindow()->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
 	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
-
 }
 
 
@@ -387,7 +383,7 @@ void CViewCommander::Command_TILE_H( void )
 */
 void CViewCommander::Command_WINTOPMOST( LPARAM lparam )
 {
-	GetDocument()->m_pcEditWnd->WindowTopMost( int(lparam) );
+	GetEditWindow()->WindowTopMost( int(lparam) );
 }
 
 
@@ -412,8 +408,8 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 		if( !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			GetDocument()->m_pcEditWnd->WindowTopMost(
-				( (DWORD)::GetWindowLongPtr( GetDocument()->m_pcEditWnd->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+			GetEditWindow()->WindowTopMost(
+				( (DWORD)::GetWindowLongPtr( GetEditWindow()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 			);
 		}
 
@@ -423,7 +419,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
-			(LPARAM)GetDocument()->m_pcEditWnd->GetHwnd(),	//CEditWndのウィンドウハンドル
+			(LPARAM)GetEditWindow()->GetHwnd(),	//CEditWndのウィンドウハンドル
 			m_pCommanderView->GetHwnd());									//自分自身
 		//End 2004.08.27 Kazika
 	}
@@ -447,7 +443,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 /* 次のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_NEXTGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->NextGroup();
@@ -458,7 +454,7 @@ void CViewCommander::Command_NEXTGROUP( void )
 /* 前のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_PREVGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->PrevGroup();
@@ -469,7 +465,7 @@ void CViewCommander::Command_PREVGROUP( void )
 /* タブを右に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVERIGHT( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->MoveRight();
@@ -480,7 +476,7 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 /* タブを左に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVELEFT( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->MoveLeft();
@@ -491,7 +487,7 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 /* 新規グループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_SEPARATE( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->Separate();
@@ -502,7 +498,7 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 /* 次のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTNEXT( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->JoinNext();
@@ -513,7 +509,7 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 /* 前のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTPREV( void )
 {
-	CTabWnd* pcTabWnd = &GetDocument()->m_pcEditWnd->m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == NULL )
 		return;
 	pcTabWnd->JoinPrev();

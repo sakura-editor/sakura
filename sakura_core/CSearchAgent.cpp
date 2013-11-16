@@ -26,32 +26,32 @@ inline int CSearchStringPattern::GetMapIndex( wchar_t c )
 }
 
 CSearchStringPattern::CSearchStringPattern() : 
+	m_pszKey(NULL),
+	m_psSearchOption(NULL),
+	m_pRegexp(NULL),
+	m_pszCaseKeyRef(NULL),
+	m_pszPatternCase(NULL),
 #ifdef SEARCH_STRING_KMP
 	m_pnNextPossArr(NULL),
 #endif
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-	m_pnUseCharSkipArr(NULL),
+	m_pnUseCharSkipArr(NULL)
 #endif
-	m_pszPatternCase(NULL),
-	m_pszKey(NULL),
-	m_pszCaseKeyRef(NULL),
-	m_psSearchOption(NULL),
-	m_pRegexp(NULL)
 {
 }
 
 	CSearchStringPattern::CSearchStringPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp) :
+	m_pszKey(NULL),
+	m_psSearchOption(NULL),
+	m_pRegexp(NULL),
+	m_pszCaseKeyRef(NULL),
+	m_pszPatternCase(NULL),
 #ifdef SEARCH_STRING_KMP
 	m_pnNextPossArr(NULL),
 #endif
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-	m_pnUseCharSkipArr(NULL),
+	m_pnUseCharSkipArr(NULL)
 #endif
-	m_pszPatternCase(NULL),
-	m_pszKey(NULL),
-	m_pszCaseKeyRef(NULL),
-	m_psSearchOption(NULL),
-	m_pRegexp(NULL)
 {
 	SetPattern(hwnd, pszPattern, nPatternLen, sSearchOption, pRegexp);
 }

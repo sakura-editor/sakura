@@ -71,15 +71,15 @@ CPrint CPrintPreview::m_cPrint;		//!< 現在のプリンタ情報 2003.05.02 かろと
 	コントロールも作成する。
 */
 CPrintPreview::CPrintPreview(CEditWnd* pParentWnd ) :
-	m_nPreview_Zoom( 100 ),			/* 印刷プレビュー倍率 */
-	m_nPreviewVScrollPos( 0 ),
-	m_nPreviewHScrollPos( 0 ),
-	m_nCurPageNum( 0 ),				/* 現在のページ */
 	m_pParentWnd( pParentWnd ),
 	m_hdcCompatDC( NULL ),			// 再描画用コンパチブルDC
 	m_hbmpCompatBMP( NULL ),		// 再描画用メモリBMP
 	m_hbmpCompatBMPOld( NULL ),		// 再描画用メモリBMP(OLD)
 	m_nbmpCompatScale( COMPAT_BMP_BASE ),
+	m_nPreviewVScrollPos( 0 ),
+	m_nPreviewHScrollPos( 0 ),
+	m_nPreview_Zoom( 100 ),			/* 印刷プレビュー倍率 */
+	m_nCurPageNum( 0 ),				/* 現在のページ */
 	m_bLockSetting( false ),
 	m_bDemandUpdateSetting( false )
 {
@@ -1478,7 +1478,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 			/* 行番号を表示するか */
 			if( m_pPrintSetting->m_bPrintLineNumber ){
 				wchar_t		szLineNum[64];	//	行番号を入れる。
-				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+				/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行

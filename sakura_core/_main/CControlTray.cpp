@@ -177,15 +177,15 @@ static LRESULT CALLBACK CControlTrayWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
 //	Apr. 24, 2001 genta
-: m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
-, m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
+: m_pcPropertyManager(NULL)
 , m_hInstance( NULL )
 , m_hWnd( NULL )
+, m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_nCurSearchKeySequence(-1)
-, m_pcPropertyManager(NULL)
+, m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
 {
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	// アクセラレータテーブル作成
 	CreateAccelTbl();
@@ -581,11 +581,6 @@ LRESULT CControlTray::DispatchEvent(
 //@@			/* 共有データの保存 */
 //@@			m_cShareData.SaveShareData();
 
-				/* アクセラレータテーブルの再作成 */
-				// アクセラレータテーブル破棄
-				DeleteAccelTbl();
-				// アクセラレータテーブル作成
-				CreateAccelTbl();
 				break;
 			default:
 				break;
@@ -957,7 +952,7 @@ bool CControlTray::OpenNewEditor(
 )
 {
 	/* 共有データ構造体のアドレスを返す */
-	DLLSHAREDATA*	pShareData = CShareData::getInstance()->GetShareData();
+	DLLSHAREDATA*	pShareData = &GetDllShareData();
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -1174,7 +1169,7 @@ bool CControlTray::OpenNewEditor2(
 	DLLSHAREDATA*	pShareData;
 
 	/* 共有データ構造体のアドレスを返す */
-	pShareData = CShareData::getInstance()->GetShareData();
+	pShareData = &GetDllShareData();
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -1288,7 +1283,7 @@ void CControlTray::TerminateApplication(
 	HWND hWndFrom	//!< [in] 呼び出し元のウィンドウハンドル
 )
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
+	DLLSHAREDATA* pShareData = &GetDllShareData();	/* 共有データ構造体のアドレスを返す */
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//終了時の確認

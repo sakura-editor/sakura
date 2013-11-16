@@ -82,8 +82,8 @@ public:
 		: m_id( id )
 		, m_sJack( sJack )
 		, m_sHandler( sHandler )
-		, m_cPlugin( plugin )
 		, m_sLabel( sLabel )
+		, m_cPlugin( plugin )
 	{
 	}
 	//デストラクタ
