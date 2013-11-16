@@ -37,6 +37,12 @@ struct TYPE_NAME {
 	const TCHAR*	pszName;
 };
 
+template <class TYPE>
+struct TYPE_NAME_ID {
+	TYPE		nMethod;
+	int			nNameId;
+};
+
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ
 -----------------------------------------------------------------------*/

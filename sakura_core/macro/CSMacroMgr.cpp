@@ -17,6 +17,7 @@
 	Copyright (C) 2006, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
+	Copyright (C) 2011, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -782,8 +783,10 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	それぞれ，文字列格納領域の指す先がNULLの時は文字列を格納しない．
 	ただし，pszFuncNameをNULLにしてしまうと戻り値が常にNULLになって
 	成功判定が行えなくなる．
-	
+	各国語メッセージリソース対応により機能名が日本語でない場合がある	
+
 	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
+	@date 2011.04.10 nasukoji 各国語メッセージリソース対応
 */
 WCHAR* CSMacroMgr::GetFuncInfoByID(
 	HINSTANCE	hInstance,			//!< [in] リソース取得のためのInstance Handle
@@ -807,7 +810,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 		}
 		//	Jun. 16, 2002 genta NULLのときは何もしない．
 		if( pszFuncNameJapanese != NULL ){
-			ApiWrap::LoadStringW_AnyBuild( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+			wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
 		}
 		return pszFuncName;
 	}
@@ -850,7 +853,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
-				::LoadStringW_AnyBuild( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+				wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}
@@ -860,7 +864,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
-				::LoadStringW_AnyBuild( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+				wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}

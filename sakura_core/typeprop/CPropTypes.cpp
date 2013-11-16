@@ -121,7 +121,7 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 }
 
 struct TypePropSheetInfo {
-	const TCHAR* szTabname;									//!< TABの表示名
+	std::tstring sTabname;									//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -138,12 +138,12 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
 	// 2013.03.10 aroka ADD-start タイプ別設定に「ウィンドウ」タブを追加
 	static const TypePropSheetInfo TypePropSheetInfoList[] = {
-		{ _T("スクリーン"), 		IDD_PROP_SCREEN,	PropTypesScreen },
-		{ _T("カラー"), 			IDD_PROP_COLOR,		PropTypesColor },
-		{ _T("ウィンドウ"), 		IDD_PROP_WINDOW,	PropTypesWindow },
-		{ _T("支援"), 				IDD_PROP_SUPPORT,	PropTypesSupport },
-		{ _T("正規表現キーワード"),	IDD_PROP_REGEX,		PropTypesRegex },
-		{ _T("キーワードヘルプ"),	IDD_PROP_KEYHELP,	PropTypesKeyHelp }
+		{ LS( STR_PROPTYPE_SCREEN ),			IDD_PROP_SCREEN,	PropTypesScreen },
+		{ LS( STR_PROPTYPE_COLOR ),			IDD_PROP_COLOR,		PropTypesColor },
+		{ LS( STR_PROPTYPE_WINDOW ),			IDD_PROP_WINDOW,	PropTypesWindow },
+		{ LS( STR_PROPTYPE_SUPPORT ),			IDD_PROP_SUPPORT,	PropTypesSupport },
+		{ LS( STR_PROPTYPE_REGEX_KEYWORD ),	IDD_PROP_REGEX,		PropTypesRegex },
+		{ LS( STR_PROPTYPE_KEYWORD_HELP ),		IDD_PROP_KEYHELP,	PropTypesKeyHelp }
 	};
 
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
@@ -152,17 +152,16 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 
 	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
 	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
-		assert( TypePropSheetInfoList[nIdx].szTabname != NULL );
 
 		PROPSHEETPAGE *p = &psp[nIdx];
 		memset_raw( p, 0, sizeof_raw( *p ) );
 		p->dwSize      = sizeof_raw( *p );
 		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-		p->hInstance   = m_hInstance;
+		p->hInstance   = CSelectLang::getLangRsrcInstance();
 		p->pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
 		p->pszIcon     = NULL;
 		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
-		p->pszTitle    = TypePropSheetInfoList[nIdx].szTabname;
+		p->pszTitle    = TypePropSheetInfoList[nIdx].sTabname.c_str();
 		p->lParam      = (LPARAM)this;
 		p->pfnCallback = NULL;
 	}
@@ -175,11 +174,11 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
 
 	// JEPROtest Sept. 30, 2000 タイプ別設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
-	psh.dwFlags    = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/;
+	psh.dwFlags    = /*PSH_USEICONID |*/ PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE/* | PSH_HASHELP*/ | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
-	psh.hInstance  = m_hInstance;
+	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = _T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
+	psh.pszCaption = LS( STR_PROPTYPE );	//_T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない

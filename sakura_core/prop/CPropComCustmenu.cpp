@@ -31,9 +31,8 @@ using namespace std;
 // 特別機能
 struct SSpecialFunc	{
 	EFunctionCode	m_nFunc;		// Function
-	const WCHAR* 	m_sName;		// 名前
+	int			 	m_nNameId;		// 名前
 };
-extern const	TCHAR*	NAME_SPECIAL_TOP;
 extern const	SSpecialFunc	sSpecialFuncs[];
 extern const int nSpecialFuncsCount;
 
@@ -71,7 +70,7 @@ static bool SetSpecialFuncName(EFunctionCode code, wchar_t *ptr)
 	if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
 		for( int k = 0; k < nSpecialFuncsCount; k++ ){
 			if( sSpecialFuncs[k].m_nFunc == code ){
-				auto_strcpy( ptr, sSpecialFuncs[k].m_sName );
+				auto_strcpy( ptr, LSW( sSpecialFuncs[k].m_nNameId ) );
 				return true;
 			}
 		}
@@ -196,6 +195,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
+				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 				//	メニュー文字列の設定
 				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( CB_ERR == nIdx1 ){
@@ -206,7 +206,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				//	Combo Boxも変更 削除＆再登録
 				Combo_DeleteString( hwndCOMBO_MENU, nIdx1 );
 				Combo_InsertString( hwndCOMBO_MENU, nIdx1,
-					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
+					m_cLookup.Custmenu2Name( nIdx1, buf, _countof(buf) ) );
 				// 削除すると選択が解除されるので，元に戻す
 				Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
@@ -314,7 +314,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndLIST_FUNC );
 					for (i = 0; i < nSpecialFuncsCount; i++) {
-						List_AddString( hwndLIST_FUNC, sSpecialFuncs[i].m_sName );
+						List_AddString( hwndLIST_FUNC, LS( sSpecialFuncs[i].m_nNameId ) );
 					}
 				}
 				else {
@@ -650,12 +650,13 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	HWND		hwndCOMBO_MENU;
 	HWND		hwndCombo;
 	int			i;
+	WCHAR		buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
 	// 特別機能追加
-	nSpecialFuncsNum = Combo_AddString( hwndCombo, NAME_SPECIAL_TOP );
+	nSpecialFuncsNum = Combo_AddString( hwndCombo, LS( STR_SPECIAL_FUNC ) );
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
@@ -663,7 +664,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
-		Combo_AddString( hwndCOMBO_MENU, m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
+		Combo_AddString( hwndCOMBO_MENU, m_cLookup.Custmenu2Name( i, buf, _countof( buf ) ) );
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCOMBO_MENU, 0 );

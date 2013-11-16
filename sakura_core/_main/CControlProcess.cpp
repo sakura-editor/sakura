@@ -95,6 +95,16 @@ bool CControlProcess::InitializeProcess()
 		}
 	}
 
+	/* 言語を選択する */
+	UINT unIndex;
+	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
+		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
+		if ( _tcsncmp(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
+			CSelectLang::ChangeLang( unIndex );
+			break;
+		}
+	}
+
 	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */

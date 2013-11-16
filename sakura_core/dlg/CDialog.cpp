@@ -12,6 +12,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
@@ -92,6 +93,8 @@ CDialog::~CDialog()
 /*!
 	@param hInstance [in] アプリケーションインスタンスのハンドル
 	@param hwndParent [in] オーナーウィンドウのハンドル
+
+	@date 2011.04.10 nasukoji	各国語メッセージリソース対応
 */
 INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam )
 {
@@ -100,8 +103,9 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
 	return ::DialogBoxParam(
-		m_hInstance,
+		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
 		MyDialogProc,
@@ -113,6 +117,8 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 /*!
 	@param hInstance [in] アプリケーションインスタンスのハンドル
 	@param hwndParent [in] オーナーウィンドウのハンドル
+
+	@date 2011.04.10 nasukoji	各国語メッセージリソース対応
 */
 HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow )
 {
@@ -121,8 +127,9 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_lParam = lParam;
+	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
 	m_hWnd = ::CreateDialogParam(
-		m_hInstance,
+		m_hLangRsrcInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
 		MyDialogProc,
@@ -373,7 +380,7 @@ void CDialog::CreateSizeBox( void )
 		0,													/* default height */
 		m_hWnd/*hdlg*/, 									/* handle of main window */
 		(HMENU) NULL,										/* no menu for a scroll bar */
-		m_hInstance,										/* instance owning this window */
+		CSelectLang::getLangRsrcInstance(),					/* instance owning this window */
 		(LPVOID) NULL										/* pointer not needed */
 	);
 	::ShowWindow( m_hwndSizeBox, SW_SHOW );
