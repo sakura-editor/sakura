@@ -9,6 +9,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
@@ -150,6 +151,7 @@ public:
 //	void*			m_pcEditView;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
+	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
 protected:
 	void CreateSizeBox( void );

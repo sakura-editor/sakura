@@ -790,13 +790,13 @@ void CCaret::ShowCaretPosInfo()
 	// ステータスバーに状態を書き出す
 	else{
 		TCHAR	szText_1[64];
-		auto_sprintf( szText_1, _T("%5d 行 %4d 桁"), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		auto_sprintf( szText_1, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
 		TCHAR	szText_6[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			_tcscpy( szText_6, _T("挿入") );
+			_tcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			_tcscpy( szText_6, _T("上書") );
+			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 		if( m_bClearStatus ){
 			::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );

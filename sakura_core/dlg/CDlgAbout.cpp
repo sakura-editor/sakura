@@ -129,6 +129,7 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+	@date 2011.04.10 nasukoji	各国語メッセージリソース対応
 	@date 2013.04.07 novice svn revision 情報追加
 */
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
@@ -219,8 +220,11 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
-	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, _countof( szMsg ) );
-	if( desclen > 0 ){
+	// 2011.06.01 nasukoji	各国語メッセージリソース対応
+	LPCTSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
+	if( _tcslen(pszDesc) > 0 ){
+		_tcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
+		szMsg[_countof(szMsg) - 1] = 0;
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta

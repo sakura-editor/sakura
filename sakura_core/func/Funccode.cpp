@@ -60,26 +60,26 @@
 
 //using namespace nsFuncCode;
 
-const TCHAR* nsFuncCode::ppszFuncKind[] = {
+const uint16_t nsFuncCode::ppszFuncKind[] = {
 //	"--未定義--",	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更
 //	Oct. 16, 2000 JEPRO 表示の順番をメニューバーのそれに合わせるように少し入れ替えた(下の個別のものも全部)
-	_T("ファイル操作系"),
-	_T("編集系"),
-	_T("カーソル移動系"),
-	_T("選択系"),		//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
-	_T("矩形選択系"),	//Oct. 17, 2000 JEPRO 「選択系」に一緒にすると多くなりすぎるので「矩形選択系」も独立させた
-	_T("クリップボード系"),
-	_T("挿入系"),
-	_T("変換系"),
-	_T("検索系"),
-	_T("モード切り替え系"),
-	_T("設定系"),
-	_T("マクロ系"),
+	STR_ERR_DLGFUNCLKUP04,	//_T("ファイル操作系"),
+	STR_ERR_DLGFUNCLKUP05,	//_T("編集系"),
+	STR_ERR_DLGFUNCLKUP06,	//_T("カーソル移動系"),
+	STR_ERR_DLGFUNCLKUP07,	//_T("選択系"),		//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
+	STR_ERR_DLGFUNCLKUP08,	//_T("矩形選択系"),	//Oct. 17, 2000 JEPRO 「選択系」に一緒にすると多くなりすぎるので「矩形選択系」も独立させた
+	STR_ERR_DLGFUNCLKUP09,	//_T("クリップボード系"),
+	STR_ERR_DLGFUNCLKUP10,	//_T("挿入系"),
+	STR_ERR_DLGFUNCLKUP11,	//_T("変換系"),
+	STR_ERR_DLGFUNCLKUP12,	//_T("検索系"),
+	STR_ERR_DLGFUNCLKUP13,	//_T("モード切り替え系"),
+	STR_ERR_DLGFUNCLKUP14,	//_T("設定系"),
+	STR_ERR_DLGFUNCLKUP15,	//("マクロ系"),
 	//	Oct. 15, 2001 genta カスタムメニューの文字列をは動的に変更可能にするためここからは外す．
 //	_T("カスタムメニュー"),	//Oct. 21, 2000 JEPRO 「その他」から独立分離化
-	_T("ウィンドウ系"),
-	_T("支援"),
-	_T("その他")
+	STR_ERR_DLGFUNCLKUP16,	//_T("ウィンドウ系"),
+	STR_ERR_DLGFUNCLKUP17,	//_T("支援"),
+	STR_ERR_DLGFUNCLKUP18	//_T("その他")
 };
 const int nsFuncCode::nFuncKindNum = _countof(nsFuncCode::ppszFuncKind);
 

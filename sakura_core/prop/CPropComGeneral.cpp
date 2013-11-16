@@ -21,13 +21,13 @@
 #include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-TYPE_NAME<int> SpecialScrollModeArr[] = {
-	{ 0,						_T("組み合わせなし") },
-	{ MOUSEFUNCTION_CENTER,		_T("マウス中ボタン") },
-	{ MOUSEFUNCTION_LEFTSIDE,	_T("マウスサイドボタン1") },
-	{ MOUSEFUNCTION_RIGHTSIDE,	_T("マウスサイドボタン2") },
-	{ VK_CONTROL,				_T("CONTROLキー") },
-	{ VK_SHIFT,					_T("SHIFTキー") },
+TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
+	{ 0,						STR_SCROLL_WITH_NO_KEY },		//_T("組み合わせなし") },
+	{ MOUSEFUNCTION_CENTER,		STR_SCROLL_WITH_MID_BTN },		//_T("マウス中ボタン") },
+	{ MOUSEFUNCTION_LEFTSIDE,	STR_SCROLL_WITH_SIDE_1_BTN },	//_T("マウスサイドボタン1") },
+	{ MOUSEFUNCTION_RIGHTSIDE,	STR_SCROLL_WITH_SIDE_2_BTN },	//_T("マウスサイドボタン2") },
+	{ VK_CONTROL,				STR_SCROLL_WITH_CTRL_KEY },	//_T("CONTROLキー") },
+	{ VK_SHIFT,					STR_SCROLL_WITH_SHIFT_KEY },	//_T("SHIFTキー") },
 };
 
 static const DWORD p_helpids[] = {	//10900
@@ -342,7 +342,7 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, SpecialScrollModeArr[i].pszName );
+		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
 		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nPageScrollByWheel ){	// ページスクロールとする組み合わせ操作
 			nSelPos = i;
 		}
@@ -354,7 +354,7 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, SpecialScrollModeArr[i].pszName );
+		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
 		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nHorizontalScrollByWheel ){	// 横スクロールとする組み合わせ操作
 			nSelPos = i;
 		}

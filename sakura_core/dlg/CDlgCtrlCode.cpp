@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002-2003, MIK
 	Copyright (C) 2006, ryoji
++	Copyright (C) 2011, nasukoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -50,45 +51,48 @@ struct ctrl_info_t {
 	unsigned int	vKey;		//表記
 	TCHAR			name[4];	//名前
 	const TCHAR		*jname;		//説明
-} static const p_ctrl_list[] = {
-	{ 0x0000, 0x00c0, _T("NUL"), _T("空文字")    }, //NULL
-	{ 0x0001, 'A', _T("SOH"), _T("ヘッダ開始")   }, //START OF HEADING
-	{ 0x0002, 'B', _T("STX"), _T("テキスト開始") }, //START OF TEXT
-	{ 0x0003, 'C', _T("ETX"), _T("テキスト終了") }, //END OF TEXT
-	{ 0x0004, 'D', _T("EOT"), _T("転送終了")     }, //END OF TRANSMISSION
-	{ 0x0005, 'E', _T("ENQ"), _T("照会")         }, //ENQUIRY
-	{ 0x0006, 'F', _T("ACK"), _T("受信OK")       }, //ACKNOWLEDGE
-	{ 0x0007, 'G', _T("BEL"), _T("警告(ベル)")   }, //BELL
-	{ 0x0008, 'H', _T("BS"),  _T("後退")         }, //BACKSPACE
-	{ 0x0009, 'I', _T("HT"),  _T("タブ")         }, //horizontal tabulation (HT)
-	{ 0x000a, 'J', _T("LF"),  _T("改行")         },	//LINE FEED (LF); new line (NL); end of line(EOL)
-	{ 0x000b, 'K', _T("VT"),  _T("垂直タブ")     }, //vertical tabulation (VT)
-	{ 0x000c, 'L', _T("FF"),  _T("改ページ")     },	//FORM FEED (FF)
-	{ 0x000d, 'M', _T("CR"),  _T("復帰")         }, //CARRIAGE RETURN
-	{ 0x000e, 'N', _T("SO"),  _T("シフトアウト") }, //SHIFT OUT
-	{ 0x000f, 'O', _T("SI"),  _T("シフトイン")   }, //SHIFT IN
-	{ 0x0010, 'P', _T("DLE"), _T("データリンクエスケープ") }, //DATA LINK ESCAPE
-	{ 0x0011, 'Q', _T("DC1"), _T("装置制御1")    }, //DEVICE CONTROL ONE
-	{ 0x0012, 'R', _T("DC2"), _T("装置制御2")    }, //DEVICE CONTROL TWO
-	{ 0x0013, 'S', _T("DC3"), _T("装置制御3")    }, //DEVICE CONTROL THREE
-	{ 0x0014, 'T', _T("DC4"), _T("装置制御4")    }, //DEVICE CONTROL FOUR
-	{ 0x0015, 'U', _T("NAK"), _T("受信失敗")     }, //NEGATIVE ACKNOWLEDGE
-	{ 0x0016, 'V', _T("SYN"), _T("同期")         }, //SYNCHRONOUS IDLE
-	{ 0x0017, 'W', _T("ETB"), _T("転送ブロック終了") }, //END OF TRANSMISSION BLOCK
-	{ 0x0018, 'X', _T("CAN"), _T("キャンセル")   }, //CANCEL
-	{ 0x0019, 'Y', _T("EM"),  _T("メディア終了") }, //END OF MEDIUM
-	{ 0x001a, 'Z', _T("SUB"), _T("置換")         }, //SUBSTITUTE
-	{ 0x001b, 0x00db, _T("ESC"), _T("エスケープ")   }, //ESCAPE
-	{ 0x001c, 0x00dc, _T("FS"),  _T("フォーム区切") }, //file separator (FS)
-	{ 0x001d, 0x00dd, _T("GS"),  _T("グループ区切") }, //group separator (GS)
-	{ 0x001e, 0x00de, _T("RS"),  _T("レコード区切") }, //record separator (RS)
-	{ 0x001f, 0x00e2, _T("US"),  _T("ユニット区切") }, //unit separator (US)
-	{ 0x007f, 0x00bf, _T("DEL"), _T("削除")         }, //DELETE
+} static p_ctrl_list[] = {
+	{ 0x0000, 0x00c0, _T("NUL"), _T("")	}, //NULL 空文字
+	{ 0x0001, 'A', _T("SOH"), _T("")	}, //START OF HEADING ヘッダ開始
+	{ 0x0002, 'B', _T("STX"), _T("")	}, //START OF TEXT テキスト開始
+	{ 0x0003, 'C', _T("ETX"), _T("")	}, //END OF TEXT テキスト終了
+	{ 0x0004, 'D', _T("EOT"), _T("")	}, //END OF TRANSMISSION 転送終了
+	{ 0x0005, 'E', _T("ENQ"), _T("")	}, //ENQUIRY 照会
+	{ 0x0006, 'F', _T("ACK"), _T("")	}, //ACKNOWLEDGE 受信OK
+	{ 0x0007, 'G', _T("BEL"), _T("")	}, //BELL 警告(ベル)
+	{ 0x0008, 'H', _T("BS"),  _T("")	}, //BACKSPACE 後退
+	{ 0x0009, 'I', _T("HT"),  _T("")	}, //horizontal tabulation (HT) タブ
+	{ 0x000a, 'J', _T("LF"),  _T("")	},	//LINE FEED (LF); new line (NL); end of line(EOL) 改行
+	{ 0x000b, 'K', _T("VT"),  _T("")	}, //vertical tabulation (VT) 垂直タブ
+	{ 0x000c, 'L', _T("FF"),  _T("")	},	//FORM FEED (FF) 改ページ
+	{ 0x000d, 'M', _T("CR"),  _T("")	}, //CARRIAGE RETURN 復帰
+	{ 0x000e, 'N', _T("SO"),  _T("")	}, //SHIFT OUT シフトアウト
+	{ 0x000f, 'O', _T("SI"),  _T("")	}, //SHIFT IN シフトイン
+	{ 0x0010, 'P', _T("DLE"), _T("")	}, //DATA LINK ESCAPE データリンクエスケープ
+	{ 0x0011, 'Q', _T("DC1"), _T("")    }, //DEVICE CONTROL ONE 装置制御1
+	{ 0x0012, 'R', _T("DC2"), _T("")    }, //DEVICE CONTROL TWO 装置制御2
+	{ 0x0013, 'S', _T("DC3"), _T("")    }, //DEVICE CONTROL THREE 装置制御3
+	{ 0x0014, 'T', _T("DC4"), _T("")    }, //DEVICE CONTROL FOUR 装置制御4
+	{ 0x0015, 'U', _T("NAK"), _T("")	}, //NEGATIVE ACKNOWLEDGE 受信失敗
+	{ 0x0016, 'V', _T("SYN"), _T("")	}, //SYNCHRONOUS IDLE 同期
+	{ 0x0017, 'W', _T("ETB"), _T("")	}, //END OF TRANSMISSION BLOCK 転送ブロック終了
+	{ 0x0018, 'X', _T("CAN"), _T("")	}, //CANCEL キャンセル
+	{ 0x0019, 'Y', _T("EM"),  _T("")	}, //END OF MEDIUM メディア終了
+	{ 0x001a, 'Z', _T("SUB"), _T("")	}, //SUBSTITUTE 置換
+	{ 0x001b, 0x00db, _T("ESC"), _T("")	}, //ESCAPE エスケープ
+	{ 0x001c, 0x00dc, _T("FS"),  _T("") }, //file separator (FS) フォーム区切
+	{ 0x001d, 0x00dd, _T("GS"),  _T("") }, //group separator (GS) グループ区切
+	{ 0x001e, 0x00de, _T("RS"),  _T("") }, //record separator (RS) レコード区切
+	{ 0x001f, 0x00e2, _T("US"),  _T("") }, //unit separator (US) ユニット区切
+	{ 0x007f, 0x00bf, _T("DEL"), _T("")	}, //DELETE 削除
 
 	//internal data
 	{ 0x001f, 0x00df, _T("US"),  NULL }	//PC98 "_"  //unit separator (US)
 };
 // Feb. 12, 2003 MIK longが抜けていた
+
+// LMP: Added, nasukoji changed
+static CLoadString cLabel_jname[ _countof(p_ctrl_list) ];
 
 CDlgCtrlCode::CDlgCtrlCode()
 {
@@ -129,6 +133,12 @@ void CDlgCtrlCode::SetData( void )
 	{
 		if( p_ctrl_list[i].jname == NULL ) continue;
 		
+		// 2011.06.01 nasukoji	元のjnameがNULLのものはそのまま残す
+		if( p_ctrl_list[i].jname ){
+			// LMP: Added, nasukoji changed
+			p_ctrl_list[i].jname = (LPTSTR)cLabel_jname[i].LoadString(STR_ERR_DLGCTL5 + i);
+		}
+
 		auto_sprintf( tmp, _T("0x%02X"), p_ctrl_list[i].code );
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = tmp;
@@ -199,28 +209,28 @@ BOOL CDlgCtrlCode::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("コード"));
+	col.pszText  = const_cast<TCHAR*>( LS( STR_DLGCTRLCODE_CODE ) );	// "コード"
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("表記"));
+	col.pszText  = const_cast<TCHAR*>( LS( STR_DLGCTRLCODE_SYMBOL ) );	// "表記"
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("名前"));
+	col.pszText  = const_cast<TCHAR*>( LS( STR_DLGCTRLCODE_NAME ) );	// "名前"
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 46 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("説明"));
+	col.pszText  = const_cast<TCHAR*>( LS( STR_DLGCTRLCODE_DESC ) );	// "説明"
 	col.iSubItem = 3;
 	ListView_InsertColumn( hwndList, 3, &col );
 

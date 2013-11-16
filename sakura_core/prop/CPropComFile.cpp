@@ -48,10 +48,10 @@ static const DWORD p_helpids[] = {	//01310
 	0, 0
 };
 
-TYPE_NAME<EShareMode> ShareModeArr[] = {
-	{ SHAREMODE_NOT_EXCLUSIVE,	_T("ÇµÇ»Ç¢") },
-	{ SHAREMODE_DENY_WRITE,		_T("è„èëÇ´Çã÷é~Ç∑ÇÈ") },
-	{ SHAREMODE_DENY_READWRITE,	_T("ì«Ç›èëÇ´Çã÷é~Ç∑ÇÈ") },
+TYPE_NAME_ID<EShareMode> ShareModeArr[] = {
+	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//_T("ÇµÇ»Ç¢") },
+	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_READWRITE },	//_T("è„èëÇ´Çã÷é~Ç∑ÇÈ") },
+	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_WRITE },		//_T("ì«Ç›èëÇ´Çã÷é~Ç∑ÇÈ") },
 };
 
 //	From Here Jun. 2, 2001 genta
@@ -274,7 +274,7 @@ void CPropFile::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
 	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, ShareModeArr[i].pszName );
+		Combo_InsertString( hwndCombo, i, LS( ShareModeArr[i].nNameId ) );
 		if( ShareModeArr[i].nMethod == m_Common.m_sFile.m_nFileShareMode ){
 			nSelPos = i;
 		}
