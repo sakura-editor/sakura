@@ -8801,9 +8801,8 @@ void CEditView::Command_EXECCOMMAND( const char *cmd_string, const int nFlgOpt)	
 
 void CEditView::AddToCmdArr( const TCHAR* szCmd )
 {
-	CRecent	cRecentCmd;
+	CRecentCmd	cRecentCmd;
 
-	cRecentCmd.EasyCreate( RECENT_FOR_CMD );
 	cRecentCmd.AppendItem( szCmd );
 	cRecentCmd.Terminate();
 }

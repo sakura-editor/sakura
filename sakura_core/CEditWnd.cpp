@@ -4367,14 +4367,13 @@ void CEditWnd::SendStatusMessage2( const char* msg )
 */
 void CEditWnd::ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep )
 {
-	CRecent	cRecentEditNode;
+	CRecentEditNode	cRecentEditNode;
 	EditNode	*p;
 	int		nIndex;
 
 	if( NULL == pszTabCaption ) pszTabCaption = _T("");	//ÉKÅ[Éh
 	if( NULL == pszFilePath )pszFilePath = "";		//ÉKÅ[Éh 2006.01.28 ryoji
 
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 	nIndex = cRecentEditNode.FindItem( (const char*)&m_hWnd );
 	if( -1 != nIndex )
 	{

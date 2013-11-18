@@ -463,8 +463,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	}
 
 	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
-		CRecent	cRecentFile;
-		cRecentFile.EasyCreate( RECENT_FOR_FILE );
+		CRecentFile	cRecentFile;
 		cRecentFile.UpdateView();
 		cRecentFile.Terminate();
 	}
@@ -479,8 +478,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 	}
 
 	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
-		CRecent	cRecentFolder;
-		cRecentFolder.EasyCreate( RECENT_FOR_FOLDER );
+		CRecentFolder	cRecentFolder;
 		cRecentFolder.UpdateView();
 		cRecentFolder.Terminate();
 	}

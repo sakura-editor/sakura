@@ -32,9 +32,6 @@ CMRUFile::CMRUFile()
 {
 	//	初期化。
 	m_pShareData = CShareData::getInstance()->GetShareData();
-
-	//履歴の管理	//@@@ 2003.04.08 MIK
-	(void)m_cRecentFile.EasyCreate( RECENT_FOR_FILE );
 }
 
 /*	デストラクタ	*/

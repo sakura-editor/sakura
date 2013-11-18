@@ -995,7 +995,7 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 {
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
-	CRecent	cRecentEditNode;
+	CRecentEditNode	cRecentEditNode;
 	EditNode	sMyEditNode;
 	EditNode	*p;
 
@@ -1004,8 +1004,6 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 
 	{	// 2007.07.07 genta LockóÃàÊ
 		LockGuard<CMutex> guard( g_cEditArrMutex );
-
-		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 
 		//ìoò^çœÇ›Ç©ÅH
 		nIndex = cRecentEditNode.FindItem( (const char*)&hWnd );
@@ -1081,8 +1079,7 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 	{	// 2007.07.07 genta LockóÃàÊ
 		LockGuard<CMutex> guard( g_cEditArrMutex );
 
-		CRecent	cRecentEditNode;
-		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+		CRecentEditNode	cRecentEditNode;
 		cRecentEditNode.DeleteItem( (const char*)&hWnd );
 		cRecentEditNode.Terminate();
 	}
@@ -1903,8 +1900,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 */
 void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 {
-	CRecent	cRecentSearchKey;
-	cRecentSearchKey.EasyCreate( RECENT_FOR_SEARCH );
+	CRecentSearch	cRecentSearchKey;
 	cRecentSearchKey.AppendItem( pszSearchKey );
 	cRecentSearchKey.Terminate();
 }
@@ -1914,8 +1910,7 @@ void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 */
 void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 {
-	CRecent	cRecentReplaceKey;
-	cRecentReplaceKey.EasyCreate( RECENT_FOR_REPLACE );
+	CRecentReplace	cRecentReplaceKey;
 	cRecentReplaceKey.AppendItem( pszReplaceKey );
 	cRecentReplaceKey.Terminate();
 
@@ -1927,8 +1922,7 @@ void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 */
 void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 {
-	CRecent	cRecentGrepFile;
-	cRecentGrepFile.EasyCreate( RECENT_FOR_GREP_FILE );
+	CRecentGrepFile	cRecentGrepFile;
 	cRecentGrepFile.AppendItem( pszGrepFile );
 	cRecentGrepFile.Terminate();
 }
@@ -1938,8 +1932,7 @@ void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 */
 void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
 {
-	CRecent	cRecentGrepFolder;
-	cRecentGrepFolder.EasyCreate( RECENT_FOR_GREP_FOLDER );
+	CRecentGrepFolder	cRecentGrepFolder;
 	cRecentGrepFolder.AppendItem( pszGrepFolder );
 	cRecentGrepFolder.Terminate();
 }

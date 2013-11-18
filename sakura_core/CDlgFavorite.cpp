@@ -33,6 +33,7 @@
 
 #include "StdAfx.h"
 #include <stdio.h>
+#include <assert.h>
 #include "global.h"
 #include "Funccode.h"
 #include "mymessage.h"
@@ -140,29 +141,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 
 		/* これ以上増やすときはテーブルサイズも書き換えてね */
-	}
-
-	{
-		//ファイル
-		(void)m_cRecentFile.EasyCreate( RECENT_FOR_FILE );
-
-		//フォルダ
-		(void)m_cRecentFolder.EasyCreate( RECENT_FOR_FOLDER );
-
-		//検索
-		(void)m_cRecentSearch.EasyCreate( RECENT_FOR_SEARCH );
-
-		//置換
-		(void)m_cRecentReplace.EasyCreate( RECENT_FOR_REPLACE );
-
-		//GREPファイル
-		(void)m_cRecentGrepFile.EasyCreate( RECENT_FOR_GREP_FILE );
-
-		//GREPフォルダ
-		(void)m_cRecentGrepFolder.EasyCreate( RECENT_FOR_GREP_FOLDER );
-
-		//コマンド
-		(void)m_cRecentCmd.EasyCreate( RECENT_FOR_CMD );
+		assert( i < _countof(m_aFavoriteInfo) );
 	}
 }
 
@@ -171,7 +150,7 @@ CDlgFavorite::~CDlgFavorite()
 	CRecent	*pRecent;
 	int		nTab;
 
-	for( nTab = 0; NULL != (pRecent = m_aFavoriteInfo[nTab].m_pRecent); nTab++ )
+	for( nTab = 0; pRecent = m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		pRecent->Terminate();
 	}

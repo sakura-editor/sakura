@@ -198,18 +198,17 @@ void CDlgTagJumpList::SetData( void )
 		m_bTagJumpAnyWhere = m_pShareData->m_sTagJump.m_bTagJumpAnyWhere;
 		::CheckDlgButton( m_hWnd, IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
 		::SendMessage( hwndKey, CB_LIMITTEXT, (WPARAM)_MAX_PATH-1, 0 );
-		CRecent cRecent;
-		cRecent.EasyCreate( RECENT_FOR_TAGJUMP_KEYWORD );
-		for( int i = 0; i < cRecent.GetItemCount(); i++ ){
-			::SendMessage( hwndKey, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)cRecent.GetItem(i) );
+		CRecentTagjumpKeyword cRecentTagJump;
+		for( int i = 0; i < cRecentTagJump.GetItemCount(); i++ ){
+			::SendMessage( hwndKey, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)cRecentTagJump.GetItem(i) );
 		}
 		if( m_pszKeyword != NULL ){
 			::SetDlgItemText( m_hWnd, IDC_KEYWORD, m_pszKeyword );
 		}
-		else if( cRecent.GetItemCount() > 0 ){
+		else if( cRecentTagJump.GetItemCount() > 0 ){
 			::SendMessage( hwndKey, CB_SETCURSEL, 0, 0 );
 		}
-		cRecent.Terminate();
+		cRecentTagJump.Terminate();
 		StartTimer();
 	}
 	//	To Here 2005.04.03 MIK ê›íËílÇÃì«Ç›çûÇ›
@@ -315,8 +314,7 @@ int CDlgTagJumpList::GetData( void )
 		SetKeyword( tmp );
 
 		//ê›íËÇï€ë∂
-		CRecent cRecentTagJumpKeyword;
-		cRecentTagJumpKeyword.EasyCreate( RECENT_FOR_TAGJUMP_KEYWORD );
+		CRecentTagjumpKeyword cRecentTagJumpKeyword;
 		cRecentTagJumpKeyword.AppendItem( m_pszKeyword );
 		cRecentTagJumpKeyword.Terminate();
 	}

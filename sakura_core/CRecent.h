@@ -37,36 +37,10 @@
 
 #include "global.h"
 
-
-
-typedef enum {
-	RECENT_CMP_STRCMP   = 0,
-	RECENT_CMP_STRICMP  = 1,
-	RECENT_CMP_STRNCMP  = 2,
-	RECENT_CMP_STRNICMP = 3,
-	RECENT_CMP_MEMCMP   = 4,
-	RECENT_CMP_MEMICMP  = 5
-} enumRecentCmp;
-
-typedef enum {
-	RECENT_FOR_FILE        = 0,
-	RECENT_FOR_FOLDER      = 1,
-	RECENT_FOR_SEARCH      = 2,
-	RECENT_FOR_REPLACE     = 3,
-	RECENT_FOR_GREP_FILE   = 4,
-	RECENT_FOR_GREP_FOLDER = 5,
-	RECENT_FOR_CMD         = 6,
-	RECENT_FOR_EDITNODE    = 7,	//ウインドウリスト	@@@ 2003.05.31 MIK
-	RECENT_FOR_TAGJUMP_KEYWORD = 8	//タグジャンプキーワード @@@ 2005.04.03 MIK
-} enumRecentFor;	//型名追加	//@@@ 2003.05.12 MIK
-
-
-
 class CRecent {
-
 public:
 	CRecent();
-	~CRecent();
+	virtual ~CRecent();
 
 	bool IsAvailable( void ) const;
 
@@ -79,11 +53,8 @@ public:
 			int		*nViewCount, 
 			int		nItemSize, 
 			int		nOffset, 
-			int		nCmpSize, 
-			int		nCmpType 
+			int		nCmpSize
 		);
-
-	bool EasyCreate( int nRecentType );
 
 	void Terminate( void );
 
@@ -97,7 +68,7 @@ public:
 	bool DeleteItem( int nIndex );			//アイテムをクリア
 	bool DeleteItem( const char *pszItemData ) { return DeleteItem( FindItem( pszItemData ) ); }
 	void DeleteAllItem( void );				//アイテムをすべてクリア
-	int FindItem( const char *pszItemData ) const;
+	virtual int FindItem( const char *pszItemData ) const = 0;
 	bool MoveItem( int nSrcIndex, int nDstIndex );	//アイテムを移動
 
 	//お気に入り制御系
@@ -116,13 +87,12 @@ public:
 	int GetOffset( void ) { return m_nOffset; }		//比較位置
 	//int GetCmpSize( void ) { return m_nCmpSize; }		//比較サイズ
 
-
 protected:
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
 
 
-private:
+protected:
 	bool	m_bCreate;		//Create済みか
 
 	int		m_nArrayCount;	//配列個数
@@ -142,6 +112,78 @@ private:
 	int GetOldestItem( int nIndex, bool bFavorite );	//最古のアイテムを探す
 	char *GetArrayOffset( int nIndex ) const { return m_puUserItemData + (nIndex * m_nItemSize); }
 	bool CopyItem( int nSrcIndex, int nDstIndex );
+};
+
+//! EditInfoの履歴を管理 (RECENT_FOR_FILE)
+class CRecentFile : public CRecent
+{
+public:
+	CRecentFile();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
+class CRecentFolder : public CRecent
+{
+public:
+	CRecentFolder();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! 検索の履歴を管理 (RECENT_FOR_SEARCH)
+class CRecentSearch : public CRecent
+{
+public:
+	CRecentSearch();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! 置換の履歴を管理 (RECENT_FOR_REPLACE)
+class CRecentReplace : public CRecent
+{
+public:
+	CRecentReplace();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
+class CRecentGrepFile : public CRecent
+{
+public:
+	CRecentGrepFile();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! GREPフォルダの履歴を管理 (RECENT_FOR_GREP_FOLDER)
+class CRecentGrepFolder : public CRecent
+{
+public:
+	CRecentGrepFolder();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! コマンドの履歴を管理 (RECENT_FOR_CMD)
+class CRecentCmd : public CRecent
+{
+public:
+	CRecentCmd();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! EditNode(ウィンドウリスト)の履歴を管理 (RECENT_FOR_EDITNODE)
+class CRecentEditNode : public CRecent
+{
+public:
+	CRecentEditNode();
+	int FindItem( const char *pszItemData ) const;
+};
+
+//! タグジャンプキーワードの履歴を管理 (RECENT_FOR_TAGJUMP_KEYWORD)
+class CRecentTagjumpKeyword : public CRecent
+{
+public:
+	CRecentTagjumpKeyword();
+	int FindItem( const char *pszItemData ) const;
 };
 
 #endif	//_CRECENT_H_

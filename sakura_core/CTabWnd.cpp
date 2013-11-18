@@ -1530,7 +1530,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( -1 != nIndex )
 		{
 			TCITEM	tcitem;
-			CRecent	cRecentEditNode;
+			CRecentEditNode	cRecentEditNode;
 			TCHAR	szName[1024];
 			//	Jun. 19, 2004 genta
 			EditNode	*p;

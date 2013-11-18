@@ -113,16 +113,15 @@ bool CRecent::IsAvailable( void ) const
 	pnViewCount = NULL にすると、擬似的に nViewCount == nArrayCount になる。
 */
 bool CRecent::Create( 
-		char	*pszItemArray,	//アイテム配列へのポインタ
-		int		*pnItemCount,	//アイテム個数へのポインタ
-		bool	*pbItemFavorite,	//お気に入りへのポインタ
-		int		nArrayCount, 
-		int		*pnViewCount, 
-		int		nItemSize, 
-		int		nOffset, 
-		int		nCmpSize, 
-		int		nCmpType 
-	)
+	char	*pszItemArray,	//アイテム配列へのポインタ
+	int		*pnItemCount,	//アイテム個数へのポインタ
+	bool	*pbItemFavorite,	//お気に入りへのポインタ
+	int		nArrayCount, 
+	int		*pnViewCount, 
+	int		nItemSize, 
+	int		nOffset, 
+	int		nCmpSize
+)
 {
 	Terminate();
 
@@ -149,7 +148,6 @@ bool CRecent::Create(
 	m_nItemSize   = nItemSize;
 	m_nOffset     = nOffset;
 	m_nCmpSize    = nCmpSize;
-	m_nCmpType    = nCmpType;
 
 	m_bCreate = true;
 
@@ -544,10 +542,320 @@ reconfigure:
 	return true;
 }
 
+CRecentFile::CRecentFile()
+{
+	Create(
+		(char*)m_pShareData->m_sHistory.m_fiMRUArr,
+		&m_pShareData->m_sHistory.m_nMRUArrNum,
+		m_pShareData->m_sHistory.m_bMRUArrFavorite,
+		MAX_MRU,
+		&(m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX),
+		sizeof( EditInfo ),
+		offsetof(EditInfo, m_szPath),
+		sizeof( ((EditInfo*)0)->m_szPath )	//_MAX_PATH
+	);
+}
+
+CRecentFolder::CRecentFolder()
+{
+	Create(
+		(char*)m_pShareData->m_sHistory.m_szOPENFOLDERArr,
+		&m_pShareData->m_sHistory.m_nOPENFOLDERArrNum,
+		m_pShareData->m_sHistory.m_bOPENFOLDERArrFavorite,
+		MAX_OPENFOLDER,
+		&(m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX),
+		sizeof( m_pShareData->m_sHistory.m_szOPENFOLDERArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentSearch::CRecentSearch()
+{
+	Create(
+		(char*)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr,
+		&m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum,
+		NULL /*m_pShareData->m_bSEARCHKEYArrFavorite*/,
+		MAX_SEARCHKEY,
+		NULL,
+		sizeof( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentReplace::CRecentReplace()
+{
+	Create(
+		(char*)m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr,
+		&m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum,
+		NULL /*m_pShareData->m_bREPLACEKEYArrFavorite*/,
+		MAX_REPLACEKEY,
+		NULL,
+		sizeof( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentGrepFile::CRecentGrepFile()
+{
+	Create(
+		(char*)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr,
+		&m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum,
+		NULL /*m_pShareData->m_bGREPFILEArrFavorite*/,
+		MAX_GREPFILE,
+		NULL,
+		sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentGrepFolder::CRecentGrepFolder()
+{
+	Create(
+		(char*)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr,
+		&m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum,
+		NULL /*m_pShareData->m_bGREPFOLDERArrFavorite*/,
+		MAX_GREPFOLDER,
+		NULL,
+		sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentCmd::CRecentCmd()
+{
+	Create(
+		(char*)m_pShareData->m_sHistory.m_szCmdArr,
+		&m_pShareData->m_sHistory.m_nCmdArrNum,
+		NULL /*m_pShareData->m_bCmdArrFavorite*/,
+		MAX_CMDARR,
+		NULL,
+		sizeof( m_pShareData->m_sHistory.m_szCmdArr[0] ),	//MAX_CMDLEN
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
+CRecentEditNode::CRecentEditNode()
+{
+	Create(
+		(char*)m_pShareData->m_sNodes.m_pEditArr,
+		&m_pShareData->m_sNodes.m_nEditArrNum,
+		NULL,
+		MAX_EDITWINDOWS,
+		NULL,
+		sizeof( m_pShareData->m_sNodes.m_pEditArr[0] ),
+		offsetof(EditNode, m_hWnd),
+		sizeof( ((EditNode*)0)->m_hWnd )	//sizeof(HWND)
+	);
+}
+
+CRecentTagjumpKeyword::CRecentTagjumpKeyword()
+{
+	Create(
+		(char*)m_pShareData->m_sTagJump.m_szTagJumpKeywordArr,
+		&m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum,
+		NULL /*m_pShareData->m_bTagJumpKeywordArrFavorite*/,
+		MAX_TAGJUMP_KEYWORD,
+		NULL,
+		sizeof( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[0] ),	//_MAX_PATH
+		0,
+		0	//AppendItemのデータは文字列
+	);
+}
+
 /*
 	アイテムを検索する。
 */
-int CRecent::FindItem( const char *pszItemData ) const
+int CRecentFile::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( my_stricmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentFolder::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( my_stricmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentSearch::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( strcmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentReplace::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( strcmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentGrepFile::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( my_stricmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentGrepFolder::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( my_stricmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentCmd::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( strcmp( p, q ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentEditNode::FindItem( const char *pszItemData ) const
+{
+	int	i;
+	const char	*p, *q;
+
+	if( ! IsAvailable() ) return -1;
+	if( NULL == pszItemData ) return -1;
+
+	p = pszItemData;
+
+	for( i = 0; i < *m_pnUserItemCount; i++ )
+	{
+		q = GetArrayOffset( i ) + m_nOffset;
+
+		if( memcmp( p, q, m_nCmpSize ) == 0 ) return i;
+	}
+
+	return -1;
+}
+
+/*
+	アイテムを検索する。
+*/
+int CRecentTagjumpKeyword::FindItem( const char *pszItemData ) const
 {
 	int	i;
 	const char	*p, *q;
@@ -562,162 +870,9 @@ int CRecent::FindItem( const char *pszItemData ) const
 	{
 		q = GetArrayOffset( i ) + m_nOffset;
 
-		switch( m_nCmpType )
-		{
-		case RECENT_CMP_STRICMP:	//stricmp
-			if( my_stricmp( p, q ) == 0 ) return i;
-			break;
-
-		case RECENT_CMP_STRNCMP:	//strncmp
-			if( strncmp( p, q, m_nCmpSize ) == 0 ) return i;
-			break;
-
-		case RECENT_CMP_STRNICMP:	//strnicmp
-			if( my_strnicmp( p, q, m_nCmpSize ) == 0 ) return i;
-			break;
-
-		case RECENT_CMP_MEMCMP:		//memcmp
-			if( memcmp( p, q, m_nCmpSize ) == 0 ) return i;
-			break;
-
-		case RECENT_CMP_MEMICMP:	//memicmp
-			if( my_memicmp( p, q, m_nCmpSize ) == 0 ) return i;
-			break;
-
-		case RECENT_CMP_STRCMP:		//strcmp
-		default:
-			if( strcmp( p, q ) == 0 ) return i;
-			break;
-		}
+		if( strcmp( p, q ) == 0 ) return i;
 	}
 
 	return -1;
-}
-
-bool CRecent::EasyCreate( int nRecentType )
-{
-	switch( nRecentType )
-	{
-	case RECENT_FOR_FILE:	//ファイル
-		return Create(
-			(char*)m_pShareData->m_sHistory.m_fiMRUArr,
-			&m_pShareData->m_sHistory.m_nMRUArrNum,
-			m_pShareData->m_sHistory.m_bMRUArrFavorite,
-			MAX_MRU,
-			&(m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX),
-			sizeof( EditInfo ),
-			offsetof(EditInfo, m_szPath),
-			sizeof( ((EditInfo*)0)->m_szPath ),	//_MAX_PATH
-			RECENT_CMP_STRICMP
-		);
-
-	case RECENT_FOR_FOLDER:	//フォルダ
-		return Create(
-			(char*)m_pShareData->m_sHistory.m_szOPENFOLDERArr,
-			&m_pShareData->m_sHistory.m_nOPENFOLDERArrNum,
-			m_pShareData->m_sHistory.m_bOPENFOLDERArrFavorite,
-			MAX_OPENFOLDER,
-			&(m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX),
-			sizeof( m_pShareData->m_sHistory.m_szOPENFOLDERArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRICMP
-		);
-
-	case RECENT_FOR_SEARCH:	//検索
-		return Create(
-			(char*)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr,
-			&m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum,
-			NULL /*m_pShareData->m_bSEARCHKEYArrFavorite*/,
-			MAX_SEARCHKEY,
-			NULL,
-			sizeof( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRCMP
-		);
-
-	case RECENT_FOR_REPLACE:	//置換
-		return Create(
-			(char*)m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr,
-			&m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum,
-			NULL /*m_pShareData->m_bREPLACEKEYArrFavorite*/,
-			MAX_REPLACEKEY,
-			NULL,
-			sizeof( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRCMP
-		);
-
-	case RECENT_FOR_GREP_FILE:	//GREPファイル
-		return Create(
-			(char*)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr,
-			&m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum,
-			NULL /*m_pShareData->m_bGREPFILEArrFavorite*/,
-			MAX_GREPFILE,
-			NULL,
-			sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRICMP
-		);
-
-	case RECENT_FOR_GREP_FOLDER:	//GREPフォルダ
-		return Create(
-			(char*)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr,
-			&m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum,
-			NULL /*m_pShareData->m_bGREPFOLDERArrFavorite*/,
-			MAX_GREPFOLDER,
-			NULL,
-			sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRICMP
-		);
-
-	case RECENT_FOR_CMD:	//コマンド
-		return Create(
-			(char*)m_pShareData->m_sHistory.m_szCmdArr,
-			&m_pShareData->m_sHistory.m_nCmdArrNum,
-			NULL /*m_pShareData->m_bCmdArrFavorite*/,
-			MAX_CMDARR,
-			NULL,
-			sizeof( m_pShareData->m_sHistory.m_szCmdArr[0] ),	//MAX_CMDLEN
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRCMP
-		);
-
-	//@@@ 2003.06.28 MIK 追加
-	case RECENT_FOR_EDITNODE:	//ウインドウリスト
-		return Create(
-			(char*)m_pShareData->m_sNodes.m_pEditArr,
-			&m_pShareData->m_sNodes.m_nEditArrNum,
-			NULL,
-			MAX_EDITWINDOWS,
-			NULL,
-			sizeof( m_pShareData->m_sNodes.m_pEditArr[0] ),
-			offsetof(EditNode, m_hWnd),
-			sizeof( ((EditNode*)0)->m_hWnd ),	//sizeof(HWND)
-			RECENT_CMP_MEMCMP
-		);
-
-	case RECENT_FOR_TAGJUMP_KEYWORD:	//タグジャンプキーワード 2005.04.03 MIK
-		return Create(
-			(char*)m_pShareData->m_sTagJump.m_szTagJumpKeywordArr,
-			&m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum,
-			NULL /*m_pShareData->m_bTagJumpKeywordArrFavorite*/,
-			MAX_TAGJUMP_KEYWORD,
-			NULL,
-			sizeof( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[0] ),	//_MAX_PATH
-			0,
-			0,	//AppendItemのデータは文字列
-			RECENT_CMP_STRCMP
-		);
-
-	default:
-		return false;
-	}
 }
 

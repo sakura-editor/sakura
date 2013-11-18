@@ -34,6 +34,7 @@
 #define SAKURA_CDLGFAVORITE_H_
 
 #include "CDialog.h"
+#include "CRecent.h"
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
@@ -70,13 +71,13 @@ protected:
 	//void	ChangeSlider( int nIndex );
 
 private:
-	CRecent	m_cRecentFile;
-	CRecent	m_cRecentFolder;
-	CRecent	m_cRecentSearch;
-	CRecent	m_cRecentReplace;
-	CRecent	m_cRecentGrepFile;
-	CRecent	m_cRecentGrepFolder;
-	CRecent	m_cRecentCmd;
+	CRecentFile       m_cRecentFile;
+	CRecentFolder     m_cRecentFolder;
+	CRecentSearch     m_cRecentSearch;
+	CRecentReplace    m_cRecentReplace;
+	CRecentGrepFile   m_cRecentGrepFile;
+	CRecentGrepFolder m_cRecentGrepFolder;
+	CRecentCmd        m_cRecentCmd;
 
 	enum {
 		// ! 管理数
