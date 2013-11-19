@@ -252,11 +252,11 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 						lf = m_Types.m_lf;
 					}
 					else{
-						lf = GetDllShareData().m_Common.m_sView.m_lf;
+						lf = m_pShareData->m_Common.m_sView.m_lf;
 					}
 
 					bool bFixedFont = true;
-					if( GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
+					if( m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
 					}else{
 						bool bFixedFont = false;
 					}
@@ -375,7 +375,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = 0;
+				m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 				return TRUE;
 			}
 			break;
@@ -571,9 +571,6 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 Screen */
 int CPropTypesScreen::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = 0;
-
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );	// 設定の名前
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );	// ファイル拡張子
 
@@ -693,7 +690,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 			lf = m_Types.m_lf;
 		}
 		else{
-			lf = GetDllShareData().m_Common.m_sView.m_lf;
+			lf = m_pShareData->m_Common.m_sView.m_lf;
 		}
 	}
 

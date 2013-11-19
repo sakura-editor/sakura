@@ -128,7 +128,7 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_MACRO;
+				m_nPageNum = ID_PROPCOM_PAGENUM_MACRO;
 				return TRUE;
 			}
 			break;
@@ -279,9 +279,6 @@ void CPropMacro::SetData( HWND hwndDlg )
 
 int CPropMacro::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_MACRO;
-
 	int index;
 	LVITEM sItem;
 

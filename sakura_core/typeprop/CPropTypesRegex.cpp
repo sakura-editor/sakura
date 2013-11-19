@@ -465,7 +465,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = 4;
+			m_nPageNum = ID_PROPTYPE_PAGENUM_REGEX;
 			return TRUE;
 		case LVN_ITEMCHANGED:
 			if( pNMHDR->hwndFrom == hwndList )
@@ -624,10 +624,6 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 	const int szKeyWordSize = _countof(m_Types.m_RegexKeywordList) * 2 + 1;
 	auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ szKeyWordSize ]);
 	TCHAR	szColorIndex[256];
-
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	//自分のページ番号
-//	m_nPageNum = 4;
 
 	//使用する・使用しない
 	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )

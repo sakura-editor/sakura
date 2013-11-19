@@ -154,7 +154,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = ID_PAGENUM_CUSTMENU;
+			m_nPageNum = ID_PROPCOM_PAGENUM_CUSTMENU;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
 			nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
@@ -719,9 +719,6 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 /* ダイアログデータの取得 Custom menu */
 int CPropCustmenu::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_CUSTMENU;
-
 	return TRUE;
 }
 

@@ -40,9 +40,13 @@ public:
 	bool OpenPropertySheet( HWND hWnd, int nPageNum );	/* ã§í ê›íË */
 	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* É^ÉCÉvï ê›íË */
 
-public:
-	CPropCommon			m_cPropCommon;
-	CPropTypes			m_cPropTypes;
+private:
+	HWND			m_hwndOwner;
+	CImageListMgr*	m_pImageList;
+	CMenuDrawer*	m_pMenuDrawer;
+
+	int				m_nPropComPageNum;
+	int				m_nPropTypePageNum;
 };
 
 #endif /* SAKURA_CPROPERTYMANAGER_03C7D94F_54C6_4772_86BE_4A00A554FCAE_H_ */

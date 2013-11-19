@@ -145,7 +145,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				GetData( hwndDlg );
 				return TRUE;
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_PLUGIN;
+				m_nPageNum = ID_PROPCOM_PAGENUM_PLUGIN;
 				return TRUE;
 			}
 			break;
