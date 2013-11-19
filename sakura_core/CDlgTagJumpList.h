@@ -29,19 +29,11 @@
 		   distribution.
 */
 
-
-
-class CDlgTagJumpList;
-
 #ifndef	_CDLGTAGJUMPLIST_H_
 #define	_CDLGTAGJUMPLIST_H_
 
 #include "CDialog.h"
 #include "CSortedTagJumpList.h"
-
-//	@@ 2005.03.31 MIK
-//編集ボックスがコンボかどうか
-#define TAGJUMP_EDITBOX_IS_COMBO
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME        "tags"

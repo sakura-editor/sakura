@@ -22,6 +22,7 @@
 
 #include "StdAfx.h"
 #include "CDlgAbout.h"
+#include "CMemory.h"
 #include "etc_uty.h"
 #ifdef USE_SVNREV
 #include "svnrev.h"

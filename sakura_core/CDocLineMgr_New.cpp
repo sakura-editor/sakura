@@ -17,13 +17,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <io.h>
+#include <commctrl.h>
+#include "global.h"
+#include "maxdata.h" // MAX_MARKLINES_LEN
 #include "charcode.h"
 #include "CDocLineMgr.h"
 #include "Debug.h"
 #include "charcode.h"
-#include <io.h>
-#include <commctrl.h>
-#include "global.h"
 #include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "CDlgCancel.h"

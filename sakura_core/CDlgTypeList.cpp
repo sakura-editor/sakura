@@ -17,6 +17,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgTypeList.h"
+#include "CShareData.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "etc_uty.h"

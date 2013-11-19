@@ -23,6 +23,7 @@
 
 #include <windows.h>
 #include "CDialog.h"
+#include "CMemory.h"
 
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka

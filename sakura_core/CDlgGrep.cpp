@@ -16,11 +16,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include "global.h"
+#include "CShareData.h"
 #include "CDlgGrep.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "Debug.h"
 #include "etc_uty.h"
-#include "global.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

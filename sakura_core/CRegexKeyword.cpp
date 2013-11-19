@@ -19,9 +19,9 @@
 //@@@ 2001.11.17 add start MIK
 
 #include "StdAfx.h"
-#include "global.h"
 #include "CRegexKeyword.h"
 #include "CBregexp.h"
+#include "CShareData.h"
 
 #if 0
 #include <stdio.h>

@@ -31,6 +31,8 @@
 
 #include "StdAfx.h"
 #include "CDlgWinSize.h"
+#include "CShareData.h"
+#include "etc_uty.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

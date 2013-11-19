@@ -37,7 +37,6 @@
 #include "global.h"
 #include "Funccode.h"
 #include "mymessage.h"
-#include "CDialog.h"
 #include "CDlgFavorite.h"
 #include "etc_uty.h"
 #include "Debug.h"

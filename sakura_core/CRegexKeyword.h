@@ -16,16 +16,14 @@
 
 //@@@ 2001.11.17 add start MIK
 
-//class CRegexKeyword;
-
 #ifndef	_REGEX_KEYWORD_H_
 #define	_REGEX_KEYWORD_H_
 
-#include <windows.h>
-#include "CShareData.h"
 #include "global.h"
 #include "CBregexp.h"
+#include "maxdata.h" //MAX_REGEX_KEYWORD
 
+struct STypeConfig;
 
 #define USE_PARENT	//親を使ってキーワード格納領域を削減する。
 

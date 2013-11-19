@@ -17,6 +17,7 @@ class CDlgPrintSetting;
 #define _CDLGPRINTSETTING_H_
 
 #include "CDialog.h"
+#include "maxdata.h" // MAX_PRINTSETTINGARR
 #include "CPrint.h" //PRINTSETTING
 
 /*!	印刷設定ダイアログ
@@ -39,7 +40,6 @@ private:
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
 
-
 protected:
 	/*
 	||  実装ヘルパ関数
@@ -57,7 +57,6 @@ protected:
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
 	int DataCheckAndCorrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	BOOL OnTimer( WPARAM );	/* タイマー処理 */
-
 };
 
 

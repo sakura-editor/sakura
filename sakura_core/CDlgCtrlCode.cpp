@@ -31,10 +31,9 @@
 
 #include "StdAfx.h"
 #include "global.h"
+#include "CDlgCtrlCode.h"
 #include "Funccode.h"
 #include "mymessage.h"
-#include "CDialog.h"
-#include "CDlgCtrlCode.h"
 #include "CEditView.h"
 #include "etc_uty.h"
 #include "Debug.h"

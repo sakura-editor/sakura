@@ -47,59 +47,7 @@ class CShareData;
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 
-enum maxdata{
-	MAX_EDITWINDOWS				= 256,
-	MAX_SEARCHKEY				=  30,
-	MAX_REPLACEKEY				=  30,
-	MAX_GREPFILE				=  30,
-	MAX_GREPFOLDER				=  30,
-	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした	// 2007.12.13 ryoji 20→30
-	MAX_TYPES_EXTS				=  64,
-	MAX_TOOLBAR_BUTTON_ITEMS	= 384,	//ツールバーに登録可能なボタン最大数	
-	MAX_TOOLBAR_ICON_X			=  32,	//アイコンBMPの桁数
-	MAX_TOOLBAR_ICON_Y			=  13,	//アイコンBMPの段数
-	MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON_Y, // =416
-	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)	
-	//2010/6/9 Uchi アイコンの最大登録数を32個増やした(384→416)
-	MAX_CUSTOM_MENU				=  25,
-	MAX_CUSTOM_MENU_NAME_LEN	=  32,
-	MAX_CUSTOM_MENU_ITEMS		=  48,
-	MAX_PRINTSETTINGARR			=   8,
-
-	//	From Here Sep. 14, 2001 genta
-	MACRONAME_MAX				= 64,
-	MAX_EXTCMDLEN				= 1024,
-	MAX_EXTCMDMRUNUM			= 32,
-
-	MAX_DATETIMEFOREMAT_LEN		= 100,
-
-	MAX_CMDLEN					= 1024,
-	MAX_CMDARR					= 32,
-	MAX_REGEX_KEYWORD			= 100,	//@@@ 2001.11.17 add MIK
-
-	MAX_KEYHELP_FILE			= 20,	//@@@ 2006.04.10 fon
-
-	MAX_MARKLINES_LEN			= 1023,	// 2002.01.18 hor
-	MAX_DOCTYPE_LEN				= 7,
-	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
-
-	/*! 登録できるマクロの数
-		@date 2005.01.30 genta 50に増やした
-	*/
-	MAX_CUSTMACRO				= 50,
-
-	// 2004/06/21 novice タグジャンプ機能追加
-	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値
-	MAX_TAGJUMP_KEYWORD			= 30,	//タグジャンプ用キーワード最大登録数2005.04.04 MIK
-	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) タイプ別設定毎のキーワードセット数
-	MAX_VERTLINES = 10,	// 2005.11.08 Moca 指定桁縦線
-
-	//	MRUリストに関係するmaxdata
-	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更。2007.10.23 kobake maxdataに移動。
-	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-};
-
-
+#include "maxdata.h"	//@@@ 2002.09.22 YAZAKI
 
 /*! ファイル情報
 
@@ -353,6 +301,20 @@ struct STypeConfig {
 
 }; /* STypeConfig */
 
+// Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
+static const int MAX_CAPTION_CONF_LEN = 256;
+
+static const int MAX_DATETIMEFOREMAT_LEN	= 100;
+static const int MAX_CUSTOM_MENU			=  25;
+static const int MAX_CUSTOM_MENU_NAME_LEN	=  32;
+static const int MAX_CUSTOM_MENU_ITEMS		=  48;
+static const int MAX_TOOLBAR_BUTTON_ITEMS	= 384;	//ツールバーに登録可能なボタン最大数
+static const int MAX_TOOLBAR_ICON_X			=  32;	//アイコンBMPの桁数
+static const int MAX_TOOLBAR_ICON_Y			=  13;	//アイコンBMPの段数
+static const int MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON_Y; // =416
+//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)	
+//2010/6/9 Uchi アイコンの最大登録数を32個増やした(384→416)
+
 //! マクロ情報
 struct MacroRec {
 	char	m_szName[MACRONAME_MAX];	//!< 表示名
@@ -383,9 +345,6 @@ const int BKUP_SEC		= 1;
 //	Aug. 21, 2000 genta
 const int BKUP_AUTO		= 64;
 
-// Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
-const int MAX_CAPTION_CONF_LEN = 256;
-
 //	2004.05.13 Moca
 //! ウィンドウサイズ・位置の制御方法
 enum EWinSizeMode{
@@ -394,9 +353,7 @@ enum EWinSizeMode{
 	WINSIZEMODE_SET = 2   //!< 直接指定(固定)
 };
 
-//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
-//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
-
+// 旧版と違い、bool型使えるようにしてあります by kobake
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           全般                              //
@@ -453,7 +410,6 @@ struct CommonSetting_Window
 	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
 	BOOL				m_bMenuIcon;					/* メニューにアイコンを表示する */
 	BOOL				m_bMenuWChar;					/* メニューの字化け対策を行う(Win2K以降のみ) */
-
 	BOOL				m_bScrollBarHorz;				/* 水平スクロールバーを使う */
 	BOOL				m_bUseCompatibleBMP;			// 再作画用互換ビットマップを使う 2007.09.09 Moca
 
@@ -860,7 +816,8 @@ struct CommonSetting_Others
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 共通設定
-struct CommonSetting {
+struct CommonSetting
+{
 	CommonSetting_General			m_sGeneral;			// 全般
 	CommonSetting_Window			m_sWindow;			// ウィンドウ
 	CommonSetting_TabBar			m_sTabBar;			// タブバー
@@ -882,7 +839,7 @@ struct CommonSetting {
 	CommonSetting_Compare			m_sCompare;
 	CommonSetting_View				m_sView;
 	CommonSetting_Others			m_sOthers;
-}; /* Common */
+};
 
 
 //! iniフォルダ設定	// 2007.05.31 ryoji

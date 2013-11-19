@@ -14,14 +14,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDialog;
-
 #ifndef _CDIALOG_H_
 #define _CDIALOG_H_
 
-#include "global.h"
-#include "CShareData.h"
-#include "etc_uty.h"
+class CDialog;
+
+struct DLLSHAREDATA;
 
 
 /*-----------------------------------------------------------------------
