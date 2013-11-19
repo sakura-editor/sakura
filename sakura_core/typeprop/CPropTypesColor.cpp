@@ -544,7 +544,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = 1;
+				m_nPageNum = ID_PROPTYPE_PAGENUM_COLOR;
 				return TRUE;
 			}
 			break;	/* default */
@@ -737,9 +737,6 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 {
 	int		nIdx;
 	HWND	hwndWork;
-
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = 1;
 
 	//	From Here May 12, 2001 genta
 	//	コメントの開始桁位置の取得

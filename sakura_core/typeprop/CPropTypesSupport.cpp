@@ -187,7 +187,7 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = 3;
+			m_nPageNum = ID_PROPTYPE_PAGENUM_SUPPORT;
 			return TRUE;
 		}
 		break;
@@ -254,9 +254,6 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropTypesSupport::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = 3;
-
 //	2001/06/19	asa-o
 	/* 入力補完機能：英大文字小文字を同一視する */
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE ) != 0;

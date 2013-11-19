@@ -43,6 +43,17 @@ struct TYPE_NAME_ID {
 	int			nNameId;
 };
 
+//!< プロパティシート番号
+enum PropTypeSheetOrder {
+	ID_PROPTYPE_PAGENUM_SCREEN = 0,		//!< スクリーン
+	ID_PROPTYPE_PAGENUM_COLOR,			//!< カラー
+	ID_PROPTYPE_PAGENUM_WINDOW,			//!< ウィンドウ
+	ID_PROPTYPE_PAGENUM_SUPPORT,		//!< 支援
+	ID_PROPTYPE_PAGENUM_REGEX,			//!< 正規表現キーワード
+	ID_PROPTYPE_PAGENUM_KEYHELP,		//!< ステータスバー
+	ID_PROPTYPE_PAGENUM_MAX,
+};
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -64,6 +75,7 @@ public:
 	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
 	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
 	HWND GetHwndParent()const { return m_hwndParent; }
+	int GetPageNum(){ return m_nPageNum; }
 
 protected:
 	//イベント
@@ -76,8 +88,9 @@ protected:
 	HWND		m_hwndThis;		//!< このダイアログのハンドル
 
 	//ダイアログデータ
-	int			m_nPageNum;
-	STypeConfig		m_Types;
+	PropTypeSheetOrder	m_nPageNum;
+	DLLSHAREDATA*		m_pShareData;
+	STypeConfig			m_Types;
 
 	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動
 	static std::vector<TYPE_NAME<EOutlineType> > m_OlmArr;			//!<アウトライン解析ルール配列

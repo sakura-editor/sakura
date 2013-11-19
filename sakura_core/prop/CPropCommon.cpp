@@ -150,7 +150,7 @@ CPropCommon::CPropCommon()
 
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PAGENUM_GENERAL;
+	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
 	m_nKeywordSet1 = -1;
 
 	return;

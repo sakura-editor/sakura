@@ -226,7 +226,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_KEYWORD;
+				m_nPageNum = ID_PROPCOM_PAGENUM_KEYWORD;
 				return TRUE;
 			}
 		}
@@ -671,15 +671,6 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 /* ダイアログデータの取得 Keyword */
 int CPropKeyword::GetData( HWND hwndDlg )
 {
-//	HWND	hwndResList;
-//	int		i;
-//	int		j;
-//	int		k;
-
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_KEYWORD;
-
-
 	return TRUE;
 }
 

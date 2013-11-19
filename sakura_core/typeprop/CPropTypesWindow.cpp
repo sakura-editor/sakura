@@ -166,7 +166,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = 2;
+			m_nPageNum = ID_PROPTYPE_PAGENUM_WINDOW;
 			return TRUE;
 		}
 		break;	/* WM_NOTIFY */

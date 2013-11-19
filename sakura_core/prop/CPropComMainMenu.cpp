@@ -283,7 +283,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			GetData( hwndDlg );
 			return TRUE;
 		case PSN_SETACTIVE:
-			m_nPageNum = ID_PAGENUM_MAINMENU;
+			m_nPageNum = ID_PROPCOM_PAGENUM_MAINMENU;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）
 			nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );

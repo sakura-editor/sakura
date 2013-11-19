@@ -24,7 +24,6 @@
 #include "StdAfx.h"
 #include "CPropTypes.h"
 #include "CEditApp.h"
-#include "env/DLLSHAREDATA.h"
 #include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
@@ -92,13 +91,16 @@ CPropTypes::CPropTypes()
 		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
 	}
 
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = &GetDllShareData();
+
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
-	m_pCKeyWordSetMgr = &(GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr);
+	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
-	m_nPageNum = 0;
+	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 
 	// 2005.11.30 Moca カスタム色を設定・保持
 	int i;

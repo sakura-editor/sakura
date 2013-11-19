@@ -82,7 +82,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			m_nPageNum = ID_PAGENUM_STATUSBAR;
+			m_nPageNum = ID_PROPCOM_PAGENUM_STATUSBAR;
 			return TRUE;
 		}
 		break;	/* WM_NOTIFY */

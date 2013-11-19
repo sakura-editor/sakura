@@ -117,7 +117,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_BACKUP;
+				m_nPageNum = ID_PROPCOM_PAGENUM_BACKUP;
 				return TRUE;
 			}
 			break;
@@ -332,9 +332,6 @@ void CPropBackup::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropBackup::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_BACKUP;
-
 	/* バックアップの作成 */
 	m_Common.m_sBackup.m_bBackUp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUP );
 	/* バックアップの作成前に確認 */

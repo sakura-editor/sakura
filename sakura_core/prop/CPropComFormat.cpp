@@ -216,7 +216,7 @@ INT_PTR CPropFormat::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_FORMAT;
+				m_nPageNum = ID_PROPCOM_PAGENUM_FORMAT;
 				return TRUE;
 			}
 //			break;	/* default */
@@ -299,9 +299,6 @@ void CPropFormat::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 Format */
 int CPropFormat::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_FORMAT;
-
 	/* 見出し記号 */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou, _countof(m_Common.m_sFormat.m_szMidashiKigou) );
 

@@ -47,27 +47,30 @@ class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
 
-//	#define -> enum に変更	2008/6/22 Uchi
-//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi
-enum ComPropSheetOrder {
-	ID_PAGENUM_GENERAL = 0,		// 全般
-	ID_PAGENUM_WIN,				// ウィンドウ
-	ID_PAGENUM_MAINMENU,		// メインメニュー
-	ID_PAGENUM_TOOLBAR,			// ツールバー
-	ID_PAGENUM_TAB,				// タブバー
-	ID_PAGENUM_STATUSBAR,		// ステータスバー
-	ID_PAGENUM_EDIT,			// 編集
-	ID_PAGENUM_FILE,			// ファイル
-	ID_PAGENUM_FILENAME,		// ファイル名表示
-	ID_PAGENUM_BACKUP,			// バックアップ
-	ID_PAGENUM_FORMAT,			// 書式
-	ID_PAGENUM_GREP,			// 検索
-	ID_PAGENUM_KEYBOARD,		// キー割り当て
-	ID_PAGENUM_CUSTMENU,		// カスタムメニュー
-	ID_PAGENUM_KEYWORD,			// 強調キーワード
-	ID_PAGENUM_HELPER,			// 支援
-	ID_PAGENUM_MACRO,			// マクロ
-	ID_PAGENUM_PLUGIN,			// プラグイン
+/*! プロパティシート番号
+	@date 2008.6.22 Uchi #define -> enum に変更	
+	@date 2008.6.22 Uchi順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に
+*/
+enum PropComSheetOrder {
+	ID_PROPCOM_PAGENUM_GENERAL = 0,		//!< 全般
+	ID_PROPCOM_PAGENUM_WIN,				//!< ウィンドウ
+	ID_PROPCOM_PAGENUM_MAINMENU,		//!< メインメニュー
+	ID_PROPCOM_PAGENUM_TOOLBAR,			//!< ツールバー
+	ID_PROPCOM_PAGENUM_TAB,				//!< タブバー
+	ID_PROPCOM_PAGENUM_STATUSBAR,		//!< ステータスバー
+	ID_PROPCOM_PAGENUM_EDIT,			//!< 編集
+	ID_PROPCOM_PAGENUM_FILE,			//!< ファイル
+	ID_PROPCOM_PAGENUM_FILENAME,		//!< ファイル名表示
+	ID_PROPCOM_PAGENUM_BACKUP,			//!< バックアップ
+	ID_PROPCOM_PAGENUM_FORMAT,			//!< 書式
+	ID_PROPCOM_PAGENUM_GREP,			//!< 検索
+	ID_PROPCOM_PAGENUM_KEYBOARD,		//!< キー割り当て
+	ID_PROPCOM_PAGENUM_CUSTMENU,		//!< カスタムメニュー
+	ID_PROPCOM_PAGENUM_KEYWORD,			//!< 強調キーワード
+	ID_PROPCOM_PAGENUM_HELPER,			//!< 支援
+	ID_PROPCOM_PAGENUM_MACRO,			//!< マクロ
+	ID_PROPCOM_PAGENUM_PLUGIN,			//!< プラグイン
+	ID_PROPCOM_PAGENUM_MAX,
 };
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -100,6 +103,7 @@ public:
 	// 2002.12.11 Moca 追加
 	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
 	void ApplyData( void );		//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
+	int GetPageNum(){ return m_nPageNum; }
 
 	//
 	static INT_PTR CALLBACK DlgProc_page(
@@ -110,9 +114,8 @@ public:
 
 	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
-	ComPropSheetOrder	m_nPageNum;
+	PropComSheetOrder	m_nPageNum;
 	DLLSHAREDATA*		m_pShareData;
-//	int				m_nActiveItem;
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
