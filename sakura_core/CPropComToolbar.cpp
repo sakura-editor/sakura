@@ -209,7 +209,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = ID_PAGENUM_TOOLBAR;
+			m_nPageNum = ID_PROPCOM_PAGENUM_TOOLBAR;
 			return TRUE;
 		}
 		break;
@@ -517,10 +517,6 @@ int CPropToolbar::GetData( HWND hwndDlg )
 	int		i;
 	int		j;
 	int		k;
-
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_TOOLBAR;
-
 
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 

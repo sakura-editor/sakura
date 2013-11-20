@@ -81,7 +81,7 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_TAB;
+				m_nPageNum = ID_PROPCOM_PAGENUM_TAB;
 				return TRUE;
 			}
 //			break;	/* default */

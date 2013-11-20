@@ -149,7 +149,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					return TRUE;
 	//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 				case PSN_SETACTIVE:
-					m_nPageNum = ID_PAGENUM_FILENAME;
+					m_nPageNum = ID_PROPCOM_PAGENUM_FILENAME;
 					return TRUE;
 				}
 				break;

@@ -174,7 +174,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = ID_PAGENUM_KEYBOARD;
+			m_nPageNum = ID_PROPCOM_PAGENUM_KEYBOARD;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
 			nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
@@ -457,9 +457,6 @@ void CPropKeybind::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 Keybind */
 int CPropKeybind::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_KEYBOARD;
-
 	return TRUE;
 }
 

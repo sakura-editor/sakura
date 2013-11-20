@@ -124,7 +124,7 @@ INT_PTR CPropFile::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_FILE;
+				m_nPageNum = ID_PROPCOM_PAGENUM_FILE;
 				return TRUE;
 			}
 		break;
@@ -320,9 +320,6 @@ void CPropFile::SetData( HWND hwndDlg )
 */
 int CPropFile::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_FILE;
-
 	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
 	int		nSelPos = ::SendMessage(hwndCombo, CB_GETCURSEL, 0L, 0L);

@@ -27,31 +27,42 @@
 #include "CShareData.h"
 #include "mymessage.h"
 
-void CPropertyManager::Create( HINSTANCE hInstance, HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* menu )
+void CPropertyManager::Create( HINSTANCE hInstance, HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* pMenuDrawer )
 {
-	/* 設定プロパティシートの初期化１ */
-	m_cPropCommon.Create( hInstance, hwndOwner, pImageList, menu );
-	m_cPropTypes.Create( hInstance, hwndOwner );
+	m_hInstance = hInstance;
+	m_hwndOwner = hwndOwner;
+	m_pImageList = pImageList;
+	m_pMenuDrawer = pMenuDrawer;
+
+	m_nPropComPageNum = -1;
+	m_nPropTypePageNum = -1;
 }
 
 /*! 共通設定 プロパティシート */
 bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
 {
+	bool bRet;
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+	CPropCommon* pcPropCommon = new CPropCommon();
+	pcPropCommon->Create( m_hInstance, m_hwndOwner, m_pImageList, m_pMenuDrawer );
 
 	// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 	// 共通設定の一時設定領域にSharaDataをコピーする
-	m_cPropCommon.InitData();
+	pcPropCommon->InitData();
+
+	if( nPageNum != -1 ){
+		m_nPropComPageNum = nPageNum;
+	}
 	
 	/* プロパティシートの作成 */
-	if( m_cPropCommon.DoPropertySheet( nPageNum ) ){
+	if( pcPropCommon->DoPropertySheet( m_nPropComPageNum ) ){
 
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
 		BOOL bGroup = (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 
-		m_cPropCommon.ApplyData();
+		pcPropCommon->ApplyData();
 		// note: 基本的にここで適用しないで、MYWM_CHANGESETTINGからたどって適用してください。
 		// 自ウィンドウには最後に通知されます。大抵は、OnChangeSetting にあります。
 		// ここでしか適用しないと、ほかのウィンドウが変更されません。
@@ -72,10 +83,17 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
 			hWnd
 		);
 
-		return true;
+		bRet = true;
 	}else{
-		return false;
+		bRet = false;
 	}
+
+	// 最後にアクセスしたシートを覚えておく
+	m_nPropComPageNum = pcPropCommon->GetPageNum();
+
+	delete pcPropCommon;
+
+	return bRet;
 }
 
 
@@ -83,16 +101,23 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
 /*! タイプ別設定 プロパティシート */
 bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, int nSettingType )
 {
+	bool bRet;
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+	CPropTypes* pcPropTypes = new CPropTypes();
+	pcPropTypes->Create( m_hInstance, m_hwndOwner );
 
 	STypeConfig& types = pShareData->m_Types[nSettingType];
-	m_cPropTypes.SetTypeData( types );
+	pcPropTypes->SetTypeData( types );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
 
-	/* プロパティシートの作成 */
-	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
+	if( nPageNum != -1 ){
+		m_nPropTypePageNum = nPageNum;
+	}
 
-		m_cPropTypes.GetTypeData( types );
+	/* プロパティシートの作成 */
+	if( pcPropTypes->DoPropertySheet( m_nPropTypePageNum ) ){
+
+		pcPropTypes->GetTypeData( types );
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessage( pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
@@ -106,9 +131,16 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, int nSet
 			hWnd
 		);
 
-		return true;
+		bRet = true;
 	}else{
-		return false;
+		bRet = false;
 	}
+
+	// 最後にアクセスしたシートを覚えておく
+	m_nPropTypePageNum = pcPropTypes->GetPageNum();
+
+	delete pcPropTypes;
+
+	return bRet;
 }
 

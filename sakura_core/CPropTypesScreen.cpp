@@ -336,7 +336,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = 0;
+				m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 				return TRUE;
 			}
 			break;
@@ -543,9 +543,6 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 int CPropTypesScreen::GetData( HWND hwndDlg )
 {
 	int  i;
-
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = 0;
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName, _countof( m_Types.m_szTypeName ) );	// 設定の名前
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts, _countof( m_Types.m_szTypeExts ) );	// ファイル拡張子

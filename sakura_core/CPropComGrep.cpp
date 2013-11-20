@@ -84,7 +84,7 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_GREP;
+				m_nPageNum = ID_PROPCOM_PAGENUM_GREP;
 				return TRUE;
 			}
 //			break;	/* default */
@@ -153,9 +153,6 @@ void CPropGrep::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropGrep::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_GREP;
-
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 	m_Common.m_sSearch.m_bCaretTextForSearch = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCaretTextForSearch );
 

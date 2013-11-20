@@ -207,7 +207,7 @@ CPropTypes::CPropTypes()
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
-	m_nPageNum = 0;
+	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 
 	// 2005.11.30 Moca カスタム色を設定・保持
 	int i;

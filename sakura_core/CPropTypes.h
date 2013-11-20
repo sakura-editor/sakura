@@ -31,6 +31,16 @@ struct TYPE_NAME {
 	const TCHAR*	pszName;
 };
 
+//!< プロパティシート番号
+enum PropTypeSheetOrder {
+	ID_PROPTYPE_PAGENUM_SCREEN = 0,		//!< スクリーン
+	ID_PROPTYPE_PAGENUM_COLOR,			//!< カラー
+	ID_PROPTYPE_PAGENUM_SUPPORT,		//!< 支援
+	ID_PROPTYPE_PAGENUM_REGEX,			//!< 正規表現キーワード
+	ID_PROPTYPE_PAGENUM_KEYHELP,		//!< ステータスバー
+	ID_PROPTYPE_PAGENUM_MAX,
+};
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -51,6 +61,7 @@ public:
 	//インターフェース	
 	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
 	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
+	int GetPageNum(){ return m_nPageNum; }
 
 protected:
 	//イベント
@@ -61,11 +72,11 @@ protected:
 	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
 	HWND		m_hwndThis;		//!< このダイアログのハンドル
-	DLLSHAREDATA*	m_pShareData;
 
 	//ダイアログデータ
-	int			m_nPageNum;
-	STypeConfig		m_Types;
+	PropTypeSheetOrder	m_nPageNum;
+	DLLSHAREDATA*		m_pShareData;
+	STypeConfig			m_Types;
 
 	// カラー用データ
 	DWORD			m_dwCustColors[16];						//!< フォントDialogカスタムパレット

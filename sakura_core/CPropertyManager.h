@@ -40,9 +40,14 @@ public:
 	bool OpenPropertySheet( HWND hWnd, int nPageNum );	/* ã§í ê›íË */
 	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, int nSettingType );	/* É^ÉCÉvï ê›íË */
 
-public:
-	CPropCommon			m_cPropCommon;
-	CPropTypes			m_cPropTypes;
+private:
+	HINSTANCE		m_hInstance;
+	HWND			m_hwndOwner;
+	CImageListMgr*	m_pImageList;
+	CMenuDrawer*	m_pMenuDrawer;
+
+	int				m_nPropComPageNum;
+	int				m_nPropTypePageNum;
 };
 
 #endif /* _CPROPERTYMANAGER_H_ */

@@ -137,7 +137,7 @@ INT_PTR CPropEdit::DispatchEvent(
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			m_nPageNum = ID_PAGENUM_EDIT;
+			m_nPageNum = ID_PROPCOM_PAGENUM_EDIT;
 			return TRUE;
 		}
 		break;	/* WM_NOTIFY */
@@ -221,9 +221,6 @@ void CPropEdit::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropEdit::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_EDIT;
-
 	/* ドラッグ & ドロップ編集 */
 	m_Common.m_sEdit.m_bUseOLE_DragDrop = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP );
 	/* DropSource */

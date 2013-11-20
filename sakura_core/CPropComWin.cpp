@@ -120,7 +120,7 @@ INT_PTR CPropWin::DispatchEvent(
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_WIN;
+				m_nPageNum = ID_PROPCOM_PAGENUM_WIN;
 				return TRUE;
 			}
 			break;
@@ -347,9 +347,6 @@ void CPropWin::SetData( HWND hwndDlg )
 /* ダイアログデータの取得 */
 int CPropWin::GetData( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_WIN;
-
 	/* 次回ウィンドウを開いたときツールバーを表示する */
 	m_Common.m_sWindow.m_bDispTOOLBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTOOLBAR );
 

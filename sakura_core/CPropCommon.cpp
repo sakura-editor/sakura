@@ -107,7 +107,7 @@ CPropCommon::CPropCommon()
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
-	m_nPageNum = ID_PAGENUM_GENERAL;
+	m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;
 
 	return;
 }
