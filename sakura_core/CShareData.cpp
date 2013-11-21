@@ -319,10 +319,13 @@ struct ARRHEAD {
 
 	Version 114:
 	m_bLineNumIsCRLF_ForJump BOOL->boolに変更 2013.11.10 novice
+
+	Version 115:
+	m_bUseRegexKeyword BOOL->boolに変更 2013.11.20 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 114;
+const unsigned int uShareDataVersion = 115;
 
 /*
 ||	Singleton風
@@ -5171,7 +5174,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
-	pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
+	pShareData->m_Types[nIdx].m_bUseRegexKeyword = false;
 //		pShareData->m_Types[nIdx].m_nRegexKeyMagicNumber = 1;
 //@@@ 2001.11.17 add end MIK
 
@@ -5292,7 +5295,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	strcpy( pShareData->m_Types[1].m_szKinsokuTail, "$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	// pShareData->m_Types[1].m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji
 	//Jun. 2, 2009 syat     クリッカブルパス用正規表現キーワード //Jan.17, 2012 syat 基本からテキストに移動
-	pShareData->m_Types[1].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
+	pShareData->m_Types[1].m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
 	pShareData->m_Types[1].m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
 	strcpy(pShareData->m_Types[1].m_RegexKeywordArr[0].m_szKeyword,				// 正規表現キーワード
 		   "/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k");					// ""で挟まれた C:\～, \\～ にマッチするパターン

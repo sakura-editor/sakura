@@ -271,15 +271,15 @@ struct STypeConfig {
 	bool				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
 
 //@@@ 2001.11.17 add start MIK
-	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
-	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
-	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
+	bool				m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
+	int					m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
+	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start
 	BOOL				m_bUseKeyWordHelp;			/* キーワード辞書セレクト機能を使うか */
 	int					m_nKeyHelpNum;					/* キーワード辞書の冊数 */
-	struct	KeyHelpInfo	m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
+	KeyHelpInfo			m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
 	BOOL				m_bUseKeyHelpAllSearch;			/* ヒットした次の辞書も検索(&A) */
 	BOOL				m_bUseKeyHelpKeyDisp;			/* 1行目にキーワードも表示する(&W) */
 	BOOL				m_bUseKeyHelpPrefix;			/* 選択範囲で前方一致検索(&P) */
