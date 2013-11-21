@@ -328,13 +328,6 @@ int CPropFileName::GetData( HWND hwndDlg )
 	int nIndex;
 	int nCount;
 
-	// ファイル名を簡易表示する
-//	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_FNAME ) ){
-//		m_bUseTransformFileName = TRUE;
-//	}else{
-//		m_bUseRegexKeyword = FALSE;
-//	}
-
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
 	m_Common.m_sFileName.m_nTransformFileNameArrNum = ListView_GetItemCount( hListView );

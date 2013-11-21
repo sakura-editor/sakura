@@ -127,7 +127,7 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 	MYDBGMSG("RegexKeyInit")
 	m_nTypeIndex = -1;
 	m_nCompiledMagicNumber = 0;
-	m_bUseRegexKeyword = FALSE;
+	m_bUseRegexKeyword = false;
 	m_nRegexKeyCount = 0;
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
