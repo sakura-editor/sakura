@@ -402,6 +402,7 @@ void CMacro::HandleCommand(
 	case F_TEXTWRAPMETHOD:	//	テキストの折り返し方法の指定。数値は、0x0（折り返さない）、0x1（指定桁で折り返す）、0x2（右端で折り返す）	// 2008.05.30 nasukoji
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 	case F_CHANGETYPE:
+	case F_TOGGLE_KEY_SEARCH:
 		//	一つ目の引数が数値。
 		pcEditView->HandleCommand( Index, false, (Argument[0] != NULL ? atoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;

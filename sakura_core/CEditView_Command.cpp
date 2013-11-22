@@ -643,7 +643,7 @@ BOOL CEditView::HandleCommand(
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
 	case F_HELP_CONTENTS:	Command_HELP_CONTENTS();break;	/* ヘルプ目次 */				//Nov. 25, 2000 JEPRO 追加
 	case F_HELP_SEARCH:		Command_HELP_SEARCH();break;	/* ヘルプトキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
-	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch();break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
+	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch((int)lparam1);break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 	case F_MENU_ALLFUNC:									/* コマンド一覧 */
 		/* 再帰処理対策 */
 		delete m_pcOpeBlk;
@@ -4533,7 +4533,27 @@ void CEditView::Command_SPLIT_VH( void )
 
 
 
-//From Here Nov. 25, 2000 JEPRO
+/*! キャレット位置の単語を辞書検索ON-OFF
+
+	@date 2006.03.24 fon 新規作成
+*/
+void CEditView::Command_ToggleKeySearch( int option )
+{	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
+	if( option == 0 ){
+		if( m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord ){
+			m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+		}else{
+			m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+		}
+	}else if( option == 1 ){
+		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+	}else if( option == 2 ){
+		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+	}
+}
+
+
+
 /* ヘルプ目次 */
 void CEditView::Command_HELP_CONTENTS( void )
 {
@@ -4543,31 +4563,12 @@ void CEditView::Command_HELP_CONTENTS( void )
 
 
 
-
 /* ヘルプキーワード検索 */
 void CEditView::Command_HELP_SEARCH( void )
 {
 	MyWinHelp( m_hWnd, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
-//To Here Nov. 25, 2000
-
-
-
-
-/*! キャレット位置の単語を辞書検索ON-OFF
-
-	@date 2006.03.24 fon 新規作成
-*/
-void CEditView::Command_ToggleKeySearch( void )
-{	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
-	if(TRUE == m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord ){
-		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
-	}else{
-		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
-	}
-}
-
 
 
 
@@ -4647,7 +4648,6 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	}
 	return;
 }
-
 
 
 

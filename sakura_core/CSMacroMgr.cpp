@@ -328,6 +328,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 
 	/* 支援 */
 	{F_HOKAN,					"Complete",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
+	{F_TOGGLE_KEY_SEARCH,		"ToggleKeyHelpSearch",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キーワードヘルプ自動表示 2013.05.03
 	{F_HELP_CONTENTS,			"HelpContents",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
 	{F_HELP_SEARCH,				"HelpSearch",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
 	{F_MENU_ALLFUNC,			"CommandList",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* コマンド一覧 */

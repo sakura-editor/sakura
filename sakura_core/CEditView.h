@@ -538,7 +538,7 @@ public: /* テスト用にアクセス属性を変更 */
 	);
 	
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
-	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );	
+	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );
 	BOOL Command_FILESAVEAS_DIALOG();							/* 名前を付けて保存 */
 	BOOL Command_FILESAVEAS( const char* filename );			/* 名前を付けて保存 */
 	BOOL Command_FILESAVEALL( void );	/* 全て上書き保存 */ // Jan. 23, 2005 genta
@@ -851,7 +851,7 @@ public: /* テスト用にアクセス属性を変更 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離
 	void PreprocessCommand_hokan( int nCommand );
 	void PostprocessCommand_hokan(void);
-	void Command_ToggleKeySearch( void );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
+	void Command_ToggleKeySearch( int );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 
 	void ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided );	//	補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void Command_HOKAN( void );			/* 入力補完 */
