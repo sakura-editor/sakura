@@ -4216,7 +4216,7 @@ BEGIN
 	STR_ERR_CSHAREDATA15			"yyyy'年'M'月'd'日('dddd')'"
 	STR_ERR_CSHAREDATA16			"tthh'時'mm'分'ss'秒'"
 	STR_ERR_CSHAREDATA17			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}"
-	STR_ERR_CSHAREDATA18			"${w?$h$:アウトプット$:$f$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" )
+	STR_ERR_CSHAREDATA18			"${w?$h$:アウトプット$:$f$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}"
 	STR_ERR_CSHAREDATA19			"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
 	STR_ERR_CSHAREDATA20			"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\nファイルメニューから「開き直す」を使用してください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]"
 	STR_ERR_CSHAREDATA21			"%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"
