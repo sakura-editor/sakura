@@ -558,6 +558,9 @@ LRESULT CControlTray::DispatchEvent(
 		case MYWM_CHANGESETTING:
 			switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 			case PM_CHANGESETTING_ALL:
+				/* 言語を選択する */
+				CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
+
 				::UnregisterHotKey( GetTrayHwnd(), ID_HOTKEY_TRAYMENU );
 				/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 				wHotKeyMods = 0;

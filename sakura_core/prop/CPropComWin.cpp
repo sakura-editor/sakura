@@ -439,7 +439,6 @@ int CPropWin::GetData( HWND hwndDlg )
 	CSelectLang::SELLANG_INFO *psLangInfo = CSelectLang::m_psLangInfoList.at( nSelPos );
 	if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
 		_tcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );
-		CSelectLang::ChangeLang( nSelPos );
 	}
 
 	return TRUE;

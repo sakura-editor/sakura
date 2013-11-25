@@ -1654,6 +1654,9 @@ LRESULT CEditWnd::DispatchEvent(
 		/* 設定変更の通知 */
 		switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 		case PM_CHANGESETTING_ALL:
+			/* 言語を選択する */
+			CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
+
 			// メインメニュー	2010/5/16 Uchi
 			LayoutMainMenu();
 

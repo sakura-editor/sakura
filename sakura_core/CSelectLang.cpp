@@ -346,6 +346,19 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	return nRet;
 }
 
+void CSelectLang::ChangeLang( TCHAR* pszDllName )
+{
+	/* Œ¾Œê‚ð‘I‘ð‚·‚é */
+	UINT unIndex;
+	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
+		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
+		if ( _tcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
+			CSelectLang::ChangeLang( unIndex );
+			break;
+		}
+	}
+}
+
 HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 {
 	if ( m_psLangInfoList.size() <= nIndex || m_psLangInfoList.at( nIndex ) == m_psLangInfo ) {
