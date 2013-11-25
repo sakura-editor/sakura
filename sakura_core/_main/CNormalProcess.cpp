@@ -84,14 +84,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	/* 言語を選択する */
-	UINT i;
-	for ( i = 0; i < CSelectLang::m_psLangInfoList.size(); i++ ) {
-		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( i );
-		if ( _tcsncmp(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
-			CSelectLang::ChangeLang( i );
-			break;
-		}
-	}
+	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 
 	/* コマンドラインオプション */
 	bool			bViewMode = false;

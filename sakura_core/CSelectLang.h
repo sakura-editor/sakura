@@ -53,12 +53,13 @@ public:
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary( SELLANG_INFO& lang );	// メッセージ用リソースDLLをロードする
-	static HINSTANCE ChangeLang( UINT nSelIndex );	// 言語を変更する
+	static void ChangeLang( TCHAR* pszDllName );	// 言語を変更する
 
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
+	static HINSTANCE ChangeLang( UINT nSelIndex );	// 言語を変更する
 
 private:
 };
