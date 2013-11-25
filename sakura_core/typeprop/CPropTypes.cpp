@@ -123,7 +123,7 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 }
 
 struct TypePropSheetInfo {
-	std::tstring sTabname;									//!< TABの表示名
+	int m_nTabNameId;										//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -140,20 +140,22 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	// 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
 	// 2013.03.10 aroka ADD-start タイプ別設定に「ウィンドウ」タブを追加
 	static const TypePropSheetInfo TypePropSheetInfoList[] = {
-		{ LS( STR_PROPTYPE_SCREEN ),			IDD_PROP_SCREEN,	PropTypesScreen },
-		{ LS( STR_PROPTYPE_COLOR ),			IDD_PROP_COLOR,		PropTypesColor },
-		{ LS( STR_PROPTYPE_WINDOW ),			IDD_PROP_WINDOW,	PropTypesWindow },
-		{ LS( STR_PROPTYPE_SUPPORT ),			IDD_PROP_SUPPORT,	PropTypesSupport },
-		{ LS( STR_PROPTYPE_REGEX_KEYWORD ),	IDD_PROP_REGEX,		PropTypesRegex },
-		{ LS( STR_PROPTYPE_KEYWORD_HELP ),		IDD_PROP_KEYHELP,	PropTypesKeyHelp }
+		{ STR_PROPTYPE_SCREEN,			IDD_PROP_SCREEN,	PropTypesScreen },
+		{ STR_PROPTYPE_COLOR,			IDD_PROP_COLOR,		PropTypesColor },
+		{ STR_PROPTYPE_WINDOW,			IDD_PROP_WINDOW,	PropTypesWindow },
+		{ STR_PROPTYPE_SUPPORT,			IDD_PROP_SUPPORT,	PropTypesSupport },
+		{ STR_PROPTYPE_REGEX_KEYWORD,	IDD_PROP_REGEX,		PropTypesRegex },
+		{ STR_PROPTYPE_KEYWORD_HELP,	IDD_PROP_KEYHELP,	PropTypesKeyHelp }
 	};
 
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
+	std::tstring		sTabname[_countof(TypePropSheetInfoList)];
 	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
 	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
+		sTabname[nIdx] = LS(TypePropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];
 		memset_raw( p, 0, sizeof_raw( *p ) );
@@ -163,7 +165,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		p->pszTemplate = MAKEINTRESOURCE( TypePropSheetInfoList[nIdx].resId );
 		p->pszIcon     = NULL;
 		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
-		p->pszTitle    = TypePropSheetInfoList[nIdx].sTabname.c_str();
+		p->pszTitle    = sTabname[nIdx].c_str();
 		p->lParam      = (LPARAM)this;
 		p->pfnCallback = NULL;
 	}
