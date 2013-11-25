@@ -49,6 +49,8 @@ class CShareData;
 
 #include "maxdata.h"	//@@@ 2002.09.22 YAZAKI
 
+#include "CEol.h"
+
 /*! ファイル情報
 
 	@date 2002.03.07 genta m_szDocType追加
@@ -207,6 +209,13 @@ enum ESmartIndentType {
 	SMARTINDENT_CPP
 };
 
+//! エンコードオプション
+struct SEncodingConfig{
+	ECodeType			m_eDefaultCodetype;				//!< デフォルト文字コード
+	EEolType			m_eDefaultEoltype;				//!< デフォルト改行コード	// 2011.01.24 ryoji
+	bool				m_bDefaultBom;					//!< デフォルトBOM			// 2011.01.24 ryoji
+};
+
 //! タイプ別設定
 struct STypeConfig {
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
@@ -266,9 +275,8 @@ struct STypeConfig {
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 
-	ECodeType			m_eDefaultCodetype;				/* デフォルト文字コード */
-	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
-	bool				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
+	SEncodingConfig		m_encoding;						//!< エンコードオプション
+
 
 //@@@ 2001.11.17 add start MIK
 	bool				m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/

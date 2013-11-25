@@ -322,10 +322,13 @@ struct ARRHEAD {
 
 	Version 115:
 	m_bUseRegexKeyword BOOL->boolに変更 2013.11.20 novice
+
+	Version 116:
+	SEncodingConfig構造体追加 2013.11.24 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 115;
+const unsigned int uShareDataVersion = 116;
 
 /*
 ||	Singleton風
@@ -5067,9 +5070,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseHokanByFile = false;			//! 入力補完 開いているファイル内から候補を探す
 
 	// 文字コード設定
-	pShareData->m_Types[nIdx].m_eDefaultCodetype = CODE_SJIS;
-	pShareData->m_Types[nIdx].m_eDefaultEoltype = EOL_CRLF;
-	pShareData->m_Types[nIdx].m_bDefaultBom = false;
+	pShareData->m_Types[nIdx].m_encoding.m_eDefaultCodetype = CODE_SJIS;
+	pShareData->m_Types[nIdx].m_encoding.m_eDefaultEoltype = EOL_CRLF;
+	pShareData->m_Types[nIdx].m_encoding.m_bDefaultBom = false;
 
 	//@@@2002.2.4 YAZAKI
 	pShareData->m_Types[nIdx].m_szExtHelp[0] = _T('\0');

@@ -731,14 +731,14 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	// 文字コードの指定	2008/6/14 Uchi
 	if( IsValidCodeType( nCharCode ) || nDocumentType >= 0 ){
 		STypeConfig& types = m_pcEditDoc->GetDocumentAttribute();
-		ECodeType eDefaultCharCode = static_cast<ECodeType>(types.m_eDefaultCodetype);
+		ECodeType eDefaultCharCode = static_cast<ECodeType>(types.m_encoding.m_eDefaultCodetype);
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
 		}
 		m_pcEditDoc->m_nCharCode = nCharCode;
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			m_pcEditDoc->m_bBomExist = types.m_bDefaultBom;
-			m_pcEditDoc->SetNewLineCode( static_cast<EEolType>( types.m_eDefaultEoltype ) );
+			m_pcEditDoc->m_bBomExist = types.m_encoding.m_bDefaultBom;
+			m_pcEditDoc->SetNewLineCode( static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype ) );
 		}
 		else{
 			m_pcEditDoc->m_bBomExist = ( nCharCode == CODE_UNICODE || nCharCode == CODE_UNICODEBE );

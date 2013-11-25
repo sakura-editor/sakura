@@ -126,9 +126,9 @@ CEditDoc::CEditDoc()
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	// 文字コード種別を初期化
-	m_nCharCode = m_pShareData->m_Types[0].m_eDefaultCodetype;
-	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
-	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
+	m_nCharCode = m_pShareData->m_Types[0].m_encoding.m_eDefaultCodetype;
+	m_bBomExist = m_pShareData->m_Types[0].m_encoding.m_bDefaultBom;
+	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_encoding.m_eDefaultEoltype) );
 }
 
 
@@ -193,9 +193,9 @@ void CEditDoc::InitDoc()
 	SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_nCharCode = m_pShareData->m_Types[0].m_eDefaultCodetype;
-	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
-	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
+	m_nCharCode = m_pShareData->m_Types[0].m_encoding.m_eDefaultCodetype;
+	m_bBomExist = m_pShareData->m_Types[0].m_encoding.m_bDefaultBom;
+	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_encoding.m_eDefaultEoltype) );
 
 	//	Oct. 2, 2005 genta 挿入モード
 	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode );
@@ -401,9 +401,9 @@ void CEditDoc::OnChangeType()
 	if( !IsValidPath() ){
 		if( !IsModified()  && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = GetDocumentAttribute();
-			m_nCharCode = types.m_eDefaultCodetype;
-			m_bBomExist = types.m_bDefaultBom;
-			SetNewLineCode( static_cast<EEolType>(types.m_eDefaultEoltype) );
+			m_nCharCode = types.m_encoding.m_eDefaultCodetype;
+			m_bBomExist = types.m_encoding.m_bDefaultBom;
+			SetNewLineCode( static_cast<EEolType>(types.m_encoding.m_eDefaultEoltype) );
 		}
 	}
 	/* 設定変更を反映させる */
@@ -926,8 +926,8 @@ BOOL CEditDoc::FileRead(
 	}else{
 		// 存在しないときもドキュメントに文字コードを反映する
 		const STypeConfig& type = GetDocumentAttribute();
-		m_nCharCode = type.m_eDefaultCodetype;
-		m_bBomExist = type.m_bDefaultBom;
+		m_nCharCode = type.m_encoding.m_eDefaultCodetype;
+		m_bBomExist = type.m_encoding.m_bDefaultBom;
 
 		// オプション：開こうとしたファイルが存在しないとき警告する
 		if( m_pShareData->m_Common.m_sFile.GetAlertIfFileNotExist() ){
@@ -1009,8 +1009,8 @@ BOOL CEditDoc::FileRead(
 	//	改行コードの設定
 	{
 		const STypeConfig& type = GetDocumentAttribute();
-		if ( m_nCharCode == type.m_eDefaultCodetype ){
-			SetNewLineCode( static_cast<EEolType>(type.m_eDefaultEoltype) );	// 2011.01.24 ryoji デフォルトEOL
+		if ( m_nCharCode == type.m_encoding.m_eDefaultCodetype ){
+			SetNewLineCode( static_cast<EEolType>(type.m_encoding.m_eDefaultEoltype) );	// 2011.01.24 ryoji デフォルトEOL
 		}
 		else{
 			SetNewLineCode( EOL_CRLF );

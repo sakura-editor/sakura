@@ -287,7 +287,7 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 			::SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)aszCodeStr[i] );
 		}
 		for( i = 0; i < _countof(aeCodeType); ++i ){
-			if( m_Types.m_eDefaultCodetype == aeCodeType[i] ){
+			if( m_Types.m_encoding.m_eDefaultCodetype == aeCodeType[i] ){
 				break;
 			}
 		}
@@ -298,8 +298,8 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 
 		// BOM チェックボックス設定
 		if( !abBomEnable[i] )
-			m_Types.m_bDefaultBom = false;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
+			m_Types.m_encoding.m_bDefaultBom = false;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
 
 		// デフォルト改行タイプのコンボボックス設定
@@ -308,7 +308,7 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 			::SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)aszEolStr[i] );
 		}
 		for( i = 0; i < _countof(aeEolType); ++i ){
-			if( m_Types.m_eDefaultEoltype == aeEolType[i] ){
+			if( m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i] ){
 				break;
 			}
 		}
@@ -340,17 +340,17 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		i = ::SendMessage(hCombo, CB_GETCURSEL, 0L, 0L);
 		if( CB_ERR != i ){
-			m_Types.m_eDefaultCodetype = aeCodeType[i];
+			m_Types.m_encoding.m_eDefaultCodetype = aeCodeType[i];
 		}
 
 		// m_Types.m_bDefaultBom を設定
-		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM ) != 0;
+		m_Types.m_encoding.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM ) != 0;
 
 		// m_Types.eDefaultEoltype を設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
 		i = ::SendMessage(hCombo, CB_GETCURSEL, 0L, 0L);
 		if( CB_ERR != i ){
-			m_Types.m_eDefaultEoltype = aeEolType[i];
+			m_Types.m_encoding.m_eDefaultEoltype = aeEolType[i];
 		}
 	}
 

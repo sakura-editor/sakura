@@ -1291,9 +1291,9 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 		sizeof( types.m_szExtHtmlHelp ));
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
-	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, (int&)types.m_eDefaultCodetype );
-	cProfile.IOProfileData( pszSecName, "eDefaultEoltype"		, types.m_eDefaultEoltype );
-	cProfile.IOProfileData( pszSecName, "bDefaultBom"			, types.m_bDefaultBom );
+	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, (int&)types.m_encoding.m_eDefaultCodetype );
+	cProfile.IOProfileData( pszSecName, "eDefaultEoltype"		, (int&)types.m_encoding.m_eDefaultEoltype );
+	cProfile.IOProfileData( pszSecName, "bDefaultBom"			, types.m_encoding.m_bDefaultBom );
 
 	cProfile.IOProfileData( pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
 	cProfile.IOProfileData( pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
