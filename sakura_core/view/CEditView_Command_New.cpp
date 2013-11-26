@@ -911,16 +911,7 @@ void CEditView::ReplaceData_CEditView3(
 	);
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
-
-	if( pcOpeBlk ){	/* アンドゥ・リドゥの実行中か */
-		/* 操作の追加 */
-		pcOpeBlk->AppendOpe(
-			new CMoveCaretOpe(
-				ptCaretPos_PHY_Old,				// 操作後のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
-			)
-		);
-	}
+// 2013.06.29 CMoveCaretOpeは不要。ReplaceOpeのみにする
 	if( pnInsSeq ){
 		*pnInsSeq = LRArg.nInsSeq;
 	}
