@@ -123,8 +123,7 @@ private:
 	// Grep結果をpszWorkに格納
 	void SetGrepResult(
 		// データ格納先
-		wchar_t*		pWork,
-		int*			pnWorkLen,
+		CNativeW&		cmemMessage,
 		// マッチしたファイルの情報
 		const TCHAR*	pszFilePath,	//	フルパス or 相対パス
 		const TCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
