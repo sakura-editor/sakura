@@ -3274,8 +3274,8 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    STR_SQLERR_EXEC_BUT_NOT_RUN	"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
-    STR_SQLERR_ACTV_BUT_NOT_RUN	"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
+	STR_SQLERR_EXEC_BUT_NOT_RUN	"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
+	STR_SQLERR_ACTV_BUT_NOT_RUN	"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
 	STR_NO_TITLE1				"(無題)"
@@ -3332,25 +3332,35 @@ BEGIN
 	STR_ERR_DLGCTL36			"ユニット区切" 
 	STR_ERR_DLGCTL37			"削除"         
 
-
-	// CDlgDiff.cpp
-	STR_ERR_DLGDIFF1			"(無題)"
-
 	// CDlgFavorite.cpp
 	STR_ERR_DLGFAV1				"ファイル"
 	STR_ERR_DLGFAV2				"フォルダ"
+	STR_ERR_DLGFAV2_1			"ファイル・フォルダ除外"
 	STR_ERR_DLGFAV3				"検索"
 	STR_ERR_DLGFAV4				"置換"
 	STR_ERR_DLGFAV5				"GREPファイル"
 	STR_ERR_DLGFAV6				"GREPフォルダ"
 	STR_ERR_DLGFAV7				"コマンド"
+	STR_ERR_DLGFAV7_1			"カレントディレクトリ"
 	STR_ERR_DLGFAV8				"(非表示)"
 	STR_ERR_DLGFAV9				"お気に入り"
-	STR_ERR_DLGFAV10			"最近使った%sの履歴を削除します。\n\nよろしいですか？\n\n「はい」\tすべて削除します。\n「いいえ」\tお気に入り以外を削除します。\n"
-	STR_ERR_DLGFAV11			"最近使った%sの履歴を削除します。\n\nよろしいですか？\n"
-	STR_ERR_DLGFAV12			"最近使った%sの履歴を削除しました。"
-	STR_ERR_DLGFAV13			"最近使った%sの履歴(お気に入り以外)を削除しました。"
-	STR_ERR_DLGFAV14			"履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
+	STR_ERR_DLGFAV10			"最近使った%tsの履歴を削除します。\nよろしいですか？\n"
+	STR_ERR_DLGFAV11			"最近使った%tsの履歴のお気に入り以外を削除します。\nよろしいですか？"
+	STR_ERR_DLGFAV12			"最近使った%tsの存在しないパスを削除します。\nよろしいですか？"
+	STR_ERR_DLGFAV13			"、"
+	STR_ERR_DLGFAV14			"履歴(%ts)が更新されたため編集中情報を破棄し再表示しました。"
+	STR_ERR_DLGFAV15			"追加"
+	STR_ERR_DLGFAV16			"追加する文字列を入力してください。"
+	STR_ERR_DLGFAV17			"編集"
+	STR_ERR_DLGFAV18			"編集する文字列を入力してください。"
+	STR_ERR_DLGFAV19			"編集(&E)"
+	STR_ERR_DLGFAV20			"新規追加(&I)"
+	STR_ERR_DLGFAV21			"除外リストに追加(&L)"
+	STR_ERR_DLGFAV22			"すべて削除(&A)"
+	STR_ERR_DLGFAV23			"お気に入り以外削除(&F)"
+	STR_ERR_DLGFAV24			"存在しない項目削除(&N)"
+	STR_ERR_DLGFAV25			"選択項目削除(&D)"
+	STR_ERR_DLGFAV26			"除外リストがいっぱいで追加できませんでした。"
 
 	// CDlgFileUpdateQuery.cpp
 	STR_ERR_DLGUPQRY1			"再ロードを行うと変更が失われますがよろしいですか?"

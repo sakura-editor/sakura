@@ -3336,25 +3336,35 @@ BEGIN
 	STR_ERR_DLGCTL36			"Unit Select" 
 	STR_ERR_DLGCTL37			"Delete"         
 
-	
-	// CDlgDiff.cpp
-	STR_ERR_DLGDIFF1			"(No Title02)"
-
 	// CDlgFavorite.cpp
 	STR_ERR_DLGFAV1				"File"
 	STR_ERR_DLGFAV2				"Folder"
+	STR_ERR_DLGFAV2_1			"Except File/Folder"
 	STR_ERR_DLGFAV3				"Search"
 	STR_ERR_DLGFAV4				"Replace"
 	STR_ERR_DLGFAV5				"GREP-File"
 	STR_ERR_DLGFAV6				"GREP-Folder"
 	STR_ERR_DLGFAV7				"Command"
+	STR_ERR_DLGFAV7_1			"Current Dir"
 	STR_ERR_DLGFAV8				"(no item)"				// Not sure of a better display.
 	STR_ERR_DLGFAV9				"Favorite"
-	STR_ERR_DLGFAV10			"Delete recent %s history.\n\nOK？\n\n「Yes」\tdelete everything.\n「No」\tDelete everything BUT the favorites\n"
-	STR_ERR_DLGFAV11			"Delete recent %s history. \n\nOK？\n"
-	STR_ERR_DLGFAV12			"Delete recent %s history has been deleted."
-	STR_ERR_DLGFAV13			"Delete recent %s history (except Favorites) has been delted."
+	STR_ERR_DLGFAV10			"Delete recent %ts history.\nOK?"
+	STR_ERR_DLGFAV11			"Delete recent %s history(except Favorites). \nOK?"
+	STR_ERR_DLGFAV12			"Delete recent %s history(Missing path) \nOK?"
+	STR_ERR_DLGFAV13			", "
 	STR_ERR_DLGFAV14			"History (%s) has been updated, will discard edit information and redisplay."
+	STR_ERR_DLGFAV15			"Add"
+	STR_ERR_DLGFAV16			"Please enter a string to add."
+	STR_ERR_DLGFAV17			"Edit"
+	STR_ERR_DLGFAV18			"Please enter a string to edit."
+	STR_ERR_DLGFAV19			"&Edit"
+	STR_ERR_DLGFAV20			"new add(&I)"
+	STR_ERR_DLGFAV21			"add for except &List"
+	STR_ERR_DLGFAV22			"&All delete"
+	STR_ERR_DLGFAV23			"delete except &Favorites"
+	STR_ERR_DLGFAV24			"delete missing path(&N)"
+	STR_ERR_DLGFAV25			"&Delete selecting item"
+	STR_ERR_DLGFAV26			"It was not possible to add full except list."
 
 	// CDlgFileUpdateQuery.cpp
 	STR_ERR_DLGUPQRY1			"Reloading will cause changes to be lost, is this OK?"

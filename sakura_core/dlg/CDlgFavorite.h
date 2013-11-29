@@ -101,6 +101,7 @@ private:
 
 	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
+		std::tstring	m_strCaption;	//キャプション
 		const TCHAR*	m_pszCaption;	//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
