@@ -677,7 +677,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
 	List_ResetContent( hwndWork );  /* ƒŠƒXƒg‚ð‹ó‚É‚·‚é */
 	for( i = 0; i < COLORIDX_LAST; ++i ){
-		GetDefaultColorInfo( &m_Types.m_ColorInfoArr[i], i );
+		GetDefaultColorInfoName( &m_Types.m_ColorInfoArr[i], i );
 		nItem = ::List_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
 		List_SetItemData( hwndWork, nItem, &m_Types.m_ColorInfoArr[i] );
 	}

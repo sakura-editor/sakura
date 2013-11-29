@@ -557,7 +557,7 @@ void CPropTypesRegex::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
-		GetDefaultColorInfo( &m_Types.m_ColorInfoArr[i], i );
+		GetDefaultColorInfoName( &m_Types.m_ColorInfoArr[i], i );
 		if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
 			0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 		{

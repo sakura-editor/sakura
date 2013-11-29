@@ -1,3 +1,27 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 // 2000.10.08 JEPRO  背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
 // 2000.12.09 Jepro  note: color setting (詳細は CshareData.h を参照のこと)
 // 2000.09.04 JEPRO  シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
@@ -72,12 +96,22 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_BOOKMARK,					{ TRUE ,	{ FALSE,	FALSE },	{ RGB( 255, 251, 240 ),	RGB(   0, 128, 192 ) } } },	// 02/10/16 ai
 };
 
-void GetDefaultColorInfo(ColorInfo* pColorInfo, int nIndex)
+void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex )
 {
+	assert( nIndex < _countof(ColorInfo_DEFAULT) );
+
 	ColorInfoBase* p = pColorInfo;
 	*p = ColorInfo_DEFAULT[nIndex].m_sColorInfo; //ColorInfoBase
-	_tcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
+	GetDefaultColorInfoName( pColorInfo, nIndex );
 	pColorInfo->m_nColorIdx = nIndex;
+}
+
+void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )
+{
+	assert( nIndex < _countof(ColorInfo_DEFAULT) );
+
+	ColorInfoBase* p = pColorInfo;
+	_tcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
 }
 
 int GetDefaultColorInfoCount()
