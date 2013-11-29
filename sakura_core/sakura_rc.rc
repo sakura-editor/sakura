@@ -4427,12 +4427,16 @@ BEGIN
 END
 
 
+#ifndef SAKURA_LANG_RESOURCE
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Custom Resource 
 //
 
 IDR_MENU1               ID_RC_TYPE_INI          "../resource/MainMenu.ini"
+
+#endif	// ! SAKURA_LANG_RESOURCE
 
 #endif    // “ú–{Œê resources
 /////////////////////////////////////////////////////////////////////////////
