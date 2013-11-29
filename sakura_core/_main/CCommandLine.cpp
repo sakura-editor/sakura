@@ -25,7 +25,6 @@
 #include <io.h>
 #include <string.h>
 #include "debug/CRunningTimer.h"
-// 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
 #include "util/shell.h"
