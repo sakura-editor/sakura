@@ -126,7 +126,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i = 0;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFile;
-		m_aFavoriteInfo[i].m_pszCaption = _T("ファイル");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV1);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -136,7 +137,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFolder;
-		m_aFavoriteInfo[i].m_pszCaption = _T("フォルダ");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV2);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -146,7 +148,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentExceptMRU;
-		m_aFavoriteInfo[i].m_pszCaption = _T("ファイル・フォルダ除外");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV2_1);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_EXCEPTMRU;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -157,7 +160,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentSearch;
-		m_aFavoriteInfo[i].m_pszCaption = _T("検索");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV3);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_SEARCH;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -167,7 +171,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentReplace;
-		m_aFavoriteInfo[i].m_pszCaption = _T("置換");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV4);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_REPLACE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -177,7 +182,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFile;
-		m_aFavoriteInfo[i].m_pszCaption = _T("GREPファイル");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV5);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -187,7 +193,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFolder;
-		m_aFavoriteInfo[i].m_pszCaption = _T("GREPフォルダ");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV6);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -197,7 +204,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCmd;
-		m_aFavoriteInfo[i].m_pszCaption = _T("コマンド");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV7);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CMD;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -207,7 +215,8 @@ CDlgFavorite::CDlgFavorite()
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCurDir;
-		m_aFavoriteInfo[i].m_pszCaption = _T("カレントディレクトリ");
+		m_aFavoriteInfo[i].m_strCaption = LS(STR_ERR_DLGFAV7_1);
+		m_aFavoriteInfo[i].m_pszCaption = const_cast<TCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -416,7 +425,8 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
 
 	// リストビューのItem/SubItem幅を計算
-	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(_T("お気に入り"));
+	std::tstring pszFavTest = LS(STR_ERR_DLGFAV9);
+	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(pszFavTest.c_str());
 	const int nListViewWidthClient = rc.right - rc.left
 		 - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
 	// 初期値は従来方式の%指定
@@ -511,7 +521,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			CRecent	*pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					_T("最近使った%tsの履歴を削除します。\nよろしいですか？\n"),
+					LS(STR_ERR_DLGFAV10),
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				if( IDYES == nRet ){
 					pRecent->DeleteAllItem();
@@ -527,7 +537,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite ){
 				int const nRet = ConfirmMessage( GetHwnd(), 
-					_T("最近使った%tsの履歴のお気に入り以外を削除します。\nよろしいですか？"),
+					LS(STR_ERR_DLGFAV11),
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
@@ -546,7 +556,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bFilePath ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					_T("最近使った%tsの存在しないパスを削除します。\n\nよろしいですか？"),
+					LS(STR_ERR_DLGFAV12),
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
@@ -748,7 +758,7 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != _T('\0') ) _tcscat( msg, _T("、") );
+			if( msg[0] != _T('\0') ) _tcscat( msg, LS(STR_ERR_DLGFAV13) );
 			_tcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}
@@ -756,7 +766,7 @@ bool CDlgFavorite::RefreshList( void )
 	if( ret_val )
 	{
 		auto_snprintf_s( m_szMsg, _countof(m_szMsg),
-			_T("履歴(%ts)が更新されたため編集中情報を破棄し再表示しました。"),
+			LS(STR_ERR_DLGFAV14),
 			msg );
 	}
 
@@ -932,7 +942,9 @@ void CDlgFavorite::AddItem()
 	_tcscpy( szAddText, _T("") );
 
 	CDlgInput1	cDlgInput1;
-	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), _T("追加"), _T("追加する文字列を入力してください。"), max_size, szAddText ) ){
+	std::tstring strTitle = LS(STR_ERR_DLGFAV15);
+	std::tstring strMessage = LS(STR_ERR_DLGFAV16);
+	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szAddText ) ){
 		return;
 	}
 
@@ -961,7 +973,9 @@ void CDlgFavorite::EditItem()
 			int max_size = _MAX_PATH;
 			_tcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
 			CDlgInput1	cDlgInput1;
-			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), _T("編集"), _T("編集する文字列を入力してください。"), max_size, szText) ){
+			std::tstring strTitle = LS(STR_ERR_DLGFAV17);
+			std::tstring strMessage = LS(STR_ERR_DLGFAV18);
+			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
 				return;
 			}
 			GetFavorite(m_nCurrentTab);
@@ -989,23 +1003,23 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	int iPos = 0;
 	int nEnable;
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_EDIT, _T("編集(&E)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_EDIT, LS(STR_ERR_DLGFAV19) );
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_NEW, _T("新規追加(&I)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_NEW, LS(STR_ERR_DLGFAV20) );
 	if( m_aFavoriteInfo[m_nCurrentTab].m_bAddExcept ){
 		nEnable = (exceptMRU.GetItemCount() <= exceptMRU.GetArrayCount() ? 0 : MF_GRAYED);
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_EXCEPT, _T("除外リストに追加(&I)") );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_EXCEPT, LS(STR_ERR_DLGFAV21) );
 	}
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
 	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_ALL, _T("すべて削除(&A)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_ALL, LS(STR_ERR_DLGFAV22) );
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOFAVORATE, _T("お気に入り以外削除(&F)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOFAVORATE, LS(STR_ERR_DLGFAV23) );
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bFilePath && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOTFOUND, _T("存在しない項目削除(&N)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOTFOUND, LS(STR_ERR_DLGFAV24) );
 	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
-	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_SELECTED, _T("選択項目削除(&D)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_SELECTED, LS(STR_ERR_DLGFAV25) );
 
 	// メニューを表示する
 	POINT pt = menuPos;
@@ -1041,7 +1055,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 						}
 					}
 					if( bAddFalse ){
-						WarningMessage(GetHwnd(), _T("除外リストがいっぱいで追加できませんでした。") );
+						WarningMessage(GetHwnd(), LS(STR_ERR_DLGFAV26) );
 					}
 					SetDataOne(m_nExceptTab, -1);
 					UpdateUIState();
@@ -1073,7 +1087,7 @@ int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 	// 0 - 9 A - Z
 	const int mod = index % 36;
 	const TCHAR c = (TCHAR)(((mod) <= 9)?(_T('0') + mod):(_T('A') + mod - 10));
-	return auto_snprintf_s( buf, size, _T("%tc%ts"), c, (view ? _T("   ") : _T(" (非表示)")) );
+	return auto_snprintf_s( buf, size, _T("%tc %ts"), c, (view ? _T("  ") : LS(STR_ERR_DLGFAV8)) );
 }
 
 
