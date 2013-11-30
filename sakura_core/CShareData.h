@@ -149,7 +149,6 @@ struct ColorInfo {
 	SFontAttr	m_sFontAttr;		//!< フォント属性
 	SColorAttr	m_sColorAttr;		//!< 色属性
 	char		m_szName[32];		//!< 名前
-	char		m_cReserved[60];
 };
 
 //! 色設定(保存用)

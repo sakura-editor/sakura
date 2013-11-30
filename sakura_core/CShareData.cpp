@@ -325,10 +325,13 @@ struct ARRHEAD {
 
 	Version 116:
 	SEncodingConfig\‘¢‘Ì’Ç‰Á 2013.11.24 novice
+
+	Version 117:
+	ColorInfo\‘¢‘Ì‚Ìƒƒ“ƒo•Ï”íœ 2013.11.28 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 116;
+const unsigned int uShareDataVersion = 117;
 
 /*
 ||	Singleton•—
