@@ -21,6 +21,7 @@
 #include "CDlgInput1.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "Debug.h" // 2002/2/10 aroka
 #include "sakura.hh"
 

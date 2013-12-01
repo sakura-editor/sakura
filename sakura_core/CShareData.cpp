@@ -30,6 +30,7 @@
 #include "Debug.h"
 #include "global.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "os.h"
 #include "CRunningTimer.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á

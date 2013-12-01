@@ -650,6 +650,10 @@ SOURCE=..\sakura_core\etc_uty.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\file.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\Funccode.cpp
 # End Source File
 # Begin Source File
@@ -659,11 +663,6 @@ SOURCE=..\sakura_core\global.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\my_icmp.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\MY_SP.C
-# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
@@ -1096,6 +1095,10 @@ SOURCE=..\sakura_core\etc_uty.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\file.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\Funccode.h
 # End Source File
 # Begin Source File
@@ -1109,10 +1112,6 @@ SOURCE=..\sakura_core\maxdata.h
 # Begin Source File
 
 SOURCE=..\sakura_core\my_icmp.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\MY_SP.h
 # End Source File
 # Begin Source File
 

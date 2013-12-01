@@ -21,8 +21,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-//	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
-#define COMPILE_NEWAPIS_STUBS
 // 2006.04.21 ryoji マルチモニタのエミュレーション関数の実体生成のため
 #define COMPILE_MULTIMON_STUBS
 
@@ -33,6 +31,7 @@
 #include <memory.h>		// Apr. 03, 2003 genta
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "etc_uty.h"
+#include "file.h"
 #include "os.h"
 #include "Debug.h"
 #include "CMemory.h"
@@ -294,39 +293,6 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 	return FALSE;
 }
 
-/* 拡張子を調べる */
-BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
-{
-	TCHAR	szExt[_MAX_EXT];
-	TCHAR*	pszWork;
-	_tsplitpath( pszPath, NULL, NULL, NULL, szExt );
-	pszWork = szExt;
-	if( pszWork[0] == _T('.') ){
-		pszWork++;
-	}
-	if( 0 == my_stricmp( pszExt, pszWork ) ){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-}
-
-/*! 相対パスか判定する
-	@author Moca
-	@date 2003.06.23
-*/
-bool _IS_REL_PATH(const TCHAR* path)
-{
-	bool ret = true;
-	if( ( _T('A') <= path[0] && path[0] <= _T('Z') || _T('a') <= path[0] && path[0] <= _T('z') )
-		&& path[1] == _T(':') && path[2] == _T('\\')
-		|| path[0] == _T('\\') && path[1] == _T('\\')
-		 ){
-		ret = false;
-	}
-	return ret;
-}
-
 /*!
 	空白を含むファイル名を考慮したトークンの分割
 	
@@ -365,69 +331,6 @@ TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimit
 	} while( ! *p );	//空のトークンなら次を探す
 	return p;
 }
-
-/*! ロングファイル名を取得する 
-
-	@param[in] pszFilePathSrc 変換元パス名
-	@param[out] pszFilePathDes 結果書き込み先 (長さMAX_PATHの領域が必要)
-
-	@date Oct. 2, 2005 genta GetFilePath APIを使って書き換え
-	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
-	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
-*/
-BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
-{
-	TCHAR* name;
-	TCHAR szBuf[_MAX_PATH + 1];
-	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
-	if( len <= 0 || _MAX_PATH <= len ){
-		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
-		if( len <= 0 || _MAX_PATH < len ){
-			return FALSE;
-		}
-		return TRUE;
-	}
-	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
-	if( len <= 0 || _MAX_PATH < len ){
-		_tcscpy( pszFilePathDes, szBuf );
-	}
-	return TRUE;
-}
-
-/* ファイルのフルパスを、フォルダとファイル名に分割 */
-/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile )
-{
-	TCHAR	szDrive[_MAX_DRIVE];
-	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFname[_MAX_FNAME];
-	TCHAR	szExt[_MAX_EXT];
-	int		nFolderLen;
-	int		nCharChars;
-	_tsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
-	if( NULL != pszFolder ){
-		_tcscpy( pszFolder, szDrive );
-		_tcscat( pszFolder, szDir );
-		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = _tcslen( pszFolder );
-		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = _T('\0');
-			}
-		}
-	}
-	if( NULL != pszFile ){
-		_tcscpy( pszFile, szFname );
-		_tcscat( pszFile, szExt );
-	}
-	return;
-}
-
-
-
-
-
 
 
 struct VS_VERSION_INFO_HEAD {
@@ -1253,143 +1156,6 @@ int IsNumber(const char *buf, int offset, int length)
 }
 //@@@ 2001.11.07 End by MIK
 
-bool fexist(LPCTSTR pszPath)
-{
-	return _taccess(pszPath,0)!=-1;
-}
-
-/**	ファイルの存在チェック
-
-	指定されたパスのファイルが存在するかどうかを確認する。
-	
-	@param path [in] 調べるパス名
-	@param bFileOnly [in] true: ファイルのみ対象 / false: ディレクトリも対象
-	
-	@retval true  ファイルは存在する
-	@retval false ファイルは存在しない
-	
-	@author genta
-	@date 2002.01.04 新規作成
-*/
-bool IsFileExists(const TCHAR* path, bool bFileOnly)
-{
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile( path, &fd );
-	if( hFind != INVALID_HANDLE_VALUE ){
-		::FindClose( hFind );
-		if( bFileOnly == false || ( fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == 0 )
-			return true;
-	}
-	return false;
-}
-
-/**	ファイル名の切り出し
-
-	指定文字列からファイル名と認識される文字列を取り出し、
-	先頭Offset及び長さを返す。
-	
-	@retval true ファイル名発見
-	@retval false ファイル名は見つからなかった
-	
-	@date 2002.01.04 genta ディレクトリを検査対象外にする機能を追加
-	@date 2003.01.15 matsumo gccのエラーメッセージ(:区切り)でもファイルを検出可能に
-	@date 2004.05.29 genta C:\からファイルCが切り出されるのを防止
-	@date 2004.11.13 genta/Moca ファイル名先頭の*?を考慮
-	@date 2005.01.10 genta 変数名変更 j -> cur_pos
-	@date 2005.01.23 genta 警告抑制のため，gotoをreturnに変更
-	
-*/
-bool IsFilePath(
-	const char* pLine,		//!< [in] 探査対象文字列
-	int* pnBgn,				//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
-	int* pnPathLen,			//!< [out] ファイル名の長さ
-	bool bFileOnly			//!< [in] true: ファイルのみ対象 / false: ディレクトリも対象
-)
-{
-	char	szJumpToFile[1024];
-	memset( szJumpToFile, 0, _countof( szJumpToFile ) );
-
-	int nLineLen = strlen( pLine );
-
-	//先頭の空白を読み飛ばす
-	int		i;
-	for( i = 0; i < nLineLen; ++i ){
-		if( ' ' != pLine[i] && '\t' != pLine[i] && '\"' != pLine[i] ){
-			break;
-		}
-	}
-
-	//	#include <ファイル名>の考慮
-	//	#で始まるときは"または<まで読み飛ばす
-	if( i < nLineLen && '#' == pLine[i] ){
-		for( ; i < nLineLen; ++i ){
-			if( '<'  == pLine[i] || '\"' == pLine[i] ){
-				++i;
-				break;
-			}
-		}
-	}
-
-	//	この時点で既に行末に達していたらファイル名は見つからない
-	if( i >= nLineLen ){
-		return false;
-	}
-
-	*pnBgn = i;
-	int cur_pos = 0;
-	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
-		if( ( i == nLineLen    ||
-			  pLine[i] == ' '  ||
-			  pLine[i] == '\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
-			  pLine[i] == '('  ||
-			  pLine[i] == '\r' ||
-			  pLine[i] == '\n' ||
-			  pLine[i] == '\0' ||
-			  pLine[i] == '>'  ||
-			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
-			  ( cur_pos > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
-			  pLine[i] == '"'
-			) &&
-			szJumpToFile[0] != '\0' 
-		){
-			if( IsFileExists(szJumpToFile, bFileOnly))
-			{
-				i--;
-				break;
-			}
-		}
-		if( pLine[i] == '\r'  ||
-			pLine[i] == '\n' ){
-			break;
-		}
-
-		if( ( /*pLine[i] == '/' ||*/
-			 pLine[i] == '<' ||	//	0x3C
-			 pLine[i] == '>' ||	//	0x3E
-			 pLine[i] == '?' ||	//	0x3F
-			 pLine[i] == '"' ||	//	0x22
-			 pLine[i] == '|' ||	//	0x7C
-			 pLine[i] == '*'	//	0x2A
-			) &&
-			/* 上の文字がSJIS2バイトコードの2バイト目でないことを、1つ前の文字がSJIS2バイトコードの1バイト目でないことで判断する */
-			//	Oct. 5, 2002 genta
-			//	2004.11.13 Moca/genta 先頭に上の文字がある場合の考慮を追加
-			( i == 0 || ( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] ))) ){
-			return false;
-		}else{
-		szJumpToFile[cur_pos] = pLine[i];
-		cur_pos++;
-		}
-	}
-
-	if( szJumpToFile[0] != _T('\0')  && IsFileExists(szJumpToFile, bFileOnly)){
-		*pnPathLen = strlen( szJumpToFile );
-		return true;
-	}
-
-	return false;
-}
-
 /*!
 	ローカルドライブの判定
 
@@ -1577,58 +1343,6 @@ int LimitStringLengthB( const char* pszData, int nDataLength, int nLimitLengthB,
 }
 
 
-
-
-/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
-void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
-{
-	if( 3 == _tcslen( pszFolder )
-	 && pszFolder[1] == _T(':')
-	 && pszFolder[2] == _T('\\')
-	){
-		/* ドライブ名:\ */
-	}else{
-		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
-		int	nFolderLen;
-		int	nCharChars;
-		nFolderLen = _tcslen( pszFolder );
-		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = _T('\0');
-			}
-		}
-	}
-	return;
-}
-
-
-
-
-/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void AddLastYenFromDirectoryPath( TCHAR* pszFolder )
-{
-	if( 3 == _tcslen( pszFolder )
-	 && pszFolder[1] == _T(':')
-	 && pszFolder[2] == _T('\\')
-	){
-		/* ドライブ名:\ */
-	}else{
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-		int	nFolderLen;
-		int	nCharChars;
-		nFolderLen = _tcslen( pszFolder );
-		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
-			}else{
-				pszFolder[nFolderLen] = _T('\\');
-				pszFolder[nFolderLen + 1] = _T('\0');
-			}
-		}
-	}
-	return;
-}
 
 
 /*!	文字列が指定された文字で終わっていなかった場合には
@@ -2119,109 +1833,6 @@ const char* GetColorNameByIndex( int index )
 }
 
 /*!
-	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
-	
-	@author genta
-	@date 2002.12.02 genta
-	@date 2007.05.20 ryoji 関数名変更（旧：GetExecutableDir）、汎用テキストマッピング化
-	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
-*/
-void GetExedir(
-	LPTSTR pDir,		//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR szFile		//!< [in] ディレクトリ名に結合するファイル名．  
-)
-{
-	if( pDir == NULL )
-		return;
-	
-	TCHAR	szPath[_MAX_PATH];
-	// sakura.exe のパスを取得
-	::GetModuleFileName( NULL, szPath, _countof(szPath) );
-	if( szFile == NULL ){
-		SplitPath_FolderAndFile( szPath, pDir, NULL );
-	}
-	else {
-		TCHAR	szDir[_MAX_PATH];
-		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		_snprintf( pDir, _MAX_PATH, _T("%s\\%s"), szDir, szFile );
-		pDir[_MAX_PATH - 1] = _T('\0');
-	}
-}
-
-/*!
-	@brief INIファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
-	
-	@author ryoji
-	@date 2007.05.19 新規作成（GetExedirベース）
-*/
-void GetInidir(
-	LPTSTR pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
-)
-{
-	if( pDir == NULL )
-		return;
-	
-	TCHAR	szPath[_MAX_PATH];
-	// sakura.ini のパスを取得
-	CShareData::getInstance()->GetIniFileName( szPath );
-	if( szFile == NULL ){
-		SplitPath_FolderAndFile( szPath, pDir, NULL );
-	}
-	else {
-		TCHAR	szDir[_MAX_PATH];
-		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		_snprintf( pDir, _MAX_PATH, _T("%s\\%s"), szDir, szFile );
-		pDir[_MAX_PATH - 1] = _T('\0');
-	}
-}
-
-
-/*!
-	@brief INIファイルまたはEXEファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す（INIを優先）．
-	
-	@author ryoji
-	@date 2007.05.22 新規作成
-*/
-void GetInidirOrExedir(
-	LPTSTR pDir,							//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
-											//         予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR szFile				/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
-	BOOL bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．	
-)
-{
-	TCHAR	szInidir[_MAX_PATH];
-	TCHAR	szExedir[_MAX_PATH];
-
-	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
-	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == _T('\0')) ){
-		GetExedir( szExedir, szFile );
-		::lstrcpy( pDir, szExedir );
-		return;
-	}
-
-	// INI基準のフルパスが実在すればそのパスを返す
-	GetInidir( szInidir, szFile );
-	if( fexist(szInidir) ){
-		::lstrcpy( pDir, szInidir );
-		return;
-	}
-
-	// EXE基準のフルパスが実在すればそのパスを返す
-	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
-		GetExedir( szExedir, szFile );
-		if( fexist(szExedir) ){
-			::lstrcpy( pDir, szExedir );
-			return;
-		}
-	}
-
-	// どちらにも実在しなければINI基準のフルパスを返す
-	::lstrcpy( pDir, szInidir );
-}
-
-
-/*!
 	@brief アプリケーションアイコンの取得
 	
 	アイコンファイルが存在する場合はそこから，無い場合は
@@ -2273,40 +1884,6 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSma
 	
 	return hIcon;
 }
-
-/*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
-	@author Moca
-	@date 2003.06.23
-	@date 2007.05.20 ryoji 関数名変更（旧：fopen_absexe）、汎用テキストマッピング化
-*/
-FILE* _tfopen_absexe(LPCTSTR fname, LPCTSTR mode)
-{
-	if( _IS_REL_PATH( fname ) ){
-		TCHAR path[_MAX_PATH];
-		GetExedir( path, fname );
-		return _tfopen( path, mode );
-	}
-	return _tfopen( fname, mode );
-	
-}
-
-/*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
-	@author ryoji
-	@date 2007.05.19 新規作成（_tfopen_absexeベース）
-*/
-FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
-{
-	if( _IS_REL_PATH( fname ) ){
-		TCHAR path[_MAX_PATH];
-		if( bOrExedir )
-			GetInidirOrExedir( path, fname );
-		else
-			GetInidir( path, fname );
-		return _tfopen( path, mode );
-	}
-	return _tfopen( fname, mode );
-}
-
 
 /*! 文字数制限機能付きstrncpy
 
@@ -2474,41 +2051,6 @@ int getCtrlKeyState()
 
 	return nIdx;
 }
-
-/*!	ファイルの更新日時を取得
-
-	@return true: 成功, false: FindFirstFile失敗
-
-	@author genta by assitance with ryoji
-	@date 2005.10.22 new
-
-	@note 書き込み後にファイルを再オープンしてタイムスタンプを得ようとすると
-	ファイルがまだロックされていることがあり，上書き禁止と誤認されることがある．
-	FindFirstFileを使うことでファイルのロック状態に影響されずにタイムスタンプを
-	取得できる．(ryoji)
-*/
-bool GetLastWriteTimestamp(
-	const TCHAR*	pszFileName,	//!< [in] ファイルのパス
-	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
-)
-{
-	HANDLE hFindFile;
-	WIN32_FIND_DATA ffd;
-
-	hFindFile = ::FindFirstFile( pszFileName, &ffd );
-	if( INVALID_HANDLE_VALUE != hFindFile )
-	{
-		::FindClose( hFindFile );
-		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
-		return true;
-	}
-	else{
-		//	ファイルが見つからなかった
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-}
-
 
 /*!	日時をフォーマット
 

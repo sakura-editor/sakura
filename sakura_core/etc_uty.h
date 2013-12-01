@@ -121,24 +121,17 @@ BOOL MyWinHelp(HWND hWndMain, UINT uCommand, DWORD_PTR dwData);	/* WinHelp ‚Ì‚©‚
 //!ƒtƒHƒ“ƒg‘I‘ğƒ_ƒCƒAƒƒO
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );   // 2009.10.01 ryoji ƒ|ƒCƒ“ƒgƒTƒCƒYi1/10ƒ|ƒCƒ“ƒg’PˆÊjˆø”’Ç‰Á
 
-void CutLastYenFromDirectoryPath( TCHAR* );/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Ìê‡‚ÍAæ‚èœ‚­ "c:\\"“™‚Ìƒ‹[ƒg‚Íæ‚èœ‚©‚È‚¢*/
-void AddLastYenFromDirectoryPath( TCHAR* );/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
 int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca ÅŒã‚Ì•¶š‚ªw’è‚³‚ê‚½•¶š‚Å‚È‚¢‚Æ‚«‚Í•t‰Á‚·‚é */
 int LimitStringLengthB( const char*, int, int, CMemory& );/* ƒf[ƒ^‚ğw’èƒoƒCƒg”ˆÈ“à‚ÉØ‚è‹l‚ß‚é */
 const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
 const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 void GetLineColumn( const char*, int*, int* );
-bool fexist(LPCTSTR pszPath); //!< ƒtƒ@ƒCƒ‹‚Ü‚½‚ÍƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚ê‚Îtrue
-bool IsFilePath( const char*, int*, int*, bool = true );
-bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 BOOL IsURL( const char*, int, int* );/* w’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· */
 BOOL IsMailAddress( const char*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
 int IsNumber( const char*, int, int );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK
 void ActivateFrameWindow( HWND );	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
 void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ\[ƒX‚©‚ç»•iƒo[ƒWƒ‡ƒ“‚Ìæ“¾ */
-void SplitPath_FolderAndFile( const char*, char*, char* );	/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
 BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
-BOOL GetLongFileName( const TCHAR*, TCHAR* );	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
 BOOL CheckEXT( const TCHAR*, const TCHAR* );	/* Šg’£q‚ğ’²‚×‚é */
 char* my_strtok( char*, int, int*, const char* );
 /* Shell InterfaceŒn(?) */
@@ -201,16 +194,10 @@ int GetColorIndexByName( const char *name );
 const char* GetColorNameByIndex( int index );
 
 //	Dec. 2, 2002 genta
-void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
-void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
-void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall = false);
 
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
-
-FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
-FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //	Apr. 30, 2003 genta
 //	ƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ğ’²‚×‚é
@@ -218,51 +205,12 @@ int CalcDirectoryDepth(const TCHAR* path);
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// w’è‚µ‚½ƒEƒBƒ“ƒhƒE‚Ì‘cæ‚Ìƒnƒ“ƒhƒ‹‚ğæ“¾‚·‚é	// 2007.07.01 ryoji
 
-//ƒtƒ@ƒCƒ‹
-class CFileTime{
-public:
-	CFileTime(){ ClearFILETIME(); }
-	CFileTime(const FILETIME& ftime){ SetFILETIME(ftime); }
-	//İ’è
-	void ClearFILETIME(){ m_ftime.dwLowDateTime = m_ftime.dwHighDateTime = 0; m_bModified = true; }
-	void SetFILETIME(const FILETIME& ftime){ m_ftime = ftime; m_bModified = true; }
-	//æ“¾
-	const FILETIME& GetFILETIME() const{ return m_ftime; }
-	const SYSTEMTIME& GetSYSTEMTIME() const
-	{
-		//ƒLƒƒƒbƒVƒ…XV -> m_systime, m_bModified
-		if(m_bModified){
-			m_bModified = false;
-			FILETIME ftimeLocal;
-			if(!::FileTimeToLocalFileTime( &m_ftime, &ftimeLocal ) || !::FileTimeToSystemTime( &ftimeLocal, &m_systime )){
-				memset(&m_systime,0,sizeof(m_systime)); //¸”sƒ[ƒƒNƒŠƒA
-			}
-		}
-		return m_systime;
-	}
-	const SYSTEMTIME* operator->() const{ return &GetSYSTEMTIME(); }
-	//”»’è
-	bool IsZero() const
-	{
-		return m_ftime.dwLowDateTime == 0 && m_ftime.dwHighDateTime == 0;
-	}
-protected:
-private:
-	FILETIME m_ftime;
-	//ƒLƒƒƒbƒVƒ…
-	mutable SYSTEMTIME	m_systime;
-	mutable bool		m_bModified;
-};
-bool GetLastWriteTimestamp( const TCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
-
 // 20051121 aroka
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
 UINT32 ParseVersion( const TCHAR* ver );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì‰ğÍ
 int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
 
 int getCtrlKeyState();
-
-bool _IS_REL_PATH(const TCHAR* path);
 
 // 2005.11.26 aroka
 bool IsLocalDrive( const TCHAR* pszDrive );

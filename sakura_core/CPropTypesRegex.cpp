@@ -22,6 +22,7 @@
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"

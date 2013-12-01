@@ -20,6 +20,7 @@
 #include "CMigemo.h"
 #include "CShareData.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "charcode.h"
 
 int __cdecl pcre_char2int_sjis(const unsigned char*, unsigned int*);

@@ -22,6 +22,7 @@
 #include "Debug.h"
 #include "CControlTray.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "CRunningTimer.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ƒwƒbƒ_®—
 

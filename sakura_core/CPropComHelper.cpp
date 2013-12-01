@@ -23,6 +23,7 @@
 #include "CDlgOpenFile.h"
 #include "Debug.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "CDlgInput1.h"
 #include "global.h"
 #include "sakura_rc.h"

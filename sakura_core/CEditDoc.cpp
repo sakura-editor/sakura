@@ -51,7 +51,7 @@
 #include "CDlgFileUpdateQuery.h"
 #include <assert.h> /// 2002/11/2 frozen
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
-#include "MY_SP.h" // 2005/11/22 aroka ’Ç‰Á
+#include "file.h"
 #include "CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "sakura_rc.h"

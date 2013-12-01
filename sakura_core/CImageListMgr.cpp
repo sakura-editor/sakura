@@ -18,6 +18,7 @@
 #include "StdAfx.h"
 #include "CImageListMgr.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "CShareData.h"
 #include "CRunningTimer.h"
 #include "sakura_rc.h"

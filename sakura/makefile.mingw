@@ -214,8 +214,8 @@ OBJS= \
 	$(OBJDIR)/CWaitCursor.o \
 	$(OBJDIR)/CWnd.o \
 	$(OBJDIR)/Debug.o \
+	$(OBJDIR)/file.o \
 	$(OBJDIR)/Funccode.o \
-	$(OBJDIR)/MY_SP.o \
 	$(OBJDIR)/StdAfx.o \
 	$(OBJDIR)/WinMain.o \
 	$(OBJDIR)/charcode.o \
@@ -518,9 +518,9 @@ $(OBJDIR)/CWnd.o: $(SRCDIR)/CWnd.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/Debug.o: $(SRCDIR)/Debug.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/Funccode.o: $(SRCDIR)/Funccode.cpp
+$(OBJDIR)/file.o: $(SRCDIR)/file.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/MY_SP.o: $(SRCDIR)/MY_SP.C
+$(OBJDIR)/Funccode.o: $(SRCDIR)/Funccode.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/StdAfx.o: $(SRCDIR)/StdAfx.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

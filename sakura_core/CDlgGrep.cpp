@@ -22,6 +22,7 @@
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "Debug.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

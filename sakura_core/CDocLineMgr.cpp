@@ -23,17 +23,17 @@
 */
 
 #include "StdAfx.h"
+#include <stdio.h>
+#include <io.h>
+#include <commctrl.h>
 #include "CDocLineMgr.h"
 #include "Debug.h"
 #include "charcode.h"
-// Oct 6, 2000 ao
-#include <stdio.h>
-#include <io.h>
 //	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
 #include "CBregexp.h"
-#include <commctrl.h>
 #include "global.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "CRunningTimer.h"
 
 //	May 15, 2000 genta

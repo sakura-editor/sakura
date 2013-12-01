@@ -21,6 +21,7 @@
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "CSMacroMgr.h" // 2002/2/10 aroka
 #include "mymessage.h"
 #include "Debug.h" ///

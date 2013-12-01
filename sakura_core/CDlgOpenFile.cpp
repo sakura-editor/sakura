@@ -25,9 +25,9 @@
 #include "Funccode.h"	//Stonee, 2001/05/18
 #include "Debug.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "os.h"
 #include "global.h"
-#include "MY_SP.h"	// Jun. 23, 2002 genta
 #include "CFileExt.h"
 #include "CEditApp.h"
 #include "my_icmp.h"

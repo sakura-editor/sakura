@@ -21,6 +21,7 @@
 #include "CMemory.h" // 2002/2/10 aroka ƒwƒbƒ_®—
 #include "CRunningTimer.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 
 CDicMgr::CDicMgr()

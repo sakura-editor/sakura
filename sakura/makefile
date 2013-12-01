@@ -226,10 +226,10 @@ OBJS =\
 	$(OBJDIR)\CBregexp.obj \
 	$(OBJDIR)\Debug.obj \
 	$(OBJDIR)\etc_uty.obj \
+	$(OBJDIR)\File.obj \
 	$(OBJDIR)\Funccode.obj \
 	$(OBJDIR)\global.obj \
 	$(OBJDIR)\my_icmp.obj \
-	$(OBJDIR)\MY_SP.obj \
 	$(OBJDIR)\os.obj \
 	$(OBJDIR)\StdAfx.obj \
 	$(OBJDIR)\WinMain.obj \

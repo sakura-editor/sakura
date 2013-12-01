@@ -27,6 +27,7 @@ class CDocLineMgr;
 #include "CDocLine.h"
 #include "CEol.h" // 2002/2/10 aroka
 #include "etc_uty.h"
+#include "file.h"
 
 /* •¶ŽšŽí—ÞŽ¯•ÊŽq */
 #define	CK_NULL			0	/*!< NULL 0x0<=c<=0x0 */

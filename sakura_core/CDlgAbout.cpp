@@ -24,6 +24,7 @@
 #include "CDlgAbout.h"
 #include "CMemory.h"
 #include "etc_uty.h"
+#include "file.h"
 #ifdef USE_SVNREV
 #include "svnrev.h"
 #else

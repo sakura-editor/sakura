@@ -39,6 +39,7 @@
 #include <memory.h>
 #include <stdlib.h>
 #include "etc_uty.h" // 2002/04/14 novice
+#include "file.h"
 #include "Debug.h"
 #include "sakura.hh"
 
