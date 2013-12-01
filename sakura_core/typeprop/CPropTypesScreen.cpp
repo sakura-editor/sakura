@@ -560,9 +560,6 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 			::DlgItem_SetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto );	// 2009.08.07 ryoji
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KINSOKUHIDE ), ( m_Types.m_bKinsokuRet || m_Types.m_bKinsokuKuto ) ? TRUE : FALSE );	// ぶら下げを隠すの有効化	2012/11/30 Uchi
 		}	//@@@ 2002.04.08 MIK end
-		
-		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon );
 	}
 }
 
