@@ -2292,7 +2292,6 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 
 		m_nOldUnderLineY = GetCaret().GetCaretLayoutPos().GetY2();
 		m_nOldUnderLineYBg = m_nOldUnderLineY;
-		m_nOldUnderLineYMargin = 0;
 		m_nOldUnderLineYHeight = GetTextMetrics().GetHankakuDy();
 		if( bDrawPaint ){
 			GetCaret().m_cUnderLine.Lock();
@@ -2365,11 +2364,8 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 		if( false == bCursorLineBgDraw || -1 == m_nOldUnderLineY ){
 			m_nOldUnderLineY = GetCaret().GetCaretLayoutPos().GetY2();
 			m_nOldUnderLineYBg = m_nOldUnderLineY;
-			m_nOldUnderLineYMargin = GetTextMetrics().GetHankakuHeight();
-			m_nOldUnderLineYHeight = 1;
-		}else{
-			m_nOldUnderLineYHeight = t_max(m_nOldUnderLineYMargin + m_nOldUnderLineYHeight, GetTextMetrics().GetHankakuHeight() + 1) - m_nOldUnderLineYMargin;
 		}
+		m_nOldUnderLineYMargin = GetTextMetrics().GetHankakuHeight();
 		m_nOldUnderLineYHeightReal = 1;
 //		MYTRACE( _T("★カーソル行アンダーラインの描画\n") );
 		/* ★カーソル行アンダーラインの描画 */
@@ -2410,21 +2406,22 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag 
 		){
 			// -- -- カーソル行アンダーラインの消去（無理やり） -- -- //
 			int nUnderLineY = GetTextArea().GetAreaTop() + (Int)(m_nOldUnderLineY - GetTextArea().GetViewTopLine())
-			 * GetTextMetrics().GetHankakuDy() + m_nOldUnderLineYMargin;
+			 * GetTextMetrics().GetHankakuDy();
 
 			GetCaret().m_cUnderLine.Lock();
 
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = GetTextArea().GetAreaLeft();
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
-			ps.rcPaint.top = nUnderLineY;
-			if( bDrawPaint ){
+			int height;
+			if( bDrawPaint && m_nOldUnderLineYHeight != 0 ){
 				ps.rcPaint.top = nUnderLineY;
-				ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
+				height = t_max(m_nOldUnderLineYHeight, m_nOldUnderLineYMargin + m_nOldUnderLineYHeightReal);
 			}else{
-				ps.rcPaint.top = nUnderLineY + (m_nOldUnderLineYHeight - m_nOldUnderLineYHeightReal);
-				ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeightReal;
+				ps.rcPaint.top = nUnderLineY + m_nOldUnderLineYMargin;
+				height = m_nOldUnderLineYHeightReal;
 			}
+			ps.rcPaint.bottom = ps.rcPaint.top + height;
 
 			//	不本意ながら選択情報をバックアップ。
 //			CLayoutRange sSelectBackup = GetSelectionInfo().m_sSelect;
@@ -2437,6 +2434,8 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag 
 				OnPaint( hdc, &ps, (ps.rcPaint.bottom - ps.rcPaint.top) == 1 );
 				this->ReleaseDC( hdc );
 			}
+			m_nOldUnderLineYHeight = 0;
+
 
 			//	選択情報を復元
 			GetCaret().m_cUnderLine.UnLock();
