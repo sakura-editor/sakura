@@ -284,22 +284,22 @@ struct STypeConfig {
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start
-	BOOL				m_bUseKeyWordHelp;			/* キーワード辞書セレクト機能を使うか */
+	bool				m_bUseKeyWordHelp;				// キーワード辞書セレクト機能を使うか
 	int					m_nKeyHelpNum;					/* キーワード辞書の冊数 */
 	KeyHelpInfo			m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
-	BOOL				m_bUseKeyHelpAllSearch;			/* ヒットした次の辞書も検索(&A) */
-	BOOL				m_bUseKeyHelpKeyDisp;			/* 1行目にキーワードも表示する(&W) */
-	BOOL				m_bUseKeyHelpPrefix;			/* 選択範囲で前方一致検索(&P) */
+	bool				m_bUseKeyHelpAllSearch;			// ヒットした次の辞書も検索(&A)
+	bool				m_bUseKeyHelpKeyDisp;			// 1行目にキーワードも表示する(&W)
+	bool				m_bUseKeyHelpPrefix;			// 選択範囲で前方一致検索(&P)
 //@@@ 2006.04.10 fon ADD-end
 
 	//	2002/04/30 YAZAKI Commonから移動。
-	BOOL				m_bAutoIndent;					/* オートインデント */
-	BOOL				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
-	BOOL				m_bRTrimPrevLine;				/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
+	bool				m_bAutoIndent;					/* オートインデント */
+	bool				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
+	bool				m_bRTrimPrevLine;				// 2005.10.11 ryoji 改行時に末尾の空白を削除
 	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
 
 	//	Sep. 10, 2002 genta
-	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
+	bool				m_bUseDocumentIcon;				//!< ファイルに関連づけられたアイコンを使う
 
 	STypeConfig()
 	: m_nMaxLineKetas(10) //	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca

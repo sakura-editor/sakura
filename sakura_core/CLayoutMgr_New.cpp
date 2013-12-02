@@ -1288,7 +1288,7 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	CMemoryIterator<CLayout> it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 
 	//	Jul. 20, 2003 genta Ž©“®ƒCƒ“ƒfƒ“ƒg‚É€‚¶‚½“®ì‚É‚·‚é
-	bool bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
+	bool bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE != false ? 1 : 0;
 	const char* szSpecialIndentChar = m_pcEditDoc->GetDocumentAttribute().m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();

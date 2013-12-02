@@ -610,10 +610,10 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 	//インデント
 	{
 		/* 自動インデント */
-		m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT );
+		m_Types.m_bAutoIndent = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ? TRUE : FALSE;
 
 		/* 日本語空白もインデント */
-		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE );
+		m_Types.m_bAutoIndent_ZENSPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT_WSPACE ) ? TRUE : FALSE;
 
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
@@ -631,7 +631,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		m_Types.m_nIndentLayout = IndentTypeArr[nSelPos].nMethod;	/* 折り返し部インデント種別 */
 
 		// 改行時に末尾の空白を削除	//2005.10.11 ryoji
-		m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE );
+		m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE ) ? TRUE : FALSE;
 	}
 
 	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta
@@ -683,7 +683,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}	//@@@ 2002.04.08 MIK end
 
 		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? TRUE : FALSE;
+		m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? true : false;
 	}
 
 	return TRUE;

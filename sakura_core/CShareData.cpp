@@ -329,10 +329,13 @@ struct ARRHEAD {
 
 	Version 117:
 	ColorInfo構造体のメンバ変数削除 2013.11.28 novice
+
+	Version 118:
+	ColorInfo構造体のメンバ変数の型変更 2013.12.01 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 117;
+const unsigned int uShareDataVersion = 118;
 
 /*
 ||	Singleton風
@@ -5083,9 +5086,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = _T('\0');
 	pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = true;
 
-	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
-	pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
-	pShareData->m_Types[nIdx].m_bRTrimPrevLine = FALSE;			// 2005.10.11 ryoji 改行時に末尾の空白を削除
+	pShareData->m_Types[nIdx].m_bAutoIndent = true;			/* オートインデント */
+	pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = true;	/* 日本語空白もインデント */
+	pShareData->m_Types[nIdx].m_bRTrimPrevLine = false;			// 2005.10.11 ryoji 改行時に末尾の空白を削除
 
 	pShareData->m_Types[nIdx].m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
@@ -5173,7 +5176,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	strcpy( pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	strcpy( pShareData->m_Types[nIdx].m_szKinsokuKuto, "、。，．､｡,." );	/* 句読点ぶら下げ文字 */	// 2009.08.07 ryoji
 
-	pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
+	pShareData->m_Types[nIdx].m_bUseDocumentIcon = false;			/* 文書に関連づけられたアイコンを使う */
 
 //@@@ 2001.11.17 add start MIK
 	for(i = 0; i < _countof(pShareData->m_Types[0].m_RegexKeywordArr); i++)
@@ -5191,11 +5194,11 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
-	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	// 辞書選択機能の使用可否
+	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = false;	// 辞書選択機能の使用可否
 	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			// 登録辞書数
-	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = FALSE;	// ヒットした次の辞書も検索(&A)
-	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = FALSE;		// 1行目にキーワードも表示する(&W)
-	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = FALSE;		// 選択範囲で前方一致検索(&P)
+	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = false;	// ヒットした次の辞書も検索(&A)
+	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = false;		// 1行目にキーワードも表示する(&W)
+	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = false;		// 選択範囲で前方一致検索(&P)
 //@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定

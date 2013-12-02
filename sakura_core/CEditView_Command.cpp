@@ -2888,7 +2888,7 @@ end_of_for:;
 	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	if( CR == cChar && TRUE == m_pcEditDoc->GetDocumentAttribute().m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
+	if( CR == cChar && m_pcEditDoc->GetDocumentAttribute().m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
 		/* 前の行にある末尾の空白を削除する */
 		RTrimPrevLine();
 	}
