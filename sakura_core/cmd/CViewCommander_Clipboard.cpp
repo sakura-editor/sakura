@@ -468,13 +468,16 @@ void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize
 /*! テキストを貼り付け
 	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
 	@date 2010.09.17 ryoji ラインモード貼り付けオプションを追加して以前の Command_PASTE() との重複部を整理・統合
+	@date 2013.05.10 Moca 高速モード
 */
 void CViewCommander::Command_INSTEXT(
 	bool			bRedraw,		//!< 
 	const wchar_t*	pszText,		//!< [in] 貼り付ける文字列。
 	CLogicInt		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
 	bool			bNoWaitCursor,	//!< 
-	bool			bLinePaste		//!< [in] ラインモード貼り付け
+	bool			bLinePaste,		//!< [in] ラインモード貼り付け
+	bool			bFastMode,		//!< [in] 高速モード(レイアウト座標は無視する)
+	const CLogicRange*	pcSelectLogic	//!< [in] オプション。高速モードのときの削除範囲ロジック単位
 )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
@@ -492,7 +495,7 @@ void CViewCommander::Command_INSTEXT(
 	GetDocument()->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 
 	// テキストが選択されているか
-	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() || bFastMode ){
 		// 矩形範囲選択中か
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			//改行までを抜き出す
@@ -508,20 +511,24 @@ void CViewCommander::Command_INSTEXT(
 		else{
 			//	Jun. 23, 2000 genta
 			//	同一行の行末以降のみが選択されている場合には選択無しと見なす
-			CLogicInt		len;
-			int pos;
-			const wchar_t	*line;
-			const CLayout* pcLayout;
-			line = GetDocument()->m_cLayoutMgr.GetLineStr( GetSelect().GetFrom().GetY2(), &len, &pcLayout );
+			bool bAfterEOLSelect = false;
+			if( !bFastMode ){
+				CLogicInt		len;
+				int pos;
+				const wchar_t	*line;
+				const CLayout* pcLayout;
+				line = GetDocument()->m_cLayoutMgr.GetLineStr( GetSelect().GetFrom().GetY2(), &len, &pcLayout );
 
-			pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
+				pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
 
-			//	開始位置が行末より後ろで、終了位置が同一行
-			if( pos >= len && GetSelect().IsLineOne()){
-				GetCaret().SetCaretLayoutPos(CLayoutPoint(GetSelect().GetFrom().x, GetCaret().GetCaretLayoutPos().y)); //キャレットX変更
-				m_pCommanderView->GetSelectionInfo().DisableSelectArea(false);
+				//	開始位置が行末より後ろで、終了位置が同一行
+				if( pos >= len && GetSelect().IsLineOne()){
+					GetCaret().SetCaretLayoutPos(CLayoutPoint(GetSelect().GetFrom().x, GetCaret().GetCaretLayoutPos().y)); //キャレットX変更
+					m_pCommanderView->GetSelectionInfo().DisableSelectArea(false);
+					bAfterEOLSelect = true;
+				}
 			}
-			else{
+			if( !bAfterEOLSelect ){
 				// データ置換 削除&挿入にも使える
 				// 行コピーの貼り付けでは選択範囲は削除（後で行頭に貼り付ける）	// 2007.10.04 ryoji
 				m_pCommanderView->ReplaceData_CEditView(
@@ -529,7 +536,9 @@ void CViewCommander::Command_INSTEXT(
 					bLinePaste? L"": pszText,	// 挿入するデータ
 					bLinePaste? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
 					bRedraw,
-					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
+					bFastMode,
+					pcSelectLogic
 				);
 				if( !bLinePaste )	// 2007.10.04 ryoji
 					goto end_of_func;

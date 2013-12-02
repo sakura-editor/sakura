@@ -59,7 +59,7 @@ public:
 	COpe(EOpeCode eCode = OPE_UNKNOWN);		/* COpeクラス構築 */
 	virtual ~COpe();	/* COpeクラス消滅 */
 
-	void DUMP( void );	/* 編集操作要素のダンプ */
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 
 	EOpeCode	GetCode() const{ return m_nOpe; }
 
@@ -78,6 +78,7 @@ public:
 	{
 		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
 	}
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
 	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
 	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
@@ -88,6 +89,7 @@ public:
 class CInsertOpe : public COpe{
 public:
 	CInsertOpe() : COpe(OPE_INSERT) { }
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
 	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;

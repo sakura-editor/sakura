@@ -406,14 +406,17 @@ public:
 		const wchar_t*		pInsData,			// 挿入するデータ
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
-		COpeBlk*			pcOpeBlk
+		COpeBlk*			pcOpeBlk,
+		bool				bFastMode = false,
+		const CLogicRange*	psDelRangeLogicFast = NULL
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
 		const wchar_t*		pInsData,			// 挿入するデータ
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
-		COpeBlk*			pcOpeBlk
+		COpeBlk*			pcOpeBlk,
+		bool				bFastMode = false
 	);
 	void ReplaceData_CEditView3(
 		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
@@ -422,7 +425,9 @@ public:
 		bool			bRedraw,
 		COpeBlk*		pcOpeBlk,
 		int				nDelSeq,
-		int*			pnInsSeq
+		int*			pnInsSeq,
+		bool			bFastMode = false,
+		const CLogicRange*	psDelRangeLogicFast = NULL
 	);
 	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 

@@ -337,20 +337,27 @@ void CViewCommander::Command_UNDO( void )
 			hwndProgress = m_pCommanderView->StartProgress();
 		}
 
+		bool bFastMode = false;
+		if( 100 < nOpeBlkNum ){
+			bFastMode = true;
+		}
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
-			GetDocument()->m_cLayoutMgr.LogicToLayout(
-				pcOpe->m_ptCaretPos_PHY_After,
-				&ptCaretPos_After
-			);
-			GetDocument()->m_cLayoutMgr.LogicToLayout(
-				pcOpe->m_ptCaretPos_PHY_Before,
-				&ptCaretPos_Before
-			);
+			if( bFastMode ){
+				GetCaret().MoveCursorFastMode( pcOpe->m_ptCaretPos_PHY_After );
+			}else{
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
+					pcOpe->m_ptCaretPos_PHY_After,
+					&ptCaretPos_After
+				);
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
+					pcOpe->m_ptCaretPos_PHY_Before,
+					&ptCaretPos_Before
+				);
 
-
-			/* カーソルを移動 */
-			GetCaret().MoveCursor( ptCaretPos_After, false );
+				/* カーソルを移動 */
+				GetCaret().MoveCursor( ptCaretPos_After, false );
+			}
 
 			switch( pcOpe->GetCode() ){
 			case OPE_INSERT:
@@ -358,10 +365,16 @@ void CViewCommander::Command_UNDO( void )
 					CInsertOpe* pcInsertOpe = static_cast<CInsertOpe*>(pcOpe);
 
 					/* 選択範囲の変更 */
-					m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetFrom(ptCaretPos_Before);
-					m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetTo(m_pCommanderView->GetSelectionInfo().m_sSelectBgn.GetFrom());
-					m_pCommanderView->GetSelectionInfo().m_sSelect.SetFrom(ptCaretPos_Before);
-					m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo(ptCaretPos_After);
+					CLogicRange cSelectLogic;
+					cSelectLogic.SetFrom(pcOpe->m_ptCaretPos_PHY_Before);
+					cSelectLogic.SetTo(pcOpe->m_ptCaretPos_PHY_After);
+					if( bFastMode ){
+					}else{
+						m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetFrom(ptCaretPos_Before);
+						m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetTo(m_pCommanderView->GetSelectionInfo().m_sSelectBgn.GetFrom());
+						m_pCommanderView->GetSelectionInfo().m_sSelect.SetFrom(ptCaretPos_Before);
+						m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo(ptCaretPos_After);
+					}
 
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
@@ -371,7 +384,9 @@ void CViewCommander::Command_UNDO( void )
 						false,						// 再描画するか否か
 						NULL,
 						pcInsertOpe->m_nOrgSeq,
-						NULL
+						NULL,
+						bFastMode,
+						&cSelectLogic
 					);
 
 					/* 選択範囲の変更 */
@@ -388,6 +403,8 @@ void CViewCommander::Command_UNDO( void )
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
+						CLogicRange cSelectLogic;
+						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
 						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
@@ -395,7 +412,9 @@ void CViewCommander::Command_UNDO( void )
 							false,										/*再描画するか否か*/
 							NULL,
 							0,
-							&pcDeleteOpe->m_nOrgSeq
+							&pcDeleteOpe->m_nOrgSeq,
+							bFastMode,
+							&cSelectLogic
 						);
 					}
 					pcDeleteOpe->m_pcmemData.clear();
@@ -408,6 +427,9 @@ void CViewCommander::Command_UNDO( void )
 					CLayoutRange sRange;
 					sRange.SetFrom(ptCaretPos_Before);
 					sRange.SetTo(ptCaretPos_After);
+					CLogicRange cSelectLogic;
+					cSelectLogic.SetFrom(pcOpe->m_ptCaretPos_PHY_Before);
+					cSelectLogic.SetTo(pcOpe->m_ptCaretPos_PHY_After);
 
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
@@ -417,27 +439,51 @@ void CViewCommander::Command_UNDO( void )
 						false,						// 再描画するか否か
 						NULL,
 						pcReplaceOpe->m_nOrgInsSeq,
-						&pcReplaceOpe->m_nOrgDelSeq
+						&pcReplaceOpe->m_nOrgDelSeq,
+						bFastMode,
+						&cSelectLogic
 					);
 					pcReplaceOpe->m_pcmemDataDel.clear();
 				}
 				break;
 			case OPE_MOVECARET:
 				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_After, false );
+				if( bFastMode ){
+					GetCaret().MoveCursorFastMode( pcOpe->m_ptCaretPos_PHY_After );
+				}else{
+					GetCaret().MoveCursor( ptCaretPos_After, false );
+				}
 				break;
 			}
 
-			GetDocument()->m_cLayoutMgr.LogicToLayout(
-				pcOpe->m_ptCaretPos_PHY_Before,
-				&ptCaretPos_Before
-			);
-			if( i == 0 ){
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_Before, true );
+			if( bFastMode ){
+				if( i == 0 ){
+					GetDocument()->m_cLayoutMgr._DoLayout();
+					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
+					}
+					GetDocument()->m_cLayoutMgr.LogicToLayout(
+						pcOpe->m_ptCaretPos_PHY_Before,
+						&ptCaretPos_Before
+					);
+					GetCaret().MoveCursor( ptCaretPos_Before, true );
+					// 通常モードではReplaceData_CEditViewの中で設定される
+					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
+				}else{
+					GetCaret().MoveCursorFastMode( pcOpe->m_ptCaretPos_PHY_Before );
+				}
 			}else{
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_Before, false );
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
+					pcOpe->m_ptCaretPos_PHY_Before,
+					&ptCaretPos_Before
+				);
+				if( i == 0 ){
+					/* カーソルを移動 */
+					GetCaret().MoveCursor( ptCaretPos_Before, true );
+				}else{
+					/* カーソルを移動 */
+					GetCaret().MoveCursor( ptCaretPos_Before, false );
+				}
 			}
 			if( hwndProgress && (i % 100) == 0 ){
 				int newPos = ::MulDiv(nOpeBlkNum - i, 100, nOpeBlkNum);
@@ -546,25 +592,32 @@ void CViewCommander::Command_REDO( void )
 			hwndProgress = m_pCommanderView->StartProgress();
 		}
 
+		bool bFastMode = false;
+		if( 100 < nOpeBlkNum ){
+			bFastMode = true;
+		}
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
-			/*
-			  カーソル位置変換
-			  物理位置(行頭からのバイト数、折り返し無し行位置)
-			  →
-			  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-			*/
-			GetDocument()->m_cLayoutMgr.LogicToLayout(
-				pcOpe->m_ptCaretPos_PHY_Before,
-				&ptCaretPos_Before
-			);
-
-			if( i == 0 ){
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_Before, true );
+			if( bFastMode ){
+				if( i == 0 ){
+					GetDocument()->m_cLayoutMgr.LogicToLayout(
+						pcOpe->m_ptCaretPos_PHY_Before,
+						&ptCaretPos_Before
+					);
+					GetCaret().MoveCursor( ptCaretPos_Before, true );
+				}else{
+					GetCaret().MoveCursorFastMode( pcOpe->m_ptCaretPos_PHY_Before );
+				}
 			}else{
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_Before, false );
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
+					pcOpe->m_ptCaretPos_PHY_Before,
+					&ptCaretPos_Before
+				);
+				if( i == 0 ){
+					GetCaret().MoveCursor( ptCaretPos_Before, true );
+				}else{
+					GetCaret().MoveCursor( ptCaretPos_Before, false );
+				}
 			}
 			switch( pcOpe->GetCode() ){
 			case OPE_INSERT:
@@ -576,6 +629,8 @@ void CViewCommander::Command_REDO( void )
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
+						CLogicRange cSelectLogic;
+						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
 						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
@@ -583,7 +638,9 @@ void CViewCommander::Command_REDO( void )
 							false,										/*再描画するか否か*/
 							NULL,
 							0,
-							&pcInsertOpe->m_nOrgSeq
+							&pcInsertOpe->m_nOrgSeq,
+							bFastMode,
+							&cSelectLogic
 						);
 
 					}
@@ -594,10 +651,16 @@ void CViewCommander::Command_REDO( void )
 				{
 					CDeleteOpe* pcDeleteOpe = static_cast<CDeleteOpe*>(pcOpe);
 
-					GetDocument()->m_cLayoutMgr.LogicToLayout(
-						pcDeleteOpe->m_ptCaretPos_PHY_To,
-						&ptCaretPos_To
-					);
+					if( bFastMode ){
+					}else{
+						GetDocument()->m_cLayoutMgr.LogicToLayout(
+							pcDeleteOpe->m_ptCaretPos_PHY_To,
+							&ptCaretPos_To
+						);
+					}
+					CLogicRange cSelectLogic;
+					cSelectLogic.SetFrom(pcOpe->m_ptCaretPos_PHY_Before);
+					cSelectLogic.SetTo(pcDeleteOpe->m_ptCaretPos_PHY_To);
 
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
@@ -607,7 +670,9 @@ void CViewCommander::Command_REDO( void )
 						false,
 						NULL,
 						pcDeleteOpe->m_nOrgSeq,
-						NULL
+						NULL,
+						bFastMode,
+						&cSelectLogic
 					);
 				}
 				break;
@@ -615,10 +680,16 @@ void CViewCommander::Command_REDO( void )
 				{
 					CReplaceOpe* pcReplaceOpe = static_cast<CReplaceOpe*>(pcOpe);
 
-					GetDocument()->m_cLayoutMgr.LogicToLayout(
-						pcReplaceOpe->m_ptCaretPos_PHY_To,
-						&ptCaretPos_To
-					);
+					if( bFastMode ){
+					}else{
+						GetDocument()->m_cLayoutMgr.LogicToLayout(
+							pcReplaceOpe->m_ptCaretPos_PHY_To,
+							&ptCaretPos_To
+						);
+					}
+					CLogicRange cSelectLogic;
+					cSelectLogic.SetFrom(pcOpe->m_ptCaretPos_PHY_Before);
+					cSelectLogic.SetTo(pcReplaceOpe->m_ptCaretPos_PHY_To);
 
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
@@ -628,7 +699,9 @@ void CViewCommander::Command_REDO( void )
 						false,
 						NULL,
 						pcReplaceOpe->m_nOrgDelSeq,
-						&pcReplaceOpe->m_nOrgInsSeq
+						&pcReplaceOpe->m_nOrgInsSeq,
+						bFastMode,
+						&cSelectLogic
 					);
 					pcReplaceOpe->m_pcmemDataIns.clear();
 				}
@@ -636,17 +709,28 @@ void CViewCommander::Command_REDO( void )
 			case OPE_MOVECARET:
 				break;
 			}
-			GetDocument()->m_cLayoutMgr.LogicToLayout(
-				pcOpe->m_ptCaretPos_PHY_After,
-				&ptCaretPos_After
-			);
-
-			if( i == nOpeBlkNum - 1	){
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_After, true );
+			if( bFastMode ){
+				if( i == nOpeBlkNum - 1	){
+					GetDocument()->m_cLayoutMgr._DoLayout();
+					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
+					}
+					GetDocument()->m_cLayoutMgr.LogicToLayout(
+						pcOpe->m_ptCaretPos_PHY_After, &ptCaretPos_After );
+					GetCaret().MoveCursor( ptCaretPos_After, true );
+					// 通常モードではReplaceData_CEditViewの中で設定される
+					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
+				}else{
+					GetCaret().MoveCursorFastMode( pcOpe->m_ptCaretPos_PHY_After );
+				}
 			}else{
-				/* カーソルを移動 */
-				GetCaret().MoveCursor( ptCaretPos_After, false );
+				GetDocument()->m_cLayoutMgr.LogicToLayout(
+					pcOpe->m_ptCaretPos_PHY_After, &ptCaretPos_After );
+				if( i == nOpeBlkNum - 1	){
+					GetCaret().MoveCursor( ptCaretPos_After, true );
+				}else{
+					GetCaret().MoveCursor( ptCaretPos_After, false );
+				}
 			}
 			if( hwndProgress && (i % 100) == 0 ){
 				int newPos = ::MulDiv(i + 1, 100, nOpeBlkNum);
