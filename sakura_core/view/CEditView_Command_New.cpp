@@ -20,6 +20,7 @@
 */
 #include "StdAfx.h"
 #include "view/CEditView.h"
+#include "CSearchAgent.h"
 #include "uiparts/CWaitCursor.h"
 #include "charset/charcode.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
@@ -459,7 +460,6 @@ void CEditView::DeleteData(
 	CLogicInt		nLineLen;
 	CLayoutInt	nLineNum;
 	CLogicInt	nCurIdx;
-	CLogicInt	nNxtIdx;
 	CLogicInt	nIdxFrom;
 	CLogicInt	nIdxTo;
 	CLogicInt	nDelLen;
@@ -618,6 +618,7 @@ void CEditView::DeleteData(
 		}
 
 		/* 指定された桁の文字のバイト数を調べる */
+		CLogicInt	nNxtIdx;
 		CLayoutInt	nNxtPos;
 		if( WCODE::IsLineDelimiter(pLine[nCurIdx]) ){
 			/* 改行 */
@@ -635,12 +636,17 @@ void CEditView::DeleteData(
 		CLayoutRange sDelRange;
 		sDelRange.SetFrom(GetCaret().GetCaretLayoutPos());
 		sDelRange.SetTo(CLayoutPoint(nNxtPos,GetCaret().GetCaretLayoutPos().GetY()));
+		CLogicRange sDelRangeLogic;
+		sDelRangeLogic.SetFrom(GetCaret().GetCaretLogicPos());
+		sDelRangeLogic.SetTo(CLogicPoint(nNxtIdx,GetCaret().GetCaretLogicPos().GetY()));
 		ReplaceData_CEditView(
 			sDelRange,
 			L"",				/* 挿入するデータ */
 			CLogicInt(0),		/* 挿入するデータの長さ */
 			bRedraw,
-			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
+			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk(),
+			false,
+			&sDelRangeLogic
 		);
 	}
 
@@ -673,7 +679,9 @@ void CEditView::ReplaceData_CEditView(
 	const wchar_t*		pInsData,			//!< [in]  挿入するデータ
 	CLogicInt			nInsDataLen,		//!< [in]  挿入するデータの長さ
 	bool				bRedraw,
-	COpeBlk*			pcOpeBlk
+	COpeBlk*			pcOpeBlk,
+	bool				bFastMode,
+	const CLogicRange*	psDelRangeLogicFast
 )
 {
 	int opeSeq;
@@ -683,11 +691,11 @@ void CEditView::ReplaceData_CEditView(
 		opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
 	}
 	if( 0 == nInsDataLen ){
-		ReplaceData_CEditView3(sDelRange, NULL, NULL, bRedraw, pcOpeBlk, opeSeq, NULL);
+		ReplaceData_CEditView3(sDelRange, NULL, NULL, bRedraw, pcOpeBlk, opeSeq, NULL, bFastMode, psDelRangeLogicFast);
 	}else{
 		COpeLineData insData;
 		StringToOpeLineData(pInsData, nInsDataLen, insData, opeSeq);
-		ReplaceData_CEditView3(sDelRange, NULL, &insData, bRedraw, pcOpeBlk, opeSeq, NULL);
+		ReplaceData_CEditView3(sDelRange, NULL, &insData, bRedraw, pcOpeBlk, opeSeq, NULL, bFastMode, psDelRangeLogicFast);
 	}
 }
 
@@ -696,12 +704,15 @@ void CEditView::ReplaceData_CEditView2(
 	const wchar_t*		pInsData,			// 挿入するデータ
 	CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 	bool				bRedraw,
-	COpeBlk*			pcOpeBlk
+	COpeBlk*			pcOpeBlk,
+	bool				bFastMode
 )
 {
 	CLayoutRange sDelRangeLayout;
-	this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
-	ReplaceData_CEditView(sDelRangeLayout,pInsData,nInsDataLen,bRedraw,pcOpeBlk);
+	if( !bFastMode ){
+		this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
+	}
+	ReplaceData_CEditView(sDelRangeLayout,pInsData,nInsDataLen,bRedraw,pcOpeBlk,bFastMode,&sDelRange);
 }
 
 
@@ -717,11 +728,15 @@ void CEditView::ReplaceData_CEditView3(
 	bool			bRedraw,
 	COpeBlk*		pcOpeBlk,
 	int				nDelSeq,
-	int*			pnInsSeq
+	int*			pnInsSeq,
+	bool			bFastMode,			//!< [in] CDocLineMgrを更新しない,行末チェックを省略する。bRedraw==falseの必要あり
+	const CLogicRange*	psDelRangeLogicFast
 )
 {
+	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeのときは bReadraw == false
 	bool bLineModifiedChange;
 
+	bool bDelRangeUpdate = false;
 	{
 		//	May. 29, 2000 genta
 		//	From Here
@@ -731,7 +746,10 @@ void CEditView::ReplaceData_CEditView3(
 		//	先頭
 		const CLayout*	pcLayout;
 		CLogicInt		len;
-		const wchar_t*	line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
+		const wchar_t*	line = NULL;
+		if( !bFastMode ){
+			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
+		}
 		bLineModifiedChange = (line)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef(), GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()): true;
 		if( line ){
 			CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
@@ -753,16 +771,20 @@ void CEditView::ReplaceData_CEditView3(
 					sDelRange.GetFromPointer()->y++;
 					sDelRange.SetFromX(CLayoutInt(0));
 				}
+				bDelRangeUpdate = true;
 			}
 		}
 
 		//	末尾
-		line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetTo().GetY2(), &len, &pcLayout );
-		if( line ){
-			CLayoutInt p = LineIndexToColumn( pcLayout, len );
+		if( !bFastMode ){
+			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetTo().GetY2(), &len, &pcLayout );
+			if( line ){
+				CLayoutInt p = LineIndexToColumn( pcLayout, len );
 
-			if( sDelRange.GetTo().x > p ){
-				sDelRange.SetToX( p );
+				if( sDelRange.GetTo().x > p ){
+					sDelRange.SetToX( p );
+					bDelRangeUpdate = true;
+				}
 			}
 		}
 		//	To Here
@@ -770,10 +792,14 @@ void CEditView::ReplaceData_CEditView3(
 
 	//削除範囲ロジック単位 sDelRange -> sDelRangeLogic
 	CLogicRange sDelRangeLogic;
-	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		sDelRange,
-		&sDelRangeLogic
-	);
+	if( !bDelRangeUpdate && psDelRangeLogicFast ){
+		sDelRangeLogic = *psDelRangeLogicFast;
+	}else{
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+			sDelRange,
+			&sDelRangeLogic
+		);
+	}
 
 
 	CLogicPoint		ptCaretPos_PHY_Old;
@@ -812,13 +838,21 @@ void CEditView::ReplaceData_CEditView3(
 
 	/* 文字列置換 */
 	LayoutReplaceArg LRArg;
-	LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
-	LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] 削除されたデータ
-	LRArg.pInsData     = pInsData;		//!< 挿入するデータ
-	LRArg.nDelSeq      = nDelSeq;
-	m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr(
-		&LRArg
-	);
+	DocLineReplaceArg DLRArg;
+	if( bFastMode ){
+		DLRArg.sDelRange = sDelRangeLogic;
+		DLRArg.pcmemDeleted = pcMemDeleted;
+		DLRArg.pInsData = pInsData;
+		DLRArg.nDelSeq = nDelSeq;
+		// DLRArg.ptNewPos;
+		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData( &DLRArg );
+	}else{
+		LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
+		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] 削除されたデータ
+		LRArg.pInsData     = pInsData;		//!< 挿入するデータ
+		LRArg.nDelSeq      = nDelSeq;	//!< 挿入するデータの長さ
+		m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr( &LRArg );
+	}
 
 	//	Jan. 30, 2001 genta
 	//	再描画の時点でファイル更新フラグが適切になっていないといけないので
@@ -898,22 +932,35 @@ void CEditView::ReplaceData_CEditView3(
 	}
 
 	if( pcOpeBlk ){
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcReplaceOpe->m_ptCaretPos_PHY_After);
-		pcReplaceOpe->m_nOrgInsSeq = LRArg.nInsSeq;
+		if( bFastMode ){
+			pcReplaceOpe->m_ptCaretPos_PHY_After = DLRArg.ptNewPos;
+			pcReplaceOpe->m_nOrgInsSeq = DLRArg.nInsSeq;
+		}else{
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcReplaceOpe->m_ptCaretPos_PHY_After);
+			pcReplaceOpe->m_nOrgInsSeq = LRArg.nInsSeq;
+		}
 		/* 操作の追加 */
 		pcOpeBlk->AppendOpe( pcReplaceOpe );
 	}
 
 	// 挿入直後位置へカーソルを移動
-	GetCaret().MoveCursor(
-		LRArg.ptLayoutNew,	// 挿入された部分の次の位置
-		bRedraw
-	);
-	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
+	if( bFastMode ){
+		GetCaret().MoveCursorFastMode(DLRArg.ptNewPos);
+	}else{
+		GetCaret().MoveCursor(
+			LRArg.ptLayoutNew,	// 挿入された部分の次の位置
+			bRedraw
+		);
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
+	}
 
 // 2013.06.29 CMoveCaretOpeは不要。ReplaceOpeのみにする
 	if( pnInsSeq ){
-		*pnInsSeq = LRArg.nInsSeq;
+		if( bFastMode ){
+			*pnInsSeq = DLRArg.nInsSeq;
+		}else{
+			*pnInsSeq = LRArg.nInsSeq;
+		}
 	}
 
 	//	Jan. 30, 2001 genta

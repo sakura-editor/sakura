@@ -26,6 +26,8 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	CLayoutPoint	ptCaretPosXY = pcView->GetCaret().GetCaretLayoutPos();
 	CLayoutInt		nCaretPosX_Prev = pcView->GetCaret().m_nCaretPosX_Prev;
 
+	bool bReplace = false;
+
 	//改行コードを統一する
 	if(cEol.IsValid()){
 		CLogicInt	nLine = CLogicInt(0);
@@ -43,8 +45,10 @@ void CDocVisitor::SetAllEol(CEol cEol)
 					cEol.GetValue2(),
 					cEol.GetLen(),
 					false,
-					pcOpeBlk
+					pcOpeBlk,
+					true
 				);
+				bReplace = true;
 			}
 			nLine++;
 		}
@@ -52,6 +56,14 @@ void CDocVisitor::SetAllEol(CEol cEol)
 		CEditDoc::GetInstance(0)->m_cDocEditor.SetNewLineCode(cEol);
 	}
 
+	if( bReplace ){
+		m_pcDocRef->m_cLayoutMgr._DoLayout();
+		if( m_pcDocRef->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+			m_pcDocRef->m_cLayoutMgr.CalculateTextWidth();
+		}else{
+			m_pcDocRef->m_cLayoutMgr.ClearLayoutLineWidth();
+		}
+	}
 	//アンドゥ記録
 	if(pcView->m_cCommander.GetOpeBlk()){
 		if(pcView->m_cCommander.GetOpeBlk()->GetNum()>0){

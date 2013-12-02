@@ -155,6 +155,7 @@ CCaret::~CCaret()
 */
 CLayoutInt CCaret::MoveCursor(
 	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
+	const CLogicPoint*	pptWk_CaretPosLogic,	//!< [in] 移動先ロジック位置(高速モード)
 	bool			bScroll,			//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
 	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
 	bool			bUnderLineDoNotOFF,	//!< [in] アンダーラインを消去しない
@@ -183,19 +184,19 @@ CLayoutInt CCaret::MoveCursor(
 		}
 	}
 	// 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
-	GetAdjustCursorPos( &ptWk_CaretPos );
-	
+	if( NULL == pptWk_CaretPosLogic ){
+		GetAdjustCursorPos( &ptWk_CaretPos );
+		m_pEditDoc->m_cLayoutMgr.LayoutToLogic(
+			ptWk_CaretPos,
+			&m_ptCaretPos_Logic	//カーソル位置。ロジック単位。
+		);
+	}else{
+		// fastMode
+		SetCaretLogicPos(*pptWk_CaretPosLogic);
+	}
 	/* キャレット移動 */
 	SetCaretLayoutPos(ptWk_CaretPos);
 
-	/* カーソル位置変換
-	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	||  →物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	m_pEditDoc->m_cLayoutMgr.LayoutToLogic(
-		m_ptCaretPos_Layout,
-		&m_ptCaretPos_Logic	//カーソル位置。ロジック単位。
-	);
 
 	// カーソル行アンダーラインのOFF
 	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
@@ -375,6 +376,26 @@ CLayoutInt CCaret::MoveCursor(
 
 	return nScrollRowNum;
 
+}
+
+
+CLayoutInt CCaret::MoveCursor(
+	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
+	bool			bScroll,			//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
+	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
+	bool			bUnderLineDoNotOFF,	//!< [in] アンダーラインを消去しない
+	bool			bVertLineDoNotOFF	//!< [in] カーソル位置縦線を消去しない
+)
+{
+	return MoveCursor(ptWk_CaretPos, NULL, bScroll, nCaretMarginRate, bUnderLineDoNotOFF, bVertLineDoNotOFF);
+}
+
+
+CLayoutInt CCaret::MoveCursorFastMode(
+	const CLogicPoint&		ptWk_CaretPosLogic	//!< [in] 移動先ロジック位置
+)
+{
+	return MoveCursor(GetCaretLayoutPos(), &ptWk_CaretPosLogic, false);
 }
 
 /* マウス等による座標指定によるカーソル移動
