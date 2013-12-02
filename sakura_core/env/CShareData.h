@@ -39,6 +39,7 @@ class CShareData;
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
 struct DLLSHAREDATA;
+struct STypeConfig;
 
 /*!	@brief 共有データの管理
 
@@ -84,7 +85,9 @@ public:
 	int			GetMacroFilename( int idx, TCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
 	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 
-	
+	//タイプ別設定(コントロールプロセス専用)
+	void CreateTypeSettings();
+	std::vector<STypeConfig*>& GetTypeSettings();
 
 
 protected:
@@ -96,13 +99,14 @@ protected:
 	void InitKeyword(DLLSHAREDATA*);
 	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta 起動中止のため値を返す
 	void InitToolButtons(DLLSHAREDATA*);
-	void InitTypeConfigs(DLLSHAREDATA*);
+	void InitTypeConfigs(DLLSHAREDATA*, std::vector<STypeConfig*>&);
 	void InitPopupMenu(DLLSHAREDATA*);
 
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
+	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
 	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 
 };

@@ -26,6 +26,7 @@
 #include "CPropertyManager.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
+#include <memory>
 
 void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* pMenuDrawer )
 {
@@ -108,8 +109,9 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 	CPropTypes* pcPropTypes = new CPropTypes();
 	pcPropTypes->Create( G_AppInstance(), m_hwndOwner );
 
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(nSettingType);
-	pcPropTypes->SetTypeData( types );
+	std::auto_ptr<STypeConfig> pType(new STypeConfig());
+	CDocTypeManager().GetTypeConfig(nSettingType, *pType);
+	pcPropTypes->SetTypeData(*pType);
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
 
 	if( nPageNum != -1 ){
@@ -122,19 +124,29 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 		CShareDataLockCounter* pLock = NULL;
 		CShareDataLockCounter::WaitLock( pcPropTypes->GetHwndParent(), &pLock );
 
-		pcPropTypes->GetTypeData( types );
+		pcPropTypes->GetTypeData(*pType);
+
+		CDocTypeManager().SetTypeConfig(nSettingType, *pType);
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
+		// ::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			(WPARAM)0,
-			(LPARAM)PM_CHANGESETTING_ALL,
+			(WPARAM)nSettingType.GetIndex(),
+			(LPARAM)PM_CHANGESETTING_TYPE,
 			hWnd
 		);
+		if( pcPropTypes->GetChangeKeyWordSet() ){
+			CAppNodeGroupHandle(0).SendMessageToAllEditors(
+				WM_COMMAND,
+				(WPARAM)MAKELONG( F_REDRAW, 0 ),
+				(LPARAM)0,
+				hWnd
+			);
+		}
 
 		delete pLock;
 		bRet = true;

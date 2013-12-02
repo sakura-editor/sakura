@@ -31,11 +31,14 @@
 #include "CDlgTypeAscertain.h"
 #include "env/CDocTypeManager.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura.hh"
 #include "sakura_rc.h"
 
 // タイプ別設定インポート確認 CDlgTypeAscertain.cpp
 const DWORD p_helpids[] = {
+	IDC_RADIO_TYPE_TO,		HIDC_RADIO_TYPE_TO,		//タイプ別名
+	IDC_RADIO_TYPE_ADD,		HIDC_RADIO_TYPE_ADD,	//タイプ別追加
 	IDC_COMBO_COLORS,		HIDC_COMBO_COLORS,		//色指定
 	IDOK,					HIDOK_DTA,				//OK
 	IDCANCEL,				HIDCANCEL_DTA,			//キャンセル
@@ -72,6 +75,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		TCHAR	buff1[_MAX_PATH + 20];
 		wchar_t	buff2[_MAX_PATH + 20];
 
+		m_psi->bAddType = IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_TYPE_ADD );
 		m_psi->sColorFile = L"";
 		m_psi->nColorType = Combo_GetCurSel( GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ) ) - 1;
 		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
@@ -95,8 +99,11 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 void CDlgTypeAscertain::SetData( void )
 {
 	// タイプ名設定
-	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_TO   ), to_tchar(m_psi->sTypeNameTo.c_str()) );
+	std::wstring typeNameTo = m_psi->sTypeNameTo + L"(&B)";
+	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_RADIO_TYPE_TO    ), to_tchar(typeNameTo.c_str()) );
 	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_FILE ), to_tchar(m_psi->sTypeNameFile.c_str()) );
+
+	::CheckDlgButton( GetHwnd(), IDC_RADIO_TYPE_ADD, TRUE );
 
 	int		nIdx;
 	HWND	hwndCombo;
@@ -108,17 +115,18 @@ void CDlgTypeAscertain::SetData( void )
 	Combo_AddString( hwndCombo, L"--そのままインポート--" );
 
 	// エディタ内の設定
-	for (nIdx = 0; nIdx < MAX_TYPES; ++nIdx) {
-		const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
-		if (types.m_szTypeExts[0] != _T('\0')) {		/* タイプ属性：拡張子リスト */
+	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
+		const STypeConfigMini* type;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
+		if (type->m_szTypeExts[0] != _T('\0') ) {		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts (%ts)"),
-				types.m_szTypeName,	/* タイプ属性：名称 */
-				types.m_szTypeExts	/* タイプ属性：拡張子リスト */
+				type->m_szTypeName,	/* タイプ属性：名称 */
+				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}
 		else{
 			auto_sprintf( szText, _T("%ts"),
-				types.m_szTypeName	/* タイプ属性：拡称 */
+				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
 		::Combo_AddString( hwndCombo, szText );

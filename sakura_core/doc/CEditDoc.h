@@ -106,7 +106,7 @@ public:
 	//イベント
 	BOOL HandleCommand( EFunctionCode );
 	void OnChangeType();
-	void OnChangeSetting(bool bDoRayout = true);		// ビューに設定変更を反映させる
+	void OnChangeSetting(bool bDoLayout = true);		// ビューに設定変更を反映させる
 	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 
 	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行

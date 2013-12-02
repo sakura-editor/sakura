@@ -173,7 +173,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		pfiWork = &pShare->m_sHistory.m_fiMRUArr[i];
 		if( cProfile.IsReadingMode() ){
-			pfiWork->m_nType = CTypeConfig(-1);
+			pfiWork->m_nTypeId = -1;
 		}
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nViewTopLine"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewTopLine );
@@ -190,9 +190,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nType"), i );
-		int nType = pfiWork->m_nType.GetIndex();
-		cProfile.IOProfileData( pszSecName, szKeyName, nType );
-		pfiWork->m_nType = CTypeConfig(nType);
+		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nTypeId );
 		//お気に入り	//@@@ 2003.04.08 MIK
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].bFavorite"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bMRUArrFavorite[i] );
@@ -1259,24 +1257,68 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 */
 void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 {
+	DLLSHAREDATA* pShare = &GetDllShareData();
 	int		i;
 	WCHAR	szKey[32];
+	
+	int nCountOld = pShare->m_nTypesCount;
+	if( !cProfile.IOProfileData( L"Other", LTEXT("nTypesCount"), pShare->m_nTypesCount ) ){
+		pShare->m_nTypesCount = 30; // 旧バージョン読み込み用
+	}
+	SetValueLimit( pShare->m_nTypesCount, 1, MAX_TYPES );
+	// 注：コントロールプロセス専用
+	std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
+	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
+		delete types[i];
+		types[i] = NULL;
+	}
+	types.resize(pShare->m_nTypesCount);
+	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
+		types[i] = new STypeConfig();
+		*types[i] = *types[0]; // 基本をコピー
+		auto_sprintf( types[i]->m_szTypeName, _T("設定%d"), i );
+		types[i]->m_nIdx = i;
+		types[i]->m_id = i;
+	}
 
-	for( i = 0; i < MAX_TYPES; ++i ){
+	for( i = 0; i < pShare->m_nTypesCount; ++i ){
 		auto_sprintf( szKey, LTEXT("Types(%d)"), i );
-		ShareData_IO_Type_One( cProfile, i, szKey);
+		STypeConfig& type = *(types[i]);
+		ShareData_IO_Type_One(cProfile, type, szKey);
+		if( cProfile.IsReadingMode() ){
+			type.m_nIdx = i;
+			if( i == 0 ){
+				pShare->m_TypeBasis = type;
+			}
+			auto_strcpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
+			auto_strcpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
+			pShare->m_TypeMini[i].m_id = type.m_id;
+		}
+	}
+	if( cProfile.IsReadingMode() ){
+		// Id重複チェック、更新
+		for( i = 0; i < pShare->m_nTypesCount - 1; i++ ){
+			STypeConfig& type = *(types[i]);
+			for( int k = i + 1; k < pShare->m_nTypesCount; k++ ){
+				STypeConfig& type2 = *(types[k]);
+				if( type.m_id == type2.m_id ){
+					type2.m_id = ::GetTickCount() + k * 0x10000;
+					pShare->m_TypeMini[k].m_id = type2.m_id;
+				}
+			}
+		}
 	}
 }
 
 /*!
 @brief 共有データのSTypeConfigセクションの入出力(１個分)
 	@param[in,out]	cProfile	INIファイル入出力クラス
-	@param[in]		nType		STypeConfigセクション番号
+	@param[in]		type		タイプ別
 	@param[in]		pszSecName	セクション名
 
 	@date 2010/04/17 Uchi ShareData_IO_TypesOneから分離。
 */
-void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, const WCHAR* pszSecName)
+void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName)
 {
 	int		j;
 	WCHAR	szKeyName[64];
@@ -1284,7 +1326,6 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
 
 	// 2005.04.07 D.S.Koba
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nType));
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
 	auto_strcpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
@@ -1348,6 +1389,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 
 	cProfile.IOProfileData( pszSecName, LTEXT("szTypeName"), MakeStringBufferT(types.m_szTypeName) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szTypeExts"), MakeStringBufferT(types.m_szTypeExts) );
+	cProfile.IOProfileData( pszSecName, LTEXT("id"), types.m_id );
 	cProfile.IOProfileData( pszSecName, LTEXT("szTabViewString"), MakeStringBufferW(types.m_szTabViewString) );
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bTabArrow")	, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bInsSpace")			, types.m_bInsSpace );	// 2001.12.03 hor

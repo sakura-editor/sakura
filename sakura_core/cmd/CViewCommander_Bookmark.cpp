@@ -120,7 +120,7 @@ void CViewCommander::Command_JUMP( void )
 	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if( !GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){ //レイアウト単位
+	if( !m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF ){ //レイアウト単位
 		/*
 		  カーソル位置変換
 		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)

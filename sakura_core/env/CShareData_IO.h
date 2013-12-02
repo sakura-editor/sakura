@@ -65,7 +65,7 @@ protected:
 	static void ShareData_IO_Other( CDataProfile& );
 
 public:
-	static void ShareData_IO_Type_One( CDataProfile&, int, const WCHAR* );	// 2010/04/12 Uchi •ª—£
+	static void ShareData_IO_Type_One( CDataProfile&, STypeConfig& , const WCHAR* );	// 2010/04/12 Uchi •ª—£
 
 public:
 	static void IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );

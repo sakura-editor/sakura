@@ -771,9 +771,10 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
-	for( int i = 0; i < MAX_TYPES; i++ ){
-		const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(i));
-		cFileExt.AppendExt( types.m_szTypeName, types.m_szTypeExts );
+	for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
+		const STypeConfigMini* type;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &type);
+		cFileExt.AppendExt( type->m_szTypeName, type->m_szTypeExts );
 	}
 
 	//メンバの初期化

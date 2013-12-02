@@ -643,7 +643,7 @@
 #define IDC_CHECK_PLUGIN_OPTION         1577
 #define IDC_COMBO_PLUGIN_OPTION         1578
 #define IDC_BUTTON_INITIALIZE           1578
-#define IDC_STATIC_TYPE_TO              1579
+#define IDC_RADIO_TYPE_TO               1579
 #define IDC_STATIC_TYPE_FILE            1580
 #define IDC_COMBO_COLORS                1581
 #define IDC_BUTTON_MENU                 1582
@@ -727,6 +727,12 @@
 #define IDC_BUTTON_FOLDER_UP            1659
 #define IDC_CHECK_SUBMENU               1660
 #define IDC_COMBO_LANGUAGE              1661
+#define IDC_BUTTON_UP_TYPE              1662
+#define IDC_BUTTON_DOWN_TYPE            1663
+#define IDC_BUTTON_ADD_TYPE             1664
+#define IDC_BUTTON_DEL_TYPE             1665
+#define IDC_BUTTON_COPY_TYPE            1666
+#define IDC_RADIO_TYPE_ADD              1667
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -767,7 +773,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1662
+#define _APS_NEXT_CONTROL_VALUE         1668
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

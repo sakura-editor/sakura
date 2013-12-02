@@ -58,18 +58,19 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	// 前回のコード -> ePrevCode
 	EditInfo	fi;
 	ECodeType ePrevCode = CODE_NONE;
-	CTypeConfig nPrevType = CTypeConfig(-1);
+	int nPrevTypeId = -1;
 	if(CMRUFile().GetEditInfo( pLoadInfo->cFilePath, &fi )){
 		ePrevCode = fi.m_nCharCode;
-		nPrevType = fi.m_nType;
+		nPrevTypeId = fi.m_nTypeId;
 	}
 
 	// タイプ別設定
-	if( !pLoadInfo->nType.IsValid() ){
-		if( !nPrevType.IsValid() ){
+	if( !pLoadInfo->nType.IsValidType() ){
+		if( 0 < nPrevTypeId ){
+			pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfId(nPrevTypeId);
+		}
+		if( !pLoadInfo->nType.IsValidType() ){
 			pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
-		}else{
-			pLoadInfo->nType = nPrevType;
 		}
 	}
 
@@ -78,8 +79,9 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
 		if( fexist(pLoadInfo->cFilePath) ){
 			// デフォルト文字コード認識のために一時的に読み込み対象ファイルのファイルタイプを適用する
-			const STypeConfig& type = CDocTypeManager().GetTypeSetting(pLoadInfo->nType);
-			CCodeMediator cmediator( type.m_encoding );
+			const STypeConfigMini* type;
+			CDocTypeManager().GetTypeConfigMini(pLoadInfo->nType, &type);
+			CCodeMediator cmediator( type->m_encoding );
 			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
 		}
 		else{
@@ -89,8 +91,14 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	else if( CODE_NONE == pLoadInfo->eCharCode ){
 		pLoadInfo->eCharCode = ePrevCode;
 	}
-	if(CODE_NONE==pLoadInfo->eCharCode)
-		pLoadInfo->eCharCode = pLoadInfo->nType.GetTypeConfig()->m_encoding.m_eDefaultCodetype;	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
+	if(CODE_NONE==pLoadInfo->eCharCode){
+		const STypeConfigMini* type;
+		if( CDocTypeManager().GetTypeConfigMini(pLoadInfo->nType, &type) ){
+			pLoadInfo->eCharCode = type->m_encoding.m_eDefaultCodetype;	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
+		}else{
+			pLoadInfo->eCharCode = GetDllShareData().m_TypeBasis.m_encoding.m_eDefaultCodetype;
+		}
+	}
 
 	//食い違う場合
 	if(IsValidCodeType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){

@@ -98,6 +98,7 @@ public:
 
 public:
 	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+	STypeConfig			m_TypeConfig;
 };
 
 //共有ハンドル
@@ -143,7 +144,9 @@ struct DLLSHAREDATA{
 	// -- -- 保存対象 -- -- //
 	//設定
 	CommonSetting				m_Common;								// 共通設定
-	STypeConfig					m_Types[MAX_TYPES];						// タイプ別設定
+	int							m_nTypesCount;	// タイプ別設定数
+	STypeConfig					m_TypeBasis;							// タイプ別設定: 共通
+	STypeConfigMini				m_TypeMini[MAX_TYPES];					// タイプ別設定(mini)
 	PRINTSETTING				m_PrintSettingArr[MAX_PRINTSETTINGARR];	// 印刷ページ設定
 	int							m_nLockCount;	//!< ロックカウント
 	

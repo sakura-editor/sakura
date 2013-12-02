@@ -35,6 +35,7 @@
 #include "util/window.h"
 #include "env/CAppNodeManager.h"
 #include "extmodule/CUxTheme.h"
+#include "env/CDocTypeManager.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -90,7 +91,7 @@ enum EFuncListCol {
 };
 
 /*! ソート比較用プロシージャ */
-int CALLBACK CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
+int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
 {
 	CFuncInfo*		pcFuncInfo1;
 	CFuncInfo*		pcFuncInfo2;
@@ -152,7 +153,7 @@ int CALLBACK CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort 
 	return -1;
 }
 
-int CALLBACK CompareFunc_Desc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+int CALLBACK CDlgFuncList::CompareFunc_Desc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	return -1 * CompareFunc_Asc(lParam1, lParam2, lParamSort);
 }
@@ -305,10 +306,11 @@ HWND CDlgFuncList::DoModeless(
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
-	m_nSortCol = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortCol;
+	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+	m_nSortCol = m_type.m_nOutlineSortCol;
 	m_nSortColOld = m_nSortCol;
-	m_bSortDesc = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_bOutlineSortDesc;
-	m_nSortType = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortType;
+	m_bSortDesc = m_type.m_bOutlineSortDesc;
+	m_nSortType = m_type.m_nOutlineSortType;
 
 	// 2007.04.18 genta : 「フォーカスを移す」と「自動的に閉じる」がチェックされている場合に
 	// ダブルクリックを行うと，trueのまま残ってしまうので，ウィンドウを開いたときにリセットする．
@@ -675,10 +677,10 @@ void CDlgFuncList::SetData()
 	if( nDocType != m_nDocType ){
 		// 以前とはドキュメントタイプが変わったので初期化する
 		m_nDocType = nDocType;
-		m_nSortCol = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortCol;
+		m_nSortCol = m_type.m_nOutlineSortCol;
 		m_nSortColOld = m_nSortCol;
-		m_bSortDesc = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_bOutlineSortDesc;
-		m_nSortType = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortType;
+		m_bSortDesc = m_type.m_bOutlineSortDesc;
+		m_nSortType = m_type.m_nOutlineSortType;
 	}
 	if( m_nViewType == VIEWTYPE_TREE ){
 		HWND hWnd_Combo_Sort = ::GetDlgItem( GetHwnd(), IDC_COMBO_nSortType );
@@ -1562,7 +1564,15 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 
 	if( !m_bInChangeLayout ){	// ChangeLayout() 処理中は設定変更しない
+		bool bType = (ProfDockSet() != 0);
+		if( bType ){
+			CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		}
 		ProfDockDisp() = TRUE;
+		if( bType ){
+			SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+
+		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
 			HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
@@ -1717,6 +1727,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			CEditView* pcEditView=(CEditView*)m_lParam;
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1);
+			CDocTypeManager().GetTypeConfig(pcEditView->GetDocument()->m_cDocType.GetDocumentType(), m_type);
 			SetData();
 		}else
 		if(m_nViewType == VIEWTYPE_TREE){
@@ -1795,12 +1806,18 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 		case LVN_COLUMNCLICK:
 //			MYTRACE( _T("LVN_COLUMNCLICK\n") );
 			m_nSortCol =  pnlv->iSubItem;
-			pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortCol = m_nSortCol;
 			if( m_nSortCol == m_nSortColOld ){
 				m_bSortDesc = !m_bSortDesc;
 			}
 			m_nSortColOld = m_nSortCol;
-			pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_bOutlineSortDesc = m_bSortDesc;
+			{
+				STypeConfig* type = new STypeConfig();
+				CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), *type );
+				type->m_nOutlineSortCol = m_nSortCol;
+				type->m_bOutlineSortDesc = m_bSortDesc;
+				SetTypeConfig( CTypeConfig(m_nDocType), *type );
+				delete type;
+			}
 			//	Apr. 23, 2005 genta 関数として独立させた
 			SortListView( hwndList, m_nSortCol );
 			return TRUE;
@@ -1834,7 +1851,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 					break;
 				case CDDS_ITEMPREPAINT:
 					{	// 選択アイテムを反転表示にする
-						STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+						const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 						COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 						COLORREF clrTextBk = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 						if( hwndList == pnmh->hwndFrom ){
@@ -2036,7 +2053,14 @@ BOOL CDlgFuncList::OnDestroy( void )
 	// 明示的にアウトライン画面を閉じたときだけアウトライン表示フラグを OFF にする
 	// フローティングでアプリ終了時やタブモードで裏にいる場合は ::IsWindowVisible( hwndEdit ) が FALSE を返す
 	if( hwndEdit && ::IsWindowVisible( hwndEdit ) && !m_bInChangeLayout ){	// ChangeLayout() 処理中は設定変更しない
+		bool bType = (ProfDockSet() != 0);
+		if( bType ){
+			CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		}
 		ProfDockDisp() = FALSE;
+		if( bType ){
+			SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
@@ -2063,7 +2087,11 @@ BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 		if( m_nSortType != nSelect )
 		{
 			m_nSortType = nSelect;
-			pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortType = m_nSortType;
+			STypeConfig* type = new STypeConfig();
+			CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), *type );
+			type->m_nOutlineSortType = m_nSortType;
+			SetTypeConfig( CTypeConfig(m_nDocType), *type );
+			delete type;
 			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
 		}
 		return TRUE;
@@ -2180,6 +2208,8 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 */
 void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
+	CEditView* pcEditView = (CEditView*)m_lParam;
+	CDocTypeManager().GetTypeConfig(pcEditView->GetDocument()->m_cDocType.GetDocumentType(), m_type);
 	SyncColor();
 
 	m_nOutlineType = nOutLineType;
@@ -2206,7 +2236,7 @@ void CDlgFuncList::SyncColor( void )
 #ifdef DEFINE_SYNCCOLOR
 	// テキスト色・背景色をビューと同色にする
 	CEditView* pcEditView = (CEditView*)m_lParam;
-	STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
@@ -2526,11 +2556,18 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		// 移動後の配置情報を記憶する
 		GetWindowRect( GetHwnd(), &rc );
+		bool bType = (ProfDockSet() != 0);
+		if( bType ){
+			CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		}
 		switch( GetDockSide() ){
 		case DOCKSIDE_LEFT:		ProfDockLeft() = rc.right - rc.left;	break;
 		case DOCKSIDE_TOP:		ProfDockTop() = rc.bottom - rc.top;		break;
 		case DOCKSIDE_RIGHT:	ProfDockRight() = rc.right - rc.left;	break;
 		case DOCKSIDE_BOTTOM:	ProfDockBottom() = rc.bottom - rc.top;	break;
+		}
+		if( bType ){
+			SetTypeConfig(CTypeConfig(m_nDocType), m_type);
 		}
 		return 1L;
 	}
@@ -2744,6 +2781,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 {
 	// メニューを作成する
 	CEditView* pcEditView = &CEditDoc::GetInstance(0)->m_pcEditWnd->GetActiveView();
+	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 	EDockSide eDockSide = ProfDockSide();	// 設定上の配置
 	UINT uFlags = MF_BYPOSITION | MF_STRING;
 	HMENU hMenu = ::CreatePopupMenu();
@@ -2838,15 +2876,18 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 					case DOCKSIDE_BOTTOM:	CommonSet().m_cyOutlineDockBottom = rc.bottom - rc.top;	break;
 				}
 			}
-			for( int i = 0; i < MAX_TYPES; i++ ){
-				STypeConfig& type = CDocTypeManager().GetTypeSetting( CTypeConfig(i) );
-				type.m_bOutlineDockDisp = CommonSet().m_bOutlineDockDisp;
-				type.m_eOutlineDockSide = CommonSet().m_eOutlineDockSide;
-				type.m_cxOutlineDockLeft = CommonSet().m_cxOutlineDockLeft;
-				type.m_cyOutlineDockTop = CommonSet().m_cyOutlineDockTop;
-				type.m_cxOutlineDockRight = CommonSet().m_cxOutlineDockRight;
-				type.m_cyOutlineDockBottom = CommonSet().m_cyOutlineDockBottom;
+			STypeConfig* type = new STypeConfig();
+			for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
+				CDocTypeManager().GetTypeConfig( CTypeConfig(i), *type );
+				type->m_bOutlineDockDisp = CommonSet().m_bOutlineDockDisp;
+				type->m_eOutlineDockSide = CommonSet().m_eOutlineDockSide;
+				type->m_cxOutlineDockLeft = CommonSet().m_cxOutlineDockLeft;
+				type->m_cyOutlineDockTop = CommonSet().m_cyOutlineDockTop;
+				type->m_cxOutlineDockRight = CommonSet().m_cxOutlineDockRight;
+				type->m_cyOutlineDockBottom = CommonSet().m_cyOutlineDockBottom;
+				CDocTypeManager().SetTypeConfig( CTypeConfig(i), *type );
 			}
+			delete type;
 			ChangeLayout( OUTLINE_LAYOUT_FOREGROUND );	// 自分自身への強制変更
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );	// 他ウィンドウにドッキング配置変更を通知する
 		}
@@ -2864,6 +2905,10 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		RECT rc;
 		GetDockSpaceRect( &rc );
 		eDockSide = EDockSide(nId - 100);	// 新しいドッキングモード
+		bool bType = (ProfDockSet() != 0);
+		if( bType ){
+			CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		}
 		if( eDockSide > DOCKSIDE_FLOAT ){
 			switch( eDockSide ){
 			case DOCKSIDE_LEFT:		pnWidth = &ProfDockLeft();		break;
@@ -2887,6 +2932,9 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		// ドッキング配置変更
 		ProfDockDisp() = GetHwnd()? TRUE: FALSE;
 		ProfDockSide() = eDockSide;	// 新しいドッキングモードを適用
+		if( bType ){
+			SetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		}
 		ChangeLayout( OUTLINE_LAYOUT_FOREGROUND );	// 自分自身への強制変更
 		if( ProfDockSync() ){
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );	// 他ウィンドウにドッキング配置変更を通知する
@@ -2926,6 +2974,8 @@ bool CDlgFuncList::ChangeLayout( int nId )
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
 	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	CDocTypeManager().GetTypeConfig(pDoc->m_cDocType.GetDocumentType(), m_type);
+
 	BOOL bDockDisp = ProfDockDisp();
 	EDockSide eDockSideNew = ProfDockSide();
 
@@ -3042,6 +3092,11 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 BOOL CDlgFuncList::PostOutlineNotifyToAllEditors( WPARAM wParam, LPARAM lParam )
 {
 	return CAppNodeGroupHandle(0).PostMessageToAllEditors( MYWM_OUTLINE_NOTIFY, (WPARAM)wParam, (LPARAM)lParam, GetHwnd() );
+}
+
+void CDlgFuncList::SetTypeConfig( CTypeConfig docType, const STypeConfig& type )
+{
+	CDocTypeManager().SetTypeConfig(docType, type);
 }
 
 /** コンテキストメニュー処理
@@ -3234,6 +3289,10 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 				EDockSide eDockSide = GetDropRect( ptDrag, pt, &rc, GetKeyState_Control() );
 				CGraphics::DrawDropRect( NULL, sizeClear, &rcDragLast, sizeLast );
 
+				bool bType = (ProfDockSet() != 0);
+				if( bType ){
+					CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+				}
 				ProfDockDisp() = GetHwnd()? TRUE: FALSE;
 				ProfDockSide() = eDockSide;	// 新しいドッキングモードを適用
 				switch( eDockSide ){
@@ -3241,6 +3300,9 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 				case DOCKSIDE_TOP:		ProfDockTop() = rc.bottom - rc.top;		break;
 				case DOCKSIDE_RIGHT:	ProfDockRight() = rc.right - rc.left;	break;
 				case DOCKSIDE_BOTTOM:	ProfDockBottom() = rc.bottom - rc.top;	break;
+				}
+				if( bType ){
+					SetTypeConfig(CTypeConfig(m_nDocType), m_type);
 				}
 				ChangeLayout( OUTLINE_LAYOUT_FOREGROUND );	// 自分自身への強制変更
 				if( !IsDocking() ){

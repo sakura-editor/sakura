@@ -43,14 +43,16 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }
 
+protected:
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
+
 	CommonSetting_OutLine& CommonSet(void){ return m_pShareData->m_Common.m_sOutline; }
-	STypeConfig& TypeSet(void){ return CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute(); }
+	STypeConfig& TypeSet(void){ return m_type; }
 	int& ProfDockSet() { return CommonSet().m_nOutlineDockSet; }
 	BOOL& ProfDockSync() { return CommonSet().m_bOutlineDockSync; }
 	BOOL& ProfDockDisp() { return (ProfDockSet() == 0)? CommonSet().m_bOutlineDockDisp: TypeSet().m_bOutlineDockDisp; }
@@ -59,7 +61,9 @@ public:
 	int& ProfDockTop() { return (ProfDockSet() == 0)? CommonSet().m_cyOutlineDockTop: TypeSet().m_cyOutlineDockTop; }
 	int& ProfDockRight() { return (ProfDockSet() == 0)? CommonSet().m_cxOutlineDockRight: TypeSet().m_cxOutlineDockRight; }
 	int& ProfDockBottom() { return (ProfDockSet() == 0)? CommonSet().m_cyOutlineDockBottom: TypeSet().m_cyOutlineDockBottom; }
+	void SetTypeConfig( CTypeConfig, const STypeConfig& );
 
+public:
 	/*! 現在の種別と同じなら
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nOutlineType; }
@@ -69,6 +73,8 @@ public:
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
 	void SyncColor( void );
 	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
+
+protected:
 	bool m_bInChangeLayout;
 
 	CFuncInfoArr*	m_pcFuncInfoArr;	/* 関数情報配列 */
@@ -79,9 +85,10 @@ public:
 	bool			m_bSortDesc;		//!< 降順
 	int				m_nDocType;			/* ドキュメントの種類 */
 	int				m_nOutlineType;		/* アウトライン解析の種別 */
-	int				m_nListType;		/* 一覧の種類 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
 	bool			m_bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
+public:
+	int				m_nListType;		/* 一覧の種類 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
@@ -115,6 +122,8 @@ protected:
 
 	//	Apr. 23, 2005 genta リストビューのソートを関数として独立させた
 	void SortListView(HWND hwndList, int sortcol);
+	static int CALLBACK CompareFunc_Asc( LPARAM, LPARAM, LPARAM );
+	static int CALLBACK CompareFunc_Desc( LPARAM, LPARAM, LPARAM );
 
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
@@ -166,6 +175,8 @@ private:
 	bool		m_bHovering;
 	int			m_nHilightedBtn;
 	int			m_nCapturingBtn;
+	
+	STypeConfig m_type;
 
 	static LPDLGTEMPLATE m_pDlgTemplate;
 	static DWORD m_dwDlgTmpSize;

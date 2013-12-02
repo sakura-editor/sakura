@@ -741,7 +741,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int cou
 		// åªç›ÇÃÉ^ÉCÉvï ÇÃ1î‘ñ⁄ÇÃägí£éqÇîqéÿ
 		TCHAR szExts[MAX_TYPES_EXTS];
 		TCHAR* pszExt = szExts;
-		auto_strcpy( szExts, GetDocument()->m_cDocType.GetDocumentAttribute().m_szTypeExts );
+		auto_strcpy( szExts, m_pCommanderView->m_pTypeData->m_szTypeExts );
 		if( szExts[0] != '\0' ){
 			// strtok íçà”
 			pszExt = _tcstok( szExts, _T(" ;,") );

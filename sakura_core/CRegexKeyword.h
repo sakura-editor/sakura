@@ -73,6 +73,7 @@ public:
 	//! 書式(囲み)チェック
 	static BOOL RegexKeyCheckSyntax( const wchar_t *s );
 
+	static DWORD GetNewMagicNumber();
 
 
 protected:
@@ -88,7 +89,8 @@ public:
 
 private:
 	const STypeConfig*	m_pTypes;				//!< タイプ設定へのポインタ(呼び出し側が持っているもの)
-	int				m_nCompiledMagicNumber;		//!< コンパイル済みか？
+	int				m_nTypeId;					//!< タイプ設定ID
+	DWORD			m_nCompiledMagicNumber;		//!< コンパイル済みか？
 	int				m_nRegexKeyCount;			//!< 現在のキーワード数
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
 #ifdef USE_PARENT

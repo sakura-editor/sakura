@@ -105,6 +105,7 @@ public:
 	// デフォルト拡張子の取得
 	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
 	const wchar_t* GetOriginExtension()	{ return L"ini"; }
+	bool IsAddType(){ return m_bAddType; }
 
 private:
 	// インターフェース用
@@ -116,6 +117,7 @@ private:
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nColorType;
 	wstring 		m_sColorFile;
+	bool			m_bAddType;
 	CDataProfile	m_cProfile;
 };
 

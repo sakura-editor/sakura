@@ -876,12 +876,19 @@
 #define HIDC_TL_BUTTON_INIT		12707	//初期化
 #define HIDC_TL_CHECK_RMENU		12708	//右クリックメニューに追加
 #define HIDC_TL_CHECK_DBLCLICK	12709	//ダブルクリックで開く
+#define HIDC_BUTTON_UP_TYPE		12710	//↑
+#define HIDC_BUTTON_DOWN_TYPE	12711	//↓
+#define HIDC_BUTTON_ADD_TYPE	12712	//追加
+#define HIDC_BUTTON_DEL_TYPE	12713	//削除
+#define HIDC_BUTTON_COPY_TYPE	12714	//複製
 
 //タイプ別設定インポート確認
 #define HIDC_COMBO_COLORS		12720	//色指定
 #define HIDOK_DTA				12721	//OK
 #define HIDCANCEL_DTA			12722	//キャンセル
 #define HIDC_DTA_BUTTON_HELP	12723	//ヘルプ
+#define HIDC_RADIO_TYPE_TO      12724	//タイプ別名
+#define HIDC_RADIO_TYPE_ADD     12725	//タイプ別追加
 
 //ジャンプ
 #define HIDC_JUMP_BUTTON_JUMP		12800	//ジャンプ

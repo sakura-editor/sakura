@@ -65,7 +65,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//改行コードが混在しているかどうか判定
 	bool bTmpResult = false;
-	if( pcDoc->m_cDocType.GetDocumentType()->m_bChkEnterAtEnd ){
+	if( pcDoc->m_cDocType.GetDocumentAttribute().m_bChkEnterAtEnd ){
 		bTmpResult = _CheckSavingEolcode(
 			pcDoc->m_cDocLineMgr, pSaveInfo->cEol
 		);

@@ -598,7 +598,7 @@ void CViewCommander::Command_GOLINETOP(
 
 		nPosY_Layout = ptCaretPos.y - 1;
 		const CLayout*	pcLayout;
-		bool			bZenSpace = GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
+		bool			bZenSpace = m_pCommanderView->m_pTypeData->m_bAutoIndent_ZENSPACE;
 		
 		CLogicInt		nLineLen;
 		do {

@@ -38,13 +38,13 @@ public:
 	}
 	CTypeConfig GetDocumentTypeOfPath( const TCHAR* pszFilePath );	/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfExt( const TCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
+	CTypeConfig GetDocumentTypeOfId( int id );
 
-	STypeConfig& GetTypeSetting(CTypeConfig cDocumentType)
-	{
-		int n = cDocumentType.GetIndex();
-		assert(n>=0 && n<_countof(m_pShareData->m_Types));
-		return m_pShareData->m_Types[n];
-	}
+	bool GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type);
+	bool SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig& type);
+	bool GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type);
+	bool AddTypeConfig(CTypeConfig cDocumentType);
+	bool DelTypeConfig(CTypeConfig cDocumentType);
 
 private:
 	DLLSHAREDATA* m_pShareData;

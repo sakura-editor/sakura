@@ -85,6 +85,7 @@ CRegexKeyword::CRegexKeyword(LPCTSTR regexp_dll )
 
 	m_pTypes    = NULL;
 	m_nTypeIndex = -1;
+	m_nTypeId = -1;
 
 	RegexKeyInit();
 }
@@ -126,7 +127,8 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 
 	MYDBGMSG("RegexKeyInit")
 	m_nTypeIndex = -1;
-	m_nCompiledMagicNumber = 0;
+	m_nTypeId = -1;
+	m_nCompiledMagicNumber = 1;
 	m_bUseRegexKeyword = false;
 	m_nRegexKeyCount = 0;
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
@@ -178,7 +180,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 		return FALSE;
 	}
 
-	if( m_pTypes               == pTypesPtr
+	if( m_nTypeId              == pTypesPtr->m_id
 	 && m_nCompiledMagicNumber == pTypesPtr->m_nRegexKeyMagicNumber
 	/* && m_bUseRegexKeyword     == pTypesPtr->m_bUseRegexKeyword */ )
 	{
@@ -239,7 +241,8 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	}
 
 	m_nTypeIndex = m_pTypes->m_nIdx;
-	m_nCompiledMagicNumber = m_pTypes->m_nRegexKeyMagicNumber - 1;	//Not Compiled.
+	m_nTypeId = m_pTypes->m_id;
+	m_nCompiledMagicNumber = 1;	//Not Compiled.
 	m_bUseRegexKeyword  = m_pTypes->m_bUseRegexKeyword;
 	if( !m_bUseRegexKeyword ) return FALSE;
 
@@ -506,5 +509,11 @@ BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
 }
 
 //@@@ 2001.11.17 add end MIK
+
+/*static*/
+DWORD CRegexKeyword::GetNewMagicNumber()
+{
+	return ::GetTickCount();
+}
 
 

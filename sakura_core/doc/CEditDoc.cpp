@@ -109,11 +109,12 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
-	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	CLayoutInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
-		ref.m_nMaxLineKetas = MAXLINEKETAS;
+		nMaxLineKetas = MAXLINEKETAS;
 	}
-	m_cLayoutMgr.SetLayoutInfo( true, ref );
+	m_cLayoutMgr.SetLayoutInfo( true, ref, ref.m_nTabSpace, nMaxLineKetas );
 
 	//	自動保存の設定	//	Aug, 21, 2000 genta
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
@@ -176,11 +177,12 @@ void CEditDoc::Clear()
 	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
 
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
-	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	CLayoutInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
-		ref.m_nMaxLineKetas = MAXLINEKETAS;
+		nMaxLineKetas = MAXLINEKETAS;
 	}
-	m_cLayoutMgr.SetLayoutInfo( true, ref );
+	m_cLayoutMgr.SetLayoutInfo( true, ref, ref.m_nTabSpace, nMaxLineKetas );
 }
 
 /* 既存データのクリア */
@@ -207,7 +209,7 @@ void CEditDoc::InitDoc()
 	m_cDocEditor.SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
 	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
@@ -419,7 +421,7 @@ void CEditDoc::GetEditInfo(
 	//各種状態
 	pfi->m_bIsModified = m_cDocEditor.IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_cDocFile.GetCodeSet();				/* 文字コード種別 */
-	pfi->m_nType = m_cDocType.GetDocumentType();
+	pfi->m_nTypeId = m_cDocType.GetDocumentAttribute().m_id;
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
@@ -590,32 +592,34 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 */
 void CEditDoc::OnChangeType()
 {
+	/* 設定変更を反映させる */
+	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
+	m_blfCurTemp = false;
+	OnChangeSetting();
+
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
 	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
 		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
 			const STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
+			m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();
 		}
 	}
-	/* 設定変更を反映させる */
-	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
-	m_blfCurTemp = false;
-	OnChangeSetting();
 
 	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
 	RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnTypeChanged );
 }
 
 /*! ビューに設定変更を反映させる
-	@param [in] bDoRayout レイアウト情報の再作成
+	@param [in] bDoLayout レイアウト情報の再作成
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
 	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
 	@date 2013.04.22 novice レイアウト情報の再作成を設定できるようにした
 */
 void CEditDoc::OnChangeSetting(
-	bool	bDoRayout
+	bool	bDoLayout
 )
 {
 	int			i;
@@ -655,16 +659,21 @@ void CEditDoc::OnChangeSetting(
 	/* 共有データ構造体のアドレスを返す */
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
-	CLogicPointEx* posSaveAry;
+	CLogicPointEx* posSaveAry = NULL;
+
 	if( m_pcEditWnd->m_posSaveAry ){
-		posSaveAry = m_pcEditWnd->m_posSaveAry;
-		m_pcEditWnd->m_posSaveAry = NULL;
+		if( bDoLayout ){
+			posSaveAry = m_pcEditWnd->m_posSaveAry;
+			m_pcEditWnd->m_posSaveAry = NULL;
+		}
 	}else{
 		if( m_pcEditWnd->m_pPrintPreview ){
 			// 一時的に設定を戻す
 			SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_NEUTRAL );
 		}
-		posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+		if( bDoLayout ){
+			posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+		}
 	}
 
 	// 文書種別
@@ -688,8 +697,9 @@ void CEditDoc::OnChangeSetting(
 	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
 
-	/* レイアウト情報の作成 */
-	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+	CLayoutInt nMaxLineKetas = ref.m_nMaxLineKetas;
+	CLayoutInt nTabSpace = ref.m_nTabSpace;
 	{
 		// 2008.06.07 nasukoji	折り返し方法の追加に対応
 		// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
@@ -697,11 +707,13 @@ void CEditDoc::OnChangeSetting(
 			if( m_nTextWrapMethodCur == WRAP_SETTING_WIDTH
 				&& m_cLayoutMgr.GetMaxLineKetas() != ref.m_nMaxLineKetas ){
 				// 2013.05.29 折り返し幅が違うのでそのままにする
-			}else{
+			}else if( bDoLayout ){
 				m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
 			}
 		}
+	}
 
+	if( bDoLayout ){
 		// 一時設定適用中でなければ折り返し方法変更
 		if( !m_bTextWrapMethodCurTemp )
 			m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
@@ -711,21 +723,25 @@ void CEditDoc::OnChangeSetting(
 		// 上記以外：MAXLINEKETASを使用
 		switch( m_nTextWrapMethodCur ){
 		case WRAP_NO_TEXT_WRAP:
-			ref.m_nMaxLineKetas = MAXLINEKETAS;
+			nMaxLineKetas = MAXLINEKETAS;
 			break;
 		case WRAP_SETTING_WIDTH:
 			if( m_bTextWrapMethodCurTemp ){
 				// 2013.05.29 現在の一時適用の折り返し幅を使うように
-				ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();
+				nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();
 			}
 			break;
 		case WRAP_WINDOW_WIDTH:
-			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
+			nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
 			break;
 		}
+	}else{
+		// レイアウトを再構築しないので元の設定を維持
+		nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
+		nTabSpace = m_cLayoutMgr.GetTabSpace();	// 現在のタブ幅
 	}
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
-	m_cLayoutMgr.SetLayoutInfo( bDoRayout, ref );
+	m_cLayoutMgr.SetLayoutInfo( bDoLayout, ref, nTabSpace, nMaxLineKetas );
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
@@ -739,7 +755,9 @@ void CEditDoc::OnChangeSetting(
 	for( i = 0; i < viewCount; ++i ){
 		m_pcEditWnd->GetView(i).OnChangeSetting();
 	}
-	m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
+	if( posSaveAry ){
+		m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
+	}
 	for( i = 0; i < viewCount; i++ ){
 		m_pcEditWnd->GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 	}

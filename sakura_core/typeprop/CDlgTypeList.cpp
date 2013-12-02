@@ -16,15 +16,17 @@
 */
 #include "StdAfx.h"
 #include "types/CType.h" // use CDlgTypeList定義
-
+#include "window/CEditWnd.h"
 #include "typeprop/CDlgTypeList.h"
-#include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
+#include "env/CShareData.h"
 #include "env/CDocTypeManager.h"
 #include "util/shell.h"
+#include "util/window.h"
+#include "util/RegKey.h"
+#include <memory>
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "util/RegKey.h"
 
 typedef std::basic_string<TCHAR> tstring;
 
@@ -53,6 +55,10 @@ const DWORD p_helpids[] = {	//12700
 	IDC_BUTTON_IMPORT,		HIDC_TL_BUTTON_IMPORT,		//インポート
 	IDC_BUTTON_EXPORT,		HIDC_TL_BUTTON_EXPORT,		//エクスポート
 	IDC_BUTTON_INITIALIZE,	HIDC_TL_BUTTON_INIT,		//初期化
+	IDC_BUTTON_UP_TYPE,		HIDC_BUTTON_UP_TYPE,		//↑
+	IDC_BUTTON_DOWN_TYPE,	HIDC_BUTTON_DOWN_TYPE,		//↓
+	IDC_BUTTON_ADD_TYPE,	HIDC_BUTTON_ADD_TYPE,		//追加
+	IDC_BUTTON_DEL_TYPE,	HIDC_BUTTON_DEL_TYPE,		//削除
 	IDC_CHECK_EXT_RMENU,	HIDC_TL_CHECK_RMENU,		//右クリックメニューに追加
 	IDC_CHECK_EXT_DBLCLICK,	HIDC_TL_CHECK_DBLCLICK,		//ダブルクリックで開く
 //	IDC_STATIC,				-1,
@@ -128,6 +134,21 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDC_BUTTON_INITIALIZE:
 		InitializeType();
 		return TRUE;
+	case IDC_BUTTON_COPY_TYPE:
+		CopyType();
+		return TRUE;
+	case IDC_BUTTON_UP_TYPE:
+		UpType();
+		return TRUE;
+	case IDC_BUTTON_DOWN_TYPE:
+		DownType();
+		return TRUE;
+	case IDC_BUTTON_ADD_TYPE:
+		AddType();
+		return TRUE;
+	case IDC_BUTTON_DEL_TYPE:
+		DelType();
+		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -135,14 +156,30 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 }
 
 
+
+BOOL CDlgTypeList::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	switch( LOWORD( wParam ) )
+	{
+	case WA_ACTIVE:
+	case WA_CLICKACTIVE:
+		SetData(-1);
+		return TRUE;
+
+	case WA_INACTIVE:
+	default:
+		break;
+	}
+
+	/* 基底クラスメンバ */
+	return CDialog::OnActivate( wParam, lParam );
+}
+
+
 INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
-	HWND	hwndList;
 
 
-	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
-	int nIdx = List_GetCurSel( hwndList );
-	const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 	HWND hwndRMenu = GetDlgItem( GetHwnd(), IDC_CHECK_EXT_RMENU );
 	HWND hwndDblClick = GetDlgItem( GetHwnd(), IDC_CHECK_EXT_DBLCLICK );
 
@@ -150,19 +187,28 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 	switch( wMsg ){
 	case WM_COMMAND:
+		{
+		HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+		int nIdx = List_GetCurSel( hwndList );
+		const STypeConfigMini* type = NULL;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
 		if( LOWORD(wParam) == IDC_LIST_TYPES )
 		{
 			switch( HIWORD(wParam) )
 			{
 			case LBN_SELCHANGE:
-				if( types.m_szTypeExts[0] == '\0' ){
+				DlgItem_Enable( GetHwnd(), IDC_BUTTON_INITIALIZE, nIdx != 0 );
+				DlgItem_Enable( GetHwnd(), IDC_BUTTON_UP_TYPE, 1 < nIdx );
+				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DOWN_TYPE, nIdx != 0 && nIdx < GetDllShareData().m_nTypesCount - 1 );
+				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DEL_TYPE, nIdx != 0 );
+				if( type->m_szTypeExts[0] == '\0' ){
 					::EnableWindow( hwndRMenu, FALSE );
 					::EnableWindow( hwndDblClick, FALSE );
 				}else{
 					::EnableWindow( GetDlgItem( GetHwnd(), IDC_CHECK_EXT_RMENU ), TRUE );
 					if( !m_bRegistryChecked[ nIdx ] ){
-						TCHAR exts[_countof(types.m_szTypeExts)] = {0};
-						_tcscpy( exts, types.m_szTypeExts );
+						TCHAR exts[_countof(type->m_szTypeExts)] = {0};
+						_tcscpy( exts, type->m_szTypeExts );
 						static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 						TCHAR *ext = _tcstok( exts, pszSeps );
 
@@ -192,8 +238,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
 			}
-			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
-			_tcscpy( exts, types.m_szTypeExts );
+			TCHAR exts[_countof(type->m_szTypeExts)] = {0};
+			_tcscpy( exts, type->m_szTypeExts );
 			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 			TCHAR *ext = _tcstok( exts, pszSeps );
 			int nRet;
@@ -230,8 +276,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
 			}
-			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
-			_tcscpy( exts, types.m_szTypeExts );
+			TCHAR exts[_countof(type->m_szTypeExts)] = {0};
+			_tcscpy( exts, type->m_szTypeExts );
 			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 			TCHAR *ext = _tcstok( exts, pszSeps );
 			int nRet;
@@ -248,6 +294,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			return TRUE;
 		}
+		}
 	}
 	return result;
 }
@@ -255,6 +302,11 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 
 /* ダイアログデータの設定 */
 void CDlgTypeList::SetData( void )
+{
+	SetData(m_nSettingType.GetIndex());
+}
+
+void CDlgTypeList::SetData( int selIdx )
 {
 	int		nIdx;
 	TCHAR	szText[64 + MAX_TYPES_EXTS + 10];
@@ -264,17 +316,27 @@ void CDlgTypeList::SetData( void )
 	HFONT	hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
 	HFONT	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 
+	if( -1 == selIdx ){
+		selIdx = List_GetCurSel( hwndList );
+		if( -1 == selIdx ){
+			selIdx = 0;
+		}
+	}
+	if( GetDllShareData().m_nTypesCount <= selIdx ){
+		selIdx = GetDllShareData().m_nTypesCount - 1;
+	}
 	List_ResetContent( hwndList );	/* リストを空にする */
-	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		const STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
-		if( types.m_szTypeExts[0] != _T('\0') ){		/* タイプ属性：拡張子リスト */
+	for( nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx ){
+		const STypeConfigMini* type;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
+		if( type->m_szTypeExts[0] != _T('\0') ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
-				types.m_szTypeName,	/* タイプ属性：名称 */
-				types.m_szTypeExts	/* タイプ属性：拡張子リスト */
+				type->m_szTypeName,	/* タイプ属性：名称 */
+				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
 			auto_sprintf( szText, _T("%ts"),
-				types.m_szTypeName	/* タイプ属性：拡称 */
+				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
 		::List_AddString( hwndList, szText );
@@ -287,13 +349,23 @@ void CDlgTypeList::SetData( void )
 			nExtent = sizeExtent.cx;
 		}
 	}
-
+	for( nIdx; nIdx < MAX_TYPES; ++nIdx ){
+		m_bRegistryChecked[ nIdx ] = FALSE;
+		m_bExtRMenu[ nIdx ] = FALSE;
+		m_bExtDblClick[ nIdx ] = FALSE;
+	}
 	::SelectObject(hDC, hFontOld);
 	::ReleaseDC( hwndList, hDC );
 	List_SetHorizontalExtent( hwndList, nExtent + 8 );
-	List_SetCurSel( hwndList, m_nSettingType.GetIndex() );
+	if( GetDllShareData().m_nTypesCount <= selIdx ){
+		selIdx = GetDllShareData().m_nTypesCount - 1;
+	}
+	List_SetCurSel( hwndList, selIdx );
+
 	::SendMessageAny( GetHwnd(), WM_COMMAND, MAKEWPARAM(IDC_LIST_TYPES, LBN_SELCHANGE), 0 );
-	::EnableWindow( GetItemHwnd(IDC_BUTTON_TEMPCHANGE), m_bEnableTempChange );
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_TEMPCHANGE, m_bEnableTempChange );
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_COPY_TYPE, GetDllShareData().m_nTypesCount < MAX_TYPES );
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_ADD_TYPE, GetDllShareData().m_nTypesCount < MAX_TYPES );
 	return;
 }
 
@@ -304,7 +376,35 @@ LPVOID CDlgTypeList::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
+static void SendChangeSetting()
+{
+	CAppNodeGroupHandle(0).SendMessageToAllEditors(
+		MYWM_CHANGESETTING,
+		(WPARAM)0,
+		(LPARAM)PM_CHANGESETTING_ALL,
+		CEditWnd::getInstance()->GetHwnd()
+	);
+}
 
+static void SendChangeSettingType(int nType)
+{
+	CAppNodeGroupHandle(0).SendMessageToAllEditors(
+		MYWM_CHANGESETTING,
+		(WPARAM)nType,
+		(LPARAM)PM_CHANGESETTING_TYPE,
+		CEditWnd::getInstance()->GetHwnd()
+	);
+}
+
+static void SendChangeSettingType2(int nType)
+{
+	CAppNodeGroupHandle(0).SendMessageToAllEditors(
+		MYWM_CHANGESETTING,
+		(WPARAM)nType,
+		(LPARAM)PM_CHANGESETTING_TYPE2,
+		CEditWnd::getInstance()->GetHwnd()
+	);
+}
 
 // タイプ別設定インポート
 //		2010/4/12 Uchi
@@ -312,20 +412,42 @@ bool CDlgTypeList::Import()
 {
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int nIdx = List_GetCurSel( hwndList );
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+	STypeConfig type;
+	// ベースのデータは基本
+	CDocTypeManager().GetTypeConfig(CTypeConfig(0), type);
 
-	CImpExpType	cImpExpType( nIdx, types, hwndList );
+	CImpExpType	cImpExpType( nIdx, type, hwndList );
+	const STypeConfigMini* typeMini;
+	CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &typeMini);
+	int id = typeMini->m_id;
 
 	// インポート
-	cImpExpType.SetBaseName( to_wchar( types.m_szTypeName ) );
+	cImpExpType.SetBaseName( to_wchar( type.m_szTypeName ) );
 	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
 		// インポートをしていない
 		return false;
 	}
+	bool bAdd = cImpExpType.IsAddType();
+	if( bAdd ){
+		AddType();
+		nIdx = GetDllShareData().m_nTypesCount - 1;
+		type.m_nIdx = nIdx;
+	}else{
+		// UIを表示している間にずれているかもしれないのでindex再取得
+		nIdx = CDocTypeManager().GetDocumentTypeOfId(id).GetIndex();
+		if( -1 == nIdx ){
+			return false;
+		}
+		type.m_nIdx = nIdx;
+	}
+	// 適用
+	CDocTypeManager().SetTypeConfig(CTypeConfig(nIdx), type);
+	if( !bAdd ){
+		SendChangeSettingType(nIdx);
+	}
 
 	// リスト再初期化
-	SetData();
-	List_SetCurSel( hwndList, nIdx );
+	SetData(nIdx);
 
 	return true;
 }
@@ -336,7 +458,8 @@ bool CDlgTypeList::Export()
 {
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int nIdx = List_GetCurSel( hwndList );
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+	STypeConfig types;
+	CDocTypeManager().GetTypeConfig(CTypeConfig(nIdx), types);
 
 	CImpExpType	cImpExpType( nIdx, types, hwndList );
 
@@ -361,35 +484,206 @@ bool CDlgTypeList::InitializeType( void )
 		// 基本の場合には何もしない
 		return true;
 	}
-	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(iDocType));
+	const STypeConfigMini* typeMini;
+	CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini);
 	int			nRet;
-	if ( types.m_szTypeExts[0] != _T('\0') ) { 
+	if ( typeMini->m_szTypeExts[0] != _T('\0') ) { 
 		nRet = ::MYMESSAGEBOX(
 			GetHwnd(),
 			MB_YESNO | MB_ICONQUESTION,
 			GSTR_APPNAME,
 			_T("%ts を初期化します。 よろしいですか？"),
-			types.m_szTypeName );
+			typeMini->m_szTypeName );
 		if (nRet != IDYES) {
 			return false;
 		}
 	}
 
+	iDocType = CDocTypeManager().GetDocumentTypeOfId(typeMini->m_id).GetIndex();
+	if( -1 == iDocType ){
+		return false;
+	}
 //	_DefaultConfig(&types);		//規定値をコピー
-	types = CDocTypeManager().GetTypeSetting(CTypeConfig(0));	// 基本をコピー
+	STypeConfig type;
+	CDocTypeManager().GetTypeConfig(CTypeConfig(0), type); 	// 基本をコピー
 
-	types.m_nIdx = iDocType;
-	auto_sprintf( types.m_szTypeName, _T("設定%d"), iDocType+1 );
-	_tcscpy( types.m_szTypeExts, _T("") );
+	// 同じ名前にならないように数字をつける
+	int nNameNum = iDocType + 1;
+	bool bUpdate = true;
+	for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
+		if( bUpdate ){
+			auto_sprintf( type.m_szTypeName, _T("設定%d"), nNameNum );
+			nNameNum++;
+			bUpdate = false;
+		}
+		if( iDocType == i ){
+			continue;
+		}
+		const STypeConfigMini* typeMini2;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
+		if( auto_strcmp(typeMini2->m_szTypeName, type.m_szTypeName) == 0 ){
+			i = 0;
+			bUpdate = true;
+		}
+	}
+	_tcscpy( type.m_szTypeExts, _T("") );
+	type.m_nIdx = iDocType;
+	type.m_id = ::GetTickCount() + iDocType * 0x10000;
+
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), type);
+
+	SendChangeSettingType(iDocType);
 
 	// リスト再初期化
-	SetData();
-	List_SetCurSel( hwndList, iDocType );
+	SetData(iDocType);
 
-	InfoMessage( hwndDlg, _T("%ts を初期化しました。"), types.m_szTypeName );
+	InfoMessage( hwndDlg, _T("%ts を初期化しました。"), type.m_szTypeName );
 
 	return true;
 }
+
+bool CDlgTypeList::CopyType()
+{
+	int nNewTypeIndex = GetDllShareData().m_nTypesCount;
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_TYPES );
+	int iDocType = List_GetCurSel( hwndList );
+	STypeConfig type;
+	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), type);
+	// 名前に2等を付ける
+	int n = 1;
+	bool bUpdate = true;
+	for(int i = 0; i < nNewTypeIndex; i++){
+		if( bUpdate ){
+			TCHAR* p = NULL;
+			for(int k = (int)auto_strlen(type.m_szTypeName) - 1; 0 <= k; k--){
+				if( WCODE::Is09(type.m_szTypeName[k]) ){
+					p = &type.m_szTypeName[k];
+				}else{
+					break;
+				}
+			}
+			if( p ){
+				n = _ttoi(p) + 1;
+				*p = _T('\0');
+			}else{
+				n++;
+			}
+			TCHAR szNum[12];
+			auto_sprintf( szNum, _T("%d"), n );
+			auto_strcat( type.m_szTypeName, szNum );
+			bUpdate = false;
+		}
+		const STypeConfigMini* typeMini;
+		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini);
+		if( auto_strcmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
+			i = -1;
+			bUpdate = true;
+		}
+	}
+	if( !CDocTypeManager().AddTypeConfig(CTypeConfig(nNewTypeIndex)) ){
+		return false;
+	}
+	type.m_id = ::GetTickCount() + nNewTypeIndex * 0x10000;
+	type.m_nIdx = nNewTypeIndex;
+	CDocTypeManager().SetTypeConfig(CTypeConfig(nNewTypeIndex), type);
+	SetData(nNewTypeIndex);
+	return true;
+}
+
+bool CDlgTypeList::UpType()
+{
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int iDocType = List_GetCurSel( hwndList );
+	if (iDocType == 0 ) {
+		// 基本の場合には何もしない
+		return true;
+	}
+	std::auto_ptr<STypeConfig> type1(new STypeConfig());
+	std::auto_ptr<STypeConfig> type2(new STypeConfig());
+	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
+	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType - 1), *type2);
+	--(type1->m_nIdx);
+	++(type2->m_nIdx);
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), *type2);
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType - 1), *type1);
+	SendChangeSettingType2(iDocType);
+	SendChangeSettingType2(iDocType - 1);
+	SetData(iDocType - 1);
+	return true;
+}
+
+bool CDlgTypeList::DownType()
+{
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int iDocType = List_GetCurSel( hwndList );
+	if (iDocType == 0 || GetDllShareData().m_nTypesCount <= iDocType + 1 ) {
+		// 基本、最後の場合には何もしない
+		return true;
+	}
+	std::auto_ptr<STypeConfig> type1(new STypeConfig());
+	std::auto_ptr<STypeConfig> type2(new STypeConfig());
+	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
+	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType + 1), *type2);
+	++(type1->m_nIdx);
+	--(type2->m_nIdx);
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), *type2);
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType + 1), *type1);
+	SendChangeSettingType2(iDocType);
+	SendChangeSettingType2(iDocType + 1);
+	SetData(iDocType + 1);
+	return true;
+}
+
+bool CDlgTypeList::AddType()
+{
+	int nNewTypeIndex = GetDllShareData().m_nTypesCount;
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_TYPES );
+	if( !CDocTypeManager().AddTypeConfig(CTypeConfig(nNewTypeIndex)) ){
+		return false;
+	}
+	SetData(nNewTypeIndex);
+	return true;
+}
+
+bool CDlgTypeList::DelType()
+{
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int iDocType = List_GetCurSel( hwndList );
+	if (iDocType == 0) {
+		// 基本の場合には何もしない
+		return true;
+	}
+	const STypeConfigMini* typeMini;
+	if( !CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini) ){
+		// 謎のエラー
+		return false;
+	}
+	const STypeConfigMini type = *typeMini; // ダイアログを出している間に変更されるかもしれないのでコピーする
+	int nRet = ConfirmMessage( hwndDlg,
+		_T("%ts を削除します。 よろしいですか？"), type.m_szTypeName );
+	if (nRet != IDYES) {
+		return false;
+	}
+	// ダイアログを出している間にタイプ別リストが更新されたかもしれないのでidから再検索
+	CTypeConfig config = CDocTypeManager().GetDocumentTypeOfId(type.m_id);
+	if( !config.IsValidType() ){
+		return false;
+	}
+	iDocType = config.GetIndex();
+	CDocTypeManager().DelTypeConfig(config);
+	if( GetDllShareData().m_nTypesCount <= iDocType ){
+		iDocType = GetDllShareData().m_nTypesCount - 1;
+	}
+	SetData(iDocType);
+	SendChangeSetting();
+	return true;
+}
+
 
 /*! 再帰的レジストリコピー */
 int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath)

@@ -118,7 +118,6 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nLine; // 2006.04.10 fon
 
 
-	CTypeConfig nTypeNo = m_pcEditDoc->m_cDocType.GetDocumentType();
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
@@ -130,8 +129,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	if(m_pTypeData->m_bUseKeyHelpPrefix)
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
-	for(int i=0;i<CDocTypeManager().GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
-		if( CDocTypeManager().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_bUse ){
+	for(int i =0 ; i < m_pTypeData->m_nKeyHelpNum; i++){	//最大数：MAX_KEYHELP_FILE
+		if( m_pTypeData->m_KeyHelpArr[i].m_bUse ){
 			// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
 			CNativeW*	pcmemRefText;
 			int nSearchResult=m_cDicMgr.CDicMgr::Search(
@@ -139,7 +138,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				nCmpLen,
 				&pcmemRefKey,
 				&pcmemRefText,
-				CDocTypeManager().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath,
+				m_pTypeData->m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
 			if(nSearchResult){

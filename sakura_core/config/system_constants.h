@@ -460,12 +460,15 @@
 	Version 146:
 	Še‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰ž 2013.08.02
 
+	Version 147:
+	ƒ^ƒCƒv•ÊÝ’è‚Ì‹¤—Lƒf[ƒ^ŠO‚¾‚µ 2012.07.17 Moca
+
 	-- “‡‚³‚ê‚½‚Ì‚ÅŒ³‚É–ß‚·i1000`1023‚ªŽg—pÏ‚Ýj 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- ƒo[ƒWƒ‡ƒ“1000ˆÈ~‚ð–{‰Æ“‡‚Ü‚Å‚ÌŠÔAŽg‚í‚¹‚Ä‚­‚¾‚³‚¢B‚©‚È‚è•p”É‚É\¬‚ª•ÏX‚³‚ê‚é‚ÆŽv‚í‚ê‚é‚Ì‚ÅBby kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		146
+#define N_SHAREDATA_VERSION		147
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -488,6 +491,9 @@
 
 //! ‹­’²ƒL[ƒ[ƒhƒƒbƒN
 #define	GSTR_MUTEX_SAKURA_KEYWORD			(_T("MutexSakuraEditorKeyword")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+//ƒ^ƒCƒv•ÊÝ’è“]‘——p
+#define	GSTR_MUTEX_SAKURA_DOCTYPE			(_T("MutexSakuraEditorDocType")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ƒCƒxƒ“ƒg                            //
@@ -555,13 +561,15 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 #define MYWM_SETACTIVEPANE  (WM_APP+1510)
 
 //!Ý’è‚ª•ÏX‚³‚ê‚½‚±‚Æ‚Ì’Ê’mƒƒbƒZ[ƒW
-//wParam:–¢Žg—p
+//wParam:PM_CHANGESETTING_TYPE‚Ì‚Æ‚«Aƒ^ƒCƒv•ÊÝ’èIndexB‚»‚êˆÈŠO‚È‚µB
 #define MYWM_CHANGESETTING  (WM_APP+1520)
 //! MYWM_CHANGESETTINGƒƒbƒZ[ƒW‚ÌlParam
 enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL		= 0, //!< ‘S•”
 	PM_CHANGESETTING_FONT		= 1, //!< ƒtƒHƒ“ƒg•ÏX
 	PM_CHANGESETTING_FONTSIZE	= 2, //!< ƒtƒHƒ“ƒgƒTƒCƒY•ÏX(WPARAM ƒ^ƒCƒv•Ê”Ô†B-1‚Å‹¤’ÊÝ’è•ÏX)
+	PM_CHANGESETTING_TYPE		= 3, //!< ƒ^ƒCƒv•ÊÝ’è
+	PM_CHANGESETTING_TYPE2		= 4, //!< ƒ^ƒCƒv•ÊÝ’è(Ä“Ç‚Ýž‚Ý‚È‚µ)
 	PM_PRINTSETTING				= 5, //!< ƒvƒŠƒ“ƒgÝ’è
 };
 //!À•WˆÊ’uî•ñ‚Ì•Û‘¶
@@ -637,6 +645,17 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 /*! ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‰æ–Ê‚Ì’Ê’m */
 #define MYWM_OUTLINE_NOTIFY (WM_APP+220)	//@@@ 2010.06.06 ryoji
+
+//! ƒ^ƒCƒv•Ê‚ðÝ’è
+// wParam:ƒ^ƒCƒv•Ê”Ô†
+#define MYWM_SET_TYPESETTING (WM_APP+221)
+//! ƒ^ƒCƒv•Ê‚ðŽæ“¾
+#define MYWM_GET_TYPESETTING (WM_APP+222)
+
+//! ƒ^ƒCƒv•Ê‚ð’Ç‰Á
+#define MYWM_ADD_TYPESETTING (WM_APP+223)
+//! ƒ^ƒCƒv•Ê‚ðíœ
+#define MYWM_DEL_TYPESETTING (WM_APP+224)
 
 /* Ä•ÏŠ·‘Î‰ž */ // 20020331 aroka
 #ifndef WM_IME_REQUEST

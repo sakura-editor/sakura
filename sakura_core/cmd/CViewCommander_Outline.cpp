@@ -65,7 +65,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
-		nOutlineType = GetDocument()->m_cDocType.GetDocumentAttribute().m_eDefaultOutline;
+		nOutlineType = m_pCommanderView->m_pTypeData->m_eDefaultOutline;
 		if( nOutlineType == OUTLINE_CPP ){
 			if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), _T("c") ) ){
 				nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
@@ -170,7 +170,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			poCaret.GetX2() + CLayoutInt(1),
 			nOutlineType,
 			nListType,
-			GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 false=折り返し単位／true=改行単位 */
+			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
 	}else{
 		/* アクティブにする */

@@ -164,8 +164,10 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 	if( nTypePlusOne == 0 ){
 		type = GetDocument()->m_cDocType.GetDocumentType();
 	}
-	if( type.IsValid() ){
-		GetDocument()->m_cDocType.SetDocumentType( type, true );
+	if( type.IsValidType() && type.GetIndex() < GetDllShareData().m_nTypesCount ){
+		const STypeConfigMini* pConfig;
+		CDocTypeManager().GetTypeConfigMini(type, &pConfig);
+		GetDocument()->m_cDocType.SetDocumentTypeIdx(pConfig->m_id, true);
 		GetDocument()->m_cDocType.LockDocumentType();
 		GetDocument()->OnChangeType();
 	}
@@ -291,11 +293,17 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 	}else if( mode == 1 ){
 		CTypeConfig nDocType = GetDocument()->m_cDocType.GetDocumentType();
-		STypeConfig* type = &GetDocument()->m_cDocType.GetDocumentAttribute();
+		STypeConfig* type = new STypeConfig();
+		if( !CDocTypeManager().GetTypeConfig( nDocType, *type ) ){
+			// 謎のエラー
+			return;
+		}
 		type->m_bUseTypeFont = true; // タイプ別フォントを有効にする
 		type->m_lf = lf;
 		type->m_lf.lfHeight = lfHeight;
 		type->m_nPointSize = nPointSize;
+		CDocTypeManager().SetTypeConfig( nDocType, *type );
+		delete type;
 		nTypeIndex = nDocType.GetIndex();
 	}else if( mode == 2 ){
 		GetDocument()->m_blfCurTemp = true;
@@ -342,7 +350,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 	
 	nWrapMode = m_pCommanderView->GetWrapMode( &newKetas );
 	GetDocument()->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
-	GetDocument()->m_bTextWrapMethodCurTemp = !( GetDocument()->m_nTextWrapMethodCur == GetDocument()->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
+	GetDocument()->m_bTextWrapMethodCurTemp = !( GetDocument()->m_nTextWrapMethodCur == m_pCommanderView->m_pTypeData->m_nTextWrapMethod );
 	if( nWrapMode == CEditView::TGWRAP_NONE ){
 		return;	// 折り返し桁は元のまま
 	}
@@ -351,7 +359,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 	
 
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
-//	GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas = m_nViewColNum;
+//	m_pCommanderView->m_pTypeData->m_nMaxLineKetas = m_nViewColNum;
 
 	m_pCommanderView->GetTextArea().SetViewLeftCol( CLayoutInt(0) );		/* 表示域の一番左の桁(0開始) */
 

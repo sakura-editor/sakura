@@ -44,13 +44,18 @@ public:
 	
 	// •¶‘í•Ê‚Ìİ’è‚Ææ“¾		// Nov. 23, 2000 genta
 	void SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly = false);	//!< •¶‘í•Ê‚Ìİ’è
+	void SetDocumentTypeIdx( int id = -1, bool force = false);
 	CTypeConfig GetDocumentType() const					//!< •¶‘í•Ê‚Ìæ“¾
 	{
 		return m_nSettingType;
 	}
-	STypeConfig& GetDocumentAttribute() const						//!< •¶‘í•Ê‚ÌÚ×î•ñ
+	const STypeConfig& GetDocumentAttribute() const						//!< •¶‘í•Ê‚ÌÚ×î•ñ
 	{
-		return *m_pType;
+		return m_typeConfig;
+	}
+	STypeConfig& GetDocumentAttributeWrite()						//!< •¶‘í•Ê‚ÌÚ×î•ñ
+	{
+		return m_typeConfig;
 	}
 
 	// Šg’£‹@”\
@@ -59,7 +64,7 @@ public:
 private:
 	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
-	STypeConfig*			m_pType;
+	STypeConfig				m_typeConfig;
 	bool					m_nSettingTypeLocked;		//!< •¶‘í•Ê‚Ìˆêİ’èó‘Ô
 };
 

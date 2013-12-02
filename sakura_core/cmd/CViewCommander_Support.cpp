@@ -53,9 +53,9 @@ void CViewCommander::Command_HOKAN( void )
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
-	if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
-		GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByKeyword == false &&
-		_T('\0') == GetDocument()->m_cDocType.GetDocumentAttribute().m_szHokanFile[0]
+	if( m_pCommanderView->m_pTypeData->m_bUseHokanByFile == FALSE &&
+		m_pCommanderView->m_pTypeData->m_bUseHokanByKeyword == false &&
+		_T('\0') == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
 	){
 		ConfirmBeep();
 		if( IDYES == ::ConfirmMessage( GetMainWindow(),
@@ -207,7 +207,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 void CViewCommander::Command_EXTHELP1( void )
 {
 retry:;
-	if( CHelpManager().ExtWinHelpIsSet( GetDocument()->m_cDocType.GetDocumentType() ) == false){
+	if( CHelpManager().ExtWinHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute()) ) == false){
 //	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
@@ -229,7 +229,7 @@ retry:;
 	}
 
 	CNativeW		cmemCurText;
-	const TCHAR*	helpfile = CHelpManager().GetExtWinHelp( GetDocument()->m_cDocType.GetDocumentType() );
+	const TCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );
@@ -277,7 +277,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	From Here Jul. 5, 2002 genta
 	const TCHAR *filename = NULL;
 	if ( 0 == helpfile.length() ){
-		while( !CHelpManager().ExtHTMLHelpIsSet( GetDocument()->m_cDocType.GetDocumentType()) ){
+		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -292,7 +292,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				return;
 			}
 		}
-		filename = CHelpManager().GetExtHTMLHelp( GetDocument()->m_cDocType.GetDocumentType() );
+		filename = CHelpManager().GetExtHTMLHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 	}
 	else {
 		filename = helpfile.c_str();
@@ -311,7 +311,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	}
 
 	/* HtmlHelpビューアはひとつ */
-	if( CHelpManager().HTMLHelpIsSingle( GetDocument()->m_cDocType.GetDocumentType() ) ){
+	if( CHelpManager().HTMLHelpIsSingle( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先

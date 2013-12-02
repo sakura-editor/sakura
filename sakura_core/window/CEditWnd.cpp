@@ -527,10 +527,10 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 				if( ei.m_szDocType[0] != '\0' ){
 					cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
-					if( CMRUFile().GetEditInfo( ei.m_szPath, &mruei ) ){
-						cTypeNew = mruei.m_nType;
+					if( CMRUFile().GetEditInfo( ei.m_szPath, &mruei ) && 0 < mruei.m_nTypeId ){
+						cTypeNew = CDocTypeManager().GetDocumentTypeOfId(mruei.m_nTypeId);
 					}
-					if( !cTypeNew.IsValid() ){
+					if( !cTypeNew.IsValidType() ){
 						if( ei.m_szPath[0] ){
 							cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
 						}else{
@@ -762,7 +762,7 @@ HWND CEditWnd::Create(
 	Timer_ONOFF( true );
 
 	//デフォルトのIMEモード設定
-	GetDocument()->m_cDocEditor.SetImeMode( CDocTypeManager().GetTypeSetting(CTypeConfig(0)).m_nImeState );
+	GetDocument()->m_cDocEditor.SetImeMode( GetDocument()->m_cDocType.GetDocumentAttribute().m_nImeState );
 
 	return GetHwnd();
 }
@@ -799,14 +799,14 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 {
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
-	if( nDocumentType.IsValid() ){
+	if( nDocumentType.IsValidType() ){
 		GetDocument()->m_cDocType.SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
 		GetDocument()->m_cDocType.LockDocumentType();
 	}
 
 	// 文字コードの指定	2008/6/14 Uchi
-	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValid() ){
+	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValidType() ){
 		const STypeConfig& types = GetDocument()->m_cDocType.GetDocumentAttribute();
 		ECodeType eDefaultCharCode = types.m_encoding.m_eDefaultCodetype;
 		if( !IsValidCodeType( nCharCode ) ){
@@ -825,7 +825,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもビューモード強制指定を有効にする
 	CAppMode::getInstance()->SetViewMode(bViewMode);
 
-	if( nDocumentType.IsValid() ){
+	if( nDocumentType.IsValidType() ){
 		/* 設定変更を反映させる */
 		GetDocument()->OnChangeSetting();	// <--- 内部に BlockingHook() 呼び出しがあるので溜まった描画がここで実行される
 	}
@@ -1745,8 +1745,8 @@ LRESULT CEditWnd::DispatchEvent(
 			//	Aug, 21, 2000 genta
 			GetDocument()->m_cAutoSaveAgent.ReloadAutoSaveParam();
 
-			GetDocument()->m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 			GetDocument()->OnChangeSetting();	// ビューに設定変更を反映させる
+			GetDocument()->m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 
 			{	// アウトライン解析画面処理
 				bool bAnalyzed = FALSE;
@@ -1773,6 +1773,17 @@ LRESULT CEditWnd::DispatchEvent(
 			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
 					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
 				GetDocument()->OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+			}
+			break;
+		case PM_CHANGESETTING_TYPE:
+			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				GetDocument()->OnChangeSetting();
+			}
+			break;
+		case PM_CHANGESETTING_TYPE2:
+			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				// indexのみ更新
+				GetDocument()->m_cDocType.SetDocumentTypeIdx();
 			}
 			break;
 		case PM_PRINTSETTING:
@@ -3494,7 +3505,18 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
 		{
 			/* 変更フラグ(タイプ別設定) */
-			GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting = nCurrentPrintSetting;
+			STypeConfig* type = new STypeConfig();
+			CDocTypeManager().GetTypeConfig( GetDocument()->m_cDocType.GetDocumentType(), *type );
+			type->m_nCurrentPrintSetting = nCurrentPrintSetting;
+			CDocTypeManager().SetTypeConfig( GetDocument()->m_cDocType.GetDocumentType(), *type );
+			delete type;
+			GetDocument()->m_cDocType.GetDocumentAttributeWrite().m_nCurrentPrintSetting = nCurrentPrintSetting; // 今の設定にも反映
+			CAppNodeGroupHandle(0).SendMessageToAllEditors(
+				MYWM_CHANGESETTING,
+				(WPARAM)GetDocument()->m_cDocType.GetDocumentType().GetIndex(),
+				(LPARAM)PM_CHANGESETTING_TYPE,
+				CEditWnd::getInstance()->GetHwnd()
+			);
 			bChangePrintSettingNo = true;
 		}
 

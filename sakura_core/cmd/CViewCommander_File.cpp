@@ -708,7 +708,7 @@ BOOL CViewCommander::Command_PUTFILE(
 */
 BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int nFlgOpt )
 {
-	CFileLoad	cfl(GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding);
+	CFileLoad	cfl(m_pCommanderView->m_pTypeData->m_encoding);
 	CEol cEol;
 	int			nLineNum = 0;
 

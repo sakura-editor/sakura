@@ -27,6 +27,9 @@
 
 #include "StdAfx.h"
 #include "CDocTypeManager.h"
+#include "_main/CMutex.h"
+
+static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
 
 /*!
@@ -81,9 +84,10 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 	TCHAR*	pszToken;
 	TCHAR	szText[MAX_TYPES_EXTS];
 
-	for( i = 0; i < MAX_TYPES; ++i ){
-		CTypeConfig nType(i);
-		_tcscpy( szText, CDocTypeManager().GetTypeSetting(nType).m_szTypeExts );
+	for( i = 0; i < m_pShareData->m_nTypesCount; ++i ){
+		const STypeConfigMini* mini;
+		GetTypeConfigMini( CTypeConfig(i), &mini );
+		_tcscpy( szText, mini->m_szTypeExts );
 		pszToken = _tcstok( szText, pszSeps );
 		while( NULL != pszToken ){
 			if( 0 == _tcsicmp( pszExt, pszToken ) ){
@@ -97,4 +101,71 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 		return GetDocumentTypeOfExt( pFileExt + 1 );
 	}
 	return CTypeConfig(0);	//	ハズレ
+}
+
+CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
+{
+	int		i;
+
+	for( i = 0; i < m_pShareData->m_nTypesCount; ++i ){
+		const STypeConfigMini* mini;
+		GetTypeConfigMini( CTypeConfig(i), &mini );
+		if( mini->m_id == id ){
+			return CTypeConfig(i);
+		}
+	}
+	return CTypeConfig(-1);	//	ハズレ
+}
+
+bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type)
+{
+	int n = cDocumentType.GetIndex();
+	if( 0 <= n && n < m_pShareData->m_nTypesCount ){
+		if( 0 == n ){
+			type = m_pShareData->m_TypeBasis;
+			return true;
+		}else{
+			LockGuard<CMutex> guard( g_cDocTypeMutex );
+			 if( SendMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_GET_TYPESETTING, (WPARAM)n, 0 ) ){
+				type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig& type)
+{
+	int n = cDocumentType.GetIndex();
+	if( 0 <= n && n < m_pShareData->m_nTypesCount ){
+		LockGuard<CMutex> guard( g_cDocTypeMutex );
+		m_pShareData->m_sWorkBuffer.m_TypeConfig = type;
+		if( SendMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_SET_TYPESETTING, (WPARAM)n, 0 ) ){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type)
+{
+	int n = cDocumentType.GetIndex();
+	if( 0 <= n && n < m_pShareData->m_nTypesCount ){
+		*type = &m_pShareData->m_TypeMini[n];
+		return true;
+	}
+	return false;
+}
+
+bool CDocTypeManager::AddTypeConfig(CTypeConfig cDocumentType)
+{
+	LockGuard<CMutex> guard( g_cDocTypeMutex );
+	return FALSE != SendMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_ADD_TYPESETTING, (WPARAM)cDocumentType.GetIndex(), 0 );
+}
+
+bool CDocTypeManager::DelTypeConfig(CTypeConfig cDocumentType)
+{
+	LockGuard<CMutex> guard( g_cDocTypeMutex );
+	return FALSE != SendMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DEL_TYPESETTING, (WPARAM)cDocumentType.GetIndex(), 0 );
 }

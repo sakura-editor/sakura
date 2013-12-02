@@ -38,21 +38,12 @@ CLayoutMgr::CLayoutMgr()
 : m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 {
 	m_pcDocLineMgr = NULL;
-	m_sTypeConfig.m_bWordWrap = true;				// 英文ワードラップをする
-	m_sTypeConfig.m_nTabSpace = CLayoutInt(8);		/* TAB文字スペース */
-	m_sTypeConfig.m_nStringType = 0;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_sTypeConfig.m_bKinsokuHead = false;			// 行頭禁則				//@@@ 2002.04.08 MIK
-	m_sTypeConfig.m_bKinsokuTail = false;			// 行末禁則				//@@@ 2002.04.08 MIK
-	m_sTypeConfig.m_bKinsokuRet  = false;			// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
-	m_sTypeConfig.m_bKinsokuKuto = false;			// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	m_pTypeConfig = NULL;
+	m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);
+	m_nTabSpace = CLayoutInt(4);
 	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();						/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-
-	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false; 
-	m_sTypeConfig.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
-	m_sTypeConfig.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 
 	m_nTextWidth = CLayoutInt(0);			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
 	m_nTextWidthMaxLine = CLayoutInt(0);	// 最大幅のレイアウト行		// 2009.08.28 nasukoji
@@ -113,19 +104,26 @@ void CLayoutMgr::_Empty()
 
 
 /*! レイアウト情報の変更
-	@param bDoRayout [in] レイアウト情報の再作成
+	@param bDoLayout [in] レイアウト情報の再作成
 	@param refType [in] タイプ別設定
 */
 void CLayoutMgr::SetLayoutInfo(
-	bool				bDoRayout,
-	const STypeConfig&	refType
+	bool				bDoLayout,
+	const STypeConfig&	refType,
+	CLayoutInt			nTabSpace,
+	CLayoutInt			nMaxLineKetas
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
 
+	assert_warning( (!bDoLayout && m_nMaxLineKetas == nMaxLineKetas) || bDoLayout );
+	assert_warning( (!bDoLayout && m_nTabSpace == refType.m_nTabSpace) || bDoLayout );
+
 	//タイプ別設定
-	m_sTypeConfig = refType;
-	
+	m_pTypeConfig = &refType;
+	m_nMaxLineKetas = nMaxLineKetas;
+	m_nTabSpace = nTabSpace;
+
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
 	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
@@ -144,7 +142,7 @@ void CLayoutMgr::SetLayoutInfo(
 	//句読点ぶら下げ文字	// 2009.08.07 ryoji
 	//refType.m_szKinsokuKuto → m_pszKinsokuKuto_1
 	m_pszKinsokuKuto_1.clear();
-	if(m_sTypeConfig.m_bKinsokuKuto){	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
+	if(refType.m_bKinsokuKuto){	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
 		for( const wchar_t* p = refType.m_szKinsokuKuto; *p; p++ ){
 			m_pszKinsokuKuto_1.push_back_unique(*p);
 		}
@@ -170,7 +168,7 @@ void CLayoutMgr::SetLayoutInfo(
 	}
 
 	//レイアウト
-	if( bDoRayout ){
+	if( bDoLayout ){
 		_DoLayout();
 	}
 }
@@ -631,8 +629,8 @@ bool CLayoutMgr::ChangeLayoutParam(
 	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
 	if( nMaxLineKetas < MINLINEKETAS || nMaxLineKetas > MAXLINEKETAS ){ return false; }
 
-	m_sTypeConfig.m_nTabSpace = nTabSize;
-	m_sTypeConfig.m_nMaxLineKetas = nMaxLineKetas;
+	m_nTabSpace = nTabSize;
+	m_nMaxLineKetas = nMaxLineKetas;
 
 	_DoLayout();
 
@@ -1052,9 +1050,9 @@ void CLayoutMgr::DUMP()
 	MYTRACE( _T("m_nLines=%d\n"), m_nLines );
 	MYTRACE( _T("m_pLayoutTop=%08lxh\n"), m_pLayoutTop );
 	MYTRACE( _T("m_pLayoutBot=%08lxh\n"), m_pLayoutBot );
-	MYTRACE( _T("m_nMaxLineKetas=%d\n"), m_sTypeConfig.m_nMaxLineKetas );
+	MYTRACE( _T("m_nMaxLineKetas=%d\n"), m_nMaxLineKetas );
 
-	MYTRACE( _T("m_nTabSpace=%d\n"), m_sTypeConfig.m_nTabSpace );
+	MYTRACE( _T("m_nTabSpace=%d\n"), m_nTabSpace );
 	CLayout* pLayout;
 	CLayout* pLayoutNext;
 	pLayout = m_pLayoutTop;
