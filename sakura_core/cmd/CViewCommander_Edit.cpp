@@ -58,7 +58,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 			m_pCommanderView->DeleteData( true );
 		}
-		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
+		if( m_pCommanderView->m_pTypeData->m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
 			const wchar_t*	pLine;
 			CLogicInt		nLineLen;
@@ -88,14 +88,14 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 						/* その他のインデント文字 */
 						if( 0 < nCharChars
 						 && pLine[nPos] != L'\0'	// その他のインデント文字に L'\0' は含まれない	// 2009.02.04 ryoji L'\0'がインデントされてしまう問題修正
-						 && GetDocument()->m_cDocType.GetDocumentAttribute().m_szIndentChars[0] != L'\0'
+						 && m_pCommanderView->m_pTypeData->m_szIndentChars[0] != L'\0'
 						){
 							wchar_t szCurrent[10];
 							wmemcpy( szCurrent, &pLine[nPos], nCharChars );
 							szCurrent[nCharChars] = L'\0';
 							/* その他のインデント対象文字 */
 							if( NULL != wcsstr(
-								GetDocument()->m_cDocType.GetDocumentAttribute().m_szIndentChars,
+								m_pCommanderView->m_pTypeData->m_szIndentChars,
 								szCurrent
 							) ){
 								goto end_of_for;
@@ -103,7 +103,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 						}
 						
 						{
-							bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
+							bool bZenSpace=m_pCommanderView->m_pTypeData->m_bAutoIndent_ZENSPACE;
 							if(nCharChars==1 && WCODE::IsIndentChar(pLine[nPos],bZenSpace))
 							{
 								//下へ進む
@@ -158,7 +158,7 @@ end_of_for:;
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	/* スマートインデント */
-	ESmartIndentType nSIndentType = GetDocument()->m_cDocType.GetDocumentAttribute().m_eSmartIndent;
+	ESmartIndentType nSIndentType = m_pCommanderView->m_pTypeData->m_eSmartIndent;
 	switch( nSIndentType ){	/* スマートインデント種別 */
 	case SMARTINDENT_NONE:
 		break;
@@ -198,7 +198,7 @@ end_of_for:;
 	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	if( WCODE::IsLineDelimiter(wcChar) && GetDocument()->m_cDocType.GetDocumentAttribute().m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
+	if( WCODE::IsLineDelimiter(wcChar) && m_pCommanderView->m_pTypeData->m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
 		/* 前の行にある末尾の空白を削除する */
 		m_pCommanderView->RTrimPrevLine();
 	}

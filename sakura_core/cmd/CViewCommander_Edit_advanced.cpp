@@ -98,7 +98,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		int m_nTab;
 	} stabData( GetDocument()->m_cLayoutMgr.GetTabSpace() );
 
-	const bool bSoftTab = ( eIndent == INDENT_TAB && GetDocument()->m_cDocType.GetDocumentAttribute().m_bInsSpace );
+	const bool bSoftTab = ( eIndent == INDENT_TAB && m_pCommanderView->m_pTypeData->m_bInsSpace );
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */

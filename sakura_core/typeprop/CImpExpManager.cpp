@@ -289,6 +289,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 
 	m_nColorType = sAscertainInfo.nColorType;
 	m_sColorFile = sAscertainInfo.sColorFile;
+	m_bAddType   = sAscertainInfo.bAddType;
 
 	return true;
 }
@@ -310,23 +311,28 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 		else {
 			// 失敗したら基本をコピー(メッセージは出さない)
-			memcpy( &colorInfoArr, &CDocTypeManager().GetTypeSetting(CTypeConfig(0)).m_ColorInfoArr, sizeof(colorInfoArr) );
+			memcpy( &colorInfoArr, GetDllShareData().m_TypeBasis.m_ColorInfoArr, sizeof(colorInfoArr) );
 			files += wstring(L"\n× ") + m_sColorFile;	// 失敗
 		}
 	}
 	else if (m_nColorType >= 0 ) {
 		// 色指定(内部)
-		memcpy( &colorInfoArr, &CDocTypeManager().GetTypeSetting(CTypeConfig(m_nColorType)).m_ColorInfoArr, sizeof(colorInfoArr) );
+		STypeConfig type;
+		CDocTypeManager().GetTypeConfig(CTypeConfig(m_nColorType), type);
+		memcpy( &colorInfoArr, type.m_ColorInfoArr, sizeof(colorInfoArr) );
 	}
 
 	// 読み込み
-	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_nIdx, szSecTypes );
+	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_Types, szSecTypes );
 
 	m_Types.m_nIdx = m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
 		_tcscpy( m_Types.m_szTypeName, _T("基本") );
 		_tcscpy( m_Types.m_szTypeExts, _T("") );
+		m_Types.m_id = 0;
+	}else{
+		m_Types.m_id = ::GetTickCount() + m_nIdx * 0x10000;
 	}
 
 	// 色の設定
@@ -443,7 +449,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	cProfile.SetWritingMode();
 
-	CShareData_IO::ShareData_IO_Type_One( cProfile , m_nIdx, szSecTypes );
+	CShareData_IO::ShareData_IO_Type_One( cProfile , m_Types, szSecTypes );
 
 	// 共通設定との連結部
 	int		i;

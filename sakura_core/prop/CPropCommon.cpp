@@ -41,6 +41,7 @@
 #include "prop/CPropCommon.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "env/CDocTypeManager.h"
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
@@ -327,10 +328,15 @@ void CPropCommon::InitData( void )
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	int i;
-	for( i = 0; i < MAX_TYPES; ++i ){
+	for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
+		SKeywordSetIndex indexs;
+		STypeConfig type;
+		CDocTypeManager().GetTypeConfig(CTypeConfig(i), type);
+		indexs.typeId = type.m_id;
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			m_Types_nKeyWordSetIdx[i][j] = CTypeConfig(i)->m_nKeyWordSetIdx[j];
+			indexs.index[j] = type.m_nKeyWordSetIdx[j];
 		}
+		m_Types_nKeyWordSetIdx.push_back(indexs);
 	}
 }
 
@@ -343,11 +349,18 @@ void CPropCommon::ApplyData( void )
 	m_pShareData->m_Common = m_Common;
 
 	int i;
-	for( i = 0; i < MAX_TYPES; ++i ){
-		//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
-		/* 変更された設定値のコピー */
-		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-			CTypeConfig(i)->m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
+	const int nSize = (int)m_Types_nKeyWordSetIdx.size();
+	for( i = 0; i < nSize; ++i ){
+		CTypeConfig configIdx = CDocTypeManager().GetDocumentTypeOfId( m_Types_nKeyWordSetIdx[i].typeId );
+		if( configIdx.IsValidType() ){
+			STypeConfig type;
+			CDocTypeManager().GetTypeConfig(configIdx, type);
+			//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+			/* 変更された設定値のコピー */
+			for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+				type.m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i].index[j];
+			}
+			CDocTypeManager().SetTypeConfig(configIdx, type);
 		}
 	}
 }

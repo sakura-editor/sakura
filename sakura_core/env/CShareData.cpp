@@ -53,6 +53,7 @@ CShareData::CShareData()
 {
 	m_hFileMap   = NULL;
 	m_pShareData = NULL;
+	m_pvTypeSettings = NULL;
 }
 
 /*!
@@ -66,6 +67,14 @@ CShareData::~CShareData()
 		SetDllShareData( NULL );
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
+	}
+	if( m_pvTypeSettings ){
+		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
+			delete (*m_pvTypeSettings)[i];
+			(*m_pvTypeSettings)[i] = NULL;
+		}
+		delete m_pvTypeSettings;
+		m_pvTypeSettings = NULL;
 	}
 }
 
@@ -118,6 +127,7 @@ bool CShareData::InitShareData()
 			0,
 			0
 		);
+		CreateTypeSettings();
 		SetDllShareData( m_pShareData );
 
 		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
@@ -506,7 +516,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHistory.m_aCurDirs.clear();
 
 		InitKeyword( m_pShareData );
-		InitTypeConfigs( m_pShareData );
+		InitTypeConfigs( m_pShareData, *m_pvTypeSettings );
 		InitPopupMenu( m_pShareData );
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
@@ -1167,3 +1177,17 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	n++;
 	rMenu.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }
+
+void CShareData::CreateTypeSettings()
+{
+	if( NULL == m_pvTypeSettings ){
+		m_pvTypeSettings = new std::vector<STypeConfig*>();
+	}
+}
+
+std::vector<STypeConfig*>& CShareData::GetTypeSettings()
+{
+	return *m_pvTypeSettings;
+}
+
+

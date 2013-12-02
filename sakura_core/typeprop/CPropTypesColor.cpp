@@ -382,7 +382,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_DISP );
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
-				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
+				m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 			case IDC_CHECK_BOLD:	/* 太字か */
 				m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bBoldFont = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BOLD );
@@ -397,7 +397,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 
 			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
 				Import( hwndDlg );
-				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
+				m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 
 			case IDC_BUTTON_EXPORT:	/* 色の設定をエクスポート */
@@ -455,6 +455,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 						CShareDataLockCounter::WaitLock( pCommon->m_hwndParent );
 						pCommon->ApplyData();
 						SetData(hwndDlg);
+						m_bChangeKeyWordSet = true;
 					}
 					delete pPropKeyword;
 					return TRUE;

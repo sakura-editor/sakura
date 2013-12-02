@@ -620,6 +620,98 @@ LRESULT CControlTray::DispatchEvent(
 			}
 			return 0L;
 
+		case MYWM_SET_TYPESETTING:
+			{
+				int nIdx = (int)wParam;
+				STypeConfig& type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
+				if( 0 <= nIdx && m_pShareData->m_nTypesCount ){
+					if( 0 == nIdx ){
+						m_pShareData->m_TypeBasis = type;
+						m_pShareData->m_TypeBasis.m_nIdx = 0;
+					}
+					*(CShareData::getInstance()->GetTypeSettings()[nIdx]) = type;
+					CShareData::getInstance()->GetTypeSettings()[nIdx]->m_nIdx = nIdx;
+					auto_strcpy(m_pShareData->m_TypeMini[nIdx].m_szTypeName, type.m_szTypeName);
+					auto_strcpy(m_pShareData->m_TypeMini[nIdx].m_szTypeExts, type.m_szTypeExts);
+					m_pShareData->m_TypeMini[nIdx].m_id = type.m_id;
+					m_pShareData->m_TypeMini[nIdx].m_encoding = type.m_encoding;
+				}else{
+					return FALSE;
+				}
+			}
+			return TRUE;
+		case MYWM_GET_TYPESETTING:
+			{
+				int nIdx = (int)wParam;
+				if( 0 <= nIdx && m_pShareData->m_nTypesCount ){
+					m_pShareData->m_sWorkBuffer.m_TypeConfig = *(CShareData::getInstance()->GetTypeSettings()[nIdx]);
+				}else{
+					return FALSE;
+				}
+			}
+			return TRUE;
+		case MYWM_ADD_TYPESETTING:
+			{
+				int nInsert = (int)wParam;
+				// "共通"の前には入れない
+				if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && nInsert < MAX_TYPES ){
+					std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
+					STypeConfig* type = new STypeConfig();
+					*type = *types[0]; // 基本をコピー
+					type->m_nIdx = nInsert;
+					type->m_id = ::GetTickCount() + nInsert * 0x10000;
+					// 同じ名前のものがあったらその次にする
+					int nAddNameNum = nInsert + 1;
+					auto_sprintf( type->m_szTypeName, _T("設定%d"), nAddNameNum ); 
+					for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
+						if( auto_strcmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
+							nAddNameNum++;
+							auto_sprintf( type->m_szTypeName, _T("設定%d"), nAddNameNum ); 
+							k = 0;
+						}
+					}
+					auto_strcpy( type->m_szTypeExts, _T("") );
+					types.resize( m_pShareData->m_nTypesCount + 1 );
+					int nTypeSizeOld = m_pShareData->m_nTypesCount;
+					m_pShareData->m_nTypesCount++;
+					for( int i = nTypeSizeOld; nInsert < i; i-- ){
+						types[i] = types[i-1];
+						types[i]->m_nIdx = i;
+						m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i-1];
+					}
+					types[nInsert] = type;
+					auto_strcpy(m_pShareData->m_TypeMini[nInsert].m_szTypeName, type->m_szTypeName);
+					auto_strcpy(m_pShareData->m_TypeMini[nInsert].m_szTypeExts, type->m_szTypeExts);
+					m_pShareData->m_TypeMini[nInsert].m_id = type->m_id;
+					m_pShareData->m_TypeMini[nInsert].m_encoding = type->m_encoding;
+				}else{
+					return FALSE;
+				}
+			}
+			return TRUE;
+		case MYWM_DEL_TYPESETTING:
+			{
+				int nDelPos = (int)wParam;
+				if( 0 < nDelPos && nDelPos < m_pShareData->m_nTypesCount && 1 < m_pShareData->m_nTypesCount ){
+					int nTypeSizeOld = m_pShareData->m_nTypesCount;
+					std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
+					delete types[nDelPos];
+					for(int i = nDelPos; i < nTypeSizeOld - 1; i++ ){
+						types[i] = types[i+1];
+						types[i]->m_nIdx = i;
+						m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i+1];
+					}
+					types.resize( m_pShareData->m_nTypesCount - 1 );
+					m_pShareData->m_nTypesCount--;
+					auto_strcpy(m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName, _T(""));
+					auto_strcpy(m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts, _T(""));
+					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_id = 0;
+				}else{
+					return FALSE;
+				}
+			}
+			return TRUE;
+
 		case MYWM_NOTIFYICON:
 //			MYTRACE( _T("MYWM_NOTIFYICON\n") );
 			switch (lParam){

@@ -48,18 +48,19 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// 文字コード種別
-	const STypeConfig& type = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+	const STypeConfigMini* type;
+	CDocTypeManager().GetTypeConfigMini( sLoadInfo.nType, &type );
 	ECodeType	eCharCode = sLoadInfo.eCharCode;
 	if (CODE_AUTODETECT == eCharCode) {
-		CCodeMediator cmediator( type.m_encoding );
+		CCodeMediator cmediator( type->m_encoding );
 		eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
 	if (!IsValidCodeType( eCharCode )) {
-		eCharCode = type.m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
+		eCharCode = type->m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
 	bool	bBom;
-	if (eCharCode == type.m_encoding.m_eDefaultCodetype) {
-		bBom = type.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
+	if (eCharCode == type->m_encoding.m_eDefaultCodetype) {
+		bBom = type->m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 	}
 	else{
 		bBom = CCodeTypeName( eCharCode ).IsBomDefOn();
@@ -77,7 +78,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	EConvertResult eRet = RESULT_COMPLETE;
 
 	try{
-		CFileLoad cfl(type.m_encoding);
+		CFileLoad cfl(type->m_encoding);
 
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます

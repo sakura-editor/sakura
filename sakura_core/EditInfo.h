@@ -39,7 +39,7 @@ struct EditInfo {
 	TCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
 	ECodeType	m_nCharCode;							//!< 文字コード種別
 	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
-	CTypeConfig m_nType;								//!< 文書タイプ(MRU)
+	int 		m_nTypeId;								//!< 文書タイプ(MRU)
 
 	//表示域
 	CLayoutInt	m_nViewTopLine;							//!< 表示域の一番上の行(0開始)
@@ -71,7 +71,7 @@ struct EditInfo {
 	// Constructor 確実に初期化するため
 	EditInfo()
 	: m_nCharCode( CODE_AUTODETECT )
-	, m_nType( -1 )
+	, m_nTypeId( -1 )
 	, m_nViewTopLine( -1 )
 	, m_nViewLeftCol( -1 )
 	, m_ptCursor(CLogicInt(-1), CLogicInt(-1))

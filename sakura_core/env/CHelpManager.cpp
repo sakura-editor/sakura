@@ -34,15 +34,12 @@
 
 /*!	外部Winヘルプが設定されているか確認。
 */
-bool CHelpManager::ExtWinHelpIsSet( CTypeConfig nTypeNo )
+bool CHelpManager::ExtWinHelpIsSet( const STypeConfig* type )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
 	}
-	if (!nTypeNo.IsValid()) {
-		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
-	}
-	if (CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHelp[0] != L'\0'){
+	if (type && type->m_szExtHelp[0] != L'\0'){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -52,10 +49,10 @@ bool CHelpManager::ExtWinHelpIsSet( CTypeConfig nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CHelpManager::GetExtWinHelp( CTypeConfig nTypeNo )
+const TCHAR* CHelpManager::GetExtWinHelp( const STypeConfig* type )
 {
-	if (nTypeNo.IsValid() && CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHelp[0] != _T('\0')){
-		return CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHelp;
+	if (type && type->m_szExtHelp[0] != _T('\0')){
+		return type->m_szExtHelp;
 	}
 	
 	return m_pShareData->m_Common.m_sHelper.m_szExtHelp;
@@ -63,15 +60,12 @@ const TCHAR* CHelpManager::GetExtWinHelp( CTypeConfig nTypeNo )
 
 /*!	外部HTMLヘルプが設定されているか確認。
 */
-bool CHelpManager::ExtHTMLHelpIsSet( CTypeConfig nTypeNo )
+bool CHelpManager::ExtHTMLHelpIsSet( const STypeConfig* type )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0'){
 		return true;	//	共通設定に設定されている
 	}
-	if (!nTypeNo.IsValid()){
-		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
-	}
-	if (nTypeNo->m_szExtHtmlHelp[0] != L'\0'){
+	if (type && type->m_szExtHtmlHelp[0] != L'\0'){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -81,10 +75,10 @@ bool CHelpManager::ExtHTMLHelpIsSet( CTypeConfig nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CHelpManager::GetExtHTMLHelp( CTypeConfig nTypeNo )
+const TCHAR* CHelpManager::GetExtHTMLHelp( const STypeConfig* type )
 {
-	if (nTypeNo.IsValid() && CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHtmlHelp[0] != _T('\0')){
-		return CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHtmlHelp;
+	if (type && type->m_szExtHtmlHelp[0] != _T('\0')){
+		return type->m_szExtHtmlHelp;
 	}
 	
 	return m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp;
@@ -92,10 +86,10 @@ const TCHAR* CHelpManager::GetExtHTMLHelp( CTypeConfig nTypeNo )
 
 /*!	ビューアを複数起動しないがONかを返す。
 */
-bool CHelpManager::HTMLHelpIsSingle( CTypeConfig nTypeNo )
+bool CHelpManager::HTMLHelpIsSingle( const STypeConfig* type )
 {
-	if (nTypeNo.IsValid() && CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHtmlHelp[0] != L'\0'){
-		return CDocTypeManager().GetTypeSetting(nTypeNo).m_bHtmlHelpIsSingle;
+	if (type && type->m_szExtHtmlHelp[0] != L'\0'){
+		return type->m_bHtmlHelpIsSingle;
 	}
 
 	return m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle;

@@ -43,12 +43,19 @@ protected:
 	// 実装ヘルパ関数
 	BOOL OnLbnDblclk( int );
 	BOOL OnBnClicked( int );
+	BOOL OnActivate( WPARAM wParam, LPARAM lParam );
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	void SetData();	/* ダイアログデータの設定 */
+	void SetData(int);	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 	bool Import( void );			// 2010/4/12 Uchi
 	bool Export( void );			// 2010/4/12 Uchi
 	bool InitializeType( void );	// 2010/4/12 Uchi
+	bool CopyType();
+	bool UpType();
+	bool DownType();
+	bool AddType();
+	bool DelType();
 	bool AlertFileAssociation();	// 2011/8/20 syat
 
 private:

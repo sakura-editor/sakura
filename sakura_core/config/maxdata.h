@@ -32,7 +32,7 @@ enum maxdata{
 	MAX_REPLACEKEY				=  30,
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
-	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
+	MAX_TYPES					=  60,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした
 	MAX_TYPES_EXTS				=  64,
 	MAX_PRINTSETTINGARR			=   8,
 

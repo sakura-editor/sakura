@@ -58,10 +58,10 @@ void CTextArea::UpdateAreaMetrics(HDC hdc)
 	CEditView* pView=m_pEditView;
 
 	// 文字間隔
-	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace );
+	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pTypeData->m_nColumnSpace );
 
 	// 行間隔
-	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace );
+	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pTypeData->m_nLineSpace );
 
 	//表示域の再計算
 	//2010.08.24 Dx/Dyを使うので後で設定
@@ -144,7 +144,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 	int				nViewAlignLeftNew;
 
-	if( pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
+	if( pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
 		/* 行番号表示に必要な桁数を計算 */
 		int i = DetectWidthOfLineNumberArea_calculate();
 		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* 表示域の左端座標 */
@@ -205,7 +205,7 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate() const
 	int nAllLines; //$$ 単位混在
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if( pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
+	if( pView->m_pTypeData->m_bLineNumIsCRLF ){
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}
 	else{

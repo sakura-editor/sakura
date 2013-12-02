@@ -94,8 +94,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//! タブ幅の取得
-	CKetaXInt GetTabSpaceKetas() const { return m_sTypeConfig.m_nTabSpace; }
-	CLayoutInt GetTabSpace() const { return m_sTypeConfig.m_nTabSpace; }
+	CKetaXInt GetTabSpaceKetas() const { return m_nTabSpace; }
+	CLayoutInt GetTabSpace() const { return m_nTabSpace; }
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -127,11 +127,11 @@ public:
 		@param pos [in] 現在の位置
 		@return 次のTAB位置までの文字数．1～TAB幅
 	 */
-	CLayoutInt GetActualTabSpace(CLayoutInt pos) const { return m_sTypeConfig.m_nTabSpace - pos % m_sTypeConfig.m_nTabSpace; }
+	CLayoutInt GetActualTabSpace(CLayoutInt pos) const { return m_nTabSpace - pos % m_nTabSpace; }
 
 	//	Aug. 14, 2005 genta
 	// Sep. 07, 2007 kobake 関数名変更 GetMaxLineSize→GetMaxLineKetas
-	CLayoutInt GetMaxLineKetas(void) const { return m_sTypeConfig.m_nMaxLineKetas; }
+	CLayoutInt GetMaxLineKetas(void) const { return m_nMaxLineKetas; }
 
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	bool ChangeLayoutParam( CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
@@ -199,8 +199,10 @@ public:
 		@date 2002/04/27 YAZAKI STypeConfigを渡すように変更。
 	*/
 	void SetLayoutInfo(
-		bool			bDoRayout,
-		const STypeConfig&	refType
+		bool			bDoLayout,
+		const STypeConfig&	refType,
+		CLayoutInt		nTabSpace,
+		CLayoutInt		nMaxLineKetas
 	);
 
 	/* 文字列置換 */
@@ -335,7 +337,9 @@ protected:
 	CLayout*				m_pLayoutBot;
 
 	//タイプ別設定
-	STypeConfig				m_sTypeConfig;
+	const STypeConfig*		m_pTypeConfig;
+	CLayoutInt				m_nMaxLineKetas;
+	CLayoutInt				m_nTabSpace;
 	vector_ex<wchar_t>		m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK

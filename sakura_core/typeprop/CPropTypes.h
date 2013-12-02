@@ -76,6 +76,7 @@ public:
 	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
 	HWND GetHwndParent()const { return m_hwndParent; }
 	int GetPageNum(){ return m_nPageNum; }
+	bool GetChangeKeyWordSet() const { return m_bChangeKeyWordSet; }
 
 protected:
 	//イベント
@@ -101,6 +102,7 @@ protected:
 	int				m_nSet[ MAX_KEYWORDSET_PER_TYPE ];		//!< keyword set index  2005.01.13 MIK
 	int				m_nCurrentColorType;					//!< 現在選択されている色タイプ
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
+	bool			m_bChangeKeyWordSet;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      各プロパティページ                     //

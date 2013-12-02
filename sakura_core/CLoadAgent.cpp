@@ -210,7 +210,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	}
 	else{
 		// 存在しないときもドキュメントに文字コードを反映する
-		const STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+		const STypeConfig& types = pcDoc->m_cDocType.GetDocumentAttribute();
 		pcDoc->m_cDocFile.SetCodeSet( sLoadInfo.eCharCode, 
 			( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ) ?
 				types.m_encoding.m_bDefaultBom : CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn() );
@@ -220,12 +220,13 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
-	STypeConfig ref = pcDoc->m_cDocType.GetDocumentAttribute();
+	const STypeConfig& ref = pcDoc->m_cDocType.GetDocumentAttribute();
+	CLayoutInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
-		ref.m_nMaxLineKetas = MAXLINEKETAS;
+		nMaxLineKetas = MAXLINEKETAS;
 
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
-	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, ref );
+	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, ref, ref.m_nTabSpace, nMaxLineKetas );
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	return eRet;

@@ -243,10 +243,8 @@ bool CDocFileOperation::SaveFileDialog(
 	{
 		LPCTSTR	szExt;
 		TCHAR	szWork[MAX_TYPES_EXTS];
-		TCHAR*	pStr;
-		TCHAR*	pEnd;
 
-		CTypeConfig	nSettingType = m_pcDocRef->m_cDocType.GetDocumentType();
+		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			szExt = _T("");
@@ -254,7 +252,7 @@ bool CDocFileOperation::SaveFileDialog(
 		else {
 			szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
 		}
-		if (nSettingType.GetIndex() == 0) {
+		if (type.m_nIdx == 0) {
 			// 基本
 			if (szExt[0] == _T('\0')) { 
 				// ファイルパスが無いまたは拡張子なし
@@ -274,7 +272,9 @@ bool CDocFileOperation::SaveFileDialog(
 				_tcscat(szDefaultWildCard, szExt);
 			}
 			// 拡張子を指定に合わせる
-			pStr = pEnd = CDocTypeManager().GetTypeSetting(nSettingType).m_szTypeExts;
+			const TCHAR*	pStr;
+			const TCHAR*	pEnd;
+			pStr = pEnd = type.m_szTypeExts;
 			do {
 				if (*pEnd == _T('\0') || *pEnd == _T(',')) {
 					auto_strncpy(szWork, pStr, pEnd - pStr);

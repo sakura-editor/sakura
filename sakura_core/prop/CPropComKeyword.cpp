@@ -21,9 +21,11 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "env/CShareData.h"
+#include "env/CDocTypeManager.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"
+#include <memory>
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -285,19 +287,20 @@ INT_PTR CPropKeyword::DispatchEvent(
 					/* 削除対象のセットを使用しているファイルタイプを列挙 */
 					static TCHAR		pszLabel[1024];
 					_tcscpy( pszLabel, _T("") );
-					for( i = 0; i < MAX_TYPES; ++i ){
-						CTypeConfig type(i);
+					for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
+						std::auto_ptr<STypeConfig> type(new STypeConfig());
+						CDocTypeManager().GetTypeConfig( CTypeConfig(i), *type );
 						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
-						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][1]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][2]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][3]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][4]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][5]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][6]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][7]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][8]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i][9] ){
+						if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[0]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[1]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[2]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[3]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[4]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[5]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[6]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[7]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[8]
+						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[9] ){
 							_tcscat( pszLabel, _T("・") );
 							_tcscat( pszLabel, type->m_szTypeName );
 							_tcscat( pszLabel, _T("（") );
@@ -314,14 +317,14 @@ INT_PTR CPropKeyword::DispatchEvent(
 						return TRUE;
 					}
 					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
-					for( i = 0; i < MAX_TYPES; ++i ){
+					for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
 						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 						for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-							if( nIndex1 == m_Types_nKeyWordSetIdx[i][j] ){
-								m_Types_nKeyWordSetIdx[i][j] = -1;
+							if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[j] ){
+								m_Types_nKeyWordSetIdx[i].index[j] = -1;
 							}
-							else if( nIndex1 < m_Types_nKeyWordSetIdx[i][j] ){
-								m_Types_nKeyWordSetIdx[i][j]--;
+							else if( nIndex1 < m_Types_nKeyWordSetIdx[i].index[j] ){
+								m_Types_nKeyWordSetIdx[i].index[j]--;
 							}
 						}
 					}

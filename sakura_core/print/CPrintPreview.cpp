@@ -815,8 +815,10 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pLayoutMgr_Print->Create( m_pParentWnd->GetDocument(), &m_pParentWnd->GetDocument()->m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
-//	STypeConfig& ref = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute();
-	STypeConfig ref = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute();
+	// タイプ別設定をコピー
+	m_typePrint = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute();
+	STypeConfig& ref = m_typePrint;
+
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
@@ -837,7 +839,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bKinsokuTail = m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	m_pLayoutMgr_Print->SetLayoutInfo( true, ref );
+	m_pLayoutMgr_Print->SetLayoutInfo( true, ref, ref.m_nTabSpace, ref.m_nMaxLineKetas );
 	m_nAllPageNum = (WORD)((Int)m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ));		/* 全ページ数 */
 	if( 0 < m_pLayoutMgr_Print->GetLineCount() % ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) ){
 		m_nAllPageNum++;

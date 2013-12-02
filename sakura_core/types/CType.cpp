@@ -7,18 +7,11 @@
 
 void _DefaultConfig(STypeConfig* pType);
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        CTypeConfig                          //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-STypeConfig* CTypeConfig::GetTypeConfig()
-{
-	return &CDocTypeManager().GetTypeSetting(*this);
-}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          CType                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-void CType::InitTypeConfig(int nIdx)
+void CType::InitTypeConfig(int nIdx, STypeConfig& type)
 {
 	//規定値をコピー
 	static STypeConfig sDefault;
@@ -27,13 +20,14 @@ void CType::InitTypeConfig(int nIdx)
 		_DefaultConfig(&sDefault);
 		bLoadedDefault=true;
 	}
-	CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx)) = sDefault;
+	type = sDefault;
 
 	//インデックスを設定
-	CTypeConfig(nIdx)->m_nIdx = nIdx;
+	type.m_nIdx = nIdx;
+	type.m_id = nIdx;
 
 	//個別設定
-	InitTypeConfigImp(CTypeConfig(nIdx).GetTypeConfig());
+	InitTypeConfigImp(&type);
 }
 
 
@@ -47,7 +41,7 @@ void CType::InitTypeConfig(int nIdx)
 
 	@date 2005.01.30 genta CShareData::Init()から分離．
 */
-void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
+void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types )
 {
 	CType* table[] = {
 		new CType_Basis(),	//基本
@@ -67,22 +61,21 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		new CType_Rich(),	//リッチテキスト
 		new CType_Ini(),	//設定ファイル
 	};
-	assert( 1 <= MAX_TYPES );
+	types.clear();
+	assert( _countof(table) <= MAX_TYPES );
 	for(int i = 0; i < _countof(table) && i < MAX_TYPES; i++){
-		table[i]->InitTypeConfig(i);
+		STypeConfig* type = new STypeConfig;
+		types.push_back(type);
+		table[i]->InitTypeConfig(i, *type);
+		auto_strcpy(pShareData->m_TypeMini[i].m_szTypeExts, type->m_szTypeExts);
+		auto_strcpy(pShareData->m_TypeMini[i].m_szTypeName, type->m_szTypeName);
+		pShareData->m_TypeMini[i].m_encoding = type->m_encoding;
+		pShareData->m_TypeMini[i].m_id = type->m_id;
 		SAFE_DELETE(table[i]);
 	}
-
-	// 設定17-30(MAX_TYPES)
-	assert( _countof(table) <= MAX_TYPES);
-	if( _countof(table) < MAX_TYPES ){
-		CType_Other other;
-		for( int i = _countof(table); i < MAX_TYPES; i++ ){
-			other.InitTypeConfig(i);
-		}
-	}
+	pShareData->m_TypeBasis = *types[0];
+	pShareData->m_nTypesCount = (int)types.size();
 }
-
 
 /*!	@brief 共有メモリ初期化/強調キーワード
 
@@ -243,8 +236,8 @@ void _DefaultConfig(STypeConfig* pType)
 	}
 	pType->m_RegexKeywordList[0] = L'\0';
 	pType->m_bUseRegexKeyword = false;
-//		pType->m_nRegexKeyMagicNumber = 1;
 //@@@ 2001.11.17 add end MIK
+	pType->m_nRegexKeyMagicNumber = 0;
 
 //@@@ 2006.04.10 fon ADD-start
 	for(int i = 0; i < MAX_KEYHELP_FILE; i++){

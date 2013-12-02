@@ -84,7 +84,7 @@ bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		{
 			if( pWork->nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen )
 			{
-				if( ! (m_sTypeConfig.m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+				if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 				{
 					(this->*pfOnLine)(pWork);
 				}
@@ -102,7 +102,7 @@ bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
+	if( m_pTypeConfig->m_bWordWrap	/* 英文ワードラップをする */
 	 && pWork->nKinsokuType == KINSOKU_TYPE_NONE )
 	{
 		/* 英単語の先頭か */
@@ -116,7 +116,7 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 			pWork->nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
 
-			if( pWork->nPosX+nWordKetas>=m_sTypeConfig.m_nMaxLineKetas && pWork->nPos-pWork->nBgn>0 )
+			if( pWork->nPosX+nWordKetas>=GetMaxLineKetas() && pWork->nPos-pWork->nBgn>0 )
 			{
 				(this->*pfOnLine)(pWork);
 			}
@@ -126,12 +126,12 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 {
-	if( m_sTypeConfig.m_bKinsokuKuto && (m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX < 2) && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
+	if( m_pTypeConfig->m_bKinsokuKuto && (GetMaxLineKetas() - pWork->nPosX < 2) && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos );
 
-		if( IsKinsokuPosKuto(m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
+		if( IsKinsokuPosKuto(GetMaxLineKetas() - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
@@ -142,9 +142,9 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_sTypeConfig.m_bKinsokuHead
+	if( m_pTypeConfig->m_bKinsokuHead
 	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX < 4)
+	 && (GetMaxLineKetas() - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
 	{
@@ -152,7 +152,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos+1 );
 
-		if( IsKinsokuPosHead( m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX, nCharKetas2, nCharKetas3 )
+		if( IsKinsokuPosHead( GetMaxLineKetas() - pWork->nPosX, nCharKetas2, nCharKetas3 )
 		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
 		 && ! IsKinsokuHead( pWork->cLineStr.At(pWork->nPos) )	//1文字前が行頭禁則でない
 		 && ! IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )	//句読点でない
@@ -168,16 +168,16 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_sTypeConfig.m_bKinsokuTail
+	if( m_pTypeConfig->m_bKinsokuTail
 	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX < 4)
+	 && (GetMaxLineKetas() - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
 	{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 		CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos+1 );
 
-		if( IsKinsokuPosTail(m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
+		if( IsKinsokuPosTail(GetMaxLineKetas() - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
 			pWork->nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
@@ -192,7 +192,7 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 	CLayoutInt nCharKetas = GetActualTabSpace( pWork->nPosX );
-	if( pWork->nPosX + nCharKetas > m_sTypeConfig.m_nMaxLineKetas ){
+	if( pWork->nPosX + nCharKetas > GetMaxLineKetas() ){
 		(this->*pfOnLine)(pWork);
 		return true;
 	}
@@ -255,10 +255,10 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 //				nCharKetas = CLayoutInt(1);
 //			}
 
-			if( pWork->nPosX + nCharKetas > m_sTypeConfig.m_nMaxLineKetas ){
+			if( pWork->nPosX + nCharKetas > GetMaxLineKetas() ){
 				if( pWork->nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 				{
-					if( ! (m_sTypeConfig.m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 					{
 						(this->*pfOnLine)(pWork);
 						continue;
@@ -290,7 +290,7 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
 
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
-		nPosXがインデントを含む幅を保持するように変更．m_sTypeConfig.m_nMaxLineKetasは
+		nPosXがインデントを含む幅を保持するように変更．m_nMaxLineKetasは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 */
 void CLayoutMgr::_DoLayout()
@@ -315,8 +315,8 @@ void CLayoutMgr::_DoLayout()
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
 	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( m_sTypeConfig.m_nTabSpace >= m_sTypeConfig.m_nMaxLineKetas ){
-		m_sTypeConfig.m_nTabSpace = CLayoutInt(4);
+	if( GetTabSpace() >= GetMaxLineKetas() ){
+		m_nTabSpace = CLayoutInt(4);
 	}
 
 	nAllLineNum = m_pcDocLineMgr->GetLineCount();
@@ -412,7 +412,7 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	
 	@date 2002.10.07 YAZAKI rename from "DoLayout3_New"
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
-		pWork->nPosXがインデントを含む幅を保持するように変更．m_sTypeConfig.m_nMaxLineKetasは
+		pWork->nPosXがインデントを含む幅を保持するように変更．m_nMaxLineKetasは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 	@date 2009.08.28 nasukoji	テキスト最大幅の算出に対応
 

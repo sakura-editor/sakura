@@ -116,6 +116,7 @@ enum EStringLiteralType{
 struct STypeConfig{
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
+	int					m_id;
 	TCHAR				m_szTypeName[64];				/*!< タイプ属性：名称 */
 	TCHAR				m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
 	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
@@ -202,7 +203,7 @@ struct STypeConfig{
 
 //@@@ 2001.11.17 add start MIK
 	bool				m_bUseRegexKeyword;						/* 正規表現キーワードを使うか*/
-	int					m_nRegexKeyMagicNumber;					/* 正規表現キーワード更新マジックナンバー */
+	DWORD				m_nRegexKeyMagicNumber;					/* 正規表現キーワード更新マジックナンバー */
 	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
 	wchar_t				m_RegexKeywordList[MAX_REGEX_KEYWORDLISTLEN];	// 正規表現キーワード
 //@@@ 2001.11.17 add end MIK
@@ -236,6 +237,14 @@ struct STypeConfig{
 
 }; /* STypeConfig */
 
+// タイプ別設定(mini)
+struct STypeConfigMini
+{
+	int			m_id;
+	TCHAR		m_szTypeName[64];				/*!< タイプ属性：名称 */
+	TCHAR		m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
+	SEncodingConfig		m_encoding;						//!< エンコードオプション
+};
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -259,12 +268,12 @@ public:
 	{
 		m_nType = n;
 	}
-	bool IsValid() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
+	bool IsValidType() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
 	int GetIndex() const{ /*assert(IsValid());*/ return m_nType; }
 
 	//共有データへの簡易アクセサ
-	STypeConfig* operator->(){ return GetTypeConfig(); }
-	STypeConfig* GetTypeConfig();
+//	STypeConfig* operator->(){ return GetTypeConfig(); }
+//	STypeConfig* GetTypeConfig();
 private:
 	int m_nType;
 };
@@ -278,7 +287,7 @@ private:
 class CType{
 public:
 	virtual ~CType(){ }
-	void InitTypeConfig(int nIdx);
+	void InitTypeConfig(int nIdx, STypeConfig&);
 protected:
 	virtual void InitTypeConfigImp(STypeConfig* pType) = 0;
 };
