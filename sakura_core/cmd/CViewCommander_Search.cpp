@@ -294,13 +294,13 @@ end_of_func:;
 
 	if(bFound){
 		if(NULL == pcSelectLogic && ((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx)))
-			m_pCommanderView->SendStatusMessage(_T("▼先頭から再検索しました"));
+			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 	}
 	else{
 		GetCaret().ShowEditCaret();	// 2002/04/18 YAZAKI
 		GetCaret().ShowCaretPosInfo();	// 2002/04/18 YAZAKI
 		if( !bReplaceAll ){
-			m_pCommanderView->SendStatusMessage(_T("▽見つかりませんでした"));
+			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
 		}
 // To Here 2002.01.26 hor
 
@@ -315,7 +315,7 @@ end_of_func:;
 			AlertNotFound(
 				hwndParent,
 				bReplaceAll,
-				_T("前方(↓) に文字列 '%ls' が１つも見つかりません。"),
+				LS(STR_ERR_SRNEXT3),
 				KeyName.GetStringPtr()
 			);
 		}
@@ -460,9 +460,9 @@ end_of_func:;
 	}
 	if(bFound){
 		if((nLineNumOld < nLineNum)||(nLineNumOld == nLineNum && nIdxOld < nIdx))
-			m_pCommanderView->SendStatusMessage(_T("▲末尾から再検索しました"));
+			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
 	}else{
-		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
 // To Here 2002.01.26 hor
 
 		/* 検索／置換  見つからないときメッセージを表示 */
@@ -475,7 +475,7 @@ end_of_func:;
 		AlertNotFound(
 			hwndParent,
 			false,
-			_T("後方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+			LS(STR_ERR_SRPREV3),	//Jan. 25, 2001 jepro メッセージを若干変更
 			KeyName.GetStringPtr()
 		);
 	}
@@ -546,7 +546,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste()){
-		OkMessage( hwndParent, _T("クリップボードに有効なデータがありません！") );
+		OkMessage( hwndParent, LS(STR_ERR_CEDITVIEW_CMD10) );
 		::CheckDlgButton( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
 		::EnableWindow( ::GetDlgItem( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 		return;	//	失敗return;
@@ -684,7 +684,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, true, false, hwndParent, LTEXT("最後まで置換しました。") );
+		Command_SEARCH_NEXT( true, true, false, hwndParent, LSW(STR_ERR_CEDITVIEW_CMD11) );
 	}
 }
 
@@ -720,7 +720,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste() ){
-		OkMessage( m_pCommanderView->GetHwnd(), _T("クリップボードに有効なデータがありません！") );
+		OkMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD10) );
 		::CheckDlgButton( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
 		::EnableWindow( ::GetDlgItem( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 		return;	// TRUE;

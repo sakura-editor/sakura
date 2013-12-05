@@ -3575,27 +3575,25 @@ BEGIN
 
 
 	// CEditDoc.cpp
-	STR_ERR_DLGEDITDOC1			"'%s'\nというファイルを開けません。\n読み込みアクセス権がありません。"
-	STR_ERR_DLGEDITDOC2			"バグじゃぁあああ！！！"
-	STR_ERR_DLGEDITDOC3			"CEditDoc::FileRead()\n\nNULL == pszPath\n【対処】エラーの出た状況を作者に連絡してくださいね。"
-	STR_ERR_DLGEDITDOC4			"%s\n文字コードの判別処理でエラーが発生しました。"
+	STR_LOADAGENT_ERR_OPEN		"'%ts'\nというファイルを開けません。\n読み込みアクセス権がありません。"
+	STR_LOADAGENT_BIG_FILE		"ファイルサイズが%dMB以上あります。開きますか？"
+	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
+	STR_SAVEAGENT_OTHER			"\'%ts\'\nファイルを保存できません。\n他のウィンドウで使用中です。"
 	STR_ERR_DLGEDITDOC5			"文字コード情報"
 	STR_ERR_DLGEDITDOC6			"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません"
 	STR_ERR_DLGEDITDOC7			"バグじゃぁあああ！！！"
 	STR_ERR_DLGEDITDOC8			"【対処】エラーの出た状況を作者に連絡してください。"
-	STR_ERR_DLGEDITDOC9			"c%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"
-	STR_ERR_DLGEDITDOC10		"ファイル保存"
-	STR_ERR_DLGEDITDOC11		"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
-	STR_ERR_DLGEDITDOC12		"ファイルパスが長すぎるためバックアップの作成に失敗しました．\nANSI 版では %d バイト以上の絶対パスを扱えません．\n\n元ファイルへの上書きを継続して行いますか．"
-	STR_ERR_DLGEDITDOC13		"バックアップエラー"
-	STR_ERR_DLGEDITDOC14		"以下のバックアップフォルダが見つかりません．\n%s\nバックアップを作成せずに上書き保存してよろしいですか．"
-	STR_ERR_DLGEDITDOC15		"バックアップ作成の確認"
-	STR_ERR_DLGEDITDOC16		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n"
-	STR_ERR_DLGEDITDOC17		"バックアップ作成の確認"
-	STR_ERR_DLGEDITDOC18		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n"
-	STR_ERR_DLGEDITDOC19		"削除失敗"
-	STR_ERR_DLGEDITDOC20		"移動失敗"
-	STR_ERR_DLGEDITDOC21		"%s\nは現在他のプロセスによって書込みが禁止されています。"
+	STR_NOT_EXSIST_SAVE			"%ts\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"
+	STR_BACKUP_ERR_TITLE		"ファイル保存"
+	STR_BACKUP_ERR_MSG			"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
+	STR_BACKUP_ERR_PATH_CRETE	"バックアップ先のパス作成中にエラーになりました。\nパスが長すぎるか不正な書式です。\nバックアップを作成せずに上書き保存してよろしいですか？"
+	STR_BACKUP_CONFORM_TITLE1		"バックアップ作成の確認"
+	STR_BACKUP_CONFORM_MSG1		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%ts\n    ↓\n%ts\n\n作成したバックアップファイルをごみ箱に放り込みます。\n"
+	STR_BACKUP_CONFORM_TITLE2		"バックアップ作成の確認"
+	STR_BACKUP_CONFORM_MSG2		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%ts\n    ↓\n%ts\n\n"
+	STR_BACKUP_ERR_DELETE		"削除失敗"
+	STR_BACKUP_ERR_MOVE			"移動失敗"
+	STR_ERR_DLGEDITDOC21		"%ts\nは現在他のプロセスによって書込みが禁止されています。"
 	STR_ERR_DLGEDITDOC22		"（無題）"
 
 	STR_EXCLU_NO_EXCLUSIVE		"しない"
@@ -3609,7 +3607,7 @@ BEGIN
 	STR_ERR_DLGEDITDOC29		"Grepの処理中です。\n"
 	STR_ERR_DLGEDITDOC30		"%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"
 	STR_ERR_DLGEDITDOC31		"%s\nは変更されています。 閉じる前に保存しますか？"
-	STR_ERR_DLGEDITDOC32		"★ファイル更新 %02d:%02d:%02d"
+	STR_AUTORELOAD_NOFITY		"★ファイル更新 %02d:%02d:%02d"
 
 	// 64 bytes max, automatically 
 	STR_ERR_DLGEDITDOC33		"(印刷プレビューでのみ使用できます)"
@@ -3661,8 +3659,13 @@ BEGIN
 	STR_GREP_SHOW_FIRST_MATCH	"    (ファイル毎最初のみ検索)\r\n"
 	STR_GREP_SUSPENDED			"中断しました。\r\n"
 	STR_GREP_MATCH_COUNT		"%d 個が検索されました。\r\n"
-	STR_ERR_DLGEDITVW28			"■""%s""%s\r\n"						// LMP: Double quites one would hope FIXME?
-	STR_ERR_DLGEDITVW29			"CEditView::DoGrepFile() ファイルの読み込み中にエラーが発生しました。\r\n"
+	STR_GREP_RUNNINNG			"Grepの処理中です。\n"
+	STR_GREP_ERR_ENUMKEYS0		"(不明)"
+	STR_GREP_ERR_ENUMKEYS1		"ファイル指定のフォルダ部分にはワイルドカードは使えません"
+	STR_GREP_ERR_ENUMKEYS2		"ファイル指定にはフルパスは使えません"
+	STR_GREP_TIMER				"処理時間: %dミリ秒\r\n"
+	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
+	STR_GREP_ERR_FILEREAD		"ファイルの読み込み中にエラーが発生しました。[%ts]\r\n"
 	STR_ERR_DLGEDITVW30			"パス名貼り付け(&P)"
 	STR_ERR_DLGEDITVW31			"ファイル名貼り付け(&F)"
 	STR_ERR_DLGEDITVW32			"ファイルを開く(&O)"
@@ -3676,6 +3679,7 @@ BEGIN
 
 	// CEditView_CmdHokan.cpp
 	STR_ERR_DLGEDITVWHOKAN1		"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
+	STR_SUPPORT_NOT_COMPLITE	"補完対象がありません"
 
 	// CEditView_Cmdisrch.cpp
 	STR_ERR_DLGEDITVWISRCH1		"BREGREP.DLLが使用できません。"
@@ -3683,14 +3687,13 @@ BEGIN
 	STR_ERR_DLGEDITVWISRCH3		" (見つかりません)"
 
 	// CEditView_Command.cpp
-	STR_ERR_MACRO1				"マクロ %d (%s) の実行に失敗しました。"
-	STR_ERR_INSTXT1				"バグじゃないの？ @Command_INSTEXT"
+	STR_ERR_MACRO1				"マクロ %d (%ts) の実行に失敗しました。"
 	STR_ERR_SRPREV1				"▲末尾から再検索しました"
 	STR_ERR_SRPREV2				"△見つかりませんでした"
-	STR_ERR_SRPREV3				"前方(↑) に文字列 '%s' が１つも見つかりません。"
+	STR_ERR_SRPREV3				"後方(↑) に文字列 '%ls' が１つも見つかりません。"
 	STR_ERR_SRNEXT1				"▼先頭から再検索しました"
 	STR_ERR_SRNEXT2				"▽見つかりませんでした"
-	STR_ERR_SRNEXT3				"後方(↓) に文字列 '%s' が１つも見つかりません。"
+	STR_ERR_SRNEXT3				"前方(↓) に文字列 '%ls' が１つも見つかりません。"
 	STR_ERR_UNINDENT1			"★逆インデントは選択時のみ"
 	STR_ERR_TAGJMP1				"タグジャンプできません"
 	STR_ERR_TAGJMPBK1			"タグジャンプバックできません"
@@ -3698,15 +3701,14 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD01		"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"
 	STR_ERR_CEDITVIEW_CMD02		"外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?"
 	STR_ERR_CEDITVIEW_CMD03		"タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。"
-	STR_ERR_CEDITVIEW_CMD04		"タグ作成コマンド実行は失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD04		"タグ作成コマンド実行は失敗しました。\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD05		"タグファイルを作成中です。"
-	STR_ERR_CEDITVIEW_CMD06		"タグ作成コマンド実行は失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD06		"タグ作成コマンド実行は失敗しました。\n\n%hs"
 	STR_ERR_CEDITVIEW_CMD07		"タグファイルの作成が終了しました。"
 	STR_ERR_CEDITVIEW_CMD08		"C/C++ヘッダファイルのオープンに失敗しました。"
 	STR_ERR_CEDITVIEW_CMD09		"C/C++ソースファイルのオープンに失敗しました。"
 	STR_ERR_CEDITVIEW_CMD10		"クリップボードに有効なデータがありません！"
 	STR_ERR_CEDITVIEW_CMD11		"最後まで置換しました。"
-	STR_ERR_CEDITVIEW_CMD12		"クリップボードに有効なデータがありません！"
 	STR_ERR_CEDITVIEW_CMD13		"ファイルの作成に失敗しました。\n\n%s"
 	STR_ERR_CEDITVIEW_CMD14		"ファイルの書き込みに失敗しました。\n\n%s"
 	STR_ERR_CEDITVIEW_CMD15		"ファイルの作成に失敗しました。\n\n%s"
@@ -3719,26 +3721,23 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD22		"異なる箇所は見つかりませんでした。"
 	STR_ERR_CEDITVIEW_CMD23		"異なる箇所が見つかりました。"
 	STR_ERR_CEDITVIEW_CMD24		"マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"
-	STR_ERR_CEDITVIEW_CMD25		"マクロファイルを作成できませんでした。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD25		"マクロファイルを作成できませんでした。\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD26		"保存可能なマクロがありません．キーボードマクロ以外は保存できません．"
-	STR_ERR_CEDITVIEW_CMD27		"マクロファイルを作成できませんでした。\n\n%s"
-	STR_ERR_CEDITVIEW_CMD28		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD27		"マクロファイルを作成できませんでした。\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD28		"ファイルを開けませんでした。\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD29		"%s\n\nこのファイルは変更されています。\n再ロードを行うと変更が失われますが、よろしいですか?"
+	STR_ERR_CEDITVIEW_CMD30		"マクロの読み込みに失敗しました。\n\n%ts"
 
 	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
 	// inside funciton Command_EXTHELP1
 
 	// CEditView_Command_New.cpp
-	STR_ERR_DLGEDITVWCMDNW1		"▼先頭から再検索しました"
-	STR_ERR_DLGEDITVWCMDNW2		"▽見つかりませんでした"
-	STR_ERR_DLGEDITVWCMDNW3		"後方(↓) にブックマークが見つかりません。"
-	STR_ERR_DLGEDITVWCMDNW4		"▲末尾から再検索しました"
-	STR_ERR_DLGEDITVWCMDNW5		"△見つかりませんでした"
-	STR_ERR_DLGEDITVWCMDNW6		"前方(↑) にブックマークが見つかりません。"
+	STR_BOOKMARK_NEXT_NOT_FOUND	"前方(↓) にブックマークが見つかりません。"
+	STR_BOOKMARK_PREV_NOT_FOUND	"後方(↑) にブックマークが見つかりません。"
 	STR_ERR_DLGEDITVWCMDNW7		"%d行をマージしました。"
 	STR_ERR_DLGEDITVWCMDNW8		"マージ可能な行がみつかりませんでした。"
 	STR_ERR_DLGEDITVWCMDNW9		"作者に教えて欲しいエラー"
-	STR_ERR_DLGEDITVWCMDNW10	"'%s'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"
+	STR_SAVEAGENT_OTHER_APP		"'%ts'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"
 	STR_ERR_DLGEDITVWCMDNW11	"ファイルの書き込み中にエラーが発生しました。"
 	STR_ERR_DLGEDITVWCMDNW12	"ファイルの読み込み中にエラーが発生しました。"
 
@@ -3748,12 +3747,8 @@ BEGIN
 	STR_ERR_DLGEDITVWDIFF3		"差分コマンド実行は失敗しました。\n\n%s"
 	STR_ERR_DLGEDITVWDIFF4		"DIFF差分を行おうとしたファイルはバイナリファイルです。"
 	STR_ERR_DLGEDITVWDIFF5		"DIFF差分は見つかりませんでした。"
-	STR_ERR_DLGEDITVWDIFF6		"▼先頭から再検索しました"
-	STR_ERR_DLGEDITVWDIFF7		"▽見つかりませんでした"
-	STR_ERR_DLGEDITVWDIFF8		"後方(↓) に差分が見つかりません。"
-	STR_ERR_DLGEDITVWDIFF9		"▲末尾から再検索しました"
-	STR_ERR_DLGEDITVWDIFF10		"△見つかりませんでした"
-	STR_ERR_DLGEDITVWDIFF11		"前方(↑) に差分が見つかりません。"
+	STR_DIFF_NEXT_NOT_FOUND		"前方(↓) に差分が見つかりません。"
+	STR_DIFF_PREV_NOT_FOUND		"後方(↑) に差分が見つかりません。"
 	STR_ERR_DLGEDITVWDIFF12		"差分コマンド実行は失敗しました。"
 	STR_ERR_DLGEDITVWDIFF13		"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。"
 	STR_ERR_DLGEDITVWDIFF14		"差分コマンド実行は失敗しました。\n\n行が長すぎます。"
@@ -4422,6 +4417,15 @@ HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"
 
 	// WinMain.cpp
 
+	// CCdoeChecker.cpp
+	STR_CODECHECKER_EOL_UNIFY		"改行コードが混在しています。\r\n現在の入力改行コード %ts に統一しますか？"
+	STR_CODECHECKER_CONFORM_LOSESOME	"文字エンコード %ts で保存しようとしていますが、\r\n文字コード変換により一部の文字情報が失われます。\r\n保存処理を続行しますか？"
+	STR_CODECHECKER_LOSESOME_SAVE	"一部の文字情報が、セーブ時の変換により失われました"
+	STR_CODECHECKER_LOSESOME_ROAD	"一部の文字情報が、ロード時の変換により失われました"
+	STR_CONVERT_ERR					"変換でエラーが発生しました"
+
+	STR_DLGABOUT_APPNAME			"サクラエディタ"
+	STR_DLGEXEC_SELECT_CURDIR		"カレントディレクトリを選んでください"
 
 END
 

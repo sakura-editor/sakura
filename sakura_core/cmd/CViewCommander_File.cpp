@@ -455,11 +455,11 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			&dwResult
 		);
 		if( !bResult ){
-			TopErrorMessage( m_pCommanderView->GetHwnd(), _T("Oracle SQL*Plusからの反応がありません。\nしばらく待ってから再び実行してください。") );
+			TopErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD20) );
 		}
 	}else{
 		ErrorBeep();
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("SQLをファイルに保存しないとOracle SQL*Plusで実行できません。\n") );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD21) );
 		return;
 	}
 	return;
@@ -642,10 +642,8 @@ BOOL CViewCommander::Command_PUTFILE(
 		{
 			WarningMessage(
 				NULL,
-				_T("\'%ls\'\n")
-				_T("ファイルを保存できません。\n")
-				_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
-				filename
+				LS(STR_SAVEAGENT_OTHER_APP),
+				to_tchar(filename)
 			);
 			bResult = FALSE;
 		}
@@ -653,7 +651,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		{
 			WarningMessage(
 				NULL,
-				_T("ファイルの書き込み中にエラーが発生しました。")
+				LS(STR_ERR_DLGEDITVWCMDNW11)
 			);
 			bResult = FALSE;
 		}
@@ -797,11 +795,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		WarningMessage( NULL, _T("file open error [%ls]"), filename );
+		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), to_tchar(filename) );
 		bResult = FALSE;
 	}
 	catch( CError_FileRead ){
-		WarningMessage( NULL, _T("ファイルの読み込み中にエラーが発生しました。") );
+		WarningMessage( NULL, LS(STR_ERR_DLGEDITVWCMDNW12) );
 		bResult = FALSE;
 	} // 例外処理終わり
 

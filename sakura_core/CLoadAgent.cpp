@@ -100,7 +100,7 @@ next:
 			//	ここでステータスメッセージを使っても画面に表示されない．
 			TopInfoMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("%ts\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"),	//Mar. 24, 2001 jepro 若干修正
+				LS(STR_NOT_EXSIST_SAVE),	//Mar. 24, 2001 jepro 若干修正
 				pLoadInfo->cFilePath.GetBufferPointer()
 			);
 		}
@@ -123,9 +123,7 @@ next:
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ts\'\n")
-				_T("というファイルを開けません。\n")
-				_T("読み込みアクセス権がありません。"),
+				LS(STR_LOADAGENT_ERR_OPEN),
 				pLoadInfo->cFilePath.c_str()
 			);
 			return CALLBACK_INTERRUPT; //ファイルが存在しているのに読み取れない場合は中断
@@ -148,7 +146,7 @@ next:
 				int nRet = MYMESSAGEBOX( CEditWnd::getInstance()->GetHwnd(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 					GSTR_APPNAME,
-					_T("ファイルサイズが%dMB以上あります。開きますか？"),
+					LS(STR_LOADAGENT_BIG_FILE),
 					GetDllShareData().m_Common.m_sFile.m_nAlertFileSize );
 				if( nRet != IDYES ){
 					return CALLBACK_INTERRUPT;

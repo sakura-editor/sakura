@@ -49,7 +49,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	//	同名で上書きされるのを防ぐ
 	if( CAppMode::getInstance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
-		TopErrorMessage( CEditWnd::getInstance()->GetHwnd(), _T("ビューモードでは同一ファイルへの保存はできません。") );
+		TopErrorMessage( CEditWnd::getInstance()->GetHwnd(), LS(STR_SAVEAGENT_VIEW_FILE) );
 		return CALLBACK_INTERRUPT;
 	}
 
@@ -59,9 +59,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		if( CShareData::getInstance()->IsPathOpened( pSaveInfo->cFilePath, &hwndOwner ) ){
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ts\'\n")
-				_T("ファイルを保存できません。\n")
-				_T("他のウィンドウで使用中です。"),
+				LS(STR_SAVEAGENT_OTHER),
 				(LPCTSTR)pSaveInfo->cFilePath
 			);
 			return CALLBACK_INTERRUPT;
@@ -87,9 +85,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ts\'\n")
-				_T("ファイルを保存できません。\n")
-				_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
+				LS(STR_SAVEAGENT_OTHER_APP),
 				pSaveInfo->cFilePath.c_str()
 			);
 			return CALLBACK_INTERRUPT;

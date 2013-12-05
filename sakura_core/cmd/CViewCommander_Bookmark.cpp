@@ -320,10 +320,10 @@ re_do:;								// hor
 		}
 	}
 	if(bFound){
-		if(nYOld >= ptXY.y)m_pCommanderView->SendStatusMessage(_T("▼先頭から再検索しました"));
+		if(nYOld >= ptXY.y)m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 	}else{
-		m_pCommanderView->SendStatusMessage(_T("▽見つかりませんでした"));
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("前方(↓) にブックマークが見つかりません。"));
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_NEXT_NOT_FOUND));
 	}
 	return;
 }
@@ -364,10 +364,10 @@ re_do:;								// hor
 		}
 	}
 	if(bFound){
-		if(nYOld <= ptXY.y)m_pCommanderView->SendStatusMessage(_T("▲末尾から再検索しました"));
+		if(nYOld <= ptXY.y)m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
 	}else{
-		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("後方(↑) にブックマークが見つかりません。") );
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_PREV_NOT_FOUND) );
 	}
 	return;
 }
