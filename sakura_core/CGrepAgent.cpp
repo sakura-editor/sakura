@@ -32,7 +32,7 @@ ECallbackResult CGrepAgent::OnBeforeClose()
 		ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );	//@@@ 2003.06.25 MIK
 		TopInfoMessage(
 			CEditWnd::getInstance()->GetHwnd(),
-			_T("Grepの処理中です。\n")
+			LS(STR_GREP_RUNNINNG)
 		);
 		return CALLBACK_INTERRUPT;
 	}
@@ -222,11 +222,11 @@ DWORD CGrepAgent::DoGrep(
 			pcViewDst->m_bDoing_UndoRedo = false;
 			pcViewDst->SetUndoBuffer();
 
-			const TCHAR* pszErrorMessage = _T("(不明)");
+			const TCHAR* pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS0);
 			if( nErrorNo == 1 ){
-				pszErrorMessage = _T("ファイル指定のフォルダ部分にはワイルドカードは使えません");
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
 			}else if( nErrorNo == 2 ){
-				pszErrorMessage = _T("ファイル指定にはフルパスは使えません");
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
 			ErrorMessage( pcViewDst->m_hwndParent, _T("%ts"), pszErrorMessage );
 			return 0;
@@ -403,7 +403,7 @@ DWORD CGrepAgent::DoGrep(
 		auto_sprintf( szBuffer, LSW( STR_GREP_MATCH_COUNT ), nHitCount );	//L"%d 個が検索されました。\r\n"
 		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #ifdef _DEBUG
-		auto_sprintf( szBuffer, L"処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
+		auto_sprintf( szBuffer, LSW(STR_GREP_TIMER), cRunningTimer.Read() );
 		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #endif
 	}
@@ -1175,14 +1175,15 @@ int CGrepAgent::DoGrepFile(
 	cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		std::wstring str;
-		str = str + L"file open error [" + to_wchar(pszFullPath) + L"]\r\n";
-		pcViewDst->GetCommander().Command_ADDTAIL( str.c_str(), str.length() );
+		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
+		str.Replace(L"%ts", to_wchar(pszFullPath));
+		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
-		std::wstring str = L"CEditView::DoGrepFile() ファイルの読み込み中にエラーが発生しました。\r\n";
-		pcViewDst->GetCommander().Command_ADDTAIL( str.c_str(), str.length() );
+		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
+		str.Replace(L"%ts", to_wchar(pszFullPath));
+		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
 
 	return nHitCount;

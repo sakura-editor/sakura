@@ -59,7 +59,7 @@ retry:;
 	){
 		ConfirmBeep();
 		if( IDYES == ::ConfirmMessage( GetMainWindow(),
-			_T("補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?")
+			LS(STR_ERR_DLGEDITVWHOKAN1)
 		) ){
 			/* タイプ別設定 プロパティシート */
 			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( 2, GetDocument()->m_cDocType.GetDocumentType() ) ){
@@ -75,7 +75,7 @@ retry:;
 		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
 	}else{
 		InfoBeep(); //2010.04.03 Error→Info
-		m_pCommanderView->SendStatusMessage(_T("補完対象がありません")); // 2010.05.29 ステータスで表示
+		m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ステータスで表示
 		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
@@ -214,7 +214,7 @@ retry:;
 //		[Esc]キーと[x]ボタンでも中止できるように変更
 		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 //To Here Sept. 15, 2000
-			_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
+			LS(STR_ERR_CEDITVIEW_CMD01)
 		) ){
 			/* 共通設定 プロパティシート */
 			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PROPCOM_PAGENUM_HELPER ) ){
@@ -283,7 +283,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
 			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 	//	To Here Sept. 15, 2000
-				_T("外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?")
+				LS(STR_ERR_CEDITVIEW_CMD02)
 			) ){
 				return;
 			}

@@ -44,7 +44,7 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
 		TopErrorMessage( NULL,
 			_T("COpeBlk::AppendOpe() error.\n")
-			_T("ƒoƒO\n")
+			_T("Bug.\n")
 			_T("pcOpe->m_ptCaretPos_PHY_Before = %d,%d\n")
 			_T("pcOpe->m_ptCaretPos_PHY_After = %d,%d\n"),
 			pcOpe->m_ptCaretPos_PHY_Before.x,

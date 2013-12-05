@@ -169,10 +169,10 @@ end_of_compare:;
 
 	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
 	if( !bDefferent ){
-		TopInfoMessage( hwndMsgBox, _T("異なる箇所は見つかりませんでした。") );
+		TopInfoMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD22) );
 	}
 	else{
-//		TopInfoMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );
+//		TopInfoMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
@@ -182,7 +182,7 @@ end_of_compare:;
 		/* カーソルを移動させる */
 		memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
-		TopWarningMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );	// 位置を変更してからメッセージ	2008/4/27 Uchi
+		TopWarningMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );	// 位置を変更してからメッセージ	2008/4/27 Uchi
 	}
 
 	/* 開いているウィンドウをアクティブにする */
@@ -207,7 +207,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szTmpFile2, int nFlgOpt )
 
 	if( (DWORD)-1 == ::GetFileAttributes( szTmpFile2 ) )
 	{
-		WarningMessage( m_pCommanderView->GetHwnd(), _T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
+		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF1) );
 		return;
 	}
 
@@ -322,11 +322,11 @@ re_do:;
 	}
 
 	if( bFound ){
-		if( nYOld_Logic >= ptXY.y ) m_pCommanderView->SendStatusMessage( _T("▼先頭から再検索しました") );
+		if( nYOld_Logic >= ptXY.y ) m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRNEXT1) );
 	}
 	else{
-		m_pCommanderView->SendStatusMessage( _T("▽見つかりませんでした") );
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("前方(↓) に差分が見つかりません。") );
+		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRNEXT2) );
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_DIFF_NEXT_NOT_FOUND) );
 	}
 
 	return;
@@ -375,11 +375,11 @@ re_do:;
 	}
 
 	if( bFound ){
-		if( nYOld_Logic <= ptXY.y ) m_pCommanderView->SendStatusMessage( _T("▲末尾から再検索しました") );
+		if( nYOld_Logic <= ptXY.y ) m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV1) );
 	}
 	else{
-		m_pCommanderView->SendStatusMessage( _T("△見つかりませんでした") );
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("後方(↑) に差分が見つかりません。") );
+		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV2) );
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_DIFF_PREV_NOT_FOUND) );
 	}
 
 	return;

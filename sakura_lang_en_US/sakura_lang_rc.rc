@@ -96,7 +96,7 @@ BEGIN
     CONTROL         "Automatically close the search dialog(&L)",
                     IDC_CHECK_bAutoCloseDlgFind,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,65,130,10
-    CONTROL         "re-start search from beginning（end)(&Z)",IDC_CHECK_SEARCHALL,
+    CONTROL         "re-start search from beginning(end)(&Z)",IDC_CHECK_SEARCHALL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,76,130,10
     LTEXT           "",IDC_STATIC_JRE32VER,62,43,154,10
     PUSHBUTTON      "Previous(&U)",IDC_BUTTON_SEARCHPREV,221,4,58,14,WS_GROUP
@@ -247,9 +247,9 @@ BEGIN
     GROUPBOX        "Result Ouput",IDC_STATIC,180,63,65,35,WS_GROUP
     CONTROL         "Normal(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,112,54,10
-    CONTROL         "Per-File（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",
+    CONTROL         "Per-File(&I)",IDC_RADIO_OUTPUTSTYLE2,"Button",
                     BS_AUTORADIOBUTTON,185,124,59,10
-    CONTROL         "Result Only(&R）",IDC_RADIO_OUTPUTSTYLE3,"Button",
+    CONTROL         "Result Only(&R)",IDC_RADIO_OUTPUTSTYLE3,"Button",
                     BS_AUTORADIOBUTTON,185,136,59,10
     GROUPBOX        "Output Result Format",IDC_STATIC,180,102,65,47,WS_GROUP
     DEFPUSHBUTTON   "Find(&F)",IDOK,253,76,49,14,WS_GROUP
@@ -1993,7 +1993,7 @@ BEGIN
     LTEXT           "&File",IDC_STATIC,6,194,12,8
     COMBOBOX        IDC_MACROPATH,39,192,203,130,CBS_DROPDOWN | CBS_SORT | 
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Reload file when Macro is executed（&L）",
+    CONTROL         "Reload file when Macro is executed(&L)",
                     IDC_CHECK_RELOADWHENEXECUTE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,6,211,175,10
     LTEXT           "Cancel Timeout",IDC_STATIC,185,212,75,8
@@ -3575,45 +3575,43 @@ BEGIN
 	STR_ERR_DLGEDITAPP10		"Recently Used File(&F)"													// Right-Click Tray Menu 
 	STR_ERR_DLGEDITAPP11		"Recently used Folder(&D)"													// Right-Click Tray Menu 
 	STR_ERR_DLGEDITAPP12		"Close all open windows, and exit editor without saving?"					// When you exit editor
-	STR_ERR_DLGEDITAPP13		"（NoTitle07）"																// Used in Right Click task tray
+	STR_ERR_DLGEDITAPP13		"(NoTitle07)"																// Used in Right Click task tray
 
 
 	// CEditDoc.cpp
-	STR_ERR_DLGEDITDOC1			"'%s'\nCannot open file.\nYou do not have read access to this file."
-	STR_ERR_DLGEDITDOC2			"Bug, please report this to the developer team."
-	STR_ERR_DLGEDITDOC3			"CEditDoc::FileRead()\n\nNULL == pszPath\n【handling】Please report this to the developer team."
-	STR_ERR_DLGEDITDOC4			"%s\nError whilst attempting to process the character encoding."
+	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
+	STR_LOADAGENT_BIG_FILE		"File size is %dMB or over. Do you want to open？"
+	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
+	STR_SAVEAGENT_OTHER			"\'%ts\'\nファイルを保存できません。\n他のウィンドウで使用中です。"
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
 	STR_ERR_DLGEDITDOC6			"%s\n\nThis file was last opened with %s character encoding.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%s\n\t[(N)o]=%s\n\t[Cancel]=Dont Open"
 	STR_ERR_DLGEDITDOC7			"Bug, please report this to the developer team."
 	STR_ERR_DLGEDITDOC8			"【handling】Please report this to the developer team."
-	STR_ERR_DLGEDITDOC9			"c%s\nThe above file doenst exist.\n\nWhen you save this document the file will be created on the disk."
-	STR_ERR_DLGEDITDOC10		"File Save"																	// Dialog title for below
-	STR_ERR_DLGEDITDOC11		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
-	STR_ERR_DLGEDITDOC12		"File path is too long, backup creation failed.\nANSI paths over %d bytes cannot be used.\n\nContinue to overwire teh original file?"
-	STR_ERR_DLGEDITDOC13		"Backup Error"
-	STR_ERR_DLGEDITDOC14		"The backup path listed below cant be found.\n%s\nOverwrite file without creating a backup?"
-	STR_ERR_DLGEDITDOC15		"Confirming creation of backup"												// Dialog Title for message below
-	STR_ERR_DLGEDITDOC16		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite（または名前を付けて）.\n\n%s\n    ↓\n%s\n\nBackup file will be sent to the Trashcan\n"
-	STR_ERR_DLGEDITDOC17		"Confirming creation of backup"												// Dialog Title fo rmessage below
-	STR_ERR_DLGEDITDOC18		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite（または名前を付けて）.\n\n%s\n    ↓\n%s\n\n"
-	STR_ERR_DLGEDITDOC19		"failed to delete"
-	STR_ERR_DLGEDITDOC20		"failed to move"
-	STR_ERR_DLGEDITDOC21		"%s\nis currently prohibited from writing by another process."
+	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doenst exist.\n\nWhen you save this document the file will be created on the disk."
+	STR_BACKUP_ERR_TITLE		"File Save"
+	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
+	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwire teh original file?"
+	STR_BACKUP_CONFORM_TITLE1		"Confirming creation of backup"												// Dialog Title for message below
+	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\nt%s\n\nBackup file will be sent to the Trashcan\n"
+	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title fo rmessage below
+	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
+	STR_BACKUP_ERR_DELETE		"failed to delete"
+	STR_BACKUP_ERR_MOVE			"failed to move"
+	STR_ERR_DLGEDITDOC21		"%ts\nis currently prohibited from writing by another process."
 	STR_ERR_DLGEDITDOC22		"(NoTitle)"
 
 	STR_EXCLU_NO_EXCLUSIVE		"No Exclusive Mode"
 	STR_EXCLU_DENY_WRITE		"Deny Write Access Mode"
 	STR_EXCLU_DENY_READWRITE	"Deny Read-Write Access Mode"
-	STR_ERR_DLGEDITDOC25		"Undefined mode（problem）"
+	STR_ERR_DLGEDITDOC25		"Undefined mode (problem)"
 	STR_ERR_DLGEDITDOC26		"%s\n [%s] could not obtain lock\nThe exclusive lock on the current file is now invalid."
-	STR_ERR_DLGEDITDOC27		"（NoTitle09）"																// Dialog on closing asking if you want to save
+	STR_ERR_DLGEDITDOC27		"(NoTitle09)"																// Dialog on closing asking if you want to save
 	STR_ERR_DLGEDITDOC28		"(NoTitle10)"
 
 	STR_ERR_DLGEDITDOC29		"Grep is processing...\n"
 	STR_ERR_DLGEDITDOC30		"%s\nhas been altered. Save before closing？\n\nDue to opening as read-only it is suggested to save under a different name.\n"
 	STR_ERR_DLGEDITDOC31		"%s\nhas been altered. Save before closing？"
-	STR_ERR_DLGEDITDOC32		"★File Updated at %02d:%02d:%02d"
+	STR_AUTORELOAD_NOFITY		"★File Updated at %02d:%02d:%02d"
 
 	// 64 bytes max, automatically 
 	STR_ERR_DLGEDITDOC33		"(Only Usable from Print Preview)"
@@ -3633,7 +3631,7 @@ BEGIN
 	STR_ERR_DLGEDITDOCNEW1		"def. pos."												// Defined position
 	STR_ERR_DLGEDITDOCNEW2		"Failed to change file name[%s]"
 	STR_ERR_DLGEDITDOCNEW3		"%s\n\n was opened in read only mode. Cannot over write file.\n\nPlease save under a different name."
-	STR_ERR_DLGEDITDOCNEW4		"（NoTitle12）"
+	STR_ERR_DLGEDITDOCNEW4		"(NoTitle12)"
 	STR_ERR_DLGEDITDOCNEW5		"Unable to overwrite the same file when read-only mode."
 
 	// CEditView.cpp
@@ -3665,8 +3663,13 @@ BEGIN
 	STR_GREP_SHOW_FIRST_MATCH	"    (First Matching Area only displayed for each file)\r\n"
 	STR_GREP_SUSPENDED			"suspended.\r\n"
 	STR_GREP_MATCH_COUNT		"%d items were checked.\r\n"
-	STR_ERR_DLGEDITVW28			"■""%s""%s\r\n"										// LMP: Double quites one would hope FIXME?
-	STR_ERR_DLGEDITVW29			"CEditView::DoGrepFile() error whilst reading a file.\r\n"
+	STR_GREP_RUNNINNG			"Grep Running.\n"
+	STR_GREP_ERR_ENUMKEYS0		"(Unknown)"
+	STR_GREP_ERR_ENUMKEYS1		"You can not use a wild card in the folder of the file specified."
+	STR_GREP_ERR_ENUMKEYS2		"You can not use the full path in the file specification."
+	STR_GREP_TIMER				"Processing time: %dms\r\n"
+	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
+	STR_GREP_ERR_FILEREAD		"file read error [%ts]\r\n"
 	STR_ERR_DLGEDITVW30			"Drop (&P)ath as text"									// LMP: Right-Click Drag&Drop Menu
 	STR_ERR_DLGEDITVW31			"Drop (&F)ile as text"
 	STR_ERR_DLGEDITVW32			"(&O)pen File"					
@@ -3680,6 +3683,7 @@ BEGIN
 
 	// CEditView_CmdHokan.cpp
 	STR_ERR_DLGEDITVWHOKAN1		"Autocompletion dictionary file is not set.\nSet it now?"
+	STR_SUPPORT_NOT_COMPLITE	"There is no completions."
 
 	// CEditView_Cmdisrch.cpp
 	STR_ERR_DLGEDITVWISRCH1		"BREGREP.DLL cant be loaded, or found."
@@ -3687,14 +3691,13 @@ BEGIN
 	STR_ERR_DLGEDITVWISRCH3		" (No Matches)"
 
 	// CEditView_Command.cpp
-	STR_ERR_MACRO1				"Macro %d (%s) failed to execute."
-	STR_ERR_INSTXT1				"Possibly a bug？ @Command_INSTEXT"
+	STR_ERR_MACRO1				"Macro %d (%ts) failed to execute."
 	STR_ERR_SRPREV1				"▲Restarted search from bottom"
 	STR_ERR_SRPREV2				"△Not Found"
-	STR_ERR_SRPREV3				"Reverse searching (↑) for '%s' found no further instances."
+	STR_ERR_SRPREV3				"Reverse searching (↑) for '%ls' found no further instances."
 	STR_ERR_SRNEXT1				"▼Restarted search from top"
 	STR_ERR_SRNEXT2				"▽Not Found"
-	STR_ERR_SRNEXT3				"Forward searching (↓) for '%s' found no further instances."
+	STR_ERR_SRNEXT3				"Forward searching (↓) for '%ls' found no further instances."
 	STR_ERR_UNINDENT1			"★Reverse indent only works on selected text"
 	STR_ERR_TAGJMP1				"Cant Tag-Jump"
 	STR_ERR_TAGJMPBK1			"Cant Bookmark Tag-Jump"
@@ -3702,15 +3705,14 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD01		"External Help-1 is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD02		"External Help is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD03		"Tag creation command failed to run.\n\nCTAGS.EXE could not be found."
-	STR_ERR_CEDITVIEW_CMD04		"Tag creation command failed to run.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD04		"Tag creation command failed to run.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD05		"Creating Tag File ..."
-	STR_ERR_CEDITVIEW_CMD06		"Tag creation command failed to run.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD06		"Tag creation command failed to run.\n\n%hs"
 	STR_ERR_CEDITVIEW_CMD07		"Tag fille creation completed."
 	STR_ERR_CEDITVIEW_CMD08		"Failed to open C/C++ header file."
 	STR_ERR_CEDITVIEW_CMD09		"Failed to open C/C++ source file."
-	STR_ERR_CEDITVIEW_CMD10		"No valid data on the clip board！"
+	STR_ERR_CEDITVIEW_CMD10		"No valid data on the clip board !"
 	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurences to end of file."				// Comes up when you press replace individually until u reach end of file.
-	STR_ERR_CEDITVIEW_CMD12		"No valid data on the clip board！"
 	STR_ERR_CEDITVIEW_CMD13		"Failed to create the file.\n\n%s"
 	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%s"
 	STR_ERR_CEDITVIEW_CMD15		"Failed to create the file.\n\n%s"
@@ -3723,26 +3725,23 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD22		"Did not find any differences."
 	STR_ERR_CEDITVIEW_CMD23		"Some differences were found."
 	STR_ERR_CEDITVIEW_CMD24		"Could not create the Macro File.\nFile name acquisition error (nRet=%d)"
-	STR_ERR_CEDITVIEW_CMD25		"Could not create the Macro File.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD25		"Could not create the Macro File.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD26		"Not a savable macro sequence. Can only save Keyboard Macros."
-	STR_ERR_CEDITVIEW_CMD27		"Could not create the Macro File.\n\n%s"
-	STR_ERR_CEDITVIEW_CMD28		"Could not open the file.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD27		"Could not create the Macro File.\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD28		"Could not open the file.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD29		"%s\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
+	STR_ERR_CEDITVIEW_CMD30		"Failed to read the macro\n\n%ts"
 
 	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
 	// inside funciton Command_EXTHELP1
 
 	// CEditView_Command_New.cpp
-	STR_ERR_DLGEDITVWCMDNW1		"▼Restarting search from top"
-	STR_ERR_DLGEDITVWCMDNW2		"▽No matches"
-	STR_ERR_DLGEDITVWCMDNW3		"Forward (↓) bookmark wasnt found."
-	STR_ERR_DLGEDITVWCMDNW4		"▲Restarting search from bottom"
-	STR_ERR_DLGEDITVWCMDNW5		"△No Matches"
-	STR_ERR_DLGEDITVWCMDNW6		"Previous (↑) bookmark wasnt found."
+	STR_BOOKMARK_NEXT_NOT_FOUND	"Forward (↓) bookmark wasnt found."
+	STR_BOOKMARK_PREV_NOT_FOUND	"Previous (↑) bookmark wasnt found."
 	STR_ERR_DLGEDITVWCMDNW7		"%d line was successfully merged."												// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW8		"There were no lines of text that could be merged in your selection."			// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW9		"Please report this error to the development team"
-	STR_ERR_DLGEDITVWCMDNW10	"'%s'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
+	STR_SAVEAGENT_OTHER_APP		"'%ts'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
 	STR_ERR_DLGEDITVWCMDNW11	"An error occurred whilst trying to write to the file."
 	STR_ERR_DLGEDITVWCMDNW12	"An error occurred whilst trying to read the file."
 
@@ -3752,12 +3751,8 @@ BEGIN
 	STR_ERR_DLGEDITVWDIFF3		"DIFF command failed.\n\n%s"
 	STR_ERR_DLGEDITVWDIFF4		"The file to be used for comparison appears to be a binary file."
 	STR_ERR_DLGEDITVWDIFF5		"No differences were found by DIFF"
-	STR_ERR_DLGEDITVWDIFF6		"▼Restarting search from the top"
-	STR_ERR_DLGEDITVWDIFF7		"▽Nothing found"
-	STR_ERR_DLGEDITVWDIFF8		"Forwards (↓) searching didnt find differences"
-	STR_ERR_DLGEDITVWDIFF9		"▲Restarting search from the end"
-	STR_ERR_DLGEDITVWDIFF10		"△Nothing found"
-	STR_ERR_DLGEDITVWDIFF11		"Backward (↑) searching didnt find differences"
+	STR_DIFF_NEXT_NOT_FOUND		"Forwards (↓) searching didnt find differences"
+	STR_DIFF_PREV_NOT_FOUND		"Backward (↑) searching didnt find differences"
 	STR_ERR_DLGEDITVWDIFF12		"DIFF command failed."
 	STR_ERR_DLGEDITVWDIFF13		"DIFF command failed.\n\nCouldnt create temporary file."
 	STR_ERR_DLGEDITVWDIFF14		"DIFF command failed.\n\nLine was too long."
@@ -3799,9 +3794,9 @@ BEGIN
 	STR_ERR_DLGEDITWND23		"Unicode"
 	STR_ERR_DLGEDITWND24		"REC"
 	STR_ERR_DLGEDITWND25		"OVR"							// Overwrite mode
-	STR_WRAP_WIDTH_FULL			"Line Wrap Width: %d Col（Max）"
-	STR_WRAP_WIDTH_WINDOW		"Line Wrap Width: %d Col（Window）"
-	STR_WRAP_WIDTH_FIXED		"Line Wrap Width: %d Col（Fixed）"
+	STR_WRAP_WIDTH_FULL			"Line Wrap Width: %d Col(Max)"
+	STR_WRAP_WIDTH_WINDOW		"Line Wrap Width: %d Col(Window)"
+	STR_WRAP_WIDTH_FIXED		"Line Wrap Width: %d Col(Fixed)"
 
 
 	// CEol.cpp
@@ -4238,8 +4233,8 @@ BEGIN
 	STR_ERR_CSHAREDATA14			"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍"
 	STR_ERR_CSHAREDATA15			"yyyy'Y'M'M'd'D('dddd')'"
 	STR_ERR_CSHAREDATA16			"tthh'H'mm'M'ss'S'"
-	STR_ERR_CSHAREDATA17			"${w?$h$:Output$:${I?$f$:$N$}$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:（Write Protected）$}${M?  【Recording Macro】$}"
-	STR_ERR_CSHAREDATA18			"${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:（Write Protected）$}${M?  【Recording Macro】$}"
+	STR_ERR_CSHAREDATA17			"${w?$h$:Output$:${I?$f$:$N$}$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
+	STR_ERR_CSHAREDATA18			"${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA19			"Attempting to close multiple editor windows, sure you want to do this?"			// Displayed if you try to close edit whith many open windows
 	STR_ERR_CSHAREDATA20			"%s\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%s]\nNew Character Encoding=[%s]" // See Resource F_FILE_REOPEN_SUBMENU
 	STR_ERR_CSHAREDATA21			"%s\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%s]\nNew Char Encoding=%d [%s]"
@@ -4428,6 +4423,15 @@ HTML help requires HHCTRL.OCX.\r\n"
 
 	// WinMain.cpp
 
+	// CCdoeChecker.cpp
+	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%ts)?"
+	STR_CODECHECKER_CONFORM_LOSESOME	"文字エンコード %ts で保存しようとしていますが、\r\n文字コード変換により一部の文字情報が失われます。\r\n保存処理を続行しますか？"
+	STR_CODECHECKER_LOSESOME_SAVE	"一部の文字情報が、セーブ時の変換により失われました"
+	STR_CODECHECKER_LOSESOME_ROAD	"一部の文字情報が、ロード時の変換により失われました"
+	STR_CONVERT_ERR					"Error on Convert."
+
+	STR_DLGABOUT_APPNAME			"Sakura Editor"
+	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
 
 END
 

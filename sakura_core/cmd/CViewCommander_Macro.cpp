@@ -44,7 +44,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
 		nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
 		if( nRet <= 0 ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
+			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD24), nRet );
 			return;
 		}else{
 			_tcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
@@ -56,7 +56,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage(	m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD25), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 	}else{
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
@@ -86,7 +86,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	//	Jun. 16, 2002 genta
 	if( !m_pcSMacroMgr->IsSaveOk() ){
 		//	保存不可
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD26) );
 	}
 
 	CDlgOpenFile	cDlgOpenFile;
@@ -119,7 +119,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
 	if ( !m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), szPath );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD27), szPath );
 	}
 	return;
 }
@@ -191,7 +191,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			NULL
 		);
 		if ( !bLoadResult ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD28), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
@@ -272,7 +272,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		pszType
 	);
 	if ( !bLoadResult ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロの読み込みに失敗しました。\n\n%ts"), pszPath );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD30), pszPath );
 	}
 	else {
 		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );

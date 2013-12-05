@@ -177,7 +177,7 @@ ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
 LPCTSTR CCodeTypesForCombobox::GetName(int nIndex) const
 {
 	if (nIndex == 0) {
-		return to_tchar( ASCodeSet[0].m_sLong );
+		return LS(STR_ERR_GLOBAL01);
 	}
 	return to_tchar( msCodeSet[vDispIdx[nIndex]].m_sLong );
 }

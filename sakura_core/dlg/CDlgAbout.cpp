@@ -159,7 +159,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeT cmemMsg;
-	cmemMsg.AppendString(_T("サクラエディタ   "));
+	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME));
+	cmemMsg.AppendString(_T("   "));
 
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;

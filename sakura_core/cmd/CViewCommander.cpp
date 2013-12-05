@@ -140,7 +140,7 @@ BOOL CViewCommander::HandleCommand(
 			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
-				_T("マクロ %d (%ts) の実行に失敗しました。"),
+				LS(STR_ERR_MACRO1),
 				nCommand - F_USERMACRO_0,
 				m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);

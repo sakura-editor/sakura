@@ -433,7 +433,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 			eIndent = INDENT_NONE;
 		}
 		Command_INDENT( wcChar, eIndent );
-		m_pCommanderView->SendStatusMessage(_T("★逆インデントは選択時のみ"));
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_UNINDENT1));
 		return;
 	}
 
@@ -952,9 +952,9 @@ void CViewCommander::Command_MERGE(void)
 	m_pCommanderView->RedrawAll();
 
 	if(j){
-		TopOkMessage( m_pCommanderView->GetHwnd(), _T("%d行をマージしました。"), j);
+		TopOkMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWCMDNW7), j);
 	}else{
-		InfoMessage( m_pCommanderView->GetHwnd(), _T("マージ可能な行がみつかりませんでした。") );
+		InfoMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWCMDNW8) );
 	}
 }
 

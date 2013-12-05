@@ -135,7 +135,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			//ファイル更新のお知らせ -> ステータスバー
 			TCHAR szText[40];
 			const CFileTime& ctime = pcDoc->m_cDocFile.GetFileTime();
-			auto_sprintf( szText, _T("★ファイル更新 %02d:%02d:%02d"), ctime->wHour, ctime->wMinute, ctime->wSecond );
+			auto_sprintf( szText, LS(STR_AUTORELOAD_NOFITY), ctime->wHour, ctime->wMinute, ctime->wSecond );
 			pcDoc->m_pcEditWnd->SendStatusMessage( szText );
 		}
 		break;

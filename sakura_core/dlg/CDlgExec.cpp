@@ -266,7 +266,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 
 	case IDC_BUTTON_REFERENCE2:
 		{
-			if( SelectDir( GetHwnd(), _T("カレントディレクトリを選んでください"), &m_szCurDir[0], &m_szCurDir[0] ) ){
+			if( SelectDir( GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0] ) ){
 				::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
 				
 			}

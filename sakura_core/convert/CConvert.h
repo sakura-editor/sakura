@@ -46,7 +46,7 @@ public:
 	{
 		bool bRet=DoConvert(pcData);
 		if(!bRet){
-			ErrorMessage(NULL,_T("•ÏŠ·‚ÅƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½"));
+			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
 		}
 	}
 

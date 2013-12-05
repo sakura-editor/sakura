@@ -351,7 +351,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	}
 
 can_not_tagjump:;
-	m_pCommanderView->SendStatusMessage(_T("タグジャンプできません"));	//@@@ 2003.04.13
+	m_pCommanderView->SendStatusMessage(LS(STR_ERR_TAGJMP1));	//@@@ 2003.04.13
 	return false;
 }
 
@@ -365,7 +365,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 
 	/* タグジャンプ情報の参照 */
 	if( !CTagJumpManager().PopTagJump(&tagJump) || !IsSakuraMainWindow(tagJump.hwndReferer) ){
-		m_pCommanderView->SendStatusMessage(_T("タグジャンプバックできません"));
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_TAGJMPBK1));
 		// 2004.07.10 Moca m_TagJumpNumを0にしなくてもいいと思う
 		// GetDllShareData().m_TagJumpNum = 0;
 		return;
@@ -421,7 +421,7 @@ bool CViewCommander::Command_TagsMake( void )
 	//ctags.exeの存在チェック
 	if( (DWORD)-1 == ::GetFileAttributes( cmdline ) )
 	{
-		WarningMessage( m_pCommanderView->GetHwnd(), _T( "タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。" ) );
+		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD03) );
 		return false;
 	}
 
@@ -506,7 +506,7 @@ bool CViewCommander::Command_TagsMake( void )
 	);
 	if( !bProcessResult )
 	{
-		WarningMessage( m_pCommanderView->GetHwnd(), _T("タグ作成コマンド実行は失敗しました。\n\n%ts"), cmdline );
+		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD04), cmdline );
 		goto finish;
 	}
 
@@ -521,7 +521,7 @@ bool CViewCommander::Command_TagsMake( void )
 		HWND	hwndMsg;
 		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
 		hwndMsg = ::GetDlgItem( hwndCancel, IDC_STATIC_CMD );
-		::SendMessage( hwndMsg, WM_SETTEXT, 0, (LPARAM)L"タグファイルを作成中です。" );
+		SetWindowText( hwndMsg, LS(STR_ERR_CEDITVIEW_CMD05) );
 
 		//実行結果の取り込み
 		do {
@@ -579,7 +579,7 @@ bool CViewCommander::Command_TagsMake( void )
 						cDlgCancel.CloseDialog( TRUE );
 
 						work[ read_cnt ] = L'\0';	// Nov. 15, 2003 genta 表示用に0終端する
-						WarningMessage( m_pCommanderView->GetHwnd(), _T("タグ作成コマンド実行は失敗しました。\n\n%hs"), work ); // 2003.11.09 じゅうじ
+						WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD06), work ); // 2003.11.09 じゅうじ
 
 						return true;
 					}
@@ -600,7 +600,7 @@ finish:
 
 	cDlgCancel.CloseDialog( TRUE );
 
-	InfoMessage(m_pCommanderView->GetHwnd(), _T("タグファイルの作成が終了しました。"));
+	InfoMessage(m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD07));
 
 	return true;
 }
@@ -616,7 +616,7 @@ bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
 {
 	bool ret = Command_TagJumpByTagsFile(false);
 	if( false == ret && bMsg ){
-		m_pCommanderView->SendStatusMessage(_T("タグジャンプできません"));
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_TAGJMP1));
 	}
 	return ret;
 }
