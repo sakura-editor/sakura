@@ -3260,7 +3260,7 @@ BEGIN
     F_CUSTMENU_21           "カスタムメニュー21"
     F_CUSTMENU_22           "カスタムメニュー22"
     F_CUSTMENU_23           "カスタムメニュー23"
-    F_CUSTMENU_24           "カスタムメニュー24"
+    F_CUSTMENU_24           "タブメニュー"
 END
 
 STRINGTABLE DISCARDABLE 

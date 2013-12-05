@@ -316,6 +316,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			  && msMenu[ ptdi->item.lParam ].m_bIsNode) {
 				// ノード有効
 				pFuncWk = &msMenu[ptdi->item.lParam];
+				std::wstring strNameOld = pFuncWk->m_sName;
 				if (ptdi->item.pszText == NULL) {
 					// Esc
 					//	何も設定しない（元のまま）
@@ -327,8 +328,10 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				else {
 					pFuncWk->m_sName = to_wchar(ptdi->item.pszText);
 				}
-				// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
-				pFuncWk->m_nFunc = F_NODE;
+				if( strNameOld != pFuncWk->m_sName ){
+					// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
+					pFuncWk->m_nFunc = F_NODE;
+				}
 				ptdi->item.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
 				TreeView_SetItem( hwndTreeRes , &ptdi->item );	//	編集結果を反映
 
@@ -1043,7 +1046,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			if ( pFuncWk->m_bIsNode ) {
 				// コマンド定義外のIDの場合、ノードとして扱う 2012.10.14 syat 各国語対応
 				pcFunc->m_nType = T_NODE;
-				auto_strcpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
+				pcFunc->m_sName[0] = L'\0';	// 名前は、リソースから取得するため空白に設定
 				break;
 			}
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {

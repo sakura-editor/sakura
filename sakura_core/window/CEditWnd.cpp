@@ -2224,12 +2224,14 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	if( hMenu == ::GetSubMenu( ::GetMenu( GetHwnd() ), uPos )
 		&& !fSystemMenu ){
 		// 情報取得
-		CommonSetting_MainMenu*	pcMenu = &m_pShareData->m_Common.m_sMainMenu;
-		CMainMenu*	cMainMenu;
+		const CommonSetting_MainMenu*	pcMenu = &m_pShareData->m_Common.m_sMainMenu;
+		const CMainMenu*	cMainMenu;
 		int			nIdxStr;
 		int			nIdxEnd;
 		int			nLv;
 		std::vector<HMENU>	hSubMenu;
+		std::wstring tmpMenuName;
+		const wchar_t *pMenuName;
 
 		nIdxStr = pcMenu->m_nMenuTopIdx[uPos];
 		nIdxEnd = (uPos < MAX_MAINMENU_TOP) ? pcMenu->m_nMenuTopIdx[uPos+1] : -1;
@@ -2266,10 +2268,16 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					wcsncpy( cMainMenu->m_sName, LSW( cMainMenu->m_nFunc ), MAX_MAIN_MENU_NAME_LEN );
+					tmpMenuName = LSW( cMainMenu->m_nFunc );
+					if( MAX_MAIN_MENU_NAME_LEN < tmpMenuName.length() ){
+						tmpMenuName = tmpMenuName.substr( 0, MAX_MAIN_MENU_NAME_LEN );
+					}
+					pMenuName = tmpMenuName.c_str();
+				}else{
+					pMenuName = cMainMenu->m_sName;
 				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , 
-					cMainMenu->m_sName, cMainMenu->m_sKey );
+					pMenuName, cMainMenu->m_sKey );
 				if (hSubMenu.size() > (size_t)nLv) {
 					hSubMenu[nLv] = hMenuPopUp;
 				}
