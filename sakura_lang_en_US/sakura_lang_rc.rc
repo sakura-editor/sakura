@@ -3263,7 +3263,7 @@ BEGIN
     F_CUSTMENU_21           "Custom Menu 21"
     F_CUSTMENU_22           "Custom Menu 22"
     F_CUSTMENU_23           "Custom Menu 23"
-    F_CUSTMENU_24           "Custom Menu 24"
+    F_CUSTMENU_24           "Tab Menu"
 END
 
 STRINGTABLE DISCARDABLE 
