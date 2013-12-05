@@ -651,6 +651,7 @@ SOURCE=..\sakura_core\etc_uty.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\file.cpp
+# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 

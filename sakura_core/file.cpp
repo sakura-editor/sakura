@@ -24,6 +24,9 @@
 		   distribution.
 */
 
+//	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
+#define COMPILE_NEWAPIS_STUBS
+
 #include "StdAfx.h"
 #include <io.h>
 #include "etc_uty.h"
@@ -31,9 +34,6 @@
 #include "CShareData.h"
 #include "charcode.h"
 #include "my_icmp.h"
-
-//	Sep. 10, 2005 genta GetLongPathNameのエミュレーション関数の実体生成のため
-#define COMPILE_NEWAPIS_STUBS
 
 bool fexist(LPCTSTR pszPath)
 {
