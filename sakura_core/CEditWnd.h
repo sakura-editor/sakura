@@ -197,8 +197,8 @@ public:
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
 	void ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLineKetas );
 	//	Aug. 14, 2005 genta
-	int* SavePhysPosOfAllView();
-	void RestorePhysPosOfAllView( int* posary );
+	CLogicPoint* SavePhysPosOfAllView();
+	void RestorePhysPosOfAllView( CLogicPoint* posary );
 	// 互換BMPによる画面バッファ 2007.09.09 Moca
 	void Views_DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
 
@@ -263,8 +263,7 @@ public:
 	CTabWnd			m_cTabWnd;		//タブウインドウ	//@@@ 2003.05.31 MIK
 	CMenuDrawer		m_CMenuDrawer;
 	bool			m_bDragMode;
-	int				m_nDragPosOrgX;
-	int				m_nDragPosOrgY;
+	POINT			m_ptDragPosOrg;
 	CDropTarget*	m_pcDropTarget;
 	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
@@ -302,7 +301,7 @@ private:
 	int			m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
 	int			m_pnCaretPosInfoDx[64];	// 文字列描画用文字幅配列
 
-	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
+	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
 
 };

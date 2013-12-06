@@ -450,7 +450,7 @@ void CEditDoc::OnChangeSetting(
 	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, false );
 
-	int* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+	CLogicPoint* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
 	STypeConfig ref = GetDocumentAttribute();

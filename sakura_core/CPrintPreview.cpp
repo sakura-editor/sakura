@@ -400,8 +400,8 @@ LRESULT CPrintPreview::OnSize( WPARAM wParam, LPARAM lParam )
 	
 	/* 印刷プレビュー スクロールバーの初期化 */
 	
-	m_pParentWnd->m_nDragPosOrgX = 0;
-	m_pParentWnd->m_nDragPosOrgY = 0;
+	m_pParentWnd->m_ptDragPosOrg.x = 0;
+	m_pParentWnd->m_ptDragPosOrg.y = 0;
 	m_pParentWnd->m_bDragMode = TRUE;
 	OnMouseMove( 0, MAKELONG( 0, 0 ) );
 	m_pParentWnd->m_bDragMode = FALSE;
@@ -584,7 +584,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	int			nMoveY;
 	if( m_SCROLLBAR_VERT ){
 		int		nNowPosY = GetScrollPos( m_hwndVScrollBar, SB_CTL );
-		nMoveY = m_pParentWnd->m_nDragPosOrgY - yPos;
+		nMoveY = m_pParentWnd->m_ptDragPosOrg.y - yPos;
 
 		int		nNewPosY = nNowPosY + nMoveY;
 		if( nNewPosY < 0 ){
@@ -608,7 +608,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	int			nMoveX;
 	if( m_SCROLLBAR_HORZ ){
 		int		nNowPosX = GetScrollPos( m_hwndHScrollBar, SB_CTL );
-		nMoveX = m_pParentWnd->m_nDragPosOrgX - xPos;
+		nMoveX = m_pParentWnd->m_ptDragPosOrg.x - xPos;
 		
 		int		nNewPosX = nNowPosX + nMoveX;
 		if( nNewPosX < 0 ){
@@ -624,8 +624,8 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 		nMoveX = 0;
 	}
 
-	m_pParentWnd->m_nDragPosOrgX = xPos;
-	m_pParentWnd->m_nDragPosOrgY = yPos;
+	m_pParentWnd->m_ptDragPosOrg.x = xPos;
+	m_pParentWnd->m_ptDragPosOrg.y = yPos;
 	/* 描画 */
 	ScrollWindowEx( m_pParentWnd->m_hWnd, nMoveX, nMoveY, NULL, NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE );
 	return 0;

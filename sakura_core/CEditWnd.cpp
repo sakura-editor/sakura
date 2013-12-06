@@ -616,7 +616,7 @@ HWND CEditWnd::Create(
 	m_pcEditViewArr[0]->OnSetFocus();
 
 	/* 子ウィンドウの設定 */
-	HWND		hWndArr[2];
+	HWND        hWndArr[2];
 	hWndArr[0] = m_pcEditViewArr[0]->m_hWnd;
 	hWndArr[1] = NULL;
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
@@ -3672,14 +3672,10 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 	if(m_IconClicked != icNone)
 		return 0;
 
-	int			xPos;
-	int			yPos;
-	xPos = LOWORD(lParam);	// horizontal position of cursor
-	yPos = HIWORD(lParam);	// vertical position of cursor
-	m_nDragPosOrgX = xPos;
-	m_nDragPosOrgY = yPos;
+	m_ptDragPosOrg.x = LOWORD(lParam);	// horizontal position of cursor
+	m_ptDragPosOrg.y = HIWORD(lParam);	// vertical position of cursor
+	m_bDragMode      = true;
 	SetCapture( m_hWnd );
-	m_bDragMode = true;
 
 	return 0;
 }
@@ -4898,7 +4894,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	}
 
 	//	座標の保存
-	int* posSave = SavePhysPosOfAllView();
+	CLogicPoint* posSave = SavePhysPosOfAllView();
 
 	//	レイアウトの更新
 	m_pcEditDoc->m_cLayoutMgr.ChangeLayoutParam( NULL, nTabSize, nMaxLineKetas );
@@ -4933,57 +4929,57 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	@note 取得した値はレイアウト変更後にCEditWnd::RestorePhysPosOfAllViewへ渡す．
 	渡し忘れるとメモリリークとなる．
 
-	@date 2005.08.11 genta 新規作成
+	@date 2005.08.11 genta  新規作成
+	@date 2007.09.06 kobake 戻り値をCLogicPoint*に変更
 */
-int* CEditWnd::SavePhysPosOfAllView()
+CLogicPoint* CEditWnd::SavePhysPosOfAllView()
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
-	const int XY = 2;
 	
-	int* posary = new int[ NUM_OF_VIEW * NUM_OF_POS * XY ];
+	CLogicPoint* pptPosArray = new CLogicPoint[NUM_OF_VIEW * NUM_OF_POS];
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			m_pcEditViewArr[i]->m_ptCaretPos.x,
 			m_pcEditViewArr[i]->m_ptCaretPos.y,
-			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
-			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ]
+			&pptPosArray[i * NUM_OF_POS + 0].x,
+			&pptPosArray[i * NUM_OF_POS + 0].y
 		);
 		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
 				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y,
-				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
-				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ]
+				&pptPosArray[i * NUM_OF_POS + 1].x,
+				&pptPosArray[i * NUM_OF_POS + 1].y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
 				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y,
-				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
-				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ]
+				&pptPosArray[i * NUM_OF_POS + 2].x,
+				&pptPosArray[i * NUM_OF_POS + 2].y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
 				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y,
-				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
-				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ]
+				&pptPosArray[i * NUM_OF_POS + 3].x,
+				&pptPosArray[i * NUM_OF_POS + 3].y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
 				m_pcEditViewArr[i]->m_sSelect.m_ptTo.y,
-				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
-				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ]
+				&pptPosArray[i * NUM_OF_POS + 4].x,
+				&pptPosArray[i * NUM_OF_POS + 4].y
 			);
 		}
 	}
-	return posary;
+	return pptPosArray;
 }
 
 
@@ -4991,60 +4987,59 @@ int* CEditWnd::SavePhysPosOfAllView()
 
 	CEditWnd::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
 
-	@date 2005.08.11 genta 新規作成
+	@date 2005.08.11 genta  新規作成
+	@date 2007.09.06 kobake 引数をCLogicPoint*に変更
 */
-void CEditWnd::RestorePhysPosOfAllView( int* posary )
+void CEditWnd::RestorePhysPosOfAllView( CLogicPoint* pptPosArray )
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
-	const int XY = 2;
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		int		nPosX;
-		int		nPosY;
+		CLayoutPoint tmp;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
-			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ],
-			&nPosX,
-			&nPosY
+			pptPosArray[i * NUM_OF_POS + 0].x,
+			pptPosArray[i * NUM_OF_POS + 0].y,
+			&tmp.x,
+			&tmp.y
 		);
-		m_pcEditViewArr[i]->MoveCursor( nPosX, nPosY, true );
+		m_pcEditViewArr[i]->MoveCursor( tmp.x, tmp.y, true );
 		m_pcEditViewArr[i]->m_nCaretPosX_Prev = m_pcEditViewArr[i]->m_ptCaretPos.x;
 
 		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
-				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ],
+				pptPosArray[i * NUM_OF_POS + 1].x,
+				pptPosArray[i * NUM_OF_POS + 1].y,
 				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
 				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
-				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ],
+				pptPosArray[i * NUM_OF_POS + 2].x,
+				pptPosArray[i * NUM_OF_POS + 2].y,
 				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
 				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
-				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ],
+				pptPosArray[i * NUM_OF_POS + 3].x,
+				pptPosArray[i * NUM_OF_POS + 3].y,
 				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
 				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y
 			);
 		}
 		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
-				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ],
+				pptPosArray[i * NUM_OF_POS + 4].x,
+				pptPosArray[i * NUM_OF_POS + 4].y,
 				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
 				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.y
 			);
 		}
 	}
-	delete[] posary;
+	delete[] pptPosArray;
 }
 
 /*!
