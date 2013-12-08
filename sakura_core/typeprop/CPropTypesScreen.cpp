@@ -267,7 +267,18 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 						m_Types.m_bUseTypeFont = true;		// タイプ別フォントの使用
 						::CheckDlgButton( hwndDlg, IDC_CHECK_USETYPEFONT, m_Types.m_bUseTypeFont );
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
+						// フォント表示	// 2013/6/23 Uchi
+						if (m_hTypeFont != NULL)	::DeleteObject( m_hTypeFont );
+						m_hTypeFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, m_Types.m_bUseTypeFont);
 					}
+				}
+				return TRUE;
+			case IDC_CHECK_USETYPEFONT:	// 2013/6/24 Uchi
+				if (!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETYPEFONT )) {
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), FALSE );
+					// フォント表示
+					if (m_hTypeFont != NULL)	::DeleteObject( m_hTypeFont );
+					m_hTypeFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, FALSE);
 				}
 				return TRUE;
 			case IDC_CHECK_KINSOKURET:		//改行文字をぶら下げる
@@ -406,6 +417,13 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
+	case WM_DESTROY:
+		// タイプフォント破棄	// 2013/6/23 Uchi
+		if (m_hTypeFont != NULL) {
+			::DeleteObject( m_hTypeFont );
+			m_hTypeFont = NULL;
+		}
+		return TRUE;
 	}
 	return FALSE;
 }
@@ -538,6 +556,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 	{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_USETYPEFONT, m_Types.m_bUseTypeFont );			// タイプ別フォントの使用
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
+		m_hTypeFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, m_Types.m_bUseTypeFont);
 	}
 
 	//その他

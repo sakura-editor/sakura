@@ -954,7 +954,9 @@ BEGIN
     PUSHBUTTON      "(&1)...",IDC_BUTTON_RULEFILE_REF,268,74,20,14
     GROUPBOX        "Outline Analysis Method",IDC_STATIC,153,22,145,71
     CONTROL         "Enable(&G)",IDC_CHECK_USETYPEFONT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,162,108,78,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,162,108,48,10
+    LTEXT           "Font(nnpt)",IDC_STATIC_TYPEFONT,210,105,85,16,
+                    SS_CENTERIMAGE
     PUSHBUTTON      "Font(&F)...",IDC_BUTTON_TYPEFONT,173,121,80,14
     GROUPBOX        "Type Specific Font",IDC_STATIC,153,97,145,42
     CONTROL         "ASCII Word Wrap(&W)",IDC_CHECK_WORDWRAP,"Button",

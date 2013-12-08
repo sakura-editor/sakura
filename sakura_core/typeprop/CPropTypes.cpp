@@ -260,3 +260,50 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 		MyWinHelp( hwndParent, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 }
+
+
+
+/*!	コントロールにフォント設定する
+	@date 2013.04.24 Uchi
+*/
+HFONT CPropTypes::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
+{
+	HFONT	hFont;
+	HWND	hCtrl;
+
+	// 論理フォントを作成
+	hCtrl = ::GetDlgItem( hwndDlg, idc_ctrl );
+	hFont = ::CreateFontIndirect( &lf );
+	if (hFont) {
+		// フォントの設定
+		::SendMessage( hCtrl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
+	}
+
+	return hFont;
+}
+
+
+
+/*!	フォントラベルにフォントとフォント名設定する
+	@date 2013.04.24 Uchi
+*/
+HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps, bool bUse)
+{
+	HFONT	hFont;
+	TCHAR	szFontName[80];
+
+	if (bUse) {
+		hFont = SetCtrlFont( hwndDlg, idc_static, lf );
+
+		// フォント名の設定
+		auto_sprintf( szFontName, nps % 10 ? _T("%s(%.1fpt)") : _T("%s(%.0fpt)"),
+			lf.lfFaceName, double(nps)/10 );
+		::DlgItem_SetText( hwndDlg, idc_static, szFontName );
+	}
+	else {
+		hFont = NULL;
+		::DlgItem_SetText( hwndDlg, idc_static, _T("") );
+	}
+
+	return hFont;
+}
