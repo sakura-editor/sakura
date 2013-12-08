@@ -203,7 +203,6 @@ class CEditWnd;
 extern CEditWnd* g_pcEditWnd;
 
 
-HWND G_GetProgressBar();
 HINSTANCE G_AppInstance();
 
 
