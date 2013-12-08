@@ -1086,7 +1086,7 @@ BEGIN
     CONTROL         "Dont open multiple viewers(&N)",
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
-    CONTROL         "Check CR consistence when exit editor(&E)",IDC_CHECK_CHKENTERATEND,
+    CONTROL         "Check CR consistence when save(&E)",IDC_CHECK_CHKENTERATEND,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,8
 END
 

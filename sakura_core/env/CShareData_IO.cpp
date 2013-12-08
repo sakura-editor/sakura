@@ -1681,7 +1681,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	}
 //@@@ 2006.04.10 fon ADD-end
 
-	// 終了時、改行の一致を検査する	2013/4/14 Uchi
+	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	cProfile.IOProfileData( pszSecName, LTEXT("bChkEnterAtEnd")	, types.m_bChkEnterAtEnd );
 
 	{ // フォント設定

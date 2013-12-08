@@ -43,7 +43,7 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
 
-	IDC_CHECK_CHKENTERATEND,		HIDC_CHECK_CHKENTERATEND,			//終了時、改行の一致を検査する	// 2013/4/14 Uchi
+	IDC_CHECK_CHKENTERATEND,		HIDC_CHECK_CHKENTERATEND,			//保存時に改行コードの混在を警告する	// 2013/4/14 Uchi
 	//	IDC_STATIC,						-1,
 	0, 0
 };
@@ -247,7 +247,7 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle ? BST_CHECKED : BST_UNCHECKED);
 
-	// 終了時、改行の一致を検査する	2013/4/14 Uchi
+	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CHKENTERATEND, m_Types.m_bChkEnterAtEnd ? BST_CHECKED : BST_UNCHECKED);
 }
 
@@ -280,7 +280,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE ) != 0;
 
-	// 終了時、改行の一致を検査する	2013/4/14 Uchi
+	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	m_Types.m_bChkEnterAtEnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CHKENTERATEND ) != 0;
 
 	return TRUE;
