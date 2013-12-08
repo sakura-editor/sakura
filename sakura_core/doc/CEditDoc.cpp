@@ -129,6 +129,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 	m_blfCurTemp = false;
+	m_nPointSizeCur = -1;
+	m_nPointSizeOrg = -1;
+	m_bTabSpaceCurTemp = false;
 
 	// 文字コード種別を初期化
 	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
@@ -301,6 +304,7 @@ void CEditDoc::InitAllView( void )
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 	m_blfCurTemp = false;
+	m_bTabSpaceCurTemp = false;
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
@@ -595,6 +599,7 @@ void CEditDoc::OnChangeType()
 	/* 設定変更を反映させる */
 	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 	m_blfCurTemp = false;
+	m_bTabSpaceCurTemp = false;
 	OnChangeSetting();
 
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
@@ -676,12 +681,35 @@ void CEditDoc::OnChangeSetting(
 		}
 	}
 
+	// 旧情報の保持
+	const int nTypeId = m_cDocType.GetDocumentAttribute().m_id;
+	const bool bFontTypeOld = m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	int nFontPointSizeOld = m_nPointSizeOrg;
+	if( bFontTypeOld ){
+		nFontPointSizeOld = m_cDocType.GetDocumentAttribute().m_nPointSize;
+	}
+	const int nTextWrapMethodOld = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
+	const CKetaXInt nTabSpaceOld = m_cDocType.GetDocumentAttribute().m_nTabSpace;
+
 	// 文書種別
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
 
+	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
+
+	// タイプ別設定の種類が変更されたら、一時適用を元に戻す
+	if( nTypeId != ref.m_id ){
+		m_blfCurTemp = false;
+		if( bDoLayout ){
+			m_bTextWrapMethodCurTemp = false;
+			m_bTabSpaceCurTemp = false;
+		}
+	}
+
 	// フォントサイズの一時設定
 	if( m_blfCurTemp ){
-		if( m_nPointSizeOrg != pCEditWnd->GetFontPointSize() ){
+		if( bFontTypeOld != ref.m_bUseTypeFont ){
+			m_blfCurTemp = false;
+		}else if( nFontPointSizeOld != pCEditWnd->GetFontPointSize(false) ){
 			m_blfCurTemp = false; // フォント設定が変更された。元に戻す
 		}else{
 			// フォントの種類の変更に追随する
@@ -697,10 +725,9 @@ void CEditDoc::OnChangeSetting(
 	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
 
-	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 	CLayoutInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	CLayoutInt nTabSpace = ref.m_nTabSpace;
-	{
+	if( bDoLayout ){
 		// 2008.06.07 nasukoji	折り返し方法の追加に対応
 		// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
 		if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod ){
@@ -711,9 +738,6 @@ void CEditDoc::OnChangeSetting(
 				m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
 			}
 		}
-	}
-
-	if( bDoLayout ){
 		// 一時設定適用中でなければ折り返し方法変更
 		if( !m_bTextWrapMethodCurTemp )
 			m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
@@ -734,6 +758,16 @@ void CEditDoc::OnChangeSetting(
 		case WRAP_WINDOW_WIDTH:
 			nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
 			break;
+		}
+
+		if( m_bTabSpaceCurTemp ){
+			if( nTabSpaceOld != ref.m_nTabSpace ){
+				// タイプ別設定が変更されたので一時適用解除
+				m_bTabSpaceCurTemp = false;
+			}else{
+				// 一時適用継続
+				nTabSpace = m_cLayoutMgr.GetTabSpace();
+			}
 		}
 	}else{
 		// レイアウトを再構築しないので元の設定を維持

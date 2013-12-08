@@ -154,8 +154,9 @@ public:
 	bool			m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 	LOGFONT			m_lfCur;					// 一時設定フォント
 	int				m_nPointSizeCur;			// 一時設定フォントサイズ
-	int				m_nPointSizeOrg;			// 元のフォントサイズ
 	bool			m_blfCurTemp;				// フォント設定適用中
+	int				m_nPointSizeOrg;			// 元のフォントサイズ
+	bool			m_bTabSpaceCurTemp;			// タブ幅一時設定適用中			// 2013.05.30 Moca
 
 	HBITMAP			m_hBackImg;
 	int				m_nBackImgWidth;
