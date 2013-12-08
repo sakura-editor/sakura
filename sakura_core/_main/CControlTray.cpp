@@ -29,11 +29,10 @@
 
 #include <HtmlHelp.h>
 #include "CControlTray.h"
-#include "CEditApp.h"
 #include "CPropertyManager.h"
 #include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
-#include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
+#include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
@@ -1320,7 +1319,7 @@ bool CControlTray::OpenNewEditor2(
 
 
 
-void CControlTray::ActiveNextWindow()
+void CControlTray::ActiveNextWindow(HWND hwndParent)
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
@@ -1330,7 +1329,7 @@ void CControlTray::ActiveNextWindow()
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
-			if( CEditWnd::getInstance()->GetHwnd() == pEditNodeArr[i].GetHwnd() )
+			if( hwndParent == pEditNodeArr[i].GetHwnd() )
 			{
 				nGroup = pEditNodeArr[i].m_nGroup;
 				break;
@@ -1359,7 +1358,7 @@ void CControlTray::ActiveNextWindow()
 	}
 }
 
-void CControlTray::ActivePrevWindow()
+void CControlTray::ActivePrevWindow(HWND hwndParent)
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
@@ -1369,7 +1368,7 @@ void CControlTray::ActivePrevWindow()
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
-			if( CEditWnd::getInstance()->GetHwnd() == pEditNodeArr[i].GetHwnd() ){
+			if( hwndParent == pEditNodeArr[i].GetHwnd() ){
 				nGroup = pEditNodeArr[i].m_nGroup;
 				break;
 			}

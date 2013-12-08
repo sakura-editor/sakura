@@ -568,7 +568,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 			if( -1 != nPane ){
 				m_pcEditWnd->SetActivePane( nPane );
 			}else{
-				CControlTray::ActiveNextWindow();
+				CControlTray::ActiveNextWindow( m_pcEditWnd->GetHwnd() );
 			}
 		}
 		return TRUE;
@@ -579,7 +579,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 				m_pcEditWnd->SetActivePane( nPane );
 			}
 			else{
-				CControlTray::ActivePrevWindow();
+				CControlTray::ActivePrevWindow( m_pcEditWnd->GetHwnd() );
 			}
 		}
 		return TRUE;
