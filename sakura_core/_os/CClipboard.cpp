@@ -1,3 +1,27 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include <ShellAPI.h>// HDROP
 #include "CClipboard.h"
@@ -235,8 +259,14 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 	return true;
 }
 
-//! テキストを取得する
-bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, UINT uGetFormat)
+/*! テキストを取得する
+	@param [out] cmemBuf 取得したテキストの格納先
+	@param [in/out] pbColumnSelect 矩形選択形式
+	@param [in/out] pbLineSelect 行選択形式
+	@param [in] cEol HDROP形式のときの改行コード
+	@param [in] uGetFormat クリップボード形式
+*/
+bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
 {
 	if( !m_bOpenResult ){
 		return false;
@@ -330,7 +360,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
 				cmemBuf->AppendStringT(sTmpPath);
 				if(nMaxCnt > 1){
-					cmemBuf->AppendStringT(_TEXT("\r\n"));
+					cmemBuf->AppendString( cEol.GetValue2() );
 				}
 			}
 			return true;
@@ -349,23 +379,23 @@ struct SSystemClipFormatNames
 };
 static const SSystemClipFormatNames sClipFormatNames[] =
 {
-{CF_TEXT        ,L"CF_TEXT"},
-{CF_BITMAP      ,L"CF_BITMAP"},
-{CF_METAFILEPICT,L"CF_METAFILEPICT"},
-{CF_SYLK        ,L"CF_SYLK"},
-{CF_DIF         ,L"CF_DIF"},
-{CF_TIFF        ,L"CF_TIFF"},
-{CF_OEMTEXT     ,L"CF_OEMTEXT"},
-{CF_DIB         ,L"CF_DIB"},
-{CF_PALETTE     ,L"CF_PALETTE"},
-{CF_PENDATA     ,L"CF_PENDATA"},
-{CF_RIFF        ,L"CF_RIFF"},
-{CF_WAVE        ,L"CF_WAVE"},
-{CF_UNICODETEXT ,L"CF_UNICODETEXT"},
-{CF_ENHMETAFILE ,L"CF_ENHMETAFILE"},
-{CF_HDROP       ,L"CF_HDROP"},
-{CF_LOCALE      ,L"CF_LOCALE"},
-{CF_DIBV5       ,L"CF_DIBV5"},
+	{CF_TEXT        ,L"CF_TEXT"},
+	{CF_BITMAP      ,L"CF_BITMAP"},
+	{CF_METAFILEPICT,L"CF_METAFILEPICT"},
+	{CF_SYLK        ,L"CF_SYLK"},
+	{CF_DIF         ,L"CF_DIF"},
+	{CF_TIFF        ,L"CF_TIFF"},
+	{CF_OEMTEXT     ,L"CF_OEMTEXT"},
+	{CF_DIB         ,L"CF_DIB"},
+	{CF_PALETTE     ,L"CF_PALETTE"},
+	{CF_PENDATA     ,L"CF_PENDATA"},
+	{CF_RIFF        ,L"CF_RIFF"},
+	{CF_WAVE        ,L"CF_WAVE"},
+	{CF_UNICODETEXT ,L"CF_UNICODETEXT"},
+	{CF_ENHMETAFILE ,L"CF_ENHMETAFILE"},
+	{CF_HDROP       ,L"CF_HDROP"},
+	{CF_LOCALE      ,L"CF_LOCALE"},
+	{CF_DIBV5       ,L"CF_DIBV5"},
 };
 
 static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
@@ -534,7 +564,7 @@ static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int 
 	@param nEndMode -1:文字コードに依存 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_tの文字列
 	@date 2013.06.12 Moca 新規作成
 */
-bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode)
+bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol)
 {
 	mem.SetString(L"");
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
@@ -547,7 +577,7 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 	if( nMode == -2 ){
 		bool bret = false;
 		if( -1 != GetDataType() ){
-			bret = GetText(&mem, NULL, NULL, uFormat);
+			bret = GetText(&mem, NULL, NULL, cEol, uFormat);
 			if( !bret ){
 				mem.SetString(L"");
 			}
