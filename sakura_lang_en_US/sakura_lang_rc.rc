@@ -1087,7 +1087,7 @@ BEGIN
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
     CONTROL         "Check CR consistence when save(&E)",IDC_CHECK_CHKENTERATEND,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244
