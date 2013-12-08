@@ -310,7 +310,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetDocument()->m_lfCur = lf;
 		GetDocument()->m_lfCur.lfHeight = lfHeight;
 		GetDocument()->m_nPointSizeCur = nPointSize;
-		GetDocument()->m_nPointSizeOrg = nPointSize;
+		GetDocument()->m_nPointSizeOrg = GetEditWindow()->GetFontPointSize(false);
 	}
 
 	HWND	hwndFrame;

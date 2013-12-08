@@ -108,17 +108,7 @@ bool CEditApp::OpenPropertySheet( int nPageNum )
 /*! タイプ別設定 プロパティシート */
 bool CEditApp::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
 {
-	int nTextWrapMethodOld = GetDocument()->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
-
 	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_pcEditWnd->GetHwnd(), nPageNum, nSettingType );
-	if( bRet ){
-		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
-		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
-		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
-		if( nTextWrapMethodOld != GetDocument()->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
-			GetDocument()->m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
-		}
-	}
 
 	return bRet;
 }

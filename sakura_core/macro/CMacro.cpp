@@ -1366,6 +1366,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			Wrap( &Result )->Receive( nTab );
 			// 2013.04.30 Moca ğŒ’Ç‰ÁB•s—v‚Èê‡‚ÍChangeLayoutParam‚ğŒÄ‚Î‚È‚¢
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
+				View->GetDocument()->m_bTabSpaceCurTemp = true;
 				View->m_pcEditWnd->ChangeLayoutParam(
 					false, 
 					CLayoutInt(varCopy.Data.iVal),
