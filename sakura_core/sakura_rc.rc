@@ -1066,7 +1066,7 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "英大文字小文字を同一視(&I)",IDC_CHECK_HOKANLOHICASE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,110,10
-    LTEXT           "候補：",IDC_STATIC,122,32,20,8,NOT WS_GROUP
+    LTEXT           "候補：",IDC_STATIC,122,33,20,8,NOT WS_GROUP
     CONTROL         "編集中のファイル(&F)",IDC_CHECK_HOKANBYFILE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,142,31,75,10
     CONTROL         "強調キーワード(&K)",IDC_CHECK_HOKANBYKEYWORD,"Button",
@@ -1085,7 +1085,7 @@ BEGIN
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
     CONTROL         "保存時に改行コードの混在を警告する(&E)",IDC_CHECK_CHKENTERATEND,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,10
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244
