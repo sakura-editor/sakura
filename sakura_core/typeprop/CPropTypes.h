@@ -18,8 +18,8 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#ifndef SAKURA_TYPES_CPROPTYPES_H_
-#define SAKURA_TYPES_CPROPTYPES_H_
+#ifndef SAKURA_CPROPTYPES_E8B842DB_7434_4B94_8B6F_52C4FA9D1F3AP_H_
+#define SAKURA_CPROPTYPES_E8B842DB_7434_4B94_8B6F_52C4FA9D1F3AP_H_
 
 #include "types/CType.h" // STypeConfig
 
@@ -104,6 +104,9 @@ protected:
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
 	bool			m_bChangeKeyWordSet;
 
+	// フォント表示用データ
+	HFONT			m_hTypeFont;							//!< タイプ別フォント表示ハンドル
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      各プロパティページ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -114,6 +117,9 @@ protected:
 	int  GetData( HWND );											//!< ダイアログデータの取得
 	bool Import( HWND );											//!< インポート
 	bool Export( HWND );											//!< エクスポート
+
+	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );								//!< コントロールにフォント設定する		// 2013/4/24 Uchi
+	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps, bool bUse = true );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
 };
 
 
@@ -235,7 +241,4 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_TYPES_CPROPTYPES_H_ */
-
-
-
+#endif /* SAKURA_CPROPTYPES_E8B842DB_7434_4B94_8B6F_52C4FA9D1F3AP_H_ */
