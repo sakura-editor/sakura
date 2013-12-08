@@ -2211,16 +2211,9 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 	if(!cClipboard)
 		return false;
 
-//	return cClipboard.GetText(&cmemBuf,pbColumnSelect,pbLineSelect);
-	int nClipType = CClipboard::GetDataType();
-
-	if(!cClipboard.GetText(&cmemBuf,pbColumnSelect,pbLineSelect)){
+	CEol cEol = m_pcEditDoc->m_cDocEditor.GetNewLineCode();
+	if(!cClipboard.GetText(&cmemBuf,pbColumnSelect,pbLineSelect,cEol)){
 		return false;
-	}
-	if(nClipType == CF_HDROP)
-	{
-		//パス貼り付けの場合、改行コード変換（かなり苦しい…）
-		cmemBuf.Replace(L"\r\n", this->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2());
 	}
 
 	return true;
