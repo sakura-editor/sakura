@@ -196,7 +196,7 @@ struct STypeConfig{
 	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
 	bool				m_bHtmlHelpIsSingle;			// HtmlHelpビューアはひとつ
 
-	bool				m_bChkEnterAtEnd;				//!< 終了時、改行の一致を検査する	2013/4/14 Uchi
+	bool				m_bChkEnterAtEnd;				//!< 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 
 	SEncodingConfig		m_encoding;						//!< エンコードオプション
 

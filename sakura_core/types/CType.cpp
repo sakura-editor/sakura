@@ -257,7 +257,7 @@ void _DefaultConfig(STypeConfig* pType)
 		pType->m_nVertLineIdx[i] = CLayoutInt(0);
 	}
 
-	//  終了時、改行の一致を検査する	2013/4/14 Uchi
+	//  保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	pType->m_bChkEnterAtEnd = true;
 
 	pType->m_bUseTypeFont = false;			//!< タイプ別フォントの使用
