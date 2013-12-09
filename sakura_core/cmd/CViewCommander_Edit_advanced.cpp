@@ -641,7 +641,7 @@ bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return CStringRef_comp(pst1-
 	@author hor
 	@date 2001.12.03 hor 新規作成
 	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
-	@data 2010.07.27 行ソートでコピーを減らす/NULより後ろも比較対照に
+	@date 2010.07.27 行ソートでコピーを減らす/NULより後ろも比較対照に
 	@date 2013.06.19 Moca 矩形選択時最終行に改行がない場合は付加+ソート後の最終行の改行を削除
 */
 void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順

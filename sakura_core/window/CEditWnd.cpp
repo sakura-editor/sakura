@@ -1010,8 +1010,8 @@ void CEditWnd::LayoutTabBar( void )
 
 /*! バーの配置終了処理
 	@date 2006.12.19 ryoji 新規作成
-	@data 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
-	@data 2011.01.21 ryoji アウトライン画面にゴミが描画されるのを抑止する
+	@date 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
+	@date 2011.01.21 ryoji アウトライン画面にゴミが描画されるのを抑止する
 */
 void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {
