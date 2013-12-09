@@ -1181,7 +1181,7 @@ void CEditWnd::LayoutTabBar( void )
 
 /*! バーの配置終了処理
 	@date 2006.12.19 ryoji 新規作成
-	@data 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
+	@date 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
 */
 void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {

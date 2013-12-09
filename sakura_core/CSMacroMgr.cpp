@@ -681,7 +681,7 @@ void CSMacroMgr::Clear( int idx )
 	@return 構造体へのポインタ．見つからなければNULL
 	
 	@date 2002.06.16 genta
-	@data 2003.02.24 m_MacroFuncInfoArrも検索対象にする
+	@date 2003.02.24 m_MacroFuncInfoArrも検索対象にする
 */
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {

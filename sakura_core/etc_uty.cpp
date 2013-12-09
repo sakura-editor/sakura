@@ -1846,7 +1846,7 @@ const char* GetColorNameByIndex( int index )
 	@return アイコンハンドル．失敗した場合はNULL．
 	
 	@date 2002.12.02 genta 新規作成
-	@data 2007.05.20 ryoji iniファイルパスを優先
+	@date 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall )
