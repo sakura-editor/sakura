@@ -783,7 +783,7 @@ LRESULT CControlTray::DispatchEvent(
 								m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}
 						}
-						m_pcPropertyManager->OpenPropertySheet( NULL, -1 );
+						m_pcPropertyManager->OpenPropertySheet( NULL, -1, true );
 						CPluginManager::getInstance()->UnloadAllPlugin();
 					}
 					break;

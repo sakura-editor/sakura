@@ -208,10 +208,12 @@ struct ComPropSheetInfo {
 /*! プロパティシートの作成
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
+INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 {
 	INT_PTR				nRet;
 	int					nIdx;
+
+	m_bTrayProc = bTrayProc;
 
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）

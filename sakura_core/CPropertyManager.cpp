@@ -39,7 +39,7 @@ void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuD
 }
 
 /*! 共通設定 プロパティシート */
-bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
+bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc )
 {
 	bool bRet;
 	CPropCommon* pcPropCommon = new CPropCommon();
@@ -54,7 +54,7 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum )
 	}
 
 	/* プロパティシートの作成 */
-	if( pcPropCommon->DoPropertySheet( m_nPropComPageNum ) ){
+	if( pcPropCommon->DoPropertySheet( m_nPropComPageNum, bTrayProc ) ){
 
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
