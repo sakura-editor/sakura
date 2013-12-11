@@ -262,7 +262,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	CNativeW	ctextBuf;
-	if( !m_pCommanderView->GetSelectedData( &ctextBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedDataSimple(ctextBuf) ){
 		ErrorBeep();
 		return;
 	}
@@ -273,6 +273,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	if( !bret ){
 		return;
 	}
+	ctextBuf.Clear();
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	TCHAR		szPath[_MAX_PATH] = _T("");
@@ -311,7 +312,7 @@ void CViewCommander::Command_UUDECODE( void )
 	// 選択範囲のデータを取得 -> cmemBuf
 	// 正常時はTRUE,範囲未選択の場合はFALSEを返す
 	CNativeW	ctextBuf;
-	if( !m_pCommanderView->GetSelectedData( &ctextBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedDataSimple(ctextBuf) ){
 		ErrorBeep();
 		return;
 	}
@@ -324,6 +325,7 @@ void CViewCommander::Command_UUDECODE( void )
 		return;
 	}
 	decoder.CopyFilename( szPath );
+	ctextBuf.Clear();
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){

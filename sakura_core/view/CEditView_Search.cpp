@@ -40,7 +40,6 @@ const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditV
 BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 {
 	CNativeW	cmemCurText;
-	int			i;
 
 	/* キーワードヘルプを使用するか？ */
 	if( !m_pTypeData->m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
@@ -71,16 +70,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		PleaseReportToAuthor( NULL, _T("CEditView::KeyWordHelpSearchDict\nnID=%d"), (int)nID );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
-		wchar_t* pszWork = cmemCurText.GetStringPtr();
-		int nWorkLength	= cmemCurText.GetStringLength();
-		for( i = 0; i < nWorkLength; ++i ){
-			if( pszWork[i] == L'\0' ||
-				WCODE::IsLineDelimiter(pszWork[i]) ){
-				break;
-			}
-		}
-		cmemCurText._SetStringLength( i );
+	if( GetSelectedDataOne( cmemCurText, STRNCMP_MAX + 1 ) ){
 	}
 	/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
 	else if(GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord){
@@ -220,7 +210,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 	cmemCurText.SetString(L"");
 	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
-		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+		if( GetSelectedDataOne( cmemCurText, INT_MAX ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
 			if( bStripMaxPath ){
 				LimitStringLengthW(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), _MAX_PATH - 1, cmemTopic);
@@ -249,7 +239,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 				GetSelectionInfo().m_sSelect    = sRange;
 
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedDataOne( cmemCurText, INT_MAX ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
 					if( bStripMaxPath ){
 						LimitStringLengthW(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), _MAX_PATH - 1, cmemTopic);

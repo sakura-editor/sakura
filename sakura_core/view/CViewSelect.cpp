@@ -689,8 +689,8 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				//  内部文字コードから現在の文字コードに変換し、バイト数を取得する。
 				//  コード変換は負荷がかかるため、選択範囲の増減分のみを対象とする。
 
-				CNativeW* cmemW = new CNativeW();
-				CMemory* cmemCode = new CMemory();
+				CNativeW cmemW;
+				CMemory cmemCode;
 
 				// 増減分文字列の取得にCEditView::GetSelectedDataを使いたいが、m_sSelect限定のため、
 				// 呼び出し前にm_sSelectを書き換える。呼出し後に元に戻すので、constと言えないこともない。
@@ -723,7 +723,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetTo(), m_sSelect.GetTo() );
 					}
 
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
+					const_cast<CEditView*>( pView )->GetSelectedDataSimple(cmemW);
 					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
 				}
 				else if( m_bSelectAreaChanging && m_nLastSelectedByteLen && m_sSelect.GetTo() == m_sSelectOld.GetTo() ){
@@ -736,29 +736,27 @@ void CViewSelect::PrintSelectionInfoMsg() const
 						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetFrom(), m_sSelect.GetFrom() );
 					}
 
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
+					const_cast<CEditView*>( pView )->GetSelectedDataSimple(cmemW);
 					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
 				}
 				else{
 					// 選択領域全体をコード変換対象にする
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
+					const_cast<CEditView*>( pView )->GetSelectedDataSimple(cmemW);
 					bSelExtend = true;
 					thiz->m_nLastSelectedByteLen = 0;
 				}
 				//  現在の文字コードに変換し、バイト長を取得する
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(pView->m_pcEditDoc->GetDocumentEncoding(), false);
-				pCode->UnicodeToCode( *cmemW, cmemCode );
+				pCode->UnicodeToCode( cmemW, &cmemCode );
 				delete pCode;
 
 				if( bSelExtend ){
-					select_sum = m_nLastSelectedByteLen + cmemCode->GetRawLength();
+					select_sum = m_nLastSelectedByteLen + cmemCode.GetRawLength();
 				}else{
-					select_sum = m_nLastSelectedByteLen - cmemCode->GetRawLength();
+					select_sum = m_nLastSelectedByteLen - cmemCode.GetRawLength();
 				}
 				thiz->m_nLastSelectedByteLen = select_sum;
 
-				delete cmemW;
-				delete cmemCode;
 			}
 			else{
 				//  文字数でカウント

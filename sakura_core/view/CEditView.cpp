@@ -1432,7 +1432,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 	else{
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );
+		GetSelectedDataSimple( cmemBuf );
 
 		/* 機能種別によるバッファの変換 */
 		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
@@ -1797,8 +1797,17 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 //                       テキスト選択                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* 選択範囲のデータを取得 */
-/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
+/* 選択範囲のデータを取得
+	正常時はTRUE,範囲未選択の場合はFALSEを返す
+*/
+bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
+{
+	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EOL_UNKNOWN);
+}
+
+/* 選択範囲のデータを取得
+	正常時はTRUE,範囲未選択の場合はFALSEを返す
+*/
 bool CEditView::GetSelectedData(
 	CNativeW*		cmemBuf,
 	BOOL			bLineOnly,
@@ -2015,6 +2024,76 @@ bool CEditView::GetSelectedData(
 		delete [] pszLineNum;
 	}
 	return true;
+}
+
+/* 選択範囲内の１行の選択
+	@param bCursorPos 選択開始行の代わりにカーソル位置の行を取得
+	通常選択ならロジック行、矩形なら選択範囲内のレイアウト行１行を選択
+	2010.09.04 Moca 新規作成
+*/
+bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
+{
+	const wchar_t*	pLine;
+	CLogicInt		nLineLen;
+	CLogicInt		nIdxFrom;
+	CLogicInt		nIdxTo;
+	CLogicInt		nSelectLen;
+
+	if( !GetSelectionInfo().IsTextSelected() ){
+		return false;
+	}
+
+	cmemBuf.SetString(L"");
+	if( GetSelectionInfo().IsBoxSelecting() ){
+		// 矩形範囲選択(レイアウト処理)
+		const CLayout*	pcLayout;
+		CLayoutRect		rcSel;
+
+		// 2点を対角とする矩形を求める
+		TwoPointToRect(
+			&rcSel,
+			GetSelectionInfo().m_sSelect.GetFrom(),	// 範囲選択開始
+			GetSelectionInfo().m_sSelect.GetTo()	// 範囲選択終了
+		);
+
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
+		if( NULL != pLine && NULL != pcLayout ){
+			nLineLen = pcLayout->GetLengthWithoutEOL();
+			if( NULL != pLine ){
+				/* 指定された桁に対応する行のデータ内の位置を調べる */
+				nIdxFrom	= LineColumnToIndex( pcLayout, rcSel.left  );
+				nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
+			}
+			nSelectLen = nIdxTo - nIdxFrom;
+			if( 0 < nSelectLen ){
+				cmemBuf.AppendString(&pLine[nIdxFrom], t_min<int>(nMaxLen, t_min<int>(nSelectLen, nLineLen - nIdxFrom)));
+			}
+		}
+	}else{
+		// 線形選択(ロジック行処理)
+		CLogicPoint ptFrom;
+		CLogicPoint ptTo;
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(GetSelectionInfo().m_sSelect.GetFrom(), &ptFrom);
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(GetSelectionInfo().m_sSelect.GetTo(),   &ptTo);
+		CLogicInt targetY = ptFrom.y;
+
+		const CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( targetY );
+		if( NULL != pDocLine ){
+			pLine = pDocLine->GetPtr();
+			nLineLen = pDocLine->GetLengthWithoutEOL();
+			nIdxFrom = ptFrom.x;
+			if( targetY == ptTo.y ){
+				nIdxTo = ptTo.x;
+			}else{
+				nIdxTo = nLineLen;
+			}
+			nSelectLen = nIdxTo - nIdxFrom;
+			if( 0 < nSelectLen ){
+				cmemBuf.AppendString(&pLine[nIdxFrom], t_min<int>(nMaxLen, t_min<int>(nSelectLen, nLineLen - nIdxFrom)));
+			}
+		}
+	}
+	return 0 < cmemBuf.GetStringLength();
 }
 
 /* 指定カーソル位置が選択エリア内にあるか
