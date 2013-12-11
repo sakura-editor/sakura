@@ -220,11 +220,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		);
 		PleaseReportToAuthor(
 			NULL,
-			_T("CPropTypes::DoPropertySheet()内でエラーが出ました。\n")
-			_T("psh.nStartPage=[%d]\n")
-			_T("::PropertySheet()失敗。\n")
-			_T("\n")
-			_T("%ts\n"),
+			LS(STR_PROPTYPE_ERR),
 			psh.nStartPage,
 			pszMsgBuf
 		);

@@ -60,10 +60,10 @@ static const DWORD p_helpids[] = {
 	0, 0
 };
 
-TYPE_NAME<EDispTabClose> DispTabCloseArr[] = {
-	{ DISPTABCLOSE_NO,		_T("Ç»Çµ") },
-	{ DISPTABCLOSE_ALLWAYS,	_T("èÌÇ…ï\é¶") },
-	{ DISPTABCLOSE_AUTO,	_T("é©ìÆï\é¶") },
+TYPE_NAME_ID<EDispTabClose> DispTabCloseArr[] = {
+	{ DISPTABCLOSE_NO,		STR_PROPCOMTAB_DISP_NO },
+	{ DISPTABCLOSE_ALLWAYS,	STR_PROPCOMTAB_DISP_ALLWAYS },
+	{ DISPTABCLOSE_AUTO,	STR_PROPCOMTAB_DISP_AUTO },
 };
 
 //	From Here Jun. 2, 2001 genta
@@ -191,7 +191,7 @@ void CPropTab::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndCombo );
 	int nSelPos = 0;
 	for( int i = 0; i < _countof( DispTabCloseArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, DispTabCloseArr[i].pszName );
+		Combo_InsertString( hwndCombo, i, LS(DispTabCloseArr[i].nNameId) );
 		if( DispTabCloseArr[i].nMethod == m_Common.m_sTabBar.m_bDispTabClose ){
 			nSelPos = i;
 		}

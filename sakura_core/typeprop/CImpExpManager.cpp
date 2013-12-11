@@ -43,12 +43,6 @@
 /*-----------------------------------------------------------------------
 定数
 -----------------------------------------------------------------------*/
-// メッセージ
-static const wstring	MSG_NOT_OPEN		= L"ファイルを開けませんでした。\n\n";
-static const wstring	MSG_NOT_EXPORT		= L"エクスポート出来ませんでした。\n\n";
-static const wstring	MSG_OK_EXPORT		= L"ファイルをエクスポートしました。\n\n";
-static const wstring	MSG_OK_INPORT		= L"ファイルをインポートしました。\n\n";
-
 static const wchar_t	szSecInfo[]				= L"Info";
 
 // タイプ別設定
@@ -202,7 +196,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	}
 
 	if (sErrMsg.length() == 0) {
-		sErrMsg = MSG_OK_EXPORT + to_wchar( szPath );
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_OK_EXPORT)) + to_wchar( szPath );
 	}
 	InfoMessage( hwndParent, _T("%ls"), sErrMsg.c_str() );
 
@@ -246,7 +240,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 
 	if (!m_cProfile.ReadProfile( sPath.c_str() )) {
 		/* 設定ファイルが存在しない */
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -254,14 +248,14 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 	int		nStructureVersion = 0;
 	wchar_t	szKeyVersion[64];
 	if (!m_cProfile.IOProfileData( szSecInfo, szKeyStructureVersion, nStructureVersion )) {
-		sErrMsg = L"不正な形式です。\nインポートを中止します";
+		sErrMsg = LSW(STR_IMPEXP_ERR_TYPE);
 		return false;
 	}
 	if ((unsigned int)nStructureVersion != m_pShareData->m_vStructureVersion) {
 		auto_strcpy( szKeyVersion, L"?" );
 		m_cProfile.IOProfileData( szSecInfo, szKeyVersion, MakeStringBufferW( szKeyVersion ) );
 		int nRet = ConfirmMessage( hwndParent,
-			_T("エクスポートした %ls(%ls/%d) とバージョンが異なります。\n\nインポートしてもよろしいですか？"), 
+			LS(STR_IMPEXP_VER), 
 			_APP_NAME_(LTEXT), szKeyVersion, nStructureVersion );
 		if ( IDYES != nRet ) {
 			return false;
@@ -436,7 +430,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 	}
 
-	sErrMsg =  MSG_OK_INPORT + sFileName + files;
+	sErrMsg = std::wstring(LSW(STR_IMPEXP_OK_IMPORT)) + sFileName + files;
 
 	return true;
 }
@@ -534,11 +528,11 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	// 書き込み
 	if (!cProfile.WriteProfile( to_tchar(sFileName.c_str()), WSTR_TYPE_HEAD )) {
-		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
 
-	sErrMsg =  MSG_OK_EXPORT + sFileName + files;
+	sErrMsg =  std::wstring(LSW(STR_IMPEXP_OK_EXPORT)) + sFileName + files;
 
 	return true;
 }
@@ -555,7 +549,7 @@ bool CImpExpColors::Import( const wstring& sFileName, wstring& sErrMsg )
 	// 開けるか
 	CTextInputStream in( strPath.c_str() );
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -569,7 +563,7 @@ bool CImpExpColors::Import( const wstring& sFileName, wstring& sErrMsg )
 	//比較
 	if (szHeader != WSTR_COLORDATA_HEAD3) {
 		in.Close();
-		sErrMsg = wstring(L"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n")	// 旧バージョンの説明の削除 2010/4/22 Uchi
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_COLOR_OLD))	// 旧バージョンの説明の削除 2010/4/22 Uchi
 			+ sFileName;
 		return false;
 	}
@@ -597,7 +591,7 @@ bool CImpExpColors::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.SetWritingMode();
 	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
 	if (!cProfile.WriteProfile( to_tchar( sFileName.c_str() ), WSTR_COLORDATA_HEAD3 )) { //Jan. 15, 2001 Stonee
-		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
 
@@ -613,7 +607,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	CTextInputStream	in( to_tchar( sFileName.c_str() ) );
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -630,7 +624,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		_wcstotcs(buff,line.c_str(),_countof(buff));
 
 		if(count >= MAX_REGEX_KEYWORD){
-			sErrMsg = L"キーワード数が上限に達したため切り捨てました。";
+			sErrMsg = LSW(STR_IMPEXP_REGEX1);
 			break;
 		}
 
@@ -665,11 +659,11 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 						count++;
 						keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
 					}else{
-						sErrMsg = L"キーワード領域がいっぱいなため切り捨てました。";
+						sErrMsg = LSW(STR_IMPEXP_REGEX2);
 					}
 				}
 			}else{
-				sErrMsg = L"不正なキーワードを無視しました。";
+				sErrMsg = LSW(STR_IMPEXP_REGEX3);
 			}
 		}
 	}
@@ -693,7 +687,7 @@ bool CImpExpRegex::Export( const wstring& sFileName, wstring& sErrMsg )
 {
 	CTextOutputStream out( to_tchar( sFileName.c_str() ) );
 	if(!out){
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -729,7 +723,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	CTextInputStream in( to_tchar( sFileName.c_str() ));
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -792,7 +786,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		const WCHAR* p4 = p2;
 		if( (fp2=_tfopen_absini(to_tchar(p3),_T("r"))) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
-			p4 = L"【辞書ファイルが見つかりません】";
+			p4 = LSW(STR_IMPEXP_DIC_NOTFOUND);
 			b_enable_flag = 0;
 		}
 		else
@@ -800,7 +794,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//About
 		if (wcslen(p2) > DICT_ABOUT_LEN) {
-			auto_sprintf( msgBuff, L"辞書の説明は%d文字以内にしてください。", DICT_ABOUT_LEN );
+			auto_sprintf( msgBuff, LSW(STR_IMPEXP_DIC_LENGTH), DICT_ABOUT_LEN );
 			sErrMsg = msgBuff;
 			++invalid_record;
 			continue;
@@ -824,7 +818,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	// 2007.02.03 genta 失敗したら警告する
 	if( invalid_record > 0 ){
-		auto_sprintf( msgBuff, L"一部のデータが読み込めませんでした\n不正な行数: %d", invalid_record );
+		auto_sprintf( msgBuff, LSW(STR_IMPEXP_DIC_RECORD), invalid_record );
 		sErrMsg = msgBuff;
 	}
 
@@ -838,7 +832,7 @@ bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 {
 	CTextOutputStream out( to_tchar( sFileName.c_str() ) );
 	if (!out) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -873,7 +867,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	CDataProfile in;
 	in.SetReadingMode();
 	if (!in.ReadProfile( to_tchar( sFileName.c_str() ))) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -899,7 +893,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		// 新バージョンでない
 		CTextInputStream in(strPath.c_str());
 		if (!in) {
-			sErrMsg = MSG_NOT_OPEN + sFileName;
+			sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 			return false;
 		}
 		// ヘッダチェック
@@ -966,7 +960,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 	}
 	if (!bVer3  && !bVer2) {
-		sErrMsg = wstring(L"キー設定ファイルの形式が違います。\n\n") + sFileName;
+		sErrMsg = wstring(LSW(STR_IMPEXP_KEY_FORMAT)) + sFileName;
 		return false;
 	}
 
@@ -1012,7 +1006,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	CTextOutputStream out( strPath.c_str() );
 	if (!out) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -1034,7 +1028,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD)) {
-		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
 
@@ -1053,7 +1047,7 @@ bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 	//ヘッダ確認
 	CTextInputStream in(strPath.c_str());
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -1065,7 +1059,7 @@ bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 	WCHAR szHeader[256];
 	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
 	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
-		sErrMsg = wstring( L"カスタムメニュー設定ファイルの形式が違います。\n\n" ) + sFileName;
+		sErrMsg = wstring(LSW(STR_IMPEXP_CUSTMENU_FORMAT)) + sFileName;
 		return false;
 	}
 
@@ -1082,7 +1076,7 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	// オープン
 	CTextOutputStream out(strPath.c_str());
 	if (!out) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -1106,7 +1100,7 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_CUSTMENU_HEAD_V2)) {
-		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
 
@@ -1124,7 +1118,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	CTextInputStream in(to_tchar(sFileName.c_str()));
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 	while( in ){
@@ -1160,7 +1154,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( m_nIdx, m_bCase );
 
 	if (bAddError) {
-		sErrMsg = L"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。";
+		sErrMsg = LSW(STR_IMPEXP_KEYWORD);
 	}
 
 	return true;
@@ -1174,7 +1168,7 @@ bool CImpExpKeyWord::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	CTextOutputStream out(to_tchar(sFileName.c_str()));
 	if (!out) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 	out.WriteF( L"// " );
@@ -1214,7 +1208,7 @@ bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 	//ヘッダ確認
 	CTextInputStream in(strPath.c_str());
 	if (!in) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -1226,7 +1220,7 @@ bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 	WCHAR szHeader[256];
 	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
 	if(wcscmp(szHeader, WSTR_MAINMENU_HEAD_V1)!=0) {
-		sErrMsg = wstring( L"メインメニュー設定ファイルの形式が違います。\n\n" ) + sFileName;
+		sErrMsg = wstring(LSW(STR_IMPEXP_MEINMENU)) + sFileName;
 		return false;
 	}
 
@@ -1243,7 +1237,7 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	// オープン
 	CTextOutputStream out( strPath.c_str() );
 	if (!out) {
-		sErrMsg = MSG_NOT_OPEN + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
 
@@ -1264,7 +1258,7 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_MAINMENU_HEAD_V1)) {
-		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
 

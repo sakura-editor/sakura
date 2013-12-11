@@ -106,7 +106,10 @@ INT_PTR CPropKeyword::DispatchEvent(
 
 			GetWindowRect( hwndDlg, &rc );
 			SetWindowPos( hwndDlg, NULL, 0, 0, rc.right-rc.left, i-rc.top+10, SWP_NOZORDER|SWP_NOMOVE );
-			SetWindowText( hwndDlg, _T("共通設定 - 強調キーワード") );
+			std::tstring title = LS(STR_PROPCOMMON);
+			title += _T(" - ");
+			title += LS(STR_PROPCOMMON_KEYWORD);
+			SetWindowText( hwndDlg, title.c_str() );
 
 			hwndCOMBO_SET = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 			Combo_SetCurSel( hwndCOMBO_SET, m_nKeywordSet1 );
@@ -183,7 +186,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				}
 				if( plvi->pszText[0] != _T('\0') ){
 					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
-						InfoMessage( hwndDlg, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
+						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_ERR_LEN), MAX_KEYWORDLEN );
 						return TRUE;
 					}
 					/* ｎ番目のセットにキーワードを編集 */
@@ -252,7 +255,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				switch( wID ){
 				case IDC_BUTTON_ADDSET:	/* セット追加 */
 					if( MAX_SETNUM <= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-						InfoMessage( hwndDlg, _T("セットは%d個までしか登録できません。\n"), MAX_SETNUM );
+						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_SETMAX), MAX_SETNUM );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
@@ -261,8 +264,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 					if( !cDlgInput1.DoModal(
 						G_AppInstance(),
 						hwndDlg,
-						_T("キーワードのセット追加"),
-						_T("セット名を入力してください。"),
+						LS(STR_PROPCOMKEYWORD_SETNAME1),
+						LS(STR_PROPCOMKEYWORD_SETNAME2),
 						MAX_SETNAMELEN,
 						szKeyWord
 						)
@@ -310,7 +313,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 						}
 					}
 					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						_T("「%ls」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%ts"),
+						LS(STR_PROPCOMKEYWORD_SETDEL),
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
 						pszLabel
 					) ){
@@ -340,8 +343,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 						BOOL bDlgInputResult = cDlgInput1.DoModal(
 							G_AppInstance(),
 							hwndDlg,
-							_T("セットの名称変更"),
-							_T("セット名を入力してください。"),
+							LS(STR_PROPCOMKEYWORD_RENAME1),
+							LS(STR_PROPCOMKEYWORD_RENAME2),
 							MAX_SETNAMELEN,
 							szKeyWord
 						);
@@ -363,12 +366,12 @@ INT_PTR CPropKeyword::DispatchEvent(
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
 					if( !m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CanAddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
-						InfoMessage( hwndDlg, _T("登録できるキーワード数が上限に達しています。\n") );
+						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_KEYMAX) );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
 					wcscpy( szKeyWord, L"" );
-					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( szKeyWord[0] != L'\0' ){
@@ -471,7 +474,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	wcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYEDIT1), LS(STR_PROPCOMKEYWORD_KEYEDIT2), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
 	if( szKeyWord[0] != L'\0' ){
@@ -561,7 +564,7 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //! キーワードを整頓する
 void CPropKeyword::Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-	if( IDYES == ::MessageBox( hwndDlg, _T("現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"),
+	if( IDYES == ::MessageBox( hwndDlg, LS(STR_PROPCOMKEYWORD_DEL),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
 		if( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 		}
@@ -698,7 +701,7 @@ void CPropKeyword::DispKeywordCount( HWND hwndDlg )
 	nAlloc -= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	nAlloc += m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetFreeSize();
 	
-	auto_sprintf( szCount, _T("(最大 %d 文字, 登録数 %d, 空き %d 個)"), MAX_KEYWORDLEN, n, nAlloc );
+	auto_sprintf( szCount, LS(STR_PROPCOMKEYWORD_INFO), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }
 

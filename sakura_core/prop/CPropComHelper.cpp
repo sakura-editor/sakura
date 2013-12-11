@@ -216,7 +216,7 @@ INT_PTR CPropHelper::DispatchEvent(
 					}else{
 						_tcscpy( szPath, m_Common.m_sHelper.m_szMigemoDict );
 					}
-					if( SelectDir( hwndDlg, _T("検索するフォルダを選んでください"), szPath, szPath ) ){
+					if( SelectDir( hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath ) ){
 						_tcscpy( m_Common.m_sHelper.m_szMigemoDict, szPath );
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict );
 					}

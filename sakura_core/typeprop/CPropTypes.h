@@ -160,7 +160,7 @@ protected:
 	int  GetData( HWND );											//!< ダイアログデータの取得
 
 protected:
-	void SetCombobox(HWND hwndWork, const TCHAR** pszLabels, int nCount, int select);
+	void SetCombobox(HWND hwndWork, const int* nIds, int nCount, int select);
 	void EnableTypesPropInput( HWND hwndDlg );						//!< タイプ別設定のON/OFF
 public:
 private:

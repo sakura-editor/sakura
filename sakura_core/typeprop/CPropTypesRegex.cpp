@@ -117,13 +117,13 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 54 / 100;
-		col.pszText  = const_cast<TCHAR*>(_T("キーワード"));
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPEREGEX_LIST1));
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 38 / 100;
-		col.pszText  = const_cast<TCHAR*>(_T("色指定"));
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPEREGEX_LIST2));
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
@@ -131,7 +131,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		SetData( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
-			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, _T("正規表現キーワードは使えません。") );
+			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE) );
 			//ライブラリがなくて、使用しないになっている場合は、無効にする。
 			if( ! IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 			{
@@ -162,8 +162,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 								hwndDlg,
 								MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 								GSTR_APPNAME,
-								_T("正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？"),
-								_T("正規表現キーワードを使用する") );
+								LS(STR_PROPTYPEREGEX_NOTFOUND) );
 						if( nRet != IDYES )
 						{
 							CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
@@ -195,7 +194,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
+					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
 				//選択中のキーを探す。
@@ -242,7 +241,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
+					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
 				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
@@ -276,7 +275,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
 				{
-					ErrorMessage( hwndDlg, _T("キーワードが選択されていません。"));
+					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOSEL));
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
@@ -697,8 +696,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 				hwndDlg,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST | MB_DEFBUTTON2,
 				GSTR_APPNAME,
-				_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
-				_T("正規表現キーワード") );
+				LS(STR_PROPTYPEREGEX_KAKOMI) );
 		return false;
 	}
 	if( !CheckRegexpSyntax( to_wchar(szNewKeyWord), hwndDlg, false ) )
@@ -707,8 +705,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 				hwndDlg,
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 				GSTR_APPNAME,
-				_T("書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"),
-				_T("正規表現キーワード") );
+				LS(STR_PROPTYPEREGEX_INVALID) );
 		if( nRet != IDYES ) return false;
 	}
 	// 重複確認・文字列長制限チェック
@@ -723,13 +720,13 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], nKeyWordSize);
 			if( _tcscmp(szNewKeyWord, &szKeyWord[0]) == 0 ) 
 			{
-				ErrorMessage( hwndDlg, _T("同じキーワードで登録済みです。"));
+				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_ALREADY));
 				return false;
 			}
 			// 長さには\0も含む
 			nKeywordLen += auto_strlen(to_wchar(&szKeyWord[0])) + 1;
 			if( _countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
-				ErrorMessage( hwndDlg, _T("これ以上登録できません。\nキーワード領域がいっぱいです。") );
+				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
 				return false;
 			}
 		}

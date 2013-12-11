@@ -40,8 +40,6 @@
 using std::wstring;
 
 // TreeView 表示固定初期値
-const WCHAR	DEFAULT_NODE[]	= L"編集してください";
-const WCHAR	DEFAULT_SEPA[]	= L"――――――――――";
 
 static const DWORD p_helpids[] = {
 	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND,				//機能の種別
@@ -323,7 +321,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 				else if (auto_strcmp(ptdi->item.pszText, _T("")) == 0) {
 					// 空
-					pFuncWk->m_sName = DEFAULT_NODE;
+					pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_EDIT);
 				}
 				else {
 					pFuncWk->m_sName = to_wchar(ptdi->item.pszText);
@@ -372,8 +370,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					if (!cDlgInput1.DoModal(
 							G_AppInstance(),
 							hwndDlg,
-							_T("メニューアイテムのアクセスキー設定"),
-							_T("キーを入力してください。"),
+							LS(STR_PROPCOMMAINMENU_ACCKEY1),
+							LS(STR_PROPCOMMAINMENU_ACCKEY2),
 							1,
 							szKey)) {
 						return TRUE;
@@ -431,7 +429,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 				case IDC_BUTTON_CLEAR:
 					if (IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						_T("メニューの設定をクリアします。\nよろしいですか？")) ) {
+						LS(STR_PROPCOMMAINMENU_CLEAR)) ) {
 						return TRUE;
 					}
 					// 内部データ初期化
@@ -443,7 +441,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 				case IDC_BUTTON_INITIALIZE:
 					if (IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						_T("メニューの設定を初期状態に戻します。\nよろしいですか？"))) {
+						LS(STR_PROPCOMMAINMENU_INIT))) {
 						return TRUE;
 					}
 					// 初期状態に戻す
@@ -463,7 +461,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					if (htiItem != NULL) {
 						if (TreeView_GetChild( hwndTreeRes, htiItem ) != NULL
 						  && IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-							_T("選択している項目を下位項目ごと削除します。\nよろしいですか？"))) {
+							LS(STR_PROPCOMMAINMENU_DEL))) {
 							return TRUE;
 						}
 						htiTemp = TreeView_GetNextSibling( hwndTreeRes, htiItem );
@@ -490,11 +488,11 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_NODE:		// ノード挿入
 						eFuncCode = F_NODE;
 						bIsNode = true;
-						auto_strcpy( szLabel , DEFAULT_NODE );
+						auto_strcpy( szLabel , LSW(STR_PROPCOMMAINMENU_EDIT) );
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
 						eFuncCode = F_SEPARATOR;
-						auto_strcpy( szLabel , DEFAULT_SEPA );
+						auto_strcpy( szLabel , LSW(STR_PROPCOMMAINMENU_SEP) );
 						break;
 					case IDC_BUTTON_INSERT:				// 挿入
 					case IDC_BUTTON_INSERT_A:			// 挿入
@@ -751,7 +749,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					{
 						wstring sErrMsg;
 						if (Check_MainMenu( hwndTreeRes, sErrMsg )) {
-							InfoMessage( hwndDlg, _T("問題ありませんでした。"));
+							InfoMessage( hwndDlg, LS(STR_PROPCOMMAINMENU_OK));
 						}
 						else {
 							WarningMessage( hwndDlg, to_tchar(sErrMsg.c_str()) );
@@ -935,7 +933,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				pFuncWk->m_sName = szLabel;
 				break;
 			case T_SEPARATOR:
-				pFuncWk->m_sName = DEFAULT_SEPA;
+				pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_SEP);
 				break;
 			case T_SPECIAL:
 				pFuncWk->m_sName = pcFunc->m_sName;
@@ -1334,7 +1332,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 		tvi.hItem = s;
 		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
-			sErrMsg = L"メニュー設定の取得に失敗しました";
+			sErrMsg = LSW(STR_PROPCOMMAINMENU_ERR1);
 			return false;
 		}
 		pFuncWk = &msMenu[tvi.lParam];
@@ -1407,7 +1405,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 				tvi.hItem = mKey[pFuncWk->m_sKey[0]];
 				if (!TreeView_GetItem( hwndTree, &tvi )) {
 					// Error
-					sErrMsg = L"メニュー設定の取得に失敗しました";
+					sErrMsg = LSW(STR_PROPCOMMAINMENU_ERR1);
 					return false;
 				}
 				if (!msMenu[tvi.lParam].m_bDupErr) {
@@ -1432,23 +1430,23 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 	if (nLevel == 0) {
 		sErrMsg = L"";
 		if (!bOptionOk) {
-			sErrMsg += L"『共通設定』が有りません。\n";
+			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR2);
 			bRet = false;
 		}
 		if (nTopNum > MAX_MAINMENU_TOP) {
-			sErrMsg += L"トップレベルの項目数が多すぎます。\n";
+			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR3);
 			bRet = false;
 		}
 		if (nMenuNum > MAX_MAINMENU) {
-			sErrMsg += L"登録項目数が多すぎます。\n";
+			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR4);
 			bRet = false;
 		}
 		if (nDupErrNum > 0) {
-			sErrMsg += L"重複したアクセスキーがあります。\n";
+			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR5);
 			bRet = false;
 		}
 		if (nNoSetErrNum > 0) {
-			sErrMsg += L"未設定のアクセスキーがあります。\n";
+			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR6);
 			bRet = false;
 		}
 		if (htiErr != NULL) {

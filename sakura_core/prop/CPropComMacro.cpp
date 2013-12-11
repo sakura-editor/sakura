@@ -362,18 +362,18 @@ int CPropMacro::GetData( HWND hwndDlg )
 }
 
 struct ColumnData_CPropMacro_Init {
-	const TCHAR *title;
+	int titleId;
 	int width;
 };
 
 void CPropMacro::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData_CPropMacro_Init ColumnList[] = {
-		{ _T("番号"), 40 },
-		{ _T("マクロ名"), 150 },
-		{ _T("ファイル名"), 150 },
-		{ _T("実行時に読み込み"), 40 },
-		{ _T("自動実行"), 40 },
+		{ STR_PROPCOMMACR_LIST1, 40 },
+		{ STR_PROPCOMMACR_LIST2, 150 },
+		{ STR_PROPCOMMACR_LIST3, 150 },
+		{ STR_PROPCOMMACR_LIST4, 40 },
+		{ STR_PROPCOMMACR_LIST5, 40 },
 	};
 
 	//	ListViewの初期化
@@ -390,7 +390,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText = const_cast<TCHAR*>(ColumnList[pos].title);
+		sColumn.pszText = const_cast<TCHAR*>(LS(ColumnList[pos].titleId));
 		sColumn.cx = ColumnList[pos].width;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;
@@ -557,7 +557,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 		GetInidirOrExedir( szDir, folder );
 	}
 
-	if( SelectDir( hwndDlg, _T("Macroディレクトリの選択"), szDir, szDir ) ){
+	if( SelectDir( hwndDlg, LS(STR_PROPCOMMACR_SEL_DIR), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
 		AddLastChar( szDir, _countof(szDir), _T('\\') );
 		::DlgItem_SetText( hwndDlg, IDC_MACRODIR, szDir );

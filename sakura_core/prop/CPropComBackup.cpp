@@ -174,7 +174,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					TCHAR		szFolder[_MAX_PATH];
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, _countof( szFolder ));
 
-					if( SelectDir( hwndDlg, _T("バックアップを作成するフォルダを選んでください"), szFolder, szFolder ) ){
+					if( SelectDir( hwndDlg, LS(STR_PROPCOMBK_SEL_FOLDER), szFolder, szFolder ) ){
 						_tcscpy( m_Common.m_sBackup.m_szBackUpFolder, szFolder );
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
 					}
@@ -521,7 +521,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設
 			wcscpy( temp, LTEXT("") );
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
-			auto_sprintf( temp, LTEXT("%ls\\"), LTEXT("(ゴミ箱)") );
+			auto_sprintf( temp, LTEXT("%ls\\"), LSW(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
 			auto_sprintf( temp, LTEXT(".\\") );

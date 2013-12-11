@@ -50,19 +50,19 @@ static const DWORD p_helpids2[] = {	//11400
 
 
 
-TYPE_NAME<int> ImeSwitchArr[] = {
-	{ 0, _T("そのまま") },
-	{ 1, _T("常にON") },
-	{ 2, _T("常にOFF") },
+TYPE_NAME_ID<int> ImeSwitchArr[] = {
+	{ 0, STR_IME_SWITCH_DONTSET },
+	{ 1, STR_IME_SWITCH_ON },
+	{ 2, STR_IME_SWITCH_OFF },
 };
 
 //	Nov. 20, 2000 genta
-TYPE_NAME<int> ImeStateArr[] = {
-	{ 0, _T("標準設定") },
-	{ 1, _T("全角") },
-	{ 2, _T("全角ひらがな") },
-	{ 3, _T("全角カタカナ") },
-	{ 4, _T("無変換") }
+TYPE_NAME_ID<int> ImeStateArr[] = {
+	{ 0, STR_IME_STATE_DEF },
+	{ 1, STR_IME_STATE_FULL },
+	{ 2, STR_IME_STATE_FULLHIRA },
+	{ 3, STR_IME_STATE_FULLKATA },
+	{ 4, STR_IME_STATE_NO }
 };
 
 static const wchar_t* aszEolStr[] = {
@@ -194,11 +194,11 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 }
 
 
-void CPropTypesWindow::SetCombobox(HWND hwndWork, const TCHAR** pszLabels, int nCount, int select)
+void CPropTypesWindow::SetCombobox(HWND hwndWork, const int* nIds, int nCount, int select)
 {
 	Combo_ResetContent(hwndWork);
 	for(int i = 0; i < nCount; ++i ){
-		Combo_AddString( hwndWork, pszLabels[i] );
+		Combo_AddString( hwndWork, LS(nIds[i]) );
 	}
 	Combo_SetCurSel(hwndWork, select);
 }
@@ -222,7 +222,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ime = m_Types.m_nImeState & 3;
 		int		nSelPos = 0;
 		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, ImeSwitchArr[i].pszName );
+			Combo_InsertString( hwndCombo, i, LS(ImeSwitchArr[i].nNameId) );
 			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
 			}
@@ -235,7 +235,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		ime = m_Types.m_nImeState >> 2;
 		nSelPos = 0;
 		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, ImeStateArr[i].pszName );
+			Combo_InsertString( hwndCombo, i, LS(ImeStateArr[i].nNameId) );
 			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
 			}
@@ -307,20 +307,20 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
 	{
-		static const TCHAR* posNames[] ={
-			_T("左上"),
-			_T("右上"),
-			_T("左下"),
-			_T("右下"),
-			_T("中央"),
-			_T("中央上"),
-			_T("中央下"),
-			_T("中央左"),
-			_T("中央右"),
+		static const int posNameId[] ={
+			STR_IMAGE_POS1,
+			STR_IMAGE_POS2,
+			STR_IMAGE_POS3,
+			STR_IMAGE_POS4,
+			STR_IMAGE_POS5,
+			STR_IMAGE_POS6,
+			STR_IMAGE_POS7,
+			STR_IMAGE_POS8,
+			STR_IMAGE_POS9,
 		};
 		/*BGIMAGE_TOP_LEFT .. */
-		int nCount = _countof(posNames);
-		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNames, nCount, m_Types.m_backImgPos);
+		int nCount = _countof(posNameId);
+		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNameId, nCount, m_Types.m_backImgPos);
 	}
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y, m_Types.m_backImgRepeatY);
