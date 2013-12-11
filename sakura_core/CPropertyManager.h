@@ -37,7 +37,7 @@ public:
 	/*
 	|| ÇªÇÃëº
 	*/
-	bool OpenPropertySheet( HWND hWnd, int nPageNum );	/* ã§í ê›íË */
+	bool OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc );	/* ã§í ê›íË */
 	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* É^ÉCÉvï ê›íË */
 
 private:

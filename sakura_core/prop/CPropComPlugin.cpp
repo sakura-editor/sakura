@@ -163,7 +163,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			case IDC_PLUGIN_SearchNew:		// 新規プラグインを追加
 				GetData( hwndDlg );
 				CPluginManager::getInstance()->SearchNewPlugin( m_Common, hwndDlg );
-				LoadPluginTemp(m_Common, *m_pcMenuDrawer);
+				if( m_bTrayProc ){
+					LoadPluginTemp(m_Common, *m_pcMenuDrawer);
+				}
 				SetData_LIST( hwndDlg );	//リストの再構築
 				break;
 			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
@@ -182,7 +184,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						GetData( hwndDlg );
 						CPluginManager::getInstance()->InstZipPlugin( m_Common, hwndDlg, szPath );
-						LoadPluginTemp(m_Common, *m_pcMenuDrawer);
+						if( m_bTrayProc ){
+							LoadPluginTemp(m_Common, *m_pcMenuDrawer);
+						}
 						SetData_LIST( hwndDlg );	//リストの再構築
 					}
 					// フォルダを記憶
@@ -561,7 +565,7 @@ bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 {
-	if( !CEditApp::getInstance() ){
+	{
 		// 2013.05.31 コントロールプロセスなら即時読み込み
 		CPluginManager::getInstance()->LoadAllPlugin( &common );
 		// ツールバーアイコンの更新

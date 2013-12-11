@@ -98,7 +98,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DoPropertySheet( int );	/* プロパティシートの作成 */
+	INT_PTR DoPropertySheet( int, bool );	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
 	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
@@ -137,6 +137,7 @@ public:
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
 	std::vector<SKeywordSetIndex>	m_Types_nKeyWordSetIdx;
+	bool			m_bTrayProc;
 	HFONT			m_hKeywordHelpFont;		//!< キーワードヘルプ フォント ハンドル
 	HFONT			m_hTabFont;				//!< タブ フォント ハンドル
 
