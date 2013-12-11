@@ -2676,8 +2676,8 @@ BEGIN
     F_FILEOPEN              "Open..."
     F_FILESAVE              "Save"
     F_FILESAVEAS_DIALOG     "Save As"
-    F_FILECLOSE             "Close Untitled(&R)"
-    F_FILECLOSE_OPEN        "Close and Open(&L)..."
+    F_FILECLOSE             "Close Untitled"
+    F_FILECLOSE_OPEN        "Close and Open..."
     F_FILEOPEN_DROPDOWN     "Open... (Dropdown)"
     F_FILESAVECLOSE         "Save&&Close"
     F_FILE_REOPEN_SJIS      "Re-open as SJIS"
@@ -2688,43 +2688,43 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_FILE_REOPEN_JIS       "Re-Open as &JIS"
-    F_FILE_REOPEN_EUC       "Re-Open as &EUC"
-    F_FILE_REOPEN_UNICODE   "Re-Open as &Unicode"
-    F_FILE_REOPEN_UTF8      "Re-Open as UTF-&8"
-    F_FILE_REOPEN_UTF7      "Re-Open as UTF-&7"
-    F_FILE_REOPEN_UNICODEBE "Re-Open as U&nicodeBE"
+    F_FILE_REOPEN_JIS       "Re-Open as JIS"
+    F_FILE_REOPEN_EUC       "Re-Open as EUC"
+    F_FILE_REOPEN_UNICODE   "Re-Open as Unicode"
+    F_FILE_REOPEN_UTF8      "Re-Open as UTF-8"
+    F_FILE_REOPEN_UTF7      "Re-Open as UTF-7"
+    F_FILE_REOPEN_UNICODEBE "Re-Open as UnicodeBE"
     F_FILE_REOPEN_CESU8     "Re-Open as CESU-8"
     F_FILE_REOPEN_LATIN1    "Re-Open as Latin1"
-    F_FILE_REOPEN           "Re-Open (&W)"
-    F_FILESAVEALL           "Save all (&Z)"
+    F_FILE_REOPEN           "Re-Open"
+    F_FILESAVEALL           "Save all"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_PRINT                 "&Print..."
-    F_PRINT_PREVIEW         "Print Pre&view..."
-    F_PRINT_PAGESETUP       "Page Set&up..."
+    F_PRINT                 "Print..."
+    F_PRINT_PREVIEW         "Print PreView..."
+    F_PRINT_PAGESETUP       "Page SetUp..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_OPEN_HfromtoC         "Open &C/C++ header with same name..."
-    F_ACTIVATE_SQLPLUS      "Activate SQL*&Plus"
-    F_PLSQL_COMPILE_ON_SQLPLUS "Execute on &SQL*Plus"
+    F_OPEN_HfromtoC         "Open C/C++ header with same name..."
+    F_ACTIVATE_SQLPLUS      "Activate SQL*Plus"
+    F_PLSQL_COMPILE_ON_SQLPLUS "Execute on SQL*Plus"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BROWSE                "&Browse"
-    F_VIEWMODE              "&View Mode"
-    F_PROPERTY_FILE         "File Proper&ty"
+    F_BROWSE                "Browse"
+    F_VIEWMODE              "View Mode"
+    F_PROPERTY_FILE         "File Propery"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXITALLEDITORS        "&Quit All Editors"
-    F_EXITALL               "E&xit Sakura completely"
+    F_EXITALLEDITORS        "Quit All Editors"
+    F_EXITALL               "Exit Sakura completely"
     F_WCHAR                 "Character Input"
     F_IME_CHAR              "Hlf-Width Character Input"
 END
@@ -2740,39 +2740,39 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_WordDeleteToStart     "Delete to start of word(&L)"
-    F_WordDeleteToEnd       "Delete to end of word(&R)"
-    F_WordCut               "Cu&t entire word"
-    F_WordDelete            "&Delete entire word"
+    F_WordDeleteToStart     "Delete to start of word"
+    F_WordDeleteToEnd       "Delete to end of word"
+    F_WordCut               "Cut entire word"
+    F_WordDelete            "Delete entire word"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_LineCutToStart        "C&ut to start of line"
-    F_LineCutToEnd          "Cut to end of line(&k)"
-    F_LineDeleteToStart     "Delete to start of line(&H)"
-    F_LineDeleteToEnd       "Delete to &end of line"
-    F_CUT_LINE              "Cut entire line(&X)"
-    F_DELETE_LINE           "Delete entire line(&Y)"
-    F_DUPLICATELINE         "Duplicate line(&2)"
+    F_LineCutToStart        "Cut to start of line"
+    F_LineCutToEnd          "Cut to end of line"
+    F_LineDeleteToStart     "Delete to start of line"
+    F_LineDeleteToEnd       "Delete to End of line"
+    F_CUT_LINE              "Cut entire line"
+    F_DELETE_LINE           "Delete entire line"
+    F_DUPLICATELINE         "Duplicate line"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_INDENT_TAB            "T&ab Indent"
-    F_UNINDENT_TAB          "&Back-Tab Indent"
-    F_INDENT_SPACE          "&Space Indent"
-    F_UNINDENT_SPACE        "Reverse Space Indent(&P)"
+    F_INDENT_TAB            "Tab Indent"
+    F_UNINDENT_TAB          "Back-Tab Indent"
+    F_INDENT_SPACE          "Space Indent"
+    F_UNINDENT_SPACE        "Reverse Space Indent"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_LTRIM                 "&Left trim whitespace"
-    F_RTRIM                 "&Right trim whitespace"
-    F_SORT_ASC              "&Ascending sort selected lines"
-    F_SORT_DESC             "&Decending sort selected lines"
-    F_MERGE                 "Merge selected lines, &Unique only"
-    F_RECONVERT             "&Reconvert"
+    F_LTRIM                 "Left trim whitespace"
+    F_RTRIM                 "Right trim whitespace"
+    F_SORT_ASC              "Ascending sort selected lines"
+    F_SORT_DESC             "Decending sort selected lines"
+    F_MERGE                 "Merge selected lines, Unique only"
+    F_RECONVERT             "Reconvert"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2781,42 +2781,42 @@ BEGIN
     F_DOWN                  "Cursor Down"
     F_LEFT                  "Cursor Left"
     F_RIGHT                 "Cursor Right"
-    F_UP2                   "Move Cursor Up - 2 lines(&Q)"
-    F_DOWN2                 "Move Cursor Down - 2 lines(&K)"
+    F_UP2                   "Move Cursor Up - 2 lines"
+    F_DOWN2                 "Move Cursor Down - 2 lines"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_WORDLEFT              "Move Cursor to &Left of word"
-    F_WORDRIGHT             "Move Cursor to &Right of word"
-    F_GOLINETOP             "Move to start of line(&H)"
-    F_GOLINEEND             "Move to &End of line"
+    F_WORDLEFT              "Move Cursor to Left of word"
+    F_WORDRIGHT             "Move Cursor to Right of word"
+    F_GOLINETOP             "Move to start of line"
+    F_GOLINEEND             "Move to End of line"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_HalfPageUp            "Half page up"
     F_HalfPageDown          "Half page down"
-    F_1PageUp               "1 page &Up"
-    F_1PageDown             "1 page &Down"
-    F_GOFILETOP             "St&art of file"				// FIXME  - &T
-    F_GOFILEEND             "End of file (&Z)"				// FIXME  - &B
+    F_1PageUp               "1 page Up"
+    F_1PageDown             "1 page Down"
+    F_GOFILETOP             "Start of file"				// FIXME  - &T
+    F_GOFILEEND             "End of file"				// FIXME  - &B
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CURLINECENTER         "&Center Current Line"
+    F_CURLINECENTER         "Center Current Line"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_JUMPHIST_PREV         "Jump History: &Previous"
-    F_JUMPHIST_NEXT         "Jump History: &Next"
-    F_JUMPHIST_SET          "&Set current location in Jump History"
+    F_JUMPHIST_PREV         "Jump History: Previous"
+    F_JUMPHIST_NEXT         "Jump History: Next"
+    F_JUMPHIST_SET          "Set current location in Jump History"
     F_WndScrollDown         "Scroll text up 1 line"
     F_WndScrollUp           "Scroll text down 1 line"
-    F_GONEXTPARAGRAPH       "Next Paragraph (&Z)"
-    F_GOPREVPARAGRAPH       "Prev Paragraph (&A)"
+    F_GONEXTPARAGRAPH       "Next Paragraph"
+    F_GOPREVPARAGRAPH       "Prev Paragraph"
     F_AUTOSCROLL            "Auto Scroll"
     F_WHEELUP               "Wheel Up"
     F_WHEELDOWN             "Wheel Down"
@@ -2830,184 +2830,184 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_SELECTWORD            "Select &Word at Cursor"
-    F_SELECTALL             "Select &All"
+    F_SELECTWORD            "Select Word at Cursor"
+    F_SELECTALL             "Select All"
     F_SELECTLINE            "Select complete line"
-    F_BEGIN_SEL             "Begin &Selection"
+    F_BEGIN_SEL             "Begin Selection"
     F_UP_SEL                "(Sel.)Cursor Up"
     F_DOWN_SEL              "(Sel.)Cursor Down"
     F_LEFT_SEL              "(Sel.)Cursor Left"
     F_RIGHT_SEL             "(Sel.)Cursor Right"
-    F_UP2_SEL               "Select 2 lines above (&Q)"
+    F_UP2_SEL               "Select 2 lines above"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_DOWN2_SEL             "Select 2 lines below (&K)"
-    F_WORDLEFT_SEL          "Select to &Left side of word"
-    F_WORDRIGHT_SEL         "Select to &Right side of word"
+    F_DOWN2_SEL             "Select 2 lines below"
+    F_WORDLEFT_SEL          "Select to Left side of word"
+    F_WORDRIGHT_SEL         "Select to Right side of word"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_GOLINETOP_SEL         "Select to start of line (&H)"
-    F_GOLINEEND_SEL         "Select to end of line (&T)"
+    F_GOLINETOP_SEL         "Select to start of line"
+    F_GOLINEEND_SEL         "Select to end of line"
     F_HalfPageUp_Sel        "(Select)Half page up"
     F_HalfPageDown_Sel      "(Select)Half page down"
-    F_1PageUp_Sel           "Select 1 page &Up"
-    F_1PageDown_Sel         "Select 1 page &Down"
+    F_1PageUp_Sel           "Select 1 page Up"
+    F_1PageDown_Sel         "Select 1 page Down"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_GOFILETOP_SEL         "Select to top of file (&1)"
-    F_GOFILEEND_SEL         "Select to end of file (&9)"
+    F_GOFILETOP_SEL         "Select to top of file"
+    F_GOFILEEND_SEL         "Select to end of file"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_GONEXTPARAGRAPH_SEL   "Select next paragraph (&8)"
-    F_GOPREVPARAGRAPH_SEL   "Select previous paragraph (&2)"
+    F_GONEXTPARAGRAPH_SEL   "Select next paragraph"
+    F_GOPREVPARAGRAPH_SEL   "Select previous paragraph"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BEGIN_BOX             "&Box select being"
+    F_BEGIN_BOX             "Box select being"
     F_UP_BOX                "(Box Sel.)Cursor Up"
     F_DOWN_BOX              "(Box Sel.)Cursor Down"
     F_LEFT_BOX              "(Box Sel.)Cursor Left"
     F_RIGHT_BOX             "(Box Sel.)Cursor Right"
-    F_UP2_BOX               "(Box Sel.) 2 lines above (&Q)"
-    F_DOWN2_BOX             "(Box Sel.) 2 lines below (&K)"
-    F_WORDLEFT_BOX          "(Box Sel.)To &Left side of word"
-    F_WORDRIGHT_BOX         "(Box Sel.)To &Right side of word"
+    F_UP2_BOX               "(Box Sel.) 2 lines above"
+    F_DOWN2_BOX             "(Box Sel.) 2 lines below"
+    F_WORDLEFT_BOX          "(Box Sel.)To Left side of word"
+    F_WORDRIGHT_BOX         "(Box Sel.)To Right side of word"
     F_GOLOGICALLINETOP_BOX  "(Box Sel.)To start of line"
     F_GOLINETOP_BOX         "(Box Sel.)To left side of line"
     F_GOLINEEND_BOX         "(Box Sel.)To end of line"
     F_HalfPageUp_BOX        "(Box Sel.)Half page up"
     F_HalfPageDown_BOX      "(Box Sel.)Half page down"
-    F_1PageUp_BOX           "(Box Sel.) 1 page &Up"
-    F_1PageDown_BOX         "(Box Sel.) 1 page &Down"
+    F_1PageUp_BOX           "(Box Sel.) 1 page Up"
+    F_1PageDown_BOX         "(Box Sel.) 1 page Down"
     F_GOFILETOP_BOX         "(Box Sel.)To top of file"
     F_GOFILEEND_BOX         "(Box Sel.)To end of file"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CUT                   "Cu&t"
-    F_COPY                  "&Copy"
-    F_COPY_CRLF             "Copy using CR&LF"
-    F_PASTE                 "&Paste"
-    F_PASTEBOX              "Paste Bo&x"
+    F_CUT                   "Cut"
+    F_COPY                  "Copy"
+    F_COPY_CRLF             "Copy using CRLF"
+    F_PASTE                 "Paste"
+    F_PASTEBOX              "Paste Box"
     F_INSTEXT_W             "Paste Text"
-	F_EDIT_INS_SUBMENU		"&Insert"
-	F_EDIT_HLV_SUBMENU		"High Le&vel Editing"
-	F_EDIT_MOV_SUBMENU		"Cursor M&ovement"
-	F_EDIT_SEL_SUBMENU		"&Selection"
+	F_EDIT_INS_SUBMENU		"Insert"
+	F_EDIT_HLV_SUBMENU		"High Level Editing"
+	F_EDIT_MOV_SUBMENU		"Cursor Movement"
+	F_EDIT_SEL_SUBMENU		"Selection"
 	F_EDIT_BOX_SEL_SUBMENU	"Box Selection"
-	F_EDIT_COS_SUBMENU		"Cosmeti&k"
+	F_EDIT_COS_SUBMENU		"Cosmetik"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_COPY_ADDCRLF          "Copy adding CRLF(&H)"
-    F_COPYLINES             "Copy selected lines(&@)"
-    F_COPYLINESASPASSAGE    "Copy selected as passage(&.)"			// 選択範囲内全行引用符付きコピー" <<--check
-	F_COPYLINESWITHLINENUMBER "Copy selected with line nr.(&:)"		// 選択範囲内全行行番号付きコピー" <<--check
+    F_COPY_ADDCRLF          "Copy adding CRLF"
+    F_COPYLINES             "Copy selected lines"
+    F_COPYLINESASPASSAGE    "Copy selected as passage"			// 選択範囲内全行引用符付きコピー" <<--check
+	F_COPYLINESWITHLINENUMBER "Copy selected with line nr"		// 選択範囲内全行行番号付きコピー" <<--check
     F_COPY_COLOR_HTML       "Copy selected with HTML markup"
     F_COPY_COLOR_HTML_LINENUMBER "Copy selected with line nr && HTML"
-    F_COPYPATH              "Copy this file's path(&\\)"
-    F_COPYTAG               "Copy file path and cursor location (&^)"
-    F_COPYFNAME             "Copy this file's name(&-)"
+    F_COPYPATH              "Copy this file's path"
+    F_COPYTAG               "Copy file path and cursor location"
+    F_COPYFNAME             "Copy this file's name"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CREATEKEYBINDLIST     "Copy the Key Binding list (&Q)"
+    F_CREATEKEYBINDLIST     "Copy the Key Binding list"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_INS_DATE              "Ins. &Date"
-    F_INS_TIME              "Ins. &Time"
-    F_CTRL_CODE_DIALOG      "&Control Code Input"
+    F_INS_DATE              "Ins. Date"
+    F_INS_TIME              "Ins. Time"
+    F_CTRL_CODE_DIALOG      "Control Code Input"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_CONVERT_TOPMENU		"Convert"
-    F_TOLOWER               "&Lower case"
-    F_TOUPPER               "&Upper case"
-    F_TOHANKAKU             "&Full Height → Half Height (&F)"
-    F_TOZENKAKUKATA         "Half Height + Hiragana → Full/Katakana (&Z)"
-    F_TOZENKAKUHIRA         "Half Height + Katakana → Full/Hiragana (&N)"
-    F_HANKATATOZENKATA      "Half Height Katakana   → Full Katakana (&K)"
-    F_HANKATATOZENHIRA      "Half Katakana          → Full Hiragana (&H)"
-    F_TOZENEI               "Half Alphabetic        → Full Alphabetic (&M)"
+    F_TOLOWER               "Lower case"
+    F_TOUPPER               "Upper case"
+    F_TOHANKAKU             "Full Height → Half Height"
+    F_TOZENKAKUKATA         "Half Height + Hiragana → Full/Katakana"
+    F_TOZENKAKUHIRA         "Half Height + Katakana → Full/Hiragana"
+    F_HANKATATOZENKATA      "Half Height Katakana   → Full Katakana"
+    F_HANKATATOZENHIRA      "Half Katakana          → Full Hiragana"
+    F_TOZENEI               "Half Alphabetic        → Full Alphabetic"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_TOHANEI               "Full Alphabetic → Half Alphabetic (&A)"
-    F_TOHANKATA             "Full Katakana → Half Katakana (&J)"
-    F_TABTOSPACE            "TAB→&Spaces"
-    F_SPACETOTAB            "Spaces→&TAB"
-	F_CONV_ENCODE_SUBMENU	"&Change Encoding"
+    F_TOHANEI               "Full Alphabetic → Half Alphabetic"
+    F_TOHANKATA             "Full Katakana → Half Katakana"
+    F_TABTOSPACE            "TAB→Spaces"
+    F_SPACETOTAB            "Spaces→TAB"
+	F_CONV_ENCODE_SUBMENU	"Change Encoding"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CODECNV_AUTO2SJIS     "Automatic → SJIS Code (&A)"
-    F_CODECNV_EMAIL         "E-Mail(JIS→SJIS) Code (&M)"
-    F_CODECNV_EUC2SJIS      "EUC→SJIS Code (&W)"
-    F_CODECNV_UNICODE2SJIS  "Unicode→SJIS Code (&U)"
-    F_CODECNV_UTF82SJIS     "UTF-8→SJIS Code (&T)"
-    F_CODECNV_UTF72SJIS     "UTF-7→SJIS Code (&F)"
-    F_CODECNV_UNICODEBE2SJIS "UnicodeBE→SJIS Code (&N)"
-    F_CODECNV_SJIS2JIS      "SJIS→JIS Code (&J)"
-    F_CODECNV_SJIS2EUC      "SJIS→EUC Code (&E)"
-    F_CODECNV_SJIS2UTF8     "SJIS→UTF-8 Code (&8)"
-    F_CODECNV_SJIS2UTF7     "SJIS→UTF-7 Code (&7)"
+    F_CODECNV_AUTO2SJIS     "Automatic → SJIS Code"
+    F_CODECNV_EMAIL         "E-Mail(JIS→SJIS) Code"
+    F_CODECNV_EUC2SJIS      "EUC→SJIS Code"
+    F_CODECNV_UNICODE2SJIS  "Unicode→SJIS Code"
+    F_CODECNV_UTF82SJIS     "UTF-8→SJIS Code"
+    F_CODECNV_UTF72SJIS     "UTF-7→SJIS Code"
+    F_CODECNV_UNICODEBE2SJIS "UnicodeBE→SJIS Code"
+    F_CODECNV_SJIS2JIS      "SJIS→JIS Code"
+    F_CODECNV_SJIS2EUC      "SJIS→EUC Code"
+    F_CODECNV_SJIS2UTF8     "SJIS→UTF-8 Code"
+    F_CODECNV_SJIS2UTF7     "SJIS→UTF-7 Code"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BASE64DECODE          "&Base64 Decode and save"
+    F_BASE64DECODE          "Base64 Decode and save"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_UUDECODE              "uu&decode and save"
+    F_UUDECODE              "uudecode and save"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_SEARCH_TOPMENU		"Search"
-    F_SEARCH_DIALOG         "&Find"
-    F_SEARCH_NEXT           "&Next"
-    F_SEARCH_PREV           "&Prev"
-    F_REPLACE_DIALOG        "&Replace"
-    F_SEARCH_CLEARMARK      "&Clear search marker"
+    F_SEARCH_DIALOG         "Find"
+    F_SEARCH_NEXT           "Next"
+    F_SEARCH_PREV           "Prev"
+    F_REPLACE_DIALOG        "Replace"
+    F_SEARCH_CLEARMARK      "Clear search marker"
     F_REPLACE               "Replace"
     F_REPLACE_ALL           "Replace All"
     F_SEARCH_BOX            "Search (Box)"
-    F_JUMP_SRCHSTARTPOS     "Jump to &Initial search start position"
-    F_GREP_DIALOG           "&Grep"
+    F_JUMP_SRCHSTARTPOS     "Jump to Initial search start position"
+    F_GREP_DIALOG           "Grep"
     F_GREP                  "Grep"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_JUMP_DIALOG           "&Jump to Line"
+    F_JUMP_DIALOG           "Jump to Line"
     F_JUMP                  "Jump to Line"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_OUTLINE               "Out&line analysis"
+    F_OUTLINE               "Outline analysis"
     F_OUTLINE_TOGGLE        "Outline analysis(toggle)"
-    F_TAGJUMP               "&Tagjump"
-    F_TAGJUMPBACK           "Tag Jump &Back"
+    F_TAGJUMP               "Tagjump"
+    F_TAGJUMPBACK           "Tag Jump Back"
     F_TAGS_MAKE             "Make Tag file..."
 END
 
@@ -3016,52 +3016,52 @@ BEGIN
     F_DIRECT_TAGJUMP        "Direct Tag Jump"
     F_TAGJUMP_CLOSE         "Close, Tag Jump"
     F_TAGJUMP_KEYWORD       "Set keyword and jump to tag"
-    F_COMPARE               "File Compare (&@)"
+    F_COMPARE               "File Compare"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_BRACKETPAIR           "Matching Bracket Search(&[)"
-    F_BOOKMARK_SET          "&Set/Delete Bookmark"
-    F_BOOKMARK_NEXT         "Next Bookmark (&A)"
+    F_BRACKETPAIR           "Matching Bracket Search"
+    F_BOOKMARK_SET          "Set/Delete Bookmark"
+    F_BOOKMARK_NEXT         "Next Bookmark"
     F_BOOKMARK_PATTERN      "Set Bookmark"
-    F_BOOKMARK_PREV         "Prev Bookmark (&Z)"
-    F_BOOKMARK_RESET        "Delete all bookmarks (&X)"
-    F_BOOKMARK_VIEW         "&View Bookmark list"
+    F_BOOKMARK_PREV         "Prev Bookmark"
+    F_BOOKMARK_RESET        "Delete all bookmarks"
+    F_BOOKMARK_VIEW         "View Bookmark list"
 
-    F_BOOKMARK_SUBMENU      "Book&mark"
+    F_BOOKMARK_SUBMENU      "Bookmark"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_DIFF_DIALOG           "DIFF &Differences"
+    F_DIFF_DIALOG           "DIFF Differences"
     F_DIFF                  "DIFF Differences"
     F_DIFF_NEXT             "Next Difference"
     F_DIFF_PREV             "Prev Difference"
     F_DIFF_RESET            "Reset all Differences"
-    F_ISEARCH_NEXT          "Next Incremental search (&F)"
-    F_ISEARCH_PREV          "Prev Incremental search (&B)"
-    F_ISEARCH_REGEXP_NEXT   "Regex Next Incremental search (&R)"
-    F_ISEARCH_REGEXP_PREV   "Regex Prev Incremental search (&X)"
-    F_ISEARCH_MIGEMO_NEXT   "MIGEMO Next Incremental search (&M)"
-    F_ISEARCH_MIGEMO_PREV   "MIGEMO Prev Incremental search (&N)"
+    F_ISEARCH_NEXT          "Next Incremental search"
+    F_ISEARCH_PREV          "Prev Incremental search"
+    F_ISEARCH_REGEXP_NEXT   "Regex Next Incremental search"
+    F_ISEARCH_REGEXP_PREV   "Regex Prev Incremental search"
+    F_ISEARCH_MIGEMO_NEXT   "MIGEMO Next Incremental search"
+    F_ISEARCH_MIGEMO_PREV   "MIGEMO Prev Incremental search"
 
-    F_ISEARCH_SUBMENU       "Incremental &Search"
+    F_ISEARCH_SUBMENU       "Incremental Search"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_OPTION_TOPMENU        "Option"
-    F_CHGMOD_INS            "&Insert/Overwrite mode toggle"
+    F_CHGMOD_INS            "Insert/Overwrite mode toggle"
     F_CHG_CHARSET           "Select Character Set..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CHGMOD_EOL_CRLF       "End of line type (&CRLF)"
-    F_CHGMOD_EOL_LF         "End of line type (&LF)"
-    F_CHGMOD_EOL_CR         "End of line type (C&R)"
-	F_CHGMOD_EOL_SUBMENU	"&End of line setting"
+    F_CHGMOD_EOL_CRLF       "End of line type (CRLF)"
+    F_CHGMOD_EOL_LF         "End of line type (LF)"
+    F_CHGMOD_EOL_CR         "End of line type (CR)"
+	F_CHGMOD_EOL_SUBMENU	"End of line setting"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3072,29 +3072,29 @@ BEGIN
     F_SHOWSTATUSBAR         "Hide/Show Status Bar"
     F_SHOWTAB               "Hide/Show Tab Bar"
 
-	F_SHOWTOOLBAR_ON		"Show &Tool bar"
-	F_SHOWFUNCKEY_ON		"Show Function &Keys"
-	F_SHOWTAB_ON			"Show &Multi-Tabs"
-	F_SHOWSTATUSBAR_ON		"Show &Status bar"
+	F_SHOWTOOLBAR_ON		"Show Tool bar"
+	F_SHOWFUNCKEY_ON		"Show Function Keys"
+	F_SHOWTAB_ON			"Show Multi-Tabs"
+	F_SHOWSTATUSBAR_ON		"Show Status bar"
 
-	F_SHOWTOOLBAR_OFF		"Hide &Tool bar"
-	F_SHOWFUNCKEY_OFF		"Hide Function &Keys"
-	F_SHOWTAB_OFF			"Hide &Multi-Tabs"
-	F_SHOWSTATUSBAR_OFF		"Hide &Status bar"
+	F_SHOWTOOLBAR_OFF		"Hide Tool bar"
+	F_SHOWFUNCKEY_OFF		"Hide Function Keys"
+	F_SHOWTAB_OFF			"Hide Multi-Tabs"
+	F_SHOWSTATUSBAR_OFF		"Hide Status bar"
 
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_TYPE_LIST             "File type &list"
-    F_OPTION_TYPE           "File t&ype settings"
-    F_OPTION                "&Common Settings"
-    F_FAVORITE              "Manage Hist&ory"
+    F_TYPE_LIST             "File type list"
+    F_OPTION_TYPE           "File type settings"
+    F_OPTION                "Common Settings"
+    F_FAVORITE              "Manage History"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_FONT                  "&Font settings"
+    F_FONT                  "Font settings"
     F_SETFONTSIZE           "Font Size Settings"
     F_SETFONTSIZEUP         "Increase Font Size"
     F_SETFONTSIZEDOWN       "Decrease Font Size"
@@ -3103,9 +3103,9 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_WRAPWINDOWWIDTH       "Line Wrap Width"
-    F_TMPWRAPNOWRAP         "Dont wrap (&X)"
-    F_TMPWRAPSETTING        "Wrap at &set line"
-    F_TMPWRAPWINDOW         "Wrap at &right side of window"						// FIXME - &W
+    F_TMPWRAPNOWRAP         "Dont wrap"
+    F_TMPWRAPSETTING        "Wrap at set line"
+    F_TMPWRAPWINDOW         "Wrap at right side of window"						// FIXME - &W
     F_SELECT_COUNT_MODE     "Count Byte Count"
 END
 
@@ -3117,17 +3117,17 @@ BEGIN
     F_LOADKEYMACRO          "Load Key Macro"
     F_EXECKEYMACRO          "Run Key Macro"
 
-    F_EXECEXTMACRO          "Run an &Existing macro"
+    F_EXECEXTMACRO          "Run an Existing macro"
 
-	F_RECKEYMACRO_REC		"Start &Recording Macro"	
-	F_SAVEKEYMACRO_REC		"Save the &macro"
-	F_LOADKEYMACRO_REC		"Lo&ad the macro"
-	F_EXECKEYMACRO_REC		"Run the macro (&D)"
+	F_RECKEYMACRO_REC		"Start Recording Macro"	
+	F_SAVEKEYMACRO_REC		"Save the macro"
+	F_LOADKEYMACRO_REC		"Load the macro"
+	F_EXECKEYMACRO_REC		"Run the macro"
 
-	F_RECKEYMACRO_APPE		"Stop &Recording Macro"
-	F_SAVEKEYMACRO_APPE		"Stop && Save the &macro"
-	F_LOADKEYMACRO_APPE		"Stop && Lo&ad the macro"
-	F_EXECKEYMACRO_APPE		"Stop && Run the macro (&D)"
+	F_RECKEYMACRO_APPE		"Stop Recording Macro"
+	F_SAVEKEYMACRO_APPE		"Stop && Save the macro"
+	F_LOADKEYMACRO_APPE		"Stop && Load the macro"
+	F_EXECKEYMACRO_APPE		"Stop && Run the macro"
 
 	F_EXECKEYMACRO_REGD		"Registered Macros"
 	F_TOOL_CUSTOM_SUBMENU	"Custom Menu"
@@ -3135,7 +3135,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXECMD_DIALOG         "Execute an e&xternal command"
+    F_EXECMD_DIALOG         "Execute an external command"
     F_EXECMD                "Execute an external command"
 END
 
@@ -3153,77 +3153,77 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_SPLIT_VH              "Toggle 4-way split"
-	F_SPLIT_VH_ON           "&Split four ways"
-	F_SPLIT_VH_OFF          "Stop &Split four ways"
+	F_SPLIT_VH_ON           "Split four ways"
+	F_SPLIT_VH_OFF          "Stop Split four ways"
 
-    F_WINCLOSE              "&Close"
-    F_WIN_CLOSEALL          "Close All(&Q)"
-    F_TAB_CLOSEOTHER        "Close all &Other windows or tabs"
-	F_TAB_CLOSEOTHER_TAB	"Close all (&O)ther tabs"
-	F_TAB_CLOSEOTHER_WINDOW	"Close all (&O)ther windows"
+    F_WINCLOSE              "Close"
+    F_WIN_CLOSEALL          "Close All"
+    F_TAB_CLOSEOTHER        "Close all Other windows or tabs"
+	F_TAB_CLOSEOTHER_TAB	"Close all Other tabs"
+	F_TAB_CLOSEOTHER_WINDOW	"Close all Other windows"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CASCADE               "cascad&e"
-    F_TILE_V                "Tile Vertically (&H)"
-    F_TILE_H                "Tile Horizontally (&T)"
+    F_CASCADE               "cascade"
+    F_TILE_V                "Tile Vertically"
+    F_TILE_H                "Tile Horizontally"
     F_BIND_WINDOW           "Group windows"						// See F_TAB_GROUPDEL/F_TAB_GROUPIZE toggle for this one.
     F_TOPMOST               "Always on top"						// Toggle for below two types (set/rel on top)
-	F_TOPMOST_REL			"Release Always on top (&F)"
-	F_TOPMOST_SET			"Set Always on top  (&F)"
-    F_WINLIST               "&Window list"
-    F_NEXTWINDOW            "&Next window"
-    F_PREVWINDOW            "&Prev window"
+	F_TOPMOST_REL			"Release Always on top"
+	F_TOPMOST_SET			"Set Always on top"
+    F_WINLIST               "Window list"
+    F_NEXTWINDOW            "Next window"
+    F_PREVWINDOW            "Prev window"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_MAXIMIZE_V            "Maximize Vertically (&X)"
-    F_MINIMIZE_ALL          "&Minimize all"
-    F_MAXIMIZE_H            "Maximize Horizontally (&Y)"
+    F_MAXIMIZE_V            "Maximize Vertically"
+    F_MINIMIZE_ALL          "Minimize all"
+    F_MAXIMIZE_H            "Maximize Horizontally"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_REDRAW                "&Redraw"
-    F_WIN_OUTPUT            "Show outp&Ut window"
+    F_REDRAW                "Redraw"
+    F_WIN_OUTPUT            "Show output window"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_GROUPCLOSE            "&Group Close"
-    F_NEXTGROUP             "&Next group"
-    F_PREVGROUP             "&Prev group"
-    F_TAB_MOVERIGHT         "Move tab &Right"
-    F_TAB_MOVELEFT          "Move tab &Left"
-    F_TAB_SEPARATE          "New Tab Group (&E)" // "新規グループ"
-    F_TAB_JOINTNEXT         "Move to ne&Xt group"
-    F_TAB_JOINTPREV         "Move to pre&V group"
-    F_TAB_MANIP_SUBMENU     "Ta&b control"				// LMP -- added
-	F_TAB_GROUPDEL			"Ta&b group delete"			// LMP -- added
-	F_TAB_GROUPIZE			"Create Ta&b group"			// LMP -- added
-    F_TAB_CLOSELEFT         "Close all tabs to the Left (&H)"
-    F_TAB_CLOSERIGHT        "Close all tabs to the Right (&M)"
+    F_GROUPCLOSE            "Group Close"
+    F_NEXTGROUP             "Next group"
+    F_PREVGROUP             "Prev group"
+    F_TAB_MOVERIGHT         "Move tab Right"
+    F_TAB_MOVELEFT          "Move tab Left"
+    F_TAB_SEPARATE          "New Tab Group" // "新規グループ"
+    F_TAB_JOINTNEXT         "Move to next group"
+    F_TAB_JOINTPREV         "Move to prev group"
+    F_TAB_MANIP_SUBMENU     "Tab control"				// LMP -- added
+	F_TAB_GROUPDEL			"Tab group delete"			// LMP -- added
+	F_TAB_GROUPIZE			"Create Tab group"			// LMP -- added
+    F_TAB_CLOSELEFT         "Close all tabs to the Left"
+    F_TAB_CLOSERIGHT        "Close all tabs to the Right"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_HOKAN                 "Supplemental Input (&/)"
+    F_HOKAN                 "Supplemental Input"
     F_TOGGLE_KEY_SEARCH     "Auto-display keyword help"
-	F_TOGGLE_KEY_SEARCH_ON	"Automatically show Keyword &help"
-	F_TOGGLE_KEY_SEARCH_OFF	"Dont show Keyword &help"
+	F_TOGGLE_KEY_SEARCH_ON	"Automatically show Keyword help"
+	F_TOGGLE_KEY_SEARCH_OFF	"Dont show Keyword help"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_HELP_TOPMENU          "Help"
-    F_HELP_CONTENTS         "&Open help contents"
-    F_HELP_SEARCH           "&Search help by keyword"
-    F_MENU_ALLFUNC          "Co&Mmand list"
-    F_EXTHELP1              "&External Help1"
-    F_EXTHTMLHELP           "External &HTML Help"
-    F_ABOUT                 "&About Sakura"
+    F_HELP_CONTENTS         "Open help contents"
+    F_HELP_SEARCH           "Search help by keyword"
+    F_MENU_ALLFUNC          "Command list"
+    F_EXTHELP1              "External Help1"
+    F_EXTHTMLHELP           "External HTML Help"
+    F_ABOUT                 "About Sakura"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3366,13 +3366,13 @@ BEGIN
 	STR_ERR_DLGFAV16			"Please enter a string to add."
 	STR_ERR_DLGFAV17			"Edit"
 	STR_ERR_DLGFAV18			"Please enter a string to edit."
-	STR_ERR_DLGFAV19			"&Edit"
-	STR_ERR_DLGFAV20			"new add(&I)"
-	STR_ERR_DLGFAV21			"add for except &List"
-	STR_ERR_DLGFAV22			"&All delete"
-	STR_ERR_DLGFAV23			"delete except &Favorites"
-	STR_ERR_DLGFAV24			"delete missing path(&N)"
-	STR_ERR_DLGFAV25			"&Delete selecting item"
+	STR_ERR_DLGFAV19			"Edit"
+	STR_ERR_DLGFAV20			"new add"
+	STR_ERR_DLGFAV21			"add for except List"
+	STR_ERR_DLGFAV22			"All delete"
+	STR_ERR_DLGFAV23			"delete except Favorites"
+	STR_ERR_DLGFAV24			"delete missing path"
+	STR_ERR_DLGFAV25			"Delete selecting item"
 	STR_ERR_DLGFAV26			"It was not possible to add full except list."
 
 	// CDlgFileUpdateQuery.cpp
