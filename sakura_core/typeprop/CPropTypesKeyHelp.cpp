@@ -106,19 +106,19 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 25 / 100;
-		col.pszText  = const_cast<TCHAR*>(_T("   辞書ファイル"));	/* 指定辞書ファイルの使用可否 */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_DIC));	/* 指定辞書ファイルの使用可否 */
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 55 / 100;
-		col.pszText  = const_cast<TCHAR*>(_T("辞書の説明"));		/* 指定辞書の１行目を取得 */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_INFO));		/* 指定辞書の１行目を取得 */
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 18 / 100;
-		col.pszText  = const_cast<TCHAR*>(_T("パス"));				/* 指定辞書ファイルパス */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_PATH));				/* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		SetData( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
@@ -129,8 +129,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		}
 		/* リストがなければ初期値として用途を表示 */
 		else{
-			::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, _T("辞書ファイルの１行目の文字列") );
-			::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, _T("キーワード辞書ファイル パス") );
+			::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
+			::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
 		}
 
 		/* 初期状態を設定 */
@@ -201,7 +201,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 
 				if(wID == IDC_BUTTON_KEYHELP_INS){	/* 挿入 */
 					if( nIndex2 >= MAX_KEYHELP_FILE ){
-						ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
+						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG1));
 						return FALSE;
 					}if( -1 == nIndex ){
 						/* 選択中でなければ最後にする。 */
@@ -209,7 +209,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 				}else{								/* 更新 */
 					if( -1 == nIndex ){
-						ErrorMessage( hwndDlg, _T("更新する辞書をリストから選択してください。"));
+						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_SELECT));
 						return FALSE;
 					}
 				}
@@ -227,7 +227,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					if( _tcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
-							ErrorMessage( hwndDlg, _T("既に登録済みの辞書です。"));
+							ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG2));
 							return FALSE;
 						}
 					}
@@ -237,7 +237,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				{
 					CTextInputStream_AbsIni in(szPath);
 					if(!in){
-						ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_OPEN), szPath );
 						return FALSE;
 					}
 					// 開けたなら1行目を取得してから閉じる -> szAbout
@@ -290,8 +290,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				ListView_DeleteItem( hwndList, nIndex );
 				/* リストがなくなったら初期値として用途を表示 */
 				if(ListView_GetItemCount(hwndList) == 0){
-					::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, _T("辞書ファイルの１行目の文字列") );
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, _T("キーワード辞書ファイル パス") );
+					::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
 				}/* リストの最後を削除した場合は、削除後のリストの最後を選択する。 */
 				else if(nIndex > ListView_GetItemCount(hwndList)-1){
 					ListView_SetItemState( hwndList, ListView_GetItemCount(hwndList)-1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );

@@ -129,7 +129,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			case IDC_BUTTON_CLEAR_MRU_FILE:
 				/* ファイルの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-					_T("最近使ったファイルの履歴を削除します。\nよろしいですか？\n") ) ){
+					LS(STR_PROPCOMGEN_FILE1) ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -138,12 +138,12 @@ INT_PTR CPropGeneral::DispatchEvent(
 					CMRUFile cMRU;
 					cMRU.ClearAll();
 				}
-				InfoMessage( hwndDlg, _T("最近使ったファイルの履歴を削除しました。\n") );
+				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_FILE2) );
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-					_T("最近使ったフォルダの履歴を削除します。\nよろしいですか？\n") ) ){
+					LS(STR_PROPCOMGEN_DIR1) ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
@@ -152,7 +152,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 					CMRUFolder cMRUFolder;	//	MRUリストの初期化。ラベル内だと問題あり？
 					cMRUFolder.ClearAll();
 				}
-				InfoMessage( hwndDlg, _T("最近使ったフォルダの履歴を削除しました。\n") );
+				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_DIR2) );
 				return TRUE;
 
 			}

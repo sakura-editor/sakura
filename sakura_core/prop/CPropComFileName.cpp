@@ -84,13 +84,13 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 60 / 100;
-			col.pszText  = const_cast<TCHAR*>(_T("置換前"));
+			col.pszText  = const_cast<TCHAR*>(LS(STR_PROPCOMFNM_LIST1));
 			col.iSubItem = 0;
 			ListView_InsertColumn( hListView, 0, &col );
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 35 / 100;
-			col.pszText  = const_cast<TCHAR*>(_T("置換後"));
+			col.pszText  = const_cast<TCHAR*>(LS(STR_PROPCOMFNM_LIST2));
 			col.iSubItem = 1;
 			ListView_InsertColumn( hListView, 1, &col );
 
@@ -364,7 +364,7 @@ int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR 
 
 	// これ以上追加できない
 	if( bInsMode && MAX_TRANSFORM_FILENAME <= nCount ){
-		ErrorMessage( GetParent( hListView ), _T("これ以上登録できません。") );
+		ErrorMessage( GetParent( hListView ), LS(STR_PROPCOMFNM_ERR_REG) );
 		return -1;
 	}
 

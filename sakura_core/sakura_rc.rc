@@ -3525,8 +3525,8 @@ BEGIN
 	STR_ERR_DLGREPLC4			"置換条件を指定してください。"
 
 	// CDlgSameColor.cpp
-	STR_ERR_DLGSMCLR1			"文字色統一"
-	STR_ERR_DLGSMCLR2			"背景色統一"
+	STR_DLGSMCLR_BTN1			"文字色統一"
+	STR_DLGSMCLR_BTN2			"背景色統一"
 
 	// CDlgTagJumpList.cpp
 	STR_ERR_DLGTAGJMP1			"(通知)"
@@ -3955,70 +3955,65 @@ BEGIN
 	// CProfile.cpp
 
 	// CPropComBackup.cpp
-	STR_ERR_DLGPROPCOMBK1		"バックアップを作成するフォルダを選んでください"
-	STR_ERR_DLGPROPCOMBK2		"(ゴミ箱)\\"  // <--- fixme, \ is \\?
+	STR_PROPCOMBK_SEL_FOLDER	"バックアップを作成するフォルダを選んでください"
+	STR_PROPCOMBK_DUSTBOX		"(ゴミ箱)"
 
 	// CPropComCustmenu.cpp
-	STR_ERR_DLGPROPCOMCUST1		" ─────────────"
-	STR_ERR_DLGPROPCOMCUST2		"メニューアイテムのアクセスキー設定"
-	STR_ERR_DLGPROPCOMCUST3		"キーを入力してください。"
-	STR_ERR_DLGPROPCOMCUST4		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPCOMCUST5		"カスタムメニュー設定ファイルの形式が違います。\n\n%s"
-	STR_ERR_DLGPROPCOMCUST6		"ファイルの書き込みに失敗しました。\n\n%s"
+	STR_PROPCOMCUSTMENU_SEP		" ─────────────"
+	STR_PROPCOMCUSTMENU_AC1		"メニューアイテムのアクセスキー設定"
+	STR_PROPCOMCUSTMENU_AC2		"キーを入力してください。"
 	// Has a HEADER #define, should we also fix this?
 
 	// CPropComEdit.cpp
+	STR_PROPEDIT_SELECT_DIR		"ファイルダイアログの指定フォルダの選択"
 
 	// CPropComFile.cpp
-	STR_ERR_DLGPROPCOMFNM1		"置換前"
-	STR_ERR_DLGPROPCOMFNM2		"置換後"
-	STR_ERR_DLGPROPCOMFNM3		"これ以上登録できません。"
+	STR_PROPCOMFNM_LIST1		"置換前"
+	STR_PROPCOMFNM_LIST2		"置換後"
+	STR_PROPCOMFNM_ERR_REG		"これ以上登録できません。"
 
 	// CPropComFormat.cpp
 	// Has static date-time string
 
+	// CPropComGeneral.cpp
+	STR_PROPCOMGEN_FILE1		"最近使ったファイルの履歴を削除します。\nよろしいですか？\n"
+	STR_PROPCOMGEN_FILE2		"最近使ったファイルの履歴を削除しました。\n"
+	STR_PROPCOMGEN_DIR1			"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n"
+	STR_PROPCOMGEN_DIR2			"最近使ったフォルダの履歴を削除しました。\n"
+
 	// CPropComGrep.cpp 
-	STR_ERR_DLGPROPCOMGREP1		"正規表現は使用できません"
+	STR_PROPCOMGREP_DLL			"正規表現は使用できません"
 
 	// CPropComHelper.cpp
-	STR_ERR_DLGPROPCOMHELP1		"検索するフォルダを選んでください"
+	STR_PROPCOMHELP_MIGEMODIR	"検索するフォルダを選んでください"
 	
 	// CPropComKeybind.cpp
 	// STR_KEYDATA_HEAD... 
-	STR_ERR_DLGPROPCOMKEYBIND1	"未割付"
-	STR_ERR_DLGPROPCOMKEYBIND2	"ファイルを開けませんでした。\n\n%s"  // used in 3 places
-	STR_ERR_DLGPROPCOMKEYBIND3	"キー設定ファイルの形式が違います。\n\n%s"
+	STR_PROPCOMKEYBIND_UNASSIGN	"未割付"
 	
 	// CPropComKeyword.cpp
-	STR_ERR_DLGPROPCOMKEYWORD1	"キーワードの長さは%dバイトまでです。"
-	STR_ERR_DLGPROPCOMKEYWORD2	"セットは%d個までしか登録できません。\n"
-	STR_ERR_DLGPROPCOMKEYWORD3	"キーワードのセット追加"
-	STR_ERR_DLGPROPCOMKEYWORD4	"セット名を入力してください。"
-	STR_ERR_DLGPROPCOMKEYWORD5	"「%s」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%s"
-	STR_ERR_DLGPROPCOMKEYWORD6	"セットの名称変更"
-	STR_ERR_DLGPROPCOMKEYWORD7	"セット名を入力してください。"
-	STR_ERR_DLGPROPCOMKEYWORD8	"登録できるキーワード数が上限に達しています。\n"
-	STR_ERR_DLGPROPCOMKEYWORD9	"キーワード追加"
-	STR_ERR_DLGPROPCOMKEYWORD10	"キーワードを入力してください。"
-	STR_ERR_DLGPROPCOMKEYWORD11	"キーワード編集"
-	STR_ERR_DLGPROPCOMKEYWORD12	"キーワードを編集してください。"
-	STR_ERR_DLGPROPCOMKEYWORD13	"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPCOMKEYWORD14	"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。"
-	STR_ERR_DLGPROPCOMKEYWORD15	"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPCOMKEYWORD16	"  キーワード定義ファイル"
-	STR_ERR_DLGPROPCOMKEYWORD17	"ファイルへエクスポートしました。\n\n%s"
-	STR_ERR_DLGPROPCOMKEYWORD18	"現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"
-	STR_ERR_DLGPROPCOMKEYWORD19	"(最大 %d 文字, 登録数 %d, 空き %d 個)"
+	STR_PROPCOMKEYWORD_ERR_LEN	"キーワードの長さは%dバイトまでです。"
+	STR_PROPCOMKEYWORD_SETMAX	"セットは%d個までしか登録できません。\n"
+	STR_PROPCOMKEYWORD_SETNAME1	"キーワードのセット追加"
+	STR_PROPCOMKEYWORD_SETNAME2	"セット名を入力してください。"
+	STR_PROPCOMKEYWORD_SETDEL	"「%ls」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%ts"
+	STR_PROPCOMKEYWORD_RENAME1	"セットの名称変更"
+	STR_PROPCOMKEYWORD_RENAME2	"セット名を入力してください。"
+	STR_PROPCOMKEYWORD_KEYMAX	"登録できるキーワード数が上限に達しています。\n"
+	STR_PROPCOMKEYWORD_KEYADD1	"キーワード追加"
+	STR_PROPCOMKEYWORD_KEYADD2	"キーワードを入力してください。"
+	STR_PROPCOMKEYWORD_KEYEDIT1	"キーワード編集"
+	STR_PROPCOMKEYWORD_KEYEDIT2	"キーワードを編集してください。"
+	STR_PROPCOMKEYWORD_DEL		"現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"
+	STR_PROPCOMKEYWORD_INFO		"(最大 %d 文字, 登録数 %d, 空き %d 個)"
 
 	// CPropComMacro.cpp
-	STR_ERR_DLGPROPCOMMACRO01	"番号"
-	STR_ERR_DLGPROPCOMMACRO02	"マクロ名"
-	STR_ERR_DLGPROPCOMMACRO03	"ファイル名"
-	STR_ERR_DLGPROPCOMMACRO04	"実行時に読み込み"
-	STR_ERR_DLGPROPCOMMACRO05	"自動実行"
-	STR_ERR_DLGPROPCOMMACRO06	"バグ報告お願い"
-	STR_ERR_DLGPROPCOMMACRO07	"Macroディレクトリの選択"
-	STR_ERR_DLGPROPCOMMACRO08	"バグ報告お願い"
+	STR_PROPCOMMACR_LIST1		"番号"
+	STR_PROPCOMMACR_LIST2		"マクロ名"
+	STR_PROPCOMMACR_LIST3		"ファイル名"
+	STR_PROPCOMMACR_LIST4		"実行時に読み込み"
+	STR_PROPCOMMACR_LIST5		"自動実行"
+	STR_PROPCOMMACR_SEL_DIR		"Macroディレクトリの選択"
 
 	// CPropComMainMenu.cpp
 	STR_SPECIAL_FUNC			"特別機能"
@@ -4028,6 +4023,20 @@ BEGIN
 	STR_SPECIAL_FUNC_CUST_MENU	"カスタムメニューリスト"
 	STR_SPECIAL_FUNC_MACRO		"登録済みマクロリスト"
 	STR_SPECIAL_FUNC_PLUGIN_CMD	"プラグインコマンドリスト"
+	STR_PROPCOMMAINMENU_EDIT	"編集してください"
+	STR_PROPCOMMAINMENU_SEP		"――――――――――"
+	STR_PROPCOMMAINMENU_ACCKEY1	"メニューアイテムのアクセスキー設定"
+	STR_PROPCOMMAINMENU_ACCKEY2	"キーを入力してください。"
+	STR_PROPCOMMAINMENU_CLEAR	"メニューの設定をクリアします。\nよろしいですか？"
+	STR_PROPCOMMAINMENU_INIT	"メニューの設定を初期状態に戻します。\nよろしいですか？"
+	STR_PROPCOMMAINMENU_DEL		"選択している項目を下位項目ごと削除します。\nよろしいですか？"
+	STR_PROPCOMMAINMENU_OK		"問題ありませんでした。"
+	STR_PROPCOMMAINMENU_ERR1	"メニュー設定の取得に失敗しました"
+	STR_PROPCOMMAINMENU_ERR2	"『共通設定』が有りません。\n"
+	STR_PROPCOMMAINMENU_ERR3	"トップレベルの項目数が多すぎます。\n"
+	STR_PROPCOMMAINMENU_ERR4	"登録項目数が多すぎます。\n"
+	STR_PROPCOMMAINMENU_ERR5	"重複したアクセスキーがあります。\n"
+	STR_PROPCOMMAINMENU_ERR6	"未設定のアクセスキーがあります。\n"
 
 	// CPropCommon.cpp
 	STR_PROPCOMMON				"共通設定"
@@ -4060,24 +4069,38 @@ BEGIN
 
 	STR_ERR_DLGPROPCOMMON23		"作者に教えて欲しいエラー"
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n"
-	STR_ERR_DLGPROPCOMMON25		"最近使ったファイルの履歴を削除します。\nよろしいですか？\n"
-	STR_ERR_DLGPROPCOMMON26		"最近使ったファイルの履歴を削除しました。\n"
-	STR_ERR_DLGPROPCOMMON27		"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n"
-	STR_ERR_DLGPROPCOMMON28		"最近使ったフォルダの履歴を削除しました。\n"
 
-
+	// CPropCOmPlugin.cpp
+	STR_PROPCOMPLG_ERR1			"プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません"
+	STR_PROPCOMPLG_ERR2			"ReadMeファイルが開けません"
+	STR_PROPCOMPLG_ERR3			"ReadMeファイルが見つかりません "
+	STR_PROPCOMPLG_STATE1		"追加"
+	STR_PROPCOMPLG_STATE2		"更新"
+	STR_PROPCOMPLG_STATE3		"停止"
+	STR_PROPCOMPLG_STATE4		"稼働"
+	STR_PROPCOMPLG_STATE5		"削除"
+	STR_PROPCOMPLG_STATE6		"未定義"
+	STR_PROPCOMPLG_LOAD			"読込"
+	STR_PROPCOMPLG_LIST1		"番号"
+	STR_PROPCOMPLG_LIST2		"プラグイン名"
+	STR_PROPCOMPLG_LIST3		"状態"
+	STR_PROPCOMPLG_LIST4		"読込"
+	STR_PROPCOMPLG_LIST5		"フォルダ"
+	
 	// CPropComTab.cpp
-
+	STR_PROPCOMTAB_DISP_NO		"なし"
+	STR_PROPCOMTAB_DISP_ALLWAYS	"常に表示"
+	STR_PROPCOMTAB_DISP_AUTO	"自動表示"
 
 	// CPropComToolbar.cpp
-	STR_ERR_DLGPROPCOMTOOL01	"Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"
-	STR_ERR_DLGPROPCOMTOOL02	"Toolbar Dialog: INS: 値の設定に失敗しました。:%d"
-	STR_ERR_DLGPROPCOMTOOL03	"Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"
-	STR_ERR_DLGPROPCOMTOOL04	"Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"
-	STR_ERR_DLGPROPCOMTOOL05	"Toolbar Dialog: 要素の追加に失敗しました。:%d"
-	STR_ERR_DLGPROPCOMTOOL06	"───────────"
-	STR_ERR_DLGPROPCOMTOOL07	"――ツールバー折返――"
-	STR_ERR_DLGPROPCOMTOOL08	"────不　明────"
+	STR_PROPCOMTOOL_ERR01		"Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"
+	STR_PROPCOMTOOL_ERR02		"Toolbar Dialog: INS: 値の設定に失敗しました。:%d"
+	STR_PROPCOMTOOL_ERR03		"Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"
+	STR_PROPCOMTOOL_ERR04		"Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"
+	STR_PROPCOMTOOL_ERR05		"Toolbar Dialog: 要素の追加に失敗しました。:%d"
+	STR_PROPCOMTOOL_ITEM1		"───────────"
+	STR_PROPCOMTOOL_ITEM2		"――ツールバー折返――"
+	STR_PROPCOMTOOL_ITEM3		"────不　明────"
 
 	// CPropComWin.cpp
 
@@ -4099,14 +4122,6 @@ BEGIN
 	STR_TAB_SYMBOL_LONG_ARROW	"長い矢印"
 	STR_SMART_INDENT_NONE		"なし"				// smart indent
 	STR_SMART_INDENT_C_CPP		"C/C++"
-	STR_ERR_DLGCPROPTYPES15		"標準設定"			// ime state
-	STR_ERR_DLGCPROPTYPES16		"全角"
-	STR_ERR_DLGCPROPTYPES17		"全角ひらがな"
-	STR_ERR_DLGCPROPTYPES18		"全角カタカナ"
-	STR_ERR_DLGCPROPTYPES19		"無変換"
-	STR_ERR_DLGCPROPTYPES20		"そのまま"			// ime switch
-	STR_ERR_DLGCPROPTYPES21		"常にON" 
-	STR_ERR_DLGCPROPTYPES22		"常にOFF" 
 	STR_WRAP_INDENT_NONE		"なし"				// ident
 	STR_WRAP_INDENT_TX2X		"tx2x"
 	STR_WRAP_INDENT_BOL			"論理行先頭"
@@ -4122,88 +4137,87 @@ BEGIN
 	STR_PROPTYPE_REGEX_KEYWORD	"正規表現キーワード"
 	STR_PROPTYPE_KEYWORD_HELP	"キーワードヘルプ"
 	STR_PROPTYPE_WINDOW			"ウィンドウ"
-	STR_ERR_DLGCPROPTYPES35		"作者に教えて欲しいエラー"		// dlg box
-	STR_ERR_DLGCPROPTYPES36		"CPropTypes::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗。\n\n%s\n"
-	STR_ERR_DLGCPROPTYPES37		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGCPROPTYPES38		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%s\n\n\
-色設定Ver3では CI[番号] から C[名前] に変更されました。\n\
-上記ファイルの設定内容を利用したい場合は、以下の修正を行ってからインポートしてください。\n\n\
-・UR1.2.24.0 (00/12/04) 以降で使っていた場合は\n\
-  (1) 一行目を Ver3 と書き換え、CI をすべて C に縮める\n\
-  (2) (1)の後、番号を( )内の文字列に変更:\n\
-      00(TXT), 01(RUL), 02(UND), 03(LNO), 04(MOD), 05(TAB), 06(ZEN), 07(CTL), 08(EOL),\n\
-      09(RAP), 10(EOF), 11(FND), 12(KW1), 13(KW2), 14(CMT), 15(SQT), 16(WQT), 17(URL)\n\n\
-・ur3β10 (00/09/28)～UR1.2.23.0 (00/11/29) で使っていた場合は\n\
-  (3) (1)の後、00-12 までは(2)と同じ  13(CMT), 14(SQT), 15(WQT), 16(URL)\n\n\
-・ur3β9 (00/09/26) 以前で使っていた場合は\n\
-  (4) (1)の後、(2)と同様:\n\
-      00(TXT), 01(LNO), 02(EOL), 03(TAB), 04(ZEN), 05(EOF), 06(KW1), 07(CMT), 08(SQT),\n\
-      09(WQT), 10(UND), 11(RAP), 12(CTL), 13(URL), 14(FND), 15(MOD), 16(RUL)\n\n"
-	STR_ERR_DLGCPROPTYPES39		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%s\n\n\
-現在の色設定Ver2.1ではVer2での仕様が一部変更されました。\n\
-上記のファイルの設定内容を利用したい場合は、そのファイルをコピーしエディタで\n\
-以下の修正を行ってからインポートしてください。\n\n\
-・0.3.9.0 UR1.2.24.0 (2000/12/04) 以降で使っていた場合は\n\
-  (1) 一行目に書かれている Ver2 を Ver2.1 と書き換える\n\n\
-・0.3.9.0:ur3β10 (2000/09/28)～UR1.2.23.0 (2000/11/29) で使っていた場合は\n\
-  (2) (1)に加えて CI[12] の次行に CI[12] の設定をコピーして CI[13] とし\n\
-      元の CI[13] 以降の番号を1つづつ17までずらす\n\n\
-・0.3.9.0:ur3β9 (2000/09/26) 以前で使っていた場合は\n\
-  (3) (1)に加えて CI の[ ]内を順に\n\
-      00, 17, 10, 01, 16, 03, 04, 12, 02, 11, 05, 15, 06, 07, 08, 09, 14\n\
-      と書き換えた後、CI[12] の設定をコピーして CI[13] とする\n\n"
+	STR_PROPTYPE_ERR			"CPropTypes::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗。\n\n%ts\n"
 
-	STR_ERR_DLGCPROPTYPES40		"ファイルを開けませんでした。\n\n%s"
-
+	// CPropTypesColor.cpp
+	STR_STRINGESC_CPP			"C/C++言語風 \\"""
+	STR_STRINGESC_PLSQL			"PL/SQL風    """""
+	STR_STRINGESC_HTML			"HTML/XML風  ="""""
+	STR_STRINGESC_CSHARP		"C#風        @"""""
+	STR_STRINGESC_PYTHON		"Python風    """""""
 
 	// CPropTypesKeyHelp.cpp
-	STR_ERR_DLGPROPTYPKEYHELP01		"   辞書ファイル"
-	STR_ERR_DLGPROPTYPKEYHELP02		"辞書の説明"
-	STR_ERR_DLGPROPTYPKEYHELP03		"パス"
-	STR_ERR_DLGPROPTYPKEYHELP04		"辞書ファイルの１行目の文字列"
-	STR_ERR_DLGPROPTYPKEYHELP05		"キーワード辞書ファイル パス"
-	STR_ERR_DLGPROPTYPKEYHELP06		"これ以上登録できません。"
-	STR_ERR_DLGPROPTYPKEYHELP07		"更新する辞書をリストから選択してください。"
-	STR_ERR_DLGPROPTYPKEYHELP08		"既に登録済みの辞書です。"
-	STR_ERR_DLGPROPTYPKEYHELP09		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPTYPKEYHELP10		"辞書ファイルの１行目の文字列"
-	STR_ERR_DLGPROPTYPKEYHELP11		"キーワード辞書ファイル パス"
-	STR_ERR_DLGPROPTYPKEYHELP12		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPTYPKEYHELP13		"【辞書ファイルが見つかりません】"
-	STR_ERR_DLGPROPTYPKEYHELP14		"辞書の説明は%d文字以内にしてください。\n"
-	STR_ERR_DLGPROPTYPKEYHELP15		"一部のデータが読み込めませんでした\n不正な行数: %d"
-	STR_ERR_DLGPROPTYPKEYHELP16		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPTYPKEYHELP17		"// キーワード辞書設定 Ver1\n"
-	STR_ERR_DLGPROPTYPKEYHELP18		"ファイルへエクスポートしました。\n\n%s"
+	STR_PROPTYPKEYHELP_DIC			"   辞書ファイル"
+	STR_PROPTYPKEYHELP_INFO			"辞書の説明"
+	STR_PROPTYPKEYHELP_PATH			"パス"
+	STR_PROPTYPKEYHELP_LINE1		"辞書ファイルの１行目の文字列"
+	STR_PROPTYPKEYHELP_DICPATH		"キーワード辞書ファイル パス"
+	STR_PROPTYPKEYHELP_ERR_REG1		"これ以上登録できません。"
+	STR_PROPTYPKEYHELP_SELECT		"更新する辞書をリストから選択してください。"
+	STR_PROPTYPKEYHELP_ERR_REG2		"既に登録済みの辞書です。"
+	STR_PROPTYPKEYHELP_ERR_OPEN		"ファイルを開けませんでした。\n\n%ts"
 
 	// CPropTypesRegex.cpp
-	STR_ERR_DLGPROPTYPESREGEX01		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPTYPESREGEX02		"ファイルを開けませんでした。\n\n%s"
-	STR_ERR_DLGPROPTYPESREGEX03		"// 正規表現キーワード Ver1\n"
-	STR_ERR_DLGPROPTYPESREGEX04		"ファイルへエクスポートしました。\n\n%s"
-	STR_ERR_DLGPROPTYPESREGEX05		"キーワード"
-	STR_ERR_DLGPROPTYPESREGEX06		"色指定"
-	STR_ERR_DLGPROPTYPESREGEX07		"正規表現キーワードは使えません。"
-	STR_ERR_DLGPROPTYPESREGEX08		"正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？"
-	STR_ERR_DLGPROPTYPESREGEX09		"正規表現キーワードを使用する"
-	STR_ERR_DLGPROPTYPESREGEX10		"これ以上登録できません。"
-	STR_ERR_DLGPROPTYPESREGEX11		"同じキーワードで登録済みです。"
-	STR_ERR_DLGPROPTYPESREGEX12		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
-	STR_ERR_DLGPROPTYPESREGEX13		"正規表現キーワード"
-	STR_ERR_DLGPROPTYPESREGEX14		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
-	STR_ERR_DLGPROPTYPESREGEX15		"正規表現キーワード"
-	STR_ERR_DLGPROPTYPESREGEX16		"これ以上登録できません。"
-	STR_ERR_DLGPROPTYPESREGEX17		"同じキーワードで登録済みです。"
-	STR_ERR_DLGPROPTYPESREGEX18		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
-	STR_ERR_DLGPROPTYPESREGEX19		"正規表現キーワード"
-	STR_ERR_DLGPROPTYPESREGEX20		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
-	STR_ERR_DLGPROPTYPESREGEX21		"正規表現キーワード"
-	STR_ERR_DLGPROPTYPESREGEX22		"キーワードが選択されていません。"
-	STR_ERR_DLGPROPTYPESREGEX23		"同じキーワードで登録済みです。"
-	STR_ERR_DLGPROPTYPESREGEX24		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
-	STR_ERR_DLGPROPTYPESREGEX25		"正規表現キーワード"
-	STR_ERR_DLGPROPTYPESREGEX26		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
-	STR_ERR_DLGPROPTYPESREGEX27		"正規表現キーワード"
+	STR_PROPTYPEREGEX_LIST1			"キーワード"
+	STR_PROPTYPEREGEX_LIST2			"色指定"
+	STR_PROPTYPEREGEX_NOUSE			"正規表現キーワードは使えません。"
+	STR_PROPTYPEREGEX_NOTFOUND		"正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？"
+	STR_PROPTYPEREGEX_NOREG			"これ以上登録できません。"
+	STR_PROPTYPEREGEX_ALREADY		"同じキーワードで登録済みです。"
+	STR_PROPTYPEREGEX_KAKOMI		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
+	STR_PROPTYPEREGEX_INVALID		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
+	STR_PROPTYPEREGEX_FULL			"これ以上登録できません。\nキーワード領域がいっぱいです。"
+	STR_PROPTYPEREGEX_NOSEL			"キーワードが選択されていません。"
+
+	// CPropTypesWindow.cpp
+	STR_IME_STATE_DEF				"標準設定"			// ime state
+	STR_IME_STATE_FULL				"全角"
+	STR_IME_STATE_FULLHIRA			"全角ひらがな"
+	STR_IME_STATE_FULLKATA			"全角カタカナ"
+	STR_IME_STATE_NO				"無変換"
+	STR_IME_SWITCH_DONTSET			"そのまま"			// ime switch
+	STR_IME_SWITCH_ON				"常にON" 
+	STR_IME_SWITCH_OFF				"常にOFF" 
+	STR_IMAGE_POS1					"左上"
+	STR_IMAGE_POS2					"右上"
+	STR_IMAGE_POS3					"左下"
+	STR_IMAGE_POS4					"右下"
+	STR_IMAGE_POS5					"中央"
+	STR_IMAGE_POS6					"中央上"
+	STR_IMAGE_POS7					"中央下"
+	STR_IMAGE_POS8					"中央左"
+	STR_IMAGE_POS9					"中央右"
+	
+	// CDlgTypeAscertain.cpp
+	STR_DLGTYPEASC_IMPORT			"--そのままインポート--"
+
+	// CDlgTypeList.cpp
+	STR_DLGTYPELIST_ERR1			"関連付けに失敗しました\n"
+	STR_DLGTYPELIST_ERR2			"関連付け解除に失敗しました\n"
+	STR_DLGTYPELIST_INIT1			"%ts を初期化します。 よろしいですか？"
+	STR_DLGTYPELIST_SETNAME			"設定%d"
+	STR_DLGTYPELIST_INIT2			"%ts を初期化しました。"
+	STR_DLGTYPELIST_DEL				"%ts を削除します。 よろしいですか？"
+	STR_DLGTYPELIST_ACC				"Windowsの関連付け設定を変更しようとしています。\nこの操作は同じ設定を利用する他のソフトにも影響を与える可能性があります。\n実施しますか？"
+
+	// CImpExpManager.cpp
+	STR_IMPEXP_ERR_FILEOPEN			"ファイルを開けませんでした。\n\n"
+	STR_IMPEXP_ERR_EXPORT			"エクスポート出来ませんでした。\n\n"
+	STR_IMPEXP_OK_EXPORT			"ファイルをエクスポートしました。\n\n"
+	STR_IMPEXP_OK_IMPORT			"ファイルをインポートしました。\n\n"
+	STR_IMPEXP_ERR_COLOR_OLD		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n"
+	STR_IMPEXP_ERR_TYPE				"不正な形式です。\nインポートを中止します"
+	STR_IMPEXP_VER					"エクスポートした %ls(%ls/%d) とバージョンが異なります。\n\nインポートしてもよろしいですか？"
+	STR_IMPEXP_REGEX1				"キーワード数が上限に達したため切り捨てました。"
+	STR_IMPEXP_REGEX2				"キーワード領域がいっぱいなため切り捨てました。"
+	STR_IMPEXP_REGEX3				"不正なキーワードを無視しました。"
+	STR_IMPEXP_DIC_NOTFOUND			"【辞書ファイルが見つかりません】"
+	STR_IMPEXP_DIC_LENGTH			"辞書の説明は%d文字以内にしてください。\n"
+	STR_IMPEXP_DIC_RECORD			"一部のデータが読み込めませんでした\n不正な行数: %d"
+	STR_IMPEXP_KEY_FORMAT			"キー設定ファイルの形式が違います。\n\n"
+	STR_IMPEXP_CUSTMENU_FORMAT		"カスタムメニュー設定ファイルの形式が違います。\n\n"
+	STR_IMPEXP_KEYWORD				"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。"
+	STR_IMPEXP_MEINMENU				"メインメニュー設定ファイルの形式が違います。\n\n"
 
 	// CRecent.cpp
 

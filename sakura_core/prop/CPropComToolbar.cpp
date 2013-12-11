@@ -83,11 +83,11 @@ int Listbox_INSERTDATA(
 {
 	int nIndex1 = List_InsertItemData( hWnd, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		TopErrorMessage( NULL, _T("Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"), index, nIndex1 );
+		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR01), index, nIndex1 );
 		return nIndex1;
 	}
 	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
-		TopErrorMessage( NULL, _T("Toolbar Dialog: INS: 値の設定に失敗しました。:%d"), nIndex1 );
+		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR02), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -115,11 +115,11 @@ int Listbox_ADDDATA(
 {
 	int nIndex1 = List_AddItemData( hWnd, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		TopErrorMessage( NULL, _T("Toolbar Dialog: 要素の追加に失敗しました。(%d)"), nIndex1 );
+		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR03), nIndex1 );
 		return nIndex1;
 	}
 	else if( List_SetItemData( hWnd, nIndex1, value ) == LB_ERR ){
-		TopErrorMessage( NULL, _T("Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"), nIndex1 );
+		TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR04), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -339,7 +339,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -360,7 +360,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 - 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -382,7 +382,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 + 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						TopErrorMessage( NULL, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						TopErrorMessage( NULL, LS(STR_PROPCOMTOOL_ERR05), nIndex1 );
 						break;
 					}
 					List_SetCurSel( hwndResList, nIndex1 );
@@ -578,13 +578,13 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		if( tbb.fsStyle & TBSTYLE_SEP ){
 			// テキストだけ表示する
 			if( tbb.idCommand == F_SEPARATOR ){
-				auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
+				auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1) );	// nLength 未使用 2003/01/09 Moca
 			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 				if( ::LoadStringW_AnyBuild( G_AppInstance(), tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
-					auto_strcpy( szLabel, LTEXT("――ツールバー折返――") );
+					auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2) );
 				}
 			}else{
-				auto_strcpy( szLabel, LTEXT("────不　明────") );
+				auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3) );
 			}
 		//	From Here Oct. 15, 2001 genta
 		}else{

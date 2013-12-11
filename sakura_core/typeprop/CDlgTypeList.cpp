@@ -249,7 +249,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					{
 						TCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-						::MessageBox( GetHwnd(), (tstring(_T("関連付けに失敗しました\n")) + buf).c_str(), GSTR_APPNAME, MB_OK );
+						::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 						break;
 					}
 				}else{			//「右クリック」チェックOFF
@@ -257,7 +257,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					{
 						TCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-						::MessageBox( GetHwnd(), (tstring(_T("関連付け解除に失敗しました\n")) + buf).c_str(), GSTR_APPNAME, MB_OK );
+						::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 						break;
 					}
 				}
@@ -286,7 +286,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				{
 					TCHAR buf[BUFFER_SIZE] = {0};
 					::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-					::MessageBox( GetHwnd(), (tstring(_T("関連付けに失敗しました\n")) + buf).c_str(), GSTR_APPNAME, MB_OK );
+					::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 					break;
 				}
 				m_bExtDblClick[ nIdx ] = checked;
@@ -492,7 +492,7 @@ bool CDlgTypeList::InitializeType( void )
 			GetHwnd(),
 			MB_YESNO | MB_ICONQUESTION,
 			GSTR_APPNAME,
-			_T("%ts を初期化します。 よろしいですか？"),
+			LS(STR_DLGTYPELIST_INIT1),
 			typeMini->m_szTypeName );
 		if (nRet != IDYES) {
 			return false;
@@ -512,7 +512,7 @@ bool CDlgTypeList::InitializeType( void )
 	bool bUpdate = true;
 	for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
 		if( bUpdate ){
-			auto_sprintf( type.m_szTypeName, _T("設定%d"), nNameNum );
+			auto_sprintf( type.m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum );
 			nNameNum++;
 			bUpdate = false;
 		}
@@ -537,7 +537,7 @@ bool CDlgTypeList::InitializeType( void )
 	// リスト再初期化
 	SetData(iDocType);
 
-	InfoMessage( hwndDlg, _T("%ts を初期化しました。"), type.m_szTypeName );
+	InfoMessage( hwndDlg, LS(STR_DLGTYPELIST_INIT2), type.m_szTypeName );
 
 	return true;
 }
@@ -665,7 +665,7 @@ bool CDlgTypeList::DelType()
 	}
 	const STypeConfigMini type = *typeMini; // ダイアログを出している間に変更されるかもしれないのでコピーする
 	int nRet = ConfirmMessage( hwndDlg,
-		_T("%ts を削除します。 よろしいですか？"), type.m_szTypeName );
+		LS(STR_DLGTYPELIST_DEL), type.m_szTypeName );
 	if (nRet != IDYES) {
 		return false;
 	}
@@ -1064,7 +1064,7 @@ bool CDlgTypeList::AlertFileAssociation()
 		if( IDYES == ::MYMESSAGEBOX( 
 						NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
 						GSTR_APPNAME,
-						_T("Windowsの関連付け設定を変更しようとしています。\nこの操作は同じ設定を利用する他のソフトにも影響を与える可能性があります。\n実施しますか？"))
+						LS(STR_DLGTYPELIST_ACC))
 					)
 		{
 			m_bAlertFileAssociation = false;	//「はい」なら最初の一度だけ確認する

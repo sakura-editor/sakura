@@ -249,8 +249,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						G_AppInstance(),
 						hwndDlg,
-						_T("メニューアイテムのアクセスキー設定"),
-						_T("キーを入力してください。"),
+						LS(STR_PROPCOMCUSTMENU_AC1),
+						LS(STR_PROPCOMCUSTMENU_AC2),
 						1,
 						szKey
 					);
@@ -344,7 +344,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					if( LB_ERR == nIdx2 ){
 						nIdx2 = 0;
 					}
-					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, L" ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, LSW(STR_PROPCOMCUSTMENU_SEP) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					if( nIdx2 == LB_ERR || nIdx2 == LB_ERRSPACE ){
 						break;
 					}
@@ -687,7 +687,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			auto_strcpy( szLabel, LTEXT(" ─────────────") );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			auto_strcpy( szLabel, LSW(STR_PROPCOMCUSTMENU_SEP) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta

@@ -146,7 +146,7 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	{
 	case IDC_BUTTON_SAMETEXTCOLOR:
 		// タイプ別設定から文字色を重複しないように取り出す
-		::SetWindowText( GetHwnd(), _T("文字色統一") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGSMCLR_BTN1) );
 		for( i = 0; i < COLORIDX_LAST; ++i ){
 			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
 				continue;
@@ -162,7 +162,7 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	case IDC_BUTTON_SAMEBKCOLOR:
 		// タイプ別設定から背景色を重複しないように取り出す
-		::SetWindowText( GetHwnd(), _T("背景色統一") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGSMCLR_BTN2) );
 		for( i = 0; i < COLORIDX_LAST; ++i ){
 			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 				continue;

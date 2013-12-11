@@ -219,7 +219,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							CDlgPluginOption cDlgPluginOption;
 							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
 						}else{
-							WarningMessage( hwndDlg, _T("プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません") );
+							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR1) );
 						}
 					}
 				}
@@ -243,10 +243,10 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					std::tstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
-							WarningMessage( hwndDlg, _T("ReadMeファイルが開けません") );
+							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR2) );
 						}
 					}else{
-						WarningMessage( hwndDlg, _T("ReadMeファイルが見つかりません ") );
+						WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR3) );
 					}
 				}
 				break;
@@ -360,13 +360,13 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
 		switch( plugin_table[index].m_state ){
-		case PLS_INSTALLED: sItem.pszText = const_cast<TCHAR*>(_T("追加")); break;
-		case PLS_UPDATED:   sItem.pszText = const_cast<TCHAR*>(_T("更新")); break;
-		case PLS_STOPPED:   sItem.pszText = const_cast<TCHAR*>(_T("停止")); break;
-		case PLS_LOADED:    sItem.pszText = const_cast<TCHAR*>(_T("稼働")); break;
-		case PLS_DELETED:   sItem.pszText = const_cast<TCHAR*>(_T("削除")); break;
+		case PLS_INSTALLED: sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE1)); break;
+		case PLS_UPDATED:   sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE2)); break;
+		case PLS_STOPPED:   sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE3)); break;
+		case PLS_LOADED:    sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE4)); break;
+		case PLS_DELETED:   sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE5)); break;
 		case PLS_NONE:      sItem.pszText = const_cast<TCHAR*>(_T("")); break;
-		default:            sItem.pszText = const_cast<TCHAR*>(_T("未定義")); break;
+		default:            sItem.pszText = const_cast<TCHAR*>(LS(STR_PROPCOMPLG_STATE6)); break;
 		}
 		ListView_SetItem( hListView, &sItem );
 		
@@ -375,7 +375,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
 		if( plugin_table[index].m_state != PLS_NONE ){
-			sItem.pszText = const_cast<TCHAR*>(plugin ? _T("読込") : _T(""));
+			sItem.pszText = const_cast<TCHAR*>(plugin ? LS(STR_PROPCOMPLG_LOAD) : _T(""));
 		}else{
 			sItem.pszText = const_cast<TCHAR*>(_T(""));
 		}
@@ -432,7 +432,7 @@ int CPropPlugin::GetData( HWND hwndDlg )
 }
 
 struct ColumnData_CPropPlugin_Init {
-	const TCHAR *title;
+	int titleId;
 	int width;
 };
 
@@ -443,12 +443,12 @@ struct ColumnData_CPropPlugin_Init {
 */
 void CPropPlugin::InitDialog( HWND hwndDlg )
 {
-	struct ColumnData_CPropPlugin_Init ColumnList[] = {
-		{ _T("番号"), 40 },
-		{ _T("プラグイン名"), 200 },
-		{ _T("状態"), 40 },
-		{ _T("読込"), 40 },
-		{ _T("フォルダ"), 150 },
+	const struct ColumnData_CPropPlugin_Init ColumnList[] = {
+		{ STR_PROPCOMPLG_LIST1, 40 },
+		{ STR_PROPCOMPLG_LIST2, 200 },
+		{ STR_PROPCOMPLG_LIST3, 40 },
+		{ STR_PROPCOMPLG_LIST4, 40 },
+		{ STR_PROPCOMPLG_LIST5, 150 },
 	};
 
 	//	ListViewの初期化
@@ -461,7 +461,7 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText = const_cast<TCHAR*>(ColumnList[pos].title);
+		sColumn.pszText = const_cast<TCHAR*>(LS(ColumnList[pos].titleId));
 		sColumn.cx = ColumnList[pos].width;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;

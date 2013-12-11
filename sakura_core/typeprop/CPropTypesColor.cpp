@@ -72,12 +72,12 @@ static const DWORD p_helpids2[] = {	//11400
 	0, 0
 };
 
-TYPE_NAME<EStringLiteralType> StringLitteralArr[] = {
-	{ STRING_LITERAL_CPP,       _T("C/C++言語風 \\\" ") },
-	{ STRING_LITERAL_PLSQL,     _T("PL/SQL風    \"\"") },
-	{ STRING_LITERAL_HTML,      _T("HTML/XML風  =\"\"") },
-	{ STRING_LITERAL_CSHARP,    _T("C#風        @\"\"") },
-	{ STRING_LITERAL_PYTHON,    _T("Python風    \"\"\"") },
+TYPE_NAME_ID<EStringLiteralType> StringLitteralArr[] = {
+	{ STRING_LITERAL_CPP,    STR_STRINGESC_CPP },
+	{ STRING_LITERAL_PLSQL,  STR_STRINGESC_PLSQL },
+	{ STRING_LITERAL_HTML,   STR_STRINGESC_HTML },
+	{ STRING_LITERAL_CSHARP, STR_STRINGESC_CSHARP },
+	{ STRING_LITERAL_PYTHON, STR_STRINGESC_PYTHON },
 };
 
 
@@ -639,7 +639,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
 	for( i = 0; i < _countof( StringLitteralArr ); ++i ){
-		Combo_InsertString( hwndCombo, i, StringLitteralArr[i].pszName );
+		Combo_InsertString( hwndCombo, i, LS(StringLitteralArr[i].nNameId) );
 		if( StringLitteralArr[i].nMethod == m_Types.m_nStringType ){		// テキストの折り返し方法
 			nSelPos = i;
 		}
