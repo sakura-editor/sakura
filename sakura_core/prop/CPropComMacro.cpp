@@ -385,13 +385,16 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 
 	LVCOLUMN sColumn;
 	int pos;
+	RECT rc;
+	::GetWindowRect( hListView, &rc );
+	int width = rc.right - rc.left;
 	
 	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
 		sColumn.pszText = const_cast<TCHAR*>(LS(ColumnList[pos].titleId));
-		sColumn.cx = ColumnList[pos].width;
+		sColumn.cx = ColumnList[pos].width * width / 499;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;
 		
