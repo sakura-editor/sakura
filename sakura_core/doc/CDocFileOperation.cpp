@@ -303,6 +303,16 @@ bool CDocFileOperation::SaveFileDialog(
 				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
 		}
 	}
+	// 無題に、無題番号を付ける
+	if( pSaveInfo->cFilePath[0] == _T('\0') ){
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
+		if( 0 < node->m_nId ){
+			TCHAR szText[16];
+			auto_sprintf(szText, _T("%d"), node->m_nId);
+			auto_strcpy(pSaveInfo->cFilePath, LS(STR_ERR_DLGOPNFL7));	// 無題
+			auto_strcat(pSaveInfo->cFilePath, szText);
+		}
+	}
 
 	// ダイアログを表示
 	m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.Create(
