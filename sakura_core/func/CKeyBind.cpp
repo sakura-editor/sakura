@@ -399,7 +399,12 @@ int CKeyBind::GetKeyStrList(
 
 
 
-// アクセスキー付きの文字列の作成
+/*! アクセスキー付きの文字列の作成
+	@param sName ラベル
+	@param sKey アクセスキー
+	@return アクセスキー付きの文字列
+	@data 2013.12.09 novice アクセスキーと文字列の比較で小文字も有効にする
+*/
 TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 {
 	static	TCHAR	sLabel[300];
@@ -409,8 +414,8 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 		return const_cast<TCHAR*>( to_tchar(sName) );
 	}
 	else {
-		if (!GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
-			  && (p = auto_strchr( sName, sKey[0] )) != NULL) {
+		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
+			  && (((p = auto_strchr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
 			// 欧文風、使用している文字をアクセスキーに
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = _T('&');
