@@ -13,6 +13,7 @@
 */
 #include "StdAfx.h"
 #include "view/CEditView.h"
+#include "window/CEditWnd.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h"
 #include "extmodule/CMigemo.h"
@@ -252,6 +253,7 @@ void CEditView::ISearchExit()
 	}
 	m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	GetDllShareData().m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
+	m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
