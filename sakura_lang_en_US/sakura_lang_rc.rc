@@ -2718,7 +2718,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_BROWSE                "Browse"
     F_VIEWMODE              "View Mode"
-    F_PROPERTY_FILE         "File Propery"
+    F_PROPERTY_FILE         "File Property"
 END
 
 STRINGTABLE DISCARDABLE 
