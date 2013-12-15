@@ -404,7 +404,7 @@ struct CommonSetting_KeyBind
 	/* キー割り当て */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100+1];		/* キー割り当て表 */ // 未割り当てキーコード用にダミーを追加
-	BYTE				m_VKeyToKeyNameArr[256];	// キーコード→割り当て表インデックス // 2012.11.25 aroka
+	BYTE				m_VKeyToKeyNameArr[256+10];	// キーコード→割り当て表インデックス // 2012.11.25 aroka
 };
 
 

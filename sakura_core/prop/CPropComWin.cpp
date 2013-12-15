@@ -23,6 +23,7 @@
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "_main/CProcess.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11200

@@ -4258,16 +4258,20 @@ BEGIN
 	STR_ERR_CSHAREDATA23			"Rich Text"			// File types dialog
 
 	// Key settings dialog box ( loop so must be N items long in a row )
-	STR_ERR_CSHAREDATA24			"Double-Click"
-	STR_ERR_CSHAREDATA25			"Right-Click"
-	STR_ERR_CSHAREDATA26			"Middle-Click"
-	STR_ERR_CSHAREDATA27			"Left-Side-Click"
-	STR_ERR_CSHAREDATA28			"Right-Side-Click"
-	STR_ERR_CSHAREDATA29			"Triple-Click"
-	STR_ERR_CSHAREDATA30			"Quadruple-Click"
-	STR_ERR_CSHAREDATA31			"^(EN KBD ')"
-	STR_ERR_CSHAREDATA32			"@(EN KBD `)"
-	STR_ERR_CSHAREDATA33			"Apli Key"
+	STR_KEY_BIND_DBL_CLICK			"Double-Click"
+	STR_KEY_BIND_R_CLICK			"Right-Click"
+	STR_KEY_BIND_MID_CLICK			"Middle-Click"
+	STR_KEY_BIND_LSD_CLICK			"Left-Side-Click"
+	STR_KEY_BIND_RSD_CLICK			"Right-Side-Click"
+	STR_KEY_BIND_TRI_CLICK			"Triple-Click"
+	STR_KEY_BIND_QUA_CLICK			"Quadruple-Click"
+	STR_KEY_BIND_WHEEL_UP			"Wheel-Up"
+	STR_KEY_BIND_WHEEL_DOWN			"Wheel-Down"
+	STR_KEY_BIND_WHEEL_LEFT			"Wheel-Left"
+	STR_KEY_BIND_WHEEL_RIGHT		"Wheel-Right"
+	STR_KEY_BIND_HAT_ENG_QT			"^(EN KBD ')"
+	STR_KEY_BIND_AT_ENG_BQ			"@(EN KBD `)"
+	STR_KEY_BIND_APLI				"Apli Key"
 
 	// Error message
 	STR_ERR_CSHAREDATA34			"Please report bug"

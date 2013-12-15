@@ -36,6 +36,23 @@ struct KEYDATA {
 	EFunctionCode	m_nFuncCodeArr[8];
 };
 
+/*! 仮想キーコード独自拡張 */
+#define VKEX_DBL_CLICK		0x0100	// ダブルクリック
+#define VKEX_R_CLICK		0x0101	// 右クリック
+#define VKEX_MDL_CLICK		0x0102	// 中クリック
+#define VKEX_LSD_CLICK		0x0103	// 左サイドクリック
+#define VKEX_RSD_CLICK		0x0104	// 右サイドクリック
+
+#define VKEX_TRI_CLICK		0x0105	// トリプルクリック
+#define VKEX_QUA_CLICK		0x0106	// クアドラプルクリック
+
+#define VKEX_WHEEL_UP		0x0107	// ホイールアップ
+#define VKEX_WHEEL_DOWN		0x0108	// ホイールダウン
+#define VKEX_WHEEL_LEFT		0x0109	// ホイール左
+#define VKEX_WHEEL_RIGHT	0x010A	// ホイール右
+
+extern TCHAR* jpVKEXNames[];
+extern int jpVKEXNamesLen;
 
 /*-----------------------------------------------------------------------
 クラスの宣言

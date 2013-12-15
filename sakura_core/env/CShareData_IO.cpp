@@ -1044,9 +1044,11 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
-						for( int im=0; im< MOUSEFUNCTION_KEYBEGIN; im++ ){
-							if( _tcscmp( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
-								sKeyBind.m_pKeyNameArr[im] = tmpKeydata;
+						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
+						for( int im=0; im< jpVKEXNamesLen; im++ ){
+							if( _tcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
+								_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName );
+								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
 							}
 						}
 					}
@@ -1054,10 +1056,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						// 割り当て済みキーコードは上書き
 						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
 						if( idx != KEYNAME_SIZE ){
+							_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName );
 							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
 						}else{// 未割り当てキーコードは末尾に追加
 							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
 							else{
+								_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
 								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
 								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 							}
@@ -1112,8 +1116,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 				}
 				wcscat(szKeyData, szWork);
 			}
-			
-			auto_sprintf(szWork, L",%ts", keydata.m_szKeyName);
+
+			if( 0x0100 <= keydata.m_nKeyCode ){
+				auto_sprintf(szWork, L",%ts", jpVKEXNames[ keydata.m_nKeyCode - 0x0100 ]);
+			}else{
+				auto_sprintf(szWork, L",%ts", keydata.m_szKeyName);
+			}
 			wcscat(szKeyData, szWork);
 			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
 //

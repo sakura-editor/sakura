@@ -66,7 +66,7 @@ public:
 	||  Attributes & Operations
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
-
+	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
 	BOOL IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner ); /* 指定ファイルが開かれているか調べる */
@@ -98,6 +98,7 @@ protected:
 	//	Jan. 30, 2005 genta 初期化関数の分割
 	void InitKeyword(DLLSHAREDATA*);
 	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta 起動中止のため値を返す
+	void RefreshKeyAssignString(DLLSHAREDATA*);
 	void InitToolButtons(DLLSHAREDATA*);
 	void InitTypeConfigs(DLLSHAREDATA*, std::vector<STypeConfig*>&);
 	void InitPopupMenu(DLLSHAREDATA*);
