@@ -143,3 +143,12 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 #endif
+
+/*!
+	言語選択後に共有メモリ内の文字列を更新する
+*/
+void CProcess::RefreshString()
+{
+
+	m_pcShareData->RefreshString();
+}

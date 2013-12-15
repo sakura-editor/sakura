@@ -75,7 +75,8 @@ static const wchar_t	WSTR_REGEXKW_HEAD[]		= L"// 正規表現キーワード Ver1\n";
 static const wchar_t	WSTR_KEYHELP_HEAD[]		= L"// キーワード辞書設定 Ver1\n";
 
 // キー割り当て
-static const wchar_t	WSTR_KEYBIND_HEAD[]		= L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
+static const wchar_t	WSTR_KEYBIND_HEAD4[]		= L"SakuraKeyBind_Ver4";	//2013.12.05 syat 多言語対応
+static const wchar_t	WSTR_KEYBIND_HEAD3[]	= L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
 static const wchar_t	WSTR_KEYBIND_HEAD2[]	= L"// テキストエディタキー設定 Ver2";	// (旧バージョン(ANSI版)） 読み込みのみ対応 2008/5/3 by Uchi
 
 // カスタムメニューファイル
@@ -872,24 +873,27 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	}
 
 	//バージョン確認
+	bool	bVer4;			// 新バージョン（多言語対応）のファイル
 	bool	bVer3;			// 新バージョンのファイル
 	bool	bVer2;
 	WCHAR szHeader[256];
-	bVer3 = true;
+	bVer4 = false;
+	bVer3 = false;
 	bVer2 = false;
 	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
-	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD)!=0)	bVer3=false;
+	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD4)==0)	bVer4=true;
+	else if(wcscmp(szHeader,WSTR_KEYBIND_HEAD3)==0)	bVer3=true;
 
 	//int	nKeyNameArrNum;			// キー割り当て表の有効データ数
-	if ( bVer3 ) {
+	if ( bVer3 || bVer4 ) {
 		//Count取得 -> nKeyNameArrNum
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", sKeyBind.m_nKeyNameArrNum);
-		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE)	bVer3=false; //範囲チェック
+		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE){	bVer3=false; bVer4=false; } //範囲チェック
 
 		CShareData_IO::IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
 	}
 
-	if (!bVer3) {
+	if (!bVer3 && !bVer4) {
 		// 新バージョンでない
 		CTextInputStream in(strPath.c_str());
 		if (!in) {
@@ -959,7 +963,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 			}
 		}
 	}
-	if (!bVer3  && !bVer2) {
+	if (!bVer4 && !bVer3 && !bVer2) {
 		sErrMsg = wstring(LSW(STR_IMPEXP_KEY_FORMAT)) + sFileName;
 		return false;
 	}
@@ -969,7 +973,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	//memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
 	int nKeyNameArrUsed = m_Common.m_sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 	for( int j=sKeyBind.m_nKeyNameArrNum-1; j>=0; j-- ){
-		if( sKeyBind.m_pKeyNameArr[j].m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
+		if( (bVer2 || bVer3) && sKeyBind.m_pKeyNameArr[j].m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 			for( int im=0; im< MOUSEFUNCTION_KEYBEGIN; im++ ){
 				if( _tcscmp( sKeyBind.m_pKeyNameArr[j].m_szKeyName, m_Common.m_sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
 					m_Common.m_sKeyBind.m_pKeyNameArr[im] = sKeyBind.m_pKeyNameArr[j];
@@ -1019,7 +1023,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.SetWritingMode();
 
 	// ヘッダ
-	StaticString<wchar_t,256> szKeydataHead = WSTR_KEYBIND_HEAD;
+	StaticString<wchar_t,256> szKeydataHead = WSTR_KEYBIND_HEAD4;
 	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
 	cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
@@ -1027,7 +1031,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
 
 	// 書き込み
-	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD)) {
+	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD4)) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}

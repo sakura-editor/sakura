@@ -24,7 +24,10 @@
 //! KEYDATAとほぼ同じ
 struct KEYDATAINIT {
 	short			m_nKeyCode;			//!< Key Code (0 for non-keybord button)
-	const TCHAR*	m_pszKeyName;		//!< Key Name (for display)
+	union {
+		const TCHAR*	m_pszKeyName;		//!< Key Name (for display)
+		UINT			m_nKeyNameId;		//!< String Resource Id ( 0x0000 - 0xFFFF )
+	};
 	EFunctionCode	m_nFuncCodeArr[8];	//!< Key Function Number
 //					m_nFuncCodeArr[0]	//                      Key
 //					m_nFuncCodeArr[1]	// Shift +              Key
@@ -675,19 +678,6 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 // 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
 // 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
 
-/*!	@brief 共有メモリ初期化/キー割り当て
-
-	デフォルトキー割り当て関連の初期化処理
-
-	@date 2005.01.30 genta CShareData::Init()から分離
-	@date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
-*/
-bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
-{
-	/********************/
-	/* 共通設定の規定値 */
-	/********************/
-
 #define _SQL_RUN	F_PLSQL_COMPILE_ON_SQLPLUS
 #define _COPYWITHLINENUM	F_COPYLINESWITHLINENUMBER
 	static const KEYDATAINIT	KeyDataInit[] = {
@@ -696,18 +686,18 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	//		0,		1,		 2(000), 3(001),4(010),	5(011),		6(100),	7(101),		8(110),		9(111)
 
 		/* マウスボタン */
-		//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-		{ 0,_T("ダブルクリック"),		{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
-		{ 0,_T("右クリック"),			{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 }, },
-		{ 0,_T("中クリック"),			{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 マウス中ボタン対応
-		{ 0,_T("左サイドクリック"),		{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 マウスサイドボタン対応
-		{ 0,_T("右サイドクリック"),		{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-		{ 0,_T("トリプルクリック"),		{ F_SELECTLINE,		F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE }, },
-		{ 0,_T("クアドラプルクリック"),	{ F_SELECTALL,		F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL }, },
-		{ 0,_T("ホイールアップ"),		{ F_WHEELUP,		F_WHEELUP,			F_SETFONTSIZEUP,		F_WHEELUP,			F_WHEELUP,				F_WHEELUP,			F_WHEELUP,				F_WHEELUP }, },
-		{ 0,_T("ホイールダウン"),		{ F_WHEELDOWN,		F_WHEELDOWN,		F_SETFONTSIZEDOWN,		F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN }, },
-		{ 0,_T("ホイール左"),			{ F_WHEELLEFT,		F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT }, },
-		{ 0,_T("ホイール右"),			{ F_WHEELRIGHT,		F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT }, },
+		//keycode,			keyname,							なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+		{ VKEX_DBL_CLICK,	(LPCTSTR)STR_KEY_BIND_DBL_CLICK,	{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
+		{ VKEX_R_CLICK,		(LPCTSTR)STR_KEY_BIND_R_CLICK,		{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 }, },
+		{ VKEX_MDL_CLICK,	(LPCTSTR)STR_KEY_BIND_MID_CLICK,	{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 マウス中ボタン対応
+		{ VKEX_LSD_CLICK,	(LPCTSTR)STR_KEY_BIND_LSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 マウスサイドボタン対応
+		{ VKEX_RSD_CLICK,	(LPCTSTR)STR_KEY_BIND_RSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+		{ VKEX_TRI_CLICK,	(LPCTSTR)STR_KEY_BIND_TRI_CLICK,	{ F_SELECTLINE,		F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE }, },
+		{ VKEX_QUA_CLICK,	(LPCTSTR)STR_KEY_BIND_QUA_CLICK,	{ F_SELECTALL,		F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL }, },
+		{ VKEX_WHEEL_UP,	(LPCTSTR)STR_KEY_BIND_WHEEL_UP,		{ F_WHEELUP,		F_WHEELUP,			F_SETFONTSIZEUP,		F_WHEELUP,			F_WHEELUP,				F_WHEELUP,			F_WHEELUP,				F_WHEELUP }, },
+		{ VKEX_WHEEL_DOWN,	(LPCTSTR)STR_KEY_BIND_WHEEL_DOWN,	{ F_WHEELDOWN,		F_WHEELDOWN,		F_SETFONTSIZEDOWN,		F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN }, },
+		{ VKEX_WHEEL_LEFT,	(LPCTSTR)STR_KEY_BIND_WHEEL_LEFT,	{ F_WHEELLEFT,		F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT }, },
+		{ VKEX_WHEEL_RIGHT,	(LPCTSTR)STR_KEY_BIND_WHEEL_RIGHT,	{ F_WHEELRIGHT,		F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT }, },
 
 		/* ファンクションキー */
 		//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
@@ -799,9 +789,9 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		/* 記号 */
 		//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 		{ 0x00bd,	_T("-"),			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
-		{ 0x00de,	_T("^(英語')"),		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+		{ 0x00de,	(LPCTSTR)STR_KEY_BIND_HAT_ENG_QT,		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 		{ 0x00dc,	_T("\\"),			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
-		{ 0x00c0,	_T("@(英語`)"),		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+		{ 0x00c0,	(LPCTSTR)STR_KEY_BIND_AT_ENG_BQ,		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
 		{ 0x00db,	_T("["),			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
 		{ 0x00bb,	_T(";"),			{ F_0,				F_0,				F_0,					F_SPLIT_VH,			F_INS_DATE,				F_0,				F_0,					F_0 }, },
 		{ 0x00ba,	_T(":"),			{ F_0,				F_0,				_COPYWITHLINENUM,		F_0,				F_INS_TIME,				F_0,				F_0,					F_0 }, },
@@ -811,8 +801,36 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ 0x00bf,	_T("/"),			{ F_0,				F_0,				F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 		{ 0x00e2,	_T("_"),			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 		{ 0x00df,	_T("_(PC-98)"),		{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-		{ VK_APPS,	_T("アプリキー"),	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
+		{ VK_APPS,	(LPCTSTR)STR_KEY_BIND_APLI,	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
 	};
+
+TCHAR* jpVKEXNames[] = {
+	_T("ダブルクリック"),
+	_T("右クリック"),
+	_T("中クリック"),
+	_T("左サイドクリック"),
+	_T("右サイドクリック"),
+	_T("トリプルクリック"),
+	_T("クアドラプルクリック"),
+	_T("ホイールアップ"),
+	_T("ホイールダウン"),
+	_T("ホイール左"),
+	_T("ホイール右")
+};
+int jpVKEXNamesLen = _countof( jpVKEXNames );
+
+/*!	@brief 共有メモリ初期化/キー割り当て
+
+	デフォルトキー割り当て関連の初期化処理
+
+	@date 2005.01.30 genta CShareData::Init()から分離
+	@date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
+*/
+bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
+{
+	/********************/
+	/* 共通設定の規定値 */
+	/********************/
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
 	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
@@ -845,7 +863,20 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	return true;
 }
 
+/*!	@brief 言語選択後の文字列更新処理 */
+void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
+{
+	const int	nKeyDataInitNum = _countof( KeyDataInit );
 
+	for( int i = 0; i < nKeyDataInitNum; ++i ){
+		KEYDATA* pKeydata = &pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];
+
+		if ( KeyDataInit[i].m_nKeyNameId <= 0xFFFF ) {
+			_tcscpy( pKeydata->m_szKeyName, LS( KeyDataInit[i].m_nKeyNameId ) );
+		}
+	}
+
+}
 
 
 
@@ -863,6 +894,8 @@ static void SetKeyNameArrVal(
 	KEYDATA* pKeydata = &pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[nIdx];
 
 	pKeydata->m_nKeyCode = pKeydataInit->m_nKeyCode;
-	_tcscpy( pKeydata->m_szKeyName, pKeydataInit->m_pszKeyName );
+	if ( 0xFFFF < pKeydataInit->m_nKeyNameId ) {
+		_tcscpy( pKeydata->m_szKeyName, pKeydataInit->m_pszKeyName );
+	}
 	memcpy_raw( pKeydata->m_nFuncCodeArr, pKeydataInit->m_nFuncCodeArr, sizeof(pKeydataInit->m_nFuncCodeArr) );
 }

@@ -1178,6 +1178,13 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }
 
+/* 言語選択後に共有メモリ内の文字列を更新する */
+void CShareData::RefreshString()
+{
+
+	RefreshKeyAssignString( m_pShareData );
+}
+
 void CShareData::CreateTypeSettings()
 {
 	if( NULL == m_pvTypeSettings ){

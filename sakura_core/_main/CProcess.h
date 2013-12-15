@@ -32,6 +32,7 @@ public:
 	CProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
 	bool Run();
 	virtual ~CProcess(){}
+	virtual void RefreshString();
 protected:
 	CProcess();
 	virtual bool InitializeProcess();
