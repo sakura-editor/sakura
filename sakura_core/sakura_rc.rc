@@ -4460,6 +4460,31 @@ HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"
 	STR_DLGEXEC_SELECT_CURDIR		"カレントディレクトリを選んでください"
 	STR_MENU_GREP					"%ts 【Grep】""%ts%ts"""
 	
+	// 設定値の変換
+	STR_TAB_CAPTION_OUTPUT			"【Grep】"
+	STR_TAB_CAPTION_GREP			"【アウトプット】"
+	STR_CAPTION_ACTIVE_OUTPUT		"アウトプット"
+	STR_CAPTION_ACTIVE_UPDATE		"(更新)"
+	STR_CAPTION_ACTIVE_VIEW			"(ビューモード)"
+	STR_CAPTION_ACTIVE_OVERWRITE	"(上書き禁止)"
+	STR_CAPTION_ACTIVE_KEYMACRO		"【キーマクロの記録中】"
+	STR_DATA_FORMAT					"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'"
+	STR_TIME_FORMAT					"tthh\'時\'mm\'分\'ss\'秒\'"
+	STR_TRANSNAME_COMDESKTOP		"共有デスクトップ\\"
+	STR_TRANSNAME_COMDOC			"共有ドキュメント\\"
+	STR_TRANSNAME_DESKTOP			"デスクトップ\\"
+	STR_TRANSNAME_MYDOC				"マイドキュメント\\"
+	STR_TRANSNAME_IE				"IEキャッシュ\\"
+	STR_TRANSNAME_TEMP				"TEMP\\"
+	STR_TRANSNAME_APPDATA			"アプリデータ\\"
+	STR_PRINT_SET_NAME				"印刷設定"
+	STR_TYPE_NAME_BASIS				"基本"
+	STR_TYPE_NAME_RICHTEXT			"リッチテキスト"
+	STR_TYPE_NAME_TEXT				"テキスト"
+	STR_TYPE_NAME_DOS				"MS-DOSバッチファイル"
+	STR_TYPE_NAME_ASM				"アセンブラ"
+	STR_TYPE_NAME_INI				"設定ファイル"
+
 END
 
 STRINGTABLE DISCARDABLE 

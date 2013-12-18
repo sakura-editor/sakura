@@ -112,7 +112,7 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 	PopulateKeyword( L"Perl2",			true,	PERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
 	PopulateKeyword( L"Visual Basic",	false,	VB );			/* セット13の追加 */	//Jul. 10, 2001 JEPRO
 	PopulateKeyword( L"Visual Basic2",	false,	VB2 );			/* セット14の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( L"リッチテキスト",	true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"Rich Text",		true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
 #undef PopulateKeyword
 }

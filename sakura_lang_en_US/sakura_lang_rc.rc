@@ -4465,6 +4465,31 @@ HTML help requires HHCTRL.OCX.\r\n"
 	STR_DLGABOUT_APPNAME			"Sakura Editor"
 	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
 
+	// Convert Setting Values
+	STR_TAB_CAPTION_OUTPUT			"[Grep]"
+	STR_TAB_CAPTION_GREP			"[Output]"
+	STR_CAPTION_ACTIVE_OUTPUT		"Output"
+	STR_CAPTION_ACTIVE_UPDATE		"(Update)"
+	STR_CAPTION_ACTIVE_VIEW			"(View mode)"
+	STR_CAPTION_ACTIVE_OVERWRITE	"(Read only)"
+	STR_CAPTION_ACTIVE_KEYMACRO		"[REC Key macro]"
+	STR_DATA_FORMAT					"M\'/\'d\'/\'yyyy dddd"
+	STR_TIME_FORMAT					"hh\':\'mm\':\'ss\' \'tt"
+	STR_TRANSNAME_COMDESKTOP		"Com Desktop\\"
+	STR_TRANSNAME_COMDOC			"Com Documents\\"
+	STR_TRANSNAME_DESKTOP			"Desktop\\"
+	STR_TRANSNAME_MYDOC				"My Documents\\"
+	STR_TRANSNAME_IE				"IE Cache\\"
+	STR_TRANSNAME_TEMP				"TEMP\\"
+	STR_TRANSNAME_APPDATA			"App Data\\"
+	STR_PRINT_SET_NAME				"Print setting"
+	STR_TYPE_NAME_BASIS				"Basis"
+	STR_TYPE_NAME_RICHTEXT			"Rich text"
+	STR_TYPE_NAME_TEXT				"Text"
+	STR_TYPE_NAME_DOS				"MS-DOS batch file"
+	STR_TYPE_NAME_ASM				"Assembler"
+	STR_TYPE_NAME_INI				"Ini file"
+
 END
 
 STRINGTABLE DISCARDABLE 

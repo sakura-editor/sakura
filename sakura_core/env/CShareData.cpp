@@ -523,10 +523,10 @@ bool CShareData::InitShareData()
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive, 
 			_T("${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -")
-			_T(" $A $V ${R?(ビューモード)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$}") );
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive, 
 			_T("${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -")
-			_T(" $A $V ${R?(ビューモード)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$}") );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
@@ -594,12 +594,138 @@ bool CShareData::InitShareData()
 
 
 
+static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& org, std::wstring& to )
+{
+	CNativeW mem;
+	mem.SetString(pBuf);
+	mem.Replace(org.c_str(), to.c_str());
+	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	pBuf[chBufSize - 1] = L'\0';
+}
+
+static void ConvertLangString( char* pBuf, size_t chBufSize, std::wstring& org, std::wstring& to )
+{
+	CNativeA mem;
+	mem.SetString(pBuf);
+	mem.Replace_j(to_achar(org.c_str()), to_achar(to.c_str()));
+	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	pBuf[chBufSize - 1] = '\0';
+}
+
+static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
+{
+	if( setValues ){
+		if( bUpdate ){
+			values.push_back( std::wstring(LSW(nStrId)) );
+		}
+		return;
+	}
+	std::wstring to = LSW(nStrId);
+	ConvertLangString( pBuf, chBufSize, values[index], to );
+	index++;
+}
+
+static void ConvertLangValueImpl( char* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
+{
+	if( setValues ){
+		if( bUpdate ){
+			values.push_back( std::wstring(LSW(nStrId)) );
+		}
+		return;
+	}
+	std::wstring to = LSW(nStrId);
+	ConvertLangString( pBuf, chBufSize, values[index], to );
+	index++;
+}
+
+
+#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true);
+#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false);
 
 
 
+/*!
+	国際化対応のための文字列を変更する
 
-
-
+	1. 1回目呼び出し、setValuesをtrueにして、valuesに旧設定の言語文字列を読み込み
+	2. SelectLang呼び出し
+	3. 2回目呼び出し、valuesを使って新設定の言語に書き換え
+*/
+void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues)
+{
+	DLLSHAREDATA&	shareData = *m_pShareData;
+	int i;
+	int index = 0;
+	int indexBackup;
+	CommonSetting& common = shareData.m_Common;
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_TAB_CAPTION_OUTPUT );
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_TAB_CAPTION_GREP );
+	indexBackup = index;
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_CAPTION_ACTIVE_OUTPUT );
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_CAPTION_ACTIVE_UPDATE );
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_CAPTION_ACTIVE_VIEW );
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_CAPTION_ACTIVE_OVERWRITE );
+	ConvertLangValue( common.m_sTabBar.m_szTabWndCaption, STR_CAPTION_ACTIVE_KEYMACRO );
+	index = indexBackup;
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionActive, STR_CAPTION_ACTIVE_OUTPUT );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionActive, STR_CAPTION_ACTIVE_UPDATE );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionActive, STR_CAPTION_ACTIVE_VIEW );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionActive, STR_CAPTION_ACTIVE_OVERWRITE );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionActive, STR_CAPTION_ACTIVE_KEYMACRO );
+	index = indexBackup;
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionInactive, STR_CAPTION_ACTIVE_OUTPUT );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionInactive, STR_CAPTION_ACTIVE_UPDATE );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionInactive, STR_CAPTION_ACTIVE_VIEW );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionInactive, STR_CAPTION_ACTIVE_OVERWRITE );
+	ConvertLangValue2( common.m_sWindow.m_szWindowCaptionInactive, STR_CAPTION_ACTIVE_KEYMACRO );
+	ConvertLangValue( common.m_sFormat.m_szDateFormat, STR_DATA_FORMAT );
+	ConvertLangValue( common.m_sFormat.m_szTimeFormat, STR_TIME_FORMAT );
+	indexBackup = index;
+	for( i = 0; i < common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
+		index = indexBackup;
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_COMDESKTOP );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_COMDOC );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_DESKTOP );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_MYDOC );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_IE );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_TEMP );
+		ConvertLangValue( common.m_sFileName.m_szTransformFileNameTo[i], STR_TRANSNAME_APPDATA );
+		if( bSetValues ){
+			break;
+		}
+	}
+	indexBackup = index;
+	for( i = 0; i < MAX_PRINTSETTINGARR; i++ ){
+		index = indexBackup;
+		ConvertLangValue( shareData.m_PrintSettingArr[i].m_szPrintSettingName, STR_PRINT_SET_NAME );
+		if( bSetValues ){
+			break;
+		}
+	}
+	assert( m_pvTypeSettings != NULL );
+	indexBackup = index;
+	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
+	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
+		index = indexBackup;
+		STypeConfig& type = *(GetTypeSettings()[i]);
+		ConvertLangValue2( type.m_szTypeName, STR_TYPE_NAME_BASIS );
+		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_RICHTEXT );
+		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_TEXT );
+		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_DOS );
+		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_ASM );
+		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_INI );
+		index = indexBackup;
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_BASIS );
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_RICHTEXT );
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_TEXT );
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_DOS );
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_ASM );
+		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_INI );
+		if( bSetValues ){
+			break;
+		}
+	}
+}
 
 /*!
 	@brief	指定ファイルが開かれているか調べる
