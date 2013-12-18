@@ -25,7 +25,7 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 	wchar_t* pData;
 	pData = (wchar_t*)malloc( (nDataLen + 1) * sizeof(wchar_t) );
 	if( NULL == pData ){
-		TopErrorMessage( NULL, _T("CDocLineMgr::GetAllData()\nメモリ確保に失敗しました。\n%dバイト"), nDataLen + 1 );
+		TopErrorMessage( NULL, LS(STR_ERR_DLGDOCLM6), nDataLen + 1 );
 		return NULL;
 	}
 	pDocLine = m_pcDocLineMgr->GetDocLineTop();

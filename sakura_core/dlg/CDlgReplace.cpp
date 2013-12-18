@@ -389,7 +389,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		/* テキストの貼り付け */
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE ) &&
 			!pcEditView->m_pcEditDoc->m_cDocEditor.IsEnablePaste() ){
-			OkMessage( GetHwnd(), _T("クリップボードに有効なデータがありません！") );
+			OkMessage( GetHwnd(), LS(STR_DLGREPLC_CLIPBOARD) );
 			::CheckDlgButton( GetHwnd(), IDC_CHK_PASTE, FALSE );
 		}
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE)) );
@@ -495,7 +495,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
-			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGREPLC_STR) );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
@@ -513,7 +513,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
-			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGREPLC_STR) );
 		}
 		return TRUE;
 
@@ -540,7 +540,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->GetCommander().HandleCommand( F_REDRAW, true, 0, 0, 0, 0 );
 		}else{
-			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGREPLC_STR) );
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
@@ -558,7 +558,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* アクティブにする */
 			ActivateFrameWindow( GetHwnd() );
 
-			TopOkMessage( GetHwnd(), _T("%d箇所を置換しました。"), m_nReplaceCnt);
+			TopOkMessage( GetHwnd(), LS(STR_DLGREPLC_REPLACE), m_nReplaceCnt);
 
 			if( !m_bCanceled ){
 				if( m_bModal ){		/* モーダルダイアログか */
@@ -573,7 +573,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}
 			return TRUE;
 		}else{
-			OkMessage( GetHwnd(), _T("置換条件を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGREPLC_REPSTR) );
 		}
 		return TRUE;
 //	case IDCANCEL:

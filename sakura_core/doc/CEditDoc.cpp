@@ -842,7 +842,7 @@ BOOL CEditDoc::OnFileClose()
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
-		auto_sprintf( szGrepTitle, _T("【Grep】%ls%ts"),
+		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
 			( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T("")
 		);
@@ -862,7 +862,7 @@ BOOL CEditDoc::OnFileClose()
 			hwndMainFrame,
 			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 			GSTR_APPNAME,
-			_T("%ts\nは変更されています。 閉じる前に保存しますか？\n\nビューモードで開いているので、名前を付けて保存すればいいと思います。\n"),
+			LS(STR_ERR_DLGEDITDOC30),
 			pszTitle
 		);
 		switch( nRet ){
@@ -883,10 +883,7 @@ BOOL CEditDoc::OnFileClose()
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
-				_T("%ts\n")
-				_T("はテキストの変更は有りませんが、\n")
-				_T("文字コードセットが変更されています。\n")
-				_T("閉じる前に保存しますか？"),
+				LS(STR_CHANGE_CHARSET),
 				pszTitle);
 		}
 		else {
@@ -894,7 +891,7 @@ BOOL CEditDoc::OnFileClose()
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
-				_T("%ts\nは変更されています。 閉じる前に保存しますか？"),
+				LS(STR_ERR_DLGEDITDOC31),
 				pszTitle
 			);
 		}

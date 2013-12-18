@@ -342,7 +342,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 		}
 		else{
-			OkMessage( GetHwnd(), _T("検索条件を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:		/* 下検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
@@ -373,7 +373,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 		}
 		else{
-			OkMessage( GetHwnd(), _T("検索条件を指定してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );
 		}
 		return TRUE;
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク

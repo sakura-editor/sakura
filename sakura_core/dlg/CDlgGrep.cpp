@@ -359,7 +359,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			if( szFolder[0] == _T('\0') ){
 				::GetCurrentDirectory( _countof( szFolder ), szFolder );
 			}
-			if( SelectDir( GetHwnd(), _T("検索するフォルダを選んでください"), szFolder, szFolder ) ){
+			if( SelectDir( GetHwnd(), LS(STR_DLGGREP1), szFolder, szFolder ) ){
 				SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szFolder );
 			}
 		}
@@ -633,10 +633,10 @@ int CDlgGrep::GetData( void )
 		CGrepEnumKeys enumKeys;
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
 		if( 1 == nErrorNo ){
-			WarningMessage(	GetHwnd(), _T("ファイル指定のフォルダ部分にはワイルドカードは使えません。") );
+			WarningMessage(	GetHwnd(), LS(STR_DLGGREP2) );
 			return FALSE;
 		}else if( nErrorNo == 2 ){
-			WarningMessage(	GetHwnd(), _T("ファイル指定にはフルパスは使えません") );
+			WarningMessage(	GetHwnd(), LS(STR_DLGGREP3) );
 			return FALSE;
 		}
 	}
@@ -648,7 +648,7 @@ int CDlgGrep::GetData( void )
 		_tcscpy( m_szFile, _T("*.*") );
 	}
 	if( m_szFolder[0] == _T('\0') ){
-		WarningMessage(	GetHwnd(), _T("検索対象フォルダを指定してください。") );
+		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
 		return FALSE;
 	}
 
@@ -665,7 +665,7 @@ int CDlgGrep::GetData( void )
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
 			// 相対パス→絶対パス
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
-				WarningMessage(	GetHwnd(), _T("検索対象フォルダが正しくありません。") );
+				WarningMessage(	GetHwnd(), LS(STR_DLGGREP5) );
 				return FALSE;
 			}
 			TCHAR szFolderItem[_MAX_PATH];
@@ -678,7 +678,7 @@ int CDlgGrep::GetData( void )
 			}
 			int nFolderItemLen = auto_strlen( szFolderItem );
 			if( _MAX_PATH < nFolderLen + nFolderItemLen + 1 ){
-				WarningMessage(	GetHwnd(), _T("検索対象フォルダが長すぎます。") );
+				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}
 			if( i ){

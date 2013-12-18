@@ -3377,7 +3377,7 @@ BEGIN
 	STR_ERR_DLGUPQRY2			"再ロードしますか?"
 
 	// CDlgFind.cpp
-	STR_ERR_DLGFIND1			"検索条件を指定してください。"
+	STR_DLGFIND1				"検索条件を指定してください。"
 
 	// CDlgFuncList.cpp
 	STR_ERR_DLGFNCLST1			"C++ メソッドツリー"
@@ -3451,28 +3451,35 @@ BEGIN
 
 
 	// CDlgGrep.cpp
-	STR_ERR_DLGGREP1			"検索するフォルダを選んでください"
-	STR_ERR_DLGGREP2			"検索対象フォルダを指定してください。"
-	STR_ERR_DLGGREP3			"検索対象フォルダが正しくありません。"
+	STR_DLGGREP1				"検索するフォルダを選んでください"
+	STR_DLGGREP2				"ファイル指定のフォルダ部分にはワイルドカードは使えません。"
+	STR_DLGGREP3				"ファイル指定にはフルパスは使えません"
+	STR_DLGGREP4				"検索対象フォルダを指定してください。"
+	STR_DLGGREP5				"検索対象フォルダが正しくありません。"
+	STR_DLGGREP6				"検索対象フォルダが長すぎます。"
 
 	// CDlgJump.cpp
-	STR_ERR_DLGJUMP1			"正しく行番号を入力してください。"
-	STR_ERR_DLGJUMP2			"%d 行  %s  パッケージ仕様部"
+	STR_DLGJUMP1				"正しく行番号を入力してください。"
+	STR_DLGJUMP_PSLQL			"%d 行  %ts  パッケージ仕様部"
 
 	// CDlgOpenFile.cpp
-	STR_ERR_DLGOPNFL1			"変換なし"				// Max 32 bytes.
-	STR_ERR_DLGOPNFL2			" は既に存在します。\r\n上書きしますか？"
-	STR_ERR_DLGOPNFL3			"名前を付けて保存"
+	STR_DLGOPNFL1				"変換なし"				// Max 32 bytes.
+	STR_DLGOPNFL2				" は既に存在します。\r\n上書きしますか？"
+	STR_DLGOPNFL3				"名前を付けて保存"
+	STR_DLGOPNFL_EXTNAME1		"ユーザー指定"
+	STR_DLGOPNFL_EXTNAME2		"テキストファイル"
+	STR_DLGOPNFL_EXTNAME3		"すべてのファイル"
+	STR_DLGOPNFL_NONAME			"無題"
+	STR_DLGOPNFL_ERR1			"ダイアログが開けません。\n\nエラー:%ts"
 
-	STR_ERR_DLGOPNFL4			"ユーザー指定"
-	STR_ERR_DLGOPNFL5			"テキストファイル"
-	STR_ERR_DLGOPNFL6			"すべてのファイル"
-
-	STR_ERR_DLGOPNFL7			"無題"
-
-	STR_ERR_DLGOPNFL8			"ダイアログが開けません。\n\nエラー:%s"
-
-	STR_ERR_DLGOPNFL9			"ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"
+	// CDlgPluginOption.cpp
+	STR_DLGPLUGINOPT_LOAD		"プラグインがロードされていません。"
+	STR_DLGPLUGINOPT_TITLE		"%ls プラグインの設定"
+	STR_DLGPLUGINOPT_INIHEAD	" プラグイン設定ファイル"
+	STR_DLGPLUGINOPT_OPTION		"指定できるオプションがありません"
+	STR_DLGPLUGINOPT_LIST1		"項目"
+	STR_DLGPLUGINOPT_LIST2		"値"
+	STR_DLGPLUGINOPT_SELECT		"%tsの選択"
 
 	// CDlgPrintPage.cpp
 	STR_ERR_DLGPRNPG1			"%d ～ %d ページ"
@@ -3480,71 +3487,74 @@ BEGIN
 	STR_ERR_DLGPRNPG3			"ページ範囲指定が正しくありません。"
 
 	// CDlgPrintSetting.cpp
-	STR_ERR_DLGPRNST1			"設定名の変更" 
-	STR_ERR_DLGPRNST2			"設定の名称を入力してください。"
+	STR_DLGPRNST1				"設定名の変更" 
+	STR_DLGPRNST2				"設定の名称を入力してください。"
 
 	// CDlgProperty.cpp
-	STR_ERR_DLGFLPROP1			"ファイル名  "
-	STR_ERR_DLGFLPROP2			"設定のタイプ  "
-	STR_ERR_DLGFLPROP3			"文字コード  "
-
-	STR_ERR_DLGFLPROP4			"行数  %d行\r\n"
-	STR_ERR_DLGFLPROP5			"レイアウト行数  %d行\r\n"
-	STR_ERR_DLGFLPROP6			"読み取り専用モードで開いています。\r\n"
-	STR_ERR_DLGFLPROP7			"変更されています。\r\n"
-	STR_ERR_DLGFLPROP8			"変更されていません。\r\n"
-	STR_ERR_DLGFLPROP9			"\r\nコマンド実行回数    %d回\r\n"
-	STR_ERR_DLGFLPROP10			"--ファイル情報-----------------\r\n"
-	STR_ERR_DLGFLPROP11			"あなたはこのファイルを、他プロセスからの上書き禁止モードでロックしています。\r\n"
-	STR_ERR_DLGFLPROP12			"あなたはこのファイルを、他プロセスからの読み書き禁止モードでロックしています。\r\n"
-	STR_ERR_DLGFLPROP13			"あなたはこのファイルをロックしています。\r\n"
-	STR_ERR_DLGFLPROP14			"あなたはこのファイルをロックしていません。\r\n"
-	STR_ERR_DLGFLPROP15			"ファイル属性  "
-	STR_ERR_DLGFLPROP16			"/アーカイブ"
-	STR_ERR_DLGFLPROP17			"/圧縮"
-	STR_ERR_DLGFLPROP18			"/フォルダ"
-	STR_ERR_DLGFLPROP19			"/隠し"
-	STR_ERR_DLGFLPROP20			"/ノーマル"
-	STR_ERR_DLGFLPROP21			"/オフライン"
-	STR_ERR_DLGFLPROP22			"/読み取り専用"
-	STR_ERR_DLGFLPROP23			"/システム"
-	STR_ERR_DLGFLPROP24			"/テンポラリ"
-	STR_ERR_DLGFLPROP25			"作成日時  "
-	STR_ERR_DLGFLPROP26			"%d年%d月%d日 %02d:%02d:%02d"
-	STR_ERR_DLGFLPROP27			"更新日時  "
-//	STR_ERR_DLGFLPROP28			"%d年%d月%d日 %02d:%02d:%02d"
-	STR_ERR_DLGFLPROP29			"アクセス日  "
-	STR_ERR_DLGFLPROP30			"%d年%d月%d日"
-	STR_ERR_DLGFLPROP31			"MS-DOSファイル名  %s\r\n"
-	STR_ERR_DLGFLPROP32			"ファイルサイズ  %d バイト\r\n"
+	STR_DLGFLPROP01				"ファイル名  "
+	STR_DLGFLPROP02				"設定のタイプ  "
+	STR_DLGFLPROP03				"文字コード  "
+	STR_DLGFLPROP04				" BOM 付"
+	STR_DLGFLPROP05				"行数  %d行\r\n"
+	STR_DLGFLPROP06				"レイアウト行数  %d行\r\n"
+	STR_DLGFLPROP07				"ビューモードで開いています。\r\n"
+	STR_DLGFLPROP08				"変更されています。\r\n"
+	STR_DLGFLPROP09				"変更されていません。\r\n"
+	STR_DLGFLPROP10				"\r\nコマンド実行回数    %d回\r\n"
+	STR_DLGFLPROP11				"--ファイル情報-----------------\r\n"
+	STR_DLGFLPROP12				"あなたはこのファイルを、他プロセスからの上書き禁止モードでロックしています。\r\n"
+	STR_DLGFLPROP13				"あなたはこのファイルを、他プロセスからの読み書き禁止モードでロックしています。\r\n"
+	STR_DLGFLPROP14				"あなたはこのファイルをロックしています。\r\n"
+	STR_DLGFLPROP15				"あなたはこのファイルをロックしていません。\r\n"
+	STR_DLGFLPROP16				"ファイル属性  "
+	STR_DLGFLPROP17				"/アーカイブ"
+	STR_DLGFLPROP18				"/圧縮"
+	STR_DLGFLPROP19				"/フォルダ"
+	STR_DLGFLPROP20				"/隠し"
+	STR_DLGFLPROP21				"/ノーマル"
+	STR_DLGFLPROP22				"/オフライン"
+	STR_DLGFLPROP23				"/読み取り専用"
+	STR_DLGFLPROP24				"/システム"
+	STR_DLGFLPROP25				"/テンポラリ"
+	STR_DLGFLPROP26				"作成日時  "
+	STR_DLGFLPROP27				"%d年%d月%d日 %02d:%02d:%02d"
+	STR_DLGFLPROP28				"更新日時  "
+	STR_DLGFLPROP29				"アクセス日  "
+	STR_DLGFLPROP30				"%d年%d月%d日"
+	STR_DLGFLPROP31				"MS-DOSファイル名  %ts\r\n"
+	STR_DLGFLPROP32				"ファイルサイズ  %d バイト\r\n"
 
 	// CDlgReplace.cpp
-	STR_ERR_DLGREPLC1			"クリップボードに有効なデータがありません！"
-	STR_ERR_DLGREPLC2			"文字列を指定してください。"
-	STR_ERR_DLGREPLC3			"%d箇所を置換しました。"
-	STR_ERR_DLGREPLC4			"置換条件を指定してください。"
+	STR_DLGREPLC_CLIPBOARD		"クリップボードに有効なデータがありません！"
+	STR_DLGREPLC_STR			"文字列を指定してください。"
+	STR_DLGREPLC_REPLACE		"%d箇所を置換しました。"
+	STR_DLGREPLC_REPSTR			"置換条件を指定してください。"
 
 	// CDlgSameColor.cpp
 	STR_DLGSMCLR_BTN1			"文字色統一"
 	STR_DLGSMCLR_BTN2			"背景色統一"
 
 	// CDlgTagJumpList.cpp
-	STR_ERR_DLGTAGJMP1			"(通知)"
-	STR_ERR_DLGTAGJMP2			"(これ以降は切り捨てました)"
-	STR_ERR_DLGTAGJMP3			"キーワード"
-	STR_ERR_DLGTAGJMP4			"階層"
-	STR_ERR_DLGTAGJMP5			"行番号"
-	STR_ERR_DLGTAGJMP6			"種類"
-	STR_ERR_DLGTAGJMP7			"ファイル名"
-	STR_ERR_DLGTAGJMP8			"備考"
+	STR_DLGTAGJMP1				"(通知)"
+	STR_DLGTAGJMP2				"(候補は見つかりませんでした)"
+	STR_DLGTAGJMP_LIST1			"キーワード"
+	STR_DLGTAGJMP_LIST2			"階層"
+	STR_DLGTAGJMP_LIST3			"行番号"
+	STR_DLGTAGJMP_LIST4			"種類"
+	STR_DLGTAGJMP_LIST5			"ファイル名"
+	STR_DLGTAGJMP_LIST6			"備考"
+	STR_DLGTAGJMP3				"キーワード 検索中..."
 
 	// CDlgTagsMake.cpp
-	STR_ERR_DLGTAGMAK1			"タグ作成フォルダの選択"
+	STR_DLGTAGMAK_SELECTDIR		"タグ作成フォルダの選択"
 
 	// CDlgWinSize.cpp
 	STR_DLGWINSZ_NORMAL			"普通"
 	STR_DLGWINSZ_MAXIMIZE		"最大化"
 	STR_DLGWINSZ_MINIMIZE		"(最小化)"
+
+	// CDocOutline.cpp
+	STR_DOCOUTLINE_REGEX		"正規表現ルール\\%ls\\でエラーが発生しました。\n%ts"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%s\nというファイルを開けません。\nファイルが存在しません。"
@@ -3607,7 +3617,9 @@ BEGIN
 	STR_ERR_DLGEDITDOC28		"(無題)"
 
 	STR_ERR_DLGEDITDOC29		"Grepの処理中です。\n"
-	STR_ERR_DLGEDITDOC30		"%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"
+	STR_TITLE_GREP				"【Grep】%ls%ts"
+	STR_ERR_DLGEDITDOC30		"%s\nは変更されています。 閉じる前に保存しますか？\n\nビューモードで開いているので、名前を付けて保存すればいいと思います。\n"
+	STR_CHANGE_CHARSET			"%ts\nはテキストの変更は有りませんが、\n文字コードセットが変更されています。\n閉じる前に保存しますか？"
 	STR_ERR_DLGEDITDOC31		"%s\nは変更されています。 閉じる前に保存しますか？"
 	STR_AUTORELOAD_NOFITY		"★ファイル更新 %02d:%02d:%02d"
 
@@ -3780,7 +3792,7 @@ BEGIN
 	STR_ERR_DLGEDITWND14		"印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
 	STR_ERR_DLGEDITWND15		"最近使ったフォルダ(&D)"
 	STR_ERR_DLGEDITWND16		"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
-	STR_ERR_DLGEDITWND17		"&%c アウトプット"
+	STR_MENU_OUTPUT				"%ts アウトプット"
 	STR_ERR_DLGEDITWND18		"(無題)"
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
@@ -4446,7 +4458,8 @@ HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"
 
 	STR_DLGABOUT_APPNAME			"サクラエディタ"
 	STR_DLGEXEC_SELECT_CURDIR		"カレントディレクトリを選んでください"
-
+	STR_MENU_GREP					"%ts 【Grep】""%ts%ts"""
+	
 END
 
 STRINGTABLE DISCARDABLE 

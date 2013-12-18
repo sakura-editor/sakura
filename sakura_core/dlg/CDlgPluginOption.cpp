@@ -97,7 +97,7 @@ int CDlgPluginOption::DoModal(
 	m_cPropPlugin = cPropPlugin;
 
 	if( m_cPlugin == NULL ){
-		::ErrorMessage( hwndParent, _T("プラグインがロードされていません。") );
+		::ErrorMessage( hwndParent, LS(STR_DLGPLUGINOPT_LOAD) );
 		return 0;
 	}
 
@@ -114,7 +114,7 @@ void CDlgPluginOption::SetData( void )
 	bool bLoadDefault = false;
 
 	// タイトル
-	auto_sprintf( buf, _T("%ls プラグインの設定"), m_cPlugin->m_sName.c_str());
+	auto_sprintf( buf, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
 	::SetWindowText( GetHwnd(), buf );
 
 	// リスト
@@ -197,7 +197,7 @@ void CDlgPluginOption::SetData( void )
 
 	if( bLoadDefault ){
 		cProfile->SetWritingMode();
-		cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + L" プラグイン設定ファイル").c_str());
+		cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LSW(STR_DLGPLUGINOPT_INIHEAD)).c_str());
 	}
 
 	if (i ==0) {
@@ -205,7 +205,7 @@ void CDlgPluginOption::SetData( void )
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDOK                       ), FALSE );
 	
-		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, _T("指定できるオプションがありません") );
+		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, LS(STR_DLGPLUGINOPT_OPTION) );
 	}
 
 	// ReadMe Button
@@ -304,14 +304,14 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 40 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("項目"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGPLUGINOPT_LIST1));
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 55 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("値"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGPLUGINOPT_LIST2));
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
@@ -404,10 +404,10 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 		{
 			if (!m_sReadMeName.empty()) {
 				if (!m_cPropPlugin->BrowseReadMe(m_sReadMeName)) {
-					WarningMessage( GetHwnd(), _T("ReadMeファイルが開けません") );
+					WarningMessage( GetHwnd(), LS(STR_PROPCOMPLG_ERR2) );
 				}
 			}else{
-				WarningMessage( GetHwnd(), _T("ReadMeファイルが見つかりません ") );
+				WarningMessage( GetHwnd(), LS(STR_PROPCOMPLG_ERR3) );
 			}
 		}
 		return TRUE;
@@ -744,7 +744,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	ListView_GetItem( hwndList, &lvi );
 
 	TCHAR	sTitle[MAX_LENGTH_VALUE+10];
-	auto_sprintf( sTitle, _T("%sの選択"), buf);
+	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const TCHAR*)sTitle /*_T("ディレクトリの選択")*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
 		AddLastChar( szDir, _countof(szDir), _T('\\') );
