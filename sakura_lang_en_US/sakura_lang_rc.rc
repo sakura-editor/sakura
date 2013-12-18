@@ -1500,7 +1500,7 @@ BEGIN
                     WS_TABSTOP,24,79,170,10
     GROUPBOX        "Automatic Mode",IDC_STATIC,7,27,280,68
     CONTROL         "Display &Icons",IDC_CHECK_DispTabIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,115,53,10
     CONTROL         "Fixed Width(&E)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,70,115,59,10
     LTEXT           "Close Btn(&X)",IDC_STATIC,133,116,68,8
