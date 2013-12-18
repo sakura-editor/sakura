@@ -367,17 +367,17 @@ void CDlgFuncList::SetData()
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), TRUE );	// Jan. 04, 2002 genta Java Method Treeに統合
-		::SetWindowText( GetHwnd(), _T("C++ メソッドツリー") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_CPP) );
 	}
 	else if( OUTLINE_FILE == m_nListType ){	//@@@ 2002.04.01 YAZAKI アウトライン解析にルールファイル導入
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree();
-		::SetWindowText( GetHwnd(), _T("ルールファイル") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_RULE) );
 	}
 	else if( OUTLINE_WZTXT == m_nListType ){ //@@@ 2003.05.20 zenryaku 階層付テキストアウトライン解析
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree();
-		::SetWindowText( GetHwnd(), _T("WZ階層付テキスト") ); //	2003.06.22 Moca 名前変更
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_WZ) ); //	2003.06.22 Moca 名前変更
 	}
 	else if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
 		m_nViewType = VIEWTYPE_TREE;
@@ -392,28 +392,28 @@ void CDlgFuncList::SetData()
 	else if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree();	//@@@ 2002.04.01 YAZAKI テキストトピックツリーも、汎用SetTreeを呼ぶように変更。
-		::SetWindowText( GetHwnd(), _T("テキスト トピックツリー") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_TEXT) );
 	}
 	else if( OUTLINE_JAVA == m_nListType ){ /* Javaメソッドツリー */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), TRUE );
-		::SetWindowText( GetHwnd(), _T("Java メソッドツリー") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_JAVA) );
 	}
 	//	2007.02.08 genta Python追加
 	else if( OUTLINE_PYTHON == m_nListType ){ /* Python メソッドツリー */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree( true );
-		::SetWindowText( GetHwnd(), _T("Python メソッドツリー") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_PYTHON) );
 	}
 	else if( OUTLINE_COBOL == m_nListType ){ /* COBOL アウトライン */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), FALSE );
-		::SetWindowText( GetHwnd(), _T("COBOL アウトライン") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_COBOL) );
 	}
 	else if( OUTLINE_VB == m_nListType ){	/* VisualBasic アウトライン */
 		m_nViewType = VIEWTYPE_LIST;
 		SetListVB();
-		::SetWindowText( GetHwnd(), _T("Visual Basic アウトライン") );
+		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_VB) );
 	}
 	else if( OUTLINE_TREE == m_nListType ){ /* 汎用ツリー */
 		m_nViewType = VIEWTYPE_TREE;
@@ -434,16 +434,16 @@ void CDlgFuncList::SetData()
 		m_nViewType = VIEWTYPE_LIST;
 		switch( m_nListType ){
 		case OUTLINE_C:
-			::SetWindowText( GetHwnd(), _T("C 関数一覧") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_C) );
 			break;
 		case OUTLINE_PLSQL:
-			::SetWindowText( GetHwnd(), _T("PL/SQL 関数一覧") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_PLSQL) );
 			break;
 		case OUTLINE_ASM:
-			::SetWindowText( GetHwnd(), _T("アセンブラ アウトライン") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_ASM) );
 			break;
 		case OUTLINE_PERL:	//	Sep. 8, 2000 genta
-			::SetWindowText( GetHwnd(), _T("Perl 関数一覧") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_PERL) );
 			break;
 // Jul 10, 2003  little YOSHI  上に移動しました--->>
 //		case OUTLINE_VB:	// 2001/06/23 N.Nakatani for Visual Basic
@@ -451,16 +451,16 @@ void CDlgFuncList::SetData()
 //			break;
 // <<---ここまで
 		case OUTLINE_ERLANG:	//	2009.08.10 genta
-			::SetWindowText( GetHwnd(), _T("Erlang 関数一覧") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_ERLANG) );
 			break;
 		case OUTLINE_BOOKMARK:
 			LV_COLUMN col;
 			col.mask = LVCF_TEXT;
-			col.pszText = const_cast<TCHAR*>(_T("テキスト"));
+			col.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_LIST_TEXT));
 			col.iSubItem = 0;
 			//	Apr. 23, 2005 genta 行番号を左端へ
 			ListView_SetColumn( hwndList, FL_COL_NAME, &col );
-			::SetWindowText( GetHwnd(), _T("ブックマーク") );
+			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_BOOK) );
 			break;
 		case OUTLINE_LIST:	// 汎用リスト 2010.03.28 syat
 			::SetWindowText( GetHwnd(), _T("") );
@@ -562,16 +562,16 @@ void CDlgFuncList::SetData()
 			//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
 			item.mask = LVIF_TEXT;
-			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("宣言"));}else
-			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("関数宣言"));}else
-			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("プロシージャ宣言"));}else
-			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("関数"));}else
-			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("プロシージャ"));}else
-			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("■パッケージ仕様部"));}else
-			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("■パッケージ本体部"));}else
-			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("PROC"));}else
-			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("ラベル"));}else
-			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(_T("ENDP"));}else{
+			if(  1 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK01));}else
+			if( 10 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK02));}else
+			if( 20 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK03));}else
+			if( 11 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK04));}else
+			if( 21 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK05));}else
+			if( 31 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK06));}else
+			if( 41 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK07));}else
+			if( 50 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK08));}else
+			if( 51 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK09));}else
+			if( 52 == pcFuncInfo->m_nInfo ){item.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_REMARK10));}else{
 				// Jul 10, 2003  little YOSHI
 				// ここにあったVB関係の処理はSetListVB()メソッドに移動しました。
 
@@ -687,8 +687,8 @@ void CDlgFuncList::SetData()
 		::EnableWindow( hWnd_Combo_Sort , TRUE );
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
 		Combo_ResetContent( hWnd_Combo_Sort ); // 2002.11.10 Moca 追加
-		Combo_AddString( hWnd_Combo_Sort , _WINT("デフォルト"));
-		Combo_AddString( hWnd_Combo_Sort , _WINT("アルファベット順"));
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1));
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));
 		Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
 		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
@@ -801,14 +801,14 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
 	// 追加文字列の初期化（プラグインで指定済みの場合は上書きしない）
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_DECLARE,		L"(宣言)", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_CLASS,		L" クラス", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_STRUCT,		L" 構造体", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_ENUM,		L" 列挙体", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_UNION,		L" 共用体", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_NAMESPACE,	L" 名前空間", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_INTERFACE,	L" インターフェース", false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_GLOBAL,		L"グローバル", false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_DECLARE,		LSW(STR_DLGFNCLST_APND_DECLARE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_CLASS,		LSW(STR_DLGFNCLST_APND_CLASS),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_STRUCT,		LSW(STR_DLGFNCLST_APND_STRUCT),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_ENUM,		LSW(STR_DLGFNCLST_APND_ENUM),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_UNION,		LSW(STR_DLGFNCLST_APND_UNION),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_NAMESPACE,	LSW(STR_DLGFNCLST_APND_NAMESPACE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_INTERFACE,	LSW(STR_DLGFNCLST_APND_INTERFACE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_GLOBAL,		LSW(STR_DLGFNCLST_APND_GLOBAL),		false );
 	
 	nFuncLineOld = CLayoutInt(-1);
 	nFuncColOld = CLayoutInt(-1);
@@ -1195,57 +1195,57 @@ void CDlgFuncList::SetListVB (void)
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			_tcscpy(szOption, _T("静的 "));
+			_tcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				_tcsncat(szOption, _T("プライベート"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				_tcsncat(szOption, _T("フレンド"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				_tcsncat(szOption, _T("パブリック"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
-				_tcscpy(szType, _T("関数"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
 				break;
 
 			// 2006.12.12 Moca ステータス→プロシージャに変更
 			case 2:		// プロシージャ(Sub)
-				_tcscpy(szType, _T("プロシージャ"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
-				_tcscpy(szType, _T("プロパティ 取得"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
 				break;
 
 			case 4:		// プロパティ 設定(Property Let)
-				_tcscpy(szType, _T("プロパティ 設定"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
 				break;
 
 			case 5:		// プロパティ 参照(Property Set)
-				_tcscpy(szType, _T("プロパティ 参照"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
 				break;
 
 			case 6:		// 定数(Const)
-				_tcscpy(szType, _T("定数"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
 				break;
 
 			case 7:		// 列挙型(Enum)
-				_tcscpy(szType, _T("列挙型"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
 				break;
 
 			case 8:		// ユーザ定義型(Type)
-				_tcscpy(szType, _T("ユーザ定義型"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
 				break;
 
 			case 9:		// イベント(Event)
-				_tcscpy(szType, _T("イベント"));
+				_tcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
 				break;
 
 			default:	// 未定義なのでクリア
@@ -1254,7 +1254,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			_tcsncat(szType, _T("宣言"), _countof(szType) - _tcslen(szType));
+			_tcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), _countof(szType) - _tcslen(szType));
 		}
 
 		TCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
@@ -1497,7 +1497,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.fmt = LVCFMT_LEFT;
 	col.cx = rc.right - rc.left - ( nColWidthArr[1] + nColWidthArr[2] + nColWidthArr[3] ) - nCxVScroll - 8;
 	//	Apr. 23, 2005 genta 行番号を左端へ
-	col.pszText = const_cast<TCHAR*>(_T("行 *"));
+	col.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_LIST_LINE_M));
 	col.iSubItem = FL_COL_ROW;
 	ListView_InsertColumn( hwndList, FL_COL_ROW, &col);
 
@@ -1505,7 +1505,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_COL];
-	col.pszText = const_cast<TCHAR*>(_T("桁"));
+	col.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_LIST_COL));
 	col.iSubItem = FL_COL_COL;
 	ListView_InsertColumn( hwndList, FL_COL_COL, &col);
 
@@ -1513,7 +1513,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_NAME];
 	//	Apr. 23, 2005 genta 行番号を左端へ
-	col.pszText = const_cast<TCHAR*>(_T("関数名"));
+	col.pszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_LIST_FUNC));
 	col.iSubItem = FL_COL_NAME;
 	ListView_InsertColumn( hwndList, FL_COL_NAME, &col);
 
@@ -1915,9 +1915,9 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 	// From Here 2001.12.03 hor
 	//	col.pszText = _T("関数名 *");
 		if(OUTLINE_BOOKMARK == m_nListType){
-			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("テキスト *") : _T("テキスト") );
+			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_TEXT_M) : LS(STR_DLGFNCLST_LIST_TEXT) );
 		}else{
-			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("関数名 *") : _T("関数名") );
+			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_FUNC_M) : LS(STR_DLGFNCLST_LIST_FUNC) );
 		}
 	// To Here 2001.12.03 hor
 		col.iSubItem = 0;
@@ -1925,21 +1925,21 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 
 		col_no = FL_COL_ROW;
 		col.mask = LVCF_TEXT;
-		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("行 *") : _T("行") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_LINE_M) : LS(STR_DLGFNCLST_LIST_LINE) );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 
 		// 2010.03.17 syat 桁追加
 		col_no = FL_COL_COL;
 		col.mask = LVCF_TEXT;
-		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("桁 *") : _T("桁") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_COL_M) : LS(STR_DLGFNCLST_LIST_COL) );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 
 		col_no = FL_COL_REMARK;
 	// From Here 2001.12.07 hor
 		col.mask = LVCF_TEXT;
-		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("*") : _T("") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_M) : _T("") );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 	// To Here 2001.12.07 hor
@@ -2480,9 +2480,9 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		ti.hinst        = m_hInstance;
 		ti.uId          = (UINT_PTR)GetHwnd();
 		switch( m_nHilightedBtn ){
-		case 0: ti.lpszText = const_cast<TCHAR*>(_T("閉じる")); break;
-		case 1: ti.lpszText = const_cast<TCHAR*>(_T("ウィンドウの位置")); break;
-		case 2: ti.lpszText = const_cast<TCHAR*>(_T("更新")); break;
+		case 0: ti.lpszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_TIP_CLOSE)); break;
+		case 1: ti.lpszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_TIP_WIN)); break;
+		case 2: ti.lpszText = const_cast<TCHAR*>(LS(STR_DLGFNCLST_TIP_UPDATE)); break;
 		default: ti.lpszText = NULL;	// 消す
 		}
 		Tooltip_UpdateTipText( m_hwndToolTip, &ti );
@@ -2794,19 +2794,19 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	if( hwndFrom != GetHwnd() ){
 		// 将来、ここに hwndFrom に応じた状況依存メニューを追加するといいかも
 		// （ツリーなら「すべて展開」／「すべて縮小」とか、そういうの）
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 450, _T("更新(&U)") );
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 451, _T("コピー(&C)") );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 450, LS(STR_DLGFNCLST_MENU_UPDATE) );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 451, LS(STR_DLGFNCLST_MENU_COPY) );
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuSub,	_T("ウィンドウの位置(&W)") );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuSub,	LS(STR_DLGFNCLST_MENU_WINPOS) );
 	}
 
 	int iFrom = iPosRef;
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_LEFT,		_T("左ドッキング(&L)") );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_RIGHT,	_T("右ドッキング(&R)") );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_TOP,		_T("上ドッキング(&T)") );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_BOTTOM,	_T("下ドッキング(&B)") );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_FLOAT,	_T("フローティング(&F)") );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_UNDOCKABLE,	_T("ドッキング禁止(&I)") );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_LEFT,       LS(STR_DLGFNCLST_MENU_LEFTDOC) );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_RIGHT,      LS(STR_DLGFNCLST_MENU_RIGHTDOC) );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_TOP,        LS(STR_DLGFNCLST_MENU_TOPDOC) );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_BOTTOM,     LS(STR_DLGFNCLST_MENU_BOTDOC) );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_FLOAT,      LS(STR_DLGFNCLST_MENU_FLOATING) );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 100 + DOCKSIDE_UNDOCKABLE, LS(STR_DLGFNCLST_MENU_NODOCK) );
 	int iTo = iPosRef - 1;
 	for( int i = iFrom; i <= iTo; i++ ){
 		if( ::GetMenuItemID( hMenuRef, i ) == (100 + eDockSide) ){
@@ -2815,18 +2815,18 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}
 	}
 	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-	::InsertMenu( hMenuRef, iPosRef++, uFlags, 200,	_T("ドッキング配置を同期(&S)") );
+	::InsertMenu( hMenuRef, iPosRef++, uFlags, 200, LS(STR_DLGFNCLST_MENU_SYNC) );
 	::CheckMenuItem( hMenuRef, 200, MF_BYCOMMAND | ProfDockSync()? MF_CHECKED: MF_UNCHECKED );
 	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 300, _T("ドッキング配置を共通継承(&C)") );
-	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 301, _T("ドッキング配置をタイプ別継承(&Y)") );
+	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 300, LS(STR_DLGFNCLST_MENU_INHERIT) );
+	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 301, LS(STR_DLGFNCLST_MENU_TYPE) );
 	::CheckMenuRadioItem( hMenuRef, 300, 301, (ProfDockSet() == 0)? 300: 301, MF_BYCOMMAND );
 	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 305, _T("継承情報を統一(&U)") );
+	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 305, LS(STR_DLGFNCLST_MENU_UNIFY) );
 
 	if( hwndFrom != GetHwnd() ){
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 452, _T("閉じる(&X)") );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 452, LS(STR_DLGFNCLST_MENU_CLOSE) );
 	}
 
 	// メニューを表示する
@@ -2862,8 +2862,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	else if( nId == 305 ){	// 設定コピー
 		if( IDOK == ::MYMESSAGEBOX( hwndEdit,
 						MB_OKCANCEL | MB_ICONINFORMATION, GSTR_APPNAME,
-						_T("現在の画面のドッキング配置情報をすべての共通設定・タイプ別設定にコピーして統一します。")
-						_T("\n（現在開いている他画面の状態も統一します。）\n") ) ){
+						LS(STR_DLGFNCLST_UNIFY) ) ){
 			CommonSet().m_bOutlineDockDisp = GetHwnd()? TRUE: FALSE;
 			CommonSet().m_eOutlineDockSide = GetDockSide();
 			if( GetHwnd() ){
