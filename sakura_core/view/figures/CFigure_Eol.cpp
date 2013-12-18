@@ -125,14 +125,30 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // 折り返し描画
-void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
+void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayoutYInt nLineNum )
 {
 	RECT rcClip2;
 	if(pcView->GetTextArea().GenerateClipRect(&rcClip2,*pDispPos,1))
 	{
 		//サポートクラス
 		CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
-		bool bTrans = pcView->IsBkBitmap() && cWrapType.GetBackColor() == CTypeSupport(pcView,COLORIDX_TEXT).GetBackColor();
+		CTypeSupport cTextType(pcView,COLORIDX_TEXT);
+		CTypeSupport cBgLineType(pcView,COLORIDX_CARETLINEBG);
+		bool bBgcolor = cWrapType.GetBackColor() == cTextType.GetBackColor();
+		bool bBgcolorOverwrite = false;
+		bool bTrans = pcView->IsBkBitmap();
+		if( cWrapType.IsDisp() && cBgLineType.IsDisp() ){
+			if( pcView->GetCaret().GetCaretLayoutPos().GetY2() == nLineNum ){
+				if( bBgcolor ){
+					bBgcolorOverwrite = true;
+					bTrans = bTrans && cBgLineType.GetBackColor() == cTextType.GetBackColor();
+				}
+			}
+		}
+		if( !bBgcolorOverwrite ){
+			bTrans = bTrans && bBgcolor;
+		}
+		bool bChangeColor = false;
 
 		//描画文字列と色の決定
 		const wchar_t* szText;
@@ -140,6 +156,10 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 		{
 			szText = L"<";
 			cWrapType.SetGraphicsState_WhileThisObj(gr);
+			if( bBgcolorOverwrite ){
+				bChangeColor = true;
+				gr.PushTextBackColor( cBgLineType.GetBackColor() );
+			}
 		}
 		else
 		{
@@ -157,6 +177,9 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 			wcslen(szText),
 			pcView->GetTextMetrics().GetDxArray_AllHankaku()
 		);
+		if( bChangeColor ){
+			gr.PopTextBackColor();
+		}
 	}
 	pDispPos->ForwardDrawCol(1);
 }

@@ -46,7 +46,7 @@
 #endif
 #endif
 
-void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
+void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayoutYInt nLineNum);
 
 /*
 	PAINT_LINENUMBER = (1<<0), //!< 行番号
@@ -317,6 +317,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 */
 EColorIndexType CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
+	CLayoutYInt				nLineNum,
 	int						nIndex,
 	SColorStrategyInfo* 	pInfo,			// 2010.03.31 ryoji 追加
 	bool					bPrev			// 指定位置の色変更直前まで	2010.06.19 ryoji 追加
@@ -329,14 +330,16 @@ EColorIndexType CEditView::GetColorIndex(
 	}
 
 	const CLayoutColorInfo* colorInfo;
+	const CLayout* pcLayoutLineFirst = pcLayout;
+	CLayoutYInt nLineNumFirst = nLineNum;
 	{
 		// 2002/2/10 aroka CMemory変更
 		pInfo->m_pLineOfLogic = pcLayout->GetDocLineRef()->GetPtr();
 
 		// 論理行の最初のレイアウト情報を取得 -> pcLayoutLineFirst
-		const CLayout* pcLayoutLineFirst = pcLayout;
 		while( 0 != pcLayoutLineFirst->GetLogicOffset() ){
 			pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
+			nLineNumFirst--;
 
 			// 論理行の先頭まで戻らないと確実には正確な色は得られない
 			// （正規表現キーワードにマッチした長い強調表示がその位置のレイアウト行頭をまたいでいる場合など）
@@ -371,6 +374,8 @@ EColorIndexType CEditView::GetColorIndex(
 		//	}
 		//};
 		//pInfo->pDispPos->SetLayoutLineRef(CLayoutInt(TmpVisitor::CalcLayoutIndex(pcLayout)));
+		// 2013.12.11 Moca カレント行の色替えで必要になりました
+		pInfo->m_pDispPos->SetLayoutLineRef(nLineNumFirst);
 	}
 
 	//文字列参照
@@ -385,6 +390,8 @@ EColorIndexType CEditView::GetColorIndex(
 		pInfo->m_pStrategy->SetStrategyColorInfo(colorInfo);
 	}
 
+	const CLayout* pcLayoutNext = pcLayoutLineFirst->GetNextLayout();
+	CLayoutYInt nLineNumScan = nLineNumFirst;
 	int nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
 	while(pInfo->m_nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->m_nPosInLogic == nPosTo )
@@ -399,6 +406,11 @@ EColorIndexType CEditView::GetColorIndex(
 									cLineStr.GetLength(),
 									pInfo->m_nPosInLogic
 								);
+		if( pcLayoutNext && pcLayoutNext->GetLogicOffset() <= pInfo->m_nPosInLogic ){
+			nLineNumScan++;
+			pInfo->m_pDispPos->SetLayoutLineRef(nLineNumScan);
+			pcLayoutNext = pcLayoutNext->GetNextLayout();
+		}
 	}
 
 	CColor3Setting cColor;
@@ -854,7 +866,7 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
-		EColorIndexType eType = GetColorIndex(pcLayout, 0, pInfo, true);
+		EColorIndexType eType = GetColorIndex(pcLayout, pInfo->m_pDispPos->GetLayoutLineRef(), 0, pInfo, true);
 		SetCurrentColor(pInfo->m_gr, eType);
 	}
 
@@ -1025,7 +1037,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	// 必要なら折り返し記号描画
 	if(pcLayout && pcLayout->GetLayoutEol().GetLen()==0 && pcLayout->GetNextLayout()!=NULL){
-		_DispWrap(pInfo->m_gr,pInfo->m_pDispPos,this);
+		_DispWrap(pInfo->m_gr,pInfo->m_pDispPos,this,pInfo->m_pDispPos->GetLayoutLineRef());
 	}
 
 	// 行末背景描画
