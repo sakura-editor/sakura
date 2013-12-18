@@ -344,13 +344,13 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 //		pszMsgText = _T("(これ以降は切り捨てました)");
 //	}
 	if( (! bInit) && m_pcList->GetCount() == 0 ){
-		pszMsgText = _T("(候補は見つかりませんでした)");
+		pszMsgText = LS(STR_DLGTAGJMP2);
 	}
 	if( pszMsgText ){
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.iItem    = nIndex;
 		lvi.iSubItem = 0;
-		lvi.pszText  = const_cast<TCHAR*>(_T("(通知)"));
+		lvi.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP1));
 		lvi.lParam   = -1;
 		ListView_InsertItem( hwndList, &lvi );
 //		ListView_SetItemText( hwndList, nIndex, 1, _T("") );
@@ -466,42 +466,42 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 20 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("キーワード"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST1));
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_CENTER;
 	col.cx       = nWidth * 7 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("階層"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST2));
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_RIGHT;
 	col.cx       = nWidth * 8 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("行番号"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST3));
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 9 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("種類"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST4));
 	col.iSubItem = 3;
 	ListView_InsertColumn( hwndList, 3, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 35 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("ファイル名"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST5));
 	col.iSubItem = 4;
 	ListView_InsertColumn( hwndList, 4, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 21 / 100;
-	col.pszText  = const_cast<TCHAR*>(_T("備考"));
+	col.pszText  = const_cast<TCHAR*>(LS(STR_DLGTAGJMP_LIST6));
 	col.iSubItem = 5;
 	ListView_InsertColumn( hwndList, 5, &col );
 
@@ -953,7 +953,7 @@ int CDlgTagJumpList::FindDirectTagJump()
 
 void CDlgTagJumpList::find_key( const wchar_t* keyword )
 {
-	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, _T("キーワード 検索中...") );
+	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP3) );
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 
 	find_key_core(
@@ -965,7 +965,7 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 		IsDirectTagJump(),
 		IsDirectTagJump() ? 1 : 3
 	);
-	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, _T("キーワード") );
+	DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP_LIST1) );
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 }
 

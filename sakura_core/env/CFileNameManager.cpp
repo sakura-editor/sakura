@@ -409,13 +409,13 @@ bool CFileNameManager::GetMenuFullLabel(
 		//	Jan. 19, 2002 genta
 		//	&の重複処理を追加したため継続判定を若干変更
 		//	20100729 ExpandParameterにあわせて、・・・を...に変更
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts 【Grep】\"%ts%ts\""),
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_GREP),
 			szAccKey, pszKey,
 			( nGrepKeyLen > cmemDes.GetStringLength() ) ? _T("..."):_T("")
 		);
 	}else if( pfi->m_bIsDebug ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts アウトプット"), szAccKey );
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_OUTPUT), szAccKey );
 	}else{
 		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified, pfi->m_nCharCode, bFavorite,
 			 index, bAccKeyZeroOrigin);

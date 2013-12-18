@@ -212,7 +212,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 				return;
 			}
 			if( !pRegex[i].Compile(test[i].szMatch, test[i].nRegexOption) ){
-				ErrorMessage( NULL, _T("正規表現ルール\"%ls\"でエラーが発生しました。\n%ts"),
+				ErrorMessage( NULL, LS(STR_DOCOUTLINE_REGEX),
 					test[i].szMatch,
 					pRegex[i].GetLastMessage()
 				);

@@ -3380,7 +3380,7 @@ BEGIN
 	STR_ERR_DLGUPQRY2			"Reload?"
 
 	// CDlgFind.cpp
-	STR_ERR_DLGFIND1			"Please supply a search term first."
+	STR_DLGFIND1				"Please supply a search term first."
 
 	// CDlgFuncList.cpp
 	STR_ERR_DLGFNCLST1			"C++ Method Tree"
@@ -3454,28 +3454,35 @@ BEGIN
 
 
 	// CDlgGrep.cpp
-	STR_ERR_DLGGREP1			"Please select search folder."
-	STR_ERR_DLGGREP2			"Please define the target search folder."
-	STR_ERR_DLGGREP3			"Target folder is not correct."
+	STR_DLGGREP1				"Please select search folder."
+	STR_DLGGREP2				"ファイル指定のフォルダ部分にはワイルドカードは使えません。"
+	STR_DLGGREP3				"ファイル指定にはフルパスは使えません"
+	STR_DLGGREP4				"Please define the target search folder."
+	STR_DLGGREP5				"Target folder is not correct."
+	STR_DLGGREP6				"検索対象フォルダが長すぎます。"
 
 	// CDlgJump.cpp
-	STR_ERR_DLGJUMP1			"Please input correct line number"
-	STR_ERR_DLGJUMP2			"%d Ln  %s  Package Specification"			// PL/SQL 
+	STR_DLGJUMP1				"Please input correct line number"
+	STR_DLGJUMP_PSLQL			"%d Ln  %ts  Package Specification"			// PL/SQL 
 
 	// CDlgOpenFile.cpp
-	STR_ERR_DLGOPNFL1			"as is"										// Save dialog, CRLF encoding option (none, cr+lf, cr)
-	STR_ERR_DLGOPNFL2			" already exists\r\nOverwrite the file?"
-	STR_ERR_DLGOPNFL3			"Save as"		//"save with name"							// FIXME - used in what context
+	STR_DLGOPNFL1				"as is"										// Save dialog, CRLF encoding option (none, cr+lf, cr)
+	STR_DLGOPNFL2				" already exists\r\nOverwrite the file?"
+	STR_DLGOPNFL3				"Save as"		//"save with name"							// FIXME - used in what context
+	STR_DLGOPNFL_EXTNAME1		"User setting"								// Used for most "eXport" buttons in the File dialog
+	STR_DLGOPNFL_EXTNAME2		"Text File"
+	STR_DLGOPNFL_EXTNAME3		"All Files"
+	STR_DLGOPNFL_NONAME			"No Title"								// Save/Save as dialog box file name
+	STR_DLGOPNFL_ERR1			"Dialog didnt open.\n\nError:%ts"
 
-	STR_ERR_DLGOPNFL4			"User setting"								// Used for most "eXport" buttons in the File dialog
-	STR_ERR_DLGOPNFL5			"Text File"
-	STR_ERR_DLGOPNFL6			"All Files"
-
-	STR_ERR_DLGOPNFL7			"No Title"								// Save/Save as dialog box file name
-
-	STR_ERR_DLGOPNFL8			"Dialog didnt open.\n\nError:%s"
-
-	STR_ERR_DLGOPNFL9			"File path is too long. Cant handle more than ANSI version is %d bytes in absolute path."
+	// CDlgPluginOption.cpp
+	STR_DLGPLUGINOPT_LOAD		"プラグインがロードされていません。"
+	STR_DLGPLUGINOPT_TITLE		"%ls プラグインの設定"
+	STR_DLGPLUGINOPT_INIHEAD	" プラグイン設定ファイル"
+	STR_DLGPLUGINOPT_OPTION		"指定できるオプションがありません"
+	STR_DLGPLUGINOPT_LIST1		"Item"
+	STR_DLGPLUGINOPT_LIST2		"Value"
+	STR_DLGPLUGINOPT_SELECT		"%tsの選択"
 
 	// CDlgPrintPage.cpp
 	STR_ERR_DLGPRNPG1			"%d ～ %d pages"
@@ -3483,71 +3490,74 @@ BEGIN
 	STR_ERR_DLGPRNPG3			"Page border settings are not correct."
 
 	// CDlgPrintSetting.cpp
-	STR_ERR_DLGPRNST1			"Page Setup Profile Name" 
-	STR_ERR_DLGPRNST2			"Please input the profile name"
+	STR_DLGPRNST1				"Page Setup Profile Name" 
+	STR_DLGPRNST2				"Please input the profile name"
 
 	// CDlgProperty.cpp
-	STR_ERR_DLGFLPROP1			"Filename  "
-	STR_ERR_DLGFLPROP2			"File Type  "
-	STR_ERR_DLGFLPROP3			"Character Encoding  "
-
-	STR_ERR_DLGFLPROP4			"Total Lines  %d\r\n"
-	STR_ERR_DLGFLPROP5			"Total including wrapped lines  %d\r\n"
-	STR_ERR_DLGFLPROP6			"Opened in Read-Only mode.\r\n"
-	STR_ERR_DLGFLPROP7			"Updated since last save\r\n"
-	STR_ERR_DLGFLPROP8			"Not changed since last save\r\n"
-	STR_ERR_DLGFLPROP9			"\r\nTotal Editor Commands issued    %d times\r\n"
-	STR_ERR_DLGFLPROP10			"--File Information-----------------\r\n"
-	STR_ERR_DLGFLPROP11			"You have a *write-only* lock on this file that prevents other processes from accessing it.\r\n"
-	STR_ERR_DLGFLPROP12			"You have a *ready-only* lock on this file that prevents other processes from accessing it.\r\n"
-	STR_ERR_DLGFLPROP13			"You locked this file.\r\n"
-	STR_ERR_DLGFLPROP14			"You did not lock this file.\r\n"
-	STR_ERR_DLGFLPROP15			"File Attributes  "
-	STR_ERR_DLGFLPROP16			"/Archive"
-	STR_ERR_DLGFLPROP17			"/Compressed"
-	STR_ERR_DLGFLPROP18			"/Folder"
-	STR_ERR_DLGFLPROP19			"/Hidden"
-	STR_ERR_DLGFLPROP20			"/Normal"
-	STR_ERR_DLGFLPROP21			"/Offline"
-	STR_ERR_DLGFLPROP22			"/Read Only"
-	STR_ERR_DLGFLPROP23			"/System"
-	STR_ERR_DLGFLPROP24			"/Temporary"
-	STR_ERR_DLGFLPROP25			"Create Date  "
-	STR_ERR_DLGFLPROP26			"%dY %dM %dD %02d:%02d:%02d"
-	STR_ERR_DLGFLPROP27			"Modify Date  "
-//	STR_ERR_DLGFLPROP28			"%d年%d月%d日 %02d:%02d:%02d"
-	STR_ERR_DLGFLPROP29			"Access Date  "
-	STR_ERR_DLGFLPROP30			"%dY %dM %dD"
-	STR_ERR_DLGFLPROP31			"MS-DOS Filename  %s\r\n"
-	STR_ERR_DLGFLPROP32			"File Size  %d Bytes\r\n"
+	STR_DLGFLPROP01				"Filename  "
+	STR_DLGFLPROP02				"File Type  "
+	STR_DLGFLPROP03				"Character Encoding  "
+	STR_DLGFLPROP04				" with BOM"
+	STR_DLGFLPROP05				"Total Lines  %d\r\n"
+	STR_DLGFLPROP06				"Total including wrapped lines  %d\r\n"
+	STR_DLGFLPROP07				"Opened in Read-Only mode.\r\n"
+	STR_DLGFLPROP08				"Updated since last save\r\n"
+	STR_DLGFLPROP09				"Not changed since last save\r\n"
+	STR_DLGFLPROP10				"\r\nTotal Editor Commands issued    %d times\r\n"
+	STR_DLGFLPROP11				"--File Information-----------------\r\n"
+	STR_DLGFLPROP12				"You have a *write-only* lock on this file that prevents other processes from accessing it.\r\n"
+	STR_DLGFLPROP13				"You have a *ready-only* lock on this file that prevents other processes from accessing it.\r\n"
+	STR_DLGFLPROP14				"You locked this file.\r\n"
+	STR_DLGFLPROP15				"You did not lock this file.\r\n"
+	STR_DLGFLPROP16				"File Attributes  "
+	STR_DLGFLPROP17				"/Archive"
+	STR_DLGFLPROP18				"/Compressed"
+	STR_DLGFLPROP19				"/Folder"
+	STR_DLGFLPROP20				"/Hidden"
+	STR_DLGFLPROP21				"/Normal"
+	STR_DLGFLPROP22				"/Offline"
+	STR_DLGFLPROP23				"/Read Only"
+	STR_DLGFLPROP24				"/System"
+	STR_DLGFLPROP25				"/Temporary"
+	STR_DLGFLPROP26				"Create Date  "
+	STR_DLGFLPROP27				"%dY %dM %dD %02d:%02d:%02d"
+	STR_DLGFLPROP28				"Modify Date  "
+	STR_DLGFLPROP29				"Access Date  "
+	STR_DLGFLPROP30				"%dY %dM %dD"
+	STR_DLGFLPROP31				"MS-DOS Filename  %ts\r\n"
+	STR_DLGFLPROP32				"File Size  %d Bytes\r\n"
 
 	// CDlgReplace.cpp
-	STR_ERR_DLGREPLC1			"There is no valid data in the clipboard！"
-	STR_ERR_DLGREPLC2			"No Selected Text to Replace"
-	STR_ERR_DLGREPLC3			"Changed %d occurances"
-	STR_ERR_DLGREPLC4			"Please provide a replacement term first."
+	STR_DLGREPLC_CLIPBOARD		"There is no valid data in the clipboard！"
+	STR_DLGREPLC_STR			"No Selected Text to Replace"
+	STR_DLGREPLC_REPLACE		"Changed %d occurances"
+	STR_DLGREPLC_REPSTR			"Please provide a replacement term first."
 
 	// CDlgSameColor.cpp
 	STR_DLGSMCLR_BTN1			"foreground color unity"											// FIXME - correct?
 	STR_DLGSMCLR_BTN2			"background color unity"
 
 	// CDlgTagJumpList.cpp
-	STR_ERR_DLGTAGJMP1			"(report)"															// FIXME - correct?
-	STR_ERR_DLGTAGJMP2			"(below will be discarded)"											// FIXME ???
-	STR_ERR_DLGTAGJMP3			"Keyword"
-	STR_ERR_DLGTAGJMP4			"hierarchical"
-	STR_ERR_DLGTAGJMP5			"Line Nr"
-	STR_ERR_DLGTAGJMP6			"Type"
-	STR_ERR_DLGTAGJMP7			"File Name"
-	STR_ERR_DLGTAGJMP8			"Notes"
+	STR_DLGTAGJMP1				"(report)"															// FIXME - correct?
+	STR_DLGTAGJMP2				"(候補は見つかりませんでした)"											// FIXME ???
+	STR_DLGTAGJMP_LIST1			"Keyword"
+	STR_DLGTAGJMP_LIST2			"hierarchical"
+	STR_DLGTAGJMP_LIST3			"Line Nr"
+	STR_DLGTAGJMP_LIST4			"Type"
+	STR_DLGTAGJMP_LIST5			"File Name"
+	STR_DLGTAGJMP_LIST6			"Notes"
+	STR_DLGTAGJMP3				"Keyword Searching..."
 
 	// CDlgTagsMake.cpp
-	STR_ERR_DLGTAGMAK1			"Select folder for tag creation"
+	STR_DLGTAGMAK_SELECTDIR		"Select folder for tag creation"
 
 	// CDlgWinSize.cpp
 	STR_DLGWINSZ_NORMAL			"Normal"  // Window Settings &W indow to size
 	STR_DLGWINSZ_MAXIMIZE		"Maximize"
 	STR_DLGWINSZ_MINIMIZE		"(Minimize)"
+
+	// CDocOutline.cpp
+	STR_DOCOUTLINE_REGEX		"正規表現ルール\\%ls\\でエラーが発生しました。\n%ts"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%s\n file couldnt be opened.\nFile is not valid."
@@ -3610,8 +3620,10 @@ BEGIN
 	STR_ERR_DLGEDITDOC28		"(NoTitle10)"
 
 	STR_ERR_DLGEDITDOC29		"Grep is processing...\n"
-	STR_ERR_DLGEDITDOC30		"%s\nhas been altered. Save before closing？\n\nDue to opening as read-only it is suggested to save under a different name.\n"
-	STR_ERR_DLGEDITDOC31		"%s\nhas been altered. Save before closing？"
+	STR_TITLE_GREP				"[Grep] %ls%ts"
+	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing？\n\nDue to opening as view-mode it is suggested to save under a different name.\n"
+	STR_CHANGE_CHARSET			"%ts\nはテキストの変更は有りませんが、\n文字コードセットが変更されています。\n閉じる前に保存しますか？"
+	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing？"
 	STR_AUTORELOAD_NOFITY		"★File Updated at %02d:%02d:%02d"
 
 	// 64 bytes max, automatically 
@@ -3783,7 +3795,7 @@ BEGIN
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
 	STR_ERR_DLGEDITWND15		"Recent Folders(&D)"		// Open Folder task tray icon
 	STR_ERR_DLGEDITWND16		"CEditWnd::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
-	STR_ERR_DLGEDITWND17		"&%c output"
+	STR_MENU_OUTPUT				"%ts output"
 	STR_ERR_DLGEDITWND18		"(No Title05)"				// Menu bar :: Window list (Empty doc)
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん

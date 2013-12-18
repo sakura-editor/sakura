@@ -252,8 +252,8 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			BOOL bDlgInputResult=cDlgInput1.DoModal(
 				m_hInstance,
 				GetHwnd(),
-				_T("İ’è–¼‚Ì•ÏX"),
-				_T("İ’è‚Ì–¼Ì‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B"),
+				LS(STR_DLGPRNST1),
+				LS(STR_DLGPRNST2),
 				_countof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
 				szWork
 			);

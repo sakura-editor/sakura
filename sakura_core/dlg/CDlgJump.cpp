@@ -171,7 +171,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 		if( 0 < GetData() ){
 			CloseDialog( 1 );
 		}else{
-			OkMessage( GetHwnd(), _T("正しく行番号を入力してください。") );
+			OkMessage( GetHwnd(), LS(STR_DLGJUMP1) );
 		}
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
@@ -229,12 +229,12 @@ void CDlgJump::SetData( void )
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				auto_sprintf( szText, L"%d 行  %ts  パッケージ仕様部",
+				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				auto_sprintf( szText, L"%d 行  %ts  パッケージ仕様部",
+				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
@@ -250,12 +250,12 @@ void CDlgJump::SetData( void )
 		}
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				auto_sprintf( szText, L"%d 行  %ts  パッケージ本体部",
+				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				auto_sprintf( szText, L"%d 行  %ts  パッケージ本体部",
+				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);

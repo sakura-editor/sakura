@@ -122,7 +122,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 	/* フォルダ */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
-	if( SelectDir( hwndDlg, _T("タグ作成フォルダの選択"), szPath, szPath ) )
+	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
 	{
 		//末尾に\\マークを追加する．
 		int pos = _tcslen( szPath );

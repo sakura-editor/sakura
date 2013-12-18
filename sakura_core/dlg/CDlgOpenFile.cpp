@@ -160,7 +160,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	};
 	//	文字列はResource内に入れる
 	static const TCHAR*	const	pEolNameArr[] = {
-		_T("変換なし"),
+		_T("変換なし"), // ダミー
 		_T("CR+LF"),
 		_T("LF (UNIX)"),
 		_T("CR (Mac)"),
@@ -225,7 +225,11 @@ UINT_PTR CALLBACK OFNHookProc(
 				// 2013.05.27 初期値をSaveInfoから設定する
 				nIdxSel = 0;
 				for( i = 0; i < nEolNameArrNum; ++i ){
-					nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
+					if( i == 0 ){
+						nIdx = Combo_AddString( hwndComboEOL, LS(STR_DLGOPNFL1) );
+					}else{
+						nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
+					}
 					Combo_SetItemData( hwndComboEOL, nIdx, nEolValueArr[i] );
 					if( nEolValueArr[i] == pcDlgOpenFile->m_cEol ){
 						nIdxSel = nIdx;
@@ -378,8 +382,8 @@ UINT_PTR CALLBACK OFNHookProc(
 				if( IsFileExists(pcDlgOpenFile->m_szPath, true) ){
 					TCHAR szText[_MAX_PATH + 100];
 					lstrcpyn(szText, pcDlgOpenFile->m_szPath, _MAX_PATH);
-					::_tcscat(szText, _T(" は既に存在します。\r\n上書きしますか？"));
-					if( IDYES != ::MessageBox( hwndOpenDlg, szText, _T("名前を付けて保存"), MB_YESNO | MB_ICONEXCLAMATION) ){
+					::_tcscat(szText, LS(STR_DLGOPNFL2));
+					if( IDYES != ::MessageBox( hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 						::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 						return TRUE;
 					}
@@ -641,9 +645,9 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( _T("ユーザー指定"),     m_szDefaultWildCard );
-	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
-	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
 
 	/* 構造体の初期化 */
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
@@ -713,9 +717,9 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( _T("ユーザー指定"),     m_szDefaultWildCard );
-	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
-	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
 	
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
 	if( pszPath[0] ){
@@ -769,8 +773,8 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 
 	// ファイルの種類	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
-	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
 	for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &type);
@@ -860,13 +864,13 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( _T("ユーザー指定"),     m_szDefaultWildCard );
-	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
-	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
 	if( pSaveInfo->cFilePath[0] == _T('\0') )
-		lstrcpyn(pSaveInfo->cFilePath, LS( STR_ERR_DLGOPNFL7 ), _MAX_PATH);	// 無題
+		lstrcpyn(pSaveInfo->cFilePath, LS(STR_DLGOPNFL_NONAME), _MAX_PATH);	// 無題
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
@@ -977,9 +981,7 @@ void CDlgOpenFile::DlgOpenFail(void)
 
 	ErrorBeep();
 	TopErrorMessage( m_hwndParent,
-		_T("ダイアログが開けません。\n")
-		_T("\n")
-		_T("エラー:%ts"),
+		LS(STR_DLGOPNFL_ERR1),
 		pszError
 	);
 }
