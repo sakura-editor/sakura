@@ -1500,9 +1500,9 @@ BEGIN
     CONTROL         "アイコン表示(&I)",IDC_CHECK_DispTabIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,70,115,59,10
-    LTEXT           "閉じるボタン(&X)",IDC_STATIC,133,116,68,8
-    COMBOBOX        IDC_CHECK_DispTabClose,176,113,46,80,CBS_DROPDOWNLIST | 
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,80,115,39,10
+    LTEXT           "閉じるボタン(&X)",IDC_STATIC,124,116,48,8
+    COMBOBOX        IDC_CHECK_DispTabClose,173,113,46,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     RTEXT           "Font", IDC_STATIC_TABFONT,102,127,180,17,SS_RIGHT
