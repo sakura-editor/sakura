@@ -287,9 +287,15 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 {
 	HFONT	hFont;
 	TCHAR	szFontName[80];
+	LOGFONT lfTemp;
+	lfTemp = lf;
+	// 大きすぎるフォントは小さく表示
+	if( lfTemp.lfHeight < -16 ){
+		lfTemp.lfHeight = -16;
+	}
 
 	if (bUse) {
-		hFont = SetCtrlFont( hwndDlg, idc_static, lf );
+		hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 		// フォント名の設定
 		auto_sprintf( szFontName, nps % 10 ? _T("%s(%.1fpt)") : _T("%s(%.0fpt)"),
