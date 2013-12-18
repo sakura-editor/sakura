@@ -89,6 +89,8 @@ public:
 	void CreateTypeSettings();
 	std::vector<STypeConfig*>& GetTypeSettings();
 
+	// 国際化対応のための文字列を変更する(コントロールプロセス専用)
+	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);
 
 protected:
 	/*
