@@ -309,7 +309,7 @@ bool CDocFileOperation::SaveFileDialog(
 		if( 0 < node->m_nId ){
 			TCHAR szText[16];
 			auto_sprintf(szText, _T("%d"), node->m_nId);
-			auto_strcpy(pSaveInfo->cFilePath, LS(STR_ERR_DLGOPNFL7));	// –³‘è
+			auto_strcpy(pSaveInfo->cFilePath, LS(STR_DLGOPNFL_NONAME));	// –³‘è
 			auto_strcat(pSaveInfo->cFilePath, szText);
 		}
 	}
