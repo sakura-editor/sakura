@@ -78,6 +78,7 @@ class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
+struct CColor3Setting;
 
 // struct DispPos; //	誰かがincludeしてます
 // class CColorStrategy;	// 誰かがincludeしてます
@@ -245,9 +246,8 @@ protected:
 
 	//色分け
 public:
-	EColorIndexType GetColorIndex( const CLayout*, CLayoutYInt, int, SColorStrategyInfo* pInfo, bool bPrev = false );				/* 指定位置のColorIndexの取得 02/12/13 ai */
-	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
-	void SetCurrentColor3( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
+	CColor3Setting GetColorIndex( const CLayout* pcLayout, CLayoutYInt nLineNum, int nIndex, SColorStrategyInfo* pInfo, bool bPrev = false );	/* 指定位置のColorIndexの取得 02/12/13 ai */
+	void SetCurrentColor( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
 	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 	COLORREF GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 

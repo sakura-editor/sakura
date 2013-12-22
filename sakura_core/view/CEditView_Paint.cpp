@@ -315,7 +315,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	CEditView::DrawLogicLineを元にしたためCEditView::DrawLogicLineに
 	修正があった場合は、ここも修正が必要。
 */
-EColorIndexType CEditView::GetColorIndex(
+CColor3Setting CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
 	CLayoutYInt				nLineNum,
 	int						nIndex,
@@ -326,7 +326,8 @@ EColorIndexType CEditView::GetColorIndex(
 	EColorIndexType eRet = COLORIDX_TEXT;
 
 	if(!pcLayout){
-		return COLORIDX_TEXT;
+		CColor3Setting cColor = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
+		return cColor;
 	}
 
 	const CLayoutColorInfo* colorInfo;
@@ -416,30 +417,7 @@ EColorIndexType CEditView::GetColorIndex(
 	CColor3Setting cColor;
 	pInfo->DoChangeColor(&cColor);
 
-	eRet = pInfo->GetCurrentColor2();
-
-	return eRet;
-}
-
-
-/*! 現在の色を指定
-	@param eColorIndex 現在の色
-
-	@date 2013.05.08 novice 範囲外チェック削除
-*/
-void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
-{
-	//インデックス決定
-	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
-
-	//実際に色を設定
-	const ColorInfo& info = m_pTypeData->m_ColorInfoArr[nColorIdx];
-	gr.SetTextForeColor(info.m_sColorAttr.m_cTEXT);
-	gr.SetTextBackColor(info.m_sColorAttr.m_cBACK);
-	SFONT sFont;
-	sFont.m_sFontAttr = info.m_sFontAttr;
-	sFont.m_hFont = GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
-	gr.SetMyFont(sFont);
+	return cColor;
 }
 
 /*! 現在の色を指定
@@ -449,7 +427,7 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 
 	@date 2013.05.08 novice 範囲外チェック削除
 */
-void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
+void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
 {
 	//インデックス決定
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
@@ -866,8 +844,8 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
-		EColorIndexType eType = GetColorIndex(pcLayout, pInfo->m_pDispPos->GetLayoutLineRef(), 0, pInfo, true);
-		SetCurrentColor(pInfo->m_gr, eType);
+		CColor3Setting cColor = GetColorIndex(pcLayout, pInfo->m_pDispPos->GetLayoutLineRef(), 0, pInfo, true);
+		SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 	}
 
 	//開始ロジック位置を算出
@@ -950,7 +928,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 			if( bChange ){
 				pInfo->DoChangeColor(&cColor);
-				SetCurrentColor3(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
+				SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 		}
 		return false;
@@ -1008,7 +986,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			if( pInfo->CheckChangeColor(cLineStr) ){
 				CColor3Setting cColor;
 				pInfo->DoChangeColor(&cColor);
-				SetCurrentColor3(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
+				SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
 			//1文字情報取得 $$高速化可能
