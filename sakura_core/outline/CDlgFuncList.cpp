@@ -321,13 +321,14 @@ HWND CDlgFuncList::DoModeless(
 	if( IsDocking() ){
 		// ドッキング用にダイアログテンプレートに手を加えてから表示する（WS_CHILD化）
 		if( !m_pDlgTemplate ){
-			HRSRC hResInfo = ::FindResource( NULL, MAKEINTRESOURCE(IDD_FUNCLIST), RT_DIALOG );
+			HINSTANCE hInstance2 = CSelectLang::getLangRsrcInstance();
+			HRSRC hResInfo = ::FindResource( hInstance2, MAKEINTRESOURCE(IDD_FUNCLIST), RT_DIALOG );
 			if( !hResInfo ) return NULL;
-			HGLOBAL hResData = ::LoadResource( NULL, hResInfo );
+			HGLOBAL hResData = ::LoadResource( hInstance2, hResInfo );
 			if( !hResData ) return NULL;
 			m_pDlgTemplate = (LPDLGTEMPLATE)::LockResource( hResData );
 			if( !m_pDlgTemplate ) return NULL;
-			m_dwDlgTmpSize = ::SizeofResource( NULL, hResInfo );
+			m_dwDlgTmpSize = ::SizeofResource( hInstance2, hResInfo );
 		}
 		LPDLGTEMPLATE pDlgTemplate = (LPDLGTEMPLATE)::GlobalAlloc( GMEM_FIXED, m_dwDlgTmpSize );
 		if( !pDlgTemplate ) return NULL;
