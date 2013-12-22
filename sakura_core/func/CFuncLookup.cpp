@@ -274,6 +274,7 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) c
 
 	// ‹¤’ÊÝ’è‚Å–¼Ì‚ðÝ’è‚µ‚Ä‚¢‚ê‚Î‚»‚ê‚ð•Ô‚·
 	if ( m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ][0] != '\0' ) {
+		wcscpyn( buf, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ], bufSize );
 		return m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ index ];
 	}
 
