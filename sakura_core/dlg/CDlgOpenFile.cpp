@@ -870,7 +870,7 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
 	if( pSaveInfo->cFilePath[0] == _T('\0') )
-		lstrcpyn(pSaveInfo->cFilePath, LS(STR_DLGOPNFL_NONAME), _MAX_PATH);	// 無題
+		lstrcpyn(pSaveInfo->cFilePath, LS(STR_NO_TITLE2), _MAX_PATH);	// 無題
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji

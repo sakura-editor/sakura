@@ -73,23 +73,22 @@ static const DWORD p_helpids1[] = {	//11300
 };
 
 
-// TODO プラグイン追加のため英語化（TYPE_NAME_ID化）を保留
 //アウトライン解析方法・標準ルール
-TYPE_NAME<EOutlineType> OlmArr[] = {
+TYPE_NAME_ID<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
-	{ OUTLINE_CPP,		_T("C/C++") },
-	{ OUTLINE_PLSQL,	_T("PL/SQL") },
-	{ OUTLINE_JAVA,		_T("Java") },
-	{ OUTLINE_COBOL,	_T("COBOL") },
-	{ OUTLINE_PERL,		_T("Perl") },				//Sep. 8, 2000 genta
-	{ OUTLINE_ASM,		_T("アセンブラ") },
-	{ OUTLINE_VB,		_T("Visual Basic") },		// 2001/06/23 N.Nakatani
-	{ OUTLINE_PYTHON,	_T("Python") },				//	2007.02.08 genta
-	{ OUTLINE_ERLANG,	_T("Erlang") },				//	2009.08.10 genta
-	{ OUTLINE_WZTXT,	_T("WZ階層付テキスト") },	// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
-	{ OUTLINE_HTML,		_T("HTML") },				// 2003.05.20 zenryaku
-	{ OUTLINE_TEX,		_T("TeX") },				// 2003.07.20 naoh
-	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
+	{ OUTLINE_CPP,		STR_OUTLINE_CPP },
+	{ OUTLINE_PLSQL,	STR_OUTLINE_PLSQL },
+	{ OUTLINE_JAVA,		STR_OUTLINE_JAVA },
+	{ OUTLINE_COBOL,	STR_OUTLINE_COBOL },
+	{ OUTLINE_PERL,		STR_OUTLINE_PERL },			//Sep. 8, 2000 genta
+	{ OUTLINE_ASM,		STR_OUTLINE_ASM },
+	{ OUTLINE_VB,		STR_OUTLINE_VB },			// 2001/06/23 N.Nakatani
+	{ OUTLINE_PYTHON,	STR_OUTLINE_PYTHON },		//	2007.02.08 genta
+	{ OUTLINE_ERLANG,	STR_OUTLINE_ERLANG },			//	2009.08.10 genta
+	{ OUTLINE_WZTXT,	STR_OUTLINE_WZ },			// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
+	{ OUTLINE_HTML,		STR_OUTLINE_HTML },			// 2003.05.20 zenryaku
+	{ OUTLINE_TEX,		STR_OUTLINE_TEX },		// 2003.07.20 naoh
+	{ OUTLINE_TEXT,		STR_OUTLINE_TEXT }		//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 
 TYPE_NAME_ID<ETabArrow> TabArrowArr[] = {
@@ -98,10 +97,9 @@ TYPE_NAME_ID<ETabArrow> TabArrowArr[] = {
 	{ TABARROW_LONG,	STR_TAB_SYMBOL_LONG_ARROW },	//_T("長い矢印")
 };
 
-// TODO プラグイン追加のため英語化（TYPE_NAME_ID化）を保留
-TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
-	{ SMARTINDENT_NONE,	_T("なし") },
-	{ SMARTINDENT_CPP,	_T("C/C++") },
+TYPE_NAME_ID<ESmartIndentType> SmartIndentArr[] = {
+	{ SMARTINDENT_NONE,	STR_SMART_INDENT_NONE },
+	{ SMARTINDENT_CPP,	STR_SMART_INDENT_C_CPP },
 };
 
 /*!	2行目以降のインデント方法
@@ -123,18 +121,18 @@ TYPE_NAME_ID<int> WrapMethodArr[] = {
 };
 
 //静的メンバ
-std::vector<TYPE_NAME<EOutlineType> > CPropTypes::m_OlmArr;	//!<アウトライン解析ルール配列
-std::vector<TYPE_NAME<ESmartIndentType> > CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
+std::vector<TYPE_NAME_ID2<EOutlineType> > CPropTypes::m_OlmArr;	//!<アウトライン解析ルール配列
+std::vector<TYPE_NAME_ID2<ESmartIndentType> > CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
 
 //スクリーンタブの初期化
 void CPropTypesScreen::CPropTypes_Screen()
 {
 	//プラグイン無効の場合、ここで静的メンバを初期化する。プラグイン有効の場合はAddXXXMethod内で初期化する。
 	if( m_OlmArr.empty() ){
-		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//アウトライン解析ルール
+		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
 	}
 	if( m_SIndentArr.empty() ){
-		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//スマートインデントルール
+		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
 	}
 }
 
@@ -486,7 +484,11 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int		nSelPos = 0;
 		int nSize = (int)m_SIndentArr.size();
 		for( int i = 0; i < nSize; ++i ){
-			Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
+			if( m_SIndentArr[i].pszName == NULL ){
+				Combo_InsertString( hwndCombo, i, LS(m_SIndentArr[i].nNameId) );
+			}else{
+				Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
+			}
 			if( m_SIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
 				nSelPos = i;
 			}
@@ -521,7 +523,11 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int		nSelPos = 0;
 		int nSize = (int)m_OlmArr.size();
 		for( int i = 0; i < nSize; ++i ){
-			Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
+			if( m_OlmArr[i].pszName == NULL ){
+				Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
+			}else{
+				Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
+			}
 			if( m_OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;
 			}
@@ -736,10 +742,11 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_OlmArr.empty() ){
-		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//アウトライン解析ルール
+		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
 	}
-	TYPE_NAME<EOutlineType> method;
+	TYPE_NAME_ID2<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
+	method.nNameId = 0;
 	const TCHAR* tszName = to_tchar( szName );
 	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
 	_tcscpy( pszName, tszName );
@@ -763,10 +770,11 @@ void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
 void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_SIndentArr.empty() ){
-		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//スマートインデントルール
+		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
 	}
-	TYPE_NAME<ESmartIndentType> method;
+	TYPE_NAME_ID2<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
+	method.nNameId = 0;
 	const TCHAR* tszName = to_tchar( szName );
 	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
 	_tcscpy( pszName, tszName );

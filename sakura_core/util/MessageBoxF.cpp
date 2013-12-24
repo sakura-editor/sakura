@@ -115,7 +115,7 @@ int CustomMessage   (HWND hwnd, UINT uType, LPCTSTR format, ...){   va_list p;va
 int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){   va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, uType | MB_TOPMOST            , GSTR_APPNAME,   format, p);va_end(p);return n;}	//(TOPMOST)
 
 //作者に教えて欲しいエラー
-int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("sakura: 作者に教えて欲しいエラー"), format, p);va_end(p);return n;}
+int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, LS(STR_ERR_DLGDOCLMN1), format, p);va_end(p);return n;}
 
 
 

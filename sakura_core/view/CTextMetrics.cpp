@@ -66,7 +66,7 @@ void CTextMetrics::Update(HFONT hFont)
 #ifdef _UNICODE
 		::GetTextExtentPoint32( hdc, L"xx", 2, &sz );
 #else
-		::GetTextExtentPoint32( hdc, "Се", 2, &sz );
+		::GetTextExtentPoint32( hdc, LS(STR_ERR_DLGEDITVW2), 2, &sz );
 #endif
 		this->SetHankakuHeight(sz.cy);
 		this->SetHankakuWidth(sz.cx / 2);

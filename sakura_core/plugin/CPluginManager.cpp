@@ -86,7 +86,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	if (hFind == INVALID_HANDLE_VALUE) {
 		//プラグインフォルダが存在しない
 		if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
-			InfoMessage( hWndOwner, _T("%s"), _T("プラグインフォルダを作成出来ません"));
+			InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_FOLDER));
 			return true;
 		}
 	}
@@ -106,10 +106,10 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	}
 
 	if (bCancel) {
-		InfoMessage( hWndOwner, _T("%s"), _T("キャンセルされました"));
+		InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_CANCEL));
 	}
 	else if (!bFindNewDir) {
-		InfoMessage( hWndOwner, _T("%s"), _T("新しいプラグインは見つかりませんでした"));
+		InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_NEWPLUGIN));
 	}
 
 	return true;
@@ -156,12 +156,12 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			}
 
 			bFindNewDir = true;
-			int nRes = Select3Message( hWndOwner, _T("プラグイン「%ts」をインストールしますか？"), wf.cFileName );
+			int nRes = Select3Message( hWndOwner, LS(STR_PLGMGR_INSTALL), wf.cFileName );
 			if (nRes == IDYES) {
 				std::wstring errMsg;
 				int pluginNo = InstallPlugin( common, wf.cFileName, hWndOwner, errMsg );
 				if( pluginNo < 0 ){
-					WarningMessage( hWndOwner, _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"),
+					WarningMessage( hWndOwner, LS(STR_PLGMGR_INSTALL_ERR),
 						wf.cFileName, errMsg.c_str() );
 				}
 			}
@@ -225,8 +225,8 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
-		auto_snprintf_s( msg, _countof(msg), _T("ZIPファイルは扱えません") );
-		InfoMessage( hWndOwner, _T("%s"), msg);
+		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP) );
+		InfoMessage( hWndOwner, _T("%ts"), msg);
 		return false;
 	}
 
@@ -236,13 +236,13 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 	if ((hFind = ::FindFirstFile( (m_sBaseDir + _T("*")).c_str(), &wf )) == INVALID_HANDLE_VALUE) {
 		//プラグインフォルダが存在しない
 		if (m_sBaseDir == m_sExePluginDir) {
-			InfoMessage( hWndOwner, _T("プラグインフォルダがありません"));
+			InfoMessage( hWndOwner, LS(STR_PLGMGR_ERR_FOLDER));
 			::FindClose(hFind);
 			return false;
 		}
 		else {
 			if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
-				WarningMessage( hWndOwner, _T("プラグインフォルダを作成出来ません") );
+				WarningMessage( hWndOwner, LS(STR_PLGMGR_ERR_CREATEDIR) );
 				::FindClose(hFind);
 				return false;
 			}
@@ -268,14 +268,14 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 
 	// Plugin フォルダ名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.SetZip(sZipFile)) {
-		auto_snprintf_s( msg, _countof(msg), _T("ZIPファイル「%ts」にアクセス出来ません"), sDispName.c_str() );
+		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ACCESS), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
 
 	// Plgin フォルダ名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.ChkPluginDef(PII_FILENAME, sFolderName)) {
-		auto_snprintf_s( msg, _countof(msg), _T("ZIPファイル「%ts」にはプラグイン定義ファイル（plugin.def）がありません"), sDispName.c_str() );
+		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_DEF), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
@@ -296,7 +296,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 				bNewPlugin = true;
 			}
 			else {
-				if( ConfirmMessage( hWndOwner, _T("「%ts」は既にインストールされています\n上書きしますか？"),
+				if( ConfirmMessage( hWndOwner, LS(STR_PLGMGR_INST_ZIP_ALREADY),
 						sDispName.c_str() ) != IDYES ){
 					// Yesで無いなら終了
 					return false;
@@ -314,7 +314,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		}
 		if (bOk) {
 			bNewPlugin= true;
-			int nRes = Select3Message( hWndOwner, _T("ZIPプラグイン「%ts」を「%ts」にインストールしますか？"),
+			int nRes = Select3Message( hWndOwner, LS(STR_PLGMGR_INST_ZIP_INST),
 				sDispName.c_str(), sFolderName.c_str() );
 			switch (nRes) {
 			case IDCANCEL:
@@ -330,13 +330,13 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 
 	// Zip解凍
 	if (bOk && !cZipFile.Unzip(m_sBaseDir)) {
-		auto_snprintf_s( msg, _countof(msg), _T("ZIPプラグイン「%ts」の解凍に失敗しました"), sDispName.c_str() );
+		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_UNZIP), sDispName.c_str() );
 		bOk = false;
 	}
 	if (bOk) {
 		int pluginNo = InstallPlugin( common, to_tchar(sFolderName.c_str()), hWndOwner, errMsg, true );
 		if( pluginNo < 0 ){
-			auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"), sDispName.c_str(), errMsg.c_str() );
+			auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ERR), sDispName.c_str(), errMsg.c_str() );
 			bOk = false;
 		}
 	}
@@ -363,14 +363,14 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( (m_sBaseDir + pszPluginName + _T("\\") + PII_FILENAME).c_str() )
 		&& !cProfDef.ReadProfile( (m_sExePluginDir + pszPluginName + _T("\\") + PII_FILENAME).c_str() ) ){
-		errorMsg = L"プラグイン定義ファイル（plugin.def）がありません";
+		errorMsg = LSW(STR_PLGMGR_INST_DEF);
 		return -1;
 	}
 
 	std::wstring sId;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_ID, sId );
 	if( sId.length() == 0 ){
-		errorMsg = L"Plugin.IDがありません";
+		errorMsg = LSW(STR_PLGMGR_INST_ID);
 		return -1;
 	}
 	//2010.08.04 ID使用不可の文字を確認
@@ -378,12 +378,12 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( sId.npos != sId.find(szReservedChars[x]) ){
-			errorMsg = std::wstring(L"Plugin.IDに\"") + szReservedChars + L"\"は使用できません";
+			errorMsg = std::wstring(LSW(STR_PLGMGR_INST_RESERVE1)) + szReservedChars + LSW(STR_PLGMGR_INST_RESERVE2);
 			return -1;
 		}
 	}
 	if( WCODE::Is09(sId[0]) ){
-		errorMsg = L"Plugin.IDの先頭に数字は使用できません";
+		errorMsg = LSW(STR_PLGMGR_INST_IDNUM);
 		return -1;
 	}
 
@@ -398,11 +398,11 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 		}
 		if( wcscmp( sId.c_str(), plugin_table[iNo].m_szId ) == 0 ){	//ID一致
 			if (!bUpdate) {
-				const TCHAR* msg = _T("同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%ts」を使用\n　いいえ→　インストール済みの「%ls」を使用");
+				const TCHAR* msg = LS(STR_PLGMGR_INST_NAME);
 				// 2010.08.04 削除中のIDは元の位置へ追加(復活させる)
 				if( plugin_table[iNo].m_state != PLS_DELETED &&
 				  ConfirmMessage( hWndOwner, msg, static_cast<const TCHAR*>(pszPluginName), static_cast<const WCHAR*>(plugin_table[iNo].m_szName) ) != IDYES ){
-					errorMsg = L"ユーザキャンセル";
+					errorMsg = LSW(STR_PLGMGR_INST_USERCANCEL);
 					return -1;
 				}
 			}
@@ -413,7 +413,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 	}
 
 	if( nEmpty == -1 ){
-		errorMsg = L"プラグインをこれ以上登録できません";
+		errorMsg = LSW(STR_PLGMGR_INST_MAX);
 		return -1;
 	}
 

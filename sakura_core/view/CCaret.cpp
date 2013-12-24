@@ -674,7 +674,7 @@ void CCaret::ShowCaretPosInfo()
 	if (hwndStatusBar) {
 		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal() );
 		if (m_pEditDoc->GetDocumentBomExist()) {
-			cmemCodeName.AppendString( _T(" BOM•t") );
+			cmemCodeName.AppendString( LS(STR_CARET_WITHBOM) );
 		}
 	}
 	else {

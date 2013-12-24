@@ -109,7 +109,7 @@ bool CControlProcess::InitializeProcess()
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
+		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
 	SetMainWindow(hwnd);
@@ -118,7 +118,7 @@ bool CControlProcess::InitializeProcess()
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("SetEvent()失敗。\n終了します。") );
+		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
 		return false;
 	}
 

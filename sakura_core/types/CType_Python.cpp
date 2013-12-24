@@ -503,7 +503,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				szWord[ len ] = L'\0';
 			}
 			else {
-				wcscpy( szWord, L"ñºèÃñ¢íË" );
+				wcscpy( szWord, LSW(STR_OUTLINE_PYTHON_UNDEFINED) );
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
@@ -512,7 +512,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					len = _countof( szWord ) - 8;
 				}
 				// class
-				wcscpy( szWord + len, L" ÉNÉâÉX" );
+				wcscpy( szWord + len, LSW(STR_OUTLINE_PYTHON_CLASS) );
 			}
 			
 			/*

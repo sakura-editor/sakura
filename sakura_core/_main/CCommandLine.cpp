@@ -285,8 +285,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					TCHAR msg_str[_MAX_PATH + 1];
 					_stprintf(
 						msg_str,
-						_T("%ls\r\n")
-						_T("上記のファイル名は不正です。ファイル名に \\ / : * ? \" < > | の文字は使えません。 "),
+						LS(STR_CMDLINE_PARSECMD1),
 						szPath
 					);
 					MessageBox( NULL, msg_str, _T("FileNameError"), MB_OK);

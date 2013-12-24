@@ -272,7 +272,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		pszType
 	);
 	if ( !bLoadResult ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD30), pszPath );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_MACROERR1), pszPath );
 	}
 	else {
 		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );

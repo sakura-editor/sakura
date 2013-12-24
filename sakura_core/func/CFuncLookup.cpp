@@ -121,7 +121,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 			_tcstowcs( ptr, p, bufsize - 1 );
 			ptr[ bufsize - 1 ] = LTEXT('\0');
 		}else{
-			_snwprintf( ptr, bufsize, LTEXT("マクロ %d (未登録)"), position );
+			_snwprintf( ptr, bufsize, LSW(STR_ERR_DLGFUNCLKUP03), position );
 			ptr[ bufsize - 1 ] = LTEXT('\0');
 		}
 		return true;
@@ -173,10 +173,10 @@ const TCHAR* CFuncLookup::Category2Name( int category ) const
 		return LS( nsFuncCode::ppszFuncKind[category] );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO ){
-		return LS( STR_ERR_DLGFUNCLKUP1 );
+		return LS( STR_ERR_DLGFUNCLKUP01 );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU ){
-		return LS( STR_ERR_DLGFUNCLKUP2 );
+		return LS( STR_ERR_DLGFUNCLKUP02 );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		return LS( STR_ERR_DLGFUNCLKUP19 );
@@ -201,9 +201,9 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 	}
 
 	//	ユーザマクロ
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP1 ) );
+	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
 	//	カスタムメニュー
-	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP2 ) );
+	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );
 	//	プラグイン
 	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
 }

@@ -150,7 +150,7 @@ void CMainToolBar::CreateToolBar( void )
 		);
 
 		if( NULL == m_hwndReBar ){
-			TopWarningMessage( m_pOwner->GetHwnd(), _T("Rebar の作成に失敗しました。") );
+			TopWarningMessage( m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND04) );
 			return;
 		}
 
@@ -188,7 +188,7 @@ void CMainToolBar::CreateToolBar( void )
 		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
-		TopWarningMessage( m_pOwner->GetHwnd(), _T("ツールバーの作成に失敗しました。") );
+		TopWarningMessage( m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND05) );
 		DestroyToolBar();	// 2006.06.17 ryoji
 	}
 	else{

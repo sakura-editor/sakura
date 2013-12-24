@@ -129,14 +129,14 @@ bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 	if( INVALID_HANDLE_VALUE == m_hLockedFile && bMsg ){
 		const TCHAR*	pszMode;
 		switch( eShareMode ){
-		case SHAREMODE_DENY_READWRITE:	pszMode = _T("読み書き禁止モード"); break;
-		case SHAREMODE_DENY_WRITE:		pszMode = _T("書き込み禁止モード"); break;
-		default:						pszMode = _T("未定義のモード（問題があります）"); break;
+		case SHAREMODE_DENY_READWRITE:	pszMode = LS(STR_EXCLU_DENY_READWRITE); break;
+		case SHAREMODE_DENY_WRITE:		pszMode = LS(STR_EXCLU_DENY_WRITE); break;
+		default:						pszMode = LS(STR_EXCLU_UNDEFINED); break;
 		}
 		TopWarningMessage(
 			CEditWnd::getInstance()->GetHwnd(),
-			_T("%ts\nを%tsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
-			GetFilePathClass().IsValidPath() ? GetFilePath() : _T("(無題)"),
+			LS(STR_FILE_LOCK_ERR),
+			GetFilePathClass().IsValidPath() ? GetFilePath() : LS(STR_NO_TITLE1),
 			pszMode
 		);
 		return false;

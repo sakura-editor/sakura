@@ -175,7 +175,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 			case 2: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
+					SendStatusMessage(LS(STR_EDITVWISRCH_REGEX));
 					return;
 				}
 				m_sCurSearchOption.bRegularExp = true;
@@ -185,7 +185,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 			case 3: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
+					SendStatusMessage(LS(STR_EDITVWISRCH_REGEX));
 					return;
 				}
 				if(m_pcmigemo==NULL){
@@ -197,7 +197,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				//	可能性があるので，使用可能でなければ一応初期化を試みる
 				if ( !m_pcmigemo->IsAvailable() && DLL_SUCCESS != m_pcmigemo->InitDll() ){
 					WarningBeep();
-					SendStatusMessage(_T("MIGEMO.DLLが使用できません。"));
+					SendStatusMessage(LS(STR_EDITVWISRCH_MIGEGO1));
 					return;
 				}
 				m_pcmigemo->migemo_load_all();
@@ -207,7 +207,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
 					WarningBeep();
-					SendStatusMessage(_T("MIGEMOは使用できません。 "));
+					SendStatusMessage(LS(STR_EDITVWISRCH_MIGEGO2));
 					return;
 				}
 				break;
@@ -420,7 +420,7 @@ void CEditView::ISearchExec(bool bNext)
 	);
 	if( nSearchResult == 0 ){
 		/*検索結果がない*/
-		msg.AppendString(_T(" (見つかりません)"));
+		msg.AppendString(LS(STR_EDITVWISRCH_NOMATCH));
 		SendStatusMessage(msg.GetStringPtr());
 		
 		if (bNext) 	m_bISearchWrap = true;

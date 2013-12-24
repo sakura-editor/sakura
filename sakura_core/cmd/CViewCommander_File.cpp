@@ -274,7 +274,7 @@ void CViewCommander::Command_FILE_REOPEN(
 			m_pCommanderView->GetHwnd(),
 			MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 			GSTR_APPNAME,
-			_T("%ts\n\nこのファイルは変更されています。\n再ロードを行うと変更が失われますが、よろしいですか?"),
+			LS(STR_ERR_CEDITVIEW_CMD29),
 			pcDoc->m_cDocFile.GetFilePath()
 		);
 		if( IDOK == nDlgResult ){
@@ -346,7 +346,7 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
 		_countof(source_ext), _countof(header_ext),
-		_T("C/C++ヘッダファイルのオープンに失敗しました。") );
+		LS(STR_ERR_CEDITVIEW_CMD08) );
 }
 
 
@@ -361,7 +361,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
 		_countof(header_ext), _countof(source_ext),
-		_T("C/C++ソースファイルのオープンに失敗しました。"));
+		LS(STR_ERR_CEDITVIEW_CMD09));
 }
 
 
@@ -405,8 +405,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			m_pCommanderView->GetHwnd(),
 			MB_YESNOCANCEL | MB_ICONEXCLAMATION,
 			GSTR_APPNAME,
-			_T("%ts\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？"),
-			GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ? GetDocument()->m_cDocFile.GetFilePath() : _T("(無題)")
+			LS(STR_ERR_CEDITVIEW_CMD18),
+			GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ? GetDocument()->m_cDocFile.GetFilePath() : LS(STR_NO_TITLE1)
 		);
 		switch( nRet ){
 		case IDYES:

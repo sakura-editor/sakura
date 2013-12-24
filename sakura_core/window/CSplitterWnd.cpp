@@ -78,7 +78,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 	if( 0 == atWork ){
-		ErrorMessage( NULL, _T("SplitterWndクラスの登録に失敗しました。") );
+		ErrorMessage( NULL, LS(STR_ERR_CSPLITTER01) );
 	}
 
 	/* 基底クラスメンバ呼び出し */

@@ -383,7 +383,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	int ret = 0;
 	if( NULL == pfi ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts •s–¾(‰ž“š‚È‚µ)"), szAccKey );
+		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
 		return true; // true‚É‚µ‚Ä‚¨‚­
 	}else if( pfi->m_bIsGrep ){
 		

@@ -367,7 +367,7 @@ BOOL CEditView::Create(
 
 	/* タイマー起動 */
 	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, nKeyBoardSpeed, EditViewTimerProc ) ){
-		WarningMessage( GetHwnd(), _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+		WarningMessage( GetHwnd(), LS(STR_VIEW_TIMER) );
 	}
 
 	m_bHideMouse = false;
@@ -1499,8 +1499,8 @@ int	CEditView::CreatePopUpMenu_R( void )
 	// 2010.07.24 Moca オーナードロー対応のために前に移動してCMenuDrawer経由で追加する
 	if( !GetSelectionInfo().IsMouseSelecting() ){
 		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
-			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, _T("キーワードの説明をクリップボードにコピー"), _T("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
-			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, _T("キーワード辞書を開く"), _T("L") );	// 2006.04.10 fon
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, LS(STR_MENU_KEYWORDINFO), _T("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, LS(STR_MENU_OPENKEYWORDDIC), _T("L") );	// 2006.04.10 fon
 			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
 		}
 	}

@@ -223,7 +223,7 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	{
 		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
 		std::vector<SHokanMethod>* pMedothList = GetHokanMethodList();
-		ApiWrap::Combo_AddString( hCombo, L"‚È‚µ" );
+		ApiWrap::Combo_AddString( hCombo, LS(STR_SMART_INDENT_NONE) );
 		Combo_SetCurSel( hCombo, 0 );
 		size_t nSize = pMedothList->size();
 		for( size_t i = 0; i < nSize; i++ ){

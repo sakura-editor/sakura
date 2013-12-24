@@ -307,11 +307,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 		);
 		PleaseReportToAuthor(
 			NULL,
-			_T("CPropCommon::DoPropertySheet()内でエラーが出ました。\n")
-			_T("psh.nStartPage=[%d]\n")
-			_T("::PropertySheet()失敗\n")
-			_T("\n")
-			_T("%ts\n"),
+			LS(STR_ERR_DLGPROPCOMMON24),
 			psh.nStartPage,
 			pszMsgBuf
 		);

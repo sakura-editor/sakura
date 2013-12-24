@@ -474,7 +474,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 		}
 		return;
 	}
-	out.WriteF( LTEXT("CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n") );
+	out.WriteF( LSW(STR_ERR_DLGMACRO01) );
 }
 
 /**	マクロ引数変換
@@ -497,7 +497,8 @@ bool CMacro::HandleCommand(
 	const int			ArgSize
 )
 {
-	static const TCHAR EXEC_ERROR_TITLE[] = _T("Macro実行エラー");
+	std::tstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
+	const TCHAR* EXEC_ERROR_TITLE = EXEC_ERROR_TITLE_string.c_str();
 
 	switch ( LOWORD(Index) ) 
 	{
@@ -509,7 +510,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("挿入すべき文字コードが指定されていません．")
+				LS(STR_ERR_DLGMACRO03)
 			);
 			return false;
 		}
@@ -545,7 +546,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("入力改行コードが指定されていません．")
+				LS(STR_ERR_DLGMACRO03_1)
 			);
 			return false;
 		}
@@ -574,7 +575,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("引数(文字列)が指定されていません．")
+				LS(STR_ERR_DLGMACRO04)
 			);
 			return false;
 		}
@@ -592,7 +593,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("引数(文字列)が指定されていません．")
+				LS(STR_ERR_DLGMACRO04)
 			);
 			return false;
 		}
@@ -623,7 +624,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("ジャンプ先行番号が指定されていません．")
+				LS(STR_ERR_DLGMACRO05)
 			);
 			return false;
 		}
@@ -642,7 +643,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T("マーク行のパターンが指定されていません．")
+				LS(STR_ERR_DLGMACRO06)
 			);
 			return false;
 		}
@@ -721,7 +722,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T(	"引数(文字列)が指定されていません．" )
+				LS(STR_ERR_DLGMACRO07)
 			);
 			return false;
 		}
@@ -743,7 +744,7 @@ bool CMacro::HandleCommand(
 				NULL,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				EXEC_ERROR_TITLE,
-				_T(	"引数(文字列)が指定されていません．" )
+				LS(STR_ERR_DLGMACRO07)
 			);
 			return false;
 		}
@@ -766,7 +767,7 @@ bool CMacro::HandleCommand(
 		//		現在は特になし
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T(	"ファイル名が指定されていません．" ));
+				LS(STR_ERR_DLGMACRO08));
 			return false;
 		}
 		{
@@ -807,12 +808,12 @@ bool CMacro::HandleCommand(
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
 		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("置換元パターンが指定されていません．"));
+				LS(STR_ERR_DLGMACRO09));
 			return false;
 		}
 		if( Argument[1] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("置換先パターンが指定されていません．"));
+				LS(STR_ERR_DLGMACRO10));
 			return false;
 		}
 		{
@@ -897,17 +898,17 @@ bool CMacro::HandleCommand(
 		//		0x080000	フォルダ毎に表示
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("GREPパターンが指定されていません．"));
+				LS(STR_ERR_DLGMACRO11));
 			return false;
 		}
 		if( Argument[1] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("ファイル種別が指定されていません．"));
+				LS(STR_ERR_DLGMACRO12));
 			return false;
 		}
 		if( Argument[2] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("検索先フォルダが指定されていません．"));
+				LS(STR_ERR_DLGMACRO13));
 			return false;
 		}
 		{
@@ -988,7 +989,7 @@ bool CMacro::HandleCommand(
 		//	Argument[0]を開く。
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("読み込みファイル名が指定されていません．"));
+				LS(STR_ERR_DLGMACRO14));
 			return false;
 		}
 		{
@@ -1004,7 +1005,7 @@ bool CMacro::HandleCommand(
 		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == NULL ||  L'\0' == Argument[0][0]) ){
 			// F_FILESAVEAS_DIALOGの場合は空文字列を許容
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("保存ファイル名が指定されていません．"));
+				LS(STR_ERR_DLGMACRO15));
 			return false;
 		}
 		{
@@ -1113,7 +1114,7 @@ bool CMacro::HandleCommand(
 				pcEditView->GetCommander().HandleCommand( Index, true, lparam1, lparam2, lparam3, 0);
 			}else{
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				_T("数値を指定してください．"));
+				LS(STR_ERR_DLGMACRO16));
 				return false;
 			}
 		}
@@ -1142,7 +1143,7 @@ bool CMacro::HandleCommand(
 		{
 			if( Argument[0] == NULL ){
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-					_T("引数(文字列)が指定されていません．") );
+					LS(STR_ERR_DLGMACRO07) );
 				return false;
 			}
 			std::tstring val0 = to_tchar(Argument[0]);

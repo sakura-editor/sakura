@@ -241,7 +241,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		wc.lpszClassName	= GSTR_CEDITAPP;
 		ATOM	atom = RegisterClass( &wc );
 		if( 0 == atom ){
-			ErrorMessage( NULL, _T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。") );
+			ErrorMessage( NULL, LS(STR_TRAY_CREATE) );
 		}
 	}
 	g_m_pCControlTray = this;
@@ -431,7 +431,7 @@ LRESULT CControlTray::DispatchEvent(
 			szClassName[0] = L'\0';
 			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
 			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
-			if( 0 == _tcscmp( szText, _T("共通設定") ) ){
+			if( 0 == _tcscmp( szText, LS(STR_PROPCOMMON) ) ){
 				return -1;
 			}
 
@@ -674,11 +674,11 @@ LRESULT CControlTray::DispatchEvent(
 					type->m_id = ::GetTickCount() + nInsert * 0x10000;
 					// 同じ名前のものがあったらその次にする
 					int nAddNameNum = nInsert + 1;
-					auto_sprintf( type->m_szTypeName, _T("設定%d"), nAddNameNum ); 
+					auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 					for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
 						if( auto_strcmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
 							nAddNameNum++;
-							auto_sprintf( type->m_szTypeName, _T("設定%d"), nAddNameNum ); 
+							auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 							k = 0;
 						}
 					}
@@ -755,7 +755,7 @@ LRESULT CControlTray::DispatchEvent(
 					}while(IDYES == ::MYMESSAGEBOX( 
 							NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
 							GSTR_APPNAME,
-							_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"))
+							LS(STR_TRAY_EXTHELP1))
 					);/*do-while*/
 
 					break;
@@ -1093,7 +1093,7 @@ bool CControlTray::OpenNewEditor(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
 
@@ -1147,14 +1147,14 @@ bool CControlTray::OpenNewEditor(
 			GetInidir(szIniDir);
 			LPTSTR pszTempFile = _ttempnam(szIniDir, _T("skr_resp"));
 			if( !pszTempFile ){
-				ErrorMessage(hWndParent, _T("レスポンスファイルの作成に失敗しました。"));
+				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
 			auto_strcpy(szResponseFile, pszTempFile);
 			free(pszTempFile);
 			CTextOutputStream output(szResponseFile);
 			if( !output ){
-				ErrorMessage(hWndParent, _T("レスポンスファイルの作成に失敗しました。"));
+				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
 			respDeleter.fileName = szResponseFile;
@@ -1226,7 +1226,7 @@ bool CControlTray::OpenNewEditor(
 		);
 		ErrorMessage(
 			hWndParent,
-			_T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"),
+			LS(STR_TRAY_CREATEPROC1),
 			szEXE,
 			pMsg
 		);
@@ -1241,7 +1241,7 @@ bool CControlTray::OpenNewEditor(
 		if( nResult != 0 ){
 			ErrorMessage(
 				hWndParent,
-				_T("\'%ts\'\nプロセスの起動に失敗しました。"),
+				LS(STR_TRAY_CREATEPROC2),
 				szEXE
 			);
 			bRet = false;
@@ -1310,7 +1310,7 @@ bool CControlTray::OpenNewEditor2(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
 
@@ -1429,7 +1429,7 @@ void CControlTray::TerminateApplication(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
-				_T("現在開いている編集用のウィンドウをすべて閉じて終了しますか?")
+				LS(STR_TRAY_EXITALL)
 			) ){
 				return;
 			}
@@ -1677,9 +1677,7 @@ void CControlTray::CreateAccelTbl( void )
 	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
 		ErrorMessage(
 			NULL,
-			_T("CControlTray::CreateAccelTbl()\n")
-			_T("アクセラレータ テーブルが作成できません。\n")
-			_T("システムリソースが不足しています。")
+			LS(STR_TRAY_ACCELTABLE)
 		);
 	}
 }

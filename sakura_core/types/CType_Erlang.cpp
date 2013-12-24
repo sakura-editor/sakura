@@ -246,7 +246,7 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 					case L']': op = L'['; break;
 					case L'}': op = L'{'; break;
 					default:
-						PleaseReportToAuthor(NULL, _T("COutlineErlang::ScanArgs –¢’m‚ÌŠ‡ŒÊ"));
+						PleaseReportToAuthor(NULL, LS(STR_OUTLINE_ERLANG_SCANARGS));
 						op = 0;
 						break;
 				}

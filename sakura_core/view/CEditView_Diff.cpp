@@ -104,7 +104,7 @@ void CEditView::ViewDiffInfo(
 	//	diff.exeの存在チェック
 	if( INVALID_FILE_ATTRIBUTES == ::GetFileAttributes( cmdline ) )
 	{
-		WarningMessage( GetHwnd(), _T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
+		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2) );
 		return;
 	}
 	cmdline[0] = _T('\0');
@@ -197,7 +197,7 @@ void CEditView::ViewDiffInfo(
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
 	{
-			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n%ls"), cmdline );
+			WarningMessage( NULL, LS(STR_ERR_DLGEDITVWDIFF3), cmdline );
 		goto finish;
 	}
 
@@ -253,7 +253,7 @@ void CEditView::ViewDiffInfo(
 						bFirst = false;
 						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
 						{
-							WarningMessage( NULL, _T("DIFF差分を行おうとしたファイルはバイナリファイルです。") );
+							WarningMessage( NULL, LS(STR_ERR_DLGEDITVWDIFF4) );
 							goto finish;
 						}
 					}
@@ -337,7 +337,7 @@ void CEditView::ViewDiffInfo(
 	{
 		if( !CDiffManager::getInstance()->IsDiffUse() )
 		{
-			InfoMessage( this->GetHwnd(), _T("DIFF差分は見つかりませんでした。") );
+			InfoMessage( this->GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF5) );
 		}
 	}
 
@@ -476,7 +476,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	//一時
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
-		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。") );
+		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
 		return FALSE;
 	}
 
@@ -500,7 +500,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	CTextOutputStream out(filename, CODE_SJIS);
 	if(!out){
-		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
+		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}
 
@@ -518,7 +518,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 			if( nLineLen > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
 				out.Close();
 				_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-				WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );
+				WarningMessage( NULL, LS(STR_DIFF_FAILED_LONG) );
 				return FALSE;
 			}
 		}
@@ -534,7 +534,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 		catch(...){
 			out.Close();
 			_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
+			WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 		}
 
 		y++;

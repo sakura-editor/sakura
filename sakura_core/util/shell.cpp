@@ -149,8 +149,8 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			GetMonitorWorkRect( pt, &rc );	// モニタのワークエリア
 
 			HMENU hMenu = ::CreatePopupMenu();
-			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, _T("開く(&O)...") );
-			::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, _T("インポート／エクスポートの起点リセット(&R)") );
+			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, LS(STR_SHELL_MENU_OPEN) );
+			::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, LS(STR_SHELL_MENU_IMPEXP) );
 
 			int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 										( pt.x > rc.left )? pt.x: rc.left,
@@ -204,8 +204,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					hwnd,
 					MB_OKCANCEL | MB_ICONINFORMATION,
 					GSTR_APPNAME,
-					_T("各種設定のインポート／エクスポート用ファイル選択画面の\n")
-					_T("初期表示フォルダを設定フォルダに戻します。")
+					LS(STR_SHELL_IMPEXPDIR)
 				);
 				if( IDOK == nMsgResult )
 				{
@@ -236,7 +235,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 	if( uMsg == PSCB_INITIALIZED ){
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-		HWND hwndBtn = ::CreateWindowEx( 0, _T("BUTTON"), _T("設定フォルダ(&/) >>"), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+		HWND hwndBtn = ::CreateWindowEx( 0, _T("BUTTON"), LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
 		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
 		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 	}
@@ -358,9 +357,8 @@ HWND OpenHtmlHelp(
 	if( msgflag ){
 		::MessageBox(
 			hWnd,
-			_T("HHCTRL.OCXが見つかりません。\r\n")
-			_T("HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"),
-			_T("情報"),
+			LS(STR_SHELL_HHCTRL),
+			LS(STR_SHELL_INFO),
 			MB_OK | MB_ICONEXCLAMATION
 		);
 	}

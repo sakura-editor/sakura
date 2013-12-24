@@ -3292,12 +3292,12 @@ BEGIN
 //	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
 	STR_NO_TITLE1				"(No Title)"
+	STR_NO_TITLE2				"No Title"
 	STR_PREVIEW_ONLY			"(Available in Print Preview)"
 	STR_NOT_SAVED				"(Not Saved)"
 
 	// CCommandLine.cpp - cant map properly	
-	STR_ERR_OVERFLOW1			"File path is too long. ANSI paths over %d bytes cannot be used."
-	STR_ERR_PARSECMD1			"%s\r\nThe above file name is not correct.  File name cannot contain the following characters; \\ / : * ? "" < > | ."
+	STR_CMDLINE_PARSECMD1		"%ls\r\nThe above file name is not correct.  File name cannot contain the following characters; \\ / : * ? "" < > | ."
 
 	// CControlProcess.cpp
 	STR_ERR_CTRLMTX1			"CreateMutex() failed.\n Will exit app."
@@ -3488,7 +3488,6 @@ BEGIN
 	STR_DLGOPNFL_EXTNAME1		"User setting"								// Used for most "eXport" buttons in the File dialog
 	STR_DLGOPNFL_EXTNAME2		"Text File"
 	STR_DLGOPNFL_EXTNAME3		"All Files"
-	STR_DLGOPNFL_NONAME			"No Title"								// Save/Save as dialog box file name
 	STR_DLGOPNFL_ERR1			"Dialog didnt open.\n\nError:%ts"
 
 	// CDlgPluginOption.cpp
@@ -3499,11 +3498,6 @@ BEGIN
 	STR_DLGPLUGINOPT_LIST1		"Item"
 	STR_DLGPLUGINOPT_LIST2		"Value"
 	STR_DLGPLUGINOPT_SELECT		"%tsの選択"
-
-	// CDlgPrintPage.cpp
-	STR_ERR_DLGPRNPG1			"%d ～ %d pages"
-	STR_ERR_DLGPRNPG2			"Input Error"
-	STR_ERR_DLGPRNPG3			"Page border settings are not correct."
 
 	// CDlgPrintSetting.cpp
 	STR_DLGPRNST1				"Page Setup Profile Name" 
@@ -3576,11 +3570,11 @@ BEGIN
 	STR_DOCOUTLINE_REGEX		"正規表現ルール\\%ls\\でエラーが発生しました。\n%ts"
 
 	// CDocLineMgr.cpp
-	STR_ERR_DLGDOCLM1			"%s\n file couldnt be opened.\nFile is not valid."
-	STR_ERR_DLGDOCLM2			"'%s'\n file could not be opened.\nCould not get acesses to the file."
-	STR_ERR_DLGDOCLM3			"'%s'\n file could not be opened.\nIts possible another application is using the file."
-	STR_ERR_DLGDOCLM4			"'%s' error occured whilst trying to read the file.\nWill stop attempting to read file."
-	STR_ERR_DLGDOCLM5			"'%s'\nCould not save file.\nIncorrect path or other application is using the file."
+	STR_ERR_DLGDOCLM1			"%ls\n file couldnt be opened.\nFile is not valid."
+	STR_ERR_DLGDOCLM2			"'%ls'\n file could not be opened.\nCould not get acesses to the file."
+	STR_ERR_DLGDOCLM3			"'%ls'\n file could not be opened.\nIts possible another application is using the file."
+	STR_ERR_DLGDOCLM4			"'%ls' error occured whilst trying to read the file.\nWill stop attempting to read file."
+	STR_ERR_DLGDOCLM5			"'%ls'\nCould not save file.\nIncorrect path or other application is using the file."
 	STR_ERR_DLGDOCLM6			"CDocLineMgr::GetAllData()\nFailure to reserve memory \n%d bytes"
 
 	// CDocLineMgr_New.cpp
@@ -3590,19 +3584,14 @@ BEGIN
 	STR_ERR_DLGDRPTGT1			"::RegisterDragDrop()\nError"
 
 	// CEditApp.cpp
-	STR_ERR_DLGEDITAPP1			"CEditApp::CEditApp()\nCoule not create accelerator table.\nInsufficient system resources."
-	STR_ERR_DLGEDITAPP2			"CEditApp::Create()\nCould not register window class."
-	STR_ERR_DLGEDITAPP3			"共通設定" // <--- check this strcmp
-	STR_ERR_DLGEDITAPP4			"CEditApp::DispatchEvent()\nCould not create accelerator table.\nInsufficient system resrouces."
-	STR_ERR_DLGEDITAPP5			"External Help 1 is unset.\nSet it now?"
-	STR_ERR_DLGEDITAPP6			"Maximum of %d editor windows reached.\nCan not open more windows that this."
-	STR_ERR_DLGEDITAPP7			"'%s'\nFailed to execute process.\n%s"
-	STR_ERR_DLGEDITAPP8			"'%s'\nFailed to execute process."
-	STR_ERR_DLGEDITAPP9			"Maximum of %d editor windows reached.\nCan not open more windows that this."
-	STR_ERR_DLGEDITAPP10		"Recently Used File(&F)"													// Right-Click Tray Menu 
-	STR_ERR_DLGEDITAPP11		"Recently used Folder(&D)"													// Right-Click Tray Menu 
-	STR_ERR_DLGEDITAPP12		"Close all open windows, and exit editor without saving?"					// When you exit editor
-	STR_ERR_DLGEDITAPP13		"(NoTitle07)"																// Used in Right Click task tray
+	STR_TRAY_CREATE				"CControlTray::Create()\nCould not register window class."
+	STR_TRAY_TYPE_NAME			"Set %d"
+	STR_TRAY_EXTHELP1			"External Help 1 is unset.\nSet it now?"
+	STR_TRAY_RESPONSEFILE		"レスポンスファイルの作成に失敗しました。"
+	STR_TRAY_CREATEPROC1		"'%ts'\nFailed to execute process.\n%ts"
+	STR_TRAY_CREATEPROC2		"'%ts'\nFailed to execute process."
+	STR_TRAY_EXITALL			"Close all open windows, and exit editor without saving?"					// When you exit editor
+	STR_TRAY_ACCELTABLE			"CControlTray::CreateAccelTbl()\nCoule not create accelerator table.\nInsufficient system resources."
 
 
 	// CEditDoc.cpp
@@ -3611,9 +3600,7 @@ BEGIN
 	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
 	STR_SAVEAGENT_OTHER			"\'%ts\'\nファイルを保存できません。\n他のウィンドウで使用中です。"
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
-	STR_ERR_DLGEDITDOC6			"%s\n\nThis file was last opened with %s character encoding.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%s\n\t[(N)o]=%s\n\t[Cancel]=Dont Open"
-	STR_ERR_DLGEDITDOC7			"Bug, please report this to the developer team."
-	STR_ERR_DLGEDITDOC8			"【handling】Please report this to the developer team."
+	STR_ERR_DLGEDITDOC6			"%ts\n\nこのファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\nUse same character formatting as last time?\n\n\t[(Y)es]  =%ts\n\t[(N)o]=%ts\n\t[Cancel]=Dont Open"
 	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doenst exist.\n\nWhen you save this document the file will be created on the disk."
 	STR_BACKUP_ERR_TITLE		"File Save"
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
@@ -3625,53 +3612,43 @@ BEGIN
 	STR_BACKUP_ERR_DELETE		"failed to delete"
 	STR_BACKUP_ERR_MOVE			"failed to move"
 	STR_ERR_DLGEDITDOC21		"%ts\nis currently prohibited from writing by another process."
-	STR_ERR_DLGEDITDOC22		"(NoTitle)"
 
 	STR_EXCLU_NO_EXCLUSIVE		"No Exclusive Mode"
 	STR_EXCLU_DENY_WRITE		"Deny Write Access Mode"
 	STR_EXCLU_DENY_READWRITE	"Deny Read-Write Access Mode"
-	STR_ERR_DLGEDITDOC25		"Undefined mode (problem)"
-	STR_ERR_DLGEDITDOC26		"%s\n [%s] could not obtain lock\nThe exclusive lock on the current file is now invalid."
-	STR_ERR_DLGEDITDOC27		"(NoTitle09)"																// Dialog on closing asking if you want to save
-	STR_ERR_DLGEDITDOC28		"(NoTitle10)"
+	STR_EXCLU_UNDEFINED			"Undefined mode (problem)"
+	STR_FILE_LOCK_ERR			"%ts\n [%ts] could not obtain lock\nThe exclusive lock on the current file is now invalid."
 
-	STR_ERR_DLGEDITDOC29		"Grep is processing...\n"
 	STR_TITLE_GREP				"[Grep] %ls%ts"
 	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing？\n\nDue to opening as view-mode it is suggested to save under a different name.\n"
 	STR_CHANGE_CHARSET			"%ts\nはテキストの変更は有りませんが、\n文字コードセットが変更されています。\n閉じる前に保存しますか？"
 	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing？"
 	STR_AUTORELOAD_NOFITY		"★File Updated at %02d:%02d:%02d"
 
-	// 64 bytes max, automatically 
-	STR_ERR_DLGEDITDOC33		"(Only Usable from Print Preview)"
-	STR_ERR_DLGEDITDOC34		"(No Title11)"																// No title for document title bar, and tab name
-	STR_ERR_DLGEDITDOC35		"(No Saved)"
+	// CType_Cpp.cpp
+	STR_OUTLINE_CPP_NONAME		"No Name"
+	STR_OUTLINE_CPP_DEFPOS		"::def. pos."																// Defined position
 
+	// CType_Python.cpp
+	STR_OUTLINE_PYTHON_UNDEFINED	"unset name"
+	STR_OUTLINE_PYTHON_CLASS		" Class"
 
-	// CEditDoc_FuncList1.cpp
-	STR_ERR_DLGEDITDOCFL11		"No Name"
-	STR_ERR_DLGEDITDOCFL12		"::def. pos."																// Defined position
+	// CType_Java.cpp
+	STR_OUTLINE_JAVA_DEFPOS		"def. pos."												// Defined position
 
-	// CEditDoc_FuncList2.cpp
-	STR_ERR_DLGEDITDOCFL21		"unset name"
-	STR_ERR_DLGEDITDOCFL22		" Class"
+	// CType_Erlang.cpp
+	STR_OUTLINE_ERLANG_SCANARGS	"COutlineErlang::ScanArgs 未知の括弧"
 
-	// CEditDoc_new.cpp
-	STR_ERR_DLGEDITDOCNEW1		"def. pos."												// Defined position
-	STR_ERR_DLGEDITDOCNEW2		"Failed to change file name[%s]"
-	STR_ERR_DLGEDITDOCNEW3		"%s\n\n was opened in read only mode. Cannot over write file.\n\nPlease save under a different name."
-	STR_ERR_DLGEDITDOCNEW4		"(NoTitle12)"
-	STR_ERR_DLGEDITDOCNEW5		"Unable to overwrite the same file when read-only mode."
+	// Caret.cpp
+	STR_CARET_WITHBOM			" BOM"
 
 	// CEditView.cpp
-	STR_ERR_DLGEDITVW1			"CEditView::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
+	STR_VIEW_TIMER				"CEditView::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
 	STR_ERR_DLGEDITVW2			"大"													// Used in get Extents
-	STR_ERR_DLGEDITVW3			"Possible bug, please report to the development team."
-	STR_ERR_DLGEDITVW4			"Possible bug, please report to the development team."
 	STR_ERR_DLGEDITVW5			"\n--------------------\n■"
 	STR_ERR_DLGEDITVW6			"■"
-	STR_ERR_DLGEDITVW7			"Copy (&K)eyword description to clipboard"				// Right click menu
-	STR_ERR_DLGEDITVW8			"Open keyword dictionary (&J)"							// Right click menu
+	STR_MENU_KEYWORDINFO		"Copy Keyword description to clipboard"				// Right click menu
+	STR_MENU_OPENKEYWORDDIC		"Open keyword dictionary"							// Right click menu
 	STR_STATUS_ROW_COL			"%5d Ln %4d Col"
 	STR_INS_MODE_INS			"INS"													// Insert mode
 	STR_INS_MODE_OVR			"OVR"													// Overwrite mode
@@ -3699,25 +3676,21 @@ BEGIN
 	STR_GREP_TIMER				"Processing time: %dms\r\n"
 	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
 	STR_GREP_ERR_FILEREAD		"file read error [%ts]\r\n"
-	STR_ERR_DLGEDITVW30			"Drop (&P)ath as text"									// LMP: Right-Click Drag&Drop Menu
-	STR_ERR_DLGEDITVW31			"Drop (&F)ile as text"
-	STR_ERR_DLGEDITVW32			"(&O)pen File"					
-	STR_ERR_DLGEDITVW33			"Cancel"
-	STR_ERR_DLGEDITVW34			"Failed to execute command."
-	STR_ERR_DLGEDITVW35			"\r\nSuspended.\r\n"
-	STR_ERR_DLGEDITVW36			"\r\nProgram's Exit Code: %d\r\n"
 
-	// CEditView_Cmdgrep.cpp
-	STR_ERR_DLGEDITVWGREP1		"Maximum number of Editor windows is %d.\nCan not open more than this limit"
+	// CEditView_ExecCmd.cpp
+	STR_EDITVIEW_EXECCMD_ERR	"Failed to execute command."
+	STR_EDITVIEW_EXECCMD_STOP	"\r\nSuspended.\r\n"
+	STR_EDITVIEW_EXECCMD_RET	"\r\nProgram's Exit Code: %d\r\n"
 
 	// CEditView_CmdHokan.cpp
 	STR_ERR_DLGEDITVWHOKAN1		"Autocompletion dictionary file is not set.\nSet it now?"
 	STR_SUPPORT_NOT_COMPLITE	"There is no completions."
 
 	// CEditView_Cmdisrch.cpp
-	STR_ERR_DLGEDITVWISRCH1		"BREGREP.DLL cant be loaded, or found."
-	STR_ERR_DLGEDITVWISRCH2		"MIGEMO.DLL cant be loaded, or found."
-	STR_ERR_DLGEDITVWISRCH3		" (No Matches)"
+	STR_EDITVWISRCH_REGEX		"Regex dll cant be loaded, or found."
+	STR_EDITVWISRCH_MIGEGO1		"MIGEMO.DLL cant be loaded, or found."
+	STR_EDITVWISRCH_MIGEGO2		"MIGEMOは使用できません。"
+	STR_EDITVWISRCH_NOMATCH		" (No Matches)"
 
 	// CEditView_Command.cpp
 	STR_ERR_MACRO1				"Macro %d (%ts) failed to execute."
@@ -3730,7 +3703,7 @@ BEGIN
 	STR_ERR_UNINDENT1			"★Reverse indent only works on selected text"
 	STR_ERR_TAGJMP1				"Cant Tag-Jump"
 	STR_ERR_TAGJMPBK1			"Cant Bookmark Tag-Jump"
-	STR_ERR_MACROERR1			"Failed to open Macro.\n\n%s"
+	STR_ERR_MACROERR1			"Failed to open Macro.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD01		"External Help-1 is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD02		"External Help is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD03		"Tag creation command failed to run.\n\nCTAGS.EXE could not be found."
@@ -3742,13 +3715,9 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD09		"Failed to open C/C++ source file."
 	STR_ERR_CEDITVIEW_CMD10		"No valid data on the clip board !"
 	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurences to end of file."				// Comes up when you press replace individually until u reach end of file.
-	STR_ERR_CEDITVIEW_CMD13		"Failed to create the file.\n\n%s"
-	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%s"
-	STR_ERR_CEDITVIEW_CMD15		"Failed to create the file.\n\n%s"
-	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%s"
-	STR_ERR_CEDITVIEW_CMD17		"Using Oracle SQL*Plus to run it.\n\n\nOracle SQL*Plus isnt running.\n"
-	STR_ERR_CEDITVIEW_CMD18		"%s\n has been changed. Save before passing to Oracle SQL*Plus？"
-	STR_ERR_CEDITVIEW_CMD19		"(No Title04)"  // Answer to the above if no auto path
+	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD18		"%ts\n has been changed. Save before passing to Oracle SQL*Plus？"
 	STR_ERR_CEDITVIEW_CMD20		"Oracle SQL*Plus did not respond.\nPlease wait a while and try again."
 	STR_ERR_CEDITVIEW_CMD21		"If the SQL isnt saved to a file then Oracle SQL*Plus can not run it.\n"
 	STR_ERR_CEDITVIEW_CMD22		"Did not find any differences."
@@ -3758,8 +3727,7 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD26		"Not a savable macro sequence. Can only save Keyboard Macros."
 	STR_ERR_CEDITVIEW_CMD27		"Could not create the Macro File.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD28		"Could not open the file.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD29		"%s\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
-	STR_ERR_CEDITVIEW_CMD30		"Failed to read the macro\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD29		"%ts\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
 
 	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
 	// inside funciton Command_EXTHELP1
@@ -3769,7 +3737,6 @@ BEGIN
 	STR_BOOKMARK_PREV_NOT_FOUND	"Previous (↑) bookmark wasnt found."
 	STR_ERR_DLGEDITVWCMDNW7		"%d line was successfully merged."												// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW8		"There were no lines of text that could be merged in your selection."			// Edit Menu::Cosmtik::Merge lines option
-	STR_ERR_DLGEDITVWCMDNW9		"Please report this error to the development team"
 	STR_SAVEAGENT_OTHER_APP		"'%ts'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
 	STR_ERR_DLGEDITVWCMDNW11	"An error occurred whilst trying to write to the file."
 	STR_ERR_DLGEDITVWCMDNW12	"An error occurred whilst trying to read the file."
@@ -3777,14 +3744,14 @@ BEGIN
 	// CEditView_Diff.cpp
 	STR_ERR_DLGEDITVWDIFF1		"DIFF command failed.\n\nFile to be used for comparison wasnt found."
 	STR_ERR_DLGEDITVWDIFF2		"DIFF command failed.\n\nDIFF.EXE wasnt found."
-	STR_ERR_DLGEDITVWDIFF3		"DIFF command failed.\n\n%s"
+	STR_ERR_DLGEDITVWDIFF3		"DIFF command failed.\n\n%ls"
 	STR_ERR_DLGEDITVWDIFF4		"The file to be used for comparison appears to be a binary file."
 	STR_ERR_DLGEDITVWDIFF5		"No differences were found by DIFF"
 	STR_DIFF_NEXT_NOT_FOUND		"Forwards (↓) searching didnt find differences"
 	STR_DIFF_PREV_NOT_FOUND		"Backward (↑) searching didnt find differences"
-	STR_ERR_DLGEDITVWDIFF12		"DIFF command failed."
-	STR_ERR_DLGEDITVWDIFF13		"DIFF command failed.\n\nCouldnt create temporary file."
-	STR_ERR_DLGEDITVWDIFF14		"DIFF command failed.\n\nLine was too long."
+	STR_DIFF_FAILED				"DIFF command failed."
+	STR_DIFF_FAILED_TEMP		"DIFF command failed.\n\nCouldnt create temporary file."
+	STR_DIFF_FAILED_LONG		"DIFF command failed.\n\nLine was too long."
 
 	// CEditView_New.cpp -- no words, going to ignore for now ( just block [], ... etc )
 
@@ -3792,27 +3759,27 @@ BEGIN
 
 	// CEditView_New3.cpp -- no words, going to ignore for now ( just block [], ... etc )
 
-	// CEditWnd.cpp
-	STR_ERR_DLGEDITWND1			"CEditWnd::CEditWnd()\nCould not create the accellerator table\nInsufficient system resources."
-	STR_ERR_DLGEDITWND2			"Maximum number of Editor windows is %d.\nCan not open more than this limit."		// Used in two places..
-	STR_ERR_DLGEDITWND3			"Failed to create Client Window."
-	STR_ERR_DLGEDITWND4			"Interaction between editors has failed.\nWindows OS UIPI security may be different between the editors."
-	STR_ERR_DLGEDITWND5			"Maximum number of Editor windows is %d.\nCan not open more than this limit."
-	STR_ERR_DLGEDITWND6			"CEditWnd::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
-	STR_ERR_DLGEDITWND7			"Rebar creation failed."
-	STR_ERR_DLGEDITWND8			"Failed to create the Tool Bar."
-	STR_ERR_DLGEDITWND9			"Input Line-Feed code set (&CRLF)"
-	STR_ERR_DLGEDITWND10		"Input Line-Feed code set (&LF)"
-	STR_ERR_DLGEDITWND11		"Input Line-Feed code set (C&R)"
-	STR_ERR_DLGEDITWND12		"CEditWnd::DispatchEvent()\nCould not create the accellerator table\nInsufficient system resources."
-		// Others handled in dialog box statements, or otherwise already labeled in the above...
+	// CEditView_Mouse.cpp
+	STR_VIEW_MOUSE_BUG			"Possible bug, please report to the development team."
+	STR_VIEW_MOUSE_MENU_PATH	"Drop (&P)ath as text"									// LMP: Right-Click Drag&Drop Menu
+	STR_VIEW_MOUSE_MENU_FILE	"Drop (&F)ile as text"
+	STR_VIEW_MOUSE_MENU_OPEN	"(&O)pen File"					
+	STR_VIEW_MOUSE_MENU_CANCEL	"Cancel"
 
-	STR_ERR_DLGEDITWND13		"File path is too long. ANSI paths over %d bytes cannot be used."
+	// CEditWnd.cpp
+	STR_ERR_DLGEDITWND01		"CEditWnd::CreateAccelTbl()\nCould not create the accellerator table\nInsufficient system resources."
+	STR_ERR_DLGEDITWND02		"Interaction between editors has failed.\nWindows OS UIPI security may be different between the editors."
+	STR_ERR_DLGEDITWND03		"CEditWnd::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
+	STR_ERR_DLGEDITWND04		"Rebar creation failed."
+	STR_ERR_DLGEDITWND05		"Failed to create the Tool Bar."
+	STR_EDITWND_MENU_NEL		"Input Line-Feed code set (&NEL)"
+	STR_EDITWND_MENU_LS			"Input Line-Feed code set (L&S)"
+	STR_EDITWND_MENU_PS			"Input Line-Feed code set (&PS)"
+
+	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
+
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
-	STR_ERR_DLGEDITWND15		"Recent Folders(&D)"		// Open Folder task tray icon
-	STR_ERR_DLGEDITWND16		"CEditWnd::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
 	STR_MENU_OUTPUT				"%ts output"
-	STR_ERR_DLGEDITWND18		"(No Title05)"				// Menu bar :: Window list (Empty doc)
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 	STR_ERR_DLGEDITWND19		""
@@ -3820,7 +3787,7 @@ BEGIN
 //	STR_ERR_DLGEDITWND20		"99999 行 9999 列"
 	STR_ERR_DLGEDITWND21		"CFLF"
 	STR_ERR_DLGEDITWND22		"0000"
-	STR_ERR_DLGEDITWND23		"Unicode"
+	STR_ERR_DLGEDITWND23		"Unicode BOM"
 	STR_ERR_DLGEDITWND24		"REC"
 	STR_ERR_DLGEDITWND25		"OVR"							// Overwrite mode
 	STR_WRAP_WIDTH_FULL			"Line Wrap Width: %d Col(Max)"
@@ -3844,9 +3811,9 @@ BEGIN
 	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nCouldnt start timer。\nPossibly insufficient system resources."
 
 	// CFuncLookup.cpp
-	STR_ERR_DLGFUNCLKUP1		"External Macro"
-	STR_ERR_DLGFUNCLKUP2		"Custom Menu"
-	STR_ERR_DLGFUNCLKUP3		"Macro %d (Unregistered)"
+	STR_ERR_DLGFUNCLKUP01		"External Macro"
+	STR_ERR_DLGFUNCLKUP02		"Custom Menu"
+	STR_ERR_DLGFUNCLKUP03		"Macro %d (Unregistered)"
 	STR_ERR_DLGFUNCLKUP19		"Plugin"
 
 	// Related Commands Menu
@@ -3882,11 +3849,11 @@ BEGIN
 	STR_ERR_DLGKEYMACMGR1		"//キーボードマクロのファイル\r\n"
 	STR_ERR_DLGKEYMACMGR2		"Error reading in Macro"
 	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: Too many parameters\n"
-	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\nFunction %s parameter %d can not be a string."
-	STR_ERR_DLGKEYMACMGR5		"Line %d:\r\nFunction %s parameter %d does not end with %c."
+	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\nFunction %ls parameter %d can not be a string."
+	STR_ERR_DLGKEYMACMGR5		"Line %d:\r\nFunction %ls parameter %d does not end with %lc."
 	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n Function %s parameter %d can not be a numeral."
 	STR_ERR_DLGKEYMACMGR7		"Line %d: Column %d: Syntax Error\n"
-	STR_ERR_DLGKEYMACMGR8		"Line %d: %s function does not exist.\n"
+	STR_ERR_DLGKEYMACMGR8		"Line %d: %ls function does not exist.\n"
 
 	// CKeyWordSetMgr.cpp
 
@@ -3903,21 +3870,23 @@ BEGIN
 	// CLineComment.cpp
 
 	// CMacro.cpp
-	STR_ERR_DLGMACRO1			"CMacro::GetFuncInfoByID() hit a bug, please report it\r\n"
-	STR_ERR_DLGMACRO2			"Macro Execution Error"
-	STR_ERR_DLGMACRO3			"End of line auto-insert char code hasnt been defined."	// Fixme: what code?
-	STR_ERR_DLGMACRO4			"Parameter(string)is not defined."
-	STR_ERR_DLGMACRO5			"Jump To Line Numer is not defined."
-	STR_ERR_DLGMACRO6			"Bookmarking pattern has not been defined."				// Fixme: pattern?
-	STR_ERR_DLGMACRO7			"Parameter(string)is not defined."
-	STR_ERR_DLGMACRO8			"File name is not defined."
-	STR_ERR_DLGMACRO9			"Source replacement string is unset."				// Fixme - clear enough?
+	STR_ERR_DLGMACRO01			"CMacro::GetFuncInfoByID() hit a bug, please report it\r\n"
+	STR_ERR_DLGMACRO02			"Macro Execution Error"
+	STR_ERR_DLGMACRO03			"End of line auto-insert char code hasnt been defined."	// Fixme: what code?
+	STR_ERR_DLGMACRO03_1		"Line Break Code is not defined."
+	STR_ERR_DLGMACRO04			"Parameter(string)is not defined."
+	STR_ERR_DLGMACRO05			"Jump To Line Numer is not defined."
+	STR_ERR_DLGMACRO06			"Bookmarking pattern has not been defined."				// Fixme: pattern?
+	STR_ERR_DLGMACRO07			"Parameter(string)is not defined."
+	STR_ERR_DLGMACRO08			"File name is not defined."
+	STR_ERR_DLGMACRO09			"Source replacement string is unset."				// Fixme - clear enough?
 	STR_ERR_DLGMACRO10			"Destination replacement string is unset."
 	STR_ERR_DLGMACRO11			"GREP pattern is not defined."
 	STR_ERR_DLGMACRO12			"File type is not defined."
 	STR_ERR_DLGMACRO13			"Destination search folder is unset."
 	STR_ERR_DLGMACRO14			"Input file name is unset."
 	STR_ERR_DLGMACRO15			"Filename for saving not set."
+	STR_ERR_DLGMACRO16			"Number is not defined."
 
 	// CMacroFactory.cpp
 	
@@ -3929,7 +3898,6 @@ BEGIN
 	STR_ERR_DLGMEM1				"CMemory::AllocBuffer(nNewDataLen==%d)\nMemory reservation error\n"
 
 	// CMenuDrawer.cpp
-	STR_ERR_DLGMNUDRAW1			"CMenuDrawer::MyAppendMenu() Error\n\nCMenuDrawer can only handle a max. of CMenuDrawer::MAX_MENUITEMS==%d menu items\n "
 
 	// CMigemo.cpp
 
@@ -3944,12 +3912,10 @@ BEGIN
 	// COpe.cpp
 
 	// COpeBlk.cpp
-	STR_ERR_DLGOPEBLK1			"COpeBlk::AppendOpe() error.\n Bug \n pcOpe->m_nCaretPosX_PHY_Before = %d\npcOpe->m_nCaretPosY_PHY_Before = %d\npcOpe->m_nCaretPosX_PHY_After = %d\npcOpe->m_nCaretPosY_PHY_After = %d\n"
-	STR_ERR_DLGOPEBLK2			"Failed to reserve memory。\nVery serious error."
 	
 	// CPPA.cpp
 	STR_ERR_DLGPPA1				"Whilst executing PPA its impossible to call another PPA macro."
-	STR_ERR_DLGPPA2				"Error executing function\n%s"
+	STR_ERR_DLGPPA2				"Error executing function\n%hs"
 	STR_ERR_DLGPPA3				"Unknown type of error whilst executing a function (Bug?)\nFunc_ID=%d"
 	STR_ERR_DLGPPA4				"Detailed Unknown Error"
 	STR_ERR_DLGPPA5				"Undefined Error\nError_CD=%d\n%s"
@@ -3959,20 +3925,20 @@ BEGIN
 	// CPPAMacroMgr.cpp
 
 	// CPrint.cpp
-	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPriter Device Name=[%s]"
-	STR_ERR_CPRINT02			"StartDoc() error,\nPriter Device Name=[%s]"
+	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPriter Device Name=[%ts]"
+	STR_ERR_CPRINT02			"StartDoc() error,\nPriter Device Name=[%ts]"
 	STR_ERR_CPRINT03			"unknown"
 
 
 	// CPrintPreview.cpp
 	STR_ERR_DLGPRNPRVW1			"Landscape"
 	STR_ERR_DLGPRNPRVW2			"Portrait"		// next to paper type
-	STR_ERR_DLGPRNPRVW3			"The printer %s, \n cant use the selected %s paper.\n Automatically choosing to use %s paper."
+	STR_ERR_DLGPRNPRVW3			"The printer %ts, \n cant use the selected %ts paper.\n Automatically choosing to use %ts paper."
+	STR_ERR_DLGPRNPRVW3_1		"印刷ページ設定エラー:印字可能領域がありません"
 	STR_ERR_DLGPRNPRVW4			"Please choose the page number to display (1 - %d)"			//  Print dialog ".." button
 	STR_ERR_DLGPRNPRVW5			"Preview Page Settings"										//  Print dialog ".." button
 	STR_ERR_DLGPRNPRVW6			"%d/%dpg"
 	STR_ERR_DLGPRNPRVW7			"The page is blank, there is nothing to print."
-	STR_ERR_DLGPRNPRVW8			"No Title06"
 
 	// CProcess.cpp
 	STR_ERR_DLGPROCESS1			"Can not run as there is already a different version of the editor open."
@@ -4099,8 +4065,7 @@ BEGIN
 	STR_SCROLL_WITH_CTRL_KEY	"Control Key"
 	STR_SCROLL_WITH_SHIFT_KEY	"Shift Key"
 
-	STR_ERR_DLGPROPCOMMON23		"Please report this bug"
-	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%s\n"
+	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%ts\n"
 
 	// CPropCOmPlugin.cpp
 	STR_PROPCOMPLG_ERR1			"プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません"
@@ -4118,6 +4083,7 @@ BEGIN
 	STR_PROPCOMPLG_LIST3		"Stat"
 	STR_PROPCOMPLG_LIST4		"Load"
 	STR_PROPCOMPLG_LIST5		"Folder"
+	STR_PROPCOMPLG_DELETE		"%ls を削除しますか"
 
 	// CPropComTab.cpp
 	STR_PROPCOMTAB_DISP_NO		"None"
@@ -4138,18 +4104,19 @@ BEGIN
 	// CPropComWin.cpp
 
 	// CPropTypes.cpp	
-	STR_ERR_DLGCPROPTYPES01		"C/C++"
-	STR_ERR_DLGCPROPTYPES02		"PL/SQL"
-	STR_ERR_DLGCPROPTYPES03		"Java"
-	STR_ERR_DLGCPROPTYPES04		"COBOL"
-	STR_ERR_DLGCPROPTYPES05		"Perl"	
-	STR_ERR_DLGCPROPTYPES06		"Assembler"
-	STR_ERR_DLGCPROPTYPES07		"Visual Basic"
-	STR_ERR_DLGCPROPTYPES08		"Python"
-	STR_ERR_DLGCPROPTYPES09		"WZ Hierarchy Text"
-	STR_ERR_DLGCPROPTYPES10		"HTML"
-	STR_ERR_DLGCPROPTYPES11		"TeX"
-	STR_ERR_DLGCPROPTYPES12		"Text"			// <-- FIXME CHECK was Nashi
+	STR_OUTLINE_CPP				"C/C++"
+	STR_OUTLINE_PLSQL			"PL/SQL"
+	STR_OUTLINE_JAVA			"Java"
+	STR_OUTLINE_COBOL			"COBOL"
+	STR_OUTLINE_PERL			"Perl"	
+	STR_OUTLINE_ASM				"Assembler"
+	STR_OUTLINE_VB				"Visual Basic"
+	STR_OUTLINE_PYTHON			"Python"
+	STR_OUTLINE_ERLANG			"Erlang"
+	STR_OUTLINE_WZ				"WZ Hierarchy Text"
+	STR_OUTLINE_HTML			"HTML"
+	STR_OUTLINE_TEX				"TeX"
+	STR_OUTLINE_TEXT			"Text"			// <-- FIXME CHECK was Nashi
 	STR_TAB_SYMBOL_CHARA		"Character"
 	STR_TAB_SYMBOL_SHORT_ARROW	"Short Arrow"
 	STR_TAB_SYMBOL_LONG_ARROW	"Long Arrow"
@@ -4261,13 +4228,6 @@ BEGIN
 	// CShareData.cpp
 	STR_ERR_CSHAREDATA01			"CreateFileMapping() failed."
 	STR_ERR_CSHAREDATA02			"Unexpected error"
-	STR_ERR_CSHAREDATA03			"Desktop\\"
-	STR_ERR_CSHAREDATA04			"My Documents\\"
-	STR_ERR_CSHAREDATA05			"IE Cache\\"
-	STR_ERR_CSHAREDATA06			"Shared Desktop\\"
-	STR_ERR_CSHAREDATA07			"Shared Documents\\"
-	STR_ERR_CSHAREDATA08			"Application Data\\"
-	STR_ERR_CSHAREDATA09			"Print Settings %d"
 
 									// Common Prop::Tab/Title bar
 	STR_ERR_CSHAREDATA10			"${w?【Grep】$h$:【Output】$:$f$}${U?(Changed)$}${R?(Read Only)$:(Write Protected)$}${M?【Recording Macro】$}"
@@ -4280,10 +4240,9 @@ BEGIN
 	STR_ERR_CSHAREDATA17			"${w?$h$:Output$:${I?$f$:$N$}$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA18			"${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA19			"Attempting to close multiple editor windows, sure you want to do this?"			// Displayed if you try to close edit whith many open windows
-	STR_ERR_CSHAREDATA20			"%s\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%s]\nNew Character Encoding=[%s]" // See Resource F_FILE_REOPEN_SUBMENU
-	STR_ERR_CSHAREDATA21			"%s\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%s]\nNew Char Encoding=%d [%s]"
+	STR_ERR_CSHAREDATA20			"%ts\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%ts]\nNew Character Encoding=[%ts]" // See Resource F_FILE_REOPEN_SUBMENU
+	STR_ERR_CSHAREDATA21			"%ts\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%ts]\nNew Char Encoding=%d [%ts]"
 	STR_ERR_CSHAREDATA22			"unknown" // relates to above two [%s]
-	STR_ERR_CSHAREDATA23			"Rich Text"			// File types dialog
 
 	// Key settings dialog box ( loop so must be N items long in a row )
 	STR_KEY_BIND_DBL_CLICK			"Double-Click"
@@ -4300,11 +4259,6 @@ BEGIN
 	STR_KEY_BIND_HAT_ENG_QT			"^(EN KBD ')"
 	STR_KEY_BIND_AT_ENG_BQ			"@(EN KBD `)"
 	STR_KEY_BIND_APLI				"Apli Key"
-
-	// Error message
-	STR_ERR_CSHAREDATA34			"Please report bug"
-	STR_ERR_CSHAREDATA35			"DLLSHARE::m_nKeyNameArr[] isnt big enough for the requested Key setting."
-
 
 	// Color Names in the Settings Color Box
 	STR_COLOR_TEXT					"Text"
@@ -4363,26 +4317,6 @@ BEGIN
 	STR_COLOR_DIFF_DEL				"DIFF area (deleted)"
 	STR_COLOR_BOOKMARK				"Bookmark"
 
-	// Type names array (16 elements in a for loop)
-	STR_ERR_CSHAREDATA83			"Default"
-	STR_ERR_CSHAREDATA84			"Text"
-	STR_ERR_CSHAREDATA85			"C/C++"
-	STR_ERR_CSHAREDATA86			"HTML"
-	STR_ERR_CSHAREDATA87			"PL/SQL"
-	STR_ERR_CSHAREDATA88			"COBOL"
-	STR_ERR_CSHAREDATA89			"Java"
-	STR_ERR_CSHAREDATA90			"Assembler"
-	STR_ERR_CSHAREDATA91			"AWK"
-	STR_ERR_CSHAREDATA92			"MS-DOS Batch File"
-	STR_ERR_CSHAREDATA93			"Pascal"
-	STR_ERR_CSHAREDATA94			"TeX"
-	STR_ERR_CSHAREDATA95			"Perl"
-	STR_ERR_CSHAREDATA96			"Visual Basic"
-	STR_ERR_CSHAREDATA97			"Rich Text"
-	STR_ERR_CSHAREDATA98			"Config file"
-
-	STR_ERR_CSHAREDATA99			"Setting %d"
-
 	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
 
 	// CShareData_new.cpp
@@ -4394,15 +4328,11 @@ BEGIN
 	STR_ERR_CSPLITTER01				"SplitterWnd class registration failed."
 
 	// CTabWnd.cpp
-	STR_ERR_CTABWND01				"Left-Click: Tab Name List\nRight-Click: Path List"
-	STR_ERR_CTABWND02				"Close Tab"
-	STR_ERR_CTABWND03				"(NoTitle13)"	// Empty tab
-	STR_ERR_CTABWND04				"(NoTitle14)"	// Empty Tab
-	STR_ERR_CTABWND05				"(NoTitle15)"	// Empty Tab
-	
-	STR_ERR_CTABWND06				"Show (&A)ll"	// Menus 
-	STR_ERR_CTABWND07				"S(&w)ap to tab names list"  // Windows Menu -> Show Windows
-	STR_ERR_CTABWND08				"S(&w)ap to path names list"  // Windows Menu -> Show Windows
+	STR_TABWND_LR_INFO				"Left-Click: Tab Name List\nRight-Click: Path List"
+	STR_TABWND_CLOSETAB				"Close Tab"
+	STR_TABWND_SHOWALL				"Show (&A)ll"	// Menus 
+	STR_TABWND_SHOWTABNAME			"S(&w)ap to tab names list"  // Windows Menu -> Show Windows
+	STR_TABWND_SHOWPATHNAME			"S(&w)ap to path names list"  // Windows Menu -> Show Windows
 
 	// CTipWnd.cpp
 
@@ -4421,6 +4351,7 @@ BEGIN
 	STR_ERR_CWSH06					"Unable to pass object"
 	STR_ERR_CWSH07					"Status update error"
 	STR_ERR_CWSH08					"Failed to execute"
+	STR_ERR_CWSH09					"マクロの実行を中断しました。"
 
 
 	// Debug.cpp
@@ -4437,17 +4368,12 @@ Suspending execution of any further new %s.\n\
 System Resource\tRemaining  %d%%\n\
 User Resrouce\tRemaining  %d%%\n\
 GDI Resource\tRemaining  %d%%\n\n"
-	STR_ERR_ETCUTY04				"Couldnt fine Regular Expresssion Library\r\n\
-Regex relies upon BREGEXP.DLL to work.\r\n\
-Please refer to the help for assistance."
-	STR_ERR_ETCUTY05				"Regular Expression Error"
-	STR_ERR_ETCUTY06				"HHCTRL.OCX could not be found\r\n\
-HTML help requires HHCTRL.OCX.\r\n"
-	STR_ERR_ETCUTY07				"information"							// Dialog (Settings "Folder/>" button)
-	STR_ERR_ETCUTY08				"Open (&O)..."
-	STR_ERR_ETCUTY09				"Import／Export Location (&R)eset "
-	STR_ERR_ETCUTY10				"Reset Import/Export default folder path to\nSettings-Folder path."
-	STR_ERR_ETCUTY11				"Settings Folder(&/) >>"
+	STR_SHELL_HHCTRL				"HHCTRL.OCX could not be found\r\nHTML help requires HHCTRL.OCX.\r\n"
+	STR_SHELL_INFO					"Information"
+	STR_SHELL_MENU_OPEN				"Open (&O)..."
+	STR_SHELL_MENU_IMPEXP			"Import／Export Location (&R)eset "
+	STR_SHELL_IMPEXPDIR				"Reset Import/Export default folder path to\nSettings-Folder path."
+	STR_SHELL_INIFOLDER				"Settings Folder(&/) >>"
 
 	// Funccode.cpp
 	// CONTAINS one array with Japanese, ppszFuncKind.
@@ -4480,6 +4406,8 @@ HTML help requires HHCTRL.OCX.\r\n"
 
 	STR_DLGABOUT_APPNAME			"Sakura Editor"
 	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
+	STR_MENU_UNKOWN					"%ts unkown"
+	STR_PRINT_WAITING				"印刷処理の終了を待機しています・・・"
 
 	// Convert Setting Values
 	STR_TAB_CAPTION_OUTPUT			"[Grep]"
@@ -4491,20 +4419,69 @@ HTML help requires HHCTRL.OCX.\r\n"
 	STR_CAPTION_ACTIVE_KEYMACRO		"[REC Key macro]"
 	STR_DATA_FORMAT					"M\'/\'d\'/\'yyyy dddd"
 	STR_TIME_FORMAT					"hh\':\'mm\':\'ss\' \'tt"
-	STR_TRANSNAME_COMDESKTOP		"Com Desktop\\"
-	STR_TRANSNAME_COMDOC			"Com Documents\\"
+	STR_TRANSNAME_COMDESKTOP		"Shared Desktop\\"
+	STR_TRANSNAME_COMDOC			"Shared Documents\\"
 	STR_TRANSNAME_DESKTOP			"Desktop\\"
 	STR_TRANSNAME_MYDOC				"My Documents\\"
 	STR_TRANSNAME_IE				"IE Cache\\"
 	STR_TRANSNAME_TEMP				"TEMP\\"
 	STR_TRANSNAME_APPDATA			"App Data\\"
-	STR_PRINT_SET_NAME				"Print setting"
-	STR_TYPE_NAME_BASIS				"Basis"
+	STR_PRINT_SET_NAME				"Print settings"
+	STR_TYPE_NAME_BASIS				"Default"
 	STR_TYPE_NAME_RICHTEXT			"Rich text"
 	STR_TYPE_NAME_TEXT				"Text"
 	STR_TYPE_NAME_DOS				"MS-DOS batch file"
 	STR_TYPE_NAME_ASM				"Assembler"
 	STR_TYPE_NAME_INI				"Ini file"
+
+	// CBregexp.cpp
+#ifdef _M_IA64
+	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/IA64 ver) to work.\r\nPlease refer to the help for assistance."
+#elif defined(_M_AMD64)
+	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/x64 ver) to work.\r\nPlease refer to the help for assistance."
+#else
+	STR_BREGONIG_LOAD				"failed to load the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
+#endif
+#ifdef _M_IA64
+	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/IA64 ver) to work.\r\nPlease refer to the help for assistance."
+#elif defined(_M_AMD64)
+	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde/x64 ver) to work.\r\nPlease refer to the help for assistance."
+#else
+	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
+#endif
+	STR_BREGONIG_ERROR				"bregonig.dll のロードで予期せぬエラーが発生しました。"
+	STR_BREGONIG_TITLE				"Regular Expression Error"
+
+	// CDllPlugin.cpp
+	STR_DLLPLG_TITLE				"DLLプラグイン"
+	STR_DLLPLG_INIT_ERR1			"DLLの読み込みに失敗しました\n%ts\n%ls"
+	STR_DLLPLG_INIT_ERR2			"DLLの読み込みに失敗しました"
+
+	// CPluginManager.cpp
+	STR_PLGMGR_FOLDER				"プラグインフォルダを作成出来ません"
+	STR_PLGMGR_CANCEL				"キャンセルされました"
+	STR_PLGMGR_NEWPLUGIN			"新しいプラグインは見つかりませんでした"
+	STR_PLGMGR_INSTALL				"プラグイン「%ts」をインストールしますか？"
+	STR_PLGMGR_INSTALL_ERR			"プラグイン「%ts」をインストールできませんでした\n理由：%ls"
+	STR_PLGMGR_ERR_ZIP				"ZIPファイルは扱えません"
+	STR_PLGMGR_ERR_FOLDER			"プラグインフォルダがありません"
+	STR_PLGMGR_ERR_CREATEDIR		"プラグインフォルダを作成出来ません"
+	STR_PLGMGR_INST_ZIP_ACCESS		"ZIPファイル「%ts」にアクセス出来ません"
+	STR_PLGMGR_INST_ZIP_DEF			"ZIPファイル「%ts」にはプラグイン定義ファイル（plugin.def）がありません"
+	STR_PLGMGR_INST_ZIP_ALREADY		"「%ts」は既にインストールされています\n上書きしますか？"
+	STR_PLGMGR_INST_ZIP_INST		"ZIPプラグイン「%ts」を「%ts」にインストールしますか？"
+	STR_PLGMGR_INST_ZIP_UNZIP		"ZIPプラグイン「%ts」の解凍に失敗しました"
+	STR_PLGMGR_INST_ZIP_ERR			"プラグイン「%ts」をインストールできませんでした\n理由：%ls"
+	STR_PLGMGR_INST_DEF				"プラグイン定義ファイル（plugin.def）がありません"
+	STR_PLGMGR_INST_ID				"Plugin.IDがありません"
+	STR_PLGMGR_INST_RESERVE1		"Plugin.IDに"""
+	STR_PLGMGR_INST_RESERVE2		"""は使用できません"
+	STR_PLGMGR_INST_IDNUM			"Plugin.IDの先頭に数字は使用できません"
+	STR_PLGMGR_INST_NAME			"同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%ts」を使用\n　いいえ→　インストール済みの「%ls」を使用"
+	STR_PLGMGR_INST_USERCANCEL		"ユーザキャンセル"
+	STR_PLGMGR_INST_MAX				"プラグインをこれ以上登録できません"
+
+	STR_WSHPLUG_LOADMACRO			"マクロの読み込みに失敗しました。\n\n%ts"
 
 END
 

@@ -204,7 +204,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
-						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((m_Common.m_sPlugin.m_PluginTable[sel].m_szName + std::wstring(L" ‚ðíœ‚µ‚Ü‚·‚©")).c_str()) ) == IDYES ){
+						
+						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, LS(STR_PROPCOMPLG_DELETE), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) == IDYES ){
 							CPluginManager::getInstance()->UninstallPlugin( m_Common, sel );
 							SetData_LIST( hwndDlg );
 						}
