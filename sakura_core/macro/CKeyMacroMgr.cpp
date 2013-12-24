@@ -107,7 +107,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 	}
 
 	//最初のコメント
-	out.WriteF(L"//キーボードマクロのファイル\n");
+	out.WriteF(LSW(STR_ERR_DLGKEYMACMGR1));
 
 	//マクロ内容
 	CMacro* p = m_pTop;
@@ -166,7 +166,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 
 	//	Jun. 16, 2002 genta
 	m_nReady = true;	//	エラーがあればfalseになる
-	static const TCHAR MACRO_ERROR_TITLE[] = _T("Macro読み込みエラー");
+	std::tstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
+	const TCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
 
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
 	for( ; in.Good() ; ++line ){
@@ -226,7 +227,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 						NULL,
 						MB_OK | MB_ICONSTOP | MB_TOPMOST,
 						MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: 引数が多すぎます\n"),
+						LS(STR_ERR_DLGKEYMACMGR3),
 						line,
 						i + 1
 					);
@@ -256,8 +257,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 							NULL,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
-							_T("Line %d: Column %d\r\n")
-							_T("関数%lsの%d番目の引数に文字列は置けません．"),
+							LS(STR_ERR_DLGKEYMACMGR4),
 							line,
 							i + 1,
 							szFuncName,
@@ -285,7 +285,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 								NULL,
 								MB_OK | MB_ICONSTOP | MB_TOPMOST,
 								MACRO_ERROR_TITLE,
-								_T("Line %d:\r\n関数%lsの%d番目の引数の終わりに %lc がありません．"),
+								LS(STR_ERR_DLGKEYMACMGR5),
 								line,
 								szFuncName,
 								nArgs + 1,
@@ -319,8 +319,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 							NULL,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
-							_T("Line %d: Column %d\r\n")
-							_T("関数%lsの%d番目の引数に数値は置けません．"),
+							LS(STR_ERR_DLGKEYMACMGR6),
 							line,
 							i + 1,
 							szFuncName,
@@ -361,7 +360,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: Syntax Error\n"), line, i + 1 );
+						LS(STR_ERR_DLGKEYMACMGR7), line, i + 1 );
 					m_nReady = false;
 					break;
 				}
@@ -387,7 +386,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 		}
 		else {
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-				_T("Line %d: %lsは存在しない関数です．\n"), line, szFuncName );
+				LS(STR_ERR_DLGKEYMACMGR8), line, szFuncName );
 			//	Jun. 16, 2002 genta
 			m_nReady = false;
 			break;

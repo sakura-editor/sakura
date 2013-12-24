@@ -182,7 +182,7 @@ int CKeyBind::CreateKeyBindList(
 	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRを追加
 
 
-	cMemList.AppendString( LTEXT("キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可") );
+	cMemList.AppendString( LSW(STR_ERR_DLGKEYBIND1) );
 	cMemList.AppendString( pszCR );
 	cMemList.AppendString( LTEXT("-----\t-----\t-----\t-----\t-----") );
 	cMemList.AppendString( pszCR );
@@ -207,7 +207,7 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					auto_strcpy( szFuncNameJapanese, LTEXT("---名前が定義されていない-----") );
+					auto_strcpy( szFuncNameJapanese, LSW(STR_ERR_DLGKEYBIND2) );
 				}
 				auto_strcpy( szFuncName, LTEXT("")/*"---unknown()--"*/ );
 

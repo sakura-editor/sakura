@@ -507,7 +507,7 @@ void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 		if( bStart ){
 			/* タイマーを起動 */
 			if( 0 == ::SetTimer( GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
-				WarningMessage(	GetHwnd(), _T("CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+				WarningMessage(	GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1) );
 			}
 		} else {
 			/* タイマーを削除 */

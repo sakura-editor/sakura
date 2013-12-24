@@ -1481,7 +1481,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		if( m_bListBtnHilighted )	// ボタンに入ってきた?
 		{
 			pszTip = szText;
-			_tcscpy( szText, _T("左クリック: タブ名一覧\n右クリック: パス名一覧") );
+			_tcscpy( szText, LS(STR_TABWND_LR_INFO) );
 		}
 	}
 
@@ -1501,7 +1501,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			{
 				if( !m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin )
 				{
-					_tcscpy( szText, _T("タブを閉じる") );
+					_tcscpy( szText, LS(STR_TABWND_CLOSETAB) );
 				}
 				else
 				{
@@ -1697,7 +1697,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TCITEM	tcitem;
 			TCHAR	szName[1024];
 
-			_tcscpy( szName, _T("(無題)") );
+			_tcscpy( szName, LS(STR_NO_TITLE1) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 			tcitem.pszText = szName;
@@ -2734,7 +2734,7 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 
 	if( pEditNode == NULL )
 	{
-		::lstrcpyn( pszText, _T("(無題)"), nLen );
+		::lstrcpyn( pszText, LS(STR_NO_TITLE1), nLen );
 	}
 	else if( !bFull || pEditNode->m_szFilePath[0] == '\0' )
 	{
@@ -2744,7 +2744,7 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 		}
 		else
 		{
-			::lstrcpyn( pszText, _T("(無題)"), nLen );
+			::lstrcpyn( pszText, LS(STR_NO_TITLE1), nLen );
 		}
 	}
 	else
@@ -2891,7 +2891,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 			}
 			else
 			{
-				::InsertMenu( hMenu, nSelfTab, MF_BYPOSITION, 101, _T("すべて表示(&A)") );
+				::InsertMenu( hMenu, nSelfTab, MF_BYPOSITION, 101, LS(STR_TABWND_SHOWALL) );
 			}
 			::InsertMenu( hMenu, nSelfTab, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
 		}
@@ -2899,7 +2899,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		// 表示切替メニューを追加する
 		if( bSel )
 		{
-			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, bFull? _T("タブ名一覧に切替える(&W)"): _T("パス名一覧に切替える(&W)") );
+			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, bFull? LS(STR_TABWND_SHOWTABNAME): LS(STR_TABWND_SHOWPATHNAME) );
 			::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
 		}
 

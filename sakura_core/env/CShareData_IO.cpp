@@ -117,6 +117,13 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 
 	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
+	if( bRead ){
+		DLLSHAREDATA* pShareData = &GetDllShareData();
+		cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferT( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
+		CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
+		pcShare->RefreshString();
+	}
+
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
 	ShareData_IO_Keys( cProfile );
@@ -1284,7 +1291,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
 		types[i] = new STypeConfig();
 		*types[i] = *types[0]; // 基本をコピー
-		auto_sprintf( types[i]->m_szTypeName, _T("設定%d"), i );
+		auto_sprintf( types[i]->m_szTypeName, LS(STR_TRAY_TYPE_NAME), i );
 		types[i]->m_nIdx = i;
 		types[i]->m_id = i;
 	}

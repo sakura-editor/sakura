@@ -107,7 +107,7 @@ void CViewCommander::Command_GREP( void )
 	else{
 		// 編集ウィンドウの上限チェック
 		if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-			OkMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWGREP1), MAX_EDITWINDOWS );
+			OkMessage( m_pCommanderView->GetHwnd(), LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 			return;
 		}
 

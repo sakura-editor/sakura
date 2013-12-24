@@ -171,7 +171,7 @@ LRESULT CPrintPreview::OnPaint(
 		szText,
 		_T("%ts  %ts"),
 		szPaperName,
-		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? _T("横") : _T("縦")
+		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)
 	);
 	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAPER, szText );
 
@@ -780,8 +780,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 			TopWarningMessage(
 				m_pParentWnd->GetHwnd(),
-				_T("現在のプリンタ %ts では、\n指定された用紙 %ts は使用できません。\n")
-				_T("利用可能な用紙 %ts に変更しました。"),
+				LS(STR_ERR_DLGPRNPRVW3),
 				m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName,
 				szPaperNameOld,
 				szPaperNameNew
@@ -807,7 +806,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	if( m_bPreview_EnableColumns == 0 || m_bPreview_EnableLines == 0 ){
 		CEditWnd* pcEditWnd = m_pParentWnd;
 		pcEditWnd->PrintPreviewModeONOFF();
-		pcEditWnd->SendStatusMessage( _T("印刷ページ設定エラー:印字可能領域がありません") );
+		pcEditWnd->SendStatusMessage( LS(STR_ERR_DLGPRNPRVW3_1) );
 		return;
 	}
 
@@ -875,13 +874,13 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	TCHAR      szMessage[512];
 	TCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	
-	auto_sprintf( szMessage, _T("表示するページ番号を指定してください。(1 - %d)") , m_nAllPageNum );
+	auto_sprintf( szMessage, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum );
 	auto_sprintf( szPageNum, _T("%d"), m_nCurPageNum + 1 );
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
 		CEditApp::getInstance()->GetAppInstance(),
 		m_hwndPrintPreviewBar, 
-		_T("プレビューページ指定"),
+		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
 		INPUT_PAGE_NUM_LEN,
 		szPageNum
@@ -938,7 +937,7 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 	}
 	wchar_t	szEdit[1024];
-	auto_sprintf( szEdit, L"%d/%d頁", m_nCurPageNum + 1, m_nAllPageNum );
+	auto_sprintf( szEdit, LSW(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
 	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
 	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
@@ -1035,13 +1034,13 @@ void CPrintPreview::OnPrint( void )
 	HFONT		hFontOld;	//	OnPrint以前のフォント
 
 	if( 0 == m_nAllPageNum ){
-		TopWarningMessage( m_pParentWnd->GetHwnd(), _T("印刷するページがありません。") );
+		TopWarningMessage( m_pParentWnd->GetHwnd(), LS(STR_ERR_DLGPRNPRVW7) );
 		return;
 	}
 
 	/* プリンタに渡すジョブ名を生成 */
 	if( ! m_pParentWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){	/* 現在編集中のファイルのパス */
-		_tcscpy( szJobName, _T("無題") );
+		_tcscpy( szJobName, LS(STR_NO_TITLE2) );
 	}else{
 		TCHAR	szFileName[_MAX_FNAME];
 		TCHAR	szExt[_MAX_EXT];

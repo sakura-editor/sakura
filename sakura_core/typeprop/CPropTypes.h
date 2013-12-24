@@ -43,6 +43,13 @@ struct TYPE_NAME_ID {
 	int			nNameId;
 };
 
+template <class TYPE>
+struct TYPE_NAME_ID2 {
+	TYPE		nMethod;
+	int			nNameId;
+	const TCHAR*	pszName;
+};
+
 //!< プロパティシート番号
 enum PropTypeSheetOrder {
 	ID_PROPTYPE_PAGENUM_SCREEN = 0,		//!< スクリーン
@@ -94,8 +101,8 @@ protected:
 	STypeConfig			m_Types;
 
 	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動
-	static std::vector<TYPE_NAME<EOutlineType> > m_OlmArr;			//!<アウトライン解析ルール配列
-	static std::vector<TYPE_NAME<ESmartIndentType> > m_SIndentArr;	//!<スマートインデントルール配列
+	static std::vector<TYPE_NAME_ID2<EOutlineType> > m_OlmArr;			//!<アウトライン解析ルール配列
+	static std::vector<TYPE_NAME_ID2<ESmartIndentType> > m_SIndentArr;	//!<スマートインデントルール配列
 
 	// カラー用データ
 	DWORD			m_dwCustColors[16];						//!< フォントDialogカスタムパレット
@@ -238,6 +245,14 @@ protected:
 	bool Export( HWND );											//!< エクスポート
 };
 
+template<typename T>
+void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr, size_t size )
+{
+	for( size_t i = 0; i < size; i++ ){
+		TYPE_NAME_ID2<T> item = {arr[i].nMethod, arr[i].nNameId, NULL};
+		vec.push_back( item );
+	}
+}
 
 
 ///////////////////////////////////////////////////////////////////////

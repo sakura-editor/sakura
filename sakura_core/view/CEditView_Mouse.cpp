@@ -324,7 +324,7 @@ normal_action:;
 
 		/******* この時点で必ず true == GetSelectionInfo().IsTextSelected() の状態になる ****:*/
 		if( !GetSelectionInfo().IsTextSelected() ){
-			WarningMessage( GetHwnd(), _T("バグってる") );
+			WarningMessage( GetHwnd(), LS(STR_VIEW_MOUSE_BUG) );
 			return;
 		}
 
@@ -2074,12 +2074,12 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	RECT rcWork;
 	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
 	HMENU hMenu = ::CreatePopupMenu();
-	::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, _T("パス名貼り付け(&P)") );
-	::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, _T("ファイル名貼り付け(&F)") );
+	::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, LS(STR_VIEW_MOUSE_MENU_PATH) );
+	::InsertMenu( hMenu, 1, MF_BYPOSITION | MF_STRING, 101, LS(STR_VIEW_MOUSE_MENU_FILE) );
 	::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
-	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, _T("ファイルを開く(&O)") );
+	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, LS(STR_VIEW_MOUSE_MENU_OPEN) );
 	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);	// セパレータ
-	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, _T("キャンセル") );
+	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, LS(STR_VIEW_MOUSE_MENU_CANCEL) );
 	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 									( pt.x > rcWork.left )? pt.x: rcWork.left,
 									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,

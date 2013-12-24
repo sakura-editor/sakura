@@ -294,7 +294,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 
 err:
 	ErrorBeep();
-	ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルの書き込みに失敗しました。\n\n%ts"), szPath );
+	ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD14), szPath );
 }
 
 
@@ -346,5 +346,5 @@ void CViewCommander::Command_UUDECODE( void )
 
 err:
 	ErrorBeep();
-	ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルの書き込みに失敗しました。\n\n%ts"), szPath );
+	ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD16), szPath );
 }

@@ -308,8 +308,7 @@ HDC CPrint::CreateDC(
 	) ){
 		auto_sprintf(
 			pszErrMsg,
-			_T("OpenPrinter()に失敗。\n")
-			_T("プリンタデバイス名=[%ts]"),
+			LS(STR_ERR_CPRINT01),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		goto end_of_func;
@@ -507,8 +506,7 @@ BOOL CPrint::PrintOpen(
 	if( 0 >= ::StartDoc( hdc, &di ) ){
 		auto_sprintf(
 			pszErrMsg,
-			_T("StartDoc()に失敗。\n")
-			_T("プリンタデバイス名=[%ts]"),
+			LS(STR_ERR_CPRINT02),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		bRet = FALSE;
@@ -560,7 +558,7 @@ TCHAR* CPrint::GetPaperName( int nPaperSize, TCHAR* pszPaperName )
 	if( NULL != paperInfo ){
 		_tcscpy( pszPaperName, paperInfo->m_pszName );
 	}else{
-		_tcscpy( pszPaperName, _T("不明") );
+		_tcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
 	}
 	return pszPaperName;
 }

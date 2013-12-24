@@ -323,7 +323,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	m_Types.m_nIdx = m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
-		_tcscpy( m_Types.m_szTypeName, _T("基本") );
+		_tcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
 		_tcscpy( m_Types.m_szTypeExts, _T("") );
 		m_Types.m_id = 0;
 	}else{

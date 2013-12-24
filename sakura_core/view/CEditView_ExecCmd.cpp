@@ -246,7 +246,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 		);
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 					CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
-			MessageBox( NULL, cmdline, _T("コマンド実行は失敗しました。"), MB_OK | MB_ICONEXCLAMATION );
+			MessageBox( NULL, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION );
 			goto finish;
 		}
 	}
@@ -540,7 +540,7 @@ user_cancel:
 		if( bCancelEnd && bOutputExtInfo ){
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
-			oa.OutputW( L"\r\n中断しました。\r\n" );
+			oa.OutputW( LSW(STR_EDITVIEW_EXECCMD_STOP) );
 		}
 		
 		{
@@ -550,7 +550,7 @@ user_cancel:
 			::GetExitCodeProcess( pi.hProcess, &result );
 			if( bOutputExtInfo ){
 				WCHAR endCode[128];
-				auto_sprintf( endCode, L"\r\n終了コード: %d\r\n", result );
+				auto_sprintf( endCode, LSW(STR_EDITVIEW_EXECCMD_RET), result );
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする

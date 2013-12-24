@@ -139,9 +139,9 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
 					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
-						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n■") );
+						m_cTipWnd.m_cInfo.AppendString( LS(STR_ERR_DLGEDITVW5) );
 					else
-						m_cTipWnd.m_cInfo.AppendString( _T("■") );	/* 先頭の場合 */
+						m_cTipWnd.m_cInfo.AppendString( LS(STR_ERR_DLGEDITVW6) );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
 					{
 						TCHAR szFile[MAX_PATH];

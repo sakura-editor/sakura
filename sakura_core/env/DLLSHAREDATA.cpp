@@ -63,7 +63,7 @@ public:
 		HWND hwndMsg = ::GetDlgItem(hwndCancel, IDC_STATIC_MSG);
 		HWND hwndCancelButton = ::GetDlgItem(hwndCancel, IDCANCEL);
 		HWND hwndKensuu = ::GetDlgItem(hwndCancel, IDC_STATIC_KENSUU);
-		LPCTSTR msg = _T("印刷処理の終了を待機しています・・・");
+		LPCTSTR msg = LS(STR_PRINT_WAITING);
 		CTextWidthCalc calc(hwndMsg);
 		calc.SetTextWidthIfMax(msg);
 		RECT rc;

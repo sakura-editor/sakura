@@ -850,7 +850,7 @@ BOOL CEditDoc::OnFileClose()
 	}
 	if( NULL == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
-		auto_sprintf( szGrepTitle, _T("%s%d"), LS( STR_ERR_DLGEDITDOC22 ), node->m_nId );	//(無題)
+		auto_sprintf( szGrepTitle, _T("%s%d"), LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */

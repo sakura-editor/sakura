@@ -122,7 +122,7 @@ CDropTarget::~CDropTarget()
 BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 {
 	if( FAILED( ::RegisterDragDrop( hWnd, this ) ) ){
-		TopWarningMessage( hWnd, _T("::RegisterDragDrop()\né∏îs") );
+		TopWarningMessage( hWnd, LS(STR_ERR_DLGDRPTGT1) );
 		return FALSE;
 	}
 	m_hWnd_DropTarget = hWnd;

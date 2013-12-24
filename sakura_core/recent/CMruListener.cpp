@@ -110,14 +110,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 			int nRet = MYMESSAGEBOX(
 				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				_T("文字コード情報"),
-				_T("%ts\n")
-				_T("\n")
-				_T("このファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\n")
-				_T("前回と同じ文字コードを使いますか？\n")
-				_T("\n")
-				_T("・[はい(Y)]  ＝%ts\n")
-				_T("・[いいえ(N)]＝%ts"),
+				LS(STR_ERR_DLGEDITDOC5),
+				LS(STR_ERR_DLGEDITDOC6),
 				pLoadInfo->cFilePath.c_str(),
 				pszCodeNameNew,
 				pszCodeNameOld,

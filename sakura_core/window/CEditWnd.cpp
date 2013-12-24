@@ -176,7 +176,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				}
 
 				// メッセージボックス表示
-				auto_sprintf(szMsg, _T("文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"),
+				auto_sprintf(szMsg, LS(STR_ERR_DLGEDITWND13),
 					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_LATIN1], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
 				::MessageBox( hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			}
@@ -637,7 +637,7 @@ HWND CEditWnd::Create(
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return NULL;
 	}
 
@@ -661,7 +661,7 @@ HWND CEditWnd::Create(
 	// Vista/7 での初回表示アニメーション抑止（rev1868）とのからみで、ウィンドウが可視化される時点でタブバーに全タブが揃っていないと見苦しいのでここに移動。
 	// AddEditWndList() で自ウィンドウにポストされる MYWM_TAB_WINDOW_NOTIFY(TWNT_ADD) はタブバー作成後の初回アイドリング時に処理されるので特に問題は無いはず。
 	if( !CAppNodeGroupHandle(nGroup).AddEditWndList( GetHwnd() ) ){	// 2007.06.26 ryoji nGroup引数追加
-		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( GetHwnd(), LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		::DestroyWindow( GetHwnd() );
 		m_hWnd = hWnd = NULL;
 		return hWnd;
@@ -740,9 +740,8 @@ HWND CEditWnd::Create(
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)GetHwnd() );
 		if( !m_bUIPI ){	// 返事が返らない
-			TopErrorMessage( GetHwnd(), 
-				_T("エディタ間の対話に失敗しました。\n")
-				_T("権限レベルの異なるエディタが既に起動している可能性があります。")
+			TopErrorMessage( GetHwnd(),
+				LS(STR_ERR_DLGEDITWND02)
 			);
 			::DestroyWindow( GetHwnd() );
 			m_hWnd = hWnd = NULL;
@@ -756,7 +755,7 @@ HWND CEditWnd::Create(
 	m_nTimerCount = 0;
 	/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
 	if( 0 == ::SetTimer( GetHwnd(), IDT_EDIT, 500, NULL ) ){
-		WarningMessage( GetHwnd(), _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITWND03) );
 	}
 	// ツールバーのタイマーを分離した 20060128 aroka
 	Timer_ONOFF( true );
@@ -1444,11 +1443,11 @@ LRESULT CEditWnd::DispatchEvent(
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
 						LS( F_CHGMOD_EOL_CR ), _T("") ); // 入力改行コード指定(CR)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_NEL,
-						_T("入力改行コード指定(&NEL)"), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
+						LS(STR_EDITWND_MENU_NEL), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LS,
-						_T("入力改行コード指定(&LS)"), _T(""), TRUE, -2 ); // 入力改行コード指定(LS)
+						LS(STR_EDITWND_MENU_LS), _T(""), TRUE, -2 ); // 入力改行コード指定(LS)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_PS,
-						_T("入力改行コード指定(&PS)"), _T(""), TRUE, -2 ); // 入力改行コード指定(PS)
+						LS(STR_EDITWND_MENU_PS), _T(""), TRUE, -2 ); // 入力改行コード指定(PS)
 					
 					//	mp->ptはステータスバー内部の座標なので，スクリーン座標への変換が必要
 					POINT	po = mp->pt;
@@ -2769,8 +2768,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				else{
 					/* 編集ウィンドウの上限チェック */
 					if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-						OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-						::DragFinish( hDrop );
+						OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 						return;
 					}
 					/* 新たな編集ウィンドウを起動 */
@@ -2955,7 +2953,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
 		if( !bRes ){
-			TopInfoMessage( GetHwnd(), _T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n") );
+			TopInfoMessage( GetHwnd(), LS(STR_ERR_DLGEDITWND14) );
 			return;
 		}
 
@@ -4001,7 +3999,7 @@ void CEditWnd::Timer_ONOFF( bool bStart )
 		if( bStart ){
 			/* タイマーを起動 */
 			if( 0 == ::SetTimer( GetHwnd(), IDT_TOOLBAR, 300, NULL ) ){
-				WarningMessage( GetHwnd(), _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+				WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITWND03) );
 			}
 		} else {
 			/* タCマーを削除 */
@@ -4657,9 +4655,7 @@ void CEditWnd::CreateAccelTbl( void )
 		if( NULL == m_hAccelWine ){
 			ErrorMessage(
 				NULL,
-				_T("CEditWnd::CEditWnd()\n")
-				_T("アクセラレータ テーブルが作成できません。\n")
-				_T("システムリソースが不足しています。")
+				LS(STR_ERR_DLGEDITWND01)
 			);
 		}
 	}

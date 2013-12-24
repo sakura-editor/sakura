@@ -129,7 +129,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			// ファイルがない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("%ls\nというファイルを開けません。\nファイルが存在しません。"),	//Mar. 24, 2001 jepro 若干修正
+				LS(STR_ERR_DLGDOCLM1),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
 		}
@@ -137,14 +137,14 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			// 読み込みアクセス権がない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ts\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
+				LS(STR_ERR_DLGDOCLM2),
 				pszPath
 			 );
 		}
 		else{
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ts\'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。"),
+				LS(STR_ERR_DLGDOCLM3),
 				pszPath
 			 );
 		}
@@ -153,7 +153,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		eRet = RESULT_FAILURE;
 		ErrorMessage(
 			CEditWnd::getInstance()->GetHwnd(),
-			_T("\'%ts\'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"),
+			LS(STR_ERR_DLGDOCLM4),
 			pszPath
 		 );
 		/* 既存データのクリア */

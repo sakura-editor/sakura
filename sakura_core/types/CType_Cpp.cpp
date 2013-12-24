@@ -545,7 +545,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 				}else{
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE ){
-						if( wcscmp(L"final", szWord) == 0 && wcscmp(L"無名", szItemName) != 0 ){
+						if( wcscmp(L"final", szWord) == 0 && wcscmp(LSW(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
 							// strcut name final のfinalはクラス名の一部ではない
 							// ただし struct finalは名前
 						}else{
@@ -589,7 +589,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
-							wcscpy(szItemName,L"無名");
+							wcscpy(szItemName,LSW(STR_OUTLINE_CPP_NONAME));
 						}
 					}
 					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji 上で条件変更したので行頭の else を除去
@@ -755,15 +755,16 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						bAddFunction = true;
 					}
 					int nItemNameLen = 0;
+					int nLenDefPos = wcslen(LSW(STR_OUTLINE_CPP_DEFPOS));
 					if( nNestLevel_func !=0 || (szWordPrev[0] == L'=' && szWordPrev[1] == L'\0') || nMode2 == M2_AFTER_EQUAL )
 						++nNestLevel_func;
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + 6 + 1) < nNamespaceLenMax)
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
-					// +6は追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
+					// +nLenDefPosは追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
 					// +1は終端NUL文字
 					{
 						wcscpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
@@ -780,7 +781,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
 							if( nItemFuncId == FL_OBJ_NAMESPACE )
-								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]],L"::定義位置");
+								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LSW(STR_OUTLINE_CPP_DEFPOS));
 							else
 							{
 								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';

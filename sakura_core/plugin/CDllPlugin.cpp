@@ -71,7 +71,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 	tstring dllPath = GetFilePath( to_tchar(m_sDllName.c_str()) );
 	EDllResult resInit = InitDll( to_tchar( dllPath.c_str() ) );
 	if( resInit != DLL_SUCCESS ){
-		::MYMESSAGEBOX( view->m_hwndParent, MB_OK, _T("DLLプラグイン"), _T("DLLの読み込みに失敗しました\n%ts\n%ls"), dllPath.c_str(), m_sName.c_str() );
+		::MYMESSAGEBOX( view->m_hwndParent, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR1), dllPath.c_str(), m_sName.c_str() );
 		return false;
 	}
 
@@ -84,7 +84,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 		};
 		if( ! RegisterEntries( imp ) ){
 //			DWORD err = GetLastError();
-			::MYMESSAGEBOX( NULL, MB_OK, _T("DLLプラグイン"), _T("DLLの読み込みに失敗しました") );
+			::MYMESSAGEBOX( NULL, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR2) );
 			return false;
 		}
 	}
