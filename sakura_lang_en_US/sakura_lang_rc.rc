@@ -3361,7 +3361,7 @@ BEGIN
 	STR_ERR_DLGFAV11			"Delete recent %s history(except Favorites). \nOK?"
 	STR_ERR_DLGFAV12			"Delete recent %s history(Missing path) \nOK?"
 	STR_ERR_DLGFAV13			", "
-	STR_ERR_DLGFAV14			"History (%s) has been updated, will discard edit information and redisplay."
+	STR_ERR_DLGFAV14			"History (%ts) has been updated, will discard edit information and redisplay."
 	STR_ERR_DLGFAV15			"Add"
 	STR_ERR_DLGFAV16			"Please enter a string to add."
 	STR_ERR_DLGFAV17			"Edit"
@@ -3437,14 +3437,14 @@ BEGIN
 	STR_DLGFNCLST_VB_EVENT		"event"
 	STR_DLGFNCLST_VB_DECL		"declaration"
 
-	STR_DLGFNCLST_LIST_TEXT		"Text *"
-	STR_DLGFNCLST_LIST_TEXT_M	"Text"
+	STR_DLGFNCLST_LIST_TEXT		"Text"
+	STR_DLGFNCLST_LIST_TEXT_M	"Text *"
 	STR_DLGFNCLST_LIST_FUNC		"Function name"
 	STR_DLGFNCLST_LIST_FUNC_M	"Function name *"
-	STR_DLGFNCLST_LIST_LINE		"Ln *"
-	STR_DLGFNCLST_LIST_LINE_M	"Ln"
-	STR_DLGFNCLST_LIST_COL		"Cl *"
-	STR_DLGFNCLST_LIST_COL_M	"Cl"
+	STR_DLGFNCLST_LIST_LINE		"Ln"
+	STR_DLGFNCLST_LIST_LINE_M	"Ln *"
+	STR_DLGFNCLST_LIST_COL		"Cl"
+	STR_DLGFNCLST_LIST_COL_M	"Cl *"
 	STR_DLGFNCLST_LIST_M		"*"
 
 	STR_DLGFNCLST_TIP_CLOSE		"Close"
@@ -3510,7 +3510,7 @@ BEGIN
 	STR_DLGFLPROP04				" with BOM"
 	STR_DLGFLPROP05				"Total Lines  %d\r\n"
 	STR_DLGFLPROP06				"Total including wrapped lines  %d\r\n"
-	STR_DLGFLPROP07				"Opened in Read-Only mode.\r\n"
+	STR_DLGFLPROP07				"Opened in View-Mode mode.\r\n"
 	STR_DLGFLPROP08				"Updated since last save\r\n"
 	STR_DLGFLPROP09				"Not changed since last save\r\n"
 	STR_DLGFLPROP10				"\r\nTotal Editor Commands issued    %d times\r\n"
@@ -3779,7 +3779,6 @@ BEGIN
 	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
 
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
-	STR_MENU_OUTPUT				"%ts output"
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 	STR_ERR_DLGEDITWND19		""
@@ -4405,8 +4404,13 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_CONVERT_ERR					"Error on Convert."
 
 	STR_DLGABOUT_APPNAME			"Sakura Editor"
+
 	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
+
 	STR_MENU_UNKOWN					"%ts unkown"
+	STR_MENU_GREP					"%ts [Grep]""%ts%ts"""
+	STR_MENU_OUTPUT					"%ts output"
+
 	STR_PRINT_WAITING				"印刷処理の終了を待機しています・・・"
 
 	// Convert Setting Values
