@@ -3775,7 +3775,6 @@ BEGIN
 	STR_EDITWND_MENU_PS			"入力改行コード指定(&PS)"
 	STR_ERR_DLGEDITWND13		"文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
 	STR_ERR_DLGEDITWND14		"印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
-	STR_MENU_OUTPUT				"%ts アウトプット"
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 	STR_ERR_DLGEDITWND19		""
@@ -4397,8 +4396,14 @@ GDI リソース\t残り  %d%%\n\n"
 	STR_CONVERT_ERR					"変換でエラーが発生しました"
 
 	STR_DLGABOUT_APPNAME			"サクラエディタ"
+
 	STR_DLGEXEC_SELECT_CURDIR		"カレントディレクトリを選んでください"
+
+	STR_MENU_UNKOWN					"%ts 不明(応答なし)"
 	STR_MENU_GREP					"%ts 【Grep】""%ts%ts"""
+	STR_MENU_OUTPUT					"%ts アウトプット"
+
+	STR_PRINT_WAITING				"印刷処理の終了を待機しています・・・"
 	
 	// 設定値の変換
 	STR_TAB_CAPTION_OUTPUT			"【Grep】"
@@ -4424,8 +4429,6 @@ GDI リソース\t残り  %d%%\n\n"
 	STR_TYPE_NAME_DOS				"MS-DOSバッチファイル"
 	STR_TYPE_NAME_ASM				"アセンブラ"
 	STR_TYPE_NAME_INI				"設定ファイル"
-	STR_MENU_UNKOWN					"%ts 不明(応答なし)"
-	STR_PRINT_WAITING				"印刷処理の終了を待機しています・・・"
 
 	// CBregexp.cpp
 #ifdef _M_IA64
