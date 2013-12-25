@@ -75,8 +75,6 @@ CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
 
 bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	int	nEol = pWork->pcDocLine->GetEol().GetLen();
-
 	if( KINSOKU_TYPE_NONE != pWork->nKinsokuType )
 	{
 		//禁則処理の最後尾に達したら禁則処理中を解除する
@@ -84,6 +82,8 @@ bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		{
 			if( pWork->nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen )
 			{
+				int	nEol = pWork->pcDocLine->GetEol().GetLen();
+
 				if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 				{
 					(this->*pfOnLine)(pWork);
@@ -102,8 +102,7 @@ bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_pTypeConfig->m_bWordWrap	/* 英文ワードラップをする */
-	 && pWork->nKinsokuType == KINSOKU_TYPE_NONE )
+	if( pWork->nKinsokuType == KINSOKU_TYPE_NONE )
 	{
 		/* 英単語の先頭か */
 		if( pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr.At(pWork->nPos)) ){
@@ -126,7 +125,7 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 {
-	if( m_pTypeConfig->m_bKinsokuKuto && (GetMaxLineKetas() - pWork->nPosX < 2) && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
+	if( (GetMaxLineKetas() - pWork->nPosX < 2) && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pWork->cLineStr, pWork->nPos );
@@ -142,8 +141,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_pTypeConfig->m_bKinsokuHead
-	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
+	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
 	 && (GetMaxLineKetas() - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -168,8 +166,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
-	if( m_pTypeConfig->m_bKinsokuTail
-	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
+	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
 	 && (GetMaxLineKetas() - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -213,40 +210,49 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if( 0 >	nEol_1 ){
 		nEol_1 = 0;
 	}
+	CLogicInt nLength = pWork->cLineStr.GetLength() - CLogicInt(nEol_1);
 
 	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
 	//1ロジック行を消化するまでループ
-	while( pWork->nPos < pWork->cLineStr.GetLength() - CLogicInt(nEol_1) ){
+	while( pWork->nPos < nLength ){
 		// インデント幅は_OnLineで計算済みなのでここからは削除
 
 		//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
 		if(_DoKinsokuSkip(pWork, pfOnLine)){ }
 		else{
-			// ワードラップ処理
-			_DoWordWrap(pWork, pfOnLine);
+			// 英文ワードラップをする
+			if( m_pTypeConfig->m_bWordWrap ){
+				_DoWordWrap(pWork, pfOnLine);
+			}
 
 			// 句読点のぶらさげ
-			_DoKutoBurasage(pWork);
+			if( m_pTypeConfig->m_bKinsokuKuto ){
+				_DoKutoBurasage(pWork);
+			}
 
 			// 行頭禁則
-			_DoGyotoKinsoku(pWork, pfOnLine);
+			if( m_pTypeConfig->m_bKinsokuHead ){
+				_DoGyotoKinsoku(pWork, pfOnLine);
+			}
 
 			// 行末禁則
-			_DoGyomatsuKinsoku(pWork, pfOnLine);
+			if( m_pTypeConfig->m_bKinsokuTail ){
+				_DoGyomatsuKinsoku(pWork, pfOnLine);
+			}
 		}
 
 		//@@@ 2002.09.22 YAZAKI
 		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
-		
+
 		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
 			if(_DoTab(pWork, pfOnLine)){
 				continue;
 			}
 		}
 		else{
-			if( pWork->nPos>=pWork->cLineStr.GetLength() ){
+			if( pWork->nPos >= pWork->cLineStr.GetLength() ){
 				break;
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
@@ -265,7 +271,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 					}
 				}
 			}
-			pWork->nPos+= 1;
+			pWork->nPos += 1;
 			pWork->nPosX += nCharKetas;
 		}
 	}
