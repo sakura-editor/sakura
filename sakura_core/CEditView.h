@@ -864,8 +864,6 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_ABOUT( void );			/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
-//@@@ 2002.01.14 YAZAKI 不使用のため
-//	void Command_SENDMAIL( void );		/* メール送信 */
 
 	//	May 23, 2000 genta
 	//	画面描画補助関数

@@ -658,7 +658,6 @@ BOOL CEditView::HandleCommand(
 	case F_ABOUT:	Command_ABOUT();break;				/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
-//	case F_SENDMAIL:	Command_SENDMAIL();break;		/* メール送信 */
 
 	}
 
