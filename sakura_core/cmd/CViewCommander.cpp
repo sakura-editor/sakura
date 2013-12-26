@@ -604,7 +604,6 @@ BOOL CViewCommander::HandleCommand(
 	case F_ABOUT:	Command_ABOUT();break;				/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
 	/* その他 */
-//	case F_SENDMAIL:	Command_SENDMAIL();break;		/* メール送信 */
 
 	case F_0: break; // F_0でプラグインが実行されるバグ対策	// ← rev1886 の問題は呼び元で対策したが安全弁として残す
 

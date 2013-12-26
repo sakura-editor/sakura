@@ -1188,7 +1188,6 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_ABOUT					:/* バージョン情報 */		//Dec. 25, 2000 JEPRO 追加
 
 	/* その他 */
-//	case F_SENDMAIL					:/* メール送信 */
 		return TRUE;
 	}
 	return FALSE;
