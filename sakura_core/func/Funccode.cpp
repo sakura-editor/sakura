@@ -498,7 +498,6 @@ const int nFincList_Support_Num = _countof( pnFuncList_Support );	//Oct. 16, 200
 
 /* その他 */	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 const EFunctionCode pnFuncList_Others[] = {
-//	F_SENDMAIL					,	/* メール送信 */
 	F_DISABLE				//Oct. 21, 2000 JEPRO 何もないとエラーになってしまうのでダミーで[未定義]を入れておく
 };
 const int nFincList_Others_Num = _countof( pnFuncList_Others );	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
@@ -946,7 +945,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 
 
 	/* その他 */
-//	case F_SENDMAIL:		return ;	/* メール送信 */
 
 	default:
 		// From Here 2003.09.23 Moca
