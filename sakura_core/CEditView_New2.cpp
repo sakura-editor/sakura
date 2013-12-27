@@ -450,15 +450,14 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 				nSelectTo   = m_sSelect.m_ptTo.x;
 				// 2006.09.30 Moca From ‹éŒ`‘I‘ðŽž[EOF]‚Æ‚»‚Ì‰E‘¤‚Í”½“]‚µ‚È‚¢‚æ‚¤‚ÉC³Bˆ—‚ð’Ç‰Á
 				if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
-					int EndX = 0;
-					int EndY = 0;
-					m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( EndX, EndY );
-					if( EndY == nLineNum ){
-						if( EndX < nSelectFrom ){
-							nSelectFrom = EndX;
+					CLayoutPoint ptEnd( 0, 0 );
+					m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptEnd );
+					if( ptEnd.y == nLineNum ){
+						if( ptEnd.x < nSelectFrom ){
+							nSelectFrom = ptEnd.x;
 						}
-						if( EndX < nSelectTo ){
-							nSelectTo = EndX;
+						if( ptEnd.x < nSelectTo ){
+							nSelectTo = ptEnd.x;
 						}
 					}
 				}

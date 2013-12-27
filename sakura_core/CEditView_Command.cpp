@@ -2093,7 +2093,7 @@ void CEditView::Command_SELECTALL( void )
 	CLayoutRange sRange;
 	sRange.m_ptFrom.x = 0;
 	sRange.m_ptFrom.y = 0;
-	m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( sRange.m_ptTo.x, sRange.m_ptTo.y );
+	m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &sRange.m_ptTo );
 	SetSelectArea( sRange );
 
 	/* ‘I‘ð—Ìˆæ•`‰æ */

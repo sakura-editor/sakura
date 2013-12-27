@@ -107,7 +107,7 @@ public:
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineKetas );
 
 	// Jul. 29, 2006 genta
-	void GetEndLayoutPos(int& lX, int& lY);
+	void GetEndLayoutPos(CLayoutPoint* ptLayoutEnd);
 	CLayout* GetTopLayout()		{ return m_pLayoutTop; }	// 2009.02.17 ryoji
 	CLayout* GetBottomLayout()	{ return m_pLayoutBot; }	// 2009.02.17 ryoji
 	

@@ -1692,18 +1692,17 @@ void CEditView::DrawSelectArea( void )
 				// 抑えるために EOF以降をリージョンから削除して1度の作画にする
 
 				// 2006.10.01 Moca Start EOF位置計算をGetEndLayoutPosに書き換え。
-				int  nLastLen;
-				int  nLastLine;
-				m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( nLastLen, nLastLine );
+				CLayoutPoint ptLast;
+				m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptLast );
 				// 2006.10.01 Moca End
-				if(m_sSelect.m_ptFrom.y>=nLastLine || m_sSelect.m_ptTo.y>=nLastLine ||
-					m_sSelectOld.m_ptFrom.y>=nLastLine || m_sSelectOld.m_ptTo.y>=nLastLine){
+				if(m_sSelect.m_ptFrom.y>=ptLast.y || m_sSelect.m_ptTo.y>=ptLast.y ||
+					m_sSelectOld.m_ptFrom.y>=ptLast.y || m_sSelectOld.m_ptTo.y>=ptLast.y){
 					//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
 					//	最終行にTABが入っていると反転範囲が不足する．
 					//	2006.10.01 Moca GetEndLayoutPosで処理するためColumnToIndexは不要に。
-					rcNew.left = m_nViewAlignLeft + (m_nViewLeftCol + nLastLen) * nCharWidth;
+					rcNew.left = m_nViewAlignLeft + (m_nViewLeftCol + ptLast.x) * nCharWidth;
 					rcNew.right = m_nViewAlignLeft + m_nViewCx;
-					rcNew.top = (nLastLine - m_nViewTopLine) * nCharHeight + m_nViewAlignTop;
+					rcNew.top = (ptLast.y - m_nViewTopLine) * nCharHeight + m_nViewAlignTop;
 					rcNew.bottom = rcNew.top + nCharHeight;
 					// 2006.10.01 Moca GDI(リージョン)リソースリーク修正
 					HRGN hrgnEOFNew = ::CreateRectRgnIndirect( &rcNew );

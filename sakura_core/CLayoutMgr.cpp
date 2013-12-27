@@ -539,48 +539,47 @@ bool CLayoutMgr::IsEndOfLine(
 	@date 2006.10.01 Moca メンバで保持するように。データ変更時には、_DoLayout/DoLayout_Rangeで無効にする。
 */
 void CLayoutMgr::GetEndLayoutPos(
-	int& lX,
-	int& lY
+	CLayoutPoint* ptLayoutEnd //[out]
 )
 {
 	if( -1 != m_nEOFLine ){
-		lX = m_nEOFColumn;
-		lY = m_nEOFLine;
+		ptLayoutEnd->x = m_nEOFColumn;
+		ptLayoutEnd->y = m_nEOFLine;
 		return;
 	}
 
 	if( 0 == m_nLines || m_pLayoutBot == NULL ){
 		// データが空
-		lX = 0; lY = 0;
-		m_nEOFColumn = lX;
-		m_nEOFLine = lY;
+		ptLayoutEnd->x = 0;
+		ptLayoutEnd->y = 0;
+		m_nEOFColumn = ptLayoutEnd->x;
+		m_nEOFLine = ptLayoutEnd->y;
 		return;
 	}
 
 	CLayout *btm = m_pLayoutBot;
 	if( btm->m_cEol != EOL_NONE ){
 		//	末尾に改行がある
-		lX = 0;
-		lY = GetLineCount();
+		ptLayoutEnd->x = 0;
+		ptLayoutEnd->y = GetLineCount();
 	}
 	else {
 		CMemoryIterator<CLayout> it( btm, GetTabSpace() );
-		int nPosX = 0;
 		while( !it.end() ){
 			it.scanNext();
 			it.addDelta();
 		}
-		lX = it.getColumn();
-		lY = GetLineCount() - 1;
+		ptLayoutEnd->x = it.getColumn();
+		ptLayoutEnd->y = GetLineCount() - 1;
 		// 2006.10.01 Moca Start [EOF]のみのレイアウト行処理が抜けていたバグを修正
-		if( GetMaxLineKetas() <= lX ){
-			lX = 0;
-			lY++;
+		if( GetMaxLineKetas() <= ptLayoutEnd->x ){
+			ptLayoutEnd->x = 0;
+			ptLayoutEnd->y++;
 		}
 		// 2006.10.01 Moca End
 	}
-	m_nEOFColumn = lX;
-	m_nEOFLine = lY;
+	m_nEOFColumn = ptLayoutEnd->x;
+	m_nEOFLine = ptLayoutEnd->y;
 }
 
 
@@ -1012,6 +1011,28 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 	return;
 }
 
+
+bool CLayoutMgr::ChangeLayoutParam(
+	HWND hwndProgress,
+	int nTabSize,
+	int nMaxLineKetas
+)
+{
+	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
+	if( nMaxLineKetas < MINLINEKETAS || nMaxLineKetas > MAXLINEKETAS ){ return false; }
+
+	m_sTypeConfig.m_nTabSpace = nTabSize;
+	m_sTypeConfig.m_nMaxLineKetas = nMaxLineKetas;
+
+	_DoLayout( hwndProgress );
+
+	return true;
+}
+
+
+
+
+
 /* 現在位置の単語の範囲を調べる */
 bool CLayoutMgr::WhereCurrentWord(
 	int				nLineNum,
@@ -1438,22 +1459,6 @@ checkloop:;
 	return;
 }
 
-bool CLayoutMgr::ChangeLayoutParam(
-	HWND hwndProgress,
-	int nTabSize,
-	int nMaxLineKetas
-)
-{
-	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
-	if( nMaxLineKetas < MINLINEKETAS || nMaxLineKetas > MAXLINEKETAS ){ return false; }
-
-	m_sTypeConfig.m_nTabSpace = nTabSize;
-	m_sTypeConfig.m_nMaxLineKetas = nMaxLineKetas;
-
-	_DoLayout( hwndProgress );
-
-	return true;
-}
 
 /* テスト用にレイアウト情報をダンプ */
 void CLayoutMgr::DUMP()
