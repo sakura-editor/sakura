@@ -97,97 +97,97 @@ void CDlgProperty::SetData( void )
 	WIN32_FIND_DATA	wfd;
 
 	//	Aug. 16, 2000 genta	全角化
-	cmemProp.AppendString( LS(STR_DLGFLPROP01) );
+	cmemProp.AppendString( LS(STR_DLGFLPROP_FILENAME) );
 	cmemProp.AppendString( pCEditDoc->m_cDocFile.GetFilePath() );
 	cmemProp.AppendString( _T("\r\n") );
 
-	cmemProp.AppendString( LS(STR_DLGFLPROP02) );
+	cmemProp.AppendString( LS(STR_DLGFLPROP_FILETYPE) );
 	cmemProp.AppendString( pCEditDoc->m_cDocType.GetDocumentAttribute().m_szTypeName );
 	cmemProp.AppendString( _T("\r\n") );
 
-	cmemProp.AppendString( LS(STR_DLGFLPROP03) );
+	cmemProp.AppendString( LS(STR_DLGFLPROP_ENCODING) );
 	cmemProp.AppendString( CCodeTypeName(pCEditDoc->GetDocumentEncoding()).Normal() );
 	//	From Here  2008/4/27 Uchi
 	if (pCEditDoc->GetDocumentBomExist()) {
-		cmemProp.AppendString( LS(STR_DLGFLPROP04) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_WITH_BOM) );
 	}
 	//	To Here  2008/4/27 Uchi
 	cmemProp.AppendString( _T("\r\n") );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP05), pCEditDoc->m_cDocLineMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_LINE_COUNT), pCEditDoc->m_cDocLineMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP06), pCEditDoc->m_cLayoutMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_LAYOUT_LINE), pCEditDoc->m_cLayoutMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
 
 	if( CAppMode::getInstance()->IsViewMode() ){
-		cmemProp.AppendString( LS(STR_DLGFLPROP07) );	// 2009.04.11 ryoji 「上書き禁止モード」→「ビューモード」
+		cmemProp.AppendString( LS(STR_DLGFLPROP_VIEW_MODE) );	// 2009.04.11 ryoji 「上書き禁止モード」→「ビューモード」
 	}
 	if( pCEditDoc->m_cDocEditor.IsModified() ){
-		cmemProp.AppendString( LS(STR_DLGFLPROP08) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_MODIFIED) );
 	}else{
-		cmemProp.AppendString( LS(STR_DLGFLPROP09) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_NOT_MODIFIED) );
 	}
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP10), pCEditDoc->m_nCommandExecNum );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_CMD_COUNT), pCEditDoc->m_nCommandExecNum );
 	cmemProp.AppendString( szWork );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP11), pCEditDoc->m_cDocLineMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_INFO), pCEditDoc->m_cDocLineMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
 
 	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->m_cDocFile.GetFilePath(), &wfd ) ) ){
 		if( pCEditDoc->m_cDocFile.IsFileLocking() ){
 			if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE ){
-				auto_sprintf( szWork, LS(STR_DLGFLPROP12) );
+				auto_sprintf( szWork, LS(STR_DLGFLPROP_W_LOCK) );
 			}
 			else if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE ){
-				auto_sprintf( szWork, LS(STR_DLGFLPROP13) );
+				auto_sprintf( szWork, LS(STR_DLGFLPROP_RW_LOCK) );
 			}
 			else{
-				auto_sprintf( szWork, LS(STR_DLGFLPROP14) );
+				auto_sprintf( szWork, LS(STR_DLGFLPROP_LOCK) );
 			}
 			cmemProp.AppendString( szWork );
 		}
 		else{
-			auto_sprintf( szWork, LS(STR_DLGFLPROP15) );
+			auto_sprintf( szWork, LS(STR_DLGFLPROP_NOT_LOCK) );
 			cmemProp.AppendString( szWork );
 		}
 
-		auto_sprintf( szWork, LS(STR_DLGFLPROP16), pCEditDoc->m_cDocLineMgr.GetLineCount() );
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_ATTRIBUTES), pCEditDoc->m_cDocLineMgr.GetLineCount() );
 		cmemProp.AppendString( szWork );
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP17) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_ARCHIVE) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP18) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_COMPRESS) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP19) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_FOLDER) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP20) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_HIDDEN) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_NORMAL ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP21) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_NORMAL) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_OFFLINE ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP22) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_OFFLINE) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_READONLY ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP23) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_READONLY) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP24) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_SYSTEM) );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_TEMPORARY ){
-			cmemProp.AppendString( LS(STR_DLGFLPROP25) );
+			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_TEMP) );
 		}
 		cmemProp.AppendString( _T("\r\n") );
 
 
-		cmemProp.AppendString( LS(STR_DLGFLPROP26) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_CREATE_DT) );
 		CFileTime ctimeCreation = wfd.ftCreationTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP27),
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeCreation->wYear,
 			ctimeCreation->wMonth,
 			ctimeCreation->wDay,
@@ -198,9 +198,9 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
-		cmemProp.AppendString( LS(STR_DLGFLPROP28) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_UPDATE_DT) );
 		CFileTime ctimeLastWrite = wfd.ftLastWriteTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP27),
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeLastWrite->wYear,
 			ctimeLastWrite->wMonth,
 			ctimeLastWrite->wDay,
@@ -212,9 +212,9 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( _T("\r\n") );
 
 
-		cmemProp.AppendString( LS(STR_DLGFLPROP29) );
+		cmemProp.AppendString( LS(STR_DLGFLPROP_ACCESS_DT) );
 		CFileTime ctimeLastAccess = wfd.ftLastAccessTime;
-		auto_sprintf( szWork, LS(STR_DLGFLPROP27),
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
 			ctimeLastAccess->wYear,
 			ctimeLastAccess->wMonth,
 			ctimeLastAccess->wDay,
@@ -225,10 +225,10 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
-		auto_sprintf( szWork, LS(STR_DLGFLPROP31), wfd.cAlternateFileName );
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_DOS_NAME), wfd.cAlternateFileName );
 		cmemProp.AppendString( szWork );
 
-		auto_sprintf( szWork, LS(STR_DLGFLPROP32), wfd.nFileSizeLow );
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_SIZE), wfd.nFileSizeLow );
 		cmemProp.AppendString( szWork );
 
 		::FindClose( nFind );
