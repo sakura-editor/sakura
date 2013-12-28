@@ -3530,7 +3530,7 @@ BEGIN
 	STR_DLGFLPROP26				"作成日時  "
 	STR_DLGFLPROP27				"%d年%d月%d日 %02d:%02d:%02d"
 	STR_DLGFLPROP28				"更新日時  "
-	STR_DLGFLPROP29				"アクセス日  "
+	STR_DLGFLPROP29				"アクセス日時  "
 	STR_DLGFLPROP30				"%d年%d月%d日"
 	STR_DLGFLPROP31				"MS-DOSファイル名  %ts\r\n"
 	STR_DLGFLPROP32				"ファイルサイズ  %d バイト\r\n"

@@ -217,7 +217,10 @@ void CDlgProperty::SetData( void )
 		auto_sprintf( szWork, LS(STR_DLGFLPROP27),
 			ctimeLastAccess->wYear,
 			ctimeLastAccess->wMonth,
-			ctimeLastAccess->wDay
+			ctimeLastAccess->wDay,
+			ctimeLastAccess->wHour,
+			ctimeLastAccess->wMinute,
+			ctimeLastAccess->wSecond
 		);
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
