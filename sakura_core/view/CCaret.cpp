@@ -485,7 +485,29 @@ void CCaret::ShowEditCaret()
 		return;
 	}
 
+	// CalcCaretDrawPosのためにCaretサイズを仮設定
+	int				nCaretWidth = 0;
+	int				nCaretHeight = 0;
+	if( 0 == pCommon->m_sGeneral.GetCaretType() ){
+		nCaretHeight = GetHankakuHeight();
+		if( m_pEditView->IsInsMode() ){
+			nCaretWidth = 2;
+		}else{
+			nCaretWidth = GetHankakuDx();
+		}
+	}else if( 1 == pCommon->m_sGeneral.GetCaretType() ){
+		if( m_pEditView->IsInsMode() ){
+			nCaretHeight = GetHankakuHeight() / 2;
+		}
+		else{
+			nCaretHeight = GetHankakuHeight();
+		}
+		nCaretWidth = GetHankakuDx();
+	}
+	CMySize caretSizeOld = GetCaretSize();
+	SetCaretSize(nCaretWidth,nCaretHeight);
 	POINT ptDrawPos=CalcCaretDrawPos(GetCaretLayoutPos());
+	SetCaretSize(caretSizeOld.cx, caretSizeOld.cy); // 後で比較するので戻す
 	bool bShowCaret = false;
 	if ( m_pEditView->GetTextArea().GetAreaLeft() <= ptDrawPos.x && m_pEditView->GetTextArea().GetAreaTop() <= ptDrawPos.y
 		&& ptDrawPos.x < m_pEditView->GetTextArea().GetAreaRight() && ptDrawPos.y < m_pEditView->GetTextArea().GetAreaBottom() ){
@@ -493,8 +515,6 @@ void CCaret::ShowEditCaret()
 		bShowCaret = true;
 	}
 	/* キャレットの幅、高さを決定 */
-	int				nCaretWidth = 0;
-	int				nCaretHeight = 0;
 	// カーソルのタイプ = win
 	if( 0 == pCommon->m_sGeneral.GetCaretType() ){
 		nCaretHeight = GetHankakuHeight();					/* キャレットの高さ */
