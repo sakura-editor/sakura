@@ -1927,7 +1927,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 {
 	/* 印刷プレビュー 操作バー */
 	m_hwndPrintPreviewBar = ::CreateDialogParam(
-		CEditApp::getInstance()->GetAppInstance(),				// handle to application instance
+		CSelectLang::getLangRsrcInstance(),					// handle to application instance
 		MAKEINTRESOURCE( IDD_PRINTPREVIEWBAR ),				// identifies dialog box template name
 		m_pParentWnd->GetHwnd(),							// handle to owner window
 		CPrintPreview::PrintPreviewBar_DlgProc,	// pointer to dialog box procedure
