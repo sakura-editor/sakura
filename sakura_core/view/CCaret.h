@@ -127,14 +127,6 @@ public:
 		bool			bUnderlineDoNotOFF	= false,					//!< [in] アンダーラインを消去しない
 		bool			bVertLineDoNotOFF	= false						//!< [in] カーソル位置縦線を消去しない
 	);
-	CLayoutInt MoveCursor(												//!< 行桁指定によるカーソル移動
-		CLayoutPoint	ptWk_CaretPos,									//!< [in] 移動先レイアウト位置
-		const CLogicPoint*	pptWk_CaretPosLogic,						//!< [in] 移動先ロジック位置
-		bool			bScroll,										//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
-		int				nCaretMarginRate	= _CARETMARGINRATE,			//!< [in] 縦スクロール開始位置を決める値
-		bool			bUnderlineDoNotOFF	= false,					//!< [in] アンダーラインを消去しない
-		bool			bVertLineDoNotOFF	= false						//!< [in] カーソル位置縦線を消去しない
-	);
 	CLayoutInt MoveCursorFastMode(
 		const CLogicPoint&	pptWk_CaretPosLogic							//!< [in] 移動先ロジック位置
 	);
