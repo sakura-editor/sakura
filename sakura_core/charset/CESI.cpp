@@ -810,55 +810,55 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	//	判別結果を分析
 	//
 
-	pcmtxtOut->AppendString( _T("--文字コード調査結果-----------\r\n") );
-	pcmtxtOut->AppendString( _T("判別結果の状態\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_CHARCODE_DETECT) );	// "--文字コード調査結果-----------\r\n"
+	pcmtxtOut->AppendString( LS(STR_ESI_RESULT_STATE) );	// "判別結果の状態\r\n"
 
 
 	if( cesi.m_nTargetDataLen < 1 || cesi.m_dwStatus == ESI_NOINFORMATION ){
-		pcmtxtOut->AppendString( _T("\t判別結果を取得できません。\r\n") );
+		pcmtxtOut->AppendString( LS(STR_ESI_NO_INFO) );	// "\t判別結果を取得できません。\r\n"
 		return;
 	}
 	if( cesi.m_dwStatus != ESI_NODETECTED ){
 		// nstat == CESI_MBC_DETECTED or CESI_WC_DETECTED
-		pcmtxtOut->AppendString( _T("\tおそらく正常に判定されました。\r\n") );
+		pcmtxtOut->AppendString( LS(STR_ESI_DETECTED) );	// "\tおそらく正常に判定されました。\r\n"
 	}else{
-		pcmtxtOut->AppendString( _T("\tコードを検出できませんでした。\r\n") );
+		pcmtxtOut->AppendString( LS(STR_ESI_NO_DETECTED) );	// "\tコードを検出できませんでした。\r\n"
 	}
 
 
 
-	pcmtxtOut->AppendString( _T("文書種別\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_DOC_TYPE) );	// "文書種別\r\n"
 
 
 	auto_sprintf( szWork, _T("\t%s\r\n"), doc.m_cDocType.GetDocumentAttribute().m_szTypeName );
 	pcmtxtOut->AppendString( szWork );
 
 
-	pcmtxtOut->AppendString( _T("デフォルト文字コード\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_DEFAULT_CHARCODE) );	// "デフォルト文字コード\r\n"
 
 
 	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 
-	pcmtxtOut->AppendString( _T("サンプルデータ長\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_SAMPLE_LEN) );	// "サンプルデータ長\r\n"
 
 
-	auto_sprintf( szWork, _T("\t%d バイト\r\n"), cesi.GetDataLen() );
+	auto_sprintf( szWork, LS(STR_ESI_SAMPLE_LEN_FORMAT), cesi.GetDataLen() );	// "\t%d バイト\r\n"
 	pcmtxtOut->AppendString( szWork );
 
 
-	pcmtxtOut->AppendString( _T("固有バイト数とポイント数\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_BYTES_AND_POINTS) );	// "固有バイト数とポイント数\r\n"
 
 
 	pcmtxtOut->AppendString( _T("\tUNICODE\r\n") );
 	cesi.GetEvaluation( CODE_UNICODE, &v1, &v2 );
 	cesi.GetEvaluation( CODE_UNICODEBE, &v3, &v4 );
-	auto_sprintf( szWork, _T("\t\tUTF16LE 固有バイト数 %d,\tポイント数 %d\r\n"), v1, v2 );
+	auto_sprintf( szWork, LS(STR_ESI_UTF16LE_B_AND_P), v1, v2 ); // "\t\tUTF16LE 固有バイト数 %d,\tポイント数 %d\r\n"
 	pcmtxtOut->AppendString( szWork );
-	auto_sprintf( szWork, _T("\t\tUTF16BE 固有バイト数 %d,\tポイント数 %d\r\n"), v3, v4 );
+	auto_sprintf( szWork, LS(STR_ESI_UTF16BE_B_AND_P), v3, v4 ); // "\t\tUTF16BE 固有バイト数 %d,\tポイント数 %d\r\n"
 	pcmtxtOut->AppendString( szWork );
-	pcmtxtOut->AppendString( _T("\t\tBOM の推測結果　") );
+	pcmtxtOut->AppendString( LS(STR_ESI_BOM) );	// "\t\tBOM の推測結果　"
 	switch( cesi.m_eWcBomType ){
 	case ESI_BOMTYPE_LE:
 		auto_sprintf( szWork, _T("LE\r\n") );
@@ -867,24 +867,24 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 		auto_sprintf( szWork, _T("BE\r\n") );
 		break;
 	default:
-		auto_sprintf( szWork, _T("不明\r\n") );
+		auto_sprintf( szWork, LS(STR_ESI_BOM_UNKNOWN) );	// "不明\r\n"
 	}
 	pcmtxtOut->AppendString( szWork );
-	pcmtxtOut->AppendString( _T("\tMBC と 上記以外の UNICODE ファミリ\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_MBC_OTHER_UNICODE) );
 	for( i = 0; i < NUM_OF_MBCODE; ++i ){
 		if( !IsValidCodeType(cesi.m_apMbcInfo[i]->eCodeID) ){
 			cesi.m_apMbcInfo[i]->eCodeID = CODE_SJIS;
 		}
 		cesi.GetEvaluation( cesi.m_apMbcInfo[i]->eCodeID, &v1, &v2 );
-		auto_sprintf( szWork, _T("\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"),
+		auto_sprintf( szWork, LS(STR_ESI_OTHER_B_AND_P),	// "\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"
 			i+1, CCodeTypeName(cesi.m_apMbcInfo[i]->eCodeID).Normal(), v1, v2 );
 		pcmtxtOut->AppendString( szWork );
 	}
-	auto_sprintf( szWork, _T("\t\t・EUC全角カナかな/EUC全角\t%6.3f\r\n"), static_cast<double>(cesi.m_nMbcEucZenHirakata)/cesi.m_nMbcEucZen );
+	auto_sprintf( szWork, LS(STR_ESI_EUC_ZENKAKU), static_cast<double>(cesi.m_nMbcEucZenHirakata)/cesi.m_nMbcEucZen );	// "\t\t・EUC全角カナかな/EUC全角\t%6.3f\r\n"
 	pcmtxtOut->AppendString( szWork );
 
 
-	pcmtxtOut->AppendString( _T("判定結果\r\n") );
+	pcmtxtOut->AppendString( LS(STR_ESI_RESULT) );	// "判定結果\r\n"
 
 
 	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(ecode_result).Normal() );
