@@ -38,6 +38,14 @@ class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
 struct STypeConfig;// 2005.11.20 Moca
 
+//! レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
+enum EKinsokuType {
+	KINSOKU_TYPE_NONE = 0,			//!< なし
+	KINSOKU_TYPE_WORDWRAP,			//!< 英文ワードラップ中
+	KINSOKU_TYPE_KINSOKU_HEAD,		//!< 行頭禁則中
+	KINSOKU_TYPE_KINSOKU_TAIL,		//!< 行末禁則中
+	KINSOKU_TYPE_KINSOKU_KUTO,		//!< 句読点ぶら下げ中
+};
 
 struct LayoutReplaceArg {
 	CLayoutRange	sDelRange;			//!< [in]削除範囲。レイアウト単位。

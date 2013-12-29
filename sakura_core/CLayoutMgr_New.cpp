@@ -33,15 +33,6 @@
 #include "CMemoryIterator.h"
 #include "CEditDoc.h" /// 2003/07/20 genta
 
-//レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
-#define	KINSOKU_TYPE_NONE			0	//なし
-#define	KINSOKU_TYPE_WORDWRAP		1	//ワードラップ中
-#define	KINSOKU_TYPE_KINSOKU_HEAD	2	//行頭禁則中
-#define	KINSOKU_TYPE_KINSOKU_TAIL	3	//行末禁則中
-#define	KINSOKU_TYPE_KINSOKU_KUTO	4	//句読点ぶら下げ中
-
-
-
 /*!
 	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
 
@@ -72,7 +63,7 @@ void CLayoutMgr::_DoLayout(
 	int			nWordBgn;
 	int			nWordLen;
 	int			nAllLineNum;
-	int			nKinsokuType;	//@@@ 2002.04.20 MIK
+	EKinsokuType	eKinsokuType;	//@@@ 2002.04.20 MIK
 
 	int			nIndent;			//	インデント幅
 	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
@@ -128,7 +119,7 @@ void CLayoutMgr::_DoLayout(
 		nPos = 0;
 		nWordBgn = 0;
 		nWordLen = 0;
-		nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+		eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
 		int	nEol = pCDocLine->m_cEol.GetLen();
 		int nEol_1 = nEol - 1;
@@ -155,12 +146,12 @@ void CLayoutMgr::_DoLayout(
 			SEARCH_START:;
 			
 			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-			if( KINSOKU_TYPE_NONE != nKinsokuType )
+			if( KINSOKU_TYPE_NONE != eKinsokuType )
 			{
 				//禁則処理の最後尾に達したら禁則処理中を解除する
 				if( nPos >= nWordBgn + nWordLen )
 				{
-					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
+					if( eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
 					 && nPos == nWordBgn + nWordLen )
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
@@ -176,7 +167,7 @@ void CLayoutMgr::_DoLayout(
 					}
 					
 					nWordLen = 0;
-					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+					eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 				}
 			}
 			else
@@ -184,7 +175,7 @@ void CLayoutMgr::_DoLayout(
 			
 				/* ワードラップ処理 */
 				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
-				 && nKinsokuType == KINSOKU_TYPE_NONE )
+				 && eKinsokuType == KINSOKU_TYPE_NONE )
 				{
 //				if( 0 == nWordLen ){
 					/* 英単語の先頭か */
@@ -213,7 +204,7 @@ void CLayoutMgr::_DoLayout(
 						}
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
-						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
+						eKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
 						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
 						){
@@ -238,7 +229,7 @@ void CLayoutMgr::_DoLayout(
 				/* 句読点のぶらさげ */
 				if( m_sTypeConfig.m_bKinsokuKuto
 				 && (nMaxLineSize - nPosX < 2)
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -249,7 +240,7 @@ void CLayoutMgr::_DoLayout(
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
 					}
 				}
 
@@ -257,7 +248,7 @@ void CLayoutMgr::_DoLayout(
 				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -271,7 +262,7 @@ void CLayoutMgr::_DoLayout(
 						//nPos += nCharChars2 + nCharChars3; nPosX += nCharChars2 + nCharChars3;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2 + nCharChars3;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -286,7 +277,7 @@ void CLayoutMgr::_DoLayout(
 				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -298,7 +289,7 @@ void CLayoutMgr::_DoLayout(
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
 						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint( nBgn, nLineNum ), nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -340,7 +331,7 @@ void CLayoutMgr::_DoLayout(
 					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars2 > nMaxLineSize ){
-					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+					if( eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
@@ -448,7 +439,7 @@ int CLayoutMgr::DoLayout_Range(
 	bool		bNeedChangeCOMMENTMODE = false;	//@@@ 2002.09.23 YAZAKI bAddを名称変更
 	int			nWordBgn;
 	int			nWordLen;
-	int			nKinsokuType;	//@@@ 2002.04.20 MIK
+	EKinsokuType	eKinsokuType;	//@@@ 2002.04.20 MIK
 
 	int			nIndent;			//	インデント幅
 	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
@@ -496,7 +487,7 @@ int CLayoutMgr::DoLayout_Range(
 		nPos = 0;
 		nWordBgn = 0;
 		nWordLen = 0;
-		nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+		eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 
 		int	nEol = pCDocLine->m_cEol.GetLen();
 		int nEol_1 = nEol - 1;
@@ -522,12 +513,12 @@ int CLayoutMgr::DoLayout_Range(
 			SEARCH_START:;
 			
 			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-			if( KINSOKU_TYPE_NONE != nKinsokuType )
+			if( KINSOKU_TYPE_NONE != eKinsokuType )
 			{
 				//禁則処理の最後尾に達したら禁則処理中を解除する
 				if( nPos >= nWordBgn + nWordLen )
 				{
-					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
+					if( eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
 					 && nPos == nWordBgn + nWordLen )
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
@@ -556,7 +547,7 @@ int CLayoutMgr::DoLayout_Range(
 					}
 
 					nWordLen = 0;
-					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+					eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 				}
 			}
 			else
@@ -564,7 +555,7 @@ int CLayoutMgr::DoLayout_Range(
 			
 				/* ワードラップ処理 */
 				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
-				 && nKinsokuType == KINSOKU_TYPE_NONE )
+				 && eKinsokuType == KINSOKU_TYPE_NONE )
 				{
 					/* 英単語の先頭か */
 					// 2005-09-02 D.S.Koba GetSizeOfChar
@@ -591,7 +582,7 @@ int CLayoutMgr::DoLayout_Range(
 						}
 						nWordBgn = nPos;
 						nWordLen = i - nPos;
-						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
+						eKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
 
 						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
@@ -625,7 +616,7 @@ int CLayoutMgr::DoLayout_Range(
 				/* 句読点のぶらさげ */
 				if( m_sTypeConfig.m_bKinsokuKuto
 				 && (nMaxLineSize - nPosX < 2)
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -636,7 +627,7 @@ int CLayoutMgr::DoLayout_Range(
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
 					}
 				}
 
@@ -644,7 +635,7 @@ int CLayoutMgr::DoLayout_Range(
 				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -658,7 +649,7 @@ int CLayoutMgr::DoLayout_Range(
 						//nPos += nCharChars2 + nCharChars3; nPosX += nCharChars2 + nCharChars3;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2 + nCharChars3;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 						//@@@ 2002.09.23 YAZAKI 最適化
 						if( bNeedChangeCOMMENTMODE ){
 							pLayout = pLayout->m_pNext;
@@ -686,7 +677,7 @@ int CLayoutMgr::DoLayout_Range(
 				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
+				 && (eKinsokuType == KINSOKU_TYPE_NONE) )
 				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					int nCharChars2 = CMemory::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -698,7 +689,7 @@ int CLayoutMgr::DoLayout_Range(
 						//nPos += nCharChars2; nPosX += nCharChars2;
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
+						eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
 						//@@@ 2002.09.23 YAZAKI 最適化
 						if( bNeedChangeCOMMENTMODE ){
 							pLayout = pLayout->m_pNext;
@@ -722,7 +713,7 @@ int CLayoutMgr::DoLayout_Range(
 					}
 				}
 				//@@@ 2002.04.08 MIK end
-			}	// if( nKinsokuType != KINSOKU_TYPE_NONE )
+			}	// if( eKinsokuType != KINSOKU_TYPE_NONE )
 
 			//@@@ 2002.09.22 YAZAKI
 			bool bGotoSEARCH_START = CheckColorMODE( nCOMMENTMODE, nCOMMENTEND, nPos, nLineLen, pLine );
@@ -765,7 +756,7 @@ int CLayoutMgr::DoLayout_Range(
 					break;	//@@@ 2002.04.16 MIK
 				}
 				if( nPosX + nCharChars > nMaxLineSize ){
-					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+					if( eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
 						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
