@@ -622,9 +622,9 @@ struct CommonSetting_Plugin
 // 種類
 enum EMainMenuType {
 	T_NODE,			// Node
-	T_LEAF,			// 機能
+	T_LEAF,			// 機能コマンド
 	T_SEPARATOR,	// 区切線
-	T_SPECIAL,		// 特殊機能
+	T_SPECIAL,		// 特殊機能コマンド
 }; 
 
 class CMainMenu {

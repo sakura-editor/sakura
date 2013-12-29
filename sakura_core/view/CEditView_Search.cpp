@@ -23,6 +23,7 @@
 */
 
 #include "StdAfx.h"
+#include <limits.h>
 #include "CEditView.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"

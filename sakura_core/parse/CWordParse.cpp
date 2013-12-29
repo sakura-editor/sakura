@@ -32,7 +32,7 @@ bool CWordParse::WhereCurrentWord_2(
 		return false;
 	}
 
-	// 現在位置の文字の種類によっては選択不能
+	// 現在位置の文字の種類によっては選択不可
 	if( WCODE::IsLineDelimiter(pLine[nIdx]) ){
 		return false;
 	}
