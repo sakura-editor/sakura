@@ -1378,17 +1378,15 @@ void CEditView::OnSetFocus( void )
 {
 	// 2004.04.02 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	{
-		int nPosX = m_ptCaretPos.x;
-		int nPosY = m_ptCaretPos.y;
-		if( GetAdjustCursorPos( &nPosX, &nPosY ) ){
-			MoveCursor( nPosX, nPosY, false );
+		CLayoutPoint ptPos = m_ptCaretPos;
+		if( GetAdjustCursorPos( &ptPos ) ){
+			MoveCursor( ptPos.x, ptPos.y, false );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 		}
 	}
 
 	ShowEditCaret();
 
-//	SetIMECompFormPos();	YAZAKI ShowEditCaretで作業済み
 	SetIMECompFormFont();
 
 	/* ルーラのカーソルをグレーから黒に変更する */
@@ -2345,7 +2343,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 		}
 	}
 	// 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
-	GetAdjustCursorPos( &nWk_CaretPosX, &nWk_CaretPosY );
+	CLayoutPoint ptWk_CaretPos( nWk_CaretPosX, nWk_CaretPosY );
+	GetAdjustCursorPos( &ptWk_CaretPos );
 	
 	
 	/* 水平スクロール量（文字数）の算出 */
@@ -2354,14 +2353,14 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 	nScrollMarginLeft = SCROLLMARGIN_LEFT;
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() > m_nViewColNum &&
-		nWk_CaretPosX > m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ){
+		ptWk_CaretPos.x > m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ){
 		nScrollColNum =
-			( m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ) - nWk_CaretPosX;
+			( m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ) - ptWk_CaretPos.x;
 	}else
 	if( 0 < m_nViewLeftCol &&
-		nWk_CaretPosX < m_nViewLeftCol + nScrollMarginLeft
+		ptWk_CaretPos.x < m_nViewLeftCol + nScrollMarginLeft
 	){
-		nScrollColNum = m_nViewLeftCol + nScrollMarginLeft - nWk_CaretPosX;
+		nScrollColNum = m_nViewLeftCol + nScrollMarginLeft - ptWk_CaretPos.x;
 		if( 0 > m_nViewLeftCol - nScrollColNum ){
 			nScrollColNum = m_nViewLeftCol;
 		}
@@ -2375,51 +2374,51 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 										// 画面が３行以下
 	if( m_nViewRowNum <= 3 ){
 							// 移動先は、画面のスクロールラインより上か？（up キー）
-		if( nWk_CaretPosY - m_nViewTopLine < nCaretMarginY ){
-			if( nWk_CaretPosY < nCaretMarginY ){	//１行目に移動
+		if( ptWk_CaretPos.y - m_nViewTopLine < nCaretMarginY ){
+			if( ptWk_CaretPos.y < nCaretMarginY ){	//１行目に移動
 				nScrollRowNum = m_nViewTopLine;
 			}else
 			if( m_nViewRowNum <= 1 ){	// 画面が１行
-				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+				nScrollRowNum = m_nViewTopLine - ptWk_CaretPos.y;
 			}else
 #if !(0)	// COMMENTにすると、上下の空きを死守しない為、縦移動はgoodだが、横移動の場合上下にぶれる
 			if( m_nViewRowNum <= 2 ){	// 画面が２行
-				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+				nScrollRowNum = m_nViewTopLine - ptWk_CaretPos.y;
 			}else
 #endif
 			{						// 画面が３行
-				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY + 1;
+				nScrollRowNum = m_nViewTopLine - ptWk_CaretPos.y + 1;
 			}
 		}else
 							// 移動先は、画面の最大行数－２より下か？（down キー）
-		if( nWk_CaretPosY - m_nViewTopLine >= (m_nViewRowNum - nCaretMarginY - 2) ){
+		if( ptWk_CaretPos.y - m_nViewTopLine >= (m_nViewRowNum - nCaretMarginY - 2) ){
 			int ii = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-			if( ii - nWk_CaretPosY < nCaretMarginY + 1 &&
+			if( ii - ptWk_CaretPos.y < nCaretMarginY + 1 &&
 				ii - m_nViewTopLine < m_nViewRowNum ) {
 			} else
 			if( m_nViewRowNum <= 2 ){	// 画面が２行、１行
-				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY;
+				nScrollRowNum = m_nViewTopLine - ptWk_CaretPos.y;
 			}else{						// 画面が３行
-				nScrollRowNum = m_nViewTopLine - nWk_CaretPosY + 1;
+				nScrollRowNum = m_nViewTopLine - ptWk_CaretPos.y + 1;
 			}
 		}
 	}else							// 移動先は、画面のスクロールラインより上か？（up キー）
-	if( nWk_CaretPosY - m_nViewTopLine < nCaretMarginY ){
-		if( nWk_CaretPosY < nCaretMarginY ){	//１行目に移動
+	if( ptWk_CaretPos.y - m_nViewTopLine < nCaretMarginY ){
+		if( ptWk_CaretPos.y < nCaretMarginY ){	//１行目に移動
 			nScrollRowNum = m_nViewTopLine;
 		}else{
-			nScrollRowNum = -(nWk_CaretPosY - m_nViewTopLine) + nCaretMarginY;
+			nScrollRowNum = -(ptWk_CaretPos.y - m_nViewTopLine) + nCaretMarginY;
 		}
 	} else
 							// 移動先は、画面の最大行数－２より下か？（down キー）
-	if( nWk_CaretPosY - m_nViewTopLine >= m_nViewRowNum - nCaretMarginY - 2 ){
+	if( ptWk_CaretPos.y - m_nViewTopLine >= m_nViewRowNum - nCaretMarginY - 2 ){
 		int ii = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-		if( ii - nWk_CaretPosY < nCaretMarginY + 1 &&
+		if( ii - ptWk_CaretPos.y < nCaretMarginY + 1 &&
 			ii - m_nViewTopLine < m_nViewRowNum ) {
 		} else
 		{
 			nScrollRowNum =
-				-(nWk_CaretPosY - m_nViewTopLine) + (m_nViewRowNum - nCaretMarginY - 2);
+				-(ptWk_CaretPos.y - m_nViewTopLine) + (m_nViewRowNum - nCaretMarginY - 2);
 		}
 	}
 	//	To Here 2007.07.28 じゅうじ
@@ -2523,8 +2522,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 		if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 			// AdjustScrollBars()で移動後のキャレット位置が必要なため、ここでコピー
 			if( IsTextSelected() || m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode ){
-				m_ptCaretPos.x = nWk_CaretPosX;
-				m_ptCaretPos.y = nWk_CaretPosY;
+				m_ptCaretPos = ptWk_CaretPos;
 			}
 		}
 
@@ -2533,8 +2531,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 	}
 
 	/* キャレット移動 */
-	m_ptCaretPos.x = nWk_CaretPosX;
-	m_ptCaretPos.y = nWk_CaretPosY;
+	m_ptCaretPos = ptWk_CaretPos;
 
 	/* カーソル位置変換
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -2588,45 +2585,46 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 }
 
 /*! 正しいカーソル位置を算出する(EOF以降のみ)
-	@param pnPosX [in/out] カーソルのレイアウト座標X
-	@param pnPosY [in/out] カーソルのレイアウト座標Y
+	@param pptPosXY [in/out] カーソルのレイアウト座標
 	@retval	TRUE 座標を修正した
 	@retval	FALSE 座標は修正されなかった
 	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能
 			EOFだけの行は、先頭位置のみ正しい。
 	@date 2004.04.02 Moca 関数化
 */
-BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
+BOOL CEditView::GetAdjustCursorPos(
+	CLayoutPoint* pptPosXY
+)
+{
 	// 2004.03.28 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	int nLayoutLineCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	int nPosX2 = *pnPosX;
-	int nPosY2 = *pnPosY;
+
+	CLayoutPoint ptPosXY2 = *pptPosXY;
 	BOOL ret = FALSE;
-	if( nPosY2 >= nLayoutLineCount ){
+	if( ptPosXY2.y >= nLayoutLineCount ){
 		if( 0 < nLayoutLineCount ){
-			nPosY2 = nLayoutLineCount - 1;
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nPosY2 );
+			ptPosXY2.y = nLayoutLineCount - 1;
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.y );
 			if( pcLayout->m_cEol == EOL_NONE ){
-				nPosX2 = LineIndexToColumn( pcLayout, pcLayout->GetLength() );
+				ptPosXY2.x = LineIndexToColumn( pcLayout, pcLayout->GetLength() );
 				// EOFだけ折り返されているか
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( nPosX2 >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
-					nPosY2++;
-					nPosX2 = 0;
+				if( ptPosXY2.x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
+					ptPosXY2.y++;
+					ptPosXY2.x = 0;
 				}
 			}else{
 				// EOFだけの行
-				nPosY2++;
-				nPosX2 = 0;
+				ptPosXY2.y++;
+				ptPosXY2.x = 0;
 			}
 		}else{
 			// 空のファイル
-			nPosX2 = 0;
-			nPosY2 = 0;
+			ptPosXY2.x = 0;
+			ptPosXY2.y = 0;
 		}
-		if( *pnPosX != nPosX2 || *pnPosY != nPosY2 ){
-			*pnPosX = nPosX2;
-			*pnPosY = nPosY2;
+		if( pptPosXY->x != ptPosXY2.x || pptPosXY->y != ptPosXY2.y ){
+			*pptPosXY = ptPosXY2;
 			ret = TRUE;
 		}
 	}
@@ -3850,7 +3848,7 @@ void CEditView::CopySelectedAllLines(
 			pcLayout = pcLayout->m_pNext;
 		}
 		sSelect.m_ptTo.x = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
-		GetAdjustCursorPos( &sSelect.m_ptTo.x, &sSelect.m_ptTo.y );	// EOF行を超えていたら座標修正
+		GetAdjustCursorPos( &sSelect.m_ptTo );	// EOF行を超えていたら座標修正
 
 		DisableSelectArea( false ); // 2011.06.03 true →false
 		SetSelectArea( sSelect );
