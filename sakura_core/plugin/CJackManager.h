@@ -99,7 +99,7 @@ public:
 	//メンバ変数
 private:
 	DLLSHAREDATA* m_pShareData;
-	std::vector<JackDef> m_Jacks;	//ジャック定義表
+	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
 
 #endif /* SAKURA_CJACKMANAGER_6CC7B212_130B_46AF_9C88_05F554CDA34BO_H_ */
