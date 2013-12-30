@@ -1954,7 +1954,8 @@ re_do:;								// hor
 		if(!bFound	&&	// Œ©‚Â‚©‚ç‚È‚©‚Á‚½
 			bRedo		// Å‰‚ÌŒŸõ
 		){
-			nY=m_pcEditDoc->m_cLayoutMgr.GetLineCount();	// 2002/06/01 MIK
+			// 2011.02.02 m_cLayoutMgr¨m_cDocLineMgr
+			nY=m_pcEditDoc->m_cDocLineMgr.GetLineCount();	// 2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;	// ––”ö‚©‚çÄŒŸõ
 		}

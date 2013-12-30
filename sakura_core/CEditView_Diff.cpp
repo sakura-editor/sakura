@@ -612,7 +612,8 @@ re_do:;
 	if( m_pShareData->m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった、かつ、最初の検索
 		if( !bFound	&& bRedo ){
-			ptXY.y = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	// 1個手前を指定
+			// 2011.02.02 m_cLayoutMgr→m_cDocLineMgr
+			ptXY.y = m_pcEditDoc->m_cDocLineMgr.GetLineCount();	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;	// 末尾から再検索
 		}
