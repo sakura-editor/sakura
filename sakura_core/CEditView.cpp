@@ -2562,7 +2562,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 		m_cUnderLine.CaretUnderLineON( true );
 
 		/* キャレットの行桁位置を表示する */
-		DrawCaretPosInfo();
+		ShowCaretPosInfo();
 
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		//	bScroll == FALSEの時にはスクロールしないので，実行しない
@@ -4370,7 +4370,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 	@note ステータスバーの出力内容の変更はCEditWnd::OnSize()の
 		カラム幅計算に影響があることに注意
 */
-void CEditView::DrawCaretPosInfo( void )
+void CEditView::ShowCaretPosInfo( void )
 {
 	if( !m_bDrawSWITCH ){
 		return;
@@ -4697,7 +4697,7 @@ void CEditView::RedrawAll( void )
 	ShowEditCaret();
 
 	/* キャレットの行桁位置を表示する */
-	DrawCaretPosInfo();
+	ShowCaretPosInfo();
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcEditWnd->UpdateCaption();

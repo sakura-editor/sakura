@@ -2984,7 +2984,7 @@ void CEditView::Command_CHGMOD_INS( void )
 	/* キャレットの表示・更新 */
 	ShowEditCaret();
 	/* キャレットの行桁位置を表示する */
-	DrawCaretPosInfo();
+	ShowCaretPosInfo();
 }
 
 
@@ -3412,7 +3412,7 @@ end_of_func:;
 	}
 	else{
 		ShowEditCaret();	// 2002/04/18 YAZAKI
-		DrawCaretPosInfo();	// 2002/04/18 YAZAKI
+		ShowCaretPosInfo();	// 2002/04/18 YAZAKI
 		SendStatusMessage(_T("▽見つかりませんでした"));
 // To Here 2002.01.26 hor
 
@@ -8289,7 +8289,7 @@ void CEditView::Command_RECKEYMACRO( void )
 	m_pcEditWnd->UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
-	DrawCaretPosInfo();
+	ShowCaretPosInfo();
 }
 
 
@@ -8719,7 +8719,7 @@ void CEditView::Command_FILE_REOPEN(
 		m_pcEditDoc->m_bReadOnly	/* 読み取り専用モード */
 	);
 	/* キャレットの行桁位置を表示する */
-	DrawCaretPosInfo();
+	ShowCaretPosInfo();
 }
 
 

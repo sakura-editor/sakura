@@ -3491,7 +3491,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		int			nStArr[8];
 		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
 		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
-		// 幅を変えた場合にはCEditView::DrawCaretPosInfo()での表示方法を見直す必要あり．
+		// 幅を変えた場合にはCEditView::ShowCaretPosInfo()での表示方法を見直す必要あり．
 		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("0000"), _T("Unicode"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん
 		int			nStArrNum = 7;
 		//	To Here
@@ -4912,7 +4912,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 		}
 	}
 	if( !m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
-		GetActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
+		GetActiveView().ShowCaretPosInfo();	// 2009.07.25 ryoji
 	}
 
 	if( hwndProgress ){

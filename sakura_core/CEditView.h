@@ -497,7 +497,7 @@ public:
 protected:
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
 public:
-	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
+	void ShowCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
 protected:
 	bool IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( int, int);							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji

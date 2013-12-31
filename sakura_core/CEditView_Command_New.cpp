@@ -795,7 +795,7 @@ void CEditView::Command_UNDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
-		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
+		ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
 		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
@@ -961,7 +961,7 @@ void CEditView::Command_REDO( void )
 			/* キャレットの表示・更新 */
 			ShowEditCaret();
 		}
-		DrawCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
+		ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
 		if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
@@ -1657,7 +1657,7 @@ void CEditView::Command_WndScrollDown( void )
 				Cursor_UPDOWN( (m_pcEditDoc->m_cLayoutMgr.GetLineCount() - nCaretMarginY) - m_ptCaretPos.y, FALSE );
 			else
 				Cursor_UPDOWN( -1, FALSE);
-			DrawCaretPosInfo();
+			ShowCaretPosInfo();
 		}
 	}
 
@@ -1691,7 +1691,7 @@ void CEditView::Command_WndScrollUp(void)
 				Cursor_UPDOWN( nCaretMarginY + 1, FALSE );
 			else
 				Cursor_UPDOWN( 1, FALSE );
-			DrawCaretPosInfo();
+			ShowCaretPosInfo();
 		}
 	}
 
@@ -2546,7 +2546,7 @@ void CEditView::Command_CHGMOD_EOL( EEolType e ){
 		m_pcEditDoc->SetNewLineCode( e );
 		// ステータスバーを更新するため
 		// キャレットの行桁位置を表示する関数を呼び出す
-		DrawCaretPosInfo();
+		ShowCaretPosInfo();
 	}
 }
 

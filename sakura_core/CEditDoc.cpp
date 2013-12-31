@@ -1040,7 +1040,7 @@ BOOL CEditDoc::FileRead(
 
 end_of_func:;
 	//	2004.05.13 Moca 改行コードの設定内からここに移動
-	m_pcEditWnd->GetActiveView().DrawCaretPosInfo();
+	m_pcEditWnd->GetActiveView().ShowCaretPosInfo();
 
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );

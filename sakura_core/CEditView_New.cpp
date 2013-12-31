@@ -143,9 +143,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	}
 //@@@ 2001.11.17 add end MIK
 
-	/* キャレットの行桁位置を表示する */
-//	DrawCaretPosInfo();
-
 	/* メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える */
 	// 2007.09.09 Moca bUseMemoryDCを有効化。
 	// bUseMemoryDC = FALSE;
