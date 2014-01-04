@@ -23,6 +23,7 @@
 #include "Debug.h"
 #include "etc_uty.h"
 #include "file.h"
+#include "CBregexp.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -148,12 +148,6 @@ void ResolvePath(TCHAR* pszPath); //!< ƒVƒ‡[ƒgƒJƒbƒg‚Ì‰ðŒˆ‚Æƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚Ö•
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
-//	Jun. 26, 2001 genta
-//!	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ìƒo[ƒWƒ‡ƒ“Žæ“¾
-bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor’Ç‰Á
-bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
-
 HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag = true);
 DWORD NetConnect ( const char strNetWorkPass[] );
 

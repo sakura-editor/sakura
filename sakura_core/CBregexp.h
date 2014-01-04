@@ -264,7 +264,7 @@ private:
 	//	メンバ変数
 	BREGEXP*			m_pRegExp;			//!< コンパイル構造体
 	int					m_ePatType;			//!< 検索文字列パターン種別
-	const char			*m_szTarget;		//!< 対象文字列へのポインタ
+	const char*			m_szTarget;			//!< 対象文字列へのポインタ
 	char				m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 	struct SyntaxInfo {
 		SyntaxInfo() : lookBehindIsAvailable( false ), nestedRawBracketIsDisallowed( false ), qeEscapeIsAvailable( false ) {}
@@ -275,6 +275,13 @@ private:
 	// 静的メンバ変数
 	static const char	m_tmpBuf[2];	//!< ダミー文字列
 };
+
+
+//	Jun. 26, 2001 genta
+//!	正規表現ライブラリのバージョン取得
+bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
+bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
+bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 //	以下は関数ポインタに読み込まれる関数の解説
 /*!	@fn int CBregexp::BMatch(char* str,char *target,char *targetendp, BREGEXP **rxp,char *msg)

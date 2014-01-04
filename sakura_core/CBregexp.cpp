@@ -45,7 +45,9 @@
 #include <string.h>
 #include "CBregexp.h"
 #include "charcode.h"
+#include "CShareData.h"
 #include "etc_uty.h"
+#include "Debug.h"
 
 //	2007.07.22 genta : DLL判別用
 static const TCHAR P_BREG[] = _T("BREGEXP.DLL");
@@ -191,17 +193,17 @@ int CBregexp::CheckPattern(const char* szPattern)
 /*! @brief ライブラリに渡すための検索・置換パターンを作成する
 **
 ** @note szPattern2: == NULL:検索 != NULL:置換
-** 
+**
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
 ** 
 ** @date 2003.05.03 かろと 関数に切り出し
 */
 char* CBregexp::MakePatternSub(
-	const char* szPattern,		//!< 検索パターン
-	const char* szPattern2,		//!< 置換パターン(NULLなら検索)
-	const char* szAdd2,			//!< 置換パターンの後ろに付け加えるパターン($1など) 
-	int nOption					//!< 検索オプション
+	const char* szPattern,	//!< 検索パターン
+	const char* szPattern2,	//!< 置換パターン(NULLなら検索)
+	const char* szAdd2,		//!< 置換パターンの後ろに付け加えるパターン($1など) 
+	int			nOption		//!< 検索オプション
 ) 
 {
 	static const char DELIMITER = '\xFF';		//!< デリミタ
@@ -646,5 +648,103 @@ int CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 	return result;
 }
 //>> 2002/03/27 Azumaiya
+
+//	From Here Jun. 26, 2001 genta
+/*!
+	与えられた正規表現ライブラリの初期化を行う．
+	メッセージフラグがONで初期化に失敗したときはメッセージを表示する．
+
+	@retval true 初期化成功
+	@retval false 初期化に失敗
+
+	@date 2007.08.12 genta 共通設定からDLL名を取得する
+*/
+bool InitRegexp(
+	HWND		hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
+	CBregexp&	rRegexp,		//!< [in] チェックに利用するCBregexpクラスへの参照
+	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+)
+{
+	//	From Here 2007.08.12 genta
+	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+
+	LPCTSTR RegexpDll = _T("");
+
+	RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
+	//	To Here 2007.08.12 genta
+
+	if( !rRegexp.Init( RegexpDll ) ){
+		if( bShowMessage ){
+			WarningBeep();
+			WarningMessage( hWnd, _T("正規表現ライブラリが見つかりません。\r\n"
+				"正規表現を利用するにはBREGEXP.DLL互換のライブラリが必要です。\r\n"
+				"入手方法はヘルプを参照してください。")
+			);
+		}
+		return false;
+	}
+	return true;
+}
+
+/*!
+	正規表現ライブラリの存在を確認し、あればバージョン情報を指定コンポーネントにセットする。
+	失敗した場合には空文字列をセットする。
+
+	@retval true バージョン番号の設定に成功
+	@retval false 正規表現ライブラリの初期化に失敗
+*/
+bool CheckRegexpVersion(
+	HWND	hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
+	int		nCmpId,			//!< [in] バージョン文字列を設定するコンポーネントID
+	bool	bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+)
+{
+	CBregexp cRegexp;
+
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
+		if( hWnd != NULL ){
+			::SetDlgItemText( hWnd, nCmpId, _T(" "));
+		}
+		return false;
+	}
+	if( hWnd != NULL ){
+		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersionT() );
+	}
+	return true;
+}
+
+/*!
+	正規表現が規則に従っているかをチェックする。
+
+	@param szPattern [in] チェックする正規表現
+	@param hWnd [in] メッセージボックスの親ウィンドウ
+	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
+	@param nOption [in] 大文字と小文字を無視して比較するフラグ // 2002/2/1 hor追加
+
+	@retval true 正規表現は規則通り
+	@retval false 文法に誤りがある。または、ライブラリが使用できない。
+*/
+bool CheckRegexpSyntax(
+	const char*	szPattern,
+	HWND		hWnd,
+	bool		bShowMessage,
+	int			nOption
+)
+{
+	CBregexp cRegexp;
+
+	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
+		return false;
+	}
+	if( !cRegexp.Compile( szPattern, nOption ) ){	// 2002/2/1 hor追加
+		if( bShowMessage ){
+			::MessageBox( hWnd, cRegexp.GetLastMessage(),
+				_T("正規表現エラー"), MB_OK | MB_ICONEXCLAMATION );
+		}
+		return false;
+	}
+	return true;
+}
+//	To Here Jun. 26, 2001 genta
 
 /*[EOF]*/
