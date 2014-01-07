@@ -699,7 +699,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 				LS(STR_PROPTYPEREGEX_KAKOMI) );
 		return false;
 	}
-	if( !CheckRegexpSyntax( to_wchar(szNewKeyWord), hwndDlg, false ) )
+	if( !CheckRegexpSyntax( to_wchar(szNewKeyWord), hwndDlg, false, -1, true ) )
 	{
 		nRet = ::MYMESSAGEBOX(
 				hwndDlg,
