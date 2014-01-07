@@ -74,10 +74,10 @@ public:
 		optGlobal = 2,					//!< 全域オプション(/g)
 		optExtend = 4,					//!< 拡張正規表現(/x)
 		optASCII = 8,					//!< ASCII(/a)
-		optUnicode = 0xf,				//!< Unicode(/u)
-		optDefault = 0x10,				//!< Default(/d)
-		optLocale = 0x20,				//!< Locale(/l)
-		optR = 0x40,					//!< CRLF(/R)
+		optUnicode = 0x10,				//!< Unicode(/u)
+		optDefault = 0x20,				//!< Default(/d)
+		optLocale = 0x40,				//!< Locale(/l)
+		optR = 0x80,					//!< CRLF(/R)
 	};
 	//! 検索パターン定義
 	enum Pattern {
@@ -101,7 +101,7 @@ public:
 	bool Compile(const wchar_t *szPattern, int nOption = 0) {
 		return Compile(szPattern, NULL, nOption);
 	}
-	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0);	//!< Replace用
+	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0, bool bKakomi = false);	//!< Replace用
 	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0);						//!< 検索を実行する
 	int Replace(const wchar_t *szTarget, int nLen, int nStart = 0);					//!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
@@ -226,7 +226,7 @@ private:
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
+bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 

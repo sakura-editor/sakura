@@ -426,7 +426,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption )
+bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption, bool bKakomi )
 {
 
 	//	DLLが利用可能でないときはエラー終了
@@ -438,14 +438,21 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	wchar_t *szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
+	wchar_t *szNPattern = NULL;
+	const wchar_t *pszNPattern = NULL;
+	if( bKakomi ){
+		pszNPattern = szPattern0;
+	}else{
+		szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
+		pszNPattern = szNPattern;
+	}
 	m_szMsg[0] = L'\0';		//!< エラー解除
 	if (szPattern1 == NULL) {
 		// 検索実行
-		BMatch( szNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+		BMatch( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
 	} else {
 		// 置換実行
-		BSubst( szNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
+		BSubst( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
 	}
 	delete [] szNPattern;
 
@@ -676,14 +683,18 @@ bool CheckRegexpSyntax(
 	const wchar_t*	szPattern,
 	HWND			hWnd,
 	bool			bShowMessage,
-	int				nOption )
+	int				nOption,
+	bool			bKakomi)
 {
 	CBregexp cRegexp;
 
 	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		return false;
 	}
-	if( !cRegexp.Compile( szPattern, nOption ) ){	// 2002/2/1 hor追加
+	if( nOption == -1 ){
+		nOption = CBregexp::optCaseSensitive;
+	}
+	if( !cRegexp.Compile( szPattern, NULL, nOption, bKakomi ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
 			::MessageBox( hWnd, cRegexp.GetLastMessage(),
 				LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION );
