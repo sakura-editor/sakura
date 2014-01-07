@@ -1259,9 +1259,6 @@ LRESULT CEditWnd::DispatchEvent(
 	LPTOOLTIPTEXT		lptip;
 	int					nPane;
 	EditInfo*			pfi;
-	int					nCaretPosX;
-	int					nCaretPosY;
-	POINT*				ppoCaret;
 	LPHELPINFO			lphi;
 	const char*			pLine;
 	int					nLineLen;
@@ -1901,7 +1898,6 @@ LRESULT CEditWnd::DispatchEvent(
 				bSelect = GetActiveView().m_bSelectingLock;
 			}
 			
-			ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
 			//	2006.07.09 genta 強制解除しない
 			/*
 			カーソル位置変換
@@ -1909,11 +1905,13 @@ LRESULT CEditWnd::DispatchEvent(
 			→
 			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
+			CLogicPoint* ppoCaret = (CLogicPoint*)m_pShareData->m_sWorkBuffer.m_szWork;
+			CLayoutPoint ptCaretPos;
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 				ppoCaret->x,
 				ppoCaret->y,
-				&nCaretPosX,
-				&nCaretPosY
+				&ptCaretPos.x,
+				&ptCaretPos.y
 			);
 			// 改行の真ん中にカーソルが来ないように	// 2007.08.22 ryoji
 			// Note. もとが改行単位の桁位置なのでレイアウト折り返しの桁位置を超えることはない。
@@ -1923,19 +1921,18 @@ LRESULT CEditWnd::DispatchEvent(
 			if( !bSelect ){
 				const CDocLine *pTmpDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( ppoCaret->y );
 				if( pTmpDocLine ){
-					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) nCaretPosX--;
+					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) ptCaretPos.x--;
 				}
 			}
 			//	2006.07.09 genta 選択範囲を考慮して移動
 			//	MoveCursorの位置調整機能があるので，最終行以降への
 			//	移動指示の調整もMoveCursorにまかせる
-			GetActiveView().MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
+			GetActiveView().MoveCursorSelecting( ptCaretPos, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
 
 
 	case MYWM_GETCARETPOS:	/* カーソル位置取得要求 */
-		ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
 		/*
 		カーソル位置変換
 		 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -1943,11 +1940,12 @@ LRESULT CEditWnd::DispatchEvent(
 		物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
 		{
+			CLogicPoint* ppoCaret = (CLogicPoint*)m_pShareData->m_sWorkBuffer.m_szWork;
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				GetActiveView().m_ptCaretPos.x,
 				GetActiveView().m_ptCaretPos.y,
-				(int*)&ppoCaret->x,
-				(int*)&ppoCaret->y
+				&ppoCaret->x,
+				&ppoCaret->y
 			);
 		}
 		return 0L;

@@ -1126,8 +1126,6 @@ void CEditView::Command_GOLINETOP(
 )
 {
 	bool			bLineTopOnly = false;
-	int				nCaretPosX;
-	int				nCaretPosY;
 	int				nPos;
 	int				nPosY;
 	const CLayout*	pcLayout;
@@ -1141,24 +1139,25 @@ void CEditView::Command_GOLINETOP(
 		bSelect = true;
 	}
 
+	CLayoutPoint ptCaretPos;
 	if ( lparam & 8 ){
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			0,
 			m_ptCaretPos_PHY.y,
-			&nCaretPosX,
-			&nCaretPosY
+			&ptCaretPos.x,
+			&ptCaretPos.y
 		);
 	}
 	else{
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
-		nCaretPosX = pcLayout ? pcLayout->GetIndent() : 0;
-		nCaretPosY = m_ptCaretPos.y;
+		ptCaretPos.x = pcLayout ? pcLayout->GetIndent() : 0;
+		ptCaretPos.y = m_ptCaretPos.y;
 	}
 	if( !bLineTopOnly ){
 		/* 目的行のデータを取得 */
 		/* 改行単位指定で、先頭から空白が1折り返し行以上続いている場合は次の行データを取得 */
-		nPosY = nCaretPosY - 1;
+		nPosY = ptCaretPos.y - 1;
 		const char*		pLine;
 		const CLayout*	pcLayout;
 		BOOL			bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
@@ -1194,18 +1193,18 @@ void CEditView::Command_GOLINETOP(
 			nPos = 0;
 		}
 		
-		if(0 == nPos) nPosY = nCaretPosY;	/* 物理行の移動なし */
+		if(0 == nPos) nPosY = ptCaretPos.y;	/* 物理行の移動なし */
 		
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		nPos = LineIndexToColumn( pcLayout, nPos );
 		if( (m_ptCaretPos.x != nPos) || (m_ptCaretPos.y != nPosY) ){
-			nCaretPosX = nPos;
-			nCaretPosY = nPosY;
+			ptCaretPos.x = nPos;
+			ptCaretPos.y = nPosY;
 		}
 	}
 
 	//	2006.07.09 genta 新規関数にまとめた
-	MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect );
+	MoveCursorSelecting( ptCaretPos, bSelect );
 }
 
 
@@ -1273,7 +1272,11 @@ void CEditView::Command_GOFILETOP( bool bSelect )
 	AddCurrentLineToHistory();
 
 	//	2006.07.09 genta 新規関数にまとめた
-	MoveCursorSelecting( (!m_bBeginBoxSelect)? 0: m_ptCaretPos.x, 0, bSelect );	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_ptCaretPos.x, 0)へ移動
+	CLayoutPoint pt(
+		(!m_bBeginBoxSelect)? 0: m_ptCaretPos.x,
+		0
+	);
+	MoveCursorSelecting( pt, bSelect );	//	通常は、(0, 0)へ移動。ボックス選択中は、(m_ptCaretPos.x, 0)へ移動
 }
 
 
@@ -2120,23 +2123,26 @@ void CEditView::Command_SELECTLINE( int lparam )
 
 	m_bBeginLineSelect = true;		// 行単位選択中
 
-	int nCaretPosX;
-	int nCaretPosY;
+	CLayoutPoint ptCaret;
 
 	// 最下行（物理行）でない
 	if( m_ptCaretPos_PHY.y < m_pcEditDoc->m_cDocLineMgr.GetLineCount() ){
 		// 1行先の物理行からレイアウト行を求める
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, m_ptCaretPos_PHY.y + 1, &nCaretPosX, &nCaretPosY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, m_ptCaretPos_PHY.y + 1, &ptCaret.x, &ptCaret.y );
 
 		// カーソルを次の物理行頭へ移動する
-		MoveCursorSelecting( nCaretPosX, nCaretPosY, true );
+		MoveCursorSelecting( ptCaret, true );
+
+		// 移動後のカーソル位置を取得する
+		ptCaret = m_ptCaretPos;
 	}else{
 		// カーソルを最下行（レイアウト行）へ移動する
-		MoveCursorSelecting( 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), true );
+		MoveCursorSelecting( CLayoutPoint(0, m_pcEditDoc->m_cLayoutMgr.GetLineCount()), true );
 		Command_GOLINEEND( true, 0 );	// 行末に移動
 
 		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
-		if(( ! IsTextSelected() )&&( m_ptCaretPos_PHY.y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() ))
+		if(( ! IsTextSelected() )&&
+		  ( m_ptCaretPos_PHY.y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() ))
 		{
 			// 現在の選択範囲を非選択状態に戻す
 			DisableSelectArea( true );
@@ -2145,8 +2151,8 @@ void CEditView::Command_SELECTLINE( int lparam )
 
 	if( m_bBeginLineSelect ){
 		// クリック行より上へ選択移動した時にクリック行が非選択となってしまうことへの対処
-		m_sSelectBgn.m_ptTo.y = m_sSelect.m_ptTo.y = m_ptCaretPos.y;	// 範囲選択開始行(原点)
-		m_sSelectBgn.m_ptTo.x = m_sSelect.m_ptTo.x = m_ptCaretPos.x;	// 範囲選択開始桁(原点)
+		m_sSelect.m_ptTo = ptCaret;
+		m_sSelectBgn.m_ptTo = ptCaret;
 	}
 
 	return;
@@ -3719,7 +3725,7 @@ void CEditView::Command_JUMP( void )
 		//	Sep. 8, 2000 genta
 		AddCurrentLineToHistory();
 		//	2006.07.09 genta 選択状態を解除しないように
-		MoveCursorSelecting( 0, nLineNum - 1, m_bSelectingLock, _CARETMARGINRATE / 3 );
+		MoveCursorSelecting( CLayoutPoint(0, nLineNum - 1), m_bSelectingLock, _CARETMARGINRATE / 3 );
 		return;
 	}
 	if( 0 >= nLineNum ){
@@ -3854,18 +3860,17 @@ void CEditView::Command_JUMP( void )
 	  →
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 	*/
-	int		nPosX;
-	int		nPosY;
+	CLayoutPoint ptPos;
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 		0,
 		nLineCount,
-		&nPosX,
-		&nPosY
+		&ptPos.x,
+		&ptPos.y
 	);
 	//	Sep. 8, 2000 genta
 	AddCurrentLineToHistory();
 	//	2006.07.09 genta 選択状態を解除しないように
-	MoveCursorSelecting( nPosX, nPosY, m_bSelectingLock, _CARETMARGINRATE / 3 );
+	MoveCursorSelecting( ptPos, m_bSelectingLock, _CARETMARGINRATE / 3 );
 }
 
 
@@ -8825,7 +8830,7 @@ void CEditView::Command_BRACKETPAIR( void )
 	if( SearchBracket( m_ptCaretPos, &ptColLine, &mode ) ){	// 02/09/18 ai
 		//	2005.06.24 Moca
 		//	2006.07.09 genta 表示更新漏れ：新規関数にて対応
-		MoveCursorSelecting( ptColLine.x, ptColLine.y, m_bSelectingLock );
+		MoveCursorSelecting( ptColLine, m_bSelectingLock );
 	}
 	else{
 		//	失敗した場合は nCol/nLineには有効な値が入っていない.
@@ -8855,17 +8860,17 @@ void CEditView::Command_JUMPHIST_PREV( void )
 	}
 
 	if( m_cHistory->CheckPrev() ){
-		int x, y;
 		if( ! m_cHistory->PrevValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("PrevValid"), MB_OK );
 		}
 		CLogicPoint ptLogic = m_cHistory->GetCurrent().GetPosition();
+		CLayoutPoint pt;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			ptLogic.x, ptLogic.y,
-			&x, &y
+			&pt.x, &pt.y
 		);
 		//	2006.07.09 genta 選択を考慮
-		MoveCursorSelecting( x, y, m_bSelectingLock );
+		MoveCursorSelecting( pt, m_bSelectingLock );
 	}
 }
 
@@ -8873,17 +8878,17 @@ void CEditView::Command_JUMPHIST_PREV( void )
 void CEditView::Command_JUMPHIST_NEXT( void )
 {
 	if( m_cHistory->CheckNext() ){
-		int x, y;
 		if( ! m_cHistory->NextValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("NextValid"), MB_OK );
 		}
 		CLogicPoint ptLogic = m_cHistory->GetCurrent().GetPosition();
+		CLayoutPoint pt;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			ptLogic.x, ptLogic.y,
-			&x, &y
+			&pt.x, &pt.y
 		);
 		//	2006.07.09 genta 選択を考慮
-		MoveCursorSelecting( x, y, m_bSelectingLock );
+		MoveCursorSelecting( pt, m_bSelectingLock );
 	}
 }
 //	To HERE Sep. 8, 2000 genta

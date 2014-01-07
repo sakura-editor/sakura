@@ -2245,15 +2245,13 @@ int CEditView::GetRightEdgeForScrollBar( void )
 	カーソル移動後は上下移動でもカラム位置を保つよう，
 	m_nCaretPosX_Prevの更新も併せて行う．
 
-	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
-	@param nWk_CaretPosY	[in] 移動先行位置(0～)
-	@param bSelect			[in] TRUE: 選択する/ FALSE: 選択解除
-	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
-
-
 	@date 2006.07.09 genta 新規作成
 */
-void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool bSelect, int nCaretMarginRate )
+void CEditView::MoveCursorSelecting(
+	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
+	bool			bSelect,			//!< true: 選択する  false: 選択解除
+	int				nCaretMarginRate	//!< 縦スクロール開始位置を決める値
+)
 {
 	if( bSelect ){
 		if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -2266,8 +2264,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 			DisableSelectArea( true );
 		}
 	}
-	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
-	m_nCaretPosX_Prev = m_ptCaretPos.x;
+	GetAdjustCursorPos(&ptWk_CaretPos);
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
 		
@@ -2276,9 +2273,10 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 			引数で与えた座標とは異なることがあるため，
 			nPosX, nPosYの代わりに実際の移動結果を使うように．
 		*/
-		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
+		ChangeSelectAreaByCurrentCursor( ptWk_CaretPos );
 	}
-	
+	MoveCursor( ptWk_CaretPos.x, ptWk_CaretPos.y, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
+	m_nCaretPosX_Prev = m_ptCaretPos.x;
 }
 
 

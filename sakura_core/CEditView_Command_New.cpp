@@ -1893,34 +1893,36 @@ void CEditView::Command_BOOKMARK_SET(void)
 //! 次のブックマークを探し，見つかったら移動する
 void CEditView::Command_BOOKMARK_NEXT(void)
 {
-	int			nX=0;
-	int			nY;
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
 
-	nY=m_ptCaretPos_PHY.y;
-	nYOld=nY;						// hor
+	CLogicPoint	ptXY(0, m_ptCaretPos_PHY.y);
+	int tmp_y;
+
+	nYOld=ptXY.y;					// hor
 
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_FORWARD, &nY)){
-		bFound = TRUE;				// hor
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(nX,nY,&nX,&nY);
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(ptXY.y, SEARCH_FORWARD, &tmp_y)){
+		ptXY.y = tmp_y;
+		bFound = TRUE;
+		CLayoutPoint ptLayout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(ptXY.x,ptXY.y,&ptLayout.x,&ptLayout.y);
 		//	2006.07.09 genta 新規関数にまとめた
-		MoveCursorSelecting( nX, nY, m_bSelectingLock );
+		MoveCursorSelecting( ptLayout, m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&		// 見つからなかった
 			bRedo			// 最初の検索
 		){
-			nY=-1;	//	2002/06/01 MIK
+			ptXY.y=-1;	//	2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;		// 先頭から再検索
 		}
 	}
 	if(bFound){
-		if(nYOld >= nY)SendStatusMessage(_T("▼先頭から再検索しました"));
+		if(nYOld >= ptXY.y)SendStatusMessage(_T("▼先頭から再検索しました"));
 	}else{
 		SendStatusMessage(_T("▽見つかりませんでした"));
 		AlertNotFound( m_hWnd, _T("前方(↓) にブックマークが見つかりません。"));
@@ -1933,21 +1935,23 @@ re_do:;								// hor
 //! 前のブックマークを探し，見つかったら移動する．
 void CEditView::Command_BOOKMARK_PREV(void)
 {
-	int			nX=0;
-	int			nY;
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
 
-	nY=m_ptCaretPos_PHY.y;
-	nYOld=nY;						// hor
+	CLogicPoint	ptXY(0,m_ptCaretPos_PHY.y);
+	int tmp_y;
+
+	nYOld=ptXY.y;						// hor
 
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_BACKWARD, &nY)){
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(ptXY.y, SEARCH_BACKWARD, &tmp_y)){
+		ptXY.y = tmp_y;
 		bFound = TRUE;				// hor
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(nX,nY,&nX,&nY);
+		CLayoutPoint ptLayout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(ptXY.x,ptXY.y,&ptLayout.x,&ptLayout.y);
 		//	2006.07.09 genta 新規関数にまとめた
-		MoveCursorSelecting( nX, nY, m_bSelectingLock );
+		MoveCursorSelecting( ptLayout, m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
@@ -1955,13 +1959,13 @@ re_do:;								// hor
 			bRedo		// 最初の検索
 		){
 			// 2011.02.02 m_cLayoutMgr→m_cDocLineMgr
-			nY=m_pcEditDoc->m_cDocLineMgr.GetLineCount();	// 2002/06/01 MIK
+			ptXY.y=m_pcEditDoc->m_cDocLineMgr.GetLineCount();	// 2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;	// 末尾から再検索
 		}
 	}
 	if(bFound){
-		if(nYOld <= nY)SendStatusMessage(_T("▲末尾から再検索しました"));
+		if(nYOld <= ptXY.y)SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
 		AlertNotFound( m_hWnd, _T("後方(↑) にブックマークが見つかりません。") );
@@ -2503,14 +2507,14 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 {
 	if( 0 <= m_ptSrchStartPos_PHY.x && 0 <= m_ptSrchStartPos_PHY.y )
 	{
-		int x, y;
+		CLayoutPoint pt;
 		/* 範囲選択中か */
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			m_ptSrchStartPos_PHY.x,
 			m_ptSrchStartPos_PHY.y,
-			&x, &y );
+			&pt.x, &pt.y );
 		//	2006.07.09 genta 選択状態を保つ
-		MoveCursorSelecting( x, y, m_bSelectingLock );
+		MoveCursorSelecting( pt, m_bSelectingLock );
 	}
 	else
 	{
