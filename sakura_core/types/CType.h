@@ -173,6 +173,7 @@ struct STypeConfig{
 	int					m_cyOutlineDockTop;				/*!< アウトラインの上ドッキング高 */
 	int					m_cxOutlineDockRight;			/*!< アウトラインの右ドッキング幅 */
 	int					m_cyOutlineDockBottom;			/*!< アウトラインの下ドッキング高 */
+	int					m_nDockOutline;					/*!< ドッキング時のアウトライン/ブックマーク */
 	EOutlineType		m_eDefaultOutline;				/*!< アウトライン解析方法 */
 	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
 	int					m_nOutlineSortCol;				/*!< アウトライン解析ソート列番号 */
