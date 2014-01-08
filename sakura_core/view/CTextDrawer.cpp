@@ -346,12 +346,15 @@ void CTextDrawer::DispLineNumber(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	EColorIndexType nColorIndex = COLORIDX_GYOU;	/* 行番号 */
 	const CDocLine*	pCDocLine = NULL;
+	bool bGyouMod = false;
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
 
 		if( pView->GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
-			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() )	// 2006.12.12 ryoji
+			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() ){	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
+				bGyouMod = true;
+			}
 		}
 	}
 
@@ -385,6 +388,18 @@ void CTextDrawer::DispLineNumber(
 	bool bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cColorType.GetBackColor();
 	bool bTransText = pView->IsBkBitmap();
 
+	COLORREF fgcolor = cColorType.GetTextColor();
+	COLORREF bgcolor = cColorType.GetBackColor();
+	CTypeSupport cGyouType(pView,COLORIDX_GYOU);
+	CTypeSupport cGyouModType(pView,COLORIDX_GYOU_MOD);
+	if( bGyouMod && nColorIndex != COLORIDX_GYOU_MOD ){
+		if( cGyouType.GetTextColor() == cColorType.GetTextColor() ){
+			fgcolor = cGyouModType.GetTextColor();
+		}
+		if( cGyouType.GetBackColor() == cColorType.GetBackColor() ){
+			bgcolor = cGyouModType.GetBackColor();
+		}
+	}
 	if(!pcLayout){
 		//行が存在しない場合は、テキスト描画色で塗りつぶし
 		if( !bTransText ){
@@ -392,11 +407,25 @@ void CTextDrawer::DispLineNumber(
 		}
 	}
 	else if( CTypeSupport(pView,COLORIDX_GYOU).IsDisp() ){ /* 行番号表示／非表示 */
-		COLORREF fgcolor = cColorType.GetTextColor();
+		SFONT sFont = cColorType.GetTypeFont();
+	 	// 2013.12.30 変更行の色・フォント属性をDIFFブックマーク行に継承するように
+		if( bGyouMod && nColorIndex != COLORIDX_GYOU_MOD ){
+			bool bChange = true;
+			if( cGyouType.IsBoldFont() == cColorType.IsBoldFont() ){
+		 		sFont.m_sFontAttr.m_bBoldFont = cGyouModType.IsBoldFont();
+				bChange = true;
+			}
+			if( cGyouType.HasUnderLine() == cColorType.HasUnderLine() ){
+				sFont.m_sFontAttr.m_bUnderLine = cGyouModType.HasUnderLine();
+				bChange = true;
+			}
+			if( bChange ){
+				sFont.m_hFont = pView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+			}
+		}
 		gr.PushTextForeColor(fgcolor);	//テキスト：行番号の色
-		COLORREF bgcolor = cColorType.GetBackColor();
 		gr.PushTextBackColor(bgcolor);	//テキスト：行番号背景の色
-		gr.PushMyFont(cColorType.GetTypeFont());	//フォント：行番号のフォント
+		gr.PushMyFont(sFont);	//フォント：行番号のフォント
 
 		//描画文字列
 		wchar_t szLineNum[18];
@@ -447,7 +476,7 @@ void CTextDrawer::DispLineNumber(
 			rc.top = y;
 			rc.right = nLineNumAreaWidth - 1;
 			rc.bottom = y + nLineHeight;
-			gr.FillSolidMyRect(rc, cColorType.GetTextColor());
+			gr.FillSolidMyRect(rc, fgcolor);
 		}
 
 		gr.PopTextForeColor();
@@ -457,7 +486,7 @@ void CTextDrawer::DispLineNumber(
 	else{
 		// 行番号エリアの背景描画
 		if( !bTrans ){
-			cColorType.FillBack(gr,rcLineNum);
+			gr.FillSolidMyRect(rcLineNum, fgcolor);
 		}
 	}
 
@@ -475,7 +504,7 @@ void CTextDrawer::DispLineNumber(
 		}
 
 		//DIFFマーク描画
-		CDiffLineGetter(pCDocLine).DrawDiffMark(gr,y,nLineHeight,cColorType);
+		CDiffLineGetter(pCDocLine).DrawDiffMark(gr,y,nLineHeight,fgcolor);
 	}
 
 	// 行番号とテキストの隙間の描画
