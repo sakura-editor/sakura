@@ -91,9 +91,9 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_REGEX_KEYWORD8,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2001.11.17 add MIK
 	{ STR_COLOR_REGEX_KEYWORD9,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2001.11.17 add MIK
 	{ STR_COLOR_REGEX_KEYWORD10,			{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2001.11.17 add MIK
-	{ STR_COLOR_DIFF_ADD,					{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2002.06.01 MIK
-	{ STR_COLOR_DIFF_CNG,					{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2002.06.01 MIK
-	{ STR_COLOR_DIFF_DEL,					{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2002.06.01 MIK
+	{ STR_COLOR_DIFF_ADD,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 210 ),	RGB( 162, 208, 255 ) } } },	//@@@ 2002.06.01 MIK
+	{ STR_COLOR_DIFF_CNG,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0, 111,   0 ),	RGB( 189, 253, 192 ) } } },	//@@@ 2002.06.01 MIK
+	{ STR_COLOR_DIFF_DEL,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 213, 106,   0 ),	RGB( 255, 233, 172 ) } } },	//@@@ 2002.06.01 MIK
 	{ STR_COLOR_BOOKMARK,					{ TRUE ,	{ FALSE,	FALSE },	{ RGB( 255, 251, 240 ),	RGB(   0, 128, 192 ) } } },	// 02/10/16 ai
 };
 
