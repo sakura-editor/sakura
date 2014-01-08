@@ -158,6 +158,22 @@ int CALLBACK CDlgFuncList::CompareFunc_Desc(LPARAM lParam1, LPARAM lParam2, LPAR
 	return -1 * CompareFunc_Asc(lParam1, lParam2, lParamSort);
 }
 
+EFunctionCode CDlgFuncList::GetFuncCodeRedraw(int outlineType)
+{
+	if( outlineType == OUTLINE_BOOKMARK ){
+		return F_BOOKMARK_VIEW;
+	}
+	return F_OUTLINE;
+}
+
+static int GetOutlineTypeRedraw(int outlineType)
+{
+	if( outlineType == OUTLINE_BOOKMARK ){
+		return OUTLINE_BOOKMARK;
+	}
+	return OUTLINE_DEFAULT;
+}
+
 LPDLGTEMPLATE CDlgFuncList::m_pDlgTemplate = NULL;
 DWORD CDlgFuncList::m_dwDlgTmpSize = 0;
 
@@ -168,6 +184,7 @@ CDlgFuncList::CDlgFuncList()
 
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
+	m_nOutlineType = OUTLINE_DEFAULT;
 	m_nListType = OUTLINE_DEFAULT;
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	m_nSortCol = 0;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(1列目) */
@@ -311,6 +328,14 @@ HWND CDlgFuncList::DoModeless(
 	m_nSortColOld = m_nSortCol;
 	m_bSortDesc = m_type.m_bOutlineSortDesc;
 	m_nSortType = m_type.m_nOutlineSortType;
+
+	bool bType = (ProfDockSet() != 0);
+	if( bType ){
+		m_type.m_nDockOutline = m_nOutlineType;
+		SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+	}else{
+		CommonSet().m_nDockOutline = m_nOutlineType;
+	}
 
 	// 2007.04.18 genta : 「フォーカスを移す」と「自動的に閉じる」がチェックされている場合に
 	// ダブルクリックを行うと，trueのまま残ってしまうので，ウィンドウを開いたときにリセットする．
@@ -2182,7 +2207,7 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	);
 	switch( nFuncCode ){
 	case F_REDRAW:
-		nFuncCode=(m_nListType==OUTLINE_BOOKMARK)?F_BOOKMARK_VIEW:F_OUTLINE;
+		nFuncCode=GetFuncCodeRedraw(m_nOutlineType);
 		/*FALLTHROUGH*/
 	case F_OUTLINE:
 	case F_OUTLINE_TOGGLE: // 20060201 aroka フォーカスがあるときはリロード
@@ -2218,6 +2243,16 @@ void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFunc
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
+
+	bool bType = (ProfDockSet() != 0);
+	if( bType ){
+		CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
+		m_type.m_nDockOutline = m_nOutlineType;
+		SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+	}else{
+		CommonSet().m_nDockOutline = m_nOutlineType;
+	}
+
 	SetData();
 }
 
@@ -2657,7 +2692,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 			if( nBtn == 0 ){	// 閉じる
 				::DestroyWindow( GetHwnd() );
 			}else if( m_nCapturingBtn == 2 ){	// 更新
-				EFunctionCode nFuncCode = (m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
+				EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 				CEditView* pcEditView = (CEditView*)m_lParam;
 				pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 			}
@@ -2842,7 +2877,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	// メニュー選択された状態に切り替える
 	HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
 	if( nId == 450 ){	// 更新
-		EFunctionCode nFuncCode = (m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
+		EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
@@ -2950,7 +2985,7 @@ void CDlgFuncList::Refresh( void )
 	CEditWnd* pcEditWnd = CEditDoc::GetInstance(0)->m_pcEditWnd;
 	BOOL bReloaded = ChangeLayout( OUTLINE_LAYOUT_FILECHANGED );	// 現在設定に従ってアウトライン画面を再配置する
 	if( !bReloaded && pcEditWnd->m_cDlgFuncList.GetHwnd() ){
-		int nOutlineType = (m_nListType == OUTLINE_BOOKMARK)? OUTLINE_BOOKMARK: OUTLINE_DEFAULT;
+		int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 		pcEditWnd->GetActiveView().GetCommander().Command_FUNCLIST( SHOW_RELOAD, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 	}
 	if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == pcEditWnd->GetHwnd() )
@@ -2988,7 +3023,16 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			CEditView* pcEditView = &pDoc->m_pcEditWnd->GetActiveView();
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), FALSE );
-			int nOutlineType = (m_nListType == OUTLINE_BOOKMARK)? OUTLINE_BOOKMARK: OUTLINE_DEFAULT;	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
+			if( m_nOutlineType == OUTLINE_DEFAULT ){
+				bool bType = (ProfDockSet() != 0);
+				if( bType ){
+					m_nOutlineType = m_type.m_nDockOutline;
+					SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+				}else{
+					m_nOutlineType = CommonSet().m_nDockOutline;
+				}
+			}
+			int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
 			return true;	// 解析した
@@ -3016,7 +3060,16 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), FALSE );
-			int nOutlineType = (m_nListType == OUTLINE_BOOKMARK)? OUTLINE_BOOKMARK: OUTLINE_DEFAULT;
+			if( m_nOutlineType == OUTLINE_DEFAULT ){
+				bool bType = (ProfDockSet() != 0);
+				if( bType ){
+					m_nOutlineType = m_type.m_nDockOutline;
+					SetTypeConfig( CTypeConfig(m_nDocType), m_type );
+				}else{
+					m_nOutlineType = CommonSet().m_nDockOutline;
+				}
+			}
+			int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
 			return true;	// 解析した

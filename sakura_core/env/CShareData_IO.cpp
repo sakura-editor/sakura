@@ -690,7 +690,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
 		}
 	}
-	
+	cProfile.IOProfileData( pszSecName, LTEXT("nDockOutline"), common.m_sOutline.m_nDockOutline );
 }
 
 
@@ -1515,6 +1515,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
 		}
 	}
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDockOutline")	, 	types.m_nDockOutline );/* アウトライン解析方法 */
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
 	cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
 	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortCol")		, types.m_nOutlineSortCol );/* アウトライン解析ソート列番号 */

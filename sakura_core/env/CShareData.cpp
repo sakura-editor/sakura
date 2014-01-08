@@ -472,6 +472,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sOutline.m_cyOutlineDockTop		=	0;	// アウトラインの上ドッキング高
 		m_pShareData->m_Common.m_sOutline.m_cxOutlineDockRight		=	0;	// アウトラインの右ドッキング幅
 		m_pShareData->m_Common.m_sOutline.m_cyOutlineDockBottom		=	0;	// アウトラインの下ドッキング高
+		m_pShareData->m_Common.m_sOutline.m_nDockOutline = OUTLINE_TEXT;
 		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
 		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 

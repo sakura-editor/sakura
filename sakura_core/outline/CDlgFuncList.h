@@ -73,6 +73,7 @@ public:
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
 	void SyncColor( void );
 	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
+	EFunctionCode GetFuncCodeRedraw(int outlineType);
 
 protected:
 	bool m_bInChangeLayout;
@@ -84,11 +85,11 @@ protected:
 	int				m_nSortColOld;		//!< ソートする列番号(OLD)
 	bool			m_bSortDesc;		//!< 降順
 	int				m_nDocType;			/* ドキュメントの種類 */
-	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
 	bool			m_bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-public:
 	int				m_nListType;		/* 一覧の種類 */
+public:
+	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );

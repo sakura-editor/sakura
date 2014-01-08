@@ -533,6 +533,7 @@ struct CommonSetting_OutLine
 	int			m_cyOutlineDockTop;			// アウトラインの上ドッキング高
 	int			m_cxOutlineDockRight;		// アウトラインの右ドッキング幅
 	int			m_cyOutlineDockBottom;		// アウトラインの下ドッキング高
+	int			m_nDockOutline;				// アウトラインタイプ
 
 	//IDD_FUNCLIST (ツール - アウトライン解析)
 	BOOL		m_bAutoCloseDlgFuncList;	// アウトラインダイアログを自動的に閉じる

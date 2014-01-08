@@ -1759,7 +1759,7 @@ LRESULT CEditWnd::DispatchEvent(
 #endif
 				if( m_cDlgFuncList.GetHwnd() && !bAnalyzed ){	// アウトラインを開いていれば再解析
 					// SHOW_NORMAL: 解析方法が変化していれば再解析される。そうでなければ描画更新（変更されたカラーの適用）のみ。
-					EFunctionCode nFuncCode = (m_cDlgFuncList.m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
+					EFunctionCode nFuncCode = m_cDlgFuncList.GetFuncCodeRedraw(m_cDlgFuncList.m_nOutlineType);
 					GetActiveView().GetCommander().HandleCommand( nFuncCode, true, SHOW_NORMAL, 0, 0, 0 );
 				}
 				if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
