@@ -4490,9 +4490,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 			GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
-	if( !GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
-		GetActiveView().GetCaret().ShowCaretPosInfo();	// 2009.07.25 ryoji
-	}
+	GetActiveView().GetCaret().ShowCaretPosInfo();	// 2009.07.25 ryoji
 
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
@@ -4616,6 +4614,12 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 		);
 		GetView(i).GetCaret().MoveCursor( ptPosXY, false ); // 2013.06.05 bScroll‚ðtrue=>falase
 		GetView(i).GetCaret().m_nCaretPosX_Prev = GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
+
+		CLayoutInt nLeft = GetView(i).GetRightEdgeForScrollBar() - GetView(i).GetTextArea().m_nViewColNum;
+		if( nLeft < GetView(i).GetTextArea().GetViewLeftCol() ){
+			GetView(i).GetTextArea().SetViewLeftCol( nLeft );
+		}
+
 		GetView(i).GetCaret().ShowEditCaret();
 	}
 	GetActiveView().GetCaret().ShowCaretPosInfo();
