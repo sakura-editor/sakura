@@ -230,7 +230,12 @@ CLayoutInt CCaret::MoveCursor(
 
 	}
 
-	m_pEditView->GetTextArea().SetViewLeftCol(m_pEditView->GetTextArea().GetViewLeftCol() - nScrollColNum);
+	// 2013.12.30 bScrollがOFFのときは横スクロールしない
+	if( bScroll ){
+		m_pEditView->GetTextArea().SetViewLeftCol(m_pEditView->GetTextArea().GetViewLeftCol() - nScrollColNum);
+	}else{
+		nScrollColNum = 0;
+	}
 
 	//	From Here 2007.07.28 じゅうじ : 表示行数が3行以下の場合の動作改善
 	/* 垂直スクロール量（行数）の算出 */
