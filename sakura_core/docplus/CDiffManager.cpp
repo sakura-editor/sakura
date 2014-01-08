@@ -50,7 +50,7 @@ bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
 
 	à¯êîÇÕâºÅBÅiñ≥ë Ç»à¯êîÇ†ÇËÇªÇ§Åj
 */
-bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, CTypeSupport& cColorType) const
+bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORREF color) const
 {
 	EDiffMark type = GetLineDiffMark();
 
@@ -58,7 +58,7 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, CTypeS
 	{
 		int	cy = y + nLineHeight / 2;
 
-		gr.PushPen(cColorType.GetTextColor(),0);
+		gr.PushPen(color, 0);
 
 		switch( type )
 		{
