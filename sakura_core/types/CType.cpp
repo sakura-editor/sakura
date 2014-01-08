@@ -187,6 +187,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_nIndentLayout = 0;	/* Ü‚è•Ô‚µ‚Í2s–ÚˆÈ~‚ğš‰º‚°•\¦ */
 
 
+	assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr) );
 	for( int i = 0; i < COLORIDX_LAST; ++i ){
 		GetDefaultColorInfo(&pType->m_ColorInfoArr[i],i);
 	}

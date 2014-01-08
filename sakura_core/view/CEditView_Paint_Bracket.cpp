@@ -180,8 +180,11 @@ void CEditView::DrawBracketPair( bool bDraw )
 					}
 				}
 				CTypeSupport    cCuretLineBg(this,COLORIDX_CARETLINEBG);
-				EColorIndexType nColorIndexBg = (cCuretLineBg.IsDisp() && ptColLine.GetY2() == GetCaret().GetCaretLayoutPos().GetY2() ? COLORIDX_CARETLINEBG :  COLORIDX_TEXT);
-
+				EColorIndexType nColorIndexBg = (cCuretLineBg.IsDisp() && ptColLine.GetY2() == GetCaret().GetCaretLayoutPos().GetY2()
+					? COLORIDX_CARETLINEBG
+					: CTypeSupport(this,COLORIDX_EVENLINEBG).IsDisp() && ptColLine.GetY2() % 2 == 1
+						? COLORIDX_EVENLINEBG
+						: COLORIDX_TEXT);
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
 				CLayoutInt caretX = GetCaret().GetCaretLayoutPos().GetX2();
@@ -202,9 +205,10 @@ void CEditView::DrawBracketPair( bool bDraw )
 					cTextType.SetGraphicsState_WhileThisObj(gr);
 					// 2013.05.24 背景色がテキストの背景色と同じならカーソル行の背景色を適用
 					CTypeSupport cColorIndexType(this,nColorIndex);
+					CTypeSupport cColorIndexBgType(this,nColorIndexBg);
 					CTypeSupport* pcColorBack = &cColorIndexType;
-					if( cColorIndexType.GetBackColor() == cTextType.GetBackColor() && nColorIndexBg == COLORIDX_CARETLINEBG ){
-						pcColorBack = &cCuretLineBg;
+					if( cColorIndexType.GetBackColor() == cTextType.GetBackColor() && nColorIndexBg != COLORIDX_TEXT ){
+						pcColorBack = &cColorIndexBgType;
 					}
 
 					SetCurrentColor( gr, nColorIndex, nColorIndex, nColorIndexBg );

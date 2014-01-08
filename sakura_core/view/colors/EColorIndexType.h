@@ -48,6 +48,7 @@ enum EColorIndexType {
 	COLORIDX_CURSORVLINE,	//!< カーソル位置縦線 // 2006.05.13 Moca
 	COLORIDX_GYOU,			//!< 行番号
 	COLORIDX_GYOU_MOD,		//!< 行番号(変更行)
+	COLORIDX_EVENLINEBG,	//!< 奇数行の背景色
 	COLORIDX_TAB,			//!< TAB記号
 	COLORIDX_SPACE,			//!< 半角空白 //2002.04.28 Add by KK 以降全て+1
 	COLORIDX_ZENSPACE,		//!< 日本語空白

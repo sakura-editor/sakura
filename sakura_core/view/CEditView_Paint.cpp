@@ -681,6 +681,11 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	CLayoutInt nLayoutLineTo = GetTextArea().GetViewTopLine()
 		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2007.02.17 ryoji 計算を精密化
+	CLayoutPoint ptLayoutEOF;
+	m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptLayoutEOF );
+	if( ptLayoutEOF.GetY() < nLayoutLineTo ){
+		nLayoutLineTo = ptLayoutEOF.GetY();
+	}
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -937,8 +942,13 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// コンフィグ
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	CTypeSupport	cCaretLineBg(this, COLORIDX_CARETLINEBG);
+	CTypeSupport	cEvenLineBg(this, COLORIDX_EVENLINEBG);
 	CTypeSupport&	cBackType = (cCaretLineBg.IsDisp() &&
-		GetCaret().GetCaretLayoutPos().GetY() == pInfo->m_pDispPos->GetLayoutLineRef() ?  cCaretLineBg : cTextType);
+		GetCaret().GetCaretLayoutPos().GetY() == pInfo->m_pDispPos->GetLayoutLineRef()
+			? cCaretLineBg
+			: cEvenLineBg.IsDisp() && pInfo->m_pDispPos->GetLayoutLineRef() % 2 == 1
+				? cEvenLineBg
+				: cTextType);
 	bool bTransText = IsBkBitmap();
 	if( bTransText ){
 		bTransText = cBackType.GetBackColor() == cTextType.GetBackColor();
