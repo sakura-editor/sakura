@@ -1323,7 +1323,7 @@ BEGIN
     CONTROL         "&Windows風",IDC_RADIO_CARETTYPE0,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,8,99,61,10
     CONTROL         "MS-&DOS風",IDC_RADIO_CARETTYPE1,"Button",
-                    BS_AUTORADIOBUTTON,64,99,61,10
+                    BS_AUTORADIOBUTTON,69,99,61,10
     GROUPBOX        "タスクトレイ",IDC_STATIC,3,115,149,71,WS_GROUP
     CONTROL         "タスクトレイを使う(&T)",IDC_CHECK_USETRAYICON,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,127,81,10
