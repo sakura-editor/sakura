@@ -49,6 +49,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_CURSOR_COLUMN,				{ FALSE,	{ FALSE,	FALSE },	{ RGB( 128, 128, 255 ),	RGB( 255, 251, 240 ) } } },	// 2007.09.09 Moca
 	{ STR_COLOR_LINE_NO,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_LINE_NO_CHANGE,				{ TRUE,		{ TRUE,		FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
+	{ STR_COLOR_EVEN_LINE_BG,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 243, 243, 243 ) } } },	// 2013.12.30 Moca
 	{ STR_COLOR_TAB,						{ TRUE,		{ FALSE,	FALSE },	{ RGB( 128, 128, 128 ),	RGB( 255, 251, 240 ) } } },	//Jan. 19, 2001 JEPRO RGB(192,192,192)ÇÊÇËîZÇ¢ÉOÉåÅ[Ç…ïœçX
 	{ STR_COLOR_HALF_SPACE,					{ FALSE,	{ FALSE,	FALSE },	{ RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ) } } }, //2002.04.28 Add by KK
 	{ STR_COLOR_FULL_SPACE,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ) } } },

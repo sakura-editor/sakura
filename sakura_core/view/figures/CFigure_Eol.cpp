@@ -134,19 +134,22 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
 		CTypeSupport cTextType(pcView,COLORIDX_TEXT);
 		CTypeSupport cBgLineType(pcView,COLORIDX_CARETLINEBG);
+		CTypeSupport cEvenBgLineType(pcView,COLORIDX_EVENLINEBG);
 		bool bBgcolor = cWrapType.GetBackColor() == cTextType.GetBackColor();
-		bool bBgcolorOverwrite = false;
+		EColorIndexType eBgcolorOverwrite = COLORIDX_WRAP;
 		bool bTrans = pcView->IsBkBitmap();
-		if( cWrapType.IsDisp() && cBgLineType.IsDisp() ){
-			if( pcView->GetCaret().GetCaretLayoutPos().GetY2() == nLineNum ){
+		if( cWrapType.IsDisp() ){
+			if( cBgLineType.IsDisp() && pcView->GetCaret().GetCaretLayoutPos().GetY2() == nLineNum ){
 				if( bBgcolor ){
-					bBgcolorOverwrite = true;
+					eBgcolorOverwrite = COLORIDX_CARETLINEBG;
 					bTrans = bTrans && cBgLineType.GetBackColor() == cTextType.GetBackColor();
 				}
+			}else if( cEvenBgLineType.IsDisp() && nLineNum % 2 == 1 ){
+				if( bBgcolor ){
+					eBgcolorOverwrite = COLORIDX_EVENLINEBG;
+					bTrans = bTrans && cEvenBgLineType.GetBackColor() == cTextType.GetBackColor();
+				}
 			}
-		}
-		if( !bBgcolorOverwrite ){
-			bTrans = bTrans && bBgcolor;
 		}
 		bool bChangeColor = false;
 
@@ -156,9 +159,9 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		{
 			szText = L"<";
 			cWrapType.SetGraphicsState_WhileThisObj(gr);
-			if( bBgcolorOverwrite ){
+			if( eBgcolorOverwrite != COLORIDX_WRAP ){
 				bChangeColor = true;
-				gr.PushTextBackColor( cBgLineType.GetBackColor() );
+				gr.PushTextBackColor( CTypeSupport(pcView, eBgcolorOverwrite).GetBackColor() );
 			}
 		}
 		else

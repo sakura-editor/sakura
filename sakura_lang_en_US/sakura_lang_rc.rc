@@ -4286,6 +4286,7 @@ BEGIN
 	STR_COLOR_CURSOR_COLUMN			"Cursor pos VertLine"
 	STR_COLOR_LINE_NO				"Line No."
 	STR_COLOR_LINE_NO_CHANGE		"Line No.(edited)"
+	STR_COLOR_EVEN_LINE_BG			"Even Line Background"
 	STR_COLOR_TAB					"TAB Mark"
 	STR_COLOR_HALF_SPACE			"ASCII Space"
 	STR_COLOR_FULL_SPACE			"Japanese Space"

@@ -124,6 +124,21 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 			}
 		}
 	}
+	//偶数行の背景色
+	CTypeSupport cEvenLineBg(m_pcView, COLORIDX_EVENLINEBG);
+	if( cEvenLineBg.IsDisp() && m_colorIdxBackLine != COLORIDX_CARETLINEBG ){
+		if( m_colorIdxBackLine == COLORIDX_EVENLINEBG ){
+			if( m_pDispPos->GetLayoutLineRef() % 2 == 0 ){
+				m_colorIdxBackLine = COLORIDX_TEXT;
+				bChange = true;
+			}
+		}else{
+			if( m_pDispPos->GetLayoutLineRef() % 2 == 1 ){
+				m_colorIdxBackLine = COLORIDX_EVENLINEBG;
+				bChange = true;
+			}
+		}
+	}
 
 	return bChange;
 }
@@ -290,6 +305,7 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{_T("CVL"), COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
 	{_T("LNO"), 0},
 	{_T("MOD"), 0},
+	{_T("EBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("TAB"), 0},
 	{_T("SPC"), 0},	//2002.04.28 Add By KK
 	{_T("ZEN"), 0},
