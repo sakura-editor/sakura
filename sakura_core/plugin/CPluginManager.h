@@ -52,7 +52,7 @@ public:
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
 private:
-	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName );	//プラグインを読み込む
+	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName );	//プラグインを読み込む
 	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
 	bool UnRegisterPlugin( CPlugin* plugin );	//プラグインのCJackManagerの登録を解除する
 

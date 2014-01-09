@@ -75,7 +75,7 @@ public:
 
 	//ŽÀ‘•
 public:
-	bool ReadPluginDef( CDataProfile *cProfile );
+	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang );
 	bool ReadPluginOption( CDataProfile *cProfile );
 	CPlug::Array GetPlugs() const{
 		return m_plugs;

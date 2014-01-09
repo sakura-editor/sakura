@@ -47,6 +47,7 @@ class CPluginIfObj : public CWSHIfObj {
 		F_PL_GETDEF,							//設定ファイルから値を読む
 		F_PL_GETOPTION,							//オプションファイルから値を読む
 		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
+		F_PL_GETSTRING,							//設定ファイルから文字列を読みだす(多言語対応)
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
@@ -131,6 +132,22 @@ public:
 				Wrap(&Result)->Receive(m_nPlugIndex);
 			}
 			return true;
+		case F_PL_GETSTRING:
+			{
+				int num;
+				if(variant_to_int( Arguments[0], num ) == false) return false;
+				if( 0 < num && num < MAX_PLUG_STRING ){
+					std::wstring& str = m_cPlugin.m_aStrings[num];
+					SysString S(str.c_str(), str.size());
+					Wrap(&Result)->Receive(S);
+					return true;
+				}else if( 0 == num ){
+					std::wstring str = to_wchar(m_cPlugin.m_sLangName.c_str());
+					SysString S(str.c_str(), str.size());
+					Wrap(&Result)->Receive(S);
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -190,6 +207,7 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] =
 	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //設定ファイルから値を読む
 	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //オプションファイルから値を読む
 	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //オプションファイルから値を読む
+	{EFunctionCode(F_PL_GETSTRING),			LTEXT("GetString"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //設定ファイルから文字列を読む
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };

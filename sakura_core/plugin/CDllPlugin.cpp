@@ -46,21 +46,24 @@ CPlug* CDllPlugin::CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstrin
 }
 
 // プラグイン定義ファイルの読み込み
-bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile )
+bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
-	ReadPluginDefCommon( cProfile );
+	ReadPluginDefCommon( cProfile, cProfileMlang );
 
 	//DLL名の読み込み
 	cProfile->IOProfileData( PII_DLL, PII_DLL_NAME, m_sDllName );
 
 	//プラグの読み込み
-	ReadPluginDefPlug( cProfile );
+	ReadPluginDefPlug( cProfile, cProfileMlang );
 
 	//コマンドの読み込み
-	ReadPluginDefCommand( cProfile );
+	ReadPluginDefCommand( cProfile, cProfileMlang );
 
 	//オプション定義の読み込み	// 2010/3/24 Uchi
-	ReadPluginDefOption( cProfile );
+	ReadPluginDefOption( cProfile, cProfileMlang );
+
+	//文字列定義の読み込み
+	ReadPluginDefString( cProfile, cProfileMlang );
 
 	return true;
 }

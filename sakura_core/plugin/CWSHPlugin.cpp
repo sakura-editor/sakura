@@ -39,21 +39,24 @@ CWSHPlugin::~CWSHPlugin(void)
 }
 
 //プラグイン定義ファイルを読み込む
-bool CWSHPlugin::ReadPluginDef( CDataProfile *cProfile )
+bool CWSHPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
-	ReadPluginDefCommon( cProfile );
+	ReadPluginDefCommon( cProfile, cProfileMlang );
 
 	//WSHセクションの読み込み
 	cProfile->IOProfileData<bool>( PII_WSH, PII_WSH_USECACHE, m_bUseCache );
 
 	//プラグの読み込み
-	ReadPluginDefPlug( cProfile );
+	ReadPluginDefPlug( cProfile, cProfileMlang );
 
 	//コマンドの読み込み
-	ReadPluginDefCommand( cProfile );
+	ReadPluginDefCommand( cProfile, cProfileMlang );
 
 	//オプション定義の読み込み	// 2010/3/24 Uchi
-	ReadPluginDefOption( cProfile );
+	ReadPluginDefOption( cProfile, cProfileMlang );
+
+	//文字列定義の読み込み
+	ReadPluginDefString( cProfile, cProfileMlang );
 
 	return true;
 }
