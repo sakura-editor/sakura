@@ -29,7 +29,7 @@
 
 
 /* wchar_t1個分の文字を入力 */
-void CViewCommander::Command_WCHAR( wchar_t wcChar )
+void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -51,8 +51,10 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 	cmemDataW2 = wcChar;
 	if( WCODE::IsLineDelimiter(wcChar) ){ 
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-		CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
-		cmemDataW2.SetString( cWork.GetValue2(), cWork.GetLen() );
+		if( bConvertEOL ){
+			CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
+			cmemDataW2.SetString( cWork.GetValue2(), cWork.GetLen() );
+		}
 
 		/* テキストが選択されているか */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){

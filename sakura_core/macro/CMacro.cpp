@@ -180,6 +180,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		break;
 	/*	数値パラメータを追加 */
 	case F_WCHAR:
+	case F_CTRL_CODE:
 		AddIntParam( lParam ); //※文字コードが渡される
 		break;
 	case F_CHGMOD_EOL:
@@ -504,6 +505,7 @@ bool CMacro::HandleCommand(
 	{
 	case F_WCHAR:		//	文字入力。数値は文字コード
 	case F_IME_CHAR:	//	日本語入力
+	case F_CTRL_CODE:
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(

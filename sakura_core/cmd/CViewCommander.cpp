@@ -380,6 +380,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_INS_DATE:				Command_INS_DATE();break;	//日付挿入
 	case F_INS_TIME:				Command_INS_TIME();break;	//時刻挿入
     case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
+    case F_CTRL_CODE:				Command_WCHAR( (wchar_t)lparam1, false );break;
 
 	/* 変換 */
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 小文字 */

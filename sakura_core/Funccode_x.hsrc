@@ -254,6 +254,7 @@ F_CREATEKEYBINDLIST			= 30630,	//キー割り当て一覧をコピー						なし
 F_INS_DATE				= 30790,	//日付挿入										なし
 F_INS_TIME				= 30791,	//時刻挿入										なし
 F_CTRL_CODE_DIALOG		= 30792,	//コントロールコードの入力(ダイアログ)			なし
+F_CTRL_CODE				= 30793.	//コントロールコードの入力						wchar_t code
 
 
 // 変換系

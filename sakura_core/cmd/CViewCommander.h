@@ -121,7 +121,7 @@ public:
 	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
 
 	/* 編集系 */
-	void Command_WCHAR( wchar_t );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
+	void Command_WCHAR( wchar_t, bool bConvertEOL = true );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
 	void Command_IME_CHAR( WORD );			/* 全角文字入力 */
 	void Command_UNDO( void );				/* 元に戻す(Undo) */
 	void Command_REDO( void );				/* やり直し(Redo) */

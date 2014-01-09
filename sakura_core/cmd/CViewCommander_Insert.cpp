@@ -62,6 +62,7 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 	{
 		//コントロールコードを入力する
 		// 2013.06.11 Command_WCHAR -> HandleCommand マクロ記録対応
-		HandleCommand( F_WCHAR, true, cDlgCtrlCode.GetCharCode(), 0, 0, 0 );
+		// 2013.12.12 F_WCHAR -> F_CTRL_CODE
+		HandleCommand( F_CTRL_CODE, true, cDlgCtrlCode.GetCharCode(), 0, 0, 0 );
 	}
 }
