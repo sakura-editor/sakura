@@ -798,6 +798,7 @@ int CAppNodeManager::GetFreeGroupId( void )
 //			NULLはタブまとめ表示で無いかグループに他にウィンドウが無い場合
 //
 //	@date 2013.04.10 Uchi
+//	@date 2013.10.25 Moca 次のウィンドウは「1つ前のアクティブなタブ」にする
 //
 HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 {
@@ -808,7 +809,7 @@ HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 		int			nGroup = 0;
 		bool		bFound = false;
 		EditNode*	p = NULL;
-		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, TRUE );
+		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, FALSE, FALSE );
 		if ( nCount > 1 ) {
 			// search Group No.
 			for (i = 0; i < nCount; i++) {
