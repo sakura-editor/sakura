@@ -221,6 +221,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_INS_DATE,				LTEXT("InsertDate"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 日付挿入
 	{F_INS_TIME,				LTEXT("InsertTime"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 時刻挿入
 	{F_CTRL_CODE_DIALOG,		LTEXT("CtrlCodeDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+	{F_CTRL_CODE,				LTEXT("CtrlCode"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力 2013.12.12
 
 	/* 変換系 */
 	{F_TOLOWER,		 			LTEXT("ToLower"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //小文字
@@ -1032,6 +1033,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_INS_DATE					:// 日付挿入
 	case F_INS_TIME					:// 時刻挿入
 //	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+	case F_CTRL_CODE				://コントロールコードの入力 2013.12.12
 
 	/* 変換系 */
 	case F_TOLOWER		 			://小文字
