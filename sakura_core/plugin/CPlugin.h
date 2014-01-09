@@ -39,6 +39,9 @@ typedef int PlugId;
 
 //プラグイン定義ファイル名
 #define PII_FILENAME				_T("plugin.def")
+#define PII_L10NDIR					_T("local")
+#define PII_L10NFILEBASE			_T("plugin_")
+#define PII_L10NFILEEXT				_T(".def")
 //オプションファイル拡張子（オプションファイル＝個別フォルダ名＋拡張子）
 #define PII_OPTFILEEXT				_T(".ini")
 
@@ -53,6 +56,7 @@ typedef int PlugId;
 #define	PII_PLUGIN_URL				L"Url"			//配布URL：配布元URL
 
 #define PII_PLUG					L"Plug"			//プラグ情報
+#define PII_STRING					L"String"		//文字列情報
 
 #define PII_COMMAND					L"Command"		//コマンド情報
 #define PII_OPTION					L"Option"		//オプション定義情報	// 2010/3/24 Uchi
@@ -250,10 +254,11 @@ public:
 	int 	GetCommandCount()	{ return m_nCommandCount; }			// コマンド数を返す	2010/7/4 Uchi
 
 protected:
-	bool ReadPluginDefCommon( CDataProfile *cProfile );					//プラグイン定義ファイルのCommonセクションを読み込む
-	bool ReadPluginDefPlug( CDataProfile *cProfile );					//プラグイン定義ファイルのPlugセクションを読み込む
-	bool ReadPluginDefCommand( CDataProfile *cProfile );				//プラグイン定義ファイルのCommandセクションを読み込む
-	bool ReadPluginDefOption( CDataProfile *cProfile );					//プラグイン定義ファイルのOptionセクションを読み込む	// 2010/3/24 Uchi
+	bool ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのCommonセクションを読み込む
+	bool ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのPlugセクションを読み込む
+	bool ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfileMlang );				//プラグイン定義ファイルのCommandセクションを読み込む
+	bool ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのOptionセクションを読み込む	// 2010/3/24 Uchi
+	bool ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのStringセクションを読み込む
 
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
 	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
@@ -282,7 +287,9 @@ public:
 	wstring m_sUrl;				//!< 配布URL
 	tstring m_sBaseDir;
 	tstring m_sOptionDir;
+	tstring m_sLangName;		//!< 言語名
 	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
+	std::vector<std::wstring> m_aStrings;	// 文字列
 private:
 	bool m_bLoaded;
 protected:
@@ -292,7 +299,7 @@ protected:
 	//非実装提供
 public:
 	virtual bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& param ) =0;	//プラグを実行する
-	virtual bool ReadPluginDef( CDataProfile *cProfile ) =0;		//プラグイン定義ファイルを読み込む
+	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//プラグイン定義ファイルを読み込む
 	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//オプションファイルを読み込む
 };
 

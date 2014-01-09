@@ -452,6 +452,26 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 
 	if( ! pluginSetting.m_bEnablePlugin ) return true;
 
+	std::tstring szLangName;
+	{
+		std::tstring szDllName = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
+		if( szDllName == _T("") ){
+			szLangName = _T("ja_JP");
+		}else{
+			// "sakura_lang_*.dll"
+			int nStartPos = 0;
+			int nEndPos = szDllName.length();
+			if( szDllName.substr( 0, 12 ) == _T("sakura_lang_") ){
+				nStartPos = 12;
+			}
+			if( 4 < szDllName.length() && szDllName.substr( szDllName.length() - 4, 4 ) == _T(".dll") ){
+				nEndPos = szDllName.length() - 4;
+			}
+			szLangName = szDllName.substr( nStartPos, nEndPos - nStartPos );
+		}
+		DEBUG_TRACE( _T("lang = %ts\n"), szLangName.c_str() );
+	}
+
 	//プラグインテーブルに登録されたプラグインを読み込む
 	PluginRec* plugin_table = pluginSetting.m_PluginTable;
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
@@ -460,9 +480,9 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
 		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
 		std::tstring name = to_tchar(plugin_table[iNo].m_szName);
-		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str() );
+		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
-			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str() );
+			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );
 		}
 		if( plugin ){
 			// 要検討：plugin.defのidとsakuraw.iniのidの不一致処理
@@ -481,11 +501,14 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 }
 
 //プラグインを読み込む
-CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName )
+CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName )
 {
 	TCHAR pszBasePath[_MAX_PATH];
 	TCHAR pszPath[_MAX_PATH];
+	std::tstring strMlang;
 	CDataProfile cProfDef;				//プラグイン定義ファイル
+	CDataProfile cProfDefMLang;			//プラグイン定義ファイル(L10N)
+	CDataProfile* pcProfDefMLang = &cProfDefMLang; 
 	CDataProfile cProfOption;			//オプションファイル
 	CPlugin* plugin = NULL;
 
@@ -504,6 +527,22 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	DEBUG_TRACE(_T("  定義ファイル読込 %ts\n"),  pszPath );
 #endif
 
+	//L10N定義ファイルを読む
+	//プラグイン定義ファイルを読み込む base\pluginname\local\plugin_en_us.def
+	strMlang = std::tstring(pszBasePath) + _T("\\") + PII_L10NDIR + _T("\\") + PII_L10NFILEBASE + pszLangName + PII_L10NFILEEXT;
+	cProfDefMLang.SetReadingMode();
+	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
+		//プラグイン定義ファイルが存在しない
+		pcProfDefMLang = NULL;
+#ifdef _UNICODE
+		DEBUG_TRACE(_T("  L10N定義ファイル読込 %ts Not Found\n"),  strMlang.c_str() );
+#endif
+	}else{
+#ifdef _UNICODE
+		DEBUG_TRACE(_T("  L10N定義ファイル読込 %ts\n"),  strMlang.c_str() );
+#endif
+	}
+
 	std::wstring sPlugType;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
@@ -515,7 +554,8 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		return NULL;
 	}
 	plugin->m_sOptionDir = m_sBaseDir + pszPluginName;
-	plugin->ReadPluginDef( &cProfDef );
+	plugin->m_sLangName = pszLangName;
+	plugin->ReadPluginDef( &cProfDef, pcProfDefMLang );
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("  プラグインタイプ %ls\n"), sPlugType.c_str() );
 #endif
@@ -527,7 +567,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		plugin->ReadPluginOption( &cProfOption );
 	}
 #ifdef _UNICODE
-	DEBUG_TRACE(_T("  オプションファイル読込 %ts\n"),  pszPath );
+	DEBUG_TRACE(_T("  オプションファイル読込 %ts\n"),  plugin->GetOptionPath().c_str() );
 #endif
 
 	return plugin;
