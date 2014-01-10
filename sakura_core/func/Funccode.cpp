@@ -184,8 +184,8 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1
 	F_JUMPHIST_SET		,	//現在位置を移動履歴に登録
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
 	F_WndScrollUp		,	//テキストを１行上へスクロール	// 2001/06/20 asa-o
-	F_GONEXTPARAGRAPH	,	//次の段落へ
-	F_GOPREVPARAGRAPH	,	//前の段落へ
+	F_GONEXTPARAGRAPH	,	//次の段落へ移動
+	F_GOPREVPARAGRAPH	,	//前の段落へ移動
 	F_AUTOSCROLL		,	//オートスクロール
 	F_WHEELUP			,	//ホイールアップ
 	F_WHEELDOWN			,	//ホイールダウン
@@ -223,8 +223,8 @@ const EFunctionCode pnFuncList_Select[] = {
 	F_1PageDown_Sel			,	//(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
 	F_GOFILETOP_SEL			,	//(範囲選択)ファイルの先頭に移動
 	F_GOFILEEND_SEL			,	//(範囲選択)ファイルの最後に移動
-	F_GONEXTPARAGRAPH_SEL	,	//(範囲選択)次の段落へ
-	F_GOPREVPARAGRAPH_SEL		//(範囲選択)前の段落へ
+	F_GONEXTPARAGRAPH_SEL	,	//(範囲選択)次の段落へ移動
+	F_GOPREVPARAGRAPH_SEL		//(範囲選択)前の段落へ移動
 };
 const int nFincList_Select_Num = _countof( pnFuncList_Select );
 
@@ -654,11 +654,11 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_JUMPHIST_SET:	return HLP000265;	//現在位置を移動履歴に登録
 	case F_WndScrollDown:	return HLP000198;	//テキストを１行下へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
-	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落に移動
-	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落に移動
+	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落へ移動
+	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落へ移動
 	case F_AUTOSCROLL:		return HLP000296;	//オートスクロール
-	case F_SETFONTSIZEUP:	return HLP000344;
-	case F_SETFONTSIZEDOWN:	return HLP000345;
+	case F_SETFONTSIZEUP:	return HLP000360;	//フォントサイズ拡大
+	case F_SETFONTSIZEDOWN:	return HLP000361;	//フォントサイズ縮小
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
@@ -673,8 +673,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_DOWN2_SEL:		return HLP000235;	//(範囲選択)カーソル下移動(２行ごと)
 	case F_WORDLEFT_SEL:	return HLP000236;	//(範囲選択)単語の左端に移動
 	case F_WORDRIGHT_SEL:	return HLP000237;	//(範囲選択)単語の右端に移動
-	case F_GONEXTPARAGRAPH_SEL:	return HLP000273;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
-	case F_GOPREVPARAGRAPH_SEL:	return HLP000274;	//(範囲選択)前の段落に移動	//@@@ 2003.06.15 MIK
+	case F_GONEXTPARAGRAPH_SEL:	return HLP000273;	//(範囲選択)前の段落へ移動	//@@@ 2003.06.15 MIK
+	case F_GOPREVPARAGRAPH_SEL:	return HLP000274;	//(範囲選択)前の段落へ移動	//@@@ 2003.06.15 MIK
 	case F_GOLINETOP_SEL:	return HLP000238;	//(範囲選択)行頭に移動(折り返し単位)
 	case F_GOLINEEND_SEL:	return HLP000239;	//(範囲選択)行末に移動(折り返し単位)
 //	case F_ROLLDOWN_SEL:	return ;	//(範囲選択)スクロールダウン
@@ -685,31 +685,31 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_1PageDown_Sel:	return HLP000241;	//(範囲選択)１ページダウン
 	case F_GOFILETOP_SEL:	return HLP000242;	//(範囲選択)ファイルの先頭に移動
 	case F_GOFILEEND_SEL:	return HLP000243;	//(範囲選択)ファイルの最後に移動
-//	case F_GONEXTPARAGRAPH_SEL:	return HLP000262;	//(範囲選択)次の段落へ
-//	case F_GOPREVPARAGRAPH_SEL:	return HLP000263;	//(範囲選択)前の段落へ
 
 
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 //	case F_BOXSELALL:		return ;	//矩形ですべて選択
 	case F_BEGIN_BOX:		return HLP000244;	//矩形範囲選択開始
-/*
-	case F_UP_BOX:			return ;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
-	case F_DOWN_BOX:		return ;	//(矩形選択)カーソル下移動
-	case F_LEFT_BOX:		return ;	/(矩形選択)カーソル左移動
-	case F_RIGHT_BOX:		return ;	//(矩形選択)カーソル右移動
-	case F_UP2_BOX:			return ;	//(矩形選択)カーソル上移動(２行ごと)
-	case F_DOWN2_BOX:		return ;	//(矩形選択)カーソル下移動(２行ごと)
-	case F_WORDLEFT_BOX:	return ;	//(矩形選択)単語の左端に移動
-	case F_WORDRIGHT_BOX:	return ;	//(矩形選択)単語の右端に移動
-	case F_GOLINETOP_BOX:	return ;	//(矩形選択)行頭に移動(折り返し単位)
-	case F_GOLINEEND_BOX:	return ;	//(矩形選択)行末に移動(折り返し単位)
-	case F_HalfPageUp_Box:	return ;	//(矩形選択)半ページアップ
-	case F_HalfPageDown_Box:return ;	//(矩形選択)半ページダウン
-	case F_1PageUp_Box:		return ;	//(矩形選択)１ページアップ
-	case F_1PageDown_Box:	return ;	//(矩形選択)１ページダウン
-	case F_GOFILETOP_BOX:	return ;	//(矩形選択)ファイルの先頭に移動
-	case F_GOFILEEND_BOX:	return ;	//(矩形選択)ファイルの最後に移動
-*/
+	case F_UP_BOX:			return HLP000359;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
+	case F_DOWN_BOX:		return HLP000359;	//(矩形選択)カーソル下移動
+	case F_LEFT_BOX:		return HLP000359;	//(矩形選択)カーソル左移動
+	case F_RIGHT_BOX:		return HLP000359;	//(矩形選択)カーソル右移動
+	case F_UP2_BOX:			return HLP000344;	//(矩形選択)カーソル上移動(２行ごと)
+	case F_DOWN2_BOX:		return HLP000345;	//(矩形選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_BOX:	return HLP000346;	//(矩形選択)単語の左端に移動
+	case F_WORDRIGHT_BOX:	return HLP000347;	//(矩形選択)単語の右端に移動
+	case F_GOLINETOP_BOX:	return HLP000350;	//(矩形選択)行頭に移動(折り返し単位)
+	case F_GOLOGICALLINETOP_BOX:	return HLP000358;	//(矩形選択)行頭に移動(改行単位)
+	case F_GOLINEEND_BOX:	return HLP000351;	//(矩形選択)行末に移動(折り返し単位)
+	case F_HalfPageUp_BOX:	return HLP000356;	//(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX:return HLP000357;	//(矩形選択)半ページダウン
+	case F_1PageUp_BOX:		return HLP000352;	//(矩形選択)１ページアップ
+	case F_1PageDown_BOX:	return HLP000353;	//(矩形選択)１ページダウン
+	case F_GOFILETOP_BOX:	return HLP000354;	//(矩形選択)ファイルの先頭に移動
+	case F_GOFILEEND_BOX:	return HLP000355;	//(矩形選択)ファイルの最後に移動
+//	case F_GONEXTPARAGRAPH_BOX:	return HLP000348;	//(範囲選択)次の段落へ
+//	case F_GOPREVPARAGRAPH_BOX:	return HLP000349;	//(範囲選択)前の段落へ
+
 	/* 整形系 2002/04/17 YAZAKI */
 	case F_LTRIM:		return HLP000210;	//左(先頭)の空白を削除
 	case F_RTRIM:		return HLP000211;	//右(末尾)の空白を削除
