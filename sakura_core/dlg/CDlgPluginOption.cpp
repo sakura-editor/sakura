@@ -284,7 +284,7 @@ int CDlgPluginOption::GetData( void )
 		cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
 	}
 
-	cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + L" プラグイン設定ファイル").c_str());
+	cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LSW(STR_DLGPLUGINOPT_INIHEAD)).c_str());
 
 	return TRUE;
 }
