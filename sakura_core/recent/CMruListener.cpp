@@ -66,7 +66,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 
 	// ƒ^ƒCƒv•ÊÝ’è
 	if( !pLoadInfo->nType.IsValidType() ){
-		if( 0 < nPrevTypeId ){
+		if( 0 <= nPrevTypeId ){
 			pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfId(nPrevTypeId);
 		}
 		if( !pLoadInfo->nType.IsValidType() ){
