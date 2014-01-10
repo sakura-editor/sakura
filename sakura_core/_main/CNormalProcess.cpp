@@ -194,11 +194,6 @@ bool CNormalProcess::InitializeProcess()
 		}
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
-			TCHAR szWork[MAX_PATH];
-			/* ロングファイル名を取得する */
-			if( ::GetLongFileName( gi.cmGrepFolder.GetStringPtr(), szWork ) ){
-				gi.cmGrepFolder.SetString( szWork, _tcslen( szWork ) );
-			}
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );

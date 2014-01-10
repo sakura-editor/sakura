@@ -289,22 +289,27 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			int nFolderLen = 0;
 			if( 0 < vPaths.size() ){
 				// ÅŒã‚ÌƒpƒX‚ª‘€ì‘ÎÛ
-				auto_strcpy( szFolder, vPaths.rbegin()->c_str() );
+				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), _MAX_PATH );
+				szFolder[_MAX_PATH-1] = _T('\0');
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = _T('\0');
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
 						TCHAR szFolderItem[_MAX_PATH];
-						auto_strcpy( szFolderItem, vPaths[i].c_str() );
+						auto_strncpy( szFolderItem, vPaths[i].c_str(), _MAX_PATH );
+						szFolderItem[_MAX_PATH-1] = _T('\0');
 						if( auto_strchr( szFolderItem, _T(';') ) ){
 							szFolderItem[0] = _T('"');
-							auto_strcpy( szFolderItem + 1, vPaths[i].c_str() );
+							auto_strncpy( szFolderItem + 1, vPaths[i].c_str(), _MAX_PATH - 1 );
+							szFolderItem[_MAX_PATH-1] = _T('\0');
 							auto_strcat( szFolderItem, _T("\"") );
+							szFolderItem[_MAX_PATH-1] = _T('\0');
 						}
 						if( i ){
 							auto_strcat( szFolder, _T(";") );
+							szFolder[_MAX_PATH-1] = _T('\0');
 						}
-						auto_strcat( szFolder, szFolderItem );
+						auto_strcat_s( szFolder, _MAX_PATH, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
