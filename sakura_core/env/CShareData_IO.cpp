@@ -1317,7 +1317,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			for( int k = i + 1; k < pShare->m_nTypesCount; k++ ){
 				STypeConfig& type2 = *(types[k]);
 				if( type.m_id == type2.m_id ){
-					type2.m_id = ::GetTickCount() + k * 0x10000;
+					type2.m_id = (::GetTickCount() & 0x3fffffff) + k * 0x10000;
 					pShare->m_TypeMini[k].m_id = type2.m_id;
 				}
 			}
@@ -1405,6 +1405,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("szTypeName"), MakeStringBufferT(types.m_szTypeName) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szTypeExts"), MakeStringBufferT(types.m_szTypeExts) );
 	cProfile.IOProfileData( pszSecName, LTEXT("id"), types.m_id );
+	if( types.m_id < 0 ){
+		types.m_id *= -1;
+	}
 	cProfile.IOProfileData( pszSecName, LTEXT("szTabViewString"), MakeStringBufferW(types.m_szTabViewString) );
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bTabArrow")	, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bInsSpace")			, types.m_bInsSpace );	// 2001.12.03 hor

@@ -528,7 +528,7 @@ bool CDlgTypeList::InitializeType( void )
 	}
 	_tcscpy( type.m_szTypeExts, _T("") );
 	type.m_nIdx = iDocType;
-	type.m_id = ::GetTickCount() + iDocType * 0x10000;
+	type.m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
 
 	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), type);
 
@@ -584,7 +584,7 @@ bool CDlgTypeList::CopyType()
 	if( !CDocTypeManager().AddTypeConfig(CTypeConfig(nNewTypeIndex)) ){
 		return false;
 	}
-	type.m_id = ::GetTickCount() + nNewTypeIndex * 0x10000;
+	type.m_id = (::GetTickCount() & 0x3fffffff) + nNewTypeIndex * 0x10000;
 	type.m_nIdx = nNewTypeIndex;
 	CDocTypeManager().SetTypeConfig(CTypeConfig(nNewTypeIndex), type);
 	SetData(nNewTypeIndex);
