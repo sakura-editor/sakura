@@ -327,7 +327,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		_tcscpy( m_Types.m_szTypeExts, _T("") );
 		m_Types.m_id = 0;
 	}else{
-		m_Types.m_id = ::GetTickCount() + m_nIdx * 0x10000;
+		m_Types.m_id = (::GetTickCount() & 0x3fffffff) + m_nIdx * 0x10000;
 	}
 
 	// êFÇÃê›íË

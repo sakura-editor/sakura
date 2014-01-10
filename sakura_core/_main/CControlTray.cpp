@@ -671,7 +671,7 @@ LRESULT CControlTray::DispatchEvent(
 					STypeConfig* type = new STypeConfig();
 					*type = *types[0]; // 基本をコピー
 					type->m_nIdx = nInsert;
-					type->m_id = ::GetTickCount() + nInsert * 0x10000;
+					type->m_id = (::GetTickCount() & 0x3fffffff) + nInsert * 0x10000;
 					// 同じ名前のものがあったらその次にする
 					int nAddNameNum = nInsert + 1;
 					auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
