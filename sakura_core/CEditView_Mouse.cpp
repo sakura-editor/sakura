@@ -1,9 +1,9 @@
 /*!	@file
-	@brief 文書ウィンドウの管理
+	@brief マウスイベントの処理
 
 	@author Norio Nakatani
 	@date	1998/03/13 作成
-	@date   2005/09/02 D.S.Koba GetSizeOfCharで書き換え
+	@date   2008/04/13 CEditView.cppから分離
 */
 /*
 	Copyright (C) 1998-2002, Norio Nakatani
@@ -94,8 +94,9 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	/* 現在のマウスカーソル位置→レイアウト位置 */
-	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
-	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+	CLayoutPoint ptNew;
+	ptNew.x = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
+	ptNew.y = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.11.30 nasukoji	トリプルクリック時はドラッグを開始しない
@@ -106,11 +107,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 				goto normal_action;
 			}
 			/* 指定カーソル位置が選択エリア内にあるか */
-			if( 0 == IsCurrentPositionSelected(
-				nNewX,		// カーソル位置X
-				nNewY		// カーソル位置Y
-				)
-			){
+			if( 0 == IsCurrentPositionSelected(ptNew) ){
 				POINT ptWk = {xPos, yPos};
 				::ClientToScreen(m_hWnd, &ptWk);
 				if( !::DragDetect(m_hWnd, ptWk) ){
@@ -315,14 +312,12 @@ normal_action:;
 
 		int	nWorkRel;
 		nWorkRel = IsCurrentPositionSelected(
-			m_ptCaretPos.x,	// カーソル位置X
-			m_ptCaretPos.y	// カーソル位置Y
+			m_ptCaretPos	// カーソル位置
 		);
 
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
-
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
 		if( GetKeyState_Control() &&( ! tripleClickMode)){
@@ -358,8 +353,7 @@ normal_action:;
 
 
 						nWork = IsCurrentPositionSelected(
-							sRange.m_ptFrom.x,	// カーソル位置X
-							sRange.m_ptFrom.y	// カーソル位置Y
+							sRange.m_ptFrom	// カーソル位置
 						);
 						if( -1 == nWork || 0 == nWork ){
 							m_sSelect.m_ptFrom = sRange.m_ptFrom;
@@ -383,17 +377,11 @@ normal_action:;
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
 						sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
-						nWork = IsCurrentPositionSelected(
-							sRange.m_ptFrom.x,	// カーソル位置X
-							sRange.m_ptFrom.y	// カーソル位置Y
-						);
+						nWork = IsCurrentPositionSelected(sRange.m_ptFrom);
 						if( -1 == nWork || 0 == nWork ){
 							m_sSelect.m_ptTo = sRange.m_ptFrom;
 						}
-						if( 1 == IsCurrentPositionSelected(
-							sRange.m_ptTo.x,	// カーソル位置X
-							sRange.m_ptTo.y		// カーソル位置Y
-						) ){
+						if( 1 == IsCurrentPositionSelected(sRange.m_ptTo) ){
 							m_sSelect.m_ptTo = sRange.m_ptTo;
 						}
 						if( -1 == nWorkRel || 0 == nWorkRel ){
@@ -547,17 +535,17 @@ BOOL CEditView::CheckTripleClick( int xPos, int yPos )
 	return result;
 }
 
-
 /* マウス右ボタン押下 */
 void CEditView::OnRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
 	/* 現在のマウスカーソル位置→レイアウト位置 */
-	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
-	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+
+	CLayoutPoint ptNew;
+	ptNew.x = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
+	ptNew.y = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 	/* 指定カーソル位置が選択エリア内にあるか */
 	if( 0 == IsCurrentPositionSelected(
-		nNewX,		// カーソル位置X
-		nNewY		// カーソル位置Y
+		ptNew		// カーソル位置
 		)
 	){
 		return;
@@ -802,8 +790,9 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			}
 		}
 		/* 現在のマウスカーソル位置→レイアウト位置 */
-		int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
-		int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+		CLayoutPoint ptNew;
+		ptNew.x = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
+		ptNew.y = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 		int			nUrlLine;	// URLの行(折り返し単位)
 		int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
 		int			nUrlLen;	// URLの長さ(バイト数)
@@ -811,7 +800,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 		/* 選択テキストのドラッグ中か */
 		if( m_bDragMode ){
-			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+			if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
 				MoveCursorToPoint( xPos , yPos );
 			}
@@ -824,13 +813,11 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
 					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
-			}else
-
-			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
-			 && TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
+			}
+			else if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+			 && m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
 			 && 0 == IsCurrentPositionSelected(						/* 指定カーソル位置が選択エリア内にあるか */
-				nNewX,	// カーソル位置X
-				nNewY	// カーソル位置Y
+				ptNew	// カーソル位置
 				)
 			){
 				/* 矢印カーソル */
@@ -839,13 +826,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			/* カーソル位置にURLが有る場合 */
 			else if(
 				IsCurrentPositionURL(
-				nNewX,			// カーソル位置X
-				nNewY,			// カーソル位置Y
+				ptNew.x,			// カーソル位置X
+				ptNew.y,			// カーソル位置Y
 				&nUrlLine,		// URLの行(改行単位)
 				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
 				&nUrlLen,		// URLの長さ(バイト数)
 				NULL			// URL受け取り先
-			) ){
+				)
+			){
 				/* 手カーソル */
 				::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
 			}else{
@@ -963,20 +951,18 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					sRange.m_ptTo.x = LineIndexToColumn( pcLayout, sRange.m_ptTo.x );
 
 					nWorkF = IsCurrentPositionSelectedTEST(
-						sRange.m_ptFrom.x,	// カーソル位置X
-						sRange.m_ptFrom.y,	// カーソル位置Y
+						sRange.m_ptFrom,	// カーソル位置
 						sSelect
 					);
 					nWorkT = IsCurrentPositionSelectedTEST(
-						sRange.m_ptTo.x,	// カーソル位置X
-						sRange.m_ptTo.y,	// カーソル位置Y
+						sRange.m_ptTo,	// カーソル位置
 						sSelect
 					);
-					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
+					if( -1 == nWorkF ){
 						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom );
 					}
-					else if( /*0 == nWorkT ||*/ 1 == nWorkT ){
+					else if( 1 == nWorkT ){
 						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo );
 					}
@@ -1425,7 +1411,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
 	if( pcDragSourceView && !IsDragSource() &&
-		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos.x, m_ptCaretPos.y )
+		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos )
 	){
 		*pdwEffect = DROPEFFECT_NONE;
 	}
@@ -1501,7 +1487,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
 	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos.x, m_ptCaretPos.y )
+		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos )
 	){
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう

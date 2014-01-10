@@ -6200,8 +6200,7 @@ bool CEditView::GetCurrentWord(
 	1	選択エリアより後方
 */
 int CEditView::IsCurrentPositionSelected(
-	int		nCaretPosX,		// カーソル位置X
-	int		nCaretPosY		// カーソル位置Y
+	CLayoutPoint	ptCaretPos		// カーソル位置
 )
 {
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -6209,7 +6208,6 @@ int CEditView::IsCurrentPositionSelected(
 	}
 	RECT	rcSel;
 	POINT	po;
-
 
 	/* 矩形範囲選択中か */
 	if( m_bBeginBoxSelect ){
@@ -6222,8 +6220,8 @@ int CEditView::IsCurrentPositionSelected(
 			m_sSelect.m_ptTo.x			/* 範囲選択終了桁 */
 		);
 		++rcSel.bottom;
-		po.x = nCaretPosX;
-		po.y = nCaretPosY;
+		po.x = ptCaretPos.x;
+		po.y = ptCaretPos.y;
 		if( IsDragSource() ){
 			if(GetKeyState_Control()){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
@@ -6234,54 +6232,54 @@ int CEditView::IsCurrentPositionSelected(
 		if( PtInRect( &rcSel, po ) ){
 			return 0;
 		}
-		if( rcSel.top > nCaretPosY ){
+		if( rcSel.top > ptCaretPos.y ){
 			return -1;
 		}
-		if( rcSel.bottom < nCaretPosY ){
+		if( rcSel.bottom < ptCaretPos.y ){
 			return 1;
 		}
-		if( rcSel.left > nCaretPosX ){
+		if( rcSel.left > ptCaretPos.x ){
 			return -1;
 		}
-		if( rcSel.right < nCaretPosX ){
+		if( rcSel.right < ptCaretPos.x ){
 			return 1;
 		}
 	}else{
-		if( m_sSelect.m_ptFrom.y > nCaretPosY ){
+		if( m_sSelect.m_ptFrom.y > ptCaretPos.y ){
 			return -1;
 		}
-		if( m_sSelect.m_ptTo.y < nCaretPosY ){
+		if( m_sSelect.m_ptTo.y < ptCaretPos.y ){
 			return 1;
 		}
-		if( m_sSelect.m_ptFrom.y == nCaretPosY ){
+		if( m_sSelect.m_ptFrom.y == ptCaretPos.y ){
 			if( IsDragSource() ){
 				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
-					if( m_sSelect.m_ptFrom.x >= nCaretPosX ){
+					if( m_sSelect.m_ptFrom.x >= ptCaretPos.x ){
 						return -1;
 					}
 				}else{
-					if( m_sSelect.m_ptFrom.x > nCaretPosX ){
+					if( m_sSelect.m_ptFrom.x > ptCaretPos.x ){
 						return -1;
 					}
 				}
 			}else
-			if( m_sSelect.m_ptFrom.x > nCaretPosX ){
+			if( m_sSelect.m_ptFrom.x > ptCaretPos.x ){
 				return -1;
 			}
 		}
-		if( m_sSelect.m_ptTo.y == nCaretPosY ){
+		if( m_sSelect.m_ptTo.y == ptCaretPos.y ){
 			if( IsDragSource() ){
 				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
-					if( m_sSelect.m_ptTo.x <= nCaretPosX ){
+					if( m_sSelect.m_ptTo.x <= ptCaretPos.x ){
 						return 1;
 					}
 				}else{
-					if( m_sSelect.m_ptTo.x < nCaretPosX ){
+					if( m_sSelect.m_ptTo.x < ptCaretPos.x ){
 						return 1;
 					}
 				}
 			}else
-			if( m_sSelect.m_ptTo.x <= nCaretPosX ){
+			if( m_sSelect.m_ptTo.x <= ptCaretPos.x ){
 				return 1;
 			}
 		}
@@ -6297,28 +6295,27 @@ int CEditView::IsCurrentPositionSelected(
 	1	選択エリアより後方
 */
 int CEditView::IsCurrentPositionSelectedTEST(
-	int		nCaretPosX,		// カーソル位置X
-	int		nCaretPosY,		// カーソル位置Y
+	const CLayoutPoint& ptCaretPos,      //カーソル位置
 	const CLayoutRange& sSelect
-)
+) const
 {
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return -1;
 	}
 
-	if( sSelect.m_ptFrom.y > nCaretPosY ){
+	if( sSelect.m_ptFrom.y > ptCaretPos.y ){
 		return -1;
 	}
-	if( sSelect.m_ptTo.y < nCaretPosY ){
+	if( sSelect.m_ptTo.y < ptCaretPos.y ){
 		return 1;
 	}
-	if( sSelect.m_ptFrom.y == nCaretPosY ){
-		if( sSelect.m_ptFrom.x > nCaretPosX ){
+	if( sSelect.m_ptFrom.y == ptCaretPos.y ){
+		if( sSelect.m_ptFrom.x > ptCaretPos.x ){
 			return -1;
 		}
 	}
-	if( sSelect.m_ptTo.y == nCaretPosY ){
-		if( sSelect.m_ptTo.x <= nCaretPosX ){
+	if( sSelect.m_ptTo.y == ptCaretPos.y ){
+		if( sSelect.m_ptTo.x <= ptCaretPos.x ){
 			return 1;
 		}
 	}
@@ -6932,8 +6929,6 @@ void CEditView::SetBracketPairPos( bool flag )
 void CEditView::DrawBracketPair( bool bDraw )
 {
 	int			i;
-	int			nCol;
-	int			nLine;
 	COLORREF	crBackOld;
 	COLORREF	crTextOld;
 	HFONT		hFontOld;
@@ -6975,26 +6970,28 @@ void CEditView::DrawBracketPair( bool bDraw )
 		//   ＃ { と } が異なる行にある場合に { を BS で消すと } の強調表示が解除されない問題（Wiki BugReport/89）の対策
 		//   ＃ この順序変更によりカーソル位置が括弧でなくなっていても対括弧があれば対括弧側の強調表示は解除される
 
+		CLayoutPoint	ptColLine;
+
 		if( i == 0 ){
-			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketPairPos_PHY.x,  m_ptBracketPairPos_PHY.y,  &nCol, &nLine );
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketPairPos_PHY.x,  m_ptBracketPairPos_PHY.y,  &ptColLine.x, &ptColLine.y );
 		}else{
-			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketCaretPos_PHY.x, m_ptBracketCaretPos_PHY.y, &nCol, &nLine );
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketCaretPos_PHY.x, m_ptBracketCaretPos_PHY.y, &ptColLine.x, &ptColLine.y );
 		}
 
-		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
-			&& ( nLine >= m_nViewTopLine ) && ( nLine <= m_nViewTopLine + m_nViewRowNum ) )
+		if ( ( ptColLine.x >= m_nViewLeftCol ) && ( ptColLine.x <= m_nViewLeftCol + m_nViewColNum )
+			&& ( ptColLine.y >= m_nViewTopLine ) && ( ptColLine.y <= m_nViewTopLine + m_nViewRowNum ) )
 		{	// 表示領域内の場合
-			if( !bDraw && m_bDrawSelectArea && ( 0 == IsCurrentPositionSelected( nCol, nLine ) ) )
+			if( !bDraw && m_bDrawSelectArea && ( 0 == IsCurrentPositionSelected( ptColLine ) ) )
 			{	// 選択範囲描画済みで消去対象の括弧が選択範囲内の場合
 				continue;
 			}
 			const CLayout* pcLayout;
 			int			nLineLen;
-			const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
+			const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptColLine.y, &nLineLen, &pcLayout );
 			if( pLine )
 			{
 				EColorIndexType nColorIndex;
-				int	OutputX = LineColumnToIndex( pcLayout, nCol );
+				int	OutputX = LineColumnToIndex( pcLayout, ptColLine.x );
 				if( bDraw )	{
 					nColorIndex = COLORIDX_BRACKET_PAIR;
 				}
@@ -7020,21 +7017,21 @@ void CEditView::DrawBracketPair( bool bDraw )
 				SetCurrentColor( hdc, nColorIndex );
 
 				int nHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;
-				int nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace )) + nCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
-				int nTop  = ( nLine - m_nViewTopLine ) * nHeight + m_nViewAlignTop;
+				int nLeft = (m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace )) + ptColLine.x * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
+				int nTop  = ( ptColLine.y - m_nViewTopLine ) * nHeight + m_nViewAlignTop;
 
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
-				if( ( nCol == m_ptCaretPos.x ) && ( m_bCaretShowFlag == true ) ){
+				if( ( ptColLine.x == m_ptCaretPos.x ) && ( m_bCaretShowFlag == true ) ){
 					HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 					// 2006.04.30 Moca 対括弧の縦線対応
-					DispVerticalLines( hdc, nTop, nTop + nHeight, nCol, nCol + m_nCharSize );
+					DispVerticalLines( hdc, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + m_nCharSize );
 					ShowCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 				}else{
 					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 					// 2006.04.30 Moca 対括弧の縦線対応
-					DispVerticalLines( hdc, nTop, nTop + nHeight, nCol, nCol + m_nCharSize );
+					DispVerticalLines( hdc, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + m_nCharSize );
 				}
 
 				if( NULL != m_hFontOld ){
@@ -7046,7 +7043,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 				::SelectObject( hdc, hFontOld );
 
 				if( ( m_pcEditWnd->GetActivePane() == m_nMyIndex )
-					&& ( ( nLine == m_ptCaretPos.y ) || ( nLine - 1 == m_ptCaretPos.y ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
+					&& ( ( ptColLine.y == m_ptCaretPos.y ) || ( ptColLine.y - 1 == m_ptCaretPos.y ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					m_cUnderLine.CaretUnderLineON( true );
 				}
 			}

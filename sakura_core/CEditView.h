@@ -501,8 +501,8 @@ public:
 protected:
 	bool IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( int, int);							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
-	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
-	int IsCurrentPositionSelectedTEST( int, int, const CLayoutRange& sSelect );/* 指定カーソル位置が選択エリア内にあるか */
+	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
+	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 	HFONT ChooseFontHandle( bool bBold, bool bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
