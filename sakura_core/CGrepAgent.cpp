@@ -77,7 +77,13 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 				szTmp[nFolderLen - 1] = _T('\0');
 			}
 		}
-		vPaths.push_back( &szTmp[0] );
+		/* ロングファイル名を取得する */
+		TCHAR szTmp2[_MAX_PATH];
+		if( ::GetLongFileName( &szTmp[0], szTmp2 ) ){
+			vPaths.push_back( szTmp2 );
+		}else{
+			vPaths.push_back( &szTmp[0] );
+		}
 	}
 }
 
@@ -280,7 +286,22 @@ DWORD CGrepAgent::DoGrep(
 
 	cmemMessage.AppendString( L"\r\n" );
 	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
-	cmemWork.SetStringT( pcmGrepFolder->GetStringPtr() );
+	{
+		std::tstring grepFolder;
+		for( int i = 0; i < (int)vPaths.size(); i++ ){
+			if( i ){
+				grepFolder += _T(';');
+			}
+			if( auto_strchr( vPaths[i].c_str(), _T(';') ) ){
+				grepFolder += _T('"');
+				grepFolder += vPaths[i];
+				grepFolder += _T('"');
+			}else{
+				grepFolder += vPaths[i];
+			}
+		}
+		cmemWork.SetStringT( grepFolder.c_str() );
+	}
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
