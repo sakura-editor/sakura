@@ -200,7 +200,7 @@ normal_action:;
 		GetCaret().HideCaret_( GetHwnd() ); // 2002/07/22 novice
 		/* 現在のカーソル位置から選択を開始する */
 		GetSelectionInfo().BeginSelectArea( );
-		GetCaret().m_cUnderLine.CaretUnderLineOFF( TRUE );
+		GetCaret().m_cUnderLine.CaretUnderLineOFF( true );
 		GetCaret().m_cUnderLine.Lock();
 		if( ptMouse.x < GetTextArea().GetAreaLeft() ){
 			/* カーソル下移動 */
