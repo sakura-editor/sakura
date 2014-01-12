@@ -195,6 +195,8 @@ CDlgFuncList::CDlgFuncList()
 	m_cFuncInfo = NULL;			/* 現在の関数情報 */
 	m_bEditWndReady = false;	/* エディタ画面の準備完了 */
 	m_bInChangeLayout = false;
+	m_ptDefaultSize.x = -1;
+	m_ptDefaultSize.y = -1;
 }
 
 
@@ -2034,6 +2036,9 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 BOOL CDlgFuncList::OnMinMaxInfo( LPARAM lParam )
 {
 	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	if( m_ptDefaultSize.x < 0 ){
+		return 0;
+	}
 	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x/2;
 	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y/3;
 	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
