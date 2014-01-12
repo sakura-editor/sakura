@@ -68,6 +68,9 @@ CShareData::~CShareData()
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
+	if( m_hFileMap ){
+		CloseHandle( m_hFileMap );
+	}
 	if( m_pvTypeSettings ){
 		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
