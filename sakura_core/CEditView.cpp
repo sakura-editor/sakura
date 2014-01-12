@@ -2743,32 +2743,22 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 
 
 
-/*	指定カーソル位置にURLが有る場合のその範囲を調べる
-	戻り値がTRUEの場合、*ppszURLは呼び出し側でdeleteすること
+/*!
+	指定カーソル位置にURLが有る場合のその範囲を調べる
+
+	2007.01.18 kobake URL文字列の受け取りをwstringで行うように変更
 	2009.05.27 ryoji URL色指定の正規表現キーワードにマッチする文字列もURLとみなす
 	                 URLの強調表示OFFのチェックはこの関数内で行うように変更
  */
 bool CEditView::IsCurrentPositionURL(
-		int		nCaretPosX,		// カーソル位置X
-		int		nCaretPosY,		// カーソル位置Y
-		int*	pnUrlLine,		// URLの行(改行単位)
-		int*	pnUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-		int*	pnUrlLen,		// URLの長さ(バイト数)
-		char**	ppszURL			// URL受け取り先(関数内でnewする)
+	const CLayoutPoint&	ptCaretPos,		//!< [in]  カーソル位置
+	CLogicRange*		pUrlRange,		//!< [out] URL範囲。ロジック単位。
+	std::tstring*		ptstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
 
-	const char*	pLine;
-//	const char*	pLineWork;
-	int			nLineLen;
-	int			nX;
-	int			nY;
-//	char*		pURL;
-	int			i;
-//	BOOL		bFindURL;
 	int			nCharChars;
-	int			nUrlLen;
 
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	bool bDispUrl = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp;
@@ -2799,21 +2789,23 @@ bool CEditView::IsCurrentPositionURL(
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
+	CLogicPoint ptXY;
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		nCaretPosX,
-		nCaretPosY,
-		(int*)&nX,
-		(int*)&nY
+		ptCaretPos.x,
+		ptCaretPos.y,
+		(int*)&ptXY.x,
+		(int*)&ptXY.y
 	);
+	int			nLineLen;
+	const char*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( ptXY.y, &nLineLen );
+
 	bool		bMatch;
 	int			nMatchColor;
-	*pnUrlLine = nY;
-	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
-
-	i = t_max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
-	// nLineLen = t_min(nLineLen, nX + _MAX_PATH);
+	int			nUrlLen = 0;
+	int			i = t_max(0, ptXY.x - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
+	//nLineLen = t_min(nLineLen, nX + _MAX_PATH);
 	bool bKeyWordTop = (i == 0);
-	while( i <= nX && i < nLineLen ){
+	while( i <= ptXY.x && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
 					&& m_cRegexKeyword->RegexIsKeyword( pLine, i, nLineLen, &nUrlLen, &nMatchColor )
 					&& nMatchColor == COLORIDX_URL );
@@ -2822,17 +2814,13 @@ bool CEditView::IsCurrentPositionURL(
 						&& IsURL(&pLine[i], (int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 		}
 		if( bMatch ){
-			if( i <= nX && nX < i + nUrlLen ){
+			if( i <= ptXY.x && ptXY.x < i + nUrlLen ){
 				/* URLを返す場合 */
-				if( NULL != ppszURL ){
-					*ppszURL = new char[nUrlLen + 1];
-					memcpy( *ppszURL, &pLine[i], nUrlLen );
-					(*ppszURL)[nUrlLen] = '\0';
-					/* *ppszURLは呼び出し側でdeleteすること */
+				if( ptstrURL ){
+					ptstrURL->assign(&pLine[i],nUrlLen);
 				}
-				*pnUrlLen = nUrlLen;
-				*pnUrlLine = nY;
-				*pnUrlIdxBgn = i;
+				pUrlRange->m_ptFrom.y = ptXY.y; pUrlRange->m_ptTo.y = ptXY.y;
+				pUrlRange->m_ptFrom.x = i; pUrlRange->m_ptTo.x = i + nUrlLen;
 				return true;
 			}else{
 				i += nUrlLen;

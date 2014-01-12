@@ -442,16 +442,11 @@ normal_action:;
 			/* URLがクリックされたら選択するか */
 			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
 
-				int			nUrlLine;	// URLの行(折り返し単位)
-				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-				int			nUrlLen;	// URLの長さ(バイト数)
+				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
 				bool bIsUrl = IsCurrentPositionURL(
-					m_ptCaretPos.x,	// カーソル位置X
-					m_ptCaretPos.y,	// カーソル位置Y
-					&nUrlLine,		// URLの行(改行単位)
-					&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-					&nUrlLen,		// URLの長さ(バイト数)
+					m_ptCaretPos,	// カーソル位置
+					&cUrlRange,		// URL範囲
 					NULL			// URL受け取り先
 				);
 				if( bIsUrl ){
@@ -465,8 +460,8 @@ normal_action:;
 						2002/04/08 YAZAKI 少しでもわかりやすく。
 					*/
 					CLayoutRange sRangeB;
-					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn          , nUrlLine, &sRangeB.m_ptFrom.x, &sRangeB.m_ptFrom.y );
-					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn + nUrlLen, nUrlLine, &sRangeB.m_ptTo.x,   &sRangeB.m_ptTo.y );
+					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( cUrlRange.m_ptFrom.x, cUrlRange.m_ptFrom.y, &sRangeB.m_ptFrom.x, &sRangeB.m_ptFrom.y );
+					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( cUrlRange.m_ptTo.x, cUrlRange.m_ptTo.y, &sRangeB.m_ptTo.x, &sRangeB.m_ptTo.y );
 
 					m_sSelectBgn = sRangeB;
 					m_sSelect = sRangeB;
@@ -793,10 +788,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		CLayoutPoint ptNew;
 		ptNew.x = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 		ptNew.y = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
-		int			nUrlLine;	// URLの行(折り返し単位)
-		int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-		int			nUrlLen;	// URLの長さ(バイト数)
-
+		CLogicRange	cUrlRange;	//URL範囲
 
 		/* 選択テキストのドラッグ中か */
 		if( m_bDragMode ){
@@ -826,12 +818,9 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			/* カーソル位置にURLが有る場合 */
 			else if(
 				IsCurrentPositionURL(
-				ptNew.x,			// カーソル位置X
-				ptNew.y,			// カーソル位置Y
-				&nUrlLine,		// URLの行(改行単位)
-				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-				&nUrlLen,		// URLの長さ(バイト数)
-				NULL			// URL受け取り先
+					ptNew,			// カーソル位置
+					&cUrlRange,		// URL範囲
+					NULL			// URL受け取り先
 				)
 			){
 				/* 手カーソル */
@@ -1180,53 +1169,40 @@ static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 }
 
 
-/* マウス左ボタンダブルクリック */
+// マウス左ボタンダブルクリック
+// 2007.01.18 kobake IsCurrentPositionURL仕様変更に伴い、処理の書き換え
 void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 {
-	int			nIdx;
-	int			nFuncID;
-	int			nUrlLine;	// URLの行(折り返し単位)
-	int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
-	int			nUrlLen;	// URLの長さ(バイト数)
-	char*		pszURL;
-	const char*	pszMailTo = "mailto:";
+	CLogicRange		cUrlRange;	// URL範囲
+	std::tstring	tstrURL;
+	const TCHAR*	pszMailTo = _T("mailto:");
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		if(
 			IsCurrentPositionURL(
-				m_ptCaretPos.x,	// カーソル位置X
-				m_ptCaretPos.y,	// カーソル位置Y
-				&nUrlLine,		// URLの行(改行単位)
-				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-				&nUrlLen,		// URLの長さ(バイト数)
-				&pszURL			// URL受け取り先
+				m_ptCaretPos,	// カーソル位置
+				&cUrlRange,		// URL範囲
+				&tstrURL		// URL受け取り先
 			)
 		 ){
-			char*		pszWork = NULL;
-			char*		pszOPEN;
+			std::tstring tstrOPEN;
 
-			/* URLを開く */
-			/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-			if( TRUE == IsMailAddress( pszURL, lstrlen( pszURL ), NULL ) ){
-				pszWork = new char[ lstrlen( pszURL ) + lstrlen( pszMailTo ) + 1];
-				strcpy( pszWork, pszMailTo );
-				strcat( pszWork, pszURL );
-				pszOPEN = pszWork;
-			}else{
-				if( _tcsnicmp( pszURL, _T("ttp://"), 6 ) == 0 ){	//抑止URL
-					pszWork = new TCHAR[ _tcslen( pszURL ) + 1 + 1 ];
-					_tcscpy( pszWork, _T("h") );
-					_tcscat( pszWork, pszURL );
-					pszOPEN = pszWork;
-				}else if( _tcsnicmp( pszURL, _T("tp://"), 5 ) == 0 ){	//抑止URL
-					pszWork = new TCHAR[ _tcslen( pszURL ) + 2 + 1 ];
-					_tcscpy( pszWork, _T("ht") );
-					_tcscat( pszWork, pszURL );
-					pszOPEN = pszWork;
-				}else{
-					pszOPEN = pszURL;
+			// URLを開く
+			// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
+			if( IsMailAddress( tstrURL.c_str(), tstrURL.length(), NULL ) ){
+				tstrOPEN = pszMailTo + tstrURL;
+			}
+			else{
+				if( _tcsnicmp( tstrURL.c_str(), _T("ttp://"), 6 ) == 0 ){	//抑止URL
+					tstrOPEN = _T("h") + tstrURL;
+				}
+				else if( _tcsnicmp( tstrURL.c_str(), _T("tp://"), 5 ) == 0 ){	//抑止URL
+					tstrOPEN = _T("ht") + tstrURL;
+				}
+				else{
+					tstrOPEN = tstrURL;
 				}
 			}
 			{
@@ -1235,7 +1211,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 				CWaitCursor cWaitCursor( m_hWnd );	// カーソルを砂時計にする
 
 				unsigned int nThreadId;
-				LPCTSTR szUrl = pszOPEN;
+				LPCTSTR szUrl = tstrOPEN.c_str();
 				LPTSTR szUrlDup = new TCHAR[_tcslen( szUrl ) + 1];
 				_tcscpy( szUrlDup, szUrl );
 				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
@@ -1250,8 +1226,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 					delete[] szUrlDup;
 				}
 			}
-			delete [] pszURL;
-			delete [] pszWork;
 			return;
 		}
 
@@ -1266,10 +1240,10 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
-	nIdx = getCtrlKeyState();
+	int nIdx = getCtrlKeyState();
 
 	/* マウス左クリックに対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
-	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[
+	int	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[
 		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
 		].m_nFuncCodeArr[nIdx];
 	if(m_dwTripleClickCheck){
@@ -1332,9 +1306,9 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 	if( IsTextSelected() ){
 		/* 常時選択範囲の範囲 */
-		m_sSelectBgn.m_ptTo.y = m_sSelect.m_ptTo.y;
-		m_sSelectBgn.m_ptTo.x = m_sSelect.m_ptTo.x;
-	}else{
+		m_sSelectBgn.m_ptTo = m_sSelect.m_ptTo;
+	}
+	else{
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
 	}
