@@ -102,6 +102,7 @@ DWORD CGrepAgent::DoGrep(
 	const CNativeW*			pcmGrepKey,
 	const CNativeT*			pcmGrepFile,
 	const CNativeT*			pcmGrepFolder,
+	bool					bGrepCurFolder,
 	BOOL					bGrepSubFolder,
 	const SSearchOption&	sSearchOption,
 	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
@@ -453,8 +454,12 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( NULL );
 
-	// 現行フォルダを検索したフォルダに変更
-	::SetCurrentDirectory( pcmGrepFolder->GetStringPtr() );
+	if( !bGrepCurFolder ){
+		// 現行フォルダを検索したフォルダに変更
+		if( 0 < vPaths.size() ){
+			::SetCurrentDirectory( vPaths[0].c_str() );
+		}
+	}
 
 	return nHitCount;
 }

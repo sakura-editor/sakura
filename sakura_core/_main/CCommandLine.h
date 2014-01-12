@@ -33,6 +33,7 @@ struct GrepInfo {
 	CNativeT		cmGrepFile;			//!< 検索対象ファイル
 	CNativeT		cmGrepFolder;		//!< 検索対象フォルダ
 	SSearchOption	sGrepSearchOption;	//!< 検索オプション
+	bool			bGrepCurFolder;		//!< カレントディレクトリを維持
 	bool			bGrepSubFolder;		//!< サブフォルダを検索する
 	ECodeType		nGrepCharSet;		//!< 文字コードセット
 	int				nGrepOutputStyle;	//!< 結果出力形式

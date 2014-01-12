@@ -86,6 +86,7 @@ void CViewCommander::Command_GREP( void )
 			&cmWork1,
 			&cmWork2,
 			&cmWork3,
+			false,
 			GetEditWindow()->m_cDlgGrep.m_bSubFolder,
 			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
 			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
