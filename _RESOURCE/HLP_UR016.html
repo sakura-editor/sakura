@@ -13,12 +13,85 @@
 <h2>変更履歴(2013/05/13～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
 
+<h3>Jan. xx, 2014 (2.1.1.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>タブの閉じるボタンを自動表示するオプションを追加 (svn:3300 upatchid:656 ryoji)</li>
+	<li>各言語対応 (svn:3447 svn:3463 svn:3464 svn:3468 svn:3469 svn:3483 svn:3484 svn:3485 svn:3497 svn:3498 svn:3505 svn:3508 svn:3509 svn:3510 svn:3511 svn:3512 svn:3514 svn:3516 svn:3517 svn:3523 svn:3544 svn:3547 upatchid:259 Lucien,nasukoji,syat,Moca,novice)</li>
+	<li>タイプ別設定数疑似可変長(最大60) (svn:3476 upatchid:451 Moca)</li>
+	<li>偶数行の背景色 (svn:3541 upatchid:729 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+	<li>[アイコン]ON時のタブのテキストと閉じるボタンの隙間を狭める調整 (svn:3283 upatchid:649 ryoji)</li>
+	<li>タブの閉じるボタン上でマウスオーバーしたときにボタンを囲む矩形を描画する (svn:3300 upatchid:656 ryoji)</li>
+	<li>異常終了したウィンドウをリストから削除 (svn:3466 upatchid:629 Moca)</li>
+	<li>すべて置換の高速化 (svn:3477 upatchid:521 Moca)</li>
+	<li>タイプ別フォントにフォントラベルをつける (svn:3490 upatchid:621 Uchi,Moca)</li>
+	<li>名前を付けて保存で無題番号を付ける (svn:3501 upatchid:707 Moca)</li>
+	<li>ファイルのプロパティにアクセス日時を表示 (svn:3522 upatchid:718 syat)</li>
+	<li>DIFFの色分けをデフォルトで有効にする (svn:3542 upatchid:730 Moca)</li>
+	<li>変更行の色属性をDIFF・ブックマーク時に継承する (svn:3543 upatchid:731 Moca)</li>
+	<li>コントロールコードの入力で改行コード変換をしないように (svn:3546 upatchid:714 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>タイプ別カラー設定のグループ枠欠け修正 (svn:3260 syat)</li>
+	<li>「閉じるボタン」ONのときフォントの指定が効かない (svn:3283 upatchid:649 ryoji)</li>
+	<li>「閉じるボタン」と「等幅」がONだと非アクティブタブ上のマウスオーバーでタブがハイライトしない (svn:3283 upatchid:649 ryoji)</li>
+	<li>「[等幅]OFF、[閉じるボタン]ON」から「[等幅]ON、[閉じるボタン]OFF」への変更でタブのアイコンやテキストの描画位置がずれる (svn:3283 upatchid:649 ryoji)</li>
+	<li>タブの閉じるボタン上でマウス左ボタンを押下げて別タブの閉じるボタン上で離すと別タブが閉じてしまう (svn:3300 upatchid:656 ryoji)</li>
+	<li>高DPI(125%)で[共通設定]-[タブバー]で表記末尾が切れる項目がある (svn:3300 upatchid:656 ryoji)</li>
+	<li>Grepダイアログ内のアクセスキー重複 (svn:3305 upatchid:657 syat)</li>
+	<li>@や$で始まる単語の補完ができない (svn:3321 syat)</li>
+	<li>ファイル内容比較で強制停止 (svn:3371 upatchid:671 novice)</li>
+	<li>最大化するときにスクロールすると画面が更新されない (svn:3398 upatchid:647 Moca)</li>
+	<li>Grepの検索文字列のエスケープ判定が間違っている (svn:3399 upatchid:634 Moca)</li>
+	<li>全角カタカナ→半角カタカナ変換で長音符が変換されない (svn:3400 upatchid:666 Moca)</li>
+	<li>印刷ページ設定の変更が反映されない (svn:3401 upatchid:665 Moca)</li>
+	<li>組み合わせてスクロールが動作しない (svn:3402 upatchid:675 Moca)</li>
+	<li>メニューとショートカットキーの機能選択不一致 (svn:3417 upatchid:678 novice)</li>
+	<li>CPropCommon派生クラスのメンバ変数 (svn:3437 upatchid:690 novice)</li>
+	<li>色指定リストが初期化されて表示される (svn:3471 upatchid:695 Moca,novice)</li>
+	<li>FUNCLISTの無駄な余白 (svn:3474 upatchid:698 LR4,novice)</li>
+	<li>リソーススクリプトのミスを修正(windressでエラー) (svn:3461 Moca)</li>
+	<li>長いPATHでGrepするとバッファオーバーラン (svn:3467 upatchid:691 Moca)</li>
+	<li>開く(ドロップダウン)の最近使ったフォルダのラベルがファイルになっている(r3447-) (svn:3478 upatchid:700 LR4,Moca)</li>
+	<li>下線が残ることがある (svn:3479 upatchid:696 Moca)</li>
+	<li>「終了時、改行の一致を検査する」を「保存時…」に変更 (svn:3491 upatchid:471 Moca)</li>
+	<li>保存時に改行コードの混在を警告するが欠けている (svn:3492 upatchid:471 Moca)</li>
+	<li>タブ幅等の一時適用の保持の修正 (svn:3493 upatchid:701 Moca)</li>
+	<li>折り返しているとキーワードヘルプが表示されない (svn:3499 upatchid:703 Moca)</li>
+	<li>変換等でも「折り返し行に改行を付けてコピー」が有効になっていた (svn:3499 upatchid:703 Moca)</li>
+	<li>トレイの共通設定でプラグインが即時読み込まれない (svn:3500 upatchid:705 Moca)</li>
+	<li>インクリメンタルサーチ後に検索(BOX)が更新されない (svn:3502 upatchid:708 Moca)</li>
+	<li>高DPI時のリストビューの幅がスケーリングしていない (svn:3503 upatchid:709 Moca)</li>
+	<li>フォント名の表示でサイズ制限をつける (svn:3506 upatchid:715 Moca)</li>
+	<li>カーソル行の背景色がおかしい (svn:3507 upatchid:712 Moca)</li>
+	<li>名前を付けて保存でエラーになる (svn:3527 upatchid:722 Moca)</li>
+	<li>カーソル形状をMS-DOS風にしたときの挿入/上書き切り替え時にカーソル表示がずれる (svn:3528 upatchid:725 Moca)</li>
+	<li>マクロ等の正規表現チェックがおかしい (svn:3537 upatchid:723 Moca)</li>
+	<li>ドッキング時のブックマーク一覧表示 (svn:3539 upatchid:721 Moca)</li>
+	<li>折り返し変更時の横スクロール位置をなるべく保持するように (svn:3540 upatchid:728 Moca)</li>
+	<li>タブを閉じた後のウィンドウの変更 (svn:3545 upatchid:689 Moca)</li>
+	<li>MRUのタイプ別設定が基本だと適用されない (svn:3549 upatchid:732 Moca)</li>
+	<li>TypeIdがマイナスになることがある (svn:3550 upatchid:733 Moca)</li>
+	<li>Grepフォルダに;が含まれているとGrepフォルダがおかしい (svn:3551 upatchid:734 Moca)</li>
+	<li>ヘルプIDの修正 (svn:3552 upatchid:737 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>Wine実行判定処理 (svn:3423 svn:3430 svn:3434 upatchid:685 novice)</li>
+	<li>パス貼り付けの改行コード変換 (svn:3494 upatchid:704 novice)</li>
+	<li>アクセスキーの小文字対応 (svn:3504 upatchid:711 novice)</li>
+</ul>
+
 <h3>Jul. 20, 2013 (2.1.0.0)</h3>
 [機能追加]<br />
 <ul>
 	<li>カラー印刷 (svn:3030 upatchid:491 Request/105 ossan&Uchi)</li>
-	<li>印刷でヘッダ･フッタのフォントを設定 (svn:3059svn:3099svn:3117 upatchid:536 Uchi)</li>
-	<li>外部コマンド実行の拡張 (svn:3078svn:3156 upatchid:324upatchid:599 Request/149 Moca)</li>
+	<li>印刷でヘッダ･フッタのフォントを設定 (svn:3059 svn:3099 svn:3117 upatchid:536 Uchi)</li>
+	<li>外部コマンド実行の拡張 (svn:3078 svn:3156 upatchid:324 upatchid:599 Request/149 Moca)</li>
 	<li>カラーHTMLコピー (svn:3080 upatchid:500 Request/431 Moca)</li>
 	<li>NEL,LS,PS限定的サポート (svn:3081 upatchid:450 Moca)</li>
 	<li>トレイメニューで共通設定・タイプ別設定呼び出し (svn:3107 upatchid:525 Moca)</li>
@@ -28,8 +101,8 @@
 	<li>タブを閉じるボタンの追加 (svn:3124 upatchid:214 Request/282 syat)</li>
 	<li>Redoバッファ操作マクロ追加 (svn:3132 upatchid:495 Moca)</li>
 	<li>タイプ別フォント設定 (svn:3142 upatchid:371 Request/350 Moca,aroka)</li>
-	<li>Grep拡張 (svn:3153svn:3154 upatchid:325 Moca,wakura)</li>
-	<li>DrawSwitchマクロ (svn:3157svn:3159 upatchid:474 Moca)</li>
+	<li>Grep拡張 (svn:3153 svn:3154 upatchid:325 Moca,wakura)</li>
+	<li>DrawSwitchマクロ (svn:3157 svn:3159 upatchid:474 Moca)</li>
 	<li>ステータスメッセージ表示マクロ等 (svn:3158 upatchid:477 Moca)</li>
 	<li>ダイアログ表示/結果適用のマクロを追加 (svn:3160 upatchid:489 Moca)</li>
 	<li>5つ以上のマクロ引数のサポート (svn:3162 upatchid:596 Moca)</li>
@@ -84,7 +157,7 @@
 	<li>設定変更後でも折り返し桁数での折り返しを継続するように (svn:3119 upatchid:567 Moca)</li>
 	<li>検索マーク切り替えで検索ボックスが更新されない (svn:3121 upatchid:514 Moca)</li>
 	<li>次に検索されるキーを検索ボックスに表示 (svn:3121 upatchid:514 Moca)</li>
-	<li>変更行が一致しない問題 (svn:3127svn:3186 upatchid:194 Moca)</li>
+	<li>変更行が一致しない問題 (svn:3127 svn:3186 upatchid:194 Moca)</li>
 	<li>設定変更時、カーソル位置よりスクロール位置を優先する (svn:3129 upatchid:577 Moca)</li>
 	<li>無題番号を無題が必要なときのみカウントする (svn:3131 upatchid:578 BugReport/119 Moca)</li>
 	<li>シングルトンのアサートに引っかかる (svn:3133 upatchid:600 Moca)</li>
@@ -94,11 +167,11 @@
 	<li>印刷プレビュー中の設定変更対応(EditView側) (svn:3142 upatchid:371 Moca)</li>
 	<li>ATOK2013で再変換できない (svn:3143 upatchid:576 Moca)</li>
 	<li>GetLineCodeのNEL等の対応 (svn:3145 upatchid:581 Moca)</li>
-	<li>プリント中の設定変更対応 (svn:3146svn:3149svn:3191 upatchid:583upatchid:594 Moca, syat)</li>
-	<li>カーソル位置表示の修正 (svn:3147svn:3148 upatchid:558 Moca)</li>
+	<li>プリント中の設定変更対応 (svn:3146 svn:3149 svn:3191 upatchid:583upatchid:594 Moca, syat)</li>
+	<li>カーソル位置表示の修正 (svn:3147 svn:3148 upatchid:558 Moca)</li>
 	<li>スクロールバーの32bit化 (svn:3150 upatchid:595 Moca)</li>
 	<li>コントロールコード入力のマクロ記録対応 (svn:3151 upatchid:598 Moca)</li>
-	<li>マクロ文字列のNUL文字列の修正 (svn:3161svn:3165 upatchid:582 Moca)</li>
+	<li>マクロ文字列のNUL文字列の修正 (svn:3161 svn:3165 upatchid:582 Moca)</li>
 	<li>５つ以上の引数の修正 (svn:3161 upatchid:582 Moca)</li>
 	<li>ファイルダイアログ初期位置の指定フォルダに長いパスが編集できない (svn:3164 upatchid:601 Moca)</li>
 	<li>プログレスバーの進捗を正確にする (svn:3180 upatchid:592 Moca)</li>
@@ -127,15 +200,15 @@
 	<li>タイプ別設定一覧ダイアログのリストに水平スクロールバー追加 (svn:3029 upatchid:524 novice)</li>
 	<li>HeaderMakeとMakefileMakeのフィルターを削除 (svn:3033 upatchid:538 Uchi)</li>
 	<li>カラー印刷の性能改善 (svn:3064 upatchid:545 Moca)</li>
-	<li>LogicToLayoutが遅いのを修正 (svn:3071svn:3075 upatchid:517upatchid:530 Moca)</li>
+	<li>LogicToLayoutが遅いのを修正 (svn:3071 svn:3075 upatchid:517upatchid:530 Moca)</li>
 	<li>折り返さないだと全行矩形入力が遅い (svn:3073 upatchid:532 Moca)</li>
 	<li>ファイル中央を表示していると画面描画が遅い (svn:3074 upatchid:537 Moca)</li>
-	<li>VS2003ビルド対応 (svn:3088svn:3089svn:3090svn:3091svn:3096 syat,novice)</li>
+	<li>VS2003ビルド対応 (svn:3088 svn:3089 svn:3090 svn:3091 svn:3096 syat,novice)</li>
 	<li>画面分割時のフォント共有 (svn:3104 upatchid:541 novice)</li>
 	<li>Mingwでのwarningの修正 (svn:3126 upatchid:579 Moca)</li>
-	<li>すべて置換・Grepの高速化(CSearchStringPatternの再利用) (svn:3130svn:3155 upatchid:534upatchid:597 Moca)</li>
+	<li>すべて置換・Grepの高速化(CSearchStringPatternの再利用) (svn:3130 svn:3155 upatchid:534upatchid:597 Moca)</li>
 	<li>ファイルダイアログの初期位置を指定 (svn:3152 upatchid:358 novice)</li>
-	<li>置換Opeの追加 (svn:3179svn:3184 upatchid:606 Moca)</li>
+	<li>置換Opeの追加 (svn:3179 svn:3184 upatchid:606 Moca)</li>
 	<li>いくつかの操作でプログレスバーを表示 (svn:3181 upatchid:593 Moca)</li>
 	<li>デバイスコンテキストから情報を取得しない (svn:3190 upatchid:614 novice)</li>
 	<li>MinGWの-Wallでの警告削減 (svn:3204 upatchid:627 Moca)</li>
