@@ -53,6 +53,9 @@ CDlgCompare::CDlgCompare()
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	m_bCompareAndTileHorz = TRUE;	/* ç∂âEÇ…ï¿Ç◊Çƒï\é¶ */
+
+	m_ptDefaultSize.x = -1;
+	m_ptDefaultSize.y = -1;
 	return;
 }
 
@@ -312,6 +315,9 @@ BOOL CDlgCompare::OnMove( WPARAM wParam, LPARAM lParam )
 BOOL CDlgCompare::OnMinMaxInfo( LPARAM lParam )
 {
 	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	if( m_ptDefaultSize.x < 0 ){
+		return 0;
+	}
 	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
 	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
 	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;

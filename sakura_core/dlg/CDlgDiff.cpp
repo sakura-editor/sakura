@@ -93,6 +93,8 @@ CDlgDiff::CDlgDiff()
 	m_bIsModified    = false;
 	m_bIsModifiedDst = false;
 	m_hWnd_Dst       = NULL;
+	m_ptDefaultSize.x = -1;
+	m_ptDefaultSize.y = -1;
 	return;
 }
 
@@ -553,6 +555,9 @@ BOOL CDlgDiff::OnMove( WPARAM wParam, LPARAM lParam )
 BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
 {
 	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	if( m_ptDefaultSize.x < 0 ){
+		return 0;
+	}
 	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
 	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
 	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;

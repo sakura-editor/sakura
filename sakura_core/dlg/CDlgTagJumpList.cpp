@@ -159,6 +159,8 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	m_pcList = new CSortedTagJumpList(50);
 	m_psFindPrev = new STagFindState();
 	m_psFind0Match = new STagFindState();
+	m_ptDefaultSize.x = -1;
+	m_ptDefaultSize.y = -1;
 	ClearPrevFindInfo();
 }
 
@@ -633,6 +635,9 @@ BOOL CDlgTagJumpList::OnMove( WPARAM wParam, LPARAM lParam )
 BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
 {
 	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	if( m_ptDefaultSize.x < 0 ){
+		return 0;
+	}
 	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
 	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
 	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
