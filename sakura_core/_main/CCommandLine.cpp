@@ -395,6 +395,8 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GOPT:	//	GOPT
 				for( ; *arg != '\0' ; ++arg ){
 					switch( *arg ){
+					case 'X':
+						m_gi.bGrepCurFolder = true;	break;
 					case 'S':
 						// サブフォルダからも検索する
 						m_gi.bGrepSubFolder = true;	break;
@@ -496,6 +498,7 @@ CCommandLine::CCommandLine()
 	m_gi.bGrepRegularExp	= false;
 	m_gi.bGrepWordOnly		= false;
 	*/
+	m_gi.bGrepCurFolder		= false;
 	m_gi.nGrepCharSet		= CODE_SJIS;
 	m_gi.bGrepOutputLine	= false;
 	m_gi.nGrepOutputStyle	= 1;

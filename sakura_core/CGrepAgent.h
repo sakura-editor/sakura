@@ -70,6 +70,7 @@ public:
 		const CNativeW*			pcmGrepKey,
 		const CNativeT*			pcmGrepFile,
 		const CNativeT*			pcmGrepFolder,
+		bool					bGrepCurFolder,
 		BOOL					bGrepSubFolder,
 		const SSearchOption&	sSearchOption,
 		ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択

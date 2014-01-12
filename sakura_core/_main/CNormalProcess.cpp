@@ -204,6 +204,7 @@ bool CNormalProcess::InitializeProcess()
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
+				gi.bGrepCurFolder,
 				gi.bGrepSubFolder,
 				gi.sGrepSearchOption,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
