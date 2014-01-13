@@ -80,6 +80,12 @@
 	<tr><td colspan=2>　　例） O[3].Select=自動:0|XML固定:1|XML/XHTML検出:2|XHTML固定:3|HTML固定:6</td></tr>
 	</table>
 	　(n=1～99。欠番があっても読み込む)<br>
+<br>
+	<table class=f>
+	<tr><td width=120><b>[String]</b></td><td>- 文字列の定義(sakura 2.1.1.0以降)</td></tr>
+	<tr><td>　S[n]</td>		<td>= 多言語化のための文字列の定義</td></tr>
+	</table>
+	　(n=1～99。欠番があっても読み込む)<br>
 </div><br>
 	■WSHプラグイン固有<br>
 <div class=li200>
@@ -101,6 +107,18 @@
 	<tr><td>　Name</td><td>= DLLファイル名</td></tr>
 	</table>
 </div><br>
+	■localサブフォルダ内のplugin_&lt;言語名&gt;.def (sakura:2.1.1.0 以降)<br>
+<div class=li200>
+・デフォルト言語は、「ja_JP」(local\plugin_ja_JP.def)です。<br>
+各定義を言語ごとに上書きすることができます。<br>
+　[Plugin]のName, Description, URL<br>
+　[Plug]のジャック名.Label<br>
+　[Command]のC[n].Label, C[n].Icon<br>
+　[Option]のO[n].Label, [n].Select<br>
+　[String]のS[n]<br>
+に適用されます。<br>
+適用する言語は、プロセスの起動時に決定されてエディタが終了するまでその言語のままになります。<br>
+</div>
 
 <h3 id=c0302>3.2. ReadMeファイル(readme.txt等)</h3>
 <div class=li100>
