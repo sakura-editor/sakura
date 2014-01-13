@@ -14,7 +14,8 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>コントロールコード</h2>
 キーボードからでは入力の困難なコントロールコードをカーソル位置に挿入します。<br>
-CR/LFは改行コードに変換されます。<br>
+<del>CR/LFは改行コードに変換されます。</del><br>
+CR/LFは変換ぜずにそのまま挿入します。(sakura 2.1.1.0以降)<br>
 <br>
 <img src="images/ControlCode.png"><br>
 <br>
@@ -25,5 +26,12 @@ CR/LFは改行コードに変換されます。<br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: CtrlCodeDialog( );<br>
 ・記録:	×<br>
-Char マクロとして記録されます。(sakura:2.0.9.0以降)<br>
+<del>Char マクロとして記録されます。(sakura:2.0.9.0以降)</del><br>
+CtrlCode マクロとして記録されます。(sakura:2.1.1.0以降)<br>
+<br>
+・構文: CtrlCode( int1 :Integer );<br>
+    int1    文字コード<br>
+・記録: ○<br>
+Charと違い、改行コードも変換されずに挿入します。<br>
+(sakura:2.1.1.0以降)<br>
 </BODY></HTML>
