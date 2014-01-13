@@ -20,6 +20,7 @@
 #include "sakura_rc.h"
 #include "Debug.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "sakura.hh"
 
 // “ü—Í CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK

@@ -21,6 +21,7 @@
 #include "CDlgInput1.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
+#include "shell.h"
 #include "Debug.h"		// 2002/2/10 aroka
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"

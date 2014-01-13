@@ -223,6 +223,7 @@ OBJS= \
 	$(OBJDIR)/global.o \
 	$(OBJDIR)/my_icmp.o \
 	$(OBJDIR)/os.o \
+	$(OBJDIR)/shell.o \
 	$(OBJDIR)/sakura_rc.o
 
 RCTOOLDIR=../btool
@@ -535,6 +536,8 @@ $(OBJDIR)/global.o: $(SRCDIR)/global.cpp
 $(OBJDIR)/my_icmp.o: $(SRCDIR)/my_icmp.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/os.o: $(SRCDIR)/os.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/shell.o: $(SRCDIR)/shell.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJDIR)/sakura_rc.o: $(SRCDIR)/sakura_rc.rc

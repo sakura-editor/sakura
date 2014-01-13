@@ -19,6 +19,7 @@
 #include "StdAfx.h"
 #include "CDlgCompare.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "Debug.h"
 #include "CEditWnd.h"
 #include "CEditDoc.h"

@@ -43,6 +43,7 @@
 #include "mymessage.h"
 #include "CRecent.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "Debug.h"
 #include "my_icmp.h"
 #include "charcode.h"  // 2006.06.28 rastiv

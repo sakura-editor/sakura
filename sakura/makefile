@@ -231,6 +231,7 @@ OBJS =\
 	$(OBJDIR)\global.obj \
 	$(OBJDIR)\my_icmp.obj \
 	$(OBJDIR)\os.obj \
+	$(OBJDIR)\shell.obj \
 	$(OBJDIR)\StdAfx.obj \
 	$(OBJDIR)\WinMain.obj \
 

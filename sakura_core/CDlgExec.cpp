@@ -20,6 +20,7 @@
 #include "CDlgExec.h"
 #include "Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "etc_uty.h"	//Stonee, 2001/03/12
+#include "shell.h"
 #include "CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 #include "Debug.h"// 2002/2/10 aroka ヘッダ整理
 

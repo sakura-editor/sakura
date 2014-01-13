@@ -25,6 +25,7 @@
 #include "CBregexp.h"
 #include "CEditView.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
+#include "shell.h"
 #include "Debug.h"// 2002/2/10 aroka ƒwƒbƒ_®—
 #include "sakura_rc.h"
 #include "sakura.hh"

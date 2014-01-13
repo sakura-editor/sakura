@@ -39,6 +39,7 @@
 #include "mymessage.h"
 #include "CPrint.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "os.h"
 #include "charcode.h"
 #include "global.h"

@@ -21,6 +21,7 @@
 #include "Debug.h"
 #include "CEditDoc.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26
 #include "charcode.h"	// rastiv, 2006/06/28

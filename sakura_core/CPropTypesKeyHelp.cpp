@@ -35,6 +35,7 @@
 #include "Debug.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "file.h"
 #include "charcode.h"
 #include "sakura_rc.h"

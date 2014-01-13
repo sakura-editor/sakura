@@ -116,11 +116,6 @@ class CMemory;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 class CEol;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 class CBregexp;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 
-BOOL MyWinHelp(HWND hWndMain, UINT uCommand, DWORD_PTR dwData);	/* WinHelp ‚Ì‚©‚í‚è‚É HtmlHelp ‚ğŒÄ‚Ño‚· */	// 2006.07.22 ryoji
-
-//!ƒtƒHƒ“ƒg‘I‘ğƒ_ƒCƒAƒƒO
-BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );   // 2009.10.01 ryoji ƒ|ƒCƒ“ƒgƒTƒCƒYi1/10ƒ|ƒCƒ“ƒg’PˆÊjˆø”’Ç‰Á
-
 int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca ÅŒã‚Ì•¶š‚ªw’è‚³‚ê‚½•¶š‚Å‚È‚¢‚Æ‚«‚Í•t‰Á‚·‚é */
 int LimitStringLengthB( const char*, int, int, CMemory& );/* ƒf[ƒ^‚ğw’èƒoƒCƒg”ˆÈ“à‚ÉØ‚è‹l‚ß‚é */
 const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
@@ -134,12 +129,6 @@ void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ\[ƒX‚©‚ç»•iƒo
 BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
 BOOL CheckEXT( const TCHAR*, const TCHAR* );	/* Šg’£q‚ğ’²‚×‚é */
 char* my_strtok( char*, int, int*, const char* );
-/* Shell InterfaceŒn(?) */
-BOOL SelectDir(HWND, const TCHAR*, const TCHAR*, TCHAR* );	/* ƒtƒHƒ‹ƒ_‘I‘ğƒ_ƒCƒAƒƒO */
-//•s—v•À‘•ŠÔˆá‚¢‚Ì‚½‚ß
-//ITEMIDLIST* CreateItemIDList( const char* );	/* ƒpƒX–¼‚É‘Î‚·‚éƒAƒCƒeƒ€‚h‚cƒŠƒXƒg‚ğæ“¾‚·‚é */
-//BOOL DeleteItemIDList( ITEMIDLIST* );/* ƒAƒCƒeƒ€‚h‚cƒŠƒXƒg‚ğíœ‚·‚é */
-BOOL ResolveShortcutLink(HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath);/* ƒVƒ‡[ƒgƒJƒbƒg(.lnk)‚Ì‰ğŒˆ */
 void ResolvePath(TCHAR* pszPath); //!< ƒVƒ‡[ƒgƒJƒbƒg‚Ì‰ğŒˆ‚Æƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚Ö•ÏŠ·‚ğs‚¤B
 
 /*
@@ -148,14 +137,8 @@ void ResolvePath(TCHAR* pszPath); //!< ƒVƒ‡[ƒgƒJƒbƒg‚Ì‰ğŒˆ‚Æƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚Ö•
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
-HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag = true);
-DWORD NetConnect ( const char strNetWorkPass[] );
-
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 int cescape_j(const char* org, char* out, char cesc, char cwith);
-
-/* ƒwƒ‹ƒv‚Ì–ÚŸ‚ğ•\¦ */
-void ShowWinHelpContents( HWND hwnd );
 
 /*!	&‚Ì“ñd‰»
 	ƒƒjƒ…[‚ÉŠÜ‚Ü‚ê‚é&‚ğ&&‚É’u‚«Š·‚¦‚é
@@ -213,9 +196,6 @@ DWORD GetDllVersion( LPCTSTR lpszDllName );	// ƒVƒFƒ‹‚âƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹ DLL ‚Ì
 
 void ChangeCurrentDirectoryToExeDir();
 HMODULE LoadLibraryExedir(LPCTSTR pszDll);
-
-BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// “ÁêƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğæ“¾‚·‚é	// 2007.05.19 ryoji
-INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// “Æ©Šg’£ƒvƒƒpƒeƒBƒV[ƒg	// 2007.05.24 ryoji
 
 #endif /* _ETC_UTY_H_ */
 

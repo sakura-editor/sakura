@@ -31,6 +31,7 @@
 #include "StdAfx.h"
 #include "CDlgSameColor.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

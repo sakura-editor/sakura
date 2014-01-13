@@ -33,6 +33,7 @@
 #include "CRunningTimer.h"
 #include "CProfile.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "COsVersionInfo.h"
 #include "CCommandLine.h"
 

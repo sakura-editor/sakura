@@ -36,6 +36,7 @@
 #include "mymessage.h"
 #include "CEditView.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "Debug.h"
 #include "sakura_rc.h"
 #include "sakura.hh"

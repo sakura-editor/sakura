@@ -33,6 +33,7 @@
 #include "CDlgWinSize.h"
 #include "CShareData.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

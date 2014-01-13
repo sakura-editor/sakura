@@ -28,6 +28,7 @@
 #include "CEditView.h" //2002/2/10 aroka
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "etc_uty.h" //2002/2/10 aroka
+#include "shell.h"
 #include "CEditWnd.h"
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
 #include "Debug.h"

@@ -27,6 +27,7 @@
 #include "CDlgOpenFile.h"
 #include "CDlgKeywordSelect.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "file.h"
 #include "global.h"
 #include "CProfile.h"

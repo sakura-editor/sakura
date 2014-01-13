@@ -28,6 +28,7 @@
 #include "CDlgInput1.h" /// 2007.02.11 Moca
 #include "Debug.h"///
 #include "etc_uty.h"///
+#include "shell.h"
 #include <stdio.h>/// 2002/2/3 aroka to here
 #include "CEditApp.h"
 

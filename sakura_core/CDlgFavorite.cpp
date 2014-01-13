@@ -39,6 +39,7 @@
 #include "mymessage.h"
 #include "CDlgFavorite.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "Debug.h"
 #include "my_icmp.h"
 #include "sakura_rc.h"

@@ -675,6 +675,10 @@ SOURCE=..\sakura_core\sakura_rc.rc
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\shell.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
@@ -1137,6 +1141,10 @@ SOURCE=..\sakura_core\RegKey.h
 # Begin Source File
 
 SOURCE=..\sakura_core\sakura_rc.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\shell.h
 # End Source File
 # Begin Source File
 

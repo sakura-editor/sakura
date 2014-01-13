@@ -21,6 +21,7 @@
 #include "Debug.h"
 #include "CEditView.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "global.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "CLayout.h"/// 2002/2/3 aroka

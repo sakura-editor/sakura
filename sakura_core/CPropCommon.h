@@ -26,6 +26,7 @@
 #include "sakura_rc.h"
 #include "CFuncLookup.h"
 #include "etc_uty.h"
+#include "shell.h"
 
 class CImageListMgr;
 class CSMacroMgr;

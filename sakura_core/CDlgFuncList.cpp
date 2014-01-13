@@ -27,6 +27,7 @@
 #include "CFuncInfo.h"
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "etc_uty.h"
+#include "shell.h"
 #include "os.h"
 #include "Debug.h"
 #include "CEditView.h"

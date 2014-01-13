@@ -20,6 +20,7 @@
 #include "CDialog.h"
 #include "CEditApp.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "os.h"
 #include "Debug.h"/// 2002/2/10 aroka ƒwƒbƒ_®—
 

@@ -25,6 +25,7 @@
 #include "Funccode.h"	//Stonee, 2001/05/18
 #include "Debug.h"
 #include "etc_uty.h"
+#include "shell.h"
 #include "file.h"
 #include "os.h"
 #include "global.h"
