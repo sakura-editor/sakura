@@ -398,6 +398,7 @@ void CTextDrawer::DispLineNumber(
 		}
 		if( cGyouType.GetBackColor() == cColorType.GetBackColor() ){
 			bgcolor = cGyouModType.GetBackColor();
+			bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cGyouModType.GetBackColor();
 		}
 	}
 	if(!pcLayout){
@@ -486,7 +487,7 @@ void CTextDrawer::DispLineNumber(
 	else{
 		// çsî‘çÜÉGÉäÉAÇÃîwåiï`âÊ
 		if( !bTrans ){
-			gr.FillSolidMyRect(rcLineNum, fgcolor);
+			gr.FillSolidMyRect(rcLineNum, bgcolor);
 		}
 	}
 
