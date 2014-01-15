@@ -716,6 +716,7 @@ void CViewCommander::Command_HalfPageDown( bool bSelect )
 	@date 2000.10.10 JEPRO 作成
 	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
 		１ページアップに動作変更
+	@date 2014.01.10 Moca カーソルが動かないときも画面をスクロールするように
 */	//Oct. 10, 2000 JEPRO added
 void CViewCommander::Command_1PageUp( bool bSelect )
 {
@@ -723,18 +724,16 @@ void CViewCommander::Command_1PageUp( bool bSelect )
 
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページアップ
-	if(m_pCommanderView->GetTextArea().GetViewTopLine()>=m_pCommanderView->GetTextArea().m_nViewRowNum-1){
+	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
-		CLayoutInt nViewTopLine=GetCaret().GetCaretLayoutPos().GetY2()-m_pCommanderView->GetTextArea().GetViewTopLine();
-		GetCaret().Cursor_UPDOWN( -m_pCommanderView->GetTextArea().m_nViewRowNum+1, bSelect );
+		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
+		CLayoutInt nScrollNum = -m_pCommanderView->GetTextArea().m_nViewRowNum + 1;
+		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( GetCaret().GetCaretLayoutPos().GetY2()-nViewTopLine ));
+		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum ));
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 		m_pCommanderView->RedrawAll();
-		
-	}else{
-		GetCaret().Cursor_UPDOWN( -m_pCommanderView->GetTextArea().m_nViewRowNum+1, bSelect );
 	}
 	return;
 }
@@ -746,6 +745,7 @@ void CViewCommander::Command_1PageUp( bool bSelect )
 	@date 2000.10.10 JEPRO 作成
 	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
 		１ページダウンに動作変更
+	@date 2014.01.10 Moca カーソルが動かないときも画面をスクロールするように
 */
 void CViewCommander::Command_1PageDown( bool bSelect )
 {
@@ -753,18 +753,16 @@ void CViewCommander::Command_1PageDown( bool bSelect )
 
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページダウン
-	if(m_pCommanderView->GetTextArea().GetViewTopLine()+m_pCommanderView->GetTextArea().m_nViewRowNum <= GetDocument()->m_cLayoutMgr.GetLineCount() ){ //- m_pCommanderView->GetTextArea().m_nViewRowNum){
+	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
-		CLayoutInt nViewTopLine=GetCaret().GetCaretLayoutPos().GetY2()-m_pCommanderView->GetTextArea().GetViewTopLine();
-		GetCaret().Cursor_UPDOWN( m_pCommanderView->GetTextArea().m_nViewRowNum-1, bSelect );
+		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
+		CLayoutInt nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
+		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( GetCaret().GetCaretLayoutPos().GetY2()-nViewTopLine ));
+		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum ));
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 		m_pCommanderView->RedrawAll();
-	}else{
-		GetCaret().Cursor_UPDOWN( m_pCommanderView->GetTextArea().m_nViewRowNum , bSelect );
-		Command_DOWN( bSelect, true );
 	}
 
 	return;
