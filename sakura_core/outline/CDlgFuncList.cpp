@@ -176,6 +176,7 @@ static int GetOutlineTypeRedraw(int outlineType)
 
 LPDLGTEMPLATE CDlgFuncList::m_pDlgTemplate = NULL;
 DWORD CDlgFuncList::m_dwDlgTmpSize = 0;
+HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
 
 CDlgFuncList::CDlgFuncList()
 {
@@ -347,8 +348,8 @@ HWND CDlgFuncList::DoModeless(
 	HWND hwndRet;
 	if( IsDocking() ){
 		// ドッキング用にダイアログテンプレートに手を加えてから表示する（WS_CHILD化）
-		if( !m_pDlgTemplate ){
-			HINSTANCE hInstance2 = CSelectLang::getLangRsrcInstance();
+		HINSTANCE hInstance2 = CSelectLang::getLangRsrcInstance();
+		if( !m_pDlgTemplate || m_lastRcInstance != hInstance2 ){
 			HRSRC hResInfo = ::FindResource( hInstance2, MAKEINTRESOURCE(IDD_FUNCLIST), RT_DIALOG );
 			if( !hResInfo ) return NULL;
 			HGLOBAL hResData = ::LoadResource( hInstance2, hResInfo );
@@ -356,6 +357,8 @@ HWND CDlgFuncList::DoModeless(
 			m_pDlgTemplate = (LPDLGTEMPLATE)::LockResource( hResData );
 			if( !m_pDlgTemplate ) return NULL;
 			m_dwDlgTmpSize = ::SizeofResource( hInstance2, hResInfo );
+			// 言語切り替えでリソースがアンロードされていないか確認するためインスタンスを記憶する
+			m_lastRcInstance = hInstance2;
 		}
 		LPDLGTEMPLATE pDlgTemplate = (LPDLGTEMPLATE)::GlobalAlloc( GMEM_FIXED, m_dwDlgTmpSize );
 		if( !pDlgTemplate ) return NULL;
@@ -3265,6 +3268,18 @@ EDockSide CDlgFuncList::GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, b
 			if( rcFloat.bottom < cy ) rcFloat.bottom = cy;
 		}
 		else{
+			HINSTANCE hInstance2 = CSelectLang::getLangRsrcInstance();
+			if ( m_lastRcInstance != hInstance2 ) {
+				HRSRC hResInfo = ::FindResource( hInstance2, MAKEINTRESOURCE(IDD_FUNCLIST), RT_DIALOG );
+				if( !hResInfo ) return eDockSide;
+				HGLOBAL hResData = ::LoadResource( hInstance2, hResInfo );
+				if( !hResData ) return eDockSide;
+				m_pDlgTemplate = (LPDLGTEMPLATE)::LockResource( hResData );
+				if( !m_pDlgTemplate ) return eDockSide;
+				m_dwDlgTmpSize = ::SizeofResource( hInstance2, hResInfo );
+				// 言語切り替えでリソースがアンロードされていないか確認するためインスタンスを記憶する
+				m_lastRcInstance = hInstance2;
+			}
 			// デフォルトのサイズ（ダイアログテンプレートで決まるサイズ）
 			rcFloat.right = m_pDlgTemplate->cx;
 			rcFloat.bottom = m_pDlgTemplate->cy;

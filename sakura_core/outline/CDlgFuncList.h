@@ -181,6 +181,7 @@ private:
 
 	static LPDLGTEMPLATE m_pDlgTemplate;
 	static DWORD m_dwDlgTmpSize;
+	static HINSTANCE m_lastRcInstance;		// リソース生存チェック用
 
 	POINT				m_ptDefaultSize;
 	POINT				m_ptDefaultSizeClient;
