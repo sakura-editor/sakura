@@ -657,8 +657,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落へ移動
 	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落へ移動
 	case F_AUTOSCROLL:		return HLP000296;	//オートスクロール
-	case F_SETFONTSIZEUP:	return HLP000360;	//フォントサイズ拡大
-	case F_SETFONTSIZEDOWN:	return HLP000361;	//フォントサイズ縮小
+	case F_SETFONTSIZEUP:	return HLP000359;	//フォントサイズ拡大
+	case F_SETFONTSIZEDOWN:	return HLP000360;	//フォントサイズ縮小
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
@@ -690,10 +690,10 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 //	case F_BOXSELALL:		return ;	//矩形ですべて選択
 	case F_BEGIN_BOX:		return HLP000244;	//矩形範囲選択開始
-	case F_UP_BOX:			return HLP000359;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
-	case F_DOWN_BOX:		return HLP000359;	//(矩形選択)カーソル下移動
-	case F_LEFT_BOX:		return HLP000359;	//(矩形選択)カーソル左移動
-	case F_RIGHT_BOX:		return HLP000359;	//(矩形選択)カーソル右移動
+	case F_UP_BOX:			return HLP000299;	//(矩形選択)カーソル上移動	//Oct. 17, 2000 JEPRO 以下「ファイルの最後に移動」まで追加
+	case F_DOWN_BOX:		return HLP000299;	//(矩形選択)カーソル下移動
+	case F_LEFT_BOX:		return HLP000299;	//(矩形選択)カーソル左移動
+	case F_RIGHT_BOX:		return HLP000299;	//(矩形選択)カーソル右移動
 	case F_UP2_BOX:			return HLP000344;	//(矩形選択)カーソル上移動(２行ごと)
 	case F_DOWN2_BOX:		return HLP000345;	//(矩形選択)カーソル下移動(２行ごと)
 	case F_WORDLEFT_BOX:	return HLP000346;	//(矩形選択)単語の左端に移動
