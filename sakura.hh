@@ -79,11 +79,11 @@
 #define HLP000221	221 //カーソル下移動（2行ごと）
 #define HLP000222	222 //単語の左端に移動
 #define HLP000223	223 //単語の右端に移動
-#define HLP000262	262 //前の段落に移動
-#define HLP000263	263 //次の段落に移動
+#define HLP000262	262 //前の段落へ移動
+#define HLP000263	263 //次の段落へ移動
 #define HLP000296	296 //オートスクロール
-#define HLP000344	344 //フォントサイズ拡大
-#define HLP000345	345 //フォントサイズ縮小
+#define HLP000359	359 //フォントサイズ拡大
+#define HLP000360	360 //フォントサイズ縮小
 #define HLP000224	224 //行頭に移動（折り返し単位）
 #define HLP000225	225 //行末に移動（折り返し単位）
 #define HLP000226	226 //1ページアップ
@@ -308,8 +308,8 @@
 #define HLP000235	235 //（選択）カーソル下移動（2行ごと）
 #define HLP000236	236 //（選択）単語の左端に移動
 #define HLP000237	237 //（選択）単語の右端に移動
-#define HLP000273	273 //（選択）前の段落に移動
-#define HLP000274	274 //（選択）次の段落に移動
+#define HLP000273	273 //（選択）次の段落へ移動
+#define HLP000274	274 //（選択）前の段落へ移動
 #define HLP000238	238 //（選択）行頭に移動（折り返し単位）
 #define HLP000239	239 //（選択）行末に移動（折り返し単位）
 #define HLP000240	240 //（選択）1ページアップ
@@ -317,6 +317,22 @@
 #define HLP000242	242 //（選択）ファイルの先頭に移動
 #define HLP000243	243 //（選択）ファイルの最後に移動
 #define HLP000244	244 //矩形範囲選択開始
+#define HLP000299	299 //(矩形選択)カーソル移動
+#define HLP000344	344 //(矩形選択)カーソル上移動(２行ごと)
+#define HLP000345	345 //(矩形選択)カーソル下移動(２行ごと)
+#define HLP000346	346 //(矩形選択)単語の左端に移動
+#define HLP000347	347 //(矩形選択)単語の右端に移動
+#define HLP000348	348 //(矩形選択)次の段落へ移動
+#define HLP000349	349 //(矩形選択)前の段落へ移動
+#define HLP000350	350 //(矩形選択)行頭に移動(折り返し単位)
+#define HLP000351	351 //(矩形選択)行末に移動(折り返し単位)
+#define HLP000352	352 //(矩形選択)１ページアップ
+#define HLP000353	353 //(矩形選択)１ページダウン
+#define HLP000354	354 //(矩形選択)ファイルの先頭に移動
+#define HLP000355	355 //(矩形選択)ファイルの最後に移動
+#define HLP000357	356 //(矩形選択)半ページアップ
+#define HLP000358	357 //(矩形選択)半ページダウン
+#define HLP000356	358 //(矩形選択)行頭に移動(改行単位)
 #define HLP000245	245 //半ページアップ
 #define HLP000246	246 //半ページダウン
 #define HLP000247	247 //（選択）半ページアップ
@@ -498,7 +514,7 @@
 #define HIDC_LIST_FUNC_KEYBIND					10750 //機能一覧
 #define HIDC_LIST_KEY							10751 //キー一覧
 #define HIDC_LIST_ASSIGNEDKEYS					10752 //機能に割り当てられているキー
-#define HIDC_CHECK_ACCELTBL_EACHWIN				10760 //ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// nasukoji 2009.08.11
+//#define HIDC_CHECK_ACCELTBL_EACHWIN				10760 //ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// nasukoji 2009.08.11
 #define HIDC_BUTTON_ADDSET						10800 //キーワードセット追加
 #define HIDC_BUTTON_DELSET						10801 //キーワードセット削除
 #define HIDC_BUTTON_ADDKEYWORD					10802 //キーワード追加
@@ -603,6 +619,8 @@
 #define HIDC_BUTTON_RULEFILE_REF				11356 //ルールファイル参照	// 2006/09/09 novice
 #define HIDC_CHECK_DOCICON						11357 //文書アイコンを使う	// 2006.08.06 ryoji
 #define HIDC_EDIT_KINSOKUKUTO					11358 //句読点ぶら下げ文字	// 2009.08.07 ryoji
+#define HIDC_CHECK_USETYPEFONT					11359 //タイプ別フォント使用する
+#define HIDC_BUTTON_TYPEFONT					11360 //タイプ別フォント
 #define HIDC_BUTTON_TEXTCOLOR					11400 //文字色
 #define HIDC_BUTTON_BACKCOLOR					11401 //背景色
 #define HIDC_BUTTON_SAMETEXTCOLOR				11402 //文字色統一
@@ -663,6 +681,7 @@
 #define HIDC_BUTTON_TYPEOPENEXTHTMLHELP			11545 //外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE			11546 //ビューアを複数起動しない	// 2006.08.06 ryoji
 #define HIDC_CHECK_CHKENTERATEND				11547 //終了時、改行の一致を検査する	// 2013/4/14 Uchi
+#define HIDC_COMBO_LANGUAGE						11548 //言語選択
 #define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
@@ -875,12 +894,19 @@
 #define HIDC_TL_BUTTON_INIT		12707	//初期化
 #define HIDC_TL_CHECK_RMENU		12708	//右クリックメニューに追加
 #define HIDC_TL_CHECK_DBLCLICK	12709	//ダブルクリックで開く
+#define HIDC_BUTTON_UP_TYPE		12710	//↑
+#define HIDC_BUTTON_DOWN_TYPE	12711	//↓
+#define HIDC_BUTTON_ADD_TYPE	12712	//追加
+#define HIDC_BUTTON_DEL_TYPE	12713	//削除
+#define HIDC_BUTTON_COPY_TYPE	12714	//複製
 
 //タイプ別設定インポート確認
 #define HIDC_COMBO_COLORS		12720	//色指定
 #define HIDOK_DTA				12721	//OK
 #define HIDCANCEL_DTA			12722	//キャンセル
 #define HIDC_DTA_BUTTON_HELP	12723	//ヘルプ
+#define HIDC_RADIO_TYPE_TO      12724	//タイプ別名
+#define HIDC_RADIO_TYPE_ADD     12725	//タイプ別追加
 
 //ジャンプ
 #define HIDC_JUMP_BUTTON_JUMP		12800	//ジャンプ

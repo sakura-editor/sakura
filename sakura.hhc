@@ -188,6 +188,11 @@
 				<param name="Local" value="_RESOURCE\HLP000110.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="表示言語の切り替え">
+				<param name="Local" value="_RESOURCE\HLP000358.html">
+				<param name="ImageNumber" value="9">
+				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="コマンド概要">

@@ -145,6 +145,10 @@
 <param name="Local" value="_RESOURCE\HLP000110.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="表示言語の切り替え">
+<param name="Local" value="_RESOURCE\HLP000358.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="コマンド概要">
 <param name="Local" value="_RESOURCE\HLP000001.html#c903">
 </OBJECT>
