@@ -1400,6 +1400,18 @@
 <param name="Local" value="_RESOURCE\HLP000357.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行頭に移動(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000361.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="フォントサイズ拡大">
+<param name="Local" value="_RESOURCE\HLP000359.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="フォントサイズ縮小">
+<param name="Local" value="_RESOURCE\HLP000360.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="デフォルト設定値（インストール時）">
 <param name="Local" value="_RESOURCE\HLP000001.html#c925">
 </OBJECT>

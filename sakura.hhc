@@ -1846,6 +1846,21 @@
 					<param name="Local" value="_RESOURCE\HLP000357.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="(矩形選択)行頭に移動(改行単位)">
+					<param name="Local" value="_RESOURCE\HLP000361.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="フォントサイズ拡大">
+					<param name="Local" value="_RESOURCE\HLP000359.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="フォントサイズ縮小">
+					<param name="Local" value="_RESOURCE\HLP000360.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
 			</UL>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
