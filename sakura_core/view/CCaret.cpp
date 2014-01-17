@@ -1051,11 +1051,11 @@ POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 */
 CLayoutInt CCaret::MoveCursorProperly(
 	CLayoutPoint	ptNewXY,			//!< [in] カーソルのレイアウト座標X
-	bool			bScroll,			//!< [in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
+	bool			bScroll,			//!< [in] true: 画面位置調整有り/ false: 画面位置調整有り無し
 	bool			test,				//!< [in] true: カーソル移動はしない
 	CLayoutPoint*	ptNewXYNew,			//!< [out] 新しいレイアウト座標
 	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
-	int				dx					//!< [in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
+	int				dx					//!< [in] ptNewXY.xとマウスカーソル位置との誤差(カラム幅未満のドット数)
 )
 {
 	CLogicInt		nLineLen;
