@@ -3553,14 +3553,9 @@ void CEditDoc::ReloadCurrentFile(
 
 	BOOL	bOpened;
 	char	szFilePath[MAX_PATH];
-	int		nViewTopLine;
-	int		nViewLeftCol;
-	int		nCaretPosX;
-	int		nCaretPosY;
-	nViewTopLine = m_pcEditWnd->GetActiveView().m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
-	nViewLeftCol = m_pcEditWnd->GetActiveView().m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
-	nCaretPosX = m_pcEditWnd->GetActiveView().m_ptCaretPos.x;
-	nCaretPosY = m_pcEditWnd->GetActiveView().m_ptCaretPos.y;
+	int		nViewTopLine = m_pcEditWnd->GetActiveView().m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
+	int		nViewLeftCol = m_pcEditWnd->GetActiveView().m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
+	CLayoutPoint	ptCaretPosXY = m_pcEditWnd->GetActiveView().m_ptCaretPos;
 
 	strcpy( szFilePath, GetFilePath() );
 
@@ -3588,11 +3583,11 @@ void CEditDoc::ReloadCurrentFile(
 	// レイアウト行単位のカーソル位置復元
 	// ※ここではオプションのカーソル位置復元（＝改行単位）が指定されていない場合でも復元する
 	// 2007.08.23 ryoji 表示領域復元
-	if( nCaretPosY < m_cLayoutMgr.GetLineCount() ){
+	if( ptCaretPosXY.y < m_cLayoutMgr.GetLineCount() ){
 		m_pcEditWnd->GetActiveView().m_nViewTopLine = nViewTopLine;
 		m_pcEditWnd->GetActiveView().m_nViewLeftCol = nViewLeftCol;
 	}
-	m_pcEditWnd->GetActiveView().MoveCursorProperly( nCaretPosX, nCaretPosY, true );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
+	m_pcEditWnd->GetActiveView().MoveCursorProperly( ptCaretPosXY, true );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
 	m_pcEditWnd->GetActiveView().m_nCaretPosX_Prev = m_pcEditWnd->GetActiveView().m_ptCaretPos.x;
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する

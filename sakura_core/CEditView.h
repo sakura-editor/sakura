@@ -199,7 +199,7 @@ public:
 	int GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
 	int ViewColNumToWrapColNum( int nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
 	int  MoveCursor( int, int, bool, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
-	int MoveCursorProperly( int, int, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
+	int MoveCursorProperly( CLayoutPoint ptNewXY, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
 	void MoveCursorSelecting( CLayoutPoint ptWk_CaretPos, bool, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( CLayoutPoint* pptPosXY );	// 正しいカーソル位置を算出する

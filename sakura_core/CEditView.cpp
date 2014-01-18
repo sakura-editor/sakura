@@ -2630,12 +2630,9 @@ BOOL CEditView::GetAdjustCursorPos(
 }
 
 
-/** 行桁指定によるカーソル移動（座標調整付き）
-	@param nNewX[in/out] カーソルのレイアウト座標X
-	@param nNewY[in/out] カーソルのレイアウト座標Y
-	@param bScroll[in] true: 画面位置調整有り/ false: 画面位置調整有り無し
-	@param nCaretMarginRate[in] 縦スクロール開始位置を決める値
-	@param dx[in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
+/*!
+	行桁指定によるカーソル移動（座標調整付き）
+
 	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
 
 	@note マウス等による移動で不適切な位置に行かないよう座標調整してカーソル移動する
@@ -2643,25 +2640,31 @@ BOOL CEditView::GetAdjustCursorPos(
 	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
 	@date 2007.09.26 ryoji 半角文字でも中央で左右にカーソルを振り分ける
 */
-int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCaretMarginRate, int dx )
+int CEditView::MoveCursorProperly(
+	CLayoutPoint	ptNewXY,			//!< [in] カーソルのレイアウト座標X
+	bool			bScroll,			//!< [in] true: 画面位置調整有り/ false: 画面位置調整有り無し
+	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
+	int				dx					//!< [in] ptNewXY.xとマウスカーソル位置との誤差(カラム幅未満のドット数)
+)
 {
 	int				nLineLen;
 	const CLayout*	pcLayout;
 
-	if( 0 > nNewY ){
-		nNewY = 0;
+	if( 0 > ptNewXY.y ){
+		ptNewXY.y = 0;
 	}
+
 	/* カーソルがテキスト最下端行にあるか */
-	if( nNewY >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
+	if( ptNewXY.y >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 		// 2004.04.03 Moca EOFより後ろの座標調整は、MoveCursor内でやってもらうので、削除
 	}else
 	/* カーソルがテキスト最上端行にあるか */
-	if( nNewY < 0 ){
-		nNewX = 0;
-		nNewY = 0;
+	if( ptNewXY.y < 0 ){
+		ptNewXY.x = 0;
+		ptNewXY.y = 0;
 	}else{
 		/* 移動先の行のデータを取得 */
-		m_pcEditDoc->m_cLayoutMgr.GetLineStr( nNewY, &nLineLen, &pcLayout );
+		m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewXY.y, &nLineLen, &pcLayout );
 
 		int nColWidth = m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace;
 		int nPosX = 0;
@@ -2673,8 +2676,8 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 				i = nLineLen;
 				break;
 			}
-			if( it.getColumn() + it.getColumnDelta() > nNewX ){
-				if (nNewX >= (pcLayout ? pcLayout->GetIndent() : 0) && ((nNewX - it.getColumn()) * nColWidth + dx) * 2 >= it.getColumnDelta() * nColWidth){
+			if( it.getColumn() + it.getColumnDelta() > ptNewXY.x ){
+				if (ptNewXY.x >= (pcLayout ? pcLayout->GetIndent() : 0) && ((ptNewXY.x - it.getColumn()) * nColWidth + dx) * 2 >= it.getColumnDelta() * nColWidth){
 					nPosX += it.getColumnDelta();
 				}
 				i = it.getIndex();
@@ -2690,7 +2693,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 
 		if( i >= nLineLen ){
 // From 2001.12.21 hor フリーカーソルOFFでEOFのある行の直前がマウスで選択できないバグの修正
-			if( nNewY +1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
+			if( ptNewXY.y +1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() &&
 				EOL_NONE == pcLayout->m_cEol.GetLen() ){
 				nPosX = LineIndexToColumn( pcLayout, nLineLen );
 			}else
@@ -2701,7 +2704,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 //			  || m_bDragMode /* OLE DropTarget */
 			  || ( m_bDragMode && m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
-					nPosX = nNewX;
+					nPosX = ptNewXY.x;
 					//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 					if( nPosX < 0 ){
 						nPosX = 0;
@@ -2712,10 +2715,10 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 //				}
 			}
 		}
-		nNewX = nPosX;
+		ptNewXY.x = nPosX;
 	}
 
-	return MoveCursor( nNewX, nNewY, bScroll, nCaretMarginRate );
+	return MoveCursor( ptNewXY.x, ptNewXY.y, bScroll, nCaretMarginRate );
 }
 
 
@@ -2724,18 +2727,18 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCare
 || 必要に応じて縦/横スクロールもする
 || 垂直スクロールをした場合はその行数を返す(正／負)
 */
+//2007.09.11 kobake 関数名変更: MoveCursorToPoint→MoveCursorToClientPoint
 int CEditView::MoveCursorToPoint( int xPos, int yPos )
 {
 	int				nScrollRowNum;
-	int				nNewX;
-	int				nNewY;
+	CLayoutPoint	ptLayoutPos;
 	int				dx;
 
-	nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
-	nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
+	ptLayoutPos.x = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
+	ptLayoutPos.y = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 	dx = (xPos - m_nViewAlignLeft) % ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
 
-	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, true, 1000, dx );
+	nScrollRowNum = MoveCursorProperly( ptLayoutPos, true, 1000, dx );
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	return nScrollRowNum;
 }
