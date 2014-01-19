@@ -889,8 +889,8 @@ BOOL CEditDoc::FileRead(
 	}
 
 	// タイプ別設定
-	if( bIsExistInMRU && ((fi.m_nType>=0 && fi.m_nType<MAX_TYPES)) ){
-		doctype = fi.m_nType;
+	if( bIsExistInMRU && ((fi.m_nTypeId>=0 && fi.m_nTypeId<MAX_TYPES)) ){
+		doctype = fi.m_nTypeId;
 	}else{
 		doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	}
@@ -3437,7 +3437,7 @@ void CEditDoc::GetEditInfo(
 	//各種状態
 	pfi->m_bIsModified = IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_nCharCode;				/* 文字コード種別 */
-	pfi->m_nType = GetDocumentType();
+	pfi->m_nTypeId = GetDocumentType();
 
 	//GREPモード
 	pfi->m_bIsGrep = m_bGrepMode;

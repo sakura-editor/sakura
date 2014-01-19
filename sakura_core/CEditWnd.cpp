@@ -458,7 +458,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 					cTypeNew = CShareData::getInstance()->GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
 					if( CMRUFile().GetEditInfo( ei.m_szPath, &mruei ) ){
-						cTypeNew = mruei.m_nType;
+						cTypeNew = mruei.m_nTypeId;
 					}
 					if( !(cTypeNew>=0 && cTypeNew<MAX_TYPES) ){
 						if( ei.m_szPath[0] ){
