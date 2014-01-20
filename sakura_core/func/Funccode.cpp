@@ -699,7 +699,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_WORDLEFT_BOX:	return HLP000346;	//(矩形選択)単語の左端に移動
 	case F_WORDRIGHT_BOX:	return HLP000347;	//(矩形選択)単語の右端に移動
 	case F_GOLINETOP_BOX:	return HLP000350;	//(矩形選択)行頭に移動(折り返し単位)
-	case F_GOLOGICALLINETOP_BOX:	return HLP000358;	//(矩形選択)行頭に移動(改行単位)
+	case F_GOLOGICALLINETOP_BOX:	return HLP000361;	//(矩形選択)行頭に移動(改行単位)
 	case F_GOLINEEND_BOX:	return HLP000351;	//(矩形選択)行末に移動(折り返し単位)
 	case F_HalfPageUp_BOX:	return HLP000356;	//(矩形選択)半ページアップ
 	case F_HalfPageDown_BOX:return HLP000357;	//(矩形選択)半ページダウン
