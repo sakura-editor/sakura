@@ -555,7 +555,7 @@ void CEditView::DeleteData(
 			SetDrawSwitch(true);	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
-			if ( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
+			if ( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( true ) ){
 				/* キャレットの表示・更新 */
 				GetCaret().ShowEditCaret();
 			}
