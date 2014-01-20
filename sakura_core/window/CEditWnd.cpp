@@ -4396,7 +4396,7 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 		}
 		else {
 			//	ï\é¶Ç≥ÇÍÇƒÇ¢Ç»Ç¢ÇÃÇ≈çƒï`âÊÇµÇ»Ç¢
-			GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			GetView(m_nActivePaneIndex^1).GetTextArea().DetectWidthOfLineNumberArea( false );
 		}
 		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
 			GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( bRedraw );
@@ -4405,8 +4405,8 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 			}
 		}
 		else {
-			GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
-			GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( FALSE );
+			GetView(m_nActivePaneIndex^2).GetTextArea().DetectWidthOfLineNumberArea( false );
+			GetView((m_nActivePaneIndex^1)^2).GetTextArea().DetectWidthOfLineNumberArea( false );
 		}
 		return TRUE;
 	}
