@@ -23,7 +23,7 @@ class CSelectLang
 {
 public:
 	// メッセージリソース用構造体
-	struct SELLANG_INFO {
+	struct SSelLangInfo {
 		TCHAR szDllName[MAX_PATH];		// メッセージリソースDLLのファイル名
 		TCHAR szLangName[MAX_SELLANG_NAME_STR];		// 言語名
 		HINSTANCE hInstance;			// 読み込んだリソースのインスタンスハンドル
@@ -33,10 +33,10 @@ public:
 
 protected:
 	//static LPTSTR m_szDefaultLang;					// メッセージリソースDLL未読み込み時のデフォルト言語
-	static SELLANG_INFO* m_psLangInfo;				// メッセージリソースの情報
+	static SSelLangInfo* m_psLangInfo;				// メッセージリソースの情報
 public:
-	typedef std::vector<SELLANG_INFO*> PSELLANG_INFO_LIST;
-	static PSELLANG_INFO_LIST m_psLangInfoList;
+	typedef std::vector<SSelLangInfo*> PSSelLangInfoList;
+	static PSSelLangInfoList m_psLangInfoList;
 
 public:
 	/*
@@ -52,7 +52,7 @@ public:
 	static LPCTSTR getDefaultLangString( void );			// メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
 
 	static HINSTANCE InitializeLanguageEnvironment(void);		// 言語環境を初期化する
-	static HINSTANCE LoadLangRsrcLibrary( SELLANG_INFO& lang );	// メッセージ用リソースDLLをロードする
+	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// メッセージ用リソースDLLをロードする
 	static void ChangeLang( TCHAR* pszDllName );	// 言語を変更する
 
 protected:

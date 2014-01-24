@@ -19,8 +19,8 @@
 
 #include <new>
 
-CSelectLang::SELLANG_INFO* CSelectLang::m_psLangInfo = NULL;	// メッセージリソース用構造体
-CSelectLang::PSELLANG_INFO_LIST CSelectLang::m_psLangInfoList;
+CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = NULL;	// メッセージリソース用構造体
+CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 
 /*!
 	@brief デストラクタ
@@ -31,7 +31,7 @@ CSelectLang::PSELLANG_INFO_LIST CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang( void )
 {
-	for (PSELLANG_INFO_LIST::iterator it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
+	for (PSSelLangInfoList::iterator it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
 		if( (*it)->hInstance ){
 			FreeLibrary( (*it)->hInstance );
 			(*it)->hInstance = NULL;
@@ -84,11 +84,11 @@ LPCTSTR CSelectLang::getDefaultLangString( void )
 HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 {
 	int nCount;
-	SELLANG_INFO *psLangInfo;
+	SSelLangInfo *psLangInfo;
 
 	if ( m_psLangInfoList.size() == 0 ) {
 		// デフォルト情報を作成する
-		psLangInfo = new SELLANG_INFO();
+		psLangInfo = new SSelLangInfo;
 		psLangInfo->hInstance = GetModuleHandle(NULL);
 
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
@@ -117,7 +117,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 	while( result ){
 		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダでない
 			// バッファに登録する。
-			psLangInfo = new SELLANG_INFO();
+			psLangInfo = new SSelLangInfo;
 			_tcscpy( psLangInfo->szDllName, w32fd.cFileName );
 			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
 
@@ -160,7 +160,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 
 	@date 2011.04.10 nasukoji	新規作成
 */
-HINSTANCE CSelectLang::LoadLangRsrcLibrary( SELLANG_INFO& lang )
+HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 {
 	if( lang.szDllName[0] == _T('\0') )
 		return NULL;		// DLLが指定されていなければNULLを返す
@@ -351,7 +351,7 @@ void CSelectLang::ChangeLang( TCHAR* pszDllName )
 	/* 言語を選択する */
 	UINT unIndex;
 	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
-		CSelectLang::SELLANG_INFO* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
+		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
 		if ( _tcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;
@@ -365,7 +365,7 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 		return m_psLangInfo->hInstance;
 	}
 
-	SELLANG_INFO *psLangInfo = m_psLangInfoList.at( nIndex );
+	SSelLangInfo *psLangInfo = m_psLangInfoList.at( nIndex );
 	if ( psLangInfo->hInstance != GetModuleHandle(NULL) ) {
 		psLangInfo->hInstance = LoadLangRsrcLibrary( *psLangInfo );
 		if ( psLangInfo->hInstance == NULL ) {
