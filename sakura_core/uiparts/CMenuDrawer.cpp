@@ -83,16 +83,6 @@ CMenuDrawer::CMenuDrawer()
 		int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 	} TBBUTTON;
 	*/
-#if 0
-	2002/04/26 無用な汎用性は排除。
-	struct TBUTTONDATA {
-		int			idCommand;
-		BYTE		fsState;
-		BYTE		fsStyle;
-		DWORD		dwData;
-		int			iString;
-	};
-#endif
 //	キーワード：アイコン順序(アイコンインデックス)
 //	Sept. 16, 2000 Jepro note: アイコン登録メニュー
 //	以下の登録はツールバーだけでなくアイコンをもつすべてのメニューで利用されている
@@ -136,7 +126,7 @@ CMenuDrawer::CMenuDrawer()
 //	注4. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
 //	注5. アイコンビットマップの有効段数は、CImageListMgr の MAX_Y です。
 
-	static const int /* TBUTTONDATA */ tbd[] = {
+	static const int tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
 /*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く

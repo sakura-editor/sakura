@@ -77,7 +77,8 @@ void CFigureManager::OnChangeSetting(void)
 	m_vFiguresDisp.clear();
 
 	int size = (int)m_vFigures.size();
-	for(int i = 0; i < size; i++){
+	int i;
+	for(i = 0; i < size; i++){
 		m_vFigures[i]->Update();
 		// F•ª‚¯•\Ž¦‘ÎÛ‚Ì‚Ý‚ð“o˜^
 		if( m_vFigures[i]->Disp() ){
