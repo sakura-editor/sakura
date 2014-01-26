@@ -1959,7 +1959,7 @@ void CEditView::SetFont( void )
 	m_nViewColNum = (m_nViewCx - 1) / ( m_nCharWidth  + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );	/* 表示域の桁数 */
 	m_nViewRowNum = (m_nViewCy - 1) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );	/* 表示域の行数 */
 	/* 行番号表示に必要な幅を設定 */
-	DetectWidthOfLineNumberArea( FALSE );
+	DetectWidthOfLineNumberArea( false );
 	/* 文字列描画用文字幅配列 */
 	for( i = 0; i < ( sizeof(m_pnDx) / sizeof(m_pnDx[0]) ); ++i ){
 		m_pnDx[i] = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace );
@@ -2011,7 +2011,7 @@ int CEditView::DetectWidthOfLineNumberArea_calculate( void )
 /*
 行番号表示に必要な幅を設定幅が変更された場合はTRUEを返す
 */
-BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
+BOOL CEditView::DetectWidthOfLineNumberArea( bool bRedraw )
 {
 	int				i;
 	PAINTSTRUCT		ps;

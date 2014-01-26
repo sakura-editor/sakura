@@ -4802,7 +4802,7 @@ void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 
 
 /* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
-BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
+BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 {
 	if( 1 == GetAllViewCount() ){
 		return m_pcEditViewArr[m_nActivePaneIndex]->DetectWidthOfLineNumberArea( bRedraw );
@@ -4816,7 +4816,7 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 		}
 		else {
 			//	表示されていないので再描画しない
-			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( FALSE );
+			m_pcEditViewArr[m_nActivePaneIndex^1]->DetectWidthOfLineNumberArea( false );
 		}
 		if ( m_cSplitterWnd.GetAllSplitRows() == 2 ){
 			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( bRedraw );
@@ -4825,8 +4825,8 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 			}
 		}
 		else {
-			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( FALSE );
-			m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->DetectWidthOfLineNumberArea( FALSE );
+			m_pcEditViewArr[m_nActivePaneIndex^2]->DetectWidthOfLineNumberArea( false );
+			m_pcEditViewArr[(m_nActivePaneIndex^1)^2]->DetectWidthOfLineNumberArea( false );
 		}
 		return TRUE;
 	}

@@ -191,7 +191,7 @@ public:
 	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
 	void SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pcViewExclude );				/* すべてのペインをRedrawする */
-	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
+	BOOL DetectWidthOfLineNumberAreaAllPane( bool bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新

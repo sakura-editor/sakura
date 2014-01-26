@@ -203,7 +203,7 @@ public:
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
 	void MoveCursorSelecting( CLayoutPoint ptWk_CaretPos, bool, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( CLayoutPoint* pptPosXY );	// 正しいカーソル位置を算出する
-	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
+	BOOL DetectWidthOfLineNumberArea( bool );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
 	void DisableSelectArea( bool );								/* 現在の選択範囲を非選択状態に戻す */
 	void SetFont( void );										/* フォントの変更 */
