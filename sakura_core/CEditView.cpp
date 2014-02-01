@@ -846,7 +846,7 @@ LRESULT CEditView::DispatchEvent(
 			m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 		}
 		if( m_bHokan ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 		}
 		return 0L;
@@ -1423,7 +1423,7 @@ void CEditView::OnKillFocus( void )
 	}
 
 	if( m_bHokan ){
-		m_pcEditDoc->m_cHokanMgr.Hide();
+		m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
 

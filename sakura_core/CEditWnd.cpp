@@ -1227,11 +1227,11 @@ void CEditWnd::MessageLoop( void )
 
 		//ダイアログメッセージ
 		if( m_pPrintPreview && NULL != m_pPrintPreview->GetPrintPreviewBarHANDLE() && ::IsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE(), &msg ) ){}	//!< 印刷プレビュー 操作バー
-		else if( m_pcEditDoc->m_cDlgFind.m_hWnd && ::IsDialogMessage( m_pcEditDoc->m_cDlgFind.m_hWnd, &msg ) ){}	//!<「検索」ダイアログ
-		else if( m_pcEditDoc->m_cDlgFuncList.m_hWnd && ::IsDialogMessage( m_pcEditDoc->m_cDlgFuncList.m_hWnd, &msg ) ){}	//!<「アウトライン」ダイアログ
-		else if( m_pcEditDoc->m_cDlgReplace.m_hWnd && ::IsDialogMessage( m_pcEditDoc->m_cDlgReplace.m_hWnd, &msg ) ){}	//!<「置換」ダイアログ
-		else if( m_pcEditDoc->m_cDlgGrep.m_hWnd && ::IsDialogMessage( m_pcEditDoc->m_cDlgGrep.m_hWnd, &msg ) ){}	//!<「Grep」ダイアログ
-		else if( m_pcEditDoc->m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_pcEditDoc->m_cHokanMgr.m_hWnd, &msg ) ){}	//!<「入力補完」
+		else if( m_cDlgFind.m_hWnd && ::IsDialogMessage( m_cDlgFind.m_hWnd, &msg ) ){}	//!<「検索」ダイアログ
+		else if( m_cDlgFuncList.m_hWnd && ::IsDialogMessage( m_cDlgFuncList.m_hWnd, &msg ) ){}	//!<「アウトライン」ダイアログ
+		else if( m_cDlgReplace.m_hWnd && ::IsDialogMessage( m_cDlgReplace.m_hWnd, &msg ) ){}	//!<「置換」ダイアログ
+		else if( m_cDlgGrep.m_hWnd && ::IsDialogMessage( m_cDlgGrep.m_hWnd, &msg ) ){}	//!<「Grep」ダイアログ
+		else if( m_cHokanMgr.m_hWnd && ::IsDialogMessage( m_cHokanMgr.m_hWnd, &msg ) ){}	//!<「入力補完」
 		else if( m_hwndSearchBox && ::IsDialogMessage( m_hwndSearchBox, &msg ) ){	/* 「検索ボックス」 */
 			ProcSearchBox( &msg );
 		}
@@ -4734,22 +4734,22 @@ void  CEditWnd::SetActivePane( int nIndex )
 
 	m_cSplitterWnd.SetActivePane( nIndex );
 
-	if( NULL != m_pcEditDoc->m_cDlgFind.m_hWnd ){		/* 「検索」ダイアログ */
+	if( NULL != m_cDlgFind.m_hWnd ){		/* 「検索」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
-		m_pcEditDoc->m_cDlgFind.ChangeView( (LPARAM)&GetActiveView() );
+		m_cDlgFind.ChangeView( (LPARAM)&GetActiveView() );
 	}
-	if( NULL != m_pcEditDoc->m_cDlgReplace.m_hWnd ){	/* 「置換」ダイアログ */
+	if( NULL != m_cDlgReplace.m_hWnd ){	/* 「置換」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
-		m_pcEditDoc->m_cDlgReplace.ChangeView( (LPARAM)&GetActiveView() );
+		m_cDlgReplace.ChangeView( (LPARAM)&GetActiveView() );
 	}
-	if( NULL != m_pcEditDoc->m_cHokanMgr.m_hWnd ){	/* 「入力補完」ダイアログ */
-		m_pcEditDoc->m_cHokanMgr.Hide();
+	if( NULL != m_cHokanMgr.m_hWnd ){	/* 「入力補完」ダイアログ */
+		m_cHokanMgr.Hide();
 		/* モードレス時：検索対象となるビューの変更 */
-		m_pcEditDoc->m_cHokanMgr.ChangeView( (LPARAM)&GetActiveView() );
+		m_cHokanMgr.ChangeView( (LPARAM)&GetActiveView() );
 	}
-	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
+	if( NULL != m_cDlgFuncList.m_hWnd ){	/* 「アウトライン」ダイアログ */ // 20060201 aroka
 		/* モードレス時：現在位置表示の対象となるビューの変更 */
-		m_pcEditDoc->m_cDlgFuncList.ChangeView( (LPARAM)&GetActiveView() );
+		m_cDlgFuncList.ChangeView( (LPARAM)&GetActiveView() );
 	}
 
 	return;

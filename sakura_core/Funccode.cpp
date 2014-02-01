@@ -1213,7 +1213,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, i
 		return pcEditDoc->m_pcEditWnd->GetActiveView().IsISearchEnabled( nId );
 	case F_OUTLINE_TOGGLE: // 20060201 aroka アウトラインウィンドウ
 		// ToDo:ブックマークリストが出ているときもへこんでしまう。
-		return pcEditDoc->m_cDlgFuncList.m_hWnd != NULL;
+		return pCEditWnd->m_cDlgFuncList.m_hWnd != NULL;
 	}
 	//End 2004.07.14 Kazika
 

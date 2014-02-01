@@ -3015,16 +3015,16 @@ void CEditView::Command_SEARCH_DIALOG( void )
 	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* 検索文字列を初期化 */
-	strcpy( m_pcEditDoc->m_cDlgFind.m_szText, cmemCurText.GetStringPtr() );
+	strcpy( m_pcEditWnd->m_cDlgFind.m_szText, cmemCurText.GetStringPtr() );
 
 	/* 検索ダイアログの表示 */
-	if( NULL == m_pcEditDoc->m_cDlgFind.m_hWnd ){
-		m_pcEditDoc->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)&m_pcEditWnd->GetActiveView() );
+	if( NULL == m_pcEditWnd->m_cDlgFind.m_hWnd ){
+		m_pcEditWnd->m_cDlgFind.DoModeless( m_hInstance, m_hWnd, (LPARAM)&m_pcEditWnd->GetActiveView() );
 	}
 	else{
 		/* アクティブにする */
-		ActivateFrameWindow( m_pcEditDoc->m_cDlgFind.m_hWnd );
-		::SetDlgItemText( m_pcEditDoc->m_cDlgFind.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ActivateFrameWindow( m_pcEditWnd->m_cDlgFind.m_hWnd );
+		::SetDlgItemText( m_pcEditWnd->m_cDlgFind.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	return;
 }
@@ -3663,7 +3663,7 @@ void CEditView::Command_COPYTAG( void )
 */
 void CEditView::Command_JUMP_DIALOG( void )
 {
-	if( !m_pcEditDoc->m_cDlgJump.DoModal(
+	if( !m_pcEditWnd->m_cDlgJump.DoModal(
 		m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc
 	) ){
 		return;
@@ -3691,9 +3691,9 @@ void CEditView::Command_JUMP( void )
 
 	/* 行番号 */
 	int	nLineNum;
-	nLineNum = m_pcEditDoc->m_cDlgJump.m_nLineNum;
+	nLineNum = m_pcEditWnd->m_cDlgJump.m_nLineNum;
 
-	if( !m_pcEditDoc->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
+	if( !m_pcEditWnd->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 			if( 0 >= nLineNum ){
@@ -3733,10 +3733,10 @@ void CEditView::Command_JUMP( void )
 		nLineNum = 1;
 	}
 	nMode = 0;
-	nCurrentLine = m_pcEditDoc->m_cDlgJump.m_nPLSQL_E2 - 1;
+	nCurrentLine = m_pcEditWnd->m_cDlgJump.m_nPLSQL_E2 - 1;
 
 	int	nLineCount;
-	nLineCount = m_pcEditDoc->m_cDlgJump.m_nPLSQL_E1 - 1;
+	nLineCount = m_pcEditWnd->m_cDlgJump.m_nPLSQL_E1 - 1;
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( !m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
@@ -4433,19 +4433,19 @@ BOOL CEditView::Command_FUNCLIST(
 		}
 	}
 
-	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && nAction != SHOW_RELOAD ){
+	if( NULL != m_pcEditWnd->m_cDlgFuncList.m_hWnd && nAction != SHOW_RELOAD ){
 		switch(nAction ){
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
-			if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
-				ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
+			if( m_pcEditWnd->m_cDlgFuncList.CheckListType( nOutlineType )){
+				ActivateFrameWindow( m_pcEditWnd->m_cDlgFuncList.m_hWnd );
 				return TRUE;
 			}
 			break;
 		case SHOW_TOGGLE: // 閉じる
 			//	開いているものと種別が同じなら閉じる．異なれば再解析
-			if( m_pcEditDoc->m_cDlgFuncList.CheckListType( nOutlineType )){
-				::SendMessage( m_pcEditDoc->m_cDlgFuncList.m_hWnd, WM_CLOSE, 0, 0 );
+			if( m_pcEditWnd->m_cDlgFuncList.CheckListType( nOutlineType )){
+				::SendMessage( m_pcEditWnd->m_cDlgFuncList.m_hWnd, WM_CLOSE, 0, 0 );
 				return TRUE;
 			}
 			break;
@@ -4486,8 +4486,8 @@ BOOL CEditView::Command_FUNCLIST(
 	_tcscpy( cFuncInfoArr.m_szFilePath, m_pcEditDoc->GetFilePath() );
 
 	/* アウトライン ダイアログの表示 */
-	if( NULL == m_pcEditDoc->m_cDlgFuncList.m_hWnd ){
-		m_pcEditDoc->m_cDlgFuncList.DoModeless(
+	if( NULL == m_pcEditWnd->m_cDlgFuncList.m_hWnd ){
+		m_pcEditWnd->m_cDlgFuncList.DoModeless(
 			m_hInstance,
 			/*m_pcEditDoc->*/m_hWnd,
 			(LPARAM)this,
@@ -4499,8 +4499,8 @@ BOOL CEditView::Command_FUNCLIST(
 		);
 	}else{
 		/* アクティブにする */
-		m_pcEditDoc->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, m_ptCaretPos.y + 1, m_ptCaretPos.x + 1 );
-		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
+		m_pcEditWnd->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, m_ptCaretPos.y + 1, m_ptCaretPos.x + 1 );
+		ActivateFrameWindow( m_pcEditWnd->m_cDlgFuncList.m_hWnd );
 	}
 
 	return TRUE;
@@ -6662,9 +6662,9 @@ void CEditView::Command_REPLACE_DIALOG( void )
 	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* 検索文字列を初期化 */
-	strcpy( m_pcEditDoc->m_cDlgReplace.m_szText, cmemCurText.GetStringPtr() );
-	strncpy( m_pcEditDoc->m_cDlgReplace.m_szText2, m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
-	m_pcEditDoc->m_cDlgReplace.m_szText2[MAX_PATH - 1] = '\0';
+	strcpy( m_pcEditWnd->m_cDlgReplace.m_szText, cmemCurText.GetStringPtr() );
+	strncpy( m_pcEditWnd->m_cDlgReplace.m_szText2, m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+	m_pcEditWnd->m_cDlgReplace.m_szText2[MAX_PATH - 1] = '\0';
 
 	if ( IsTextSelected() && m_sSelect.m_ptFrom.y!=m_sSelect.m_ptTo.y ) {
 		bSelected = TRUE;	//選択範囲をチェックしてダイアログ表示
@@ -6672,19 +6672,19 @@ void CEditView::Command_REPLACE_DIALOG( void )
 		bSelected = FALSE;	//ファイル全体をチェックしてダイアログ表示
 	}
 	/* 置換オプションの初期化 */
-	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget=0;	/* 置換対象 */
-	m_pcEditDoc->m_cDlgReplace.m_nPaste=FALSE;		/* 貼り付ける？ */
+	m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget=0;	/* 置換対象 */
+	m_pcEditWnd->m_cDlgReplace.m_nPaste=FALSE;		/* 貼り付ける？ */
 // To Here 2001.12.03 hor
 
 	/* 置換ダイアログの表示 */
 	//	From Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
-	if( !::IsWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd ) ){
-		m_pcEditDoc->m_cDlgReplace.DoModeless( m_hInstance, m_hWnd/*::GetParent( m_hwndParent )*/, (LPARAM)this, bSelected );
+	if( !::IsWindow( m_pcEditWnd->m_cDlgReplace.m_hWnd ) ){
+		m_pcEditWnd->m_cDlgReplace.DoModeless( m_hInstance, m_hWnd/*::GetParent( m_hwndParent )*/, (LPARAM)this, bSelected );
 	}
 	else {
 		/* アクティブにする */
-		ActivateFrameWindow( m_pcEditDoc->m_cDlgReplace.m_hWnd );
-		::SetDlgItemText( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
+		ActivateFrameWindow( m_pcEditWnd->m_cDlgReplace.m_hWnd );
+		::SetDlgItemText( m_pcEditWnd->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
@@ -6701,16 +6701,16 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		hwndParent = m_hWnd;
 	}
 	//2002.02.10 hor
-	int nPaste			=	m_pcEditDoc->m_cDlgReplace.m_nPaste;
-	int nReplaceTarget	=	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
+	int nPaste			=	m_pcEditWnd->m_cDlgReplace.m_nPaste;
+	int nReplaceTarget	=	m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget;
 	int	bRegularExp		=	m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
 	int nFlag			=	m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste()){
 		OkMessage( hwndParent, _T("クリップボードに有効なデータがありません！") );
-		::CheckDlgButton( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_CHK_PASTE, FALSE );
-		::EnableWindow( ::GetDlgItem( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
+		::CheckDlgButton( m_pcEditWnd->m_cDlgReplace.m_hWnd, IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( m_pcEditWnd->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
 		return;	//	失敗return;
 	}
 
@@ -6881,14 +6881,14 @@ void CEditView::Command_REPLACE_ALL()
 	int			colTmp,linTmp,colLast,linLast;
 
 	//2002.02.10 hor
-	int nPaste			= m_pcEditDoc->m_cDlgReplace.m_nPaste;
-	int nReplaceTarget	= m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
+	int nPaste			= m_pcEditWnd->m_cDlgReplace.m_nPaste;
+	int nReplaceTarget	= m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget;
 	int	bRegularExp		= m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
 	int bSelectedArea	= m_pShareData->m_Common.m_sSearch.m_bSelectedArea;
 	int bConsecutiveAll	= m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 
-	m_pcEditDoc->m_cDlgReplace.m_bCanceled=false;
-	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=0;
+	m_pcEditWnd->m_cDlgReplace.m_bCanceled=false;
+	m_pcEditWnd->m_cDlgReplace.m_nReplaceCnt=0;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste() ){
@@ -7450,8 +7450,8 @@ void CEditView::Command_REPLACE_ALL()
 	}
 	// To Here 2001.12.03 hor
 
-	m_pcEditDoc->m_cDlgReplace.m_bCanceled = (cDlgCancel.IsCanceled() != FALSE);
-	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=nReplaceNum;
+	m_pcEditWnd->m_cDlgReplace.m_bCanceled = (cDlgCancel.IsCanceled() != FALSE);
+	m_pcEditWnd->m_cDlgReplace.m_nReplaceCnt=nReplaceNum;
 	m_bDrawSWITCH = true;
 	ActivateFrameWindow( ::GetParent( m_hwndParent ) );
 }

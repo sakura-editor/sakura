@@ -27,17 +27,10 @@
 
 #include "global.h"
 #include "CAutoSave.h"
-#include "CDlgFind.h"
-#include "CDlgFuncList.h"
-#include "CDlgGrep.h"
-#include "CDlgJump.h"
-#include "CDlgOpenFile.h"
-#include "CDlgReplace.h"
 #include "CDocLineMgr.h"
 #include "CEditView.h"
 #include "CEol.h"
 #include "CFuncLookup.h"
-#include "CHokanMgr.h"
 #include "CLayoutMgr.h"
 #include "COpeBuf.h"
 #include "CPropertyManager.h"
@@ -214,8 +207,6 @@ protected:
 	void SetFilePathAndIcon(const TCHAR*);	// Sep. 9, 2002 genta
 	
 public: /* テスト用にアクセス属性を変更 */
-	/* 入力補完 */
-	CHokanMgr		m_cHokanMgr;
 	BOOL			m_bGrepRunning;				/* Grep処理中 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
@@ -260,12 +251,6 @@ public:
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
 // To Here 2001.12.03 hor
 
-	CDlgFind		m_cDlgFind;					/* 「検索」ダイアログ */
-	CDlgReplace		m_cDlgReplace;				/* 「置換」ダイアログ */
-	CDlgJump		m_cDlgJump;					/* 「指定行へジャンプ」ダイアログ */
-//	CDlgSendMail	m_cDlgSendMail;				/* メール送信ダイアログ */
-	CDlgGrep		m_cDlgGrep;					/* Grepダイアログ */
-	CDlgFuncList	m_cDlgFuncList;				/* アウトライン解析結果ダイアログ */
 	CEditWnd*		m_pcEditWnd;	//	Sep. 10, 2002
 	/*
 	||  メンバ変数
@@ -275,7 +260,6 @@ public:
 	DLLSHAREDATA*	m_pShareData;
 
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
-	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
 
 	CPropertyManager* m_pcPropertyManager;	//プロパティ管理
 

@@ -510,7 +510,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 				m_sSelect.m_ptFrom.x >= m_nViewLeftCol)
 			{
 				HWND hWnd = ::GetForegroundWindow();
-				if( hWnd && (hWnd == m_pcEditDoc->m_cDlgFind.m_hWnd || hWnd == m_pcEditDoc->m_cDlgReplace.m_hWnd) ){
+				if( hWnd && (hWnd == m_pcEditWnd->m_cDlgFind.m_hWnd || hWnd == m_pcEditWnd->m_cDlgReplace.m_hWnd) ){
 					rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
 				}
 			}

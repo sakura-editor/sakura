@@ -81,10 +81,10 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 
 	case F_JUMP:	//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 		{
-			AddIntParam( pcEditView->m_pcEditDoc->m_cDlgJump.m_nLineNum );
+			AddIntParam( pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_pShareData->m_bLineNumIsCRLF_ForJump		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
+			lFlag |= pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -118,9 +118,9 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
-			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
-			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
+			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll	? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
@@ -446,10 +446,10 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
-			pcEditView->m_pcEditDoc->m_cDlgJump.m_nLineNum = atoi(Argument[0]);	//ジャンプ先
+			pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum = atoi(Argument[0]);	//ジャンプ先
 			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 1; // デフォルト1
 			pcEditView->m_pShareData->m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
-			pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
+			pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0 );	//	標準
 		}
 		break;
@@ -629,7 +629,7 @@ void CMacro::HandleCommand(
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
-			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
+			pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
 //			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
 			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta コマンドは下位ワード
@@ -640,7 +640,7 @@ void CMacro::HandleCommand(
 				//	全置換の時は選べる？
 				pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
-			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
+			pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
 			//	コマンド発行
 			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0);
 		}

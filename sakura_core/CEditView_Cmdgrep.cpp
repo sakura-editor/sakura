@@ -16,6 +16,7 @@
 */
 #include "StdAfx.h"
 #include "CEditView.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "CControlTray.h"
 #include "charcode.h"
@@ -62,10 +63,10 @@ void CEditView::Command_GREP_DIALOG( void )
 	if( 0 == cmemCurText.GetStringLength() ){
 		cmemCurText.SetString( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );
 	}
-	_tcscpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
+	_tcscpy( m_pcEditWnd->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
 
 	/* Grepダイアログの表示 */
-	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
+	int nRet = m_pcEditWnd->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
 //	MYTRACE( _T("nRet=%d\n"), nRet );
 	if( !nRet ){
 		return;
@@ -83,9 +84,9 @@ void CEditView::Command_GREP( void )
 	CMemory		cmWork2;
 	CMemory		cmWork3;
 
-	cmWork1.SetString( m_pcEditDoc->m_cDlgGrep.m_szText );
-	cmWork2.SetString( m_pcEditDoc->m_cDlgGrep.m_szFile );
-	cmWork3.SetString( m_pcEditDoc->m_cDlgGrep.m_szFolder );
+	cmWork1.SetString( m_pcEditWnd->m_cDlgGrep.m_szText );
+	cmWork2.SetString( m_pcEditWnd->m_cDlgGrep.m_szFile );
+	cmWork3.SetString( m_pcEditWnd->m_cDlgGrep.m_szFolder );
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
@@ -111,11 +112,11 @@ void CEditView::Command_GREP( void )
 			&cmWork1,
 			&cmWork2,
 			&cmWork3,
-			m_pcEditDoc->m_cDlgGrep.m_bSubFolder,
-			m_pcEditDoc->m_cDlgGrep.m_sSearchOption,
-			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet,
-			m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine,
-			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
+			m_pcEditWnd->m_cDlgGrep.m_bSubFolder,
+			m_pcEditWnd->m_cDlgGrep.m_sSearchOption,
+			m_pcEditWnd->m_cDlgGrep.m_nGrepCharSet,
+			m_pcEditWnd->m_cDlgGrep.m_bGrepOutputLine,
+			m_pcEditWnd->m_cDlgGrep.m_nGrepOutputStyle
 		);
 	}
 	else{
@@ -139,18 +140,18 @@ void CEditView::Command_GREP( void )
 			cmWork1.GetStringPtr(),
 			cmWork2.GetStringPtr(),
 			cmWork3.GetStringPtr(),
-			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet
+			m_pcEditWnd->m_cDlgGrep.m_nGrepCharSet
 		);
 
 		//GOPTオプション
 		pOpt[0] = _T('\0');
-		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder				)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
-		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
-		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
-		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
-		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
-		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+		if( m_pcEditWnd->m_cDlgGrep.m_bSubFolder				)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
+		if( m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
+		if( m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+		if( m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
+		if( m_pcEditWnd->m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+		if( 1 == m_pcEditWnd->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
+		if( 2 == m_pcEditWnd->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
 		if( pOpt[0] != _T('\0') ){
 			_tcscat( pCmdLine, _T(" -GOPT=") );
 			_tcscat( pCmdLine, pOpt );

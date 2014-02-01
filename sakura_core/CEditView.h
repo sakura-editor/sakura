@@ -422,8 +422,6 @@ public: /* テスト用にアクセス属性を変更 */
 	POINT	m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
 	BOOL	m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
 	CDicMgr	m_cDicMgr;				/* 辞書マネージャ */
-	/* 入力補完 */
-//	CHokanMgr	m_cHokanMgr;
 	BOOL		m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
 	//	Aug. 31, 2000 genta
 	CAutoMarkMgr	*m_cHistory;	//	Jump履歴

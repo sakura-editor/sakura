@@ -26,6 +26,7 @@
 #include "etc_uty.h"
 #include "charcode.h"  // 2006.06.28 rastiv
 #include "CDocLineMgr.h"	// 2008.10.29 syat
+#include "CEditWnd.h"
 #include "my_icmp.h"		// 2008.10.29 syat
 #include "sakura_rc.h"
 
@@ -44,7 +45,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 		 && nCommand != F_CHAR		//	文字入力
 		 && nCommand != F_IME_CHAR	//	漢字入力
 		 ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 		}
 	}
@@ -66,7 +67,7 @@ void CEditView::PostprocessCommand_hokan(void)
 			ShowHokanMgr( cmemData, FALSE );
 		}else{
 			if( m_bHokan ){
-				m_pcEditDoc->m_cHokanMgr.Hide();
+				m_pcEditWnd->m_cHokanMgr.Hide();
 				m_bHokan = FALSE;
 			}
 		}
@@ -117,15 +118,15 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	// エディタ起動時だとエディタ可視化の途中になぜか不可視の入力補完ウィンドウが一時的にフォアグラウンドになって、
 	// タブバーに新規タブが追加されるときのタブ切替でタイトルバーがちらつく（一瞬非アクティブ表示になるのがはっきり見える）ことがあった。
 	// ※ Vista/7 の特定の PC でだけのちらつきか？ 該当 PC 以外の Vista/7 PC でもたまに微妙に表示が乱れた感じになる程度の症状が見られたが、それらが同一原因かどうかは不明。
-	if( !m_pcEditDoc->m_cHokanMgr.m_hWnd ){
-		m_pcEditDoc->m_cHokanMgr.DoModeless(
+	if( !m_pcEditWnd->m_cHokanMgr.m_hWnd ){
+		m_pcEditWnd->m_cHokanMgr.DoModeless(
 			m_pcEditDoc->m_hInstance,
 			m_hWnd,
 			(LPARAM)this
 		);
 		::SetFocus( m_hWnd );	//エディタにフォーカスを戻す
 	}
-	nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
+	nKouhoNum = m_pcEditWnd->m_cHokanMgr.Search(
 		&poWin,
 		m_nCharHeight,
 		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace,
@@ -138,7 +139,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	/* 補完候補の数によって動作を変える */
 	if (nKouhoNum <= 0) {				//	候補無し
 		if( m_bHokan ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
 			ErrorBeep();
@@ -146,7 +147,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	}
 	else if( bAutoDecided && nKouhoNum == 1){ //	候補1つのみ→確定。
 		if( m_bHokan ){
-			m_pcEditDoc->m_cHokanMgr.Hide();
+			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 		}
 		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた

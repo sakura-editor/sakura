@@ -201,13 +201,13 @@ bool CNormalProcess::InitializeProcess()
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			_tcscpy( pEditWnd->m_pcEditDoc->m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
-			_tcscpy( pEditWnd->m_pcEditDoc->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
-			_tcscpy( pEditWnd->m_pcEditDoc->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
+			_tcscpy( pEditWnd->m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
+			_tcscpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
+			_tcscpy( pEditWnd->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			int nRet = pEditWnd->m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, pEditWnd->m_hWnd, NULL);
+			int nRet = pEditWnd->m_cDlgGrep.DoModal( m_hInstance, pEditWnd->m_hWnd, NULL);
 			if( FALSE != nRet ){
 				pEditWnd->GetActiveView().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}

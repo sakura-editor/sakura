@@ -35,7 +35,14 @@ class CEditWnd;
 #include "CImageListMgr.h"
 
 //by 鬼
+#include "CDlgFind.h"
+#include "CDlgReplace.h"
+#include "CDlgJump.h"
+#include "CDlgGrep.h"
+#include "CDlgOpenFile.h"
+#include "CDlgFuncList.h"
 #include "CDropTarget.h"
+#include "CHokanMgr.h"
 #include "CViewFont.h"
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
@@ -91,7 +98,7 @@ public:
 		HWND,
 		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
-		int nGroup
+		int				nGroup
 	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
 	void _GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo);
@@ -251,7 +258,6 @@ public:
 	*/
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
-	CEditDoc*		m_pcEditDoc;
 	HWND			m_hwndParent;
     HWND			m_hwndReBar;	// Rebar ウィンドウ	//@@@ 2006.06.17 ryoji
     HWND			m_hwndToolBar;
@@ -259,8 +265,8 @@ public:
 	HWND			m_hwndProgressBar;
 	DLLSHAREDATA*	m_pShareData;
 
-	CFuncKeyWnd		m_CFuncKeyWnd;
-	CTabWnd			m_cTabWnd;		//タブウインドウ	//@@@ 2003.05.31 MIK
+	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
+	CFuncKeyWnd		m_CFuncKeyWnd;		//!< ファンクションバー
 	CMenuDrawer		m_CMenuDrawer;
 	bool			m_bDragMode;
 	POINT			m_ptDragPosOrg;
@@ -271,8 +277,17 @@ public:
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
 	CViewFont*		m_pcViewFont;		//!< フォント
 
+	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ
+	CDlgReplace		m_cDlgReplace;		// 「置換」ダイアログ
+	CDlgJump		m_cDlgJump;			// 「指定行へジャンプ」ダイアログ
+	CDlgGrep		m_cDlgGrep;			// Grepダイアログ
+	CDlgFuncList	m_cDlgFuncList;		// アウトライン解析結果ダイアログ
+	CDlgOpenFile	m_cDlgOpenFile;		// ファイルオープンダイアログ
+	CHokanMgr		m_cHokanMgr;		// 入力補完
+
 	CImageListMgr*	m_pcIcons;
 
+	CEditDoc*		m_pcEditDoc;
 	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
 	CEditView*		m_pcEditView;				//!< 有効なビュー
 	int				m_nActivePaneIndex;			//!< 有効なビューのindex

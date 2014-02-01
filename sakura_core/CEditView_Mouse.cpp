@@ -40,7 +40,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
 
 	if( m_bHokan ){
-		m_pcEditDoc->m_cHokanMgr.Hide();
+		m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
 
