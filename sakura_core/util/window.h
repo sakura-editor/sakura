@@ -151,5 +151,21 @@ private:
 	int nExt;
 };
 
+class CFontAutoDeleter
+{
+public:
+	CFontAutoDeleter();
+	~CFontAutoDeleter();
+	void SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd );
+	void ReleaseOnDestroy();
+	// void Release();
+
+private:
+	HFONT m_hFontOld;
+	HFONT m_hFont;
+	HWND  m_hwnd;
+};
+
+
 #endif /* SAKURA_WINDOW_E7B899CD_2106_4A3B_BBA1_EB29FD9640F39_H_ */
 /*[EOF]*/

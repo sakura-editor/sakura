@@ -137,8 +137,11 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 						m_Common.m_sTabBar.m_lf = lf;
 						m_Common.m_sTabBar.m_nPointSize = nPointSize;
 						// タブ フォント表示	// 2013/4/24 Uchi
-						if (m_hTabFont != NULL)		::DeleteObject( m_hTabFont );
-						m_hTabFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
+						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
+						if (m_hTabFont != NULL){
+							::DeleteObject( m_hTabFont );
+						}
+						m_hTabFont = hFont;
 					}
 					break;
 				}

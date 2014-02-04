@@ -635,9 +635,9 @@ bool CDialog::DirectoryUp( TCHAR* szDir )
 }
 
 // コントロールに画面のフォントを設定	2012/11/27 Uchi
-void	CDialog::SetMainFont( HWND hTarget )
+HFONT CDialog::SetMainFont( HWND hTarget )
 {
-	if (hTarget == NULL)	return;
+	if (hTarget == NULL)	return NULL;
 
 	HFONT	hFont;
 	LOGFONT	lf;
@@ -670,6 +670,7 @@ void	CDialog::SetMainFont( HWND hTarget )
 		// フォントの設定
 		::SendMessage(hTarget, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
 	}
+	return hFont;
 }
 
 void CDialog::ResizeItem( HWND hTarget, const POINT& ptDlgDefault, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate)

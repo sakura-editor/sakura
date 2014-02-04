@@ -132,10 +132,6 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 /* ダイアログデータの設定 */
 void CDlgReplace::SetData( void )
 {
-	// フォント設定	2012/11/27 Uchi
-	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
-	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ));
-
 	// 検索文字列/置換後文字列リストの設定(関数化)	2010/5/26 Uchi
 	SetCombosList();
 
@@ -372,11 +368,29 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelText2.pRecent = &m_cRecentReplace;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_comboDelText2);
 
+	// フォント設定	2012/11/27 Uchi
+	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
+	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
+	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+
+	hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT2 ), WM_GETFONT, 0, 0 );
+	hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT2 ) );
+	m_cFontText2.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT2 ) );
+
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 
 }
 
+
+
+
+BOOL CDlgReplace::OnDestroy()
+{
+	m_cFontText.ReleaseOnDestroy();
+	m_cFontText2.ReleaseOnDestroy();
+	return CDialog::OnDestroy();
+}
 
 
 

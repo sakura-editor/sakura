@@ -269,8 +269,11 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 						::CheckDlgButton( hwndDlg, IDC_CHECK_USETYPEFONT, m_Types.m_bUseTypeFont );
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
 						// フォント表示	// 2013/6/23 Uchi
-						if (m_hTypeFont != NULL)	::DeleteObject( m_hTypeFont );
-						m_hTypeFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, m_Types.m_bUseTypeFont);
+						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, m_Types.m_bUseTypeFont);
+						if(m_hTypeFont != NULL){
+							::DeleteObject( m_hTypeFont );
+						}
+						m_hTypeFont = hFont;
 					}
 				}
 				return TRUE;
@@ -278,8 +281,11 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				if (!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETYPEFONT )) {
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), FALSE );
 					// フォント表示
-					if (m_hTypeFont != NULL)	::DeleteObject( m_hTypeFont );
-					m_hTypeFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, FALSE);
+					HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TYPEFONT, m_Types.m_lf, m_Types.m_nPointSize, FALSE);
+					if(m_hTypeFont != NULL){
+						::DeleteObject( m_hTypeFont );
+					}
+					m_hTypeFont = hFont;
 				}
 				return TRUE;
 			case IDC_CHECK_KINSOKURET:		//改行文字をぶら下げる

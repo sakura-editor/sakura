@@ -160,7 +160,7 @@ protected:
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
 
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
-	void SetMainFont( HWND hTarget );
+	HFONT SetMainFont( HWND hTarget );
 };
 
 
