@@ -176,8 +176,11 @@ INT_PTR CPropHelper::DispatchEvent(
 						m_Common.m_sHelper.m_lf = lf;
 						m_Common.m_sHelper.m_nPointSize = nPointSize;	// 2009.10.01 ryoji
 						// キーワードヘルプ フォント表示	// 2013/4/24 Uchi
-						if (m_hKeywordHelpFont != NULL)		::DeleteObject( m_hKeywordHelpFont );
-						m_hKeywordHelpFont = SetFontLabel( hwndDlg, IDC_STATIC_KEYWORDHELPFONT, m_Common.m_sHelper.m_lf, m_Common.m_sHelper.m_nPointSize);
+						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_KEYWORDHELPFONT, m_Common.m_sHelper.m_lf, m_Common.m_sHelper.m_nPointSize);
+						if(m_hKeywordHelpFont != NULL){
+							::DeleteObject( m_hKeywordHelpFont );
+						}
+						m_hKeywordHelpFont = hFont;
 					}
 				}
 				return TRUE;

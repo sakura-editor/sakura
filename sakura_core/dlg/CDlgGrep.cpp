@@ -212,6 +212,11 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
 
+	// フォント設定	2012/11/27 Uchi
+	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
+	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
+	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
@@ -250,6 +255,12 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
+}
+
+BOOL CDlgGrep::OnDestroy()
+{
+	m_cFontText.ReleaseOnDestroy();
+	return CDialog::OnDestroy();
 }
 
 BOOL CDlgGrep::OnBnClicked( int wID )
@@ -411,9 +422,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgGrep::SetData( void )
 {
-	// フォント設定	2012/11/27 Uchi
-	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
-
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 

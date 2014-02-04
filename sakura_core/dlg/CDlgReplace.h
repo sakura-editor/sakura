@@ -15,13 +15,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgReplace;
-
-#ifndef _CDLGREPLACE_H_
-#define _CDLGREPLACE_H_
+#ifndef SAKURA_CDLGREPLACE_H_
+#define SAKURA_CDLGREPLACE_H_
 
 #include "dlg/CDialog.h"
 #include "recent/CRecent.h"
+#include "util/window.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -39,7 +38,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
@@ -63,11 +61,15 @@ protected:
 	SComboBoxItemDeleter	m_comboDelText;
 	CRecentReplace			m_cRecentReplace;
 	SComboBoxItemDeleter	m_comboDelText2;
+	CFontAutoDeleter		m_cFontText;
+	CFontAutoDeleter		m_cFontText2;
 
 	/*
 	||  実装ヘルパ関数
 	*/
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnDestroy();
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
@@ -80,7 +82,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGREPLACE_H_ */
+#endif /* SAKURA_CDLGREPLACE_H_ */
 
 
 

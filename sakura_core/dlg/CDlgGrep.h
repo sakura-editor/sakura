@@ -20,6 +20,7 @@ class CDlgGrep;
 
 #include "dlg/CDialog.h"
 #include "recent/CRecent.h"
+#include "util/window.h"
 
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog
@@ -61,11 +62,13 @@ protected:
 	CRecentGrepFile			m_cRecentGrepFile;
 	SComboBoxItemDeleter	m_comboDelFolder;
 	CRecentGrepFolder		m_cRecentGrepFolder;
+	CFontAutoDeleter		m_cFontText;
 
 	/*
 	||  実装ヘルパ関数
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnDestroy();
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 

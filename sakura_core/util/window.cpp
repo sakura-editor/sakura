@@ -222,3 +222,53 @@ bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText, int extCx)
 	return false;
 }
 
+CFontAutoDeleter::CFontAutoDeleter()
+	: m_hFontOld(NULL)
+	, m_hFont(NULL)
+	, m_hwnd(NULL)
+{}
+
+CFontAutoDeleter::~CFontAutoDeleter()
+{
+	if( m_hFont ){
+		DeleteObject( m_hFont );
+		m_hFont = NULL;
+	}
+}
+
+void CFontAutoDeleter::SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd )
+{
+	if( m_hFont ){
+		::DeleteObject( m_hFont );
+	}
+	if( m_hFont != hfontOld ){
+		m_hFontOld = hfontOld;
+	}
+	m_hFont = hfont;
+	m_hwnd = hwnd;
+}
+
+/*! ウィンドウのリリース(WM_DESTROY用)
+*/
+void CFontAutoDeleter::ReleaseOnDestroy()
+{
+	if( m_hFont ){
+		::DeleteObject( m_hFont );
+		m_hFont = NULL;
+	}
+	m_hFontOld = NULL;
+}
+
+/*! ウィンドウ生存中のリリース
+*/
+#if 0
+void CFontAutoDeleter::Release()
+{
+	if( m_hwnd && m_hFont ){
+		::SendMessageAny( m_hwnd, WM_SETFONT, (WPARAM)m_hFontOld, FALSE );
+		::DeleteObject( m_hFont );
+		m_hFont = NULL;
+		m_hwnd = NULL;
+	}
+}
+#endif

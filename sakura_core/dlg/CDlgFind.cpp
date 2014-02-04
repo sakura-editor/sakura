@@ -106,7 +106,20 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	m_comboDel = SComboBoxItemDeleter();
 	m_comboDel.pRecent = &m_cRecentSearch;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDel);
+
+	// フォント設定	2012/11/27 Uchi
+	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
+	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
+	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
 	return bRet;
+}
+
+
+
+BOOL CDlgFind::OnDestroy()
+{
+	m_cFontText.ReleaseOnDestroy();
+	return CDialog::OnDestroy();
 }
 
 
@@ -127,8 +140,6 @@ void CDlgFind::SetData( void )
 	// Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
-	// フォント設定	2012/11/27 Uchi
-	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
 
 
 	/*****************************
