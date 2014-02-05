@@ -13,9 +13,9 @@
 <!--
 <noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
 -->
-<h3 id=c0305>3.5. プラグインコーディングガイド</h3>
+<h3 id=c0305>プラグインコーディングガイド</h3>
 
-<h4 id=c030501>3.5.1. アウトライン解析(ジャック名：Outline)</h4>
+<h4 id=c030501>アウトライン解析(ジャック名：Outline)</h4>
 <div class=li100>
 　アウトライン解析プラグインは、アウトライン解析ダイアログを表示する際に一度だけ呼びだされる。プラグインコードは、編集中文書の先頭から1行ずつ読み取り、条件に合致すればOutlineオブジェクトの AddFuncInfo, AddFuncInfo2関数でアウトライン解析ダイアログに登録する。<br>
 　アウトライン解析ダイアログはあらかじめ提供されている中から適当なものをOutline.SetListType関数で選択する。ダイアログのタイトルはOutline.SetTitle関数で指定できる。<br>
@@ -91,7 +91,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 　　　　　- Fuga メソッド<br>
 </div></div></div><br>
 
-<h4 id=c030502>3.5.2. スマートインデント(ジャック名：SmartIndent)</h4>
+<h4 id=c030502>スマートインデント(ジャック名：SmartIndent)</h4>
 <div class=li100>
 　スマートインデントプラグインは、キーボードの文字キーを押下してから実際に文字が表示されるまでの間に毎回呼びだされる。プラグインコードは、編集中文書の先頭から1行ずつ読み取んで、現在行で適切なインデント幅を判断してスペースまたはタブを出力する。キー入力ごとにプラグインを呼び出すため、WSHプラグインなら負荷軽減のためUseCacheを1にしたほうがよい。<br>
 <br>
@@ -116,7 +116,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 </pre>
 </div></div>
 
-<h4 id=c030503>3.5.3. 補完候補検索 ・・・ (Ver.2.0.6.0以降)</h4>
+<h4 id=c030503>補完候補検索 ・・・ (Ver.2.0.6.0以降)</h4>
 <div class=li100>
 <b>≪ジャック≫</b><br>
 <div class=li200>
@@ -133,7 +133,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 ＋編集中ファイルの単語(有効な場合)<br>
 </div>
 
-<h4 id=c030504>3.5.4. エディタイベント ・・・ (Ver.2.0.8.0以降)</h4>
+<h4 id=c030504>エディタイベント ・・・ (Ver.2.0.8.0以降)</h4>
 <div class=li100>
 <b>≪ジャック≫</b><br>
 <div class=li200>
