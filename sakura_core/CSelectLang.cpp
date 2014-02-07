@@ -88,7 +88,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 
 	if ( m_psLangInfoList.size() == 0 ) {
 		// デフォルト情報を作成する
-		psLangInfo = new SSelLangInfo;
+		psLangInfo = new SSelLangInfo();
 		psLangInfo->hInstance = GetModuleHandle(NULL);
 
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
@@ -117,7 +117,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 	while( result ){
 		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダでない
 			// バッファに登録する。
-			psLangInfo = new SSelLangInfo;
+			psLangInfo = new SSelLangInfo();
 			_tcscpy( psLangInfo->szDllName, w32fd.cFileName );
 			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
 

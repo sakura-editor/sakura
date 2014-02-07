@@ -157,8 +157,8 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);
-	m_psFindPrev = new STagFindState;
-	m_psFind0Match = new STagFindState;
+	m_psFindPrev = new STagFindState();
+	m_psFind0Match = new STagFindState();
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
 	ClearPrevFindInfo();
