@@ -836,19 +836,9 @@
 		<param name="Local" value="source\reference\window\S_NextWindow.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="OpenCCpp">
-		<param name="Name" value="S_OpenCCpp">
-		<param name="Local" value="source\reference\file\S_OpenCCpp.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="OpenHfromtoC">
 		<param name="Name" value="S_OpenHfromtoC">
 		<param name="Local" value="source\reference\file\S_OpenHfromtoC.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="OpenHHpp">
-		<param name="Name" value="S_OpenHHpp">
-		<param name="Local" value="source\reference\file\S_OpenHHpp.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="OptionCommon">
@@ -1646,16 +1636,8 @@
 		<param name="Local" value="source\reference\window\S_NextWindow.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="S_OpenCCpp">
-		<param name="Local" value="source\reference\file\S_OpenCCpp.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_OpenHfromtoC">
 		<param name="Local" value="source\reference\file\S_OpenHfromtoC.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="S_OpenHHpp">
-		<param name="Local" value="source\reference\file\S_OpenHHpp.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_OptionCommon">

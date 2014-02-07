@@ -123,16 +123,6 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="同名のC/C++ソースを開く">
-					<param name="Local" value="source\reference\file\S_OpenHHpp.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="同名のC/C++ソースを開く">
-					<param name="Local" value="source\reference\file\S_OpenCCpp.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="SQL*Plusをアクティブ表示">
 					<param name="Local" value="source\reference\file\S_ActivateSQLPLUS.html">
 					<param name="ImageNumber" value="9">
