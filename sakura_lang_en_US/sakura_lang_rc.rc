@@ -36,7 +36,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 
 #define	S_COPYRIGHT	"Copyright (C) 2011-2014  by Lucien & Collaborators"
 #define PR_VER		2,1,1,0
-#define PR_VER_STR	"2,1,1,0"
+#define PR_VER_STR	"2.1.1.0"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -2582,7 +2582,7 @@ BEGIN
             VALUE "ProductName", "Sakura Editor Language DLL\0"
             VALUE "ProductVersion", PR_VER_STR
 #if (SVN_REV != 0)
-                " (r" SVN_REV_STR ")"
+                " (Rev." SVN_REV_STR ")"
 #endif
 #ifdef _DEBUG
                 " Debug version"
