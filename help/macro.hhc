@@ -1373,7 +1373,7 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="アウトプットウインドウに出力">
+					<param name="Name" value="トレース出力">
 					<param name="Local" value="source\reference\other\S_TraceOut.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
