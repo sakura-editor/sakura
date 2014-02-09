@@ -8,12 +8,12 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="1PageDown">
 		<param name="Name" value="S_1PageDown">
-		<param name="Local" value="source\source\reference\cursor\S_1PageDown.html">
+		<param name="Local" value="source\reference\cursor\S_1PageDown.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="1PageDown_Sel">
 		<param name="Name" value="S_1PageDown_Sel">
-		<param name="Local" value="source\source\reference\select\S_1PageDown_Sel.html">
+		<param name="Local" value="source\reference\select\S_1PageDown_Sel.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="1PageUp">
