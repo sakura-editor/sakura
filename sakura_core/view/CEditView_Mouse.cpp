@@ -201,7 +201,7 @@ normal_action:;
 		/* 現在のカーソル位置から選択を開始する */
 		GetSelectionInfo().BeginSelectArea( );
 		GetCaret().m_cUnderLine.CaretUnderLineOFF( true );
-		GetCaret().m_cUnderLine.Lock();
+		GetCaret().m_cUnderLine.UnderLineLock();
 		if( ptMouse.x < GetTextArea().GetAreaLeft() ){
 			/* カーソル下移動 */
 			GetCommander().Command_DOWN( true, false );
@@ -1485,7 +1485,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		// 20100715 Moca マウスクリック座標をリセット
 		m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 
-		GetCaret().m_cUnderLine.UnLock();
+		GetCaret().m_cUnderLine.UnderLineUnLock();
 		if( GetSelectionInfo().m_sSelect.IsOne() ){
 			/* 現在の選択範囲を非選択状態に戻す */
 			GetSelectionInfo().DisableSelectArea( true );

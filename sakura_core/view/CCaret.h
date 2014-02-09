@@ -39,6 +39,7 @@ public:
 	: m_pcEditView(pcEditView)
 	{
 		m_nLockCounter = 0;
+		m_nUnderLineLockCounter = 0;
 	}
 	// 表示非表示を切り替えられないようにする
 	void Lock()
@@ -53,6 +54,18 @@ public:
 			m_nLockCounter = 0;
 		}
 	}
+	void UnderLineLock()
+	{
+		m_nUnderLineLockCounter++;
+	}
+	// 表示非表示を切り替えられるようにする
+	void UnderLineUnLock()
+	{
+		m_nUnderLineLockCounter--;
+		if (m_nUnderLineLockCounter < 0){
+			m_nUnderLineLockCounter = 0;
+		}
+	}
 	void CaretUnderLineON( bool, bool );	// カーソル行アンダーラインのON
 	void CaretUnderLineOFF( bool, bool = true, bool = false );	// カーソル行アンダーラインのOFF
 	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
@@ -62,6 +75,7 @@ public:
 private:
 	/* ロックカウンタ。0のときは、ロックされていない。UnLockが呼ばれすぎても負にはならない */
 	int m_nLockCounter;
+	int m_nUnderLineLockCounter;
 	CEditView* m_pcEditView;
 	bool m_bUnderLineDoNotOFF;
 	bool m_bVertLineDoNotOFF;
