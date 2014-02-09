@@ -262,8 +262,8 @@ public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
 	void RedrawAll();											/* フォーカス移動時の再描画 */
 	void Redraw();										// 2001/06/21 asa-o 再描画
-	void CaretUnderLineON( bool, bool );						/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( bool, bool = true, bool = false );				/* カーソル行アンダーラインのOFF */
+	void CaretUnderLineON( bool, bool, bool );						/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( bool, bool, bool, bool );				/* カーソル行アンダーラインのOFF */
 	bool GetDrawSwitch() const
 	{
 		return m_bDrawSWITCH;

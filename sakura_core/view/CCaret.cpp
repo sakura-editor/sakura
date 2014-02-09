@@ -83,14 +83,14 @@ inline int CCaret::GetHankakuDy() const
 void CCaretUnderLine::CaretUnderLineON( bool bDraw, bool bPaintDraw )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
-	m_pcEditView->CaretUnderLineON( bDraw, bPaintDraw );
+	m_pcEditView->CaretUnderLineON( bDraw, bPaintDraw, m_nUnderLineLockCounter != 0 );
 }
 
 /* カーソル行アンダーラインのOFF */
 void CCaretUnderLine::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
-	m_pcEditView->CaretUnderLineOFF( bDraw, bDrawPaint, bResetFlag );
+	m_pcEditView->CaretUnderLineOFF( bDraw, bDrawPaint, bResetFlag, m_nUnderLineLockCounter != 0 );
 }
 
 
@@ -193,9 +193,11 @@ CLayoutInt CCaret::MoveCursor(
 
 
 	// カーソル行アンダーラインのOFF
+	DEBUG_TRACE( _T("%d, %d\n"), (int)(Int)ptWk_CaretPos.GetY2(), (int)(Int)m_pEditView->m_nOldUnderLineYBg );
+	bool bDrawPaint = ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg;
 	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
 	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
-	m_cUnderLine.CaretUnderLineOFF( bScroll, ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg );	//	YAZAKI
+	m_cUnderLine.CaretUnderLineOFF( bScroll, bDrawPaint );	//	YAZAKI
 	m_cUnderLine.SetUnderLineDoNotOFF( false );
 	m_cUnderLine.SetVertLineDoNotOFF( false );
 	
@@ -355,7 +357,7 @@ CLayoutInt CCaret::MoveCursor(
 		m_pEditView->ReleaseDC( hdc );
 
 		/* アンダーラインの再描画 */
-		m_cUnderLine.CaretUnderLineON(true, ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg);
+		m_cUnderLine.CaretUnderLineON(true, bDrawPaint);
 
 		/* キャレットの行桁位置を表示する */
 		ShowCaretPosInfo();
