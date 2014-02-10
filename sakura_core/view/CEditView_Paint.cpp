@@ -836,6 +836,7 @@ bool CEditView::DrawLogicLine(
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this);
 	pool->NotifyOnStartScanLogic();
+	bool bSkipBeforeLayout = pool->IsSkipBeforeLayout();
 
 	//DispPosを保存しておく
 	pInfo->m_sDispPosBegin = *pInfo->m_pDispPos;
@@ -849,8 +850,22 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
-		CColor3Setting cColor = GetColorIndex(pcLayout, pInfo->m_pDispPos->GetLayoutLineRef(), 0, pInfo, true);
-		SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
+		if( bSkipBeforeLayout ){
+			EColorIndexType eRet = COLORIDX_TEXT;
+			const CLayoutColorInfo* colorInfo = NULL;
+			if( pcLayout ){
+				eRet = pcLayout->GetColorTypePrev(); // COLORIDX_TEXTのはず
+				colorInfo = pcLayout->GetColorInfo();
+			}
+			pInfo->m_pStrategy = pool->GetStrategyByColor(eRet);
+			if( pInfo->m_pStrategy ){
+				pInfo->m_pStrategy->InitStrategyStatus();
+				pInfo->m_pStrategy->SetStrategyColorInfo(colorInfo);
+			}
+		}else{
+			CColor3Setting cColor = GetColorIndex(pcLayout, pInfo->m_pDispPos->GetLayoutLineRef(), 0, pInfo, true);
+			SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
+		}
 	}
 
 	//開始ロジック位置を算出
@@ -987,6 +1002,18 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         本文描画                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	bool bSkipRight = false; // 続きを描画しなくていい場合はスキップする
+	if(pcLayout){
+		const CLayout* pcLayoutNext = pcLayout->GetNextLayout();
+		if( NULL == pcLayoutNext ){
+			bSkipRight = true;
+		}else if( pcLayoutNext->GetLogicOffset() == 0 ){
+			bSkipRight = true; // 次の行は別のロジック行なのでスキップ可能
+		}
+		if( !bSkipRight ){
+			bSkipRight = CColorStrategyPool::getInstance()->IsSkipBeforeLayout();
+		}
+	}
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
@@ -1004,6 +1031,10 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 			//1文字描画
 			cFigure.DrawImp(pInfo);
+			if( bSkipRight && GetTextArea().GetAreaRight() < pInfo->m_pDispPos->GetDrawPos().x ){
+				pInfo->m_nPosInLogic = nPosTo;
+				break;
+			}
 		}
 	}
 

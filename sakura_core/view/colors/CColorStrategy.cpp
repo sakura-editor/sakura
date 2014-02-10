@@ -284,7 +284,74 @@ void CColorStrategyPool::OnChangeSetting(void)
 	m_pcLineComment = (CColor_LineComment*)GetStrategyByColor(COLORIDX_COMMENT);	// 行コメント
 	m_pcSingleQuote = (CColor_SingleQuote*)GetStrategyByColor(COLORIDX_SSTRING);	// シングルクォーテーション文字列
 	m_pcDoubleQuote = (CColor_DoubleQuote*)GetStrategyByColor(COLORIDX_WSTRING);	// ダブルクォーテーション文字列
+
+	// 色分けをしない場合に、処理をスキップできるように確認する
+	const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
+	EColorIndexType bSkipColorTypeTable[] = {
+		COLORIDX_DIGIT,
+		COLORIDX_COMMENT,
+		COLORIDX_SSTRING,
+		COLORIDX_WSTRING,
+		COLORIDX_HEREDOC,
+		COLORIDX_URL,
+		COLORIDX_KEYWORD1,
+		COLORIDX_KEYWORD2,
+		COLORIDX_KEYWORD3,
+		COLORIDX_KEYWORD4,
+		COLORIDX_KEYWORD5,
+		COLORIDX_KEYWORD6,
+		COLORIDX_KEYWORD7,
+		COLORIDX_KEYWORD8,
+		COLORIDX_KEYWORD9,
+		COLORIDX_KEYWORD10,
+	};
+	m_bSkipBeforeLayoutGeneral = true;
+	int nKeyword1;
+	int bUnuseKeyword = false;
+	for(int n = 0; n < _countof(bSkipColorTypeTable); n++ ){
+		if( COLORIDX_KEYWORD1 == bSkipColorTypeTable[n] ){
+			nKeyword1 = n;
+		}
+		if( COLORIDX_KEYWORD1 <= bSkipColorTypeTable[n] && bSkipColorTypeTable[n] <= COLORIDX_KEYWORD10 ){
+			if( type.m_nKeyWordSetIdx[n - nKeyword1] == -1 ){
+				bUnuseKeyword = true; // -1以降は無効
+			}
+			if( !bUnuseKeyword && type.m_ColorInfoArr[bSkipColorTypeTable[n]].m_bDisp ){
+				m_bSkipBeforeLayoutGeneral = false;
+				break;
+			}
+		}else if( type.m_ColorInfoArr[bSkipColorTypeTable[n]].m_bDisp ){
+			m_bSkipBeforeLayoutGeneral = false;
+			break;
+		}
+	}
+	if( m_bSkipBeforeLayoutGeneral ){
+		if( type.m_bUseRegexKeyword ){
+			m_bSkipBeforeLayoutGeneral = false;
+		}
+	}
+	m_bSkipBeforeLayoutFound = true;
+	for(int n = COLORIDX_SEARCH; n <= COLORIDX_SEARCHTAIL; n++ ){
+		if( type.m_ColorInfoArr[n].m_bDisp ){
+			m_bSkipBeforeLayoutFound = false;
+			break;
+		}
+	}
 }
+
+bool CColorStrategyPool::IsSkipBeforeLayout()
+{
+	if( !m_bSkipBeforeLayoutGeneral ){
+		return false;
+	}
+	if( !m_bSkipBeforeLayoutFound && m_pcView->m_bCurSrchKeyMark ){
+		return false;
+	}
+	return true;
+}
+
+
+
 
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
