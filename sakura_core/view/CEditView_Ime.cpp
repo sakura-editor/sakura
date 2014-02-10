@@ -199,7 +199,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	// 以下 ptSelect.y ptSelect.x, nSelectedLen を使用
 
 	//ドキュメント行取得 -> pcCurDocLine
-	CDocLine* pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptSelect.GetY2());
+	const CDocLine* pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptSelect.GetY2());
 	if (NULL == pcCurDocLine )
 		return 0;
 

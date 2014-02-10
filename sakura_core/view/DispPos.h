@@ -105,7 +105,7 @@ private:
 	CLayoutInt		m_nLineRef; //絶対レイアウト単位。
 
 	//キャッシュ############
-	CLayout*		m_pcLayoutRef;
+	const CLayout*		m_pcLayoutRef;
 };
 
 #endif /* SAKURA_DISPPOS_5705EE1C_0A31_419D_81A1_07DA95E57D879_H_ */

@@ -1047,7 +1047,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 	else if(!pcLayout && pInfo->m_pDispPos->GetLayoutLineRef()==m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
 		// ‹ós‚ÌEOF
-		CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
+		const CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
 		if(pBottom==NULL || (pBottom && pBottom->GetLayoutEol().GetLen())){
 			_DispEOF(pInfo->m_gr,pInfo->m_pDispPos,this);
 			bDispEOF = true;

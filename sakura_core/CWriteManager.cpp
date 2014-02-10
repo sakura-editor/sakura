@@ -33,7 +33,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 
 		//各行出力
 		int			nLineNumber = 0;
-		CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
+		const CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
 		// 1行目
 		{
 			++nLineNumber;

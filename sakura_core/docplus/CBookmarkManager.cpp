@@ -90,7 +90,7 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 */
 LPCWSTR CBookmarkManager::GetBookMarks()
 {
-	CDocLine*	pCDocLine;
+	const CDocLine*	pCDocLine;
 	static wchar_t szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta static‚É
 	wchar_t szBuff[10];
 	CLogicInt	nLinePos=CLogicInt(0);

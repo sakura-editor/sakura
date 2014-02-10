@@ -53,9 +53,14 @@ public:
 	CLogicInt GetLineCount() const{ return m_nLines; }	//!< 全行数を返す
 
 	//行データへのアクセス
-	CDocLine* GetLine( CLogicInt nLine ) const;						//!< 指定行を取得
-	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }		//!< 先頭行を取得
-	CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }	//!< 最終行を取得
+	const CDocLine* GetLine( CLogicInt nLine ) const;						//!< 指定行を取得
+	CDocLine* GetLine( CLogicInt nLine ){
+		return const_cast<CDocLine*>(const_cast<CDocLine*>(static_cast<const CDocLineMgr*>(this)->GetLine( nLine )));
+	}
+	const CDocLine* GetDocLineTop() const { return m_pDocLineTop; }		//!< 先頭行を取得
+	CDocLine* GetDocLineTop() { return m_pDocLineTop; }		//!< 先頭行を取得
+	const CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }	//!< 最終行を取得
+	CDocLine* GetDocLineBottom() { return m_pDocLineBot; }	//!< 最終行を取得
 
 	//行データの管理
 	CDocLine* InsertNewLine(CDocLine* pPos);	//!< pPosの直前に新しい行を挿入
