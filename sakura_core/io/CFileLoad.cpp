@@ -265,11 +265,11 @@ EConvertResult CFileLoad::ReadLine(
 			// バッファロード   File -> ReadBuf
 			Buffering();
 		}else{
-			cLineBuffer.AppendRawData( pLine, nBufLineLen );
+			cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
 			break;
 		}
 	}
-	m_nReadLength += ( nBufLineLen = cLineBuffer.GetRawLength() );
+	m_nReadLength += cLineBuffer.GetRawLength();
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
 	EConvertResult eConvertResult = CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
@@ -288,12 +288,7 @@ EConvertResult CFileLoad::ReadLine(
 			}
 		}
 	}
-	// データあり
-	if( 0 != pUnicodeBuffer->GetStringLength() + nEolLen ){
-		// 改行コードを追加
-		pUnicodeBuffer->AppendString( pcEol->GetValue2(), pcEol->GetLen() );
-	}
-	else{
+	if( 0 == pUnicodeBuffer->GetStringLength() ){
 		eRet = RESULT_FAILURE;
 	}
 
