@@ -2370,8 +2370,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = GetTextArea().GetAreaLeft();
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
-			ps.rcPaint.top = GetTextArea().GetAreaTop() + (Int)(m_nOldUnderLineY - GetTextArea().GetViewTopLine())
-				 * (GetTextMetrics().GetHankakuDy());
+			ps.rcPaint.top = GetTextArea().GenerateYPx(m_nOldUnderLineY);
 			ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
 
 			// 描画
@@ -2479,8 +2478,16 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 		 && !GetCaret().m_cUnderLine.GetUnderLineDoNotOFF()	// アンダーラインを消去するか
 		){
 			// -- -- カーソル行アンダーラインの消去（無理やり） -- -- //
-			int nUnderLineY = GetTextArea().GetAreaTop() + (Int)(m_nOldUnderLineY - GetTextArea().GetViewTopLine())
-			 * GetTextMetrics().GetHankakuDy();
+			int nUnderLineY; // client px
+			CLayoutYInt nY = m_nOldUnderLineY - GetTextArea().GetViewTopLine();
+			int nPosY;
+			if( nY < 0 ){
+				nUnderLineY = -1;
+			}else if( GetTextArea().m_nViewRowNum < nY ){
+				nUnderLineY = GetTextArea().GetAreaBottom() + 1;
+			}else{
+				nUnderLineY = GetTextArea().GetAreaTop() + (Int)(nY) * GetTextMetrics().GetHankakuDy();
+			}
 
 			GetCaret().m_cUnderLine.Lock();
 

@@ -1028,9 +1028,17 @@ POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 	int nPosX = m_pEditView->GetTextArea().GetAreaLeft()
 		+ (Int)(ptCaretPos.x - m_pEditView->GetTextArea().GetViewLeftCol()) * GetHankakuDx();
 
-	int nPosY = m_pEditView->GetTextArea().GetAreaTop()
-		+ (Int)(ptCaretPos.y - m_pEditView->GetTextArea().GetViewTopLine()) * m_pEditView->GetTextMetrics().GetHankakuDy()
-		+ m_pEditView->GetTextMetrics().GetHankakuHeight() - GetCaretSize().cy; //‰ºŠñ‚¹
+	CLayoutYInt nY = ptCaretPos.y - m_pEditView->GetTextArea().GetViewTopLine();
+	int nPosY;
+	if( nY < 0 ){
+		nPosY = -1;
+	}else if( m_pEditView->GetTextArea().m_nViewRowNum < nY ){
+		nPosY = m_pEditView->GetTextArea().GetAreaBottom() + 1;
+	}else{
+		nPosY = m_pEditView->GetTextArea().GetAreaTop()
+			+ (Int)(nY) * m_pEditView->GetTextMetrics().GetHankakuDy()
+			+ m_pEditView->GetTextMetrics().GetHankakuHeight() - GetCaretSize().cy; //‰ºŠñ‚¹
+	}
 
 	return CMyPoint(nPosX,nPosY);
 }

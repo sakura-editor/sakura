@@ -352,7 +352,7 @@ void CLayoutMgr::_DoLayout()
 		
 		// 処理中のユーザー操作を可能にする
 		if( GetListenerCount()!=0 && 0 < nAllLineNum && 0 == ( pWork->nCurLine % 1024 ) ){
-			NotifyProgress(pWork->nCurLine * 100 / nAllLineNum);
+			NotifyProgress(::MulDiv( pWork->nCurLine, 100 , nAllLineNum ) );
 			if( !::BlockingHook( NULL ) )return;
 		}
 
