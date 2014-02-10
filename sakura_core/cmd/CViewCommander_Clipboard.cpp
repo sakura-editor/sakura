@@ -219,8 +219,9 @@ void CViewCommander::Command_PASTE( int option )
 	}
 
 	if( bConvertEol ){
-		wchar_t	*pszConvertedText = new wchar_t[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
-		CLogicInt nConvertedTextLen = ConvertEol( pszText, nTextLen, pszConvertedText );
+		CLogicInt nConvertedTextLen = ConvertEol( pszText, nTextLen, NULL );
+		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
+		ConvertEol( pszText, nTextLen, pszConvertedText );
 		// テキストを貼り付け
 		Command_INSTEXT( true, pszConvertedText, nConvertedTextLen, true, bLineSelect );	// 2010.09.17 ryoji
 		delete [] pszConvertedText;
