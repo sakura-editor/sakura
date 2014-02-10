@@ -225,6 +225,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
 	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, ref, ref.m_nTabSpace, nMaxLineKetas );
+	pcDoc->m_pcEditWnd->ClearViewCaretPosInfo();
+	
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	return eRet;

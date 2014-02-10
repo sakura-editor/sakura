@@ -186,6 +186,7 @@ void CEditDoc::Clear()
 		nMaxLineKetas = MAXLINEKETAS;
 	}
 	m_cLayoutMgr.SetLayoutInfo( true, ref, ref.m_nTabSpace, nMaxLineKetas );
+	m_pcEditWnd->ClearViewCaretPosInfo();
 }
 
 /* 既存データのクリア */
@@ -777,6 +778,8 @@ void CEditDoc::OnChangeSetting(
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
 	m_cLayoutMgr.SetLayoutInfo( bDoLayout, ref, nTabSpace, nMaxLineKetas );
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
+	m_pcEditWnd->ClearViewCaretPosInfo();
+
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )

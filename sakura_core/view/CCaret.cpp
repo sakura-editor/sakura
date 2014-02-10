@@ -113,6 +113,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
 	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 	m_bClearStatus = true;
+	ClearCaretPosInfoCache();
 }
 
 CCaret::~CCaret()
@@ -704,8 +705,54 @@ void CCaret::ShowCaretPosInfo()
 		ptCaret.x = 0;
 		ptCaret.y = (Int)GetCaretLogicPos().y;
 		if(pcLayout){
-			// 2013.05.11 折り返しなしとして計算する
-			CLayoutInt offset = pcLayout->CalcLayoutOffset(*pLayoutMgr);
+			// 2014.01.10 改行のない大きい行があると遅いのでキャッシュする
+			CLayoutInt offset;
+			if( m_nLineLogicNoCache == pcLayout->GetLogicLineNo()
+				&& m_nLineNoCache == GetCaretLayoutPos().GetY2()
+				&& m_nLineLogicModCache == CModifyVisitor().GetLineModifiedSeq( pcLayout->GetDocLineRef() ) ){
+				offset = m_nOffsetCache;
+			}else if( m_nLineLogicNoCache == pcLayout->GetLogicLineNo()
+				&& m_nLineNoCache < GetCaretLayoutPos().GetY2()
+				&& m_nLineLogicModCache == CModifyVisitor().GetLineModifiedSeq( pcLayout->GetDocLineRef() ) ){
+				// 下移動
+				offset = pcLayout->CalcLayoutOffset(*pLayoutMgr, m_nLogicOffsetCache, m_nOffsetCache);
+				m_nOffsetCache = offset;
+				m_nLogicOffsetCache = pcLayout->GetLogicOffset();
+				m_nLineNoCache = GetCaretLayoutPos().GetY2();
+			}else if(m_nLineLogicNoCache == pcLayout->GetLogicLineNo()
+				&& m_nLineNo50Cache <= GetCaretLayoutPos().GetY2()
+				&& GetCaretLayoutPos().GetY2() <= m_nLineNo50Cache + 50
+				&& m_nLineLogicModCache == CModifyVisitor().GetLineModifiedSeq( pcLayout->GetDocLineRef() ) ){
+				// 上移動
+				offset = pcLayout->CalcLayoutOffset(*pLayoutMgr, m_nLogicOffset50Cache, m_nOffset50Cache);
+				m_nOffsetCache = offset;
+				m_nLogicOffsetCache = pcLayout->GetLogicOffset();
+				m_nLineNoCache = GetCaretLayoutPos().GetY2();
+			}else{
+				// 2013.05.11 折り返しなしとして計算する
+				const CLayout* pcLayout50 = pcLayout;
+				CLayoutInt nLineNum = GetCaretLayoutPos().GetY2();
+				for(;;){
+					if( pcLayout50->GetLogicOffset() == 0 ){
+						break;
+					}
+					if( nLineNum + 50 == GetCaretLayoutPos().GetY2() ){
+						break;
+					}
+					pcLayout50 = pcLayout50->GetPrevLayout();
+					nLineNum--;
+				}
+				m_nOffset50Cache = pcLayout50->CalcLayoutOffset(*pLayoutMgr);
+				m_nLogicOffset50Cache = pcLayout50->GetLogicOffset();
+				m_nLineNo50Cache = nLineNum;
+				
+				offset = pcLayout->CalcLayoutOffset(*pLayoutMgr, m_nLogicOffset50Cache, m_nLineNo50Cache);
+				m_nOffsetCache = offset;
+				m_nLogicOffsetCache = pcLayout->GetLogicOffset();
+				m_nLineLogicNoCache = pcLayout->GetLogicLineNo();
+				m_nLineNoCache = GetCaretLayoutPos().GetY2();
+				m_nLineLogicModCache = CModifyVisitor().GetLineModifiedSeq( pcLayout->GetDocLineRef() );
+			}
 			CLayout cLayout(
 				pcLayout->GetDocLineRef(),
 				pcLayout->GetLogicPos(),
@@ -837,6 +884,18 @@ void CCaret::ShowCaretPosInfo()
 		::StatusBar_SetText( hwndStatusBar, 6 | 0,             szText_6 );
 	}
 
+}
+
+void CCaret::ClearCaretPosInfoCache()
+{
+	m_nOffsetCache = CLayoutInt(-1);
+	m_nLineNoCache = CLayoutInt(-1);
+	m_nLogicOffsetCache = CLogicInt(-1);
+	m_nLineLogicNoCache = CLogicInt(-1);
+	m_nLineNo50Cache = CLayoutInt(-1);
+	m_nOffset50Cache = CLayoutInt(-1);
+	m_nLogicOffset50Cache = CLogicInt(-1);
+	m_nLineLogicModCache = -1;
 }
 
 /* カーソル上下移動処理 */

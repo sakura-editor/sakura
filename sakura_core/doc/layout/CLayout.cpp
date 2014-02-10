@@ -59,13 +59,14 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 }
 
 //! オフセット値をレイアウト単位に変換して取得。2007.10.17 kobake
-CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const
+CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nStartPos, CLayoutInt nStartOffset) const
 {
-	CLayoutInt nRet(0);
+	CLayoutInt nRet = nStartOffset;
 	if(this->GetLogicOffset()){
 		const wchar_t* pLine = this->m_pCDocLine->GetPtr();
 		int nLineLen = this->m_pCDocLine->GetLengthWithEOL();
-		for(int i=0;i<GetLogicOffset();i++){
+		const int nOffset = GetLogicOffset();
+		for(int i = (Int)nStartPos; i < nOffset; i++){
 			if(pLine[i]==WCODE::TAB){
 				nRet+=cLayoutMgr.GetActualTabSpace(nRet);
 			}

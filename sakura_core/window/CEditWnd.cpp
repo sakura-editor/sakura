@@ -4430,6 +4430,7 @@ BOOL CEditWnd::WrapWindowWidth( int nPane )
 	CLayoutInt nWidth = GetView(nPane).ViewColNumToWrapColNum( GetView(nPane).GetTextArea().m_nViewColNum );
 	if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
 		ChangeLayoutParam( false, GetDocument()->m_cLayoutMgr.GetTabSpace(), nWidth );
+		ClearViewCaretPosInfo();
 		return TRUE;
 	}
 	return FALSE;
@@ -4481,6 +4482,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 
 	//	レイアウトの更新
 	GetDocument()->m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
+	ClearViewCaretPosInfo();
 
 	//	座標の復元
 	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
@@ -4745,4 +4747,12 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 		return CWM_CACHE_LOCAL;
 	}
 	return CWM_CACHE_SHARE;
+}
+
+
+void CEditWnd::ClearViewCaretPosInfo()
+{
+	for( int v = 0; v < GetAllViewCount(); ++v ){
+		GetView(v).GetCaret().ClearCaretPosInfoCache();
+	}
 }

@@ -58,6 +58,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 
 	if( bReplace ){
 		m_pcDocRef->m_cLayoutMgr._DoLayout();
+		m_pcDocRef->m_pcEditWnd->ClearViewCaretPosInfo();
 		if( m_pcDocRef->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 			m_pcDocRef->m_cLayoutMgr.CalculateTextWidth();
 		}else{

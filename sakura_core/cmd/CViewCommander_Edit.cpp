@@ -461,6 +461,7 @@ void CViewCommander::Command_UNDO( void )
 			if( bFastMode ){
 				if( i == 0 ){
 					GetDocument()->m_cLayoutMgr._DoLayout();
+					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
 					}
@@ -714,6 +715,7 @@ void CViewCommander::Command_REDO( void )
 			if( bFastMode ){
 				if( i == nOpeBlkNum - 1	){
 					GetDocument()->m_cLayoutMgr._DoLayout();
+					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
 					}
