@@ -31,15 +31,15 @@ public:
 	CJis(bool base64decode = true) : m_base64decode(base64decode) { }
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ *pDst->_GetMemory()=cSrc; return JISToUnicode(pDst->_GetMemory(),m_base64decode); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ *pDst=*cSrc._GetMemory(); return UnicodeToJIS(pDst); }	//!< UNICODE    → 特定コード 変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return JISToUnicode(cSrc, pDst, m_base64decode); }	//!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToJIS(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:
 	//実装
-	static EConvertResult JISToUnicode(CMemory* pMem, bool base64decode = true);	// E-Mail(JIS→Unicode)コード変換	//2007.08.13 kobake 追加
-	static EConvertResult UnicodeToJIS(CMemory* pMem);		// Unicode   → JISコード変換
+	static EConvertResult JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool base64decode = true);	// E-Mail(JIS→Unicode)コード変換	//2007.08.13 kobake 追加
+	static EConvertResult UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   → JISコード変換
 
 protected:
 	// 2008.11.10  変換ロジックを書き直す

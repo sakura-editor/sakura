@@ -340,8 +340,12 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		char* szData = GlobalLockChar(hText);
 		//SJIS¨UNICODE
 		CMemory cmemSjis( szData, GlobalSize(hText) );
-		CShiftJis::SJISToUnicode(&cmemSjis);
-		cmemBuf->SetString( reinterpret_cast<const wchar_t*>(cmemSjis.GetRawPtr()) );
+		CNativeW cmemUni;
+		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
+		cmemSjis.Clean();
+		// '\0'‚Ü‚Å‚ðŽæ“¾
+		cmemUni._SetStringLength(auto_strlen(cmemUni.GetStringPtr()));
+		cmemUni.swap(*cmemBuf);
 		::GlobalUnlock(hText);
 		return true;
 	}

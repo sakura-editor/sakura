@@ -31,15 +31,15 @@
 class CEuc : public CCodeBase{
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ *pDst->_GetMemory()=cSrc; return EUCToUnicode(pDst->_GetMemory()); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ *pDst=*cSrc._GetMemory(); return UnicodeToEUC(pDst); }	//!< UNICODE    → 特定コード 変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return EUCToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToEUC(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:
 	//実装
-	static EConvertResult EUCToUnicode(CMemory* pMem);		// EUC       → Unicodeコード変換  //2007.08.13 kobake 追加
-	static EConvertResult UnicodeToEUC(CMemory* pMem);		// Unicode   → EUCコード変換
+	static EConvertResult EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// EUC       → Unicodeコード変換  //2007.08.13 kobake 追加
+	static EConvertResult UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   → EUCコード変換
 
 public:
 	// 実装

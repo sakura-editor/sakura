@@ -33,10 +33,10 @@ public:
 
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< 特定コード → UNICODE    変換
-		*pDst->_GetMemory()=cSrc; return CUtf8::CESU8ToUnicode(pDst->_GetMemory());
+		return CUtf8::CESU8ToUnicode(cSrc, pDst);
 	}
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    → 特定コード 変換
-		*pDst=*cSrc._GetMemory(); return CUtf8::UnicodeToCESU8(pDst);
+		return CUtf8::UnicodeToCESU8(cSrc, pDst);
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi

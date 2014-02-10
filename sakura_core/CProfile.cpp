@@ -154,7 +154,8 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType )
 	char*		pn;
 	size_t		lnsz;
 	wstring		line;
-
+	CMemory cmLine;
+	CNativeW cmLineW;
 	m_strProfileName = _T("-Res-");
 
 	if (( hRsrc = ::FindResource( 0, pName, pType )) != NULL
@@ -183,9 +184,9 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType )
 			if (sLine[lnsz-1] == '\r')	sLine[--lnsz] = '\0';
 			
 			// UTF-8 -> UNICODE
-			CMemory cmLine( sLine, lnsz );
-			CUtf8::UTF8ToUnicode( &cmLine );
-			line = (const wchar_t*)cmLine.GetRawPtr();
+			cmLine.SetRawDataHoldBuffer( sLine, lnsz );
+			CUtf8::UTF8ToUnicode( cmLine, &cmLineW );
+			line = cmLineW.GetStringPtr();
 
 			//âêÕ
 			ReadOneline(line);

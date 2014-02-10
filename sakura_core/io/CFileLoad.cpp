@@ -240,8 +240,7 @@ EConvertResult CFileLoad::ReadLine(
 	}
 #endif
 	//行データバッファ (文字コード変換無しの生のデータ)
-	/*static */CMemory cLineBuffer;
-	cLineBuffer.SetRawData("",0);
+	m_cLineBuffer.SetRawDataHoldBuffer("",0);
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
@@ -260,19 +259,19 @@ EConvertResult CFileLoad::ReadLine(
 
 		// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
-			cLineBuffer.AppendRawData( pLine, nBufLineLen );
+			m_cLineBuffer.AppendRawData( pLine, nBufLineLen );
 			m_nReadBufOffSet -= nEolLen;
 			// バッファロード   File -> ReadBuf
 			Buffering();
 		}else{
-			cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
+			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
 			break;
 		}
 	}
-	m_nReadLength += cLineBuffer.GetRawLength();
+	m_nReadLength += m_cLineBuffer.GetRawLength();
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	EConvertResult eConvertResult = CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
+	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
 	if(eConvertResult==RESULT_LOSESOME){
 		eRet = RESULT_LOSESOME;
 	}

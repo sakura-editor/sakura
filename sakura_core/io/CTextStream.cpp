@@ -52,25 +52,26 @@ CTextInputStream::~CTextInputStream()
 wstring CTextInputStream::ReadLineW()
 {
 	//$$ 非効率だけど今のところは許して。。
-	CMemory line;
+	CNativeW line;
+	line.AllocStringBuffer(60);
 	for (;;) {
 		int c=getc(GetFp());
 		if(c==EOF)break; //EOFで終了
 		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" または "\r\n" で終了
 		if(c=='\n')break; //"\n" で終了
-		line.AppendRawData(&c,sizeof(char));
+		line._GetMemory()->AppendRawData(&c,sizeof(char));
 	}
 
 	//UTF-8 → UNICODE
 	if(m_bIsUtf8){
-		CUtf8::UTF8ToUnicode(&line);
+		CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line);
 	}
 	//Shift_JIS → UNICODE
 	else{
-		CShiftJis::SJISToUnicode(&line);
+		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
 	}
 
-	return wstring().assign( (wchar_t*)line.GetRawPtr(), line.GetRawLength()/sizeof(wchar_t) );	// EOL まで NULL 文字も含める
+	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL まで NULL 文字も含める
 }
 
 
