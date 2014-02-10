@@ -364,7 +364,7 @@ void CEditView::ISearchExec(bool bNext)
 			CLogicInt nLineP;
 			int nIdxP;
 			nLineP =  m_pcEditDoc->m_cDocLineMgr.GetLineCount() - CLogicInt(1);
-			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( nLineP );
+			const CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( nLineP );
 			nIdxP = pDocLine->GetLengthWithEOL() -1;
 			CLayoutPoint ptTmp;
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(CLogicPoint(nIdxP,nLineP),&ptTmp);
@@ -392,7 +392,7 @@ void CEditView::ISearchExec(bool bNext)
 	}
 
 	//Œ…ˆÊ’u‚©‚çindex‚É•ÏŠ·
-	CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLine );
+	const CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLine );
 	CLogicInt nIdx = LineColumnToIndex( pCLayout, nIdx1 );
 
 	m_nISearchHistoryCount ++ ;

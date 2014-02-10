@@ -353,7 +353,7 @@ bool CSearchAgent::WhereCurrentWord(
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
 
-	CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLineNum );
+	const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLineNum );
 	if( NULL == pDocLine ){
 		return false;
 	}
@@ -379,7 +379,7 @@ bool CSearchAgent::PrevOrNextWord(
 {
 	using namespace WCODE;
 
-	CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLineNum );
+	const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLineNum );
 	if( NULL == pDocLine ){
 		return false;
 	}

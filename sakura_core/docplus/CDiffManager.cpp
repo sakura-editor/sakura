@@ -145,7 +145,7 @@ bool CDiffLineMgr::SearchDiffMark(
 	if( bPrevOrNext == SEARCH_BACKWARD )
 	{
 		nLinePos--;
-		CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
+		const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
 		while( pDocLine )
 		{
 			if( CDiffLineGetter(pDocLine).GetLineDiffMark() != 0 )
@@ -161,7 +161,7 @@ bool CDiffLineMgr::SearchDiffMark(
 	else
 	{
 		nLinePos++;
-		CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
+		const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
 		while( pDocLine )
 		{
 			if( CDiffLineGetter(pDocLine).GetLineDiffMark() != 0 )

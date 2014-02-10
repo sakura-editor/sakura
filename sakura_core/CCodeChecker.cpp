@@ -17,7 +17,7 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 	bool bMix = false;
 	if( cEolType == EOL_NONE ){	//改行コード変換なし
 		CEol cEolCheck;	//比較対象EOL
-		CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
+		const CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
 		if( pcDocLine ){
 			cEolCheck = pcDocLine->GetEol();
 		}
@@ -36,7 +36,7 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 //! CDocLineMgrが保持するデータを指定文字コードで安全に保存できるかどうか判定する
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECodeType eCodeType)
 {
-	CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
+	const CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
 	CCodeBase* pCodeBase=CCodeFactory::CreateCodeBase(eCodeType,0);
 	while( pcDocLine ){
 		// コード変換 pcDocLine -> cmemTmp

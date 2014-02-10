@@ -133,7 +133,7 @@ void CViewCommander::Command_WordDelete( void )
 //行頭まで切り取り(改行単位)
 void CViewCommander::Command_LineCutToStart( void )
 {
-	CLayout*	pCLayout;
+	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 切り取り(選択範囲をクリップボードにコピーして削除) */
 		Command_CUT();
@@ -166,7 +166,7 @@ void CViewCommander::Command_LineCutToStart( void )
 //行末まで切り取り(改行単位)
 void CViewCommander::Command_LineCutToEnd( void )
 {
-	CLayout*	pCLayout;
+	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 切り取り(選択範囲をクリップボードにコピーして削除) */
 		Command_CUT();
@@ -218,7 +218,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 //行頭まで削除(改行単位)
 void CViewCommander::Command_LineDeleteToStart( void )
 {
-	CLayout*	pCLayout;
+	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		m_pCommanderView->DeleteData( true );
 		return;
@@ -251,7 +251,7 @@ void CViewCommander::Command_LineDeleteToStart( void )
 //行末まで削除(改行単位)
 void CViewCommander::Command_LineDeleteToEnd( void )
 {
-	CLayout*	pCLayout;
+	const CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		m_pCommanderView->DeleteData( true );
 		return;

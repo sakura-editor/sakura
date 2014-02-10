@@ -1005,7 +1005,7 @@ void CViewCommander::Command_WndScrollUp(void)
 */
 void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 {
-	CDocLine* pcDocLine;
+	const CDocLine* pcDocLine;
 	int nCaretPointer = 0;
 	
 	bool nFirstLineIsEmptyLine = false;
@@ -1083,7 +1083,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 */
 void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 {
-	CDocLine* pcDocLine;
+	const CDocLine* pcDocLine;
 	int nCaretPointer = -1;
 
 	bool nFirstLineIsEmptyLine = false;

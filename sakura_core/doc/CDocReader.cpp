@@ -12,7 +12,7 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 {
 	int			nDataLen;
 	int			nLineLen;
-	CDocLine* 	pDocLine;
+	const CDocLine* 	pDocLine;
 
 	pDocLine = m_pcDocLineMgr->GetDocLineTop();
 	nDataLen = 0;
@@ -50,7 +50,7 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 
 const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 {
-	CDocLine* pDocLine;
+	const CDocLine* pDocLine;
 	pDocLine = m_pcDocLineMgr->GetLine( nLine );
 	if( NULL == pDocLine ){
 		*pnLineLen = CLogicInt(0);
@@ -97,7 +97,7 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 	}else{
 		pszLine = m_pcDocLineMgr->GetDocLineTop()->GetDocLineStrWithEOL( pnLineLen );
 
-		m_pcDocLineMgr->m_pDocLineCurrent = m_pcDocLineMgr->GetDocLineTop()->GetNextLine();
+		m_pcDocLineMgr->m_pDocLineCurrent = const_cast<CDocLine*>(m_pcDocLineMgr->GetDocLineTop()->GetNextLine());
 	}
 	return pszLine;
 }
