@@ -193,7 +193,6 @@ CLayoutInt CCaret::MoveCursor(
 
 
 	// カーソル行アンダーラインのOFF
-	DEBUG_TRACE( _T("%d, %d\n"), (int)(Int)ptWk_CaretPos.GetY2(), (int)(Int)m_pEditView->m_nOldUnderLineYBg );
 	bool bDrawPaint = ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg;
 	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
 	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
