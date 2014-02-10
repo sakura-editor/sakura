@@ -34,10 +34,10 @@ public:
 
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< 特定コード → UNICODE    変換
-		*pDst->_GetMemory()=cSrc; return UTF8ToUnicode(pDst->_GetMemory());
+		return UTF8ToUnicode(cSrc, pDst);
 	}
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    → 特定コード 変換
-		*pDst=*cSrc._GetMemory(); return UnicodeToUTF8(pDst);
+		return UnicodeToUTF8(cSrc, pDst);
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi
@@ -48,12 +48,12 @@ public:
 	// UTF-8 / CESU-8 <-> Unicodeコード変換
 	//2007.08.13 kobake 追加
 	//2009.01.08        CESU-8 に対応
-	static EConvertResult _UTF8ToUnicode( CMemory* pMem, bool bCESU8Mode );
-	static EConvertResult _UnicodeToUTF8( CMemory* pMem, bool bCESU8Mode );
-	inline static EConvertResult UTF8ToUnicode( CMemory* pmem ){ return _UTF8ToUnicode(pmem,false); }	// UTF-8 -> Unicodeコード変換
-	inline static EConvertResult CESU8ToUnicode( CMemory* pmem ){ return _UTF8ToUnicode(pmem,true); }	// CESU-8 -> Unicodeコード変換
-	inline static EConvertResult UnicodeToUTF8( CMemory* pmem ){ return  _UnicodeToUTF8(pmem,false); }	// Unicode → UTF-8コード変換
-	inline static EConvertResult UnicodeToCESU8( CMemory* pmem ){ return _UnicodeToUTF8(pmem,true); }	// Unicode → CESU-8コード変換
+	static EConvertResult _UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode );
+	static EConvertResult _UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bool bCESU8Mode );
+	inline static EConvertResult UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, false); }	// UTF-8 -> Unicodeコード変換
+	inline static EConvertResult CESU8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, true); }	// CESU-8 -> Unicodeコード変換
+	inline static EConvertResult UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDst ){ return  _UnicodeToUTF8(cSrc, pDst, false); }	// Unicode → UTF-8コード変換
+	inline static EConvertResult UnicodeToCESU8( const CNativeW& cSrc, CMemory* pDst ){ return _UnicodeToUTF8(cSrc, pDst, true); }	// Unicode → CESU-8コード変換
 
 protected:
 

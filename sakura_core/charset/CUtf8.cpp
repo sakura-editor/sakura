@@ -71,14 +71,14 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 
 //! UTF-8→Unicodeコード変換
 // 2007.08.13 kobake 作成
-EConvertResult CUtf8::_UTF8ToUnicode( CMemory* pMem, bool bCESU8Mode/*, bool decodeMime*/ )
+EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode/*, bool decodeMime*/ )
 {
 	// エラー状態
 	bool bError = false;
 
 	// データ取得
 	int nSrcLen;
-	const char* pSrc = reinterpret_cast<const char*>( pMem->GetRawPtr(&nSrcLen) );
+	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
  
 	const char* psrc = pSrc;
 	int nsrclen = nSrcLen;
@@ -107,8 +107,8 @@ EConvertResult CUtf8::_UTF8ToUnicode( CMemory* pMem, bool bCESU8Mode/*, bool dec
 	// 変換
 	int nDstLen = Utf8ToUni( psrc, nsrclen, pDst, bCESU8Mode );
 
-	// pMem を更新
-	pMem->SetRawData( pDst, nDstLen*sizeof(wchar_t) );
+	// pDstMem を更新
+	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
 
 	// 後始末
 	delete [] pDst;
@@ -179,14 +179,14 @@ int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 
 
 //! コード変換 Unicode→UTF-8
-EConvertResult CUtf8::_UnicodeToUTF8( CMemory* pMem, bool bCesu8Mode )
+EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bool bCesu8Mode )
 {
 	// エラー状態
 	bool bError = false;
 
 	// ソースを取得
-	const wchar_t* pSrc = reinterpret_cast<wchar_t*>( pMem->GetRawPtr() );
-	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
+	const wchar_t* pSrc = cSrc.GetStringPtr();
+	int nSrcLen = cSrc.GetStringLength();
 
 
 	// 必要なバッファサイズを調べてメモリを確保
@@ -203,8 +203,8 @@ EConvertResult CUtf8::_UnicodeToUTF8( CMemory* pMem, bool bCesu8Mode )
 	// 変換
 	int nDstLen = UniToUtf8( pSrc, nSrcLen, pDst, &bError, bCesu8Mode );
 
-	// pMem を更新
-	pMem->SetRawData( pDst, nDstLen );
+	// pDstMem を更新
+	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
 	// 後始末
 	delete [] pDst;
@@ -219,7 +219,7 @@ EConvertResult CUtf8::_UnicodeToUTF8( CMemory* pMem, bool bCesu8Mode )
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
 EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
 {
-	CMemory	cBuff;
+	CNativeW		cBuff;
 	EConvertResult	res;
 	int				i;
 	TCHAR*			pd;
@@ -230,13 +230,13 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR*
 		// Unicodeで表示
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
-
+	cBuff.AllocStringBuffer(4);
 	// 1文字データバッファ
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
-		cBuff.SetRawData(cSrc,4);
+		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 4);
 	}
 	else {
-		cBuff.SetRawData(cSrc,2);
+		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 2);
 		if( IsBinaryOnSurrogate(cSrc[0]) ){
 			bbinary = true;
 		}
@@ -244,20 +244,20 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR*
 
 	// UTF-8/CESU-8 変換
 	if (bCESUMode != true) {
-		res = UnicodeToUTF8(&cBuff);
+		res = UnicodeToUTF8(cBuff, cBuff._GetMemory());
 	}
 	else {
-		res = UnicodeToCESU8(&cBuff);
+		res = UnicodeToCESU8(cBuff, cBuff._GetMemory());
 	}
 	if (res != RESULT_COMPLETE) {
 		return res;
 	}
 
 	// Hex変換
-	ps = reinterpret_cast<unsigned char*>( cBuff.GetRawPtr() );
+	ps = reinterpret_cast<unsigned char*>( cBuff._GetMemory()->GetRawPtr() );
 	pd = pDst;
 	if( bbinary == false ){
-		for (i = cBuff.GetRawLength(); i >0; i--, ps ++, pd += 2) {
+		for (i = cBuff._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
 			auto_sprintf( pd, _T("%02X"), *ps);
 		}
 	}else{

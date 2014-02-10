@@ -6,34 +6,60 @@
 #include "mem/CMemory.h"
 #include "CEol.h"
 
-EConvertResult CUnicode::_UnicodeToUnicode_in( CMemory* pMem, const bool bBigEndian )
+EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pDstMem, const bool bBigEndian )
 {
 	// ソース取得
 	int nSrcLen;
-	unsigned char* pSrc = reinterpret_cast<unsigned char*>( pMem->GetRawPtr(&nSrcLen) );
+	const unsigned char* pSrc = reinterpret_cast<const unsigned char*>( cSrc.GetRawPtr(&nSrcLen) );
+	CMemory* pDstMem2 = pDstMem->_GetMemory();
 
 	EConvertResult res = RESULT_COMPLETE;
+	bool bCopy = false;
 	if( nSrcLen % 2 == 1 ){
 		// 不足分の最終1バイトとして 0x00 を補う。
-		pMem->AllocBuffer( nSrcLen + 1 );
-		if( pMem->GetRawPtr() != NULL ){
-			pSrc[nSrcLen] = 0;
-			pMem->_SetRawLength( nSrcLen + 1 );
+		pDstMem2->AllocBuffer( nSrcLen + 1 );
+		unsigned char* pDst  = reinterpret_cast<unsigned char*>( pDstMem2->GetRawPtr() );
+		if( pDstMem2->GetRawPtr() != NULL ){
+			if( &cSrc != pDstMem2 ){
+				pDstMem2->SetRawDataHoldBuffer(pSrc, nSrcLen);
+				bCopy = true;
+			}
+			pDst[nSrcLen] = 0;
+			pDstMem2->_SetRawLength(nSrcLen + 1);
+			res = RESULT_LOSESOME;
+		}else{
+			return RESULT_FAILURE;
 		}
-		res = RESULT_LOSESOME;
 	}
 
 	if( bBigEndian ){
-		pMem->SwapHLByte();  // UnicodeBe -> Unicode
+		if( &cSrc != pDstMem2 && !bCopy ){
+			// コピーしつつ UnicodeBe -> Unicode
+			pDstMem2->SwabHLByte(cSrc);
+		}else{
+			pDstMem2->SwapHLByte();  // UnicodeBe -> Unicode
+		}
+	}else if( !bCopy ){
+		pDstMem2->SetRawDataHoldBuffer(pSrc, nSrcLen);
 	}
 	return res;
 }
 
 
-EConvertResult CUnicode::_UnicodeToUnicode_out( CMemory* pMem, const bool bBigEndian )
+EConvertResult CUnicode::_UnicodeToUnicode_out( const CNativeW& cSrc, CMemory* pDstMem, const bool bBigEndian )
 {
 	if( bBigEndian == true ){
-		pMem->SwapHLByte();   // Unicode -> UnicodeBe
+		if( cSrc._GetMemory() == pDstMem ){
+			pDstMem->SwapHLByte();   // Unicode -> UnicodeBe
+		}else{
+			pDstMem->SwabHLByte(*(cSrc._GetMemory()));
+		}
+	}else{
+		if( cSrc._GetMemory() != pDstMem ){
+			pDstMem->SetRawDataHoldBuffer(*(cSrc._GetMemory()));
+		}else{
+			// 何もしない
+		}
 	}
 
 	return RESULT_COMPLETE;   // 何もしない

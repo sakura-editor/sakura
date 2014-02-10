@@ -56,6 +56,8 @@ public:
 	void AllocBuffer( int );                               //!< バッファサイズの調整。必要に応じて拡大する。
 	void SetRawData( const void* pData, int nDataLen );    //!< バッファの内容を置き換える
 	void SetRawData( const CMemory& );                     //!< バッファの内容を置き換える
+	void SetRawDataHoldBuffer( const void* pData, int nDataLen );    //!< バッファの内容を置き換える(バッファを保持)
+	void SetRawDataHoldBuffer( const CMemory& );                     //!< バッファの内容を置き換える(バッファを保持)
 	void AppendRawData( const void* pData, int nDataLen ); //!< バッファの最後にデータを追加する
 	void AppendRawData( const CMemory* );                  //!< バッファの最後にデータを追加する
 	void Clean(){ _Empty(); }
@@ -76,6 +78,7 @@ public:
 	// 変換関数
 	static void SwapHLByte( char*, const int ); // 下記関数のstatic関数版
 	void SwapHLByte();			// Byteを交換する
+	bool SwabHLByte( const CMemory& ); // Byteを交換する(コピー版)
 
 
 protected:
@@ -104,9 +107,9 @@ private: // 2002/2/10 aroka アクセス権変更
 	/*
 	|| メンバ変数
 	*/
-	int		m_nDataBufSize;	//バッファサイズ。バイト単位。
 	char*	m_pRawData;		//バッファ
 	int		m_nRawLen;		//データサイズ(m_nDataBufSize以内)。バイト単位。
+	int		m_nDataBufSize;	//バッファサイズ。バイト単位。
 };
 
 

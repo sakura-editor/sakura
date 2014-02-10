@@ -59,6 +59,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				pcDocLine = pcDocLine->GetNextLine();
 			}
 		}
+		CMemory cmemOutputBuffer;
 		while( pcDocLine ){
 			++nLineNumber;
 
@@ -72,7 +73,6 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 			}
 
 			//1行出力 -> cmemOutputBuffer
-			CMemory cmemOutputBuffer;
 			{
 				// 書き込み時のコード変換 cstrSrc -> cmemOutputBuffer
 				EConvertResult e = pcCodeBase->UnicodeToCode(

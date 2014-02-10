@@ -33,15 +33,15 @@ class CShiftJis : public CCodeBase{
 
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ *pDst->_GetMemory()=cSrc; return SJISToUnicode(pDst->_GetMemory()); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ *pDst=*cSrc._GetMemory(); return UnicodeToSJIS(pDst); }	//!< UNICODE    → 特定コード 変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return SJISToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToSJIS(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:
 	//実装
-	static EConvertResult SJISToUnicode(CMemory* pMem);		// SJIS      → Unicodeコード変換
-	static EConvertResult UnicodeToSJIS(CMemory* pMem);		// Unicode   → SJISコード変換
+	static EConvertResult SJISToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// SJIS      → Unicodeコード変換
+	static EConvertResult UnicodeToSJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   → SJISコード変換
 //	S_GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	// 2005-09-02 D.S.Koba
 	// 2007.08.14 kobake CMemoryからCShiftJisへ移動

@@ -288,6 +288,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	DWORD       dwCompStrLen;       // CHARs
 	DWORD       dwInsByteCount = 0; // byte
 	CNativeW    cmemBuf1;
+	CNativeA    cmemBuf2;
 	const void* pszReconv; 
 	const void* pszInsBuffer;
 
@@ -315,8 +316,8 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		//考慮文字列の開始から対象文字列の開始まで -> dwCompStrOffset
 		if( ptSelect.x - nReconvIndex > 0 ){
 			cmemBuf1.SetString(pszReconvSrc, ptSelect.x - nReconvIndex);
-			CShiftJis::UnicodeToSJIS(cmemBuf1._GetMemory());
-			dwCompStrOffset = cmemBuf1._GetMemory()->GetRawLength();				//compオフセット。バイト単位。
+			CShiftJis::UnicodeToSJIS(cmemBuf1, cmemBuf2._GetMemory());
+			dwCompStrOffset = cmemBuf2._GetMemory()->GetRawLength();				//compオフセット。バイト単位。
 		}else{
 			dwCompStrOffset = 0;
 		}
@@ -324,9 +325,9 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		pszInsBuffer = "";
 		//対象文字列の開始から対象文字列の終了まで -> dwCompStrLen
 		if (nSelectedLen > 0 ){
-			cmemBuf1.SetString(pszReconvSrc + ptSelect.x, nSelectedLen);  
-			CShiftJis::UnicodeToSJIS(cmemBuf1._GetMemory());
-			dwCompStrLen = cmemBuf1._GetMemory()->GetRawLength();					//comp文字列長。文字単位。
+			cmemBuf1.SetString(pszReconvSrc + ptSelect.x, nSelectedLen);
+			CShiftJis::UnicodeToSJIS(cmemBuf1, cmemBuf2._GetMemory());
+			dwCompStrLen = cmemBuf2._GetMemory()->GetRawLength();					//comp文字列長。文字単位。
 		}else if(nInsertCompLen > 0){
 			// nSelectedLen と nInsertCompLen が両方指定されることはないはず
 			const ACHAR* pComp = to_achar(m_szComposition);
@@ -339,13 +340,13 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		
 		//考慮文字列すべて
 		cmemBuf1.SetString(pszReconvSrc , nReconvLen );
-		CShiftJis::UnicodeToSJIS(cmemBuf1._GetMemory());
+		CShiftJis::UnicodeToSJIS(cmemBuf1, cmemBuf2._GetMemory());
 		
-		dwReconvTextLen    = cmemBuf1._GetMemory()->GetRawLength();				//reconv文字列長。文字単位。
+		dwReconvTextLen    = cmemBuf2._GetMemory()->GetRawLength();				//reconv文字列長。文字単位。
 		dwReconvTextInsLen = dwReconvTextLen + dwInsByteCount;						//reconv文字列長。文字単位。
-		cbReconvLenWithNull = cmemBuf1._GetMemory()->GetRawLength() + dwInsByteCount + sizeof(char);		//reconvデータ長。バイト単位。
+		cbReconvLenWithNull = cmemBuf2._GetMemory()->GetRawLength() + dwInsByteCount + sizeof(char);		//reconvデータ長。バイト単位。
 		
-		pszReconv = reinterpret_cast<const void*>(cmemBuf1._GetMemory()->GetRawPtr());	//reconv文字列へのポインタ
+		pszReconv = reinterpret_cast<const void*>(cmemBuf2._GetMemory()->GetRawPtr());	//reconv文字列へのポインタ
 	}
 	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -451,7 +452,7 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 	}
 	//ANSI→UNICODE
 	else{
-		CNativeA	cmemBuf;
+		CNativeW	cmemBuf;
 
 		//考慮文字列の開始から対象文字列の開始まで
 		if( pReconv->dwCompStrOffset > 0){
@@ -460,9 +461,9 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 			}
 			// 2010.03.17 sizeof(pReconv)+1ではなくdwStrOffsetを利用するように
 			const char* p=((const char*)(pReconv)) + pReconv->dwStrOffset;
-			cmemBuf.SetString(p, pReconv->dwCompStrOffset ); 
-			CShiftJis::SJISToUnicode(cmemBuf._GetMemory());
-			dwOffset = cmemBuf._GetMemory()->GetRawLength()/sizeof(WCHAR);
+			cmemBuf._GetMemory()->SetRawData(p, pReconv->dwCompStrOffset );
+			CShiftJis::SJISToUnicode(*(cmemBuf._GetMemory()), &cmemBuf);
+			dwOffset = cmemBuf.GetStringLength();
 		}else{
 			dwOffset = 0;
 		}
@@ -475,9 +476,9 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 			}
 			// 2010.03.17 sizeof(pReconv)+1ではなくdwStrOffsetを利用するように
 			const char* p= ((const char*)pReconv) + pReconv->dwStrOffset;
-			cmemBuf.SetString(p + pReconv->dwCompStrOffset, pReconv->dwCompStrLen); 
-			CShiftJis::SJISToUnicode(cmemBuf._GetMemory());
-			dwLen = cmemBuf._GetMemory()->GetRawLength()/sizeof(WCHAR);
+			cmemBuf._GetMemory()->SetRawData(p + pReconv->dwCompStrOffset, pReconv->dwCompStrLen);
+			CShiftJis::SJISToUnicode(*(cmemBuf._GetMemory()), &cmemBuf);
+			dwLen = cmemBuf.GetStringLength();
 		}else{
 			dwLen = 0;
 		}
