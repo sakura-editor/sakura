@@ -220,8 +220,8 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 				rcPx.left   =  area.GetAreaLeft() + nCharWidth * (Int)(drawLeft - area.GetViewLeftCol());
 				rcPx.right  = area.GetAreaLeft() + nCharWidth * (Int)(drawRight- area.GetViewLeftCol());
 			}
-			rcPx.top    = area.GetAreaTop() + nCharHeight * (Int)(rc.top -area.GetViewTopLine());
-			rcPx.bottom = area.GetAreaTop() + nCharHeight * (Int)(rc.bottom + 1 -area.GetViewTopLine());
+			rcPx.top    = area.GenerateYPx(rc.top);
+			rcPx.bottom = area.GenerateYPx(rc.bottom + 1);
 
 			CMyRect rcArea;
 			pView->GetTextArea().GenerateTextAreaRect(&rcArea);
@@ -321,8 +321,8 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		RECT rcOld2;
 		rcOld2.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcOld.left  * nCharWidth;
 		rcOld2.right	= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcOld.right * nCharWidth;
-		rcOld2.top		= (Int)( rcOld.top - pView->GetTextArea().GetViewTopLine() ) * nCharHeight + pView->GetTextArea().GetAreaTop();
-		rcOld2.bottom	= (Int)( rcOld.bottom + 1 - pView->GetTextArea().GetViewTopLine() ) * nCharHeight + pView->GetTextArea().GetAreaTop();
+		rcOld2.top		= pView->GetTextArea().GenerateYPx( rcOld.top );
+		rcOld2.bottom	= pView->GetTextArea().GenerateYPx( rcOld.bottom + 1 );
 		HRGN hrgnOld = ::CreateRectRgnIndirect( &rcOld2 );
 
 		// 2点を対角とする矩形を求める
@@ -342,8 +342,8 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		RECT rcNew2;
 		rcNew2.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcNew.left  * nCharWidth;
 		rcNew2.right	= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)rcNew.right * nCharWidth;
-		rcNew2.top		= (Int)(rcNew.top - pView->GetTextArea().GetViewTopLine()) * nCharHeight + pView->GetTextArea().GetAreaTop();
-		rcNew2.bottom	= (Int)(rcNew.bottom + 1 - pView->GetTextArea().GetViewTopLine()) * nCharHeight + pView->GetTextArea().GetAreaTop();
+		rcNew2.top		= pView->GetTextArea().GenerateYPx(rcNew.top);
+		rcNew2.bottom	= pView->GetTextArea().GenerateYPx(rcNew.bottom + 1);
 
 		HRGN hrgnNew = ::CreateRectRgnIndirect( &rcNew2 );
 
@@ -377,7 +377,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 					RECT rcNew;
 					rcNew.left   = pView->GetTextArea().GetAreaLeft() + (Int)(pView->GetTextArea().GetViewLeftCol() + ptLast.x) * nCharWidth;
 					rcNew.right  = pView->GetTextArea().GetAreaRight();
-					rcNew.top    = (Int)(ptLast.y - pView->GetTextArea().GetViewTopLine()) * nCharHeight + pView->GetTextArea().GetAreaTop();
+					rcNew.top    = pView->GetTextArea().GenerateYPx( ptLast.y );
 					rcNew.bottom = rcNew.top + nCharHeight;
 					
 					// 2006.10.01 Moca GDI(リージョン)リソースリーク修正
@@ -534,7 +534,7 @@ void CViewSelect::DrawSelectAreaLine(
 	CMyRect	rcClip; // px
 	rcClip.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectFrom * nCharWidth;
 	rcClip.right	= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectTo   * nCharWidth;
-	rcClip.top		= (Int)(nLineNum - pView->GetTextArea().GetViewTopLine()) * nLineHeight + pView->GetTextArea().GetAreaTop();
+	rcClip.top		= pView->GetTextArea().GenerateYPx( nLineNum );
 	rcClip.bottom	= rcClip.top + nLineHeight;
 	if( rcClip.right > pView->GetTextArea().GetAreaRight() ){
 		rcClip.right = pView->GetTextArea().GetAreaRight();

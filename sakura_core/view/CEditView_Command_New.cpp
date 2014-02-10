@@ -290,7 +290,7 @@ void CEditView::InsertData_CEditView(
 
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
-				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(nStartLine - GetTextArea().GetViewTopLine());
+				ps.rcPaint.top = GetTextArea().GenerateYPx(nStartLine);
 				ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 			}
 			else{
@@ -309,14 +309,8 @@ void CEditView::InsertData_CEditView(
 
 				// 2002.02.25 Mod By KK 次行 (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1); => (ptInsertPos.y - GetTextArea().GetViewTopLine());
 				//ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1);
-				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(nStartLine - GetTextArea().GetViewTopLine());
-				ps.rcPaint.bottom = ps.rcPaint.top + GetTextMetrics().GetHankakuDy() * (Int)(nModifyLayoutLinesOld);
-				if( ps.rcPaint.top < 0 ){
-					ps.rcPaint.top = 0;
-				}
-				if( GetTextArea().GetAreaBottom() < ps.rcPaint.bottom ){
-					ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
-				}
+				ps.rcPaint.top = GetTextArea().GenerateYPx(nStartLine);
+				ps.rcPaint.bottom = GetTextArea().GenerateYPx(nStartLine + nModifyLayoutLinesOld);
 			}
 			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
@@ -887,19 +881,22 @@ void CEditView::ReplaceData_CEditView3(
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
 
 				/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-				ps.rcPaint.top = GetTextArea().GetAreaTop() + (Int)(LRArg.nModLineFrom - GetTextArea().GetViewTopLine())* GetTextMetrics().GetHankakuDy();
+				ps.rcPaint.top = GetTextArea().GenerateYPx(LRArg.nModLineFrom);
 				// 2011.12.26 正規表現キーワード・検索文字列などは、ロジック行頭までさかのぼって更新する必要がある
 				{
 					const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
 					while( pcLayoutLineFirst && 0 != pcLayoutLineFirst->GetLogicOffset() ){
 						pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
 						ps.rcPaint.top -= GetTextMetrics().GetHankakuDy();
+						if( ps.rcPaint.top < 0 ){
+							break;
+						}
 					}
 				}
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
 				}
-				ps.rcPaint.bottom = GetTextArea().GetAreaTop() + (Int)(LRArg.nModLineTo - GetTextArea().GetViewTopLine() + 1 + nAddLine)* GetTextMetrics().GetHankakuDy();
+				ps.rcPaint.bottom = GetTextArea().GenerateYPx(LRArg.nModLineTo + 1 + nAddLine);
 				if( GetTextArea().GetAreaBottom() < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 				}

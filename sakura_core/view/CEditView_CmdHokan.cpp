@@ -83,12 +83,22 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	int			nKouhoNum;
 	POINT		poWin;
 	/* 補完ウィンドウの表示位置を算出 */
-	poWin.x = GetTextArea().GetAreaLeft()
-			 + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
-			  * GetTextMetrics().GetHankakuDx();
-	poWin.y = GetTextArea().GetAreaTop()
-			 + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
-			  * GetTextMetrics().GetHankakuDy();
+	CLayoutXInt nX = GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol();
+	if( nX < 0 ){
+		poWin.x = 0;
+	}else if( GetTextArea().m_nViewColNum < nX ){
+		poWin.x = GetTextArea().GetAreaRight();
+	}else{
+		poWin.x = GetTextArea().GetAreaLeft() + (Int)(nX) * GetTextMetrics().GetHankakuDx();
+	}
+	CLayoutYInt nY = GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine();
+	if( nY < 0 ){
+		poWin.y = 0;
+	}else if( GetTextArea().m_nViewRowNum < nY ){
+		poWin.y = GetTextArea().GetAreaBottom();
+	}else{
+		poWin.y = GetTextArea().GetAreaTop() + (Int)(nY) * GetTextMetrics().GetHankakuDy();
+	}
 	this->ClientToScreen( &poWin );
 	poWin.x -= (
 		cmemData.GetStringLength()

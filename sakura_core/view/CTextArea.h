@@ -212,6 +212,8 @@ public:
 
 	void GenerateTextAreaRect(RECT* rc) const;
 
+	int GenerateYPx(CLayoutYInt nLineNum) const;
+
 private:
 	//éQè∆
 	CEditView*	m_pEditView;

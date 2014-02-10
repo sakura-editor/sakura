@@ -308,4 +308,17 @@ void CTextArea::GenerateTextAreaRect(RECT* rc) const
 }
 
 
+int CTextArea::GenerateYPx(CLayoutYInt nLineNum) const
+{
+	CLayoutYInt nY = nLineNum - GetViewTopLine();
+	int ret;
+	if( nY < 0 ){
+		ret = GetAreaTop();
+	}else if( m_nViewRowNum < nY ){
+		ret = GetAreaBottom();
+	}else{
+		ret = GetAreaTop() + m_pEditView->GetTextMetrics().GetHankakuDy() * (Int)(nY);
+	}
+	return ret;
+}
 
