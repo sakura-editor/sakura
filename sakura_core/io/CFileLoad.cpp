@@ -259,6 +259,12 @@ EConvertResult CFileLoad::ReadLine(
 
 		// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
+			int n = 128;
+			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nBufLineLen + 100;
+			while( n < nMinAllocSize ){
+				n *= 2;
+			}
+			m_cLineBuffer.AllocBuffer( n );
 			m_cLineBuffer.AppendRawData( pLine, nBufLineLen );
 			m_nReadBufOffSet -= nEolLen;
 			// バッファロード   File -> ReadBuf
