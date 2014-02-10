@@ -68,6 +68,7 @@ CLayoutMgr::~CLayoutMgr()
 */
 void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
 {
+	_Empty();
 	Init();
 	//	Jun. 20, 2003 genta EditDoc‚Ö‚Ìƒ|ƒCƒ“ƒ^’Ç‰Á
 	m_pcEditDoc = pcEditDoc;
