@@ -415,14 +415,14 @@ void CEditDoc::OnChangeType()
 }
 
 /*! ビューに設定変更を反映させる
-	@param [in] bDoRayout レイアウト情報の再作成
+	@param [in] bDoLayout レイアウト情報の再作成
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
 	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
 	@date 2013.04.22 novice レイアウト情報の再作成を設定できるようにした
 */
 void CEditDoc::OnChangeSetting(
-	bool	bDoRayout
+	bool	bDoLayout
 )
 {
 	int			i;
@@ -475,7 +475,7 @@ void CEditDoc::OnChangeSetting(
 		}
 	}
 
-	m_cLayoutMgr.SetLayoutInfo( bDoRayout, hwndProgress, ref ); /* レイアウト情報の変更 */
+	m_cLayoutMgr.SetLayoutInfo( bDoLayout, hwndProgress, ref ); /* レイアウト情報の変更 */
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )

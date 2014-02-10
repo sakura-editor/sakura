@@ -122,11 +122,11 @@ void CLayoutMgr::_Empty()
 
 
 /*! レイアウト情報の変更
-	@param bDoRayout [in] レイアウト情報の再作成
+	@param bDoLayout [in] レイアウト情報の再作成
 	@param refType [in] タイプ別設定
 */
 void CLayoutMgr::SetLayoutInfo(
-	bool				bDoRayout,
+	bool				bDoLayout,
 	HWND				hwndProgress,
 	const STypeConfig&	refType
 )
@@ -255,7 +255,7 @@ void CLayoutMgr::SetLayoutInfo(
 		m_sTypeConfig.m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	}	//@@@ 2002.04.08 MIK end
 
-	if( bDoRayout ){
+	if( bDoLayout ){
 		_DoLayout( hwndProgress );
 	}
 }
