@@ -900,8 +900,9 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
-		wchar_t	*pszConvertedText = new wchar_t[nREPLACEKEY * 2]; // ëSï∂éö\nÅ®\r\nïœä∑Ç≈ç≈ëÂÇÃÇQî{Ç…Ç»ÇÈ
-		CLogicInt nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
+		CLogicInt nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, NULL);
+		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
+		ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
 		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
 		szREPLACEKEY = cmemClip.GetStringPtr(&nREPLACEKEY);
 		delete [] pszConvertedText;

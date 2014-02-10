@@ -644,17 +644,32 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 	CEol eol = GetDocument()->m_cDocEditor.GetNewLineCode();
 
 	nConvertedTextLen = 0;
-	for( int i = 0; i < nTextLen; i++ ){
-		if( WCODE::IsLineDelimiter(pszText[i]) ){
-			if( pszText[i] == WCODE::CR ){
-				if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
-					i++;
+	if( pszConvertedText == NULL ){
+		for( int i = 0; i < nTextLen; i++ ){
+			if( WCODE::IsLineDelimiter(pszText[i]) ){
+				if( pszText[i] == WCODE::CR ){
+					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
+						i++;
+					}
 				}
+				nConvertedTextLen += eol.GetLen();
+			} else {
+				nConvertedTextLen++;
 			}
-			wmemcpy( &pszConvertedText[nConvertedTextLen], eol.GetValue2(), eol.GetLen() );
-			nConvertedTextLen += eol.GetLen();
-		} else {
-			pszConvertedText[nConvertedTextLen++] = pszText[i];
+		}
+	}else{
+		for( int i = 0; i < nTextLen; i++ ){
+			if( WCODE::IsLineDelimiter(pszText[i]) ){
+				if( pszText[i] == WCODE::CR ){
+					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
+						i++;
+					}
+				}
+				wmemcpy( &pszConvertedText[nConvertedTextLen], eol.GetValue2(), eol.GetLen() );
+				nConvertedTextLen += eol.GetLen();
+			} else {
+				pszConvertedText[nConvertedTextLen++] = pszText[i];
+			}
 		}
 	}
 	return nConvertedTextLen;
