@@ -87,7 +87,7 @@ public:
 	CLayoutInt CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const;
 
 	//! オフセット値をレイアウト単位に変換して取得。2007.10.17 kobake
-	CLayoutInt CalcLayoutOffset(const CLayoutMgr& cLayoutMgr) const;
+	CLayoutInt CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nStartPos = CLogicInt(0), CLayoutInt nStartOffset = CLayoutInt(0)) const;
 
 	//! 文字列参照を取得
 	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLengthWithEOL()); }

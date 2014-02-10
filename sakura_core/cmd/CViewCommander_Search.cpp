@@ -1330,6 +1330,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		if( 0 < nReplaceNum ){
 			// CLayoutMgrの更新(変更有の場合)
 			rLayoutMgr._DoLayout();
+			GetEditWindow()->ClearViewCaretPosInfo();
 			if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 				rLayoutMgr.CalculateTextWidth();
 			}

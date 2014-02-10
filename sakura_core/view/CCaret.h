@@ -163,6 +163,7 @@ public:
 	//計算
 	BOOL GetAdjustCursorPos( CLayoutPoint* pptPosXY ); //!< 正しいカーソル位置を算出する
 
+	void ClearCaretPosInfoCache();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           表示                              //
@@ -206,6 +207,17 @@ private:
 	CLayoutPoint	m_ptCaretPos_Layout;	// ビュー左上端からのカーソル位置。レイアウト単位。
 	CLogicPoint		m_ptCaretPos_Logic;		// カーソル位置。ロジック単位。データ内文字単位。
 
+	// カーソル位置計算キャッシュ
+	CLayoutInt m_nOffsetCache;
+	CLayoutInt m_nLineNoCache;
+	CLogicInt  m_nLogicOffsetCache;
+	CLogicInt  m_nLineLogicNoCache;
+	CLayoutInt m_nLineNo50Cache;
+	CLayoutInt m_nOffset50Cache;
+	CLogicInt  m_nLogicOffset50Cache;
+	int m_nLineLogicModCache;
+
+	
 public:
 	CLayoutInt		m_nCaretPosX_Prev;	// 直前のX座標記憶用。レイアウト単位。このソースの下部に詳細説明があります。
 

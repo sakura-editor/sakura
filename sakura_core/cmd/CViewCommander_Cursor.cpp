@@ -154,6 +154,7 @@ int CViewCommander::Command_DOWN( bool bSelect, bool bRepeat )
 			pcLayout == NULLかつキャレット位置が行頭以外の場合は
 			2つのifのどちらにも当てはまらないが，そのあとのMoveCursorにて適正な
 			位置に移動させられる．
+	@date 2014.01.10 Moca キーリピート時、MoveCursorを一度にまとめる
 */
 int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 {
@@ -161,8 +162,10 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 	if( bSelect ){
 		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
 	}
+	bool	bMoveCaretLine = false;
 	int		nRepeat = bRepeat ? 2 : 1;
 	int		nRes = 0;
+	CLayoutPoint ptCaretMove = GetCaret().GetCaretLayoutPos();
 	for( int nRepCount = 0; nRepCount < nRepeat; ++nRepCount ) {
 
 		if( bSelect && ! m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
@@ -179,17 +182,17 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			}
 		}
 		// (これから求める)カーソルの移動先。
-		CLayoutPoint ptPos(CLayoutInt(0), GetCaret().GetCaretLayoutPos().GetY2());
+		CLayoutPoint ptPos(CLayoutInt(0), ptCaretMove.GetY2());
 
 		/* 現在行のデータを取得 */
-		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretMove.GetY2() );
 		/* カーソルが左端にある */
-		if( GetCaret().GetCaretLayoutPos().GetX2() == (pcLayout ? pcLayout->GetIndent() : CLayoutInt(0))) {
-			if( 0 < GetCaret().GetCaretLayoutPos().GetY2()
+		if( ptCaretMove.GetX2() == (pcLayout ? pcLayout->GetIndent() : CLayoutInt(0))) {
+			if( 0 < ptCaretMove.GetY2()
 			   && ! m_pCommanderView->GetSelectionInfo().IsBoxSelecting()
 			) {
 				// 前のレイアウト行の、折り返し桁一つ手前または改行文字の手前に移動する。
-				pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() - CLayoutInt(1) );
+				pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretMove.GetY2() - CLayoutInt(1) );
 				CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
 				while( !it.end() ){
 					it.scanNext();
@@ -206,13 +209,14 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 				break; // これ以上左に動けぬ。
 			}
 			bUnderlineDoNotOFF = false;	//行が変わるのでアンダーラインを消去する
+			bMoveCaretLine = true;
 		}
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if( pcLayout ) {
 			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
 			while( !it.end() ){
 				it.scanNext();
-				if ( it.getColumn() + it.getColumnDelta() > GetCaret().GetCaretLayoutPos().GetX2() - 1 ){
+				if ( it.getColumn() + it.getColumnDelta() > ptCaretMove.GetX2() - 1 ){
 					ptPos.x += it.getColumnDelta();
 					break;
 				}
@@ -221,7 +225,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			ptPos.x += it.getColumn() - it.getColumnDelta();
 			//	Oct. 18, 2002 YAZAKI
 			if( it.getIndex() >= pcLayout->GetLengthWithEOL() ){
-				ptPos.x = GetCaret().GetCaretLayoutPos().GetX2() - CLayoutInt(1);
+				ptPos.x = ptCaretMove.GetX2() - CLayoutInt(1);
 			}
 		}
 
@@ -235,8 +239,11 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			*/
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptPos );
 		}
-		GetCaret().MoveCursor( ptPos, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		if( bMoveCaretLine || nRepeat - 1 == nRepCount ){
+			GetCaret().MoveCursor( ptPos, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
+			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		}
+		ptCaretMove = ptPos;
 		nRes = 1;
 	}
 	return nRes;
@@ -244,14 +251,18 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 
 
 
-/* カーソル右移動 */
+/* カーソル右移動
+	@date 2014.01.10 Moca キーリピート時、MoveCursorを一度にまとめる
+*/
 void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, bool bRepeat )
 {
 	bool	bUnderlineDoNotOFF = true;	// アンダーラインを消去しない
 	if( bSelect ){
 		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
 	}
+	bool	bMoveCaretLine = false;
 	int nRepeat = bRepeat ? 2 : 1; // 移動する回数
+	CLayoutPoint ptCaretMove = GetCaret().GetCaretLayoutPos();
 	for( int nRepCount = 0; nRepCount < nRepeat; ++nRepCount ) {
 		// 2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に
 		// 対応するため、現在行のデータを取得を移動
@@ -273,7 +284,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 
 		// (これから求める)カーソルの移動先。
 		CLayoutPoint ptTo( 0, 0 );
-		const CLayoutPoint ptCaret = GetCaret().GetCaretLayoutPos();
+		const CLayoutPoint ptCaret = ptCaretMove;
 
 		/* 現在行のデータを取得 */
 		const CLayout* const pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaret.y );
@@ -344,6 +355,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 					++nRepeat;
 				}
 				bUnderlineDoNotOFF = false;
+				bMoveCaretLine = true;
 			} else {
 				ptTo.y = ptCaret.y;
 				ptTo.x = t_min( to_x, x_max );
@@ -359,8 +371,12 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
 		}
-		GetCaret().MoveCursor( ptTo, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+		if( bMoveCaretLine || nRepeat - 1 == nRepCount ){
+			GetCaret().MoveCursor( ptTo, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
+			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		}
+		ptCaretMove = ptTo;
 	}
 	return;
 }

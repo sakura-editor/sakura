@@ -340,6 +340,8 @@ public:
 	const LOGFONT&	GetLogfont(bool bTempSetting = true);
 	int			GetFontPointSize(bool bTempSetting = true);
 	ECharWidthCacheMode GetLogfontCacheMode();
+
+	void ClearViewCaretPosInfo();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ÉÅÉìÉoïœêî                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
