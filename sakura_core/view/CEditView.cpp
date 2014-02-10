@@ -2480,7 +2480,6 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 			// -- -- カーソル行アンダーラインの消去（無理やり） -- -- //
 			int nUnderLineY; // client px
 			CLayoutYInt nY = m_nOldUnderLineY - GetTextArea().GetViewTopLine();
-			int nPosY;
 			if( nY < 0 ){
 				nUnderLineY = -1;
 			}else if( GetTextArea().m_nViewRowNum < nY ){
