@@ -18,11 +18,16 @@ CRLF	( 0d 0a )<br>
 <strike>LFCR	( 0a 0d )</strike>	<img src="images/hint.png">廃止しました。(sakura:2.0.0.0)<br>
 CR	( 0d )<br>
 LF	( 0a )<br>
+<br>
+Unicode/UniocdeBEのみ以下の改行コードを読み書きできます。(sakura:2.1.0.0 以降)<br>
+NEL	( 85 )<br>
+LS	( 2028 )<br>
+PS	( 2029 )<br>
 </div><br>
 <h3>ファイル読み込み時の処理</h3>
 ファイルを読み込む際は改行単位で行バッファに追加していく。<br>
 <ul>
-<li>ファイルの先頭から1バイトずつサーチし、CRかLFが出現するまでループする。</li>
+<li>ファイルの先頭から1バイトずつサーチし、改行コードが出現するまでループする。</li>
 <li>取り扱える改行コードのどれに該当するのか調べる。</li>
 <li>行テキストと改行コードの情報を行バッファに格納する。</li>
 <li>ファイルの終わりまで繰り返す。</li>
@@ -47,39 +52,41 @@ LF	( 0a )<br>
 		<li>データ内容不定</li>
 	</ul>
 
-	<font color="red">CF_OEMTEXT</font>形式のデータをクリップボードに格納<br>
+	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
 		<li>すべての改行コードをCRLFに統一</li>
-		<li>null文字(0x00)以降切捨て</li>
+		<li>末尾にnull文字を付加</li>
 	</ul>
 
-	"<font color="red">SAKURAClip</font>"形式のデータをクリップボードに格納<br>
+	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + n - 1 のnバイトがデータ(バイナリ含む)</li>
-		<li>選択領域の各行が改行を含む場合はそのまま、改行を含まない場合はCRLFを付加</li>
+		<li>先頭4～4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
+		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
+		<li>すべての改行コードをCRLFに統一</li>
 	</ul>
 </div>
 
 ■<b><font color="blue">線形選択時</font></b><br>
 <div class=li200>
-	<font color="red">CF_OEMTEXT</font>形式のデータをクリップボードに格納
+	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納
 	<ul>
 		<li>改行コードは元テキストの状態を保持する。</li>
-		<li>null文字(0x00)以降切捨て</li>
+		<li>末尾にnull文字を付加</li>
 	</ul>
-	"<font color="red">SAKURAClip</font>"形式のデータをクリップボードに格納
+	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納
 	<ul>
 		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + n - 1 のnバイトがデータ(バイナリ含む)</li>
+		<li>先頭4～4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
 	</ul>
 </div>
 ■<b><font color="blue">未選択時</font></b><br>
 <div class=li200>
 	カーソル位置のレイアウト行データを線形選択時の方法でコピーし、
 	加えて、<a href="HLP000144.html">共通設定</a>のランモード貼付設定が有効になっている場合、
-	"<font color="red">MSDEVLineSelect</font>"形式のデータをクリップボードに格納
+	"<font color="red">MSDEVLineSelect</font>"形式と
+	"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式のデータをクリップボードに格納
 </div>
 <br>
 
@@ -90,25 +97,28 @@ LF	( 0a )<br>
 	<ul>
 		<li>矩形貼り付けとする</li>
 	</ul>
-	"<font color="red">MSDEVLineSelect</font>"形式がある場合
+	"<font color="red">MSDEVLineSelect</font>"形式または
+		"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式がある場合
 	<ul>
 		<li><a href="HLP000144.html">共通設定</a>で有効の場合、ラインモード貼付とする</li>
 	</ul>
 	
-	"<font color="red">SAKURAClip</font>"形式がある場合
+	"<font color="red">SAKURAClipW</font>"形式がある場合
 	<ul>
 		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して張り付ける」が有効の場合、改行コードを変換する</li>
 	</ul>
 	<font color="red">CF_UNICODETEXT</font>形式のデータがある場合
 	<ul>
-		<li>サクラエディタ内部のSJIS変換ロジックを使用してShiftJISに変換したものを貼り付けデータとする。</li>
-			<li>改行コードは元テキストの状態を保持する。</li>
-			<li>null文字(0x00)以降切捨て</li>
+		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して張り付ける」が有効の場合、改行コードを変換する</li>
+		<li>null文字(0x00)以降切捨て</li>
 	</ul>
 	<font color="red">CF_OEMTEXT</font>形式のデータがある場合
 	<ul>
-		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
-		<li>改行コードは元テキストの状態を保持する。</li>
+		<li>そのデータを取り出しShift_JISをUnicodeに変換する。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して張り付ける」が有効の場合、改行コードを変換する</li>
+		<li>無効の場合、改行コードは元テキストの状態を保持する。</li>
 		<li>null文字(0x00)以降切捨て</li>
 	</ul>
 </div><br>
