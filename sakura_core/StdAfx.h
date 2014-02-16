@@ -19,6 +19,7 @@
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 
 //#pragma warning(disable: 4786)
+#pragma warning(disable: 4345)	//warning C4345: 動作変更 : 形式 () の初期化子で構築される POD 型のオブジェクトは既定初期化されます。
 #pragma warning(disable: 4996)	//warning C4996: 'xxxx': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 #pragma warning(disable: 4355)	//warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
 
