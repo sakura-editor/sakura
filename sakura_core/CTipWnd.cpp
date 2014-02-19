@@ -27,6 +27,7 @@ CTipWnd::CTipWnd()
 : CWnd(_T("::CTipWnd"))
 {
 	m_pszClassName = _T("CTipWnd");
+	m_hFont = NULL;
 	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
 	return;
 }
