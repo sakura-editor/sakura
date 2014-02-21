@@ -17,28 +17,14 @@
 #include "CWnd.h"
 #include "os.h" //WM_MOUSEWHEEL
 
-CWnd* gm_pCWnd = NULL;
+
 
 
 /* CWndウィンドウメッセージのコールバック関数 */
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	CWnd* pCWnd;
+	CWnd* pCWnd = (CWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 
-	if( NULL != gm_pCWnd
-	 && 0 == ::GetWindowLongPtr( hwnd, GWLP_USERDATA ) // Modified by KEITA for WIN64 2003.9.6
-	){
-		pCWnd = gm_pCWnd;
-		/* クラスオブジェクトのポインタを拡張ウィンドウメモリに格納しておく */
-		// Modified by KEITA for WIN64 2003.9.6
-		::SetWindowLongPtr( hwnd, GWLP_USERDATA, (LONG_PTR)pCWnd );
-		pCWnd->m_hWnd = hwnd;
-		gm_pCWnd = NULL;
-	}else{
-		/* クラスオブジェクトのポインタを拡張ウィンドウメモリから取り出す */
-		// Modified by KEITA for WIN64 2003.9.6
-		pCWnd = (CWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
-	}
 	if( pCWnd ){
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
 		return pCWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -48,6 +34,52 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }
+
+//!Windowsフック(CBT)
+namespace CWindowCreationHook
+{
+	int		g_nCnt  = 0; //参照カウンタ
+	HHOOK	g_hHook = NULL;
+
+	//!フック用コールバック
+	static LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
+	{
+		if(nCode==HCBT_CREATEWND){
+			HWND hwnd = (HWND)wParam;
+			CBT_CREATEWND* pCreateWnd = (CBT_CREATEWND*)lParam;
+			CWnd* pcWnd = (CWnd*)pCreateWnd->lpcs->lpCreateParams;
+
+			//CWnd以外のウィンドウ生成イベントは無視する
+			WNDPROC wndproc = (WNDPROC)::GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+			if(wndproc!=CWndProc)goto next;
+
+			//ウィンドウにCWndを関連付ける
+			::SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pcWnd);
+
+			//CWndにウィンドウを関連付ける
+			pcWnd->m_hWnd = hwnd;
+		}
+next:
+		return ::CallNextHookEx(g_hHook, nCode, wParam, lParam);
+	}
+
+	//!フック開始
+	void Use()
+	{
+		if(++g_nCnt>=1 && g_hHook==NULL){
+			g_hHook = ::SetWindowsHookEx(WH_CBT, CBTProc, NULL, GetCurrentThreadId());
+		}
+	}
+
+	//!フック終了
+	void Unuse()
+	{
+		if(--g_nCnt<=0 && g_hHook!=NULL){
+			::UnhookWindowsHookEx(g_hHook);
+			g_hHook=NULL;
+		}
+	}
+} //namespace CWindowCreationHook
 
 
 CWnd::CWnd(const TCHAR* pszInheritanceAppend)
@@ -129,7 +161,10 @@ HWND CWnd::Create(
 
 	/* 初期ウィンドウサイズ */
 	/* ウィンドウの作成 */
-	gm_pCWnd = this;
+
+	//Windowsフックにより、ウィンドウが作成されるタイミングを横取りする 2007.10.01 kobake
+	CWindowCreationHook::Use();
+
 	m_hWnd = ::CreateWindowEx(
 		dwExStyle, // extended window style
 		lpszClassName, // pointer to registered class name
@@ -144,6 +179,10 @@ HWND CWnd::Create(
 		m_hInstance, // handle to application instance
 		(LPVOID)this	// pointer to window-creation data
 	);
+
+	//Windowsフック解除
+	CWindowCreationHook::Unuse();
+
 	if( NULL == m_hWnd ){
 		::MessageBox( m_hwndParent, _T("CWnd::Create()\n\n::CreateWindowEx failed."), _T("error"), MB_OK );
 		return NULL;
