@@ -22,8 +22,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CShareData;
-
 #ifndef _CSHAREDATA_H_
 #define _CSHAREDATA_H_
 
@@ -117,7 +115,7 @@ struct KeyHelpInfo {
 };
 //@@@ 2006.04.10 fon ADD-end
 
-/* アウトライン解析の種類 */
+//! アウトライン解析の種類
 enum EOutlineType {
 	OUTLINE_C,
 	OUTLINE_CPP,
@@ -144,10 +142,10 @@ enum EOutlineType {
 	OUTLINE_LIST = 300,		// 汎用リスト 2010.03.28 syat
 };
 
-/* スマートインデント種別 */
+//! スマートインデント種別
 enum ESmartIndentType {
-	SMARTINDENT_NONE,
-	SMARTINDENT_CPP
+	SMARTINDENT_NONE,		//!< なし
+	SMARTINDENT_CPP			//!< C/C++
 };
 
 //! エンコードオプション
@@ -161,84 +159,84 @@ struct SEncodingConfig{
 struct STypeConfig {
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
-	char				m_szTypeName[64];				/*!< タイプ属性：名称 */
-	char				m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
-	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
-	int					m_nMaxLineKetas;				/*!< 折り返し文字数 */
-	int					m_nColumnSpace;					/*!< 文字と文字の隙間 */
-	int					m_nLineSpace;					/*!< 行間のすきま */
-	int					m_nTabSpace;					/*!< TABの文字数 */
-	BOOL				m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
-	char				m_szTabViewString[8+1];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
-	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
+	char				m_szTypeName[64];				//!< タイプ属性：名称
+	char				m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
+	int					m_nTextWrapMethod;				//!< テキストの折り返し方法		// 2008.05.30 nasukoji
+	int					m_nMaxLineKetas;				//!< 折り返し文字数
+	int					m_nColumnSpace;					//!< 文字と文字の隙間
+	int					m_nLineSpace;					//!< 行間のすきま
+	int					m_nTabSpace;					//!< TABの文字数
+	BOOL				m_bTabArrow;					//!< タブ矢印表示		//@@@ 2003.03.26 MIK
+	char				m_szTabViewString[8+1];			//!< TAB表示文字列	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
+	int					m_bInsSpace;					//!< スペースの挿入	// 2001.12.03 hor
 	// 2005.01.13 MIK 配列化
-	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
+	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	//!< キーワードセット
 
-	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
-	CBlockComment		m_cBlockComments[2];			/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	CLineComment		m_cLineComment;					//!< 行コメントデリミタ			//@@@ 2002.09.22 YAZAKI
+	CBlockComment		m_cBlockComments[2];			//!< ブロックコメントデリミタ	//@@@ 2002.09.22 YAZAKI
 
-	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	char				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
+	int					m_nStringType;					//!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""]['']
+	char				m_szIndentChars[64];			//!< その他のインデント対象文字
 
-	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
-	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
+	int					m_nColorInfoArrNum;				//!< 色設定配列の有効数
+	ColorInfo			m_ColorInfoArr[64];				//!< 色設定配列
 
-	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 false=折り返し単位／true=改行単位 */
-	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
-	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
-	int					m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
+	bool				m_bLineNumIsCRLF;				//!< 行番号の表示 false=折り返し単位／true=改行単位
+	int					m_nLineTermType;				//!< 行番号区切り  0=なし 1=縦線 2=任意
+	char				m_cLineTermChar;				//!< 行番号区切り文字
+	int					m_nVertLineIdx[MAX_VERTLINES];	//!< 指定桁縦線
 
 	BOOL				m_bWordWrap;					//!< 英文ワードラップをする
 	bool				m_bKinsokuHead;					//!< 行頭禁則をする		//@@@ 2002.04.08 MIK
 	bool				m_bKinsokuTail;					//!< 行末禁則をする		//@@@ 2002.04.08 MIK
 	bool				m_bKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
 	bool				m_bKinsokuKuto;					//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
-	char				m_szKinsokuHead[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	char				m_szKinsokuTail[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	char				m_szKinsokuKuto[200];			/*!< 句読点ぶらさげ文字 */	// 2009.08.07 ryoji
+	char				m_szKinsokuHead[200];			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	char				m_szKinsokuTail[200];			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	char				m_szKinsokuKuto[200];			//!< 句読点ぶらさげ文字	// 2009.08.07 ryoji
 
-	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
+	int					m_nCurrentPrintSetting;			//!< 現在選択している印刷設定
 
-	int					m_nDefaultOutline;				/*!< アウトライン解析方法 */
-	char				m_szOutlineRuleFilename[_MAX_PATH];	/*!< アウトライン解析ルールファイル */
+	int					m_nDefaultOutline;				//!< アウトライン解析方法
+	char				m_szOutlineRuleFilename[_MAX_PATH];	//!< アウトライン解析ルールファイル
 
-	int					m_nSmartIndent;					/*!< スマートインデント種別 */
-	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
+	int					m_nSmartIndent;					//!< スマートインデント種別
+	int					m_nImeState;					//!< 初期IME状態	Nov. 20, 2000 genta
 
 	//	2001/06/14 asa-o 補完のタイプ別設定
-	char				m_szHokanFile[_MAX_PATH];		/*!< 入力補完 単語ファイル */
+	char				m_szHokanFile[_MAX_PATH];		//!< 入力補完 単語ファイル
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	bool				m_bUseHokanByFile;				//!< 入力補完 開いているファイル内から候補を探す
 	//	2001/06/19 asa-o
 	bool				m_bHokanLoHiCase;				//!< 入力補完機能：英大文字小文字を同一視する
 
-	char				m_szExtHelp[_MAX_PATH];			/* 外部ヘルプ１ */
-	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
+	char				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
+	char				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	bool				m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ
 
 	SEncodingConfig		m_encoding;						//!< エンコードオプション
 
 
 //@@@ 2001.11.17 add start MIK
-	bool				m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
-	int					m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
-	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
+	bool				m_bUseRegexKeyword;								//!< 正規表現キーワードを使うか
+	int					m_nRegexKeyMagicNumber;							//!< 正規表現キーワード更新マジックナンバー
+	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];			//!< 正規表現キーワード
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start
-	bool				m_bUseKeyWordHelp;				// キーワード辞書セレクト機能を使うか
-	int					m_nKeyHelpNum;					/* キーワード辞書の冊数 */
-	KeyHelpInfo			m_KeyHelpArr[MAX_KEYHELP_FILE];	/* キーワード辞書ファイル */
-	bool				m_bUseKeyHelpAllSearch;			// ヒットした次の辞書も検索(&A)
-	bool				m_bUseKeyHelpKeyDisp;			// 1行目にキーワードも表示する(&W)
-	bool				m_bUseKeyHelpPrefix;			// 選択範囲で前方一致検索(&P)
+	bool				m_bUseKeyWordHelp;				//!< キーワード辞書セレクト機能を使うか
+	int					m_nKeyHelpNum;					//!< キーワード辞書の冊数
+	KeyHelpInfo			m_KeyHelpArr[MAX_KEYHELP_FILE];	//!< キーワード辞書ファイル
+	bool				m_bUseKeyHelpAllSearch;			//!< ヒットした次の辞書も検索(&A)
+	bool				m_bUseKeyHelpKeyDisp;			//!< 1行目にキーワードも表示する(&W)
+	bool				m_bUseKeyHelpPrefix;			//!< 選択範囲で前方一致検索(&P)
 //@@@ 2006.04.10 fon ADD-end
 
 	//	2002/04/30 YAZAKI Commonから移動。
-	bool				m_bAutoIndent;					/* オートインデント */
-	bool				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
-	bool				m_bRTrimPrevLine;				// 2005.10.11 ryoji 改行時に末尾の空白を削除
-	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
+	bool				m_bAutoIndent;					//!< オートインデント
+	bool				m_bAutoIndent_ZENSPACE;			//!< 日本語空白もインデント
+	bool				m_bRTrimPrevLine;				//!< 2005.10.11 ryoji 改行時に末尾の空白を削除
+	int					m_nIndentLayout;				//!< 折り返しは2行目以降を字下げ表示
 
 	//	Sep. 10, 2002 genta
 	bool				m_bUseDocumentIcon;				//!< ファイルに関連づけられたアイコンを使う
@@ -267,8 +265,8 @@ static const int MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON
 //! マクロ情報
 struct MacroRec {
 	char	m_szName[MACRONAME_MAX];	//!< 表示名
-	char	m_szFile[_MAX_PATH+1];	//!< ファイル名(ディレクトリを含まない)
-	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
+	char	m_szFile[_MAX_PATH+1];		//!< ファイル名(ディレクトリを含まない)
+	BOOL	m_bReloadWhenExecute;		//!< 実行時に読み込みなおすか（デフォルトon）
 	
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
 	const char* GetTitle() const { return m_szName[0] == '\0' ? m_szFile: m_szName; }	// 2007.11.02 ryoji 追加
@@ -297,9 +295,9 @@ const int BKUP_AUTO		= 64;
 //	2004.05.13 Moca
 //! ウィンドウサイズ・位置の制御方法
 enum EWinSizeMode{
-	WINSIZEMODE_DEF = 0, //!< 指定なし
-	WINSIZEMODE_SAVE = 1, //!< 継承(保存)
-	WINSIZEMODE_SET = 2   //!< 直接指定(固定)
+	WINSIZEMODE_DEF = 0,	//!< 指定なし
+	WINSIZEMODE_SAVE = 1,	//!< 継承(保存)
+	WINSIZEMODE_SET = 2		//!< 直接指定(固定)
 };
 
 // 旧版と違い、bool型使えるようにしてあります by kobake
@@ -317,35 +315,35 @@ struct CommonSetting_General
 	void	SetCaretType(const int f){ m_nCaretType &= ~0xf; m_nCaretType |= f & 0xf; }
 
 	//カーソル
-	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
-	bool				m_bIsINSMode;					// 挿入／上書きモード
-	bool				m_bIsFreeCursorMode;			// フリーカーソルモードか
-	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
-	BOOL				m_bStopsBothEndsWhenSearchParagraph;	/* 段落単位で移動するときに、段落の両端で止まるか */
-	BOOL				m_bNoCaretMoveByActivation;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
+	int					m_nCaretType;							//!< カーソルのタイプ 0=win 1=dos
+	bool				m_bIsINSMode;							//!< 挿入／上書きモード
+	bool				m_bIsFreeCursorMode;					//!< フリーカーソルモードか
+	BOOL				m_bStopsBothEndsWhenSearchWord;			//!< 単語単位で移動するときに、単語の両端で止まるか
+	BOOL				m_bStopsBothEndsWhenSearchParagraph;	//!< 段落単位で移動するときに、段落の両端で止まるか
+	BOOL				m_bNoCaretMoveByActivation;				//!< マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta)
 
 	//スクロール
-	int					m_nRepeatedScrollLineNum;		/* キーリピート時のスクロール行数 */
-	BOOL				m_nRepeatedScroll_Smooth;		/* キーリピート時のスクロールを滑らかにするか */
-	int					m_nPageScrollByWheel;			// キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.12 nasukoji
-	int					m_nHorizontalScrollByWheel;		// キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.12 nasukoji
+	int					m_nRepeatedScrollLineNum;		//!< キーリピート時のスクロール行数
+	BOOL				m_nRepeatedScroll_Smooth;		//!< キーリピート時のスクロールを滑らかにするか
+	int					m_nPageScrollByWheel;			//!< キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.12 nasukoji
+	int					m_nHorizontalScrollByWheel;		//!< キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.12 nasukoji
 
 	//タスクトレイ
-	BOOL				m_bUseTaskTray;				/* タスクトレイのアイコンを使う */
-	BOOL				m_bStayTaskTray;			/* タスクトレイのアイコンを常駐 */
-	WORD				m_wTrayMenuHotKeyCode;		/* タスクトレイ左クリックメニュー キー */
-	WORD				m_wTrayMenuHotKeyMods;		/* タスクトレイ左クリックメニュー キー */
+	BOOL				m_bUseTaskTray;					//!< タスクトレイのアイコンを使う
+	BOOL				m_bStayTaskTray;				//!< タスクトレイのアイコンを常駐
+	WORD				m_wTrayMenuHotKeyCode;			//!< タスクトレイ左クリックメニュー キー
+	WORD				m_wTrayMenuHotKeyMods;			//!< タスクトレイ左クリックメニュー キー
 
 	//履歴
-	int					m_nMRUArrNum_MAX;
-	int					m_nOPENFOLDERArrNum_MAX;
+	int					m_nMRUArrNum_MAX;				//!< ファイルの履歴MAX
+	int					m_nOPENFOLDERArrNum_MAX;		//!< フォルダの履歴MAX
 
 	//ノーカテゴリ
-	BOOL				m_bCloseAllConfirm;				/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
-	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
+	BOOL				m_bCloseAllConfirm;				//!< [すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
+	BOOL				m_bExitConfirm;					//!< 終了時の確認をする
 
 	//INI内設定のみ
-	BOOL				m_bDispExitingDialog;			/* 終了ダイアログを表示する */
+	BOOL				m_bDispExitingDialog;			//!< 終了ダイアログを表示する
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -354,43 +352,43 @@ struct CommonSetting_General
 struct CommonSetting_Window
 {
 	//基本設定
-	BOOL				m_bDispTOOLBAR;					/* 次回ウィンドウを開いたときツールバーを表示する */
-	BOOL				m_bDispSTATUSBAR;				/* 次回ウィンドウを開いたときステータスバーを表示する */
-	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
-	BOOL				m_bMenuIcon;					/* メニューにアイコンを表示する */
-	BOOL				m_bMenuWChar;					/* メニューの字化け対策を行う(Win2K以降のみ) */
-	BOOL				m_bScrollBarHorz;				/* 水平スクロールバーを使う */
-	BOOL				m_bUseCompatibleBMP;			// 再作画用互換ビットマップを使う 2007.09.09 Moca
+	BOOL				m_bDispTOOLBAR;					//!< 次回ウィンドウを開いたときツールバーを表示する
+	BOOL				m_bDispSTATUSBAR;				//!< 次回ウィンドウを開いたときステータスバーを表示する
+	BOOL				m_bDispFUNCKEYWND;				//!< 次回ウィンドウを開いたときファンクションキーを表示する
+	BOOL				m_bMenuIcon;					//!< メニューにアイコンを表示する
+	BOOL				m_bMenuWChar;					//!< メニューの字化け対策を行う(Win2K以降のみ)
+	BOOL				m_bScrollBarHorz;				//!< 水平スクロールバーを使う
+	BOOL				m_bUseCompatibleBMP;			//!< 再作画用互換ビットマップを使う 2007.09.09 Moca
 
 	//位置と大きさの設定
-	EWinSizeMode		m_eSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 EWinSizeModeに順ずる
-	int					m_nWinSizeType;
-	int					m_nWinSizeCX;
-	int					m_nWinSizeCY;
-	EWinSizeMode		m_eSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 EWinSizeModeに順ずる
-	int					m_nWinPosX;
-	int					m_nWinPosY;
+	EWinSizeMode		m_eSaveWindowSize;				//!< ウィンドウサイズ継承・固定 EWinSizeModeに順ずる 2004.05.13 Moca
+	int					m_nWinSizeType;					//!< 大きさの指定
+	int					m_nWinSizeCX;					//!< 直接指定 幅
+	int					m_nWinSizeCY;					//!< 直接指定 高さ
+	EWinSizeMode		m_eSaveWindowPos;				//!< ウィンドウ位置継承・固定 EWinSizeModeに順ずる 2004.05.13 Moca
+	int					m_nWinPosX;						//!< 直接指定 X座標
+	int					m_nWinPosY;						//!< 直接指定 Y座標
 
 	//ファンクションキー
-	int					m_nFUNCKEYWND_Place;			/* ファンクションキー表示位置／0:上 1:下 */
-	int					m_nFUNCKEYWND_GroupNum;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+	int					m_nFUNCKEYWND_Place;			//!< ファンクションキー表示位置／0:上 1:下
+	int					m_nFUNCKEYWND_GroupNum;			//!< 2002/11/04 Moca ファンクションキーのグループボタン数
 
 	//ルーラー・行番号
-	int					m_nRulerHeight;				/* ルーラー高さ */
-	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
-	int					m_nRulerType;				/* ルーラーのタイプ */
-	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
+	int					m_nRulerHeight;					//!< ルーラー高さ
+	int					m_nRulerBottomSpace;			//!< ルーラーとテキストの隙間
+	int					m_nRulerType;					//!< ルーラーのタイプ
+	int					m_nLineNumRightSpace;			//!< 行番号の右のスペース Sep. 18, 2002 genta
 
 	//分割ウィンドウ
-	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
-	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
+	BOOL				m_bSplitterWndHScroll;			//!< 分割ウィンドウの水平スクロールの同期をとる 2001/06/20 asa-o
+	BOOL				m_bSplitterWndVScroll;			//!< 分割ウィンドウの垂直スクロールの同期をとる 2001/06/20 asa-o
 
 	//タイトルバー
-	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];
-	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];
+	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];		//!< タイトルバー(アクティブ時)
+	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< タイトルバー(非アクティブ時)
 
 	//INI内設定のみ
-	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
+	int					m_nVertLineOffset;				//!< 縦線の描画座標オフセット 2005.11.10 Moca
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -398,27 +396,28 @@ struct CommonSetting_Window
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_TabBar
 {
-	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
-	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
+	BOOL				m_bDispTabWnd;					//!< タブウインドウ表示する	//@@@ 2003.05.31 MIK
+	BOOL				m_bDispTabWndMultiWin;			//!< タブをまとめない	//@@@ 2003.05.31 MIK
 	BOOL				m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
 	BOOL				m_bTab_CloseOneWin;				//!< タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる
 	BOOL				m_bNewWindow;					//!< 外部から起動するときは新しいウインドウで開く
 
-	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
-	BOOL				m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
-	BOOL				m_bDispTabIcon;					//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
-	BOOL				m_bSortTabList;					//タブ一覧をソートする	//@@@ 2006.03.23 fon
-	BOOL				m_bTab_ListFull;				//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
+	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
+	BOOL				m_bSameTabWidth;				//!< タブを等幅にする			//@@@ 2006.01.28 ryoji
+	BOOL				m_bDispTabIcon;					//!< タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
+	BOOL				m_bSortTabList;					//!< タブ一覧をソートする	//@@@ 2006.03.23 fon
+	BOOL				m_bTab_ListFull;				//!< タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 
-	BOOL				m_bChgWndByWheel;				//マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
+	BOOL				m_bChgWndByWheel;				//!< マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
 
-	LOGFONT				m_lf;							//タブフォント // 2011.12.01 Moca
-	INT					m_nPointSize;
+	LOGFONT				m_lf;							//!< タブフォント // 2011.12.01 Moca
+	INT					m_nPointSize;					//!< フォントサイズ（1/10ポイント単位）
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           編集                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//! ファイルダイアログの初期位置
 enum EOpenDialogDir{
 	OPENDIALOGDIR_CUR, //!< カレントフォルダ
 	OPENDIALOGDIR_MRU, //!< 最近使ったフォルダ
@@ -428,31 +427,31 @@ enum EOpenDialogDir{
 struct CommonSetting_Edit
 {
 	//コピー
-	bool				m_bAddCRLFWhenCopy;			// 折り返し行に改行を付けてコピー
-	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
-	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
-	bool				m_bEnableLineModePaste;		// ラインモード貼り付けを可能にする 2007.10.08 ryoji
-	bool				m_bConvertEOLPaste;			// 改行コードを変換して貼り付ける  2009.2.28 salarm
+	bool				m_bAddCRLFWhenCopy;			//!< 折り返し行に改行を付けてコピー
+	BOOL				m_bEnableNoSelectCopy;		//!< 選択なしでコピーを可能にする	2007.11.18 ryoji
+	BOOL				m_bCopyAndDisablSelection;	//!< コピーしたら選択解除
+	bool				m_bEnableLineModePaste;		//!< ラインモード貼り付けを可能にする 2007.10.08 ryoji
+	bool				m_bConvertEOLPaste;			//!< 改行コードを変換して貼り付ける  2009.2.28 salarm
 
 	//ドラッグ＆ドロップ
-	BOOL				m_bUseOLE_DragDrop;			/* OLEによるドラッグ & ドロップを使う */
-	BOOL				m_bUseOLE_DropSource;		/* OLEによるドラッグ元にするか */
+	BOOL				m_bUseOLE_DragDrop;			//!< OLEによるドラッグ & ドロップを使う
+	BOOL				m_bUseOLE_DropSource;		//!< OLEによるドラッグ元にするか
 
 	//上書きモード
-	BOOL				m_bNotOverWriteCRLF;		/* 改行は上書きしない */
+	BOOL				m_bNotOverWriteCRLF;		//!< 改行は上書きしない
 
 	//クリッカブルURL
-	BOOL				m_bJumpSingleClickURL;			/* URLのシングルクリックでJump */ // 未使用
-	BOOL				m_bSelectClickedURL;			/* URLがクリックされたら選択するか */
+	BOOL				m_bJumpSingleClickURL;		//!< URLのシングルクリックでJump // 未使用
+	BOOL				m_bSelectClickedURL;		//!< URLがクリックされたら選択するか
 
-	EOpenDialogDir		m_eOpenDialogDir;			// ファイルダイアログの初期位置
-	TCHAR				m_OpenDialogSelDir[_MAX_PATH];	// 指定フォルダ
+	EOpenDialogDir		m_eOpenDialogDir;			//!< ファイルダイアログの初期位置
+	TCHAR				m_OpenDialogSelDir[_MAX_PATH];	//!< 指定フォルダ
 
 	// (ダイアログ項目無し)
-	BOOL				m_bAutoColumnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
+	BOOL				m_bAutoColumnPaste;			//!< 矩形コピーのテキストは常に矩形貼り付け
 };
 
-//!ファイルの排他制御モード  2007.10.11 kobake 作成
+//! ファイルの排他制御モード  2007.10.11 kobake 作成
 enum EShareMode{
 	SHAREMODE_NOT_EXCLUSIVE,	//!< 排他制御しない
 	SHAREMODE_DENY_WRITE,		//!< 他プロセスからの上書きを禁止
@@ -484,28 +483,28 @@ struct CommonSetting_File
 	bool	GetAlertIfFileNotExist() const		{ return m_bAlertIfFileNotExist; }
 	void	SetAlertIfFileNotExist(bool i)		{ m_bAlertIfFileNotExist = i; } // 未使用
 
-	//ファイルの排他制御モード
-	EShareMode			m_nFileShareMode;		// ファイルの排他制御モード
-	bool				m_bCheckFileTimeStamp;	// 更新の監視
+	//ファイルの排他制御
+	EShareMode			m_nFileShareMode;		//!< ファイルの排他制御モード
+	bool				m_bCheckFileTimeStamp;	//!< 更新の監視
 
 	//ファイルの保存
-	bool				m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか
+	bool				m_bEnableUnmodifiedOverwrite;	//!< 無変更でも上書きするか
 
 	//「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示
 	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	bool				m_bNoFilterSaveNew;		// 新規から保存時は全ファイル表示
-	bool				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
+	bool				m_bNoFilterSaveNew;		//!< 新規から保存時は全ファイル表示
+	bool				m_bNoFilterSaveFile;	//!< 新規以外から保存時は全ファイル表示
 
 	//ファイルオープン
-	bool				m_bDropFileAndClose;	// ファイルをドロップしたときは閉じて開く
-	int					m_nDropFileNumMax;		// 一度にドロップ可能なファイル数
-	bool				m_bRestoreCurPosition;	// ファイルを開いたときカーソル位置を復元するか
-	bool				m_bRestoreBookmarks;	// ブックマークを復元するかどうか 2002.01.16 hor
-	bool				m_bAutoMIMEdecode;		// ファイル読み込み時にMIMEのdecodeを行うか
-	bool				m_bQueryIfCodeChange;	// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta 
-	bool				m_bAlertIfFileNotExist;	// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
-	bool				m_bAlertIfLargeFile;    // 開こうとしたファイルサイズが大きい場合に警告する
-	int 				m_nAlertFileSize;       // 警告を始めるファイルサイズ(MB)
+	bool				m_bDropFileAndClose;	//!< ファイルをドロップしたときは閉じて開く
+	int					m_nDropFileNumMax;		//!< 一度にドロップ可能なファイル数
+	bool				m_bRestoreCurPosition;	//!< ファイルを開いたときカーソル位置を復元するか
+	bool				m_bRestoreBookmarks;	//!< ブックマークを復元するかどうか 2002.01.16 hor
+	bool				m_bAutoMIMEdecode;		//!< ファイル読み込み時にMIMEのdecodeを行うか
+	bool				m_bQueryIfCodeChange;	//!< 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta 
+	bool				m_bAlertIfFileNotExist;	//!< 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
+	bool				m_bAlertIfLargeFile;    //!< 開こうとしたファイルサイズが大きい場合に警告する
+	int 				m_nAlertFileSize;       //!< 警告を始めるファイルサイズ(MB)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -541,21 +540,21 @@ struct CommonSetting_Backup
 	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
 	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
 
-	bool				m_bBackUp;						// 保存時にバックアップを作成する
-	bool				m_bBackUpDialog;				// バックアップの作成前に確認
-	bool				m_bBackUpFolder;				// 指定フォルダにバックアップを作成する
-	bool				m_bBackUpFolderRM;				// 指定フォルダにバックアップを作成する(リムーバブルメディアのみ)
-	char				m_szBackUpFolder[_MAX_PATH];	// バックアップを作成するフォルダ
-	int 				m_nBackUpType;					// バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
-	int 				m_nBackUpType_Opt1;				// バックアップファイル名：オプション1
-	int 				m_nBackUpType_Opt2;				// バックアップファイル名：オプション2
-	int 				m_nBackUpType_Opt3;				// バックアップファイル名：オプション3
-	int 				m_nBackUpType_Opt4;				// バックアップファイル名：オプション4
-	int 				m_nBackUpType_Opt5;				// バックアップファイル名：オプション5
-	int 				m_nBackUpType_Opt6;				// バックアップファイル名：オプション6
-	bool				m_bBackUpDustBox;				// バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	bool				m_bBackUpPathAdvanced;				// バックアップ先フォルダを詳細設定する 20051107 aroka 
-	char				m_szBackUpPathAdvanced[_MAX_PATH];	// バックアップを作成するフォルダの詳細設定 20051107 aroka 
+	bool				m_bBackUp;							//!< 保存時にバックアップを作成する
+	bool				m_bBackUpDialog;					//!< バックアップの作成前に確認
+	bool				m_bBackUpFolder;					//!< 指定フォルダにバックアップを作成する
+	bool				m_bBackUpFolderRM;					//!< 指定フォルダにバックアップを作成する(リムーバブルメディアのみ)
+	char				m_szBackUpFolder[_MAX_PATH];		//!< バックアップを作成するフォルダ
+	int 				m_nBackUpType;						//!< バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
+	int 				m_nBackUpType_Opt1;					//!< バックアップファイル名：オプション1
+	int 				m_nBackUpType_Opt2;					//!< バックアップファイル名：オプション2
+	int 				m_nBackUpType_Opt3;					//!< バックアップファイル名：オプション3
+	int 				m_nBackUpType_Opt4;					//!< バックアップファイル名：オプション4
+	int 				m_nBackUpType_Opt5;					//!< バックアップファイル名：オプション5
+	int 				m_nBackUpType_Opt6;					//!< バックアップファイル名：オプション6
+	bool				m_bBackUpDustBox;					//!< バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
+	bool				m_bBackUpPathAdvanced;				//!< バックアップ先フォルダを詳細設定する 20051107 aroka 
+	char				m_szBackUpPathAdvanced[_MAX_PATH];	//!< バックアップを作成するフォルダの詳細設定 20051107 aroka 
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -564,18 +563,18 @@ struct CommonSetting_Backup
 struct CommonSetting_Format
 {
 	//日付書式
-	int					m_nDateFormatType;						//日付書式のタイプ
-	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];//日付書式
+	int					m_nDateFormatType;							//!< 日付書式のタイプ
+	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 日付書式
 
 	//時刻書式
-	int					m_nTimeFormatType;						//時刻書式のタイプ
-	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];//時刻書式
+	int					m_nTimeFormatType;							//!< 時刻書式のタイプ
+	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 時刻書式
 
 	//見出し記号
-	char				m_szMidashiKigou[256];			/* 見出し記号 */
+	char				m_szMidashiKigou[256];						//!< 見出し記号
 
 	//引用符
-	char				m_szInyouKigou[32];				/* 引用符 */
+	char				m_szInyouKigou[32];							//!< 引用符
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -583,34 +582,33 @@ struct CommonSetting_Format
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Search
 {
-	SSearchOption		m_sSearchOption;				// 検索／置換  条件
-	int					m_bConsecutiveAll;				// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
-	int					m_bNOTIFYNOTFOUND;				// 検索／置換  見つからないときメッセージを表示
-	int					m_bSelectedArea;				// 置換  選択範囲内置換
+	SSearchOption		m_sSearchOption;				//!< 検索／置換  条件
+	int					m_bConsecutiveAll;				//!< 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	int					m_bNOTIFYNOTFOUND;				//!< 検索／置換  見つからないときメッセージを表示
+	int					m_bSelectedArea;				//!< 置換  選択範囲内置換
 
-	int					m_bGrepSubFolder;				// Grep: サブフォルダも検索
-	BOOL				m_bGrepOutputLine;				// Grep: 行を出力するか該当部分だけ出力するか
-	int					m_nGrepOutputStyle;				// Grep: 出力形式
-	int					m_bGrepDefaultFolder;			// Grep: フォルダの初期値をカレントフォルダにする
-	ECodeType			m_nGrepCharSet;					// Grep: 文字コードセット // 2002/09/20 Moca Add
-
-	BOOL				m_bCaretTextForSearch;			// カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
-	TCHAR				m_szRegexpLib[_MAX_PATH];		// 使用する正規表現DLL 2007.08.22 genta
+	int					m_bGrepSubFolder;				//!< Grep: サブフォルダも検索
+	BOOL				m_bGrepOutputLine;				//!< Grep: 行を出力するか該当部分だけ出力するか
+	int					m_nGrepOutputStyle;				//!< Grep: 出力形式
+	int					m_bGrepDefaultFolder;			//!< Grep: フォルダの初期値をカレントフォルダにする
+	ECodeType			m_nGrepCharSet;					//!< Grep: 文字コードセット // 2002/09/20 Moca Add
+	BOOL				m_bCaretTextForSearch;			//!< カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
+	TCHAR				m_szRegexpLib[_MAX_PATH];		//!< 使用する正規表現DLL 2007.08.22 genta
 
 	//Grep
-	BOOL				m_bGrepExitConfirm;				// Grepモードで保存確認するか
-	BOOL				m_bGrepRealTimeView;			// Grep結果のリアルタイム表示 2003.06.16 Moca
+	BOOL				m_bGrepExitConfirm;				//!< Grepモードで保存確認するか
+	BOOL				m_bGrepRealTimeView;			//!< Grep結果のリアルタイム表示 2003.06.16 Moca
 
-	BOOL				m_bGTJW_RETURN;					// エンターキーでタグジャンプ
-	BOOL				m_bGTJW_LDBLCLK;				// ダブルクリックでタグジャンプ
+	BOOL				m_bGTJW_RETURN;					//!< エンターキーでタグジャンプ
+	BOOL				m_bGTJW_LDBLCLK;				//!< ダブルクリックでタグジャンプ
 
 	//検索・置換ダイアログ
-	BOOL				m_bAutoCloseDlgFind;			// 検索ダイアログを自動的に閉じる
-	BOOL				m_bAutoCloseDlgReplace;			// 置換 ダイアログを自動的に閉じる
-	BOOL				m_bSearchAll;					// 先頭（末尾）から再検索 2002.01.26 hor
+	BOOL				m_bAutoCloseDlgFind;			//!< 検索ダイアログを自動的に閉じる
+	BOOL				m_bAutoCloseDlgReplace;			//!< 置換 ダイアログを自動的に閉じる
+	BOOL				m_bSearchAll;					//!< 先頭（末尾）から再検索 2002.01.26 hor
 
 	//INI内設定のみ
-	BOOL				m_bUseCaretKeyWord;				// キャレット位置の単語を辞書検索		// 2006.03.24 fon
+	BOOL				m_bUseCaretKeyWord;				//!< キャレット位置の単語を辞書検索		// 2006.03.24 fon
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -618,9 +616,9 @@ struct CommonSetting_Search
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_KeyBind
 {
-	/* キー割り当て */
-	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
-	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
+	// キー割り当て
+	int					m_nKeyNameArrNum;			//!< キー割り当て表の有効データ数
+	KEYDATA				m_pKeyNameArr[100];			//!< キー割り当て表
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -628,7 +626,6 @@ struct CommonSetting_KeyBind
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_CustomMenu
 {
-	/* カスタムメニュー情報 */
 	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
 	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
 	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
@@ -640,9 +637,9 @@ struct CommonSetting_CustomMenu
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_ToolBar
 {
-	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
-	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	/* ツールバーボタン構造体 */
-	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
+	int					m_nToolBarButtonNum;								//!< ツールバーボタンの数
+	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	//!< ツールバーボタン構造体
+	int					m_bToolBarIsFlat;									//!< フラットツールバーにする／しない
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -650,38 +647,39 @@ struct CommonSetting_ToolBar
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_SpecialKeyword
 {
-	/* 強調キーワード設定 */
-	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
-	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */ //未使用
+	// 強調キーワード設定
+	CKeyWordSetMgr		m_CKeyWordSetMgr;					//!< 強調キーワード
+	char				m_szKeyWordSetDir[MAX_PATH];		//!< 強調キーワードファイルのディレクトリ //未使用
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Helper
-{	//入力補完機能
-	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_TAB;	/* VK_TAB		補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_RIGHT;	/* VK_RIGHT		補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_SPACE;	/* VK_SPACE		補完決定キーが有効/無効 */
+{
+	//入力補完機能
+	BOOL				m_bHokanKey_RETURN;				//!< VK_RETURN	補完決定キーが有効/無効
+	BOOL				m_bHokanKey_TAB;				//!< VK_TAB		補完決定キーが有効/無効
+	BOOL				m_bHokanKey_RIGHT;				//!< VK_RIGHT	補完決定キーが有効/無効
+	BOOL				m_bHokanKey_SPACE;				//!< VK_SPACE	補完決定キーが有効/無効
 
 	//外部ヘルプの設定
-	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
+	char				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
 
 	//外部HTMLヘルプの設定
-	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
+	char				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	bool				m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ
 
 	//migemo設定
-	char				m_szMigemoDll[_MAX_PATH];		/* migemo dll */
-	char				m_szMigemoDict[_MAX_PATH];		/* migemo dict */
+	char				m_szMigemoDll[_MAX_PATH];		//!< migemo dll
+	char				m_szMigemoDict[_MAX_PATH];		//!< migemo dict
 
 	//キーワードヘルプ
-	LOGFONT				m_lf;							// キーワードヘルプのフォント情報 		// ai 02/05/21 Add
-	INT					m_nPointSize;					// キーワードヘルプのフォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
+	LOGFONT				m_lf;							//!< キーワードヘルプのフォント情報 		// ai 02/05/21 Add
+	INT					m_nPointSize;					//!< キーワードヘルプのフォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
 
 	//INI内設定のみ
-	int					m_bUseHokan;					/* 入力補完機能を使用する */
+	int					m_bUseHokan;					//!< 入力補完機能を使用する
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -689,21 +687,22 @@ struct CommonSetting_Helper
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Macro
 {
-	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
-	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	//	Sep. 14, 2001 genta
-	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
-	int					m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int					m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int					m_nMacroOnSave;				/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	char				m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
+	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	Sep. 14, 2001 genta
+	char				m_szMACROFOLDER[_MAX_PATH];		//!< マクロ用フォルダ
+	int					m_nMacroOnOpened;				//!< オープン後自動実行マクロ番号	@@@ 2006.09.01 ryoji
+	int					m_nMacroOnTypeChanged;			//!< タイプ変更後自動実行マクロ番号	@@@ 2006.09.01 ryoji
+	int					m_nMacroOnSave;					//!< 保存前自動実行マクロ番号	@@@ 2006.09.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名表示                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_FileName {
-	int					m_nTransformFileNameArrNum;
-	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
-	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
+struct CommonSetting_FileName
+{
+	int					m_nTransformFileNameArrNum;										//!< ファイル名の簡易表示登録数
+	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
+	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -712,16 +711,16 @@ struct CommonSetting_FileName {
 struct CommonSetting_OutLine
 {
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
-	int					m_bRememberOutlineWindowPos;
-	int					m_widthOutlineWindow;
-	int					m_heightOutlineWindow;
-	int					m_xOutlineWindowPos;
-	int					m_yOutlineWindowPos;
+	int					m_bRememberOutlineWindowPos;//!< アウトライン/トピックリスト の位置とサイズを記憶する
+	int					m_widthOutlineWindow;		//!< アウトライン/トピックリスト のサイズ(幅)
+	int					m_heightOutlineWindow;		//!< アウトライン/トピックリスト のサイズ(高さ)
+	int					m_xOutlineWindowPos;		//!< アウトライン/トピックリスト の位置(X座標)
+	int					m_yOutlineWindowPos;		//!< アウトライン/トピックリスト の位置(Y座標)
 
 	//IDD_FUNCLIST (ツール - アウトライン解析)
-	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
-	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
-	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
+	BOOL				m_bAutoCloseDlgFuncList;	//!< アウトラインダイアログを自動的に閉じる
+	BOOL				m_bFunclistSetFocusOnJump;	//!< フォーカスを移す 2002.02.08 hor
+	BOOL				m_bMarkUpBlankLineEnable;	//!< 空行を無視する 2002.02.08 aroka,hor
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -730,17 +729,18 @@ struct CommonSetting_OutLine
 struct CommonSetting_Compare
 {
 	//ファイル内容比較ダイアログ
-	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
+	BOOL				m_bCompareAndTileHorz;		//!< 文書比較後、左右に並べて表示
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ビュー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_View {
+struct CommonSetting_View
+{
 	//INI内設定のみ
-	LOGFONT				m_lf;							/* 現在のフォント情報 */
-	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
-	INT					m_nPointSize;					// フォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
+	LOGFONT				m_lf;						//!< 現在のフォント情報
+	BOOL				m_bFontIs_FIXED_PITCH;		//!< 現在のフォントは固定幅フォントである
+	INT					m_nPointSize;				//!< フォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -749,7 +749,7 @@ struct CommonSetting_View {
 struct CommonSetting_Others
 {
 	//INI内設定のみ
-	RECT				m_rcOpenDialog;				/* 「開く」ダイアログのサイズと位置 */
+	RECT				m_rcOpenDialog;				//!< 「開く」ダイアログのサイズと位置
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -767,27 +767,27 @@ struct CommonSetting_Others
 //! 共通設定
 struct CommonSetting
 {
-	CommonSetting_General			m_sGeneral;			// 全般
-	CommonSetting_Window			m_sWindow;			// ウィンドウ
-	CommonSetting_TabBar			m_sTabBar;			// タブバー
-	CommonSetting_Edit				m_sEdit;			// 編集
-	CommonSetting_File				m_sFile;			// ファイル
-	CommonSetting_Backup			m_sBackup;			// バックアップ
-	CommonSetting_Format			m_sFormat;			// 書式
-	CommonSetting_Search			m_sSearch;			// 検索
-	CommonSetting_KeyBind			m_sKeyBind;			// キー割り当て
+	CommonSetting_General			m_sGeneral;			//!< 全般
+	CommonSetting_Window			m_sWindow;			//!< ウィンドウ
+	CommonSetting_TabBar			m_sTabBar;			//!< タブバー
+	CommonSetting_Edit				m_sEdit;			//!< 編集
+	CommonSetting_File				m_sFile;			//!< ファイル
+	CommonSetting_Backup			m_sBackup;			//!< バックアップ
+	CommonSetting_Format			m_sFormat;			//!< 書式
+	CommonSetting_Search			m_sSearch;			//!< 検索
+	CommonSetting_KeyBind			m_sKeyBind;			//!< キー割り当て
 	//
-	CommonSetting_CustomMenu		m_sCustomMenu;		// カスタムメニュー
-	CommonSetting_ToolBar			m_sToolBar;			// ツールバー
-	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	// 強調キーワード
-	CommonSetting_Helper			m_sHelper;			// 支援
-	CommonSetting_Macro				m_sMacro;			// マクロ
-	CommonSetting_FileName			m_sFileName;		// ファイル名表示
+	CommonSetting_CustomMenu		m_sCustomMenu;		//!< カスタムメニュー
+	CommonSetting_ToolBar			m_sToolBar;			//!< ツールバー
+	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	//!< 強調キーワード
+	CommonSetting_Helper			m_sHelper;			//!< 支援
+	CommonSetting_Macro				m_sMacro;			//!< マクロ
+	CommonSetting_FileName			m_sFileName;		//!< ファイル名表示
 	//
-	CommonSetting_OutLine			m_sOutline;
-	CommonSetting_Compare			m_sCompare;
-	CommonSetting_View				m_sView;
-	CommonSetting_Others			m_sOthers;
+	CommonSetting_OutLine			m_sOutline;			//!< アウトライン
+	CommonSetting_Compare			m_sCompare;			//!< ファイル内容比較
+	CommonSetting_View				m_sView;			//!< ビュー
+	CommonSetting_Others			m_sOthers;			//!< その他
 };
 
 
@@ -800,7 +800,7 @@ struct IniFolder {
 	TCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
 };	/* iniフォルダ設定 */
 
-//共有フラグ
+//! 共有フラグ
 struct SShare_Flags{
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 	/*	@@@ 2002.1.24 YAZAKI
@@ -811,13 +811,13 @@ struct SShare_Flags{
 	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
 };
 
-//共有ワークバッファ
+//! 共有ワークバッファ
 struct SShare_WorkBuffer{
 	char				m_szWork[32000];
 	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
 };
 
-//共有ハンドル
+//! 共有ハンドル
 struct SShare_Handles{
 	HWND				m_hwndTray;
 	HWND				m_hwndDebug;
@@ -832,13 +832,13 @@ struct SShare_Nodes{
 	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
 };
 
-//EXE情報
+//! EXE情報
 struct SShare_Version{
 	DWORD				m_dwProductVersionMS;
 	DWORD				m_dwProductVersionLS;
 };
 
-//共有メモリ内構造体
+//! 共有メモリ内構造体
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //
 	int					m_nSEARCHKEYArrNum;
@@ -851,7 +851,7 @@ struct SShare_SearchKeywords{
 	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
 };
 
-//共有メモリ内構造体
+//! 共有メモリ内構造体
 struct SShare_TagJump{
 	//データ
 	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
@@ -863,12 +863,12 @@ struct SShare_TagJump{
 	BOOL				m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
 };
 
-//共有メモリ内構造体
+//! 共有メモリ内構造体
 struct SShare_FileNameManagement{
 	IniFolder			m_IniFolder;	/**** iniフォルダ設定 ****/
 };
 
-//共有メモリ内構造体
+//! 共有メモリ内構造体
 struct SShare_History{
 	//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
@@ -1055,13 +1055,13 @@ public:
 	bool		ExtHTMLHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
 	char*		GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
 	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
-	
+
 	//@@@ 2002.2.9 YAZAKI
 	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
 	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
 	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
 	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
-	
+
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
 	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
@@ -1090,7 +1090,7 @@ protected:
 	void InitToolButtons(DLLSHAREDATA*);
 	void InitTypeConfigs(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
-	
+
 	// Feb. 12, 2006 D.S.Koba
 	void ShareData_IO_Mru( CProfile& );
 	void ShareData_IO_Keys( CProfile& );
