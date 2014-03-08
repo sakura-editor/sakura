@@ -684,7 +684,8 @@ bool CheckRegexpSyntax(
 	HWND			hWnd,
 	bool			bShowMessage,
 	int				nOption,
-	bool			bKakomi)
+	bool			bKakomi
+)
 {
 	CBregexp cRegexp;
 
