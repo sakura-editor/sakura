@@ -2168,6 +2168,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				sLoadInfo.cFilePath = files[0].c_str();
 				//開く
 				cDocOp.FileLoad( &sLoadInfo );
+
+				// 新たな編集ウィンドウを起動
 				size_t nSize = files.size();
 				for( size_t f = 1; f < nSize; f++ ){
 					sLoadInfo.cFilePath = files[f].c_str();

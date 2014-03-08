@@ -33,7 +33,7 @@ class CKeyWordSetMgr;
 //2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
 template <class TYPE>
 struct TYPE_NAME {
-	TYPE		nMethod;
+	TYPE			nMethod;
 	const TCHAR*	pszName;
 };
 
@@ -45,8 +45,8 @@ struct TYPE_NAME_ID {
 
 template <class TYPE>
 struct TYPE_NAME_ID2 {
-	TYPE		nMethod;
-	int			nNameId;
+	TYPE			nMethod;
+	int				nNameId;
 	const TCHAR*	pszName;
 };
 
