@@ -50,8 +50,8 @@ static const DWORD p_helpids[] = {	//01310
 
 TYPE_NAME_ID<EShareMode> ShareModeArr[] = {
 	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//_T("‚µ‚È‚¢") },
-	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_READWRITE },	//_T("ã‘‚«‚ð‹ÖŽ~‚·‚é") },
-	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_WRITE },		//_T("“Ç‚Ý‘‚«‚ð‹ÖŽ~‚·‚é") },
+	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_WRITE },		//_T("ã‘‚«‚ð‹ÖŽ~‚·‚é") },
+	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_READWRITE },	//_T("“Ç‚Ý‘‚«‚ð‹ÖŽ~‚·‚é") },
 };
 
 //	From Here Jun. 2, 2001 genta
