@@ -421,6 +421,9 @@ CShareData::~CShareData()
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
+	if( m_hFileMap ){
+		CloseHandle( m_hFileMap );
+	}
 }
 
 
