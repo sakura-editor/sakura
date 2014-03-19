@@ -337,11 +337,6 @@ struct ARRHEAD {
 extern const unsigned int uShareDataVersion;
 const unsigned int uShareDataVersion = 118;
 
-/*
-||	Singleton風
-*/
-CShareData* CShareData::_instance = NULL;
-
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
 static BOOL s_bGSort;	// グループ指定
@@ -441,9 +436,6 @@ CShareData::~CShareData()
 bool CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
-
-	if (CShareData::_instance == NULL)	//	Singleton風
-		CShareData::_instance = this;
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 

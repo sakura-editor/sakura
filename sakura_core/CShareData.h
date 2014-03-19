@@ -946,24 +946,18 @@ struct DLLSHAREDATA {
 class CShareData
 {
 public:
-	/*
-	||	Singleton•—
-	*/
-	static CShareData* getInstance()
-	{
-		return _instance;
+	static CShareData* getInstance(){
+		static CShareData instance;
+
+		return &instance;
 	}
 
-protected:
-	static CShareData* _instance;
+	CShareData();
+	CShareData(CShareData const&);
+	void operator=(CShareData const&);
 
 public:
-	/*
-	||  Constructors
-	*/
-	CShareData();
 	~CShareData();
-
 
 	/*
 	||  Attributes & Operations

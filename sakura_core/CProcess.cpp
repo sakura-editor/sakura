@@ -36,6 +36,7 @@ CProcess::CProcess(
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
+	m_pcShareData = CShareData::getInstance();
 }
 
 /*!
@@ -46,13 +47,13 @@ CProcess::CProcess(
 bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
-	if( !m_cShareData.InitShareData() ){
+	if( !m_pcShareData->InitShareData() ){
 		//	適切なデータを得られなかった
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
 			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
 		return false;
 	}
-	m_pShareData = m_cShareData.GetShareData();
+	m_pShareData = m_pcShareData->GetShareData();
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが

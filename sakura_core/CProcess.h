@@ -56,9 +56,7 @@ protected:
 		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
 		);
 #endif
-
-	//	—Bˆê‚ÌCShareDate‚Æ‚·‚éBiCProcess‚ªÓ”C‚ğ‚Á‚Änew/delete‚·‚éj
-	CShareData		m_cShareData;
+	CShareData*		m_pcShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 private:
