@@ -1501,14 +1501,14 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,80,115,39,10
-    LTEXT           "閉じるボタン(&X)",IDC_STATIC,124,116,48,8
+    LTEXT           "閉じるボタン(&X)",IDC_TextTabClose,124,116,48,8
     COMBOBOX        IDC_CHECK_DispTabClose,173,113,46,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     RTEXT           "Font", IDC_STATIC_TABFONT,102,127,180,17,SS_RIGHT
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,129,85,10
-    LTEXT           "タイトル(&T)",IDC_STATIC,15,148,40,10
+    LTEXT           "タイトル(&T)",IDC_TextTabCaption,15,148,40,10
     EDITTEXT        IDC_TABWND_CAPTION,56,145,226,14,ES_AUTOHSCROLL
     GROUPBOX        "タブの外観",IDC_STATIC,7,102,280,64,WS_GROUP
     CONTROL         "マウスホイールでタブ切替(&W)",IDC_CHECK_ChgWndByWheel,
