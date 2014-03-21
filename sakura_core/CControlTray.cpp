@@ -44,6 +44,9 @@
 #include "CRunningTimer.h"
 #include "sakura_rc.h"
 
+#define IDT_EDITCHECK 2
+// 3秒
+#define IDT_EDITCHECK_INTERVAL 3000
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
@@ -407,6 +410,30 @@ LRESULT CControlTray::DispatchEvent(
 		}
 		return 0;
 
+	case WM_TIMER:
+		// タイマメッセージ
+		if( IDT_EDITCHECK == wParam ){
+			// 2010.08.26 ウィンドウ存在確認。消えたウィンドウを抹消する
+			bool bDelete = false;
+			bool bDelFound;
+			do {
+				bDelFound = false;
+				for( int i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+					HWND target = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
+					if( ! IsSakuraMainWindow( target ) ){
+						CShareData::getInstance()->DeleteEditWndList( target );
+						bDelete = bDelFound = true;
+						// 1つ削除したらやり直し
+						break;
+					}
+				}
+			}while( bDelFound );
+			if( bDelete && m_pShareData->m_sNodes.m_nEditArrNum == 0 ){
+				::PostMessage( hwnd, MYWM_DELETE_ME, 0, 0 );
+			}
+		}
+		return 0;
+
 	case MYWM_UIPI_CHECK:
 		/* エディタ－トレイ間でのUI特権分離の確認メッセージ */	// 2007.06.07 ryoji
 		::SendMessage( (HWND)lParam, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)0 );	// 返事を返す
@@ -503,6 +530,9 @@ LRESULT CControlTray::DispatchEvent(
 				pfnSetProcessShutdownParameters( 0x180, 0 );
 			}
 		}
+
+		// 2010.08.26 ウィンドウ存在確認
+		::SetTimer( hwnd, IDT_EDITCHECK, IDT_EDITCHECK_INTERVAL, NULL );
 		return 0L;
 
 //	case WM_QUERYENDSESSION:
