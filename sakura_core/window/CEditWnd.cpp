@@ -1752,7 +1752,21 @@ LRESULT CEditWnd::DispatchEvent(
 			GetDocument()->OnChangeSetting();	// ビューに設定変更を反映させる
 			GetDocument()->m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 
-			{	// アウトライン解析画面処理
+			break;
+		case PM_CHANGESETTING_FONT:
+			GetDocument()->OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
+			break;
+		case PM_CHANGESETTING_FONTSIZE:
+			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
+					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				GetDocument()->OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+			}
+			break;
+		case PM_CHANGESETTING_TYPE:
+			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				GetDocument()->OnChangeSetting();
+
+				// アウトライン解析画面処理
 				bool bAnalyzed = FALSE;
 #if 0
 				if( /* 必要なら変更条件をここに記述する（将来用） */ )
@@ -1768,20 +1782,6 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 				if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
 					::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
-			}
-			break;
-		case PM_CHANGESETTING_FONT:
-			GetDocument()->OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
-			break;
-		case PM_CHANGESETTING_FONTSIZE:
-			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
-					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
-				GetDocument()->OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
-			}
-			break;
-		case PM_CHANGESETTING_TYPE:
-			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
-				GetDocument()->OnChangeSetting();
 			}
 			break;
 		case PM_CHANGESETTING_TYPE2:
