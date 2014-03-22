@@ -182,7 +182,6 @@ int CPropTab::GetData( HWND hwndDlg )
 */
 void CPropTab::EnableTabPropInput(HWND hwndDlg)
 {
-
 	BOOL bTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
 	BOOL bMultiWin = FALSE;
 	if( bTabWnd ){
@@ -194,6 +193,7 @@ void CPropTab::EnableTabPropInput(HWND hwndDlg)
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin         ), bMultiWin );	// 2009.06.17
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), bTabWnd );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TextTabCaption           ), bTabWnd );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_TABFONT           ), bTabWnd );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), bTabWnd );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), bTabWnd );

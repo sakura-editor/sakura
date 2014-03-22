@@ -1393,7 +1393,7 @@ BEGIN
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,209,113,51,14
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,129,90,10,0
-    LTEXT           "タイトル(&T)",IDC_STATIC,15,148,40,10
+    LTEXT           "タイトル(&T)",IDC_TextTabCaption,15,148,40,10
     EDITTEXT        IDC_TABWND_CAPTION,56,145,203,14,ES_AUTOHSCROLL,0
     GROUPBOX        "タブの外観",IDC_STATIC,7,102,257,64,WS_GROUP
     CONTROL         "マウスホイールでタブ切替(&W)",IDC_CHECK_ChgWndByWheel,
