@@ -189,9 +189,6 @@ int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//バージョン番号の比
 
 int getCtrlKeyState();
 
-// 2005.11.26 aroka
-bool IsLocalDrive( const TCHAR* pszDrive );
-
 DWORD GetDllVersion( LPCTSTR lpszDllName );	// シェルやコモンコントロール DLL のバージョン番号を取得	// 2006.06.17 ryoji
 
 void ChangeCurrentDirectoryToExeDir();

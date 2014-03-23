@@ -34,6 +34,8 @@ bool IsFilePath( const char*, int*, int*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 
 
+// 2005.11.26 aroka
+bool IsLocalDrive( const TCHAR* pszDrive );
 
 //※サクラ依存
 FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
@@ -45,7 +47,7 @@ void AddLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'
 void SplitPath_FolderAndFile( const char*, char*, char* );		/* ファイルのフルパスを、フォルダとファイル名に分割 */
 BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */
 BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
-bool _IS_REL_PATH(const TCHAR* path);
+bool _IS_REL_PATH(const TCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 
 //※サクラ依存
 void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );

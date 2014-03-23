@@ -148,6 +148,42 @@ bool IsFilePath(
 	return false;
 }
 
+/*!
+	ローカルドライブの判定
+
+	@param[in] pszDrive ドライブ名を含むパス名
+	
+	@retval true ローカルドライブ
+	@retval false リムーバブルドライブ．ネットワークドライブ．
+	
+	@author MIK
+	@date 2001.03.29 MIK 新規作成
+	@date 2001.12.23 YAZAKI MRUの別クラス化に伴う関数化
+	@date 2002.01.28 genta 戻り値の型をBOOLからboolに変更．
+	@date 2005.11.12 aroka 文字判定部変更
+	@date 2006.01.08 genta CMRU::IsRemovableDriveとCEditDoc::IsLocalDriveが
+		実質的に同じものだった
+*/
+bool IsLocalDrive( const TCHAR* pszDrive )
+{
+	TCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
+	long	lngRet;
+
+	if( isalpha(pszDrive[0]) ){
+		_stprintf(szDriveType, _T("%c:\\"), _totupper(pszDrive[0]));
+		lngRet = GetDriveType( szDriveType );
+		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
+		{
+			return false;
+		}
+	}
+	else if (pszDrive[0] == _T('\\') && pszDrive[1] == _T('\\')) {
+		// ネットワークパス	2010/5/27 Uchi
+		return false;
+	}
+	return true;
+}
+
 /*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
 	@author Moca
 	@date 2003.06.23
@@ -450,7 +486,7 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 	if( hFind != INVALID_HANDLE_VALUE ){
 		::FindClose( hFind );
 		if( bFileOnly && (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )return false;
-			return true;
+		return true;
 	}
 	return false;
 }
