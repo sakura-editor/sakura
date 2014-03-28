@@ -62,7 +62,7 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 
 		int ArgCount = 0;
 		if( Info->m_pData ){
-			ArgCount = Info->m_pData->m_nArgSize;
+			ArgCount = Info->m_pData->m_nArgMinSize;
 		}else{
 			for(int i = 0; i < 4; ++i){
 				if(Info->m_varArguments[i] != VT_EMPTY) 

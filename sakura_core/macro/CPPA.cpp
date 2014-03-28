@@ -244,8 +244,8 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		if( i < 4 ){
 			type = cMacroFuncInfo.m_varArguments[i];
 		}else{
-			if( cMacroFuncInfo.m_pData && cMacroFuncInfo.m_pData->m_nArgSize < i ){
-				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i];
+			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
+				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
 			}
 		}
 		if ( type == VT_EMPTY ){
@@ -545,8 +545,8 @@ bool CPPA::CallHandleFunction(
 		if( i < 4 ){
 			type = mfi->m_varArguments[i];
 		}else{
-			if( mfi->m_pData && mfi->m_pData->m_nArgSize < i ){
-				type = mfi->m_pData->m_pVarArgEx[i];
+			if( mfi->m_pData && i < mfi->m_pData->m_nArgMinSize ){
+				type = mfi->m_pData->m_pVarArgEx[i - 4];
 			}
 		}
 		if(VT_EMPTY == type){

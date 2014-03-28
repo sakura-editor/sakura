@@ -218,7 +218,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 			VARTYPE type = VT_EMPTY;
 			int nArgSizeMax = _countof( mInfo->m_varArguments );
 			if( mInfo->m_pData  ){
-				nArgSizeMax = mInfo->m_pData->m_nArgSize;
+				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
 			}
 			for(nArgs = 0; szLine[i] ; ++nArgs ) {
 				// Jun. 16, 2002 genta プロトタイプチェック
@@ -237,8 +237,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 				if( nArgs < 4 ){
 					type = mInfo->m_varArguments[nArgs];
 				}else{
-					if( mInfo->m_pData && mInfo->m_pData->m_nArgSize < nArgs ){
-						type = mInfo->m_pData->m_pVarArgEx[nArgs];
+					if(  mInfo->m_pData && nArgs < mInfo->m_pData->m_nArgMinSize ){
+						type = mInfo->m_pData->m_pVarArgEx[nArgs - 4];
 					}
 				}
 

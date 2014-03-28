@@ -50,7 +50,8 @@ const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep.
 
 struct MacroFuncInfoEx
 {
-	int			m_nArgSize;
+	int			m_nArgMinSize;
+	int			m_nArgMaxSize;
 	VARTYPE*	m_pVarArgEx;
 };
 
