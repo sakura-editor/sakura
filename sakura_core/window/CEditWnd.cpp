@@ -1441,11 +1441,11 @@ LRESULT CEditWnd::DispatchEvent(
 					m_CMenuDrawer.ResetContents();
 					HMENU hMenuPopUp = ::CreatePopupMenu();
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, 
-						LS( F_CHGMOD_EOL_CRLF ), _T("") ); // 入力改行コード指定(CRLF)
+						LS( F_CHGMOD_EOL_CRLF ), _T("C") ); // 入力改行コード指定(CRLF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF,
-						LS( F_CHGMOD_EOL_LF ), _T("") ); // 入力改行コード指定(LF)
+						LS( F_CHGMOD_EOL_LF ), _T("L") ); // 入力改行コード指定(LF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
-						LS( F_CHGMOD_EOL_CR ), _T("") ); // 入力改行コード指定(CR)
+						LS( F_CHGMOD_EOL_CR ), _T("R") ); // 入力改行コード指定(CR)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_NEL,
 						LS(STR_EDITWND_MENU_NEL), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LS,
