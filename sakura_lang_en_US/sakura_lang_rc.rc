@@ -3288,7 +3288,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     STR_SQLERR_EXEC_BUT_NOT_RUN	"Trying to execute in Oracle SQL*Plus\n\n\nOracle SQL*Plus is not running\n"
     STR_SQLERR_ACTV_BUT_NOT_RUN	"Trying to activate Oracle SQL*Plus\n\n\nOracle SQL*Plus is not running\n"
-	STR_ERR_CMPERR				"Comparison destination folder\n%s\nhas a %d byte line \ncan not perform comparison."			// FIXME - ok?
+	STR_ERR_CMPERR				"Comparison destination folder\n%ts\nhas a %d byte line \ncan not perform comparison."			// FIXME - ok?
 //	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
 	STR_NO_TITLE1				"(No Title)"
@@ -3358,8 +3358,8 @@ BEGIN
 	STR_DLGFAV_HIDDEN			"(hidden)"
 	STR_DLGFAV_FAVORITE			"Favorite"
 	STR_DLGFAV_CONF_DEL_FAV		"Delete recent %ts history.\nOK?"
-	STR_DLGFAV_CONF_DEL_NOTFAV	"Delete recent %s history(except Favorites). \nOK?"
-	STR_DLGFAV_CONF_DEL_PATH	"Delete recent %s history(Missing path) \nOK?"
+	STR_DLGFAV_CONF_DEL_NOTFAV	"Delete recent %ts history(except Favorites). \nOK?"
+	STR_DLGFAV_CONF_DEL_PATH	"Delete recent %ts history(Missing path) \nOK?"
 	STR_DLGFAV_DELIMITER		", "
 	STR_DLGFAV_FAV_REFRESH		"History (%ts) has been updated, will discard edit information and redisplay."
 	STR_DLGFAV_ADD				"Add"
@@ -3605,7 +3605,7 @@ BEGIN
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
 	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwire teh original file?"
 	STR_BACKUP_CONFORM_TITLE1		"Confirming creation of backup"												// Dialog Title for message below
-	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\nt%s\n\nBackup file will be sent to the Trashcan\n"
+	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\nBackup file will be sent to the Trashcan\n"
 	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title fo rmessage below
 	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
 	STR_BACKUP_ERR_DELETE		"failed to delete"
@@ -3775,7 +3775,7 @@ BEGIN
 	STR_EDITWND_MENU_LS			"Input Line-Feed code set (L&S)"
 	STR_EDITWND_MENU_PS			"Input Line-Feed code set (&PS)"
 
-	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
+	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%ts)\n\nSJIS:\t\t%ts\nJIS:\t\t%ts\nEUC:\t\t%ts\nLatin1:\t\t%ts\nUnicode:\t\t%ts\nUTF-8:\t\t%ts\nCESU-8:\t\t%ts"
 
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
 
@@ -3811,7 +3811,7 @@ BEGIN
 	STR_ESI_BOM					"\t\tBOM Detection　"
 	STR_ESI_BOM_UNKNOWN			"Unknown\r\n"
 	STR_ESI_MBC_OTHER_UNICODE	"\tMBC and Other UNICODE Family\r\n"
-	STR_ESI_OTHER_B_AND_P		"\t\t%d.%s\tSpecific Bytes %d\tPoint %d\r\n"
+	STR_ESI_OTHER_B_AND_P		"\t\t%d.%ts\tSpecific Bytes %d\tPoint %d\r\n"
 	STR_ESI_EUC_ZENKAKU			"\t\tEUC Zenkaku Kana/EUC Zenkaku Kanji\t%6.3f\r\n"
 	STR_ESI_RESULT				"Detection Result\r\n"
 
@@ -3867,7 +3867,7 @@ BEGIN
 	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: Too many parameters\n"
 	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\nFunction %ls parameter %d can not be a string."
 	STR_ERR_DLGKEYMACMGR5		"Line %d:\r\nFunction %ls parameter %d does not end with %lc."
-	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n Function %s parameter %d can not be a numeral."
+	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n Function %ls parameter %d can not be a numeral."
 	STR_ERR_DLGKEYMACMGR7		"Line %d: Column %d: Syntax Error\n"
 	STR_ERR_DLGKEYMACMGR8		"Line %d: %ls function does not exist.\n"
 
@@ -3934,7 +3934,7 @@ BEGIN
 	STR_ERR_DLGPPA2				"Error executing function\n%hs"
 	STR_ERR_DLGPPA3				"Unknown type of error whilst executing a function (Bug?)\nFunc_ID=%d"
 	STR_ERR_DLGPPA4				"Detailed Unknown Error"
-	STR_ERR_DLGPPA5				"Undefined Error\nError_CD=%d\n%s"
+	STR_ERR_DLGPPA5				"Undefined Error\nError_CD=%d\n%ts"
 	STR_ERR_DLGPPA6				"Error report is not correct"
 	STR_ERR_DLGPPA7				"PPA Execution Error"
 
@@ -3962,8 +3962,8 @@ BEGIN
 	// CProcessFactory.cpp
 	STR_ERR_DLGPROCFACT1		"This application expects to run on \nbetter than Windows95, or WindowsNT4.0 OS.\nApplication will now close."
 	STR_ERR_DLGPROCFACT2		"Could not determine OS Version.\nExiting Application."
-	STR_ERR_DLGPROCFACT3		"'%s'\nProcess startup failed.\n%s"
-	STR_ERR_DLGPROCFACT4		"'%s'\nControl Process startup failed."
+	STR_ERR_DLGPROCFACT3		"'%ts'\nProcess startup failed.\n%ts"
+	STR_ERR_DLGPROCFACT4		"'%ls'\nControl Process startup failed."
 	STR_ERR_DLGPROCFACT5		"Editor or System is busy.\nPlease wait a while..."
 
 	// CProfile.cpp
@@ -4378,9 +4378,9 @@ BEGIN
 	// CONTAINS a few STRINGS...
 	STR_ERR_ETCUTY01				"System "
 	STR_ERR_ETCUTY02				"User "
-	STR_ERR_ETCUTY03				"%s resources are extremely low\n\
-Continued execution of %s will likely result in failure.\n\
-Suspending execution of any further new %s.\n\
+	STR_ERR_ETCUTY03				"%ts resources are extremely low\n\
+Continued execution of %ts will likely result in failure.\n\
+Suspending execution of any further new %ts.\n\
 \n\
 System Resource\tRemaining  %d%%\n\
 User Resrouce\tRemaining  %d%%\n\

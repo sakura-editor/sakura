@@ -876,7 +876,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 			cesi.m_apMbcInfo[i]->eCodeID = CODE_SJIS;
 		}
 		cesi.GetEvaluation( cesi.m_apMbcInfo[i]->eCodeID, &v1, &v2 );
-		auto_sprintf( szWork, LS(STR_ESI_OTHER_B_AND_P),	// "\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"
+		auto_sprintf( szWork, LS(STR_ESI_OTHER_B_AND_P),	// "\t\t%d.%ts\t固有バイト数 %d\tポイント数 %d\r\n"
 			i+1, CCodeTypeName(cesi.m_apMbcInfo[i]->eCodeID).Normal(), v1, v2 );
 		pcmtxtOut->AppendString( szWork );
 	}
