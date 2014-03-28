@@ -32,12 +32,12 @@
 #include "debug/CRunningTimer.h"
 
 VARTYPE s_MacroArgEx_i[] = {VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_i = {5, s_MacroArgEx_i};
+MacroFuncInfoEx s_MacroInfoEx_i = {5, 5, s_MacroArgEx_i};
 #if 0
 VARTYPE s_MacroArgEx_ii[] = {VT_I4, VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_ii = {6, s_MacroArgEx_ii};
+MacroFuncInfoEx s_MacroInfoEx_ii = {6, 6, s_MacroArgEx_ii};
 VARTYPE s_MacroArgEx_s[] = {VT_BSTR};
-MacroFuncInfoEx s_MacroInfoEx_s = {5, s_MacroArgEx_s};
+MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
 #endif
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
