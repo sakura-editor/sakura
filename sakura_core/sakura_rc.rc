@@ -3286,7 +3286,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
 	STR_SQLERR_EXEC_BUT_NOT_RUN	"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 	STR_SQLERR_ACTV_BUT_NOT_RUN	"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
-	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
+	STR_ERR_CMPERR				"比較先のファイル\n%ts\n%dバイトを超える行があります。\n比較できません。"
 
 	STR_NO_TITLE1				"(無題)"
 	STR_NO_TITLE2				"無題"
@@ -3619,7 +3619,7 @@ BEGIN
 	STR_TITLE_GREP				"【Grep】%ls%ts"
 	STR_ERR_DLGEDITDOC30		"%ts\nは変更されています。 閉じる前に保存しますか？\n\nビューモードで開いているので、名前を付けて保存すればいいと思います。\n"
 	STR_CHANGE_CHARSET			"%ts\nはテキストの変更は有りませんが、\n文字コードセットが変更されています。\n閉じる前に保存しますか？"
-	STR_ERR_DLGEDITDOC31		"%s\nは変更されています。 閉じる前に保存しますか？"
+	STR_ERR_DLGEDITDOC31		"%ts\nは変更されています。 閉じる前に保存しますか？"
 	STR_AUTORELOAD_NOFITY		"★ファイル更新 %02d:%02d:%02d"
 
 	// CType_Cpp.cpp
@@ -3772,7 +3772,7 @@ BEGIN
 	STR_EDITWND_MENU_NEL		"入力改行コード指定(&NEL)"
 	STR_EDITWND_MENU_LS			"入力改行コード指定(L&S)"
 	STR_EDITWND_MENU_PS			"入力改行コード指定(&PS)"
-	STR_ERR_DLGEDITWND13		"文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
+	STR_ERR_DLGEDITWND13		"文字:\t\t%ls (%ts)\n\nSJIS:\t\t%ts\nJIS:\t\t%ts\nEUC:\t\t%ts\nLatin1:\t\t%ts\nUnicode:\t\t%ts\nUTF-8:\t\t%ts\nCESU-8:\t\t%ts"
 	STR_ERR_DLGEDITWND14		"印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
 
 	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
@@ -3806,7 +3806,7 @@ BEGIN
 	STR_ESI_BOM					"\t\tBOM の推測結果　"
 	STR_ESI_BOM_UNKNOWN			"不明\r\n"
 	STR_ESI_MBC_OTHER_UNICODE	"\tMBC と 上記以外の UNICODE ファミリ\r\n"
-	STR_ESI_OTHER_B_AND_P		"\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"
+	STR_ESI_OTHER_B_AND_P		"\t\t%d.%ts\t固有バイト数 %d\tポイント数 %d\r\n"
 	STR_ESI_EUC_ZENKAKU			"\t\t・EUC全角カナかな/EUC全角\t%6.3f\r\n"
 	STR_ESI_RESULT				"判定結果\r\n"
 
@@ -3862,7 +3862,7 @@ BEGIN
 	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: 引数が多すぎます\n"
 	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\n関数%lsの%d番目の引数に文字列は置けません．"
 	STR_ERR_DLGKEYMACMGR5		"Line %d:\r\n関数%lsの%d番目の引数の終わりに%lcがありません．"
-	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n関数%sの%d番目の引数に数値は置けません．"
+	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n関数%lsの%d番目の引数に数値は置けません．"
 	STR_ERR_DLGKEYMACMGR7		"Line %d: Column %d: Syntax Error\n"
 	STR_ERR_DLGKEYMACMGR8		"Line %d: %lsは存在しない関数です．\n"
 
@@ -3929,7 +3929,7 @@ BEGIN
 	STR_ERR_DLGPPA2				"関数の実行エラー\n%hs"
 	STR_ERR_DLGPPA3				"不明な関数の実行エラー(バグです)\nFunc_ID=%d"
 	STR_ERR_DLGPPA4				"詳細不明のエラー"
-	STR_ERR_DLGPPA5				"未定義のエラー\nError_CD=%d\n%s"
+	STR_ERR_DLGPPA5				"未定義のエラー\nError_CD=%d\n%ts"
 	STR_ERR_DLGPPA6				"エラー情報が不正"
 	STR_ERR_DLGPPA7				"PPA実行エラー"
 
@@ -3957,8 +3957,8 @@ BEGIN
 	// CProcessFactory.cpp
 	STR_ERR_DLGPROCFACT1		"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
 	STR_ERR_DLGPROCFACT2		"OSのバージョンが取得できません。\nアプリケーションを終了します。"
-	STR_ERR_DLGPROCFACT3		"'%s'\nプロセスの起動に失敗しました。\n%s"
-	STR_ERR_DLGPROCFACT4		"'%s'\nコントロールプロセスの起動に失敗しました。"
+	STR_ERR_DLGPROCFACT3		"'%ts'\nプロセスの起動に失敗しました。\n%ts"
+	STR_ERR_DLGPROCFACT4		"'%ls'\nコントロールプロセスの起動に失敗しました。"
 	STR_ERR_DLGPROCFACT5		"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
 
 	// CProfile.cpp
@@ -4371,9 +4371,9 @@ BEGIN
 	// CONTAINS a few STRINGS...
 	STR_ERR_ETCUTY01				"システム "
 	STR_ERR_ETCUTY02				"ユーザー "
-	STR_ERR_ETCUTY03				"%sリソースが極端に不足しています。\n\
-このまま%sを起動すると、正常に動作しない可能性があります。\n\
-新しい%sの起動を中断します。\n\
+	STR_ERR_ETCUTY03				"%tsリソースが極端に不足しています。\n\
+このまま%tsを起動すると、正常に動作しない可能性があります。\n\
+新しい%tsの起動を中断します。\n\
 \n\
 システム リソース\t残り  %d%%\n\
 User リソース\t残り  %d%%\n\
