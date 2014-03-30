@@ -632,7 +632,7 @@ void CEditView::DeleteData(
 		sDelRange.SetTo(CLayoutPoint(nNxtPos,GetCaret().GetCaretLayoutPos().GetY()));
 		CLogicRange sDelRangeLogic;
 		sDelRangeLogic.SetFrom(GetCaret().GetCaretLogicPos());
-		sDelRangeLogic.SetTo(CLogicPoint(nNxtIdx,GetCaret().GetCaretLogicPos().GetY()));
+		sDelRangeLogic.SetTo(CLogicPoint(nNxtIdx + pcLayout->GetLogicOffset(), GetCaret().GetCaretLogicPos().GetY()));
 		ReplaceData_CEditView(
 			sDelRange,
 			L"",				/* ‘}“ü‚·‚éƒf[ƒ^ */
