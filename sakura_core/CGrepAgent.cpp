@@ -46,6 +46,9 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	wcscpy( CAppMode::getInstance()->m_szGrepKey, L"" );
 }
 
+/*!
+	@date 2014.03.09 novice 最後の\\を取り除くのをやめる(d:\\ -> d:になる)
+*/
 void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>& vPaths )
 {
 	const int nPathLen = auto_strlen( pszPath );
@@ -69,6 +72,7 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 			p++;
 		}
 		*q = _T('\0');
+#if 0
 		// 2011.12.25 仕様変更。最後の\\は取り除く
 		int	nFolderLen = q - &szTmp[0];
 		if( 0 < nFolderLen ){
@@ -77,6 +81,7 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 				szTmp[nFolderLen - 1] = _T('\0');
 			}
 		}
+#endif
 		/* ロングファイル名を取得する */
 		TCHAR szTmp2[_MAX_PATH];
 		if( ::GetLongFileName( &szTmp[0], szTmp2 ) ){
@@ -85,6 +90,32 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 			vPaths.push_back( &szTmp[0] );
 		}
 	}
+}
+
+/*! 最後の\\を取り除く
+	@date 2014.03.09 novice 新規作成
+*/
+std::tstring CGrepAgent::ChopYen( const std::tstring& str )
+{
+	std::tstring dst = str;
+	size_t nPathLen = dst.length();
+
+	// 最後のフォルダ区切り記号を削除する
+	// [A:\]などのルートであっても削除
+	for(size_t i = 0; i < nPathLen; i++ ){
+#ifdef _MBCS
+		if( _IS_SJIS_1( (unsigned char)dst[i] ) && (i + 1 < nPathLen) && _IS_SJIS_2( (unsigned char)dst[i + 1] ) ){
+			// SJIS読み飛ばし
+			i++;
+		} else
+#endif
+		if( _T('\\') == dst[i] && i == nPathLen - 1 ){
+			dst.resize( nPathLen - 1 );
+			break;
+		}
+	}
+
+	return dst;
 }
 
 /*! Grep実行
@@ -293,12 +324,13 @@ DWORD CGrepAgent::DoGrep(
 			if( i ){
 				grepFolder += _T(';');
 			}
-			if( auto_strchr( vPaths[i].c_str(), _T(';') ) ){
+			std::tstring sPath = ChopYen( vPaths[i] );
+			if( auto_strchr( sPath.c_str(), _T(';') ) ){
 				grepFolder += _T('"');
-				grepFolder += vPaths[i];
+				grepFolder += sPath;
 				grepFolder += _T('"');
 			}else{
-				grepFolder += vPaths[i];
+				grepFolder += sPath;
 			}
 		}
 		cmemWork.SetStringT( grepFolder.c_str() );
@@ -393,6 +425,7 @@ DWORD CGrepAgent::DoGrep(
 
 	for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
 		bool bOutputBaseFolder = false;
+		std::tstring sPath = ChopYen( vPaths[nPath] );
 		int nTreeRet = DoGrepTree(
 			pcViewDst,
 			&cDlgCancel,
@@ -400,8 +433,8 @@ DWORD CGrepAgent::DoGrep(
 			cGrepEnumKeys,
 			cGrepExceptAbsFiles,
 			cGrepExceptAbsFolders,
-			vPaths[nPath].c_str(),
-			vPaths[nPath].c_str(),
+			sPath.c_str(),
+			sPath.c_str(),
 			sSearchOption,
 			sGrepOption,
 			pattern,
