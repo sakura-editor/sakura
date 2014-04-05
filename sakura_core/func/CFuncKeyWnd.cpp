@@ -58,7 +58,6 @@ CFuncKeyWnd::CFuncKeyWnd()
 {
 	int		i;
 	LOGFONT	lf;
-	m_pszClassName = _T("CFuncKeyWnd");
 	m_pcEditDoc = NULL;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -115,6 +114,8 @@ CFuncKeyWnd::~CFuncKeyWnd()
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
+	LPCTSTR pszClassName = _T("CFuncKeyWnd");
+
 	m_pcEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
 	m_hwndSizeBox = NULL;
@@ -134,15 +135,15 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
 		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
 		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
-		m_pszClassName// Pointer to a null-terminated string or is an atom.
+		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
 		hwndParent,
 		0, // extended window style
-		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
-		m_pszClassName, // pointer to window name
+		pszClassName,	// Pointer to a null-terminated string or is an atom.
+		pszClassName, // pointer to window name
 		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN 追加	// 2007.03.08 ryoji WS_VISIBLE 除去
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
