@@ -36,7 +36,6 @@ public:
 	void Close();
 
 private:
-	LPCTSTR	m_pszClassName;	/* ƒNƒ‰ƒX–¼ */
 	HBITMAP	m_hCenterImg;
 	CEditView*	m_cView;
 protected:

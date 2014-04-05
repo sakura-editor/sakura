@@ -43,7 +43,6 @@ public:
 	*/
 private:
 	// 20060126 aroka ‚·‚×‚ÄPrivate‚É‚µ‚ÄA‰Šú‰»‡˜‚É‡‚í‚¹‚Ä•À‚×‘Ö‚¦
-	LPCTSTR			m_pszClassName;	/*!< ƒNƒ‰ƒX–¼ */
 	CEditDoc*		m_pcEditDoc;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nCurrentKeyState;

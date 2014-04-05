@@ -49,7 +49,6 @@ public:
 	}
 
 protected: // 2002/2/10 aroka アクセス権変更
-	LPCTSTR		m_pszClassName;	/* Mutex作成用・ウィンドウクラス名 */
 	HFONT		m_hFont;
 
 public:

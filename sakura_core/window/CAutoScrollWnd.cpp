@@ -43,22 +43,24 @@ CAutoScrollWnd::~CAutoScrollWnd()
 
 HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal, const CMyPoint& point, CEditView* view )
 {
+	LPCTSTR pszClassName;
+
 	m_cView = view;
 	int idb, idc;
 	if( bVertical ){
 		if( bHorizontal ){
 			idb = IDB_SCROLL_CENTER;
 			idc = IDC_CURSOR_AUTOSCROLL_CENTER;
-			m_pszClassName = _T("SakuraAutoScrollCWnd");
+			pszClassName = _T("SakuraAutoScrollCWnd");
 		}else{
 			idb = IDB_SCROLL_VERTICAL;
 			idc = IDC_CURSOR_AUTOSCROLL_VERTICAL;
-			m_pszClassName = _T("SakuraAutoScrollVWnd");
+			pszClassName = _T("SakuraAutoScrollVWnd");
 		}
 	}else{
 		idb = IDB_SCROLL_HORIZONTAL;
 		idc = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
-		m_pszClassName = _T("SakuraAutoScrollHWnd");
+		pszClassName = _T("SakuraAutoScrollHWnd");
 	}
 	m_hCenterImg = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(idb), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(idc));
@@ -71,7 +73,7 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		hCursor,
 		(HBRUSH)(COLOR_3DFACE + 1),
 		NULL,
-		m_pszClassName
+		pszClassName
 	);
 
 	/* 基底クラスメンバ呼び出し */
@@ -79,8 +81,8 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		/* 初期化 */
 		hwndParent,
 		0,
-		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
-		m_pszClassName, // pointer to window name
+		pszClassName,	// Pointer to a null-terminated string or is an atom.
+		pszClassName, // pointer to window name
 		WS_CHILD | WS_VISIBLE, // window style
 		point.x-16, // horizontal position of window
 		point.y-16, // vertical position of window
