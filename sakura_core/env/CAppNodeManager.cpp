@@ -171,7 +171,7 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 			p = cRecentEditNode.GetItem( nIndex );
 			if( p )
 			{
-				memcpy_raw( &sMyEditNode, p, sizeof( sMyEditNode ) );
+				sMyEditNode = *p;
 			}
 		}
 
