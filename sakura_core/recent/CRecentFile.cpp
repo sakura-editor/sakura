@@ -78,7 +78,7 @@ int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 
 void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
 {
-	memcpy_raw(dst,src,sizeof(*dst));
+	*dst = *src;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
