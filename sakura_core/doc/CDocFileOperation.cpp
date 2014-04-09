@@ -597,16 +597,15 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	/* 全ビューの初期化 */
 	m_pcDocRef->InitAllView();
 
-	/* 親ウィンドウのタイトルを更新 */
-	m_pcDocRef->m_pcEditWnd->UpdateCaption();
-
 	//開く
 	FileLoadWithoutAutoMacro(&sLoadInfo);
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		CAppNodeManager::getInstance()->GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
-		m_pcDocRef->m_pcEditWnd->UpdateCaption();
 	}
+
+	/* 親ウィンドウのタイトルを更新 */
+	m_pcDocRef->m_pcEditWnd->UpdateCaption();
 
 	// オープン後自動実行マクロを実行する
 	// ※ロードしてなくても(無題)には変更済み
