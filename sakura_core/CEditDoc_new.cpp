@@ -1284,6 +1284,10 @@ void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bR
 	/* 全ビューの初期化 */
 	InitAllView();
 
+	if( !IsValidPath() ){
+		CShareData::getInstance()->GetNoNameNumber( m_pcEditWnd->m_hWnd );
+	}
+
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcEditWnd->UpdateCaption();
 

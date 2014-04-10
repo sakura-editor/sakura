@@ -3568,6 +3568,9 @@ void CEditDoc::ReloadCurrentFile(
 	/* 全ビューの初期化 */
 	InitAllView();
 
+	// 無題番号取得
+	CShareData::getInstance()->GetNoNameNumber( m_pcEditWnd->m_hWnd );
+
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcEditWnd->UpdateCaption();
 
@@ -3794,8 +3797,10 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				}else{
 					TCHAR szText[10];
 					const EditNode* node = CShareData::getInstance()->GetEditNode( m_pcEditWnd->m_hWnd );
-					_stprintf( szText, "%d", node->m_nId );
-					q = strncpy_ex( q, q_max - q, szText, strlen(szText));
+					if( 0 < node->m_nId ){
+						_stprintf( szText, _T("%d"), node->m_nId );
+						q = strncpy_ex( q, q_max - q, szText, strlen(szText));
+					}
 				}
 			}
 			++p;
@@ -3851,7 +3856,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		//	From Here Jan. 15, 2002 hor
 		case 'B':	// タイプ別設定の名前			2013/03/28 Uchi
 			{
-				STypeConfig&	sTypeCongig = GetDocumentAttribute();
+				const STypeConfig&	sTypeCongig = GetDocumentAttribute();
 				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
 					q = strncpy_ex( q, q_max - q, sTypeCongig.m_szTypeName, strlen(sTypeCongig.m_szTypeName) );
 				}
@@ -3998,8 +4003,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				char buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
 				//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 				DWORD dwVersionMS, dwVersionLS;
-				GetAppVersionInfo( NULL, VS_VERSION_INFO,
-					&dwVersionMS, &dwVersionLS );
+				GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 				int len = sprintf( buf, "%d.%d.%d.%d",
 					HIWORD( dwVersionMS ),
 					LOWORD( dwVersionMS ),

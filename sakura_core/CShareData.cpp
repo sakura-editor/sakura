@@ -332,10 +332,13 @@ struct ARRHEAD {
 
 	Version 118:
 	ColorInfo構造体のメンバ変数の型変更 2013.12.01 novice
+
+	Version 119:
+	無題番号の修正 2014.04.06 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 118;
+const unsigned int uShareDataVersion = 119;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -489,6 +492,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 		m_pShareData->m_sNodes.m_nSequences = 0;					/* ウィンドウ連番 */
+		m_pShareData->m_sNodes.m_nNonameSequences = 0;
 		m_pShareData->m_sNodes.m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
 		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 
@@ -1003,7 +1007,6 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 {
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
-	CRecentEditNode	cRecentEditNode;
 	EditNode	sMyEditNode;
 	EditNode	*p;
 
@@ -1012,6 +1015,8 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 
 	{	// 2007.07.07 genta Lock領域
 		LockGuard<CMutex> guard( g_cEditArrMutex );
+
+		CRecentEditNode	cRecentEditNode;
 
 		//登録済みか？
 		nIndex = cRecentEditNode.FindItem( (const char*)&hWnd );
@@ -1042,12 +1047,16 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 
 			//連番を更新する。
 			sMyEditNode.m_nIndex = m_pShareData->m_sNodes.m_nSequences;
-			sMyEditNode.m_nId = m_pShareData->m_sNodes.m_nSequences;
+			sMyEditNode.m_nId = -1;
 
 			/* タブグループ連番 */
 			if( nGroup > 0 )
 			{
 				sMyEditNode.m_nGroup = nGroup;	// 指定のグループ
+				if (m_pShareData->m_sNodes.m_nGroupSequences < nGroup ) {
+					// 指定グループが現在のGroup Sequencesを超えていた場合の補正
+					m_pShareData->m_sNodes.m_nGroupSequences = nGroup;
+				}
 			}
 			else
 			{
@@ -1323,6 +1332,22 @@ EditNode* CShareData::GetEditNode( HWND hWnd )
 	}
 
 	return NULL;
+}
+
+
+
+//! 無題番号取得
+int CShareData::GetNoNameNumber( HWND hWnd )
+{
+	EditNode* editNode = GetEditNode( hWnd );
+	if( editNode ){
+		if( -1 == editNode->m_nId ){
+			m_pShareData->m_sNodes.m_nNonameSequences++;
+			editNode->m_nId = m_pShareData->m_sNodes.m_nNonameSequences;
+		}
+		return editNode->m_nId;
+	}
+	return -1;
 }
 
 

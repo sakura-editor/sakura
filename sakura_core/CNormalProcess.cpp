@@ -150,6 +150,11 @@ bool CNormalProcess::InitializeProcess()
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
 		pEditWnd->SetDebugModeON();
+		if( !CCommandLine::getInstance()->IsDebugMode() ){
+			// デバッグではなくて(無題)
+			CShareData::getInstance()->GetNoNameNumber( pEditWnd->m_hWnd );
+			pEditWnd->UpdateCaption();
+		}
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
@@ -184,6 +189,9 @@ bool CNormalProcess::InitializeProcess()
 			return true; // 2003.06.23 Moca
 		}
 		else{
+			CShareData::getInstance()->GetNoNameNumber( pEditWnd->m_hWnd );
+			pEditWnd->UpdateCaption();
+			
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
 			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
 			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
@@ -280,6 +288,10 @@ bool CNormalProcess::InitializeProcess()
 				bReadOnly,	// 読み取り専用か
 				nType
 			);
+		}
+		if( !pEditWnd->m_pcEditDoc->IsValidPath() ){
+			CShareData::getInstance()->GetNoNameNumber( pEditWnd->m_hWnd );
+			pEditWnd->UpdateCaption();
 		}
 	}
 

@@ -829,6 +829,7 @@ struct SShare_Nodes{
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
 	LONG				m_nSequences;	/* ウィンドウ連番 */
+	LONG				m_nNonameSequences;	/* 無題連番 */
 	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
 };
 
@@ -970,6 +971,7 @@ public:
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 	void ResetGroupId( void );									/* グループをIDリセットする */
 	EditNode* GetEditNode( HWND hWnd );							/* 編集ウィンドウ情報を取得する */
+	int GetNoNameNumber( HWND hWnd );
 	int GetGroupId( HWND hWnd );								/* グループIDを取得する */
 	bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */
 	int GetFreeGroupId( void );									/* 空いているグループ番号を取得する */
