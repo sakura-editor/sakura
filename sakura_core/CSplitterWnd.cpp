@@ -26,7 +26,6 @@
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(_T("::CSplitterWnd"))
-, m_pszClassName(_T("SplitterWndClass"))	/* クラス名 */
 , m_pCEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
@@ -62,6 +61,8 @@ CSplitterWnd::~CSplitterWnd()
 /* 初期化 */
 HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
 {
+	LPCTSTR pszClassName = _T("SplitterWndClass");
+
 	/* 初期化 */
 	m_pCEditWnd	= pCEditWnd;
 
@@ -76,7 +77,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated 
 				//character string that specifies the resource name of the class menu,
 				//as the name appears in the resource file.
-		m_pszClassName// Pointer to a null-terminated string or is an atom.
+		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 	if( 0 == atWork ){
 		ErrorMessage( NULL, _T("SplitterWndクラスの登録に失敗しました。") );
@@ -86,8 +87,8 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 	return CWnd::Create(
 		hwndParent,
 		0, // extended window style
-		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
-		m_pszClassName, // pointer to window name
+		pszClassName,	// Pointer to a null-terminated string or is an atom.
+		pszClassName, // pointer to window name
 		WS_CHILD | WS_VISIBLE, // window style
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
