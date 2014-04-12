@@ -187,7 +187,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		}
 	}
 	else{
-		wcscpy(eiOld.m_szMarkLines,L"");
+		eiOld.m_szMarkLines[0] = L'\0';
 	}
 
 	// MRUƒŠƒXƒg‚Ö‚Ì“o˜^

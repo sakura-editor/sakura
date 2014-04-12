@@ -613,7 +613,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					pFuncWk->m_sName = szLabel;
 					pFuncWk->m_bDupErr = false;
 					pFuncWk->m_bIsNode = bIsNode;
-					auto_strcpy(pFuncWk->m_sKey, L"");
+					pFuncWk->m_sKey[0] = L'\0';
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = htiTemp;

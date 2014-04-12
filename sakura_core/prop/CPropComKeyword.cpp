@@ -259,7 +259,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					wcscpy( szKeyWord, L"" );
+					szKeyWord[0] = L'\0';
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
 					if( !cDlgInput1.DoModal(
 						G_AppInstance(),
@@ -370,7 +370,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					wcscpy( szKeyWord, L"" );
+					szKeyWord[0] = L'\0';
 					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}

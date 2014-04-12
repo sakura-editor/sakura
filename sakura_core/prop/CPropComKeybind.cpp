@@ -462,7 +462,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	nIndex = List_GetCurSel( hwndKeyList );
 	nIndexTop = List_GetTopIndex( hwndKeyList );
-	wcscpy( szKeyState, L"" );
+	szKeyState[0] = L'\0';
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
