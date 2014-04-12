@@ -211,7 +211,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		fiInit.m_nViewTopLine = CLayoutInt(0);
 		fiInit.m_ptCursor.Set(CLogicInt(0), CLogicInt(0));
 		_tcscpy( fiInit.m_szPath, _T("") );
-		wcscpy( fiInit.m_szMarkLines, L"" );	// 2002.01.16 hor
+		fiInit.m_szMarkLines[0] = L'\0';	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
 			pShare->m_sHistory.m_fiMRUArr[i] = fiInit;
 			pShare->m_sHistory.m_bMRUArrFavorite[i] = false;	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
@@ -2084,7 +2084,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("TagJumpKeyword[%02d]"), i );
 		if( i >= nSize ){
-			wcscpy( pShare->m_sTagJump.m_aTagJumpKeywords[i], LTEXT("") );
+			pShare->m_sTagJump.m_aTagJumpKeywords[i][0] = LTEXT('\0');
 		}
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i] );
 	}

@@ -514,11 +514,11 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設
 	wchar_t temp[MAX_PATH];
 	/* バックアップを作成するファイル */ // 20051107 aroka
 	if( !m_Common.m_sBackup.m_bBackUp ){
-		wcscpy( temp, LTEXT("") );
+		temp[0] = LTEXT('\0');
 	}
 	else{
 		if( m_Common.m_sBackup.m_bBackUpFolder ){
-			wcscpy( temp, LTEXT("") );
+			temp[0] = LTEXT('\0');
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
 			auto_sprintf( temp, LTEXT("%ls\\"), LSW(STR_PROPCOMBK_DUSTBOX) );

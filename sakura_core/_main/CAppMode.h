@@ -33,7 +33,7 @@ class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###仮
 	: m_bViewMode( false )	// ビューモード
 	, m_bDebugMode( false )		// デバッグモニタモード
 	{
-		wcscpy( m_szGrepKey, L"" );
+		m_szGrepKey[0] = L'\0';
 	}
 
 public:

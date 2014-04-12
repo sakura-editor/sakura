@@ -404,7 +404,7 @@ int CDlgTagJumpList::GetData( void )
 			return FALSE;
 		}
 		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
-		wcscpy( tmp, L"" );
+		tmp[0] = L'\0';
 		::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
 		SetKeyword( tmp );
 
@@ -921,7 +921,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 void CDlgTagJumpList::FindNext( bool bNewFind )
 {
 	wchar_t	szKey[ MAX_TAG_STRING_LENGTH ];
-	wcscpy( szKey, L"" );
+	szKey[0] = L'\0';
 	::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
 	if( bNewFind ){
 		// 前回のキーワードからの絞込検索のときで、tagsをスキップできるときはスキップ

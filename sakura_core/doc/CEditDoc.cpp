@@ -193,7 +193,7 @@ void CEditDoc::Clear()
 void CEditDoc::InitDoc()
 {
 	CAppMode::getInstance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
-	wcscpy( CAppMode::getInstance()->m_szGrepKey, L"" );	//$$
+	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';	//$$
 
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
 	m_cAutoReloadAgent.m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法 $$

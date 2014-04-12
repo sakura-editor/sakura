@@ -209,7 +209,7 @@ int CKeyBind::CreateKeyBindList(
 					szFuncNameJapanese, 255 )){
 					auto_strcpy( szFuncNameJapanese, LSW(STR_ERR_DLGKEYBIND2) );
 				}
-				auto_strcpy( szFuncName, LTEXT("")/*"---unknown()--"*/ );
+				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
 
 //				/* ‹@”\–¼“ú–{Œê */
 //				::LoadString(

@@ -95,7 +95,7 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 	wchar_t szBuff[10];
 	CLogicInt	nLinePos=CLogicInt(0);
 	pCDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-	wcscpy( szText, L"" );
+	szText[0] = L'\0';
 	while( pCDocLine ){
 		if(CBookmarkGetter(pCDocLine).IsBookmarked()){
 			auto_sprintf( szBuff, L"%d,",nLinePos );

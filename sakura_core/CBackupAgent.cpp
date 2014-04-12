@@ -367,7 +367,7 @@ bool CBackupAgent::FormatBackUpPath(
 			time( &ltime );				/* システム時刻を得ます */
 			today = localtime( &ltime );/* 現地時間に変換する */
 
-			wcscpy( szForm, L"" );
+			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
 				wcscat( szForm, L"%Y" );
 			}
@@ -398,7 +398,7 @@ bool CBackupAgent::FormatBackUpPath(
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
 
-				wcscpy( szTime, L"" );
+				szTime[0] = L'\0';
 				if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
 					auto_sprintf(szTime,L"%d",ctimeLastWrite->wYear);
 				}

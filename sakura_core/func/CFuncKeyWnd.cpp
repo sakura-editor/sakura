@@ -63,7 +63,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < _countof(m_szFuncNameArr); ++i ){
-		wcscpy( m_szFuncNameArr[i], LTEXT("") );
+		m_szFuncNameArr[i][0] = LTEXT('\0');
 	}
 //	2002.11.04 Moca Open()‘¤‚ÅÝ’è
 //	m_nButtonGroupNum = 4;
@@ -328,7 +328,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			if( nFuncCode != m_nFuncCodeArr[i] ){
 				m_nFuncCodeArr[i] = nFuncCode;
 				if( 0 == m_nFuncCodeArr[i] ){
-					wcscpy( m_szFuncNameArr[i], LTEXT("") );
+					m_szFuncNameArr[i][0] = LTEXT('\0');
 				}else{
 					//	Oct. 2, 2001 genta
 					m_pcEditDoc->m_cFuncLookup.Funccode2Name(

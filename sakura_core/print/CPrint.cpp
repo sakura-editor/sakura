@@ -615,14 +615,14 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	pPrintSetting.m_bHeaderUse[1] = FALSE;
 	pPrintSetting.m_bHeaderUse[2] = FALSE;
 	wcscpy( pPrintSetting.m_szHeaderForm[0], L"$f" );
-	wcscpy( pPrintSetting.m_szHeaderForm[1], L"" );
-	wcscpy( pPrintSetting.m_szHeaderForm[2], L"" );
+	pPrintSetting.m_szHeaderForm[1][0] = L'\0';
+	pPrintSetting.m_szHeaderForm[2][0] = L'\0';
 	pPrintSetting.m_bFooterUse[0] = TRUE;
 	pPrintSetting.m_bFooterUse[1] = FALSE;
 	pPrintSetting.m_bFooterUse[2] = FALSE;
-	wcscpy( pPrintSetting.m_szFooterForm[0], L"" );
+	pPrintSetting.m_szFooterForm[0][0] = L'\0';
 	wcscpy( pPrintSetting.m_szFooterForm[1], L"- $p -" );
-	wcscpy( pPrintSetting.m_szFooterForm[2], L"" );
+	pPrintSetting.m_szFooterForm[2][0] = L'\0';
 }
 
 
