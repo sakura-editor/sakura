@@ -29,13 +29,6 @@
 #include <Windows.h>
 #include <tchar.h>
 
-#if defined(__BORLANDC__)
-#define __forceinline inline
-#define _itoa itoa
-#define _stricmp stricmp
-#define _memicmp memicmp
-#endif
-
 
 
 
