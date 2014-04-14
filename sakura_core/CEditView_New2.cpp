@@ -203,11 +203,11 @@ void CEditView::DispLineNumber(
 			if( NULL == pcLayout || 0 != pcLayout->m_ptLogicPos.x ){
 				strcpy( szLineNum, " " );
 			}else{
-				_itoa( pcLayout->m_ptLogicPos.y + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+				_itot( pcLayout->m_ptLogicPos.y + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 			}
 		}else{
 			/* 物理行（レイアウト行）番号表示モード */
-			_itoa( nLineNum + 1, szLineNum, 10 );
+			_itot( nLineNum + 1, szLineNum, 10 );
 		}
 		nLineCols = lstrlen( szLineNum );
 

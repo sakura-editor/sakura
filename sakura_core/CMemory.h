@@ -133,7 +133,7 @@ public:
 	const char operator[](int nIndex) const;
 
 	/* データへのポインタと長さ返す */
-	__forceinline char* GetStringPtr( int* pnLength ) const
+	inline char* GetStringPtr( int* pnLength ) const
 	{
 		if( NULL != pnLength ){
 			*pnLength = GetStringLength();
@@ -141,7 +141,7 @@ public:
 		return (char*)m_pData;
 	}
 
-	__forceinline char* GetStringPtr( void ) const
+	inline char* GetStringPtr( void ) const
 	{
 		return (char*)m_pData;
 	}

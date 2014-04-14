@@ -32,7 +32,7 @@ CC_OBJFILEOPT=-o
 CC_EXEFILEOPT=-e
 
 ## (BCC) CPP Options
-CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -D__MT__ -tWM
+CPPFLAGS=-I$(SRCDIR)  -D__MSC -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -D__MT__ -tWM
 RFLAGS=-dDS_SETFOREGROUND=0x200L -i$(SRCDIR)
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 

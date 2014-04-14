@@ -57,16 +57,8 @@ inline T t_max(T t1,T t2)
 #define _countof(A) (sizeof(A)/sizeof(A[0]))
 #endif
 
-#if defined(__BORLANDC__)
-#define __forceinline inline
-#define _itoa itoa
-#define _strlwr strlwr
-#endif
 
 #if defined(__MINGW32__)
-#ifndef __forceinline
-#define __forceinline inline
-#endif
 #include <limits.h>
 #include <ole2.h>
 #include <objbase.h>
