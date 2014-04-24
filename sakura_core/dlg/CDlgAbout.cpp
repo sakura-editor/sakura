@@ -167,14 +167,19 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 #if (SVN_REV == 0)
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
-#else
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),
-#endif
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
 		LOWORD( dwVersionLS )
 	);
+#else
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),
+		HIWORD( dwVersionMS ),
+		LOWORD( dwVersionMS ),
+		HIWORD( dwVersionLS ),
+		LOWORD( dwVersionLS )
+	);
+#endif
 	cmemMsg.AppendString( szMsg );
 
 	cmemMsg.AppendString( _T("\r\n") );

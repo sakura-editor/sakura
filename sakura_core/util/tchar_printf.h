@@ -48,28 +48,28 @@
 #define SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_
 
 // vsprintf_sラップ
-int tchar_vsprintf_s (ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
-int tchar_vswprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
+int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
+int tchar_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
 
 // vsprintfラップ
-int tchar_vsprintf (ACHAR* buf, const ACHAR* format, va_list& v);
-int tchar_vswprintf(WCHAR* buf, const WCHAR* format, va_list& v);
+int tchar_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v);
+int tchar_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v);
 
 // vsnprintf_sラップ
-int tchar_vsnprintf_s (ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
-int tchar_vsnwprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
+int tchar_vsnprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
+int tchar_vsnprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
 
 // sprintf_sラップ
-int tchar_sprintf_s (ACHAR* buf, size_t nBufCount, const ACHAR* format, ...);
-int tchar_swprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...);
+int tchar_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...);
+int tchar_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...);
 
 // sprintfラップ
 int tchar_sprintf(ACHAR* buf, const ACHAR* format, ...);
-int tchar_swprintf(WCHAR* buf, const WCHAR* format, ...);
+int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...);
 
 // _snprintf_sラップ
-int tchar_snprintf_s (ACHAR* buf, size_t count, const ACHAR* format, ...);
-int tchar_snwprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
+int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...);
+int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
 
 #endif /* SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_ */
 /*[EOF]*/
