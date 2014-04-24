@@ -3157,8 +3157,8 @@ BEGIN
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべて閉じる"
     F_TAB_CLOSEOTHER        "このタブ／ウィンドウ以外を閉じる"
-	F_TAB_CLOSEOTHER_TAB	"このタブ以外を閉じる(&O)"
-	F_TAB_CLOSEOTHER_WINDOW	"このウィンドウ以外を閉じる(&O)"
+	F_TAB_CLOSEOTHER_TAB	"このタブ以外を閉じる"
+	F_TAB_CLOSEOTHER_WINDOW	"このウィンドウ以外を閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
