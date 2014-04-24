@@ -53,7 +53,7 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 	static WCHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
-	int ret = tchar_vsnwprintf_s( szText, _countof(szText), lpFmt, argList );
+	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
 
 	//èoóÕ
 	::OutputDebugStringW( szText );

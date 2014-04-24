@@ -855,7 +855,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 
 	アウトプットウインドウが無ければオープンする
 	@param lpFmt [in] 書式指定文字列(wchar_t版)
-	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnwprintf_s に変更.長すぎるときは切り詰められる
+	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnprintf_s に変更.長すぎるときは切り詰められる
 */
 void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 {
@@ -865,7 +865,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	
 	va_list argList;
 	va_start( argList, lpFmt );
-	int ret = tchar_vsnwprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
+	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
 		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(),
 		to_wchar(lpFmt), argList );
 	va_end( argList );

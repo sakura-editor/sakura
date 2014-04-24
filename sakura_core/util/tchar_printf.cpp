@@ -307,7 +307,7 @@ int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list&
 	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v,false);
 }
 
-int tchar_vswprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
+int tchar_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
 {
 	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,false);
 }
@@ -322,9 +322,9 @@ int tchar_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v)
 {
 	return tchar_vsprintf_s(buf,MAX_BUF,format,v);
 }
-int tchar_vswprintf(WCHAR* buf, const WCHAR* format, va_list& v)
+int tchar_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v)
 {
-	return tchar_vswprintf_s(buf,MAX_BUF,format,v);
+	return tchar_vsprintf_s(buf,MAX_BUF,format,v);
 }
 
 
@@ -335,7 +335,7 @@ int tchar_vsnprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list
 {
 	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v,true);
 }
-int tchar_vsnwprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
+int tchar_vsnprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
 {
 	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,true);
 }
@@ -357,11 +357,11 @@ int tchar_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-int tchar_swprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...)
+int tchar_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...)
 {
 	va_list v;
 	va_start(v,format);
-	int ret=tchar_vswprintf_s(buf,nBufCount,format,v);
+	int ret=tchar_vsprintf_s(buf,nBufCount,format,v);
 	va_end(v);
 	return ret;
 }
@@ -385,11 +385,11 @@ int tchar_sprintf(ACHAR* buf, const ACHAR* format, ...)
 	return ret;
 }
 
-int tchar_swprintf(WCHAR* buf, const WCHAR* format, ...)
+int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...)
 {
 	va_list v;
 	va_start(v,format);
-	int ret=tchar_vswprintf_s(buf,MAX_BUF,format,v);
+	int ret=tchar_vsprintf_s(buf,MAX_BUF,format,v);
 	va_end(v);
 	return ret;
 }
@@ -405,11 +405,11 @@ int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-int tchar_snwprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)
+int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)
 {
 	va_list v;
 	va_start(v,format);
-	int ret=tchar_vswprintf_s(buf,count,format,v);
+	int ret=tchar_vsprintf_s(buf,count,format,v);
 	va_end(v);
 	return ret;
 }
