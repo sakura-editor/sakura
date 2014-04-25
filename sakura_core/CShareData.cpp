@@ -1034,7 +1034,7 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 			p = (EditNode*)cRecentEditNode.GetItem( nIndex );
 			if( p )
 			{
-				memcpy( &sMyEditNode, p, sizeof( sMyEditNode ) );
+				sMyEditNode = *p;
 			}
 		}
 
