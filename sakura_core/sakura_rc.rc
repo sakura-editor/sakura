@@ -3597,7 +3597,7 @@ BEGIN
 	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
 	STR_SAVEAGENT_OTHER			"\'%ts\'\nファイルを保存できません。\n他のウィンドウで使用中です。"
 	STR_ERR_DLGEDITDOC5			"文字コード情報"
-	STR_ERR_DLGEDITDOC6			"%ts\n\nこのファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%ts\n・[いいえ(N)]＝%ts\n・[キャンセル]＝開きません"
+	STR_ERR_DLGEDITDOC6			"%ts\n\nこのファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%ts\n・[いいえ(N)]＝%ts\n"
 	STR_NOT_EXSIST_SAVE			"%ts\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"
 	STR_BACKUP_ERR_TITLE		"ファイル保存"
 	STR_BACKUP_ERR_MSG			"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
