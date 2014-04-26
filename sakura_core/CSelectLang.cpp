@@ -224,8 +224,7 @@ int CLoadString::m_nDataTempArrayIndex = 0;							// ÅŒã‚Ég—p‚µ‚½ƒoƒbƒtƒ@‚ÌƒCƒ
 LPCTSTR CLoadString::LoadStringSt( UINT uid )
 {
 	// g—p‚·‚éƒoƒbƒtƒ@‚ÌŒ»İˆÊ’u‚ği‚ß‚é
-	m_nDataTempArrayIndex = ( m_nDataTempArrayIndex >= _countof(m_acLoadStrBufferTemp) - 1) ?
-															0 : ( m_nDataTempArrayIndex + 1 );
+	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % _countof(m_acLoadStrBufferTemp);
 
 	m_acLoadStrBufferTemp[m_nDataTempArrayIndex].LoadString( uid );
 
@@ -304,7 +303,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				hRsrc = ::GetModuleHandle(NULL);	// “à•”ƒŠƒ\[ƒX‚ğg‚¤
 			}else{
 				// “à•”ƒŠƒ\[ƒX‚©‚ç‚à“Ç‚ß‚È‚©‚Á‚½‚ç’ú‚ß‚éi•’Ê‚Í‚ ‚è“¾‚È‚¢j
-				m_pszString[0] = 0;
+				m_pszString[0] = _T('\0');
 				break;
 			}
 #ifdef UNICODE
