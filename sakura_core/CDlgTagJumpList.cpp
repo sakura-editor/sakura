@@ -43,6 +43,7 @@
 #include "mymessage.h"
 #include "CRecent.h"
 #include "etc_uty.h"
+#include "file.h"
 #include "shell.h"
 #include "Debug.h"
 #include "my_icmp.h"

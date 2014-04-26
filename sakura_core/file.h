@@ -33,6 +33,9 @@ bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 bool IsFilePath( const char*, int*, int*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 
+//	Apr. 30, 2003 genta
+//	ディレクトリの深さを調べる
+int CalcDirectoryDepth(const TCHAR* path);
 
 // 2005.11.26 aroka
 bool IsLocalDrive( const TCHAR* pszDrive );

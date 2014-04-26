@@ -176,10 +176,6 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSma
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
-//	Apr. 30, 2003 genta
-//	ディレクトリの深さを調べる
-int CalcDirectoryDepth(const TCHAR* path);
-
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
 
 // 20051121 aroka
