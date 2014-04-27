@@ -23,8 +23,8 @@
 */
 
 #include "StdAfx.h"
-#include "etc_uty.h"
 #include "os.h"
+#include "module.h"
 #include "CUxTheme.h"
 #include "Debug.h"
 

@@ -229,6 +229,7 @@ OBJS =\
 	$(OBJDIR)\File.obj \
 	$(OBJDIR)\Funccode.obj \
 	$(OBJDIR)\global.obj \
+	$(OBJDIR)\module.obj \
 	$(OBJDIR)\my_icmp.obj \
 	$(OBJDIR)\os.obj \
 	$(OBJDIR)\shell.obj \

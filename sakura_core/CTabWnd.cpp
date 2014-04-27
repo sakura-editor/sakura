@@ -45,6 +45,7 @@
 #include "mymessage.h"
 #include "etc_uty.h"
 #include "os.h"
+#include "module.h"
 #include "charcode.h"
 #include "my_tchar.h"	//Unicode‘Î‰ž Moca
 

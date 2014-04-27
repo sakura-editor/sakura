@@ -42,6 +42,7 @@
 #include "CShareData.h"
 #include "CEditWnd.h"
 #include "etc_uty.h"
+#include "module.h"
 #include "global.h"
 #include "CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "CSMacroMgr.h"///

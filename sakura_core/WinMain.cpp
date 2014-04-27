@@ -23,8 +23,8 @@
 #include <windows.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
-#include "etc_uty.h"
 #include "os.h"
+#include "module.h"
 #include "CRunningTimer.h"
 #include "Debug.h"
 

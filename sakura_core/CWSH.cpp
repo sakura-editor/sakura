@@ -29,6 +29,7 @@
 #include "CEditDoc.h"
 #include "etc_uty.h"
 #include "os.h"
+#include "module.h"
 #include "OleTypes.h"
 
 //スクリプトに渡されるオブジェクトの情報

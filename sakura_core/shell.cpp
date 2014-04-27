@@ -29,6 +29,7 @@
 #include "shell.h"
 #include "file.h"
 #include "os.h"
+#include "module.h"
 #include "CShareData.h"
 #include "COsVersionInfo.h"
 #include "Debug.h"

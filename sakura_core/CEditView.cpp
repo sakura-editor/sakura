@@ -38,6 +38,7 @@
 #include "CEditWnd.h"
 #include "CDlgCancel.h"
 #include "etc_uty.h"
+#include "module.h"
 #include "os.h"
 #include "CLayout.h"/// 2002/2/3 aroka
 #include "COpe.h"///

@@ -125,7 +125,6 @@ BOOL IsURL( const char*, int, int* );/* w’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’
 BOOL IsMailAddress( const char*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
 int IsNumber( const char*, int, int );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK
 void ActivateFrameWindow( HWND );	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
-void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ\[ƒX‚©‚ç»•iƒo[ƒWƒ‡ƒ“‚Ìæ“¾ */
 BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
 BOOL CheckEXT( const TCHAR*, const TCHAR* );	/* Šg’£q‚ğ’²‚×‚é */
 char* my_strtok( char*, int, int*, const char* );
@@ -170,9 +169,6 @@ int scan_ints(
 int GetColorIndexByName( const char *name );
 const char* GetColorNameByIndex( int index );
 
-//	Dec. 2, 2002 genta
-HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall = false);
-
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
@@ -184,11 +180,6 @@ UINT32 ParseVersion( const TCHAR* ver );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì‰ğÍ
 int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
 
 int getCtrlKeyState();
-
-DWORD GetDllVersion( LPCTSTR lpszDllName );	// ƒVƒFƒ‹‚âƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹ DLL ‚Ìƒo[ƒWƒ‡ƒ“”Ô†‚ğæ“¾	// 2006.06.17 ryoji
-
-void ChangeCurrentDirectoryToExeDir();
-HMODULE LoadLibraryExedir(LPCTSTR pszDll);
 
 #endif /* _ETC_UTY_H_ */
 

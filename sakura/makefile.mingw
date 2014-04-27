@@ -221,6 +221,7 @@ OBJS= \
 	$(OBJDIR)/charcode.o \
 	$(OBJDIR)/etc_uty.o \
 	$(OBJDIR)/global.o \
+	$(OBJDIR)/module.o \
 	$(OBJDIR)/my_icmp.o \
 	$(OBJDIR)/os.o \
 	$(OBJDIR)/shell.o \
@@ -532,6 +533,8 @@ $(OBJDIR)/charcode.o: $(SRCDIR)/charcode.cpp
 $(OBJDIR)/etc_uty.o: $(SRCDIR)/etc_uty.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/global.o: $(SRCDIR)/global.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/module.o: $(SRCDIR)/module.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/my_icmp.o: $(SRCDIR)/my_icmp.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

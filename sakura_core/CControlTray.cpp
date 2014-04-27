@@ -40,6 +40,7 @@
 #include "CDlgOpenFile.h"
 #include "global.h"
 #include "etc_uty.h"
+#include "module.h"
 #include "shell.h"
 #include "CRunningTimer.h"
 #include "sakura_rc.h"

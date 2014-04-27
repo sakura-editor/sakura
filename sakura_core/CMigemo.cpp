@@ -20,6 +20,7 @@
 #include "CMigemo.h"
 #include "CShareData.h"
 #include "etc_uty.h"
+#include "module.h"
 #include "file.h"
 #include "charcode.h"
 

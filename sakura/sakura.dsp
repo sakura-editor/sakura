@@ -663,6 +663,10 @@ SOURCE=..\sakura_core\global.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\module.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\my_icmp.cpp
 # End Source File
 # Begin Source File
@@ -1117,6 +1121,10 @@ SOURCE=..\sakura_core\global.h
 # Begin Source File
 
 SOURCE=..\sakura_core\maxdata.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\module.h
 # End Source File
 # Begin Source File
 

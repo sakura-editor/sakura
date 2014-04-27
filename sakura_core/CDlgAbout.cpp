@@ -25,6 +25,7 @@
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "file.h"
+#include "module.h"
 #ifdef USE_SVNREV
 #include "svnrev.h"
 #else

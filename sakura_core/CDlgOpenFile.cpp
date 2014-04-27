@@ -21,16 +21,16 @@
 #include "StdAfx.h"
 #include <cderr.h>
 #include <dlgs.h>
+#include "global.h"
 #include "CDlgOpenFile.h"
 #include "Funccode.h"	//Stonee, 2001/05/18
 #include "Debug.h"
-#include "etc_uty.h"
-#include "shell.h"
-#include "file.h"
-#include "os.h"
-#include "global.h"
 #include "CFileExt.h"
 #include "CEditApp.h"
+#include "shell.h"
+#include "file.h"
+#include "module.h"
+#include "os.h"
 #include "my_icmp.h"
 #include "sakura_rc.h"
 #include "sakura.hh"

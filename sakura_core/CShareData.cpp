@@ -30,6 +30,7 @@
 #include "Debug.h"
 #include "global.h"
 #include "etc_uty.h"
+#include "module.h"
 #include "file.h"
 #include "os.h"
 #include "CRunningTimer.h"
