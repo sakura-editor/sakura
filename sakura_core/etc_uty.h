@@ -174,11 +174,6 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
 
-// 20051121 aroka
-bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
-UINT32 ParseVersion( const TCHAR* ver );	//バージョン番号の解析
-int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//バージョン番号の比較
-
 int getCtrlKeyState();
 
 #endif /* _ETC_UTY_H_ */

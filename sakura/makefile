@@ -226,7 +226,8 @@ OBJS =\
 	$(OBJDIR)\CBregexp.obj \
 	$(OBJDIR)\Debug.obj \
 	$(OBJDIR)\etc_uty.obj \
-	$(OBJDIR)\File.obj \
+	$(OBJDIR)\file.obj \
+	$(OBJDIR)\format.obj \
 	$(OBJDIR)\Funccode.obj \
 	$(OBJDIR)\global.obj \
 	$(OBJDIR)\module.obj \

@@ -655,6 +655,10 @@ SOURCE=..\sakura_core\file.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\format.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\Funccode.cpp
 # End Source File
 # Begin Source File
