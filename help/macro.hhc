@@ -814,11 +814,6 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="すべて行置換">
-					<param name="Local" value="source\reference\find\S_ReplaceAllLine.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="検索マークのクリア">
 					<param name="Local" value="source\reference\find\S_SearchClearMark.html">
 					<param name="ImageNumber" value="9">

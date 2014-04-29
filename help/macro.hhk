@@ -931,11 +931,6 @@
 		<param name="Local" value="source\reference\find\S_ReplaceAll.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="ReplaceAllLine">
-		<param name="Name" value="S_ReplaceAllLine">
-		<param name="Local" value="source\reference\find\S_ReplaceAllLine.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="ReplaceDialog">
 		<param name="Name" value="S_ReplaceDialog">
 		<param name="Local" value="source\reference\find\S_ReplaceDialog.html">
@@ -1702,11 +1697,6 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_ReplaceAll">
 		<param name="Local" value="source\reference\find\S_ReplaceAll.html">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="S_ReplaceAllLine">
-		<param name="Name" value="S_ReplaceAllLine">
-		<param name="Local" value="source\reference\find\S_ReplaceAllLine.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_ReplaceDialog">
