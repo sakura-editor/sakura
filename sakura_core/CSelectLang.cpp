@@ -83,7 +83,6 @@ LPCTSTR CSelectLang::getDefaultLangString( void )
 */
 HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 {
-	int nCount;
 	SSelLangInfo *psLangInfo;
 
 	if ( m_psLangInfoList.size() == 0 ) {
@@ -92,7 +91,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		psLangInfo->hInstance = GetModuleHandle(NULL);
 
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
-		nCount = ::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
+		::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
 
 		m_psLangInfoList.push_back( psLangInfo );
 	}

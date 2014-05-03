@@ -111,7 +111,6 @@ void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )
 {
 	assert( nIndex < _countof(ColorInfo_DEFAULT) );
 
-	ColorInfoBase* p = pColorInfo;
 	_tcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
 }
 

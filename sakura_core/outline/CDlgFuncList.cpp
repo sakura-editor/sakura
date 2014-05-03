@@ -2113,7 +2113,6 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 {
-	CEditView* pcEditView=(CEditView*)m_lParam;
 	int nSelect = Combo_GetCurSel( hwndCtl );
 	switch(wID)
 	{

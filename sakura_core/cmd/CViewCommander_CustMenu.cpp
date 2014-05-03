@@ -89,7 +89,6 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 	GetEditWindow()->GetMenuDrawer().ResetContents();
 
 	//	Oct. 3, 2001 genta
-	CFuncLookup& FuncLookup = GetDocument()->m_cFuncLookup;
 
 	if( nMenuIdx < 0 || MAX_CUSTOM_MENU <= nMenuIdx ){
 		return 0;

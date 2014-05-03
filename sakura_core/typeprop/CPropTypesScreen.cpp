@@ -259,7 +259,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 					bool bFixedFont = true;
 					if( m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
 					}else{
-						bool bFixedFont = false;
+						bFixedFont = false;
 					}
 
 					if( MySelectFont( &lf, &nPointSize, hwndDlg, bFixedFont) ){

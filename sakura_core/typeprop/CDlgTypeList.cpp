@@ -350,7 +350,7 @@ void CDlgTypeList::SetData( int selIdx )
 			nExtent = sizeExtent.cx;
 		}
 	}
-	for( nIdx; nIdx < MAX_TYPES; ++nIdx ){
+	for( ; nIdx < MAX_TYPES; ++nIdx ){
 		m_bRegistryChecked[ nIdx ] = FALSE;
 		m_bExtRMenu[ nIdx ] = FALSE;
 		m_bExtDblClick[ nIdx ] = FALSE;
@@ -594,7 +594,6 @@ bool CDlgTypeList::CopyType()
 
 bool CDlgTypeList::UpType()
 {
-	HWND hwndDlg = GetHwnd();
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0 ) {
@@ -617,7 +616,6 @@ bool CDlgTypeList::UpType()
 
 bool CDlgTypeList::DownType()
 {
-	HWND hwndDlg = GetHwnd();
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0 || GetDllShareData().m_nTypesCount <= iDocType + 1 ) {
@@ -641,8 +639,6 @@ bool CDlgTypeList::DownType()
 bool CDlgTypeList::AddType()
 {
 	int nNewTypeIndex = GetDllShareData().m_nTypesCount;
-	HWND hwndDlg = GetHwnd();
-	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_TYPES );
 	if( !CDocTypeManager().AddTypeConfig(CTypeConfig(nNewTypeIndex)) ){
 		return false;
 	}
