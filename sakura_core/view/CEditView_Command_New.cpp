@@ -161,9 +161,8 @@ void CEditView::InsertData_CEditView(
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
-				if( 0 < nDataLen && WCODE::IsLineDelimiter(pData[nDataLen-1]) ){
-					bHintNext = true;	// 更新が次行からになる可能性がある
-				}
+				// 1行多く更新する必要がある可能性がある
+				bHintNext = true;
 			}
 			StringToOpeLineData( cMem.GetStringPtr(), cMem.GetStringLength(), insData, opeSeq );
 			cMem.Clear();
