@@ -110,8 +110,18 @@ private:
 		bool		m_bEditable;		//編集可能
 		bool		m_bAddExcept;		//除外へ追加
 		int			m_nViewCount;		//カレントの表示数
+		FavoriteInfo():
+			m_pRecent(NULL)
+			,m_pszCaption(NULL)
+			,m_nId(0)
+			,m_bHaveFavorite(false)
+			,m_bHaveView(false)
+			,m_bFilePath(false)
+			,m_bEditable(false)
+			,m_bAddExcept(false)
+			,m_nViewCount(0)
+		{};
 	};
-
 	struct ListViewSortInfo {
 		HWND	hListView; //!< リストビューの HWND
 		int		nSortColumn; //!< ソート列 -1で未指定

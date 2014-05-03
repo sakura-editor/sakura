@@ -122,8 +122,6 @@ CDlgFavorite::CDlgFavorite()
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	{
-		memset_raw( m_aFavoriteInfo, 0, sizeof( m_aFavoriteInfo ) );
-
 		i = 0;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFile;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_FILE );
@@ -222,6 +220,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = NULL;
