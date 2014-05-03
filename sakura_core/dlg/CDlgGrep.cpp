@@ -297,7 +297,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
 			std::vector<std::tstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
-			int nFolderLen = 0;
 			if( 0 < vPaths.size() ){
 				// ÅŒã‚ÌƒpƒX‚ª‘€ì‘ÎÛ
 				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), _MAX_PATH );

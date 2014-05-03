@@ -706,7 +706,6 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=è∏èá,FALSE=ç~èá
 	}
 
 	sta.reserve(sSelectOld.GetTo().GetY2() - sSelectOld.GetFrom().GetY2() );
-	int nStrDataLength = 0;
 	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( i );
 		const CNativeW& cmemLine = pcDocLine->_GetDocLineDataWithEOL();

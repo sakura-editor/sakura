@@ -689,7 +689,6 @@ void CEditDoc::OnChangeSetting(
 	if( bFontTypeOld ){
 		nFontPointSizeOld = m_cDocType.GetDocumentAttribute().m_nPointSize;
 	}
-	const int nTextWrapMethodOld = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
 	const CKetaXInt nTabSpaceOld = m_cDocType.GetDocumentAttribute().m_nTabSpace;
 
 	// ï∂èëéÌï 

@@ -118,8 +118,6 @@ bool CShareData::InitShareData()
 		return false;
 	}
 
-	HINSTANCE hLangRsrc;		// メッセージリソースDLLのインスタンスハンドル
-
 	if( GetLastError() != ERROR_ALREADY_EXISTS ){
 		/* オブジェクトが存在していなかった場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
@@ -134,7 +132,7 @@ bool CShareData::InitShareData()
 		SetDllShareData( m_pShareData );
 
 		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
-		hLangRsrc = m_cSelectLang.InitializeLanguageEnvironment();
+		m_cSelectLang.InitializeLanguageEnvironment();
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
 		TCHAR	szIniFolder[_MAX_PATH];
@@ -590,7 +588,7 @@ bool CShareData::InitShareData()
 		//	To Here Oct. 27, 2000 genta
 
 		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
-		hLangRsrc = m_cSelectLang.InitializeLanguageEnvironment();
+		m_cSelectLang.InitializeLanguageEnvironment();
 	}
 	return true;
 }

@@ -170,7 +170,6 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 		if( m_sSelect != m_sSelectOld ){
 			// 選択色表示の時は、WM_PAINT経由で作画
 			const int nCharWidth = pView->GetTextMetrics().GetHankakuDx();
-			const int nCharHeight = pView->GetTextMetrics().GetHankakuDy();
 			const CTextArea& area =  pView->GetTextArea();
 			CLayoutRect rcOld; // CLayoutRect
 			TwoPointToRect( &rcOld, m_sSelectOld.GetFrom(), m_sSelectOld.GetTo() );

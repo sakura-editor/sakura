@@ -457,7 +457,6 @@ void CEditView::DeleteData(
 	CLogicInt	nIdxFrom;
 	CLogicInt	nIdxTo;
 	CLogicInt	nDelLen;
-	CLogicInt	nDelPosNext;
 	CLogicInt	nDelLenNext;
 	CLayoutRect		rcSel;
 	const CLayout*	pcLayout;
@@ -516,7 +515,6 @@ void CEditView::DeleteData(
 			nIdxFrom = CLogicInt(0);
 			nIdxTo = CLogicInt(0);
 			for( nLineNum = rcSel.bottom; nLineNum >= rcSel.top - 1; nLineNum-- ){
-				nDelPosNext = nIdxFrom;
 				nDelLenNext	= nIdxTo - nIdxFrom;
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 				if( pLine ){

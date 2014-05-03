@@ -804,7 +804,7 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 		{ VK_APPS,	(LPCTSTR)STR_KEY_BIND_APLI,	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
 	};
 
-TCHAR* jpVKEXNames[] = {
+const TCHAR* jpVKEXNames[] = {
 	_T("ダブルクリック"),
 	_T("右クリック"),
 	_T("中クリック"),

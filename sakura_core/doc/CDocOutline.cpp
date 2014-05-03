@@ -289,7 +289,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
-		for( i = 0; i < pszText[i] != L'\0'; ++i ){
+		for( i = 0; pszText[i] != L'\0'; ++i ){
 			if( WCODE::IsLineDelimiter(pszText[i]) ){
 				pszText[i] = L'\0';
 				break;
