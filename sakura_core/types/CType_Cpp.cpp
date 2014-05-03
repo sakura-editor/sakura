@@ -533,8 +533,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 								}
 								else if( nMode2 == M2_TEMPLATE_SAVE)
 								{
-									wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) );
-									szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+									wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) - 1 );
 									nMode2 = M2_NAMESPACE_END;
 								}
 							}
@@ -561,10 +560,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 								// template func<const x>() のような場合にconstの後ろにスペースを挿入
 								if( nLen + 1 < nItemNameLenMax ){
 									wcscat( szTemplateName, L" " );
+									nLen++;
 								}
 							}
-							wcsncat( szTemplateName, szWord, nItemNameLenMax - nLen );
-							szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+							wcsncat( szTemplateName, szWord, nItemNameLenMax - nLen - 1 );
 						}
 					}
 					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_FUNC_NAME_END 条件を追加し、補正がかかるようにした。
@@ -761,7 +760,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax)
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax &&
+							(nItemLine > 0) )
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					// +nLenDefPosは追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
@@ -1106,8 +1106,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							}
 							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
-								wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) );
-								szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+								wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) - 1 );
 								nMode2 = M2_NAMESPACE_END;
 							}
 							else if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
