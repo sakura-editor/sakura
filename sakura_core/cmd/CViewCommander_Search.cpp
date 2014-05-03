@@ -749,11 +749,12 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 	int	nAllLineNum; // $$単位混在
 	if( bFastMode ){
-		nAllLineNum = (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
-	}else{
 		nAllLineNum = (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
+	}else{
+		nAllLineNum = (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
 	}
 	int	nAllLineNumOrg = nAllLineNum;
+	int	nAllLineNumLogicOrg = (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
 
 	/* 進捗表示&中止ダイアログの作成 */
 	CDlgCancel	cDlgCancel;
@@ -991,7 +992,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				if( 0 <= nDiff ){
 					nNewPos = (nDiff + (Int)cSelectLogic.GetFrom().GetY2()) >> nShiftCount;
 				}else{
-					nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cLayoutMgr.GetLineCount());
+					nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cDocLineMgr.GetLineCount());
 				}
 			}else{
 				int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
@@ -1274,6 +1275,30 @@ void CViewCommander::Command_REPLACE_ALL()
 			}
 		}
 
+		if( !bFastMode && 50 <= nReplaceNum && !(bSelectedArea || nPaste) ){
+			bFastMode = true;
+			nAllLineNum = (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
+			nAllLineNumOrg = nAllLineNumLogicOrg;
+			for( nShiftCount = 0; 300 < nAllLineNum; nShiftCount++ ){
+				nAllLineNum/=2;
+			}
+			Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
+			int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
+			if( 0 <= nDiff ){
+				nNewPos = (nDiff + (Int)cSelectLogic.GetFrom().GetY2()) >> nShiftCount;
+			}else{
+				nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cDocLineMgr.GetLineCount());
+			}
+			Progress_SetPos( hwndProgress, nNewPos +1 );
+			Progress_SetPos( hwndProgress, nNewPos );
+		}
+		// 最後に置換した位置を記憶
+		if( bFastMode ){
+			ptLastLogic = GetCaret().GetCaretLogicPos();
+		}else{
+			ptLast = GetCaret().GetCaretLayoutPos();
+		}
+
 		/* 置換後の位置を確認 */
 		if( bSelectedArea )
 		{
@@ -1309,17 +1334,6 @@ void CViewCommander::Command_REPLACE_ALL()
 			}
 		}
 		// To Here 2001.12.03 hor
-
-		if( !bFastMode && 50 <= nReplaceNum && !(bSelectedArea || nPaste) ){
-			bFastMode = true;
-			nAllLineNum = (Int)GetDocument()->m_cLayoutMgr.GetLineCount() >> nShiftCount;
-		}
-		// 最後に置換した位置を記憶
-		if( bFastMode ){
-			ptLastLogic = GetCaret().GetCaretLogicPos();
-		}else{
-			ptLast = GetCaret().GetCaretLayoutPos();
-		}
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
