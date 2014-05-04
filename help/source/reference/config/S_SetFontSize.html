@@ -1,0 +1,41 @@
+<html><head><title>S_SetFontSize</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_SetFontSize</h2>
+
+<dl>
+	<dt>機能</dt>
+		<dd>フォントサイズ設定</dd>
+	<dt>構文</dt>
+		<dd><i>void  S_SetFontSize ( i1 ， i2 ， i3 )</i>
+		<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>i1</td><td>整数数値</td><td>フォントサイズ(1/10ポイント単位)</td></tr>
+			<tr><td>i2</td><td>整数数値</td><td>フォントサイズを拡大or縮小するための変更量(i1=0のとき有効)</td></tr>
+			<tr><td>i3</td><td>整数数値</td><td>変更範囲(省略可能)</td></tr>
+		</table>
+		</dd>
+	<dt>説明</dt>
+		<dd>
+		使用中のフォントがTrueTypeのみサイズを変更できます。</br>
+		i1でフォントサイズを設定します。1/10ポイント単位になります。</br>
+		10.5ptにしたいときは、SetFontSize(105, 0);を設定します。</br>
+		</br>
+		i1=0に設定したときに、int2でフォントサイズの拡大or縮小ができます。</br>
+		選択されるフォントサイズは下記の通りです。</br>
+		8pt, 9pt, 10pt, 10.5pt, 11pt, 12pt, 14pt, 16pt, 18pt, 20pt, 22pt, 24pt, 26pt, 28pt, 36pt, 48pt, 72pt</br>
+		現在のフォントサイズが10のときにSetFontSize(0,1);を設定するとフォントサイズが11になります。</br>
+		現在のフォントサイズが10のときにSetFontSize(0,-1);を設定するとフォントサイズが9になります。</br>
+		</br>
+		i3=0(省略時規定) 共通設定変更</br>
+		i3=1 タイプ別設定変更</br>
+		i3=2 現在のウィンドウのみ一時的に変更</br>
+		</dd>
+</dl>
+<hr>
+</body></html>
