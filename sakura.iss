@@ -18,8 +18,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sinst2-1-0-0
-VersionInfoVersion=2.1.0.0
+OutputBaseFilename=sakura_install2-1-1-2
+VersionInfoVersion=2.1.1.2
 
 ; OSバージョン制限
 MinVersion=0,5.0
@@ -55,6 +55,7 @@ Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: mai
 Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.chm";           DestDir: "{app}";         Components: help
 Source: "sakura\macro.chm";            DestDir: "{app}";         Components: help
+Source: "sakura\plugin.chm";           DestDir: "{app}";         Components: help
 Source: "sakura\sakura.exe.ini";       DestDir: "{app}";         Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 
 Source: "sakura\keyword\*"; DestDir: "{app}\keyword"; Components: keyword; Flags: recursesubdirs
