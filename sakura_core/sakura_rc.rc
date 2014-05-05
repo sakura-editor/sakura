@@ -3611,8 +3611,8 @@ BEGIN
 	STR_ERR_DLGEDITDOC21		"%ts\nは現在他のプロセスによって書込みが禁止されています。"
 
 	STR_EXCLU_NO_EXCLUSIVE		"しない"
-	STR_EXCLU_DENY_WRITE		"書き込み禁止モード"
-	STR_EXCLU_DENY_READWRITE	"読み書き禁止モード"
+	STR_EXCLU_DENY_WRITE		"上書きを禁止する"
+	STR_EXCLU_DENY_READWRITE	"読み書きを禁止する"
 	STR_EXCLU_UNDEFINED			"未定義のモード（問題があります）"
 	STR_FILE_LOCK_ERR			"%ts\nを%tsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"
 
