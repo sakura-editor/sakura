@@ -13,6 +13,46 @@
 <h2>変更履歴(2013/05/13～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
 
+<h3>May. 5, 2014 (2.1.1.2)</h3>
+[バグ修正]<br />
+<ul>
+	<li>印刷プレビューで設定変更するとメモリーリーク (svn:3623 upatchid:769 unicode:2111 Moca)</li>
+	<li>整数オーバーフローの修正 (svn:3624 upatchid:755 Moca)</li>
+	<li>ファイル読み込み進捗で改行コード長が抜けていた (svn:3626 upatchid:736 Moca)</li>
+	<li>CTipWndクラスのメンバ変数の初期化 (svn:3638 upatchid:779 novice)</li>
+	<li>現在位置の単語選択 (svn:3640 upatchid:781 novice)</li>
+	<li>排他制御の修正 (svn:3649 upatchid:784 novice)</li>
+	<li>無効なコントロールのショートカットキー (svn:3654 upatchid:787 novice)</li>
+	<li>タイプ別設定変更内容がアウトライン表示に即時反映されない (svn:3656 upatchid:788 novice)</li>
+	<li>自動判別→SJISコード変換の修正 (svn:3660 upatchid:774 Moca)</li>
+	<li>共通設定のファンクションキーの上下が重なって表示されている (svn:3661 upatchid:775 Moca)</li>
+	<li>ステータスバーの入力改行コード指定のCRLF,LF,CRにアクセラレータキー未割り当て (svn:3662 upatchid:776 Moca)</li>
+	<li>%sの修正 (svn:3663 upatchid:780 Moca)</li>
+	<li>GetDocumentationの修正 (svn:3664 upatchid:788 Moca)</li>
+	<li>PPAでS_GREPで異常終了する (svn:3665 upatchid:782 Moca)</li>
+	<li>折り返し行で1文字削除した場合のRedoでエラー(r3477-) (svn:3666 upatchid:790 Moca)</li>
+	<li>Grepフォルダの解析処理変更 (svn:3667 upatchid:785 unicode:2138 novice)</li>
+	<li>このタブ以外を閉じるのアクセスキー不正 (svn:3679 upatchid:798 Moca)</li>
+	<li>文字コード不一致時のダイアログ表示 (svn:3681 upatchid:800 novice)</li>
+	<li>gccでお気に入りダイアログでフリーズする (svn:3697 upatchid:791 Moca)</li>
+	<li>mingwでのコンパイル警告・バグの修正 (svn:3698 upatchid:792 Moca)</li>
+	<li>すべて置換の矩形選択処理が不正&進捗表示不正(r3477-) (svn:3699 upatchid:801 Moca)</li>
+	<li>折り返し位置への挿入での再描画不足(r3069-) (svn:3700 upatchid:802 unicode:2156 LR4,Moca)</li>
+	<li>ファイル切替え時のフォント切換え不正 (svn:3701 upatchid:804 unicode:2149 LR4,Moca)</li>
+	<li>C++アウトライン解析でバッファオーバーラン (svn:3702 upatchid:786 unicode:2140 Moca,suzz)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>未使用変数削除 (svn:3625 Moca)</li>
+	<li>CFileLoadの変換でEOLも含めるように (svn:3626 upatchid:736 Moca)</li>
+	<li>文字コード変換の高速化 (svn:3627 upatchid:727 Moca)</li>
+	<li>色を変えない時の表示速度改善 (svn:3628 upatchid:745 Moca)</li>
+	<li>改行コード変換のメモリー使用量削減 (svn:3629 upatchid:746 Moca)</li>
+	<li>改行コードのないファイルの読み込み高速化 (svn:3630 upatchid:747 Moca)</li>
+	<li>大きいファイルのときのカーソル移動の高速化 (svn:3631 upatchid:748 Moca)</li>
+	<li>CDocLine,CLayoutのconst付加 (svn:3632 upatchid:752 Moca)</li>
+</ul>
+
 <h3>Feb. 9, 2014 (2.1.1.1)</h3>
 [バグ修正]<br />
 <ul>
