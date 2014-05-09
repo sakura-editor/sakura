@@ -205,6 +205,10 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 				ptPos.x += it.getColumn() - it.getColumnDelta();
 				ptPos.y --;
 			} else {
+				if( 0 < nRepCount ){
+					GetCaret().MoveCursor( ptCaretMove, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
+					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+				}
 				nRes = 0;
 				break; // ‚±‚êˆÈã¶‚É“®‚¯‚ÊB
 			}
