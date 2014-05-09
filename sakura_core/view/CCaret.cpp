@@ -746,7 +746,7 @@ void CCaret::ShowCaretPosInfo()
 				m_nLogicOffset50Cache = pcLayout50->GetLogicOffset();
 				m_nLineNo50Cache = nLineNum;
 				
-				offset = pcLayout->CalcLayoutOffset(*pLayoutMgr, m_nLogicOffset50Cache, m_nLineNo50Cache);
+				offset = pcLayout->CalcLayoutOffset(*pLayoutMgr, m_nLogicOffset50Cache, m_nOffset50Cache);
 				m_nOffsetCache = offset;
 				m_nLogicOffsetCache = pcLayout->GetLogicOffset();
 				m_nLineLogicNoCache = pcLayout->GetLogicLineNo();
