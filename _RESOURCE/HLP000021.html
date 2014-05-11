@@ -50,8 +50,8 @@ BOMを付加する場合にチェックしてください。<br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文:	FileSaveAs( str1 :String, int2 :Integer, int3 :Integer );<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能、ただしPPAマクロは省略不可）<br>
 ・記録:	×<br>
 ・解説<br>
 文字コードは以下のいずれかを指定することができます。<br>
@@ -74,9 +74,9 @@ BOMを付加する場合にチェックしてください。<br>
 拡張子の自動補完は、FileSaveAsマクロからの実行では動作しません。<br>
 <br>
 ・構文:	FileSaveAsDialog( str1 :String, int2 :Integer, int3 :Integer ); (sakura 2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名（省略可能）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能、ただしPPAマクロは省略不可）<br>
 ・記録:	×<br>
 ・解説<br>
 名前を付けて保存ダイアログを表示し、ファイルを保存します。<br>
