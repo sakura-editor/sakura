@@ -52,7 +52,7 @@ CSelectLang::~CSelectLang( void )
 */
 HINSTANCE CSelectLang::getLangRsrcInstance( void )
 {
-	return m_psLangInfo->hInstance;
+	return m_psLangInfo ? m_psLangInfo->hInstance : GetModuleHandle(NULL);
 }
 
 /*!
