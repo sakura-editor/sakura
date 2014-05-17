@@ -33,8 +33,8 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 1998-2014  by Norio Nakatani & Collaborators"
-#define PR_VER		2,1,1,2
-#define PR_VER_STR	"2.1.1.2"
+#define PR_VER		2,1,1,3
+#define PR_VER_STR	"2.1.1.3"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
