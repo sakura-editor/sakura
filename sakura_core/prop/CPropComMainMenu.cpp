@@ -83,22 +83,6 @@ static HTREEITEM TreeCopy( HWND, HTREEITEM, HTREEITEM, bool, bool );
 static void TreeView_ExpandAll( HWND, bool );
 static const TCHAR * MakeDispLabel( SMainMenuWork* );
 
-// 特別機能
-struct SSpecialFunc	{
-	EFunctionCode	m_nFunc;		// Function
-	int			 	m_nNameId;		// 名前
-};
-
-extern const	SSpecialFunc	sSpecialFuncs[] = {
-		{F_WINDOW_LIST,				STR_SPECIAL_FUNC_WINDOW },
-		{F_FILE_USED_RECENTLY,		STR_SPECIAL_FUNC_RECENT_FILE },
-		{F_FOLDER_USED_RECENTLY,	STR_SPECIAL_FUNC_RECENT_FOLDER },
-		{F_CUSTMENU_LIST,			STR_SPECIAL_FUNC_CUST_MENU },
-		{F_USERMACRO_LIST,			STR_SPECIAL_FUNC_MACRO },
-		{F_PLUGIN_LIST,				STR_SPECIAL_FUNC_PLUGIN_CMD },
-};
-extern const int nSpecialFuncsCount = (int)_countof(sSpecialFuncs);
-
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //  TreeViewキー入力時のメッセージ処理用
@@ -225,7 +209,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	HTREEITEM	nIdxMenu;
 	int			nIdxFIdx;
 	int			nIdxFunc;
-	WCHAR		szLabel[MAX_MAIN_MENU_NAME_LEN+10];
+	WCHAR		szLabel[256+10];
 
 	EFunctionCode	eFuncCode;
 	SMainMenuWork*	pFuncWk;	// 機能
@@ -401,8 +385,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				if (nIdxFIdx == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndListFunk );
-					for (i = 0; i < _countof(sSpecialFuncs); i++) {
-						List_AddString( hwndListFunk, LSW( sSpecialFuncs[i].m_nNameId ) );
+					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++) {
+						List_AddString( hwndListFunk, LS(nsFuncCode::pnFuncList_Special[i]) );
 					}
 				}
 				else {
@@ -508,8 +492,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							auto_strcpy( szLabel, LSW( sSpecialFuncs[nIdxFunc].m_nNameId ) );
-							eFuncCode = sSpecialFuncs[nIdxFunc].m_nFunc;
+							auto_strcpy( szLabel, LSW(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
+							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
 							List_GetText( hwndListFunk, nIdxFunc, szLabel );
@@ -873,14 +857,14 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 	HWND			hwndCombo;
 	HWND			hwndCheck;
 	HWND			hwndTreeRes;
-	WCHAR			szLabel[MAX_MAIN_MENU_NAME_LEN+10];
+	const int		MAX_LABEL_CCH = 256+10;
+	WCHAR			szLabel[MAX_LABEL_CCH];
 	int				nCurLevel;
 	HTREEITEM		htiItem;
 	HTREEITEM		htiParent;
 	TV_INSERTSTRUCT	tvis;			// 挿入用
 	SMainMenuWork*	pFuncWk;		// 機能(work)
 	int 			i;
-	int 			j;
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
@@ -931,22 +915,15 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 		pFuncWk->m_bIsNode = false;
 		switch (pcFunc->m_nType) {
 			case T_LEAF:
-				m_cLookup.Funccode2Name( pcFunc->m_nFunc, szLabel, MAX_MAIN_MENU_NAME_LEN );
+				m_cLookup.Funccode2Name( pcFunc->m_nFunc, szLabel, MAX_LABEL_CCH );
 				pFuncWk->m_sName = szLabel;
 				break;
 			case T_SEPARATOR:
 				pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_SEP);
 				break;
 			case T_SPECIAL:
-				pFuncWk->m_sName = pcFunc->m_sName;
-				if (pFuncWk->m_sName.empty()) {
-					for (j = 0; j < _countof(sSpecialFuncs); j++) {
-						if (pcFunc->m_nFunc == sSpecialFuncs[j].m_nFunc) {
-							pFuncWk->m_sName = RemoveAmpersand( LSW( sSpecialFuncs[j].m_nNameId ) );
-							break;
-						}
-					}
-				}
+				// 2014.05.04 各国語対応
+				pFuncWk->m_sName = LSW(pcFunc->m_nFunc);
 				break;
 			case T_NODE:
 				pFuncWk->m_bIsNode = true;
@@ -1051,12 +1028,8 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			}
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {
 				pcFunc->m_nType = T_SPECIAL;
-				if (nLevel == 0) {
-					auto_strcpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
-				}
-				else {
-					pcFunc->m_sName[0] = L'\0';
-				}
+				// 2014.05.04 nLevel == 0 のときも"名前なし"にする
+				pcFunc->m_sName[0] = L'\0';
 			}
 			else {
 				if (pFuncWk->m_nFunc == F_OPTION) {
@@ -1158,13 +1131,18 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 	TV_INSERTSTRUCT	tvis;		// 挿入用
 	TV_ITEM			tvi;		// 取得用
 	int				n = 0;
-	TCHAR			szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
+#ifdef _UNICODE
+	const int		MAX_LABEL_CCH = 256+10;
+#else
+	const int		MAX_LABEL_CCH = (256+10)*2;
+#endif
+	TCHAR			szLabel[MAX_LABEL_CCH];
 
 	for (s = src; s != NULL; s = fOnryOne ? NULL:TreeView_GetNextSibling( hwndTree, s )) {
 		tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
 		tvi.pszText = szLabel;
-		tvi.cchTextMax = MAX_MAIN_MENU_NAME_LEN;
+		tvi.cchTextMax = MAX_LABEL_CCH;
 		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
 			break;
@@ -1258,7 +1236,7 @@ static void TreeView_ExpandAll( HWND hwndTree, bool bExpand )
 // 表示用データの作成（アクセスキー付加）
 static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 {
-	static	WCHAR	szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
+	static	WCHAR	szLabel[256 + 10];
 
 	if (pFunc->m_sKey[0]) {
 		auto_sprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls(%ls)",

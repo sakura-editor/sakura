@@ -407,14 +407,16 @@ int CKeyBind::GetKeyStrList(
 	@param sKey アクセスキー
 	@return アクセスキー付きの文字列
 	@data 2013.12.09 novice アクセスキーと文字列の比較で小文字も有効にする
+	@date 2014.05.04 sLabelのバッファ長を300 => _MAX_PATH*2 + 30
 */
 TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 {
-	static	TCHAR	sLabel[300];
+	const int MAX_LABEL_CCH = _MAX_PATH*2 + 30;
+	static	TCHAR	sLabel[MAX_LABEL_CCH];
 	const	TCHAR*	p;
 
 	if (sKey == NULL || sKey[0] == L'\0') {
-		return const_cast<TCHAR*>( to_tchar(sName) );
+		return const_cast<TCHAR*>( sName );
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
@@ -450,6 +452,7 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 /*! メニューラベルの作成
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 	2010/5/17	アクセスキーの追加
+	@date 2014.05.04 Moca LABEL_MAX=256 => nLabelSize
 */
 TCHAR* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
@@ -459,10 +462,11 @@ TCHAR* CKeyBind::GetMenuLabel(
 		TCHAR*      pszLabel,   //!< [in,out] バッファは256以上と仮定
 		const TCHAR*	pszKey,
 		BOOL		bKeyStr,
+		int			nLabelSize,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	const int LABEL_MAX = 256;
+	const unsigned int LABEL_MAX = nLabelSize;
 
 
 	if( _T('\0') == pszLabel[0] ){
