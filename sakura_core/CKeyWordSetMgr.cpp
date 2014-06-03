@@ -102,6 +102,7 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 	memcpy_raw( m_nKeyWordNumArr , cKeyWordSetMgr.m_nKeyWordNumArr , sizeof( m_nKeyWordNumArr )  );
 	memcpy_raw( m_szKeyWordArr   , cKeyWordSetMgr.m_szKeyWordArr   , sizeof( m_szKeyWordArr )    );
 	memcpy_raw( m_IsSorted       , cKeyWordSetMgr.m_IsSorted       , sizeof( m_IsSorted )        ); //MIK 2000.12.01 binary search
+	memcpy_raw( m_nKeyWordMaxLenArr, cKeyWordSetMgr.m_nKeyWordMaxLenArr, sizeof( m_nKeyWordMaxLenArr ) ); //2014.05.04 Moca
 	return *this;
 }
 
@@ -130,7 +131,8 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 		--m_nKeyWordSetNum;	//	キーワードセットの追加をキャンセルする
 		return false;
 	}
-	wcscpy( m_szSetNameArr[nIdx], pszSetName );
+	wcsncpy( m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1 );
+	m_szSetNameArr[nIdx][_countof(m_szSetNameArr[nIdx]) - 1] = L'\0';
 	m_bKEYWORDCASEArr[nIdx] = bKEYWORDCASE;
 	m_nKeyWordNumArr[nIdx] = 0;
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
@@ -156,6 +158,7 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 		m_nKeyWordNumArr[i] = m_nKeyWordNumArr[i + 1];
 		m_nStartIdx[i] = m_nStartIdx[i + 1];	//	2004.07.29 Moca 可変長記憶
 		m_IsSorted[i] = m_IsSorted[i+1];	//MIK 2000.12.01 binary search
+		m_nKeyWordMaxLenArr[i] = m_nKeyWordMaxLenArr[i+1];	// 2014.05.04 Moca
 	}
 	m_nStartIdx[m_nKeyWordSetNum - 1] = m_nStartIdx[m_nKeyWordSetNum];	// 2007.07.14 ryoji これが無いと末尾＝最終セットの先頭になってしまう
 	m_nKeyWordSetNum--;
@@ -247,7 +250,10 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 		}
 	}
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
-	return wcscpy( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2], pszKeyWord );
+	wchar_t* p = m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
+	wcsncpy( p, pszKeyWord, MAX_KEYWORDLEN );
+	p[MAX_KEYWORDLEN] = L'\0';
+	return p;
 }
 
 
@@ -313,6 +319,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	if( 0 >= m_nKeyWordNumArr[nIdx]	){
 		return 3;	//	登録数が0なら上の条件で引っかかるのでここには来ない？
 	}
+	int nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
 	int  i;
 	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
@@ -323,6 +330,11 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	// 2005.01.26 Moca 1つずらすだけなので、ソートの状態は保持される
 	// m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
 	KeyWordReAlloc( nIdx, m_nKeyWordNumArr[nIdx] );	// 2004.07.29 Moca
+
+	// 2014.05.04 Moca キーワード長の再計算
+	if( nDelKeywordLen == m_nKeyWordMaxLenArr[nIdx] ){
+		KeywordMaxLen(nIdx);
+	}
 	return 0;
 }
 
@@ -353,21 +365,26 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 			(qsort_callback)wcsicmp
 		);
 	}
-
-	{
-		int i;
-		int len;
-		m_nKeyWordMaxLenArr[nIdx] = 0;
-		for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; i++ ){
-			len = wcslen( m_szKeyWordArr[i] );
-			if( m_nKeyWordMaxLenArr[nIdx] < len ){
-				m_nKeyWordMaxLenArr[nIdx] = len;
-			}
-		}
-	}
+	KeywordMaxLen(nIdx);
 	m_IsSorted[nIdx] = 1;
 	return;
 }
+
+void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
+{
+	int i;
+	int len;
+	int nMaxLen = 0;
+	const int nEnd = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx];
+	for( i = m_nStartIdx[nIdx]; i < nEnd; i++ ){
+		len = wcslen( m_szKeyWordArr[i] );
+		if( nMaxLen < len ){
+			nMaxLen = len;
+		}
+	}
+	m_nKeyWordMaxLenArr[nIdx] = nMaxLen;
+}
+
 
 /** nIdx番目のキーワードセットから pszKeyWordを探す。
 	見つかれば 0以上を、見つからなければ負の数を返す。
