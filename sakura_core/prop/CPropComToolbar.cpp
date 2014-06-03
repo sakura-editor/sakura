@@ -578,13 +578,16 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		if( tbb.fsStyle & TBSTYLE_SEP ){
 			// テキストだけ表示する
 			if( tbb.idCommand == F_SEPARATOR ){
-				auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1) );	// nLength 未使用 2003/01/09 Moca
+				auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
+				szLabel[_countof(szLabel) - 1] = L'\0';
 			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 				if( ::LoadStringW_AnyBuild( G_AppInstance(), tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
-					auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2) );
+					auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
+					szLabel[_countof(szLabel) - 1] = L'\0';
 				}
 			}else{
-				auto_strcpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3) );
+				auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
+				szLabel[_countof(szLabel) - 1] = L'\0';
 			}
 		//	From Here Oct. 15, 2001 genta
 		}else{

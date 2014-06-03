@@ -488,11 +488,13 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_NODE:		// ÉmÅ[Éhë}ì¸
 						eFuncCode = F_NODE;
 						bIsNode = true;
-						auto_strcpy( szLabel , LSW(STR_PROPCOMMAINMENU_EDIT) );
+						auto_strncpy( szLabel , LSW(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
+						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// ãÊêÿê¸ë}ì¸
 						eFuncCode = F_SEPARATOR;
-						auto_strcpy( szLabel , LSW(STR_PROPCOMMAINMENU_SEP) );
+						auto_strncpy( szLabel , LSW(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
+						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERT:				// ë}ì¸
 					case IDC_BUTTON_INSERT_A:			// ë}ì¸
