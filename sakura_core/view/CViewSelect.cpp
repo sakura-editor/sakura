@@ -243,6 +243,11 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 			}
 		}
 	}else{
+		if( IsTextSelecting() && (!m_sSelectOld.IsValid() || m_sSelectOld.IsOne()) ){
+			m_bDrawSelectArea = false;
+			pView->DrawBracketPair( false );
+			m_bDrawSelectArea = true;
+		}
 		HDC hdc = pView->GetDC();
 		DrawSelectArea2( hdc );
 		// 2011.12.02 選択解除状態での、カーソル位置ライン復帰
