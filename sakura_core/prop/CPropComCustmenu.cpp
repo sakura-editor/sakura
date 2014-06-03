@@ -117,7 +117,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 	int			nIdx3;
 	int			nIdx4;
 	WCHAR		szLabel[300];
-	WCHAR		szLabel2[300];
+	WCHAR		szLabel2[300+4];
 
 	CDlgInput1	cDlgInput1;
 
@@ -679,7 +679,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 {
 	int			i;
 	WCHAR		szLabel[300];
-	WCHAR		szLabel2[300];
+	WCHAR		szLabel2[300+4];
 
 	/* メニュー項目一覧に文字列をセット（リストボックス）*/
 	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
@@ -687,7 +687,8 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			auto_strcpy( szLabel, LSW(STR_PROPCOMCUSTMENU_SEP) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			auto_strncpy( szLabel, LSW(STR_PROPCOMCUSTMENU_SEP), _countof(szLabel) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta

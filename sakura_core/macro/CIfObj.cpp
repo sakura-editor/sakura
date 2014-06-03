@@ -377,6 +377,7 @@ void CIfObj::AddMethod(
 	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //–ß‚è’l‚Ì•ª
 	Info->Desc.lprgelemdescParam = Info->Arguments;
 	//	Nov. 10, 2003 FILE Win9X‚Å‚ÍA[lstrcpyW]‚ª–³Œø‚Ì‚½‚ßA[wcscpy]‚ÉC³
+	assert( auto_strlen(Name)<_countof(Info->Name) );
 	wcscpy(Info->Name, Name);
 	Info->Method = Method;
 	Info->ID = ID;

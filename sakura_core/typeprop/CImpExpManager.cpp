@@ -449,7 +449,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 	// 共通設定との連結部
 	int		i;
 	wchar_t	szKeyName[64];
-	wchar_t buff[64];
+	wchar_t buff[MAX_SETNAMELEN+1];
 	wchar_t	szFileName[_MAX_PATH+1];
 	bool	bCase;
 	wstring	files = L"";
@@ -923,7 +923,8 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				auto_strcpy(szData, in.ReadLineW().c_str());
+				auto_strncpy(szData, in.ReadLineW().c_str(), _countof(szData) - 1);
+				szData[_countof(szData) - 1] = L'\0';
 
 				//解析開始
 				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
