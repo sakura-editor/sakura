@@ -831,7 +831,8 @@ void CMenuDrawer::MyAppendMenu(
 			nFuncId,
 			szLabel,
 			szKey,
-			bAddKeyStr
+			bAddKeyStr,
+			_countof(szLabel)
 		 );
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */

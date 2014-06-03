@@ -28,14 +28,6 @@
 
 using namespace std;
 
-// 特別機能
-struct SSpecialFunc	{
-	EFunctionCode	m_nFunc;		// Function
-	int			 	m_nNameId;		// 名前
-};
-extern const	SSpecialFunc	sSpecialFuncs[];
-extern const int nSpecialFuncsCount;
-
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -64,19 +56,6 @@ static const DWORD p_helpids[] = {	//10100
 	0, 0
 };
 //@@@ 2001.02.04 End
-
-static bool SetSpecialFuncName(EFunctionCode code, wchar_t *ptr)
-{
-	if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
-		for( int k = 0; k < nSpecialFuncsCount; k++ ){
-			if( sSpecialFuncs[k].m_nFunc == code ){
-				auto_strcpy( ptr, LSW( sSpecialFuncs[k].m_nNameId ) );
-				return true;
-			}
-		}
-	}
-	return false;
-}
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -259,9 +238,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 				}
 				//	Oct. 3, 2001 genta
-				if( !m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 ) ){
-					SetSpecialFuncName( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel );
-				}
+				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
 
 				{
 					KEYCODE keycode[3]={0}; _tctomb(szKey, keycode);
@@ -313,8 +290,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				if (nIdx3 == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndLIST_FUNC );
-					for (i = 0; i < nSpecialFuncsCount; i++) {
-						List_AddString( hwndLIST_FUNC, LS( sSpecialFuncs[i].m_nNameId ) );
+					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++) {
+						List_AddString( hwndLIST_FUNC, LS( nsFuncCode::pnFuncList_Special[i] ) );
 					}
 				}
 				else {
@@ -428,7 +405,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					//	Oct. 3, 2001 genta
 					if (nIdx3 == nSpecialFuncsNum) {
 						// 特殊機能
-						eFuncCode = sSpecialFuncs[nIdx4].m_nFunc;
+						eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
 					}else{
 						eFuncCode = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
 					}
@@ -476,8 +453,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					eFuncCode = F_DISABLE;
 					if (nIdx3 == nSpecialFuncsNum) {
 						// 特殊機能
-						if( 0 <= nIdx4 && nIdx4 < nSpecialFuncsCount ){
-							eFuncCode = sSpecialFuncs[nIdx4].m_nFunc;
+						if( 0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num ){
+							eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
 						}
 					}else{
 						eFuncCode = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
@@ -609,7 +586,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		}
 		if( CB_ERR != nIdx3 && LB_ERR != nIdx4 &&
 		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 &&
-			!(nIdx3 == nSpecialFuncsNum && 0 <= nIdx4 && nIdx4 < nSpecialFuncsCount)
+			!(nIdx3 == nSpecialFuncsNum && 0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num)
 		){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
@@ -692,9 +669,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
-			if( !m_cLookup.Funccode2Name( code, szLabel, 256 ) ){
-				SetSpecialFuncName( code, szLabel );
-			}
+			m_cLookup.Funccode2Name( code, szLabel, 256 );
 		}
 		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){

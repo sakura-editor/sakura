@@ -863,7 +863,13 @@ void CEditWnd::LayoutMainMenu()
 			break;
 		case T_LEAF:
 			/* メニューラベルの作成 */
-			szLabel[0] = _T('\0');
+			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
+			{
+				WCHAR szLabelW[256];
+				GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabelW, 256 );
+				auto_strncpy( szLabel, to_tchar(szLabelW), _countof(szLabel) - 1 );
+				szLabel[_countof(szLabel) - 1] = _T('\0');
+			}
 			auto_strcpy( szKey, to_tchar(cMainMenu->m_sKey));
 			if (CKeyBind::GetMenuLabel(
 				G_AppInstance(),
@@ -872,7 +878,8 @@ void CEditWnd::LayoutMainMenu()
 				cMainMenu->m_nFunc,
 				szLabel,
 				to_tchar(cMainMenu->m_sKey),
-				FALSE) == NULL) {
+				FALSE,
+				_countof(szLabel)) == NULL) {
 				auto_strcpy( szLabel, _T("?") );
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
@@ -933,7 +940,7 @@ void CEditWnd::LayoutMainMenu()
 				break;
 			}
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( to_tchar(cMainMenu->m_sName), to_tchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), to_tchar(cMainMenu->m_sKey) ) );
 			break;
 		}
 	}
@@ -2355,12 +2362,12 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 */
 void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t* pszName, const wchar_t* pszKey)
 {
-	int j = 0;
 	const wchar_t* psName = NULL;
 	/* メニューラベルの作成 */
 	// カスタムメニュー
 	if (eFunc == F_MENU_RBUTTON
 	  || eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24) {
+		int j;
 		//	右クリックメニュー
 		if (eFunc == F_MENU_RBUTTON) {
 			j = CUSTMENU_INDEX_FOR_RBUTTONUP;
@@ -2393,20 +2400,12 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	}
 	// プラグインコマンド
 	else if (eFunc >= F_PLUGCOMMAND_FIRST && eFunc < F_PLUGCOMMAND_LAST) {
-		const CJackManager* pcJackManager = CJackManager::getInstance();
-
-		CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
-		j = -1;
-		for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
-			if ((*it)->GetFunctionCode() == eFunc) {
-				//コマンドを登録
-				j = eFunc - F_PLUGCOMMAND_FIRST;
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-					(*it)->GetFunctionCode(), (*it)->m_sLabel.c_str(), pszKey,
-					TRUE, (*it)->GetFunctionCode() );
-			}
-		}
-		if (j == -1) {
+		WCHAR szLabel[256];
+		if( 0 < CJackManager::getInstance()->GetCommandName( eFunc, szLabel, _countof(szLabel) ) ){
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
+				eFunc, szLabel, pszKey,
+				TRUE, eFunc );
+		}else{
 			// not found
 			psName = L"-- undefined plugin command --";
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,

@@ -3278,6 +3278,16 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_WINDOW_LIST           "ウィンドウリスト"
+    F_FILE_USED_RECENTLY    "最近使ったファイル"
+    F_FOLDER_USED_RECENTLY  "最近使ったフォルダ"
+    F_CUSTMENU_LIST         "カスタムメニューリスト"
+    F_USERMACRO_LIST        "登録済みマクロリスト"
+    F_PLUGIN_LIST           "プラグインコマンドリスト"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     IDS_AUTHOR_PAGE         "http://sakura-editor.sourceforge.net/"
     IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
 END
@@ -4026,12 +4036,6 @@ BEGIN
 
 	// CPropComMainMenu.cpp
 	STR_SPECIAL_FUNC			"特別機能"
-	STR_SPECIAL_FUNC_WINDOW		"ウィンドウリスト"
-	STR_SPECIAL_FUNC_RECENT_FILE	"最近使ったファイル"
-	STR_SPECIAL_FUNC_RECENT_FOLDER	"最近使ったフォルダ"
-	STR_SPECIAL_FUNC_CUST_MENU	"カスタムメニューリスト"
-	STR_SPECIAL_FUNC_MACRO		"登録済みマクロリスト"
-	STR_SPECIAL_FUNC_PLUGIN_CMD	"プラグインコマンドリスト"
 	STR_PROPCOMMAINMENU_EDIT	"編集してください"
 	STR_PROPCOMMAINMENU_SEP		"――――――――――"
 	STR_PROPCOMMAINMENU_ACCKEY1	"メニューアイテムのアクセスキー設定"

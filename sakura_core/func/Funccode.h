@@ -173,6 +173,9 @@ namespace nsFuncCode{
 	extern const int			pnFuncListNumArr[];
 	extern const EFunctionCode*	ppnFuncListArr[];
 	extern const int			nFincListNumArrNum;
+
+	extern const EFunctionCode	pnFuncList_Special[];
+	extern const int			nFuncList_Special_Num;
 };
 ///////////////////////////////////////////////////////////////////////
 

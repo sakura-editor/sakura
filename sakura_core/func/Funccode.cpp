@@ -502,6 +502,16 @@ const EFunctionCode pnFuncList_Others[] = {
 };
 const int nFincList_Others_Num = _countof( pnFuncList_Others );	//Oct. 16, 2000 JEPRO ïœêîñºïœçX(List12Å®List_Others)
 
+// ì¡éÍã@î\
+const EFunctionCode nsFuncCode::pnFuncList_Special[] = {
+	F_WINDOW_LIST,
+	F_FILE_USED_RECENTLY,
+	F_FOLDER_USED_RECENTLY,
+	F_CUSTMENU_LIST,
+	F_USERMACRO_LIST,
+	F_PLUGIN_LIST,
+};
+const int nsFuncCode::nFuncList_Special_Num = (int)_countof(nsFuncCode::pnFuncList_Special);
 
 
 
