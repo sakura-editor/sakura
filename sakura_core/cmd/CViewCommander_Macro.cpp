@@ -25,6 +25,7 @@
 //@@@ 2002.2.2 YAZAKI É}ÉNÉçÇÕCSMacroMgrÇ…ìùàÍ
 #include "macro/CSMacroMgr.h"
 #include "dlg/CDlgExec.h"
+#include "dlg/CDlgOpenFile.h"
 #include "CEditApp.h"
 #include "recent/CRecentCurDir.h"
 #include "util/module.h"

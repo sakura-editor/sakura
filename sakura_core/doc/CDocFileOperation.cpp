@@ -28,6 +28,7 @@
 
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
+#include "dlg/CDlgOpenFile.h"
 #include "_main/CAppMode.h" 
 #include "_main/CControlTray.h"
 #include "CEditApp.h"
@@ -88,7 +89,8 @@ bool CDocFileOperation::OpenFileDialog(
 	ActivateFrameWindow( hwndParent );
 
 	// ファイルオープンダイアログを表示
-	m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		G_AppInstance(),
 		hwndParent,
 		_T("*.*"),
@@ -96,7 +98,7 @@ bool CDocFileOperation::OpenFileDialog(
 		CMRUFile().GetPathList(),															// MRUリストのファイルのリスト
 		CMRUFolder().GetPathList()														// OPENFOLDERリストのファイルのリスト
 	);
-	return m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.DoModalOpenDlg( pLoadInfo, &files );
+	return cDlgOpenFile.DoModalOpenDlg( pLoadInfo, &files );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -315,7 +317,8 @@ bool CDocFileOperation::SaveFileDialog(
 	}
 
 	// ダイアログを表示
-	m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),
 		szDefaultWildCard,
@@ -323,7 +326,7 @@ bool CDocFileOperation::SaveFileDialog(
 		CMRUFile().GetPathList(),		//	最近のファイル
 		CMRUFolder().GetPathList()	//	最近のフォルダ
 	);
-	return m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.DoModalSaveDlg( pSaveInfo, pSaveInfo->eCharCode == CODE_CODEMAX );
+	return cDlgOpenFile.DoModalSaveDlg( pSaveInfo, pSaveInfo->eCharCode == CODE_CODEMAX );
 }
 
 //!「ファイル名を付けて保存」ダイアログ
