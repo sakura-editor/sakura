@@ -51,6 +51,7 @@
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"
 #include "dlg/CDlgInput1.h"
+#include "dlg/CDlgOpenFile.h"
 #include "util/format.h"
 #include "util/shell.h"
 #include "uiparts/CWaitCursor.h"

@@ -25,27 +25,13 @@
 #include "CEol.h"
 #include "basis/CMyString.h"
 #include "dlg/CDialog.h"
-#include "recent/CRecent.h"
 
 struct DLLSHAREDATA;
 struct SLoadInfo;	// doc/CDocListener.h
 struct SSaveInfo;	// doc/CDocListener.h
 
-// 2005.10.29 ryoji
-// Windows 2000 version of OPENFILENAME.
-// The new version has three extra members.
-// See CommDlg.h
-#if (_WIN32_WINNT >= 0x0500)
-struct OPENFILENAMEZ : public OPENFILENAME {
-};
-#else
-struct OPENFILENAMEZ : public OPENFILENAME {
-  void *        pvReserved;
-  DWORD         dwReserved;
-  DWORD         FlagsEx;
-};
-#define OPENFILENAME_SIZE_VERSION_400 sizeof(OPENFILENAME)
-#endif // (_WIN32_WINNT >= 0x0500)
+struct OPENFILENAMEZ;
+class CDlgOpenFileMem;
 
 
 /*!	ファイルオープンダイアログボックス
@@ -73,32 +59,10 @@ public:
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>* );	/* 開くダイアグ モーダルダイアログの表示 */
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode );	/* 保存ダイアログ モーダルダイアログの表示 */
 
-public:
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND			m_hWnd;			/* このダイアログのハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
-
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
-	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
-	ECodeType		m_nCharCode;					/* 文字コード */
-
-	CEol			m_cEol;		//	Feb. 9, 2001 genta
-	bool			m_bUseEol;	//	Feb. 9, 2001 genta
-	
-	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
-	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
-
-	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
-
 protected:
-	SComboBoxItemDeleter	m_combDelFile;
-	CRecentFile				m_cRecentFile;
-	SComboBoxItemDeleter	m_combDelFolder;
-	CRecentFolder			m_cRecentFolder;
+	CDlgOpenFileMem*	m_mem;
 
+public:
 	/*
 	||  実装ヘルパ関数
 	*/
