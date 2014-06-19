@@ -290,6 +290,28 @@ int LimitStringLengthW(
 	return n;
 }
 
+//! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
+int LimitStringLengthA(
+	const char*		pszData,		//!< [in]
+	int				nDataLength,	//!< [in]
+	int				nLimitLength,	//!< [in]
+	CNativeA&		cmemDes			//!< [out]
+)
+{
+	int n=nDataLength;
+	if(n>nLimitLength){
+		int i = 0;
+		int charSize = CNativeA::GetSizeOfChar(pszData, nDataLength, i);
+		for(; i + charSize <= nLimitLength;){
+			i += charSize;
+			charSize = CNativeA::GetSizeOfChar(pszData, nDataLength, i);
+		}
+		n = i;
+	}
+	cmemDes.SetString(pszData,n);
+	return n;
+}
+
 
 
 void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn )

@@ -24,6 +24,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/RegKey.h"
+#include "util/string_ex2.h"
 #include <memory>
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -572,6 +573,14 @@ bool CDlgTypeList::CopyType()
 			}
 			TCHAR szNum[12];
 			auto_sprintf( szNum, _T("%d"), n );
+			int nLen = auto_strlen( szNum );
+			TCHAR szTemp[_countof(type.m_szTypeName) + 12];
+			auto_strcpy( szTemp, type.m_szTypeName );
+			int nTempLen = auto_strlen( szTemp );
+			CNativeT cmem;
+			// バッファをはみ出さないように
+			LimitStringLengthT( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
+			auto_strcpy( type.m_szTypeName, cmem.GetStringPtr() );
 			auto_strcat( type.m_szTypeName, szNum );
 			bUpdate = false;
 		}
