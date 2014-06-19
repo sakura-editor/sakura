@@ -107,7 +107,7 @@ void CDlgTypeAscertain::SetData( void )
 
 	int		nIdx;
 	HWND	hwndCombo;
-	TCHAR	szText[130];
+	TCHAR	szText[_MAX_PATH + 10];
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS );
 	/* コンボボックスを空にする */
 	Combo_ResetContent( hwndCombo );
