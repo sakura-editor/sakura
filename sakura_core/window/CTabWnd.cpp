@@ -955,7 +955,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 		// タブバーにツールチップを追加する
 		TOOLINFO	ti;
-		ti.cbSize      = sizeof( ti );
+		ti.cbSize      = CCSIZEOF_STRUCT(TOOLINFO, lpszText);
 		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
 		ti.hwnd        = GetHwnd();
 		ti.hinst       = GetAppInstance();
@@ -1523,7 +1523,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	{
 		TOOLINFO ti;
 		::ZeroMemory( &ti, sizeof(ti) );
-		ti.cbSize       = sizeof(ti);
+		ti.cbSize       = CCSIZEOF_STRUCT(TOOLINFO, lpszText);
 		ti.hwnd         = GetHwnd();
 		ti.hinst        = GetAppInstance();
 		ti.uId          = (UINT_PTR)GetHwnd();
