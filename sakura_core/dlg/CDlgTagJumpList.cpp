@@ -1247,7 +1247,10 @@ next_line:
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
 			auto_strcpy( state.m_szCurPath, szNextPath );
-			state.m_nLoop = CalcMaxUpDirectory( state.m_szCurPath );
+			std::tstring path = state.m_szCurPath;
+			path += _T("\\dummy");
+			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
+			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
 //			_tcscat( state.m_szCurPath, _T("..\\") );
