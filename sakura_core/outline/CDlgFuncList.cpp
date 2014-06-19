@@ -1643,7 +1643,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 		// アウトラインにツールチップを追加する
 		TOOLINFO	ti;
-		ti.cbSize      = sizeof( ti );
+		ti.cbSize      = CCSIZEOF_STRUCT(TOOLINFO, lpszText);
 		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
 		ti.hwnd        = GetHwnd();
 		ti.hinst       = m_hInstance;
@@ -2518,7 +2518,7 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		// ツールチップ更新
 		TOOLINFO ti;
 		::ZeroMemory( &ti, sizeof(ti) );
-		ti.cbSize       = sizeof(ti);
+		ti.cbSize       = CCSIZEOF_STRUCT(TOOLINFO, lpszText);
 		ti.hwnd         = GetHwnd();
 		ti.hinst        = m_hInstance;
 		ti.uId          = (UINT_PTR)GetHwnd();
