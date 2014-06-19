@@ -37,7 +37,8 @@ CFileExt::CFileExt()
 {
 	m_puFileExtInfo = NULL;
 	m_nCount = 0;
-	_tcscpy( m_szFilter, _T("") );
+	m_vstrFilter.resize( 1 );
+	m_vstrFilter[0] = _T('\0');
 
 //	//テキストエディタとして、既定でリストに載ってほしい拡張子
 //	AppendExt( "すべてのファイル", "*" );
@@ -102,30 +103,32 @@ const TCHAR *CFileExt::GetExt( int nIndex )
 const TCHAR *CFileExt::GetExtFilter( void )
 {
 	int		i;
-	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szName) + _countof(m_puFileExtInfo[0].m_szExt)*2 + 10];
+	std::tstring work;
 
 	/* 拡張子フィルタの作成 */
-	_tcscpy( m_szFilter, _T("") );
+	m_vstrFilter.resize(0);
 
 	for( i = 0; i < m_nCount; i++ )
 	{
-		auto_sprintf( szWork,
-			_T("%ts (%ts)|%ts|"),
-			m_puFileExtInfo[i].m_szName,
-			m_puFileExtInfo[i].m_szExt,
-			m_puFileExtInfo[i].m_szExt );
+		// "%ts (%ts)\0%ts\0"
+		work = m_puFileExtInfo[i].m_szName;
+		work.append(_T(" ("));
+		work.append(m_puFileExtInfo[i].m_szExt);
+		work.append(_T(")"));
+		work.append(_T("\0"), 1);
+		work.append(m_puFileExtInfo[i].m_szExt);
+		work.append(_T("\0"), 1);
 
-		_tcscat( m_szFilter, szWork );
+		int i = (int)m_vstrFilter.size();
+		m_vstrFilter.resize( i + work.length() );
+		auto_memcpy( &m_vstrFilter[i], &work[0], work.length() );
 	}
-	_tcscat( m_szFilter, _T("|") );
-
-	//区切りは０なので置き換える。
-	for( i = 0; m_szFilter[i] != _T('\0'); i++ )
-	{
-		if( m_szFilter[i] == _T('|') ) m_szFilter[i] = _T('\0');
+	if( 0 == m_nCount ){
+		m_vstrFilter.push_back( _T('\0') );
 	}
+	m_vstrFilter.push_back( _T('\0') );
 
-	return m_szFilter;
+	return &m_vstrFilter[0];
 }
 
 /*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
