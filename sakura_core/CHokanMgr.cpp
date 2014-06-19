@@ -23,6 +23,7 @@
 #include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "util/other_util.h"
 #include "sakura_rc.h"
 
 WNDPROC			gm_wpHokanListProc;
@@ -531,20 +532,21 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 
 	HWND hwndList;
 	int nItem;
-	wchar_t wszLabel[1024];
 	CEditView* pcEditView;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
 	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
-	List_GetText( hwndList, nItem, wszLabel );
+	int nLabelLen = List_GetTextLen( hwndList, nItem );
+	auto_array_ptr<WCHAR> wszLabel( new WCHAR [nLabelLen + 1] );
+	List_GetText( hwndList, nItem, &wszLabel[0] );
 
  	/* テキストを貼り付け */
 	pcEditView = (CEditView*)m_lParam;
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wszLabel, wcslen(wszLabel), TRUE, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&wszLabel[0], wcslen(&wszLabel[0]), TRUE, 0 );
 
 	// Until here
 //	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
@@ -638,7 +640,6 @@ void CHokanMgr::ShowTip()
 	INT			nItem,
 				nTopItem,
 				nItemHeight;
-	WCHAR		szLabel[1024];
 	POINT		point;
 	CEditView*	pcEditView;
 	HWND		hwndCtrl;
@@ -649,7 +650,9 @@ void CHokanMgr::ShowTip()
 	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
-	List_GetText( hwndCtrl, nItem, szLabel );	// 選択中の単語を取得
+	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
+	auto_array_ptr<WCHAR> szLabel( new WCHAR [nLabelLen + 1] );
+	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// 選択中の単語を取得
 
 	pcEditView = (CEditView*)m_lParam;
 
@@ -670,7 +673,7 @@ void CHokanMgr::ShowTip()
 	if( point.y > m_poWin.y && point.y < m_poWin.y + m_nHeight )
 	{
 		::SetRect( &rcHokanWin , m_poWin.x, m_poWin.y, m_poWin.x + m_nWidth, m_poWin.y + m_nHeight );
-		if( !pcEditView -> ShowKeywordHelp( point,szLabel, &rcHokanWin ) )
+		if( !pcEditView -> ShowKeywordHelp( point, &szLabel[0], &rcHokanWin ) )
 			pcEditView -> m_dwTipTimer = ::GetTickCount();	// 表示するべきキーワードヘルプが無い
 	}
 }
