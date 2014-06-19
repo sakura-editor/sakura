@@ -28,8 +28,8 @@
 		   distribution.
 */
 
-#ifndef	_CFILEEXT_H_
-#define	_CFILEEXT_H_
+#ifndef SAKURA_CFILEEXT_H_
+#define SAKURA_CFILEEXT_H_
 
 #include "_main/global.h"
 #include "config/maxdata.h"
@@ -46,6 +46,7 @@ public:
 	const TCHAR *GetExt( int nIndex );
 
 	//ダイアログに渡す拡張子フィルタを取得する。(lpstrFilterに直接指定可能)
+	//2回呼び出すと古いバッファが無効になることがあるのに注意
 	const TCHAR *GetExtFilter( void );
 
 	int GetCount( void ) { return m_nCount; }
@@ -62,8 +63,8 @@ private:
 
 	int				m_nCount;
 	FileExtInfoTag	*m_puFileExtInfo;
-	TCHAR			m_szFilter[4096];
+	std::vector<TCHAR>	m_vstrFilter;
 };
 
-#endif	//_CFILEEXT_H_
+#endif	//SAKURA_CFILEEXT_H_
 
