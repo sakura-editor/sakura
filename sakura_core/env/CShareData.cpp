@@ -561,6 +561,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = FALSE;
 		//To Here 2005.04.03 MIK 
 
+		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
+		}
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
