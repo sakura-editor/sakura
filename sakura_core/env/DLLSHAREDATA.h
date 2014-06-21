@@ -136,6 +136,7 @@ struct DLLSHAREDATA{
 	SShare_Handles				m_sHandles;
 
 	SCharWidthCache				m_sCharWidth;							//!< 文字半角全角キャッシュ
+	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット
 
 	// プラグイン
 	short						m_PlugCmdIcon[MAX_PLUGIN*MAX_PLUG_CMD];	//!< プラグイン コマンド ICON 番号	// 2010/7/3 Uchi
