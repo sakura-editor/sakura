@@ -127,6 +127,7 @@ struct DLLSHAREDATA{
 		必ず先頭になくてはならない．
 	*/
 	unsigned int				m_vStructureVersion;
+	unsigned int				m_nSize;
 
 	// -- -- 非保存対象 -- -- //
 	SShare_Version				m_sVersion;	//※読込は行わないが、書込は行う

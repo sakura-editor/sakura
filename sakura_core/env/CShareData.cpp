@@ -141,6 +141,7 @@ bool CShareData::InitShareData()
 		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
+		m_pShareData->m_nSize = sizeof(*m_pShareData);
 		_tcscpy(m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
@@ -580,7 +581,9 @@ bool CShareData::InitShareData()
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
 
 		//	From Here Oct. 27, 2000 genta
-		if( m_pShareData->m_vStructureVersion != uShareDataVersion ){
+		//	2014.01.08 Moca サイズチェック追加
+		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
+			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
 			SetDllShareData( NULL );
