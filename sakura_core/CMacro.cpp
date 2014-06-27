@@ -468,8 +468,8 @@ void CMacro::HandleCommand(
 		/* NO BREAK */
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
-		//	Argument[0]を検索。オプションはArgument[1]に。
-		//	Argument[1]:
+		//	Argument[0] を検索。(省略時、元の検索文字列・オプションを使う)
+		//	Argument[1]:オプション (省略時、0のみなす)
 		//		0x01	単語単位で探す
 		//		0x02	英大文字と小文字を区別する
 		//		0x04	正規表現
@@ -478,7 +478,9 @@ void CMacro::HandleCommand(
 		//		0x20	先頭（末尾）から再検索する
 		{
 			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
-			if( 0 < _tcslen( Argument[0] ) ){
+			const TCHAR* pszSearchKey = (Argument[0] == NULL) ? "" : Argument[0];
+			int nLen = _tcslen( pszSearchKey );
+			if( 0 < nLen ){
 				/* 正規表現 */
 				if( lFlag & 0x04
 					&& !CheckRegexpSyntax( Argument[0], NULL, true )
@@ -500,7 +502,6 @@ void CMacro::HandleCommand(
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
-		//	pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0);
 			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0);
 		}
 		break;
