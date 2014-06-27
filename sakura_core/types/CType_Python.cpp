@@ -419,7 +419,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					break;
 				}
 			}
-			if( WCODE::IsLineDelimiter(pLine[col] == L'\r') ||
+			if( WCODE::IsLineDelimiter(pLine[col]) ||
 				pLine[col] == L'\0' ||
 				pLine[col] == L'#' ){
 				//	blank line or comment line are ignored
