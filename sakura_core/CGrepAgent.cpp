@@ -918,7 +918,8 @@ int CGrepAgent::DoGrepFile(
 			// 2003.06.10 Moca コード判別処理をここに移動．
 			// 判別エラーでもファイル数にカウントするため
 			// ファイルの日本語コードセット判別
-			CCodeMediator cmediator( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
+			// 2014.06.19 Moca ファイル名のタイプ別のm_encodingに変更
+			CCodeMediator cmediator( type->m_encoding );
 			nCharCode = cmediator.CheckKanjiCodeOfFile( pszFullPath );
 			if( !IsValidCodeType(nCharCode) ){
 				pszCodeName = _T("  [(DetectError)]");
