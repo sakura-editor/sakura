@@ -1308,6 +1308,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			auto_strcpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
 			auto_strcpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
 			pShare->m_TypeMini[i].m_id = type.m_id;
+			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}
 	}
 	if( cProfile.IsReadingMode() ){
