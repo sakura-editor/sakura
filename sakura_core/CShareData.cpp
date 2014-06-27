@@ -336,10 +336,13 @@ struct ARRHEAD {
 
 	Version 119:
 	無題番号の修正 2014.04.06 novice
+
+	Version 120:
+	カスタムパレット 2014.06.21 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 119;
+const unsigned int uShareDataVersion = 120;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -864,6 +867,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = FALSE;
 		//To Here 2005.04.03 MIK 
 
+		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
+		}
 	}else{
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */

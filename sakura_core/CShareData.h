@@ -904,11 +904,14 @@ struct DLLSHAREDATA {
 	SShare_Nodes				m_sNodes;
 	SShare_Handles				m_sHandles;
 
+	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット
+
 	// -- -- 保存対象 -- -- //
 	//設定
 	CommonSetting				m_Common;								// 共通設定
 	STypeConfig					m_Types[MAX_TYPES];						// タイプ別設定
 	PRINTSETTING				m_PrintSettingArr[MAX_PRINTSETTINGARR];	// 印刷ページ設定
+
 	//その他
 	SShare_SearchKeywords		m_sSearchKeywords;
 	SShare_TagJump				m_sTagJump;
