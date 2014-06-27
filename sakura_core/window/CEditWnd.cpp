@@ -4620,7 +4620,10 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 		GetView(i).GetCaret().MoveCursor( ptPosXY, false ); // 2013.06.05 bScroll‚ðtrue=>falase
 		GetView(i).GetCaret().m_nCaretPosX_Prev = GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
 
-		CLayoutInt nLeft = GetView(i).GetRightEdgeForScrollBar() - GetView(i).GetTextArea().m_nViewColNum;
+		CLayoutInt nLeft = CLayoutInt(0);
+		if( GetView(i).GetTextArea().m_nViewColNum < GetView(i).GetRightEdgeForScrollBar() ){
+			nLeft = GetView(i).GetRightEdgeForScrollBar() - GetView(i).GetTextArea().m_nViewColNum;
+		}
 		if( nLeft < GetView(i).GetTextArea().GetViewLeftCol() ){
 			GetView(i).GetTextArea().SetViewLeftCol( nLeft );
 		}
