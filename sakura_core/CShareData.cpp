@@ -765,7 +765,7 @@ bool CShareData::InitShareData()
 			m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;		// 更新の監視
 
 			//ファイルの保存
-			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;// 無変更でも上書きするか
+			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = false;	// 無変更でも上書きするか
 
 			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = true;	// 新規から保存時は全ファイル表示
