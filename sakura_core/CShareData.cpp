@@ -339,10 +339,13 @@ struct ARRHEAD {
 
 	Version 120:
 	カスタムパレット 2014.06.21 novice
+
+	Version 121:
+	DLLSHAREDATAのサイズチェック 2014.06.28 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 120;
+const unsigned int uShareDataVersion = 121;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -485,6 +488,7 @@ bool CShareData::InitShareData()
 		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
+		m_pShareData->m_nSize = sizeof(*m_pShareData);
 		_tcscpy(m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
@@ -881,7 +885,9 @@ bool CShareData::InitShareData()
 			0
 		);
 		//	From Here Oct. 27, 2000 genta
-		if( m_pShareData->m_vStructureVersion != uShareDataVersion ){
+		//	2014.01.08 Moca サイズチェック追加
+		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
+			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
 			//	ハンドルを解放する
 			::UnmapViewOfFile( m_pShareData );
