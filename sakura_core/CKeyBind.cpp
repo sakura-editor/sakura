@@ -49,7 +49,7 @@ HACCEL CKeyBind::CreateAccerelator(
 	HACCEL	hAccel;
 	int		i, j, k;
 
-	// 機能が割り当てられているキーの数をカウント
+	// 機能が割り当てられているキーの数をカウント -> nAccelArrNum
 	int nAccelArrNum = 0;
 	for( i = 0; i < nKeyNameArrNum; ++i ){
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
@@ -60,7 +60,6 @@ HACCEL CKeyBind::CreateAccerelator(
 			}
 		}
 	}
-//	nAccelArrNum = nKeyNameArrNum * 8;
 
 
 	if( nAccelArrNum <= 0 ){
@@ -109,8 +108,8 @@ int CKeyBind::GetFuncCode(
 )
 {
 	int i;
-	int nCmd = (int)( nAccelCmd & 0x00ff );
-	int nSts = (int)( ( nAccelCmd & 0xff00 ) >> 8 );
+	int nCmd = (int)LOBYTE(nAccelCmd);
+	int nSts = (int)HIBYTE(nAccelCmd);
 	for( i = 0; i < nKeyNameArrNum; ++i ){
 		if( nCmd == pKeyNameArr[i].m_nKeyCode ){
 			return GetFuncCodeAt( pKeyNameArr[i], nSts, bGetDefFuncCode );
@@ -147,16 +146,11 @@ int CKeyBind::CreateKeyBindList(
 	TCHAR	szFuncNameJapanese[256];
 
 	nValidKeys = 0;
-//	cMemList = "";
-//	cMemList.SetData( "", strlen( "" ) );
 	cMemList.SetString(_T(""));
 	const TCHAR*	pszSHIFT = _T("Shift+");
 	const TCHAR*	pszCTRL = _T("Ctrl+");
 	const TCHAR*	pszALT = _T("Alt+");
-//	char*	pszEQUAL = " = ";
 	const TCHAR*	pszTAB = _T("\t");
-
-//	char*	pszCR = "\n";	//Feb. 17, 2001 JEPRO \n=0x0a=LFが行末コードになってしまうので
 	const TCHAR*	pszCR = _T("\r\n");	//\r=0x0d=CRを追加
 
 
@@ -185,9 +179,9 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					strcpy( szFuncNameJapanese, _T("---名前が定義されていない-----") );
+					_tcscpy( szFuncNameJapanese, _T("---名前が定義されていない-----") );
 				}
-				strcpy( szFuncName, _T("")/*"---unknown()--"*/ );
+				_tcscpy( szFuncName, _T("")/*"---unknown()--"*/ );
 
 //				/* 機能名日本語 */
 //				::LoadString(
@@ -200,7 +194,6 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能ID→関数名，機能名日本語 */
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				CMacro::GetFuncInfoByID(
 				CSMacroMgr::GetFuncInfoByID(
 					hInstance,
 					iFunc,
@@ -220,7 +213,6 @@ int CKeyBind::CreateKeyBindList(
 				/* キーマクロに記録可能な機能かどうかを調べる */
 				cMemList.AppendString( pszTAB );
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
 					cMemList.AppendString( _T("○") );
 				}else{
@@ -233,7 +225,6 @@ int CKeyBind::CreateKeyBindList(
 			}
 		}
 	}
-//	delete [] pszStr;
 	return nValidKeys;
 }
 
@@ -344,9 +335,6 @@ int CKeyBind::GetKeyStrList(
 {
 	int		i;
 	int		j;
-	const TCHAR*	pszSHIFT = _T("Shift+");
-	const TCHAR*	pszCTRL = _T("Ctrl+");
-	const TCHAR*	pszALT = _T("Alt+");
 	int		nAssignedKeysNum;
 
 	nAssignedKeysNum = 0;
@@ -386,7 +374,11 @@ int CKeyBind::GetKeyStrList(
 
 
 
-// アクセスキー付きの文字列の作成
+/*! アクセスキー付きの文字列の作成
+	@param sName ラベル
+	@param sKey アクセスキー
+	@return アクセスキー付きの文字列
+*/
 TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 {
 	static	TCHAR	sLabel[300];
@@ -435,6 +427,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 )
 {
 	const int LABEL_MAX = 256;
+
 
 	if( _T('\0') == pszLabel[0] ){
 		::LoadString( hInstance, nFuncId, pszLabel, LABEL_MAX );

@@ -12,13 +12,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CKeyBind;
 
 #ifndef _CKEYBIND_H_
 #define _CKEYBIND_H_
 
 #include <windows.h>
+
 class CMemory;// 2002/2/10 aroka
+class CFuncLookup;
 
 //! キー情報を保持する
 struct KEYDATA {
@@ -35,8 +36,6 @@ struct KEYDATA {
 	*/
 	short	m_nFuncCodeArr[8]; // 2012.11.8 aroka KEYDATAINITとサイズを合わせる
 };
-
-class CFuncLookup;
 
 
 /*-----------------------------------------------------------------------
