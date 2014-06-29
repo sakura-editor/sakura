@@ -17,10 +17,10 @@
 
 #include "StdAfx.h"
 #include "CControlProcess.h"
+#include "CControlTray.h"
 #include "CCommandLine.h"
 #include "CShareData.h"
 #include "Debug.h"
-#include "CControlTray.h"
 #include "etc_uty.h"
 #include "file.h"
 #include "CRunningTimer.h"
@@ -104,13 +104,14 @@ bool CControlProcess::InitializeProcess()
 
 	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
 
-	m_hWnd = m_pcTray->Create( m_hInstance );
-	if( !m_hWnd ){
+	HWND hwnd = m_pcTray->Create( m_hInstance );
+	if( !hwnd ){
 		ErrorBeep();
 		TopErrorMessage( NULL, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
 		return false;
 	}
-	m_pShareData->m_sHandles.m_hwndTray = m_hWnd;
+	m_hWnd = hwnd;
+	m_pShareData->m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
