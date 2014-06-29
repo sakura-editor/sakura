@@ -208,6 +208,9 @@ DWORD CGrepAgent::DoGrep(
 		return 0;
 	}
 
+	//2014.06.13 別ウィンドウで検索したとき用にGrepダイアログの検索キーを設定
+	pcViewDst->m_pcEditWnd->m_cDlgGrep.m_strText = pcmGrepKey->GetStringPtr();
+
 	hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING );
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
