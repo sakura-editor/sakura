@@ -11,20 +11,18 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class COpe;
-
 #ifndef SAKURA_COPE_H_
 #define SAKURA_COPE_H_
 
 
 
-// アンドゥバッファ用 操作コード
+//! アンドゥバッファ用 操作コード
 enum EOpeCode {
-	OPE_UNKNOWN		= 0,
-	OPE_INSERT		= 1,
-	OPE_DELETE		= 2,
-	OPE_REPLACE		= 3,
-	OPE_MOVECARET	= 4,
+	OPE_UNKNOWN		= 0, //!< 不明(未使用)
+	OPE_INSERT		= 1, //!< 挿入
+	OPE_DELETE		= 2, //!< 削除
+	OPE_REPLACE		= 3, //!< 置換
+	OPE_MOVECARET	= 4, //!< キャレット移動
 };
 
 class CLineData {
@@ -56,7 +54,7 @@ typedef std::vector<CLineData> COpeLineData;
 //2007.10.17 kobake 解放漏れを防ぐため、データをポインタではなくインスタンス実体で持つように変更
 class COpe {
 public:
-	COpe(EOpeCode eCode = OPE_UNKNOWN);		/* COpeクラス構築 */
+	COpe(EOpeCode eCode);		/* COpeクラス構築 */
 	virtual ~COpe();	/* COpeクラス消滅 */
 
 	virtual void DUMP( void );	/* 編集操作要素のダンプ */
@@ -95,7 +93,7 @@ public:
 	int				m_nOrgSeq;
 };
 
-//!挿入
+//!置換
 class CReplaceOpe : public COpe{
 public:
 	CReplaceOpe() : COpe(OPE_REPLACE)
