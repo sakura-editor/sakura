@@ -38,10 +38,7 @@ void CViewCommander::Command_WordDeleteToStart( void )
 	}
 
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		//$$ 動作上は問題が無いらしいですが。
-		//   ここの COpe だけ、意味付け(EOpeCode指定)がされていないので、
-		//   せめて何らかの名前付けをしてあげないと、意図が読み取れません。
-		COpe*	pcOpe = new COpe;
+		CMoveCaretOpe*	pcOpe = new CMoveCaretOpe();
 		GetDocument()->m_cLayoutMgr.LayoutToLogic(
 			GetSelect().GetTo(),
 			&pcOpe->m_ptCaretPos_PHY_Before
