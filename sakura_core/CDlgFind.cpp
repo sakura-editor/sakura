@@ -58,33 +58,23 @@ CDlgFind::CDlgFind()
 
 
 /*!
-	標準以外のメッセージを捕捉する
+	コンボボックスのドロップダウンメッセージを捕捉する
 
 	@date 2013.03.24 novice 新規作成
 */
-INT_PTR CDlgFind::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 {
-	INT_PTR result;
-	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
-	switch( wMsg ){
-	case WM_COMMAND:
-		WORD wID = LOWORD(wParam);
-		switch( wID ){
-		case IDC_COMBO_TEXT:
-			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
-				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
-				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
-					int i;
-					for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
-						::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
-					}
-				}
+	switch( wID ){
+	case IDC_COMBO_TEXT:
+		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			int i;
+			for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
+				::SendMessage( hwndCtl, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 			}
-			break;
 		}
 		break;
 	}
-	return result;
+	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
 
 /* モードレスダイアログの表示 */

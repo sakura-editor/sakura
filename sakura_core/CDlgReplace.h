@@ -37,7 +37,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
@@ -59,6 +58,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
