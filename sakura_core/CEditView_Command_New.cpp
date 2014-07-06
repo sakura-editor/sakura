@@ -307,8 +307,7 @@ void CEditView::InsertData_CEditView(
 	@date 2002/05/12 YAZAKI bRedraw, bRedraw2削除（常にFALSEだから）
 */
 void CEditView::DeleteData2(
-	int			nCaretX,
-	int			nCaretY,
+	const CLayoutPoint& _ptCaretPos,
 	int			nDelLen,
 	CMemory*	pcMem,
 	COpe*		pcOpe		/* 編集操作要素 COpe */
@@ -325,16 +324,16 @@ void CEditView::DeleteData2(
 	int			nDeleteLayoutLines;
 
 	const CLayout* pcLayout;
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCaretY, &nLineLen, &pcLayout );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( _ptCaretPos.y, &nLineLen, &pcLayout );
 	if( NULL == pLine ){
-		goto end_of_func;
+		return;
 	}
-	nIdxFrom = LineColumnToIndex( pcLayout, nCaretX );
+	nIdxFrom = LineColumnToIndex( pcLayout, _ptCaretPos.x );
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nOpe = OPE_DELETE;				/* 操作種別 */
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			LineIndexToColumn( pcLayout, nIdxFrom + nDelLen ),
-			nCaretY,
+			_ptCaretPos.y,
 			&pcOpe->m_ptCaretPos_PHY_To.x,
 			&pcOpe->m_ptCaretPos_PHY_To.y
 		);
@@ -342,7 +341,7 @@ void CEditView::DeleteData2(
 
 	/* データ削除 */
 	m_pcEditDoc->m_cLayoutMgr.DeleteData_CLayoutMgr(
-		nCaretY, nIdxFrom, nDelLen,
+		_ptCaretPos.y, nIdxFrom, nDelLen,
 		&nModifyLayoutLinesOld,
 		&nModifyLayoutLinesNew,
 		&nDeleteLayoutLines,
@@ -355,11 +354,8 @@ void CEditView::DeleteData2(
 	}
 
 	/* 選択エリアの先頭へカーソルを移動 */
-	MoveCursor( nCaretX, nCaretY, false );
+	MoveCursor( _ptCaretPos.x, _ptCaretPos.y, false );
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
-
-
-end_of_func:;
 }
 
 
@@ -493,8 +489,7 @@ void CEditView::DeleteData(
 					pcMemDeleted = new CMemory;
 					// 指定位置の指定長データ削除
 					DeleteData2(
-						rcSel.left,
-						nLineNum + 1,
+						CLayoutPoint(rcSel.left, nLineNum + 1),
 						nDelLen,
 						pcMemDeleted,
 						pcOpe				/* 編集操作要素 COpe */

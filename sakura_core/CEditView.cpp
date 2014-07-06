@@ -3972,8 +3972,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				pcMemDeleted = new CMemory;
 				/* 指定位置の指定長データ削除 */
 				DeleteData2(
-					sPos.x,
-					sPos.y,
+					sPos,
 					nDelLen,
 					pcMemDeleted,
 					pcOpe		/* 編集操作要素 COpe */

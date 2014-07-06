@@ -5313,8 +5313,7 @@ void CEditView::Command_UNINDENT( char cChar )
 			pcMemDeleted = new CMemory;
 			/* 指定位置の指定長データ削除 */
 			DeleteData2(
-				0,
-				i,
+				CLayoutPoint(0,i),
 				nDelLen,	// 2001.12.03 hor
 				pcMemDeleted,
 				pcOpe				/* 編集操作要素 COpe */

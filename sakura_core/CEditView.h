@@ -600,8 +600,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 	/* 指定位置の指定長データ削除 */
 	void DeleteData2(
-		int			nCaretX,
-		int			nCaretY,
+		const CLayoutPoint&	_ptCaretPos,
 		int			nDelLen,
 		CMemory*	pcMem,
 		COpe*		pcOpe		/* 編集操作要素 COpe */
