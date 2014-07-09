@@ -347,6 +347,10 @@ void CEditView::InsertData_CEditView(
 
 /*!	指定位置の指定長データ削除
 
+	@param _ptCaretPos [in]  削除データの位置
+	@param nDelLen [out] 削除データのサイズ
+	@param pcMem [out]  削除したデータ(NULL可能)
+
 	@date 2002/03/24 YAZAKI bUndo削除
 	@date 2002/05/12 YAZAKI bRedraw, bRedraw2削除（常にFALSEだから）
 	@date 2007/10/17 kobake (重要)pcMemの所有者が条件によりCOpeに移ったり移らなかったりする振る舞いは
@@ -355,7 +359,7 @@ void CEditView::InsertData_CEditView(
 void CEditView::DeleteData2(
 	const CLayoutPoint& _ptCaretPos,
 	CLogicInt			nDelLen,
-	CNativeW*			pcMem		//!< [out]
+	CNativeW*			pcMem
 )
 {
 #ifdef _DEBUG
@@ -430,7 +434,6 @@ void CEditView::DeleteData2(
 		// 操作の追加
 		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
-
 }
 
 
