@@ -509,12 +509,11 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-			CNativeW	cMemDeleted;
 			/* 指定位置の指定長データ削除 */
 			m_pCommanderView->DeleteData2(
 				CLayoutPoint(CLayoutInt(0),i),
 				nDelLen,	// 2001.12.03 hor
-				&cMemDeleted
+				NULL
 			);
 			if ( nLineCountPrev != GetDocument()->m_cLayoutMgr.GetLineCount() ){
 				//	行数が変化した!!
