@@ -1675,8 +1675,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = ptSelectFrom_PHY_Old;
 			pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;
 			m_pcOpeBlk->AppendOpe( pcOpe );

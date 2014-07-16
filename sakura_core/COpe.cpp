@@ -12,15 +12,17 @@
 */
 
 #include "StdAfx.h"
+#include <assert.h>
 #include "COpe.h"
-#include "Debug.h"
 #include "CMemory.h"// 2002/2/10 aroka
+#include "Debug.h"
 
 
 // COpeクラス構築
-COpe::COpe()
+COpe::COpe(EOpeCode eCode)
 {
-	m_nOpe = OPE_UNKNOWN;					// 操作種別
+	assert( eCode != OPE_UNKNOWN );
+	m_nOpe = eCode;					// 操作種別
 
 	m_ptCaretPos_PHY_To.x = 0;		// 操作前のキャレット位置Ｘ To 改行単位行の行番号（０開始）
 	m_ptCaretPos_PHY_To.y = 0;		// 操作前のキャレット位置Ｙ To 改行単位行先頭からのバイト数（０開始）
@@ -42,7 +44,6 @@ COpe::~COpe()
 		delete m_pcmemData;
 		m_pcmemData = NULL;
 	}
-	return;
 }
 
 /* 編集操作要素のダンプ */
@@ -50,7 +51,7 @@ void COpe::DUMP( void )
 {
 	DEBUG_TRACE( _T("\t\tm_nOpe                  = [%d]\n"), m_nOpe               );
 	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_Before = [%d,%d]\n"), m_ptCaretPos_PHY_Before.x, m_ptCaretPos_PHY_Before.y   );
-	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_After; = [%d,%d]\n"), m_ptCaretPos_PHY_After.x, m_ptCaretPos_PHY_After.y   );
+	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_After  = [%d,%d]\n"), m_ptCaretPos_PHY_After.x, m_ptCaretPos_PHY_After.y   );
 	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), m_nDataLen           );
 	if( NULL == m_pcmemData ){
 		DEBUG_TRACE( _T("\t\tm_pcmemData         = [NULL]\n") );

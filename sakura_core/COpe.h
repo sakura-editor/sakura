@@ -11,20 +11,18 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class COpe;
-
 #ifndef _COPE_H_
 #define _COPE_H_
 
 class CMemory;// 2002/2/10 aroka
 
 
-// アンドゥバッファ用 操作コード
+//! アンドゥバッファ用 操作コード
 enum EOpeCode {
-	OPE_UNKNOWN		= 0,
-	OPE_INSERT		= 1,
-	OPE_DELETE		= 2,
-	OPE_MOVECARET	= 3,
+	OPE_UNKNOWN		= 0, //!< 不明(未使用)
+	OPE_INSERT		= 1, //!< 挿入
+	OPE_DELETE		= 2, //!< 削除
+	OPE_MOVECARET	= 3, //!< キャレット移動
 };
 
 
@@ -36,13 +34,17 @@ enum EOpeCode {
 */
 class COpe {
 public:
-	COpe();		/* COpeクラス構築 */
+	COpe(EOpeCode eCode);		/* COpeクラス構築 */
 	~COpe();	/* COpeクラス消滅 */
 
 	void DUMP( void );	/* 編集操作要素のダンプ */
 
+	EOpeCode	GetCode() const{ return m_nOpe; }
+
+private:
 	EOpeCode	m_nOpe;						//!< 操作種別
 
+public:
 	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< カーソル位置
 	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置
 	CLogicPoint	m_ptCaretPos_PHY_After;		//!< カーソル位置

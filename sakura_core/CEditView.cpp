@@ -3958,7 +3958,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				sPos.x = LineIndexToColumn( pcLayout, nDelPos );
 				sPos.y =  nLineNum + 1;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-					pcOpe = new COpe;
+					pcOpe = new COpe(OPE_DELETE);
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						sPos.x,
 						sPos.y,
@@ -3996,7 +3996,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				/* 機能種別によるバッファの変換 */
 				ConvMemory( &cmemBuf, nFuncCode, rcSel.left );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-					pcOpe = new COpe;
+					pcOpe = new COpe(OPE_INSERT);
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						sPos.x,
 						sPos.y,
@@ -4029,8 +4029,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 			/* 操作の追加 */
@@ -4069,8 +4068,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 			/* 操作の追加 */

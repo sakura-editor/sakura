@@ -1679,8 +1679,7 @@ void CEditView::Command_DELETE_BACK( void )
 					// 下から（下の行の行頭から）の移動では改行も削除する
 					if( nIdx < pcLayout->GetLengthWithoutEOL() || m_ptCaretPos.y < nPosY ){
 						if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-							pcOpe = new COpe;
-							pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+							pcOpe = new COpe(OPE_MOVECARET);
 							m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 								nPosX,
 								nPosY,
@@ -1724,8 +1723,7 @@ void CEditView::Command_WordDeleteToEnd( void )
 		return;
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;							/* 操作種別 */
+		pcOpe = new COpe(OPE_MOVECARET);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			m_sSelect.m_ptFrom.x,
 			m_sSelect.m_ptFrom.y,
@@ -1765,7 +1763,7 @@ void CEditView::Command_WordDeleteToStart( void )
 	}
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
+		pcOpe = new COpe(OPE_MOVECARET);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			m_sSelect.m_ptTo.x,
 			m_sSelect.m_ptTo.y,
@@ -2064,8 +2062,7 @@ void CEditView::Command_DELETE_LINE( void )
 		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;					/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
@@ -2418,8 +2415,7 @@ void CEditView::Command_INSTEXT(
 		if( bLinePaste ){	// 2007.10.04 ryoji
 			/* 挿入ポイント（折り返し単位行頭）にカーソルを移動 */
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
-				pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
+				pcOpe = new COpe(OPE_MOVECARET);
 				pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 			}
 			Command_GOLINETOP( false, 1 );	// 行頭に移動(折り返し単位)
@@ -2431,7 +2427,7 @@ void CEditView::Command_INSTEXT(
 			}
 		}
 		if( !m_bDoing_UndoRedo ){						/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
+			pcOpe = new COpe(OPE_INSERT);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 		}
 
@@ -2457,8 +2453,7 @@ void CEditView::Command_INSTEXT(
 		if( bLinePaste ){	// 2007.10.04 ryoji
 			/* 元の位置へカーソルを移動 */
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
-				pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
+				pcOpe = new COpe(OPE_MOVECARET);
 				pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 			}
 			int nPosX;
@@ -2555,7 +2550,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 		{
 			if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 			{
-				pcOpe = new COpe;
+				pcOpe = new COpe(OPE_INSERT);
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 												nCurXOld,
 												nCurYOld + nCount,
@@ -2619,7 +2614,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 				nInsPosX = LineIndexToColumn( pcLayout, nLineLen );
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
-					pcOpe = new COpe;
+					pcOpe = new COpe(OPE_INSERT);
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 														nInsPosX,
 														m_ptCaretPos.y,
@@ -2682,8 +2677,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 
 	if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 	{
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;						/* 操作種別 */
+		pcOpe = new COpe(OPE_MOVECARET);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 
 		pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
@@ -2862,7 +2856,7 @@ end_of_for:;
 		}
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
+		pcOpe = new COpe(OPE_INSERT);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 	}
 
@@ -2954,7 +2948,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		}
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
+		pcOpe = new COpe(OPE_INSERT);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 	}
 	//	Oct. 6 ,2002 genta 
@@ -4059,8 +4053,7 @@ void CEditView::Command_DUPLICATELINE( void )
 	}
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
+		pcOpe = new COpe(OPE_MOVECARET);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 		pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 		/* 操作の追加 */
@@ -4074,8 +4067,7 @@ void CEditView::Command_DUPLICATELINE( void )
 	Command_GOLINETOP( m_bSelectingLock, 0x1 /* カーソル位置に関係なく行頭に移動 */ );
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
+		pcOpe = new COpe(OPE_MOVECARET);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 		pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 		/* 操作の追加 */
@@ -4085,7 +4077,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
+		pcOpe = new COpe(OPE_INSERT);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作前のキャレット位置 */
 	}
 
@@ -4143,8 +4135,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
-		pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+		pcOpe = new COpe(OPE_MOVECARET);
 
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 
@@ -5067,7 +5058,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			nPosX = ( pcLayout == NULL ? 0 : LineIndexToColumn( pcLayout, nDelPos ));
 			nPosY = nLineNum;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
+				pcOpe = new COpe(OPE_INSERT);
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					nPosX,
 					nPosY,
@@ -5123,8 +5114,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
@@ -5162,7 +5152,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
+				pcOpe = new COpe(OPE_INSERT);
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					0,
 					i,
@@ -5200,8 +5190,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
@@ -5300,7 +5289,7 @@ void CEditView::Command_UNINDENT( char cChar )
 			MoveCursor( 0, i, false );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				pcOpe = new COpe;
+				pcOpe = new COpe(OPE_DELETE);
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					0,
 					i,
@@ -5342,8 +5331,7 @@ void CEditView::Command_UNINDENT( char cChar )
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
+			pcOpe = new COpe(OPE_MOVECARET);
 			pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;				/* 操作前のキャレット位置 */
 			pcOpe->m_ptCaretPos_PHY_After = pcOpe->m_ptCaretPos_PHY_Before;	/* 操作後のキャレット位置 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
@@ -5368,7 +5356,7 @@ void CEditView::Command_ADDTAIL(
 	Command_GOFILEEND( false );
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new COpe;
+		pcOpe = new COpe(OPE_INSERT);
 		pcOpe->m_ptCaretPos_PHY_Before = m_ptCaretPos_PHY;	/* 操作後のキャレット位置 */
 	}
 
