@@ -514,12 +514,14 @@ LRESULT CControlTray::DispatchEvent(
 			wHotKeyMods |= MOD_ALT;
 		}
 		wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
-		::RegisterHotKey(
-			m_hWnd,
-			ID_HOTKEY_TRAYMENU,
-			wHotKeyMods,
-			wHotKeyCode
-		);
+		if( wHotKeyCode != 0 ){
+			::RegisterHotKey(
+				m_hWnd,
+				ID_HOTKEY_TRAYMENU,
+				wHotKeyMods,
+				wHotKeyCode
+			);
+		}
 
 		// 2006.07.09 ryoji 最後の方でシャットダウンするアプリケーションにする
 		BOOL (WINAPI *pfnSetProcessShutdownParameters)( DWORD dwLevel, DWORD dwFlags );
@@ -567,12 +569,14 @@ LRESULT CControlTray::DispatchEvent(
 					wHotKeyMods |= MOD_ALT;
 				}
 				wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
-				::RegisterHotKey(
-					m_hWnd,
-					ID_HOTKEY_TRAYMENU,
-					wHotKeyMods,
-					wHotKeyCode
-				);
+				if( wHotKeyCode != 0 ){
+					::RegisterHotKey(
+						m_hWnd,
+						ID_HOTKEY_TRAYMENU,
+						wHotKeyMods,
+						wHotKeyCode
+					);
+				}
 
 //@@			/* 共有データの保存 */
 //@@			m_cShareData.SaveShareData();
