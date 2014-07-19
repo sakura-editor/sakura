@@ -1030,6 +1030,10 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			if( bLineNumLayout && !bAddCRLF ){
 				cmemClip.AppendString(WCODE::CRLF, 2);
 			}
+			// 2014.06.25 バッファ拡張
+			if( cmemClip.capacity() < cmemClip.GetStringLength() + 100 ){
+				cmemClip.AllocStringBuffer( cmemClip.capacity() + cmemClip.capacity() / 2 );
+			}
 		}
 	}
 	if( sFontAttrLast2.m_bBoldFont ){
