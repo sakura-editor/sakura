@@ -33,7 +33,7 @@ class CFigure{
 public:
 	virtual ~CFigure(){}
 	virtual bool DrawImp(SColorStrategyInfo* pInfo) = 0;
-	virtual bool Match(const wchar_t* pText) const = 0;
+	virtual bool Match(const wchar_t* pText, int nTextLen) const = 0;
 
 	//! êFï™ÇØï\é¶ëŒè€îªíË
 	virtual bool Disp(void) const = 0;
@@ -52,7 +52,7 @@ protected:
 class CFigure_Text : public CFigure{
 public:
 	bool DrawImp(SColorStrategyInfo* pInfo);
-	bool Match(const wchar_t* pText) const
+	bool Match(const wchar_t* pText, int nTextLen) const
 	{
 		return true;
 	}

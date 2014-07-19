@@ -8,7 +8,7 @@
 //                     CFigure_HanSpace                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_HanSpace::Match(const wchar_t* pText) const
+bool CFigure_HanSpace::Match(const wchar_t* pText, int nTextLen) const
 {
 	if( pText[0] == L' ' ){
 		return true;

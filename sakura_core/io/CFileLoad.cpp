@@ -399,11 +399,12 @@ const char* CFileLoad::GetNextLineCharCode(
 		*pnEolLen = 0;
 		return NULL;
 	}
+	const unsigned char* pUData = (const unsigned char*)pData; // signedÇæÇ∆ïÑçÜägí£Ç≈NELÇ™Ç®Ç©ÇµÇ≠Ç»ÇÈÇÃÇ≈
 
 	switch( m_CharCode ){
 	case CODE_UNICODE:
 		for( i = nbgn; i < nDataLen; i += 2 ){
-			wchar_t c = static_cast<wchar_t>((pData[i + 1] << 8) | pData[i]);
+			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
 			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
 				break;
@@ -412,7 +413,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		break;
 	case CODE_UNICODEBE:
 		for( i = nbgn; i < nDataLen; i += 2 ){
-			wchar_t c = static_cast<wchar_t>((pData[i] << 8) | pData[i + 1]);
+			wchar_t c = static_cast<wchar_t>((pUData[i] << 8) | pUData[i + 1]);
 			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
 				break;

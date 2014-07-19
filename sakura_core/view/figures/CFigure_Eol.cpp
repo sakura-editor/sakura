@@ -49,10 +49,12 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 //                        CFigure_Eol                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Eol::Match(const wchar_t* pText) const
+bool CFigure_Eol::Match(const wchar_t* pText, int nTextLen) const
 {
-	if(pText[0]==L'\r' && pText[1]==L'\n' && pText[2]==L'\0')return true;
-	if(WCODE::IsLineDelimiter(pText[0]) && pText[1]==L'\0')return true;
+	// 2014.06.18 折り返し・最終行だとDrawImpでcEol.GetLen()==0になり無限ループするので
+	// もしも行の途中に改行コードがあった場合はMatchさせない
+	if(nTextLen == 2 && pText[0]==L'\r' && pText[1]==L'\n')return true;
+	if(nTextLen == 1 && WCODE::IsLineDelimiter(pText[0]))return true;
 	return false;
 }
 
@@ -115,6 +117,10 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		DrawImp_DrawUnderline(pInfo, sPos);
 
 		pInfo->m_nPosInLogic+=cEol.GetLen();
+	}else{
+		// 無限ループ対策
+		pInfo->m_nPosInLogic += 1;
+		assert_warning( 1 );
 	}
 
 	return true;

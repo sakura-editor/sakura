@@ -1027,7 +1027,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 
 			//1•¶Žšî•ñŽæ“¾ $$‚‘¬‰»‰Â”\
-			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
+			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()],
+				cLineStr.GetLength() - pInfo->GetPosInLogic());
 
 			//1•¶Žš•`‰æ
 			cFigure.DrawImp(pInfo);

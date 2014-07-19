@@ -34,7 +34,10 @@ class CFigureManager : public TSingleton<CFigureManager>{
 	virtual ~CFigureManager();
 
 public:
-	CFigure& GetFigure(const wchar_t* pText);
+	//! •`‰æ‚·‚éCFigure‚ğæ“¾
+	//	@param	pText	‘ÎÛ•¶š—ñ‚Ìæ“ª
+	//	@param	nTextLen	pText‚©‚çs––‚Ü‚Å‚Ì’·‚³(‚½‚¾‚µCRLF==2)
+	CFigure& GetFigure(const wchar_t* pText, int nTextLen);
 
 	// İ’è•ÏX
 	void OnChangeSetting(void);

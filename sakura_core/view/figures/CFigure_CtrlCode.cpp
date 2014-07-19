@@ -7,7 +7,7 @@
 //                     CFigure_CtrlCode                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_CtrlCode::Match(const wchar_t* pText) const
+bool CFigure_CtrlCode::Match(const wchar_t* pText, int nTextLen) const
 {
 	//当面はASCII制御文字（C0 Controls, IsHankaku()で半角扱い）だけを制御文字表示にする
 	//そうしないと IsHankaku(0x0600)==false なのに iswcntrl(0x0600)!=0 のようなケースで表示桁がずれる
@@ -45,7 +45,7 @@ void CFigure_CtrlCode::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* p
 //                     CFigure_HanBinary                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_HanBinary::Match(const wchar_t* pText) const
+bool CFigure_HanBinary::Match(const wchar_t* pText, int nTextLen) const
 {
 	int nLen = pText[1]? 2:1;	// ※ pText は常に終端よりも手前
 	if(CNativeW::GetKetaOfChar(pText, nLen, 0) == 1){	// 半角
@@ -85,7 +85,7 @@ void CFigure_HanBinary::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* 
 //                     CFigure_ZenBinary                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_ZenBinary::Match(const wchar_t* pText) const
+bool CFigure_ZenBinary::Match(const wchar_t* pText, int nTextLen) const
 {
 	int nLen = pText[1]? 2:1;	// ※ pText は常に終端よりも手前
 	if(CNativeW::GetKetaOfChar(pText, nLen, 0) > 1){	// 全角
