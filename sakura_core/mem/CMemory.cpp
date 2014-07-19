@@ -280,7 +280,8 @@ bool CMemory::SwabHLByte( const CMemory& mem )
 		return true;
 	}
 	int nSize = mem.GetRawLength();
-	if( m_pRawData && m_nDataBufSize < nSize + 2 ) {
+	if( m_pRawData && nSize + 2 <= m_nDataBufSize ) {
+		// データが短い時はバッファの再利用
 		_SetRawLength(0);
 	}else{
 		_Empty();
@@ -316,7 +317,14 @@ void CMemory::AllocBuffer( int nNewDataLen )
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
-			pWork = (char*)realloc( m_pRawData, nWorkLen );
+			// 2014.06.25 有効データ長が0の場合はfree & malloc
+			if( m_nRawLen == 0 ){
+				free( m_pRawData );
+				m_pRawData = NULL;
+				pWork = malloc_char( nWorkLen );
+			}else{
+				pWork = (char*)realloc( m_pRawData, nWorkLen );
+			}
 			m_nDataBufSize = nWorkLen;
 		}else{
 			return;
@@ -366,10 +374,8 @@ void CMemory::SetRawDataHoldBuffer( const void* pData, int nDataLen )
 {
 	// this 重複不可
 	assert( m_pRawData != pData );
-	if( m_pRawData && m_nDataBufSize < nDataLen + 2 ) {
-		_SetRawLength(0); // _Emptyの代わりに、データを削除
-	}else{
-		_Empty();
+	if( m_nRawLen != 0 ){
+		_SetRawLength(0);
 	}
 	AllocBuffer( nDataLen );
 	_AddData( pData, nDataLen );
