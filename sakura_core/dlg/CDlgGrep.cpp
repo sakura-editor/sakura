@@ -75,6 +75,7 @@ CDlgGrep::CDlgGrep()
 	m_bGrepOutputBaseFolder = false;
 	m_bGrepSeparateFolder = false;
 
+	m_bSetText = false;
 	m_szFile[0] = 0;
 	m_szFolder[0] = 0;
 	return;
@@ -607,6 +608,7 @@ int CDlgGrep::GetData( void )
 	std::vector<TCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
+	m_bSetText = true;
 	/* 検索ファイル */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	/* 検索フォルダ */
@@ -700,6 +702,9 @@ int CDlgGrep::GetData( void )
 			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 		}
+	}else{
+		// 2014.07.01 空キーも登録する
+		CSearchKeywordManager().AddToSearchKeyArr( L"" );
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23

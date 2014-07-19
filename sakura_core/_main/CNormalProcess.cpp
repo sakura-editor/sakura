@@ -253,6 +253,7 @@ bool CNormalProcess::InitializeProcess()
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
+			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
 			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = _T('\0');

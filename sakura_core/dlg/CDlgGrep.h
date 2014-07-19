@@ -52,6 +52,7 @@ public:
 
 
 	std::wstring	m_strText;				/*!< 検索文字列 */
+	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePath	m_szFile;					/*!< 検索ファイル */
 	SFilePath	m_szFolder;					/*!< 検索フォルダ */
 	SFilePath	m_szCurrentFilePath;
