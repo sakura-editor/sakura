@@ -73,6 +73,7 @@ struct SLoadInfo
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
+	bool		bWritableNoMsg; //<! 書き込み禁止メッセージを表示しない
 	CTypeConfig	nType;
 
 	//モード
@@ -85,6 +86,7 @@ struct SLoadInfo
 	: cFilePath(_T(""))
 	, eCharCode(CODE_AUTODETECT)
 	, bViewMode(false)
+	, bWritableNoMsg(false)
 	, nType(-1)
 	, bRequestReload(false)
 	, bOpened(false)
@@ -94,6 +96,7 @@ struct SLoadInfo
 	: cFilePath(_cFilePath)
 	, eCharCode(_eCodeType)
 	, bViewMode(_bReadOnly)
+	, bWritableNoMsg(false)
 	, nType(_nType)
 	, bRequestReload(false)
 	, bOpened(false)
