@@ -182,8 +182,8 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 
 	if( m_nTypeId              == pTypesPtr->m_id
 	 && m_nCompiledMagicNumber == pTypesPtr->m_nRegexKeyMagicNumber
-	/* && m_bUseRegexKeyword     == pTypesPtr->m_bUseRegexKeyword */ )
-	{
+	 && m_pTypes != NULL  // 2014.07.02 ğŒ’Ç‰Á
+	){
 		return TRUE;
 	}
 

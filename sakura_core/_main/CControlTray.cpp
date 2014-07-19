@@ -692,6 +692,7 @@ LRESULT CControlTray::DispatchEvent(
 						}
 					}
 					auto_strcpy( type->m_szTypeExts, _T("") );
+					type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 					types.resize( m_pShareData->m_nTypesCount + 1 );
 					int nTypeSizeOld = m_pShareData->m_nTypesCount;
 					m_pShareData->m_nTypesCount++;

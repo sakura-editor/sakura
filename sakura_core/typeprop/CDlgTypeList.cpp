@@ -442,6 +442,7 @@ bool CDlgTypeList::Import()
 		}
 		type.m_nIdx = nIdx;
 	}
+	type.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 	// “K—p
 	CDocTypeManager().SetTypeConfig(CTypeConfig(nIdx), type);
 	if( !bAdd ){
@@ -531,6 +532,7 @@ bool CDlgTypeList::InitializeType( void )
 	_tcscpy( type.m_szTypeExts, _T("") );
 	type.m_nIdx = iDocType;
 	type.m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
+	type.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 
 	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), type);
 
@@ -596,6 +598,7 @@ bool CDlgTypeList::CopyType()
 	}
 	type.m_id = (::GetTickCount() & 0x3fffffff) + nNewTypeIndex * 0x10000;
 	type.m_nIdx = nNewTypeIndex;
+	type.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 	CDocTypeManager().SetTypeConfig(CTypeConfig(nNewTypeIndex), type);
 	SetData(nNewTypeIndex);
 	return true;
