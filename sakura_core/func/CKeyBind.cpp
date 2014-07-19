@@ -487,7 +487,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 		/* 機能に対応するキー名の取得 */
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
-			if( _tcslen( pszLabel ) + cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
+			if( _tcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
 				_tcscat( pszLabel, _T("\t") );
 				_tcscat( pszLabel, cMemAccessKey.GetStringPtr() );
 			}
