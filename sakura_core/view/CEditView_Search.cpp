@@ -285,9 +285,11 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 
 
 /*!	現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
+	@return 値を設定したか
 	@date 2006.08.23 ryoji 新規作成
+	@date 2014.07.01 Moca bGetHistory追加、戻り値をboolに変更
 */
-void CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText )
+bool CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText, bool bGetHistory )
 {
 	bool bStripMaxPath = false;
 	cmemCurText.SetString(L"");
@@ -296,16 +298,27 @@ void CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText )
 		GetCurrentTextForSearch( cmemCurText, bStripMaxPath );
 	}
 	else{	// テキストが選択されていない
+		bool bGet = false;
 		if( GetDllShareData().m_Common.m_sSearch.m_bCaretTextForSearch ){
 			GetCurrentTextForSearch( cmemCurText, bStripMaxPath );	// カーソル位置単語を取得
-		}
-		else if( 0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size()
-				&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
-			cmemCurText.SetString( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	// 履歴からとってくる
+			if( cmemCurText.GetStringLength() == 0 && bGetHistory ){
+				bGet = true;
+			}
 		}else{
-			cmemCurText.SetString( m_strCurSearchKey.c_str() );
+			bGet = true;
+		}
+		if( bGet ){
+			if( 0 < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size()
+					&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
+				cmemCurText.SetString( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	// 履歴からとってくる
+				return true; // ""でもtrue
+			}else{
+				cmemCurText.SetString( m_strCurSearchKey.c_str() );
+				return 0 <= m_nCurSearchKeySequence; // ""でもtrue.未設定のときはfalse
+			}
 		}
 	}
+	return 0 < cmemCurText.GetStringLength();
 }
 
 
