@@ -194,7 +194,8 @@ void CDocFileOperation::ReloadCurrentFile(
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath=m_pcDocRef->m_cDocFile.GetFilePath();
 	sLoadInfo.eCharCode=nCharCode;
-	sLoadInfo.bViewMode=!m_pcDocRef->IsEditable(); //CAppMode::getInstance()->IsViewMode();
+	sLoadInfo.bViewMode=CAppMode::getInstance()->IsViewMode(); // 2014.06.13 IsEditable->IsViewModeに戻す。かわりに bForceNoMsgを追加
+	sLoadInfo.bWritableNoMsg = !m_pcDocRef->IsEditable(); // すでに編集できない状態ならファイルロックのメッセージを表示しない
 	sLoadInfo.bRequestReload=true;
 	bool bRet = this->DoLoadFlow(&sLoadInfo);
 
