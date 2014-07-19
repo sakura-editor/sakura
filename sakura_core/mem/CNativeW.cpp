@@ -52,7 +52,7 @@ void CNativeW::SetString( const wchar_t* pData, int nDataLen )
 // バッファの内容を置き換える
 void CNativeW::SetString( const wchar_t* pszData )
 {
-	SetString(pszData,wcslen(pszData));
+	CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
 }
 
 // バッファの内容を置き換える
@@ -70,7 +70,7 @@ void CNativeW::AllocStringBuffer( int nDataLen )
 //! バッファの最後にデータを追加する
 void CNativeW::AppendString( const wchar_t* pszData )
 {
-	AppendString(pszData,wcslen(pszData));
+	CNative::AppendRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
 }
 
 //! バッファの最後にデータを追加する。nLengthは文字単位。
@@ -82,7 +82,7 @@ void CNativeW::AppendString( const wchar_t* pszData, int nLength )
 //! バッファの最後にデータを追加する
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
-	AppendString(cmemData.GetStringPtr(),cmemData.GetStringLength());
+	CNative::AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
 }
 
 // -- -- charからの移行用 -- -- //

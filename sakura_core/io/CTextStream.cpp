@@ -59,6 +59,9 @@ wstring CTextInputStream::ReadLineW()
 		if(c==EOF)break; //EOF‚ÅI—¹
 		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" ‚Ü‚½‚Í "\r\n" ‚ÅI—¹
 		if(c=='\n')break; //"\n" ‚ÅI—¹
+		if( line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10 ){
+			line._GetMemory()->AllocBuffer( line._GetMemory()->GetRawLength() * 2 );
+		}
 		line._GetMemory()->AppendRawData(&c,sizeof(char));
 	}
 
