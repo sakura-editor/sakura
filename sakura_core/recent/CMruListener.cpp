@@ -193,6 +193,14 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	// MRUリストへの登録
 	EditInfo	eiNew;
 	pcDoc->GetEditInfo(&eiNew);
+	// 2014.07.04 ブックマークの保持(エディタが落ちたときブックマークが消えるため)
+	if( bIsExistInMRU ){
+		if( GetDllShareData().m_Common.m_sFile.GetRestoreBookmarks() ){
+			// SetBookMarksでデータがNUL区切りに書き換わっているので再取得
+			cMRU.GetEditInfo(pcDoc->m_cDocFile.GetFilePath(),&eiOld);
+			auto_strcpy(eiNew.m_szMarkLines, eiOld.m_szMarkLines);
+		}
+	}
 	cMRU.Add( &eiNew );
 }
 
