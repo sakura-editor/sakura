@@ -126,8 +126,7 @@ void CEditView::InsertData_CEditView(
 	CLayoutInt	nLineAllColLen;
 	CLogicInt	nIdxFrom = CLogicInt(0);
 	CLayoutInt	nColumnFrom = ptInsertPos.GetX2();
-	CNativeW	cMem;
-	cMem.SetString(L"");
+	CNativeW	cMem(L"");
 	COpeLineData insData;
 	if( pLine ){
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
@@ -324,12 +323,6 @@ void CEditView::InsertData_CEditView(
 			}
 		}
 	}
-
-	if( !m_bDoing_UndoRedo && pcOpe ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe->m_pcmemData.clear();					/* 操作に関連するデータ */
-	}
-
-
 
 	//2007.10.18 kobake ここでCOpe処理をまとめる
 	if( !m_bDoing_UndoRedo ){
