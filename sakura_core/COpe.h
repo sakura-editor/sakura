@@ -118,6 +118,12 @@ public:
 		m_ptCaretPos_PHY_Before = ptBefore;
 		m_ptCaretPos_PHY_After = ptAfter;
 	}
+	CMoveCaretOpe(const CLogicPoint& ptCaretPos)
+	: COpe(OPE_MOVECARET)
+	{
+		m_ptCaretPos_PHY_Before = ptCaretPos;
+		m_ptCaretPos_PHY_After = ptCaretPos;
+	}
 };
 
 

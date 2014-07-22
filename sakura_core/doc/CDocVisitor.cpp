@@ -75,7 +75,6 @@ void CDocVisitor::SetAllEol(CEol cEol)
 			pcView->GetCaret().m_nCaretPosX_Prev = nCaretPosX_Prev;
 			pcView->m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					pcView->GetCaret().GetCaretLogicPos(),
 					pcView->GetCaret().GetCaretLogicPos()
 				)
 			);

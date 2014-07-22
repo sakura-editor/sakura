@@ -492,8 +492,7 @@ void CEditView::DeleteData(
 			/* 操作の追加 */
 			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -804,8 +803,7 @@ void CEditView::ReplaceData_CEditView3(
 		if( sDelRangeLogic.GetFrom() != GetCaret().GetCaretLogicPos() ){
 			pcOpeBlk->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -1008,8 +1006,7 @@ void CEditView::RTrimPrevLine( void )
 						/* 操作の追加 */
 						m_cCommander.GetOpeBlk()->AppendOpe(
 							new CMoveCaretOpe(
-								GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-								GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+								GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 							)
 						);
 					}

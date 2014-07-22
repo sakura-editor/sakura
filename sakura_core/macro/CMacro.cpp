@@ -1218,8 +1218,7 @@ bool CMacro::HandleCommand(
 			opeBlk->AddRef();
 			opeBlk->AppendOpe(
 				new CMoveCaretOpe(
-					pcEditView->GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					pcEditView->GetCaret().GetCaretLogicPos() 	// 操作後のキャレット位置
+					pcEditView->GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 			pcEditView->SetUndoBuffer();
