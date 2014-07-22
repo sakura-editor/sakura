@@ -1492,8 +1492,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			/* 操作の追加 */
 			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}

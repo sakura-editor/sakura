@@ -303,8 +303,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			/* 操作の追加 */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -399,8 +398,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -539,8 +537,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -806,8 +803,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 			)
 		);
 	}
@@ -941,8 +937,7 @@ void CViewCommander::Command_MERGE(void)
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 			)
 		);
 	}

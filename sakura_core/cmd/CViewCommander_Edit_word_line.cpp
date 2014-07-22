@@ -375,8 +375,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 			/* 操作の追加 */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos(),
-					GetCaret().GetCaretLogicPos()
+					GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 				)
 			);
 		}
@@ -409,8 +408,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 		/* 操作の追加 */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 			)
 		);
 	}
@@ -424,8 +422,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 		/* 操作の追加 */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 			)
 		);
 	}
@@ -475,8 +472,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 		/* 操作の追加 */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				GetCaret().GetCaretLogicPos()	// 操作前後のキャレット位置
 			)
 		);
 	}
