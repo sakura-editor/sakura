@@ -293,9 +293,6 @@ void CEditView::InsertData_CEditView(
 			&pcOpe->m_ptCaretPos_PHY_To.x,
 			&pcOpe->m_ptCaretPos_PHY_To.y
 		);
-
-		pcOpe->m_nDataLen = cMem.GetStringLength();	/* 操作に関連するデータのサイズ */
-		pcOpe->m_pcmemData = NULL;				/* 操作に関連するデータ */
 	}
 }
 
@@ -347,7 +344,6 @@ void CEditView::DeleteData2(
 	);
 
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe->m_nDataLen = pcMem->GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = pcMem;				/* 操作に関連するデータ */
 	}
 
@@ -734,7 +730,7 @@ void CEditView::Command_UNDO( void )
 						sRange,
 						NULL,								// 削除されたデータのコピー(NULL可能)
 						pcOpe->m_pcmemData->GetStringPtr(),	// 挿入するデータ
-						pcOpe->m_nDataLen,					// 挿入するデータの長さ
+						pcOpe->m_pcmemData->GetStringLength(),// 挿入するデータの長さ
 						false								// 再描画するか否か
 					);
 
@@ -1169,7 +1165,6 @@ void CEditView::ReplaceData_CEditView(
 	}
 
 	if( !m_bDoing_UndoRedo && 0 < pcMemDeleted->GetStringLength() ){
-		pcOpe->m_nDataLen = pcMemDeleted->GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = pcMemDeleted;						/* 操作に関連するデータ */
 		/* 操作の追加 */
 		m_pcOpeBlk->AppendOpe( pcOpe );

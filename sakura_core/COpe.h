@@ -49,7 +49,6 @@ public:
 	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置
 	CLogicPoint	m_ptCaretPos_PHY_After;		//!< カーソル位置
 
-	int			m_nDataLen;			//!< 操作に関連するデータのサイズ
 	CMemory*	m_pcmemData;		//!< 操作に関連するデータ
 
 };

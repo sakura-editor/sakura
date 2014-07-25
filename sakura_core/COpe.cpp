@@ -30,7 +30,6 @@ COpe::COpe(EOpeCode eCode)
 	m_ptCaretPos_PHY_Before.y = -1;	// カーソル位置 改行単位行の行番号（０開始）
 	m_ptCaretPos_PHY_After.x = -1;	// カーソル位置 改行単位行先頭からのバイト数（０開始）
 	m_ptCaretPos_PHY_After.y = -1;	// カーソル位置 改行単位行の行番号（０開始）
-	m_nDataLen = 0;					// 操作に関連するデータのサイズ 
 	m_pcmemData = NULL;				// 操作に関連するデータ 
 }
 
@@ -52,10 +51,11 @@ void COpe::DUMP( void )
 	DEBUG_TRACE( _T("\t\tm_nOpe                  = [%d]\n"), m_nOpe               );
 	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_Before = [%d,%d]\n"), m_ptCaretPos_PHY_Before.x, m_ptCaretPos_PHY_Before.y   );
 	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_After  = [%d,%d]\n"), m_ptCaretPos_PHY_After.x, m_ptCaretPos_PHY_After.y   );
-	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), m_nDataLen           );
 	if( NULL == m_pcmemData ){
+	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), 0 );
 		DEBUG_TRACE( _T("\t\tm_pcmemData         = [NULL]\n") );
 	}else{
+	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), m_pcmemData->GetStringLength() );
 		DEBUG_TRACE( _T("\t\tm_pcmemData         = [%s]\n"), m_pcmemData->GetStringPtr() );
 	}
 	return;
