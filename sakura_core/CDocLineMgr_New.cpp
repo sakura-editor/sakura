@@ -488,7 +488,7 @@ void CDocLineMgr::ResetAllBookMark( void )
 /*
 	@date 2001.12.03 hor
 */
-int CDocLineMgr::SearchBookMark(
+bool CDocLineMgr::SearchBookMark(
 	int					nLineNum,		/* 検索開始行 */
 	ESearchDirection	bPrevOrNext,	/* 0==前方検索 1==後方検索 */
 	int*				pnLineNum 		/* マッチ行 */
@@ -504,7 +504,7 @@ int CDocLineMgr::SearchBookMark(
 		while( pDocLine ){
 			if(pDocLine->IsBookmarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
-				return TRUE;
+				return true;
 			}
 			nLinePos--;
 			pDocLine = pDocLine->m_pPrev;
@@ -517,13 +517,13 @@ int CDocLineMgr::SearchBookMark(
 		while( NULL != pDocLine ){
 			if(pDocLine->IsBookmarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
-				return TRUE;
+				return true;
 			}
 			nLinePos++;
 			pDocLine = pDocLine->m_pNext;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 //! 物理行番号のリストからまとめて行マーク

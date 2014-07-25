@@ -17,8 +17,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDocLineMgr;
-
 #ifndef _CDOCLINEMGR_H_
 #define _CDOCLINEMGR_H_
 
@@ -130,7 +128,7 @@ public:
 
 // From Here 2001.12.03 hor
 	void ResetAllBookMark( void );			/* ブックマークの全解除 */
-	int SearchBookMark( int , ESearchDirection , int* ); /* ブックマーク検索 */
+	bool SearchBookMark( int , ESearchDirection , int* ); /* ブックマーク検索 */
 // To Here 2001.12.03 hor
 
 	//@@@ 2002.05.25 MIK
