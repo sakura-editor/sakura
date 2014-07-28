@@ -286,7 +286,7 @@ void CPropFileName::SetData( HWND hwndDlg )
 
 	// リストにデータをセット
 	for( i = 0, nIndex = 0; i < m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
-		if( '\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ) continue;
+		if( _T('\0') == m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ) continue;
 
 		::ZeroMemory( &lvItem, sizeof( lvItem ));
 		lvItem.mask     = LVIF_TEXT;
@@ -339,15 +339,15 @@ int CPropFileName::GetData( HWND hwndDlg )
 			ListView_GetItemText( hListView, nIndex, 0, m_Common.m_sFileName.m_szTransformFileNameFrom[nCount], _MAX_PATH );
 
 			// 置換前文字列がNULLだったら捨てる
-			if( '\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
-				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = '\0';
+			if( _T('\0') == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
+				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = _T('\0');
 			}else{
 				ListView_GetItemText( hListView, nIndex, 1, m_Common.m_sFileName.m_szTransformFileNameTo[nCount], _MAX_PATH );
 				nCount++;
 			}
 		}else{
-			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = '\0';
-			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = '\0';
+			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = _T('\0');
+			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = _T('\0');
 		}
 	}
 

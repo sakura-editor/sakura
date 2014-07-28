@@ -701,8 +701,8 @@ struct CommonSetting_Macro
 struct CommonSetting_FileName
 {
 	int					m_nTransformFileNameArrNum;										//!< ファイル名の簡易表示登録数
-	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
-	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
+	TCHAR				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
+	TCHAR				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

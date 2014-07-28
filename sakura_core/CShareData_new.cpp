@@ -558,16 +558,16 @@ void CShareData::ShareData_IO_Nickname( CProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "From%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[0] ));
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i], _countof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[0] ));
 		wsprintf( szKeyName, "To%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i], sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[0] ));
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i], _countof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[0] ));
 	}
 	// “Ç‚İ‚İCc‚è‚ğNULL‚ÅÄ‰Šú‰»
 	if( cProfile.IsReadingMode() ){
 		for( ; i < MAX_TRANSFORM_FILENAME; i++ ){
-			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] = '\0';
-			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i][0]   = '\0';
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] = _T('\0');
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i][0]   = _T('\0');
 		}
 	}
 }

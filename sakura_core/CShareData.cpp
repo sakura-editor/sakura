@@ -2147,7 +2147,7 @@ int CShareData::TransformFileName_MakeCache( void ){
 	int i;
 	int nCount = 0;
 	for( i = 0; i < m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
-		if( '\0' != m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ){
+		if( _T('\0') != m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ){
 			if( ExpandMetaToFolder( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i],
 			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
 				// m_szTransformFileNameTo‚Æm_szTransformFileNameFromExp‚Ì”Ô†‚ª‚¸‚ê‚é‚±‚Æ‚ª‚ ‚é‚Ì‚Å‹L˜^‚µ‚Ä‚¨‚­
