@@ -259,8 +259,6 @@ public:
 
 	DLLSHAREDATA*	m_pShareData;
 
-	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
-
 	CPropertyManager* m_pcPropertyManager;	//プロパティ管理
 
 	EShareMode		m_nFileShareModeOld;	/* ファイルの排他制御モード */
@@ -286,8 +284,6 @@ public:
 	WatchUpdate		m_eWatchUpdate;	//!< 更新監視方法
 	//	To Here Dec. 4, 2002 genta
 
-//	CDlgTest*		m_pcDlgTest;
-
 	int m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
 	bool m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 
@@ -298,7 +294,6 @@ public:
 protected:
 	void DoFileLock( void );	/* ファイルの排他ロック */
 	void DoFileUnlock( void );	/* ファイルの排他ロック解除 */
-	//char			m_pszCaption[1024];	//@@@ YAZAKI
 	
 	// 2005.11.21 aroka
 	// 2008.11.23 nasukoji	パスが長すぎる場合への対応

@@ -81,7 +81,6 @@ CEditDoc::CEditDoc()
 , m_bDebugMode( false )			/* デバッグモニタモード */
 , m_bGrepMode( false )			/* Grepモードか */
 , m_hInstance( NULL )
-, m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
 , m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )	/* ファイルの排他制御モード */
 , m_hLockedFile( INVALID_HANDLE_VALUE )	/* ロックしているファイルのハンドル */
 , m_eWatchUpdate( CEditDoc::WU_QUERY )
