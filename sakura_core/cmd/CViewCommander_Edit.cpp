@@ -325,7 +325,7 @@ void CViewCommander::Command_UNDO( void )
 	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
-	m_pCommanderView->m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
+	m_pCommanderView->m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
@@ -503,7 +503,7 @@ void CViewCommander::Command_UNDO( void )
 		/* Undo後の変更フラグ */
 		GetDocument()->m_cDocEditor.SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
-		m_pCommanderView->m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+		m_pCommanderView->m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 		m_pCommanderView->SetBracketPairPos( true );	// 03/03/07 ai
 
@@ -530,7 +530,7 @@ void CViewCommander::Command_UNDO( void )
 	}
 
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;	// 2007.10.11 ryoji 追加
-	m_pCommanderView->m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_pCommanderView->m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 	return;
 }
@@ -581,7 +581,7 @@ void CViewCommander::Command_REDO( void )
 	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
-	m_pCommanderView->m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
+	m_pCommanderView->m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
@@ -751,7 +751,7 @@ void CViewCommander::Command_REDO( void )
 		/* Redo後の変更フラグ */
 		GetDocument()->m_cDocEditor.SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
-		m_pCommanderView->m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+		m_pCommanderView->m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 		m_pCommanderView->SetBracketPairPos( true );	// 03/03/07 ai
 
@@ -778,7 +778,7 @@ void CViewCommander::Command_REDO( void )
 	}
 
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;	// 2007.10.11 ryoji 追加
-	m_pCommanderView->m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_pCommanderView->m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 	return;
 }
