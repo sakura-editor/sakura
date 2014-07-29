@@ -186,7 +186,7 @@ BOOL CEditView::Create(
 
 	/* 共有データ構造体のアドレスを返す */
 	m_bCommandRunning = FALSE;	/* コマンドの実行中 */
-	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 	m_pcsbwVSplitBox = NULL;	/* 垂直分割ボックス */
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
 	m_hwndVScrollBar = NULL;
@@ -2356,7 +2356,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	 && bCursorLineBg
 	 && GetDrawSwitch()
 	 && GetCaret().GetCaretLayoutPos().GetY2() >= GetTextArea().GetViewTopLine()
-	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
+	 && m_bDoing_UndoRedo == false	/* アンドゥ・リドゥの実行中か */
 		){
 		bCursorLineBgDraw = true;
 
@@ -2391,7 +2391,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	if( bDraw
 	 && GetDrawSwitch()
 	 && IsDrawCursorVLinePos(nCursorVLineX)
-	 && m_bDoing_UndoRedo == FALSE
+	 && m_bDoing_UndoRedo == false
 	 && !GetSelectionInfo().IsTextSelecting()
 	 && !DisalbeUnderLine
 	){
@@ -2428,7 +2428,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	if( bDraw
 	 && GetDrawSwitch()
 	 && nUnderLineY >= GetTextArea().GetAreaTop()
-	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
+	 && m_bDoing_UndoRedo == false	/* アンドゥ・リドゥの実行中か */
 	 && !GetSelectionInfo().IsTextSelecting()
 	 && !DisalbeUnderLine
 	){
@@ -2534,7 +2534,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 		if( bDraw
 		 && GetDrawSwitch()
 		 && IsDrawCursorVLinePos( m_nOldCursorLineX )
-		 && m_bDoing_UndoRedo == FALSE
+		 && m_bDoing_UndoRedo == false
 		 && !GetCaret().m_cUnderLine.GetVertLineDoNotOFF()	// カーソル位置縦線を消去するか
 		 && !DisalbeUnderLine
 		){
