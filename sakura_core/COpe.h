@@ -79,7 +79,7 @@ public:
 	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
 	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
-	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	COpeLineData	m_cOpeLineData;			//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;
 };
 
@@ -89,7 +89,7 @@ public:
 	CInsertOpe() : COpe(OPE_INSERT) { }
 	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
-	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	COpeLineData	m_cOpeLineData;			//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;
 };
 

@@ -381,7 +381,7 @@ void CViewCommander::Command_UNDO( void )
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
 						m_pCommanderView->GetSelectionInfo().m_sSelect,				// 削除範囲
-						&pcInsertOpe->m_pcmemData,	// 削除されたデータのコピー(NULL可能)
+						&pcInsertOpe->m_cOpeLineData,	// 削除されたデータのコピー(NULL可能)
 						NULL,
 						false,						// 再描画するか否か
 						NULL,
@@ -401,7 +401,7 @@ void CViewCommander::Command_UNDO( void )
 					CDeleteOpe* pcDeleteOpe = static_cast<CDeleteOpe*>(pcOpe);
 
 					//2007.10.17 kobake メモリリークしてました。修正。
-					if( 0 < pcDeleteOpe->m_pcmemData.size() ){
+					if( 0 < pcDeleteOpe->m_cOpeLineData.size() ){
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
@@ -410,7 +410,7 @@ void CViewCommander::Command_UNDO( void )
 						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
-							&pcDeleteOpe->m_pcmemData,
+							&pcDeleteOpe->m_cOpeLineData,
 							false,										/*再描画するか否か*/
 							NULL,
 							0,
@@ -419,7 +419,7 @@ void CViewCommander::Command_UNDO( void )
 							&cSelectLogic
 						);
 					}
-					pcDeleteOpe->m_pcmemData.clear();
+					pcDeleteOpe->m_cOpeLineData.clear();
 				}
 				break;
 			case OPE_REPLACE:
@@ -628,7 +628,7 @@ void CViewCommander::Command_REDO( void )
 					CInsertOpe* pcInsertOpe = static_cast<CInsertOpe*>(pcOpe);
 
 					//2007.10.17 kobake メモリリークしてました。修正。
-					if( 0 < pcInsertOpe->m_pcmemData.size() ){
+					if( 0 < pcInsertOpe->m_cOpeLineData.size() ){
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
@@ -637,7 +637,7 @@ void CViewCommander::Command_REDO( void )
 						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
-							&pcInsertOpe->m_pcmemData,					/* 挿入するデータ */
+							&pcInsertOpe->m_cOpeLineData,				/* 挿入するデータ */
 							false,										/*再描画するか否か*/
 							NULL,
 							0,
@@ -647,7 +647,7 @@ void CViewCommander::Command_REDO( void )
 						);
 
 					}
-					pcInsertOpe->m_pcmemData.clear();
+					pcInsertOpe->m_cOpeLineData.clear();
 				}
 				break;
 			case OPE_DELETE:
@@ -668,7 +668,7 @@ void CViewCommander::Command_REDO( void )
 					/* データ置換 削除&挿入にも使える */
 					m_pCommanderView->ReplaceData_CEditView3(
 						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
-						&pcDeleteOpe->m_pcmemData,	/* 削除されたデータのコピー(NULL可能) */
+						&pcDeleteOpe->m_cOpeLineData,	/* 削除されたデータのコピー(NULL可能) */
 						NULL,
 						false,
 						NULL,

@@ -419,7 +419,7 @@ void CEditView::DeleteData2(
 	}
 	//2007.10.18 kobake COpe‚Ì’Ç‰Á‚ð‚±‚±‚É‚Ü‚Æ‚ß‚é
 	if( pcOpe ){
-		pcOpe->m_pcmemData.swap(memDeleted);
+		pcOpe->m_cOpeLineData.swap(memDeleted);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			_ptCaretPos,
 			&pcOpe->m_ptCaretPos_PHY_After
