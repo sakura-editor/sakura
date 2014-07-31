@@ -87,16 +87,17 @@ int CMigemo::DeInitDll(void)
 	return 0;
 }
 
-const char* CMigemo::GetDllName(const char *)
+LPCTSTR CMigemo::GetDllName(const char *)
 {
-	char* szDll;
-	static char szDllName[_MAX_PATH];
+	TCHAR* szDll;
+	static TCHAR szDllName[_MAX_PATH];
 	szDll = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDll;
 
 	if(szDll[0] == _T('\0')){
 		GetInidir( szDllName, _T("migemo.dll") );
 		return fexist(szDllName) ? szDllName: _T("migemo.dll");
-	}else{
+	}
+	else{
 		if(_IS_REL_PATH(szDll)){
 			GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 			szDll = szDllName;

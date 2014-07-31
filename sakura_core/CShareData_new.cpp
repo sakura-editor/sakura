@@ -673,9 +673,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 		common.m_sHelper.m_szExtHtmlHelp, sizeof( common.m_sHelper.m_szExtHtmlHelp ));
 	
 	cProfile.IOProfileData( pszSecName, "szMigemoDll",
-		common.m_sHelper.m_szMigemoDll, sizeof( common.m_sHelper.m_szMigemoDll ));
+		common.m_sHelper.m_szMigemoDll, _countof( common.m_sHelper.m_szMigemoDll ));
 	cProfile.IOProfileData( pszSecName, "szMigemoDict",
-		common.m_sHelper.m_szMigemoDict, sizeof( common.m_sHelper.m_szMigemoDict ));
+		common.m_sHelper.m_szMigemoDict, _countof( common.m_sHelper.m_szMigemoDict ));
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font

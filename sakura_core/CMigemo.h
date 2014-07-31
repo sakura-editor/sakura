@@ -123,7 +123,7 @@ protected:
 	migemo* m_migemo;
 	bool	m_bStdcall;
 	
-	const char* GetDllName(const char *);
+	LPCTSTR GetDllName(const char *);
 	int InitDll(void);
 	int DeInitDll(void);
 	

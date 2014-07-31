@@ -671,8 +671,8 @@ struct CommonSetting_Helper
 	bool				m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ
 
 	//migemo設定
-	char				m_szMigemoDll[_MAX_PATH];		//!< migemo dll
-	char				m_szMigemoDict[_MAX_PATH];		//!< migemo dict
+	TCHAR				m_szMigemoDll[_MAX_PATH];		//!< migemo dll
+	TCHAR				m_szMigemoDict[_MAX_PATH];		//!< migemo dict
 
 	//キーワードヘルプ
 	LOGFONT				m_lf;							//!< キーワードヘルプのフォント情報 		// ai 02/05/21 Add
