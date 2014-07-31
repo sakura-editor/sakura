@@ -1814,6 +1814,12 @@ LRESULT CEditWnd::DispatchEvent(
 			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 			EndLayoutBars();
 
+			// アクセラレータテーブルを再作成する(Wine用)
+			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+			DeleteAccelTbl();
+			// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			CreateAccelTbl();
+
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 			{
 				// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある

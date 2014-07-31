@@ -581,6 +581,11 @@ LRESULT CControlTray::DispatchEvent(
 //@@			/* 共有データの保存 */
 //@@			m_cShareData.SaveShareData();
 
+				/* アクセラレータテーブルの再作成 */
+				// アクセラレータテーブル破棄
+				DeleteAccelTbl();
+				// アクセラレータテーブル作成
+				CreateAccelTbl();
 				break;
 			default:
 				break;
