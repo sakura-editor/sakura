@@ -198,11 +198,11 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
 		if (FALSE==bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
-			char szTextDate[1024], szTextTime[1024];
+			TCHAR szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
-			CShareData::getInstance()->MyGetDateFormat( systime, szTextDate, sizeof( szTextDate ) - 1 );
-			CShareData::getInstance()->MyGetTimeFormat( systime, szTextTime, sizeof( szTextTime ) - 1 );
+			CShareData::getInstance()->MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
+			CShareData::getInstance()->MyGetTimeFormat( systime, szTextTime, _countof( szTextTime ) - 1 );
 			CShareData::getInstance()->TraceOut( "\r\n%s\r\n", "#============================================================" );
 			CShareData::getInstance()->TraceOut( "#DateTime : %s %s\r\n", szTextDate, szTextTime );
 			CShareData::getInstance()->TraceOut( "#CmdLine  : %s\r\n", pszCmd );

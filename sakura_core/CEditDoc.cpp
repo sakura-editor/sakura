@@ -3921,7 +3921,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				TCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
@@ -3931,7 +3931,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				TCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
-				CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
+				CShareData::getInstance()->MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}

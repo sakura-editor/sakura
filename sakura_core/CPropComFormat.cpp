@@ -143,7 +143,7 @@ INT_PTR CPropFormat::DispatchEvent(
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_sFormat.m_szInyouKigou) - 1 ), 0 );
 
 		/* ì˙ïtèëéÆ */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_sFormat.m_szDateFormat) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szDateFormat) - 1 ), 0 );
 
 		/* éûçèèëéÆ */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_sFormat.m_szTimeFormat) - 1 ), 0 );

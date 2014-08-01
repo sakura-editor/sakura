@@ -564,11 +564,11 @@ struct CommonSetting_Format
 {
 	//日付書式
 	int					m_nDateFormatType;							//!< 日付書式のタイプ
-	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 日付書式
+	TCHAR				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 日付書式
 
 	//時刻書式
 	int					m_nTimeFormatType;							//!< 時刻書式のタイプ
-	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 時刻書式
+	TCHAR				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< 時刻書式
 
 	//見出し記号
 	char				m_szMidashiKigou[256];						//!< 見出し記号
@@ -1057,10 +1057,10 @@ public:
 	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 
 	//@@@ 2002.2.9 YAZAKI
-	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
-	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
-	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
-	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
+	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
+	const TCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
+	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nDateFormatType, TCHAR* szDateFormat );
+	const TCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nTimeFormatType, TCHAR* szTimeFormat );
 
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
 	int TransformFileName_MakeCache( void );

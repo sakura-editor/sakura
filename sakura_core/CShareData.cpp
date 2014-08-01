@@ -2059,14 +2059,14 @@ bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 	pszDateFormat：
 		カスタムのときのフォーマット
 */
-const char* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen )
+const TCHAR* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
 	return MyGetDateFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_sFormat.m_nDateFormatType, m_pShareData->m_Common.m_sFormat.m_szDateFormat );
 }
 
-const char* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat )
+const TCHAR* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nDateFormatType, TCHAR* szDateFormat )
 {
-	const char* pszForm;
+	const TCHAR* pszForm;
 	DWORD dwFlags;
 	if( 0 == nDateFormatType ){
 		dwFlags = DATE_LONGDATE;
@@ -2082,15 +2082,15 @@ const char* CShareData::MyGetDateFormat( const SYSTEMTIME& systime, char* pszDes
 
 
 /* 時刻をフォーマット */
-const char* CShareData::MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen )
+const TCHAR* CShareData::MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
 	return MyGetTimeFormat( systime, pszDest, nDestLen, m_pShareData->m_Common.m_sFormat.m_nTimeFormatType, m_pShareData->m_Common.m_sFormat.m_szTimeFormat );
 }
 
 /* 時刻をフォーマット */
-const char* CShareData::MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat )
+const TCHAR* CShareData::MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nTimeFormatType, TCHAR* szTimeFormat )
 {
-	const char* pszForm;
+	const TCHAR* pszForm;
 	DWORD dwFlags;
 	if( 0 == nTimeFormatType ){
 		dwFlags = 0;
