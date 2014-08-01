@@ -347,7 +347,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CEditWnd* 		m_pcEditWnd;
 	CEditDoc*		m_pcEditDoc;		/* ドキュメント */
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
-	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
+	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
 	int				m_nVScrollRate;		/* 垂直スクロールバーの縮尺 */
 	HWND			m_hwndHScrollBar;	/* 水平スクロールバーウィンドウハンドル */

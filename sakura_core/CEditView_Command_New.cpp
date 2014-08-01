@@ -661,7 +661,7 @@ void CEditView::Command_UNDO( void )
 	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
-	m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoUndo( &bIsModified ) ) ){
@@ -764,7 +764,7 @@ void CEditView::Command_UNDO( void )
 		/* Undo後の変更フラグ */
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
-		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+		m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 		SetBracketPairPos( true );	// 03/03/07 ai
 
@@ -790,7 +790,7 @@ void CEditView::Command_UNDO( void )
 	}
 
 	m_nCaretPosX_Prev = m_ptCaretPos.x;	// 2007.10.11 ryoji 追加
-	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 	return;
 }
@@ -832,7 +832,7 @@ void CEditView::Command_REDO( void )
 	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
 
-	m_bDoing_UndoRedo = TRUE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = true;	/* アンドゥ・リドゥの実行中か */
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoRedo( &bIsModified ) ) ){
@@ -929,7 +929,7 @@ void CEditView::Command_REDO( void )
 		/* Redo後の変更フラグ */
 		m_pcEditDoc->SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
 
-		m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+		m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 
 		SetBracketPairPos( true );	// 03/03/07 ai
 
@@ -955,7 +955,7 @@ void CEditView::Command_REDO( void )
 	}
 
 	m_nCaretPosX_Prev = m_ptCaretPos.x;	// 2007.10.11 ryoji 追加
-	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 }
 
 
@@ -1092,7 +1092,7 @@ void CEditView::ReplaceData_CEditView(
 	//	再描画の時点でファイル更新フラグが適切になっていないといけないので
 	//	関数の末尾からここへ移動
 	/* 状態遷移 */
-	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
+	if( false == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
 

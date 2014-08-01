@@ -57,9 +57,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	if( NULL == hdc ){
 		return;
 	}
-//	if( m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-//		return;
-//	}
+
 	if( !m_bDrawSWITCH ){
 		return;
 	}

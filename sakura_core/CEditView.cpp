@@ -175,7 +175,7 @@ BOOL CEditView::Create(
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_bCommandRunning = FALSE;	/* コマンドの実行中 */
 	m_pcOpeBlk = NULL;			/* 操作ブロック */
-	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
+	m_bDoing_UndoRedo = false;	/* アンドゥ・リドゥの実行中か */
 	m_pcsbwVSplitBox = NULL;	/* 垂直分割ボックス */
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
 	m_hInstance = NULL;
@@ -4916,7 +4916,7 @@ DWORD CEditView::DoGrep(
 	*/
 	cmemMessage.AllocStringBuffer( 4000 );
 
-	m_bDoing_UndoRedo		= TRUE;
+	m_bDoing_UndoRedo		= true;
 
 
 	/* アンドゥバッファの処理 */
@@ -4948,7 +4948,7 @@ DWORD CEditView::DoGrep(
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			m_pcEditDoc->m_bGrepRunning = FALSE;
-			m_bDoing_UndoRedo = FALSE;
+			m_bDoing_UndoRedo = false;
 			return 0;
 		}
 
@@ -4977,7 +4977,7 @@ DWORD CEditView::DoGrep(
 	if( sSearchOption.bRegularExp ){
 		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
 			m_pcEditDoc->m_bGrepRunning = FALSE;
-			m_bDoing_UndoRedo = FALSE;
+			m_bDoing_UndoRedo = false;
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
@@ -4985,7 +4985,7 @@ DWORD CEditView::DoGrep(
 		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
 			m_pcEditDoc->m_bGrepRunning = FALSE;
-			m_bDoing_UndoRedo = FALSE;
+			m_bDoing_UndoRedo = false;
 			return 0;
 		}
 	}else{
@@ -5175,7 +5175,7 @@ DWORD CEditView::DoGrep(
 	m_pcEditDoc->SetModified(false,false);
 
 	m_pcEditDoc->m_bGrepRunning = FALSE;
-	m_bDoing_UndoRedo = FALSE;
+	m_bDoing_UndoRedo = false;
 
 	if( NULL != pnKey_CharCharsArr ){
 		delete [] pnKey_CharCharsArr;
@@ -6694,7 +6694,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	 && m_bDrawSWITCH
 	 && m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 	 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
-	 && m_bDoing_UndoRedo == FALSE
+	 && m_bDoing_UndoRedo == false
 	){
 		// カーソル位置縦線の描画
 		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
@@ -6730,7 +6730,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	if( bDraw
 	 && m_bDrawSWITCH
 	 && m_nOldUnderLineY >=m_nViewAlignTop
-	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
+	 && m_bDoing_UndoRedo == false	/* アンドゥ・リドゥの実行中か */
 	){
 //		MYTRACE( _T("★カーソル行アンダーラインの描画\n") );
 		/* ★カーソル行アンダーラインの描画 */
@@ -6804,7 +6804,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 		 && m_bDrawSWITCH
 		 && m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 		 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
-		 && m_bDoing_UndoRedo == FALSE
+		 && m_bDoing_UndoRedo == false
 		){
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = m_nOldCursorLineX;
