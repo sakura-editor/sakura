@@ -79,6 +79,72 @@
 
 #define IDT_ROLLMOUSE	1
 
+//! 編集禁止コマンド
+static const EFunctionCode EIsModificationForbidden[] = {
+	F_WCHAR,
+	F_IME_CHAR,
+	F_UNDO,		// 2007.10.12 genta
+	F_REDO,		// 2007.10.12 genta
+	F_DELETE,
+	F_DELETE_BACK,
+	F_WordDeleteToStart,
+	F_WordDeleteToEnd,
+	F_WordCut,
+	F_WordDelete,
+	F_LineCutToStart,
+	F_LineCutToEnd,
+	F_LineDeleteToStart,
+	F_LineDeleteToEnd,
+	F_CUT_LINE,
+	F_DELETE_LINE,
+	F_DUPLICATELINE,
+	F_INDENT_TAB,
+	F_UNINDENT_TAB,
+	F_INDENT_SPACE,
+	F_UNINDENT_SPACE,
+	F_LTRIM,		// 2001.12.03 hor
+	F_RTRIM,		// 2001.12.03 hor
+	F_SORT_ASC,	// 2001.12.11 hor
+	F_SORT_DESC,	// 2001.12.11 hor
+	F_MERGE,		// 2001.12.11 hor
+	F_CUT,
+	F_PASTE,
+	F_PASTEBOX,
+	F_INSTEXT_W,
+	F_ADDTAIL_W,
+	F_INS_DATE,
+	F_INS_TIME,
+	F_CTRL_CODE_DIALOG,	//@@@ 2002.06.02 MIK
+	F_TOLOWER,
+	F_TOUPPER,
+	F_TOHANKAKU,
+	F_TOZENKAKUKATA,
+	F_TOZENKAKUHIRA,
+	F_HANKATATOZENKATA,
+	F_HANKATATOZENHIRA,
+	F_TOZENEI,					// 2001/07/30 Misaka
+	F_TOHANEI,
+	F_TOHANKATA,				// 2002/08/29 ai
+	F_TABTOSPACE,
+	F_SPACETOTAB,  //---- Stonee, 2001/05/27
+	F_CODECNV_AUTO2SJIS,
+	F_CODECNV_EMAIL,
+	F_CODECNV_EUC2SJIS,
+	F_CODECNV_UNICODE2SJIS,
+	F_CODECNV_UTF82SJIS,
+	F_CODECNV_UTF72SJIS,
+	F_CODECNV_UNICODEBE2SJIS,
+	F_CODECNV_SJIS2JIS,
+	F_CODECNV_SJIS2EUC,
+	F_CODECNV_SJIS2UTF8,
+	F_CODECNV_SJIS2UTF7,
+	F_REPLACE_DIALOG,
+	F_REPLACE,
+	F_REPLACE_ALL,
+	F_CHGMOD_INS,
+	F_HOKAN,
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -139,6 +205,16 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	// 排他制御オプションを初期化
 	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
+
+#ifdef _DEBUG
+	{
+		// 編集禁止コマンドの並びをチェック
+		int i;
+		for ( i = 0; i < _countof(EIsModificationForbidden) - 1; i++){
+			assert( EIsModificationForbidden[i] <  EIsModificationForbidden[i+1] );
+		}
+	}
+#endif
 }
 
 
@@ -438,88 +514,40 @@ void CEditDoc::GetEditInfo(
 }
 
 
-//	From Here Aug. 14, 2000 genta
-//
-//	書き換えが禁止されているかどうか
-//	戻り値: true: 禁止 / false: 許可
-//
+/*! @brief 指定コマンドによる書き換えが禁止されているかどうか
+
+	@retval true  禁止
+	@retval false 許可
+
+	@date 2000.08.14 genta 新規作成
+	@date 2014.07.27 novice 編集禁止の場合の検索方法変更
+*/
 bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 {
 	//	編集可能の場合
 	if( IsEditable() )
 		return false; // 常に書き換え許可
 
-	//	編集禁止の場合
-	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
-	switch( nCommand ){
-	//	ファイルを書き換えるコマンドは使用禁止
-	case F_WCHAR:
-	case F_IME_CHAR:
-	case F_DELETE:
-	case F_DELETE_BACK:
-	case F_WordDeleteToEnd:
-	case F_WordDeleteToStart:
-	case F_WordDelete:
-	case F_WordCut:
-	case F_LineDeleteToStart:
-	case F_LineDeleteToEnd:
-	case F_LineCutToStart:
-	case F_LineCutToEnd:
-	case F_DELETE_LINE:
-	case F_CUT_LINE:
-	case F_DUPLICATELINE:
-	case F_INDENT_TAB:
-	case F_UNINDENT_TAB:
-	case F_INDENT_SPACE:
-	case F_UNINDENT_SPACE:
-	case F_CUT:
-	case F_PASTE:
-	case F_INS_DATE:
-	case F_INS_TIME:
-	case F_CTRL_CODE_DIALOG:	//@@@ 2002.06.02 MIK
-	case F_INSTEXT_W:
-	case F_ADDTAIL_W:
-	case F_PASTEBOX:
-	case F_REPLACE_DIALOG:
-	case F_REPLACE:
-	case F_REPLACE_ALL:
-	case F_CODECNV_EMAIL:
-	case F_CODECNV_EUC2SJIS:
-	case F_CODECNV_UNICODE2SJIS:
-	case F_CODECNV_UNICODEBE2SJIS:
-	case F_CODECNV_SJIS2JIS:
-	case F_CODECNV_SJIS2EUC:
-	case F_CODECNV_UTF82SJIS:
-	case F_CODECNV_UTF72SJIS:
-	case F_CODECNV_SJIS2UTF7:
-	case F_CODECNV_SJIS2UTF8:
-	case F_CODECNV_AUTO2SJIS:
-	case F_TOLOWER:
-	case F_TOUPPER:
-	case F_TOHANKAKU:
-	case F_TOHANKATA:				// 2002/08/29 ai
-	case F_TOZENEI:					// 2001/07/30 Misaka
-	case F_TOHANEI:
-	case F_TOZENKAKUKATA:
-	case F_TOZENKAKUHIRA:
-	case F_HANKATATOZENKATA:
-	case F_HANKATATOZENHIRA:
-	case F_TABTOSPACE:
-	case F_SPACETOTAB:  //---- Stonee, 2001/05/27
-	case F_HOKAN:
-	case F_CHGMOD_INS:
-	case F_LTRIM:		// 2001.12.03 hor
-	case F_RTRIM:		// 2001.12.03 hor
-	case F_SORT_ASC:	// 2001.12.11 hor
-	case F_SORT_DESC:	// 2001.12.11 hor
-	case F_MERGE:		// 2001.12.11 hor
-	case F_UNDO:		// 2007.10.12 genta
-	case F_REDO:		// 2007.10.12 genta
-		return true;
+	//	編集禁止の場合(バイナリサーチ)
+	{
+		int lbound = 0;
+		int ubound = _countof(EIsModificationForbidden) - 1;
+
+		while( lbound <= ubound ){
+			int mid = ( lbound + ubound ) / 2;
+
+			if( nCommand < EIsModificationForbidden[mid] ){
+				ubound = mid - 1;
+			} else if( nCommand > EIsModificationForbidden[mid] ){
+				lbound = mid + 1;
+			}else{
+				return true;
+			}
+		}
 	}
-	return false;	//	デフォルトで書き換え許可
+
+	return false;
 }
-//	To Here Aug. 14, 2000 genta
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
