@@ -280,18 +280,6 @@ struct TagJump {
 	POINT	point;						//!< ライン, カラム
 };
 
-//	Aug. 15, 2000 genta
-//	Backup Flags
-const int BKUP_YEAR		= 32;
-const int BKUP_MONTH	= 16;
-const int BKUP_DAY		= 8;
-const int BKUP_HOUR		= 4;
-const int BKUP_MIN		= 2;
-const int BKUP_SEC		= 1;
-
-//	Aug. 21, 2000 genta
-const int BKUP_AUTO		= 64;
-
 //	2004.05.13 Moca
 //! ウィンドウサイズ・位置の制御方法
 enum EWinSizeMode{
@@ -510,6 +498,21 @@ struct CommonSetting_File
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       バックアップ                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//	Aug. 15, 2000 genta
+//! Backup Flags
+enum EBackupOptionFlag{
+	BKUP_YEAR		= 32,
+	BKUP_MONTH		= 16,
+	BKUP_DAY		= 8,
+	BKUP_HOUR		= 4,
+	BKUP_MIN		= 2,
+	BKUP_SEC		= 1,
+
+	//	Aug. 21, 2000 genta
+	BKUP_AUTO		= 64,
+};
+
 struct CommonSetting_Backup
 {
 	//	Aug. 15, 2000 genta
@@ -517,8 +520,8 @@ struct CommonSetting_Backup
 	int		GetBackupType(void) const { return m_nBackUpType; }
 	void	SetBackupType(int n){ m_nBackUpType = n; }
 
-	bool	GetBackupOpt(int flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
-	void	SetBackupOpt(int flag, bool value){ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
+	bool	GetBackupOpt(EBackupOptionFlag flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
+	void	SetBackupOpt(EBackupOptionFlag flag, bool value){ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
 
 	//	バックアップ数
 	int		GetBackupCount(void) const { return m_nBackUpType_Opt2 & 0xffff; }
