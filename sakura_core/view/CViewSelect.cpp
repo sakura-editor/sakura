@@ -611,7 +611,7 @@ void CViewSelect::GetSelectAreaLineFromRange(
 		// 2006.05.24 Moca 矩形選択/フリーカーソル選択(選択開始/終了行)で
 		// To < From になることがある。必ず From < To になるように入れ替える。
 		if( nSelectTo < nSelectFrom ){
-			t_swap(nSelectFrom, nSelectTo);
+			std::swap(nSelectFrom, nSelectTo);
 		}
 		ret.SetFrom(CLayoutPoint(nSelectFrom, nLineNum));
 		ret.SetTo(CLayoutPoint(nSelectTo, nLineNum));
