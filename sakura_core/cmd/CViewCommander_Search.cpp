@@ -799,7 +799,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		//	範囲チェックで colFrom < colTo を仮定しているので，
 		//	矩形選択の場合は左上～右下指定になるよう桁を入れ換える．
 		if( bBeginBoxSelect && sRangeA.GetTo().x < sRangeA.GetFrom().x )
-			t_swap(sRangeA.GetFromPointer()->x,sRangeA.GetToPointer()->x);
+			std::swap(sRangeA.GetFromPointer()->x,sRangeA.GetToPointer()->x);
 		//	To Here 2007.09.20 genta 矩形範囲の選択置換ができない
 
 		GetDocument()->m_cLayoutMgr.LayoutToLogic(

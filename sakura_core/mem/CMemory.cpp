@@ -174,7 +174,6 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 */
 void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	unsigned char *p;
-	unsigned char ctemp;
 	unsigned char *p_end;
 	unsigned int *pdwchar;
 	unsigned int *pdw_end;
@@ -192,9 +191,7 @@ void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	pdwchar = (unsigned int*)pBuf;
 	if( (size_t)pBuf % 2 == 0){
 		if( (size_t)pBuf % 4 == 2 ){
-			ctemp = pBuf[0];
-			pBuf[0]  = pBuf[1];
-			pBuf[1]  = ctemp;
+			std::swap( pBuf[0], pBuf[1] );
 			pdwchar = (unsigned int*)(pBuf + 2);
 		}
 		pdw_end = (unsigned int*)(pBuf + nBufLen - sizeof(unsigned int));
@@ -208,9 +205,7 @@ void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	p_end = pBuf + nBufLen - 2;
 	
 	for(; p <= p_end ; p+=2){
-		ctemp = p[0];
-		p[0]  = p[1];
-		p[1]  = ctemp;
+		std::swap( p[0], p[1] );
 	}
 	return;
 }
