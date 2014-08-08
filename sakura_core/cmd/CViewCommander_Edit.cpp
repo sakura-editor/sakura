@@ -339,10 +339,7 @@ void CViewCommander::Command_UNDO( void )
 			hwndProgress = m_pCommanderView->StartProgress();
 		}
 
-		bool bFastMode = false;
-		if( 100 < nOpeBlkNum ){
-			bFastMode = true;
-		}
+		const bool bFastMode = (100 < nOpeBlkNum);
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
 			if( bFastMode ){
@@ -595,10 +592,7 @@ void CViewCommander::Command_REDO( void )
 			hwndProgress = m_pCommanderView->StartProgress();
 		}
 
-		bool bFastMode = false;
-		if( 100 < nOpeBlkNum ){
-			bFastMode = true;
-		}
+		const bool bFastMode = (100 < nOpeBlkNum);
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
 			if( bFastMode ){
