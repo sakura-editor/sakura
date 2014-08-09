@@ -43,6 +43,7 @@
 #include <locale.h>
 #include <limits.h>
 #include <assert.h>
+#include <algorithm>
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
@@ -2693,7 +2694,6 @@ void CMemory::SPACEToTAB( int nTabSpace, int nStartColumn	 )
 */
 void CMemory::SwapHLByte( void ){
 	unsigned char *p;
-	unsigned char ctemp;
 	unsigned char *p_end;
 	unsigned int *pdwchar;
 	unsigned int *pdw_end;
@@ -2709,9 +2709,7 @@ void CMemory::SwapHLByte( void ){
 	pdwchar = (unsigned int*)pBuf;
 	if( (size_t)pBuf % 2 == 0){
 		if( (size_t)pBuf % 4 == 2 ){
-			ctemp = pBuf[0];
-			pBuf[0]  = pBuf[1];
-			pBuf[1]  = ctemp;
+			std::swap( pBuf[0], pBuf[1] );
 			pdwchar = (unsigned int*)(pBuf + 2);
 		}
 		pdw_end = (unsigned int*)(pBuf + nBufLen - sizeof(unsigned int));
@@ -2725,9 +2723,7 @@ void CMemory::SwapHLByte( void ){
 	p_end = pBuf + nBufLen - 2;
 	
 	for(; p <= p_end ; p+=2){
-		ctemp = p[0];
-		p[0]  = p[1];
-		p[1]  = ctemp;
+		std::swap( p[0], p[1] );
 	}
 	return;
 }
