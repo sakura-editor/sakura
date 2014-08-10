@@ -2735,7 +2735,10 @@ void CMemory::AllocStringBuffer( int nNewDataLen )
 {
 	int		nWorkLen;
 	char*	pWork = NULL;
-	nWorkLen = nNewDataLen + 1;	/* 1バイト多くメモリ確保しておく(\0を入れる) */
+
+	// 1バイト多くメモリ確保しておく('\0'を入れるため)
+	nWorkLen = ((nNewDataLen + 1) + 7) & (~7); // 8Byteごとに整列
+
 	if( m_nDataBufSize == 0 ){
 		/* 未確保の状態 */
 		pWork = (char*)malloc( nWorkLen );
