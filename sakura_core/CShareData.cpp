@@ -1989,13 +1989,13 @@ void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
 */
 bool CShareData::ExtWinHelpIsSet( int nTypeNo )
 {
-	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != '\0'){
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != _T('\0')){
 		return true;	//	共通設定に設定されている
 	}
 	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
 		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
 	}
-	if (m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != _T('\0')){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -2005,9 +2005,9 @@ bool CShareData::ExtWinHelpIsSet( int nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-char* CShareData::GetExtWinHelp( int nTypeNo )
+TCHAR* CShareData::GetExtWinHelp( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHelp[0] != _T('\0')){
 		return m_pShareData->m_Types[nTypeNo].m_szExtHelp;
 	}
 	
@@ -2017,13 +2017,13 @@ char* CShareData::GetExtWinHelp( int nTypeNo )
 */
 bool CShareData::ExtHTMLHelpIsSet( int nTypeNo )
 {
-	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != '\0'){
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != _T('\0')){
 		return true;	//	共通設定に設定されている
 	}
 	if (nTypeNo < 0 || MAX_TYPES <= nTypeNo ){
 		return false;	//	共通設定に設定されていない＆nTypeNoが範囲外。
 	}
-	if (m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != _T('\0')){
 		return true;	//	タイプ別設定に設定されている。
 	}
 	return false;
@@ -2033,9 +2033,9 @@ bool CShareData::ExtHTMLHelpIsSet( int nTypeNo )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-char* CShareData::GetExtHTMLHelp( int nTypeNo )
+TCHAR* CShareData::GetExtHTMLHelp( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != _T('\0')){
 		return m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp;
 	}
 	
@@ -2045,7 +2045,7 @@ char* CShareData::GetExtHTMLHelp( int nTypeNo )
 */
 bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 {
-	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
+	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != _T('\0')){
 		return m_pShareData->m_Types[nTypeNo].m_bHtmlHelpIsSingle;
 	}
 	

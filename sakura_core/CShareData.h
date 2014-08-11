@@ -210,8 +210,8 @@ struct STypeConfig {
 	//	2001/06/19 asa-o
 	bool				m_bHokanLoHiCase;				//!< 入力補完機能：英大文字小文字を同一視する
 
-	char				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
-	char				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	TCHAR				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
+	TCHAR				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
 	bool				m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ
 
 	SEncodingConfig		m_encoding;						//!< エンコードオプション
@@ -667,10 +667,10 @@ struct CommonSetting_Helper
 	BOOL				m_bHokanKey_SPACE;				//!< VK_SPACE	補完決定キーが有効/無効
 
 	//外部ヘルプの設定
-	char				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
+	TCHAR				m_szExtHelp[_MAX_PATH];			//!< 外部ヘルプ１
 
 	//外部HTMLヘルプの設定
-	char				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
+	TCHAR				m_szExtHtmlHelp[_MAX_PATH];		//!< 外部HTMLヘルプ
 	bool				m_bHtmlHelpIsSingle;			//!< HtmlHelpビューアはひとつ
 
 	//migemo設定
@@ -690,7 +690,7 @@ struct CommonSetting_Helper
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Macro
 {
-	char				m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
+	TCHAR				m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
 	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	Sep. 14, 2001 genta
 	char				m_szMACROFOLDER[_MAX_PATH];		//!< マクロ用フォルダ
 	int					m_nMacroOnOpened;				//!< オープン後自動実行マクロ番号	@@@ 2006.09.01 ryoji
@@ -1054,9 +1054,9 @@ public:
 
 	//@@@ 2002.2.3 YAZAKI
 	bool		ExtWinHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部ヘルプが設定されているか。
-	char*		GetExtWinHelp( int nType = -1 );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
+	TCHAR*		GetExtWinHelp( int nType = -1 );	//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
 	bool		ExtHTMLHelpIsSet( int nType = -1 );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
-	char*		GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
+	TCHAR*		GetExtHTMLHelp( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
 	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 
 	//@@@ 2002.2.9 YAZAKI

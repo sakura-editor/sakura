@@ -668,9 +668,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 		common.m_sBackup.m_szBackUpPathAdvanced, sizeof( common.m_sBackup.m_szBackUpPathAdvanced ));	/* 20051107 aroka */
 	cProfile.IOProfileData( pszSecName, "nFileShareMode"		, (int&)common.m_sFile.m_nFileShareMode );
 	cProfile.IOProfileData( pszSecName, "szExtHelp",
-		common.m_sHelper.m_szExtHelp, sizeof( common.m_sHelper.m_szExtHelp ));
+		common.m_sHelper.m_szExtHelp, _countof( common.m_sHelper.m_szExtHelp ));
 	cProfile.IOProfileData( pszSecName, "szExtHtmlHelp",
-		common.m_sHelper.m_szExtHtmlHelp, sizeof( common.m_sHelper.m_szExtHtmlHelp ));
+		common.m_sHelper.m_szExtHtmlHelp, _countof( common.m_sHelper.m_szExtHtmlHelp ));
 	
 	cProfile.IOProfileData( pszSecName, "szMigemoDll",
 		common.m_sHelper.m_szMigemoDll, _countof( common.m_sHelper.m_szMigemoDll ));
@@ -1289,11 +1289,11 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 	//@@@ 2002.2.4 YAZAKI
 	cProfile.IOProfileData( pszSecName, "szExtHelp"			,
 		types.m_szExtHelp,
-		sizeof( m_pShareData->m_Types[0].m_szExtHelp ));
-		
+		_countof( m_pShareData->m_Types[0].m_szExtHelp ));
+
 	cProfile.IOProfileData( pszSecName, "szExtHtmlHelp"		,
 		types.m_szExtHtmlHelp,
-		sizeof( types.m_szExtHtmlHelp ));
+		_countof( types.m_szExtHtmlHelp ));
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
 	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, (int&)types.m_encoding.m_eDefaultCodetype );
