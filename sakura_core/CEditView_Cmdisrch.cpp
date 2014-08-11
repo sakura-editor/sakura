@@ -12,13 +12,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CEditView.h"
+#include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "CDocLine.h"
 #include "CMigemo.h"
 #include "etc_uty.h"
 #include "Debug.h"
+#include "sakura_rc.h"
 
 /*!
 	コマンドコードの変換(ISearch時)及び
@@ -252,6 +253,7 @@ void CEditView::ISearchExit()
 {
 	CShareData::getInstance()->AddToSearchKeyArr( m_szCurSrchKey );
 	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
+	m_pcEditWnd->AcceptSharedSearchKey();
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
