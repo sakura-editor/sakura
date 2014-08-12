@@ -577,6 +577,42 @@ SOURCE=..\sakura_core\CRecent.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CRecentCmd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentEditNode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentFolder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentGrepFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentGrepFolder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentReplace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentSearch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentTagjumpKeyword.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CRegexKeyword.cpp
 # End Source File
 # Begin Source File
@@ -1037,6 +1073,42 @@ SOURCE=..\sakura_core\CPropTypes.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CRecent.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentCmd.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentEditNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentFolder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentGrepFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentGrepFolder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentReplace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentSearch.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CRecentTagjumpKeyword.h
 # End Source File
 # Begin Source File
 

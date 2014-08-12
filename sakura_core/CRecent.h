@@ -114,77 +114,16 @@ protected:
 	bool CopyItem( int nSrcIndex, int nDstIndex );
 };
 
-//! EditInfoの履歴を管理 (RECENT_FOR_FILE)
-class CRecentFile : public CRecent
-{
-public:
-	CRecentFile();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
-class CRecentFolder : public CRecent
-{
-public:
-	CRecentFolder();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! 検索の履歴を管理 (RECENT_FOR_SEARCH)
-class CRecentSearch : public CRecent
-{
-public:
-	CRecentSearch();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! 置換の履歴を管理 (RECENT_FOR_REPLACE)
-class CRecentReplace : public CRecent
-{
-public:
-	CRecentReplace();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
-class CRecentGrepFile : public CRecent
-{
-public:
-	CRecentGrepFile();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! GREPフォルダの履歴を管理 (RECENT_FOR_GREP_FOLDER)
-class CRecentGrepFolder : public CRecent
-{
-public:
-	CRecentGrepFolder();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! コマンドの履歴を管理 (RECENT_FOR_CMD)
-class CRecentCmd : public CRecent
-{
-public:
-	CRecentCmd();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! EditNode(ウィンドウリスト)の履歴を管理 (RECENT_FOR_EDITNODE)
-class CRecentEditNode : public CRecent
-{
-public:
-	CRecentEditNode();
-	int FindItem( const char *pszItemData ) const;
-};
-
-//! タグジャンプキーワードの履歴を管理 (RECENT_FOR_TAGJUMP_KEYWORD)
-class CRecentTagjumpKeyword : public CRecent
-{
-public:
-	CRecentTagjumpKeyword();
-	int FindItem( const char *pszItemData ) const;
-};
+#include "CRecentFile.h"
+#include "CRecentFolder.h"
+#include "CRecentSearch.h"
+#include "CRecentReplace.h"
+#include "CRecentGrepFile.h"
+#include "CRecentGrepFolder.h"
+#include "CRecentCmd.h"
+#include "CRecentEditNode.h"
+#include "CRecentTagjumpKeyword.h"
 
 #endif	//_CRECENT_H_
 
+/*[EOF]*/

@@ -197,6 +197,15 @@ OBJS= \
 	$(OBJDIR)/CPropTypesScreen.o \
 	$(OBJDIR)/CPropTypesSupport.o \
 	$(OBJDIR)/CRecent.o \
+	$(OBJDIR)/CRecentCmd.o \
+	$(OBJDIR)/CRecentEditNode.o \
+	$(OBJDIR)/CRecentFile.o \
+	$(OBJDIR)/CRecentFolder.o \
+	$(OBJDIR)/CRecentGrepFile.o \
+	$(OBJDIR)/CRecentGrepFolder.o \
+	$(OBJDIR)/CRecentReplace.o \
+	$(OBJDIR)/CRecentSearch.o \
+	$(OBJDIR)/CRecentTagjumpKeyword.o \
 	$(OBJDIR)/CRegexKeyword.o \
 	$(OBJDIR)/CRunningTimer.o \
 	$(OBJDIR)/CSMacroMgr.o \
@@ -486,6 +495,24 @@ $(OBJDIR)/CPropTypesScreen.o: $(SRCDIR)/CPropTypesScreen.cpp
 $(OBJDIR)/CPropTypesSupport.o: $(SRCDIR)/CPropTypesSupport.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CRecent.o: $(SRCDIR)/CRecent.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentCmd.o: $(SRCDIR)/CRecentCmd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentEditNode.o: $(SRCDIR)/CRecentEditNode.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentFile.o: $(SRCDIR)/CRecentFile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentFolder.o: $(SRCDIR)/CRecentFolder.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentGrepFile.o: $(SRCDIR)/CRecentGrepFile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentGrepFolder.o: $(SRCDIR)/CRecentGrepFolder.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentReplace.o: $(SRCDIR)/CRecentReplace.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentSearch.o: $(SRCDIR)/CRecentSearch.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecentTagjumpKeyword.o: $(SRCDIR)/CRecentTagjumpKeyword.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CRegexKeyword.o: $(SRCDIR)/CRegexKeyword.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

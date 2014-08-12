@@ -208,6 +208,15 @@ OBJS =\
 	$(OBJDIR)\CPropTypesSupport.obj \
 	$(OBJDIR)\CRunningTimer.obj \
 	$(OBJDIR)\CRecent.obj \
+	$(OBJDIR)\CRecentCmd.obj \
+	$(OBJDIR)\CRecentEditNode.obj \
+	$(OBJDIR)\CRecentFile.obj \
+	$(OBJDIR)\CRecentFolder.obj \
+	$(OBJDIR)\CRecentGrepFile.obj \
+	$(OBJDIR)\CRecentGrepFolder.obj \
+	$(OBJDIR)\CRecentReplace.obj \
+	$(OBJDIR)\CRecentSearch.obj \
+	$(OBJDIR)\CRecentTagjumpKeyword.obj \
 	$(OBJDIR)\CRegexKeyword.obj \
 	$(OBJDIR)\CShareData_new.obj \
 	$(OBJDIR)\CShareData.obj \
