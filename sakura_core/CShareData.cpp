@@ -843,9 +843,9 @@ bool CShareData::InitShareData()
 		//	Macro登録の初期化
 		MacroRec *mptr = m_pShareData->m_Common.m_sMacro.m_MacroTable;
 		for( i = 0; i < MAX_CUSTMACRO; ++i, ++mptr ){
-			mptr->m_szName[0] = '\0';
-			mptr->m_szFile[0] = '\0';
-			mptr->m_bReloadWhenExecute = FALSE;
+			mptr->m_szName[0] = _T('\0');
+			mptr->m_szFile[0] = _T('\0');
+			mptr->m_bReloadWhenExecute = false;
 		}
 		//	To Here Sep. 14, 2001 genta
 		m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
@@ -1940,7 +1940,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 	if( !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return false;
 
-	return ( m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_bReloadWhenExecute == TRUE );
+	return m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_bReloadWhenExecute;
 }
 
 /*!	m_szSEARCHKEYArrにpszSearchKeyを追加する。
