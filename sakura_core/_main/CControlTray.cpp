@@ -984,7 +984,7 @@ LRESULT CControlTray::DispatchEvent(
 			case WM_LBUTTONDBLCLK:
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
-				OnNewEditor( m_pShareData->m_Common.m_sTabBar.m_bNewWindow == TRUE );
+				OnNewEditor( m_pShareData->m_Common.m_sTabBar.m_bNewWindow != FALSE );
 				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
 				::PostMessageAny( GetTrayHwnd(), WM_CANCELMODE, 0, 0 );
 				return 0L;
@@ -1016,7 +1016,7 @@ LRESULT CControlTray::DispatchEvent(
 		//	メッセージループの後ろの処理をここで完了させる必要がある．
 		case WM_ENDSESSION:
 			//	もしWindowsの終了が中断されたのなら何もしない
-			if( wParam == TRUE )
+			if( wParam != FALSE )
 				OnDestroy();	// 2006.07.09 ryoji WM_DESTROY と同じ処理をする（トレイアイコンの破棄などもNT系では必要）
 
 			return 0;	//	もうこのプロセスに制御が戻ることはない
@@ -1066,7 +1066,7 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 {
 	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
 	bNewWindow = bNewWindow
-				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd == TRUE
+				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != FALSE
 				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin == FALSE;
 
 	// 編集ウインドウを開く

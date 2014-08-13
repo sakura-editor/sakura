@@ -474,7 +474,7 @@ normal_action:;
 		}
 		else{
 			/* URLがクリックされたら選択するか */
-			if( TRUE == GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
+			if( FALSE != GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
 
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる

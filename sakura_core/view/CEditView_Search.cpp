@@ -190,7 +190,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 			}
 		}
 	}
-	if(m_cTipWnd.m_KeyWasHit == TRUE){
+	if( m_cTipWnd.m_KeyWasHit != FALSE ){
 			return TRUE;
 	}
 	/* ŠY“–‚·‚éƒL[‚ª‚È‚©‚Á‚½ê‡ */

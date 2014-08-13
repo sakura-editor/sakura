@@ -376,7 +376,7 @@ int CPropFile::GetData( HWND hwndDlg )
 
 	//	From Here Aug. 16, 2000 genta
 	//	©“®•Û‘¶‚ğs‚¤‚©‚Ç‚¤‚©
-	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
+	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) != FALSE );
 
 	//	©“®•Û‘¶ŠÔŠu‚Ìæ“¾
 	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK

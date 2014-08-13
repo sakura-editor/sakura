@@ -3515,7 +3515,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		nLineNumberColumns // 行番号表示用に桁数を渡す 2013.5.10 aroka
 	);
 
-	if( TRUE == bRes ){
+	if( FALSE != bRes ){
 		bool bChangePrintSettingNo = false;
 		/* 現在選択されているページ設定の番号が変更されたか */
 		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting != nCurrentPrintSetting )
