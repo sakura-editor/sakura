@@ -60,7 +60,7 @@ void CViewCommander::Command_COMPARE( void )
 	GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	if( TRUE  == GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
+	if( FALSE != GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
 	 && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_pCommanderView->GetHwnd();

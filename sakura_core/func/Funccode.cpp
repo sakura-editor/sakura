@@ -1277,7 +1277,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, E
 	case F_TMPWRAPWINDOW:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH );		// 右端で折り返す
 	// 2009.07.06 syat  文字カウント方法
 	case F_SELECT_COUNT_MODE:	return ( pCEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
-											pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte == TRUE :
+											pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte != FALSE :
 											pCEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
 	// Mar. 6, 2002 genta
 	case F_VIEWMODE:			return CAppMode::getInstance()->IsViewMode(); //ビューモード

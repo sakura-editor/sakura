@@ -487,7 +487,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( 0 < nRet ){
 
 			// ŒŸõŠJŽnˆÊ’u‚ð“o˜^ 02/07/28 ai start
-			if( TRUE == pcEditView->m_bSearch ){
+			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
@@ -506,7 +506,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( 0 < nRet ){
 
 			// ŒŸõŠJŽnˆÊ’u‚ð“o˜^ 02/07/28 ai start
-			if( TRUE == pcEditView->m_bSearch ){
+			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
@@ -534,7 +534,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( 0 < nRet ){
 
 			// ’uŠ·ŠJŽnˆÊ’u‚ð“o˜^ 02/07/28 ai start
-			if( TRUE == pcEditView->m_bSearch ){
+			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
@@ -553,7 +553,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		nRet = GetData();
 		if( 0 < nRet ){
 			// ’uŠ·ŠJŽnˆÊ’u‚ð“o˜^ 02/07/28 ai start
-			if( TRUE == pcEditView->m_bSearch ){
+			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end

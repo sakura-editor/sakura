@@ -74,7 +74,7 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 		} else {
 			// ISO 8859-1ˆÈŠO
 			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const wchar_t*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, NULL, &blost );
-			if( blost == TRUE ){
+			if( blost != FALSE ){
 				// Uni -> CLatin1 •ÏŠ·‚ÉŽ¸”s
 				berror = true;
 				pDst[0] = '?';

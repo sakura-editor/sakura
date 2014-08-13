@@ -235,7 +235,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		}
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED )
 		{
-			bool checked = ( BtnCtl_GetCheck( hwndRMenu ) == TRUE ? true : false );
+			bool checked = ( BtnCtl_GetCheck( hwndRMenu ) != FALSE ? true : false );
 			if( ! AlertFileAssociation() ){		//レジストリ変更確認
 				BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
@@ -273,7 +273,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		}
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED )
 		{
-			bool checked = ( BtnCtl_GetCheck( hwndDblClick ) == TRUE ? true : false );
+			bool checked = ( BtnCtl_GetCheck( hwndDblClick ) != FALSE ? true : false );
 			if( ! AlertFileAssociation() ){		//レジストリ変更確認
 				BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
