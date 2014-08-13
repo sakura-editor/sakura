@@ -92,7 +92,7 @@ void CEditView::TranslateCommand_isearch(
 */
 bool CEditView::ProcessCommand_isearch(
 	int	nCommand,
-	BOOL	bRedraw,
+	bool	bRedraw,
 	LPARAM	lparam1,
 	LPARAM	lparam2,
 	LPARAM	lparam3,

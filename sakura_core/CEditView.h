@@ -769,7 +769,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 //2004.10.13 インクリメンタルサーチ関係
 	void TranslateCommand_isearch( int&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
-	bool ProcessCommand_isearch( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
+	bool ProcessCommand_isearch( int, bool, LPARAM, LPARAM, LPARAM, LPARAM );
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
