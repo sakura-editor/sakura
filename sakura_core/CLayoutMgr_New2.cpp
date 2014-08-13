@@ -86,7 +86,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 			nLineWork,
 			ptFrom.y,
 			ptFrom.y + nWork,
-			ptFrom.y, ptFrom.x,
+			ptFrom,
 			&nModifyLayoutLinesOld
 		);
 
@@ -136,7 +136,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nModLineTo = DoLayout_Range(
 		pLayoutPrev,
 		nRowNum,
-		ptFrom.y, ptFrom.x,
+		ptFrom,
 		nCurrentLineType,
 		&ctwArg,
 		&nAddInsLineNum

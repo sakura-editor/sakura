@@ -612,8 +612,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	int			nDelLineOldFrom;	/* 削除された変更前論理行(from) */
 	int			nDelLineOldNum;		/* 削除された行数 */
 	int			nRowNum;
-	int			nDelStartLogicalLine;
-	int			nDelStartLogicalPos;
+	CLogicPoint	ptDelStartLogical;
 	EColorIndexType	nCurrentLineType;
 	int			nLineWork;
 
@@ -623,8 +622,8 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		return;
 	}
 	pLayout = m_pLayoutPrevRefer;
-	nDelStartLogicalLine = pLayout->m_ptLogicPos.y;
-	nDelStartLogicalPos  = nDelPos + pLayout->m_ptLogicPos.x;
+	ptDelStartLogical.y = pLayout->m_ptLogicPos.y;
+	ptDelStartLogical.x = nDelPos + pLayout->m_ptLogicPos.x;
 
 	pLayoutWork = pLayout;
 	nLineWork = nLineNum;
@@ -636,8 +635,8 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 
 	/* テキストのデータを削除 */
 	m_pcDocLineMgr->DeleteData_CDocLineMgr(
-		nDelStartLogicalLine,
-		nDelStartLogicalPos,
+		ptDelStartLogical.y,
+		ptDelStartLogical.x,
 		nDelLen,
 		&nModLineOldFrom,
 		&nModLineOldTo,
@@ -657,8 +656,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		nLineWork,
 		nModLineOldFrom,
 		nModLineOldTo,
-		nDelStartLogicalLine,
-		nDelStartLogicalPos,
+		ptDelStartLogical,
 		pnModifyLayoutLinesOld
 	);
 
@@ -699,7 +697,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	*pnModifyLayoutLinesNew = DoLayout_Range(
 		pLayoutPrev,
 		nRowNum,
-		nDelStartLogicalLine, nDelStartLogicalPos,
+		ptDelStartLogical,
 		nCurrentLineType,
 		&ctwArg,
 		&nAddInsLineNum
@@ -732,8 +730,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	CLayout*	pLayout;
 	CLayout*	pLayoutPrev;
 	CLayout*	pLayoutWork;
-	int			nInsStartLogicalLine;
-	int			nInsStartLogicalPos;
+	CLogicPoint	ptInsStartLogical;
 	int			nInsLineNum;
 	int			nRowNum;
 	EColorIndexType	nCurrentLineType;
@@ -754,8 +751,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 			/* 空のテキストの先頭に行を作る場合 */
 			pLayout = NULL;
 			nLineWork = 0;
-			nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
-			nInsStartLogicalPos  = 0;
+			ptInsStartLogical.y = m_pcDocLineMgr->GetLineCount();
+			ptInsStartLogical.x = 0;
 			nCurrentLineType = COLORIDX_DEFAULT;
 		}
 		else{
@@ -765,8 +762,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				// 空でないテキストの最後に行を作る場合
 				pLayout = NULL;
 				nLineWork = 0;
-				nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
-				nInsStartLogicalPos  = 0;
+				ptInsStartLogical.y = m_pcDocLineMgr->GetLineCount();
+				ptInsStartLogical.x = 0;
 				nCurrentLineType = m_nLineTypeBot;
 			}
 			else{
@@ -777,8 +774,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				nLineWork = m_nPrevReferLine;
 
 
-				nInsStartLogicalLine = pLayout->m_ptLogicPos.y;
-				nInsStartLogicalPos  = nInsPos + pLayout->m_ptLogicPos.x;
+				ptInsStartLogical.y = pLayout->m_ptLogicPos.y;
+				ptInsStartLogical.x = nInsPos + pLayout->m_ptLogicPos.x;
 				nCurrentLineType = pLayout->m_nTypePrev;
 			}
 		}
@@ -787,8 +784,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nLineWork = m_nPrevReferLine;
 
 
-		nInsStartLogicalLine = pLayout->m_ptLogicPos.y;
-		nInsStartLogicalPos  = nInsPos + pLayout->m_ptLogicPos.x;
+		ptInsStartLogical.y = pLayout->m_ptLogicPos.y;
+		ptInsStartLogical.x = nInsPos + pLayout->m_ptLogicPos.x;
 		nCurrentLineType = pLayout->m_nTypePrev;
 	}
 
@@ -810,8 +807,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	int			nNewLine;	//挿入された部分の次の行
 	int			nNewPos;	//挿入された部分の次のデータ位置
 	m_pcDocLineMgr->InsertData_CDocLineMgr(
-		nInsStartLogicalLine,
-		nInsStartLogicalPos,
+		ptInsStartLogical.y,
+		ptInsStartLogical.x,
 		pInsData,
 		nInsDataLen,
 		&nInsLineNum,
@@ -828,8 +825,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		pLayoutPrev = DeleteLayoutAsLogical(
 			pLayoutWork,
 			nLineWork,
-			nInsStartLogicalLine, nInsStartLogicalLine,
-			nInsStartLogicalLine, nInsStartLogicalPos,
+			ptInsStartLogical.y, ptInsStartLogical.y,
+			ptInsStartLogical,
 			pnModifyLayoutLinesOld
 		);
 	}else{
@@ -876,7 +873,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	DoLayout_Range(
 		pLayoutPrev,
 		nRowNum,
-		nInsStartLogicalLine, nInsStartLogicalPos,
+		ptInsStartLogical,
 		nCurrentLineType,
 		&ctwArg,
 		&nAddInsLineNum
@@ -902,8 +899,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	int			nLineOf_pLayoutInThisArea,
 	int			nLineFrom,
 	int			nLineTo,
-	int			nDelLogicalLineFrom,
-	int			nDelLogicalColFrom,
+	CLogicPoint	ptDelLogicalFrom,
 	int*		pnDeleteLines
 )
 {
@@ -960,9 +956,9 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 //			--m_nPrevReferLine;
 //		}
 
-		if( ( nDelLogicalLineFrom == pLayout->m_ptLogicPos.y &&
-			  nDelLogicalColFrom < pLayout->m_ptLogicPos.x + pLayout->m_nLength ) ||
-			( nDelLogicalLineFrom < pLayout->m_ptLogicPos.y )
+		if( ( ptDelLogicalFrom.y == pLayout->m_ptLogicPos.y &&
+			  ptDelLogicalFrom.x < pLayout->m_ptLogicPos.x + pLayout->m_nLength ) ||
+			( ptDelLogicalFrom.y < pLayout->m_ptLogicPos.y )
 		){
 			(*pnDeleteLines)++;
 		}

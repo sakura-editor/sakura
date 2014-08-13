@@ -198,9 +198,9 @@ protected:
 	void _DoLayout( HWND );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	// 2009.08.28 nasukoji	テキスト最大幅算出用引数追加
-	int DoLayout_Range( CLayout* , int, int, int, EColorIndexType, const CalTextWidthArg*, int* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	int DoLayout_Range( CLayout* , int, CLogicPoint, EColorIndexType, const CalTextWidthArg*, int* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	void CalculateTextWidth_Range( const CalTextWidthArg* pctwArg );	/* テキストが編集されたら最大幅を算出する */	// 2009.08.28 nasukoji
-	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, int, int, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
+	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, CLogicPoint, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , int );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
 private:

@@ -412,8 +412,7 @@ void CLayoutMgr::_DoLayout(
 int CLayoutMgr::DoLayout_Range(
 	CLayout* pLayoutPrev,
 	int		nLineNum,
-	int		nDelLogicalLineFrom,
-	int		nDelLogicalColFrom,
+	CLogicPoint		_ptDelLogicalFrom,
 	EColorIndexType	nCurrentLineType,
 	const CalTextWidthArg*	pctwArg,
 	int*	pnExtInsLineNum
@@ -538,8 +537,8 @@ int CLayoutMgr::DoLayout_Range(
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
-							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-								( nDelLogicalLineFrom < nCurLine )
+							if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+								( _ptDelLogicalFrom.y < nCurLine )
 							){
 								(nModifyLayoutLinesNew)++;
 							}
@@ -602,8 +601,8 @@ int CLayoutMgr::DoLayout_Range(
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
-							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-								( nDelLogicalLineFrom < nCurLine )
+							if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+								( _ptDelLogicalFrom.y < nCurLine )
 							){
 								(nModifyLayoutLinesNew)++;
 							}
@@ -665,8 +664,8 @@ int CLayoutMgr::DoLayout_Range(
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 						pLayoutCalculated = pLayout;
-						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-							( nDelLogicalLineFrom < nCurLine )
+						if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+							( _ptDelLogicalFrom.y < nCurLine )
 						){
 							(nModifyLayoutLinesNew)++;
 						}
@@ -705,8 +704,8 @@ int CLayoutMgr::DoLayout_Range(
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 						pLayoutCalculated = pLayout;
-						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-							( nDelLogicalLineFrom < nCurLine )
+						if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+							( _ptDelLogicalFrom.y < nCurLine )
 						){
 							(nModifyLayoutLinesNew)++;
 						}
@@ -740,8 +739,8 @@ int CLayoutMgr::DoLayout_Range(
 					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 					nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 					pLayoutCalculated = pLayout;
-					if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-						( nDelLogicalLineFrom < nCurLine )
+					if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+						( _ptDelLogicalFrom.y < nCurLine )
 					){
 						(nModifyLayoutLinesNew)++;
 					}
@@ -775,8 +774,8 @@ int CLayoutMgr::DoLayout_Range(
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
-							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-								( nDelLogicalLineFrom < nCurLine )
+							if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+								( _ptDelLogicalFrom.y < nCurLine )
 							){
 								(nModifyLayoutLinesNew)++;
 							}
@@ -805,8 +804,8 @@ int CLayoutMgr::DoLayout_Range(
 			}
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 
-			if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
-				( nDelLogicalLineFrom < nCurLine )
+			if( ( _ptDelLogicalFrom.y == nCurLine && _ptDelLogicalFrom.x < nPos ) ||
+				( _ptDelLogicalFrom.y < nCurLine )
 			){
 				(nModifyLayoutLinesNew)++;
 			}
