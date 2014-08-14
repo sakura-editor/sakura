@@ -33,6 +33,7 @@
 
 #include "_main/global.h"
 #include "config/maxdata.h"
+#include "util/design_template.h"
 
 class CFileExt
 {
@@ -64,6 +65,9 @@ private:
 	int				m_nCount;
 	FileExtInfoTag	*m_puFileExtInfo;
 	std::vector<TCHAR>	m_vstrFilter;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CFileExt);
 };
 
 #endif	//SAKURA_CFILEEXT_H_

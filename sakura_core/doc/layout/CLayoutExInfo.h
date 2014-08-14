@@ -24,6 +24,8 @@
 #ifndef SAKURA_CLAYOUTEXINFO_H_
 #define SAKURA_CLAYOUTEXINFO_H_
 
+#include "util/design_template.h"
+
 class CLayoutColorInfo{
 public:
 	CLayoutColorInfo(){}
@@ -56,8 +58,8 @@ public:
 private:
 	CLayoutColorInfo* m_colorInfo;
 
-	CLayoutExInfo(const CLayoutExInfo&);
-	CLayoutExInfo& operator=(const CLayoutExInfo&);
+private:
+	DISALLOW_COPY_AND_ASSIGN(CLayoutExInfo);
 };
 
 #endif

@@ -40,6 +40,7 @@
 #include "CMacroManagerBase.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"
+#include "util/design_template.h"
 
 class CEditView;
 
@@ -179,6 +180,9 @@ private:
 public:
 	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
 	static MacroFuncInfo	m_MacroFuncInfoArr[];		// 関数情報(戻り値あり)
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);
 };
 
 

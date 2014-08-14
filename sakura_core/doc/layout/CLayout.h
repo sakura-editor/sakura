@@ -13,20 +13,18 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CLayout;
-class CLayoutMgr;
-
 #ifndef _CLAYOUT_H_
 #define _CLAYOUT_H_
 
-
-
+#include "util/design_template.h"
 #include "CEol.h"// 2002/2/10 aroka
 #include "doc/logic/CDocLine.h"// 2002/4/21 YAZAKI
 #include "mem/CMemory.h"// 2002/4/21 YAZAKI
 #include "CLayoutExInfo.h"
 #include "view/colors/EColorIndexType.h"
 
+class CLayout;
+class CLayoutMgr;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -125,6 +123,9 @@ private:
 	CEol				m_cEol;
 	CLayoutInt			m_nLayoutWidth;		//!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ）	// 2009.08.28 nasukoji
 	CLayoutExInfo		m_cExInfo;			//!< 色分け詳細情報
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
 
 

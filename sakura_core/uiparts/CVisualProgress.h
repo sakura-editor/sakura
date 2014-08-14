@@ -25,6 +25,7 @@
 #define SAKURA_CVISUALPROGRESS_64023BB9_BFA3_45B6_9E06_553B0F5EDCC5_H_
 
 #include "doc/CDocListener.h"
+#include "util/design_template.h"
 class CWaitCursor;
 
 class CVisualProgress : public CDocListenerEx, public CProgressListener{
@@ -52,6 +53,9 @@ protected:
 private:
 	CWaitCursor* m_pcWaitCursor;
 	int	nOldValue;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CVisualProgress);
 };
 
 #endif /* SAKURA_CVISUALPROGRESS_64023BB9_BFA3_45B6_9E06_553B0F5EDCC5_H_ */

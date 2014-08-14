@@ -30,6 +30,13 @@
 #ifndef SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_
 #define SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_
 
+// http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
+// A macro to disallow the copy constructor and operator= functions
+// This should be used in the private: declarations for a class
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
+
 /*!
 	SingletonÉpÉ^Å[Éì
 
@@ -48,8 +55,7 @@ public:
 protected:
 	TSingleton(){}
 private:
-	TSingleton(TSingleton const&);
-	void operator=(TSingleton const&);
+	DISALLOW_COPY_AND_ASSIGN(TSingleton);
 };
 
 /*!

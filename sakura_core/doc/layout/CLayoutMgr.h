@@ -32,6 +32,7 @@
 #include "view/colors/EColorIndexType.h"
 #include "COpe.h"
 #include "util/container.h"
+#include "util/design_template.h"
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -371,6 +372,9 @@ protected:
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
 	CLayoutInt				m_nTextWidth;				// テキスト最大幅の記憶
 	CLayoutInt				m_nTextWidthMaxLine;		// 最大幅のレイアウト行
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
 
 
