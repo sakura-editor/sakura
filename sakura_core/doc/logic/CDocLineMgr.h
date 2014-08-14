@@ -23,6 +23,7 @@
 #include <Windows.h>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
+#include "util/design_template.h"
 #include "COpe.h"
 
 class CDocLine; // 2002/2/10 aroka
@@ -95,6 +96,9 @@ public:
 	mutable CDocLine*	m_pDocLineCurrent;	//!< 順アクセス時の現在位置
 	mutable CLogicInt	m_nPrevReferLine;
 	mutable CDocLine*	m_pCodePrevRefer;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
 
 

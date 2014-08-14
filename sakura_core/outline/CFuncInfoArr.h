@@ -18,6 +18,7 @@
 class CFuncInfo;
 #include <string>
 #include <map>
+#include "util/design_template.h"
 
 // 標準的な付加情報定数
 #define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
@@ -59,6 +60,9 @@ private:
 	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
 	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
 	int			m_nAppendTextLenMax;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
 
 

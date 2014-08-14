@@ -33,6 +33,7 @@
 
 #include <Windows.h>
 #include "CStream.h" //CError_FileOpen
+#include "util/design_template.h"
 
 // VC6添付のヘッダで定義されてません
 #ifndef INVALID_SET_FILE_POINTER
@@ -87,11 +88,6 @@ public:
 //	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
 
 protected:
-
-	// コピーの禁止
-	CFileLoad( const CFileLoad& ){}
-	CFileLoad& operator= ( const CFileLoad& ){ return *this; }
-
 	// Oct. 19, 2002 genta スペルミス修正
 //	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
 	void Buffering( void );		// バッファにデータをロードする
@@ -134,6 +130,8 @@ protected:
 //	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
 	CMemory m_cLineBuffer;
 
+private:
+	DISALLOW_COPY_AND_ASSIGN(CFileLoad);
 }; // class CFileLoad
 
 // インライン関数郡

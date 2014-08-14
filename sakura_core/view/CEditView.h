@@ -65,7 +65,7 @@
 #include "doc/CDocListener.h"	// parent
 #include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
 #include "util/container.h"		// vector_ex
-
+#include "util/design_template.h"
 
 class CViewFont;
 class CRuler;
@@ -738,6 +738,9 @@ public:
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex;	/* ï™äÑèÛë‘ */
 	CMigemo*		m_pcmigemo;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 
 

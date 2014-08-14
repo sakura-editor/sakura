@@ -39,6 +39,7 @@
 #define SAKURA_WINDOW_CTABWND_H_
 
 #include "CWnd.h"
+#include "util/design_template.h"
 
 class CGraphics;
 struct EditNode;
@@ -194,6 +195,9 @@ private:
 	int			m_nTabHover;			//!< マウスカーソル下のタブ（無いときは-1）
 	bool		m_bTabCloseHover;		//!< マウスカーソル下にタブ内の閉じるボタンがあるか
 	int			m_nTabCloseCapture;		//!< 閉じるボタンがマウス押下されているタブ（無いときは-1）
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */

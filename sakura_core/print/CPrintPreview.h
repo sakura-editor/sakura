@@ -34,6 +34,7 @@
 
 #include <Windows.h> // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
+#include "util/design_template.h"
 #include "CPrint.h" // 2002/2/10 aroka
 
 class CColorStrategy;
@@ -261,6 +262,9 @@ protected:
 
 	bool			m_bLockSetting;				// 設定のロック
 	bool			m_bDemandUpdateSetting;		// 設定の更新要求
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };
 
 #endif /* SAKURA_CPRINTPREVIEW_4FBD8BE8_4E93_4714_A3F2_F69081A2EDBDR_H_ */

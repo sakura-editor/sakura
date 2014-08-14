@@ -31,6 +31,8 @@
 #ifndef SAKURA_CSORTED_TAGJUMP_LIST_H_
 #define SAKURA_CSORTED_TAGJUMP_LIST_H_
 
+#include "util/design_template.h"
+
 #define MAX_TAG_STRING_LENGTH _MAX_PATH	//管理する文字列の最大長
 
 /*!	@brief ダイレクトタグジャンプ用検索結果をソートして保持する．
@@ -77,6 +79,9 @@ private:
 	const int		m_MAX_TAGJUMPLIST;	//!< 管理する情報の最大数
 
 	void Free( TagJumpInfo* item );
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CSortedTagJumpList);
 };
 
 #endif	//SAKURA_CSORTED_TAGJUMP_LIST_H_

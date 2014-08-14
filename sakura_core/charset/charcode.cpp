@@ -273,6 +273,8 @@ namespace WCODE
 		LocalCache m_localcache[2];
 		SCharWidthCache* m_parCache[2];
 		ECharWidthCacheMode m_eLastEditCacheMode;
+	private:
+		DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);
 	};
 
 	static LocalCacheSelector selector;
