@@ -912,7 +912,7 @@ BOOL CEditDoc::FileRead(
 	//	Nov. 12, 2000 genta ロングファイル名の取得を前方に移動
 	char szWork[MAX_PATH];
 	/* ロングファイル名を取得する */
-	if( TRUE == ::GetLongFileName( pszPath, szWork ) ){
+	if( FALSE != ::GetLongFileName( pszPath, szWork ) ){
 		//	Sep. 10, 2002 genta
 		SetFilePathAndIcon( szWork );
 	}
@@ -1074,7 +1074,7 @@ end_of_func:;
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
-	if( TRUE == bRet && IsValidPath() ){
+	if( FALSE != bRet && IsValidPath() ){
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}
@@ -1193,7 +1193,7 @@ end_of_func:;
 
 	if( IsValidPath() &&
 		!m_bReadOnly && /* 読み取り専用モード ではない */
-		TRUE == bRet
+		FALSE != bRet
 	){
 		/* ファイルの排他ロック */
 		DoFileLock();

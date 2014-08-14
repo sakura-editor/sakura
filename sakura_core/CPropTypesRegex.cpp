@@ -110,7 +110,7 @@ bool CPropTypesRegex::Import(HWND hwndDlg)
 			*p = '\0';
 			p++;
 			if( p[0]	//キーワードがある
-			 && RegexKakomiCheck(p) == TRUE )	//囲みがある
+			 && RegexKakomiCheck(p) != FALSE )	//囲みがある
 			{
 				//色指定名に対応する番号を探す
 				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30

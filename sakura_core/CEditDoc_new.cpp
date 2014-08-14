@@ -1214,7 +1214,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 
 			// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 			// 2007.06.27 maru すでに編集ウィンドウは開いているので、FileReadがキャンセルされた場合は開くマクロは実行不要
-			if(TRUE==bRet) RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
+			if( FALSE!=bRet ) RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 		}else{
 			if( strchr( pszPath, ' ' ) ){
 				char	szFile2[_MAX_PATH + 3];

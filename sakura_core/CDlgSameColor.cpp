@@ -303,7 +303,7 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	rc.left += 2;
 	rc.right = rc.left + (rc.bottom - rc.top);
 	UINT uState =  DFCS_BUTTONCHECK | DFCS_FLAT;
-	if( TRUE == (BOOL)pDis->itemData )
+	if( FALSE != (BOOL)pDis->itemData )
 		uState |= DFCS_CHECKED;		// チェック状態
 	::DrawFrameControl( pDis->hDC, &rc, DFC_BUTTON, uState );
 

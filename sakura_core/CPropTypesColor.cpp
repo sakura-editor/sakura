@@ -930,7 +930,7 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	for( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
 		en = ::IsDlgButtonChecked( hwndDlg, cLineComment[i].nCheckBoxID );
 		pos = ::GetDlgItemInt( hwndDlg, cLineComment[i].nTextID, &bTranslated, FALSE );
-		if( bTranslated != TRUE ){
+		if( bTranslated == FALSE ){
 			en = 0;
 			pos = 0;
 		}

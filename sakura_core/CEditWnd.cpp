@@ -3069,7 +3069,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 
 				// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 				// 2007.06.27 maru すでに編集ウィンドウは開いているのでFileReadがキャンセルされたときは開くマクロを実行する必要なし
-				if(TRUE==bRet) m_pcEditDoc->RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
+				if( FALSE!=bRet ) m_pcEditDoc->RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
@@ -3930,7 +3930,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		PrintSettingArr
 	);
 
-	if( TRUE == bRes ){
+	if( FALSE != bRes ){
 		/* 現在選択されているページ設定の番号が変更されたか */
 		if( nCurrentPrintSetting !=
 			m_pShareData->m_Types[m_pcEditDoc->GetDocumentType()].m_nCurrentPrintSetting

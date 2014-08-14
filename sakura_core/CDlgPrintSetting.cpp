@@ -111,7 +111,7 @@ int CDlgPrintSetting::DoModal(
 	}
 
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, (LPARAM)NULL );
-	if( TRUE == nRet ){
+	if( FALSE != nRet ){
 		*pnCurrentPrintSetting = m_nCurrentPrintSetting;
 		for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
 			pPrintSettingArr[i] = m_PrintSettingArr[i];

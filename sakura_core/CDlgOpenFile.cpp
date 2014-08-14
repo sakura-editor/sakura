@@ -762,7 +762,7 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	m_ofn.Flags = OFN_EXPLORER | OFN_CREATEPROMPT | OFN_FILEMUSTEXIST | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_SHOWHELP | OFN_ENABLESIZING;
 	if( NULL != pbReadOnly ){
 		m_bReadOnly = *pbReadOnly;
-		if( TRUE == *pbReadOnly ){
+		if( FALSE != *pbReadOnly ){
 			m_ofn.Flags |= OFN_READONLY;
 		}
 	}

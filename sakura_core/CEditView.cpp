@@ -2848,14 +2848,14 @@ VOID CEditView::OnTimer(
 	POINT		po;
 	RECT		rc;
 
-	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+	if( FALSE != m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 		if( IsDragSource() ){
 			return;
 		}
 	}
 	/* 範囲選択中でない場合 */
 	if(!m_bBeginSelect){
-		if(TRUE == KeyWordHelpSearchDict( LID_SKH_ONTIMER, &po, &rc ) ){	// 2006.04.10 fon
+		if( FALSE != KeyWordHelpSearchDict( LID_SKH_ONTIMER, &po, &rc ) ){	// 2006.04.10 fon
 			/* 辞書Tipを表示 */
 			m_cTipWnd.Show( po.x, po.y + m_nCharHeight, NULL );
 		}
@@ -3049,7 +3049,7 @@ BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
 			}
 		}
 	}
-	if(m_cTipWnd.m_KeyWasHit == TRUE){
+	if( m_cTipWnd.m_KeyWasHit != FALSE ){
 			return TRUE;
 	}
 	/* 該当するキーがなかった場合 */
@@ -4308,7 +4308,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 	}
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
+		if( FALSE != KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
 			pszWork = m_cTipWnd.m_cInfo.GetStringPtr();
 			// 2002.05.25 Moca &の考慮を追加 
 			char*	pszShortOut = new char[160 + 1];
@@ -7298,7 +7298,7 @@ searchnext:;
 						}
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && ( TRUE == IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+					 && ( FALSE != IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 					){
 						nBgn = nPos;
 						nCOMMENTMODE = COLORIDX_URL;	/* URLモード */ // 2002/03/13 novice

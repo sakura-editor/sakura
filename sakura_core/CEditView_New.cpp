@@ -767,7 +767,7 @@ searchnext:;
 						}
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_URL].m_bDisp			/* URLを表示する */
-					 && ( TRUE == IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+					 && ( FALSE != IsURL( &pLine[nPos], nLineLen - nPos, &nUrlLen ) )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 					){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */

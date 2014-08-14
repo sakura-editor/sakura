@@ -344,7 +344,7 @@ int CPropFile::GetData( HWND hwndDlg )
 
 	//	From Here Aug. 16, 2000 genta
 	//	自動保存を行うかどうか
-	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
+	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) != FALSE );
 
 	//	自動保存間隔の取得
 	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
@@ -367,17 +367,17 @@ int CPropFile::GetData( HWND hwndDlg )
 	//	To Here Aug. 16, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
-	m_Common.m_sFile.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
+	m_Common.m_sFile.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) != FALSE );
 	// 2002.01.16 hor ブックマーク復元フラグ
-	m_Common.m_sFile.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
+	m_Common.m_sFile.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) != FALSE );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
-	m_Common.m_sFile.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
+	m_Common.m_sFile.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) != FALSE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.m_sFile.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
+	m_Common.m_sFile.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) != FALSE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
+	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) != FALSE );
 	// 開こうとしたファイルが大きい場合に警告する
-	m_Common.m_sFile.m_bAlertIfLargeFile = (::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE ) == TRUE);
+	m_Common.m_sFile.m_bAlertIfLargeFile = (::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE ) != FALSE );
 	m_Common.m_sFile.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
 	if( m_Common.m_sFile.m_nAlertFileSize < 1 ){
 		m_Common.m_sFile.m_nAlertFileSize = 1;

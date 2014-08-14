@@ -482,10 +482,10 @@ int CDlgGrep::GetData( void )
 	m_bGrepOutputLine = ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_OUTPUTLINE );
 
 	/* Grep: 出力形式 */
-	if( TRUE == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_OUTPUTSTYLE1 ) ){
+	if( FALSE != ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_OUTPUTSTYLE1 ) ){
 		m_nGrepOutputStyle = 1;				/* Grep: 出力形式 */
 	}
-	if( TRUE == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_OUTPUTSTYLE2 ) ){
+	if( FALSE != ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_OUTPUTSTYLE2 ) ){
 		m_nGrepOutputStyle = 2;				/* Grep: 出力形式 */
 	}
 

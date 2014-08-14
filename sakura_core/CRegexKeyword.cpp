@@ -249,7 +249,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 		rp = &m_sInfo[i].sRegexKey;
 #endif
 
-		if( RegexKeyCheckSyntax( rp->m_szKeyword ) == TRUE )
+		if( RegexKeyCheckSyntax( rp->m_szKeyword ) != FALSE )
 		{
 			m_szMsg[0] = '\0';
 			BMatch(rp->m_szKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);

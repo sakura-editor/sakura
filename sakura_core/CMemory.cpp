@@ -512,7 +512,7 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 					continue;
 				}
 			}
-			if( bMIME == TRUE ){
+			if( bMIME != FALSE ){
 				if( i <= nSrcLen - 2  &&
 					0 == memcmp( "?=", &pszSrc[i], 2 ) ){
 					nWorkLen = i - nWorkBgn;
@@ -2305,7 +2305,7 @@ void CMemory::ToHankaku(
 				}
 				/* From Here 2007.01.16 maru 7bit‚ÌASCII”ÍˆÍ‚ð‘ÎÛ‚Æ‚·‚é‚æ‚¤‚É•ÏX */
 			}
-			if (bHenkanOK == TRUE){
+			if( bHenkanOK != FALSE ){
 				uiDes = _mbctombb( uiSrc );
 				if( uiDes == uiSrc ){	//	•ÏŠ·•s‰Â”\
 					memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );

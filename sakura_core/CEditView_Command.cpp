@@ -1174,7 +1174,7 @@ void CEditView::Command_GOLINETOP(
 				if('\t' == pLine[nPos]) continue;
 				
 				/* 2007.06.18 maru 全角空白もインデントの設定になっていれば行頭判定に考慮する */
-				if( TRUE == bZenSpace && nPos+1 < nLineLen ){
+				if( FALSE != bZenSpace && nPos+1 < nLineLen ){
 					if( (char)0x81 == pLine[nPos] && (char)0x40 == pLine[nPos+1] ){
 						nPos++;
 						continue;
@@ -5721,7 +5721,7 @@ bool CEditView::TagJumpSub(
 
 	/* ロングファイル名を取得する */
 	TCHAR	szWork[1024];
-	if( TRUE == ::GetLongFileName( szJumpToFile, szWork ) )
+	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 	{
 		_tcscpy( szJumpToFile, szWork );
 	}
@@ -6998,7 +6998,7 @@ void CEditView::Command_REPLACE_ALL()
 		}
 
 		// 矩形貼り付けが許可されていて、クリップボードのデータが矩形選択のとき。
-		if ( m_pShareData->m_Common.m_sEdit.m_bAutoColumnPaste == TRUE && bColumnSelect == TRUE )
+		if ( m_pShareData->m_Common.m_sEdit.m_bAutoColumnPaste != FALSE && bColumnSelect != FALSE )
 		{
 			// マウスによる範囲選択中
 			if( m_bBeginSelect )
@@ -7939,7 +7939,7 @@ void CEditView::Command_COMPARE( void )
 	m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+	if( FALSE != m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_hWnd;

@@ -100,7 +100,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.11.30 nasukoji	トリプルクリック時はドラッグを開始しない
-	if( !tripleClickMode && TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){
+	if( !tripleClickMode && FALSE != m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){
 		if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
 			if( xPos < m_nViewAlignLeft - ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColumnSpace ) ){
@@ -440,7 +440,7 @@ normal_action:;
 		}
 		else{
 			/* URLがクリックされたら選択するか */
-			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
+			if( FALSE != m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
 
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
@@ -1329,7 +1329,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 {
 	DEBUG_TRACE( _T("CEditView::DragEnter()\n") );
 
-	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+	if( FALSE != m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
 		 && !( SHAREMODE_NOT_EXCLUSIVE != m_pcEditDoc->m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_pcEditDoc->m_hLockedFile )
 		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読み取り専用のファイルにはドロップさせない
