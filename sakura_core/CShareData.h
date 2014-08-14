@@ -372,8 +372,8 @@ struct CommonSetting_Window
 	BOOL				m_bSplitterWndVScroll;			//!< 分割ウィンドウの垂直スクロールの同期をとる 2001/06/20 asa-o
 
 	//タイトルバー
-	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];		//!< タイトルバー(アクティブ時)
-	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< タイトルバー(非アクティブ時)
+	TCHAR				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];		//!< タイトルバー(アクティブ時)
+	TCHAR				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< タイトルバー(非アクティブ時)
 
 	//INI内設定のみ
 	int					m_nVertLineOffset;				//!< 縦線の描画座標オフセット 2005.11.10 Moca

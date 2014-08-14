@@ -213,9 +213,9 @@ void CEditWnd::UpdateCaption()
 	if( !GetActiveView().m_bDrawSWITCH )return;
 
 	//ƒLƒƒƒvƒVƒ‡ƒ“•¶Žš—ñ‚Ì¶¬ -> pszCap
-	char	pszCap[1024];
+	TCHAR	pszCap[1024];
 	const CommonSetting_Window& setting = m_pShareData->m_Common.m_sWindow;
-	const char* pszFormat = NULL;
+	const TCHAR* pszFormat = NULL;
 	if( !IsActiveApp() )	pszFormat = setting.m_szWindowCaptionInactive;
 	else					pszFormat = setting.m_szWindowCaptionActive;
 	m_pcEditDoc->ExpandParameter(
