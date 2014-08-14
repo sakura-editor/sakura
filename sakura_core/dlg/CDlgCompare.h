@@ -31,10 +31,9 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, bool, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
 
 	const TCHAR*	m_pszPath;
-	bool			m_bIsModified;
 	TCHAR*			m_pszCompareLabel;
 	HWND*			m_phwndCompareWnd;
 	BOOL			m_bCompareAndTileHorz;/* 左右に並べて表示 */

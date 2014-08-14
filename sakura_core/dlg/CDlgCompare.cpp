@@ -66,13 +66,11 @@ int CDlgCompare::DoModal(
 	HWND			hwndParent,
 	LPARAM			lParam,
 	const TCHAR*	pszPath,
-	bool			bIsModified,
 	TCHAR*			pszCompareLabel,
 	HWND*			phwndCompareWnd
 )
 {
 	m_pszPath = pszPath;
-	m_bIsModified = bIsModified;
 	m_pszCompareLabel = pszCompareLabel;
 	m_phwndCompareWnd = phwndCompareWnd;
 	return CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );

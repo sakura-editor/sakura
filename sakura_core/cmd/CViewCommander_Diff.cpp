@@ -49,7 +49,6 @@ void CViewCommander::Command_COMPARE( void )
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
-		GetDocument()->m_cDocEditor.IsModified(),
 		szPath,
 		&hwndCompareWnd
 	);
@@ -245,8 +244,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
-		GetDocument()->m_cDocFile.GetFilePath(),
-		GetDocument()->m_cDocEditor.IsModified()
+		GetDocument()->m_cDocFile.GetFilePath()
 	);
 	if( !nDiffDlgResult ){
 		return;

@@ -87,10 +87,7 @@ CDlgDiff::CDlgDiff()
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
-	m_szFile1[0] = 0;
-	m_szFile2[0] = 0;
 	m_nDiffFlgOpt    = 0;
-	m_bIsModified    = false;
 	m_bIsModifiedDst = false;
 	m_hWnd_Dst       = NULL;
 	m_ptDefaultSize.x = -1;
@@ -103,12 +100,10 @@ int CDlgDiff::DoModal(
 	HINSTANCE			hInstance,
 	HWND				hwndParent,
 	LPARAM				lParam,
-	const TCHAR*		pszPath,		//自ファイル
-	bool				bIsModified		//自ファイル編集中？
+	const TCHAR*		pszPath		//自ファイル
 )
 {
 	_tcscpy(m_szFile1, pszPath);
-	m_bIsModified = bIsModified;
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
 }
