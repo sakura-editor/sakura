@@ -15,13 +15,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDocLine;
-
 #ifndef _CDOCLINE_H_
 #define _CDOCLINE_H_
 
+#include "design_template.h"
 #include "CEol.h"
 #include "CMemory.h"
+
+class CDocLine;
 
 
 //! DIFFî•ñ’è”
@@ -72,6 +73,9 @@ protected:
 			unsigned m_bDiffMark	: 3;	//!< DIFF·•ªî•ñ
 		} m_bMarkArray;
 	} m_bMark;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDocLine);
 };
 
 

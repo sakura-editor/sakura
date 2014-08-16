@@ -32,6 +32,7 @@
 #define	_CFILEEXT_H_
 
 #include "global.h"
+#include "design_template.h"
 
 class CFileExt
 {
@@ -62,6 +63,9 @@ private:
 	int				m_nCount;
 	FileExtInfoTag	*m_puFileExtInfo;
 	TCHAR			m_szFilter[4096];
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CFileExt);
 };
 
 #endif	//_CFILEEXT_H_

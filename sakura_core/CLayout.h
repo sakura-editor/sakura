@@ -13,17 +13,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CLayout;
-
 #ifndef _CLAYOUT_H_
 #define _CLAYOUT_H_
 
-
+#include "design_template.h"
 
 #include "CEol.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/4/21 YAZAKI
 #include "CMemory.h"// 2002/4/21 YAZAKI
 
+class CLayout;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -69,6 +68,9 @@ public:
 	int				m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
 	CEol			m_cEol;
 	int				m_nLayoutWidth;		//!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ） // 2009.08.28 nasukoji
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
 
 

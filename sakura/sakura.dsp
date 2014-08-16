@@ -1176,6 +1176,10 @@ SOURCE=..\sakura_core\Debug.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\design_template.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\EditInfo.h
 # End Source File
 # Begin Source File

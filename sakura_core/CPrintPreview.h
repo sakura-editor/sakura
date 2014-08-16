@@ -12,13 +12,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CPrintPreview;
 
 #ifndef _CPRINTPREVIEW_H_
 #define _CPRINTPREVIEW_H_
-#include "CShareData.h"
-#include "CPrint.h" // 2002/2/10 aroka
+
 #include <windows.h> // 2002/2/10 aroka
+#include "CShareData.h"
+#include "design_template.h"
+#include "CPrint.h" // 2002/2/10 aroka
 
 class CPrintPreview {
 /* メンバ関数宣言 */
@@ -186,6 +187,9 @@ protected:
 	int				m_pnDx[MAXLINEKETAS + 10];	/* 文字列描画用文字幅配列 */
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
 	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };
 
 #endif

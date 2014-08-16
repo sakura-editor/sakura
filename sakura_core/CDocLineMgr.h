@@ -22,6 +22,7 @@
 
 #include <windows.h>
 #include "global.h" // 2002/2/10 aroka
+#include "design_template.h"
 #include "CDocLine.h"
 #include "CEol.h" // 2002/2/10 aroka
 #include "etc_uty.h"
@@ -207,6 +208,9 @@ private:
 	int			m_nPrevReferLine;
 	CDocLine*	m_pCodePrevRefer;
 	bool		m_bIsDiffUse;		//!< DIFF·•ª•\Ž¦ŽÀŽ{’†	//@@@ 2002.05.25 MIK
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
 
 

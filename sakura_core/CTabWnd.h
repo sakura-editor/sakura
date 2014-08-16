@@ -38,6 +38,7 @@
 #define _CTABWND_H_
 
 #include "CWnd.h"
+#include "design_template.h"
 #include "CEditDoc.h"
 #include "CShareData.h"
 
@@ -182,6 +183,9 @@ private:
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
 
 #endif /* _CTABWND_H_ */

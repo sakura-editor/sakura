@@ -29,6 +29,7 @@
 #include "CShareData.h"
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
+#include "design_template.h"
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -275,6 +276,9 @@ protected:
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
 	int m_nTextWidth;				// テキスト最大幅の記憶
 	int m_nTextWidthMaxLine;		// 最大幅のレイアウト行
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
 
 

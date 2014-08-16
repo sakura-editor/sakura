@@ -18,6 +18,7 @@
 #define _CEDITDROPTARGET_H_
 
 #include <unknwn.h>
+#include "design_template.h"
 
 class CDropTarget;
 class CYbInterfaceBase;
@@ -146,6 +147,9 @@ public:
 	STDMETHOD( DAdvise )( LPFORMATETC, DWORD, LPADVISESINK, LPDWORD );
 	STDMETHOD( DUnadvise )( DWORD );
 	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDataObject);
 };
 
 

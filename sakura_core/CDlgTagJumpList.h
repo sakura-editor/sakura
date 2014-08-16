@@ -34,6 +34,7 @@
 
 #include "CDialog.h"
 #include "CSortedTagJumpList.h"
+#include "design_template.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME        "tags"
@@ -108,6 +109,8 @@ private:
 	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
 	BOOL	m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
 
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
 
 #endif	//_CDLGTAGJUMPLIST_H_

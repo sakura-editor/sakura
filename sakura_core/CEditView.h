@@ -36,6 +36,7 @@
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEol.h"
+#include "design_template.h"
 
 class CEditWnd;
 class CEditView;
@@ -935,6 +936,9 @@ private:
 	void AlertNotFound(HWND hwnd, LPCTSTR format, ...);
 	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	int ConvertEol(const char* pszText, int nTextLen, char* pszConvertedText);
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 
 

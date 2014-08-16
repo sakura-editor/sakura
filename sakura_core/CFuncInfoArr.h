@@ -12,12 +12,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CFuncInfoArr;
-
 #ifndef _CFUNCINFOARR_H_
 #define _CFUNCINFOARR_H_
 
+class CFuncInfoArr;
+
 #include "CFuncInfo.h"
+#include "design_template.h"
 
 //! アウトライン解析 データ配列
 class CFuncInfoArr {
@@ -40,6 +41,9 @@ public:
 private:
 	int			m_nFuncInfoArrNum;	/*!< 配列要素数 */
 	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
 
 
