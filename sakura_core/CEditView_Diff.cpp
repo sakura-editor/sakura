@@ -87,8 +87,7 @@ void CEditView::Command_Diff_Dialog( void )
 		m_hInstance,
 		m_hWnd,
 		(LPARAM)m_pcEditDoc,
-		m_pcEditDoc->GetFilePath(),
-		m_pcEditDoc->IsModified()
+		m_pcEditDoc->GetFilePath()
 	);
 	if( !nDiffDlgResult ){
 		return;

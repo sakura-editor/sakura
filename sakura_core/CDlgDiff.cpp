@@ -66,7 +66,6 @@ CDlgDiff::CDlgDiff()
 	m_szFile2[0] = 0;
 	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
-	m_bIsModified    = false;
 	m_bIsModifiedDst = false;
 	m_hWnd_Dst       = NULL;
 	return;
@@ -77,12 +76,10 @@ int CDlgDiff::DoModal(
 	HINSTANCE			hInstance,
 	HWND				hwndParent,
 	LPARAM				lParam,
-	const TCHAR*		pszPath,		//自ファイル
-	bool				bIsModified		//自ファイル編集中？
+	const TCHAR*		pszPath		//自ファイル
 )
 {
 	_tcscpy(m_szFile1, pszPath);
-	m_bIsModified = bIsModified;
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
 }

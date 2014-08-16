@@ -7928,7 +7928,6 @@ void CEditView::Command_COMPARE( void )
 		m_hWnd,
 		(LPARAM)m_pcEditDoc,
 		m_pcEditDoc->GetFilePath(),
-		m_pcEditDoc->IsModified(),
 		szPath,
 		&hwndCompareWnd
 	);
