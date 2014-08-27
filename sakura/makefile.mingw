@@ -116,9 +116,6 @@ OBJS= \
 	$(OBJDIR)/CESI.o \
 	$(OBJDIR)/CEditApp.o \
 	$(OBJDIR)/CEditDoc.o \
-	$(OBJDIR)/CEditDoc_FuncList1.o \
-	$(OBJDIR)/CEditDoc_FuncList2.o \
-	$(OBJDIR)/CEditDoc_FuncList3.o \
 	$(OBJDIR)/CEditDoc_new.o \
 	$(OBJDIR)/CEditView.o \
 	$(OBJDIR)/CEditView_CmdHokan.o \
@@ -216,6 +213,9 @@ OBJS= \
 	$(OBJDIR)/CSplitterWnd.o \
 	$(OBJDIR)/CTabWnd.o \
 	$(OBJDIR)/CTipWnd.o \
+	$(OBJDIR)/CType_Cpp.o \
+	$(OBJDIR)/CType_Erlang.o \
+	$(OBJDIR)/CType_Python.o \
 	$(OBJDIR)/CUxTheme.o \
 	$(OBJDIR)/CViewFont.o \
 	$(OBJDIR)/CWSH.o \
@@ -331,12 +331,6 @@ $(OBJDIR)/CESI.o: $(SRCDIR)/CESI.cpp
 $(OBJDIR)/CEditApp.o: $(SRCDIR)/CEditApp.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CEditDoc.o: $(SRCDIR)/CEditDoc.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/CEditDoc_FuncList1.o: $(SRCDIR)/CEditDoc_FuncList1.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/CEditDoc_FuncList2.o: $(SRCDIR)/CEditDoc_FuncList2.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
-$(OBJDIR)/CEditDoc_FuncList3.o: $(SRCDIR)/CEditDoc_FuncList3.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CEditDoc_new.o: $(SRCDIR)/CEditDoc_new.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
@@ -533,6 +527,12 @@ $(OBJDIR)/CSplitterWnd.o: $(SRCDIR)/CSplitterWnd.cpp
 $(OBJDIR)/CTabWnd.o: $(SRCDIR)/CTabWnd.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CTipWnd.o: $(SRCDIR)/CTipWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Cpp.o: $(SRCDIR)/CType_Cpp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Erlang.o: $(SRCDIR)/CType_Erlang.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Python.o: $(SRCDIR)/CType_Python.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CUxTheme.o: $(SRCDIR)/CUxTheme.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

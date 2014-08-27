@@ -245,18 +245,6 @@ SOURCE=..\sakura_core\CEditDoc.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CEditDoc_FuncList1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\CEditDoc_FuncList2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\CEditDoc_FuncList3.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\CEditDoc_new.cpp
 # End Source File
 # Begin Source File
@@ -650,6 +638,18 @@ SOURCE=..\sakura_core\CTabWnd.cpp
 # Begin Source File
 
 SOURCE=..\sakura_core\CTipWnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Cpp.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Erlang.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Python.cpp
 # End Source File
 # Begin Source File
 

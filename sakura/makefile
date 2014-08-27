@@ -124,9 +124,6 @@ OBJS =\
 	$(OBJDIR)\CDropTarget.obj \
 	$(OBJDIR)\CEditApp.obj \
 	$(OBJDIR)\CEditDoc.obj \
-	$(OBJDIR)\CEditDoc_FuncList1.obj \
-	$(OBJDIR)\CEditDoc_FuncList2.obj \
-	$(OBJDIR)\CEditDoc_FuncList3.obj \
 	$(OBJDIR)\CEditDoc_new.obj \
 	$(OBJDIR)\CEditView.obj \
 	$(OBJDIR)\CEditView_Cmdgrep.obj \
@@ -226,6 +223,9 @@ OBJS =\
 	$(OBJDIR)\CSplitterWnd.obj \
 	$(OBJDIR)\CTabWnd.obj \
 	$(OBJDIR)\CTipWnd.obj \
+	$(OBJDIR)\CType_Cpp.obj \
+	$(OBJDIR)\CType_Erlang.obj \
+	$(OBJDIR)\CType_Python.obj \
 	$(OBJDIR)\CUxTheme.obj \
 	$(OBJDIR)\CViewFont.obj \
 	$(OBJDIR)\CWnd.obj \
