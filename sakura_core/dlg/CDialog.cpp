@@ -536,7 +536,7 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	@param wID [in]			コンボボックスのID
 
 	@author ryoji
-	@date 2009.03.29
+	@date 2009.03.29 新規作成
 */
 BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 {
@@ -548,7 +548,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	int nTextLen;
 	int iItem;
 	int nItem;
-	int nMargin = 8;
+	const int nMargin = 8;
 
 	hDC = ::GetDC( hwndCtl );
 	if( NULL == hDC )
