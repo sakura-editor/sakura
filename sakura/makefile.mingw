@@ -213,9 +213,18 @@ OBJS= \
 	$(OBJDIR)/CSplitterWnd.o \
 	$(OBJDIR)/CTabWnd.o \
 	$(OBJDIR)/CTipWnd.o \
+	$(OBJDIR)/CType_Asm.o \
+	$(OBJDIR)/CType_Cobol.o \
 	$(OBJDIR)/CType_Cpp.o \
 	$(OBJDIR)/CType_Erlang.o \
+	$(OBJDIR)/CType_Html.o \
+	$(OBJDIR)/CType_Java.o \
+	$(OBJDIR)/CType_Perl.o \
+	$(OBJDIR)/CType_Sql.o \
 	$(OBJDIR)/CType_Python.o \
+	$(OBJDIR)/CType_Tex.o \
+	$(OBJDIR)/CType_Text.o \
+	$(OBJDIR)/CType_Vb.o \
 	$(OBJDIR)/CUxTheme.o \
 	$(OBJDIR)/CViewFont.o \
 	$(OBJDIR)/CWSH.o \
@@ -528,11 +537,29 @@ $(OBJDIR)/CTabWnd.o: $(SRCDIR)/CTabWnd.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CTipWnd.o: $(SRCDIR)/CTipWnd.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Asm.o: $(SRCDIR)/CType_Asm.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Cobol.o: $(SRCDIR)/CType_Cobol.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CType_Cpp.o: $(SRCDIR)/CType_Cpp.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CType_Erlang.o: $(SRCDIR)/CType_Erlang.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Html.o: $(SRCDIR)/CType_Html.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Java.o: $(SRCDIR)/CType_Java.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Perl.o: $(SRCDIR)/CType_Perl.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Sql.o: $(SRCDIR)/CType_Sql.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CType_Python.o: $(SRCDIR)/CType_Python.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Tex.o: $(SRCDIR)/CType_Tex.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Text.o: $(SRCDIR)/CType_Text.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CType_Vb.o: $(SRCDIR)/CType_Vb.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CUxTheme.o: $(SRCDIR)/CUxTheme.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

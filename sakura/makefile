@@ -223,9 +223,18 @@ OBJS =\
 	$(OBJDIR)\CSplitterWnd.obj \
 	$(OBJDIR)\CTabWnd.obj \
 	$(OBJDIR)\CTipWnd.obj \
+	$(OBJDIR)\CType_Asm.obj \
+	$(OBJDIR)\CType_Cobol.obj \
 	$(OBJDIR)\CType_Cpp.obj \
 	$(OBJDIR)\CType_Erlang.obj \
+	$(OBJDIR)\CType_Html.obj \
+	$(OBJDIR)\CType_Java.obj \
+	$(OBJDIR)\CType_Perl.obj \
+	$(OBJDIR)\CType_Sql.obj \
 	$(OBJDIR)\CType_Python.obj \
+	$(OBJDIR)\CType_Tex.obj \
+	$(OBJDIR)\CType_Text.obj \
+	$(OBJDIR)\CType_Vb.obj \
 	$(OBJDIR)\CUxTheme.obj \
 	$(OBJDIR)\CViewFont.obj \
 	$(OBJDIR)\CWnd.obj \

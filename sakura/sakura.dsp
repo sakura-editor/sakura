@@ -641,6 +641,14 @@ SOURCE=..\sakura_core\CTipWnd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CType_Asm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Cobol.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CType_Cpp.cpp
 # End Source File
 # Begin Source File
@@ -649,7 +657,35 @@ SOURCE=..\sakura_core\CType_Erlang.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CType_Html.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Java.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Perl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Sql.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CType_Python.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Tex.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Text.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CType_Vb.cpp
 # End Source File
 # Begin Source File
 
