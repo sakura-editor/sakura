@@ -106,7 +106,7 @@ protected:
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
 
 	// 2005.10.29 ryoji コンボボックスのドロップダウン時処理
-	static void OnCmbDropdown( HWND hwnd );
+	static void OnCbnDropDown( HWND hwnd );
 
 	// 2006.09.03 Moca ファイルダイアログのエラー回避
 	//! リトライ機能付き GetOpenFileName

@@ -139,7 +139,6 @@ UINT_PTR CALLBACK OFNHookProc(
 	static HWND				hwndCheckBOM;	//	Jul. 26, 2003 ryoji BOMチェックボックス
 	static CDlgOpenFile*	pcDlgOpenFile;
 	int						i;
-	int						nSize;
 	OFNOTIFY*				pofn;
 	LRESULT					lRes;
 	WORD					wNotifyCode;
@@ -282,20 +281,6 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* 読み取り専用の初期値セット */
 			::CheckDlgButton( hwndOpenDlg, chx1, m_bReadOnly );
-
-			/* 最近開いたファイル コンボボックス初期値設定 */
-			//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
-			nSize = (int)m_vMRU.size();
-			for( i = 0; i < nSize; i++ ){
-				::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_vMRU[i] );
-			}
-
-			/* 最近開いたフォルダ コンボボックス初期値設定 */
-			//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
-			nSize = (int)m_vOPENFOLDER.size();
-			for( i = 0; i < nSize; i++ ){
-				::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_vOPENFOLDER[i] );
-			}
 		}
 		break;
 
@@ -475,13 +460,34 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 			break;	/* CBN_SELCHANGE */
 		case CBN_DROPDOWN:
-			switch( wID ){
-			case IDC_COMBO_MRU:
-			case IDC_COMBO_OPENFOLDER:
-				CDlgOpenFile::OnCmbDropdown( hwndCtl );
-				break;
+			{
+				switch( wID ){
+				case IDC_COMBO_MRU:
+					if ( ::SendMessage(hwndComboMRU, CB_GETCOUNT, 0L, 0L) == 0) {
+						/* 最近開いたファイル コンボボックス初期値設定 */
+						//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
+						int nSize = (int)m_vMRU.size();
+						for( i = 0; i < nSize; i++ ){
+							::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_vMRU[i] );
+						}
+					}
+					CDlgOpenFile::OnCbnDropDown( hwndCtl );
+					break;
+
+				case IDC_COMBO_OPENFOLDER:
+					if ( ::SendMessage(hwndComboOPENFOLDER, CB_GETCOUNT, 0L, 0L) == 0) {
+						/* 最近開いたフォルダ コンボボックス初期値設定 */
+						//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
+						int nSize = (int)m_vOPENFOLDER.size();
+						for( i = 0; i < nSize; i++ ){
+							::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_vOPENFOLDER[i] );
+						}
+					}
+					CDlgOpenFile::OnCbnDropDown( hwndCtl );
+					break;
+				}
+				break;	/* CBN_DROPDOWN */
 			}
-			break;	/* CBN_DROPDOWN */
 		}
 		break;	/* WM_COMMAND */
 
@@ -1041,12 +1047,12 @@ void CDlgOpenFile::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl
 	コンボボックスがドロップダウンされる時に
 	ドロップダウンリストの幅をアイテム文字列の最大表示幅に合わせる
 
-	@param hwnd [in]		コンボボックスのウィンドウハンドル
+	@param hwndCtl [in]		コンボボックスのウィンドウハンドル
 
 	@author ryoji
 	@date 2005.10.29
 */
-void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
+void CDlgOpenFile::OnCbnDropDown( HWND hwndCtl )
 {
 	HDC hDC;
 	HFONT hFont;
@@ -1056,20 +1062,21 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 	int nTextLen;
 	int iItem;
 	int nItem;
+	const int nMargin = 8;
 
-	hDC = ::GetDC( hwnd );
+	hDC = ::GetDC( hwndCtl );
 	if( NULL == hDC )
 		return;
-	hFont = (HFONT)::SendMessage( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+	hFont = (HFONT)::SendMessage( hwndCtl, WM_GETFONT, 0, (LPARAM)NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = ::SendMessage( hwnd, CB_GETCOUNT, 0, (LPARAM)NULL );
-	::GetWindowRect( hwnd, &rc );
-	nWidth = rc.right - rc.left - 8;
+	nItem = ::SendMessage( hwndCtl, CB_GETCOUNT, 0, (LPARAM)NULL );
+	::GetWindowRect( hwndCtl, &rc );
+	nWidth = rc.right - rc.left - nMargin;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = ::SendMessage( hwnd, CB_GETLBTEXTLEN, (WPARAM)iItem, (LPARAM)NULL );
+		nTextLen = ::SendMessage( hwndCtl, CB_GETLBTEXTLEN, (WPARAM)iItem, (LPARAM)NULL );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
-			::SendMessage( hwnd, CB_GETLBTEXT, (WPARAM)iItem, (LPARAM)pszText );
+			::SendMessage( hwndCtl, CB_GETLBTEXT, (WPARAM)iItem, (LPARAM)pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
 				if ( nWidth < sizeText.cx )
 					nWidth = sizeText.cx;
@@ -1077,9 +1084,9 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 			delete []pszText;
 		}
 	}
-	::SendMessage( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), (LPARAM)NULL );
+	::SendMessage( hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + nMargin), (LPARAM)NULL );
 	::SelectObject( hDC, hFont );
-	::ReleaseDC( hwnd, hDC );
+	::ReleaseDC( hwndCtl, hDC );
 }
 
 /*! リトライ機能付き GetOpenFileName
