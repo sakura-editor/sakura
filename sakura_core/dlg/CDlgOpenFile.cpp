@@ -207,7 +207,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
 
 	//	From Here	Feb. 9, 2001 genta
-	static const int			nEolValueArr[] = {
+	static const int		nEolValueArr[] = {
 		EOL_NONE,
 		EOL_CRLF,
 		EOL_LF,
@@ -232,21 +232,21 @@ UINT_PTR CALLBACK OFNHookProc(
 		break;
 	case WM_SIZE:
 		{
-		nWidth = LOWORD(lParam);	// width of client area
+			nWidth = LOWORD(lParam);	// width of client area
 
-		/* 「開く」ダイアログのサイズと位置 */
-		CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-		hwndFrame = ::GetParent( hdlg );
-		::GetWindowRect( hwndFrame, &pData->m_pcDlgOpenFile->m_mem->m_pShareData->m_Common.m_sOthers.m_rcOpenDialog );
+			/* 「開く」ダイアログのサイズと位置 */
+			CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
+			hwndFrame = ::GetParent( hdlg );
+			::GetWindowRect( hwndFrame, &pData->m_pcDlgOpenFile->m_mem->m_pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 
-		// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
-		::GetWindowRect( pData->m_hwndComboMRU, &rc );
-		po.x = rc.left;
-		po.y = rc.top;
-		::ScreenToClient( hdlg, &po );
-		::SetWindowPos( pData->m_hwndComboMRU, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-		::SetWindowPos( pData->m_hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-		return 0;
+			// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
+			::GetWindowRect( pData->m_hwndComboMRU, &rc );
+			po.x = rc.left;
+			po.y = rc.top;
+			::ScreenToClient( hdlg, &po );
+			::SetWindowPos( pData->m_hwndComboMRU, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			::SetWindowPos( pData->m_hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
+			return 0;
 		}
 	case WM_INITDIALOG:
 		{
@@ -379,89 +379,88 @@ UINT_PTR CALLBACK OFNHookProc(
 		case CDN_FILEOK:
 			// 拡張子の補完を自前で行う	// 2006.11.10 ryoji
 			{
-			CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-			if( pData->m_bIsSaveDialog ){
-				TCHAR szDefExt[_MAX_EXT];	// 補完する拡張子
-				TCHAR szBuf[_MAX_PATH + _MAX_EXT];	// ワーク
-				LPTSTR pszCur, pszNext;
-				int i;
+				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
+				if( pData->m_bIsSaveDialog ){
+					TCHAR szDefExt[_MAX_EXT];	// 補完する拡張子
+					TCHAR szBuf[_MAX_PATH + _MAX_EXT];	// ワーク
+					LPTSTR pszCur, pszNext;
+					int i;
 
-				CommDlg_OpenSave_GetSpec(pData->m_hwndOpenDlg, szBuf, _MAX_PATH);	// ファイル名入力ボックス内の文字列
-				pszCur = szBuf;
-				while( *pszCur == _T(' ') )	// 空白を読み飛ばす
-					pszCur = ::CharNext(pszCur);
-				if( *pszCur == _T('\"') ){	// 二重引用部で始まっている
-					::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
-				}
-				else{
-					_tsplitpath( pData->m_pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
-					if( szDefExt[0] == _T('.') /* && szDefExt[1] != _T('\0') */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
-						// .のみの場合にも拡張子付きとみなす。
-						lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
+					CommDlg_OpenSave_GetSpec(pData->m_hwndOpenDlg, szBuf, _MAX_PATH);	// ファイル名入力ボックス内の文字列
+					pszCur = szBuf;
+					while( *pszCur == _T(' ') )	// 空白を読み飛ばす
+						pszCur = ::CharNext(pszCur);
+					if( *pszCur == _T('\"') ){	// 二重引用部で始まっている
+						::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 					}
 					else{
-						switch( pData->m_pOf->nFilterIndex )	// 選択されているファイルの種類
-						{
-						case 1:		// ユーザー定義
-							pszCur = pData->m_pcDlgOpenFile->m_mem->m_szDefaultWildCard;
-							while( *pszCur != _T('.') && *pszCur != _T('\0') )	// '.'まで読み飛ばす
-								pszCur = ::CharNext(pszCur);
-							i = 0;
-							while( *pszCur != _T(';') && *pszCur != _T('\0') ){	// ';'までコピーする
-								pszNext = ::CharNext(pszCur);
-								while( pszCur < pszNext )
-									szDefExt[i++] = *pszCur++;
-							}
-							szDefExt[i] = _T('\0');
-							if( ::_tcslen(szDefExt) < 2 || szDefExt[1] == _T('*') )	// 無効な拡張子?
-								szDefExt[0] = _T('\0');
-							break;
-						case 2:		// *.txt
-							::_tcscpy(szDefExt, _T(".txt"));
-							break;
-						case 3:		// *.*
-						default:	// 不明
-							szDefExt[0] = _T('\0');
-							break;
+						_tsplitpath( pData->m_pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
+						if( szDefExt[0] == _T('.') /* && szDefExt[1] != _T('\0') */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
+							// .のみの場合にも拡張子付きとみなす。
+							lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 						}
-						lstrcpyn(szBuf, pData->m_pOf->lpstrFile, _MAX_PATH + 1);
-						::_tcscat(szBuf, szDefExt);
-						lstrcpyn(pData->m_szPath, szBuf, _MAX_PATH);
+						else{
+							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
+							case 1:		// ユーザー定義
+								pszCur = pData->m_pcDlgOpenFile->m_mem->m_szDefaultWildCard;
+								while( *pszCur != _T('.') && *pszCur != _T('\0') )	// '.'まで読み飛ばす
+									pszCur = ::CharNext(pszCur);
+								i = 0;
+								while( *pszCur != _T(';') && *pszCur != _T('\0') ){	// ';'までコピーする
+									pszNext = ::CharNext(pszCur);
+									while( pszCur < pszNext )
+										szDefExt[i++] = *pszCur++;
+								}
+								szDefExt[i] = _T('\0');
+								if( ::_tcslen(szDefExt) < 2 || szDefExt[1] == _T('*') )	// 無効な拡張子?
+									szDefExt[0] = _T('\0');
+								break;
+							case 2:		// *.txt
+								::_tcscpy(szDefExt, _T(".txt"));
+								break;
+							case 3:		// *.*
+							default:	// 不明
+								szDefExt[0] = _T('\0');
+								break;
+							}
+							lstrcpyn(szBuf, pData->m_pOf->lpstrFile, _MAX_PATH + 1);
+							::_tcscat(szBuf, szDefExt);
+							lstrcpyn(pData->m_szPath, szBuf, _MAX_PATH);
+						}
+					}
+
+					// ファイルの上書き確認を自前で行う	// 2006.11.10 ryoji
+					if( IsFileExists(pData->m_szPath, true) ){
+						TCHAR szText[_MAX_PATH + 100];
+						lstrcpyn(szText, pData->m_szPath, _MAX_PATH);
+						::_tcscat(szText, LS(STR_DLGOPNFL2));
+						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
+							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
+							return TRUE;
+						}
 					}
 				}
 
-				// ファイルの上書き確認を自前で行う	// 2006.11.10 ryoji
-				if( IsFileExists(pData->m_szPath, true) ){
-					TCHAR szText[_MAX_PATH + 100];
-					lstrcpyn(szText, pData->m_szPath, _MAX_PATH);
-					::_tcscat(szText, LS(STR_DLGOPNFL2));
-					if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
-						::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
-						return TRUE;
-					}
+				/* 文字コード選択コンボボックス 値を取得 */
+				nIdx = Combo_GetCurSel( pData->m_hwndComboCODES );
+				lRes = Combo_GetItemData( pData->m_hwndComboCODES, nIdx );
+				pData->m_nCharCode = (ECodeType)lRes;	/* 文字コード */
+				//	Feb. 9, 2001 genta
+				if( pData->m_bUseEol ){
+					nIdx = Combo_GetCurSel( pData->m_hwndComboEOL );
+					lRes = Combo_GetItemData( pData->m_hwndComboEOL, nIdx );
+					pData->m_cEol = (EEolType)lRes;	/* 文字コード */
 				}
-			}
+				//	From Here Jul. 26, 2003 ryoji
+				//	BOMチェックボックスの状態を取得
+				if( pData->m_bUseBom ){
+					lRes = BtnCtl_GetCheck( pData->m_hwndCheckBOM );
+					pData->m_bBom = (lRes == BST_CHECKED);	/* BOM */
+				}
+				//	To Here Jul. 26, 2003 ryoji
 
-			/* 文字コード選択コンボボックス 値を取得 */
-			nIdx = Combo_GetCurSel( pData->m_hwndComboCODES );
-			lRes = Combo_GetItemData( pData->m_hwndComboCODES, nIdx );
-			pData->m_nCharCode = (ECodeType)lRes;	/* 文字コード */
-			//	Feb. 9, 2001 genta
-			if( pData->m_bUseEol ){
-				nIdx = Combo_GetCurSel( pData->m_hwndComboEOL );
-				lRes = Combo_GetItemData( pData->m_hwndComboEOL, nIdx );
-				pData->m_cEol = (EEolType)lRes;	/* 文字コード */
-			}
-			//	From Here Jul. 26, 2003 ryoji
-			//	BOMチェックボックスの状態を取得
-			if( pData->m_bUseBom ){
-				lRes = BtnCtl_GetCheck( pData->m_hwndCheckBOM );
-				pData->m_bBom = (lRes == BST_CHECKED);	/* BOM */
-			}
-			//	To Here Jul. 26, 2003 ryoji
-
-//			MYTRACE( _T("文字コード  lRes=%d\n"), lRes );
-//			MYTRACE( _T("pofn->hdr.code=CDN_FILEOK        \n") );break;
+//				MYTRACE( _T("文字コード  lRes=%d\n"), lRes );
+//				MYTRACE( _T("pofn->hdr.code=CDN_FILEOK        \n") );break;
 			}
 			break;	/* CDN_FILEOK */
 

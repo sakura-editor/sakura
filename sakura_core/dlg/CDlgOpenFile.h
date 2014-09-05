@@ -22,14 +22,13 @@
 
 #include <CommDlg.h>
 #include <vector>
+#include "util/design_template.h"
 #include "CEol.h"
 #include "basis/CMyString.h"
 #include "dlg/CDialog.h"
 
-struct DLLSHAREDATA;
 struct SLoadInfo;	// doc/CDocListener.h
 struct SSaveInfo;	// doc/CDocListener.h
-
 struct OPENFILENAMEZ;
 class CDlgOpenFileMem;
 
@@ -62,7 +61,6 @@ public:
 protected:
 	CDlgOpenFileMem*	m_mem;
 
-public:
 	/*
 	||  é¿ëïÉwÉãÉpä÷êî
 	*/
@@ -86,6 +84,9 @@ public:
 	bool GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
 };
 
 
