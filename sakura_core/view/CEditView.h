@@ -634,6 +634,7 @@ public:
 	//描画
 	bool			m_bDrawSWITCH;
 	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
+	COLORREF		m_crBack2;				// テキストの背景(キャレット用)
 	CLayoutInt		m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
 	CLayoutInt		m_nOldUnderLineYBg;
 	int				m_nOldUnderLineYMargin;

@@ -607,7 +607,7 @@ void CCaret::ShowEditCaret()
 		m_bCaretShowFlag = false; // 2002/07/22 novice
 	}
 	else{
-		if( GetCaretSize() != CMySize(nCaretWidth,nCaretHeight) || m_crCaret != crCaret || m_pEditView->m_crBack != crBack ){
+		if( GetCaretSize() != CMySize(nCaretWidth,nCaretHeight) || m_crCaret != crCaret || m_pEditView->m_crBack2 != crBack ){
 			/* キャレットはあるが、大きさや色が変わった場合 */
 			/* 現在のキャレットを削除 */
 			::DestroyCaret();
@@ -635,7 +635,7 @@ void CCaret::ShowEditCaret()
 	}
 
 	m_crCaret = crCaret;	//	2006.12.07 ryoji
-	m_pEditView->m_crBack = crBack;		//	2006.12.07 ryoji
+	m_pEditView->m_crBack2 = crBack;		//	2006.12.07 ryoji
 	m_pEditView->SetIMECompFormPos();
 }
 

@@ -204,6 +204,7 @@ BOOL CEditView::Create(
 	GetSelectionInfo().m_bDrawSelectArea = false;	/* ‘I‘ð”ÍˆÍ‚ð•`‰æ‚µ‚½‚© */	// 02/12/13 ai
 
 	m_crBack = -1;				/* ƒeƒLƒXƒg‚Ì”wŒiF */			// 2006.12.16 ryoji
+	m_crBack2 = -1;
 	
 	m_szComposition[0] = _T('\0');
 
@@ -378,6 +379,10 @@ BOOL CEditView::Create(
 	if( (bUserPref[2] & 0x01) == 1 ){
 		m_bHideMouse = true;
 	}
+
+	CTypeSupport cTextType(this, COLORIDX_TEXT);
+	m_crBack = cTextType.GetBackColor();
+
 	return TRUE;
 }
 
@@ -1689,6 +1694,8 @@ void CEditView::OnChangeSetting()
 	if( !m_pcEditWnd->m_pPrintPreview ){
 		::InvalidateRect( GetHwnd(), NULL, TRUE );
 	}
+	CTypeSupport cTextType(this, COLORIDX_TEXT);
+	m_crBack = cTextType.GetBackColor();
 }
 
 
