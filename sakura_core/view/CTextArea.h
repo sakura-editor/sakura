@@ -26,6 +26,7 @@
 
 class CViewFont;
 class CEditView;
+class CLayoutMgr;
 #include "DispPos.h"
 
 
@@ -137,7 +138,7 @@ public:
 	bool DetectWidthOfLineNumberArea( bool bRedraw );
 
 	//! 行番号表示に必要な桁数を計算
-	int  DetectWidthOfLineNumberArea_calculate() const;
+	int  DetectWidthOfLineNumberArea_calculate(const CLayoutMgr*) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           判定                              //

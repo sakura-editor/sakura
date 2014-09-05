@@ -1840,7 +1840,7 @@ bool CEditView::GetSelectedData(
 	}
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
-		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate();
+		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr);
 		nLineNumCols += 1;
 		pszLineNum = new wchar_t[nLineNumCols + 1];
 	}

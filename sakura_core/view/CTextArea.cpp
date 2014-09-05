@@ -146,7 +146,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 	if( pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
 		/* 行番号表示に必要な桁数を計算 */
-		int i = DetectWidthOfLineNumberArea_calculate();
+		int i = DetectWidthOfLineNumberArea_calculate(&pView->m_pcEditDoc->m_cLayoutMgr);
 		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* 表示域の左端座標 */
 		m_nViewAlignLeftCols = i + 1;
 	}
@@ -198,7 +198,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 
 /* 行番号表示に必要な桁数を計算 */
-int CTextArea::DetectWidthOfLineNumberArea_calculate() const
+int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMgr) const
 {
 	const CEditView* pView=m_pEditView;
 
@@ -209,7 +209,7 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate() const
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}
 	else{
-		nAllLines = (Int)pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+		nAllLines = (Int)pLayoutMgr->GetLineCount();
 	}
 	
 	if( 0 < nAllLines ){

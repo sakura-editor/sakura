@@ -734,7 +734,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 行番号を表示するか */
 	if( m_pPrintSetting->m_bPrintLineNumber ){
 		/* 行番号表示に必要な桁数を計算 */
-		m_nPreview_LineNumberColumns = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate();
+		m_nPreview_LineNumberColumns = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(m_pLayoutMgr_Print);
 	}
 	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
 	m_pPrintSetting->m_mdmDevMode.dmPaperSize = m_pPrintSetting->m_nPrintPaperSize;
@@ -855,6 +855,15 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* プレビュー ページ指定 */
 	OnPreviewGoPage( m_nCurPageNum );
 	m_bLockSetting = bLockOld;
+
+	// 2014.07.23 レイアウト行番号で行番号幅が合わない時は再計算
+	if( m_pPrintSetting->m_bPrintLineNumber ){
+		/* 行番号表示に必要な桁数を計算 */
+		int tempLineNum = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(m_pLayoutMgr_Print);
+		if( m_nPreview_LineNumberColumns != tempLineNum ){
+			OnChangeSetting();
+		}
+	}
 	if( m_bDemandUpdateSetting ){
 		// やりなおし
 		OnChangeSetting();
