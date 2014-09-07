@@ -2206,9 +2206,6 @@ void CEditDoc::GetEditInfo(
 	EditInfo* pfi	//!< [out]
 )
 {
-	int		nX;
-	int		nY;
-
 	//ファイルパス
 	_tcscpy( pfi->m_szPath, GetFilePath() );
 
@@ -2225,11 +2222,9 @@ void CEditDoc::GetEditInfo(
 	m_cLayoutMgr.LayoutToLogic(
 		m_pcEditWnd->GetActiveView().m_ptCaretPos.x,	/* ビュー左端からのカーソル桁位置(０開始) */
 		m_pcEditWnd->GetActiveView().m_ptCaretPos.y,	/* ビュー上端からのカーソル行位置(０開始) */
-		&nX,
-		&nY
+		&pfi->m_ptCursor.x,
+		&pfi->m_ptCursor.y
 	);
-	pfi->m_ptCursor.x = nX;		/* カーソル 物理位置(行頭からのバイト数) */
-	pfi->m_ptCursor.y = nY;		/* カーソル 物理位置(折り返し無し行位置) */
 
 	//各種状態
 	pfi->m_bIsModified = IsModified();			/* 変更フラグ */

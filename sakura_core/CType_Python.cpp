@@ -537,17 +537,14 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			  →
 			  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			int		nPosX;
-			int		nPosY;
-			m_cLayoutMgr.LayoutToLogic(
-				0,
-				nLineCount,
-				&nPosX,
-				&nPosY
+			CLayoutPoint ptPosXY;
+			m_cLayoutMgr.LogicToLayout(
+				0, nLineCount,
+				&ptPosXY.x, &ptPosXY.y
 			);
 			pcFuncInfoArr->AppendData(
 				nLineCount + 1,
-				nPosY + 1,
+				ptPosXY.y + 1,
 				szWord,
 				nItemFuncId,
 				depth_index
