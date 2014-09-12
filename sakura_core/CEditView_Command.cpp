@@ -66,6 +66,7 @@
 #include "CDlgTagJumpList.h"
 #include "CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "COsVersionInfo.h"
+#include "CDlgOpenFile.h"
 #include "my_icmp.h"
 #include "sakura_rc.h"
 

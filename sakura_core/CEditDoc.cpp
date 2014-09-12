@@ -56,6 +56,7 @@
 #include "file.h"
 #include "CLayout.h"	// 2007.08.22 ryoji 追加
 #include "CMemoryIterator.h"	// 2007.08.22 ryoji 追加
+#include "CDlgOpenFile.h"
 #include "sakura_rc.h"
 
 #define IDT_ROLLMOUSE	1
@@ -1260,7 +1261,8 @@ bool CEditDoc::OpenFileDialog(
 	ActivateFrameWindow( hwndParent );
 
 	/* ファイルオープンダイアログの初期化 */
-	m_pcEditWnd->m_cDlgOpenFile.Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndParent,
 		"*.*",
@@ -1268,7 +1270,7 @@ bool CEditDoc::OpenFileDialog(
 		CMRUFile().GetPathList(),
 		CMRUFolder().GetPathList()
 	);
-	return m_pcEditWnd->m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
+	return cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
 }
 
 
@@ -1311,7 +1313,8 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	}
 
 	/* ダイアログを表示 */
-	m_pcEditWnd->m_cDlgOpenFile.Create(
+	CDlgOpenFile cDlgOpenFile;
+	cDlgOpenFile.Create(
 		m_hInstance,
 		m_pcEditWnd->m_hWnd,
 		szDefaultWildCard,
@@ -1319,7 +1322,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 		CMRUFile().GetPathList(),		//	最近のファイル
 		CMRUFolder().GetPathList()	//	最近のフォルダ
 	);
-	return m_pcEditWnd->m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
+	return cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
 }
 
 /* Undo(元に戻す)可能な状態か？ */

@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "CSplitBoxWnd.h"
 #include "CEditWnd.h"
+#include "COsVersionInfo.h"
 #include "etc_uty.h"
 
 #if 0 // –¢Žg—p

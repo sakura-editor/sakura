@@ -39,7 +39,6 @@ class CEditWnd;
 #include "CDlgReplace.h"
 #include "CDlgJump.h"
 #include "CDlgGrep.h"
-#include "CDlgOpenFile.h"
 #include "CDlgFuncList.h"
 #include "CDropTarget.h"
 #include "CHokanMgr.h"
@@ -282,7 +281,6 @@ public:
 	CDlgJump		m_cDlgJump;			// 「指定行へジャンプ」ダイアログ
 	CDlgGrep		m_cDlgGrep;			// Grepダイアログ
 	CDlgFuncList	m_cDlgFuncList;		// アウトライン解析結果ダイアログ
-	CDlgOpenFile	m_cDlgOpenFile;		// ファイルオープンダイアログ
 	CHokanMgr		m_cHokanMgr;		// 入力補完
 
 	CImageListMgr*	m_pcIcons;

@@ -29,6 +29,7 @@
 #include "charcode.h"
 #include "CEditWnd.h"
 #include "CDlgCancel.h"
+#include "COsVersionInfo.h"
 #include "etc_uty.h"
 
 /*!	@brief	外部コマンドの実行

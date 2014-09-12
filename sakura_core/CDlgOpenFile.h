@@ -23,27 +23,13 @@
 
 #include <windows.h>
 #include <vector>
+#include "design_template.h"
 #include "CShareData.h"
 #include "CEol.h"
 #include "COsVersionInfo.h"	// 2005.11.02 ryoji
 
-// 2005.10.29 ryoji
-// Windows 2000 version of OPENFILENAME.
-// The new version has three extra members.
-// See commdlg.h
-#if (_WIN32_WINNT >= 0x0500)
-struct OPENFILENAMEZ : public OPENFILENAME {
-};
-#else
-struct OPENFILENAMEZ : public OPENFILENAME {
-  void *        pvReserved;
-  DWORD         dwReserved;
-  DWORD         FlagsEx;
-};
-#ifndef OPENFILENAME_SIZE_VERSION_400
-#define OPENFILENAME_SIZE_VERSION_400 sizeof(OPENFILENAME)
-#endif
-#endif // (_WIN32_WINNT >= 0x0500)
+struct OPENFILENAMEZ;
+class CDlgOpenFileMem;
 
 
 /*!	ファイルオープンダイアログボックス
@@ -71,27 +57,9 @@ public:
 	bool DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
 	bool DoModalSaveDlg( char* , ECodeType*, CEol*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
-public:
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND			m_hWnd;			/* このダイアログのハンドル */
-
-	DLLSHAREDATA*	m_pShareData;
-
-	TCHAR			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-	TCHAR			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
-	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
-	ECodeType		m_nCharCode;					/* 文字コード */
-
-	CEol			m_cEol;		//	Feb. 9, 2001 genta
-	bool			m_bUseEol;	//	Feb. 9, 2001 genta
-
-	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
-	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
-
-	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
-
 protected:
+	CDlgOpenFileMem*	m_mem;
+
 	/*
 	||  実装ヘルパ関数
 	*/
@@ -117,6 +85,9 @@ protected:
 	BOOL CheckPathLengthOverflow( const char *pszPath, int nLength, BOOL bErrDisp = TRUE );	// 2008.11.23 nasukoji	指定のファイルパスのバッファオーバーフローをチェックする
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
 };
 
 

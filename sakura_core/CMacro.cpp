@@ -35,6 +35,7 @@
 #include "Debug.h"
 #include "OleTypes.h" //2003-02-21 ‹S
 #include "CDlgInput1.h"
+#include "CDlgOpenFile.h"
 #include "CWaitCursor.h"
 
 CMacro::CMacro( int nFuncID )

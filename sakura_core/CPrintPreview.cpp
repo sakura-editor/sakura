@@ -19,6 +19,7 @@
 */
 
 #include "StdAfx.h"
+#include <stdio.h>/// 2002/2/3 aroka to here
 #include "CPrintPreview.h"
 #include "CLayout.h"
 #include "CEditWnd.h"
@@ -29,8 +30,8 @@
 #include "Debug.h"///
 #include "etc_uty.h"///
 #include "shell.h"
-#include <stdio.h>/// 2002/2/3 aroka to here
 #include "CEditApp.h"
+#include "COsVersionInfo.h"
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
