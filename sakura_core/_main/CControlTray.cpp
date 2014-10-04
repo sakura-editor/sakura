@@ -1027,6 +1027,9 @@ LRESULT CControlTray::DispatchEvent(
 			/* Windows にスレッドの終了を要求します。*/
 			::PostQuitMessage( 0 );
 			return 0L;
+		case MYWM_ALLOWACTIVATE:
+			::AllowSetForegroundWindow(wParam);
+			return 0L;
 		default:
 // << 20010412 by aroka
 //	Apr. 24, 2001 genta RegisterWindowMessageを使うように修正

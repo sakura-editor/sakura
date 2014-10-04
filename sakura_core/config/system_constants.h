@@ -594,6 +594,7 @@ enum e_PM_CHANGESETTING_SELECT {
 
 /*! トレイからエディタへの終了要求 */
 #define	MYWM_CLOSE			(WM_APP+200)
+#define	MYWM_ALLOWACTIVATE	(WM_APP+201)
 
 /*! トレイからエディタへの編集ファイル情報 要求通知 */
 #define	MYWM_GETFILEINFO	(WM_APP+203)
