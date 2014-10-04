@@ -1649,6 +1649,9 @@ LRESULT CEditWnd::DispatchEvent(
 			::DestroyWindow( hwnd );
 		}
 		return nRet;
+	case MYWM_ALLOWACTIVATE:
+		::AllowSetForegroundWindow(wParam);
+		return 0L;
 
 
 	case MYWM_GETFILEINFO:
@@ -2039,16 +2042,20 @@ LRESULT CEditWnd::DispatchEvent(
 
 	@retval TRUE: 終了して良い / FALSE: 終了しない
 */
-int	CEditWnd::OnClose(HWND hWndFrom)
+int	CEditWnd::OnClose(HWND hWndActive)
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 	int nRet = GetDocument()->OnFileClose();
 	if( !nRet ) return nRet;
+
 	// パラメータでハンドルを貰う様にしたので検索を削除	2013/4/9 Uchi
-	if (hWndFrom != 0 && IsSakuraMainWindow( hWndFrom )) {
-//		for (int iWait = 0; ::IsWindowVisible( hWndFrom ) && iWait < 100; iWait++)	// Waitを追加(パフォーマンスが低いマシンで間に合わない)	Uchi 2013/4/19 Uchi
-//			::Sleep(1);
-		ActivateFrameWindow( hWndFrom );
+	if( hWndActive ){
+		// アクティブ化制御ウィンドウをアクティブ化する
+		if( IsSakuraMainWindow(hWndActive) ){
+			ActivateFrameWindow(hWndActive);	// エディタ
+		}else{
+			::SetForegroundWindow(hWndActive);	// タスクトレイ
+		}
 	}
 
 #if 0
