@@ -1236,17 +1236,17 @@ static void TreeView_ExpandAll( HWND hwndTree, bool bExpand )
 // 表示用データの作成（アクセスキー付加）
 static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 {
-	static	WCHAR	szLabel[256 + 10];
+	static	WCHAR	szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
 
 	if (pFunc->m_sKey[0]) {
 		auto_sprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls(%ls)",
 			pFunc->m_bDupErr ? L">" : L"",
-			pFunc->m_sName.c_str() , pFunc->m_sKey );
+			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str(), pFunc->m_sKey);
 	}
 	else {
 		auto_sprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls",
 			pFunc->m_bDupErr ? L">" : L"",
-			pFunc->m_sName.c_str() );
+			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str() );
 	}
 
 	return to_tchar( szLabel );
