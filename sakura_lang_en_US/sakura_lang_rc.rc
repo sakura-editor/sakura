@@ -35,8 +35,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 2011-2014  by Lucien & Collaborators"
-#define PR_VER		2,1,1,1
-#define PR_VER_STR	"2.1.1.1"
+#define PR_VER		2,1,1,4
+#define PR_VER_STR	"2.1.1.4"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -1457,7 +1457,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
     RTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,4,4,51,8
-    COMBOBOX        IDC_COMBO_FUNCKIND,56,2,70,170,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_FUNCKIND,56,2,80,170,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,15,40,8
     LISTBOX         IDC_LIST_FUNC,3,25,123,199,LBS_OWNERDRAWFIXED | 
@@ -1839,7 +1839,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
     RTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,4,4,51,8
-    COMBOBOX        IDC_COMBO_FUNCKIND,60,2,68,180,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_FUNCKIND,60,2,80,180,CBS_DROPDOWNLIST | 
                     CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
     LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,18,41,8
@@ -1876,7 +1876,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
     RTEXT           "Category(&K)",IDC_LABEL_MENUFUNCKIND,4,4,52,8
-    COMBOBOX        IDC_COMBO_FUNCKIND,60,2,68,180,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_FUNCKIND,60,2,80,180,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Function(&F)",IDC_LABEL_MENUFUNC,3,16,40,8,NOT WS_GROUP
     LISTBOX         IDC_LIST_FUNC,3,27,124,178,LBS_NOINTEGRALHEIGHT | 
@@ -2045,7 +2045,7 @@ CAPTION "Main Menu"
 FONT 9, "Tahoma"
 BEGIN
     RTEXT           "Category(&K)", IDC_LABEL_MENUFUNCKIND, 15, 6, 40, 8
-    COMBOBOX        IDC_COMBO_FUNCKIND, 57, 4, 70, 180,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_FUNCKIND, 57, 4, 80, 180,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Function(&F)", IDC_LABEL_MENUFUNC, 4, 15, 40, 8
     LISTBOX         IDC_LIST_FUNC, 4, 25, 123, 192,LBS_NOINTEGRALHEIGHT | 
@@ -3165,7 +3165,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CASCADE               "cascade"
+    F_CASCADE               "Cascade"
     F_TILE_V                "Tile Vertically"
     F_TILE_H                "Tile Horizontally"
     F_BIND_WINDOW           "Group windows"						// See F_TAB_GROUPDEL/F_TAB_GROUPIZE toggle for this one.
@@ -3606,10 +3606,10 @@ BEGIN
 	// CEditDoc.cpp
 	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
 	STR_LOADAGENT_BIG_FILE		"File size is %dMB or over. Do you want to open？"
-	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
-	STR_SAVEAGENT_OTHER			"'%ts'\nファイルを保存できません。\n他のウィンドウで使用中です。"
+	STR_SAVEAGENT_VIEW_FILE		"Cannot overwrite file in view-mode."
+	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
-	STR_ERR_DLGEDITDOC6			"%ts\n\nこのファイルを文字コード %ts で開こうとしていますが、前回は別の文字コード %ts で開かれています。\nUse same character formatting as last time?\n\n\t[(Y)es]  =%ts\n\t[(N)o]=%ts\n"
+	STR_ERR_DLGEDITDOC6			"%ts\n\nOpening in %ts, but it has been opened in %ts last time.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%ts\n\t[(N)o]=%ts\n"
 	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doenst exist.\n\nWhen you save this document the file will be created on the disk."
 	STR_BACKUP_ERR_TITLE		"File Save"
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
@@ -3698,7 +3698,7 @@ BEGIN
 	// CEditView_Cmdisrch.cpp
 	STR_EDITVWISRCH_REGEX		"Regex dll cant be loaded, or found."
 	STR_EDITVWISRCH_MIGEGO1		"MIGEMO.DLL cant be loaded, or found."
-	STR_EDITVWISRCH_MIGEGO2		"MIGEMOは使用できません。"
+	STR_EDITVWISRCH_MIGEGO2		"MIGEMO is not available"
 	STR_EDITVWISRCH_NOMATCH		" (No Matches)"
 
 	// CEditView_Command.cpp
@@ -3847,7 +3847,7 @@ BEGIN
 	STR_ERR_DLGFUNCLKUP05		"Edit related"		
 	STR_ERR_DLGFUNCLKUP06		"Cursor related"	
 	STR_ERR_DLGFUNCLKUP07		"Selection related"	
-	STR_ERR_DLGFUNCLKUP08		"Not sure"			
+	STR_ERR_DLGFUNCLKUP08		"Box Selection related"			
 	STR_ERR_DLGFUNCLKUP09		"Clipboard related"	
 	STR_ERR_DLGFUNCLKUP10		"Insert related"	
 	STR_ERR_DLGFUNCLKUP11		"Replace related"	
@@ -4045,16 +4045,16 @@ BEGIN
 	STR_PROPCOMMAINMENU_SEP		"――――――――――"
 	STR_PROPCOMMAINMENU_ACCKEY1	"Access key settings of menu item"
 	STR_PROPCOMMAINMENU_ACCKEY2	"Please input key."
-	STR_PROPCOMMAINMENU_CLEAR	"メニューの設定をクリアします。\nよろしいですか？"
-	STR_PROPCOMMAINMENU_INIT	"メニューの設定を初期状態に戻します。\nよろしいですか？"
-	STR_PROPCOMMAINMENU_DEL		"選択している項目を下位項目ごと削除します。\nよろしいですか？"
-	STR_PROPCOMMAINMENU_OK		"問題ありませんでした。"
+	STR_PROPCOMMAINMENU_CLEAR	"Are you sure you want to erase menu settings?"
+	STR_PROPCOMMAINMENU_INIT	"Are you sure you want to load default menu settings?"
+	STR_PROPCOMMAINMENU_DEL		"Are you sure you want to delete selected item?"
+	STR_PROPCOMMAINMENU_OK		"No problems detected."
 	STR_PROPCOMMAINMENU_ERR1	"メニュー設定の取得に失敗しました"
 	STR_PROPCOMMAINMENU_ERR2	"『共通設定』が有りません。\n"
-	STR_PROPCOMMAINMENU_ERR3	"トップレベルの項目数が多すぎます。\n"
-	STR_PROPCOMMAINMENU_ERR4	"登録項目数が多すぎます。\n"
-	STR_PROPCOMMAINMENU_ERR5	"重複したアクセスキーがあります。\n"
-	STR_PROPCOMMAINMENU_ERR6	"未設定のアクセスキーがあります。\n"
+	STR_PROPCOMMAINMENU_ERR3	"Too many top-level items\n"
+	STR_PROPCOMMAINMENU_ERR4	"Too many items\n"
+	STR_PROPCOMMAINMENU_ERR5	"There is access key duplicate.\n"
+	STR_PROPCOMMAINMENU_ERR6	"There is access key not set.\n"
 
 	// CPropCommon.cpp
 	STR_PROPCOMMON				"Common Setting"
@@ -4103,11 +4103,11 @@ BEGIN
 	STR_PROPCOMPLG_LIST3		"Stat"
 	STR_PROPCOMPLG_LIST4		"Load"
 	STR_PROPCOMPLG_LIST5		"Folder"
-	STR_PROPCOMPLG_DELETE		"%ls を削除しますか"
+	STR_PROPCOMPLG_DELETE		"Are you sure you want to remove %ls ?"
 
 	// CPropComTab.cpp
 	STR_PROPCOMTAB_DISP_NO		"None"
-	STR_PROPCOMTAB_DISP_ALLWAYS	"Allways"
+	STR_PROPCOMTAB_DISP_ALLWAYS	"Always"
 	STR_PROPCOMTAB_DISP_AUTO	"Auto"
 
 
@@ -4212,13 +4212,13 @@ BEGIN
 	STR_DLGTYPEASC_IMPORT			"--そのままインポート--"
 
 	// CDlgTypeList.cpp
-	STR_DLGTYPELIST_ERR1			"関連付けに失敗しました\n"
-	STR_DLGTYPELIST_ERR2			"関連付け解除に失敗しました\n"
-	STR_DLGTYPELIST_INIT1			"%ts を初期化します。 よろしいですか？"
+	STR_DLGTYPELIST_ERR1			"Failed to set association settings.\n"
+	STR_DLGTYPELIST_ERR2			"Failed to reset association settings.\n"
+	STR_DLGTYPELIST_INIT1			"Are you sure you want to initialize %ts ?"
 	STR_DLGTYPELIST_SETNAME			"Set %d"
-	STR_DLGTYPELIST_INIT2			"%ts を初期化しました。"
-	STR_DLGTYPELIST_DEL				"%ts を削除します。 よろしいですか？"
-	STR_DLGTYPELIST_ACC				"Windowsの関連付け設定を変更しようとしています。\nこの操作は同じ設定を利用する他のソフトにも影響を与える可能性があります。\n実施しますか？"
+	STR_DLGTYPELIST_INIT2			"%ts has been initialized"
+	STR_DLGTYPELIST_DEL				"Are you sure you want to remove %ts ?"
+	STR_DLGTYPELIST_ACC				"Are you sure you want to change Windows association settings?\nThis may affects other apps that use same settings."
 
 	// CImpExpManager.cpp
 	STR_IMPEXP_ERR_FILEOPEN			"Could not open the file.\n\n"
@@ -4487,8 +4487,8 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_PLGMGR_FOLDER				"プラグインフォルダを作成出来ません"
 	STR_PLGMGR_CANCEL				"キャンセルされました"
 	STR_PLGMGR_NEWPLUGIN			"新しいプラグインは見つかりませんでした"
-	STR_PLGMGR_INSTALL				"プラグイン「%ts」をインストールしますか？"
-	STR_PLGMGR_INSTALL_ERR			"プラグイン「%ts」をインストールできませんでした\n理由：%ls"
+	STR_PLGMGR_INSTALL				"Are you sure you want to install %ts?"
+	STR_PLGMGR_INSTALL_ERR			"Failed to install %ts\nReason: %ls"
 	STR_PLGMGR_ERR_ZIP				"ZIPファイルは扱えません"
 	STR_PLGMGR_ERR_FOLDER			"プラグインフォルダがありません"
 	STR_PLGMGR_ERR_CREATEDIR		"プラグインフォルダを作成出来ません"
