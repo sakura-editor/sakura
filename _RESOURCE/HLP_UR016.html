@@ -13,6 +13,56 @@
 <h2>変更履歴(2013/05/13～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
 
+<h3>Oct. 9, 2014 (2.1.1.4)</h3>
+[仕様変更]<br />
+<ul>
+	<li>DLLSHAREDATAのサイズチェック (svn:3746 upatchid:744 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>強調キーワードの不具合の修正 (svn:3724 upatchid:809 Moca)</li>
+	<li>文字列コピーのバッファオーバーランの可能性のある箇所の修正 (svn:3725 upatchid:810 Moca)</li>
+	<li>メニュー周りの不具合の修正 (svn:3726 upatchid:811 Moca)</li>
+	<li>対括弧強調の状態で選択すると対括弧が強調されたままになる (svn:3727 upatchid:814 BugReport/163 Moca)</li>
+	<li>マクロで引数無しのSearchNext()/SearchPrev()でエラー (svn:3728 upatchid:818 Moca)</li>
+	<li>ファイルダイアログの再入でエラーになる (svn:3729 upatchid:819 Moca)</li>
+	<li>文字幅に合わせてスペースを詰めるのヘルプID修正 (svn:3730 upatchid:820 Moca)</li>
+	<li>ウィンドウの位置と大きさの位置に-(マイナス記号)を直接入力できない (svn:3731 upatchid:822 Moca)</li>
+	<li>トレイメニューのホットキーをなしにするとなんでも反応する (svn:3732 upatchid:823 BugReport/168 Moca)</li>
+	<li>マクロパスのブロック範囲外でのアクセスの修正 (svn:3733 upatchid:824 Moca)</li>
+	<li>windressの場合sakura_lang_rc.rcで\'の警告が出る (svn:3734 upatchid:825 Moca)</li>
+	<li>タグジャンプの!_TAG_S_SEARCH_NEXTが正常に処理されない (svn:3735 upatchid:827 Moca)</li>
+	<li>古いOSでツールチップが表示されない可能性があるバグの修正 (svn:3736 upatchid:828 Moca)</li>
+	<li>1023文字を超える長さの補完をするとバッファオーバーランする (svn:3737 upatchid:831 Moca)</li>
+	<li>タイプ別設定のインポートで約122文字以上のファイル名を持つ色設定があるとバッファオーバーラン (svn:3738 upatchid:832 Moca)</li>
+	<li>タイプ別設定一覧でタイプ名が63文字のときに複製するとバッファオーバーランする (svn:3739 upatchid:833 Moca)</li>
+	<li>タイプ別設定の名前拡張子タイプ数が多いとファイルダイアログで異常終了する (svn:3740 upatchid:834 Moca)</li>
+	<li>各国語対応 はみ出ている場所の修正・訳語統一 (svn:3741 upatchid:259 Moca)</li>
+	<li>作成した色の保持 (svn:3742 upatchid:808 novice)</li>
+	<li>デフォルト文字コードの設定が適用されないことがある (svn:3747 upatchid:845 Request/175 Moca)</li>
+	<li>Pythonの改行コードチェックが無効になっていたのを修正 (svn:3748 upatchid:843 BugReport/169 Moca)</li>
+	<li>水平スクロールバーがOFFで折り返し位置が画面内だと設定適用で画面がずれる(r3540-) (svn:3749 upatchid:846 data:7857 BugReport/167 BugReport/176 Moca)</li>
+	<li>検索/置換/grepダイアログの検索履歴の初回ドロップダウン幅不正(r2743-) (svn:3757 upatchid:852 BugReport/170 novice)</li>
+	<li>UnicodeファイルでNELが含まれているとNELが改行コードにならず描画で無限ループする (svn:3765 upatchid:842 BugReport/169 Moca)</li>
+	<li>AppendData系処理でのAllocBufferを追加 (svn:3766 upatchid:848 Moca)</li>
+	<li>SetRawDataHoldBufferの修正 (svn:3767 upatchid:849 Moca)</li>
+	<li>Grep検索キーが空だった場合に履歴から取得する (svn:3768 upatchid:855 Moca)</li>
+	<li>キー割り当てが未割当だった/にした場合動作しない(r3430-) (svn:3769 upatchid:857 BugReport/173 Moca)</li>
+	<li>CKeyBind.cppでDebug_x64のときCStrictIntegerのエラー (svn:3770 upatchid:862 unicode:2197 Moca)</li>
+	<li>正規表現キーワードが無効になることがある (svn:3771 upatchid:856 Moca)</li>
+	<li>ファイルを開いた後落ちるとブックマークが消える (svn:3772 upatchid:859 Moca)</li>
+	<li>分割直後のビューで背景が透過されない (svn:3815 upatchid:866 Moca)</li>
+	<li>レイアウト行番号幅が印刷で不正なことがある (svn:3816 upatchid:873 Moca)</li>
+	<li>アウトラインが右・下にあるときにビューにサイズボックスが表示されたままになる (svn:3817 upatchid:874 Moca)</li>
+	<li>保存確認メッセージが非フォーカス状態で表示される (svn:3820 upatchid:858 BugReport/165 anonymous)</li>
+	<li>タイプ別設定の強調キーワードダイアログを多言語化 (svn:3823 upatchid:891 syat)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>EOpeCode未設定箇所の修正 (svn:3758 upatchid:853 novice)</li>
+	<li>再読み込みのとき書き込み禁止の場合にビューモードにするのをやめる (svn:3764 upatchid:835 BugReport/130 Moca)</li>
+</ul>
+
 <h3>May. 18, 2014 (2.1.1.3)</h3>
 [バグ修正]<br />
 <ul>
