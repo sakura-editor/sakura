@@ -43,7 +43,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropTypes* )(pPsp->lParam);
+		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -102,7 +102,7 @@ CPropTypes::CPropTypes()
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PROPTYPE_PAGENUM_SCREEN;
 
-	((CPropTypesScreen*)(this))->CPropTypes_Screen();
+	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
 }
 
 CPropTypes::~CPropTypes()

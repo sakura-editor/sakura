@@ -158,7 +158,7 @@ static LRESULT CALLBACK CControlTrayWndProc(
 	CControlTray* pSApp;
 	switch( uMsg ){
 	case WM_CREATE:
-		pSApp = ( CControlTray* )g_m_pCControlTray;
+		pSApp = g_m_pCControlTray;
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6

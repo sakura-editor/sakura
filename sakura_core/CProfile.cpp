@@ -325,7 +325,6 @@ bool CProfile::GetProfileDataImp(
 	wstring&		strEntryValue	//!< [out] ƒGƒ“ƒgƒŠ’l
 )
 {
-	wstring strWork;
 	std::vector< Section >::iterator iter;
 	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
 	MAP_STR_STR::iterator mapiter;

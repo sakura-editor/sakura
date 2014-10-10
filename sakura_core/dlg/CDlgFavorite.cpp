@@ -1171,7 +1171,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 
 static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2, LPARAM lParamSort )
 {
-	CompareListViewLParam* pCompInfo = (CompareListViewLParam*)lParamSort;
+	CompareListViewLParam* pCompInfo = reinterpret_cast<CompareListViewLParam*>(lParamSort);
 	int nRet = 0;
 	if(0 == pCompInfo->nSortColumn){
 		nRet = lParamItem1 - lParamItem2;
