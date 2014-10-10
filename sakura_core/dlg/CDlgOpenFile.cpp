@@ -253,7 +253,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			// Save off the long pointer to the OPENFILENAME structure.
 			// Modified by KEITA for WIN64 2003.9.6
 			OPENFILENAME* pOfn = (OPENFILENAME*)lParam;
-			CDlgOpenFileData* pData = (CDlgOpenFileData*)(pOfn->lCustData);
+			CDlgOpenFileData* pData = reinterpret_cast<CDlgOpenFileData*>(pOfn->lCustData);
 			::SetWindowLongPtr(hdlg, DWLP_USER, (LONG_PTR)pData);
 			pData->m_pOf = pOfn;
 

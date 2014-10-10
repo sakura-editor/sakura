@@ -1260,14 +1260,13 @@ bool CPropMainMenu::Check_MainMenu(
 	wstring&	sErrMsg			// エラーメッセージ
 )
 {
-	bool			bRet = false;
 	HTREEITEM		htiItem;
 	
 	sErrMsg = L"";
 	
 	htiItem = TreeView_GetRoot( hwndTree );
 
-	bRet = Check_MainMenu_Sub( hwndTree, htiItem, 0, sErrMsg );
+	bool bRet = Check_MainMenu_Sub( hwndTree, htiItem, 0, sErrMsg );
 	return bRet;
 }
 

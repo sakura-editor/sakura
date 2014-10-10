@@ -113,7 +113,7 @@ void CHokanMgr::Hide( void )
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
 	/* 入力フォーカスを受け取ったときの処理 */
-	CEditView* pcEditView = (CEditView*)m_lParam;
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	pcEditView->OnSetFocus();
 	return;
 
@@ -138,7 +138,7 @@ int CHokanMgr::Search(
 	CNativeW*		pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
-	CEditView* pcEditView = (CEditView*)m_lParam;
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -352,7 +352,7 @@ void CHokanMgr::HokanSearchByKeyword(
 	bool 			bHokanLoHiCase,
 	vector_ex<std::wstring>& 	vKouho
 ){
-	const CEditView* pcEditView = (const CEditView*)m_lParam;
+	const CEditView* pcEditView = reinterpret_cast<const CEditView*>(m_lParam);
 	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
 	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	const int nKeyLen = wcslen(pszCurWord);
@@ -543,7 +543,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	List_GetText( hwndList, nItem, &wszLabel[0] );
 
  	/* テキストを貼り付け */
-	pcEditView = (CEditView*)m_lParam;
+	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
 	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&wszLabel[0], wcslen(&wszLabel[0]), TRUE, 0 );
@@ -654,7 +654,7 @@ void CHokanMgr::ShowTip()
 	auto_array_ptr<WCHAR> szLabel( new WCHAR [nLabelLen + 1] );
 	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// 選択中の単語を取得
 
-	pcEditView = (CEditView*)m_lParam;
+	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// すでに辞書Tipが表示されていたら
 	if( pcEditView->m_dwTipTimer == 0 )
