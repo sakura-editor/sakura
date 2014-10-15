@@ -147,7 +147,7 @@ public:
 	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
-	int	OnClose( HWND hWndActive );	/* 終了時の処理 */
+	int	OnClose( HWND hWndActive, bool );	/* 終了時の処理 */
 	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER 処理	// 2007.04.03 ryoji

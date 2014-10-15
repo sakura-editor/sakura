@@ -594,6 +594,10 @@ enum e_PM_CHANGESETTING_SELECT {
 
 /*! トレイからエディタへの終了要求 */
 #define	MYWM_CLOSE			(WM_APP+200)
+enum e_PM_CLOSE_WPARAM {
+	PM_CLOSE_EXIT				= 1, //!< 全終了
+	PM_CLOSE_GREPNOCONFIRM		= 2, //!< Grepで終了確認しない
+};
 #define	MYWM_ALLOWACTIVATE	(WM_APP+201)
 
 /*! トレイからエディタへの編集ファイル情報 要求通知 */

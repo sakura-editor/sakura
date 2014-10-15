@@ -333,7 +333,7 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 				DWORD dwPid;
 				::GetWindowThreadProcessId(pWndArr[i].m_hWnd, &dwPid);
 				::SendMessage(hWndActive, MYWM_ALLOWACTIVATE, dwPid, 0);	// アクティブ化の許可を依頼する
-				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, (LPARAM)hWndActive ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit ? PM_CLOSE_EXIT : 0, (LPARAM)hWndActive ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 					return FALSE;
 				}
 			}

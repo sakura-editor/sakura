@@ -519,7 +519,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 bool CDocFileOperation::FileClose()
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	if( !m_pcDocRef->OnFileClose() ){
+	if( !m_pcDocRef->OnFileClose(false) ){
 		return false;
 	}
 
@@ -560,7 +560,7 @@ bool CDocFileOperation::FileClose()
 void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	if( !m_pcDocRef->OnFileClose() ){
+	if( !m_pcDocRef->OnFileClose(false) ){
 		return;
 	}
 
