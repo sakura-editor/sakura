@@ -207,6 +207,9 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	m_bEolEx = bEolEx;
 	m_nMaxEolLen = nMaxEolLen;
+	m_nReadOffset2 = 0;
+	m_nTempResult = RESULT_FAILURE;
+	m_cLineTemp.SetString(L"");
 	return m_CharCode;
 }
 
@@ -235,6 +238,47 @@ void CFileLoad::FileClose( void )
 	m_nLineIndex	= -1;
 }
 
+/*! 1行読み込み
+	UTF-7場合、データ内のNEL,PS,LS等の改行までを1行として取り出す
+*/
+EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
+{
+	if( m_CharCode != CODE_UTF7 ){
+		return ReadLine_core( pUnicodeBuffer, pcEol );
+	}
+	if( m_nReadOffset2 == m_cLineTemp.GetStringLength() ){
+		CEol cEol;
+		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol );
+		if( e == RESULT_FAILURE ){
+			pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+			*pcEol = cEol;
+			return RESULT_FAILURE;
+		}
+		m_nReadOffset2 = 0;
+		m_nTempResult = e;
+	}
+	int  nOffsetTemp = m_nReadOffset2;
+	int  nRetLineLen;
+	CEol cEolTemp;
+	const wchar_t* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
+				&nRetLineLen, &m_nReadOffset2, &cEolTemp );
+	if( m_cLineTemp.GetStringLength() == m_nReadOffset2 && nOffsetTemp == 0 ){
+		// 途中に改行がない限りは、swapを使って中身のコピーを省略する
+		pUnicodeBuffer->swap(m_cLineTemp);
+		if( 0 < m_cLineTemp.GetStringLength() ){
+			m_cLineTemp._GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+		}
+		m_nReadOffset2 = 0;
+	}else{
+		// 改行が途中にあった。必要分をコピー
+		pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+		pUnicodeBuffer->AppendString( pRet, nRetLineLen + cEolTemp.GetLen() );
+	}
+	*pcEol = cEolTemp;
+	return m_nTempResult;
+}
+
+
 /*!
 	次の論理行を文字コード変換してロードする
 	順次アクセス専用
@@ -242,7 +286,7 @@ void CFileLoad::FileClose( void )
 	@return	NULL以外	1行を保持しているデータの先頭アドレスを返す。永続的ではない一時的な領域。
 			NULL		データがなかった
 */
-EConvertResult CFileLoad::ReadLine(
+EConvertResult CFileLoad::ReadLine_core(
 	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ。改行も含めて読み取る。
 	CEol*		pcEol			//!< [i/o]
 )

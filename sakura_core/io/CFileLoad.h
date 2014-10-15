@@ -96,6 +96,7 @@ protected:
 
 	// GetLextLine の 文字コード考慮版
 	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int*, int* );
+	EConvertResult ReadLine_core( CNativeW*, CEol* );
 
 	int Read( void*, size_t ); // inline
 	DWORD FilePointer( DWORD, DWORD ); // inline
@@ -134,6 +135,9 @@ protected:
 	int		m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
 //	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
 	CMemory m_cLineBuffer;
+	CNativeW m_cLineTemp;
+	int		m_nReadOffset2;
+	EConvertResult m_nTempResult;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(CFileLoad);
