@@ -1539,7 +1539,7 @@ LRESULT CEditWnd::DispatchEvent(
 		OnDropFiles( (HDROP) wParam );
 		return 0L;
 	case WM_QUERYENDSESSION:	//OSの終了
-		if( OnClose( NULL ) ){
+		if( OnClose( NULL, false ) ){
 			::DestroyWindow( hwnd );
 			return TRUE;
 		}
@@ -1547,7 +1547,7 @@ LRESULT CEditWnd::DispatchEvent(
 			return FALSE;
 		}
 	case WM_CLOSE:
-		if( OnClose( NULL ) ){
+		if( OnClose( NULL, false ) ){
 			::DestroyWindow( hwnd );
 		}
 		return 0L;
@@ -1603,7 +1603,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_CLOSE:
 		/* エディタへの終了要求 */
-		if( FALSE != ( nRet = OnClose( (HWND)lParam )) ){	// Jan. 23, 2002 genta 警告抑制
+		if( FALSE != ( nRet = OnClose( (HWND)lParam,
+				PM_CLOSE_GREPNOCONFIRM == (PM_CLOSE_GREPNOCONFIRM & wParam) )) ){	// Jan. 23, 2002 genta 警告抑制
 			//プラグイン：DocumentCloseイベント実行
 			CPlug::Array plugs;
 			CWSHIfObj::List params;
@@ -1620,7 +1621,7 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
-			if( !(BOOL)wParam ){	// 全終了要求でない場合
+			if( PM_CLOSE_EXIT != (PM_CLOSE_EXIT & wParam) ){	// 全終了要求でない場合
 				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する
 				if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
 					!m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin &&
@@ -2042,10 +2043,10 @@ LRESULT CEditWnd::DispatchEvent(
 
 	@retval TRUE: 終了して良い / FALSE: 終了しない
 */
-int	CEditWnd::OnClose(HWND hWndActive)
+int	CEditWnd::OnClose(HWND hWndActive, bool bGrepNoConfirm )
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-	int nRet = GetDocument()->OnFileClose();
+	int nRet = GetDocument()->OnFileClose( bGrepNoConfirm );
 	if( !nRet ) return nRet;
 
 	// パラメータでハンドルを貰う様にしたので検索を削除	2013/4/9 Uchi

@@ -839,7 +839,7 @@ void CEditDoc::OnChangeSetting(
 
 	@retval TRUE: 終了して良い / FALSE: 終了しない
 */
-BOOL CEditDoc::OnFileClose()
+BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 {
 	int			nRet;
 	int			nBool;
@@ -855,6 +855,9 @@ BOOL CEditDoc::OnFileClose()
 	//GREPモードで、かつ、「GREPモードで保存確認するか」がOFFだったら、保存確認しない
 	// 2011.11.13 GrepモードでGrep直後は"未編集"状態になっているが保存確認が必要
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
+		if( bGrepNoConfirm ){ // Grepで保存確認しないモード
+			return TRUE;
+		}
 		if( !GetDllShareData().m_Common.m_sSearch.m_bGrepExitConfirm ){
 			return TRUE;
 		}

@@ -206,6 +206,8 @@ bool CNormalProcess::InitializeProcess()
 				&gi.cmGrepFolder,
 				gi.bGrepCurFolder,
 				gi.bGrepSubFolder,
+				gi.bGrepStdout,
+				gi.bGrepHeader,
 				gi.sGrepSearchOption,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
 				gi.bGrepOutputLine,
@@ -284,6 +286,11 @@ bool CNormalProcess::InitializeProcess()
 		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
 		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
 			(*it)->Invoke(&pEditWnd->GetActiveView(), params);
+		}
+
+		if( !bGrepDlg && gi.bGrepStdout ){
+			// ‘¦ŽžI—¹
+			PostMessageCmd( pEditWnd->GetHwnd(), MYWM_CLOSE, PM_CLOSE_GREPNOCONFIRM | PM_CLOSE_EXIT, (LPARAM)NULL );
 		}
 
 		return true; // 2003.06.23 Moca

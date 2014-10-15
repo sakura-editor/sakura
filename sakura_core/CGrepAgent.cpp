@@ -10,6 +10,7 @@
 #include "window/CEditWnd.h"
 #include "charset/CCodeMediator.h"
 #include "view/colors/CColorStrategy.h"
+#include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "io/CFileLoad.h"
 #include "util/window.h"
@@ -118,6 +119,23 @@ std::tstring CGrepAgent::ChopYen( const std::tstring& str )
 	return dst;
 }
 
+void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout )
+{
+	if( bAddStdout ){
+		HANDLE out = ::GetStdHandle(STD_OUTPUT_HANDLE);
+		if( out && out != INVALID_HANDLE_VALUE ){
+			CMemory cmemOut;
+			std::auto_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(
+					pcEditView->GetDocument()->GetDocumentEncoding(), 0) );
+			pcCodeBase->UnicodeToCode( cmem, &cmemOut );
+			DWORD dwWrite = 0;
+			::WriteFile(out, cmemOut.GetRawPtr(), cmemOut.GetRawLength(), &dwWrite, NULL);
+		}
+	}else{
+		pcEditView->GetCommander().Command_ADDTAIL( cmem.GetStringPtr(), cmem.GetStringLength() );
+	}
+}
+
 /*! Grep実行
 
   @param[in] pcmGrepKey 検索パターン
@@ -135,6 +153,8 @@ DWORD CGrepAgent::DoGrep(
 	const CNativeT*			pcmGrepFolder,
 	bool					bGrepCurFolder,
 	BOOL					bGrepSubFolder,
+	bool					bGrepStdout,
+	bool					bGrepHeader,
 	const SSearchOption&	sSearchOption,
 	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
 	BOOL					bGrepOutputLine,
@@ -237,6 +257,8 @@ DWORD CGrepAgent::DoGrep(
 	
 	// Grepオプションまとめ
 	sGrepOption.bGrepSubFolder = FALSE != bGrepSubFolder;
+	sGrepOption.bGrepStdout = bGrepStdout;
+	sGrepOption.bGrepHeader = bGrepHeader;
 	sGrepOption.nGrepCharSet = nGrepCharSet;
 	sGrepOption.bGrepOutputLine = FALSE != bGrepOutputLine;
 	sGrepOption.nGrepOutputStyle = nGrepOutputStyle;
@@ -402,8 +424,8 @@ DWORD CGrepAgent::DoGrep(
 	pszWork = cmemMessage.GetStringPtr( &nWork );
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
 	CLayoutInt tmp_PosY_Layout = pcViewDst->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	if( 0 < nWork ){
-		pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
+	if( 0 < nWork && sGrepOption.bGrepHeader ){
+		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 	}
 	cmemMessage.Clear(); // もういらない
 	pszWork = NULL;
@@ -453,17 +475,22 @@ DWORD CGrepAgent::DoGrep(
 		}
 		nGrepTreeResult += nTreeRet;
 	}
-	if( -1 == nGrepTreeResult ){
+	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
 		const wchar_t* p = LSW( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
-		pcViewDst->GetCommander().Command_ADDTAIL( p, -1 );
+		CNativeW cmemSuspend;
+		cmemSuspend.SetString( p );
+		AddTail( pcViewDst, cmemSuspend, sGrepOption.bGrepStdout );
 	}
-	{
+	if( sGrepOption.bGrepHeader ){
 		WCHAR szBuffer[128];
 		auto_sprintf( szBuffer, LSW( STR_GREP_MATCH_COUNT ), nHitCount );	//L"%d 個が検索されました。\r\n"
-		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
+		CNativeW cmemOutput;
+		cmemOutput.SetString( szBuffer );
+		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #ifdef _DEBUG
 		auto_sprintf( szBuffer, LSW(STR_GREP_TIMER), cRunningTimer.Read() );
-		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
+		cmemOutput.SetString( szBuffer );
+		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #endif
 	}
 	pcViewDst->GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), true );	//	カーソルをGrep直前の位置に戻す。
@@ -609,7 +636,7 @@ int CGrepAgent::DoGrepTree(
 		if( *pnHitCount - nHitCountOld  >= 10 ){
 			/* 結果出力 */
 			if( 0 < cmemMessage.GetStringLength() ){
-				pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
+				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 				pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
 				if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 					CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
@@ -625,7 +652,7 @@ int CGrepAgent::DoGrepTree(
 
 	// 2010.08.25 フォルダ移動前に残りを先に出力
 	if( 0 < cmemMessage.GetStringLength() ){
-		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
+		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 		pcViewDst->GetCommander().Command_GOFILEEND( false );
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
@@ -695,7 +722,7 @@ int CGrepAgent::DoGrepTree(
 cancel_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
-		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
+		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 		pcViewDst->GetCommander().Command_GOFILEEND( false );
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
