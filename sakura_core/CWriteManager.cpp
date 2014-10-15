@@ -26,6 +26,23 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 	EConvertResult		nRetVal = RESULT_COMPLETE;
 	std::auto_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode,0) );
 
+	{
+		// 変換テスト
+		CNativeW buffer = L"abcde";
+		CMemory tmp;
+		EConvertResult e = pcCodeBase->UnicodeToCode( buffer, &tmp );
+		if(e==RESULT_FAILURE){
+			nRetVal=RESULT_FAILURE;
+			ErrorMessage(
+				CEditWnd::getInstance()->GetHwnd(),
+				LS(STR_FILESAVE_CONVERT_ERROR),
+				sSaveInfo.cFilePath.c_str()
+			);
+			return nRetVal;
+		}
+	}
+
+
 	try
 	{
 		//ファイルオープン
@@ -52,6 +69,15 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				EConvertResult e = pcCodeBase->UnicodeToCode( cstrSrc, &cmemOutputBuffer );
 				if(e==RESULT_LOSESOME){
 					nRetVal=RESULT_LOSESOME;
+				}
+				if(e==RESULT_FAILURE){
+					nRetVal=RESULT_FAILURE;
+					ErrorMessage(
+						CEditWnd::getInstance()->GetHwnd(),
+						LS(STR_FILESAVE_CONVERT_ERROR),
+						sSaveInfo.cFilePath.c_str()
+					);
+					throw CError_FileWrite();
 				}
 			}
 			out.Write(cmemOutputBuffer.GetRawPtr(), cmemOutputBuffer.GetRawLength());
@@ -81,6 +107,15 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				);
 				if(e==RESULT_LOSESOME){
 					if(nRetVal==RESULT_COMPLETE)nRetVal=RESULT_LOSESOME;
+				}
+				if(e==RESULT_FAILURE){
+					nRetVal=RESULT_FAILURE;
+					ErrorMessage(
+						CEditWnd::getInstance()->GetHwnd(),
+						LS(STR_FILESAVE_CONVERT_ERROR),
+						sSaveInfo.cFilePath.c_str()
+					);
+					break;
 				}
 			}
 

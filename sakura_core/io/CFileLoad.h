@@ -33,6 +33,8 @@
 
 #include <Windows.h>
 #include "CStream.h" //CError_FileOpen
+#include "charset/CCodeBase.h"
+#include "charset/CCodePage.h"
 #include "util/design_template.h"
 
 // VC6添付のヘッダで定義されてません
@@ -41,7 +43,6 @@
 #endif // INVALID_SET_FILE_POINTER
 
 struct SEncodingConfig;
-#include "charset/CCodeBase.h"
 class CCodeBase;
 
 /*!
@@ -94,7 +95,7 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int* );
+	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int*, int* );
 
 	int Read( void*, size_t ); // inline
 	DWORD FilePointer( DWORD, DWORD ); // inline
@@ -110,6 +111,10 @@ protected:
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
 	CCodeBase*	m_pCodeBase;	////
+	EEncodingTrait	m_encodingTrait;
+	CMemory			m_memEols[3];
+	bool	m_bEolEx;		//!< CR/LF以外のEOLが有効か
+	int		m_nMaxEolLen;	//!< EOLの長さ
 	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca

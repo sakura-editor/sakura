@@ -110,6 +110,7 @@ public:
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ){return FALSE;} // @@2005.03.31 MIK タグジャンプDialog
 	virtual BOOL OnCbnDropDown( HWND hwndCtl, int wID );
+	static BOOL OnCbnDropDown( HWND hwndCtl, bool scrollBar );
 //	virtual BOOL OnCbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 

@@ -32,6 +32,7 @@ public:
 
 	ECodeType*	m_pnCharSet;			// 文字コードセット
 	bool*		m_pbBom;				// BOM
+	bool		m_bCP;
 
 	HWND		m_hwndCharSet;
 	HWND		m_hwndCheckBOM;

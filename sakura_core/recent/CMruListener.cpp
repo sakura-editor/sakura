@@ -28,6 +28,7 @@
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
+#include "charset/CCodePage.h"
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
 
@@ -53,7 +54,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	_HoldBookmarks_And_AddToMRU();	// ← 新規オープン（ファイル名未設定）では何もしない
 
 	// 文字コード指定は明示的であるか
-	bool bSpecified = IsValidCodeType(pLoadInfo->eCharCode);
+	bool bSpecified = IsValidCodeOrCPType(pLoadInfo->eCharCode);
 
 	// 前回のコード -> ePrevCode
 	EditInfo	fi;
@@ -101,11 +102,13 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	}
 
 	//食い違う場合
-	if(IsValidCodeType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){
+	if(IsValidCodeOrCPType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){
 		//オプション：前回と文字コードが異なるときに問い合わせを行う
 		if( GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange && !pLoadInfo->bRequestReload ){
-			const TCHAR* pszCodeNameOld = CCodeTypeName(ePrevCode).Normal();
-			const TCHAR* pszCodeNameNew = CCodeTypeName(pLoadInfo->eCharCode).Normal();
+			TCHAR szCpNameNew[260];
+			TCHAR szCpNameOld[260];
+			CCodePage::GetNameLong(szCpNameOld, ePrevCode);
+			CCodePage::GetNameLong(szCpNameNew, pLoadInfo->eCharCode);
 			ConfirmBeep();
 			int nRet = MYMESSAGEBOX(
 				CEditWnd::getInstance()->GetHwnd(),
@@ -113,10 +116,10 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 				LS(STR_ERR_DLGEDITDOC5),
 				LS(STR_ERR_DLGEDITDOC6),
 				pLoadInfo->cFilePath.c_str(),
-				pszCodeNameNew,
-				pszCodeNameOld,
-				pszCodeNameOld,
-				pszCodeNameNew
+				szCpNameNew,
+				szCpNameOld,
+				szCpNameOld,
+				szCpNameNew
 			);
 			if( IDYES == nRet ){
 				// 前回の文字コードを採用する

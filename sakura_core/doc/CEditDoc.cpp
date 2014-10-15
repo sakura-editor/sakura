@@ -467,7 +467,7 @@ bool CEditDoc::GetDocumentBomExist() const
 //! ドキュメントの文字コードを設定
 void CEditDoc::SetDocumentEncoding(ECodeType eCharCode, bool bBom)
 {
-	if(!IsValidCodeType(eCharCode))return; //無効な範囲を受け付けない
+	if(!IsValidCodeOrCPType(eCharCode))return; //無効な範囲を受け付けない
 
 	m_cDocFile.SetCodeSet( eCharCode, bBom );
 }

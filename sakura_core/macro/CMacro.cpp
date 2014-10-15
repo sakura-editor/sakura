@@ -1019,7 +1019,7 @@ bool CMacro::HandleCommand(
 			if (Argument[1] != NULL){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
-			if (LOWORD(Index) == F_FILESAVEAS && IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
+			if (LOWORD(Index) == F_FILESAVEAS && IsValidCodeOrCPType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
 				//	From Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
 				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode, CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
 				//	To Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»

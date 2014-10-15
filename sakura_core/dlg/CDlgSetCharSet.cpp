@@ -15,6 +15,7 @@
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "env/DLLSHAREDATA.h"
+#include "charset/CCodePage.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -25,6 +26,7 @@ const DWORD p_helpids[] = {
 	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ヘルプ
 	IDC_COMBO_CHARSET,				HIDC_OPENDLG_COMBO_CODE,			//文字コードセット
 	IDC_CHECK_BOM,					HIDC_OPENDLG_CHECK_BOM,				//条件
+	IDC_CHECK_CP,					HIDC_OPENDLG_CHECK_CP,				//CP
 	0, 0
 };
 
@@ -34,6 +36,7 @@ CDlgSetCharSet::CDlgSetCharSet()
 {
 	m_pnCharSet = NULL;			// 文字コードセット
 	m_pbBom = NULL;				// 文字コードセット
+	m_bCP = false;
 }
 
 
@@ -77,6 +80,13 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgSetCharSet::OnBnClicked( int wID )
 {
 	switch( wID ){
+	case IDC_CHECK_CP:
+		if( !m_bCP ){
+			m_bCP = true;
+			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+			CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, -1 );
+		}
+		return TRUE;
 	case IDC_BUTTON_HELP:
 		/* 「文字コードセット設定」のヘルプ */
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_CHG_CHARSET) );
@@ -172,15 +182,25 @@ LPVOID CDlgSetCharSet::GetHelpIdTable(void)
 void CDlgSetCharSet::SetData( void )
 {
 	// 文字コードセット
-	int		nIdx, nCurIdx;
+	int		nIdx, nCurIdx, nIdxOld;
 	ECodeType nCharSet;
 	CCodeTypesForCombobox cCodeTypes;
 
-	nCurIdx = Combo_GetCurSel( m_hwndCharSet );
+	nIdxOld = Combo_GetCurSel( m_hwndCharSet );
+	nCurIdx = -1;
 	for (nIdx = 0; nIdx < Combo_GetCount( m_hwndCharSet ); nIdx++) {
 		nCharSet = (ECodeType)Combo_GetItemData( m_hwndCharSet, nIdx );
 		if (nCharSet == *m_pnCharSet) {
 			nCurIdx = nIdx;
+		}
+	}
+	if( -1 == nCurIdx ){
+		m_bCP = true;
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+		nCurIdx = CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, *m_pnCharSet );
+		if( nCurIdx == -1 ){
+			nCurIdx = nIdxOld;
 		}
 	}
 	Combo_SetCurSel( m_hwndCharSet, nCurIdx );

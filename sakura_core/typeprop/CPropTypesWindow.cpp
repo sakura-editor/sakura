@@ -11,6 +11,7 @@
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
 #include "view/colors/EColorIndexType.h"
+#include "charset/CCodePage.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -25,6 +26,7 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
 
 	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//デフォルト文字コード
+	IDC_CHECK_CP,					HIDC_CHECK_TYPE_SUPPORT_CP,			//コードページ
 	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//デフォルト改行コード	// 2011.01.24 ryoji
 	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//デフォルトBOM	// 2011.01.24 ryoji
 	IDC_CHECK_PRIOR_CESU8,			HIDC_CHECK_PRIOR_CESU8,				//自動判別時にCESU-8を優先する
@@ -148,6 +150,13 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			//	To Here Sept. 10, 2000
 
 			}
+			case IDC_CHECK_CP:
+				{
+					::CheckDlgButton( hwndDlg, IDC_CHECK_CP, TRUE );
+					::EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_CP ), FALSE );
+					CCodePage::AddComboCodePages( hwndDlg, ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_CODETYPE), -1 );
+				}
+				return TRUE;
 			break;	/* BN_CLICKED */
 		}
 		break;	/* WM_COMMAND */
@@ -252,7 +261,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_encoding.m_bPriorCesu8 );
 
 		// デフォルトコードタイプのコンボボックス設定
-		int		nSel= 0;
+		int		nSel= -1;
 		int		j = 0;
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		CCodeTypesForCombobox cCodeTypes;
@@ -264,6 +273,16 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 					nSel = j;
 				}
 				j++;
+			}
+		}
+		if( nSel == -1 ){
+			::CheckDlgButton( hwndDlg, IDC_CHECK_CP, TRUE );
+			::EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_CP ), FALSE );
+			int nIdx = CCodePage::AddComboCodePages( hwndDlg, hCombo, m_Types.m_encoding.m_eDefaultCodetype );
+			if( nIdx == -1 ){
+				nSel = 0;
+			}else{
+				nSel = nIdx;
 			}
 		}
 		Combo_SetCurSel( hCombo, nSel );

@@ -236,6 +236,8 @@ BEGIN
     LTEXT           "Encoding(&A)",IDC_STATIC,16,142,62,8
     COMBOBOX        IDC_COMBO_CHARSET,80,140,65,101,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
+    CONTROL         "CP(&Q)",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,148,142,30,10
     CONTROL         "&Default for Folder is 1st Folder",
                     IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,156,164,10
@@ -617,11 +619,13 @@ BEGIN
     LTEXT           "Encoding(&C):",IDC_STATIC,5,15,64,8
     COMBOBOX        IDC_COMBO_CODE,71,13,50,126,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "CR Code(&E):",IDC_STATIC_EOL,127,15,45,8
-    COMBOBOX        IDC_COMBO_EOL,173,13,50,126,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "C&P",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,122,14,25,10
     CONTROL         "&BOM",IDC_CHECK_BOM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,226,14,30,10
+                    WS_TABSTOP,148,14,30,10
+    LTEXT           "CR Code(&E):",IDC_STATIC_EOL,181,15,45,8
+    COMBOBOX        IDC_COMBO_EOL,226,13,50,126,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     LTEXT           "Recent File(&F):",IDC_STATIC,5,32,59,8
     COMBOBOX        IDC_COMBO_MRU,71,30,185,236,CBS_DROPDOWNLIST | 
                     CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
@@ -832,7 +836,8 @@ BEGIN
     LTEXT           "Encoding(&C):", IDC_STATIC, 5, 9, 64, 8
     COMBOBOX        IDC_COMBO_CHARSET, 71, 7, 50, 126, CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    AUTOCHECKBOX    "&BOM", IDC_CHECK_BOM, 71, 26, 30, 10
+    AUTOCHECKBOX    "C&P", IDC_CHECK_CP, 71, 26, 25, 10
+    AUTOCHECKBOX    "&BOM", IDC_CHECK_BOM, 96, 26, 30, 10
     DEFPUSHBUTTON   "&OK", IDOK, 129, 7, 50, 14
     PUSHBUTTON      "Cancel(&X)", IDCANCEL, 129, 24, 50, 14
 END
@@ -1181,11 +1186,13 @@ BEGIN
     LTEXT           "CR Code(&E)",IDC_STATIC,15,34,46,8
     COMBOBOX        IDC_COMBO_DEFAULT_EOLTYPE,57,32,52,57,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&BOM",IDC_CHECK_DEFAULT_BOM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,114,33,30,10
     LTEXT           "Encoding(&C)",IDC_STATIC,8,49,46,8
     COMBOBOX        IDC_COMBO_DEFAULT_CODETYPE,57,47,52,57,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&BOM",IDC_CHECK_DEFAULT_BOM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,114,48,30,10
+    CONTROL         "C&P",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    114,48,25,10
     CONTROL         "Give Priority to CESU-8 at Auto-Detection(&U)",
                     IDC_CHECK_PRIOR_CESU8,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,63,135,10
@@ -4508,6 +4515,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_PLGMGR_INST_MAX				"プラグインをこれ以上登録できません"
 
 	STR_WSHPLUG_LOADMACRO			"マクロの読み込みに失敗しました。\n\n%ts"
+	STR_FILESAVE_CONVERT_ERROR		"'%ts'\nFailed File save\nConvert Error."
 
 END
 

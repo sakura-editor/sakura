@@ -191,14 +191,25 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 	{
 		TCHAR	exename[512];
 		::GetModuleFileName( NULL, exename, _countof(exename) );
+		WCHAR	wexename[512];
+		auto_strcpy( wexename, to_wchar(exename) );
 
-		int		len = _tcslen( exename );
+		int		len = wcslen( wexename );
 
-		for( TCHAR *p = exename + len - 1; p > exename; p-- ){
-			if( *p == _T('.') ){
-				ECodeType n = (ECodeType)(p[-1] - _T('0'));
-				if(IsValidCodeType(n))
-					m_fi.m_nCharCode = n;
+		for( int i = len - 1; 0 <= i; i-- ){
+			if(wexename[i] == L'.' ){
+				wexename[i] = L'\0';
+				int k = i - 1;
+				for(; 0 < k && WCODE::Is09(wexename[k]); k-- ){}
+				if( k < 0 || !WCODE::Is09(wexename[k])){
+					k++;
+				}
+				if( WCODE::Is09(wexename[k]) ){
+					ECodeType n = (ECodeType)_wtoi(&wexename[k]);
+					if(IsValidCodeOrCPType(n)){
+						m_fi.m_nCharCode = n;
+					}
+				}
 				break;
 			}
 		}

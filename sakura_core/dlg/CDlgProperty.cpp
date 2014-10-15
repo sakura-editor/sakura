@@ -40,6 +40,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "charset/charcode.h"	// rastiv, 2006/06/28
+#include "charset/CCodePage.h"
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 #include "util/shell.h"
@@ -106,7 +107,11 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendString( _T("\r\n") );
 
 	cmemProp.AppendString( LS(STR_DLGFLPROP_ENCODING) );
-	cmemProp.AppendString( CCodeTypeName(pCEditDoc->GetDocumentEncoding()).Normal() );
+	{
+		TCHAR szCpName[100];
+		CCodePage::GetNameNormal(szCpName, pCEditDoc->GetDocumentEncoding());
+		cmemProp.AppendString( szCpName );
+	}
 	//	From Here  2008/4/27 Uchi
 	if (pCEditDoc->GetDocumentBomExist()) {
 		cmemProp.AppendString( LS(STR_DLGFLPROP_WITH_BOM) );

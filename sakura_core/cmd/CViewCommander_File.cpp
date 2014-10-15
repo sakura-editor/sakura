@@ -743,7 +743,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	}
 
 	/* ここまできて文字コードが決定しないならどこかおかしい */
-	if( !IsValidCodeType(nSaveCharCode) ) nSaveCharCode = CODE_SJIS;
+	if( !IsValidCodeOrCPType(nSaveCharCode) ) nSaveCharCode = CODE_SJIS;
 
 	try{
 		// ファイルを開く
