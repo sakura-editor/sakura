@@ -21,6 +21,7 @@
 #include "CGrepAgent.h"
 #include "CGrepEnumKeys.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
+#include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/os.h"
@@ -43,6 +44,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_CHK_LOHICASE,				HIDC_GREP_CHK_LOHICASE,				//大文字小文字
 	IDC_CHK_REGULAREXP,				HIDC_GREP_CHK_REGULAREXP,			//正規表現
 	IDC_COMBO_CHARSET,				HIDC_GREP_COMBO_CHARSET,			//文字コードセット
+	IDC_CHECK_CP,					HIDC_GREP_CHECK_CP,					//コードページ
 	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//条件
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダ
@@ -364,6 +366,15 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 
 		return TRUE;
+	case IDC_CHECK_CP:
+		{
+			if( IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CP ) ){
+				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+				HWND combo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
+				CCodePage::AddComboCodePages(GetHwnd(), combo, -1);
+			}
+		}
+		return TRUE;
 	case IDC_CHK_DEFAULTFOLDER:
 		/* フォルダの初期値をカレントフォルダにする */
 		{
@@ -447,7 +458,7 @@ void CDlgGrep::SetData( void )
 	// 2002/09/22 Moca Add
 	/* 文字コードセット */
 	{
-		int		nIdx, nCurIdx;
+		int		nIdx, nCurIdx = -1;
 		ECodeType nCharSet;
 		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
 		nCurIdx = Combo_GetCurSel( hWndCombo );
@@ -458,7 +469,16 @@ void CDlgGrep::SetData( void )
 				nCurIdx = nIdx;
 			}
 		}
-		Combo_SetCurSel( hWndCombo, nCurIdx );
+		if( nCurIdx != -1 ){
+			Combo_SetCurSel( hWndCombo, nCurIdx );
+		}else{
+			::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
+			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+			nCurIdx = CCodePage::AddComboCodePages(GetHwnd(), hWndCombo, m_nGrepCharSet);
+			if( nCurIdx == -1 ){
+				Combo_SetCurSel( hWndCombo, 0 );
+			}
+		}
 	}
 
 	/* 行を出力するか該当部分だけ出力するか */

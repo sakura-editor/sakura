@@ -91,6 +91,7 @@ charset/CCesu8.o \
 charset/CCodeBase.o \
 charset/CCodeFactory.o \
 charset/CCodeMediator.o \
+charset/CCodePage.o \
 charset/CESI.o \
 charset/CEuc.o \
 charset/charcode.o \

@@ -17,6 +17,22 @@ void CUtf8::GetBom(CMemory* pcmemBom)
 
 
 
+void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
+	static const struct{
+		const char* szData;
+		int nLen;
+	}
+	aEolTable[EOL_TYPE_NUM] = {
+		"",			0,	// EOL_NONE
+		"\x0d\x0a",	2,	// EOL_CRLF
+		"\x0a",		1,	// EOL_LF
+		"\x0d",		1,	// EOL_CR
+		"\xc2\x85",			2,	// EOL_NEL
+		"\xe2\x80\xa8",		3,	// EOL_LS
+		"\xe2\x80\xa9",		3,	// EOL_PS
+	};
+	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+}
 
 
 /*!

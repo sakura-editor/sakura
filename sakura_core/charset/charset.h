@@ -41,6 +41,8 @@ enum ECodeType {
 	CODE_CESU8,						//!< CESU-8
 	CODE_LATIN1,					//!< Latin1				(Latin1, 欧文, Windows-1252, Windows Codepage 1252 West European)
 	CODE_CODEMAX,
+	CODE_CPACP      = 90,
+	CODE_CPOEM      = 91,
 	CODE_AUTODETECT	= 99,			//!< 文字コード自動判別
 	CODE_ERROR      = -1,			//!< エラー
 	CODE_NONE       = -1,			//!< 未検出
@@ -91,8 +93,22 @@ inline bool IsValidCodeTypeExceptSJIS(int code)
 //{
 //	return IsValidCodeType(eCodeType) && eCodeType != CODE_AUTODETECT;
 //}
+inline bool IsValidCodePageEx(int code)
+{
+	return 12000 == code
+		|| 12001 == code
+		|| ::IsValidCodePage(code);
+}
 
 void InitCodeSet();
+inline bool IsValidCodeOrCPType(int code)
+{
+	return IsValidCodeType(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
+}
+inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
+{
+	return IsValidCodeTypeExceptSJIS(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
+}
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -103,6 +119,7 @@ class CCodeTypeName{
 public:
 	CCodeTypeName(ECodeType eCodeType) : m_eCodeType(eCodeType) { InitCodeSet(); }
 	CCodeTypeName(int eCodeType) : m_eCodeType((ECodeType)eCodeType) { InitCodeSet(); }
+	ECodeType GetCode() const { return m_eCodeType; }
 	LPCTSTR	Normal() const;
 	LPCTSTR	Short() const;
 	LPCTSTR	Bracket() const;

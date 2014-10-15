@@ -44,6 +44,7 @@
 #include "doc/layout/CLayout.h"
 #include "mem/CMemoryIterator.h"
 #include "charset/charcode.h"
+#include "charset/CCodePage.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
@@ -676,18 +677,22 @@ void CCaret::ShowCaretPosInfo()
 	const TCHAR* pszCodeName;
 	CNativeT cmemCodeName;
 	if (hwndStatusBar) {
-		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal() );
+		TCHAR szCodeName[100];
+		CCodePage::GetNameNormal(szCodeName, m_pEditDoc->GetDocumentEncoding());
+		cmemCodeName.AppendString(szCodeName);
 		if (m_pEditDoc->GetDocumentBomExist()) {
 			cmemCodeName.AppendString( LS(STR_CARET_WITHBOM) );
 		}
 	}
 	else {
-		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Short() );
+		TCHAR szCodeName[100];
+		CCodePage::GetNameShort(szCodeName, m_pEditDoc->GetDocumentEncoding());
+		cmemCodeName.AppendString(szCodeName);
 		if (m_pEditDoc->GetDocumentBomExist()) {
 			cmemCodeName.AppendString( _T("#") );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
 		}
 	}
-	pszCodeName = (const TCHAR*)cmemCodeName._GetMemory()->GetRawPtr();
+	pszCodeName = cmemCodeName.GetStringPtr();
 
 
 	// -- -- -- -- 改行モード -> szEolMode -- -- -- -- //

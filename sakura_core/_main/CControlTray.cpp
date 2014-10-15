@@ -1122,7 +1122,7 @@ bool CControlTray::OpenNewEditor(
 	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
 
 	// コード指定
-	if( IsValidCodeType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
+	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
 
 	// ビューモード指定
 	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( _T(" -R") );

@@ -30,6 +30,7 @@
 
 #include "DLLSHAREDATA.h"
 #include "CFileNameManager.h"
+#include "charset/CCodePage.h"
 #include "util/module.h"
 #include "util/os.h"
 #include "util/shell.h"
@@ -384,7 +385,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	if( NULL == pfi ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
 		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
-		return true; // true‚É‚µ‚Ä‚¨‚­
+		return 0 < ret;
 	}else if( pfi->m_bIsGrep ){
 		
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
@@ -455,8 +456,12 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszName = szFileName;
 	}
 	const TCHAR* pszCharset = _T("");
+	TCHAR szCodePageName[100];
 	if( IsValidCodeTypeExceptSJIS(nCharCode)){
 		pszCharset = CCodeTypeName(nCharCode).Bracket();
+	}else if( IsValidCodeOrCPTypeExceptSJIS(nCharCode) ){
+		CCodePage::GetNameBracket(szCodePageName, nCharCode);
+		pszCharset = szCodePageName;
 	}
 	
 	int ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts%ts%ts %ts%ts"),

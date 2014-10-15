@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
+#include "charset/CCodePage.h"
 #include "charset/CCodeMediator.h"
 #include "charset/CEuc.h"
 #include "charset/codeutil.h"
@@ -836,8 +837,9 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 
 	pcmtxtOut->AppendString( LS(STR_ESI_DEFAULT_CHARCODE) );	// "デフォルト文字コード\r\n"
 
-
-	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype).Normal() );
+	TCHAR szCpName[100];
+	CCodePage::GetNameNormal(szCpName, doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype);
+	auto_sprintf( szWork, _T("\t%ts\r\n"), szCpName );
 	pcmtxtOut->AppendString( szWork );
 
 
@@ -872,7 +874,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	pcmtxtOut->AppendString( szWork );
 	pcmtxtOut->AppendString( LS(STR_ESI_MBC_OTHER_UNICODE) );
 	for( i = 0; i < NUM_OF_MBCODE; ++i ){
-		if( !IsValidCodeType(cesi.m_apMbcInfo[i]->eCodeID) ){
+		if( !IsValidCodeOrCPType(cesi.m_apMbcInfo[i]->eCodeID) ){
 			cesi.m_apMbcInfo[i]->eCodeID = CODE_SJIS;
 		}
 		cesi.GetEvaluation( cesi.m_apMbcInfo[i]->eCodeID, &v1, &v2 );

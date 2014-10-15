@@ -55,7 +55,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		CCodeMediator cmediator( type->m_encoding );
 		eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
-	if (!IsValidCodeType( eCharCode )) {
+	if (!IsValidCodeOrCPType( eCharCode )) {
 		eCharCode = type->m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
 	bool	bBom;

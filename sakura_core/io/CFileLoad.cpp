@@ -41,6 +41,7 @@
 #include "charset/charcode.h"
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h" ////
+#include "charset/CCodePage.h"
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"
 #include "charset/CESI.h"
@@ -68,6 +69,7 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
 	m_pCodeBase		= NULL;////
+	m_encodingTrait = ENCODING_TRAIT_ASCII;
 	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
@@ -158,11 +160,12 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
-	if( !IsValidCodeType(CharCode) ){
+	if( !IsValidCodeOrCPType(CharCode) ){
 		CharCode = CODE_DEFAULT;
 	}
 	m_CharCode = CharCode;
 	m_pCodeBase=CCodeFactory::CreateCodeBase(m_CharCode, m_nFlag);
+	m_encodingTrait = CCodePage::GetEncodingTrait(m_CharCode);
 	m_nFlag = nFlag;
 
 	m_nFileDataLen = m_nFileSize;
@@ -191,6 +194,19 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_READY;
 //	m_cmemLine.AllocBuffer( 256 );
+	m_pCodeBase->GetEol( &m_memEols[0], EOL_NEL );
+	m_pCodeBase->GetEol( &m_memEols[1], EOL_LS );
+	m_pCodeBase->GetEol( &m_memEols[2], EOL_PS );
+	bool bEolEx = false;
+	int  nMaxEolLen = 0;
+	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
+		if( 0 != m_memEols[k].GetRawLength() ){
+			bEolEx = true;
+			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
+		}
+	}
+	m_bEolEx = bEolEx;
+	m_nMaxEolLen = nMaxEolLen;
 	return m_CharCode;
 }
 
@@ -246,6 +262,7 @@ EConvertResult CFileLoad::ReadLine(
 	//	Oct. 19, 2002 genta while条件を整理
 	int			nBufLineLen;
 	int			nEolLen;
+	int			nBufferNext;
 	for (;;) {
 		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
@@ -253,22 +270,27 @@ EConvertResult CFileLoad::ReadLine(
 			&nBufLineLen,      //[out]改行を含まない長さ
 			&m_nReadBufOffSet, //[i/o]オフセット
 			pcEol,
-			&nEolLen
+			&nEolLen,
+			&nBufferNext
 		);
 		if(pLine==NULL)break;
 
 		// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
 			int n = 128;
-			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nBufLineLen + 100;
+			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nEolLen - nBufferNext + 100;
 			while( n < nMinAllocSize ){
 				n *= 2;
 			}
 			m_cLineBuffer.AllocBuffer( n );
-			m_cLineBuffer.AppendRawData( pLine, nBufLineLen );
-			m_nReadBufOffSet -= nEolLen;
+			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen - nBufferNext );
+			m_nReadBufOffSet -= nBufferNext;
 			// バッファロード   File -> ReadBuf
 			Buffering();
+			if( 0 == nBufferNext && 0 < nEolLen ){
+				// ぴったり行出力
+				break;
+			}
 		}else{
 			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen );
 			break;
@@ -386,13 +408,14 @@ const char* CFileLoad::GetNextLineCharCode(
 	int*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
 	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
 	CEol*		pcEol,		//!< [i/o]	EOL
-	int*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
+	int*		pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
+	int*		pnBufferNext	//!< [out]	次回持越しバッファ長(EOLの断片)
 ){
 	int nbgn = *pnBgn;
 	int i;
-	int neollen;
 
 	pcEol->SetType( EOL_NONE );
+	*pnBufferNext = 0;
 
 	if( nDataLen <= nbgn ){
 		*pnLineLen = 0;
@@ -400,42 +423,159 @@ const char* CFileLoad::GetNextLineCharCode(
 		return NULL;
 	}
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
-
-	switch( m_CharCode ){
-	case CODE_UNICODE:
-		for( i = nbgn; i < nDataLen; i += 2 ){
+	int nLen = nDataLen;
+	int neollen = 0;
+	switch( m_encodingTrait ){
+	case ENCODING_TRAIT_ERROR://
+	case ENCODING_TRAIT_ASCII:
+		{
+			static const EEolType eEolEx[] = {
+				EOL_NEL,
+				EOL_LS,
+				EOL_PS,
+			};
+			nLen = nDataLen;
+			for( i = nbgn; i < nDataLen; ++i ){
+				if( pData[i] == '\r' || pData[i] == '\n' ){
+					pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+					neollen = pcEol->GetLen();
+					break;
+				}
+				if( m_bEolEx ){
+					int k;
+					for( k = 0; k < (int)_countof(eEolEx); k++ ){
+						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
+								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
+							pcEol->SetType(eEolEx[k]);
+							neollen = m_memEols[k].GetRawLength();
+							break;
+						}
+					}
+					if( k != (int)_countof(eEolEx) ){
+						break;
+					}
+				}
+			}
+			// UTF-8のNEL,PS,LS断片の検出
+			if( i == nDataLen && m_bEolEx ){
+				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
+					int k;
+					bool bSet = false;
+					for( k = 0; k < (int)_countof(eEolEx); k++ ){
+						int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
+						if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
+							*pnBufferNext = t_max(*pnBufferNext, nCompLen);
+							bSet = true;
+						}
+					}
+					if( bSet ){
+						break;
+					}
+				}
+				i = nDataLen;
+			}
+		}
+		break;
+	case ENCODING_TRAIT_UTF16LE:
+		nLen = nDataLen - 1;
+		for( i = nbgn; i < nLen; i += 2 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
 			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
+				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
 				break;
 			}
 		}
 		break;
-	case CODE_UNICODEBE:
-		for( i = nbgn; i < nDataLen; i += 2 ){
+	case ENCODING_TRAIT_UTF16BE:
+		nLen = nDataLen - 1;
+		for( i = nbgn; i < nLen; i += 2 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i] << 8) | pUData[i + 1]);
 			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
+				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
 				break;
 			}
 		}
 		break;
-	default:
-		for( i = nbgn; i < nDataLen; ++i ){
-			if( pData[i] == '\r' || pData[i] == '\n' ){
-				pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+	case ENCODING_TRAIT_UTF32LE:
+		nLen = nDataLen - 3;
+		for( i = nbgn; i < nLen; i += 4 ){
+			wchar_t c = static_cast<wchar_t>((pUData[i+1] << 8) | pUData[i]);
+			if( pUData[i+3] == 0x00 && pUData[i+2] == 0x00 && WCODE::IsLineDelimiter(c) ){
+				wchar_t c2;
+				int eolTempLen;
+				if( i + 4 < nLen && pUData[i+7] == 0x00 && pUData[i+6] == 0x00 ){
+					c2 = static_cast<wchar_t>((pUData[i+5] << 8) | pUData[i+4]);
+					eolTempLen = 2 * sizeof(wchar_t);
+				}else{
+					c2 = 0x0000;
+					eolTempLen = 1 * sizeof(wchar_t);
+				}
+				wchar_t pDataTmp[2] = {c, c2};
+				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
+				neollen = (Int)pcEol->GetLen() * 4;
 				break;
 			}
 		}
+		break;
+	case ENCODING_TRAIT_UTF32BE:
+		nLen = nDataLen - 3;
+		for( i = nbgn; i < nLen; i += 4 ){
+			wchar_t c = static_cast<wchar_t>((pUData[i+2] << 8) | pUData[i+3]);
+			if( pUData[i] == 0x00 && pUData[i+1] == 0x00 && WCODE::IsLineDelimiter(c) ){
+				wchar_t c2;
+				int eolTempLen;
+				if( i + 4 < nLen && pUData[i+4] == 0x00 && pUData[i+5] == 0x00 ){
+					c2 = static_cast<wchar_t>((pUData[i+6] << 8) | pUData[i+7]);
+					eolTempLen = 2 * sizeof(wchar_t);
+				}else{
+					c2 = 0x0000;
+					eolTempLen = 1 * sizeof(wchar_t);
+				}
+				wchar_t pDataTmp[2] = {c, c2};
+				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
+				neollen = (Int)pcEol->GetLen() * 4;
+				break;
+			}
+		}
+		break;
+	case ENCODING_TRAIT_EBCDEC_CRLF:
+	case ENCODING_TRAIT_EBCDEC:
+		// EOLコード変換しつつ設定
+		for( i = nbgn; i < nDataLen; ++i ){
+			if( m_encodingTrait == ENCODING_TRAIT_EBCDEC ){
+				if( pData[i] == '\x15' ){
+					pcEol->SetType(EOL_NEL);
+					neollen = 1;
+					break;
+				}
+			}
+			if( pData[i] == '\x0d' || pData[i] == '\x25' ){
+				char szEof[3] = {
+					(pData[i]  == '\x25' ? '\x0a' : '\x0d'),
+					(pData[i+1]== '\x25' ? '\x0a' : 
+						(pData[i+1] == '\x0a' ? 0 : // EBCDEC の"\x0aがLFにならないように細工する
+							(i + 1 < nDataLen ? pData[i+1] : 0))),
+					0
+				};
+				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i,2) );
+				neollen = (Int)pcEol->GetLen();
+				break;
+			}
+		}
+		break;
 	}
 
-	neollen = pcEol->GetLen();
-	if( m_CharCode == CODE_UNICODE || m_CharCode == CODE_UNICODEBE ){
-		neollen *= sizeof(wchar_t);   // EOL のバイト数を計算
-		if( neollen < 1 ){
-			if( i != nDataLen ){
-				i = nDataLen;		// 最後の半端な1バイトを落とさないように
-			}
+	if( neollen < 1 ){
+		// EOLがなかった場合
+		if( i != nDataLen ){
+			i = nDataLen;		// 最後の半端なバイトを落とさないように
+		}
+	}else{
+		// CRの場合は、CRLFかもしれないので次のバッファへ送る
+		if( *pcEol == EOL_CR ){
+			*pnBufferNext = neollen;
 		}
 	}
 

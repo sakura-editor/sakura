@@ -824,6 +824,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\charset\CCodePage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CCodePage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\charset\CESI.cpp"
 					>
 				</File>

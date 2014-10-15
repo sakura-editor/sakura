@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "CCodeChecker.h"
+#include "charset/CCodePage.h"
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h" ////
 
@@ -94,12 +95,14 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//ÉÜÅ[ÉUñ‚Ç¢çáÇÌÇπ
 	if(nTmpResult==RESULT_LOSESOME){
+		TCHAR szCpName[100];
+		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
 			MB_YESNO | MB_ICONWARNING,
 			GSTR_APPNAME,
 			LS(STR_CODECHECKER_CONFORM_LOSESOME),
-			CCodeTypeName(pSaveInfo->eCharCode).Normal()
+			szCpName
 		);
 		switch(nDlgResult){
 		case IDYES:		break; //ë±çs

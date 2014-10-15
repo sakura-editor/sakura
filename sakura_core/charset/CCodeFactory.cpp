@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "CCodeFactory.h"
 #include "CCodeMediator.h"
+#include "CCodePage.h"
 
 // move start	from CCodeMediator.h	2012/12/02 Uchi
 #include "CEuc.h"
@@ -30,8 +31,13 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 	case CODE_UNICODEBE:	return new CUnicodeBe();
 	case CODE_CESU8:		return new CCesu8();
 	case CODE_LATIN1:		return new CLatin1();	// 2010/3/20 Uchi
+	case CODE_CPACP:		return new CCodePage(eCodeType);
+	case CODE_CPOEM:		return new CCodePage(eCodeType);
 	default:
-		assert(0);
+		if( IsValidCodePageEx(eCodeType) ){
+			return new CCodePage(eCodeType);
+		}
+		assert_warning(0);
 	}
 	return NULL;
 }

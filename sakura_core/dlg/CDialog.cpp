@@ -527,6 +527,10 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	return TRUE;
 }
 
+BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
+{
+	return OnCbnDropDown( hwndCtl, false );
+}
 /** コンボボックスのドロップダウン時処理
 
 	コンボボックスがドロップダウンされる時に
@@ -538,7 +542,7 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	@author ryoji
 	@date 2009.03.29 新規作成
 */
-BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
+BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 {
 	HDC hDC;
 	HFONT hFont;
@@ -549,6 +553,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	int iItem;
 	int nItem;
 	const int nMargin = 8;
+	int nScrollWidth = scrollBar ? ::GetSystemMetrics( SM_CXVSCROLL ) + 2 : 2;
 
 	hDC = ::GetDC( hwndCtl );
 	if( NULL == hDC )
@@ -557,15 +562,15 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	hFont = (HFONT)::SelectObject( hDC, hFont );
 	nItem = Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );
-	nWidth = rc.right - rc.left - nMargin;
+	nWidth = rc.right - rc.left - nMargin + nScrollWidth;
 	for( iItem = 0; iItem < nItem; iItem++ ){
 		nTextLen = Combo_GetLBTextLen( hwndCtl, iItem );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
 			Combo_GetLBText( hwndCtl, iItem, pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
-				if ( nWidth < sizeText.cx )
-					nWidth = sizeText.cx;
+				if ( nWidth < sizeText.cx + nScrollWidth )
+					nWidth = sizeText.cx + nScrollWidth;
 			}
 			delete []pszText;
 		}

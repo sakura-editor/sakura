@@ -30,6 +30,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
 #include "_main/CControlTray.h"
+#include "charset/CCodePage.h"
 #include "debug/CRunningTimer.h"
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
@@ -804,16 +805,17 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 		::SendMessageAny( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		if(nCharCode != CODE_AUTODETECT){
-			LPCTSTR pszCodeNameNew = CCodeTypeName(nCharCode).Normal();
-			LPCTSTR pszCodeNameCur = CCodeTypeName(pfi->m_nCharCode).Normal();
-
-			if(pszCodeNameCur && pszCodeNameNew){
+			TCHAR szCpNameCur[100];
+			CCodePage::GetNameLong(szCpNameCur, pfi->m_nCharCode);
+			TCHAR szCpNameNew[100];
+			CCodePage::GetNameLong(szCpNameNew, pfi->m_nCharCode);
+			if(szCpNameCur[0] && szCpNameNew[0]){
 				if(nCharCode != pfi->m_nCharCode){
 					TopWarningMessage( *phwndOwner,
 						LS(STR_ERR_CSHAREDATA20),
 						pszPath,
-						pszCodeNameCur,
-						pszCodeNameNew
+						szCpNameCur,
+						szCpNameNew
 					);
 				}
 			}
@@ -822,9 +824,9 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 					LS(STR_ERR_CSHAREDATA21),
 					pszPath,
 					pfi->m_nCharCode,
-					NULL==pszCodeNameCur?LS(STR_ERR_CSHAREDATA22):pszCodeNameCur,
+					0==szCpNameCur[0]?LS(STR_ERR_CSHAREDATA22):szCpNameCur,
 					nCharCode,
-					NULL==pszCodeNameNew?LS(STR_ERR_CSHAREDATA22):pszCodeNameNew
+					0==szCpNameNew[0]?LS(STR_ERR_CSHAREDATA22):szCpNameNew
 				);
 			}
 		}

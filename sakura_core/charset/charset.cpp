@@ -35,6 +35,7 @@
 */
 #include "StdAfx.h"
 #include "charset.h"
+#include "CCodePage.h"
 #include <vector>
 #include <map>
 
@@ -135,6 +136,12 @@ LPCTSTR CCodeTypeName::Bracket() const
 bool CCodeTypeName::UseBom()
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		if( IsValidCodeOrCPType(m_eCodeType) ){
+			CCodePage encoding(m_eCodeType);
+			CMemory mem;
+			encoding.GetBom(&mem);
+			return 0 < mem.GetRawLength();
+		}
 		return false;
 	}
 
@@ -153,6 +160,9 @@ bool CCodeTypeName::IsBomDefOn()
 bool CCodeTypeName::CanDefault()
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		if( IsValidCodeOrCPType(m_eCodeType) ){
+			return true;
+		}
 		return false;
 	}
 

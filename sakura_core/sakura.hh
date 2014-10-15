@@ -687,6 +687,7 @@
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
 #define HIDC_CHECK_DEFAULT_BOM					14303 //デフォルトBOM			// 2011.01.24 ryoji
+#define HIDC_CHECK_TYPE_SUPPORT_CP				14304 //コードページ
 #define HIDC_BUTTON_REGEX_IMPORT	11600	//インポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_EXPORT	11601	//エクスポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_INS		11602	//挿入			//@@@ 2001.11.17 add MIK
@@ -795,6 +796,7 @@
 #define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダ表示
 #define HIDC_CHECK_SEP_FOLDER			12023	//フォルダ毎に表示
 #define HIDC_GREP_BUTTON_FOLDER_UP		12024	//Up
+#define HIDC_GREP_CHECK_CP				12025	//コードページ
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照
@@ -940,6 +942,7 @@
 #define HIDC_OPENDLG_COMBO_OPENFOLDER	13105	//最近のフォルダ
 #define HIDC_OPENDLG_COMBO_EOL	13106	//改行コード
 #define HIDC_OPENDLG_CHECK_BOM	13107	//BOM	// 2006.08.06 ryoji
+#define HIDC_OPENDLG_CHECK_CP	13108	//CP
 
 //DIFF差分表示
 #define HIDC_BUTTON_DIFF_DST		13200	// 相手ファイル参照

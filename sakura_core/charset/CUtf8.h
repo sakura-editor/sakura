@@ -40,7 +40,7 @@ public:
 		return UnicodeToUTF8(cSrc, pDst);
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMƒf[ƒ^Žæ“¾
-// GetEol‚ÍCCodeBase‚ÉˆÚ“®	2010/6/13 Uchi
+	void GetEol(CMemory* pcmemEol, EEolType eEolType);
 	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE ¨ Hex •ÏŠ·
 	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, TCHAR* pd, const CommonSetting_Statusbar* psStatusbar){ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 

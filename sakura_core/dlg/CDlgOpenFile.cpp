@@ -26,9 +26,12 @@
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "CEditApp.h"
+#include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
 #include "recent/CRecent.h"
 #include "_os/COsVersionInfo.h"
+#include "dlg/CDialog.h"
+#include "util/window.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -46,6 +49,7 @@ static const DWORD p_helpids[] = {	//13100
 	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダ
 	IDC_COMBO_EOL,			HIDC_OPENDLG_COMBO_EOL,			//改行コード
 	IDC_CHECK_BOM,			HIDC_OPENDLG_CHECK_BOM,			//BOM	// 2006.08.06 ryoji
+	IDC_CHECK_CP,			HIDC_OPENDLG_CHECK_CP,			//CP
 //	IDC_STATIC,				-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -69,6 +73,9 @@ struct OPENFILENAMEZ : public OPENFILENAME {
 #ifndef OFN_ENABLESIZING
 	#define OFN_ENABLESIZING	0x00800000
 #endif
+
+static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
+
 
 // 2014.05.22 Moca FileDialogの再入サポート
 class CDlgOpenFileMem{
@@ -100,6 +107,8 @@ public:
 	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
+
+	bool			m_bInitCodePage;
 
 	SComboBoxItemDeleter	m_combDelFile;
 	CRecentFile				m_cRecentFile;
@@ -265,6 +274,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			pData->m_hwndComboOPENFOLDER = ::GetDlgItem( hdlg, IDC_COMBO_OPENFOLDER );
 			pData->m_hwndComboEOL = ::GetDlgItem( hdlg, IDC_COMBO_EOL );
 			pData->m_hwndCheckBOM = ::GetDlgItem( hdlg, IDC_CHECK_BOM );//	Jul. 26, 2003 ryoji BOMチェックボックス
+			pData->m_bInitCodePage = false;
 
 			// 2005.11.02 ryoji 初期レイアウト設定
 			CDlgOpenFile::InitLayout( pData->m_hwndOpenDlg, hdlg, pData->m_hwndComboCODES );
@@ -327,9 +337,9 @@ UINT_PTR CALLBACK OFNHookProc(
 			pData->m_wpOpenDialogProc = (WNDPROC) ::SetWindowLongPtr( pData->m_hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR) OFNHookProcMain );
 
 			/* 文字コード選択コンボボックス初期化 */
-			nIdxSel = 0;
+			nIdxSel = -1;
 			if( pData->m_bIsSaveDialog ){	/* 保存のダイアログか */
-				i = 1;
+				i = 1; // 「自動選択」飛ばし
 			}else{
 				i = 0;
 			}
@@ -341,7 +351,14 @@ UINT_PTR CALLBACK OFNHookProc(
 					nIdxSel = nIdx;
 				}
 			}
-			Combo_SetCurSel( pData->m_hwndComboCODES, nIdxSel );
+			if( nIdxSel != -1 ){
+				Combo_SetCurSel( pData->m_hwndComboCODES, nIdxSel );
+			}else{
+				CheckDlgButtonBool( hdlg, IDC_CHECK_CP, true );
+				if( -1 == AddComboCodePages( hdlg, pData->m_hwndComboCODES, pData->m_nCharCode, pData->m_bInitCodePage ) ){
+					Combo_SetCurSel( pData->m_hwndComboCODES, 0 );
+				}
+			}
 
 
 			/* ビューモードの初期値セット */
@@ -573,7 +590,7 @@ UINT_PTR CALLBACK OFNHookProc(
 							Combo_AddString( pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_mem->m_vMRU[i] );
 						}
 					}
-					CDlgOpenFile::OnCbnDropDown( hwndCtl );
+					CDialog::OnCbnDropDown( hwndCtl, true );
 					break;
 
 				case IDC_COMBO_OPENFOLDER:
@@ -585,11 +602,23 @@ UINT_PTR CALLBACK OFNHookProc(
 							Combo_AddString( pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_mem->m_vOPENFOLDER[i] );
 						}
 					}
-					CDlgOpenFile::OnCbnDropDown( hwndCtl );
+					CDialog::OnCbnDropDown( hwndCtl, true );
 					break;
 				}
 				break;	/* CBN_DROPDOWN */
 			}
+		case BN_CLICKED:
+			switch( wID ){
+			case IDC_CHECK_CP:
+				{
+					CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
+					if( IsDlgButtonCheckedBool( hdlg, IDC_CHECK_CP ) ){
+						AddComboCodePages( hdlg, pData->m_hwndComboCODES, -1, pData->m_bInitCodePage );
+					}
+				}
+				break;
+			}
+			break;	// BN_CLICKED
 		}
 		break;	/* WM_COMMAND */
 
@@ -613,6 +642,17 @@ UINT_PTR CALLBACK OFNHookProc(
 	return TRUE;
 }
 
+int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
+{
+	int nSel = -1;
+	if( !bInit ){
+		::EnableWindow( GetDlgItem( hdlg, IDC_CHECK_CP ), FALSE );
+		// コードページ追加
+		bInit = true;
+		nSel = CCodePage::AddComboCodePages(hdlg, combo, nSelCode);
+	}
+	return nSel;
+}
 
 
 
@@ -1162,52 +1202,6 @@ void CDlgOpenFile::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl
 	::SetWindowPos( hwndDlg, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 }
 
-/*! コンボボックスのドロップダウン時処理
-
-	コンボボックスがドロップダウンされる時に
-	ドロップダウンリストの幅をアイテム文字列の最大表示幅に合わせる
-
-	@param hwndCtl [in]		コンボボックスのウィンドウハンドル
-
-	@author ryoji
-	@date 2005.10.29
-*/
-void CDlgOpenFile::OnCbnDropDown( HWND hwndCtl )
-{
-	HDC hDC;
-	HFONT hFont;
-	LONG nWidth;
-	RECT rc;
-	SIZE sizeText;
-	int nTextLen;
-	int iItem;
-	int nItem;
-	const int nMargin = 8;
-
-	hDC = ::GetDC( hwndCtl );
-	if( NULL == hDC )
-		return;
-	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)NULL );
-	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = Combo_GetCount( hwndCtl );
-	::GetWindowRect( hwndCtl, &rc );
-	nWidth = rc.right - rc.left - nMargin;
-	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = Combo_GetLBTextLen( hwndCtl, iItem );
-		if( 0 < nTextLen ) {
-			TCHAR* pszText = new TCHAR[nTextLen + 1];
-			Combo_GetLBText( hwndCtl, iItem, pszText );
-			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
-				if ( nWidth < sizeText.cx )
-					nWidth = sizeText.cx;
-			}
-			delete []pszText;
-		}
-	}
-	Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
-	::SelectObject( hDC, hFont );
-	::ReleaseDC( hwndCtl, hDC );
-}
 
 /*! リトライ機能付き GetOpenFileName
 	@author Moca
