@@ -212,7 +212,7 @@ void CViewCommander::Command_PASTE( int option )
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
 	if( bLineSelect ){
-		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1]) ){
+		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			pszText = cmemClip.GetStringPtr( &nTextLen );
 		}
@@ -295,6 +295,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	CLayoutPoint ptCurOld = GetCaret().GetCaretLayoutPos();
 
 	nCount = CLayoutInt(0);
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無い場合の対策
 	//	データの最後まで処理 i.e. nBgnがnPasteSizeを超えたら終了
@@ -304,7 +305,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無いと
 		//	最終行のPaste処理が動かないので，
 		//	データの末尾に来た場合は強制的に処理するようにする
-		if( WCODE::IsLineDelimiter(szPaste[nPos]) || nPos == nPasteSize )
+		if( WCODE::IsLineDelimiter(szPaste[nPos], bExtEol) || nPos == nPasteSize )
 		{
 			/* 現在位置にデータを挿入 */
 			if( nPos - nBgn > 0 ){
@@ -329,7 +330,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( NULL != pLine && 1 <= nLineLen )
 			{
-				if( WCODE::IsLineDelimiter(pLine[nLineLen - 1]) )
+				if( WCODE::IsLineDelimiter(pLine[nLineLen - 1], bExtEol) )
 				{
 				}
 				else
@@ -502,8 +503,9 @@ void CViewCommander::Command_INSTEXT(
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			//改行までを抜き出す
 			CLogicInt i;
+			bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 			for( i = CLogicInt(0); i < nTextLen; i++ ){
-				if( WCODE::IsLineDelimiter(pszText[i]) ){
+				if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 					break;
 				}
 			}
@@ -733,7 +735,7 @@ static bool AppendHTMLColor(
 	cmemBuf.Replace(L">", L"&gt;");
 	cmemClip.AppendNativeData(cmemBuf);
 	if( 0 < nLen ){
-		return WCODE::IsLineDelimiter(pAppendStr[nLen-1]);
+		return WCODE::IsLineDelimiter(pAppendStr[nLen-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 	}
 	return false;
 }

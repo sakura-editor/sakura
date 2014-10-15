@@ -644,9 +644,10 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 	CEol eol = GetDocument()->m_cDocEditor.GetNewLineCode();
 
 	nConvertedTextLen = 0;
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	if( pszConvertedText == NULL ){
 		for( int i = 0; i < nTextLen; i++ ){
-			if( WCODE::IsLineDelimiter(pszText[i]) ){
+			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				if( pszText[i] == WCODE::CR ){
 					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
 						i++;
@@ -659,7 +660,7 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 		}
 	}else{
 		for( int i = 0; i < nTextLen; i++ ){
-			if( WCODE::IsLineDelimiter(pszText[i]) ){
+			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				if( pszText[i] == WCODE::CR ){
 					if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
 						i++;

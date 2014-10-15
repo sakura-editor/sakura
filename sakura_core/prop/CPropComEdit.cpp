@@ -43,6 +43,7 @@ static const DWORD p_helpids[] = {	//10210
 	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//指定フォルダ
 	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
 	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
+	IDC_CHECK_ENABLEEXTEOL,				HIDC_CHECK_ENABLEEXTEOL,				//改行コードNEL,PS,LSを有効にする
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -219,6 +220,9 @@ void CPropEdit::SetData( HWND hwndDlg )
 	}
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
 
+	// 改行コードNEL,PS,LSを有効にする
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL, m_Common.m_sEdit.m_bEnableExtEol );
+
 	EnableEditPropInput( hwndDlg );
 }
 
@@ -266,6 +270,9 @@ int CPropEdit::GetData( HWND hwndDlg )
 		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_SEL;
 	}
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof2(m_Common.m_sEdit.m_OpenDialogSelDir) );
+
+	// 改行コードNEL,PS,LSを有効にする
+	m_Common.m_sEdit.m_bEnableExtEol = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL );
 	return TRUE;
 }
 

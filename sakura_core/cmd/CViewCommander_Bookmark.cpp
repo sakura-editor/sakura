@@ -191,7 +191,7 @@ void CViewCommander::Command_JUMP( void )
 				/* 空白やタブ記号等を飛ばす */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::IsLineDelimiter( pLine[i] )
+					WCODE::IsLineDelimiter( pLine[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol )
 				){
 					continue;
 				}else
@@ -223,7 +223,7 @@ void CViewCommander::Command_JUMP( void )
 				bValidLine = TRUE;
 			}
 			/* コメントブロック内の改行だけの行 */
-			if( WCODE::IsLineDelimiter(pLine[nBgn]) ){
+			if( WCODE::IsLineDelimiter(pLine[nBgn], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 				bValidLine = FALSE;
 			}
 		}

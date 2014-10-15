@@ -263,8 +263,9 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 	}
 	int nTopic2Len = (int)wcslen( pTopic2 );
 	/* ŒŸõ•¶š—ñ‚Í‰üs‚Ü‚Å */
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	for( i = 0; i < nTopic2Len; ++i ){
-		if( WCODE::IsLineDelimiter(pTopic2[i]) ){
+		if( WCODE::IsLineDelimiter(pTopic2[i], bExtEol) ){
 			break;
 		}
 	}

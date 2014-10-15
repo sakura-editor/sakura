@@ -1451,12 +1451,15 @@ LRESULT CEditWnd::DispatchEvent(
 						LS( F_CHGMOD_EOL_LF ), _T("L") ); // 入力改行コード指定(LF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
 						LS( F_CHGMOD_EOL_CR ), _T("R") ); // 入力改行コード指定(CR)
-					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_NEL,
-						LS(STR_EDITWND_MENU_NEL), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
-					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LS,
-						LS(STR_EDITWND_MENU_LS), _T(""), TRUE, -2 ); // 入力改行コード指定(LS)
-					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_PS,
-						LS(STR_EDITWND_MENU_PS), _T(""), TRUE, -2 ); // 入力改行コード指定(PS)
+					// 拡張EOLが有効の時だけ表示
+					if( GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol ){
+						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_NEL,
+							LS(STR_EDITWND_MENU_NEL), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
+						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LS,
+							LS(STR_EDITWND_MENU_LS), _T(""), TRUE, -2 ); // 入力改行コード指定(LS)
+						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_PS,
+							LS(STR_EDITWND_MENU_PS), _T(""), TRUE, -2 ); // 入力改行コード指定(PS)
+					}
 					
 					//	mp->ptはステータスバー内部の座標なので，スクリーン座標への変換が必要
 					POINT	po = mp->pt;

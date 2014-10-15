@@ -894,7 +894,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
 	if( bLineSelect ){
-		if( !WCODE::IsLineDelimiter(szREPLACEKEY[nREPLACEKEY - 1]) ){
+		if( !WCODE::IsLineDelimiter(szREPLACEKEY[nREPLACEKEY - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			szREPLACEKEY = cmemClip.GetStringPtr( &nREPLACEKEY );
 		}

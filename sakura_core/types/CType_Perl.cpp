@@ -76,6 +76,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	CLogicInt	nLineCount;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
@@ -94,7 +95,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				/* ãÛîíÇ‚É^ÉuãLçÜìôÇîÚÇŒÇ∑ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::IsLineDelimiter(pLine[i])
+					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					continue;
 				}
@@ -116,7 +117,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 			else if( 2 == nMode ){
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::IsLineDelimiter(pLine[i])
+					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					continue;
 				}

@@ -28,8 +28,8 @@
 
 class CConvert_SpaceToTab : public CConvert{
 public:
-	CConvert_SpaceToTab(int nTabWidth, int nStartColumn)
-	: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn)
+	CConvert_SpaceToTab(int nTabWidth, int nStartColumn, bool bExtEol)
+	: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn), m_bExtEol(bExtEol)
 	{
 	}
 
@@ -38,6 +38,7 @@ public:
 private:
 	int m_nTabWidth;
 	int m_nStartColumn;
+	bool m_bExtEol;
 };
 
 #endif /* SAKURA_CCONVERT_SPACETOTAB_E17CC2BE_1BD0_4838_ABFD_570B344B99AD_H_ */

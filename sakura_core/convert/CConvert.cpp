@@ -71,6 +71,7 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 		case CODE_UTF7:			nFuncCode = F_CODECNV_UTF72SJIS;		break;
 		}
 	}
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	switch( nFuncCode ){
 	//文字種変換、整形
@@ -85,10 +86,10 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_HANKATATOZENKATA:		CConvert_HankataToZenkata().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
 	case F_HANKATATOZENHIRA:		CConvert_HankataToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
 	//文字種変換、整形
-	case F_TABTOSPACE:				CConvert_TabToSpace(nTabWidth, nStartColumn).CallConvert(pCMemory);break;	// TAB→空白
-	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth, nStartColumn).CallConvert(pCMemory);break;	// 空白→TAB
-	case F_LTRIM:					CConvert_Trim(true).CallConvert(pCMemory);			break;	// 2001.12.03 hor
-	case F_RTRIM:					CConvert_Trim(false).CallConvert(pCMemory);			break;	// 2001.12.03 hor
+	case F_TABTOSPACE:				CConvert_TabToSpace(nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// TAB→空白
+	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// 空白→TAB
+	case F_LTRIM:					CConvert_Trim(true, bExtEol).CallConvert(pCMemory);		break;	// 2001.12.03 hor
+	case F_RTRIM:					CConvert_Trim(false, bExtEol).CallConvert(pCMemory);	break;	// 2001.12.03 hor
 	//コード変換(xxx2SJIS)
 	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS追加。自動判別でSJIS, Latin1, CESU8になった場合をサポート
 	case F_CODECNV_AUTO2SJIS:
