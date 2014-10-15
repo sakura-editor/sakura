@@ -67,6 +67,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 	const wchar_t*	pszKeyWord;
 	int				nKeyWordLen;
 	BOOL			bDivision;
+	bool			bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	szDivision[0] = L'\0';
 	szLabel[0] =  L'\0';
@@ -87,7 +88,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			k = 0;
 			for( i = 7; i < nLineLen; ){
 				if( pLine[i] == '.'
-				 || WCODE::IsLineDelimiter(pLine[i])
+				 || WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					break;
 				}

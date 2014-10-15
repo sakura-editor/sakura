@@ -27,7 +27,7 @@ bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 	}
 
 	//â¸çs
-	if( WCODE::IsLineDelimiter(cStr.At(nPos)) ){
+	if( WCODE::IsLineDelimiter(cStr.At(nPos), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 		return true;
 	}
 

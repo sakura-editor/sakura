@@ -54,7 +54,7 @@ bool CFigure_Eol::Match(const wchar_t* pText, int nTextLen) const
 	// 2014.06.18 折り返し・最終行だとDrawImpでcEol.GetLen()==0になり無限ループするので
 	// もしも行の途中に改行コードがあった場合はMatchさせない
 	if(nTextLen == 2 && pText[0]==L'\r' && pText[1]==L'\n')return true;
-	if(nTextLen == 1 && WCODE::IsLineDelimiter(pText[0]))return true;
+	if(nTextLen == 1 && WCODE::IsLineDelimiterExt(pText[0]))return true;
 	return false;
 }
 

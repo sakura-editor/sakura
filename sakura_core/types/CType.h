@@ -330,12 +330,12 @@ GEN_CTYPE(CType_Other)
 /*!
 	スペースの判定
 */
-inline bool C_IsSpace( wchar_t c )
+inline bool C_IsSpace( wchar_t c, bool bExtEol )
 {
 	return (
 		L'\t' == c ||
 		L' ' == c ||
-		WCODE::IsLineDelimiter(c)
+		WCODE::IsLineDelimiter(c, bExtEol)
 	);
 }
 

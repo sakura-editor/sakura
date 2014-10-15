@@ -21,7 +21,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
-	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
+	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
 			// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
 			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;
@@ -46,7 +46,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
-	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
+	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
 			// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
 			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;

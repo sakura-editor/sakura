@@ -49,7 +49,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 	/* 現在位置にデータを挿入 */
 	CNativeW cmemDataW2;
 	cmemDataW2 = wcChar;
-	if( WCODE::IsLineDelimiter(wcChar) ){ 
+	if( WCODE::IsLineDelimiter(wcChar, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){ 
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 		if( bConvertEOL ){
 			CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
@@ -200,7 +200,7 @@ end_of_for:;
 	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	if( WCODE::IsLineDelimiter(wcChar) && m_pCommanderView->m_pTypeData->m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
+	if( WCODE::IsLineDelimiter(wcChar, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) && m_pCommanderView->m_pTypeData->m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
 		/* 前の行にある末尾の空白を削除する */
 		m_pCommanderView->RTrimPrevLine();
 	}
@@ -908,7 +908,8 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					nDelLen = 1;
 					if( nKetaDiff < 0 && nPos < line.GetLength() ){
 						wchar_t c = line.At(nPos);
-						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c) ){
+						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
+								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 							nDelLen = 2;
 							CLayoutInt nKetaBefore2 = CNativeW::GetKetaOfChar(line, nPos);
 							nKetaAfterIns = nKetaBefore + nKetaBefore2 - nKetaAfter;

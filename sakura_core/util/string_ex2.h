@@ -49,7 +49,7 @@ int LimitStringLengthW( const WCHAR*, int, int, CNativeW& );/* ƒf[ƒ^‚ğw’èu•¶
 
 const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
 const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
-const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å
+const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol*, bool ); // GetNextLine‚Ìwchar_t”Å
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å(ƒrƒbƒNƒGƒ“ƒfƒBƒAƒ“—p)  // –¢g—p
 void GetLineColumn( const wchar_t*, int*, int* );
 

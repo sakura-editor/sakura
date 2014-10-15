@@ -1598,6 +1598,9 @@ BEGIN
     PUSHBUTTON      "...",IDC_BUTTON_FILEOPENDIR,273,100,9,12
     GROUPBOX        "ファイルダイアログの初期位置",IDC_STATIC,156,41,130,79,
                     WS_GROUP
+    CONTROL         "改行コードNEL,PS,LSを有効にする(&O)",
+                    IDC_CHECK_ENABLEEXTEOL,"Button",BS_AUTOCHECKBOX | WS_GROUP
+                    | WS_TABSTOP,158,123,130,10
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 293, 240

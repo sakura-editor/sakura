@@ -261,7 +261,7 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 	int  nRetLineLen;
 	CEol cEolTemp;
 	const wchar_t* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
-				&nRetLineLen, &m_nReadOffset2, &cEolTemp );
+				&nRetLineLen, &m_nReadOffset2, &cEolTemp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
 	if( m_cLineTemp.GetStringLength() == m_nReadOffset2 && nOffsetTemp == 0 ){
 		// 途中に改行がない限りは、swapを使って中身のコピーを省略する
 		pUnicodeBuffer->swap(m_cLineTemp);
@@ -467,6 +467,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		return NULL;
 	}
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
+	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	int nLen = nDataLen;
 	int neollen = 0;
 	switch( m_encodingTrait ){
@@ -524,7 +525,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		nLen = nDataLen - 1;
 		for( i = nbgn; i < nLen; i += 2 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
-			if( WCODE::IsLineDelimiter(c) ){
+			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
 				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
 				break;
@@ -535,7 +536,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		nLen = nDataLen - 1;
 		for( i = nbgn; i < nLen; i += 2 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i] << 8) | pUData[i + 1]);
-			if( WCODE::IsLineDelimiter(c) ){
+			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
 				neollen = (Int)pcEol->GetLen() * sizeof(wchar_t);
 				break;
@@ -546,7 +547,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		nLen = nDataLen - 3;
 		for( i = nbgn; i < nLen; i += 4 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i+1] << 8) | pUData[i]);
-			if( pUData[i+3] == 0x00 && pUData[i+2] == 0x00 && WCODE::IsLineDelimiter(c) ){
+			if( pUData[i+3] == 0x00 && pUData[i+2] == 0x00 && WCODE::IsLineDelimiter(c, bExtEol) ){
 				wchar_t c2;
 				int eolTempLen;
 				if( i + 4 < nLen && pUData[i+7] == 0x00 && pUData[i+6] == 0x00 ){
@@ -567,7 +568,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		nLen = nDataLen - 3;
 		for( i = nbgn; i < nLen; i += 4 ){
 			wchar_t c = static_cast<wchar_t>((pUData[i+2] << 8) | pUData[i+3]);
-			if( pUData[i] == 0x00 && pUData[i+1] == 0x00 && WCODE::IsLineDelimiter(c) ){
+			if( pUData[i] == 0x00 && pUData[i+1] == 0x00 && WCODE::IsLineDelimiter(c, bExtEol) ){
 				wchar_t c2;
 				int eolTempLen;
 				if( i + 4 < nLen && pUData[i+4] == 0x00 && pUData[i+5] == 0x00 ){

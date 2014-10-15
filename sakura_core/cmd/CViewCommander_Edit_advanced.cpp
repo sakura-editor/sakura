@@ -729,7 +729,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		pStrLast = sta[sta.size()-1]->pCmemLine->GetStringPtr();
 		int nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
 		if( 0 < nlen ){
-			if( WCODE::IsLineDelimiter(pStrLast[nlen-1]) ){
+			if( WCODE::IsLineDelimiter(pStrLast[nlen-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 				pStrLast = NULL;
 			}
 		}
@@ -764,7 +764,8 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		// ÅIs‚Ì‰üs‚ðíœ
 		CLineData& lastData = repData[repData.size()-1];
 		int nLen = lastData.cmemLine.GetStringLength();
-		while( 0 <nLen && WCODE::IsLineDelimiter(lastData.cmemLine[nLen-1]) ){
+		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+		while( 0 <nLen && WCODE::IsLineDelimiter(lastData.cmemLine[nLen-1], bExtEol) ){
 			nLen--;
 		}
 		lastData.cmemLine._SetStringLength(nLen);

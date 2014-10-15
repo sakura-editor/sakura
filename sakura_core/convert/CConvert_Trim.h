@@ -29,13 +29,14 @@
 
 class CConvert_Trim : public CConvert{
 public:
-	CConvert_Trim(bool bLeft) : m_bLeft(bLeft) { }
+	CConvert_Trim(bool bLeft, bool bExtEol) : m_bLeft(bLeft), m_bExtEol(bExtEol) { }
 
 public:
 	bool DoConvert(CNativeW* pcData);
 
 private:
 	bool m_bLeft;
+	bool m_bExtEol;
 };
 
 #endif /* SAKURA_CCONVERT_TRIM_09061551_FDED_4982_A974_FAC9AE9AF040_H_ */

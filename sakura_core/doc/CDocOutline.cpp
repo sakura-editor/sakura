@@ -289,8 +289,9 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
+		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		for( i = 0; pszText[i] != L'\0'; ++i ){
-			if( WCODE::IsLineDelimiter(pszText[i]) ){
+			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 				pszText[i] = L'\0';
 				break;
 			}
@@ -403,10 +404,11 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 		}// RTrim
 		// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@" の右２バイトが全角空白と判定される問題の対処）
 		k = pos_wo_space = leftspace;
+		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		while( k < nLineLen ){
 			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, k );
 			if( 1 == nCharChars ){
-				if( !(WCODE::IsLineDelimiter(pLine[k]) ||
+				if( !(WCODE::IsLineDelimiter(pLine[k], bExtEol) ||
 						pLine[k] == WCODE::SPACE ||
 						pLine[k] == WCODE::TAB ||
 						WCODE::IsZenkakuSpace(pLine[k]) ||

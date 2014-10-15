@@ -212,6 +212,8 @@ struct CommonSetting_Edit
 	EOpenDialogDir	m_eOpenDialogDir;	//!< ファイルダイアログの初期位置
 	SFilePath	m_OpenDialogSelDir;		//!< 指定フォルダ
 
+	bool	m_bEnableExtEol;			//!< NEL,PS,LSを改行コードとして利用する
+
 	// (ダイアログ項目無し)
 	BOOL	m_bAutoColumnPaste;			//!< 矩形コピーのテキストは常に矩形貼り付け
 };

@@ -1373,8 +1373,9 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				nIdxFrom	= LineColumnToIndex( pcLayout, rcSelLayout.left );
 				nIdxTo		= LineColumnToIndex( pcLayout, rcSelLayout.right );
 
+				bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 				for( CLogicInt i = nIdxFrom; i <= nIdxTo; ++i ){
-					if( WCODE::IsLineDelimiter(pLine[i]) ){
+					if( WCODE::IsLineDelimiter(pLine[i], bExtEol) ){
 						nIdxTo = i;
 						break;
 					}
@@ -1887,6 +1888,7 @@ bool CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
+		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		nRowNum = 0;
 		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
@@ -1897,7 +1899,7 @@ bool CEditView::GetSelectedData(
 				//2002.02.08 hor
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
-					if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1]) ){
+					if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bExtEol) ){
 						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 					}else{
 						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );

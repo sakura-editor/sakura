@@ -143,7 +143,8 @@ const wchar_t* GetNextLineW(
 	int				nDataLen,	//!< [in]	検索文字列の文字数
 	int*			pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
 	int*			pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEol*			pcEol		//!< [out]	EOL
+	CEol*			pcEol,		//!< [out]	EOL
+	bool			bExtEol
 )
 {
 	int		i;
@@ -156,7 +157,7 @@ const wchar_t* GetNextLineW(
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
 		// 改行コードがあった
-		if( WCODE::IsLineDelimiter(pData[i]) ){
+		if( WCODE::IsLineDelimiter(pData[i], bExtEol) ){
 			// 行終端子の種類を調べる
 			pcEol->SetTypeByString(&pData[i], nDataLen - i);
 			break;

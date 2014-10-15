@@ -619,6 +619,7 @@ void CViewCommander::Command_GOLINETOP(
 		nPosY_Layout = ptCaretPos.y - 1;
 		const CLayout*	pcLayout;
 		bool			bZenSpace = m_pCommanderView->m_pTypeData->m_bAutoIndent_ZENSPACE;
+		bool			bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		
 		CLogicInt		nLineLen;
 		do {
@@ -630,7 +631,7 @@ void CViewCommander::Command_GOLINETOP(
 			for( nPosX_Logic = 0; nPosX_Logic < nLineLen; ++nPosX_Logic ){
 				if(WCODE::IsIndentChar(pLine[nPosX_Logic],bZenSpace!=0))continue;
 				
-				if(WCODE::IsLineDelimiter(pLine[nPosX_Logic]) ){
+				if(WCODE::IsLineDelimiter(pLine[nPosX_Logic], bExtEol) ){
 					nPosX_Logic = 0;	// 空白またはタブおよび改行だけの行だった
 				}
 				break;

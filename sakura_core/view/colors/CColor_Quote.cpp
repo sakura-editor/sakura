@@ -139,7 +139,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 			// 終了文字列がない場合は行末までを色分け
 			if( m_pTypeData->m_bStringEndLine ){
 				// 改行コードを除く
-				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(cStr.GetLength()-1)) ){
+				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(cStr.GetLength()-1), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					if( 1 < cStr.GetLength() && cStr.At(cStr.GetLength()-2) == WCODE::CR
 							&& cStr.At(cStr.GetLength()-1) == WCODE::LF ){
 						m_nCOMMENTEND = cStr.GetLength() - 2;
@@ -199,7 +199,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 			// エスケープ \"
 			if( 1 == nCharChars && cLineStr.At(i) == L'\\' ){
 				++i;
-				if( i < cLineStr.GetLength() && WCODE::IsLineDelimiter(cLineStr.At(i)) ){
+				if( i < cLineStr.GetLength() && WCODE::IsLineDelimiter(cLineStr.At(i), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					if( pbEscapeEnd ){
 						*pbEscapeEnd = true;
 					}
