@@ -52,7 +52,7 @@ struct KEYDATA {
 #define VKEX_WHEEL_RIGHT	0x010A	// ホイール右
 
 extern const TCHAR* jpVKEXNames[];
-extern int jpVKEXNamesLen;
+extern const int jpVKEXNamesLen;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
