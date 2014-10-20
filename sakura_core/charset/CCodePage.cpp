@@ -412,7 +412,7 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 volatile CCodePage::CodePageList* s_list = NULL;
 
 struct sortByCodePage{
-	bool operator() (std::pair<int, std::wstring>& left, std::pair<int, std::wstring>& right) const {
+	bool operator() (const std::pair<int, std::wstring>& left, const std::pair<int, std::wstring>& right) const {
 		return left.first < right.first;
 	}
 };
