@@ -28,8 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef _CFILELOAD_H_
-#define _CFILELOAD_H_
+#ifndef SAKURA_CFILELOAD_H_
+#define SAKURA_CFILELOAD_H_
 
 #include <Windows.h>
 #include "CStream.h" //CError_FileOpen
@@ -58,7 +58,7 @@ public:
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCTSTR, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	ECodeType FileOpen( LPCTSTR, bool bBigFile, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用
@@ -83,7 +83,7 @@ public:
 	int GetPercent( void );
 
 	//! ファイルサイズを取得する
-	inline int GetFileSize( void ){ return m_nFileSize; }
+	inline LONGLONG GetFileSize( void ){ return m_nFileSize; }
 
 	static const int gm_nBufSizeDef; // ロード用バッファサイズの初期値
 //	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
@@ -106,9 +106,9 @@ protected:
 
 //	LPTSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル
-	int		m_nFileSize;	// ファイルサイズ
-	int		m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
-	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
+	LONGLONG	m_nFileSize;	// ファイルサイズ(64bit)
+	LONGLONG	m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
+	LONGLONG	m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
 	CCodeBase*	m_pCodeBase;	////
@@ -169,6 +169,6 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 }
 
 
-#endif /* _CFILELOAD_H_ */
+#endif /* SAKURA_CFILELOAD_H_ */
 
 

@@ -100,17 +100,17 @@ CFileLoad::~CFileLoad( void )
 /*!
 	ファイルを開く
 	@param pFileName [in] ファイル名
+	@param bBigFile  [in] 2GB以上のファイルを開くか。Grep=true, 32bit版はその他=falseで運用
 	@param CharCode  [in] ファイルの文字コード．
 	@param nFlag [in] 文字コードのオプション
 	@param pbBomExist [out] BOMの有無
 	@date 2003.06.08 Moca CODE_AUTODETECTを指定できるように変更
 	@date 2003.07.26 ryoji BOM引数追加
 */
-ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, bool* pbBomExist )
+ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharCode, int nFlag, bool* pbBomExist )
 {
 	HANDLE	hFile;
-	DWORD	FileSize;
-	DWORD	FileSizeHigh;
+	ULARGE_INTEGER	fileSize;
 	ECodeType	nBomCode;
 
 	// FileCloseを呼んでからにしてください
@@ -136,13 +136,21 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	m_hFile = hFile;
 
-	FileSize = ::GetFileSize( hFile, &FileSizeHigh );
-	// ファイルサイズが、約2GBを超える場合はとりあえずエラー
-	if( 0x80000000 <= FileSize || 0 < FileSizeHigh ){
+	// GetFileSizeEx は Win2K以上
+	fileSize.LowPart = ::GetFileSize( hFile, &fileSize.HighPart );
+	if( 0xFFFFFFFF == fileSize.LowPart ){
+		DWORD lastError = ::GetLastError();
+		if( NO_ERROR != lastError ){
+			FileClose();
+			throw CError_FileOpen();
+		}
+	}
+	if( !bBigFile && 0x80000000 <= fileSize.QuadPart ){
+		// ファイルが大きすぎる(2GB位)
 		FileClose();
 		throw CError_FileOpen();
 	}
-	m_nFileSize = FileSize;
+	m_nFileSize = fileSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;
 
 	// From Here Jun. 08, 2003 Moca 文字コード判定
@@ -383,7 +391,7 @@ void CFileLoad::Buffering( void )
 	// メモリー確保
 	if( NULL == m_pReadBuf ){
 		int nBufSize;
-		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( m_nFileSize ):( gm_nBufSizeDef );
+		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( static_cast<int>(m_nFileSize) ):( gm_nBufSizeDef );
 		//	Borland C++では0バイトのmallocを獲得失敗と見なすため
 		//	最低1バイトは取得することで0バイトのファイルを開けるようにする
 		if( 0 >= nBufSize ){
@@ -439,10 +447,8 @@ int CFileLoad::GetPercent( void ){
 	int nRet;
 	if( 0 == m_nFileDataLen || m_nReadLength > m_nFileDataLen ){
 		nRet = 100;
-	}else if(  0x10000 > m_nFileDataLen ){
-		nRet = m_nReadLength * 100 / m_nFileDataLen ;
 	}else{
-		nRet = m_nReadLength / 128 * 100 / ( m_nFileDataLen / 128 );
+		nRet = static_cast<int>(m_nReadLength * 100 / m_nFileDataLen);
 	}
 	return nRet;
 }

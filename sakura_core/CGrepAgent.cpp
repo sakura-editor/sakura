@@ -752,7 +752,7 @@ void CGrepAgent::SetGrepResult(
 	const TCHAR*		pszFilePath,	/*!< [in] フルパス or 相対パス*/
 	const TCHAR*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
 	/* マッチした行の情報 */
-	int			nLine,				/*!< [in] マッチした行番号(1～) */
+	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColumn,			/*!< [in] マッチした桁番号(1～) */
 	const wchar_t*	pCompareData,	/*!< [in] 行の文字列 */
 	int			nLineLen,			/*!< [in] 行の文字列の長さ */
@@ -778,7 +778,7 @@ void CGrepAgent::SetGrepResult(
 			cmemBuf.AppendString( L"・" );
 		}
 		cmemBuf.AppendStringT( pszFilePath );
-		::auto_sprintf( strWork, L"(%d,%d)", nLine, nColumn );
+		::auto_sprintf( strWork, L"(%I64d,%d)", nLine, nColumn );
 		cmemBuf.AppendString( strWork );
 		cmemBuf.AppendStringT( pszCodeName );
 		cmemBuf.AppendString( L": " );
@@ -786,7 +786,7 @@ void CGrepAgent::SetGrepResult(
 	}
 	/* WZ風 */
 	else if( 2 == sGrepOption.nGrepOutputStyle ){
-		::auto_sprintf( strWork, L"・(%6d,%-5d): ", nLine, nColumn );
+		::auto_sprintf( strWork, L"・(%6I64d,%-5d): ", nLine, nColumn );
 		cmemBuf.AppendString( strWork );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
@@ -919,7 +919,7 @@ int CGrepAgent::DoGrepFile(
 {
 	int		nHitCount;
 //	char	szLine[16000];
-	int		nLine;
+	LONGLONG	nLine;
 	const wchar_t*	pszRes; // 2002/08/29 const付加
 	ECodeType	nCharCode;
 	const wchar_t*	pCompareData; // 2002/08/29 const付加
@@ -1039,7 +1039,7 @@ int CGrepAgent::DoGrepFile(
 	// ファイルを開く
 	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
 	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
-	nCharCode = cfl.FileOpen( pszFullPath, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode() );
+	nCharCode = cfl.FileOpen( pszFullPath, true, sGrepOption.nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode() );
 	TCHAR szCpName[100];
 	{
 		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
