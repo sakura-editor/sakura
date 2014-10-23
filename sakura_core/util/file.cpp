@@ -32,6 +32,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
+#include "_main/CCommandLine.h"
 
 bool fexist(LPCTSTR pszPath)
 {
@@ -529,9 +530,11 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
+	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szPath[_MAX_PATH];
+
 	// sakura.ini ‚ÌƒpƒX‚ðŽæ“¾
-	CFileNameManager::getInstance()->GetIniFileName( szPath );
+	CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}

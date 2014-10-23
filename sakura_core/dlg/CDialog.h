@@ -77,7 +77,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDialog();
+	CDialog(bool bCheckShareData = true);
 	virtual ~CDialog();
 	/*
 	||  Attributes & Operations

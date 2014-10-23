@@ -2162,6 +2162,26 @@ BEGIN
     PUSHBUTTON      "Help(&H)", IDC_BUTTON_HELP, 214, 234, 50, 14
 END
 
+IDD_PROFILEMGR DIALOGEX 0, 0, 191, 184
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Profile Maneger"
+FONT 9, "Tahoma"
+BEGIN
+    LISTBOX         IDC_LIST_PROFILE,9,9,109,128,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+    CONTROL         "Start Default Setting(&E)",IDC_CHECK_PROF_DEFSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,143,150,10
+    DEFPUSHBUTTON   "&Start",IDOK,8,161,56,14
+    PUSHBUTTON      "Close(&X)",IDCANCEL,68,161,56,14
+    PUSHBUTTON      "&Help",IDC_BUTTON_HELP,128,161,56,14
+    PUSHBUTTON      "&New",IDC_BUTTON_PROF_CREATE,125,8,61,14
+    PUSHBUTTON      "&Rename",IDC_BUTTON_PROF_RENAME,125,25,61,14
+    PUSHBUTTON      "&Delete",IDC_BUTTON_PROF_DELETE,125,42,61,14
+    PUSHBUTTON      "Set De&Fault",IDC_BUTTON_PROF_DEFSET,125,62,61,14
+    PUSHBUTTON      "&Clear Default",IDC_BUTTON_PROF_DEFCLEAR,125,79,61,14
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -2729,6 +2749,7 @@ BEGIN
     F_BROWSE                "Browse"
     F_VIEWMODE              "View Mode"
     F_PROPERTY_FILE         "File Property"
+    F_PROFILEMGR            "Profile Maneger"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3584,6 +3605,17 @@ BEGIN
 	STR_DLGWINSZ_NORMAL			"Normal"  // Window Settings &W indow to size
 	STR_DLGWINSZ_MAXIMIZE		"Maximize"
 	STR_DLGWINSZ_MINIMIZE		"(Minimize)"
+
+	// CDlgProfileMgr.cpp
+	STR_DLGPROFILE_ERR_WRITE		"プロフィール設定の書き込みに失敗しました。"
+	STR_DLGPROFILE_NEW_PROF_TITLE	"New Profile Name"
+	STR_DLGPROFILE_NEW_PROF_MSG		"Input New Profile Name."
+	STR_DLGPROFILE_ERR_INVALID_CHAR	"利用できない文字が含まれています。"
+	STR_DLGPROFILE_ERR_ALREADY		"すでに同じ名前のプロファイルがあります。"
+	STR_DLGPROFILE_ERR_FILE			"同名のファイルがあるため作成できません。"
+	STR_DLGPROFILE_RENAME_TITLE		"Rename Proflie Name"
+	STR_DLGPROFILE_RENAME_MSG		"Input Profile Name."
+	STR_DLGPROFILE_ERR_RENAME		"名前の変更に失敗しました。\nプロファイルは利用中の可能性があります。"
 
 	// CDocOutline.cpp
 	STR_DOCOUTLINE_REGEX		"正規表現ルール\\%ls\\でエラーが発生しました。\n%ts"

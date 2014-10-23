@@ -23,6 +23,7 @@
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "_os/COsVersionInfo.h"
+#include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
 #include <io.h>
@@ -46,7 +47,9 @@ class CProcess;
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 {
-	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+	if( !ProfileSelect( hInstance, lpCmdLine ) ){
+		return 0;
+	}
 
 	CProcess* process = 0;
 	if( !IsValidVersion() ){
@@ -81,6 +84,44 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 	return process;
 }
 
+
+bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
+{
+	CDlgProfileMgr dlgProf;
+	SProfileSettings settings;
+
+	CDlgProfileMgr::ReadProfSettings( settings );
+	CSelectLang::InitializeLanguageEnvironment();
+	CSelectLang::ChangeLang( settings.m_szDllLanguage );
+
+	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+
+	bool bDialog;
+	if( CCommandLine::getInstance()->IsProfileMgr() ){
+		bDialog = true;
+	}else if( CCommandLine::getInstance()->IsSetProfile() ){
+		bDialog = false;
+	}else if( settings.m_nDefaultIndex == -1 ){
+		bDialog = true;
+	}else{
+		assert( 0 <= settings.m_nDefaultIndex );
+		if( 0 < settings.m_nDefaultIndex ){
+			CCommandLine::getInstance()->SetProfileName( to_wchar(
+					settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str()) );
+		}else{
+			CCommandLine::getInstance()->SetProfileName( L"" );
+		}
+		bDialog = false;
+	}
+	if( bDialog ){
+		if( dlgProf.DoModal( hInstance, NULL, NULL ) ){
+			CCommandLine::getInstance()->SetProfileName( to_wchar(dlgProf.m_strProfileName.c_str()) );
+		}else{
+			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
+		}
+	}
+	return true;
+}
 
 /*!
 	@brief Windowsバージョンのチェック
@@ -163,8 +204,11 @@ bool CProcessFactory::IsStartingControlProcess()
 */
 bool CProcessFactory::IsExistControlProcess()
 {
+	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
+	strMutexSakuraCp += strProfileName;
  	HANDLE hMutexCP;
-	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, GSTR_MUTEX_SAKURA_CP );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
+	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
 	if( NULL != hMutexCP ){
 		::CloseHandle( hMutexCP );
 		return true;	// コントロールプロセスが見つかった
@@ -205,7 +249,12 @@ bool CProcessFactory::StartControlProcess()
 	TCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
-	::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""付加
+	if( CCommandLine::getInstance()->IsSetProfile() ){
+		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN -PROF=\"%ls\""),
+			szEXE, CCommandLine::getInstance()->GetProfileName() );
+	}else{
+		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""付加
+	}
 
 	//常駐プロセス起動
 	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
@@ -281,8 +330,11 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		return false;
 	}
 
+	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	strInitEvent += strProfileName;
 	HANDLE hEvent;
-	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, GSTR_EVENT_SAKURA_CP_INITIALIZED );
+	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
 	if( NULL == hEvent ){
 		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
 		//
@@ -317,7 +369,7 @@ bool CProcessFactory::TestWriteQuit()
 	if( CCommandLine::getInstance()->IsWriteQuit() ){
 		TCHAR szIniFileIn[_MAX_PATH];
 		TCHAR szIniFileOut[_MAX_PATH];
-		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut );
+		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut, _T("") );
 		if( szIniFileIn[0] != _T('\0') ){	// マルチユーザ用設定か
 			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
 			if( fexist(szIniFileIn) ){

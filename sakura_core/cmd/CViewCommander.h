@@ -115,6 +115,7 @@ public:
 	void Command_BROWSE( void );				/* ブラウズ */
 	void Command_VIEWMODE( void );				/* ビューモード */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
+	void Command_PROFILEMGR( void );			// プロファイルマネージャ
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */

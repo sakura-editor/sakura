@@ -33,6 +33,7 @@
 #include "view/colors/CColorStrategy.h"
 #include "plugin/CPlugin.h"
 #include "uiparts/CMenuDrawer.h"
+#include "_main/CCommandLine.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );
@@ -83,8 +84,9 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
+	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szIniFileName[_MAX_PATH + 1];
-	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
+	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
 //	MYTRACE( _T("Iniファイル処理-1 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
 

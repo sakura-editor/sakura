@@ -118,6 +118,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5
 	F_BROWSE			,	//ブラウズ
 	F_VIEWMODE			,	//ビューモード
 	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
+	F_PROFILEMGR		,	//プロファイルマネージャ
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 };
@@ -609,6 +610,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_BROWSE:				return HLP000121;			//ブラウズ
 	case F_VIEWMODE:			return HLP000249;			//ビューモード
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
+	case F_PROFILEMGR:			return HLP000363;			//プロファイルマネージャ
 
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
 	case F_EXITALL:			return HLP000028;				//サクラエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更

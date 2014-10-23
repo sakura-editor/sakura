@@ -484,7 +484,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	@date 2007.09.04 ryoji 新規作成
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile )
+void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile, LPCTSTR pszProfName )
 {
 	TCHAR szPath[_MAX_PATH];
 	TCHAR szDrive[_MAX_DRIVE];
@@ -498,7 +498,11 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	);
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
 
-	auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".ini") );
+	if( pszProfName[0] == '\0' ){
+		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".ini") );
+	}else{
+		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts\\%ts%ts"), szDrive, szDir, pszProfName, szFname, _T(".ini") );
+	}
 
 	// マルチユーザ用のiniファイルパス
 	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
@@ -527,7 +531,11 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 			if( szDir[0] == _T('\0') )
 				::lstrcpy( szDir, _T("sakura") );
 			if( GetSpecialFolderPath( nFolder, szPath ) ){
-				auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, _T(".ini") );
+				if( pszProfName[0] == '\0' ){
+					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, _T(".ini") );
+				}else{
+					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, pszProfName, _T(".ini") );
+				}
 			}
 		}
 	}
@@ -545,14 +553,14 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	@author ryoji
 	@date 2007.05.19 ryoji 新規作成
 */
-void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
+void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfName, BOOL bRead/*=FALSE*/ )
 {
 	if( !m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit ){
 		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// 初期化済フラグ
 		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
 		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
 
-		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile );
+		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, pszProfName );
 		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = true;
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
@@ -565,6 +573,15 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE
 				TCHAR szDrive[_MAX_DRIVE];
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
+				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
+				MakeSureDirectoryPathExistsT( szPath );
+			}
+		}else{
+			if( pszProfName[0] != _T('\0') ){
+				TCHAR szPath[_MAX_PATH];
+				TCHAR szDrive[_MAX_DRIVE];
+				TCHAR szDir[_MAX_DIR];
+				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
 				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
 				MakeSureDirectoryPathExistsT( szPath );
 			}
