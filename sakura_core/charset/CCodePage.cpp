@@ -230,11 +230,6 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 
 void CCodePage::GetEol(CMemory* pcmemEol, EEolType eEolType)
 {
-	// UTF-7‚Í“Á•Êˆµ‚¢
-	if( CP_UTF7 == m_nCodePageEx ){
-		CCodeBase::GetEol(pcmemEol, eEolType);
-		return;
-	}
 	CNativeW temp;
 	CUnicode().GetEol(temp._GetMemory(), eEolType);
 	UnicodeToCode(temp, pcmemEol);

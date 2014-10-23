@@ -299,3 +299,21 @@ void CUtf7::GetBom(CMemory* pcmemBom)
 	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
 	pcmemBom->SetRawData(UTF7_BOM, sizeof(UTF7_BOM));
 }
+
+void CUtf7::GetEol(CMemory* pcmemEol, EEolType eEolType)
+{
+	static const struct{
+		const char* szData;
+		int nLen;
+	}
+	aEolTable[EOL_TYPE_NUM] = {
+		{ "",			0 },	// EOL_NONE
+		{ "\x0d\x0a",	2 },	// EOL_CRLF
+		{ "\x0a",		1 },	// EOL_LF
+		{ "\x0d",		1 },	// EOL_CR
+		{ "+AIU-",		5 },	// EOL_NEL
+		{ "+ICg-",		5 },	// EOL_LS
+		{ "+ICk-",		5 },	// EOL_PS
+	};
+	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+}

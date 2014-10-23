@@ -32,7 +32,7 @@ public:
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UTF7ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
-// GetEolはCCodeBaseに移動	2010/6/13 Uchi
+	void GetEol(CMemory* pcmemEol, EEolType eEolType);
 
 public:
 	//実装
