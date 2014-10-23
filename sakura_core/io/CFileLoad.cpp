@@ -207,6 +207,10 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	m_bEolEx = bEolEx;
 	m_nMaxEolLen = nMaxEolLen;
+	if(	false == GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol ){
+		m_bEolEx = false;
+	}
+
 	m_nReadOffset2 = 0;
 	m_nTempResult = RESULT_FAILURE;
 	m_cLineTemp.SetString(L"");
