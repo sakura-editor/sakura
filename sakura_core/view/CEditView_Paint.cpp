@@ -681,11 +681,6 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	CLayoutInt nLayoutLineTo = GetTextArea().GetViewTopLine()
 		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2007.02.17 ryoji ŒvZ‚ğ¸–§‰»
-	CLayoutPoint ptLayoutEOF;
-	m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptLayoutEOF );
-	if( ptLayoutEOF.GetY() < nLayoutLineTo ){
-		nLayoutLineTo = ptLayoutEOF.GetY();
-	}
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -733,10 +728,10 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 				nLayoutLineTo
 			);
 
-			if(bDispResult){
-				pPs->rcPaint.bottom += nLineHeight;	// EOFÄ•`‰æ‘Î‰
-				break;
-			}
+//			if(bDispResult){
+//				pPs->rcPaint.bottom += nLineHeight;	// EOFÄ•`‰æ‘Î‰
+//				break;
+//			}
 		}
 	}
 
@@ -754,6 +749,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 		cTextType.FillBack(gr,rcBack);
 	}
 	{
+		GetTextDrawer().DispNoteLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, pPs->rcPaint.left, pPs->rcPaint.right );
 		// 2006.04.29 s•”•ª‚Ís‚²‚Æ‚Éì‰æ‚µA‚±‚±‚Å‚Ícü‚Ìc‚è‚ğì‰æ
 		GetTextDrawer().DispVerticalLines( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, CLayoutInt(0), CLayoutInt(-1) );
 		GetTextDrawer().DispWrapLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom );	// 2009.10.24 ryoji
@@ -1090,6 +1086,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 		}
 	}
+
+	// ƒm[ƒgü•`‰æ
+	GetTextDrawer().DispNoteLine(
+		pInfo->m_gr,
+		pInfo->m_pDispPos->GetDrawPos().y,
+		pInfo->m_pDispPos->GetDrawPos().y + nLineHeight,
+		GetTextArea().GetAreaLeft(),
+		GetTextArea().GetAreaRight()
+	);
 
 	// w’èŒ…cü•`‰æ
 	GetTextDrawer().DispVerticalLines(

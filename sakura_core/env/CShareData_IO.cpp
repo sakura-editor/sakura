@@ -1583,6 +1583,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			break;
 		}
 	}
+	cProfile.IOProfileData( pszSecName, L"nNoteLineOffset", types.m_nNoteLineOffset );
 
 //@@@ 2001.11.17 add start MIK
 	{	//正規表現キーワード

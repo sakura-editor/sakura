@@ -4323,6 +4323,7 @@ BEGIN
 	STR_COLOR_CURSOR_LINE_BG		"カーソル行の背景色"
 	STR_COLOR_CURSOR_LINE			"カーソル行アンダーライン"
 	STR_COLOR_CURSOR_COLUMN			"カーソル位置縦線"
+	STR_COLOR_NOTE_LINE				"ノート線"
 	STR_COLOR_LINE_NO				"行番号"
 	STR_COLOR_LINE_NO_CHANGE		"行番号(変更行)"
 	STR_COLOR_EVEN_LINE_BG			"偶数行の背景色"

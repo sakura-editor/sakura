@@ -281,6 +281,7 @@ void _DefaultConfig(STypeConfig* pType)
 	for(int i = 0; i < MAX_VERTLINES; i++ ){
 		pType->m_nVertLineIdx[i] = CLayoutInt(0);
 	}
+	pType->m_nNoteLineOffset = 0;
 
 	//  保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	pType->m_bChkEnterAtEnd = true;
