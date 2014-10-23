@@ -441,6 +441,7 @@
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
 #define HIDC_CHECK_bNotOverWriteCRLF			10214 //改行は上書きしない
 #define HIDC_CHECK_bOverWriteFixMode			10218 //文字幅に合わせてスペースを詰める
+#define HIDC_CHECK_bOverWriteBoxDelete			10219 //矩形入力で選択範囲を削除する
 #define HIDC_CHECK_CONVERTEOLPASTE				10217 //改行コードを変換して貼り付ける // 2009.02.28 salarm
 #define HIDC_RADIO_CURDIR						10220 //カレントフォルダ
 #define HIDC_RADIO_MRUDIR						10221 //最近使ったフォルダ

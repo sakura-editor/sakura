@@ -214,6 +214,7 @@ struct CommonSetting_Edit
 	//上書きモード
 	BOOL	m_bNotOverWriteCRLF;		//!< 改行は上書きしない
 	bool	m_bOverWriteFixMode;		//!< 文字幅に合わせてスペースを詰める
+	bool	m_bOverWriteBoxDelete;		//!< 上書きモードでの矩形入力で選択範囲を削除する
 
 	//クリッカブルURL
 	BOOL	m_bJumpSingleClickURL;		//!< URLのシングルクリックでJump $$$未使用
