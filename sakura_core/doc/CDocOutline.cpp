@@ -362,7 +362,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			pszText[nLineLen] = L'\0';
 			bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 			for( i = 0; pszText[i] != L'\0'; ++i ){
-				if( WCODE::IsLineDelimiter(pszText[i]), bExtEol ){
+				if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
 					pszText[i] = L'\0';
 					break;
 				}
