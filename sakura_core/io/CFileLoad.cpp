@@ -243,7 +243,7 @@ void CFileLoad::FileClose( void )
 */
 EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 {
-	if( m_CharCode != CODE_UTF7 ){
+	if( m_CharCode != CODE_UTF7 && m_CharCode != CP_UTF7 ){
 		return ReadLine_core( pUnicodeBuffer, pcEol );
 	}
 	if( m_nReadOffset2 == m_cLineTemp.GetStringLength() ){
