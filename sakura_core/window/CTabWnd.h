@@ -73,6 +73,14 @@ public:
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE, BOOL bOtherGroup = TRUE );	/*!< タブ一覧メニュー作成処理 */	// 2006.03.23 fon
 
+	void SizeBox_ONOFF( bool bSizeBox );
+	HWND GetHwndSizeBox(){
+		return m_hwndSizeBox;
+	}
+	void OnSize(){
+		OnSize( GetHwnd(), WM_SIZE, 0, 0 );
+	}
+	void UpdateStyle();
 protected:
 	/*
 	|| 実装ヘルパ系
@@ -166,6 +174,7 @@ public:
 	HWND			m_hwndTab;		/*!< タブコントロール */
 	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
 	TCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
+	ETabPosition	m_eTabPosition;	//!< タブ表示位置
 
 private:
 	DragState	m_eDragState;			//!< ドラッグ状態
@@ -190,11 +199,15 @@ private:
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報
+	bool		m_bMultiLine;			//!< 複数行
 
 	// タブ内の閉じるボタン用変数
 	int			m_nTabHover;			//!< マウスカーソル下のタブ（無いときは-1）
 	bool		m_bTabCloseHover;		//!< マウスカーソル下にタブ内の閉じるボタンがあるか
 	int			m_nTabCloseCapture;		//!< 閉じるボタンがマウス押下されているタブ（無いときは-1）
+
+	HWND		m_hwndSizeBox;
+	bool		m_bSizeBox;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);

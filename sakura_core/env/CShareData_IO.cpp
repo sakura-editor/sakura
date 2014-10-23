@@ -558,6 +558,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bTab_ListFull")			, common.m_sTabBar.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("bChgWndByWheel")		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
 	cProfile.IOProfileData( pszSecName, LTEXT("bNewWindow")			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
+	cProfile.IOProfileData( pszSecName, L"bTabMultiLine"			, common.m_sTabBar.m_bTabMultiLine );	// タブ多段
+	cProfile.IOProfileData_WrapInt( pszSecName, L"eTabPosition"		, common.m_sTabBar.m_eTabPosition );	// タブ位置
 
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
 		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );

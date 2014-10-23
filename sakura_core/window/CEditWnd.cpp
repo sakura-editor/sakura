@@ -1012,6 +1012,8 @@ void CEditWnd::LayoutTabBar( void )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( NULL == m_cTabWnd.GetHwnd() ){
 			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
+		}else{
+			m_cTabWnd.UpdateStyle();
 		}
 	}else{
 		m_cTabWnd.Close();
@@ -1931,6 +1933,12 @@ LRESULT CEditWnd::DispatchEvent(
 	//タブウインドウ	//@@@ 2003.05.31 MIK
 	case MYWM_TAB_WINDOW_NOTIFY:
 		m_cTabWnd.TabWindowNotify( wParam, lParam );
+		{
+			RECT		rc;
+			::GetClientRect( GetHwnd(), &rc );
+			OnSize( m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+			GetActiveView().SetIMECompFormPos();
+		}
 		return 0L;
 
 	//アウトライン	// 2010.06.06 ryoji
@@ -3066,14 +3074,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		nFuncKeyWndHeight = rc.bottom - rc.top;
 	}
 	//@@@ From Here 2003.05.31 MIK
-	//タブウインドウ
-	nTabWndHeight = 0;
-	if( NULL != m_cTabWnd.GetHwnd() )
-	{
-		::SendMessage( m_cTabWnd.GetHwnd(), WM_SIZE, wParam, lParam );
-		::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
-		nTabWndHeight = rc.bottom - rc.top;
-	}
 	//@@@ To Here 2003.05.31 MIK
 	nStatusBarHeight = 0;
 	if( NULL != m_cStatusBar.GetStatusHwnd() ){
@@ -3136,16 +3136,74 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	//タブウインドウ追加に伴い，ファンクションキー表示位置も調整
 
 	//タブウインドウ
+	int nTabHeightBottom = 0;
+	nTabWndHeight = 0;
 	if( m_cTabWnd.GetHwnd() )
 	{
-		if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
-		{
-			::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
+		// タブ多段はSizeBox/ウィンドウ幅で高さが変わる可能性がある
+		ETabPosition tabPosition = m_pShareData->m_Common.m_sTabBar.m_eTabPosition;
+		bool bHidden = false;
+		if( tabPosition == TabPosition_Top ){
+			// 上から下に移動するとゴミが表示されるので一度非表示にする
+			if( m_cTabWnd.m_eTabPosition != TabPosition_None && m_cTabWnd.m_eTabPosition != TabPosition_Top ){
+				bHidden = true;
+				::ShowWindow( m_cTabWnd.GetHwnd(), SW_HIDE );
+			}
+			m_cTabWnd.SizeBox_ONOFF( false );
+			::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
+			nTabWndHeight = rc.bottom - rc.top;
+			if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){
+				::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
+			}else{
+				::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
+			}
+			m_cTabWnd.OnSize();
+			::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
+			if( nTabWndHeight != rc.bottom - rc.top ){
+				nTabWndHeight = rc.bottom - rc.top;
+				if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){
+					::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight + nFuncKeyWndHeight, cx, nTabWndHeight, TRUE );
+				}else{
+					::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
+				}
+			}
+		}else if( tabPosition == TabPosition_Bottom ){
+			// 上から下に移動するとゴミが表示されるので一度非表示にする
+			if( m_cTabWnd.m_eTabPosition != TabPosition_None && m_cTabWnd.m_eTabPosition != TabPosition_Bottom ){
+				bHidden = true;
+				ShowWindow( m_cTabWnd.GetHwnd(), SW_HIDE );
+			}
+			bool	bSizeBox = true;
+			if( NULL != m_cStatusBar.GetStatusHwnd() ){
+				bSizeBox = false;
+			}
+			if( NULL != m_CFuncKeyWnd.GetHwnd() ){
+				if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 1 ){
+					bSizeBox = false;
+				}
+			}
+			if( wParam == SIZE_MAXIMIZED ){
+				bSizeBox = false;
+			}
+			m_cTabWnd.SizeBox_ONOFF( bSizeBox );
+			::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
+			nTabWndHeight = rc.bottom - rc.top;
+			::MoveWindow( m_cTabWnd.GetHwnd(), 0,
+				cy - nFuncKeyWndHeight - nStatusBarHeight - nTabWndHeight, cx, nTabWndHeight, TRUE );
+			m_cTabWnd.OnSize();
+			::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
+			if( nTabWndHeight != rc.bottom - rc.top ){
+				nTabWndHeight = rc.bottom - rc.top;
+				::MoveWindow( m_cTabWnd.GetHwnd(), 0,
+					cy - nFuncKeyWndHeight - nStatusBarHeight - nTabWndHeight, cx, nTabWndHeight, TRUE );
+			}
+			nTabHeightBottom = rc.bottom - rc.top;
+			nTabWndHeight = 0;
 		}
-		else
-		{
-			::MoveWindow( m_cTabWnd.GetHwnd(), 0, nToolBarHeight, cx, nTabWndHeight, TRUE );
+		if( bHidden ){
+			::ShowWindow( m_cTabWnd.GetHwnd(), SW_SHOW );
 		}
+		m_cTabWnd.m_eTabPosition = tabPosition;
 	}
 
 	//	2005.04.23 genta ファンクションキー非表示の時は移動しない
@@ -3195,7 +3253,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	int nTop = nToolBarHeight + nTabWndHeight;
 	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0)
 		nTop += nFuncKeyWndHeight;
-	int nHeight = cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight;
+	int nHeight = cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nTabHeightBottom - nStatusBarHeight;
 	if( m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() )
 	{
 		::MoveWindow(

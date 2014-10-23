@@ -355,6 +355,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;			// 外部から起動するときは新しいウインドウで開く
+		m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine = false;		// タブ多段
+		m_pShareData->m_Common.m_sTabBar.m_eTabPosition = TabPosition_Top;		//タブ位置
 
 		m_pShareData->m_Common.m_sTabBar.m_lf = lfIconTitle;
 		m_pShareData->m_Common.m_sTabBar.m_nPointSize = nIconPointSize;
