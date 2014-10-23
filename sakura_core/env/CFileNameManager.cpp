@@ -35,6 +35,8 @@
 #include "util/os.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
+#include "util/file.h"
+#include "util/window.h"
 #include "_main/CCommandLine.h"
 #include "_os/COsVersionInfo.h"
 
@@ -50,13 +52,22 @@
 	@date 2003.01.27 Moca 新規作成
 	@note 連続して呼び出す場合のため、展開済みメタ文字列をキャッシュして高速化している。
 */
-LPTSTR CFileNameManager::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
+LPTSTR CFileNameManager::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen, HDC hDC, bool bFitMode, int cchMaxWidth )
 {
 	int i;
 	TCHAR szBuf[_MAX_PATH + 1];
 
 	if( -1 == m_nTransformFileNameCount ){
 		TransformFileName_MakeCache();
+	}
+
+	int nPxWidth = -1;
+	if( m_pShareData->m_Common.m_sFileName.m_bTransformShortPath && cchMaxWidth != -1 ){
+		if( cchMaxWidth == 0 ){
+			cchMaxWidth = m_pShareData->m_Common.m_sFileName.m_nTransformShortMaxWidth;
+		}
+		CTextWidthCalc calc(hDC);
+		nPxWidth = calc.GetTextWidth(_T("x")) * cchMaxWidth;
 	}
 
 	if( 0 < m_nTransformFileNameCount ){
@@ -70,6 +81,12 @@ LPTSTR CFileNameManager::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDes
 				m_szTransformFileNameFromExp[i],
 				m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
 		}
+		if( nPxWidth != -1 ){
+			_tcscpy( szBuf, pszDest );
+			GetShortViewPath( pszDest, nDestLen, szBuf, hDC, nPxWidth, bFitMode );
+		}
+	}else if( nPxWidth != -1 ){
+		GetShortViewPath( pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode );
 	}else{
 		// 変換する必要がない コピーだけする
 		_tcsncpy( pszDest, pszSrc, nDestLen - 1 );
@@ -377,7 +394,7 @@ static void GetAccessKeyLabelByIndex(TCHAR* pszLabel, bool bEspaceAmp, int index
 bool CFileNameManager::GetMenuFullLabel(
 	TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp,
 	const EditInfo* editInfo, int nId, bool bFavorite,
-	int index, bool bAccKeyZeroOrigin
+	int index, bool bAccKeyZeroOrigin, HDC hDC
 ){
 	const EditInfo* pfi = editInfo;
 	TCHAR szAccKey[4];
@@ -419,7 +436,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_OUTPUT), szAccKey );
 	}else{
 		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified, pfi->m_nCharCode, bFavorite,
-			 index, bAccKeyZeroOrigin);
+			 index, bAccKeyZeroOrigin, hDC);
 	}
 	return 0 < ret;
 }
@@ -427,7 +444,7 @@ bool CFileNameManager::GetMenuFullLabel(
 bool CFileNameManager::GetMenuFullLabel(
 	TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp,
 	const TCHAR* pszFile, int nId, bool bModified, ECodeType nCharCode, bool bFavorite,
-	int index, bool bAccKeyZeroOrigin
+	int index, bool bAccKeyZeroOrigin, HDC hDC
 ){
 	TCHAR szAccKey[4];
 	TCHAR szFileName[_MAX_PATH];
@@ -436,7 +453,7 @@ bool CFileNameManager::GetMenuFullLabel(
 
 	GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
 	if( pszFile[0] ){
-		this->GetTransformFileNameFast( pszFile, szFileName, _MAX_PATH );
+		this->GetTransformFileNameFast( pszFile, szFileName, _MAX_PATH, hDC );
 
 		// szFileName → szMenu2
 		//	Jan. 19, 2002 genta

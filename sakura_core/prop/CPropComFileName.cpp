@@ -34,11 +34,14 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
 
 static const DWORD p_helpids[] = {	//13400
+	IDC_CHECK_SHORTPATH,	HIDC_CHECK_FNAME_SHORTPATH,
+	IDC_EDIT_SHORTMAXWIDTH,	HIDC_EDIT_FNAME_SHORTMAXWIDTH,
 	IDC_LIST_FNAME,			HIDC_LIST_FNAME, 		// ファイル名置換リスト
 	IDC_EDIT_FNAME_FROM,	HIDC_EDIT_FNAME_FROM,	// 置換前
 	IDC_EDIT_FNAME_TO,		HIDC_EDIT_FNAME_TO,		// 置換後
@@ -102,6 +105,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			SetData( hwndDlg );
 
 			// エディット コントロールに入力できるテキストの長さを制限する
+			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_SHORTMAXWIDTH ), 4 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ), _MAX_PATH - 1 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),   _MAX_PATH - 1 );
 		}
@@ -277,6 +281,8 @@ void CPropFileName::SetData( HWND hwndDlg )
 	int i;
 	LVITEM lvItem;
 
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_SHORTPATH, m_Common.m_sFileName.m_bTransformShortPath );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, m_Common.m_sFileName.m_nTransformShortMaxWidth, FALSE );
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
@@ -327,6 +333,9 @@ int CPropFileName::GetData( HWND hwndDlg )
 
 	int nIndex;
 	int nCount;
+
+	m_Common.m_sFileName.m_bTransformShortPath = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_SHORTPATH );
+	m_Common.m_sFileName.m_nTransformShortMaxWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, NULL, FALSE );
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );

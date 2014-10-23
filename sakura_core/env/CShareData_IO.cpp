@@ -379,6 +379,8 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 	int		i;
 	WCHAR	szKeyName[64];
 
+	cProfile.IOProfileData( pszSecName, LTEXT("bShortPath"), pShare->m_Common.m_sFileName.m_bTransformShortPath );
+	cProfile.IOProfileData( pszSecName, LTEXT("nShortPathMaxWidth"), pShare->m_Common.m_sFileName.m_nTransformShortMaxWidth );
 	cProfile.IOProfileData( pszSecName, LTEXT("ArrNum"), pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum );
 	SetValueLimit( pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum, MAX_TRANSFORM_FILENAME );
 	int nSize = pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum;

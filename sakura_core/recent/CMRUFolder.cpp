@@ -20,6 +20,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CMenuDrawer.h"	//	これでいいのか？
 #include "util/string_ex2.h"
+#include "util/window.h"
 
 /*!	コンストラクタ
 
@@ -69,6 +70,11 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 	int		i;
 	bool	bFavorite;
 
+	NONCLIENTMETRICS met;
+	met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+	CDCFont dcFont(met.lfMenuFont);
+
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
@@ -78,7 +84,7 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 		const TCHAR* pszFolder = m_cRecentFolder.GetItemText( i );
 		bFavorite = m_cRecentFolder.IsFavorite( i );
 		bool bFavoriteLabel = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
-		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true );
+		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC() );
 
 		//	メニューに追加
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, _T(""), TRUE,

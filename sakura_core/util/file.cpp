@@ -29,6 +29,7 @@
 #include "file.h"
 #include "charset/CharPointer.h"
 #include "util/module.h"
+#include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
@@ -1204,4 +1205,180 @@ int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 	return score;
 }
 
+/*! 指定幅までに文字列を省略
+	@date 2014.06.12 新規作成 Moca
+*/
+void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth )
+{
+	// できるだけ左側から表示
+	// \\server\dir...
+	const int nPathLen = auto_strlen(path);
+	CTextWidthCalc calc(hDC);
+	if( calc.GetTextWidth(path) <= nPxWidth ){
+		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		return;
+	}
+	std::tstring strTemp;
+	std::tstring strTempOld;
+	int nPos = 0;
+	while( path[nPos] != _T('\0') ){
+		strTemp.assign(path, nPos);
+		std::tstring strTemp2 = strTemp;
+		strTemp2 += _T("...");
+		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
+			// 入りきらなかったので1文字前までをコピー
+			_tcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
+			_tcscat_s(dest, nSize, _T("..."));
+			return;
+		}
+		strTempOld = strTemp;
+		nPos += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nPos));
+	}
+	// 全部表示(ここには来ないはず)
+	_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+}
 
+/*! パスの省略表示
+	in  C:\sub1\sub2\sub3\file.ext
+	out C:\...\sub3\file.ext
+	@date 2014.06.12 新規作成 Moca
+*/
+void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth, bool bFitMode )
+{
+	int nLeft = 0; // 左側固定表示部分
+	int nSkipLevel = 1;
+	const int nPathLen = auto_strlen(path);
+	CTextWidthCalc calc(hDC);
+	if( calc.GetTextWidth(path) <= nPxWidth ){
+		// 全部表示可能
+		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		return;
+	}
+	if( path[0] == _T('\\') && path[1] == _T('\\') ){
+		if( path[2] == _T('?') && path[4] == _T('\\') ){
+			// [\\?\A:\]
+			nLeft = 4;
+		}else{
+			nSkipLevel = 2; // [\\server\dir\] の2階層飛ばす
+			nLeft = 2;
+		}
+	}else{
+		// http://server/ とか ftp://server/ とかを保持
+		int nTop = 0;
+		while( path[nTop] != _T('\0') && path[nTop] != _T('/') ){
+			nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
+		}
+		if( 0 < nTop && path[nTop - 1] == ':' ){
+			// 「ほにゃらら:/」だった /が続いてる間飛ばす
+			while( path[nTop] == _T('/') ){
+				nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
+			}
+			nLeft = nTop;
+		}
+	}
+	for( int i = 0; i < nSkipLevel; i++ ){
+		while( path[nLeft] != _T('\0') && path[nLeft] != _T('\\') && path[nLeft] != _T('/') ){
+			nLeft += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nLeft));
+		}
+		if( path[nLeft] != _T('\0') ){
+			if( i + 1 < nSkipLevel ){
+				nLeft++;
+			}
+		}else{
+			if( bFitMode ){
+				GetStrTrancateWidth(dest, nSize, path, hDC, nPxWidth);
+				return;
+			}
+			// ここで終端なら全部表示
+			_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+			return;
+		}
+	}
+	int nRight = nLeft; // 右側の表示開始位置(nRightは\を指している)
+	while( path[nRight] != _T('\0') ){
+		int nNext = nRight;
+		nNext++;
+		while( path[nNext] != _T('\0') && path[nNext] != _T('\\') && path[nNext] != _T('/') ){
+			nNext += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nNext));
+		}
+		if( path[nNext] != _T('\0') ){
+			// サブフォルダ省略
+			// C:\...\dir\file.ext
+			std::tstring strTemp(path, nLeft + 1);
+			if( nLeft + 1 < nRight ){
+				strTemp += _T("...");
+			}
+			strTemp += &path[nRight];
+			if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
+				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				return;
+			}
+			// C:\...\dir\   フォルダパスだった。最後のフォルダを表示
+			if( path[nNext+1] == _T('\0') ){
+				if( bFitMode ){
+					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
+					return;
+				}
+				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				return;
+			}
+			nRight = nNext;
+		}else{
+			break;
+		}
+	}
+	// nRightより右に\が見つからなかった=ファイル名だったのでファイル名表示
+	// C:\...\file.ext
+	int nLeftLen = nLeft;
+	if( nLeftLen && nLeftLen != nRight ){
+		nLeftLen++;
+	}
+	std::tstring strTemp(path, nLeftLen);
+	if( nLeft != nRight ){
+		strTemp += _T("...");
+	}
+	strTemp += &path[nRight];
+	if( bFitMode ){
+		if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
+			_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+			return;
+		}
+		// ファイル名(か左側固定部)が長すぎてはいらない
+		int nExtPos = -1;
+		{
+			// 拡張子の.を探す
+			int nExt = nRight;
+			while( path[nExt] != _T('\0') ){
+				if( path[nExt] == _T('.') ){
+					nExtPos = nExt;
+				}
+				nExt += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nExt));
+			}
+		}
+		if( nExtPos != -1 ){
+			std::tstring strLeftFile(path, nLeftLen); // [C:\]  
+			if( nLeft != nRight ){
+				strLeftFile += _T("..."); // C:\...
+			}
+			int nExtWidth = calc.GetTextWidth(&path[nExtPos]);
+			int nLeftWidth = calc.GetTextWidth(strLeftFile.c_str());
+			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
+			if( 0 < nFileNameWidth ){
+				// 拡張子は省略しない(ファイルタイトルを省略)
+				std::tstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
+				strLeftFile += strFile; // C:\...\longfilename
+				int nExtLen = nPathLen - nExtPos;
+				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
+				_tcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
+			}else{
+				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
+				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
+			}
+		}else{
+			// 拡張子はなかった。左側から残す
+			GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
+		}
+		return;
+	}
+	_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+}
