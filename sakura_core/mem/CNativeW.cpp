@@ -55,6 +55,11 @@ void CNativeW::SetString( const wchar_t* pszData )
 	CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
 }
 
+void CNativeW::SetStringHoldBuffer( const wchar_t* pData, int nDataLen )
+{
+	CNative::SetRawDataHoldBuffer(pData, nDataLen * sizeof(wchar_t));
+}
+
 // バッファの内容を置き換える
 void CNativeW::SetNativeData( const CNativeW& pcNative )
 {

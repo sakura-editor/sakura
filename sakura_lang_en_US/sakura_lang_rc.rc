@@ -4430,9 +4430,9 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	// CCdoeChecker.cpp
 	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%ts)?"
-	STR_CODECHECKER_CONFORM_LOSESOME	"文字エンコード %ts で保存しようとしていますが、\r\n文字コード変換により一部の文字情報が失われます。\r\n保存処理を続行しますか？"
-	STR_CODECHECKER_LOSESOME_SAVE	"一部の文字情報が、セーブ時の変換により失われました"
-	STR_CODECHECKER_LOSESOME_ROAD	"一部の文字情報が、ロード時の変換により失われました"
+	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\Do you continue saving？\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
+	STR_CODECHECKER_LOSESOME_SAVE	"lose some char info by saving encoding conversion."
+	STR_CODECHECKER_LOSESOME_ROAD	"lose some char info by loading encoding conversion."
 	STR_CONVERT_ERR					"Error on Convert."
 
 	STR_DLGABOUT_APPNAME			"Sakura Editor"

@@ -70,6 +70,7 @@ public:
 	//WCHAR
 	void SetString( const wchar_t* pData, int nDataLen );      //!< バッファの内容を置き換える。nDataLenは文字単位。
 	void SetString( const wchar_t* pszData );                  //!< バッファの内容を置き換える
+	void SetStringHoldBuffer( const wchar_t* pData, int nDataLen );
 	void AppendString( const wchar_t* pszData );               //!< バッファの最後にデータを追加する
 	void AppendString( const wchar_t* pszData, int nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
 
