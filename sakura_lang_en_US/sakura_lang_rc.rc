@@ -1565,32 +1565,35 @@ FONT 9, "Tahoma"
 BEGIN
     CONTROL         "Insert &CR when line-wraps in copied text",
                     IDC_CHECK_ADDCRLFWHENCOPY,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,18,143,10
+                    WS_GROUP | WS_TABSTOP,8,16,143,10
     CONTROL         "Cancel selection after copying(&R)",
                     IDC_CHECK_COPYnDISABLESELECTEDAREA,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,33,143,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,29,143,10
     CONTROL         "Selectionless copy copies current lin&e",
                     IDC_CHECK_bEnableNoSelectCopy,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,48,143,10
+                    WS_TABSTOP,8,42,143,10
     CONTROL         "Pasting a (&L)ine pastes at start of line",
                     IDC_CHECK_bEnableLineModePaste,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,63,143,10
+                    WS_TABSTOP,8,55,143,10
     CONTROL         "Pasting Lines with CR Conversion(&P)",
                     IDC_CHECK_CONVERTEOLPASTE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,79,143,10
-    GROUPBOX        "Copy",IDC_STATIC,3,3,149,96,WS_GROUP
+                    WS_TABSTOP,8,68,143,10
+    GROUPBOX        "Copy",IDC_STATIC,3,3,149,81,WS_GROUP
     CONTROL         "Drag'n'Drop editing(&D)",IDC_CHECK_DRAGDROP,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,119,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,104,
                     143,10
     CONTROL         "Allow other tools to drop(&S)",IDC_CHECK_DROPSOURCE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,134,143,10
-    GROUPBOX        "Drag'n'Drop",IDC_STATIC,3,104,149,50,WS_GROUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,156,143,10
+    GROUPBOX        "Drag'n'Drop",IDC_STATIC,3,91,149,50,WS_GROUP
     CONTROL         "Dont overwrite existing line-breaks(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,174,143,10
+                    WS_TABSTOP,8,156,143,10
     CONTROL         "Fill Space when Overrite 2-bytes by 1-byte(&F)",
                     IDC_CHECK_bOverWriteFixMode,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,190,143,10
+                    WS_TABSTOP,8,169,143,10
+    CONTROL         "Delete selecting area while box selecting(&G)",
+                    IDC_CHECK_bOverWriteBoxDelete,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,182,143,10
     GROUPBOX        "Overwrite Mode",IDC_STATIC,3,159,149,51,WS_GROUP
     CONTROL         "Clicking selects whole &URL",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,18,120,10
