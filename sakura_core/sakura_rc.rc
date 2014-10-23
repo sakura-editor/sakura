@@ -4422,7 +4422,7 @@ GDI リソース\t残り  %d%%\n\n"
 
 	// CCdoeChecker.cpp
 	STR_CODECHECKER_EOL_UNIFY		"改行コードが混在しています。\r\n現在の入力改行コード %ts に統一しますか？"
-	STR_CODECHECKER_CONFORM_LOSESOME	"文字エンコード %ts で保存しようとしていますが、\r\n文字コード変換により一部の文字情報が失われます。\r\n保存処理を続行しますか？"
+	STR_CODECHECKER_CONFORM_LOSESOME	"文字エンコード %ts で保存しようとしていますが、\r\n文字コード変換により一部の文字情報が失われます。\r\n保存処理を続行しますか？\n最初の場所 %d行 %ts 文字[%ls]%ts\nキャンセル=該当位置に移動"
 	STR_CODECHECKER_LOSESOME_SAVE	"一部の文字情報が、セーブ時の変換により失われました"
 	STR_CODECHECKER_LOSESOME_ROAD	"一部の文字情報が、ロード時の変換により失われました"
 	STR_CONVERT_ERR					"変換でエラーが発生しました"
