@@ -1030,7 +1030,7 @@ void CEditView::OnSize( int cx, int cy )
 	}
 
 	/* 親ウィンドウのタイトルを更新 */
-	m_pcEditWnd->UpdateCaption(); // [Q] genta 本当に必要？
+	// m_pcEditWnd->UpdateCaption(); // [Q] genta 本当に必要？
 
 	return;
 }

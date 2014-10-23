@@ -282,6 +282,9 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	  )
 	){
 		bSizeBox = FALSE;
+	}else if( NULL != pCEditWnd->m_cTabWnd.GetHwnd()
+		&& m_pShareData->m_Common.m_sTabBar.m_eTabPosition == TabPosition_Bottom ) {
+		bSizeBox = FALSE;
 	}else{
 		bSizeBox = TRUE;
 		/* ステータスパーを表示している場合はサイズボックスを表示しない */
@@ -850,6 +853,9 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	  && 1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
 	){
+		bSizeBox = FALSE;
+	}else if( NULL != pCEditWnd->m_cTabWnd.GetHwnd()
+		&& m_pShareData->m_Common.m_sTabBar.m_eTabPosition == TabPosition_Bottom ) {
 		bSizeBox = FALSE;
 	}else{
 		bSizeBox = TRUE;

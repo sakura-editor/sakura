@@ -157,6 +157,14 @@ enum EDispTabClose{
 	DISPTABCLOSE_AUTO		= 2  //!< 自動表示
 };
 
+enum ETabPosition{
+	TabPosition_Top,
+	TabPosition_Bottom,
+	TabPosition_Left,
+	TabPosition_Right,
+	TabPosition_None = -1,
+};
+
 struct CommonSetting_TabBar
 {
 	BOOL		m_bDispTabWnd;					//!< タブウインドウ表示する	//@@@ 2003.05.31 MIK
@@ -164,6 +172,8 @@ struct CommonSetting_TabBar
 	BOOL		m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
 	BOOL		m_bTab_CloseOneWin;				//!< タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる
 	BOOL		m_bNewWindow;					//!< 外部から起動するときは新しいウインドウで開く
+	bool		m_bTabMultiLine;				//!< タブ多段
+	ETabPosition	m_eTabPosition;				//!<タブ位置
 
 	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL		m_bSameTabWidth;				//!< タブを等幅にする			//@@@ 2006.01.28 ryoji

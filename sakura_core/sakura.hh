@@ -592,6 +592,8 @@
 #define HIDC_BUTTON_TABFONT						11277 //タブフォント
 #define HIDC_CHECK_INHERIT_KEY_OTHER_VIEW		11278 //次・前検索で他のビューの検索条件を引き継ぐ
 #define HIDC_CHECK_DispTabClose					11279 //タブを閉じるボタン表示	// 2012.04.14 syat
+#define HIDC_CHECK_TAB_MULTILINE				11280 //タブ多段
+#define HIDC_COMBO_TAB_POSITION					11281 //タブ表示位置
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK

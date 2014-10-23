@@ -806,6 +806,7 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 CTabWnd::CTabWnd()
 : CWnd(_T("::CTabWnd"))
+, m_eTabPosition( TabPosition_None )
 , m_eDragState( DRAG_NONE )
 , m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
 , m_bHovering( FALSE )	//	2006.02.01 ryoji
@@ -816,6 +817,8 @@ CTabWnd::CTabWnd()
 , m_nTabHover( -1 )
 , m_bTabCloseHover( false )
 , m_nTabCloseCapture( -1 )
+,m_hwndSizeBox(NULL)
+,m_bSizeBox(false)
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -855,6 +858,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	m_bListBtnHilighted = FALSE;	// 2006.02.01 ryoji
 	m_bCloseBtnHilighted = FALSE;	// 2006.10.21 ryoji
 	m_eCaptureSrc = CAPT_NONE;	// 2006.11.30 ryoji
+	m_eTabPosition = TabPosition_None;
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
@@ -869,6 +873,9 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		pszClassName						// Pointer to a null-terminated string or is an atom.
 	);
 
+	RECT rcParent;
+	::GetWindowRect( hwndParent, &rcParent );
+
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
 		hwndParent,
@@ -880,7 +887,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		// ※タブ非表示 -> 表示切替で編集ウィンドウにゴミが表示されることがあるので初期幅はゼロに
 		CW_USEDEFAULT,						// horizontal position of window
 		0,									// vertical position of window
-		0,									// window width
+		rcParent.right - rcParent.left,		// window width
 		TAB_WINDOW_HEIGHT,					// window height
 		NULL								// handle to menu, or child-window identifier
 	);
@@ -895,7 +902,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		// 2006.01.30 ryoji 初期配置見直し
 		TAB_MARGIN_LEFT,
 		TAB_MARGIN_TOP,
-		0,
+		rcParent.right - rcParent.left - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT),
 		TAB_WINDOW_HEIGHT,
 		GetHwnd(),
 		(HMENU)NULL,
@@ -913,7 +920,13 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
 		//	Feb. 14, 2004 MIK マルチライン化の変更混入戻し
 		lngStyle &= ~(TCS_BUTTONS | TCS_MULTILINE);
-		lngStyle |= TCS_TABS | TCS_SINGLELINE | TCS_FOCUSNEVER | TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;	// 2006.01.28 ryoji
+		if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine ){
+			lngStyle |= TCS_MULTILINE;
+		}else{
+			lngStyle |= TCS_SINGLELINE;
+		}
+		m_bMultiLine = m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine;
+		lngStyle |= TCS_TABS | TCS_FOCUSNEVER | TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;	// 2006.01.28 ryoji
 		//lngStyle &= ~(TCS_BUTTONS | TCS_SINGLELINE);	//2004.01.31
 		//lngStyle |= TCS_TABS | TCS_MULTILINE;
 		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
@@ -971,9 +984,25 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		InitImageList();
 
 		Refresh();	// タブ非表示から表示に切り替わったときに各ウィンドウの情報をタブ登録する必要がある
+
+		LayoutTab();
 	}
 
 	return GetHwnd();
+}
+
+void CTabWnd::UpdateStyle()
+{
+	if( m_bMultiLine != m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine ){
+		m_bMultiLine = m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine;
+		UINT lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
+		if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine ){
+			lngStyle |= TCS_MULTILINE;
+		}else{
+			lngStyle &= ~TCS_MULTILINE;
+		}
+		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
+	}
 }
 
 /* ウィンドウ クローズ */
@@ -1004,28 +1033,18 @@ void CTabWnd::Close( void )
 //WM_SIZE処理
 LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	RECT	rcWnd;
-
 	if( NULL == GetHwnd() || NULL == m_hwndTab ) return 0L;
 
+	RECT rcWnd;
 	::GetWindowRect( GetHwnd(), &rcWnd );
 
-	int nHeight = TAB_WINDOW_HEIGHT;
-#if 0	// 多段化しなければ不要
-	if( TabCtrl_GetItemCount( m_hwndTab ) )
-	{
-		// 正確に再配置（多段タブでは段数が変わることがあるので必須）
-		RECT rcTab, rcDisp;
-		::GetWindowRect( m_hwndTab, &rcTab );
-		rcDisp = rcTab;
-		TabCtrl_AdjustRect( m_hwndTab, FALSE, &rcDisp );
-		nHeight = (rcDisp.top - rcTab.top - 2) + TAB_MARGIN_TOP;
-
-		::SetWindowPos( GetHwnd(), NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
+	int nSizeBoxWidth = 0;
+	if( m_hwndSizeBox ){
+		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
+		int nSizeBoxHeight = ::GetSystemMetrics( SM_CYHSCROLL );
+		::MoveWindow( m_hwndSizeBox,  rcWnd.right - rcWnd.left - nSizeBoxWidth,
+			rcWnd.bottom - rcWnd.top - nSizeBoxHeight, nSizeBoxWidth, nSizeBoxHeight, TRUE );
 	}
-#endif
-
-	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), nHeight, TRUE );	// 2005.01.30 ryoji
 
 	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
 
@@ -1801,15 +1820,23 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			p = CAppNodeManager::getInstance()->GetEditNode( (HWND)lParam );
 			GetTabName( p, FALSE, TRUE, szName, _countof(szName) );
 
-			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
-			tcitem.pszText = szName;
-			tcitem.lParam  = lParam;
+			tcitem.mask    = TCIF_TEXT | TCIF_IMAGE;
+			TCHAR	szNameOld[1024];
+			tcitem.pszText = szNameOld;
+			TabCtrl_GetItem( m_hwndTab, nIndex, &tcitem );
+			if( 0 != auto_strcmp( szNameOld, szName )
+				|| tcitem.iImage != GetImageIndex( p ) ){
 
-			// 2006.01.28 ryoji タブのアイコンイメージを変更する
-			tcitem.mask |= TCIF_IMAGE;
-			tcitem.iImage = GetImageIndex( p );
+				tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
+				tcitem.pszText = szName;
+				tcitem.lParam  = lParam;
 
-			TabCtrl_SetItem( m_hwndTab, nIndex, &tcitem );
+				// 2006.01.28 ryoji タブのアイコンイメージを変更する
+				tcitem.mask |= TCIF_IMAGE;
+				tcitem.iImage = GetImageIndex( p );
+
+				TabCtrl_SetItem( m_hwndTab, nIndex, &tcitem );
+			}
 		}
 		else
 		{
@@ -1871,11 +1898,11 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( bFlag ) ::ShowWindow( m_hwndTab, SW_SHOW );
 	}
 
-	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
+//	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
 
 	//更新
-	::InvalidateRect( m_hwndTab, NULL, TRUE );
-	::InvalidateRect( GetHwnd(), NULL, TRUE );		// 2006.10.21 ryoji タブ内ボタン再描画のために追加
+//	::InvalidateRect( m_hwndTab, NULL, FALSE );
+//	::InvalidateRect( GetHwnd(), NULL, FALSE );		// 2006.10.21 ryoji タブ内ボタン再描画のために追加
 
 	return;
 }
@@ -2264,6 +2291,10 @@ void CTabWnd::LayoutTab( void )
 {
 	// フォントを切り替える 2011.12.01 Moca
 	bool bChgFont = (0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ));
+	int nSizeBoxWidth = 0;
+	if( m_hwndSizeBox ){
+		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
+	}
 	if( bChgFont ){
 		HFONT hFontOld = m_hFont;
 		m_lf = m_pShareData->m_Common.m_sTabBar.m_lf;
@@ -2271,12 +2302,6 @@ void CTabWnd::LayoutTab( void )
 		::SendMessageAny( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 		::DeleteObject( hFontOld );
 		// ウィンドウの高さを修正
-		RECT rcWnd;
-		::GetWindowRect( GetHwnd(), &rcWnd );
-
-		int nHeight = TAB_WINDOW_HEIGHT;
-		::SetWindowPos( GetHwnd(), NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
-		::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), nHeight, TRUE );
 	}
 
 	// アイコンの表示を切り替える
@@ -2354,6 +2379,25 @@ void CTabWnd::LayoutTab( void )
 			//    （Vista/7/8 で同様の症状を確認）
 			::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
 		}
+	}
+	RECT rcWnd;
+	::GetWindowRect( GetHwnd(), &rcWnd );
+
+	int nHeight = TAB_WINDOW_HEIGHT;
+	::GetWindowRect( m_hwndTab, &rcTab );
+	if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine
+		&& TabCtrl_GetItemCount( m_hwndTab ) ){
+		// 正確に再配置（多段タブでは段数が変わることがあるので必須）
+		RECT rcDisp = rcTab;
+		rcDisp.left = TAB_MARGIN_LEFT;
+		rcDisp.right = rcTab.left + (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT + nSizeBoxWidth);
+		TabCtrl_AdjustRect( m_hwndTab, FALSE, &rcDisp );
+		nHeight = (rcDisp.top - rcTab.top - 2) + TAB_MARGIN_TOP;
+	}
+	::SetWindowPos( GetHwnd(), NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
+	int nWidth = (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT + nSizeBoxWidth);
+	if( (nWidth != rcTab.right - rcTab.left) || (nHeight != rcTab.bottom - rcTab.top) ){
+		::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, nWidth, nHeight, TRUE );
 	}
 }
 
@@ -2691,7 +2735,11 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
 	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
+	int nSizeBoxWidth = 0;
+	if( m_hwndSizeBox ){
+		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
+	}
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT - nSizeBoxWidth + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
 }
 
 /*! 閉じるボタンの矩形取得処理
@@ -2701,8 +2749,12 @@ void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
 	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	int nSizeBoxWidth = 0;
+	if( m_hwndSizeBox ){
+		nSizeBoxWidth = ::GetSystemMetrics( SM_CXVSCROLL );
+	}
 	::OffsetRect(lprc,
-		lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7),
+		lprcClient->right - TAB_MARGIN_RIGHT - nSizeBoxWidth + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7),
 		lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
 }
 
@@ -3191,3 +3243,37 @@ void CTabWnd::JoinPrev( void )
 }
 
 
+/*! サイズボックスの表示／非表示切り替え */
+void CTabWnd::SizeBox_ONOFF( bool bSizeBox )
+{
+	RECT		rc;
+	::GetWindowRect( GetHwnd(), &rc );
+	if( m_bSizeBox == bSizeBox ){
+		return;
+	}
+	if( m_bSizeBox ){
+		::DestroyWindow( m_hwndSizeBox );
+		m_hwndSizeBox = NULL;
+		m_bSizeBox = false;
+		OnSize();
+	}else{
+		m_hwndSizeBox = ::CreateWindowEx(
+			0L, 						/* no extended styles			*/
+			_T("SCROLLBAR"),				/* scroll bar control class		*/
+			NULL,						/* text for window title bar	*/
+			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
+			0,							/* horizontal position			*/
+			0,							/* vertical position			*/
+			200,						/* width of the scroll bar		*/
+			CW_USEDEFAULT,				/* default height				*/
+			GetHwnd(), 				/* handle of main window		*/
+			(HMENU) NULL,				/* no menu for a scroll bar 	*/
+			GetAppInstance(),				/* instance owning this window	*/
+			(LPVOID) NULL			/* pointer not needed				*/
+		);
+		::ShowWindow( m_hwndSizeBox, SW_SHOW );
+		m_bSizeBox = true;
+		OnSize();
+	}
+	return;
+}
