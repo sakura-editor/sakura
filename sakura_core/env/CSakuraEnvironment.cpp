@@ -41,6 +41,7 @@
 #include "util/string_ex2.h"
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
+#include "util/window.h"
 
 typedef std::wstring wstring;
 
@@ -210,7 +211,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			else {
 				TCHAR szText[1024];
-				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023 );
+				NONCLIENTMETRICS met;
+				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023, dcFont.GetHDC(), true );
 				q = wcs_pushT( q, q_max - q, szText);
 				++p;
 			}
@@ -254,7 +259,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 
 				// ŠÈˆÕ•\Ž¦‚É•ÏŠ·
 				TCHAR szText[1024];
-				CFileNameManager::getInstance()->GetTransformFileNameFast( to_tchar(buff), szText, _countof(szText)-1 );
+				NONCLIENTMETRICS met;
+				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
+				CFileNameManager::getInstance()->GetTransformFileNameFast( to_tchar(buff), szText, _countof(szText)-1, dcFont.GetHDC(), true );
 				q = wcs_pushT( q, q_max - q, szText);
 			}
 			++p;

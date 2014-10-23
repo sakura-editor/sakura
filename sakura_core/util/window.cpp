@@ -153,6 +153,7 @@ CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
 
 	hwnd = ::GetDlgItem(hParent, nID);
 	hDC = ::GetDC( hwnd );
+	assert(hDC);
 	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 }
@@ -168,23 +169,44 @@ CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx = 0;
 	nExt = 0;
+	bHDCComp = false;
+	bFromDC = false;
 }
 
 CTextWidthCalc::CTextWidthCalc(HFONT font)
 {
 	hwnd = 0;
-	hDC = 0;
+	HDC hDCTemp = ::GetDC( NULL ); // Desktop
+	hDC = ::CreateCompatibleDC( hDCTemp );
+	assert(hDC);
 	hFont = font;
-	hFontOld = 0;
+	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx = 0;
 	nExt = 0;
+	bHDCComp = true;
+	bFromDC = false;
+}
+
+CTextWidthCalc::CTextWidthCalc(HDC hdc)
+{
+	hwnd = 0;
+	hDC = hdc;
+	assert(hDC);
+	nCx = 0;
+	nExt = 0;
+	bHDCComp = true;
+	bFromDC = true;
 }
 
 CTextWidthCalc::~CTextWidthCalc()
 {
-	if(hDC){
+	if(hDC && !bFromDC){
 		::SelectObject(hDC, hFontOld);
-		::ReleaseDC(hwnd, hDC);
+		if( bHDCComp ){
+			::DeleteDC(hDC);
+		}else{
+			::ReleaseDC(hwnd, hDC);
+		}
 		hwnd = 0;
 		hDC = 0;
 	}
@@ -220,6 +242,15 @@ bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText, int extCx)
 		return SetWidthIfMax(size.cx, extCx);
 	}
 	return false;
+}
+
+int CTextWidthCalc::GetTextWidth(LPCTSTR pszText) const
+{
+	SIZE size;
+	if( ::GetTextExtentPoint32( hDC, pszText, _tcslen(pszText), &size ) ){
+		return size.cx;
+	}
+	return 0;
 }
 
 CFontAutoDeleter::CFontAutoDeleter()

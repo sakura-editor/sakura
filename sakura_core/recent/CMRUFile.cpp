@@ -25,6 +25,7 @@
 #include "uiparts/CMenuDrawer.h"	//	これでいいのか？
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
+#include "util/window.h"
 
 /*!	コンストラクタ
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -78,6 +79,11 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
+	
+	NONCLIENTMETRICS met;
+	met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+	CDCFont dcFont(met.lfMenuFont);
 
 	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
@@ -89,7 +95,7 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 		const EditInfo	*p = m_cRecentFile.GetItem( i );
 		bFavorite = m_cRecentFile.IsFavorite( i );
 		bool bFavoriteLabel = bFavorite && !bMenuIcon;
-		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i );
+		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
 
 		//	メニューに追加。
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, _T(""), TRUE,

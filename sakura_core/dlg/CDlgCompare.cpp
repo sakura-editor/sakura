@@ -144,10 +144,7 @@ void CDlgCompare::SetData( void )
 	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
 		// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
-		HDC hDC = ::GetDC( hwndList );
-		HFONT hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
-		HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
-		int nExtent = 0;	// 文字列の横幅
+		CTextWidthCalc calc(hwndList);
 		int score = 0;
 		TCHAR		szFile1[_MAX_PATH];
 		SplitPath_FolderAndFile(m_pszPath, NULL, szFile1);
@@ -159,21 +156,18 @@ void CDlgCompare::SetData( void )
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
 				// 2010.07.30 自分の名前もここから設定する
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1 );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
 				::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );
 				continue;
 			}
 			// 番号は ウィンドウリストと同じになるようにする
-			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i );
+			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i, calc.GetDC() );
 
 			nItem = ::List_AddString( hwndList, szMenu );
 			List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
 
 			// 横幅を計算する
-			SIZE sizeExtent;
-			if( ::GetTextExtentPoint32( hDC, szMenu, _tcslen(szMenu), &sizeExtent ) && sizeExtent.cx > nExtent ){
-				nExtent = sizeExtent.cx;
-			}
+			calc.SetTextWidthIfMax(szMenu);
 
 			// ファイル名一致のスコアを計算する
 			TCHAR szFile2[_MAX_PATH];
@@ -187,9 +181,7 @@ void CDlgCompare::SetData( void )
 		}
 		delete [] pEditNodeArr;
 		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-		::SelectObject(hDC, hFontOld);
-		::ReleaseDC( hwndList, hDC );
-		List_SetHorizontalExtent( hwndList, nExtent + 8 );
+		List_SetHorizontalExtent( hwndList, calc.GetCx() );
 	}
 	List_SetCurSel( hwndList, selIndex );
 
@@ -228,7 +220,8 @@ int CDlgCompare::GetData( void )
 
 		// 2010.07.30 パス名はやめて表示名に変更
 		int nId = CAppNodeManager::getInstance()->GetEditNode( *m_phwndCompareWnd )->GetId();
-		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1 );
+		CTextWidthCalc calc(hwndList);
+		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1, calc.GetDC() );
 	
 		/* 左右に並べて表示 */
 		m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );

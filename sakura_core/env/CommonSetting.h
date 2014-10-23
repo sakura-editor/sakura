@@ -508,6 +508,8 @@ struct CommonSetting_Macro
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_FileName
 {
+	bool		m_bTransformShortPath;											//!< ファイル名の省略表記
+	int			m_nTransformShortMaxWidth;										//!< ファイル名の省略表記の最大長
 	int			m_nTransformFileNameArrNum;										//!< ファイル名の簡易表示登録数
 	TCHAR		m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ファイル名の簡易表示変換前文字列
 	TCHAR		m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ファイル名の簡易表示変換後文字列	//@@@ 2003.04.08 MIK

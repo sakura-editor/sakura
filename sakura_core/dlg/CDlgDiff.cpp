@@ -256,10 +256,7 @@ void CDlgDiff::SetData( void )
 		if( nRowNum > 0 )
 		{
 			// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
-			HDC hDC = ::GetDC( hwndList );
-			HFONT hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
-			HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
-			int nExtent = 0;	// 文字列の横幅
+			CTextWidthCalc calc(hwndList);
 			int score = 0;
 			TCHAR		szFile1[_MAX_PATH];
 			SplitPath_FolderAndFile(m_szFile1, NULL, szFile1);
@@ -273,13 +270,13 @@ void CDlgDiff::SetData( void )
 				if ( pEditNode[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() )
 				{
 					// 同じ形式にしておく。ただしアクセスキー番号はなし
-					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1 );
+					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
 					::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
 					continue;
 				}
 
 				// 番号はウィンドウ一覧と同じ番号を使う
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
 
 
 				/* リストに登録する */
@@ -288,10 +285,7 @@ void CDlgDiff::SetData( void )
 				count++;
 
 				// 横幅を計算する
-				SIZE sizeExtent;
-				if( ::GetTextExtentPoint32( hDC, szName, _tcslen(szName), &sizeExtent ) && sizeExtent.cx > nExtent ){
-					nExtent = sizeExtent.cx;
-				}
+				calc.SetTextWidthIfMax(szName);
 
 				// ファイル名一致のスコアを計算する
 				TCHAR szFile2[_MAX_PATH];
@@ -308,9 +302,7 @@ void CDlgDiff::SetData( void )
 
 			delete [] pEditNode;
 			// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-			::SelectObject(hDC, hFontOld);
-			::ReleaseDC( hwndList, hDC );
-			List_SetHorizontalExtent( hwndList, nExtent + 8 );
+			List_SetHorizontalExtent( hwndList, calc.GetCx() + 8 );
 
 			/* 最初を選択 */
 			//List_SetCurSel( hwndList, 0 );

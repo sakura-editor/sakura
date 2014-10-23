@@ -2803,7 +2803,11 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 	else
 	{
 		// ƒtƒ‹ƒpƒX–¼‚ðŠÈˆÕ–¼‚É•ÏŠ·‚·‚é
-		CFileNameManager::getInstance()->GetTransformFileNameFast( pEditNode->m_szFilePath, pszText, nLen );
+		HDC hdc = ::GetDC(m_hwndTab);
+		HFONT hFontOld = (HFONT)SelectObject(hdc, m_hFont);
+		CFileNameManager::getInstance()->GetTransformFileNameFast( pEditNode->m_szFilePath, pszText, nLen, hdc, false );
+		SelectObject(hdc, hFontOld);
+		::ReleaseDC(m_hwndTab, hdc);
 	}
 
 	if( bDupamp )
