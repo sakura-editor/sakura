@@ -56,6 +56,7 @@
 #define HLP000027	27 //Oracle SQL*Plusで実行
 #define HLP000121	121 //ブラウズ
 #define HLP000022	22 //ファイルのプロパティ
+#define HLP000363	363 //プロファイルマネージャ
 #define HLP000029	29 //最近使ったファイル
 #define HLP000023	23 //最近使ったフォルダ
 #define HLP000030	30 //編集の全終了	// 2007.02.13 ryoji
@@ -1100,5 +1101,17 @@
 #define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 #define HIDC_CHECK_KEY_PARENTHESES			14414	//アクセスキーを必ず( )付で表示(&P)
+
+//プロファイル一覧
+#define HIDC_LIST_PROFILE					14600	//プロファイル一覧
+#define HIDC_CHECK_PROF_DEFSTART			14601	//デフォルト設定にして起動
+#define HIDOK_PROFILEMGR					14602	//起動
+#define HIDCANCEL_PROFILEMGR				14603	//キャンセル
+#define HIDC_PROFILEMGR_BUTTON_HELP			14604	//ヘルプ
+#define HIDC_BUTTON_PROF_CREATE				14605	//新規作成
+#define HIDC_BUTTON_PROF_RENAME				14606	//名前変更
+#define HIDC_BUTTON_PROF_DELETE				14607	//削除
+#define HIDC_BUTTON_PROF_DEFSET				14608	//デフォルト設定
+#define HIDC_BUTTON_PROF_DEFCLEAR			14609	//デフォルト解除
 
 #define HIDC_STATIC								19999 //不明

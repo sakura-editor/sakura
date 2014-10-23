@@ -738,6 +738,13 @@
 #define IDC_TextTabCaption              1670
 #define IDC_CHECK_CP                    1671
 #define IDC_CHECK_ENABLEEXTEOL          1672
+#define IDC_LIST_PROFILE                1673
+#define IDC_BUTTON_PROF_CREATE          1674
+#define IDC_BUTTON_PROF_RENAME          1675
+#define IDC_BUTTON_PROF_DELETE          1676
+#define IDC_CHECK_PROF_DEFSTART         1677
+#define IDC_BUTTON_PROF_DEFSET          1678
+#define IDC_BUTTON_PROF_DEFCLEAR        1679
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -770,6 +777,7 @@
 #define IDD_PROP_MAINMENU               5217
 #define IDD_WINPOSSIZE                  5220
 #define IDD_PLUGIN_OPTION               5221
+#define IDD_PROFILEMGR                  5222
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -778,7 +786,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1673
+#define _APS_NEXT_CONTROL_VALUE         1680
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

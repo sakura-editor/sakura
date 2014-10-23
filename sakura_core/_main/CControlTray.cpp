@@ -48,6 +48,7 @@
 #include "doc/CDocListener.h" // SLoadInfo,EditInfo
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
+#include "_main/CCommandLine.h"
 #include "sakura_rc.h"
 
 #define IDT_EDITCHECK 2
@@ -217,7 +218,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	HWND hwndWork = ::FindWindow( GSTR_CEDITAPP, GSTR_CEDITAPP );
+	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strCEditAppName = GSTR_CEDITAPP;
+	strCEditAppName += strProfileName;
+	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
 	if( NULL != hwndWork ){
 		return NULL;
 	}
@@ -238,7 +242,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		wc.hCursor			= LoadCursor( NULL, IDC_ARROW );
 		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
 		wc.lpszMenuName		= NULL;
-		wc.lpszClassName	= GSTR_CEDITAPP;
+		wc.lpszClassName	= strCEditAppName.c_str();
 		ATOM	atom = RegisterClass( &wc );
 		if( 0 == atom ){
 			ErrorMessage( NULL, LS(STR_TRAY_CREATE) );
@@ -248,8 +252,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	// ウィンドウ作成 (WM_CREATEで、GetHwnd() に HWND が格納される)
 	::CreateWindow(
-		GSTR_CEDITAPP,						// pointer to registered class name
-		GSTR_CEDITAPP,						// pointer to window name
+		strCEditAppName.c_str(),			// pointer to registered class name
+		strCEditAppName.c_str(),			// pointer to window name
 		WS_OVERLAPPEDWINDOW/*WS_VISIBLE *//*| WS_CHILD *//* | WS_CLIPCHILDREN*/	,	// window style
 		CW_USEDEFAULT,						// horizontal position of window
 		0,									// vertical position of window
@@ -290,18 +294,24 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 //			TrayMessage( GetTrayHwnd(), NIM_ADD, 0,  hIcon, GSTR_APPNAME );
 		/* バージョン情報 */
 		//	UR version no.を設定 (cf. cDlgAbout.cpp)
-		TCHAR	pszTips[64];
+		TCHAR	pszTips[64 + _MAX_PATH];
 		//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 		DWORD dwVersionMS, dwVersionLS;
 		GetAppVersionInfo( NULL, VS_VERSION_INFO,
 			&dwVersionMS, &dwVersionLS );
 
-		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		std::wstring profname;
+		if( CCommandLine::getInstance()->GetProfileName()[0] != L'\0' ){
+			profname = L" ";
+			profname += CCommandLine::getInstance()->GetProfileName();
+		}
+		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
 			HIWORD( dwVersionLS ),
-			LOWORD( dwVersionLS )
+			LOWORD( dwVersionLS ),
+			profname.c_str()
 		);
 		TrayMessage( GetTrayHwnd(), NIM_ADD, 0,  hIcon, pszTips );
 //To Here Jan. 12, 2001
@@ -1138,6 +1148,10 @@ bool CControlTray::OpenNewEditor(
 	}else{
 		// 空いているグループIDを使用する
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::getInstance()->GetFreeGroupId() );
+	}
+
+	if( CCommandLine::getInstance()->IsSetProfile() ){
+		cCmdLineBuf.AppendF( _T(" -PROF=\"%ls\""), CCommandLine::getInstance()->GetProfileName() );
 	}
 
 	// 追加のコマンドラインオプション

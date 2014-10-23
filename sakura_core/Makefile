@@ -165,6 +165,7 @@ dlg/CDlgJump.o \
 dlg/CDlgOpenFile.o \
 dlg/CDlgPluginOption.o \
 dlg/CDlgPrintSetting.o \
+dlg/CDlgProfileMgr.o \
 dlg/CDlgProperty.o \
 dlg/CDlgReplace.o \
 dlg/CDlgSetCharSet.o \

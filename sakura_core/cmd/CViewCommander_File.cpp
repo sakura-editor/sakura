@@ -42,6 +42,7 @@
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
+#include "dlg/CDlgProfileMgr.h"
 #include "doc/CDocReader.h"	//  Command_PROPERTY_FILE for _DEBUG
 #include "print/CPrintPreview.h"
 #include "io/CBinaryStream.h"
@@ -548,6 +549,20 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 }
 
 
+
+void CViewCommander::Command_PROFILEMGR( void )
+{
+	CDlgProfileMgr profMgr;
+	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
+		TCHAR szOpt[MAX_PATH+10];
+		auto_sprintf( szOpt, _T("-PROF=\"%ts\""), profMgr.m_strProfileName.c_str() );
+		SLoadInfo sLoadInfo;
+		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.eCharCode = CODE_DEFAULT;
+		sLoadInfo.bViewMode = false;
+		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, NULL, false );
+	}
+}
 
 /* ï“èWÇÃëSèIóπ */	// 2007.02.13 ryoji í«â¡
 void CViewCommander::Command_EXITALLEDITORS( void )

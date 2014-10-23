@@ -77,7 +77,7 @@ LPCTSTR CSelectLang::getDefaultLangString( void )
 	@note メッセージリソースDLLが未指定、または読み込みエラー発生の時はexeのインスタンスハンドルが返る
 	@note （LoadString()の引数としてそのまま使用するため）
 	@note デフォルト言語の文字列の読み込みも行う
-	@note プロセス毎にCShareDataから1回だけ呼ばれる
+	@note プロセス毎にProcessFactoryの最初に1回だけ呼ばれる
 
 	@date 2011.04.10 nasukoji	新規作成
 */

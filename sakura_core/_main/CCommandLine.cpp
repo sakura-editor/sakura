@@ -58,6 +58,8 @@
 #define CMDLINEOPT_M			106
 #define CMDLINEOPT_MTYPE		107
 #define CMDLINEOPT_GROUP		500
+#define CMDLINEOPT_PROF			501
+#define CMDLINEOPT_PROFMGR		502
 
 /*!
 	コマンドラインのチェックを行って、オプション番号と
@@ -83,6 +85,7 @@ int CCommandLine::CheckCommandLine(
 		LPCTSTR opt;	//!< オプション文字列
 		int len;		//!< オプションの文字列長（計算を省くため）
 		int value;		//!< 変換後の値
+		bool bLen0;
 	};
 
 	/*!
@@ -90,13 +93,14 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取らないもの
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
-		{_T("R"),			1,	CMDLINEOPT_R},
-		{_T("-"),			1,	CMDLINEOPT_NOMOREOPT},
-		{_T("NOWIN"),		5,	CMDLINEOPT_NOWIN},
-		{_T("WQ"),			2,	CMDLINEOPT_WRITEQUIT},	// 2007.05.19 ryoji sakuext用に追加
-		{_T("GREPMODE"),	8,	CMDLINEOPT_GREPMODE},
-		{_T("GREPDLG"),		7,	CMDLINEOPT_GREPDLG},
-		{_T("DEBUGMODE"),	9,	CMDLINEOPT_DEBUGMODE},
+		{_T("R"),			1,	CMDLINEOPT_R, false},
+		{_T("-"),			1,	CMDLINEOPT_NOMOREOPT, false},
+		{_T("NOWIN"),		5,	CMDLINEOPT_NOWIN, false},
+		{_T("WQ"),			2,	CMDLINEOPT_WRITEQUIT, false},	// 2007.05.19 ryoji sakuext用に追加
+		{_T("GREPMODE"),	8,	CMDLINEOPT_GREPMODE, false},
+		{_T("GREPDLG"),		7,	CMDLINEOPT_GREPDLG, false},
+		{_T("DEBUGMODE"),	9,	CMDLINEOPT_DEBUGMODE, false},
+		{_T("PROFMGR"),		7,	CMDLINEOPT_PROFMGR, false},
 		{NULL, 0, 0}
 	};
 
@@ -105,25 +109,26 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取るもの
 	*/
 	static const _CmdLineOpt _COptWithA[] = {
-		{_T("@"),		1,			CMDLINEOPT_AT},
-		{_T("X"),		1,			CMDLINEOPT_X},
-		{_T("Y"),		1,			CMDLINEOPT_Y},
-		{_T("VX"),		2,			CMDLINEOPT_VX},
-		{_T("VY"),		2,			CMDLINEOPT_VY},
-		{_T("SX"),		2,			CMDLINEOPT_SX},
-		{_T("SY"),		2,			CMDLINEOPT_SY},
-		{_T("WX"),		2,			CMDLINEOPT_WX},
-		{_T("WY"),		2,			CMDLINEOPT_WY},
-		{_T("CODE"),	4,			CMDLINEOPT_CODE},	// 2002/09/20 Moca _COptWoAから移動
-		{_T("TYPE"),	4,			CMDLINEOPT_TYPE},	//!< タイプ別設定 Mar. 7, 2002 genta
-		{_T("GKEY"),	4,			CMDLINEOPT_GKEY},
-		{_T("GFILE"),	5,			CMDLINEOPT_GFILE},
-		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER},
-		{_T("GOPT"),	4,			CMDLINEOPT_GOPT},
-		{_T("GCODE"),	5,			CMDLINEOPT_GCODE},	// 2002/09/21 Moca 追加
-		{_T("GROUP"),	5,			CMDLINEOPT_GROUP},	// 2007.06.26 ryoji
-		{_T("M"),		1,			CMDLINEOPT_M},		// 2009.06.14 syat
-		{_T("MTYPE"),	5,			CMDLINEOPT_MTYPE},	// 2009.06.14 syat
+		{_T("@"),		1,			CMDLINEOPT_AT, false},
+		{_T("X"),		1,			CMDLINEOPT_X, false},
+		{_T("Y"),		1,			CMDLINEOPT_Y, false},
+		{_T("VX"),		2,			CMDLINEOPT_VX, false},
+		{_T("VY"),		2,			CMDLINEOPT_VY, false},
+		{_T("SX"),		2,			CMDLINEOPT_SX, false},
+		{_T("SY"),		2,			CMDLINEOPT_SY, false},
+		{_T("WX"),		2,			CMDLINEOPT_WX, false},
+		{_T("WY"),		2,			CMDLINEOPT_WY, false},
+		{_T("CODE"),	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
+		{_T("TYPE"),	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
+		{_T("GKEY"),	4,			CMDLINEOPT_GKEY, false},
+		{_T("GFILE"),	5,			CMDLINEOPT_GFILE, false},
+		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
+		{_T("GOPT"),	4,			CMDLINEOPT_GOPT, false},
+		{_T("GCODE"),	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
+		{_T("GROUP"),	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
+		{_T("M"),		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
+		{_T("MTYPE"),	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
+		{_T("PROF"),	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
 		{NULL, 0, 0}
 	};
 
@@ -147,7 +152,7 @@ int CCommandLine::CheckCommandLine(
 					(*arglen)--;
 				}
 			}
-			if (*arglen <= 0) {
+			if (*arglen <= 0 && !(ptr->bLen0)) {
 				return 0;		//2010.06.12 syat 値なしはオプションとして認めない
 			}
 			return ptr->value;
@@ -472,6 +477,13 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
 				m_cmMacroType.SetStringT( arg );
 				break;
+			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
+				m_cmProfile.SetStringT( arg );
+				m_bSetProfile = true;
+				break;
+			case CMDLINEOPT_PROFMGR:
+				m_bProfileMgr = true;
+				break;
 			}
 		}
 		pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
@@ -506,6 +518,8 @@ CCommandLine::CCommandLine()
 	m_bDebugMode			= false;
 	m_bNoWindow				= false;
 	m_bWriteQuit			= false;
+	m_bProfileMgr			= false;
+	m_bSetProfile			= false;
 	m_gi.bGrepSubFolder		= false;
 	m_gi.sGrepSearchOption.Reset();
 	/*
@@ -524,5 +538,6 @@ CCommandLine::CCommandLine()
 	m_gi.bGrepSeparateFolder = false;
 	m_bViewMode			= false;
 	m_nGroup				= -1;		// 2007.06.26 ryoji
+	m_cmProfile.SetString(L"");
 }
 

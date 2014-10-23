@@ -37,6 +37,7 @@ public:
 protected:
 private:
 	bool IsValidVersion();
+	bool ProfileSelect( HINSTANCE, LPCTSTR );
 	bool IsStartingControlProcess();
 	bool IsExistControlProcess();
 	bool StartControlProcess();

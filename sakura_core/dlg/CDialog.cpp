@@ -62,11 +62,11 @@ INT_PTR CALLBACK MyDialogProc(
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CDialog::CDialog()
+CDialog::CDialog(bool bCheckShareData)
 {
 //	MYTRACE( _T("CDialog::CDialog()\n") );
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
+	m_pShareData = &GetDllShareData(bCheckShareData);
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */

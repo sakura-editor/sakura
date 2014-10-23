@@ -233,6 +233,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_BROWSE:				Command_BROWSE();break;				/* ブラウズ */
 	case F_VIEWMODE:			Command_VIEWMODE();break;			/* ビューモード */
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
+	case F_PROFILEMGR:			Command_PROFILEMGR();break;			// プロファイルマネージャ
 	case F_EXITALLEDITORS:		Command_EXITALLEDITORS();break;		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
 	case F_PUTFILE:				Command_PUTFILE((LPCWSTR)lparam1, (ECodeType)lparam2, (int)lparam3);break;	/* 作業中ファイルの一時出力 */ //maru 2006.12.10

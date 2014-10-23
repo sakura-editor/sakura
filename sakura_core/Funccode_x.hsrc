@@ -94,6 +94,7 @@ F_PLSQL_COMPILE_ON_SQLPLUS	= 30171,	//Oracle SQL*Plusで実行				なし
 F_BROWSE					= 30180,	//ブラウズ							なし
 F_VIEWMODE					= 30185,	//ビューモード						なし
 F_PROPERTY_FILE				= 30190,	//ファイルのプロパティ				なし
+F_PROFILEMGR				= 30191,	//プロファイルマネージャ			なし
 F_EXITALLEDITORS			= 30194,	//編集の全終了						なし
 F_EXITALL					= 30195,	//サクラエディタの全終了			なし
 

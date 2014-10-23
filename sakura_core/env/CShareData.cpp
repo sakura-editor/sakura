@@ -30,6 +30,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
 #include "_main/CControlTray.h"
+#include "_main/CCommandLine.h"
 #include "charset/CCodePage.h"
 #include "debug/CRunningTimer.h"
 #include "recent/CMRUFile.h"
@@ -101,14 +102,19 @@ bool CShareData::InitShareData()
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 
 	/* ファイルマッピングオブジェクト */
-	m_hFileMap = ::CreateFileMapping(
-		INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
-		NULL,
-		PAGE_READWRITE | SEC_COMMIT,
-		0,
-		sizeof( DLLSHAREDATA ),
-		GSTR_SHAREDATA
-	);
+	{
+		std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+		std::tstring strShareDataName = GSTR_SHAREDATA;
+		strShareDataName += strProfileName;
+		m_hFileMap = ::CreateFileMapping(
+			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
+			NULL,
+			PAGE_READWRITE | SEC_COMMIT,
+			0,
+			sizeof( DLLSHAREDATA ),
+			strShareDataName.c_str()
+		);
+	}
 	if( NULL == m_hFileMap ){
 		::MessageBox(
 			NULL,
@@ -131,9 +137,6 @@ bool CShareData::InitShareData()
 		);
 		CreateTypeSettings();
 		SetDllShareData( m_pShareData );
-
-		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
-		m_cSelectLang.InitializeLanguageEnvironment();
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
 		TCHAR	szIniFolder[_MAX_PATH];
@@ -529,10 +532,10 @@ bool CShareData::InitShareData()
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive, 
 			_T("${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -")
-			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>") );
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive, 
 			_T("${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -")
-			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$}") );
+			_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>") );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
@@ -596,8 +599,6 @@ bool CShareData::InitShareData()
 		}
 		//	To Here Oct. 27, 2000 genta
 
-		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
-		m_cSelectLang.InitializeLanguageEnvironment();
 	}
 	return true;
 }
