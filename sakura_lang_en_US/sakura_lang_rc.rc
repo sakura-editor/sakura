@@ -4330,6 +4330,7 @@ BEGIN
 	STR_COLOR_CURSOR_LINE_BG		"CursorLine Background"
 	STR_COLOR_CURSOR_LINE			"CursorLine Underline"
 	STR_COLOR_CURSOR_COLUMN			"Cursor pos VertLine"
+	STR_COLOR_NOTE_LINE				"Note Line"
 	STR_COLOR_LINE_NO				"Line No."
 	STR_COLOR_LINE_NO_CHANGE		"Line No.(edited)"
 	STR_COLOR_EVEN_LINE_BG			"Even Line Background"

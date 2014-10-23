@@ -357,7 +357,7 @@ bool CColorStrategyPool::IsSkipBeforeLayout()
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
   配列の順番は共有メモリ中のデータの順番と一致している。
 
-  @note 数値による内部的対応は EColorIndexType CColorStrategy.h
+  @note 数値による内部的対応は EColorIndexType EColorIndexType.h
   日本語名などは  ColorInfo_DEFAULT CDocTypeSetting.cpp
   CShareDataからglobalに移動
 */
@@ -370,6 +370,7 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{_T("CBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("UND"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("CVL"), COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
+	{_T("NOT"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("LNO"), 0},
 	{_T("MOD"), 0},
 	{_T("EBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},

@@ -47,6 +47,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_CURSOR_LINE_BG,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 255, 128 ) } } },	// 2012.11.21 Moca
 	{ STR_COLOR_CURSOR_LINE,				{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_CURSOR_COLUMN,				{ FALSE,	{ FALSE,	FALSE },	{ RGB( 128, 128, 255 ),	RGB( 255, 251, 240 ) } } },	// 2007.09.09 Moca
+	{ STR_COLOR_NOTE_LINE,					{ FALSE,	{ FALSE,	FALSE },	{ RGB( 192, 192, 255 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_LINE_NO,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_LINE_NO_CHANGE,				{ TRUE,		{ TRUE,		FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_EVEN_LINE_BG,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 243, 243, 243 ) } } },	// 2013.12.30 Moca

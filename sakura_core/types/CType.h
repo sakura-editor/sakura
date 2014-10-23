@@ -158,6 +158,7 @@ struct STypeConfig{
 	int					m_nLineTermType;				//!< 行番号区切り  0=なし 1=縦線 2=任意
 	wchar_t				m_cLineTermChar;				//!< 行番号区切り文字
 	CLayoutInt			m_nVertLineIdx[MAX_VERTLINES];	//!< 指定桁縦線
+	int 				m_nNoteLineOffset;				//!< ノート線のオフセット
 
 	bool				m_bWordWrap;					//!< 英文ワードラップをする
 	bool				m_bKinsokuHead;					//!< 行頭禁則をする		//@@@ 2002.04.08 MIK

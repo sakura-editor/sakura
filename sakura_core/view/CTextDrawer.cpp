@@ -281,6 +281,38 @@ void CTextDrawer::DispVerticalLines(
 	}
 }
 
+void CTextDrawer::DispNoteLine(
+	CGraphics&	gr,			//!< 作画するウィンドウのDC
+	int			nTop,		//!< 線を引く上端のクライアント座標y
+	int			nBottom,	//!< 線を引く下端のクライアント座標y
+	int			nLeft,		//!< 線を引く左端
+	int			nRight		//!< 線を引く右端
+) const
+{
+	const CEditView* pView=m_pEditView;
+
+	CTypeSupport cNoteLine(pView, COLORIDX_NOTELINE);
+	if( cNoteLine.IsDisp() ){
+		gr.SetPen( cNoteLine.GetTextColor() );
+		const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
+		const int left = nLeft;
+		const int right = nRight;
+		int userOffset = pView->m_pTypeData->m_nNoteLineOffset;
+		int offset = pView->GetTextArea().GetAreaTop() + userOffset - 1;
+		while( offset < 0 ){
+			offset += nLineHeight;
+		}
+		int offsetMod = offset % nLineHeight;
+		int y = ((nTop - offset) / nLineHeight * nLineHeight) + offsetMod;
+		for( ; y < nBottom; y += nLineHeight ){
+			if( nTop <= y ){
+				::MoveToEx( gr, left, y, NULL );
+				::LineTo( gr, right, y );
+			}
+		}
+	}
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        折り返し桁縦線                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -339,6 +371,15 @@ void CTextDrawer::DispLineNumber(
 	int				nLineNumAreaWidth = pView->GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace;	// 2009.03.26 ryoji
 
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
+	CTypeSupport cCaretLineBg(pView, COLORIDX_CARETLINEBG);
+	CTypeSupport cEvenLineBg(pView, COLORIDX_EVENLINEBG);
+	// 行がないとき・行の背景が透明のときの色
+	CTypeSupport &cBackType = (cCaretLineBg.IsDisp() &&
+		pView->GetCaret().GetCaretLayoutPos().GetY() == nLineNum
+			? cCaretLineBg
+			: cEvenLineBg.IsDisp() && nLineNum % 2 == 1
+				? cEvenLineBg
+				: cTextType);
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -386,7 +427,8 @@ void CTextDrawer::DispLineNumber(
 	rcLineNum.bottom = y + nLineHeight;
 	
 	bool bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cColorType.GetBackColor();
-	bool bTransText = pView->IsBkBitmap();
+	bool bTransText = pView->IsBkBitmap() && cTextType.GetBackColor() == cBackType.GetBackColor();
+	bool bDispLineNumTrans = false;
 
 	COLORREF fgcolor = cColorType.GetTextColor();
 	COLORREF bgcolor = cColorType.GetBackColor();
@@ -401,11 +443,18 @@ void CTextDrawer::DispLineNumber(
 			bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cGyouModType.GetBackColor();
 		}
 	}
+	// 2014.01.29 Moca 背景色がテキストと同じなら、透過色として行背景色を適用
+	if( bgcolor == cTextType.GetBackColor() ){
+		bgcolor = cBackType.GetBackColor();
+		bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == bgcolor;
+		bDispLineNumTrans = true;
+	}
 	if(!pcLayout){
 		//行が存在しない場合は、テキスト描画色で塗りつぶし
 		if( !bTransText ){
-			cTextType.FillBack(gr,rcLineNum);
+			cBackType.FillBack(gr,rcLineNum);
 		}
+		bDispLineNumTrans = true;
 	}
 	else if( CTypeSupport(pView,COLORIDX_GYOU).IsDisp() ){ /* 行番号表示／非表示 */
 		SFONT sFont = cColorType.GetTypeFont();
@@ -489,6 +538,7 @@ void CTextDrawer::DispLineNumber(
 		if( !bTrans ){
 			gr.FillSolidMyRect(rcLineNum, bgcolor);
 		}
+		bDispLineNumTrans = true;
 	}
 
 	//行属性描画 ($$$分離予定)
@@ -515,7 +565,14 @@ void CTextDrawer::DispLineNumber(
 		rcRest.right  = pView->GetTextArea().GetAreaLeft();
 		rcRest.top    = y;
 		rcRest.bottom = y + nLineHeight;
-		cTextType.FillBack(gr,rcRest);
+		cBackType.FillBack(gr,rcRest);
 	}
+
+	// 行番号部分のノート線描画
+	int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
+	int right  = pView->GetTextArea().GetAreaLeft();
+	int top    = y;
+	int bottom = y + nLineHeight;
+	DispNoteLine( gr, top, bottom, left, right );
 }
 

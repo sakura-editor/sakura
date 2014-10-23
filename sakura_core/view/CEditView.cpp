@@ -2375,7 +2375,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 		if( bDrawPaint ){
 			GetCaret().m_cUnderLine.Lock();
 			PAINTSTRUCT ps;
-			ps.rcPaint.left = GetTextArea().GetAreaLeft();
+			ps.rcPaint.left = 0;
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
 			ps.rcPaint.top = GetTextArea().GenerateYPx(m_nOldUnderLineY);
 			ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
@@ -2498,7 +2498,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 			GetCaret().m_cUnderLine.Lock();
 
 			PAINTSTRUCT ps;
-			ps.rcPaint.left = GetTextArea().GetAreaLeft();
+			ps.rcPaint.left = 0;
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
 			int height;
 			if( bDrawPaint && m_nOldUnderLineYHeight != 0 ){
