@@ -3628,7 +3628,7 @@ BEGIN
 	STR_DLGPROFILE_ERR_RENAME		"名前の変更に失敗しました。\nプロファイルは利用中の可能性があります。"
 
 	// CDocOutline.cpp
-	STR_DOCOUTLINE_REGEX		"正規表現ルール\\%ls\\でエラーが発生しました。\n%ts"
+	STR_DOCOUTLINE_REGEX		"正規表現ルール\n%ls\nでエラーが発生しました。\n%ts"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%ls\nというファイルを開けません。\nファイルが存在しません。"
