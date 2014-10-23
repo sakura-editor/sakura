@@ -761,8 +761,14 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	if( !IsValidCodeOrCPType(nSaveCharCode) ) nSaveCharCode = CODE_SJIS;
 
 	try{
+		bool bBigFile;
+#ifdef _WIN64
+		bBigFile = true;
+#else
+		bBigFile = false;
+#endif
 		// ファイルを開く
-		cfl.FileOpen( to_tchar(filename), nSaveCharCode, 0 );
+		cfl.FileOpen( to_tchar(filename), bBigFile, nSaveCharCode, 0 );
 
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {

@@ -80,10 +80,16 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	try{
 		CFileLoad cfl(type->m_encoding);
 
+		bool bBigFile;
+#ifdef _WIN64
+		bBigFile = true;
+#else
+		bBigFile = false;
+#endif
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
 		//	Jul. 28, 2003 ryoji BOMパラメータ追加
-		cfl.FileOpen( pszPath, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
+		cfl.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
 		pFileInfo->SetBomExist( bBom );
 
 		/* ファイル時刻の取得 */

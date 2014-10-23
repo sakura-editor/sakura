@@ -123,7 +123,7 @@ static inline int local_vsnprintf_s(wchar_t* buf, size_t nBufCount, const wchar_
 	return _vsnwprintf_s(buf,nBufCount,_TRUNCATE,format,v);
 }
 
-static void my_va_forward(va_list& v, const char* field)
+static void my_va_forward(va_list& v, const char* field, const char* prefix)
 {
 	if(*field==0)return;
 	const char* field_end=auto_strchr(field,0)-1;
@@ -139,7 +139,15 @@ static void my_va_forward(va_list& v, const char* field)
 	case 'u':
 	case 'x':
 	case 'X':
-		va_arg(v,int);
+		{
+			// 2014.06.12 64bit値対応
+			const char *p = prefix;
+			if( p[0]=='I' && p[1]=='6' && p[2]=='4' ){
+				va_arg(v,LONGLONG);
+			}else{
+				va_arg(v,int);
+			}
+		}
 		break;
 	case 'c':
 		if(field_end-1>=field && *(field_end-1)=='w')va_arg(v,int); // wchar_t
@@ -161,7 +169,7 @@ static void my_va_forward(va_list& v, const char* field)
 		break;
 	}
 }
-static void my_va_forward(va_list& v, const wchar_t* field)
+static void my_va_forward(va_list& v, const wchar_t* field, const wchar_t* prefix)
 {
 	if(*field==0)return;
 	const wchar_t* field_end=auto_strchr(field,0)-1;
@@ -177,7 +185,15 @@ static void my_va_forward(va_list& v, const wchar_t* field)
 	case L'u':
 	case L'x':
 	case L'X':
-		va_arg(v,int);
+		// 2014.06.12 64bit値対応
+		{
+			const wchar_t *p = prefix;
+			if( p[0]==L'I' && p[1]==L'6' && p[2]==L'4' ){
+				va_arg(v,LONGLONG);
+			}else{
+				va_arg(v,int);
+			}
+		}
 		break;
 	case 'c':
 		if(field_end-1>=field && *(field_end-1)==L'h')va_arg(v,int);
@@ -241,6 +257,7 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 			src=skip_field_flag(src);
 			src=skip_field_width(src);
 			src=skip_field_precision(src);
+			const T* prefix = src;
 			src=skip_field_prefix(src);
 
 			if(is_field_type(*src)){
@@ -274,7 +291,7 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 				}
 
 				//vを進める。自信なっしんぐ
-				my_va_forward(v,field);
+				my_va_forward(v,field, prefix);
 
 				//変換先ワークポインタを進める
 				if(ret!=-1){
