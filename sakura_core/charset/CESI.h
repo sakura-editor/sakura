@@ -93,6 +93,7 @@ public:
 	explicit CESI( const SEncodingConfig& ref ) : m_pEncodingConfig(&ref) {
 		m_dwStatus = ESI_NOINFORMATION;
 		m_nTargetDataLen = -1;
+		m_eMetaName = CODE_NONE;
 	}
 
 	//! 調査結果の情報を格納
@@ -144,6 +145,7 @@ protected:
 	void GetEncodingInfo_cesu8( const char *, const int );
 	void GetEncodingInfo_uni( const char *, const int );
 	void GetEncodingInfo_latin1( const char *, const int );
+	void GetEncodingInfo_meta( const char *, const int );
 
 
 	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );
@@ -199,12 +201,17 @@ public:
 	//
 	WCCODE_INFO m_aWcInfo[ESI_WCIDX_MAX];  //!< UTF-16 LE/BE 情報
 	EBOMType m_eWcBomType;          //!< m_pWcInfo から推測される BOM の種類
+	ECodeType m_eMetaName;          //!< エンコーディング名からの種類判別
 
 	EBOMType GetBOMType(void) const { return m_eWcBomType; }
+	ECodeType GetMetaName() const { return m_eMetaName; }
 
 protected:
 	//! BOMの種類を推測して m_eWcBomType を設定
 	void GuessUtf16Bom( void );
+	ECodeType AutoDetectByXML( const char*, int );
+	ECodeType AutoDetectByHTML( const char*, int );
+	ECodeType AutoDetectByCoding( const char*, int );
 
 
 public:
