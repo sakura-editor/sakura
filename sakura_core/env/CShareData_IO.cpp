@@ -196,8 +196,13 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, pfiWork->m_nCharCode );
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szPath"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pfiWork->m_szPath) );
-		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
+		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark2"), i );
+		if( !cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) ) ){
+			if( cProfile.IsReadingMode() ){
+				auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i ); // ‹ŒverŒÝŠ·
+				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
+			}
+		}
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nType"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nTypeId );
 		//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
