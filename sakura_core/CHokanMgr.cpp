@@ -119,7 +119,7 @@ void CHokanMgr::Hide( void )
 	::ShowWindow( m_hWnd, SW_HIDE );
 	m_nCurKouhoIdx = -1;
 	/* 入力フォーカスを受け取ったときの処理 */
-	CEditView* pcEditView = (CEditView*)m_lParam;
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	pcEditView->OnSetFocus();
 	return;
 
@@ -142,7 +142,7 @@ int CHokanMgr::Search(
 	CMemory*		pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
-	CEditView* pcEditView = (CEditView*)m_lParam;
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	/*
 	||  補完キーワードの検索
 	||
@@ -496,7 +496,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	::SendMessage( hwndList, LB_GETTEXT, nItem, (LPARAM)szLabel );
 
  	/* テキストを貼り付け */
-	pcEditView = (CEditView*)m_lParam;
+	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
 	pcEditView->HandleCommand( F_INSTEXT, true, (LPARAM)(szLabel), TRUE, 0, 0 );
@@ -605,7 +605,7 @@ void CHokanMgr::ShowTip()
 
 	::SendMessage( hwndCtrl, LB_GETTEXT, nItem, (LPARAM)szLabel );	// 選択中の単語を取得
 
-	pcEditView = (CEditView*)m_lParam;
+	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// すでに辞書Tipが表示されていたら
 	if( pcEditView->m_dwTipTimer == 0 )

@@ -1574,7 +1574,7 @@ int CALLBACK CPrintPreview::MyEnumFontFamProc(
 	LPARAM			lParam 		// address of application-defined data
 )
 {
-	CPrintPreview* pCPrintPreview = (CPrintPreview*)lParam;
+	CPrintPreview* pCPrintPreview = reinterpret_cast<CPrintPreview*>(lParam);
 	if( 0 == strcmp( pelf->elfLogFont.lfFaceName, pCPrintPreview->m_pPrintSetting->m_szPrintFontFaceHan ) ){
 		pCPrintPreview->SetPreviewFontHan(&pelf->elfLogFont);
 	}
@@ -1723,7 +1723,7 @@ INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		// 2007.02.11 Moca WM_INIT‚àDispatchEvent_PPB‚ðŒÄ‚Ô‚æ‚¤‚É
-		pCPrintPreview = ( CPrintPreview* )lParam;
+		pCPrintPreview = reinterpret_cast<CPrintPreview*>(lParam);
 		if( NULL != pCPrintPreview ){
 			return pCPrintPreview->DispatchEvent_PPB( hwndDlg, uMsg, wParam, lParam );
 		}

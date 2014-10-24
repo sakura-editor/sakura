@@ -322,12 +322,10 @@ namespace Charcode
 		uchar_t* end_ptr;
 		int nlostbytes;
 		int num_of_base64_encoded_bytes;
-		bool bSetBPart;
 		int nret;
 		
 		nlostbytes = 0;
 		num_of_base64_encoded_bytes = 0;
-		bSetBPart = false;
 		base_ptr = (uchar_t *)pS;
 		ptr = base_ptr;
 		end_ptr = base_ptr + nLen;

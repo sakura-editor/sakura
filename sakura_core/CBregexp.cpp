@@ -246,6 +246,7 @@ char* CBregexp::MakePatternSub(
 	if( (nOption & optGlobal) ) {
 		*pPat++ = 'g';			// 全域(global)オプション、行単位の置換をする時に使用する
 	}
+
 	*pPat = '\0';
 	return szNPattern;
 }
@@ -668,9 +669,7 @@ bool InitRegexp(
 	//	From Here 2007.08.12 genta
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
 
-	LPCTSTR RegexpDll = _T("");
-
-	RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
+	LPCTSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	//	To Here 2007.08.12 genta
 
 	if( !rRegexp.Init( RegexpDll ) ){

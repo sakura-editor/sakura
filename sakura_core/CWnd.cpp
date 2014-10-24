@@ -47,7 +47,7 @@ namespace CWindowCreationHook
 		if(nCode==HCBT_CREATEWND){
 			HWND hwnd = (HWND)wParam;
 			CBT_CREATEWND* pCreateWnd = (CBT_CREATEWND*)lParam;
-			CWnd* pcWnd = (CWnd*)pCreateWnd->lpcs->lpCreateParams;
+			CWnd* pcWnd = static_cast<CWnd*>(pCreateWnd->lpcs->lpCreateParams);
 
 			//CWnd以外のウィンドウ生成イベントは無視する
 			WNDPROC wndproc = (WNDPROC)::GetWindowLongPtr(hwnd, GWLP_WNDPROC);

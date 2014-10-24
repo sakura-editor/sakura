@@ -424,7 +424,6 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		/* 既存データのクリア */
 		Empty();
 		Init();
-		nRetVal = FALSE;
 	} // 例外処理終わり
 
 	if( NULL != hwndProgress ){

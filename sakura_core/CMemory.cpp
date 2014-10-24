@@ -735,7 +735,6 @@ int CMemory::MemBASE64_Encode(
 	long		nLineLen;
 	char		cw;
 	static const char	szBASE64CODE[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	int			nBASE64CODE_Num = sizeof( szBASE64CODE ) / sizeof( szBASE64CODE[0] );
 	int			nDesLen;
 
 	// 符号化後の長さを算出（ヘッダー・フッターを除く）
