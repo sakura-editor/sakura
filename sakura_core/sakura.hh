@@ -735,6 +735,7 @@
 #define HIDC_CHECK_KINSOKUHIDE		11766	//ぶら下げを隠す			// 2012.11.30 Uchi
 #define HIDC_PLUGIN_README			11767	//ReadMe表示					// 2011/11/2 Uchi
 #define HIDC_PLUGIN_INST_ZIP		11768	//Zipプラグインを追加			// 2011/11/2 Uchi
+#define HIDC_EDIT_LINENUMWIDTH		11769	//行番号の最小桁数				// 2014.08.02 katze
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

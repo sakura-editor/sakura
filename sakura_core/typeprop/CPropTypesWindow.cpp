@@ -46,6 +46,7 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_RADIO_LINETERMTYPE1,		HIDC_RADIO_LINETERMTYPE1,		//行番号区切り（縦線）
 	IDC_RADIO_LINETERMTYPE2,		HIDC_RADIO_LINETERMTYPE2,		//行番号区切り（任意）
 	IDC_EDIT_LINETERMCHAR,			HIDC_EDIT_LINETERMCHAR,			//行番号区切り
+	IDC_EDIT_LINENUMWIDTH,			HIDC_EDIT_LINENUMWIDTH,			//行番号の最小桁数 2014.08.02 katze
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -95,6 +96,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	WORD				wNotifyCode;
 	WORD				wID;
 	NMHDR*				pNMHDR;
+	NM_UPDOWN*			pMNUD;		// 追加 2014.08.02 katze
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -178,6 +180,30 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			m_nPageNum = ID_PROPTYPE_PAGENUM_WINDOW;
 			return TRUE;
 		}
+
+		// switch文追加 2014.08.02 katze
+		pMNUD  = (NM_UPDOWN*)lParam;
+		switch( (int)wParam ) {
+		case IDC_SPIN_LINENUMWIDTH:
+			/* 行番号の最小桁数 */
+//			MYTRACE( _T("IDC_SPIN_LINENUMWIDTH\n") );
+			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < LINENUMWIDTH_MIN ){
+				nVal = LINENUMWIDTH_MIN;
+			}
+			if( nVal > LINENUMWIDTH_MAX ){
+				nVal = LINENUMWIDTH_MAX;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE );
+			return TRUE;
+		}
+
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -317,6 +343,11 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_LAYOUT, FALSE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, TRUE );
+	}
+
+	{
+		// 行番号の最小桁数	// 追加 2014.08.02 katze
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, (Int)m_Types.m_nLineNumWidth, FALSE );
 	}
 
 	// 背景画像
@@ -466,6 +497,15 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	wchar_t	szLineTermChar[2];
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar, 2 );
 	m_Types.m_cLineTermChar = szLineTermChar[0];
+
+	/* 行番号の最小桁数 */	// 追加 2014.08.02 katze
+	m_Types.m_nLineNumWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
+	if( m_Types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
+		m_Types.m_nLineNumWidth = LINENUMWIDTH_MIN;
+	}
+	if( m_Types.m_nLineNumWidth > LINENUMWIDTH_MAX ){
+		m_Types.m_nLineNumWidth = LINENUMWIDTH_MAX;
+	}
 
 	return TRUE;
 }
