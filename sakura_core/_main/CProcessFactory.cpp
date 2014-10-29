@@ -114,7 +114,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		bDialog = false;
 	}
 	if( bDialog ){
-		if( dlgProf.DoModal( hInstance, NULL, NULL ) ){
+		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
 			CCommandLine::getInstance()->SetProfileName( to_wchar(dlgProf.m_strProfileName.c_str()) );
 		}else{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
