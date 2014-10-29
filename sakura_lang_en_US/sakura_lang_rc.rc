@@ -1583,8 +1583,8 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,104,
                     143,10
     CONTROL         "Allow other tools to drop(&S)",IDC_CHECK_DROPSOURCE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,156,143,10
-    GROUPBOX        "Drag'n'Drop",IDC_STATIC,3,91,149,50,WS_GROUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,117,143,10
+    GROUPBOX        "Drag'n'Drop",IDC_STATIC,3,91,149,43,WS_GROUP
     CONTROL         "Dont overwrite existing line-breaks(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,156,143,10
@@ -1594,7 +1594,7 @@ BEGIN
     CONTROL         "Delete selecting area while box selecting(&G)",
                     IDC_CHECK_bOverWriteBoxDelete,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,182,143,10
-    GROUPBOX        "Overwrite Mode",IDC_STATIC,3,159,149,51,WS_GROUP
+    GROUPBOX        "Overwrite Mode",IDC_STATIC,3,143,149,58,WS_GROUP
     CONTROL         "Clicking selects whole &URL",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,18,120,10
     GROUPBOX        "URL Selection",IDC_STATIC,156,3,131,35,WS_GROUP
