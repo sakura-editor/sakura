@@ -551,3 +551,10 @@ BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
 	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
 	return 0;
 }
+
+BOOL CDlgDiff::OnLbnDblclk( int wID )
+{
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+	if( List_GetCurSel( hwndList ) == LB_ERR ) return FALSE;
+	return OnBnClicked(IDOK);
+}
