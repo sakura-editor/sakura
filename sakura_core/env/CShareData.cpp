@@ -331,6 +331,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sSearch.m_szRegexpLib[0] =_T('\0');		/* 2007.08.12 genta 正規表現DLL */
 		m_pShareData->m_Common.m_sSearch.m_bGTJW_RETURN = TRUE;				/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
+		m_pShareData->m_Common.m_sSearch.m_nTagJumpMode = 1;				//タグジャンプモード
+		m_pShareData->m_Common.m_sSearch.m_nTagJumpModeKeyword = 3;			//タグジャンプモード
 
 //キーワード：ツールバー順序
 		//	Jan. 30, 2005 genta 関数として独立

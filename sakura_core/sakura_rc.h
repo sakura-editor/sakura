@@ -751,6 +751,8 @@
 #define IDC_CHECK_bOverWriteBoxDelete   1683
 #define IDC_CHECK_SHORTPATH             1684
 #define IDC_EDIT_SHORTMAXWIDTH          1685
+#define IDC_COMBO_TAGJUMP               1686
+#define IDC_COMBO_KEYWORD_TAGJUMP       1687
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -792,7 +794,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1686
+#define _APS_NEXT_CONTROL_VALUE         1688
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

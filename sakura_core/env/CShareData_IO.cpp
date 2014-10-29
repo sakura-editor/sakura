@@ -483,6 +483,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepRealTime")			, common.m_sSearch.m_bGrepRealTimeView ); // 2003.06.16 Moca
 	cProfile.IOProfileData( pszSecName, LTEXT("bCaretTextForSearch")	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bInheritKeyOtherView")	, common.m_sSearch.m_bInheritKeyOtherView );
+	cProfile.IOProfileData( pszSecName, LTEXT("nTagJumpMode")			, common.m_sSearch.m_nTagJumpMode );
+	cProfile.IOProfileData( pszSecName, LTEXT("nTagJumpModeKeyword")	, common.m_sSearch.m_nTagJumpModeKeyword );
 	
 	/* 正規表現DLL 2007.08.12 genta */
 	cProfile.IOProfileData( pszSecName, LTEXT("szRegexpLib")			, MakeStringBufferT(common.m_sSearch.m_szRegexpLib) );
