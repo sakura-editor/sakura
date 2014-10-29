@@ -1852,6 +1852,16 @@ BEGIN
                     WS_TABSTOP,8,154,115,10
     GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,127,285,46,
                     WS_GROUP
+    GROUPBOX        "タグジャンプ",IDC_STATIC,3,178,285,52,
+                    WS_GROUP
+    LTEXT           "タグファイルの検索(&T):",IDC_STATIC,8,192,112,8
+    COMBOBOX        IDC_COMBO_TAGJUMP,124,190,156,100,CBS_DROPDOWNLIST | 
+                    CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "キーワード指定のタグファイル検索(&K):",IDC_STATIC,8,210,112,8
+    COMBOBOX        IDC_COMBO_KEYWORD_TAGJUMP,124,208,156,100,CBS_DROPDOWNLIST | 
+                    CBS_AUTOHSCROLL | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
 END
 
 IDD_PROP_KEYBIND DIALOGEX 0, 0, 293, 240
@@ -4056,6 +4066,10 @@ BEGIN
 
 	// CPropComGrep.cpp 
 	STR_PROPCOMGREP_DLL			"正規表現は使用できません"
+	STR_TAGJUMP_0				"次のファイルを検索しない"
+	STR_TAGJUMP_1				"ヒットしたら次のファイルを検索しない"
+	STR_TAGJUMP_2				"完全一致でヒットしたら次のファイルを検索しない"
+	STR_TAGJUMP_3				"次のファイルを検索する"
 
 	// CPropComHelper.cpp
 	STR_PROPCOMHELP_MIGEMODIR	"検索するフォルダを選んでください"

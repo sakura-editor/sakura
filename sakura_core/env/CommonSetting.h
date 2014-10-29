@@ -407,6 +407,9 @@ struct CommonSetting_Search
 	BOOL			m_bAutoCloseDlgReplace;		//!< 置換 ダイアログを自動的に閉じる
 	BOOL			m_bSearchAll;				//!< 先頭（末尾）から再検索 2002.01.26 hor
 
+	int				m_nTagJumpMode;				//!< タグジャンプモード(0-3)
+	int				m_nTagJumpModeKeyword;		//!< タグジャンプモード(0-3)
+
 	//INI内設定のみ
 	BOOL			m_bUseCaretKeyWord;			//!< キャレット位置の単語を辞書検索		// 2006.03.24 fon
 };

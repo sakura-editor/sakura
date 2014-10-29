@@ -64,7 +64,6 @@ public:
 
 	//	@@ 2005.03.31 MIK 階層パラメータを追加
 //	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
-	bool GetSelectedParam( TCHAR *s0, TCHAR *s1, int *n2, TCHAR *s3, TCHAR *s4, int *depth, TCHAR* fileBase  );	//取得
 	void SetFileName( const TCHAR *pszFileName );
 	void SetKeyword( const wchar_t *pszKeyword );	//	@@ 2005.03.31 MIK
 	int  FindDirectTagJump();
@@ -111,6 +110,8 @@ private:
 	bool IsDirectTagJump();
 	
 	void ClearPrevFindInfo();
+	bool GetFullPathAndLine( int index, TCHAR *fullPath, int count, int *lineNum, int *depth );
+
 
 	//! depthから完全パス名(相対パス/絶対パス)を作成する
 	static TCHAR* GetFullPathFromDepth( TCHAR*, int, TCHAR*, const TCHAR*, int );

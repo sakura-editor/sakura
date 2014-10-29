@@ -33,6 +33,8 @@ static const DWORD p_helpids[] = {	//10500
 	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//タグジャンプ（エンターキー）
 	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//タグジャンプ（ダブルクリック）
 	IDC_CHECK_GREPREALTIME,			HIDC_CHECK_GREPREALTIME,		//リアルタイムで表示する	// 2006.08.08 ryoji
+	IDC_COMBO_TAGJUMP,				HIDC_COMBO_TAGJUMP,				//タグファイルの検索
+	IDC_COMBO_KEYWORD_TAGJUMP,		HIDC_COMBO_KEYWORD_TAGJUMP,		//タグファイルの検索
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -149,6 +151,46 @@ void CPropGrep::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
+	struct tagTagJumpMode{
+		DWORD	m_nMethod;
+		DWORD	m_nNameID;
+	};
+	struct tagTagJumpMode TagJumpMode1Arr[] ={
+		{ 0, STR_TAGJUMP_0 },
+		{ 1, STR_TAGJUMP_1 },
+		//{ 2, STR_TAGJUMP_2 },
+		{ 3, STR_TAGJUMP_3 }
+	};
+	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
+	Combo_ResetContent(hwndCombo);
+	int nSelPos = 0;
+	for(int i = 0; i < _countof(TagJumpMode1Arr); ++i){
+		Combo_InsertString(hwndCombo, i, LS(TagJumpMode1Arr[i].m_nNameID));
+		Combo_SetItemData(hwndCombo, i, TagJumpMode1Arr[i].m_nMethod);
+		if(TagJumpMode1Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpMode ){
+			nSelPos = i;
+		}
+	}
+	Combo_SetCurSel(hwndCombo, nSelPos);
+
+	struct tagTagJumpMode TagJumpMode2Arr[] ={
+		{ 0, STR_TAGJUMP_0 },
+		{ 1, STR_TAGJUMP_1 },
+		{ 2, STR_TAGJUMP_2 },
+		{ 3, STR_TAGJUMP_3 }
+	};
+	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);
+	Combo_ResetContent(hwndCombo);
+	nSelPos = 0;
+	for(int i = 0; i < _countof(TagJumpMode2Arr); ++i){
+		Combo_InsertString(hwndCombo, i, LS(TagJumpMode2Arr[i].m_nNameID));
+		Combo_SetItemData(hwndCombo, i, TagJumpMode2Arr[i].m_nMethod);
+		if(TagJumpMode2Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpModeKeyword ){
+			nSelPos = i;
+		}
+	}
+	Combo_SetCurSel(hwndCombo, nSelPos);
+
 	return;
 }
 
@@ -177,6 +219,14 @@ int CPropGrep::GetData( HWND hwndDlg )
 
 	//	2007.08.12 genta 正規表現DLL
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, _countof( m_Common.m_sSearch.m_szRegexpLib ));
+
+	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
+	int nSelPos = Combo_GetCurSel(hwndCombo);
+	m_Common.m_sSearch.m_nTagJumpMode = Combo_GetItemData(hwndCombo, nSelPos);
+	
+	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);
+	nSelPos = Combo_GetCurSel(hwndCombo);
+	m_Common.m_sSearch.m_nTagJumpModeKeyword = Combo_GetItemData(hwndCombo, nSelPos);
 
 	return TRUE;
 }
