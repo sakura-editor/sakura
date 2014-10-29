@@ -1212,7 +1212,11 @@ BEGIN
                     BS_AUTORADIOBUTTON | WS_GROUP,8,134,60,10
     CONTROL         "CRLF(&W)",IDC_RADIO_LINENUM_CRLF,"Button",
                     BS_AUTORADIOBUTTON,8,149,60,10
-    GROUPBOX        "Line nr. Display",IDC_STATIC,4,122,70,49,WS_GROUP
+    LTEXT           "Column",IDC_STATIC,8,165,26,8
+    EDITTEXT        IDC_EDIT_LINENUMWIDTH,41,163,31,12,ES_AUTOHSCROLL
+    CONTROL         "Spin3",IDC_SPIN_LINENUMWIDTH,"msctls_updown32",
+                    UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_AUTOBUDDY,61,163,9,12
+    GROUPBOX        "Line nr. Display",IDC_STATIC,4,122,70,59,WS_GROUP
     CONTROL         "None(&N)",IDC_RADIO_LINETERMTYPE0,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,83,134,39,10
     CONTROL         "Vertical Line(&V)",IDC_RADIO_LINETERMTYPE1,"Button",

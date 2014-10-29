@@ -7,6 +7,12 @@
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
 
+// 2014.07.26 katze
+//#define USE_LOG10			// この行のコメントを外すと行番号の最小桁数の計算にlog10()を用いる
+#ifdef USE_LOG10
+#include <math.h>
+#endif
+
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)
 {
@@ -213,18 +219,39 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMg
 	}
 	
 	if( 0 < nAllLines ){
-		int nWork = 100;
+		int nWork;
 		int i;
-		for( i = 3; i < 12; ++i ){
+
+		// 行番号の桁数を決める 2014.07.26 katze
+		/* m_nLineNumWidthは純粋に数字の桁数を示し、先頭の空白を含まない（仕様変更） 2014.08.02 katze */
+#ifdef USE_LOG10
+		/* 表示している行数の桁数を求める */
+		nWork = (int)(log10( (double)nAllLines) +1);	// 10を底とする対数(小数点以下切り捨て)+1で桁数
+		/* 設定値と比較し、大きい方を取る */
+		i = nWork > pView->m_pTypeData->m_nLineNumWidth ?
+			nWork : pView->m_pTypeData->m_nLineNumWidth;
+		// 先頭の空白分を加算する
+		return (i +1);
+#else
+		/* 設定から行数を求める */
+		nWork = 10;
+		for( i = 1; i < pView->m_pTypeData->m_nLineNumWidth; ++i ){
+			nWork *= 10;
+		}
+		/* 表示している行数と比較し、大きい方の値を取る */
+		for( i = pView->m_pTypeData->m_nLineNumWidth; i < LINENUMWIDTH_MAX; ++i ){
 			if( nWork > nAllLines ){	// Oct. 18, 2003 genta 式を整理
 				break;
 			}
 			nWork *= 10;
 		}
-		return i;
+		// 先頭の空白分を加算する
+		return (i +1);
+#endif
 	}else{
 		//	2003.09.11 wmlhq 行番号が1桁のときと幅を合わせる
-		return 3;
+		// 最小桁数を可変に変更 2014.07.26 katze	// 先頭の空白分を加算する 2014.07.31 katze
+		return pView->m_pTypeData->m_nLineNumWidth +1;
 	}
 }
 

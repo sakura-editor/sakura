@@ -753,6 +753,8 @@
 #define IDC_EDIT_SHORTMAXWIDTH          1685
 #define IDC_COMBO_TAGJUMP               1686
 #define IDC_COMBO_KEYWORD_TAGJUMP       1687
+#define IDC_SPIN_LINENUMWIDTH           1688
+#define IDC_EDIT_LINENUMWIDTH           1689
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

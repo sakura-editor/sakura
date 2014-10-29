@@ -287,4 +287,6 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bChkEnterAtEnd = true;
 
 	pType->m_bUseTypeFont = false;			//!< タイプ別フォントの使用
+
+	pType->m_nLineNumWidth = LINENUMWIDTH_MIN;	//!< 行番号最小桁数 2014.08.02 katze
 }
