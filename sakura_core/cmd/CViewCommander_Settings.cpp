@@ -61,7 +61,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
+	GetDllShareData().m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_cFuncKeyWnd.GetHwnd())? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
 	pCEditWnd->EndLayoutBars();
 

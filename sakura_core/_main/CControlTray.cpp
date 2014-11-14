@@ -270,13 +270,13 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	
 	// タスクトレイアイコン作成
 	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
-	m_CMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
+	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
 
 	m_pcPropertyManager = new CPropertyManager();
-	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_CMenuDrawer );
+	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
 	auto_strcpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
 
@@ -400,13 +400,13 @@ LRESULT CControlTray::DispatchEvent(
 	switch ( uMsg ){
 	case WM_MENUCHAR:
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
-		return m_CMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
+		return m_cMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
 	case WM_DRAWITEM:
 		lpdis = (DRAWITEMSTRUCT*) lParam;	/* 項目描画情報 */
 		switch( lpdis->CtlType ){
 		case ODT_MENU:	/* オーナー描画メニュー */
 			/* メニューアイテム描画 */
-			m_CMenuDrawer.DrawItem( lpdis );
+			m_cMenuDrawer.DrawItem( lpdis );
 			return TRUE;
 		}
 		return FALSE;
@@ -415,7 +415,7 @@ LRESULT CControlTray::DispatchEvent(
 		switch( lpmis->CtlType ){
 		case ODT_MENU:	/* オーナー描画メニュー */
 			/* メニューアイテムの描画サイズを計算 */
-			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
+			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( 0 < nItemWidth ){
 				lpmis->itemWidth = nItemWidth;
 				lpmis->itemHeight = nItemHeight;
@@ -424,7 +424,7 @@ LRESULT CControlTray::DispatchEvent(
 		}
 		return FALSE;
 	case WM_EXITMENULOOP:
-		m_CMenuDrawer.EndDrawMenu();
+		m_cMenuDrawer.EndDrawMenu();
 		break;
 
 
@@ -805,15 +805,15 @@ LRESULT CControlTray::DispatchEvent(
 						{
 							// アイコンの登録
 							const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
-							m_CMenuDrawer.m_pcIcons->ResetExtend();
+							m_cMenuDrawer.m_pcIcons->ResetExtend();
 							for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
 								int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 								const CPlug* plug = *it;
 								if( !plug->m_sIcon.empty() ){
-									iBitmap = m_CMenuDrawer.m_pcIcons->Add(
+									iBitmap = m_cMenuDrawer.m_pcIcons->Add(
 										to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
 								}
-								m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
+								m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}
 						}
 						m_pcPropertyManager->OpenPropertySheet( NULL, -1, true );
@@ -1523,36 +1523,36 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	if( m_bUseTrayMenu ) return -1;
 	m_bUseTrayMenu = true;
 
-	m_CMenuDrawer.ResetContents();
+	m_cMenuDrawer.ResetContents();
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
 	// リソースを使わないように
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
-	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayL", L"" );
+	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayL", L"" );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T(""), _T("G"), FALSE );
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T(""), _T("G"), FALSE );
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	const CMRUFile cMRU;
-	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
+	hMenuPopUp = cMRU.CreateMenu( &m_cMenuDrawer );	//	ファイルメニュー
 	int nEnable = (cMRU.MenuLength() > 0 ? 0 : MF_GRAYED);
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), _T("F") );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), _T("F") );
 
 	/* 最近使ったフォルダのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	const CMRUFolder cMRUFolder;
-	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
+	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );
 	nEnable = (cMRUFolder.MenuLength() > 0 ? 0 : MF_GRAYED);
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP| nEnable, (UINT_PTR)hMenuPopUp, LS( F_FILE_RCNTFLDR_SUBMENU ), _T("D") );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP| nEnable, (UINT_PTR)hMenuPopUp, LS( F_FILE_RCNTFLDR_SUBMENU ), _T("D") );
 
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T(""), _T("Z"), FALSE );	// Jan. 24, 2005 genta
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T(""), _T("Z"), FALSE );	// Jan. 24, 2005 genta
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
@@ -1563,7 +1563,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	}
 
 	if( j > 0 ){
-		m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+		m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 		NONCLIENTMETRICS met;
 		met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
@@ -1579,20 +1579,20 @@ int	CControlTray::CreatePopUpMenu_L( void )
 
 				// メニューラベル。1からアクセスキーを振る
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
+				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
 				++j;
 			}
 		}
 	}
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 	if( j == 0 ){
 		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
 		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
 	//	Jun. 9, 2001 genta ソフトウェア名改称
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 
 	po.x = 0;
 	po.y = 0;
@@ -1644,24 +1644,24 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	if( m_bUseTrayMenu ) return -1;
 	m_bUseTrayMenu = true;
 
-	m_CMenuDrawer.ResetContents();
+	m_cMenuDrawer.ResetContents();
 
 	// リソースを使わないように
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
-	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayR", L"" );
+	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayR", L"" );
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T(""), _T("L"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T(""), _T("C"), FALSE );
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T(""), _T("L"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T(""), _T("C"), FALSE );
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	//	Jun. 18, 2001 genta ソフトウェア名改称
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );
 
 	po.x = 0;
 	po.y = 0;
