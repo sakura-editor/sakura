@@ -397,7 +397,6 @@ void CMainToolBar::DestroyToolBar( void )
 		m_hwndToolBar = NULL;
 
 		//if( m_cTabWnd.m_pOwner->GetHwnd() ) ::UpdateWindow( m_cTabWnd.m_pOwner->GetHwnd() );
-		//if( m_CFuncKeyWnd.m_pOwner->GetHwnd() ) ::UpdateWindow( m_CFuncKeyWnd.m_pOwner->GetHwnd() );
 	}
 
 	// 2006.06.17 ryoji Rebar ‚ð”jŠü‚·‚é

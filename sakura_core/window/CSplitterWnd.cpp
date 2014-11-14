@@ -26,7 +26,7 @@
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(_T("::CSplitterWnd"))
-, m_pCEditWnd(NULL)
+, m_pcEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
 , m_nVSplitPos(0)					/* 垂直分割位置 */
@@ -64,7 +64,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 	LPCTSTR pszClassName = _T("SplitterWndClass");
 
 	/* 初期化 */
-	m_pCEditWnd	= pCEditWnd;
+	m_pcEditWnd	= pCEditWnd;
 
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
@@ -258,7 +258,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	BOOL				bVUp;
 	BOOL				bHUp;
 	BOOL				bSizeBox;
-	CEditWnd*			pCEditWnd = (CEditWnd*)m_pCEditWnd;
+	CEditWnd*			pCEditWnd = (CEditWnd*)m_pcEditWnd;
 	bVUp = FALSE;
 	bHUp = FALSE;
 
@@ -277,7 +277,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	|| ステータスパーを表示している場合はサイズボックスを表示しない
 	*/
 	if( NULL == pCEditWnd
-	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.GetHwnd()
+	 ||( NULL != pCEditWnd->m_cFuncKeyWnd.GetHwnd()
 	  && 1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
 	){
@@ -834,7 +834,7 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	CEditWnd*	pCEditWnd = (CEditWnd*)m_pCEditWnd;
+	CEditWnd*	pCEditWnd = (CEditWnd*)m_pcEditWnd;
 	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
 	RECT		rcClient;
@@ -849,7 +849,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	|| ステータスパーを表示している場合はサイズボックスを表示しない
 	*/
 	if( NULL == pCEditWnd
-	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.GetHwnd()
+	 ||( NULL != pCEditWnd->m_cFuncKeyWnd.GetHwnd()
 	  && 1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
 	){
