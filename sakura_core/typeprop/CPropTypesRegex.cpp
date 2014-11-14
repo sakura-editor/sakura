@@ -281,7 +281,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				//更新するキー情報を取得する。
 				szKeyWord[0] = _T('\0');
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( &szKeyWord[0] == L'\0' ) return FALSE;
+				if( szKeyWord[0] == L'\0' ) return FALSE;
 				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], nIndex) ){
 					return FALSE;
 				}
