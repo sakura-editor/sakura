@@ -77,7 +77,7 @@ const wchar_t* g_ppszKeywordsRTF[] = {
 	L"\\fonttbl",
 	L"\\footnote",
 	L"\\fs",
-	L"\\i"
+	L"\\i",
 	L"\\intbl",
 	L"\\keep",
 	L"\\keepn",
