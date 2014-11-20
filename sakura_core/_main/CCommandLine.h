@@ -30,6 +30,7 @@ class CMemory;
 */
 struct GrepInfo {
 	CNativeW		cmGrepKey;			//!< 検索キー
+	CNativeW		cmGrepRep;			//!< 置換キー
 	CNativeT		cmGrepFile;			//!< 検索対象ファイル
 	CNativeT		cmGrepFolder;		//!< 検索対象フォルダ
 	SSearchOption	sGrepSearchOption;	//!< 検索オプション
@@ -43,6 +44,9 @@ struct GrepInfo {
 	bool			bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
 	bool			bGrepOutputBaseFolder;	//!< ベースフォルダ表示
 	bool			bGrepSeparateFolder;	//!< フォルダ毎に表示
+	bool			bGrepReplace;		//!< Grep置換
+	bool			bGrepPaste;			//!< クリップボードから貼り付け
+	bool			bGrepBackup;		//!< 置換でバックアップを保存
 };
 
 

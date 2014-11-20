@@ -163,6 +163,7 @@
 #define HLP000062	62 //置換
 #define HLP000136	136 //検索マークの切替え
 #define HLP000067	67 //Grep
+#define HLP000362	362 //Grep置換
 #define HLP000063	63 //指定行へジャンプ
 #define HLP000064	64 //アウトライン解析
 #define HLP000317	317 //アウトライン解析(トグル)	// 2006.10.11 ryoji
@@ -1109,6 +1110,34 @@
 #define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 #define HIDC_CHECK_KEY_PARENTHESES			14414	//アクセスキーを必ず( )付で表示(&P)
+
+#define HIDC_GREP_REP_BUTTON_FOLDER			14500	//フォルダ
+#define HIDC_GREP_REP_BUTTON_CURRENTFOLDER	14501	//現フォルダ
+#define HIDOK_GREP_REP						14502	//置換開始
+#define HIDCANCEL_GREP_REP					14503	//キャンセル
+#define HIDC_GREP_REP_BUTTON_HELP			14504	//ヘルプ
+#define HIDC_GREP_REP_CHK_PASTE				14505	//クリップボードから貼り付け
+#define HIDC_GREP_REP_CHK_WORD				14506	//単語単位
+#define HIDC_GREP_REP_CHK_SUBFOLDER			14507	//サブフォルダも検索
+#define HIDC_GREP_REP_CHK_LOHICASE			14509	//大文字小文字
+#define HIDC_GREP_REP_CHK_REGULAREXP		14510	//正規表現
+#define HIDC_GREP_REP_CHK_BACKUP			14511	//バックアップ作成
+#define HIDC_GREP_REP_COMBO_CHARSET			14512	//文字コードセット
+#define HIDC_GREP_REP_COMBO_TEXT			14513	//置換前
+#define HIDC_GREP_REP_COMBO_TEXT2			14514	//置換後
+#define HIDC_GREP_REP_COMBO_FILE			14515	//ファイル
+#define HIDC_GREP_REP_COMBO_FOLDER			14516	//フォルダ
+#define HIDC_GREP_REP_BUTTON_FOLDER_UP		14517	//上
+#define HIDC_GREP_REP_RADIO_OUTPUTLINE		14518	//結果出力：行単位
+#define HIDC_GREP_REP_RADIO_OUTPUTMARKED	14519	//結果出力：該当部分
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE1	14520	//結果出力形式：ノーマル
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE2	14521	//結果出力形式：ファイル毎
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE3	14522	//結果出力形式：結果のみ
+#define HIDC_GREP_REP_STATIC_JRE32VER		14523	//正規表現バージョン
+#define HIDC_GREP_REP_CHK_DEFAULTFOLDER		14524	//フォルダの初期値をカレントフォルダにする
+#define HIDC_GREP_REP_CHECK_FILE_ONLY		14525	//ファイル毎最初のみ検索
+#define HIDC_GREP_REP_CHECK_BASE_PATH		14526	//ベースフォルダ表示
+#define HIDC_GREP_REP_CHECK_SEP_FOLDER		14527	//フォルダ毎に表示
 
 //プロファイル一覧
 #define HIDC_LIST_PROFILE					14600	//プロファイル一覧

@@ -57,6 +57,7 @@
 #define CMDLINEOPT_GCODE		105
 #define CMDLINEOPT_M			106
 #define CMDLINEOPT_MTYPE		107
+#define CMDLINEOPT_GREPR		108
 #define CMDLINEOPT_GROUP		500
 #define CMDLINEOPT_PROF			501
 #define CMDLINEOPT_PROFMGR		502
@@ -121,6 +122,7 @@ int CCommandLine::CheckCommandLine(
 		{_T("CODE"),	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
 		{_T("TYPE"),	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
 		{_T("GKEY"),	4,			CMDLINEOPT_GKEY, false},
+		{_T("GREPR"),	5,			CMDLINEOPT_GREPR, false},
 		{_T("GFILE"),	5,			CMDLINEOPT_GFILE, false},
 		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
 		{_T("GOPT"),	4,			CMDLINEOPT_GOPT, false},
@@ -399,6 +401,12 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				m_gi.cmGrepKey.SetStringT( arg,  lstrlen( arg ) );
 				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
 				break;
+			case CMDLINEOPT_GREPR:	//	GREPR
+				//	前後の""を取り除く
+				m_gi.cmGrepRep.SetStringT( arg,  lstrlen( arg ) );
+				m_gi.cmGrepRep.Replace( L"\"\"", L"\"" );
+				m_gi.bGrepReplace = true;
+				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
 				m_gi.cmGrepFile.SetStringT( arg,  lstrlen( arg ) );
@@ -451,6 +459,10 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepOutputBaseFolder = true;	break;
 					case 'D':
 						m_gi.bGrepSeparateFolder = true;	break;
+					case 'C':
+						m_gi.bGrepPaste = true;	break;
+					case 'O':
+						m_gi.bGrepBackup = true;	break;
 					}
 				}
 				break;
@@ -536,6 +548,9 @@ CCommandLine::CCommandLine()
 	m_gi.bGrepOutputFileOnly = false;
 	m_gi.bGrepOutputBaseFolder = false;
 	m_gi.bGrepSeparateFolder = false;
+	m_gi.bGrepReplace		= false;
+	m_gi.bGrepPaste			= false;
+	m_gi.bGrepBackup		= false;
 	m_bViewMode			= false;
 	m_nGroup				= -1;		// 2007.06.26 ryoji
 	m_cmProfile.SetString(L"");

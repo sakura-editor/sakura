@@ -54,6 +54,7 @@
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
+#include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
 #include "CHokanMgr.h"
@@ -368,6 +369,7 @@ public:
 	CDlgReplace		m_cDlgReplace;		// 「置換」ダイアログ
 	CDlgJump		m_cDlgJump;			// 「指定行へジャンプ」ダイアログ
 	CDlgGrep		m_cDlgGrep;			// Grepダイアログ
+	CDlgGrepReplace	m_cDlgGrepReplace;	// Grep置換ダイアログ
 	CDlgFuncList	m_cDlgFuncList;		// アウトライン解析結果ダイアログ
 	CHokanMgr		m_cHokanMgr;		// 入力補完
 	CDlgSetCharSet	m_cDlgSetCharSet;	// 「文字コードセット設定」ダイアログ
