@@ -332,6 +332,7 @@ const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(Lis
 	F_SEARCH_CLEARMARK	,	//検索マークのクリア
 	F_JUMP_SRCHSTARTPOS	,	//検索開始位置へ戻る	// 02/06/26 ai
 	F_GREP_DIALOG		,	//Grep
+	F_GREP_REPLACE_DLG	,	//Grep置換
 	F_JUMP_DIALOG		,	//指定行ヘジャンプ
 	F_OUTLINE			,	//アウトライン解析
 	F_OUTLINE_TOGGLE	,	//アウトライン解析(toggle) // 20060201 aroka
@@ -791,6 +792,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_REPLACE_DIALOG:		return HLP000062;	//置換(置換ダイアログ)
 	case F_SEARCH_CLEARMARK:	return HLP000136;	//検索マークのクリア
 	case F_GREP_DIALOG:			return HLP000067;	//Grep
+	case F_GREP_REPLACE_DLG:	return HLP000362;	//Grep置換
 	case F_JUMP_DIALOG:			return HLP000063;	//指定行へジャンプ
 	case F_OUTLINE:				return HLP000064;	//アウトライン解析
 	case F_OUTLINE_TOGGLE:		return HLP000317;	//アウトライン解析(トグル)	// 2006.10.11 ryoji
@@ -1106,6 +1108,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 
 	case F_FILENEW:	/* 新規作成 */
 	case F_GREP_DIALOG:	/* Grep */
+	case F_GREP_REPLACE_DLG:
 		/* 編集ウィンドウの上限チェック */
 		if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 			return false;

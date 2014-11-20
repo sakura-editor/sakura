@@ -201,7 +201,9 @@ bool CNormalProcess::InitializeProcess()
 			::CloseHandle( hMutex );
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
 				&pEditWnd->GetActiveView(),
+				gi.bGrepReplace,
 				&gi.cmGrepKey,
+				&gi.cmGrepRep,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
 				gi.bGrepCurFolder,
@@ -214,7 +216,9 @@ bool CNormalProcess::InitializeProcess()
 				gi.nGrepOutputStyle,
 				gi.bGrepOutputFileOnly,
 				gi.bGrepOutputBaseFolder,
-				gi.bGrepSeparateFolder
+				gi.bGrepSeparateFolder,
+				gi.bGrepPaste,
+				gi.bGrepBackup
 			);
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			//return true; // 2003.06.23 Moca

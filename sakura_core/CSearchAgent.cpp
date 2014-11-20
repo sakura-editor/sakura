@@ -79,7 +79,7 @@ void CSearchStringPattern::Reset(){
 #endif
 }
 
-bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* regexp)
+bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* regexp)
 {
 	Reset();
 	m_pszCaseKeyRef = m_pszKey = pszPattern;
@@ -95,8 +95,14 @@ bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int 
 		}
 		int nFlag = (GetLoHiCase() ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		/* 検索パターンのコンパイル */
-		if( !m_pRegexp->Compile( pszPattern, nFlag ) ){
-			return false;
+		if( pszPattern2 ){
+			if( !m_pRegexp->Compile( pszPattern, pszPattern2, nFlag ) ){
+				return false;
+			}
+		}else{
+			if( !m_pRegexp->Compile( pszPattern, nFlag ) ){
+				return false;
+			}
 		}
 	}else if( m_psSearchOption->bWordOnly ){
 	}else{

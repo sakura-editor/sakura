@@ -1974,6 +1974,12 @@
 					RelativePath="..\sakura_core\dlg\CDlgGrep.h">
 				</File>
 				<File
+					RelativePath="..\sakura_core\dlg\CDlgGrepReplace.cpp">
+				</File>
+				<File
+					RelativePath="..\sakura_core\dlg\CDlgGrepReplace.h">
+				</File>
+				<File
 					RelativePath="..\sakura_core\dlg\CDlgInput1.cpp">
 				</File>
 				<File

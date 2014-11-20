@@ -160,6 +160,7 @@ dlg/CDlgFavorite.o \
 dlg/CDlgFileUpdateQuery.o \
 dlg/CDlgFind.o \
 dlg/CDlgGrep.o \
+dlg/CDlgGrepReplace.o \
 dlg/CDlgInput1.o \
 dlg/CDlgJump.o \
 dlg/CDlgOpenFile.o \

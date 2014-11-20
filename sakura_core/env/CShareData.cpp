@@ -322,6 +322,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = false;
 		m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = false;
 		m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = false;
+		m_pShareData->m_Common.m_sSearch.m_bGrepBackup = true;
 
 		m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
 		m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = CODE_AUTODETECT;	/* Grep: 文字コードセット */

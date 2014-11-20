@@ -152,17 +152,28 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			AddIntParam( lFlag );
 		}
 		break;
+	case F_GREP_REPLACE:
 	case F_GREP:
 		{
-			AddStringParam( pcEditView->m_pcEditWnd->m_cDlgGrep.m_strText.c_str() );	//	lParamを追加。
+			CDlgGrep* pcDlgGrep;
+			CDlgGrepReplace* pcDlgGrepRep;
+			if( F_GREP == m_nFuncID ){
+				pcDlgGrep = &pcEditView->m_pcEditWnd->m_cDlgGrep;
+				pcDlgGrepRep = NULL;
+				AddStringParam( pcDlgGrep->m_strText.c_str() );
+			}else{
+				pcDlgGrep = pcDlgGrepRep = &pcEditView->m_pcEditWnd->m_cDlgGrepReplace;
+				AddStringParam( pcDlgGrep->m_strText.c_str() );
+				AddStringParam( pcEditView->m_pcEditWnd->m_cDlgGrepReplace.m_strText2.c_str() );
+			}
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParamを追加。
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
 			//			この編集中のテキストから検索する(0x02.未実装)
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bRegularExp	? 0x08 : 0x00;
+			lFlag |= pcDlgGrep->m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
+			lFlag |= pcDlgGrep->m_sSearchOption.bRegularExp	? 0x08 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
@@ -171,10 +182,14 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			if( IsValidCodeType(code) || CODE_AUTODETECT == code ){
 				lFlag |= code << 8;
 			}
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x10000 : 0x00;
+			lFlag |= pcDlgGrep->m_sSearchOption.bWordOnly								? 0x10000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputFileOnly			? 0x20000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputBaseFolder		? 0x40000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSeparateFolder			? 0x80000 : 0x00;
+			if( F_GREP_REPLACE == m_nFuncID ){
+				lFlag |= pcDlgGrepRep->m_bPaste											? 0x100000 : 0x00;
+				lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepBackup				? 0x200000 : 0x00;
+			}
 			AddIntParam( lFlag );
 			AddIntParam( code );
 		}
@@ -466,6 +481,35 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
 			}
 			break;
+		case F_GREP_REPLACE:
+			{
+				pText = m_pParamTop->m_pData;
+				nTextLen = wcslen(pText);
+				cmemWork.SetString( pText, nTextLen );
+				cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				CNativeW cmemWork2(GetParamAt(m_pParamTop, 1));
+				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
+
+				CNativeW cmemWork3(GetParamAt(m_pParamTop, 2));
+				cmemWork3.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				CNativeW cmemWork4(GetParamAt(m_pParamTop, 3));
+				cmemWork4.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork4.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				out.WriteF( L"S_%ls(\'", szFuncName );
+				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
+				out.WriteString( L"\', \'" );
+				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
+				out.WriteString( L"\', \'" );
+				out.WriteString( cmemWork3.GetStringPtr(), cmemWork3.GetStringLength() );
+				out.WriteString( L"\', \'" );
+				out.WriteString( cmemWork4.GetStringPtr(), cmemWork4.GetStringLength() );
+				out.WriteF( L"', %d", wtoi_def(GetParamAt(m_pParamTop, 4), 0) );
+				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop, 5), 99) );
+				out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
+			}
 		default:
 			if( 0 == m_pParamTop ){
 				out.WriteF( LTEXT("S_%ls();\t// %ls\r\n"), szFuncName, szFuncNameJapanese );
@@ -874,6 +918,7 @@ bool CMacro::HandleCommand(
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0);
 		}
 		break;
+	case F_GREP_REPLACE:
 	case F_GREP:
 		//	Argument[0]	検索文字列
 		//	Argument[1]	検索対象にするファイル名
@@ -900,30 +945,49 @@ bool CMacro::HandleCommand(
 		//		0x020000	ファイル毎最初のみ検索
 		//		0x040000	ベースフォルダ表示
 		//		0x080000	フォルダ毎に表示
-		if( Argument[0] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				LS(STR_ERR_DLGMACRO11));
-			return false;
-		}
-		if( Argument[1] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				LS(STR_ERR_DLGMACRO12));
-			return false;
-		}
-		if( Argument[2] == NULL ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
-				LS(STR_ERR_DLGMACRO13));
-			return false;
-		}
 		{
+			if( Argument[0] == NULL ){
+				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+					LS(STR_ERR_DLGMACRO11));
+				return false;
+			}
+			int ArgIndex = 0;
+			bool bGrepReplace = LOWORD(Index) == F_GREP_REPLACE;
+			if( bGrepReplace ){
+				if( ArgLengths[0] == 0 ){
+					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+						LS(STR_ERR_DLGMACRO11));
+					return false;
+				}
+				ArgIndex = 1;
+				if( Argument[1] == NULL ){
+					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+						LS(STR_ERR_DLGMACRO17));
+					return false;
+				}
+			}
+			if( Argument[ArgIndex+1] == NULL ){
+				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+					LS(STR_ERR_DLGMACRO12));
+				return false;
+			}
+			if( Argument[ArgIndex+2] == NULL ){
+				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+					LS(STR_ERR_DLGMACRO13));
+				return false;
+			}
 			//	常に外部ウィンドウに。
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
 			CNativeW cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace( L"\"", L"\"\"" );	//	検索文字列
-			CNativeT cmWork2;	cmWork2.SetStringW( Argument[1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
-			CNativeT cmWork3;	cmWork3.SetStringW( Argument[2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
+			CNativeW cmWork4;
+			if( bGrepReplace ){
+				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	置換後
+			}
+			CNativeT cmWork2;	cmWork2.SetStringW( Argument[ArgIndex+1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
+			CNativeT cmWork3;	cmWork3.SetStringW( Argument[ArgIndex+2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
 
-			LPARAM lFlag = Argument[3] != NULL ? _wtoi(Argument[3]) : 5;
+			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
 			// 2002/09/21 Moca 文字コードセット
 			ECodeType	nCharSet;
@@ -937,8 +1001,8 @@ bool CMacro::HandleCommand(
 					nCharSet = (ECodeType)nCode;
 				}
 				// 2013.06.11 5番目の引き数を文字コードにする
-				if( 5 <= ArgSize ){
-					nCharSet = (ECodeType)_wtoi(Argument[4]);
+				if( ArgIndex + 5 <= ArgSize ){
+					nCharSet = (ECodeType)_wtoi(Argument[ArgIndex + 4]);
 				}
 			}
 
@@ -948,6 +1012,10 @@ bool CMacro::HandleCommand(
 			TCHAR	pOpt[64];
 			cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
 			cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+			if( bGrepReplace ){
+				cCmdLine.AppendString(_T("\" -GREPR=\""));
+				cCmdLine.AppendStringW(cmWork4.GetStringPtr());
+			}
 			cCmdLine.AppendString(_T("\" -GFILE=\""));
 			cCmdLine.AppendString(cmWork2.GetStringPtr());
 			cCmdLine.AppendString(_T("\" -GFOLDER=\""));
@@ -969,6 +1037,10 @@ bool CMacro::HandleCommand(
 			if( lFlag & 0x20000 )_tcscat( pOpt, _T("F") );
 			if( lFlag & 0x40000 )_tcscat( pOpt, _T("B") );
 			if( lFlag & 0x80000 )_tcscat( pOpt, _T("D") );
+			if( bGrepReplace ){
+				if( lFlag & 0x100000 )_tcscat( pOpt, _T("C") );
+				if( lFlag & 0x200000 )_tcscat( pOpt, _T("O") );
+			}
 			if( pOpt[0] != _T('\0') ){
 				auto_sprintf( szTemp, _T(" -GOPT=%ts"), pOpt );
 				cCmdLine.AppendString(szTemp);

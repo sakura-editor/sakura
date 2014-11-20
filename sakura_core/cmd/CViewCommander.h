@@ -275,6 +275,8 @@ public:
 
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
+	void Command_GREP_REPLACE_DLG( void );				/* Grep置換ダイアログの表示 */
+	void Command_GREP_REPLACE( void );					/* Grep置換 */
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
@@ -397,8 +399,9 @@ public:
 private:
 	void AlertNotFound(HWND hwnd, bool, LPCTSTR format, ...);
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
-	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理
+public:
+	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 
 };
 

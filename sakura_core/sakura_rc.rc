@@ -256,6 +256,73 @@ BEGIN
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,253,147,49,14
 END
 
+IDD_GREP_REPLACE DIALOGEX 0, 0, 308, 193
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Grep置換"
+FONT 9, "ＭＳ Ｐゴシック"
+BEGIN
+    LTEXT           "置換前(&N)",IDC_STATIC,5,6,39,8
+    COMBOBOX        IDC_COMBO_TEXT,46,4,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "置換後(&Z)",IDC_STATIC,5,21,39,8
+    COMBOBOX        IDC_COMBO_TEXT2,46,19,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "ファイル(&T)",IDC_STATIC,5,36,39,8,NOT WS_GROUP
+    COMBOBOX        IDC_COMBO_FILE,46,34,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "フォルダ(&O)",IDC_STATIC,5,51,39,8
+    COMBOBOX        IDC_COMBO_FOLDER,46,49,246,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,293,49,9,13
+    PUSHBUTTON      "上(&B)",IDC_BUTTON_FOLDER_UP,225,64,25,14
+    PUSHBUTTON      "現フォルダ(&U)",IDC_BUTTON_CURRENTFOLDER,253,64,49,14,
+                    BS_MULTILINE
+    CONTROL         "クリップボードから貼り付ける(&J)",IDC_CHK_PASTE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,67,116,10
+    CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,78,116,10
+    CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,89,116,10
+    CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,100,116,10
+    CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,111,55,10
+    LTEXT           "",IDC_STATIC_JRE32VER,18,120,159,8
+    CONTROL         "ファイル毎最初のみ検索(&G)",
+                    IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,131,119,10
+    CONTROL         "ベースフォルダ表示(&V)",
+                    IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,142,85,10
+    CONTROL         "フォルダ毎に表示(&Y)",
+                    IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,92,142,85,10
+    LTEXT           "文字コードセット(&A)",IDC_STATIC,16,156,62,8
+    COMBOBOX        IDC_COMBO_CHARSET,80,154,65,101,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "バックアップ作成(&K)",IDC_CHK_BACKUP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,167,164,10
+    CONTROL         "フォルダの初期値をカレントフォルダにする(&D)",
+                    IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,178,164,10
+    CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,91,56,10
+    CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",
+                    BS_AUTORADIOBUTTON,185,101,56,10
+    GROUPBOX        "結果出力",IDC_STATIC,180,79,65,35,WS_GROUP
+    CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,128,54,10
+    CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",
+                    BS_AUTORADIOBUTTON,185,140,59,10
+    CONTROL         "結果のみ(&R)",IDC_RADIO_OUTPUTSTYLE3,"Button",
+                    BS_AUTORADIOBUTTON,185,152,59,10
+    GROUPBOX        "結果出力形式",IDC_STATIC,180,118,65,47,WS_GROUP
+    DEFPUSHBUTTON   "置換(&F)",IDOK,253,87,49,14,WS_GROUP
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,253,150,49,14
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,253,167,49,14
+END
+
 IDD_GREPRUNNING DIALOGEX 0, 0, 293, 79
 STYLE DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Grep実行中"
@@ -2267,6 +2334,14 @@ BEGIN
         BOTTOMMARGIN, 136
     END
 
+    IDD_GREP_REPLACE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 158
+    END
+
     IDD_GREPRUNNING, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -3049,6 +3124,8 @@ BEGIN
     F_JUMP_SRCHSTARTPOS     "検索開始位置へ戻る"
     F_GREP_DIALOG           "Grep..."
     F_GREP                  "Grep"
+    F_GREP_REPLACE_DLG      "Grep置換..."
+    F_GREP_REPLACE          "Grep置換"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3730,6 +3807,8 @@ BEGIN
 	STR_GREP_SEARCH_CONDITION	"\r\n□検索条件  "
 	STR_GREP_SEARCH_FILE		"「ファイル検索」\r\n"
 	STR_GREP_SEARCH_TARGET		"検索対象   "
+	STR_GREP_REPLACE_TO			"置換後     "
+	STR_GREP_PASTE_CLIPBOAD		"(クリップボードから貼り付け)"
 	STR_GREP_SEARCH_FOLDER		"フォルダ   "
 	STR_GREP_SUBFOLDER_YES		"    (サブフォルダも検索)\r\n"
 	STR_GREP_SUBFOLDER_NO		"    (サブフォルダを検索しない)\r\n"
@@ -3740,9 +3819,11 @@ BEGIN
 	STR_GREP_CHARSET_AUTODETECT	"    (文字コードセットの自動判別)\r\n"
 	STR_GREP_CHARSET			"    (文字コードセット："
 	STR_GREP_SHOW_MATCH_LINE	"    (一致した行を出力)\r\n"
+	STR_GREP_SHOW_FIRST_LINE	"    (一致した行の最初の箇所のみ出力)\r\n"
 	STR_GREP_SHOW_MATCH_AREA	"    (一致した箇所のみ出力)\r\n"
 	STR_GREP_SHOW_FIRST_MATCH	"    (ファイル毎最初のみ検索)\r\n"
 	STR_GREP_SUSPENDED			"中断しました。\r\n"
+	STR_GREP_REPLACE_COUNT		"%d 個を置換しました。\r\n"
 	STR_GREP_MATCH_COUNT		"%d 個が検索されました。\r\n"
 	STR_GREP_RUNNINNG			"Grepの処理中です。\n"
 	STR_GREP_ERR_ENUMKEYS0		"(不明)"
@@ -3751,6 +3832,9 @@ BEGIN
 	STR_GREP_TIMER				"処理時間: %dミリ秒\r\n"
 	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
 	STR_GREP_ERR_FILEREAD		"ファイルの読み込み中にエラーが発生しました。[%ts]\r\n"
+	STR_GREP_ERR_FILEWRITE		"書き込めませんでした。 [%ts]\r\n";
+	STR_GREP_REP_ERR_DELETE		"ファイルの削除に失敗しました。"
+	STR_GREP_REP_ERR_REPLACE	"ファイルの置き換えに失敗しました。"
 
 	// CEditView_ExecCmd.cpp
 	STR_EDITVIEW_EXECCMD_ERR	"コマンド実行は失敗しました。"
@@ -3976,6 +4060,7 @@ BEGIN
 	STR_ERR_DLGMACRO14			"読み込みファイル名が指定されていません．"
 	STR_ERR_DLGMACRO15			"保存ファイル名が指定されていません．"
 	STR_ERR_DLGMACRO16			"数値を指定してください．"
+	STR_ERR_DLGMACRO17			"GREP置換後が指定されていません．"
 
 	// CMacroFactory.cpp
 	

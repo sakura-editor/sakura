@@ -427,6 +427,12 @@ BOOL CViewCommander::HandleCommand(
 		Command_GREP_DIALOG();
 		return bRet;
 	case F_GREP:			Command_GREP();break;							//Grep
+	case F_GREP_REPLACE_DLG:	//Grep置換ダイアログの表示
+		/* 再帰処理対策 */
+		m_pCommanderView->SetUndoBuffer( true );
+		Command_GREP_REPLACE_DLG();
+		return bRet;
+	case F_GREP_REPLACE:	Command_GREP_REPLACE();break;							//Grep置換
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
 	case F_OUTLINE:			bRet = Command_FUNCLIST( (int)lparam1, OUTLINE_DEFAULT );break;	//アウトライン解析

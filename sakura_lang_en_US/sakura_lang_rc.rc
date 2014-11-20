@@ -258,6 +258,73 @@ BEGIN
     PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,253,147,49,14
 END
 
+IDD_GREP_REPLACE DIALOGEX 0, 0, 308, 193
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Grep Replace"
+FONT 9, "Tahoma"
+BEGIN
+    LTEXT           "Fi&nd",IDC_STATIC,5,6,39,8
+    COMBOBOX        IDC_COMBO_TEXT,46,4,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Replace(&Z)",IDC_STATIC,5,21,39,8
+    COMBOBOX        IDC_COMBO_TEXT2,46,19,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "File(&T)",IDC_STATIC,5,36,39,8,NOT WS_GROUP
+    COMBOBOX        IDC_COMBO_FILE,46,34,257,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "F&older",IDC_STATIC,5,51,39,8
+    COMBOBOX        IDC_COMBO_FOLDER,46,49,246,120,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,293,49,9,13
+    PUSHBUTTON      "Up(&B)",IDC_BUTTON_FOLDER_UP,225,64,25,14
+    PUSHBUTTON      "C&ur Folder",IDC_BUTTON_CURRENTFOLDER,253,64,49,14,
+                    BS_MULTILINE
+    CONTROL         "Paste from Clipboard(&Z)",IDC_CHK_PASTE,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,67,116,10
+    CONTROL         "Match Whole &Word",IDC_CHK_WORD,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,78,116,10
+    CONTROL         "Search &Sub Folders",IDC_CHK_SUBFOLDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,89,116,10
+    CONTROL         "&Case Sensitive",IDC_CHK_LOHICASE,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,100,116,10
+    CONTROL         "R&egex",IDC_CHK_REGULAREXP,"Button",
+                    BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,111,55,10
+    LTEXT           "",IDC_STATIC_JRE32VER,18,120,159,8
+    CONTROL         "Match Once Per File(&G)",
+                    IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,131,119,10
+    CONTROL         "Output Relati&ve Path",
+                    IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,142,85,10
+    CONTROL         "Output Per Director&y",
+                    IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,92,142,85,10
+    LTEXT           "Ch&aracter Set",IDC_STATIC,16,156,62,8
+    COMBOBOX        IDC_COMBO_CHARSET,80,154,65,101,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Bac&kup",IDC_CHK_BACKUP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,167,164,10
+    CONTROL         "&Default for Folder is 1st Folder",
+                    IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,178,164,10
+    CONTROL         "Complete &Line",IDC_RADIO_OUTPUTLINE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,91,56,10
+    CONTROL         "Matching &Part",IDC_RADIO_OUTPUTMARKED,"Button",
+                    BS_AUTORADIOBUTTON,185,101,56,10
+    GROUPBOX        "Result Ouput",IDC_STATIC,180,79,65,35,WS_GROUP
+    CONTROL         "Nor&mal",IDC_RADIO_OUTPUTSTYLE1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,128,54,10
+    CONTROL         "Per-F&ile",IDC_RADIO_OUTPUTSTYLE2,"Button",
+                    BS_AUTORADIOBUTTON,185,140,59,10
+    CONTROL         "&Result Only",IDC_RADIO_OUTPUTSTYLE3,"Button",
+                    BS_AUTORADIOBUTTON,185,152,59,10
+    GROUPBOX        "Output Result Format",IDC_STATIC,180,118,65,47,WS_GROUP
+    DEFPUSHBUTTON   "Replace(&F)",IDOK,253,87,49,14,WS_GROUP
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,253,150,49,14
+    PUSHBUTTON      "&Help",IDC_BUTTON_HELP,253,167,49,14
+END
+
 IDD_GREPRUNNING DIALOGEX 0, 0, 293, 79
 STYLE DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Grep Running..."
@@ -2270,6 +2337,14 @@ BEGIN
         BOTTOMMARGIN, 136
     END
 
+    IDD_GREP_REPLACE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 158
+    END
+
     IDD_GREPRUNNING, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -3052,6 +3127,8 @@ BEGIN
     F_JUMP_SRCHSTARTPOS     "Jump to Initial search start position"
     F_GREP_DIALOG           "Grep"
     F_GREP                  "Grep"
+    F_GREP_REPLACE_DLG      "Grep Replace..."
+    F_GREP_REPLACE          "Grep Replace"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3733,6 +3810,8 @@ BEGIN
 	STR_GREP_SEARCH_CONDITION	"\r\nÅ† Search Conditions  "							// Output from GREP resuilts
 	STR_GREP_SEARCH_FILE		"ÅuFile SearchÅv\r\n"
 	STR_GREP_SEARCH_TARGET		"Search Target   "
+	STR_GREP_REPLACE_TO			"Repalce To      "
+	STR_GREP_PASTE_CLIPBOAD		"(Paste From Clipborad)"
 	STR_GREP_SEARCH_FOLDER		"Folder          "
 	STR_GREP_SUBFOLDER_YES		"    (search sub-folders = Yes)\r\n"
 	STR_GREP_SUBFOLDER_NO		"    (search sub-folders = No)\r\n"
@@ -3743,9 +3822,11 @@ BEGIN
 	STR_GREP_CHARSET_AUTODETECT	"    (Encoding = Auto-Detect)\r\n"
 	STR_GREP_CHARSET			"    (Encoding:"
 	STR_GREP_SHOW_MATCH_LINE	"    (Matching Line displayed)\r\n"
+	STR_GREP_SHOW_FIRST_LINE	"    (Matching line first postion only displayed)\r\n"
 	STR_GREP_SHOW_MATCH_AREA	"    (Matching Area only displayed)\r\n"
 	STR_GREP_SHOW_FIRST_MATCH	"    (First Matching Area only displayed for each file)\r\n"
 	STR_GREP_SUSPENDED			"suspended.\r\n"
+	STR_GREP_REPLACE_COUNT		"%d items replaced.\r\n"
 	STR_GREP_MATCH_COUNT		"%d items were checked.\r\n"
 	STR_GREP_RUNNINNG			"Grep Running.\n"
 	STR_GREP_ERR_ENUMKEYS0		"(Unknown)"
@@ -3754,6 +3835,9 @@ BEGIN
 	STR_GREP_TIMER				"Processing time: %dms\r\n"
 	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
 	STR_GREP_ERR_FILEREAD		"file read error [%ts]\r\n"
+	STR_GREP_ERR_FILEWRITE		"file write error [%ts]\r\n";
+	STR_GREP_REP_ERR_DELETE		"failed file delete."
+	STR_GREP_REP_ERR_REPLACE	"failed file replace."
 
 	// CEditView_ExecCmd.cpp
 	STR_EDITVIEW_EXECCMD_ERR	"Failed to execute command."
@@ -3982,6 +4066,7 @@ BEGIN
 	STR_ERR_DLGMACRO14			"Input file name is unset."
 	STR_ERR_DLGMACRO15			"Filename for saving not set."
 	STR_ERR_DLGMACRO16			"Number is not defined."
+	STR_ERR_DLGMACRO17			"Grep Replace To is not defined."
 
 	// CMacroFactory.cpp
 	
