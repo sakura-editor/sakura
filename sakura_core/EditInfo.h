@@ -38,6 +38,7 @@ struct EditInfo {
 	//ファイル
 	TCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
 	ECodeType	m_nCharCode;							//!< 文字コード種別
+	bool		m_bBom;									//!< BOM(GetFileInfo)
 	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
 	int 		m_nTypeId;								//!< 文書タイプ(MRU)
 
@@ -71,6 +72,7 @@ struct EditInfo {
 	// Constructor 確実に初期化するため
 	EditInfo()
 	: m_nCharCode( CODE_AUTODETECT )
+	, m_bBom( false )
 	, m_nTypeId( -1 )
 	, m_nViewTopLine( -1 )
 	, m_nViewLeftCol( -1 )

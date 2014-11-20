@@ -89,6 +89,8 @@ CDlgDiff::CDlgDiff()
 
 	m_nDiffFlgOpt    = 0;
 	m_bIsModifiedDst = false;
+	m_nCodeTypeDst = CODE_ERROR;
+	m_bBomDst = false;
 	m_hWnd_Dst       = NULL;
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
@@ -389,6 +391,8 @@ int CDlgDiff::GetData( void )
 
 			_tcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;
+			m_nCodeTypeDst = pFileInfo->m_nCharCode;
+			m_bBomDst = pFileInfo->m_bBom;
 		}
 		else
 		{

@@ -503,6 +503,7 @@ void CEditDoc::GetEditInfo(
 	//各種状態
 	pfi->m_bIsModified = m_cDocEditor.IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_cDocFile.GetCodeSet();				/* 文字コード種別 */
+	pfi->m_bBom = GetDocumentBomExist();
 	pfi->m_nTypeId = m_cDocType.GetDocumentAttribute().m_id;
 
 	//GREPモード
