@@ -79,6 +79,7 @@ class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
+class COutputAdapter;
 
 // struct DispPos; //	誰かがincludeしてます
 // class CColorStrategy;	// 誰かがincludeしてます
@@ -351,7 +352,7 @@ public:
 
 
 
-	void ExecCmd(const TCHAR*, int, const TCHAR*) ;							// 子プロセスの標準出力をリダイレクトする
+	bool ExecCmd(const TCHAR*, int, const TCHAR*, COutputAdapter* = NULL ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr( const TCHAR* );
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const TCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
@@ -530,8 +531,9 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( TCHAR*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
-	void ViewDiffInfo( const TCHAR*, const TCHAR*, int );		/* DIFF差分表示 */		//2005.10.29 maru
+	BOOL MakeDiffTmpFile( TCHAR*, HWND, ECodeType, bool );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	BOOL MakeDiffTmpFile2( TCHAR*, const TCHAR*, ECodeType, ECodeType );
+	void ViewDiffInfo( const TCHAR*, const TCHAR*, int, bool );		/* DIFF差分表示 */		//2005.10.29 maru
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           履歴                              //
@@ -746,6 +748,17 @@ private:
 
 
 
+class COutputAdapter
+{
+public:
+	COutputAdapter(){};
+	virtual  ~COutputAdapter(){};
+
+	virtual bool OutputW(const WCHAR* pBuf, int size = -1) = 0;
+	virtual bool OutputA(const ACHAR* pBuf, int size = -1) = 0;
+	virtual bool IsEnableRunningDlg(){ return true; }
+	virtual bool IsActiveDebugWindow(){ return true; }
+};
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITVIEW_H_ */
 

@@ -24,6 +24,8 @@
 
 #include "dlg/CDlgCompare.h"
 #include "dlg/CDlgDiff.h"
+#include "charset/CCodeMediator.h"
+#include "charset/CCodePage.h"
 #include "util/window.h"
 #include "util/os.h"
 
@@ -192,34 +194,92 @@ end_of_compare:;
 
 
 
+static ECodeType GetFileCharCode( LPCTSTR pszFile )
+{
+	const STypeConfigMini* typeMini;
+	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &typeMini );
+	return CCodeMediator(typeMini->m_encoding).CheckKanjiCodeOfFile( pszFile );
+}
+
+
+
+static ECodeType GetDiffCreateTempFileCode(ECodeType code)
+{
+	EEncodingTrait e = CCodePage::GetEncodingTrait(code);
+	if( e != ENCODING_TRAIT_ASCII ){
+		return CODE_UTF8;
+	}
+	return code;
+}
+
+
+
 /*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
 	@author	maru
 	@date	2005/10/28 これまでのCommand_Diffはm_pCommanderView->ViewDiffInfoに名称変更
 */
-void CViewCommander::Command_Diff( const WCHAR* _szTmpFile2, int nFlgOpt )
+void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
-	const TCHAR* szTmpFile2 = to_tchar(_szTmpFile2);
+	const std::tstring strDiffFile2 = to_tchar(_szDiffFile2);
+	const TCHAR* szDiffFile2 = strDiffFile2.c_str();
 
 	bool	bTmpFile1 = false;
 	TCHAR	szTmpFile1[_MAX_PATH * 2];
 
-	if( (DWORD)-1 == ::GetFileAttributes( szTmpFile2 ) )
+	if( !IsFileExists( szDiffFile2, true ) )
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF1) );
 		return;
 	}
 
 	//自ファイル
-	if (!GetDocument()->m_cDocEditor.IsModified()) _tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath());
-	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
-	else return;
+	// 2013.06.21 Unicodeのときは、いつもファイル出力
+	ECodeType code = GetDocument()->GetDocumentEncoding();
+	ECodeType saveCode = GetDiffCreateTempFileCode(code);
+	ECodeType code2 = GetFileCharCode(szDiffFile2);
+	ECodeType saveCode2 = GetDiffCreateTempFileCode(code2);
+	// 2014.10.24 コードが違うときは必ずUTF-8ファイル出力
+	if( saveCode != saveCode2 ){
+		saveCode = CODE_UTF8;
+		saveCode2 = CODE_UTF8;
+	}
+
+	if( GetDocument()->m_cDocEditor.IsModified()
+		|| saveCode != code
+		|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/アウトプットも対象にする
+	){
+		if( !m_pCommanderView->MakeDiffTmpFile(szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist()) ){
+			return;
+		}
+		bTmpFile1 = true;
+	}else{
+		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+	}
+
+	bool bTmpFile2 = false;
+	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	bool bTmpFileMode = code2 != saveCode2;
+	if( !bTmpFileMode ){
+		_tcscpy(szTmpFile2, szDiffFile2);
+	}else if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, szDiffFile2, code2, saveCode2 ) ){
+		bTmpFile2 = true;
+	}else{
+		if( bTmpFile1 ) _tunlink( szTmpFile1 );
+		return;
+	}
+
+	bool bUTF8io = true;
+	if( saveCode == CODE_SJIS ){
+		bUTF8io = false;
+	}
 
 	//差分表示
-	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt);
+	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt, bUTF8io);
 
 	//一時ファイルを削除する
 	if( bTmpFile1 ) _tunlink( szTmpFile1 );
+	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
 	return;
 
@@ -252,22 +312,65 @@ void CViewCommander::Command_Diff_Dialog( void )
 	
 	//自ファイル
 	TCHAR	szTmpFile1[_MAX_PATH * 2];
-	if (!GetDocument()->m_cDocEditor.IsModified()) _tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath());
-	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
-	else return;
+	ECodeType code = GetDocument()->GetDocumentEncoding();
+	ECodeType saveCode = GetDiffCreateTempFileCode(code);
+	ECodeType code2 = cDlgDiff.m_nCodeTypeDst;
+	if( CODE_ERROR == code2 ){
+		if( cDlgDiff.m_szFile2[0] != _T('\0') ){
+			// ファイル名指定
+			code2 = GetFileCharCode(cDlgDiff.m_szFile2);
+		}
+	}
+	ECodeType saveCode2 = GetDiffCreateTempFileCode(code2);
+	// 2014.10.24 コードが違うときは必ずUTF-8ファイル出力
+	if( saveCode != saveCode2 ){
+		saveCode = CODE_UTF8;
+		saveCode2 = CODE_UTF8;
+	}
+	if( GetDocument()->m_cDocEditor.IsModified()
+			|| code != saveCode
+			|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/アウトプットも対象にする
+	){
+		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
+		bTmpFile1 = true;
+	}else{
+		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+	}
 		
 	//相手ファイル
+	// UNICODE,UNICODEBEの場合は常に一時ファイルでUTF-8にする
 	TCHAR	szTmpFile2[_MAX_PATH * 2];
-	if (!cDlgDiff.m_bIsModifiedDst ) _tcscpy( szTmpFile2, cDlgDiff.m_szFile2);
-	else if (m_pCommanderView->MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
-	else 
-	{
-		if( bTmpFile1 ) _tunlink( szTmpFile1 );
-		return;
+	// 2014.06.25 ファイル名がない(=無題,Grep,アウトプット)もTmpFileModeにする
+	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == _T('\0');
+	if( !bTmpFileMode ){
+		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
+		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
+	}else if( cDlgDiff.m_hWnd_Dst ){
+		// ファイル一覧から選択
+		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){
+			bTmpFile2 = true;
+		}else {
+			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			return;
+		}
+	}else{
+		// ファイル名指定で非ASCII系だった場合
+		if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, cDlgDiff.m_szFile2, code2, saveCode2 ) ){
+			bTmpFile2 = true;
+		}else{
+			// Error
+			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			return;
+		}
 	}
 	
+	bool bUTF8io = true;
+	if( saveCode == CODE_SJIS ){
+		bUTF8io = false;
+	}
+
 	//差分表示
-	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt);
+	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt, bUTF8io);
 	
 	
 	//一時ファイルを削除する

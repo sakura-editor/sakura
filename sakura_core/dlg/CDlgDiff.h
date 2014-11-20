@@ -79,6 +79,8 @@ public:
 	SFilePath	m_szFile1;			// 自ファイル
 	SFilePath	m_szFile2;			// 相手ファイル
 	bool		m_bIsModifiedDst;	// 相手ファイル更新中
+	ECodeType	m_nCodeTypeDst;		// 相手ファイルの文字コード
+	bool		m_bBomDst;			// 相手ファイルのBOM
 	int			m_nDiffFlgOpt;		// DIFFオプション
 	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
 

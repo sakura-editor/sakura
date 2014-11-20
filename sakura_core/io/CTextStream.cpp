@@ -85,11 +85,11 @@ wstring CTextInputStream::ReadLineW()
 //                     CTextOutputStream                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CTextOutputStream::CTextOutputStream(const TCHAR* tszPath, ECodeType eCodeType, bool bExceptionMode)
+CTextOutputStream::CTextOutputStream(const TCHAR* tszPath, ECodeType eCodeType, bool bExceptionMode, bool bBom)
 : COutputStream(tszPath,_T("wb"),bExceptionMode)
 {
 	m_pcCodeBase = CCodeFactory::CreateCodeBase(eCodeType,0);
-	if(Good()){
+	if(Good() && bBom){
 		//BOM•t‰Á
 		CMemory cmemBom;
 		m_pcCodeBase->GetBom(&cmemBom);

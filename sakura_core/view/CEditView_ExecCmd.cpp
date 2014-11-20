@@ -37,27 +37,40 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class OutputAdapter
+class COutputAdapterDefault: public COutputAdapter
 {
 public:
-	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_bWindow(bToEditWindow), m_view(view)
-		,pcCodeBase(CCodeFactory::CreateCodeBase(CODE_UTF8,0))
+	COutputAdapterDefault(CEditView* view, BOOL bToEditWindow) : m_bWindow(bToEditWindow), m_view(view)
 	{
 		m_pCShareData = CShareData::getInstance();
 		m_pCommander  = &(view->GetCommander());
 	}
+	~COutputAdapterDefault(){};
 
-	void OutputW(const WCHAR* pBuf, int size = -1);
-	void OutputA(const ACHAR* pBuf, int size = -1);
-	void OutputUTF8(const ACHAR* pBuf, int size = -1);
-	void Output(const WCHAR* pBuf, int size = -1){ OutputW(pBuf, size); }
-	void Output(const ACHAR* pBuf, int size = -1){ OutputA(pBuf, size); }
+	bool OutputW(const WCHAR* pBuf, int size = -1);
+	bool OutputA(const ACHAR* pBuf, int size = -1);
+	bool IsActiveDebugWindow(){ return FALSE == m_bWindow; }
 
-private:
+protected:
+	void OutputBuf(const WCHAR* pBuf, int size);
+
 	BOOL m_bWindow;
 	CEditView* m_view;
 	CShareData* m_pCShareData;
 	CViewCommander* m_pCommander;
+};
+
+class COutputAdapterUTF8: public COutputAdapterDefault
+{
+public:
+	COutputAdapterUTF8(CEditView* view, BOOL bToEditWindow) : COutputAdapterDefault(view, bToEditWindow)
+		,pcCodeBase(CCodeFactory::CreateCodeBase(CODE_UTF8,0))
+	{}
+	~COutputAdapterUTF8(){};
+
+	bool OutputA(const ACHAR* pBuf, int size = -1);
+
+protected:
 	std::auto_ptr<CCodeBase> pcCodeBase;
 };
 
@@ -94,7 +107,7 @@ private:
 
 	TODO:	標準入力・標準エラーの取込選択。カレントディレクトリ。UTF-8等への対応
 */
-void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDir )
+bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDir, COutputAdapter* customOa )
 {
 	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
 	PROCESS_INFORMATION	pi;
@@ -146,7 +159,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	sa.lpSecurityDescriptor = NULL;
 	if( CreatePipe( &hStdOutRead, &hStdOutWrite, &sa, 1000 ) == FALSE ) {
 		//エラー。対策無し
-		return;
+		return false;
 	}
 	//hStdOutReadのほうは子プロセスでは使用されないので継承不能にする（子プロセスのリソースを無駄に増やさない）
 	DuplicateHandle( GetCurrentProcess(), hStdOutRead,
@@ -217,6 +230,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 		sui.hStdOutput = bGetStdout ? hStdOutWrite : GetStdHandle( STD_OUTPUT_HANDLE );
 		sui.hStdError = bGetStdout ? hStdOutWrite : GetStdHandle( STD_ERROR_HANDLE );
 	}
+	bool bRet = false;
 
 	//コマンドライン実行
 	TCHAR	cmdline[1024];
@@ -273,17 +287,25 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	CloseHandle(hStdOutWrite);
 	hStdOutWrite = NULL;	// 2007.09.08 genta 二重closeを防ぐ
 
+	COutputAdapter* oaInst = NULL;
 	if( bGetStdout ) {
 		DWORD	new_cnt;
 		int		bufidx = 0;
 		bool	bLoopFlag = true;
 		bool	bCancelEnd = false; // キャンセルでプロセス停止
-		OutputAdapter oa(this, bToEditWindow );
+		oaInst =  (customOa
+					? NULL
+					: (outputEncoding == CODE_UTF8
+						? new COutputAdapterUTF8(this, bToEditWindow)
+						: new COutputAdapterDefault(this, bToEditWindow)) );
+		COutputAdapter& oa = customOa ? *customOa: *oaInst;
 
 		//中断ダイアログ表示
-		cDlgCancel.DoModeless( G_AppInstance(), m_hwndParent, IDD_EXECRUNNING );
-		// ダイアログにコマンドを表示
-		::DlgItem_SetText( cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd );
+		if( oa.IsEnableRunningDlg() ){
+			cDlgCancel.DoModeless( G_AppInstance(), m_hwndParent, IDD_EXECRUNNING );
+			// ダイアログにコマンドを表示
+			::DlgItem_SetText( cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd );
+		}
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
 		// 2006.12.03 maru アウトプットウィンドウにのみ出力
@@ -386,7 +408,9 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 								read_cntw -= 1; // 2010.04.12 1文字余分に消されてた
 								workw[read_cntw] = L'\0';
 							}
-							oa.OutputW( workw, read_cntw );
+							if( !oa.OutputW( workw, read_cntw ) ){
+								goto finish;
+							}
 							bufidx = 0;
 							if (bCarry) {
 								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
@@ -435,14 +459,18 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 						if( j == (int)read_cnt ) {	//ぴったり出力できる場合
 							work[read_cnt] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							oa.OutputA( work, read_cnt );
+							if( !oa.OutputA( work, read_cnt ) ){
+								goto finish;
+							}
 							bufidx = 0;
 						}
 						else {
 							char tmp = work[read_cnt-1];
 							work[read_cnt-1] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							oa.OutputA( work, read_cnt-1 );
+							if( !oa.OutputA( work, read_cnt-1 ) ){
+								goto finish;
+							}
 							work[0] = tmp;
 							bufidx = 1;
 							DEBUG_TRACE( _T("ExecCmd: Carry last character [%x]\n"), tmp );
@@ -467,7 +495,9 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 						if( j == (int)read_cnt ) {	//ぴったり出力できる場合
 							work[read_cnt] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							oa.OutputUTF8(work, read_cnt);
+							if( !oa.OutputA(work, read_cnt) ){
+								goto finish;
+							}
 							bufidx = 0;
 						}
 						else {
@@ -477,7 +507,9 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 							memcpy(tmp, &work[j], len);
 							work[j] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							oa.OutputUTF8(work, j);
+							if( !oa.OutputA(work, j) ){
+								goto finish;
+							}
 							memcpy(work, tmp, len);
 							bufidx = len;
 							DEBUG_TRACE(_T("ExecCmd: Carry last character [%x]\n"), tmp[0]);
@@ -533,7 +565,7 @@ user_cancel:
 				oa.OutputA( work, bufidx );
 			}else if( outputEncoding == CODE_UTF8 ) {
 				work[bufidx] = '\0';
-				oa.OutputUTF8( work, bufidx );
+				oa.OutputA( work, bufidx );
 			}
 		}
 
@@ -554,7 +586,9 @@ user_cancel:
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if(!bToEditWindow && result > 0) ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
+			if(!bToEditWindow && result > 0 && oa.IsActiveDebugWindow() ){
+				ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
+			}
 		}
 		if (bToEditWindow) {
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
@@ -569,6 +603,11 @@ user_cancel:
 			//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			RedrawAll();
 		}
+		if( !bCancelEnd ){
+			bRet = true;
+		}
+	}else{
+		bRet = true;
 	}
 
 
@@ -579,52 +618,50 @@ finish:
 	CloseHandle( hStdOutRead );
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
 	if( pi.hThread ) CloseHandle( pi.hThread );
+	delete oaInst;
+	return bRet;
 }
 
 /*!
 	@param pBuf size未指定なら要NUL終端
 	@param size WCHAR単位 
 */
-void OutputAdapter::OutputW(const WCHAR* pBuf, int size)
+void COutputAdapterDefault::OutputBuf(const WCHAR* pBuf, int size)
 {
 	if( m_bWindow ){
-		m_pCommander->Command_INSTEXT( false, pBuf, CLogicInt(size), TRUE);
+		m_pCommander->Command_INSTEXT( false, pBuf, CLogicInt(size), true);
 	}else{
 		m_pCShareData->TraceOutString( pBuf , size );
 	}
 }
 
-/*
-	@param pBuf size未指定なら要NUL終端
-	@param size ACHAR単位 
-*/
-void OutputAdapter::OutputA(const ACHAR* pBuf, int size)
+bool COutputAdapterDefault::OutputW(const WCHAR* pBuf, int size)
 {
-	if( m_bWindow ){
-		CNativeW buf;
-		if( -1 == size ){
-			buf.SetStringOld(pBuf);
-		}else{
-			buf.SetStringOld(pBuf,size);
-		}
-		m_pCommander->Command_INSTEXT( false, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
-	}else{
-		// TraceOutString側にANSI版を作ったほうが高速
-		CNativeW buf;
-		if( -1 == size ){
-			buf.SetStringOld(pBuf);
-		}else{
-			buf.SetStringOld(pBuf,size);
-		}
-		m_pCShareData->TraceOutString( buf.GetStringPtr(), (int)buf.GetStringLength() );
-	}
+	OutputBuf(pBuf, size);
+	return true;
 }
 
 /*
 	@param pBuf size未指定なら要NUL終端
 	@param size ACHAR単位 
 */
-void OutputAdapter::OutputUTF8(const ACHAR* pBuf, int size)
+bool COutputAdapterDefault::OutputA(const ACHAR* pBuf, int size)
+{
+	CNativeW buf;
+	if( -1 == size ){
+		buf.SetStringOld(pBuf);
+	}else{
+		buf.SetStringOld(pBuf,size);
+	}
+	OutputBuf( buf.GetStringPtr(), (int)buf.GetStringLength() );
+	return true;
+}
+
+/*
+	@param pBuf size未指定なら要NUL終端
+	@param size ACHAR単位 
+*/
+bool COutputAdapterUTF8::OutputA(const ACHAR* pBuf, int size)
 {
 	CMemory input;
 	CNativeW buf;
@@ -634,9 +671,6 @@ void OutputAdapter::OutputUTF8(const ACHAR* pBuf, int size)
 		input.SetRawData(pBuf, size);
 	}
 	pcCodeBase->CodeToUnicode(input, &buf);
-	if( m_bWindow ){
-		m_pCommander->Command_INSTEXT(FALSE, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
-	}else{
-		m_pCShareData->TraceOutString( buf.GetStringPtr(), (int)buf.GetStringLength() );
-	}
+	OutputBuf( buf.GetStringPtr(), (int)buf.GetStringLength() );
+	return true;
 }
