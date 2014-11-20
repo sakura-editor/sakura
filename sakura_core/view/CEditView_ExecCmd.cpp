@@ -113,6 +113,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	PROCESS_INFORMATION	pi;
 	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
+	COutputAdapter* oaInst = NULL;
 
 	bool bEditable = m_pcEditDoc->IsEditable();
 
@@ -287,7 +288,6 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	CloseHandle(hStdOutWrite);
 	hStdOutWrite = NULL;	// 2007.09.08 genta “ñdclose‚ğ–h‚®
 
-	COutputAdapter* oaInst = NULL;
 	if( bGetStdout ) {
 		DWORD	new_cnt;
 		int		bufidx = 0;

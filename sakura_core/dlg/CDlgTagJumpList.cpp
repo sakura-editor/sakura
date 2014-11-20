@@ -867,6 +867,26 @@ void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
 	return;
 }
 
+typedef struct tagTagPathInfo {
+	TCHAR	szFileNameDst[_MAX_PATH*4];
+	TCHAR	szDriveSrc[_MAX_DRIVE*2];
+	TCHAR	szDriveDst[_MAX_DRIVE*2];
+	TCHAR	szPathSrc[_MAX_PATH*4];
+	TCHAR	szPathDst[_MAX_PATH*4];
+	TCHAR	szFileSrc[_MAX_PATH*4];
+	TCHAR	szFileDst[_MAX_PATH*4];
+	TCHAR	szExtSrc[_MAX_EXT*2];
+	TCHAR	szExtDst[_MAX_EXT*2];
+	size_t	nDriveSrc;
+	size_t	nDriveDst;
+	size_t	nPathSrc;
+	size_t	nPathDst;
+	size_t	nFileSrc;
+	size_t	nFileDst;
+	size_t	nExtSrc;
+	size_t	nExtDst;
+} TagPathInfo;
+
 /*!
 	得られた候補から最も期待に近いと思われるものを
 	選び出す．(初期選択位置決定のため)
@@ -880,25 +900,6 @@ int CDlgTagJumpList::SearchBestTag( void )
 	if( m_pcList->GetCount() <= 0 ) return -1;	//選べません。
 	if( NULL == m_pszFileName ) return 0;
 
-	typedef struct tagTagPathInfo {
-		TCHAR	szFileNameDst[_MAX_PATH*4];
-		TCHAR	szDriveSrc[_MAX_DRIVE*2];
-		TCHAR	szDriveDst[_MAX_DRIVE*2];
-		TCHAR	szPathSrc[_MAX_PATH*4];
-		TCHAR	szPathDst[_MAX_PATH*4];
-		TCHAR	szFileSrc[_MAX_PATH*4];
-		TCHAR	szFileDst[_MAX_PATH*4];
-		TCHAR	szExtSrc[_MAX_EXT*2];
-		TCHAR	szExtDst[_MAX_EXT*2];
-		size_t	nDriveSrc;
-		size_t	nDriveDst;
-		size_t	nPathSrc;
-		size_t	nPathDst;
-		size_t	nFileSrc;
-		size_t	nFileDst;
-		size_t	nExtSrc;
-		size_t	nExtDst;
-	} TagPathInfo;
 	std::auto_ptr<TagPathInfo> mem_lpPathInfo( new TagPathInfo );
 	TagPathInfo* lpPathInfo= mem_lpPathInfo.get();
 	int nMatch1 = -1;

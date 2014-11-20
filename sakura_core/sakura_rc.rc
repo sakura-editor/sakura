@@ -3832,7 +3832,7 @@ BEGIN
 	STR_GREP_TIMER				"処理時間: %dミリ秒\r\n"
 	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
 	STR_GREP_ERR_FILEREAD		"ファイルの読み込み中にエラーが発生しました。[%ts]\r\n"
-	STR_GREP_ERR_FILEWRITE		"書き込めませんでした。 [%ts]\r\n";
+	STR_GREP_ERR_FILEWRITE		"書き込めませんでした。 [%ts]\r\n"
 	STR_GREP_REP_ERR_DELETE		"ファイルの削除に失敗しました。"
 	STR_GREP_REP_ERR_REPLACE	"ファイルの置き換えに失敗しました。"
 
