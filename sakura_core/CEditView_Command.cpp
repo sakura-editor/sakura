@@ -4599,7 +4599,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	::GetWindowRect( pCEditWnd->m_cSplitterWnd.m_hWnd, &rc );
 	po.y = rc.top;
 
-	m_pcEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_cMenuDrawer.ResetContents();
 
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
@@ -4617,12 +4617,12 @@ void CEditView::Command_MENU_ALLFUNC( void )
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
 				//	Oct. 3, 2001 genta
-				m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, _T("") );
+				m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, _T("") );
 			}
 		}
 		//	Oct. 3, 2001 genta
-		m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i), _T("") );
-//		m_pcEditWnd->m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
+		m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i), _T("") );
+//		m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
 	nId = ::TrackPopupMenu(
@@ -7780,7 +7780,7 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	char		szLabel2[300];
 	UINT		uFlags;
 
-	m_pcEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_cMenuDrawer.ResetContents();
 	
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
@@ -7814,7 +7814,7 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
-			m_pcEditWnd->m_CMenuDrawer.MyAppendMenu(
+			m_pcEditWnd->m_cMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2, _T("") );
 		}
@@ -8123,7 +8123,7 @@ void CEditView::Command_SHOWSTATUSBAR( void )
 */
 void CEditView::Command_SHOWFUNCKEY( void )
 {
-	m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == m_pcEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
+	m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == m_pcEditWnd->m_cFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
 	m_pcEditWnd->LayoutFuncKey();
 	m_pcEditWnd->EndLayoutBars();
 

@@ -108,7 +108,7 @@ protected:
 	|| メンバ変数
 	*/
 private:
-	CMenuDrawer		m_CMenuDrawer;
+	CMenuDrawer		m_cMenuDrawer;
 	CPropertyManager*	m_pcPropertyManager;
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	HINSTANCE		m_hInstance;

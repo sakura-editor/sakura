@@ -1183,7 +1183,7 @@ bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, i
 			return false;
 		}
 	case F_SHOWTOOLBAR:				return pCEditWnd->m_hwndToolBar != NULL;
-	case F_SHOWFUNCKEY:				return pCEditWnd->m_CFuncKeyWnd.m_hWnd != NULL;
+	case F_SHOWFUNCKEY:				return pCEditWnd->m_cFuncKeyWnd.m_hWnd != NULL;
 	case F_SHOWTAB:					return pCEditWnd->m_cTabWnd.m_hWnd != NULL;	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:			return pCEditWnd->m_hwndStatusBar != NULL;
 	// 2008.05.30 nasukoji	テキストの折り返し方法

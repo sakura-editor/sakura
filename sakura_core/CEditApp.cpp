@@ -50,7 +50,7 @@ void CEditApp::Create(HINSTANCE hInst, HWND hwndParent, int nGroupId)
 		hInst,
 		m_pcEditWnd->m_hWnd,
 		&m_cIcons,
-		&m_pcEditWnd->m_CMenuDrawer
+		&m_pcEditWnd->m_cMenuDrawer
 	);
 }
 

@@ -4265,7 +4265,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 //	BOOL		bBool;
 
 
-	m_pcEditWnd->m_CMenuDrawer.ResetContents();
+	m_pcEditWnd->m_cMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
 	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
@@ -4300,7 +4300,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
 //			bBool = ::AppendMenu( hMenu, uFlags, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2 );
-			m_pcEditWnd->m_CMenuDrawer.MyAppendMenu(
+			m_pcEditWnd->m_cMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2, _T("") );
 

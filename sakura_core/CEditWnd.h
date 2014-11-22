@@ -265,8 +265,8 @@ public:
 	DLLSHAREDATA*	m_pShareData;
 
 	CTabWnd			m_cTabWnd;			//!< タブウインドウ	//@@@ 2003.05.31 MIK
-	CFuncKeyWnd		m_CFuncKeyWnd;		//!< ファンクションバー
-	CMenuDrawer		m_CMenuDrawer;
+	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ファンクションバー
+	CMenuDrawer		m_cMenuDrawer;
 	bool			m_bDragMode;
 	POINT			m_ptDragPosOrg;
 	CDropTarget*	m_pcDropTarget;
