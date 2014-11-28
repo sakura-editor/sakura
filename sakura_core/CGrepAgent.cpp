@@ -269,7 +269,9 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_pcEditWnd->m_cDlgGrep.m_strText = pcmGrepKey->GetStringPtr();
 	pcViewDst->m_pcEditWnd->m_cDlgGrep.m_bSetText = true;
 	pcViewDst->m_pcEditWnd->m_cDlgGrepReplace.m_strText = pcmGrepKey->GetStringPtr();
-	pcViewDst->m_pcEditWnd->m_cDlgGrepReplace.m_strText2 = pcmGrepReplace->GetStringPtr();
+	if( bGrepReplace ){
+		pcViewDst->m_pcEditWnd->m_cDlgGrepReplace.m_strText2 = pcmGrepReplace->GetStringPtr();
+	}
 	pcViewDst->m_pcEditWnd->m_cDlgGrepReplace.m_bSetText = true;
 	hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING );
 
