@@ -493,7 +493,7 @@ void CCaret::ShowEditCaret()
 		return;
 	}
 	// 2014.07.02 GetDrawSwitch‚ðŒ©‚é
-	if( !GetDrawSwitch() ){
+	if( !m_pEditView->GetDrawSwitch() ){
 		return;
 	}
 
