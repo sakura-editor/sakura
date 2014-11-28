@@ -69,6 +69,7 @@
 #include "mem/CMemoryIterator.h"	// 2007.08.22 ryoji 追加
 #include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
 #include "macro/CSMacroMgr.h"
+#include "recent/CMRUFolder.h"
 #include "util/file.h"
 #include "util/format.h"
 #include "util/module.h"
@@ -986,3 +987,32 @@ void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
 	bRunning = false;
 }
 
+/*! (無題)の時のカレントディレクトリを設定する
+*/
+void CEditDoc::SetCurDirNotitle()
+{
+	if( m_cDocFile.GetFilePathClass().IsValidPath() ){
+		return; // ファイルがあるときは何もしない
+	}
+	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
+	TCHAR szSelDir[_MAX_PATH];
+	const TCHAR* pszDir = NULL;
+	if( eOpenDialogDir == OPENDIALOGDIR_MRU ){
+		const CMRUFolder cMRU;
+		std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+		int nCount = cMRU.Length();
+		for( int i = 0; i < nCount ; i++ ){
+			DWORD attr = ::GetFileAttributes( vMRU[i] );
+			if( ( attr != -1 ) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
+				pszDir = vMRU[i];
+				break;
+			}
+		}
+	}else if( eOpenDialogDir == OPENDIALOGDIR_SEL ){
+		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
+		pszDir = szSelDir;
+	}
+	if( pszDir != NULL ){
+		::SetCurrentDirectory( pszDir );
+	}
+}

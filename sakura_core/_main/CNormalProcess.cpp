@@ -169,6 +169,7 @@ bool CNormalProcess::InitializeProcess()
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
+		pEditWnd->GetDocument()->SetCurDirNotitle();
 		CAppMode::getInstance()->SetDebugModeON();
 		if( !CAppMode::getInstance()->IsDebugMode() ){
 			// デバッグではなくて(無題)
@@ -194,6 +195,8 @@ bool CNormalProcess::InitializeProcess()
 		}
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
+			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
+			// pEditWnd->GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
@@ -272,6 +275,9 @@ bool CNormalProcess::InitializeProcess()
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
 			if( FALSE != nRet ){
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
+			}else{
+				// 自分はGrepでない
+				pEditWnd->GetDocument()->SetCurDirNotitle();
 			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			//return true; // 2003.06.23 Moca
@@ -370,6 +376,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->GetActiveView().RedrawAll();
 		}
 		else{
+			pEditWnd->GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
@@ -378,6 +385,7 @@ bool CNormalProcess::InitializeProcess()
 			);
 		}
 		if( !pEditWnd->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			pEditWnd->GetDocument()->SetCurDirNotitle();	// (無題)ウィンドウ
 			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
 			pEditWnd->UpdateCaption();
 		}
