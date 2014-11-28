@@ -67,7 +67,7 @@ public:
 	void SetReadingMode( void ) { m_bRead = true; }
 	void SetWritingMode( void ) { m_bRead = false; }
 	bool ReadProfile( const TCHAR* );
-	bool ReadProfileRes( const TCHAR*, const TCHAR* );				// 200/5/19 Uchi
+	bool ReadProfileRes( const TCHAR*, const TCHAR*, std::vector<std::wstring>* = NULL );				// 200/5/19 Uchi
 	bool WriteProfile( const TCHAR*, const WCHAR* pszComment);
 
 

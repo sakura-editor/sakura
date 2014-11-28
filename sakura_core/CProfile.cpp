@@ -142,7 +142,7 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 
 	1çs300ï∂éöÇ‹Ç≈Ç…êßå¿
 */
-bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType )
+bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vector<std::wstring>* pData )
 {
 	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
 	HRSRC		hRsrc;
@@ -188,8 +188,12 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType )
 			CUtf8::UTF8ToUnicode( cmLine, &cmLineW );
 			line = cmLineW.GetStringPtr();
 
-			//âêÕ
-			ReadOneline(line);
+			if( pData ){
+				pData->push_back(line);
+			}else{
+				//âêÕ
+				ReadOneline(line);
+			}
 		}
 	}
 	return true;

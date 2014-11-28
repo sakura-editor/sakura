@@ -73,7 +73,11 @@ public:
 public:
 	static void IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );
 	static void IO_KeyBind( CDataProfile&, CommonSetting_KeyBind&, bool);		// 2012.11.22 aroka
-	static void IO_MainMenu( CDataProfile&, CommonSetting_MainMenu&, bool );		// 2010/5/15 Uchi
+	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
+		IO_MainMenu(c, NULL, s, b);
+	}
+	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
+		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
 	static void IO_ColorSet( CDataProfile* , const WCHAR* , ColorInfo* );	/* êFê›íË I/O */ // Feb. 12, 2006 D.S.Koba
 };
 

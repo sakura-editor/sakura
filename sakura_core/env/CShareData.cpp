@@ -525,10 +525,11 @@ bool CShareData::InitShareData()
 		// [メインメニュー]タブ
 		{
 			CDataProfile	cProfile;
+			std::vector<std::wstring> data;
 			cProfile.SetReadingMode();
-			cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI) );
+			cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI), &data );
 
-			CShareData_IO::IO_MainMenu( cProfile, m_pShareData->m_Common.m_sMainMenu, false );
+			CShareData_IO::IO_MainMenu( cProfile, &data, m_pShareData->m_Common.m_sMainMenu, false );
 		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();
