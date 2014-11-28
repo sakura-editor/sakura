@@ -592,7 +592,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			::DestroyMenu( hMenu );
 			if( nId != 0 ){
 				int index = nId - MENU_ROOT;
-				TCHAR* pszPaths[] = { _T("<iniroot>"), _T("%MYDOC%"), _T("%MYMUSIC%"), _T("%MYVIDEO%"),
+				const TCHAR* pszPaths[] = { _T("<iniroot>"), _T("%MYDOC%"), _T("%MYMUSIC%"), _T("%MYVIDEO%"),
 					_T("%DESKTOP%"), _T("%TEMP%"), _T("%SAKURA%"), _T("%SAKURADATA%") };
 				EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
 			}
