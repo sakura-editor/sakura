@@ -537,6 +537,8 @@ bool CDocFileOperation::FileClose()
 	/* ‘Sƒrƒ…[‚Ì‰Šú‰» */
 	m_pcDocRef->InitAllView();
 
+	m_pcDocRef->SetCurDirNotitle();
+
 	// –³‘è”Ô†Žæ“¾
 	CAppNodeManager::getInstance()->GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 
@@ -605,6 +607,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	FileLoadWithoutAutoMacro(&sLoadInfo);
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
+		m_pcDocRef->SetCurDirNotitle();
 		CAppNodeManager::getInstance()->GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 	}
 
