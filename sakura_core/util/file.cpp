@@ -1126,30 +1126,38 @@ void my_splitpath_w (
 // -----------------------------------------------------------------------------
 int FileMatchScore( const TCHAR *file1, const TCHAR *file2 );
 
+// フルパスからファイル名の.以降を分離する
+// 2014.06.15 フォルダ名に.が含まれた場合、フォルダが分離されたのを修正
+static void FileNameSepExt( const TCHAR *file, TCHAR* pszFile, TCHAR* pszExt )
+{
+	const TCHAR* folderPos = file;
+	const TCHAR* x = folderPos;
+	while( x ){
+		x = auto_strchr(folderPos, _T('\\'));
+		if( x ){
+			x++;
+			folderPos = x;
+		}
+	}
+	const TCHAR* p = auto_strchr(folderPos, _T('.'));
+	if( p ){
+		auto_memcpy(pszFile, file, p - file);
+		pszFile[p - file] = _T('\0');
+		auto_strcpy(pszExt, p);
+	}else{
+		auto_strcpy(pszFile, file);
+		pszExt[0] = _T('\0');
+	}
+}
+
 int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 )
 {
 	TCHAR szFile1[_MAX_PATH];
 	TCHAR szFile2[_MAX_PATH];
 	TCHAR szFileExt1[_MAX_PATH];
 	TCHAR szFileExt2[_MAX_PATH];
-	const TCHAR* p = auto_strchr(file1, _T('.'));
-	if( p ){
-		auto_memcpy(szFile1, file1, p - file1);
-		szFile1[p - file1] = _T('\0');
-		auto_strcpy(szFileExt1, p);
-	}else{
-		auto_strcpy(szFile1, file1);
-		szFileExt1[0] = _T('\0');
-	}
-	const TCHAR* p2 = auto_strchr(file2, _T('.'));
-	if( p2 ){
-		auto_memcpy(szFile2, file2, p2 - file2);
-		szFile2[p2 - file2] = _T('\0');
-		auto_strcpy(szFileExt2, p2);
-	}else{
-		auto_strcpy(szFile2, file2);
-		szFileExt2[0] = _T('\0');
-	}
+	FileNameSepExt(file1, szFile1, szFileExt1);
+	FileNameSepExt(file2, szFile2, szFileExt2);
 	int score = FileMatchScore(szFile1, szFile2);
 	score += FileMatchScore(szFileExt1, szFileExt2);
 	return score;
