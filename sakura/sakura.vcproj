@@ -2988,6 +2988,14 @@
 				Name="outline"
 				>
 				<File
+					RelativePath="..\sakura_core\outline\CDlgFileTree.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\outline\CDlgFileTree.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\outline\CDlgFuncList.cpp"
 					>
 				</File>

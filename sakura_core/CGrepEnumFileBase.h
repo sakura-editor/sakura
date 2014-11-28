@@ -40,6 +40,18 @@
 typedef std::pair< LPTSTR, DWORD > PairGrepEnumItem;
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
 
+class CGrepEnumOptions {
+public:
+	CGrepEnumOptions()
+		:m_bIgnoreHidden(false)
+		,m_bIgnoreReadOnly(false)
+		,m_bIgnoreSystem(false)
+	{}
+	bool	m_bIgnoreHidden;
+	bool	m_bIgnoreReadOnly;
+	bool	m_bIgnoreSystem;
+};
+
 class CGrepEnumFileBase {
 private:
 	VPGrepEnumItem m_vpItems;
@@ -92,7 +104,7 @@ public:
 		return m_vpItems[ i ].second;
 	}
 
-	int Enumerates( LPCTSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumFileBase* pExceptItems = NULL ){
+	int Enumerates( LPCTSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = NULL ){
 		int found = 0;
 
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
@@ -121,6 +133,15 @@ public:
 			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
 			if( INVALID_HANDLE_VALUE != handle ){
 				do{
+					if( option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ){
+						continue;
+					}
+					if( option.m_bIgnoreReadOnly && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) ){
+						continue;
+					}
+					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
+						continue;
+					}
 					LPTSTR lpName = new TCHAR[ nKeyDirLen + _tcslen( w32fd.cFileName ) + 1 ];
 					_tcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
 					_tcscpy( lpName + nKeyDirLen, w32fd.cFileName );

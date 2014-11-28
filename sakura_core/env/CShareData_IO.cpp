@@ -709,6 +709,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		}
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("nDockOutline"), common.m_sOutline.m_nDockOutline );
+	ShareData_IO_FileTree( cProfile, common.m_sOutline.m_sFileTree, pszSecName );
+	cProfile.IOProfileData( pszSecName, LTEXT("szFileTreeDefIniName"), common.m_sOutline.m_sFileTreeDefIniName );
 }
 
 
@@ -1553,6 +1555,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortCol")		, types.m_nOutlineSortCol );/* アウトライン解析ソート列番号 */
 	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineSortDesc")		, types.m_bOutlineSortDesc );/* アウトライン解析ソート降順 */
 	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortType")		, types.m_nOutlineSortType );/* アウトライン解析ソート基準 */
+	ShareData_IO_FileTree( cProfile, types.m_sFileTree, pszSecName );
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
 	//	Nov. 20, 2000 genta
 	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
@@ -2258,3 +2261,45 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 }
 
 
+void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName )
+{
+	cProfile.IOProfileData( pszSecName, L"bFileTreeProject", fileTree.m_bProject );
+	cProfile.IOProfileData( pszSecName, L"szFileTreeProjectIni", fileTree.m_szProjectIni );
+	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", fileTree.m_nItemCount );
+	SetValueLimit( fileTree.m_nItemCount, _countof(fileTree.m_aItems) );
+	for( int i = 0;i < fileTree.m_nItemCount; i++ ){
+		ShareData_IO_FileTreeItem( cProfile, fileTree.m_aItems[i], pszSecName, i );
+	}
+}
+
+void CShareData_IO::ShareData_IO_FileTreeItem(
+	CDataProfile& cProfile, SFileTreeItem& item, const WCHAR* pszSecName, int i )
+{
+	WCHAR szKey[64];
+	auto_sprintf( szKey, L"FileTree(%d).eItemType", i );
+	cProfile.IOProfileData_WrapInt( pszSecName, szKey, item.m_eFileTreeItemType );
+	if( cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep
+		|| item.m_eFileTreeItemType == EFileTreeItemType_File ){
+		auto_sprintf( szKey, L"FileTree(%d).szTargetPath", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_szTargetPath );
+	}
+	if( cProfile.IsReadingMode()
+		|| ((item.m_eFileTreeItemType == EFileTreeItemType_Grep || item.m_eFileTreeItemType == EFileTreeItemType_File)
+			&& item.m_szLabelName[0] != _T('\0') )
+		|| item.m_eFileTreeItemType == EFileTreeItemType_Folder ){
+		auto_sprintf( szKey, L"FileTree(%d).szLabelName", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_szLabelName );
+	}
+	auto_sprintf( szKey, L"FileTree(%d).nDepth", i );
+	cProfile.IOProfileData( pszSecName, szKey, item.m_nDepth );
+	if( cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep ){
+		auto_sprintf( szKey, L"FileTree(%d).szTargetFile", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_szTargetFile );
+		auto_sprintf( szKey, L"FileTree(%d).bIgnoreHidden", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreHidden );
+		auto_sprintf( szKey, L"FileTree(%d).bIgnoreReadOny", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreReadOnly );
+		auto_sprintf( szKey, L"FileTree(%d).bIgnoreSystem", i );
+		cProfile.IOProfileData( pszSecName, szKey, item.m_bIgnoreSystem );
+	}
+}

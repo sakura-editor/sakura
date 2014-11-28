@@ -534,6 +534,41 @@ enum EDockSide{
 	DOCKSIDE_UNDOCKABLE = -1,	//!< ドッキング禁止
 };
 
+enum EFileTreeItemType{
+	EFileTreeItemType_Grep,
+	EFileTreeItemType_File,
+	EFileTreeItemType_Folder
+};
+
+struct SFileTreeItem{
+public:
+	EFileTreeItemType m_eFileTreeItemType;
+	SFilePath	m_szTargetPath;	//!< フォルダorファイルパス
+	StaticString<TCHAR,_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
+	int  m_nDepth;	//!< 階層
+
+	// GrepタイプTreeItem
+	StaticString<TCHAR,_MAX_PATH>	m_szTargetFile;	//!< ファイル一覧
+	bool		m_bIgnoreHidden;		//!< 隠しファイルを除く
+	bool		m_bIgnoreReadOnly;		//!< 読み取り専用ファイルを除く
+	bool		m_bIgnoreSystem;		//!< システムファイルを除く
+
+	SFileTreeItem()
+		: m_eFileTreeItemType(EFileTreeItemType_Grep)
+		, m_nDepth(0)
+		, m_bIgnoreHidden(true)
+		, m_bIgnoreReadOnly(false)
+		, m_bIgnoreSystem(false)
+		{}
+};
+
+struct SFileTree{
+	bool		m_bProject;			//!< プロジェクトファイルモード
+	SFilePath	m_szProjectIni;		//!< デフォルトiniパス
+	int			m_nItemCount;		//!< ファイルパス数
+	SFileTreeItem	m_aItems[20];	//!< ツリーアイテム
+};
+
 struct CommonSetting_OutLine
 {
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
@@ -557,6 +592,9 @@ struct CommonSetting_OutLine
 	BOOL		m_bAutoCloseDlgFuncList;	//!< アウトラインダイアログを自動的に閉じる
 	BOOL		m_bFunclistSetFocusOnJump;	//!< フォーカスを移す 2002.02.08 hor
 	BOOL		m_bMarkUpBlankLineEnable;	//!< 空行を無視する 2002.02.08 aroka,hor
+
+	SFileTree	m_sFileTree;				//!< ファイルツリー設定
+	SFilePath	m_sFileTreeDefIniName;		//!< ファイルツリー設定のデフォルトファイル名(GUIなし)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

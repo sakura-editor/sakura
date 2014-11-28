@@ -514,7 +514,8 @@ public:
 public:
 	//@@@ 2003.04.13 MIK, Apr. 21, 2003 genta bClose追加
 	//	Feb. 17, 2007 genta 相対パスの基準ディレクトリ指示を追加
-	bool TagJumpSub( const TCHAR* pszJumpToFile, CMyPoint ptJumpTo, bool bClose = false, bool bRelFromIni = false );
+	bool TagJumpSub( const TCHAR* pszJumpToFile, CMyPoint ptJumpTo,bool bClose = false,
+		bool bRelFromIni = false, bool* pbJumpToSelf = NULL );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
