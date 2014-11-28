@@ -173,7 +173,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		// m_nViewColNum = CLayoutInt(t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
 		UpdateViewColRowNums();
 
-		if( bRedraw ){
+		if( bRedraw && pView2->GetDrawSwitch() ){
 			/* 再描画 */
 			pView2->GetCaret().m_cUnderLine.Lock();
 			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
