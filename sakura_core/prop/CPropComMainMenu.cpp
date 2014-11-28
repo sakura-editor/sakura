@@ -431,10 +431,11 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// èâä˙èÛë‘Ç…ñﬂÇ∑
 					{
 						CDataProfile	cProfile;
+						std::vector<std::wstring> data;
 						cProfile.SetReadingMode();
-						cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI) );
+						cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI), &data );
 
-						CShareData_IO::IO_MainMenu( cProfile, m_Common.m_sMainMenu, false );
+						CShareData_IO::IO_MainMenu( cProfile, &data, m_Common.m_sMainMenu, false );
 						
 						SetData( hwndDlg ); 
 					}

@@ -1930,8 +1930,9 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 	@param[in]		bOutCmdName	出力時、名前で出力
 
 	@date 2010/5/15 Uchi
+	@date 2014.11.21 Moca pData追加。データのみのタイプを追加
 */
-void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu& mainmenu, bool bOutCmdName)
+void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData, CommonSetting_MainMenu& mainmenu, bool bOutCmdName)
 {
 	const WCHAR*	pszSecName = LTEXT("MainMenu");
 	CMainMenu*		pcMenu;
@@ -1942,10 +1943,16 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 	WCHAR	szLine[1024];
 	WCHAR*	p = NULL;
 	WCHAR*	pn;
+	std::vector<std::wstring>& data = *pData;
+	int dataNum = 0;
 
 	if (cProfile.IsReadingMode()) {
 		int menuNum = 0;
-		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), menuNum);
+		if( pData ){
+			menuNum = (int)data.size() - 1;
+		}else{
+			cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), menuNum);
+		}
 		if (menuNum == 0) {
 			return;
 		}
@@ -1956,7 +1963,11 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), mainmenu.m_nMainMenuNum);
 	}
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("bKeyParentheses"), mainmenu.m_bMainMenuKeyParentheses );
+	if( pData ){
+		mainmenu.m_bMainMenuKeyParentheses = (_wtoi(data[dataNum++].c_str()) != 0);
+	}else{
+		cProfile.IOProfileData( pszSecName, LTEXT("bKeyParentheses"), mainmenu.m_bMainMenuKeyParentheses );
+	}
 
 	if (cProfile.IsReadingMode()) {
 		// Top Level 初期化
@@ -1979,7 +1990,11 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 			pcMenu->m_sKey[1]  = L'\0';
 
 			// 読み出し
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+			if( pData ){
+				wcscpy(szLine, data[dataNum++].c_str());
+			}else{
+				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+			}
 
 			// レベル
 			p = szLine;
