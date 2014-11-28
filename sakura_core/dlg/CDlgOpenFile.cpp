@@ -103,6 +103,7 @@ public:
 	ECodeType		m_nCharCode;		// 文字コード
 
 	CEol			m_cEol;
+	bool			m_bUseCharCode;
 	bool			m_bUseEol;
 	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
@@ -358,6 +359,10 @@ UINT_PTR CALLBACK OFNHookProc(
 				if( -1 == AddComboCodePages( hdlg, pData->m_hwndComboCODES, pData->m_nCharCode, pData->m_bInitCodePage ) ){
 					Combo_SetCurSel( pData->m_hwndComboCODES, 0 );
 				}
+			}
+			if( !pData->m_bUseCharCode ){
+				::ShowWindow( GetDlgItem( hdlg, IDC_STATIC_CHARCODE ), SW_HIDE );
+				::ShowWindow( pData->m_hwndComboCODES, SW_HIDE );
 			}
 
 
@@ -884,7 +889,7 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>* pFileNames )
+bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>* pFileNames, bool bOptions )
 {
 	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	pData->m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
@@ -905,6 +910,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 	pData->m_bViewMode = pLoadInfo->bViewMode;
 	pData->m_nCharCode = pLoadInfo->eCharCode;	/* 文字コード自動判別 */
 	pData->m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILEOPEN);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
+	pData->m_bUseCharCode = true;
 	pData->m_bUseEol = false;	//	Feb. 9, 2001 genta
 	pData->m_bUseBom = false;	//	Jul. 26, 2003 ryoji
 
@@ -928,6 +934,10 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 		pData->m_ofn.Flags |= OFN_ALLOWMULTISELECT;
 	}
 	pData->m_ofn.lpstrDefExt = _T("");	// 2005/02/20 novice 拡張子を省略したら補完する
+	if( bOptions == false ){
+		pData->m_ofn.Flags |= OFN_HIDEREADONLY;
+		pData->m_bUseCharCode = false;
+	}
 
 	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -1038,9 +1048,11 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 	if(!bSimpleMode){
 		pData->m_bBom = pSaveInfo->bBomExist;
 		pData->m_bUseBom = true;
+		pData->m_bUseCharCode = true;
 	}
 	else{
 		pData->m_bUseBom = false;
+		pData->m_bUseCharCode = false;
 	}
 
 	pData->m_nHelpTopicID = ::FuncID_To_HelpContextID(F_FILESAVEAS_DIALOG);	//Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした

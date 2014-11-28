@@ -48,15 +48,20 @@
 */
 bool CEditView::TagJumpSub(
 	const TCHAR*	pszFileName,
-	CMyPoint		ptJumpTo,
+	CMyPoint		ptJumpTo,		//!< ジャンプ位置(1開始)
 	bool			bClose,			//!< [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
-	bool			bRelFromIni
+	bool			bRelFromIni,
+	bool*			pbJumpToSelf	//!< [out] オプションNULL可。自分にジャンプしたか
 )
 {
 	HWND	hwndOwner;
 	POINT	poCaret;
 	// 2004/06/21 novice タグジャンプ機能追加
 	TagJump	tagJump;
+
+	if( pbJumpToSelf ){
+		*pbJumpToSelf = false;
+	}
 
 	// 参照元ウィンドウ保存
 	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
@@ -114,6 +119,11 @@ bool CEditView::TagJumpSub(
 		}
 		/* アクティブにする */
 		ActivateFrameWindow( hwndOwner );
+		if( tagJump.hwndReferer == hwndOwner ){
+			if( pbJumpToSelf ){
+				*pbJumpToSelf = true;
+			}
+		}
 	}
 	else{
 		/* 新しく開く */

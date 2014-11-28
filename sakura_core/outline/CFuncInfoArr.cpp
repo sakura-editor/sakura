@@ -92,11 +92,13 @@ void CFuncInfoArr::AppendData(
 	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
 	CLayoutInt		nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
 	const TCHAR*	pszFuncName,		//!< 関数名
+	const TCHAR*	pszFileName,		//!< ファイル名
 	int				nInfo,				//!< 付加情報
 	int				nDepth				//!< 深さ
 )
 {
-	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT, pszFuncName, nInfo );
+	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT,
+		pszFuncName, pszFileName, nInfo );
 	pcFuncInfo->m_nDepth = nDepth;
 	AppendData( pcFuncInfo );
 	return;
@@ -108,11 +110,13 @@ void CFuncInfoArr::AppendData(
 	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
 	CLayoutInt			nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
 	const NOT_TCHAR*	pszFuncName,		//!< 関数名
+	const NOT_TCHAR*	pszFileName,		//!< ファイル名
 	int					nInfo,				//!< 付加情報
 	int					nDepth				//!< 深さ
 )
 {
-	AppendData(nFuncLineCRLF,nFuncColCRLF,nFuncLineLAYOUT,nFuncColLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
+	AppendData(nFuncLineCRLF,nFuncColCRLF,nFuncLineLAYOUT,nFuncColLAYOUT,to_tchar(pszFuncName),
+		(pszFileName?to_tchar(pszFileName):NULL),nInfo,nDepth);
 }
 
 void CFuncInfoArr::AppendData(
@@ -123,7 +127,7 @@ void CFuncInfoArr::AppendData(
 	int				nDepth				//!< 深さ
 )
 {
-	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,nInfo,nDepth);
+	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,NULL,nInfo,nDepth);
 	return;
 }
 
@@ -149,6 +153,8 @@ void CFuncInfoArr::DUMP( void )
 		MYTRACE( _T("m_nFuncLineCRLF	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
 		MYTRACE( _T("m_nFuncLineLAYOUT	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
 		MYTRACE( _T("m_cmemFuncName	=[%ts]\n"), m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE( _T("m_cmemFileName	=[%ts]\n"),
+			(m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() : _T("NULL")) );
 		MYTRACE( _T("m_nInfo			=%d\n"), m_ppcFuncInfoArr[i]->m_nInfo );
 	}
 	MYTRACE( _T("=============================\n") );

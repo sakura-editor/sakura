@@ -308,5 +308,32 @@ private:
 };
 
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     メインメニュー                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class CImpExpFileTree : public CImpExpManager
+{
+public:
+	// Constructor
+	CImpExpFileTree( std::vector<SFileTreeItem>& items )
+		: m_aFileTreeItems( items )
+	{
+	}
+
+public:
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
+	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
+
+public:
+	// デフォルト拡張子の取得
+	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
+	const wchar_t* GetOriginExtension()	{ return L"ini"; }
+
+private:
+	std::vector<SFileTreeItem>&		m_aFileTreeItems;
+};
+
+
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CIMPEXPMANAGER_H_ */

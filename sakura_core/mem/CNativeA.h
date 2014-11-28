@@ -66,6 +66,9 @@ public:
 	//ネイティブ変換
 	void Replace( const char* pszFrom, const char* pszTo );   //!< 文字列置換
 	void Replace_j( const char* pszFrom, const char* pszTo ); //!< 文字列置換（日本語考慮版）
+	void ReplaceT( const char* pszFrom, const char* pszTo ){
+		Replace_j( pszFrom, pszTo );
+	}
 
 	//一般関数
 	void ToLower(); // →小文字

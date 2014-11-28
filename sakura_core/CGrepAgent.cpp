@@ -526,10 +526,11 @@ DWORD CGrepAgent::DoGrep(
 		CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 	const bool bDrawSwitchOld = pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
 
+	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFiles cGrepExceptAbsFiles;
-	cGrepExceptAbsFiles.Enumerates(_T(""), cGrepEnumKeys.m_vecExceptAbsFileKeys);
+	cGrepExceptAbsFiles.Enumerates(_T(""), cGrepEnumKeys.m_vecExceptAbsFileKeys, cGrepEnumOptions);
 	CGrepEnumFolders cGrepExceptAbsFolders;
-	cGrepExceptAbsFolders.Enumerates(_T(""), cGrepEnumKeys.m_vecExceptAbsFolderKeys);
+	cGrepExceptAbsFolders.Enumerates(_T(""), cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
 	int nGrepTreeResult = 0;
 
@@ -657,8 +658,9 @@ int CGrepAgent::DoGrepTree(
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
 	int			nBasePathLen = auto_strlen(pszBasePath);
+	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
-	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepExceptAbsFiles );
+	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
 
 	/*
 	 * カレントフォルダのファイルを探索する。
@@ -776,8 +778,9 @@ int CGrepAgent::DoGrepTree(
 	 * サブフォルダを検索する。
 	 */
 	if( sGrepOption.bGrepSubFolder ){
+		CGrepEnumOptions cGrepEnumOptionsDir;
 		CGrepEnumFilterFolders cGrepEnumFilterFolders;
-		cGrepEnumFilterFolders.Enumerates( pszPath, cGrepEnumKeys, cGrepExceptAbsFolders );
+		cGrepEnumFilterFolders.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptionsDir, cGrepExceptAbsFolders );
 
 		count = cGrepEnumFilterFolders.GetCount();
 		for( i = 0; i < count; i++ ){

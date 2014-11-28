@@ -92,6 +92,8 @@ static const wchar_t	WSTR_CASE_FALSE[]		= L"// CASE=False";
 // メインメニューファイル
 static       wchar_t	WSTR_MAINMENU_HEAD_V1[]	= L"SakuraEditorMainMenu Ver1";
 
+static       wchar_t	WSTR_FILETREE_HEAD_V1[]	= L"SakuraEditorFileTree_Ver1";
+
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
 //		2010/4/12 Uchi
@@ -1268,4 +1270,61 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	}
 
 	return true;
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     ファイルツリー                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//	2014.06.07 Moca
+// インポート
+bool CImpExpFileTree::Import( const wstring& sFileName, wstring& sErrMsg )
+{
+	const tstring strPath = to_tchar( sFileName.c_str() );
+
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+	cProfile.ReadProfile( strPath.c_str() );
+
+	IO_FileTreeIni( cProfile, m_aFileTreeItems );
+
+	return true;
+}
+
+// エクスポート
+bool CImpExpFileTree::Export( const wstring& sFileName, wstring& sErrMsg )
+{
+	const tstring strPath = to_tchar( sFileName.c_str() );
+
+	CDataProfile	cProfile;
+
+	// 書き込みモード設定
+	cProfile.SetWritingMode();
+
+	IO_FileTreeIni( cProfile, m_aFileTreeItems );
+
+	// 書き込み
+	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_FILETREE_HEAD_V1)) {
+		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
+		return false;
+	}
+
+	return true;
+}
+
+void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileTreeItem>& data )
+{
+	const WCHAR* pszSecName = L"FileTree";
+	int nItemCount = (int)data.size();
+	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", nItemCount );
+	if( nItemCount < 0 ){
+		nItemCount = 0;
+	}
+	int i = 0;
+	if( cProfile.IsReadingMode() ){
+		data.resize( nItemCount );
+	}
+	for( ;i < nItemCount; i++ ){
+		CShareData_IO::ShareData_IO_FileTreeItem( cProfile, data[i], pszSecName, i );
+	}
 }

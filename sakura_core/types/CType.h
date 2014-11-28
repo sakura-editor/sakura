@@ -61,6 +61,7 @@ enum EOutlineType{
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor
 	OUTLINE_PLUGIN,		//	2009.10.29 syat プラグインによるアウトライン解析
+	OUTLINE_FILETREE,	//	2012.06.20 Moca ファイルツリー
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
 	OUTLINE_UNKNOWN	= 99,
 	OUTLINE_TREE = 100,		// 汎用ツリー 2010.03.28 syat
@@ -184,6 +185,7 @@ struct STypeConfig{
 	int					m_nOutlineSortCol;				//!< アウトライン解析ソート列番号
 	bool				m_bOutlineSortDesc;				//!< アウトライン解析ソート降順
 	int					m_nOutlineSortType;				//!< アウトライン解析ソート基準
+	SFileTree			m_sFileTree;					/*!< ファイルツリー設定 */
 
 	ESmartIndentType	m_eSmartIndent;					//!< スマートインデント種別
 	int					m_nImeState;					//!< 初期IME状態	Nov. 20, 2000 genta

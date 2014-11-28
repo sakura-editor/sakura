@@ -18,8 +18,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDLGFUNCLIST_H_
-#define _CDLGFUNCLIST_H_
+#ifndef SAKURA_CDLGFUNCLIST_H_
+#define SAKURA_CDLGFUNCLIST_H_
 
 #include <Windows.h>
 #include "dlg/CDialog.h"
@@ -27,10 +27,29 @@
 
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
+class CDataProfile;
 
 #define OUTLINE_LAYOUT_FOREGROUND (0)
 #define OUTLINE_LAYOUT_BACKGROUND (1)
 #define OUTLINE_LAYOUT_FILECHANGED (2)
+
+// ファイルツリー関連クラス
+enum EFileTreeSettingFrom{
+	EFileTreeSettingFrom_Common,
+	EFileTreeSettingFrom_Type,
+	EFileTreeSettingFrom_File
+};
+
+class CFileTreeSetting{
+public:
+	std::vector<SFileTreeItem>	m_aItems;		//!< ツリーアイテム
+	bool		m_bProject;				//!< プロジェクトファイルモード
+	SFilePath	m_szDefaultProjectIni;	//!< デフォルトiniファイル名
+	SFilePath	m_szLoadProjectIni;		//!< 現在読み込んでいるiniファイル名
+	EFileTreeSettingFrom	m_eFileTreeSettingOrgType;
+	EFileTreeSettingFrom	m_eFileTreeSettingLoadType;
+};
+
 
 //!	アウトライン解析ダイアログボックス
 class CDlgFuncList : public CDialog
@@ -74,6 +93,8 @@ public:
 	void SyncColor( void );
 	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
+	void LoadFileTreeSetting( CFileTreeSetting&, SFilePath& );
+	static void ReadFileTreeIni( CDataProfile&, CFileTreeSetting& );
 
 protected:
 	bool m_bInChangeLayout;
@@ -84,11 +105,11 @@ protected:
 	int				m_nSortCol;			/* ソートする列番号 */
 	int				m_nSortColOld;		//!< ソートする列番号(OLD)
 	bool			m_bSortDesc;		//!< 降順
-	int				m_nDocType;			/* ドキュメントの種類 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
 	bool			m_bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	int				m_nListType;		/* 一覧の種類 */
 public:
+	int				m_nDocType;			//! ドキュメントの種類 */
 	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
@@ -106,12 +127,14 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnJump( bool bCheckAutoClose = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
+	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
 	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
-	void SetTree(bool tagjump = false);		/* ツリーコントロールの初期化：汎用品 */
+	void SetTree(bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
+	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 
+	void SetTreeFileSub( HTREEITEM, const TCHAR* );
 	// 2002/11/1 frozen 
 	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）
 #if 0
@@ -147,6 +170,8 @@ protected:
 	BOOL PostOutlineNotifyToAllEditors( WPARAM wParam, LPARAM lParam );
 	EDockSide GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, bool bForceFloat );
 	BOOL Track( POINT ptDrag );
+	bool GetTreeFileFullName(HWND, HTREEITEM, std::tstring*, int*);
+	bool TagJumpTimer(const TCHAR*, CMyPoint, bool);
 
 private:
 	//	May 18, 2001 genta
@@ -169,6 +194,11 @@ private:
 
 	// 選択中の関数情報
 	CFuncInfo* m_cFuncInfo;
+	std::tstring m_sJumpFile;
+
+	const TCHAR* m_pszTimerJumpFile;
+	CMyPoint	m_pointTimerJump;
+	bool		m_bTimerJumpAutoClose;
 
 	EDockSide	m_eDockSide;	// 現在の画面の表示位置
 	HWND		m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
@@ -178,6 +208,7 @@ private:
 	int			m_nCapturingBtn;
 	
 	STypeConfig m_type;
+	CFileTreeSetting	m_fileTreeSetting;
 
 	static LPDLGTEMPLATE m_pDlgTemplate;
 	static DWORD m_dwDlgTmpSize;
@@ -191,7 +222,7 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGFUNCLIST_H_ */
+#endif /* SAKURA_CDLGFUNCLIST_H_ */
 
 
 

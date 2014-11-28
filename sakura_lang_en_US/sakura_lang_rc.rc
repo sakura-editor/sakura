@@ -190,6 +190,7 @@ BEGIN
     CONTROL         "Mark Blank Lines(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,271,77,10
     LTEXT           "Sort(&S)",IDC_STATIC_nSortType,3,4,28,8
+    PUSHBUTTON      "&Setting",IDC_BUTTON_SETTING,3,3,45,14
     COMBOBOX        IDC_COMBO_nSortType,34,3,94,65,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END
@@ -2276,6 +2277,62 @@ BEGIN
     PUSHBUTTON      "&Clear Default",IDC_BUTTON_PROF_DEFCLEAR,125,79,61,14
 END
 
+IDD_FILETREE DIALOGEX 0, 0, 291, 241
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "File Tree Setting"
+FONT 9, "Tahoma"
+BEGIN
+    LTEXT           "Setting：Common",IDC_STATIC_SETTFING_FROM,4,4,282,10
+    CONTROL         "Load &Ini from foldres",IDC_CHECK_LOADINI,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,16,120,9
+    LTEXT           "Default Setting File(&J)",IDC_STATIC,4,28,110,8
+    EDITTEXT        IDC_EDIT_DEFINI,13,39,124,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "...(&1)",IDC_BUTTON_REF1,137,39,17,13
+    PUSHBUTTON      "Load(&V)",IDC_BUTTON_LOAD,108,53,47,14
+    CONTROL         "&Grep",IDC_RADIO_GREP,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP | WS_TABSTOP,6,72,56,8
+    CONTROL         "&File",IDC_RADIO_FILE,"Button",BS_AUTORADIOBUTTON |
+                    WS_TABSTOP,6,85,56,8
+    CONTROL         "Folder(&2)",IDC_RADIO_FOLDER,"Button",BS_AUTORADIOBUTTON |
+                    WS_TABSTOP,6,98,56,8
+    GROUPBOX        "Type",IDC_STATIC,1,61,89,50,WS_GROUP
+    LTEXT           "Pa&Th",IDC_STATIC_PATH,3,119,22,10
+    EDITTEXT        IDC_EDIT_PATH,38,117,122,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "&...",IDC_BUTTON_REF2,161,117,10,13
+    PUSHBUTTON      "▼(&3)",IDC_BUTTON_PATH_MENU,171,117,21,14
+    LTEXT           "Lab&El",IDC_STATIC,3,136,32,10
+    EDITTEXT        IDC_EDIT_LABEL,38,134,111,13,ES_AUTOHSCROLL
+    LTEXT           "File(&K)",IDC_STATIC_FILE,3,154,32,10
+    EDITTEXT        IDC_EDIT_FILE,38,151,111,13,ES_AUTOHSCROLL
+    CONTROL         "Hidden file(&W)",IDC_CHECK_HIDDEN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,10,181,87,8
+    CONTROL         "Read Only(&Z)",IDC_CHECK_READONLY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,10,193,87,8
+    CONTROL         "&System file",IDC_CHECK_SYSTEM,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,10,205,87,8
+    GROUPBOX        "Excepting File Att",IDC_STATIC,4,169,100,51
+    PUSHBUTTON      "Del(&4)",IDC_BUTTON_DELETE,156,17,36,14
+    PUSHBUTTON      "Ins Bef(&Q)",IDC_BUTTON_INSERT,156,32,36,14
+    PUSHBUTTON      "Ins &Aft",IDC_BUTTON_INSERT_A,156,46,36,14
+    PUSHBUTTON      "Ins Last(&B)",IDC_BUTTON_ADD,156,60,36,14
+    PUSHBUTTON      "U&Pdate",IDC_BUTTON_UPDATE,156,74,36,14
+    PUSHBUTTON      "Files Ins(&C)...",IDC_BUTTON_FILEADD,133,88,59,14
+    PUSHBUTTON      "Paths Repalce(&N)...",IDC_BUTTON_REPLACE,111,102,81,14
+    PUSHBUTTON      "&Up",IDC_BUTTON_UP,156,140,36,14
+    PUSHBUTTON      "&Down",IDC_BUTTON_DOWN,156,154,36,14
+    PUSHBUTTON      "&Right",IDC_BUTTON_RIGHT,156,168,36,14
+    PUSHBUTTON      "&Left",IDC_BUTTON_LEFT,156,182,36,14
+    CONTROL         "",IDC_TREE_FL,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,193,17,94,202
+    PUSHBUTTON      "I&Mport",IDC_BUTTON_IMPORT,5,225,50,14
+    PUSHBUTTON      "Export(&Y)",IDC_BUTTON_EXPORT,59,225,50,14
+    DEFPUSHBUTTON   "&OK",IDOK,128,225,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,183,225,50,14
+    PUSHBUTTON      "&Help",IDC_BUTTON_HELP,238,225,50,14
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -3180,6 +3237,7 @@ BEGIN
     F_ISEARCH_REGEXP_PREV   "Regex Prev Incremental search"
     F_ISEARCH_MIGEMO_NEXT   "MIGEMO Next Incremental search"
     F_ISEARCH_MIGEMO_PREV   "MIGEMO Prev Incremental search"
+    F_FILETREE              "File Tree"
 
     F_ISEARCH_SUBMENU       "Incremental Search"
 END
@@ -4672,6 +4730,22 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	STR_WSHPLUG_LOADMACRO			"マクロの読み込みに失敗しました。\n\n%ts"
 	STR_FILESAVE_CONVERT_ERROR		"'%ts'\nFailed File save\nConvert Error."
+
+	STR_FILETREE_FROM_COMMON		"Setting: Common"
+	STR_FILETREE_FROM_TYPE			"Setting: Types"
+	STR_FILETREE_FROM_FILE			"Setting: %ts"
+	STR_FILETREE_CURDIR				"<Cur Folder>"
+	STR_FILETREE_MAXCOUNT			"最大数(%d)を超えたため切り捨てました"
+	STR_FILETREE_MENU_ROOT			"&Ini Root"
+	STR_FILETREE_MENU_MYDOC			"M&Y Document"
+	STR_FILETREE_MENU_MYMUSIC		"My &Music"
+	STR_FILETREE_MENU_MYVIDEO		"My &Video"
+	STR_FILETREE_MENU_DESK			"&Desktop"
+	STR_FILETREE_MENU_TEMP			"&Temp"
+	STR_FILETREE_MENU_SAKURA		"&Sakura"
+	STR_FILETREE_MENU_SAKURADATA	"S&Akura data"
+	STR_FILETREE_REPLACE_PATH_FROM	"Please Input Replace 'From' Path"
+	STR_FILETREE_REPLACE_PATH_TO	"Please Input Replace 'To' Path"
 
 END
 

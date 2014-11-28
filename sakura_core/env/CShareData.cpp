@@ -491,6 +491,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sOutline.m_nDockOutline = OUTLINE_TEXT;
 		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
 		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
+		InitFileTree( &m_pShareData->m_Common.m_sOutline.m_sFileTree );
+		m_pShareData->m_Common.m_sOutline.m_sFileTreeDefIniName = _T("_sakurafiletree.ini");
 
 		/*
 			書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
@@ -1339,3 +1341,22 @@ std::vector<STypeConfig*>& CShareData::GetTypeSettings()
 }
 
 
+void CShareData::InitFileTree( SFileTree* setting )
+{
+	setting->m_bProject = true;
+	for(int i = 0; i < (int)_countof(setting->m_aItems); i++){
+		SFileTreeItem& item = setting->m_aItems[i];
+		item.m_eFileTreeItemType = EFileTreeItemType_Grep;
+		item.m_szTargetPath = _T("");
+		item.m_szLabelName = _T("");
+		item.m_szTargetPath = _T("");
+		item.m_nDepth = 0;
+		item.m_szTargetFile = _T("");
+		item.m_bIgnoreHidden = true;
+		item.m_bIgnoreReadOnly = false;
+		item.m_bIgnoreSystem = false;
+	}
+	setting->m_nItemCount = 1;
+	setting->m_aItems[0].m_szTargetPath = _T(".");
+	setting->m_aItems[0].m_szTargetFile = _T("*.*");
+}

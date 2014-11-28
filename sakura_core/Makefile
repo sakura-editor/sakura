@@ -244,6 +244,7 @@ mem/CNativeA.o \
 mem/CNativeW.o \
 mem/CRecycledBuffer.o \
 mfclike/CMyWnd.o \
+outline/CDlgFileTree.o \
 outline/CDlgFuncList.o \
 outline/CFuncInfo.o \
 outline/CFuncInfoArr.o \

@@ -123,6 +123,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 //	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO g‚í‚È‚¢‚æ‚¤‚É•ÏX
 	case OUTLINE_PYTHON:	GetDocument()->m_cDocOutline.MakeFuncList_python(&cFuncInfoArr);break;		// 2007.02.08 genta
 	case OUTLINE_ERLANG:	GetDocument()->m_cDocOutline.MakeFuncList_Erlang(&cFuncInfoArr);break;		// 2009.08.10 genta
+	case OUTLINE_FILETREE:	/* “Á‚É‰½‚à‚µ‚È‚¢*/ ;break;	// 2013.12.08 Moca
 	case OUTLINE_TEXT:
 		//	fall though
 		//	‚±‚±‚É‚Í‰½‚à“ü‚ê‚Ä‚Í‚¢‚¯‚È‚¢ 2007.02.28 genta ’ˆÓ‘‚«
