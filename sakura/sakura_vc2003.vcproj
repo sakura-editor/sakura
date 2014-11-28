@@ -617,7 +617,7 @@
 				<File
 					RelativePath="..\sakura_core\charset\CCodeMediator.h">
 				</File>
- 				<File
+				<File
 					RelativePath="..\sakura_core\charset\CCodePage.cpp">
 				</File>
 				<File
@@ -1447,7 +1447,7 @@
 					<File
 						RelativePath="..\sakura_core\view\colors\CColor_Found.h">
 					</File>
- 					<File
+					<File
 						RelativePath="..\sakura_core\view\colors\CColor_Heredoc.cpp">
 					</File>
 					<File
@@ -2008,6 +2008,12 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\dlg\CDlgPrintSetting.h">
+				</File>
+				<File
+					RelativePath="..\sakura_core\dlg\CDlgProfileMgr.cpp">
+				</File>
+				<File
+					RelativePath="..\sakura_core\dlg\CDlgProfileMgr.h">
 				</File>
 				<File
 					RelativePath="..\sakura_core\dlg\CDlgProperty.cpp">
