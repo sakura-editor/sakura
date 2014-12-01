@@ -4653,7 +4653,7 @@ static const char* ppszKeyWordsRTF[] = {
 	"\\fonttbl",
 	"\\footnote",
 	"\\fs",
-	"\\i"
+	"\\i",
 	"\\intbl",
 	"\\keep",
 	"\\keepn",
