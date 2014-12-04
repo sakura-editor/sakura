@@ -95,6 +95,7 @@ enum EColorIndexType {
 	COLORIDX_DIFF_CHANGE,	//!< DIFF追加  //@@@ 2002.06.01 MIK
 	COLORIDX_DIFF_DELETE,	//!< DIFF追加  //@@@ 2002.06.01 MIK
 	COLORIDX_MARK,			//!< ブックマーク  // 02/10/16 ai Add
+	COLORIDX_PAGEVIEW,		//!< 表示範囲(ミニマップ)  // 2014.07.14 Add
 
 	//カラーの最後
 	COLORIDX_LAST,			//!< カラーの最後

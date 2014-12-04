@@ -3261,16 +3261,19 @@ BEGIN
     F_SHOWFUNCKEY           "ファンクションキーの表示／非表示"
     F_SHOWSTATUSBAR         "ステータスバーの表示／非表示"
     F_SHOWTAB               "タブバーの表示／非表示"
+    F_SHOWMINIMAP           "ミニマップの表示／非表示"
 
 	F_SHOWTOOLBAR_ON		"ツールバーを表示"
 	F_SHOWFUNCKEY_ON		"ファンクションキーを表示"
 	F_SHOWTAB_ON			"タブバーを表示"
 	F_SHOWSTATUSBAR_ON		"ステータスバーを表示"
+    F_SHOWMINIMAP_ON        "ミニマップを表示"
 
 	F_SHOWTOOLBAR_OFF		"表示中のツールバーを隠す"
 	F_SHOWFUNCKEY_OFF		"表示中のファンクションキーを隠す"
 	F_SHOWTAB_OFF			"表示中のタブバーを隠す"
 	F_SHOWSTATUSBAR_OFF		"表示中のステータスバーを隠す"
+    F_SHOWMINIMAP_OFF       "表示中のミニマップを隠す"
 
 END
 
@@ -4551,6 +4554,7 @@ BEGIN
 	STR_COLOR_DIFF_CNG				"DIFF差分表示(変更)"
 	STR_COLOR_DIFF_DEL				"DIFF差分表示(削除)"
 	STR_COLOR_BOOKMARK				"ブックマーク"
+	STR_COLOR_PAGEVIEW				"表示範囲(ミニマップ)"
 
 	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
 

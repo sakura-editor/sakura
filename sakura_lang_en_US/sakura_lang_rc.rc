@@ -3264,16 +3264,19 @@ BEGIN
     F_SHOWFUNCKEY           "Hide/Show Function"
     F_SHOWSTATUSBAR         "Hide/Show Status Bar"
     F_SHOWTAB               "Hide/Show Tab Bar"
+    F_SHOWMINIMAP           "Hide/Show Mini Map"
 
 	F_SHOWTOOLBAR_ON		"Show Tool bar"
 	F_SHOWFUNCKEY_ON		"Show Function Keys"
 	F_SHOWTAB_ON			"Show Multi-Tabs"
 	F_SHOWSTATUSBAR_ON		"Show Status bar"
+    F_SHOWMINIMAP_ON        "Show Mini Map"
 
 	F_SHOWTOOLBAR_OFF		"Hide Tool bar"
 	F_SHOWFUNCKEY_OFF		"Hide Function Keys"
 	F_SHOWTAB_OFF			"Hide Multi-Tabs"
 	F_SHOWSTATUSBAR_OFF		"Hide Status bar"
+    F_SHOWMINIMAP_OFF       "Hide Mini Map"
 
 END
 
@@ -4558,6 +4561,7 @@ BEGIN
 	STR_COLOR_DIFF_CNG				"DIFF area (changed)"
 	STR_COLOR_DIFF_DEL				"DIFF area (deleted)"
 	STR_COLOR_BOOKMARK				"Bookmark"
+	STR_COLOR_PAGEVIEW				"View Range(Minimap)"
 
 	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
 

@@ -49,6 +49,7 @@ inline COpeBlk* CViewCommander::GetOpeBlk()
 inline void CViewCommander::SetOpeBlk(COpeBlk* p)
 {
 	GetDocument()->m_cDocEditor.m_pcOpeBlk = p;
+	GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
 }
 inline CLayoutRange& CViewCommander::GetSelect()
 {

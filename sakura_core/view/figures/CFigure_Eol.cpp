@@ -28,6 +28,7 @@
 #include "types/CTypeSupport.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "window/CEditWnd.h"
 
 //Ü‚è•Ô‚µ•`‰æ
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
@@ -141,10 +142,12 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		CTypeSupport cTextType(pcView,COLORIDX_TEXT);
 		CTypeSupport cBgLineType(pcView,COLORIDX_CARETLINEBG);
 		CTypeSupport cEvenBgLineType(pcView,COLORIDX_EVENLINEBG);
+		CTypeSupport cPageViewBgLineType(pcView,COLORIDX_PAGEVIEW);
 		bool bBgcolor = cWrapType.GetBackColor() == cTextType.GetBackColor();
 		EColorIndexType eBgcolorOverwrite = COLORIDX_WRAP;
 		bool bTrans = pcView->IsBkBitmap();
 		if( cWrapType.IsDisp() ){
+			CEditView& cActiveView = pcView->m_pcEditWnd->GetActiveView();
 			if( cBgLineType.IsDisp() && pcView->GetCaret().GetCaretLayoutPos().GetY2() == nLineNum ){
 				if( bBgcolor ){
 					eBgcolorOverwrite = COLORIDX_CARETLINEBG;
@@ -155,6 +158,9 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 					eBgcolorOverwrite = COLORIDX_EVENLINEBG;
 					bTrans = bTrans && cEvenBgLineType.GetBackColor() == cTextType.GetBackColor();
 				}
+			}else if( pcView->m_bMiniMap && cActiveView.GetTextArea().GetViewTopLine() <= nLineNum && nLineNum < cActiveView.GetTextArea().GetBottomLine() ){
+				eBgcolorOverwrite = COLORIDX_PAGEVIEW;
+				bTrans = bTrans && cPageViewBgLineType.GetBackColor() == cTextType.GetBackColor();
 			}
 		}
 		bool bChangeColor = false;

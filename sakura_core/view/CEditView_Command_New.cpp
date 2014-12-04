@@ -278,6 +278,8 @@ void CEditView::InsertData_CEditView(
 					nModifyLayoutLinesOld++;
 				}
 			}
+			CLayoutYInt nLayoutTop;
+			CLayoutYInt nLayoutBottom;
 			if( 0 != nInsLineNum ){
 				// スクロールバーの状態を更新する
 				AdjustScrollBars();
@@ -291,6 +293,8 @@ void CEditView::InsertData_CEditView(
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
 				ps.rcPaint.top = GetTextArea().GenerateYPx(nStartLine);
 				ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
+				nLayoutTop = nStartLine;
+				nLayoutBottom = CLayoutYInt(-1);
 			}
 			else{
 				// 描画開始行位置と描画行数を調整する	// 2009.02.17 ryoji
@@ -310,11 +314,28 @@ void CEditView::InsertData_CEditView(
 				//ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1);
 				ps.rcPaint.top = GetTextArea().GenerateYPx(nStartLine);
 				ps.rcPaint.bottom = GetTextArea().GenerateYPx(nStartLine + nModifyLayoutLinesOld);
+				nLayoutTop = nStartLine;
+				nLayoutBottom = nStartLine + nModifyLayoutLinesOld;
 			}
 			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
 			this->ReleaseDC( hdc );
+			// 2014.07.16 他のビュー(ミニマップ)の再描画を抑制する
+			if( 0 == nInsLineNum ){
+				for(int i = 0; i < m_pcEditWnd->GetAllViewCount(); i++ ){
+					CEditView* pcView = &m_pcEditWnd->GetView(i);
+					if( pcView == this ){
+						continue;
+					}
+					pcView->RedrawLines(nLayoutTop, nLayoutBottom);
+				}
+				m_pcEditWnd->GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
+				if( !m_bDoing_UndoRedo && pcOpe ){
+					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
+				}
+			}
 
+#if 0 // すでに行頭から描画済み
 			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 			if( bLineModifiedChange ){	// 無変更だった行が変更された
 				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nStartLine );
@@ -322,6 +343,7 @@ void CEditView::InsertData_CEditView(
 					Call_OnPaint( PAINT_LINENUMBER, false );
 				}
 			}
+#endif
 		}
 	}
 
@@ -710,7 +732,7 @@ void CEditView::ReplaceData_CEditView2(
 /* データ置換 削除&挿入にも使える */
 // Jun 23, 2000 genta 変数名を書き換え忘れていたのを修正
 // Jun. 1, 2000 genta DeleteDataから移動した
-void CEditView::ReplaceData_CEditView3(
+bool CEditView::ReplaceData_CEditView3(
 	CLayoutRange	sDelRange,			//!< [in]  削除範囲レイアウト単位
 	COpeLineData*	pcmemCopyOfDeleted,	//!< [out] 削除されたデータのコピー(NULL可能)
 	COpeLineData*	pInsData,			//!< [in]  挿入するデータ
@@ -724,6 +746,7 @@ void CEditView::ReplaceData_CEditView3(
 {
 	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeのときは bReadraw == false
 	bool bLineModifiedChange;
+	bool bUpdateAll = true;
 
 	bool bDelRangeUpdate = false;
 	{
@@ -899,6 +922,21 @@ void CEditView::ReplaceData_CEditView3(
 				OnPaint( hdc, &ps, FALSE );
 				this->ReleaseDC( hdc );
 
+				CLayoutYInt nLayoutTop = LRArg.nModLineFrom;
+				CLayoutYInt nLayoutBottom = LRArg.nModLineTo + 1 + nAddLine;
+				for(int i = 0; i < m_pcEditWnd->GetAllViewCount(); i++ ){
+					CEditView* pcView = &m_pcEditWnd->GetView(i);
+					if( pcView == this ){
+						continue;
+					}
+					pcView->RedrawLines(nLayoutTop, nLayoutBottom);
+				}
+				m_pcEditWnd->GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
+				if( !m_bDoing_UndoRedo && pcOpeBlk ){
+					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
+				}
+				bUpdateAll = false;
+#if 0 // すでに1行まとめて描画済み
 				// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 				if( bLineModifiedChange ){	// 無変更だった行が変更された
 					const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
@@ -906,6 +944,7 @@ void CEditView::ReplaceData_CEditView3(
 						Call_OnPaint( PAINT_LINENUMBER, false );
 					}
 				}
+#endif
 			}
 		}
 	}
@@ -957,6 +996,7 @@ void CEditView::ReplaceData_CEditView3(
 	//	Jan. 30, 2001 genta
 	//	ファイル全体の更新フラグが立っていないと各行の更新状態が表示されないので
 	//	フラグ更新処理を再描画より前に移動する
+	return  bUpdateAll;
 }
 
 

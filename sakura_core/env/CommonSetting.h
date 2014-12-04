@@ -109,6 +109,7 @@ struct CommonSetting_Window
 	BOOL			m_bDispTOOLBAR;				//!< 次回ウィンドウを開いたときツールバーを表示する
 	BOOL			m_bDispSTATUSBAR;			//!< 次回ウィンドウを開いたときステータスバーを表示する
 	BOOL			m_bDispFUNCKEYWND;			//!< 次回ウィンドウを開いたときファンクションキーを表示する
+	bool			m_bDispMiniMap;				//!< ミニマップを表示する
 	BOOL			m_bMenuIcon;				//!< メニューにアイコンを表示する (アイコン付きメニュー)
 	BOOL			m_bScrollBarHorz;			//!< 水平スクロールバーを使う
 	BOOL			m_bUseCompatibleBMP;		//!< 再作画用互換ビットマップを使う 2007.09.09 Moca
@@ -145,6 +146,11 @@ struct CommonSetting_Window
 
 	//言語選択
 	TCHAR			m_szLanguageDll[MAX_PATH];	//!< 言語DLLファイル名
+
+	//ミニマップ
+	int				m_nMiniMapFontSize;
+	int				m_nMiniMapQuality;
+	int				m_nMiniMapWidth;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

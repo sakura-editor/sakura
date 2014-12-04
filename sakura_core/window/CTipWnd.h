@@ -58,6 +58,7 @@ public:
 	int			m_nSearchDict;	/* ヒット辞書番号 */	// 2006.04.10 fon
 
 	CNativeT	m_cInfo;		/* Tipの内容データ */
+	bool		m_bAlignLeft;	// 右側揃えでチップを表示
 
 protected:
 	/*

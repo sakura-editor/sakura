@@ -134,6 +134,29 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 
 
 
+/*! ミニマップの表示/非表示
+
+	@date 2014.07.14 新規作成
+*/
+void CViewCommander::Command_SHOWMINIMAP( void )
+{
+	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
+
+	GetDllShareData().m_Common.m_sWindow.m_bDispMiniMap = ((NULL == pCEditWnd->GetMiniMap().GetHwnd())? true: false);
+	pCEditWnd->LayoutMiniMap();
+	pCEditWnd->EndLayoutBars();
+
+	//全ウインドウに変更を通知する。
+	CAppNodeGroupHandle(0).PostMessageToAllEditors(
+		MYWM_BAR_CHANGE_NOTIFY,
+		(WPARAM)MYBCN_MINIMAP,
+		(LPARAM)pCEditWnd->GetHwnd(),
+		pCEditWnd->GetHwnd()
+	);
+}
+
+
+
 /* タイプ別設定一覧 */
 void CViewCommander::Command_TYPE_LIST( void )
 {

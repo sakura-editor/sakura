@@ -318,6 +318,7 @@ public:
 	void Command_SHOWFUNCKEY( void );		/* ファンクションキーの表示/非表示 */
 	void Command_SHOWTAB( void );			/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	void Command_SHOWSTATUSBAR( void );		/* ステータスバーの表示/非表示 */
+	void Command_SHOWMINIMAP( void );		// ミニマップの表示/非表示
 	void Command_TYPE_LIST( void );			/* タイプ別設定一覧 */
 	void Command_CHANGETYPE( int nTypePlusOne );	// タイプ別設定一時適用
 	void Command_OPTION_TYPE( void );		/* タイプ別設定 */

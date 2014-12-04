@@ -329,8 +329,10 @@ void CViewCommander::Command_UNDO( void )
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
-		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	//	hor
 		nOpeBlkNum = pcOpeBlk->GetNum();
+		bool bDraw = (nOpeBlkNum < 5) && m_pCommanderView->GetDrawSwitch();
+		bool bDrawAll = false;
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(bDraw);	// hor
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
 		HWND hwndProgress = NULL;
@@ -376,11 +378,11 @@ void CViewCommander::Command_UNDO( void )
 					}
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView3(
+					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						m_pCommanderView->GetSelectionInfo().m_sSelect,				// 削除範囲
 						&pcInsertOpe->m_cOpeLineData,	// 削除されたデータのコピー(NULL可能)
 						NULL,
-						false,						// 再描画するか否か
+						bDraw,						// 再描画するか否か
 						NULL,
 						pcInsertOpe->m_nOrgSeq,
 						NULL,
@@ -404,11 +406,11 @@ void CViewCommander::Command_UNDO( void )
 						sRange.Set(ptCaretPos_Before);
 						CLogicRange cSelectLogic;
 						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
-						m_pCommanderView->ReplaceData_CEditView3(
+						bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
 							&pcDeleteOpe->m_cOpeLineData,
-							false,										/*再描画するか否か*/
+							bDraw,										/*再描画するか否か*/
 							NULL,
 							0,
 							&pcDeleteOpe->m_nOrgSeq,
@@ -431,11 +433,11 @@ void CViewCommander::Command_UNDO( void )
 					cSelectLogic.SetTo(pcOpe->m_ptCaretPos_PHY_After);
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView3(
+					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						sRange,				// 削除範囲
 						&pcReplaceOpe->m_pcmemDataIns,	// 削除されたデータのコピー(NULL可能)
 						&pcReplaceOpe->m_pcmemDataDel,	// 挿入するデータ
-						false,						// 再描画するか否か
+						bDraw,						// 再描画するか否か
 						NULL,
 						pcReplaceOpe->m_nOrgInsSeq,
 						&pcReplaceOpe->m_nOrgDelSeq,
@@ -520,8 +522,9 @@ void CViewCommander::Command_UNDO( void )
 
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		if( !GetEditWindow()->UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+		}
 
 		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
 	}
@@ -582,8 +585,10 @@ void CViewCommander::Command_REDO( void )
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
-		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2007.07.22 ryoji
 		nOpeBlkNum = pcOpeBlk->GetNum();
+		bool bDraw = (nOpeBlkNum < 5) && m_pCommanderView->GetDrawSwitch();
+		bool bDrawAll = false;
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(bDraw);	// 2007.07.22 ryoji
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
 		HWND hwndProgress = NULL;
@@ -628,11 +633,11 @@ void CViewCommander::Command_REDO( void )
 						sRange.Set(ptCaretPos_Before);
 						CLogicRange cSelectLogic;
 						cSelectLogic.Set(pcOpe->m_ptCaretPos_PHY_Before);
-						m_pCommanderView->ReplaceData_CEditView3(
+						bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
 							&pcInsertOpe->m_cOpeLineData,				/* 挿入するデータ */
-							false,										/*再描画するか否か*/
+							bDraw,										/*再描画するか否か*/
 							NULL,
 							0,
 							&pcInsertOpe->m_nOrgSeq,
@@ -660,11 +665,11 @@ void CViewCommander::Command_REDO( void )
 					cSelectLogic.SetTo(pcDeleteOpe->m_ptCaretPos_PHY_To);
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView3(
+					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
 						&pcDeleteOpe->m_cOpeLineData,	/* 削除されたデータのコピー(NULL可能) */
 						NULL,
-						false,
+						bDraw,
 						NULL,
 						pcDeleteOpe->m_nOrgSeq,
 						NULL,
@@ -689,11 +694,11 @@ void CViewCommander::Command_REDO( void )
 					cSelectLogic.SetTo(pcReplaceOpe->m_ptCaretPos_PHY_To);
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView3(
+					bDrawAll |= m_pCommanderView->ReplaceData_CEditView3(
 						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
 						&pcReplaceOpe->m_pcmemDataDel,	// 削除されたデータのコピー(NULL可能)
 						&pcReplaceOpe->m_pcmemDataIns,	// 挿入するデータ
-						false,
+						bDraw,
 						NULL,
 						pcReplaceOpe->m_nOrgDelSeq,
 						&pcReplaceOpe->m_nOrgInsSeq,
@@ -765,8 +770,9 @@ void CViewCommander::Command_REDO( void )
 
 		GetCaret().ShowCaretPosInfo();	// キャレットの行桁位置を表示する	// 2007.10.19 ryoji
 
-		if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+		if( !GetEditWindow()->UpdateTextWrap() && bDrawAll ){	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+		}
 
 		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
 	}

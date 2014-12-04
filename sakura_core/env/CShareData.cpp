@@ -342,8 +342,12 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = TRUE;			/* 次回ウィンドウを開いたときツールバーを表示する */
 		m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
 		m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bDispMiniMap = false;			// ミニマップを表示する
 		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
 		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+		m_pShareData->m_Common.m_sWindow.m_nMiniMapFontSize = -1;
+		m_pShareData->m_Common.m_sWindow.m_nMiniMapQuality = NONANTIALIASED_QUALITY;
+		m_pShareData->m_Common.m_sWindow.m_nMiniMapWidth = 150;
 
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK

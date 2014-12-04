@@ -569,10 +569,12 @@ void CTextDrawer::DispLineNumber(
 	}
 
 	// s”Ô†•”•ª‚Ìƒm[ƒgü•`‰æ
-	int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
-	int right  = pView->GetTextArea().GetAreaLeft();
-	int top    = y;
-	int bottom = y + nLineHeight;
-	DispNoteLine( gr, top, bottom, left, right );
+	if( !pView->m_bMiniMap ){
+		int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
+		int right  = pView->GetTextArea().GetAreaLeft();
+		int top    = y;
+		int bottom = y + nLineHeight;
+		DispNoteLine( gr, top, bottom, left, right );
+	}
 }
 
