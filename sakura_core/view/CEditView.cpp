@@ -1841,8 +1841,16 @@ bool CEditView::GetSelectedData(
 	}
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
-		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr);
-		nLineNumCols += 1;
+		// 2014.11.30 桁はレイアウト単位である必要がある
+		// nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr);
+		CLayoutYInt nLineTo = GetSelectionInfo().m_sSelect.GetTo().y;
+		nLineTo += CLayoutYInt(1); // 表示は+1なので
+		CLayoutYInt nWork = CLayoutYInt(1);
+		int i = 1;
+		for( ; nWork < nLineTo; ++i ){
+			nWork *= 10;
+		}
+		nLineNumCols = i + 1;
 		pszLineNum = new wchar_t[nLineNumCols + 1];
 	}
 
