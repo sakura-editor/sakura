@@ -62,7 +62,7 @@ INT_PTR CALLBACK MyDialogProc(
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CDialog::CDialog(bool bCheckShareData)
+CDialog::CDialog(bool bSizable, bool bCheckShareData)
 {
 //	MYTRACE( _T("CDialog::CDialog()\n") );
 	/* 共有データ構造体のアドレスを返す */
@@ -72,6 +72,7 @@ CDialog::CDialog(bool bCheckShareData)
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
+	m_bSizable = bSizable;
 	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
@@ -216,6 +217,14 @@ void CDialog::SetDialogPosSize()
 			//      （マルチモニタ環境で親が非プライマリモニタにある場合だけ？）
 			//       状況に合わせて処理を変えるのは厄介なので、一律、１ドットの空きを入れる
 
+			// 2014.11.28 フォント変更対応
+			if( m_nWidth == -1 ){
+				RECT	rc;
+				::GetWindowRect( m_hWnd, &rc );
+				m_nWidth = rc.right - rc.left;
+				m_nHeight = rc.bottom - rc.top;
+			}
+
 			RECT rc;
 			RECT rcWork;
 			rc.left = m_xPos;
@@ -271,6 +280,11 @@ BOOL CDialog::OnDestroy( void )
 		m_yPos = cWindowPlacement.rcNormalPosition.top;
 		m_nWidth = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
 		m_nHeight = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
+		// 2014.11.28 フォント変更によるサイズ変更対応
+		if( !m_bSizable ){
+			m_nWidth = -1;
+			m_nHeight = -1;
+		}
 	}
 	/* 破棄 */
 	if( NULL != m_hwndSizeBox ){

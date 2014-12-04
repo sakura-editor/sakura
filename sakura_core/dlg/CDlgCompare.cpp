@@ -48,6 +48,7 @@ static const SAnchorList anchorList[] = {
 };
 
 CDlgCompare::CDlgCompare()
+	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert( _countof(anchorList) == _countof(m_rcItems) );

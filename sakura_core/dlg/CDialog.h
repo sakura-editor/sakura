@@ -77,7 +77,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDialog(bool bCheckShareData = true);
+	CDialog( bool bSizable = false, bool bCheckShareData = true );
 	virtual ~CDialog();
 	/*
 	||  Attributes & Operations
@@ -144,6 +144,7 @@ public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
 	BOOL			m_bModal;		/* モーダル ダイアログか */
+	bool			m_bSizable;		// 可変ダイアログかどうか
 	int				m_nShowCmd;		//	最大化/最小化
 	int				m_nWidth;
 	int				m_nHeight;

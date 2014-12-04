@@ -112,6 +112,7 @@ struct CompareListViewLParam
 
 
 CDlgFavorite::CDlgFavorite()
+	 : CDialog(true)
 {
 	int	i;
 
