@@ -1144,8 +1144,6 @@ LRESULT CEditWnd::DispatchEvent(
 	int					nPane;
 	EditInfo*			pfi;
 	LPHELPINFO			lphi;
-	const wchar_t*		pLine;
-	CLogicInt			nLineLen;
 
 	UINT				idCtl;	/* コントロールのID */
 	MEASUREITEMSTRUCT*	lpmis;
@@ -1901,7 +1899,7 @@ LRESULT CEditWnd::DispatchEvent(
 			→
 			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			CLogicPoint* ppoCaret = m_pShareData->m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
+			CLogicPoint* ppoCaret = &(m_pShareData->m_sWorkBuffer.m_LogicPoint);
 			CLayoutPoint ptCaretPos;
 			GetDocument()->m_cLayoutMgr.LogicToLayout(
 				*ppoCaret,
@@ -1934,7 +1932,7 @@ LRESULT CEditWnd::DispatchEvent(
 		物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
 		{
-			CLogicPoint* ppoCaret = m_pShareData->m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
+			CLogicPoint* ppoCaret = &(m_pShareData->m_sWorkBuffer.m_LogicPoint);
 			GetDocument()->m_cLayoutMgr.LayoutToLogic(
 				GetActiveView().GetCaret().GetCaretLayoutPos(),
 				ppoCaret
@@ -1943,16 +1941,36 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case MYWM_GETLINEDATA:	/* 行(改行単位)データの要求 */
+	{
+		// 共有データ：自分Write→相手Read
+		// return 0以上：行データあり。wParamオフセットを除いた行データ長。0はEOFかOffsetがちょうどバッファ長だった
+		//       -1以下：エラー
+		CLogicInt	nLineNum = CLogicInt(wParam);
+		CLogicInt	nLineOffset = CLogicInt(lParam);
+		if( nLineNum < 0 || GetDocument()->m_cDocLineMgr.GetLineCount() < nLineNum ){
+			return -2; // 行番号不正。LineCount == nLineNum はEOF行として下で処理
+		}
+		CLogicInt	nLineLen = CLogicInt(0);
+		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(nLineNum)->GetDocLineStrWithEOL( &nLineLen );
+		if( nLineOffset < 0 || nLineLen < nLineOffset ){
+			return -3; // オフセット位置不正
+		}
+		if( nLineNum == GetDocument()->m_cDocLineMgr.GetLineCount() ){
+			return 0; // EOF正常終了
+		}
+ 		if( NULL == pLine ){
+			return -4; // 不明なエラー
+		}
+		if( nLineLen == nLineOffset ){
+ 			return 0;
+ 		}
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(CLogicInt(wParam))->GetDocLineStrWithEOL( &nLineLen );
-		if( NULL == pLine ){
-			return 0;
-		}
-		if( nLineLen > (int)m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
-			auto_memcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
-		}else{
-			auto_memcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nLineLen );
-		}
+		pLine += nLineOffset;
+		nLineLen -= nLineOffset;
+		size_t nEnd = t_min<size_t>(nLineLen, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>());
+		auto_memcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nEnd );
 		return nLineLen;
+	}
 
 	// 2010.05.11 Moca MYWM_ADDSTRINGLEN_Wを追加 NULセーフ
 	case MYWM_ADDSTRINGLEN_W:

@@ -375,7 +375,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	ActivateFrameWindow( tagJump.hwndReferer );
 
 	/* ÉJÅ[É\ÉãÇà⁄ìÆÇ≥ÇπÇÈ */
-	memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &(tagJump.point), sizeof( tagJump.point ) );
+	GetDllShareData().m_sWorkBuffer.m_LogicPoint = tagJump.point;
 	::SendMessageAny( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 
 	return;
