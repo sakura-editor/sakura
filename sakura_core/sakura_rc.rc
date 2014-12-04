@@ -2121,12 +2121,12 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "プラグイン一覧",IDC_STATIC,4,9,36,8
     CONTROL         "プラグインを有効にする(&E)",IDC_CHECK_PluginEnable,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,21,100,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,9,100,10
     PUSHBUTTON      "ZIPプラグインを導入(&Z)", IDC_PLUGIN_INST_ZIP,192, 6, 96, 14
     PUSHBUTTON      "フォルダを開く(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
     PUSHBUTTON      "新規プラグインを追加(&I)",IDC_PLUGIN_SearchNew,192,20,96,14
+    LTEXT           "プラグイン一覧",IDC_STATIC,4,28,50,8
     CONTROL         "List1",IDC_PLUGINLIST,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
                     LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,41,285,108
