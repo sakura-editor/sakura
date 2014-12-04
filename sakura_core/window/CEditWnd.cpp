@@ -1936,7 +1936,7 @@ LRESULT CEditWnd::DispatchEvent(
 		{
 			RECT		rc;
 			::GetClientRect( GetHwnd(), &rc );
-			OnSize( m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+			OnSize2( m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ), false );
 			GetActiveView().SetIMECompFormPos();
 		}
 		return 0L;
@@ -3002,6 +3002,12 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 /* WM_SIZE 処理 */
 LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 {
+	return OnSize2(wParam, lParam, true);
+}
+
+LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
+{
+	DEBUG_TRACE(L"CEditWnd::OnSize2 %ts\n", bUpdateStatus ? _T("true"): _T("false"));
 	HWND		hwndToolBar;
 	int			cx;
 	int			cy;
@@ -3117,7 +3123,9 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	初期状態ではすべての部分が「枠あり」だが，メッセージエリアは枠を描画しないようにしている
 		//	ため，初期化時の枠が変な風に残ってしまう．初期状態で枠を描画させなくするため，
 		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
-		m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
+		if( bUpdateStatus ){
+			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
+		}
 
 		StatusBar_SetParts( m_cStatusBar.GetStatusHwnd(), nStArrNum, nStArr );
 		if (hFont != NULL)
