@@ -141,6 +141,7 @@ public:
 	//各種イベント
 	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
 	LRESULT OnSize( WPARAM, LPARAM );	/* WM_SIZE 処理 */
+	LRESULT OnSize2( WPARAM, LPARAM, bool );
 	LRESULT OnLButtonUp( WPARAM, LPARAM );
 	LRESULT OnLButtonDown( WPARAM, LPARAM );
 	LRESULT OnMouseMove( WPARAM, LPARAM );
