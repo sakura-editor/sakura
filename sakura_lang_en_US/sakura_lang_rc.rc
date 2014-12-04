@@ -2123,12 +2123,12 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "Plugin List",IDC_STATIC,4,9,36,8
     CONTROL         "Enable Plugin Feature(&E)",IDC_CHECK_PluginEnable,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,21,100,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,9,100,10
     PUSHBUTTON      "Install ZIP Plugin(&Z)", IDC_PLUGIN_INST_ZIP,192, 6, 96, 14
     PUSHBUTTON      "Open Folder(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
     PUSHBUTTON      "Install Plugin(&I)",IDC_PLUGIN_SearchNew,192,20,96,14
+    LTEXT           "Plugin List",IDC_STATIC,4,28,50,8
     CONTROL         "List1",IDC_PLUGINLIST,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
                     LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,41,285,108
