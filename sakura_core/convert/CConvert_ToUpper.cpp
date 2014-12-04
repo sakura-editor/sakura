@@ -38,6 +38,9 @@ bool CConvert_ToUpper::DoConvert(CNativeW* pcData)
 			c = 0x0178;
 		}
 		// Latin Extended-A •ÏŠ·(ŠÜ“Œ‰¢“™)
+		else if (c==0x0131) { // 2014.11.25 0x0131=>0x0130‚ÍŠÔˆá‚¢B0x0131=>0x0049‚É•ÏX
+			c = 0x0049; // I
+		}
 		else if ((c>=0x0100 && c<=0x0137) || (c>=0x014A && c<=0x0177)) {
 			c = (c & ~0x0001);
 		}
