@@ -21,6 +21,7 @@
 #include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
 #include "uiparts/CImageListMgr.h" // 2005/8/9 aroka
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -125,6 +126,10 @@ int Listbox_ADDDATA(
 	return nIndex1;
 }
 
+
+static int nToolBarListBoxTopMargin = 0;
+
+
 /* Toolbar メッセージ処理 */
 INT_PTR CPropToolbar::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -148,31 +153,32 @@ INT_PTR CPropToolbar::DispatchEvent(
 	int					nNum;
 	int					i;
 	int					j;
-	HDC					hdc;
-	TEXTMETRIC			tm;
 	static int			nListItemHeight;
 	LRESULT				lResult;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 Toolbar */
-		SetData( hwndDlg );
-		// Modified by KEITA for WIN64 2003.9.6
-		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
-
 		/* コントロールのハンドルを取得 */
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 		hwndFuncList = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 		hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
-		hdc = ::GetDC( hwndDlg );
-		::GetTextMetrics( hdc, &tm );
-		::ReleaseDC( hwndDlg, hdc );
-		nListItemHeight = 18/*18*/; //Oct. 18, 2000 JEPRO 「ツールバー」タブでの機能アイテムの行間を少し狭くして表示行数を増やした(20→18 これ以上小さくしても効果はないようだ)
-		if( nListItemHeight < tm.tmHeight ){
-			nListItemHeight = tm.tmHeight;
+		{
+			// 2014.11.25 フォントの高さが正しくなかったバグを修正
+			CTextWidthCalc calc(hwndResList);
+			int nFontHeight = calc.GetTextHeight();
+			nListItemHeight = 18; //Oct. 18, 2000 JEPRO 「ツールバー」タブでの機能アイテムの行間を少し狭くして表示行数を増やした(20→18 これ以上小さくしても効果はないようだ)
+			if( nListItemHeight < nFontHeight ){
+				nListItemHeight = nFontHeight;
+				nToolBarListBoxTopMargin = 0;
+			}else{
+				nToolBarListBoxTopMargin = (nListItemHeight - (nFontHeight + 1)) / 2;
+			}
 		}
-//		nListItemHeight+=2;
+		/* ダイアログデータの設定 Toolbar */
+		SetData( hwndDlg );
+		// Modified by KEITA for WIN64 2003.9.6
+		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 //	From Here Oct.14, 2000 JEPRO added	(Ref. CPropComCustmenu.cpp 内のWM_INITDIALOGを参考にした)
 		/* キー選択時の処理 */
@@ -462,11 +468,9 @@ void CPropToolbar::SetData( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndResList;
-	HDC			hdc;
 	int			i;
 	int			nListItemHeight;
 	LRESULT		lResult;
-	TEXTMETRIC	tm;
 
 	/* 機能種別一覧に文字列をセット(コンボボックス) */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
@@ -479,13 +483,12 @@ void CPropToolbar::SetData( HWND hwndDlg )
 	/* コントロールのハンドルを取得 */
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
-	hdc = ::GetDC( hwndDlg );
-	::GetTextMetrics( hdc, &tm );
-	::ReleaseDC( hwndDlg, hdc );
+	// 2014.11.25 フォントの高さが正しくなかったバグを修正
+	int nFontHeight = CTextWidthCalc(hwndResList).GetTextHeight();
 
 	nListItemHeight = 18; //Oct. 18, 2000 JEPRO 「ツールバー」タブでのツールバーアイテムの行間を少し狭くして表示行数を増やした(20→18 これ以上小さくしても効果はないようだ)
-	if( nListItemHeight < tm.tmHeight ){
-		nListItemHeight = tm.tmHeight;
+	if( nListItemHeight < nFontHeight ){
+		nListItemHeight = nFontHeight;
 	}
 //	nListItemHeight+=2;
 
@@ -615,7 +618,8 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 //		::DeleteObject( hBrush );
 
 		::SetBkMode( pDis->hDC, TRANSPARENT );
-		TextOutW_AnyBuild( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, wcslen( szLabel ) );
+		// 2014.11.25 topマージンが2固定だとフォントが大きい時に見切れるので変数に変更
+		TextOutW_AnyBuild( pDis->hDC, rc1.left + 4, rc1.top + nToolBarListBoxTopMargin, szLabel, wcslen( szLabel ) );
 
 	}
 
