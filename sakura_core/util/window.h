@@ -131,6 +131,7 @@ public:
 	bool SetTextWidthIfMax(LPCTSTR pszText);
 	bool SetTextWidthIfMax(LPCTSTR pszText, int extCx);
 	int GetTextWidth(LPCTSTR pszText) const;
+	int GetTextHeight() const;
 	HDC GetDC() const{ return hDC; }
 	int GetCx(){ return nCx; }
 	// Zo•û–@‚ª‚æ‚­•ª‚©‚ç‚È‚¢‚Ì‚Å’è”‚É‚µ‚Ä‚¨‚­

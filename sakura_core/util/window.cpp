@@ -253,6 +253,13 @@ int CTextWidthCalc::GetTextWidth(LPCTSTR pszText) const
 	return 0;
 }
 
+int CTextWidthCalc::GetTextHeight() const
+{
+	TEXTMETRIC tm;
+	::GetTextMetrics(hDC, &tm);
+	return tm.tmHeight;
+}
+
 CFontAutoDeleter::CFontAutoDeleter()
 	: m_hFontOld(NULL)
 	, m_hFont(NULL)

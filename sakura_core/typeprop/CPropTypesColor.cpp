@@ -680,6 +680,9 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	/* 色をつける文字種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
 	List_ResetContent( hwndWork );  /* リストを空にする */
+	// 2014.11.25 大きいフォント対応
+	int nItemHeight = CTextWidthCalc(hwndWork).GetTextHeight();
+	List_SetItemHeight(hwndWork, 0, nItemHeight + 4);
 	for( i = 0; i < COLORIDX_LAST; ++i ){
 		GetDefaultColorInfoName( &m_Types.m_ColorInfoArr[i], i );
 		nItem = ::List_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
