@@ -26,22 +26,91 @@
 #include "dlg/CDlgDiff.h"
 #include "charset/CCodeMediator.h"
 #include "charset/CCodePage.h"
+#include "env/CShareData.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "_main/CMutex.h"
 
 
-/* ファイル内容比較 */
-void CViewCommander::Command_COMPARE( void )
+/*!
+	@return true:正常終了 / false:エラー終了
+*/
+static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
-	HWND		hwndCompareWnd;
-	TCHAR		szPath[_MAX_PATH + 1];
-	CMyPoint	poDes;
-	CDlgCompare	cDlgCompare;
-	BOOL		bDefferent;
 	const wchar_t*	pLineSrc;
 	CLogicInt		nLineLenSrc;
 	const wchar_t*	pLineDes;
 	int			nLineLenDes;
+	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
+	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
+
+	bDifferent = true;
+	{
+		pLineDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
+		int nLineOffset = 0;
+		for(;;){
+			pLineSrc = docMgr.GetLine(poSrc.y)->GetDocLineStrWithEOL(&nLineLenSrc);
+			do{
+				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
+				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
+				// 行(改行単位)データの要求
+				nLineLenDes = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
+				if( nLineLenDes < 0 ){
+					return false;
+				}
+				// どっちも最終行(EOF)に到達。同一と判定
+				if( pLineSrc == NULL && 0 == nLineLenDes ){
+					bDifferent = false;
+					return true;
+				}
+				// どちらかだけが、最終行に到達
+				if( pLineSrc == NULL || 0 == nLineLenDes ){
+					return true;
+				}
+				int nDstEndPos = std::min( nLineLenDes, max_size ) + nLineOffset;
+				if( poDes.x < nLineOffset ){
+					// 1行目行頭データ読み飛ばし
+					if( nLineLenDes < poDes.x ){
+						poDes.x = nLineLenDes - 1;
+						return true;
+					}
+					nLineOffset = poDes.x;
+				}else{
+					// Note: サロゲート/改行の途中にカーソルがくることがある
+					while( poDes.x < nDstEndPos ){
+						if( nLineLenSrc <= poSrc.x ){
+							return true;
+						}
+						if( pLineSrc[poSrc.x] != pLineDes[poDes.x - nLineOffset] ){
+							return true;
+						}
+						poSrc.x++;
+						poDes.x++;
+					}
+				}
+				nLineOffset += max_size;
+			}while(max_size < nLineLenDes);
+
+			if( poSrc.x < nLineLenSrc ){
+				return true;
+			}
+			poSrc.x = 0;
+			poSrc.y++;
+			poDes.x = 0;
+			poDes.y++;
+			nLineOffset = 0;
+		}
+	}
+	assert_warning(0);
+	return false;
+}
+
+/* ファイル内容比較 */
+void CViewCommander::Command_COMPARE( void )
+{
+	HWND		hwndCompareWnd = NULL;
+	TCHAR		szPath[_MAX_PATH + 1];
+	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
 	/* 比較後、左右に並べて表示 */
@@ -86,55 +155,17 @@ void CViewCommander::Command_COMPARE( void )
 	);
 
 	// カーソル位置取得 -> poDes
+	CLogicPoint	poDes;
 	{
 		::SendMessageAny( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
-		CLogicPoint* ppoCaretDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
+		CLogicPoint* ppoCaretDes = &(GetDllShareData().m_sWorkBuffer.m_LogicPoint);
 		poDes.x = ppoCaretDes->x;
 		poDes.y = ppoCaretDes->y;
 	}
-	bDefferent = TRUE;
-	pLineSrc = GetDocument()->m_cDocLineMgr.GetLine(poSrc.GetY2())->GetDocLineStrWithEOL(&nLineLenSrc);
-	/* 行(改行単位)データの要求 */
-	nLineLenDes = ::SendMessageAny( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
-	pLineDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
-	for (;;) {
-		if( pLineSrc == NULL &&	0 == nLineLenDes ){
-			bDefferent = FALSE;
-			break;
-		}
-		if( pLineSrc == NULL || 0 == nLineLenDes ){
-			break;
-		}
-		if( nLineLenDes > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
-			TopErrorMessage( m_pCommanderView->GetHwnd(),
-				LS( STR_ERR_CMPERR ), // "比較先のファイル\n%ts\n%d文字を超える行があります。\n比較できません。"
-				szPath,
-				GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>()
-			);
-			return;
-		}
-		for( ; poSrc.x < nLineLenSrc; ){
-			if( poDes.x >= nLineLenDes ){
-				goto end_of_compare;
-			}
-			if( pLineSrc[poSrc.x] != pLineDes[poDes.x] ){
-				goto end_of_compare;
-			}
-			poSrc.x++;
-			poDes.x++;
-		}
-		if( poDes.x < nLineLenDes ){
-			goto end_of_compare;
-		}
-		poSrc.x = 0;
-		poSrc.y++;
-		poDes.x = 0;
-		poDes.y++;
-		pLineSrc = GetDocument()->m_cDocLineMgr.GetLine(poSrc.GetY2())->GetDocLineStrWithEOL(&nLineLenSrc);
-		/* 行(改行単位)データの要求 */
-		nLineLenDes = ::SendMessageAny( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
-	}
-end_of_compare:;
+	bool bDifferent = false;
+	// 本処理
+	Commander_COMPARE_core(*this, bDifferent, hwndCompareWnd, poSrc, poDes);
+
 	/* 比較後、左右に並べて表示 */
 //From Here Oct. 10, 2000 JEPRO	チェックボックスをボタン化すれば以下の行(To Here まで)は不要のはずだが
 //	うまくいかなかったので元に戻してある…
@@ -169,7 +200,7 @@ end_of_compare:;
 //To Here Oct. 10, 2000
 
 	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
-	if( !bDefferent ){
+	if( !bDifferent ){
 		TopInfoMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD22) );
 	}
 	else{
@@ -177,11 +208,11 @@ end_of_compare:;
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
-		memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poDes, sizeof( poDes ) );
+		GetDllShareData().m_sWorkBuffer.m_LogicPoint = poDes;
 		::SendMessageAny( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
-		memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
+		GetDllShareData().m_sWorkBuffer.m_LogicPoint = poSrc;
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
 		TopWarningMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );	// 位置を変更してからメッセージ	2008/4/27 Uchi
 	}

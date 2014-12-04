@@ -31,6 +31,7 @@
 #include "doc/CDocListener.h" // SLoadInfo
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"
+#include "_main/CMutex.h"
 #include "charset/CCodePage.h"
 #include "debug/CRunningTimer.h"
 #include "recent/CMRUFile.h"
@@ -83,6 +84,12 @@ CShareData::~CShareData()
 	}
 }
 
+
+static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
+ 
+CMutex& CShareData::GetMutexShareWork(){
+	return g_cMutexShareWork;
+}
 
 //! CShareDataクラスの初期化処理
 /*!
@@ -887,6 +894,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		return;
 	}
 	
+	LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 	va_list argList;
 	va_start( argList, lpFmt );
 	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
@@ -929,6 +937,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 	int outPos = 0;
 	if(0 == len){
 		// 0のときは何も追加しないが、カーソル移動が発生する
+		LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 		pOutBuffer[0] = L'\0';
 		::SendMessage( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, 0, 0 );
 	}else{
@@ -946,6 +955,7 @@ void CShareData::TraceOutString( const wchar_t* pStr, int len )
 					--outLen;
 				}
 			}
+			LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 			wmemcpy( pOutBuffer, pStr + outPos, outLen );
 			pOutBuffer[outLen] = L'\0';
 			DWORD_PTR	dwMsgResult;

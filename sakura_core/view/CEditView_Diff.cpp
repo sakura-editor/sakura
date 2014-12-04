@@ -41,12 +41,15 @@
 #include <stdlib.h>
 #include "view/CEditView.h"
 #include "_main/global.h"
+#include "_main/CMutex.h"
 #include "dlg/CDlgDiff.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "uiparts/CWaitCursor.h"
 #include "_os/COsVersionInfo.h"
+#include "env/CShareData.h"
+#include "env/CSakuraEnvironment.h"
 #include "util/module.h"
 #include "util/file.h"
 #include "window/CEditWnd.h"
@@ -391,6 +394,62 @@ void CEditView::AnalyzeDiffInfo(
 	return;
 }
 
+static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& view, bool bBom)
+{
+	CLogicInt y = CLogicInt(0);
+	const wchar_t*	pLineData;
+	if( !hwnd ){
+		const CDocLineMgr& docMgr = view.m_pcEditDoc->m_cDocLineMgr;
+		for(;;){
+			CLogicInt		nLineLen;
+			pLineData = docMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
+			// 正常終了
+			if( 0 == nLineLen || NULL == pLineData ) break;
+			if( bBom ){
+				CNativeW cLine2(L"\ufeff");
+				cLine2.AppendString(pLineData, nLineLen);
+				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
+				bBom = false;
+			}else{
+				out.WriteString(pLineData,nLineLen);
+			}
+			y++;
+		}
+	}else if( IsSakuraMainWindow(hwnd) ) {
+		const int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<const EDIT_CHAR>();
+		pLineData = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
+		for(;;){
+			int nLineOffset = 0;
+			int nLineLen = 0; //初回用仮値
+			do{
+				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
+				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
+				{
+					nLineLen = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
+					if( nLineLen == 0 ){ return true; } // EOF => 正常終了
+					if( nLineLen < 0 ){ return false; } // 何かエラー
+					if( bBom ){
+						CNativeW cLine2(L"\ufeff");
+						cLine2.AppendString(pLineData, t_min(nLineLen, max_size));
+						out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
+						bBom = false;
+					}else{
+						out.WriteString(pLineData, t_min(nLineLen, max_size));
+					}
+				}
+				nLineOffset += max_size;
+			}while(max_size < nLineLen);
+			y++;
+		}
+	}else{
+		return false;
+	}
+	if( bBom ){
+		out.WriteString(L"\ufeff", 1);
+	}
+	return true;
+}
+
 /*!	一時ファイルを作成する
 	@author	MIK
 	@date	2002/05/26
@@ -433,54 +492,20 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 		return FALSE;
 	}
 
-	CLogicInt y = CLogicInt(0);
-
-	for (;;) {
-		// 行(改行単位)データの要求 
-		const wchar_t*	pLineData;
-		CLogicInt		nLineLen;
-		if( hWnd ){
-			pLineData = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
-			nLineLen = CLogicInt(::SendMessageAny( hWnd, MYWM_GETLINEDATA, y, 0 ));
-
-			// 一時バッファを超える場合はエラー終了
-			if( nLineLen > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
-				out.Close();
-				_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-				WarningMessage( NULL, LS(STR_DIFF_FAILED_LONG) );
-				return FALSE;
-			}
+	bool bError = false;
+	try{
+		if( ! MakeDiffTmpFile_core(out, hWnd, *this, bBom) ){
+			bError = true;
 		}
-		else{
-			pLineData = m_pcEditDoc->m_cDocLineMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
-		}
-
-		if( 0 == nLineLen || NULL == pLineData ) break;
-
-		try{
-			if( bBom ){
-				CNativeW cLine2(L"\ufeff");
-				cLine2.AppendString(pLineData, nLineLen);
-				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
-				bBom = false;
-			}else{
-				out.WriteString(pLineData,nLineLen);
-			}
-		}
-		catch(...){
-			out.Close();
-			_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
-			return FALSE;
-		}
-
-		y++;
 	}
-	if( bBom ){
-		out.WriteString(L"\ufeff", 1);
+	catch(...){
+		bError = true;
 	}
-
-	//fclose( fp );
+	if( bError ){
+		out.Close();
+		_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
+	}
 
 	return TRUE;
 }

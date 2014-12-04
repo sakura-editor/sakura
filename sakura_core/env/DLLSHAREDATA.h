@@ -108,6 +108,7 @@ public:
 
 public:
 	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+	CLogicPoint			m_LogicPoint;
 	STypeConfig			m_TypeConfig;
 };
 

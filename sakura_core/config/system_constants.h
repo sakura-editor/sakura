@@ -508,12 +508,15 @@
 	Version 162:
 	ミニマップ 2014.07.14 Moca
 
+	Version 163:
+	MYWM_GETLINEDATA,MYWM_SETCARETPOS,MYWM_GETCARETPOS変更 2014.05.07 Moca
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		162
+#define N_SHAREDATA_VERSION		163
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -533,6 +536,9 @@
 
 //! ノード操作同期
 #define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+//DLLSHARE Work操作同期
+#define	GSTR_MUTEX_SAKURA_SHAREWORK			(_T("MutexSakuraEditorShareWork")		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! 強調キーワードロック
 #define	GSTR_MUTEX_SAKURA_KEYWORD			(_T("MutexSakuraEditorKeyword")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
@@ -656,7 +662,15 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! タグジャンプ元通知 */
 #define	MYWM_SETREFERER		(WM_APP+207)
 
-/*! 行(改行単位)データの要求 */
+/*! 行(改行単位)データの要求(Send)
+	共有データ： EditWnd:Write→呼び出し元Read
+	wParam:CLogicInt ロジック行
+	lParam:ClogicInt ロジック列オフセット
+	@retval 0：行なし正常終了。EOF最終行
+	@retval 1以上：行データあり。行データ長
+	@retval -1以下：エラー
+	@date 2014.05.07 仕様変更。戻り値のマイナス lParamに意味を追加
+*/
 #define	MYWM_GETLINEDATA	(WM_APP+208)
 
 
