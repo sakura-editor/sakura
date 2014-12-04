@@ -52,7 +52,7 @@ const DWORD p_helpids[] = {
 };
 
 CDlgProfileMgr::CDlgProfileMgr()
-: CDialog(false)
+: CDialog(false, false)
 {
 	return;
 }

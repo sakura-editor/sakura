@@ -137,7 +137,8 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 
 
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
-	: m_bDirectTagJump(bDirectTagJump),
+	: CDialog(true),
+	  m_bDirectTagJump(bDirectTagJump),
 	  m_nIndex( -1 ),
 	  m_pszFileName( NULL ),
 	  m_pszKeyword( NULL ),
