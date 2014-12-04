@@ -270,8 +270,8 @@ namespace WCODE
 		LocalCache* GetCache(){ return pcache; }
 	private:
 		LocalCache* pcache;
-		LocalCache m_localcache[2];
-		SCharWidthCache* m_parCache[2];
+		LocalCache m_localcache[3];
+		SCharWidthCache* m_parCache[3];
 		ECharWidthCacheMode m_eLastEditCacheMode;
 	private:
 		DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);

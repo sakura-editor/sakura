@@ -253,6 +253,8 @@ void CEditDoc::Clear()
 	// 「基本」のタイプ別設定を適用
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), true );
 	m_blfCurTemp = false;
+	m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&m_pcEditWnd->GetLogfont());
+	InitCharWidthCache( m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
 	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
 	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
@@ -752,7 +754,9 @@ void CEditDoc::OnChangeSetting(
 
 	// フォント更新
 	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
+	m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&m_pcEditWnd->GetLogfont());
 
+	InitCharWidthCache( m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
 	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
 
@@ -822,12 +826,14 @@ void CEditDoc::OnChangeSetting(
 	for( i = 0; i < viewCount; ++i ){
 		m_pcEditWnd->GetView(i).OnChangeSetting();
 	}
+	m_pcEditWnd->GetMiniMap().OnChangeSetting();
 	if( posSaveAry ){
 		m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
 	}
 	for( i = 0; i < viewCount; i++ ){
 		m_pcEditWnd->GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 	}
+	m_pcEditWnd->GetMiniMap().AdjustScrollBars();
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}

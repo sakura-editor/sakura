@@ -64,7 +64,7 @@ BOOL CEditView::CreateScrollBar()
 
 	/* スクロールバーの作成 */
 	m_hwndHScrollBar = NULL;
-	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
+	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz && !m_bMiniMap ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
 			_T("SCROLLBAR"),					/* scroll bar control class */
@@ -420,6 +420,8 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	/* キャレットの表示・更新 */
 	GetCaret().ShowEditCaret();
 
+	MiniMapRedraw(false);
+
 	return -nScrollRowNum;	//方向が逆なので符号反転が必要
 }
 
@@ -599,6 +601,75 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 }
 
 
+void CEditView::MiniMapRedraw(bool bUpdateAll)
+{
+	if( this == &m_pcEditWnd->GetActiveView() && m_pcEditWnd->GetMiniMap().GetHwnd() ){
+		CEditView& miniMap = m_pcEditWnd->GetMiniMap();
+		CLayoutYInt nViewTop = miniMap.m_nPageViewTop;
+		CLayoutYInt nViewBottom = miniMap.m_nPageViewBottom;
+		CLayoutYInt nDiff = nViewTop - GetTextArea().GetViewTopLine();
+		CLayoutYInt nDrawTopTop;
+		CLayoutYInt nDrawTopBottom;
+		bool bUpdate = (t_abs(nDiff) > nViewBottom - nViewTop) || bUpdateAll;
+		bool bUpdateOne = false;
+		if( bUpdate ){
+			if( nViewTop == GetTextArea().GetViewTopLine() ){
+				// OnSize:下だけ伸縮する
+				bUpdateOne = true;
+				nDrawTopTop = t_min(nViewBottom, GetTextArea().GetBottomLine());
+				nDrawTopBottom = t_max(nViewBottom, GetTextArea().GetBottomLine());
+			}else{
+				nDrawTopTop = nViewTop;
+				nDrawTopBottom = nViewBottom;
+			}
+		}else{
+			if( nDiff < 0 ){
+				// 上に移動
+				nDrawTopTop = GetTextArea().GetViewTopLine();
+				nDrawTopBottom = nViewTop;
+			}else{
+				// 下に移動
+				nDrawTopTop = nViewTop;
+				nDrawTopBottom = GetTextArea().GetViewTopLine();
+			}
+		}
+		RECT rcMiniMap;
+		rcMiniMap.left = 0;
+		rcMiniMap.right = miniMap.GetTextArea().GetAreaRight();
+		rcMiniMap.top = miniMap.GetTextArea().GenerateYPx(nDrawTopTop);
+		rcMiniMap.bottom = miniMap.GetTextArea().GenerateYPx(nDrawTopBottom);
+		::InvalidateRect( miniMap.GetHwnd(), &rcMiniMap, FALSE );
+		::UpdateWindow( miniMap.GetHwnd() );
+
+		if( bUpdateOne ){
+			return;
+		}
+		CLayoutYInt nDrawBottomTop;
+		CLayoutYInt nDrawBottomBottom;
+		if( bUpdate ){
+			nDrawBottomTop = GetTextArea().GetViewTopLine();
+			nDrawBottomBottom = GetTextArea().GetBottomLine();
+		}else{
+			if( nDiff < 0 ){
+				// 上に移動
+				nDrawBottomTop = GetTextArea().GetBottomLine();
+				nDrawBottomBottom = nViewBottom;
+			}else{
+				// 下に移動
+				nDrawBottomTop = nViewBottom;
+				nDrawBottomBottom = GetTextArea().GetBottomLine();
+			}
+		}
+		rcMiniMap.left = 0;
+		rcMiniMap.right = miniMap.GetTextArea().GetAreaRight();
+		rcMiniMap.top = miniMap.GetTextArea().GenerateYPx(nDrawBottomTop);
+		rcMiniMap.bottom = miniMap.GetTextArea().GenerateYPx(nDrawBottomBottom);
+		::InvalidateRect( miniMap.GetHwnd(), &rcMiniMap, FALSE );
+		::UpdateWindow( miniMap.GetHwnd() );
+	}
+}
+
+
 /*!	垂直同期スクロール
 
 	垂直同期スクロールがONならば，対応するウィンドウを指定行数同期スクロールする
@@ -615,7 +686,8 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 void CEditView::SyncScrollV( CLayoutInt line )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 
-		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01) 
+		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01)
+		&& 0 <= m_nMyIndex
 	){
 		CEditView&	editView = m_pcEditWnd->GetView(m_nMyIndex^0x01);
 #if 0
@@ -643,6 +715,7 @@ void CEditView::SyncScrollH( CLayoutInt col )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
 		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
+		&& 0 <= m_nMyIndex
 	){
 		CEditView&	cEditView = m_pcEditWnd->GetView(m_nMyIndex^0x02);
 		HDC			hdc = ::GetDC( cEditView.GetHwnd() );

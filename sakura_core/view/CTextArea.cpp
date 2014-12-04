@@ -63,11 +63,20 @@ void CTextArea::UpdateAreaMetrics(HDC hdc)
 {
 	CEditView* pView=m_pEditView;
 
-	// •¶ŽšŠÔŠu
-	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pTypeData->m_nColumnSpace );
 
-	// sŠÔŠu
-	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pTypeData->m_nLineSpace );
+	if( pView->m_bMiniMap ){
+		// •¶ŽšŠÔŠu
+		pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() );
+
+		// sŠÔŠu
+		pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() );
+	}else{
+		// •¶ŽšŠÔŠu
+		pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pTypeData->m_nColumnSpace );
+
+		// sŠÔŠu
+		pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pTypeData->m_nLineSpace );
+	}
 
 	//•\Ž¦ˆæ‚ÌÄŒvŽZ
 	//2010.08.24 Dx/Dy‚ðŽg‚¤‚Ì‚ÅŒã‚ÅÝ’è
@@ -150,13 +159,15 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 	int				nViewAlignLeftNew;
 
-	if( pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp ){
+	if( pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp && !pView->m_bMiniMap ){
 		/* s”Ô†•\Ž¦‚É•K—v‚ÈŒ…”‚ðŒvŽZ */
 		int i = DetectWidthOfLineNumberArea_calculate(&pView->m_pcEditDoc->m_cLayoutMgr);
 		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* •\Ž¦ˆæ‚Ì¶’[À•W */
 		m_nViewAlignLeftCols = i + 1;
-	}
-	else{
+	}else if( pView->m_bMiniMap ){
+		nViewAlignLeftNew = 4;
+		m_nViewAlignLeftCols = 0;
+	}else{
 		nViewAlignLeftNew = 8;
 		m_nViewAlignLeftCols = 0;
 	}

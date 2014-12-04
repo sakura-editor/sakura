@@ -175,6 +175,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 
 	// •¶‘Ží•ÊŠm’è
 	pcDoc->m_cDocType.SetDocumentType( sLoadInfo.nType, true );
+	pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());
+	InitCharWidthCache( pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
 	SelectCharWidthCache( CWM_FONT_EDIT, pcDoc->m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( pcDoc->m_pcEditWnd->GetLogfont() );
 	pcDoc->m_pcEditWnd->m_pcViewFont->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());

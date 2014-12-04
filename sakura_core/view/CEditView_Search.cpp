@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include <limits.h>
 #include "CEditView.h"
+#include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 
@@ -195,6 +196,96 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	}
 	/* 該当するキーがなかった場合 */
 	return FALSE;
+}
+
+bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
+{
+	*pbHide = true;
+	if( !m_bMiniMap ){
+		return false;
+	}
+	// ウィンドウ内にマウスカーソルがあるか？
+	GetCursorPos( po );
+	GetWindowRect( GetHwnd(), rc );
+	rc->right -= ::GetSystemMetrics(SM_CXVSCROLL);
+	if( !PtInRect( rc, *po ) ){
+		return false;
+	}
+	if(!( m_bInMenuLoop == FALSE	&&			/* １．メニュー モーダル ループに入っていない */
+		300 < ::GetTickCount() - m_dwTipTimer	/* ２．一定時間以上、マウスが固定されている */
+	) ){
+		return false;
+	}
+	if( WindowFromPoint( *po ) != GetHwnd() ){
+		return false;
+	}
+
+	CMyPoint ptClient(*po);
+	ScreenToClient( GetHwnd(), &ptClient );
+	CLayoutPoint ptNew;
+	GetTextArea().ClientToLayout( ptClient, &ptNew );
+	// 同じ行ならなにもしない
+	if( 0 == m_dwTipTimer && m_cTipWnd.m_nSearchLine == (Int)ptNew.y ){
+		*pbHide = false; // 表示継続
+		return false;
+	}
+	CNativeW cmemCurText;
+	CLayoutYInt nTipBeginLine = ptNew.y;
+	CLayoutYInt nTipEndLine = ptNew.y + CLayoutYInt(4);
+	for( CLayoutYInt nCurLine = nTipBeginLine; nCurLine < nTipEndLine; nCurLine++ ){
+		const CLayout* pcLayout = NULL;
+		if( 0 <= nCurLine ){
+			pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nCurLine );
+		}
+		if( pcLayout ){
+			CNativeW cmemCurLine;
+			{
+				CLogicInt nLineLen = pcLayout->GetLengthWithoutEOL();
+				const wchar_t* pszData = pcLayout->GetPtr();
+				int nLimitLength = 80;
+				int pre = 0;
+				int i = 0;
+				int k = 0;
+				int charSize = CNativeW::GetSizeOfChar( pszData, nLineLen, i );
+				int charWidth = t_max(1, (int)(Int)CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
+				int charType = 0;
+				// 連続する"\t" " " を " "1つにする
+				// 左からnLimitLengthまでの幅を切り取り
+				while( i + charSize <= (Int)nLineLen && k + charWidth <= nLimitLength ){
+					if( pszData[i] == L'\t' || pszData[i] == L' ' ){
+						if( charType == 0 ){
+							cmemCurLine.AppendString( pszData + pre , i - pre );
+							cmemCurLine.AppendString( L" " );
+							charType = 1;
+						}
+						pre = i + charSize;
+						k++;
+					}else{
+						k += charWidth;
+						charType = 0;
+					}
+					i += charSize;
+					charSize = CNativeW::GetSizeOfChar( pszData, nLineLen, i );
+					charWidth = t_max(1, (int)(Int)CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
+				}
+				cmemCurLine.AppendString( pszData + pre , i - pre );
+			}
+			if( nTipBeginLine != nCurLine ){
+				cmemCurText.AppendString( L"\n" );
+			}
+			cmemCurLine.Replace( L"\\", L"\\\\" );
+			cmemCurText.AppendNativeData( cmemCurLine );
+		}
+	}
+	if( cmemCurText.GetStringLength() <= 0 ){
+		return false;
+	}
+	m_cTipWnd.m_cKey = cmemCurText;
+	m_cTipWnd.m_cInfo = cmemCurText.GetStringT();
+	m_cTipWnd.m_nSearchLine = (Int)ptNew.y;
+	m_dwTipTimer = 0;		// 辞書Tipを表示している */
+	m_poTipCurPos = *po;	// 現在のマウスカーソル位置 */
+	return true;			// ここまで来ていればヒット・ワード
 }
 
 /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */

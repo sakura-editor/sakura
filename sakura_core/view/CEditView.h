@@ -164,12 +164,14 @@ public:
 	/* Constructors */
 	CEditView(CEditWnd* pcEditWnd);
 	~CEditView();
+	void Close();
 	/* 初期化系メンバ関数 */
 	BOOL Create(
 		HWND		hwndParent,	//!< 親
 		CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
 		int			nMyIndex,	//!< ビューのインデックス
-		BOOL		bShow		//!< 作成時に表示するかどうか
+		BOOL		bShow,		//!< 作成時に表示するかどうか
+		bool		bMiniMap
 	);
 	void CopyViewStatus( CEditView* ) const;					/* 自分の表示状態を他のビューにコピー */
 
@@ -200,6 +202,7 @@ public:
 	//
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
+	void OnPaint2( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
 	void DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg);
 	void OnTimer( HWND, UINT, UINT_PTR, DWORD );
 	//ウィンドウ
@@ -263,6 +266,7 @@ public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
 	void RedrawAll();											/* フォーカス移動時の再描画 */
 	void Redraw();										// 2001/06/21 asa-o 再描画
+	void RedrawLines( CLayoutYInt top, CLayoutYInt bottom );
 	void CaretUnderLineON( bool, bool, bool );						/* カーソル行アンダーラインのON */
 	void CaretUnderLineOFF( bool, bool, bool, bool );				/* カーソル行アンダーラインのOFF */
 	bool GetDrawSwitch() const
@@ -308,6 +312,7 @@ public:
 	CLayoutInt  ScrollByV( CLayoutInt vl ){	return ScrollAtV( GetTextArea().GetViewTopLine() + vl );}	/* 指定行スクロール*/
 	CLayoutInt  ScrollByH( CLayoutInt hl ){	return ScrollAtH( GetTextArea().GetViewLeftCol() + hl );}	/* 指定桁スクロール */
 	void ScrollDraw(CLayoutInt, CLayoutInt, const RECT&, const RECT&, const RECT&);
+	void MiniMapRedraw(bool);
 public:
 	void SyncScrollV( CLayoutInt );									/* 垂直同期スクロール */
 	void SyncScrollH( CLayoutInt );									/* 水平同期スクロール */
@@ -421,7 +426,7 @@ public:
 		COpeBlk*			pcOpeBlk,
 		bool				bFastMode = false
 	);
-	void ReplaceData_CEditView3(
+	bool ReplaceData_CEditView3(
 		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
 		COpeLineData*	pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
 		COpeLineData*	pInsData,
@@ -453,6 +458,7 @@ public:
 	bool IsISearchEnabled(int nCommand) const;
 
 	BOOL KeySearchCore( const CNativeW* pcmemCurText );	// 2006.04.10 fon
+	bool MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide );
 
 	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
 		@date 2006.04.10 fon 新規作成
@@ -742,6 +748,10 @@ public:
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	int				m_nMyIndex;	/* 分割状態 */
 	CMigemo*		m_pcmigemo;
+	bool			m_bMiniMap;
+	bool			m_bMiniMapMouseDown;
+	CLayoutInt		m_nPageViewTop;
+	CLayoutInt		m_nPageViewBottom;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(CEditView);

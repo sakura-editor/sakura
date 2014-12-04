@@ -117,6 +117,7 @@ static const SFuncMenuName	sFuncMenuName[] = {
 	{F_SHOWFUNCKEY,			{F_SHOWFUNCKEY_ON,				F_SHOWFUNCKEY_OFF}},
 	{F_SHOWTAB,				{F_SHOWTAB_ON,					F_SHOWTAB_OFF}},
 	{F_SHOWSTATUSBAR,		{F_SHOWSTATUSBAR_ON,			F_SHOWSTATUSBAR_OFF}},
+	{F_SHOWMINIMAP,			{F_SHOWMINIMAP_ON,				F_SHOWMINIMAP_OFF}},
 	{F_TOGGLE_KEY_SEARCH,	{F_TOGGLE_KEY_SEARCH_ON,		F_TOGGLE_KEY_SEARCH_OFF}},
 };
 
@@ -240,8 +241,14 @@ CEditWnd::~CEditWnd()
 	}
 	m_pcEditView = NULL;
 
+	delete m_pcEditViewMiniMap;
+	m_pcEditViewMiniMap = NULL;
+
 	delete m_pcViewFont;
 	m_pcViewFont = NULL;
+
+	delete m_pcViewFontMiniMap;
+	m_pcViewFontMiniMap = NULL;
 
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
@@ -622,6 +629,10 @@ HWND CEditWnd::Create(
 
 	m_pcViewFont = new CViewFont(&GetLogfont());
 
+	m_pcEditViewMiniMap = new CEditView(this);
+
+	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
+
 	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	//	Dec. 4, 2002 genta
@@ -677,6 +688,8 @@ HWND CEditWnd::Create(
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
 
+	SelectCharWidthCache( CWM_FONT_MINIMAP, CWM_CACHE_LOCAL ); // Init
+	InitCharWidthCache( m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
 	SelectCharWidthCache( CWM_FONT_EDIT, GetLogfontCacheMode() );
 	InitCharWidthCache( GetLogfont() );
 
@@ -687,7 +700,7 @@ HWND CEditWnd::Create(
 	m_cSplitterWnd.Create( G_AppInstance(), GetHwnd(), this );
 
 	/* ビュー */
-	GetView(0).Create( m_cSplitterWnd.GetHwnd(), GetDocument(), 0, TRUE  );
+	GetView(0).Create( m_cSplitterWnd.GetHwnd(), GetDocument(), 0, TRUE, false  );
 	GetView(0).OnSetFocus();
 
 	/* 子ウィンドウの設定 */
@@ -715,6 +728,9 @@ HWND CEditWnd::Create(
 
 	/* タブウインドウ */
 	LayoutTabBar();
+
+	// ミニマップ
+	LayoutMiniMap();
 
 	/* バーの配置終了 */
 	EndLayoutBars( FALSE );
@@ -1017,6 +1033,22 @@ void CEditWnd::LayoutTabBar( void )
 		}
 	}else{
 		m_cTabWnd.Close();
+	}
+}
+
+/*! ミニマップの配置処理
+	@date 2014.07.14 新規作成
+*/
+void CEditWnd::LayoutMiniMap( void )
+{
+	if( m_pShareData->m_Common.m_sWindow.m_bDispMiniMap ){	/* タブバーを表示する */
+		if( NULL == GetMiniMap().GetHwnd() ){
+			GetMiniMap().Create( GetHwnd(), GetDocument(), -1, TRUE, true );
+		}
+	}else{
+		if( NULL != GetMiniMap().GetHwnd() ){
+			GetMiniMap().Close();
+		}
 	}
 }
 
@@ -1718,6 +1750,8 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 			}
 
+			LayoutMiniMap();
+
 			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 			EndLayoutBars();
 
@@ -1975,6 +2009,9 @@ LRESULT CEditWnd::DispatchEvent(
 				break;
 			case MYBCN_STATUSBAR:
 				LayoutStatusBar();		// 2006.12.19 ryoji
+				break;
+			case MYBCN_MINIMAP:
+				LayoutMiniMap();
 				break;
 			}
 			EndLayoutBars();	// 2006.12.19 ryoji
@@ -2485,6 +2522,10 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 		case F_SHOWSTATUSBAR:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cStatusBar.GetStatusHwnd() );
+			break;
+		case F_SHOWMINIMAP:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !GetMiniMap().GetHwnd() );
 			break;
 		case F_TOGGLE_KEY_SEARCH:
 			SetMenuFuncSel( hMenu, eFunc, pszKey, 
@@ -3081,6 +3122,10 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 	}
 	//@@@ From Here 2003.05.31 MIK
 	//@@@ To Here 2003.05.31 MIK
+	bool bMiniMapSizeBox = true;
+	if( wParam == SIZE_MAXIMIZED ){
+		bMiniMapSizeBox = false;
+	}
 	nStatusBarHeight = 0;
 	if( NULL != m_cStatusBar.GetStatusHwnd() ){
 		::SendMessage( m_cStatusBar.GetStatusHwnd(), WM_SIZE, wParam, lParam );
@@ -3137,6 +3182,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		::UpdateWindow( m_cStatusBar.GetStatusHwnd() );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 		::GetWindowRect( m_cStatusBar.GetStatusHwnd(), &rc );
 		nStatusBarHeight = rc.bottom - rc.top;
+		bMiniMapSizeBox = false;
 	}
 	::GetClientRect( GetHwnd(), &rcClient );
 
@@ -3207,6 +3253,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			}
 			nTabHeightBottom = rc.bottom - rc.top;
 			nTabWndHeight = 0;
+			bMiniMapSizeBox = false;
 		}
 		if( bHidden ){
 			::ShowWindow( m_cTabWnd.GetHwnd(), SW_SHOW );
@@ -3243,6 +3290,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 				bSizeBox = false;
 			}
 			m_cFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
+			bMiniMapSizeBox = false;
 		}
 		::UpdateWindow( m_cFuncKeyWnd.GetHwnd() );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 	}
@@ -3272,12 +3320,30 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			(eDockSideFL == DOCKSIDE_TOP || eDockSideFL == DOCKSIDE_BOTTOM)? nFuncListHeight: nHeight,
 			TRUE
 		);
+		if( eDockSideFL == DOCKSIDE_RIGHT || eDockSideFL == DOCKSIDE_BOTTOM ){
+			bMiniMapSizeBox = false;
+		}
 	}
+
+	// ミニマップ
+	int nMiniMapWidth = 0;
+	if( GetMiniMap().GetHwnd() ){
+		nMiniMapWidth = GetDllShareData().m_Common.m_sWindow.m_nMiniMapWidth;
+		::MoveWindow( m_pcEditViewMiniMap->GetHwnd(), 
+			(eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth - nMiniMapWidth: cx - nMiniMapWidth,
+			(eDockSideFL == DOCKSIDE_TOP)? nTop + nFuncListHeight: nTop,
+			nMiniMapWidth,
+			(eDockSideFL == DOCKSIDE_TOP || eDockSideFL == DOCKSIDE_BOTTOM)? nHeight - nFuncListHeight: nHeight,
+			TRUE
+		);
+		GetMiniMap().SplitBoxOnOff( FALSE, FALSE, bMiniMapSizeBox );
+	}
+
 	::MoveWindow(
 		m_cSplitterWnd.GetHwnd(),
 		(eDockSideFL == DOCKSIDE_LEFT)? nFuncListWidth: 0,
 		(eDockSideFL == DOCKSIDE_TOP)? nTop + nFuncListHeight: nTop,	//@@@ 2003.05.31 MIK
-		(eDockSideFL == DOCKSIDE_LEFT || eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth: cx,
+		((eDockSideFL == DOCKSIDE_LEFT || eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth: cx) - nMiniMapWidth,
 		(eDockSideFL == DOCKSIDE_TOP || eDockSideFL == DOCKSIDE_BOTTOM)? nHeight - nFuncListHeight: nHeight,	//@@@ 2003.05.31 MIK
 		TRUE
 	);
@@ -4268,6 +4334,7 @@ void CEditWnd::Views_DeleteCompatibleBitmap()
 			GetView(i).DeleteCompatibleBitmap();
 		}
 	}
+	GetMiniMap().DeleteCompatibleBitmap();
 }
 
 LRESULT CEditWnd::Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -4297,7 +4364,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
 			m_pcEditViewArr[i] = new CEditView(this);
-			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE );
+			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE, false );
 		}
 		m_nEditViewCount = nViewCount;
 
@@ -4332,6 +4399,7 @@ void CEditWnd::InitAllViews()
 		GetView(i).GetCaret().MoveCursor( CLayoutPoint(0, 0), true );
 		GetView(i).GetCaret().m_nCaretPosX_Prev = CLayoutInt(0);
 	}
+	GetMiniMap().OnChangeSetting();
 }
 
 
@@ -4343,6 +4411,7 @@ void CEditWnd::Views_RedrawAll()
 			GetView(v).RedrawAll();
 		}
 	}
+	GetMiniMap().RedrawAll();
 	//アクティブを再描画
 	GetActiveView().RedrawAll();
 }
@@ -4354,6 +4423,7 @@ void CEditWnd::Views_Redraw()
 		if( m_nActivePaneIndex != v )
 			GetView(v).Redraw();
 	}
+	GetMiniMap().Redraw();
 	//アクティブを再描画
 	GetActiveView().Redraw();
 }
@@ -4430,6 +4500,7 @@ bool CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
 	for( i = 0; i < GetAllViewCount(); i++ ){
 		GetView(i).SetDrawSwitch( bDraw );
 	}
+	GetMiniMap().SetDrawSwitch( bDraw );
 	return bDrawSwitchOld;
 }
 
@@ -4458,6 +4529,8 @@ void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 			pcView->AdjustScrollBars();
 		}
 	}
+	GetMiniMap().Redraw();
+	GetMiniMap().AdjustScrollBars();
 }
 
 
@@ -4538,6 +4611,7 @@ BOOL CEditWnd::UpdateTextWrap( void )
 			for( int i = 0; i < GetAllViewCount(); i++ ){
 				::UpdateWindow( GetView(i).GetHwnd() );
 			}
+			::UpdateWindow( GetMiniMap().GetHwnd() );
 		}
 		return bWrap;	// 画面更新＝折り返し変更
 	}
@@ -4583,6 +4657,8 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 			GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
+	InvalidateRect( GetMiniMap().GetHwnd(), NULL, TRUE );
+	GetMiniMap().AdjustScrollBars();
 	GetActiveView().GetCaret().ShowCaretPosInfo();	// 2009.07.25 ryoji
 
 	if( hwndProgress ){

@@ -2649,19 +2649,31 @@ void CDlgFuncList::SyncColor( void )
 void CDlgFuncList::GetDockSpaceRect( LPRECT pRect )
 {
 	CEditView* pcEditView = (CEditView*)m_lParam;
+	// CDlgFuncList と CSplitterWnd の外接矩形
+	// 2014.12.02 ミニマップ対応
+	HWND hwnd[3];
+	RECT rc[3];
+	hwnd[0] = ::GetParent( pcEditView->GetHwnd() );	// CSplitterWnd
+	int nCount = 1;
 	if( IsDocking() ){
-		// CDlgFuncList と CSplitterWnd との外接矩形
-		HWND hwnd[2];
-		RECT rc[2];
-		hwnd[0] = GetHwnd();
-		hwnd[1] = ::GetParent( pcEditView->GetHwnd() );	// CSplitterWnd
-		for( int i = 0; i < 2; i++ ){
-			::GetWindowRect(hwnd[i], &rc[i]);
-		}
+		hwnd[nCount] = GetHwnd();
+		nCount++;
+	}
+	hwnd[nCount] = pcEditView->m_pcEditWnd->GetMiniMap().GetHwnd();
+	if( hwnd[nCount] != NULL ){
+		nCount++;
+	}
+	for( int i = 0; i < nCount; i++ ){
+		::GetWindowRect(hwnd[i], &rc[i]);
+	}
+	if( 1 == nCount ){
+		*pRect = rc[0];
+	}else if( 2 == nCount ){
 		::UnionRect(pRect, &rc[0], &rc[1]);
 	}else{
-		// CCSplitterWnd の矩形
-		::GetWindowRect( ::GetParent(pcEditView->GetHwnd()), pRect );
+		RECT rcTemp;
+		::UnionRect(&rcTemp, &rc[0], &rc[1]);
+		::UnionRect(pRect, &rcTemp, &rc[2]);
 	}
 }
 

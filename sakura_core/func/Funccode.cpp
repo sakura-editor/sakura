@@ -382,6 +382,7 @@ const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List9
 	F_SHOWFUNCKEY		,	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\¦ */	//Sept. 14, 2000 JEPRO ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ÆƒXƒe[ƒ^ƒXƒo[‚ğ“ü‚ê‘Ö‚¦
 	F_SHOWTAB			,	/* ƒ^ƒu‚Ì•\¦ */	//@@@ 2003.06.10 MIK
 	F_SHOWSTATUSBAR		,	/* ƒXƒe[ƒ^ƒXƒo[‚Ì•\¦ */
+	F_SHOWMINIMAP		,	// ƒ~ƒjƒ}ƒbƒv‚Ì•\¦
 	F_TYPE_LIST			,	/* ƒ^ƒCƒv•Êİ’èˆê—— */			//Sept. 17, 2000 JEPRO İ’èŒn‚É“ü‚Á‚Ä‚È‚©‚Á‚½‚Ì‚Å’Ç‰Á
 	F_OPTION_TYPE		,	/* ƒ^ƒCƒv•Êİ’è */
 	F_OPTION			,	/* ‹¤’Êİ’è */
@@ -838,6 +839,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_SHOWFUNCKEY:		return HLP000070;	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\¦ */
 	case F_SHOWTAB:			return HLP000282;	/* ƒ^ƒu‚Ì•\¦ */	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:	return HLP000134;	/* ƒXƒe[ƒ^ƒXƒo[‚Ì•\¦ */
+	case F_SHOWMINIMAP:		return HLP000371;	// ƒ~ƒjƒ}ƒbƒv‚Ì•\¦
 	case F_TYPE_LIST:		return HLP000072;	/* ƒ^ƒCƒv•Êİ’èˆê—— */
 	case F_OPTION_TYPE:		return HLP000073;	/* ƒ^ƒCƒv•Êİ’è */
 	case F_OPTION:			return HLP000076;	/* ‹¤’Êİ’è */

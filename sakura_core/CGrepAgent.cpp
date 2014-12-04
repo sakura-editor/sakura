@@ -209,6 +209,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	else {
 		pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk = new COpeBlk;
+		pcViewDst->GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
 	}
 	pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk->AddRef();
 

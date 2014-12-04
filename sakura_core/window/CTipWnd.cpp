@@ -123,7 +123,14 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 
 	::ReleaseDC( GetHwnd(), hdc );
 
-	::MoveWindow( GetHwnd(), nX, nY, rc.right + 8, rc.bottom + 8/*nHeight*/, TRUE );
+	if( m_bAlignLeft ){
+		// âEë§å≈íËÇ≈ï\é¶(MiniMap)
+		::MoveWindow( GetHwnd(), nX - rc.right, nY, rc.right + 8, rc.bottom + 8, TRUE );
+	}else{
+		// ç∂ë§å≈íËÇ≈ï\é¶(í èÌ)
+		::MoveWindow( GetHwnd(), nX, nY, rc.right + 8, rc.bottom + 8/*nHeight*/, TRUE );
+	}
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	::ShowWindow( GetHwnd(), SW_SHOWNA );
 	return;
 
