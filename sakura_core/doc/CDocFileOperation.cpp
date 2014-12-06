@@ -245,7 +245,6 @@ bool CDocFileOperation::SaveFileDialog(
 	TCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	{
 		LPCTSTR	szExt;
-		TCHAR	szWork[MAX_TYPES_EXTS];
 
 		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
@@ -269,30 +268,7 @@ bool CDocFileOperation::SaveFileDialog(
 		}
 		else {
 			szDefaultWildCard[0] = _T('\0'); 
-			if (szExt[0] != _T('\0')) {
-				// ファイルパスがあり、拡張子ありの場合、トップに指定
-				_tcscpy(szDefaultWildCard, _T("*"));
-				_tcscat(szDefaultWildCard, szExt);
-			}
-			// 拡張子を指定に合わせる
-			const TCHAR*	pStr;
-			const TCHAR*	pEnd;
-			pStr = pEnd = type.m_szTypeExts;
-			do {
-				if (*pEnd == _T('\0') || *pEnd == _T(',')) {
-					auto_strncpy(szWork, pStr, pEnd - pStr);
-					szWork[pEnd - pStr]= _T('\0');
-					if (szExt[0] == _T('\0') || auto_stricmp(szWork, szExt + 1) != 0) {
-						// 拡張子指定なし、またはマッチした拡張子でない
-						if (szDefaultWildCard[0] != _T('\0')) {
-							_tcscat(szDefaultWildCard, _T(";"));
-						}
-						_tcscat(szDefaultWildCard, _T("*."));
-						_tcscat(szDefaultWildCard, szWork);
-					}
-					pStr = pEnd + 1;
-				}
-			} while	(*pEnd++ != _T('\0'));
+			CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt, szDefaultWildCard);
 		}
 
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){

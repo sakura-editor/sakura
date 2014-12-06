@@ -28,6 +28,11 @@
 #include "StdAfx.h"
 #include "CDocTypeManager.h"
 #include "_main/CMutex.h"
+#include "CFileExt.h"
+#include <Shlwapi.h>	// PathMatchSpec
+
+const TCHAR* CDocTypeManager::m_typeExtSeps = _T(" ;,");	// タイプ別拡張子 区切り文字
+const TCHAR* CDocTypeManager::m_typeExtWildcards = _T("*?");	// タイプ別拡張子 ワイルドカード
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
@@ -38,29 +43,25 @@ static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 	@param pszFilePath [in] ファイル名
 	
 	拡張子を切り出して GetDocumentTypeOfExt に渡すだけ．
+	@date 2014.12.06 syat ワイルドカード対応。２重拡張子対応をやめる
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 {
-	TCHAR	szExt[_MAX_EXT];
-	TCHAR	szName[_MAX_FNAME];
-	TCHAR*	pszExt = szExt;
+	int		i;
 
-	if( NULL != pszFilePath && pszFilePath[0] ){
-		_tsplitpath( pszFilePath, NULL, NULL, szName, szExt );
-		// 2重拡張子探索
-		TCHAR* pFileExt = _tcschr( szName, '.' );
-		if( pFileExt ){
-			pFileExt++;
-			auto_strcat( pFileExt, pszExt );
-		}else{
-			if( 0 == pszExt[0] ){
-				// 拡張子がファイルにない
-				pFileExt = szName;
-			}else{
-				pFileExt = pszExt + 1;
-			}
+	// ファイル名を抽出
+	const TCHAR* pszFileName = pszFilePath;
+	const TCHAR* pszSep = _tcsrchr(pszFilePath, _T('\\'));
+	if (pszSep) {
+		pszFileName = pszSep + 1;
+	}
+
+	for (i = 0; i < m_pShareData->m_nTypesCount; ++i){
+		const STypeConfigMini* mini;
+		GetTypeConfigMini(CTypeConfig(i), &mini);
+		if (IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
+			return CTypeConfig(i);	//	番号
 		}
-		return GetDocumentTypeOfExt( pFileExt );
 	}
 	return CTypeConfig(0);
 }
@@ -75,32 +76,11 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
 	ファイル全体の形式に対応させるときは，また考え直す．
 	@date 2012.10.22 Moca ２重拡張子, 拡張子なしに対応
+	@date 2014.12.06 syat GetDocumentTypeOfPathに統合
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 {
-	static const TCHAR	pszSeps[] = _T(" ;,");	// separator
-
-	int		i;
-	TCHAR*	pszToken;
-	TCHAR	szText[MAX_TYPES_EXTS];
-
-	for( i = 0; i < m_pShareData->m_nTypesCount; ++i ){
-		const STypeConfigMini* mini;
-		GetTypeConfigMini( CTypeConfig(i), &mini );
-		_tcscpy( szText, mini->m_szTypeExts );
-		pszToken = _tcstok( szText, pszSeps );
-		while( NULL != pszToken ){
-			if( 0 == _tcsicmp( pszExt, pszToken ) ){
-				return CTypeConfig(i);	//	番号
-			}
-			pszToken = _tcstok( NULL, pszSeps );
-		}
-	}
-	const TCHAR* pFileExt = _tcschr( pszExt, _T('.') );
-	if( pFileExt && pFileExt[1] ){
-		return GetDocumentTypeOfExt( pFileExt + 1 );
-	}
-	return CTypeConfig(0);	//	ハズレ
+	return GetDocumentTypeOfPath(pszExt);
 }
 
 CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
@@ -168,4 +148,105 @@ bool CDocTypeManager::DelTypeConfig(CTypeConfig cDocumentType)
 {
 	LockGuard<CMutex> guard( g_cDocTypeMutex );
 	return FALSE != SendMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DEL_TYPESETTING, (WPARAM)cDocumentType.GetIndex(), 0 );
+}
+
+/*!
+	タイプ別拡張子にファイル名がマッチするか
+	
+	@param pszTypeExts [in] タイプ別拡張子（ワイルドカードを含む）
+	@param pszFileName [in] ファイル名
+*/
+bool CDocTypeManager::IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName)
+{
+	TCHAR szWork[MAX_TYPES_EXTS];
+
+	_tcsncpy(szWork, pszTypeExts, _countof(szWork));
+	szWork[_countof(szWork) - 1] = '\0';
+	TCHAR* token = _tcstok(szWork, m_typeExtSeps);
+	while (token) {
+		if (_tcspbrk(token, m_typeExtWildcards) == NULL) {
+			if (_tcsicmp(token, pszFileName) == 0) {
+				return true;
+			}
+			const TCHAR* pszExt = _tcsrchr(pszFileName, _T('.'));
+			if (pszExt != NULL && _tcsicmp(token, pszExt + 1) == 0) {
+				return true;
+			}
+		} else {
+			if (PathMatchSpec(pszFileName, token) == TRUE) {
+				return true;
+			}
+		}
+		token = _tcstok(NULL, m_typeExtSeps);
+	}
+	return false;
+}
+
+/*!
+	タイプ別拡張子の先頭拡張子を取得する
+	
+	@param pszTypeExts [in] タイプ別拡張子（ワイルドカードを含む）
+	@param szFirstExt  [out] 先頭拡張子
+	@param nBuffSize   [in] 先頭拡張子のバッファサイズ
+*/
+void CDocTypeManager::GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize)
+{
+	TCHAR szWork[MAX_TYPES_EXTS];
+
+	_tcsncpy(szWork, pszTypeExts, _countof(szWork));
+	szWork[_countof(szWork) - 1] = '\0';
+	TCHAR* token = _tcstok(szWork, m_typeExtSeps);
+	while (token) {
+		if (_tcspbrk(token, m_typeExtWildcards) == NULL) {
+			_tcsncpy(szFirstExt, token, nBuffSize);
+			szFirstExt[nBuffSize - 1] = _T('\0');
+			return;
+		}
+	}
+	szFirstExt[0] = _T('\0');
+	return;
+}
+
+/*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
+	@param pszSrcExt [in]  拡張子リスト 例「.c .cpp;.h」
+	@param pszDstExt [out] 拡張子リスト 例「*.c;*.cpp;*.h」
+	@param szExt [in] リストの先頭にする拡張子 例「.h」
+
+	@date 2014.12.06 syat CFileExtから移動
+*/
+bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt )
+{
+	TCHAR	*token;
+	TCHAR	*p;
+
+	//	2003.08.14 MIK NULLじゃなくてfalse
+	if( NULL == pszSrcExt ) return false;
+	if( NULL == pszDstExt ) return false;
+
+	p = _tcsdup( pszSrcExt );
+	_tcscpy( pszDstExt, _T("") );
+
+	if (szExt != NULL && szExt[0] != _T('\0')) {
+		// ファイルパスがあり、拡張子ありの場合、トップに指定
+		_tcscpy(pszDstExt, _T("*"));
+		_tcscat(pszDstExt, szExt);
+	}
+
+	token = _tcstok(p, m_typeExtSeps);
+	while( token )
+	{
+		if (szExt == NULL || szExt[0] == _T('\0') || auto_stricmp(token, szExt + 1) != 0) {
+			if( pszDstExt[0] != '\0' ) _tcscat( pszDstExt, _T(";") );
+			// 拡張子指定なし、またはマッチした拡張子でない
+			if (_tcspbrk(token, m_typeExtWildcards) == NULL) {
+				if (_T('.') == *token) _tcscat(pszDstExt, _T("*"));
+				else                 _tcscat(pszDstExt, _T("*."));
+			}
+			_tcscat(pszDstExt, token);
+		}
+
+		token = _tcstok( NULL, m_typeExtSeps );
+	}
+	free( p );	// 2003.05.20 MIK メモリ解放漏れ
+	return true;
 }

@@ -53,7 +53,8 @@ public:
 	int GetCount( void ) { return m_nCount; }
 
 protected:
-	bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt );
+	// 2014.10.30 syat ConvertTypesExtToDlgExt‚ðCDocTypeManager‚ÉˆÚ“®
+	//bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt );
 
 private:
 

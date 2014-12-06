@@ -211,18 +211,19 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					if( !m_bRegistryChecked[ nIdx ] ){
 						TCHAR exts[_countof(type->m_szTypeExts)] = {0};
 						_tcscpy( exts, type->m_szTypeExts );
-						static const TCHAR	pszSeps[] = _T(" ;,");	// separator
-						TCHAR *ext = _tcstok( exts, pszSeps );
+						TCHAR *ext = _tcstok( exts, CDocTypeManager::m_typeExtSeps );
 
 						m_bExtRMenu[ nIdx ] = true;
 						m_bExtDblClick[ nIdx ] = true;
 						while( NULL != ext ){
-							bool bRMenu;
-							bool bDblClick;
-							CheckExt( ext, &bRMenu, &bDblClick );
-							m_bExtRMenu[ nIdx ] &= bRMenu;
-							m_bExtDblClick[ nIdx ] &= bDblClick;
-							ext = _tcstok( NULL, pszSeps );
+							if (_tcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
+								bool bRMenu;
+								bool bDblClick;
+								CheckExt( ext, &bRMenu, &bDblClick );
+								m_bExtRMenu[ nIdx ] &= bRMenu;
+								m_bExtDblClick[ nIdx ] &= bDblClick;
+							}
+							ext = _tcstok( NULL, CDocTypeManager::m_typeExtSeps );
 						}
 						m_bRegistryChecked[ nIdx ] = true;
 					}
@@ -242,33 +243,34 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			TCHAR exts[_countof(type->m_szTypeExts)] = {0};
 			_tcscpy( exts, type->m_szTypeExts );
-			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
-			TCHAR *ext = _tcstok( exts, pszSeps );
+			TCHAR *ext = _tcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( NULL != ext ){
-				if( checked ){	//「右クリック」チェックON
-					if( (nRet = RegistExt( ext, true )) != 0 )
-					{
-						TCHAR buf[BUFFER_SIZE] = {0};
-						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-						::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
-						break;
-					}
-				}else{			//「右クリック」チェックOFF
-					if( (nRet = UnregistExt( ext )) != 0 )
-					{
-						TCHAR buf[BUFFER_SIZE] = {0};
-						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-						::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
-						break;
+				if (_tcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
+					if( checked ){	//「右クリック」チェックON
+						if( (nRet = RegistExt( ext, true )) != 0 )
+						{
+							TCHAR buf[BUFFER_SIZE] = {0};
+							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL );
+							::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+							break;
+						}
+					}else{			//「右クリック」チェックOFF
+						if( (nRet = UnregistExt( ext )) != 0 )
+						{
+							TCHAR buf[BUFFER_SIZE] = {0};
+							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL );
+							::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+							break;
+						}
 					}
 				}
-				m_bExtRMenu[ nIdx ] = checked;
-				::EnableWindow( hwndDblClick, checked );
-				m_bExtDblClick[ nIdx ] = checked;
-				BtnCtl_SetCheck( hwndDblClick, checked );
-				ext = _tcstok( NULL, pszSeps );
+				ext = _tcstok( NULL, CDocTypeManager::m_typeExtSeps );
 			}
+			m_bExtRMenu[nIdx] = checked;
+			::EnableWindow(hwndDblClick, checked);
+			m_bExtDblClick[nIdx] = checked;
+			BtnCtl_SetCheck(hwndDblClick, checked);
 			return TRUE;
 		}
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED )
@@ -280,20 +282,21 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			TCHAR exts[_countof(type->m_szTypeExts)] = {0};
 			_tcscpy( exts, type->m_szTypeExts );
-			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
-			TCHAR *ext = _tcstok( exts, pszSeps );
+			TCHAR *ext = _tcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( NULL != ext ){
-				if( (nRet = RegistExt( ext, checked )) != 0 )
-				{
-					TCHAR buf[BUFFER_SIZE] = {0};
-					::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
-					::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
-					break;
+				if (_tcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
+					if( (nRet = RegistExt( ext, checked )) != 0 )
+					{
+						TCHAR buf[BUFFER_SIZE] = {0};
+						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL );
+						::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+						break;
+					}
 				}
-				m_bExtDblClick[ nIdx ] = checked;
-				ext = _tcstok( NULL, pszSeps );
+				ext = _tcstok( NULL, CDocTypeManager::m_typeExtSeps );
 			}
+			m_bExtDblClick[ nIdx ] = checked;
 			return TRUE;
 		}
 		}
