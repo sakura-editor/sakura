@@ -67,7 +67,7 @@ const TCHAR* CFormatManager::MyGetDateFormat(
 		dwFlags = 0;
 		pszForm = szDateFormat;
 	}
-	::GetDateFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
+	::GetDateFormat( CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen );
 	return pszDest;
 }
 
@@ -103,7 +103,7 @@ const TCHAR* CFormatManager::MyGetTimeFormat(
 		dwFlags = 0;
 		pszForm = szTimeFormat;
 	}
-	::GetTimeFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
+	::GetTimeFormat(CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen);
 	return pszDest;
 }
 

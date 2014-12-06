@@ -69,6 +69,15 @@ LPCTSTR CSelectLang::getDefaultLangString( void )
 	return m_psLangInfo->szLangName;
 }
 
+// Œ¾ŒêID‚ð•Ô‚·
+WORD CSelectLang::getDefaultLangId(void)
+{
+	if (m_psLangInfo == NULL){
+		return ::GetUserDefaultLangID();
+	}
+	return m_psLangInfo->wLangId;
+}
+
 /*!
 	@brief Œ¾ŒêŠÂ‹«‚ð‰Šú‰»‚·‚é
 	
