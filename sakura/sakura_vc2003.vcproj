@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				GenerateMapFile="TRUE"
 				SubSystem="2"
@@ -96,7 +96,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -154,7 +154,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -212,7 +212,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
