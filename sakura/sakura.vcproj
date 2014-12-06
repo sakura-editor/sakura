@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				GenerateMapFile="true"
 				SubSystem="2"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -217,7 +217,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -294,7 +294,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib"
+				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"

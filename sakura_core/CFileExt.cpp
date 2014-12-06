@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "CFileExt.h"
+#include "env/CDocTypeManager.h"
 
 CFileExt::CFileExt()
 {
@@ -56,7 +57,7 @@ bool CFileExt::AppendExt( const TCHAR *pszName, const TCHAR *pszExt )
 {
 	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szExt) + 10];
 
-	if( !ConvertTypesExtToDlgExt( pszExt, szWork ) ) return false;
+	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, NULL, szWork ) ) return false;
 	return AppendExtRaw( pszName, szWork );
 }
 
@@ -130,34 +131,3 @@ const TCHAR *CFileExt::GetExtFilter( void )
 
 	return &m_vstrFilter[0];
 }
-
-/*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
-	@param pszSrcExt [in]  拡張子リスト 例「.c .cpp;.h」
-	@param pszDstExt [out] 拡張子リスト 例「*.c;*.cpp;*.h」
-*/
-bool CFileExt::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt )
-{
-	TCHAR	*token;
-	TCHAR	*p;
-
-	//	2003.08.14 MIK NULLじゃなくてfalse
-	if( NULL == pszSrcExt ) return false;
-	if( NULL == pszDstExt ) return false;
-
-	p = _tcsdup( pszSrcExt );
-	_tcscpy( pszDstExt, _T("") );
-
-	token = _tcstok( p, _T(" ;,") );
-	while( token )
-	{
-		if( _T('.') == *token ) _tcscat( pszDstExt, _T("*") );
-		else                 _tcscat( pszDstExt, _T("*.") );
-		_tcscat( pszDstExt, token );
-
-		token = _tcstok( NULL, _T(" ;,") );
-		if( token ) _tcscat( pszDstExt, _T(";") );
-	}
-	free( p );	// 2003.05.20 MIK メモリ解放漏れ
-	return true;
-}
-

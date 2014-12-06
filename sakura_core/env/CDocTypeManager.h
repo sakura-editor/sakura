@@ -46,6 +46,13 @@ public:
 	bool AddTypeConfig(CTypeConfig cDocumentType);
 	bool DelTypeConfig(CTypeConfig cDocumentType);
 
+	static bool IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName);	// タイプ別拡張子にファイル名がマッチするか
+	static void GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize);	// タイプ別拡張子の先頭拡張子を取得する
+	static bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt );	// タイプ別設定の拡張子リストをダイアログ用リストに変換する
+
+	static const TCHAR* m_typeExtSeps;			// タイプ別拡張子の区切り文字
+	static const TCHAR* m_typeExtWildcards;		// タイプ別拡張子のワイルドカード
+
 private:
 	DLLSHAREDATA* m_pShareData;
 };

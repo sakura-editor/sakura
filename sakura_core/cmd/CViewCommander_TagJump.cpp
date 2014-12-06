@@ -740,20 +740,12 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int cou
 		// (無題)でもファイル名を要求してくるのでダミーをつける
 		// 現在のタイプ別の1番目の拡張子を拝借
 		TCHAR szExts[MAX_TYPES_EXTS];
-		TCHAR* pszExt = szExts;
-		auto_strcpy( szExts, m_pCommanderView->m_pTypeData->m_szTypeExts );
-		if( szExts[0] != '\0' ){
-			// strtok 注意
-			pszExt = _tcstok( szExts, _T(" ;,") );
-		}
-		int nExtLen = 0;
-		if( NULL != pszExt ){
-			nExtLen = auto_strlen( pszExt );
-		}
+		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
+		int nExtLen = auto_strlen( szExts );
 		_tcscat( szCurrentPath, _T("\\dmy") );
 		if( nExtLen ){
 			_tcscat( szCurrentPath, _T(".") );
-			_tcscat( szCurrentPath, pszExt );
+			_tcscat( szCurrentPath, szExts );
 		}
 	}
 	return true;
