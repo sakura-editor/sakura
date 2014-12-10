@@ -3679,11 +3679,11 @@ BEGIN
 
 	// CDlgGrep.cpp
 	STR_DLGGREP1				"Please select search folder."
-	STR_DLGGREP2				"ファイル指定のフォルダ部分にはワイルドカードは使えません。"
-	STR_DLGGREP3				"ファイル指定にはフルパスは使えません"
+	STR_DLGGREP2				"You can not use wildcards in the folder part of the file specification."
+	STR_DLGGREP3				"File name not use full path."
 	STR_DLGGREP4				"Please define the target search folder."
 	STR_DLGGREP5				"Target folder is not correct."
-	STR_DLGGREP6				"検索対象フォルダが長すぎます。"
+	STR_DLGGREP6				"Target folder is too long"
 
 	// CDlgJump.cpp
 	STR_DLGJUMP1				"Please input correct line number"
@@ -3699,13 +3699,13 @@ BEGIN
 	STR_DLGOPNFL_ERR1			"Dialog didnt open.\n\nError:%ts"
 
 	// CDlgPluginOption.cpp
-	STR_DLGPLUGINOPT_LOAD		"プラグインがロードされていません。"
-	STR_DLGPLUGINOPT_TITLE		"%ls プラグインの設定"
-	STR_DLGPLUGINOPT_INIHEAD	" プラグイン設定ファイル"
-	STR_DLGPLUGINOPT_OPTION		"指定できるオプションがありません"
+	STR_DLGPLUGINOPT_LOAD		"Didn't load plugin."
+	STR_DLGPLUGINOPT_TITLE		"%ls Plugin Setting"
+	STR_DLGPLUGINOPT_INIHEAD	" Plugin Setting file"
+	STR_DLGPLUGINOPT_OPTION		"Option doesn't exist"
 	STR_DLGPLUGINOPT_LIST1		"Item"
 	STR_DLGPLUGINOPT_LIST2		"Value"
-	STR_DLGPLUGINOPT_SELECT		"%tsの選択"
+	STR_DLGPLUGINOPT_SELECT		"Select %ts"
 
 	// CDlgPrintSetting.cpp
 	STR_DLGPRNST1				"Page Setup Profile Name" 
@@ -3745,7 +3745,7 @@ BEGIN
 	STR_DLGFLPROP_FILE_SIZE		"File Size  %d Bytes\r\n"
 
 	// CDlgReplace.cpp
-	STR_DLGREPLC_CLIPBOARD		"There is no valid data in the clipboard！"
+	STR_DLGREPLC_CLIPBOARD		"There is no valid data in the clipboard!"
 	STR_DLGREPLC_STR			"No Selected Text to Replace"
 	STR_DLGREPLC_REPLACE		"Changed %d occurances"
 	STR_DLGREPLC_REPSTR			"Please provide a replacement term first."
@@ -3756,7 +3756,7 @@ BEGIN
 
 	// CDlgTagJumpList.cpp
 	STR_DLGTAGJMP1				"(report)"															// FIXME - correct?
-	STR_DLGTAGJMP2				"(候補は見つかりませんでした)"											// FIXME ???
+	STR_DLGTAGJMP2				"(Not Found)"											// FIXME ???
 	STR_DLGTAGJMP_LIST1			"Keyword"
 	STR_DLGTAGJMP_LIST2			"hierarchical"
 	STR_DLGTAGJMP_LIST3			"Line Nr"
@@ -3774,15 +3774,15 @@ BEGIN
 	STR_DLGWINSZ_MINIMIZE		"(Minimize)"
 
 	// CDlgProfileMgr.cpp
-	STR_DLGPROFILE_ERR_WRITE		"プロフィール設定の書き込みに失敗しました。"
+	STR_DLGPROFILE_ERR_WRITE		"Failed to write profile settings."
 	STR_DLGPROFILE_NEW_PROF_TITLE	"New Profile Name"
 	STR_DLGPROFILE_NEW_PROF_MSG		"Input New Profile Name."
-	STR_DLGPROFILE_ERR_INVALID_CHAR	"利用できない文字が含まれています。"
-	STR_DLGPROFILE_ERR_ALREADY		"すでに同じ名前のプロファイルがあります。"
-	STR_DLGPROFILE_ERR_FILE			"同名のファイルがあるため作成できません。"
+	STR_DLGPROFILE_ERR_INVALID_CHAR	"Contains is not available characters."
+	STR_DLGPROFILE_ERR_ALREADY		"Already there is a profile of the same name."
+	STR_DLGPROFILE_ERR_FILE			"You can not create because there is a file with the same name."
 	STR_DLGPROFILE_RENAME_TITLE		"Rename Proflie Name"
 	STR_DLGPROFILE_RENAME_MSG		"Input Profile Name."
-	STR_DLGPROFILE_ERR_RENAME		"名前の変更に失敗しました。\nプロファイルは利用中の可能性があります。"
+	STR_DLGPROFILE_ERR_RENAME		"Failed to change the name.\nProfile there is a possibility of being used."
 
 	// CDocOutline.cpp
 	STR_DOCOUTLINE_REGEX		"Regex Rule\n%ls\nOn Error\n%ts"
@@ -3805,7 +3805,7 @@ BEGIN
 	STR_TRAY_CREATE				"CControlTray::Create()\nCould not register window class."
 	STR_TRAY_TYPE_NAME			"Set %d"
 	STR_TRAY_EXTHELP1			"External Help 1 is unset.\nSet it now?"
-	STR_TRAY_RESPONSEFILE		"レスポンスファイルの作成に失敗しました。"
+	STR_TRAY_RESPONSEFILE		"Create error response file."
 	STR_TRAY_CREATEPROC1		"'%ts'\nFailed to execute process.\n%ts"
 	STR_TRAY_CREATEPROC2		"'%ts'\nFailed to execute process."
 	STR_TRAY_EXITALL			"Close all open windows, and exit editor without saving?"					// When you exit editor
@@ -3814,7 +3814,7 @@ BEGIN
 
 	// CEditDoc.cpp
 	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
-	STR_LOADAGENT_BIG_FILE		"File size is %dMB or over. Do you want to open？"
+	STR_LOADAGENT_BIG_FILE		"File size is %dMB or over. Do you want to open?"
 	STR_SAVEAGENT_VIEW_FILE		"Cannot overwrite file in view-mode."
 	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
@@ -3824,9 +3824,9 @@ BEGIN
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
 	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwire teh original file?"
 	STR_BACKUP_CONFORM_TITLE1		"Confirming creation of backup"												// Dialog Title for message below
-	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\nBackup file will be sent to the Trashcan\n"
+	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\nBackup file will be sent to the Trashcan\n"
 	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title fo rmessage below
-	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK？  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
+	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
 	STR_BACKUP_ERR_DELETE		"failed to delete"
 	STR_BACKUP_ERR_MOVE			"failed to move"
 	STR_ERR_DLGEDITDOC21		"%ts\nis currently prohibited from writing by another process."
@@ -3838,9 +3838,9 @@ BEGIN
 	STR_FILE_LOCK_ERR			"%ts\n [%ts] could not obtain lock\nThe exclusive lock on the current file is now invalid."
 
 	STR_TITLE_GREP				"[Grep] %ls%ts"
-	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing？\n\nDue to opening as view-mode it is suggested to save under a different name.\n"
-	STR_CHANGE_CHARSET			"%ts\nはテキストの変更は有りませんが、\n文字コードセットが変更されています。\n閉じる前に保存しますか？"
-	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing？"
+	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing? \n\nDue to opening as view-mode it is suggested to save under a different name.\n"
+	STR_CHANGE_CHARSET			"%ts\nis no change.\however change encoding.\nSave before closing?"
+	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing?"
 	STR_AUTORELOAD_NOFITY		"★File Updated at %02d:%02d:%02d"
 
 	// CType_Cpp.cpp
@@ -3855,7 +3855,7 @@ BEGIN
 	STR_OUTLINE_JAVA_DEFPOS		"def. pos."												// Defined position
 
 	// CType_Erlang.cpp
-	STR_OUTLINE_ERLANG_SCANARGS	"COutlineErlang::ScanArgs 未知の括弧"
+	STR_OUTLINE_ERLANG_SCANARGS	"COutlineErlang::ScanArgs unknown bracket"
 
 	// Caret.cpp
 	STR_CARET_WITHBOM			" BOM"
@@ -3871,7 +3871,7 @@ BEGIN
 	STR_INS_MODE_INS			"INS"													// Insert mode
 	STR_INS_MODE_OVR			"OVR"													// Overwrite mode
 	STR_GREP_SEARCH_CONDITION	"\r\n□ Search Conditions  "							// Output from GREP resuilts
-	STR_GREP_SEARCH_FILE		"「File Search」\r\n"
+	STR_GREP_SEARCH_FILE		"<File Search>\r\n"
 	STR_GREP_SEARCH_TARGET		"Search Target   "
 	STR_GREP_REPLACE_TO			"Repalce To      "
 	STR_GREP_PASTE_CLIPBOAD		"(Paste From Clipborad)"
@@ -3942,7 +3942,7 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurences to end of file."				// Comes up when you press replace individually until u reach end of file.
 	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD18		"%ts\n has been changed. Save before passing to Oracle SQL*Plus？"
+	STR_ERR_CEDITVIEW_CMD18		"%ts\n has been changed. Save before passing to Oracle SQL*Plus?"
 	STR_ERR_CEDITVIEW_CMD20		"Oracle SQL*Plus did not respond.\nPlease wait a while and try again."
 	STR_ERR_CEDITVIEW_CMD21		"If the SQL isnt saved to a file then Oracle SQL*Plus can not run it.\n"
 	STR_ERR_CEDITVIEW_CMD22		"Did not find any differences."
@@ -4034,7 +4034,7 @@ BEGIN
 	STR_ESI_BYTES_AND_POINTS	"Specific Bytes and Point\n"
 	STR_ESI_UTF16LE_B_AND_P		"\t\tUTF16LE Specific Bytes %d\tPoint %d\r\n"
 	STR_ESI_UTF16BE_B_AND_P		"\t\tUTF16BE Specific Bytes %d\tPoint %d\r\n"
-	STR_ESI_BOM					"\t\tBOM Detection　"
+	STR_ESI_BOM					"\t\tBOM Detection  "
 	STR_ESI_BOM_UNKNOWN			"Unknown\r\n"
 	STR_ESI_MBC_OTHER_UNICODE	"\tMBC and Other UNICODE Family\r\n"
 	STR_ESI_OTHER_B_AND_P		"\t\t%d.%ts\tSpecific Bytes %d\tPoint %d\r\n"
@@ -4050,7 +4050,7 @@ BEGIN
 	// CFuncInfo.cpp
 
 	// CFuncInfoArr.cpp
-	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nCouldnt start timer。\nPossibly insufficient system resources."
+	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nCouldnt start timer.\nPossibly insufficient system resources."
 
 	// CFuncLookup.cpp
 	STR_ERR_DLGFUNCLKUP01		"External Macro"
@@ -4088,7 +4088,7 @@ BEGIN
 	STR_ERR_DLGKEYBIND2			"---Undefined Name-----"
 
 	// CKeyMacroMgr.cpp
-	STR_ERR_DLGKEYMACMGR1		"//キーボードマクロのファイル\r\n"
+	STR_ERR_DLGKEYMACMGR1		"//Keyborad macro file\r\n"
 	STR_ERR_DLGKEYMACMGR2		"Error reading in Macro"
 	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: Too many parameters\n"
 	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\nFunction %ls parameter %d can not be a string."
@@ -4177,7 +4177,7 @@ BEGIN
 	STR_ERR_DLGPRNPRVW1			"Landscape"
 	STR_ERR_DLGPRNPRVW2			"Portrait"		// next to paper type
 	STR_ERR_DLGPRNPRVW3			"The printer %ts, \n cant use the selected %ts paper.\n Automatically choosing to use %ts paper."
-	STR_ERR_DLGPRNPRVW3_1		"印刷ページ設定エラー:印字可能領域がありません"
+	STR_ERR_DLGPRNPRVW3_1		"Print Page Setting Error:There is no printable area"
 	STR_ERR_DLGPRNPRVW4			"Please choose the page number to display (1 - %d)"			//  Print dialog ".." button
 	STR_ERR_DLGPRNPRVW5			"Preview Page Settings"										//  Print dialog ".." button
 	STR_ERR_DLGPRNPRVW6			"%d/%dpg"
@@ -4200,7 +4200,7 @@ BEGIN
 	STR_PROPCOMBK_DUSTBOX		"(Recycle Folder)"
 
 	// CPropComCustmenu.cpp
-	STR_PROPCOMCUSTMENU_SEP		" ─────────────"
+	STR_PROPCOMCUSTMENU_SEP		" --------------------------"
 	STR_PROPCOMCUSTMENU_AC1		"Menu Item Access Settings"
 	STR_PROPCOMCUSTMENU_AC2		"Please press a key."
 	// Has a HEADER #define, should we also fix this?
@@ -4217,9 +4217,9 @@ BEGIN
 	// Has static date-time string
 
 	// CPropComGeneral.cpp 
-	STR_PROPCOMGEN_FILE1		"Deleting recent file history,\nOK？\n"
+	STR_PROPCOMGEN_FILE1		"Deleting recent file history,\nOK?\n"
 	STR_PROPCOMGEN_FILE2		"Deleted recent file history.\n"
-	STR_PROPCOMGEN_DIR1			"Deleting recent folder history,\nOK？\n"
+	STR_PROPCOMGEN_DIR1			"Deleting recent folder history,\nOK?\n"
 	STR_PROPCOMGEN_DIR2			"Deleted recent folder history\n"
 
 	// CPropComGrep.cpp 
@@ -4241,7 +4241,7 @@ BEGIN
 	STR_PROPCOMKEYWORD_SETMAX	"Maximum registration of %d sets is possible.\n"
 	STR_PROPCOMKEYWORD_SETNAME1	"Added Keyword Set"
 	STR_PROPCOMKEYWORD_SETNAME2	"Please input the Set's name"
-	STR_PROPCOMKEYWORD_SETDEL	"Delete the set [%ls]\nOK？\nThe set to be deleted is one of the below types\nDeleted set will become invalid.\n\n%ts"  // FIX
+	STR_PROPCOMKEYWORD_SETDEL	"Delete the set [%ls]\nOK?\nThe set to be deleted is one of the below types\nDeleted set will become invalid.\n\n%ts"  // FIX
 	STR_PROPCOMKEYWORD_RENAME1	"Name for Set has been changed"
 	STR_PROPCOMKEYWORD_RENAME2	"Please input Set's name"
 	STR_PROPCOMKEYWORD_KEYMAX	"Reached the maximum number of registerable keywords.\n"
@@ -4263,15 +4263,15 @@ BEGIN
 	// CPropComMainMenu.cpp
 	STR_SPECIAL_FUNC			"Special Function"
 	STR_PROPCOMMAINMENU_EDIT	"Please edit"
-	STR_PROPCOMMAINMENU_SEP		"――――――――――"
+	STR_PROPCOMMAINMENU_SEP		"--------------------"
 	STR_PROPCOMMAINMENU_ACCKEY1	"Access key settings of menu item"
 	STR_PROPCOMMAINMENU_ACCKEY2	"Please input key."
 	STR_PROPCOMMAINMENU_CLEAR	"Are you sure you want to erase menu settings?"
 	STR_PROPCOMMAINMENU_INIT	"Are you sure you want to load default menu settings?"
 	STR_PROPCOMMAINMENU_DEL		"Are you sure you want to delete selected item?"
 	STR_PROPCOMMAINMENU_OK		"No problems detected."
-	STR_PROPCOMMAINMENU_ERR1	"メニュー設定の取得に失敗しました"
-	STR_PROPCOMMAINMENU_ERR2	"『共通設定』が有りません。\n"
+	STR_PROPCOMMAINMENU_ERR1	"Faild to get menu setting"
+	STR_PROPCOMMAINMENU_ERR2	"Not include [Common Settings]\n"
 	STR_PROPCOMMAINMENU_ERR3	"Too many top-level items\n"
 	STR_PROPCOMMAINMENU_ERR4	"Too many items\n"
 	STR_PROPCOMMAINMENU_ERR5	"There is access key duplicate.\n"
@@ -4309,7 +4309,7 @@ BEGIN
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%ts\n"
 
 	// CPropCOmPlugin.cpp
-	STR_PROPCOMPLG_ERR1			"プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません"
+	STR_PROPCOMPLG_ERR1			"Do not loaded plugin this window or Folder is different for\nYou can't change the settings."
 	STR_PROPCOMPLG_ERR2			"Don't open ReadMe File"
 	STR_PROPCOMPLG_ERR3			"ReadMe file not found"
 	STR_PROPCOMPLG_STATE1		"Add"
@@ -4434,7 +4434,7 @@ BEGIN
 	STR_IMAGE_POS9					"Center right"
 
 	// CDlgTypeAscertain.cpp
-	STR_DLGTYPEASC_IMPORT			"--そのままインポート--"
+	STR_DLGTYPEASC_IMPORT			"--Without change import--"
 
 	// CDlgTypeList.cpp
 	STR_DLGTYPELIST_ERR1			"Failed to set association settings.\n"
@@ -4447,22 +4447,22 @@ BEGIN
 
 	// CImpExpManager.cpp
 	STR_IMPEXP_ERR_FILEOPEN			"Could not open the file.\n\n"
-	STR_IMPEXP_ERR_EXPORT			"エクスポート出来ませんでした。\n\n"
+	STR_IMPEXP_ERR_EXPORT			"Was not able to export\n\n"
 	STR_IMPEXP_OK_EXPORT			"Exported to the file\n\n"
-	STR_IMPEXP_OK_IMPORT			"ファイルをインポートしました。\n\n"
-	STR_IMPEXP_ERR_COLOR_OLD		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n"
-	STR_IMPEXP_ERR_TYPE				"不正な形式です。\nインポートを中止します"
-	STR_IMPEXP_VER					"エクスポートした %ls(%ls/%d) とバージョンが異なります。\n\nインポートしてもよろしいですか？"
-	STR_IMPEXP_REGEX1				"キーワード数が上限に達したため切り捨てました。"
-	STR_IMPEXP_REGEX2				"キーワード領域がいっぱいなため切り捨てました。"
-	STR_IMPEXP_REGEX3				"不正なキーワードを無視しました。"
-	STR_IMPEXP_DIC_NOTFOUND			"【Could not find dict file】"
+	STR_IMPEXP_OK_IMPORT			"Imported to the file.\n\n"
+	STR_IMPEXP_ERR_COLOR_OLD		"Is different format color settings file. Not support old version format.\n"
+	STR_IMPEXP_ERR_TYPE				"Invalid format.\nStop import."
+	STR_IMPEXP_VER					"Export %ls(%ls/%d) Different version.\n\nAre you sure you want to import?"
+	STR_IMPEXP_REGEX1				"keyword truncated becouse the number of keywords has reached the upper limit."
+	STR_IMPEXP_REGEX2				"keyword truncated becouse keyword are is full."
+	STR_IMPEXP_REGEX3				"Ignore invalid keyword."
+	STR_IMPEXP_DIC_NOTFOUND			"<Could not find dict file>"
 	STR_IMPEXP_DIC_LENGTH			"Dictionary file description should be a maximum of %d characters.\n"
 	STR_IMPEXP_DIC_RECORD			"A part of the data couldnt be read\nIncorrect line: %d"
 	STR_IMPEXP_KEY_FORMAT			"Key bindings file is the worng format.\n\n"
 	STR_IMPEXP_CUSTMENU_FORMAT		"Custom Menu setting file's format is wrong.\n\n"
 	STR_IMPEXP_KEYWORD				"Due to reaching the upper limit, several keywords could not be registered."
-	STR_IMPEXP_MEINMENU				"メインメニュー設定ファイルの形式が違います。\n\n"
+	STR_IMPEXP_MEINMENU				"Is different format main menu setting file\n\n"
 
 	// CRecent.cpp
 
@@ -4599,7 +4599,7 @@ BEGIN
 	STR_ERR_CWSH06					"Unable to pass object"
 	STR_ERR_CWSH07					"Status update error"
 	STR_ERR_CWSH08					"Failed to execute"
-	STR_ERR_CWSH09					"マクロの実行を中断しました。"
+	STR_ERR_CWSH09					"Aborted execute macro."
 
 
 	// Debug.cpp
@@ -4619,7 +4619,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_SHELL_HHCTRL				"HHCTRL.OCX could not be found\r\nHTML help requires HHCTRL.OCX.\r\n"
 	STR_SHELL_INFO					"Information"
 	STR_SHELL_MENU_OPEN				"Open (&O)..."
-	STR_SHELL_MENU_IMPEXP			"Import／Export Location (&R)eset "
+	STR_SHELL_MENU_IMPEXP			"Import/Export Location (&R)eset "
 	STR_SHELL_IMPEXPDIR				"Reset Import/Export default folder path to\nSettings-Folder path."
 	STR_SHELL_INIFOLDER				"Settings Folder(&/) >>"
 
@@ -4647,7 +4647,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	// CCdoeChecker.cpp
 	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%ts)?"
-	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\Do you continue saving？\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
+	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\Do you continue saving?\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
 	STR_CODECHECKER_LOSESOME_SAVE	"lose some char info by saving encoding conversion."
 	STR_CODECHECKER_LOSESOME_ROAD	"lose some char info by loading encoding conversion."
 	STR_CONVERT_ERR					"Error on Convert."
@@ -4660,7 +4660,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_MENU_GREP					"%ts [Grep]""%ts%ts"""
 	STR_MENU_OUTPUT					"%ts output"
 
-	STR_PRINT_WAITING				"印刷処理の終了を待機しています・・・"
+	STR_PRINT_WAITING				"Waiting for end of printing processing..."
 
 	// Convert Setting Values
 	STR_TAB_CAPTION_OUTPUT			"[Grep]"
@@ -4702,39 +4702,39 @@ GDI Resource\tRemaining  %d%%\n\n"
 #else
 	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
 #endif
-	STR_BREGONIG_ERROR				"bregonig.dll のロードで予期せぬエラーが発生しました。"
+	STR_BREGONIG_ERROR				"Failed to load bregonig.dll."
 	STR_BREGONIG_TITLE				"Regular Expression Error"
 
 	// CDllPlugin.cpp
-	STR_DLLPLG_TITLE				"DLLプラグイン"
-	STR_DLLPLG_INIT_ERR1			"DLLの読み込みに失敗しました\n%ts\n%ls"
-	STR_DLLPLG_INIT_ERR2			"DLLの読み込みに失敗しました"
+	STR_DLLPLG_TITLE				"DLL Plugin"
+	STR_DLLPLG_INIT_ERR1			"Faild to read DLL\n%ts\n%ls"
+	STR_DLLPLG_INIT_ERR2			"Faild to read DLL"
 
 	// CPluginManager.cpp
-	STR_PLGMGR_FOLDER				"プラグインフォルダを作成出来ません"
-	STR_PLGMGR_CANCEL				"キャンセルされました"
-	STR_PLGMGR_NEWPLUGIN			"新しいプラグインは見つかりませんでした"
+	STR_PLGMGR_FOLDER				"Faild to create plugin folder"
+	STR_PLGMGR_CANCEL				"Canceled"
+	STR_PLGMGR_NEWPLUGIN			"Not found new plugin"
 	STR_PLGMGR_INSTALL				"Are you sure you want to install %ts?"
 	STR_PLGMGR_INSTALL_ERR			"Failed to install %ts\nReason: %ls"
-	STR_PLGMGR_ERR_ZIP				"ZIPファイルは扱えません"
-	STR_PLGMGR_ERR_FOLDER			"プラグインフォルダがありません"
-	STR_PLGMGR_ERR_CREATEDIR		"プラグインフォルダを作成出来ません"
-	STR_PLGMGR_INST_ZIP_ACCESS		"ZIPファイル「%ts」にアクセス出来ません"
-	STR_PLGMGR_INST_ZIP_DEF			"ZIPファイル「%ts」にはプラグイン定義ファイル（plugin.def）がありません"
-	STR_PLGMGR_INST_ZIP_ALREADY		"「%ts」は既にインストールされています\n上書きしますか？"
-	STR_PLGMGR_INST_ZIP_INST		"ZIPプラグイン「%ts」を「%ts」にインストールしますか？"
-	STR_PLGMGR_INST_ZIP_UNZIP		"ZIPプラグイン「%ts」の解凍に失敗しました"
-	STR_PLGMGR_INST_ZIP_ERR			"プラグイン「%ts」をインストールできませんでした\n理由：%ls"
-	STR_PLGMGR_INST_DEF				"プラグイン定義ファイル（plugin.def）がありません"
-	STR_PLGMGR_INST_ID				"Plugin.IDがありません"
-	STR_PLGMGR_INST_RESERVE1		"Plugin.IDに"""
-	STR_PLGMGR_INST_RESERVE2		"""は使用できません"
-	STR_PLGMGR_INST_IDNUM			"Plugin.IDの先頭に数字は使用できません"
-	STR_PLGMGR_INST_NAME			"同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%ts」を使用\n　いいえ→　インストール済みの「%ls」を使用"
-	STR_PLGMGR_INST_USERCANCEL		"ユーザキャンセル"
-	STR_PLGMGR_INST_MAX				"プラグインをこれ以上登録できません"
+	STR_PLGMGR_ERR_ZIP				"Can't use ZIP file."
+	STR_PLGMGR_ERR_FOLDER			"Not found plugins folder"
+	STR_PLGMGR_ERR_CREATEDIR		"Can't create plugins folder."
+	STR_PLGMGR_INST_ZIP_ACCESS		"Can't access ZIP file [%ts]"
+	STR_PLGMGR_INST_ZIP_DEF			"Not found plugin Define file(plugin.def) in ZIP file [%ts]"
+	STR_PLGMGR_INST_ZIP_ALREADY		"Already install [%ts]\nDo you overwrite?"
+	STR_PLGMGR_INST_ZIP_INST		"Do you install ZIP plugin [%ts] for [%ts]?"
+	STR_PLGMGR_INST_ZIP_UNZIP		"Error unzip ZIP plugin [%ts]"
+	STR_PLGMGR_INST_ZIP_ERR			"Can't install plugin [%ts]\nReason: %ls"
+	STR_PLGMGR_INST_DEF				"Not found plugin Define file(plugin.def)"
+	STR_PLGMGR_INST_ID				"Not found Plugin.ID"
+	STR_PLGMGR_INST_RESERVE1		"Do'nt Use  """
+	STR_PLGMGR_INST_RESERVE2		""" in Plugin.ID"
+	STR_PLGMGR_INST_IDNUM			"Plugin.ID of Head charcter not use numbers"
+	STR_PLGMGR_INST_NAME			"The same plugin has been installed under a different name. Are you sure Overwite?\n　Yes　->　Use new「%ts」\n　No→　Use installed「%ls」"
+	STR_PLGMGR_INST_USERCANCEL		"User Cancel"
+	STR_PLGMGR_INST_MAX				"Plugin can not register any more"
 
-	STR_WSHPLUG_LOADMACRO			"マクロの読み込みに失敗しました。\n\n%ts"
+	STR_WSHPLUG_LOADMACRO			"Failed to read the macro.\n\n%ts"
 	STR_FILESAVE_CONVERT_ERROR		"'%ts'\nFailed File save\nConvert Error."
 
 	STR_FILETREE_FROM_COMMON		"Setting: Common"
