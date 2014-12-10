@@ -1141,6 +1141,7 @@
 #define HIDC_GREP_REP_CHECK_FILE_ONLY		14525	//ファイル毎最初のみ検索
 #define HIDC_GREP_REP_CHECK_BASE_PATH		14526	//ベースフォルダ表示
 #define HIDC_GREP_REP_CHECK_SEP_FOLDER		14527	//フォルダ毎に表示
+#define HIDC_GREP_REP_CHECK_CP				14528	//CP
 
 //プロファイル一覧
 #define HIDC_LIST_PROFILE					14600	//プロファイル一覧
