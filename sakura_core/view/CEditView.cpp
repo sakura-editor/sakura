@@ -474,10 +474,8 @@ LRESULT CEditView::DispatchEvent(
 
 	switch ( uMsg ){
 	case WM_MOUSEWHEEL:
-		if( m_pcEditWnd->m_pPrintPreview ){
-			if( m_pcEditWnd->DoMouseWheel( wParam, lParam ) ){
-				return 0L;
-			}
+		if( m_pcEditWnd->DoMouseWheel( wParam, lParam ) ){
+			return 0L;
 		}
 		return OnMOUSEWHEEL( wParam, lParam );
 
