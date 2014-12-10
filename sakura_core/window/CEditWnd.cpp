@@ -4628,7 +4628,9 @@ BOOL CEditWnd::UpdateTextWrap( void )
 			for( int i = 0; i < GetAllViewCount(); i++ ){
 				::UpdateWindow( GetView(i).GetHwnd() );
 			}
-			::UpdateWindow( GetMiniMap().GetHwnd() );
+			if( GetMiniMap().GetHwnd() ){
+				::UpdateWindow( GetMiniMap().GetHwnd() );
+			}
 		}
 		return bWrap;	// ‰æ–ÊXVÜ‚è•Ô‚µ•ÏX
 	}
@@ -4674,8 +4676,10 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 			GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
-	InvalidateRect( GetMiniMap().GetHwnd(), NULL, TRUE );
-	GetMiniMap().AdjustScrollBars();
+	if( GetMiniMap().GetHwnd() ){
+		InvalidateRect( GetMiniMap().GetHwnd(), NULL, TRUE );
+		GetMiniMap().AdjustScrollBars();
+	}
 	GetActiveView().GetCaret().ShowCaretPosInfo();	// 2009.07.25 ryoji
 
 	if( hwndProgress ){
