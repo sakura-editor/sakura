@@ -207,6 +207,13 @@ void CDialog::SetDialogPosSize()
 
 	if( -1 != m_xPos && -1 != m_yPos ){
 		/* ウィンドウ位置・サイズを再現 */
+		// 2014.11.28 フォント変更対応
+		if( m_nWidth == -1 ){
+			RECT	rc;
+			::GetWindowRect( m_hWnd, &rc );
+			m_nWidth = rc.right - rc.left;
+			m_nHeight = rc.bottom - rc.top;
+		}
 
 		if( !(::GetWindowLongPtr( m_hWnd, GWL_STYLE ) & WS_CHILD) ){
 			// 2006.06.09 ryoji
@@ -216,14 +223,6 @@ void CDialog::SetDialogPosSize()
 			//       強制的に親の中央に移動させられてしまうときがある
 			//      （マルチモニタ環境で親が非プライマリモニタにある場合だけ？）
 			//       状況に合わせて処理を変えるのは厄介なので、一律、１ドットの空きを入れる
-
-			// 2014.11.28 フォント変更対応
-			if( m_nWidth == -1 ){
-				RECT	rc;
-				::GetWindowRect( m_hWnd, &rc );
-				m_nWidth = rc.right - rc.left;
-				m_nHeight = rc.bottom - rc.top;
-			}
 
 			RECT rc;
 			RECT rcWork;
