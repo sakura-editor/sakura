@@ -3066,7 +3066,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 {
-	DEBUG_TRACE(L"CEditWnd::OnSize2 %ts\n", bUpdateStatus ? _T("true"): _T("false"));
 	HWND		hwndToolBar;
 	int			cx;
 	int			cy;
