@@ -122,7 +122,7 @@ int CCommandLine::CheckCommandLine(
 		{_T("CODE"),	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoA‚©‚çˆÚ“®
 		{_T("TYPE"),	4,			CMDLINEOPT_TYPE, false},	//!< ƒ^ƒCƒv•ÊÝ’è Mar. 7, 2002 genta
 		{_T("GKEY"),	4,			CMDLINEOPT_GKEY, false},
-		{_T("GREPR"),	5,			CMDLINEOPT_GREPR, false},
+		{_T("GREPR"),	5,			CMDLINEOPT_GREPR, true},
 		{_T("GFILE"),	5,			CMDLINEOPT_GFILE, false},
 		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
 		{_T("GOPT"),	4,			CMDLINEOPT_GOPT, false},

@@ -304,6 +304,8 @@ BEGIN
     LTEXT           "Ch&aracter Set",IDC_STATIC,16,156,62,8
     COMBOBOX        IDC_COMBO_CHARSET,80,154,65,101,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
+    CONTROL         "CP(&Q)",IDC_CHECK_CP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,147,154,30,10
     CONTROL         "Bac&kup",IDC_CHK_BACKUP,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,5,167,164,10
     CONTROL         "&Default for Folder is 1st Folder",
