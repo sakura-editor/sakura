@@ -560,6 +560,7 @@ F_GETDEFAULTCHARLENGTH = 40050,	// デフォルト文字幅の取得
 F_ISINCLUDECLIPBOARDFORMAT	= 40051,	// クリップボードの形式取得
 F_GETCLIPBOARDBYFORMAT	= 40052,	// クリップボードの指定形式で取得
 F_SETCLIPBOARDBYFORMAT	= 40053,	// クリップボードの指定形式で設定
+F_GETLINEATTRIBUTE	= 40054,		// 行属性取得
 
 
 //	= 2005,.01.10 genta ISearch用補助コード

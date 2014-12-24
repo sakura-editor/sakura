@@ -54,6 +54,7 @@
 #include "dlg/CDlgOpenFile.h"
 #include "util/format.h"
 #include "util/shell.h"
+#include "util/ole_convert.h"
 #include "uiparts/CWaitCursor.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
@@ -2141,6 +2142,50 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return true;
 			}
 			return false;
+		}
+	case F_GETLINEATTRIBUTE:
+		{
+			int nLineNum;
+			int nAttType;
+			if( ArgSize < 2 ){
+				return false;
+			}
+			if( !variant_to_int(Arguments[0], nLineNum) ) return false;
+			if( !variant_to_int(Arguments[1], nAttType) ) return false;
+			CLogicInt nLine;
+			if( 0 == nLineNum ){
+				nLine = View->GetCaret().GetCaretLogicPos().GetY2();
+			}if( nLineNum < 0 ){
+				return false;
+			}else{
+				nLine = CLogicInt(nLineNum - 1); // nLineNum‚Í1ŠJŽn
+			}
+			const CDocLine* pcDocLine = View->GetDocument()->m_cDocLineMgr.GetLine(nLine);
+			if( pcDocLine == NULL ){
+				return false;
+			}
+			int nRet;
+			switch( nAttType ){
+			case 0:
+				nRet = (CModifyVisitor().IsLineModified(pcDocLine, View->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ? 1: 0);
+				break;
+			case 1:
+				nRet = pcDocLine->m_sMark.m_cModified.GetSeq();
+				break;
+			case 2:
+				nRet = (pcDocLine->m_sMark.m_cBookmarked ? 1: 0);
+				break;
+			case 3:
+				nRet = pcDocLine->m_sMark.m_cDiffmarked;
+				break;
+			case 4:
+				nRet = (pcDocLine->m_sMark.m_cFuncList.GetFuncListMark() ? 1: 0 );
+				break;
+			default:
+				return false;
+			}
+			Wrap( &Result )->Receive( nRet );
+			return true;
 		}
 	default:
 		return false;
