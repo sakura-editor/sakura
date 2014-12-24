@@ -55,6 +55,7 @@
 #include "util/format.h"
 #include "util/shell.h"
 #include "util/ole_convert.h"
+#include "util/os.h"
 #include "uiparts/CWaitCursor.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
@@ -2247,6 +2248,121 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int nColumns = (Int)View->GetTextArea().m_nViewColNum;
 			Wrap( &Result )->Receive( nColumns );
 			return true;
+		}
+	case F_CREATEMENU:
+		{
+			Variant varCopy2;
+			if( 2 <= ArgSize ){
+				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
+				if( !VariantToBStr(varCopy2, Arguments[1]) ) return false;
+				std::vector<wchar_t> vStrMenu;
+				int nLen = (int)auto_strlen(varCopy2.Data.bstrVal);
+				vStrMenu.assign( nLen + 1, L'\0' );
+				auto_strcpy(&vStrMenu[0], varCopy2.Data.bstrVal);
+				HMENU hMenu = ::CreatePopupMenu();
+				std::vector<HMENU> vHmenu;
+				vHmenu.push_back( hMenu );
+				HMENU hMenuCurrent = hMenu;
+				int nPos = 0;
+				wchar_t* p;
+				int i = 1;
+				while( p = my_strtok( &vStrMenu[0], nLen, &nPos, L"," ) ){
+					wchar_t* r = p;
+					int nFlags = MF_STRING;
+					int nFlagBreak = 0;
+					bool bSpecial = false;
+					bool bRadio = false;
+					bool bSubMenu = false;
+					int nBreakNum = 0;
+					if( p[0] == L'[' ){
+						r++;
+						while( *r != L']' && *r != L'\0' ){
+							switch( *r ){
+							case L'S':
+								if( !bSubMenu ){
+									HMENU hMenuSub = ::CreatePopupMenu();
+									vHmenu.push_back( hMenuSub );
+									bSubMenu = true;
+								}
+								break;
+							case L'E':
+								nBreakNum++;
+								break;
+							case L'C':
+								nFlags |= MF_CHECKED;
+								break;
+							case L'D':
+								nFlags |= MF_GRAYED;
+								break;
+							case L'R':
+								bRadio = true;
+								break;
+							case L'B':
+								nFlagBreak |= MF_MENUBARBREAK;
+								break;
+							default:
+								break;
+							}
+							r++;
+						}
+						if( *r == L']' ){
+							r++;
+						}
+					}
+					if( p[0] == L'-' && p[1] == L'\0' ){
+						nFlags |= MF_SEPARATOR;
+						r++;
+						bSpecial = true;
+					}
+
+					if( bSubMenu ){
+						nFlags |= nFlagBreak;
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION | MF_POPUP, (UINT_PTR)vHmenu.back(), to_tchar(r) );
+						hMenuCurrent = vHmenu.back();
+					}else if( bSpecial ){
+						nFlags |= nFlagBreak;
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, NULL );
+					}else{
+						nFlags |= nFlagBreak;
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, to_tchar(r) );
+						if( bRadio ){
+							::CheckMenuRadioItem( hMenuCurrent, i, i, i, MF_BYCOMMAND );
+						}
+						i++;
+					}
+					for( int n = 0; n < nBreakNum; n++ ){
+						if( 1 < vHmenu.size() ){
+							vHmenu.resize( vHmenu.size() - 1 );
+						}
+						hMenuCurrent = vHmenu.back();
+					}
+				}
+				POINT pt;
+				int nViewPointType = varCopy.Data.lVal;
+				if( nViewPointType == 1 ){
+					// キャレット位置
+					pt = View->GetCaret().CalcCaretDrawPos( View->GetCaret().GetCaretLayoutPos() );
+					if ( View->GetTextArea().GetAreaLeft() <= pt.x && View->GetTextArea().GetAreaTop() <= pt.y
+						&& pt.x < View->GetTextArea().GetAreaRight() && pt.y < View->GetTextArea().GetAreaBottom() ){
+						::ClientToScreen( View->GetHwnd(), &pt );
+					}else{
+						::GetCursorPos( &pt );
+					}
+				}else{
+					// マウス位置
+					::GetCursorPos( &pt );
+				}
+				RECT rcWork;
+				GetMonitorWorkRect( pt, &rcWork );
+				int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+											( pt.x > rcWork.left )? pt.x: rcWork.left,
+											( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+											0, View->GetHwnd(), NULL);
+				::DestroyMenu( hMenu );
+				Wrap( &Result )->Receive( nId );
+				return true;
+			}
+			return false;
 		}
 	default:
 		return false;
