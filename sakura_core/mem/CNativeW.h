@@ -154,6 +154,7 @@ public:
 	void ReplaceT( const wchar_t* pszFrom, const wchar_t* pszTo ){
 		Replace( pszFrom, pszTo );
 	}
+	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< •¶Žš—ñ’uŠ·
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

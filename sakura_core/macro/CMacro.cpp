@@ -65,14 +65,20 @@ CMacro::CMacro( EFunctionCode nFuncID )
 
 CMacro::~CMacro( void )
 {
+	ClearMacroParam();
+}
+
+void CMacro::ClearMacroParam()
+{
 	CMacroParam* p = m_pParamTop;
 	CMacroParam* del_p;
 	while (p){
 		del_p = p;
 		p = p->m_pNext;
-		delete[] del_p->m_pData;
 		delete del_p;
 	}
+	m_pParamTop = NULL;
+	m_pParamBot = NULL;
 	return;
 }
 
@@ -231,18 +237,38 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	}
 }
 
+void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
+{
+	Clear();
+	int nLen;
+	if( nLength == -1 ){
+		nLen = auto_strlen( szParam );
+	}else{
+		nLen = nLength;
+	}
+	m_pData = new WCHAR[nLen + 1];
+	auto_memcpy( m_pData, szParam, nLen );
+	m_pData[nLen] = LTEXT('\0');
+	m_nDataLen = nLen;
+	m_eType = EMacroParamTypeStr;
+}
+
+void CMacroParam::SetIntParam( const int nParam )
+{
+	Clear();
+	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
+	_itow(nParam, m_pData, 10);
+	m_nDataLen = auto_strlen(m_pData);
+	m_eType = EMacroParamTypeInt;
+}
+
 /*	引数に文字列を追加。
 */
-void CMacro::AddStringParam( const WCHAR* szParam )
+void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 {
-	CMacroParam* param = new CMacroParam;
-	param->m_pNext = NULL;
+	CMacroParam* param = new CMacroParam();
 
-	//	必要な領域を確保してコピー。
-	int nLen = auto_strlen( szParam );
-	param->m_pData = new WCHAR[nLen + 1];
-	auto_memcpy(param->m_pData, szParam, nLen );
-	param->m_pData[nLen] = LTEXT('\0');
+	param->SetStringParam( szParam, nLength );
 
 	//	リストの整合性を保つ
 	if (m_pParamTop){
@@ -259,12 +285,9 @@ void CMacro::AddStringParam( const WCHAR* szParam )
 */
 void CMacro::AddIntParam( const int nParam )
 {
-	CMacroParam* param = new CMacroParam;
-	param->m_pNext = NULL;
+	CMacroParam* param = new CMacroParam();
 
-	//	必要な領域を確保してコピー。
-	param->m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
-	_itow(nParam, param->m_pData, 10);
+	param->SetIntParam( nParam );
 
 	//	リストの整合性を保つ
 	if (m_pParamTop){
@@ -325,6 +348,17 @@ WCHAR* CMacro::GetParamAt(CMacroParam* p, int index)
 	return x->m_pData;
 }
 
+int CMacro::GetParamCount() const
+{
+	CMacroParam* p = m_pParamTop;
+	int n = 0;
+	while( p ){
+		n++;
+		p = p->m_pNext;
+	}
+	return n;
+}
+
 static inline int wtoi_def( const WCHAR* arg, int def_val )
 {
 	return (arg == NULL ? def_val: _wtoi(arg));
@@ -348,176 +382,58 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	int				nTextLen;
 	const WCHAR*	pText;
 	CNativeW		cmemWork;
+	int nFuncID = m_nFuncID;
 
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
-	if (CSMacroMgr::GetFuncInfoByID( hInstance, m_nFuncID, szFuncName, szFuncNameJapanese)){
-		switch ( m_nFuncID ){
-		case F_INSTEXT_W:
-		case F_FILEOPEN:
-		case F_EXECEXTMACRO:
-			//	引数ひとつ分だけ保存
-			pText = m_pParamTop->m_pData;
-			nTextLen = wcslen(pText);
-			cmemWork.SetString( pText, nTextLen );
-			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			out.WriteF( L"S_%ls(\'", szFuncName );
-			out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-			out.WriteF( L"\');\t// %ls\r\n",
-				szFuncNameJapanese
-			);
-			break;
-		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
-			out.WriteF(
-				LTEXT("S_%ls(%d, %d);\t// %ls\r\n"),
-				szFuncName,
-				(m_pParamTop->m_pData ? _wtoi(m_pParamTop->m_pData) : 1),
-				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
-				szFuncNameJapanese
-			);
-			break;
-		case F_SETFONTSIZE:	// 2013.05.31
-			out.WriteF(
-				L"S_%ls(%d",
-				szFuncName,
-				_wtoi(m_pParamTop->m_pData) );
-			if( GetParamAt(m_pParamTop,1) ){
-				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop,1), 0) );
+	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
+		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
+		out.WriteF( L"S_%ls(", szFuncName );
+		CMacroParam* pParam = m_pParamTop;
+		while( pParam ){
+			if( pParam != m_pParamTop ){
+				out.WriteString( L", " );
 			}
-			if( GetParamAt(m_pParamTop,2) ){
-				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop,2), 0) );
-			}
-			out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
-			break;
-		case F_BOOKMARK_PATTERN:	//2002.02.08 hor
-		case F_SEARCH_NEXT:
-		case F_SEARCH_PREV:
-			pText = m_pParamTop->m_pData;
-			nTextLen = wcslen(pText);
-			cmemWork.SetString( pText, nTextLen );
-			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			out.WriteF( L"S_%ls(\'", szFuncName );
-			out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-			out.WriteF( L"', %d);\t// %ls\r\n",
-				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
-				szFuncNameJapanese
-			);
-			break;
-		case F_EXECMD:
-			pText = m_pParamTop->m_pData;
-			nTextLen = wcslen(pText);
-			cmemWork.SetString( pText, nTextLen );
-			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			if( NULL != m_pParamTop->m_pNext->m_pNext ){
-				CNativeW cmemWork2(m_pParamTop->m_pNext->m_pNext->m_pData); 
-				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				out.WriteF(
-					LTEXT("S_%ls(\'%ls\', %d, '%ls');\t// %ls\r\n"),
-					szFuncName,
-					cmemWork.GetStringPtr(),
-					m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
-					cmemWork2.GetStringPtr(),
-					szFuncNameJapanese
-				);
-			}else{
-				out.WriteF(
-					LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
-					szFuncName,
-					cmemWork.GetStringPtr(),
-					m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
-					szFuncNameJapanese
-				);
-			}
-			break;
-		case F_REPLACE:
-		case F_REPLACE_ALL:
-			pText = m_pParamTop->m_pData;
-			nTextLen = wcslen(pText);
-			cmemWork.SetString( pText, nTextLen );
-			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			{
-				CNativeW cmemWork2(m_pParamTop->m_pNext->m_pData);
-				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				out.WriteF( L"S_%ls(\'", szFuncName );
-				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-				out.WriteF( L"\', \'" );
-				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
-				out.WriteF( L"\', %d);\t// %ls\r\n",
-					m_pParamTop->m_pNext->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0,
-					szFuncNameJapanese
-				);
-			}
-			break;
-		case F_GREP:
-			pText = m_pParamTop->m_pData;
-			nTextLen = wcslen(pText);
-			cmemWork.SetString( pText, nTextLen );
-			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			{
-				CNativeW cmemWork2(m_pParamTop->m_pNext->m_pData);
-				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
-
-				CNativeW cmemWork3(m_pParamTop->m_pNext->m_pNext->m_pData);
-				cmemWork3.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				out.WriteF( L"S_%ls(\'", szFuncName );
-				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-				out.WriteString( L"\', \'" );
-				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
-				out.WriteString( L"\', \'" );
-				out.WriteString( cmemWork3.GetStringPtr(), cmemWork3.GetStringLength() );
-				out.WriteF( L"', %d", (GetParamAt(m_pParamTop, 3) ? _wtoi(GetParamAt(m_pParamTop, 3)) : 0) );
-				// 古いマクロは引数4つなので5つめはオプション
-				if( GetParamAt(m_pParamTop, 4) ){
-					out.WriteF( L", %d", _wtoi(GetParamAt(m_pParamTop, 4)) );
-				}
-				out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
-			}
-			break;
-		case F_GREP_REPLACE:
-			{
-				pText = m_pParamTop->m_pData;
-				nTextLen = wcslen(pText);
+			switch( pParam->m_eType ){
+			case EMacroParamTypeInt:
+				out.WriteString( pParam->m_pData );
+				break;
+			case EMacroParamTypeStr:
+				pText = pParam->m_pData;
+				nTextLen = pParam->m_nDataLen;
 				cmemWork.SetString( pText, nTextLen );
-				cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				CNativeW cmemWork2(GetParamAt(m_pParamTop, 1));
-				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
-
-				CNativeW cmemWork3(GetParamAt(m_pParamTop, 2));
-				cmemWork3.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				CNativeW cmemWork4(GetParamAt(m_pParamTop, 3));
-				cmemWork4.Replace( LTEXT("\\"), LTEXT("\\\\") );
-				cmemWork4.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				out.WriteF( L"S_%ls(\'", szFuncName );
+				cmemWork.Replace( L"\\", L"\\\\" );
+				cmemWork.Replace( L"\'", L"\\\'" );
+				cmemWork.Replace( L"\r", L"\\\r" );
+				cmemWork.Replace( L"\n", L"\\\n" );
+				cmemWork.Replace( L"\t", L"\\\t" );
+				cmemWork.Replace( L"\0", 1, L"\\u0000", 6 );
+				cmemWork.Replace( L"\u85", L"\\u0085" );
+				cmemWork.Replace( L"\u2028", L"\\u2028" );
+				cmemWork.Replace( L"\u2029", L"\\u2029" );
+				for( int c = 0; c < 0x20; c++ ){
+					int nLen = cmemWork.GetStringLength();
+					const wchar_t* p = cmemWork.GetStringPtr();
+					for( int i = 0; i < nLen; i++ ){
+						if( p[i] == c ){
+							wchar_t from[2];
+							wchar_t to[7];
+							from[0] = c;
+							from[1] = L'\0';
+							auto_sprintf( to, L"\\u%4x", c );
+							cmemWork.Replace( from, to );
+							break;
+						}
+					}
+				}
+				cmemWork.Replace( L"\u7f", L"\\u007f" );
+				out.WriteString( L"'" );
 				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-				out.WriteString( L"\', \'" );
-				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
-				out.WriteString( L"\', \'" );
-				out.WriteString( cmemWork3.GetStringPtr(), cmemWork3.GetStringLength() );
-				out.WriteString( L"\', \'" );
-				out.WriteString( cmemWork4.GetStringPtr(), cmemWork4.GetStringLength() );
-				out.WriteF( L"', %d", wtoi_def(GetParamAt(m_pParamTop, 4), 0) );
-				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop, 5), 99) );
-				out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
+				out.WriteString( L"'" );
+				break;
 			}
-		default:
-			if( 0 == m_pParamTop ){
-				out.WriteF( LTEXT("S_%ls();\t// %ls\r\n"), szFuncName, szFuncNameJapanese );
-			}else{
-				out.WriteF( LTEXT("S_%ls(%d);\t// %ls\r\n"), szFuncName, m_pParamTop->m_pData ? _wtoi(m_pParamTop->m_pData) : 0, szFuncNameJapanese );
-			}
-			break;
+			pParam = pParam->m_pNext;
 		}
+		out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
 		return;
 	}
 	out.WriteF( LSW(STR_ERR_DLGMACRO01) );

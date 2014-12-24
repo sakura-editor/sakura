@@ -165,9 +165,14 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 //! •¶Žš—ñ’uŠ·
 void CNativeW::Replace( const wchar_t* pszFrom, const wchar_t* pszTo )
 {
-	CNativeW	cmemWork;
 	int			nFromLen = wcslen( pszFrom );
 	int			nToLen = wcslen( pszTo );
+	Replace( pszFrom, nFromLen, pszTo, nToLen );
+}
+
+void CNativeW::Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen )
+{
+	CNativeW	cmemWork;
 	int			nBgnOld = 0;
 	int			nBgn = 0;
 	while( nBgn <= GetStringLength() - nFromLen ){
