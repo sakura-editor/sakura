@@ -715,18 +715,24 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 
 
 /* 半ページアップ */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールダウンそのもの)
-void CViewCommander::Command_HalfPageUp( bool bSelect )
+void CViewCommander::Command_HalfPageUp( bool bSelect, CLayoutYInt nScrollNum )
 {
-	GetCaret().Cursor_UPDOWN( - ( m_pCommanderView->GetTextArea().m_nViewRowNum / 2 ), bSelect );
+	if( nScrollNum <= 0 ){
+		nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum / 2;
+	}
+	GetCaret().Cursor_UPDOWN( - (nScrollNum), bSelect );
 	return;
 }
 
 
 
 /* 半ページダウン */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールアップそのもの)
-void CViewCommander::Command_HalfPageDown( bool bSelect )
+void CViewCommander::Command_HalfPageDown( bool bSelect, CLayoutYInt nScrollNum )
 {
-	GetCaret().Cursor_UPDOWN( ( m_pCommanderView->GetTextArea().m_nViewRowNum / 2 ), bSelect );
+	if( nScrollNum <= 0 ){
+		nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum / 2;
+	}
+	GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
 	return;
 }
 
@@ -739,7 +745,7 @@ void CViewCommander::Command_HalfPageDown( bool bSelect )
 		１ページアップに動作変更
 	@date 2014.01.10 Moca カーソルが動かないときも画面をスクロールするように
 */	//Oct. 10, 2000 JEPRO added
-void CViewCommander::Command_1PageUp( bool bSelect )
+void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 {
 //	GetCaret().Cursor_UPDOWN( - m_pCommanderView->GetTextArea().m_nViewRowNum, bSelect );
 
@@ -748,11 +754,13 @@ void CViewCommander::Command_1PageUp( bool bSelect )
 	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
-		CLayoutInt nScrollNum = -m_pCommanderView->GetTextArea().m_nViewRowNum + 1;
-		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
+		if( nScrollNum <= 0 ){
+			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
+		}
+		GetCaret().Cursor_UPDOWN( -nScrollNum, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum ));
+		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum ));
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 		m_pCommanderView->RedrawAll();
 	}
@@ -768,7 +776,7 @@ void CViewCommander::Command_1PageUp( bool bSelect )
 		１ページダウンに動作変更
 	@date 2014.01.10 Moca カーソルが動かないときも画面をスクロールするように
 */
-void CViewCommander::Command_1PageDown( bool bSelect )
+void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 {
 //	GetCaret().Cursor_UPDOWN( m_pCommanderView->GetTextArea().m_nViewRowNum, bSelect );
 
@@ -777,7 +785,9 @@ void CViewCommander::Command_1PageDown( bool bSelect )
 	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
-		CLayoutInt nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
+		if( nScrollNum <= 0 ){
+			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
+		}
 		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
