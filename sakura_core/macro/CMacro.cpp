@@ -229,6 +229,31 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			AddIntParam( lParams[2] );
 		}
 		break;
+	// 2014.01.15 PageUp/Down系追加
+	case F_HalfPageUp:
+	case F_HalfPageUp_Sel:
+	case F_HalfPageUp_BOX:
+	case F_HalfPageDown:
+	case F_HalfPageDown_Sel:
+	case F_HalfPageDown_BOX:
+		if( lParam == 0 ){
+			AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum / 2 );
+		}else{
+			AddIntParam( lParam );
+		}
+		break;
+	case F_1PageUp:
+	case F_1PageUp_Sel:
+	case F_1PageUp_BOX:
+	case F_1PageDown:
+	case F_1PageDown_Sel:
+	case F_1PageDown_BOX:
+		if( lParam == 0 ){
+			AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum - 1 );
+		}else{
+			AddIntParam( lParam );
+		}
+		break;
 
 	/*	標準もパラメータを追加 */
 	default:
@@ -500,6 +525,18 @@ bool CMacro::HandleCommand(
 	case F_WHEELPAGEDOWN:
 	case F_WHEELPAGELEFT:
 	case F_WHEELPAGERIGHT:
+	case F_HalfPageUp:
+	case F_HalfPageDown:
+	case F_HalfPageUp_Sel:
+	case F_HalfPageDown_Sel:
+	case F_HalfPageUp_BOX:
+	case F_HalfPageDown_BOX:
+	case F_1PageUp:
+	case F_1PageDown:
+	case F_1PageUp_Sel:
+	case F_1PageDown_Sel:
+	case F_1PageUp_BOX:
+	case F_1PageDown_BOX:
 		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
 	case F_CHGMOD_EOL:	//	入力改行コード指定。EEolTypeの数値を指定。2003.06.23 Moca

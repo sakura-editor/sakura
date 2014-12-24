@@ -284,10 +284,10 @@ BOOL CViewCommander::HandleCommand(
 	case F_GOLINEEND:		Command_GOLINEEND( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, 0, lparam1 ); break;		//行末に移動(折り返し単位)
 //	case F_ROLLDOWN:		Command_ROLLDOWN( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//スクロールダウン
 //	case F_ROLLUP:			Command_ROLLUP( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;					//スクロールアップ
-	case F_HalfPageUp:		Command_HalfPageUp( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	case F_HalfPageDown:	Command_HalfPageDown( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;			//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	case F_1PageUp:			Command_1PageUp( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;					//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	case F_1PageDown:		Command_1PageDown( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	case F_HalfPageUp:		Command_HalfPageUp( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, CLayoutYInt(lparam1) ); break;				//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_HalfPageDown:	Command_HalfPageDown( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, CLayoutYInt(lparam1) ); break;			//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_1PageUp:			Command_1PageUp( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, CLayoutYInt(lparam1) ); break;					//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	case F_1PageDown:		Command_1PageDown( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, CLayoutYInt(lparam1) ); break;				//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
 	case F_GOFILETOP:		Command_GOFILETOP( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//ファイルの先頭に移動
 	case F_GOFILEEND:		Command_GOFILEEND( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//ファイルの最後に移動
 	case F_CURLINECENTER:	Command_CURLINECENTER(); break;								/* カーソル行をウィンドウ中央へ */
@@ -327,10 +327,10 @@ BOOL CViewCommander::HandleCommand(
 	case F_GOLINEEND_SEL:	Command_GOLINEEND( true, 0, lparam1 );break;	//(範囲選択)行末に移動(折り返し単位)
 //	case F_ROLLDOWN_SEL:	Command_ROLLDOWN( TRUE ); break;				//(範囲選択)スクロールダウン
 //	case F_ROLLUP_SEL:		Command_ROLLUP( TRUE ); break;					//(範囲選択)スクロールアップ
-	case F_HalfPageUp_Sel:	Command_HalfPageUp( true ); break;				//(範囲選択)半ページアップ
-	case F_HalfPageDown_Sel:Command_HalfPageDown( true ); break;			//(範囲選択)半ページダウン
-	case F_1PageUp_Sel:		Command_1PageUp( true ); break;					//(範囲選択)１ページアップ
-	case F_1PageDown_Sel:	Command_1PageDown( true ); break;				//(範囲選択)１ページダウン
+	case F_HalfPageUp_Sel:	Command_HalfPageUp( true, CLayoutYInt(lparam1) ); break;				//(範囲選択)半ページアップ
+	case F_HalfPageDown_Sel:Command_HalfPageDown( true, CLayoutYInt(lparam1) ); break;			//(範囲選択)半ページダウン
+	case F_1PageUp_Sel:		Command_1PageUp( true, CLayoutYInt(lparam1) ); break;					//(範囲選択)１ページアップ
+	case F_1PageDown_Sel:	Command_1PageDown( true, CLayoutYInt(lparam1) ); break;				//(範囲選択)１ページダウン
 	case F_GOFILETOP_SEL:	Command_GOFILETOP( true );break;				//(範囲選択)ファイルの先頭に移動
 	case F_GOFILEEND_SEL:	Command_GOFILEEND( true );break;				//(範囲選択)ファイルの最後に移動
 	case F_GONEXTPARAGRAPH_SEL:	Command_GONEXTPARAGRAPH( true ); break;			//次の段落へ進む
@@ -353,10 +353,10 @@ BOOL CViewCommander::HandleCommand(
 //	case F_GOLOGICALLINEEND_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINEEND( true, 0, 8 | lparam1 );break;	//(矩形選択)行末に移動(改行単位)
 	case F_GOLINETOP_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINETOP( true, lparam1 );break;	//(矩形選択)行頭に移動(折り返し単位/改行単位)
 	case F_GOLINEEND_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINEEND( true, 0, lparam1 );break;	//(矩形選択)行末に移動(折り返し単位/改行単位)
-	case F_HalfPageUp_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageUp( true ); break;		//(矩形選択)半ページアップ
-	case F_HalfPageDown_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageDown( true ); break;		//(矩形選択)半ページダウン
-	case F_1PageUp_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageUp( true ); break;			//(矩形選択)１ページアップ
-	case F_1PageDown_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageDown( true ); break;			//(矩形選択)１ページダウン
+	case F_HalfPageUp_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageUp( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageDown( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページダウン
+	case F_1PageUp_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageUp( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページアップ
+	case F_1PageDown_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageDown( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページダウン
 	case F_GOFILETOP_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
 	case F_GOFILEEND_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
 
