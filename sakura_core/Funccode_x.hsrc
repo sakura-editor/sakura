@@ -504,6 +504,8 @@ F_ADDREFUNDOBUFFER	= 32814,	// OpeBlK AddRef
 F_SETUNDOBUFFER		= 32815,	// OpeBlK Release
 F_APPENDUNDOBUFFERCURSOR	= 32816,	// OpeBlK にカーソル位置を追加
 F_CLIPBOARDEMPTY		= 32817,		// クリップボードクリア
+F_SETVIEWTOP			= 32818,		// ビューの上の行数を設定					CLayoutYInt nLineNumber
+F_SETVIEWLEFT			= 32819,		// ビューの左端の桁数を設定					CLayoutXInt nColumnIndex
 
 
 F_FUNCTION_FIRST	= 40000,	// 2003-02-21 鬼 これ以上だと関数
@@ -562,6 +564,8 @@ F_GETCLIPBOARDBYFORMAT	= 40052,	// クリップボードの指定形式で取得
 F_SETCLIPBOARDBYFORMAT	= 40053,	// クリップボードの指定形式で設定
 F_GETLINEATTRIBUTE	= 40054,		// 行属性取得
 F_ISTEXTSELECTINGLOCK	= 40055,	// 選択状態のロックを取得
+F_GETVIEWLINES		= 40056,	// ビューの行数取得
+F_GETVIEWCOLUMNS	= 40057,	// ビューの列数取得
 
 
 //	= 2005,.01.10 genta ISearch用補助コード
