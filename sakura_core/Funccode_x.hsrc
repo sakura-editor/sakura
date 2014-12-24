@@ -171,6 +171,8 @@ F_WHEELPAGEDOWN		= 30390,	//ホイールページダウン						int zDelta
 F_WHEELPAGELEFT		= 30391,	//ホイールページ左							int zDelta
 F_WHEELPAGERIGHT	= 30392,	//ホイールページ右							int zDelta
 F_WHEEL_LAST		= 30392,
+F_MODIFYLINE_NEXT	= 30393,	//次の変更行へ								なし
+F_MODIFYLINE_PREV	= 30394,	//前の変更行へ								なし
 
 // 選択系
 F_SELECTWORD		= 30400,	//現在位置の単語選択						なし
@@ -201,6 +203,8 @@ F_GOFILETOP_SEL		= 30450,	//(範囲選択)ファイルの先頭に移動			なし
 F_GOFILEEND_SEL		= 30451,	//(範囲選択)ファイルの最後に移動			なし
 F_GONEXTPARAGRAPH_SEL	= 30482,	//(範囲選択)次の段落へ					なし
 F_GOPREVPARAGRAPH_SEL	= 30483,	//(範囲選択)前の段落へ					なし
+F_MODIFYLINE_NEXT_SEL	= 30484,	//(範囲選択)次の変更行へ					なし
+F_MODIFYLINE_PREV_SEL	= 30485,	//(範囲選択)前の変更行へ					なし
 
 
 // 矩形選択系

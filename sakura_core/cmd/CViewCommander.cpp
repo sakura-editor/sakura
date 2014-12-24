@@ -307,6 +307,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_WHEELPAGEDOWN:	Command_WHEELPAGEDOWN(lparam1); break;
 	case F_WHEELPAGELEFT:	Command_WHEELPAGELEFT(lparam1); break;
 	case F_WHEELPAGERIGHT:	Command_WHEELPAGERIGHT(lparam1); break;
+	case F_MODIFYLINE_NEXT:	Command_MODIFYLINE_NEXT( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;	// 次の変更行へ
+	case F_MODIFYLINE_PREV:	Command_MODIFYLINE_PREV( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;	// 前の変更行へ
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD();break;						//現在位置の単語選択
@@ -333,6 +335,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_GOFILEEND_SEL:	Command_GOFILEEND( true );break;				//(範囲選択)ファイルの最後に移動
 	case F_GONEXTPARAGRAPH_SEL:	Command_GONEXTPARAGRAPH( true ); break;			//次の段落へ進む
 	case F_GOPREVPARAGRAPH_SEL:	Command_GOPREVPARAGRAPH( true ); break;			//前の段落へ戻る
+	case F_MODIFYLINE_NEXT_SEL:	Command_MODIFYLINE_NEXT( true ); break;			//(範囲選択)次の変更行へ
+	case F_MODIFYLINE_PREV_SEL:	Command_MODIFYLINE_PREV( true ); break;			//(範囲選択)前の変更行へ
 
 	/* 矩形選択系 */
 //	case F_BOXSELALL:		Command_BOXSELECTALL();break;		//矩形ですべて選択

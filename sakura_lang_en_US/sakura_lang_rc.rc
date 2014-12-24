@@ -3018,6 +3018,8 @@ BEGIN
     F_WHEELPAGEDOWN         "Wheel Page Down"
     F_WHEELPAGELEFT         "Wheel Page Left"
     F_WHEELPAGERIGHT        "Wheel Page Right"
+    F_MODIFYLINE_NEXT       "Next Modified Line"
+    F_MODIFYLINE_PREV       "Prev Modified Line"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3060,6 +3062,8 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_GONEXTPARAGRAPH_SEL   "Select next paragraph"
     F_GOPREVPARAGRAPH_SEL   "Select previous paragraph"
+    F_MODIFYLINE_NEXT_SEL   "Select Next Modified Line"
+    F_MODIFYLINE_PREV_SEL   "Select Prev Modified Line"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3981,6 +3985,8 @@ BEGIN
 	STR_DIFF_FAILED				"DIFF command failed."
 	STR_DIFF_FAILED_TEMP		"DIFF command failed.\n\nCouldnt create temporary file."
 	STR_DIFF_FAILED_LONG		"DIFF command failed.\n\nLine was too long."
+	STR_MODLINE_NEXT_NOT_FOUND	"Forward (Å´) Modified Line wasnt found."
+	STR_MODLINE_PREV_NOT_FOUND	"Previous (Å™) Modified Line wasnt found."
 
 	// CEditView_New.cpp -- no words, going to ignore for now ( just block [], ... etc )
 

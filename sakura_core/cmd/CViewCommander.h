@@ -193,6 +193,8 @@ public:
 	void Command_WHEELPAGEDOWN(int);
 	void Command_WHEELPAGELEFT(int);
 	void Command_WHEELPAGERIGHT(int);
+	void Command_MODIFYLINE_NEXT( bool bSelect );	// 次の変更行へ
+	void Command_MODIFYLINE_PREV( bool bSelect );	// 前の変更行へ
 
 	/* 選択系 */
 	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* 現在位置の単語選択 */

@@ -196,6 +196,8 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1
 	F_WHEELPAGEDOWN		,	//ホイールページダウン
 	F_WHEELPAGELEFT		,	//ホイールページ左
 	F_WHEELPAGERIGHT	,	//ホイールページ右
+	F_MODIFYLINE_NEXT	,	//次の変更行へ移動
+	F_MODIFYLINE_PREV	,	//前の変更行へ移動
 };
 const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
@@ -225,7 +227,9 @@ const EFunctionCode pnFuncList_Select[] = {
 	F_GOFILETOP_SEL			,	//(範囲選択)ファイルの先頭に移動
 	F_GOFILEEND_SEL			,	//(範囲選択)ファイルの最後に移動
 	F_GONEXTPARAGRAPH_SEL	,	//(範囲選択)次の段落へ移動
-	F_GOPREVPARAGRAPH_SEL		//(範囲選択)前の段落へ移動
+	F_GOPREVPARAGRAPH_SEL	,	//(範囲選択)前の段落へ移動
+	F_MODIFYLINE_NEXT_SEL	,	//(範囲選択)次の変更行へ移動
+	F_MODIFYLINE_PREV_SEL	,	//(範囲選択)前の変更行へ移動
 };
 const int nFincList_Select_Num = _countof( pnFuncList_Select );
 
@@ -676,6 +680,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_AUTOSCROLL:		return HLP000296;	//オートスクロール
 	case F_SETFONTSIZEUP:	return HLP000359;	//フォントサイズ拡大
 	case F_SETFONTSIZEDOWN:	return HLP000360;	//フォントサイズ縮小
+	case F_MODIFYLINE_NEXT:	return HLP000366;	//次の変更行へ移動
+	case F_MODIFYLINE_PREV:	return HLP000367;	//前の変更行へ移動
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
@@ -702,6 +708,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_1PageDown_Sel:	return HLP000241;	//(範囲選択)１ページダウン
 	case F_GOFILETOP_SEL:	return HLP000242;	//(範囲選択)ファイルの先頭に移動
 	case F_GOFILEEND_SEL:	return HLP000243;	//(範囲選択)ファイルの最後に移動
+	case F_MODIFYLINE_NEXT_SEL:	return HLP000369;	//(範囲選択)次の変更行へ移動
+	case F_MODIFYLINE_PREV_SEL:	return HLP000370;	//(範囲選択)前の変更行へ移動
 
 
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
