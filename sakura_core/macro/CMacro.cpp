@@ -1315,6 +1315,42 @@ bool CMacro::HandleCommand(
 			cClipboard.Empty();
 		}
 		break;
+	case F_SETVIEWTOP:
+		{
+			if( ArgSize <= 0 ){
+				return false;
+			}
+			if( ArgLengths[0] <= 0 ){
+				return false;
+			}
+			if( !WCODE::Is09( Argument[0][0] ) ){
+				return false;
+			}
+			CLayoutYInt nLineNum = CLayoutYInt(_wtoi(Argument[0]) - 1);
+			if( nLineNum < 0 ){
+				nLineNum = CLayoutYInt(0);
+			}
+			pcEditView->SyncScrollV( pcEditView->ScrollAtV( nLineNum ));
+		}
+		break;
+	case F_SETVIEWLEFT:
+		{
+			if( ArgSize <= 0 ){
+				return false;
+			}
+			if( ArgLengths[0] <= 0 ){
+				return false;
+			}
+			if( !WCODE::Is09( Argument[0][0] ) ){
+				return false;
+			}
+			CLayoutXInt nColumn = CLayoutXInt(_wtoi(Argument[0]) - 1);
+			if( nColumn < 0 ){
+				nColumn = CLayoutXInt(0);
+			}
+			pcEditView->SyncScrollH( pcEditView->ScrollAtH( nColumn ) );
+		}
+		break;
 	default:
 		//	ˆø”‚È‚µB
 		pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	•W€
@@ -2200,6 +2236,18 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			}
 		}
 		return true;
+	case F_GETVIEWLINES:
+		{
+			int nLines = (Int)View->GetTextArea().m_nViewRowNum;
+			Wrap( &Result )->Receive( nLines );
+			return true;
+		}
+	case F_GETVIEWCOLUMNS:
+		{
+			int nColumns = (Int)View->GetTextArea().m_nViewColNum;
+			Wrap( &Result )->Receive( nColumns );
+			return true;
+		}
 	default:
 		return false;
 	}

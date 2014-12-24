@@ -398,6 +398,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_SETUNDOBUFFER,			LTEXT("SetUndoBuffer"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK Release
 	{F_APPENDUNDOBUFFERCURSOR,	L"AppendUndoBufferCursor",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK にカーソル位置を追加
 	{F_CLIPBOARDEMPTY,			LTEXT("ClipboardEmpty"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
+	{F_SETVIEWTOP,				L"SetViewTop",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ビューの上の行数を設定
+	{F_SETVIEWLEFT,				L"SetViewLeft",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ビューの左端の桁数を設定
 
 	//	終端
 	//	Jun. 27, 2002 genta
@@ -466,6 +468,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_SETCLIPBOARDBYFORMAT,	L"SetClipboardByFormat",	{VT_BSTR,  VT_BSTR,  VT_I4,    VT_I4,    },	VT_I4,		NULL }, //クリップボードの指定形式で設定
 	{F_GETLINEATTRIBUTE,		L"GetLineAttribute",		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //行属性取得
 	{F_ISTEXTSELECTINGLOCK,		L"IsTextSelectingLock",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //選択状態のロックを取得
+	{F_GETVIEWLINES,			L"GetViewLines",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ビューの行数取得
+	{F_GETVIEWCOLUMNS,			L"GetViewColumns",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ビューの列数取得
 
 	//	終端
 	//	Jun. 27, 2002 genta
