@@ -56,6 +56,12 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 			}else{
 				m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 			}
+		}else{
+			// 2014.01.08 追加
+			if( bBoxSelect && !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+				// 通常選択→矩形選択に変更。他のコマンドに合わせる
+				Command_BEGIN_BOXSELECT();
+			}
 		}
 	}else{
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
