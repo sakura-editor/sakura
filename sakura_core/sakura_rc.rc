@@ -3236,6 +3236,8 @@ BEGIN
     F_ISEARCH_REGEXP_PREV   "正規表現後方インクリメンタルサーチ"
     F_ISEARCH_MIGEMO_NEXT   "MIGEMO前方インクリメンタルサーチ"
     F_ISEARCH_MIGEMO_PREV   "MIGEMO後方インクリメンタルサーチ"
+    F_FUNCLIST_NEXT         "次の関数リストマーク"
+    F_FUNCLIST_PREV         "前の関数リストマーク"
     F_FILETREE              "ファイルツリー"
 
     F_ISEARCH_SUBMENU       "インクリメンタルサーチ"
@@ -3957,6 +3959,8 @@ BEGIN
 	// CEditView_Command_New.cpp
 	STR_BOOKMARK_NEXT_NOT_FOUND	"前方(↓) にブックマークが見つかりません。"
 	STR_BOOKMARK_PREV_NOT_FOUND	"後方(↑) にブックマークが見つかりません。"
+	STR_FUCLIST_NEXT_NOT_FOUND	"前方(↓) に関数が見つかりません。"
+	STR_FUCLIST_PREV_NOT_FOUND	"後方(↑) に関数が見つかりません。"
 	STR_ERR_DLGEDITVWCMDNW7		"%d行をマージしました。"
 	STR_ERR_DLGEDITVWCMDNW8		"マージ可能な行がみつかりませんでした。"
 	STR_SAVEAGENT_OTHER_APP		"'%ts'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"

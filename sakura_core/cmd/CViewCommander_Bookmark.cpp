@@ -16,6 +16,7 @@
 #include "StdAfx.h"
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
+#include "docplus/CFuncListManager.h"
 
 
 //	from CViewCommander_New.cpp
@@ -398,4 +399,65 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 	);
 	// 2002.01.16 hor 分割したビューも更新
 	GetEditWindow()->Views_Redraw();
+}
+
+
+
+//! 次の関数リストマークを探し，見つかったら移動する
+void CViewCommander::Command_FUNCLIST_NEXT(void)
+{
+	CLogicPoint	ptXY(0, GetCaret().GetCaretLogicPos().y);
+	int			nYOld = ptXY.y;
+
+	for(int n = 0; n < 2; n++){
+		if( CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr,
+				ptXY.GetY2(), SEARCH_FORWARD, &ptXY.y) ){
+			CLayoutPoint ptLayout;
+			GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY,&ptLayout);
+			m_pCommanderView->MoveCursorSelecting( ptLayout,
+				m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
+			if( nYOld >= ptXY.y ){
+				m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
+			}
+			return;
+		}
+		if( !GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
+			break;
+		}
+		ptXY.y=-1;
+	}
+	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
+	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_FUCLIST_NEXT_NOT_FOUND));
+	return;
+}
+
+
+
+//! 前のブックマークを探し，見つかったら移動する．
+void CViewCommander::Command_FUNCLIST_PREV(void)
+{
+
+	CLogicPoint	ptXY(0,GetCaret().GetCaretLogicPos().y);
+	int			nYOld = ptXY.y;
+
+	for(int n = 0; n < 2; n++){
+		if(CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr,
+				ptXY.GetY2(), SEARCH_BACKWARD, &ptXY.y)){
+			CLayoutPoint ptLayout;
+			GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY,&ptLayout);
+			m_pCommanderView->MoveCursorSelecting( ptLayout,
+				m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
+			if( nYOld <= ptXY.y ){
+				m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
+			}
+			return;
+		}
+		if( !GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
+			break;
+		}
+		ptXY.y= GetDocument()->m_cDocLineMgr.GetLineCount();
+	}
+	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
+	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_FUCLIST_PREV_NOT_FOUND) );
+	return;
 }

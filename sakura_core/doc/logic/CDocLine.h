@@ -25,6 +25,7 @@
 #include "docplus/CBookmarkManager.h"
 #include "docplus/CDiffManager.h"
 #include "docplus/CModifyManager.h"
+#include "docplus/CFuncListManager.h"
 
 class CDocLine;
 class COpeBlk;
@@ -104,6 +105,7 @@ public:
 	struct MarkType{
 		CLineModified	m_cModified;	//変更フラグ
 		CLineBookmarked	m_cBookmarked;	//ブックマーク
+		CLineFuncList	m_cFuncList;	//関数リストマーク
 		CLineDiffed		m_cDiffmarked;	//DIFF差分情報
 	};
 	MarkType m_sMark;
