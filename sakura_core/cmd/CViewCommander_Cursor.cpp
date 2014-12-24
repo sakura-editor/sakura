@@ -1239,3 +1239,193 @@ void CViewCommander::Command_WHEELPAGERIGHT(int zDelta)
 	LPARAM lParam = 0;
 	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELPAGERIGHT );
 }
+
+/*! 次の変更行へ
+	変更行のブロックの先頭行と、変更行のブロックの末尾(次の行頭)に移動する
+*/
+void CViewCommander::Command_MODIFYLINE_NEXT( bool bSelect )
+{
+	CLogicInt   nYOld = GetCaret().GetCaretLogicPos().y;
+	CLogicPoint ptXY(0, nYOld);
+	const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
+	const int nSaveSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq();
+	bool bModified = false;
+	if( GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
+		return;
+	}
+	if( pcDocLine ){
+		bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
+		ptXY.y++;
+		pcDocLine = pcDocLine->GetNextLine();
+	}
+	for(int n = 0; n < 2; n++){
+		while( pcDocLine ){
+			if( CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq) != bModified
+				|| (0 == ptXY.y
+					&& CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq) != false ) ){
+				CLayoutPoint ptLayout;
+				GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
+				m_pCommanderView->MoveCursorSelecting( ptLayout, bSelect );
+				if( nYOld >= ptXY.GetY2() ){
+					m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
+				}
+				return;
+			}
+			ptXY.y++;
+			pcDocLine = pcDocLine->GetNextLine();
+		}
+		if( n == 0 && bModified ){
+			const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
+			bool bSkip = false;
+			CLogicPoint pos;
+			if( pcDocLineLast != NULL ){
+				if( pcDocLineLast->GetEol() == EOL_NONE ){
+					// ぶら下がり[EOF]
+					pos.x = pcDocLineLast->GetLengthWithoutEOL();
+					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;
+					if( GetCaret().GetCaretLogicPos() == pos ){
+						bSkip = true;
+					}
+				}else{
+					// 単独[EOF]
+					pos = ptXY;
+				}
+			}else{
+				bSkip = true;
+			}
+			if( !bSkip ){
+				CLayoutPoint ptLayout;
+				GetDocument()->m_cLayoutMgr.LogicToLayout(pos, &ptLayout);
+				m_pCommanderView->MoveCursorSelecting( ptLayout, bSelect );
+				return;
+			}
+		}
+		if( n == 0 ){
+			ptXY.y = CLogicInt(0);
+			pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
+			bModified = false;
+		}
+		if( !GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
+			break;
+		}
+	}
+	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
+	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_MODLINE_NEXT_NOT_FOUND));
+}
+
+/*! 前の変更行へ
+	変更行のブロックの先頭行と、変更行のブロックの末尾(次の行頭)に移動する
+	Command_MODIFYLINE_NEXTと同じ位置に止まる
+*/
+void CViewCommander::Command_MODIFYLINE_PREV( bool bSelect )
+{
+	CLogicInt   nYOld = GetCaret().GetCaretLogicPos().y;
+	CLogicInt   nYOld2 = nYOld;
+	CLogicPoint ptXY(0, nYOld);
+	const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
+	const int nSaveSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq();
+	bool bModified = false;
+	bool bLast = false;
+	if( pcDocLine == NULL ){
+		// [EOF]
+		const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2() - 1);
+		if( NULL == pcDocLineLast ){
+			// 1行もない
+			return;
+		}
+		bModified = CModifyVisitor().IsLineModified(pcDocLineLast, nSaveSeq);
+		ptXY.y--;
+		pcDocLine = pcDocLineLast;
+		bLast = true;
+	}
+	if( !bLast ){
+		const CDocLine* pcDocLineLast = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
+		if( pcDocLineLast != NULL && pcDocLineLast->GetEol() == EOL_NONE ){
+			CLogicPoint pos;
+			pos.x = pcDocLine->GetLengthWithoutEOL();
+			pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;
+			if( GetCaret().GetCaretLogicPos() == pos ){
+				// ぶら下がり[EOF]の位置だった
+				bLast = true;
+			}
+		}
+	}
+	assert( pcDocLine );
+	bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
+	nYOld2 = ptXY.y;
+	ptXY.y--;
+	pcDocLine = pcDocLine->GetPrevLine();
+	if( pcDocLine && !bLast ){
+		bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
+		nYOld2 = ptXY.y;
+		ptXY.y--;
+		pcDocLine = pcDocLine->GetPrevLine();
+	}
+	for(int n = 0; n < 2; n++){
+		while( pcDocLine ){
+			bool bModifiedTemp = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
+			if( bModifiedTemp != bModified ){
+				// 検出された位置の1行後ろ(MODIFYLINE_NEXTと同じ位置)に止まる
+				ptXY.y = nYOld2;
+				CLayoutPoint ptLayout;
+				GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
+				m_pCommanderView->MoveCursorSelecting( ptLayout, bSelect );
+				if( n == 1 ){
+					m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
+				}
+				return;
+			}
+			nYOld2 = ptXY.y;
+			ptXY.y--;
+			pcDocLine = pcDocLine->GetPrevLine();
+		}
+		if( n == 0 ){
+			// 先頭行チェック
+			const CDocLine* pcDocLineTemp = GetDocument()->m_cDocLineMgr.GetDocLineTop();
+			assert( pcDocLineTemp );
+			if( CModifyVisitor().IsLineModified(pcDocLineTemp, nSaveSeq) != false ){
+				if( GetCaret().GetCaretLogicPos() != CLogicPoint(0,0) ){
+					ptXY = CLogicPoint(0,0);
+					CLayoutPoint ptLayout;
+					GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
+					m_pCommanderView->MoveCursorSelecting( ptLayout, bSelect );
+					return;
+				}
+			}
+			ptXY.y = GetDocument()->m_cDocLineMgr.GetLineCount() - CLogicInt(1);
+			nYOld2 = ptXY.y;
+			pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
+			bModified = false;
+		}
+		if( !GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
+			break;
+		}
+		if( n == 0 ){
+			const CDocLine* pcDocLineTemp = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
+			assert( pcDocLineTemp );
+			if( CModifyVisitor().IsLineModified(pcDocLineTemp, nSaveSeq) != false ){
+				// 最終行が変更行の場合は、[EOF]に止まる
+				CLogicPoint pos;
+				if( pcDocLineTemp->GetEol() != EOL_NONE ){
+					pos.x = 0;
+					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount();
+					pos.y++;
+				}else{
+					pos.x = pcDocLine->GetLengthWithoutEOL();
+					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;
+				}
+				if( GetCaret().GetCaretLogicPos() != pos ){
+					ptXY = pos;
+					CLayoutPoint ptLayout;
+					GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
+					m_pCommanderView->MoveCursorSelecting( ptLayout, bSelect );
+					m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
+					return;
+				}
+			}
+		}
+	}
+	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
+	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_MODLINE_PREV_NOT_FOUND) );
+}
+

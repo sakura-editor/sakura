@@ -225,8 +225,8 @@ CMenuDrawer::CMenuDrawer()
 /* 91 */		F_GONEXTPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の段落へ
 /* 92 */		F_GOPREVPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の段落へ
 /* 93 */		F_JUMPHIST_SET					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//現在位置を移動履歴に登録
-/* 94 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 95 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 94 */		F_MODIFYLINE_PREV				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の変更行へ
+/* 95 */		F_MODIFYLINE_NEXT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の変更行へ
 /* 96 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 選択系(4段目32個: 97-128) */
@@ -259,8 +259,8 @@ CMenuDrawer::CMenuDrawer()
 /* 123 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 124 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 125 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 126 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 127 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 126 */		F_MODIFYLINE_PREV_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)前の変更行へ
+/* 127 */		F_MODIFYLINE_NEXT_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)次の変更行へ
 /* 128 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 矩形選択系(5段目32個: 129-160) */ //(注. 矩形選択系のほとんどは未実装)

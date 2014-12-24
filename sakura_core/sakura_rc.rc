@@ -3015,6 +3015,8 @@ BEGIN
     F_WHEELPAGEDOWN         "ホイールページダウン"
     F_WHEELPAGELEFT         "ホイールページ左"
     F_WHEELPAGERIGHT        "ホイールページ右"
+    F_MODIFYLINE_NEXT       "次の変更行へ"
+    F_MODIFYLINE_PREV       "前の変更行へ"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3057,6 +3059,8 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_GONEXTPARAGRAPH_SEL   "(選択)次の段落へ移動"
     F_GOPREVPARAGRAPH_SEL   "(選択)前の段落へ移動"
+    F_MODIFYLINE_NEXT_SEL   "(選択)次の変更行へ"
+    F_MODIFYLINE_PREV_SEL   "(選択)前の変更行へ"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3978,6 +3982,8 @@ BEGIN
 	STR_DIFF_FAILED				"差分コマンド実行は失敗しました。"
 	STR_DIFF_FAILED_TEMP		"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。"
 	STR_DIFF_FAILED_LONG		"差分コマンド実行は失敗しました。\n\n行が長すぎます。"
+	STR_MODLINE_NEXT_NOT_FOUND	"前方(↓) に変更行が見つかりません。"
+	STR_MODLINE_PREV_NOT_FOUND	"後方(↑) に変更行が見つかりません。"
 
 	// CEditView_Mouse.cpp
 	STR_VIEW_MOUSE_BUG			"バグってる"
