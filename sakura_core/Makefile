@@ -195,6 +195,7 @@ doc/logic/CDocLine.o \
 doc/logic/CDocLineMgr.o \
 docplus/CBookmarkManager.o \
 docplus/CDiffManager.o \
+docplus/CFuncListManager.o \
 docplus/CModifyManager.o \
 env/CAppNodeManager.o \
 env/CDocTypeManager.o \

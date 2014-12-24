@@ -3239,6 +3239,8 @@ BEGIN
     F_ISEARCH_REGEXP_PREV   "Regex Prev Incremental search"
     F_ISEARCH_MIGEMO_NEXT   "MIGEMO Next Incremental search"
     F_ISEARCH_MIGEMO_PREV   "MIGEMO Prev Incremental search"
+    F_FUNCLIST_NEXT         "Next Function List Mark"
+    F_FUNCLIST_PREV         "Prev Function List Mark"
     F_FILETREE              "File Tree"
 
     F_ISEARCH_SUBMENU       "Incremental Search"
@@ -3960,6 +3962,8 @@ BEGIN
 	// CEditView_Command_New.cpp
 	STR_BOOKMARK_NEXT_NOT_FOUND	"Forward (Å´) bookmark wasnt found."
 	STR_BOOKMARK_PREV_NOT_FOUND	"Previous (Å™) bookmark wasnt found."
+	STR_FUCLIST_NEXT_NOT_FOUND	"Forward (Å´) Function wasnt found."
+	STR_FUCLIST_PREV_NOT_FOUND	"Previous (Å™) Function wasnt found."
 	STR_ERR_DLGEDITVWCMDNW7		"%d line was successfully merged."												// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW8		"There were no lines of text that could be merged in your selection."			// Edit Menu::Cosmtik::Merge lines option
 	STR_SAVEAGENT_OTHER_APP		"'%ts'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."

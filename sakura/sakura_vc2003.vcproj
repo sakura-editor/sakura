@@ -2124,6 +2124,12 @@
 					RelativePath="..\sakura_core\docplus\CDiffManager.h">
 				</File>
 				<File
+					RelativePath="..\sakura_core\docplus\CFuncListManager.cpp">
+				</File>
+				<File
+					RelativePath="..\sakura_core\docplus\CFuncListManager.h">
+				</File>
+				<File
 					RelativePath="..\sakura_core\docplus\CModifyManager.cpp">
 				</File>
 				<File

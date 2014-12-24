@@ -423,6 +423,7 @@ void CDlgFuncList::SetData()
 	::ShowWindow( GetItemHwnd(IDC_BUTTON_SETTING), SW_HIDE );
 
 
+	SetDocLineFuncList();
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), TRUE );	// Jan. 04, 2002 genta Java Method Treeに統合
@@ -1604,6 +1605,33 @@ end_of_func:;
 	}
 
 	free( phParentStack );
+}
+
+
+
+void CDlgFuncList::SetDocLineFuncList()
+{
+	if( m_nOutlineType == OUTLINE_BOOKMARK ){
+		return;
+	}
+	if( m_nOutlineType == OUTLINE_FILETREE ){
+		return;
+	}
+	CEditView* pcEditView=(CEditView*)m_lParam;
+	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
+	
+	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
+	int i;
+	int num = m_pcFuncInfoArr->GetNum();
+	for( i = 0; i < num; ++i ){
+		const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+		if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
+			CDocLine* pcDocLine = pcDocLineMgr->GetLine( pcFuncInfo->m_nFuncLineCRLF - 1 );
+			if( pcDocLine ){
+				CFuncListManager().SetLineFuncList( pcDocLine, true );
+			}
+		}
+	}
 }
 
 

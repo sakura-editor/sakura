@@ -330,6 +330,8 @@ F_ISEARCH_REGEXP_NEXT	= 30983,	//前方正規表現インクリメンタルサーチ		？
 F_ISEARCH_REGEXP_PREV	= 30984,	//後方正規表現インクリメンタルサーチ		？
 F_ISEARCH_MIGEMO_NEXT	= 30985,	//前方MIGEMOインクリメンタルサーチ			？
 F_ISEARCH_MIGEMO_PREV	= 30986,	//後方MIGEMOインクリメンタルサーチ			？
+F_FUNCLIST_NEXT		= 30988,	//次の関数リストマークへ						なし
+F_FUNCLIST_PREV		= 30989,	//前の関数リストマークへ						なし
 F_FILETREE			= 30990,	//ファイルツリー								なし
 
 // モード切り替え系 
