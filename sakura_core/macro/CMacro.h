@@ -41,6 +41,42 @@
 class CTextOutputStream;
 class CEditView;
 
+enum EMacroParamType{
+	EMacroParamTypeNull,
+	EMacroParamTypeInt,
+	EMacroParamTypeStr,
+};
+struct CMacroParam{
+	WCHAR*			m_pData;
+	CMacroParam*	m_pNext;
+	int				m_nDataLen;
+	EMacroParamType m_eType;
+
+	CMacroParam():m_pData(NULL), m_pNext(NULL), m_nDataLen(0), m_eType(EMacroParamTypeNull){}
+	CMacroParam( const CMacroParam& obj ){
+		if( obj.m_pData ){
+			m_pData = new WCHAR[obj.m_nDataLen + 1];
+		}else{
+			m_pData = NULL;
+		}
+		m_pNext = NULL;
+		m_nDataLen = obj.m_nDataLen;
+		m_eType = obj.m_eType;
+	}
+	~CMacroParam(){
+		Clear();
+	}
+	void Clear(){
+		delete[] m_pData;
+		m_pData = NULL;
+		m_nDataLen = 0;
+		m_eType = EMacroParamTypeNull;
+	}
+	void SetStringParam( const WCHAR* szParam, int nLength = -1 );
+	void SetStringParam( const ACHAR* lParam ){ SetStringParam(to_wchar(lParam)); }
+	void SetIntParam( const int nParam );
+};
+
 /*! @brief キーボードマクロの1コマンド
 
 	引数をリスト構造にして、いくつでも持てるようにしてみました。
@@ -64,6 +100,7 @@ public:
 	*/
 	CMacro( EFunctionCode nFuncID );	//	機能IDを指定して初期化
 	~CMacro();
+	void ClearMacroParam();
 
 	void SetNext(CMacro* pNext){ m_pNext = pNext; }
 	CMacro* GetNext(){ return m_pNext; }
@@ -72,9 +109,10 @@ public:
 	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake const追加
 	
 	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
-	void AddStringParam( const WCHAR* lParam );
+	void AddStringParam( const WCHAR* szParam, int nLength = -1 );
 	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
-	void AddIntParam( const int lParam );
+	void AddIntParam( const int nParam );
+	int GetParamCount() const;
 
 	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
@@ -89,10 +127,6 @@ public:
 #endif
 
 protected:
-	struct CMacroParam{
-		WCHAR*			m_pData;
-		CMacroParam*	m_pNext;
-	};
 	static WCHAR* GetParamAt(CMacroParam*, int);
 
 	/*
