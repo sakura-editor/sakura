@@ -622,6 +622,7 @@ bool CMacro::HandleCommand(
 		//		0x10	検索ダイアログを自動的に閉じる
 		//		0x20	先頭（末尾）から再検索する
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
+		//		0x1000	(マクロ専用)検索オプションを元に戻す
 		{
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			SSearchOption sSearchOption;
@@ -629,6 +630,20 @@ bool CMacro::HandleCommand(
 			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
 			sSearchOption.bRegularExp		= (0 != (lFlag & 0x04));
 			bool bAddHistory = (0 == (lFlag & 0x800));
+			bool bBackupFlag = (0 != (lFlag & 0x1000));
+			CommonSetting_Search backupFlags;
+			SSearchOption backupLocalFlags;
+			std::wstring backupStr;
+			bool backupKeyMark;
+			int nBackupSearchKeySequence;
+			if( bBackupFlag ){
+				backupFlags = GetDllShareData().m_Common.m_sSearch;
+				backupLocalFlags = pcEditView->m_sCurSearchOption;
+				backupStr = pcEditView->m_strCurSearchKey;
+				backupKeyMark = pcEditView->m_bCurSrchKeyMark;
+				nBackupSearchKeySequence = pcEditView->m_nCurSearchKeySequence;
+				bAddHistory = false;
+			}
 			const WCHAR* pszSearchKey = wtow_def(Argument[0], L"");
 			int nLen = wcslen( pszSearchKey );
 			if( 0 < nLen ){
@@ -658,6 +673,19 @@ bool CMacro::HandleCommand(
 
 			//	コマンド発行
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0);
+			if( bBackupFlag ){
+				GetDllShareData().m_Common.m_sSearch = backupFlags;
+				pcEditView->m_sCurSearchOption = backupLocalFlags;
+				pcEditView->m_strCurSearchKey = backupStr;
+				pcEditView->m_bCurSearchUpdate = true;
+				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+				pcEditView->ChangeCurRegexp( backupKeyMark );
+				pcEditView->m_bCurSrchKeyMark = backupKeyMark;
+				if( !backupKeyMark ){
+					pcEditView->Redraw();
+				}
+				pcEditView->m_nCurSearchKeySequence = nBackupSearchKeySequence;
+			}
 		}
 		break;
 	case F_DIFF:
@@ -770,6 +798,7 @@ bool CMacro::HandleCommand(
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
+		//		0x1000	(マクロ専用)検索オプションを元に戻す
 		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO09));
@@ -788,6 +817,22 @@ bool CMacro::HandleCommand(
 			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
 			sSearchOption.bRegularExp		= (0 != (lFlag & 0x04));
 			bool bAddHistory = (0 == (lFlag & 0x800));
+			bool bBackupFlag = (0 != (lFlag & 0x1000));
+			CommonSetting_Search backupFlags;
+			SSearchOption backupLocalFlags;
+			std::wstring backupStr;
+			std::wstring backupStrRep;
+			int nBackupSearchKeySequence;
+			bool backupKeyMark;
+			if( bBackupFlag ){
+				backupFlags = GetDllShareData().m_Common.m_sSearch;
+				backupLocalFlags = pcEditView->m_sCurSearchOption;
+				backupStr = pcEditView->m_strCurSearchKey;
+				backupStrRep = cDlgReplace.m_strText2;
+				backupKeyMark = pcEditView->m_bCurSrchKeyMark;
+				nBackupSearchKeySequence = pcEditView->m_nCurSearchKeySequence;
+				bAddHistory = false;
+			}
 			/* 正規表現 */
 			if( lFlag & 0x04
 				&& !CheckRegexpSyntax( Argument[0], NULL, true )
@@ -832,6 +877,20 @@ bool CMacro::HandleCommand(
 			}
 			//	コマンド発行
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0);
+			if( bBackupFlag ){
+				GetDllShareData().m_Common.m_sSearch = backupFlags;
+				pcEditView->m_sCurSearchOption = backupLocalFlags;
+				pcEditView->m_strCurSearchKey = backupStr;
+				pcEditView->m_bCurSearchUpdate = true;
+				cDlgReplace.m_strText2 = backupStrRep;
+				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+				pcEditView->ChangeCurRegexp( backupKeyMark );
+				pcEditView->m_bCurSrchKeyMark = backupKeyMark;
+				if( !backupKeyMark ){
+					pcEditView->Redraw();
+				}
+				pcEditView->m_nCurSearchKeySequence = nBackupSearchKeySequence;
+			}
 		}
 		break;
 	case F_GREP_REPLACE:
