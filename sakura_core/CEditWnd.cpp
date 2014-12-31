@@ -2723,7 +2723,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.m_hWnd );
 
 			SetMenuFuncSel( hMenu, F_SHOWSTATUSBAR, _T("S"),
-				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.m_hWnd );
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_hwndStatusBar );
 
 			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T("") );
 			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST		, _T(""), _T("L") );	//Sept. 13, 2000 JEPRO ê›íËÇÊÇËè„Ç…à⁄ìÆ
