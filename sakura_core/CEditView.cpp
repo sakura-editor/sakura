@@ -5155,7 +5155,7 @@ DWORD CEditView::DoGrep(
 		Command_ADDTAIL( szBuffer, lstrlen( szBuffer ) );
 #ifdef _DEBUG
 		wsprintf( szBuffer, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
-		Command_ADDTAIL( szPath, lstrlen( szPath ) );
+		Command_ADDTAIL( szBuffer, lstrlen( szBuffer ) );
 #endif
 	}
 	MoveCursor( 0, tmp_PosY_PHY, true );	//	カーソルをGrep直前の位置に戻す
