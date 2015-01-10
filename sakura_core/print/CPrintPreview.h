@@ -137,7 +137,7 @@ protected:
 		int				nBlockLen,
 		int				nKind,		//< 0:半角, 1:全角
 		const CLayout*	pcLayout,	//!< 色設定用Layout
-		const CColorStrategy*	pStrategy,
+		int				nColorIndex,
 		int				nBgnPhysical,
 		CLayoutInt		nLayoutX,
 		int				nDx,
@@ -148,7 +148,8 @@ protected:
 	CColorStrategy* GetColorStrategy(
 		const CStringRef&	cStringLine,
 		int					iLogic,
-		CColorStrategy*		pStrategy
+		CColorStrategy*		pStrategy,
+		bool&				bChange
 	);
 
 	// 印刷用フォントを作成する

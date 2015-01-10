@@ -887,7 +887,6 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		CColorStrategy* pStrategyNormal = NULL;
 		CColorStrategy* pStrategyFound = NULL;
 		CColorStrategy* pStrategy = NULL;
-		CColorStrategy*	pStrategyLast = (CColorStrategy*)-1;
 		CStringRef cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
 		{
 			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
@@ -961,15 +960,15 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			int iLogic = nLineStart;
 			bool bAddCRLF = false;
 			for( ; iLogic < nLineStart + nLineLen; ++iLogic ){
-				pStrategy = GetColorStrategyHTML(cStringLine, iLogic, pool, &pStrategyNormal, &pStrategyFound);
-				if( pStrategy != pStrategyLast ){
+				bool bChange = false;
+				pStrategy = GetColorStrategyHTML(cStringLine, iLogic, pool, &pStrategyNormal, &pStrategyFound, bChange);
+				if( bChange ){
 					int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
 					if (-1 != nColorIdx) {
 						const ColorInfo& info = type.m_ColorInfoArr[nColorIdx];
 						sColorAttrNext = info.m_sColorAttr;
 						sFontAttrNext  = info.m_sFontAttr;
 					}
-					pStrategyLast = pStrategy;
 				}
 				if( nIdxFrom != -1 && nIdxFrom + nLineStart <= iLogic && iLogic <= nIdxTo + nLineStart ){
 					if( nIdxFrom + nLineStart == iLogic ){
@@ -1059,18 +1058,23 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 
 
 
+/*!
+	@date 2014.12.30 Moca “¯‚¶CColorStrategy‚Åˆá‚¤F‚ÉØ‚è‘Ö‚í‚Á‚½‚Æ‚«‚É‘Î‰ž
+*/
 CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	const CStringRef&	cStringLine,
 	int					iLogic,
 	const CColorStrategyPool*	pool,
 	CColorStrategy**	ppStrategy,
-	CColorStrategy**	ppStrategyFound		// [in,out]
+	CColorStrategy**	ppStrategyFound,		// [in,out]
+	bool& bChange
 )
 {
 	//ŒŸõFI—¹
 	if(*ppStrategyFound){
 		if((*ppStrategyFound)->EndColor(cStringLine, iLogic)){
 			*ppStrategyFound = NULL;
+			bChange = true;
 		}
 	}
 
@@ -1079,6 +1083,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 		CColor_Found*  pcFound  = pool->GetFoundStrategy();
 		if(pcFound->BeginColor(cStringLine, iLogic)){
 			*ppStrategyFound = pcFound;
+			bChange = true;
 		}
 	}
 
@@ -1086,6 +1091,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	if(*ppStrategy){
 		if((*ppStrategy)->EndColor(cStringLine, iLogic)){
 			*ppStrategy = NULL;
+			bChange = true;
 		}
 	}
 
@@ -1095,6 +1101,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 		for(int i = 0; i < size; i++ ){
 			if(pool->GetStrategy(i)->BeginColor(cStringLine, iLogic)){
 				*ppStrategy = pool->GetStrategy(i);
+				bChange = true;
 				break;
 			}
 		}
