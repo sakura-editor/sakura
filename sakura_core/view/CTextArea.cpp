@@ -215,14 +215,14 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 
 /* 行番号表示に必要な桁数を計算 */
-int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMgr) const
+int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMgr, bool bLayout) const
 {
 	const CEditView* pView=m_pEditView;
 
 	int nAllLines; //$$ 単位混在
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if( pView->m_pTypeData->m_bLineNumIsCRLF ){
+	if( pView->m_pTypeData->m_bLineNumIsCRLF && !bLayout){
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}
 	else{
