@@ -504,9 +504,9 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	}
 	if( idx == TEMP_KEYMACRO ){		// ˆêŽžƒ}ƒNƒ
 		if( m_pTempMacro != NULL ){
-			SetCurrentIdx( idx );
+			int prevmacro = SetCurrentIdx( idx );
 			m_pTempMacro->ExecKeyMacro( pcEditView, flags );
-			SetCurrentIdx( INVALID_MACRO_IDX );
+			SetCurrentIdx( prevmacro );
 			return TRUE;
 		}
 		else {
