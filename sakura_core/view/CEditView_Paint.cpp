@@ -365,6 +365,11 @@ CColor3Setting CEditView::GetColorIndex(
 		CColor3Setting cColor = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 		return cColor;
 	}
+	// 2014.12.30 Skipƒ‚[ƒh‚ÌŽž‚àCOLORIDX_TEXT
+	if (CColorStrategyPool::getInstance()->IsSkipBeforeLayout()) {
+		CColor3Setting cColor = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
+		return cColor;
+	}
 
 	const CLayoutColorInfo* colorInfo;
 	const CLayout* pcLayoutLineFirst = pcLayout;
