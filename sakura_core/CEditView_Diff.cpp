@@ -56,7 +56,9 @@ void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
 	}
 
 	//自ファイル
-	if (!m_pcEditDoc->IsModified()) _tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	if (!m_pcEditDoc->IsModified()
+		&& m_pcEditDoc->IsValidPath()) // 2014.06.25 Grep/アウトプットもbTmpFile1の対象にする
+		_tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
 	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 
@@ -95,13 +97,17 @@ void CEditView::Command_Diff_Dialog( void )
 	
 	//自ファイル
 	TCHAR	szTmpFile1[_MAX_PATH * 2];
-	if (!m_pcEditDoc->IsModified()) _tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	if (!m_pcEditDoc->IsModified()
+		&& m_pcEditDoc->IsValidPath()) // 2014.06.25 Grep/アウトプットもbTmpFile1の対象にする
+		_tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
 	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 		
 	//相手ファイル
 	TCHAR	szTmpFile2[_MAX_PATH * 2];
-	if (!cDlgDiff.m_bIsModifiedDst) _tcscpy( szTmpFile2, cDlgDiff.m_szFile2);
+	// 2014.06.25 ファイル名がない(=無題,Grep,アウトプット)もbTmpFile2にする
+	if (!cDlgDiff.m_bIsModifiedDst && cDlgDiff.m_szFile2[0] != _T('\0'))
+		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2);
 	else if (MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
 	else 
 	{
