@@ -1618,10 +1618,10 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"mutable",
 	L"namespace",
 	L"new",
-	L"noexcept"
+	L"noexcept",
 	L"not",
 	L"not_eq",
-	L"nullptr"
+	L"nullptr",
 	L"operator",
 	L"or",
 	L"or_eq",
@@ -1638,13 +1638,13 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"signed",
 	L"sizeof",
 	L"static",
-	L"static_assert"
+	L"static_assert",
 	L"static_cast",
 	L"struct",
 	L"switch",
 	L"template",
 	L"this",
-	L"thread_local"
+	L"thread_local",
 	L"throw",
 	L"true",
 	L"try",
@@ -1659,7 +1659,7 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"void",
 	L"volatile",
 	L"wchar_t",
-	L"while"
+	L"while",
 	L"xor",
 	L"xor_eq",
 };
