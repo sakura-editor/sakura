@@ -2194,7 +2194,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			CLogicInt nLine;
 			if( 0 == nLineNum ){
 				nLine = View->GetCaret().GetCaretLogicPos().GetY2();
-			}if( nLineNum < 0 ){
+			}else if( nLineNum < 0 ){
 				return false;
 			}else{
 				nLine = CLogicInt(nLineNum - 1); // nLineNum‚Í1ŠJŽn
