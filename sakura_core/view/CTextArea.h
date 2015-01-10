@@ -138,7 +138,7 @@ public:
 	bool DetectWidthOfLineNumberArea( bool bRedraw );
 
 	//! 行番号表示に必要な桁数を計算
-	int  DetectWidthOfLineNumberArea_calculate(const CLayoutMgr*) const;
+	int  DetectWidthOfLineNumberArea_calculate(const CLayoutMgr*, bool bLayout=false) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           判定                              //
