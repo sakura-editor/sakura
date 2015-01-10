@@ -31,6 +31,7 @@
 #include <algorithm>
 #include "macro/CWSHIfObj.h"
 #include "CDataProfile.h"
+#include "util/string_ex.h"
 
 //! ƒvƒ‰ƒOƒCƒ“‚ÌŠÇ—”Ô†index
 typedef int PluginId;
@@ -189,7 +190,7 @@ public:
 		m_sSection	= sSection;
 		m_sKey		= sKey;
 		// ¬•¶š•ÏŠ·
-		std::transform( sType.begin (), sType.end (), sType.begin (), tolower );
+		std::transform( sType.begin (), sType.end (), sType.begin (), my_towlower2 );
 		m_sType		= sType;
 		m_sSelects	= sSelects;
 		m_sDefaultVal = sDefaultVal;

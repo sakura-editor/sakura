@@ -535,7 +535,7 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 	if (iLine >= 0) {
 		// Focus‚ÌØ‚è‘Ö‚¦
 		sType = m_cPlugin->m_options[iLine]->GetType();
-		transform( sType.begin(), sType.end(), sType.begin(), tolower );
+		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
 			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_CHECK_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
@@ -580,7 +580,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 		ListView_GetItem( hwndList, &lvi );
 
 		sType = m_cPlugin->m_options[iLine]->GetType();
-		transform( sType.begin(), sType.end(), sType.begin(), tolower );
+		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
 			::CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, _tcscmp(buf,  BOOL_DISP_FALSE) != 0 );
 			::DlgItem_SetText( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, m_cPlugin->m_options[iLine]->GetLabel().c_str() );
@@ -663,7 +663,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 
 	if (iLine >= 0) {
 		sType = m_cPlugin->m_options[iLine]->GetType();
-		transform (sType.begin (), sType.end (), sType.begin (), tolower);
+		transform(sType.begin (), sType.end (), sType.begin (), my_towlower2);
 		if (sType == OPTION_TYPE_BOOL) {
 			if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLUGIN_OPTION ) ) {
 				_tcscpy( buf, BOOL_DISP_TRUE );
