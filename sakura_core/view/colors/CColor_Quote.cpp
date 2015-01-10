@@ -135,7 +135,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 
 		// 「文字列は行内のみ」(C++ Raw String、Pythonのlong string、@""は特別)
 		if( m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd
-				&& m_nCOMMENTEND == cStr.GetLength() ){
+				&& m_nCOMMENTEND == cStr.GetLength() + 1 ){
 			// 終了文字列がない場合は行末までを色分け
 			if( m_pTypeData->m_bStringEndLine ){
 				// 改行コードを除く
@@ -227,7 +227,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 			++i;
 		}
 	}
-	return cLineStr.GetLength();
+	return cLineStr.GetLength() + 1; // 終端なしはLength + 1
 }
 
 int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape )
