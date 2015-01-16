@@ -124,6 +124,10 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 	return FALSE;
 }
 
+struct tagTagJumpMode{
+	DWORD	m_nMethod;
+	DWORD	m_nNameID;
+};
 
 /* ダイアログデータの設定 */
 void CPropGrep::SetData( HWND hwndDlg )
@@ -151,10 +155,6 @@ void CPropGrep::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
-	struct tagTagJumpMode{
-		DWORD	m_nMethod;
-		DWORD	m_nNameID;
-	};
 	struct tagTagJumpMode TagJumpMode1Arr[] ={
 		{ 0, STR_TAGJUMP_0 },
 		{ 1, STR_TAGJUMP_1 },
