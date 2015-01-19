@@ -511,16 +511,19 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 	if (!fl->IsFileExist()) {
 		sReadMeName = CPluginManager::getInstance()->GetBaseDir()
 			+ sName + _T("\\") + sName + _T(".txt");
+		delete fl;
 		fl = new CFile(sReadMeName.c_str());
 	}
 	if (!fl->IsFileExist()) {
 		// exeフォルダ配下
 		sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
 			+ sName + _T("\\ReadMe.txt");
+		delete fl;
 		fl = new CFile(sReadMeName.c_str());
 		if (!fl->IsFileExist()) {
 			sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
 				+ sName + _T("\\") + sName + _T(".txt");
+			delete fl;
 			fl = new CFile(sReadMeName.c_str());
 		}
 	}
@@ -528,6 +531,7 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 	if (!fl->IsFileExist()) {
 		sReadMeName = _T("");
 	}
+	delete fl;
 	return sReadMeName;
 }
 
