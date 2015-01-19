@@ -1648,6 +1648,13 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		}
 	}
 
+	// サイズボックスを描画する
+	if (!m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR 
+		&& !m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND
+		&& m_pShareData->m_Common.m_sTabBar.m_eTabPosition == TabPosition_Bottom) {
+		SizeBox_ONOFF(true);
+	}
+
 	::EndPaint( hwnd, &ps );
 
 	return 0L;
