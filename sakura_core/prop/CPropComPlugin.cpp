@@ -54,7 +54,8 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//プラグインを削除
 	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
 	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMe表示		// 2011/11/2 Uchi
-//	IDC_STATIC,			-1,
+	IDC_PLUGIN_URL,			HIDC_PLUGIN_URL,			//配布先			// 2015/01/02 syat
+	//	IDC_STATIC,			-1,
 	0, 0
 };
 
@@ -123,6 +124,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), 
 							(state == PLS_INSTALLED || state == PLS_UPDATED || state == PLS_LOADED || state == PLS_DELETED)
 							&& !GetReadMeFile(to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName)).empty());
+						::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_URL), state == PLS_LOADED && plugin && plugin->m_sUrl.size() > 0);
 					}
 				}
 				break;
@@ -255,6 +257,18 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
+			case IDC_PLUGIN_URL:
+				{
+					HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
+					int sel = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+					if (sel >= 0){
+						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
+						if (plugin != NULL){
+							::ShellExecute(NULL, _T("Open"), to_tchar(plugin->m_sUrl.c_str()), NULL, NULL, SW_SHOW);
+						}
+					}
+				}
+				break;
 			}
 			break;
 		case CBN_DROPDOWN:
@@ -326,6 +340,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), FALSE );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), FALSE );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), FALSE );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_URL ), FALSE );
 
 	//プラグインリスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );

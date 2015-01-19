@@ -745,6 +745,7 @@
 #define HIDC_PLUGIN_README			11767	//ReadMe表示					// 2011/11/2 Uchi
 #define HIDC_PLUGIN_INST_ZIP		11768	//Zipプラグインを追加			// 2011/11/2 Uchi
 #define HIDC_EDIT_LINENUMWIDTH		11769	//行番号の最小桁数				// 2014.08.02 katze
+#define HIDC_PLUGIN_URL				11770	//プラグイン配布元				// 2015.01.02 syat
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

@@ -2139,7 +2139,8 @@ BEGIN
     LTEXT           "Author",IDC_STATIC,11,175,50,8
     LTEXT           "",IDC_LABEL_PLUGIN_Author,66,175,200,8
     LTEXT           "Version",IDC_STATIC,11,190,50,8
-    LTEXT           "",IDC_LABEL_PLUGIN_Version,66,190,200,8
+    LTEXT           "",IDC_LABEL_PLUGIN_Version,66,190,100,8
+    PUSHBUTTON      "Distribution Site(&D)",IDC_PLUGIN_URL,186,187,80,14
     PUSHBUTTON      "Remove(&R)",IDC_PLUGIN_Remove,6,205,80,14
     PUSHBUTTON      "Properties(&P)",IDC_PLUGIN_OPTION,96,205,80,14
     PUSHBUTTON      "ReadMe(&M)",IDC_PLUGIN_README,186,205,80,14
