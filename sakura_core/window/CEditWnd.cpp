@@ -1033,6 +1033,7 @@ void CEditWnd::LayoutTabBar( void )
 		}
 	}else{
 		m_cTabWnd.Close();
+		m_cTabWnd.SizeBox_ONOFF(false);
 	}
 }
 
