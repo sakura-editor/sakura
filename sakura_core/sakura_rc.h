@@ -780,6 +780,7 @@
 #define IDC_BUTTON_REPLACE              1711
 #define IDC_BUTTON_SETTING              1712
 #define IDC_STATIC_CHARCODE             1713
+#define IDC_PLUGIN_URL                  1714
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
