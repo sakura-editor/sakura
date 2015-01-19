@@ -1152,6 +1152,7 @@ LRESULT CEditWnd::DispatchEvent(
 	int					nItemHeight;
 	UINT				uItem;
 	LRESULT				lRes;
+	CTypeConfig			cTypeNew;
 
 	switch( uMsg ){
 	case WM_PAINTICON:
@@ -1815,7 +1816,9 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			break;
 		case PM_CHANGESETTING_TYPE:
-			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+			cTypeNew = CDocTypeManager().GetDocumentTypeOfPath(GetDocument()->m_cDocFile.GetFilePath());
+			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam
+				|| cTypeNew.GetIndex() == wParam){
 				GetDocument()->OnChangeSetting();
 
 				// アウトライン解析画面処理
@@ -1837,9 +1840,15 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			break;
 		case PM_CHANGESETTING_TYPE2:
-			if( GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
+			cTypeNew = CDocTypeManager().GetDocumentTypeOfPath(GetDocument()->m_cDocFile.GetFilePath());
+			if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam
+				|| cTypeNew.GetIndex() == wParam){
 				// indexのみ更新
 				GetDocument()->m_cDocType.SetDocumentTypeIdx();
+				// タイプが変更になった場合は適用する
+				if (GetDocument()->m_cDocType.GetDocumentType().GetIndex() != wParam) {
+					::SendMessage(m_hWnd, MYWM_CHANGESETTING, wParam, PM_CHANGESETTING_TYPE);
+				}
 			}
 			break;
 		case PM_PRINTSETTING:
