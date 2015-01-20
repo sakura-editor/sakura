@@ -45,7 +45,7 @@ public:
 
 	ECodeType	m_nGrepCharSet;			/*!< 文字コードセット */
 	int			m_nGrepOutputStyle;		/*!< Grep: 出力形式 */
-	BOOL		m_bGrepOutputLine;		/*!< 行を出力するか該当部分だけ出力するか */
+	int			m_nGrepOutputLineType;		//!< 結果出力：行を出力/該当部分/否マッチ行
 	bool		m_bGrepOutputFileOnly;		/*!< ファイル毎最初のみ検索 */
 	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダ表示 */
 	bool		m_bGrepSeparateFolder;		/*!< フォルダ毎に表示 */

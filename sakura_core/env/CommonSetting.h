@@ -390,7 +390,7 @@ struct CommonSetting_Search
 	int				m_bSelectedArea;			//!< 置換  選択範囲内置換
 
 	int				m_bGrepSubFolder;			//!< Grep: サブフォルダも検索
-	BOOL			m_bGrepOutputLine;			//!< Grep: 行を出力するか該当部分だけ出力するか
+	int				m_nGrepOutputLineType;		//!< Grep: 行を出力/該当部分/否マッチ行 を出力
 	int				m_nGrepOutputStyle;			//!< Grep: 出力形式
 	int				m_bGrepDefaultFolder;		//!< Grep: フォルダの初期値をカレントフォルダにする
 	ECodeType		m_nGrepCharSet;				//!< Grep: 文字コードセット // 2002/09/20 Moca Add

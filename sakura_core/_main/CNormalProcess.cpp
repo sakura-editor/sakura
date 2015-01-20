@@ -215,7 +215,7 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepHeader,
 				gi.sGrepSearchOption,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
-				gi.bGrepOutputLine,
+				gi.nGrepOutputLineType,
 				gi.nGrepOutputStyle,
 				gi.bGrepOutputFileOnly,
 				gi.bGrepOutputBaseFolder,
@@ -250,7 +250,7 @@ bool CNormalProcess::InitializeProcess()
 			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder = gi.bGrepSubFolder;
 			GetDllShareData().m_Common.m_sSearch.m_sSearchOption = gi.sGrepSearchOption;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet = gi.nGrepCharSet;
-			GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine = gi.bGrepOutputLine;
+			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType = gi.nGrepOutputLineType;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない

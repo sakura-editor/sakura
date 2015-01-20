@@ -71,7 +71,7 @@ CDlgGrep::CDlgGrep()
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
 	m_sSearchOption.Reset();			// 検索オプション
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
-	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
+	m_nGrepOutputLineType = 1;			// 行を出力/該当部分/否マッチ行 を出力
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
 	m_bGrepOutputFileOnly = false;
 	m_bGrepOutputBaseFolder = false;
@@ -125,7 +125,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: サブフォルダも検索
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// 文字コードセット
-	m_bGrepOutputLine = m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine;	// 行を出力するか該当部分だけ出力するか
+	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: 出力形式
 	m_bGrepOutputFileOnly = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
@@ -482,8 +482,10 @@ void CDlgGrep::SetData( void )
 	}
 
 	/* 行を出力するか該当部分だけ出力するか */
-	if( m_bGrepOutputLine ){
+	if( m_nGrepOutputLineType == 1 ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTLINE, TRUE );
+	}else if( m_nGrepOutputLineType == 2 ){
+		::CheckDlgButton( GetHwnd(), IDC_RADIO_NOHIT, TRUE );
 	}else{
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTMARKED, TRUE );
 	}
@@ -604,8 +606,14 @@ int CDlgGrep::GetData( void )
 	}
 
 
-	/* 行を出力するか該当部分だけ出力するか */
-	m_bGrepOutputLine = ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTLINE );
+	/* 行を出力/該当部分/否マッチ行 を出力 */
+	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTLINE ) ){
+		m_nGrepOutputLineType = 1;
+	}else if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_NOHIT ) ){
+		m_nGrepOutputLineType = 2;
+	}else{
+		m_nGrepOutputLineType = 0;
+	}
 
 	/* Grep: 出力形式 */
 	if( FALSE != ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTSTYLE1 ) ){
@@ -635,7 +643,7 @@ int CDlgGrep::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
 
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = m_bGrepOutputLine;	// 行を出力するか該当部分だけ出力するか
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
