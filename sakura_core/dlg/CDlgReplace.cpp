@@ -43,6 +43,7 @@ const DWORD p_helpids[] = {	//11900
 	IDC_RADIO_REPLACE,				HIDC_REP_RADIO_REPLACE,				//置換対象：置換
 	IDC_RADIO_INSERT,				HIDC_REP_RADIO_INSERT,				//置換対象：挿入
 	IDC_RADIO_ADD,					HIDC_REP_RADIO_ADD,					//置換対象：追加
+	IDC_RADIO_LINEDELETE,			HIDC_REP_RADIO_LINEDELETE,			//置換対象：行削除
 	IDC_RADIO_SELECTEDAREA,			HIDC_REP_RADIO_SELECTEDAREA,		//範囲：全体
 	IDC_RADIO_ALLAREA,				HIDC_REP_RADIO_ALLAREA,				//範囲：選択範囲
 	IDC_STATIC_JRE32VER,			HIDC_REP_STATIC_JRE32VER,			//正規表現バージョン
@@ -175,6 +176,11 @@ void CDlgReplace::SetData( void )
 	}else
 	if(m_nReplaceTarget==2){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_ADD, TRUE );
+	}else
+	if(m_nReplaceTarget==3){
+		::CheckDlgButton( GetHwnd(), IDC_RADIO_LINEDELETE, TRUE );
+		::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_PASTE ), FALSE );
 	}
 	// To Here 2001.12.03 hor
 
@@ -247,10 +253,14 @@ int CDlgReplace::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 	/* 置換後文字列 */
-	nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
-	vText.resize(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
-	m_strText2 = to_wchar(&vText[0]);
+	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINEDELETE ) ){
+		m_strText2 = L"";
+	}else{
+		nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
+		vText.resize(nBufferSize);
+		::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
+		m_strText2 = to_wchar(&vText[0]);
+	}
 
 	/* 置換 ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgReplace );
@@ -303,7 +313,13 @@ int CDlgReplace::GetData( void )
 		}else
 		if(::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_ADD )){
 			m_nReplaceTarget=2;
+		}else
+		if(::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINEDELETE )){
+			m_nReplaceTarget=3;
+			m_nPaste = FALSE;
+			::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), FALSE );
 		}
+		
 		// To Here 2001.12.03 hor
 
 		// 検索文字列/置換後文字列リストの設定	2010/5/26 Uchi
@@ -395,6 +411,19 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			::CheckDlgButton( GetHwnd(), IDC_CHK_PASTE, FALSE );
 		}
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE)) );
+		return TRUE;
+		// 置換対象
+	case IDC_RADIO_REPLACE:
+	case IDC_RADIO_INSERT:
+	case IDC_RADIO_ADD:
+	case IDC_RADIO_LINEDELETE:
+		if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINEDELETE ) ){
+			::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHK_PASTE ), FALSE );
+		}else{
+			::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHK_PASTE ), TRUE );
+		}
 		return TRUE;
 	case IDC_RADIO_SELECTEDAREA:
 		/* 範囲範囲 */

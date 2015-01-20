@@ -381,18 +381,20 @@ BEGIN
                     WS_TABSTOP,5,118,128,10
     CONTROL         "Re-start search from beginning(end)(&Z)",IDC_CHECK_SEARCHALL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,129,146,10
-    GROUPBOX        "Substitution Method",IDC_STATIC,153,37,81,51,WS_GROUP
+    GROUPBOX        "Substitution Method",IDC_STATIC,153,37,81,62,WS_GROUP
     CONTROL         "(&0) overwrite",IDC_RADIO_REPLACE,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,156,50,59,10
     CONTROL         "(&1) insert before",IDC_RADIO_INSERT,"Button",
                     BS_AUTORADIOBUTTON | WS_TABSTOP,156,61,71,10
     CONTROL         "(&2) insert after",IDC_RADIO_ADD,"Button",
                     BS_AUTORADIOBUTTON | WS_TABSTOP,156,72,71,10
-    GROUPBOX        "Scope",IDC_STATIC,153,92,81,37,WS_GROUP
+    CONTROL         "(&3) line delete",IDC_RADIO_LINEDELETE,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,156,83,71,10
+    GROUPBOX        "Scope",IDC_STATIC,153,103,81,37,WS_GROUP
     CONTROL         "Selected text(&S)",IDC_RADIO_SELECTEDAREA,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,156,104,73,10
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,156,115,73,10
     CONTROL         "Whole Document(&O)",IDC_RADIO_ALLAREA,"Button",
-                    BS_AUTORADIOBUTTON | WS_TABSTOP,156,115,76,10
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,156,126,76,10
     PUSHBUTTON      "Search (&U)p",IDC_BUTTON_SEARCHPREV,237,4,58,14,WS_GROUP
     DEFPUSHBUTTON   "Search (&D)own",IDC_BUTTON_SEARCHNEXT,237,19,58,14
     PUSHBUTTON      "(&B)ookmark",IDC_BUTTON_SETMARK,237,38,58,14
