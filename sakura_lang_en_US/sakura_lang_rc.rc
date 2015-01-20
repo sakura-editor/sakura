@@ -246,14 +246,16 @@ BEGIN
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,73,56,10
     CONTROL         "Matching &Part",IDC_RADIO_OUTPUTMARKED,"Button",
                     BS_AUTORADIOBUTTON,185,85,56,10
-    GROUPBOX        "Result Ouput",IDC_STATIC,180,63,65,35,WS_GROUP
+    CONTROL         "NoHit Line(&1)",IDC_RADIO_NOHIT,"Button",
+                    BS_AUTORADIOBUTTON,185,97,56,10
+    GROUPBOX        "Result Ouput",IDC_STATIC,180,63,65,47,WS_GROUP
     CONTROL         "Normal(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,112,54,10
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,124,54,10
     CONTROL         "Per-File(&I)",IDC_RADIO_OUTPUTSTYLE2,"Button",
-                    BS_AUTORADIOBUTTON,185,124,59,10
-    CONTROL         "Result Only(&R)",IDC_RADIO_OUTPUTSTYLE3,"Button",
                     BS_AUTORADIOBUTTON,185,136,59,10
-    GROUPBOX        "Output Format",IDC_STATIC,180,102,65,47,WS_GROUP
+    CONTROL         "Result Only(&R)",IDC_RADIO_OUTPUTSTYLE3,"Button",
+                    BS_AUTORADIOBUTTON,185,148,59,10
+    GROUPBOX        "Output Format",IDC_STATIC,180,114,65,47,WS_GROUP
     DEFPUSHBUTTON   "Find(&F)",IDOK,253,76,49,14,WS_GROUP
     PUSHBUTTON      "Cancel(&X)",IDCANCEL,253,130,49,14
     PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,253,147,49,14
@@ -3896,6 +3898,7 @@ BEGIN
 	STR_GREP_SHOW_MATCH_LINE	"    (Matching Line displayed)\r\n"
 	STR_GREP_SHOW_FIRST_LINE	"    (Matching line first postion only displayed)\r\n"
 	STR_GREP_SHOW_MATCH_AREA	"    (Matching Area only displayed)\r\n"
+	STR_GREP_SHOW_MATCH_NOHITLINE	"    (Not Matching Line displayed)\r\n"
 	STR_GREP_SHOW_FIRST_MATCH	"    (First Matching Area only displayed for each file)\r\n"
 	STR_GREP_SUSPENDED			"suspended.\r\n"
 	STR_GREP_REPLACE_COUNT		"%d items replaced.\r\n"

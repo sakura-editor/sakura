@@ -244,15 +244,17 @@ BEGIN
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,73,48,10
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",
                     BS_AUTORADIOBUTTON,185,85,56,10
-    GROUPBOX        "結果出力",IDC_STATIC,180,63,65,35,WS_GROUP
+    CONTROL         "否該当行(&1)",IDC_RADIO_NOHIT,"Button",
+                    BS_AUTORADIOBUTTON,185,97,56,10
+    GROUPBOX        "結果出力",IDC_STATIC,180,63,65,47,WS_GROUP
     CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,112,54,10
+                    BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,185,124,54,10
     CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",
-                    BS_AUTORADIOBUTTON,185,124,59,10
-    CONTROL         "結果のみ(&R）",IDC_RADIO_OUTPUTSTYLE3,"Button",
                     BS_AUTORADIOBUTTON,185,136,59,10
-    GROUPBOX        "結果出力形式",IDC_STATIC,180,102,65,47,WS_GROUP
-    DEFPUSHBUTTON   "検索(&F)",IDOK,253,76,49,14,WS_GROUP
+    CONTROL         "結果のみ(&R）",IDC_RADIO_OUTPUTSTYLE3,"Button",
+                    BS_AUTORADIOBUTTON,185,148,59,10
+    GROUPBOX        "結果出力形式",IDC_STATIC,180,114,65,47,WS_GROUP
+    DEFPUSHBUTTON   "検索(&F)",IDOK,253,88,49,14,WS_GROUP
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,253,130,49,14
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,253,147,49,14
 END
@@ -3893,6 +3895,7 @@ BEGIN
 	STR_GREP_SHOW_MATCH_LINE	"    (一致した行を出力)\r\n"
 	STR_GREP_SHOW_FIRST_LINE	"    (一致した行の最初の箇所のみ出力)\r\n"
 	STR_GREP_SHOW_MATCH_AREA	"    (一致した箇所のみ出力)\r\n"
+	STR_GREP_SHOW_MATCH_NOHITLINE	"    (一致しなかった行を出力)\r\n"
 	STR_GREP_SHOW_FIRST_MATCH	"    (ファイル毎最初のみ検索)\r\n"
 	STR_GREP_SUSPENDED			"中断しました。\r\n"
 	STR_GREP_REPLACE_COUNT		"%d 個を置換しました。\r\n"

@@ -98,7 +98,7 @@ void CViewCommander::Command_GREP( void )
 			true, // Header
 			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
 			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
-			GetEditWindow()->m_cDlgGrep.m_bGrepOutputLine,
+			GetEditWindow()->m_cDlgGrep.m_nGrepOutputLineType,
 			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle,
 			GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly,
 			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
@@ -197,7 +197,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 			true, // Header
 			cDlgGrepRep.m_sSearchOption,
 			cDlgGrepRep.m_nGrepCharSet,
-			cDlgGrepRep.m_bGrepOutputLine,
+			cDlgGrepRep.m_nGrepOutputLineType,
 			cDlgGrepRep.m_nGrepOutputStyle,
 			cDlgGrepRep.m_bGrepOutputFileOnly,
 			cDlgGrepRep.m_bGrepOutputBaseFolder,
@@ -241,7 +241,8 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
 		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
 		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
-		if( cDlgGrepRep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, _T("P") );	// 行を出力する
+		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, _T("N") );	// 否ヒット行を出力する 2014.09.23
 		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
 		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("3") );

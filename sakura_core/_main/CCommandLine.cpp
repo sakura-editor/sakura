@@ -439,8 +439,11 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 						// 2002/09/21 Moca 互換性保持のための処理
 						m_gi.nGrepCharSet = CODE_AUTODETECT;	break;
 					case 'P':
-						// 行を出力するか該当部分だけ出力するか
-						m_gi.bGrepOutputLine = true;	break;
+						// 結果出力：[行を出力]/該当部分/否マッチ行
+						m_gi.nGrepOutputLineType = 1;	break;
+					case 'N':
+						// 結果出力：行を出力/該当部分/[否マッチ行]
+						m_gi.nGrepOutputLineType = 2;	break;
 					case 'W':
 						// 単語単位で探す
 						m_gi.sGrepSearchOption.bWordOnly = true;	break;
@@ -543,7 +546,7 @@ CCommandLine::CCommandLine()
 	m_gi.bGrepStdout		= false;
 	m_gi.bGrepHeader		= true;
 	m_gi.nGrepCharSet		= CODE_SJIS;
-	m_gi.bGrepOutputLine	= false;
+	m_gi.nGrepOutputLineType	= 0;
 	m_gi.nGrepOutputStyle	= 1;
 	m_gi.bGrepOutputFileOnly = false;
 	m_gi.bGrepOutputBaseFolder = false;

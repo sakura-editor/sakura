@@ -38,7 +38,7 @@ struct SGrepOption{
 	bool		bGrepStdout;			//!< 標準出力モード
 	bool		bGrepHeader;			//!< ヘッダ・フッダ表示
 	ECodeType	nGrepCharSet;			//!< 文字コードセット選択
-	bool		bGrepOutputLine;		//!< true: ヒット行を出力 / false: ヒット部分を出力
+	int			nGrepOutputLineType;	//!< 0:ヒット部分を出力, 1: ヒット行を出力, 2: 否ヒット行を出力
 	int			nGrepOutputStyle;		//!< 出力形式 1: Normal, 2: WZ風(ファイル単位) 3: 結果のみ
 	bool		bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
 	bool		bGrepOutputBaseFolder;	//!< ベースフォルダ表示
@@ -52,8 +52,8 @@ struct SGrepOption{
 		,bGrepStdout(false)
 		,bGrepHeader(true)
 		,nGrepCharSet(CODE_AUTODETECT)
-		,bGrepOutputLine(true)
-		,nGrepOutputStyle(true)
+		,nGrepOutputLineType(1)
+		,nGrepOutputStyle(1)
 		,bGrepOutputFileOnly(false)
 		,bGrepOutputBaseFolder(false)
 		,bGrepSeparateFolder(false)
@@ -90,7 +90,7 @@ public:
 		bool					bGrepHeader,
 		const SSearchOption&	sSearchOption,
 		ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-		BOOL					bGrepOutputLine,
+		int						nGrepOutputLineType,
 		int						nGrepOutputStyle,
 		bool					bGrepOutputFileOnly,	//!< [in] ファイル毎最初のみ出力
 		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダ表示

@@ -162,7 +162,7 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepHeader,
 	const SSearchOption&	sSearchOption,
 	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-	BOOL					bGrepOutputLine,
+	int						nGrepOutputLineType,
 	int						nGrepOutputStyle,
 	bool					bGrepOutputFileOnly,
 	bool					bGrepOutputBaseFolder,
@@ -313,7 +313,7 @@ DWORD CGrepAgent::DoGrep(
 	sGrepOption.bGrepStdout = bGrepStdout;
 	sGrepOption.bGrepHeader = bGrepHeader;
 	sGrepOption.nGrepCharSet = nGrepCharSet;
-	sGrepOption.bGrepOutputLine = FALSE != bGrepOutputLine;
+	sGrepOption.nGrepOutputLineType = nGrepOutputLineType;
 	sGrepOption.nGrepOutputStyle = nGrepOutputStyle;
 	sGrepOption.bGrepOutputFileOnly = bGrepOutputFileOnly;
 	sGrepOption.bGrepOutputBaseFolder = bGrepOutputBaseFolder;
@@ -321,6 +321,12 @@ DWORD CGrepAgent::DoGrep(
 	sGrepOption.bGrepReplace = bGrepReplace;
 	sGrepOption.bGrepPaste = bGrepPaste;
 	sGrepOption.bGrepBackup = bGrepBackup;
+	if( sGrepOption.bGrepReplace ){
+		// Grep否定行はGrep置換では無効
+		if( sGrepOption.nGrepOutputLineType == 2 ){
+			sGrepOption.nGrepOutputLineType = 1; // 行単位
+		}
+	}
 
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
@@ -488,9 +494,12 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( sGrepOption.bGrepOutputLine ){
-		/* 該当行 */
+		if( sGrepOption.nGrepOutputLineType == 1 ){
+			/* 該当行 */
 			pszWork = LSW( STR_GREP_SHOW_MATCH_LINE );	//L"    (一致した行を出力)\r\n"
+		}else if( sGrepOption.nGrepOutputLineType == 2 ){
+			// 否該当行
+			pszWork = LSW( STR_GREP_SHOW_MATCH_NOHITLINE );	//L"    (一致しなかった行を出力)\r\n"
 		}else{
 			if( bGrepReplace && sSearchOption.bRegularExp && !bGrepPaste ){
 				pszWork = LSW(STR_GREP_SHOW_FIRST_LINE);
@@ -913,7 +922,7 @@ void CGrepAgent::SetGrepResult(
 	}
 
 	/* 該当行 */
-	if( sGrepOption.bGrepOutputLine ){
+	if( sGrepOption.nGrepOutputLineType != 0 ){
 		pDispData = pCompareData;
 		k = nLineLen - nEolCodeLen;
 		if( nMaxOutStr < k ){
@@ -1176,6 +1185,7 @@ int CGrepAgent::DoGrepFile(
 	if( pcDlgCancel->IsCanceled() ){
 		return -1;
 	}
+	int nOutputHitCount = 0;
 
 	/* 検索条件が長さゼロの場合はファイル名だけ返す */
 	// 2002/08/29 ファイルオープンの手前へ移動
@@ -1223,6 +1233,8 @@ int CGrepAgent::DoGrepFile(
 				}
 			}
 		}
+		int nHitOldLine = nHitCount;
+		int nHitCountOldLine = *pnHitCount;
 
 		/* 正規表現検索 */
 		if( sSearchOption.bRegularExp ){
@@ -1234,7 +1246,7 @@ int CGrepAgent::DoGrepFile(
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+			//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
 			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 			// 2010.08.25 行頭以外で^にマッチする不具合の修正
@@ -1250,34 +1262,26 @@ int CGrepAgent::DoGrepFile(
 					}
 					nIndexPrev = nIndex;
 #endif
-
-					OutputPathInfo(
-						cmemMessage, sGrepOption,
-						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-						bOutputBaseFolder, bOutputFolderName, bOutFileName
-					);
-					/* Grep結果を、cmemMessageに格納する */
-					SetGrepResult(
-						cmemMessage,
-						pszDispFilePath,
-						pszCodeName,
-						nLine,
-						nIndex + 1,
-						pLine,
-						nLineLen,
-						nEolCodeLen,
-						pLine + nIndex,
-						matchlen,
-						sGrepOption
-					);
-					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					++nHitCount;
 					++(*pnHitCount);
-					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-						::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					if( sGrepOption.nGrepOutputLineType != 2 ){
+						OutputPathInfo(
+							cmemMessage, sGrepOption,
+							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+							bOutputBaseFolder, bOutputFolderName, bOutFileName
+						);
+						SetGrepResult(
+							cmemMessage, pszDispFilePath, pszCodeName,
+							nLine, nIndex + 1, pLine, nLineLen, nEolCodeLen,
+							pLine + nIndex, matchlen, sGrepOption
+						);
+						if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
+							::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+						}
 					}
+					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ) {
+					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
 						break;
 					}
 					//	探し始める位置を補正
@@ -1307,30 +1311,29 @@ int CGrepAgent::DoGrepFile(
 			// Jun. 26, 2003 genta 無駄なwhileは削除
 			while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != NULL ){
 				nIdx = pszRes - pLine + nMatchLen;
-				OutputPathInfo(
-					cmemMessage, sGrepOption,
-					pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-					bOutputBaseFolder, bOutputFolderName, bOutFileName
-				);
-				/* Grep結果を、cmemMessageに格納する */
-				SetGrepResult(
-					cmemMessage,
-					pszDispFilePath, pszCodeName,
-					//	Jun. 25, 2002 genta
-					//	桁位置は1始まりなので1を足す必要がある
-					nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
-					pszRes, nMatchLen,
-					sGrepOption
-				);
 				++nHitCount;
 				++(*pnHitCount);
-				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				if( sGrepOption.nGrepOutputLineType != 2 ){
+					OutputPathInfo(
+						cmemMessage, sGrepOption,
+						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+						bOutputBaseFolder, bOutputFolderName, bOutFileName
+					);
+					SetGrepResult(
+						cmemMessage, pszDispFilePath, pszCodeName,
+						//	Jun. 25, 2002 genta
+						//	桁位置は1始まりなので1を足す必要がある
+						nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+						pszRes, nMatchLen, sGrepOption
+					);
+					//	May 22, 2000 genta
+					if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
+						::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					}
 				}
 
 				// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
-				if ( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ) {
+				if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
 					break;
 				}
 			}
@@ -1341,7 +1344,7 @@ int CGrepAgent::DoGrepFile(
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
+			//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
 			for (;;) {
 				pszRes = CSearchAgent::SearchString(
 					pCompareData,
@@ -1353,28 +1356,27 @@ int CGrepAgent::DoGrepFile(
 
 				nColumn = pszRes - pCompareData + 1;
 
-				OutputPathInfo(
-					cmemMessage, sGrepOption,
-					pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-					bOutputBaseFolder, bOutputFolderName, bOutFileName
-				);
-				/* Grep結果を、cmemMessageに格納する */
-				SetGrepResult(
-					cmemMessage,
-					pszDispFilePath, pszCodeName,
-					nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
-					pszRes, nKeyLen,
-					sGrepOption
-				);
 				++nHitCount;
 				++(*pnHitCount);
-				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				if( sGrepOption.nGrepOutputLineType != 2 ){
+					OutputPathInfo(
+						cmemMessage, sGrepOption,
+						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+						bOutputBaseFolder, bOutputFolderName, bOutFileName
+					);
+					SetGrepResult(
+						cmemMessage, pszDispFilePath, pszCodeName,
+						nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
+						pszRes, nKeyLen, sGrepOption
+					);
+					//	May 22, 2000 genta
+					if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
+						::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+					}
 				}
 				
 				//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-				if ( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ) {
+				if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
 					break;
 				}
 				//	探し始める位置を補正
@@ -1387,6 +1389,41 @@ int CGrepAgent::DoGrepFile(
 				nColumnPrev += nPosDiff;
 			}
 		}
+		// 2014.09.23 否ヒット行を出力
+		if( sGrepOption.nGrepOutputLineType == 2 ){
+			bool bNoHit = nHitOldLine == nHitCount;
+			// ヒット数を戻す
+			nHitCount = nHitOldLine;
+			*pnHitCount = nHitCountOldLine;
+			// 否ヒット行だった
+			if( bNoHit ){
+				nHitCount++;
+				(*pnHitCount)++;
+				OutputPathInfo(
+					cmemMessage, sGrepOption,
+					pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+					bOutputBaseFolder, bOutputFolderName, bOutFileName
+				);
+				SetGrepResult(
+					cmemMessage, pszDispFilePath, pszCodeName,
+					nLine, 1, pLine, nLineLen, nEolCodeLen,
+					pLine, nLineLen, sGrepOption
+				);
+				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
+					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				}
+			}
+		}
+		// 2014.09.23 データが多い時はバッファ出力
+		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+			nOutputHitCount = nHitCount;
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+			if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+			cmemMessage._SetStringLength(0);
+		}
+
 		// ファイル検索の場合は、1つ見つかったら終了
 		if( sGrepOption.bGrepOutputFileOnly && 1 <= nHitCount ){
 			break;
@@ -1614,6 +1651,8 @@ int CGrepAgent::DoGrepReplaceFile(
 	if( pcDlgCancel->IsCanceled() ){
 		return -1;
 	}
+	int nOutputHitCount = 0;
+
 	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
 	if( sSearchOption.bWordOnly ){
 		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
@@ -1696,14 +1735,14 @@ int CGrepAgent::DoGrepReplaceFile(
 						sGrepOption
 					);
 					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-					if( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ){
+					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 						bOutput = false;
 					}
 				}
 				output.OutputHead();
 				++nHitCount;
 				++(*pnHitCount);
-				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
 					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 				}
 				if( !sGrepOption.bGrepPaste ){
@@ -1766,7 +1805,7 @@ int CGrepAgent::DoGrepReplaceFile(
 						pszRes, nMatchLen,
 						sGrepOption
 					);
-					if( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ){
+					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 						bOutput = false;
 					}
 				}
@@ -1774,7 +1813,7 @@ int CGrepAgent::DoGrepReplaceFile(
 				++nHitCount;
 				++(*pnHitCount);
 				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
 					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 				}
 				if( 0 < pszRes - pLine - nOutputPos ){
@@ -1812,7 +1851,7 @@ int CGrepAgent::DoGrepReplaceFile(
 						pszRes, nKeyLen,
 						sGrepOption
 					);
-					if( sGrepOption.bGrepOutputLine || sGrepOption.bGrepOutputFileOnly ){
+					if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
 						bOutput = false;
 					}
 				}
@@ -1820,7 +1859,7 @@ int CGrepAgent::DoGrepReplaceFile(
 				++nHitCount;
 				++(*pnHitCount);
 				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
 					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 				}
 				if( nColumn ){
@@ -1839,6 +1878,16 @@ int CGrepAgent::DoGrepReplaceFile(
 			cOutBuffer.AppendString( &pLine[nColumnPrev], nLineLen - nColumnPrev );
 		}
 		output.AppendBuffer(cOutBuffer);
+
+		// 2014.09.23 データが多い時はバッファ出力
+		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+			nOutputHitCount = nHitCount;
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+			if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+			cmemMessage._SetStringLength(0);
+		}
 	}
 
 	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている

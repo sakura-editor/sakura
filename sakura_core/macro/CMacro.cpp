@@ -183,7 +183,8 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= pcDlgGrep->m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
 			lFlag |= pcDlgGrep->m_sSearchOption.bRegularExp	? 0x08 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType == 1	? 0x20 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType == 2	? 0x400000 : 0x00;	// 2014.09.23 否ヒット行
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 3)		? 0x80 : 0x00;
 			ECodeType code = GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet;
@@ -949,6 +950,8 @@ bool CMacro::HandleCommand(
 		//		******** 以下「結果出力」 ********
 		//		0x00	該当行
 		//		0x20	該当部分
+		//		0x400000	否ヒット行	// 2014.09.23
+		//		0x400020	(未使用)	// 2014.09.23
 		//		**********************************
 		//		******** 以下「出力形式」 ********
 		//		0x00	ノーマル
@@ -1045,7 +1048,8 @@ bool CMacro::HandleCommand(
 			if( lFlag & 0x01 )_tcscat( pOpt, _T("S") );	/* サブフォルダからも検索する */
 			if( lFlag & 0x04 )_tcscat( pOpt, _T("L") );	/* 英大文字と英小文字を区別する */
 			if( lFlag & 0x08 )_tcscat( pOpt, _T("R") );	/* 正規表現 */
-			if( lFlag & 0x20 )_tcscat( pOpt, _T("P") );	/* 行を出力するか該当部分だけ出力するか */
+			if(          0x20 == (lFlag & 0x400020) )_tcscat( pOpt, _T("P") );	// 行を出力する
+			else if( 0x400000 == (lFlag & 0x400020) )_tcscat( pOpt, _T("N") );	// 否ヒット行を出力する
 			if(      0x40 == (lFlag & 0xC0) )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
 			else if( 0x80 == (lFlag & 0xC0) )_tcscat( pOpt, _T("3") );
 			else _tcscat( pOpt, _T("1") );
