@@ -786,6 +786,7 @@
 #define HIDC_REP_BUTTON_SETMARK			11920   //検索該当行をマーク
 #define HIDC_REP_CHECK_SEARCHALL		11921   //先頭（末尾）から再検索
 #define HIDC_REP_CHECK_CONSECUTIVEALL	11922   //「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+#define HIDC_REP_RADIO_LINEDELETE		11923	//置換対象：行削除
 
 //GREP
 #define HIDC_GREP_BUTTON_FOLDER			12000	//フォルダ
