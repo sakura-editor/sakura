@@ -24,16 +24,17 @@
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: Paste( int1 :Integer );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;改行コード (sakura:2.0.4.0で追加)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;オプション (sakura:2.0.4.0で追加)<br>
 ・記録:	○<br>
 ・解説<br>
-改行コードは以下のいずれかを指定することができます。<br>
+オプションは以下のいずれかの和を指定することができます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;改行コード変換有効<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;改行コード変換無効<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp;&nbsp;ラインモード貼り付け有効<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;ラインモード貼り付け無効<br>
 &nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;矩形コピーは常に矩形貼り付け<br>
 &nbsp;&nbsp;&nbsp;&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;矩形コピーは常に通常貼り付け<br>
+それぞれ指定しない場合は、共通設定に依存します。<br>
 <br>
 <img src="images/note.png"><b>注意</b><br>
 コピーするアプリケーションが、Unicodeテキスト形式とOEMテキスト形式で違う文字列を設定している場合があります。そのときは、従来と違うデータがサクラエディタに貼り付けられることになります。<br>
