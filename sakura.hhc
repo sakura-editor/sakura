@@ -1103,6 +1103,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Grep置換">
+					<param name="Local" value="_RESOURCE\HLP000362.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="指定行へジャンプ">
 					<param name="Local" value="_RESOURCE\HLP000063.html">
 					<param name="ImageNumber" value="9">
