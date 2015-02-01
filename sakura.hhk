@@ -1344,6 +1344,10 @@
 <param name="Local" value="_RESOURCE\HLP000275.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="プロファイルマネージャ">
+<param name="Local" value="_RESOURCE\HLP000363.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="検索（ボックス）">
 <param name="Local" value="_RESOURCE\HLP000276.html">
 </OBJECT>
