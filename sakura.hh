@@ -56,6 +56,7 @@
 #define HLP000027	27 //Oracle SQL*Plusで実行
 #define HLP000121	121 //ブラウズ
 #define HLP000022	22 //ファイルのプロパティ
+#define HLP000363	363 //プロファイルマネージャ
 #define HLP000029	29 //最近使ったファイル
 #define HLP000023	23 //最近使ったフォルダ
 #define HLP000030	30 //編集の全終了	// 2007.02.13 ryoji
@@ -96,6 +97,8 @@
 #define HLP000231	231 //移動履歴：前へ
 #define HLP000232	232 //移動履歴：次へ
 #define HLP000265	265 //現在位置を移動履歴に登録
+#define HLP000366	366 //次の変更行へ移動
+#define HLP000367	367 //前の変更行へ移動
 #define HLP000166	166 //単語の左端まで削除
 #define HLP000167	167 //単語の右端まで削除
 #define HLP000045	45 //現在位置の単語選択
@@ -162,6 +165,7 @@
 #define HLP000062	62 //置換
 #define HLP000136	136 //検索マークの切替え
 #define HLP000067	67 //Grep
+#define HLP000362	362 //Grep置換
 #define HLP000063	63 //指定行へジャンプ
 #define HLP000064	64 //アウトライン解析
 #define HLP000317	317 //アウトライン解析(トグル)	// 2006.10.11 ryoji
@@ -186,11 +190,15 @@
 #define HLP000307	307 //正規表現後方インクリメンタルサーチ	// 2006.10.05 ryoji
 #define HLP000308	308 //MIGEMO前方インクリメンタルサーチ	// 2006.10.05 ryoji
 #define HLP000309	309 //MIGEMO後方インクリメンタルサーチ	// 2006.10.05 ryoji
+#define HLP000364	364 //次の関数リストマーク
+#define HLP000365	365 //前の関数リストマーク
+#define HLP000368	368 //ファイルツリー
 #define HLP000068	68 //「ツール(T)」メニューの一覧
 #define HLP000069	69 //ツールバーを表示(隠す)
 #define HLP000070	70 //ファンクションキーを表示(隠す)
 #define HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
 #define HLP000134	134 //ステータスバーを表示(隠す)
+#define HLP000371	371 //ミニマップの表示
 #define HLP000072	72 //タイプ別設定一覧
 #define HLP000338	338 //タイプ別設定インポート	// 2010/5/1 Uchi
 #define HLP000073	73 //タイプ別設定
@@ -317,6 +325,8 @@
 #define HLP000241	241 //（選択）1ページダウン
 #define HLP000242	242 //（選択）ファイルの先頭に移動
 #define HLP000243	243 //（選択）ファイルの最後に移動
+#define HLP000369	369 //（選択）次の変更行へ移動
+#define HLP000370	370 //（選択）前の変更行へ移動
 #define HLP000244	244 //矩形範囲選択開始
 #define HLP000299	299 //(矩形選択)カーソル移動
 #define HLP000344	344 //(矩形選択)カーソル上移動(２行ごと)
@@ -440,11 +450,13 @@
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
 #define HIDC_CHECK_bNotOverWriteCRLF			10214 //改行は上書きしない
 #define HIDC_CHECK_bOverWriteFixMode			10218 //文字幅に合わせてスペースを詰める
+#define HIDC_CHECK_bOverWriteBoxDelete			10219 //矩形入力で選択範囲を削除する
 #define HIDC_CHECK_CONVERTEOLPASTE				10217 //改行コードを変換して貼り付ける // 2009.02.28 salarm
 #define HIDC_RADIO_CURDIR						10220 //カレントフォルダ
 #define HIDC_RADIO_MRUDIR						10221 //最近使ったフォルダ
 #define HIDC_RADIO_SELDIR						10222 //指定フォルダ
 #define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダパス
+#define HIDC_CHECK_ENABLEEXTEOL					10224 //改行コードNEL,PS,LSを有効にする
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
 #define HIDC_CHECK_bCheckFileTimeStamp			10311 //更新の監視
 #define HIDC_CHECK_EXCVLUSIVE_WRITE				10312 //ファイルの排他制御（上書き禁止）
@@ -481,6 +493,8 @@
 #define HIDC_CHECK_GREPREALTIME					10513 //リアルタイムで表示する	// 2006.08.08 ryoji
 #define HIDC_EDIT_REGEXPLIB						10514 //正規表現ライブラリ選択	// 2007.09.02 genta
 #define HIDC_LABEL_REGEXPVER					10515 //正規表現ライブラリ選択	// 2007.09.02 genta
+#define HIDC_COMBO_TAGJUMP						10516 //タグファイルの検索
+#define HIDC_COMBO_KEYWORD_TAGJUMP				10517 //タグファイルの検索
 //#define HIDC_BUTTON_HOKANFILE_REF				10600 //入力補完 単語ファイル参照			//Jul. 05, 2001 JEPRO タイプ別に移動
 //#define HIDC_BUTTON_KEYWORDHELPFILE_REF			10601 //キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
 #define HIDC_BUTTON_OPENHELP1					10602 //外部ヘルプファイル参照
@@ -590,6 +604,8 @@
 #define HIDC_BUTTON_TABFONT						11277 //タブフォント
 #define HIDC_CHECK_INHERIT_KEY_OTHER_VIEW		11278 //次・前検索で他のビューの検索条件を引き継ぐ
 #define HIDC_CHECK_DispTabClose					11279 //タブを閉じるボタン表示	// 2012.04.14 syat
+#define HIDC_CHECK_TAB_MULTILINE				11280 //タブ多段
+#define HIDC_COMBO_TAB_POSITION					11281 //タブ表示位置
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
@@ -687,6 +703,7 @@
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
 #define HIDC_CHECK_DEFAULT_BOM					14303 //デフォルトBOM			// 2011.01.24 ryoji
+#define HIDC_CHECK_TYPE_SUPPORT_CP				14304 //コードページ
 #define HIDC_BUTTON_REGEX_IMPORT	11600	//インポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_EXPORT	11601	//エクスポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_INS		11602	//挿入			//@@@ 2001.11.17 add MIK
@@ -727,6 +744,8 @@
 #define HIDC_CHECK_KINSOKUHIDE		11766	//ぶら下げを隠す			// 2012.11.30 Uchi
 #define HIDC_PLUGIN_README			11767	//ReadMe表示					// 2011/11/2 Uchi
 #define HIDC_PLUGIN_INST_ZIP		11768	//Zipプラグインを追加			// 2011/11/2 Uchi
+#define HIDC_EDIT_LINENUMWIDTH		11769	//行番号の最小桁数				// 2014.08.02 katze
+#define HIDC_PLUGIN_URL				11770	//プラグイン配布元				// 2015.01.02 syat
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
@@ -767,6 +786,7 @@
 #define HIDC_REP_BUTTON_SETMARK			11920   //検索該当行をマーク
 #define HIDC_REP_CHECK_SEARCHALL		11921   //先頭（末尾）から再検索
 #define HIDC_REP_CHECK_CONSECUTIVEALL	11922   //「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+#define HIDC_REP_RADIO_LINEDELETE		11923	//置換対象：行削除
 
 //GREP
 #define HIDC_GREP_BUTTON_FOLDER			12000	//フォルダ
@@ -795,6 +815,7 @@
 #define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダ表示
 #define HIDC_CHECK_SEP_FOLDER			12023	//フォルダ毎に表示
 #define HIDC_GREP_BUTTON_FOLDER_UP		12024	//Up
+#define HIDC_GREP_CHECK_CP				12025	//コードページ
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照
@@ -824,6 +845,7 @@
 #define HIDC_COMBO_nSortType	12209	//順序
 #define HIDC_FL_BUTTON_WINSIZE	12210	//ウィンドウ位置保存	// 2006.08.06 ryoji
 #define HIDC_FL_BUTTON_MENU		12211	//ウィンドウの位置メニュー
+#define HIDC_FL_BUTTON_SETTING	12212	//設定
 
 //ファイル内容比較
 #define HIDC_CMP_BUTTON1		12300	//上下に表示
@@ -940,6 +962,7 @@
 #define HIDC_OPENDLG_COMBO_OPENFOLDER	13105	//最近のフォルダ
 #define HIDC_OPENDLG_COMBO_EOL	13106	//改行コード
 #define HIDC_OPENDLG_CHECK_BOM	13107	//BOM	// 2006.08.06 ryoji
+#define HIDC_OPENDLG_CHECK_CP	13108	//CP
 
 //DIFF差分表示
 #define HIDC_BUTTON_DIFF_DST		13200	// 相手ファイル参照
@@ -981,6 +1004,8 @@
 #define HIDC_BUTTON_FNAME_DOWN		13409	// 下へ
 #define HIDC_BUTTON_FNAME_LAST		13410	// 最終
 //#define HIDC_CHECK_FNAME,	13411	// ファイル名を簡易表示する
+#define HIDC_CHECK_FNAME_SHORTPATH		13412
+#define HIDC_EDIT_FNAME_SHORTMAXWIDTH	13413
 
 //履歴の管理	//@@@ 2003.04.08 MIK
 //#define	HIDC_FAVORITE_DIALOG		13500	//ダイアログ用
@@ -1096,5 +1121,82 @@
 #define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 #define HIDC_CHECK_KEY_PARENTHESES			14414	//アクセスキーを必ず( )付で表示(&P)
+
+#define HIDC_GREP_REP_BUTTON_FOLDER			14500	//フォルダ
+#define HIDC_GREP_REP_BUTTON_CURRENTFOLDER	14501	//現フォルダ
+#define HIDOK_GREP_REP						14502	//置換開始
+#define HIDCANCEL_GREP_REP					14503	//キャンセル
+#define HIDC_GREP_REP_BUTTON_HELP			14504	//ヘルプ
+#define HIDC_GREP_REP_CHK_PASTE				14505	//クリップボードから貼り付け
+#define HIDC_GREP_REP_CHK_WORD				14506	//単語単位
+#define HIDC_GREP_REP_CHK_SUBFOLDER			14507	//サブフォルダも検索
+#define HIDC_GREP_REP_CHK_LOHICASE			14509	//大文字小文字
+#define HIDC_GREP_REP_CHK_REGULAREXP		14510	//正規表現
+#define HIDC_GREP_REP_CHK_BACKUP			14511	//バックアップ作成
+#define HIDC_GREP_REP_COMBO_CHARSET			14512	//文字コードセット
+#define HIDC_GREP_REP_COMBO_TEXT			14513	//置換前
+#define HIDC_GREP_REP_COMBO_TEXT2			14514	//置換後
+#define HIDC_GREP_REP_COMBO_FILE			14515	//ファイル
+#define HIDC_GREP_REP_COMBO_FOLDER			14516	//フォルダ
+#define HIDC_GREP_REP_BUTTON_FOLDER_UP		14517	//上
+#define HIDC_GREP_REP_RADIO_OUTPUTLINE		14518	//結果出力：行単位
+#define HIDC_GREP_REP_RADIO_OUTPUTMARKED	14519	//結果出力：該当部分
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE1	14520	//結果出力形式：ノーマル
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE2	14521	//結果出力形式：ファイル毎
+#define HIDC_GREP_REP_RADIO_OUTPUTSTYLE3	14522	//結果出力形式：結果のみ
+#define HIDC_GREP_REP_STATIC_JRE32VER		14523	//正規表現バージョン
+#define HIDC_GREP_REP_CHK_DEFAULTFOLDER		14524	//フォルダの初期値をカレントフォルダにする
+#define HIDC_GREP_REP_CHECK_FILE_ONLY		14525	//ファイル毎最初のみ検索
+#define HIDC_GREP_REP_CHECK_BASE_PATH		14526	//ベースフォルダ表示
+#define HIDC_GREP_REP_CHECK_SEP_FOLDER		14527	//フォルダ毎に表示
+#define HIDC_GREP_REP_CHECK_CP				14528	//CP
+
+//プロファイル一覧
+#define HIDC_LIST_PROFILE					14600	//プロファイル一覧
+#define HIDC_CHECK_PROF_DEFSTART			14601	//デフォルト設定にして起動
+#define HIDOK_PROFILEMGR					14602	//起動
+#define HIDCANCEL_PROFILEMGR				14603	//キャンセル
+#define HIDC_PROFILEMGR_BUTTON_HELP			14604	//ヘルプ
+#define HIDC_BUTTON_PROF_CREATE				14605	//新規作成
+#define HIDC_BUTTON_PROF_RENAME				14606	//名前変更
+#define HIDC_BUTTON_PROF_DELETE				14607	//削除
+#define HIDC_BUTTON_PROF_DEFSET				14608	//デフォルト設定
+#define HIDC_BUTTON_PROF_DEFCLEAR			14609	//デフォルト解除
+
+// ファイルツリー設定
+#define HIDC_CHECK_FILETREE_LOADINI			14700
+#define HIDC_EDIT_FILETREE_DEFINI			14701
+#define HIDC_BUTTON_FILETREE_REF1			14702
+#define HIDC_BUTTON_FILETREE_LOAD			14703
+#define HIDC_RADIO_FILETREE_GREP			14704
+#define HIDC_RADIO_FILETREE_FILE			14705
+#define HIDC_RADIO_FILETREE_FOLDER			14706
+#define HIDC_STATIC_FILETREE_PATH			14707
+#define HIDC_EDIT_FILETREE_PATH				14708
+#define HIDC_BUTTON_FILETREE_REF2			14709
+#define HIDC_BUTTON_FILETREE_PATH_MENU		14710
+#define HIDC_EDIT_FILETREE_LABEL			14711
+#define HIDC_STATIC_FILETREE_FILE			14712
+#define HIDC_EDIT_FILETREE_FILE				14713
+#define HIDC_CHECK_FILETREE_HIDDEN			14714
+#define HIDC_CHECK_FILETREE_READONLY		14715
+#define HIDC_CHECK_FILETREE_SYSTEM			14716
+#define HIDC_BUTTON_FILETREE_DELETE			14717
+#define HIDC_BUTTON_FILETREE_INSERT			14718
+#define HIDC_BUTTON_FILETREE_INSERT_A		14719
+#define HIDC_BUTTON_FILETREE_ADD			14720
+#define HIDC_BUTTON_FILETREE_UPDATE			14721
+#define HIDC_BUTTON_FILETREE_FILEADD		14722
+#define HIDC_BUTTON_FILETREE_REPLACE		14723
+#define HIDC_BUTTON_FILETREE_UP				14724
+#define HIDC_BUTTON_FILETREE_DOWN			14725
+#define HIDC_BUTTON_FILETREE_RIGHT			14726
+#define HIDC_BUTTON_FILETREE_LEFT			14727
+#define HIDC_TREE_FILETREE_FL				14728
+#define HIDC_BUTTON_FILETREE_IMPORT			14729
+#define HIDC_BUTTON_FILETREE_EXPORT			14730
+#define HIDC_FILETREE_IDOK					14731
+#define HIDC_FILETREE_IDCANCEL				14732
+#define HIDC_BUTTON_FILETREE_HELP			14733
 
 #define HIDC_STATIC								19999 //不明
