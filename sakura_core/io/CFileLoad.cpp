@@ -599,7 +599,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_EBCDEC:
 		// EOLƒR[ƒh•ÏŠ·‚µ‚Â‚Âİ’è
 		for( i = nbgn; i < nDataLen; ++i ){
-			if( m_encodingTrait == ENCODING_TRAIT_EBCDEC ){
+			if( m_encodingTrait == ENCODING_TRAIT_EBCDEC && bExtEol ){
 				if( pData[i] == '\x15' ){
 					pcEol->SetType(EOL_NEL);
 					neollen = 1;
