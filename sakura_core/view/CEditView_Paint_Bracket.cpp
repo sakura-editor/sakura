@@ -233,6 +233,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 					GetTextDrawer().DispText(gr, &sPos,  &pLine[OutputX], 1, bTrans);
 					// 2006.04.30 Moca ‘ÎŠ‡ŒÊ‚Ìcü‘Î‰
 					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //¦Š‡ŒÊ‚ª‘SŠp•‚Å‚ ‚éê‡‚ğl—¶
+					GetTextDrawer().DispNoteLine(gr, nTop, nTop + nHeight, nLeft, nLeft + (Int)charsWidth * nWidth);
 					cTextType.RewindGraphicsState(gr);
 				}
 
