@@ -341,7 +341,7 @@ bool CShareData::InitShareData()
 			sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 			sEdit.m_bEnableLineModePaste = true;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 			sEdit.m_bConvertEOLPaste = false;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
-			sEdit.m_bEnableExtEol = true;
+			sEdit.m_bEnableExtEol = false;
 			sEdit.m_bBoxSelectLock = true;
 
 			sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
