@@ -1686,7 +1686,11 @@ BEGIN
                     WS_GROUP
     CONTROL         "改行コードNEL,PS,LSを有効にする(&O)",
                     IDC_CHECK_ENABLEEXTEOL,"Button",BS_AUTOCHECKBOX | WS_GROUP
-                    | WS_TABSTOP,158,123,130,10
+                    | WS_TABSTOP,161,138,122,10
+    CONTROL         "矩形選択移動で選択をロックする(&B)"
+                    IDC_CHECK_BOXSELECTLOCK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,161,151,122,10
+    GROUPBOX        "その他",IDC_STATIC,156,125,131,42,WS_GROUP
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 293, 240

@@ -1688,7 +1688,11 @@ BEGIN
                     WS_GROUP
     CONTROL         "Enable CR Code NEL,PS,LS(&O)",
                     IDC_CHECK_ENABLEEXTEOL,"Button",BS_AUTOCHECKBOX | WS_GROUP
-                    | WS_TABSTOP,158,123,130,10
+                    | WS_TABSTOP,161,138,122,10
+    CONTROL         "Lock Move Box Selecting(&B)"
+                    IDC_CHECK_BOXSELECTLOCK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,161,151,122,10
+    GROUPBOX        "Etc",IDC_STATIC,156,125,131,42,WS_GROUP
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 293, 240
