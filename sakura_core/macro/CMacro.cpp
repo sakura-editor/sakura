@@ -144,6 +144,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 				}
 			}
 			AddIntParam( nParamOption );
+		}
 		break;
 	case F_INSTEXT_W:
 	case F_FILEOPEN:
