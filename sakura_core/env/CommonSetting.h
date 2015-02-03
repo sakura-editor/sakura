@@ -230,6 +230,7 @@ struct CommonSetting_Edit
 	SFilePath	m_OpenDialogSelDir;		//!< 指定フォルダ
 
 	bool	m_bEnableExtEol;			//!< NEL,PS,LSを改行コードとして利用する
+	bool	m_bBoxSelectLock;			//!< (矩形選択)移動でロックする
 
 	// (ダイアログ項目無し)
 	BOOL	m_bAutoColumnPaste;			//!< 矩形コピーのテキストは常に矩形貼り付け

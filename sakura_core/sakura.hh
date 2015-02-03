@@ -457,6 +457,7 @@
 #define HIDC_RADIO_SELDIR						10222 //指定フォルダ
 #define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダパス
 #define HIDC_CHECK_ENABLEEXTEOL					10224 //改行コードNEL,PS,LSを有効にする
+#define HIDC_CHECK_BOXSELECTLOCK				10225 //矩形選択移動で選択をロックする
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
 #define HIDC_CHECK_bCheckFileTimeStamp			10311 //更新の監視
 #define HIDC_CHECK_EXCVLUSIVE_WRITE				10312 //ファイルの排他制御（上書き禁止）

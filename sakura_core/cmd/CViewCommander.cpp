@@ -341,24 +341,24 @@ BOOL CViewCommander::HandleCommand(
 	/* 矩形選択系 */
 //	case F_BOXSELALL:		Command_BOXSELECTALL();break;		//矩形ですべて選択
 	case F_BEGIN_BOX:		Command_BEGIN_BOXSELECT( true );break;	/* 矩形範囲選択開始 */
-	case F_UP_BOX:			if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_UP( true, bRepeat ); break;		//(矩形選択)カーソル上移動
-	case F_DOWN_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_DOWN( true, bRepeat ); break;		//(矩形選択)カーソル下移動
-	case F_LEFT_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_LEFT( true, bRepeat ); break;		//(矩形選択)カーソル左移動
-	case F_RIGHT_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_RIGHT( true, false, bRepeat ); break;	//(矩形選択)カーソル右移動
-	case F_UP2_BOX:			if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_UP2( true ); break;				//(矩形選択)カーソル上移動(２行ごと)
-	case F_DOWN2_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_DOWN2( true );break;				//(矩形選択)カーソル下移動(２行ごと)
-	case F_WORDLEFT_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_WORDLEFT( true );break;			//(矩形選択)単語の左端に移動
-	case F_WORDRIGHT_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_WORDRIGHT( true );break;			//(矩形選択)単語の右端に移動
-	case F_GOLOGICALLINETOP_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINETOP( true, 8 | lparam1 );break;	//(矩形選択)行頭に移動(改行単位)
-//	case F_GOLOGICALLINEEND_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINEEND( true, 0, 8 | lparam1 );break;	//(矩形選択)行末に移動(改行単位)
-	case F_GOLINETOP_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINETOP( true, lparam1 );break;	//(矩形選択)行頭に移動(折り返し単位/改行単位)
-	case F_GOLINEEND_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOLINEEND( true, 0, lparam1 );break;	//(矩形選択)行末に移動(折り返し単位/改行単位)
-	case F_HalfPageUp_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageUp( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページアップ
-	case F_HalfPageDown_BOX:if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_HalfPageDown( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページダウン
-	case F_1PageUp_BOX:		if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageUp( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページアップ
-	case F_1PageDown_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_1PageDown( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページダウン
-	case F_GOFILETOP_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
-	case F_GOFILEEND_BOX:	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { this->Command_BEGIN_BOXSELECT( false ); } this->Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
+	case F_UP_BOX:			Sub_BoxSelectLock(lparam1); this->Command_UP( true, bRepeat ); break;		//(矩形選択)カーソル上移動
+	case F_DOWN_BOX:		Sub_BoxSelectLock(lparam1); this->Command_DOWN( true, bRepeat ); break;		//(矩形選択)カーソル下移動
+	case F_LEFT_BOX:		Sub_BoxSelectLock(lparam1); this->Command_LEFT( true, bRepeat ); break;		//(矩形選択)カーソル左移動
+	case F_RIGHT_BOX:		Sub_BoxSelectLock(lparam1); this->Command_RIGHT( true, false, bRepeat ); break;	//(矩形選択)カーソル右移動
+	case F_UP2_BOX:			Sub_BoxSelectLock(lparam1); this->Command_UP2( true ); break;				//(矩形選択)カーソル上移動(２行ごと)
+	case F_DOWN2_BOX:		Sub_BoxSelectLock(lparam1); this->Command_DOWN2( true );break;				//(矩形選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_BOX:	Sub_BoxSelectLock(lparam1); this->Command_WORDLEFT( true );break;			//(矩形選択)単語の左端に移動
+	case F_WORDRIGHT_BOX:	Sub_BoxSelectLock(lparam1); this->Command_WORDRIGHT( true );break;			//(矩形選択)単語の右端に移動
+	case F_GOLOGICALLINETOP_BOX:Sub_BoxSelectLock(lparam2); this->Command_GOLINETOP( true, 8 | lparam1 );break;	//(矩形選択)行頭に移動(改行単位)
+//	case F_GOLOGICALLINEEND_BOX:Sub_BoxSelectLock(lparam2); this->Command_GOLINEEND( true, 0, 8 | lparam1 );break;	//(矩形選択)行末に移動(改行単位)
+	case F_GOLINETOP_BOX:	Sub_BoxSelectLock(lparam2); this->Command_GOLINETOP( true, lparam1 );break;	//(矩形選択)行頭に移動(折り返し単位/改行単位)
+	case F_GOLINEEND_BOX:	Sub_BoxSelectLock(lparam2); this->Command_GOLINEEND( true, 0, lparam1 );break;	//(矩形選択)行末に移動(折り返し単位/改行単位)
+	case F_HalfPageUp_BOX:	Sub_BoxSelectLock(lparam2); this->Command_HalfPageUp( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX:Sub_BoxSelectLock(lparam2); this->Command_HalfPageDown( true, CLayoutYInt(lparam1) ); break;		//(矩形選択)半ページダウン
+	case F_1PageUp_BOX:		Sub_BoxSelectLock(lparam2); this->Command_1PageUp( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページアップ
+	case F_1PageDown_BOX:	Sub_BoxSelectLock(lparam2); this->Command_1PageDown( true, CLayoutYInt(lparam1) ); break;			//(矩形選択)１ページダウン
+	case F_GOFILETOP_BOX:	Sub_BoxSelectLock(lparam1); this->Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
+	case F_GOFILEEND_BOX:	Sub_BoxSelectLock(lparam1); this->Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
@@ -651,6 +651,25 @@ BOOL CViewCommander::HandleCommand(
 	return bRet;
 }
 
+
+
+/*!
+	@date 2014.07.11 新規追加
+*/
+void CViewCommander::Sub_BoxSelectLock( int flags )
+{
+	bool bSelLock;
+	if( flags == 0x00 ){
+		bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock;
+	}else if( flags == 0x01 ){
+		bSelLock = true;
+	}else if( flags == 0x02 ){
+		bSelLock = false;
+	}
+	if( ! this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) {
+		this->Command_BEGIN_BOXSELECT( bSelLock );
+	}
+}
 
 
 CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText)

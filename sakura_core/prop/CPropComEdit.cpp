@@ -45,6 +45,7 @@ static const DWORD p_helpids[] = {	//10210
 	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
 	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
 	IDC_CHECK_ENABLEEXTEOL,				HIDC_CHECK_ENABLEEXTEOL,				//改行コードNEL,PS,LSを有効にする
+	IDC_CHECK_BOXSELECTLOCK,			HIDC_CHECK_BOXSELECTLOCK,				//矩形選択移動で選択をロックする
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -226,6 +227,8 @@ void CPropEdit::SetData( HWND hwndDlg )
 
 	// 改行コードNEL,PS,LSを有効にする
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL, m_Common.m_sEdit.m_bEnableExtEol );
+	// 矩形選択移動で選択をロックする
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_BOXSELECTLOCK, m_Common.m_sEdit.m_bBoxSelectLock );
 
 	EnableEditPropInput( hwndDlg );
 }
@@ -280,6 +283,9 @@ int CPropEdit::GetData( HWND hwndDlg )
 
 	// 改行コードNEL,PS,LSを有効にする
 	m_Common.m_sEdit.m_bEnableExtEol = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL );
+	// 矩形選択移動で選択をロックする
+	m_Common.m_sEdit.m_bBoxSelectLock = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BOXSELECTLOCK );
+
 	return TRUE;
 }
 

@@ -93,9 +93,58 @@ void CMacro::ClearMacroParam()
 */
 void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 {
+	int nOption = 0;
 	LPARAM lParam = lParams[0];
 	switch( m_nFuncID ){
-	/*	文字列パラメータを追加 */
+	case F_GOLOGICALLINETOP_BOX:
+	case F_GOLINETOP_BOX:
+	case F_GOLINEEND_BOX:
+	case F_HalfPageUp_BOX:
+	case F_HalfPageDown_BOX:
+	case F_1PageUp_BOX:
+	case F_1PageDown_BOX:
+		nOption = 1;
+	case F_UP_BOX:
+	case F_DOWN_BOX:
+	case F_LEFT_BOX:
+	case F_RIGHT_BOX:
+	case F_UP2_BOX:
+	case F_DOWN2_BOX:
+	case F_WORDLEFT_BOX:
+	case F_WORDRIGHT_BOX:
+	case F_GOFILETOP_BOX:
+	case F_GOFILEEND_BOX:
+		{
+			if( nOption == 1 ){
+				switch( m_nFuncID ){
+				case F_HalfPageUp_BOX:
+				case F_HalfPageDown_BOX:
+					AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum / 2 );
+					break;
+				case F_1PageUp_BOX:
+				case F_1PageDown_BOX:
+					AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum - 1 );
+					break;
+				default:
+					AddIntParam( lParam );
+					break;
+				}
+			}
+			int nParamOption;
+			if( nOption == 1 ){
+				nParamOption = lParams[1];
+			}else{
+				nParamOption = lParam;
+			}
+			if( nParamOption == 0 ){
+				if( GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock ){
+					nParamOption = 0x01;
+				}else{
+					nParamOption = 0x02;
+				}
+			}
+			AddIntParam( nParamOption );
+		break;
 	case F_INSTEXT_W:
 	case F_FILEOPEN:
 	case F_EXECEXTMACRO:
@@ -235,10 +284,8 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	// 2014.01.15 PageUp/Down系追加
 	case F_HalfPageUp:
 	case F_HalfPageUp_Sel:
-	case F_HalfPageUp_BOX:
 	case F_HalfPageDown:
 	case F_HalfPageDown_Sel:
-	case F_HalfPageDown_BOX:
 		if( lParam == 0 ){
 			AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum / 2 );
 		}else{
@@ -247,10 +294,8 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		break;
 	case F_1PageUp:
 	case F_1PageUp_Sel:
-	case F_1PageUp_BOX:
 	case F_1PageDown:
 	case F_1PageDown_Sel:
-	case F_1PageDown_BOX:
 		if( lParam == 0 ){
 			AddIntParam( (Int)pcEditView->GetTextArea().m_nViewRowNum - 1 );
 		}else{
@@ -491,6 +536,7 @@ bool CMacro::HandleCommand(
 {
 	std::tstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
 	const TCHAR* EXEC_ERROR_TITLE = EXEC_ERROR_TITLE_string.c_str();
+	int nOptions = 0;
 
 	switch ( LOWORD(Index) ) 
 	{
@@ -512,11 +558,8 @@ bool CMacro::HandleCommand(
 	case F_TEXTWRAPMETHOD:	//	テキストの折り返し方法の指定。数値は、0x0（折り返さない）、0x1（指定桁で折り返す）、0x2（右端で折り返す）	// 2008.05.30 nasukoji
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動）
 	case F_GOLINETOP_SEL:
-	case F_GOLOGICALLINETOP_BOX:
-	case F_GOLINETOP_BOX:
 	case F_GOLINEEND:	//	行末に移動
 	case F_GOLINEEND_SEL:
-	case F_GOLINEEND_BOX:
 	case F_SELECT_COUNT_MODE:	//	文字カウントの方法を指定。数値は、0x0（変更せず取得のみ）、0x1（文字数）、0x2（バイト数）、0x3（文字数⇔バイト数トグル）	// 2009.07.06 syat
 	case F_OUTLINE:	//	アウトライン解析のアクションを指定。数値は、0x0（画面表示）、0x1（画面表示＆再解析）、0x2（画面表示トグル）
 	case F_CHANGETYPE:
@@ -534,15 +577,42 @@ bool CMacro::HandleCommand(
 	case F_HalfPageDown:
 	case F_HalfPageUp_Sel:
 	case F_HalfPageDown_Sel:
-	case F_HalfPageUp_BOX:
-	case F_HalfPageDown_BOX:
 	case F_1PageUp:
 	case F_1PageDown:
 	case F_1PageUp_Sel:
 	case F_1PageDown_Sel:
+		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
+		break;
+	case F_UP_BOX:
+	case F_DOWN_BOX:
+	case F_LEFT_BOX:
+	case F_RIGHT_BOX:
+	case F_UP2_BOX:
+	case F_DOWN2_BOX:
+	case F_WORDLEFT_BOX:
+	case F_WORDRIGHT_BOX:
+	case F_GOFILETOP_BOX:
+	case F_GOFILEEND_BOX:
+		nOptions = 1;
+	case F_GOLOGICALLINETOP_BOX:
+	case F_GOLINETOP_BOX:
+	case F_GOLINEEND_BOX:
+	case F_HalfPageUp_BOX:
+	case F_HalfPageDown_BOX:
 	case F_1PageUp_BOX:
 	case F_1PageDown_BOX:
-		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
+		{
+			// 0: 共通設定
+			// 1: true(マクロのデフォルト値)
+			// 2: false
+			// マクロのデフォルト値はtrue(1)だが、CEditView側のデフォルトは共通設定(0)
+			int nBoxLock = wtoi_def(Argument[nOptions == 1 ? 0 : 1], 1);
+			if( nOptions == 1 ){
+				pcEditView->GetCommander().HandleCommand( Index, true, nBoxLock, 0, 0, 0 );
+			}else{
+				pcEditView->GetCommander().HandleCommand( Index, true, wtoi_def(Argument[0], 0), nBoxLock, 0, 0 );
+			}
+		}
 		break;
 	case F_CHGMOD_EOL:	//	入力改行コード指定。EEolTypeの数値を指定。2003.06.23 Moca
 		//	Jun. 16, 2002 genta
