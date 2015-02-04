@@ -833,6 +833,10 @@
 <param name="Local" value="_RESOURCE\HLP000064.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイルツリー">
+<param name="Local" value="_RESOURCE\HLP000368.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="タグジャンプ">
 <param name="Local" value="_RESOURCE\HLP000065.html">
 </OBJECT>
