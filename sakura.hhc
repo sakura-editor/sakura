@@ -1747,6 +1747,16 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="次の変更行へ移動">
+					<param name="Local" value="_RESOURCE\HLP000366.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="前の変更行へ移動">
+					<param name="Local" value="_RESOURCE\HLP000367.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="(選択)カーソル移動">
 					<param name="Local" value="_RESOURCE\HLP000290.html">
 					<param name="ImageNumber" value="9">
@@ -1789,6 +1799,16 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="(選択)半ページダウン">
 					<param name="Local" value="_RESOURCE\HLP000248.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="(選択)次の変更行へ移動">
+					<param name="Local" value="_RESOURCE\HLP000369.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="(選択)前の変更行へ移動">
+					<param name="Local" value="_RESOURCE\HLP000370.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
