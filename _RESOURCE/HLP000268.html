@@ -72,6 +72,7 @@
 <META NAME="MS-HKWD" CONTENT="SetViewLeft">
 <META NAME="MS-HKWD" CONTENT="GetViewLines">
 <META NAME="MS-HKWD" CONTENT="GetViewColumns">
+<META NAME="MS-HKWD" CONTENT="CreateMenu">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -161,6 +162,7 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#SetViewLeft">SetViewLeft</a>( int1 :Integer )<br>
 ・<a href="#GetViewLines">GetViewLines</a>() :Integer<br>
 ・<a href="#GetViewColumns">GetViewColumns</a>() :Integer<br>
+・<a href="#CreateMenu">CreateMenu</a>( int1 :Integer, str2 :String ) :Integer<br>
 <br>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -1046,6 +1048,32 @@ sakura:2.2.0.0以降<br>
 ルーラー基準の文字数に変換するには以下のようにします。<br>
 var px = GetViewColumns();<br>
 var chars = Math.floor(px / GetDefaultCharLength());<br>
+</div>
+sakura:2.2.0.0以降<br>
+<br>
+■ function <span id="CreateMenu">CreateMenu</span>( int1 :Integer, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;0=マウス位置に表示 1=カーソル位置に表示<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;メニュー文字列<br>
+<b>戻り値</b><br>
+セパレータ要素,サブメニューを除いた、項目番号(1開始)が返ります。<br>
+キャンセルされた場合は 0 です。<br>
+<b>解説</b><br>
+メニュー文字列は , 区切りで指定します。<br>
+先頭に以下の文字を付けるとそれぞれの意味になります。<br>
+複数設定する場合は[CD]のように書きます。<br>
+[C] チェックボックス<br>
+[D]　非活性(Disable)<br>
+[R] ラジオボタン<br>
+[S] サブメニュー<br>
+[E] サブメニュー終了（サブメニューの最後の要素に書く)<br>
+[EE] ２段分サブメニューを終了(3段はEEE,4段はEEEE...)<br>
+[B] メニューの折り返し(これを指定すると描画が旧テーマ風)<br>
+"["そのものを先頭に表示したい場合は、"[][str]"のように書く必要があります。<br>
+アクセスキーを付ける場合は &amp;A のように書きます。&amp; そのものは &amp;&amp; と書いてください。<br>
+要素を「-」(スラッシュ単独)にすると、その要素はセパレータです。<br>
+例、CreateMenu( 0, "[C]チェック項目(&A),[S]サブメニュー(&B),サブメニュー1, [E]サブメニュー2,-,[D]非活性" )<br>
 </div>
 sakura:2.2.0.0以降<br>
 <br>
