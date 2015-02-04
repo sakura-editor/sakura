@@ -1177,6 +1177,16 @@
 					<param name="Local" value="_RESOURCE\HLP000183.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="次の関数リストマーク">
+					<param name="Local" value="_RESOURCE\HLP000364.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="前の関数リストマーク">
+					<param name="Local" value="_RESOURCE\HLP000365.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="「ツール(T)」メニュー">

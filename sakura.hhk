@@ -881,6 +881,14 @@
 <param name="Local" value="_RESOURCE\HLP000183.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="次の関数リストマーク">
+<param name="Local" value="_RESOURCE\HLP000364.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前の関数リストマーク">
+<param name="Local" value="_RESOURCE\HLP000365.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="ツール(T)">
 <param name="Local" value="_RESOURCE\HLP000068.html">
 </OBJECT>
