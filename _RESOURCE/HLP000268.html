@@ -66,6 +66,7 @@
 <META NAME="MS-HKWD" CONTENT="IsIncludeClipboardFormat">
 <META NAME="MS-HKWD" CONTENT="GetClipboardByFormat">
 <META NAME="MS-HKWD" CONTENT="SetClipboardByFormat">
+<META NAME="MS-HKWD" CONTENT="GetLineAttribute">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -149,6 +150,7 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#IsIncludeClipboardFormat">IsIncludeClipboardFormat</a>(str1 :String) :Integer<br>
 ・<a href="#GetClipboardByFormat">GetClipboardByFormat</a>(str1 :String, int2 :Integer, int3:Integer) :String<br>
 ・<a href="#SetClipboardByFormat">SetClipboardByFormat</a>(str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer<br>
+・<a href="#GetLineAttribute">GetLineAttribute</a>(int1 :Integer, int2 :Integer) :Integer<br>
 <br>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -972,6 +974,23 @@ int4&nbsp;&nbsp;&nbsp;&nbsp;終端モード<br>
 元からあるデータは削除しないので、ClipboardEmptyと併用してください。<br>
 </div>
 sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="GetLineAttribute">GetLineAttribute</span>(int1 :Integer, int2:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;行番号1開始(0==カーソル行)<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;属性<br>
+<b>戻り値</b><br>
+属性によります。<br>
+<b>解説</b><br>
+属性は以下の種類です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更行: 戻り値 0=未変更 1=修正あり<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;変更行シーケンス: 戻り値 シーケンス番号<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;ブックマーク: 戻り値 0=未設定 1=ブックマーク行<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;DIFFマーク: 戻り値 0=未変更 1=追加 2=変更 3=削除 4=削除(EOF以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;関数リストマーク: 戻り値 0=未設定 1=設定あり<br>
+</div>
+sakura:2.2.0.0以降<br>
 <br>
 
 </BODY></HTML>
