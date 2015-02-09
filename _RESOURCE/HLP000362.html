@@ -18,7 +18,7 @@
 　1. [対象ファイル名]を読み込み<br>
 　2. 1.の処理の途中で置換が発生したら[対象ファイル名.skrnew]というファイルに書き出し<br>
 　3. 読み込み・置換が完了し「バックアップ作成」がONなら対象ファイルを[対象ファイル名.skrold]に改名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;OFFなら対象ファイルを削除
+&nbsp;&nbsp;&nbsp;&nbsp;OFFなら対象ファイルを削除<br>
 　4. [対象ファイル名.skrnew]を[対象ファイル]に改名<br>
 <br>
 <div class=li200>
@@ -78,10 +78,6 @@
 <img src="images/GrepReplace.png"><br>
 <br>
 <font color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
-<br>
-<span id="hintmarksearch"><br></span>
-<img src="images/hint.png">ヒント<br>
-編集中のドキュメント、Grep結果などの中から行を抽出したい場合は、「<a href="HLP000059.html">検索</a>」の[該当行マーク]と「<a href="HLP000209.html">ブックマーク一覧</a>」の[コピー]を組み合わせると便利です。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: GrepReplace( str1 :String, str2 :String, str3 :String, str4 :String, int5 :Integer, int6 :Integer );<br>
