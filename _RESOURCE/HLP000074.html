@@ -149,6 +149,15 @@ i以外にもxaudlRが使えます。<br>
 同じLvのものは、下に現れた方が子として表示されます。<br>
 ・無視要素<br>
 グループ名を「Except」にすると、その行はアウトラインに表示されません。<br>
+<br>
+<b>ルールファイル拡張2(sakura:2.2.0.0以降)</b><br>
+・正規表現置換モード<br>
+;Mode=RegexReplace<br>
+で正規表現置換モードになります。以下のように指定します。<br>
+<pre>Match /// ReplaceStr /// groupname
+\bfunction([ \t]+)([\w]+) /// $2 /// Function</pre>
+ReplaceStrに指定した文字列がツリーに表示されます。<br>
+「 /// 」が1つしか指定されていない行は、正規表現モードのアイテムとして処理されます。<br>
 </div>
 <br>
 <b>&lt;タイプ別フォント&gt;</b> (sakura:2.1.0.0以降)<br>
