@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ミニマップを表示</TITLE>
+<META NAME="MS-HKWD" CONTENT="ミニマップを表示">
+<META NAME="MS-HKWD" CONTENT="ShowMiniMap">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ミニマップを表示</h2>
+(sakura:2.2.0.0以降)ミニマップの表示／非表示を切り替えます。<br>
+<br>
+ミニマップは、ビューの右側に固定で表示されます。<br>
+マウスカーソルを合わせると該当行から下3行をツールチップでポップアップ表示します。<br>
+マウスクリックで該当行に移動します。<br>
+フォーカスがある状態で、マウススクロール(キー割り当てがある場合)するとミニマップをスクロールできます。<br>
+また、Shift+マウスクリックで、範囲選択をすることができます。<br>
+<br>
+ノート線・カーソル行背景等のいくつかの画面表示要素は、ミニマップでは無効になっています。<br>
+表示範囲は、「表示範囲(ミニマップ)」で色のON/OFFおよび背景色を指定可能です。<br>
+<br>
+以下のオプションがsakura.iniにあります。<br>
+[Common]<br>
+nMiniMapFontSize=フォントサイズ(デフォルト:-1)<br>
+nMiniMapQuality=フォント表示のクオリティー設定<br>
+nMiniMapWidth=ミニマップの幅px単位(デフォルト:150)<br>
+クオリティーは以下の定数の数値です。<br>
+　DEFAULT_QUALITY 0<br>
+　DRAFT_QUALITY 1<br>
+　PROOF_QUALITY 2<br>
+　NONANTIALIASED_QUALITY 3(デフォルト値)<br>
+　ANTIALIASED_QUALITY 4<br>
+　CLEARTYPE_QUALITY 5<br>
+　CLEARTYPE_NATURAL_QUALITY 6<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ShowMiniMap( ); (sakura:2.2.0.0以降)<br>
+・記録: ×<br>
+</BODY></HTML>

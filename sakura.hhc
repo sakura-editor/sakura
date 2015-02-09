@@ -1293,6 +1293,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ミニマップを表示">
+					<param name="Local" value="_RESOURCE\HLP000371.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="タイプ別設定一覧">
 					<param name="Local" value="_RESOURCE\HLP000072.html">
 					<param name="ImageNumber" value="9">
