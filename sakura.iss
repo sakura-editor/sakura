@@ -10,6 +10,7 @@ AppUpdatesURL=http://sourceforge.net/projects/sakura-editor/
 DefaultDirName={code:getDefautDirName|sakura}
 DefaultGroupName=サクラエディタ
 UninstallDisplayIcon={app}\sakura.exe
+InfoBeforeFile="instmaterials\info.txt"
 
 WizardImageFile="instmaterials\SetupModern20.bmp"
 WizardSmallImageFile="instmaterials\SetupModernSmall20.bmp"
