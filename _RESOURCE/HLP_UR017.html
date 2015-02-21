@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>変更履歴(2015/2/22～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2015/02/22～)</h2>
+<!--<h3>xxx. xx, 2015 (2.x.x.x)</h3>-->
+
+<h3>Feb. 22, 2015 (2.2.0.0)</h3>
+[機能追加]<br />
+<ul>
+<li>コードページ対応 (svn:3830 upatchid:311 Moca)</li>
+<li>エンコーディング名による文字コードの設定 (svn:3840 upatchid:726 Moca)</li>
+<li>マルチプロファイル対応 (svn:3841 upatchid:716 Moca)</li>
+<li>偶数行の背景色の修正とノート線 (svn:3842 upatchid:765 Request/438 Moca)</li>
+<li>Grep置換 (svn:3862 upatchid:637 Request/273 Moca)</li>
+<li>ファイルツリー表示 (svn:3865 upatchid:710 Moca)</li>
+<li>ミニマップ (svn:3884 upatchid:864 Request/453 Moca)</li>
+<li>関数リストマーク追加 (svn:3900 upatchid:738 Moca)</li>
+<li>変更行へ移動コマンド追加 (svn:3902 upatchid:739 Moca)</li>
+<li>行属性取得マクロ追加 (svn:3904 upatchid:758 Moca)</li>
+<li>選択ロック取得マクロ追加 (svn:3905 upatchid:759 Moca)</li>
+<li>画面スクロール位置設定・画面行桁数取得マクロ追加 (svn:3906 upatchid:760 Moca)</li>
+<li>ポップアップメニュー作成マクロ追加 (svn:3907 upatchid:761 Request/307 Moca)</li>
+<li>置換に行削除モード追加 (svn:3931 upatchid:882 Request/487 Moca)</li>
+<li>Grepに否定行検索を追加 (svn:3932 upatchid:883 Request/487 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>Grepで標準出力に出力するコマンドラインオプションを追加 (svn:3829 upatchid:762 Moca)</li>
+<li>NEL,PS,LSの改行コード表示を変更 (svn:3831 upatchid:777 Moca)</li>
+<li>改行コードNEL,PS,LSを有効にするオプション追加 (svn:3833 upatchid:854 Moca)</li>
+<li>文字情報が失われる場所を表示してジャンプできるように (svn:3839 upatchid:840 Moca)</li>
+<li>タブ多段・下に表示 (svn:3843 upatchid:773 Request/224 Moca)</li>
+<li>ブックマークの記憶方法の変更 (svn:3844 upatchid:803 Moca)</li>
+<li>上書きモードでの矩形選択入力で選択範囲を削除するオプションを追加 (svn:3845 upatchid:821 data:7769 Moca)</li>
+<li>ファイルパスを省略表示するオプションの追加 (svn:3846 upatchid:829 Moca)</li>
+<li>大きいファイルの暫定サポート (svn:3847 upatchid:838 Moca)</li>
+<li>ルールファイル拡張2(正規表現置換) (svn:3848 upatchid:851 Request/466 Moca)</li>
+<li>タグジャンプの一覧選択の改善とタグジャンプ検索オプション (svn:3854 upatchid:863 Request/482 anonymous,Moca)</li>
+<li>DIFF画面でダブルクリックしたとき実行 (svn:3855 upatchid:886 Moca)</li>
+<li>行番号の最小桁数 (svn:3856 upatchid:887 Request/305 Develope/13 ねこ,Moca)</li>
+<li>MainMenu.iniのフォーマット変更 (svn:3870 upatchid:907 Moca)</li>
+<li>無題ウィンドウのカレントディレクトリをファイルダイアログの初期位置にする (svn:3872 upatchid:841 Moca)</li>
+<li>長い行の比較・DIFFのサポートと排他制御の追加 (svn:3885 upatchid:839 Moca)</li>
+<li>タイプ別拡張子ワイルドカード (svn:3886 upatchid:902 syat)</li>
+<li>日時書式の各国語対応 (svn:3888 upatchid:893 syat)</li>
+<li>マクロ保存処理の変更 (svn:3898 upatchid:865 Moca)</li>
+<li>SearchNext等のマクロで検索設定を元に戻すオプション (svn:3899 upatchid:694 Moca)</li>
+<li>改行置換時次の行を変更状態にしない (svn:3901 upatchid:743 Moca)</li>
+<li>PageUp/Downマクロの修正 (svn:3903 upatchid:751 Moca)</li>
+<li>MoveCursorで通常→矩形選択のときの動作を変更 (svn:3905 upatchid:759 Moca)</li>
+<li>プラグイン設定に配布元ボタン追加 (svn:3928 upatchid:960 syat)</li>
+<li>矩形選択移動で選択をロックするオプション (svn:3949 upatchid:909 Moca)</li>
+<li>NEL,PS,LSのデフォルトを無効に変更 (svn:3950 upatchid:966 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>UTF-7のNEL,PS,LSを改行として読み込むように (svn:3832 upatchid:847 Moca)</li>
+<li>コードページ対応がmingwでエラーになる(r3830-) (svn:3835 upatchid:898 Moca)</li>
+<li>CP_UTF7でのNEL等を改行コードとして読み込めていない(r3832-) (svn:3836 upatchid:896 Moca)</li>
+<li>NELオプションのコードページ対応への修正漏れ(r3833-) (svn:3837 upatchid:895 Moca)</li>
+<li>単独のUTF-7のNEL,PS,LSを改行として読み込めるように (svn:3838 upatchid:897 Moca)</li>
+<li>コンパイルエラー修正(r3848) (svn:3849 Moca)</li>
+<li>MinGW警告削減 (svn:3852 upatchid:899 Moca)</li>
+<li>英語リソースの修正(共通設定-編集)(r3845-) (svn:3853 upatchid:900 Moca)</li>
+<li>正規表現キーワードの更新の文字列長チェックが不正 (svn:3858 upatchid:901 Moca)</li>
+<li>Rich Textのキーワード"\i"の修正 (svn:3860 upatchid:905 Moca)</li>
+<li>DiffのSJIS以外に対応 (svn:3861 upatchid:636 Moca)</li>
+<li>MinGWでのコンパイルエラー(-r3863) (svn:3863 upatchid:906 Moca)</li>
+<li>VC2003プロジェクトファイル更新 (svn:3866 upatchid:915 Moca)</li>
+<li>Diffのフォルダ名に.が含まれる場合のファイル選択の修正 (svn:3867 upatchid:910 Moca)</li>
+<li>メインメニューのファイルツリーがundefinedになっている(r3865-) (svn:3868 upatchid:922 Moca)</li>
+<li>同一ウィンドウでGrepするとエラーになる(r3862-) (svn:3869 upatchid:918 Moca)</li>
+<li>キャレットの更新でGetDrawSwitchフラグを見るように (svn:3871 upatchid:913 Moca)</li>
+<li>CCaret.cppのコンパイルエラー修正(r3871-) (svn:3873 upatchid:923 Moca)</li>
+<li>MinGW警告削減(ファイルツリー)(r3865-) (svn:3874 upatchid:924 Moca)</li>
+<li>モードレスダイアログ等のウィンドウサイズがフォント変更に未対応 (svn:3877 upatchid:919 Moca)</li>
+<li>変換のU+0130,0131の大小文字対応がおかしい (svn:3878 upatchid:917 BugReport/181 Moca)</li>
+<li>共通設定-ツールバーのリストボックスの高さが正しく設定されない (svn:3879 upatchid:916 Moca)</li>
+<li>CTextWidthCalcの不具合の修正 (svn:3880 upatchid:921 Moca)</li>
+<li>再描画でステータスメッセージが消える(r3843-) (svn:3881 upatchid:925 Moca)</li>
+<li>プラグイン一覧の表記位置サイズ修正 (svn:3882 upatchid:927 Moca)</li>
+<li>選択範囲内全行行番号付きコピーの行番号桁不正 (svn:3883 upatchid:928 Moca)</li>
+<li>Debug_Ansiでビルドエラー(r3881-) (svn:3890 upatchid:932 Moca)</li>
+<li>タブバーのスクロールができない(r3884-) (svn:3891 upatcid:933 unicode:2221 Moca)</li>
+<li>Grep置換のマージミスの修正(r3862-) (svn:3892 upatchid:931 Moca)</li>
+<li>ミニマップを表示していないと右端で折り返すのとき画面全体が再描画される(r3884-) (svn:3893 upatchid:934 unicode:2221 Moca)</li>
+<li>ダイアログでウィンドウサイズに-1を設定するコードパスがある(r3877-) (svn:3894 upatchid:935 Moca)</li>
+<li>ツールバー折返が英語にならない (svn:3895 upatchid:929 Moca)</li>
+<li>英語リソースの残された日本語を一部翻訳 (svn:3896 upatchid:912 Moca)</li>
+<li>英訳の修正 (svn:3897 upatchid:930 Moca)</li>
+<li>MinGWのリンクエラーとUnicodeのコンパイルエラー (svn:3910 upatchid:942 Moca)</li>
+<li>一時マクロ実行後のマクロidxの修正 (svn:3911 upatchid:945 Moca)</li>
+<li>C++キーワードの修正(r2999-) (svn:3916 upatchid:947 Moca)</li>
+<li>HTML出力・印刷で正規表現キーワード等の色が正しくないことがある (svn:3917 upatchid:948 Moca)</li>
+<li>対括弧表示でも色分けのスキップ処理をする (svn:3918 upatchid:951 Moca)</li>
+<li>マクロGetLineAttributeで行番号に0を指定するとエラーになる(r3904-) (svn:3919 upatchid:953 Moca)</li>
+<li>カラーの文字列が行内のみの設定だとEOF直前で色分けされない(r3118-) (svn:3920 upatchid:955 Moca)</li>
+<li>カラー判定のC++RawStringの修正(r3118-) (svn:3921 upatchid:954 unicode:2223 Moca)</li>
+<li>選択範囲内全行行番号付きコピーのバッファオーバーフロー等の修正 (svn:3922 upatchid:961 Moca)</li>
+<li>Pluginの小文字変換の修正 (svn:3923 upatchid:964 Moca)</li>
+<li>MinGWで関数内構造体を使ったテンプレートの実体化でエラーになる(r3854-) (svn:3924 upatchid:965 Moca)</li>
+<li>プラグイン共通設定のメモリ解放不足 (svn:3927 upatchid:962 syat)</li>
+<li>タイプ変更時に即時適用する (svn:3929 upatchid:958 syat)</li>
+<li>タブバー表示切り替えでサイズボックスが表示されない (svn:3930 upatchid:959 syat)</li>
+<li>NELを無効にしてもEBCDICだとNELの改行になる (svn:3947 upatchid:967 Moca)</li>
+<li>ノート線が対括弧強調で消える (svn:3948 upatchid:968 data:7936 Moca)</li>
+<li>括弧の対応がおかしいためコンパイルエラーになる(r3949-) (svn:3951 upatchid:969 Moca)</li>
+<li>矩形選択ロックのマクロの記録が正しくない(r3949-) (svn:3976 upatchid:970 Moca)</li>
+<li>対括弧強調のノート線と縦線の描画順が反対(r3948-) (svn:3977 upatchid:972 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>cppcheckで検出したエラー、警告修正 (svn:3828 upatchid:890 novice123)</li>
+<li>機能番号の配列サイズチェック (svn:3834 upatchid:892 novice123)</li>
+<li>メンバ変数のクラス名を小文字に揃える (svn:3859 upatchid:903 novice123)</li>
+<li>MSBuild警告対策 (svn:3908 syat)</li>
+<li>共有メモリの初期化処理を構造体ごとにまとめる (svn:3912 upatchid:894 novice123)</li>
+[仕様変更]<br />
+</ul>
+
+<br>
+</BODY></HTML>
