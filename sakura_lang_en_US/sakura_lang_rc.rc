@@ -1689,7 +1689,7 @@ BEGIN
     CONTROL         "Enable CR Code NEL,PS,LS(&O)",
                     IDC_CHECK_ENABLEEXTEOL,"Button",BS_AUTOCHECKBOX | WS_GROUP
                     | WS_TABSTOP,161,138,122,10
-    CONTROL         "Lock Move Box Selecting(&B)"
+    CONTROL         "Lock Move Box Selecting(&B)",
                     IDC_CHECK_BOXSELECTLOCK,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,161,151,122,10
     GROUPBOX        "Etc",IDC_STATIC,156,125,131,42,WS_GROUP
@@ -3854,7 +3854,7 @@ BEGIN
 
 	STR_TITLE_GREP				"[Grep] %ls%ts"
 	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing? \n\nDue to opening as view-mode it is suggested to save under a different name.\n"
-	STR_CHANGE_CHARSET			"%ts\nis no change.\however change encoding.\nSave before closing?"
+	STR_CHANGE_CHARSET			"%ts\nis no change.\nhowever change encoding.\nSave before closing?"
 	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing?"
 	STR_AUTORELOAD_NOFITY		"ÅöFile Updated at %02d:%02d:%02d"
 
@@ -3914,7 +3914,7 @@ BEGIN
 	STR_GREP_TIMER				"Processing time: %dms\r\n"
 	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
 	STR_GREP_ERR_FILEREAD		"file read error [%ts]\r\n"
-	STR_GREP_ERR_FILEWRITE		"file write error [%ts]\r\n";
+	STR_GREP_ERR_FILEWRITE		"file write error [%ts]\r\n"
 	STR_GREP_REP_ERR_DELETE		"failed file delete."
 	STR_GREP_REP_ERR_REPLACE	"failed file replace."
 
@@ -4667,7 +4667,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	// CCdoeChecker.cpp
 	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%ts)?"
-	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\Do you continue saving?\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
+	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\nDo you continue saving?\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
 	STR_CODECHECKER_LOSESOME_SAVE	"lose some char info by saving encoding conversion."
 	STR_CODECHECKER_LOSESOME_ROAD	"lose some char info by loading encoding conversion."
 	STR_CONVERT_ERR					"Error on Convert."
