@@ -1430,11 +1430,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	/* çsî‘çÜÇÃç≈è¨åÖêî */	// â¡í« 2014.08.02 katze
 	cProfile.IOProfileData( pszSecName, LTEXT("nLineNumWidth"), types.m_nLineNumWidth );
 	if( cProfile.IsReadingMode() ){
-		if( types.m_nLineSpace < LINENUMWIDTH_MIN ){
-			types.m_nLineSpace = LINENUMWIDTH_MIN;
+		if( types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
+			types.m_nLineNumWidth = LINENUMWIDTH_MIN;
 		}
-		if( types.m_nLineSpace > LINENUMWIDTH_MAX ){
-			types.m_nLineSpace = LINENUMWIDTH_MAX;
+		if( types.m_nLineNumWidth > LINENUMWIDTH_MAX ){
+			types.m_nLineNumWidth = LINENUMWIDTH_MAX;
 		}
 	}
 
