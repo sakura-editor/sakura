@@ -25,19 +25,25 @@
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 (矩形選択)カーソル上移動<br>
-・構文: Up_BoxSel( );<br>
+・構文: Up_BoxSel( int1 :Integer );<br>
 ・記録:	○<br>
 <br>
 (矩形選択)カーソル下移動<br>
-・構文: Down_BoxSel( );<br>
+・構文: Down_BoxSel( int1 :Integer );<br>
 ・記録:	○<br>
 <br>
 (矩形選択)カーソル左移動<br>
-・構文: Left_BoxSel( );<br>
+・構文: Left_BoxSel( int1 :Integer );<br>
 ・記録:	○<br>
 <br>
 (矩形選択)カーソル右移動<br>
-・構文: Right_BoxSel( );<br>
+・構文: Right_BoxSel( int1 :Integer );<br>
 ・記録:	○<br>
 <br>
+上下左右共通<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;オプション(省略可能、ただしPPAマクロは省略不可) (sakura:2.2.0.0以降)<br>
+オプションには以下を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;共通設定のオプション「矩形選択移動で選択をロックする」に従う<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;選択をロックする(省略時規定値)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;選択をロックしない<br>
 </BODY></HTML>

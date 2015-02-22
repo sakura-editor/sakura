@@ -17,12 +17,17 @@
 文字列の先頭にカーソルがある場合には、本来の折り返し単位の行頭に移動します。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
-・構文: GoLineTop_BoxSel( int1 :Integer );<br>
+・構文: GoLineTop_BoxSel( int1 :Integer, int2 :Integer );<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;移動オプション（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;選択オプション(省略可能、ただしPPAマクロは省略不可) (sakura:2.2.0.0以降)<br>
 ・記録: ○<br>
 ・解説<br>
  移動オプションは以下の値を組み合わせて指定できます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;行頭のスペースを無視する<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;改行単位で移動する<br>
 省略時規定値は０です。<br>
+選択オプションには以下を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;共通設定のオプション「矩形選択移動で選択をロックする」に従う<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;選択をロックする(省略時規定値)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;選択をロックしない<br>
 </BODY></HTML>
