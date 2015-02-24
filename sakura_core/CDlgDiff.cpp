@@ -426,4 +426,12 @@ LPVOID CDlgDiff::GetHelpIdTable( void )
 	return (LPVOID)p_helpids;
 }
 
+
+BOOL CDlgDiff::OnLbnDblclk( int wID )
+{
+	HWND hwndList = GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES );
+	if( ::SendMessage( hwndList, LB_GETCURSEL, 0L, 0L ) == LB_ERR ) return FALSE;
+	return OnBnClicked(IDOK);
+}
+
 /*[EOF]*/

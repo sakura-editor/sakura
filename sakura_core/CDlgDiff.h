@@ -58,6 +58,7 @@ protected:
 	*/
 	BOOL	OnBnClicked( int );
 	BOOL	OnLbnSelChange( HWND hwndCtl, int wID );
+	BOOL	OnLbnDblclk( int wID );
 	BOOL	OnEnChange( HWND hwndCtl, int wID );
 	LPVOID	GetHelpIdTable(void);
 
