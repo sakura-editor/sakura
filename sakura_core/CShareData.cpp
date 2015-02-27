@@ -532,7 +532,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 
-		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+		for( i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
 
