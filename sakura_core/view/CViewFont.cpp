@@ -32,12 +32,14 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	LOGFONT	lf;
 	int miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
 	int quality = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
+	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys等でMiniMapのフォントが小さくならない修正
 
 	/* フォント作成 */
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
 		lf.lfQuality = quality;
+		lf.lfOutPrecision = outPrec;
 	}
 	m_hFont_HAN = CreateFontIndirect( &lf );
 	m_LogFont = lf;
@@ -47,6 +49,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
 		lf.lfQuality = quality;
+		lf.lfOutPrecision = outPrec;
 	}
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
@@ -59,6 +62,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
 		lf.lfQuality = quality;
+		lf.lfOutPrecision = outPrec;
 	}
 	
 	lf.lfUnderline = TRUE;
@@ -69,6 +73,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
 		lf.lfQuality = quality;
+		lf.lfOutPrecision = outPrec;
 	}
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
