@@ -75,8 +75,9 @@
 #define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
 #define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
 
-#define MAX_TABITEM_WIDTH	DpiScaleX(200)
-#define MIN_TABITEM_WIDTH	DpiScaleX(60)
+#define MAX_TABITEM_WIDTH	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMaxWidth)
+#define MIN_TABITEM_WIDTH	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidth)
+#define MIN_TABITEM_WIDTH_MULTI	DpiScaleX(GetDllShareData().m_Common.m_sTabBar.m_nTabMinWidthOnMulti)
 
 #define CX_SMICON			DpiScaleX(16)
 #define CY_SMICON			DpiScaleY(16)
@@ -2355,10 +2356,14 @@ void CTabWnd::LayoutTab( void )
 	if( 0 < nCount )
 	{
 		cx = (rcTab.right - rcTab.left - 8) / nCount;
+		int min = MIN_TABITEM_WIDTH;
+		if( m_pShareData->m_Common.m_sTabBar.m_bTabMultiLine ){
+			min = MIN_TABITEM_WIDTH_MULTI;
+		}
 		if( MAX_TABITEM_WIDTH < cx )
 			cx = MAX_TABITEM_WIDTH;
-		else if( MIN_TABITEM_WIDTH > cx )
-			cx = MIN_TABITEM_WIDTH;
+		else if( min > cx )
+			cx = min;
 		TabCtrl_SetItemSize( m_hwndTab, cx, TAB_ITEM_HEIGHT );
 	}
 

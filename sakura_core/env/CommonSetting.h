@@ -192,6 +192,9 @@ struct CommonSetting_TabBar
 
 	LOGFONT		m_lf;							//!< タブフォント // 2011.12.01 Moca
 	INT			m_nPointSize;					//!< フォントサイズ（1/10ポイント単位）
+	int			m_nTabMaxWidth;					//!< タブ幅の最大値
+	int			m_nTabMinWidth;					//!< タブ幅の最小値
+	int			m_nTabMinWidthOnMulti;			//!< タブ幅の最小値(タブ多段時)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
