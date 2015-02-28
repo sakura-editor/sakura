@@ -580,6 +580,10 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
 		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );
 	
+	cProfile.IOProfileData( pszSecName, LTEXT("nTabMaxWidth")			, common.m_sTabBar.m_nTabMaxWidth );
+	cProfile.IOProfileData( pszSecName, LTEXT("nTabMinWidth")			, common.m_sTabBar.m_nTabMinWidth );
+	cProfile.IOProfileData( pszSecName, LTEXT("nTabMinWidthOnMulti")	, common.m_sTabBar.m_nTabMinWidthOnMulti );
+
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndHScroll")	, common.m_sWindow.m_bSplitterWndHScroll );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndVScroll")	, common.m_sWindow.m_bSplitterWndVScroll );

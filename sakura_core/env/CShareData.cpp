@@ -326,6 +326,9 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_lf = lfIconTitle;
 			sTabBar.m_nPointSize = nIconPointSize;
+			sTabBar.m_nTabMaxWidth = 200;
+			sTabBar.m_nTabMinWidth = 60;
+			sTabBar.m_nTabMinWidthOnMulti = 100;
 		}
 
 		// [ï“èW]É^Éu
