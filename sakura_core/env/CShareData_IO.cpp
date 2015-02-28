@@ -1922,9 +1922,130 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 	}
 }
 
+struct SMainMenuAddItemInfo
+{
+	int m_nVer;
+	EFunctionCode m_nAddFuncCode;
+	EFunctionCode m_nPrevFuncCode;
+	wchar_t m_cAccKey;
+	bool m_bAddPrevSeparete;
+	bool m_bAddNextSeparete;
+};
+
 void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 {
 	IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
+
+	// 2015.02.26 Moca メインメニュー自動更新
+	const WCHAR*	pszSecName = LTEXT("MainMenu");
+	int& nVersion = GetDllShareData().m_Common.m_sMainMenu.m_nVersion;
+	// ※メニュー定義を追加したらnCurrentVerを修正
+	const int nCurrentVer = 1;
+	nVersion = nCurrentVer;
+	if( cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuVer"), nVersion) ){
+	}else{
+		if( cProfile.IsReadingMode() ){
+			int menuNum;
+			if( cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), menuNum) ){
+				// メインメニューが定義されていた
+				nVersion = 0; // 旧定義はVer0
+			}else{
+				// メインメニューすらない古いバージョンからのアップデートでは、最新メニューになるのでパス
+			}
+		}
+	}
+	if( cProfile.IsReadingMode() && nVersion < nCurrentVer ){
+		CommonSetting_MainMenu& mainmenu = GetDllShareData().m_Common.m_sMainMenu;
+		SMainMenuAddItemInfo addInfos[] = {
+			{1, F_FILENEW_NEWWINDOW, F_FILENEW, L'M', false, false},	// 新しいウインドウを開く
+			{1, F_CHG_CHARSET, F_TOGGLE_KEY_SEARCH, L'A', false, false},	// 文字コード変更
+			{1, F_CHG_CHARSET, F_VIEWMODE, L'A', false, false}, 	// 文字コード変更(Sub)
+			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN_EUC, L'L', false, false}, 	// Latin1で開き直す
+			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN, L'L', false, false}, 	// Latin1で開き直す(Sub)
+			{1, F_COPY_COLOR_HTML, F_COPYLINESWITHLINENUMBER, L'C', false, false}, 	// 選択範囲内色付きHTMLコピー
+			{1, F_COPY_COLOR_HTML_LINENUMBER, F_COPY_COLOR_HTML, L'F', false, false}, 	// 選択範囲内行番号色付きHTMLコピー
+			// 矩形選択類は省略...
+			{1, F_GREP_REPLACE_DLG, F_GREP_DIALOG, L'\0', false, false}, 	// Grep置換
+			{1, F_FILETREE, F_OUTLINE, L'E', false, false}, 	// ファイルツリー表示
+			{1, F_FILETREE, F_OUTLINE_TOGGLE, L'E', false, false}, 	// ファイルツリー表示(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWSTATUSBAR, L'N', false, false}, 	// ミニマップ表示
+			{1, F_SHOWMINIMAP, F_SHOWTAB, L'N', false, false}, 	// ミニマップ表示(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWFUNCKEY, L'N', false, false}, 	// ミニマップ表示(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWTOOLBAR, L'N', false, false}, 	// ミニマップ表示(Sub)
+			{1, F_FUNCLIST_NEXT, F_JUMPHIST_SET, L'\0', true, false}, 	// 次の関数リストマーク(セパレータ追加)
+			{1, F_FUNCLIST_PREV, F_FUNCLIST_NEXT, L'\0', false, false}, 	// 前の関数リストマーク
+			{1, F_MODIFYLINE_NEXT, F_FUNCLIST_PREV, L'\0', false, false}, 	// 次の変更行へ
+			{1, F_MODIFYLINE_PREV, F_MODIFYLINE_NEXT, L'\0', false, false}, 	// 前の変更行へ
+			{1, F_MODIFYLINE_NEXT_SEL, F_GOFILEEND_SEL, L'\0', true, false}, 	// (選択)次の変更行へ
+			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', true, false}, 	// (選択)前の変更行へ
+		};
+		for( int i = 0; i < _countof(addInfos); i++ ){
+			SMainMenuAddItemInfo& item = addInfos[i];
+			if( item.m_nVer <= nVersion ){
+				continue;
+			}
+			CMainMenu*	pcMenuTlb = mainmenu.m_cMainMenuTbl;
+			int k = 0;
+			for(; k < mainmenu.m_nMainMenuNum; k++ ){
+				if( pcMenuTlb[k].m_nFunc == item.m_nAddFuncCode ){
+					break;
+				}
+			}
+			int nAddSep = 0;
+			if( item.m_bAddPrevSeparete ){
+				nAddSep++;
+			}
+			if( item.m_bAddNextSeparete ){
+				nAddSep++;
+			}
+			if( k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < _countof(mainmenu.m_cMainMenuTbl) ){
+				// メニュー内にまだ追加されていないので追加する
+				for( int r = 0; r < mainmenu.m_nMainMenuNum; r++ ){
+					if( pcMenuTlb[r].m_nFunc == item.m_nPrevFuncCode && 0 < pcMenuTlb[r].m_nLevel ){
+						// 追加分後ろにずらす
+						for( int n = mainmenu.m_nMainMenuNum - 1; r < n; n-- ){
+							pcMenuTlb[n + 1 + nAddSep] = pcMenuTlb[n];
+						}
+						for( int n = 0; n < MAX_MAINMENU_TOP; n++ ){
+							if( r < mainmenu.m_nMenuTopIdx[n] ){
+								mainmenu.m_nMenuTopIdx[n] += 1 + nAddSep;
+							}
+						}
+						CMainMenu* pcMenu = &pcMenuTlb[r+1];
+						const int nLevel = pcMenuTlb[r].m_nLevel;
+						if( item.m_bAddPrevSeparete ){
+							pcMenu->m_nType    = T_SEPARATOR;
+							pcMenu->m_nFunc    = F_0;
+							pcMenu->m_nLevel   = nLevel;
+							pcMenu->m_sName[0] = L'\0';
+							pcMenu->m_sKey[0]  = L'\0';
+							pcMenu->m_sKey[1]  = L'\0';
+							pcMenu++;
+							mainmenu.m_nMainMenuNum++;
+						}
+						pcMenu->m_nType    = T_LEAF;
+						pcMenu->m_nFunc    = item.m_nAddFuncCode;
+						pcMenu->m_nLevel   = nLevel;
+						pcMenu->m_sName[0] = L'\0';
+						pcMenu->m_sKey[0]  = L'\0';
+						pcMenu->m_sKey[1]  = L'\0';
+						mainmenu.m_nMainMenuNum++;
+						if( item.m_bAddNextSeparete ){
+							pcMenu++;
+							pcMenu->m_nType    = T_SEPARATOR;
+							pcMenu->m_nFunc    = F_0;
+							pcMenu->m_nLevel   = nLevel;
+							pcMenu->m_sName[0] = L'\0';
+							pcMenu->m_sKey[0]  = L'\0';
+							pcMenu->m_sKey[1]  = L'\0';
+							mainmenu.m_nMainMenuNum++;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 

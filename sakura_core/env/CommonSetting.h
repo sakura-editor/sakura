@@ -702,6 +702,7 @@ public:
 
 struct CommonSetting_MainMenu
 {
+	int				m_nVersion;							//!< メインメニューバージョン
 	int				m_nMenuTopIdx[MAX_MAINMENU_TOP];	//!< メインメニュートップレベル
 	int 			m_nMainMenuNum;						//!< メインメニューデータの数
 	CMainMenu		m_cMainMenuTbl[MAX_MAINMENU];		//!< メインメニューデータ
