@@ -1981,7 +1981,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 			{1, F_MODIFYLINE_NEXT, F_FUNCLIST_PREV, L'\0', false, false}, 	// 次の変更行へ
 			{1, F_MODIFYLINE_PREV, F_MODIFYLINE_NEXT, L'\0', false, false}, 	// 前の変更行へ
 			{1, F_MODIFYLINE_NEXT_SEL, F_GOFILEEND_SEL, L'\0', true, false}, 	// (選択)次の変更行へ
-			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', true, false}, 	// (選択)前の変更行へ
+			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, 	// (選択)前の変更行へ
 		};
 		for( int i = 0; i < _countof(addInfos); i++ ){
 			SMainMenuAddItemInfo& item = addInfos[i];
@@ -2019,7 +2019,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 						const int nLevel = pcMenuTlb[r].m_nLevel;
 						if( item.m_bAddPrevSeparete ){
 							pcMenu->m_nType    = T_SEPARATOR;
-							pcMenu->m_nFunc    = F_0;
+							pcMenu->m_nFunc    = F_SEPARATOR;
 							pcMenu->m_nLevel   = nLevel;
 							pcMenu->m_sName[0] = L'\0';
 							pcMenu->m_sKey[0]  = L'\0';
@@ -2037,7 +2037,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 						if( item.m_bAddNextSeparete ){
 							pcMenu++;
 							pcMenu->m_nType    = T_SEPARATOR;
-							pcMenu->m_nFunc    = F_0;
+							pcMenu->m_nFunc    = F_SEPARATOR;
 							pcMenu->m_nLevel   = nLevel;
 							pcMenu->m_sName[0] = L'\0';
 							pcMenu->m_sKey[0]  = L'\0';
