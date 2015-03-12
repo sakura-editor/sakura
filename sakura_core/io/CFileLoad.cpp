@@ -595,11 +595,11 @@ const char* CFileLoad::GetNextLineCharCode(
 			}
 		}
 		break;
-	case ENCODING_TRAIT_EBCDEC_CRLF:
-	case ENCODING_TRAIT_EBCDEC:
+	case ENCODING_TRAIT_EBCDIC_CRLF:
+	case ENCODING_TRAIT_EBCDIC:
 		// EOLÉRÅ[Éhïœä∑ÇµÇ¬Ç¬ê›íË
 		for( i = nbgn; i < nDataLen; ++i ){
-			if( m_encodingTrait == ENCODING_TRAIT_EBCDEC && bExtEol ){
+			if( m_encodingTrait == ENCODING_TRAIT_EBCDIC && bExtEol ){
 				if( pData[i] == '\x15' ){
 					pcEol->SetType(EOL_NEL);
 					neollen = 1;
@@ -610,7 +610,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				char szEof[3] = {
 					(pData[i]  == '\x25' ? '\x0a' : '\x0d'),
 					(pData[i+1]== '\x25' ? '\x0a' : 
-						(pData[i+1] == '\x0a' ? 0 : // EBCDEC ÇÃ"\x0aÇ™LFÇ…Ç»ÇÁÇ»Ç¢ÇÊÇ§Ç…ç◊çHÇ∑ÇÈ
+						(pData[i+1] == '\x0a' ? 0 : // EBCDIC ÇÃ"\x0aÇ™LFÇ…Ç»ÇÁÇ»Ç¢ÇÊÇ§Ç…ç◊çHÇ∑ÇÈ
 							(i + 1 < nDataLen ? pData[i+1] : 0))),
 					0
 				};

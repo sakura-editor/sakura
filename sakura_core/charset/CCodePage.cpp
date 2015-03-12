@@ -385,9 +385,9 @@ EEncodingTrait CCodePage::GetEncodingTrait(int charcodeEx)
 			CHAR testNel[10];
 			int nRetNel = ::WideCharToMultiByte(codepage, 0, nel, 1, testNel, sizeof(testNel), NULL, NULL);
 			if( nRetNel && 0 == memcmp(testNel, "\x15", 1) ){
-				return ENCODING_TRAIT_EBCDEC;
+				return ENCODING_TRAIT_EBCDIC;
 			}
-			return ENCODING_TRAIT_EBCDEC_CRLF;
+			return ENCODING_TRAIT_EBCDIC_CRLF;
 		}
 		if(0 == memcmp(testCrlf, "\r\n", 2)){ return ENCODING_TRAIT_ASCII; }
 		return ENCODING_TRAIT_ERROR;
