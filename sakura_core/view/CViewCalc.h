@@ -24,6 +24,8 @@
 #ifndef SAKURA_CVIEWCALC_F7EB84D2_C716_4183_AF9C_197AEEC5B7A9_H_
 #define SAKURA_CVIEWCALC_F7EB84D2_C716_4183_AF9C_197AEEC5B7A9_H_
 
+#include "doc/layout/CTsvModeInfo.h"
+
 /*
 	X値の単位変換関数群。
 */
@@ -36,6 +38,7 @@ class CViewCalc{
 protected:
 	//外部依存
 	CLayoutInt GetTabSpace() const;
+	CTsvModeInfo& GetTsvMode() const;
 
 public:
 	CViewCalc(const CEditView* pOwner) : m_pOwner(pOwner) { }

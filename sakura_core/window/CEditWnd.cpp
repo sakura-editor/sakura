@@ -4616,7 +4616,7 @@ BOOL CEditWnd::WrapWindowWidth( int nPane )
 	// 右端で折り返す
 	CLayoutInt nWidth = GetView(nPane).ViewColNumToWrapColNum( GetView(nPane).GetTextArea().m_nViewColNum );
 	if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
-		ChangeLayoutParam( false, GetDocument()->m_cLayoutMgr.GetTabSpace(), nWidth );
+		ChangeLayoutParam( false, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, nWidth );
 		ClearViewCaretPosInfo();
 		return TRUE;
 	}
@@ -4655,7 +4655,7 @@ BOOL CEditWnd::UpdateTextWrap( void )
 	@date 2005.08.14 genta 新規作成
 	@date 2008.06.18 ryoji レイアウト変更途中はカーソル移動の画面スクロールを見せない（画面のちらつき抑止）
 */
-void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas )
+void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, int nTsvMode, CLayoutInt nMaxLineKetas )
 {
 	HWND		hwndProgress = NULL;
 	if( bShowProgress && NULL != this ){
@@ -4671,7 +4671,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 	CLogicPointEx* posSave = SavePhysPosOfAllView();
 
 	//	レイアウトの更新
-	GetDocument()->m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
+	GetDocument()->m_cLayoutMgr.ChangeLayoutParam( nTabSize, nTsvMode, nMaxLineKetas );
 	ClearViewCaretPosInfo();
 
 	//	座標の復元

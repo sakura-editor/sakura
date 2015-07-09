@@ -1995,6 +1995,14 @@
 					Name="figures"
 					>
 					<File
+						RelativePath="..\sakura_core\view\figures\CFigure_Comma.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\sakura_core\view\figures\CFigure_Comma.h"
+						>
+					</File>
+					<File
 						RelativePath="..\sakura_core\view\figures\CFigure_CtrlCode.cpp"
 						>
 					</File>
@@ -2408,6 +2416,14 @@
 					</File>
 					<File
 						RelativePath="..\sakura_core\doc\layout\CLayoutMgr_New2.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\sakura_core\doc\layout\CTsvModeInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\sakura_core\doc\layout\CTsvModeInfo.h"
 						>
 					</File>
 				</Filter>

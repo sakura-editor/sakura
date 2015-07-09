@@ -378,7 +378,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 		return;	// 折り返し桁は元のまま
 	}
 
-	GetEditWindow()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpace(), newKetas );
+	GetEditWindow()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, newKetas );
 	
 
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
@@ -461,7 +461,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	pcDoc->m_bTextWrapMethodCurTemp = !( pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod == nWrapMethod );
 
 	// 折り返し位置を変更
-	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpace(), (CLayoutInt)nWidth );
+	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpace(), pcDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, (CLayoutInt)nWidth );
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){

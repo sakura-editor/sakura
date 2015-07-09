@@ -199,7 +199,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			) {
 				// 前のレイアウト行の、折り返し桁一つ手前または改行文字の手前に移動する。
 				pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretMove.GetY2() - CLayoutInt(1) );
-				CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
+				CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
 				while( !it.end() ){
 					it.scanNext();
 					if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
@@ -223,7 +223,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 		}
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if( pcLayout ) {
-			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
+			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
 			while( !it.end() ){
 				it.scanNext();
 				if ( it.getColumn() + it.getColumnDelta() > ptCaretMove.GetX2() - 1 ){
@@ -307,7 +307,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			const bool nextline_exists = pcLayout->GetNextLayout() || pcLayout->GetLayoutEol() != EOL_NONE; // EOFのみの行も含め、キャレットが移動可能な次行が存在するか。
 
 			// 現在のキャレットの右の位置( to_x )を求める。
-			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
+			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
 			for( ; ! it.end(); it.scanNext(), it.addDelta() ) {
 				if( ptCaret.x < it.getColumn() ) {
 					break;

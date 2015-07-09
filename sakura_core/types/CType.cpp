@@ -158,6 +158,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_nColumnSpace = 0;					/* ï∂éöÇ∆ï∂éöÇÃåÑä‘ */
 	pType->m_nLineSpace = 1;					/* çsä‘ÇÃÇ∑Ç´Ç‹ */
 	pType->m_nTabSpace = CLayoutInt(4);					/* TABÇÃï∂éöêî */
+	pType->m_nTsvMode = 0;						/* TSVÉÇÅ[Éh */
 	for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
 		pType->m_nKeyWordSetIdx[i] = -1;
 	}
