@@ -60,6 +60,22 @@ int WINAPI _tWinMain(
 
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
 	{
+		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
+		HMODULE kernel32 = GetModuleHandleA( "KERNEL32" );
+		if( kernel32 ){
+			typedef BOOL (WINAPI* Proc_pfnSetDllDirectoryW)(LPCWSTR);
+			Proc_pfnSetDllDirectoryW pfnSetDllDirectoryW = (Proc_pfnSetDllDirectoryW)GetProcAddress( kernel32, "SetDllDirectoryW" );
+			if( pfnSetDllDirectoryW ){
+				pfnSetDllDirectoryW( L"" );
+			}
+			typedef BOOL (WINAPI* Proc_pfnSetSearchPathMode)(DWORD);
+			Proc_pfnSetSearchPathMode pfnSetSearchPathMode = (Proc_pfnSetSearchPathMode)GetProcAddress( kernel32, "SetSearchPathMode" );
+			if( pfnSetSearchPathMode ){
+				const DWORD dwBASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE = 1;
+				const DWORD dwBASE_SEARCH_PATH_PERMANENT = 0x8000;
+				pfnSetSearchPathMode( dwBASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | dwBASE_SEARCH_PATH_PERMANENT );
+			}
+		}
 		// 2010.08.28 Moca DLLインジェクション対策
 		CCurrentDirectoryBackupPoint dirBack;
 		ChangeCurrentDirectoryToExeDir();
