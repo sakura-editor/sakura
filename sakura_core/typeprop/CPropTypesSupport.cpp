@@ -44,6 +44,9 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
 
 	IDC_CHECK_CHKENTERATEND,		HIDC_CHECK_CHKENTERATEND,			//保存時に改行コードの混在を警告する	// 2013/4/14 Uchi
+	IDC_CHECK_INDENTCPPSTR,			HIDC_CHECK_INDENTCPPSTR,
+	IDC_CHECK_INDENTCPPCMT,			HIDC_CHECK_INDENTCPPCMT,
+	IDC_CHECK_INDENTCPPUNDO,		HIDC_CHECK_INDENTCPPUNDO,
 	//	IDC_STATIC,						-1,
 	0, 0
 };
@@ -249,6 +252,10 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CHKENTERATEND, m_Types.m_bChkEnterAtEnd ? BST_CHECKED : BST_UNCHECKED);
+
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPSTR,  m_Types.m_bIndentCppStringIgnore );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPCMT,  m_Types.m_bIndentCppCommentIgnore );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPUNDO, m_Types.m_bIndentCppUndoSep );
 }
 
 /* ダイアログデータの取得 */
@@ -283,6 +290,10 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	m_Types.m_bChkEnterAtEnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CHKENTERATEND ) != 0;
 
+
+	m_Types.m_bIndentCppStringIgnore =  IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPSTR );
+	m_Types.m_bIndentCppCommentIgnore = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPCMT );
+	m_Types.m_bIndentCppUndoSep = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPUNDO );
 	return TRUE;
 }
 

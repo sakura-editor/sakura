@@ -243,6 +243,9 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_nOutlineSortType = 0;					/* アウトライン解析ソート基準 */
 	CShareData::InitFileTree( &pType->m_sFileTree );
 	pType->m_eSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
+	pType->m_bIndentCppStringIgnore = true;
+	pType->m_bIndentCppCommentIgnore = true;
+	pType->m_bIndentCppUndoSep = false;
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
 	pType->m_szOutlineRuleFilename[0] = L'\0';		//Dec. 4, 2000 MIK

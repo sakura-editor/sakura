@@ -1223,6 +1223,22 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 }
 
 
+struct SCommentBlock{
+	int nFirst;
+	int nLast;
+};
+static bool IsCommentBlock( std::vector<SCommentBlock>& arr, int pos )
+{
+	int size = (int)arr.size();
+	for(int i = 0; i < size; i++){
+		if( arr[i].nFirst <= pos && pos <= arr[i].nLast ){
+			return true;
+		}
+	}
+	return false;
+}
+
+
 
 /* C/C++スマートインデント処理 */
 void CEditView::SmartIndent_CPP( wchar_t wcChar )
@@ -1265,6 +1281,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	case L'{':
 	case L'(':
 
+		wchar_t wcCharOrg = wcChar;
 		nCaretPosX_PHY = GetCaret().GetCaretLogicPos().x;
 
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2())->GetDocLineStrWithEOL(&nLineLen);
@@ -1355,6 +1372,109 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				k = nLineLen2 - nCharChars;
 			}
 
+			// コメント・文字列検索
+			bool bCommentStringCheck = m_pTypeData->m_bIndentCppStringIgnore || m_pTypeData->m_bIndentCppCommentIgnore;
+			std::vector<SCommentBlock> arrCommentBlock;
+			if( bCommentStringCheck ){
+				int nMode = 0;
+				int nBegin = -1;
+				CLogicPoint  pointLogic(CLogicInt(0), j);
+				CLayoutPoint pointLayout;
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(pointLogic, &pointLayout);
+				const CLayout* layout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pointLayout.GetY() );
+				if( layout == NULL ){
+					nMode = 0;
+				}else{
+					EColorIndexType eColorIndex = layout->GetColorTypePrev();
+					switch( eColorIndex ){
+					case COLORIDX_SSTRING:
+						if( m_pTypeData->m_bIndentCppStringIgnore ){
+							nMode = 2;
+							nBegin = 0;
+						}
+						break;
+					case COLORIDX_WSTRING:
+						if( m_pTypeData->m_bIndentCppStringIgnore ){
+							nMode = 1;
+							nBegin = 0;
+						}
+						break;
+					case COLORIDX_BLOCK1:
+						if( m_pTypeData->m_bIndentCppCommentIgnore ){
+							nMode = 3;
+							nBegin = 0;
+						}
+						break;
+					default:
+						break;
+					}
+				}
+				for( int n = 0; n < nLineLen2; n++ ){
+					switch( nMode ){
+					case 0:
+						if( m_pTypeData->m_bIndentCppStringIgnore && L'"' == pLine2[n] ){
+							nMode = 1;
+							nBegin = n;
+						}else if( m_pTypeData->m_bIndentCppStringIgnore &&  L'\'' == pLine2[n] ){
+							nMode = 2;
+							nBegin = n;
+						}else if( m_pTypeData->m_bIndentCppCommentIgnore &&  n + 1 < nLineLen2 && '/' == pLine2[n] && '*' == pLine2[n+1] ){
+							nMode = 3;
+							nBegin = n;
+							n++;
+						}else if( m_pTypeData->m_bIndentCppCommentIgnore && n + 1 < nLineLen2 && '/' == pLine2[n] && '/' == pLine2[n+1] ){
+							SCommentBlock block = { n, nLineLen2 - 1 };
+							arrCommentBlock.push_back(block);
+							n = k;
+						}
+						break;
+					case 1:
+						if( L'\\' == pLine2[n] ){
+							n++;
+						}else if( L'"' == pLine2[n] ){
+							SCommentBlock block = { nBegin, n };
+							arrCommentBlock.push_back(block);
+							nBegin = -1;
+							nMode = 0;
+						}
+						break;
+					case 2:
+						if( L'\\' == pLine2[n] ){
+							n++;
+						}else if( L'\'' == pLine2[n] ){
+							SCommentBlock block = { nBegin, n };
+							arrCommentBlock.push_back(block);
+							nBegin = -1;
+							nMode = 0;
+						}
+						break;
+					case 3:
+						if( n + 1 < nLineLen2 && '*' == pLine2[n] && '/' == pLine2[n+1] ){
+							SCommentBlock block = { nBegin, n + 1 };
+							arrCommentBlock.push_back(block);
+							nBegin = -1;
+							nMode = 0;
+							n++;
+						}
+						break;
+					}
+				}
+				if( 0 < nBegin ){
+					// 終わりのない文字列orコメント
+					SCommentBlock block = { nBegin, nLineLen2 };
+					arrCommentBlock.push_back(block);
+				}
+				if( j == GetCaret().GetCaretLogicPos().GetY2() ){
+					if( wcCharOrg != WCODE::CR ){
+						int pos = GetCaret().GetCaretLogicPos().GetX();
+						if( IsCommentBlock(arrCommentBlock, pos) ){
+							// もし最後に入力した文字がコメント内だったら何もしない
+							return;
+						}
+					}
+				}
+			}
+
 			for( ; k >= 0; /*k--*/ ){
 				if( 1 == nCharChars && ( L'}' == pLine2[k] || L')' == pLine2[k] )
 				){
@@ -1362,6 +1482,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
 //						MYTRACE( _T("▼[%ls]\n"), pLine2 );
+					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合
 						if( j == GetCaret().GetCaretLogicPos().y ){
@@ -1384,6 +1505,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
 //						MYTRACE( _T("▼[%ls]\n"), pLine2 );
+					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合
 						if( j == GetCaret().GetCaretLogicPos().y ){
@@ -1493,6 +1615,14 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			bChange = FALSE;
 		}else{
 			bChange = TRUE;
+			if( m_pTypeData->m_bIndentCppUndoSep ){
+				//キー入力とインデントを別のアンドゥバッファにする
+				SetUndoBuffer();
+				if( m_cCommander.GetOpeBlk() == NULL ){
+					m_cCommander.SetOpeBlk(new COpeBlk);
+				}
+				m_cCommander.GetOpeBlk()->AddRef();
+			}
 
 			/* データ置換 削除&挿入にも使える */
 			ReplaceData_CEditView(
