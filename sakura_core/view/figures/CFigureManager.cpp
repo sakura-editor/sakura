@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "CFigureManager.h"
 #include "CFigure_Tab.h"
+#include "CFigure_Comma.h"
 #include "CFigure_HanSpace.h"
 #include "CFigure_ZenSpace.h"
 #include "CFigure_Eol.h"
@@ -33,6 +34,7 @@
 CFigureManager::CFigureManager()
 {
 	m_vFigures.push_back(new CFigure_Tab());
+	m_vFigures.push_back(new CFigure_Comma());
 	m_vFigures.push_back(new CFigure_HanSpace());
 	m_vFigures.push_back(new CFigure_ZenSpace());
 	m_vFigures.push_back(new CFigure_Eol());

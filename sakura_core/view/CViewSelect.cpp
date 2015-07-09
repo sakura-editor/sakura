@@ -505,7 +505,7 @@ void CViewSelect::DrawSelectAreaLine(
 	CLayoutInt nSelectTo = lineArea.GetTo().GetX2();
 	if( nSelectFrom == INT_MAX || nSelectTo == INT_MAX ){
 		CLayoutInt nPosX = CLayoutInt(0);
-		CMemoryIterator it = CMemoryIterator(pcLayout, layoutMgr.GetTabSpace());
+		CMemoryIterator it = CMemoryIterator(pcLayout, layoutMgr.GetTabSpace(), layoutMgr.m_tsvInfo);
 		
 		while( !it.end() ){
 			it.scanNext();

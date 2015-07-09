@@ -969,7 +969,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 	const CLogicInt nLineLen = pLayout ? pLayout->GetLengthWithEOL() : CLogicInt(0);
 	int i = 0; ///< ‰½H
 	if( pLayout ) {
-		CMemoryIterator it( pLayout, pLayoutMgr->GetTabSpace() );
+		CMemoryIterator it( pLayout, pLayoutMgr->GetTabSpace(), pLayoutMgr->m_tsvInfo );
 		while( ! it.end() ){
 			it.scanNext();
 			if ( it.getIndex() + it.getIndexDelta() > pLayout->GetLengthWithoutEOL() ){
@@ -1177,7 +1177,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 		int nColWidth = m_pEditView->GetTextMetrics().GetHankakuDx();
 		CLayoutInt nPosX = CLayoutInt(0);
 		int i = 0;
-		CMemoryIterator it( pcLayout, m_pEditDoc->m_cLayoutMgr.GetTabSpace() );
+		CMemoryIterator it( pcLayout, m_pEditDoc->m_cLayoutMgr.GetTabSpace(), m_pEditDoc->m_cLayoutMgr.m_tsvInfo );
 		while( !it.end() ){
 			it.scanNext();
 			if ( it.getIndex() + it.getIndexDelta() > CLogicInt(pcLayout->GetLengthWithoutEOL()) ){

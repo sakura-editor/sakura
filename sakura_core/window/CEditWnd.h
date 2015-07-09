@@ -259,7 +259,7 @@ public:
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
-	void ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
+	void ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, int nTsvMode, CLayoutInt nMaxLineKetas );
 	//	Aug. 14, 2005 genta
 	CLogicPointEx* SavePhysPosOfAllView();
 	void RestorePhysPosOfAllView( CLogicPointEx* pptPosArray );

@@ -186,7 +186,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	if( pLayoutPrev->GetLogicOffset() > 0 )
 		return nIpos;
 	
-	CMemoryIterator it( pLayoutPrev, GetTabSpace() );
+	CMemoryIterator it( pLayoutPrev, GetTabSpace(), m_tsvInfo );
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && it.getCurrentChar() == WCODE::TAB ){
@@ -226,7 +226,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		return nIpos;
 	
 	//	2002.10.07 YAZAKI インデントの計算
-	CMemoryIterator it( pLayoutPrev, GetTabSpace() );
+	CMemoryIterator it( pLayoutPrev, GetTabSpace(), m_tsvInfo );
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
 	bool bZenSpace = m_pTypeConfig->m_bAutoIndent_ZENSPACE;

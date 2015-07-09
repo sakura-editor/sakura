@@ -1371,11 +1371,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
 
 	// 2005.04.07 D.S.Koba
-	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
+	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
 	auto_strcpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
-			int buf[11];
+			int buf[12];
 			scan_ints( szKeyData, pszForm, buf );
 			types.m_nIdx					= buf[ 0];
 			types.m_nMaxLineKetas			= buf[ 1];
@@ -1388,6 +1388,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			types.m_nLineTermType			= buf[ 8];
 			types.m_bWordWrap				= (buf[ 9]!=0);
 			types.m_nCurrentPrintSetting	= buf[10];
+			types.m_nTsvMode				= buf[11];
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
 		if( types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){
@@ -1406,7 +1407,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			types.m_bLineNumIsCRLF?1:0,
 			types.m_nLineTermType,
 			types.m_bWordWrap?1:0,
-			types.m_nCurrentPrintSetting
+			types.m_nCurrentPrintSetting,
+			types.m_nTsvMode
 		);
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 	}

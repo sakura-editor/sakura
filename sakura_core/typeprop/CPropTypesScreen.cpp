@@ -28,6 +28,7 @@
 #include "util/file.h" // _IS_REL_PATH
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "doc/layout/CTsvModeInfo.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_TYPENAME,				HIDC_EDIT_TYPENAME,			//設定の名前
@@ -45,6 +46,7 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_TABVIEWSTRING,			HIDC_EDIT_TABVIEWSTRING,	//TAB表示文字列
 	IDC_CHECK_TAB_ARROW,			HIDC_CHECK_TAB_ARROW,		//矢印表示	// 2006.08.06 ryoji
 	IDC_CHECK_INS_SPACE,			HIDC_CHECK_INS_SPACE,		//スペースの挿入
+	IDC_COMBO_TSV_MODE,				HIDC_COMBO_TSV_MODE,		//TSVモード
 
 	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,			//自動インデント	// 2006.08.19 ryoji
 	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,	//全角空白もインデント	// 2006.08.19 ryoji
@@ -121,6 +123,13 @@ TYPE_NAME_ID<int> WrapMethodArr[] = {
 	{ WRAP_NO_TEXT_WRAP,	STR_WRAP_METHOD_NO_WRAP },	//_T("折り返さない")
 	{ WRAP_SETTING_WIDTH,	STR_WRAP_METHOD_SPEC_WIDTH },	//_T("指定桁で折り返す")
 	{ WRAP_WINDOW_WIDTH,	STR_WRAP_METHOD_WIN_WIDTH },	//_T("右端で折り返す")
+};
+
+// TSVモード
+TYPE_NAME_ID<int> TsvModeArr[] = {
+	{ TSV_MODE_NONE,		STR_TSV_MODE_NONE },	//_T("通常")
+	{ TSV_MODE_TSV,			STR_TSV_MODE_TSV },		//_T("TSV")
+	{ TSV_MODE_CSV,			STR_TSV_MODE_CSV },		//_T("CSV")
 };
 
 //静的メンバ
@@ -477,6 +486,18 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		Combo_SetCurSel( hwndCombo, nSelPos );
 
 		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );				// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
+
+		// TSVモード
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TSV_MODE );
+		Combo_ResetContent( hwndCombo );
+		nSelPos = 0;
+		for( int i = 0; i < _countof( TsvModeArr ); ++i ){
+			Combo_InsertString( hwndCombo, i, LS( TsvModeArr[i].nNameId ) );
+			if( TsvModeArr[i].nMethod == m_Types.m_nTsvMode ){
+				nSelPos = i;
+			}
+		}
+		Combo_SetCurSel( hwndCombo, nSelPos );
 	}
 
 	//インデント
@@ -664,6 +685,11 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		// SPACEの挿入
 		m_Types.m_bInsSpace = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INS_SPACE );
+
+		// TSVモード
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_TSV_MODE );
+		nSelPos = Combo_GetCurSel( hwndCombo );
+		m_Types.m_nTsvMode = TsvModeArr[nSelPos].nMethod;
 	}
 
 	//インデント

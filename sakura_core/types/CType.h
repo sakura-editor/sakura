@@ -132,6 +132,7 @@ struct STypeConfig{
 	ETabArrow			m_bTabArrow;					//!< タブ矢印表示		//@@@ 2003.03.26 MIK
 	EDIT_CHAR			m_szTabViewString[8+1];			//!< TAB表示文字列	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
 	bool				m_bInsSpace;					//!< スペースの挿入	// 2001.12.03 hor
+	int					m_nTsvMode;						//!< TSVモード	// 2015.05.02 syat
 	// 2005.01.13 MIK 配列化
 	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	//!< キーワードセット
 

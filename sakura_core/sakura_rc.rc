@@ -1005,6 +1005,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_TABVIEWSTRING,102,108,40,12,ES_AUTOHSCROLL
     CONTROL         "S&PACEの挿入",IDC_CHECK_INS_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,70,123,57,10
+    COMBOBOX        IDC_COMBO_TSV_MODE,16,123,46,8,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "レイアウト",IDC_STATIC,3,22,145,117
     CONTROL         "自動インデント(&U)",IDC_CHECK_INDENT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,154,72,10
@@ -4396,6 +4398,11 @@ BEGIN
 	STR_PROPTYPE_KEYWORD_HELP	"キーワードヘルプ"
 	STR_PROPTYPE_WINDOW			"ウィンドウ"
 	STR_PROPTYPE_ERR			"CPropTypes::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗。\n\n%ts\n"
+
+	// CPropTypesScreen.cpp
+	STR_TSV_MODE_NONE			"通常"
+	STR_TSV_MODE_TSV			"TSV"
+	STR_TSV_MODE_CSV			"CSV"
 
 	// CPropTypesColor.cpp
 	STR_STRINGESC_CPP			"C/C++言語風 \\"""
