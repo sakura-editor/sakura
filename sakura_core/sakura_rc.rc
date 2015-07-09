@@ -1167,6 +1167,13 @@ BEGIN
                     WS_TABSTOP,8,125,109,10
     CONTROL         "保存時に改行コードの混在を警告する(&E)",IDC_CHECK_CHKENTERATEND,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,10
+    CONTROL         "文字列を無視する(&S)",IDC_CHECK_INDENTCPPSTR,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,171,146,10
+    CONTROL         "コメントを無視する(&C)",IDC_CHECK_INDENTCPPCMT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,158,171,146,10
+    CONTROL         "Undoバッファを分ける(&U)",IDC_CHECK_INDENTCPPUNDO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,183,146,10
+    GROUPBOX        "C/C++インデント詳細設定",IDC_STATIC,3,159,295,40,WS_GROUP
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244

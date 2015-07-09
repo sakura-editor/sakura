@@ -701,6 +701,9 @@
 #define HIDC_CHECK_CHKENTERATEND				11547 //終了時、改行の一致を検査する	// 2013/4/14 Uchi
 #define HIDC_COMBO_LANGUAGE						11548 //言語選択
 #define HIDC_COMBO_TSV_MODE						11549 //TSVモード
+#define HIDC_CHECK_INDENTCPPSTR					11550 //C/C++インデントで文字列を無視する
+#define HIDC_CHECK_INDENTCPPCMT					11551 //C/C++インデントでコメントを無視する
+#define HIDC_CHECK_INDENTCPPUNDO				11552 //C/C++インデントでUndoバッファを分ける
 #define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
