@@ -40,6 +40,26 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
+{
+	static int (WINAPI *RealMessageBox)(HWND, LPCTSTR, LPCTSTR, UINT, WORD);
+	static HMODULE hMod = NULL;
+	if( hMod == NULL ){	// 初期化されていない場合は初期化する
+	hMod = GetModuleHandle(_T("USER32"));
+#ifdef _UNICODE
+		*(FARPROC *)&RealMessageBox = GetProcAddress(hMod, "MessageBoxExW");
+#else
+		*(FARPROC *)&RealMessageBox = GetProcAddress(hMod, "MessageBoxExA");
+#endif
+	}
+
+	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
+	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
+	//    メッセージボックス上の Ctrl+C が文字化けしないように
+	return RealMessageBox(hWnd, lpText? std::tstring(lpText).c_str(): NULL,
+		lpCaption? std::tstring(lpCaption).c_str(): NULL, uType, CSelectLang::getDefaultLangId());
+}
+
 HWND GetMessageBoxOwner(HWND hwndOwner)
 {
 	if(hwndOwner==NULL && g_pcEditWnd){
