@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT /SAFESEH /DYNAMICBASE"
 				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
@@ -141,6 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT /DYNAMICBASE"
 				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -218,6 +220,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT /SAFESEH /DYNAMICBASE"
 				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
@@ -296,6 +299,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NXCOMPAT /DYNAMICBASE"
 				AdditionalDependencies="comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
