@@ -34,6 +34,7 @@
 #include <windows.h>
 #include <string.h>
 #include <tchar.h>
+#include <Shlwapi.h>
 #include "CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
@@ -133,6 +134,9 @@ public:
 			HANDLE handle = ::FindFirstFile( lpPath, &w32fd );
 			if( INVALID_HANDLE_VALUE != handle ){
 				do{
+					if( !::PathMatchSpec(w32fd.cFileName, vecKeys[ i ] + nKeyDirLen) ){
+						continue;
+					}
 					if( option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ){
 						continue;
 					}
