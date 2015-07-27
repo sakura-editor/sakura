@@ -294,8 +294,9 @@ DWORD CGrepAgent::DoGrep(
 		bool bError;
 		if( bGrepReplace && !bGrepPaste ){
 			// Grep置換
+			// 2015.03.03 Grep置換がoptGlobalじゃないバグを修正
 			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength(),
-				cmemReplace.GetStringPtr(), sSearchOption, &cRegexp);
+				cmemReplace.GetStringPtr(), sSearchOption, &cRegexp, true);
 		}else{
 			bError = !pattern.SetPattern(pcViewDst->GetHwnd(), pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength(),
 				sSearchOption, &cRegexp);
