@@ -19,7 +19,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
-//#define USE_CRASHDUMP
+#define USE_CRASHDUMP
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾
