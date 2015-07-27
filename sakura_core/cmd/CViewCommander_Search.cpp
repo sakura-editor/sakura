@@ -537,6 +537,11 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 */
 void CViewCommander::Command_REPLACE( HWND hwndParent )
 {
+	// m_sSearchOption選択のための先に適用
+	if( !m_pCommanderView->ChangeCurRegexp(false) ){
+		return;
+	}
+
 	if ( hwndParent == NULL ){	//	親ウィンドウが指定されていなければ、CEditViewが親。
 		hwndParent = m_pCommanderView->GetHwnd();
 	}
