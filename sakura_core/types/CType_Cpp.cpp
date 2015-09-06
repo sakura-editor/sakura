@@ -1715,7 +1715,7 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"const_cast",
 	L"constexpr",
 	L"continue",
-	L"decltype"
+	L"decltype",
 	L"default",
 	L"define",
 	L"defined",
@@ -1732,7 +1732,7 @@ const wchar_t* g_ppszKeywordsCPP[] = {
 	L"export",
 	L"extern",
 	L"false",
-	L"final"
+	L"final",
 	L"float",
 	L"for",
 	L"friend",

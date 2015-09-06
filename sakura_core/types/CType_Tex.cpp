@@ -720,7 +720,7 @@ const wchar_t* g_ppszKeywordsTEX2[] = {
 	//	環境コマンド
 	//Jan. 19, 2001 JEPRO 本当は{}付きでキーワードにしたかったが単語として認識してくれないので止めた
 	L"abstract",
-	L"array"
+	L"array",
 	L"center",
 	L"description",
 	L"document",
