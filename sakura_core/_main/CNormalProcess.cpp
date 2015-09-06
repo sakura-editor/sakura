@@ -125,6 +125,10 @@ bool CNormalProcess::InitializeProcess()
 			ActivateFrameWindow( hwndOwner );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
+
+			// 複数ファイル読み込み
+			OpenFiles( hwndOwner );
+
 			return false;
 		}
 	}
@@ -224,7 +228,6 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepBackup
 			);
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
-			//return true; // 2003.06.23 Moca
 		}
 		else{
 			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
@@ -280,7 +283,6 @@ bool CNormalProcess::InitializeProcess()
 				pEditWnd->GetDocument()->SetCurDirNotitle();
 			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
-			//return true; // 2003.06.23 Moca
 		}
 
 		//プラグイン：EditorStartイベント実行
@@ -441,34 +443,15 @@ bool CNormalProcess::InitializeProcess()
 		view.GetCommander().HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 
-	// 複数ファイル読み込み
-	int fileNum = CCommandLine::getInstance()->GetFileNum();
-	if( fileNum > 0 ){
-		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
-		// ファイルドロップ数の上限に合わせる
-		if( fileNum > nDropFileNumMax ){
-			fileNum = nDropFileNumMax;
-		}
-		EditInfo openFileInfo = fi;
-		int i;
-		for( i = 0; i < fileNum; i++ ){
-			// ファイル名差し替え
-			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
-			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), pEditWnd->GetHwnd(), &openFileInfo, bViewMode );
-			if( ret == false ){
-				break;
-			}
-		}
-		// 用済みなので削除
-		CCommandLine::getInstance()->ClearFile();
-	}
-
 	//プラグイン：DocumentOpenイベント実行
 	plugs.clear();
 	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
 	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
 		(*it)->Invoke(&pEditWnd->GetActiveView(), params);
 	}
+
+	// 複数ファイル読み込み
+	OpenFiles( pEditWnd->GetHwnd() );
 
 	return pEditWnd->GetHwnd() ? true : false;
 }
@@ -541,3 +524,36 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 }
 
 
+/*!
+	@brief 複数ファイル読み込み
+
+	@date 2015.03.14 novice 新規作成
+*/
+void CNormalProcess::OpenFiles( HWND hwnd )
+{
+	EditInfo fi;
+	CCommandLine::getInstance()->GetEditInfo( &fi );
+	bool bViewMode = CCommandLine::getInstance()->IsViewMode();
+
+	int fileNum = CCommandLine::getInstance()->GetFileNum();
+	if( fileNum > 0 ){
+		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+		// ファイルドロップ数の上限に合わせる
+		if( fileNum > nDropFileNumMax ){
+			fileNum = nDropFileNumMax;
+		}
+
+		int i;
+		for( i = 0; i < fileNum; i++ ){
+			// ファイル名差し替え
+			_tcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
+			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );
+			if( ret == false ){
+				break;
+			}
+		}
+
+		// 用済みなので削除
+		CCommandLine::getInstance()->ClearFile();
+	}
+}

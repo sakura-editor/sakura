@@ -44,6 +44,7 @@ protected:
 protected:
 	//é¿ëïï‚èï
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
+	void OpenFiles( HWND );
 
 private:
 	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
