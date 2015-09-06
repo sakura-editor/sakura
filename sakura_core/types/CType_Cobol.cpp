@@ -193,7 +193,7 @@ const wchar_t* g_ppszKeywordsCOBOL[] = {
 	L"GO",
 	L"GOBACK",
 	L"HIGH-VALUE",
-	L"IDENTIFICATION"
+	L"IDENTIFICATION",
 	L"IF",
 	L"INITIALIZE",
 	L"INPUT",
