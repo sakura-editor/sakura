@@ -157,6 +157,7 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_AT_ImmSetReconvertString(NULL)
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
+, m_hAtokModule(NULL)
 {
 }
 
