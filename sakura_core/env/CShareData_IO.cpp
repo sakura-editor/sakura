@@ -592,7 +592,6 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("szInyouKigou")			, MakeStringBufferW(common.m_sFormat.m_szInyouKigou) );
 	
 	// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除：３行
-	cProfile.IOProfileData( pszSecName, LTEXT("bUseHokan")				, common.m_sHelper.m_bUseHokan );
 	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 	// 2001/06/19 asa-o タイプ別に移動したので削除：1行
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bSaveWindowSize"), common.m_sWindow.m_eSaveWindowSize );	//#####フラグ名が激しくきもい

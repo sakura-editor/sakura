@@ -38,6 +38,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 		if( nCommand != F_HOKAN		//	補完開始・終了コマンド
 		 && nCommand != F_WCHAR		//	文字入力
 		 && nCommand != F_IME_CHAR	//	漢字入力
+		 && nCommand != F_DELETE_BACK	//	カーソル前を削除
 		 ){
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
@@ -53,7 +54,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 */
 void CEditView::PostprocessCommand_hokan(void)
 {
-	if( GetDllShareData().m_Common.m_sHelper.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
+	if( m_bHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
 		CNativeW	cmemData;
 
 		/* カーソル直前の単語を取得 */
@@ -102,7 +103,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	this->ClientToScreen( &poWin );
 	poWin.x -= (
 		cmemData.GetStringLength()
-		 * GetTextMetrics().GetHankakuDx()
+		* (WCODE::IsHankaku(*cmemData.GetStringPtr())? GetTextMetrics().GetHankakuDx(): GetTextMetrics().GetZenkakuDx())
 	);
 
 	/*	補完ウィンドウを表示
@@ -125,10 +126,9 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	if( !m_pcEditWnd->m_cHokanMgr.GetHwnd() ){
 		m_pcEditWnd->m_cHokanMgr.DoModeless(
 			G_AppInstance(),
-			GetHwnd(),
+			m_pcEditWnd->GetHwnd(),
 			(LPARAM)this
 		);
-		::SetFocus( GetHwnd() );	//エディタにフォーカスを戻す
 	}
 	nKouhoNum = m_pcEditWnd->m_cHokanMgr.CHokanMgr::Search(
 		&poWin,
@@ -163,11 +163,6 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	}
 	else {
 		m_bHokan = TRUE;
-	}
-	
-	//	補完終了。
-	if ( !m_bHokan ){
-		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
 	}
 }
 

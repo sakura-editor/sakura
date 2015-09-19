@@ -1122,6 +1122,14 @@ void CEditWnd::MessageLoop( void )
 		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
 		//アクセラレータ
 		else{
+			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
+			if( msg.message == WM_KEYDOWN ){
+				if( GetActiveView().m_bHokan ){
+					if( -1 == m_cHokanMgr.KeyProc( msg.wParam, msg.lParam ) )
+						continue;	// 補完ウィンドウが処理を実行した
+				}
+			}
+
 			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
 			//通常メッセージ
 			else{
@@ -4501,7 +4509,6 @@ void  CEditWnd::SetActivePane( int nIndex )
 		m_cDlgReplace.ChangeView( (LPARAM)&GetActiveView() );
 	}
 	if( NULL != m_cHokanMgr.GetHwnd() ){	/* 「入力補完」ダイアログ */
-		m_cHokanMgr.Hide();
 		/* モードレス時：検索対象となるビューの変更 */
 		m_cHokanMgr.ChangeView( (LPARAM)&GetActiveView() );
 	}
