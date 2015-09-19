@@ -591,6 +591,8 @@ LRESULT CEditView::DispatchEvent(
 			ImmGetCompositionString(hIMC, GCS_RESULTSTR, lptstr, dwSize);
 
 			/* テキストを貼り付け */
+			BOOL bHokan;
+			bHokan = m_bHokan;
 			if( m_bHideMouse && 0 <= m_nMousePouse ){
 				m_nMousePouse = -1;
 				::SetCursor( NULL );
@@ -601,12 +603,15 @@ LRESULT CEditView::DispatchEvent(
 			std::wstring wstr = to_wchar(lptstr);
 			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wstr.c_str(), wstr.length(), TRUE, 0 );
 #endif
+			m_bHokan = bHokan;	// 消されても表示中であるかのように誤魔化して入力補完を動作させる
 			ImmReleaseContext( hwnd, hIMC );
 
 			// add this string into text buffer of application
 
 			GlobalUnlock( hstr );
 			GlobalFree( hstr );
+
+			PostprocessCommand_hokan();	// 補完実行
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );

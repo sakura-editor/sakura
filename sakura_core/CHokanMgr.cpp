@@ -34,40 +34,24 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	// Modified by KEITA for WIN64 2003.9.6
 	CDialog* pCDialog = ( CDialog* )::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
 	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
-	MSG* pMsg;
-	int nVKey;
 
 	switch( uMsg ){
-	case WM_KEYDOWN:
-		nVKey = (int) wParam;	// virtual-key code
-		/* キー操作を偽造しよう */
-		if (nVKey == VK_SPACE){	//	Space
-// novice 2004/10/10
-			/* Shift,Ctrl,Altキーが押されていたか */
-			int nIdx = getCtrlKeyState();
-			if (nIdx == _SHIFT){
-				//	Shift + Spaceで↑を偽造
-				wParam = VK_UP;
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONDBLCLK:
+		{
+			// アクティブ化を防止するために自前でリスト選択処理を実施する
+			LRESULT lResult = ::SendMessageAny( hwnd, LB_ITEMFROMPOINT, 0, lParam );
+			if( HIWORD(lResult) == 0 ){	// クライアントエリア内
+				if( uMsg == WM_LBUTTONDOWN ){
+					List_SetCurSel( hwnd, LOWORD(lResult) );
+					pCHokanMgr->OnLbnSelChange( hwnd, IDC_LIST_WORDS );
+				}
+				else if( uMsg == WM_LBUTTONDBLCLK ){
+					pCHokanMgr->DoHokan(0);
+				}
 			}
-			else if (nIdx == 0) {
-				//	Spaceのみで↓を偽造
-				wParam = VK_DOWN;
-			}
 		}
-		/* 補完実行キーなら補完する */
-		if( -1 != pCHokanMgr->KeyProc( wParam, lParam ) ){
-			/* キーストロークを親に転送 */
-			return ::PostMessageAny( ::GetParent( ::GetParent( pCDialog->m_hwndParent ) ), uMsg, wParam, lParam );
-		}
-		break;
-	case WM_GETDLGCODE:
-		pMsg = (MSG*) lParam; // pointer to an MSG structure
-		if( NULL == pMsg ){
-//			MYTRACE( _T("WM_GETDLGCODE  pMsg==NULL\n") );
-			return 0;
-		}
-//		MYTRACE( _T("WM_GETDLGCODE  pMsg->message = %xh\n"), pMsg->message );
-		return DLGC_WANTALLKEYS;/* すべてのキーストロークを私に下さい */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+		return 0;	// 本来のウィンドウプロシージャは呼ばない（アクティブ化しない）
 	}
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
@@ -91,12 +75,12 @@ HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam
 {
 	HWND hwndWork;
 	hwndWork = CDialog::DoModeless( hInstance, hwndParent, IDD_HOKAN, lParam, SW_HIDE );
+	::SetFocus( ((CEditView*)m_lParam)->GetHwnd() );	//エディタにフォーカスを戻す
 	OnSize( 0, 0 );
 	/* リストをフック */
 	// Modified by KEITA for WIN64 2003.9.6
 	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
 
-	::ShowWindow( GetHwnd(), SW_HIDE );
 	return hwndWork;
 }
 
@@ -331,11 +315,7 @@ int CHokanMgr::Search(
 //
 //	}
 	::MoveWindow( GetHwnd(), nX, nY, nCX, nCY, TRUE );
-	::ShowWindow( GetHwnd(), SW_SHOW );
-//	::ShowWindow( GetHwnd(), SW_SHOWNA );
-	::SetFocus( GetHwnd() );
-//	::SetFocus( ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ) );
-//	::SetFocus( ::GetParent( ::GetParent( m_hwndParent ) ) );
+	::ShowWindow( GetHwnd(), SW_SHOWNA );
 
 
 //	2001/06/18 asa-o:
@@ -379,6 +359,114 @@ void CHokanMgr::HokanSearchByKeyword(
 	}
 }
 
+
+/*!
+	標準以外のメッセージを捕捉する
+*/
+INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	// 念のため IME 関連のメッセージが来るようならビューに処理させる
+	// 何かの環境依存（常駐ソフト？）によるものかもしれないが、
+	// フォーカスが無くても IME 関連メッセージがこっちに来るケースがあったので、その対策
+	if(wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST || wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP){
+		CEditView* pcEditView = (CEditView*)m_lParam;
+		pcEditView->DispatchEvent( pcEditView->GetHwnd(), wMsg, wParam, lParam );
+		return TRUE;
+	}
+
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+	switch( wMsg ){
+	case WM_MOUSEACTIVATE:
+		// アクティブにしないでおく
+		::SetWindowLongPtr( GetHwnd(), DWLP_MSGRESULT, MA_NOACTIVATE );
+		return TRUE;
+	case WM_LBUTTONDOWN:
+		return TRUE;	// クライアント領域はリストボックスで埋まっているのでここへは来ないはずだけど念のため
+	case WM_NCLBUTTONDOWN:
+		// ここでもアクティブ化防止の対策が必要
+		// ::SetCapture() して自前でサイズ変更する
+		{
+			POINT ptStart;
+			POINT pt;
+			RECT rcStart;
+			RECT rc;
+			::GetCursorPos( &ptStart );
+			::GetWindowRect( GetHwnd(), &rcStart );
+			::SetCapture( GetHwnd() );
+			while( ::GetCapture() == GetHwnd() )
+			{
+				MSG msg;
+				if (!::GetMessage(&msg, NULL, 0, 0)){
+					::PostQuitMessage( (int)msg.wParam );
+					break;
+				}
+
+				switch (msg.message){
+				case WM_MOUSEMOVE:
+					rc = rcStart;
+					::GetCursorPos( &pt );
+					{
+						switch( wParam ){
+						case HTTOP:
+							rc.top += pt.y - ptStart.y;
+							break;
+						case HTBOTTOM:
+							rc.bottom += pt.y - ptStart.y;
+							break;
+						case HTLEFT:
+							rc.left += pt.x - ptStart.x;
+							break;
+						case HTRIGHT:
+							rc.right += pt.x - ptStart.x;
+							break;
+						case HTTOPLEFT:
+							rc.top += pt.y - ptStart.y;
+							rc.left += pt.x - ptStart.x;
+							break;
+						case HTTOPRIGHT:
+							rc.top += pt.y - ptStart.y;
+							rc.right += pt.x - ptStart.x;
+							break;
+						case HTBOTTOMLEFT:
+							rc.bottom += pt.y - ptStart.y;
+							rc.left += pt.x - ptStart.x;
+							break;
+						case HTBOTTOMRIGHT:
+							rc.bottom += pt.y - ptStart.y;
+							rc.right += pt.x - ptStart.x;
+							break;
+						}
+						::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
+					}
+					break;
+				case WM_LBUTTONUP:
+				case WM_RBUTTONDOWN:
+					::ReleaseCapture();
+					break;
+				case WM_KEYDOWN:
+					if( msg.wParam == VK_ESCAPE ){
+						// キャンセル
+						::ReleaseCapture();
+					}
+					break;
+				default:
+					::DispatchMessage( &msg );
+					break;
+				}
+			}
+		}
+		return TRUE;
+	case WM_GETMINMAXINFO:
+		// 最小サイズを制限する
+		MINMAXINFO *pmmi;
+		pmmi = (MINMAXINFO*)lParam;
+		pmmi->ptMinTrackSize.x = ::GetSystemMetrics(SM_CXVSCROLL) * 4;
+		pmmi->ptMinTrackSize.y = ::GetSystemMetrics(SM_CYHSCROLL) * 4;
+		break;
+	}
+	return result;
+}
 
 BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -460,61 +548,11 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 
 }
 
-BOOL CHokanMgr::OnBnClicked( int wID )
-{
-	switch( wID ){
-	case IDCANCEL:
-//		CloseDialog( 0 );
-		Hide();
-		return TRUE;
-	case IDOK:
-//		CloseDialog( 0 );
-		/* 補完実行 */
-		DoHokan( VK_RETURN );
-		return TRUE;
-	}
-	return FALSE;
-}
-
-
-
-BOOL CHokanMgr::OnKeyDown( WPARAM wParam, LPARAM lParam )
-{
-	int nVKey;
-	nVKey = (int) wParam;	// virtual-key code
-//	lKeyData = lParam;			// key data
-	switch( nVKey ){
-	case VK_HOME:
-	case VK_END:
-	case VK_UP:
-	case VK_DOWN:
-	case VK_PRIOR:
-	case VK_NEXT:
-		return 1;
-	}
- 	return 0;
-}
-
 
 BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 {
 //	2001/06/18 asa-o:
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
-	return TRUE;
-}
-
-BOOL CHokanMgr::OnLbnDblclk( int wID )
-{
-	/* 補完実行 */
-	DoHokan( 0 );
-	return TRUE;
-
-}
-
-
-BOOL CHokanMgr::OnKillFocus( WPARAM wParam, LPARAM lParam )
-{
-//	Hide();
 	return TRUE;
 }
 
@@ -552,7 +590,6 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
-	m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	補完したら
 	return TRUE;
 }
 
@@ -613,6 +650,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_PRIOR:
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
+		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
 		return -1;
 	case VK_RETURN:
 	case VK_TAB:
@@ -628,7 +666,6 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 		}
 	case VK_ESCAPE:
 	case VK_LEFT:
-		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;
 		return -2;
 	}
 	return -2;

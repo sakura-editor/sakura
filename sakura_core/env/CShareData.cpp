@@ -517,8 +517,6 @@ bool CShareData::InitShareData()
 			sHelper.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
 			sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
-
-			sHelper.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 		}
 
 		// [アウトライン]タブ

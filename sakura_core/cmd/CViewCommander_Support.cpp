@@ -34,7 +34,6 @@
 /*!	入力補完
 	Ctrl+Spaceでここに到着。
 	CEditView::m_bHokan： 現在補完ウィンドウが表示されているかを表すフラグ。
-	m_Common.m_sHelper.m_bUseHokan：現在補完ウィンドウが表示されているべきか否かをあらわすフラグ。
 
     @date 2001/06/19 asa-o 英大文字小文字を同一視する
                      候補が1つのときはそれに確定する
@@ -45,9 +44,6 @@
 */
 void CViewCommander::Command_HOKAN( void )
 {
-	if(!GetDllShareData().m_Common.m_sHelper.m_bUseHokan){
-		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = TRUE;
-	}
 #if 0
 // 2011.06.24 Moca Plugin導入に従い未設定の確認をやめる
 retry:;
@@ -76,7 +72,6 @@ retry:;
 	}else{
 		InfoBeep(); //2010.04.03 Error→Info
 		m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ステータスで表示
-		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
 }
