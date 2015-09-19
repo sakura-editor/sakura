@@ -498,6 +498,9 @@ void CViewCommander::Command_UNDO( void )
 		}
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	//	hor
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
+		if (!bDraw) {
+			GetCaret().ShowEditCaret();
+		}
 
 		/* Undo後の変更フラグ */
 		GetDocument()->m_cDocEditor.SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
@@ -746,6 +749,9 @@ void CViewCommander::Command_REDO( void )
 		}
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld); // 2007.07.22 ryoji
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
+		if (!bDraw) {
+			GetCaret().ShowEditCaret();
+		}
 
 		/* Redo後の変更フラグ */
 		GetDocument()->m_cDocEditor.SetModified(bIsModified,true);	//	Jan. 22, 2002 genta
