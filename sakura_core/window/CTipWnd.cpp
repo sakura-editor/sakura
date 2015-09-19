@@ -24,6 +24,7 @@
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
 : CWnd(_T("::CTipWnd"))
+, m_bAlignLeft(false)
 {
 	m_hFont = NULL;
 	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
