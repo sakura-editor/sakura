@@ -485,15 +485,15 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork.SetString( pText, nTextLen );
 				cmemWork.Replace( L"\\", L"\\\\" );
 				cmemWork.Replace( L"\'", L"\\\'" );
-				cmemWork.Replace( L"\r", L"\\\r" );
-				cmemWork.Replace( L"\n", L"\\\n" );
-				cmemWork.Replace( L"\t", L"\\\t" );
+				cmemWork.Replace( L"\r", L"\\r" );
+				cmemWork.Replace( L"\n", L"\\n" );
+				cmemWork.Replace( L"\t", L"\\t" );
 				cmemWork.Replace( L"\0", 1, L"\\u0000", 6 );
 				const wchar_t u0085[] = {0x85, 0};
 				cmemWork.Replace( u0085, L"\\u0085" );
 				cmemWork.Replace( L"\u2028", L"\\u2028" );
 				cmemWork.Replace( L"\u2029", L"\\u2029" );
-				for( int c = 0; c < 0x20; c++ ){
+				for( int c = 1; c < 0x20; c++ ){
 					int nLen = cmemWork.GetStringLength();
 					const wchar_t* p = cmemWork.GetStringPtr();
 					for( int i = 0; i < nLen; i++ ){
@@ -502,7 +502,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 							wchar_t to[7];
 							from[0] = c;
 							from[1] = L'\0';
-							auto_sprintf( to, L"\\u%4x", c );
+							auto_sprintf( to, L"\\u%04x", c );
 							cmemWork.Replace( from, to );
 							break;
 						}
