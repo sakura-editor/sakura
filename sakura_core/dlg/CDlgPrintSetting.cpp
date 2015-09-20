@@ -107,11 +107,8 @@ int CALLBACK SetData_EnumFontFamProc(
 	hwndComboFontZen = ::GetDlgItem( pCDlgPrintSetting->GetHwnd(), IDC_COMBO_FONT_ZEN );
 
 	/* LOGFONT */
-	if( FIXED_PITCH & pelf->elfLogFont.lfPitchAndFamily ){
-//		MYTRACE( _T("%ls\n\n"), pelf->elfLogFont.lfFaceName );
-		Combo_AddString( hwndComboFontHan, pelf->elfLogFont.lfFaceName  );
-		Combo_AddString( hwndComboFontZen, pelf->elfLogFont.lfFaceName  );
-	}
+	Combo_AddString( hwndComboFontHan, pelf->elfLogFont.lfFaceName );
+	Combo_AddString( hwndComboFontZen, pelf->elfLogFont.lfFaceName );
 	return 1;
 }
 

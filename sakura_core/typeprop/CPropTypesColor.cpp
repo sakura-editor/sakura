@@ -696,9 +696,9 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	WCHAR szVertLine[MAX_VERTLINES * 15] = L"";
 	int offset = 0;
 	for( i = 0; i < MAX_VERTLINES && m_Types.m_nVertLineIdx[i] != 0; i++ ){
-		CLayoutInt nXCol = m_Types.m_nVertLineIdx[i];
-		CLayoutInt nXColEnd = nXCol;
-		CLayoutInt nXColAdd = CLayoutInt(1);
+		CKetaXInt nXCol = m_Types.m_nVertLineIdx[i];
+		CKetaXInt nXColEnd = nXCol;
+		CKetaXInt nXColAdd = CKetaXInt(1);
 		if( nXCol < 0 ){
 			if( i < MAX_VERTLINES - 2 ){
 				nXCol = -nXCol;
@@ -846,16 +846,16 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 			}
 			offset++;
 			if(i + 2 < MAX_VERTLINES){
-				m_Types.m_nVertLineIdx[i++] = CLayoutInt(-valueBegin);
-				m_Types.m_nVertLineIdx[i++] = CLayoutInt(valueEnd);
-				m_Types.m_nVertLineIdx[i++] = CLayoutInt(value);
+				m_Types.m_nVertLineIdx[i++] = CKetaXInt(-valueBegin);
+				m_Types.m_nVertLineIdx[i++] = CKetaXInt(valueEnd);
+				m_Types.m_nVertLineIdx[i++] = CKetaXInt(value);
 			}
 			else{
 				break;
 			}
 		}
 		else{
-			m_Types.m_nVertLineIdx[i++] = CLayoutInt(value);
+			m_Types.m_nVertLineIdx[i++] = CKetaXInt(value);
 		}
 		if( szVertLine[offset] != ',' ){
 			break;
@@ -863,7 +863,7 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 		offset++;
 	}
 	if( i < MAX_VERTLINES ){
-		m_Types.m_nVertLineIdx[i] = CLayoutInt(0);
+		m_Types.m_nVertLineIdx[i] = CKetaXInt(0);
 	}
 	// to here 2005.11.30 Moca Žw’èˆÊ’ucü‚ÌÝ’è
 	return TRUE;

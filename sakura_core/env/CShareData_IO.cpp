@@ -1390,8 +1390,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			types.m_nTsvMode				= buf[11];
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
-		if( types.m_nMaxLineKetas < CLayoutInt(MINLINEKETAS) ){
-			types.m_nMaxLineKetas = CLayoutInt(MINLINEKETAS);
+		if( types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS) ){
+			types.m_nMaxLineKetas = CKetaXInt(MINLINEKETAS);
+		}
+		if( types.m_nMaxLineKetas - 2 < types.m_nTabSpace ){
+			types.m_nTabSpace = types.m_nMaxLineKetas - 2;
 		}
 	}
 	else{
@@ -1424,8 +1427,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	/* 行間のすきま */
 	cProfile.IOProfileData( pszSecName, LTEXT("nLineSpace"), types.m_nLineSpace );
 	if( cProfile.IsReadingMode() ){
-		if( types.m_nLineSpace < /* 1 */ 0 ){
-			types.m_nLineSpace = /* 1 */ 0;
+		if( types.m_nLineSpace < -LINESPACE_MAX ){
+			types.m_nLineSpace = -LINESPACE_MAX;
 		}
 		if( types.m_nLineSpace > LINESPACE_MAX ){
 			types.m_nLineSpace = LINESPACE_MAX;

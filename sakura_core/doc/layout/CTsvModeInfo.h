@@ -43,9 +43,10 @@ class CTsvModeInfo {
 public:
 	void CalcTabLength(CDocLineMgr* cDocLineMgr);	// タブ位置を再計算する
 	void CalcTabLength(LPCWSTR pLine);	// タブ位置を再計算する（一行）
-	CLayoutInt GetActualTabLength(CLayoutInt pos) const;	// 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
+	CLayoutInt GetActualTabLength(CLayoutInt pos, CLayoutInt px) const;	// 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
 
 	int m_nTsvMode;
+	CLayoutInt m_nMaxCharLayoutX;
 
 private:
 	std::vector<int> m_tabLength;

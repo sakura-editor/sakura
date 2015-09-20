@@ -46,10 +46,10 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_eDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 	// 指定桁縦線	//2005.11.08 Moca
 	pType->m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = true;
-	pType->m_nVertLineIdx[0] = CLayoutInt(7);
-	pType->m_nVertLineIdx[1] = CLayoutInt(8);
-	pType->m_nVertLineIdx[2] = CLayoutInt(12);
-	pType->m_nVertLineIdx[3] = CLayoutInt(73);
+	pType->m_nVertLineIdx[0] = CKetaXInt(7);
+	pType->m_nVertLineIdx[1] = CKetaXInt(8);
+	pType->m_nVertLineIdx[2] = CKetaXInt(12);
+	pType->m_nVertLineIdx[3] = CKetaXInt(73);
 }
 
 

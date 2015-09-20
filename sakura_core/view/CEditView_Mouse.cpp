@@ -1142,14 +1142,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			CMyPoint nNewPos(0, ptMouse.y);
 
 			// 1行の高さ
-			int nLineHeight = GetTextMetrics().GetHankakuHeight() + m_pTypeData->m_nLineSpace;
+			int nLineHeight = GetTextMetrics().GetHankakuDy();
 
 			// 選択開始行以下へのドラッグ時は1行下にカーソルを移動する
 			if( GetTextArea().GetViewTopLine() + (ptMouse.y - GetTextArea().GetAreaTop()) / nLineHeight >= GetSelectionInfo().m_sSelectBgn.GetTo().y)
 				nNewPos.y += nLineHeight;
 
 			// カーソルを移動
-			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pTypeData->m_nColumnSpace );
+			nNewPos.x = GetTextArea().GetAreaLeft() - GetTextMetrics().GetCharPxWidth(GetTextArea().GetViewLeftCol());
 			GetCaret().MoveCursorToClientPoint( nNewPos, false, &ptNewCursor );
 
 			// 2.5クリックによる行単位のドラッグ
@@ -1466,14 +1466,15 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 
 		const bool bSmooth = !! GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth;
 		const int nRollActions = bSmooth ? nRollNum : 1;
-		const CLayoutInt nCount = CLayoutInt(((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollNum) );
+		int nCount = ((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollNum);		// 1回あたりのスクロール数(縦横混在)
 
 		for( i = 0; i < nRollActions; ++i ){
 			//	Sep. 11, 2004 genta 同期スクロール行数
 			if( bHorizontal ){
-				SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + nCount ) );
+				const CLayoutXInt layoutCount = nCount * GetTextMetrics().GetLayoutXDefault();
+				SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + layoutCount ) );
 			}else{
-				SyncScrollV( ScrollAtV( GetTextArea().GetViewTopLine() + nCount ) );
+				SyncScrollV( ScrollAtV( GetTextArea().GetViewTopLine() + CLayoutInt(nCount) ) );
 			}
 		}
 	}

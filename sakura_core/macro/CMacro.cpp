@@ -1573,14 +1573,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
-			int nTab = (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
+			int nTab = (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas();
 			Wrap( &Result )->Receive( nTab );
 			// 2013.04.30 Moca ğŒ’Ç‰ÁB•s—v‚Èê‡‚ÍChangeLayoutParam‚ğŒÄ‚Î‚È‚¢
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
 				View->GetDocument()->m_bTabSpaceCurTemp = true;
 				View->m_pcEditWnd->ChangeLayoutParam(
 					false, 
-					CLayoutInt(varCopy.Data.iVal),
+					CKetaXInt(varCopy.Data.iVal),
 					View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
 					View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
 				);
@@ -1695,9 +1695,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
 			View->m_pcEditWnd->ChangeLayoutParam(
 				false, 
-				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace(),
+				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
 				View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-				CLayoutInt(varCopy.Data.iVal)
+				CKetaXInt(varCopy.Data.iVal)
 			);
 		}
 		return true;

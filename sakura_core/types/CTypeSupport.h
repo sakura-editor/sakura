@@ -111,7 +111,7 @@ public:
 	{
 		SFONT sFont;
 		sFont.m_sFontAttr = m_pColorInfoArr->m_sFontAttr;
-		sFont.m_hFont = m_pFontset->ChooseFontHandle( m_pColorInfoArr->m_sFontAttr );
+		sFont.m_hFont = m_pFontset->ChooseFontHandle( 0, m_pColorInfoArr->m_sFontAttr );
 		return sFont;
 	}
 	void SetGraphicsState_WhileThisObj(CGraphics& gr)

@@ -62,7 +62,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 				continue;
 			}
 			if( pcLine[i] != WCODE::TAB ){
-				CLayoutInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
+				CKetaXInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
 				nFieldWidth += Int(nKeta);
 			} else {
 				nFieldWidth++;
@@ -88,13 +88,13 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 }
 
 // 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
-CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos) const
+CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos, CLayoutInt px) const
 {
 	unsigned int i;
 	for (i = 0; i < m_tabLength.size(); i++) {
-		if (pos < m_tabLength[i]) {
-			return CLayoutInt(m_tabLength[i]) - pos;
+		if (pos < m_tabLength[i] * px) {
+			return CLayoutInt(m_tabLength[i] * px) - pos;
 		}
 	}
-	return CLayoutInt(1);
+	return CLayoutInt(px*2);
 }

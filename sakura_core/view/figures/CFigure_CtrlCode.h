@@ -33,29 +33,32 @@ public:
 	bool Match(const wchar_t* pText, int nTextLen) const;
 
 	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
+	bool DrawImp(SColorStrategyInfo* pInfo);
+	virtual void DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans, int width) const;
+	virtual wchar_t GetAlternateChar() const{ return L'•'; }
+	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const{assert(0);};
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
 //! ÉoÉCÉiÉäîºäpï`âÊ
-class CFigure_HanBinary : public CFigureSpace{
+class CFigure_HanBinary : public CFigure_CtrlCode{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const;
 
 	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
+	virtual wchar_t GetAlternateChar() const{ return L'Å¨'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
 //! ÉoÉCÉiÉäëSäpï`âÊ
-class CFigure_ZenBinary : public CFigureSpace{
+class CFigure_ZenBinary : public CFigure_CtrlCode{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const;
 
 	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
+	virtual wchar_t GetAlternateChar() const{ return L'Å¨'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 

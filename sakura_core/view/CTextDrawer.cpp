@@ -49,7 +49,7 @@ using namespace std;
 @@@ 2002.09.22 YAZAKI    const unsigned char* pDataを、const char* pDataに変更
 @@@ 2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 */
-void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength, bool bTransparent ) const
+void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent ) const
 {
 	if( 0 >= nLength ){
 		return;
@@ -63,7 +63,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 
 	//文字間隔配列を生成
 	static vector<int> vDxArray(1);
-	const int* pDxArray=pMetrics->GenerateDxArray(&vDxArray,pData,nLength,this->m_pEditView->GetTextMetrics().GetHankakuDx());
+	const int* pDxArray = pMetrics->GenerateDxArray2(&vDxArray, pData, nLength);
 
 	//文字列のピクセル幅
 	int nTextWidth=pMetrics->CalcTextWidth(pData,nLength,pDxArray);
@@ -73,13 +73,13 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 	rcClip.left   = x;
 	rcClip.right  = x + nTextWidth;
 	rcClip.top    = y;
-	rcClip.bottom = y + m_pEditView->GetTextMetrics().GetHankakuDy();
+	rcClip.bottom = y + pMetrics->GetHankakuDy();
 	if( rcClip.left < pArea->GetAreaLeft() ){
 		rcClip.left = pArea->GetAreaLeft();
 	}
 
 	//文字間隔
-	int nDx = m_pEditView->GetTextMetrics().GetHankakuDx();
+	int nDx = pMetrics->GetCharPxWidth();
 
 	if( pArea->IsRectIntersected(rcClip) && rcClip.top >= pArea->GetAreaTop() ){
 
@@ -95,8 +95,9 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 		CLayoutInt nBeforeLayout = CLayoutInt(0);
 		if ( x < 0 ){
 			int nLeftLayout = ( 0 - x ) / nDx - 1;
+			CLayoutMgr& layoutMgr = m_pEditView->m_pcEditDoc->m_cLayoutMgr;
 			while (nBeforeLayout < nLeftLayout){
-				nBeforeLayout += CNativeW::GetKetaOfChar( pData, nLength, nBeforeLogic );
+				nBeforeLayout += layoutMgr.GetLayoutXOfChar(pData, nLength, nBeforeLogic);
 				nBeforeLogic  += CNativeW::GetSizeOfChar( pData, nLength, nBeforeLogic );
 			}
 		}
@@ -139,7 +140,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 		::ExtTextOutW_AnyBuild(
 			hdc,
 			nDrawX,					//X
-			y,						//Y
+			y + marginy,			//Y
 			ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
 			&rcClip,
 			pDrawData,				//文字列
@@ -150,7 +151,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 
 end:
 	//描画位置を進める
-	pDispPos->ForwardDrawCol(nTextWidth / nDx);
+	pDispPos->ForwardDrawCol(CLayoutXInt(nTextWidth / nDx));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -180,16 +181,17 @@ void CTextDrawer::DispVerticalLines(
 
 	if(!cVertType.IsDisp())return;
 
-	nLeftCol = t_max( pView->GetTextArea().GetViewLeftCol(), nLeftCol );
+	const CLayoutXInt nViewLeftCol = pView->GetTextArea().GetViewLeftCol();
 
-	const CLayoutInt nWrapKetas  = pView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-	const int nCharDx  = pView->GetTextMetrics().GetHankakuDx();
+	nLeftCol = t_max( nViewLeftCol, nLeftCol );
+
+	const CLayoutInt nWrapLayout  = pView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineLayout();
 	if( nRightCol < 0 ){
-		nRightCol = nWrapKetas;
+		nRightCol = nWrapLayout;
 	}
 	const int nPosXOffset = GetDllShareData().m_Common.m_sWindow.m_nVertLineOffset + pView->GetTextArea().GetAreaLeft();
-	const int nPosXLeft   = t_max( pView->GetTextArea().GetAreaLeft() + (Int)(nLeftCol  - pView->GetTextArea().GetViewLeftCol()) * nCharDx, pView->GetTextArea().GetAreaLeft() );
-	const int nPosXRight  = t_min( pView->GetTextArea().GetAreaLeft() + (Int)(nRightCol - pView->GetTextArea().GetViewLeftCol()) * nCharDx, pView->GetTextArea().GetAreaRight() );
+	const int nPosXLeft   = t_max(pView->GetTextMetrics().GetCharPxWidth(pView->GetTextArea().GetAreaLeft() + (nLeftCol  - nViewLeftCol)), pView->GetTextArea().GetAreaLeft() );
+	const int nPosXRight  = t_min(pView->GetTextMetrics().GetCharPxWidth(pView->GetTextArea().GetAreaLeft() + (nRightCol - nViewLeftCol)), pView->GetTextArea().GetAreaRight() );
 	const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	bool bOddLine = ((((nLineHeight % 2) ? (Int)pView->GetTextArea().GetViewTopLine() : 0) + pView->GetTextArea().GetAreaTop() + nTop) % 2 == 1);
 
@@ -210,21 +212,21 @@ void CTextDrawer::DispVerticalLines(
 	int k;
 	for( k = 0; k < MAX_VERTLINES && typeData.m_nVertLineIdx[k] != 0; k++ ){
 		// nXColは1開始。GetTextArea().GetViewLeftCol()は0開始なので注意。
-		CLayoutInt nXCol = typeData.m_nVertLineIdx[k];
-		CLayoutInt nXColEnd = nXCol;
-		CLayoutInt nXColAdd = CLayoutInt(1);
+		CLayoutXInt nXCol = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[k]);
+		CLayoutXInt nXColEnd = nXCol;
+		CLayoutXInt nXColAdd = pView->GetTextMetrics().GetLayoutXDefault();
 		// nXColがマイナスだと繰り返し。k+1を終了値、k+2をステップ幅として利用する
 		if( nXCol < 0 ){
 			if( k < MAX_VERTLINES - 2 ){
 				nXCol = -nXCol;
-				nXColEnd = typeData.m_nVertLineIdx[++k];
-				nXColAdd = typeData.m_nVertLineIdx[++k];
+				nXColEnd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
+				nXColAdd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
 				if( nXColEnd < nXCol || nXColAdd <= 0 ){
 					continue;
 				}
 				// 作画範囲の始めまでスキップ
-				if( nXCol < pView->GetTextArea().GetViewLeftCol() ){
-					nXCol = pView->GetTextArea().GetViewLeftCol() + nXColAdd - (pView->GetTextArea().GetViewLeftCol() - nXCol) % nXColAdd;
+				if( nXCol < nViewLeftCol ){
+					nXCol = nViewLeftCol + nXColAdd - (nViewLeftCol - nXCol) % nXColAdd;
 				}
 			}else{
 				k += 2;
@@ -232,10 +234,10 @@ void CTextDrawer::DispVerticalLines(
 			}
 		}
 		for(; nXCol <= nXColEnd; nXCol += nXColAdd ){
-			if( nWrapKetas < nXCol ){
+			if( nWrapLayout < nXCol ){
 				break;
 			}
-			int nPosX = nPosXOffset + (Int)( nXCol - 1 - pView->GetTextArea().GetViewLeftCol() ) * nCharDx;
+			int nPosX = nPosXOffset + pView->GetTextMetrics().GetCharPxWidth(nXCol - pView->GetTextMetrics().GetLayoutXDefault() - nViewLeftCol);
 			// 2006.04.30 Moca 線の引く範囲・方法を変更
 			// 太線の場合、半分だけ作画する可能性がある。
 			int nPosXBold = nPosX;
@@ -331,9 +333,8 @@ void CTextDrawer::DispWrapLine(
 	if( !cWrapType.IsDisp() ) return;
 
 	const CTextArea& rArea = *GetTextArea();
-	const CLayoutInt nWrapKetas = pView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-	const int nCharDx = pView->GetTextMetrics().GetHankakuDx();
-	int nXPos = rArea.GetAreaLeft() + (Int)( nWrapKetas - rArea.GetViewLeftCol() ) * nCharDx;
+	const CLayoutInt nWrapLayout = pView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineLayout();
+	int nXPos = rArea.GetAreaLeft() + pView->GetTextMetrics().GetCharPxWidth(nWrapLayout - rArea.GetViewLeftCol());
 	//	2005.11.08 Moca 作画条件変更
 	if( rArea.GetAreaLeft() < nXPos && nXPos < rArea.GetAreaRight() ){
 		/// 折り返し記号の色のペンを設定
@@ -368,8 +369,7 @@ void CTextDrawer::DispLineNumber(
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();
 	// 行番号表示部分X幅	Sep. 23, 2002 genta 共通式のくくりだし
 	//int				nLineNumAreaWidth = pView->GetTextArea().m_nViewAlignLeftCols * nCharWidth;
-	int				nLineNumAreaWidth = pView->GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace;	// 2009.03.26 ryoji
-
+	int				nLineNumAreaWidth = pView->GetTextArea().GetLineNumberWidth();	// 2009.03.26 ryoji
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
 	CTypeSupport cCaretLineBg(pView, COLORIDX_CARETLINEBG);
 	CTypeSupport cEvenLineBg(pView, COLORIDX_EVENLINEBG);
@@ -470,7 +470,7 @@ void CTextDrawer::DispLineNumber(
 				bChange = true;
 			}
 			if( bChange ){
-				sFont.m_hFont = pView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+				sFont.m_hFont = pView->GetFontset().ChooseFontHandle( 0, sFont.m_sFontAttr );
 			}
 		}
 		gr.PushTextForeColor(fgcolor);	//テキスト：行番号の色
@@ -509,9 +509,11 @@ void CTextDrawer::DispLineNumber(
 
 		//	Sep. 23, 2002 genta
 		int drawNumTop = (pView->GetTextArea().m_nViewAlignLeftCols - nLineNumCols - 1) * ( nCharWidth );
+		int fontNo = WCODE::GetFontNo('0');
+		int nHeightMargin = pView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 		::ExtTextOutW_AnyBuild( gr,
 			drawNumTop,
-			y,
+			y + nHeightMargin,
 			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcLineNum,
 			szLineNum,

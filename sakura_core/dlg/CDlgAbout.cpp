@@ -73,9 +73,9 @@ const DWORD p_helpids[] = {	//12900
 //	To Here Feb. 7, 2002 genta
 
 #ifdef _UNICODE
-	#define TARGET_STRING_MODEL "W"
+	#define TARGET_STRING_MODEL "WP"
 #else
-	#define TARGET_STRING_MODEL "A"
+	#define TARGET_STRING_MODEL "AP"
 #endif
 
 #ifdef _DEBUG

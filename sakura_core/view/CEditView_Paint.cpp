@@ -247,7 +247,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	// スクロール時の画面の端を作画するときの位置あたりへ移動
 	if( typeConfig.m_backImgScrollX ){
 		int tile = typeConfig.m_backImgRepeatX ? doc.m_nBackImgWidth : INT_MAX;
-		Int posX = (area.GetViewLeftCol() % tile) * GetTextMetrics().GetHankakuDx();
+		Int posX = (area.GetViewLeftCol() % tile) * GetTextMetrics().GetCharPxWidth();
 		rcImagePos.left -= posX % tile;
 	}
 	if( typeConfig.m_backImgScrollY ){
@@ -487,7 +487,7 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex,  EC
 	gr.SetTextBackColor(bkcolor);
 	SFONT sFont;
 	sFont.m_sFontAttr = (info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK) ? info.m_sFontAttr : info2.m_sFontAttr;
-	sFont.m_hFont = GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+	sFont.m_hFont = GetFontset().ChooseFontHandle( 0, sFont.m_sFontAttr );
 	gr.SetMyFont(sFont);
 }
 
@@ -634,7 +634,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 	RECT			rc;
 	int				nLineHeight = GetTextMetrics().GetHankakuDy();
-	int				nCharDx = GetTextMetrics().GetHankakuDx();
+	int				nCharDx = GetTextMetrics().GetCharPxWidth();
 
 	//サポート
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
@@ -743,7 +743,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         描画座標                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	DispPos sPos(GetTextMetrics().GetHankakuDx(),GetTextMetrics().GetHankakuDy());
+	DispPos sPos(nCharDx, GetTextMetrics().GetHankakuDy());
 	sPos.InitDrawPos(CMyPoint(
 		GetTextArea().GetAreaLeft() - (Int)GetTextArea().GetViewLeftCol() * nCharDx,
 		GetTextArea().GetAreaTop() + (Int)( nLayoutLine - GetTextArea().GetViewTopLine() ) * nLineHeight
@@ -1052,11 +1052,11 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pcLayout && pcLayout->GetIndent()!=0)
 	{
 		RECT rcClip;
-		if(!bTransText && GetTextArea().GenerateClipRect(&rcClip,*pInfo->m_pDispPos,(Int)pcLayout->GetIndent())){
+		if(!bTransText && GetTextArea().GenerateClipRect(&rcClip, *pInfo->m_pDispPos, pcLayout->GetIndent())){
 			cBackType.FillBack(pInfo->m_gr,rcClip);
 		}
 		//描画位置進める
-		pInfo->m_pDispPos->ForwardDrawCol((Int)pcLayout->GetIndent());
+		pInfo->m_pDispPos->ForwardDrawCol(pcLayout->GetIndent());
 	}
 
 
@@ -1133,8 +1133,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			// 選択範囲の指定色：必要ならテキストのない部分の矩形選択を作画
 			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(pInfo->m_pDispPos->GetLayoutLineRef(), pcLayout);
 			// 2010.10.04 スクロール分の足し忘れ
-			int nSelectFromPx = GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - GetTextArea().GetViewLeftCol());
-			int nSelectToPx   = GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - GetTextArea().GetViewLeftCol());
+			CPixelXInt nSelectFromPx =  GetTextMetrics().GetCharPxWidth(selectArea.GetFrom().x - GetTextArea().GetViewLeftCol());
+			CPixelXInt nSelectToPx   = GetTextMetrics().GetCharPxWidth(selectArea.GetTo().x - GetTextArea().GetViewLeftCol());
 			if( nSelectFromPx < nSelectToPx && selectArea.GetTo().x != INT_MAX ){
 				RECT rcSelect; // Pixel
 				rcSelect.top    = pInfo->m_pDispPos->GetDrawPos().y;
@@ -1187,7 +1187,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			pInfo->m_gr,
 			pInfo->m_pDispPos->GetLayoutLineRef(),
 			CMyPoint(pInfo->m_sDispPosBegin.GetDrawPos().x, pInfo->m_pDispPos->GetDrawPos().y),
-			pcLayout->CalcLayoutWidth(CEditDoc::GetInstance(0)->m_cLayoutMgr) + CLayoutInt(pcLayout->GetLayoutEol().GetLen()?1:0)
+			pcLayout->CalcLayoutWidth(m_pcEditDoc->m_cLayoutMgr)
+				+ CLayoutInt(pcLayout->GetLayoutEol().GetLen()
+					? (CTypeSupport(this, COLORIDX_EOL).IsDisp()
+						? (GetTextMetrics().GetLayoutXDefault()+CLayoutXInt(4)) // HACK:EOLの描画幅分だけ確保する。4pxはCRLFのはみ出している分
+						: CLayoutXInt(2)) // 非表示 = 2px
+					: CLayoutInt(0))
 		);
 	}
 
@@ -1225,7 +1230,7 @@ void CEditView::DispTextSelected(
 	CLayoutInt	nSelectTo;
 	RECT		rcClip;
 	int			nLineHeight = GetTextMetrics().GetHankakuDy();
-	int			nCharWidth = GetTextMetrics().GetHankakuDx();
+	int			nCharWidth = GetTextMetrics().GetCharPxWidth();
 	HRGN		hrgnDraw;
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 	CLayoutRange& sSelect = GetSelectionInfo().m_sSelect;
@@ -1270,7 +1275,7 @@ void CEditView::DispTextSelected(
 			{
 				HWND hWnd = ::GetForegroundWindow();
 				if( hWnd && (hWnd == m_pcEditWnd->m_cDlgFind.GetHwnd() || hWnd == m_pcEditWnd->m_cDlgReplace.GetHwnd()) ){
-					rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+					rcClip.right = rcClip.left + 2;
 					bOMatch = true;
 				}
 			}

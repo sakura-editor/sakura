@@ -33,23 +33,29 @@ class CMemoryIterator
 {
 public:
 	//CDocLine用コンストラクタ
-	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo )
+	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )
 	, m_nIndent( CLayoutInt(0) )
+	, m_nSpacing(nSpacing)
+	, m_nTabPadding(nCharDx - 1)
+	, m_nTabSpaceDx((Int)nTabSpace + nCharDx - 1)
 	{
 		first();
 	}
 
 	//CLayout用コンストラクタ
-	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo )
+	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )
 	, m_nIndent( pcT ? pcT->GetIndent() : CLayoutInt(0) )
+	, m_nSpacing(nSpacing)
+	, m_nTabPadding(nCharDx - 1)
+	, m_nTabSpaceDx((Int)nTabSpace + nCharDx - 1)
 	{
 		first();
 	}
@@ -78,23 +84,27 @@ public:
 		// 2007.09.04 kobake UNICODE化：データ増分と桁増分を別々の値として計算する。
 
 		//データ増分を計算
-		m_nIndex_Delta = CLogicInt(CNativeW::GetSizeOfChar( m_pLine, m_nLineLen, m_nIndex ));
+		m_nIndex_Delta = CNativeW::GetSizeOfChar(m_pLine, m_nLineLen, m_nIndex);
 		if( 0 == m_nIndex_Delta )
 			m_nIndex_Delta = CLogicInt(1);
 
 		//桁増分を計算
 		if (m_pLine[m_nIndex] == WCODE::TAB){
 			if (m_tsvInfo.m_nTsvMode == TSV_MODE_TSV) {
-				m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn);
-			} else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
-				m_nColumn_Delta = 1;
-			} else {
-				m_nColumn_Delta = m_nTabSpace - ( m_nColumn % m_nTabSpace );
+				m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
+			}
+			else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+				m_nColumn_Delta = m_nTabPadding;
+			}
+			else {
+				m_nColumn_Delta = m_nTabSpaceDx - (m_nColumn + m_nTabPadding) % m_nTabSpace;
 			}
 		} else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV){
-			m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn);
+			m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
 		}else{
-			m_nColumn_Delta = CLayoutInt(CNativeW::GetKetaOfChar( m_pLine, m_nLineLen, m_nIndex ));
+			m_nColumn_Delta = CNativeW::GetColmOfChar( m_pLine, m_nLineLen, m_nIndex )
+			+ CLayoutInt(m_nSpacing)
+			;
 //			if( 0 == m_nColumn_Delta )				// 削除 サロゲートペア対策	2008/7/5 Uchi
 //				m_nColumn_Delta = CLayoutInt(1);
 		}
@@ -127,6 +137,10 @@ private:
 	const CLayoutInt	m_nTabSpace;
 	const CTsvModeInfo&	m_tsvInfo;
 	const CLayoutInt	m_nIndent;
+
+	const CPixelXInt	m_nSpacing;		//文字隙間(px)
+	const CPixelXInt	m_nTabPadding;	//タブ幅最少値-1
+	const CPixelXInt	m_nTabSpaceDx;	//タブ幅計算用(m_nTabSpace + m_nTabPadding - 1)
 
 	//状態変数
 	CLogicInt	m_nIndex;        //データ位置。文字単位。

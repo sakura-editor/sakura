@@ -61,9 +61,17 @@ public:
 			m_ptDrawOrigin.y + (Int)m_ptDrawLayout.y * m_nDy
 		);
 	}
+	int GetCharWidth() const
+	{
+		return m_nDx;
+	}
+	int GetCharHeight() const
+	{
+		return m_nDy;
+	}
 
 	//進む
-	void ForwardDrawCol (int nColOffset ){ m_ptDrawLayout.x += nColOffset; }
+	void ForwardDrawCol (CLayoutXInt nColOffset ){ m_ptDrawLayout.x += nColOffset; }
 	void ForwardDrawLine(int nOffsetLine){ m_ptDrawLayout.y += nOffsetLine; }
 
 	//リセット

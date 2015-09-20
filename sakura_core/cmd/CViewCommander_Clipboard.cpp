@@ -270,7 +270,6 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	int				nBgn;
 	int				nPos;
-	CLayoutInt		nCount;
 	CLayoutPoint	ptLayoutNew;	//挿入された部分の次の位置
 	BOOL			bAddLastCR;
 	CLayoutInt		nInsPosX;
@@ -294,7 +293,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	CLayoutPoint ptCurOld = GetCaret().GetCaretLayoutPos();
 
-	nCount = CLayoutInt(0);
+	CLayoutYInt	nCount = CLayoutInt(0); // カーソル位置からのオフセット行数
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無い場合の対策

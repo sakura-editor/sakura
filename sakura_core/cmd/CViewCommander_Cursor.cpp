@@ -199,7 +199,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			) {
 				// 前のレイアウト行の、折り返し桁一つ手前または改行文字の手前に移動する。
 				pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretMove.GetY2() - CLayoutInt(1) );
-				CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
+				CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 				while( !it.end() ){
 					it.scanNext();
 					if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
@@ -223,7 +223,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 		}
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if( pcLayout ) {
-			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
+			CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 			while( !it.end() ){
 				it.scanNext();
 				if ( it.getColumn() + it.getColumnDelta() > ptCaretMove.GetX2() - 1 ){
@@ -235,7 +235,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			ptPos.x += it.getColumn() - it.getColumnDelta();
 			//	Oct. 18, 2002 YAZAKI
 			if( it.getIndex() >= pcLayout->GetLengthWithEOL() ){
-				ptPos.x = ptCaretMove.GetX2() - CLayoutInt(1);
+				ptPos.x = ptCaretMove.GetX2() - CLayoutXInt(1);
 			}
 		}
 
@@ -307,7 +307,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			const bool nextline_exists = pcLayout->GetNextLayout() || pcLayout->GetLayoutEol() != EOL_NONE; // EOFのみの行も含め、キャレットが移動可能な次行が存在するか。
 
 			// 現在のキャレットの右の位置( to_x )を求める。
-			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.m_tsvInfo );
+			CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 			for( ; ! it.end(); it.scanNext(), it.addDelta() ) {
 				if( ptCaret.x < it.getColumn() ) {
 					break;
@@ -325,7 +325,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			} on_x_max;
 
 			if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) {
-				x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+				x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 				on_x_max = STOP;
 			} else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 				// フリーカーソルモードでは折り返し位置だけをみて、改行文字の位置はみない。
@@ -335,12 +335,12 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
 					}else{
 						// データのあるEOF行は折り返しではない
-						x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+						x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 						on_x_max = STOP;
 					}
 				} else {
-					if( x_wrap < GetDocument()->m_cLayoutMgr.GetMaxLineKetas() ) {
-						x_max = GetDocument()->m_cLayoutMgr.GetMaxLineKetas();
+					if( x_wrap < GetDocument()->m_cLayoutMgr.GetMaxLineLayout() ) {
+						x_max = GetDocument()->m_cLayoutMgr.GetMaxLineLayout();
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
 					} else { // 改行文字がぶら下がっているときは例外。
 						x_max = x_wrap;
@@ -445,7 +445,24 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	}
 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	CLayoutInt layoutEnd;
+	nIdx = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &layoutEnd );
+	// 矩形選択で、EOLより右側のときは１カラム単位で左移動
+	if( (m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode)
+	 && pcLayout->GetLengthWithEOL() <= nIdx ){
+		if( EOL_NONE != pcLayout->GetLayoutEol() ){
+			layoutEnd -= CLayoutInt(1);
+		}
+		CLayoutPoint ptLayoutNew;
+		ptLayoutNew.x = t_max(layoutEnd, GetCaret().GetCaretLayoutPos().GetX2() - m_pCommanderView->GetTextMetrics().GetLayoutXDefault());
+		ptLayoutNew.y = GetCaret().GetCaretLayoutPos().GetY2();
+		GetCaret().MoveCursor(ptLayoutNew, true);
+		if( bSelect ){
+			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptLayoutNew);
+		}
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		return;
+	}
 
 	/* 現在位置の左の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -562,6 +579,19 @@ try_again:;
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	else{
+		// 矩形選択/フリーカーソルで、EOLより右側のときは１カラム単位で右移動
+		if( (m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode) &&
+			pcLayout->GetLengthWithEOL() <= nIdx ){
+			ptLayoutNew.x = t_min(GetCaret().GetCaretLayoutPos().GetX2() + m_pCommanderView->GetTextMetrics().GetLayoutXDefault(),
+				m_pCommanderView->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
+			ptLayoutNew.y = GetCaret().GetCaretLayoutPos().GetY2();
+			GetCaret().MoveCursor(ptLayoutNew, true);
+			if( bSelect ){
+				m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptLayoutNew);
+			}
+			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+			return;
+		}
 		bool	bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル右移動 */

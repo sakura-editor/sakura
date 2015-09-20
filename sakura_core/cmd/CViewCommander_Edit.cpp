@@ -459,7 +459,7 @@ void CViewCommander::Command_UNDO( void )
 
 			if( bFastMode ){
 				if( i == 0 ){
-					GetDocument()->m_cLayoutMgr._DoLayout();
+					GetDocument()->m_cLayoutMgr._DoLayout(false);
 					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
@@ -716,7 +716,7 @@ void CViewCommander::Command_REDO( void )
 			}
 			if( bFastMode ){
 				if( i == nOpeBlkNum - 1	){
-					GetDocument()->m_cLayoutMgr._DoLayout();
+					GetDocument()->m_cLayoutMgr._DoLayout(false);
 					GetEditWindow()->ClearViewCaretPosInfo();
 					if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 						GetDocument()->m_cLayoutMgr.CalculateTextWidth();
@@ -893,9 +893,9 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 	bool bEol = false;
 	BOOL bDelete = TRUE;
 	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	int nDelLen = CLogicInt(0);
-	CLayoutInt nKetaDiff = CLayoutInt(0);
-	CLayoutInt nKetaAfterIns = CLayoutInt(0);
+	int nDelLen = 0;
+	CKetaXInt nKetaDiff = CKetaXInt(0);
+	CKetaXInt nKetaAfterIns = CKetaXInt(0);
 	if( NULL != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		CLogicInt nIdxTo = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
@@ -913,8 +913,8 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 				const CStringRef line = pcLayout->GetDocLineRef()->GetStringRefWithEOL();
 				CLogicInt nPos = GetCaret().GetCaretLogicPos().GetX();
 				if( line.At(nPos) != WCODE::TAB ){
-					CLayoutInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
-					CLayoutInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
+					CKetaXInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
+					CKetaXInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
 					nKetaDiff = nKetaBefore - nKetaAfter;
 					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
 					nDelLen = 1;
@@ -923,7 +923,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 							nDelLen = 2;
-							CLayoutInt nKetaBefore2 = CNativeW::GetKetaOfChar(line, nPos);
+							CKetaXInt nKetaBefore2 = CNativeW::GetKetaOfChar(line, nPos);
 							nKetaAfterIns = nKetaBefore + nKetaBefore2 - nKetaAfter;
 						}
 					}
@@ -946,10 +946,10 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 			}
 		}
 		CNativeW tmp;
-		for(CLayoutInt i = CLayoutInt(0); i < nKetaDiff; i++){
+		for(CKetaXInt i = CKetaXInt(0); i < nKetaDiff; i++){
 			tmp.AppendString(L" ");
 		}
-		for(CLayoutInt i = CLayoutInt(0); i < nKetaAfterIns; i++){
+		for(CKetaXInt i = CKetaXInt(0); i < nKetaAfterIns; i++){
 			tmp.AppendString(L" ");
 		}
 		if( 0 < tmp.GetStringLength() ){

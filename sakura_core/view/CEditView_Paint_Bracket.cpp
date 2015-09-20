@@ -196,9 +196,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 				{
 					int nWidth  = GetTextMetrics().GetHankakuDx();
 					int nHeight = GetTextMetrics().GetHankakuDy();
-					int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * nWidth;
+					int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + GetTextMetrics().GetCharPxWidth(ptColLine.x);
 					int nTop  = (Int)( ptColLine.GetY2() - GetTextArea().GetViewTopLine() ) * nHeight + GetTextArea().GetAreaTop();
-					CLayoutInt charsWidth = CNativeW::GetKetaOfChar(pLine, nLineLen, OutputX);
+					CLayoutXInt charsWidth = m_pcEditDoc->m_cLayoutMgr.GetLayoutXOfChar(pLine, nLineLen, OutputX);
 
 					//Fİ’è
 					CTypeSupport cTextType(this,COLORIDX_TEXT);
@@ -220,7 +220,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 						RECT rcChar;
 						rcChar.left  = nLeft;
 						rcChar.top = nTop;
-						rcChar.right = nLeft + (Int)charsWidth * nWidth;
+						rcChar.right = nLeft + GetTextMetrics().GetCharPxWidth(charsWidth);
 						rcChar.bottom = nTop + nHeight;
 						HDC hdcBgImg = ::CreateCompatibleDC(gr);
 						HBITMAP hBmpOld = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
@@ -230,7 +230,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 					}
 					DispPos sPos(nWidth, nHeight);
 					sPos.InitDrawPos(CMyPoint(nLeft, nTop));
-					GetTextDrawer().DispText(gr, &sPos,  &pLine[OutputX], 1, bTrans);
+					GetTextDrawer().DispText(gr, &sPos, 0, &pLine[OutputX], 1, bTrans);
 					GetTextDrawer().DispNoteLine(gr, nTop, nTop + nHeight, nLeft, nLeft + (Int)charsWidth * nWidth);
 					// 2006.04.30 Moca ‘ÎŠ‡ŒÊ‚Ìcü‘Î‰
 					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //¦Š‡ŒÊ‚ª‘SŠp•‚Å‚ ‚éê‡‚ğl—¶

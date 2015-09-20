@@ -450,3 +450,14 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 
 	::ReleaseDC(hwndDt, hdc);
 }
+
+void CGraphics::DrawRect(int x1, int y1, int x2, int y2)
+{
+	--x2;
+	--y2;
+	::MoveToEx(m_hdc, x1, y1, NULL);
+	::LineTo(m_hdc, x2, y1);
+	::LineTo(m_hdc, x2, y2);
+	::LineTo(m_hdc, x1, y2);
+	::LineTo(m_hdc, x1, y1);
+}

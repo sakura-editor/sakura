@@ -54,7 +54,7 @@ void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 	/* SPACEorTABインンデントで矩形選択桁がゼロの時は選択範囲を最大にする */
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if( INDENT_NONE != eIndent && m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && GetSelect().GetFrom().x==GetSelect().GetTo().x ){
-		GetSelect().SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+		GetSelect().SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		m_pCommanderView->RedrawAll();
 		return;
 	}
@@ -83,7 +83,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		{ return ch == WCODE::SPACE || ch == WCODE::TAB; }
 	} IsIndentChar;
 	struct SSoftTabData {
-		SSoftTabData( CLayoutInt nTab ) : m_szTab(NULL), m_nTab((Int)nTab) {}
+		SSoftTabData( CLayoutXInt nTab, int width ) : m_szTab(NULL), m_nTab((Int)nTab), m_nXWidth(width - 1), m_nSpWidth(width) {}
 		~SSoftTabData() { delete []m_szTab; }
 		operator const wchar_t* ()
 		{
@@ -93,10 +93,16 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			}
 			return m_szTab;
 		}
-		int Len( CLayoutInt nCol ) { return m_nTab - ((Int)nCol % m_nTab); }
+		// TAB=4 だとしても、TAB="x"幅*4 なのでSPとは幅が違うので、PPFontだとレイアウト上は桁が一致しません
+		// @see CConvert_TabToSpace::DoConvert() convert/CConvert_TabToSpace.cpp
+		// とりあえずCMemoryIterator/CLayoutMgr::GetActualTabSpace互換で計算してx幅での個数分を追加する
+		// nColまでの文字のGetKetaOfCharとGetTabSpaceKetasを使うとTAB指定文字数分になる
+		int Len( CLayoutInt nCol ) { return (m_nTab + m_nXWidth - ((Int)nCol + m_nXWidth) % m_nTab) / m_nSpWidth; }
 		wchar_t* m_szTab;
 		int m_nTab;
-	} stabData( GetDocument()->m_cLayoutMgr.GetTabSpace() );
+		int m_nXWidth;
+		int m_nSpWidth;
+	} stabData( GetDocument()->m_cLayoutMgr.GetTabSpace(), GetDocument()->m_cLayoutMgr.GetWidthPerKeta() );
 
 	const bool bSoftTab = ( eIndent == INDENT_TAB && m_pCommanderView->m_pTypeData->m_bInsSpace );
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
@@ -200,7 +206,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 						{ rcSel.GetTo().x, &nIdxTo, &xLayoutTo },
 						{ CLayoutInt(-1), 0, 0 }
 					};
-					CMemoryIterator it( pcLayout, this->GetDocument()->m_cLayoutMgr.GetTabSpace(), this->GetDocument()->m_cLayoutMgr.m_tsvInfo );
+					CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 					for( int i = 0; 0 <= sortedKetas[i].keta; ++i ) {
 						for( ; ! it.end(); it.addDelta() ) {
 							if( sortedKetas[i].keta == it.getColumn() ) {
@@ -265,8 +271,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				);
 				insertionWasDone = true;
 				minOffset = t_min(
-					0 <= minOffset ? minOffset : this->GetDocument()->m_cLayoutMgr.GetMaxLineKetas(),
-					ptInsert.x <= ptInserted.x ? ptInserted.x - ptInsert.x : t_max( CLayoutInt(0), this->GetDocument()->m_cLayoutMgr.GetMaxLineKetas() - ptInsert.x)
+					0 <= minOffset ? minOffset : this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout(),
+					ptInsert.x <= ptInserted.x ? ptInserted.x - ptInsert.x : t_max( CLayoutInt(0), this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() - ptInsert.x)
 				);
 
 				GetCaret().MoveCursor( ptInserted, false );
@@ -292,8 +298,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 
 		// 挿入された文字の分だけ選択範囲を後ろにずらし、rcSelにセットする。
 		if( 0 < minOffset ) {
-			rcSel.GetFromPointer()->x = t_min( rcSel.GetFrom().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
-			rcSel.GetToPointer()->x = t_min( rcSel.GetTo().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+			rcSel.GetFromPointer()->x = t_min( rcSel.GetFrom().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
+			rcSel.GetToPointer()->x = t_min( rcSel.GetTo().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		}
 
 		/* カーソルを移動 */
@@ -481,7 +487,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 				else{
 					//削り取る半角スペース数 (1～タブ幅分) -> nDelLen
 					CLogicInt i;
-					CLogicInt nTabSpaces = CLogicInt((Int)GetDocument()->m_cLayoutMgr.GetTabSpace());
+					CLogicInt nTabSpaces = CLogicInt((Int)GetDocument()->m_cLayoutMgr.GetTabSpaceKetas());
 					for( i = CLogicInt(0); i < nLineLen; i++ ){
 						if( WCODE::SPACE != pLine[i] ){
 							break;
@@ -573,7 +579,7 @@ void CViewCommander::Command_TRIM(
 		);
 		cViewSelect.m_sSelect.SetTo  (
 			CLayoutPoint(
-				GetDocument()->m_cLayoutMgr.GetMaxLineKetas(),
+				GetDocument()->m_cLayoutMgr.GetMaxLineLayout(),
 				GetCaret().GetCaretLayoutPos().GetY()
 			)
 		);
@@ -662,7 +668,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		sRangeA=m_pCommanderView->GetSelectionInfo().m_sSelect;
 		if( m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().x==m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().x ){
 			//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-			m_pCommanderView->GetSelectionInfo().m_sSelect.SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+			m_pCommanderView->GetSelectionInfo().m_sSelect.SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		}
 		if(m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().x<m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().x){
 			nCF=m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().GetX2();
