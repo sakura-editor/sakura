@@ -19,7 +19,9 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
+#ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP
+#endif
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾
