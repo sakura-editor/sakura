@@ -1048,7 +1048,7 @@ void CEditWnd::LayoutMiniMap( void )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispMiniMap ){	/* タブバーを表示する */
 		if( NULL == GetMiniMap().GetHwnd() ){
-			GetMiniMap().Create( GetHwnd(), GetDocument(), -1, TRUE, true );
+			GetMiniMap().Create( GetHwnd(), GetDocument(), -1, FALSE, true );
 		}
 	}else{
 		if( NULL != GetMiniMap().GetHwnd() ){
@@ -1081,6 +1081,9 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		// メニューから[ファンクションキーを表示]/[ステータスバーを表示]を実行して非表示のバーをアウトライン直下に表示したり、
 		// その後、ウィンドウの下部境界を上下ドラッグしてサイズ変更するとゴミが現れることがあった。
 		::SetWindowPos( m_cDlgFuncList.GetHwnd(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
+	}
+	if (NULL != GetMiniMap().GetHwnd()) {
+		::ShowWindow(GetMiniMap().GetHwnd(), nCmdShow);
 	}
 
 	if( bAdjust )
@@ -1719,8 +1722,11 @@ LRESULT CEditWnd::DispatchEvent(
 			CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 			CShareData::getInstance()->RefreshString();
 
-			// メインメニュー	2010/5/16 Uchi
-			LayoutMainMenu();
+			// 2015.08.20 プリントプレビューのとき設定を延期する(戻るとき適用)
+			if (!m_pPrintPreview) {
+				// メインメニュー	2010/5/16 Uchi
+				LayoutMainMenu();
+			}
 
 			// Oct 10, 2000 ao
 			/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
@@ -3018,6 +3024,9 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_cFuncKeyWnd.GetHwnd(), SW_SHOW );
 		::ShowWindow( m_cTabWnd.GetHwnd(), SW_SHOW );	//@@@ 2003.06.25 MIK
 		::ShowWindow( m_cDlgFuncList.GetHwnd(), SW_SHOW );	// 2010.06.25 ryoji
+		if (NULL != GetMiniMap().GetHwnd()) {
+			::ShowWindow(GetMiniMap().GetHwnd(), SW_SHOW);
+		}
 
 		// その他のモードレスダイアログも戻す	// 2010.06.25 ryoji
 		::ShowWindow( m_cDlgFind.GetHwnd(), SW_SHOW );
@@ -3049,6 +3058,9 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_cFuncKeyWnd.GetHwnd(), SW_HIDE );
 		::ShowWindow( m_cTabWnd.GetHwnd(), SW_HIDE );	//@@@ 2003.06.25 MIK
 		::ShowWindow( m_cDlgFuncList.GetHwnd(), SW_HIDE );	// 2010.06.25 ryoji
+		if (NULL != GetMiniMap().GetHwnd()) {
+			::ShowWindow(GetMiniMap().GetHwnd(), SW_HIDE);
+		}
 
 		// その他のモードレスダイアログも隠す	// 2010.06.25 ryoji
 		::ShowWindow( m_cDlgFind.GetHwnd(), SW_HIDE );

@@ -558,6 +558,9 @@ COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorI
 
 void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
+	if (m_pcEditWnd->m_pPrintPreview) {
+		return;
+	}
 	bool bChangeFont = m_bMiniMap;
 	if( bChangeFont ){
 		SelectCharWidthCache( CWM_FONT_MINIMAP, CWM_CACHE_LOCAL );
