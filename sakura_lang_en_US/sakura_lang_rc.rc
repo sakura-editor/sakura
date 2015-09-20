@@ -35,8 +35,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 2011-2015  by Lucien & Collaborators"
-#define PR_VER		2,2,0,1
-#define PR_VER_STR	"2.2.0.1"
+#define PR_VER		2,2,1,0
+#define PR_VER_STR	"2.2.1.0"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -1007,6 +1007,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_TABVIEWSTRING,103,108,40,12,ES_AUTOHSCROLL
     CONTROL         "Insert S&PACE",IDC_CHECK_INS_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,70,123,57,10
+    COMBOBOX        IDC_COMBO_TSV_MODE,16,123,46,8,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Layout",IDC_STATIC,3,22,145,117
     CONTROL         "Auto-Indent(&U)",IDC_CHECK_INDENT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,154,72,10
@@ -1167,6 +1169,13 @@ BEGIN
                     WS_TABSTOP,8,125,109,10
     CONTROL         "Check CR consistence when save(&E)",IDC_CHECK_CHKENTERATEND,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,146,10
+    CONTROL         "Ignore char in strings(&S)",IDC_CHECK_INDENTCPPSTR,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,171,146,10
+    CONTROL         "Ignore char in comments(&C)",IDC_CHECK_INDENTCPPCMT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,158,171,130,10
+    CONTROL         "When Undo, separate from editing(&U)",IDC_CHECK_INDENTCPPUNDO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,183,146,10
+    GROUPBOX        "C/C++Å@Indent Settings",IDC_STATIC,3,159,295,40,WS_GROUP
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244
@@ -4403,6 +4412,11 @@ BEGIN
 	STR_PROPTYPE_KEYWORD_HELP	"Keyword Help"
 	STR_PROPTYPE_WINDOW			"Window"
 	STR_PROPTYPE_ERR			"CPropTypes::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed.\n\n%ts\n"
+
+	// CPropTypesScreen.cpp
+	STR_TSV_MODE_NONE			"Normal"
+	STR_TSV_MODE_TSV			"TSV"
+	STR_TSV_MODE_CSV			"CSV"
 
 	// CPropTypesColor.cpp
 	STR_STRINGESC_CPP			"C/C++    \\"" "
