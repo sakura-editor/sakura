@@ -718,6 +718,10 @@ void CPrintPreview::OnChangePrintSetting( void )
 		(FONTENUMPROC)CPrintPreview::MyEnumFontFamProc,
 		(LPARAM)this
 	);
+	SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
+	LOGFONT aLogFontArray[] = {m_lfPreviewHan, m_lfPreviewZen};
+	InitCharWidthCacheFromDC( aLogFontArray, CWM_FONT_PRINT, hdc );
+
 
 	bool bLockOld = m_bLockSetting;
 	m_bLockSetting = true;
@@ -798,7 +802,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_nPreview_ViewMarginTop = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 
 	/* 行あたりの文字数(行番号込み) */
-	m_bPreview_EnableColumns = CLayoutInt( CPrint::CalculatePrintableColumns( m_pPrintSetting, m_nPreview_PaperAllWidth, m_nPreview_LineNumberColumns ) );	/* 印字可能桁数/ページ */
+	m_bPreview_EnableColumns = CKetaXInt( CPrint::CalculatePrintableColumns( m_pPrintSetting, m_nPreview_PaperAllWidth, m_nPreview_LineNumberColumns ) );	/* 印字可能桁数/ページ */
 	/* 縦方向の行数 */
 	m_bPreview_EnableLines = CPrint::CalculatePrintableLines( m_pPrintSetting, m_nPreview_PaperAllHeight );			/* 印字可能行数/ページ */
 
@@ -821,7 +825,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
-	ref.m_nTabSpace =			m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpace();
+	ref.m_nTabSpace =			m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
 	ref.m_nTsvMode =			m_pParentWnd->GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode;
 
 	//@@@ 2002.09.22 YAZAKI
@@ -839,7 +843,9 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bKinsokuTail = m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	m_pLayoutMgr_Print->SetLayoutInfo( true, ref, ref.m_nTabSpace, ref.m_nTsvMode, ref.m_nMaxLineKetas );
+	m_pLayoutMgr_Print->SetLayoutInfo( true, false, ref, ref.m_nTabSpace, ref.m_nTsvMode, ref.m_nMaxLineKetas,
+		CLayoutXInt(m_pPrintSetting->m_nPrintFontWidth),
+	NULL );
 	m_nAllPageNum = (WORD)((Int)m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ));		/* 全ページ数 */
 	if( 0 < m_pLayoutMgr_Print->GetLineCount() % ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) ){
 		m_nAllPageNum++;
@@ -1328,6 +1334,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 
 		// 文字間隔
 		int nDx = m_pPrintSetting->m_nPrintFontWidth;
+		int spaceing = 0;
 
 		// Y座標基準
 		int nY = bHeader ? rect.top : rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
@@ -1355,7 +1362,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx); //テキスト幅
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1374,7 +1381,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx); //テキスト幅
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1468,6 +1475,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 		// 本文1桁目の左隅の座標(行番号がある場合はこの座標より左側)
 		const int nBasePosX = nOffX + nDanWidth * nDan + nLineNumWidth * (nDan + 1);
 		
+		const int charWidth = m_pPrintSetting->m_nPrintFontWidth;
 		for( i = 0; i < m_bPreview_EnableLines; ++i ){
 			if( NULL != pCDlgCancel ){
 				/* 処理中のユーザー操作を可能にする */
@@ -1520,11 +1528,12 @@ CColorStrategy* CPrintPreview::DrawPageText(
 
 				//文字間隔配列を生成
 				vector<int> vDxArray;
-				const int* pDxArray = CTextMetrics::GenerateDxArray(&vDxArray, szLineNum, nLineCols, m_pPrintSetting->m_nPrintFontWidth);
+				int spacing = 0;
+				const int* pDxArray = CTextMetrics::GenerateDxArray(&vDxArray, szLineNum, nLineCols, m_pPrintSetting->m_nPrintFontWidth, spacing);
 
 				ApiWrap::ExtTextOutW_AnyBuild(
 					hdc,
-					nBasePosX - nLineCols * m_pPrintSetting->m_nPrintFontWidth,
+					nBasePosX - nLineCols * charWidth,
 					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - m_nAscentHan ) ),
 					0,
 					NULL,
@@ -1676,9 +1685,14 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 
 	//文字間隔
 	int nDx = m_pPrintSetting->m_nPrintFontWidth;
+	int space = m_pLayoutMgr_Print->GetCharSpacing(); // 0
 
 	//タブ幅取得
-	CLayoutInt nTabSpace = m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
+//	CLayoutInt nTabSpace = m_pParentWnd->GetDocument()->m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
+	CLayoutXInt nTabSpace = m_pLayoutMgr_Print->GetTabSpace();	// docから自分のLayoutMgrに変更
+
+	CLayoutInt tabPadding = CLayoutInt(m_pLayoutMgr_Print->GetWidthPerKeta() - 1); //LayoutInt == 1描画単位
+	const int charWidth = 1; // 1 LayoutIntあたりの幅
 
 	//文字間隔配列を生成
 	vector<int> vDxArray;
@@ -1688,7 +1702,8 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 		nLineLen,
 		nDx,
 		(Int)nTabSpace,
-		(Int)nIndent
+		(Int)nIndent,
+		space
 	);
 
 	int nBgnLogic = nLineStart;	// TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
@@ -1711,7 +1726,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 		if(pLine[iLogic]==WCODE::TAB){
 			nKind = 2;
 		}
-		else if(WCODE::IsHankaku(pLine[iLogic])){
+		else if(0 == WCODE::GetFontNo(pLine[iLogic])){
 			nKind = 0;
 		}
 		else{
@@ -1741,15 +1756,15 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 
 				//桁進め
 				if (nKindLast == 2) {
-					nLayoutX += ( nTabSpace - nLayoutX % nTabSpace )
+					nLayoutX += ( nTabSpace + tabPadding - (nLayoutX + tabPadding) % nTabSpace )
 						+ nTabSpace * (iLogic - nBgnLogic - 1);
-				}
+					}
 				else{
 					int		nIncrement = 0;
 					for (int i = nBgnLogic - nLineStart; i < iLogic - nLineStart; i++) {
 						nIncrement += pDxArray[i];
 					}
-					nLayoutX += CLayoutInt(nIncrement/nDx);
+					nLayoutX += nIncrement;
 				}
 				//ロジック進め
 				nBgnLogic = iLogic;
@@ -1836,10 +1851,11 @@ void CPrintPreview::Print_DrawBlock(
 //			::SetBkColor( hdc, info.m_colBACK);
 		}
 	}
+	const int charWidth = 1;
 	::SelectObject( hdc, hFont );
 	::ExtTextOutW_AnyBuild(
 		hdc,
-		ptDraw.x + (Int)nLayoutX * nDx,
+		ptDraw.x + (Int)nLayoutX * charWidth,
 		ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKind == 1 ? m_nAscentZen : m_nAscentHan) ),
 		0,
 		NULL,
@@ -1906,11 +1922,9 @@ void CPrintPreview::SetPreviewFontHan( const LOGFONT* lf )
 
 	//	PrintSettingからコピー
 	m_lfPreviewHan.lfHeight			= m_pPrintSetting->m_nPrintFontHeight;
-	m_lfPreviewHan.lfWidth			= m_pPrintSetting->m_nPrintFontWidth;
+	m_lfPreviewHan.lfWidth	= 0;
 	_tcscpy(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan);
 
-	SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
-	InitCharWidthCache( m_lfPreviewHan, CWM_FONT_PRINT );
 }
 
 void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
@@ -1918,7 +1932,7 @@ void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
 	m_lfPreviewZen = *lf;
 	//	PrintSettingからコピー
 	m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
-	m_lfPreviewZen.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
+	m_lfPreviewZen.lfWidth	= 0;
 	_tcscpy(m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 }
 
@@ -2211,7 +2225,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 
 	// 印刷用半角フォントを作成 -> m_hFontHan
 	m_lfPreviewHan.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
-	m_lfPreviewHan.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
+	m_lfPreviewHan.lfWidth = 0;
 	_tcscpy( m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan );
 	m_hFontHan	= CreateFontIndirect( &m_lfPreviewHan );
 	if (m_pPrintSetting->m_bColorPrint) {
@@ -2235,7 +2249,7 @@ void CPrintPreview::CreateFonts( HDC hdc )
 	// 印刷用全角フォントを作成 -> m_hFontZen
 	if (auto_strcmp(m_pPrintSetting->m_szPrintFontFaceHan, m_pPrintSetting->m_szPrintFontFaceZen)) {
 		m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
-		m_lfPreviewZen.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
+		m_lfPreviewZen.lfWidth	= 0;
 		_tcscpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
 		m_hFontZen	= CreateFontIndirect( &m_lfPreviewZen );
 		if (m_pPrintSetting->m_bColorPrint) {

@@ -160,6 +160,16 @@ public:
 		assert(!m_vFonts.empty());
 		return  m_vFonts.back().m_sFontAttr.m_bBoldFont;
 	}
+	bool GetCurrentMyFontUnderline()
+	{
+		assert(!m_vFonts.empty());
+		return  m_vFonts.back().m_sFontAttr.m_bUnderLine;
+	}
+	const SFontAttr& GetCurrentMyFontAttr()
+	{
+		assert(!m_vFonts.empty());
+		return  m_vFonts.back().m_sFontAttr;
+	}
 
 	//ペン
 public:
@@ -220,6 +230,8 @@ public:
 	}
 
 	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ドロップ先の矩形を描画する
+	void DrawRect(int x1, int y1, int x2, int y2);
+	void DrawRect(const RECT& rc){ DrawRect(rc.left, rc.top, rc.right, rc.bottom); }
 
 private:
 	//型

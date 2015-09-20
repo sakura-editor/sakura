@@ -16,6 +16,10 @@ CTsvModeInfo& CViewCalc::GetTsvMode() const
 	return m_pOwner->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo;
 }
 
+CPixelXInt CViewCalc::GetCharSpacing() const
+{
+	return m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetCharSpacing();
+}
 
 /* 指定された桁に対応する行のデータ内の位置を調べる Ver1
 	
@@ -24,7 +28,7 @@ CTsvModeInfo& CViewCalc::GetTsvMode() const
 CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nColumn ) const
 {
 	CLogicInt i2 = CLogicInt(0);
-	CMemoryIterator it( pcDocLine, GetTabSpace(), GetTsvMode() );
+	CMemoryIterator it( pcDocLine, GetTabSpace(), GetTsvMode(), m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetWidthPerKeta(), GetCharSpacing() );
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
@@ -44,7 +48,7 @@ CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nC
 CLogicInt CViewCalc::LineColumnToIndex( const CLayout* pcLayout, CLayoutInt nColumn ) const
 {
 	CLogicInt i2 = CLogicInt(0);
-	CMemoryIterator it( pcLayout, GetTabSpace(), GetTsvMode() );
+	CMemoryIterator it = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
@@ -70,7 +74,7 @@ CLogicInt CViewCalc::LineColumnToIndex2( const CLayout* pcLayout, CLayoutInt nCo
 
 	CLogicInt i2 = CLogicInt(0);
 	CLayoutInt nPosX2 = CLayoutInt(0);
-	CMemoryIterator it( pcLayout, GetTabSpace(), GetTsvMode() );
+	CMemoryIterator it = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getColumn() + it.getColumnDelta() > nColumn ){
@@ -99,7 +103,7 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nInd
 {
 	//	以下、iterator版
 	CLayoutInt nPosX2 = CLayoutInt(0);
-	CMemoryIterator it( pcLayout, GetTabSpace(), GetTsvMode() );
+	CMemoryIterator it = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndex() + it.getIndexDelta() > nIndex ){
@@ -120,7 +124,7 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nInd
 CLayoutInt CViewCalc::LineIndexToColumn( const CDocLine* pcDocLine, CLogicInt nIndex ) const
 {
 	CLayoutInt nPosX2 = CLayoutInt(0);
-	CMemoryIterator it( pcDocLine, GetTabSpace(), GetTsvMode() );
+	CMemoryIterator it( pcDocLine, GetTabSpace(), GetTsvMode(), m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetWidthPerKeta(), GetCharSpacing() );
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndex() + it.getIndexDelta() > nIndex ){

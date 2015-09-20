@@ -49,6 +49,7 @@ void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 {
 	pDst->SetHankakuWidth			(GetHankakuWidth());		/* 半角文字の幅 */
 	pDst->SetHankakuHeight			(GetHankakuHeight());		/* 文字の高さ */
+	pDst->m_aFontHeightMargin = m_aFontHeightMargin;
 }
 
 /*
@@ -57,22 +58,61 @@ void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 	※ビルド種により、微妙にサイズが変わるようでした。
 	　サイズを合わせるため、適当な文字で調整。
 */
-void CTextMetrics::Update(HFONT hFont)
+void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 {
-	HDC hdc = GetDC(NULL);
-	{
-		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFont );
-		SIZE  sz;
-#ifdef _UNICODE
-		::GetTextExtentPoint32( hdc, L"xx", 2, &sz );
-#else
-		::GetTextExtentPoint32( hdc, LS(STR_ERR_DLGEDITVW2), 2, &sz );
-#endif
-		this->SetHankakuHeight(sz.cy);
-		this->SetHankakuWidth(sz.cx / 2);
+	int size = 1; //暫定
+	HFONT hFontArray[1] = { hFont };
+
+	this->SetHankakuHeight(1);
+	this->SetHankakuWidth(1);
+	int tmAscent[1];
+	int tmAscentMaxHeight;
+	m_aFontHeightMargin.resize(size);
+	for( int i = 0; i < size; i++ ){
+		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFontArray[i] );
+ 		SIZE  sz;
+		// LocalCache::m_han_size と一致していなければならない
+		{
+			// KB145994
+			// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
+			// ただしこのコードはカーニングの影響を受ける
+			GetTextExtentPoint32W_AnyBuild(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+			sz.cx = (sz.cx / 26 + 1) / 2;
+		}
+		TEXTMETRIC tm;
+		GetTextMetrics(hdc, &tm);
+		if( GetHankakuHeight() < sz.cy ){
+			SetHankakuHeight(sz.cy);
+			tmAscentMaxHeight = tm.tmAscent;
+		}
+		if( i == 0 && GetHankakuWidth() < sz.cx ){
+			SetHankakuWidth(sz.cx);
+		}
+		tmAscent[i] = tm.tmAscent;
 		::SelectObject( hdc, hFontOld );
 	}
-	ReleaseDC(NULL,hdc);
+	int minMargin = 0;
+	for(int i = 0; i < size; i++){
+		if( tmAscentMaxHeight - tmAscent[i] < minMargin ){
+			minMargin = tmAscentMaxHeight - tmAscent[i];
+		}
+	}
+	if( minMargin < 0 ){
+		minMargin *= -1;
+		SetHankakuHeight( GetHankakuHeight() + minMargin );
+	}
+	int nOrgHeight = GetHankakuHeight();
+	if( nLineSpace < 0 ){
+		// マイナスの場合は文字の高さも引く
+		SetHankakuHeight( std::max(1, GetHankakuHeight() + nLineSpace) );
+	}
+	for( int i = 0; i < size; i++ ){
+		m_aFontHeightMargin[i] = tmAscentMaxHeight - tmAscent[i] + minMargin;
+	}
+	
+	// Dx/Dyも設定
+	SetHankakuDx( GetHankakuWidth() + nColmSpace );
+	SetHankakuDy( std::max(1, nOrgHeight + nLineSpace) );
 }
 
 
@@ -114,65 +154,45 @@ const int* CTextMetrics::GenerateDxArray(
 	const wchar_t* pText,           //!< [in]  文字列
 	int nLength,                    //!< [in]  文字列長
 	int	nHankakuDx,					//!< [in]  半角文字の文字間隔
-	int	nTabSpace,					//   [in]  TAB幅
-	int	nIndent						//   [in]  インデント(TAB対応用)
+	int	nTabSpace,					//   [in]  TAB幅(CLayoutXInt)
+	int	nIndent,					//   [in]  インデント(TAB対応用)(CLayoutXInt)
+	int nCharSpacing				//!< [in]  文字隙間
 )
 {
-	bool bHigh;				// サロゲートペア（上位）
 
 	vResultArray->resize(nLength);
 	if(!pText || nLength<=0)return NULL;
 
 	int* p=&(*vResultArray)[0];
 	int	 nLayoutCnt = nIndent;
-	const wchar_t* q=pText;
-	bHigh = false;
-	for (int i=0; i<nLength; i++, p++, q++) {
-		if (*q == WCODE::TAB) {
+	const wchar_t* x=pText;
+	for (int i=0; i<nLength; i++, p++, x++) {
+		// サロゲートチェック
+		if (*x == WCODE::TAB) {
 			// TAB対応	2013/5/7 Uchi
-			if (i > 0 && *(q-1) == WCODE::TAB) {
-				*p = nTabSpace * nHankakuDx;
-				nLayoutCnt += nTabSpace;
+			if (i > 0 && *(x-1) == WCODE::TAB) {
+				*p = nTabSpace;
+				nLayoutCnt += *p;
 			}
 			else {
-				*p = (nTabSpace - nLayoutCnt % nTabSpace) * nHankakuDx;
-				nLayoutCnt += (nTabSpace - nLayoutCnt % nTabSpace);
+				*p = (nTabSpace + nHankakuDx - 1) - ((nLayoutCnt + nHankakuDx - 1) % nTabSpace);
+				nLayoutCnt += *p;
 			}
-			bHigh = false;
-		}
-		// サロゲートチェック BMP 以外は全角扱い	2008/7/5 Uchi
-		else if (IsUTF16High(*q)) {
-			*p = nHankakuDx*2;
-			nLayoutCnt += 2;
-			bHigh = true;
-		}
-		else if (IsUTF16Low(*q)) {
-			// サロゲートペア（下位）単独の場合は全角扱い
-			//*p = (bHigh) ? 0 : nHankakuDx*2;
-			if (bHigh) {
+		}else
+		if(IsUTF16High(*x)){
+			if(i+1 < nLength && IsUTF16Low(x[1])){
+				*p = WCODE::CalcPxWidthByFont2(x) + nCharSpacing;
+				p++;
+				x++;
+				i++;
 				*p = 0;
+			}else{
+				*p = WCODE::CalcPxWidthByFont(*x) + nCharSpacing;
+				nLayoutCnt += *p;
 			}
-			else{
-				if (IsBinaryOnSurrogate(*q)) {
-					*p = nHankakuDx;
-					nLayoutCnt++;
-				}
-				else{
-					*p = nHankakuDx*2;
-					nLayoutCnt += 2;
-				}
-			}
-			bHigh = false;
-		}
-		else if(WCODE::IsHankaku(*q)){
-			*p = nHankakuDx;
-			nLayoutCnt++;
-			bHigh = false;				// サロゲートペア対策	2008/7/5 Uchi
-		}
-		else{
-			*p = nHankakuDx*2;
-			nLayoutCnt += 2;
-			bHigh = false;				// サロゲートペア対策	2008/7/5 Uchi
+		}else{
+			*p = WCODE::CalcPxWidthByFont(*x) + nCharSpacing;
+			nLayoutCnt += *p;
 		}
 	}
 
@@ -204,7 +224,8 @@ int CTextMetrics::CalcTextWidth(
 int CTextMetrics::CalcTextWidth2(
 	const wchar_t* pText, //!< 文字列
 	int nLength,          //!< 文字列長
-	int nHankakuDx        //!< 半角文字の文字間隔
+	int nHankakuDx,       //!< 半角文字の文字間隔
+	int nCharSpacing      //!< 文字の隙間
 )
 {
 	//文字間隔配列を生成
@@ -213,10 +234,18 @@ int CTextMetrics::CalcTextWidth2(
 		&vDxArray,
 		pText,
 		nLength,
-		nHankakuDx
+		nHankakuDx,
+		nCharSpacing
 	);
 
 	//ピクセル幅を計算
 	return CalcTextWidth(pText, nLength, pDxArray);
 }
 
+int CTextMetrics::CalcTextWidth3(
+	const wchar_t* pText, //!< 文字列
+	int nLength          //!< 文字列長
+) const
+{
+	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing());
+}

@@ -186,7 +186,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	if( pLayoutPrev->GetLogicOffset() > 0 )
 		return nIpos;
 	
-	CMemoryIterator it( pLayoutPrev, GetTabSpace(), m_tsvInfo );
+	CMemoryIterator it = CreateCMemoryIterator(pLayoutPrev);
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && it.getCurrentChar() == WCODE::TAB ){
@@ -195,7 +195,9 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		it.addDelta();
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( GetMaxLineKetas() - nIpos < GetTabSpace() + 2 ){
+	if ( GetMaxLineLayout() - nIpos < GetTabSpace() + 2
+			* (m_nCharLayoutXPerKeta + m_nSpacing)
+	){
 		nIpos = t_max(CLayoutInt(0), GetMaxLineKetas() - (GetTabSpace() + 2)); // 2013.05.12 Chg:0だったのを最大幅に変更
 	}
 	return nIpos;	//	インデント
@@ -226,7 +228,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		return nIpos;
 	
 	//	2002.10.07 YAZAKI インデントの計算
-	CMemoryIterator it( pLayoutPrev, GetTabSpace(), m_tsvInfo );
+	CMemoryIterator it = CreateCMemoryIterator(pLayoutPrev);
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
 	bool bZenSpace = m_pTypeConfig->m_bAutoIndent_ZENSPACE;
@@ -260,7 +262,9 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		nIpos = it.getColumn();	//	終了
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( GetMaxLineKetas() - nIpos < GetTabSpace() + 2 ){
+	if ( GetMaxLineLayout() - nIpos < GetTabSpace() + 2
+			* (m_nCharLayoutXPerKeta + m_nSpacing)
+	 ){
 		nIpos = t_max(CLayoutInt(0), GetMaxLineKetas() - (GetTabSpace() + 2)); // 2013.05.12 Chg:0だったのを最大幅に変更
 	}
 	return nIpos;	//	インデント
@@ -359,7 +363,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 			nMaxLineNum = i;		// 最大幅のレイアウト行
 
 			// アプリケーションの最大幅となったら算出は停止
-			if( nMaxLen >= MAXLINEKETAS && !bCalLineLen )
+			if( nMaxLen >= MAXLINEKETAS * GetWidthPerKeta() && !bCalLineLen )
 				break;
 		}
 

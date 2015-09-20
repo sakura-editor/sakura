@@ -46,7 +46,7 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	_tcscpy( pType->m_szTypeExts, _T("txt,log,1st,err,ps") );
 
 	//設定
-	pType->m_nMaxLineKetas = CLayoutInt(120);					/* 折り返し桁数 */
+	pType->m_nMaxLineKetas = CKetaXInt(120);					/* 折り返し桁数 */
 	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* アウトライン解析方法 */
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない

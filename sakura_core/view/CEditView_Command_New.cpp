@@ -144,20 +144,21 @@ void CEditView::InsertData_CEditView(
 
 		// 行終端より右に挿入しようとした
 		if( nLineAllColLen > 0 ){
+			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
 			// 終端直前から挿入位置まで空白を埋める為の処理
 			// 行終端が何らかの改行コードか?
 			if( EOL_NONE != pcLayout->GetLayoutEol() ){
 				nIdxFrom = nLineLen - CLogicInt(1);
-				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1) + nDataLen );
-				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen + 1; ++i ){
+				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1)/ nSpWidth + nDataLen );
+				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen + 1; i += nSpWidth ){
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
 			}
 			else{
 				nIdxFrom = nLineLen;
-				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen) + nDataLen );
-				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen; ++i ){
+				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen) / nSpWidth + nDataLen );
+				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen; i += nSpWidth ){
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
@@ -179,8 +180,9 @@ void CEditView::InsertData_CEditView(
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 		if( 0 < ptInsertPos.GetX2() ){
-			cMem.AllocStringBuffer( (Int)ptInsertPos.GetX2() + nDataLen );
-			for( CLayoutInt i = CLayoutInt(0); i < ptInsertPos.GetX2(); ++i ){
+			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
+			cMem.AllocStringBuffer( (Int)ptInsertPos.GetX2() / nSpWidth + nDataLen );
+			for( CLayoutInt i = CLayoutInt(0); i < ptInsertPos.GetX2(); i+=nSpWidth ){
 				cMem += L' ';
 			}
 			cMem.AppendString( pData, nDataLen );
@@ -228,7 +230,7 @@ void CEditView::InsertData_CEditView(
 	}
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( pptNewPos->x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
+	if( pptNewPos->x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineLayout() ){
 		if( m_pTypeData->m_bKinsokuRet
 		 || m_pTypeData->m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{

@@ -51,7 +51,7 @@ public:
 
 	//2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 	//実際には pX と nX が更新される。
-	void DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // テキスト表示
+	void DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // テキスト表示
 
 	//!	ノート線描画
 	void DispNoteLine( CGraphics& gr, int nTop, int nBottom, int nLeft, int nRight ) const;

@@ -45,12 +45,20 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	const CTextArea* pArea=&pcView->GetTextArea();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
-	int nCharWidth = pMetrics->GetHankakuDx();
+	int nCharWidth = pMetrics->GetCharPxWidth();	// Layout→Px
 
 	CTypeSupport cTabType(pcView,COLORIDX_TAB);
 
 	// これから描画するタブ幅
-	int tabDispWidth = (Int)pcView->m_pcEditDoc->m_cLayoutMgr.GetActualTsvSpace( sPos.GetDrawCol(), WCODE::TAB );
+	CLayoutXInt tabDispWidthLayout = pcView->m_pcEditDoc->m_cLayoutMgr.GetActualTsvSpace( sPos.GetDrawCol(), WCODE::TAB );
+	int tabDispWidth = (Int)tabDispWidthLayout;
+	if( pcView->m_bMiniMap ){
+		CLayoutMgr mgrTemp;
+		mgrTemp.SetTabSpaceInfo(pcView->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
+			CLayoutXInt(pcView->GetTextMetrics().GetHankakuWidth()) );
+		tabDispWidthLayout = mgrTemp.GetActualTabSpace(sPos.GetDrawCol());
+		tabDispWidth = (Int)tabDispWidthLayout;
+	}
 
 	// タブ記号領域
 	RECT rcClip2;
@@ -61,20 +69,33 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	}
 	rcClip2.top = sPos.GetDrawPos().y;
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
+	int nLen = wcslen( m_pTypeData->m_szTabViewString );
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+			int fontNo = WCODE::GetFontNo(m_pTypeData->m_szTabViewString[0]);
+			if( fontNo ){
+				SFONT sFont;
+				sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
+				sFont.m_hFont = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
+				gr.PushMyFont(sFont);
+			}
+			int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 			//@@@ 2001.03.16 by MIK
 			::ExtTextOutW_AnyBuild(
 				gr,
 				sPos.GetDrawPos().x,
-				sPos.GetDrawPos().y,
+				sPos.GetDrawPos().y + nHeightMargin,
 				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				m_pTypeData->m_szTabViewString,
-				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
-				pMetrics->GetDxArray_AllHankaku()
+				// tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
+				nLen,
+				pMetrics->GetDxArray_AllHankaku()	// FIXME:半角固定？
 			);
+			if( fontNo ){
+				gr.PopMyFont();
+			}
 		}else{
 			//背景
 			::ExtTextOutW_AnyBuild(
@@ -84,7 +105,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				L"        ",
-				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
+				8,
 				pMetrics->GetDxArray_AllHankaku()
 			);
 
@@ -124,7 +145,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	}
 
 	//Xを進める
-	sPos.ForwardDrawCol(tabDispWidth);
+	sPos.ForwardDrawCol(tabDispWidthLayout);
 }
 
 

@@ -54,41 +54,24 @@ void CTextArea::UpdateViewColRowNums()
 	CEditView* pView=m_pEditView;
 	// Note: マイナスの割り算は処理系依存です。
 	// 0だとカーソルを設定できない・選択できないなど動作不良になるので1以上にする
-	m_nViewColNum = CLayoutInt(t_max(1, t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx()));	// 表示域の桁数
+	m_nViewColNum = CLayoutInt(t_max(1, t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetCharPxWidth()));	// 表示域の桁数
 	m_nViewRowNum = CLayoutInt(t_max(1, t_max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// 表示域の行数
 }
 
 //!フォント変更の際、各種パラメータを計算し直す
-void CTextArea::UpdateAreaMetrics(HDC hdc)
+void CTextArea::UpdateAreaMetrics()
 {
-	CEditView* pView=m_pEditView;
-
-
-	if( pView->m_bMiniMap ){
-		// 文字間隔
-		pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() );
-
-		// 行間隔
-		pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() );
-	}else{
-		// 文字間隔
-		pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pTypeData->m_nColumnSpace );
-
-		// 行間隔
-		pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pTypeData->m_nLineSpace );
-	}
-
 	//表示域の再計算
 	//2010.08.24 Dx/Dyを使うので後で設定
 	UpdateViewColRowNums();
 }
 
-void CTextArea::GenerateCharRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const
+void CTextArea::GenerateCharRect(RECT* rc,const DispPos& sPos,CLayoutXInt nColumns) const
 {
 	const CEditView* pView=m_pEditView;
 
 	rc->left   = sPos.GetDrawPos().x;
-	rc->right  = sPos.GetDrawPos().x + pView->GetTextMetrics().GetHankakuDx() * nHankakuNum;
+	rc->right  = sPos.GetDrawPos().x + pView->GetTextMetrics().GetCharPxWidth(nColumns);
 	rc->top    = sPos.GetDrawPos().y;
 	rc->bottom = sPos.GetDrawPos().y + pView->GetTextMetrics().GetHankakuDy();
 }
@@ -109,9 +92,9 @@ bool CTextArea::TrimRectByArea(RECT* rc) const
 	return true;
 }
 
-bool CTextArea::GenerateClipRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const
+bool CTextArea::GenerateClipRect(RECT* rc, const DispPos& sPos, CLayoutXInt nColumns) const
 {
-	GenerateCharRect(rc,sPos,nHankakuNum);
+	GenerateCharRect(rc, sPos, nColumns);
 	return TrimRectByArea(rc);
 }
 
@@ -173,7 +156,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 	}
 
 	//	Sep 18, 2002 genta
-	nViewAlignLeftNew += GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace;
+	nViewAlignLeftNew += GetLeftYohaku();
 	if( nViewAlignLeftNew != GetAreaLeft() ){
 		CMyRect			rc;
 		SetAreaLeft(nViewAlignLeftNew);
@@ -281,7 +264,7 @@ void CTextArea::TextArea_OnSize(
 
 int CTextArea::GetDocumentLeftClientPointX() const
 {
-	return GetAreaLeft() - (Int)GetViewLeftCol() * m_pEditView->GetTextMetrics().GetHankakuDx();
+	return GetAreaLeft() - m_pEditView->GetTextMetrics().GetCharPxWidth(GetViewLeftCol());
 }
 
 //! クライアント座標からレイアウト位置に変換する
@@ -289,7 +272,7 @@ void CTextArea::ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const
 {
 	const CEditView* pView=m_pEditView;
 	pptLayout->Set(
-		GetViewLeftCol() + CLayoutInt( (ptClient.x - GetAreaLeft()) / pView->GetTextMetrics().GetHankakuDx() ),
+		GetViewLeftCol() + CLayoutInt( (ptClient.x - GetAreaLeft()) / pView->GetTextMetrics().GetCharPxWidth() ),
 		GetViewTopLine() + CLayoutInt( (ptClient.y - GetAreaTop()) / pView->GetTextMetrics().GetHankakuDy() )
 	);
 }
@@ -316,14 +299,14 @@ void CTextArea::GenerateBottomRect(RECT* rc, CLayoutInt nLineCount) const
 void CTextArea::GenerateLeftRect  (RECT* rc, CLayoutInt nColCount ) const
 {
 	rc->left   = m_nViewAlignLeft;
-	rc->right  = m_nViewAlignLeft + (Int)nColCount * m_pEditView->GetTextMetrics().GetHankakuDx();
+	rc->right  = m_nViewAlignLeft + m_pEditView->GetTextMetrics().GetCharPxWidth(nColCount);
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop + m_nViewCy;
 }
 
 void CTextArea::GenerateRightRect (RECT* rc, CLayoutInt nColCount ) const
 {
-	rc->left   = m_nViewAlignLeft + m_nViewCx - (Int)nColCount * m_pEditView->GetTextMetrics().GetHankakuDx(); //2008.01.26 kobake 符号が逆になってたのを修正
+	rc->left   = m_nViewAlignLeft + m_nViewCx - m_pEditView->GetTextMetrics().GetCharPxWidth(nColCount); //2008.01.26 kobake 符号が逆になってたのを修正
 	rc->right  = m_nViewAlignLeft + m_nViewCx;
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop  + m_nViewCy;

@@ -130,8 +130,9 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	// 下線 (ルーラーと本文の境界)
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	//	2005.11.10 Moca 1dot足りない
-	CLayoutInt	nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-	int nToX = m_pEditView->GetTextArea().GetAreaLeft() + (Int)(nMaxLineKetas - m_pEditView->GetTextArea().GetViewLeftCol()) * m_pEditView->GetTextMetrics().GetHankakuDx() + 1;
+	CLayoutXInt	nMaxLineColum = m_pEditDoc->m_cLayoutMgr.GetMaxLineLayout();
+	CKetaXInt	nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
+	int nToX = m_pEditView->GetTextArea().GetAreaLeft() + m_pEditView->GetTextMetrics().GetCharPxWidth(nMaxLineColum - m_pEditView->GetTextArea().GetViewLeftCol()) + 1;
 	if( nToX > m_pEditView->GetTextArea().GetAreaRight() ){
 		nToX = m_pEditView->GetTextArea().GetAreaRight();
 	}
@@ -140,24 +141,34 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 
 
 	//目盛を描画
-	CLayoutInt i = m_pEditView->GetTextArea().GetViewLeftCol();
-	while(i <= m_pEditView->GetTextArea().GetRightCol() + 1 && i <= nMaxLineKetas)
+	const int oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
+	CLayoutXInt i  = m_pEditView->GetTextArea().GetViewLeftCol();
+	CKetaXInt keta = CKetaXInt(((Int)i) / oneColumn);
+	const int dx = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPでもDx
+	// 先頭がかけている場合は次の桁に進む
+	const int pxOffset = (Int)i % oneColumn;
+	if( pxOffset ){
+		nX += oneColumn - pxOffset;
+		i += CLayoutXInt(oneColumn - pxOffset); // CLayoutXInt == pixel
+		++keta;
+	}
+	while(i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas)
 	{
 		//ルーラー終端の区切り(大)
-		if( i == nMaxLineKetas ){
+		if( keta == nMaxLineKetas ){
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, 0 );
 		}
 		//10目盛おきの区切り(大)と数字
-		else if( 0 == i % 10 ){
+		else if( 0 == keta % 10 ){
 			wchar_t szColumn[32];
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, 0 );
-			_itow( ((Int)i) / 10, szColumn, 10 );
+			_itow( ((Int)keta) / 10, szColumn, 10 );
 			::TextOutW_AnyBuild( gr, nX + 2 + 0, -1 + 0, szColumn, wcslen( szColumn ) );
 		}
 		//5目盛おきの区切り(中)
-		else if( 0 == i % 5 ){
+		else if( 0 == keta % 5 ){
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, nY - 6 );
 		}
@@ -167,8 +178,9 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 			::LineTo( gr, nX, nY - 3 );
 		}
 
-		nX += m_pEditView->GetTextMetrics().GetHankakuDx();
-		i++;
+		nX += dx;
+		i  += oneColumn;
+		keta++;
 	}
 
 	//色戻す

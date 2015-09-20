@@ -289,9 +289,9 @@ open_c:;
 	@date 2006.01.08 genta 判定条件を見直し
 	@date 2008.06.08 ryoji ウィンドウ幅設定にぶら下げ余白を追加
 */
-CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CLayoutInt* _newKetas )
+CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 {
-	CLayoutInt& newKetas=*_newKetas;
+	CKetaXInt& newKetas=*_newKetas;
 	//@@@ 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするコマンド。
 	//2002/04/08 YAZAKI ときどきウィンドウ幅で折り返されないことがあるバグ修正。
 	// 20051022 aroka 現在のウィンドウ幅→最大値→文書タイプの初期値 をトグルにするコマンド
@@ -324,14 +324,14 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CLayoutInt* _newKetas )
 	
 	if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == ViewColNumToWrapColNum( GetTextArea().m_nViewColNum ) ){
 		// a)
-		newKetas = CLayoutInt(MAXLINEKETAS);
+		newKetas = CKetaXInt(MAXLINEKETAS);
 		return TGWRAP_FULL;
 	}
 	else if( MINLINEKETAS > GetTextArea().m_nViewColNum - GetWrapOverhang() ){ // 2)
 		// 3)
 		if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != MAXLINEKETAS ){
 			// 4)
-			newKetas = CLayoutInt(MAXLINEKETAS);
+			newKetas = CKetaXInt(MAXLINEKETAS);
 			return TGWRAP_FULL;
 		}
 		else if( m_pTypeData->m_nMaxLineKetas == MAXLINEKETAS ){ // 5)
@@ -339,7 +339,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CLayoutInt* _newKetas )
 			return TGWRAP_NONE;
 		}
 		else { // 7)
-			newKetas = CLayoutInt(m_pTypeData->m_nMaxLineKetas);
+			newKetas = m_pTypeData->m_nMaxLineKetas;
 			return TGWRAP_PROP;
 		}
 	}
@@ -347,7 +347,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CLayoutInt* _newKetas )
 		if( GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == MAXLINEKETAS && // 9)
 			m_pTypeData->m_nMaxLineKetas != MAXLINEKETAS ){
 			// a)
-			newKetas = CLayoutInt(m_pTypeData->m_nMaxLineKetas);
+			newKetas = m_pTypeData->m_nMaxLineKetas;
 			return TGWRAP_PROP;
 			
 		}

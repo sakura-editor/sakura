@@ -169,7 +169,7 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 	if( bDispText ){
 		if( m_sSelect != m_sSelectOld ){
 			// 選択色表示の時は、WM_PAINT経由で作画
-			const int nCharWidth = pView->GetTextMetrics().GetHankakuDx();
+			const int nCharWidth = pView->GetTextMetrics().GetCharPxWidth();
 			const CTextArea& area =  pView->GetTextArea();
 			CLayoutRect rcOld; // CLayoutRect
 			TwoPointToRect( &rcOld, m_sSelectOld.GetFrom(), m_sSelectOld.GetTo() );
@@ -192,12 +192,14 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 					// GetToの行が対象
 					rc.top = rc.bottom = m_sSelect.GetTo().GetY2();
 					drawLeft  = t_min(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x);
-					drawRight = t_max(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x) + 1;
+					drawRight = t_max(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x)
+						+ pView->GetTextMetrics().GetLayoutXDefault() + 4; // 改行コード幅分余分に取る
 				}else if(m_sSelect.GetTo() == m_sSelectOld.GetTo() && m_sSelect.GetFrom().x != m_sSelectOld.GetFrom().x){
 					// GetFromの行が対象
 					rc.top = rc.bottom = m_sSelect.GetFrom().GetY2();
 					drawLeft  = t_min(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x);
-					drawRight = t_max(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x) + 1;
+					drawRight = t_max(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x)
+						+ pView->GetTextMetrics().GetLayoutXDefault() + 4; // 改行コード幅分余分に取る
 				}else{
 					rc.UnionStrictRect(rcOld, rcNew);
 				}
@@ -304,7 +306,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		//	return;
 		//}
 
-		const int nCharWidth = pView->GetTextMetrics().GetHankakuDx();
+		const int nCharWidth = pView->GetTextMetrics().GetCharPxWidth();
 		const int nCharHeight = pView->GetTextMetrics().GetHankakuDy();
 
 
@@ -505,12 +507,20 @@ void CViewSelect::DrawSelectAreaLine(
 	CLayoutInt nSelectTo = lineArea.GetTo().GetX2();
 	if( nSelectFrom == INT_MAX || nSelectTo == INT_MAX ){
 		CLayoutInt nPosX = CLayoutInt(0);
-		CMemoryIterator it = CMemoryIterator(pcLayout, layoutMgr.GetTabSpace(), layoutMgr.m_tsvInfo);
+		CMemoryIterator it = layoutMgr.CreateCMemoryIterator(pcLayout);
 		
 		while( !it.end() ){
 			it.scanNext();
 			if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
-				nPosX ++;
+				// HACK:改行コードは選択だけ1桁幅
+				if( CTypeSupport(pView, COLORIDX_EOL).IsDisp() ){
+					nPosX += pView->GetTextMetrics().GetLayoutXDefault();
+					if( pcLayout->GetLayoutEol().GetLen() != 0 ){
+						nPosX += 4; // 4pxはCRLFのはみ出てる分
+					}
+				}else{
+					nPosX += 2; // 非表示なら()2px
+				}
 				break;
 			}
 			// 2006.03.28 Moca 画面外まで求めたら打ち切る
@@ -534,7 +544,7 @@ void CViewSelect::DrawSelectAreaLine(
 		nSelectFrom = pView->GetTextArea().GetViewLeftCol();
 	}
 	int		nLineHeight = pView->GetTextMetrics().GetHankakuDy();
-	int		nCharWidth = pView->GetTextMetrics().GetHankakuDx();
+	int		nCharWidth = pView->GetTextMetrics().GetCharPxWidth();
 	CMyRect	rcClip; // px
 	rcClip.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectFrom * nCharWidth;
 	rcClip.right	= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectTo   * nCharWidth;
@@ -667,9 +677,9 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		if( select_col < 0 ){
 			select_col = -select_col;
 		}
-		auto_sprintf( msg, _T("%d Columns * %d lines selected."),
-			select_col, select_line );
-			
+		int select_col_keta = (Int)select_col / (Int)pView->GetTextMetrics().GetLayoutXDefault();
+		auto_sprintf( msg, _T("%d col (%dpx) * %d lines selected."),
+			select_col_keta, select_col, select_line );
 	}
 	else {
 		//	通常の選択では選択範囲の中身を数える

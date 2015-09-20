@@ -38,14 +38,31 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
 					);
-	bool bTrans = pInfo->m_pcView->IsBkBitmap() && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == pInfo->m_gr.GetTextBackColor();
+	bool bTrans = pInfo->m_pcView->IsBkBitmap() && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->m_gr);
+	int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
+			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
+	if( fontNo ){
+		CTypeSupport cCurrentType(pInfo->m_pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色/選択色）
+		CTypeSupport cCurrentType2(pInfo->m_pcView, pInfo->GetCurrentColor2());	// 周辺の色（現在の指定色）
+		bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor();
+		SFONT sFont;
+		sFont.m_sFontAttr.m_bBoldFont  = (blendColor ? cCurrentType2.IsBoldFont() : cCurrentType.IsBoldFont());
+		sFont.m_sFontAttr.m_bUnderLine = (blendColor ? cCurrentType2.HasUnderLine() : cCurrentType.HasUnderLine());
+		sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
+		pInfo->m_gr.PushMyFont(sFont);
+	}
+	int nHeightMargin = pInfo->m_pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 	pInfo->m_pcView->GetTextDrawer().DispText(
 		pInfo->m_gr,
 		pInfo->m_pDispPos,
+		nHeightMargin,
 		&pInfo->m_pLineOfLogic[nIdx],
 		nLength,
 		bTrans
 	);
+	if( fontNo ){
+		pInfo->m_gr.PopMyFont();
+	}
 	pInfo->m_nPosInLogic += nLength;
 	return true;
 }
@@ -127,7 +144,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 	SFONT sFont;
 	sFont.m_sFontAttr.m_bBoldFont = cSpaceType.IsBoldFont() || bBold;
 	sFont.m_sFontAttr.m_bUnderLine = cSpaceType.HasUnderLine();
-	sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+	sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( 0, sFont.m_sFontAttr );
 	pInfo->m_gr.PushMyFont(sFont);
 	bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 	return bTrans;
@@ -152,26 +169,43 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 
 	if( !cSpaceType.HasUnderLine() && colorStyle.HasUnderLine() )
 	{
+		int fontNo = WCODE::GetFontNo(' ');
 		// 下線を周辺の前景色で描画する
 		SFONT sFont;
 		sFont.m_sFontAttr.m_bBoldFont = false;
 		sFont.m_sFontAttr.m_bUnderLine = true;
-		sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
+		sFont.m_hFont = pInfo->m_pcView->GetFontset().ChooseFontHandle( fontNo, sFont.m_sFontAttr );
 		pInfo->m_gr.PushMyFont(sFont);
 
-		int nLength = (Int)(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
+		int nHeightMargin = pInfo->m_pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
+		CLayoutXInt nColLength = CLayoutXInt(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
+		int nSpWidth = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
+		int nLength = (Int)(nColLength + nSpWidth - 1) / nSpWidth;
 		wchar_t* pszText = new wchar_t[nLength];
-		for( int i = 0; i < nLength; i++ )
+		std::vector<int> vDxArray(nLength);
+		for( int i = 0; i < nLength; i++ ){
 			pszText[i] = L' ';
-		pInfo->m_pcView->GetTextDrawer().DispText(
+			vDxArray[i] = nSpWidth;
+		}
+		RECT rcClip2;
+		rcClip2.left = sPos.GetDrawPos().x;
+		rcClip2.right = rcClip2.left + (Int)(nColLength); // 前提条件：CLayoutInt == px
+		if( rcClip2.left < pcView->GetTextArea().GetAreaLeft() ){
+			rcClip2.left = pcView->GetTextArea().GetAreaLeft();
+		}
+		rcClip2.top = sPos.GetDrawPos().y;
+		rcClip2.bottom = sPos.GetDrawPos().y + sPos.GetCharHeight();
+		::ExtTextOutW_AnyBuild(
 			pInfo->m_gr,
-			&sPos,
+			sPos.GetDrawPos().x,
+			sPos.GetDrawPos().y + nHeightMargin,
+			ExtTextOutOption() & ~(ETO_OPAQUE),
+			&rcClip2,
 			pszText,
 			nLength,
-			true		// 背景は透明
+			&vDxArray[0]
 		);
 		delete []pszText;
-
 		pInfo->m_gr.PopMyFont();
 	}
 }

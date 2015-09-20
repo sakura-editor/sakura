@@ -129,6 +129,11 @@ namespace WCODE
 		return !IsHankaku(wc);
 	}
 
+	//!使用フォント番号を返す
+	// (0:半角/1:全角)
+	int GetFontNo(wchar_t);
+	int GetFontNo2(wchar_t, wchar_t);
+
 	//!全角スペースかどうか判定
 	inline bool IsZenkakuSpace(wchar_t wc)
 	{
@@ -242,6 +247,12 @@ namespace WCODE
 		return c>=0x2500 && c<=0x257F;
 	}
 
+	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
+	bool CalcHankakuByFont(wchar_t c);
+	//!文字のpx幅を取得(DLLSHARE/フォント依存)
+	int  CalcPxWidthByFont(wchar_t c);
+	//!文字のpx幅を取得(DLLSHARE/フォント依存)
+	int  CalcPxWidthByFont2(const wchar_t* c);
 	//! 句読点か
 	//bool IsKutoten( wchar_t wc );
 
@@ -320,7 +331,8 @@ namespace TCODE
 struct SCharWidthCache {
 	// 文字半角全角キャッシュ
 	TCHAR		m_lfFaceName[LF_FACESIZE];
-	BYTE		m_bCharWidthCache[0x10000/4];		//16KB 文字半角全角キャッシュ 2008/5/16 Uchi
+	TCHAR		m_lfFaceName2[LF_FACESIZE];
+	short		m_nCharPxWidthCache[0x10000];
 	int			m_nCharWidthCacheTest;				//cache溢れ検出
 };
 
@@ -339,6 +351,7 @@ enum ECharWidthCacheMode {
 // キャッシュの初期化関数群
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //<! モードを変更したいとき
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //<! フォントを変更したとき
+void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
 
 #endif /* SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_ */
 /*[EOF]*/

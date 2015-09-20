@@ -97,8 +97,9 @@ void CViewFont::DeleteFont()
 	@param m_bBoldFont true‚Å‘¾š
 	@param m_bUnderLine true‚Å‰ºü
 */
-HFONT CViewFont::ChooseFontHandle( SFontAttr sFontAttr ) const
+HFONT CViewFont::ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const
 {
+	assert( fontNo == 0 );
 	if( sFontAttr.m_bBoldFont ){	/* ‘¾š‚© */
 		if( sFontAttr.m_bUnderLine ){	/* ‰ºü‚© */
 			return m_hFont_HAN_BOLD_UL;

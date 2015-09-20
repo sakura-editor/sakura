@@ -1246,7 +1246,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	int			k;
-	int			m;
 	const wchar_t*	pLine2;
 	CLogicInt	nLineLen2;
 	int			nLevel;
@@ -1535,15 +1534,17 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				continue;
 			}
 
-			for( m = 0; m < nLineLen2; m++ ){
-				if( WCODE::TAB != pLine2[m] && WCODE::SPACE != pLine2[m] ){
-					break;
+			{
+				int m;
+				for( m = 0; m < nLineLen2; m++ ){
+					if( WCODE::TAB != pLine2[m] && WCODE::SPACE != pLine2[m] ){
+						break;
+					}
 				}
+				nDataLen = CLogicInt(m);
 			}
 
-
-			nDataLen = CLogicInt(m);
-			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(): 1;
+			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): 1;
 			pszData = new wchar_t[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
 			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
@@ -1551,16 +1552,18 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
 				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
 					int i;
-					i = m = 0;
+					CKetaXInt m = CKetaXInt(0);
+					i = 0;
 					while( i < nDataLen ){
 						nCharChars = CNativeW::GetSizeOfChar( pszData, nDataLen, i );
+						CKetaXInt nCharKetas = CNativeW::GetKetaOfChar( pszData, nDataLen, i );
 						if( nCharChars == 1 && WCODE::TAB == pszData[i] )
-							m += (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(CLayoutInt(m));
+							m += m_pcEditDoc->m_cLayoutMgr.GetActualTabSpaceKetas(m);
 						else
-							m += nCharChars;
+							m += nCharKetas;
 						i += nCharChars;
 					}
-					nCharChars = (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpace(CLayoutInt(m));
+					nCharChars = (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpaceKetas(m);
 					for( int i = 0; i < nCharChars; i++ )
 						pszData[nDataLen + i] = WCODE::SPACE;
 					pszData[nDataLen + nCharChars] = L'\0';

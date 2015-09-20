@@ -453,7 +453,7 @@ end_of_func:;
 			bRedo		// 最初の検索
 		){
 			nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount()-CLayoutInt(1);
-			nIdx		= CLogicInt(MAXLINEKETAS);
+			nIdx		= CLogicInt(MAXLINEKETAS); // ロジック折り返し < レイアウト折り返しという前提
 			bRedo		= false;
 			goto re_do;	// 末尾から再検索
 		}
@@ -1406,7 +1406,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	if( bFastMode ){
 		if( 0 < nReplaceNum ){
 			// CLayoutMgrの更新(変更有の場合)
-			rLayoutMgr._DoLayout();
+			rLayoutMgr._DoLayout(false);
 			GetEditWindow()->ClearViewCaretPosInfo();
 			if( GetDocument()->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 				rLayoutMgr.CalculateTextWidth();

@@ -308,6 +308,7 @@ BOOL CEditView::Create(
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){
 		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
+	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
 
 
 	/* ウィンドウクラスの登録 */
@@ -1165,13 +1166,19 @@ void CEditView::OnKillFocus( void )
 /* フォントの変更 */
 void CEditView::SetFont( void )
 {
+	HDC hdc = ::GetDC( GetHwnd() );
+
 	// メトリクス更新
-	GetTextMetrics().Update(GetFontset().GetFontHan());
+	if( m_bMiniMap ){
+		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), 0, 0);
+	}else{
+		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), m_pTypeData->m_nLineSpace, m_pTypeData->m_nColumnSpace);
+	}
+
+	::ReleaseDC( GetHwnd(), hdc );
 
 	// エリア情報を更新
-	HDC hdc = ::GetDC( GetHwnd() );
-	GetTextArea().UpdateAreaMetrics(hdc);
-	::ReleaseDC( GetHwnd(), hdc );
+	GetTextArea().UpdateAreaMetrics();
 
 	// 行番号表示に必要な幅を設定
 	GetTextArea().DetectWidthOfLineNumberArea( false );
@@ -1392,7 +1399,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 {
 	CNativeW	cmemBuf;
 
-	CLayoutPoint sPos;
 
 	CLogicInt	nIdxFrom;
 	CLogicInt	nIdxTo;
@@ -1457,6 +1463,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			CLogicInt	nDelPos = nDelPosNext;
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSelLayout.bottom && 0 < nDelLen ){
+				CLayoutPoint sPos;
 				m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + CLayoutInt(1), &nLineLen2, &pcLayout );
 				sPos.Set(
 					LineIndexToColumn( pcLayout, nDelPos ),
@@ -1473,7 +1480,8 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				
 				{
 					/* 機能種別によるバッファの変換 */
-					CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), (Int)sPos.GetX2() );
+					int nStartColumn = (Int)sPos.GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
+					CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColumn );
 
 					/* 現在位置にデータを挿入 */
 					CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
@@ -1510,7 +1518,8 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		GetSelectedDataSimple( cmemBuf );
 
 		/* 機能種別によるバッファの変換 */
-		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
+		int nStartColum = (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
+		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColum );
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
@@ -2467,8 +2476,8 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( bCursorVLine ){
 		// カーソル位置縦線。-1してキャレットの左に来るように。
-		nCursorVLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
-			* (m_pTypeData->m_nColumnSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
+		nCursorVLineX = GetTextArea().GetAreaLeft() + GetTextMetrics().GetCharPxWidth(
+			GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol()) - 1;
 	}
 
 	if( bDraw
