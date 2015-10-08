@@ -143,9 +143,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 	}
 	CLayoutXInt width = CLayoutXInt(pcView->GetTextMetrics().CalcTextWidth3(szText, 1));
 	RECT rcClip2;
-	if(pcView->GetTextArea().GenerateClipRect(&rcClip2, *pDispPos, width)
-		&& cWrapType.IsDisp()
-	)
+	if(pcView->GetTextArea().GenerateClipRect(&rcClip2, *pDispPos, width))
 	{
 		//サポートクラス
 		CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
