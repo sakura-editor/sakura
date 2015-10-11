@@ -1621,7 +1621,7 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    GROUPBOX        "表示文字コードの指定",IDC_STATIC,3,3,285,113
+    GROUPBOX        "表示文字コードの指定",IDC_STATIC,3,3,285,92
     CONTROL         "SJIS,Latin1等で文字コード値をUnicodeで表示する(&S)",
                     IDC_CHECK_DISP_UNICODE_IN_SJIS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,16,205,10
@@ -1637,9 +1637,13 @@ BEGIN
     CONTROL         "サロゲートペアをコードポイントで表示する(&P)",
                     IDC_CHECK_DISP_SP_CODEPOINT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,80,205,10
+    GROUPBOX        "表示文字数の指定",IDC_STATIC,3,98,285,47
     CONTROL         "選択文字数を文字単位ではなくバイト単位で表示する(&B)　※高負荷のため非推奨",
                     IDC_CHECK_DISP_SELCOUNT_BY_BYTE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,96,274,10
+                    WS_TABSTOP,7,112,274,10
+    CONTROL         "現在桁をルーラー単位ではなく文字単位で表示する(&C)",
+                    IDC_CHECK_DISP_COL_BY_CHAR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,128,274,10
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 293, 240

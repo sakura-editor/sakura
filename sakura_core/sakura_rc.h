@@ -788,6 +788,7 @@
 #define IDC_CHECK_INDENTCPPSTR          1719
 #define IDC_CHECK_INDENTCPPCMT          1720
 #define IDC_CHECK_INDENTCPPUNDO         1721
+#define IDC_CHECK_DISP_COL_BY_CHAR      1722
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
