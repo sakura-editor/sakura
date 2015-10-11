@@ -269,7 +269,11 @@ public:
 	BOOL CalculateTextWidth( BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1), CLayoutInt nEnd = CLayoutInt(-1) );	/* テキスト最大幅を算出する */		// 2009.08.28 nasukoji
 	void ClearLayoutLineWidth( void );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
 	CLayoutXInt GetLayoutXOfChar( const wchar_t* pData, int nDataLen, int i ) const {
-		return CNativeW::GetColmOfChar( pData, nDataLen, i ) + m_nSpacing;
+		CLayoutXInt nSpace = CLayoutXInt(0);
+		if( m_nSpacing ){
+			nSpace = CLayoutXInt(CNativeW::GetKetaOfChar(pData, nDataLen, i)) * m_nSpacing;
+		}
+		return CNativeW::GetColmOfChar( pData, nDataLen, i ) + nSpace;
 	}
 	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
 		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);

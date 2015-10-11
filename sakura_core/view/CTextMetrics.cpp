@@ -181,17 +181,29 @@ const int* CTextMetrics::GenerateDxArray(
 		}else
 		if(IsUTF16High(*x)){
 			if(i+1 < nLength && IsUTF16Low(x[1])){
-				*p = WCODE::CalcPxWidthByFont2(x) + nCharSpacing;
+				int n = 0;
+				if(nCharSpacing){
+					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+				}
+				*p = WCODE::CalcPxWidthByFont2(x) + n;
 				p++;
 				x++;
 				i++;
 				*p = 0;
 			}else{
-				*p = WCODE::CalcPxWidthByFont(*x) + nCharSpacing;
+				int n = 0;
+				if(nCharSpacing){
+					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+				}
+				*p = WCODE::CalcPxWidthByFont(*x) + n;
 				nLayoutCnt += *p;
 			}
 		}else{
-			*p = WCODE::CalcPxWidthByFont(*x) + nCharSpacing;
+			int n = 0;
+			if(nCharSpacing){
+				n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+			}
+			*p = WCODE::CalcPxWidthByFont(*x) + n;
 			nLayoutCnt += *p;
 		}
 	}
@@ -235,6 +247,8 @@ int CTextMetrics::CalcTextWidth2(
 		pText,
 		nLength,
 		nHankakuDx,
+		8,
+		0,
 		nCharSpacing
 	);
 
