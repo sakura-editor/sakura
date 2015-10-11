@@ -720,20 +720,43 @@ void CCaret::ShowCaretPosInfo()
 
 	// -- -- -- -- キャレット位置 -> ptCaret -- -- -- -- //
 	//
+	bool bCaretHabaMode = GetDllShareData().m_Common.m_sStatusbar.m_bDispColByChar == 0;
 	CMyPoint ptCaret;
 	//行番号をロジック単位で表示
 	if(pTypes->m_bLineNumIsCRLF){
-		ptCaret = GetCaretLogicPos().GetPOINT();
+		if( bCaretHabaMode ){
+			ptCaret.y = GetCaretLogicPos().GetPOINT().y;
+			if( pcLayout ){
+				// 新レイアウト桁数を計算(1行のデータが長いと重い)
+				int nPosX = 0;
+				const CLayout* pcLayoutCalc = pcLayout;
+				while( pcLayoutCalc->GetPrevLayout() ){
+					if( pcLayoutCalc->GetLogicOffset() == 0 ){
+						break; // 先頭行
+					}
+					pcLayoutCalc = pcLayoutCalc->GetPrevLayout();
+					nPosX += Int((m_pEditView->LineIndexToColumn(pcLayoutCalc, pcLayoutCalc->GetLengthWithoutEOL()) - pcLayoutCalc->GetIndent()) / (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault());
+				}
+				ptCaret.x = nPosX + (Int)(GetCaretLayoutPos().GetX() - pcLayout->GetIndent()) / (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
+			}else{
+				ptCaret.x = 0;
+			}
+		}else{
+			ptCaret = GetCaretLogicPos().GetPOINT();
+		}
 	}
 	//行番号をレイアウト単位で表示
 	else {
-		// ルーラー基準
-//		ptCaret.x = (Int)GetCaretLayoutPos().GetX() / (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
-		// 文字単位
-		if( pcLayout ){
-			ptCaret.x = (Int)GetCaretLogicPos().GetX() - pcLayout->GetLogicOffset();
+		if( bCaretHabaMode ){
+			// ルーラー基準
+			ptCaret.x = (Int)GetCaretLayoutPos().GetX() / (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
 		}else{
-			ptCaret.x = (Int)GetCaretLogicPos().GetX();
+			// 文字単位
+			if( pcLayout ){
+				ptCaret.x = (Int)GetCaretLogicPos().GetX() - pcLayout->GetLogicOffset();
+			}else{
+				ptCaret.x = (Int)GetCaretLogicPos().GetX();
+			}
 		}
 		ptCaret.y = (Int)GetCaretLayoutPos().GetY();
 	}
