@@ -78,6 +78,16 @@ static const DWORD p_helpids1[] = {	//11300
 };
 
 
+enum eOutlineNativeNamesId{
+	STR2_OUTLINE_XML = 0,
+	STR2_OUTLINE_MAX
+};
+
+const TCHAR* pszOutlineNames[] = {
+	_T("XML"),
+};
+
+
 //アウトライン解析方法・標準ルール
 TYPE_NAME_ID<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
@@ -92,6 +102,7 @@ TYPE_NAME_ID<EOutlineType> OlmArr[] = {
 	{ OUTLINE_ERLANG,	STR_OUTLINE_ERLANG },			//	2009.08.10 genta
 	{ OUTLINE_WZTXT,	STR_OUTLINE_WZ },			// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
 	{ OUTLINE_HTML,		STR_OUTLINE_HTML },			// 2003.05.20 zenryaku
+	{ OUTLINE_XML,		STR2_OUTLINE_XML },			// 2014.12.25 Moca
 	{ OUTLINE_TEX,		STR_OUTLINE_TEX },		// 2003.07.20 naoh
 	{ OUTLINE_TEXT,		STR_OUTLINE_TEXT }		//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
@@ -551,7 +562,11 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int nSize = (int)m_OlmArr.size();
 		for( int i = 0; i < nSize; ++i ){
 			if( m_OlmArr[i].pszName == NULL ){
-				Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
+				if( m_OlmArr[i].nNameId < STR2_OUTLINE_MAX ){
+					Combo_InsertString( hwndCombo, i, pszOutlineNames[m_OlmArr[i].nNameId] );
+				}else{
+					Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
+				}
 			}else{
 				Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
 			}

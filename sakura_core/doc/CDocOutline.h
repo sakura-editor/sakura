@@ -42,7 +42,7 @@ public:
 	void	MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr );								//!< Python アウトライン解析 // 2007.02.08 genta
 	void	MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr );								//!< Erlang アウトライン解析 // 2009.08.10 genta
 	void	MakeTopicList_wztxt(CFuncInfoArr*);												//!< 階層付きテキスト アウトライン解析 // 2003.05.20 zenryaku
-	void	MakeTopicList_html(CFuncInfoArr*);												//!< HTML アウトライン解析 // 2003.05.20 zenryaku
+	void	MakeTopicList_html(CFuncInfoArr*, bool bXml);									//!< HTML アウトライン解析 // 2003.05.20 zenryaku
 	void	MakeTopicList_tex(CFuncInfoArr*);												//!< TeX アウトライン解析 // 2003.07.20 naoh
 	void	MakeFuncList_RuleFile( CFuncInfoArr*, std::tstring& );											//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
 	int		ReadRuleFile( const TCHAR*, SOneRule*, int, bool&, std::wstring& );	//!< ルールファイル読込 2002.04.01 YAZAKI
