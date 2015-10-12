@@ -732,6 +732,7 @@ void CEditView::AutoScrollEnter()
 	}
 	if( !m_bAutoScrollHorizontal && !m_bAutoScrollVertical ){
 		m_nAutoScrollMode = 0;
+		::ReleaseCapture();
 		return;
 	}
 	m_nAutoScrollMode = 2;
