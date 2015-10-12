@@ -475,6 +475,11 @@ void CDlgFuncList::SetData()
 		SetListVB();
 		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_VB) );
 	}
+	else if( OUTLINE_XML == m_nListType ){ // XMLÉcÉäÅ[
+		m_nViewType = VIEWTYPE_TREE;
+		SetTree();
+		::SetWindowText( GetHwnd(), _T("XML") );
+	}
 	else if ( OUTLINE_FILETREE == m_nListType ){
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeFile();
