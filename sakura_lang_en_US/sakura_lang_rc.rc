@@ -35,8 +35,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 2011-2015  by Lucien & Collaborators"
-#define PR_VER		2,2,1,0
-#define PR_VER_STR	"2.2.1.0"
+#define PR_VER		2,3,0,0
+#define PR_VER_STR	"2.3.0.0"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -1623,7 +1623,7 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "Character Code",IDC_STATIC,3,3,285,113
+    GROUPBOX        "Character Code",IDC_STATIC,3,3,285,92
     CONTROL         "Display Character Code by Unicode when using SJIS, Latin1(&S)",
                     IDC_CHECK_DISP_UNICODE_IN_SJIS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,16,205,10
@@ -1639,9 +1639,13 @@ BEGIN
     CONTROL         "Display Code Point for Surrogate Pair(&P)",
                     IDC_CHECK_DISP_SP_CODEPOINT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,80,205,10
+    GROUPBOX        "Character Count",IDC_STATIC,3,98,285,47
     CONTROL         "Display Character Count by Bytes(&B) * HIGH LOAD",
                     IDC_CHECK_DISP_SELCOUNT_BY_BYTE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,96,274,10
+                    WS_TABSTOP,7,112,274,10
+    CONTROL         "Display Column by Character Count(&C)",
+                    IDC_CHECK_DISP_COL_BY_CHAR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,128,274,10
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 293, 240
