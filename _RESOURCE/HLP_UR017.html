@@ -13,6 +13,48 @@
 <h2>変更履歴(2015/02/22～)</h2>
 <!--<h3>xxx. xx, 2015 (2.x.x.x)</h3>-->
 
+<h3>Oct. 12, 2015 (2.3.0.0)</h3>
+[機能追加]
+<ul>
+<li>TSV、CSVモード (svn:4019 upatchid:991 Request/359 syat)</li>
+<li>プロポーショナルフォント (svn:4035 upatchid:713 Request/500 Moca)</li>
+<li>XMLアウトラインとHTMLの修正 (svn:4047 upatchid:944 BugReport/174 Moca)</li>
+</ul>
+[仕様変更]
+<ul>
+<li>C/C++インデントの改良 (svn:4020 upatchid:717 Request/336 Moca)</li>
+<li>桁数表示のオプション化 (svn:4045 upatchid:1004 unicode:2282 Moca,syat)</li>
+</ul>
+[バグ修正]
+<ul>
+<li>(選択)前の変更行へが追加されるときにもセパレータが余分に追加される (svn:4016 upatchid:983 novice123)</li>
+<li>EBCDIC typo修正 (svn:4017 upatchid:987 novice123)</li>
+<li>TCITEMの cchTextMaxメンバが初期化されていなかった (svn:4018 unicode:2263 teru,ds14050)</li>
+<li>DLL,EXEの検索パスのセキュリティ設定変更 (svn:4021 upatchid:805 Moca)</li>
+<li>メッセージボックスのコピーがおかしい (svn:4022 upatchid:816 unicode:2165 novice123,LR4)</li>
+<li>正規表現OFF置換で異常終了する (svn:4024 upatchid:994 unicode:2266 syat)</li>
+<li>Grepの検索対象ファイルを厳密にする (svn:4026 upatchid:992 BugReport/184 LR4)</li>
+<li>正規表現のGrep置換で行内の1つめしか置換されない (svn:4027 upatchid:984 Moca)</li>
+<li>C/C++用強調キーワードにてfinalとfloatが動作しない (svn:4028 upatchid:993 BugReport/186 syat)</li>
+<li>複数ファイルを「送る」メニューから開いたときの挙動 (svn:4029 upatchid:990 novice123)</li>
+<li>入力補完中のIME動作がおかしい (svn:4031 upatchid:993 unicode:2278 ryoji)</li>
+<li>「ミニマップを隠す」メニュー／ツールバーのアイコンが窪んだ状態にならない (svn:4032 upatchid:997 ryoji)</li>
+<li>キーワードヘルプの表示位置不正 (svn:4033 upatchid:998 ryoji)</li>
+<li>Undo/Redo時にキャレットが期待する位置に移動しない (svn:4034 upatchid:999 ryoji)</li>
+<li>ミニマップが印刷プレビューで表示されたままになる (svn:4037 upatchid:1000 unicode:2276 Moca)</li>
+<li>タブの検索をキーマクロとして保存できない (svn:4038 upatchid:1001 BugReport/188 anonymous)</li>
+<li>折り返し記号をOFFにしても折り返し記号が消えない (svn:4043 upatchid:1002 unicode:2290 syat)</li>
+<li>文字の間隔の適用値が今までと異なる (svn:4046 upatchid:1003 unicode:2294 Moca)</li>
+<li>スクロールできないときマウスキャプチャされたままになる (svn:4048 upatchid:1005 unicode:2298 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>USE_CRASHDUMPをデフォルトで有効化 (svn:4023 upatchid:995 unicode:2268 syat)</li>
+<li>コンパイルオプションに/NXCOMPAT /SAFESEH /DYNAMICBASEを追加 (svn:4025 upatchid:826 Moca)</li>
+<li>ミニマップビュー生成時にメンバを初期化する (svn:4030 syat)</li>
+<li>MinGWコンパイル対応 (svn:4036 upatchid:995 syat)</li>
+</ul>
+
 <h3>Mar. 1, 2015 (2.2.0.1)</h3>
 [仕様変更]<br />
 <ul>
