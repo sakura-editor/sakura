@@ -214,19 +214,24 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if( pcLayout ) {
 			CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
-			while( !it.end() ){
+			for (; ! it.end(); it.addDelta()) {
 				it.scanNext();
-				if ( it.getColumn() + it.getColumnDelta() > ptCaretMove.GetX2() - 1 ){
-					ptPos.x += it.getColumnDelta();
+				if ( ptCaretMove.GetX2() <= it.getColumn() + it.getColumnDelta()) {
 					break;
 				}
-				it.addDelta();
 			}
-			ptPos.x += it.getColumn() - it.getColumnDelta();
-			//	Oct. 18, 2002 YAZAKI
-			if( it.getIndex() >= pcLayout->GetLengthWithEOL() ){
-				ptPos.x = ptCaretMove.GetX2() - CLayoutXInt(1);
-			}
+			if (it.end()) {
+				const bool has_eol = EOL_NONE != pcLayout->GetLayoutEol(); // 改行文字で終わっているか。
+				const CLayoutXInt dx_default = this->m_pCommanderView->GetTextMetrics().GetLayoutXDefault(); // 文字のない部分の移動量。
+				const CLayoutXInt eol_hosei = has_eol ? CLayoutXInt(-it.getColumnDelta() + dx_default) : CLayoutXInt(0);
+				if (ptCaretMove.GetX2() <= it.getColumn() + eol_hosei) {
+					ptPos.x = it.getColumn() - it.getColumnDelta();
+				} else {
+					ptPos.x = t_max(ptCaretMove.GetX2() - dx_default, it.getColumn() + eol_hosei);
+				}
+			} else {
+				ptPos.x = it.getColumn();
+ 			}
 		}
 
 		GetCaret().GetAdjustCursorPos( &ptPos );
@@ -294,6 +299,8 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			const bool wrapped = EOL_NONE == pcLayout->GetLayoutEol(); // 折り返しているか、改行文字で終わっているか。これにより x_wrapの意味が変わる。
 			const bool nextline_exists = pcLayout->GetNextLayout() || pcLayout->GetLayoutEol() != EOL_NONE; // EOFのみの行も含め、キャレットが移動可能な次行が存在するか。
 
+			const CLayoutXInt dx_default = this->m_pCommanderView->GetTextMetrics().GetLayoutXDefault(); // 文字のない部分(※改行マーク部分を含む)の移動量。
+
 			// 現在のキャレットの右の位置( to_x )を求める。
 			CMemoryIterator it = GetDocument()->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 			for( ; ! it.end(); it.scanNext(), it.addDelta() ) {
@@ -301,7 +308,8 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 					break;
 				}
 			}
-			const CLayoutInt to_x = t_max( it.getColumn(), ptCaret.x + 1 );
+			const CLayoutXInt eol_hosei = (it.end() && ! wrapped) ? CLayoutXInt(-it.getColumnDelta() + dx_default) : CLayoutXInt(0);
+			const CLayoutInt to_x = ptCaret.x < it.getColumn() + eol_hosei ? it.getColumn() + eol_hosei : ptCaret.x + dx_default;
 
 			// キャレットの右端( x_max )と、そこでの扱い( on_x_max )を決める。
 			CLayoutInt x_max;
@@ -327,7 +335,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						on_x_max = STOP;
 					}
 				} else {
-					if( x_wrap < GetDocument()->m_cLayoutMgr.GetMaxLineLayout() ) {
+					if( x_wrap + dx_default < GetDocument()->m_cLayoutMgr.GetMaxLineLayout() ) {
 						x_max = GetDocument()->m_cLayoutMgr.GetMaxLineLayout();
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
 					} else { // 改行文字がぶら下がっているときは例外。
