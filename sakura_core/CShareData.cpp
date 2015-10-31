@@ -2559,7 +2559,7 @@ static const char* ppszKeyWordsCPP[] = {
 	"const_cast",
 	"constexpr",
 	"continue",
-	"decltype"
+	"decltype",
 	"default",
 	"define",
 	"defined",
@@ -2576,7 +2576,7 @@ static const char* ppszKeyWordsCPP[] = {
 	"export",
 	"extern",
 	"false",
-	"final"
+	"final",
 	"float",
 	"for",
 	"friend",
@@ -2592,10 +2592,10 @@ static const char* ppszKeyWordsCPP[] = {
 	"mutable",
 	"namespace",
 	"new",
-	"noexcept"
+	"noexcept",
 	"not",
 	"not_eq",
-	"nullptr"
+	"nullptr",
 	"operator",
 	"or",
 	"or_eq",
@@ -2612,13 +2612,13 @@ static const char* ppszKeyWordsCPP[] = {
 	"signed",
 	"sizeof",
 	"static",
-	"static_assert"
+	"static_assert",
 	"static_cast",
 	"struct",
 	"switch",
 	"template",
 	"this",
-	"thread_local"
+	"thread_local",
 	"throw",
 	"true",
 	"try",
@@ -2633,7 +2633,7 @@ static const char* ppszKeyWordsCPP[] = {
 	"void",
 	"volatile",
 	"wchar_t",
-	"while"
+	"while",
 	"xor",
 	"xor_eq",
 };
@@ -3023,7 +3023,7 @@ static const char* ppszKeyWordsCOBOL[] = {
 	"GO",
 	"GOBACK",
 	"HIGH-VALUE",
-	"IDENTIFICATION"
+	"IDENTIFICATION",
 	"IF",
 	"INITIALIZE",
 	"INPUT",
@@ -3949,7 +3949,7 @@ static const char* ppszKeyWordsTEX2[] = {
 	//	環境コマンド
 	//Jan. 19, 2001 JEPRO 本当は{}付きでキーワードにしたかったが単語として認識してくれないので止めた
 	"abstract",
-	"array"
+	"array",
 	"center",
 	"description",
 	"document",
