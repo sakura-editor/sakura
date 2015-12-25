@@ -676,7 +676,7 @@ BOOL CEditDoc::IsTextSelected( void ) const
 						多重オープン処理をCEditDoc::IsPathOpenedに移動
 */
 BOOL CEditDoc::FileRead(
-	TCHAR*	pszPath,	//!< [in/out]
+	TCHAR*	pszPath,	//!< [in,out]
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
 	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
 	bool	bReadOnly,			/*!< [in] 読み取り専用か */

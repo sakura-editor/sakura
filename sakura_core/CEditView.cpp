@@ -2584,7 +2584,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 }
 
 /*! 正しいカーソル位置を算出する(EOF以降のみ)
-	@param pptPosXY [in/out] カーソルのレイアウト座標
+	@param pptPosXY [in,out] カーソルのレイアウト座標
 	@retval	TRUE 座標を修正した
 	@retval	FALSE 座標は修正されなかった
 	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能

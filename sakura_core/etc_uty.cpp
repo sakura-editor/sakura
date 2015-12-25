@@ -83,7 +83,7 @@ static LPCTSTR GetHelpFilePath()
 	
 	@param pBuffer [in] 文字列バッファ(終端があること)
 	@param nLen [in] 文字列の長さ
-	@param pnOffset [in/out] オフセット
+	@param pnOffset [in,out] オフセット
 	@param pDelimiter [in] 区切り文字
 	@return トークン
 
