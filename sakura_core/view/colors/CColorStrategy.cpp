@@ -252,7 +252,7 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 
 // 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
 void CColorStrategyPool::CheckColorMODE(
-	CColorStrategy**	ppcColorStrategy,	//!< [in/out]
+	CColorStrategy**	ppcColorStrategy,	//!< [in,out]
 	int					nPos,
 	const CStringRef&	cLineStr
 )

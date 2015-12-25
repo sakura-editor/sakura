@@ -42,17 +42,17 @@ public:
 	bool OpenFileDialog(
 		HWND				hwndParent,
 		const TCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
-		SLoadInfo*			pLoadInfo,		//!< [in/out] ロード情報
+		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 		std::vector<std::tstring>&	files
 	);
 
 	//ロードフロー
 	bool DoLoadFlow(SLoadInfo* pLoadInfo);
 	bool FileLoad(
-		SLoadInfo*	pLoadInfo			//!< [in/out]
+		SLoadInfo*	pLoadInfo			//!< [in,out]
 	);
 	bool FileLoadWithoutAutoMacro(
-		SLoadInfo*	pLoadInfo			//!< [in/out]
+		SLoadInfo*	pLoadInfo			//!< [in,out]
 	);
 	void ReloadCurrentFile(				//!< 同一ファイルの再オープン Jul. 26, 2003 ryoji BOMオプション追加
 		ECodeType	nCharCode			//!< [in] 文字コード種別

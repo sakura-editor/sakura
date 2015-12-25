@@ -57,7 +57,7 @@ enum EKinsokuType {
 struct LayoutReplaceArg {
 	CLayoutRange	sDelRange;		//!< [in]削除範囲。レイアウト単位。
 	COpeLineData*	pcmemDeleted;	//!< [out]削除されたデータ
-	COpeLineData*	pInsData;		//!< [in/out]挿入するデータ
+	COpeLineData*	pInsData;		//!< [in,out]挿入するデータ
 	CLayoutInt		nAddLineNum;	//!< [out] 再描画ヒント レイアウト行の増減
 	CLayoutInt		nModLineFrom;	//!< [out] 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
 	CLayoutInt		nModLineTo;		//!< [out] 再描画ヒント 変更されたレイアウト行To(レイアウト行の増減が0のとき使う)

@@ -81,7 +81,7 @@ int VMessageBoxF(
 	UINT		uType,		//!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
 	LPCTSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
 	LPCTSTR		lpText,		//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
-	va_list&	v			//!< [in/out] 引数リスト
+	va_list&	v			//!< [in,out] 引数リスト
 )
 {
 	hwndOwner=GetMessageBoxOwner(hwndOwner);

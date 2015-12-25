@@ -300,7 +300,7 @@ static const KAKKO_T g_aKakkos[] = {
 
 	@param ptLayout [in] 検索開始点の物理座標
 	@param pptLayoutNew [out] 移動先のレイアウト座標
-	@param mode [in/out] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
+	@param mode [in,out] bit0(in)  : 表示領域外を調べるか？ 0:調べない  1:調べる
 						 bit1(in)  : 前方文字を調べるか？   0:調べない  1:調べる (このbitを参照)
 						 bit2(out) : 見つかった位置         0:後ろ      1:前     (このbitを更新)
 

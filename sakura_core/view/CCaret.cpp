@@ -423,7 +423,7 @@ CLayoutInt CCaret::MoveCursorToClientPoint( const POINT& ptClientPos, bool test,
 
 
 /*! 正しいカーソル位置を算出する(EOF以降のみ)
-	@param pptPosXY [in/out] カーソルのレイアウト座標
+	@param pptPosXY [in,out] カーソルのレイアウト座標
 	@retval	TRUE 座標を修正した
 	@retval	FALSE 座標は修正されなかった
 	@note	EOFの直前が改行でない場合は、その行に限りEOF以降にも移動可能
@@ -1097,7 +1097,7 @@ POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 
 	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
 	@date 2007.09.26 ryoji 半角文字でも中央で左右にカーソルを振り分ける
-	@date 2007.10.23 kobake 引数説明の誤りを修正 ([in/out]→[in])
+	@date 2007.10.23 kobake 引数説明の誤りを修正 ([in,out]→[in])
 	@date 2009.02.17 ryoji レイアウト行末以後のカラム位置指定なら末尾文字の前ではなく末尾文字の後に移動する
 */
 CLayoutInt CCaret::MoveCursorProperly(

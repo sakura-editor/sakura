@@ -642,7 +642,7 @@ template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
 	CHAR_TYPE*			pBuffer,	//[in] 文字列バッファ(終端があること)
 	int					nLen,		//[in] 文字列の長さ
-	int*				pnOffset,	//[in/out] オフセット
+	int*				pnOffset,	//[in,out] オフセット
 	const CHAR_TYPE*	pDelimiter	//[in] 区切り文字
 )
 {
