@@ -261,8 +261,8 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 
 /*! テキストを取得する
 	@param [out] cmemBuf 取得したテキストの格納先
-	@param [in/out] pbColumnSelect 矩形選択形式
-	@param [in/out] pbLineSelect 行選択形式
+	@param [in,out] pbColumnSelect 矩形選択形式
+	@param [in,out] pbLineSelect 行選択形式
 	@param [in] cEol HDROP形式のときの改行コード
 	@param [in] uGetFormat クリップボード形式
 */

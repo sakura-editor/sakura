@@ -105,7 +105,7 @@ INT_PTR CDlgSameColor::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARA
 
 /*! モーダルダイアログの表示
 	@param wID [in] タイプ別設定ダイアログで押されたボタンID
-	@param pTypes  [in/out] タイプ別設定データ
+	@param pTypes  [in,out] タイプ別設定データ
 	@param cr [in] 指定色
 
 	@date 2006.04.26 ryoji 新規作成

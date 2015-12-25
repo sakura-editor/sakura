@@ -32,7 +32,7 @@ class CBregexp; // 2002/2/10 aroka
 struct DocLineReplaceArg {
 	CLogicRange		sDelRange;			//!< [in] 削除範囲。ロジック単位。
 	COpeLineData*	pcmemDeleted;		//!< [out] 削除されたデータを保存
-	COpeLineData*	pInsData;			//!< [in/out] 挿入するデータ(中身が移動する)
+	COpeLineData*	pInsData;			//!< [in,out] 挿入するデータ(中身が移動する)
 	CLogicInt		nDeletedLineNum;	//!< [out] 削除した行の総数
 	CLogicInt		nInsLineNum;		//!< [out] 挿入によって増えた行の数
 	CLogicPoint		ptNewPos;			//!< [out] 挿入された部分の次の位置

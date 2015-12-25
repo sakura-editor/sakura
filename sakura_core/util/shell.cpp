@@ -600,8 +600,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 }
 
 /*フォント選択ダイアログ
-	@param plf [in/out]
-	@param piPointSize [in/out] 1/10ポイント単位
+	@param plf [in,out]
+	@param piPointSize [in,out] 1/10ポイント単位
 	
 	2008.04.27 kobake CEditDoc::SelectFont から分離
 	2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加

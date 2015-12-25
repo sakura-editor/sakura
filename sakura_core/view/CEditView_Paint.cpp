@@ -878,7 +878,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 */
 bool CEditView::DrawLogicLine(
 	HDC				_hdc,			//!< [in]     作画対象
-	DispPos*		_pDispPos,		//!< [in/out] 描画する箇所、描画元ソース
+	DispPos*		_pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
 	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 )
 {

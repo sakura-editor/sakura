@@ -68,10 +68,10 @@ CDlgWinSize::~CDlgWinSize()
 int CDlgWinSize::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
-	EWinSizeMode&	eSaveWinSize,	//!< [in/out] ウィンドウ位置継承
-	EWinSizeMode&	eSaveWinPos,	//!< [in/out] ウィンドウサイズ継承
-	int&			nWinSizeType,	//!< [in/out] ウィンドウの実行時の大きさ
-	RECT&			rc				//!< [in/out] 幅、高さ、左、上
+	EWinSizeMode&	eSaveWinSize,	//!< [in,out] ウィンドウ位置継承
+	EWinSizeMode&	eSaveWinPos,	//!< [in,out] ウィンドウサイズ継承
+	int&			nWinSizeType,	//!< [in,out] ウィンドウの実行時の大きさ
+	RECT&			rc				//!< [in,out] 幅、高さ、左、上
 )
 {
 	m_eSaveWinSize = eSaveWinSize;

@@ -81,7 +81,7 @@ void CDocFileOperation::DoFileUnlock()
 bool CDocFileOperation::OpenFileDialog(
 	HWND				hwndParent,		//!< [in]
 	const TCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダを指定できる
-	SLoadInfo*			pLoadInfo,		//!< [in/out] ロード情報
+	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 	std::vector<std::tstring>&	files
 )
 {
@@ -135,7 +135,7 @@ bool CDocFileOperation::DoLoadFlow(SLoadInfo* pLoadInfo)
 
 //! ファイルを開く
 bool CDocFileOperation::FileLoad(
-	SLoadInfo*	pLoadInfo		//!< [in/out]
+	SLoadInfo*	pLoadInfo		//!< [in,out]
 )
 {
 	bool bRet = DoLoadFlow(pLoadInfo);
@@ -157,7 +157,7 @@ bool CDocFileOperation::FileLoad(
 //! ファイルを開く（自動実行マクロを実行しない）
 //	2009.08.11 ryoji FileLoadへのパラメータ追加にしてもいいがANSI版と整合がとりやすいので当面は別関数にしておく
 bool CDocFileOperation::FileLoadWithoutAutoMacro(
-	SLoadInfo*	pLoadInfo		//!< [in/out]
+	SLoadInfo*	pLoadInfo		//!< [in,out]
 )
 {
 	return DoLoadFlow(pLoadInfo);
