@@ -1827,6 +1827,8 @@ LRESULT CEditWnd::DispatchEvent(
 			break;
 		case PM_CHANGESETTING_FONT:
 			GetDocument()->OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
+			delete [] m_posSaveAry;
+			m_posSaveAry = NULL;
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
 			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
@@ -1861,9 +1863,6 @@ LRESULT CEditWnd::DispatchEvent(
 				if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
 					::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
 			}
-			break;
-			delete [] m_posSaveAry;
-			m_posSaveAry = NULL;
 			break;
 		case PM_CHANGESETTING_TYPE2:
 			cTypeNew = CDocTypeManager().GetDocumentTypeOfPath(GetDocument()->m_cDocFile.GetFilePath());
