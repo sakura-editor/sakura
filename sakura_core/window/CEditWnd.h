@@ -404,7 +404,7 @@ private:
 	LPTSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
 public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
-	CLogicPointEx*	m_posSaveAry;
+	CLogicPointEx*	m_posSaveAry;		//!< フォント変更前の座標
 private:
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
