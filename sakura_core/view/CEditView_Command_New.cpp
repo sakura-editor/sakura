@@ -114,8 +114,6 @@ void CEditView::InsertData_CEditView(
 	bool			bHintNext = false;	// 更新が次行からになる可能性があることを示唆する
 	bool			bKinsoku;			// 禁則の有無
 	const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
-	bool			bLineModifiedChange = (pLine)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef(),
-		GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()): true;
 
 	//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
 	bKinsoku = ( m_pTypeData->m_bWordWrap
@@ -336,16 +334,6 @@ void CEditView::InsertData_CEditView(
 					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 				}
 			}
-
-#if 0 // すでに行頭から描画済み
-			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
-			if( bLineModifiedChange ){	// 無変更だった行が変更された
-				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nStartLine );
-				if( pcLayoutWk && pcLayoutWk->GetLogicOffset() ){	// 折り返しレイアウト行か？
-					Call_OnPaint( PAINT_LINENUMBER, false );
-				}
-			}
-#endif
 		}
 	}
 
@@ -747,7 +735,6 @@ bool CEditView::ReplaceData_CEditView3(
 )
 {
 	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeのときは bReadraw == false
-	bool bLineModifiedChange;
 	bool bUpdateAll = true;
 
 	bool bDelRangeUpdate = false;
@@ -757,40 +744,37 @@ bool CEditView::ReplaceData_CEditView3(
 		//	行の後ろが選択されていたときの不具合を回避するため，
 		//	選択領域から行末以降の部分を取り除く．
 
-		//	先頭
-		const CLayout*	pcLayout;
-		CLogicInt		len;
-		const wchar_t*	line = NULL;
 		if( !bFastMode ){
+			//	先頭
+			const CLayout*	pcLayout;
+			CLogicInt		len;
+			const wchar_t*	line = NULL;
 			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
-		}
-		bLineModifiedChange = (line)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef(), GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()): true;
-		if( line ){
-			CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
-			//	Jun. 1, 2000 genta
-			//	同一行の行末以降のみが選択されている場合を考慮する
+			if( line ){
+				CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
+				//	Jun. 1, 2000 genta
+				//	同一行の行末以降のみが選択されている場合を考慮する
 
-			//	Aug. 22, 2000 genta
-			//	開始位置がEOFの後ろのときは次行に送る処理を行わない
-			//	これをやってしまうと存在しない行をPointして落ちる．
-			if( sDelRange.GetFrom().y < m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 && pos >= len){
-				if( sDelRange.GetFrom().y == sDelRange.GetTo().y  ){
-					//	GetSelectionInfo().m_sSelect.GetFrom().y <= GetSelectionInfo().m_sSelect.GetTo().y はチェックしない
-					CLayoutPoint tmp = sDelRange.GetFrom();
-					tmp.y++;
-					tmp.x = CLayoutInt(0);
-					sDelRange.Set(tmp);
+				//	Aug. 22, 2000 genta
+				//	開始位置がEOFの後ろのときは次行に送る処理を行わない
+				//	これをやってしまうと存在しない行をPointして落ちる．
+				if( sDelRange.GetFrom().y < m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 && pos >= len){
+					if( sDelRange.GetFrom().y == sDelRange.GetTo().y  ){
+						//	GetSelectionInfo().m_sSelect.GetFrom().y <= GetSelectionInfo().m_sSelect.GetTo().y はチェックしない
+						CLayoutPoint tmp = sDelRange.GetFrom();
+						tmp.y++;
+						tmp.x = CLayoutInt(0);
+						sDelRange.Set(tmp);
+					}
+					else {
+						sDelRange.GetFromPointer()->y++;
+						sDelRange.SetFromX(CLayoutInt(0));
+					}
+					bDelRangeUpdate = true;
 				}
-				else {
-					sDelRange.GetFromPointer()->y++;
-					sDelRange.SetFromX(CLayoutInt(0));
-				}
-				bDelRangeUpdate = true;
 			}
-		}
 
-		//	末尾
-		if( !bFastMode ){
+			//	末尾
 			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetTo().GetY2(), &len, &pcLayout );
 			if( line ){
 				CLayoutInt p = LineIndexToColumn( pcLayout, len );
@@ -938,15 +922,6 @@ bool CEditView::ReplaceData_CEditView3(
 					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 				}
 				bUpdateAll = false;
-#if 0 // すでに1行まとめて描画済み
-				// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
-				if( bLineModifiedChange ){	// 無変更だった行が変更された
-					const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
-					if( pcLayoutWk && pcLayoutWk->GetLogicOffset() ){	// 折り返しレイアウト行か？
-						Call_OnPaint( PAINT_LINENUMBER, false );
-					}
-				}
-#endif
 			}
 		}
 	}
