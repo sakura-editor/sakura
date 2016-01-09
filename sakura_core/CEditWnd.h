@@ -141,6 +141,7 @@ public:
 	void CreateStatusBar( void );		/* ステータスバー作成 */
 	void DestroyStatusBar( void );		/* ステータスバー破棄 */
 	void AcceptSharedSearchKey();		/* 検索ボックスを更新 */
+	int GetSearchKey(std::tstring& strText);
 
 	//ファイル名変更通知
 	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加

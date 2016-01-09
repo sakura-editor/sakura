@@ -1024,8 +1024,8 @@ void CEditWnd::CreateToolBar( void )
 								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_hFontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
-							//入力長制限
-							::SendMessage( m_hwndSearchBox, CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
+							// //入力長制限
+							// ::SendMessage( m_hwndSearchBox, CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
 
 							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
 							AcceptSharedSearchKey();
@@ -1543,9 +1543,6 @@ LRESULT CEditWnd::DispatchEvent(
 			m_pPrintPreview->SetFocusToPrintPreviewBar();
 		}
 
-		//検索ボックスを更新
-		AcceptSharedSearchKey();
-		
 		return lRes;
 
 	case WM_NOTIFY:
@@ -2151,6 +2148,27 @@ int	CEditWnd::OnClose()
 */
 void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
+	if( m_hwndSearchBox && hwndCtl == m_hwndSearchBox ){
+		switch( wNotifyCode ){
+		case CBN_SETFOCUS:
+			m_nCurrentFocus = F_SEARCH_BOX;
+			break;
+		case CBN_KILLFOCUS:
+			m_nCurrentFocus = 0;
+			//フォーカスがはずれたときに検索キーにしてしまう。
+			//検索キーワードを取得
+			std::tstring	strText;
+			if( GetSearchKey(strText) )	//キー文字列がある
+			{
+				//検索キーを登録
+				if( strText.length() < _MAX_PATH ){
+					CShareData::getInstance()->AddToSearchKeyArr( strText.c_str() );
+				}
+			}
+			break;
+		}
+		return;	// CBN_SELCHANGE(1) がアクセラレータと誤認されないようにここで抜ける（rev1886 の問題の抜本対策）
+	}
 
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
@@ -2193,8 +2211,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//ビューにフォーカスを移動しておく
 			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
 				::SetFocus( GetActiveView().m_hWnd );
-				//検索ボックスを更新	// 2010/6/6 Uchi
-				AcceptSharedSearchKey();
 			}
 
 			// コマンドコードによる処理振り分け
@@ -2216,32 +2232,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 			);
 			m_pcEditDoc->HandleCommand( nFuncCode | FA_FROMKEYBOARD );
-		}
-		break;
-
-	case CBN_SETFOCUS:
-		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
-		{
-			m_nCurrentFocus = F_SEARCH_BOX;
-		}
-		break;
-
-	case CBN_KILLFOCUS:
-		if( NULL != m_hwndSearchBox && hwndCtl == m_hwndSearchBox )
-		{
-			m_nCurrentFocus = 0;
-
-			//フォーカスがはずれたときに検索キーにしてしまう。
-			//検索キーワードを取得
-			char	szText[_MAX_PATH];
-			memset( szText, 0, sizeof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
-			if( szText[0] )	//キー文字列がある
-			{
-				//検索キーを登録
-				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
-			}
-
 		}
 		break;
 	}
@@ -3290,13 +3280,41 @@ void CEditWnd::AcceptSharedSearchKey()
 	if( m_hwndSearchBox )
 	{
 		int	i;
-		::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-		for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; i++ )
+		// 2013.05.28 Combo_ResetContentだとちらつくのでDeleteStringでリストだけ削除
+		while (SendMessage(m_hwndSearchBox, CB_GETCOUNT, 0L, 0L) > 0) {
+			::SendMessage(m_hwndSearchBox, CB_DELETESTRING, 0L, 0L);
+		}
+		int nSize = m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum;
+		for( i = 0; i < nSize; i++ )
 		{
 			::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 		}
-		::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+		const TCHAR* pszText;
+		if( 0 < nSize ){
+			pszText = m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0];
+		}else{
+			pszText = _T("");
+		}
+		std::tstring strText;
+		GetSearchKey(strText);
+		if( 0 < nSize && 0 != _tcscmp(strText.c_str(), pszText) ){
+			::SetWindowText(m_hwndSearchBox, pszText);
+		}
 	}
+}
+
+int CEditWnd::GetSearchKey(std::tstring& strText)
+{
+	if( m_hwndSearchBox ){
+		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
+		std::vector<TCHAR> vText(nBufferSize);
+
+		::GetWindowText( m_hwndSearchBox, &vText[0], vText.size() );
+		strText = &vText[0];
+	}else{
+		strText = _T("");
+	}
+	return strText.length();
 }
 
 /* デバッグモニタモードに設定 */
@@ -4105,16 +4123,16 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 {
 	if( msg->message == WM_KEYDOWN /* && ::GetParent( msg->hwnd ) == m_hwndSearchBox */ )
 	{
-		if( (TCHAR)msg->wParam == VK_RETURN )  //リターンキー
+		if( msg->wParam == VK_RETURN )  //リターンキー
 		{
 			//検索キーワードを取得
-			char	szText[_MAX_PATH];
-			memset( szText, 0, _countof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
-			if( szText[0] )	//キー文字列がある
+			std::tstring strText;
+			if( 0 < GetSearchKey(strText) )	//キー文字列がある
 			{
-				//検索キーを登録
-				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
+				if( strText.size() < _MAX_PATH ){
+					//検索キーを登録
+					CShareData::getInstance()->AddToSearchKeyArr( strText.c_str() );
+				}
 
 				//検索ボックスを更新	// 2010/6/6 Uchi
 				AcceptSharedSearchKey();
@@ -4130,7 +4148,7 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				OnCommand( (WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
 			}
 		}
-		else if( (TCHAR)msg->wParam == VK_TAB )	//タブキー
+		else if( msg->wParam == VK_TAB )	//タブキー
 		{
 			//フォーカスを移動
 			//	2004.10.27 MIK IME表示位置のずれ修正

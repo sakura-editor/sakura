@@ -3025,40 +3025,42 @@ void CEditView::Command_SEARCH_DIALOG( void )
 }
 
 
-/* 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す) */
-/* 2002.01.16 hor 共通ロジックを関数にしただけ・・・ */
+/*! 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
+	@date 2002.01.16 hor 共通ロジックを関数にしただけ・・・
+*/
 BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
-	BOOL	bChangeState;
+	bool	bChangeState;
 	if( !m_bCurSrchKeyMark
 	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] )
 	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearch.m_sSearchOption
 	){
-		bChangeState = TRUE;
+		bChangeState = true;
 	}else{
-		bChangeState = FALSE;
+		bChangeState = false;
 	}
 
 	m_bCurSrchKeyMark = true;									/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );/* 検索文字列 */
 	m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
-	/* 正規表現 */
-	if( m_sCurSearchOption.bRegularExp
-	 && bChangeState
-	){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
-			return FALSE;
+	if( bChangeState ){
+		/* 正規表現 */
+		if( m_sCurSearchOption.bRegularExp ){
+			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+			if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+				return FALSE;
+			}
+			int nFlag = m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
+			/* 検索パターンのコンパイル */
+			m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 		}
-		int nFlag = 0x00;
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
-	}
 
-	if( bChangeState && bRedrawIfChanged ){
-		/* フォーカス移動時の再描画 */
-		RedrawAll();
+		m_pcEditWnd->AcceptSharedSearchKey();
+
+		if( bRedrawIfChanged ){
+			/* フォーカス移動時の再描画 */
+			RedrawAll();
+		}
 	}
 
 	return TRUE;
@@ -8665,6 +8667,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		// 検索オプション設定
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly=false;		//単語で検索しない
+		m_bCurSrchKeyMark = false;
 		// 2010.06.30 Moca ChangeCurRegexpに再描画フラグ追加。2回再描画しないように
 		ChangeCurRegexp(false); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 
