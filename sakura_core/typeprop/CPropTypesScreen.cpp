@@ -194,7 +194,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPENAME ), FALSE );	//設定の名前
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TYPEEXTS ), FALSE );	//ファイル拡張子
 		}
-		UpDown_SetRange(::GetDlgItem(hwndDlg, IDC_SPIN_LINESPACE), LINESPACE_MAX, -LINESPACE_MAX);
+		UpDown_SetRange(::GetDlgItem(hwndDlg, IDC_SPIN_LINESPACE), -LINESPACE_MAX, LINESPACE_MAX);
 
 		return TRUE;
 	case WM_COMMAND:
