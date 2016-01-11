@@ -205,7 +205,7 @@ void CPropEdit::SetData( HWND hwndDlg )
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteFixMode, m_Common.m_sEdit.m_bOverWriteFixMode );
 
 	// 矩形入力で選択範囲を削除する
-	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteBoxDelete, m_Common.m_sEdit.m_bOverWriteFixMode );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteBoxDelete, m_Common.m_sEdit.m_bOverWriteBoxDelete );
 
 	//	URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_sEdit.m_bSelectClickedURL );
