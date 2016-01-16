@@ -103,8 +103,8 @@ LPCTSTR CPPA::GetDllNameImp(int nIndex)
 
 	関数のアドレスを取得してメンバに保管する．
 
-	@retval 0 成功
-	@retval 1 アドレス取得に失敗
+	@retval true 成功
+	@retval false アドレス取得に失敗
 */
 bool CPPA::InitDllImp()
 {
