@@ -208,7 +208,7 @@ void CDialog::SetDialogPosSize()
 	if( -1 != m_xPos && -1 != m_yPos ){
 		/* ウィンドウ位置・サイズを再現 */
 		// 2014.11.28 フォント変更対応
-		if( m_nWidth == -1 ){
+		if( m_nWidth == -1 && m_nHeight == -1 ){
 			RECT	rc;
 			::GetWindowRect( m_hWnd, &rc );
 			m_nWidth = rc.right - rc.left;
