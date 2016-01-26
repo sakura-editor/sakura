@@ -92,10 +92,11 @@ bool CMigemo::InitDllImp()
 	return true;
 }
 
-int CMigemo::DeInitDll(void)
+bool CMigemo::DeinitDllImp(void)
 {
 	migemo_close();
-	return 0;
+
+	return true;
 }
 
 LPCTSTR CMigemo::GetDllNameImp(int nIndex)
@@ -334,6 +335,7 @@ int CMigemo::migemo_load_all()
 
 CMigemo::~CMigemo()
 {
+	DeinitDll();
 }
 
 int __cdecl pcre_char2int_sjis(const unsigned char* in, unsigned int* out)
