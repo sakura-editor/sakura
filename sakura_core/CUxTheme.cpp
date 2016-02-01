@@ -51,7 +51,7 @@ CUxTheme::~CUxTheme()
 	@author ryoji
 	@date 2007.04.01 ryoji êVãK
 */
-bool CUxTheme::Init( char* str )
+bool CUxTheme::InitThemeDll( TCHAR* str )
 {
 	if( m_bInitialized )
 		return IsAvailable();
@@ -68,7 +68,7 @@ LPCTSTR CUxTheme::GetDllName( LPCTSTR )
 	return _T("UxTheme.dll");
 }
 
-int CUxTheme::InitDll(void)
+bool CUxTheme::InitDll(void)
 {
 	const ImportTable table[] = {
 		{ &m_pfnIsThemeActive,		"IsThemeActive" },
@@ -77,16 +77,16 @@ int CUxTheme::InitDll(void)
 	};
 
 	if( !RegisterEntries( table ) ){
-		return 1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 /*! IsThemeActive API Wrapper */
 BOOL CUxTheme::IsThemeActive( VOID )
 {
-	if( !Init() )
+	if( !InitThemeDll() )
 		return FALSE;
 	return m_pfnIsThemeActive();
 }
@@ -94,7 +94,7 @@ BOOL CUxTheme::IsThemeActive( VOID )
 /*! SetWindowTheme API Wrapper */
 HRESULT CUxTheme::SetWindowTheme( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList )
 {
-	if( !Init() )
+	if( !InitThemeDll() )
 		return S_FALSE;
 	return m_pfnSetWindowTheme( hwnd, pszSubAppName, pszSubIdList );
 }

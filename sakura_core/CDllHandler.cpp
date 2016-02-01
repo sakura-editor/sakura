@@ -34,7 +34,8 @@
 
 CDllHandler::CDllHandler()
 	: m_hInstance( NULL )
-{}
+{
+}
 
 /*!
 	オブジェクト消滅前にDLLが読み込まれた状態であればDLLの解放を行う．
@@ -69,12 +70,12 @@ int CDllHandler::LoadLibrary(const char* str)
 		m_hInstance = LoadLibraryExedir( name );
 	}
 
-	int ret = InitDll();
-	if( ret != 0 ){
+	bool ret = InitDll();
+	if(!ret){
 		::FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
 	}
-	return ret;
+	return ret ? 0 : -1;
 }
 
 int CDllHandler::FreeLibrary(bool force)
@@ -84,19 +85,19 @@ int CDllHandler::FreeLibrary(bool force)
 		return 0;
 	}
 
-	int ret = DeinitDll();
-	if( ret == 0 || force ){
+	bool ret = DeinitDll();
+	if( ret == false || force ){
 		::FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
 	}
-	return ret;
+	return ret ? 0 : -1;
 }
 /*!
 	実装を省略できるようにするため、空の関数を用意しておく
 */
-int CDllHandler::DeinitDll(void)
+bool CDllHandler::DeinitDll(void)
 {
-	return 0;
+	return true;
 }
 
 /*!

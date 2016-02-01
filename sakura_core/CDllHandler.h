@@ -39,11 +39,21 @@
 //! DLLの動的なLoad/Unloadを行うためのクラス
 /*!
 	@author genta
-	@date Jun. 10, 2001
+	@date Jun. 10, 2001 genta
 	@date Apr. 15, 2002 genta RegisterEntriesの追加。
 */
 class CDllHandler {
 public:
+	/*!
+		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
+		@author YAZAKI
+		@date 2002.01.26
+	*/
+	struct ImportTable{
+		void*		proc;
+		const char*	name;
+	};
+
 	CDllHandler();
 	virtual ~CDllHandler();
 
@@ -82,38 +92,27 @@ public:
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
 protected:
-
-	/*!
-		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
-		@author YAZAKI
-		@date 2002.01.26
-	*/
-	struct ImportTable 
-	{
-		void* proc;
-		const char* name;
-	};
-
 	//!	DLLの初期化
 	/*!
 		DLLのロードに成功した直後に呼び出される．エントリポイントの
 		確認などを行う．
 
-		@retval 0 正常終了
-		@retval other 異常終了．値の意味は自由に設定して良い．
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note 0以外の値を返した場合は、読み込んだDLLを解放する．
+		@note falseを返した場合は、読み込んだDLLを解放する．
 	*/
-	virtual int InitDll(void) = 0;
+	virtual bool InitDll(void) = 0;
+
 	//!	関数の初期化
 	/*!
 		DLLのアンロードを行う直前に呼び出される．メモリの解放などを
 		行う．
 
-		@retval 0 正常終了
-		@retval other 異常終了．値の意味は自由に設定して良い．
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note 0以外を返したときはDLLのUnloadは行われない．
+		@note falseを返したときはDLLのUnloadは行われない．
 		@par 注意
 		デストラクタからFreeLibrary及びDeinitDllが呼び出されたときは
 		ポリモーフィズムが行われないためにサブクラスのDeinitDllが呼び出されない。
@@ -128,7 +127,8 @@ protected:
 		
 		@date 2002.04.15 genta 注意書き追加
 	*/
-	virtual int DeinitDll(void);
+	virtual bool DeinitDll(void);
+
 	//! DLLファイル名の取得
 	/*!
 		@date 2001.07.05 genta 引数追加。パスの指定などに使える
@@ -156,11 +156,11 @@ protected:
 		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
 	virtual LPCTSTR GetDllNameInOrder(LPCTSTR str, int index);
-	
+
 	bool RegisterEntries(const ImportTable table[]);
 
 private:
-	HINSTANCE m_hInstance;
+	HINSTANCE		m_hInstance;
 };
 
 #endif

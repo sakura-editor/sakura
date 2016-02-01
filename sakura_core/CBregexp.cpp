@@ -98,10 +98,10 @@ LPCTSTR CBregexp::GetDllNameInOrder( LPCTSTR str, int index )
 
 	関数のアドレスを取得してメンバに保管する．
 
-	@retval 0 成功
-	@retval 1 アドレス取得に失敗
+	@retval true 成功
+	@retval false アドレス取得に失敗
 */
-int CBregexp::InitDll(void)
+bool CBregexp::InitDll(void)
 {
 	//	Apr. 15, 2002 genta
 	//	CPPA.cpp を参考に設定を配列化した
@@ -117,7 +117,7 @@ int CBregexp::InitDll(void)
 	};
 	
 	if( ! RegisterEntries( table )){
-		return 1;
+		return false;
 	}
 	// 2003.11.01 かろと 拡張した関数のアドレス取得
 	BMatchEx = (BREGEXP_BMatchEx)GetProcAddress( GetInstance(), "BMatchEx" );
@@ -125,7 +125,7 @@ int CBregexp::InitDll(void)
 
 	this->CheckSupportedSyntax();
 
-	return 0;
+	return true;
 }
 
 /*! @brief 検索パターンが特定の検索パターンかチェックする

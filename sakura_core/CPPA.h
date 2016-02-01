@@ -40,9 +40,9 @@ PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚ÌPascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|
 #ifndef _DLL_CPPA_H_
 #define _DLL_CPPA_H_
 
+#include <stdio.h>
 #include "CSMacroMgr.h"
 #include "CDllHandler.h"
-#include "stdio.h"
 
 #define PPADLL_VER 123
 
@@ -83,7 +83,7 @@ protected:
 public:
 	virtual LPCTSTR GetDllName(LPCTSTR);
 protected:
-	virtual int InitDll(void);
+	virtual bool InitDll(void);
 
 private:
 	//	DLL Interface‚Ìó‚¯M

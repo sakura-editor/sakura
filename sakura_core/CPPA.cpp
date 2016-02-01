@@ -107,10 +107,10 @@ LPCTSTR CPPA::GetDllName( LPCTSTR str )
 
 	関数のアドレスを取得してメンバに保管する．
 
-	@retval 0 成功
-	@retval 1 アドレス取得に失敗
+	@retval true 成功
+	@retval false アドレス取得に失敗
 */
-int CPPA::InitDll()
+bool CPPA::InitDll()
 {
 	/* PPA.DLLが持っている関数を準備 */
 
@@ -167,7 +167,7 @@ int CPPA::InitDll()
 	//	Apr. 15, 2002 genta
 	//	CDllHandlerの共通関数化した
 	if( ! RegisterEntries(table) )
-		return 1;
+		return false;
 
 	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
 	SetStrFunc((void *)CPPA::stdStrFunc);
@@ -204,7 +204,7 @@ int CPPA::InitDll()
 		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
 		SetDefProc( buf );
 	}
-	return 0; 
+	return true; 
 }
 
 /*! PPAに関数を登録するための文字列を作成する

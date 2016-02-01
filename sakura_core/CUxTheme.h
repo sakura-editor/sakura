@@ -60,8 +60,8 @@ public:
 protected:
 	bool m_bInitialized;
 
-	bool Init( char* str = NULL );
-	virtual int InitDll( void );
+	bool InitThemeDll( TCHAR* str = NULL );
+	virtual bool InitDll( void );
 	virtual LPCTSTR GetDllName( LPCTSTR );
 
 protected:

@@ -44,7 +44,7 @@ LPCTSTR CHtmlHelp::GetDllName(LPCTSTR)
 	return _T("HHCTRL.OCX");
 }
 
-int CHtmlHelp::InitDll(void)
+bool CHtmlHelp::InitDll(void)
 {
 	if((HtmlHelp = (Proc_HtmlHelp)::GetProcAddress(GetInstance(),
 #ifdef _UNICODE
@@ -53,9 +53,9 @@ int CHtmlHelp::InitDll(void)
 	"HtmlHelpA"
 #endif
 	)) == NULL )
-		return 1;
+		return false;
 
-	return 0;
+	return true;
 }
 
 

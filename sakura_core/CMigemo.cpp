@@ -24,6 +24,15 @@
 #include "file.h"
 #include "charcode.h"
 
+/*! @brief PCRE メタキャラクタのエスケープ処理を行う。
+ （CMigemo::migemo_setproc_int2char の引数として使用）
+ @param[in] in 入力文字コード(unsigned int)
+ @param[out] out 出力バイト列(unsigned char*)
+ @return 出力された文字列のバイト数。
+  0を返せばデフォルトのプロシージャが実行される。
+*/
+static int __cdecl pcre_int2char(unsigned int in, unsigned char* out);	// 2009.04.30 miau
+
 int __cdecl pcre_char2int_sjis(const unsigned char*, unsigned int*);
 int __cdecl pcre_char2int_utf8(const unsigned char*, unsigned int*);
 int __cdecl pcre_int2char_utf8(unsigned int, unsigned char*);
@@ -31,7 +40,7 @@ int __cdecl pcre_int2char_utf8(unsigned int, unsigned char*);
 //-----------------------------------------
 //	DLL 初期化関数
 //-----------------------------------------
-int CMigemo::InitDll(void)
+bool CMigemo::InitDll(void)
 {
 	//	staticにしてはいけないらしい
 	
@@ -50,7 +59,7 @@ int CMigemo::InitDll(void)
 	};
 	
 	if( ! RegisterEntries(table) ){
-			return 1;
+		return false;
 	}
 
 	m_migemo_open_s             = (Proc_migemo_open_s)            m_migemo_open;
@@ -76,15 +85,16 @@ int CMigemo::InitDll(void)
 	}
 
 	if( ! migemo_open(NULL) )
-		return 1;
+		return false;
 	
-	return 0;
+	return true;
 }
 
-int CMigemo::DeInitDll(void)
+bool CMigemo::DeinitDll(void)
 {
 	migemo_close();
-	return 0;
+
+	return true;
 }
 
 LPCTSTR CMigemo::GetDllName(const char *)
@@ -288,6 +298,7 @@ int CMigemo::migemo_load_all()
 
 CMigemo::~CMigemo()
 {
+	CDllHandler::FreeLibrary();
 }
 
 int __cdecl pcre_char2int_sjis(const unsigned char* in, unsigned int* out)

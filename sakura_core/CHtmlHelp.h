@@ -51,7 +51,7 @@ public:
 	Proc_HtmlHelp HtmlHelp;
 
 protected:
-	virtual int InitDll(void);
+	virtual bool InitDll(void);
 	virtual LPCTSTR GetDllName(const char *);
 };
 

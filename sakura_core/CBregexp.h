@@ -211,7 +211,7 @@ public:
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int);
-	virtual int InitDll(void);
+	virtual bool InitDll(void);
 
 	//	DLL Interfaceの受け皿
 	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
@@ -256,7 +256,7 @@ private:
 	//	内部関数
 
 	//! 検索パターン作成
-	int CheckPattern( const char *szPattern );
+	int CheckPattern( const char* szPattern );
 	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption );
 	char* MakePattern( const char* szPattern, const char* szPattern2, int nOption );
 	char* MakePatternAlternate( const char* const szSearch, const char* const szReplace, int nOption );
