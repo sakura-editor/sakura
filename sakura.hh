@@ -457,6 +457,7 @@
 #define HIDC_RADIO_SELDIR						10222 //指定フォルダ
 #define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダパス
 #define HIDC_CHECK_ENABLEEXTEOL					10224 //改行コードNEL,PS,LSを有効にする
+#define HIDC_CHECK_BOXSELECTLOCK				10225 //矩形選択移動で選択をロックする
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
 #define HIDC_CHECK_bCheckFileTimeStamp			10311 //更新の監視
 #define HIDC_CHECK_EXCVLUSIVE_WRITE				10312 //ファイルの排他制御（上書き禁止）
@@ -699,6 +700,10 @@
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE			11546 //ビューアを複数起動しない	// 2006.08.06 ryoji
 #define HIDC_CHECK_CHKENTERATEND				11547 //終了時、改行の一致を検査する	// 2013/4/14 Uchi
 #define HIDC_COMBO_LANGUAGE						11548 //言語選択
+#define HIDC_COMBO_TSV_MODE						11549 //TSVモード
+#define HIDC_CHECK_INDENTCPPSTR					11550 //C/C++インデントで文字列を無視する
+#define HIDC_CHECK_INDENTCPPCMT					11551 //C/C++インデントでコメントを無視する
+#define HIDC_CHECK_INDENTCPPUNDO				11552 //C/C++インデントでUndoバッファを分ける
 #define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
 #define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
 #define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
@@ -1104,6 +1109,7 @@
 #define HIDC_CHECK_DISP_UTF8_CODEPOINT	14203		// UTF-8をコードポイントで表示する
 #define HIDC_CHECK_DISP_SP_CODEPOINT	14204		// サロゲートペアをコードポイントで表示する
 #define HIDC_CHECK_DISP_SELCOUNT_BY_BYTE	14205	// 選択文字数を文字単位ではなくバイト単位で表示する
+#define HIDC_CHECK_DISP_COL_BY_CHAR		14206		// 現在桁をルーラー単位ではなく文字単位で表示する
 
 // 共通設定メインメニュー			// 2010/5/16	Uchi
 #define HIDC_TREE_RES						14400	//メニュー一覧
