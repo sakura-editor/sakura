@@ -28,15 +28,15 @@ void CBookmarkManager::ResetAllBookMark( void )
 	@date 2001.12.03 hor
 */
 bool CBookmarkManager::SearchBookMark(
-	CLogicInt			nLineNum,		/* 検索開始行 */
-	ESearchDirection	bPrevOrNext,	/* 0==前方検索 1==後方検索 */
-	CLogicInt*			pnLineNum 		/* マッチ行 */
+	CLogicInt			nLineNum,		//!< 検索開始行
+	ESearchDirection	bPrevOrNext,	//!< 検索方向
+	CLogicInt*			pnLineNum 		//!< マッチ行
 )
 {
 	CDocLine*	pDocLine;
 	CLogicInt	nLinePos=nLineNum;
 
-	//前方検索
+	// 後方検索
 	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
@@ -49,7 +49,7 @@ bool CBookmarkManager::SearchBookMark(
 			pDocLine = pDocLine->GetPrevLine();
 		}
 	}
-	//後方検索
+	// 前方検索
 	else{
 		nLinePos++;
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
