@@ -41,7 +41,7 @@ void CEditView::TranslateCommand_isearch(
 	LPARAM&			lparam4
 )
 {
-	if (m_nISearchMode <= 0 )
+	if (m_nISearchMode <= SEARCH_NONE )
 		return;
 
 	switch (nCommand){
@@ -113,22 +113,22 @@ bool CEditView::ProcessCommand_isearch(
 
 		//	検索モードへの移行
 		case F_ISEARCH_NEXT:
-			ISearchEnter(1,SEARCH_FORWARD);	//前方インクリメンタルサーチ //2004.10.13 isearch
+			ISearchEnter(SEARCH_NORMAL, SEARCH_FORWARD);	//前方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_PREV:
-			ISearchEnter(1,SEARCH_BACKWARD); //後方インクリメンタルサーチ //2004.10.13 isearch
+			ISearchEnter(SEARCH_NORMAL, SEARCH_BACKWARD);	//後方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_REGEXP_NEXT:
-			ISearchEnter(2,SEARCH_FORWARD);	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+			ISearchEnter(SEARCH_REGEXP, SEARCH_FORWARD);	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_REGEXP_PREV:
-			ISearchEnter(2,SEARCH_BACKWARD);	//後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+			ISearchEnter(SEARCH_REGEXP, SEARCH_BACKWARD);	//後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_MIGEMO_NEXT:
-			ISearchEnter(3,SEARCH_FORWARD);	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+			ISearchEnter(SEARCH_MIGEMO, SEARCH_FORWARD);	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_MIGEMO_PREV:
-			ISearchEnter(3,SEARCH_BACKWARD); //後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+			ISearchEnter(SEARCH_MIGEMO, SEARCH_BACKWARD);	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 	}
 	return false;
@@ -145,7 +145,7 @@ bool CEditView::ProcessCommand_isearch(
 	@date 2012.10.11 novice m_sCurSearchOption/m_sSearchOptionの同期をswitchの前に変更
 	@date 2012.10.11 novice MIGEMOの処理をcase内に移動
 */
-void CEditView::ISearchEnter( int mode, ESearchDirection direction)
+void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 {
 
 	if (m_nISearchMode == mode ) {
@@ -166,13 +166,13 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 
 		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
 		switch( mode ) {
-			case 1: // 通常インクリメンタルサーチ
+			case SEARCH_NORMAL: // 通常インクリメンタルサーチ
 				m_sCurSearchOption.bRegularExp = false;
 				m_sCurSearchOption.bLoHiCase = false;
 				m_sCurSearchOption.bWordOnly = false;
 				//SendStatusMessage(_T("I-Search: "));
 				break;
-			case 2: // 正規表現インクリメンタルサーチ
+			case SEARCH_REGEXP: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
 					SendStatusMessage(LS(STR_EDITVWISRCH_REGEX));
@@ -182,7 +182,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				m_sCurSearchOption.bLoHiCase = false;
 				//SendStatusMessage(_T("[RegExp] I-Search: "));
 				break;
-			case 3: // MIGEMOインクリメンタルサーチ
+			case SEARCH_MIGEMO: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
 					SendStatusMessage(LS(STR_EDITVWISRCH_REGEX));
@@ -215,7 +215,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		
 		//	Feb. 04, 2005 genta	検索開始位置を記録
 		//	インクリメンタルサーチ間でモードを切り替える場合には開始と見なさない
-		if( m_nISearchMode == 0 ){
+		if( m_nISearchMode == SEARCH_NONE ){
 			m_ptSrchStartPos_PHY = GetCaret().GetCaretLogicPos();
 		}
 		
@@ -255,8 +255,8 @@ void CEditView::ISearchExit()
 	GetDllShareData().m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
 	m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
 	m_nISearchDirection = SEARCH_BACKWARD;
-	m_nISearchMode = 0;
-	
+	m_nISearchMode = SEARCH_NONE;
+
 	if (m_nISearchHistoryCount == 0){
 		m_strCurSearchKey.clear();
 	}
@@ -339,7 +339,7 @@ void CEditView::ISearchExec(bool bNext)
 {
 	//検索を実行する.
 
-	if ( (m_strCurSearchKey.size() == 0) || (m_nISearchMode == 0)){
+	if ( (m_strCurSearchKey.size() == 0) || (m_nISearchMode == SEARCH_NONE)){
 		//ステータスの表示
 		CNativeT msg;
 		ISearchSetStatusMsg(&msg);
@@ -355,11 +355,11 @@ void CEditView::ISearchExec(bool bNext)
 	if ( bNext && m_bISearchWrap ) {
 		switch (m_nISearchDirection)
 		{
-		case 1:
+		case SEARCH_FORWARD:
 			nLine = CLayoutInt(0);
 			nIdx1 = CLayoutInt(0);
 			break;
-		case 0:
+		case SEARCH_BACKWARD:
 			//最後から検索
 			CLogicInt nLineP;
 			int nIdxP;
@@ -373,14 +373,14 @@ void CEditView::ISearchExec(bool bNext)
 		}
 	}else if (GetSelectionInfo().IsTextSelected()){
 		switch( m_nISearchDirection * 2 + (bNext ? 1: 0)){
-			case 2 : //前方検索で現在位置から検索のとき
-			case 1 : //後方検索で次を検索のとき
+			case (SEARCH_FORWARD * 2): //前方検索で現在位置から検索のとき
+			case (SEARCH_BACKWARD * 2 + 1): //後方検索で次を検索のとき
 				//選択範囲の先頭を検索開始位置に
 				nLine = GetSelectionInfo().m_sSelect.GetFrom().GetY2();
 				nIdx1 = GetSelectionInfo().m_sSelect.GetFrom().GetX2();
 				break;
-			case 0 : //前方検索で次を検索
-			case 3 : //後方検索で現在位置から検索
+			case (SEARCH_BACKWARD * 2): //後方検索で現在位置から検索
+			case (SEARCH_FORWARD * 2 + 1): //前方検索で次を検索
 				//選択範囲の後ろから
 				nLine = GetSelectionInfo().m_sSelect.GetTo().GetY2();
 				nIdx1 = GetSelectionInfo().m_sSelect.GetTo().GetX2();
@@ -414,7 +414,7 @@ void CEditView::ISearchExec(bool bNext)
 	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLine,						// 検索開始レイアウト行
 		nIdx,						// 検索開始データ位置
-		m_nISearchDirection,		// 0==前方検索 1==後方検索
+		m_nISearchDirection,		// 検索方向
 		&sMatchRange,				// マッチレイアウト範囲
 		m_sSearchPattern
 	);
@@ -502,11 +502,11 @@ void CEditView::ISearchBack(void) {
 void CEditView::ISearchWordMake(void)
 {
 	switch ( m_nISearchMode ) {
-	case 1: // 通常インクリメンタルサーチ
-	case 2: // 正規表現インクリメンタルサーチ
+	case SEARCH_NORMAL: // 通常インクリメンタルサーチ
+	case SEARCH_REGEXP: // 正規表現インクリメンタルサーチ
 		m_sSearchPattern.SetPattern(this->GetHwnd(), m_strCurSearchKey.c_str(), m_strCurSearchKey.size(), m_sCurSearchOption, &m_CurRegexp);
 		break;
-	case 3: // MIGEMOインクリメンタルサーチ
+	case SEARCH_MIGEMO: // MIGEMOインクリメンタルサーチ
 		{
 			//migemoで捜す
 			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_strCurSearchKey.c_str());
@@ -535,20 +535,20 @@ void CEditView::ISearchSetStatusMsg(CNativeT* msg) const
 {
 
 	switch ( m_nISearchMode){
-	case 1 :
+	case SEARCH_NORMAL:
 		msg->SetString(_T("I-Search") );
 		break;
-	case 2 :
+	case SEARCH_REGEXP:
 		msg->SetString(_T("[RegExp] I-Search") );
 		break;
-	case 3 :
+	case SEARCH_MIGEMO:
 		msg->SetString(_T("[Migemo] I-Search") );
 		break;
 	default:
 		msg->SetString(_T(""));
 		return;
 	}
-	if (m_nISearchDirection == 0){
+	if (m_nISearchDirection == SEARCH_BACKWARD){
 		msg->AppendString(_T(" Backward: "));
 	}
 	else{
@@ -574,17 +574,17 @@ bool CEditView::IsISearchEnabled(int nCommand) const
 	switch( nCommand )
 	{
 	case F_ISEARCH_NEXT:
-		return m_nISearchMode == 1 && m_nISearchDirection == 1;
+		return (m_nISearchMode == SEARCH_NORMAL) && (m_nISearchDirection == SEARCH_FORWARD);
 	case F_ISEARCH_PREV:
-		return m_nISearchMode == 1 && m_nISearchDirection == 0;
+		return (m_nISearchMode == SEARCH_NORMAL) && (m_nISearchDirection == SEARCH_BACKWARD);
 	case F_ISEARCH_REGEXP_NEXT:
-		return m_nISearchMode == 2 && m_nISearchDirection == 1;
+		return (m_nISearchMode == SEARCH_REGEXP) && (m_nISearchDirection == SEARCH_FORWARD);
 	case F_ISEARCH_REGEXP_PREV:
-		return m_nISearchMode == 2 && m_nISearchDirection == 0;
+		return (m_nISearchMode == SEARCH_REGEXP) && (m_nISearchDirection == SEARCH_BACKWARD);
 	case F_ISEARCH_MIGEMO_NEXT:
-		return m_nISearchMode == 3 && m_nISearchDirection == 1;
+		return (m_nISearchMode == SEARCH_MIGEMO) && (m_nISearchDirection == SEARCH_FORWARD);
 	case F_ISEARCH_MIGEMO_PREV:
-		return m_nISearchMode == 3 && m_nISearchDirection == 0;
+		return (m_nISearchMode == SEARCH_MIGEMO) && (m_nISearchDirection == SEARCH_BACKWARD);
 	}
 	return false;
 }

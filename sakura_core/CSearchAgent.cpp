@@ -495,10 +495,10 @@ int CSearchAgent::SearchWord(
 	if( sSearchOption.bRegularExp ){
 		nLinePos = ptSerachBegin.GetY2();		// 検索行＝検索開始行
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-		//前方検索
+		// 後方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			//
-			// 前方(↑)検索(正規表現)
+			// 後方(↑)検索(正規表現)
 			//
 			nHitTo = ptSerachBegin.x;				// 検索開始位置
 			nIdxPos = 0;
@@ -546,10 +546,10 @@ int CSearchAgent::SearchWord(
 				}
 			}
 		}
-		//後方検索
+		// 前方検索
 		else {
 			//
-			// 後方検索(正規表現)
+			// 前方検索(正規表現)
 			//
 			nIdxPos = ptSerachBegin.x;
 			while( NULL != pDocLine ){
@@ -594,7 +594,7 @@ int CSearchAgent::SearchWord(
 			英単語やC/C++識別子などの検索条件ならヒットします。
 		*/
 
-		// 前方検索
+		// 後方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = ptSerachBegin.GetY2();
 			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
@@ -638,7 +638,7 @@ int CSearchAgent::SearchWord(
 				}
 			}
 		}
-		// 後方検索
+		// 前方検索
 		else{
 			nLinePos = ptSerachBegin.GetY2();
 			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
@@ -668,7 +668,7 @@ int CSearchAgent::SearchWord(
 	//普通の検索 (正規表現でも単語単位でもない)
 	else{
 		const int	nPatternLen = pattern.GetLen();
-		//前方検索
+		// 後方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = ptSerachBegin.GetY2();
 			nHitTo = ptSerachBegin.x;
@@ -725,7 +725,7 @@ int CSearchAgent::SearchWord(
 			nRetVal = 0;
 			goto end_of_func;
 		}
-		//後方検索
+		// 前方検索
 		else{
 			nIdxPos = ptSerachBegin.x;
 			nLinePos = ptSerachBegin.GetY2();

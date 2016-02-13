@@ -277,7 +277,7 @@ BOOL CEditView::Create(
 	// to here  2002.04.10 minfu
 	
 	//2004.10.23 isearch
-	m_nISearchMode = 0;
+	m_nISearchMode = SEARCH_NONE;
 	m_pcmigemo = NULL;
 
 	// 2007.10.02 nasukoji

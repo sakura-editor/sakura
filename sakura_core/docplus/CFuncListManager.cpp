@@ -48,7 +48,7 @@ void CFuncListManager::SetLineFuncList(CDocLine* pcDocLine, bool bFlag)
 bool CFuncListManager::SearchFuncListMark(
 	const CDocLineMgr*	pcDocLineMgr,
 	CLogicInt			nLineNum,		//!< 検索開始行
-	ESearchDirection	bPrevOrNext,
+	ESearchDirection	bPrevOrNext,	//!< 検索方向
 	CLogicInt*			pnLineNum 		//!< マッチ行
 ) const
 {

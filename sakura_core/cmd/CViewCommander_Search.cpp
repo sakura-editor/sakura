@@ -197,14 +197,14 @@ re_do:;
 		nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
 			nLineNum,						// 検索開始レイアウト行
 			nIdx,							// 検索開始データ位置
-			SEARCH_FORWARD,					// 0==前方検索 1==後方検索
+			SEARCH_FORWARD,					// 前方検索
 			&sRangeA,						// マッチレイアウト範囲
 			m_pCommanderView->m_sSearchPattern
 		);
 	}else{
 		nSearchResult = CSearchAgent(&GetDocument()->m_cDocLineMgr).SearchWord(
 			CLogicPoint(nIdx, nLineNumLogic),
-			SEARCH_FORWARD,					// 0==前方検索 1==後方検索
+			SEARCH_FORWARD,					// 前方検索
 			pcSelectLogic,
 			m_pCommanderView->m_sSearchPattern
 		);
@@ -404,7 +404,7 @@ re_do:;							//	hor
 	if( GetDocument()->m_cLayoutMgr.SearchWord(
 		nLineNum,								// 検索開始レイアウト行
 		nIdx,									// 検索開始データ位置
-		SEARCH_BACKWARD,						// 0==前方検索 1==後方検索
+		SEARCH_BACKWARD,						// 後方検索
 		&sRangeA,								// マッチレイアウト範囲
 		m_pCommanderView->m_sSearchPattern
 	) ){

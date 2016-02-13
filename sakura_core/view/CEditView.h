@@ -477,7 +477,7 @@ public:
 private:
 	/* インクリメンタルサーチ */ 
 	//2004.10.24 isearch migemo
-	void ISearchEnter( int mode, ESearchDirection direction);
+	void ISearchEnter( ESearchMode mode, ESearchDirection direction);
 	void ISearchExit();
 	void ISearchExec(DWORD wChar);
 	void ISearchExec(LPCWSTR pszText);
@@ -700,8 +700,8 @@ public:
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 	CLogicPoint			m_ptSrchStartPos_PHY;		// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	BOOL				m_bSearch;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
-	ESearchDirection	m_nISearchDirection;
-	int					m_nISearchMode;
+	ESearchDirection	m_nISearchDirection;		//!< 検索方向
+	ESearchMode			m_nISearchMode;				//!< 検索モード
 	bool				m_bISearchWrap;
 	bool				m_bISearchFlagHistory[256];
 	int					m_nISearchHistoryCount;

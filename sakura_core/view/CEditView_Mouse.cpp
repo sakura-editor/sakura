@@ -54,7 +54,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	}
 
 	//isearch 2004.10.22 isearch‚ðƒLƒƒƒ“ƒZƒ‹‚·‚é
-	if (m_nISearchMode > 0 ){
+	if (m_nISearchMode > SEARCH_NONE ){
 		ISearchExit();
 	}
 	if( m_nAutoScrollMode ){
@@ -1097,8 +1097,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				SetHandCursor();		// Hand Cursor‚ðÝ’è 2013/1/29 Uchi
 			}else{
 				//migemo isearch 2004.10.22
-				if( m_nISearchMode > 0 ){
-					if (m_nISearchDirection == 1){
+				if( m_nISearchMode > SEARCH_NONE ){
+					if (m_nISearchDirection == SEARCH_FORWARD){
 						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 					}else{
 						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
