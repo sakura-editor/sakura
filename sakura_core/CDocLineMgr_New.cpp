@@ -489,15 +489,15 @@ void CDocLineMgr::ResetAllBookMark( void )
 	@date 2001.12.03 hor
 */
 bool CDocLineMgr::SearchBookMark(
-	int					nLineNum,		/* 検索開始行 */
-	ESearchDirection	bPrevOrNext,	/* 0==前方検索 1==後方検索 */
-	int*				pnLineNum 		/* マッチ行 */
+	int					nLineNum,		//!< 検索開始行
+	ESearchDirection	bPrevOrNext,	//!< 検索方向
+	int*				pnLineNum 		//!< マッチ行
 )
 {
 	CDocLine*	pDocLine;
 	int			nLinePos=nLineNum;
 
-	//前方検索
+	// 後方検索
 	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
 		pDocLine = GetLine( nLinePos );
@@ -510,7 +510,7 @@ bool CDocLineMgr::SearchBookMark(
 			pDocLine = pDocLine->m_pPrev;
 		}
 	}
-	//後方検索
+	// 前方検索
 	else{
 		nLinePos++;
 		pDocLine = GetLine( nLinePos );
@@ -692,14 +692,14 @@ void CDocLineMgr::ResetAllDiffMark( void )
 */
 int CDocLineMgr::SearchDiffMark(
 	int					nLineNum,		//!< 検索開始行
-	ESearchDirection	bPrevOrNext,	//!< 0==前方検索 1==後方検索
+	ESearchDirection	bPrevOrNext,	//!< 検索方向
 	int*				pnLineNum 		//!< マッチ行
 )
 {
 	CDocLine*	pDocLine;
 	int			nLinePos = nLineNum;
 
-	//前方検索
+	// 後方検索
 	if( bPrevOrNext == SEARCH_BACKWARD )
 	{
 		nLinePos--;
@@ -715,7 +715,7 @@ int CDocLineMgr::SearchDiffMark(
 			pDocLine = pDocLine->m_pPrev;
 		}
 	}
-	//後方検索
+	// 前方検索
 	else
 	{
 		nLinePos++;

@@ -1275,10 +1275,10 @@ int CDocLineMgr::SearchWord(
 	if( sSearchOption.bRegularExp ){
 		nLinePos = nLineNum;		// 検索行＝検索開始行
 		pDocLine = GetLine( nLinePos );
-		//前方検索
+		// 後方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			//
-			// 前方(↑)検索(正規表現)
+			// 後方(↑)検索(正規表現)
 			//
 			nHitTo = nIdx;				// 検索開始位置
 			nIdxPos = 0;
@@ -1326,10 +1326,10 @@ int CDocLineMgr::SearchWord(
 				}
 			}
 		}
-		//後方検索
+		// 前方検索
 		else {
 			//
-			// 後方検索(正規表現)
+			// 前方検索(正規表現)
 			//
 			nIdxPos = nIdx;
 			while( NULL != pDocLine ){
@@ -1449,7 +1449,7 @@ int CDocLineMgr::SearchWord(
 	}
 	//普通の検索 (正規表現でも単語単位でもない)
 	else{
-		//前方検索
+		// 後方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
 			nHitTo = nIdx;
@@ -1507,7 +1507,7 @@ int CDocLineMgr::SearchWord(
 			nRetVal = 0;
 			goto end_of_func;
 		}
-		//後方検索
+		// 前方検索
 		else{
 			nIdxPos = nIdx;
 			nLinePos = nLineNum;

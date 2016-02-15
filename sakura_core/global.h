@@ -423,16 +423,24 @@ enum MOUSEFUNCTION_ASSIGN {
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
 enum WRAP_TEXT_WRAP_METHOD {
-	WRAP_NO_TEXT_WRAP		= 0,		// 折り返さない（スクロールバーをテキスト幅に合わせる）
-	WRAP_SETTING_WIDTH,					// 指定桁で折り返す
-	WRAP_WINDOW_WIDTH,					// 右端で折り返す
+	WRAP_NO_TEXT_WRAP		= 0,		//!< 折り返さない（スクロールバーをテキスト幅に合わせる）
+	WRAP_SETTING_WIDTH,					//!< 指定桁で折り返す
+	WRAP_WINDOW_WIDTH,					//!< 右端で折り返す
+};
+
+//!検索モード
+enum ESearchMode {
+	SEARCH_NONE   = 0, //!< インクリメンタルサーチ無効
+	SEARCH_NORMAL = 1, //!< 通常インクリメンタルサーチ
+	SEARCH_REGEXP = 2, //!< 正規表現インクリメンタルサーチ
+	SEARCH_MIGEMO = 3, //!< MIGEMOインクリメンタルサーチ
 };
 
 //2007.09.06 kobake 追加
 //!検索方向
 enum ESearchDirection{
-	SEARCH_BACKWARD = 0, //前方検索 (前を検索)
-	SEARCH_FORWARD  = 1, //後方検索 (次を検索) (普通)
+	SEARCH_BACKWARD = 0, //!< 後方検索 (前を検索)
+	SEARCH_FORWARD  = 1, //!< 前方検索 (次を検索) (普通)
 };
 
 //2007.09.06 kobake 追加

@@ -3141,7 +3141,7 @@ re_do:;							//	hor
 		nLineNum,								// 検索開始行
 		nIdx,									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
-		SEARCH_BACKWARD,						// 0==前方検索 1==後方検索
+		SEARCH_BACKWARD,						// 検索方向
 		m_sCurSearchOption,						// 検索オプション
 		&sRange.m_ptFrom.y,								// マッチレイアウト行from
 		&sRange.m_ptFrom.x, 							// マッチレイアウト位置from
@@ -3335,7 +3335,7 @@ re_do:;
 		nLineNum, 								// 検索開始行
 		nIdx, 									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
-		SEARCH_FORWARD,							// 0==前方検索 1==後方検索
+		SEARCH_FORWARD,							// 検索方向
 		m_sCurSearchOption,						// 検索オプション
 		&sRange.m_ptFrom.y,								// マッチレイアウト行from
 		&sRange.m_ptFrom.x, 							// マッチレイアウト位置from
