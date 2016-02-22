@@ -85,7 +85,7 @@ static const EEolType aeEolType[] = {
 	EOL_PS,
 };
 
-/* window メッセージ処理 */
+/*! window メッセージ処理 */
 INT_PTR CPropTypesWindow::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
@@ -151,7 +151,6 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				return TRUE;
 			//	To Here Sept. 10, 2000
 
-			}
 			case IDC_CHECK_CP:
 				{
 					::CheckDlgButton( hwndDlg, IDC_CHECK_CP, TRUE );
@@ -159,6 +158,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 					CCodePage::AddComboCodePages( hwndDlg, ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_CODETYPE), -1 );
 				}
 				return TRUE;
+			}
 			break;	/* BN_CLICKED */
 		}
 		break;	/* WM_COMMAND */
