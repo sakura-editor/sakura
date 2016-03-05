@@ -284,7 +284,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	INT nPointSize;
 
 	// TrueType‚Ì‚Ý‘Î‰ž
-	if( OUT_STROKE_PRECIS != lf.lfOutPrecision) {
+	if( OUT_STROKE_PRECIS != lf.lfOutPrecision && OUT_PS_ONLY_PRECIS != lf.lfOutPrecision ) {
 		return;
 	}
 
