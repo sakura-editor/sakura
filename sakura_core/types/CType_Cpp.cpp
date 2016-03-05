@@ -1424,7 +1424,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						}else if( m_pTypeData->m_bIndentCppCommentIgnore && n + 1 < nLineLen2 && '/' == pLine2[n] && '/' == pLine2[n+1] ){
 							SCommentBlock block = { n, nLineLen2 - 1 };
 							arrCommentBlock.push_back(block);
-							n = k;
+							n = nLineLen2 - 1;
 						}
 						break;
 					case 1:
