@@ -238,7 +238,9 @@ namespace WCODE
 	//! ƒLƒŠƒ‹•¶Žš‚©‚Ç‚¤‚©
 	inline bool IsCyrillic(wchar_t c)
 	{
-		return c>=0x0410 && c<=0x044F;
+		return (c>=0x0400 && c<=0x052F)  // Cyrillic, Cyrillic Supplement
+			|| (c>=0x2DE0 && c<=0x2DFF)  // Cyrillic Extended-A
+			|| (c>=0xA640 && c<=0xA69F); // Cyrillic Extended-B
 	}
 
 	//! BOX DRAWING •¶Žš ‚©‚Ç‚¤‚©
