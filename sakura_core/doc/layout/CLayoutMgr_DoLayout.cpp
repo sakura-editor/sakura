@@ -118,7 +118,9 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 {
-	if( (GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
+	if(
+//		(GetMaxLineLayout() - pWork->nPosX < 2 * GetWidthPerKeta()) &&
+		(pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
@@ -135,7 +137,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineLayout() - pWork->nPosX < 4)
+//	 && (GetMaxLineLayout() - pWork->nPosX < 4 * GetWidthPerKeta())
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
@@ -160,7 +162,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineKetas() - pWork->nPosX < 4)
+//	 && (GetMaxLineKetas() - pWork->nPosX < 4 * GetWidthPerKeta())
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
