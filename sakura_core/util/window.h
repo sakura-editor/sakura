@@ -178,8 +178,8 @@ public:
 	CDCFont(LOGFONT& font, HWND hwnd = NULL){
 		m_hwnd = hwnd;
 		m_hDC = ::GetDC(hwnd);
-		HFONT hFont = ::CreateFontIndirect(&font);
-		m_hFontOld = (HFONT)::SelectObject(m_hDC, hFont);
+		m_hFont = ::CreateFontIndirect(&font);
+		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
 	}
 	~CDCFont(){
 		if( m_hDC ){
