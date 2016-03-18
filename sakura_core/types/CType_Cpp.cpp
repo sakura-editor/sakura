@@ -1059,6 +1059,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1), szNamespace, nItemFuncId);
 					}
 					nItemLine = -1;
+					szWordPrev[0] = L'\0';
+					szTemplateName[0] = L'\0'; // hoge < ... ; はtemplateではなかったのでクリア
 					nNestLevel_template = 0;
 					nMode2 = M2_NORMAL;
 					//  2002/10/27 frozen ここまで
@@ -1141,13 +1143,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							}
 						}
 
-						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
 						//	//	Mar. 15, 2000 genta
 						//	From Here
 						//	長さチェックは必須
 						if( nWordIdx < nMaxWordLeng ){
 							nMode = 1;
+							szWord[nWordIdx] = pLine[i];
+							szWord[nWordIdx + 1] = L'\0';
 						}
 						else{
 							nMode = 999;
