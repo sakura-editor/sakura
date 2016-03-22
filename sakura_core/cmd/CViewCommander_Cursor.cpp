@@ -435,24 +435,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	}
 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	CLayoutInt layoutEnd;
-	nIdx = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &layoutEnd );
-	// 矩形選択で、EOLより右側のときは１カラム単位で左移動
-	if( (m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode)
-	 && pcLayout->GetLengthWithEOL() <= nIdx ){
-		if( EOL_NONE != pcLayout->GetLayoutEol() ){
-			layoutEnd -= CLayoutInt(1);
-		}
-		CLayoutPoint ptLayoutNew;
-		ptLayoutNew.x = t_max(layoutEnd, GetCaret().GetCaretLayoutPos().GetX2() - m_pCommanderView->GetTextMetrics().GetLayoutXDefault());
-		ptLayoutNew.y = GetCaret().GetCaretLayoutPos().GetY2();
-		GetCaret().MoveCursor(ptLayoutNew, true);
-		if( bSelect ){
-			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptLayoutNew);
-		}
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-		return;
-	}
+	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 
 	/* 現在位置の左の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -567,19 +550,6 @@ try_again:;
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	else{
-		// 矩形選択/フリーカーソルで、EOLより右側のときは１カラム単位で右移動
-		if( (m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode) &&
-			pcLayout->GetLengthWithEOL() <= nIdx ){
-			ptLayoutNew.x = t_min(GetCaret().GetCaretLayoutPos().GetX2() + m_pCommanderView->GetTextMetrics().GetLayoutXDefault(),
-				m_pCommanderView->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
-			ptLayoutNew.y = GetCaret().GetCaretLayoutPos().GetY2();
-			GetCaret().MoveCursor(ptLayoutNew, true);
-			if( bSelect ){
-				m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptLayoutNew);
-			}
-			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-			return;
-		}
 		bool	bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル右移動 */
