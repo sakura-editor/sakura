@@ -94,7 +94,7 @@ inline bool isCSymbol(wchar_t c)
 	//	(c>=L'0' && c<=L'9') ||
 	//	(c>=L'A' && c<=L'Z') ||
 	//	(c>=L'a' && c<=L'z');
-	return (c<128 && gm_keyword_char[c]==CK_CSYM);
+	return (c<_countof(gm_keyword_char) && gm_keyword_char[c]==CK_CSYM);
 }
 
 //! 全角版、識別子に使用可能な文字かどうか
@@ -126,7 +126,7 @@ ECharKind CWordParse::WhatKindOfChar(
 		wchar_t c=pData[nIdx];
 
 		//今までの半角
-		if( c<128                ) return (ECharKind)gm_keyword_char[c];
+		if( c<_countof(gm_keyword_char) ) return (ECharKind)gm_keyword_char[c];
 		//if( c == CR              )return CK_CR;
 		//if( c == LF              )return CK_LF;
 		//if( c == TAB             )return CK_TAB;	// タブ

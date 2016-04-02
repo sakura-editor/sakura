@@ -30,7 +30,7 @@
 /*! キーワードキャラクタ */
 const unsigned char gm_keyword_char[128] = {
  /* 0         1         2         3         4         5         6         7         8         9         A         B         C         D         E         F             : 0123456789ABCDEF */
-	CK_NULL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_TAB,   CK_LF,    CK_CTRL,  CK_CTRL,  CK_CR,    CK_CTRL,  CK_CTRL,  /* 0: ................ */
+	CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_TAB,   CK_LF,    CK_CTRL,  CK_CTRL,  CK_CR,    CK_CTRL,  CK_CTRL,  /* 0: ................ */
 	CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  /* 1: ................ */
 	CK_SPACE, CK_ETC,   CK_ETC,   CK_UDEF,  CK_UDEF,  CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   /* 2:  !"#$%&'()*+,-./ */
 	CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_CSYM,  CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   CK_ETC,   /* 3: 0123456789:;<=>? */
@@ -97,7 +97,7 @@ namespace WCODE
 		//if(wc==TAB)return false;
 
 		//return iswcntrl(wc)!=0;
-		return (wc<128 && gm_keyword_char[wc]==CK_CTRL);
+		return (wc<_countof(gm_keyword_char) && gm_keyword_char[wc]==CK_CTRL);
 	}
 
 #if 0
@@ -265,7 +265,7 @@ namespace WCODE
 		{
 			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
 			// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
-			if (WCODE::IsControlCode(c) || L'\0' == c) {
+			if (WCODE::IsControlCode(c)) {
 				GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
 				const int nCx = size.cx;
 				const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
