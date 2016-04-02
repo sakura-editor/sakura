@@ -77,6 +77,21 @@ inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
 inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
 inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
 
+
+#define GWL_SNAP_LEFT		16
+#define GWL_SNAP_TOP		20
+#define GWL_SNAP_RIGHT		24
+#define GWL_SNAP_BOTTOM		28
+#define GWL_UNSNAP_LEFT		32
+#define GWL_UNSNAP_TOP		36
+#define GWL_UNSNAP_RIGHT	40
+#define GWL_UNSNAP_BOTTOM	44
+
+bool GetVirtualSnapRect( HWND hWnd, RECT* prcSnap = NULL, RECT* prcUnsnap = NULL );
+void SetVirtualSnapRect( HWND hWnd, const RECT* prcSnap, const RECT* prcUnsnap );
+void SetVirtualSnapRectEmpty( HWND hWnd );
+bool GetAeroSnapRect( HWND hWnd, RECT* prcSnap = NULL, RECT* prcUnsnap = NULL, bool bRealOnly = false );
+bool SetAeroSnap( HWND hWnd );
 void ActivateFrameWindow( HWND );	/* アクティブにする */
 
 /*

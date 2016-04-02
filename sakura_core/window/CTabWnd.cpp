@@ -665,6 +665,9 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 		if( wp.showCmd != SW_SHOWMAXIMIZED )
 		{
 			// 移動元の先頭ウィンドウのサイズで画面内を相対移動する
+			RECT rcSnap;
+			if( GetAeroSnapRect(hwndTop, &rcSnap) )
+				::OffsetRect(&wp.rcNormalPosition, rcSnap.left - wp.rcNormalPosition.left, rcSnap.top - wp.rcNormalPosition.top);
 			wp.rcNormalPosition.left += (ptDrop.x - ptDrag.x);
 			wp.rcNormalPosition.right += (ptDrop.x - ptDrag.x);
 			wp.rcNormalPosition.top += (ptDrop.y - ptDrag.y);
@@ -726,7 +729,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 			::GetWindowPlacement( hwndDst, &wp );
 			if( wp.showCmd == SW_SHOWMINIMIZED )
 				wp.showCmd = showCmdRestore;
-			SetCarmWindowPlacement( hwndSrc, &wp );
+			SetCarmWindowPlacement( hwndSrc, &wp, hwndDst );
 			::ShowWindow( hwndDst, SW_HIDE );	// 移動先の以前の先頭ウィンドウを消す
 		}
 	}
@@ -2111,8 +2114,10 @@ void CTabWnd::AdjustWindowPlacement( void )
 			::GetWindowPlacement( hwndInsertAfter, &wp );
 			if( wp.showCmd == SW_SHOWMINIMIZED )
 				wp.showCmd = pEditNode->m_showCmdRestore;
+			if( ::IsIconic( hwndInsertAfter ) && pEditNode->m_showCmdRestore == SW_SHOWNORMAL )
+				ShowWindow( hwndInsertAfter, SW_RESTORE );	// AeroSnap 矩形取得のため先に戻しておく
 			::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
-			SetCarmWindowPlacement( hwnd, &wp );	// 位置を復元する
+			SetCarmWindowPlacement( hwnd, &wp, hwndInsertAfter );	// 位置を復元する
 			::UpdateWindow( hwnd );	// 強制描画
 		}
 	}
@@ -2123,9 +2128,19 @@ void CTabWnd::AdjustWindowPlacement( void )
 	@author ryoji
 	@date 2007.11.30 新規作成
 */
-int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl )
+int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl, HWND hwndDst/* = NULL*/ )
 {
 	WINDOWPLACEMENT wp = *pWndpl;
+	if( hwndDst )
+	{
+		RECT rcSnap, rcUnsnap;
+		if( GetAeroSnapRect(hwndDst, &rcSnap, &rcUnsnap) ){
+			wp.rcNormalPosition = rcSnap;
+			SetVirtualSnapRect(hwnd, &rcSnap, &rcUnsnap);
+			::PostMessage(hwnd, MYWM_SETAEROSNAP, 0, 0);
+		}
+	}
+
 	if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
 	{
 		WINDOWPLACEMENT wpCur;

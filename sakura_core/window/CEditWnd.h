@@ -78,12 +78,14 @@ struct DLLSHAREDATA;
 #define IDT_TOOLBAR		456
 #define IDT_CAPTION		457
 #define IDT_FIRST_IDLE	458
+#define IDT_SETAEROSNAP	477
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
 struct STabGroupInfo{
 	HWND			hwndTop;
 	WINDOWPLACEMENT	wpTop;
+	RECT rcTop;
 
 	STabGroupInfo() : hwndTop(NULL) { }
 	bool IsValid() const{ return hwndTop!=NULL; }
