@@ -358,11 +358,11 @@ void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGr
 		RECT rcWork, rcMon;
 		GetMonitorWorkRect( sTabGroupInfo.hwndTop, &rcWork, &rcMon );
 
-		const WINDOWPLACEMENT& wpTop = sTabGroupInfo.wpTop;
-		nWinCX = wpTop.rcNormalPosition.right  - wpTop.rcNormalPosition.left;
-		nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
-		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
-		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
+		const RECT& rcTop = sTabGroupInfo.rcTop;
+		nWinCX = rcTop.right  - rcTop.left;
+		nWinCY = rcTop.bottom - rcTop.top;
+		nWinOX = rcTop.left   + (rcWork.left - rcMon.left);
+		nWinOY = rcTop.top    + (rcWork.top - rcMon.top);
 	}
 
 	//結果
@@ -378,7 +378,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= 32;
+	wc.cbWndExtra		= 48;
 	wc.hInstance		= G_AppInstance();
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
 	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
@@ -417,6 +417,10 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 		G_AppInstance(),		// handle to application instance
 		NULL				// pointer to window-creation data
 	);
+	if( hwndResult && sTabGroupInfo.IsValid() && !::EqualRect(&sTabGroupInfo.wpTop.rcNormalPosition, &sTabGroupInfo.rcTop) ){
+		SetVirtualSnapRect(hwndResult, &sTabGroupInfo.rcTop, &sTabGroupInfo.wpTop.rcNormalPosition);
+		::PostMessage(hwndResult, MYWM_SETAEROSNAP, 0, 0);
+	}
 	return hwndResult;
 }
 
@@ -424,6 +428,7 @@ void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
 {
 	HWND hwndTop = NULL;
 	WINDOWPLACEMENT	wpTop = {0};
+	RECT rcTop = {0};
 
 	//From Here @@@ 2003.05.31 MIK
 	//タブウインドウの場合は現状値を指定
@@ -443,6 +448,16 @@ void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
 			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
 				if( wpTop.showCmd == SW_SHOWMINIMIZED )
 					wpTop.showCmd = pEditNode->m_showCmdRestore;
+				rcTop = wpTop.rcNormalPosition;
+
+				// AeroSnap 時の補正
+				if( ::IsIconic( hwndTop ) && pEditNode->m_showCmdRestore == SW_SHOWNORMAL )
+					ShowWindow( hwndTop, SW_RESTORE );	// AeroSnap 矩形取得のため先に戻しておく
+				RECT rcSnap, rcUnsnap;
+				if( GetAeroSnapRect( hwndTop, &rcSnap, &rcUnsnap ) ){
+					rcTop = rcSnap;
+					wpTop.rcNormalPosition = rcUnsnap;
+				}
 			}
 			else{
 				hwndTop = NULL;
@@ -454,6 +469,7 @@ void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
 	//結果
 	pTabGroupInfo->hwndTop = hwndTop;
 	pTabGroupInfo->wpTop = wpTop;
+	pTabGroupInfo->rcTop = rcTop;
 }
 
 void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
@@ -2070,8 +2086,24 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return 0L;
 
+	case MYWM_SETAEROSNAP:
+		::SetTimer(GetHwnd(), IDT_SETAEROSNAP, 0, NULL);	// Aero Snap 設定用タイマを開始する
+		return 0L;
+
 	//by 鬼 (2) MYWM_CHECKSYSMENUDBLCLKは不要に, WM_LBUTTONDBLCLK追加
 	case WM_NCLBUTTONDOWN:
+		{
+			// Aero Snap 未反映のときはここで強制的にフォアグラウンド化して Snap を反映する
+			//（例1）Snap グループからアクティブタブを切り離した直後の Snap グループ。
+			//（例2）Snap 状態のエディタから[ファイル]-[開く]で自分が開いているファイルを含めた
+			//       複数ファイルを開き、最後に可視になるのが自エディタだった場合。
+			if (GetVirtualSnapRect(GetHwnd())){
+				HWND hwndActivate = ::IsWindowEnabled( GetHwnd() )? GetHwnd(): ::GetLastActivePopup( GetHwnd() );
+				::SetForegroundWindow(hwndActivate);
+				BlockingHook(NULL);	// SetAeroSnap()の前にキューを空にしておく必要がある
+				SetAeroSnap(GetHwnd());
+			}
+		}
 		return OnNcLButtonDown(wParam, lParam);
 
 	case WM_NCLBUTTONUP:
@@ -2938,6 +2970,11 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		CAppNodeGroupHandle(0).PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
 		::PostMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_FIRST_IDLE, (WPARAM)::GetCurrentProcessId(), (LPARAM)0 );
 		::KillTimer( m_hWnd, wParam );
+		break;
+	case IDT_SETAEROSNAP:
+		::KillTimer( GetHwnd(), wParam );
+		if( !SetAeroSnap(GetHwnd()) )
+			::SetTimer( GetHwnd(), wParam, 100, NULL );
 		break;
 	default:
 		return 1L;

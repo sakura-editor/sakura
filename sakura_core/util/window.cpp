@@ -2,6 +2,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "util/os.h"
 #include <limits.h>
 #include "window.h"
 
@@ -97,6 +98,158 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 
 
 
+bool GetVirtualSnapRect( HWND hWnd, RECT* prcSnap/* = NULL*/, RECT* prcUnsnap/* = NULL*/ )
+{
+	RECT rcSnap, rcUnsnap;
+
+	// Note. Unsnap サイズだけでなく Snap サイズも Window Byte に記憶している理由
+	//   SetAeroSnap() 操作途中のウィンドウは一時的に Unsnap サイズにされるが、
+	//   このタイミングで呼ばれた場合にも Snap サイズを返せるように。
+	rcSnap.left = ::GetWindowLong(hWnd, GWL_SNAP_LEFT);
+	rcSnap.top = ::GetWindowLong(hWnd, GWL_SNAP_TOP);
+	rcSnap.right = ::GetWindowLong(hWnd, GWL_SNAP_RIGHT);
+	rcSnap.bottom = ::GetWindowLong(hWnd, GWL_SNAP_BOTTOM);
+
+	rcUnsnap.left = ::GetWindowLong(hWnd, GWL_UNSNAP_LEFT);
+	rcUnsnap.top = ::GetWindowLong(hWnd, GWL_UNSNAP_TOP);
+	rcUnsnap.right = ::GetWindowLong(hWnd, GWL_UNSNAP_RIGHT);
+	rcUnsnap.bottom = ::GetWindowLong(hWnd, GWL_UNSNAP_BOTTOM);
+
+	bool bRet = (!::IsRectEmpty(&rcSnap) && !::IsRectEmpty(&rcUnsnap));
+	if (bRet)
+	{
+		if (prcSnap) *prcSnap = rcSnap;
+		if (prcUnsnap) *prcUnsnap = rcUnsnap;
+	}
+	return bRet;
+}
+
+void SetVirtualSnapRect( HWND hWnd, const RECT* prcSnap, const RECT* prcUnsnap )
+{
+	::SetWindowLong(hWnd, GWL_SNAP_LEFT, prcSnap->left);
+	::SetWindowLong(hWnd, GWL_SNAP_TOP, prcSnap->top);
+	::SetWindowLong(hWnd, GWL_SNAP_RIGHT, prcSnap->right);
+	::SetWindowLong(hWnd, GWL_SNAP_BOTTOM, prcSnap->bottom);
+
+	::SetWindowLong(hWnd, GWL_UNSNAP_LEFT, prcUnsnap->left);
+	::SetWindowLong(hWnd, GWL_UNSNAP_TOP, prcUnsnap->top);
+	::SetWindowLong(hWnd, GWL_UNSNAP_RIGHT, prcUnsnap->right);
+	::SetWindowLong(hWnd, GWL_UNSNAP_BOTTOM, prcUnsnap->bottom);
+}
+
+void SetVirtualSnapRectEmpty( HWND hWnd )
+{
+	RECT rcEmpty;
+	::SetRectEmpty(&rcEmpty);
+	SetVirtualSnapRect(hWnd, &rcEmpty, &rcEmpty);
+}
+
+bool GetAeroSnapRect( HWND hWnd, RECT* prcSnap/* = NULL*/, RECT* prcUnsnap/* = NULL*/, bool bRealOnly/* = false*/ )
+{
+	if (IsZoomed(hWnd) || IsIconic(hWnd))
+		return false;
+
+	if (!bRealOnly)
+	{
+		if (GetVirtualSnapRect(hWnd, prcSnap, prcUnsnap))
+			return true;
+	}
+
+	RECT rcWnd, rcWork, rcMon;
+	::GetWindowRect(hWnd, &rcWnd);
+	GetMonitorWorkRect(hWnd, &rcWork, &rcMon);
+	::OffsetRect(&rcWnd, rcMon.left - rcWork.left, rcMon.top - rcWork.top);	// ワークエリア座標に変換
+	WINDOWPLACEMENT wp = {sizeof(wp)};
+	::GetWindowPlacement(hWnd, &wp);
+	if (!::EqualRect(&wp.rcNormalPosition, &rcWnd))
+	{
+		if (prcUnsnap) *prcUnsnap = wp.rcNormalPosition;
+		if (prcSnap) *prcSnap = rcWnd;
+		return true;
+	}
+
+	return false;
+}
+
+bool SetAeroSnap( HWND hWnd )
+{
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+	if( !::IsWindowVisible(hWnd) || ::IsZoomed(hWnd) ||
+		!(pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) ){
+		// Aero Snap 状態への遷移が不要になった
+		SetVirtualSnapRectEmpty(hWnd);
+		return true;
+	}
+
+	RECT rcSnap, rcUnsnap;
+	if (!GetVirtualSnapRect(hWnd, &rcSnap, &rcUnsnap))	// （注）rcSnap は現在の位置と同じのはず
+		return true;
+
+	if (GetWindowThreadProcessId(::GetForegroundWindow(), NULL) != GetWindowThreadProcessId(hWnd, NULL))
+		return false;
+
+	RECT rcWork, rcMon;
+	GetMonitorWorkRect(hWnd, &rcWork, &rcMon);
+
+	// Aero Snap 操作できるように、強制的にエディタウィンドウをアクティブ化する
+	// （メッセージボックス表示中など Aero Snap 不可状態でも一時的に可能にする）
+	HWND hWndActiveOld = ::GetActiveWindow();
+	BOOL bEnableOld = ::IsWindowEnabled(hWnd);
+	::EnableWindow(hWnd, TRUE);
+	::SetActiveWindow(hWnd);
+
+	// 一時的に Snap 解除後の位置に戻す
+	::OffsetRect(&rcSnap, rcWork.left - rcMon.left, rcWork.top - rcMon.top);
+	::OffsetRect(&rcUnsnap, rcWork.left - rcMon.left, rcWork.top - rcMon.top);
+	::MoveWindow(hWnd, rcUnsnap.left, rcUnsnap.top, rcUnsnap.right - rcUnsnap.left, rcUnsnap.bottom - rcUnsnap.top, FALSE);
+
+	// Shift, Ctrl, Alt キーは離す
+	INPUT in[3 + 4];
+	ULONG_PTR dwExtraInfo = ::GetMessageExtraInfo();
+	in[0].ki.wVk = VK_SHIFT;
+	in[1].ki.wVk = VK_CONTROL;
+	in[2].ki.wVk = VK_MENU;
+	int i;
+	for (i = 0; i < 3; i++)
+	{
+		in[i].type = INPUT_KEYBOARD;
+		in[i].ki.wScan = ::MapVirtualKey(in[i].ki.wVk, 0);
+		in[i].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+		in[i].ki.time = 0;
+		in[i].ki.dwExtraInfo = dwExtraInfo;
+	}
+	// Aero Snap キー操作を注入する
+	INPUT* pin = &in[i];
+	pin[0].ki.wVk = pin[3].ki.wVk = VK_LWIN;
+	pin[1].ki.wVk = pin[2].ki.wVk = ((rcSnap.right + rcSnap.left) < (rcWork.right + rcWork.left))? VK_LEFT: VK_RIGHT;
+	pin[0].ki.dwFlags = pin[1].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+	pin[2].ki.dwFlags = pin[3].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+	for (i = 0; i < 4; i++)
+	{
+		pin[i].type = INPUT_KEYBOARD;
+		pin[i].ki.wScan = ::MapVirtualKey(pin[i].ki.wVk, 0);
+		pin[i].ki.time = 0;
+		pin[i].ki.dwExtraInfo = dwExtraInfo;
+	}
+	::SendInput(_countof(in), in, sizeof(in[0]));
+	BlockingHook(NULL);
+
+	// Snap 位置に戻す
+	::ShowWindow(hWnd, SW_HIDE);
+	::MoveWindow(hWnd, rcSnap.left, rcSnap.top, rcSnap.right - rcSnap.left, rcSnap.bottom - rcSnap.top, FALSE);
+	::ShowWindow(hWnd, SW_SHOW);
+	::SetActiveWindow(hWndActiveOld);
+	::EnableWindow(hWnd, bEnableOld);
+
+	SetVirtualSnapRectEmpty(hWnd);
+
+	// Win 10 では Aero Snap 操作で Foreground が外れるので強制的に戻す
+	::Sleep(0);	// おまじない（Foreground 化が安定動作しますように）
+	::SetForegroundWindow(hWnd);	// for Windows 10
+
+	return true;
+}
+
 /** フレームウィンドウをアクティブにする
 	@date 2007.11.07 ryoji 対象がdisableのときは最近のポップアップをフォアグラウンド化する．
 		（モーダルダイアログやメッセージボックスを表示しているようなとき）
@@ -104,9 +257,17 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 void ActivateFrameWindow( HWND hwnd )
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
+	bool bAeroSnap = false;
 	DLLSHAREDATA* pShareData = &GetDllShareData();
 	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 		if( IsSakuraMainWindow( hwnd ) ){
+			// 既にアクティブなら何もしない
+			// ※ 多重にアクティブ化（SetWindowPlacement）すると AeroSnap が解除されてしまう
+			//    （例）「同名のC/C++ヘッダ（ソース）を開く」から不要なのに呼ばれている
+			HWND hwndActivate = ::IsWindowEnabled( hwnd )? hwnd: ::GetLastActivePopup( hwnd );
+			if( hwndActivate == ::GetForegroundWindow() )
+				return;
+
 			if( pShareData->m_sFlags.m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
 			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
@@ -122,6 +283,7 @@ void ActivateFrameWindow( HWND hwnd )
 				10000,
 				&dwResult
 			);
+			bAeroSnap = GetVirtualSnapRect(hwnd);
 		}
 	}
 
@@ -135,10 +297,29 @@ void ActivateFrameWindow( HWND hwnd )
 		::ShowWindow( hwnd, SW_MAXIMIZE );
 	}
 	else {
-		::ShowWindow( hwnd, SW_SHOW );
+		// SW_SHOW -> SW_SHOWNAに変更（SW_SHOW だと既に Aero Snap 状態の場合に解除されてしまう）
+		// （例）ファイル1を開いたエディタ1が Snap 状態で起動している状態で、
+		//       更に起動パラメータにファイル1を指定してエディタ2を起動すると
+		//       エディタ2がエディタ1をアクティブにする際、SW_SHOW だと Snap 解除されてしまうことがある
+		//       ↑エディタ1から[ファイル]-[開く]操作でファイルダイアログのファイル名エディットボックス
+		//         にファイル1、ファイル2の2ファイルを入力して[開く]ボタンを押すと再現
+		::ShowWindow( hwnd, SW_SHOWNA );
 	}
 	::SetForegroundWindow( hwndActivate );
 	::BringWindowToTop( hwndActivate );
+
+	// Aero Snap 状態の反映待ち
+	// （まとめて閉じる場合でも Aero Snap が引き継がれるように）
+	if( bAeroSnap ){
+		DWORD dwTid = GetWindowThreadProcessId(hwnd, NULL);
+		if( dwTid != GetCurrentThreadId() && dwTid == GetWindowThreadProcessId(::GetForegroundWindow(), NULL) ){
+			for(int iRetry = 0; iRetry < 40; iRetry++){
+				if( !GetVirtualSnapRect(hwnd) )
+					break;
+				::Sleep(50);
+			}
+		}
+	}
 
 	if( pShareData )
 		pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
