@@ -3237,14 +3237,15 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 	EDockSide eDockSide = ProfDockSide();	// 設定上の配置
 	UINT uFlags = MF_BYPOSITION | MF_STRING;
+	const bool bDropDown = (hwndFrom == GetHwnd()); // true=ドロップダウン, false=右クリック
 	HMENU hMenu = ::CreatePopupMenu();
-	HMENU hMenuSub = ::CreatePopupMenu();
+	HMENU hMenuSub = bDropDown ? NULL : ::CreatePopupMenu();
 	int iPos = 0;
 	int iPosSub = 0;
-	HMENU& hMenuRef = ( hwndFrom == GetHwnd() )? hMenu: hMenuSub;
-	int& iPosRef = ( hwndFrom == GetHwnd() )? iPos: iPosSub;
+	HMENU& hMenuRef = bDropDown ? hMenu : hMenuSub;
+	int& iPosRef = bDropDown ? iPos : iPosSub;
 
-	if( hwndFrom != GetHwnd() ){
+	if( bDropDown == false ){
 		// 将来、ここに hwndFrom に応じた状況依存メニューを追加するといいかも
 		// （ツリーなら「すべて展開」／「すべて縮小」とか、そういうの）
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 450, LS(STR_DLGFNCLST_MENU_UPDATE) );
@@ -3281,7 +3282,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
 	::InsertMenu( hMenuRef, iPosRef++, MF_BYPOSITION | MF_STRING, 305, LS(STR_DLGFNCLST_MENU_UNIFY) );
 
-	if( hwndFrom != GetHwnd() ){
+	if( bDropDown == false ){
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 452, LS(STR_DLGFNCLST_MENU_CLOSE) );
 	}
