@@ -311,7 +311,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		}
 
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
-		wchar_t*		pszText = NULL;
+		const wchar_t*		pszText = NULL;
+		std::wstring strText;
 		int		j;
 		for( j = 0; j < nCount; j++ ){
 			if( bRegex ){
@@ -330,9 +331,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 						int nIndex = pRegex[j].GetIndex();
 						int nMatchLen = pRegex[j].GetMatchLen();
 						int nTextLen = pRegex[j].GetStringLen() - nLineLen + nMatchLen;
-						pszText = new wchar_t[nTextLen + 1];
-						wmemcpy( pszText, pRegex[j].GetString() + nIndex, nTextLen );
-						pszText[nTextLen] = L'\0';
+						strText.assign( pRegex[j].GetString() + nIndex, nTextLen );
+						pszText = strText.c_str();
 						wcscpy( szTitle, test[j].szGroupName );
 						break;
 					}
@@ -357,16 +357,16 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		//行文字列から改行を取り除く pLine -> pszText
 		// 正規表現置換のときは設定済み
 		if( NULL == pszText ){
-			pszText = new wchar_t[nLineLen + 1];
-			wmemcpy( pszText, &pLine[i], nLineLen );
-			pszText[nLineLen] = L'\0';
-			bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-			for( i = 0; pszText[i] != L'\0'; ++i ){
+			pszText = &pLine[i];
+			nLineLen -= i;
+			const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+			for( i = 0; i < nLineLen; ++i ){
 				if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
-					pszText[i] = L'\0';
 					break;
 				}
 			}
+			strText.assign( pszText, i );
+			pszText = strText.c_str();
 		}
 
 		/*
@@ -421,8 +421,6 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , pszText, 0, nDepth );
 			nDepth++;
 		}
-		delete [] pszText;
-
 	}
 	delete [] pRegex;
 	return;

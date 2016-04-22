@@ -183,16 +183,16 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		*/
 
 		//行文字列から改行を取り除く pLine -> pszText
-		wchar_t*	pszText = new wchar_t[nLineLen + 1];
-		wmemcpy( pszText, &pLine[i], nLineLen );
-		pszText[nLineLen] = L'\0';
-		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+		const wchar_t*	pszText = &pLine[i];
+		nLineLen -= i;
+		const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		for( i = 0; i < nLineLen; ++i ){
 			if( WCODE::IsLineDelimiter(pszText[i], bExtEol) ){
-				pszText[i] = L'\0';
 				break;
 			}
 		}
+		std::wstring strText( pszText, i );
+		pszText = strText.c_str();
 
 		/*
 		  カーソル位置変換
@@ -235,8 +235,6 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , pszText, 0, nDepth );
 			nDepth++;
 		}
-		delete [] pszText;
-
 	}
 	return;
 }
