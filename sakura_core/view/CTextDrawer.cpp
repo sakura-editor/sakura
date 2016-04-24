@@ -557,7 +557,9 @@ void CTextDrawer::DispLineNumber(
 		}
 
 		//DIFFマーク描画
-		CDiffLineGetter(pCDocLine).DrawDiffMark(gr,y,nLineHeight,fgcolor);
+		if( !pView->m_bMiniMap ){
+			CDiffLineGetter(pCDocLine).DrawDiffMark(gr,y,nLineHeight,fgcolor);
+		}
 	}
 
 	// 行番号とテキストの隙間の描画
