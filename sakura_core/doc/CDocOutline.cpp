@@ -383,8 +383,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 
 		/* nDepthを計算 */
 		int k;
-		BOOL bAppend;
-		bAppend = TRUE;
+		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = wcscmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -396,7 +395,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			//	ので、同じレベルに合わせてAppendData.
 			nDepth = k;
 		}
-		else if( nMaxStack> k ){
+		else if( nMaxStack > k ){
 			//	いままでに同じ見出しが存在しなかった。
 			//	Lvが高い場合は、一致するまでさかのぼる
 			for ( k = nDepth - 1; 0 <= k ; k-- ){
@@ -414,10 +413,10 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
 			// nDepth = nMaxStack;
-			bAppend = FALSE;
+			bAppend = false;
 		}
-		
-		if( FALSE != bAppend ){
+
+		if( bAppend ){
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , pszText, 0, nDepth );
 			nDepth++;
 		}
