@@ -44,7 +44,6 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	int						nCharChars2;
 	const char*				pszStarts;
 	int						nStartsLen;
-	char*					pszText;
 
 
 	pszStarts = m_pShareData->m_Common.m_sFormat.m_szMidashiKigou; 	/* 見出し記号 */
@@ -136,38 +135,39 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 		}
+
 		/*	「見出し記号」に含まれる文字で始まるか、
 			(0、(1、...(9、(A、(B、...(Z、(a、(b、...(z
 			で始まる行は、アウトライン結果に表示する。
 		*/
-		pszText = new char[nLineLen + 1];
-		memcpy( pszText, (const char *)&pLine[i], nLineLen );
-		pszText[nLineLen] = '\0';
-		int nLen = (int)lstrlen(pszText);
-		for( i = 0; i < nLen; ++i ){
+
+		//行文字列から改行を取り除く pLine -> pszText
+		const char* pszText = (const char *)&pLine[i];
+		nLineLen -= i;
+		for( i = 0; i < nLineLen; ++i ){
 			if( pszText[i] == CR ||
 				pszText[i] == LF ){
-				pszText[i] = '\0';
+				break;
 			}
 		}
+		std::string strText( pszText, i );
+		pszText = strText.c_str();
+
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
 		  →
 		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 		*/
-		int		nPosX;
-		int		nPosY;
+		CLayoutPoint ptPos;
 		m_cLayoutMgr.LogicToLayout(
-			0,
-			nLineCount,
-			&nPosX,
-			&nPosY
+			0, nLineCount,
+			&ptPos.x, &ptPos.y
 		);
+
 		/* nDepthを計算 */
 		int k;
-		BOOL bAppend;
-		bAppend = TRUE;
+		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = strcmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -183,18 +183,17 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
 			strcpy(pszStack[nDepth], szTitle);
-		}else{
+		}
+		else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーラン
 			// nDepth = nMaxStack;
-			bAppend = FALSE;
+			bAppend = false;
 		}
-		
-		if( FALSE != bAppend ){
-			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+
+		if( bAppend ){
+			pcFuncInfoArr->AppendData( nLineCount + 1, ptPos.y + 1 , pszText, 0, nDepth );
 			nDepth++;
 		}
-		delete [] pszText;
-
 	}
 	return;
 }

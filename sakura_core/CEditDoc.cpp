@@ -2096,7 +2096,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	int						nLineCount;
 	int						i;
 	int						j;
-	char*					pszText;
+	const char*				pszText;
 
 	/* ルールファイルの内容をバッファに読み込む */
 	const int nRuleSize = 1024;
@@ -2143,35 +2143,34 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		}
 		/*	ルールにマッチした行は、アウトライン結果に表示する。
 		*/
-		pszText = new char[nLineLen + 1];
-		memcpy( pszText, (const char *)&pLine[i], nLineLen );
-		pszText[nLineLen] = '\0';
-		int nTextLen = lstrlen( pszText );
-		for( i = 0; i < nTextLen; ++i ){
+		pszText = (const char *)&pLine[i];
+		nLineLen = nLineLen - i;
+		for (i = 0; i < nLineLen; ++i){
 			if( pszText[i] == CR ||
 				pszText[i] == LF ){
-				pszText[i] = '\0';
 				break;
 			}
 		}
+		std::string strText( pszText, i );
+		pszText = strText.c_str();
+
 		/*
 		  カーソル位置変換
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
 		  →
 		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 		*/
-		int		nPosX;
-		int		nPosY;
+		CLayoutPoint ptPos;
 		m_cLayoutMgr.LogicToLayout(
 			0,
 			nLineCount,
-			&nPosX,
-			&nPosY
+			&ptPos.x,
+			&ptPos.y
 		);
+
 		/* nDepthを計算 */
 		int k;
-		BOOL bAppend;
-		bAppend = TRUE;
+		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
 			int nResult = strcmp( pszStack[k], szTitle );
 			if ( nResult == 0 ){
@@ -2190,15 +2189,13 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
 			// nDepth = nMaxStack;
-			bAppend = FALSE;
+			bAppend = false;
 		}
-		
-		if( FALSE != bAppend ){
-			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1 , (char *)pszText, 0, nDepth );
+
+		if( bAppend ){
+			pcFuncInfoArr->AppendData( nLineCount + 1, ptPos.y + 1 , pszText, 0, nDepth );
 			nDepth++;
 		}
-		delete [] pszText;
-
 	}
 	delete [] test;
 	return;
