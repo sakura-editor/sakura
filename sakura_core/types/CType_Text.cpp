@@ -230,7 +230,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			// nDepth = nMaxStack;
 			bAppend = false;
 		}
-		
+
 		if( bAppend ){
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , pszText, 0, nDepth );
 			nDepth++;
