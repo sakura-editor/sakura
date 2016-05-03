@@ -752,13 +752,8 @@ int CEditView::Command_DOWN( bool bSelect, bool bRepeat )
 int CEditView::Command_LEFT( bool bSelect, bool bRepeat )
 {
 	int		nRepCount;
-	int		nRepeat;
-	int		nRes;
-	if( bRepeat ){
-		nRepeat = 2;
-	}else{
-		nRepeat = 1;
-	}
+	int		nRepeat = bRepeat ? m_pShareData->m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
+	int		nRes = 0;
 	for( nRepCount = 0; nRepCount < nRepeat; ++nRepCount ){
 		int				nPosX = 0;
 		int				nPosY = m_ptCaretPos.y;
@@ -860,17 +855,12 @@ end_of_func:;
 
 
 
-
-/* カーソル右移動 */
+/*! @brief カーソル右移動
+*/
 void CEditView::Command_RIGHT( bool bSelect,  bool bIgnoreCurrentSelection, bool bRepeat )
 {
 	int		nRepCount;
-	int		nRepeat;
-	if( bRepeat ){
-		nRepeat = 2;
-	}else{
-		nRepeat = 1;
-	}
+	int		nRepeat = bRepeat ? m_pShareData->m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
 	for( nRepCount = 0; nRepCount < nRepeat; ++nRepCount ){
 		int			nPosX;
 		int			nPosY = m_ptCaretPos.y;

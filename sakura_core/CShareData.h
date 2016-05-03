@@ -312,6 +312,7 @@ struct CommonSetting_General
 
 	//スクロール
 	int					m_nRepeatedScrollLineNum;		//!< キーリピート時のスクロール行数
+	int					m_nRepeatedMoveCaretNum;		//!< キーリピート時の左右移動数
 	BOOL				m_nRepeatedScroll_Smooth;		//!< キーリピート時のスクロールを滑らかにするか
 	int					m_nPageScrollByWheel;			//!< キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.12 nasukoji
 	int					m_nHorizontalScrollByWheel;		//!< キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.12 nasukoji

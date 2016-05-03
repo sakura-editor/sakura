@@ -366,10 +366,13 @@ static void SetKeyNameArrVal(
 
 	Version 121:
 	DLLSHAREDATAのサイズチェック 2014.06.28 novice
+
+	Version 122:
+	左右リピート文字数 2014.01.08 Moca
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 121;
+const unsigned int uShareDataVersion = 122;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -592,6 +595,7 @@ bool CShareData::InitShareData()
 			sGeneral.m_bCloseAllConfirm = FALSE;		/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 			sGeneral.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 			sGeneral.m_nRepeatedScrollLineNum = 3;		/* キーリピート時のスクロール行数 */
+			sGeneral.m_nRepeatedMoveCaretNum = 2;		// キーリピート時の左右移動数
 			sGeneral.m_nRepeatedScroll_Smooth = FALSE;	/* キーリピート時のスクロールを滑らかにするか */
 			sGeneral.m_nPageScrollByWheel = 0;			/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.12 nasukoji
 			sGeneral.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.12 nasukoji

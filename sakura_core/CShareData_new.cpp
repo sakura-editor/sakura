@@ -600,6 +600,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "eOpenDialogDir"		, (int&)common.m_sEdit.m_eOpenDialogDir );
 	cProfile.IOProfileData( pszSecName, "szOpenDialogSelDir"		, common.m_sEdit.m_OpenDialogSelDir, sizeof(common.m_sEdit.m_OpenDialogSelDir) );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_sGeneral.m_nRepeatedScrollLineNum );
+	cProfile.IOProfileData( pszSecName, "nRepeatedMoveCaretNum"		, common.m_sGeneral.m_nRepeatedMoveCaretNum );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_sGeneral.m_nRepeatedScroll_Smooth );
 	cProfile.IOProfileData( pszSecName, "nPageScrollByWheel"	, common.m_sGeneral.m_nPageScrollByWheel );	// 2009.01.12 nasukoji
 	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_sGeneral.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
