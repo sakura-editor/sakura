@@ -95,7 +95,7 @@ BOOL CDlgInput1::DoModal(
 //	m_pszText = pszText;			/* テキスト */
 	m_cmemText.SetString( pszText );
 	bRet = (BOOL)::DialogBoxParam(
-		m_hInstance,
+		CSelectLang::getLangRsrcInstance(),
 		MAKEINTRESOURCE( IDD_INPUT1 ),
 		m_hwndParent,
 		CDlgInput1Proc,
