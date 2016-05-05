@@ -1770,7 +1770,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			}
 
 			TCHAR *Buffer = new TCHAR[ nMaxLen+1 ];
-			_tcscpy( Buffer, sDefaultValue.c_str() );
+			size_t nLen = t_min( sDefaultValue.length(), (size_t)nMaxLen);
+			auto_memcpy( Buffer, sDefaultValue.c_str(), nLen );
+			Buffer[nLen] = _T('\0');
 			CDlgInput1 cDlgInput1;
 			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), _T("sakura macro"), sMessage.c_str(), nMaxLen, Buffer ) ) {
 				SysString S( Buffer, _tcslen(Buffer) );
