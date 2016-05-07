@@ -73,6 +73,9 @@ bool CMigemo::InitDllImp()
 	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
 	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
 
+	// IA64/x64ÇÕëŒâûïsóv
+#ifdef _WIN64
+#else
 	// ver 1.3 à»ç~ÇÕ stdcall
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( GetInstance(), VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
@@ -83,6 +86,7 @@ bool CMigemo::InitDllImp()
 	}else{
 		m_bStdcall = false;
 	}
+#endif
 
 	m_bUtf8 = false;
 
@@ -134,7 +138,7 @@ long CMigemo::migemo_open(char* dict)
 	}else{
 		m_migemo = (*m_migemo_open)(NULL);
 	}
-	
+
 	if (m_migemo == NULL)
 		return 0;
 	
