@@ -108,7 +108,12 @@ protected:
 	Proc_migemo_is_enable_s           m_migemo_is_enable_s;
 
 	migemo* m_migemo;
+	// IA64/x64‚Í‘Î‰ž•s—v
+#ifdef _WIN64
+	static const bool	m_bStdcall = true;
+#else
 	bool	m_bStdcall;
+#endif
 	bool	m_bUtf8;
 
 	LPCTSTR GetDllNameImp(int nIndex);
