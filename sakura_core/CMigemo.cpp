@@ -73,6 +73,9 @@ bool CMigemo::InitDll(void)
 	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
 	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
 
+	// IA64/x64ÇÕëŒâûïsóv
+#ifdef _WIN64
+#else
 	// ver 1.3 à»ç~ÇÕ stdcall
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( GetInstance(), VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
@@ -83,6 +86,7 @@ bool CMigemo::InitDll(void)
 	}else{
 		m_bStdcall = false;
 	}
+#endif
 
 	if( ! migemo_open(NULL) )
 		return false;
