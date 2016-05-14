@@ -199,7 +199,6 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			switch( HIWORD(wParam) )
 			{
 			case LBN_SELCHANGE:
-				DlgItem_Enable( GetHwnd(), IDC_BUTTON_INITIALIZE, nIdx != 0 );
 				DlgItem_Enable( GetHwnd(), IDC_BUTTON_UP_TYPE, 1 < nIdx );
 				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DOWN_TYPE, nIdx != 0 && nIdx < GetDllShareData().m_nTypesCount - 1 );
 				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DEL_TYPE, nIdx != 0 );
@@ -479,21 +478,25 @@ bool CDlgTypeList::Export()
 	return true;
 }
 
-// タイプ別設定初期化
-//		2010/4/12 Uchi
+/*! タイプ別設定初期化
+	@date 2010/4/12 Uchi
+	@date 2016.03.09 Moca 基本の初期化をサポート。基本の時は内蔵設定に戻す動作にする
+
+	@retval true  正常
+	@retval false 異常
+*/
 bool CDlgTypeList::InitializeType( void )
 {
 	HWND hwndDlg = GetHwnd();
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
-	if (iDocType == 0) {
-		// 基本の場合には何もしない
-		return true;
-	}
 	const STypeConfigMini* typeMini;
-	CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini);
+	if( !CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini) ){
+		// なんかエラーだった
+		return false;
+	}
 	int			nRet;
-	if ( typeMini->m_szTypeExts[0] != _T('\0') ) { 
+	if( typeMini->m_szTypeExts[0] != _T('\0') || iDocType == 0 ){ 
 		nRet = ::MYMESSAGEBOX(
 			GetHwnd(),
 			MB_YESNO | MB_ICONQUESTION,
@@ -510,41 +513,47 @@ bool CDlgTypeList::InitializeType( void )
 		return false;
 	}
 //	_DefaultConfig(&types);		//規定値をコピー
-	STypeConfig type;
-	CDocTypeManager().GetTypeConfig(CTypeConfig(0), type); 	// 基本をコピー
+	std::auto_ptr<STypeConfig> type(new STypeConfig());
+	if( 0 != iDocType ){
+		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); 	// 基本をコピー
 
-	// 同じ名前にならないように数字をつける
-	int nNameNum = iDocType + 1;
-	bool bUpdate = true;
-	for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
-		if( bUpdate ){
-			auto_sprintf( type.m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum );
-			nNameNum++;
-			bUpdate = false;
+		// 同じ名前にならないように数字をつける
+		int nNameNum = iDocType + 1;
+		bool bUpdate = true;
+		for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
+			if( bUpdate ){
+				auto_sprintf( type->m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum );
+				nNameNum++;
+				bUpdate = false;
+			}
+			if( iDocType == i ){
+				continue;
+			}
+			const STypeConfigMini* typeMini2;
+			CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
+			if( auto_strcmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
+				i = 0;
+				bUpdate = true;
+			}
 		}
-		if( iDocType == i ){
-			continue;
-		}
-		const STypeConfigMini* typeMini2;
-		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
-		if( auto_strcmp(typeMini2->m_szTypeName, type.m_szTypeName) == 0 ){
-			i = 0;
-			bUpdate = true;
-		}
+		_tcscpy( type->m_szTypeExts, _T("") );
+		type->m_nIdx = iDocType;
+		type->m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
+		type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
+	}else{
+		// 2016.03.09 基本の初期化
+		CType_Basis basis;
+		basis.InitTypeConfig(0, *type);
 	}
-	_tcscpy( type.m_szTypeExts, _T("") );
-	type.m_nIdx = iDocType;
-	type.m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
-	type.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 
-	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), type);
+	CDocTypeManager().SetTypeConfig(CTypeConfig(iDocType), *type);
 
 	SendChangeSettingType(iDocType);
 
 	// リスト再初期化
 	SetData(iDocType);
 
-	InfoMessage( hwndDlg, LS(STR_DLGTYPELIST_INIT2), type.m_szTypeName );
+	InfoMessage( hwndDlg, LS(STR_DLGTYPELIST_INIT2), type->m_szTypeName );
 
 	return true;
 }
