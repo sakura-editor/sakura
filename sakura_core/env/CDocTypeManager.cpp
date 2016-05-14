@@ -128,6 +128,13 @@ bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig
 	return false;
 }
 
+/*! タイプ別設定(mini)取得
+	@param cDocumentType [in] ドキュメントタイプ
+	@param type [out] タイプ別設定(mini)
+
+	@retval true  正常
+	@retval false 異常
+*/
 bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type)
 {
 	int n = cDocumentType.GetIndex();
