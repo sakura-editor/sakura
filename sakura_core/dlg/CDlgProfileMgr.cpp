@@ -82,20 +82,16 @@ static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 	TCHAR	szDir[_MAX_PATH];
 	SplitPath_FolderAndFile( pszPath, szDir, NULL );
 
-	TCHAR szExePath[_MAX_PATH];
-	TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir2[_MAX_DIR];
-	TCHAR szFname[_MAX_FNAME];
-	TCHAR szExt[_MAX_EXT];
-
-	::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
-	_tsplitpath( szExePath, szDrive, szDir2, szFname, szExt );
 
 	TCHAR szIniFile[_MAX_PATH];
 	if( profName == NULL ){
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts%ts%ts_prof%ts"), szDrive, szDir2, szFname, _T(".ini") );
+		TCHAR szExePath[_MAX_PATH];
+		TCHAR szFname[_MAX_FNAME];
+		::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
+		_tsplitpath( szExePath, NULL, NULL, szFname, NULL );
+		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts\\%ts_prof%ts"), szDir, szFname, _T(".ini") );
 	}else{
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts%ts%ts"), szDrive, szDir2, profName );
+		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts\\%ts"), szDir, profName );
 	}
 
 	return std::tstring(szIniFile);
