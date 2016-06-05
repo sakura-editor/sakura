@@ -658,15 +658,17 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
 	assert_warning(gr != m_hdcCompatDC);
+	bool bClipping = false;
 	if( bUseMemoryDC ){
 		hdcOld = gr;
 		gr = m_hdcCompatDC;
 	}else{
-		if( bTransText || pPs->rcPaint.bottom - pPs->rcPaint.top <= 2 || pPs->rcPaint.left - pPs->rcPaint.right <= 2 ){
+		if( bTransText || pPs->rcPaint.bottom - pPs->rcPaint.top <= 2 || pPs->rcPaint.right - pPs->rcPaint.left <= 2 ){
 			// 透過処理の場合フォントの輪郭が重ね塗りになるため自分でクリッピング領域を設定
 			// 2以下はたぶんアンダーライン・カーソル行縦線の作画
 			// MemoryDCの場合は転送が矩形クリッピングの代わりになっている
 			gr.SetClipping(pPs->rcPaint);
+			bClipping = true;
 		}
 	}
 
@@ -788,33 +790,25 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 				nLayoutLineTo
 			);
 
-//			if(bDispResult){
-//				pPs->rcPaint.bottom += nLineHeight;	// EOF再描画対応
-//				break;
-//			}
+			if(bDispResult){
+				// EOF再描画対応
+				nLayoutLineTo++;
+				int nBackImageTop = pPs->rcPaint.bottom;
+				pPs->rcPaint.bottom += nLineHeight;
+				if(bClipping){
+					gr.SetClipping(pPs->rcPaint);
+				}
+				if(bTransText){
+					HDC hdcBgImg = CreateCompatibleDC(gr);
+					HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
+					RECT rc = pPs->rcPaint;
+					rc.top = nBackImageTop;
+					DrawBackImage(gr, rc, hdcBgImg);
+					SelectObject(hdcBgImg, hOldBmp);
+					DeleteObject(hdcBgImg);
+				}
+			}
 		}
-	}
-
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              テキストの無い部分の塗りつぶし                 //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	if( !bTransText && sPos.GetDrawPos().y < pPs->rcPaint.bottom ){
-		RECT rcBack;
-		rcBack.left   = pPs->rcPaint.left;
-		rcBack.right  = pPs->rcPaint.right;
-		rcBack.top    = sPos.GetDrawPos().y;
-		rcBack.bottom = pPs->rcPaint.bottom;
-
-		cTextType.FillBack(gr,rcBack);
-	}
-	{
-		if( !m_bMiniMap ){
-			GetTextDrawer().DispNoteLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, pPs->rcPaint.left, pPs->rcPaint.right );
-		}
-		// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
-		GetTextDrawer().DispVerticalLines( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, CLayoutInt(0), CLayoutInt(-1) );
-		GetTextDrawer().DispWrapLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom );	// 2009.10.24 ryoji
 	}
 
 	cTextType.RewindGraphicsState(gr);
