@@ -1139,7 +1139,7 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
-		if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ){
+	if ( ( pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer) ) ) != NULL ){
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer--;
 	}
@@ -1190,6 +1190,9 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 	}
 
 	//	EOFまで来たり、目的の場所まできたので移動終了。
+	if( GetCaret().GetCaretLogicPos().y + nCaretPointer < CLogicYInt(0) ){
+		return;
+	}
 
 	/* 移動距離を計算 */
 	CLayoutPoint ptCaretPos_Layo;
