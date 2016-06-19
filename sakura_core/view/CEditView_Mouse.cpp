@@ -803,7 +803,7 @@ void CEditView::AutoScrollOnTimer()
 		}else if( scrollPos.x > 0 ){
 			scrollPos.x -= 1;
 		}
-		SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + scrollPos.x ) );
+		SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + GetTextMetrics().GetLayoutXDefault(scrollPos.x) ) );
 	}
 	if( m_bAutoScrollVertical ){
 		if( scrollPos.y < 0 ){
