@@ -636,6 +636,8 @@ struct CommonSetting_Others
 	RECT		m_rcDiffDialog;				//!< 「DIFF差分表示」ダイアログボックスのサイズと位置
 	RECT		m_rcFavoriteDialog;			//!< 「履歴とお気に入りの管理」ダイアログボックスのサイズと位置
 	RECT		m_rcTagJumpDialog;			//!< 「ダイレクトタグジャンプ候補一覧」ダイアログボックスのサイズと位置
+
+	bool		m_bIniReadOnly;				//!< sakura.iniの読み取り専用
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

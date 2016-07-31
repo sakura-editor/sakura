@@ -619,6 +619,8 @@ bool CShareData::InitShareData()
 			::SetRect( &sOthers.m_rcDiffDialog, 0, 0, 0, 0 );
 			::SetRect( &sOthers.m_rcFavoriteDialog, 0, 0, 0, 0 );
 			::SetRect( &sOthers.m_rcTagJumpDialog, 0, 0, 0, 0 );
+
+			sOthers.m_bIniReadOnly = false;
 		}
 
 		// [ステータスバー]タブ

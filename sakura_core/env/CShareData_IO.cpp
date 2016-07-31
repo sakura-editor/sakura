@@ -151,7 +151,10 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	pcMenuDrawer = NULL;
 
 	if( !bRead ){
-		cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル") );
+		// 2014.12.08 sakura.iniの読み取り専用
+		if( !GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly ){
+			cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル") );
+		}
 	}
 
 //	MYTRACE( _T("Iniファイル処理 8 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
@@ -2294,6 +2297,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 		nStructureVersion = int(pShare->m_vStructureVersion);
 		cProfile.IOProfileData( pszSecName, LTEXT("vStructureVersion"), nStructureVersion );
 	}
+	cProfile.IOProfileData( pszSecName, L"bIniReadOnly", pShare->m_Common.m_sOthers.m_bIniReadOnly );
 }
 
 /*!
