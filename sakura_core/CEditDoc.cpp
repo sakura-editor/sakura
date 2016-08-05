@@ -1762,7 +1762,8 @@ bool CEditDoc::FormatBackUpPath(
 			{
 				// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
 				SYSTEMTIME	SystemTime;
-				::GetSystemTime(&SystemTime);			// 現在時刻を取得
+				// 2016.07.28 UTC→ローカル時刻に変更
+				::GetLocalTime(&SystemTime);			// 現在時刻を取得
 
 				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
 					return false;
