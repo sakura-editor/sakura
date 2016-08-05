@@ -122,7 +122,7 @@ const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’
 const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 void GetLineColumn( const char*, int*, int* );
 BOOL IsURL( const char*, int, int* );/* w’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· */
-BOOL IsMailAddress( const char*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
+BOOL IsMailAddress( const TCHAR*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
 int IsNumber( const char*, int, int );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK
 void ActivateFrameWindow( HWND );	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
 BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */

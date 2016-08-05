@@ -267,8 +267,10 @@ BOOL IsURL(
 	return IsMailAddress(pszLine, nLineLen, pnMatchLen);
 }
 
-/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
+/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
+	@date 2016.04.27 記号類を許可
+*/
+BOOL IsMailAddress( const TCHAR* pszBuf, int nBufLen, int* pnAddressLenfth )
 {
 	int		j;
 	int		nDotCount;
@@ -279,6 +281,7 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 	if( (pszBuf[j] >= 'a' && pszBuf[j] <= 'z')
 	 || (pszBuf[j] >= 'A' && pszBuf[j] <= 'Z')
 	 || (pszBuf[j] >= '0' && pszBuf[j] <= '9')
+	 || NULL != _tcschr(_T("!#$%&'*+-/=?^_`{|}~"), pszBuf[j])
 	){
 		j++;
 	}else{
@@ -290,8 +293,7 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 	 || (pszBuf[j] >= 'A' && pszBuf[j] <= 'Z')
 	 || (pszBuf[j] >= '0' && pszBuf[j] <= '9')
 	 || (pszBuf[j] == '.')
-	 || (pszBuf[j] == '-')
-	 || (pszBuf[j] == '_')
+	 || NULL != _tcschr(_T("!#$%&'*+-/=?^_`{|}~"), pszBuf[j])
 		)
 	){
 		j++;
@@ -308,7 +310,7 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 //	nAlphaCount = 0;
 
 
-	while( 1 ){
+	for (;;) {
 		nBgn = j;
 		while( j < nBufLen &&
 			(
