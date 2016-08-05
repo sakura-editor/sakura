@@ -344,9 +344,12 @@ bool CShareData::ShareData_IO_2( bool bRead )
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
 	ShareData_IO_Other( cProfile );
-	
+
 	if( !bRead ){
-		cProfile.WriteProfile( szIniFileName, _T(" sakura.ini テキストエディタ設定ファイル") );
+		// 2014.12.08 sakura.iniの読み取り専用
+		if( !m_pShareData->m_Common.m_sOthers.m_bIniReadOnly ){
+			cProfile.WriteProfile( szIniFileName, _T(" sakura.ini テキストエディタ設定ファイル") );
+		}
 	}
 
 //	MYTRACE( _T("Iniファイル処理 8 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
@@ -1549,50 +1552,52 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 */
 void CShareData::ShareData_IO_Other( CProfile& cProfile )
 {
+	DLLSHAREDATA* pShare = m_pShareData;
+
 	const char* pszSecName = "Other";	//セクションを1個作成した。2003.05.12 MIK
 	int		i;	
 	char	szKeyName[64];
 
 	/* **** その他のダイアログ **** */
 	/* 外部コマンド実行の「標準出力を得る」 */
-	if(!cProfile.IOProfileData( pszSecName, "nExecFlgOpt"	, m_pShareData->m_nExecFlgOpt ) ){ //	2006.12.03 maru オプション拡張
-		cProfile.IOProfileData( pszSecName, "bGetStdout"		, m_pShareData->m_nExecFlgOpt );
+	if(!cProfile.IOProfileData( pszSecName, "nExecFlgOpt"	, pShare->m_nExecFlgOpt ) ){ //	2006.12.03 maru オプション拡張
+		cProfile.IOProfileData( pszSecName, "bGetStdout"		, pShare->m_nExecFlgOpt );
 	}
 
 	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
-	cProfile.IOProfileData( pszSecName, "bLineNumIsCRLF"	, m_pShareData->m_bLineNumIsCRLF_ForJump );
+	cProfile.IOProfileData( pszSecName, "bLineNumIsCRLF"	, pShare->m_bLineNumIsCRLF_ForJump );
 	
 	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
-	cProfile.IOProfileData( pszSecName, "nDiffFlgOpt"	, m_pShareData->m_nDiffFlgOpt );
+	cProfile.IOProfileData( pszSecName, "nDiffFlgOpt"	, pShare->m_nDiffFlgOpt );
 	
 	/* CTAGS */	//@@@ 2003.05.12 MIK
-	cProfile.IOProfileData( pszSecName, "nTagsOpt"		, m_pShareData->m_nTagsOpt );
-	cProfile.IOProfileData( pszSecName, "szTagsCmdLine"	, m_pShareData->m_szTagsCmdLine, sizeof( m_pShareData->m_szTagsCmdLine ) );
+	cProfile.IOProfileData( pszSecName, "nTagsOpt"		, pShare->m_nTagsOpt );
+	cProfile.IOProfileData( pszSecName, "szTagsCmdLine"	, pShare->m_szTagsCmdLine, sizeof( pShare->m_szTagsCmdLine ) );
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
-	cProfile.IOProfileData( pszSecName, "_TagJumpKeyword_Counts", m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum );
-	for( i = 0; i < m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum; ++i ){
+	cProfile.IOProfileData( pszSecName, "_TagJumpKeyword_Counts", pShare->m_sTagJump.m_nTagJumpKeywordArrNum );
+	for( i = 0; i < pShare->m_sTagJump.m_nTagJumpKeywordArrNum; ++i ){
 		wsprintf( szKeyName, "TagJumpKeyword[%02d]", i );
-		if( i >= m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum ){
-			strcpy( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[i], "" );
+		if( i >= pShare->m_sTagJump.m_nTagJumpKeywordArrNum ){
+			strcpy( pShare->m_sTagJump.m_szTagJumpKeywordArr[i], "" );
 		}
-		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[i], sizeof( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[0] ));
+		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_szTagJumpKeywordArr[i], sizeof( pShare->m_sTagJump.m_szTagJumpKeywordArr[0] ));
 	}
-	cProfile.IOProfileData( pszSecName, "m_bTagJumpICase"		, m_pShareData->m_sTagJump.m_bTagJumpICase );
-	cProfile.IOProfileData( pszSecName, "m_bTagJumpAnyWhere"		, m_pShareData->m_sTagJump.m_bTagJumpAnyWhere );
+	cProfile.IOProfileData( pszSecName, "m_bTagJumpICase"		, pShare->m_sTagJump.m_bTagJumpICase );
+	cProfile.IOProfileData( pszSecName, "m_bTagJumpAnyWhere"		, pShare->m_sTagJump.m_bTagJumpAnyWhere );
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプの
 
 	//	MIK バージョン情報（書き込みのみ）
 	if( ! cProfile.IsReadingMode() ){
 		TCHAR	iniVer[256];
 		wsprintf( iniVer, _T("%d.%d.%d.%d"), 
-					HIWORD( m_pShareData->m_sVersion.m_dwProductVersionMS ),
-					LOWORD( m_pShareData->m_sVersion.m_dwProductVersionMS ),
-					HIWORD( m_pShareData->m_sVersion.m_dwProductVersionLS ),
-					LOWORD( m_pShareData->m_sVersion.m_dwProductVersionLS ) );
+					HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
+					LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
+					HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
+					LOWORD( pShare->m_sVersion.m_dwProductVersionLS ) );
 		cProfile.IOProfileData( pszSecName, _T("szVersion")	, iniVer, sizeof( iniVer ) );
 	}
+	cProfile.IOProfileData( pszSecName, _T("bIniReadOnly"), pShare->m_Common.m_sOthers.m_bIniReadOnly );
 }
 
 /*!

@@ -754,6 +754,8 @@ struct CommonSetting_Others
 {
 	//INI内設定のみ
 	RECT				m_rcOpenDialog;				//!< 「開く」ダイアログのサイズと位置
+
+	bool				m_bIniReadOnly;				//!< sakura.iniの読み取り専用
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

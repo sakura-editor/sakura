@@ -369,10 +369,13 @@ static void SetKeyNameArrVal(
 
 	Version 122:
 	左右リピート文字数 2014.01.08 Moca
+
+	Version 123:
+	ini読み取り専用オプション 2014.12.08 Moca
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 122;
+const unsigned int uShareDataVersion = 123;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -938,6 +941,8 @@ bool CShareData::InitShareData()
 			CommonSetting_Others& sOthers = m_pShareData->m_Common.m_sOthers;
 
 			::SetRect( &sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
+
+			sOthers.m_bIniReadOnly = false;
 		}
 
 		{
