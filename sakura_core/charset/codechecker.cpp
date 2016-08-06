@@ -738,6 +738,7 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 			c1 = pS[1];
 			// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
 			if( (c1 & 0xc0) == 0x80 ){
+				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 				ncwidth = 2;	// ３バイトコードの先頭2バイトである
 				if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
 					// デコードできない.(往復変換不可領域)
