@@ -37,6 +37,7 @@ UNICODE版では問題無いが、ANSI版では設定の前にコード変換する必要がある。
 */
 
 #include "../util/tchar_convert.h"
+#include <vector>
 
 namespace ApiWrap{
 
@@ -175,6 +176,7 @@ namespace ApiWrap{
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* str, int nMaxCount);
 	//GetDlgItemText
 
+	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr);
 }
 using namespace ApiWrap;
 
