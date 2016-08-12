@@ -32,4 +32,20 @@ namespace ApiWrap{
 		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<WCHAR>(str,nMaxCount), nMaxCount);
 	}
 
+	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr)
+	{
+		BOOL ret = FALSE;
+		int nBufferSize = 64;
+		while( FALSE == ret ){
+			nBufferSize *= 2;
+			if( 0x10000 < nBufferSize ){
+				break;
+			}
+			vecStr.resize(nBufferSize);
+			item.pszText = &vecStr[0];
+			item.cchTextMax = (int)vecStr.size();
+			ret = TreeView_GetItem(hwndTree, &item);
+		}
+		return FALSE != ret;
+	}
 }
