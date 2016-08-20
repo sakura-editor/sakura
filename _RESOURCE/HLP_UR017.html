@@ -13,19 +13,75 @@
 <h2>変更履歴(2015/02/22～)</h2>
 <!--<h3>xxx. xx, 2015 (2.x.x.x)</h3>-->
 
+<h3>Aug. 14, 2016 (2.3.1.0)</h3>
+[仕様変更]<br />
+<ul>
+<li>カーソル左右リピート設定(iniのみ) (svn:4102 upatchid:926 Moca)</li>
+<li>タイプ一覧の基本も初期化できるように (svn:4111 upatchid:1037 Moca)</li>
+<li>メールアドレスの記号類を許可する (svn:4117 upatchid:1063 Moca)</li>
+<li>ini読み取り専用オプション (svn:4119 upatchid:937 Moca)</li>
+<li>英語リソースでなるべくアクセスキーで括弧を使わないように変更 (svn:4124 upatchid:911 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>共通・タイプ別設定変更後にタイトルバー更新 (svn:4061 upatchid:1013 novice123)</li>
+<li>プロポーショナルフォント (svn:4065 upatchid:713 novice123)</li>
+<li>すべて置換の高速化 (svn:4066 upatchid:521 novice123)</li>
+<li>外部コマンド実行の拡張(memcpyがオーバーランするのを修正) (svn:4068 upatchid:324 novice123)</li>
+<li>プロポーショナルフォント(「行の間隔」スピンコントロールの増減が逆) (svn:4070 upatchid:713 novice123)</li>
+<li>上書きモードでの矩形選択入力で選択範囲を削除するオプションを追加(「上書きモードでの矩形入力で選択範囲を削除する」修正) (svn:4071 upatchid:821 novice123)</li>
+<li>アウトラインを上下にドッキングした場合の初期表示の高さが不正 (svn:4074 upatchid:1016 novice123)</li>
+<li>migemo_close()呼び出し (svn:4075 upatchid:1017 novice123)</li>
+<li>コードページ対応(「折り返し単位/改行単位」をチェックしたときに 文字コードのCPがチェックされるのを修正) (svn:4080 upatchid:311 novice123)</li>
+<li>フォント拡大縮小がOpenTypeのPostScriptだと動作しない (svn:4081 upatchid:1020 Moca)</li>
+<li>C++インデントでコメント行を改行するとRuntime Error (svn:4082 upatchid:1021 ds14050,Moca)</li>
+<li>単語種別のキリル文字の範囲修正 (svn:4083 upatchid:1022 Moca)</li>
+<li>CDCFontでフォント削除がおかしい (svn:4084 upatchid:1026 Moca)</li>
+<li>ソートコマンドでメモリーリーク (svn:4085 upatchid:1027 Moca)</li>
+<li>TSV,CSVモードコンボボックスの縦幅を広げる (svn:4086 upatchid:1033 Moca)</li>
+<li>C++アウトライン解析で異常終了する (svn:4087 upatchid:1007 Moca)</li>
+<li>WCODE::IsCtrlCode()でNUL文字がfalseになるためコントロールコードとして描画されない (svn:4090 upatchid:1035 Moca,novice123)</li>
+<li>テキスト・ルールファイル解析での範囲外アクセスの修正 (svn:4092 upatchid:1010 Moca,novice123)</li>
+<li>アウトラインのメニュー表示でリソースリーク (svn:4093 upatchid:1048 Moca,novice123)</li>
+<li>ミニマップのDIFFマークを非表示に修正 (svn:4096 upatchid:1029 Moca)</li>
+<li>テキスト・ルールファイル解析での範囲外アクセスの修正(bAppendをBOOLからboolに修正) (svn:4097 upatchid:1010 novice123)</li>
+<li>プロファイルマネージャのアイコンがおかしい (svn:4099 upatchid:1039 Moca)</li>
+<li>プロファイルマネージャが左上に表示される (svn:4100 upatchid:1025 Moca)</li>
+<li>共通設定マクロ一覧の幅調整 (svn:4101 upatchid:974 Moca)</li>
+<li>CDlgInput1が言語切り替え未対応 (svn:4105 upatchid:1060 Moca)</li>
+<li>起動時のプロファイルマネージャで新規作成・名前変更で落ちる (svn:4106 upatchid:1059 Moca)</li>
+<li>マクロ関数InputBoxバッファオーバーラン (svn:4107 upatchid:1058 Moca)</li>
+<li>プロファイルマネージャで表示直後(default)が削除・名前変更できるバグ (svn:4109 upatchid:1061 Moca)</li>
+<li>ユーザ別設定のときのマルチプロファイルの場所がおかしい (svn:4112 upatchid:1024 Moca)</li>
+<li>EOF直前の改行を改行なしに置換するとEOFの再描画が不足する (svn:4113 upatchid:1008 Moca)</li>
+<li>プラグインオプションのコンボボックスの高さが不正 (svn:4114 upatchid:1054 Moca)</li>
+<li>1行目で前の段落へ移動を実行すると落ちる (svn:4115 upatchid:1023 Moca)</li>
+<li>オートスクロールの横方向がpx単位になっている (svn:4116 upatchid:1062 Moca)</li>
+<li>バックアップの詳細設定の時刻がUTCになっている (svn:4118 upatchid:1082 Moca)</li>
+<li>外部コマンド実行の標準出力を得るUTF-8で文字化け (svn:4123 upatchid:1077 Moca)</li>
+<li>アウトライン解析C++/Javaツリーのクラス名の最大長の修正 (svn:4125 upatchid:1030 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>インクリメントサーチ定義 (svn:4077 upatchid:1018 novice123)</li>
+<li>assertダイアログでファイル行番号を画面に表示 (svn:4088 upatchid:957 Moca)</li>
+<li>slnファイルのタイプをVC2005Expressにする (svn:4103 upatchid:1073 Moca)</li>
+<li>x64コンパイル時のmigemo呼び出し規約判定省略 (svn:4108 upatchid:1075 novice123)</li>
+</ul>
+
 <h3>Oct. 12, 2015 (2.3.0.0)</h3>
-[機能追加]
+[機能追加]<br />
 <ul>
 <li>TSV、CSVモード (svn:4019 upatchid:991 Request/359 syat)</li>
 <li>プロポーショナルフォント (svn:4035 upatchid:713 Request/500 Moca)</li>
 <li>XMLアウトラインとHTMLの修正 (svn:4047 upatchid:944 BugReport/174 Moca)</li>
 </ul>
-[仕様変更]
+[仕様変更]<br />
 <ul>
 <li>C/C++インデントの改良 (svn:4020 upatchid:717 Request/336 Moca)</li>
 <li>桁数表示のオプション化 (svn:4045 upatchid:1004 unicode:2282 Moca,syat)</li>
 </ul>
-[バグ修正]
+[バグ修正]<br />
 <ul>
 <li>(選択)前の変更行へが追加されるときにもセパレータが余分に追加される (svn:4016 upatchid:983 novice123)</li>
 <li>EBCDIC typo修正 (svn:4017 upatchid:987 novice123)</li>
