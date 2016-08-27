@@ -218,7 +218,7 @@ void CDlgJump::SetData( void )
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PLSQLBLOCKS );
 
 /* タイプ別に設定されたアウトライン解析方法 */
-	if( OUTLINE_PLSQL == pCEditDoc->GetDocumentAttribute().m_nDefaultOutline ){
+	if( OUTLINE_PLSQL == pCEditDoc->GetDocumentAttribute().m_eDefaultOutline ){
 		pCEditDoc->MakeFuncList_PLSQL( &cFuncInfoArr );
 	}
 	nWorkLine = -1;

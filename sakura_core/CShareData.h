@@ -197,7 +197,7 @@ struct STypeConfig {
 
 	int					m_nCurrentPrintSetting;			//!< 現在選択している印刷設定
 
-	int					m_nDefaultOutline;				//!< アウトライン解析方法
+	EOutlineType		m_eDefaultOutline;				//!< アウトライン解析方法
 	char				m_szOutlineRuleFilename[_MAX_PATH];	//!< アウトライン解析ルールファイル
 
 	int					m_nSmartIndent;					//!< スマートインデント種別

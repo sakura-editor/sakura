@@ -1269,7 +1269,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 		sizeof( m_pShareData->m_Types[0].m_szIndentChars ));
 	cProfile.IOProfileData( pszSecName, "cLineTermChar"		, types.m_cLineTermChar );
 
-	cProfile.IOProfileData( pszSecName, "nDefaultOutline"	, types.m_nDefaultOutline );/* アウトライン解析方法 */
+	cProfile.IOProfileData( pszSecName, "nDefaultOutline"	, (int&)types.m_eDefaultOutline );/* アウトライン解析方法 */
 	cProfile.IOProfileData( pszSecName, "szOutlineRuleFilename"	,
 		types.m_szOutlineRuleFilename,
 		sizeof( m_pShareData->m_Types[0].m_szOutlineRuleFilename ));/* アウトライン解析ルールファイル */

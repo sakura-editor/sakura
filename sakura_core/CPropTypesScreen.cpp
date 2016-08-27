@@ -485,7 +485,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		int		nSelPos = 0;
 		for( i = 0; i < _countof( OlmArr ); ++i ){
 			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
-			if( OlmArr[i].nMethod == m_Types.m_nDefaultOutline ){	/* アウトライン解析方法 */
+			if( OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;
 			}
 		}
@@ -495,7 +495,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		::SetDlgItemText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 
 		//標準ルール
-		if( m_Types.m_nDefaultOutline != OUTLINE_FILE ){
+		if( m_Types.m_eDefaultOutline != OUTLINE_FILE ){
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINERULEFILE, FALSE );
 
@@ -656,11 +656,11 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 			HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 			int		nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 			if( nSelPos >= 0 ){
-				m_Types.m_nDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+				m_Types.m_eDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
 			}
 		}
 		else {
-			m_Types.m_nDefaultOutline = OUTLINE_FILE;
+			m_Types.m_eDefaultOutline = OUTLINE_FILE;
 		}
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持

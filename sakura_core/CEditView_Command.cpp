@@ -4409,7 +4409,7 @@ BOOL CEditView::Command_FUNCLIST(
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
-		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
+		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_eDefaultOutline;
 		if( nOutlineType == OUTLINE_CPP ){
 			if( CheckEXT( m_pcEditDoc->GetFilePath(), _T("c") ) ){
 				nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
