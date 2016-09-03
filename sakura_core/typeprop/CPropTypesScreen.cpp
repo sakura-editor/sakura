@@ -80,18 +80,23 @@ static const DWORD p_helpids1[] = {	//11300
 
 enum eOutlineNativeNamesId{
 	STR2_OUTLINE_XML = 0,
+	STR2_OUTLINE_C,
+	STR2_OUTLINE_CPP,
 	STR2_OUTLINE_MAX
 };
 
 const TCHAR* pszOutlineNames[] = {
 	_T("XML"),
+	_T("C"),
+	_T("C++"),
 };
 
 
 //アウトライン解析方法・標準ルール
 TYPE_NAME_ID<EOutlineType> OlmArr[] = {
-//	{ OUTLINE_C,		_T("C") },
-	{ OUTLINE_CPP,		STR_OUTLINE_CPP },
+	{ OUTLINE_C_CPP,	STR_OUTLINE_CPP },
+	{ OUTLINE_C,		STR2_OUTLINE_C },
+	{ OUTLINE_CPP,		STR2_OUTLINE_CPP },
 	{ OUTLINE_PLSQL,	STR_OUTLINE_PLSQL },
 	{ OUTLINE_JAVA,		STR_OUTLINE_JAVA },
 	{ OUTLINE_COBOL,	STR_OUTLINE_COBOL },

@@ -424,7 +424,7 @@ void CDlgFuncList::SetData()
 
 
 	SetDocLineFuncList();
-	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
+	if( OUTLINE_C_CPP == m_nListType || OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), TRUE );	// Jan. 04, 2002 genta Java Method Treeに統合
 		::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_CPP) );
