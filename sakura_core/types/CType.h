@@ -43,7 +43,7 @@ enum ETabArrow {
 //! アウトライン解析の種類
 enum EOutlineType{
 	OUTLINE_C,
-	OUTLINE_CPP,
+	OUTLINE_C_CPP,		// C/C++自動認識
 	OUTLINE_PLSQL,
 	OUTLINE_TEXT,
 	OUTLINE_JAVA,
@@ -58,6 +58,7 @@ enum EOutlineType{
 	OUTLINE_PYTHON,		//	2007.02.08 genta Pythonアウトライン解析
 	OUTLINE_ERLANG,		//	2009.08.10 genta Erlangアウトライン解析
 	OUTLINE_XML,		//  2014.12.25 Moca
+	OUTLINE_CPP,		//  2015.11.13 Moca
 	//	新しいアウトライン解析は必ずこの直前へ挿入
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor

@@ -60,7 +60,7 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );			/* ブロックコメントデリミタ */
 	pType->m_cBlockComments[1].SetBlockCommentRule( L"#if 0", L"#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
 	pType->m_nKeyWordSetIdx[0] = 0;											/* キーワードセット */
-	pType->m_eDefaultOutline = OUTLINE_CPP;									/* アウトライン解析方法 */
+	pType->m_eDefaultOutline = OUTLINE_C_CPP;									/* アウトライン解析方法 */
 	pType->m_eSmartIndent = SMARTINDENT_CPP;								/* スマートインデント種別 */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//半角数値を色分け表示	//Mar. 10, 2001 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
@@ -337,7 +337,9 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 	@param pcFuncInfoArr [out] 関数一覧を返すためのクラス。
 	ここに関数のリストを登録する。
 */
-void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberFunc )
+void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOutlineType,
+	const TCHAR* pszFileName, bool bVisibleMemberFunc
+)
 {
 #ifdef _DEBUG
 // #define TRACE_OUTLINE
@@ -345,6 +347,24 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	const wchar_t*	pLine;
 	CLogicInt	nLineLen;
 	CLogicInt	i;
+	// 2015.11.14 C/C++のファイル名による判定
+	if( nOutlineType == OUTLINE_C_CPP ){
+		if( CheckEXT( pszFileName, _T("c") ) ){
+			nOutlineType = OUTLINE_C;
+		}else if( CheckEXT( pszFileName, _T("cpp") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}else if( CheckEXT( pszFileName, _T("c++") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}else if( CheckEXT( pszFileName, _T("cxx") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}else if( CheckEXT( pszFileName, _T("hpp") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}else if( CheckEXT( pszFileName, _T("h++") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}else if( CheckEXT( pszFileName, _T("hxx") ) ){
+			nOutlineType = OUTLINE_CPP;
+		}
+	}
 
 	// 2002/10/27 frozen　ここから
 	// nNestLevelを nNestLevel_global を nNestLevel_func に分割した。
@@ -1031,6 +1051,14 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					{
 						// zenryaku K&Rスタイルの関数宣言の終了後 M2_FUNC_NAME_END にもどす
 						nMode2 = M2_FUNC_NAME_END;
+						if( nOutlineType == OUTLINE_C ){
+							// CのときはK&R定義。
+							continue;
+						}
+						// それ以外はC++の以下のような場合
+						// int funcname() const;
+						// void funcname() throw(MyException);
+						// auto funcname() -> int;
 					} //	Jan. 30, 2005 genta K&R処理に引き続いて宣言処理も行う．
 					if( nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
