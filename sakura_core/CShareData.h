@@ -276,8 +276,8 @@ struct MacroRec {
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
-	HWND	hwndReferer;				//!< 参照元ウィンドウ
-	POINT	point;						//!< ライン, カラム
+	HWND	hwndReferer;					//!< 参照元ウィンドウ
+	CLogicPoint	point;						//!< ライン, カラム
 };
 
 //	2004.05.13 Moca
@@ -821,6 +821,7 @@ struct SShare_Flags{
 struct SShare_WorkBuffer{
 	char				m_szWork[32000];
 	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+	CLogicPoint			m_LogicPoint;					//!< カーソル位置
 };
 
 //! 共有ハンドル

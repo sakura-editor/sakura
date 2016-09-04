@@ -5523,7 +5523,7 @@ void CEditView::Command_TAGJUMPBACK( void )
 	ActivateFrameWindow( tagJump.hwndReferer );
 
 	/* カーソルを移動させる */
-	memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&(tagJump.point), sizeof( tagJump.point ) );
+	m_pShareData->m_sWorkBuffer.m_LogicPoint = tagJump.point;
 	::SendMessage( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 
 	return;
@@ -5727,10 +5727,8 @@ bool CEditView::TagJumpSub(
 
 	/* カーソル位置変換 */
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		m_ptCaretPos.x,
-		m_ptCaretPos.y,
-		(int*)&tagJump.point.x,
-		(int*)&tagJump.point.y
+		m_ptCaretPos.x, m_ptCaretPos.y,
+		&tagJump.point.x, &tagJump.point.y
 	);
 
 	// タグジャンプ情報の保存
@@ -5751,7 +5749,7 @@ bool CEditView::TagJumpSub(
 			}else{
 				poCaret.x = 0;
 			}
-			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poCaret, sizeof(poCaret) );
+			m_pShareData->m_sWorkBuffer.m_LogicPoint = CLogicPoint( poCaret.x, poCaret.y );
 			::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 		}
 		/* アクティブにする */
@@ -7903,15 +7901,12 @@ void CEditView::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd;
 	TCHAR		szPath[_MAX_PATH + 1];
-	POINT		poSrc;
-	POINT		poDes;
 	CDlgCompare	cDlgCompare;
 	BOOL		bDefferent;
 	const char*	pLineSrc;
 	int			nLineLenSrc;
 	const char*	pLineDes;
 	int			nLineLenDes;
-	POINT*		ppoCaretDes;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
 	/* 比較後、左右に並べて表示 */
@@ -7949,16 +7944,17 @@ void CEditView::Command_COMPARE( void )
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
+	CLogicPoint	poSrc;
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		m_ptCaretPos.x,
-		m_ptCaretPos.y,
-		(int*)&poSrc.x,
-		(int*)&poSrc.y
+		m_ptCaretPos.x, m_ptCaretPos.y,
+		&poSrc.x, &poSrc.y
 	);
-	// カーソル位置取得要求
+
+	// カーソル位置取得 -> poDes
+	CLogicPoint	poDes;
 	{
 		::SendMessage( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
-		ppoCaretDes = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
+		CLogicPoint* ppoCaretDes = &(m_pShareData->m_sWorkBuffer.m_LogicPoint);
 		poDes.x = ppoCaretDes->x;
 		poDes.y = ppoCaretDes->y;
 	}
@@ -8048,11 +8044,11 @@ end_of_compare:;
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
-		memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poDes, sizeof( poDes ) );
+		m_pShareData->m_sWorkBuffer.m_LogicPoint = poDes;
 		::SendMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
-		memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poSrc, sizeof( poSrc ) );
+		m_pShareData->m_sWorkBuffer.m_LogicPoint = poSrc;
 		::PostMessage( ::GetParent( m_hwndParent ), MYWM_SETCARETPOS, 0, 0 );
 	}
 

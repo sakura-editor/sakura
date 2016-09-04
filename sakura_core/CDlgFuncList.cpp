@@ -1640,11 +1640,11 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor 引数追加
 			::EndDialog( m_hWnd, 1 );
 		}else{
 			/* カーソルを移動させる */
-			POINT	poCaret;
+			CLogicPoint	poCaret;
 			poCaret.x = nColTo - 1;
 			poCaret.y = nLineTo - 1;
 
-			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poCaret, sizeof(poCaret) );
+			m_pShareData->m_sWorkBuffer.m_LogicPoint = poCaret;
 
 			//	2006.07.09 genta 移動時に選択状態を保持するように
 			::SendMessage( ::GetParent( ::GetParent( m_hwndParent ) ),

@@ -372,10 +372,13 @@ static void SetKeyNameArrVal(
 
 	Version 123:
 	ini読み取り専用オプション 2014.12.08 Moca
+
+	Version 124:
+	SShare_WorkBuffer変更 2016.09.03 novice
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 123;
+const unsigned int uShareDataVersion = 124;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定

@@ -1907,7 +1907,7 @@ LRESULT CEditWnd::DispatchEvent(
 			→
 			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			CLogicPoint* ppoCaret = (CLogicPoint*)m_pShareData->m_sWorkBuffer.m_szWork;
+			CLogicPoint* ppoCaret = &(m_pShareData->m_sWorkBuffer.m_LogicPoint);
 			CLayoutPoint ptCaretPos;
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 				ppoCaret->x,
@@ -1942,7 +1942,7 @@ LRESULT CEditWnd::DispatchEvent(
 		物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
 		{
-			CLogicPoint* ppoCaret = (CLogicPoint*)m_pShareData->m_sWorkBuffer.m_szWork;
+			CLogicPoint* ppoCaret = &(m_pShareData->m_sWorkBuffer.m_LogicPoint);
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				GetActiveView().m_ptCaretPos.x,
 				GetActiveView().m_ptCaretPos.y,

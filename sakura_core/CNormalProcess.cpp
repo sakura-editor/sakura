@@ -102,7 +102,7 @@ bool CNormalProcess::InitializeProcess()
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
-				POINT& pt = *(POINT*)CProcess::m_pShareData->m_sWorkBuffer.m_szWork;
+				CLogicPoint& pt = CProcess::m_pShareData->m_sWorkBuffer.m_LogicPoint;
 				if( fi.m_ptCursor.x < 0 ){
 					//	桁の指定が無い場合
 					::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
