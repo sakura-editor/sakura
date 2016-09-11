@@ -215,6 +215,7 @@ CDlgFuncList::CDlgFuncList() : CDialog(true)
 	m_pszTimerJumpFile = NULL;
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
+	m_bDummyLParamMode = false;
 }
 
 
@@ -414,6 +415,9 @@ void CDlgFuncList::SetData()
 	HWND			hwndTree;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
 	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+
+	m_bDummyLParamMode = false;
+	m_vecDummylParams.clear();
 
 	//2002.02.08 hor 隠しといてアイテム削除→あとで表示
 	::ShowWindow( hwndList, SW_HIDE );
@@ -816,6 +820,29 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tst
 }
 
 
+/*! lParamからFuncInfoの番号を算出
+	vecにはダミーのlParam番号が入っているのでずれている数を数える
+*/
+static int TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
+{
+	// vec = { 3,6,7 }
+	// lParam 0,1,2,3,4,5,6,7,8
+	// return 0 1 2-1 3 4-1-1 5
+	int nCount = (int)vec.size();
+	int nDiff = 0;
+	for( int i = 0; i < nCount; i++ ){
+		if( vec[i] < lParam ){
+			nDiff++;
+		}else if( vec[i] == lParam ){
+			return -1;
+		}else{
+			break;
+		}
+	}
+	return lParam - nDiff;
+}
+
+
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力   0より大きい==正常   0より小さい==入力エラー */
@@ -854,7 +881,16 @@ int CDlgFuncList::GetData( void )
 			if( TreeView_GetItem( hwndTree, &tvi ) ){
 				// lParamが-1以下は pcFuncInfoArrには含まれない項目
 				if( 0 <= tvi.lParam ){
-					m_cFuncInfo = m_pcFuncInfoArr->GetAt( tvi.lParam );
+					int nIndex;
+					if( m_bDummyLParamMode ){
+						// ダミー要素を排除:SetTreeJava
+						nIndex = TreeDummylParamToFuncInfoIndex(m_vecDummylParams, tvi.lParam);
+					}else{
+						nIndex = tvi.lParam;
+					}
+					if( 0 <= nIndex ){
+						m_cFuncInfo = m_pcFuncInfoArr->GetAt(nIndex);
+					}
 				}else{
 					if( m_nListType == OUTLINE_FILETREE ){
 						if( tvi.lParam == -1 ){
@@ -900,10 +936,12 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	HTREEITEM		htiSelected = NULL;
 	TV_ITEM			tvi;
 	int				nClassNest;
-	int				nDummylParam = -64000;	// 2002.11.10 Moca クラス名のダミーlParam ソートのため
 	std::vector<std::tstring> vStrClasses;
 
 	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
+	m_bDummyLParamMode = true;
+	m_vecDummylParams.clear();
+	int nlParamCount = 0;
 
 	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
@@ -1039,26 +1077,25 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					// 2002/10/28 frozen 上からここへ移動
 					std::tstring strClassName = vStrClasses[k];
 					
-					tvis.item.lParam = -1;
 					if( bAddClass )
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
 							//_tcscat( pClassName, _T(" 名前空間") );
 							strClassName += to_tchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE).c_str());
-							tvis.item.lParam = i;
 						}
 						else
 							//_tcscat( pClassName, _T(" クラス") );
 							strClassName += to_tchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS).c_str());
-							tvis.item.lParam = nDummylParam;
-							nDummylParam++;
 					}
-
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = TVI_LAST;
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
 					tvis.item.pszText = const_cast<TCHAR*>(strClassName.c_str());
+					// 2016.03.06 item.lParamは登録順の連番に変更
+					tvis.item.lParam = nlParamCount;
+					m_vecDummylParams.push_back(nlParamCount);
+					nlParamCount++;
 
 					htiClass = TreeView_InsertItem( hwndTree, &tvis );
 				}else{
@@ -1093,9 +1130,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					tvg.item.mask = TVIF_TEXT | TVIF_PARAM;
 					//tvg.item.pszText = const_cast<TCHAR*>(_T("グローバル"));
 					tvg.item.pszText = const_cast<TCHAR*>(sGlobal.c_str());
-					tvg.item.lParam = nDummylParam;
+					tvg.item.lParam = nlParamCount;
+					m_vecDummylParams.push_back(nlParamCount);
+					nlParamCount++;
 					htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
-					nDummylParam++;
 				}
 				htiClass = htiGlobal;
 			}
@@ -1118,7 +1156,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		tvis.hInsertAfter = TVI_LAST;
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
 		tvis.item.pszText = const_cast<TCHAR*>(strFuncName.c_str());
-		tvis.item.lParam = i;
+		tvis.item.lParam = nlParamCount;
+		nlParamCount++;
 		htiItem = TreeView_InsertItem( hwndTree, &tvis );
 
 		/* クリップボードにコピーするテキストを編集 */
