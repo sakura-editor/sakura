@@ -748,7 +748,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 			// 2002/10/27 frozen ここから
 			// 2007.05.26 genta "__interface" をクラスに類する扱いにする
-			if( 3 <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= 8 )
+			if( FL_OBJ_CLASS <= pcFuncInfo->m_nInfo  && pcFuncInfo->m_nInfo <= FL_OBJ_ELEMENT_MAX )
 				htiClass = TVI_ROOT;
 			else
 			{
@@ -776,16 +776,15 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		// 2002/10/27 frozen 追加文字列の種類を増やした
 		switch(pcFuncInfo->m_nInfo)
 		{// case 4以上の各追加文字列の最初にある半角スペースを省略することはできない。
-		case 1: _tcscat( pFuncName, _T("(宣言)") );break;
-		case 3: _tcscat( pFuncName, _T(" クラス") );break;
-		case 4: _tcscat( pFuncName, _T(" 構造体") );break;
-		case 5: _tcscat( pFuncName, _T(" 列挙体") );break;
-		case 6: _tcscat( pFuncName, _T(" 共用体") );break;
-//		case 7: _tcscat( pFuncName, _T(" 名前空間") );break;
-		
-		case 8: _tcscat( pFuncName, _T(" インターフェース") );break; // 2007.05.26 genta : "__interface"
+		case FL_OBJ_DECLARE: _tcscat( pFuncName, _T("(宣言)") );break;
+		case FL_OBJ_CLASS: _tcscat( pFuncName, _T(" クラス") );break;
+		case FL_OBJ_STRUCT: _tcscat( pFuncName, _T(" 構造体") );break;
+		case FL_OBJ_ENUM: _tcscat( pFuncName, _T(" 列挙体") );break;
+		case FL_OBJ_UNION: _tcscat( pFuncName, _T(" 共用体") );break;
+//		case FL_OBJ_NAMESPACE: _tcscat( pFuncName, _T(" 名前空間") );break;
+		case FL_OBJ_INTERFACE: _tcscat( pFuncName, _T(" インターフェース") );break; // 2007.05.26 genta : "__interface"
 		}
-//		}
+
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
 		tvis.hParent = htiClass;
 		tvis.hInsertAfter = TVI_LAST;
@@ -806,7 +805,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		m_cmemClipText.AppendString( (const char *)szText ); /* クリップボードコピー用テキスト */
 		// "%ts%ls\r\n"
 		m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
-		m_cmemClipText.AppendString(1 == pcFuncInfo->m_nInfo ? " (宣言)\r\n" : "\r\n"); 	//	Jan. 04, 2001 genta C++で使用
+		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? " (宣言)\r\n" : "\r\n"); 	//	Jan. 04, 2001 genta C++で使用
 		delete [] pFuncName;
 
 		/* 現在カーソル位置のメソッドかどうか調べる */

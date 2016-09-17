@@ -20,6 +20,18 @@ class CFuncInfoArr;
 #include "CFuncInfo.h"
 #include "design_template.h"
 
+//! 標準的な付加情報定数
+#define FL_OBJ_DEFINITION	0	//!< 親クラスの定義位置
+#define FL_OBJ_DECLARE		1	//!< 関数プロトタイプ宣言
+#define FL_OBJ_FUNCTION		2	//!< 関数
+#define FL_OBJ_CLASS		3	//!< クラス
+#define FL_OBJ_STRUCT		4	//!< 構造体
+#define FL_OBJ_ENUM			5	//!< 列挙体
+#define FL_OBJ_UNION		6	//!< 共用体
+#define FL_OBJ_NAMESPACE	7	//!< 名前空間
+#define FL_OBJ_INTERFACE	8	//!< インタフェース
+#define FL_OBJ_ELEMENT_MAX	FL_OBJ_INTERFACE
+
 //! アウトライン解析 データ配列
 class CFuncInfoArr {
 public:

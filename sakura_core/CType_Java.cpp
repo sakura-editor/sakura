@@ -142,7 +142,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						}
 						strcat( szClass, szWord );
 
-						nFuncId = 0;
+						nFuncId = FL_OBJ_DEFINITION;
 						++nFuncNum;
 						/*
 						  カーソル位置変換
@@ -250,7 +250,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						 && 0 != strcmp( "switch", szFuncName )
 						 && 0 != strcmp( "return", szFuncName )
 						){
-							nFuncId = 2;
+							nFuncId = FL_OBJ_FUNCTION;
 							++nFuncNum;
 							/*
 							  カーソル位置変換
@@ -393,7 +393,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						 && 0 != strcmp( "switch", szFuncName )
 						 && 0 != strcmp( "return", szFuncName )
 						){
-							nFuncId = 1;
+							nFuncId = FL_OBJ_DECLARE;
 							++nFuncNum;
 							/*
 							  カーソル位置変換

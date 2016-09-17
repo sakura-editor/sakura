@@ -594,20 +594,20 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_FUNC_NAME_END 条件を追加し、補正がかかるようにした。
 					{
 						if( nMode2 == M2_NORMAL )
-							nItemFuncId = 0;
+							nItemFuncId = FL_OBJ_DEFINITION;
 						if( strcmp(szWord,"class")==0 )
-							nItemFuncId = 3;
+							nItemFuncId = FL_OBJ_CLASS;
 						if( strcmp(szWord,"struct")==0 )
-							nItemFuncId = 4;
+							nItemFuncId = FL_OBJ_STRUCT;
 						else if( strcmp(szWord,"namespace")==0 )
-							nItemFuncId = 7;
+							nItemFuncId = FL_OBJ_NAMESPACE;
 						else if( strcmp(szWord,"enum")==0 )
-							nItemFuncId = 5;
+							nItemFuncId = FL_OBJ_ENUM;
 						else if( strcmp(szWord,"union")==0 )
-							nItemFuncId = 6;
+							nItemFuncId = FL_OBJ_UNION;
 						else if( strcmp(szWord,"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
-							nItemFuncId = 8;
-						if( nItemFuncId != 0 )
+							nItemFuncId = FL_OBJ_INTERFACE;
+						if( nItemFuncId != FL_OBJ_DEFINITION )
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + 1;
@@ -720,7 +720,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						{
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
-							if( nItemFuncId == 7)
+							if( nItemFuncId == FL_OBJ_NAMESPACE)
 								strcpy(&szNamespace[nNamespaceLen[nNestLevel_global]],"::定義位置");
 							else
 							{
@@ -833,7 +833,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 							if( nMode2 == M2_NORMAL )
 								bInInitList = false;
 							nMode2 = M2_FUNC_NAME_END;
-							nItemFuncId = 2;
+							nItemFuncId = FL_OBJ_FUNCTION;
 						}
 					}
 					//  2002/10/27 frozen ここまで
@@ -881,7 +881,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					{
 						strcpy( &szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName);
 
-						nItemFuncId = 1;
+						nItemFuncId = FL_OBJ_DECLARE;
 						/*
 						  カーソル位置変換
 						  物理位置(行頭からのバイト数、折り返し無し行位置)
