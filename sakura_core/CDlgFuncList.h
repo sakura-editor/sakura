@@ -18,10 +18,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDLGFUNCLIST_H_
-#define _CDLGFUNCLIST_H_
+#ifndef SAKURA_CDLGFUNCLIST_H_
+#define SAKURA_CDLGFUNCLIST_H_
 
 #include <windows.h>
+#include <vector>
 #include "CDialog.h"
 #include "CMemory.h"
 
@@ -43,7 +44,7 @@ public:
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, bool );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
-	
+
 	/*! 現在の種別と同じなら
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
@@ -110,6 +111,8 @@ private:
 	// 0 デフォルト(ノードに関連づけれられた値順)
 	// 1 アルファベット順
 	int m_nSortType;
+	bool m_bDummyLParamMode;				//!< m_vecDummylParams有効/無効
+	std::vector<int> m_vecDummylParams;		//!< ダミー要素の識別値
 
 	// 選択中の関数情報
 	CFuncInfo* m_cFuncInfo;
@@ -119,7 +122,7 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGFUNCLIST_H_ */
+#endif /* SAKURA_CDLGFUNCLIST_H_ */
 
 
 /*[EOF]*/
