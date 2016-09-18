@@ -711,7 +711,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					tvis.item.lParam = -1;
 					if( bAddClass )
 					{
-						if( pcFuncInfo->m_nInfo == 7 )
+						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
 							_tcscat( pClassName, _T(" –¼‘O‹óŠÔ") );
 							tvis.item.lParam = i;
