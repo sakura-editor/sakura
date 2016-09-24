@@ -208,7 +208,7 @@ CDlgFuncList::CDlgFuncList() : CDialog(true)
 	m_nSortColOld = -1;
 	m_bLineNumIsCRLF = false;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
-	m_nSortType = 0;
+	m_nSortType = SORTTYPE_DEFAULT;
 	m_cFuncInfo = NULL;			/* 現在の関数情報 */
 	m_bEditWndReady = false;	/* エディタ画面の準備完了 */
 	m_bInChangeLayout = false;
@@ -765,12 +765,14 @@ void CDlgFuncList::SetData()
 		}
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
 		Combo_ResetContent( hWnd_Combo_Sort ); // 2002.11.10 Moca 追加
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1));
-		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1));	// SORTTYPE_DEFAULT
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE1_2));	// SORTTYPE_DEFAULT_DESC
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));    // SORTTYPE_ATOZ
+		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2_2));  // SORTTYPE_ZTOA
 		Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
 		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
-		if( 1 == m_nSortType ){
+		if( SORTTYPE_DEFAULT < m_nSortType ){
 			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
 		}
 	}else if( m_nListType == OUTLINE_FILETREE ){
@@ -1213,6 +1215,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		TreeView_SelectItem( hwndTree, htiSelectedTop );
 	}
 //	GetTreeTextNext( hwndTree, NULL, 0 );
+	m_nTreeItemCount = nlParamCount;
 	return;
 }
 
@@ -2387,7 +2390,7 @@ BOOL CDlgFuncList::OnMinMaxInfo( LPARAM lParam )
 	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
 	return 0;
 }
-int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+static inline int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	if( lParam1< lParam2 )
 		return -1;
@@ -2395,6 +2398,33 @@ int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSo
 		return 1;
 	else
 		return 0;
+}
+
+static int CALLBACK Compare_by_ItemDataDesc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	return Compare_by_ItemData(lParam2, lParam1, lParamSort);
+}
+
+struct STreeViewSortData{
+	std::vector<std::tstring> m_vecText;
+};
+
+static int CALLBACK Compare_by_ItemText(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	STreeViewSortData* pData = (STreeViewSortData*)lParamSort;
+	std::tstring* pText1 = &pData->m_vecText[lParam1];
+	std::tstring* pText2 = &pData->m_vecText[lParam2];
+	int result = ::lstrcmpi(pText1->c_str(), pText2->c_str());
+	if( result == 0 ){
+		// 同じ名前は登録順
+		return Compare_by_ItemData(lParam1, lParam2, lParamSort);
+	}
+	return result;
+}
+
+static int CALLBACK Compare_by_ItemTextDesc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	return Compare_by_ItemText(lParam2, lParam1, lParamSort);
 }
 
 BOOL CDlgFuncList::OnDestroy( void )
@@ -2450,7 +2480,10 @@ BOOL CDlgFuncList::OnDestroy( void )
 }
 
 
-BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
+/*!
+	@date 2016.03.04 Moca OnCbnSelChange -> OnCbnSelEndOk マウスで一覧から選択中にソートされないように変更
+*/
+BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
 	int nSelect = Combo_GetCurSel( hwndCtl );
 	switch(wID)
@@ -2471,20 +2504,67 @@ BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 	return FALSE;
 
 }
-void  CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
+
+static void SortTree_Sub(HWND hWndTree,HTREEITEM htiParent, STreeViewSortData& data, int nSortType)
 {
-	if( m_nSortType == 1 )
-		TreeView_SortChildren(hWndTree,htiParent,TRUE);
-	else
-	{
-		TVSORTCB sort;
-		sort.hParent =  htiParent;
+	if( SORTTYPE_ATOZ == nSortType || SORTTYPE_ZTOA == nSortType ){
+		for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem )){
+			TVITEM item;
+			item.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
+			item.hItem = htiItem;
+			std::vector<TCHAR> vecStr;
+			if( TreeView_GetItemTextVector(hWndTree, item, vecStr) ){
+				data.m_vecText[item.lParam].assign(&vecStr[0]);
+			}
+		}
+	}
+	TVSORTCB sort;
+	sort.hParent = htiParent;
+	switch( nSortType ){
+	case SORTTYPE_DEFAULT:
 		sort.lpfnCompare = Compare_by_ItemData;
 		sort.lParam = 0;
-		TreeView_SortChildrenCB(hWndTree , &sort , TRUE);
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		// TreeView_SortChildren(hWndTree,htiParent,FALSE);
+		break;
+	case SORTTYPE_DEFAULT_DESC:
+		sort.lpfnCompare = Compare_by_ItemDataDesc;
+		sort.lParam = 0;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	case SORTTYPE_ATOZ:
+		sort.lpfnCompare = Compare_by_ItemText;
+		sort.lParam = (LPARAM)&data;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	case SORTTYPE_ZTOA:
+		sort.lpfnCompare = Compare_by_ItemTextDesc;
+		sort.lParam = (LPARAM)&data;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	default:
+		assert(0);
+		break;
 	}
-	for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem ))
-		SortTree(hWndTree,htiItem);
+
+	for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem )){
+		SortTree_Sub(hWndTree, htiItem, data, nSortType);
+	}
+}
+
+
+
+void CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
+{
+	STreeViewSortData data;
+	int size = m_pcFuncInfoArr->GetNum();
+	if( m_bDummyLParamMode ){
+		size = m_nTreeItemCount;
+	}
+	data.m_vecText.resize(size);
+	::SendMessageAny(hWndTree, WM_SETREDRAW, (WPARAM)FALSE, 0);
+	SortTree_Sub(hWndTree, htiParent, data, m_nSortType);
+	::SendMessageAny(hWndTree, WM_SETREDRAW, (WPARAM)TRUE, 0);
 }
 
 

@@ -3646,7 +3646,9 @@ BEGIN
 	STR_DLGFNCLST_REMARK10		"ENDP"
 
 	STR_DLGFNCLST_SORTTYPE1		"Default"
-	STR_DLGFNCLST_SORTTYPE2		"Alphabetic Order"
+	STR_DLGFNCLST_SORTTYPE1_2	"Default (Desc)"
+	STR_DLGFNCLST_SORTTYPE2		"Alphabetical Order"
+	STR_DLGFNCLST_SORTTYPE2_2	"Alphabetical Order (Desc)"
 
 	// NOT complete....
 	STR_DLGFNCLST_APND_DECLARE		"(Declaration)" 
