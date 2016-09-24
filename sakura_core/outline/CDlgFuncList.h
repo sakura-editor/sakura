@@ -29,9 +29,16 @@ class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 class CDataProfile;
 
-#define OUTLINE_LAYOUT_FOREGROUND (0)
-#define OUTLINE_LAYOUT_BACKGROUND (1)
-#define OUTLINE_LAYOUT_FILECHANGED (2)
+//! アウトライン動作指定
+#define OUTLINE_LAYOUT_FOREGROUND (0)   //<! 前面用の動作
+#define OUTLINE_LAYOUT_BACKGROUND (1)   //<! 背後用の動作
+#define OUTLINE_LAYOUT_FILECHANGED (2)  //<! ファイル切替用の動作（前面だが特殊）
+
+//! ツリービューをソートする基準
+#define SORTTYPE_DEFAULT       0 //<! デフォルト(ノードに関連づけれられた値順,昇順)
+#define SORTTYPE_DEFAULT_DESC  1 //<! デフォルト(ノードに関連づけれられた値順,降順)
+#define SORTTYPE_ATOZ          2 //<! アルファベット順(昇順)
+#define SORTTYPE_ZTOA          3 //<! アルファベット順(降順)
 
 // ファイルツリー関連クラス
 enum EFileTreeSettingFrom{
@@ -119,7 +126,7 @@ protected:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void); // 20060201 aroka
-	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
+	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 	BOOL OnContextMenu( WPARAM, LPARAM );
 	void SetData();	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
@@ -128,7 +135,6 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
-	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree(bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
@@ -187,11 +193,8 @@ private:
 	// (無理矢理なのでどなたか修正お願いします)
 	bool m_bWaitTreeProcess;
 
-	// 2002/11/1 frozen
-	//! ツリービューをソートする基準
-	// 0 デフォルト(ノードに関連づけれられた値順)
-	// 1 アルファベット順
-	int m_nSortType;
+	int m_nSortType;						//!< ツリービューをソートする基準
+	int m_nTreeItemCount;
 	bool m_bDummyLParamMode;				//!< m_vecDummylParams有効/無効
 	std::vector<int> m_vecDummylParams;		//!< ダミー要素の識別値
 
