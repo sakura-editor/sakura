@@ -29,6 +29,13 @@
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 
+//! ツリービューをソートする基準
+#define SORTTYPE_DEFAULT       0 //<! デフォルト(ノードに関連づけれられた値順,昇順)
+#define SORTTYPE_DEFAULT_DESC  1 //<! デフォルト(ノードに関連づけれられた値順,降順)
+#define SORTTYPE_ATOZ          2 //<! アルファベット順(昇順)
+#define SORTTYPE_ZTOA          3 //<! アルファベット順(降順)
+
+
 
 //!	アウトライン解析ダイアログボックス
 class CDlgFuncList : public CDialog
@@ -63,7 +70,7 @@ protected:
 	BOOL OnNotify( WPARAM, LPARAM );
 	BOOL OnSize( WPARAM, LPARAM );
 	BOOL OnDestroy(void); // 20060201 aroka
-	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
+	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 	void SetData();	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
 
@@ -71,7 +78,6 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnJump( bool bCheckAutoClose = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
-	void SetTreeCpp( HWND );	/* ツリーコントロールの初期化：C++メソッドツリー */
 	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree(bool tagjump = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
@@ -106,11 +112,8 @@ private:
 	// (無理矢理なのでどなたか修正お願いします)
 	bool m_bWaitTreeProcess;
 
-	// 2002/11/1 frozen
-	//! ツリービューをソートする基準
-	// 0 デフォルト(ノードに関連づけれられた値順)
-	// 1 アルファベット順
-	int m_nSortType;
+	int m_nSortType;						//!< ツリービューをソートする基準
+	int m_nTreeItemCount;
 	bool m_bDummyLParamMode;				//!< m_vecDummylParams有効/無効
 	std::vector<int> m_vecDummylParams;		//!< ダミー要素の識別値
 

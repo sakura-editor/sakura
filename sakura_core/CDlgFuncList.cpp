@@ -23,6 +23,7 @@
 */
 
 #include "StdAfx.h"
+#include <assert.h>
 #include "CDlgFuncList.h"
 #include "CFuncInfo.h"
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
@@ -62,6 +63,25 @@ enum EFuncListCol {
 	FL_COL_NAME		= 2,	//関数名
 	FL_COL_REMARK	= 3		//備考
 };
+
+namespace ApiWrap{
+	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr)
+	{
+		BOOL ret = FALSE;
+		int nBufferSize = 64;
+		while( FALSE == ret ){
+			nBufferSize *= 2;
+			if( 0x10000 < nBufferSize ){
+				break;
+			}
+			vecStr.resize(nBufferSize);
+			item.pszText = &vecStr[0];
+			item.cchTextMax = (int)vecStr.size();
+			ret = TreeView_GetItem(hwndTree, &item);
+		}
+		return FALSE != ret;
+	}
+}
 
 /*! ソート比較用プロシージャ */
 int CALLBACK _CompareFunc_( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
@@ -134,7 +154,7 @@ CDlgFuncList::CDlgFuncList()
 	m_nSortCol = 0;				/* ソートする列番号 2004.04.06 zenryaku 標準は行番号(1列目) */
 	m_bLineNumIsCRLF = false;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	m_bWaitTreeProcess = false;	// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 2/4
-	m_nSortType = 0;
+	m_nSortType = SORTTYPE_DEFAULT;
 	m_cFuncInfo = NULL;			/* 現在の関数情報 */
 	m_bDummyLParamMode = false;
 }
@@ -509,15 +529,16 @@ void CDlgFuncList::SetData()
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
 		::SendMessage( hWnd_Combo_Sort , CB_RESETCONTENT, 0, 0 ); // 2002.11.10 Moca 追加
 		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("デフォルト")));
+		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("デフォルト(降順)")));
 		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("アルファベット順")));
+		::SendMessage( hWnd_Combo_Sort , CB_ADDSTRING, 0, (LPARAM)(_T("アルファベット(降順)")));
 		::SendMessage( hWnd_Combo_Sort , CB_SETCURSEL, m_nSortType, 0L);
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
-		if( 1 == m_nSortType ){
+		if( SORTTYPE_DEFAULT < m_nSortType ){
 			SortTree(::GetDlgItem( m_hWnd , IDC_TREE_FL),TVI_ROOT);
 		}
-	}
-	else {
+	}else {
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), SW_HIDE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_HIDE );
@@ -886,6 +907,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		}
 	}
 //	GetTreeTextNext( hwndTree, NULL, 0 );
+	m_nTreeItemCount = nlParamCount;
 	return;
 }
 
@@ -1597,7 +1619,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 
-int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+static inline int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	if( lParam1< lParam2 )
 		return -1;
@@ -1605,6 +1627,33 @@ int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSo
 		return 1;
 	else
 		return 0;
+}
+
+static int CALLBACK Compare_by_ItemDataDesc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	return Compare_by_ItemData(lParam2, lParam1, lParamSort);
+}
+
+struct STreeViewSortData{
+	std::vector<std::tstring> m_vecText;
+};
+
+static int CALLBACK Compare_by_ItemText(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	STreeViewSortData* pData = (STreeViewSortData*)lParamSort;
+	std::tstring* pText1 = &pData->m_vecText[lParam1];
+	std::tstring* pText2 = &pData->m_vecText[lParam2];
+	int result = ::lstrcmpi(pText1->c_str(), pText2->c_str());
+	if( result == 0 ){
+		// 同じ名前は登録順
+		return Compare_by_ItemData(lParam1, lParam2, lParamSort);
+	}
+	return result;
+}
+
+static int CALLBACK Compare_by_ItemTextDesc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	return Compare_by_ItemText(lParam2, lParam1, lParamSort);
 }
 
 BOOL CDlgFuncList::OnDestroy( void )
@@ -1631,7 +1680,10 @@ BOOL CDlgFuncList::OnDestroy( void )
 }
 
 
-BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
+/*!
+	@date 2016.03.04 Moca OnCbnSelChange -> OnCbnSelEndOk マウスで一覧から選択中にソートされないように変更
+*/
+BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 {
 	int nSelect = ::SendMessage(hwndCtl,CB_GETCURSEL, 0, 0L);
 	switch(wID)
@@ -1647,20 +1699,67 @@ BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 	return FALSE;
 
 }
-void  CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
+
+static void SortTree_Sub(HWND hWndTree,HTREEITEM htiParent, STreeViewSortData& data, int nSortType)
 {
-	if( m_nSortType == 1 )
-		TreeView_SortChildren(hWndTree,htiParent,TRUE);
-	else
-	{
-		TVSORTCB sort;
-		sort.hParent =  htiParent;
+	if( SORTTYPE_ATOZ == nSortType || SORTTYPE_ZTOA == nSortType ){
+		for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem )){
+			TVITEM item;
+			item.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
+			item.hItem = htiItem;
+			std::vector<TCHAR> vecStr;
+			if( TreeView_GetItemTextVector(hWndTree, item, vecStr) ){
+				data.m_vecText[item.lParam].assign(&vecStr[0]);
+			}
+		}
+	}
+	TVSORTCB sort;
+	sort.hParent = htiParent;
+	switch( nSortType ){
+	case SORTTYPE_DEFAULT:
 		sort.lpfnCompare = Compare_by_ItemData;
 		sort.lParam = 0;
-		TreeView_SortChildrenCB(hWndTree , &sort , TRUE);
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		// TreeView_SortChildren(hWndTree,htiParent,FALSE);
+		break;
+	case SORTTYPE_DEFAULT_DESC:
+		sort.lpfnCompare = Compare_by_ItemDataDesc;
+		sort.lParam = 0;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	case SORTTYPE_ATOZ:
+		sort.lpfnCompare = Compare_by_ItemText;
+		sort.lParam = (LPARAM)&data;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	case SORTTYPE_ZTOA:
+		sort.lpfnCompare = Compare_by_ItemTextDesc;
+		sort.lParam = (LPARAM)&data;
+		TreeView_SortChildrenCB(hWndTree , &sort , FALSE);
+		break;
+	default:
+		assert(0);
+		break;
 	}
-	for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem ))
-		SortTree(hWndTree,htiItem);
+
+	for(HTREEITEM htiItem = TreeView_GetChild( hWndTree, htiParent ); NULL != htiItem ; htiItem = TreeView_GetNextSibling( hWndTree, htiItem )){
+		SortTree_Sub(hWndTree, htiItem, data, nSortType);
+	}
+}
+
+
+
+void CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
+{
+	STreeViewSortData data;
+	int size = m_pcFuncInfoArr->GetNum();
+	if( m_bDummyLParamMode ){
+		size = m_nTreeItemCount;
+	}
+	data.m_vecText.resize(size);
+	::SendMessage(hWndTree, WM_SETREDRAW, (WPARAM)FALSE, 0);
+	SortTree_Sub(hWndTree, htiParent, data, m_nSortType);
+	::SendMessage(hWndTree, WM_SETREDRAW, (WPARAM)TRUE, 0);
 }
 
 
