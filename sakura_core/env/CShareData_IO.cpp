@@ -790,6 +790,31 @@ bool GetPlugCmdInfoByFuncCode(
 }
 
 
+/*! プラグイン名or機能番号文字列をEFunctionCodeにする
+
+	@param[in]	pszFuncName		プラグイン名or機能番号文字列
+	@return 機能コード
+*/
+static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
+{
+	EFunctionCode n;
+	if (pszFuncName == NULL) {
+		n = F_DEFAULT;
+	}else if (wcschr(pszFuncName, L'/') != NULL) {
+		// Plugin名
+		n = GetPlugCmdInfoByName(pszFuncName);
+	}else if (WCODE::Is09(pszFuncName[0]) 
+	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
+		n = (EFunctionCode)auto_atol(pszFuncName);
+	}else {
+		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
+	}
+	if (n == F_INVALID) {
+		n = F_DEFAULT;
+	}
+	return n;
+}
+
 /*!
 	@brief 共有データのToolbarセクションの入出力
 	@param[in]		bRead		true: 読み込み / false: 書き込み
@@ -906,20 +931,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
 			if (cProfile.IsReadingMode()) {
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
-				if (wcschr(szFuncName, L'/') != NULL) {
-					// Plugin名
-					n = GetPlugCmdInfoByName(szFuncName);
-				}
-				else if ( WCODE::Is09(*szFuncName) 
-				  && (szFuncName[1] == L'\0' || WCODE::Is09(szFuncName[1])) ) {
-					n = (EFunctionCode)auto_atol(szFuncName);
-				}
-				else {
-					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, NULL);
-				}
-				if ( n == F_INVALID ) {
-					n = F_DEFAULT;
-				}
+				n = GetFunctionStrToFunctionCode(szFuncName);
 				menu.m_nCustMenuItemFuncArr[i][j] = n;
 			}
 			else {
@@ -1062,19 +1074,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						pn = auto_strchr(p,',');
 						if (pn == NULL)	break;
 						*pn = 0;
-						if (wcschr(p, L'/') != NULL) {
-							// Plugin名
-							n = GetPlugCmdInfoByName( p );
-						}
-						else if (WCODE::Is09(*p) && (p[1] == L'\0' || WCODE::Is09(p[1]))) {
-							n = (EFunctionCode)auto_atol( p);
-						}
-						else {
-							n = CSMacroMgr::GetFuncInfoByName(0, p, NULL);
-						}
-						if( n == F_INVALID ) {
-							n = F_DEFAULT;
-						}
+						n = GetFunctionStrToFunctionCode(p);
 						tmpKeydata.m_nFuncCodeArr[j] = n;
 						p = pn+1;
 					}
@@ -2160,20 +2160,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			if (wcschr(p, L'/') != NULL) {
-				// Plugin名
-				n = GetPlugCmdInfoByName(p);
-			}
-			else if (WCODE::Is09( *p )
-			  && (WCODE::Is09( p[1] ) == L'\0' ||  WCODE::Is09( p[1] ))) {
-				n = (EFunctionCode)auto_atol( p );
-			}
-			else {
-				n = CSMacroMgr::GetFuncInfoByName(0, p, NULL);
-			}
-			if ( n == F_INVALID ) {
-				n = F_DEFAULT;
-			}
+			n = GetFunctionStrToFunctionCode(p);
 			pcMenu->m_nFunc = n;
 			if (pn == NULL) {
 				continue;
