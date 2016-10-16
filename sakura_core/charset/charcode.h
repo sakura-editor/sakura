@@ -351,8 +351,8 @@ enum ECharWidthCacheMode {
 };
 
 // キャッシュの初期化関数群
-void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //<! モードを変更したいとき
-void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //<! フォントを変更したとき
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< モードを変更したいとき
+void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
 
 #endif /* SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_ */

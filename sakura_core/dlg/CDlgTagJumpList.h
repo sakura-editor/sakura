@@ -147,8 +147,8 @@ private:
 	bool	m_bNextItem;	//!< まだ次にヒットするものがある
 
 	// 絞り込み検索用
-	STagFindState* m_psFindPrev; //<! 前回の最後に検索した状態
-	STagFindState* m_psFind0Match; //<! 前回の1つもHitしなかった最後のtags
+	STagFindState* m_psFindPrev; //!< 前回の最後に検索した状態
+	STagFindState* m_psFind0Match; //!< 前回の1つもHitしなかった最後のtags
 
 	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視

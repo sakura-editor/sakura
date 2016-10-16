@@ -694,9 +694,9 @@ public:
 	CSearchStringPattern m_sSearchPattern;
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
 	bool				m_bCurSrchKeyMark;			/* 検索文字列のマーク */
-	bool				m_bCurSearchUpdate;			//<! コンパイルデータ更新要求
-	int					m_nCurSearchKeySequence;	//<! 検索キーシーケンス
-	std::wstring		m_strCurSearchKey;			//<! 検索文字列
+	bool				m_bCurSearchUpdate;			//!< コンパイルデータ更新要求
+	int					m_nCurSearchKeySequence;	//!< 検索キーシーケンス
+	std::wstring		m_strCurSearchKey;			//!< 検索文字列
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 	CLogicPoint			m_ptSrchStartPos_PHY;		// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	BOOL				m_bSearch;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
