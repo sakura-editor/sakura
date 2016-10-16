@@ -30,10 +30,10 @@ class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 
 //! ツリービューをソートする基準
-#define SORTTYPE_DEFAULT       0 //<! デフォルト(ノードに関連づけれられた値順,昇順)
-#define SORTTYPE_DEFAULT_DESC  1 //<! デフォルト(ノードに関連づけれられた値順,降順)
-#define SORTTYPE_ATOZ          2 //<! アルファベット順(昇順)
-#define SORTTYPE_ZTOA          3 //<! アルファベット順(降順)
+#define SORTTYPE_DEFAULT       0 //!< デフォルト(ノードに関連づけれられた値順,昇順)
+#define SORTTYPE_DEFAULT_DESC  1 //!< デフォルト(ノードに関連づけれられた値順,降順)
+#define SORTTYPE_ATOZ          2 //!< アルファベット順(昇順)
+#define SORTTYPE_ZTOA          3 //!< アルファベット順(降順)
 
 
 

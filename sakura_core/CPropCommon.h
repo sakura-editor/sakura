@@ -249,11 +249,11 @@ private:
 	void GetKeyWordSet( HWND , int );	/* 指定キーワードセットの取得 */
 	void DispKeywordCount( HWND hwndDlg );
 
-	void Edit_List_KeyWord( HWND, HWND );		//<! リスト中で選択されているキーワードを編集する
-	void Delete_List_KeyWord( HWND , HWND );	//<! リスト中で選択されているキーワードを削除する
-	void Import_List_KeyWord( HWND , HWND );	//<! リスト中のキーワードをインポートする
-	void Export_List_KeyWord( HWND , HWND );	//<! リスト中のキーワードをエクスポートする
-	void Clean_List_KeyWord( HWND , HWND );		//<! リスト中のキーワードを整理する 2005.01.26 Moca
+	void Edit_List_KeyWord( HWND, HWND );		//!< リスト中で選択されているキーワードを編集する
+	void Delete_List_KeyWord( HWND , HWND );	//!< リスト中で選択されているキーワードを削除する
+	void Import_List_KeyWord( HWND , HWND );	//!< リスト中のキーワードをインポートする
+	void Export_List_KeyWord( HWND , HWND );	//!< リスト中のキーワードをエクスポートする
+	void Clean_List_KeyWord( HWND , HWND );		//!< リスト中のキーワードを整理する 2005.01.26 Moca
 };
 
 //==============================================================
