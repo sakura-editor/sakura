@@ -73,7 +73,7 @@ struct SLoadInfo
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
-	bool		bWritableNoMsg; //<! 書き込み禁止メッセージを表示しない
+	bool		bWritableNoMsg; //!< 書き込み禁止メッセージを表示しない
 	CTypeConfig	nType;
 
 	//モード
