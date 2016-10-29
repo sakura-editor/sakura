@@ -124,7 +124,7 @@ struct STypeConfig{
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
 	int					m_id;
-	TCHAR				m_szTypeName[64];				//!< タイプ属性：名称
+	TCHAR				m_szTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
 	TCHAR				m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
 	int					m_nTextWrapMethod;				//!< テキストの折り返し方法		// 2008.05.30 nasukoji
 	CKetaXInt			m_nMaxLineKetas;				//!< 折り返し桁数
@@ -252,13 +252,13 @@ struct STypeConfig{
 	int					m_nLineNumWidth;				//!< 行番号の最小桁数 2014.08.02 katze
 }; /* STypeConfig */
 
-// タイプ別設定(mini)
+//! タイプ別設定(mini)
 struct STypeConfigMini
 {
-	int			m_id;
-	TCHAR		m_szTypeName[64];				//!< タイプ属性：名称
-	TCHAR		m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
-	SEncodingConfig		m_encoding;				//!< エンコードオプション
+	int					m_id;
+	TCHAR				m_szTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
+	TCHAR				m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
+	SEncodingConfig		m_encoding;						//!< エンコードオプション
 };
 
 
