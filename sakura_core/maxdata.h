@@ -24,17 +24,19 @@
 #ifndef _MAXDATA_H_
 #define _MAXDATA_H_
 
-//2007.10.19 kobake
-
+/*! 最大値定義
+	@date 2007.10.19 kobake 新規作成
+*/
 enum maxdata{
-	MAX_EDITWINDOWS				= 256,
-	MAX_SEARCHKEY				=  30,
-	MAX_REPLACEKEY				=  30,
-	MAX_GREPFILE				=  30,
-	MAX_GREPFOLDER				=  30,
-	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした	// 2007.12.13 ryoji 20→30
-	MAX_TYPES_EXTS				=  64,
-	MAX_PRINTSETTINGARR			=   8,
+	MAX_EDITWINDOWS				= 256,	//!< 編集ウィンドウ数
+	MAX_SEARCHKEY				=  30,	//!< 検索キー
+	MAX_REPLACEKEY				=  30,	//!< 置換キー
+	MAX_GREPFILE				=  30,	//!< Gprepファイル
+	MAX_GREPFOLDER				=  30,	//!< Gprepフォルダ
+	MAX_TYPES					=  30,	//!< タイプ別設定
+	MAX_TYPES_NAME				=  64,	//!< タイプ属性：名称 バッファサイズ
+	MAX_TYPES_EXTS				=  64,	//!< タイプ属性：拡張子リスト バッファサイズ
+	MAX_PRINTSETTINGARR			=   8,	//!< 印刷ページ設定
 
 	//	From Here Sep. 14, 2001 genta
 	MACRONAME_MAX				= 64,
