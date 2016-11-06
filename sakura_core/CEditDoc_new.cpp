@@ -86,9 +86,9 @@ bool CEditDoc::SaveFile( const char* pszPath )
 
 //	To Here Aug. 21, 2000 genta
 
-// From Here 2001.12.03 hor
 /*! ブックマークリスト作成（無理矢理！）
 
+	@date 2001.12.03 hor   新規作成
 	@date 2002.01.19 aroka 空行をマーク対象にするフラグ bMarkUpBlankLineEnable を導入しました。
 	@date 2005.10.11 ryoji "ａ@" の右２バイトが全角空白と判定される問題の対処
 	@date 2005.11.03 genta 文字列長修正．右端のゴミを除去
@@ -98,8 +98,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	const char*	pLine;
 	int		nLineLen;
 	int		nLineCount;
-	int		leftspace, pos_wo_space, k,nX,nY;
-	char*	pszText;
+	int		leftspace, pos_wo_space, k;
 	BOOL	bMarkUpBlankLineEnable = m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable;	//! 空行をマーク対象にするフラグ 20020119 aroka
 	int		nNewLineLen	= m_cNewLineCode.GetLen();
 	int		nLineLast	= m_cDocLineMgr.GetLineCount();
@@ -154,17 +153,14 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			k += nCharChars;
 		}
 		//	Nov. 3, 2005 genta 文字列長計算式の修正
-		nLineLen = pos_wo_space - leftspace;
-		pszText = new char[nLineLen + 1];
-		memcpy( pszText, (const char *)&pLine[leftspace], nLineLen );
-		pszText[nLineLen] = '\0';
-		m_cLayoutMgr.LogicToLayout(	0, nLineCount, &nX, &nY );
-		pcFuncInfoArr->AppendData( nLineCount+1, nY+1 , (char *)pszText, 0 );
-		delete [] pszText;
+		std::string strText( &pLine[leftspace], pos_wo_space - leftspace );
+
+		CLayoutPoint ptXY;
+		m_cLayoutMgr.LogicToLayout(	0, nLineCount, &ptXY.x, &ptXY.y );
+		pcFuncInfoArr->AppendData( nLineCount+1, ptXY.y+1 , strText.c_str(), 0 );
 	}
 	return;
 }
-// To Here 2001.12.03 hor
 
 // From Here Jan. 22, 2002 genta
 /*! 変更フラグの設定
