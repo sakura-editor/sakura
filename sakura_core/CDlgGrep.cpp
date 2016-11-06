@@ -437,25 +437,25 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		::CheckDlgButton( m_hWnd, IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
 	}
-	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_FILE ), bEnableControls );
-	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER ), bEnableControls );
+	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_FILE ),    bEnableControls );
+	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER ),  bEnableControls );
 	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_BUTTON_FOLDER ), bEnableControls );
 	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_SUBFOLDER ), bEnableControls );
 	return;
 }
 
-/* ダイアログデータの取得 */
-/* TRUE==正常  FALSE==入力エラー  */
+/*! ダイアログデータの取得
+	@retval TRUE  正常
+	@retval FALSE 入力エラー
+*/
 int CDlgGrep::GetData( void )
 {
-
 	/* サブフォルダからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_SUBFOLDER );
 
-	m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;		/* Grep：サブフォルダも検索 */
-
 	/* この編集中のテキストから検索する */
 	m_bFromThisText = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_FROMTHISTEXT );
+
 	/* 英大文字と英小文字を区別する */
 	m_sSearchOption.bLoHiCase = (0!=::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE ));
 
@@ -503,7 +503,6 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;					// Grep: 出力形式
 
-
 //やめました
 //	if( 0 == _tcslen( m_szText ) ){
 //		WarningMessage(	m_hWnd,	_T("検索のキーワードを指定してください。") );
@@ -547,12 +546,16 @@ int CDlgGrep::GetData( void )
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
+	// 2016.03.08 Moca 「このファイルから検索」の場合はサブフォルダ共通設定を更新しない
 	if (!m_bFromThisText) {
 		/* 検索ファイル */
 		CShareData::getInstance()->AddToGrepFileArr( m_szFile );
 
 		/* 検索フォルダ */
 		CShareData::getInstance()->AddToGrepFolderArr( m_szFolder );
+
+		// Grep：サブフォルダも検索
+		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;
 	}
 
 	return TRUE;
