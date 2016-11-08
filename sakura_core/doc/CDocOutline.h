@@ -31,7 +31,7 @@ struct SOneRule;
 class CDocOutline{
 public:
 	CDocOutline(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
-	void	MakeFuncList_C( CFuncInfoArr*, EOutlineType& nOutlineType, const wchar_t* pszFileName,
+	void	MakeFuncList_C( CFuncInfoArr*, EOutlineType& nOutlineType, const TCHAR* pszFileName,
 		bool bVisibleMemberFunc = true );					//!< C/C++関数リスト作成
 	void	MakeFuncList_PLSQL( CFuncInfoArr* );											//!< PL/SQL関数リスト作成
 	void	MakeTopicList_txt( CFuncInfoArr* );												//!< テキスト・トピックリスト作成
