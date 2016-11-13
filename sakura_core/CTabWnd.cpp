@@ -1117,20 +1117,20 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// 状態に従ってテキストと背景色を決める
 		COLORREF clrText;
-		INT_PTR clrBk;
+		INT_PTR nSysClrBk;
 		if (lpdis->itemState & ODS_SELECTED)
 		{
 			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
-			clrBk = COLOR_HIGHLIGHT;
+			nSysClrBk = COLOR_HIGHLIGHT;
 		}
 		else
 		{
 			clrText = ::GetSysColor( COLOR_MENUTEXT );
-			clrBk = COLOR_MENU;
+			nSysClrBk = COLOR_MENU;
 		}
 
 		// 背景描画
-		::FillRect( hdc, &rcItem, (HBRUSH)(clrBk + 1) );
+		::FillRect( hdc, &rcItem, (HBRUSH)(nSysClrBk + 1) );
 
 		// アイコン描画
 		int cxIcon = CX_SMICON;
@@ -2081,9 +2081,10 @@ HIMAGELIST CTabWnd::InitImageList( void )
 		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
 		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
 		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
+		// 2016.08.06 ".0" の場合に Win10で同じインデックスが返ってくるので、"C:\\"に変更
 
 		hImlSys = (HIMAGELIST)::SHGetFileInfo(
-			_T(".0"),
+			_T("C:\\"),
 			FILE_ATTRIBUTE_DIRECTORY,
 			&sfi,
 			sizeof(sfi),
@@ -2114,8 +2115,10 @@ HIMAGELIST CTabWnd::InitImageList( void )
 		// （利用しないアイコンと差し替える）
 		m_hIconApp = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 		ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
-		m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
-		ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+		if( m_iIconApp != m_iIconGrep ){
+			m_hIconGrep = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
+			ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+		}
 	}
 
 l_end:
@@ -2166,7 +2169,9 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 			// イメージリストにアプリケーションアイコンと Grepアイコンを登録する
 			// （利用しないアイコンと差し替える）
 			ImageList_ReplaceIcon( hImlNew, m_iIconApp, m_hIconApp );
-			ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+			if( m_iIconApp != m_iIconGrep ){
+				ImageList_ReplaceIcon( hImlNew, m_iIconGrep, m_hIconGrep );
+			}
 
 			// タブにアイコンイメージを設定する
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
