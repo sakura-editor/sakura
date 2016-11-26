@@ -535,9 +535,7 @@ void CDlgFuncList::SetData()
 		::SendMessage( hWnd_Combo_Sort , CB_SETCURSEL, m_nSortType, 0L);
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
-		if( SORTTYPE_DEFAULT < m_nSortType ){
-			SortTree(::GetDlgItem( m_hWnd , IDC_TREE_FL),TVI_ROOT);
-		}
+		SortTree(::GetDlgItem( m_hWnd , IDC_TREE_FL),TVI_ROOT);
 	}else {
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), FALSE );
 		::ShowWindow( GetDlgItem( m_hWnd, IDC_COMBO_nSortType ), SW_HIDE );
@@ -1172,7 +1170,8 @@ void CDlgFuncList::SetTree(bool tagjump)
 		HTREEITEM hItem;
 		TV_INSERTSTRUCT cTVInsertStruct;
 		cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
-		cTVInsertStruct.hInsertAfter = TVI_LAST;	//	必ず最後に追加。
+		// 2016.04.24 TVI_LASTは要素数が多いとすごく遅い。TVI_FIRSTを使い後でソートしなおす
+		cTVInsertStruct.hInsertAfter = TVI_FIRST;
 		cTVInsertStruct.item.mask = TVIF_TEXT | TVIF_PARAM;
 		cTVInsertStruct.item.pszText = pcFuncInfo->m_cmemFuncName.GetStringPtr();
 		cTVInsertStruct.item.lParam = i;	//	あとでこの数値（＝m_pcFuncInfoArrの何番目のアイテムか）を見て、目的地にジャンプするぜ!!。
