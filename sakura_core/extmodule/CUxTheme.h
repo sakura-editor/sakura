@@ -85,7 +85,7 @@ protected:
 	HTHEME (WINAPI* m_pfnOpenThemeData)( HWND hwnd, LPCWSTR pszClassList );
 	HRESULT (WINAPI* m_pfnDrawThemeBackground)( HTHEME htheme, HDC hdc, int iPartId, int iStateId, RECT* prc, RECT* prcClip );
 	HRESULT (WINAPI* m_pfnDrawThemeParentBackground)( HWND hwnd, HDC hdc, RECT* prc );
-	HRESULT (WINAPI* m_pfnIsThemeBackgroundPartiallyTransparent)( HTHEME htheme, int iPartId, int iStateId );
+	BOOL (WINAPI* m_pfnIsThemeBackgroundPartiallyTransparent)( HTHEME htheme, int iPartId, int iStateId );
 
 public:
 	// UxTheme API Wrapper Functions
@@ -94,7 +94,7 @@ public:
 	HTHEME OpenThemeData( HWND hwnd, LPCWSTR pszClassList );
 	HRESULT DrawThemeBackground( HTHEME htheme, HDC hdc, int iPartId, int iStateId, RECT* prc, RECT* prcClip );
 	HRESULT DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT* prc );
-	HRESULT IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
+	BOOL IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
 };
 
 #endif

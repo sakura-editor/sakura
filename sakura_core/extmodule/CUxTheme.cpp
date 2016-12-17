@@ -128,10 +128,10 @@ HRESULT CUxTheme::DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT *prc )
 }
 
 /*! SetWindowTheme API Wrapper */
-HRESULT CUxTheme::IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId )
+BOOL CUxTheme::IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId )
 {
 	if( !InitThemeDll() )
-		return S_FALSE;
+		return FALSE;
 	return m_pfnIsThemeBackgroundPartiallyTransparent( htheme, iPartId, iStateId );
 }
 
