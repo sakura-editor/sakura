@@ -80,7 +80,6 @@ static	int		nMenuCnt = 0;					// 一時データ番号
 
 // ローカル関数定義
 static HTREEITEM TreeCopy( HWND, HTREEITEM, HTREEITEM, bool, bool );
-static void TreeView_ExpandAll( HWND, bool );
 static const TCHAR * MakeDispLabel( SMainMenuWork* );
 
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
@@ -1179,60 +1178,6 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 
 	return td;
 }
-
-// TreeView 全開･全閉
-static void TreeView_ExpandAll( HWND hwndTree, bool bExpand )
-{
-	std::map<int, HTREEITEM>	htiStack;
-	HTREEITEM	htiCur;
-	HTREEITEM	htiItem;
-	HTREEITEM	htiNext;
-	int			nLevel;
-
-	nLevel = 0;
-	htiCur = htiItem = TreeView_GetSelection( hwndTree );
-	if (!bExpand && htiCur != NULL) {
-		// 閉じる時はトップに変更
-		for (htiNext = htiCur; htiNext !=  NULL; ) {
-			htiItem = htiNext;
-			htiNext = TreeView_GetParent( hwndTree, htiItem );
-		}
-		if (htiCur != htiItem) {
-			htiCur = htiItem;
-			TreeView_SelectItem( hwndTree, htiCur );
-		}
-	}
-
-
-	for (htiItem = TreeView_GetRoot( hwndTree ); htiItem != NULL; htiItem = htiNext) {
-		htiNext = TreeView_GetChild( hwndTree, htiItem);
-		if (htiNext != NULL) {
-			TreeView_Expand( hwndTree, htiItem, bExpand ? TVE_EXPAND : TVE_COLLAPSE);
-			// 子の開閉
-			htiStack[nLevel++] = htiItem;
-		}
-		else {
-			htiNext = TreeView_GetNextSibling( hwndTree, htiItem);
-			while (htiNext == NULL && nLevel > 0) {
-				htiItem = htiStack[--nLevel];
-				htiNext = TreeView_GetNextSibling( hwndTree, htiItem);
-			}
-		}
-	}
-	// 選択位置を戻す
-	if (htiCur == NULL) {
-		if (bExpand ) {
-			htiItem = TreeView_GetRoot( hwndTree );
-			TreeView_SelectSetFirstVisible( hwndTree, htiItem );
-		}
-		TreeView_SelectItem( hwndTree, NULL );
-	}
-	else {
-		TreeView_SelectSetFirstVisible( hwndTree, htiCur );
-	}
-}
-
-
 
 // 表示用データの作成（アクセスキー付加）
 static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )

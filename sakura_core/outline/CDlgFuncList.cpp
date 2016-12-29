@@ -2976,7 +2976,16 @@ INT_PTR CDlgFuncList::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		}
 		::KillTimer(hwnd, 2);
 		return 0L;
+	}else if( wParam == 3 ){
+		::KillTimer(hwnd, 3);
+		HWND hwndTree = ::GetDlgItem(hwnd, IDC_TREE_FL);
+		TreeView_ExpandAll(hwndTree, true, 64);
+	}else  if( wParam == 4 ){
+		::KillTimer(hwnd, 4);
+		HWND hwndTree = ::GetDlgItem(hwnd, IDC_TREE_FL);
+		TreeView_ExpandAll(hwndTree, false, 64);
 	}
+
 	if( !IsDocking() )
 		return 0L;
 
@@ -3356,6 +3365,20 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			flag |= MF_GRAYED;
 		}
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | flag, 451, LS(STR_DLGFNCLST_MENU_COPY) );
+		if( m_nViewType == VIEWTYPE_TREE ){
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING, 500, LS(STR_DLGFNCLST_MENU_EXPAND));
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING, 501, LS(STR_DLGFNCLST_MENU_COLLAPSE));
+		}else if( m_nListType == OUTLINE_BOOKMARK ){
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+			flag = 0;
+			HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+			if( ListView_GetSelectedCount(hwndList) == 0 ){
+				flag |= MF_GRAYED;
+			}
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING | flag, 510, LS(STR_DLGFNCLST_MENU_BOOK_DEL));
+			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING, 511, LS(STR_DLGFNCLST_MENU_BOOK_ALL_DEL));
+		}
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuSub,	LS(STR_DLGFNCLST_MENU_WINPOS) );
 	}
@@ -3399,9 +3422,9 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	::DestroyMenu( hMenu );	// サブメニューは再帰的に破棄される
 
 	// メニュー選択された状態に切り替える
+	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 	HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
 	if( nId == 450 ){	// 更新
-		EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
@@ -3411,6 +3434,33 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	}
 	else if( nId == 452 ){	// 閉じる
 		::DestroyWindow( GetHwnd() );
+	}else if( nId == 500 ){	// すべて展開
+		::SetTimer(GetHwnd(), 3, 100, NULL);
+	}else if( nId == 501 ){	// すべて縮小
+		::SetTimer(GetHwnd(), 4, 100, NULL);
+	}else if( nId == 510 ){	// ブックマーク削除
+		HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+		int nItem = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_SELECTED);
+		if( nItem != -1 ){
+			LVITEM item;
+			item.mask = LVIF_PARAM;
+			item.iItem = nItem;
+			item.iSubItem = 0;
+			ListView_GetItem(hwndList, &item);
+			const CFuncInfo* pFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
+			// FIXME: 行番号があってるとは限らない
+			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
+			if( pCDocLine ){
+				CBookmarkSetter cBookmark(pCDocLine);
+				cBookmark.SetBookmark(false);
+				pcEditView->m_pcEditWnd->Views_Redraw();
+			}
+		}
+		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
+	}else if( nId == 511 ){	// ブックマークすべて削除
+		HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+		pcEditView->GetCommander().HandleCommand(F_BOOKMARK_RESET, TRUE, 0, 0, 0, 0);
+		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}
 	else if( nId == 300 || nId == 301 ){	// ドッキング配置の継承方法
 		ProfDockSet() = nId - 300;
