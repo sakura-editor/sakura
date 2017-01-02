@@ -247,26 +247,9 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 
 			case IDC_BUTTON_RULEFILE_REF:	/* アウトライン解析→ルールファイルの「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Types.m_szOutlineRuleFilename ) ){
-						GetInidirOrExedir( szPath, m_Types.m_szOutlineRuleFilename );
-					}else{
-						_tcscpy( szPath, m_Types.m_szOutlineRuleFilename );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						m_hInstance,
-						hwndDlg,
-						_T("*.*"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Types.m_szOutlineRuleFilename, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), _T("*.rul;*.rule;*.txt"), true, false);
 				}
 				return TRUE;
 

@@ -483,7 +483,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_REF1:
 		{
-			SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), _T("*.ini"), true );
+			CDlgOpenFile::SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), _T("*.ini"), true, false );
 		}
 		return TRUE;
 	case IDC_BUTTON_LOAD:

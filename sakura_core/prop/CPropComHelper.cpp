@@ -120,50 +120,16 @@ INT_PTR CPropHelper::DispatchEvent(
 			switch( wID ){
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Common.m_sHelper.m_szExtHelp ) ){
-						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szExtHelp, TRUE );
-					}else{
-						_tcscpy( szPath, m_Common.m_sHelper.m_szExtHelp );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						G_AppInstance(),
-						hwndDlg,
-						_T("*.hlp;*.chm;*.col"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Common.m_sHelper.m_szExtHelp, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHELP1), _T("*.hlp;*.chm;*.col"), true, false);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Common.m_sHelper.m_szExtHtmlHelp ) ){
-						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szExtHtmlHelp, TRUE );
-					}else{
-						_tcscpy( szPath, m_Common.m_sHelper.m_szExtHtmlHelp );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						G_AppInstance(),
-						hwndDlg,
-						_T("*.chm;*.col"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Common.m_sHelper.m_szExtHtmlHelp, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_sHelper.m_szExtHtmlHelp );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHTMLHELP), _T("*.chm;*.col"), true, false);
 				}
 				return TRUE;
 			// ai 02/05/21 Add S
@@ -187,26 +153,9 @@ INT_PTR CPropHelper::DispatchEvent(
 			// ai 02/05/21 Add E
 			case IDC_BUTTON_OPENMDLL:	/* MIGEMODLL場所指定「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDll ) ){
-						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szMigemoDll, TRUE );
-					}else{
-						_tcscpy( szPath, m_Common.m_sHelper.m_szMigemoDll );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						G_AppInstance(),
-						hwndDlg,
-						_T("*.dll"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Common.m_sHelper.m_szMigemoDll, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_MIGEMO_DLL), _T("*.dll"), true, false);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
@@ -220,7 +169,7 @@ INT_PTR CPropHelper::DispatchEvent(
 						_tcscpy( szPath, m_Common.m_sHelper.m_szMigemoDict );
 					}
 					if( SelectDir( hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath ) ){
-						_tcscpy( m_Common.m_sHelper.m_szMigemoDict, szPath );
+						_tcscpy( m_Common.m_sHelper.m_szMigemoDict, GetRelPath(szPath) ); // 2015.03.03 可能なら相対パスにする
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict );
 					}
 				}
