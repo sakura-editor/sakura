@@ -55,6 +55,7 @@ public:
 	virtual bool			DeleteItem( int nIndex ) = 0;	//!< アイテムをクリア
 	virtual bool			AppendItemText(const TCHAR* pszText) = 0;
 	virtual bool			EditItemText( int nIndex, const TCHAR* pszText) = 0;
+	virtual size_t			GetTextMaxLength() const = 0;
 
 	int FindItemByText(const TCHAR* pszText) const
 	{

@@ -39,6 +39,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( const EditInfo** dst, const EditInfo* src ) const;
 	bool			TextToDataType( EditInfo* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( const EditInfo* ) const;
+	size_t			GetTextMaxLength() const;
 	//固有インターフェース
 	int FindItemByPath(const TCHAR* pszPath) const;
 };

@@ -88,6 +88,7 @@ private:
 
 //‹¤’ÊŒ^
 typedef StaticString<TCHAR,_MAX_PATH> SFilePath;
+typedef StaticString<TCHAR, MAX_GREP_PATH> SFilePathLong;
 class CFilePath : public StaticString<TCHAR,_MAX_PATH>{
 private:
 	typedef StaticString<TCHAR,_MAX_PATH> Super;

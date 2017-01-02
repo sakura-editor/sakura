@@ -36,6 +36,7 @@ CRecentGrepFile::CRecentGrepFile()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aGrepFiles.dataPtr(),
+		GetShareData()->m_sSearchKeywords.m_aGrepFiles.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aGrepFiles._GetSizeRef(),
 		NULL,
 		MAX_GREPFILE,
@@ -65,6 +66,9 @@ bool CRecentGrepFile::DataToReceiveType( LPCTSTR* dst, const CGrepFileString* sr
 
 bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(pszText) ){
+		return false;
+	}
 	CopyItem(dst, pszText);
 	return true;
 }
@@ -77,4 +81,17 @@ int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCTSTR p2 ) const
 void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
+}
+
+bool CRecentGrepFile::ValidateReceiveType( LPCTSTR p ) const
+{
+	if( GetTextMaxLength() <= _tcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentGrepFile::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

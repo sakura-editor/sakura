@@ -114,11 +114,12 @@ BOOL CDlgInput1::DoModal(
 	NOT_TCHAR*		pszText
 )
 {
-	TCHAR buf[1024];
+	std::vector<TCHAR> buf(nMaxTextLen);
 	buf[0] = _T('\0');
-	BOOL ret=DoModal(hInstApp, hwndParent, pszTitle, pszMessage, nMaxTextLen, buf);
+	BOOL ret=DoModal(hInstApp, hwndParent, pszTitle, pszMessage, nMaxTextLen, &buf[0]);
 	if(ret){
-		auto_strcpy(pszText,to_not_tchar(buf));
+		auto_strncpy(pszText,to_not_tchar(&buf[0]), nMaxTextLen);
+		pszText[nMaxTextLen-1] = 0;
 	}
 	return ret;
 }

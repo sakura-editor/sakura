@@ -36,6 +36,7 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 {
 	Create(
 		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr(),
+		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
 		NULL,
 		MAX_TAGJUMP_KEYWORD,
@@ -65,6 +66,9 @@ bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywo
 
 bool CRecentTagjumpKeyword::TextToDataType( CTagjumpKeywordString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(to_wchar(pszText)) ){
+		return false;
+	}
 	CopyItem(dst, to_wchar(pszText));
 	return true;
 }
@@ -77,4 +81,17 @@ int CRecentTagjumpKeyword::CompareItem( const CTagjumpKeywordString* p1, LPCWSTR
 void CRecentTagjumpKeyword::CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const
 {
 	wcscpy(*dst,src);
+}
+
+bool CRecentTagjumpKeyword::ValidateReceiveType( LPCWSTR p ) const
+{
+	if( GetTextMaxLength() <= wcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentTagjumpKeyword::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

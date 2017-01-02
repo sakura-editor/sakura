@@ -37,6 +37,7 @@ CRecentCmd::CRecentCmd()
 {
 	Create(
 		GetShareData()->m_sHistory.m_aCommands.dataPtr(),
+		GetShareData()->m_sHistory.m_aCommands.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
 		NULL,
 		MAX_CMDARR,
@@ -66,6 +67,9 @@ bool CRecentCmd::DataToReceiveType( LPCTSTR* dst, const CCmdString* src ) const
 
 bool CRecentCmd::TextToDataType( CCmdString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(pszText) ){
+		return false;
+	}
 	CopyItem(dst, pszText);
 	return true;
 }
@@ -78,4 +82,17 @@ int CRecentCmd::CompareItem( const CCmdString* p1, LPCTSTR p2 ) const
 void CRecentCmd::CopyItem( CCmdString* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
+}
+
+bool CRecentCmd::ValidateReceiveType( LPCTSTR p ) const
+{
+	if( GetTextMaxLength() <= _tcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentCmd::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

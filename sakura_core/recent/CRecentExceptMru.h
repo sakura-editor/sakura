@@ -41,6 +41,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CMetaPath* src ) const;
 	bool			TextToDataType( CMetaPath* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTEXCEPTMRU_C30EB710_D560_49A0_99EB_603E335B102A_H_ */

@@ -43,6 +43,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CPathString* src ) const;
 	bool			TextToDataType( CPathString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTFOLDER_A671E5A1_CE40_4BEF_BA37_B468B056F081_H_ */

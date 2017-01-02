@@ -36,6 +36,7 @@ CRecentEditNode::CRecentEditNode()
 {
 	Create(
 		GetShareData()->m_sNodes.m_pEditArr,
+		0,
 		&GetShareData()->m_sNodes.m_nEditArrNum,
 		NULL,
 		MAX_EDITWINDOWS,
@@ -76,6 +77,16 @@ int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 void CRecentEditNode::CopyItem( EditNode* dst, const EditNode* src ) const
 {
 	*dst = *src;
+}
+
+bool CRecentEditNode::ValidateReceiveType( const EditNode* ) const
+{
+	return true;
+}
+
+size_t CRecentEditNode::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

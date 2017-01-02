@@ -45,6 +45,7 @@ protected:
 	//生成
 	bool Create(
 		DataType*		pszItemArray,	//!< アイテム配列へのポインタ
+		size_t			nTextMaxLength,	//!< 最大テキスト長(終端含む)
 		int*			pnItemCount,	//!< アイテム個数へのポインタ
 		bool*			pbItemFavorite,	//!< お気に入りへのポインタ(NULL許可)
 		int				nArrayCount,	//!< 最大管理可能なアイテム数
@@ -94,6 +95,7 @@ public:
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
 	virtual bool TextToDataType( DataType* dst, LPCTSTR pszText ) const = 0;
+	virtual bool ValidateReceiveType( ReceiveType p ) const = 0;
 
 	//実装補助
 private:
@@ -113,6 +115,7 @@ protected:
 	bool*		m_pbUserItemFavorite;	//!< お気に入りへのポインタ (NULL許可)
 	int			m_nArrayCount;			//!< 最大管理可能なアイテム数
 	int*		m_pnUserViewCount;		//!< 表示個数 (NULL許可)
+	size_t		m_nTextMaxLength;		//!< 最大テキスト長(終端含む)
 };
 
 #include "CRecentFile.h"

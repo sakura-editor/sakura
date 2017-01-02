@@ -39,6 +39,7 @@ CRecentExceptMRU::CRecentExceptMRU()
 {
 	Create(
 		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),
+		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aExceptMRU._GetSizeRef(),
 		NULL,
 		MAX_MRU,
@@ -68,6 +69,9 @@ bool CRecentExceptMRU::DataToReceiveType( LPCTSTR* dst, const CMetaPath* src ) c
 
 bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(pszText) ){
+		return false;
+	}
 	CopyItem(dst, pszText);
 	return true;
 }
@@ -80,4 +84,17 @@ int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCTSTR p2 ) const
 void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
+}
+
+bool CRecentExceptMRU::ValidateReceiveType( LPCTSTR p ) const
+{
+	if( GetTextMaxLength() <= _tcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentExceptMRU::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

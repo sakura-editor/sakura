@@ -566,7 +566,9 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 
 					// ‘¶Ý‚µ‚È‚¢ƒpƒX‚Ìíœ
 					for( int i = pRecent->GetItemCount() - 1; i >= 0; i-- ){
-						TCHAR szPath[_MAX_PATH];
+						size_t nLen = auto_strlen(pRecent->GetItemText(i));
+						std::vector<TCHAR> vecPath(nLen + 2);
+						TCHAR* szPath = &vecPath[0];
 						auto_strcpy( szPath, pRecent->GetItemText(i) );
 						CutLastYenFromDirectoryPath(szPath);
 						if( false == IsFileExists(szPath, false ) ){
@@ -939,8 +941,10 @@ void CDlgFavorite::AddItem()
 	if( !m_aFavoriteInfo[m_nCurrentTab].m_bEditable ){
 		return;
 	}
-	TCHAR szAddText[_MAX_PATH];
-	int max_size = _MAX_PATH;
+	CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+	size_t max_size = recent.GetTextMaxLength();
+	std::vector<TCHAR> vecAddText(max_size);
+	TCHAR* szAddText = &vecAddText[0];
 	_tcscpy( szAddText, _T("") );
 
 	CDlgInput1	cDlgInput1;
@@ -950,7 +954,6 @@ void CDlgFavorite::AddItem()
 		return;
 	}
 
-	CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
 	GetFavorite(m_nCurrentTab);
 	if( recent.AppendItemText(szAddText) ){
 		SetDataOne(m_nCurrentTab, -1);
@@ -971,8 +974,9 @@ void CDlgFavorite::EditItem()
 		if( -1 != nLvItem ) {
 			int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
 			CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
-			TCHAR szText[_MAX_PATH];
-			int max_size = _MAX_PATH;
+			size_t max_size = recent.GetTextMaxLength();
+			std::vector<TCHAR> vecAddText(max_size);
+			TCHAR* szText = &vecAddText[0];
 			_tcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
 			CDlgInput1	cDlgInput1;
 			std::tstring strTitle = LS( STR_DLGFAV_EDIT );

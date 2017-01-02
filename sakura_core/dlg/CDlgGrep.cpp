@@ -157,8 +157,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _MAX_PATH - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _MAX_PATH - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
@@ -279,33 +279,34 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_BUTTON_FOLDER_UP:
 		{
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
-			TCHAR szFolder[_MAX_PATH];
+			const int nMaxPath = MAX_GREP_PATH;
+			TCHAR szFolder[nMaxPath];
 			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
 			std::vector<std::tstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), _MAX_PATH );
-				szFolder[_MAX_PATH-1] = _T('\0');
+				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
+				szFolder[nMaxPath-1] = _T('\0');
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = _T('\0');
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
-						TCHAR szFolderItem[_MAX_PATH];
-						auto_strncpy( szFolderItem, vPaths[i].c_str(), _MAX_PATH );
-						szFolderItem[_MAX_PATH-1] = _T('\0');
+						TCHAR szFolderItem[nMaxPath];
+						auto_strncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
+						szFolderItem[nMaxPath-1] = _T('\0');
 						if( auto_strchr( szFolderItem, _T(';') ) ){
 							szFolderItem[0] = _T('"');
-							auto_strncpy( szFolderItem + 1, vPaths[i].c_str(), _MAX_PATH - 1 );
-							szFolderItem[_MAX_PATH-1] = _T('\0');
+							auto_strncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
+							szFolderItem[nMaxPath-1] = _T('\0');
 							auto_strcat( szFolderItem, _T("\"") );
-							szFolderItem[_MAX_PATH-1] = _T('\0');
+							szFolderItem[nMaxPath-1] = _T('\0');
 						}
 						if( i ){
 							auto_strcat( szFolder, _T(";") );
-							szFolder[_MAX_PATH-1] = _T('\0');
+							szFolder[nMaxPath-1] = _T('\0');
 						}
-						auto_strcat_s( szFolder, _MAX_PATH, szFolderItem );
+						auto_strcat_s( szFolder, nMaxPath, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
@@ -354,11 +355,12 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_BUTTON_FOLDER:
 		/* フォルダ参照ボタン */
 		{
-			TCHAR	szFolder[MAX_PATH];
+			const int nMaxPath = MAX_GREP_PATH;
+			TCHAR	szFolder[nMaxPath];
 			/* 検索フォルダ */
-			::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, szFolder, _MAX_PATH - 1 );
+			::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, szFolder, nMaxPath - 1 );
 			if( szFolder[0] == _T('\0') ){
-				::GetCurrentDirectory( _countof( szFolder ), szFolder );
+				::GetCurrentDirectory( nMaxPath, szFolder );
 			}
 			if( SelectDir( GetHwnd(), LS(STR_DLGGREP1), szFolder, szFolder ) ){
 				SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szFolder );
@@ -685,7 +687,8 @@ int CDlgGrep::GetData( void )
 		std::vector<std::tstring> vPaths;
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
 		int nFolderLen = 0;
-		TCHAR szFolder[_MAX_PATH];
+		const int nMaxPath = MAX_GREP_PATH;
+		TCHAR szFolder[nMaxPath];
 		szFolder[0] = _T('\0');
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
 			// 相対パス→絶対パス
@@ -693,16 +696,16 @@ int CDlgGrep::GetData( void )
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP5) );
 				return FALSE;
 			}
-			TCHAR szFolderItem[_MAX_PATH];
-			::GetCurrentDirectory( _MAX_PATH, szFolderItem );
+			TCHAR szFolderItem[nMaxPath];
+			::GetCurrentDirectory( nMaxPath, szFolderItem );
 			// ;がフォルダ名に含まれていたら""で囲う
 			if( auto_strchr( szFolderItem, _T(';') ) ){
 				szFolderItem[0] = _T('"');
-				::GetCurrentDirectory( _MAX_PATH, szFolderItem + 1 );
+				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
 				auto_strcat(szFolderItem, _T("\""));
 			}
 			int nFolderItemLen = auto_strlen( szFolderItem );
-			if( _MAX_PATH < nFolderLen + nFolderItemLen + 1 ){
+			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}

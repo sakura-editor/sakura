@@ -42,6 +42,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CCmdString* src ) const;
 	bool			TextToDataType( CCmdString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTCMD_606E7B7E_F285_423C_9EB8_C472B010280B_H_ */
