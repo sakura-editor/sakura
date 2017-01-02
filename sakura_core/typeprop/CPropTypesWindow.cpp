@@ -8,6 +8,7 @@
 #include "CPropTypes.h"
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+#include "dlg/CDlgOpenFile.h"
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
 #include "view/colors/EColorIndexType.h"
@@ -138,8 +139,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			switch( wID ){
 			case IDC_BUTTON_BACKIMG_PATH_SEL:
 				{
-					CDialog::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
-						_T("*.bmp;*.jpg;*.jpeg"), true );
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
+						_T("*.bmp;*.jpg;*.jpeg"), true, false );
 				}
 				return TRUE;
 			//	From Here Sept. 10, 2000 JEPRO

@@ -755,7 +755,7 @@ void CDlgOpenFile::Create(
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
+bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir, bool bAddTextFilter )
 {
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -763,8 +763,12 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_mem->m_szDefaultWildCard );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
+	if( bAddTextFilter ){
+		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), _T("*.txt") );
+	}
+	if( 0 != auto_strcmp(m_mem->m_szDefaultWildCard, _T("*.*")) ){
+		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), _T("*.*") );
+	}
 
 	/* 構造体の初期化 */
 	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
@@ -1250,3 +1254,39 @@ bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ* ofn )
 }
 
 
+
+/*! ファイル選択
+	@note 実行ファイルのパスor設定ファイルのパスが含まれる場合は相対パスに変換
+*/
+BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath, bool bAddTextFilter)
+{
+	CDlgOpenFile	cDlgOpenFile;
+	TCHAR			szFilePath[_MAX_PATH + 1];
+	TCHAR			szPath[_MAX_PATH + 1];
+	::GetWindowText( hwndCtl, szFilePath, _countof(szFilePath) );
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	if( resolvePath && _IS_REL_PATH( szFilePath ) ){
+		GetInidirOrExedir(szPath, szFilePath);
+	}else{
+		auto_strcpy(szPath, szFilePath);
+	}
+	/* ファイルオープンダイアログの初期化 */
+	cDlgOpenFile.Create(
+		::GetModuleHandle(NULL),
+		parent,
+		filter,
+		szPath
+	);
+	if( cDlgOpenFile.DoModal_GetOpenFileName(szPath, false, bAddTextFilter) ){
+		const TCHAR* fileName;
+		if( resolvePath ){
+			fileName = GetRelPath( szPath );
+		}else{
+			fileName = szPath;
+		}
+		::SetWindowText( hwndCtl, fileName );
+		return TRUE;
+	}
+	return FALSE;
+}

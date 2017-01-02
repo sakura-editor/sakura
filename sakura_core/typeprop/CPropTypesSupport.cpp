@@ -102,74 +102,23 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 			switch( wID ){
 			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Types.m_szHokanFile ) ){
-						GetInidirOrExedir( szPath, m_Types.m_szHokanFile );
-					}else{
-						_tcscpy( szPath, m_Types.m_szHokanFile );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						m_hInstance,
-						hwndDlg,
-						_T("*.*"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Types.m_szHokanFile, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_HOKANFILE), _T("*.kwd"), true, true);
 				}
 				return TRUE;
 			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Types.m_szExtHelp ) ){
-						GetInidirOrExedir( szPath, m_Types.m_szExtHelp, TRUE );
-					}else{
-						_tcscpy( szPath, m_Types.m_szExtHelp );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						m_hInstance,
-						hwndDlg,
-						_T("*.hlp;*.chm;*.col"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Types.m_szExtHelp, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHELP), _T("*.hlp;*.chm;*.col"), true, false);
 				}
 				return TRUE;
 			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
-					TCHAR			szPath[_MAX_PATH + 1];
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					if( _IS_REL_PATH( m_Types.m_szExtHtmlHelp ) ){
-						GetInidirOrExedir( szPath, m_Types.m_szExtHtmlHelp, TRUE );
-					}else{
-						_tcscpy( szPath, m_Types.m_szExtHtmlHelp );
-					}
-					/* ファイルオープンダイアログの初期化 */
-					cDlgOpenFile.Create(
-						m_hInstance,
-						hwndDlg,
-						_T("*.chm;*.col"),
-						szPath
-					);
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						_tcscpy( m_Types.m_szExtHtmlHelp, szPath );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP), _T("*.chm;*.col"), true, false);
 				}
 				return TRUE;
 			}

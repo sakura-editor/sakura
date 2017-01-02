@@ -444,20 +444,9 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 
 			case IDC_BUTTON_KEYHELP_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
 				{
-					CDlgOpenFile	cDlgOpenFile;
 					/* ファイルオープンダイアログの初期化 */
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					TCHAR szWk[_MAX_PATH];
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szWk, _MAX_PATH );
-					if( _IS_REL_PATH( szWk ) ){
-						GetInidirOrExedir( szPath, szWk );
-					}else{
-						::lstrcpy( szPath, szWk );
-					}
-					cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.khp"), szPath );
-					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );
-					}
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _T("*.khp"), true, true);
 				}
 				return TRUE;
 
