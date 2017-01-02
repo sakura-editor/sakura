@@ -36,6 +36,7 @@ CRecentReplace::CRecentReplace()
 {
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
+		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
 		NULL,
 		MAX_REPLACEKEY,
@@ -65,6 +66,9 @@ bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src 
 
 bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(to_wchar(pszText)) ){
+		return false;
+	}
 	CopyItem(dst, to_wchar(pszText));
 	return true;
 }
@@ -78,4 +82,17 @@ int CRecentReplace::CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const
 void CRecentReplace::CopyItem( CReplaceString* dst, LPCWSTR src ) const
 {
 	wcscpy(*dst,src);
+}
+
+bool CRecentReplace::ValidateReceiveType( LPCWSTR p ) const
+{
+	if( GetTextMaxLength() <= wcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentReplace::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

@@ -27,7 +27,7 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-typedef StaticString<TCHAR, _MAX_PATH> CGrepFolderString;
+typedef StaticString<TCHAR, MAX_GREP_PATH> CGrepFolderString;
 
 //! GREPÉtÉHÉãÉ_ÇÃóöóÇä«óù (RECENT_FOR_GREP_FOLDER)
 class CRecentGrepFolder : public CRecentImp<CGrepFolderString, LPCTSTR>{
@@ -41,6 +41,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CGrepFolderString* src ) const;
 	bool			TextToDataType( CGrepFolderString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTGREPFOLDER_6162D952_F009_44DB_9C13_80E73507D8E7_H_ */

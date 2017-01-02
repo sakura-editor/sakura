@@ -42,6 +42,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CCurDirString* src ) const;
 	bool			TextToDataType( CCurDirString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTCURDIR_606E7B1E_F285_4232_92B8_C47260107806_H_ */

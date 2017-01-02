@@ -27,7 +27,7 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-typedef StaticString<TCHAR, _MAX_PATH> CGrepFileString;
+typedef StaticString<TCHAR, MAX_GREP_PATH> CGrepFileString;
 
 //! GREPÉtÉ@ÉCÉãÇÃóöóÇä«óù (RECENT_FOR_GREP_FILE)
 class CRecentGrepFile : public CRecentImp<CGrepFileString, LPCTSTR>{
@@ -41,6 +41,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCTSTR* dst, const CGrepFileString* src ) const;
 	bool			TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCTSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTGREPFILE_6DFF8FB2_B7D0_4828_8191_744A9580C467_H_ */

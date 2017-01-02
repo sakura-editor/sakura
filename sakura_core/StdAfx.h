@@ -45,6 +45,7 @@
 
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
+#include "config/maxdata.h"
 
 //定数(プリコンパイル日付に依存)
 #include "config/system_constants.h"	//システム定数

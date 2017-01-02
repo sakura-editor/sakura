@@ -45,6 +45,7 @@
 template <class T, class S>
 bool CRecentImp<T, S>::Create( 
 	DataType*		pszItemArray,	//!< アイテム配列へのポインタ
+	size_t			nTextMaxLength,	//!< 最大テキスト長(終端含む)
 	int*			pnItemCount,	//!< アイテム個数へのポインタ
 	bool*			pbItemFavorite,	//!< お気に入りへのポインタ(NULL許可)
 	int				nArrayCount,	//!< 最大管理可能なアイテム数
@@ -61,6 +62,7 @@ bool CRecentImp<T, S>::Create(
 
 	//各パラメータ格納
 	m_puUserItemData		= pszItemArray;
+	m_nTextMaxLength		= nTextMaxLength;
 	m_pnUserItemCount		= pnItemCount;
 	m_pbUserItemFavorite	= pbItemFavorite;
 	m_nArrayCount			= nArrayCount;
@@ -193,6 +195,7 @@ bool CRecentImp<T, S>::AppendItem( ReceiveType pItemData )
 
 	if( !IsAvailable() ) return false;
 	if( !pItemData ) return false;
+	if( false == ValidateReceiveType(pItemData) ) return false;
 
 	//登録済みか調べる。
 	int	nIndex = FindItem( pItemData );
@@ -565,9 +568,9 @@ template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;
 template class CRecentImp<EditInfo>;
 template class CRecentImp<CPathString, LPCTSTR>;
+template class CRecentImp<CGrepFileString, LPCTSTR>;
 #ifndef __MINGW32__
 template class CRecentImp<CMetaPath, LPCTSTR>;
-template class CRecentImp<CGrepFileString, LPCTSTR>;
 template class CRecentImp<CGrepFolderString, LPCTSTR>;
 template class CRecentImp<CSearchString, LPCWSTR>;
 template class CRecentImp<CTagjumpKeywordString, LPCWSTR>;

@@ -33,6 +33,7 @@ enum maxdata{
 	MAX_REPLACEKEY				=  30,	//!< 置換キー
 	MAX_GREPFILE				=  30,	//!< Grepファイル
 	MAX_GREPFOLDER				=  30,	//!< Grepフォルダ
+	MAX_GREP_PATH				= 512,	//!< Grepファイルパス長
 	MAX_TYPES					=  60,	//!< タイプ別設定
 	MAX_TYPES_NAME				=  64,	//!< タイプ属性：名称 バッファサイズ
 	MAX_TYPES_EXTS				=  64,	//!< タイプ属性：拡張子リスト バッファサイズ

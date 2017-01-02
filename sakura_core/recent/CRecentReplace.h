@@ -41,6 +41,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCWSTR* dst, const CReplaceString* src ) const;
 	bool			TextToDataType( CReplaceString* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( LPCWSTR p ) const;
+	size_t			GetTextMaxLength() const;
 };
 
 #endif /* SAKURA_CRECENTREPLACE_0597B923_7C40_4B6A_BCCE_C35E043E7577_H_ */

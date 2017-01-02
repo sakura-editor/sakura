@@ -37,6 +37,7 @@ CRecentCurDir::CRecentCurDir()
 {
 	Create(
 		GetShareData()->m_sHistory.m_aCurDirs.dataPtr(),
+		GetShareData()->m_sHistory.m_aCurDirs.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aCurDirs._GetSizeRef(),
 		NULL,
 		MAX_CMDARR,
@@ -66,6 +67,9 @@ bool CRecentCurDir::DataToReceiveType( LPCTSTR* dst, const CCurDirString* src ) 
 
 bool CRecentCurDir::TextToDataType( CCurDirString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(pszText) ){
+		return false;
+	}
 	CopyItem(dst, pszText);
 	return true;
 }
@@ -78,4 +82,17 @@ int CRecentCurDir::CompareItem( const CCurDirString* p1, LPCTSTR p2 ) const
 void CRecentCurDir::CopyItem( CCurDirString* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
+}
+
+bool CRecentCurDir::ValidateReceiveType( LPCTSTR p ) const
+{
+	if( GetTextMaxLength() <= _tcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentCurDir::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }

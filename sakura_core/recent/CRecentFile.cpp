@@ -49,6 +49,7 @@ CRecentFile::CRecentFile()
 {
 	Create(
 		GetShareData()->m_sHistory.m_fiMRUArr,
+		_countof(GetShareData()->m_sHistory.m_fiMRUArr[0].m_szPath),
 		&GetShareData()->m_sHistory.m_nMRUArrNum,
 		GetShareData()->m_sHistory.m_bMRUArrFavorite,
 		MAX_MRU,
@@ -79,6 +80,16 @@ int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
 {
 	*dst = *src;
+}
+
+bool CRecentFile::ValidateReceiveType( const EditInfo* ) const
+{
+	return true;
+}
+
+size_t CRecentFile::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

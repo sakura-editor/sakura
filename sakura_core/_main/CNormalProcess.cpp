@@ -237,11 +237,11 @@ bool CNormalProcess::InitializeProcess()
 			if( gi.cmGrepKey.GetStringLength() < _MAX_PATH ){
 				CSearchKeywordManager().AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
 			}
-			if( gi.cmGrepFile.GetStringLength() < _MAX_PATH ){
+			if( gi.cmGrepFile.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
 			}
 			CNativeT cmemGrepFolder = gi.cmGrepFolder;
-			if( gi.cmGrepFolder.GetStringLength() < _MAX_PATH ){
+			if( gi.cmGrepFolder.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 				// 2013.05.21 指定なしの場合はカレントフォルダにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){

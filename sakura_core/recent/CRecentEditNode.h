@@ -39,6 +39,8 @@ public:
 	const TCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( const EditNode** dst, const EditNode* src ) const;
 	bool			TextToDataType( EditNode* dst, LPCTSTR pszText ) const;
+	bool			ValidateReceiveType( const EditNode* ) const;
+	size_t			GetTextMaxLength() const;
 	//固有インターフェース
 	int FindItemByHwnd(HWND hwnd) const;
 	void DeleteItemByHwnd(HWND hwnd);

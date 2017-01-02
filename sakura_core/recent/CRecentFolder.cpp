@@ -39,6 +39,7 @@ CRecentFolder::CRecentFolder()
 {
 	Create(
 		&GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
+		GetShareData()->m_sHistory.m_szOPENFOLDERArr[0].GetBufferCount(),
 		&GetShareData()->m_sHistory.m_nOPENFOLDERArrNum,
 		GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
 		MAX_OPENFOLDER,
@@ -68,6 +69,9 @@ bool CRecentFolder::DataToReceiveType( LPCTSTR* dst, const CPathString* src ) co
 
 bool CRecentFolder::TextToDataType( CPathString* dst, LPCTSTR pszText ) const
 {
+	if( false == ValidateReceiveType(pszText) ){
+		return false;
+	}
 	CopyItem(dst, pszText);
 	return true;
 }
@@ -80,4 +84,17 @@ int CRecentFolder::CompareItem( const CPathString* p1, LPCTSTR p2 ) const
 void CRecentFolder::CopyItem( CPathString* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
+}
+
+bool CRecentFolder::ValidateReceiveType( LPCTSTR p ) const
+{
+	if( GetTextMaxLength() <= _tcslen(p) ){
+		return false;
+	}
+	return true;
+}
+
+size_t CRecentFolder::GetTextMaxLength() const
+{
+	return m_nTextMaxLength;
 }
