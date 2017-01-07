@@ -315,7 +315,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
 	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( GetTabSpace() >= GetMaxLineKetas() ){
+	if( GetTabSpaceKetas() >= GetMaxLineKetas() ){
 		m_nTabSpace = CKetaXInt(4);
 	}
 
