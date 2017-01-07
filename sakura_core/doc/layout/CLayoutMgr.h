@@ -408,14 +408,14 @@ protected:
 
 	//タイプ別設定
 	const STypeConfig*		m_pTypeConfig;
-	CKetaXInt				m_nMaxLineKetas;
-	CKetaXInt				m_nTabSpace;
-	CLayoutXInt				m_nCharLayoutXPerKeta;		//CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
-	CPixelXInt				m_nSpacing;					//1文字ずつの間隔(px)
-	vector_ex<wchar_t>		m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t>		m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
-	CalcIndentProc			m_getIndentOffset;			//	Oct. 1, 2002 genta インデント幅計算関数を保持
+	CKetaXInt				m_nMaxLineKetas;			//!< 折り返し桁数
+	CKetaXInt				m_nTabSpace;				//!< TABの文字数
+	CLayoutXInt				m_nCharLayoutXPerKeta;		//!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
+	CPixelXInt				m_nSpacing;					//!< 1文字ずつの間隔(px)
+	vector_ex<wchar_t>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	CalcIndentProc			m_getIndentOffset;			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
 
 	//フラグ等
 	EColorIndexType			m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
