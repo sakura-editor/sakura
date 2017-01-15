@@ -101,8 +101,8 @@ public:
 	INT_PTR DoPropertySheet( int, bool );	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
-	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
-	void ApplyData( void );		//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
+	void InitData( const int* = NULL, const TCHAR* = NULL, const TCHAR* = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
+	void ApplyData( int* = NULL );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 	int GetPageNum(){ return m_nPageNum; }
 
 	//
@@ -137,6 +137,8 @@ public:
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
 	std::vector<SKeywordSetIndex>	m_Types_nKeyWordSetIdx;
+	TCHAR			m_tempTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
+	TCHAR			m_tempTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
 	bool			m_bTrayProc;
 	HFONT			m_hKeywordHelpFont;		//!< キーワードヘルプ フォント ハンドル
 	HFONT			m_hTabFont;				//!< タブ フォント ハンドル

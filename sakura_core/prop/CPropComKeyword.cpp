@@ -81,7 +81,6 @@ INT_PTR CPropKeyword::DispatchEvent(
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
 	int					nIndex1;
-	int					i;
 	LV_COLUMN			lvc;
 	LV_ITEM*			plvi;
 	static HWND			hwndCOMBO_SET;
@@ -96,13 +95,21 @@ INT_PTR CPropKeyword::DispatchEvent(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Keyword */
+		if( wParam == IDOK ){ // 独立ウィンドウ
+			if( 0 <= m_nKeywordSet1 ){
+				// タイプ別設定のものを表示
+				m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_nKeywordSet1;
+			}else{
+				// -1だったら共通設定で最後に表示したものを維持する
+			}
+		}
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		if( wParam == IDOK ){ // 独立ウィンドウ
 			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
 			GetWindowRect( hwndCtl, &rc );
-			i = rc.bottom; // OK,CANCELボタンの下端
+			int i = rc.bottom; // OK,CANCELボタンの下端
 
 			GetWindowRect( hwndDlg, &rc );
 			SetWindowPos( hwndDlg, NULL, 0, 0, rc.right-rc.left, i-rc.top+10, SWP_NOZORDER|SWP_NOMOVE );
@@ -110,9 +117,6 @@ INT_PTR CPropKeyword::DispatchEvent(
 			title += _T(" - ");
 			title += LS(STR_PROPCOMMON_KEYWORD);
 			SetWindowText( hwndDlg, title.c_str() );
-
-			hwndCOMBO_SET = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-			Combo_SetCurSel( hwndCOMBO_SET, m_nKeywordSet1 );
 		}
 		else{
 			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
@@ -283,58 +287,70 @@ INT_PTR CPropKeyword::DispatchEvent(
 					}
 					return TRUE;
 				case IDC_BUTTON_DELSET:	/* セット削除 */
-					nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
-					if( CB_ERR == nIndex1 ){
-						return TRUE;
-					}
-					/* 削除対象のセットを使用しているファイルタイプを列挙 */
-					static TCHAR		pszLabel[1024];
-					_tcscpy( pszLabel, _T("") );
-					for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
-						std::auto_ptr<STypeConfig> type(new STypeConfig());
-						CDocTypeManager().GetTypeConfig( CTypeConfig(i), *type );
-						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
-						if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[0]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[1]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[2]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[3]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[4]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[5]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[6]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[7]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[8]
-						||  nIndex1 == m_Types_nKeyWordSetIdx[i].index[9] ){
-							_tcscat( pszLabel, _T("・") );
-							_tcscat( pszLabel, type->m_szTypeName );
-							_tcscat( pszLabel, _T("（") );
-							_tcscat( pszLabel, type->m_szTypeExts );
-							_tcscat( pszLabel, _T("）") );
-							_tcscat( pszLabel, _T("\n") );
+					{
+						nIndex1 = Combo_GetCurSel( hwndCOMBO_SET );
+						if( CB_ERR == nIndex1 ){
+							return TRUE;
 						}
-					}
-					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						LS(STR_PROPCOMKEYWORD_SETDEL),
-						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
-						pszLabel
-					) ){
-						return TRUE;
-					}
-					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
-					for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
-						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
-						for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
-							if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[j] ){
-								m_Types_nKeyWordSetIdx[i].index[j] = -1;
-							}
-							else if( nIndex1 < m_Types_nKeyWordSetIdx[i].index[j] ){
-								m_Types_nKeyWordSetIdx[i].index[j]--;
+						/* 削除対象のセットを使用しているファイルタイプを列挙 */
+						std::tstring strLabel;
+						for( size_t i = 0; i < m_Types_nKeyWordSetIdx.size() ; ++i ){
+							// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
+							for( int k = 0; k < MAX_KEYWORDSET_PER_TYPE; k++ ){
+								if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[k] ){
+									std::tstring name;
+									std::tstring exts;
+									bool bAdd = false;
+									if( m_Types_nKeyWordSetIdx[i].typeId == -1 ){
+										// タイプ別一時表示
+										name = _T("(Temp)");
+										name += m_tempTypeName;
+										exts = m_tempTypeExts;
+										bAdd = true;
+									}else{
+										const STypeConfigMini* type = NULL;
+										CTypeConfig typeConfig = CDocTypeManager().GetDocumentTypeOfId( m_Types_nKeyWordSetIdx[i].typeId );
+										if( CDocTypeManager().GetTypeConfigMini( typeConfig, &type ) ){
+											name = type->m_szTypeName;
+											exts = type->m_szTypeExts;
+											bAdd = true;
+										}
+									}
+									if( bAdd ){
+										strLabel += _T("・");
+										strLabel += name;
+										strLabel +=  _T("(");
+										strLabel += exts;
+										strLabel += _T(")\n");
+									}
+									break;
+								}
 							}
 						}
+						if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
+							LS(STR_PROPCOMKEYWORD_SETDEL),
+							m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
+							strLabel.c_str()
+						) ){
+							return TRUE;
+						}
+						/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
+						for( size_t i = 0; i < m_Types_nKeyWordSetIdx.size(); ++i ){
+							// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+							for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+								if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[j] ){
+									m_Types_nKeyWordSetIdx[i].index[j] = -1;
+								}
+								else if( nIndex1 < m_Types_nKeyWordSetIdx[i].index[j] ){
+									m_Types_nKeyWordSetIdx[i].index[j]--;
+								}
+							}
+						}
+						/* ｎ番目のセットを削除 */
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWordSet( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+						/* ダイアログデータの設定 Keyword */
+						SetData( hwndDlg );
 					}
-					/* ｎ番目のセットを削除 */
-					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWordSet( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-					/* ダイアログデータの設定 Keyword */
-					SetData( hwndDlg );
 					return TRUE;
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
 					// モードレスダイアログの表示
