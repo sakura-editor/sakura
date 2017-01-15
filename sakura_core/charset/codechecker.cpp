@@ -1000,7 +1000,7 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 
 	@note この関数の前に CheckUtf7DPart() が実行される必要がある。
 */
-int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbError, const int nOption )
+int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbError, const int nOption, bool* pbNoAddPoint )
 {
 	const char *pr, *pr_end;
 	bool berror_found, bminus_found;
@@ -1011,6 +1011,9 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	ECharSet echarset;
 	CMemory cmbuffer;
 
+	if( pbNoAddPoint ){
+		*pbNoAddPoint = false;
+	}
 
 	if( nLen < 1 ){
 		if( pbError ){
@@ -1129,6 +1132,16 @@ EndFunc:;
 		*ppNextChar = const_cast<char*>(pr) + 1;
 	}else{
 		*ppNextChar = const_cast<char*>(pr);
+
+		if( (UC_LOOSE != (nOption & UC_LOOSE)) && bminus_found == false ){
+			// 2015.03.05 Moca エンコードチェック時に終端の'-'がない場合はポイントを加算しない
+			if( pr < pr_end ){
+				// バッファの終端の場合を除く
+				if( pbNoAddPoint ){
+					*pbNoAddPoint = true;
+				}
+			}
+		}
 	}
 
 	return nchecklen;

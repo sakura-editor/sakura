@@ -375,6 +375,7 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 
 	@note
 	　1 バイト以上のエラー（いわゆる ill-formed）が見つかれば UTF-7 と判定されない。
+	@date 2015.03.05 Moca 「+G10)」のような、-がない場合ポイントに加算しないようにする
 */
 void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 {
@@ -406,7 +407,8 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		pr = pr_next;
 
 		/* セットB 文字列の検査 */
-		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror, 0 );
+		bool bNoAddPoint = false;
+		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror, 0, &bNoAddPoint );
 		if( pr+nlen_setb == pr_next && pr_next == pr_end ){
 			// セットＢ文字列の終端文字 '-' が無い、かつ、
 			// 次の読み込み位置が調査データの終端文字上にある場合、エラーを取り消して検査終了
@@ -419,8 +421,9 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		}
 
 		pr = pr_next;
-		npoints += nlen_setb; // セットＢの文字列の長さをポイントとして加算する。
-
+		if( !bNoAddPoint ){
+			npoints += nlen_setb; // セットＢの文字列の長さをポイントとして加算する。
+		}
 	}while( pr_next < pr_end );  // 検査ループ終了  --------------------
 
 
