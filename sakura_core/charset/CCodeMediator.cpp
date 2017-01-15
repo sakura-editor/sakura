@@ -37,12 +37,16 @@ ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 			}
 		}
 	}
+#if 0
+// 2015.03.05 Moca UTF-7 BOMは無効に変更
+// もしデータがASCII互換でUTF-7として正しければ、文字コード比較でUTF-7になるはず
 	if( 4 <= nLen ){
 		if( memcmp( pBuf, "+/v", 3 ) == 0
 			&& ( pBuf[3] == '8' || pBuf[3] == '9' || pBuf[3] == '+' || pBuf[3] == '/' ) ){
 			return CODE_UTF7;
 		}
 	}
+#endif
 	return CODE_NONE;
 }
 
