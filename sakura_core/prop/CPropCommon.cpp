@@ -318,13 +318,30 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 }
 
 /*!	ShareDataから一時領域へ設定をコピーする
+	@param[in] tempTypeKeywordSet キーワードセット
+	@param[in] name	タイプ属性：名称
+	@param[in] exts	タイプ属性：拡張子リスト
+
 	@date 2002.12.11 Moca CEditDoc::OpenPropertySheetから移動
 */
-void CPropCommon::InitData( void )
+void CPropCommon::InitData( const int* tempTypeKeywordSet, const TCHAR* name, const TCHAR* exts )
 {
 	m_Common = m_pShareData->m_Common;
+	m_tempTypeName[0] = _T('\0');
+	m_tempTypeExts[0] = _T('\0');
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+	if( tempTypeKeywordSet ){
+		m_nKeywordSet1 = tempTypeKeywordSet[0];
+		auto_strcpy(m_tempTypeName, name);
+		auto_strcpy(m_tempTypeExts, exts);
+		SKeywordSetIndex indexs;
+		indexs.typeId = -1;
+		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+			indexs.index[j] = tempTypeKeywordSet[j];
+		}
+		m_Types_nKeyWordSetIdx.push_back(indexs);
+	}
 	int i;
 	for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
 		SKeywordSetIndex indexs;
@@ -339,16 +356,24 @@ void CPropCommon::InitData( void )
 }
 
 /*!	ShareData に 設定を適用・コピーする
+	@param[out] tempTypeKeywordSet キーワードセット
 	@note ShareDataにコピーするだけなので，更新要求などは，利用する側で処理してもらう
 	@date 2002.12.11 Moca CEditDoc::OpenPropertySheetから移動
 */
-void CPropCommon::ApplyData( void )
+void CPropCommon::ApplyData( int* tempTypeKeywordSet )
 {
 	m_pShareData->m_Common = m_Common;
 
 	int i;
 	const int nSize = (int)m_Types_nKeyWordSetIdx.size();
-	for( i = 0; i < nSize; ++i ){
+	int nBegin = 0;
+	if( tempTypeKeywordSet ){
+		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
+			tempTypeKeywordSet[j] = m_Types_nKeyWordSetIdx[0].index[j];
+		}
+		nBegin = 1;
+	}
+	for( i = nBegin; i < nSize; ++i ){
 		CTypeConfig configIdx = CDocTypeManager().GetDocumentTypeOfId( m_Types_nKeyWordSetIdx[i].typeId );
 		if( configIdx.IsValidType() ){
 			STypeConfig type;

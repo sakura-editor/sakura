@@ -182,6 +182,7 @@ public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
 protected:
 	void SetData( HWND );											//!< ダイアログデータの設定
+	void SetDataKeyword( HWND );									//!< セット名コンボボックスの値セット
 	int  GetData( HWND );											//!< ダイアログデータの取得
 	bool Import( HWND );											//!< インポート
 	bool Export( HWND );											//!< エクスポート
