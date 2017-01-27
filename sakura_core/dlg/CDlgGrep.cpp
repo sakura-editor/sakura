@@ -215,15 +215,16 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 */
 LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
-	if(msg == WM_DROPFILES) 
-	do {
+	if(msg == WM_DROPFILES){
 		//	From Here 2007.09.02 genta 
 		SFilePath sPath;
 		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > _countof2(sPath) - 1 ){
 			// skip if the length of the path exceeds buffer capacity
-			break;
+			::DragFinish((HDROP)wparam);
+			return 0;
 		}
 		DragQueryFile((HDROP)wparam, 0, sPath, _countof2(sPath) - 1);
+		::DragFinish((HDROP)wparam);
 
 		//ファイルパスの解決
 		CSakuraEnvironment::ResolvePath(sPath);
@@ -237,8 +238,8 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		}
 
 		SetGrepFolder(hwnd, sPath);
+		return 0;
 	}
-	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }
