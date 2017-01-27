@@ -2889,6 +2889,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				else{
 					/* 編集ウィンドウの上限チェック */
 					if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+						::DragFinish( hDrop );
 						OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 						return;
 					}
