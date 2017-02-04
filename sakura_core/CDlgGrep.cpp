@@ -175,15 +175,16 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 */
 LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
-	if(msg == WM_DROPFILES) 
-	do {
+	if(msg == WM_DROPFILES){
 		//	From Here 2007.09.02 genta 
 		TCHAR sPath[MAX_PATH + 1];
 		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > sizeof(sPath) - 1 ){
 			// skip if the length of the path exceeds buffer capacity
-			break;
+			::DragFinish((HDROP)wparam);
+			return 0;
 		}
 		DragQueryFile((HDROP)wparam, 0, sPath, sizeof(sPath) - 1);
+		::DragFinish((HDROP)wparam);
 
 		//ファイルパスの解決
 		ResolvePath(sPath);
@@ -197,8 +198,8 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		}
 
 		SetWindowText(hwnd, sPath);
+		return 0;
 	}
-	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }

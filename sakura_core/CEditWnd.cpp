@@ -3096,8 +3096,8 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				else{
 					/* 編集ウィンドウの上限チェック */
 					if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-						OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 						::DragFinish( hDrop );
+						OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 						return;
 					}
 					char	szFile2[_MAX_PATH + 3];
