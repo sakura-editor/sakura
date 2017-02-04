@@ -431,7 +431,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 #endif
-				if( matched )
+				if( 0 < matched )
 				{
 					m_sInfo[i].nOffset = m_sInfo[i].pBregexp->startp[0] - cStr.GetPtr();
 					m_sInfo[i].nLength = m_sInfo[i].pBregexp->endp[0] - m_sInfo[i].pBregexp->startp[0];
