@@ -65,7 +65,6 @@
 #define IMR_DOCUMENTFEED 0x0007
 #endif
 
-CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
 
@@ -87,10 +86,13 @@ LRESULT CALLBACK EditViewWndProc(
 {
 //	DEBUG_TRACE(_T("EditViewWndProc(0x%08X): %ls\n"), hwnd, GetWindowsMessageName(uMsg));
 
-	CEditView*	pCEdit;
+	CREATESTRUCT* pCreate;
+	CEditView* pCEdit;
+
 	switch( uMsg ){
 	case WM_CREATE:
-		pCEdit = ( CEditView* )g_m_pcEditView;
+		pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pCEdit = reinterpret_cast<CEditView*>(pCreate->lpCreateParams);
 		return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
@@ -328,7 +330,6 @@ BOOL CEditView::Create(
 	}
 
 	/* エディタウィンドウの作成 */
-	g_m_pcEditView = this;
 	SetHwnd(
 		::CreateWindowEx(
 			WS_EX_STATICEDGE,		// extended window style
@@ -346,7 +347,7 @@ BOOL CEditView::Create(
 			hwndParent,				// handle to parent or owner window
 			NULL,					// handle to menu or child-window identifier
 			G_AppInstance(),		// handle to application instance
-			(LPVOID)this			// pointer to window-creation data
+			(LPVOID)this			// pointer to window-creation data(lpCreateParams)
 		)
 	);
 	if( NULL == GetHwnd() ){
