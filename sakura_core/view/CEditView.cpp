@@ -187,7 +187,6 @@ BOOL CEditView::Create(
 	m_cRegexKeyword = NULL;				// 2007.04.08 ryoji
 
 	SetDrawSwitch(true);
-	m_pcDropTarget = new CDropTarget( this );
 	_SetDragMode(FALSE);					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = false;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
@@ -354,7 +353,10 @@ BOOL CEditView::Create(
 		return FALSE;
 	}
 
-	m_pcDropTarget->Register_DropTarget( GetHwnd() );
+	if( !m_bMiniMap ){
+		m_pcDropTarget = new CDropTarget( this );
+		m_pcDropTarget->Register_DropTarget( GetHwnd() );
+	}
 
 	/* 辞書Tip表示ウィンドウ作成 */
 	m_cTipWnd.Create( G_AppInstance(), GetHwnd()/*GetDllShareData().m_sHandles.m_hwndTray*/ );
@@ -799,7 +801,9 @@ LRESULT CEditView::DispatchEvent(
 		::DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
-		m_pcDropTarget->Revoke_DropTarget();
+		if( NULL != m_pcDropTarget ){
+			m_pcDropTarget->Revoke_DropTarget();
+		}
 
 		/* タイマー終了 */
 		::KillTimer( GetHwnd(), IDT_ROLLMOUSE );
