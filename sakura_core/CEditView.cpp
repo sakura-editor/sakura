@@ -57,7 +57,6 @@
 
 const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
-CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
 
@@ -90,10 +89,15 @@ LRESULT CALLBACK EditViewWndProc(
 	LPARAM		lParam 	// second message parameter
 )
 {
-	CEditView*	pCEdit;
+//	DEBUG_TRACE(_T("EditViewWndProc(0x%08X): %ls\n"), hwnd, GetWindowsMessageName(uMsg));
+
+	CREATESTRUCT* pCreate;
+	CEditView* pCEdit;
+
 	switch( uMsg ){
 	case WM_CREATE:
-		pCEdit = ( CEditView* )g_m_pcEditView;
+		pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pCEdit = reinterpret_cast<CEditView*>(pCreate->lpCreateParams);
 		return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
@@ -340,7 +344,6 @@ BOOL CEditView::Create(
 	}
 
 	/* エディタウィンドウの作成 */
-	g_m_pcEditView = this;
 	m_hWnd = ::CreateWindowEx(
 		WS_EX_STATICEDGE,	// extended window style
 		GSTR_VIEWNAME,			// pointer to registered class name

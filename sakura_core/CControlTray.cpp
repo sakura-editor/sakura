@@ -51,8 +51,6 @@
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
-static CControlTray*	g_m_pCControlTray;
-
 //Stonee, 2001/03/21
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CControlTray::DoGrep()
@@ -126,10 +124,13 @@ static LRESULT CALLBACK CControlTrayWndProc(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	CREATESTRUCT* pCreate;
 	CControlTray* pSApp;
+
 	switch( uMsg ){
 	case WM_CREATE:
-		pSApp = ( CControlTray* )g_m_pCControlTray;
+		pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pSApp = reinterpret_cast<CControlTray*>(pCreate->lpCreateParams);
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
@@ -214,7 +215,6 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 			ErrorMessage( NULL, _T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。") );
 		}
 	}
-	g_m_pCControlTray = this;
 
 	::CreateWindow(
 		GSTR_CEDITAPP,						// pointer to registered class name
@@ -227,7 +227,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		NULL,								// handle to parent or owner window
 		NULL,								// handle to menu or child-window identifier
 		m_hInstance,						// handle to application instance
-		NULL								// pointer to window-creation data
+		(LPVOID)this						// pointer to window-creation data(lpCreateParams)
 	);
 
 	// 最前面にする（トレイからのポップアップウィンドウが最前面になるように）
