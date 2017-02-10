@@ -328,7 +328,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	MYDBGMSG("RegexKeyLineStart")
 
 	//動作に必要なチェックをする。
-	if( !m_bUseRegexKeyword ||  !IsAvailable() || m_pTypes == NULL )
+	if( !m_bUseRegexKeyword || !IsAvailable() || m_pTypes == NULL )
 	{
 		return FALSE;
 	}
@@ -413,7 +413,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 					? BMatchEx(m_sInfo[i].sRegexKey.m_szKeyword, pLine, pLine+nPos, pLine+nLineLen,&m_sInfo[i].pBregexp, m_szMsg);
 					: BMatch(m_sInfo[i].sRegexKey.m_szKeyword,          pLine+nPos, pLine+nLineLen,&m_sInfo[i].pBregexp, m_szMsg);
 #endif
-				if( matched )
+				if( 0 < matched )
 				{
 					m_sInfo[i].nOffset = m_sInfo[i].pBregexp->startp[0] - pLine;
 					m_sInfo[i].nLength = m_sInfo[i].pBregexp->endp[0] - m_sInfo[i].pBregexp->startp[0];
