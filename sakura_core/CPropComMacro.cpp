@@ -549,7 +549,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	if( SelectDir( hwndDlg, _T("Macroディレクトリの選択"), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
 		AddLastChar( szDir, _countof(szDir), _T('\\') );
-		::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
+		::SetDlgItemText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
 	}
 }
 

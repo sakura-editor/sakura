@@ -526,6 +526,33 @@ void GetInidirOrExedir(
 	::lstrcpy( pDir, szInidir );
 }
 
+/*!
+	@brief INIファイルまたはEXEファイルのあるディレクトリの相対パスを返す（INIを優先）．
+	@param pszPath [in] 対象パス
+	@date 2013.06.26 novice 新規作成
+*/
+LPCTSTR GetRelPath( LPCTSTR pszPath )
+{
+	TCHAR szPath[_MAX_PATH + 1];
+	LPCTSTR pszFileName = pszPath;
+
+	GetInidir( szPath, _T("") );
+	int nLen = strlen( szPath );
+	if( 0 == strnicmp( szPath, pszPath, nLen ) ){
+		pszFileName = pszPath + nLen;
+	}else{
+		GetExedir( szPath, _T("") );
+		nLen = strlen( szPath );
+		if( 0 == strnicmp( szPath, pszPath, nLen ) ){
+			pszFileName = pszPath + nLen;
+		}
+	}
+
+	return pszFileName;
+}
+
+
+
 /**	ファイルの存在チェック
 
 	指定されたパスのファイルが存在するかどうかを確認する。
