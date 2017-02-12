@@ -469,7 +469,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	/* 2002.2.2 YAZAKI CSMacroMgr‚É—Š‚Ş */
 	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
 		// 2014.01.24 Moca ƒ}ƒNƒ‘‚«o‚µ‚ğm_eType‚ğ’Ç‰Á‚µ‚Ä“‡
-		out.WriteF( L"S_%ls(", szFuncName );
+		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"‚ğíœ
 		CMacroParam* pParam = m_pParamTop;
 		while( pParam ){
 			if( pParam != m_pParamTop ){
