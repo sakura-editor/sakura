@@ -1707,6 +1707,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpAllSearch"), types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpKeyDisp"), types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpPrefix"), types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
+		cProfile.IOProfileData_WrapInt(pszSecName, LTEXT("nKeyHelpRMenuShowType"), types.m_eKeyHelpRMenuShowType);
 		for(j = 0; j < MAX_KEYHELP_FILE; j++){
 			auto_sprintf( szKeyName, LTEXT("KDct[%02d]"), j );
 			/* 読み出し */

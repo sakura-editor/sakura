@@ -1257,6 +1257,10 @@ BEGIN
     CONTROL         "選択範囲で前方一致検索(&P)",IDC_CHECK_KEYHELP_PREFIX,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,224,
                     108,10
+    LTEXT           "右クリックメニュー(&R)",IDC_STATIC_MENU,120,225,70,8,NOT 
+                    WS_GROUP
+    COMBOBOX        IDC_COMBO_MENU,192,223,60,180,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_PROP_WINDOW DIALOGEX 0, 0, 302, 244
@@ -4450,6 +4454,10 @@ BEGIN
 	STR_PROPTYPEREGEX_INVALID		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
 	STR_PROPTYPEREGEX_FULL			"これ以上登録できません。\nキーワード領域がいっぱいです。"
 	STR_PROPTYPEREGEX_NOSEL			"キーワードが選択されていません。"
+
+	STR_KEYHELP_RMENU_NONE			"表示しない"
+	STR_KEYHELP_RMENU_TOP			"先頭に表示"
+	STR_KEYHELP_RMENU_BOTTOM		"末尾に表示"
 
 	// CPropTypesWindow.cpp
 	STR_IME_STATE_DEF				"標準設定"			// ime state

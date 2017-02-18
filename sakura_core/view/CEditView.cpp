@@ -1569,8 +1569,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 int	CEditView::CreatePopUpMenu_R( void )
 {
 	HMENU		hMenu;
-	POINT		po;
-	RECT		rc;
 	int			nMenuIdx;
 
 	CMenuDrawer& cMenuDrawer = m_pcEditWnd->GetMenuDrawer();
@@ -1584,22 +1582,37 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 	hMenu = ::CreatePopupMenu();
 
+	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const EKeyHelpRMenuType eRmenuType = type.m_eKeyHelpRMenuShowType;
+
+	return CreatePopUpMenuSub( hMenu, nMenuIdx, NULL, eRmenuType );
+}
+
+void CEditView::AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType)
+{
+	CMenuDrawer& cMenuDrawer = m_pcEditWnd->GetMenuDrawer();
 	// 2010.07.24 Moca オーナードロー対応のために前に移動してCMenuDrawer経由で追加する
-	if( !GetSelectionInfo().IsMouseSelecting() ){
+	if( !GetSelectionInfo().IsMouseSelecting() && eRmenuType != KEYHELP_RMENU_NONE ){
+		POINT po;
+		RECT rc;
 		if( FALSE != KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
+			if( eRmenuType == KEYHELP_RMENU_BOTTOM ){
+				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
+			}
 			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, LS(STR_MENU_KEYWORDINFO), _T("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
 			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, LS(STR_MENU_OPENKEYWORDDIC), _T("L") );	// 2006.04.10 fon
-			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
+			if( eRmenuType == KEYHELP_RMENU_TOP ){
+				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
+			}
 		}
 	}
-	return CreatePopUpMenuSub( hMenu, nMenuIdx, NULL );
 }
 
 /*! ポップアップメニューの作成(Sub)
 	hMenuは作成済み
 	@date 2013.06.15 新規作成 ポップアップメニューとメインメニューの表示方法を統合
 */
-int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus )
+int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus, EKeyHelpRMenuType eRmenuType )
 {
 	int			nId;
 	int			i;
@@ -1628,6 +1641,10 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus 
 			nThisCode = EFunctionCode(nMenuIdx + F_CUSTMENU_1 - 1);
 		}
 		pNextParam[nParamIndex] = nThisCode;
+	}
+
+	if( eRmenuType == KEYHELP_RMENU_TOP ){
+		AddKeyHelpMenu(hMenu, KEYHELP_RMENU_TOP);
 	}
 
 	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
@@ -1661,7 +1678,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus 
 				keys[1] = 0;
 				HMENU hMenuPopUp = ::CreatePopupMenu();
 				cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , p, keys );
-				CreatePopUpMenuSub( hMenuPopUp, nCustIdx, pNextParam );
+				CreatePopUpMenuSub( hMenuPopUp, nCustIdx, pNextParam, KEYHELP_RMENU_NONE );
 				bAppend = true;
 			}else{
 				// ループしているときは、従来同様別で表示
@@ -1680,6 +1697,10 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus 
 				m_pcEditWnd->InitMenu_Function( hMenu, code, szLabel, keys );
 			}
 		}
+	}
+
+	if( eRmenuType == KEYHELP_RMENU_BOTTOM ){
+		AddKeyHelpMenu(hMenu, KEYHELP_RMENU_BOTTOM);
 	}
 
 	pNextParam[nParamIndex] = 0;
