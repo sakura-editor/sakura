@@ -259,7 +259,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 			cmemWork.Replace_j( _T("\'"), _T("\\\'") );
 			wsprintf(
 				szLine,
-				_T("S_%s(\'%s\');\t// %s\r\n"),
+				_T("%s(\'%s\');\t// %s\r\n"),
 				szFuncName,
 				cmemWork.GetStringPtr(),
 				szFuncNameJapanese
@@ -269,7 +269,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 			wsprintf(
 				szLine,
-				_T("S_%s(%d, %d);\t// %s\r\n"),
+				_T("%s(%d, %d);\t// %s\r\n"),
 				szFuncName,
 				(m_pParamTop->m_pData ? atoi(m_pParamTop->m_pData) : 1),
 				m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0,
@@ -285,7 +285,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( _T("\\"), _T("\\\\") );
 			cmemWork.Replace_j( _T("\'"), _T("\\\'") );
-			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, _tcslen( szLine ) );
 			break;
 		case F_EXECMD:
@@ -295,7 +295,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( _T("\\"), _T("\\\\") );
 			cmemWork.Replace_j( _T("\'"), _T("\\\'") );
-			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, _tcslen( szLine ) );
 			break;
 		case F_REPLACE:
@@ -311,7 +311,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 				cmemWork2.Replace_j( "\'", "\\\'" );
 				wsprintf(
 					szLine,
-					_T("S_%s(\'%s\', \'%s\', %d);\t// %s\r\n"),
+					_T("%s(\'%s\', \'%s\', %d);\t// %s\r\n"),
 					szFuncName,
 					cmemWork.GetStringPtr(),
 					cmemWork2.GetStringPtr(),
@@ -337,7 +337,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 				cmemWork3.Replace_j( _T("\'"), _T("\\\'") );
 				wsprintf(
 					szLine,
-					_T("S_%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n"),
+					_T("%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n"),
 					szFuncName,
 					cmemWork.GetStringPtr(),
 					cmemWork2.GetStringPtr(),
@@ -350,9 +350,9 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile ) const
 			break;
 		default:
 			if( 0 == m_pParamTop ){
-				wsprintf( szLine, "S_%s();\t// %s\r\n", szFuncName, szFuncNameJapanese );
+				wsprintf( szLine, "%s();\t// %s\r\n", szFuncName, szFuncNameJapanese );
 			}else{
-				wsprintf( szLine, "S_%s(%d);\t// %s\r\n", szFuncName, m_pParamTop->m_pData ? atoi(m_pParamTop->m_pData) : 0, szFuncNameJapanese );
+				wsprintf( szLine, "%s(%d);\t// %s\r\n", szFuncName, m_pParamTop->m_pData ? atoi(m_pParamTop->m_pData) : 0, szFuncNameJapanese );
 			}
 			_lwrite( hFile, szLine, _tcslen( szLine ) );
 			break;
