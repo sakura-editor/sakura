@@ -280,6 +280,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bUseKeyHelpAllSearch = false;	// ヒットした次の辞書も検索(&A)
 	pType->m_bUseKeyHelpKeyDisp = false;	// 1行目にキーワードも表示する(&W)
 	pType->m_bUseKeyHelpPrefix = false;		// 選択範囲で前方一致検索(&P)
+	pType->m_eKeyHelpRMenuShowType = KEYHELP_RMENU_TOP;
 //@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定

@@ -58,6 +58,7 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDC_CHECK_KEYHELP_ALLSEARCH,	HIDC_CHECK_KEYHELP_ALLSEARCH,	//全辞書検索する(&A)
 	IDC_CHECK_KEYHELP_KEYDISP,		HIDC_CHECK_KEYHELP_KEYDISP,		//キーワードも表示する(&W)
 	IDC_CHECK_KEYHELP_PREFIX,		HIDC_CHECK_KEYHELP_PREFIX,		//前方一致検索(&P)
+	IDC_COMBO_MENU,					HIDC_COMBO_KEYHELP_RMENU,		//右クリックメニュー
 	IDC_BUTTON_KEYHELP_IMPORT,		HIDC_BUTTON_KEYHELP_IMPORT,		//インポート
 	IDC_BUTTON_KEYHELP_EXPORT,		HIDC_BUTTON_KEYHELP_EXPORT,		//エクスポート
 	0, 0
@@ -65,6 +66,12 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 
 static TCHAR* strcnv(TCHAR *str);
 static TCHAR* GetFileName(const TCHAR *fullpath);
+
+static int nKeyHelpRMenuType[] = {
+	STR_KEYHELP_RMENU_NONE,
+	STR_KEYHELP_RMENU_TOP,
+	STR_KEYHELP_RMENU_BOTTOM,
+};
 
 /*! キーワード辞書ファイル設定 メッセージ処理
 
@@ -148,46 +155,32 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 
 			switch( wID ){
 			case IDC_CHECK_KEYHELP:	/* キーワードヘルプ機能を使う */
-				if( !IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
+				{
+					BOOL bEnable = TRUE;
+					if( !IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
+						bEnable = FALSE;
+					}
 					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), FALSE );			//キーワードヘルプ機能を使う(&K)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), FALSE );		  	//辞書ファイル一覧(&L)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), FALSE );         	//SysListView32
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_TITLE ), FALSE );  	//<辞書の説明>
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_ABOUT ), FALSE );  	//辞書ファイルの概要
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UPD ), FALSE );   	//更新(&E)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_KEYWORD ), FALSE );	//辞書ファイル
-					EnableWindow( GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), FALSE );         	//EDITTEXT
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_REF ), FALSE );   	//参照(&O)...
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_PRIOR ), FALSE );  	//↑優先度(高)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_TOP ), FALSE );   	//先頭(&T)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UP ), FALSE );    	//上へ(&U)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DOWN ), FALSE );  	//下へ(&G)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_LAST ), FALSE );  	//最終(&B)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_INS ), FALSE );   	//挿入(&S)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DEL ), FALSE );   	//削除(&D)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ), FALSE );	//全辞書検索する(&A)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ), FALSE );	//キーワードも表示する(&W)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ), FALSE );		//前方一致検索(&P)
-				}else{
-					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), TRUE );			//キーワードヘルプ機能を使う(&K)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), TRUE );				//辞書ファイル一覧(&L)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), TRUE );				//SysListView32
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_TITLE ), TRUE );		//<辞書の説明>
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_ABOUT ), TRUE );  		//辞書ファイルの概要
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UPD ), TRUE );   		//更新(&E)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_KEYWORD ), TRUE );		//辞書ファイル
-					EnableWindow( GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), TRUE );         		//EDITTEXT
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_REF ), TRUE );   		//参照(&O)...
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_PRIOR ), TRUE );  		//↑優先度(高)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_TOP ), TRUE );   		//先頭(&T)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UP ), TRUE );    		//上へ(&U)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DOWN ), TRUE );  		//下へ(&G)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_LAST ), TRUE );  		//最終(&B)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_INS ), TRUE );   		//挿入(&S)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DEL ), TRUE );   		//削除(&D)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ), TRUE );	//全辞書検索する(&A)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ), TRUE );		//キーワードも表示する(&W)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ), TRUE );		//前方一致検索(&P)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), bEnable );		  	//辞書ファイル一覧(&L)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), bEnable );         	//SysListView32
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_TITLE ), bEnable );  	//<辞書の説明>
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_ABOUT ), bEnable );  	//辞書ファイルの概要
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UPD ), bEnable );   	//更新(&E)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_KEYWORD ), bEnable );	//辞書ファイル
+					EnableWindow( GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), bEnable );         	//EDITTEXT
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_REF ), bEnable );   	//参照(&O)...
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_PRIOR ), bEnable );  	//↑優先度(高)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_TOP ), bEnable );   	//先頭(&T)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UP ), bEnable );    	//上へ(&U)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DOWN ), bEnable );  	//下へ(&G)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_LAST ), bEnable );  	//最終(&B)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_INS ), bEnable );   	//挿入(&S)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DEL ), bEnable );   	//削除(&D)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ), bEnable );	//全辞書検索する(&A)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ), bEnable );	//キーワードも表示する(&W)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ), bEnable );		//前方一致検索(&P)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_STATIC_MENU ), bEnable );
+					EnableWindow( GetDlgItem( hwndDlg, IDC_COMBO_MENU ), bEnable );
 				}
 				m_Types.m_nKeyHelpNum = ListView_GetItemCount( hwndList );
 				return TRUE;
@@ -533,6 +526,13 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, m_Types.m_bUseKeyHelpKeyDisp );
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, m_Types.m_bUseKeyHelpPrefix );
 
+	HWND hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_MENU);
+	Combo_ResetContent(hwndCombo);
+	for( i = 0; i < (int)_countof(nKeyHelpRMenuType); i++ ){
+		Combo_AddString(hwndCombo, LS(nKeyHelpRMenuType[i]));
+	}
+	Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);
+
 	/* リスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
@@ -589,6 +589,7 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	m_Types.m_bUseKeyHelpAllSearch = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) );
 	m_Types.m_bUseKeyHelpKeyDisp   = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) );
 	m_Types.m_bUseKeyHelpPrefix    = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) );
+	m_Types.m_eKeyHelpRMenuShowType = (EKeyHelpRMenuType)Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_MENU));
 
 	/* リストに登録されている情報を配列に取り込む */
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );

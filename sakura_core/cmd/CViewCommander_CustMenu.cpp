@@ -97,5 +97,5 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 		return 0;
 	}
 	hMenu = ::CreatePopupMenu();
-	return m_pCommanderView->CreatePopUpMenuSub( hMenu, nMenuIdx, NULL );
+	return m_pCommanderView->CreatePopUpMenuSub( hMenu, nMenuIdx, NULL, KEYHELP_RMENU_NONE );
 }

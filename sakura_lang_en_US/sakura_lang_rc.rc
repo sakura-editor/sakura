@@ -1259,6 +1259,10 @@ BEGIN
     CONTROL         "Search within selection(&P)",IDC_CHECK_KEYHELP_PREFIX,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,224,
                     108,10
+    LTEXT           "&Right Click Menu",IDC_STATIC_MENU,120,225,70,8,NOT 
+                    WS_GROUP
+    COMBOBOX        IDC_COMBO_MENU,192,223,60,180,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_PROP_WINDOW DIALOGEX 0, 0, 302, 244
@@ -4457,6 +4461,10 @@ BEGIN
 	STR_PROPTYPEREGEX_INVALID		"Formatted incorrectly or RegEx library cant be found\n\nRegister anyway?"
 	STR_PROPTYPEREGEX_FULL			"Cannot register any further keywords.\nkeyword area is full."
 	STR_PROPTYPEREGEX_NOSEL			"No selected Keyword."
+
+	STR_KEYHELP_RMENU_NONE			"Hide"
+	STR_KEYHELP_RMENU_TOP			"Show Top"
+	STR_KEYHELP_RMENU_BOTTOM		"Show Bottom"
 
 	// CPropTypesWindow.cpp
 	STR_IME_STATE_DEF				"Default"			// ime state
