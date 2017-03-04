@@ -2361,6 +2361,22 @@ BEGIN
     PUSHBUTTON      "&Help",IDC_BUTTON_HELP,238,225,50,14
 END
 
+IDD_WINLIST DIALOGEX 0, 0, 350, 250
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_THICKFRAME |
+WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Window List"
+FONT 9, "Tahoma"
+BEGIN
+    CONTROL         "", IDC_LIST_WINDOW, "SysListView32",
+                    LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | 
+                    LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,336,215
+    PUSHBUTTON      "&Close Window",IDC_BUTTON_CLOSE,7,229,90,14
+    PUSHBUTTON      "&Save",IDC_BUTTON_SAVE,112,229,50,14
+    DEFPUSHBUTTON   "&OK",IDOK,229,229,50,14
+    PUSHBUTTON      "&Help",IDC_BUTTON_HELP,286,229,50,14
+END
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -3403,8 +3419,10 @@ BEGIN
 	F_TOPMOST_REL			"Release Always on top"
 	F_TOPMOST_SET			"Set Always on top"
     F_WINLIST               "Window list"
+    F_DLGWINLIST            "Window List(Dlg)..."
     F_NEXTWINDOW            "Next window"
     F_PREVWINDOW            "Prev window"
+    F_WINDOW_LIST_SUBMENU   "Window List"
 END
 
 STRINGTABLE DISCARDABLE 

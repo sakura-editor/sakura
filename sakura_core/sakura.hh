@@ -256,6 +256,7 @@
 #define HLP000092	92 //次のウィンドウ
 #define HLP000091	91 //前のウィンドウ
 #define HLP000314	314 //ウィンドウ一覧	// 2006.10.05 ryoji
+#define HLP000372	372 //ウィンドウ一覧表示
 #define HLP000311	311 //結合して表示	// 2006.10.05 ryoji
 #define HLP000138	138 //重ねて表示
 #define HLP000140	140 //上下に並べて表示
@@ -1205,5 +1206,11 @@
 #define HIDC_FILETREE_IDOK					14731
 #define HIDC_FILETREE_IDCANCEL				14732
 #define HIDC_BUTTON_FILETREE_HELP			14733
+
+//ウィンドウ一覧
+#define HIDC_WINLIST_LIST_WINDOW			14800
+#define HIDC_WINLIST_BUTTTN_SAVE			14801
+#define HIDC_WINLIST_BUTTTN_CLOSE			14802
+#define HIDC_WINLIST_IDOK					14803
 
 #define HIDC_STATIC								19999 //不明

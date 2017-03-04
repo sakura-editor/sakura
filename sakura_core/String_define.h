@@ -84,7 +84,7 @@
 #define F_WINDOW_TOPMENU				34058
 #define F_HELP_TOPMENU					34059
 
-// #define F_RESERVED						34060
+#define F_WINDOW_LIST_SUBMENU			34060
 // #define F_RESERVED						34061
 // #define F_RESERVED						34062
 // #define F_RESERVED						34063
