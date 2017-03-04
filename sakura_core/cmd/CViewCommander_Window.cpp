@@ -117,6 +117,18 @@ void CViewCommander::Command_WINLIST( int nCommandFrom )
 }
 
 
+/*! ウィンドウ一覧表示
+*/
+void CViewCommander::Command_DLGWINLIST( void )
+{
+	DWORD dwPid;
+	HWND hwnd = GetDllShareData().m_sHandles.m_hwndTray;
+	::GetWindowThreadProcessId(hwnd, &dwPid);
+	::AllowSetForegroundWindow(dwPid);
+	::PostMessage(hwnd, MYWM_DLGWINLIST, 0, 0);
+}
+
+
 /*!	@brief 重ねて表示
 
 	@date 2002.01.08 YAZAKI 「左右に並べて表示」すると、

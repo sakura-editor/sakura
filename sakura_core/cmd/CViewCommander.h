@@ -375,6 +375,7 @@ public:
 	void Command_TRACEOUT( const wchar_t* outputstr , int, int );	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
 	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
 	void Command_WINLIST( int nCommandFrom );		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
+	void Command_DLGWINLIST( void );	// ウィンドウ一覧ダイアログ // 2015.03.07 Moca
 	void Command_GROUPCLOSE( void );	/* グループを閉じる */		// 2007.06.20 ryoji
 	void Command_NEXTGROUP( void );		/* 次のグループ */			// 2007.06.20 ryoji
 	void Command_PREVGROUP( void );		/* 前のグループ */			// 2007.06.20 ryoji

@@ -34,6 +34,7 @@
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "dlg/CDlgWindowList.h"
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
 #include "io/CTextStream.h"
@@ -538,6 +539,18 @@ LRESULT CControlTray::DispatchEvent(
 			// 編集ウィンドウの数が0になったら終了
 			if( 0 == nRowNum ){
 				::SendMessage( hwnd, WM_CLOSE, 0, 0 );
+			}
+		}
+		return 0;
+
+	case MYWM_DLGWINLIST:
+		{
+			static CDlgWindowList dlg;
+			if (dlg.GetHwnd() == NULL) {
+				dlg.DoModal(m_hInstance, hwnd, 0);
+			}else{
+				::SetForegroundWindow(dlg.GetHwnd());
+				::BringWindowToTop(dlg.GetHwnd());
 			}
 		}
 		return 0;

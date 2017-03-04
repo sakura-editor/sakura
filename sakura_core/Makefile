@@ -172,6 +172,7 @@ dlg/CDlgReplace.o \
 dlg/CDlgSetCharSet.o \
 dlg/CDlgTagJumpList.o \
 dlg/CDlgTagsMake.o \
+dlg/CDlgWindowList.o \
 dlg/CDlgWinSize.o \
 doc/CBlockComment.o \
 doc/CDocEditor.o \

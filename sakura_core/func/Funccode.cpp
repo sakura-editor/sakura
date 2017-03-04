@@ -467,6 +467,7 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List7
 	F_NEXTWINDOW		,	//Ÿ‚ÌƒEƒBƒ“ƒhƒE
 	F_PREVWINDOW		,	//‘O‚ÌƒEƒBƒ“ƒhƒE
  	F_WINLIST			,	//ŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒEˆê——ƒ|ƒbƒvƒAƒbƒv•\¦	// 2006.03.23 fon
+	F_DLGWINLIST		,	//ƒEƒBƒ“ƒhƒEˆê——•\¦
 	F_CASCADE			,	//d‚Ë‚Ä•\¦
 	F_TILE_V			,	//ã‰º‚É•À‚×‚Ä•\¦
 	F_TILE_H			,	//¶‰E‚É•À‚×‚Ä•\¦
@@ -939,6 +940,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_NEXTWINDOW:		return HLP000092;	//Ÿ‚ÌƒEƒBƒ“ƒhƒE
 	case F_PREVWINDOW:		return HLP000091;	//‘O‚ÌƒEƒBƒ“ƒhƒE
 	case F_WINLIST:			return HLP000314;	//ƒEƒBƒ“ƒhƒEˆê——	// 2006.10.05 ryoji
+	case F_DLGWINLIST:		return HLP000372;	//ƒEƒBƒ“ƒhƒEˆê——•\¦
 	case F_BIND_WINDOW:		return HLP000311;	//Œ‹‡‚µ‚Ä•\¦	// 2006.10.05 ryoji
 	case F_CASCADE:			return HLP000138;	//d‚Ë‚Ä•\¦
 	case F_TILE_V:			return HLP000140;	//ã‰º‚É•À‚×‚Ä•\¦

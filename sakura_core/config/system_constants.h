@@ -748,6 +748,9 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 //! タイプ別を削除
 #define MYWM_DEL_TYPESETTING (WM_APP+224)
 
+//! ウィンドウ一覧表示
+#define MYWM_DLGWINLIST (WM_APP+225)
+
 /* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST
 #define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
