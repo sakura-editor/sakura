@@ -938,6 +938,7 @@
 #define HIDC_CHECK_KEYHELP_PREFIX		13913		//前方一致検索(&P)
 #define HIDC_BUTTON_KEYHELP_IMPORT		13914		//インポート
 #define HIDC_BUTTON_KEYHELP_EXPORT		13915		//エクスポート
+#define HIDC_COMBO_KEYHELP_RMENU		13916		//右クリックメニュー
 
 //文字色／背景色設定ダイアログ	// 2006.10.10 ryoji
 #define HIDOK_SAMECOLOR					14000		// OK

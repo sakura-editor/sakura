@@ -4252,39 +4252,58 @@ int CEditView::LineIndexToColumn( const CDocLine* pcDocLine, int nIndex )
 /* ポップアップメニュー(右クリック) */
 int	CEditView::CreatePopUpMenu_R( void )
 {
-	int			nId;
-//	HMENU		hMenuTop;
 	HMENU		hMenu;
-	POINT		po;
-//	UINT		fuFlags;
-//	int			cMenuItems;
-//	int			nPos;
-	RECT		rc;
-	CMemory		cmemCurText;
-	char*		pszWork;
-	int			i;
 	int			nMenuIdx;
-	char		szLabel[300];
-	char		szLabel2[300];
-	UINT		uFlags;
-//	BOOL		bBool;
-
 
 	m_pcEditWnd->m_cMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
 	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
-//	if( nMenuIdx < 0 || MAX_CUSTOM_MENU	<= nMenuIdx ){
-//		return 0;
-//	}
-//	if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx] ){
-//		return 0;
-//	}
 
-	//	Oct. 3, 2001 genta
-	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
 
 	hMenu = ::CreatePopupMenu();
+
+	const STypeConfig& type = m_pcEditDoc->GetDocumentAttribute();
+	const EKeyHelpRMenuType eRmenuType = type.m_eKeyHelpRMenuShowType;
+
+	return CreatePopUpMenuSub( hMenu, nMenuIdx, NULL, eRmenuType );
+}
+
+void CEditView::AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType)
+{
+	if (!m_bBeginSelect && eRmenuType != KEYHELP_RMENU_NONE ){	/* 範囲選択中 */
+		POINT po;
+		RECT rc;
+		if( FALSE != KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
+			if (eRmenuType == KEYHELP_RMENU_BOTTOM){
+				m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, MF_SEPARATOR, F_0, NULL, _T("") );
+			}
+			m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, _T("キーワードの説明をクリップボードにコピー"), _T("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
+			m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, _T("キーワード辞書を開く"), _T("J") );	// 2006.04.10 fon
+			if (eRmenuType == KEYHELP_RMENU_TOP){
+				m_pcEditWnd->m_cMenuDrawer.MyAppendMenu( hMenu, MF_SEPARATOR, F_0, NULL, _T("") );
+			}
+		}
+	}
+}
+
+/*! ポップアップメニューの作成(Sub)
+	hMenuは作成済み
+*/
+int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus, EKeyHelpRMenuType eRmenuType )
+{
+	int			nId;
+	int			i;
+	char		szLabel[300];
+	char		szLabel2[300];
+	UINT		uFlags;
+
+	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
+
+	if( eRmenuType == KEYHELP_RMENU_TOP ){
+		AddKeyHelpMenu(hMenu, KEYHELP_RMENU_TOP);
+	}
+
 	for( i = 0; i < m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
 		if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
@@ -4308,30 +4327,14 @@ int	CEditView::CreatePopUpMenu_R( void )
 			m_pcEditWnd->m_cMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2, _T("") );
-
 		}
 	}
 
-	if( !m_bBeginSelect ){	/* 範囲選択中 */
-		if( FALSE != KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
-			pszWork = m_cTipWnd.m_cInfo.GetStringPtr();
-			// 2002.05.25 Moca &の考慮を追加 
-			char*	pszShortOut = new char[160 + 1];
-			if( 80 < lstrlen( pszWork ) ){
-				char*	pszShort = new char[80 + 1];
-				memcpy( pszShort, pszWork, 80 );
-				pszShort[80] = '\0';
-				dupamp( (const char*)pszShort, pszShortOut );
-				delete [] pszShort;
-			}else{
-				dupamp( (const char*)pszWork, pszShortOut );
-			}
-			::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, "キーワードの説明をクリップボードにコピー(&K)" );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
-			delete [] pszShortOut;
-			::InsertMenu( hMenu, 1, MF_BYPOSITION, IDM_JUMPDICT, "キーワード辞書を開く(&J)" );	// 2006.04.10 fon
-			::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-		}
+	if( eRmenuType == KEYHELP_RMENU_BOTTOM ){
+		AddKeyHelpMenu(hMenu, KEYHELP_RMENU_BOTTOM);
 	}
+
+	POINT		po;
 	po.x = 0;
 	po.y = 0;
 	::GetCursorPos( &po );

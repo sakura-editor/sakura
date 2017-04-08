@@ -813,6 +813,8 @@ public: /* テスト用にアクセス属性を変更 */
 	/* カスタムメニュー */
 	void Command_MENU_RBUTTON( void );	/* 右クリックメニュー */
 	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
+	int	CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus, EKeyHelpRMenuType eRmenuType );
+	void AddKeyHelpMenu( HMENU hMenu, EKeyHelpRMenuType eRmenuType );
 	int Command_CUSTMENU( int );		/* カスタムメニュー表示 */
 
 	/* ウィンドウ系 */

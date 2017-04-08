@@ -375,10 +375,13 @@ static void SetKeyNameArrVal(
 
 	Version 124:
 	SShare_WorkBuffer変更 2016.09.03 novice
+
+	Version 125:
+	キーワードヘルプの右クリックメニュー表示選択
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 124;
+const unsigned int uShareDataVersion = 125;
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
@@ -5365,6 +5368,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = false;	// ヒットした次の辞書も検索(&A)
 	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = false;		// 1行目にキーワードも表示する(&W)
 	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = false;		// 選択範囲で前方一致検索(&P)
+	pShareData->m_Types[nIdx].m_eKeyHelpRMenuShowType = KEYHELP_RMENU_TOP;
 //@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定

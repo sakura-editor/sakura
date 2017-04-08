@@ -155,6 +155,13 @@ struct SEncodingConfig{
 	bool				m_bDefaultBom;					//!< デフォルトBOM			// 2011.01.24 ryoji
 };
 
+//! 右クリックメニュー表示
+enum EKeyHelpRMenuType{
+	KEYHELP_RMENU_NONE,		//!< 非表示
+	KEYHELP_RMENU_TOP,		//!< メニュー先頭
+	KEYHELP_RMENU_BOTTOM,	//!< メニュー末尾
+};
+
 //! タイプ別設定
 struct STypeConfig {
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
@@ -230,6 +237,7 @@ struct STypeConfig {
 	bool				m_bUseKeyHelpAllSearch;			//!< ヒットした次の辞書も検索(&A)
 	bool				m_bUseKeyHelpKeyDisp;			//!< 1行目にキーワードも表示する(&W)
 	bool				m_bUseKeyHelpPrefix;			//!< 選択範囲で前方一致検索(&P)
+	EKeyHelpRMenuType	m_eKeyHelpRMenuShowType;		//!< 右クリックメニュー表示
 //@@@ 2006.04.10 fon ADD-end
 
 	//	2002/04/30 YAZAKI Commonから移動。

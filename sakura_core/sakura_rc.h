@@ -612,6 +612,7 @@
 #define IDC_EDIT_FILEOPENDIR            1630
 #define IDC_BUTTON_FILEOPENDIR          1631
 #define IDC_TextTabCaption              1670
+#define IDC_STATIC_MENU                 1723
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -646,7 +647,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1671
+#define _APS_NEXT_CONTROL_VALUE         1724
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

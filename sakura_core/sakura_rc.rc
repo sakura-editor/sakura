@@ -1122,6 +1122,10 @@ BEGIN
                     BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,212,90,13,0
     CONTROL         "選択範囲で前方一致検索(&P)",IDC_CHECK_KEYHELP_PREFIX,"Button",
                     BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,224,95,13,0
+    LTEXT           "右クリックメニュー(&R)",IDC_STATIC_MENU,120,225,70,8,NOT 
+                    WS_GROUP
+    COMBOBOX        IDC_COMBO_MENU,192,223,60,180,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     CONTROL         "キーワードヘルプ機能を使う(&K)",IDC_CHECK_KEYHELP,"Button",
                     BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,6,112,13,0
 END
