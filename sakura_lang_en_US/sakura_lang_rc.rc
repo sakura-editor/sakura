@@ -2923,10 +2923,10 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_FILE_REOPEN_JIS       "Re-Open as JIS"
     F_FILE_REOPEN_EUC       "Re-Open as EUC"
-    F_FILE_REOPEN_UNICODE   "Re-Open as Unicode"
+    F_FILE_REOPEN_UNICODE   "Re-Open as UTF-16"
     F_FILE_REOPEN_UTF8      "Re-Open as UTF-8"
     F_FILE_REOPEN_UTF7      "Re-Open as UTF-7"
-    F_FILE_REOPEN_UNICODEBE "Re-Open as UnicodeBE"
+    F_FILE_REOPEN_UNICODEBE "Re-Open as UTF-16 BE"
     F_FILE_REOPEN_CESU8     "Re-Open as CESU-8"
     F_FILE_REOPEN_LATIN1    "Re-Open as Latin1"
     F_FILE_REOPEN           "Re-Open"
@@ -3198,10 +3198,10 @@ BEGIN
     F_CODECNV_AUTO2SJIS     "Automatic → SJIS Code"
     F_CODECNV_EMAIL         "E-Mail(JIS→SJIS) Code"
     F_CODECNV_EUC2SJIS      "EUC→SJIS Code"
-    F_CODECNV_UNICODE2SJIS  "Unicode→SJIS Code"
+    F_CODECNV_UNICODE2SJIS  "UTF-16→SJIS Code"
     F_CODECNV_UTF82SJIS     "UTF-8→SJIS Code"
     F_CODECNV_UTF72SJIS     "UTF-7→SJIS Code"
-    F_CODECNV_UNICODEBE2SJIS "UnicodeBE→SJIS Code"
+    F_CODECNV_UNICODEBE2SJIS "UTF-16 BE→SJIS Code"
     F_CODECNV_SJIS2JIS      "SJIS→JIS Code"
     F_CODECNV_SJIS2EUC      "SJIS→EUC Code"
     F_CODECNV_SJIS2UTF8     "SJIS→UTF-8 Code"
@@ -4062,17 +4062,17 @@ BEGIN
 	STR_EDITWND_MENU_LS			"End of line type (L&S)"
 	STR_EDITWND_MENU_PS			"End of line type (&PS)"
 
-	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%ts)\n\nSJIS:\t\t%ts\nJIS:\t\t%ts\nEUC:\t\t%ts\nLatin1:\t\t%ts\nUnicode:\t\t%ts\nUTF-8:\t\t%ts\nCESU-8:\t\t%ts"
+	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%ts)\n\nSJIS:\t\t%ts\nJIS:\t\t%ts\nEUC:\t\t%ts\nLatin1:\t\t%ts\nUTF-16:\t\t%ts\nUTF-8:\t\t%ts\nCESU-8:\t\t%ts"
 
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
 
-	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
+	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "UTF-16", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
 	STR_ERR_DLGEDITWND19		""
 	STR_ERR_DLGEDITWND20		"99999 L 9999 C"
 //	STR_ERR_DLGEDITWND20		"99999 行 9999 列"
 	STR_ERR_DLGEDITWND21		"CFLF"
 	STR_ERR_DLGEDITWND22		"0000"
-	STR_ERR_DLGEDITWND23		"Unicode BOM"
+	STR_ERR_DLGEDITWND23		"UTF-16 BOM"
 	STR_ERR_DLGEDITWND24		"REC"
 	STR_ERR_DLGEDITWND25		"OVR"							// Overwrite mode
 	STR_WRAP_WIDTH_FULL			"Line Wrap Width: %d Col(Max)"

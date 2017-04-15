@@ -56,8 +56,8 @@ static	SCodeSet	ASCodeSet[] = {
 	{ CODE_JIS,			L"JIS",		L"JIS",		L"JIS",			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
 	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)‚Å‚Í‚È‚¢
 	{ CODE_LATIN1,		L"Latin1",	L"Latin1",	L"Latin1",		false,	false,	true  },	//!< Latin1				(‰¢•¶, Windows-932, Windows Codepage 1252 West European)
-	{ CODE_UNICODE,		L"Unicode",	L"Uni",		L"Unicode",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
-	{ CODE_UNICODEBE,	L"UniBE",	L"UniBE",	L"UnicodeBE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
+	{ CODE_UNICODE,		L"UTF-16",	L"UTF-16",	L"UTF-16",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
+	{ CODE_UNICODEBE,	L"U16BE",	L"U16BE",	L"UTF-16BE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
 	{ CODE_UTF8,		L"UTF-8",	L"UTF-8",	L"UTF-8",		true,	false,	true  },	//!< UTF-8
 	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2‚©‚çUTF-8‰»)
 	{ CODE_UTF7,		L"UTF-7",	L"UTF-7",	L"UTF-7",		true,	false,	false },	//!< UTF-7
