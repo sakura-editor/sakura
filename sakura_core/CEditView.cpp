@@ -3005,7 +3005,7 @@ BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
 		nCmpLen = lstrlen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i=0;i<m_pShareData->m_Types[nTypeNo].m_nKeyHelpNum;i++){	//Å‘å”FMAX_KEYHELP_FILE
-		if( 1 == m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_nUse ){
+		if( m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_bUse ){
 			if(m_cDicMgr.Search( pcmemCurText->GetStringPtr(), nCmpLen, &pcmemRefKey, &pcmemRefText, m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath, &nLine )){	// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)ˆø”‚ð’Ç‰Á
 				/* ŠY“–‚·‚éƒL[‚ª‚ ‚é */
 				pszWork = pcmemRefText->GetStringPtr();

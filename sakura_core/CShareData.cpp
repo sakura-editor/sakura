@@ -5359,7 +5359,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 //@@@ 2006.04.10 fon ADD-start
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_nUse = 0;
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_bUse = false;
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}

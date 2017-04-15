@@ -567,7 +567,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 		lvi.pszText  = m_Types.m_KeyHelpArr[i].m_szPath;
 		ListView_SetItem( hwndWork, &lvi );
 		/* ON/OFFを取得してチェックボックスにセット（とりあえず応急処置） */
-		if(1 == m_Types.m_KeyHelpArr[i].m_nUse){	// ON
+		if(m_Types.m_KeyHelpArr[i].m_bUse){	// ON
 			ListView_SetCheckState(hwndWork, i, TRUE);
 		}
 		else{
@@ -601,15 +601,15 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	nIndex = ListView_GetItemCount( hwndList );
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
-			int nUse	= 0;	/* 辞書ON(1)/OFF(0) */
+			int bUse	= false;	/* 辞書ON(1)/OFF(0) */
 			szAbout[0]	= _T('\0');
 			szPath[0]	= _T('\0');
-			/* チェックボックス状態を取得してnUseにセット */
+			/* チェックボックス状態を取得してbUseにセット */
 			if(ListView_GetCheckState(hwndList, i))
-				nUse = 1;
+				bUse = true;
 			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
 			ListView_GetItemText( hwndList, i, 2, szPath, _countof(szPath) );
-			m_Types.m_KeyHelpArr[i].m_nUse = nUse;
+			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
 			_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
 			_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
 		}else{	/* 未登録部分はクリアする */
@@ -724,7 +724,7 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 		}
 
 		//良さそうなら
-		m_Types.m_KeyHelpArr[i].m_nUse = b_enable_flag;	// 2007.02.03 genta
+		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
 		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
 		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, p3);
 		i++;
@@ -779,7 +779,7 @@ bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 	for(i = 0; i < j; i++){
 		fprintf( fp, pszForm,
 			i,
-			m_Types.m_KeyHelpArr[i].m_nUse,
+			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
 			m_Types.m_KeyHelpArr[i].m_szAbout,
 			m_Types.m_KeyHelpArr[i].m_szPath
 		);

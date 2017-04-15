@@ -1393,18 +1393,18 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 			wsprintf( szKeyName, "KDct[%02d]", j );
 			/* ì«Ç›èoÇµ */
 			if( cProfile.IsReadingMode() ){
-				types.m_KeyHelpArr[j].m_nUse = 0;
-				types.m_KeyHelpArr[j].m_szAbout[0] = '\0';
-				types.m_KeyHelpArr[j].m_szPath[0] = '\0';
+				types.m_KeyHelpArr[j].m_bUse = false;
+				types.m_KeyHelpArr[j].m_szAbout[0] = _T('\0');
+				types.m_KeyHelpArr[j].m_szPath[0] = _T('\0');
 				if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 					pH = szKeyData;
 					if( NULL != (pT=strchr(pH, ',')) ){
 						*pT = '\0';
-						types.m_KeyHelpArr[j].m_nUse = atoi( pH );
+						types.m_KeyHelpArr[j].m_bUse = (atoi( pH )!=0);
 						pH = pT+1;
 						if( NULL != (pT=strchr(pH, ',')) ){
 							*pT = '\0';
-							strcpy( types.m_KeyHelpArr[j].m_szAbout, pH );
+							_tcscpy( types.m_KeyHelpArr[j].m_szAbout, pH );
 							pH = pT+1;
 							if( '\0' != (*pH) ){
 								strcpy( types.m_KeyHelpArr[j].m_szPath, pH );
@@ -1417,7 +1417,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 			else{
 				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
 					wsprintf( szKeyData, pszForm,
-						types.m_KeyHelpArr[j].m_nUse,
+						types.m_KeyHelpArr[j].m_bUse?1:0,
 						types.m_KeyHelpArr[j].m_szAbout,
 						types.m_KeyHelpArr[j].m_szPath
 					);
