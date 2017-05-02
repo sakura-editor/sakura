@@ -13,6 +13,104 @@
 <h2>変更履歴(2015/02/22～)</h2>
 <!--<h3>xxx. xx, 2015 (2.x.x.x)</h3>-->
 
+<h3>May. 2, 2017 (2.3.2.0)</h3>
+[機能追加]<br />
+<ul>
+<li>ウィンドウ一覧ダイアログ (svn:4176 upatchid:1072 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>アウトラインのツリーの逆順ソート追加 (svn:4138 upatchid:1038 Moca)</li>
+<li>アウトライン解析ツリー表示の高速化 (svn:4156 upatchid:1056 Moca)</li>
+<li>アウトラインメニューにすべて展開・縮小・ブックマーク削除・全削除を追加 (svn:4159 upatchid:1049 Moca)</li>
+<li>Grepファイル・フォルダ長を512に拡張 (svn:4161 upatchid:1076 Moca)</li>
+<li>マクロ保存でS_を追加しない (svn:4173 upatchid:943 Moca)</li>
+<li>キーワードヘルプメニューのオプション (svn:4175 upatchid:1066 Moca)</li>
+
+</ul>
+[バグ修正]<br />
+<ul>
+<li>C++アウトラインでのK&R引数定義対策 (svn:4130 upatchid:1012 Moca)</li>
+<li>アウトライン解析C++/Javaのソート順がおかしいバグの修正 (svn:4133 upatchid:1031 Moca)</li>
+<li>Grepダイアログが言語切替でウィンドウサイズが変わらない (svn:4137 upatchid:1071 Moca)</li>
+<li>キーボードでCPをチェックするとキーボードで操作できなくなる (svn:4139 upatchid:1084 Moca)</li>
+<li>IO_ProfileのコマンドIDプラグイン名処理をまとめる (svn:4142 upatchid:1064 Moca)</li>
+<li>編集中ファイルからGrepのときサブフォルダ共通設定を上書きしない (svn:4147 upatchid:1032 Moca)</li>
+<li>アウトライン解析KR対策以降でANSIビルドエラーが出る (svn:4153 upatchid:1088 Moca)</li>
+<li>Win10で無題のタブアイコンがGrepになる (svn:4154 upatchid:1080 LR4, Moca)</li>
+<li>CUxThemeの保守修正パッチ (svn:4158 upatchid:1091 berryzplus)</li>
+<li>設定画面のファイル選択ダイアログで相対パスにできるときはする (svn:4160 upatchid:985 Moca)</li>
+<li>タブ幅がフォントサイズが大きいと4固定になる (svn:4162 upatchid:1078 berryzplus)</li>
+<li>UTF-7自動認識を厳しくする (svn:4163 upatchid:988 Moca)</li>
+<li>タイプ別から共通設定キーワードを表示すると内容が一致しない (svn:4164 upatchid:1083 Moca)</li>
+<li>DragFinishがたりない (svn:4165 upatchid:1042 Moca)</li>
+<li>正規表現キーワードで落ちることがある (svn:4166 upatchid:1095 Moca)</li>
+<li>ミニマップにドロップすると落ちる (svn:4169 upatchid:1094 Moca)</li>
+<li>UnicodeをUTF-16表記に変更 (svn:4178 upatchid:1102 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>maxdata定義追加 (svn:4145 svn:4151 upatchid:1085 novice123)</li>
+<li>new/deleteからwstringに置き換え (svn:4146 upatchid:1086 novice123)</li>
+<li>static変数削除 (svn:4168 upatchid:1096 novice123)</li>
+</ul>
+
+<h3>Oct. 12, 2015 (2.3.0.0)</h3>
+[機能追加]<br />
+<ul>
+<li>TSV、CSVモード (svn:4019 upatchid:991 Request/359 syat)</li>
+<li>プロポーショナルフォント (svn:4035 upatchid:713 Request/500 Moca)</li>
+<li>XMLアウトラインとHTMLの修正 (svn:4047 upatchid:944 BugReport/174 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>C/C++インデントの改良 (svn:4020 upatchid:717 Request/336 Moca)</li>
+<li>桁数表示のオプション化 (svn:4045 upatchid:1004 unicode:2282 Moca,syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>(選択)前の変更行へが追加されるときにもセパレータが余分に追加される (svn:4016 upatchid:983 novice123)</li>
+<li>EBCDIC typo修正 (svn:4017 upatchid:987 novice123)</li>
+<li>TCITEMの cchTextMaxメンバが初期化されていなかった (svn:4018 unicode:2263 teru,ds14050)</li>
+<li>DLL,EXEの検索パスのセキュリティ設定変更 (svn:4021 upatchid:805 Moca)</li>
+<li>メッセージボックスのコピーがおかしい (svn:4022 upatchid:816 unicode:2165 novice123,LR4)</li>
+<li>正規表現OFF置換で異常終了する (svn:4024 upatchid:994 unicode:2266 syat)</li>
+<li>Grepの検索対象ファイルを厳密にする (svn:4026 upatchid:992 BugReport/184 LR4)</li>
+<li>正規表現のGrep置換で行内の1つめしか置換されない (svn:4027 upatchid:984 Moca)</li>
+<li>C/C++用強調キーワードにてfinalとfloatが動作しない (svn:4028 upatchid:993 BugReport/186 syat)</li>
+<li>複数ファイルを「送る」メニューから開いたときの挙動 (svn:4029 upatchid:990 novice123)</li>
+<li>入力補完中のIME動作がおかしい (svn:4031 upatchid:996 unicode:2278 ryoji)</li>
+<li>「ミニマップを隠す」メニュー／ツールバーのアイコンが窪んだ状態にならない (svn:4032 upatchid:997 ryoji)</li>
+<li>キーワードヘルプの表示位置不正 (svn:4033 upatchid:998 ryoji)</li>
+<li>Undo/Redo時にキャレットが期待する位置に移動しない (svn:4034 upatchid:999 ryoji)</li>
+<li>ミニマップが印刷プレビューで表示されたままになる (svn:4037 upatchid:1000 unicode:2276 Moca)</li>
+<li>タブの検索をキーマクロとして保存できない (svn:4038 upatchid:1001 BugReport/188 anonymous)</li>
+<li>折り返し記号をOFFにしても折り返し記号が消えない (svn:4043 upatchid:1002 unicode:2290 syat)</li>
+<li>文字の間隔の適用値が今までと異なる (svn:4046 upatchid:1003 unicode:2294 Moca)</li>
+<li>スクロールできないときマウスキャプチャされたままになる (svn:4048 upatchid:1005 unicode:2298 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>USE_CRASHDUMPをデフォルトで有効化 (svn:4023 upatchid:995 unicode:2268 syat)</li>
+<li>コンパイルオプションに/NXCOMPAT /SAFESEH /DYNAMICBASEを追加 (svn:4025 upatchid:826 Moca)</li>
+<li>ミニマップビュー生成時にメンバを初期化する (svn:4030 syat)</li>
+<li>MinGWコンパイル対応 (svn:4036 upatchid:995 syat)</li>
+</ul>
+
+<h3>Mar. 1, 2015 (2.2.0.1)</h3>
+[仕様変更]<br />
+<ul>
+<li>メインメニューの自動更新 (svn:4007 upatchid:979 data:7948 Moca)</li>
+<li>タブバーの項目幅の調整・iniで設定可能に (svn:4008 upatchid:980 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>行間隔の設定が保存されない (svn:4000 upatchid:977 data:7953 novice123)</li>
+<li>ビットマップフォント等でミニマップが小さく表示されない (svn:4006 upatchid:978 Moca)</li>
+<li>Grep/Grep置換のCPのアクセスキー変更 (svn:4009 upatchid:981 data:7973 Moca)</li>
+</ul>
+
+
 <h3>Aug. 14, 2016 (2.3.1.0)</h3>
 [仕様変更]<br />
 <ul>
