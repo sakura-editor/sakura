@@ -1698,6 +1698,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ウィンドウ一覧表示">
+					<param name="Local" value="_RESOURCE\HLP000372.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="(ウィンドウリスト)">
 					<param name="Local" value="_RESOURCE\HLP000097.html">
 					<param name="ImageNumber" value="9">
