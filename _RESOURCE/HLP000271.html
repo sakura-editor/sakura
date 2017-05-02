@@ -26,7 +26,7 @@ JISで保存する場合のエスケープシーケンスは次の通りです。<br>
 <img src="images/note.png"><b>注意</b><br>
 JISの半角カタカナは規格違反です。使用しないでください<br>
 </div><br>
-■Unicode/UnicodeBE/UTF-8/UTF-7/CESU-8<br>
+■UTF-16/UTF-16BE/UTF-8/UTF-7/CESU-8<br>
 <div class=li200>・制限<br>
 (sakura:1.6.6.0以前)<br>
 サクラエディタの内部コードがSJISのため、SJISに含まれない文字は変になります。<br>
@@ -48,7 +48,7 @@ JISの半角カタカナは規格違反です。使用しないでください<br>
 2-3. HTML5の&lt;meta charset="utf-8"&gt;のような文字列<br>
 2-4. 「# coding: utf-8」「「# coding=utf-8」」のようなエディタ用エンコーディング指定<br>
 をそれぞれ検出すると、そのコードに決定します。対応しているエンコード名にはコードページも含みます。<br>
-3. UTF-16のCRLF検出器でUnicode/UnicodeBEを判定します。<br>
+3. UTF-16のCRLF検出器でUTF-16/UTF-16BEを判定します。<br>
 4. Shift_JIS/EUC/JIS/UTF-8/UTF-7での固有文字情報(ASCII以外の文字の検出)を元に決定します。<br>
 5. すべてASCIIなどの文字または空のファイルの場合は、タイプ別設定のデフォルト文字コードを利用します。<br>
 </div><br>
