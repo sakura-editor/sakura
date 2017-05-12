@@ -60,8 +60,8 @@ static const TCHAR* aszCodeStr[] = {
 	_T("SJIS"),
 	_T("EUC"),
 	_T("UTF-8"),
-	_T("Unicode"),
-	_T("UnicodeBE")
+	_T("UTF-16"),
+	_T("UTF-16BE")
 };
 static const ECodeType aeCodeType[] = {
 	CODE_SJIS,

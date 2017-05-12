@@ -31,30 +31,30 @@ LPCTSTR gm_pszCodeNameArr_1[] = {
 	_T("SJIS"),			/* SJIS */
 	_T("JIS"),			/* JIS */
 	_T("EUC"),			/* EUC */
-	_T("Unicode"),		/* Unicode */
+	_T("UTF-16"),		/* UTF-16 LittleEndian */
 	_T("UTF-8"),		/* UTF-8 */
 	_T("UTF-7"),		/* UTF-7 */
-	_T("UniBE")			/* Unicode BigEndian */
+	_T("U16BE")			/* UTF-16 BigEndian */
 };
 
 LPCTSTR gm_pszCodeNameArr_2[] = {
 	_T("SJIS"),			/* SJIS */
 	_T("JIS"),			/* JIS */
 	_T("EUC"),			/* EUC */
-	_T("Uni"),			/* Unicode */
+	_T("Uni"),			/* UTF-16 LittleEndian */
 	_T("UTF-8"),		/* UTF-8 */
 	_T("UTF-7"),		/* UTF-7 */
-	_T("UniBE")			/* Unicode BigEndian */
+	_T("U16BE")			/* UTF-16 BigEndian */
 };
 
 LPCTSTR gm_pszCodeNameArr_3[] = {
 	_T("  [SJIS]"),		/* SJIS */
 	_T("  [JIS]"),		/* JIS */
 	_T("  [EUC]"),		/* EUC */
-	_T("  [Unicode]"),	/* Unicode */
+	_T("  [UTF-16]"),	/* UTF-16 LittleEndian */
 	_T("  [UTF-8]"),	/* UTF-8 */
 	_T("  [UTF-7]"),	/* UTF-7 */
-	_T("  [UniBE]")		/* Unicode BigEndian */
+	_T("  [U16BE]")		/* UTF-16 BigEndian */
 };
 
 const int gm_nCodeComboValueArr[] = {
@@ -73,8 +73,8 @@ LPCTSTR	gm_pszCodeComboNameArr[] = {
 	_T("SJIS"),
 	_T("JIS"),
 	_T("EUC"),
-	_T("Unicode"),
-	_T("UnicodeBE"),
+	_T("UTF-16"),
+	_T("UTF-16BE"),
 	_T("UTF-8"),
 	_T("UTF-7")
 };
