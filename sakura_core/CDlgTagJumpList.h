@@ -105,7 +105,7 @@ private:
 	char	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int		m_nLoop;		//!< さかのぼれる階層数
 	CSortedTagJumpList	m_cList;	//!< タグジャンプ情報
-	UINT	m_nTimerId;		//!< タイマ番号
+	UINT_PTR	m_nTimerId;		//!< タイマ番号
 	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
 	BOOL	m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
 
