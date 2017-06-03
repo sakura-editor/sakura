@@ -104,7 +104,7 @@ bool CFuncLookup::Pos2FuncName(
 	@param funccode [in] 機能番号
 	@param ptr [out] 文字列を格納するバッファの先頭
 	@param bufsize [in] 文字列を格納するバッファのサイズ
-	
+
 	@retval true 指定された機能番号は定義されている
 	@retval false 指定された機能番号は未定義
 
@@ -113,6 +113,9 @@ bool CFuncLookup::Pos2FuncName(
 bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 {
 	LPCWSTR pszStr = NULL;
+
+	assert( ptr != NULL );
+	assert( bufsize >= 1 );
 
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
@@ -149,12 +152,23 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		}
 	}
 
-	// 未定義コマンド
+	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
 	if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
 		wcsncpy( ptr, pszStr, bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return false;
 	}
+
+	// なにかコピーしないとループ処理などで一つ前の名前になることがあるので(-- 不明 --)をコピーしておく
+	if( ( pszStr = LSW( F_DISABLE ) )[0] != L'\0' ){
+		wcsncpy( ptr, pszStr, bufsize );
+		ptr[bufsize-1] = LTEXT('\0');
+		return false;
+	}
+	// リソース全死亡ガード
+	wcsncpy( ptr, L"unknown", bufsize );
+	ptr[bufsize-1] = LTEXT('\0');
+
 	return false;
 }
 
