@@ -282,7 +282,7 @@ public:
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
-	BOOL Command_FUNCLIST( int nAction, int nOutlineType );	/* アウトライン解析 */ // 20060201 aroka
+	BOOL Command_FUNCLIST( int nAction, EOutlineType nOutlineType );	/* アウトライン解析 */ // 20060201 aroka
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */

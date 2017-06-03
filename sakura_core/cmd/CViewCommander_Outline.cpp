@@ -29,13 +29,13 @@
 
 
 /*!	アウトライン解析
-	
-	2002/3/13 YAZAKI nOutlineTypeとnListTypeを統合。
+
+	@date 2002/03/13 YAZAKI nOutlineTypeとnListTypeを統合。
+	@date 2006/02/01 aroka トグル用のフラグに変更
 */
-// トグル用のフラグに変更 20060201 aroka
 BOOL CViewCommander::Command_FUNCLIST(
 	int nAction,
-	int _nOutlineType = OUTLINE_DEFAULT
+	EOutlineType nOutlineType = OUTLINE_DEFAULT
 )
 {
 	static bool bIsProcessing = false;	//アウトライン解析処理中フラグ
@@ -51,15 +51,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 	::GetWindowThreadProcessId( ::GetForegroundWindow(), &dwPid2 );
 	bool bForeground = (dwPid1 == dwPid2);
 
-	EOutlineType nOutlineType = (EOutlineType)_nOutlineType; //2007.11.29 kobake
-
 //	if( bCheckOnly ){
 //		return TRUE;
 //	}
 
 	static CFuncInfoArr	cFuncInfoArr;
-//	int		nLine;
-//	int		nListType;
 	std::tstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
