@@ -180,7 +180,7 @@ EFunctionCode CDlgFuncList::GetFuncCodeRedraw(int outlineType)
 	return F_OUTLINE;
 }
 
-static int GetOutlineTypeRedraw(int outlineType)
+static EOutlineType GetOutlineTypeRedraw(int outlineType)
 {
 	if( outlineType == OUTLINE_BOOKMARK ){
 		return OUTLINE_BOOKMARK;
@@ -3559,7 +3559,7 @@ void CDlgFuncList::Refresh( void )
 	CEditWnd* pcEditWnd = CEditDoc::GetInstance(0)->m_pcEditWnd;
 	BOOL bReloaded = ChangeLayout( OUTLINE_LAYOUT_FILECHANGED );	// 現在設定に従ってアウトライン画面を再配置する
 	if( !bReloaded && pcEditWnd->m_cDlgFuncList.GetHwnd() ){
-		int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
+		EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 		pcEditWnd->GetActiveView().GetCommander().Command_FUNCLIST( SHOW_RELOAD, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 	}
 	if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == pcEditWnd->GetHwnd() )
@@ -3607,7 +3607,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 					m_nOutlineType = CommonSet().m_nDockOutline;
 				}
 			}
-			int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
+			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
 			return true;	// 解析した
@@ -3644,7 +3644,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 					m_nOutlineType = CommonSet().m_nDockOutline;
 				}
 			}
-			int nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
+			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
 			return true;	// 解析した
