@@ -4389,13 +4389,13 @@ void CEditView::Command_CODECNV_AUTO2SJIS( void )
 
 
 /*!	アウトライン解析
-	
-	2002/3/13 YAZAKI nOutlineTypeとnListTypeを統合。
+
+	@date 2002/03/13 YAZAKI nOutlineTypeとnListTypeを統合。
+	@date 2006/02/01 aroka トグル用のフラグに変更
 */
-// トグル用のフラグに変更 20060201 aroka
 BOOL CEditView::Command_FUNCLIST(
 	int nAction,
-	int nOutlineType
+	EOutlineType nOutlineType
 )
 {
 //	if( bCheckOnly ){
@@ -4403,8 +4403,6 @@ BOOL CEditView::Command_FUNCLIST(
 //	}
 
 	static CFuncInfoArr	cFuncInfoArr;
-//	int		nLine;
-//	int		nListType;
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
