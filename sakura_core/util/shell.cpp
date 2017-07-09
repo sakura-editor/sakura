@@ -102,15 +102,29 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 /*!	特殊フォルダのパスを取得する
 	SHGetSpecialFolderPath API（shell32.dll version 4.71以上が必要）と同等の処理をする
 
+	@param [in] nFolder CSIDL (constant special item ID list)
+	@param [out] pszPath 特殊フォルダのパス
+
 	@author ryoji
 	@date 2007.05.19 新規
+	@date 2017.06.24 novice SHGetFolderLocation()に変更
+
+	@note SHGetFolderLocation()は、shell32.dll version 5.00以上が必要
 */
 BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 {
 	BOOL bRet = FALSE;
 	HRESULT hres;
+	LPITEMIDLIST pidl = NULL;
+
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	hres = ::SHGetFolderLocation( NULL, nFolder, NULL, NULL, &pidl );
+	if( SUCCEEDED( hres ) ){
+		bRet = ::SHGetPathFromIDList( pidl, pszPath );
+		::CoTaskMemFree( pidl );
+	}
+#else
 	LPMALLOC pMalloc;
-	LPITEMIDLIST pidl;
 
 	hres = ::SHGetMalloc( &pMalloc );
 	if( FAILED( hres ) )
@@ -123,6 +137,7 @@ BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 	}
 
 	pMalloc->Release();
+#endif
 
 	return bRet;
 }
