@@ -13,6 +13,18 @@
 #include <math.h>
 #endif
 
+//! テンプレートでべき乗を計算(!=0)
+template <int N, int M>
+struct power{
+    static const int value = N * power<N, M - 1>::value;
+};
+
+//! テンプレートでべき乗を計算(==0)
+template<int N>
+struct power<N, 0>{
+    static const int value = 1;
+};
+
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)
 {
@@ -197,7 +209,14 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 }
 
 
-/* 行番号表示に必要な桁数を計算 */
+/*!
+	行番号表示に必要な桁数を計算
+
+	@param [in] pLayoutMgr
+	@param [in] bLayout true:レイアウト行単位 / false:物理行単位
+
+	@return 行番号表示に必要な桁数
+*/
 int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMgr, bool bLayout) const
 {
 	const CEditView* pView=m_pEditView;
@@ -222,18 +241,17 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMg
 		/* 表示している行数の桁数を求める */
 		nWork = (int)(log10( (double)nAllLines) +1);	// 10を底とする対数(小数点以下切り捨て)+1で桁数
 		/* 設定値と比較し、大きい方を取る */
-		i = nWork > pView->m_pTypeData->m_nLineNumWidth ?
-			nWork : pView->m_pTypeData->m_nLineNumWidth;
+		i = std::max( nWork, pView->m_pTypeData->m_nLineNumWidth );
 		// 先頭の空白分を加算する
 		return (i +1);
 #else
 		/* 設定から行数を求める */
-		nWork = 10;
-		for( i = 1; i < pView->m_pTypeData->m_nLineNumWidth; ++i ){
+		nWork = power<10, LINENUMWIDTH_MIN>::value;
+		for( i = LINENUMWIDTH_MIN; i < pView->m_pTypeData->m_nLineNumWidth; ++i ){
 			nWork *= 10;
 		}
 		/* 表示している行数と比較し、大きい方の値を取る */
-		for( i = pView->m_pTypeData->m_nLineNumWidth; i < LINENUMWIDTH_MAX; ++i ){
+		for( /*i = pView->m_pTypeData->m_nLineNumWidth*/; i < LINENUMWIDTH_MAX; ++i ){
 			if( nWork > nAllLines ){	// Oct. 18, 2003 genta 式を整理
 				break;
 			}
