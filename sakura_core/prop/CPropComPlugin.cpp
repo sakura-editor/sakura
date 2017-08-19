@@ -550,7 +550,13 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 	return sReadMeName;
 }
 
-//	Readme ファイルの表示	2011/11/2 Uchi
+/*!
+	Readme ファイルの表示
+
+	@date 2011/11/2 Uchi
+
+	@return true: 成功, false: 失敗
+*/
 bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 {
 	// -- -- -- -- コマンドライン文字列を生成 -- -- -- -- //
@@ -582,8 +588,20 @@ bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 
 	TCHAR	szCmdLine[1024];
 	auto_strcpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
-	return (::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
-		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) != 0);
+	//リソースリーク対策
+	BOOL bRet = ::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
+		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi );
+
+	//プロセス作成に成功した場合
+	if ( bRet )
+	{
+		//スレッドハンドルは使わないので閉じておく
+		::CloseHandle( pi.hThread );
+		//プロセスハンドルは使わないので閉じておく
+		::CloseHandle( pi.hProcess );
+	}
+
+	return ( bRet != FALSE );
 }
 
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
