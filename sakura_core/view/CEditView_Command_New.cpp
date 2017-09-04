@@ -623,8 +623,8 @@ void CEditView::DeleteData(
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		if( WCODE::IsLineDelimiter(pLine[nCurIdx], bExtEol) ){
 			/* 改行 */
-			nNxtIdx = nCurIdx + pcLayout->GetLayoutEol().GetLen();
-			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt((Int)pcLayout->GetLayoutEol().GetLen()); //※改行コードの文字数を文字幅と見なす
+			nNxtIdx = pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
+			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt(pcLayout->GetLayoutEol().GetLen()>0?1+m_pcEditDoc->m_cLayoutMgr.GetCharSpacing():0);
 		}
 		else{
 			nNxtIdx = CLogicInt(CNativeW::GetCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine);
