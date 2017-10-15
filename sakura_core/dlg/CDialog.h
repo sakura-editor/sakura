@@ -86,7 +86,7 @@ public:
 	INT_PTR DoModal( HINSTANCE, HWND, int, LPARAM );	/* モーダルダイアログの表示 */
 	HWND DoModeless( HINSTANCE, HWND, int, LPARAM, int );	/* モードレスダイアログの表示 */
 	HWND DoModeless( HINSTANCE, HWND, LPCDLGTEMPLATE, LPARAM, int );	/* モードレスダイアログの表示 */
-	void CloseDialog( int );
+	void CloseDialog( INT_PTR );
 
 	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	virtual void SetDialogPosSize();

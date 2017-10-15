@@ -48,28 +48,29 @@ BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam 
 */
 BOOL CDlgFileUpdateQuery::OnBnClicked(int id)
 {
-	int result;
+	EFileUpdateQuery result;
+
 	switch( id ){
 	case IDC_BTN_RELOAD: // 再読込
-		result = 1;
+		result = EFUQ_RELOAD;
 		break;
 	case IDC_BTN_CLOSE: // 閉じる
-		result = 0;
+		result = EFUQ_CLOSE;
 		break;
 	case IDC_BTN_NOTIFYONLY: // 以後通知メッセージのみ
-		result = 2;
+		result = EFUQ_NOTIFYONLY;
 		break;
 	case IDC_BTN_NOSUPERVISION: // 以後更新を監視しない
-		result = 3;
+		result = EFUQ_NOSUPERVISION;
 		break;
 	case IDC_BTN_AUTOLOAD:		// 以後未編集で再ロード
-		result = 4;
+		result = EFUQ_AUTOLOAD;
 		break;
 	default:
-		result = 0;
+		result = EFUQ_CLOSE;
 		break;
 	}
-	CloseDialog( result );
+	CloseDialog( (INT_PTR)result );
 
 	return 0;
 }
