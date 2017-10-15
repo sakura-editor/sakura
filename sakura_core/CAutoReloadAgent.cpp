@@ -156,7 +156,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			PauseWatching(); // 更新監視の抑制
 
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
-			int result = dlg.DoModal(
+			EFileUpdateQuery result = (EFileUpdateQuery)dlg.DoModal(
 				G_AppInstance(),
 				CEditWnd::getInstance()->GetHwnd(),
 				IDD_FILEUPDATEQUERY,
@@ -164,24 +164,24 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			);
 
 			switch( result ){
-			case 1:	// 再読込
+			case EFUQ_RELOAD:	// 再読込
 				/* 同一ファイルの再オープン */
 				pcDoc->m_cDocFileOperation.ReloadCurrentFile( pcDoc->m_cDocFile.GetCodeSet() );
 				m_eWatchUpdate = WU_QUERY;
 				break;
-			case 2:	// 以後通知メッセージのみ
+			case EFUQ_NOTIFYONLY:	// 以後通知メッセージのみ
 				m_eWatchUpdate = WU_NOTIFY;
 				break;
-			case 3:	// 以後更新を監視しない
+			case EFUQ_NOSUPERVISION:	// 以後更新を監視しない
 				m_eWatchUpdate = WU_NONE;
 				break;
-			case 4:	// 以後未編集で再ロード
+			case EFUQ_AUTOLOAD:	// 以後未編集で再ロード
 				/* 同一ファイルの再オープン */
 				pcDoc->m_cDocFileOperation.ReloadCurrentFile( pcDoc->m_cDocFile.GetCodeSet() );
 				m_eWatchUpdate = WU_AUTOLOAD;
 				m_nDelayCount = 0;
 				break;
-			case 0:	// CLOSE
+			case EFUQ_CLOSE:	// CLOSE
 			default:
 				m_eWatchUpdate = WU_QUERY;
 				break;

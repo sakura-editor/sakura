@@ -161,7 +161,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 	return m_hWnd;
 }
 
-void CDialog::CloseDialog( int nModalRetVal )
+void CDialog::CloseDialog( INT_PTR nModalRetVal )
 {
 	if( NULL != m_hWnd ){
 		if( m_bModal ){
@@ -595,7 +595,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 // static
 bool CDialog::DirectoryUp( TCHAR* szDir )
 {
-	int nLen = auto_strlen( szDir );
+	size_t nLen = auto_strlen( szDir );
 	if( 3 < nLen ){
 		// X:\ ‚â\\. ‚æ‚è’·‚¢
 		CutLastYenFromDirectoryPath( szDir );
