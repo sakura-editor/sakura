@@ -130,7 +130,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	return m_hWnd;
 }
 
-void CDialog::CloseDialog( int nModalRetVal )
+void CDialog::CloseDialog( INT_PTR nModalRetVal )
 {
 	if( NULL != m_hWnd ){
 		if( m_bModal ){
@@ -329,7 +329,7 @@ void CDialog::CreateSizeBox( void )
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
 		_T("SCROLLBAR"),									/* scroll bar control class */
-		(LPSTR) NULL,										/* text for window title bar */
+		NULL,												/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
 		0,													/* vertical position */

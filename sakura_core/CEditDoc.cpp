@@ -2293,18 +2293,18 @@ void CEditDoc::CheckFileTimeStamp( void )
 				);
 
 				switch( result ){
-				case 1:	// 再読込
+				case EFUQ_RELOAD:	// 再読込
 					/* 同一ファイルの再オープン */
 					ReloadCurrentFile( m_nCharCode, m_bReadOnly );
 					m_eWatchUpdate = WU_QUERY;
 					break;
-				case 2:	// 以後通知メッセージのみ
+				case EFUQ_NOTIFYONLY:	// 以後通知メッセージのみ
 					m_eWatchUpdate = WU_NOTIFY;
 					break;
-				case 3:	// 以後更新を監視しない
+				case EFUQ_NOSUPERVISION:	// 以後更新を監視しない
 					m_eWatchUpdate = WU_NONE;
 					break;
-				case 0:	// CLOSE
+				case EFUQ_CLOSE:	// CLOSE
 				default:
 					m_eWatchUpdate = WU_QUERY;
 					break;
