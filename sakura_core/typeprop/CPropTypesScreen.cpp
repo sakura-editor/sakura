@@ -249,7 +249,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), _T("*.rul;*.rule;*.txt"), true, false);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), _T("*.rul;*.rule;*.txt"), true, EFITER_NONE);
 				}
 				return TRUE;
 

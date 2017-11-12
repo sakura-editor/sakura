@@ -157,7 +157,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 		_T("*.*"),
 		szInitDir
 	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 		return;
 	}
 
@@ -243,7 +243,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 			_T("*.*"),
 			szInitDir
 		);
-		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 			return;
 		}
 		pszPath = szPath;
