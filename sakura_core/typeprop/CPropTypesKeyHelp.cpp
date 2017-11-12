@@ -439,7 +439,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				{
 					/* ファイルオープンダイアログの初期化 */
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _T("*.khp"), true, true);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _T("*.khp"), true, EFITER_TEXT);
 				}
 				return TRUE;
 
