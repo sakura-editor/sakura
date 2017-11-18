@@ -8393,7 +8393,7 @@ void CEditView::Command_LOADKEYMACRO( void )
 		_T("*.*"),
 		szInitDir
 	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 		return;
 	}
 
@@ -8437,7 +8437,7 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 			_T("*.*"),
 			szInitDir
 		);
-		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 			return;
 		}
 		pszPath = szPath;

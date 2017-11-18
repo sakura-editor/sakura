@@ -670,13 +670,14 @@ void CDlgOpenFile::Create(
 /*! 「開く」ダイアログ モーダルダイアログの表示
 
 	@param[in,out] pszPath 初期ファイル名．選択されたファイル名の格納場所
-	@param[in] bSetCurDir カレントディレクトリを変更するか デフォルト: false
+	@param[in] eAddFiler フィルタ設定
+
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir, bool bAddTextFilter )
+bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFiler )
 {
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -684,9 +685,23 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir, bo
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( _T("ユーザー指定"),     m_mem->m_szDefaultWildCard );
-	if( bAddTextFilter ){
+
+	switch( eAddFiler ){
+	case EFITER_TEXT:
 		cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
+		break;
+	case EFITER_MACRO:
+		cFileExt.AppendExtRaw( _T("Macros"), _T("*.js;*.vbs;*.ppa;*.mac") );
+		cFileExt.AppendExtRaw( _T("JScript"), _T("*.js") );
+		cFileExt.AppendExtRaw( _T("VBScript"), _T("*.vbs") );
+		cFileExt.AppendExtRaw( _T("Pascal"), _T("*.ppa") );
+		cFileExt.AppendExtRaw( _T("Key Macro"), _T("*.mac") );
+		break;
+	case EFITER_NONE:
+	default:
+		break;
 	}
+
 	if( 0 != strcmp(m_mem->m_szDefaultWildCard, _T("*.*")) ){
 		cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 	}
@@ -750,13 +765,13 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir, bo
 
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
-	@param bSetCurDir [in] カレントディレクトリを変更するか デフォルト: false
+
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
+bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 {
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -1284,7 +1299,7 @@ BOOL CDlgOpenFile::CheckPathLengthOverflow( const char *pszPath, int nLength, BO
 /*! ファイル選択
 	@note 実行ファイルのパスor設定ファイルのパスが含まれる場合は相対パスに変換
 */
-BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath, bool bAddTextFilter)
+BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath, EFilter eAddFilter)
 {
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szFilePath[_MAX_PATH + 1];
@@ -1295,7 +1310,7 @@ BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bo
 	if( resolvePath && _IS_REL_PATH( szFilePath ) ){
 		GetInidirOrExedir(szPath, szFilePath);
 	}else{
-		strcpy(szPath, szFilePath);
+		_tcscpy(szPath, szFilePath);
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -1304,7 +1319,7 @@ BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bo
 		filter,
 		szPath
 	);
-	if( cDlgOpenFile.DoModal_GetOpenFileName(szPath, false, bAddTextFilter) ){
+	if( cDlgOpenFile.DoModal_GetOpenFileName(szPath, eAddFilter) ){
 		const TCHAR* fileName;
 		if( resolvePath ){
 			fileName = GetRelPath( szPath );
