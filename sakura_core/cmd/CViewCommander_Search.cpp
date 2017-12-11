@@ -983,13 +983,12 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	//$$ 単位混在
-	CLayoutPoint	ptOld;						//検索後の選択範囲
+	CLayoutPoint ptOld(0, -1); // 検索後の選択範囲(xはいつもLogic。yは矩形はLayout,通常はLogic)
 	/*CLogicInt*/int		lineCnt = 0;		//置換前の行数
 	/*CLayoutInt*/int		linDif = (0);		//置換後の行調整
-	/*CLayoutInt*/int		colDif = (0);		//置換後の桁調整
-	/*CLayoutInt*/int		linPrev = (0);		//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
+	CLogicXInt  colDif(0);     // 置換後の桁調整
+	CLogicPoint boxRight;      // 矩形選択の現在の行の右端。sRangeA.GetTo().x ではなく boxRight.x + colDif を使う。
 	/*CLogicInt*/int		linOldLen = (0);	//検査後の行の長さ
-	/*CLayoutInt*/int		linNext;			//次回の検索行(矩形)
 
 	int nLoopCnt = -1;
 
@@ -1055,30 +1054,77 @@ void CViewCommander::Command_REPLACE_ALL()
 			{
 				// 検索時の行数を記憶
 				lineCnt = (Int)rLayoutMgr.GetLineCount();
-				// 検索後の範囲終端
-				ptOld = GetSelect().GetTo();
-				// 前回の検索行と違う？
-				if(ptOld.y!=linPrev){
-					colDif=(0);
+				// 前回と今回の検索マッチ終端(ptOld, ptNew)と今回のマッチ先頭(ptNewFrom)
+				CLayoutPoint ptNew     = GetSelect().GetTo();
+				CLayoutPoint ptNewFrom = GetSelect().GetFrom();
+				CLayoutInt   ptNewX    = ptNew.x; // 上書きされるので保存。
+				{ // ptNew.x(ptOld.x)は特殊。
+					CLogicPoint logicNew;
+					rLayoutMgr.LayoutToLogic(ptNew, &logicNew);
+					ptNew.x = (Int)(logicNew.x); // 2016.01.13 矩形でもxは必ずLogic
 				}
-				linPrev=(Int)ptOld.GetY2();
-				// 行は範囲内？
-				if ((sRangeA.GetTo().y+linDif == ptOld.y && sRangeA.GetTo().GetX2()+colDif < ptOld.x) ||
-					(sRangeA.GetTo().y+linDif <  ptOld.y)) {
-					break;
+				if (ptNew.y != ptOld.y) {
+					colDif = (0); // リセット
+					rLayoutMgr.LayoutToLogic(CLayoutPoint(sRangeA.GetTo().x, ptNew.y), &boxRight); // リセット
 				}
-				// 桁は範囲内？
-				if(!(sRangeA.GetFrom().x<=GetSelect().GetFrom().x && ptOld.GetX2()<=sRangeA.GetTo().GetX2()+colDif)){
-					if(ptOld.x<sRangeA.GetTo().GetX2()+colDif){
-						linNext=(Int)GetSelect().GetTo().GetY2();
-					}else{
-						linNext=(Int)GetSelect().GetTo().GetY2()+1;
+				// 矩形範囲を通り過ぎた？
+				if (sRangeA.GetTo().y + linDif < ptNew.y) {
+					break; // 下へ抜けた。
+				}
+				if (sRangeA.GetTo().y + linDif == ptNew.y) {
+					if (boxRight.x + colDif < (Int)ptNew.x) {
+						break; // 最終行の右へ抜けた。
 					}
+				}
+				/*
+					矩形選択範囲の左端と文字境界(ロジック座標系)が一致しないときに
+					検索開始位置が前に進まないことがある。具体的には次の3×3のテキス
+					      トの2と3の桁を選択して「あ」を検索置換しようとした場合、
+					123   「あ」の真ん中のレイアウト座標から検索を開始しようとして
+					あ3   実際には「あ」の直前から検索が開始されるために、リトライ
+					123   が堂々巡りする。レアケースなので事前に座標変換をして確か
+					      めるのではなく、事後的に検索結果の一致から検知することにする。
+				*/
+				const CLayoutInt raggedLeftDiff = ptNew == ptOld ? ptNewFrom.x - sRangeA.GetFrom().x : CLayoutInt(0);
+				// 桁は矩形範囲内？
+				bool out = false; // とりあえず範囲内(仮)。
+				/*
+					＊検索で見つかった文字列は複数のレイアウト行に分かれている場合がある。
+					＊文字列の先端と後端が矩形範囲に収まっているだけでなく、レイアウトさ
+					  れた中間の文字列の文字部分(※)が矩形範囲に収まっていることを確かめ
+					  なければいけない。
+					  ※インデント部分が矩形範囲から外れているだけで範囲外とはしないよね？
+					＊折り返し直前まで選択した場合は選択範囲が次行行頭(left=right=0;インデント))
+					  を含む２レイアウト行にまたがることに注意が必要。
+					  out = left < right && (...) というのがまさに対応を迫られた痕跡ですよ。
+				*/
+				const CLayoutInt firstLeft =  ptNewFrom.x - raggedLeftDiff;
+				const CLogicInt  lastRight = (Int)ptNew.x - colDif;
+				if (ptNewFrom.y == ptNew.y) { // 一番よくあるケースではレイアウトの取得・計算が不要。
+					out = firstLeft < sRangeA.GetFrom().x || boxRight.x < lastRight;
+				} else {
+					for (CLayoutInt ll = ptNewFrom.y; ll <= ptNew.y; ++ll) { // ll = Layout Line
+						const CLayout* pLayout = rLayoutMgr.SearchLineByLayoutY(ll);
+						CLayoutInt  left = ll == ptNewFrom.y ? firstLeft : pLayout ? pLayout->GetIndent()                 : CLayoutInt(0);
+						CLayoutInt right = ll == ptNew.y     ? ptNewX    : pLayout ? pLayout->CalcLayoutWidth(rLayoutMgr) : CLayoutInt(0);
+						out = left < right && (left < sRangeA.GetFrom().x || sRangeA.GetTo().x < right);
+						if (out) {
+							break;
+						}
+					}
+				}
+				// Newは Oldになりました。
+				ptOld = ptNew;
+
+				if (out) {
 					//次の検索開始位置へシフト
-					GetCaret().SetCaretLayoutPos(CLayoutPoint(sRangeA.GetFrom().x,CLayoutInt(linNext)));
+					m_pCommanderView->GetSelectionInfo().DisableSelectArea(bDisplayUpdate); // 2016.01.13 範囲選択をクリアしないと位置移動できていなかった
+					GetCaret().SetCaretLayoutPos(CLayoutPoint(
+						sRangeA.GetFrom().x,
+						ptNewFrom.y + CLayoutInt(firstLeft < sRangeA.GetFrom().x ? 0 : 1)
+					));
 					// 2004.05.30 Moca 現在の検索文字列を使って検索する
 					Command_SEARCH_NEXT( false, bDisplayUpdate, true, 0, NULL );
-					colDif=(0);
 					continue;
 				}
 			}
@@ -1229,21 +1275,15 @@ void CViewCommander::Command_REPLACE_ALL()
 				nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
 				nLen = pcDocLine->GetLengthWithEOL();
 			}
-			CLogicInt colDiff = CLogicInt(0);
 			if( !bConsecutiveAll ){	// 一括置換
 				// 2007.01.16 ryoji
-				// 選択範囲置換の場合は行内の選択範囲末尾まで置換範囲を縮め，
-				// その位置を記憶する．
+				// 選択範囲置換の場合は行内の選択範囲末尾まで置換範囲を縮める。
 				if( bSelectedArea ){
 					if( bBeginBoxSelect ){	// 矩形選択
-						CLogicPoint ptWork;
-						rLayoutMgr.LayoutToLogic(
-							CLayoutPoint(sRangeA.GetTo().x,ptOld.y),
-							&ptWork
-						);
-						ptColLineP.x = ptWork.x;
-						if( nLen - pcDocLine->GetEol().GetLen() > ptColLineP.x + colDif )
-							nLen = ptColLineP.GetX2() + CLogicInt(colDif);
+						CLogicInt len = t_min(boxRight.x + colDif, (CLogicInt)(Int)ptOld.x); // 必ず縮める(うっかり先のレイアウト行まで伸ばして次の置換候補を見落としていた)。
+						if (nLen - pcDocLine->GetEol().GetLen() > len) {
+							nLen = len;
+						}
 					} else {	// 通常の選択
 						if( ptColLineP.y+linDif == (Int)ptOld.y ){ //$$ 単位混在
 							if( nLen - pcDocLine->GetEol().GetLen() > ptColLineP.x + colDif )
@@ -1251,62 +1291,59 @@ void CViewCommander::Command_REPLACE_ALL()
 						}
 					}
 				}
-
-				if(pcDocLine->GetLengthWithoutEOL() < nLen)
-					ptOld.x = (CLayoutInt)(Int)pcDocLine->GetLengthWithoutEOL() + 1; //$$ 単位混在
-				else
-					ptOld.x = (CLayoutInt)(Int)nLen; //$$ 単位混在
 			}
 
 			if( int nReplace = cRegexp.Replace(pLine, nLen, nIdx) ){
 				nReplaceNum += nReplace;
+				CLogicInt exTail; // 置換せずに残す部分の長さ(置換対象となる選択範囲より右側の長さと、置換後文字列である CRegexp::GetString()から除外する長さを兼ねている)。
 				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji
 					// 行単位での置換処理
 					// 選択範囲を物理行末までにのばす
+					exTail = CLogicInt(0);
 					if( bFastMode ){
 						cSelectLogic.SetTo(CLogicPoint(nLen, nLogicLineNum));
 					}else{
 						rLayoutMgr.LogicToLayout( CLogicPoint(nLen, nLogicLineNum), GetSelect().GetToPointer() );
 					}
 				} else {
-				    // From Here Jun. 6, 2005 かろと
-				    // 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
-				    // キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
-				    // そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
-				    CLogicInt matchLen = cRegexp.GetMatchLen();
-				    CLogicInt nIdxTo = nIdx + matchLen;		// 検索文字列の末尾
-				    if (matchLen == 0) {
-					    // ０文字マッチの時(無限置換にならないように１文字進める)
-					    if (nIdxTo < nLen) {
-						    // 2005-09-02 D.S.Koba GetSizeOfChar
-						    nIdxTo += CLogicInt(CNativeW::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
-					    }
-					    // 無限置換しないように、１文字増やしたので１文字選択に変更
-					    // 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
+					// From Here Jun. 6, 2005 かろと
+					// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
+					// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
+					// そこで、INSTEXTする文字列長を調整する方法に変更する（実はこっちの方がわかりやすい）
+					CLogicInt nIdxTo = nIdx + cRegexp.GetMatchLen(); // 検索文字列の末尾
+					if (nIdx == nIdxTo) { // ０文字マッチの時
+						// 無限置換にならないように１文字進める
+						if (nIdxTo < nLen) {
+							// 2005-09-02 D.S.Koba GetSizeOfChar
+							nIdxTo += CLogicInt(CNativeW::GetSizeOfChar(pLine, nLen, nIdxTo) == 2 ? 2 : 1);
+						}
+					}
+					// Oct. 22, 2005 Karoto
+					// \rを置換するとその後ろの\nが消えてしまう問題の対応
+					if (nLen < nIdxTo + pcDocLine->GetEol().GetLen()) {
+						// 改行にかかっていたら、行全体をINSTEXTする。
+						nIdxTo = nLen;
+					}
+					exTail = nLen - nIdxTo;
+					if (nIdxTo != nIdx + cRegexp.GetMatchLen()) { // nIdxToが最初の定義から変更されていたら
+						// それに合わせて選択範囲を変更する。
+						// 選択始点・終点への挿入の場合も０文字マッチと１文字マッチの動作は同じ。
 						if( bFastMode ){
 							cSelectLogic.SetTo(CLogicPoint(nIdxTo, nLogicLineNum));
 						}else{
 							rLayoutMgr.LogicToLayout( CLogicPoint(nIdxTo, nLogicLineNum), GetSelect().GetToPointer() );	// 2007.01.19 ryoji 行位置も取得する
 						}
-				    }
-				    // 行末から検索文字列末尾までの文字数
-					colDiff =  nLen - nIdxTo;
-					ptOld.x = (CLayoutInt)(Int)nIdxTo;	// 2007.01.19 ryoji 追加  // $$ 単位混在
-				    //	Oct. 22, 2005 Karoto
-				    //	\rを置換するとその後ろの\nが消えてしまう問題の対応
-				    if (colDiff < pcDocLine->GetEol().GetLen()) {
-					    // 改行にかかっていたら、行全体をINSTEXTする。
-					    colDiff = CLogicInt(0);
-						if( bFastMode ){
-							cSelectLogic.SetTo(CLogicPoint(nLen, nLogicLineNum));
-						}else{
-							rLayoutMgr.LogicToLayout( CLogicPoint(nLen, nLogicLineNum), GetSelect().GetToPointer() );	// 2007.01.19 ryoji 追加
-						}
-						ptOld.x = (CLayoutInt)(Int)pcDocLine->GetLengthWithoutEOL() + 1;	// 2007.01.19 ryoji 追加 //$$ 単位混在
-				    }
+					}
 				}
+				if (bBeginBoxSelect) {
+					ptOld   = GetSelect().GetTo();
+					ptOld.x = Int(nLen - exTail);
+				} else {
+					ptOld.x = Int(nLen - exTail); // 2007.01.19 ryoji 追加  // $$ 単位混在 // min(nIdxTo, pcDocLine->GetLengthWithoutEOL()+1) にすべき？
+				}
+
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, true, false, bFastMode, bFastMode ? &cSelectLogic : NULL );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - exTail, true, false, bFastMode, bFastMode ? &cSelectLogic : NULL );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}
@@ -1368,7 +1405,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			// 検索→置換の行補正値取得
 			if( bBeginBoxSelect )
 			{
-				colDif += (Int)(ptLast.GetX2() - ptOld.GetX2());
+				colDif += GetCaret().GetCaretLogicPos().x - Int(ptOld.x); // 矩形でもLogic
 				linDif += (Int)(rLayoutMgr.GetLineCount() - lineCnt);
 			}
 			else{
