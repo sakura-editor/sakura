@@ -718,20 +718,31 @@ BOOL CEditDoc::FileRead(
 		if( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ){
 			/* 指定フォルダで「開くダイアログ」を表示 */
 			{
-				TCHAR*		pszPathNew = new TCHAR[_MAX_PATH];
-
-				pszPathNew[0] = _T('\0');
-
+				TCHAR	szPathNew[_MAX_PATH + 1];
+				szPathNew[0] = _T('\0');
 				/* 「ファイルを開く」ダイアログ */
 				nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 				bReadOnly = false;
-//				::ShowWindow( m_hWnd, SW_SHOW );
-				if( !OpenFileDialog( m_pcEditWnd->m_hWnd, pszPath, pszPathNew, &nCharCode, &bReadOnly ) ){
-					delete [] pszPathNew;
+				std::vector<std::tstring> files;
+				if( !OpenFileDialog( m_pcEditWnd->m_hWnd, pszPath, szPathNew, &nCharCode, &bReadOnly, files ) ){
 					return FALSE;
 				}
-				_tcscpy( pszPath, pszPathNew );
-				delete [] pszPathNew;
+
+				// 新たな編集ウィンドウを起動
+				size_t nSize = files.size();
+				if( 0 < nSize ){
+					_tcscpy( pszPath, files[0].c_str() );
+					for( size_t f = 1; f < nSize; f++ ){
+						HWND hWndOwner;
+						_tcscpy(szPathNew, files[f].c_str() );
+						/* 指定ファイルが開かれているか調べる */
+						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPathNew, &hWndOwner, nCharCode )){
+						}else{
+							CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, szPathNew, nCharCode, bReadOnly, true );
+						}
+					}
+				}
+
 				if( !fexist( pszPath ) ){
 					bFileIsExist = FALSE;
 				}else{
@@ -1250,11 +1261,12 @@ std::tstring CEditDoc::GetDlgInitialDir()
 /* 「ファイルを開く」ダイアログ */
 //	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 bool CEditDoc::OpenFileDialog(
-	HWND		hwndParent,
-	const char*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
-	char*		pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
-	ECodeType*	pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
-	bool*		pbReadOnly		//!< [out] 読み取り専用か
+	HWND			hwndParent,		//!< [in]
+	const TCHAR*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
+	TCHAR*			pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
+	ECodeType*		pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
+	bool*			pbReadOnly,		//!< [out] 読み取り専用か
+	std::vector<std::tstring>& files	//!< [out] 開くファイルのパスを受け取るアドレス
 )
 {
 	/* アクティブにする */
@@ -1265,12 +1277,12 @@ bool CEditDoc::OpenFileDialog(
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndParent,
-		"*.*",
+		_T("*.*"),
 		pszOpenFolder ? pszOpenFolder : GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),
 		CMRUFolder().GetPathList()
 	);
-	return cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
+	return cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly, &files );
 }
 
 

@@ -2198,13 +2198,26 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//「ファイルを開く」ダイアログ
 			ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 			bool bReadOnly = false;
-			char		szPath[_MAX_PATH + 3];
-			szPath[0] = '\0';
-			if( !m_pcEditDoc->OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
-				return;
+			TCHAR szPath[_MAX_PATH + 1];
+			szPath[0] = _T('\0');
+			std::vector<std::tstring> files;
+			if( m_pcEditDoc->OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly, files ) ){
+				HWND hWndOwner;
+				_tcscpy( szPath, files[0].c_str() );
+				//開く
+				m_pcEditDoc->OpenFile( szPath, nCharCode, bReadOnly );
+
+				// 新たな編集ウィンドウを起動
+				size_t nSize = files.size();
+				for( size_t f = 1; f < nSize; f++ ){
+					_tcscpy( szPath, files[f].c_str() );
+					/* 指定ファイルが開かれているか調べる */
+					if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode ) ){
+					}else{
+						CControlTray::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly, true );
+					}
+				}
 			}
-			//	Oct.  9, 2004 genta 共通関数化
-			m_pcEditDoc->OpenFile( szPath, nCharCode, bReadOnly );
 		}
 		//その他コマンド
 		else{
@@ -3125,6 +3138,7 @@ end_of_drop_query:;
 /*! WM_TIMER 処理 
 	@date 2007.04.03 ryoji 新規
 	@date 2008.04.19 ryoji IDT_FIRST_IDLE での MYWM_FIRST_IDLE ポスト処理を追加
+	@date 2013.06.09 novice コントロールプロセスへの MYWM_FIRST_IDLE ポスト処理を追加
 */
 LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 {
@@ -3145,6 +3159,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		break;
 	case IDT_FIRST_IDLE:
 		CShareData::getInstance()->PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
+		::PostMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_FIRST_IDLE, (WPARAM)::GetCurrentProcessId(), (LPARAM)0 );
 		::KillTimer( m_hWnd, wParam );
 		break;
 	default:

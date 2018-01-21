@@ -91,7 +91,7 @@ public:
 	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
 
 	std::tstring GetDlgInitialDir();
-	bool OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
+	bool OpenFileDialog( HWND, const TCHAR*, TCHAR*, ECodeType*, bool*, std::vector<std::tstring>& files );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeType();
 	void OnChangeSetting(bool bDoLayout = true);		// ビューに設定変更を反映させる
 	//	Jul. 26, 2003 ryoji BOMオプション追加

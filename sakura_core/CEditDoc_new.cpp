@@ -263,22 +263,39 @@ void CEditDoc::AddToMRU(void)
 */
 void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOnly )
 {
-	char		pszPath[_MAX_PATH];
+	TCHAR		szPath[_MAX_PATH];
 	BOOL		bOpened;
 	HWND		hWndOwner;
 
 	/* 「ファイルを開く」ダイアログ */
 	if( filename == NULL ){
-		pszPath[0] = '\0';
-		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+		szPath[0] = _T('\0');
+		std::vector<std::tstring> files;
+		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, szPath, &nCharCode, &bReadOnly, files ) ){
 			return;
+		}
+
+		// 新たな編集ウィンドウを起動
+		size_t nSize = files.size();
+		if( 0 < nSize ){
+			for( size_t f = 1; f < nSize; f++ ){
+				HWND hWndOwner;
+				_tcscpy(szPath, files[f].c_str() );
+				/* 指定ファイルが開かれているか調べる */
+				if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode ) ){
+				}else{
+					CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, szPath, nCharCode, bReadOnly, true );
+				}
+			}
+
+			_tcscpy( szPath, files[0].c_str() );
 		}
 	}
 	else {
 		//	2007.10.01 genta 相対パスを絶対パスに変換
 		//	変換しないとIsPathOpenedで正しい結果が得られず，
 		//	同一ファイルを複数開くことがある．
-		if( ! GetLongFileName( filename, pszPath )){
+		if( ! GetLongFileName( filename, szPath )){
 			//	ファイル名の変換に失敗
 			OkMessage( m_pcEditWnd->m_hWnd,
 				_T("ファイル名の変換に失敗しました [%s]"), filename );
@@ -286,7 +303,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 		}
 	}
 	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pszPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
+	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(szPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
 		/* 2007.03.12 maru 開いていたときの処理はCShareData::IsPathOpenedに移動 */
 	}else{
 		/* ファイルが開かれていない */
@@ -297,20 +314,20 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 			BOOL bRet;
 			/* ファイル読み込み */
 			//	Oct. 03, 2004 genta コード確認は設定に依存
-			bRet = FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
+			bRet = FileRead( szPath, &bOpened, nCharCode, bReadOnly,
 							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange );
 
 			// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 			// 2007.06.27 maru すでに編集ウィンドウは開いているので、FileReadがキャンセルされた場合は開くマクロは実行不要
 			if( FALSE!=bRet ) RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 		}else{
-			if( strchr( pszPath, ' ' ) ){
+			if( strchr( szPath, ' ' ) ){
 				char	szFile2[_MAX_PATH + 3];
-				wsprintf( szFile2, "\"%s\"", pszPath );
-				strcpy( pszPath, szFile2 );
+				wsprintf( szFile2, "\"%s\"", szPath );
+				strcpy( szPath, szFile2 );
 			}
 			/* 新たな編集ウィンドウを起動 */
-			CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, pszPath, nCharCode, bReadOnly );
+			CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, szPath, nCharCode, bReadOnly );
 		}
 	}
 	return;
@@ -357,12 +374,29 @@ void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bR
 	}
 
 	// Mar. 30, 2003 genta
-	char	pszPath[_MAX_PATH];
+	TCHAR	szPath[_MAX_PATH];
 
 	if( filename == NULL ){
-		pszPath[0] = '\0';
-		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, pszPath, &nCharCode, &bReadOnly ) ){
+		szPath[0] = _T('\0');
+		std::vector<std::tstring> files;
+		if( !OpenFileDialog( m_pcEditWnd->m_hWnd, NULL, szPath, &nCharCode, &bReadOnly, files) ){
 			return;
+		}
+
+		// 新たな編集ウィンドウを起動
+		size_t nSize = files.size();
+		if( 0 < nSize ){
+			for( size_t f = 1; f < nSize; f++ ){
+				HWND hWndOwner;
+				_tcscpy(szPath, files[f].c_str() );
+				/* 指定ファイルが開かれているか調べる */
+				if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
+				}else{
+					CControlTray::OpenNewEditor( m_hInstance, m_pcEditWnd->m_hWnd, szPath, CODE_NONE, bReadOnly, true );
+				}
+			}
+
+			_tcscpy( szPath, files[0].c_str() );
 		}
 	}
 
@@ -382,7 +416,7 @@ void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bR
 	/* ファイルを開く */
 	// Mar. 30, 2003 genta
 	// Oct.  9, 2004 genta CEditDocへ移動したことによる変更
-	OpenFile(( filename ? filename : pszPath ), nCharCode, bReadOnly );
+	OpenFile(( filename ? filename : szPath ), nCharCode, bReadOnly );
 }
 
 /*! 上書き保存

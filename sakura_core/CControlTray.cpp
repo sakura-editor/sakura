@@ -691,8 +691,6 @@ LRESULT CControlTray::DispatchEvent(
 					break;
 				case F_FILEOPEN:	/* 開く */
 					{
-						HWND			hWndOwner;
-
 						// MRUリストのファイルのリスト
 						const CMRUFile cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
@@ -711,24 +709,31 @@ LRESULT CControlTray::DispatchEvent(
 							vMRU,
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
-						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly ) ){
+						std::vector<std::tstring> files;
+						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly, &files ) ){
 							break;
 						}
 						if( NULL == m_hWnd ){
 							break;
 						}
-						/* 指定ファイルが開かれているか調べる */
-						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
-							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
-						}else{
-							if( strchr( szPath, ' ' ) ){
-								char	szFile2[_MAX_PATH + 3];
-								wsprintf( szFile2, "\"%s\"", szPath );
-								strcpy( szPath, szFile2 );
+
+						// 新たな編集ウィンドウを起動
+						size_t nSize = files.size();
+						for( size_t f = 0; f < nSize; f++ ){
+							HWND hWndOwner;
+							_tcscpy( szPath, files[f].c_str() );
+							/* 指定ファイルが開かれているか調べる */
+							if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
+								// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
+							}else{
+								if( strchr( szPath, ' ' ) ){
+									char	szFile2[_MAX_PATH + 3];
+									wsprintf( szFile2, "\"%s\"", szPath );
+									strcpy( szPath, szFile2 );
+								}
+								CControlTray::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
+									true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 							}
-							// 新たな編集ウィンドウを起動
-							CControlTray::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
-								true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 						}
 					}
 					break;
@@ -786,8 +791,6 @@ LRESULT CControlTray::DispatchEvent(
 						//	To Here Oct. 27, 2000 genta
 					}
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
-						HWND			hWndOwner;
-
 						/* MRUリストのファイルのリスト */
 						const CMRUFile cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
@@ -801,8 +804,8 @@ LRESULT CControlTray::DispatchEvent(
 
 						/* ファイルオープンダイアログの初期化 */
 						TCHAR szPath[_MAX_PATH + 1];
-						_tcscpy( szPath, _T("") );
-						ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+						szPath[0] = _T('\0');
+						ECodeType nCharCode = CODE_AUTODETECT;	// 文字コード自動判別
 						bool bReadOnly = false;
 						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
@@ -813,25 +816,31 @@ LRESULT CControlTray::DispatchEvent(
 							vMRU,
 							vOPENFOLDER
 						);
-						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly ) ){
+						std::vector<std::tstring> files;
+						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly, &files ) ){
 							break;
 						}
 						if( NULL == m_hWnd ){
 							break;
 						}
-						/* 指定ファイルが開かれているか調べる */
-						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
-							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
-						} else {
-							if( strchr( szPath, ' ' ) ){
-								char	szFile2[_MAX_PATH + 3];
-								wsprintf( szFile2, "\"%s\"", szPath );
-								strcpy( szPath, szFile2 );
-							}
 
-							// 新たな編集ウィンドウを起動
-							CControlTray::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
-								true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+						// 新たな編集ウィンドウを起動
+						size_t nSize = files.size();
+						for( size_t f = 0; f < nSize; f++ ){
+							HWND hWndOwner;
+							_tcscpy( szPath, files[f].c_str() );
+							/* 指定ファイルが開かれているか調べる */
+							if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
+								// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
+							} else {
+								if( strchr( szPath, ' ' ) ){
+									char	szFile2[_MAX_PATH + 3];
+									wsprintf( szFile2, "\"%s\"", szPath );
+									strcpy( szPath, szFile2 );
+								}
+								CControlTray::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
+									true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+							}
 						}
 					}
 					break;

@@ -458,9 +458,30 @@ UINT_PTR CALLBACK OFNHookProc(
 //			MYTRACE( _T("\tlRes=%d\tszFolder=[%s]\n"), lRes, szFolder );
 
 			break;
+		case CDN_SELCHANGE :
+			{
+				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
+				// OFNの再設定はNT系ではUnicode版APIのみ有効
+				if( pData->m_ofn.Flags & OFN_ALLOWMULTISELECT &&
+#ifdef _UNICODE
+						IsWin32NT()
+#else
+						!IsWin32NT()
+#endif
+				){
+					DWORD nLength = CommDlg_OpenSave_GetSpec( pData->m_hwndOpenDlg, NULL, 0 );
+					nLength += _MAX_PATH + 2;
+					if( pData->m_ofn.nMaxFile < nLength ){
+						delete [] pData->m_ofn.lpstrFile;
+						pData->m_ofn.lpstrFile = new TCHAR[nLength];
+						pData->m_ofn.nMaxFile = nLength;
+					}
+				}
+			}
+			// MYTRACE( _T("pofn->hdr.code=CDN_SELCHANGE     \n") );
+			break;
 //		case CDN_HELP			:	MYTRACE( _T("pofn->hdr.code=CDN_HELP          \n") );break;
 //		case CDN_INITDONE		:	MYTRACE( _T("pofn->hdr.code=CDN_INITDONE      \n") );break;
-//		case CDN_SELCHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_SELCHANGE     \n") );break;
 //		case CDN_SHAREVIOLATION	:	MYTRACE( _T("pofn->hdr.code=CDN_SHAREVIOLATION\n") );break;
 //		case CDN_TYPECHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_TYPECHANGE    \n") );break;
 //		default:					MYTRACE( _T("pofn->hdr.code=???\n") );break;
@@ -829,12 +850,13 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* pbReadOnly )
+bool CDlgOpenFile::DoModalOpenDlg( TCHAR* pszPath, ECodeType* pnCharCode, bool* pbReadOnly, std::vector<std::tstring>* pFileNames )
 {
 	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	pData->m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
 	int		i;
+	bool bMultiSelect = pFileNames != NULL;
 
 	// ファイルの種類	2003.05.12 MIK
 	CFileExt	cFileExt;
@@ -852,6 +874,10 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	pData->m_bUseEol = false;	//	Feb. 9, 2001 genta
 	pData->m_bUseBom = false;	//	Jul. 26, 2003 ryoji
 
+	//ファイルパス受け取りバッファ
+	TCHAR* pszPathBuf = new TCHAR[2000];
+	pszPathBuf[0] = _T('\0');
+
 	//OPENFILENAME構造体の初期化
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
 	pData->m_pcDlgOpenFile = this;
@@ -859,11 +885,14 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	pData->m_ofn.hwndOwner = m_mem->m_hwndParent;
 	pData->m_ofn.hInstance = m_mem->m_hInstance;
 	pData->m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	pData->m_ofn.lpstrFile = pszPath;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	pData->m_ofn.nMaxFile = _MAX_PATH;
+	pData->m_ofn.lpstrFile = pszPathBuf;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	pData->m_ofn.nMaxFile = 2000;
 	pData->m_ofn.lpstrInitialDir = m_mem->m_szInitialDir;
 	pData->m_ofn.Flags = OFN_EXPLORER | OFN_CREATEPROMPT | OFN_FILEMUSTEXIST | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_SHOWHELP | OFN_ENABLESIZING;
 	if( pData->m_bReadOnly ) pData->m_ofn.Flags |= OFN_READONLY;
+	if( bMultiSelect ){
+		pData->m_ofn.Flags |= OFN_ALLOWMULTISELECT;
+	}
 	pData->m_ofn.lpstrDefExt = _T("");	// 2005/02/20 novice 拡張子を省略したら補完する
 
 	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
@@ -875,6 +904,25 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	//ダイアログ表示
 	bool bDlgResult = _GetOpenFileNameRecover( &pData->m_ofn );
 	if( bDlgResult ){
+		if( bMultiSelect ){
+			pszPath[0] = _T('\0');
+			if( pData->m_ofn.nFileOffset < _tcslen( pData->m_ofn.lpstrFile ) ){
+				pFileNames->push_back( std::tstring(pData->m_ofn.lpstrFile) );
+			}else{
+				std::tstring path;
+				TCHAR* pos = pData->m_ofn.lpstrFile;
+				pos += _tcslen(pos) + 1;
+				while( *pos != _T('\0') ){
+					path = pData->m_ofn.lpstrFile;
+					path.append( _T("\\") );
+					path.append( pos );
+					pFileNames->push_back( path );
+					pos += _tcslen(pos) + 1;
+				}
+			}
+		}else{
+			_tcscpy( pszPath, pData->m_ofn.lpstrFile );
+		}
 		if( pnCharCode ){
 			*pnCharCode = pData->m_nCharCode;
 		}
@@ -885,6 +933,7 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	else{
 		DlgOpenFail();
 	}
+	delete [] pData->m_ofn.lpstrFile;
 	return bDlgResult;
 }
 
