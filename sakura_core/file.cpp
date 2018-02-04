@@ -55,12 +55,13 @@ bool fexist(LPCTSTR pszPath)
 	@date 2004.11.13 genta/Moca ファイル名先頭の*?を考慮
 	@date 2005.01.10 genta 変数名変更 j -> cur_pos
 	@date 2005.01.23 genta 警告抑制のため，gotoをreturnに変更
+	@date 2013.05.27 Moca 最長一致に変更
 */
 bool IsFilePath(
-	const char* pLine,		//!< [in] 探査対象文字列
+	const char* pLine,		//!< [in]  探査対象文字列
 	int* pnBgn,				//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
 	int* pnPathLen,			//!< [out] ファイル名の長さ
-	bool bFileOnly			//!< [in] true: ファイルのみ対象 / false: ディレクトリも対象
+	bool bFileOnly			//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
 	char	szJumpToFile[1024];
@@ -95,32 +96,34 @@ bool IsFilePath(
 
 	*pnBgn = i;
 	int cur_pos = 0;
+	int tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
+		//ファイル名終端を検知する
+		if( pLine[i] == '\r' || pLine[i] == '\n' || pLine[i] == L'\0' ){
+			break;
+		}
+
+		//ファイル名終端を検知する
 		if( ( i == nLineLen    ||
 			  pLine[i] == ' '  ||
 			  pLine[i] == '\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
 			  pLine[i] == '('  ||
-			  pLine[i] == '\r' ||
-			  pLine[i] == '\n' ||
-			  pLine[i] == '\0' ||
-			  pLine[i] == '>'  ||
-			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
-			  ( cur_pos > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
-			  pLine[i] == '"'
+			  pLine[i] == '"'  ||
+			  strchr(")'`[]{};#!@&%$", pLine[i]) != NULL // 2013.05.27 Moca 文字種追加
 			) &&
-			szJumpToFile[0] != '\0' 
+			szJumpToFile[0] != '\0'
 		){
-			if( IsFileExists(szJumpToFile, bFileOnly))
-			{
-				i--;
-				break;
+			//	ファイル存在確認
+			if( IsFileExists(szJumpToFile, bFileOnly)){
+				tmp_end = cur_pos;
 			}
 		}
-		if( pLine[i] == '\r'  ||
-			pLine[i] == '\n' ){
+
+		// May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
+		if( cur_pos > 1 && pLine[i] == ':' ){   //@@@ 2003/1/15/ matsumo (for gcc)
 			break;
 		}
-
+		//ファイル名に使えない文字が含まれていたら、即ループ終了
 		if( ( /*pLine[i] == '/' ||*/
 			 pLine[i] == '<' ||	//	0x3C
 			 pLine[i] == '>' ||	//	0x3E
@@ -133,15 +136,20 @@ bool IsFilePath(
 			//	Oct. 5, 2002 genta
 			//	2004.11.13 Moca/genta 先頭に上の文字がある場合の考慮を追加
 			( i == 0 || ( i > 0 && ! _IS_SJIS_1( (unsigned char)pLine[i - 1] ))) ){
-			return false;
-		}else{
+			break;
+		}
+
 		szJumpToFile[cur_pos] = pLine[i];
 		cur_pos++;
-		}
 	}
 
-	if( szJumpToFile[0] != _T('\0')  && IsFileExists(szJumpToFile, bFileOnly)){
-		*pnPathLen = strlen( szJumpToFile );
+	//	Jan. 04, 2002 genta
+	//	ファイル存在確認方法変更
+	if( szJumpToFile[0] != '\0' && IsFileExists(szJumpToFile, bFileOnly)){
+		tmp_end = cur_pos;
+	}
+	if( tmp_end != 0 ){
+		*pnPathLen = tmp_end;
 		return true;
 	}
 
