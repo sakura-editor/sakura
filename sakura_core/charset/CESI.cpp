@@ -501,11 +501,11 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 {
 	// XML宣言は先頭にあるので、最初にチェック
 	ECodeType encoding = AutoDetectByXML( pS, nLen );
-	if( encoding == CODE_NONE ){
+	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
 		// スクリプト等Coding中にHTMLがあるのでCodingを優先
 		encoding = AutoDetectByCoding( pS, nLen );
 	}
-	if( encoding == CODE_NONE ){
+	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
 		encoding = AutoDetectByHTML( pS, nLen );
 	}
 	m_eMetaName = encoding;
@@ -745,24 +745,41 @@ void CESI::GuessUtf8OrCesu8( void )
 	}
 }
 
+// 2016.04.05 いくつかの互換名を追加
 static const struct{
 	const char* name;
 	int nLen;
 	int nCode;
 } encodingNameToCode[] = {
+	{ "shift_jis",     9, CODE_SJIS },
 	{ "windows-31j",  11, CODE_SJIS },
 	{ "x-sjis",        6, CODE_SJIS },
-	{ "shift_jis",     9, CODE_SJIS },
 	{ "cp932",         9, CODE_SJIS },
+	{ "ms932",         9, CODE_SJIS },
+	{ "shift-jis",     9, CODE_SJIS },
+	{ "csWindows31J", 12, CODE_SJIS },
+	{ "MS_Kanji",      8, CODE_SJIS },
+	{ "csShiftJIS",   10, CODE_SJIS },
+	{ "sjis",          4, CODE_SJIS },
 	{ "iso-2022-jp",  11, CODE_JIS },
+	{ "iso2022jp",     9, CODE_JIS },
+	{ "csISO2022jp",  11, CODE_JIS },
 	{ "euc-jp",        6, CODE_EUC },
+	{ "euc_jp",        6, CODE_EUC },
+	{ "eucjp",         6, CODE_EUC },
 //	{ "utf-7",         5, CODE_UTF7 },
 	{ "utf-8",         5, CODE_UTF8 },
+	{ "utf_8",         5, CODE_UTF8 },
+	{ "utf8",          4, CODE_UTF8 },
 	{ "cesu-8",        6, CODE_CESU8 },
 	{ "iso-8859-1",   10, CODE_LATIN1 },
 	{ "latin1",        7, CODE_LATIN1 },
 	{ "latin-1",       8, CODE_LATIN1 },
+	{ "iso8859_1",     9, CODE_LATIN1 },
+	{ "iso_8859_1",   10, CODE_LATIN1 },
+	{ "iso88591",      8, CODE_LATIN1 },
 	{ "windows-1252", 12, CODE_LATIN1 },
+	{ "cp1252",        6, CODE_LATIN1 },
 	{"ibm437",             6,   437},
 	{"asmo-708",           8,   708},
 	{"dos-720",            7,   720},
@@ -861,7 +878,6 @@ static const struct{
 	{"x-iscii-ma",        10, 57009},
 	{"x-iscii-gu",        10, 57010},
 	{"x-iscii-pa",        10, 57011},
-	{ NULL, 0, 0}
 };
 
 static bool IsXMLWhiteSpace( int c )
@@ -876,8 +892,28 @@ static bool IsXMLWhiteSpace( int c )
 	return false;
 }
 
+/*!
+	文字列からコードを判定する。
+
+	@param [in] pBuf 判定対象文字列
+	@param [in] nSize 文字列サイズ
+
+	@return 文字コード
+*/
+static ECodeType MatchEncoding(const char* pBuf, int nSize)
+{
+	for(int k = 0; k < _countof(encodingNameToCode); k++ ){
+		const int nLen = encodingNameToCode[k].nLen;
+		if( nLen == nSize && 0 == memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
+			return static_cast<ECodeType>(encodingNameToCode[k].nCode);
+		}
+	}
+	return CODE_NONE;
+}
+
 /*!	ファイル中のエンコーディング指定を利用した文字コード自動選択
- *	@return	決定した文字コード。 未決定は-1を返す
+ *	@return	決定した文字コード。 未決定は-1を返す。
+ 		xml宣言ありでencodingがない場合、CODE_AUTODETECTなので注意
 */
 ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 {
@@ -913,14 +949,9 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				quoteChar = pBuf[i];
 				i++;
 				int k;
-				for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-					const int nLen = encodingNameToCode[k].nLen;
-					if( i + nLen < nSize - 1
-					  && pBuf[i + nLen] == quoteChar
-					  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + i, nLen ) ){
-						return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-					}
-				}
+				for(k = i; pBuf[k] != quoteChar && k < nSize - 1; ++k){}
+				// 2016.04.05 不明なencoding名の場合にUTF-8になっていたのをNoneに変更
+				return MatchEncoding(pBuf + i, k - i);
 			}else{
 				if( pBuf[i] == '<' || pBuf[i] == '>' ){
 					break;
@@ -937,7 +968,7 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 			}
 			// encoding指定無しでxml宣言が終了した
 			if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-				return CODE_UTF8;
+				return CODE_AUTODETECT; // 2016.04.05 特別にAUTODETECTにする。後で考慮
 			}
 		}
 	}else
@@ -1041,29 +1072,20 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 							if( nEndAttVal <= i ){ i = nNextPos; continue; }
 							int nCharsetBegin = i;
 							while( i < nEndAttVal && !IsXMLWhiteSpace(pBuf[i]) ){ i++; }
-							int k;
-							for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-								const int nLen = encodingNameToCode[k].nLen;
-								if( i - nCharsetBegin == nLen
-								  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nCharsetBegin, nLen ) ){
-									if( bContentType ){
-										return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-									}else{
-										encoding = static_cast<ECodeType>(encodingNameToCode[k].nCode);
-										break;
-									}
+							ECodeType eCode = MatchEncoding(pBuf + nCharsetBegin, i - nCharsetBegin);
+							if( eCode != CODE_NONE ){
+								if( bContentType ){
+									return eCode;
+								}else{
+									encoding = eCode;
 								}
 							}
 						}
 						i = nNextPos;
 					}else if( 3 == nAttType ){
-						int k;
-						for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-							const int nLen = encodingNameToCode[k].nLen;
-							if( nEndAttVal - nBeginAttVal == nLen
-							  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBeginAttVal, nLen ) ){
-								return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-							}
+						ECodeType eCode = MatchEncoding(pBuf + nBeginAttVal, nEndAttVal - nBeginAttVal);
+						if( eCode != CODE_NONE ){
+							return eCode;
 						}
 					}
 				}else if( '<' == pBuf[i] ){
@@ -1085,6 +1107,7 @@ static bool IsEncodingNameChar( int c )
 {
 	return ('A' <= c && c <= 'Z')
 		|| ('a' <= c && c <= 'z')
+		|| ('0' <= c && c <= '9')
 		|| '_' == c
 		|| '-' == c
 	;
@@ -1111,7 +1134,7 @@ ECodeType CESI::AutoDetectByCoding( const char* pBuf, int nSize )
 				return CODE_NONE;
 			}
 			int k;
-			for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
+			for( k = 0; k < _countof(encodingNameToCode); k++ ){
 				const int nLen = encodingNameToCode[k].nLen;
 				if( i - nBegin == nLen
 				  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBegin, nLen ) ){
@@ -1196,7 +1219,7 @@ static ECodeType DetectUnicode( CESI* pcesi )
 	return pcesi->m_aWcInfo[ebom_type].eCodeID;
 }
 
-/*
+/*!
 	日本語コードセット判定
 */
 ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
@@ -1215,7 +1238,7 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 	*/
 	SetInformation(pBuf, nBufLen);
 
-	if( GetMetaName() != CODE_NONE ){
+	if( GetMetaName() != CODE_NONE && GetMetaName() != CODE_AUTODETECT ){
 		return GetMetaName();
 	}
 	auto nret = DetectUnicode( this );
@@ -1225,6 +1248,10 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 	nret = DetectMBCode( this );
 	if( nret != CODE_NONE && GetStatus() != ESI_NODETECTED ){
 		return nret;
+	}
+	if( GetMetaName() == CODE_AUTODETECT ){
+		// 2016.04.05 MetaがAUTODETECTの場合は、encodingがないxml文書。XML仕様書の通りUTF-8にする
+		return CODE_UTF8;
 	}
 
 	// デフォルト文字コードを返す
