@@ -40,7 +40,7 @@ bool fexist(LPCTSTR pszPath)
 	return _taccess(pszPath,0)!=-1;
 }
 
-/**	ファイル名の切り出し
+/*!	ファイル名の切り出し
 
 	指定文字列からファイル名と認識される文字列を取り出し、
 	先頭Offset及び長さを返す。
@@ -59,18 +59,18 @@ bool fexist(LPCTSTR pszPath)
 */
 bool IsFilePath(
 	const wchar_t*	pLine,		//!< [in]  探査対象文字列
-	int*			pnBgn,		//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
-	int*			pnPathLen,	//!< [out] ファイル名の長さ
+	size_t*			pnBgn,		//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
+	size_t*			pnPathLen,	//!< [out] ファイル名の長さ
 	bool			bFileOnly	//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
 	wchar_t	szJumpToFile[_MAX_PATH];
 	wmemset( szJumpToFile, 0, _countof( szJumpToFile ) );
 
-	int	nLineLen = wcslen( pLine );
+	size_t	nLineLen = wcslen( pLine );
 
 	//先頭の空白を読み飛ばす
-	int		i;
+	size_t	i;
 	for( i = 0; i < nLineLen; ++i ){
 		wchar_t c = pLine[i];
 		if( L' '!=c && L'\t'!=c && L'\"'!=c ){
@@ -95,8 +95,8 @@ bool IsFilePath(
 	}
 
 	*pnBgn = i;
-	int cur_pos = 0;
-	int tmp_end = 0;
+	size_t cur_pos = 0;
+	size_t tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
 		//ファイル名終端を検知する
 		if( WCODE::IsLineDelimiterExt(pLine[i]) || pLine[i] == L'\0' ){
@@ -105,11 +105,9 @@ bool IsFilePath(
 
 		//ファイル名終端を検知する
 		if( ( i == nLineLen    ||
-			  pLine[i] == L' '  ||
-			  pLine[i] == L'\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
-			  pLine[i] == L'('  ||
-			  pLine[i] == L'"' ||
-			  wcschr(L")'`[]{};#!@&%$", pLine[i]) != NULL // 2013.05.27 Moca 文字種追加
+			  // 2002.01.08 YAZAKI タブ文字も。
+			  // 2013.05.27 Moca 文字種追加
+			  wcschr(L" \t(\")'`[]{};#!@&%$", pLine[i]) != NULL
 			) &&
 			szJumpToFile[0] != L'\0'
 		){
@@ -124,7 +122,7 @@ bool IsFilePath(
 			break;
 		}
 		//ファイル名に使えない文字が含まれていたら、即ループ終了
-		if( !WCODE::IsValidFilenameChar(pLine,i) ){
+		if( !WCODE::IsValidFilenameChar(pLine[i]) ){
 			break;
 		}
 

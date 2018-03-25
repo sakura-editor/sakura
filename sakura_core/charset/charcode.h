@@ -178,11 +178,10 @@ namespace WCODE
 	}
 
 	//!ファイル名に使える文字であるかどうか
-	inline bool IsValidFilenameChar(const wchar_t* pData, size_t nIndex)
+	inline bool IsValidFilenameChar(const wchar_t wc)
 	{
 		static const wchar_t* table = L"<>?\"|*";
 
-		wchar_t wc = pData[nIndex];
 		if(wcschr(table,wc)!=NULL)return false; //table内の文字が含まれていたら、ダメ。
 		else return true;
 	}
@@ -304,10 +303,9 @@ namespace ACODE
 	}
 
 	//!ファイル名に使える文字であるかどうか
-	inline bool IsValidFilenameChar(const char* pData, size_t nIndex)
+	inline bool IsValidFilenameChar(const char c)
 	{
 		static const char* table = "<>?\"|*";
-		char c = pData[nIndex];
 
 		//table内の文字が含まれていて
 		if(strchr(table,c)!=NULL){
