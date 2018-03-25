@@ -56,7 +56,7 @@ static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size 
 static bool IsFileExists2( const wchar_t* pszFile )
 {
 	for(int i = 0; pszFile[i]; i++ ){
-		if( !WCODE::IsValidFilenameChar(pszFile, i) ){
+		if( !WCODE::IsValidFilenameChar(pszFile[i]) ){
 			return false;
 		}
 	}
@@ -86,8 +86,8 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	//ファイル名バッファ
 	wchar_t		szJumpToFile[1024];
 	wchar_t		szFile[_MAX_PATH] = {L'\0'};
-	int			nBgn;
-	int			nPathLen;
+	size_t		nBgn;
+	size_t		nPathLen;
 	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
 
 	/*
@@ -173,7 +173,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			/* WZ風のタグリストか */
 			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_tchar(&pLine[2]) ) ){
 				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
-				GetLineColumn( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColumn );
+				GetLineColumn( &pLine[2 + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
 			}else if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
 				break;

@@ -299,7 +299,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			}
 			int len = _tcslen(szPath);
 			for (int i = 0; i < len ; ) {
-				if ( !TCODE::IsValidFilenameChar(szPath,i) ){
+				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
 					TCHAR msg_str[_MAX_PATH + 1];
 					_stprintf(
 						msg_str,
