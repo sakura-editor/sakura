@@ -52,6 +52,13 @@
 #define	SCRIPT_E_REPORTED	0x80020101L	// ActivScp.h(VS2012)と同じ様な形に変更
 #endif
 
+#ifdef USE_JSCRIPT9
+const GUID CLSID_JSScript9 =
+{
+	0x16d51579, 0xa30b, 0x4c8b, { 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } 
+};
+#endif
+
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
  */
@@ -243,6 +250,11 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 		Error(LSW(STR_ERR_CWSH01));
 	else
 	{
+#ifdef USE_JSCRIPT9
+		if( 0 == wcscmp( AEngine, LTEXT("JScript") ) ){
+			ClassID = CLSID_JSScript9;
+		}
+#endif
 		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
 			Error(LSW(STR_ERR_CWSH02));
 		else
