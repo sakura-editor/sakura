@@ -32,6 +32,13 @@
 #include "module.h"
 #include "OleTypes.h"
 
+#ifdef USE_JSCRIPT9
+const GUID CLSID_JSScript9 =
+{
+	0x16d51579, 0xa30b, 0x4c8b, { 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } 
+};
+#endif
+
 //スクリプトに渡されるオブジェクトの情報
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
 {
@@ -510,7 +517,7 @@ void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, 
 }
 
 CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
-				m_Engine(NULL), m_OnError(AErrorHandler), m_Data(AData), m_Valid(false)
+				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(NULL)
 { 
 	m_InterfaceObject = new CInterfaceObject(this);
 	m_InterfaceObject->AddRef();
@@ -524,6 +531,11 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 		Error(L"指名のスクリプトエンジンが見つかりません");
 	else
 	{
+#ifdef USE_JSCRIPT9
+		if( 0 == wcscmp( AEngine, L"JScript" ) ){
+			ClassID = CLSID_JSScript9;
+		}
+#endif
 		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
 			Error(L"指名のスクリプトエンジンが作成できません");
 		else
