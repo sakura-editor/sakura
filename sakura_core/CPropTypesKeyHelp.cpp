@@ -601,7 +601,7 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	nIndex = ListView_GetItemCount( hwndList );
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
-			int bUse	= false;	/* 辞書ON(1)/OFF(0) */
+			bool		bUse = false;						/* 辞書ON(1)/OFF(0) */
 			szAbout[0]	= _T('\0');
 			szPath[0]	= _T('\0');
 			/* チェックボックス状態を取得してbUseにセット */
