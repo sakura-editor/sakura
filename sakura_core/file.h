@@ -30,7 +30,7 @@
 
 bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
-bool IsFilePath( const char*, int*, int*, bool = true );
+bool IsFilePath( const char*, size_t*, size_t*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 
 //	Apr. 30, 2003 genta

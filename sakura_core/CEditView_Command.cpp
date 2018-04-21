@@ -5388,8 +5388,8 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 	int			nJumpToLine;
 	int			nJumpToColumn;
 	char		szJumpToFile[1024];
-	int			nPathLen;
-	int			nBgn;
+	size_t		nBgn;
+	size_t		nPathLen;
 	memset( szJumpToFile, 0, sizeof(szJumpToFile) );
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
@@ -5424,7 +5424,7 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 		if( 0 == memcmp( pLine, "■\"", 3 ) ){
 			if( IsFilePath( &pLine[3], &nBgn, &nPathLen ) ){
 				memcpy( szJumpToFile, &pLine[3 + nBgn], nPathLen );
-				GetLineColumn( &pLine[3] + nPathLen, &nJumpToLine, &nJumpToColumn );
+				GetLineColumn( &pLine[3 + nPathLen], &nJumpToLine, &nJumpToColumn );
 			}else{
 				goto can_not_tagjump;
 			}

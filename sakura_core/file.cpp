@@ -7,8 +7,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -17,7 +17,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -40,7 +40,7 @@ bool fexist(LPCTSTR pszPath)
 	return _taccess(pszPath,0)!=-1;
 }
 
-/**	ファイル名の切り出し
+/*!	ファイル名の切り出し
 
 	指定文字列からファイル名と認識される文字列を取り出し、
 	先頭Offset及び長さを返す。
@@ -58,19 +58,19 @@ bool fexist(LPCTSTR pszPath)
 	@date 2013.05.27 Moca 最長一致に変更
 */
 bool IsFilePath(
-	const char* pLine,		//!< [in]  探査対象文字列
-	int* pnBgn,				//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
-	int* pnPathLen,			//!< [out] ファイル名の長さ
-	bool bFileOnly			//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
+	const char*	pLine,		//!< [in]  探査対象文字列
+	size_t*		pnBgn,		//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
+	size_t*		pnPathLen,	//!< [out] ファイル名の長さ
+	bool		bFileOnly	//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
 	char	szJumpToFile[1024];
 	memset( szJumpToFile, 0, _countof( szJumpToFile ) );
 
-	int nLineLen = strlen( pLine );
+	size_t	nLineLen = strlen( pLine );
 
 	//先頭の空白を読み飛ばす
-	int		i;
+	size_t	i;
 	for( i = 0; i < nLineLen; ++i ){
 		char c = pLine[i];
 		if( ' ' != c && '\t' != c && '\"' != c ){
@@ -95,8 +95,8 @@ bool IsFilePath(
 	}
 
 	*pnBgn = i;
-	int cur_pos = 0;
-	int tmp_end = 0;
+	size_t cur_pos = 0;
+	size_t tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
 		//ファイル名終端を検知する
 		if( pLine[i] == '\r' || pLine[i] == '\n' || pLine[i] == L'\0' ){
@@ -105,11 +105,9 @@ bool IsFilePath(
 
 		//ファイル名終端を検知する
 		if( ( i == nLineLen    ||
-			  pLine[i] == ' '  ||
-			  pLine[i] == '\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
-			  pLine[i] == '('  ||
-			  pLine[i] == '"'  ||
-			  strchr(")'`[]{};#!@&%$", pLine[i]) != NULL // 2013.05.27 Moca 文字種追加
+			  // 2002.01.08 YAZAKI タブ文字も。
+			  // 2013.05.27 Moca 文字種追加
+			  strchr(" \t(\")'`[]{};#!@&%$", pLine[i]) != NULL
 			) &&
 			szJumpToFile[0] != '\0'
 		){
