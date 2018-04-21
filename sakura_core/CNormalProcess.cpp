@@ -118,11 +118,14 @@ bool CNormalProcess::InitializeProcess()
 			ActivateFrameWindow( hwndOwner );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
+
+			// 複数ファイル読み込み
+			OpenFiles( hwndOwner );
+
 			return false;
 		}
 	}
 
-	MY_TRACETIME( cRunningTimer, "CheckFile" );
 
 	// グループIDを取得
 	int nGroupId = CCommandLine::getInstance()->GetGroupId();
@@ -143,6 +146,8 @@ bool CNormalProcess::InitializeProcess()
 	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
+
+	MY_TRACETIME( cRunningTimer, "CheckFile" );
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const int nType = (fi.m_szDocType[0] == '\0' ? -1 : m_pcShareData->GetDocumentTypeOfExt(fi.m_szDocType));
@@ -323,26 +328,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	// 複数ファイル読み込み
-	int fileNum = CCommandLine::getInstance()->GetFileNum();
-	if( fileNum > 0 ){
-		int nDropFileNumMax = m_pShareData->m_Common.m_sFile.m_nDropFileNumMax - 1;
-		// ファイルドロップ数の上限に合わせる
-		if( fileNum > nDropFileNumMax ){
-			fileNum = nDropFileNumMax;
-		}
-		EditInfo openFileInfo = fi;
-		int i;
-		for( i = 0; i < fileNum; i++ ){
-			// ファイル名差し替え
-			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
-			bool ret = CControlTray::OpenNewEditor2( m_hInstance, pEditWnd->m_hWnd, &openFileInfo, bReadOnly );
-			if( ret == false ){
-				break;
-			}
-		}
-		// 用済みなので削除
-		CCommandLine::getInstance()->ClearFile();
-	}
+	OpenFiles( pEditWnd->m_hWnd );
 
 	return pEditWnd->m_hWnd ? true : false;
 }
@@ -409,4 +395,38 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	return hMutex;
 }
 
+
+/*!
+	@brief 複数ファイル読み込み
+
+	@date 2015.03.14 novice 新規作成
+*/
+void CNormalProcess::OpenFiles( HWND hwnd )
+{
+	EditInfo fi;
+	CCommandLine::getInstance()->GetEditInfo( &fi );
+	bool bReadOnly = CCommandLine::getInstance()->IsReadOnly();
+
+	int fileNum = CCommandLine::getInstance()->GetFileNum();
+	if( fileNum > 0 ){
+		int nDropFileNumMax = m_pShareData->m_Common.m_sFile.m_nDropFileNumMax - 1;
+		// ファイルドロップ数の上限に合わせる
+		if( fileNum > nDropFileNumMax ){
+			fileNum = nDropFileNumMax;
+		}
+
+		int i;
+		for( i = 0; i < fileNum; i++ ){
+			// ファイル名差し替え
+			_tcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
+			bool ret = CControlTray::OpenNewEditor2( m_hInstance, hwnd, &fi, bReadOnly );
+			if( ret == false ){
+				break;
+			}
+		}
+
+		// 用済みなので削除
+		CCommandLine::getInstance()->ClearFile();
+	}
+}
 /*[EOF]*/
