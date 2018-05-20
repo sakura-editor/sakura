@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="MakefileMake"
-	ProjectGUID="{40735439-B12B-40AC-92F7-F1183D8B6862}"
-	RootNamespace="MakefileMake"
+	Name="HeaderMake_vc2005"
+	ProjectGUID="{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
+	RootNamespace="HeaderMake_vc2005"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -158,7 +158,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\MakefileMake.cpp"
+			RelativePath=".\HeaderMake.cpp"
 			>
 		</File>
 	</Files>
