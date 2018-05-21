@@ -2,7 +2,7 @@
 /*.dll
 /*.exe
 /*.exp
-/*.filters
+# /*.filters
 /*.idb
 /*.ilk
 /*.ini
@@ -19,7 +19,7 @@
 /*.suo
 /*.tds
 /*.user
-/*.vcxproj
+# /*.vcxproj
 /Debug
 /Debug_Ansi
 /Debug_Unicode
