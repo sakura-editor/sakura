@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura.vcproj", "{DFFC20C2-2220-4135-847D-873E6ACE13E3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura_vc2005.vcproj", "{DFFC20C2-2220-4135-847D-873E6ACE13E3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0F2918B0-23E3-42E8-A1A8-8739F726A23E} = {0F2918B0-23E3-42E8-A1A8-8739F726A23E}
 		{40735439-B12B-40AC-92F7-F1183D8B6862} = {40735439-B12B-40AC-92F7-F1183D8B6862}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "..\HeaderMake\HeaderMake.vcproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "..\HeaderMake\HeaderMake_vc2005.vcproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "..\MakefileMake\MakefileMake.vcproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "..\MakefileMake\MakefileMake_vc2005.vcproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
