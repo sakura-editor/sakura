@@ -24,6 +24,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "gitrev.h"
 #include "svnrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "sakura.hh"
@@ -165,7 +166,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-#if (SVN_REV == 0)
+#if defined(GIT_COMMIT_HASH)
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(hash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
+		HIWORD(dwVersionMS),
+		LOWORD(dwVersionMS),
+		HIWORD(dwVersionLS),
+		LOWORD(dwVersionLS)
+	);
+#elif (SVN_REV == 0)
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
