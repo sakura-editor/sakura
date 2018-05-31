@@ -2813,7 +2813,7 @@ BEGIN
             VALUE "ProductName", "サクラエディタ\0"
             VALUE "ProductVersion", PR_VER_STR
 #if defined(GIT_SHORT_COMMIT_HASH)
-                " (hash " GIT_SHORT_COMMIT_HASH ")"
+                " (GitHash " GIT_SHORT_COMMIT_HASH ")"
 #elif (SVN_REV != 0)
                 " (Rev." SVN_REV_STR ")"
 #endif

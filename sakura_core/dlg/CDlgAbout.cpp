@@ -154,7 +154,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 以下の形式で出力
 	//サクラエディタ   Ver. 2.0.0.0
-	//(hash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
@@ -168,7 +168,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 #if defined(GIT_COMMIT_HASH)
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(hash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(GitHash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
 		HIWORD(dwVersionMS),
 		LOWORD(dwVersionMS),
 		HIWORD(dwVersionLS),
