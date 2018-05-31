@@ -6,7 +6,6 @@
 	#include "sakura_rc.h"
 	#include "Funccode_define.h"
 	#include "gitrev.h"
-	#include "svnrev.h"
 	#include "String_define.h"
 #else
 	#include "sakura_lang.h"
@@ -2814,8 +2813,6 @@ BEGIN
             VALUE "ProductVersion", PR_VER_STR
 #if defined(GIT_SHORT_COMMIT_HASH)
                 " (GitHash " GIT_SHORT_COMMIT_HASH ")"
-#elif (SVN_REV != 0)
-                " (Rev." SVN_REV_STR ")"
 #endif
 #ifdef _DEBUG
                 " Debug version"

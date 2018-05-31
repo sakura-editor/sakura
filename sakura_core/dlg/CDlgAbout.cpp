@@ -25,7 +25,6 @@
 #include "util/file.h"
 #include "util/module.h"
 #include "gitrev.h"
-#include "svnrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka •œ‹A
 #include "sakura.hh"
 
@@ -173,13 +172,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		LOWORD(dwVersionMS),
 		HIWORD(dwVersionLS),
 		LOWORD(dwVersionLS)
-	);
-#elif (SVN_REV == 0)
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
-		HIWORD( dwVersionMS ),
-		LOWORD( dwVersionMS ),
-		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS )
 	);
 #else
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),
