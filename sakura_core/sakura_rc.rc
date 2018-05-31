@@ -119,7 +119,7 @@ BEGIN
                     WS_GROUP
     LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,33,88,71,
                     8,NOT WS_GROUP
-    LTEXT           "http://sakura-editor.sourceforge.net/",
+    LTEXT           "https://sakura-editor.github.io/",
                     IDC_STATIC_URL_UR,101,88,120,8,SS_NOTIFY | NOT WS_GROUP | 
                     WS_TABSTOP
     EDITTEXT        IDC_EDIT_ABOUT,5,107,233,67,ES_MULTILINE | ES_READONLY | 
@@ -3535,7 +3535,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_AUTHOR_PAGE         "http://sakura-editor.sourceforge.net/"
+    IDS_AUTHOR_PAGE         "https://sakura-editor.github.io/"
     IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
 END
 
