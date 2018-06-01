@@ -41,13 +41,13 @@
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\$(TargetName).obj\</IntDir>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\$(TargetName).obj\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -68,6 +68,17 @@
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "$(SolutionDir)$(TargetName)$(TargetExt)" (
+  MKLINK /H "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)"
+) ELSE (
+  ECHO n | COMP "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)" &gt; NUL 2&gt;&amp;1
+  IF ERRORLEVEL 1 (
+    ERASE /F "$(SolutionDir)$(TargetName)$(TargetExt)"
+    MKLINK /H "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)"
+  )
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -86,9 +97,20 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "$(SolutionDir)$(TargetName)$(TargetExt)" (
+  MKLINK /H "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)"
+) ELSE (
+  ECHO n | COMP "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)" &gt; NUL 2&gt;&amp;1
+  IF ERRORLEVEL 1 (
+    ERASE /F "$(SolutionDir)$(TargetName)$(TargetExt)"
+    MKLINK /H "$(SolutionDir)$(TargetName)$(TargetExt)" "$(TargetPath)"
+  )
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HeaderMake.cpp" />
+    <ClCompile Include="..\HeaderMake\HeaderMake.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
