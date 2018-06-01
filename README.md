@@ -1,4 +1,6 @@
 # Sakura Editor
+[![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
+
 A free Japanese text editor for Windows
 
 ## Web Site
@@ -24,10 +26,10 @@ Visual Studio Community 2017 で `sakura/sakura_vc2017.sln` を開いてビル�
 
 ## CI Build (AppVeyor)
 本リポジトリの最新 master は以下の AppVeyor プロジェクト上で自動ビルドされます。  
-https://ci.appveyor.com/project/sakuraeditor/sakura
+https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master
 
 最新のビルド結果（バイナリ）はここから取得できます。  
-https://ci.appveyor.com/project/sakuraeditor/build/artifacts
+https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts
 
-最新以前のビルド結果は以下から参照できます。  
-https://ci.appveyor.com/project/sakuraeditor/history
+最新以外のビルド結果は以下から参照できます。  
+https://ci.appveyor.com/project/sakuraeditor/sakura/history
