@@ -8,7 +8,7 @@ init:
 
 build_script:
 - cmd: >-
-    set SLN_FILE=sakura\sakura_vc2017.sln
+    set SLN_FILE=sakura\sakura.sln
 
 
     set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"

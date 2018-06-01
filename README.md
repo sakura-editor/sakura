@@ -22,7 +22,7 @@ https://github.com/sakura-editor/sakura/wiki
 More information: https://github.com/sakura-editor/sakura/issues/6
 
 ## How to build
-Visual Studio Community 2017 で `sakura/sakura_vc2017.sln` を開いてビルド。
+Visual Studio Community 2017 で `sakura/sakura.sln` を開いてビルド。
 
 ## CI Build (AppVeyor)
 本リポジトリの最新 master は以下の AppVeyor プロジェクト上で自動ビルドされます。  

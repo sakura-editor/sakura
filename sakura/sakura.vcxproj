@@ -964,11 +964,11 @@
     <Text Include="..\sakura_core\util\ReadMe_util.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HeaderMake\HeaderMake_vc2017.vcxproj">
+    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
       <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\MakefileMake\MakefileMake_vc2017.vcxproj">
+    <ProjectReference Include="..\MakefileMake\MakefileMake.vcxproj">
       <Project>{40735439-b12b-40ac-92f7-f1183d8b6862}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
