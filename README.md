@@ -24,10 +24,10 @@ Visual Studio Community 2017 で `sakura/sakura_vc2017.sln` を開いてビル�
 
 ## CI Build (AppVeyor)
 本リポジトリの最新 master は以下の AppVeyor プロジェクト上で自動ビルドされます。  
-https://ci.appveyor.com/project/kobake/sakura
+https://ci.appveyor.com/project/sakuraeditor/sakura
 
 最新のビルド結果（バイナリ）はここから取得できます。  
-https://ci.appveyor.com/project/kobake/sakura/build/artifacts
+https://ci.appveyor.com/project/sakuraeditor/build/artifacts
 
 最新以前のビルド結果は以下から参照できます。  
-https://ci.appveyor.com/project/kobake/sakura/history
+https://ci.appveyor.com/project/sakuraeditor/history
