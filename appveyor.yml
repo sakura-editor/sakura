@@ -27,5 +27,7 @@ build_script:
 artifacts:
 - path: sakura\Debug\sakura.exe
 - path: sakura\Debug\sakura.pdb
+- path: sakura_lang_en_US\Debug\sakura_lang_en_US.dll
 - path: sakura\Release\sakura.exe
 - path: sakura\Release\sakura.pdb
+- path: sakura_lang_en_US\Release\sakura_lang_en_US.dll

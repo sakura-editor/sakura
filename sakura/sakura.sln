@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "..\HeaderMake
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "..\MakefileMake\MakefileMake.vcxproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "..\sakura_lang_en_US\sakura_lang.vcxproj", "{7A6D0F29-E560-4985-835B-5F92A08EB242}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -26,6 +28,10 @@ Global
 		{40735439-B12B-40AC-92F7-F1183D8B6862}.Debug|x86.Build.0 = Debug|Win32
 		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|x86.ActiveCfg = Release|Win32
 		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|x86.Build.0 = Release|Win32
+		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|x86.ActiveCfg = Debug|Win32
+		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|x86.Build.0 = Debug|Win32
+		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Release|x86.ActiveCfg = Release|Win32
+		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
