@@ -136,9 +136,6 @@
     <ClInclude Include="..\sakura_core\StdAfx.h">
       <Filter>Other Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\svnrev.h">
-      <Filter>Other Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\String_define.h">
       <Filter>Other Files</Filter>
     </ClInclude>

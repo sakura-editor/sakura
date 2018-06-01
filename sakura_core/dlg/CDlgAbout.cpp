@@ -24,7 +24,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
-#include "svnrev.h"
+#include "gitrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "sakura.hh"
 
@@ -152,7 +152,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0 (Rev.9999)
+	//サクラエディタ   Ver. 2.0.0.0
+	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
@@ -165,12 +166,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-#if (SVN_REV == 0)
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
-		HIWORD( dwVersionMS ),
-		LOWORD( dwVersionMS ),
-		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS )
+#if defined(GIT_COMMIT_HASH)
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(GitHash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
+		HIWORD(dwVersionMS),
+		LOWORD(dwVersionMS),
+		HIWORD(dwVersionLS),
+		LOWORD(dwVersionLS)
 	);
 #else
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),

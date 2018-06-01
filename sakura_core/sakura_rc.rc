@@ -5,7 +5,7 @@
 #ifndef SAKURA_LANG_RESOURCE
 	#include "sakura_rc.h"
 	#include "Funccode_define.h"
-	#include "svnrev.h"
+	#include "gitrev.h"
 	#include "String_define.h"
 #else
 	#include "sakura_lang.h"
@@ -2811,8 +2811,8 @@ BEGIN
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
             VALUE "ProductVersion", PR_VER_STR
-#if (SVN_REV != 0)
-                " (Rev." SVN_REV_STR ")"
+#if defined(GIT_SHORT_COMMIT_HASH)
+                " (GitHash " GIT_SHORT_COMMIT_HASH ")"
 #endif
 #ifdef _DEBUG
                 " Debug version"
