@@ -2,11 +2,11 @@
 A free Japanese text editor for Windows
 
 ## Web Site
-- [Sakura Editor Portal](http://sakura-editor.sourceforge.net/)
-- [SourceForge Project Home](https://sourceforge.net/projects/sakura-editor/)
+- [Sakura Editor Portal](https://sakura-editor.github.io/)
 
-## Status
-SourceForge から当 GitHub への移行検証中。
+## 開発参加ポリシー
+開発ポリシーを以下にまとめていきます。開発にご参加いただける方はこちらご参照ください。  
+https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 ### Visual Studio Community 2017
