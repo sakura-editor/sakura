@@ -101,6 +101,8 @@ CMutex& CShareData::GetMutexShareWork(){
 	@note 既に存在する共有メモリのバージョンがこのエディタが使うものと
 	異なる場合は致命的エラーを防ぐためにfalseを返します。CProcess::Initialize()
 	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
+
+	@date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
 */
 bool CShareData::InitShareData()
 {
@@ -241,11 +243,7 @@ bool CShareData::InitShareData()
 			sGeneral.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.17 nasukoji
 
 			sGeneral.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
-#ifdef _DEBUG
-			sGeneral.m_bStayTaskTray = FALSE;				/* タスクトレイのアイコンを常駐 */
-#else
-			sGeneral.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
-#endif
+			sGeneral.m_bStayTaskTray = FALSE;			/* タスクトレイのアイコンを常駐 */
 			sGeneral.m_wTrayMenuHotKeyCode = L'Z';		/* タスクトレイ左クリックメニュー キー */
 			sGeneral.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
 
