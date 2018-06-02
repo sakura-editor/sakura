@@ -22,6 +22,21 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 ## How to build
 Visual Studio Community 2017 で `sakura/sakura_vc2017.sln` を開いてビルド。
 
+## PR を簡単にローカルに取得する方法
+
+```
+get-PR.bat PR-Number
+```
+
+### 例: PR #36 をローカルに取得したい場合
+
+```
+get-PR.bat 36
+```
+
+pull-request-36 というローカルブランチに取得してチェックアウトします。
+
+
 ## CI Build (AppVeyor)
 本リポジトリの最新 master は以下の AppVeyor プロジェクト上で自動ビルドされます。  
 https://ci.appveyor.com/project/kobake/sakura
