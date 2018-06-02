@@ -17,6 +17,7 @@ build_script:
     set SLN_FILE=sakura\sakura_vc2017.sln
 
     echo CONFIGURATION %CONFIGURATION%
+
     echo PLATFORM      %PLATFORM%
 
     set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
@@ -24,16 +25,12 @@ build_script:
     set MSBUILD_EXE="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
 
 
-    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
-         %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
 
-    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release_Unicode    /t:"Clean","Rebuild"  %EXTRA_CMD%
-         %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release_Unicode    /t:"Clean","Rebuild"  %EXTRA_CMD%
+    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
+         %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
 
     echo appveyor_yml
 
 artifacts:
-- path: sakura\Debug_Unicode\sakura.exe
-- path: sakura\Debug_Unicode\sakura.pdb
-- path: sakura\Release_Unicode\sakura.exe
-- path: sakura\Release_Unicode\sakura.pdb
+- path: sakura\%CONFIGURATION%_Unicode\sakura.exe
+- path: sakura\%CONFIGURATION%_Unicode\sakura.pdb
