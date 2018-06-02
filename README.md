@@ -36,7 +36,7 @@ cd sakura
 get-PR.bat 36
 ```
 
-pull-request-36 というローカルブランチに取得してチェックアウトします。
+pull-request/36 というローカルブランチに取得してチェックアウトします。
 
 
 ## CI Build (AppVeyor)
