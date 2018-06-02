@@ -61,6 +61,8 @@ get-PR.bat PR-Number
 ### 例: PR #36 をローカルに取得したい場合
 
 ```
+git clone https://github.com/sakura-editor/sakura.git
+cd sakura
 get-PR.bat 36
 ```
 
