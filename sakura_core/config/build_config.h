@@ -65,9 +65,9 @@ static const bool UNICODE_BOOL=false;
 //#define USE_DEBUGMON
 
 
-//newされた領域をわざと汚すかどうか (デバッグ用)
-#ifdef _DEBUG
-#define FILL_STRANGE_IN_NEW_MEMORY
+//newされた領域をわざと汚すかどうか (デバッグ用、非msvcrt環境向け)
+#if defined( _DEBUG ) && !( defined( _MSC_VER ) || defined( __MINGW32__ ) )
+	#define FILL_STRANGE_IN_NEW_MEMORY	1
 #endif
 
 
