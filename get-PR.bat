@@ -1,5 +1,6 @@
 @echo off
 set PR_NUMBER=%1
+set BRANCH_NAME=pull-request/%PR_NUMBER%
 
 if "%PR_NUMBER%" == "" (
 	echo usage  : get-PR.bat PR-Number
@@ -8,7 +9,6 @@ if "%PR_NUMBER%" == "" (
 )
 @echo on
 @echo fetching pull request %PR_NUMBER%
-git fetch origin pull/%PR_NUMBER%/head:pull-request-%PR_NUMBER%
+git fetch origin pull/%PR_NUMBER%/head:%BRANCH_NAME%
 
-@echo checkout the local branch for PR %PR_NUMBER%
-git checkout pull-request-%PR_NUMBER%
+git checkout %BRANCH_NAME%
