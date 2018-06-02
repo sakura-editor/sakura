@@ -32,5 +32,5 @@ build_script:
     echo appveyor_yml
 
 artifacts:
-- path: sakura\%CONFIGURATION%_Unicode\sakura.exe
-- path: sakura\%CONFIGURATION%_Unicode\sakura.pdb
+- path: sakura\%CONFIGURATION%\sakura.exe
+- path: sakura\%CONFIGURATION%\sakura.pdb
