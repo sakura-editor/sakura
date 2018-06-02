@@ -62,6 +62,10 @@
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
+    <PreBuildEvent>
+      <Command>HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
+HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ResourceCompile>
@@ -71,12 +75,22 @@
     <Link>
       <NoEntryPoint>true</NoEntryPoint>
     </Link>
+    <PreBuildEvent>
+      <Command>HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
+HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sakura_lang_en_US\sakura_lang_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_lang_en_US\sakura_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="HeaderMake.vcxproj">
+      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
