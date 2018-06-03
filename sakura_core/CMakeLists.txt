@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 3.0.2)
 
 # define a variable of project name
 set(project_name sakura)
@@ -20,6 +20,28 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 
 # define sources files of an executable
 add_executable(${project_name} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
+
+add_dependencies(${project_name} HeaderMake)
+
+get_target_property(HeaderMake_RUNTIME_OUTPUT_DIRECTORY HeaderMake RUNTIME_OUTPUT_DIRECTORY)
+set(update_HeaderMake_BAT      ${CMAKE_CURRENT_SOURCE_DIR}/update-HeaderMake.bat)
+set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
+set(update_HeaderMake_DIR_IN   ${CMAKE_CURRENT_SOURCE_DIR})
+set(update_HeaderMake_DIR_OUT  ${CMAKE_CURRENT_SOURCE_DIR})
+
+# set pre-Build
+add_custom_command(
+	TARGET ${project_name}
+	PRE_BUILD
+	COMMAND ${update_HeaderMake_BAT} ${update_HeaderMake_DIR_EXE} ${update_HeaderMake_DIR_IN} ${update_HeaderMake_DIR_OUT}
+)
+
+# set pre-Build
+add_custom_command(
+	TARGET ${project_name}
+	PRE_BUILD
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/update-gitHash.bat ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 include_directories(./)
 

@@ -7,4 +7,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(MakefileMake)
 add_subdirectory(HeaderMake)
+add_subdirectory(sakura_core)
 add_subdirectory(sakura_lang_en_US)

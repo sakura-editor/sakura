@@ -8,7 +8,7 @@ for /l %%n in (1,1,10) do (
 	)
 )
 @echo on
-mkdir "%BUILDDIR%"
+mkdir "%BUILDDIR%" || exit /b 1
 cd    "%BUILDDIR%"
 
 if %ERRORLEVEL% equ 0 (
