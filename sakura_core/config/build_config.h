@@ -88,41 +88,15 @@ static const bool UNICODE_BOOL=false;
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
-	#include <stdlib.h> //malloc,free
-	inline void _fill_new_memory(void* p, size_t nSize, const char* pSrc, size_t nSrcLen)
-	{
-		char* s = (char*)p;
-		size_t i;
-		for(i = 0; i < nSize; i++)
-		{
-			*s++ = pSrc[i%nSrcLen];
-		}
-	}
-	inline void* operator new(size_t nSize)
-	{
-		void* p = ::malloc(nSize);
-		_fill_new_memory(p,nSize,"ﾆｭｰ",3); //確保されたばかりのメモリ状態は「ﾆｭｰﾆｭｰﾆｭｰ…」となります
-		return p;
-	}
-#ifdef _MSC_VER
-#if _MSC_VER == 1500
-	_Ret_bytecap_(_Size)	// for VS2008 Debug mode
-#endif
-#endif
-	inline void* operator new[](size_t nSize)
-	{
-		void* p = ::malloc(nSize);
-		_fill_new_memory(p,nSize,"ｷﾞｭｰ",4); //確保されたばかりのメモリ状態は「ｷﾞｭｰｷﾞｭｰｷﾞｭｰ…」となります
-		return p;
-	}
-	inline void operator delete(void* p)
-	{
-		::free(p);
-	}
-	inline void operator delete[](void* p)
-	{
-		::free(p);
-	}
+	void* operator new(size_t nSize);
+	#ifdef _MSC_VER
+		#if _MSC_VER == 1500
+			_Ret_bytecap_(_Size)	// for VS2008 Debug mode
+		#endif
+	#endif
+	void* operator new[](size_t nSize);
+	void operator delete(void* p);
+	void operator delete[](void* p);
 #endif
 
 
