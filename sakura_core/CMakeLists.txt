@@ -21,6 +21,18 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 # define sources files of an executable
 add_executable(${project_name} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
+# configure precompiled header
+if(MSVC)
+	set(PrecompiledSource  "StdAfx.cpp")
+	set(PrecompiledHeader  "StdAfx.h")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Yu")
+	message("CMAKE_CXX_FLAGS   " ${CMAKE_CXX_FLAGS})
+	message("project_name      " ${project_name})
+	message("PrecompiledSource " ${PrecompiledSource})
+	message("PrecompiledHeader " ${PrecompiledHeader})
+	set_source_files_properties(${PrecompiledSource} PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\"")
+endif(MSVC)
+
 # set pre-Build
 add_custom_command(
 	TARGET ${project_name}
