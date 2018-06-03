@@ -1,7 +1,7 @@
-/*!	@file
+ï»¿/*!	@file
 
 	@author Project Sakura-Editor
-	@date 2013.04.03 Uchi ì¬
+	@date 2013.04.03 Uchi ä½œæˆ
 */
 /*
 	Copyright (C) 2013, Uchi
@@ -29,16 +29,16 @@
 */
 
 /*
-	++ ŠT—v ++
+	++ æ¦‚è¦ ++
 
-	MinGW—p‚Ì makefile ‚ğ©“®¶¬‚·‚é‚½‚ß‚Ìƒ‚ƒm
+	MinGWç”¨ã® makefile ã‚’è‡ªå‹•ç”Ÿæˆã™ã‚‹ãŸã‚ã®ãƒ¢ãƒ
 
-	makefile ‚ğ©“®¶¬‚·‚é
-	‘´‚ê‚È‚è‚Éè”²‚«‚È‚ñ‚ÅŠ¿š‚Ìƒtƒ@ƒCƒ‹–¼‚Æ‚©‚É‚Í–¢‘Î‰
+	makefile ã‚’è‡ªå‹•ç”Ÿæˆã™ã‚‹
+	å…¶ã‚Œãªã‚Šã«æ‰‹æŠœããªã‚“ã§æ¼¢å­—ã®ãƒ•ã‚¡ã‚¤ãƒ«åã¨ã‹ã«ã¯æœªå¯¾å¿œ
 
-	++ g—p•û–@ ++
+	++ ä½¿ç”¨æ–¹æ³• ++
 
-	usage() ‚ğQÆ
+	usage() ã‚’å‚ç…§
 */
 
 #ifdef __MINGW32__
@@ -69,13 +69,14 @@
 #undef PREPROCESSOR
 #define PREPROCESSOR "gcc -x c++ -finput-charset=cp932 -fexec-charset=cp932 -E %s"
 
-void fopen_s( 
+int fopen_s( 
    FILE** pFile,
    const char *filename,
    const char *mode 
 )
 {
 	*pFile = fopen(filename, mode);
+	return pFile != NULL ? 0 : 1;
 }
 #endif	// __MINGW32__
 
@@ -95,10 +96,18 @@ void fopen_s(
 
 int usage()
 {
-	printf("MakefileMake -file=<makefile> -dir=<ƒgƒbƒvƒfƒBƒŒƒNƒgƒŠ>\n");
-	printf("<makefile>“à‚Ì‚ÌƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹–¼‚ğ");
-	printf("ƒgƒbƒvƒfƒBƒŒƒNƒgƒŠ”z‰º‚Ìcppƒtƒ@ƒCƒ‹–¼‚ğ");
-	printf("ƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹–¼‚É‚µ‚½•¨‚É‘‘Ö‚¦‚Ü‚·B\n");
+	// MakefileMake -file=<makefile> -dir=<ãƒˆãƒƒãƒ—ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª>\n
+	// <makefile>å†…ã®ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã‚’
+	// ãƒˆãƒƒãƒ—ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªé…ä¸‹ã®cppãƒ•ã‚¡ã‚¤ãƒ«åã‚’
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã«ã—ãŸç‰©ã«æ›¸æ›¿ãˆã¾ã™ã€‚\n
+
+	printf(
+		"Usage: MakefileMake -file=<Makefile> -dir=<TopDirectory>\n"
+		"\n"
+		"    MakefileMake replaces .o file lines in the <Makefile> by .cpp file names in the <TopDirectory>.\n"
+		"\n"
+		"    NOTICE: <Makefile> will be overwritten by MakefileMake.\n"
+	);
 
 	return 1;
 }
@@ -122,7 +131,7 @@ struct SExpList {
 std::vector<std::string> file_list;  // filename_list
 
 
-// ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ğì¬‚·‚é
+// ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã‚’ä½œæˆã™ã‚‹
 int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
 {
 	std::string			path;
@@ -163,7 +172,7 @@ int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
 				std::string fl_nm;
 
 				fl_nm = ffData.cFileName;
-				fl_nm.resize(fl_nm.size() - strlen(sexp.exp));	// Šg’£qíœ
+				fl_nm.resize(fl_nm.size() - strlen(sexp.exp));	// æ‹¡å¼µå­å‰Šé™¤
 				if (dir != "") {
 					fl_nm = dir + "/" + fl_nm;
 				}
@@ -177,7 +186,7 @@ int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
 	return 0;
 }
 
-// ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ğì¬‚·‚é(top level)
+// ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã‚’ä½œæˆã™ã‚‹(top level)
 int makeFileListTop(const char* top_dir)
 {
 	int		res;
@@ -190,8 +199,8 @@ int makeFileListTop(const char* top_dir)
 }
 
 
-// ƒtƒ@ƒCƒ‹‚ğˆê‚Â‚¸‚Âæ‚èo‚·
-// ÅŒã‚ÍNULL‚ğ•Ô‚·
+// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¸€ã¤ãšã¤å–ã‚Šå‡ºã™
+// æœ€å¾Œã¯NULLã‚’è¿”ã™
 const char* getFile()
 {
 	static int		pt;
@@ -208,7 +217,7 @@ const char* getFile()
 }
 
 
-// ƒIƒuƒWƒFƒNƒgs1sì¬
+// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¡Œ1è¡Œä½œæˆ
 const char* makeObjLine(char* mkline, size_t bf_sz, const char* fl_nm)
 {
 	sprintf_s( mkline, bf_sz, "%s.o \\\n", fl_nm);
@@ -216,10 +225,10 @@ const char* makeObjLine(char* mkline, size_t bf_sz, const char* fl_nm)
 }
 
 
-// mainŠÖ”
+// mainé–¢æ•°
 int main(int argc, char* argv[])
 {
-	// ˆø”‰ğß
+	// å¼•æ•°è§£é‡ˆ
 	const char*	makefile	= NULL;
 	const char*	top_dir		= NULL;
 
@@ -252,62 +261,77 @@ int main(int argc, char* argv[])
 				}
 			}
 			else {
-				printf("Error: •s–¾‚Èˆø”[%s]\n", argv[i]);
+				// Error: ä¸æ˜ãªå¼•æ•°[%s]
+				printf("Error: Unknown argument[%s]\n", argv[i]);
 				return usage();
 			}
 		}
 		else {
-			printf("Error: •s–¾‚Èˆø”[%s]\n", argv[i]);
+			// ä¸æ˜ãªå¼•æ•°[%s]
+			printf("Error: Unknown argument[%s]\n", argv[i]);
 			return usage();
 		}
 	}
 	if (makefile == NULL && top_dir != NULL) { return usage(); }
-	if (!makefile)	{ printf("Error: makefile‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢\n\n");				return usage(); }
-	if (!top_dir)	{ printf("Error: ƒgƒbƒvƒfƒBƒŒƒNƒgƒŠ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢\n\n");	return usage(); }
+	if (!makefile) { printf("Error: Specify <Makefile>\n\n");     return usage(); } // makefileã‚’æŒ‡å®šã—ã¦ãã ã•ã„
+	if (!top_dir)  { printf("Error: Specify <TopDirectory>\n\n"); return usage(); } // ãƒˆãƒƒãƒ—ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æŒ‡å®šã—ã¦ãã ã•ã„
 
+	// é–‹å§‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	printf("\nSTART MakefileMake.\n");
+	printf("CMDLINE: ");
+	for (int i = 0; i < argc; i++) {
+		printf("%s ", argv[i]);
+	}
+	printf("\n\n");
 
-	// ƒgƒbƒvƒfƒBƒŒƒNƒgƒŠ‚Ìƒ`ƒFƒbƒN
+	// ãƒˆãƒƒãƒ—ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ãƒã‚§ãƒƒã‚¯
 	struct stat		st;
 	int		ret = stat( top_dir, &st );
 	if (ret != 0 || !(st.st_mode & _S_IFDIR)) {
-		printf("Error: ƒgƒbƒvƒfƒBƒŒƒNƒgƒŠ[%s]‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ\n", top_dir);
+		// Error: ãƒˆãƒƒãƒ—ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª[%s]ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“
+		printf("Error: Failed to stat TopDirectory[%s].\n", top_dir);
 		return 1;
 	}
 
-	// ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
 	FILE*	in = NULL;
-	if (fopen_s( &in, makefile, "rt" ) != 0) {
-		printf("Error: o—Íƒtƒ@ƒCƒ‹[%s]‚ğŠJ‚¯‚Ü‚¹‚ñ\n", makefile);
+	if (fopen_s(&in, makefile, "rt") != 0) {
+		// Error: å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«[%s]ã‚’é–‹ã‘ã¾ã›ã‚“
+		printf("Error: Failed to open Makefile[%s] with read mode.\n", makefile);
 		return 1;
 	}
 
-	// ƒeƒ“ƒ|ƒ‰ƒŠƒtƒ@ƒCƒ‹‚Ìì¬
+	// ãƒ†ãƒ³ãƒãƒ©ãƒªãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆ
 	char	tmp_file[_MAX_PATH];
 	char	drive[_MAX_DRIVE], dir[_MAX_DIR];
 	if (_splitpath_s( makefile, drive, _countof(drive), dir, _countof(dir), NULL, 0, NULL, 0 )) {
-		printf("Error: ˆêƒtƒ@ƒCƒ‹–¼‚ğì‚ê‚Ü‚¹‚ñ[%s]\n", makefile);
+		// Error: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œã‚Œã¾ã›ã‚“[%s]
+		printf("Error: Failed to generate temporary file path. [makefile:%s]\n", makefile);
 		return 1;
 	}
 	if (_makepath_s( tmp_file, _countof(tmp_file), drive, dir, "mfXXXXXX", NULL )) {
-		printf("Error: ˆêƒtƒ@ƒCƒ‹–¼‚ğì‚ê‚Ü‚¹‚ñ[%s, %s]\n", drive, dir);
+		// Error: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œã‚Œã¾ã›ã‚“[%s, %s]
+		printf("Error: Failed to generate temporary file path. [drive:%s, dir:%s]\n", drive, dir);
 		return 1;
 	}
 	if (_mktemp_s(tmp_file, _countof(tmp_file))) {
-		printf("Error: ˆêƒtƒ@ƒCƒ‹–¼‚ğì‚ê‚Ü‚¹‚ñ[%s]\n", tmp_file);
+		// Error: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œã‚Œã¾ã›ã‚“[%s]
+		printf("Error: Failed to generate temporary file path. [tmp_file:%s]\n", tmp_file);
 		return 1;
 	}
 	FILE*	out = NULL;
-	if (fopen_s( &out, tmp_file, "wt" ) != 0) {
-		printf("Error: ˆêƒtƒ@ƒCƒ‹[%s]‚ğŠJ‚¯‚Ü‚¹‚ñ\n", tmp_file);
+	if (fopen_s(&out, tmp_file, "wt") != 0) {
+		// Error: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«[%s]ã‚’é–‹ã‘ã¾ã›ã‚“
+		printf("Error: Failed to open Tmpfile[%s] with write mode.\n", tmp_file);
 		return 1;
 	}
 
-	// ƒtƒ@ƒCƒ‹ƒŠƒXƒg‚Ìì¬
+	// ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã®ä½œæˆ
 	makeFileListTop(top_dir);
 
-	// ƒtƒ@ƒCƒ‹‚Ì‘‘Ö‚¦
-	int			mode = 0;			// 0:.obj‘O 1:.obj’† 2:.objŒã
-	bool		change = false;		// •ÏX‚ ‚è
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã®æ›¸æ›¿ãˆ
+	int			mode = 0;			// 0:.objå‰ 1:.objä¸­ 2:.objå¾Œ
+	bool		change = false;		// å¤‰æ›´ã‚ã‚Š
 
 	char		line[1024];
 	char		mkline[1024];
@@ -324,13 +348,13 @@ int main(int argc, char* argv[])
 			break;
 		case 1:
 			if (line[0] == '\n' || line[0] == '\0') {
-				// ƒŠƒXƒgI—¹?
+				// ãƒªã‚¹ãƒˆçµ‚äº†?
 				fl_nm = getFile();
 				if (fl_nm != NULL) {
-					// ƒtƒ@ƒCƒ‹‚ª‘‚¦‚½
+					// ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¢—ãˆãŸ
 					change = true;
 					do {
-						//o—Í
+						//å‡ºåŠ›
 						fprintf(out, "%s", makeObjLine( mkline, _countof(mkline), fl_nm ) );
 					} while ((fl_nm = getFile()) != NULL);
 				}
@@ -339,12 +363,12 @@ int main(int argc, char* argv[])
 			else {
 				fl_nm = getFile();
 				if (fl_nm == NULL) {
-					// ƒtƒ@ƒCƒ‹‚ªŒ¸‚Á‚½
+					// ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ¸›ã£ãŸ
 					change = true;
 					continue;
 				}
 				makeObjLine( mkline, _countof(mkline), fl_nm );
-				// •ÏX—L‚è‚©H
+				// å¤‰æ›´æœ‰ã‚Šã‹ï¼Ÿ
 				if (!change && strcmp(line, mkline) != 0)
 					change = true;
 				wtline = mkline;
@@ -353,7 +377,7 @@ int main(int argc, char* argv[])
 		case 2:
 			break;
 		}
-		//o—Í
+		//å‡ºåŠ›
 		fprintf(out,"%s", wtline);
 	}
 
@@ -361,26 +385,35 @@ int main(int argc, char* argv[])
 	fclose(in);
 	fclose(out);
 #ifdef _DEBUG
-	printf("%dŒÂ‚ÌƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹–¼‚ªo—Í‚³‚ê‚Ü‚µ‚½\n", file_list.size());
+	// %då€‹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åãŒå‡ºåŠ›ã•ã‚Œã¾ã—ãŸ
+	printf("... Wrote %d object file lines to tmpfile[%s].\n", file_list.size(), tmp_file);
 #endif
 
-	// ƒtƒ@ƒCƒ‹‚Ì“üŠ·‚¦
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã®å…¥æ›ãˆ
 	if (change) {
 		if (remove(makefile)) {
-			printf("Error: makefile[%s]‚ğíœo—ˆ‚Ü‚¹‚ñ\n", tmp_file);
+			// Error: makefile[%s]ã‚’å‰Šé™¤å‡ºæ¥ã¾ã›ã‚“
+			printf("Error: Failed to remove Makefile[%s].\n", makefile);
 			return 1;
 		}
 		if (rename( tmp_file, makefile )) {
-			printf("Error: ˆêƒtƒ@ƒCƒ‹[%s]‚ğmakfile[%s]‚Éo—ˆ‚Ü‚¹‚ñ\n", tmp_file, makefile);
+			// Error: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«[%s]ã‚’makfile[%s]ã«å‡ºæ¥ã¾ã›ã‚“
+			printf("Error: Failed to rename Tmpfile[%s] to Makefile[%s].\n", tmp_file, makefile);
 			return 1;
 		}
 	}
 	else {
 		if (remove(tmp_file)) {
-			printf("Warning: ˆêƒtƒ@ƒCƒ‹[%s]‚ğíœo—ˆ‚Ü‚¹‚ñ\n", tmp_file);
+			// Warning: ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«[%s]ã‚’å‰Šé™¤å‡ºæ¥ã¾ã›ã‚“
+			printf("Warning: Failed to remove Tmpfile[%s].\n", tmp_file);
 		}
-		printf("o—Íƒtƒ@ƒCƒ‹‚ÍÅV‚Å‚·\n");
+
+		// å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã¯æœ€æ–°ã§ã™
+		printf("Makefile needs no change.\n");
 	}
+
+	// çµ‚äº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	printf("\nEND MakefileMake.\n\n");
 
 	return 0;
 }
