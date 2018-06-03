@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 3.0.2)
 
 # define a variable of project name
 set(project_name sakura)
@@ -20,6 +20,13 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 
 # define sources files of an executable
 add_executable(${project_name} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
+
+# set pre-Build
+add_custom_command(
+	TARGET ${project_name}
+	PRE_BUILD
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/update-gitHash.bat ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 include_directories(./)
 
