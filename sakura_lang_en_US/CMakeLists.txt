@@ -20,6 +20,21 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 # define sources files of an executable
 add_library(${project_name} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
+add_dependencies(${project_name} HeaderMake)
+
+get_target_property(HeaderMake_RUNTIME_OUTPUT_DIRECTORY HeaderMake RUNTIME_OUTPUT_DIRECTORY)
+set(update_HeaderMake_BAT      ${sakura_SOURCE_DIR}/update-HeaderMake.bat)
+set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
+set(update_HeaderMake_DIR_IN   ${sakura_SOURCE_DIR})
+set(update_HeaderMake_DIR_OUT  ${sakura_SOURCE_DIR})
+
+# set pre-Build
+add_custom_command(
+	TARGET ${project_name}
+	PRE_BUILD
+	COMMAND ${update_HeaderMake_BAT} ${update_HeaderMake_DIR_EXE} ${update_HeaderMake_DIR_IN} ${update_HeaderMake_DIR_OUT}
+)
+
 # add definition
 add_definitions(-D_UNICODE -DUNICODE)
 add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
