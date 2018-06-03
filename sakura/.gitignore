@@ -20,15 +20,8 @@
 /*.tds
 /*.user
 # /*.vcxproj
-/Debug
-/Debug_Ansi
-/Debug_Unicode
-/Debug_bcc
-/Debug_one
-/Release_Ansi
-/Release_Unicode
-/Release_bcc
-/Release_one
+/Debug*
+/Release*
 /Toolkit2003Env.bat
 /_UpgradeReport_Files
 /ipch

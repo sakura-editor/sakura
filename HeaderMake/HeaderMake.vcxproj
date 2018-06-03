@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{40735439-B12B-40AC-92F7-F1183D8B6862}</ProjectGuid>
-    <RootNamespace>MakefileMake_vc2017</RootNamespace>
+    <ProjectGuid>{0F2918B0-23E3-42E8-A1A8-8739F726A23E}</ProjectGuid>
+    <RootNamespace>HeaderMake</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -88,7 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MakefileMake.cpp" />
+    <ClCompile Include="HeaderMake.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
