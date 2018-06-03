@@ -14,10 +14,6 @@ file(GLOB_RECURSE SOURCE_FILES   ./*.cpp)
 file(GLOB_RECURSE HEADER_FILES   ./*.h)
 file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 
-#foreach( srcTemp ${SOURCE_FILES})
-#	message("SOURCE_FILES = " ${srcTemp})
-#endforeach( srcTemp ${SOURCE_FILES})
-
 # define sources files of an executable
 add_executable(${project_name} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
@@ -26,10 +22,6 @@ if(MSVC)
 	set(PrecompiledSource  "StdAfx.cpp")
 	set(PrecompiledHeader  "StdAfx.h")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Yu")
-	message("CMAKE_CXX_FLAGS   " ${CMAKE_CXX_FLAGS})
-	message("project_name      " ${project_name})
-	message("PrecompiledSource " ${PrecompiledSource})
-	message("PrecompiledHeader " ${PrecompiledHeader})
 	set_source_files_properties(${PrecompiledSource} PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\"")
 endif(MSVC)
 
