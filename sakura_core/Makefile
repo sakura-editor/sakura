@@ -127,6 +127,7 @@ cmd/CViewCommander_Settings.o \
 cmd/CViewCommander_Support.o \
 cmd/CViewCommander_TagJump.o \
 cmd/CViewCommander_Window.o \
+config/build_config.o \
 convert/CConvert.o \
 convert/CConvert_HaneisuToZeneisu.o \
 convert/CConvert_HankataToZenhira.o \

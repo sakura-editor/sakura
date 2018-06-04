@@ -539,6 +539,7 @@
     <ClCompile Include="..\sakura_core\cmd\CViewCommander_Support.cpp" />
     <ClCompile Include="..\sakura_core\cmd\CViewCommander_TagJump.cpp" />
     <ClCompile Include="..\sakura_core\cmd\CViewCommander_Window.cpp" />
+    <ClCompile Include="..\sakura_core\config\build_config.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenhira.cpp" />
