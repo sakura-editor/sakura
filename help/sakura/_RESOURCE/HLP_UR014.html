@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>変更履歴(2007/09/27～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2007/09/27～)</h2>
+<!--<h3>xxx. xx, 2007 (1.x.x.x)</h3>-->
+<h3>Oct 17, 2010 (1.6.6.0)</h3>
+<ul>
+	<li>読み込むファイルサイズが大きい場合に警告する(ANSI版) (svn:1746 patches:2970236 unicode:931 unicode:942 unicode:943 ラスティブ,もか)
+	<li>Erlang アウトライン解析 (svn:1828 patches:2835545 げんた)
+</ul>
+[仕様変更]<br />
+<ul>
+	<li>[U済] . を [^\n] から [^\r\n] 相当へ変更し、$のマッチ範囲を \r\n, \r, \n直前に変更 (bregonig.dllを使用している場合のみ。svn:1676 patches:2869238 unicode:1034 ds14050)</li>
+	<li>タブを閉じるコマンドの改良 (svn:1740 patches:2921307 dev:5641 syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>０文字選択の描画不正 (svn:1688 patches:2905577 unicode:1057 ryoji)</li>
+	<li>「ttp://～」や「tp://～」の動作が不正 (svn:1687 patches:2905209 dev:5628 ryoji)</li>
+	<li>全角スペース直後のクリッカブルURLが無効 (svn:1686 patches:2905012 data:7102 ryoji)</li>
+	<li>文書末を含む選択状態で文字列を貼り付けるとEOF表示が消える (svn:1681 patches:2895958 unicode:1052 ryoji)</li>
+	<li>r1676(#2869217)で起きる bcc5.5.1のエラー対策 (svn:1680 patches:2869217 ds14050)</li>
+	<li>上検索の結果が幅0のとき選択範囲が 1あったのを 0に修正 (svn:1675 patches:2869217 unicode:1035 ds14050)</li>
+	<li>浅いフォルダにあるファイルの編集・保存時にバックアップ処理で異常終了する (svn:1738 patches:2875910 dev:5624 あろか)</li>
+	<li>タブバーツールチップの&表示不正 (svn:1739 patches:2912612 dev:5637 ryoji)</li>
+	<li>検索・置換マクロのエラーチェック不具合 (svn:1741 patches:2921768 dev:5648 ryoji)</li>
+	<li>-GREPDLG指定でキャレットが消える (svn:1742 patches:2928898 dev:5650 ryoji)</li>
+	<li>画面分割ボックス操作時の動作不正 (svn:1743 patches:2934911 dev:5656 ryoji)</li>
+	<li>文字種が変わる位置での単語補完候補にカーソル位置の単語が出る (svn:1744 patches:2955419 unicode:1117 syat)</li>
+	<li>WIN64でコンパイルエラー (svn:1745 patches:2964148 もか)</li>
+	<li>[U済]ルールファイル解析でスタック使いすぎ (svn:1747 patches:2970250 もか)</li>
+	<li>画面分割でカーソル行位置表示が不正 (svn:1748 patches:2981137 unicode:1144 ryoji)</li>
+	<li>不要なコードの存在によりコンパイル時に警告が発生する (svn:1749 patches:2989036 dev:5671 なすこじ)</li>
+	<li>アウトライン解析（トグル）で「C 関数一覧」画面が閉じない (svn:1831 patches:3009187 dev:5675 ryoji)</li>
+	<li>折り返し行インデントで折り返すとメモリを食い尽くす (svn:1832 patches:3025944 dev:5677 もか)</li>
+	<li>Undo/Redoでのメモリーリーク修正 (svn:1834 patches:3055719 もか)</li>
+	<li>チップウィンドウのリソースリーク修正 (svn:1835 patches:3056634 もか)</li>
+	<li>Grep結果画面の強調表示に単語単位が適用されていない (svn:1836 patches:3056638 dev:5685 unicode:1334 もか)</li>
+	<li>Grepの出力順が不正になることがある (svn:1836 patches:3056638 dev:5685 もか)</li>
+	<li>Grep正規表現の「^」・戻り読みの不具合の修正 (svn:1836 patches:3056638 dev:5685 unicode:1213 もか)</li>
+	<li>Grep中に同一ウィンドウでGrepすると落ちる (svn:1836 patches:3056638 dev:5685 unicode:1311 もか)</li>
+	<li>「クリップボードから」で全置換したときの置換数表示がゼロになる (svn:1837 patches:3067444 dev:5681 ryoji)</li>
+	<li>「クリップボードから」と「正規表現」がONの置換で「選択始点挿入」「選択終点追加」が効かない (svn:1837 patches:3067444 dev:5681 ryoji)</li>
+	<li>フリーカーソル時のデータ挿入がカーソル位置でなく次行頭への挿入になってしまうことがある (svn:1838 patches:3069797 dev:5682 ryoji)</li>
+	<li>MSDEVLineSelect形式で「クリップボードから」全置換したときにラインモード貼り付けにならない (svn:1838 patches:3069797 dev:5682 ryoji)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>存在しないcursor1.curのsakura.dsp登録を解除 (svn:1829 patches:2992320 dev:5673 ryoji)</li>
+	<li>Viewウィンドウの遅延作成(ANSI版) (svn:1830 patches:3008991 unicode:1249 もか)</li>
+	<li>ツールバー折返しの番号ずれ対応 (svn:1833 patches:3026401 dev:5676 syat,もか)</li>
+	<li>ユーザの意図しないプログラム実行の抑制(A用) (svn:1839 patches:3055711 dev:5679 dev:5685 もか)</li>
+</ul>
+
+<h3>Sep. 26, 2009 (1.6.5.0)</h3>
+
+[機能追加]<br />
+<ul>
+	<li>自動実行マクロ (svn:1631 patches:1550557 dev:4501 dev:5545 全略, ryoji, げんた, maru, syat)</li>
+	<li>マクロ実行コマンドラインオプション追加 (svn:1632 patches:2457700 dev:5505 syat)</li>
+	<li>Sleipnir風タブを閉じるコマンド (svn:1633 patches:2326632 dev:5450 syat)</li>
+	<li>正規表現キーワードのURLをクリッカブルに (svn:1634 patches:2800435 dev:5569 syat)</li>
+	<li>句読点ぶら下げ文字指定オプション追加 (svn:1635 patches:2832975 dev:5602 ryoji)</li>
+	<li>ウィンドウ毎にアクセラレータテーブルを作成する(Wine用) (svn:1648 patches:2838119 dev:5587 dev:5612 Hidetaka Sakai, nasukoji)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+	<li>1PageXX,1PageXX_Selマクロ関数がWSHから呼べないので、同等機能のPageXX,PageXX_Selをマクロ関数に追加 (svn:1549 patches:2626109 dev:5540 syat)</li>
+	<li>削除が遅い問題の修正 (svn:1614 patches:2576450 dev:5529 ラスティブ)</li>
+	<li>[色指定]リストでのマウス操作性の改善 (svn:1602 patches:2627303 dev:5544 ryoji)</li>
+	<li>[U済]ドラッグ検出方法の改善と選択範囲内ドラッグカーソルの変更 (svn:1611 patches:2803525 dev:5570 ryoji)</li>
+	<li>[U済]設定保存の安全性向上対策 (svn:1613 patches:2816494 dev:5573 ryoji)</li>
+	<li>一部全角記号の文字種別変更・単語切れ目判定の共通化 (svn:1658 patches: 2850045 syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>[その他のインデント対象文字]に63文字入力できるのに62文字までしか設定されない (svn:1524 patches:2577775 unicode:797 ryoji)</li>
+	<li>[その他のインデント対象文字]に何か文字列が設定されているとNULL文字もインデント対象になる(svn:1524 patches:2577775 unicode:812 ryoji)</li>
+	<li>[開く...(ドロップダウン)]メニューでアクセスキーが効かない (svn:1524 patches:2577775 unicode:812 ryoji)</li>
+	<li>ExpandParameterで$hが展開されずに空白になる (svn:1552 patches:2648201 dev:5547 げんた)</li>
+	<li>[共通設定]-[バックアップ]で詳細設定ON/OFF時の表示項目ON/OFFが不正 (svn:1617 patches:2623427 dev:5538 ryoji)</li>
+	<li>[U済] [強調キーワード]の「整理」ボタンでエラーダイアログ (svn:1603 patches:2720829 dev:5561 ryoji)</li>
+	<li>[U済]テキスト変更時に行番号（変更行）表示の更新範囲が不足 (svn:1604 patches:2720839 dev:5561 ryoji)</li>
+	<li>[U済]新規編集画面でメニューからプロパティが見れない (svn:1605 patches:2754849 dev:5562 ryoji)</li>
+	<li>[U済]改行コード上書き時に描画不正 (svn:1606 patches:2754855 dev:5562 ryoji)</li>
+	<li>[U済]NextWindow()マクロが動作しない (svn:1607 patches:2754861 dev:5562 ryoji)</li>
+	<li>MIGEMOインクリメンタルサーチの不具合 (svn:1618 patches:2783973 dev:5563 miau)</li>
+	<li>[U済]文書末への選択移動で選択範囲情報が表示されない (svn:1608 patches:2789623 dev:5564 ryoji)</li>
+	<li>[U済]クリッカブルURL表示でない箇所がクリッカブル動作 (svn:1609 patches:2795419 dev:5565 ryoji)</li>
+	<li>[U済][ウィンドウ一覧]メニューの表示不正 (svn:1610 patches:2800006 dev:5568 ryoji)</li>
+	<li>0x1A検索後の再起動で設定が初期状態に戻る (svn:1612 patches:2816493 dev:5573 ryoji)</li>
+	<li>[U済]置き換え操作で発生する各種問題の修正(4件) (svn:1619 patches:2823493 dev:5575 ryoji)</li>
+	<li>#2816494の適用以後BCCでエラー (svn:1616 patches:2824796 dev:5574 ryoji)</li>
+	<li>[U済]インデント実行時にバー表示が更新されない (svn:1624 patches:2827018 dev:5583 ryoji)</li>
+	<li>[U済]行桁位置表示が折り返しに追従しない (svn:1625 patches:2827027 dev:5583 ryoji)</li>
+	<li>[U済]ドロップ貼り付け後の選択範囲拡張が不正 (svn:1626 patches:2827034 dev:5583 ryoji)</li>
+	<li>[U済]句読点の行頭禁則が機能しない (svn:1635 patches:2832975 dev:5598 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>テキスト折り返し方法の追加（その２） (svn:1652 patches:2028628 dev:5395 nasukoji)</li>
+</ul>
+
+
+<h3>Jan. 16, 2009 (1.6.4.0)</h3>
+
+[機能追加]<br />
+<ul>
+	<li>指定ボタン(キー)押下中のホイールスクロールではページスクロールする (svn:1511 patches:2341968 dev:5477 なすこじ)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>コンボボックスでリスト表示＋末尾削除＋Enterで削除部分が復活する (svn:1496 patches:2394131 dev:5503 syat)</li>
+	<li>アウトライン解析の「フォーカスを移す」で分割画面のアクティブビューが切り替わる (svn:1505 patches:2461745 ryoji)</li>
+	<li>アイコン（メニュー、ツールバー）が黒くなる (svn:1506 patches:2497716 data:6842 ryoji)</li>
+	<li>GrepへのDrag &amp; Dropフォルダパス貼り付けが動作しない (svn:1507 patches:2497740 ryoji)</li>
+	<li>Grep時のファイル名パターンのバッファオーバラン対策 (svn:1510 patches:2402850 data:6818 dev:5484なすこじ)</li>
+</ul>
+
+
+<h3>Nov. 27, 2008 (1.6.3.0)</h3>
+
+[機能追加]<br />
+<ul>
+	<li>右ボタンでのファイルドロップでファイル名やパス名を貼り付ける (svn:1414 patches:1999317 dev:5357ryoji)</li>
+	<li>クリップボードからファイルパスを貼り付ける (svn:1469 patches:1894888 dev:5344 なすこじ, bosagami)</li>
+	<li>テキスト折り返し方法の追加 (svn:1415 patches:1981460 dev:5299 ryoji, なすこじ)</li>
+	<li>「名前を指定してマクロ実行」コマンド追加 (svn:1461 patches:2188437 dev:5448 syat)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>タイプ別設定の設定最大数を20から30に拡張 (svn:1296 patches:1850199 Request/228 dev:5216 ryoji)</li>
+	<li>行番号エリアのShift+ドラッグ挙動改善 (svn:1351 patches:1846786 dev:5202 なすこじ)</li>
+	<li>ドロップ範囲を選択状態にする (svn:1359 patches:1919556 dev:5251 ryoji)</li>
+	<li>英数字以外も単語補完の対象とする (svn:1465 patches:2209897 dev:5451 syat)</li>
+	<li>HTMLアウトライン解析の改善 (svn:1432 Develop/8 patches:2051936 dev:5405 あろか)</li>
+	<li>最大化画面からのタブ切り離しを可能に (svn:1419 patches:1842668 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>長すぎるファイルパスのオープン・クローズで落ちる (svn:1474 patches: 2002211 dev:5363 data:6689 dev:4733 data:5941 dev:5475 なすこじ)</li>
+	<li>設定ダイアログでOKすると非アクティブなウィンドウのツールバーが全て有効となる (svn:1472 patches:2124374 dev:5430 なすこじ)</li>
+	<li>BCCでコンパイルできない(_strlwr未定義エラー) (svn:1470 patches:2308427 dev:5461 ryoji)</li>
+	<li>コンボボックスでリストを表示したまま文字列を修正し確定すると文字列が消える (svn:1454 patches:2164156 dev:5442 syat)</li>
+	<li>上書きモードで改行より右側に文字を入力すると正しい位置に文字が追加されない (svn:1426 patches:2029982 data:6704 dev:5397 ryoji, なすこじ)</li>
+	<li>フリーカーソルで改行ぶら下げONの設定だと右矢印キーで折り返し桁を超えてカーソル移動する (svn:1425 patches:2041524 dev:5401 ryoji)</li>
+	<li>入力補完の[編集中ファイルから...]でメモリリーク (svn:1421 patches:2025814 dev:5393 ryoji)</li>
+	<li>入力補完の[編集中ファイルから...]かつ[大文字小文字を同一視...]で補完候補が過度に絞られる (svn:1421 patches:2025814 data:6720 dev:5392 なすこじ)</li>
+	<li>Windows 98/MEでShiftキーを押しながらのDrag &amp; Drop移動操作が移動にならない (svn:1392 patches:1999312 dev:5356 ryoji)</li>
+	<li>行番号やルーラーの表示領域でもキャレットが表示される (svn:1382 patches:1988108 ryoji)</li>
+	<li>Grep結果が分割他ビューに反映されない (svn:1381 patches:1986607 ryoji)</li>
+	<li>「名前をつけて保存」の保存改行コードがその後の上書き保存にも適用されてしまう (svn:1380 patches:1921321 ryoji)</li>
+	<li>広い範囲（数千行）を削除すると異常終了することがある (svn:1369 patches:1977756 ryoji)</li>
+	<li>画面のちらつき削減 (svn:1368 patches:1977678 ryoji)</li>
+	<li>読み取り専用や上書き禁止状態でもDrag &amp; Drop移動できてしまう (svn:1367 patches:1977662 ryoji)</li>
+	<li>文書の行数の桁が増減すると文書右端の表示位置がずれる(svn:1360 patches:1970178 なすこじ)</li>
+	<li>Drag &amp; Drop編集でタイトルバー，キャレット，アンダーライン等の表示が不適切になることがある (svn:1359 patches:1919556 ryoji)</li>
+	<li>タブ切り替えでスクロールバーの動作が不正になることがある (svn:1356 patches:1971010 ryoji)</li>
+	<li>行数が1のときにCDocLineMgr::DeleteNodeが呼ばれるとメモリリークが発生する (svn:1335 patches:1923031 ryoji)</li>
+	<li>CEditWnd::OnMouseMoveでCDropSourceがメモリリークする (svn:1323 patches:1958000 ryoji)</li>
+	<li>[同名のC/C++ヘッダファイルを開く]と[同名のC/C++ソースファイルを開く]の動作が逆(svn:1293 patches:1938647 ryoji)</li>
+	<li>ATOK16/2007の単語登録操作時に単語欄に選択範囲の語句が表示されない (svn:1231 patches:1881776 もか)</li>
+	<li>2ページになる文書の印刷プレビューで前のページに移動するとホイールスクロールができなくなる (svn:1223 patches:1881776 dev:5243 なすこじ，げんた)</li>
+	<li>タブグループ画面からタブを切り離せなくなることがある (svn:1419 patches:1842668 ryoji)</li>
+	<li>C/C++アウトライン解析で#if(0)以降の解析がおかしくなる (svn:1471 patches:1849852 data:6516 じゅうじ，げんた)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>VC++2008対応 (svn:1211 patches:1855829 dev:5225 ryoji)</li>
+	<li>#$@\で始まる文字列の補完がうまくできない (svn:1441 patches:2153215 dev:5414 syat)</li>
+	<li>タブバーツールチップ表示処理の簡素化 (svn:1420 patches:1844808 ryoji)</li>
+	<li>VistaでTortoiseSVN 1.5との併用時に「オープンに失敗」や「エディタ間の対話に失敗」のエラーが発生する問題の対策 (svn:1295 patches:1946334 dev:5288 ryoji)</li>
+	<li>MyGetAncestor関数の動作修正 (svn:1294 patches:1938660 ryoji)</li>
+</ul>
+
+<h3>Dec. 2, 2007 (1.6.2.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>VS2003/2005エディタ互換の行コピー&amp;行貼り付け (svn:1159 patches:1807523 dev:5083 ryoji)</li>
+	<li>トリプルクリック，クラドラプルクリック対応 devwiki:TripleClick (svn:1191 patches:1810231 dev:5080 なすこじ)</li>
+	<li>「選択なしでコピーを可能にする」オプション (svn:1192 patches:1833906 data:6472 ryoji)</li>
+	<li>カーソル位置の縦線 (svn:1197 patches:1791110 もか)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>キーワードセット最大数を25から100に拡張 (svn:1200 patches:1842455 Request/226 data:6495 dev:5210 げんた)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>Undo/Redoでステータスバーやルーラーの行桁位置表示が更新されない (svn:1156 patches:1816675 ryoji)</li>
+	<li>マクロ登録を変更しても変更前のマクロが実行される (svn:1157 patches:1816633 data:6373 げんた)</li>
+	<li>最小化の操作でタブが切り替わる (svn:1160 patches:1818501 dev:5137 FC9#616 ryoji)</li>
+	<li>印刷設定ダイアログで印刷設定を切り替えると「用紙の向き」のラジオボタンが縦・横両方ともオンになる (svn:1177 patches:1829778 dev:5177 ryoji)</li>
+	<li>ツールバーアイコン登録で「その他」カテゴリの水平線を選択すると未定義アイコンが挿入される (svn:1198 patches:1812307 data:6362 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>マウスリリース時の対括弧強調表示 (svn:1158 patches:1815933 ryoji)</li>
+	<li>アウトライン解析とバージョン情報ダイアログからアイコンを除去 (svn:1163 patches:1820655 dev:5139 げんた，ryoji)</li>
+	<li>IME Watcher対応 (svn:1179 patches:1827485 data:6367 dev:5129 ryoji)</li>
+	<li>C++アウトライン解析のAttribute(C++/CLI)対応 (svn:1196 patches:1733921 dev:4837 げんた)</li>
+	<li>外部マクロのツールバーへの登録処理見直し．マクロ定義の有無と登録を切り離した． (svn:1198 patches:1812307 ryoji)</li>
+</ul>
+
+<h3>Oct. 17, 2007 (1.6.1.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>マウスにてウィンドウをアクティベートした時、クリック位置へカーソルを移動しない (svn:1150 patches:1810212 data:6336 dev:5080 なすこじ/げんた)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>引用符で囲まれたコマンドラインオプションを認識する (svn:1141 patches:1791112 げんた) ふぁんくらぶでの意見より</li>
+	<ul>
+		<li>引用符を付けても-で始まるファイルはオプションと認識されます．</li>
+		<li>オプションと認識させないためには，ファイル名の直前に--オプションを置いてください．</li>
+		<li>このオプションより後ろは全てファイル名と解釈されます．</li>
+	</ul>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>上下分割バーを動かすとアクティブペインが下に切り替わる (svn:1139 patches:1805643 ryoji)</li>
+	<li>マクロ"FileOpen"で相対パス，ショートネームを指定すると，当該ファイルが編集中でもフォーカスが移らずに新たに開かれてしまうことがある． (svn:1140 patches:1806006 げんた)</li>
+	<li>新規タブグループでタブが消えることがある． (svn:1143 patches:1801168 dev:5063 ryoji)</li>
+	<li>Undo/Redo後のカーソル上下移動で不適切な桁位置に移動することがある． (svn:1148 patches:1811635 ryoji)</li>
+	<li>読み取り専用でもUNDO/REDOが機能していた (svn:1149 patches:1812386 data:6265 げんた)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>半角文字上のクリックでもカーソルを左右に振り分ける (svn:1142 patches:1802794 data:6333 ryoji)</li>
+</ul>
+
+<h3>Sep. 27, 2007 (1.6.0.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>Grep 画面へのドラッグ＆ドロップ (svn:1117 patches:1786543 bosagami, げんた)</li>
+	<li>Vista UACとマルチユーザへの対応 (svn:1120 patches:1721425 dev:4809 ryoji)</li>
+	<ul>
+		<li>sakura.ini等の設定ファイルを個人のプロファイルディレクトリに置ける</li>
+		<li>管理者権限とユーザ権限のプロセス混在を防止</li>
+		<li>sakuextとの連携</li>
+	</ul>
+	<li>Pythonアウトライン解析 (svn:1121 patches:1668208 げんた)</li>
+	<li>外部コマンドへの編集文書の書き出しおよび出力の取り込み (svn:1124 patches:1553455 dev:4572 maru (げんた，ryoji))</li>
+	<li>bregonig.dllを正規表現DLLとして認識する (svn:1125 patches:1742481 dev:4877 げんた)</li>
+	<li>正規表現DLLを指定可能に (svn:1125 patches:1742481 dev:4910 dev:4937 data:6232 げんた)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>改行コード表示のLFとCRの図形を入れ換えて↓＝LF, ←＝CRとした (svn:1119 patches:1775980 data:6220 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>強調キーワードセットの削除後，セットを追加して編集すると最終セットが破壊される (svn:1111 patches:1753916 dev:4926 ryoji)</li>
+	<li>グループ化時の[XX]ボタンが「編集の全終了」になっている (svn:1112 patches:1759555 dev:4941 ryoji)</li>
+	<li>画面の高さが３ライン以下のときカーソルが上のルーラーに重なる(svn:1113 patches:1758102  dev:4936 dev:3432 じゅうじ)</li>
+	<li>ポップアップウインドウなど出すマクロをダブルクリックに割り付けると，その後選択開始状態のままになる (svn:1114 patches:1750637 macro:380 dev:4917 maru)</li>
+	<li>次の／前のウィンドウが分割画面内で巡回動作しない (svn:1115 patches:1784912 dev:4975 ryoji)</li>
+	<li>Undoでスクロールバーが更新されない．カーソル行アンダーラインの残骸が出る．(svn:1116 patches:1757559 dev:4934 ryoji)</li>
+	<li>コマンドラインの行・桁指定(-Y=num)で開いたとき改行の後ろにカーソルが移動することがある (svn:1118 patches:1776384 data:6223 ryoji)</li>
+	<li>履歴（カーソル位置の復元）で開いたときにカーソル位置が左にずれることがある (svn:1118 patches:1776384 ryoji)</li>
+	<li>外部で変更されたファイルを開き直したり、別の文字コードを指定して開き直すとカーソルが不適切な位置になることがある (svn:1118 patches:1776384 ryoji)</li>
+	<li>左下－右上の矩形選択領域に対する置換が実行されない (svn:1123 patches:1798850 dev:5046 げんた)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>Turbo C++ Explorer Edition対応 (svn:1122 patches:1558771 dev:4583 ryoji)</li>
+</ul>
+
+<br>
+</BODY></HTML>

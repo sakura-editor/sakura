@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>置換</TITLE>
+<META NAME="MS-HKWD" CONTENT="置換">
+<META NAME="MS-HKWD" CONTENT="ReplaceDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>置換</h2>
+文字列置換用のダイアログを開きます。文字列の置換を行います。<br>
+検索にもあるオプションは、<a href="HLP000059.html">検索</a>と同じです。<br>
+<div class=li200>
+<b>(置換前)</b> …… 置換前の文字列を指定します。<br>
+<b>(置換後)</b> …… 置換後の文字列を指定します。<br>
+□<b>クリップボードから貼り付ける</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換後の文字列のかわりに、クリップボードのテキストで代用します。<br>
+□<b>単語単位で探す</b><br>
+□<b>英大文字と小文字を区別する</b><br>
+□<a href="HLP000089.html"><b>正規表現</b></a> 	※<br>
+□<b>「すべて置換」は置換の繰返し</b>(sakura:1.5.15.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;正規表現を使用する場合にのみ指定可能です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;旧「すべて置換」及び「すべて行置換」の切り替え機能に相当します。<br>
+■<b>見つからないときにメッセージを表示</b><br>
+■<b>置換ダイアログを自動的に閉じる</b><br>
+□<b>先頭（末尾）から再検索する</b><br>
+</div><br>
+<b>&lt;置換対象&gt;</b><br>
+置換前の文字列と、置換後の文字列の扱いを設定します。<br>
+<div class=li200>◎<b>選択文字列</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列を、置換後の文字列に置き換えます。<br>
+○<b>選択始点挿入</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列の前に、置換後の文字列を挿入します。<br>
+○<b>選択終点追加</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列の後に、置換後の文字列を追加します。<br>
+○<b>行削除</b>(sakura:2.2.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換前の文字列が含まれるロジック行を削除します。<br>
+</div><br>
+<b>&lt;範囲&gt;</b><br>
+<div class=li200>○<b>選択範囲</b><br>
+◎<b>ファイル全体</b><br>
+</div><br>
+<div class=li200>
+<b>[上検索]</b> ボタン …… カーソル位置よりも前を検索します。<br>
+<b>[下検索]</b> ボタン …… カーソル位置よりも後ろを検索します。<br>
+<b>[該当行マーク]</b> ボタン …… 検索した行をすべてブックマークに設定します。<br>
+<b>[置換]</b> ボタン …… 下検索で見つかった検索語を置換し、次の検索語に移動します。<br>
+<b>[すべて置換]</b> ボタン … ファイル全体で見つかった検索語をすべて置換します。<br>
+<s><b>[すべて行置換]</b> ボタン … ファイル全体で見つかった検索語をすべて置換します。(sakura:1.5.10.0以降)</s>sakura:1.5.15.0よりオプションになりました。<br>
+</div><br>
+<img src="images/Replace.png"><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+「すべて置換」は置換の繰返しのオプションは、位置指定(行頭指定^や単語区切り指定\b)を含むパターンを消去(置換後の文字列が空)する場合に結果が異なります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例)「ababab」に対して「^ab」を「」に置換すると<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>有効時：</b>「ababab」が削除されます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>無効時：</b>行頭の「ab」だけが削除されます。<br>
+<br>
+<font color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ReplaceDialog( );<br>
+・記録:	実行した[<a href="HLP000061.html">上検索</a>]、[<a href="HLP000060.html">下検索</a>]、[<a href="HLP000292.html">置換</a>]、[<a href="HLP000293.html">すべて置換</a>]で記録<br>
+</BODY></HTML>

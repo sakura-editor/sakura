@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>タイプ別設定 『正規表現キーワード』プロパティ</TITLE>
+<META NAME="MS-HKWD" CONTENT="タイプ別設定 『正規表現キーワード』プロパティ">
+<META NAME="MS-HKWD" CONTENT="正規表現キーワード">
+<META NAME="MS-HKWD" CONTENT="クリッカブルURLのカスタマイズ">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>タイプ別設定 『正規表現キーワード』プロパティ</h2>
+ <a href="HLP000074.html">『スクリーン』</a>   <a href="HLP000075.html">『カラー』</a>   <a href="HLP000319.html">『ウィンドウ』</a>   <a href="HLP000197.html">『支援』</a>   <a href="HLP000203.html">『正規表現キーワード』</a>   <a href="HLP000315.html">『キーワードヘルプ』</a><br>
+<img src="images/TypeRegexKey.png"><br>
+<br>
+□<b>[正規表現キーワードを使用する]</b>チェックボックス<br>
+正規表現キーワードによる色分けを有効にします。<br>
+正規表現ライブラリが見つからない場合は使用できません。<br>
+右上に正規表現ライブラリのバージョンが表示されていれば使用可能です。<br>
+<br>
+<b>&lt;正規表現キーワード&gt;</b><br>
+正規表現キーワードによる色分けを行います。<br>
+<!--
+正規表現キーワードは、他の色分けよりも優先して処理されます。<br>
+-->
+この機能を利用するには正規表現ライブラリが必要です。<br>
+正規表現キーワードを使用する場合でも、正規表現キーワード1～10についてはカラーでの色指定がチェックされていなければ色分けされません。<br>
+大文字小文字を区別しない場合は /パターン/ki と記載します。<br>
+<div class=li200>
+<b>[正規表現キーワード]</b>リスト<br>
+登録されている正規表現キーワードのリストです。<br>
+<!--
+リストの上位にあるキーワードほど検索の優先順位が高くなります。<br>
+-->
+キーワードは最大で１００個まで登録できます。<br>
+キーワード長と個数の制限は各キーワードの文字数+1の合計が10001文字までです。<br>
+<br>
+<b>[正規表現]</b>, <b>[色指定]</b><br>
+挿入・追加・更新する正規表現キーワードのデータを指定します。<br>
+リストを選択すると、その情報がこのエリアに表示されます。<br>
+正規表現は最大で<del>９９</del>1000文字まで入力できます。(2.0.6.0以降)<br>
+正規表現の書式については、<a href="HLP000089.html">利用可能な正規表現</a>をご覧下さい。<br>
+色指定はカーソル行アンダーラインを除く色を指定できます。<br>
+正規表現キーワード1～10については、カラーでの色指定チェックを有効にしなければ色分けされません。<br>
+<br>
+<b>[インポート]</b>, <b>[エクスポート]</b>ボタン<br>
+正規表現キーワード設定のインポート/エクスポートができます。<br>
+<b>インポート</b>は正規表現キーワード設定ファイルを読み込み、現在の正規表現キーワード設定に反映させます。<br>
+<b>エクスポート</b>は現在の正規表現キーワード設定をファイルに書き出します。<br>
+エクスポートした正規表現キーワード設定ファイルは、後でインポートしたいときに使います。<br>
+<br>
+<b>[挿入]</b>, <b>[追加]</b>, <b>[更新]</b>, <b>[削除]</b>ボタン<br>
+正規表現キーワードを登録したり削除したりします。<br>
+「挿入」は、正規表現と色指定に入力した値をリストのカーソル位置に挿入します。<br>
+挿入したい位置をリストで選択してから正規表現と色指定を入力し、挿入ボタンを押します。<br>
+「追加」は、正規表現と色指定に入力した値をリストの最後に追加します。<br>
+「更新」は、正規表現と色指定に入力した値でリストのカーソル位置の情報を更新します。<br>
+更新したい位置をリストで選択してから正規表現と色指定を入力し、更新ボタンを押します。<br>
+「削除」は、リストのカーソル位置の情報を削除します。<br>
+<br>
+<b>[先頭]</b>, <b>[最終]</b>, <b>[上へ]</b>, <b>[下へ]</b>ボタン<br>
+リストの登録されているカーソル位置のキーワードを移動します。<br>
+</div>
+<br>
+[色指定] に URL を選んだ場合、<a href="HLP000129.html">クリッカブルURL</a> になります。<br>
+<a href="HLP000075.html">『カラー』</a>の URL の[色分け/表示]が OFF でも動作します。<br>
+初期設定：テキストのみ(sakura:2.0.0.0以降)、基本のみ(sakura:1.6.6.0以前)<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><th>キーワード</th><th>色指定</th><th>意味/例</th></tr>
+<tr><td>/\b[a-zA-Z]:\\[\w\-_\.\\\/\$%~]*/k</td><td>URL</td><td>Windowsのパス表記(絶対パス)<br>
+&nbsp;&nbsp;&nbsp;○ <a href="#">C:\Directory\File.txt</a><br>
+&nbsp;&nbsp;&nbsp;○ <a href="#">D:\Directory\日本語.txt</a> (bregonig.dll使用時)<br>
+&nbsp;&nbsp;&nbsp;○ "<a href="#">C:\Directory\File.txt</a>"<br>
+&nbsp;&nbsp;&nbsp;× AC:\Directory\File.txt<br>
+&nbsp;&nbsp;&nbsp;× </a>C:\Program</a> files<br>
+&nbsp;&nbsp;&nbsp;× <a href="#">C:\dir\file</a>(1).txt
+</td></tr>
+<tr><td>/\B\\\\[\w\-_\.\\\/\$%~]+/k</td><td>URL</td><td>ネットワークパス(絶対UNCパス)<br>
+&nbsp;&nbsp;&nbsp;○ <a href="#">\\a</a><br>
+&nbsp;&nbsp;&nbsp;○ <a href="#">\\server-name\Directory\file.txt</a><br>
+&nbsp;&nbsp;&nbsp;○ <a href="#">\\127.0.0.1\</a><br>
+&nbsp;&nbsp;&nbsp;× Alpha\\server\Directory\file.txt</a><br>
+&nbsp;&nbsp;&nbsp;× サーバー\\server\Directory\file.txt</td></tr>
+</table>
+bregonig.dll 使用時は、日本語のパスもリンクになります。<br>
+
+
+
+<br>
+<b>[設定フォルダ]</b><br>
+<a href="HLP000077.html">設定フォルダ</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>
+</BODY></HTML>

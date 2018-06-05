@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>改行コードについて</TITLE>
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>改行コードについて</h2>
+<h3>取り扱える改行コード</h3>
+複数の改行コードが混在したファイルも取り扱えるようにする<br>
+<div class=li200>
+<strike>CR00LF00	( 0d 00 0a 00 )</strike>	<img src="images/hint.png">廃止しました。(sakura:1.3.4.1)<br>
+CRLF	( 0d 0a )<br>
+<strike>LFCR	( 0a 0d )</strike>	<img src="images/hint.png">廃止しました。(sakura:2.0.0.0)<br>
+CR	( 0d )<br>
+LF	( 0a )<br>
+<br>
+Unicode/UniocdeBEのみ以下の改行コードを読み書きできます。(sakura:2.1.0.0 以降)<br>
+UTF-8/UTF-7/一部コードページでも以下の改行コードで読み書きできます。(sakura:2.2.0.0以降)<br>
+また「改行コードNEL,PS,LSを有効にする」オプション(<a href="HLP000144.html">編集タブ</a>)で、改行コードとして利用しないようにすることもできます。(sakura: mocaskr_ver 004以降)<br>
+NEL	( 85 )<br>
+LS	( 2028 )<br>
+PS	( 2029 )<br>
+</div><br>
+<h3>ファイル読み込み時の処理</h3>
+ファイルを読み込む際は改行単位で行バッファに追加していく。<br>
+<ul>
+<li>ファイルの先頭から1バイトずつサーチし、改行コードが出現するまでループする。</li>
+<li>取り扱える改行コードのどれに該当するのか調べる。</li>
+<li>行テキストと改行コードの情報を行バッファに格納する。</li>
+<li>ファイルの終わりまで繰り返す。</li>
+<li>ファイルの最後に改行なしの行がある場合も、行テキストと改行コードなしの情報を行バッファに格納する。</li>
+<li>改行コードの種類を判別する。これにより、編集時にEnter等で挿入される改行コードを決定する。</li>
+</ul>
+<br>
+<!--
+<h3>ファイル書き込み時の処理</h3>
+特別に指定しない限り、保存時の改行コードは、編集中データの状態のままファイルに保存される。<br>
+名前を付けて保存ダイアログで指定した場合は、その改行コードで統一される。<br>
+(ANSI版)そのファイルを開きなおすまでは、上書き保存でも先ほど指定したコードで統一されて保存されるが、画面上は書き換わらない。<br>
+(Unicode版)編集データも含めて統一される。上書き保存では変換されない。<br>
+<br>
+-->
+
+<h3>クリップボードへコピーする処理</h3>
+■<b><font color="blue">矩形選択時</font></b><br>
+<div class=li200>
+	"<font color="red">MSDEVColumnSelect</font>"形式のデータをクリップボードに格納<br>
+	<ul>
+		<li>データ内容不定</li>
+	</ul>
+
+	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納<br>
+	<ul>
+		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
+		<li>すべての改行コードをCRLFに統一</li>
+		<li>末尾にnull文字を付加</li>
+	</ul>
+
+	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納<br>
+	<ul>
+		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
+		<li>先頭4～4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
+		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
+		<li>すべての改行コードをCRLFに統一</li>
+	</ul>
+</div>
+
+■<b><font color="blue">線形選択時</font></b><br>
+<div class=li200>
+	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納
+	<ul>
+		<li>改行コードは元テキストの状態を保持する。</li>
+		<li>末尾にnull文字を付加</li>
+	</ul>
+	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納
+	<ul>
+		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
+		<li>先頭4～4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
+	</ul>
+</div>
+■<b><font color="blue">未選択時</font></b><br>
+<div class=li200>
+	カーソル位置のレイアウト行データを線形選択時の方法でコピーし、
+	加えて、<a href="HLP000144.html">共通設定</a>のランモード貼付設定が有効になっている場合、
+	"<font color="red">MSDEVLineSelect</font>"形式と
+	"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式のデータをクリップボードに格納
+</div>
+<br>
+
+<h3>クリップボードから貼り付ける処理</h3>
+<font color="green">クリップボードの形式を調べる</font><br>
+<div class=li200>
+	"<font color="red">MSDEVColumnSelect</font>"形式がある場合
+	<ul>
+		<li>矩形貼り付けとする</li>
+	</ul>
+	"<font color="red">MSDEVLineSelect</font>"形式または
+		"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式がある場合
+	<ul>
+		<li><a href="HLP000144.html">共通設定</a>で有効の場合、ラインモード貼付とする</li>
+	</ul>
+	
+	"<font color="red">SAKURAClipW</font>"形式がある場合
+	<ul>
+		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
+	</ul>
+	<font color="red">CF_UNICODETEXT</font>形式のデータがある場合
+	<ul>
+		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
+		<li>null文字(0x00)以降切捨て</li>
+	</ul>
+	<font color="red">CF_OEMTEXT</font>形式のデータがある場合
+	<ul>
+		<li>そのデータを取り出しShift_JISをUnicodeに変換する。</li>
+		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
+		<li>無効の場合、改行コードは元テキストの状態を保持する。</li>
+		<li>null文字(0x00)以降切捨て</li>
+	</ul>
+</div><br>
+<h3>[Enter] キー入力時の処理</h3>
+<div class=li200>挿入される改行コードの種類はファイル読み込み時に決定する。<br>
+[Enter] キー入力時は、その改行コードに変換して格納する。<br>
+</div><br>
+
+<h3>アンドゥ・リドゥバッファへの改行コード格納形式</h3>
+<div class=li200>
+前バージョンは改行コードを\rで表現していた。<br>
+新バージョンはCRLF等をそのまま格納する。<br>
+バッファからの取り出し処理の際、複数種類の改行コードを判別する。<br>
+</div><br>
+
+<h3>編集画面での記号表記について</h3>
+1.6.0.0より改行コードの表記が変わりましたので、ご注意ください。
+<ul>
+<li><b>1.5.17.0以前</b>：LF←，CR↓</li>
+<li><b>1.6.0.0以降</b>：LF↓，CR←</li>
+</ul>
+なお、これは以前のバージョンが間違えていたわけではなく、過去の経緯によるものなので仕様変更と理解してください。<br>
+
+</BODY></HTML>

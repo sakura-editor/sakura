@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>Visual Style</TITLE>
+<META NAME="MS-HKWD" CONTENT="Visual Style">
+<META NAME="MS-HKWD" CONTENT="視覚スタイル">
+<META NAME="MS-HKWD" CONTENT="sakura.exe.manifest">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>Visual Style</h2>
+XP以降のOSでは<em>sakura.exe.manifest</em>を設置するとVisual Style(視覚スタイル)に出来ます。<br>
+<br>
+VistaではすぐにVisual Styleが適用されないことがあるようです。その場合は一回だけサクラエディタを互換モードで起動すると次回からVisual Styleが適用されます。<br>
+<br>
+<small>*sakura.exe.manifestの内容は頁末参照</small><br>
+
+<h2>sakura.exe.manifestの内容</h2>
+以下の内容のファイルをsakura.exeと同じ場所に UTF-8 で保存します。<br>
+<em>sakura.exe.manifest</em>が<a href = "HLP000080.html">Virtual Store</a>に入らないように注意してください。<br>
+
+<br>
+XP以降のVisual Styleを有効にする例です。<br>
+<font color = "red">このmanifestではVirtual Storeを無効にできません。</font>
+<pre style = "border:1px solid;">
+&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
+
+&lt;description&gt;サクラエディタ&lt;/description&gt;
+&lt;dependency&gt;
+    &lt;dependentAssembly&gt;
+        &lt;assemblyIdentity
+            type="win32"
+            name="Microsoft.Windows.Common-Controls"
+            version="6.0.0.0"
+            processorArchitecture="X86"
+            publicKeyToken="6595b64144ccf1df"
+            language="*"
+        /&gt;
+    &lt;/dependentAssembly&gt;
+&lt;/dependency&gt;
+&lt;/assembly&gt;
+</pre>
+なお x64 版サクラエディタは processorArchitecture を "amd64" 、IA64 版 は "ia64" にしないと起動できません。
+type は "win32" のままで問題ありません。
+</BODY></HTML>

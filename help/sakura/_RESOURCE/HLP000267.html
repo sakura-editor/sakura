@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>キーボードマクロ</TITLE>
+<META NAME="MS-HKWD" CONTENT="キーボードマクロ">
+<META NAME="MS-HKWD" CONTENT="キーマクロ">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>キーボードマクロ</h2>
+キーマクロの記録開始／終了コマンドで作成される<a href="HLP000204.html">マクロ</a>の形式です。(キーマクロはキーボードマクロの短縮名で、同じ意味です。)<br>
+キーボードマクロは他のマクロとは違い、特別なDLLがなくても実行可能です。<br>
+<br>
+■言語仕様<br>
+言語仕様は、サクラエディタのバージョンで詳細が異なっていて、特に古いバージョンではここに記載している方法では動作しないことがありますので、注意してください。<br>
+変数、制御構文、演算などは今のところ一切使えません。関数のみ使えます。<br>
+関数は 「関数名( 引数1, 引数2 ); 」で、引数の数・種類は関数によって異なります。<br>
+関数名の一部は、「ヘルプ」-「<a href="HLP000057.html">キー割り当て一覧をコピー</a>」を使い、「貼り付け」をすれば機能名から関数名が分かります。<br>
+関数名は大文字小文字を区別します。S_はあってもなくても動作します。<br>
+引数の種類は「整数型」と「文字列型」があります。<br>
+数値型は必ず10進数で記載します。<br>
+文字列型は、シングルクオーテーション「' ... '」またはダブルクオーテーション「" ... "」で囲います。<br>
+文字列の中で、クオーテーションを使いたい場合は、「\'」「\"」と記載します。<br>
+「\」自身を使いたい場合は「\\」と書きます。<br>
+コメントは、「//」から行末までがコメント部分です。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+キーボードマクロでは「\」がエスケープシーケンスとして働きますが、PPAマクロでは普通の文字として解釈されます。<br>
+</BODY></HTML>

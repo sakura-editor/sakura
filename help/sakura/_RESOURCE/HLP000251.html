@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>DIFF差分表示</TITLE>
+<META NAME="MS-HKWD" CONTENT="DIFF差分表示">
+<META NAME="MS-HKWD" CONTENT="DiffDialog">
+<META NAME="MS-HKWD" CONTENT="Diff">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>DIFF差分表示</h2>
+DIFFによる行単位の差分表示を行います。<br>
+<img src="images/FileDiff.png"><br>
+<br>
+DIFF差分表示を利用するには、diff.exe が必要です。<br>
+diff.exe はパッケージに含まれません。別途ソフトウェア配布サイト等からダウンロードしてください。<br>
+<img src="images/note.png"><b>注意</b><br>
+GNU DIFF 2.5/2.7が必要です．WinCVS 1.2付属のdiffはパス中のスペースを正しく扱えないので使わないでください．<br>
+<br>
+入手先:<a href="http://w32tex.org/index-ja.html" target=_blank>http://w32tex.org/index-ja.html</a><br>
+「W32 utilities」のページから、patch-diff-w32.zip をダウンロードします。<br>
+<br>
+差分表示を行うと行番号の左側に差分状態が表示されます。<br>
+差分状態の意味は以下のとおりです。<br>
+<div class=li200>
+・「＋」	追加	その行が編集中ファイルに存在しますが、相手ファイルには存在しません。<br>
+・「！」	変更	その行が編集中ファイルと相手ファイルで異なります。その行の前後が含まれる場合もあります。<br>
+・「↑」	削除	その行と前の行の間に相手ファイルには存在しますが、編集中ファイルに存在しない行があります。<br>
+・「↓」	削除	その行の次に相手ファイルには存在しますが、編集中ファイルに存在しない行があります。EOF以降となります。<br>
+</div><br>
+差分表示の行番号の色は<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で設定できます。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+diff.exe は サクラエディタ本体と同じフォルダに置く必要があります。<br>
+diff.exeは、GNU diff 2.5/2.7 互換で、DOS版でない(=WinCUI版)必要があります。<br>
+スペースを含むパスを扱えない物もありますので、注意してください。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: DiffDialog( );<br>
+・記録:	×<br>
+<br>
+・構文: Diff( str1 :String, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;オプション<br>
+・記録:	×<br>
+・解説<br>
+オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;大文字小文字同一視<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;空白無視<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;空白変更無視<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;空行無視<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;TAB-SPACE変換<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;編集中のファイルが旧ファイル<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;DIFF差分がないときにメッセージ表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;- No Use -<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</BODY></HTML>

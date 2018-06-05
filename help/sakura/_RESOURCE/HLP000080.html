@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>Virtual Store</TITLE>
+<META NAME="MS-HKWD" CONTENT="Virtual Store">
+<META NAME="MS-HKWD" CONTENT="UAC">
+<META NAME="MS-HKWD" CONTENT="sakura.exe.manifest">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<script type="text/javascript">HHCtrlPopup();</script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>Virtual Store</h2>
+Vista以降のOSでは、特に設定を行わずにサクラエディタを単品で起動させると、Virtual Storeが有効になります。
+<em>sakura.exe.manifest</em>を設置することで<a href="javascript:id=hhctrl.TextPopup('User Account Control\nVista以降に実装されたOS保護機能','ＭＳゴシック,11',9,9,-1,-1)">UAC</a>に対応した動作になり、Virtual Storeを無効にできます。<br>
+<br>
+<small>*sakura.exe.manifestの内容は頁末参照</small><br>
+
+<h3>Virtual Storeとは</h3>
+Program FilesフォルダやWindowsフォルダ配下に設定を保存するようなVista未対応のアプリが、Vista上では急に動かなくなってしまうことが無いように設けられた互換性維持機能です。
+Vista未対応アプリはVirtual Store有効で動作します。Virtual Store有効のアプリがProgram Filesのように保護強化されたフォルダにファイルを保存しようとすると、目的のフォルダではなくVirtual Storeと呼ばれる別のフォルダにファイルが保存され、
+以後、同じファイルを開こうとしたときにはVirtual Store側にあるファイルが開かれる仕組みになっています。
+
+<h3>Virtual Store有効時の問題</h3>
+Virtual Store有効のままでアプリを使用していると、そのアプリで保護フォルダのファイルを操作したときに次のような混乱が起きます。
+<ul>
+<li>新規保存したはずなのにエクスプローラで見るとファイルが見つからない</li>
+<li>上書き保存したのにメモ帳で見ると内容が更新されていない</li>
+<li>エクスプローラでファイルを上書きしたのに開いてみると更新されていない</li>
+</ul>
+
+アプリに適用されるVirtual Storeを無効にすれば、保護フォルダへの書き込みは通常通り拒否され、保護フォルダのファイルを開こうとしてVirtual Store側のファイルが開くこともないので、上記のような混乱も起きなくなります。
+
+<h3>Virtual Storeを無効にする場合の注意事項</h3>
+必ず<a href="HLP000078.html">ユーザー別設定</a>の機能を利用し、設定ファイル(sakura.ini)が非保護フォルダに保存されるようにしてください。
+その際、ユーザー別設定構成ファイル<em>sakura.exe.ini</em>の編集はデスクトップなどの非保護フォルダで行い、編集後のファイルをエクスプローラでコピーしてください。
+<br>
+既に、<a href="HLP000078.html">ユーザー別設定</a>を適用せずにProgram Filesにインストールして使用している場合はインストール先フォルダ下の設定ファイルやその他のファイルがVirtual Storeに転送されている可能性があります。
+エクスプローラで確認して転送ファイルのほうを優先的に<a href = "HLP000077.html">設定フォルダ</a>にコピーしてください。
+<br>
+<br>
+Program Filesではなく、保護対象外のフォルダにインストールして使用する場合は<a href="HLP000078.html">ユーザー別設定</a>にする必要はありません。<br>
+<br>
+
+1.5.17.0以前のバージョンでは<a href="HLP000078.html">ユーザー別設定</a>に対応していないため、Virtual Store無効での利用ができません。
+
+<h3>Virtual Storeに転送されたファイルの確認方法</h3>
+フォルダの仮想化されたファイル（Virtual Storeに転送されたファイル）を表示するにはエクスプローラのツールバーに表示される [互換性ファイル]ボタンをクリックします。
+[互換性ファイル]ボタンは、そのフォルダに仮想化されたファイルがある場合にのみ表示されます。<br>
+<br>
+実際のパスは、たとえばProgram Files\sakuraにインストールされているとき、<em>C:\Users\&lt;username&gt;\AppData\Local\Virtual Store\Program Files\sakura</em> が転送先になります。
+
+<h2>sakura.exe.manifestの内容</h2>
+以下の内容のファイルをsakura.exeと同じ場所に保存します。<em>sakura.exe.manifest</em>自身がVirtual Storeに入らないように注意してください。<br>
+<small>*デスクトップなどの非保護フォルダで編集を済ませてエクスプローラでコピーなど。</small><br>
+<br>
+Visual Styleを有効にし、Virtual Storeを無効(UAC対応)にする例です。
+<pre style = "border:1px solid;">
+&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
+&lt;assemblyIdentity
+    name="sakura"
+    processorArchitecture="x86"
+    version="1.0.0.0"
+    type="win32"/&gt;
+&lt;description&gt;Sakura Editor&lt;/description&gt;
+&lt;dependency&gt;
+    &lt;dependentAssembly&gt;
+        &lt;assemblyIdentity
+            type="win32"
+            name="Microsoft.Windows.Common-Controls"
+            version="6.0.0.0"
+            processorArchitecture="*"
+            publicKeyToken="6595b64144ccf1df"
+            language="*"
+        /&gt;
+    &lt;/dependentAssembly&gt;
+&lt;/dependency&gt;
+&lt;trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"&gt;
+    &lt;security&gt;
+        &lt;requestedPrivileges&gt;
+            &lt;requestedExecutionLevel level="asInvoker" uiAccess="false"/&gt;
+        &lt;/requestedPrivileges&gt;
+    &lt;/security&gt;
+&lt;/trustInfo&gt;
+&lt;/assembly&gt;
+</pre>
+</BODY></HTML>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>印刷ページ設定</TITLE>
+<META NAME="MS-HKWD" CONTENT="ページ設定">
+<META NAME="MS-HKWD" CONTENT="印刷ページ設定">
+<META NAME="MS-HKWD" CONTENT="PrintPageSetup">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>印刷ページ設定</h2>
+印刷のページレイアウトに関する設定をします。<br>
+8種類の設定を記憶しておくことができます。<br>
+<br>
+<img src="images/PrintSetting.png"><br>
+<div class=li200>
+<b>ページ設定</b>	ページ設定を選択します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;タイプごとにどの設定を使用するかを記憶しています。<br>
+<b>[設定名変更]</b>	設定名を変更します。<br>
+<br>
+<b>半角フォント</b>	印刷に使用する半角フォントを指定します。<br>
+<b>全角フォント</b>	印刷に使用する全角フォントを指定します。<br>
+<b>フォント高</b>(24)	フォント高 を1/10mm単位で指定します。(sakura:2.1.0.0 以降)<br>
+<b>フォント幅</b>(12)	フォント幅 を1/10mm単位で指定します。(sakura:2.1.0.0 以前)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ポイント単位ではありません。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ポイント単位の高さは右に表示されます。(sakura:2.1.0.0 以降)<br>
+<b>行送り</b>(30)	行と行の間の幅を隙間を指定します。<br>
+<b>段数</b>(1)	段数を指定します。<br>
+<b>段の隙間</b>(7)	段と段の隙間を指定します。<br>
+<b>用紙サイズ</b>(A4)	印刷する用紙のサイズを指定します。<br>
+<b>用紙の向き</b>(縦）	印刷する用紙の向きを指定します。<br>
+<b>余白／上</b>(１0)	ページ上端とページ先頭行との間の隙間を指定します。<br>
+<b>　　　　下</b>(20)	ページ下端とページ最終行との間の隙間を指定します。<br>
+<b>　　　　左</b>(20)	ページ左端と行頭との間の隙間を指定します。<br>
+<b>　　　　右</b>(10)	ページ右端と行末との間の隙間を指定します。<br>
+<br>
+□<b>行番号を印刷</b>	行番号を印刷します。<br>
+■<b>英文ワードラップ</b>	単語の途中で改行しないようにします。<br>
+□<b>行頭禁則</b>	行頭禁則を行います。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;行頭にあってはまずい文字（行頭禁則文字で指定）を前行の行末にぶら下げます。<br>
+□<b>行末禁則</b>	行末禁則を行います。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;行末にあってはまずい文字（行末禁則文字で指定）を次行に追い出します。<br>
+□<b>改行ぶら下げ</b>	行頭に来る改行文字を前行の行末にぶら下げます。<br>
+□<b>句読点ぶら下げ</b>	行頭に来る句読点を前行の行末にぶら下げます。<br>
+<br>
+□<b>カラー印刷</b>	本文と同じカラー設定で印刷します。(sakura:2.1.0.0 以降)<br>
+<br>
+<b>ヘッダー</b>($f)()()<br>
+<b>フッター</b>()(- $p -)()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ヘッダー及びフッターは、左寄せ、中央寄せ、右寄せそれぞれに印字内容が指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000284.html">ExpandParameter</a>の特殊文字が利用可能です。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ヘッダーもしくはフッターが未設定の場合、縦方向の行数が増えます。(sakura: 2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　フォントが設定さていなければ、それぞれ２増えます。<br>
+□<b>使用</b><br>
+<b>[フォント]</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ヘッダー及びフッターに使用するフォントを指定します。(sakura:2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定を解除するには使用のチェックをはずしてください。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;フォントが未指定ならば、本文と同じ半角・全角フォント,サイズで印刷します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;サイズはポイントで指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定フォントはサイズと共に入力領域の上に表示されます。<br>
+<br>
+<b>行あたりの文字数：</b>	現在の設定での文字数を半角文字単位で表示します。<br>
+<b>縦方向の行数：</b>	現在の設定での行数を表示します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;印字可能な文字数が０の場合、[OK]で確定できません。<br>
+</div><br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文:	PrintPageSetup( );<br>
+・記録:	×<br>
+</BODY></HTML>

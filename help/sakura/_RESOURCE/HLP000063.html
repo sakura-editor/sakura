@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>指定行へジャンプ</TITLE>
+<META NAME="MS-HKWD" CONTENT="指定行へジャンプ">
+<META NAME="MS-HKWD" CONTENT="Jump">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>指定行へジャンプ</h2>
+行番号を指定するとその行へカーソルを移動させることができます。<br>
+<br>
+<b>(行番号)</b><br>
+カーソルを移動したい行番号を指定して下さい。<br>
+<br>
+<b>○折り返し単位の行番号</b><br>
+入力した行番号が、折り返し単位の行番号として扱われます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<b>○改行単位の行番号</b><br>
+入力した行番号が、改行単位単位の行番号として扱われます。<br>
+<br>
+<b>「PL/SQLコンパイルエラー行」</b><br>
+この機能は、OracleのPL/SQLパッケージのソースをSQL*Plusでコンパイルしたり、実行時エラー情報を見たリする場合に使用します。<br>
+コンパイルエラーや実行時エラーが発生した場合に出力されるエラーメッセージを見ると、エラー行番号とソース中の実際の行番号が違いますが、この機能で自動的にエラー行番号から実際の行を算出するので、ソース中の適切な位置へジャンプできます。<br>
+エラー情報が実際のソースの行番号と異なるので、この機能がないとPL/SQLプログラマは仕事になりません(1998年当時)。<br>
+<br>
+<img src="images/note.png"><b>[注意]</b><br>
+<div class=li200>・ジャンプ先の行番号は、改行単位の行番号とみなします。<br>
+・「ブロックの1行目」や、検出されたブロックの行番号は、現在のタイプ別設定における行番号表示の設定（折り返し単位の行番号か改行単位の行番号）に合わせます。<br>
+・<a href="HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>のアウトライン解析方法がPL/SQLに設定されている場合、パッケージ仕様部とパッケージ本体部を自動的に検出します。<br>
+・エラー行番号から実際の行を算出する機能は、Oracle7とSQL*Plusの組み合わせでしか動作確認をしていません。<br>
+</div><br>
+<img src="images/Jump.png"><br>
+<br>
+<img src="images/Jump_PLSQL.png"><br>
+<br>
+<a href="HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>のアウトライン解析方法がPL/SQLに設定されている場合、パッケージ仕様部とパッケージ本体部を自動的に検出します。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: Jump( int1 :Integer, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;ジャンプ先行番号<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	○<br>
+・解説<br>
+オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;折り返し単位の行番号<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;改行単位の行番号（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;PL/SQLコンパイルエラー行を処理する<br>
+<br>
+<a href="HLP000289.html">MoveCursor / MoveCursorLayout</a> もあります。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+キーマクロ中では 10進数の定数表記しか受け付けません。<br>
+オプションは10進数に直して記述してください。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+指定行へジャンプのダイアログをマクロで出すことはできません。<br>
+</BODY></HTML>

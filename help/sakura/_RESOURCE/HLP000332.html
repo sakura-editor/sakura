@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>名前を指定してマクロ実行</TITLE>
+<META NAME="MS-HKWD" CONTENT="名前を指定してマクロ実行">
+<META NAME="MS-HKWD" CONTENT="ExecExternalMacro">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>名前を指定してマクロ実行</h2>
+ダイアログからマクロファイルを選択して実行します<br>
+<br>
+
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ExecExternalMacro( str1 :String, str2:String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;(オプション)実行したいマクロファイルのパス、またはコード<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;(オプション)マクロ種別の.を除く拡張子、'mac', 'js', 'vbs'等<br>
+・記録:	○<br>
+・解説<br>
+<div class="li200">
+str1 および str2 を省略すると、ファイルを開くダイアログが表示されます。<br>
+PPAの実行中に別のPPAを実行しようとするとメッセージを表示して以降のPPA実行を中止します。<br>
+str1 のみを指定して str2 を省略した場合、str1 は、マクロファイルのパスになります。<br>
+str2 を指定した場合、str1 は str2 の種類の、マクロのコードそのものになります。<br>
+ファイルを実行の例：ExecExternalMacro( 'file.mac' );<br>
+コードを実行の例：ExecExternalMacro( 'Editor.ChangeWrapColm(Editor.ChangeWrapColm(0)+2);', 'js' );<br>
+</div>
+sakura:1.6.3.0 コマンド追加<br>
+sakura:1.6.5.0 str2 追加(PPA以外)<br>
+<br>
+
+</BODY></HTML>

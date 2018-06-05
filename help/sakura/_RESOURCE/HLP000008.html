@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>インクリメンタルサーチについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="インクリメンタルサーチについて">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>インクリメンタルサーチについて</h2>
+インクリメンタルサーチは、1文字入力するごとに随時検索して、検索対象をすばやく見つけることのできる機能で、現在位置から前方なら下、後方なら上に向かって検索できます。(sakura:1.5.0.0以降)<br>
+<br>
+インクリメンタルサーチは下記のコマンドで使用できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000304.html">前方インクリメンタルサーチ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000305.html">後方インクリメンタルサーチ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000306.html">正規表現前方インクリメンタルサーチ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000307.html">正規表現後方インクリメンタルサーチ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000308.html">MIGEMO前方インクリメンタルサーチ</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;・<a href="HLP000309.html">MIGEMO後方インクリメンタルサーチ</a><br>
+<br>
+■使い方<br>
+ショートカットキーか、メニューから選択して、インクリメンタルサーチを実行します。<br>
+インクリメンタルサーチモードになり、ステータスバーに「I-Serch:」と表示されます。そのままの状態で、探したい文字列を入力すると、随時検索してくれます。<br>
+(インクリメンタルサーチでは、ダイアログは表示されません。:-)<br>
+「TAB・逆TABインデント」は、TAB扱いになります。「SPACE・逆SPACEインデント」は、SPACE文字扱いになります。また「カーソル前を削除」は、インクリメンタルサーチの文字列が一文字削除されます。<br>
+インクリメンタルサーチモードを解除したいときは、カーソルを移動したり「各種モードの取り消し(ESC)」など、上記以外のコマンドを実行してください。<br>
+<br>
+<img src="images/IncrementalSearch.png"><br>
+<br>
+<a name="migemo">■Migemoについて</a><br>
+Migemoとは、ローマ字のままアルファベット・日本語をインクリメンタルサーチできる機能です。<br>
+例えば、「桜」を検索したい場合は「sak」「sakur」等で目的の場所に移動できます。<br>
+詳しい説明は、<a href="http://namazu.org/~satoru/migemo/" target=_blank>http://namazu.org/~satoru/migemo/</a>に書いてあります。<br>
+サクラエディタは行をまたぐ検索ができません。 <br>
+<br>
+■Migemoの設定<br>
+C/Migemoのバイナリを<a href="http://www.kaoriya.net" target=_blank>http://www.kaoriya.net</a>からダウンロード<br>
+サクラエディタだけで使う方はmigemo.dllとdictディレクトリをsakura.exeと同じ場所に置いてください。<br>
+他のソフトと共有する等の理由で別の場所に置く場合は、<a href="HLP000088.html">共通設定 『支援』プロパティ</a>でパスを指定してください。また、<a href = "HLP000006.html">正規表現ライブラリ</a>も必要です。<br>
+</BODY></HTML>

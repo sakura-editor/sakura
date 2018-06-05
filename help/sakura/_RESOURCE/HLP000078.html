@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ユーザー別設定</TITLE>
+<META NAME="MS-HKWD" CONTENT="ユーザー別設定">
+<META NAME="MS-HKWD" CONTENT="sakura.exe.ini">
+<META NAME="MS-HKWD" CONTENT="マルチユーザー">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ユーザー別設定</h2>
+Windows2000以降のNT系OSであれば、ユーザーごとにエディタの設定を独立させることができます。Vista以降のOSで<a href="HLP000080.html">Virtual Store</a>を無効にする場合は、原則としてユーザー別設定の手順が必須です。<br>
+<br>
+<div class=li200>参考：<a href="HLP000077.html">設定フォルダ</a></div>
+<br>
+権限の異なるユーザーによるプロセスの混在はできません。たとえばVistaの「管理者として実行」などで起動するケースがこれに該当します。1.5.17.0以前の古いバージョンでは一応起動したように見える場合もありますが、BackSpaceが効かないなどといった動作上の障害が発生します。
+
+<h3>ユーザー別設定の手順</h3>
+<em>sakura.exe</em>と同じディレクトリに、ユーザー別設定ファイル<em>sakura.exe.ini</em>を設置します。<br>
+<br>
+<small>*パッケージ版では、新規インストール時のみユーザー別設定にするかどうかの選択画面が表示され、「設定をユーザーごとに個別に管理する」を選択すると<em>sakura.exe.ini</em>が自動生成されます。</small><br>
+<br>
+
+<img src="images/note.png"><b>注意</b><div class=li200>
+サクラエディタの設定ファイル<em>sakura.ini</em>とファイル名が似ていますが、まったく別のファイルです。くれぐれも混同しないでください。<br>
+</div>
+<br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+Vista以降のOSのときは、<em>sakura.exe.ini</em>が<a href="HLP000080.html">Virtual Store</a>に入ってしまわないように、デスクトップなどの非保護フォルダで編集を行い、エクスプローラでコピーしてください。<br>
+</div>
+
+<h3>sakura.exe.iniの設定値</h3>
+<h4>MultiUser</h4>
+ユーザー別設定にする／しない、の切り替えです。0指定時はUserRootFolder,UserSubFolderの指定は無視されます。
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>0</td><td>ユーザー別設定にしない（デフォルト）</td></tr>
+<tr><td>1</td><td>ユーザー別設定にする</td></tr>
+</table>
+
+<h4>UserRootFolder</h4>
+基準となるパスを指定します
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>0</td><td>アプリケーションデータフォルダ（デフォルト）<br><em>%APPDATA%</em></td></tr>
+<tr><td>1</td><td>ユーザフォルダ<br><em>%USERPROFILE%</em></td></tr>
+<tr><td>2</td><td>ドキュメントフォルダ<br><em>\My Documents</em></td></tr>
+<tr><td>3</td><td>デスクトップフォルダ<br><em>\デスクトップ</em></td></tr>
+</table>
+
+<h4>UserSubFolder</h4>
+サブフォルダ名を指定します。
+
+<h3>設定例</h3>
+<h4>例１</h4>
+新規インストール時にパッケージ版で「設定をユーザーごとに個別に管理する」を選択した場合のデフォルト値です。
+<pre style = "border:1px solid;">
+[Settings]
+MultiUser=1
+UserRootFolder=0
+UserSubFolder=sakura
+</pre>
+
+<h4>例２</h4>
+<em>C:\Documents and Settings\&lt;username&gt;\My Documents\sakura_settings\sakura.ini</em> に保存する場合
+<pre style = "border:1px solid;">
+[Settings]
+MultiUser=1
+UserRootFolder=2
+UserSubFolder=sakura_settings
+</pre>
+
+<h4>例３</h4>
+以前のバージョンのサクラエディタ使用のにより<a href="HLP000080.html">Virtual Store</a>に飛ばされてしまった設定をそのまま継承する
+<pre style = "border:1px solid;">
+[Settings]
+MultiUser=1
+UserRootFolder=1
+UserSubFolder=AppData\Local\VirtualStore\Program Files\sakura
+</pre>
+
+
+</BODY></HTML>

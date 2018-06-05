@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>メタ文字列の仕様</TITLE>
+<META NAME="MS-HKWD" CONTENT="メタ文字列の仕様">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>メタ文字列の仕様</h2>
+メタ文字列はWindowsに設定された特殊なフォルダを指定するときに使います。<br>
+また、サクラエディタの実行ファイルのあるフォルダも指定可能です。<br>
+<a href="HLP000277.html">ファイル名の簡易表示</a>で使えます。<br>
+<ol>
+<li>%% … %(パーセント記号)
+<li>%SAKURA% … 実行ファイル(sakura.exe)があるフォルダ
+<li>%SAKURADATA% … 設定ファイル(sakura.ini)があるフォルダ(sakura:1.6.6.0以降)
+<li>エクスプローラ(シェル)のパス<br>
+&nbsp;&nbsp;&nbsp;&nbsp;HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Foldersの値<br>
+&nbsp;&nbsp;&nbsp;&nbsp;HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Foldersの値<br>
+<li>環境変数
+</ol>
+<br>
+
+が使えます。<br>
+この順番に探索して、最初に見つけた値に置き換えられます。 <br>
+<br>
+また，%...% には エイリアス名が利用できます。<br>
+エイリアス名も大文字小文字を区別しません。<br>
+<pre>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>エイリアス名</td><td>メタ文字列</td><td>意味</td></tr>
+<tr><td>%MyDoc%</td><td>%Personal%</td><td>マイドキュメント</td></tr>
+<tr><td>%MyPict%</td><td>%My Pictures%</td><td>マイピクチャ</td></tr>
+<tr><td>%MyMusic%</td><td>%My Music%</td><td>マイミュージック</td></tr>
+<tr><td>%MyVideo%</td><td>%Video%</td><td>マイビデオ</td></tr>
+<tr><td>%ComDoc%</td><td>%Common Documents%</td><td>共有ドキュメント</td></tr>
+<tr><td>%ComPict%</td><td>%CommonPictures%</td><td>共有ピクチャ</td></tr>
+<tr><td>%ComMusic%</td><td>%CommonMusic%</td><td>共有ミュージック</td></tr>
+<tr><td>%ComVideo%</td><td>%CommonVideo%</td><td>共有ビデオ</td></tr>
+<tr><td>%ComDesktop%</td><td>%Common Desktop%</td><td>共有デスクトップ</td></tr>
+</table>
+</pre>
+</BODY></HTML>

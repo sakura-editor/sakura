@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>置換(実行)</TITLE>
+<META NAME="MS-HKWD" CONTENT="置換(実行)">
+<META NAME="MS-HKWD" CONTENT="Replace">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>置換(実行)</h2>
+文字列を置換します。<br>
+<a href="HLP000062.html">置換</a>ダイアログで [置換] ボタンを押した時の動作です。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: 	Replace( str1 :String , str2 :String , int3 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列(空文字列はエラー)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;置換オプション（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	<a href="HLP000062.html">置換</a>の[置換]実行により記録<br>
+・解説<br>
+置換オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x001&nbsp;&nbsp;&nbsp;&nbsp;単語単位で探す<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x002&nbsp;&nbsp;&nbsp;&nbsp;英大文字と小文字を区別する<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x004&nbsp;&nbsp;&nbsp;&nbsp;正規表現<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x008&nbsp;&nbsp;&nbsp;&nbsp;見つからないときにメッセージを表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x010&nbsp;&nbsp;&nbsp;&nbsp;置換ダイアログを自動的に閉じる<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x020&nbsp;&nbsp;&nbsp;&nbsp;先頭（末尾）から再検索する<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x040&nbsp;&nbsp;&nbsp;&nbsp;クリップボードから貼り付ける<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「置換範囲」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x000&nbsp;&nbsp;&nbsp;&nbsp;ファイル全体（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x080&nbsp;&nbsp;&nbsp;&nbsp;選択範囲<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「置換対象」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x000&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列と置換（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x100&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列の前に挿入<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x200&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列の後に追加<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x300&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列の行を削除(sakura:2.2.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x800&nbsp;&nbsp;&nbsp;&nbsp;検索キーを履歴に登録しない(2.0.6.0 以降)<br>
+&nbsp;&nbsp;&nbsp;0x1000&nbsp;&nbsp;&nbsp;&nbsp;検索キー・オプションを元に戻す(sakura:2.2.0.0以降)<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+キーマクロ中では 10進数の定数表記しか受け付けません。<br>
+オプションは10進数に直して記述してください。<br>
+</BODY></HTML>

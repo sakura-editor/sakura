@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>文字入力</TITLE>
+<META NAME="MS-HKWD" CONTENT="文字入力">
+<META NAME="MS-HKWD" CONTENT="全角文字入力">
+<META NAME="MS-HKWD" CONTENT="テキストを貼り付け">
+<META NAME="MS-HKWD" CONTENT="Char">
+<META NAME="MS-HKWD" CONTENT="CharIme">
+<META NAME="MS-HKWD" CONTENT="InsText">
+<META NAME="MS-HKWD" CONTENT="InsBoxText">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>文字入力</h2>
+文字、全角文字、テキストを挿入します。<br>
+<br>
+文字入力、全角文字入力では<br>
+&nbsp;&nbsp;&nbsp;&nbsp;“挿入モード”　の時は挿入出力されます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;“上書きモード”の時は上書き出力されます。<br>
+テキストを貼り付けでは<br>
+&nbsp;&nbsp;&nbsp;&nbsp;“挿入モード” “上書きモード” に関わらず、常に挿入出力されます。ただし選択中は置き換わります。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+文字入力<br>
+・構文: Char( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;文字コード<br>
+・記録:	直接入力のキー入力を記録<br>
+　Char(10)およびChar(13)は、現在の<a href="HLP000285.html">入力改行コード指定</a>により変換されます。<br>
+<br>
+全角文字入力<br>
+・構文: CharIme( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;全角文字コード<br>
+・記録:	×<br>
+<br>
+テキストを貼り付け<br>
+・構文: InsText( str1 :String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;文字列<br>
+・記録:	IME入力を記録<br>
+<br>
+矩形貼り付け<br>
+・構文: InsBoxText( str1 :String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;文字列<br>
+・記録:	×<br>
+sakura:2.0.4.0以降<br>
+</BODY></HTML>

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>Grep置換</TITLE>
+<META NAME="MS-HKWD" CONTENT="Grep置換">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>Grep置換</h2>
+ディスクにある複数のファイルから、指定した文字列を検索・置換することができます。(sakura:2.2.0.0以降)<br>
+指定したフォルダの下層のフォルダを全て置換することもできます。<br>
+サクラエディタ自身や他のプログラムが排他制御で書き込み禁止の場合、改名処理に失敗します。<br>
+以下の手順で置換処理を実行します。<br>
+　1. [対象ファイル名]を読み込み<br>
+　2. 1.の処理の途中で置換が発生したら[対象ファイル名.skrnew]というファイルに書き出し<br>
+　3. 読み込み・置換が完了し「バックアップ作成」がONなら対象ファイルを[対象ファイル名.skrold]に改名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;OFFなら対象ファイルを削除<br>
+　4. [対象ファイル名.skrnew]を[対象ファイル]に改名<br>
+<br>
+<div class=li200>
+・置換結果はファイルが空でない場合、別のウィンドウが作成されて、そこに表示されます。<br>
+・置換結果から、条件と一致した箇所に直接ジャンプ（<a href="HLP000065.html">タグジャンプ</a>）することができます。<br>
+・<a href="HLP000148.html">共通設定 『検索』プロパティ</a> GREP の設定によっては、GREP結果から行をダブルクリック・Enterすることでも、該当する場所にジャンプします。<br>
+</div><div class=li200>
+<b>(置換前)</b> …… 検索条件を指定します。ファイル名検索はできません。<br>
+<b>(置換後)</b> …… 置換後文字列を指定します。<br>
+<b>(ファイル)</b> … 検索対象となるファイル指定します。ワイルドカードが使えます。<br>
+カンマ、スペース、セミコロン(, ;)のどれかで区切ると複数の条件を指定できます。<br>
+ファイル名に(, ;)を含む場合は、ダブルクオーテーションで囲うことで、ひとつのファイル名として扱えます。<br>
+ファイルパターンの先頭に!を付ける(例: !*.obj)と，そのパターンに当たるファイルをGrep対象から外します。<br>
+ファイルパターンの先頭に#を付ける(例: #*.svn)と、そのパターンに当たるサブフォルダをGrep対象から外します。<br>
+  指定位置にかかわらず除外指定は検索指定より優先されます． <br>
+何も指定しない場合は、「*.*」を指定したことになります。<br>
+<b>(フォルダ)</b> … 検索対象ファイルのあるフォルダを指定します。エクスプローラなどからのフォルダのドロップも受け付けます。<br>
+複数フォルダを;で区切って指定することができます。;を含むフォルダを指定する場合は""で囲ってください。<br>
+</div><div class=li200>
+<b>[現フォルダ]ボタン</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダ」を設定します。<br>
+<b>[上]ボタン</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;フォルダを1階層上に設定します。<br>
+□<b>クリップボードから貼り付け</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列を指定する代わりにクリップボードから貼り付けます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;正規表現置換の場合、通常「行置換」なのがクリップボードからの場合は「置換の繰り返し」になります。<br>
+□<b>単語単位で探す</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;スペースなどで区切ると複数単語検索が行えます。<br>
+■<b>サブフォルダからも検索する</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
+□<b>英大文字と小文字を区別する</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
+□<b>正規表現</b> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列に$1、\r\n等を置くこともできます。<br>
+□<b>ファイル毎最初のみ検索</b> … ファイル毎に1回だけ結果を出力します。<br>
+□<b>ベースフォルダ表示</b> … ルートフォルダの表示とそこからの相対パスで出力します。<br>
+□<b>フォルダ毎に表示</b> … サブフォルダ毎にパスをまとめて相対パスで出力します。<br>
+□<b>文字コードセット</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>自動選択</b>、SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページから選択します。<br>
+■<b>バックアップ作成</b> … 置換前にバックアップファイル(.skrold)を作成します。<br>
+□<b>フォルダの初期値をカレントフォルダにする</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダを(フォルダ)の初期値にします。次回のダイアログ表示時に反映されます。<br>
+</div><br>
+<b>&lt;結果出力&gt;</b> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色でハイライト表示されます。<br>
+<div class=li200>◎<b>該当行</b>	… 合致した箇所のある行全体を表示します。<br>
+○<b>該当部分</b>	… 合致した文字列だけを表示します。<br>
+</div>
+<br>
+<b>&lt;結果出力形式&gt;</b> … 検索条件の結果の出力形式を選べます。<br>
+<div class=li200>
+◎<b>ノーマル</b>  	… 一つづつ列挙して出力します。<br>
+○<b>ファイル毎</b>	… ファイル毎にまとめて出力します。いわゆるWZ風の形式です。<br>
+○<b>結果のみ</b>	… 結果部分のみ出力します。<br>
+</div><br>
+<img src="images/GrepReplace.png"><br>
+<br>
+<font color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: GrepReplace( str1 :String, str2 :String, str3 :String, str4 :String, int5 :Integer, int6 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするファイル名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str4&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするフォルダ名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int5&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int6&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	○<br>
+・解説<br>
+オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;サブフォルダからも検索する（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;<i>この編集中のテキストから検索する（未実装）</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;英大文字と英小文字を区別する（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000089.html">正規表現</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;文字コード自動判別<br>
+「結果出力」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;該当行（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;該当部分<br>
+「出力形式」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;ノーマル（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;ファイル毎<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;結果のみ<br>
+「<a href="HLP000271.html">文字コードセット</a>」<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0000&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0100&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0200&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0300&nbsp;&nbsp;&nbsp;&nbsp;UTF-16<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0400&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0500&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0600&nbsp;&nbsp;&nbsp;&nbsp;UTF-16BE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0700&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0800&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x010000;&nbsp;&nbsp;単語単位で探す<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x020000;&nbsp;&nbsp;ファイル毎最初のみ検索<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;ベースフォルダ表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;フォルダ毎に表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x100000;&nbsp;&nbsp;クリップボードから貼り付ける<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x200000;&nbsp;&nbsp;バックアップ作成<br>
+文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>
+int5の文字コードセットよりint6が優先されます。<br>
+<br>
+</BODY></HTML>

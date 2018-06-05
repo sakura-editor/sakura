@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>入力補完機能</TITLE>
+<META NAME="MS-HKWD" CONTENT="入力補完機能">
+<META NAME="MS-HKWD" CONTENT="補完">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>入力補完機能</h2>
+現在のカーソル位置の左にある単語を補完します。<br>
+<br>
+<h3>入力補完機能を使うための準備</h3>
+補完候補となる単語は5通りの設定があり、それぞれ併用することもできます。
+<dl>
+	<dt>単語ファイル</dt>
+	<dd>
+		<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で、単語を列挙したテキストファイルを設定します。<br>
+		<br />
+		単語ファイル例：
+		<div style = "background-color: #cfcfcf; padding: 5px; width: 400px;">
+			Apple<br />
+			Orange<br />
+			Strawberry<br />
+			株式会社サクラ商事<br />
+			http://sakura-editor.sourceforge.net/<br />
+		</div>
+		<br />
+		
+		<small style = "color: olive;">
+			改行コードおよびタブ文字を除き、記号・全角文字などを含むすべての語句を単語として登録できます。<br />
+			ただし、単語の区切りを含む場合には候補の表示に制限があるため注意が必要です。詳細は<a href = "#rule">候補の補完動作</a>を参照。<br />
+		</small>
+	</dd>
+
+	<dt>編集中のファイルから候補を探す</dt>
+	<dd>
+		<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で、『編集中のファイルから候補を探す』の設定をOnにします。
+		<br /><br />
+		<small style = "color: olive;">
+			候補は、ファイル内に含まれる単語から選出されますが、原則として記号は候補の単語には含まれません。これは<a href = "#rule">候補の補完動作</a>の仕様を考慮したものです。
+			（例外として半角'_'と全角'ヽヾゝゞ〃仝々〆〇ー'は候補単語に含まれる）
+			<br />
+			また、単語の区切りは文字種が変わるところですが、ひらがなだけは前の単語にひっついたものが候補単語になります。<br />
+		</small>
+		<br />
+
+		編集中のファイル例：「<em>補完候補が一つの場合は、補完候補は表示されずに、補完されます。</em>」<br />
+		「補完」を入力して…
+		<div style = "border: 2px ridge; width: 100px; margin-left: 20px; font-size: small;">
+		補完候補が<br />
+		補完候補は<br />
+		補完されます<br />
+		</div>
+
+	</dd>
+	<dt>強調キーワード</dt>
+	<dd>
+		タイプ別設定のカラータブで指定された<a href="HLP000086.html">強調キーワード</a>をもとに候補を探します。
+	</dd>
+	<dt>プラグイン(タイプ別)</dt>
+	<dd>
+		補完<a href="HLP000151.html">プラグイン</a>のタイプ別設定の中から１種類を選択して使用することができます。
+	</dd>
+	<dt>プラグイン(共通設定)</dt>
+	<dd>
+		共通補完プラグインを読み込むと、タイプ別設定にかかわらず有効になります。
+	</dd>
+</dl>
+
+<br>
+<h3>補完候補を表示する</h3>
+<ol>
+	<li>
+		[Ctrl］を押しながら［/］を押したり、［Ctrl］を押しながら［Space］を押します。<br>
+		入力補完が始まり、カーソル左側の単語を元に、補完候補が表示されます。<br>
+		このとき、キーワードヘルプの設定されている単語であれば、対応するヘルプ文字列が脇に表示されます。<br>
+		<br>
+		<img src="images/hint.png">ヒント
+		<ul>
+			<li>補完候補が一つの場合は、補完候補は表示されずに、補完されます。</li>
+			<li>補完候補が見つからない場合は、何も起こりません。</li>
+		</ul>
+		<br>
+	</li>
+	<li>
+		候補が表示されているときのキー操作は以下の通りです。<br>
+		［↑］・［↓］・［Space］・［Shift］＋［Space］・［クリック］：補完候補を選択します。<br>
+		［→］・［Enter］・［ダブルクリック］：選択した候補で補完します。<br>
+		［Esc］：補完せずに、補完を終了します。<br>
+		<small style = "color: olive;">
+		逐次入力補完は、現在廃止されています。<br>
+		</small>
+		<br>
+		<img src="images/hint.png">ヒント<br>
+		補完確定キーは、<a href="HLP000088.html">共通設定 『支援』プロパティ</a>で選択することができます。<br>
+	</li>
+</ol>
+<br>
+<h3 id = "rule">候補の補完動作</h3>
+	<ul>
+		<li>
+			\hを入力して単語ファイルから\hogehogeをサーチすることはできません。記号は単語の区切りとして認識されるためです。
+			<table>
+			<thead>
+				<tr><td>登録単語</td><td>入力文字</td><td>候補表示</td></tr>
+			</thead>
+			<tbody>
+				<tr><td>\hogehoge</td><td>\</td><td>\で始まる単語をサーチし\hogehogeを候補表示</td></tr>
+				<tr><td>\hogehoge</td><td>\h</td><td>hで始まる単語をサーチするため候補が見つからない</td></tr>
+				<tr><td>hogehoge</td><td>\h</td><td>hの文字がhogehogeにマッチして、補完後は\hogehoge</td></tr>
+			</tbody>
+			</table>
+		</li>
+		<li>既に入力した部分も含めて補完されます。例えば、Apと入力してappleを選択して補完すると、appleとなります。</li>
+		<li>サーチする時に英大文字小文字を区別するかどうかは、<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で設定できます。</li>
+	</ul>
+
+<h4>補完候補が表示されたところ</h4>
+<img src="images/Hokan.png"><br>
+</BODY></HTML>

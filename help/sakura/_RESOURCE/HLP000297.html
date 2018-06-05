@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>文字コードセット指定</TITLE>
+<META NAME="MS-HKWD" CONTENT="文字コードセット指定">
+<META NAME="MS-HKWD" CONTENT="ChgCharSet">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>文字コードセット指定</h2>
+ファイルの文字コードセット指定とBOMの有無を変更します。次回保存時からファイルに適用されます。<br>
+間違った文字コードセット指定を直すのが目的なら、各文字コードの「開き直す</a>」コマンドを使ってください。<br>
+<br>
+<b>文字コードセット</b> … 文字コードセットを選択します。<br>
+□<b>CP</b> … 文字コードセットでコードページを選択できるようにします。(sakura:2.2.0.0以降)<br>
+□<b>BOM</b> … BOMの有無を指定します。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文:	ChgCharSet( int1 :Integer, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;BOMの有無（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	○ ChgCharSet( -1 );が記録されます。<br>
+・解説<br>
+文字コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;ダイアログを表示（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;UTF-16<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;UTF-16BE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
+&nbsp;&nbsp;&nbsp;90&nbsp;&nbsp;&nbsp;&nbsp;CP_ACP (sakura:2.2.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;91&nbsp;&nbsp;&nbsp;&nbsp;CP_OEM (sakura:2.2.0.0以降)<br>
+コードページ番号&nbsp;(sakura:2.2.0.0以降)<br>
+BOMの有無は以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;BOMなし（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;BOMあり(0以外)<br>
+</BODY></HTML>

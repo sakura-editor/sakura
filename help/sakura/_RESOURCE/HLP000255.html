@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>コントロールコード</TITLE>
+<META NAME="MS-HKWD" CONTENT="コントロールコード">
+<META NAME="MS-HKWD" CONTENT="コントロールコード入力">
+<META NAME="MS-HKWD" CONTENT="CtrlCodeDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>コントロールコード</h2>
+キーボードからでは入力の困難なコントロールコードをカーソル位置に挿入します。<br>
+<del>CR/LFは改行コードに変換されます。</del><br>
+CR/LFは変換ぜずにそのまま挿入します。(sakura 2.1.1.0以降)<br>
+<br>
+<img src="images/ControlCode.png"><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ダイアログの「表記」の列の文字を押すとその文字に対応するコードを挿入することができます。<br>
+例えば @ を入力すると NULL が挿入されます。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: CtrlCodeDialog( );<br>
+・記録:	×<br>
+<del>Char マクロとして記録されます。(sakura:2.0.9.0以降)</del><br>
+CtrlCode マクロとして記録されます。(sakura:2.1.1.0以降)<br>
+<br>
+・構文: CtrlCode( int1 :Integer );<br>
+    int1    文字コード<br>
+・記録: ○<br>
+Charと違い、改行コードも変換されずに挿入します。<br>
+(sakura:2.1.1.0以降)<br>
+</BODY></HTML>

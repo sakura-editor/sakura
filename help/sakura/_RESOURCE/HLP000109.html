@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>コマンドラインオプション</TITLE>
+<META NAME="MS-HKWD" CONTENT="コマンドラインオプション">
+<META NAME="MS-HKWD" CONTENT="起動時オプション">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>コマンドラインオプション</h2>
+ここに挙げたコマンドラインオプションは、サクラエディタが内部的に使用するものです。<br>
+<ul>
+<li><font color="red">誤った指定をした場合等の動作は全く保証しません</font>。</li>
+<li><font color="red">オプションは英大文字小文字を区別しません</font>。</li>
+<li><font color="blue">オプションで使う'='(イコール)の代わりに':'(コロン)を使うこともできます。</font><br>
+	Windows95/98でオプションを環境変数に設定する場合は'='が使えないので':'を使って下さい。</li>
+<li><font color="blue">オプションは引用符で囲まれていても認識します。</font><br>
+<ul>
+	<li>ハイフン（-）で始まるファイルは引用符をつけてもオプションとして認識します。</li>
+	<li>オプションとして認識させないためにはファイル名の直前にハイフンハイフン（--）を置いてください。</li>
+</ul>
+<small>
+<b>例：sakura.exe -R "aaa.txt"</b><br>
+<b>例：sakura.exe "-R" "-CODE=2" "aaa.txt"</b><br>
+<b>例：sakura.exe -- "-aaa.txt"</b>　（-aaa.txtというファイル名）<br>
+<font color = "olive">ハイフンハイフン（--）は、これ以降にオプション指定がないことを明示するオプションです。</font>
+</small>
+</li>
+</ul>
+<br>
+<h3>ファイルオープンに関するオプション</h3>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><nobr><i>ファイル名</i></nobr></td><td>編集するファイルを指定。一つだけ指定可能。<br>""で囲ったほうがいいです。</td></tr>
+<tr><td>-X=</td>     <td>ファイルを開いたときのカーソルの桁位置を指定</td></tr>
+<tr><td>-Y=</td>     <td>ファイルを開いたときのカーソルの行位置を指定</td></tr>
+<tr><td>-VX=</td>    <td>スクロール：ウィンドウ左端の桁位置</td></tr>
+<tr><td>-VY=</td>    <td>スクロール：ウィンドウ上端の行位置</td></tr>
+<tr><td>-CODE=</td>  <td>文字コード種別<br> (0=SJIS, 4=UTF-8, 99=自動判別, 等<a href="HLP000015.html">ファイルを開く</a>と同じもの)</td></tr>
+<tr><td>-TYPE=</td>  <td>タイプ別設定の強制指定。拡張子で指定します。<br>(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストとして開く</td></tr>
+<tr><td>-R</td>      <td><a href="HLP000249.html">ビューモード</a>で開く</td></tr>
+<tr><td>-SX=</td>    <td>ウィンドウの幅を指定します。</td></tr>
+<tr><td>-SY=</td>    <td>ウィンドウの高さを指定します。</td></tr>
+<tr><td>-WX=</td>    <td>ウィンドウ左上のX座標。</td></tr>
+<tr><td>-WY=</td>    <td>ウィンドウ左上のY座標。</td></tr>
+<tr><td><nobr>-GROUP=</nobr></td> <td>タブモードのグループを指定して開く(1開始)。<br>・0を指定するとアクティブのグループ<br>・未使用のグループ番号を指定すると新規グループ<br>ファイル名指定なしのときも使えます。</td></tr>
+<tr><td>-M=</td>    <td>-MTYPE 未指定時、起動時に実行するマクロのファイル名を指定します。<br><a href="HLP000201.html">共通設定の自動実行マクロ</a>の後に実行されます。<br>Grep、アウトプットでは実行されません。<br>
+相対パスの場合その時点のカレントフォルダからの相対になります。<br>
+</td></tr>
+<tr><td>-MTYPE=</td>    <td>-M とあわせて指定します。-M はマクロの文字列そのものとして解釈されます。<br>-MTYPE にはマクロの種類を拡張子名で指定します。(ピリオドを除く)<br>-MTYPE=file は-M単独と同じ意味になります。<br>
+sakura.exe -M=D:\macro.mac<br>
+sakura.exe -M=D:\macro.mac -MTYPE=file<br>
+sakura.exe -M=InsText('data') -MTYPE=mac<br>
+sakura.exe "-M=Editor.InsText('hello world:\r\n')" "-MTYPE=js" -- "myfile.txt"<br>
+</td></tr>
+<tr><td>-@=</td>      <td>-@=file<br>
+長い引数をファイルに格納したレスポンスファイルを指定します。<br>
+ファイルのエンコードは、SJISかUTF-8 BOM付きです。</td></tr>
+<tr><td>--</td>      <td>オプション指定の終端を明示します。</td></tr>
+</table>
+<br>
+
+<h3>単独で使用するオプション</h3>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><nobr>-NOWIN</nobr></td>     <td>タスクトレイのみ起動。既にサクラエディタが起動している場合は無効</td></tr>
+<tr><td><nobr>-DEBUGMODE</nobr></td> <td>アウトプット用のウィンドウとして起動</td></tr>
+<tr><td>-WQ</td>        <td>通常は使用しません(SakuExtとの連動専用)</td></tr>
+</table>
+
+<br>
+Windowsの起動と同時にサクラエディタを常駐したい場合、ショートカットのプロパティでリンク先のexeに -NOWIN を指定してスタートアップフォルダに入れておくといいでしょう。<br>
+<br>
+
+<h3>Grepに関するオプション</h3>
+-GREPMODE と同時に指定します
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><nobr>-GREPMODE</nobr></td><td>Grep実行モードで起動</td></tr>
+<tr><td>-GKEY=</td><td>Grepの検索文字列<br>"'で囲む。条件中の'"'は二つの連続した'"'にする<br>(例) -GKEY="printf("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;「printf(」を検索<br>(例) -GKEY="printf( ""%s"&nbsp;&nbsp;&nbsp;&nbsp;「printf( "%s」を検索</td></tr>
+<tr><td>-GREPR=</td><td>Grepの置換文字列 (sakura:2.2.0.0以降)<br>これを指定すると置換になる<br>'"'で囲む。条件中の'"'は二つの連続した'"'にする</td></tr>
+<tr><td>-GFILE=</td><td>Grepの検索対象のファイル<br>'"'で囲む。条件中の'"'は二つの連続した'"'にする</td></tr>
+<tr><td><nobr>-GFOLDER=</nobr></td><td>Grepの検索対象のフォルダ<br>'"'で囲む。条件中の'"'は二つの連続した'"'にする</td></tr>
+<tr><td>-GREPDLG</td><td>サクラエディタが起動すると同時にGrepダイアログを表示します。<br></td></tr>
+<tr><td>-GCODE=</td><td>Grepでの文字コードを指定します。<br>-CODEと同じように数字で指定します。</td></tr>
+<tr><td>-GOPT=</td><td>Grepの検索条件<br>[S][L][R][P][W][1|2|3][K][F][B][G][X][C][O][U][H]</td></tr>
+</table>
+<br>
+-GOPTのオプション<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>S</td><td>サブフォルダからも検索</td></tr>
+<tr><td>L</td><td>大文字と小文字を区別</td></tr>
+<tr><td>R</td><td>正規表現</td></tr>
+<tr><td>P</td><td>該当行を出力／未指定時は該当部分だけ出力</td></tr>
+<tr><td>W</td><td>単語単位で探す</td></tr>
+<tr><td>1|2|3</td><td>結果出力形式。1か2か3のどれかを指定します。<br>(1=ノーマル、2=ファイル毎、3=結果のみ)</td></tr>
+<tr><td>K</td><td>-GCODE=99と同じ意味です。<br>互換性のためだけに残されています。</td></tr>
+<tr><td>F</td><td>ファイル毎最初のみ</td></tr>
+<tr><td>B</td><td>ベースフォルダ表示</td></tr>
+<tr><td>G</td><td>フォルダ毎に表示</td></tr>
+<tr><td>X</td><td>Grep実行後カレントディレクトリを移動しない</td></tr>
+<tr><td>C</td><td>(置換)クリップボードから貼り付け (sakura:2.2.0.0以降)</td></tr>
+<tr><td>O</td><td>(置換)バックアップ作成 (sakura:2.2.0.0以降)</td></tr>
+<tr><td>U</td><td>標準出力に出力し、Grep画面にデータを表示しない<br>
+コマンドラインからパイプやリダイレクトを指定することで結果を利用できます。(sakura:2.2.0.0以降)</td></tr>
+<tr><td>H</td><td>ヘッダ・フッタを出力しない(sakura:2.2.0.0以降)</td></tr>
+</table>
+(例) -GOPT=SRK<br>
+<br>
+<h3>プロファイルに関するオプション</h3>
+プロファイルのオプションは他のオプションと同時に指定できます。<br>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><nobr>-PROFMGR</nobr></td><td>プロファイルマネージャを起動時に表示 (sakura:2.2.0.0以降)</td></tr>
+<tr><td><nobr>-PROF=</nobr></td><td>プロファイルを選択(sakura:2.2.0.0以降)<br>
+""でデフォルトを選択<br></td></tr>
+</table>
+<hr>
+<img src="images/hint.png">ヒント<br>
+エクスプローラ(フォルダウィンドウ)の送るメニューや、IEのソースの表示ではコマンドラインオプションを設定しても、無視されてしまいます。これを回避するにはヘルパーアプリケーションが必要です。<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+数字等を指定するコマンドラインオプションは-CODE="4"のようにダブルクオートで囲って指定できません。(sakura:1.3.5.6まで)<br>
+</BODY></HTML>

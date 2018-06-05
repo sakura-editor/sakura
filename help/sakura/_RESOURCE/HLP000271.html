@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>文字コードセットのエンコードについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="文字コードセットのエンコードについて">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>文字コードセットのエンコードについて</h2>
+■SJIS/JIS/EUC<br>
+<div class=li200>・制限<br>
+JIS X 0213及びJIS X 0212(SJISで表現できない)には対応していません。<br>
+<br>
+・保存に関して<br>
+IBM選定IBM拡張文字はNEC選定IBM拡張文字に変更されてからSJIS→JIS/EUCに変換されます。<br>
+JISで保存する場合のエスケープシーケンスは次の通りです。<br>
+<div class=li400>
+ローマ字	ESC ( B<br>
+半角カタカナ	ESC ( I<br>
+漢字・全角文字	ESC $ B<br>
+</div><br>
+<img src="images/note.png"><b>注意</b><br>
+JISの半角カタカナは規格違反です。使用しないでください<br>
+</div><br>
+■UTF-16/UTF-16BE/UTF-8/UTF-7/CESU-8<br>
+<div class=li200>・制限<br>
+(sakura:1.6.6.0以前)<br>
+サクラエディタの内部コードがSJISのため、SJISに含まれない文字は変になります。<br>
+サロゲートペア(UTF-16)には未対応です。<br>
+(sakura:2.0.0.0以降)<br>
+サクラエディタの内部コードがUnicodeのため、Unicodeに含まれない文字は変になります。<br>
+サロゲートペア(UTF-16)に対応しています。<br>
+</div><br>
+■UTF-8<br>
+<div class=li200>・制限<br>
+3バイトコードまでしか対応していません。<br>
+</div><br>
+■自動選択<br>
+<div class=li200>
+1. BOMをチェックします。UTF-8,16LE,16BE,7のBOMがあった場合、そのBOMのコードに決定します。<br>
+2. 先頭付近にmeta文字列がないかチェックします。(sakura:2.2.0.0以降)<br>
+2-1. XML宣言の「&lt;?xml encoding="utf-8"」のような文字列<br>
+2-2. HTML4.01の「&lt;meta http-equiv="Content-Type" content="text/html; Charset=Shift_JIS&gt;」のような文字列<br>
+2-3. HTML5の&lt;meta charset="utf-8"&gt;のような文字列<br>
+2-4. 「# coding: utf-8」「「# coding=utf-8」」のようなエディタ用エンコーディング指定<br>
+をそれぞれ検出すると、そのコードに決定します。対応しているエンコード名にはコードページも含みます。<br>
+3. UTF-16のCRLF検出器でUTF-16/UTF-16BEを判定します。<br>
+4. Shift_JIS/EUC/JIS/UTF-8/UTF-7での固有文字情報(ASCII以外の文字の検出)を元に決定します。<br>
+5. すべてASCIIなどの文字または空のファイルの場合は、タイプ別設定のデフォルト文字コードを利用します。<br>
+</div><br>
+</BODY></HTML>

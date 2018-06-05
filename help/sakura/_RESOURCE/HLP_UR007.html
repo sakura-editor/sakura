@@ -1,0 +1,380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>変更履歴(2001/12/03～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2001/12/03～)</h2>
+Feb. 11, 2002(1.2.106.1)<br>
+<br>
+バイナリは配布していません。<br>
+<br>
+[仕様変更]<br>
+<div class=li200>
+・印刷時のヘッダ・フッタ設定の特殊文字を &amp;?形式から$?形式に変更。(BY horさん) <br>
+</div><br>
+[機能追加] <br>
+<div class=li200>
+・正規表現の大小文字区別オプションがGREP以外でも使えるように。(BY horさん) <br>
+・バージョン情報にコンパイラの情報を付加。(BY げんた)<br>
+<div class=li400>
+"V" Visual C++<br>
+"B" Borland C++ <br>
+"G" GNU C++？<br>
+"U" 不明 <br>
+</div><br>
+・icon_grep.icoの変更とその大小アイコンを別々に扱うロジックを追加 (BY horさん) <br>
+・あろかさんの「ファイル名をコピー」のアイコンを作成 (BY horさん) <br>
+・すべて置換の実行中に表示されるダイアログの更新間隔を(置換数 % 8)から(置換数 % 100)に変更して体感速度を向上 (BY horさん) <br>
+・すべて置換もマクロで扱えるように変更 (BY horさん) <br>
+・アウトラインダイアログに「ジャンプしたらフォーカスを移す」オプションを追加 (BY horさん) <br>
+・アウトラインダイアログに「ブックマーク一覧で空行を無視する」オプションを追加(あろかさん提案) (BY horさん) <br>
+・検索,置換ダイアログの「該当行マーク」(F_BOOKMARK_PATTERN)もマクロで記録できるように変更 (BY horさん) <br>
+・再描画(F_REDRAW)もマクロで記録できるように変更 (BY horさん) <br>
+・ファイル→印刷を使用可能に (BY やざきさん) <br>
+・ページ設定ダイアログでヘッダとフッタを設定可能に (BY やざきさん)<br>
+<div class=li400>
+テキストボックスは、左から、左寄せ、中央寄せ、右寄せ。<br>
+使える特殊文字は次のとおり。<br>
+$$：$文字<br>
+$F：開いているファイル名（フルパス）パス区切りが"\"<br>
+$f：開いているファイル名（ファイル名のみ）<br>
+$/：開いているファイル名（フルパス）パス区切りが"/"<br>
+$C：選択中のテキスト（ヘッダとフッタではたぶん意味なし。常に削除されるかな？）<br>
+$d：印刷日時（書式は、共通設定の日付書式）<br>
+$t：印刷時刻（書式は、共通設定の時刻書式）<br>
+$D：タイムスタンプ（日付。書式は、共通設定の日付書式）<br>
+$T：タイムスタンプ（時刻。書式は、共通設定の時刻書式）<br>
+$p：現在のページ<br>
+$P：総ページ数 <br>
+</div><br>
+・全角英数字を半角英数字にするコマンドを追加 (BY やざきさん) <br>
+</div><br>
+[バグ修正]<br>
+<div class=li200>
+・矩形エリアの端がEOFのみの行を含むときCut,Copyするとアプリケーションエラーになるのを修正 (BY horさん) <br>
+・正規表現でEOFのみの位置から次検索しても先頭から再検索できるように修正 (BY horさん) <br>
+・正規表現で検索したときにEOF直前の文字が何度もマッチしてしまうのを修正 (BY horさん) <br>
+・'/'を含む正規表現置換でアプリケーションエラーになることがあるバグ修正 (BY げんた) <br>
+・アウトラインダイアログで「ブックマーク」&lt;-&gt;「タイプ別設定アウトライン解析」をキーで切替えたときの動作が変だったのを修正 (BY horさん) <br>
+</div><br>
+[その他変更]<br>
+<div class=li200>
+・検索文字列を色分けする＆正規表現検索のときの処理を見直して速度改善 (BY horさん) <br>
+・iniファイルに未定義の正規表現キーワード,外部マクロが出力されないように変更 (BY horさん) <br>
+・CDlgFuncList::SetTreeBookMarkを削除(他のロジックに統合)して軽量化 (BY horさん) <br>
+・CShareData::AddToSearchKeyArrの移動元のコメントを削除 (BY horさん) <br>
+・CDlgReplaceのCEditView::Command_REPLACE,CEditView::Command_REPLACE_ALLに移動したロジックを削除 (BY horさん) <br>
+・CShareData_new2のCMenuDrawerへ移動された個所を削除 (BY horさん) <br>
+</div><br>
+[残存バグ・制限事項など]<br>
+<div class=li200>
+・PPA.DLL使用時に共通設定－キー割り当て／ツールバーで「外部マクロ」を選ぶとアプリケーションエラーになる． <br>
+・「コマンド一覧」でアプリケーションエラーになる．<br>
+</div><br>
+Feb. 9, 2002(1.2.106.0)<br>
+<br>
+バイナリは配布していません。<br>
+<br>
+[仕様変更]<br>
+<div class=li200>
+・PPAとの互換性を高めるためにマクロの書式を変更。機能名の前にはすべてS_を付ける。/**/形式のコメントの代わりに//のコメントを生成する。 (BY やざきさん) <br>
+</div><br>
+[機能追加]<br>
+<div class=li200>
+・PPAスクリプト対応 (BY やざきさん)<br>
+・正規表現GREP時に大文字小文字判定のON/OFFを選択可能に。(BY horさん)<br>
+・外部ヘルプと外部HTMLヘルプをタイプ別設定でも設定可能に。(BY やざきさん)<br>
+・編集中のファイル名をクリップボードにコピー。(BY あろかさん)<br>
+</div><br>
+[バグ修正]<br>
+<div class=li200>
+・正規表現の行頭判定を//無しの表現に合わせて変更。(BY horさん)<br>
+・CTipWndがアプリケーション選択時に出てこないように (BY GAEさん)<br>
+・「Alt+TAB で他のウィンドウに切替え Alt+Space で最小化を選択してもフォーカスが来ない」問題を解決 (BY GAEさん)<br>
+</div><br>
+[その他]<br>
+<div class=li200>
+・ソースコードの無駄見直し。ヘッダの無用なinclude削減(BYあろかさん)<br>
+・my_icmp で２バイト文字の大小文字同一視機能追加。(BY みくさん)<br>
+</div><br>
+[残存バグ・制限事項など]<br>
+<div class=li200>
+・画面スクロール中に突然アプリケーションエラーが起こったことがある。<br>
+・'/'を含む正規表現置換でアプリケーションエラーが起こる．<br>
+</div><br>
+Feb. 1, 2002(1.2.105.3)<br>
+<br>
+みんなの変更を取り込み<br>
+<br>
+[仕様変更]<br>
+<div class=li200>
+・空行もブックマーク一覧に表示するように変更 (by horさん) <br>
+・ディレクトリへのタグジャンプは行わないようにした （...でカレントディレクトリ/親ディレクトリへジャンプする問題を回避） (by げんた) <br>
+・正規表現を//を使わなくてもいいように修正 (by noviceさん/げんた) <br>
+・マクロのWordDleete→WordDeleteに変更 <br>
+</div><br>
+[機能追加]<br>
+<div class=li200>
+・ブックマーク(栞)関連 (by horさん)<br>
+<div class=li400>
+・空行もブックマーク一覧に表示するように変更<br>
+・ブックマークを指定条件で一気に設定する機能を追加<br>
+・「最近使ったファイル」に表示されつづけている限りは、一度設定したブックマークを覚えているように<br>
+</div><br>
+・画面表示<br>
+<div class=li400>
+・検索後のメッセージをステータスバーに表示するように (horさん)<br>
+・外部マクロをツールバーに登録したときにアイコンが表示されるように変更 (by horさん)<br>
+</div><br>
+・振る舞い<br>
+<div class=li400>
+・ウィンドウ幅で折り返す機能を、折り返す・折り返さないを切り替える機能に (by やざきさん)<br>
+・ディレクトリへのタグジャンプは行わないようにした （...でカレントディレクトリ/親ディレクトリへジャンプする問題を回避） (by げんた)<br>
+・ホイールのスクロール行を10行上限→30行上限に変更 (by やざきさん)<br>
+・保存するときにファイルの種類をテキストデータに設定したら拡張子（txt）が付くように (by やざきさん)<br>
+</div><br>
+・ダイアログボックス<br>
+<div class=li400>
+・ダイアログ画面の「？」ボタンおよび右クリックによるポップアップヘルプの実装 (by みくさん)<br>
+・共通設定画面の右クリックによるポップアップヘルプの実装 (by みくさん)<br>
+・共通設定画面（マクロ）のポップアップヘルプの実装 (by みくさん)<br>
+・共通設定画面（マクロ）のタブオーダを変更（ヘルプを正常動作させるため） (by みくさん)<br>
+・[指定行へジャンプ]の[折り返し単位の行番号]と[改行単位～]の選択で前回の設定値を保持するように修正 (by やざきさん)<br>
+</div><br>
+・検索・置換<br>
+<div class=li400>
+・先頭(末尾)から再検索するオプションを追加 (by horさん)<br>
+・置換ダイアログで、正規表現の()と$1,$2...を使えるように修正 (by noviceさん)<br>
+・正規表現を//を使わなくてもいいように修正 (by noviceさん/げんた)<br>
+</div><br>
+・外部コマンド実行<br>
+<div class=li400>
+・外部コマンド実行時に選択文字を渡せるように (by horさん)<br>
+</div><br>
+・アウトライン解析<br>
+<div class=li400>
+・C++のネストされたクラスに対応 (by げんた)<br>
+</div></div><br>
+[バグ修正]<br>
+<div class=li200>
+・振る舞いに関する問題<br>
+<div class=li400>
+・最近つかったファイルにないファイルを開いたあとに「ファイル」-「文字コードセット」-「～で開き直す」を実行すると一行目にマークがついてしまうバグを修正 (by horさん)<br>
+・外部コマンド実行で最後の文字を取りこぼすことがあるのを修正 (byやざきさん)<br>
+・「エ」を検索すると「ト」にもヒットする問題に対応 (by みくさん)<br>
+・Grep結果でファイルを開くと、そのままファイルを開いてしまう問題を修正 (by やざきさん)<br>
+・フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正 (by やざきさん)<br>
+・メニューのツール-&gt;共通設定-&gt;マクロにあるヘルプボタンが反応しないバグを修正 (by みくさん)<br>
+・マクロのWordDleete（単語削除）つづり間違い (by やざきさん)<br>
+・ページ設定の用紙サイズ変更をマウスで行うと「プログラムバグ」といわれる (by horさん)<br>
+・EOFの直前の文字をマウスで選択できるようにした (by horさん)<br>
+・EOFのある行を行番号のところをマウスでクリックして行選択できるようにした (by horさん)<br>
+・BOX選択エリアにEOFがあると反転表示が変になるのを修正 (by horさん)<br>
+・ソート・マージの選択行を計算するロジックのミスを修正 (by horさん)<br>
+</div><br>
+・表示に関する問題<br>
+<div class=li400>
+・Grep検索中画面のフォルダ名表示がサブフォルダから戻ったときに更新されなかったのを修正 (by みくさん)<br>
+・「ウィンドウサイズ継承」にして殆ど画面一杯にしても、再起動後に開いた時に、ウィンドウが少し小さくなる問題を修正 (by みくさん)<br>
+・タイトルバーがちらつかないように修正 (by げんた)<br>
+・正規表現キーワードの一部が検索キーワードに一致すると、検索キーワードの後ろがデフォルトテキスト色になってしまうのを修正 (by みくさん)<br>
+・カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正 (by やざきさん)<br>
+・[共通設定]、[タイプ別設定]でタブを数度切り替えると前回アクティブのタブを正しく覚えていないバグを修正 (by やざきさん)<br>
+・「左右に並べて表示」すると、裏で最大化されているエクスプローラが「元の大きさ」になるバグ修正 (by やざきさん)<br>
+・横に長い行をどんどんスクロールしていくと表示が変になるのを修正。(by やざきさん)<br>
+</div><br>
+・ヘルプに関する問題<br>
+<div class=li400>
+・[タイプ別設定]-[スクリーン]-「SPACEの挿入」で表示されるヘルプが【文字色】になっていたのを修正 (by みくさん)<br>
+</div><br>
+・重大な問題を起こす可能性のある内部エラー<br>
+<div class=li400>
+・マクロ機能のバッファオーバーラン修正 (by あろかさん)<br>
+</div></div><br>
+[その他変更]<br>
+<div class=li200>
+・ソースコードのf形式やe形式、l(L) も半角数値の一部として識別 (by みくさん)<br>
+・共通設定のタスクトレイ関係の挙動を変更 (by やざきさん)<br>
+・VC++で、DLL無し版を作成するプロジェクトファイルを追加 (by みくさん)<br>
+・矩形編集の高速化 (by horさん)<br>
+・URL解析部分の高速化 (by みくさん)<br>
+・メニュー文字列生成部の&amp;処置を改善 (by げんた)<br>
+・ヘルプIDはsakura.hhをインクルードして使用するように変更 (by みくさん)<br>
+・警告の削減（ポップアップヘルプのところで処理されないbreak文を削除） (by みくさん)<br>
+</div><br>
+Dec 19, 2001(1.2.104.1)<br>
+<div class=li200>
+・horさんの申し出た部分を削除．<br>
+・何となく思いつきでコメント追加．<br>
+・行ソート部分でバッファオーバーランがあったのを修正．(by げんたさん)<br>
+</div><br>
+Dec 18, 2001(1.2.104.0)<br>
+<br>
+horさんの変更を取り込み。<br>
+<br>
+[仕様変更]<br>
+<div class=li200>
+・通常選択時(!矩形)で変換コマンドを実行した後も選択範囲をキープする <br>
+・１ページスクロールと半ページスクロールのデフォルトキー割当を入れ替え <br>
+・１ページスクロールの雰囲気をメモ帳ライクに <br>
+・ツールバーのアイコンを変更 mytool.bmp (26さん、horさん) <br>
+・Grepアイコンを変更 icon_grep.ico <br>
+</div><br>
+[機能追加]<br>
+<div class=li200>
+・編集メニュー｢整形｣<br>
+<div class=li400>
+・左(先頭)の空白を削除 Alt+L : 選択してないときはカレント行を選択して実行<br>
+・右(末尾)の空白を削除 Alt+R : 選択してないときはカレント行を選択して実行<br>
+・選択行の昇順ソート Alt+A : 論理行を昇順ソート( 矩形選択時は選択値がソートキーになります )<br>
+・選択行の降順ソート Alt+D : 論理行を降順ソート( 矩形選択時は選択値がソートキーになります )<br>
+・選択行のマージ Alt+M : 論理行をマージ （ 矩形選択時は何もしません ）<br>
+</div><br>
+・ブックマーク機能<br>
+・置換オプション<br>
+<div class=li400>
+・クリップボードから貼り付け<br>
+・検索文字列の前に挿入<br>
+・検索文字列の後に追加<br>
+・選択範囲内で置換（ 複数行選択時にデフォルトON ）<br>
+</div><br>
+・タイプ別設定｢スクリーン｣<br>
+<div class=li400>
+・SPACEの挿入 : ONにするとTABインデントの実行でTAB幅分のSPACEを挿入します。(ソフトタブ)<br>
+</div><br>
+・共通設定<br>
+<div class=li400>
+・バックアップをごみ箱に放り込む (MIKさん)<br>
+</div><br>
+・その他変更<br>
+<div class=li400>
+・TAB/SPACEインデントをちょっとだけ高速化<br>
+・１ページスクロールと半ページスクロールのデフォルトキー割当を入れ替え<br>
+・１ページスクロールの雰囲気をメモ帳ライクに<br>
+・共通設定のタスクトレイがらみのEnable制御を廃止（使いにくかったので・・・）<br>
+・通常選択時(!矩形)で変換コマンドを実行した後も選択範囲をキープする<br>
+・箱型選択時でも上書モードを有効に<br>
+・｢検索マークのクリア｣を｢検索マークの切替え｣に変更 ( 文字が選択されてるときは検索マークを切替える )<br>
+・アウトライン解析結果の３列目をクリックしてもソートできるように<br>
+・ツールバーのアイコンを変更 mytool.bmp (26さん、horさん)<br>
+・Grepアイコンを変更 icon_grep.ico<br>
+</div></div><br>
+[バグ修正]<br>
+<div class=li200>
+・WinNTの場合、ヘルプの目次タブが表示されない → ｢目次タブ｣の表示がエラーになったら｢目次ページ｣を表示する<br>
+・カーソル行をウィンドウ中央への実行後、分割したウィンドウの垂直スクロールが同期しない<br>
+・印刷で紙を横向きに指定しても縦方向に印刷される<br>
+・検索・置換ダイアログの入力エリアで Enter するとキャレットの表示が見えなくなる<br>
+・正規表現/$/などで前方検索すると無限ループする<br>
+・選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正<br>
+・移動履歴で最後の要素が有効にならない<br>
+・BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正<br>
+・新しくウィンドウを開くたびに画面が小さくなっていく (MIKさん)<br>
+</div><br>
+[その他]<br>
+<div class=li200>
+・通常選択時(!矩形)の変換コマンド実行後の画面のちらつきを少し改善<br>
+・ブックマーク・変更フラグの実装を変更<br>
+・コメント見直し．ライセンス条項変更．(by げんたさん)<br>
+</div><br>
+Dec 12, 2001(デモ版)<br>
+<div class=li200>
+・horさんによる修正・機能強化.<br>
+・リソースファイルの編集は VC++4.0、コンパイラは Borland C++ Compiler 5.5 を使用<br>
+</div><br>
+▼2001.12.11 その２<br>
+<div class=li200>
+□１行の範囲内のTABがINDENTと解釈される不具合を修正 (CEditView_Command.cpp)<br>
+◎変更箇所記入漏れ<br>
+・通常選択時(!矩形)で変換 (CEditView::ConvSelectedArea) した後は選択した状態をキープする<br>
+</div><br>
+▼2001.12.11<br>
+<div class=li200>
+□MIKさんの WinSizeFix20011123.zip を取込ませていただきました ( CEditWnd.cpp )<br>
+□ソートの不具合を修正                           ( 2001.12.07 追加分の修正 )<br>
+□タブ幅分スペース挿入の矩形選択時の不具合を修正 ( 2001.12.03 追加分の修正 )<br>
+□上書き禁止モードの場合の使用禁止コマンドを追加 ( 2001.12.07 追加分の漏れ )<br>
+□sakura_rc.rc の IDD_GREP 内の配置を調整<br>
+□icon_grep.ico を少し変更<br>
+</div><br>
+▼2001.12.06 ～ 2001.12.07<br>
+<div class=li200>
+□メニュー表示変更<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・LTRIM → 左(先頭)の空白を削除<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・RTRIM → 右(末尾)の空白を削除<br>
+□置換ダイアログで｢クリップボードから貼り付け｣を選択したら｢置換後｣を入力不可に<br>
+□機能追加など<br>
+・選択行の昇順ソート Alt+A ･･･ 論理行を昇順ソート( 矩形選択時は選択値がソートキーになります )<br>
+・選択行の降順ソート Alt+D ･･･ 論理行を降順ソート( 矩形選択時は選択値がソートキーになります )<br>
+・選択行のマージ     Alt+M ･･･ 論理行をマージ   （ 矩形選択時は何もしません ）<br>
+・アウトライン解析結果の３列目をクリックしてもソートできるように<br>
+□mytool.bmp をちょっとだけ変更<br>
+</div><br>
+▼2001.12.03<br>
+『リソースファイルの変更箇所』<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sakura_rc.rc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　DIALOG<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(変更)IDD_FIND          ( 配置の調整のみ )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(変更)IDD_REPLACE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(変更)IDD_PROPTYPESP1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　STRINGTABLE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_LTRIM            "LTRIM"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_RTRIM            "RTRIM"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(変更)F_SEARCH_CLEARMARK "検索マークの切替え"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_BOOKMARK_SET     "ブックマーク設定・解除"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_BOOKMARK_NEXT    "次のブックマークへ"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_BOOKMARK_PREV    "前のブックマークへ"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_BOOKMARK_RESET   "ブックマークの全解除"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　(追加)F_BOOKMARK_VIEW    "ブックマークの一覧"<br>
+<br>
+『機能追加』<br>
+&nbsp;&nbsp;&nbsp;&nbsp;□ブックマークの設定・解除・検索・一覧表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・デフォルトキー割当<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　設定・解除&nbsp;&nbsp;&nbsp;&nbsp;Ctrl＋F2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　次へ&nbsp;&nbsp;&nbsp;&nbsp;F2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　前へ&nbsp;&nbsp;&nbsp;&nbsp;Shift+F2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　すべて解除&nbsp;&nbsp;&nbsp;&nbsp;Shift+Ctrl+F2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　一覧表示&nbsp;&nbsp;&nbsp;&nbsp;Alt+F2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・メニュー<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　　[検索]の一番下<br>
+&nbsp;&nbsp;&nbsp;&nbsp;□置換オプションの拡張<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・クリップボードから貼り付け<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・検索文字列の前に挿入<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・検索文字列の後に追加<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・選択範囲内で置換（ 複数行選択時にデフォルトON ）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;□LTrim/Rtrim<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・デフォルトキー割当<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LTrim&nbsp;&nbsp;&nbsp;&nbsp;Alt+L<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rtrim&nbsp;&nbsp;&nbsp;&nbsp;Alt+R<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　・メニュー<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[編集]-[整形]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;□ダイアログを表示せずに選択文字を検索<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→｢検索マークのクリア｣を｢検索マークの切替え｣に変更<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;　文字を選択した状態で実行すると.......選択文字をマーク<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;　文字を選択してない状態で実行すると...マークのクリア<br>
+&nbsp;&nbsp;&nbsp;&nbsp;□TAB幅分のSPACEインデント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→｢タイプ別設定｣の｢スクリーン｣タブで｢SPACEの挿入｣をONにすると<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;　TABインデントの実行でTAB幅分のSPACEを挿入します<br>
+<br>
+『バグフィックスしたつもり』<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・カーソル行をウィンドウ中央への実行後、分割したウィンドウの垂直スクロールが同期しない<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・検索・置換ダイアログの入力エリアで Enter するとキャレットの表示が見えなくなる<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・正規表現/$/で前を検索すると無限ループする<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・WinNT4の場合、ヘルプの目次タブが表示されない<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→｢目次タブ｣の表示がエラーになったら｢目次ページ｣を表示する<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・印刷で紙を横向きに指定しても縦方向に印刷される<br>
+<br>
+『その他』<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・TAB/SPACEインデントをちょっとだけ高速化<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・箱型選択時でも上書モードを有効に<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・共通設定のタスクトレイがらみのEnable制御を廃止（使いにくかったので・・・）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・１ページスクロールの雰囲気をメモ帳ライクに<br>
+&nbsp;&nbsp;&nbsp;&nbsp;・１ページスクロールと半ページスクロールのデフォルトキー割当を入れ替え<br>
+</BODY></HTML>

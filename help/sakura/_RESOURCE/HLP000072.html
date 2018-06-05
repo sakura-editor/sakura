@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>タイプ別設定一覧</TITLE>
+<META NAME="MS-HKWD" CONTENT="タイプ別設定一覧">
+<META NAME="MS-HKWD" CONTENT="TypeList">
+<META NAME="MS-HKWD" CONTENT="ChangeType">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>タイプ別設定一覧</h2>
+タイプ別設定一覧のダイアログが表示されます。<br>
+リストから<a href="HLP000300.html">ファイルタイプ</a>を選択し、<br>
+<br>
+<b>[設定変更]</b>ボタン<br>
+このボタンを押すと、選択したタイプの設定が変更できます（該当するタイプの<a href="HLP000073.html">タイプ別設定</a>ダイアログが表示される）。<br>
+<br>
+<b>[一時適用]</b>ボタン<br>
+このボタンを押すと、ウィンドウを閉じて、現在開いているファイルのタイプを、選択したタイプに一時的に変更します。<br>
+<br>
+または、リストのタイプを<b>ダブルクリック</b>しても同様の操作になります。<br>
+<br>
+<b>[キャンセル]</b>ボタン<br>
+このボタンを押すと、ウィンドウを閉じます。追加・削除・インポート・初期化などの変更は元に戻りません。<br>
+<br>
+<b>[インポート]</b>ボタン<br>
+このボタンを押すと、エクスポートした内容を読み込んで選択したタイプに設定することができます（ファイル選択ダイアログが表示される）。<br>
+<br>
+<b>[エクスポート]</b>ボタン<br>
+このボタンを押すと、選択したタイプの設定をファイルに書きだすことができます（ファイル選択ダイアログが表示される）。<br>
+<br>
+<b>[初期化]</b>ボタン<br>
+このボタンを押すと、選択したタイプの設定を初期状態に戻します。<br>
+<br>
+<b>[複製]</b>ボタン<br>
+このボタンを押すと、タイプ別設定を末尾に追加して選択したタイプ別設定を複製します。<br>
+<br>
+<b>[↑]</b>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を一つ上に移動します。<br>
+<br>
+<b>[↓]</b>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を一つ下に移動します。<br>
+<br>
+<b>[追加]</b>ボタン<br>
+このボタンを押すと、タイプ別設定を末尾に追加します。<br>
+タイプ別設定は、60個まで追加することができます。<br>
+<br>
+<b>[削除]</b>ボタン<br>
+このボタンを押すと、選択したタイプ別設定を削除します。<br>
+<br>
+<b>[右クリックメニューに追加]</b>チェックボックス<br>
+このボックスをチェックすると、タイプで指定した拡張子の右クリックメニューにサクラエディタを追加します。<br>
+<br>
+<b>[ダブルクリックで開く]</b>チェックボックス<br>
+このボックスをチェックすると、タイプで指定した拡張子の既定プログラムをサクラエディタに設定します。<br>
+<br>
+<img src="images/TypeList.png"><br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: TypeList( );<br>
+・記録:	×<br>
+・解説<br>
+タイプ別設定一覧ダイアログを表示します。<br>
+<br>
+・構文: ChangeType( int1 : Integer ); (sakura:2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定番号<br>
+・記録:	×<br>
+・解説<br>
+タイプ別設定を一時適用します。<br>
+タイプ別設定番号は、1が「基本」です。それ以降は、タイプ別設定一覧ダイアログに表示される順で指定します。<br>
+<br>
+</BODY></HTML>

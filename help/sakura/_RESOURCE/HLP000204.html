@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>マクロについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="マクロについて">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>マクロについて</h2>
+<a href="HLP000125.html">キーマクロの記録</a>によってユーザの操作をマクロとして記録することができます。<br>
+この他にマクロファイルを直接記述することによって、キーマクロで記録されない機能も使えるようになります。<br>
+記録・手書きの<a href="HLP000267.html">キーマクロ</a>、<a href="HLP000269.html">WSHマクロとPPAマクロ</a>が利用できます。<br>
+<br>
+
+<h3>拡張子</h3>
+マクロは拡張子によって、種類を判別して実行しています。<br>
+「.mac」「.ppa」はWindowsの関連付けや設定に関係なく実行できます。<br>
+<pre>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>拡張子</td><td>種類</td></tr>
+<tr><td>mac</td><td>キーマクロ</td></tr>
+<tr><td>ppa</td><td>PPAマクロ</td></tr>
+<tr><td>js</td><td>WSH:Jscriptマクロ</td></tr>
+<tr><td>vbs</td><td>WSH:VBScriptマクロ</td></tr>
+<tr><td>その他</td><td>WSH:他にWSHが認識できるものであれば使える</td></tr>
+</table>
+</pre>
+
+<h3>マクロファイルの文字コード</h3>
+(sakura:2.0.0.0以降)<br>
+通常のファイルはSJISとして読み込みます。<br>
+UTF-8BOM付きのファイルにすると、UTF-8として読み込みます。WSH、キーマクロではSJISにない文字列も直接扱うことができます。<br>
+<br>
+
+<h3>キーマクロ例</h3>
+【キーマクロ例1】<br>
+<div class=li200>
+S_InsText("string"); // 文字列挿入<br>
+S_ExecCommand( "C:\\WINDOWS\\explorer .", 0 ); // コマンド実行<br>
+S_Up(); // 3行上に移動<br>
+S_Up();<br>
+S_Up();<br>
+S_GoLineTop(1); // 1: 空白に関係なく桁位置1に移動，8: 選択して移動<br>
+</div><br>
+
+【キーマクロ例2】<br>
+<div class=li200>
+//一行挿入のマクロ<br>
+GoLineTop(1);	// 行頭に移動(折り返し単位)<br>
+Char(13);	// 文字入力<br>
+Up();	// カーソル上移動<br>
+</div><br>
+</BODY></HTML>

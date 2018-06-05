@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ツールバーアイコンの変更手順</TITLE>
+<META NAME="MS-HKWD" CONTENT="ツールバーアイコンの変更手順">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ツールバーアイコンの変更手順</h2>
+<h3>変更手順</h3>
+メニューやツールバーで使われるアイコンを標準のアイコン以外にしたい場合は、公開されているサクラエディタのソースファイル内にある mytool.bmp と同形式のビットマップ・ファイルをサクラエディタのインストールフォルダ（もしくは<a href="HLP000077.html">設定フォルダ</a>）に my_icons.bmp というファイル名でおくだけです。<br>
+サクラエディタは起動時にまずこのファイルがあるかどうかチェックし、あればそれを、なければ自分自身が持っているものをアイコンとして使うようになっています。<br>
+<br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+1.6.0.0より改行コードの表記が変わりました。
+古いバージョン用に作られたアイコンファイルをダウンロードして利用するなどの場合は、編集画面内の記号とツールバーアイコンの表示で矢印の向きが一致しない可能性があるのでご注意ください。<br>
+<ul>
+<li><b>1.5.17.0以前</b>：LF←，CR↓</li>
+<li><b>1.6.0.0以降</b>：LF↓，CR←</li>
+</ul>
+なお、これは以前のバージョンが間違えていたわけではなく、過去の経緯によるものなので仕様変更と理解してください。<br>
+</div>
+
+<h3>アイコンファイルの作成について</h3>
+ビットマップファイルの作り方そのものはここでは説明しません（結構面倒です）が、Windowsに標準で入っている『ペイント』を使うことができます。mytool.bmpの中で変更したいアイコンの位置に、自分で用意したアイコンを上書きします。一つ一つのアイコンは16x16ドットでできていますので、アイコンの移動・変更は横線や目印を参考にして慎重に行なって下さい。<br>
+この作業によってできるのは<font color="red">現在ある標準のアイコンを変更することだけ</font>です。<br>
+アイコンが割り当てられていない機能にアイコンを新規に追加することはできません。<br>
+<br>
+<img src="images/hint.png"><b>ヒント</b><div class=li200>
+サクラエディタのツールバーアイコンファイル生成ソフトとしてToolIconMaker（Copyright (C) 2001, MIK）が以下より配布されています。<br>
+<ul>
+<li><a href = "http://sakura.qp.land.to/?Customize%2FToolIconMaker" target = "_blank">http://sakura.qp.land.to/?Customize%2FToolIconMaker</a></li>
+</ul>
+</div>
+<br>
+<h3>アイコンの著作権について</h3>
+mytool.bmpを自分用に改変した場合、そのファイル（my_icons.bmp）の取り扱いに注意して下さい。<br>
+個人使用の範囲では問題ありませんが、そのファイルを再配布しようと考えている場合は著作権に抵触しないか、特にキャプチャリングソフトなどを使って作成した全く同一のアイコン、あるいは色だけ変更したアイコンは著作権の侵害になる恐れがありますので、再配布可能かどうかをアイコンの著作権者に予め問い合わせるようにして下さい。<br>
+
+</BODY></HTML>

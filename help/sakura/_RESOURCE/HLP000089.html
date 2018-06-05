@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>利用可能な正規表現</TITLE>
+<META NAME="MS-HKWD" CONTENT="正規表現">
+<META NAME="MS-HKWD" CONTENT="パターン">
+<META NAME="MS-HKWD" CONTENT="エスケープシーケンス">
+<META NAME="MS-HKWD" CONTENT="メタキャラクタ">
+<META NAME="MS-HKWD" CONTENT="量指定子">
+<!-- .がみにくいのでMS ゴシックにする -->
+<style type="text/css">
+	code {font-family: "ＭＳ ゴシック"; font-size:100%};
+</style>
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<script type="text/javascript">HHCtrlPopup();</script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>利用可能な正規表現</h2>
+使える(かも知れない)正規表現についての解説です。すべての動作を確認することは難しく、またライブラリの更新により動作が変更になることもあります。最終的にはご自分でご確認ください。<br>
+<br>
+<div class=li200>関連：<a href="HLP000006.html">正規表現ライブラリ</a>
+</div>
+<h4>基本要素</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>\</code></td><td>
+				退避修飾（エスケープ）<br>
+				正規表現記号の有効/無効の制御<br>
+				<font size="-1" color="olive">\の次にある正規表現記号を普通の文字として扱います。またアルファベット文字と組み合わせて特殊な意味を持たせたりします。</font><br>
+			</td></tr>
+<tr><td><code>|</code></td><td>選択子<br><font size="-1" color="olive">パターンの論理和</font></td></tr>
+<tr><td><code>(<font color="blue">...</font>)</code></td><td>式集合（グループ）<br><font size="-1" color="olive">パターンをグループ化。</font></td></tr>
+<tr><td><code>[<font color="blue">...</font>]</code></td><td>文字集合（文字クラス）<br><font size="-1" color="olive">キャラクタクラス。</font></td></tr>
+</table>
+
+<h4>文字集合(キャラクタクラス)</h4>
+<code>[<font color="blue">...</font>]</code> の中に以下のものが指定可能です。<br>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code><font color="blue">...</font></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
+<tr><td><code>^<font color="blue">...</font></code></td><td>否定<br><code>[^ABC]</code>はAとBとC以外の任意の1文字にマッチします。</td></tr>
+<tr><td><code><font color="blue">x</font>-<font color="blue">y</font></code></td><td>範囲<br><code>[A-Z]</code>は、「A」から「Z」までの文字のどれか1つとマッチします。</td></tr>
+<tr><td><code>[<font color="blue">...</font>]</code></td><td><font color="green">(鬼)</font> 文字集合内文字集合</td></tr>
+<tr><td><code><font color="blue">..</font>&amp;&amp;<font color="blue">..</font></code></td><td><font color="green">(鬼)</font> 積演算</td></tr>
+<tr><td><code>[:<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIXブラケット</a></td></tr>
+<tr><td><code>[:^<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIXブラケット</a>（否定）</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ<br>
+<br>
+
+
+<h4>量指定子(数量子)</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><small>最小一致<br>(無欲)</small></td><td><small>最大一致<br>(欲張り)</small></td><td> </td></tr>
+<tr><td><code>*?</code></td>     <td><code>*</code></td>      <td>直前のパターンの0回以上の繰り返し</td></tr>
+<tr><td><code>+?</code></td>     <td><code>+</code></td>      <td>直前のパターンの1回以上の繰り返し</td></tr>
+<tr><td><code>??</code></td>     <td><code>?</code></td>      <td>直前のパターンが0回または1回現われる</td></tr>
+<tr><td><code>{<font color="blue">n</font>}?</code></td>   <td><code>{<font color="blue">n</font>}</code></td>    <td>直前のパターンの n 回の繰り返し</td></tr>
+<tr><td><code>{<font color="blue">n</font>,}?</code></td>  <td><code>{<font color="blue">n</font>,}</code></td>   <td>直前のパターンの n 回以上の繰り返し</td></tr>
+<tr><td><code>{<font color="blue">n</font>,<font color="blue">m</font>}?</code></td> <td><code>{<font color="blue">n</font>,<font color="blue">m</font>}</code></td>  <td>直前のパターンが n 回以上、 m 回以下</td></tr>
+</table>
+<br>
+正規表現Aを<code><b>[A-Z_]*PROC</b></code> 、正規表現Bを<code><b>[A-Z_]*?PROC</b></code> とします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
+という文字列中で、最初にマッチするのは以下のようになります。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
+
+<h4>文字</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>\t</code></td><td>水平タブコード（HT,TAB）</td></tr>
+<tr><td><code>\n</code></td><td>ラインフィード（LF）</td></tr>
+<tr><td><code>\r</code></td><td>キャリッジリターン（CR）</td></tr>
+<tr><td><code>\b</code></td><td>後退空白／バックスペース（BS）<br><font size="-1" color="olive">[ ]の中でのみ有効</font></td></tr>
+<tr><td><code>\f</code></td><td>フォームフィード／改ページ（FF）</td></tr>
+<tr><td><code>\a</code></td><td>鐘／アラーム（BEL）</td></tr>
+<tr><td><code>\e</code></td><td>退避修飾／エスケープコード（ESC）</td></tr>
+<tr><td><code>\<font color="blue">ooo</font></code></td>	<td><font color="blue">o</font>に8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)</td></tr>
+<tr><td><code>\x<font color="blue">HH</font></code></td>	<td><font color="blue">H</font>に16進数で文字コードを指定する (<font color="blue">H</font>は1～2桁)</td></tr>
+<tr><td><code>\x{<font color="blue">HHHH</font>}</code></td><td><font color="green">(鬼)</font> 拡張16進数表現(<font color="blue">H</font>は1～4桁)</td></tr>
+<tr><td><code>\c<font color="blue">[</font></code></td>	<td>コントロール文字(<font color="blue">[</font>はコントロール文字)</td></tr>
+<tr><td><code>\Q</code></td>	<td><font color="green">(鬼)</font> \Eに至るまで 正規表現演算子（正規表現記号）を抑制します</td></tr>
+<tr><td><code>\E</code></td>	<td><font color="green">(鬼)</font> 正規表現演算子（正規表現記号）の抑制状態を終端します</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ
+
+<h4>文字種</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>.</code></td><td>\nを除く任意の1文字 <b>[^\n]</b>と同じ<br><font color="green">(Unicode版)</font> 改行を除く任意の1文字。<b>[^\r\n]</b>と同じ
+<a href="javascript:id=hhctrl.TextPopup('この処理は正規表現DLLではなくsakura側が入力された.を[^\\r\\n]に置き換えています。','ＭＳゴシック,11',9,9,-1,-1)">*1</a>
+</td></tr>
+<tr><td><code>\w</code></td><td>単語の構成文字 <b>[0-9A-Za-z_]</b>と同じ<br><font color="green">(鬼)</font> 2バイト文字も含む</td></tr>
+<tr><td><code>\W</code></td><td>単語の構成文字以外</td></tr>
+<tr><td><code>\s</code></td><td>空白類文字 [ \t\v\x0a\x0d]と同じ<br><font color = "green">(鬼)</font> <code>[:space:]</code>と同じ</td></tr>
+<tr><td><code>\S</code></td><td>空白類文字以外</td></tr>
+<tr><td><code>\d</code></td><td>10進数字 <br><font color="green">(Unicode版)</font> 2バイト文字=全角数字も含む</td></tr>
+<tr><td><code>\D</code></td><td>10進数字以外</td></tr>
+<tr><td><code>\p{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>キャラクタプロパティ</a></td></tr>
+<tr><td><code>\p{^<font color="blue">property-name</font>}<br>\P{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>キャラクタプロパティ</a>（否定）</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ<br>
+<font color="green">(Unicode版)</font> はUnicode版のサクラエディタ<br>
+
+<h4>位置(錨)</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>^</code></td><td>行頭<!-- ライブラリやバージョンで意味が違う --></td></tr>
+<tr><td><code>$</code></td><td>行末<!-- ライブラリやバージョンで意味が違う --></td></tr>
+<tr><td><code>\b</code></td><td>単語の境界<br><font size="-1" color="olive">[ ]の中ではバックスペースの意味になります</font></td></tr>
+<tr><td><code>\B</code></td><td>単語の境界以外</td></tr>
+<tr><td><code>\A</code></td><td>文字列の最初</td></tr>
+<tr><td><code>\Z</code></td><td>文字列の最後(最後が改行ならば改行の直前)</td></tr>
+<tr><td><code>\z</code></td><td><font color="green">(鬼)</font> 文字列の最後</td></tr>
+<tr><td><code>\G</code></td><td>照合開始位置</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ
+
+<h4>後方参照と部分式呼び出し</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>\<font color="blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<b>\<font color="blue">n</font></b>(<font color="blue">n</font>は1以上の整数)で参照します。</td></tr>
+<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定による後方参照</td></tr>
+<tr><td><code>
+	\k&lt;<font color="blue">name</font>+<font color="blue">n</font>&gt;<br>
+	\k&lt;<font color="blue">name</font>-<font color="blue">n</font>&gt;<br>
+	\k'<font color="blue">name</font>+<font color="blue">n</font>'<br>
+	\k'<font color="blue">name</font>-<font color="blue">n</font>'
+		</code></td><td><font color="green">(鬼)</font> ネストレベル付き後方参照</td></tr>
+<tr><td><code>\g&lt;<font color="blue">name</font>&gt;<br>\g'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定部分式呼出し</td></tr>
+<tr><td><code>\g&lt;<font color="blue">n</font>&gt;<br>\g'<font color="blue">n</font>'</code></td><td><font color="green">(鬼)</font> 番号指定部分式呼出し</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ
+
+<h4>拡張式集合</h4>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>(?#<font color="blue">...</font>)</code></td><td>注釈</td></tr>
+<tr><td><code>(<font color="blue">式</font>)</code></td><td>捕獲式集合</td></tr>
+<tr><td><code>(?:<font color="blue">式</font>)</code></td><td>非捕獲式集合 （グループ化のみ）</td></tr>
+<tr><td><code>(?&lt;<font color="blue">name</font>&gt;<font color="blue">式</font>)<br>(?'<font color="blue">name</font>'<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 名前付き捕獲式集合</td></tr>
+<tr><td><code>(?=<font color="blue">式</font>)</code></td><td>先読み</td></tr>
+<tr><td><code>(?!<font color="blue">式</font>)</code></td><td>否定先読み</td></tr>
+<tr><td><code>(?&lt;=<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 戻り読み</td></tr>
+<tr><td><code>(?&lt;!<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 否定戻り読み</td></tr>
+<tr><td><code>(?&gt;<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 原子的式集合</td></tr>
+<tr><td><code>(?imsx)</code></td><td>孤立オプション<br>i: 大文字小文字照合<br>m: 複数行（サクラエディタではデフォルトでon）<br>s: 単一行  （. が \n にもマッチ）<br>x: 拡張形式（空白を無視、# 以降を無視）</td></tr>
+<tr><td><code>(?imsx-imsx)</code></td><td><font color="green">(鬼)</font> 孤立オプション（bregonig.dllではオプションの否定が可能）</td></tr>
+<tr><td><code>(imsx-imsx:<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 式オプション</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dll のみ
+
+<h4>置換で使える参照</h4>
+「置換後」に指定して使います。<br>
+<table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td><code>$<font color="blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<b>$<font color="blue">n</font></b>(<font color="blue">n</font>は1以上の整数)で参照します。<br>サクラエディタでは<b>$<font color="blue">n</font></b>の代わりに<b>\<font color="blue">n</font></b>も使用できます。</td></tr>
+<tr><td><code>${<font color="blue">n</font>}</code></td><td><font color="green">(鬼)</font> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
+<tr><td><code>$&amp;</code></td><td>マッチした文字列全体</td></tr>
+<tr><td><code>$+</code></td><td><font color="green">(鬼)</font> 最後にマッチした部分文字列</td></tr>
+<tr><td><code>$+{<font color="blue">name</font>}<br>$-{<font color="blue">name</font>}[<font color="blue">n</font>]</code></td><td><font color="green">(鬼)</font> 名前指定参照（Perl 5.10 互換、推奨）</td></tr>
+<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定参照（鬼車準拠）</td></tr>
+<tr><td><code>${<font color="blue">name</font>}</code></td><td><font color="green">(鬼)</font> 名前指定参照（独自拡張、暫定仕様のため非推奨）</td></tr>
+</table>
+<font color="green">(鬼)</font> はbregonig.dllのみ
+
+<h4>bregonig.dllへの変更による違い</h4>
+<ul>
+	<li><b>\w は2バイト文字も含む。</b><br>
+		<small>\w は [A-Za-z0-9_] に加え、2バイト文字も含みます。これに応じて、\W, \b, \B の動作も変更になります。</small>
+	</li>
+	<li><b>[ ] の中に [ を書くときは必ずエスケープが必要。</b><br>
+		<small>文字集合の中で文字集合や積演算が使えるようになる代わりに、[ そのものを書くときは必ず \[ と書かなければならなくなりました。</small>
+	</li>
+	<li><b>\c\ の動作が異なる。</b><br>
+		<small>Bregexp.dll では、\c\ は Ctrl+\ を意味していますが、bregonig.dll では、\c の次の \ はエスケープとして解釈されます。Ctrl+\ を指定するには \c\\とする必要があります。（Perl の仕様と異なるため、変更される可能性があります。）</small>
+	</li>
+	<li><b>置換で \<font color="blue">ooo</font> の動作が少し異なる。</b><br>
+		<small>Perl の動作に近づけてあります。</small>
+	</li>
+	<li><b>Unicode版は i オプションの動作が異なる。</b><br>
+		<small>大文字小文字を区別しないの動作が ASCII 範囲外にも影響します。<br>
+		Unicode版サクラエディタの通常検索・置換も ASCII 範囲外の大文字小文字の考慮をしますが、2つが同じかどうかは未チェックです。</small>
+	</li>
+</ul>
+
+<h4>改行の検索</h4>
+サクラエディタで改行(CRLF)を検索する場合は、<br>
+<b>\r\n</b> で検索して下さい。<br>
+改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
+<b>[\r\n]+</b> のように指定してください。<br>
+改行(CR,LF,CRLF)と、最終行の行末を検索する場合は、<br>
+<b>$</b> と指定してください。<br>
+
+<hr>
+
+<img src="images/hint.png">ヒント<br>
+正規表現を検索、置換、Grepで利用する場合、「/」をエスケープしたり、「/」で囲ったりする必要はありません。<br>
+正規表現キーワードで使う場合は、/text\/css/k のように「/」をエスケープするか m#text/css#k のように書く必要があります。<br>
+
+<br>
+<img src="images/hint.png">追加情報<br>
+検索、置換、Grepでは、正規表現ライブラリに渡す文字列を以下のようにしています。[DELIMITER]は、0xffのバイナリ表記とします。<br>
+Unicode版では U+FFFF です。<br>
+検索時のオプションは「m[DELIMITER]Pattern[DELIMITER]km」です。<br>
+置換時のオプションは「s[DELIMITER]PatternBefore[DELIMITER]PatternAfter[DELIMITER]km」です。<br>
+デリミタ相当の文字を検索・置換するにはエスケープが必要です。<br>
+また大文字小文字を区別しない場合は最後に「i」が付加されます。<br>
+すべて置換で「すべて置換は置換の繰返し」がOFFの場合は「g」が付加されます。<br>
+(mオプションが付いていますが、改行をまたいだ検索はできません。)<br>
+</BODY></HTML>

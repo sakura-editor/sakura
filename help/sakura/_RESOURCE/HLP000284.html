@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>ExpandParameter</TITLE>
+<META NAME="MS-HKWD" CONTENT="ExpandParameter">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ExpandParameter</h2>
+<h3>ExpandParameterの書式</h3>
+この特殊記号は以下の各文字列で利用できます。<br>
+<ul>
+<li><a href="HLP000122.html">印刷ページ設定</a>のヘッダ・フッダ</li>
+<li><a href="HLP000103.html">外部コマンド実行</a></li>
+<li>ウィンドウのタイトルバー文字列 <a href="HLP000146.html">共通設定 『ウィンドウ』プロパティ</a></li>
+<li>マクロ専用関数 <a href="HLP000268.html#ExpandParameter">ExpandParameter</a>の引数</li>
+<li>マクロ <a href="HLP000331.html">S_TraceOut</a>の引数</li>
+</ul>
+
+<h4>特殊記号</h4>
+<div class=li200>
+例で使うフルパスを「D:\source\Main.cpp」とします。<br><br>
+$$	$自身<br>
+$A	アプリ名(sakura) (sakura:2.0.0.0以降)<br>
+$F	開いているファイルのフルパス。名前がなければ(無題)。<br>
+$f	開いているファイルの名前（ファイル名+拡張子のみ）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：Main.cpp<br>
+$g	開いているファイルの名前（拡張子除く）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：Main<br>
+$/	開いているファイルのフルパス（パスの区切りが/）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：D:/source/Main.cpp<br>
+$N	開いているファイルの名前(<a href="HLP000277.html">簡易表示</a>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：ソース\Main.cpp(設定によります)<br>
+$n	無題の通し番号 (sakura:2.0.6.0以降)<br>
+$E	開いているファイルのあるフォルダの名前(簡易表示) (sakura:2.0.6.0以降)<br>
+$e	開いているファイルのあるフォルダの名前 (sakura:2.0.6.0以降)<br>
+$B  タイプ別設定の名前 (sakura:2.0.7.0以降)<br>
+$b  開いているファイルの拡張子 (sakura:2.0.7.0以降)<br>
+$Q  印刷ページ設定の名前 (sakura:2.0.7.0以降)<br>
+$C	現在選択中のなかで改行コードを除く１行目のテキスト<br>
+&nbsp;&nbsp;&nbsp;&nbsp;選択範囲がない場合は現在のカーソル位置の単語を取得します。<br>
+$x	現在の論理桁位置(先頭からのバイト数1開始)<br>
+$y	現在の論理行位置(1開始)<br>
+$d	現在の日付(共通設定の日付書式)<br>
+$t 	現在の時刻(共通設定の時刻書式)<br>
+$p	現在のページ(印刷のヘッダ・フッダでのみ利用可能)<br>
+$P	総ページ(印刷のヘッダ・フッダでのみ利用可能)<br>
+$D	ファイルのタイムスタンプ(共通設定の日付書式)<br>
+$T	ファイルのタイムスタンプ(共通設定の時刻書式)<br>
+$V	エディタのバージョン文字列<br>
+$h	Grep検索キーの先頭32byte<br>
+$S	サクラエディタのフルパス名 (sakura:1.5.7.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：C:\Program files\sakura\sakura.exe<br>
+$I	現在参照しているiniファイルのパス<br>
+$M	現在実行中のマクロのフルパス名 (sakura:1.5.7.0以降)<br>
+$&lt;profile&gt;	プロファイル名(defaultの場合空文字列) (sakura:2.2.0.0以降)<br>
+</div><br>
+<img src="images/note.png"><b>注意</b><div class=li200>
+新規ファイル，Grep検索結果ウィンドウ，アウトプットウィンドウの場合、$F，$f，$g，$/ は「(無題)」に、$D，$T は「(保存されていません)」になります。<br>
+</div>
+<br>
+<img src="images/hint.png">ヒント<div class=li200>
+$C は「検索ダイアログを出した時に、検索の"条件"欄に取り込まれる文字列」と同じ文字列になります。つまり次のような仕様です。<br>
+<ul>
+<li>文字列が範囲選択されている場合、その選択されている文字列が取得される。</li>
+<li>文字列が範囲選択されていない場合、カーソル位置の単語が取得される。</li>
+<li>複数行を選択してあっても、取得されるのは一番上の１行のみであり、改行を含まない。</li>
+<li>取得できる文字列は 259 バイトまでである。</li>
+</ul>
+GetSelectedString(0)； の返り値とは異なる場合があります。<br>
+</div>
+<br>
+<h4>条件分岐の構文</h4>
+<div class=li200><em>${条件?文字列1$:文字列2$}</em></div>
+<br>
+条件の結果によって文字列1または文字列2のいずれかが評価(表示)されます。<br>
+文字列には、条件分岐（ネスト可能）、特殊記号を入れる事ができます。<br>
+条件によっては3つ以上のパターンを持つものもあります。<br>
+以下の条件が使えます。<br>
+<br>
+<div class=li200>
+R 	ビューモード $: 上書き禁止 $: いずれでもない <br>
+U 	更新対象ファイル $: 読込/更新後 変更されていないファイル <br>
+M	キーボードマクロ記録中 $: 記録中でない <br>
+w 	Grepウィンドウ $: アウトプットウィンドウ $: 普通のウィンドウ <br>
+I  	エディタウィンドウがアクティブではない $： エディタウィンドウがアクティブ<br>
+</div><br>
+<img src="images/note.png"><b>注意</b><br>
+Rの条件の意味は以下の通りです。<br>
+<div class=li200>
+ビューモード：<a href="HLP000249.html">ビューモード</a>に設定している<br>
+上書き禁止：ファイルの読み取り専用属性がON，他のアプリケーションが排他制御付きで開いている等<br>
+いずれでもない：上記以外<br>
+</div>
+<br>
+例:<br>
+展開前	"「$F」は、${U?未更新で$:更新されていま$}す。"<br>
+展開後	"「D:\source\Main.cpp」は、未更新です。"<br>
+<br>
+</BODY></HTML>

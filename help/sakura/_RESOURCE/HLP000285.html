@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>入力改行コード指定</TITLE>
+<META NAME="MS-HKWD" CONTENT="入力改行コード指定">
+<META NAME="MS-HKWD" CONTENT="ChgmodEOL">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>入力改行コード指定</h2>
+Enterキーを押したときに入力される改行コードを指定します。<br>
+マクロでは現在の改行コードは<a href="HLP000268.html#GetLineCode">GetLineCode</a>で取得できます。<br>
+<dl>
+	<dt>CRLF</dt>
+	<dd>Windows/DOSで一般的な改行コードです (U+000D U+000A, \r\n)</dd>
+	<dt>LF</dt>
+	<dd>Unix/Linuxで一般的な改行コードです (U+000A, \n)</dd>
+	<dt>CR</dt>
+	<dd>旧MacOSで一般的な改行コードです (U+000D, \r)</dd>
+	<dt>NEL</dt>
+	<dd>UnicodeのNext Lineです (U+0085)</dd>
+	<dt>LS</dt>
+	<dd>Unicodeの行区切り文字(Line Separator)です (U+2028)</dd>
+	<dt>PS</dt>
+	<dd>Unicodeの段落区切り文字(Paragraph Separator)です (U+2029)</dd>
+</dl>
+
+<ul>
+<li>起動時は、基本タイプの<a href="HLP000197.html">タイプ別設定 『支援』プロパティ</a>で指定した改行コードになります。</li>
+<li>ファイルを開いた場合は、そのファイルの１行目の改行コードに自動設定されます。</li>
+<li>入力済みの改行コードは、元の改行コードを保持します。</li>
+<li><a href="HLP000021.html">名前をつけて保存</a>で指定しない限り、自動変換されることはありません。</li>
+<li>詳しくは、<a href="HLP000149.html">改行コードについて</a>をご覧下さい。</li>
+<li>NEL・LS・PSはステータスバーの右クリックからのみ選択することができます。(sakura:2.1.0.0 以降)</li>
+</ul>
+
+<img src="images/hint.png">ヒント<br>
+<div class=li200>
+ステータスバー上の入力改行コード位置での右クリックで切り替えのメニューが出ます。(sakura:1.4.3.7以降)<br>
+</div><br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ChgmodEOL( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;改行コード<br>
+・記録:	指定改行コードのパラメータ付で記録<br>
+・解説<br>
+改行コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更しない<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;CRLF(Windows)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strike>2&nbsp;&nbsp;&nbsp;&nbsp;LFCR</strike>	<img src="images/hint.png">廃止しました。(sakura:2.0.0.0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;LF(UNIX)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;CR(Mac)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;NEL (sakura:2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;LS (sakura:2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;PS (sakura:2.1.0.0 以降)<br>
+</BODY></HTML>
