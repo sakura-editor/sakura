@@ -1,8 +1,8 @@
-/*!	@file
+ï»¿/*!	@file
 
 	@author Project Sakura-Editor
-	@date 2007.09.30 kobake ì¬
-	@date 2009.07.06 rastiv #pragma once ‚ğœ‹‚µ‚Ä #ifndef-#endif •¶‚É•ÏX
+	@date 2007.09.30 kobake ä½œæˆ
+	@date 2009.07.06 rastiv #pragma once ã‚’é™¤å»ã—ã¦ #ifndef-#endif æ–‡ã«å¤‰æ›´
 */
 /*
 	Copyright (C) 2007-2008, kobake
@@ -31,23 +31,23 @@
 */
 
 /*
-	++ ŠT—v ++
+	++ æ¦‚è¦ ++
 
-	enum ‚Æ define ‚Ì2í—Ş‚Ì’è”’è‹`ƒwƒbƒ_‚ğ¶¬‚·‚é‚½‚ß‚Ìƒ‚ƒm
+	enum ã¨ define ã®2ç¨®é¡ã®å®šæ•°å®šç¾©ãƒ˜ãƒƒãƒ€ã‚’ç”Ÿæˆã™ã‚‹ãŸã‚ã®ãƒ¢ãƒ
 
-	enum’è”‚Íƒ\[ƒXƒR[ƒh‚©‚çQÆ‚µA(ƒfƒoƒbƒO‚ª‚µ‚â‚·‚­‚È‚é)
-	define’è”‚ÍƒŠƒ\[ƒX‚©‚çQÆ‚·‚é  (ƒŠƒ\[ƒX“à‚Å‚Íenum’è”‚ğ—˜—p‚Å‚«‚È‚¢)
-
-
-	++ ˆË‘¶ ++
-
-	Visual Studio ‚Ì cl.exe ‚ÉˆË‘¶B
-	cl.exe ‚ÌƒvƒŠƒvƒƒZƒbƒT‹@”\‚ğ—˜—p‚µ‚Ä‚¢‚Ü‚·B
+	enumå®šæ•°ã¯ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã‹ã‚‰å‚ç…§ã—ã€(ãƒ‡ãƒãƒƒã‚°ãŒã—ã‚„ã™ããªã‚‹)
+	defineå®šæ•°ã¯ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰å‚ç…§ã™ã‚‹  (ãƒªã‚½ãƒ¼ã‚¹å†…ã§ã¯enumå®šæ•°ã‚’åˆ©ç”¨ã§ããªã„)
 
 
-	++ g—p•û–@ ++
+	++ ä¾å­˜ ++
 
-	usage() ‚ğQÆ
+	Visual Studio ã® cl.exe ã«ä¾å­˜ã€‚
+	cl.exe ã®ãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µæ©Ÿèƒ½ã‚’åˆ©ç”¨ã—ã¦ã„ã¾ã™ã€‚
+
+
+	++ ä½¿ç”¨æ–¹æ³• ++
+
+	usage() ã‚’å‚ç…§
 */
 
 #ifdef __MINGW32__
@@ -110,10 +110,19 @@ enum EMode{
 
 int usage()
 {
-	printf("HeaderMake -in=<“ü—Íƒtƒ@ƒCƒ‹> -out=<o—Íƒtƒ@ƒCƒ‹> -mode=<ƒ‚[ƒh> [-enum=<enum–¼>]\n");
-	printf("ƒ‚[ƒh\n");
-	printf("  define  c #define ‚É‚æ‚é’è”’è‹`ƒwƒbƒ_‚ğ¶¬\n");
-	printf("  enum    c enum ‚É‚æ‚é’è”’è‹`ƒwƒbƒ_‚ğ¶¬B<enum–¼>‚ğw’è‚·‚ê‚Î‚»‚ê‚ª—ñ‹“Œ^‚Ì–¼‘O‚É‚È‚é\n");
+	printf(
+		"\nUsage: HeaderMake -in=<InputFile.hsrc> -out=<OutputFile.h> -mode=<Mode> [-enum=<EnumName>]\n"
+		"\n"
+		"  Argument parameters\n"
+		"    InputFile           : Input .hsrc file path\n"
+		"    OutputFile          : Output .h file path\n"
+		"    Mode                : define|enum\n"
+		"    EnumName (Optional) : Enum name (when enum mode only)\n"
+		"\n"
+		"  Mode\n"
+		"    define : Output .h file as #define list\n"
+		"    enum   : Output .h file as enum list\n"
+	);
 	return 1;
 }
 
@@ -122,11 +131,11 @@ inline bool is_token(char c)
 	return __iscsym(c) || c=='-';
 }
 
-//! Œã‚ë‚©‚çŒŸõ‚µAc1 ‚© c2 Aæ‚ÉŒ©‚Â‚©‚Á‚½‚Ù‚¤‚ÌƒAƒhƒŒƒX‚ğ•Ô‚·
+//! å¾Œã‚ã‹ã‚‰æ¤œç´¢ã—ã€c1 ã‹ c2 ã€å…ˆã«è¦‹ã¤ã‹ã£ãŸã»ã†ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™
 const char* strrchr2(const char* str, char c1, char c2)
 {
 	const char* p=strchr(str,'\0');
-	//¦while‚ğæs‚·‚é‚ÆAc1,c2‚ª'\0'‚Ì‚Æ‚«‚ÉNULL‚ğ•Ô‚µ‚Ä‚µ‚Ü‚¤‚Ì‚ÅAdo`while‚Æ‚µ‚½B
+	//â€»whileã‚’å…ˆè¡Œã™ã‚‹ã¨ã€c1,c2ãŒ'\0'ã®ã¨ãã«NULLã‚’è¿”ã—ã¦ã—ã¾ã†ã®ã§ã€doï½whileã¨ã—ãŸã€‚
 	do{
 		if(*p==c1 || *p==c2)return p;
 	}while(--p>=str);
@@ -144,118 +153,153 @@ const char* GetFileTitlePointer(const char* fpath)
 	}
 }
 
-int main(int argc,char* argv[])
+int main_impl(
+	const char* in_file,
+	const char* out_file,
+	const char* mode_name,
+	const char* enum_name
+);
+
+int main(int argc, char* argv[])
 {
-	//ˆø”‰ğß
-	const char* in_file  =NULL;
-	const char* out_file =NULL;
-	const char* mode_name=NULL;
-	const char* enum_name="";
-	for(int i=1;i<argc;i++){
-		char* p=argv[i];
-		if(*p=='/')*p='-';
-		if(strncmp(p,"-in",3)==0){
-			p+=3;
-			if(*p!='\0'){ if(*p=='=')p++; in_file=p; }
-			else in_file=argv[++i];
+	if (argc <= 1) {
+		return usage();
+	}
+
+	//å¼•æ•°è§£é‡ˆ
+	const char* in_file = NULL;
+	const char* out_file = NULL;
+	const char* mode_name = NULL;
+	const char* enum_name = "";
+	for (int i = 1; i<argc; i++) {
+		char* p = argv[i];
+		if (*p == '/')*p = '-';
+		if (strncmp(p, "-in", 3) == 0) {
+			p += 3;
+			if (*p != '\0') { if (*p == '=')p++; in_file = p; }
+			else in_file = argv[++i];
 		}
-		else if(strncmp(p,"-out",4)==0){
-			p+=4;
-			if(*p!='\0'){ if(*p=='=')p++; out_file=p; }
-			else out_file=argv[++i];
+		else if (strncmp(p, "-out", 4) == 0) {
+			p += 4;
+			if (*p != '\0') { if (*p == '=')p++; out_file = p; }
+			else out_file = argv[++i];
 		}
-		else if(strncmp(p,"-mode",5)==0){
-			p+=5;
-			if(*p!='\0'){ if(*p=='=')p++; mode_name=p; }
-			else mode_name=argv[++i];
+		else if (strncmp(p, "-mode", 5) == 0) {
+			p += 5;
+			if (*p != '\0') { if (*p == '=')p++; mode_name = p; }
+			else mode_name = argv[++i];
 		}
-		else if(strncmp(p,"-enum",5)==0){
-			p+=5;
-			if(*p!='\0'){ if(*p=='=')p++; enum_name=p; }
-			else enum_name=argv[++i];
+		else if (strncmp(p, "-enum", 5) == 0) {
+			p += 5;
+			if (*p != '\0') { if (*p == '=')p++; enum_name = p; }
+			else enum_name = argv[++i];
 		}
-		else{
-			printf("Error: •s–¾‚Èˆø”[%s]\n",p);
+		else {
+			printf("Error: Unknown argument[%s]\n", p);
 			return 1;
 		}
 	}
-	if(!in_file)  { printf("Error: “ü—Íƒtƒ@ƒCƒ‹‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢\n\n"); return usage(); }
-	if(!out_file) { printf("Error: o—Íƒtƒ@ƒCƒ‹‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢\n\n"); return usage(); }
-	if(!mode_name){ printf("Error: ƒ‚[ƒh‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢\n\n");       return usage(); }
+	if (!in_file)   { printf("Error: Specify <InputFile> argument.\n");  return usage(); }
+	if (!out_file)  { printf("Error: Specify <OutputFile> argument.\n"); return usage(); }
+	if (!mode_name) { printf("Error: Specify <Mode> argument.\n");       return usage(); }
 
+	// é–‹å§‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	printf("\nSTART HeaderMake.\n");
+	printf("CMDLINE: ");
+	for (int i = 0; i < argc; i++) {
+		printf("%s ", argv[i]);
+	}
+	printf("\n\n");
 
-	//ƒ‚[ƒh‰ğß
+	// å‡¦ç†
+	main_impl(in_file, out_file, mode_name, enum_name);
+
+	// çµ‚äº†ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	printf("\nEND HeaderMake.\n\n");
+}
+
+int main_impl(
+	const char* in_file,
+	const char* out_file,
+	const char* mode_name,
+	const char* enum_name
+)
+{
+	//ãƒ¢ãƒ¼ãƒ‰è§£é‡ˆ
 	EMode mode=MODE_INVALID;
 	if(_stricmp(mode_name,"DEFINE")==0)mode=MODE_DEFINE;
 	else if(_stricmp(mode_name,"ENUM")==0)mode=MODE_ENUM;
 	else{
-		printf("Error: •s–¾‚Èƒ‚[ƒh[%s]‚Å‚·\n",mode_name);
+		printf("Error: Unknown mode[%s].\n", mode_name);
 		return 2;
 	}
 
 
-	//ƒtƒ@ƒCƒ‹XV”äŠr (‚È‚ñ‚©AVS‚ÌƒJƒXƒ^ƒ€ƒrƒ‹ƒh‚ª‚¤‚Ü‚­‚¢‚©‚È‚¢‚Ì‚ÅA‚±‚±‚Å”»’è(Š¾) )
+	//ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°æ™‚åˆ»æ¯”è¼ƒ (ãªã‚“ã‹ã€VSã®ã‚«ã‚¹ã‚¿ãƒ ãƒ“ãƒ«ãƒ‰ãŒã†ã¾ãã„ã‹ãªã„ã®ã§ã€ã“ã“ã§åˆ¤å®š(æ±—) )
 	struct _stat in_stat;
 	struct _stat out_stat;
 	if(-1==_stat(in_file, &in_stat ))goto next;
 	if(-1==_stat(out_file,&out_stat))goto next;
-	//“ü—Íƒtƒ@ƒCƒ‹‚ªV‚µ‚¯‚ê‚Îˆ—‚ğ‘±s‚·‚é
+	//å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ–°ã—ã‘ã‚Œã°å‡¦ç†ã‚’ç¶šè¡Œã™ã‚‹
 	if(in_stat.st_mtime>out_stat.st_mtime)goto next;
-	else{ printf("o—Íƒtƒ@ƒCƒ‹‚ÍÅV‚Å‚·\n"); return 0; }
+	else{ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
 
 
 next:
-	//ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
+	// ãƒ—ãƒªãƒ—ãƒ­ã‚»ã‚¹æ¸ˆã¿ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚ªãƒ¼ãƒ—ãƒ³
 	char in_file2[_MAX_PATH];
 	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
-	FILE* in=_popen(in_file2,"rt");               if(!in ){ printf("Error: “ü—Íƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚Ü‚¹‚ñ\n"); return 1; } //¦ƒvƒŠƒvƒƒZƒXÏ‚İƒXƒgƒŠ[ƒ€
-	FILE* out=NULL; fopen_s(&out,out_file,"wt");  if(!out){ printf("Error: o—Íƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚Ü‚¹‚ñ\n"); return 1; }
+	FILE* in = _popen(in_file2, "rt");
+	if (!in) { printf("Error: Failed to open process[%s]\n", in_file2); return 1; }
+	
+	// å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
+	FILE* out = NULL; fopen_s(&out, out_file, "wt");
+	if (!out) { printf("Error: Failed to open OutputFile[%s] as write mode\n", out_file); return 1; }
 
 
-
-	//ˆ—
+	//å‡¦ç†
 
 	if(mode==MODE_DEFINE){
 		fprintf(out,
 			"#ifndef SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
 			"#define SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
 			"\n"
-		);	// ƒCƒ“ƒNƒ‹[ƒhƒK[ƒh‚ğ‘}“üidefine —pj
+		);	// ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã‚¬ãƒ¼ãƒ‰ã‚’æŒ¿å…¥ï¼ˆdefine ç”¨ï¼‰
 	}else if(mode==MODE_ENUM){
 		fprintf(out,
 			"#ifndef SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
 			"#define SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
 			"\n"
-		);	// ƒCƒ“ƒNƒ‹[ƒhƒK[ƒh‚ğ‘}“üienum —pj
+		);	// ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã‚¬ãƒ¼ãƒ‰ã‚’æŒ¿å…¥ï¼ˆenum ç”¨ï¼‰
 	}else{
-		; // ‰½‚ào—Í‚µ‚È‚¢
+		; // ä½•ã‚‚å‡ºåŠ›ã—ãªã„
 	}
 
 	char line[1024];
 	fprintf(out,
-		"//‚±‚Ìƒtƒ@ƒCƒ‹‚Í HeaderMake ‚É‚æ‚è %s ‚©‚ç¶¬‚³‚ê‚½ƒtƒ@ƒCƒ‹‚Å‚·B\n"
-		"//’¼Ú•ÒW‚µ‚È‚¢‚Å‚­‚¾‚³‚¢B\n\n",
+		"// This file is generated by HeaderMake with %s.\n"
+		"// Don't edit this file manually.\n\n",
 		GetFileTitlePointer(in_file)
 	);
-	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enumŠJn
+	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enumé–‹å§‹
 	while(NULL!=fgets(line,_countof(line),in))
 	{
-		// #–³‹(for MinGW)
+		// #ç„¡è¦–(for MinGW)
 		if('#' == line[0]){
 			continue;
 		}
 
-		//‰üsœ‹
+		//æ”¹è¡Œé™¤å»
 		{
 			char* p=strrchr(line,'\n');
 			if(p && *(p+1)=='\0')*p='\0';
 		}
 
-		//ƒg[ƒNƒ“’ŠoŠJn
+		//ãƒˆãƒ¼ã‚¯ãƒ³æŠ½å‡ºé–‹å§‹
 		const char* p=line;
 		const char* q;
 
-		//ID•¶š—ñ -> id
+		//IDæ–‡å­—åˆ— -> id
 		char id[256];
 		while(*p && !is_token(*p))p++;
 		q=p;
@@ -264,7 +308,7 @@ next:
 		id[q-p]='\0';
 		p=q;
 
-		//’l -> value
+		//å€¤ -> value
 		char value[256];
 		while(*p && !is_token(*p))p++;
 		q=p;
@@ -273,7 +317,7 @@ next:
 		value[q-p]='\0';
 		p=q;
 
-		//o—Í
+		//å‡ºåŠ›
 		if(*id && *value){
 			if(mode==MODE_ENUM){
 				fprintf(out,"\t%s = %s,\n",id,value);
@@ -281,7 +325,7 @@ next:
 			else if(mode==MODE_DEFINE){
 				fprintf(out,"#define %s %s\n",id,value);
 			}else{
-				; // mode ‚ª•s³‚Ìê‡‚Í‰½‚ào—Í‚µ‚È‚¢
+				; // mode ãŒä¸æ­£ã®å ´åˆã¯ä½•ã‚‚å‡ºåŠ›ã—ãªã„
 			}
 		}
 	}
@@ -291,22 +335,23 @@ next:
 			"\n"
 			"#endif /* SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_ */\n"
 			"/*[EOF]*/\n"
-		);	// ƒCƒ“ƒNƒ‹[ƒhƒK[ƒhI—¹idefine —pj
+		);	// ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã‚¬ãƒ¼ãƒ‰çµ‚äº†ï¼ˆdefine ç”¨ï¼‰
 	}else if(mode==MODE_ENUM){
 		fprintf(out,
 			"};\n"
 			"\n"
 			"#endif /* SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_ */\n"
 			"/*[EOF]*/\n"
-		);	// ƒCƒ“ƒNƒ‹[ƒhƒK[ƒhI—¹ienum —pj
+		);	// ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã‚¬ãƒ¼ãƒ‰çµ‚äº†ï¼ˆenum ç”¨ï¼‰
 	}else{
-		; // ‰½‚ào—Í‚µ‚È‚¢
+		; // ä½•ã‚‚å‡ºåŠ›ã—ãªã„
 	}
 
 
-	//Œãn––
+	//å¾Œå§‹æœ«
 	fclose(out);
 	fclose(in);
+
 	return 0;
 }
 
