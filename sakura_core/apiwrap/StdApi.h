@@ -24,7 +24,19 @@
 #ifndef SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 #define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 
-#include <ImageHlp.h> //MakeSureDirectoryPathExists
+
+//ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
+//c++規格への準拠が厳しくなったため、WindowsSDKが無名enumをtypedefするコードが怒られる。
+#if defined(_MSC_VER) && _MSC_VER >= 1900
+	//一時的に警告を無効にしてインクルードする
+	#pragma warning(push)
+	#pragma warning(disable:4091)
+	#include <ImageHlp.h> //MakeSureDirectoryPathExists
+	#pragma warning(pop)
+#else
+	#include <ImageHlp.h> //MakeSureDirectoryPathExists
+#endif
+
 
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
