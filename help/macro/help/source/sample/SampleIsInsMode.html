@@ -1,0 +1,32 @@
+<html><head><title>S_IsInsModeの使用例</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_IsInsModeの使用例</h2>
+
+<pre>
+<span style = "color:green;">//sample.js
+//挿入・上書きモードを調べる</span>
+<span style = "color:blue;">var</span> oWsh = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000">"WScript.Shell"</span>);
+<span style = "color:blue;">if</span> (<span style = "color:blue;">IsInsMode</span>) {
+    oWsh.Popup(<span style = "color:#800000">"挿入モードです"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
+} <span style = "color:blue;">else</span> {
+    oWsh.Popup(<span style = "color:#800000">"上書モードです"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
+}
+</pre>
+
+<pre>
+<span style = "color:green;">//sample.ppa</span>
+<span style = "color:blue;">if S_IsInsMode then</span>
+    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'挿入モードです'</span>, <span style = "color:#800000;">'挿入／上書き'</span>, <span style = "color:red;">0</span>)
+<span style = "color:blue;">else</span>
+    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'上書きモードです'</span>, <span style = "color:#800000;">'挿入／上書き'</span>, <span style = "color:red;">0</span>)
+;
+</pre>
+
+<hr>
+</body></html>

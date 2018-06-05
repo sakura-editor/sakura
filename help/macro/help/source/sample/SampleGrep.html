@@ -1,0 +1,29 @@
+<html><head><title>S_Grepの使用例</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_Grepの使用例</h2>
+
+<pre>
+<span style = "color:green;">&#39; sample.vbs</span>
+<span style = "color:green;">&#39; 編集中のファイルを対象に選択文字列でGrep実行</span>
+sKey = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$C"</span>))
+sFile = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$f"</span>))
+sPath = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$F"</span>))
+sDir = <span style = "color:blue;">Left</span>(<span style = "color:blue;">CStr</span>(sPath), <span style = "color:blue;">Len</span>(sPath) - <span style = "color:blue;">Len</span>(sFile) - <span style = "color:red;">1</span>)
+
+<span style = "color:green;">&#39; サブフォルダから検索しない</span>
+<span style = "color:green;">&#39; 大文字小文字を区別する</span>
+<span style = "color:green;">&#39; 正規表現無効</span>
+<span style = "color:green;">&#39; 文字コードセット自動</span>
+<span style = "color:green;">&#39; 結果出力：該当行</span>
+<span style = "color:green;">&#39; 出力形式：ノーマル</span>
+<span style = "color:blue;">Grep CStr</span>(sKey), <span style = "color:blue;">CStr</span>(sFile), <span style = "color:blue;">CStr</span>(sDir), <span style = "color:blue;">CLng</span>(<span style = "color:red;">52</span>)
+</pre>
+
+<hr>
+</body></html>

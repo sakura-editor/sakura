@@ -1,0 +1,71 @@
+<html><head><title>ScriptControlの使用</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>ScriptControlの使用</h2>
+<p>WSHマクロにおいてScriptControlを使用することで
+各種スクリプトを混在で利用できます。
+</p>
+<a href = "http://www.microsoft.com/Japan/msdn/Scripting/navigation.htm?/japan/msdn/scripting/scriptcontrol/scoverview.htm" target = "_blank">Script Control - Microsoft Scripting Technologies</a>
+
+<h3>JScriptサンプル</h3>
+<pre>
+<span style = "color:green;">//JScriptからVBSのInputBox関数を実行</span>
+<span style = "color:blue;">var</span> oSC = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000;">"ScriptControl"</span>);
+oSC.Language = <span style = "color:#800000;">"VBScript"</span>;
+<span style = "color:blue;">var</span> sFunc = <span style = "color:#800000;">'Function InBox(prompt, title, default)\n'</span>;
+sFunc += <span style = "color:#800000;">'    InBox = InputBox(prompt, title, default)\n'</span>;
+sFunc += <span style = "color:#800000;">'End Function\n'</span>;
+oSC.AddCode(sFunc);
+<span style = "color:blue;">var</span> Ret = oSC.Run (<span style = "color:#800000;">"InBox"</span>, <span style = "color:#800000;">"メッセージ"</span>, <span style = "color:#800000;">"タイトル"</span>, <span style = "color:#800000;">"初期値"</span>);
+<span style = "color:blue;">InsText</span>(Ret);
+</pre>
+
+
+<h3>VBScriptサンプル</h3>
+<pre>
+<span style = "color:green;">&#39;VBScriptからJscriptのsplit関数を実行</span>
+<span style = "color:blue;">Dim</span> sCode, oSC, sFileName
+
+sCode = <span style = "color:#800000;">"GetFileNameFromFulPath=function(sBuf) {aRet=sBuf.split('\\');return aRet[aRet.length-1];}"</span>
+
+<span style = "color:blue;">Set</span> oSC = CreateObject(<span style = "color:#800000;">"ScriptControl"</span>)
+oSC.Language = <span style = "color:#800000;">"JScript"</span>
+oSC.AddCode(sCode)
+sFileName = oSC.Run(<span style = "color:#800000;">"GetFileNameFromFulPath"</span>, <span style = "color:#800000;">"c:\winnt\notepad.exe"</span>)
+<span style = "color:blue;">Set</span> oSC = <span style = "color:blue;">Nothing</span>
+
+<span style = "color:blue;">InsText</span>(sFileName)
+</pre>
+
+<h3>PerlScriptサンプル</h3>
+<pre>
+<span style = "color:green;"># http://miau.s9.xrea.com/blog/index.php?itemid=397</span>
+<span style = "color:blue;">sub</span> InputBox
+{
+    <span style = "color:blue;">my</span> @args = @_;
+    @args = map { encode('cp932', $_) } @args;
+    <span style = "color:blue;">while</span> (@args &lt; 3) {
+        <span style = "color:blue;">push</span> @args, '';
+    }
+    
+    <span style = "color:blue;">my</span> $sc = Win32::OLE-&gt;CreateObject(<span style = "color:#800000;">"ScriptControl"</span>);
+    $sc-&gt;{Language} = <span style = "color:#800000;">"VBScript"</span>;
+    $sc-&gt;AddCode(&lt;&lt;EOC);
+Function Main(prompt, title, default)
+    Main = InputBox(prompt, title, default)
+End Function
+EOC
+    <span style = "color:blue;">my</span> $ret = $sc-&gt;Run(<span style = "color:#800000;">"Main"</span>, @args);
+    $ret = decode('cp932', $ret);
+    
+    <span style = "color:blue;">return</span> $ret;
+}
+</pre>
+
+<hr>
+</body></html>
+
