@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>エディタでの実装</TITLE>
+<META NAME="MS-HKWD" CONTENT="エディタでの実装">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="index.html">目次</a>] <br></noscript>
+<!--
+<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
+-->
+<h2>エディタでの実装</h2>
+
+<h3 id=c0401>マクロ関連クラスの改造</h3>
+<div class=li100>
+WSHマクロで使用できるインタフェースオブジェクトを、Editorだけではなく複数扱えるように修正した。<br>
+</div>
+<div class=li200>
+<pre>
+CWSHManager                   WSHマクロ実行の入り口。
+                              .ExecKeyMacro関数の中でCWSHClientを作成する。
+CWSHClient                    WSH呼び出しの入り口。
+CIfObj                        純粋なインタフェースオブジェクト
+  - CWSHIfObj                   WSHマクロに特化したインタフェースオブジェクト
+      - CEditorIfObj              今までのEditorオブジェクト
+      - plugin/CPluginIfObj       プラグイン共通機能を提供するPluginオブジェクト
+      - plugin/COutlineIfObj      アウトライン解析機能を提供するOutlineオブジェクト
+      - plugin/CSmartIndentIfObj  スマートインデント機能を提供するIndentオブジェクト
+      - plugin/CComplementIfObj   補完候補検索機能を提供するComplementオブジェクト
+</pre>
+</div>
+
+<h3 id=c0402>プラグイン関連クラス構成</h3>
+<div class=li200>
+<pre>
+CPlug
+  - CWSHPlug
+  - CDllPlug
+CPlugin
+  - CWSHPlugin
+  - CDllPlugin
+CPluginManager
+CJackManager
+</pre>
+</div>
+
+<h3 id=c0403>課題</h3>
+<div class=li200>
+・ファイルタイプの判定<br>
+　アウトライン解析とスマートインデントはタイプ別設定画面の選択肢に追加することで どのプラグインを有効にするか選択できる。<br>
+　その他の新たな機能をプラグインにする場合、タイプ別設定画面の改造が必要。<br>
+　あるいはタイプ別設定画面に拡張可能な設定(プラグイン個別設定のような)のタブを追加するか？<br>
+・DLLでもWSHと同じようにEditorオブジェクトの機能を使えるのか？<br>
+・<s>コマンドを動的に追加できるのか？reallocする？追加したコマンドをツールバーに追加した場合、設定ファイルにどのように記録されるか。</s><br>
+　→ツールバーボタンのテーブルはvector化した。<br>
+　　設定ファイルへはとりあえず改造の手間が少ないよう、2xxyyのような番号で記録している。<br>
+　　xxはプラグインを識別する番号であり(少なくともローカルPC内で)、yyはプラグイン中でプラグを識別する番号である。<br>
+　　この方針だと、同時に使用できるプラグインが最大99個に制限される。<br>
+　　<s>また、xxをどうやって割り振るのか未定。</s><br>
+　　→プラグイン番号xxの割り振りは、プラグインのインストール時にプラグインテーブルの空き番号を割り当てることにした。<br>
+・プラグインの読み込みをNormalProcessの起動ごとに行うのは無駄なので、ControlProcess起動時に１度だけ読み込んで使いまわしたいが、プロセスまたがりなので共有メモリを使わなければならない。<br>
+　今の作りはSTLとか使いまくりなので共有メモリにしづらい。<br>
+・<s>ツールバーの設定はアイコンBMPの番号で記録されているため、プラグインコマンドを登録した後プラグインの削除などを行うと、次回起動時にアイコンがずれてしまう。</s><br>
+→ボタン番号で記憶している限り解決しないため、プラグインコマンドのみINI上では「プラグイン名/プラグ番号」の形式で記録するようにした。<br>
+<br>
+「アウトラインプラグインから付加文字を変更する」<br>
+・VBやC関数一覧などリスト系の備考欄カスタマイズ<s>(いらない気も)</s><br>
+　→SetLabel関数で対応(Ver.2.0.9.0以降)<br>
+</div><br>
+
+<center><a href="implementation03.html">前へ＜</a>　　<a href="reference.html">＞次へ</a></center>
+</BODY></HTML>

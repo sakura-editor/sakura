@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>プラグインコーディングガイド</TITLE>
+<META NAME="MS-HKWD" CONTENT="プラグインコーディングガイド">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="index.html">目次</a>] <br></noscript>
+<!--
+<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
+-->
+<h3 id=c0305>プラグインコーディングガイド</h3>
+
+<h4 id=c030501>アウトライン解析(ジャック名：Outline)</h4>
+<div class=li100>
+　アウトライン解析プラグインは、アウトライン解析ダイアログを表示する際に一度だけ呼びだされる。プラグインコードは、編集中文書の先頭から1行ずつ読み取り、条件に合致すればOutlineオブジェクトの AddFuncInfo, AddFuncInfo2関数でアウトライン解析ダイアログに登録する。<br>
+　アウトライン解析ダイアログはあらかじめ提供されている中から適当なものをOutline.SetListType関数で選択する。ダイアログのタイトルはOutline.SetTitle関数で指定できる。<br>
+<br>
+<b>&lt;疑似コード&gt;</b>
+<div class=li200>
+<pre class=code>
+Outline.SetListType( タイプ )            # タイプ: 4.2.3章を参照。
+Outline.SetTitle( 'タイトル文字列' )
+行数 ← Editor.GetLineCount( 0 )
+ループ： 1 ≦ カウンタ ≦ 行数
+    行 ← Editor.GetLineStr( カウンタ )  # 行末にEOLが1byte付加されていることに注意。
+    もし： 行 が 条件 に当てはまるなら
+        Outline.AddFuncInfo(
+            カウンタ,                    # 論理行番号
+            1,                           # 論理桁番号
+            '文字列',                    # ダイアログに表示する文字列
+            付加情報)                    # 追加行の種別を表す整数値
+                                         # 
+    もし：終わり
+    カウンタ ← カウンタ + 1
+ループ：終わり
+</pre>
+</div>
+※タイプで 3:汎用のツリー表示 を選択した場合は、AddFuncInfoの代わりにAddFuncInfo2関数を使用する。その場合、第4引数には階層を表す整数値を渡す。<br>
+※付加情報はタイプによって以下のように解釈される。<br>
+<div class=li200>
+<table class=f>
+<tr><td colspan=3>・タイプ 200:クラスツリー の場合</td></tr>
+<tr><td width=30 align=right>0</td><td>: 定義位置</td><td>… 無視される</td></tr>
+<tr><td width=30 align=right>1</td><td>: 宣言</td><td>… クリップボードにコピーしても付加される</td></tr>
+<tr><td width=30 align=right>2</td><td>: 通常の関数</td><td></td></tr>
+<tr><td width=30 align=right>3</td><td>: クラス</td><td>… 不明なトップレベル要素は 3 扱い(または 7 名前空間)になる</td></tr>
+<tr><td width=30 align=right>4</td><td>: 構造体</td><td></td></tr>
+<tr><td width=30 align=right>5</td><td>: 列挙体</td><td></td></tr>
+<tr><td width=30 align=right>6</td><td>: 共用体</td><td></td></tr>
+<tr><td width=30 align=right>7</td><td>: 名前空間</td><td>… 前述</td></tr>
+<tr><td width=30 align=right>8</td><td>: インタフェース</td><td></td></tr>
+<tr><td width=30 align=right>9</td><td>: グローバル</td><td>… トップレベルに 3 や 7 以外が来ると生成</td></tr>
+<tr><td colspan=3>・タイプ 8:VB関数一覧 の場合　</td></tr>
+<tr><td width=30 align=right>1</td><td>: 宣言</td><td></td></tr>
+<tr><td width=30 align=right>10</td><td>: 関数宣言</td><td></td></tr>
+<tr><td width=30 align=right>20</td><td>: プロシージャ宣言</td><td></td></tr>
+<tr><td width=30 align=right>11</td><td>: 関数</td><td></td></tr>
+<tr><td width=30 align=right>21</td><td>: プロシージャ</td><td></td></tr>
+<tr><td width=30 align=right>31</td><td>: ■パッケージ仕様部</td><td></td></tr>
+<tr><td width=30 align=right>41</td><td>: ■パッケージ本体部</td><td></td></tr>
+<tr><td width=30 align=right>50</td><td>: PROC</td><td></td></tr>
+<tr><td width=30 align=right>51</td><td>: ラベル</td><td></td></tr>
+<tr><td width=30 align=right>52</td><td>: ENDP</td><td></td></tr>
+</table>
+</div>
+※またリスト表示で付加情報に0x10000を加えると、その行はクリップボードコピーの対象外となる。<br>
+<br>
+<div>
+アウトラインプラグインで、タイプに200を指定するとJavaなどoo言語のクラスを表示できますが、「Sakura 構造体」の「構造体」ように後ろにつく文字はJava/C++の固定のものしか選べません。<br>
+SetLabelはプラグインから付加文字列を変更・追加できるようにします (Ver.2.0.9.0以降)。<br>
+<br>
+<b>&lt;例&gt;</b>
+<div class=li200>
+<pre class=code>
+Outline.SetListType( 200 ); //Javaツリー
+Outline.SetLabel( 2, " メソッド" ); //2番「 メソッド」に変更
+Outline.SetLabel( 10, " モジュール" ); //10番「 モジュール」を追加
+Outline.AddFuncInfo( 1, 1, "Foo", 10 ); //モジュール
+Outline.AddFuncInfo( 3, 1, "Foo::Bar::Hoge", 2 ); //関数
+Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
+</pre>
+以下のようになる。<br>
+　- Foo モジュール<br>
+　　　- Bar クラス<br>
+　　　　　- Hoge メソッド<br>
+　　　　　- Fuga メソッド<br>
+</div></div></div><br>
+
+<h4 id=c030502>スマートインデント(ジャック名：SmartIndent)</h4>
+<div class=li100>
+　スマートインデントプラグインは、キーボードの文字キーを押下してから実際に文字が表示されるまでの間に毎回呼びだされる。プラグインコードは、編集中文書の先頭から1行ずつ読み取んで、現在行で適切なインデント幅を判断してスペースまたはタブを出力する。キー入力ごとにプラグインを呼び出すため、WSHプラグインなら負荷軽減のためUseCacheを1にしたほうがよい。<br>
+<br>
+　Enterキーが入力された場合、カーソルが次の行に移動した状態でプラグインが呼び出される。またタイプ別設定の自動インデントが有効の場合、自動インデント後の状態でプラグインが呼び出される。改行されたかどうかは論理桁が1であるかで判定するため、自動インデントはオフにしてもらう必要がある。<br>
+<br>
+<b>&lt;疑似コード&gt;</b>
+<div class=li200>
+<pre class=code>
+現在行 ← Editor.ExpandParameter("$y")
+現在桁 ← Editor.ExpandParameter("$x")
+もし： 現在桁 が 1 でないなら
+    処理終了                             # 改行のみをインデントタイミングとする場合
+もし：終わり
+行数 ← Editor.GetLineCount( 0 )
+ループ： 1 ≦ カウンタ ≦ 行数
+    もし： カウンタ が 現在行 なら
+        Editor.InsText( '適切なインデント文字列' )
+        処理終了
+    もし： 終わり
+    カウンタ ← カウンタ + 1
+ループ：終わり
+</pre>
+</div></div>
+
+<h4 id=c030503>補完候補検索 ・・・ (Ver.2.0.6.0以降)</h4>
+<div class=li100>
+<b>≪ジャック≫</b><br>
+<div class=li200>
+<table class=f>
+<tr><td>ComplementGlobal</td><td>　全てのタイプに適用される補完候補検索</td></tr>
+<tr><td>Complement		</td><td>　タイプ別設定「支援」の選択肢に追加される補完候補検索</td></tr>
+</table>
+</div><br>
+
+実際に補完候補として表示されるのは、<br>
+　ComplementGlobalに関連づいた補完プラグイン(すべて)<br>
+＋Complementで選択した補完プラグイン(ひとつ)<br>
+＋単語ファイルに含まれる単語(指定された場合)<br>
+＋編集中ファイルの単語(有効な場合)<br>
+</div>
+
+<h4 id=c030504>エディタイベント ・・・ (Ver.2.0.8.0以降)</h4>
+<div class=li100>
+<b>≪ジャック≫</b><br>
+<div class=li200>
+<table class=f>
+<tr><td>EditorStart			</td><td>　新しいエディタウィンドウを開いて初期化完了後に呼ぶ。</td></tr>
+<tr><td>EditorEnd			</td><td>　エディタウィンドウを閉じる前に呼ぶ。</td></tr>
+<tr><td>DocumentOpen		</td><td>　ファイルを開いた後に呼ぶ。</td></tr>
+<tr><td>DocumentClose		</td><td>　ファイルを閉じる前に呼ぶ。(保存確認の後)</td></tr>
+<tr><td>DocumentBeforeSave	</td><td>　ファイルを保存する前に呼ぶ。</td></tr>
+<tr><td>DocumentAfterSave	</td><td>　ファイルを保存した後に呼ぶ。</td></tr>
+</table>
+</div><br>
+
+アウトラインのようにタイプ別設定で選んだものが動くということはなく、どんなタイプでも【アウトプット】でも【Grep】だろうと発動する。<br>
+動く順番は、EditorStart→ DocumentOpen→ DocumentBeforeSave→ DocumentAfterSave→ DocumentClose→ EditorEndが基本です。<br>
+名前をつけて保存なら、DocumentBeforeSave→ DocumentClose(旧)→ DocumentAfterSave→ DocumentOpen(新)となる。<br>
+<br>
+プラグインの初期化・終了処理や、ファイル保存後の後処理なんかにどうでしょうか。<br>
+</div><br>
+
+<center><a href="implementation02.html">前へ＜</a>　　<a href="renovation.html">＞次へ</a></center>
+</BODY></HTML>
