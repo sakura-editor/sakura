@@ -1,0 +1,389 @@
+<html><head><title>関数</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<h1>関数目次</h1>
+
+<small>使用するマクロの種類により、
+先頭の'S_'をつける場合とつけない場合があります。&gt;&gt;<a href = "../usage/func_name.html">マクロの関数名について</a>
+</small>
+
+<ul>
+<li><a href = "./file/index.html">ファイル操作</a></li>
+<ul>
+	<li><a href = "./file/S_FileNew.html">S_FileNew</a></li>
+	<li><a href = "./file/S_FileOpen.html">S_FileOpen</a></li>
+	<li><a href = "./file/S_FileSave.html">S_FileSave</a></li>
+	<li><a href = "./file/S_FileSaveAll.html">S_FileSaveAll</a></li>
+	<li><a href = "./file/S_FileSaveAs.html">S_FileSaveAs</a></li>
+	<li><a href = "./file/S_FileClose.html">S_FileClose</a></li>
+	<li><a href = "./file/S_FileCloseOpen.html">S_FileCloseOpen</a></li>
+	<li><a href = "./file/S_FileReopen.html">S_FileReopen</a></li>
+	<li><a href = "./file/S_FileReopenSJIS.html">S_FileReopenSJIS</a></li>
+	<li><a href = "./file/S_FileReopenJIS.html">S_FileReopenJIS</a></li>
+	<li><a href = "./file/S_FileReopenEUC.html">S_FileReopenEUC</a></li>
+	<li><a href = "./file/S_FileReopenLatin1.html">S_FileReopenLatin1</a></li>
+	<li><a href = "./file/S_FileReopenUNICODE.html">S_FileReopenUNICODE</a></li>
+	<li><a href = "./file/S_FileReopenUNICODEBE.html">S_FileReopenUNICODEBE</a></li>
+	<li><a href = "./file/S_FileReopenUTF8.html">S_FileReopenUTF8</a></li>
+	<li><a href = "./file/S_FileReopenCESU8.html">S_FileReopenCESU8</a></li>
+	<li><a href = "./file/S_FileReopenUTF7.html">S_FileReopenUTF7</a></li>
+	<li><a href = "./file/S_Print.html">S_Print</a></li>
+	<li><a href = "./file/S_PrintPreview.html">S_PrintPreview</a></li>
+	<li><a href = "./file/S_PrintPageSetup.html">S_PrintPageSetup</a></li>
+	<li><a href = "./file/S_OpenHfromtoC.html">S_OpenHfromtoC</a></li>
+	<li><a href = "./file/S_ActivateSQLPLUS.html">S_ActivateSQLPLUS</a></li>
+	<li><a href = "./file/S_ExecSQLPLUS.html">S_ExecSQLPLUS</a></li>
+	<li><a href = "./file/S_Browse.html">S_Browse</a></li>
+	<li><a href = "./file/S_ViewMode.html">S_ViewMode</a></li>
+	<li><a href = "./file/S_ReadOnly.html">S_ReadOnly</a></li>
+	<li><a href = "./file/S_PropertyFile.html">S_PropertyFile</a></li>
+	<li><a href = "./file/S_ExitAllEditors.html">S_ExitAllEditors</a></li>
+	<li><a href = "./file/S_ExitAll.html">S_ExitAll</a></li>
+	<li><a href = "./file/S_PutFile.html">S_PutFile</a></li>
+	<li><a href = "./file/S_InsFile.html">S_InsFile</a></li>
+</ul>
+
+<li><a href = "./edit/index.html">編集</a></li>
+<ul>
+	<li><a href = "./edit/S_Char.html">S_Char</a></li>
+	<li><a href = "./edit/S_CharIme.html">S_CharIme</a></li>
+	<li><a href = "./edit/S_Undo.html">S_Undo</a></li>
+	<li><a href = "./edit/S_Redo.html">S_Redo</a></li>
+	<li><a href = "./edit/S_Delete.html">S_Delete</a></li>
+	<li><a href = "./edit/S_DeleteBack.html">S_DeleteBack</a></li>
+	<li><a href = "./edit/S_WordDeleteToStart.html">S_WordDeleteToStart</a></li>
+	<li><a href = "./edit/S_WordDeleteToEnd.html">S_WordDeleteToEnd</a></li>
+	<li><a href = "./edit/S_WordCut.html">S_WordCut</a></li>
+	<li><a href = "./edit/S_WordDelete.html">S_WordDelete</a></li>
+	<li><a href = "./edit/S_LineCutToStart.html">S_LineCutToStart</a></li>
+	<li><a href = "./edit/S_LineCutToEnd.html">S_LineCutToEnd</a></li>
+	<li><a href = "./edit/S_LineDeleteToStart.html">S_LineDeleteToStart</a></li>
+	<li><a href = "./edit/S_LineDeleteToEnd.html">S_LineDeleteToEnd</a></li>
+	<li><a href = "./edit/S_CutLine.html">S_CutLine</a></li>
+	<li><a href = "./edit/S_DeleteLine.html">S_DeleteLine</a></li>
+	<li><a href = "./edit/S_DuplicateLine.html">S_DuplicateLine</a></li>
+	<li><a href = "./edit/S_IndentTab.html">S_IndentTab</a></li>
+	<li><a href = "./edit/S_UnindentTab.html">S_UnindentTab</a></li>
+	<li><a href = "./edit/S_IndentSpace.html">S_IndentSpace</a></li>
+	<li><a href = "./edit/S_UnindentSpace.html">S_UnindentSpace</a></li>
+	<li><a href = "./edit/S_LTrim.html">S_LTrim</a></li>
+	<li><a href = "./edit/S_RTrim.html">S_RTrim</a></li>
+	<li><a href = "./edit/S_SortAsc.html">S_SortAsc</a></li>
+	<li><a href = "./edit/S_SortDesc.html">S_SortDesc</a></li>
+	<li><a href = "./edit/S_Merge.html">S_Merge</a></li>
+</ul>
+
+<li><a href = "./cursor/index.html">カーソル移動</a></li>
+<ul>
+	<li><a href = "./cursor/S_Up.html">S_Up</a></li>
+	<li><a href = "./cursor/S_Down.html">S_Down</a></li>
+	<li><a href = "./cursor/S_Left.html">S_Left</a></li>
+	<li><a href = "./cursor/S_Right.html">S_Right</a></li>
+	<li><a href = "./cursor/S_Up2.html">S_Up2</a></li>
+	<li><a href = "./cursor/S_Down2.html">S_Down2</a></li>
+	<li><a href = "./cursor/S_WordLeft.html">S_WordLeft</a></li>
+	<li><a href = "./cursor/S_WordRight.html">S_WordRight</a></li>
+	<li><a href = "./cursor/S_GoLineTop.html">S_GoLineTop</a></li>
+	<li><a href = "./cursor/S_GoLineEnd.html">S_GoLineEnd</a></li>
+	<li><a href = "./cursor/S_HalfPageUp.html">S_HalfPageUp</a></li>
+	<li><a href = "./cursor/S_HalfPageDown.html">S_HalfPageDown</a></li>
+	<li><a href = "./cursor/S_PageUp.html">S_PageUp</a></li>
+	<li><a href = "./cursor/S_1PageUp.html">S_1PageUp</a></li>
+	<li><a href = "./cursor/S_PageDown.html">S_PageDown</a></li>
+	<li><a href = "./cursor/S_1PageDown.html">S_1PageDown</a></li>
+	<li><a href = "./cursor/S_GoFileTop.html">S_GoFileTop</a></li>
+	<li><a href = "./cursor/S_GoFileEnd.html">S_GoFileEnd</a></li>
+	<li><a href = "./cursor/S_CurLineCenter.html">S_CurLineCenter</a></li>
+	<li><a href = "./cursor/S_MoveHistPrev.html">S_MoveHistPrev</a></li>
+	<li><a href = "./cursor/S_MoveHistNext.html">S_MoveHistNext</a></li>
+	<li><a href = "./cursor/S_MoveHistSet.html">S_MoveHistSet</a></li>
+	<li><a href = "./cursor/S_F_WndScrollDown.html">S_F_WndScrollDown</a></li>
+	<li><a href = "./cursor/S_F_WndScrollUp.html">S_F_WndScrollUp</a></li>
+	<li><a href = "./cursor/S_GoNextParagraph.html">S_GoNextParagraph</a></li>
+	<li><a href = "./cursor/S_GoPrevParagraph.html">S_GoPrevParagraph</a></li>
+	<li><a href = "./cursor/S_MoveCursor.html">S_MoveCursor</a></li>
+	<li><a href = "./cursor/S_MoveCursorLayout.html">S_MoveCursorLayout</a></li>
+	<li><a href = "./cursor/S_WheelUp.html">S_WheelUp</a></li>
+	<li><a href = "./cursor/S_WheelDown.html">S_WheelDown</a></li>
+	<li><a href = "./cursor/S_WheelLeft.html">S_WheelLeft</a></li>
+	<li><a href = "./cursor/S_WheelRight.html">S_WheelRight</a></li>
+	<li><a href = "./cursor/S_WheelPageUp.html">S_WheelPageUp</a></li>
+	<li><a href = "./cursor/S_WheelPageDown.html">S_WheelPageDown</a></li>
+	<li><a href = "./cursor/S_WheelPageLeft.html">S_WheelPageLeft</a></li>
+	<li><a href = "./cursor/S_WheelPageRight.html">S_WheelPageRight</a></li>
+</ul>
+
+<li><a href = "./select/index.html">選択</a></li>
+<ul>
+	<li><a href = "./select/S_SelectWord.html">S_SelectWord</a></li>
+	<li><a href = "./select/S_SelectAll.html">S_SelectAll</a></li>
+	<li><a href = "./select/S_SelectLine.html">S_SelectLine</a></li>
+	<li><a href = "./select/S_BeginSelect.html">S_BeginSelect</a></li>
+	<li><a href = "./select/S_Up_Sel.html">S_Up_Sel</a></li>
+	<li><a href = "./select/S_Down_Sel.html">S_Down_Sel</a></li>
+	<li><a href = "./select/S_Left_Sel.html">S_Left_Sel</a></li>
+	<li><a href = "./select/S_Right_Sel.html">S_Right_Sel</a></li>
+	<li><a href = "./select/S_Up2_Sel.html">S_Up2_Sel</a></li>
+	<li><a href = "./select/S_Down2_Sel.html">S_Down2_Sel</a></li>
+	<li><a href = "./select/S_WordLeft_Sel.html">S_WordLeft_Sel</a></li>
+	<li><a href = "./select/S_WordRight_Sel.html">S_WordRight_Sel</a></li>
+	<li><a href = "./select/S_GoLineTop_Sel.html">S_GoLineTop_Sel</a></li>
+	<li><a href = "./select/S_GoLineEnd_Sel.html">S_GoLineEnd_Sel</a></li>
+	<li><a href = "./select/S_HalfPageUp_Sel.html">S_HalfPageUp_Sel</a></li>
+	<li><a href = "./select/S_HalfPageDown_Sel.html">S_HalfPageDown_Sel</a></li>
+	<li><a href = "./select/S_PageUp_Sel.html">S_PageUp_Sel</a></li>
+	<li><a href = "./select/S_1PageUp_Sel.html">S_1PageUp_Sel</a></li>
+	<li><a href = "./select/S_PageDown_Sel.html">S_PageDown_Sel</a></li>
+	<li><a href = "./select/S_1PageDown_Sel.html">S_1PageDown_Sel</a></li>
+	<li><a href = "./select/S_GoFileTop_Sel.html">S_GoFileTop_Sel</a></li>
+	<li><a href = "./select/S_GoFileEnd_Sel.html">S_GoFileEnd_Sel</a></li>
+	<li><a href = "./select/S_GoNextParagraph_Sel.html">S_GoNextParagraph_Sel</a></li>
+	<li><a href = "./select/S_GoPrevParagraph_Sel.html">S_GoPrevParagraph_Sel</a></li>
+</ul>
+
+<li><a href = "./block/index.html">矩形選択</a></li>
+<ul>
+	<li><a href = "./block/S_BeginBoxSelect.html">S_BeginBoxSelect</a></li>
+	<li><a href = "./block/S_Up_BoxSel.html">S_Up_BoxSel</a></li>
+	<li><a href = "./block/S_Down_BoxSel.html">S_Down_BoxSel</a></li>
+	<li><a href = "./block/S_Left_BoxSel.html">S_Left_BoxSel</a></li>
+	<li><a href = "./block/S_Right_BoxSel.html">S_Right_BoxSel</a></li>
+	<li><a href = "./block/S_Up2_BoxSel.html">S_Up2_BoxSel</a></li>
+	<li><a href = "./block/S_Down2_BoxSel.html">S_Down2_BoxSel</a></li>
+	<li><a href = "./block/S_WordLeft_BoxSel.html">S_WordLeft_BoxSel</a></li>
+	<li><a href = "./block/S_WordRight_BoxSel.html">S_WordRight_BoxSel</a></li>
+	<li><a href = "./block/S_GoLogicalLineTop_BoxSel.html">S_GoLogicalLineTop_BoxSel</a></li>
+	<li><a href = "./block/S_GoLineTop_BoxSel.html">S_GoLineTop_BoxSel</a></li>
+	<li><a href = "./block/S_GoLineEnd_BoxSel.html">S_GoLineEnd_BoxSel</a></li>
+	<li><a href = "./block/S_HalfPageUp_BoxSel.html">S_HalfPageUp_BoxSel</a></li>
+	<li><a href = "./block/S_HalfPageDown_BoxSel.html">S_HalfPageDown_BoxSel</a></li>
+	<li><a href = "./block/S_PageUp_BoxSel.html">S_PageUp_BoxSel</a></li>
+	<li><a href = "./block/S_1PageUp_BoxSel.html">S_1PageUp_BoxSel</a></li>
+	<li><a href = "./block/S_PageDown_BoxSel.html">S_PageDown_BoxSel</a></li>
+	<li><a href = "./block/S_1PageDown_BoxSel.html">S_1PageDown_BoxSel</a></li>
+	<li><a href = "./block/S_GoFileTop_BoxSel.html">S_GoFileTop_BoxSel</a></li>
+	<li><a href = "./block/S_GoFileEnd_BoxSel.html">S_GoFileEnd_BoxSel</a></li>
+</ul>
+
+<li><a href = "./clipboard/index.html">クリップボード</a></li>
+<ul>
+	<li><a href = "./clipboard/S_Cut.html">S_Cut</a></li>
+	<li><a href = "./clipboard/S_Copy.html">S_Copy</a></li>
+	<li><a href = "./clipboard/S_Paste.html">S_Paste</a></li>
+	<li><a href = "./clipboard/S_CopyAddCRLF.html">S_CopyAddCRLF</a></li>
+	<li><a href = "./clipboard/S_CopyCRLF.html">S_CopyCRLF</a></li>
+	<li><a href = "./clipboard/S_PasteBox.html">S_PasteBox</a></li>
+	<li><a href = "./clipboard/S_InsBoxText.html">S_InsBoxText</a></li>
+	<li><a href = "./clipboard/S_InsText.html">S_InsText</a></li>
+	<li><a href = "./clipboard/S_AddTail.html">S_AddTail</a></li>
+	<li><a href = "./clipboard/S_CopyLines.html">S_CopyLines</a></li>
+	<li><a href = "./clipboard/S_CopyLinesAsPassage.html">S_CopyLinesAsPassage</a></li>
+	<li><a href = "./clipboard/S_CopyLinesWithLineNumber.html">S_CopyLinesWithLineNumber</a></li>
+	<li><a href = "./clipboard/S_CopyColorHtml.html">S_CopyColorHtml</a></li>
+	<li><a href = "./clipboard/S_CopyColorHtmlWithLineNumber.html">S_CopyColorHtmlWithLineNumberl</a></li>
+	<li><a href = "./clipboard/S_CopyPath.html">S_CopyPath</a></li>
+	<li><a href = "./clipboard/S_CopyFilename.html">S_CopyFilename</a></li>
+	<li><a href = "./clipboard/S_CopyTag.html">S_CopyTag</a></li>
+	<li><a href = "./clipboard/S_CopyKeyBindList.html">S_CopyKeyBindList</a></li>
+</ul>
+
+<li><a href = "./insert/index.html">挿入</a></li>
+<ul>
+	<li><a href = "./insert/S_InsertDate.html">S_InsertDate</a></li>
+	<li><a href = "./insert/S_InsertTime.html">S_InsertTime</a></li>
+	<li><a href = "./insert/S_CtrlCodeDialog.html">S_CtrlCodeDialog</a></li>
+	<li><a href = "./insert/S_CtrlCode.html">S_CtrlCode</a></li>
+</ul>
+
+<li><a href = "./change/index.html">変換</a></li>
+<ul>
+	<li><a href = "./change/S_ToLower.html">S_ToLower</a></li>
+	<li><a href = "./change/S_ToUpper.html">S_ToUpper</a></li>
+	<li><a href = "./change/S_ToHankaku.html">S_ToHankaku</a></li>
+	<li><a href = "./change/S_ToHankata.html">S_ToHankata</a></li>
+	<li><a href = "./change/S_ToZenEi.html">S_ToZenEi</a></li>
+	<li><a href = "./change/S_ToHanEi.html">S_ToHanEi</a></li>
+	<li><a href = "./change/S_ToZenKata.html">S_ToZenKata</a></li>
+	<li><a href = "./change/S_ToZenHira.html">S_ToZenHira</a></li>
+	<li><a href = "./change/S_HanKataToZenKata.html">S_HanKataToZenKata</a></li>
+	<li><a href = "./change/S_HanKataToZenHira.html">S_HanKataToZenHira</a></li>
+	<li><a href = "./change/S_TABToSPACE.html">S_TABToSPACE</a></li>
+	<li><a href = "./change/S_SPACEToTAB.html">S_SPACEToTAB</a></li>
+	<li><a href = "./change/S_AutoToSJIS.html">S_AutoToSJIS</a></li>
+	<li><a href = "./change/S_JIStoSJIS.html">S_JIStoSJIS</a></li>
+	<li><a href = "./change/S_EUCtoSJIS.html">S_EUCtoSJIS</a></li>
+	<li><a href = "./change/S_CodeCnvUNICODEtoSJIS.html">S_CodeCnvUNICODEtoSJIS</a></li>
+	<li><a href = "./change/S_CodeCnvUNICODEBEtoSJIS.html">S_CodeCnvUNICODEBEtoSJIS</a></li>
+	<li><a href = "./change/S_UTF8toSJIS.html">S_UTF8toSJIS</a></li>
+	<li><a href = "./change/S_UTF7toSJIS.html">S_UTF7toSJIS</a></li>
+	<li><a href = "./change/S_SJIStoJIS.html">S_SJIStoJIS</a></li>
+	<li><a href = "./change/S_SJIStoEUC.html">S_SJIStoEUC</a></li>
+	<li><a href = "./change/S_SJIStoUTF8.html">S_SJIStoUTF8</a></li>
+	<li><a href = "./change/S_SJIStoUTF7.html">S_SJIStoUTF7</a></li>
+	<li><a href = "./change/S_Base64Decode.html">S_Base64Decode</a></li>
+	<li><a href = "./change/S_Uudecode.html">S_Uudecode</a></li>
+</ul>
+
+<li><a href = "./find/index.html">検索</a></li>
+<ul>
+	<li><a href = "./find/S_SearchDialog.html">S_SearchDialog</a></li>
+	<li><a href = "./find/S_SearchNext.html">S_SearchNext</a></li>
+	<li><a href = "./find/S_SearchPrev.html">S_SearchPrev</a></li>
+	<li><a href = "./find/S_ReplaceDialog.html">S_ReplaceDialog</a></li>
+	<li><a href = "./find/S_Replace.html">S_Replace</a></li>
+	<li><a href = "./find/S_ReplaceAll.html">S_ReplaceAll</a></li>
+	<li><a href = "./find/S_SearchClearMark.html">S_SearchClearMark</a></li>
+	<li><a href = "./find/S_SearchStartPos.html">S_SearchStartPos</a></li>
+	<li><a href = "./find/S_Grep.html">S_Grep</a></li>
+	<li><a href = "./find/S_Jump.html">S_Jump</a></li>
+	<li><a href = "./find/S_Outline.html">S_Outline</a></li>
+	<li><a href = "./find/S_TagJump.html">S_TagJump</a></li>
+	<li><a href = "./find/S_TagJumpBack.html">S_TagJumpBack</a></li>
+	<li><a href = "./find/S_TagMake.html">S_TagMake</a></li>
+	<li><a href = "./find/S_DirectTagJump.html">S_DirectTagJump</a></li>
+	<li><a href = "./find/S_Compare.html">S_Compare</a></li>
+	<li><a href = "./find/S_DiffDialog.html">S_DiffDialog</a></li>
+	<li><a href = "./find/S_Diff.html">S_Diff</a></li>
+	<li><a href = "./find/S_DiffNext.html">S_DiffNext</a></li>
+	<li><a href = "./find/S_DiffPrev.html">S_DiffPrev</a></li>
+	<li><a href = "./find/S_DiffReset.html">S_DiffReset</a></li>
+	<li><a href = "./find/S_BracketPair.html">S_BracketPair</a></li>
+	<li><a href = "./find/S_BookmarkSet.html">S_BookmarkSet</a></li>
+	<li><a href = "./find/S_BookmarkNext.html">S_BookmarkNext</a></li>
+	<li><a href = "./find/S_BookmarkPrev.html">S_BookmarkPrev</a></li>
+	<li><a href = "./find/S_BookmarkReset.html">S_BookmarkReset</a></li>
+	<li><a href = "./find/S_BookmarkView.html">S_BookmarkView</a></li>
+	<li><a href = "./find/S_BookmarkPattern.html">S_BookmarkPattern</a></li>
+</ul>
+
+<li><a href = "./mode/index.html">モード切替</a></li>
+<ul>
+	<li><a href = "./mode/S_ChgmodINS.html">S_ChgmodINS</a></li>
+	<li><a href = "./mode/S_ChgCharSet.html">S_ChgCharSet</a></li>
+	<li><a href = "./mode/S_ChgmodEOL.html">S_ChgmodEOL</a></li>
+	<li><a href = "./mode/S_CancelMode.html">S_CancelMode</a></li>
+</ul>
+
+<li><a href = "./config/index.html">設定</a></li>
+<ul>
+	<li><a href = "./config/S_ShowToolbar.html">S_ShowToolbar</a></li>
+	<li><a href = "./config/S_ShowFunckey.html">S_ShowFunckey</a></li>
+	<li><a href = "./config/S_ShowTab.html">S_ShowTab</a></li>
+	<li><a href = "./config/S_ShowStatusbar.html">S_ShowStatusbar</a></li>
+	<li><a href = "./config/S_TypeList.html">S_TypeList</a></li>
+	<li><a href = "./config/S_ChangeType.html">S_ChangeType</a></li>
+	<li><a href = "./config/S_OptionType.html">S_OptionType</a></li>
+	<li><a href = "./config/S_OptionCommon.html">S_OptionCommon</a></li>
+	<li><a href = "./config/S_SelectFont.html">S_SelectFont</a></li>
+	<li><a href = "./config/S_SetFontSize.html">S_SetFontSize</a></li>
+	<li><a href = "./config/S_WrapWindowWidth.html">S_WrapWindowWidth</a></li>
+	<li><a href = "./config/S_OptionFavorite.html">S_OptionFavorite</a></li>
+	<li><a href = "./config/S_SetMsgQuoteStr.html">S_SetMsgQuoteStr</a></li>
+	<li><a href = "./config/S_TextWrapMethod.html">S_TextWrapMethod</a></li>
+	<li><a href = "./config/S_SelectCountMode.html">S_SelectCountMode</a></li>
+	<li><a href = "./config/S_ExecCommand.html">S_ExecCommand</a></li>
+	<li><a href = "./config/S_ExecCommandDialog.html">S_ExecCommandDialog</a></li>
+</ul>
+
+<li><a href = "./custom/index.html">カスタムメニュー</a></li>
+<ul>
+	<li><a href = "./custom/S_RMenu.html">S_RMenu</a></li>
+	<li><a href = "./custom/S_CustMenu1.html">S_CustMenu1</a></li>
+	<li><a href = "./custom/S_CustMenu2.html">S_CustMenu2</a></li>
+	<li><a href = "./custom/S_CustMenu3.html">S_CustMenu3</a></li>
+	<li><a href = "./custom/S_CustMenu4.html">S_CustMenu4</a></li>
+	<li><a href = "./custom/S_CustMenu5.html">S_CustMenu5</a></li>
+	<li><a href = "./custom/S_CustMenu6.html">S_CustMenu6</a></li>
+	<li><a href = "./custom/S_CustMenu7.html">S_CustMenu7</a></li>
+	<li><a href = "./custom/S_CustMenu8.html">S_CustMenu8</a></li>
+	<li><a href = "./custom/S_CustMenu9.html">S_CustMenu9</a></li>
+	<li><a href = "./custom/S_CustMenu10.html">S_CustMenu10</a></li>
+	<li><a href = "./custom/S_CustMenu11.html">S_CustMenu11</a></li>
+	<li><a href = "./custom/S_CustMenu12.html">S_CustMenu12</a></li>
+	<li><a href = "./custom/S_CustMenu13.html">S_CustMenu13</a></li>
+	<li><a href = "./custom/S_CustMenu14.html">S_CustMenu14</a></li>
+	<li><a href = "./custom/S_CustMenu15.html">S_CustMenu15</a></li>
+	<li><a href = "./custom/S_CustMenu16.html">S_CustMenu16</a></li>
+	<li><a href = "./custom/S_CustMenu17.html">S_CustMenu17</a></li>
+	<li><a href = "./custom/S_CustMenu18.html">S_CustMenu18</a></li>
+	<li><a href = "./custom/S_CustMenu19.html">S_CustMenu19</a></li>
+	<li><a href = "./custom/S_CustMenu20.html">S_CustMenu20</a></li>
+	<li><a href = "./custom/S_CustMenu21.html">S_CustMenu21</a></li>
+	<li><a href = "./custom/S_CustMenu22.html">S_CustMenu22</a></li>
+	<li><a href = "./custom/S_CustMenu23.html">S_CustMenu23</a></li>
+	<li><a href = "./custom/S_CustMenu24.html">S_CustMenu24</a></li>
+</ul>
+
+<li><a href = "./window/index.html">ウインドウ</a></li>
+<ul>
+	<li><a href = "./window/S_SplitWinV.html">S_SplitWinV</a></li>
+	<li><a href = "./window/S_SplitWinH.html">S_SplitWinH</a></li>
+	<li><a href = "./window/S_SplitWinVH.html">S_SplitWinVH</a></li>
+	<li><a href = "./window/S_WinClose.html">S_WinClose</a></li>
+	<li><a href = "./window/S_WinCloseAll.html">S_WinCloseAll</a></li>
+	<li><a href = "./window/S_CascadeWin.html">S_CascadeWin</a></li>
+	<li><a href = "./window/S_TileWinV.html">S_TileWinV</a></li>
+	<li><a href = "./window/S_TileWinH.html">S_TileWinH</a></li>
+	<li><a href = "./window/S_NextWindow.html">S_NextWindow</a></li>
+	<li><a href = "./window/S_PrevWindow.html">S_PrevWindow</a></li>
+	<li><a href = "./window/S_WindowList.html">S_WindowList</a></li>
+	<li><a href = "./window/S_MaximizeV.html">S_MaximizeV</a></li>
+	<li><a href = "./window/S_MaximizeH.html">S_MaximizeH</a></li>
+	<li><a href = "./window/S_MinimizeAll.html">S_MinimizeAll</a></li>
+	<li><a href = "./window/S_ReDraw.html">S_ReDraw</a></li>
+	<li><a href = "./window/S_ActivateWinOutput.html">S_ActivateWinOutput</a></li>
+	<li><a href = "./window/S_TraceOut.html">S_TraceOut</a></li>
+	<li><a href = "./window/S_WindowTopMost.html">S_WindowTopMost</a></li>
+	<li><a href = "./window/S_GroupClose.html">S_GroupClose</a></li>
+	<li><a href = "./window/S_NextGroup.html">S_NextGroup</a></li>
+	<li><a href = "./window/S_PrevGroup.html">S_PrevGroup</a></li>
+	<li><a href = "./window/S_TabMoveRight.html">S_TabMoveRight</a></li>
+	<li><a href = "./window/S_TabMoveLeft.html">S_TabMoveLeft</a></li>
+	<li><a href = "./window/S_TabSeparate.html">S_TabSeparate</a></li>
+	<li><a href = "./window/S_TabJointNext.html">S_TabJointNext</a></li>
+	<li><a href = "./window/S_TabJointPrev.html">S_TabJointPrev</a></li>
+	<li><a href = "./window/S_TabCloseOther.html">S_TabCloseOther</a></li>
+	<li><a href = "./window/S_TabCloseLeft.html">S_TabCloseLeft</a></li>
+	<li><a href = "./window/S_TabCloseRight.html">S_TabCloseRight</a></li>
+</ul>
+
+<li><a href = "./support/index.html">支援</a></li>
+<ul>
+	<li><a href = "./support/S_Complete.html">S_Complete</a></li>
+	<li><a href = "./support/S_ToggleKeyHelpSearch.html">S_ToggleKeyHelpSearch</a></li>
+	<li><a href = "./support/S_HelpContents.html">S_HelpContents</a></li>
+	<li><a href = "./support/S_HelpSearch.html">S_HelpSearch</a></li>
+	<li><a href = "./support/S_CommandList.html">S_CommandList</a></li>
+	<li><a href = "./support/S_ExtHelp1.html">S_ExtHelp1</a></li>
+	<li><a href = "./support/S_ExtHtmlHelp.html">S_ExtHtmlHelp</a></li>
+	<li><a href = "./support/S_About.html">S_About</a></li>
+</ul>
+
+<li><a href = "./other/index.html">その他</a></li>
+<ul>
+	<li><a href = "./other/S_GetFilename.html">S_GetFilename</a></li>
+	<li><a href = "./other/S_GetSelectedString.html">S_GetSelectedString</a></li>
+	<li><a href = "./other/S_ExpandParameter.html">S_ExpandParameter</a></li>
+	<li><a href = "./other/S_GetLineStr.html">S_GetLineStr</a></li>
+	<li><a href = "./other/S_GetLineCount.html">S_GetLineCount</a></li>
+	<li><a href = "./other/S_ChangeTabWidth.html">S_ChangeTabWidth</a></li>
+	<li><a href = "./other/S_IsTextSelected.html">S_IsTextSelected</a></li>
+	<li><a href = "./other/S_GetSelectLineFrom.html">S_GetSelectLineFrom</a></li>
+	<li><a href = "./other/S_GetSelectColmFrom.html">S_GetSelectColmFrom</a></li>
+	<li><a href = "./other/S_GetSelectLineTo.html">S_GetSelectLineTo</a></li>
+	<li><a href = "./other/S_GetSelectColmTo.html">S_GetSelectColmTo</a></li>
+	<li><a href = "./other/S_IsInsMode.html">S_IsInsMode</a></li>
+	<li><a href = "./other/S_GetCharCode.html">S_GetCharCode</a></li>
+	<li><a href = "./other/S_GetLineCode.html">S_GetLineCode</a></li>
+	<li><a href = "./other/S_IsPossibleUndo.html">S_IsPossibleUndo</a></li>
+	<li><a href = "./other/S_IsPossibleRedo.html">S_IsPossibleRedo</a></li>
+	<li><a href = "./other/S_TraceOut.html">S_TraceOut</a></li>
+</ul>
+
+
+</ul>
+
+
+</body></html>

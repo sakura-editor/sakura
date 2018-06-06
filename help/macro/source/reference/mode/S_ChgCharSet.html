@@ -1,0 +1,49 @@
+<html><head><title>S_ChgCharSet</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_ChgCharSet</h2>
+<dl>
+	<dt>機能</dt>
+		<dd>文字コードセット指定</dd>
+	<dt>説明</dt>
+		<dd>ファイルの文字コードセット指定とBOMの有無を変更します。次回保存時からファイルに適用されます。</dd>
+	<dt>構文</dt>
+		<dd><i>void  S_ChgCharSet ( i1 ， i2 )</i>
+		<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>i1</td><td>整数数値</td><td>文字コード（省略可能） </td></tr>
+			<tr><td>i2</td><td>整数数値</td><td>BOMの有無（省略可能） </td></tr>
+		</table>
+		</dd>
+	<dt>設定値</dt>
+		<dd>引数&nbsp;<i>i1</i>&nbsp;の設定値は次のとおりです。<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>-1</td><td>ダイアログを表示（省略時規定値）</td></tr>
+			<tr><td>0</td><td>SJIS </td></tr>
+			<tr><td>1</td><td>JIS </td></tr>
+			<tr><td>2</td><td>EUC </td></tr>
+			<tr><td>3</td><td>Unicode </td></tr>
+			<tr><td>4</td><td>UTF-8 </td></tr>
+			<tr><td>5</td><td>UTF-7 </td></tr>
+			<tr><td>6</td><td>UnicodeBE </td></tr>
+			<tr><td>7</td><td>CESU-8 </td></tr>
+			<tr><td>8</td><td>Latin1(Windows-1252) </td></tr>
+			<tr><td>99</td><td>文字コードを維持 </td></tr>
+		</table>
+		<br>
+		<dd>引数&nbsp;<i>i2</i>&nbsp;の設定値は次のとおりです。<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>0</td><td>BOMなし（省略時規定値） </td></tr>
+			<tr><td>1</td><td>BOMあり(0以外) </td></tr>
+		</table>
+		</dd>
+</dl>
+<hr>
+</body></html>
