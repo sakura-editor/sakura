@@ -1,0 +1,24 @@
+<html><head><title>S_GetSelectedStringの使用例</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_GetSelectedStringの使用例</h2>
+
+<pre>
+<span style = "color:green;">//sample.js
+//選択中の文字列</span>
+<span style = "color:blue;">var</span> oWsh = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000;">"WScript.Shell"</span>);
+oWsh.Popup(<span style = "color:blue;">GetSelectedString</span>, <span style = "color:red;">0</span>, <span style = "color:#800000;">"選択中の文字列"</span>, <span style = "color:red;">0</span>);
+</pre>
+
+<pre>
+<span style = "color:green;">//sample.ppa</span>
+<span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">S_GetSelectedString</span>(<span style = "color:red;">0</span>), <span style = "color:#800000;">'選択中の文字列'</span>, <span style = "color:red;">0</span>);
+</pre>
+
+<hr>
+</body></html>

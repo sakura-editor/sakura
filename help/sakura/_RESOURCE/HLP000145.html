@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>共通設定 『バックアップ』プロパティ</TITLE>
+<META NAME="MS-HKWD" CONTENT="共通設定 『バックアップ』プロパティ">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>共通設定 『バックアップ』プロパティ</h2>
+<a href="HLP000081.html">『全般』</a>
+<a href="HLP000146.html">『ウィンドウ』</a>
+<a href="HLP000152.html">『メインメニュー』</a>
+<a href="HLP000085.html">『ツールバー』</a>
+<a href="HLP000150.html">『タブバー』</a>
+<a href="HLP000147.html">『ステータスバー』</a>
+<a href="HLP000144.html">『編集』</a>
+<a href="HLP000083.html">『ファイル』</a>
+<a href="HLP000277.html">『ファイル名表示』</a>
+<a href="HLP000145.html">『バックアップ』</a>
+<a href="HLP000082.html">『書式』</a>
+<a href="HLP000148.html">『検索』</a>
+<a href="HLP000084.html">『キー割り当て』</a>
+<a href="HLP000087.html">『カスタムメニュー』</a>
+<a href="HLP000086.html">『強調キーワード』</a>
+<a href="HLP000088.html">『支援』</a>
+<a href="HLP000201.html">『マクロ』</a>
+<a href="HLP000151.html">『プラグイン』</a>
+<br>
+<img src="images/ComBackup.png"><br>
+<br>
+<b>&lt;バックアップの作成&gt;</b><br>
+<div class=li200>ファイルを更新（保存）する際に、現存のファイルを別の名前で残しておきたいときにこの機能を使います。<br>
+<br>
+<a href="HLP000145.html#detail">□<b>詳細設定する</b></a><br><br>
+□<b>保存時にバックアップを作成する</b><br>
+このオプションを有効にすると、保存時に、更新前のファイルのバックアップを作成します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例)  readme.txt → readme.bak<br>
+<br>
+○<b>拡張子を.bakに変更したもの</b><br>
+このオプションを有効にすると、更新前のファイルの拡張子を".bak"に変更して保存しておきます。<br>
+○<b>拡張子を連番(b00～b98)に変更したもの</b><br>
+このオプションを有効にすると、更新前のファイルの拡張子を".b00"から連番で変更して保存します。<br>
+指定した世代数分の過去のファイルを保存しておきます。<br>
+◎<b>ファイル名の後ろに日付・時刻を付加したもの</b><br>
+このオプションを有効にすると、更新前のファイル名の後ろに日付・時刻を付加して保存しておきます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例)  2001年6月28日付の autoexec.bat を7月5日に保存<br>
+&nbsp;&nbsp;&nbsp;&nbsp;→ バックアップファイル名は autoexec_20010705.bat<br>
+○<b>ファイル名の後ろに前回の保存時の日付・時刻を付加したもの</b><br>
+このオプションを有効にすると、ファイル名の後ろに付加する日時はファイルのタイムスタンプを使います。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(例)  2001年6月28日付の autoexec.bat を7月5日に保存<br>
+&nbsp;&nbsp;&nbsp;&nbsp;→ バックアップファイル名は autoexec_20010628.bat<br>
+■<b>西暦</b>  ■<b>月</b>  ■<b>日</b>  □<b>時</b>  □<b>分</b>  □<b>秒</b><br>
+ファイル名の後ろに日付・時刻を付加したもの、ファイル名の後ろに前回の保存時の日付・時刻を付加したもの を選択した場合に日付・時刻をどれくらい付加するかを指定します。<br>
+<br>
+</div>
+
+<div class=li200>
+□<b>指定フォルダに作成する</b><br>
+このオプションを有効にすると、バックアップは指定されたフォルダに作成されます。<br>
+このオプションを無効にすると、バックアップは編集中のファイルと同じフォルダに作成されます。<br>
+<br>
+□<b>リムーバブルメディアのみ</b><br>
+編集中のファイルがリムーバブルメディアにある場合のみ指定フォルダにバックアップを作成します。<br>
+<br>
+<b>フォルダ名</b><br>
+指定フォルダに作成するをチェックしたときにバックアップを作成するフォルダを設定できます。<br>
+<a href="HLP000272.html">メタ文字列</a>を含むことができます。(sakura:2.0.8.0以降)<br>
+<br>
+□<b>バックアップファイルをごみ箱に放り込む</b><br>
+このオプションを有効にすると、作成したバックアップファイルをごみ箱の中に放り込みます。<br>
+<br>
+バックアップファイルの作成場所
+<table>
+<tr><td></td></td><td>ローカルドライブにあるファイル</td><td>リムーバブルメディアにあるファイル</td></tr>
+<tr><td>□指定フォルダに作成する<br><font color="#808080">□リムーバブルメディアのみ</font><br>□バックアップファイルをごみ箱に放り込む<br><td>編集中のファイルのあるフォルダ</td><td>編集中のファイルのあるフォルダ</td></tr>
+<tr><td>■指定フォルダに作成する<br>□リムーバブルメディアのみ<br>□バックアップファイルをごみ箱に放り込む<br><td>指定フォルダ</td><td>指定フォルダ</td></tr>
+<tr><td>■指定フォルダに作成する<br>■リムーバブルメディアのみ<br>□バックアップファイルをごみ箱に放り込む<br><td>編集中のファイルのあるフォルダ</td><td>指定フォルダ</td></tr>
+<tr><td>□指定フォルダに作成する<br><font color="#808080">□リムーバブルメディアのみ</font><br>■バックアップファイルをごみ箱に放り込む<br><td>編集中のファイルのあるフォルダ→ごみ箱</td><td>編集中のファイルのあるフォルダ</td></tr>
+<tr><td>■指定フォルダに作成する<br>□リムーバブルメディアのみ<br>■バックアップファイルをごみ箱に放り込む<br><td>指定フォルダ→ごみ箱</td><td>指定フォルダ</td></tr>
+<tr><td>■指定フォルダに作成する<br>■リムーバブルメディアのみ<br>■バックアップファイルをごみ箱に放り込む<br><td>編集中のファイルのあるフォルダ→ごみ箱</td><td>指定フォルダ</td></tr>
+</table>
+<br>
+■<b>作成前に確認する</b><br>
+このオプションを有効にすると、バックアップ作成前に確認します。<br>
+<img src="images/VerifyBakup.png"><br>
+<br>
+</div>
+
+<span id="detail">
+<div class=li200>
+□<b>詳細設定する(sakura:1.5.9.0以降)</b><br>
+このオプションを有効にすると、バックアップファイル名の書式を設定できます。<br>
+<img src="images/ComBackDetail.png"><br>
+<br>
+バックアップファイル名として以下の文字展開が行われます。<br>
+<table>
+<tr><td>$0</td><td>ファイル名</td></tr>
+<tr><td>$1 .. $9</td><td>上位階層へx個移動したところにあるフォルダ名</td></tr>
+<tr><td>*</td><td>拡張子</td></tr>
+<tr><td>%Y</td><td>西暦（4桁）</td></tr>
+<tr><td>%y</td><td>西暦（2桁）</td></tr>
+<tr><td>%m</td><td>月</td></tr>
+<tr><td>%d</td><td>日</td></tr>
+<tr><td>%H</td><td>時</td></tr>
+<tr><td>%M</td><td>分</td></tr>
+<tr><td>%S</td><td>秒</td></tr>
+<tr><td>%%</td><td>%記号</td></tr>
+</table>
+<br>
+(例) .\$0_%Y%m%d.* [<i>ファイル名_年月日.拡張子</i>]<br>
+<br>
+</div>
+<div class=li200>
+◎<b>保存時の日付・時刻を使用</b><br>
+バックアップファイルを作成する時点での日時を使います。<br>
+○<b>前回のファイル更新時の日付・時刻を使用</b><br>
+前回の保存時の日時（ファイルの更新日時）すなわちファイルのタイムスタンプを使います。<br>
+<br>
+</div><br>
+<b>[設定フォルダ]</b><br>
+<a href="HLP000077.html">設定フォルダ</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>
+
+</BODY></HTML>

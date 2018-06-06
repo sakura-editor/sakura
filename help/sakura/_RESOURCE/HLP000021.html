@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>名前を付けて保存</TITLE>
+<META NAME="MS-HKWD" CONTENT="名前を付けて保存">
+<META NAME="MS-HKWD" CONTENT="FileSaveAs">
+<META NAME="MS-HKWD" CONTENT="FileSaveAsDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>名前を付けて保存</h2>
+現在編集しているテキストにファイル名を付けて保存します。<br>
+フォルダの初期値はカレントディレクトリ/MRUの1番目/指定フォルダを<a href="HLP000144.html">共通設定 『編集』</a>で指定可能です。(2.0.6.0 以降)<br>
+<br>
+<img src="images/FileSave.png"><br>
+<br>
+・<b>[文字コードセット]</b><br>
+保存するときの<a href="HLP000271.html">文字コードセット</a>を、表示された中から選択することができます。<br>
+SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページの中から選択することができます。<br>
+<br>
+・<b>[改行コード]</b><br>
+ファイルを保存するときに、統一する改行コードを指定します。<br>
+変換なしを選ぶと、統一せずに、編集中の各行の改行コードのまま保存します。<br>
+CR+LF(Windows)、LF (UNIX)、CR (Mac)の中から選択することができます。<br>
+<br>
+・<b>[BOM]</b><br>
+BOMを付加する場合にチェックしてください。<br>
+文字コードセットで、UTF-16、UTF-16BE、UTF-8、CESU-8を選んだ場合のみ利用可能です。<br>
+<br>
+・<b>[最近のファイル]</b><br>
+最近使ったファイルの一覧を<b>アルファベット順</b>に見ることができます。<br>
+<br>
+・<b>[最近のフォルダ]</b><br>
+最近使ったフォルダの一覧を<b>アルファベット順</b>に見ることができます。<br>
+フォルダを選択すると、現在のフォルダが変化します。<br>
+<br>
+<img src="images/hint.png">ヒント<br>
+ダイアログ表示時にプレースバーを表示します。(sakura:1.5.8.0以降)<br>
+<br>
+<img src="images/note.png"><b>注意</b><br>
+(sakura:1.5.14.0以降)<br>
+ファイル名に拡張子を指定しないときは、現在のファイルの種類の拡張子を自動で補います。<br>
+(無題)のときは、.txtを補います。<br>
+拡張子がないファイル名にしたい場合は、""で囲います。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文:	FileSaveAs( str1 :String, int2 :Integer, int3 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	×<br>
+・解説<br>
+文字コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;変更しない（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;UTF-16<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;UTF-16BE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
+&nbsp;&nbsp;&nbsp;90&nbsp;&nbsp;&nbsp;&nbsp;CP_ACP (sakura:2.2.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;91&nbsp;&nbsp;&nbsp;&nbsp;CP_OEM (sakura:2.2.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;コードページ番号&nbsp;(sakura:2.2.0.0以降)<br>
+改行コードは以下のいずれかを指定することができます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更しない（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;CRLF(Windows)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;LF(UNIX)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;CR(Mac)<br>
+<img src="images/note.png"><b>注意</b><br>
+拡張子の自動補完は、FileSaveAsマクロからの実行では動作しません。<br>
+<br>
+・構文:	FileSaveAsDialog( str1 :String, int2 :Integer, int3 :Integer ); (sakura 2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	×<br>
+・解説<br>
+名前を付けて保存ダイアログを表示し、ファイルを保存します。<br>
+文字コード・改行コードは、FileSaveAsと同じです。<br>
+</BODY></HTML>

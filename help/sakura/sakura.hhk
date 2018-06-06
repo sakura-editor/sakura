@@ -1,0 +1,1619 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD>
+<meta name="GENERATOR" content="HelpMachine 2.5.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="サクラエディタ  ヘルプ目次">
+<param name="Local" value="_RESOURCE\HLP000001.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="サクラエディタ概要">
+<param name="Local" value="_RESOURCE\HLP000001.html#c901">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="機能概要">
+<param name="Local" value="_RESOURCE\HLP000002.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="動作環境">
+<param name="Local" value="_RESOURCE\HLP000003.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="使用条件等">
+<param name="Local" value="_RESOURCE\HLP000004.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="インストール／アンインストール手順">
+<param name="Local" value="_RESOURCE\HLP000005.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ユーザー別設定">
+<param name="Local" value="_RESOURCE\HLP000078.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Visual Style">
+<param name="Local" value="_RESOURCE\HLP000079.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Virtual Store">
+<param name="Local" value="_RESOURCE\HLP000080.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="正規表現ライブラリ">
+<param name="Local" value="_RESOURCE\HLP000006.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="最新バージョンのダウンロード">
+<param name="Local" value="_RESOURCE\HLP000112.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="基本的な使い方">
+<param name="Local" value="_RESOURCE\HLP000001.html#c902">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="メニュー項目のヘルプ">
+<param name="Local" value="_RESOURCE\HLP000133.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タスクトレイメニュー">
+<param name="Local" value="_RESOURCE\HLP000400.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="通常選択">
+<param name="Local" value="_RESOURCE\HLP000011.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行選択">
+<param name="Local" value="_RESOURCE\HLP000012.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語選択">
+<param name="Local" value="_RESOURCE\HLP000013.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="矩形選択">
+<param name="Local" value="_RESOURCE\HLP000014.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="マウスによる範囲選択">
+<param name="Local" value="_RESOURCE\HLP000007.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="TABインデント、逆TABインデント">
+<param name="Local" value="_RESOURCE\HLP000113.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SPACEインデント、逆SPACEインデント">
+<param name="Local" value="_RESOURCE\HLP000114.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="矩形編集">
+<param name="Local" value="_RESOURCE\HLP000115.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="入力補完機能">
+<param name="Local" value="_RESOURCE\HLP000104.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="利用可能な正規表現">
+<param name="Local" value="_RESOURCE\HLP000089.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーワードヘルプ">
+<param name="Local" value="_RESOURCE\HLP000105.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="クリッカブルURL">
+<param name="Local" value="_RESOURCE\HLP000129.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タブバー">
+<param name="Local" value="_RESOURCE\HLP000106.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ドラッグ & ドロップ編集">
+<param name="Local" value="_RESOURCE\HLP000135.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="パスの貼り付け／ドロップ">
+<param name="Local" value="_RESOURCE\HLP000259.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右ドロップ">
+<param name="Local" value="_RESOURCE\HLP000130.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="インクリメンタルサーチについて">
+<param name="Local" value="_RESOURCE\HLP000008.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ツールバーアイコンの変更手順">
+<param name="Local" value="_RESOURCE\HLP000010.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="アプリアイコンの変更手順">
+<param name="Local" value="_RESOURCE\HLP000260.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="あると便利なツール、ファイル">
+<param name="Local" value="_RESOURCE\HLP000261.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="プラグイン">
+<param name="Local" value="_RESOURCE\HLP000110.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="表示言語の切り替え">
+<param name="Local" value="_RESOURCE\HLP000358.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コマンド概要">
+<param name="Local" value="_RESOURCE\HLP000001.html#c903">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイル(F)">
+<param name="Local" value="_RESOURCE\HLP000016.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="新規作成">
+<param name="Local" value="_RESOURCE\HLP000025.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="新規ウィンドウを開く">
+<param name="Local" value="_RESOURCE\HLP000339.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="開く">
+<param name="Local" value="_RESOURCE\HLP000015.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="上書き保存">
+<param name="Local" value="_RESOURCE\HLP000020.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="名前を付けて保存">
+<param name="Local" value="_RESOURCE\HLP000021.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="名前を付けて保存">
+<param name="Local" value="_RESOURCE\HLP000313.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="保存して閉じる">
+<param name="Local" value="_RESOURCE\HLP000287.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="閉じる">
+<param name="Local" value="_RESOURCE\HLP000018.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="閉じて(無題)">
+<param name="Local" value="_RESOURCE\HLP000017.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="閉じて開く">
+<param name="Local" value="_RESOURCE\HLP000119.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="開き直す">
+<param name="Local" value="_RESOURCE\HLP000283.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SJISで開き直す">
+<param name="Local" value="_RESOURCE\HLP000156.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="JISで開き直す">
+<param name="Local" value="_RESOURCE\HLP000157.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="EUCで開き直す">
+<param name="Local" value="_RESOURCE\HLP000158.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Latin1で開き直す">
+<param name="Local" value="_RESOURCE\HLP000341.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Unicodeで開き直す">
+<param name="Local" value="_RESOURCE\HLP000159.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UnicodeBEで開き直す">
+<param name="Local" value="_RESOURCE\HLP000256.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UTF-8で開き直す">
+<param name="Local" value="_RESOURCE\HLP000160.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="CESU-8で開き直す">
+<param name="Local" value="_RESOURCE\HLP000337.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UTF-7で開き直す">
+<param name="Local" value="_RESOURCE\HLP000161.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="印刷">
+<param name="Local" value="_RESOURCE\HLP000162.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="印刷プレビュー">
+<param name="Local" value="_RESOURCE\HLP000120.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="印刷ページ設定">
+<param name="Local" value="_RESOURCE\HLP000122.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイルのプロパティ">
+<param name="Local" value="_RESOURCE\HLP000022.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ブラウズ">
+<param name="Local" value="_RESOURCE\HLP000121.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="最近使ったファイル">
+<param name="Local" value="_RESOURCE\HLP000029.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="最近使ったフォルダ">
+<param name="Local" value="_RESOURCE\HLP000023.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="グループを閉じる">
+<param name="Local" value="_RESOURCE\HLP000320.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="編集の全終了">
+<param name="Local" value="_RESOURCE\HLP000030.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="サクラエディタの全終了">
+<param name="Local" value="_RESOURCE\HLP000028.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="編集(E)">
+<param name="Local" value="_RESOURCE\HLP000031.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="元に戻す">
+<param name="Local" value="_RESOURCE\HLP000032.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="やり直し">
+<param name="Local" value="_RESOURCE\HLP000033.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="切り取り">
+<param name="Local" value="_RESOURCE\HLP000034.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コピー">
+<param name="Local" value="_RESOURCE\HLP000035.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="貼り付け">
+<param name="Local" value="_RESOURCE\HLP000039.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="削除">
+<param name="Local" value="_RESOURCE\HLP000041.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="すべて選択">
+<param name="Local" value="_RESOURCE\HLP000044.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="再変換">
+<param name="Local" value="_RESOURCE\HLP000218.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="CRLF改行でコピー">
+<param name="Local" value="_RESOURCE\HLP000163.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返し位置に改行をつけてコピー">
+<param name="Local" value="_RESOURCE\HLP000219.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="矩形貼り付け">
+<param name="Local" value="_RESOURCE\HLP000040.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="カーソル前を削除">
+<param name="Local" value="_RESOURCE\HLP000042.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="日付">
+<param name="Local" value="_RESOURCE\HLP000164.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="時刻">
+<param name="Local" value="_RESOURCE\HLP000165.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コントロールコード">
+<param name="Local" value="_RESOURCE\HLP000255.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語の左端まで削除">
+<param name="Local" value="_RESOURCE\HLP000166.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語の右端まで削除">
+<param name="Local" value="_RESOURCE\HLP000167.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="現在位置の単語選択">
+<param name="Local" value="_RESOURCE\HLP000045.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語切り取り">
+<param name="Local" value="_RESOURCE\HLP000169.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語削除">
+<param name="Local" value="_RESOURCE\HLP000168.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行頭まで切り取り(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000172.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行末まで切り取り(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000173.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行頭まで削除(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000170.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行末まで削除(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000171.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行切り取り(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000174.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行削除(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000137.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行の二重化(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000043.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="TABインデント">
+<param name="Local" value="_RESOURCE\HLP000113.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="逆TABインデント">
+<param name="Local" value="_RESOURCE\HLP000113.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SPACEインデント">
+<param name="Local" value="_RESOURCE\HLP000114.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="逆SPACEインデント">
+<param name="Local" value="_RESOURCE\HLP000114.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択範囲内全行コピー">
+<param name="Local" value="_RESOURCE\HLP000036.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択範囲内全行引用符付きコピー">
+<param name="Local" value="_RESOURCE\HLP000037.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択範囲内全行行番号付きコピー">
+<param name="Local" value="_RESOURCE\HLP000038.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択範囲内色付きHTMLコピー">
+<param name="Local" value="_RESOURCE\HLP000342.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択範囲内行番号色付きHTMLコピー">
+<param name="Local" value="_RESOURCE\HLP000343.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="このファイル名をコピー">
+<param name="Local" value="_RESOURCE\HLP000303.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="このファイルのパス名をコピー">
+<param name="Local" value="_RESOURCE\HLP000056.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="このファイルのパス名とカーソル位置をコピー">
+<param name="Local" value="_RESOURCE\HLP000175.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="カーソル上移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000220.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="カーソル下移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000221.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語の左端に移動">
+<param name="Local" value="_RESOURCE\HLP000222.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語の右端に移動">
+<param name="Local" value="_RESOURCE\HLP000223.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000263.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000262.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行頭に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000224.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="行末に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000225.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="１ページアップ">
+<param name="Local" value="_RESOURCE\HLP000226.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="１ページダウン">
+<param name="Local" value="_RESOURCE\HLP000227.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイルの先頭に移動">
+<param name="Local" value="_RESOURCE\HLP000228.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイルの最後に移動">
+<param name="Local" value="_RESOURCE\HLP000229.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="カーソル行をウィンドウ中央へ">
+<param name="Local" value="_RESOURCE\HLP000230.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="指定行へジャンプ">
+<param name="Local" value="_RESOURCE\HLP000063.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索開始位置へ戻る">
+<param name="Local" value="_RESOURCE\HLP000264.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="移動履歴： 前へ">
+<param name="Local" value="_RESOURCE\HLP000231.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="移動履歴： 次へ">
+<param name="Local" value="_RESOURCE\HLP000232.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="現在位置を移動履歴に登録">
+<param name="Local" value="_RESOURCE\HLP000265.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="現在位置の単語選択">
+<param name="Local" value="_RESOURCE\HLP000045.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="すべて選択">
+<param name="Local" value="_RESOURCE\HLP000044.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="範囲選択開始">
+<param name="Local" value="_RESOURCE\HLP000233.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)カーソル上移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000234.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)カーソル下移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000235.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)単語の左端に移動">
+<param name="Local" value="_RESOURCE\HLP000236.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)単語の右端に移動">
+<param name="Local" value="_RESOURCE\HLP000237.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)前の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000274.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)次の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000273.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)行頭に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000238.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)行末に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000239.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)１ページアップ">
+<param name="Local" value="_RESOURCE\HLP000240.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)１ページダウン">
+<param name="Local" value="_RESOURCE\HLP000241.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)ファイルの先頭に移動">
+<param name="Local" value="_RESOURCE\HLP000242.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)ファイルの最後に移動">
+<param name="Local" value="_RESOURCE\HLP000243.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="矩形範囲選択開始">
+<param name="Local" value="_RESOURCE\HLP000244.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)カーソル上移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000344.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)カーソル下移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000345.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)単語の左端に移動">
+<param name="Local" value="_RESOURCE\HLP000346.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)単語の右端に移動">
+<param name="Local" value="_RESOURCE\HLP000347.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)前の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000348.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)次の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000349.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行頭に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000350.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行末に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000351.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)１ページアップ">
+<param name="Local" value="_RESOURCE\HLP000352.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)１ページダウン">
+<param name="Local" value="_RESOURCE\HLP000353.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)ファイルの先頭に移動">
+<param name="Local" value="_RESOURCE\HLP000354.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)ファイルの最後に移動">
+<param name="Local" value="_RESOURCE\HLP000355.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="左(先頭)の空白を削除">
+<param name="Local" value="_RESOURCE\HLP000210.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右(末尾)の空白を削除">
+<param name="Local" value="_RESOURCE\HLP000211.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択行の昇順ソート">
+<param name="Local" value="_RESOURCE\HLP000212.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="選択行の降順ソート">
+<param name="Local" value="_RESOURCE\HLP000213.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="連続した重複行の削除(uniq)">
+<param name="Local" value="_RESOURCE\HLP000214.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変換(C)">
+<param name="Local" value="_RESOURCE\HLP000131.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="小文字">
+<param name="Local" value="_RESOURCE\HLP000047.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="大文字">
+<param name="Local" value="_RESOURCE\HLP000048.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="全角→半角">
+<param name="Local" value="_RESOURCE\HLP000049.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半角＋全ひら→全角・カタカナ">
+<param name="Local" value="_RESOURCE\HLP000050.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半角＋全カタ→全角・ひらがな">
+<param name="Local" value="_RESOURCE\HLP000051.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="全角英数→半角英数">
+<param name="Local" value="_RESOURCE\HLP000215.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半角英数→全角英数">
+<param name="Local" value="_RESOURCE\HLP000200.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="全角カタカナ→半角カタカナ">
+<param name="Local" value="_RESOURCE\HLP000258.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半角カタカナ→全角カタカナ">
+<param name="Local" value="_RESOURCE\HLP000123.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半角カタカナ→全角ひらがな">
+<param name="Local" value="_RESOURCE\HLP000124.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="TAB→空白">
+<param name="Local" value="_RESOURCE\HLP000182.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="空白→TAB">
+<param name="Local" value="_RESOURCE\HLP000196.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="自動判別→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000178.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="E-Mail(JIS→SJIS)コード変換">
+<param name="Local" value="_RESOURCE\HLP000052.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="EUC→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000053.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Unicode→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000179.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UnicodeBE→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000257.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UTF-8→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000142.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="UTF-7→SJISコード変換">
+<param name="Local" value="_RESOURCE\HLP000143.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SJIS→JISコード変換">
+<param name="Local" value="_RESOURCE\HLP000117.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SJIS→EUCコード変換">
+<param name="Local" value="_RESOURCE\HLP000118.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SJIS→UTF-8コード変換">
+<param name="Local" value="_RESOURCE\HLP000180.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SJIS→UTF-7コード変換">
+<param name="Local" value="_RESOURCE\HLP000181.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Base64デコードして保存">
+<param name="Local" value="_RESOURCE\HLP000054.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="uudecodeして保存">
+<param name="Local" value="_RESOURCE\HLP000055.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索(S)">
+<param name="Local" value="_RESOURCE\HLP000058.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索">
+<param name="Local" value="_RESOURCE\HLP000059.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次を検索">
+<param name="Local" value="_RESOURCE\HLP000061.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前を検索">
+<param name="Local" value="_RESOURCE\HLP000060.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="置換">
+<param name="Local" value="_RESOURCE\HLP000062.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索マークの切替え">
+<param name="Local" value="_RESOURCE\HLP000136.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索開始位置へ戻る">
+<param name="Local" value="_RESOURCE\HLP000264.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000304.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="後方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000305.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="正規表現前方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000306.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="正規表現後方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000307.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="MIGEMO前方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000308.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="MIGEMO後方インクリメンタルサーチ">
+<param name="Local" value="_RESOURCE\HLP000309.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ブックマーク設定・解除">
+<param name="Local" value="_RESOURCE\HLP000205.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次のブックマークへ">
+<param name="Local" value="_RESOURCE\HLP000206.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前のブックマークへ">
+<param name="Local" value="_RESOURCE\HLP000207.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ブックマークの全解除">
+<param name="Local" value="_RESOURCE\HLP000208.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ブックマークの一覧">
+<param name="Local" value="_RESOURCE\HLP000209.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Grep">
+<param name="Local" value="_RESOURCE\HLP000067.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="Grep置換">
+<param name="Local" value="_RESOURCE\HLP000362.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="指定行へジャンプ">
+<param name="Local" value="_RESOURCE\HLP000063.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="アウトライン解析">
+<param name="Local" value="_RESOURCE\HLP000064.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイルツリー">
+<param name="Local" value="_RESOURCE\HLP000368.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タグジャンプ">
+<param name="Local" value="_RESOURCE\HLP000065.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タグジャンプバック">
+<param name="Local" value="_RESOURCE\HLP000066.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タグファイルの作成">
+<param name="Local" value="_RESOURCE\HLP000280.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ダイレクトタグジャンプ">
+<param name="Local" value="_RESOURCE\HLP000281.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーワードを指定してタグジャンプ">
+<param name="Local" value="_RESOURCE\HLP000310.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="同名のC/C++ヘッダ(ソース)を開く">
+<param name="Local" value="_RESOURCE\HLP000192.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファイル内容比較">
+<param name="Local" value="_RESOURCE\HLP000116.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="DIFF差分表示">
+<param name="Local" value="_RESOURCE\HLP000251.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次の差分へ">
+<param name="Local" value="_RESOURCE\HLP000252.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前の差分へ">
+<param name="Local" value="_RESOURCE\HLP000253.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="差分表示の全解除">
+<param name="Local" value="_RESOURCE\HLP000254.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="対括弧の検索">
+<param name="Local" value="_RESOURCE\HLP000183.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次の関数リストマーク">
+<param name="Local" value="_RESOURCE\HLP000364.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前の関数リストマーク">
+<param name="Local" value="_RESOURCE\HLP000365.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ツール(T)">
+<param name="Local" value="_RESOURCE\HLP000068.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーマクロの記録開始／終了">
+<param name="Local" value="_RESOURCE\HLP000125.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーマクロの保存">
+<param name="Local" value="_RESOURCE\HLP000127.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーマクロの読み込み">
+<param name="Local" value="_RESOURCE\HLP000128.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーマクロの実行">
+<param name="Local" value="_RESOURCE\HLP000126.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="登録済みマクロ">
+<param name="Local" value="_RESOURCE\HLP000202.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="名前を指定してマクロ実行">
+<param name="Local" value="_RESOURCE\HLP000332.html">
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="外部コマンド実行">
+<param name="Local" value="_RESOURCE\HLP000103.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SQL*Plusをアクティブ表示">
+<param name="Local" value="_RESOURCE\HLP000132.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="SQL*Plusで実行">
+<param name="Local" value="_RESOURCE\HLP000027.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="入力補完">
+<param name="Local" value="_RESOURCE\HLP000111.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右クリックメニュー">
+<param name="Local" value="_RESOURCE\HLP000195.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="メニュー">
+<param name="Local" value="_RESOURCE\HLP000186.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="設定(O)">
+<param name="Local" value="_RESOURCE\HLP000500.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ツールバーを表示">
+<param name="Local" value="_RESOURCE\HLP000069.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ファンクションキーを表示">
+<param name="Local" value="_RESOURCE\HLP000070.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タブを表示">
+<param name="Local" value="_RESOURCE\HLP000282.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ステータスバーを表示">
+<param name="Local" value="_RESOURCE\HLP000134.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ミニマップを表示">
+<param name="Local" value="_RESOURCE\HLP000371.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定一覧">
+<param name="Local" value="_RESOURCE\HLP000072.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定一覧インポート">
+<param name="Local" value="_RESOURCE\HLP000338.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定">
+<param name="Local" value="_RESOURCE\HLP000073.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『スクリーン』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000074.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『カラー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000075.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『文字色（背景色）統一』">
+<param name="Local" value="_RESOURCE\HLP000316.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『ウィンドウ』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000319.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『支援』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000197.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『正規表現キーワード』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000203.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定『キーワードヘルプ』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000315.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定">
+<param name="Local" value="_RESOURCE\HLP000076.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『全般』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000081.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ウィンドウ』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000146.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ウィンドウの位置と大きさ』">
+<param name="Local" value="_RESOURCE\HLP000286.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『メインメニュー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000152.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ツールバー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000085.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定 『タブバー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000150.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ステータスバー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000147.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『編集』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000144.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ファイル』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000083.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『ファイル名表示』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000277.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『バックアップ』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000145.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『書式』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000082.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『検索』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000148.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『キー割り当て』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000084.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『カスタムメニュー』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000087.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『強調キーワード』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000086.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『支援』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000088.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『マクロ』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000201.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『プラグイン』プロパティ">
+<param name="Local" value="_RESOURCE\HLP000151.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="共通設定『プラグイン設定』">
+<param name="Local" value="_RESOURCE\HLP000153.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="フォント設定">
+<param name="Local" value="_RESOURCE\HLP000071.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="履歴の管理">
+<param name="Local" value="_RESOURCE\HLP000279.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返し方法">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返さない">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="指定桁で折り返す">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右端で折り返す">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返し桁数">
+<param name="Local" value="_RESOURCE\HLP000184.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="文字カウント方法">
+<param name="Local" value="_RESOURCE\HLP000336.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="挿入／上書きモード">
+<param name="Local" value="_RESOURCE\HLP000046.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="読み取り専用">
+<param name="Local" value="_RESOURCE\HLP000249.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーワードヘルプ自動表示">
+<param name="Local" value="_RESOURCE\HLP000318.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="文字コードセット指定">
+<param name="Local" value="_RESOURCE\HLP000297.html">
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="入力改行コード指定">
+<param name="Local" value="_RESOURCE\HLP000285.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="設定フォルダ">
+<param name="Local" value="_RESOURCE\HLP000077.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ウィンドウ(W)">
+<param name="Local" value="_RESOURCE\HLP000090.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="上下に分割">
+<param name="Local" value="_RESOURCE\HLP000093.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="左右に分割">
+<param name="Local" value="_RESOURCE\HLP000094.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="縦横に分割">
+<param name="Local" value="_RESOURCE\HLP000095.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="閉じる">
+<param name="Local" value="_RESOURCE\HLP000018.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="すべて閉じる">
+<param name="Local" value="_RESOURCE\HLP000019.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次のウィンドウ">
+<param name="Local" value="_RESOURCE\HLP000092.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前のウィンドウ">
+<param name="Local" value="_RESOURCE\HLP000091.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ウィンドウ一覧">
+<param name="Local" value="_RESOURCE\HLP000314.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="グループ化／グループ化解除">
+<param name="Local" value="_RESOURCE\HLP000311.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="グループを閉じる">
+<param name="Local" value="_RESOURCE\HLP000320.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="このタブ以外を閉じる">
+<param name="Local" value="_RESOURCE\HLP000333.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="左をすべて閉じる">
+<param name="Local" value="_RESOURCE\HLP000334.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="右をすべて閉じる">
+<param name="Local" value="_RESOURCE\HLP000335.html">
+<param name="ImageNumber" value="9">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次のグループ">
+<param name="Local" value="_RESOURCE\HLP000321.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前のグループ">
+<param name="Local" value="_RESOURCE\HLP000322.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タブを右に移動">
+<param name="Local" value="_RESOURCE\HLP000323.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タブを左に移動">
+<param name="Local" value="_RESOURCE\HLP000324.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="新規グループ">
+<param name="Local" value="_RESOURCE\HLP000325.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次のグループに移動">
+<param name="Local" value="_RESOURCE\HLP000326.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前のグループに移動">
+<param name="Local" value="_RESOURCE\HLP000327.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="重ねて表示">
+<param name="Local" value="_RESOURCE\HLP000138.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="上下に並べて表示">
+<param name="Local" value="_RESOURCE\HLP000140.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="左右に並べて表示">
+<param name="Local" value="_RESOURCE\HLP000139.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="常に手前に表示">
+<param name="Local" value="_RESOURCE\HLP000312.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="縦方向に最大化">
+<param name="Local" value="_RESOURCE\HLP000141.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="横方向に最大化">
+<param name="Local" value="_RESOURCE\HLP000098.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="すべて最小化">
+<param name="Local" value="_RESOURCE\HLP000096.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="再描画">
+<param name="Local" value="_RESOURCE\HLP000187.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="アウトプット">
+<param name="Local" value="_RESOURCE\HLP000188.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ウィンドウ一覧表示">
+<param name="Local" value="_RESOURCE\HLP000372.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(ウィンドウリスト)">
+<param name="Local" value="_RESOURCE\HLP000097.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ヘルプ(H)">
+<param name="Local" value="_RESOURCE\HLP000099.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="目次">
+<param name="Local" value="_RESOURCE\HLP000100.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーワード検索">
+<param name="Local" value="_RESOURCE\HLP000101.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コマンド一覧">
+<param name="Local" value="_RESOURCE\HLP000189.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キー割り当て一覧をコピー">
+<param name="Local" value="_RESOURCE\HLP000057.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="外部ヘルプ１">
+<param name="Local" value="_RESOURCE\HLP000190.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="外部HTMLヘルプ">
+<param name="Local" value="_RESOURCE\HLP000191.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="バージョン情報">
+<param name="Local" value="_RESOURCE\HLP000102.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="メニューに入ってないコマンド">
+<param name="Local" value="_RESOURCE\CNT000924.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="文字入力">
+<param name="Local" value="_RESOURCE\HLP000288.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="カーソル移動">
+<param name="Local" value="_RESOURCE\HLP000289.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ホイール移動">
+<param name="Local" value="_RESOURCE\HLP000298.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="次の変更行へ移動">
+<param name="Local" value="_RESOURCE\HLP000366.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="前の変更行へ移動">
+<param name="Local" value="_RESOURCE\HLP000367.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)カーソル移動">
+<param name="Local" value="_RESOURCE\HLP000290.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)カーソル移動">
+<param name="Local" value="_RESOURCE\HLP000299.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="各種モードの取り消し">
+<param name="Local" value="_RESOURCE\HLP000194.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="テキストを１行下へスクロール">
+<param name="Local" value="_RESOURCE\HLP000198.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="テキストを１行上へスクロール">
+<param name="Local" value="_RESOURCE\HLP000199.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半ページアップ">
+<param name="Local" value="_RESOURCE\HLP000245.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="半ページダウン">
+<param name="Local" value="_RESOURCE\HLP000246.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)半ページアップ">
+<param name="Local" value="_RESOURCE\HLP000247.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)半ページダウン">
+<param name="Local" value="_RESOURCE\HLP000248.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)次の変更行へ移動">
+<param name="Local" value="_RESOURCE\HLP000369.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(選択)前の変更行へ移動">
+<param name="Local" value="_RESOURCE\HLP000370.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="開く（ドロップダウン）">
+<param name="Local" value="_RESOURCE\HLP000275.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="プロファイルマネージャ">
+<param name="Local" value="_RESOURCE\HLP000363.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="検索（ボックス）">
+<param name="Local" value="_RESOURCE\HLP000276.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="アウトライン解析(トグル)">
+<param name="Local" value="_RESOURCE\HLP000317.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="閉じてタグジャンプ">
+<param name="Local" value="_RESOURCE\HLP000291.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="置換(実行)">
+<param name="Local" value="_RESOURCE\HLP000292.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="すべて置換(実行)">
+<param name="Local" value="_RESOURCE\HLP000293.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="指定パターンに一致する行をマーク">
+<param name="Local" value="_RESOURCE\HLP000294.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="最後にテキストを追加">
+<param name="Local" value="_RESOURCE\HLP000295.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="引用符の変更">
+<param name="Local" value="_RESOURCE\HLP000330.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="トレース出力">
+<param name="Local" value="_RESOURCE\HLP000331.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="編集文書の一時出力">
+<param name="Local" value="_RESOURCE\HLP000328.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="編集文書にファイル挿入">
+<param name="Local" value="_RESOURCE\HLP000329.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="1行選択">
+<param name="Local" value="_RESOURCE\HLP000108.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="オートスクロール">
+<param name="Local" value="_RESOURCE\HLP000296.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)半ページアップ">
+<param name="Local" value="_RESOURCE\HLP000356.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)半ページダウン">
+<param name="Local" value="_RESOURCE\HLP000357.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行頭に移動(改行単位)">
+<param name="Local" value="_RESOURCE\HLP000361.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="フォントサイズ拡大">
+<param name="Local" value="_RESOURCE\HLP000359.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="フォントサイズ縮小">
+<param name="Local" value="_RESOURCE\HLP000360.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="デフォルト設定値（インストール時）">
+<param name="Local" value="_RESOURCE\HLP000001.html#c925">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ">
+<param name="Local" value="_RESOURCE\HLP000300.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キー割り当て一覧">
+<param name="Local" value="_RESOURCE\HLP000107.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コマンド一覧 (機能別)">
+<param name="Local" value="_RESOURCE\HLP000193.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="仕様等">
+<param name="Local" value="_RESOURCE\HLP000001.html#c926">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="改行コードについて">
+<param name="Local" value="_RESOURCE\HLP000149.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="コマンドラインオプション">
+<param name="Local" value="_RESOURCE\HLP000109.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="単語について">
+<param name="Local" value="_RESOURCE\HLP000250.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="文字コードセットのエンコードについて">
+<param name="Local" value="_RESOURCE\HLP000271.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="メタ文字列の仕様">
+<param name="Local" value="_RESOURCE\HLP000272.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ExpandParameter">
+<param name="Local" value="_RESOURCE\HLP000284.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="スマートインデント">
+<param name="Local" value="_RESOURCE\HLP000301.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ダイレクトタグジャンプの使い方">
+<param name="Local" value="_RESOURCE\HLP000278.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="マクロ">
+<param name="Local" value="_RESOURCE\HLP000001.html#c927">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="マクロについて">
+<param name="Local" value="_RESOURCE\HLP000204.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="キーボードマクロ">
+<param name="Local" value="_RESOURCE\HLP000267.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="WSHマクロとPPAマクロ">
+<param name="Local" value="_RESOURCE\HLP000269.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="マクロ専用関数">
+<param name="Local" value="_RESOURCE\HLP000268.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="マクロ記載例">
+<param name="Local" value="_RESOURCE\HLP000270.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴">
+<param name="Local" value="_RESOURCE\HLP000009.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="プロジェクト連絡先">
+<param name="Local" value="_RESOURCE\HLP_UR000.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2013/05/13～)">
+<param name="Local" value="_RESOURCE\HLP_UR016.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2011/02/11～)">
+<param name="Local" value="_RESOURCE\HLP_UR015.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2007/09/27～)">
+<param name="Local" value="_RESOURCE\HLP_UR014.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2006/11/04～)">
+<param name="Local" value="_RESOURCE\HLP_UR013.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2004/10/02～)">
+<param name="Local" value="_RESOURCE\HLP_UR012.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2003/06/26～)">
+<param name="Local" value="_RESOURCE\HLP_UR011.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2003/01/14～)">
+<param name="Local" value="_RESOURCE\HLP_UR010.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2002/05/01～)">
+<param name="Local" value="_RESOURCE\HLP_UR009.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2002/02/23～)">
+<param name="Local" value="_RESOURCE\HLP_UR008.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2001/12/03～)">
+<param name="Local" value="_RESOURCE\HLP_UR007.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2001/06/22～)">
+<param name="Local" value="_RESOURCE\HLP_UR006.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2001/05/13～)">
+<param name="Local" value="_RESOURCE\HLP_UR005.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2000/11/20～)">
+<param name="Local" value="_RESOURCE\HLP_UR004.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2000/10/10～)">
+<param name="Local" value="_RESOURCE\HLP_UR003.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2000/05/12～)">
+<param name="Local" value="_RESOURCE\HLP_UR002.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="変更履歴(2000/02/21～)">
+<param name="Local" value="_RESOURCE\HLP_UR001.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="リリース履歴(1999/04/01～)">
+<param name="Local" value="_RESOURCE\HLP_RELEASE.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="このヘルプファイルについて">
+<param name="Local" value="_RESOURCE\HLP_LISENCE.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="ヘルプファイル更新履歴">
+<param name="Local" value="_RESOURCE\HLP_HISTORY.html">
+</OBJECT>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>すべて置換(実行)</TITLE>
+<META NAME="MS-HKWD" CONTENT="すべて置換(実行)">
+<META NAME="MS-HKWD" CONTENT="ReplaceAll">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>すべて置換(実行)</h2>
+文字列をすべて置換します。<br>
+<a href="HLP000062.html">置換</a>ダイアログで [すべて置換] ボタンを押した時の動作です。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: 	ReplaceAll( str1 :String , str2 :String , int3 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;置換オプション（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	<a href="HLP000062.html">置換</a>の[すべて置換]実行により記録<br>
+・解説:	引数は「<a href="HLP000292.html">置換(実行)」</a>Replaceの引数に加えて、
+int3には「すべて置換」の動作のみに影響を与えるオプションを指定できます。<br>
+<br>
+ReplaceAll専用オプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x400&nbsp;&nbsp;&nbsp;&nbsp;「すべて置換」は置換の繰返し(sakura:1.5.15.0以降)<br>
+<br>
+<img src="images/note.png">注意：sakura:1.5.15.0以前に作成されたマクロで「すべて置換」(ReplaceAll)を使用して、
+位置指定(行頭指定^や単語区切り指定\b)を含むパターンを消去(置換後の文字列が空)しているために
+期待の動作をしない場合は、マクロ修正が必要です。第３引数のint3に0x400のオプションを追加してください。<br>
+ReplaceAllLine は廃止しました。1.5.15.0以降では ReplaceAll で 0x400 を指定しない場合と等価です。<br>
+</BODY></HTML>

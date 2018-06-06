@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>変更履歴(2015/2/22～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2015/02/22～)</h2>
+<!--<h3>xxx. xx, 2015 (2.x.x.x)</h3>-->
+
+<h3>May. 2, 2017 (2.3.2.0)</h3>
+[機能追加]<br />
+<ul>
+<li>ウィンドウ一覧ダイアログ (svn:4176 upatchid:1072 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>アウトラインのツリーの逆順ソート追加 (svn:4138 upatchid:1038 Moca)</li>
+<li>アウトライン解析ツリー表示の高速化 (svn:4156 upatchid:1056 Moca)</li>
+<li>アウトラインメニューにすべて展開・縮小・ブックマーク削除・全削除を追加 (svn:4159 upatchid:1049 Moca)</li>
+<li>Grepファイル・フォルダ長を512に拡張 (svn:4161 upatchid:1076 Moca)</li>
+<li>マクロ保存でS_を追加しない (svn:4173 upatchid:943 Moca)</li>
+<li>キーワードヘルプメニューのオプション (svn:4175 upatchid:1066 Moca)</li>
+
+</ul>
+[バグ修正]<br />
+<ul>
+<li>C++アウトラインでのK&R引数定義対策 (svn:4130 upatchid:1012 Moca)</li>
+<li>アウトライン解析C++/Javaのソート順がおかしいバグの修正 (svn:4133 upatchid:1031 Moca)</li>
+<li>Grepダイアログが言語切替でウィンドウサイズが変わらない (svn:4137 upatchid:1071 Moca)</li>
+<li>キーボードでCPをチェックするとキーボードで操作できなくなる (svn:4139 upatchid:1084 Moca)</li>
+<li>IO_ProfileのコマンドIDプラグイン名処理をまとめる (svn:4142 upatchid:1064 Moca)</li>
+<li>編集中ファイルからGrepのときサブフォルダ共通設定を上書きしない (svn:4147 upatchid:1032 Moca)</li>
+<li>アウトライン解析KR対策以降でANSIビルドエラーが出る (svn:4153 upatchid:1088 Moca)</li>
+<li>Win10で無題のタブアイコンがGrepになる (svn:4154 upatchid:1080 LR4, Moca)</li>
+<li>CUxThemeの保守修正パッチ (svn:4158 upatchid:1091 berryzplus)</li>
+<li>設定画面のファイル選択ダイアログで相対パスにできるときはする (svn:4160 upatchid:985 Moca)</li>
+<li>タブ幅がフォントサイズが大きいと4固定になる (svn:4162 upatchid:1078 Moca)</li>
+<li>UTF-7自動認識を厳しくする (svn:4163 upatchid:988 Moca)</li>
+<li>タイプ別から共通設定キーワードを表示すると内容が一致しない (svn:4164 upatchid:1083 Moca)</li>
+<li>DragFinishがたりない (svn:4165 upatchid:1042 Moca)</li>
+<li>正規表現キーワードで落ちることがある (svn:4166 upatchid:1095 Moca)</li>
+<li>ミニマップにドロップすると落ちる (svn:4169 upatchid:1094 Moca)</li>
+<li>UnicodeをUTF-16表記に変更 (svn:4178 upatchid:1102 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>maxdata定義追加 (svn:4145 svn:4151 upatchid:1085 novice123)</li>
+<li>new/deleteからwstringに置き換え (svn:4146 upatchid:1086 novice123)</li>
+<li>static変数削除 (svn:4168 upatchid:1096 novice123)</li>
+</ul>
+
+<h3>Oct. 12, 2015 (2.3.0.0)</h3>
+[機能追加]<br />
+<ul>
+<li>TSV、CSVモード (svn:4019 upatchid:991 Request/359 syat)</li>
+<li>プロポーショナルフォント (svn:4035 upatchid:713 Request/500 Moca)</li>
+<li>XMLアウトラインとHTMLの修正 (svn:4047 upatchid:944 BugReport/174 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>C/C++インデントの改良 (svn:4020 upatchid:717 Request/336 Moca)</li>
+<li>桁数表示のオプション化 (svn:4045 upatchid:1004 unicode:2282 Moca,syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>(選択)前の変更行へが追加されるときにもセパレータが余分に追加される (svn:4016 upatchid:983 novice123)</li>
+<li>EBCDIC typo修正 (svn:4017 upatchid:987 novice123)</li>
+<li>TCITEMの cchTextMaxメンバが初期化されていなかった (svn:4018 unicode:2263 teru,ds14050)</li>
+<li>DLL,EXEの検索パスのセキュリティ設定変更 (svn:4021 upatchid:805 Moca)</li>
+<li>メッセージボックスのコピーがおかしい (svn:4022 upatchid:816 unicode:2165 novice123,LR4)</li>
+<li>正規表現OFF置換で異常終了する (svn:4024 upatchid:994 unicode:2266 syat)</li>
+<li>Grepの検索対象ファイルを厳密にする (svn:4026 upatchid:992 BugReport/184 LR4)</li>
+<li>正規表現のGrep置換で行内の1つめしか置換されない (svn:4027 upatchid:984 Moca)</li>
+<li>C/C++用強調キーワードにてfinalとfloatが動作しない (svn:4028 upatchid:993 BugReport/186 syat)</li>
+<li>複数ファイルを「送る」メニューから開いたときの挙動 (svn:4029 upatchid:990 novice123)</li>
+<li>入力補完中のIME動作がおかしい (svn:4031 upatchid:996 unicode:2278 ryoji)</li>
+<li>「ミニマップを隠す」メニュー／ツールバーのアイコンが窪んだ状態にならない (svn:4032 upatchid:997 ryoji)</li>
+<li>キーワードヘルプの表示位置不正 (svn:4033 upatchid:998 ryoji)</li>
+<li>Undo/Redo時にキャレットが期待する位置に移動しない (svn:4034 upatchid:999 ryoji)</li>
+<li>ミニマップが印刷プレビューで表示されたままになる (svn:4037 upatchid:1000 unicode:2276 Moca)</li>
+<li>タブの検索をキーマクロとして保存できない (svn:4038 upatchid:1001 BugReport/188 anonymous)</li>
+<li>折り返し記号をOFFにしても折り返し記号が消えない (svn:4043 upatchid:1002 unicode:2290 syat)</li>
+<li>文字の間隔の適用値が今までと異なる (svn:4046 upatchid:1003 unicode:2294 Moca)</li>
+<li>スクロールできないときマウスキャプチャされたままになる (svn:4048 upatchid:1005 unicode:2298 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>USE_CRASHDUMPをデフォルトで有効化 (svn:4023 upatchid:995 unicode:2268 syat)</li>
+<li>コンパイルオプションに/NXCOMPAT /SAFESEH /DYNAMICBASEを追加 (svn:4025 upatchid:826 Moca)</li>
+<li>ミニマップビュー生成時にメンバを初期化する (svn:4030 syat)</li>
+<li>MinGWコンパイル対応 (svn:4036 upatchid:995 syat)</li>
+</ul>
+
+<h3>Mar. 1, 2015 (2.2.0.1)</h3>
+[仕様変更]<br />
+<ul>
+<li>メインメニューの自動更新 (svn:4007 upatchid:979 data:7948 Moca)</li>
+<li>タブバーの項目幅の調整・iniで設定可能に (svn:4008 upatchid:980 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>行間隔の設定が保存されない (svn:4000 upatchid:977 data:7953 novice123)</li>
+<li>ビットマップフォント等でミニマップが小さく表示されない (svn:4006 upatchid:978 Moca)</li>
+<li>Grep/Grep置換のCPのアクセスキー変更 (svn:4009 upatchid:981 data:7973 Moca)</li>
+</ul>
+
+
+<h3>Aug. 14, 2016 (2.3.1.0)</h3>
+[仕様変更]<br />
+<ul>
+<li>カーソル左右リピート設定(iniのみ) (svn:4102 upatchid:926 Moca)</li>
+<li>タイプ一覧の基本も初期化できるように (svn:4111 upatchid:1037 Moca)</li>
+<li>メールアドレスの記号類を許可する (svn:4117 upatchid:1063 Moca)</li>
+<li>ini読み取り専用オプション (svn:4119 upatchid:937 Moca)</li>
+<li>英語リソースでなるべくアクセスキーで括弧を使わないように変更 (svn:4124 upatchid:911 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>共通・タイプ別設定変更後にタイトルバー更新 (svn:4061 upatchid:1013 novice123)</li>
+<li>プロポーショナルフォント (svn:4065 upatchid:713 novice123)</li>
+<li>すべて置換の高速化 (svn:4066 upatchid:521 novice123)</li>
+<li>外部コマンド実行の拡張(memcpyがオーバーランするのを修正) (svn:4068 upatchid:324 novice123)</li>
+<li>プロポーショナルフォント(「行の間隔」スピンコントロールの増減が逆) (svn:4070 upatchid:713 novice123)</li>
+<li>上書きモードでの矩形選択入力で選択範囲を削除するオプションを追加(「上書きモードでの矩形入力で選択範囲を削除する」修正) (svn:4071 upatchid:821 novice123)</li>
+<li>アウトラインを上下にドッキングした場合の初期表示の高さが不正 (svn:4074 upatchid:1016 novice123)</li>
+<li>migemo_close()呼び出し (svn:4075 upatchid:1017 novice123)</li>
+<li>コードページ対応(「折り返し単位/改行単位」をチェックしたときに 文字コードのCPがチェックされるのを修正) (svn:4080 upatchid:311 novice123)</li>
+<li>フォント拡大縮小がOpenTypeのPostScriptだと動作しない (svn:4081 upatchid:1020 Moca)</li>
+<li>C++インデントでコメント行を改行するとRuntime Error (svn:4082 upatchid:1021 ds14050,Moca)</li>
+<li>単語種別のキリル文字の範囲修正 (svn:4083 upatchid:1022 Moca)</li>
+<li>CDCFontでフォント削除がおかしい (svn:4084 upatchid:1026 Moca)</li>
+<li>ソートコマンドでメモリーリーク (svn:4085 upatchid:1027 Moca)</li>
+<li>TSV,CSVモードコンボボックスの縦幅を広げる (svn:4086 upatchid:1033 Moca)</li>
+<li>C++アウトライン解析で異常終了する (svn:4087 upatchid:1007 Moca)</li>
+<li>WCODE::IsCtrlCode()でNUL文字がfalseになるためコントロールコードとして描画されない (svn:4090 upatchid:1035 Moca,novice123)</li>
+<li>テキスト・ルールファイル解析での範囲外アクセスの修正 (svn:4092 upatchid:1010 Moca,novice123)</li>
+<li>アウトラインのメニュー表示でリソースリーク (svn:4093 upatchid:1048 Moca,novice123)</li>
+<li>ミニマップのDIFFマークを非表示に修正 (svn:4096 upatchid:1029 Moca)</li>
+<li>テキスト・ルールファイル解析での範囲外アクセスの修正(bAppendをBOOLからboolに修正) (svn:4097 upatchid:1010 novice123)</li>
+<li>プロファイルマネージャのアイコンがおかしい (svn:4099 upatchid:1039 Moca)</li>
+<li>プロファイルマネージャが左上に表示される (svn:4100 upatchid:1025 Moca)</li>
+<li>共通設定マクロ一覧の幅調整 (svn:4101 upatchid:974 Moca)</li>
+<li>CDlgInput1が言語切り替え未対応 (svn:4105 upatchid:1060 Moca)</li>
+<li>起動時のプロファイルマネージャで新規作成・名前変更で落ちる (svn:4106 upatchid:1059 Moca)</li>
+<li>マクロ関数InputBoxバッファオーバーラン (svn:4107 upatchid:1058 Moca)</li>
+<li>プロファイルマネージャで表示直後(default)が削除・名前変更できるバグ (svn:4109 upatchid:1061 Moca)</li>
+<li>ユーザ別設定のときのマルチプロファイルの場所がおかしい (svn:4112 upatchid:1024 Moca)</li>
+<li>EOF直前の改行を改行なしに置換するとEOFの再描画が不足する (svn:4113 upatchid:1008 Moca)</li>
+<li>プラグインオプションのコンボボックスの高さが不正 (svn:4114 upatchid:1054 Moca)</li>
+<li>1行目で前の段落へ移動を実行すると落ちる (svn:4115 upatchid:1023 Moca)</li>
+<li>オートスクロールの横方向がpx単位になっている (svn:4116 upatchid:1062 Moca)</li>
+<li>バックアップの詳細設定の時刻がUTCになっている (svn:4118 upatchid:1082 Moca)</li>
+<li>外部コマンド実行の標準出力を得るUTF-8で文字化け (svn:4123 upatchid:1077 Moca)</li>
+<li>アウトライン解析C++/Javaツリーのクラス名の最大長の修正 (svn:4125 upatchid:1030 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>インクリメントサーチ定義 (svn:4077 upatchid:1018 novice123)</li>
+<li>assertダイアログでファイル行番号を画面に表示 (svn:4088 upatchid:957 Moca)</li>
+<li>slnファイルのタイプをVC2005Expressにする (svn:4103 upatchid:1073 Moca)</li>
+<li>x64コンパイル時のmigemo呼び出し規約判定省略 (svn:4108 upatchid:1075 novice123)</li>
+</ul>
+
+<h3>Oct. 12, 2015 (2.3.0.0)</h3>
+[機能追加]<br />
+<ul>
+<li>TSV、CSVモード (svn:4019 upatchid:991 Request/359 syat)</li>
+<li>プロポーショナルフォント (svn:4035 upatchid:713 Request/500 Moca)</li>
+<li>XMLアウトラインとHTMLの修正 (svn:4047 upatchid:944 BugReport/174 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>C/C++インデントの改良 (svn:4020 upatchid:717 Request/336 Moca)</li>
+<li>桁数表示のオプション化 (svn:4045 upatchid:1004 unicode:2282 Moca,syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>(選択)前の変更行へが追加されるときにもセパレータが余分に追加される (svn:4016 upatchid:983 novice123)</li>
+<li>EBCDIC typo修正 (svn:4017 upatchid:987 novice123)</li>
+<li>TCITEMの cchTextMaxメンバが初期化されていなかった (svn:4018 unicode:2263 teru,ds14050)</li>
+<li>DLL,EXEの検索パスのセキュリティ設定変更 (svn:4021 upatchid:805 Moca)</li>
+<li>メッセージボックスのコピーがおかしい (svn:4022 upatchid:816 unicode:2165 novice123,LR4)</li>
+<li>正規表現OFF置換で異常終了する (svn:4024 upatchid:994 unicode:2266 syat)</li>
+<li>Grepの検索対象ファイルを厳密にする (svn:4026 upatchid:992 BugReport/184 LR4)</li>
+<li>正規表現のGrep置換で行内の1つめしか置換されない (svn:4027 upatchid:984 Moca)</li>
+<li>C/C++用強調キーワードにてfinalとfloatが動作しない (svn:4028 upatchid:993 BugReport/186 syat)</li>
+<li>複数ファイルを「送る」メニューから開いたときの挙動 (svn:4029 upatchid:990 novice123)</li>
+<li>入力補完中のIME動作がおかしい (svn:4031 upatchid:996 unicode:2278 ryoji)</li>
+<li>「ミニマップを隠す」メニュー／ツールバーのアイコンが窪んだ状態にならない (svn:4032 upatchid:997 ryoji)</li>
+<li>キーワードヘルプの表示位置不正 (svn:4033 upatchid:998 ryoji)</li>
+<li>Undo/Redo時にキャレットが期待する位置に移動しない (svn:4034 upatchid:999 ryoji)</li>
+<li>ミニマップが印刷プレビューで表示されたままになる (svn:4037 upatchid:1000 unicode:2276 Moca)</li>
+<li>タブの検索をキーマクロとして保存できない (svn:4038 upatchid:1001 BugReport/188 anonymous)</li>
+<li>折り返し記号をOFFにしても折り返し記号が消えない (svn:4043 upatchid:1002 unicode:2290 syat)</li>
+<li>文字の間隔の適用値が今までと異なる (svn:4046 upatchid:1003 unicode:2294 Moca)</li>
+<li>スクロールできないときマウスキャプチャされたままになる (svn:4048 upatchid:1005 unicode:2298 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>USE_CRASHDUMPをデフォルトで有効化 (svn:4023 upatchid:995 unicode:2268 syat)</li>
+<li>コンパイルオプションに/NXCOMPAT /SAFESEH /DYNAMICBASEを追加 (svn:4025 upatchid:826 Moca)</li>
+<li>ミニマップビュー生成時にメンバを初期化する (svn:4030 syat)</li>
+<li>MinGWコンパイル対応 (svn:4036 upatchid:995 syat)</li>
+</ul>
+
+<h3>Mar. 1, 2015 (2.2.0.1)</h3>
+[仕様変更]<br />
+<ul>
+<li>メインメニューの自動更新 (svn:4007 upatchid:979 data:7948 Moca)</li>
+<li>タブバーの項目幅の調整・iniで設定可能に (svn:4008 upatchid:980 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>行間隔の設定が保存されない (svn:4000 upatchid:977 data:7953 novice123)</li>
+<li>ビットマップフォント等でミニマップが小さく表示されない (svn:4006 upatchid:978 Moca)</li>
+<li>Grep/Grep置換のCPのアクセスキー変更 (svn:4009 upatchid:981 data:7973 Moca)</li>
+</ul>
+
+<h3>Feb. 22, 2015 (2.2.0.0)</h3>
+[機能追加]<br />
+<ul>
+<li>コードページ対応 (svn:3830 upatchid:311 Moca)</li>
+<li>エンコーディング名による文字コードの設定 (svn:3840 upatchid:726 Moca)</li>
+<li>マルチプロファイル対応 (svn:3841 upatchid:716 Moca)</li>
+<li>偶数行の背景色の修正とノート線 (svn:3842 upatchid:765 Request/438 Moca)</li>
+<li>Grep置換 (svn:3862 upatchid:637 Request/273 Moca)</li>
+<li>ファイルツリー表示 (svn:3865 upatchid:710 Moca)</li>
+<li>ミニマップ (svn:3884 upatchid:864 Request/453 Moca)</li>
+<li>関数リストマーク追加 (svn:3900 upatchid:738 Moca)</li>
+<li>変更行へ移動コマンド追加 (svn:3902 upatchid:739 Moca)</li>
+<li>行属性取得マクロ追加 (svn:3904 upatchid:758 Moca)</li>
+<li>選択ロック取得マクロ追加 (svn:3905 upatchid:759 Moca)</li>
+<li>画面スクロール位置設定・画面行桁数取得マクロ追加 (svn:3906 upatchid:760 Moca)</li>
+<li>ポップアップメニュー作成マクロ追加 (svn:3907 upatchid:761 Request/307 Moca)</li>
+<li>置換に行削除モード追加 (svn:3931 upatchid:882 Request/487 Moca)</li>
+<li>Grepに否定行検索を追加 (svn:3932 upatchid:883 Request/487 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+<li>Grepで標準出力に出力するコマンドラインオプションを追加 (svn:3829 upatchid:762 Moca)</li>
+<li>NEL,PS,LSの改行コード表示を変更 (svn:3831 upatchid:777 Moca)</li>
+<li>改行コードNEL,PS,LSを有効にするオプション追加 (svn:3833 upatchid:854 Moca)</li>
+<li>文字情報が失われる場所を表示してジャンプできるように (svn:3839 upatchid:840 Moca)</li>
+<li>タブ多段・下に表示 (svn:3843 upatchid:773 Request/224 Moca)</li>
+<li>ブックマークの記憶方法の変更 (svn:3844 upatchid:803 Moca)</li>
+<li>上書きモードでの矩形選択入力で選択範囲を削除するオプションを追加 (svn:3845 upatchid:821 data:7769 Moca)</li>
+<li>ファイルパスを省略表示するオプションの追加 (svn:3846 upatchid:829 Moca)</li>
+<li>大きいファイルの暫定サポート (svn:3847 upatchid:838 Moca)</li>
+<li>ルールファイル拡張2(正規表現置換) (svn:3848 upatchid:851 Request/466 Moca)</li>
+<li>タグジャンプの一覧選択の改善とタグジャンプ検索オプション (svn:3854 upatchid:863 Request/482 anonymous,Moca)</li>
+<li>DIFF画面でダブルクリックしたとき実行 (svn:3855 upatchid:886 Moca)</li>
+<li>行番号の最小桁数 (svn:3856 upatchid:887 Request/305 Develop/13 ねこ,Moca)</li>
+<li>MainMenu.iniのフォーマット変更 (svn:3870 upatchid:907 Moca)</li>
+<li>無題ウィンドウのカレントディレクトリをファイルダイアログの初期位置にする (svn:3872 upatchid:841 Moca)</li>
+<li>長い行の比較・DIFFのサポートと排他制御の追加 (svn:3885 upatchid:839 Moca)</li>
+<li>タイプ別拡張子ワイルドカード (svn:3886 upatchid:902 syat)</li>
+<li>日時書式の各国語対応 (svn:3888 upatchid:893 syat)</li>
+<li>マクロ保存処理の変更 (svn:3898 upatchid:865 Moca)</li>
+<li>SearchNext等のマクロで検索設定を元に戻すオプション (svn:3899 upatchid:694 Moca)</li>
+<li>改行置換時次の行を変更状態にしない (svn:3901 upatchid:743 Moca)</li>
+<li>PageUp/Downマクロの修正 (svn:3903 upatchid:751 Moca)</li>
+<li>MoveCursorで通常→矩形選択のときの動作を変更 (svn:3905 upatchid:759 Moca)</li>
+<li>プラグイン設定に配布元ボタン追加 (svn:3928 upatchid:960 syat)</li>
+<li>矩形選択移動で選択をロックするオプション (svn:3949 upatchid:909 Moca)</li>
+<li>NEL,PS,LSのデフォルトを無効に変更 (svn:3950 upatchid:966 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+<li>UTF-7のNEL,PS,LSを改行として読み込むように (svn:3832 upatchid:847 Moca)</li>
+<li>コードページ対応がmingwでエラーになる(r3830-) (svn:3835 upatchid:898 Moca)</li>
+<li>CP_UTF7でのNEL等を改行コードとして読み込めていない(r3832-) (svn:3836 upatchid:896 Moca)</li>
+<li>NELオプションのコードページ対応への修正漏れ(r3833-) (svn:3837 upatchid:895 Moca)</li>
+<li>単独のUTF-7のNEL,PS,LSを改行として読み込めるように (svn:3838 upatchid:897 Moca)</li>
+<li>コンパイルエラー修正(r3848) (svn:3849 Moca)</li>
+<li>MinGW警告削減 (svn:3852 upatchid:899 Moca)</li>
+<li>英語リソースの修正(共通設定-編集)(r3845-) (svn:3853 upatchid:900 Moca)</li>
+<li>正規表現キーワードの更新の文字列長チェックが不正 (svn:3858 upatchid:901 Moca)</li>
+<li>Rich Textのキーワード"\i"の修正 (svn:3860 upatchid:905 Moca)</li>
+<li>DiffのSJIS以外に対応 (svn:3861 upatchid:636 Moca)</li>
+<li>MinGWでのコンパイルエラー(-r3863) (svn:3863 upatchid:906 Moca)</li>
+<li>VC2003プロジェクトファイル更新 (svn:3866 upatchid:915 Moca)</li>
+<li>Diffのフォルダ名に.が含まれる場合のファイル選択の修正 (svn:3867 upatchid:910 Moca)</li>
+<li>メインメニューのファイルツリーがundefinedになっている(r3865-) (svn:3868 upatchid:922 Moca)</li>
+<li>同一ウィンドウでGrepするとエラーになる(r3862-) (svn:3869 upatchid:918 Moca)</li>
+<li>キャレットの更新でGetDrawSwitchフラグを見るように (svn:3871 upatchid:913 Moca)</li>
+<li>CCaret.cppのコンパイルエラー修正(r3871-) (svn:3873 upatchid:923 Moca)</li>
+<li>MinGW警告削減(ファイルツリー)(r3865-) (svn:3874 upatchid:924 Moca)</li>
+<li>モードレスダイアログ等のウィンドウサイズがフォント変更に未対応 (svn:3877 upatchid:919 Moca)</li>
+<li>変換のU+0130,0131の大小文字対応がおかしい (svn:3878 upatchid:917 BugReport/181 Moca)</li>
+<li>共通設定-ツールバーのリストボックスの高さが正しく設定されない (svn:3879 upatchid:916 Moca)</li>
+<li>CTextWidthCalcの不具合の修正 (svn:3880 upatchid:921 Moca)</li>
+<li>再描画でステータスメッセージが消える(r3843-) (svn:3881 upatchid:925 Moca)</li>
+<li>プラグイン一覧の表記位置サイズ修正 (svn:3882 upatchid:927 Moca)</li>
+<li>選択範囲内全行行番号付きコピーの行番号桁不正 (svn:3883 upatchid:928 Moca)</li>
+<li>Debug_Ansiでビルドエラー(r3881-) (svn:3890 upatchid:932 Moca)</li>
+<li>タブバーのスクロールができない(r3884-) (svn:3891 upatcid:933 unicode:2221 Moca)</li>
+<li>Grep置換のマージミスの修正(r3862-) (svn:3892 upatchid:931 Moca)</li>
+<li>ミニマップを表示していないと右端で折り返すのとき画面全体が再描画される(r3884-) (svn:3893 upatchid:934 unicode:2221 Moca)</li>
+<li>ダイアログでウィンドウサイズに-1を設定するコードパスがある(r3877-) (svn:3894 upatchid:935 Moca)</li>
+<li>ツールバー折返が英語にならない (svn:3895 upatchid:929 Moca)</li>
+<li>英語リソースの残された日本語を一部翻訳 (svn:3896 upatchid:912 Moca)</li>
+<li>英訳の修正 (svn:3897 upatchid:930 Moca)</li>
+<li>MinGWのリンクエラーとUnicodeのコンパイルエラー (svn:3910 upatchid:942 Moca)</li>
+<li>一時マクロ実行後のマクロidxの修正 (svn:3911 upatchid:945 Moca)</li>
+<li>C++キーワードの修正(r2999-) (svn:3916 upatchid:947 Moca)</li>
+<li>HTML出力・印刷で正規表現キーワード等の色が正しくないことがある (svn:3917 upatchid:948 Moca)</li>
+<li>対括弧表示でも色分けのスキップ処理をする (svn:3918 upatchid:951 Moca)</li>
+<li>マクロGetLineAttributeで行番号に0を指定するとエラーになる(r3904-) (svn:3919 upatchid:953 Moca)</li>
+<li>カラーの文字列が行内のみの設定だとEOF直前で色分けされない(r3118-) (svn:3920 upatchid:955 Moca)</li>
+<li>カラー判定のC++RawStringの修正(r3118-) (svn:3921 upatchid:954 unicode:2223 Moca)</li>
+<li>選択範囲内全行行番号付きコピーのバッファオーバーフロー等の修正 (svn:3922 upatchid:961 Moca)</li>
+<li>Pluginの小文字変換の修正 (svn:3923 upatchid:964 Moca)</li>
+<li>MinGWで関数内構造体を使ったテンプレートの実体化でエラーになる(r3854-) (svn:3924 upatchid:965 Moca)</li>
+<li>プラグイン共通設定のメモリ解放不足 (svn:3927 upatchid:962 syat)</li>
+<li>タイプ変更時に即時適用する (svn:3929 upatchid:958 syat)</li>
+<li>タブバー表示切り替えでサイズボックスが表示されない (svn:3930 upatchid:959 syat)</li>
+<li>NELを無効にしてもEBCDICだとNELの改行になる (svn:3947 upatchid:967 Moca)</li>
+<li>ノート線が対括弧強調で消える (svn:3948 upatchid:968 data:7936 Moca)</li>
+<li>括弧の対応がおかしいためコンパイルエラーになる(r3949-) (svn:3951 upatchid:969 Moca)</li>
+<li>矩形選択ロックのマクロの記録が正しくない(r3949-) (svn:3976 upatchid:970 Moca)</li>
+<li>対括弧強調のノート線と縦線の描画順が反対(r3948-) (svn:3977 upatchid:972 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+<li>cppcheckで検出したエラー、警告修正 (svn:3828 upatchid:890 novice123)</li>
+<li>機能番号の配列サイズチェック (svn:3834 upatchid:892 novice123)</li>
+<li>メンバ変数のクラス名を小文字に揃える (svn:3859 upatchid:903 novice123)</li>
+<li>MSBuild警告対策 (svn:3908 syat)</li>
+<li>共有メモリの初期化処理を構造体ごとにまとめる (svn:3912 upatchid:894 novice123)</li>
+<li>MinGW対応 (svn:3984 syat)</li>
+</ul>
+
+<br>
+</BODY></HTML>

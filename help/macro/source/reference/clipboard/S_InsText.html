@@ -1,0 +1,44 @@
+<html><head><title>S_InsText</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_InsText</h2>
+<dl>
+	<dt>機能</dt>
+		<dd>テキストを貼り付け</dd>
+	<dt>構文</dt>
+		<dd><i>void  S_InsText ( S1 )</i>&nbsp;&nbsp;<a href = "../../sample/SampleChar.html">使用例</a>
+		<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>S1</td><td>文字列</td><td>エディタウィンドウへ書き出したい文字列を指定する。 </td></tr>
+		</table>
+		改行の入力には S_Char ( 13 )； を使用する。
+<pre>
+<span style = "color:blue">S_InsText</span> ( ’この文字列を書き込みます。’ ) ；
+<span style = "color:blue">S_Char</span> ( <span style = "color:red">13</span> ) ；   <span style = "color:green">// ← 改行を書き込む</span>
+</pre>
+		</dd>
+	<dt>参考</dt>
+		<dd>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>関数名</th><th>機能</th></tr>
+			<tr><td><i>S_Char( )</i></td><td>文字を１バイト書き出す。<br>【挿入モード時】挿入出力<br>【上書きモード時】上書き出力 </td></tr>
+			<tr><td><i>S_CharIme( )</i></td><td>文字を１文字書き出す。<br>(半角/全角文字どちらも指定可能)<br>【挿入モード時】挿入出力<br>【上書きモード時】上書き出力 </td></tr>
+			<tr><td><i>S_InsText( )</i></td><td>文字列を書き出す。多量の文字を一発で書き出せる。<br>出力する文字列そのものを指定するため、マクロの可読性が高くなる。<br>“挿入モード” “上書きモード” に関わらず、常に挿入出力される。 </td></tr>
+			<tr><td><i>S_ChgmodINS( )</i></td><td>“挿入モード” “上書きモード” を切り替える。 </td></tr>
+		</table>
+		</dd>
+	<dt>関連項目</dt>
+		<dd>
+		<a href = "../edit/S_CharIme.html">S_CharIme()</a>
+		<a href = "../edit/S_Char.html">S_Char()</a>
+		<a href = "./S_AddTail.html">S_AddTail()</a>
+		</dd>
+</dl>
+<hr>
+</body></html>
+

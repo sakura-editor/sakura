@@ -1,0 +1,68 @@
+<html><head><title>Popupメソッド</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>Windows Scripting Host</small>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>Popupメソッド</h2>
+<dl>
+	<dt>機能</dt>
+		<dd>ポップアップ メッセージ ボックスにテキストを表示します。</dd>
+	<dt>構文</dt>
+		<dd><i>intButton = object.Popup(strText,[nSecondsToWait],[strTitle],[nType])</i>
+		<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th><nobr>引数</nobr></th><th>内容</th></tr>
+			<tr><td>object </td><td>WshShell オブジェクトです。</td></tr>
+			<tr><td>strText </td><td>ポップアップ ウィンドウに表示するテキストです。</td></tr>
+			<tr><td>nSecondsToWait </td><td>省略可能です。ポップアップ ウィンドウを閉じるまで待機する秒数を指定します。</td></tr>
+			<tr><td>strTitle </td><td>省略可能です。ポップアップ ウィンドウのタイトルに表示するテキストです。</td></tr>
+			<tr><td>nType </td><td>省略可能です。ポップアップ メッセージ ボックスに表示するボタンとアイコンの種類を示す数値です。選択する種類によってメッセージ ボックスの使い方が決まります。</td></tr>
+			<tr><td>IntButton </td><td>メッセージ ボックス終了時にクリックするボタンの番号を示す整数値です。これは Popup メソッドの戻り値です。</td></tr>
+		</table>
+		</dd>
+	<dt>設定値</dt>
+		<dd>引数&nbsp;<i>nType</i>&nbsp;の設定値は次のとおりです。<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>0</td><td>[OK] ボタンを表示します。</td></tr>
+			<tr><td>1</td><td>[OK] ボタンと [キャンセル] ボタンを表示します。</td></tr>
+			<tr><td>2</td><td>[中止] ボタン、[再試行] ボタン、および [無視] ボタンを表示します。</td></tr>
+			<tr><td>3</td><td>[はい] ボタン、[いいえ] ボタン、および [キャンセル] ボタンを表示します。</td></tr>
+			<tr><td>4</td><td>[はい] ボタンと [いいえ] ボタンを表示します。</td></tr>
+			<tr><td>5</td><td>[再試行] ボタンと [キャンセル] ボタンを表示します。</td></tr>
+			<tr><td>16</td><td>[Stop] アイコンを表示します。</td></tr>
+			<tr><td>32</td><td>[?] アイコンを表示します。</td></tr>
+			<tr><td>48</td><td>[!] アイコンを表示します。</td></tr>
+			<tr><td>64</td><td>[i] アイコンを表示します。</td></tr>
+		</table>
+		</dd>
+	<dt>解説</dt>
+		<dd>
+		Popup メソッドを呼び出すと、実行中のホスト実行可能ファイルの種類 (WScript.exe または CScript.exe) に関係なく、メッセージ ボックスが表示されます。nSecondsToWait にゼロ (既定値) を指定した場合、ポップアップ メッセージ ボックスはユーザーがウィンドウを閉じるまでずっと表示されます。natSecondsToWait に正の値を指定した場合、指定した秒数が経過すると、メッセージ ボックスのウィンドウが閉じます。strTitle を省略すると、ウィンドウ タイトルは "Windows Script Host" となります。natType の意味は、Microsoft Win32R アプリケーション プログラミング インターフェイスの MessageBox 関数で指定するものと同じです。次の表は、natType の値とその意味です。表の値は組み合わせて使用できます。
+		</dd>
+	<dt>戻り値</dt>
+		<dd>
+		戻り値 intButton は、クリックしたボタンの番号を表します。
+		ボタンをクリックする前に nSecondsToWait で指定した秒数が経過すると、intButton は -1 になります。
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>1</td><td>[OK] ボタン。</td></tr>
+			<tr><td>2</td><td>[キャンセル] ボタン。</td></tr>
+			<tr><td>3</td><td>[中止] ボタン。</td></tr>
+			<tr><td>4</td><td>[再試行] ボタン。</td></tr>
+			<tr><td>5</td><td>[無視] ボタン。</td></tr>
+			<tr><td>6</td><td>[はい] ボタン。</td></tr>
+			<tr><td>7</td><td>[いいえ] ボタン。</td></tr>
+		</table>
+		</dd>
+	<dt>参照</dt>
+		<dd>
+		<a href = "./MessageBox.html">メッセージボックスについて</a>
+		</dd>
+</dl>
+<hr>
+</body></html>
+

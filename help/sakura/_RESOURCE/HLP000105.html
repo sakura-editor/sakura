@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>キーワードヘルプ</TITLE>
+<META NAME="MS-HKWD" CONTENT="キーワードヘルプ">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>キーワードヘルプ</h2>
+<a href="HLP000315.html">タイプ別設定 『キーワードヘルプ』プロパティ</a>で、単語とその訳文を列挙したテキストファイル（辞書ファイル）を登録しておくと、キーワードヘルプが使えます。そのファイルを辞書ファイルと呼ぶことにします。<br>
+<br>
+辞書ファイルに登録されている単語を選択状態にすると、対応する訳文がポップアップ表示されます。<br>
+その時に右クリックメニューを表示し、メニューのいちばん上を選ぶと、訳語がクリップボードにコピーされます。<br>
+複数の訳語を表示したり、複数の辞書を検索することもできます。(sakura:1.5.12.0以降)<br>
+<br>
+辞書ファイルの書式について説明します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[形式]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;単語[[,単語]...] /// 訳語&lt;改行&gt;<br>
+<div class=li200>
+・キーワードは複数指定可能です（同義語）。半角カンマで区切って下さい<br>
+・'\n'で訳語に改行を入れられます<br>
+・一つの定義(行)は、10キロバイト程度までです<br>
+・一桁目が';'ならコメント行とみなします<br>
+</div><br>
+例:<br>
+林檎,リンゴ /// リンゴ\nApple<br>
+パソコン,PC,ＰＣ /// パーソナル・コンピュータ\nPersonal Computer<br>
+矩形 /// くけい<br>
+サクラエディタ /// サクラエディタはフリーソフトウェアです。\nご自由にお使いください。<br>
+<b>ポップアップしている図</b><br>
+<img src="images/KeywordHelp.png"><br>
+</BODY></HTML>

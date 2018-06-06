@@ -1,0 +1,453 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>変更履歴(2011/2/11～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2011/02/11～)</h2>
+<!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
+
+<h3>Apr. 13, 2013 (2.0.7.1)</h3>
+[バグ修正]<br />
+<ul>
+	<li>closeのバグFix (svn:2835 upatchid:414 Uchi)</li>
+</ul>
+
+<h3>Apr. 13, 2013 (2.0.7.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>タイプ別設定画面に共通設定の強調キーワード確認・登録ボタン追加 (svn:2680svn:2681 wiki:Request/110 upatchid:350upatchid:356 aroka)</li>
+	<li>ExpandParameter機能追加($B,$b,$Q) (svn:2746 wiki:Request/422 upatchid:374 Uchi)</li>
+	<li>ダイアログのリサイズの位置と大きさの記憶 (svn:2795 upatchid:380 Moca)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>スクリーンタブ「起動時のIME」「文書アイコンを使う」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>カラータブ「背景画像」「行番号の表示」「行番号区切り」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>支援タブ「デフォルトの文字コード」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>Close時の改良 (svn:2832 upatchid:404 Uchi)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>CGrepAgent.cpp(646): delete currentFileの[]がない (svn:2673 upatchid:354 aroka)</li>
+	<li>タイプ別設定(スクリーン)のヘルプID修正 (svn:2695 upatchid:366 novice)</li>
+	<li>コントロールプロセスのカレントディレクトリ(sakura.exe -NOWIN起動時) (svn:2707 upatchid:359 novice)</li>
+	<li>TAB記号の背景色 (svn:2711 upatchid:353 novice)</li>
+	<li>Ctrl+クリックがおかしい (svn:2786 upatchid:379 Moca)</li>
+	<li>アウトラインダイアログのコントロール位置修正 (svn:2812 upatchid:391 Moca)</li>
+	<li>cppcheckで検出したエラー、警告修正 (svn:2815 upatchid:403 novice)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>正規表現キーワードタブのタブオーダーを変更 (svn:2680 upatchid:350 aroka)</li>
+	<li>キーワードヘルプタブのタブオーダーとボタン配置を変更 (svn:2680 upatchid:350 aroka)</li>
+	<li>タイプ別設定全タブレイアウト調整 (svn:2680 upatchid:350 aroka)</li>
+	<li>単語判定処理コード変更 (svn:2691 upatchid:361 aroka)</li>
+	<li>OS バージョンチェックの修正(起動時のバージョンチェックをWin2000以降に変更、不要なバージョンチェックおよびルーチンを条件コンパイルではずす) (svn:2693 upatchid:357 Uchi)</li>
+	<li>CRunningTimerの分解能向上 (svn:2698 upatchid:364 Uchi)</li>
+	<li>Grepダイアログのアイテム(条件、ファイル、フォルダ)の遅延登録 (svn:2743 upatchid:368 novice)</li>
+	<li>ファイルダイアログの初期位置GUI調整 (svn:2752 upatchid:378 novice)</li>
+	<li>タグジャンプダイアログのリサイズ (svn:2754 upatchid:363 Moca)</li>
+	<li>共通設定-バックアップのGUI調整 (svn:2766 upatchid:386 novice)</li>
+	<li>iconの修正 (svn:2768 upatchid:381 Uchi)</li>
+	<li>クラッシュダンプ機能のデフォルト設定(無効) (svn:2791 upatchid:389 novice)</li>
+	<li>初期化処理の省略 (svn:2781 upatchid:383 novice)</li>
+	<li>漢字の描画幅を'一'の幅で決める ハングル、外字も同様に先頭文字の幅で決める (svn:2806 upatchid:396 aroka)</li>
+	<li>同一Fontfaceの場合、キャッシュのクリアを省略 (svn:2807 upatchid:399 aroka)</li>
+	<li>Makefileを自動生成する (svn:2813 upatchid:384 upatchid:392 Uchi)</li>
+	<li>改行記号描画高速化 (svn:2830 upatchid:411 novice)</li>
+</ul>
+
+<h3>Mar. 11, 2013 (2.0.6.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>入力補完でもプラグインを使えるように (svn:2362 svn:2371 upatch:3327635 Moca)</li>
+	<li>ファイルを開くで複数選択 (svn:2363 upatch:3364481 Moca)</li>
+	<li>WSHマクロの中断ができるように (svn:2365 upatch:3373462 syat)</li>
+	<li>Javaアウトライン解析の日本語対応 (svn:2367 upatch:3410222 unicode:1643 syat)</li>
+	<li>"送る"などで複数ファイルが指定されたときに、複数ファイルを開けるように (svn:2369 upatch:3493822 unicode:1757 novice)</li>
+	<li>C/Migemo1.3対応 (svn:2427 upatch:3450189 Moca)</li>
+	<li>MRU除外リスト (svn:2455 upatch:3450196 Moca)</li>
+	<li>(簡易)ログ監視モードの追加 (svn:2494svn:2642 upatchid:273upatchid:343 Uchi)</li>
+	<li>複数単語検索のブックマーク・Grep対応 (svn:2497 upatchid:219 Moca)</li>
+	<li>改行、句読点ぶら下げが有効で右端で折り返して居る時のマージンを取らない設定の追加 (svn:2510 upatchid:288 Uchi)</li>
+	<li>ExpandParameter機能追加 (svn:2540 upatchid:302 Uchi)</li>
+	<li>プラグインの設定の各種改善 (svn:2541 upatchid:303 Uchi)</li>
+	<li>強調キーワードで補完 (svn:2544 svn:2625 wiki:Request/164 upatchid:253 upatchid:340 Moca,aroka)
+	<li>文字コードセット指定を追加 (svn:2552 upatchid:307 Uchi)</li>
+	<li>オートスクロール (svn:2559 upatchid:218 Moca)</li>
+	<li>UTF7のBOMサポート (svn:2564 upatchid:258 Moca)</li>
+	<li>文字コードセットLatin1(Windows-1252)の追加 (svn:2566 upatchid:309 Uchi)</li>
+	<li>Cookieマクロの追加 (svn:2567 upatchid:278 Moca)</li>
+	<li>ファイルダイアログの初期位置を指定 (svn:2569 upatchid:280 Moca)</li>
+	<li>無題番号 (svn:2574 upatchid:263 Moca)</li>
+	<li>固定幅モード (svn:2607 upatchid:267 Moca)</li>
+	<li>日本語強調キーワード対応 (svn:2624 upatchid:326 aroka)</li>
+	<li>カーソル行の背景色 (svn:2610 upatchid:277 Moca)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>プラグインの最大個数を20から40に変更 (svn:2366 upatch:3396061 syat)</li>
+	<li>外部ヘルプ1でもHTMLヘルプを表示 (svn:2428 upatch:3571858 Moca)</li>
+	<li>検索置換キー長制限の撤廃 (svn:2453 upatch:3462954 Moca)</li>
+	<li>Grep終了後Grep画面のフォルダを検索したフォルダに変更する(svn:2473 upatchid:269 Uchi)</li>
+	<li>正規表現キーワードを最大1000文字に (svn:2499 upatchid:237 Moca)</li>
+	<li>初期値にないキーコードへの割り当てに対応 (svn:2505 upatchid:282 aroka)</li>
+	<li>検索入力コンボボックスに画面のフォントを設定します (svn:2509 upatchid:287 Uchi)</li>
+	<li>キー割当ての名前の長さを29文字に変更 (svn:2530 upatchid:292 aroka)</li>
+	<li>タイプ別設定の拡張子を二重・なしにも対応 (svn:2565 upatchid:262 Moca)</li>
+	<li>文字の入力中にポインタを非表示 (svn:2568 upatchid:274 Moca)</li>
+	<li>プラグインのオプション設定でBool値の表示をチェックボックス風に変更 (svn:2587 upatchid:317 Uchi)</li>
+	<li>比較、DIFF、履歴ダイアログのサイズを可変にする (svn:2598svn:2608 upatchid:320upatchid:321 aroka,Moca)</li>
+	<li>上書きモードのときの矩形選択中の入力の動作を変更 (svn:2611 upatchid:312 Moca)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>"無変更でも上書き"のポップアップヘルプが表示されない (svn:2138 upatch:3526290 novice)</li>
+	<li>大文字同一検索で一部文字の扱いが不正 (svn:2151 svn:2152 upatch:3028557 syat)</li>
+	<li>タイプ別「ビューアを複数起動しない」が正しくiniに記録されない (svn:2267 svn:2268 unicode:1832 Moca)</li>
+	<li>折り返し行での再作画が不足している (svn:2368 upatch:3465554 Moca)</li>
+	<li>全角→半角で単体の濁点・半濁点が変換されない (svn:2370 upatch:3531937 syat)</li>
+	<li>EOF回りのカーソル移動の修正 (svn:2372 upatch:3465570 Moca)</li>
+	<li>フリーカーソル・矩形で縦移動したときの位置を修正 (svn:2373 upatch:3547225 Moca)</li>
+	<li>Editor.Char(0)が使えない (svn:2416 upatch:3470602 Moca)</li>
+	<li>選択ロック中での検索で選択範囲の描画がおかしい (svn:2419 upatch:3572369 Moca)</li>
+	<li>選択色で行末以降の選択も表示 (svn:2420 upatch:3572374 Moca)</li>
+	<li>パス貼り付けの形式をANSI版に合わせる (svn:2443 upatch:3576647 BugReport/83 Moca)</li>
+	<li>設定変更時の行末以降でのカーソル・選択範囲の復帰 (svn:2444 upatch:3577006 Moca)</li>
+	<li>Texアウトライン解析のSJISチェックの修正 (svn:2454 upatch:3578795 Moca)</li>
+	<li>キーマクロが実行できない実行形式が出来てしまうことが有る (svn:2468 upatchid:266 Uchi)</li>
+	<li>ファイルの履歴0のときの処理を修正 (svn:2456 upatch:3578285 Moca)</li>
+	<li>PUTFILEでエラー (svn:2457 upatch:3576676 BugReport/102 Moca)</li>
+	<li>キー設定のインポート時の画面更新バグ修正 (svn:2470 svn:2487 upatchid:272 aroka)</li>
+	<li>ファイルダイアログで沢山選択すると応答なしになる (svn:2480 svn:2482 upatchid:279 Moca)</li>
+	<li>ファイルタイムスタンプのチェック頻度をコメント通りの３秒間隔にする (svn:2495 upatchid:286 aroka)</li>
+	<li>文字コード認識の改善 (svn:2500 upatchid:249 Moca)</li>
+	<li>矩形の選択中の未選択状態でコピーをすると矩形のままになる (svn:2501 upatchid:255 Moca)</li>
+	<li>古いキー割り当て設定をImportするとマウスが誤動作する (svn:2505 upatchid:282 aroka)</li>
+	<li>デフォルト文字コードをUTF-8にしているとSjisのファイルをUTF-8と判定ミスをする (svn:2508 svn:2531 upatchid:289 Uchi)</li>
+	<li>C/C++アウトライン解析で#if(0)以降の解析がおかしくなる (svn:2512 upatchid:293 novice)</li>
+	<li>Importしたキー割付の名前が内部のバッファサイズより長いとメモリ破壊する (svn:2530 upatchid:292 aroka)</li>
+	<li>NUL文字を含み、ある程度以上の長さがある行で IMEを使うと無限ループに陥っていた (svn:2516 upatchid:495 ds14050)</li>
+	<li>文字コード判定で全体の0.05%未満の不正バイトは、無視するはずが、5％だったのを修正 (svn:2531 upatchid:298 Uchi)</li>
+	<li>Grep時のデフォルトの文字コードを検査するファイル名から設定する (svn:2531 upatchid:298 Uchi)</li>
+	<li>折り返しを変更した時に画面がずれる (svn:2563 upatchid:261 Moca)</li>
+	<li>バックアップ詳細設定の日時書式をファイル保存時刻と現在時刻であわせる (BugReport/67)(svn:2572 upatchid:306 aroka)</li>
+	<li>アウトラインのドッキング時のサイズ調整 (svn:2623 upatchid:336 Uchi)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>ヘルプファイルのフルパス格納処理変更 (svn:2320 upatch:3565773 novice)</li>
+	<li>ルーラのキャレット位置をANSI版に合わせて1px右へ (svn:2327 upatch:3549768 Moca)</li>
+	<li>キャレットの幅のシステムの設定を適用 (svn:2418 upatch:3572365 Moca)</li>
+	<li>『プラグイン設定』Helpの指定 (svn:2474 upatchid:270 Uchi)</li>
+	<li>MinGW32 コンパイル対応 (svn:2543 upatchid:271 minoki)</li>
+</ul>
+
+<h3>May. 13, 2012 (2.0.5.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>タブバーのフォント指定 (svn:2127 upatch:3450281 Moca)</li>
+	<li>保存時に改行コードの混在を警告する (svn:2129 ryoji)</li>
+	<li>ステータスバーのカーソル位置文字コード表示欄ダブルクリックでエンコード別コード表示ダイアログを出す (svn:2132 ryoji)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>コマンドラインオプションのタイプ別の適用を拡大 (svn:2111 upatch:3030660 unicode:1340 Moca)</li>
+	<li>ドラッグ中にタブ移動 (svn:2114 upatch:3028565 unicode:1341 Moca)</li>
+	<li>メニュー作画処理の見直し (svn:2117 upatch:3028546 unicode:1341 Moca)</li>
+	<li>等幅でなくてもドラッグ中にタブ移動 (svn:2126 upatch:3518802 unicode:1767 syat)</li>
+	<li>検索で見つからないときのビープ音変更（エラー音 -> 一般の警告音） (svn:2128 wiki:Request/367,231 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>%ls/%tsの修正 (svn:2023 upatch:3475566 novice)</li>
+	<li>int->bool変更抜け (svn:2024 novice)</li>
+	<li>キーワードに「%」を含む場合にエクスポート結果が不正 (svn:2105 syat)</li>
+	<li>ビューモードで開いたときに他プロセスで使用中の警告が出る (svn:2124 wiki:Request/400 dev:5262 ryoji)</li>
+	<li>テキストアウトライン見出しのサロゲートペア対応 (svn:2133 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>インクルードガード変更(*.h) (svn:2030 novice)</li>
+	<li>インクルードガード変更(HeaderMake) (svn:2031 novice)</li>
+	<li>typo修正(rev1255,コメント) (svn:2038 novice)</li>
+	<li>stdafx.h->StdAfx.h (svn:2042 upatch:3478804 novice)</li>
+	<li>%ls/%tsの修正(続) (svn:2043 upatch:3478748 novice)</li>
+	<li>typo修正(Init->InitShareData) (svn:2048 novice)</li>
+	<li>help/trunk2の同名ファイルと同期 (svn:2049 novice)</li>
+	<li>MessageBeep整理 (svn:2058 upatch:3481578 novice)</li>
+	<li>EEolType整理 (svn:2059 upatch:3481577 novice)</li>
+	<li>CDlgFuncList::SetListVB変更 (svn:2082 upatch:3486892 novice)</li>
+	<li>RELPRINT/RELPRINT_Wマクロ追加(for debug) (svn:2090 novice)</li>
+	<li>"編集ウィンドウ数の上限～"のメッセージ処理をOkMessage関数に揃えた (svn:2093 upatch:3493898 novice)</li>
+	<li>IsEditable関数代入先修正 (svn:2097 upatch:3494726 novice)</li>
+	<li>オプション重複設定修正 (svn:2099 upatch:3494009 novice)</li>
+	<li>Delete comment-out code (svn:2103 novice)</li>
+	<li>CImpExpManager周りの修正 (svn:2112 upatch:3030649 unicode:1341 Moca)</li>
+	<li>ANSIビルド対応 (svn:2113 syat)</li>
+	<li>ツールバー番号とmyiconsの位置修正 (svn:2120 upatch:3020183 unicode:1341 Moca)</li>
+	<li>ダイレクトタグジャンプの高速化 (svn:2122 upatch:3002048 unicode:1341 Moca)</li>
+	<li>検索ルーチンの高速化 (svn:2123 upatch:3028557 unicode:1341 Moca, syat)</li>
+	<li>右端で折り返す位置の微調整 (svn:2130 ryoji)</li>
+	<li>c++アウトライン解析の微調整 (svn:2131 ryoji)</li>
+</ul>
+
+<h3>Jan. 15, 2012 (2.0.4.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>単語検索で複数単語を検索 (svn:1964 upatch:2890853 unicode:1665 wiki:Request/197 ds14050)</li>
+	<li>改行コードを変換して貼り付けるオプション (svn:1968 upatch:2648509 unicode:866 unicode:1669 Moca)</li>
+	<li>外部から起動時に新しいウインドウを開くオプション (svn:1976 upatch:2808790 unicode:1667 rastiv)</li>
+	<li>マクロ関数の充実化(座標変換・InsBoxText) (svn:1984 upatch:3324432 Moca)</li>
+	<li>Tablet PC 入力パネル対応 (svn:1971 Moca)</li>
+	<li>OSの最近使ったファイルにも登録 (svn:1979 Moca)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>矩形選択中にキャレットが操作と異なる方向に移動しないように (svn:1966 upatch:2889930 unicode:1666 ds14050)</li>
+	<li>タイプ別設定文字色・背景色のアクセスキーをボタンに付与 (svn:1982 Moca)</li>
+	<li>データのあるEOF行の選択描画を変更 (svn:1998 upatch:3465566 Moca)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>r1964のバグ。正規表現検索がハイライトされなくなっていた。(svn:1667 ds14050)</li>
+	<li>マウスホイールでのスクロールがおかしい (svn:1969 Moca)</li>
+	<li>ブックマークの一覧表示で応答なしになる (svn:1970 Moca)</li>
+	<li>NUL文字があるとIME2010での変換で応答なしになる (svn:1972 Moca)</li>
+	<li>空ファイルでの下移動でカーソルが0行目に移動する (svn:1973 Moca)</li>
+	<li>括弧を削除したとき別の行にある対括弧の強調表示が解除されない(Wiki BugReport/89) (svn:1975 upatch:3441475 Moca)</li>
+	<li>タイプ別設定-正規表現キーワードで正規表現DLLチェックが正常に働かない (svn:1977 Moca)</li>
+	<li>x64/IA64でのbregonig.dllエラーメッセージの修正 (svn:1977 Moca)</li>
+	<li>「Grepモードで保存確認する」になっていてもGrep結果を編集しないと確認できなくなっていたのを修正 (svn:1978 Moca)</li>
+	<li>保存ダイアログで、Grepウィンドウが「(無題)」と表示されるのを修正 (svn:1978 Moca)</li>
+	<li>Diff/ファイル比較ダイアログで同じくGrepが(無題)と表示されているのを修正 (svn:1978 Moca)</li>
+	<li>矩形選択でのLFCRが１行として扱われてしまう (svn:1980 upatch:3456177 Moca)</li>
+	<li>IsURLで半角カタカナのときバッファオーバーラン (svn:1981 Moca)</li>
+	<li>選択中の未選択時の作画不良 (svn:1983 upatch:3450181 Moca)</li>
+	<li>選択中の未選択状態で選択をキャンセルできない(rev2966-) (svn:1983 upatch:3450181 Moca)</li>
+	<li>isearchの色分け・次検索不一致の解消 (svn:1994 Moca)</li>
+	<li>[A済]Grep時のファイル名パターンのバッファオーバラン対策 (svn:1995 upatch:3456201 nasukoji, gentaro)</li>
+	<li>折り返し行でのCalcLayoutWidth計算ミス (svn:1996 upatch:3465553 Moca)</li>
+	<li>次検索で括弧でないものが対括弧強調表示される (svn:1997 upatch:3465564 Moca)</li>
+	<li>長い行の選択範囲描画が遅い (svn:1999 upatch:3466060 Moca)</li>
+	<li>範囲選択の描画不正 (svn:2000 upatch:3468191 Moca)</li>
+	<li>最終行のRedo/Undoでの色分けが正しくない (svn:2001 upatch:3470595 Moca)</li>
+	<li>iniを読み込むと行間が最大16に制限される (svn:2002 upatch:3470597 Moca)</li>
+	<li>Wiki BugReport/77(1,13,14,15,16,18)対応 (svn:2004 upatch:3471025 novice)</li>
+	<li>Wiki BugReport/74(5)対応 (svn:2009 upatch:3470939 novice)</li>
+	<li>Wiki BugReport/74(4,7,8,9)対応 (svn:2010 upatch:3470358 novice)</li>
+</ul>
+
+<h3>Oct. 16, 2011 (2.0.3.1)</h3>
+
+[バグ修正]<br />
+<ul>
+	<li>マクロ実行でクラッシュする (svn:1958 unicode:1655 syat)</li>
+</ul>
+
+<h3>Aug. 21, 2011 (2.0.3.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>選択範囲色指定 (svn:1921 upatch:3304481 unicode:1560 もか)</li>
+	<li>ダイアログ・クリップボード系マクロ関数の追加 (svn:1917 upatch:3226146 unicode:1516 syat)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>オンラインヘルプは http://sakura-editor.sourceforge.net/htmlhelp2/ を参照する (svn:1943 unicode:1621 ryoji)</li>
+	<li>MRUに適用タイプ別設定を追加 (svn:1939 upatch:3315685 unicode:1582 wiki:Request/111 もか)</li>
+	<li>マウススクロールでも少し滑らかにするオプションを適用 (svn:1916 unicode:1561 もか)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>共通設定画面のヘルプ表示不良 (svn:1942 unicode:1620 ryoji)</li>
+	<li>プラグインアウトライン解析でアクティブ化でも再解析される (svn:1934 upatch:3332866 unicode:1597 syat)</li>
+	<li>共通設定マクロのFileの入力可能文字数が短かい (svn:1929 unicode:1593 もか)</li>
+	<li>次回起動時にフォントサイズが小さくなる (svn:1928 unicode:1591 wiki:BugReport/84 ryoji)</li>
+	<li>プラグインコマンドを途中で追加するとアイコンが表示されないことがある (svn:1927 unicode:1590 もか)</li>
+	<li>矩形削除後カーソル位置が不正なことがある (svn:1925 unicode:1578 もか)</li>
+	<li>「選択範囲内全行コピー」等で、コピー実行時に表示が乱れる (svn:1924 unicode:1577 wiki:BugReport/45 もか)</li>
+	<li>正規表現 \Q...\Eの中に . や $ が含まれていたときに正しく検索できていなかった。 (svn:1923 upatch:3310610 unicode:1571 wiki:BugReport/82 ds14050)</li>
+	<li>タイプ別設定一覧関係のヘルプ設定 (svn:1913 syat)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>関連付け設定の変更時に警告する (svn:1944 data:7405 upatch:3373616 syat)</li>
+</ul>
+
+<h3>Apr. 9, 2011 (2.0.2.0)</h3>
+[バグ修正]<br />
+<ul>
+	<li>Wiki BugReport/77(2,5,6,7,10,11,12,17,20)対応 (svn:1907 unicode:1539 ryoji)</li>
+	<li>Wiki BugReport/75(1)対応 (svn:1907 unicode:1538 ryoji)</li>
+	<li>Wiki BugReport/74(1,2,3,6)対応 (svn:1905 unicode:1537 ryoji)</li>
+	<li>2バイト境界かつ非4バイト境界の長さ4バイトデータのような条件でバッファオーバーラン (svn:1905 unicode:1537 ryoji)</li>
+	<li>ApiWrap::List_GetText()内でバッファオーバーラン (svn:1904 unicode:1533 ryoji)</li>
+	<li>決して偽にならない条件、break漏れ、配列をループカウンタで初期化していない (svn:1903 unicode:1532 ryoji)</li>
+	<li>ウィンドウを開いて最初の単語補完でエディタのフォーカスが失われる (svn:1902 upatch:3227659 unicode:1517 syat)</li>
+	<li>行間隔を広くすると半角空白が描画されない (svn:1901 unicode:1514 wiki:BugReport/68 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>ファイル名コピーアルゴリズムの調整 (svn:1903 unicode:1532 ryoji)</li>
+</ul>
+
+<h3>Feb. 27, 2011 (2.0.1.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>「上書き禁止検出時は編集禁止にする」オプション (svn:1896 unicode:1503 ryoji)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>書込み禁止の監視を廃止（V1仕様に戻し） (svn:1895 upatch:3186997 unicode:1502 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>「履歴の管理」画面のアクセスキー重複 (svn:1898 unicode:1509 ryoji)</li>
+	<li>ロック中ファイルの上書きでエラーになっても(更新)が解除される (svn:1894 unicode:1501 ryoji)</li>
+	<li>設定変更のたびに不要な排他制御が動く (svn:1893 unicode:1500 ryoji)</li>
+	<li>バックアップの詳細設定に無効な文字があると強制終了する (svn:1892 unicode:1499 wiki:BugReport/67 ryoji)</li>
+	<li>誤認メッセージ「他プロセスによる書込み禁止」が表示される (svn:1890 unicode:1498 ryoji)</li>
+</ul>
+
+<h3>Feb. 11, 2011 (2.0.0.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>背景画像表示 (svn:1883 upatch:3152327 unicode:1465 もか)</li>
+	<li>バージョンアップ時のiniバックアップ機能 (svn:1882 upatch:3167495 unicode:1469 ryoji)</li>
+	<li>デフォルトの改行コード指定オプション (svn:1878 unicode:1878 ryoji)</li>
+	<li>タイプ別設定一覧からファイル関連付け (svn:1863 upatch:3127886 unicode:1428 wiki:Junk/49 syat)</li>
+	<li>アウトライン解析画面のドッキング機能 (svn:1801 upatch:3011753 unicode:1355 ryoji)</li>
+	<li>IME前後フィードバック機能 (svn:1793 upatch:2972711 unicode:1317 もか)</li>
+	<li>メインメニューの設定 (svn:1782 upatch:3002900 unicode:1304 Uchi)</li>
+	<li>バックアップのリムーバブルメディア対応 (svn:1769 upatch:3008813 unicode:1233 Uchi)</li>
+	<li>タイプ別設定のインポート、エクスポート、初期化 (svn:1755 upatch:2987655 unicode:1174 Uchi)</li>
+	<li>プラグインのオプション設定画面追加 (svn:1730 upatch:2977036 unicode:1139 Uchi)</li>
+	<li>WSHプラグイン機能 (svn:1715 upatch:2889809 unicode:1047 syat)</li>
+	<li>内部文字コードをUNICODE化、全体的なリファクタリング (kobake, Uchi, 他)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>ファイルパス正規表現キーワードの修正 (svn:1881 upatch:3162023 unicode:1457 syat)</li>
+	<li>非選択状態時逆Tabインデントの挙動改善 (svn:1866 unicode:1443 ryoji)</li>
+	<li>折り返し位置に改行を付加してコピーする際の改行コードに現在の入力改行コードを用いる (svn:1856 unicode:1419 ryoji)</li>
+	<li>入力補完のひらがな連結を漢字のみに制限 (svn:1794 upatch:3002010 unicode:1318 もか)</li>
+	<li>履歴の管理ダイアログの機能強化 (svn:1792 upatch:3000126 unicode:1315 もか)</li>
+	<li>ExeCmdの引数のフラグを追加 (svn:1791 unicode:1314 もか)</li>
+	<li>コマンドライン解析の整理 (svn:1781 upatch:3015434 unicode:1250 syat)</li>
+	<li>ツールバーアイコン段数を2段追加 (svn:1780 upatch:3021860 unicode:1268 syat)</li>
+	<li>.kwdファイルで、//の後ろに文字がなくてもコメント行とみなす (svn:1733 upatch:1164 unicode:1733 ds14050)</li>
+	<li>記号や空白を含む強調キーワードを使用可能に (svn:1732 upatch:2884092 unicode:1041 ds14050)</li>
+	<li>アウトライン解析ダイアログとアウトライン解析コピーに桁追加 (svn:1729 upatch:2971992 unicode:1126 syat)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>検索(ツールバー)を使うとプラグインコマンドが実行される(2) (svn:1887 unicode:1487 ryoji)</li>
+	<li>検索(ツールバー)を使うとプラグインコマンドが実行される (svn:1886 unicode:1486 もか)</li>
+	<li>diff/ブックマークの末尾から再検索が動作しないことがある (svn:1885 unicode:1485 もか)</li>
+	<li>プラグインのini保存でバッファオーバーフロー (svn:1884 unicode:1484 もか)</li>
+	<li>旧式（2003年4月以前）のiniファイルを読むと強調キーワードがほぼ消失するかクラッシュする (svn:1879 unicode:1466 ryoji)</li>
+	<li>ステータスバーの表示切替で画面下部にドッキングしたアウトライン画面にゴミが表示されることがある (svn:1876 unicode:1458 ryoji)</li>
+	<li>[同名のC/C++ヘッダー(ソース)を開く]でエラーでなくてもエラー表示される場合がある (svn:1872 unicode:1449 ryoji)</li>
+	<li>最大化したまま起動／終了を繰り返すと最大化起動しなくなる (svn:1871 unicode:1448 ryoji)</li>
+	<li>タブバーへのタブ追加時のビューのちらつき（Vista/7）を抑止する (svn:1870 unicode:1447 ryoji)</li>
+	<li>タイプ別設定一覧画面でのインポート/エクスポート操作でメモリリーク (svn:1865 unicode:1442 ryoji)</li>
+	<li>インデントプラグインと「改行時に末尾の空白を削除」併用でクラッシュする (svn:1862 upatch:3140869 unicode:1436 syat)</li>
+	<li>タイプ別設定一覧画面でのエクスポート操作で保存ダイアログの初期フォルダが不正(2) (svn:1860 unicode:1423 ryoji)</li>
+	<li>タイプ別設定一覧画面でのエクスポート操作で保存ダイアログの初期フォルダが不正 (svn:1859 unicode:1422 ryoji)</li>
+	<li>行頭以外からの選択だと[折り返し位置に改行を付けてコピー]で最初の折り返しに改行が付かない (svn:1855 unicode:1418 ryoji)</li>
+	<li>[選択範囲内全行コピー]等の全行選択の挙動が不正 (svn:1854 unicode:1417 ryoji)</li>
+	<li>画面上端よりも上にある矩形選択を解除するとルーラーが反転表示になる (svn:1851 unicode:1414 ryoji)</li>
+	<li>Grepでのメモリーリーク等の修正 (svn:1850 upatch:3064380 unicode:1413 ryoji, もか)</li>
+	<li>変換不具合の修正 (svn:1849 unicode:1412 ryoji)</li>
+	<li>通常検索・置換で大文字小文字を区別しないと U+00e0-U+00fcとU+0020が同一視される (svn:1826 unicode:1397 wiki:BugReport/64 ryoji)</li>
+	<li>標準ルール(テキスト)のアウトライン解析が行われない (svn:1823 unicode:1393 もか)</li>
+	<li>アイコンドロップでC:\temp.txt等がドロップできない (svn:1822 unicode:1392 もか)</li>
+	<li>全角半角系変換でNUL以降が失われる (svn:1821 unicode:1391 もか)</li>
+	<li>ビュー幅が狭い場合の不具合の修正 (svn:1820 upatch:3052441 unicode:1381 もか)</li>
+	<li>マウスでの範囲選択の変更の遊びを追加 (svn:1819 upatch:3030120 unicode:1340 もか)</li>
+	<li>プラグイン周りの不具合の修正とUI動作変更 (svn:1818 upatch:3050216 unicode:1388 もか)</li>
+	<li>矩形選択中の長い文字列の貼り付けでクラッシュ (svn:1816 unicode:1380 もか)</li>
+	<li>Win64の分離 (svn:1814 upatch:3030849 unicode:1340 もか)</li>
+	<li>Undo/Redoでルーラーと行番号の間の隙間が更新されない (svn:1813 unicode:1374 ryoji)</li>
+	<li>進行状況の表示が更新されない／止まる (svn:1812 unicode:1373 ryoji)</li>
+	<li>検索ボックスのボタン枠が表示されている (svn:1811 upatch:3030662 unicode:1340 もか)</li>
+	<li>行番号区切りを任意にすると行番号位置がずれる (svn:1810 unicode:1370 もか)</li>
+	<li>カーソル位置縦線の描画不正(その2) (svn:1809 unicode:1369 もか)</li>
+	<li>メニューのアクセスキー設定動作が不正 (svn:1808 unicode:1363 ryoji)</li>
+	<li>文字情報が失われるのに無警告でファイル保存される(JIS) (svn:1807 unicode:1362 ryoji)</li>
+	<li>テキストと行番号の隙間が半角文字幅より大きいと隙間位置にあるカーソルの縦線が描画される (svn:1806 unicode:1361 ryoji)</li>
+	<li>タブバーで選択タブが可視位置にスクロール表示されない (svn:1805 unicode:1360 ryoji)</li>
+	<li>ファイルのOpenSaveダイアログが出ない (svn:1804 unicode:1359 Uchi)</li>
+	<li>assertに引っ掛かかる (svn:1797 unicode:1339 Uchi)</li>
+	<li>検索文字列の色分けで単語単位のフラグがビューごとの値になっていない (svn:1796 unicode:1334 もか)</li>
+	<li>外部コマンド実行の修正 (svn:1791 unicode:1314 もか)</li>
+	<li>Grep中に同一ウィンドウでGrepすると落ちる (svn:1787 unicode:1311 wiki:BugReport/27 もか)</li>
+	<li>Grepダイアログで初期値が「現在編集中のファイルから検索」のときに""がつかない (svn:1785 upatch:3018466 unicode:1309 wiki:BugReport/55 もか)</li>
+	<li>ファイル更新通知のファイル名が見切れる (svn:1775 unicode:1263 もか)</li>
+	<li>折り返し直前位置にある対括弧強調表示の復帰色が不正 (svn:1774 unicode:1262 ryoji)</li>
+	<li>CESU-8の修正 (svn:1765 upatch:3006182 unicode:1208 Uchi)</li>
+	<li>戻り読みを使った正規表現キーワードが正しく機能しないことがあった (svn:1764 upatch:3006774 unicode:1210 ds14050)</li>
+	<li>sprintf系のバッファ長確認をいくつか追加 (svn:1754 upatch:2984429 unicode:1180 もか)</li>
+	<li>空のアウトプットウィンドウがGrepウィンドウになる (svn:1728 unicode:1148 もか)</li>
+	<li>検索強調が折り返し位置をまたぐと後続の色分けがおかしくなることがある (svn:1723 unicode:1141 wiki:BugReport/53 ryoji)</li>
+	<li>起動時のコマンドラインオプションで「-GREPMODE -GREPDLG」を指定すると落ちる (svn:1706 unicode:1098 ryoji)</li>
+	<li>「名前を指定してマクロ実行」でファイルダイアログに渡すパス名が初期化されていない (svn:1703 unicode:1091 ryoji)</li>
+	<li>元が奇数バイトのファイルをUniBEで読み書きしたときに末尾ワードのバイト並びが不自然になる (svn:1701 unicode:1089 ryoji)</li>
+	<li>書込不可のファイルまで排他ロック (svn:1695 unicode:1078 ryoji)</li>
+	<li>ファイル属性の表記誤り (svn:1694 unicode:1077 ryoji)</li>
+	<li>文書末を含む選択状態で文字列を貼り付けるとEOFが二つ表示されることがある (svn:1678 unicode:1051 ryoji)</li>
+	<li>Javaアウトライン解析BOF対策 (svn:1673 upatch:2878886 unicode:1040 syat)</li>
+	<li>カーソル位置縦線が表示されないことがある (svn:1670 unicode:1044 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>「コマンド一覧」メニューの表示位置調整 (svn:1877 unicode:1459 ryoji)</li>
+	<li>バージョン情報ダイアログのCopyright年を更新 (svn:1869 unicode:1446 ryoji)</li>
+	<li>タブ追加時の画面ズーム抑止(Vista/7) (svn:1868 unicode:1445 ryoji)</li>
+	<li>カーソル移動の性能改善 (svn:1861 upatch:3120525 unicode:1424 syat)</li>
+	<li>VS2010の行コピー対応 (svn:1858 unicode:1421 ryoji)</li>
+	<li>選択開始位置が行頭以外のときもTab⇔空白変換でレイアウトが崩れないようにする (svn:1857 unicode:1420 ryoji)</li>
+	<li>インデントプラグインから入力キーを取得する関数を追加 (svn:1802 upatch:3018667 unicode:1356 syat)</li>
+	<li>Pluginのiniファイルへの書き込みの文字列化 (svn:1800 upatch:3020889 unicode:1354 Uchi)</li>
+	<li>バージョン情報ダイアログの変更 (svn:1790 upatch:3000111 unicode:1313 もか)</li>
+	<li>ICONをすべてのコマンドに割り当てる (svn:1779 upatch:3015183 unicode:1267 Uchi)</li>
+	<li>TabCloseOther、TabCloseLeft、TabCloseRightマクロ名追加 (svn:1779 upatch:3015183 unicode:1267 Uchi)</li>
+	<li>「検索(ボックス)」の検索文字列の再設定 (svn:1772 upatch:3011996 unicode:1246 Uchi)</li>
+	<li>大文字小文字変換の修正 (svn:1771 upatch:3011710 unicode:1223 )</li>
+	<li>置換ダイアログの置換文字列等の再設定 (svn:1767 upatch:3007862 unicode:1224 Uchi)</li>
+	<li>TraceOutの仕様変更。NULセーフ, バッファオーバーラン修正 (svn:1761 upatch:2985975 unicode:1200 もか)</li>
+	<li>グループ解除時の複数タブを閉じる系コマンドを有効化 (svn:1705 upatch:2921305 unicode:1093 syat)</li>
+	<li>矩形入力動作の改善 (svn:1683 upatch:2899665 unicode:1054 ds14050, ryoji)</li>
+	<li>高DPI設定へのエディタ画面対応 (svn:1664 unicode:1036 ryoji)</li>
+	<li>Aero Snap縦方向最大化状態での画面位置保存 (svn:1654 unicode:1029 ryoji)</li>
+</ul>
+
+<br>
+</BODY></HTML>

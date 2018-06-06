@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>折り返し方法</TITLE>
+<META NAME="MS-HKWD" CONTENT="折り返し方法">
+<META NAME="MS-HKWD" CONTENT="折り返さない">
+<META NAME="MS-HKWD" CONTENT="指定桁で折り返す">
+<META NAME="MS-HKWD" CONTENT="右端で折り返す">
+<META NAME="MS-HKWD" CONTENT="TextWrapMethod">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>折り返し方法</h2>
+
+行の折り返し方法を、次の３つから選択します。<br />
+
+<dl>
+<dt>折り返さない</dt>
+<dd>スクロールバーはドキュメントの最大桁にあわせて変化します。(スクロールバー追随は sakura:1.6.5.0 以降)<br>
+<small>※ 今のところ、サクラエディタは10240桁以上を扱えません。そのため折り返さない設定をしても、実際には10240桁での折り返しとなります。</small></dd>
+<dt>指定桁で折り返す</dt>
+<dd>『設定』メニュー<a href = "HLP000184.html">折り返し桁数</a>の指定に従い折り返します。</dd>
+<dt>右端で折り返す</dt>
+<dd>ウィンドウ幅に合わせて折り返します。</dd>
+</dl>
+
+<img src="images/note.png"><b>注意</b><br>
+設定メニューからの折り返し方法の指定は、そのドキュメントのみに適用される一時設定です。
+ファイルを開いたときのデフォルトの折り返し方法を指定したい場合は、<a href = "HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>の『折り返し方法』で設定してください。<br />
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: TextWrapMethod( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;折り返し種別<br>
+・記録:	○<br>
+
+・解説<br>
+折り返し種別には、次の値を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;折り返さない<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;指定桁で折り返す<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;右端で折り返す<br>
+</BODY></HTML>

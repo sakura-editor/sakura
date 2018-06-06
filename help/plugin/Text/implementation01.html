@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>プラグイン定義ファイル等</TITLE>
+<META NAME="MS-HKWD" CONTENT="プラグイン定義ファイル">
+<META NAME="MS-HKWD" CONTENT="ReadMeファイル">
+<META NAME="MS-HKWD" CONTENT="ZIPプラグイン">
+<style>
+table.box { width: 90%; }
+table.box th { text-align: left; }
+table.box td { border: #666 1px solid; padding: 4px 10px 3px 10px; }
+</style>
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="index.html">目次</a>] <br></noscript>
+<!--
+<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
+-->
+<h2>現時点の実装仕様</h2>
+
+<h3 id=c0301>プラグイン定義ファイル(plugin.def)</h3>
+プラグイン定義ファイルはINIファイル形式で、以下の内容を含む。<br>
+文字コードセットはShift_JISまたはBOM付きUTF-8。文字コードセットはBOMの有無で判断する。<br>
+=の前後に空白は付けない。<br>
+<br>
+■全プラグイン共通<br>
+<div class=li200>
+	<table class=box>
+	<tr><th width=120>[Plugin]</th><th></th></tr>
+	<tr><td>Id</td>				<td>プラグイン識別子。最大UNICODE63文字の、世界でユニークな文字列。<br>
+									使用できる文字は、半角英数と「{}._-」のみとする。「,」と「/」は厳禁。<br>
+									例）{A8E7CC0A-032D-11DF-9E9A-333D56D89593}, jp.co.google.foo.BarPlugin, etc..</td></tr>
+	<tr><td>Name</td>			<td>プラグイン和名</td></tr>
+	<tr><td>Description</td>	<td>簡潔な説明</td></tr>
+	<tr><td>Type</td>			<td>wsh / dll / ...<br>現在はwshのみ</td></tr>
+	<tr><td>Author</td>			<td>作者名。Copyright等。</td></tr>
+	<tr><td>Version</td>		<td>バージョン。4個以内の数字を.でつなげたもの。</td></tr>
+	<tr><td>Url</td>			<td>配布元URL</td></tr>
+	</table>
+<br>
+	<table class=box>
+	<tr><th width=120>[Plug]</th><th>ジャックと呼び出すハンドラの対応表</th></tr>
+	<tr><td><em>ジャック名</em></td>		<td>ハンドラ<br>
+												※一部のジャックには、Label属性を指定することができる。(Outline, SmartIndent等)</td></tr>
+	<tr><td><em>ジャック名</em>.Label</td>	<td>ラベル文字列</td></tr>
+	</table>
+	<br>
+	<div class=li200>
+	<a href="overview.html#c0205">ジャック一覧</a>参照<br>
+	例） Outline=xxxxx　　　　　 ←アウトライン解析時にxxxxxを実行する<br>
+	　　 Outline.Label=yyy　　　←タイプ別設定の選択肢にyyyが追加される<br>
+	</div>
+<br>
+	<table class=box>
+	<tr><th width=120>[Command]</th><th>本体に追加するプラグインコマンドの定義</th></tr>
+	<tr><td>C[n]</td>			<td>ハンドラ</td></tr>
+	<tr><td>C[n].Label</td>		<td>コマンド名</td></tr>
+	<tr><td>C[n].Icon</td>		<td>アイコンファイル(16x16のBMPファイル)<br>
+									指定されなかった場合は<img src="images/PluginCommand.png" alt="規定のアイコン" title="(mytool.bmpが無い場合)">で表示される</td></tr>
+	</table>
+	　(n=1～49。欠番があるとその後は読み込まれない)<br>
+<br>
+	<table class=box>
+	<tr><th width=120>[Option]</th>	<th>プラグインオプションの定義</th></tr>
+	<tr><td>O[n].Section</td>		<td>オプションファイル中のSection名(最初のみ必須)<br>
+										未指定の場合には、直前の値を使用する。</td></tr>
+	<tr><td>O[n].Key</td>			<td>オプションファイル中のKey名(必須)</td></tr>
+	<tr><td>O[n].Label</td>			<td>表示項目<br>
+										未指定の場合には、Keyを使用する。</td></tr>
+	<tr><td>O[n].Type</td>			<td>型、以下に定義する。<br>
+										未定義、未指定の場合には文字列型として処理する。<br><br>
+			<table class=box>
+				<tr><td>Str</td>	<td>文字列型(1024文字まで)</td></tr>
+				<tr><td>Dir</td>	<td>ディレクトリ型(ボタンでディレクトリの指定が可能) (Ver.2.0.9.0以降)</td></tr>
+				<tr><td>Bool</td>	<td>ブール型 True で 1 False で 0 をプラグインオプションに設定する。</td></tr>
+				<tr><td>Int</td>	<td>整数型(-2147483647～2147483647、32bit符号付整数)</td></tr>
+				<tr><td>Sel</td>	<td>選択型(ドロップダウンリストで選択)<br>
+										選択項目は Select で指定する。</td></tr>
+			</table><br>
+		</td></tr>
+	<tr><td>O[n].Default</td>		<td>デフォルト値を設定する。 (Ver.2.0.8.0以降)</td></tr>
+	<tr><td>O[n].Select </td>		<td>選択項目br>
+										各項目は <b>|</b> で区切り、項目の中で 表示 <b>:</b> 値 の様に設定する。<br>
+										項目内に <b>:</b> が無かった場合には、項目の値を表示、値の両方に使用する。<br>
+										例） O[3].Select=自動:0|XML固定:1|XML/XHTML検出:2|XHTML固定:3|HTML固定:6</td></tr>
+	</table>
+	　(n=1～99。欠番があっても読み込む)<br>
+<br>
+	<table class=box>
+	<tr><th width=120>[String]</th><th>文字列の定義(sakura 2.1.1.0以降)</th></tr>
+	<tr><td>S[n]</td>		<td>多言語化のための文字列の定義</td></tr>
+	</table>
+	　(n=1～99。欠番があっても読み込む)<br>
+</div><br>
+	■WSHプラグイン固有<br>
+<div class=li200>
+・<b>Plug</b>, <b>Command</b> セクションでのハンドラにはスクリプトファイル名を指定する。<br>
+　例）パスは個別フォルダ起点の相対パスとする。<br>
+　　Outline=outline.js
+	<table class=box>
+	<tr><th width=120>[Wsh]</th><th></th></tr>
+	<tr><td>UseCache</td>	<td>1：ディスクから読み込んだスクリプトをメモリ上にキャッシュする<br>
+								0：キャッシュしない</td></tr>
+	</table>
+</div><br>
+	■DLLプラグイン固有<br>
+<div class=li200>
+・<b><em>現在未実装</em></b><br>
+・<b>Plug</b>, <b>Command</b> セクションでのハンドラにはDLLがエクスポートする関数名を指定する。
+	<table class=box>
+	<tr><th width=120>[DLL]</th><th></th></tr>
+	<tr><td>Name</td><td>DLLファイル名</td></tr>
+	</table>
+</div><br>
+	■localサブフォルダ内のplugin_&lt;言語名&gt;.def (sakura:2.1.1.0 以降)<br>
+<div class=li200>
+・デフォルト言語は、「ja_JP」(local\plugin_ja_JP.def)です。<br>
+各定義を言語ごとに上書きすることができます。<br>
+　[Plugin]のName, Description, URL<br>
+　[Plug]のジャック名.Label<br>
+　[Command]のC[n].Label, C[n].Icon<br>
+　[Option]のO[n].Label, [n].Select<br>
+　[String]のS[n]<br>
+に適用されます。<br>
+適用する言語は、プロセスの起動時に決定されてエディタが終了するまでその言語のままになります。<br>
+</div>
+
+<h3 id=c0302>ReadMeファイル(readme.txt等)</h3>
+<div class=li100>
+ファイル名は ReadMe.txt または 個別フォルダ名.txt とする。<br>
+プラグインに関する情報を記述する。<br>
+必須ではありません。<br>
+エディタの「共通設定」「プラグイン」で該当プラグインを選択し、[ReadMe]でこのファイルを表示する。<br>
+</div><br>
+
+<h3 id=c0303>ZIPプラグイン(XP以降)</h3>
+<div class=li100>
+プラグイン開発後、plugins配下の個別フォルダを「圧縮(ZIP形式)フォルダー」へ「送る」を実行で配布形式が出来る(XP以降)。<br>
+拡張子はzipとする。<br>
+WindowsXP以降ではZIPファイルから導入できる。<br>
+<div class=li200>
+導入はplugins配下にZIPファイルを置き「新規プラグインを追加」で行うか、<br>
+「ZIPプラグインを導入」でファイルを指定し行う。</div>
+Windows2000では plugins配下に解凍し導入する。<br>
+</div><br>
+
+<center><a href="overview.html">前へ＜</a>　　<a href="implementation02.html">＞次へ</a></center>
+</BODY></HTML>

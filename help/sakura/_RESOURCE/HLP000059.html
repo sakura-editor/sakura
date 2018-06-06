@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>検索</TITLE>
+<META NAME="MS-HKWD" CONTENT="検索">
+<META NAME="MS-HKWD" CONTENT="SearchDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>検索</h2>
+文字列検索用のダイアログを開きます。<br>
+二行以上（複数行）にまたがった検索は、今のところできません。<br>
+検索を実行すると、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色で検索マークが付きます。<br>
+<div class=li200>
+<b>(条件)</b> …… 検索条件を指定します。<br>
+□<b>単語単位で探す</b><br>
+「条件」に入力した検索文字列が1単語になっている箇所にのみ検索マークが付きます。<br>
+例えば、「pen」を入力すると、「I have a pen.」のpenにマークが付きますが、「I have a pencil.」のpenにはマークが付きません。<br>
+「条件」に複数単語の文字列を入力すると、それぞれの単語に検索マークが追加ます。(2.0.4.0 以降)<br>
+例えば、「a pen」を入力すると、「I have a pen.」のaとpenにマークが付きます。<br>
+□<b>英大文字と小文字を区別する</b><br>
+半角アルファベットの大文字と小文字を区別します。<br>
+□<a href="HLP000089.html"><b>正規表現</b></a><br>
+■<b>見つからないときにメッセージを表示</b><br>
+検索条件に一致した文字列が見つからないときに、ダイアログを表示します。<br>
+■<b>検索ダイアログを自動的に閉じる</b><br>
+□<b>先頭（末尾）から再検索する</b><br>
+</div><div class=li200>
+<b>[上検索]</b> ボタン … カーソル位置よりも前を検索します。<br>
+<b>[下検索]</b> ボタン … カーソル位置よりも後ろを検索します。<br>
+<b>[該当行マーク]</b> ボタン … 検索した行をすべてブックマークに設定します。<br>
+</div><br>
+<img src="images/Find.png"><br>
+<br>
+<font color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+<a href="HLP000276.html">検索（ボックス）</a>をツールバーに登録するとツールバーに直接文字列を書き込み検索できます。<br>
+<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: SearchDialog( );<br>
+・記録:	実行した[<a href="HLP000061.html">上検索</a>]、[<a href="HLP000060.html">下検索</a>]、[<a href="HLP000294.html">該当行マーク</a>]で記録<br>
+</BODY></HTML>

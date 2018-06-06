@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>文字カウント方法</TITLE>
+<META NAME="MS-HKWD" CONTENT="文字カウント方法">
+<META NAME="MS-HKWD" CONTENT="SelectCountMode">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>文字カウント方法</h2>
+
+文字選択時にステータスバーに表示される選択範囲のカウント方法を、文字数カウントかバイト数カウントかで切り替えます。<br />
+
+バイト数カウントは、編集中の文字コードで換算したバイト数です。(常にShiftJISとは限りません)<br />
+
+バイト数カウントは文字数カウントと比較して、文字選択時のCPU、メモリ負荷が高くなります。<br />
+
+<br>
+■<b>マクロ構文</b><br>
+・構文: SelectCountMode( int1 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;モード<br>
+・記録:	○<br>
+
+・解説<br>
+モードには、次の値を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;トグル。文字数カウント／バイト数カウントを切り替える<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;文字数でカウント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;バイト数でカウント<br>
+</BODY></HTML>

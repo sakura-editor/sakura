@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>共通設定 『書式』プロパティ</TITLE>
+<META NAME="MS-HKWD" CONTENT="共通設定 『書式』プロパティ">
+<META NAME="MS-HKWD" CONTENT="見出し記号">
+<META NAME="MS-HKWD" CONTENT="引用符">
+<META NAME="MS-HKWD" CONTENT="日付書式">
+<META NAME="MS-HKWD" CONTENT="時刻書式">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>共通設定 『書式』プロパティ</h2>
+<a href="HLP000081.html">『全般』</a>
+<a href="HLP000146.html">『ウィンドウ』</a>
+<a href="HLP000152.html">『メインメニュー』</a>
+<a href="HLP000085.html">『ツールバー』</a>
+<a href="HLP000150.html">『タブバー』</a>
+<a href="HLP000147.html">『ステータスバー』</a>
+<a href="HLP000144.html">『編集』</a>
+<a href="HLP000083.html">『ファイル』</a>
+<a href="HLP000277.html">『ファイル名表示』</a>
+<a href="HLP000145.html">『バックアップ』</a>
+<a href="HLP000082.html">『書式』</a>
+<a href="HLP000148.html">『検索』</a>
+<a href="HLP000084.html">『キー割り当て』</a>
+<a href="HLP000087.html">『カスタムメニュー』</a>
+<a href="HLP000086.html">『強調キーワード』</a>
+<a href="HLP000088.html">『支援』</a>
+<a href="HLP000201.html">『マクロ』</a>
+<a href="HLP000151.html">『プラグイン』</a>
+<br>
+<img src="images/ComFormat.png"><br>
+<br>
+<b>&lt;日付書式&gt;</b><br>
+<a href="HLP000164.html">日付挿入機能</a>で使用する日付書式を設定します。<br>
+標準に設定すると、コントロールパネルで設定された長い形式の書式を使います。<br>
+<br>
+書式制御文字列は、次の要素を組み合わせて構築します。これ以外の文字はそのまま表示されますが、誤った解釈を避けるためにシングルクォーテーションマークで囲むと安全です。<br>
+例えば「 "yyyy' 年 'M' 月 'd' 日 ('dddd')'" 」と指定すると、設定にもよりますが、<br>
+「 1997 年 4 月 30 日 ( 水曜日 ) 」が格納されます。<br>
+<div class=li200>
+書式指定子	 意味<br>
+d	年月日の日。先頭に 0 は付きません。<br>
+dd	年月日の日。1 桁の場合、先頭に 0 が付きます。<br>
+ddd	曜日。ロケールの LOCALE_SABBREVDAYNAME が使われます。<br>
+dddd	曜日。ロケールの LOCALE_SDAYNAME が使われます。<br>
+M	年月日の月。先頭に 0 は付きません。<br>
+MM	年月日の月。1 桁の場合、先頭に 0 が付きます。<br>
+MMM	年月日の月。ロケールの LOCALE_SABBREVMONTHNAME が使われます。<br>
+MMMM	年月日の月。ロケールの LOCALE_SMONTHNAME が使われます。<br>
+y	年月日の年。先頭に 0 は付きません。<br>
+yy	年月日の年。1 桁の場合、先頭に 0 が付きます。<br>
+yyyy	年月日の年。4 桁で表されます。<br>
+gg	「平成」などの時代を示す文字列。ロケールの CAL_SERASTRING が使われます。<br>
+日付がこの情報を持たないときは、無視されます。<br>
+</div><br>
+<b>&lt;時刻書式&gt;</b><br>
+<a href="HLP000165.html">時刻挿入機能</a>で使用する時刻書式を設定します。<br>
+書式制御文字列は、次の要素を組み合わせて構築します。これ以外の文字はそのまま表示されますが、誤った解釈を避けるためにシングルクォーテーションマークで囲むと安全です。<br>
+例えば「 "tt hh' 時 'm' 分 's' 秒 '" 」と指定すると、設定にもよりますが、「午前 12 時 6 分 49 秒」が格納されます。<br>
+<div class=li200>
+書式指定子	意味<br>
+h	12 時間制の時間。先頭に 0 は付きません。<br>
+hh	12 時間制の時間。必要に応じて、先頭に 0 が付きます。<br>
+H	24 時間制の時間。先頭に 0 は付きません。<br>
+HH	24 時間制の時間。必要に応じて、先頭に 0 が付きます。<br>
+m	分。先頭に 0 は付きません。<br>
+mm	分。必要に応じて、先頭に 0 が付きます。<br>
+s	秒。先頭に 0 は付きません。<br>
+ss	秒。必要に応じて、先頭に 0 が付きます。<br>
+t	時刻マーカー。「 A 」「 P 」など。<br>
+tt	時刻マーカー。「 AM 」「 PM 」「午前」「午後」など。<br>
+</div><br>
+<b>&lt;見出し記号&gt;</b><br>
+<a href="HLP000064.html">アウトライン解析</a>するときに、見出しとして識別する記号を定義します。<br>
+<br>
+<b>&lt;引用符&gt;</b><br>
+<a href="HLP000037.html">選択範囲内全行引用コピー</a>の機能で、各行の先頭につける引用符を定義します。<br>
+<div class=li200>関連：<a href = "HLP000330.html">引用符の変更</a></div>
+<br>
+<b>[設定フォルダ]</b><br>
+<a href="HLP000077.html">設定フォルダ</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>
+<br>
+</BODY></HTML>

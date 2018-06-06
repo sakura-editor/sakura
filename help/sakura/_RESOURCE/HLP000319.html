@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>タイプ別設定 『ウィンドウ』プロパティ</TITLE>
+<META NAME="MS-HKWD" CONTENT="タイプ別設定 『ウィンドウ』プロパティ">
+<META NAME="MS-HKWD" CONTENT="ウィンドウ">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<script type="text/javascript">HHCtrlPopup();</script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>タイプ別設定 『ウィンドウ』プロパティ</h2>
+ <a href="HLP000074.html">『スクリーン』</a>   <a href="HLP000075.html">『カラー』</a>   <a href="HLP000319.html">『ウィンドウ』</a>   <a href="HLP000197.html">『支援』</a>   <a href="HLP000203.html">『正規表現キーワード』</a>   <a href="HLP000315.html">『キーワードヘルプ』</a><br>
+<img src="images/TypeWindow.png"><br>
+<br>
+<b>&lt;デフォルトの文字コード&gt;</b>(sakura:2.0.0.0以降)<br>
+ファイルを新規作成するときに使用する文字コードと改行コードを指定します。<br>
+<div class=li200>
+<b>改行コード</b><br>
+CR+LF、LF、CRから選択できます。<br>
+□<b>BOM</b><br>
+BOMを付加する場合にチェックします。文字コードでUTF-8、CESU-8、UTF-16、UTF-16BEを選んだ場合のみ利用できます。<br>
+<b>文字コード</b><br>
+SJIS、EUC、Latin1、UTF-8、CESU-8、UTF-16、UTF-16BEから選択できます。<br>
+□<b>CP</b><br>
+文字コードでコードページを選択できるようにします。(sakura:2.2.0.0以降)<br>
+□<b>自動判別時にCESU-8を優先する</b><br>
+ファイルを開くときの文字コード自動判別でUTF-8とCESU-8の区別がつけられない場合に優先する文字コードを指定します。<br>
+ONにするとCESU-8を優先します。<br>
+OFFにするとUTF-8を優先します。<br>
+</div>
+
+<b>&lt;起動時のIME(日本語入力変換)&gt;</b><br>
+<div class=li200>
+<b>ON/OFF状態</b>	… IMEも一緒に起動するかどうかを指定できます。 {<b>そのまま</b>, 常にON, 常にOFF}から選択します。<br>
+<b>入力モード</b>	… 入力状態を {<b>標準設定</b>, 全角, 全角ひらがな, 全角カタカナ, 無変換}から選択します。<br>
+</div><br>
+
+□<b>文書アイコンを使う</b><br>
+エディタのアイコンを文書に関連づけられたもの(フォルダで表示されるもの)に変更します。<br>
+<br>
+<b>&lt;行番号の表示&gt;</b><br>
+行番号の表示を「○折り返し単位」と「◎改行単位」から選べます。<br>
+<b>桁数</b>(sakura:2.2.0.0以降)<br>
+行番号の最小桁数を指定します。最小値は2です。<br>
+<br>
+<b>&lt;行番号区切り&gt;</b><br>
+行番号とテキストを区切る部分の表示を設定できます。<br>
+<div class=li200>○なし・・・何も表示しない<br>
+◎縦線・・・縦線で区切る<br>
+○任意・・・任意の半角1文字で区切る<br>
+</div>
+
+<b>&lt;背景画像&gt;</b>(sakura:2.0.0.0以降)<br>
+エディタの背景に表示する画像を選択できます。<br>
+
+<div class=li200>
+<b>背景画像</b><br>
+画像のファイル名を指定します。<br>
+<b>表示位置</b><br>
+画像を表示する位置を指定します。RepeatXYがONのときは繰り返しの基準となる位置を指定します。<br>
+以下から選択できます。
+<ul>
+<li>左上（テンキーの7の位置）
+<li>右上（テンキーの9の位置）
+<li>左下（テンキーの1の位置）
+<li>右下（テンキーの3の位置）
+<li>中央（テンキーの5の位置）
+<li>中央上（テンキーの8の位置）
+<li>中央下（テンキーの2の位置）
+<li>中央左（テンキーの4の位置）
+<li>中央右（テンキーの6の位置）
+</ul>
+<b>Offset X,Y</b><br>
+背景画像の表示位置を指定した数値だけずらします。
+<br>
+<b>Repeat XY</b><br>
+背景画像を横方向／縦方向に繰り返し表示するかを指定します。<br>
+ONにすると背景画像を繰り返し表示します。<br>
+OFFにすると背景画像は一回のみ表示します。<br>
+<b>Scroll XY</b><br>
+横方向／縦方向のスクロールで背景画像もスクロールするかを指定します。<br>
+ONにするとエディタのスクロールに合わせて背景画像もスクロールします。<br>
+OFFにすると背景画像を固定位置に表示します。<br>
+</div>
+
+<br>
+<b>[設定フォルダ]</b><br>
+<a href="HLP000077.html">設定フォルダ</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>
+</BODY></HTML>

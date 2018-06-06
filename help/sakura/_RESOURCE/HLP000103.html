@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>外部コマンド実行</TITLE>
+<META NAME="MS-HKWD" CONTENT="外部コマンド実行">
+<META NAME="MS-HKWD" CONTENT="ExecCommand">
+<META NAME="MS-HKWD" CONTENT="ExecCommandDialog">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>外部コマンド実行</h2>
+外部コマンドを実行します。<br>
+$Fで、現在編集中のファイル名を外部コマンドに渡せます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;例： c:\foo.exe $F<br>
+利用できる特殊文字の一覧は<a href="HLP000284.html">ExpandParameter</a>をご覧ください。<br>
+<br>
+ファイル名に空白が含まれている場合、そのままではエラーになる場合があるので、<br>
+&nbsp;&nbsp;&nbsp;&nbsp;c:\foo.exe "$F"<br>
+のように引用符で囲んで記述します。<br>
+<br>
+<b>□標準出力を得る</b><br>
+実行結果を、<a href="HLP000188.html">アウトプットウィンドウ</a>に表示するか編集中のウィンドウに表示します。<br>
+GUIアプリケーションは、「標準出力を得る」にチェックしないでください。画面に表示されません。<br>
+<br>
+<div class=li200>
+<b>SJIS</b><br>
+標準出力からの実行結果をSJISで受け取ります。<br>
+<b>Unicode</b><br>
+標準出力からの実行結果をUnicodeで受け取ります。<br>
+<b>UTF-8</b><br>
+標準出力からの実行結果をUTF-8で受け取ります。<br>
+<br>
+</div>
+<b>□標準入力に送る</b><br>
+編集中のウィンドウの内容を子プロセスの標準入力へリダイレクトします。範囲選択中であれば、選択範囲のみを渡します。<br>
+<br>
+<div class=li200>
+<b>SJIS</b><br>
+編集中の内容を標準入力へSJISで渡します。<br>
+<b>Unicode</b><br>
+編集中の内容を標準入力へUnicodeで渡します。<br>
+<b>UTF-8</b><br>
+編集中の内容を標準入力へUTF-8で渡します。<br>
+<br>
+</div>
+<b>&lt;標準出力リダイレクト先&gt;</b><br>
+<div class=li200>
+	<b>アウトプットウィンドウ</b><br>
+	子プロセスの標準出力を、アウトプットウィンドウに出力します。<br>
+	このとき、ほかのウィンドウで同時に「標準出力を得る」リダイレクト先にアウトプットウィンドウを選択して実行しないでください。<br>
+	また、タグジャンプなども控えてください。(出力が化ける事があります)<br>
+	<br>
+	<b>編集中のウィンドウ</b><br>
+	子プロセスの標準出力を、編集中のウィンドウに取り込みます。次の条件でそれぞれ動作が変化します。<br>
+	<ul>
+	<li><font color = "blue">範囲選択時：</font>　選択中の文字列が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
+	<li><font color = "blue">非選択時で標準入力指定なし：</font>　現在のカーソル位置に、子プロセスから標準出力された内容が挿入されます。</li>
+	<li><font color = "blue">非選択時で標準入力に送る指定：</font>　現在の編集ウィンドウの内容が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
+	<li><font color = "blue">矩形選択時：</font>　現在未サポート。（矩形編集としての動作もせず、選択状態も不自然に崩れます。）</li>
+	</ul>
+</div>
+<b>□カレントディレクトリ</b><br>
+コマンドを実行するカレントディレクトリを指定します。(sakura:2.1.0.0以降)<br>
+<br>
+<img src="images/ExtCmd.png"><br>
+<hr>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: ExecCommand( str1 :String, int2 :Integer, str3 :String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;実行するコマンド文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;実行制御オプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;カレントディレクトリ(省略可能、ただしPPAマクロは省略不可)(sakura:2.1.0.0以降)<br>
+・記録:	○<br>
+・解説<br>
+実行制御オプションには、次の値の和を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;標準出力を得ます<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;標準出力を編集中のウィンドウにリダイレクト<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(指定なしならアウトプットウィンドウ)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;編集中の内容を子プロセスにリダイレクト<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;標準出力をUnicodeで行う<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;標準入力をUnicodeで行う<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;ヘッダー・フッダー情報を出力する (2.0.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;ヘッダー・フッダー情報を出力しない (2.0.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;標準出力をUTF-8で行う (2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;0x100&nbsp;&nbsp;&nbsp;&nbsp;標準入力をUTF-8で行う (2.1.0.0 以降)<br>
+&nbsp;&nbsp;&nbsp;0x200&nbsp;&nbsp;&nbsp;&nbsp;カレントディレクトリを有効にする (2.1.0.0 以降)<br>
+カレントディレクトリでは特殊文字の展開はしません。<br>
+引数のカレントディレクトリを省略した場合は、サクラエディタのカレントディレクトリで実行されます。<br>
+サクラエディタのカレントディレクトリは、ファイルを開いている場合はファイルの場所、ファイルを開いていないときは、<br>
+(sakura:2.2.0.0以降)共通設定-<a href="HLP000144.html">編集</a>-「ファイルダイアログの初期位置」です。初期位置が「カレントフォルダ」の場合は2.1.1.4と同じです。<br>
+(sakura:2.1.1.4以前)そのウィンドウで最後に開いたファイルの場所か、起動元プロセスから継承した場所です。<br>
+<br>
+・構文: ExecCommandDialog( ); (sakura:2.1.0.0以降)<br>
+・記録:	×<br>
+・解説<br>
+外部コマンド実行ダイアログを表示します。<br>
+</BODY></HTML>

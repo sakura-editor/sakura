@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<style type="text/css">
+div.codesample a{
+	color:#000
+}
+</style>
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>マクロ記載例</TITLE>
+<META NAME="MS-HKWD" CONTENT="マクロ記載例">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>マクロ記載例</h2>
+<a href="HLP000204.html">マクロ</a>のそれぞれの記載例です。<br>
+ただし、Sakuraのバージョンにより動作が異なることがあります。<br>
+詳しい言語仕様についてはそれぞれのマクロを提供している側のヘルプをご覧ください。<br>
+<br>
+■例1: キーマクロ<br>
+<div class="li200 codesample"><span class="codecomment">// コメント</span><br>
+<a href=""><a href="HLP000288.html">S_InsText</a>( <span class="codestr">'&lt;br /&gt;'</span> );<br>
+InsText( <span class="codestr">"&lt;br /&gt;</span>" );  <span class="codecomment">// S_ はあってもなくても動作します。<br>
+// キーマクロではExpandParameter は使えません</span><br>
+<a href="HLP000103.html">ExecCommand</a>(<span class="codestr">'echo $f($x,$y)'</span>, 3);	<span class="codecomment">// ExecCommandでも同様の処理が行われます。</span><br>
+ExecCommand(<span class="codestr">'dir /b</span>', 3);		<span class="codecomment">// 外部コマンド実行で、現在のフォルダのファイル一覧を取込</span><br>
+</div><br>
+■例2: WSH(JScript)<br>
+<div class="li200 codesample"><span class="codecomment">// コメント</span><br>
+Editor.InsText(<span class="codestr">'&lt;br /&gt;'</span>);<br>
+Editor.InsText(<span class="codestr">"&lt;br /&gt;"</span>);<br>
+InsText(<span class="codestr">"&lt;br /&gt;"</span>);<br>
+var str = Editor.<a href="HLP000284.html">ExpandParameter</a>(<span class="codestr">"$f($x,$y)\r\n"</span>);<br>
+Editor.InsText str;<br>
+Editor.ExecCommand(<span class="codestr">'dir /b'</span>, 3);<br>
+</div><br>
+■例3: WSH(VBScript)<br>
+<div class="li200 codesample"><span class="codecomment">' コメント</span><br>
+Dim str<br>
+Editor.InsText<span class="codestr"> "&lt;br /&gt;"</span><br>
+InsText <span class="codestr">"&lt;br /&gt;"</span><br>
+str = Editor.ExpandParameter(<span class="codestr">"$f:($x,$y)"</span> &amp; vbCrLf)<br>
+Editor.InsText str<br>
+Editor.ExecCommand <span class="codestr">"dir /b"</span>, 3<br>
+</div><br>
+■例4: PPAマクロ<br>
+<div class="li200 codesample"><span class="codecomment">// コメント</span><br>
+S_InsText( <span class="codestr">'&lt;br /&gt;'</span> ); <span class="codecomment">// PPAでは必ず S_をつけてください。</span><br>
+S_ExecCommand(<span class="codestr">'dir /b'</span>, 3);<br>
+</div><br>
+</BODY></HTML>

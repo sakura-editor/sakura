@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>タブバー</TITLE>
+<META NAME="MS-HKWD" CONTENT="タブバー">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>タブバー</h2>
+
+<a href="HLP000150.html">共通設定 『タブバー』プロパティ</a>の設定により、タブ型エディタのような動作になります。<br>
+タブバーの右端には[▼]ボタンと、[×]ボタンまたは[XX]ボタンがあります。<br>
+<br>
+<b>[▼]ボタン</b><br>
+<a href="HLP000314.html">ウィンドウ一覧</a>を表示します。<br>
+左クリックでタブ名一覧・右クリックでパス名一覧を表示します。<br>
+ウィンドウをグループ化しているときは、現在のグループのみが優先して表示されます。<br>
+<br>
+
+<b>[×]ボタン</b><br>
+<a href="HLP000150.html#IDC_CHECK_DispTabWnd">ウィンドウをまとめてグループ化する</a>の設定有効、<a href="HLP000150.html#IDC_CHECK_CloseOneWin">ウィンドウの閉じるボタンは現在のファイルのみ閉じる</a>の設定無効のとき<br>
+現在のタブを閉じる動作です。<br>
+このときタイトルバーの[×](閉じる)ボタンは<a href="HLP000320.html">『グループを閉じる』</a>の動作になります。<br>
+<br>
+
+<b>[XX]ボタン</b><br>
+<a href="HLP000150.html#IDC_CHECK_DispTabWnd">ウィンドウをまとめてグループ化する</a>の設定有効、<a href="HLP000150.html#IDC_CHECK_CloseOneWin">ウィンドウの閉じるボタンは現在のファイルのみ閉じる</a>の設定有効のとき<br>
+<a href="HLP000030.html">『編集の全終了』</a>の動作になります。<br>
+このときタイトルバーの[×](閉じる)ボタンは、現在のタブを閉じる動作になります。<br>
+<br>
+
+<a href="HLP000150.html#IDC_CHECK_DispTabWnd">ウィンドウをまとめてグループ化する</a>の設定無効のとき<br>
+<a href="HLP000030.html">『編集の全終了』</a>の動作になります。<br>
+このときタイトルバーの[×](閉じる)ボタンは、現在のタブを閉じる動作になります。<br>
+<br>
+
+<br>
+<b>(ドラッグ＆ドロップ)</b><br>タブをドラッグ＆ドロップすると、ウィンドウの分離・結合・並び順変更ができます。<br>
+<br>
+<b>(ダブルクリック)</b><br>タブバーの何もないところをダブルクリックすると新規編集画面を開きます。<br>
+<br>
+<b>(右クリック)</b><br>タブ上で右クリックするとタブメニューを表示します。カスタムメニューの24番目に相当します。<br>
+<br>
+<b>(マウスホイール)</b><br>タブ上でのホイール操作でタブを切り替えます。<br>デフォルトでこの機能は無効になっていますので、<a href="HLP000150.html">共通設定 『タブバー』プロパティ</a>から設定を変更してください。
+<br>
+<br>
+<img src="images/TabView1.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図1】ウィンドウをグループ化する設定のとき</b><br>
+<br>
+<img src="images/TabView2.png"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>【図2】ウィンドウをグループ化しない設定のとき</b><br>
+<br>
+<img src="images/hint.png">ヒント<br>
+<Ul>
+<li><a href = "HLP000019.html">『すべて閉じる』</a>は<a href = "HLP000018.html">『閉じる』</a>の一括実行です。ウィンドウも閉じるかどうか(無題)文書も残すのかは設定に左右されます。</li>
+<li><a href = "HLP000320.html">『グループを閉じる』</a>は現在のウィンドウをすべて閉じて、(無題)文書を残しません。</li>
+<li><a href = "HLP000030.html">『編集の全終了』</a>はすべてのタブおよびウィンドウを閉じます。タスクトレイを使わない設定のときは<a href = "HLP000028.html">『サクラエディタの全終了』</a>と同じ結果が得られます。</li>
+<li><a href = "HLP000028.html">『サクラエディタの全終了』</a>は、各設定内容にかかわらず、すべてのタブ・ウィンドウ・コントロールプロセスを終了します。</li>
+</ul>
+<br>
+
+<img src="images/hint.png">ヒント<br>
+一般のタブ型アプリケーションでは、すべてのタブを閉じたときにウィンドウ自体は閉じられることはなく、新規のタブがひとつ開かれます。またウィンドウの[×]ボタン、つまりタイトルバーにある最大化ボタンの右の閉じるボタンでは、すべてのタブおよびウィンドウを閉じる動作になります。
+サクラエディタでもタブバー表示時のデフォルトでは、これに準ずる動作になっていますが、タブバーの設定により動作が変わります。
+</BODY></HTML>

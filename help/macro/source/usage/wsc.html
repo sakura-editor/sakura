@@ -1,0 +1,68 @@
+<html><head><title>Windows Script Componentの使用</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>Windows Script Componentの使用</h2>
+<p>WSHマクロにおいてWindows Script Component(*.wsc)を使用することで
+各種スクリプトを混在で利用できます。
+</p>
+<p>wscファイル内では、Editorオブジェクトが見えないので、
+呼び出し元からEditorオブジェクトを渡す必要があります。
+</p>
+
+<h3>WSCサンプル（呼ばれる側）</h3>
+<pre>
+&lt;?xml version=<span style = "color:#800000">"1.0"</span>?&gt;
+&lt;component&gt;
+&lt;public&gt;
+        &lt;method name=<span style = "color:#800000">"InsTextVBS"</span>&gt;
+                &lt;PARAMETER name=<span style = "color:#800000">"Editor"</span>/&gt;
+                &lt;PARAMETER name=<span style = "color:#800000">"sBuf"</span>/&gt;
+        &lt;/method&gt;
+        &lt;method name=<span style = "color:#800000">"InsTextJS"</span>&gt;
+                &lt;PARAMETER name=<span style = "color:#800000">"Editor"</span>/&gt;
+                &lt;PARAMETER name=<span style = "color:#800000">"sBuf"</span>/&gt;
+        &lt;/method&gt;
+&lt;/public&gt;
+&lt;script language=<span style = "color:#800000">"VBScript"</span>&gt;
+&lt;![CDATA[
+<span style = "color:blue">Sub</span> InsTextVBS(Editor, sBuf)
+    <span style = "color:green;">&#39;VBSエンジンによる処理</span>
+    Editor.InsText(Cstr(sBuf))
+End <span style = "color:blue">Sub</span>
+]]&gt;
+&lt;/script&gt;
+&lt;script language=<span style = "color:#800000">"JScript"</span>&gt;
+&lt;![CDATA[
+<span style = "color:blue">function</span> InsTextJS(Editor, sBuf)
+{
+    <span style = "color:green;">//JSエンジンによる処理</span>
+    Editor.InsText(sBuf + '');
+}
+]]&gt;
+&lt;/script&gt;
+&lt;/component&gt;
+</pre>
+
+<h3>VBScriptから呼び出し</h3>
+<pre>
+WSC_PATH = <span style = "color:#800000">"L:\func.wsc"</span>
+<span style = "color:blue">Set</span> oFunc=GetObject(<span style = "color:#800000">"Script:"</span> & WSC_PATH)
+<span style = "color:blue">Call</span> oFunc.InsTextJS(Editor, <span style = "color:#800000">"By JScript"</span>)
+<span style = "color:blue">Set</span> oFunc = <span style = "color:blue">Nothing</span>
+</pre>
+
+<h3>JScriptから呼び出し</h3>
+<pre>
+<span style = "color:blue">var</span> WSC_PATH = <span style = "color:#800000">"L:\\func.wsc"</span>;
+<span style = "color:blue">var</span> oFunc = GetObject(<span style = "color:#800000">"Script:"</span> + WSC_PATH);
+oFunc.InsTextVBS(Editor, <span style = "color:#800000">"By VBScript"</span>);
+</pre>
+
+
+<hr>
+</body></html>
+

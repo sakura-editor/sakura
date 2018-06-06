@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>プラグイン</TITLE>
+<META NAME="MS-HKWD" CONTENT="プラグイン">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>プラグイン</h2>
+プラグインはエディタ本体に後から追加しさまざまな機能を提供するものです。<br />
+sakura2.0.0.0以降が必要です。<br />
+<h3>導入方法</h3>
+<ol>
+<li>プラグインのzipファイルを入手します。
+<li>サクラエディタの設定ファイル(sakura.ini)があるフォルダに「plugins」というフォルダを作成し、その中にプラグインzipを解凍します。<br />
+　以下のようなフォルダ構成になっていればOKです。<br />
+<pre>
+        ├ sakura.ini
+        └ plugins/
+            └ ○○/              // プラグイン名のフォルダ
+                ├ plugin.def     // プラグイン定義ファイル
+                ├   ：           
+</pre>
+
+<li>共通設定画面の[<a href="HLP000151.html">プラグイン</a>]タブで「プラグインを有効にする」にチェックを入れます。
+<li>「新規プラグインを追加する」を押して、解凍したプラグインをインストールします。
+<li>「OK」を押して共通設定画面を閉じます。<br />
+プラグインは次にエディタウィンドウを開いたときから有効になります。
+</ol>
+<br>
+<img src="images/hint.png">ヒント<br>
+「ZIPプラグインを導入する」からプラグインzipを選択するとより簡単にプラグインを導入できます。(sakura:2.0.6.0以降、Windows XP/2003以降)<br>
+<br />
+<h3>プラグイン開発</h3>
+プラグインはJScriptやVBScriptの知識とサクラエディタマクロの経験があれば誰でも作成して配布することが可能です。<br />
+詳細は別途公開されているプラグイン開発ガイドを参照してください。<br />
+プラグインに関する情報：<a href="http://sakura.qp.land.to/?Plugin">http://sakura.qp.land.to/?Plugin</a><br />
+</BODY></HTML>

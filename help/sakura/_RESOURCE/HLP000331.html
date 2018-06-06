@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>トレース出力</TITLE>
+<META NAME="MS-HKWD" CONTENT="トレース出力">
+<META NAME="MS-HKWD" CONTENT="TraceOut">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>トレース出力</h2>
+<a href="HLP000188.html">アウトプットウィンドウ</a> にテキストを出力します<br>
+アウトプットウィンドウが作成されていない場合は表示も行います。<br>
+NUL文字以降は転送されません。あまり長い文字列は指定しないでください。<br>
+0x01オプションの場合、展開後文字列で約2000文字に制限されています。それ以上の長さを指定しても後ろが切り捨てられます。<br>
+(sakura 2.0.0.0以降) 0x01オプションがない場合、約32000文字まで一度に送信できます。それ以上は内部で分割して送られます。<br>
+<br>
+(sakura 2.1.0.0以降) 0x01オプションが付いていない場合はNUL文字も転送できます。<br>
+<br>
+
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: TraceOut( str1 :String, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;出力したいテキスト<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;制御オプション<br>
+・記録:	×<br>
+
+・解説<br>
+制御オプションには、次の値の和を指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;ExpandParameterによる文字列展開を行う<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;テキスト末尾に改行コードを付加しない<br>
+<br>
+<br>
+
+</BODY></HTML>
