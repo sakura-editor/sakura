@@ -312,6 +312,8 @@ void CMemory::AllocBuffer( int nNewDataLen )
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
+			// 頻繁な再確保を行わないようにする為、必要量の倍のサイズを確保する
+			nWorkLen <<= 1;
 			// 2014.06.25 有効データ長が0の場合はfree & malloc
 			if( m_nRawLen == 0 ){
 				free( m_pRawData );
