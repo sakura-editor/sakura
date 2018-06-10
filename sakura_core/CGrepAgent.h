@@ -181,8 +181,9 @@ private:
 		const SGrepOption&	sGrepOption
 	);
 
-	DWORD m_dwTickAddTail;  // Command_ADDTAIL を呼び出した時間
-	DWORD m_dwPrevUICheck; // 処理中にユーザーによるUI操作が行われていないか確認した時間
+	DWORD m_dwTickAddTail;  // AddTail() を呼び出した時間
+	DWORD m_dwTickUICheck; // 処理中にユーザーによるUI操作が行われていないか確認した時間
+	DWORD m_dwTickInterval;	// UI確認・結果出力の時間間隔
 
 public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか

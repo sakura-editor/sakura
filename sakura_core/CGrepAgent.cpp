@@ -26,7 +26,8 @@ CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
 , m_dwTickAddTail( 0 )
-, m_dwPrevUICheck( 0 )
+, m_dwTickUICheck( 0 )
+, m_dwTickInterval( 50 )
 {
 }
 
@@ -126,6 +127,7 @@ std::tstring CGrepAgent::ChopYen( const std::tstring& str )
 
 void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout )
 {
+	m_dwTickAddTail = ::GetTickCount();
 	if( bAddStdout ){
 		HANDLE out = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		if( out && out != INVALID_HANDLE_VALUE ){
@@ -137,7 +139,6 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 			::WriteFile(out, cmemOut.GetRawPtr(), cmemOut.GetRawLength(), &dwWrite, NULL);
 		}
 	}else{
-		m_dwTickAddTail = ::GetTickCount();
 		pcEditView->GetCommander().Command_ADDTAIL( cmem.GetStringPtr(), cmem.GetStringLength() );
 		pcEditView->GetCommander().Command_GOFILEEND( FALSE );
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
@@ -668,7 +669,7 @@ int CGrepAgent::DoGrepTree(
 	int						nNest,				//!< [in] ネストレベル
 	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダ名出力
 	int*					pnHitCount,			//!< [i/o] ヒット数の合計
-	CNativeW&				cmemMessage
+	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
 )
 {
 	int			i;
@@ -690,8 +691,8 @@ int CGrepAgent::DoGrepTree(
 		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
 
 		DWORD dwNow = ::GetTickCount();
-		if (dwNow - m_dwPrevUICheck > 200) {
-			m_dwPrevUICheck = dwNow;
+		if (dwNow - m_dwTickUICheck > m_dwTickInterval) {
+			m_dwTickUICheck = dwNow;
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 				goto cancel_return;
@@ -771,15 +772,15 @@ int CGrepAgent::DoGrepTree(
 				nHitCountOld = -100; // 即表示
 			}
 		}
-		if( *pnHitCount - nHitCountOld  >= 10 ){
-			/* 結果出力 */
-			DWORD dwNow = ::GetTickCount();
-			if( 0 < cmemMessage.GetStringLength() && dwNow - m_dwTickAddTail > 200 ){
-				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-				cmemMessage.Clear();
-				nWork = 0;
-				nHitCountOld = *pnHitCount;
-			}
+		/* 結果出力 */
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (*pnHitCount - nHitCountOld) >= 10 &&
+		   (::GetTickCount() - m_dwTickAddTail) > m_dwTickInterval
+		){
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			cmemMessage._SetStringLength(0);
+			nWork = 0;
+			nHitCountOld = *pnHitCount;
 		}
 		if( -1 == nRet ){
 			goto cancel_return;
@@ -799,8 +800,8 @@ int CGrepAgent::DoGrepTree(
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
 			DWORD dwNow = ::GetTickCount();
-			if ( dwNow - m_dwPrevUICheck > 200 ) {
-				m_dwPrevUICheck = dwNow;
+			if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+				m_dwTickUICheck = dwNow;
 				//サブフォルダの探索を再帰呼び出し。
 				/* 処理中のユーザー操作を可能にする */
 				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
@@ -857,7 +858,7 @@ cancel_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
 		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-		cmemMessage.Clear();
+		cmemMessage._SetStringLength(0);
 	}
 
 	return -1;
@@ -1042,7 +1043,7 @@ int CGrepAgent::DoGrepFile(
 	const TCHAR*			pszRelPath,			//!< [in] 相対パス File.ext(bGrepSeparateFolder) または  SubFolder\File.ext(!bGrepSeparateFolder)
 	bool&					bOutputBaseFolder,	//!< 
 	bool&					bOutputFolderName,	//!< 
-	CNativeW&				cmemMessage			//!< 
+	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
 )
 {
 	int		nHitCount;
@@ -1180,7 +1181,8 @@ int CGrepAgent::DoGrepFile(
 	}
 
 	DWORD dwNow = ::GetTickCount();
-	if ( dwNow - m_dwPrevUICheck > 200 ) {
+	if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+		m_dwTickUICheck = dwNow;
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 			return -1;
@@ -1215,8 +1217,8 @@ int CGrepAgent::DoGrepFile(
 		// 2010.08.31 間隔を1/32にする
 		if( 0 == nLine % 32 ) {
 			DWORD dwNow = ::GetTickCount();
-			if (dwNow - m_dwPrevUICheck > 200) {
-				m_dwPrevUICheck = dwNow;
+			if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+				m_dwTickUICheck = dwNow;
 				if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
 					return -1;
 				}
@@ -1239,9 +1241,10 @@ int CGrepAgent::DoGrepFile(
 						str = str + pszFile + szWork;
 						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
 					}
+				}else{
+					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
 				}
 				::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
 				::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
 			}
 		}
@@ -1412,8 +1415,10 @@ int CGrepAgent::DoGrepFile(
 				);
 			}
 		}
-		// 2014.09.23 データが多い時はバッファ出力
-		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (nHitCount - nOutputHitCount >= 10) &&
+		   (::GetTickCount() - m_dwTickAddTail) >= m_dwTickInterval
+		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 			cmemMessage._SetStringLength(0);
@@ -1664,12 +1669,13 @@ int CGrepAgent::DoGrepReplaceFile(
 		nEolCodeLen = cEol.GetLen();
 		++nLine;
 
-		/* 処理中のユーザー操作を可能にする */
-		// 2010.08.31 間隔を1/32にする
-		if( ((0 == nLine % 32)|| 10000 < nLineLen ) && !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			return -1;
-		}
-		if( 0 == nLine % 64 ){
+		DWORD dwNow = ::GetTickCount();
+		if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+			m_dwTickUICheck = dwNow;
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook(pcDlgCancel->GetHwnd()) ){
+				return -1;
+			}
 			/* 中断ボタン押下チェック */
 			if( pcDlgCancel->IsCanceled() ){
 				return -1;
@@ -1863,8 +1869,9 @@ int CGrepAgent::DoGrepReplaceFile(
 		}
 		output.AppendBuffer(cOutBuffer);
 
-		// 2014.09.23 データが多い時はバッファ出力
-		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (::GetTickCount() - m_dwTickAddTail > m_dwTickInterval)
+		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 			cmemMessage._SetStringLength(0);
