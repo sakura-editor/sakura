@@ -4,3 +4,4 @@ Backup
 *.ipdb
 UpgradeLog.htm
 /Win32
+/x64
