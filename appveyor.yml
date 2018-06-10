@@ -6,28 +6,34 @@ init:
 - ps: Start-Sleep -s 5
 - ps: Restart-Computer
 
+configuration:
+  - Release
+  - Debug
+
+platform:
+  - x86
+
 build_script:
 - cmd: >-
     set SLN_FILE=sakura\sakura.sln
 
+    echo PLATFORM      %PLATFORM%
+
+    echo CONFIGURATION %CONFIGURATION%
 
     set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
     set MSBUILD_EXE="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
 
 
-    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug      /t:"Clean","Rebuild"  %EXTRA_CMD%
-         %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug      /t:"Clean","Rebuild"  %EXTRA_CMD%
 
-    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release    /t:"Clean","Rebuild"  %EXTRA_CMD%
-         %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release    /t:"Clean","Rebuild"  %EXTRA_CMD%
+    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
+         %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
 
     echo appveyor_yml
 
 artifacts:
-- path: sakura\Debug\sakura.exe
-- path: sakura\Debug\sakura.pdb
-- path: sakura\Release\sakura.exe
-- path: sakura\Release\sakura.pdb
-- path: sakura_lang_en_US\Debug\sakura_lang_en_US.dll
-- path: sakura_lang_en_US\Release\sakura_lang_en_US.dll
+- path: sakura\$(configuration)\sakura.exe
+- path: sakura\$(configuration)\sakura.pdb
+- path: sakura_lang_en_US\$(configuration)\sakura_lang_en_US.dll
+
