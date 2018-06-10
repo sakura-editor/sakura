@@ -3,3 +3,4 @@ Backup
 *.iobj
 *.ipdb
 UpgradeLog.htm
+/Win32

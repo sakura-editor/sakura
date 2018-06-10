@@ -2,13 +2,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura.vcxproj", "{AF03508C-515E-4A0E-87BE-67ED1E254BD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura\sakura.vcxproj", "{AF03508C-515E-4A0E-87BE-67ED1E254BD0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "..\HeaderMake\HeaderMake.vcxproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "HeaderMake\HeaderMake.vcxproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "..\MakefileMake\MakefileMake.vcxproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "MakefileMake\MakefileMake.vcxproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "..\sakura_lang_en_US\sakura_lang.vcxproj", "{7A6D0F29-E560-4985-835B-5F92A08EB242}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "sakura_lang_en_US\sakura_lang.vcxproj", "{7A6D0F29-E560-4985-835B-5F92A08EB242}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AF03508C-515E-4A0E-87BE-67ED1E254BD0} = {AF03508C-515E-4A0E-87BE-67ED1E254BD0}
 	EndProjectSection
