@@ -20,8 +20,7 @@
 /*.tds
 /*.user
 # /*.vcxproj
-/Debug*
-/Release*
+/Win32
 /Toolkit2003Env.bat
 /_UpgradeReport_Files
 /ipch

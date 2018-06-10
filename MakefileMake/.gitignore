@@ -1,5 +1,4 @@
 # /*.filters
 /*.user
 # /*.vcxproj
-/Debug
-/Release
+/Win32
