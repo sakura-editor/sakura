@@ -11,7 +11,7 @@ configuration:
   - Debug
 
 platform:
-  - x86
+  - Win32
 
 build_script:
 - cmd: >-
@@ -33,6 +33,6 @@ build_script:
     echo appveyor_yml
 
 artifacts:
-- path: '**\$(configuration)\*.exe'
-- path: '**\$(configuration)\*.dll'
-- path: '**\$(configuration)\*.pdb'
+- path: '$(platform)\$(configuration)\*.exe'
+- path: '$(platform)\$(configuration)\*.dll'
+- path: '$(platform)\$(configuration)\*.pdb'
