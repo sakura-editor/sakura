@@ -26,6 +26,7 @@
 #include "util/module.h"
 #include "gitrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
+#include "version.h"
 #include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
@@ -160,22 +161,28 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeT cmemMsg;
-	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME));
+	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
 	cmemMsg.AppendString(_T("   "));
 
-	// バージョン&リビジョン情報
+	// バージョン情報・コンフィグ情報 //
+#ifdef GIT_COMMIT_HASH
+#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")\r\n"
+#else
+#define VER_GITHASH ""
+#endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
-		HIWORD(dwVersionMS),
-		LOWORD(dwVersionMS),
-		HIWORD(dwVersionLS),
-		LOWORD(dwVersionLS)
+	auto_sprintf(szMsg,
+		_T(
+			"v%d.%d.%d.%d  %hs  %hs\r\n"
+			"%hs"
+		),
+		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS), // e.g. {2, 3, 2, 0}
+		VER_PLATFORM, // e.g. "64bit", "32bit"
+		VER_CONFIG, // e.g. "DEBUG", ""
+		VER_GITHASH // e.g. "(GitHash 4a0de5798394409af14ec69c310ba0c86efdfc05)\r\n", ""
 	);
-	cmemMsg.AppendString(szMsg);
-#if defined(GIT_COMMIT_HASH)
-	cmemMsg.AppendString(_T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
-#endif
+	cmemMsg.AppendString( szMsg );
 #if defined(GIT_URL)
 	cmemMsg.AppendString(_T("(GitURL " GIT_URL ")\r\n"));
 #endif
