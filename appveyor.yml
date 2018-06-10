@@ -33,8 +33,8 @@ build_script:
     echo appveyor_yml
 
 artifacts:
-- path: sakura\$(configuration)\sakura.exe
-- path: sakura\$(configuration)\sakura.pdb
-- path: sakura\$(configuration)\sakura_lang_en_US.dll
-- path: sakura\$(configuration)\sakura_lang_en_US.pdb
+- path: sakura\$(platform)\$(configuration)\sakura.exe
+- path: sakura\$(platform)\$(configuration)\sakura.pdb
+- path: sakura\$(platform)\$(configuration)\sakura_lang_en_US.dll
+- path: sakura\$(platform)\$(configuration)\sakura_lang_en_US.pdb
 
