@@ -43,14 +43,14 @@
     <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>.\Debug\</OutDir>
-    <IntDir>.\Debug\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\Release\</OutDir>
-    <IntDir>.\Release\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -83,10 +83,10 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug/sakura_lang_en_US.dll</OutputFile>
+      <OutputFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/sakura_lang.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang.pdb</ProgramDatabaseFile>
       <NoEntryPoint>true</NoEntryPoint>
       <ImportLibrary>.\Debug/sakura_lang.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
@@ -125,9 +125,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Release/sakura_lang_en_US.dll</OutputFile>
+      <OutputFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>.\Release/sakura_lang.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang.pdb</ProgramDatabaseFile>
       <NoEntryPoint>true</NoEntryPoint>
       <ImportLibrary>.\Release/sakura_lang.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
