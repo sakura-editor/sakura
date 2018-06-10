@@ -86,7 +86,7 @@
       <OutputFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.pdb</ProgramDatabaseFile>
       <NoEntryPoint>true</NoEntryPoint>
       <ImportLibrary>.\Debug/sakura_lang.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
@@ -127,7 +127,7 @@
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(SolutionDir)$(Configuration)\sakura_lang_en_US.pdb</ProgramDatabaseFile>
       <NoEntryPoint>true</NoEntryPoint>
       <ImportLibrary>.\Release/sakura_lang.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
