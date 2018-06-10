@@ -46,5 +46,7 @@
 	#include "../sakura_core/String_define.h"
 #endif
 
+#include "../sakura_core/version.h" // #define RESOURCE_VERSION_STRING(VERSION_STRING)
+
 #endif /* SAKURA_SAKURA_LANG_C627B14F_9909_441B_B510_9BBB2D3F078B_H_ */
 /*[EOF]*/

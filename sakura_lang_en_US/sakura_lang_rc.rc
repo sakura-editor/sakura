@@ -2790,7 +2790,6 @@ END
 //
 // Version
 //
-
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION    FL_VER
  PRODUCTVERSION PR_VER
@@ -2817,16 +2816,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor Language DLL\0"
-            VALUE "ProductVersion", PR_VER_STR
-#if defined(GIT_SHORT_COMMIT_HASH)
-                " (GitHash " GIT_SHORT_COMMIT_HASH ")"
-#endif
-#ifdef _DEBUG
-                " Debug version"
-#endif
-#ifndef _UNICODE
-                " ANSI"
-#endif
+            VALUE "ProductVersion", RESOURCE_VERSION_STRING(PR_VER_STR) // e.g. "2.3.2.0 4a0de579 UNICODE 64bit DEBUG"
         END
     END
     BLOCK "VarFileInfo"
