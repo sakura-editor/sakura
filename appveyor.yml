@@ -36,4 +36,5 @@ artifacts:
 - path: sakura\$(configuration)\sakura.exe
 - path: sakura\$(configuration)\sakura.pdb
 - path: sakura\$(configuration)\sakura_lang_en_US.dll
+- path: sakura\$(configuration)\sakura_lang_en_US.pdb
 
