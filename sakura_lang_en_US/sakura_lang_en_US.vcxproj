@@ -261,7 +261,7 @@
     <ResourceCompile Include="sakura_lang_rc.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sakura_rc.h" />
+    <ClInclude Include="sakura_lang.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
