@@ -22,12 +22,14 @@
 #include <deque>
 #include "sakura_rc.h"
 
+#define UICHECK_INTERVAL_MILLISEC 50	// UI確認の時間間隔
+#define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
+
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
 , m_dwTickAddTail( 0 )
 , m_dwTickUICheck( 0 )
-, m_dwTickInterval( 50 )
 {
 }
 
@@ -691,7 +693,7 @@ int CGrepAgent::DoGrepTree(
 		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
 
 		DWORD dwNow = ::GetTickCount();
-		if (dwNow - m_dwTickUICheck > m_dwTickInterval) {
+		if (dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC) {
 			m_dwTickUICheck = dwNow;
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
@@ -775,7 +777,7 @@ int CGrepAgent::DoGrepTree(
 		/* 結果出力 */
 		if( 0 < cmemMessage.GetStringLength() &&
 		   (*pnHitCount - nHitCountOld) >= 10 &&
-		   (::GetTickCount() - m_dwTickAddTail) > m_dwTickInterval
+		   (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC
 		){
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 			cmemMessage._SetStringLength(0);
@@ -800,7 +802,7 @@ int CGrepAgent::DoGrepTree(
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
 			DWORD dwNow = ::GetTickCount();
-			if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+			if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 				m_dwTickUICheck = dwNow;
 				//サブフォルダの探索を再帰呼び出し。
 				/* 処理中のユーザー操作を可能にする */
@@ -1181,7 +1183,7 @@ int CGrepAgent::DoGrepFile(
 	}
 
 	DWORD dwNow = ::GetTickCount();
-	if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+	if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 		m_dwTickUICheck = dwNow;
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
@@ -1217,7 +1219,7 @@ int CGrepAgent::DoGrepFile(
 		// 2010.08.31 間隔を1/32にする
 		if( 0 == nLine % 32 ) {
 			DWORD dwNow = ::GetTickCount();
-			if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+			if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 				m_dwTickUICheck = dwNow;
 				if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
 					return -1;
@@ -1417,7 +1419,7 @@ int CGrepAgent::DoGrepFile(
 		}
 		if( 0 < cmemMessage.GetStringLength() &&
 		   (nHitCount - nOutputHitCount >= 10) &&
-		   (::GetTickCount() - m_dwTickAddTail) >= m_dwTickInterval
+		   (::GetTickCount() - m_dwTickAddTail) >= ADDTAIL_INTERVAL_MILLISEC
 		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
@@ -1670,7 +1672,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		++nLine;
 
 		DWORD dwNow = ::GetTickCount();
-		if ( dwNow - m_dwTickUICheck > m_dwTickInterval ) {
+		if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 			m_dwTickUICheck = dwNow;
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook(pcDlgCancel->GetHwnd()) ){
@@ -1870,7 +1872,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		output.AppendBuffer(cOutBuffer);
 
 		if( 0 < cmemMessage.GetStringLength() &&
-		   (::GetTickCount() - m_dwTickAddTail > m_dwTickInterval)
+		   (::GetTickCount() - m_dwTickAddTail > ADDTAIL_INTERVAL_MILLISEC)
 		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
