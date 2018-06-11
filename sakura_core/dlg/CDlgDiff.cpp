@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DIFF·•ª•\¦ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief DIFFå·®åˆ†è¡¨ç¤ºãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2002.5.27
@@ -9,7 +9,7 @@
 	Copyright (C) 2001, Stonee, genta, JEPRO, YAZAKI
 	Copyright (C) 2002, aroka, MIK, Moca
 	Copyright (C) 2003, MIK, genta
-	Copyright (C) 2004, MIK, genta, ‚¶‚ã‚¤‚¶
+	Copyright (C) 2004, MIK, genta, ã˜ã‚…ã†ã˜
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
 
@@ -47,9 +47,9 @@ const DWORD p_helpids[] = {	//13200
 	IDOK,						HIDC_DIFF_IDOK,
 	IDCANCEL,					HIDC_DIFF_IDCANCEL,
 	IDC_BUTTON_HELP,			HIDC_BUTTON_DIFF_HELP,
-	IDC_CHECK_DIFF_EXEC_STATE,	HIDC_CHECK_DIFF_EXEC_STATE,	//DIFF·•ª‚ªŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦  2003.05.12 MIK
-	IDC_CHECK_NOTIFYNOTFOUND,	HIDC_CHECK_DIFF_NOTIFYNOTFOUND,	// Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦	// 2006.10.10 ryoji
-	IDC_CHECK_SEARCHALL,		HIDC_CHECK_DIFF_SEARCHALL,		// æ“ªi––”öj‚©‚çÄŒŸõ‚·‚é	// 2006.10.10 ryoji
+	IDC_CHECK_DIFF_EXEC_STATE,	HIDC_CHECK_DIFF_EXEC_STATE,	//DIFFå·®åˆ†ãŒè¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º  2003.05.12 MIK
+	IDC_CHECK_NOTIFYNOTFOUND,	HIDC_CHECK_DIFF_NOTIFYNOTFOUND,	// è¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º	// 2006.10.10 ryoji
+	IDC_CHECK_SEARCHALL,		HIDC_CHECK_DIFF_SEARCHALL,		// å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ã™ã‚‹	// 2006.10.10 ryoji
 //	IDC_FRAME_SEARCH_MSG,		HIDC_FRAME_DIFF_SEARCH_MSG,
 //	IDC_STATIC,					-1,
 	0, 0
@@ -85,7 +85,7 @@ CDlgDiff::CDlgDiff()
 	: CDialog(true)
 	, m_nIndexSave( 0 )
 {
-	/* ƒTƒCƒY•ÏX‚ÉˆÊ’u‚ğ§Œä‚·‚éƒRƒ“ƒgƒ[ƒ‹” */
+	/* ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã«ä½ç½®ã‚’åˆ¶å¾¡ã™ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æ•° */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	m_nDiffFlgOpt    = 0;
@@ -98,12 +98,12 @@ CDlgDiff::CDlgDiff()
 	return;
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgDiff::DoModal(
 	HINSTANCE			hInstance,
 	HWND				hwndParent,
 	LPARAM				lParam,
-	const TCHAR*		pszPath		//©ƒtƒ@ƒCƒ‹
+	const TCHAR*		pszPath		//è‡ªãƒ•ã‚¡ã‚¤ãƒ«
 )
 {
 	_tcscpy(m_szFile1, pszPath);
@@ -116,16 +116,16 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	switch( wID )
 	{
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DIFF_DIALOG) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ãƒ˜ãƒ«ãƒ— */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DIFF_DIALOG) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 
-	case IDC_BUTTON_DIFF_DST:	/* QÆ */
+	case IDC_BUTTON_DIFF_DST:	/* å‚ç…§ */
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			TCHAR			szPath[_MAX_PATH];
 			_tcscpy( szPath, m_szFile2 );
-			/* ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰» */
+			/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ– */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
@@ -136,7 +136,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			{
 				_tcscpy( m_szFile2, szPath );
 				::DlgItem_SetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2 );
-				//ŠO•”ƒtƒ@ƒCƒ‹‚ğ‘I‘ğó‘Ô‚É
+				//å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠçŠ¶æ…‹ã«
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
 				List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
@@ -144,8 +144,8 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		}
 		return TRUE;
 
-	case IDOK:			/* ¶‰E‚É•\¦ */
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	case IDOK:			/* å·¦å³ã«è¡¨ç¤º */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), GetData() );
 		return TRUE;
 
@@ -158,7 +158,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_DIFF_DST ), TRUE );
 		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_DIFF_DST ), TRUE );
 		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), FALSE );
-		//	Feb. 28, 2004 genta ‘I‘ğ‰ğœ‘O‚É‘O‰ñ‚ÌˆÊ’u‚ğ‹L‰¯
+		//	Feb. 28, 2004 genta é¸æŠè§£é™¤å‰ã«å‰å›ã®ä½ç½®ã‚’è¨˜æ†¶
 		{
 			int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
 			if( n != LB_ERR ){
@@ -175,7 +175,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), TRUE );
 		{
 			//	Aug. 9, 2003 genta
-			//	ListBox‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚çCæ“ª‚Ìƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚·‚éD
+			//	ListBoxãŒé¸æŠã•ã‚Œã¦ã„ãªã‹ã£ãŸã‚‰ï¼Œå…ˆé ­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã™ã‚‹ï¼
 			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
@@ -193,14 +193,14 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgDiff::SetData( void )
 {
-	//ƒIƒvƒVƒ‡ƒ“
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	m_nDiffFlgOpt = m_pShareData->m_nDiffFlgOpt;
 	if( m_nDiffFlgOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_OPT_CASE,   TRUE );
 	if( m_nDiffFlgOpt & 0x0002 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_OPT_SPACE,  TRUE );
@@ -208,7 +208,7 @@ void CDlgDiff::SetData( void )
 	if( m_nDiffFlgOpt & 0x0008 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_OPT_BLINE,  TRUE );
 	if( m_nDiffFlgOpt & 0x0010 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_OPT_TABSPC, TRUE );
 
-	//V‹Œƒtƒ@ƒCƒ‹
+	//æ–°æ—§ãƒ•ã‚¡ã‚¤ãƒ«
 	if( m_nDiffFlgOpt & 0x0020 )
 	{
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_FILE1, FALSE );
@@ -223,16 +223,16 @@ void CDlgDiff::SetData( void )
 	//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_FILE1 ), FALSE );
 	//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_FILE2 ), FALSE );
 
-	//DIFF·•ª‚ªŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦ 2003.05.12 MIK
+	//DIFFå·®åˆ†ãŒè¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º 2003.05.12 MIK
 	if( m_nDiffFlgOpt & 0x0040 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_EXEC_STATE, TRUE );
 
-	/* Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ğ•\¦ */
+	/* è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND );
 	
-	/* æ“ªi––”öj‚©‚çÄŒŸõ */
+	/* å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
 
-	/* •ÒW’†‚Ìƒtƒ@ƒCƒ‹ˆê——‚ğì¬‚·‚é */
+	/* ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§ã‚’ä½œæˆã™ã‚‹ */
 	{
 		HWND		hwndList;
 		int			nRowNum;
@@ -246,57 +246,57 @@ void CDlgDiff::SetData( void )
 		ECodeType	code;
 		int			selCode = CODE_NONE;
 
-		// ©•ª‚Ì•¶šƒR[ƒh‚ğæ“¾
+		// è‡ªåˆ†ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
 		::SendMessageAny( CEditWnd::getInstance()->GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 		pFileInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		code = pFileInfo->m_nCharCode;
 
-		/* ƒŠƒXƒg‚Ìƒnƒ“ƒhƒ‹æ“¾ */
+		/* ãƒªã‚¹ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«å–å¾— */
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 
-		/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg‚ğƒƒjƒ…[‚É‚·‚é */
+		/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆã‚’ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã™ã‚‹ */
 		nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( nRowNum > 0 )
 		{
-			// …•½ƒXƒNƒ[ƒ‹•‚ÍÀÛ‚É•\¦‚·‚é•¶š—ñ‚Ì•‚ğŒv‘ª‚µ‚ÄŒˆ‚ß‚é	// 2009.09.26 ryoji
+			// æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å¹…ã¯å®Ÿéš›ã«è¡¨ç¤ºã™ã‚‹æ–‡å­—åˆ—ã®å¹…ã‚’è¨ˆæ¸¬ã—ã¦æ±ºã‚ã‚‹	// 2009.09.26 ryoji
 			CTextWidthCalc calc(hwndList);
 			int score = 0;
 			TCHAR		szFile1[_MAX_PATH];
 			SplitPath_FolderAndFile(m_szFile1, NULL, szFile1);
 			for( i = 0; i < nRowNum; i++ )
 			{
-				/* ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹–¼—v‹’Ê’m */
+				/* ãƒˆãƒ¬ã‚¤ã‹ã‚‰ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åè¦æ±‚é€šçŸ¥ */
 				::SendMessageAny( pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 				pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-				/* ©•ª‚È‚çƒXƒLƒbƒv */
+				/* è‡ªåˆ†ãªã‚‰ã‚¹ã‚­ãƒƒãƒ— */
 				if ( pEditNode[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() )
 				{
-					// “¯‚¶Œ`®‚É‚µ‚Ä‚¨‚­B‚½‚¾‚µƒAƒNƒZƒXƒL[”Ô†‚Í‚È‚µ
+					// åŒã˜å½¢å¼ã«ã—ã¦ãŠãã€‚ãŸã ã—ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ç•ªå·ã¯ãªã—
 					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1, calc.GetDC() );
 					::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
 					continue;
 				}
 
-				// ”Ô†‚ÍƒEƒBƒ“ƒhƒEˆê——‚Æ“¯‚¶”Ô†‚ğg‚¤
+				// ç•ªå·ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ã¨åŒã˜ç•ªå·ã‚’ä½¿ã†
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
 
 
-				/* ƒŠƒXƒg‚É“o˜^‚·‚é */
+				/* ãƒªã‚¹ãƒˆã«ç™»éŒ²ã™ã‚‹ */
 				nItem = ::List_AddString( hwndList, szName );
 				List_SetItemData( hwndList, nItem, pEditNode[i].GetHwnd() );
 				count++;
 
-				// ‰¡•‚ğŒvZ‚·‚é
+				// æ¨ªå¹…ã‚’è¨ˆç®—ã™ã‚‹
 				calc.SetTextWidthIfMax(szName);
 
-				// ƒtƒ@ƒCƒ‹–¼ˆê’v‚ÌƒXƒRƒA‚ğŒvZ‚·‚é
+				// ãƒ•ã‚¡ã‚¤ãƒ«åä¸€è‡´ã®ã‚¹ã‚³ã‚¢ã‚’è¨ˆç®—ã™ã‚‹
 				TCHAR szFile2[_MAX_PATH];
 				SplitPath_FolderAndFile( pFileInfo->m_szPath, NULL, szFile2 );
 				int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
 				if( score < scoreTemp ||
 					(selCode != code && code == pFileInfo->m_nCharCode && score == scoreTemp) ){
-					// ƒXƒRƒA‚Ì‚¢‚¢‚à‚Ì‚ğ‘I‘ğ. “¯‚¶‚È‚ç•¶šƒR[ƒh‚ª“¯‚¶‚à‚Ì‚ğ‘I‘ğ
+					// ã‚¹ã‚³ã‚¢ã®ã„ã„ã‚‚ã®ã‚’é¸æŠ. åŒã˜ãªã‚‰æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒåŒã˜ã‚‚ã®ã‚’é¸æŠ
 					score = scoreTemp;
 					selIndex = nItem;
 					selCode = pFileInfo->m_nCharCode;
@@ -304,72 +304,72 @@ void CDlgDiff::SetData( void )
 			}
 
 			delete [] pEditNode;
-			// 2002/11/01 Moca ’Ç‰Á ƒŠƒXƒgƒrƒ…[‚Ì‰¡•‚ğİ’èB‚±‚ê‚ğ‚â‚ç‚È‚¢‚Æ…•½ƒXƒNƒ[ƒ‹ƒo[‚ªg‚¦‚È‚¢
+			// 2002/11/01 Moca è¿½åŠ  ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®æ¨ªå¹…ã‚’è¨­å®šã€‚ã“ã‚Œã‚’ã‚„ã‚‰ãªã„ã¨æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ãŒä½¿ãˆãªã„
 			List_SetHorizontalExtent( hwndList, calc.GetCx() + 8 );
 
-			/* Å‰‚ğ‘I‘ğ */
+			/* æœ€åˆã‚’é¸æŠ */
 			//List_SetCurSel( hwndList, 0 );
 		}
 
-		//	From Here 2004.02.22 ‚¶‚ã‚¤‚¶
-		//	ŠJ‚¢‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ª‚ ‚éê‡‚É‚Í‰Šúó‘Ô‚Å‚»‚¿‚ç‚ğ—Dæ
+		//	From Here 2004.02.22 ã˜ã‚…ã†ã˜
+		//	é–‹ã„ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚‹å ´åˆã«ã¯åˆæœŸçŠ¶æ…‹ã§ãã¡ã‚‰ã‚’å„ªå…ˆ
 		if( count == 0 )
 		{
-			/* ‘Šèƒtƒ@ƒCƒ‹‚Ì‘I‘ğ */
+			/* ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ã®é¸æŠ */
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-			/* ‚»‚Ì‘¼‚Ì•ÒW’†ƒŠƒXƒg‚Í‚È‚µ */
+			/* ãã®ä»–ã®ç·¨é›†ä¸­ãƒªã‚¹ãƒˆã¯ãªã— */
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_DST2 ), FALSE );
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), FALSE );
 		}
 		else
 		{
-			/* ‘Šèƒtƒ@ƒCƒ‹‚Ì‘I‘ğ */
+			/* ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ã®é¸æŠ */
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, FALSE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE );
-			//	ListBox‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚çCæ“ª‚Ìƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚·‚éD
+			//	ListBoxãŒé¸æŠã•ã‚Œã¦ã„ãªã‹ã£ãŸã‚‰ï¼Œå…ˆé ­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã™ã‚‹ï¼
 			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
 			    List_SetCurSel( hwndList, selIndex );
 			}
 		}
-		//	To Here 2004.02.22 ‚¶‚ã‚¤‚¶
-		//	Feb. 28, 2004 genta ˆê”Ôã‚ğ‘I‘ğˆÊ’u‚Æ‚·‚éD
+		//	To Here 2004.02.22 ã˜ã‚…ã†ã˜
+		//	Feb. 28, 2004 genta ä¸€ç•ªä¸Šã‚’é¸æŠä½ç½®ã¨ã™ã‚‹ï¼
 		m_nIndexSave = selIndex;
 	}
 
 	return;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgDiff::GetData( void )
 {
 	BOOL	ret = TRUE;
 
-	//DIFFƒIƒvƒVƒ‡ƒ“
+	//DIFFã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	m_nDiffFlgOpt = 0;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_OPT_CASE   ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0001;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_OPT_SPACE  ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0002;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_OPT_SPCCHG ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0004;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_OPT_BLINE  ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0008;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_OPT_TABSPC ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0010;
-	//ƒtƒ@ƒCƒ‹V‹Œ
+	//ãƒ•ã‚¡ã‚¤ãƒ«æ–°æ—§
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_FILE2      ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0020;
-	//DIFF·•ª‚ªŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦ 2003.05.12 MIK
+	//DIFFå·®åˆ†ãŒè¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º 2003.05.12 MIK
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_DIFF_EXEC_STATE ) == BST_CHECKED ) m_nDiffFlgOpt |= 0x0040;
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
-	//‘Šèƒtƒ@ƒCƒ‹–¼
+	//ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«å
 	_tcscpy( m_szFile2, _T("") );
 	m_hWnd_Dst = NULL;
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
 		::DlgItem_GetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2, _countof2(m_szFile2) );
-		//	2004.05.19 MIK ŠO•”ƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÍƒLƒƒƒ“ƒZƒ‹
-		//‘Šèƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚Ä‚È‚¯‚ê‚ÎƒLƒƒƒ“ƒZƒ‹
+		//	2004.05.19 MIK å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+		//ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ãªã‘ã‚Œã°ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		if( m_szFile2[0] == '\0' ) ret = FALSE;
 
 	}
@@ -379,14 +379,14 @@ int CDlgDiff::GetData( void )
 		int			nItem;
 		EditInfo	*pFileInfo;
 
-		/* ƒŠƒXƒg‚©‚ç‘Šè‚ÌƒEƒCƒ“ƒhƒEƒnƒ“ƒhƒ‹‚ğæ“¾ */
+		/* ãƒªã‚¹ãƒˆã‹ã‚‰ç›¸æ‰‹ã®ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾— */
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 		nItem = List_GetCurSel( hwndList );
 		if( nItem != LB_ERR )
 		{
 			m_hWnd_Dst = (HWND)List_GetItemData( hwndList, nItem );
 
-			/* ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹–¼—v‹’Ê’m */
+			/* ãƒˆãƒ¬ã‚¤ã‹ã‚‰ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åè¦æ±‚é€šçŸ¥ */
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
 			pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
@@ -405,20 +405,20 @@ int CDlgDiff::GetData( void )
 		ret = FALSE;
 	}
 
-	/* Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ğ•\¦ */
+	/* è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED )
 		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = TRUE;
 	else
 		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = FALSE;
 
-	/* æ“ªi––”öj‚©‚çÄŒŸõ */
+	/* å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL ) == BST_CHECKED )
 		m_pShareData->m_Common.m_sSearch.m_bSearchAll = TRUE;
 	else
 		m_pShareData->m_Common.m_sSearch.m_bSearchAll = FALSE;
 
-	//‘Šèƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚Ä‚È‚¯‚ê‚ÎƒLƒƒƒ“ƒZƒ‹
-	//	2004.02.21 MIK ‘Šè‚ª–³‘è‚¾‚Æ”äŠr‚Å‚«‚È‚¢‚Ì‚Å”»’èíœ
+	//ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ãªã‘ã‚Œã°ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	//	2004.02.21 MIK ç›¸æ‰‹ãŒç„¡é¡Œã ã¨æ¯”è¼ƒã§ããªã„ã®ã§åˆ¤å®šå‰Šé™¤
 	//if( m_szFile2[0] == '\0' ) ret = FALSE;
 
 	return ret;
@@ -437,7 +437,7 @@ BOOL CDlgDiff::OnLbnSelChange( HWND hwndCtl, int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnLbnSelChange( hwndCtl, wID );
 }
 
@@ -451,7 +451,7 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 	{
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-		//	Feb. 28, 2004 genta ‘I‘ğ‰ğœ‘O‚É‘O‰ñ‚ÌˆÊ’u‚ğ‹L‰¯‚µ‚Ä‘I‘ğ‰ğœ
+		//	Feb. 28, 2004 genta é¸æŠè§£é™¤å‰ã«å‰å›ã®ä½ç½®ã‚’è¨˜æ†¶ã—ã¦é¸æŠè§£é™¤
 		int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
 		if( n != LB_ERR ){
 			m_nIndexSave = n;
@@ -460,7 +460,7 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
@@ -519,7 +519,7 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnSize( wParam, lParam );
 
 	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog );

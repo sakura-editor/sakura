@@ -1,8 +1,8 @@
-/*! @file
-	@brief �E�B���h�E�̈ʒu�Ƒ傫���_�C�A���O
+﻿/*! @file
+	@brief ウィンドウの位置と大きさダイアログ
 
 	@author Moca
-	@date 2004/05/13 �쐬
+	@date 2004/05/13 作成
 */
 /*
 	Copyright (C) 2004, genta, Moca
@@ -36,19 +36,19 @@
 #include "sakura.hh"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
-	IDOK,						HIDOK_WINSIZE,				// ����
-	IDC_BUTTON_HELP,			HIDC_BUTTON_WINSIZE_HELP,	// �w���v
-	IDC_EDIT_WX,				HIDC_EDIT_WX,				// ��
-	IDC_EDIT_WY,				HIDC_EDIT_WY,				// ����
-	IDC_EDIT_SX,				HIDC_EDIT_SX,				// X���W
-	IDC_EDIT_SY,				HIDC_EDIT_SY,				// Y���W
+	IDOK,						HIDOK_WINSIZE,				// 閉じる
+	IDC_BUTTON_HELP,			HIDC_BUTTON_WINSIZE_HELP,	// ヘルプ
+	IDC_EDIT_WX,				HIDC_EDIT_WX,				// 幅
+	IDC_EDIT_WY,				HIDC_EDIT_WY,				// 高さ
+	IDC_EDIT_SX,				HIDC_EDIT_SX,				// X座標
+	IDC_EDIT_SY,				HIDC_EDIT_SY,				// Y座標
 //	IDC_CHECK_WINPOS,			HIDC_CHECK_WINPOS,
-	IDC_RADIO_WINSIZE_DEF,		HIDC_RADIO_WINSIZE_DEF,		// �傫��/�w�肵�Ȃ�
-	IDC_RADIO_WINSIZE_SAVE,		HIDC_RADIO_WINSIZE_SAVE,	// �傫��/�p������
-	IDC_RADIO_WINSIZE_SET,		HIDC_RADIO_WINSIZE_SET,		// �傫��/���ڎw��
-	IDC_RADIO_WINPOS_DEF,		HIDC_RADIO_WINPOS_DEF,		// �ʒu/�w�肵�Ȃ�
-	IDC_RADIO_WINPOS_SAVE,		HIDC_RADIO_WINPOS_SAVE, 	// �ʒu/�p������
-	IDC_RADIO_WINPOS_SET,		HIDC_RADIO_WINPOS_SET,  	// �ʒu/���ڎw��
+	IDC_RADIO_WINSIZE_DEF,		HIDC_RADIO_WINSIZE_DEF,		// 大きさ/指定しない
+	IDC_RADIO_WINSIZE_SAVE,		HIDC_RADIO_WINSIZE_SAVE,	// 大きさ/継承する
+	IDC_RADIO_WINSIZE_SET,		HIDC_RADIO_WINSIZE_SET,		// 大きさ/直接指定
+	IDC_RADIO_WINPOS_DEF,		HIDC_RADIO_WINPOS_DEF,		// 位置/指定しない
+	IDC_RADIO_WINPOS_SAVE,		HIDC_RADIO_WINPOS_SAVE, 	// 位置/継承する
+	IDC_RADIO_WINPOS_SET,		HIDC_RADIO_WINPOS_SET,  	// 位置/直接指定
 	IDC_COMBO_WINTYPE,			HIDC_COMBO_WINTYPE,
 	0, 0
 };
@@ -64,14 +64,14 @@ CDlgWinSize::~CDlgWinSize()
 }
 
 
-// !���[�_���_�C�A���O�̕\��
+// !モーダルダイアログの表示
 int CDlgWinSize::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
-	EWinSizeMode&	eSaveWinSize,	//!< [in,out] �E�B���h�E�ʒu�p��
-	EWinSizeMode&	eSaveWinPos,	//!< [in,out] �E�B���h�E�T�C�Y�p��
-	int&			nWinSizeType,	//!< [in,out] �E�B���h�E�̎��s���̑傫��
-	RECT&			rc				//!< [in,out] ���A�����A���A��
+	EWinSizeMode&	eSaveWinSize,	//!< [in,out] ウィンドウ位置継承
+	EWinSizeMode&	eSaveWinPos,	//!< [in,out] ウィンドウサイズ継承
+	int&			nWinSizeType,	//!< [in,out] ウィンドウの実行時の大きさ
+	RECT&			rc				//!< [in,out] 幅、高さ、左、上
 )
 {
 	m_eSaveWinSize = eSaveWinSize;
@@ -86,19 +86,19 @@ int CDlgWinSize::DoModal(
 	return TRUE;
 }
 
-/*! ����������
+/*! 初期化処理
 */
 BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_NORMAL ) );	//L"����"
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MAXIMIZE ) );	//L"�ő剻"
-	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MINIMIZE ) );	//L"(�ŏ���)"
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_NORMAL ) );	//L"普通"
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
+	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
 
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SX ), 30000, 0 );
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SY ), 30000, 0 );
-	// �E�B���h�E�̍��W�́A�}�C�i�X�l���L���B
+	// ウィンドウの座標は、マイナス値も有効。
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_WX ), 30000, -30000 );
 	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_WY ), 30000, -30000 );
 
@@ -109,8 +109,8 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgWinSize::OnBnClicked( int wID )
 {
 	switch( wID ){
-	case IDC_BUTTON_HELP:	// 2006/09/09 novice id�C��
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000286 );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+	case IDC_BUTTON_HELP:	// 2006/09/09 novice id修正
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000286 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_RADIO_WINPOS_DEF:
 	case IDC_RADIO_WINPOS_SAVE:
@@ -127,7 +127,7 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-/*! @brief �_�C�A���O�{�b�N�X�Ƀf�[�^��ݒ�
+/*! @brief ダイアログボックスにデータを設定
 */
 void CDlgWinSize::SetData( void )
 {
@@ -173,7 +173,7 @@ void CDlgWinSize::SetData( void )
 }
 
 
-/*! �_�C�A���O�{�b�N�X�̃f�[�^��ǂݏo��
+/*! ダイアログボックスのデータを読み出す
 */
 int CDlgWinSize::GetData( void )
 {
@@ -217,7 +217,7 @@ int CDlgWinSize::GetData( void )
 }
 
 
-/*! ���p�\�E�s�̏�Ԃ��X�V����
+/*! 利用可能・不可の状態を更新する
 */
 void CDlgWinSize::RenewItemState( void )
 {

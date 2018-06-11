@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •¶šƒR[ƒhƒZƒbƒgİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Uchi
-	@date 2010/6/14  V‹Kì¬
+	@date 2010/6/14  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2010, Uchi
@@ -19,13 +19,13 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-//•¶šƒR[ƒhƒZƒbƒgİ’è CDlgSetCharSet
+//æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®š CDlgSetCharSet
 const DWORD p_helpids[] = {
-	IDOK,							HIDOK_GREP,							//ŒŸõ
-	IDCANCEL,						HIDCANCEL_GREP,						//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ƒwƒ‹ƒv
-	IDC_COMBO_CHARSET,				HIDC_OPENDLG_COMBO_CODE,			//•¶šƒR[ƒhƒZƒbƒg
-	IDC_CHECK_BOM,					HIDC_OPENDLG_CHECK_BOM,				//ğŒ
+	IDOK,							HIDOK_GREP,							//æ¤œç´¢
+	IDCANCEL,						HIDCANCEL_GREP,						//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ãƒ˜ãƒ«ãƒ—
+	IDC_COMBO_CHARSET,				HIDC_OPENDLG_COMBO_CODE,			//æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	IDC_CHECK_BOM,					HIDC_OPENDLG_CHECK_BOM,				//æ¡ä»¶
 	IDC_CHECK_CP,					HIDC_OPENDLG_CHECK_CP,				//CP
 	0, 0
 };
@@ -34,17 +34,17 @@ const DWORD p_helpids[] = {
 
 CDlgSetCharSet::CDlgSetCharSet()
 {
-	m_pnCharSet = NULL;			// •¶šƒR[ƒhƒZƒbƒg
-	m_pbBom = NULL;				// •¶šƒR[ƒhƒZƒbƒg
+	m_pnCharSet = NULL;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	m_pbBom = NULL;				// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	m_bCP = false;
 }
 
 
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgSetCharSet::DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom)
 {
-	m_pnCharSet = pnCharSet;	// •¶šƒR[ƒhƒZƒbƒg
+	m_pnCharSet = pnCharSet;	// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	m_pbBom = pbBom;			// BOM
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, (LPARAM)NULL );
@@ -56,13 +56,13 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 	
-	m_hwndCharSet = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );	// •¶šƒR[ƒhƒZƒbƒgƒRƒ“ƒ{ƒ{ƒbƒNƒX
-	m_hwndCheckBOM = ::GetDlgItem( GetHwnd(), IDC_CHECK_BOM );		// BOMƒ`ƒFƒbƒNƒ{ƒbƒNƒX
+	m_hwndCharSet = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );	// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹
+	m_hwndCheckBOM = ::GetDlgItem( GetHwnd(), IDC_CHECK_BOM );		// BOMãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 
-	// ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é
+	// ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹
 	Combo_SetExtendedUI( m_hwndCharSet, TRUE );
 
-	// •¶šƒR[ƒhƒZƒbƒg‘I‘ğƒRƒ“ƒ{ƒ{ƒbƒNƒX‰Šú‰»
+	// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆé¸æŠã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹åˆæœŸåŒ–
 	int i;
 	CCodeTypesForCombobox cCodeTypes;
 	Combo_ResetContent( m_hwndCharSet );
@@ -71,7 +71,7 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		Combo_SetItemData( m_hwndCharSet, idx, cCodeTypes.GetCode(i) );
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
@@ -88,11 +88,11 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_BUTTON_HELP:
-		/* u•¶šƒR[ƒhƒZƒbƒgİ’èv‚Ìƒwƒ‹ƒv */
+		/* ã€Œæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®šã€ã®ãƒ˜ãƒ«ãƒ— */
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_CHG_CHARSET) );
 		return TRUE;
 	case IDOK:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		if( GetData() ){
 			CloseDialog( TRUE );
 		}
@@ -102,13 +102,13 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
 
-// BOM ‚Ìİ’è
+// BOM ã®è¨­å®š
 void CDlgSetCharSet::SetBOM( void )
 {
 	int 		nIdx;
@@ -136,7 +136,7 @@ void CDlgSetCharSet::SetBOM( void )
 
 
 
-// •¶šƒR[ƒh‘I‘ğ‚Ìˆ—
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰é¸æŠæ™‚ã®å‡¦ç†
 BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	int 		nIdx;
@@ -144,7 +144,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 	WPARAM		fCheck;
 
 	switch (wID) {
-	//	•¶šƒR[ƒh‚Ì•ÏX‚ğBOMƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚É”½‰f
+	//	æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®å¤‰æ›´ã‚’BOMãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã«åæ˜ 
 	case IDC_COMBO_CHARSET:
 		SetBOM();
 		nIdx = Combo_GetCurSel( hwndCtl );
@@ -178,10 +178,10 @@ LPVOID CDlgSetCharSet::GetHelpIdTable(void)
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgSetCharSet::SetData( void )
 {
-	// •¶šƒR[ƒhƒZƒbƒg
+	// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	int		nIdx, nCurIdx, nIdxOld;
 	ECodeType nCharSet;
 	CCodeTypesForCombobox cCodeTypes;
@@ -205,17 +205,17 @@ void CDlgSetCharSet::SetData( void )
 	}
 	Combo_SetCurSel( m_hwndCharSet, nCurIdx );
 
-	// BOM‚ğİ’è
+	// BOMã‚’è¨­å®š
 	SetBOM();
 }
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[  */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼  */
 int CDlgSetCharSet::GetData( void )
 {
-	// •¶šƒR[ƒhƒZƒbƒg
+	// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	int		nIdx;
 	nIdx = Combo_GetCurSel( m_hwndCharSet );
 	*m_pnCharSet = (ECodeType)Combo_GetItemData( m_hwndCharSet, nIdx );

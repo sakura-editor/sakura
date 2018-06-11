@@ -1,8 +1,8 @@
-/*!	@file
-	@brief �E�B���h�E�̈ʒu�Ƒ傫���_�C�A���O
+﻿/*!	@file
+	@brief ウィンドウの位置と大きさダイアログ
 
 	@author Moca
-	@date 2004/05/13 �쐬
+	@date 2004/05/13 作成
 */
 /*
 	Copyright (C) 2004, Moca
@@ -34,17 +34,17 @@
 #include "dlg/CDialog.h"
 #include "env/CommonSetting.h"
 
-/*!	@brief �ʒu�Ƒ傫���̐ݒ�_�C�A���O
+/*!	@brief 位置と大きさの設定ダイアログ
 
-	���ʐݒ�̃E�B���h�E�ݒ�ŁC�E�B���h�E�ʒu���w�肷�邽�߂ɕ⏕�I��
-	�g�p�����_�C�A���O�{�b�N�X
+	共通設定のウィンドウ設定で，ウィンドウ位置を指定するために補助的に
+	使用されるダイアログボックス
 */
 class CDlgWinSize : public CDialog
 {
 public:
 	CDlgWinSize();
 	~CDlgWinSize();
-	int DoModal( HINSTANCE, HWND, EWinSizeMode&, EWinSizeMode&, int&, RECT& );	//!< ���[�_���_�C�A���O�̕\��
+	int DoModal( HINSTANCE, HWND, EWinSizeMode&, EWinSizeMode&, int&, RECT& );	//!< モーダルダイアログの表示
 
 protected:
 
@@ -57,9 +57,9 @@ protected:
 	void RenewItemState( void );
 
 private:
-	EWinSizeMode	m_eSaveWinSize;	//!< �E�B���h�E�T�C�Y�̕ۑ�: 0/�f�t�H���g�C1/�p���C2/�w��
-	EWinSizeMode	m_eSaveWinPos;	//!< �E�B���h�E�ʒu�̕ۑ�: 0/�f�t�H���g�C1/�p���C2/�w��
-	int				m_nWinSizeType;	//!< �E�B���h�E�\�����@: 0/�W���C1/�ő剻�C2/�ŏ���
+	EWinSizeMode	m_eSaveWinSize;	//!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定
+	EWinSizeMode	m_eSaveWinPos;	//!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
+	int				m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT			m_rc;
 };
 

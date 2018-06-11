@@ -1,16 +1,16 @@
-/*!	@file
-	@brief ˆóüİ’èƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief å°åˆ·è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 	
-	@date 2006.08.14 Moca —p†•ûŒüƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğ”p~‚µAƒ{ƒ^ƒ“‚ğ—LŒø‰»D
-		—p†–¼ˆê——‚Ìd•¡íœD
+	@date 2006.08.14 Moca ç”¨ç´™æ–¹å‘ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’å»ƒæ­¢ã—ã€ãƒœã‚¿ãƒ³ã‚’æœ‰åŠ¹åŒ–ï¼
+		ç”¨ç´™åä¸€è¦§ã®é‡è¤‡å‰Šé™¤ï¼
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor, Stonee
 	Copyright (C) 2002, MIK, aroka, YAZAKI
-	Copyright (C) 2003, ‚©‚ë‚Æ
+	Copyright (C) 2003, ã‹ã‚ã¨
 	Copyright (C) 2006, ryoji
 
 	This software is provided 'as-is', without any express or implied
@@ -42,51 +42,51 @@
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
 
-// ˆóüİ’è CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
+// å°åˆ·è¨­å®š CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12500
-	IDC_COMBO_SETTINGNAME,			HIDC_PS_COMBO_SETTINGNAME,	//ƒy[ƒWİ’è
-	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//İ’è–¼•ÏX
-	IDC_COMBO_FONT_HAN,				HIDC_PS_COMBO_FONT_HAN,		//”¼ŠpƒtƒHƒ“ƒg
-	IDC_COMBO_FONT_ZEN,				HIDC_PS_COMBO_FONT_ZEN,		//‘SŠpƒtƒHƒ“ƒg
-	IDC_EDIT_FONTHEIGHT,			HIDC_PS_EDIT_FONTHEIGHT,	//ƒtƒHƒ“ƒg‚
+	IDC_COMBO_SETTINGNAME,			HIDC_PS_COMBO_SETTINGNAME,	//ãƒšãƒ¼ã‚¸è¨­å®š
+	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//è¨­å®šåå¤‰æ›´
+	IDC_COMBO_FONT_HAN,				HIDC_PS_COMBO_FONT_HAN,		//åŠè§’ãƒ•ã‚©ãƒ³ãƒˆ
+	IDC_COMBO_FONT_ZEN,				HIDC_PS_COMBO_FONT_ZEN,		//å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆ
+	IDC_EDIT_FONTHEIGHT,			HIDC_PS_EDIT_FONTHEIGHT,	//ãƒ•ã‚©ãƒ³ãƒˆé«˜
 	IDC_SPIN_FONTHEIGHT,			HIDC_PS_EDIT_FONTHEIGHT,	//12570,
 	IDC_SPIN_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//12571,
-	IDC_EDIT_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//s‘—‚è
-	IDC_EDIT_DANSUU,				HIDC_PS_EDIT_DANSUU,		//’i”
+	IDC_EDIT_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//è¡Œé€ã‚Š
+	IDC_EDIT_DANSUU,				HIDC_PS_EDIT_DANSUU,		//æ®µæ•°
 	IDC_SPIN_DANSUU,				HIDC_PS_EDIT_DANSUU,		//12572,
-	IDC_EDIT_DANSPACE,				HIDC_PS_EDIT_DANSPACE,		//’i‚ÌŒ„ŠÔ
+	IDC_EDIT_DANSPACE,				HIDC_PS_EDIT_DANSPACE,		//æ®µã®éš™é–“
 	IDC_SPIN_DANSPACE,				HIDC_PS_EDIT_DANSPACE,		//12573,
-	IDC_COMBO_PAPER,				HIDC_PS_COMBO_PAPER,		//—p†ƒTƒCƒY
-	IDC_RADIO_PORTRAIT,				HIDC_PS_STATIC_PAPERORIENT,	//‰¡Œü‚«
-	IDC_RADIO_LANDSCAPE,			HIDC_PS_STATIC_PAPERORIENT,	//cŒü‚«
-	IDC_EDIT_MARGINTY,				HIDC_PS_EDIT_MARGINTY,		//—]”’ã
+	IDC_COMBO_PAPER,				HIDC_PS_COMBO_PAPER,		//ç”¨ç´™ã‚µã‚¤ã‚º
+	IDC_RADIO_PORTRAIT,				HIDC_PS_STATIC_PAPERORIENT,	//æ¨ªå‘ã
+	IDC_RADIO_LANDSCAPE,			HIDC_PS_STATIC_PAPERORIENT,	//ç¸¦å‘ã
+	IDC_EDIT_MARGINTY,				HIDC_PS_EDIT_MARGINTY,		//ä½™ç™½ä¸Š
 	IDC_SPIN_MARGINTY,				HIDC_PS_EDIT_MARGINTY,		//12574,
-	IDC_EDIT_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//—]”’‰º
+	IDC_EDIT_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//ä½™ç™½ä¸‹
 	IDC_SPIN_MARGINBY,				HIDC_PS_EDIT_MARGINBY,		//12575,
-	IDC_EDIT_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//—]”’¶
+	IDC_EDIT_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//ä½™ç™½å·¦
 	IDC_SPIN_MARGINLX,				HIDC_PS_EDIT_MARGINLX,		//12576,
-	IDC_EDIT_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//—]”’‰E
+	IDC_EDIT_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//ä½™ç™½å³
 	IDC_SPIN_MARGINRX,				HIDC_PS_EDIT_MARGINRX,		//12577,
-	IDC_CHECK_WORDWRAP,				HIDC_PS_CHECK_WORDWRAP,		//ƒ[ƒhƒ‰ƒbƒv
-	IDC_CHECK_LINENUMBER,			HIDC_PS_CHECK_LINENUMBER,	//s”Ô†
-	IDC_CHECK_PS_KINSOKUHEAD,		HIDC_PS_CHECK_KINSOKUHEAD,	//s“ª‹Ö‘¥	//@@@ 2002.04.09 MIK
-	IDC_CHECK_PS_KINSOKUTAIL,		HIDC_PS_CHECK_KINSOKUTAIL,	//s––‹Ö‘¥	//@@@ 2002.04.09 MIK
-	IDC_CHECK_PS_KINSOKURET,		HIDC_PS_CHECK_KINSOKURET,	//‰üs•¶š‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.14 MIK
-	IDC_CHECK_PS_KINSOKUKUTO,		HIDC_PS_CHECK_KINSOKUKUTO,	//‹å“Ç“_‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.17 MIK
-	IDC_CHECK_COLORPRINT,			HIDC_PS_CHECK_COLORPRINT,	//ƒJƒ‰[ˆóü			// 2013/4/26 Uchi
-	IDC_EDIT_HEAD1,					HIDC_PS_EDIT_HEAD1,			//ƒwƒbƒ_[(¶Šñ‚¹)		// 2006.10.11 ryoji
-	IDC_EDIT_HEAD2,					HIDC_PS_EDIT_HEAD2,			//ƒwƒbƒ_[(’†‰›Šñ‚¹)	// 2006.10.11 ryoji
-	IDC_EDIT_HEAD3,					HIDC_PS_EDIT_HEAD3,			//ƒwƒbƒ_[(‰EŠñ‚¹)		// 2006.10.11 ryoji
-	IDC_EDIT_FOOT1,					HIDC_PS_EDIT_FOOT1,			//ƒtƒbƒ^[(¶Šñ‚¹)		// 2006.10.11 ryoji
-	IDC_EDIT_FOOT2,					HIDC_PS_EDIT_FOOT2,			//ƒtƒbƒ^[(’†‰›Šñ‚¹)	// 2006.10.11 ryoji
-	IDC_EDIT_FOOT3,					HIDC_PS_EDIT_FOOT3,			//ƒtƒbƒ^[(‰EŠñ‚¹)		// 2006.10.11 ryoji
-	IDC_CHECK_USE_FONT_HEAD,		HIDC_PS_FONT_HEAD,			//ƒwƒbƒ_[(ƒtƒHƒ“ƒg)	// 2013.05.16 Uchi
-	IDC_BUTTON_FONT_HEAD,			HIDC_PS_FONT_HEAD,			//ƒwƒbƒ_[(ƒtƒHƒ“ƒg)	// 2013.05.16 Uchi
-	IDC_CHECK_USE_FONT_FOOT,		HIDC_PS_FONT_FOOT,			//ƒtƒbƒ^[(ƒtƒHƒ“ƒg)	// 2013/5/16 Uchi
-	IDC_BUTTON_FONT_FOOT,			HIDC_PS_FONT_FOOT,			//ƒtƒbƒ^[(ƒtƒHƒ“ƒg)	// 2013/5/16 Uchi
+	IDC_CHECK_WORDWRAP,				HIDC_PS_CHECK_WORDWRAP,		//ãƒ¯ãƒ¼ãƒ‰ãƒ©ãƒƒãƒ—
+	IDC_CHECK_LINENUMBER,			HIDC_PS_CHECK_LINENUMBER,	//è¡Œç•ªå·
+	IDC_CHECK_PS_KINSOKUHEAD,		HIDC_PS_CHECK_KINSOKUHEAD,	//è¡Œé ­ç¦å‰‡	//@@@ 2002.04.09 MIK
+	IDC_CHECK_PS_KINSOKUTAIL,		HIDC_PS_CHECK_KINSOKUTAIL,	//è¡Œæœ«ç¦å‰‡	//@@@ 2002.04.09 MIK
+	IDC_CHECK_PS_KINSOKURET,		HIDC_PS_CHECK_KINSOKURET,	//æ”¹è¡Œæ–‡å­—ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.14 MIK
+	IDC_CHECK_PS_KINSOKUKUTO,		HIDC_PS_CHECK_KINSOKUKUTO,	//å¥èª­ç‚¹ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.17 MIK
+	IDC_CHECK_COLORPRINT,			HIDC_PS_CHECK_COLORPRINT,	//ã‚«ãƒ©ãƒ¼å°åˆ·			// 2013/4/26 Uchi
+	IDC_EDIT_HEAD1,					HIDC_PS_EDIT_HEAD1,			//ãƒ˜ãƒƒãƒ€ãƒ¼(å·¦å¯„ã›)		// 2006.10.11 ryoji
+	IDC_EDIT_HEAD2,					HIDC_PS_EDIT_HEAD2,			//ãƒ˜ãƒƒãƒ€ãƒ¼(ä¸­å¤®å¯„ã›)	// 2006.10.11 ryoji
+	IDC_EDIT_HEAD3,					HIDC_PS_EDIT_HEAD3,			//ãƒ˜ãƒƒãƒ€ãƒ¼(å³å¯„ã›)		// 2006.10.11 ryoji
+	IDC_EDIT_FOOT1,					HIDC_PS_EDIT_FOOT1,			//ãƒ•ãƒƒã‚¿ãƒ¼(å·¦å¯„ã›)		// 2006.10.11 ryoji
+	IDC_EDIT_FOOT2,					HIDC_PS_EDIT_FOOT2,			//ãƒ•ãƒƒã‚¿ãƒ¼(ä¸­å¤®å¯„ã›)	// 2006.10.11 ryoji
+	IDC_EDIT_FOOT3,					HIDC_PS_EDIT_FOOT3,			//ãƒ•ãƒƒã‚¿ãƒ¼(å³å¯„ã›)		// 2006.10.11 ryoji
+	IDC_CHECK_USE_FONT_HEAD,		HIDC_PS_FONT_HEAD,			//ãƒ˜ãƒƒãƒ€ãƒ¼(ãƒ•ã‚©ãƒ³ãƒˆ)	// 2013.05.16 Uchi
+	IDC_BUTTON_FONT_HEAD,			HIDC_PS_FONT_HEAD,			//ãƒ˜ãƒƒãƒ€ãƒ¼(ãƒ•ã‚©ãƒ³ãƒˆ)	// 2013.05.16 Uchi
+	IDC_CHECK_USE_FONT_FOOT,		HIDC_PS_FONT_FOOT,			//ãƒ•ãƒƒã‚¿ãƒ¼(ãƒ•ã‚©ãƒ³ãƒˆ)	// 2013/5/16 Uchi
+	IDC_BUTTON_FONT_FOOT,			HIDC_PS_FONT_FOOT,			//ãƒ•ãƒƒã‚¿ãƒ¼(ãƒ•ã‚©ãƒ³ãƒˆ)	// 2013/5/16 Uchi
 	IDOK,							HIDOK_PS,					//OK
-	IDCANCEL,						HIDCANCEL_PS,				//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_PS_BUTTON_HELP,		//ƒwƒ‹ƒv
+	IDCANCEL,						HIDCANCEL_PS,				//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_PS_BUTTON_HELP,		//ãƒ˜ãƒ«ãƒ—
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
@@ -112,7 +112,7 @@ int CALLBACK SetData_EnumFontFamProc(
 	return 1;
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgPrintSetting::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
@@ -143,24 +143,24 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 {
 	_SetHwnd( hwndDlg );
 
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹ */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER ), TRUE );
 
-	// ƒ^ƒCƒ}[‚Å‚ÌXV‚ğ‚â‚ß‚ÄA”\“®“I‚ÉXV—v‹‚·‚é 2013.5.5 aroka
-	// CDialog::OnInitDialog‚Ì‰œ‚ÅOnChangeSettingType‚ªŒÄ‚Î‚ê‚é‚Ì‚Å‚±‚±‚Å‚ÍXV—v‹‚µ‚È‚¢
+	// ã‚¿ã‚¤ãƒãƒ¼ã§ã®æ›´æ–°ã‚’ã‚„ã‚ã¦ã€èƒ½å‹•çš„ã«æ›´æ–°è¦æ±‚ã™ã‚‹ 2013.5.5 aroka
+	// CDialog::OnInitDialogã®å¥¥ã§OnChangeSettingTypeãŒå‘¼ã°ã‚Œã‚‹ã®ã§ã“ã“ã§ã¯æ›´æ–°è¦æ±‚ã—ãªã„
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
 
-	// ƒ_ƒCƒAƒƒO‚ÌƒtƒHƒ“ƒg‚Ìæ“¾
-	m_hFontDlg = (HFONT)::SendMessage( GetHwnd(), WM_GETFONT, 0, 0 );	// ƒ_ƒCƒAƒƒO‚ÌƒtƒHƒ“ƒg
+	// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚©ãƒ³ãƒˆã®å–å¾—
+	m_hFontDlg = (HFONT)::SendMessage( GetHwnd(), WM_GETFONT, 0, 0 );	// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚©ãƒ³ãƒˆ
 	LOGFONT	lf;
 	::GetObject(m_hFontDlg, sizeof(LOGFONT), &lf);
-	m_nFontHeight = lf.lfHeight;		// ƒtƒHƒ“ƒgƒTƒCƒY
+	m_nFontHeight = lf.lfHeight;		// ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
@@ -168,7 +168,7 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 {
 	::KillTimer( GetHwnd(), IDT_PRINTSETTING );
 
-	// ƒtƒHƒ“ƒg‚Ì”jŠü
+	// ãƒ•ã‚©ãƒ³ãƒˆã®ç ´æ£„
 	HFONT	hFontOld;
 	hFontOld = (HFONT)::SendMessage(::GetDlgItem( GetHwnd(), IDC_STATIC_FONT_HEAD ), WM_GETFONT, 0, 0 );
 	if (m_hFontDlg != hFontOld) {
@@ -179,7 +179,7 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 		::DeleteObject( hFontOld );
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnDestroy();
 }
 
@@ -206,7 +206,7 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 	case IDC_SPIN_MARGINBY:
 	case IDC_SPIN_MARGINLX:
 	case IDC_SPIN_MARGINRX:
-		/* ƒXƒsƒ“ƒRƒ“ƒgƒ[ƒ‹‚Ìˆ— */
+		/* ã‚¹ãƒ”ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®å‡¦ç† */
 		OnSpin( idCtrl, bSpinDown );
 		UpdatePrintableLineAndColumn();
 		break;
@@ -219,14 +219,14 @@ BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 //	if( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ) == hwndCtl ){
 	switch( wID ){
 	case IDC_COMBO_SETTINGNAME:
-		/* İ’è‚Ìƒ^ƒCƒv‚ª•Ï‚í‚Á‚½ */
+		/* è¨­å®šã®ã‚¿ã‚¤ãƒ—ãŒå¤‰ã‚ã£ãŸ */
 		OnChangeSettingType( TRUE );
 		return TRUE;
 	case IDC_COMBO_FONT_HAN:
 	case IDC_COMBO_FONT_ZEN:
 	case IDC_COMBO_PAPER:
 		UpdatePrintableLineAndColumn();
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	}
 	return FALSE;
 }
@@ -239,9 +239,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	HWND			hwndComboSettingName;
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uˆóüƒy[ƒWİ’èv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œå°åˆ·ãƒšãƒ¼ã‚¸è¨­å®šã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
 		_tcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
@@ -262,7 +262,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
 			_tcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = _T('\0');
-			/* ˆóüİ’è–¼ˆê—— */
+			/* å°åˆ·è¨­å®šåä¸€è¦§ */
 			hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
 			Combo_ResetContent( hwndComboSettingName );
 			int		nSelectIdx;
@@ -288,9 +288,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			INT		nPointSize;
 
 			if (lf.lfFaceName[0] == _T('\0')) {
-				// ”¼ŠpƒtƒHƒ“ƒg‚ğİ’è
+				// åŠè§’ãƒ•ã‚©ãƒ³ãƒˆã‚’è¨­å®š
 				auto_strcpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
-				// 1/10mm¨‰æ–Êƒhƒbƒg”
+				// 1/10mmâ†’ç”»é¢ãƒ‰ãƒƒãƒˆæ•°
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
 			}
@@ -311,9 +311,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			INT		nPointSize;
 
 			if (lf.lfFaceName[0] == _T('\0')) {
-				// ”¼ŠpƒtƒHƒ“ƒg‚ğİ’è
+				// åŠè§’ãƒ•ã‚©ãƒ³ãƒˆã‚’è¨­å®š
 				auto_strcpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
-				// 1/10mm¨‰æ–Êƒhƒbƒg”
+				// 1/10mmâ†’ç”»é¢ãƒ‰ãƒƒãƒˆæ•°
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
 			}
@@ -350,7 +350,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		return TRUE;
 	case IDOK:
 		if( CalcPrintableLineAndColumn() ){
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 			::EndDialog( GetHwnd(), GetData() );
 		}
 		return TRUE;
@@ -360,12 +360,12 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	case IDC_RADIO_PORTRAIT:
 	case IDC_RADIO_LANDSCAPE:
 		UpdatePrintableLineAndColumn();
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	case IDC_CHECK_LINENUMBER:
 		UpdatePrintableLineAndColumn();
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
@@ -375,15 +375,15 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 	switch( wID ){
 	case IDC_STATIC_ENABLECOLUMNS:
 	case IDC_STATIC_ENABLELINES:
-		// Œ»óƒNƒŠƒbƒN‚Íó‚¯•t‚¯‚Ä‚¢‚È‚¢‚ªAƒƒbƒZ[ƒWˆ—‚µ‚½‚¢‚Ì‚Å‚±‚±‚É”z’u 2013.5.5 aroka
-		// ƒƒbƒZ[ƒW‚ª˜A‘±‚µ‚Ä‘—‚ç‚ê‚½‚Æ‚«‚Íˆê‰ñ‚¾‚¯‘Î‰‚·‚é 2013.5.5 aroka
+		// ç¾çŠ¶ã‚¯ãƒªãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã¦ã„ãªã„ãŒã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†ã—ãŸã„ã®ã§ã“ã“ã«é…ç½® 2013.5.5 aroka
+		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€£ç¶šã—ã¦é€ã‚‰ã‚ŒãŸã¨ãã¯ä¸€å›ã ã‘å¯¾å¿œã™ã‚‹ 2013.5.5 aroka
 		if( m_bPrintableLinesAndColumnInvalid ){
 			m_bPrintableLinesAndColumnInvalid = false;
 			CalcPrintableLineAndColumn();
 		}
 		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnStnClicked( wID );
 }
 
@@ -391,11 +391,11 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
-	case IDC_EDIT_FONTHEIGHT:	// ƒtƒHƒ“ƒg•‚ÌÅ¬’l‚ª”ñ‚O‚Ì‚½‚ß'12'‚Æ“ü—Í‚·‚é‚Æ'1'‚Ì‚Æ‚±‚ë‚ÅR‚ç‚ê‚Ä‚µ‚Ü‚¤ 2013.5.5 aroka
-		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE ) >=10 ){	// “ñŒ…ˆÈã‚Ìê‡‚Í—Ìˆæƒ`ƒFƒbƒN 2013.5.20 aroka
+	case IDC_EDIT_FONTHEIGHT:	// ãƒ•ã‚©ãƒ³ãƒˆå¹…ã®æœ€å°å€¤ãŒéï¼ã®ãŸã‚'12'ã¨å…¥åŠ›ã™ã‚‹ã¨'1'ã®ã¨ã“ã‚ã§è¹´ã‚‰ã‚Œã¦ã—ã¾ã† 2013.5.5 aroka
+		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE ) >=10 ){	// äºŒæ¡ä»¥ä¸Šã®å ´åˆã¯é ˜åŸŸãƒã‚§ãƒƒã‚¯ 2013.5.20 aroka
 			UpdatePrintableLineAndColumn();
 		}
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	case IDC_EDIT_LINESPACE:
 	case IDC_EDIT_DANSUU:
 	case IDC_EDIT_DANSPACE:
@@ -404,9 +404,9 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 	case IDC_EDIT_MARGINLX:
 	case IDC_EDIT_MARGINRX:
 		UpdatePrintableLineAndColumn();
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
@@ -415,28 +415,28 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 {
 	switch( wID ){
 	case IDC_EDIT_FONTHEIGHT:
-	//case IDC_EDIT_LINESPACE:	// EN_CHANGE ‚ÅŒvZ‚µ‚Ä‚¢‚é‚Ì‚Åç’·‚©‚ÈA‚Æv‚¢ƒRƒƒ“ƒgƒAƒEƒg 2013.5.5 aroka
+	//case IDC_EDIT_LINESPACE:	// EN_CHANGE ã§è¨ˆç®—ã—ã¦ã„ã‚‹ã®ã§å†—é•·ã‹ãªã€ã¨æ€ã„ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ 2013.5.5 aroka
 	//case IDC_EDIT_DANSUU:
 	//case IDC_EDIT_DANSPACE:
 	//case IDC_EDIT_MARGINTY:
 	//case IDC_EDIT_MARGINBY:
 	//case IDC_EDIT_MARGINLX:
 	//case IDC_EDIT_MARGINRX:
-	case IDC_EDIT_HEAD1:	// ƒeƒLƒXƒg•ÒW‚Ì‚½‚Ñ‚Éƒ`ƒFƒbƒN‚·‚é‚Æ’x‚¢‚Ì‚ÅƒtƒH[ƒJƒXˆÚ“®‚Ì‚İ 2013.5.12 aroka
+	case IDC_EDIT_HEAD1:	// ãƒ†ã‚­ã‚¹ãƒˆç·¨é›†ã®ãŸã³ã«ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã¨é…ã„ã®ã§ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç§»å‹•æ™‚ã®ã¿ 2013.5.12 aroka
 	case IDC_EDIT_HEAD2:
 	case IDC_EDIT_HEAD3:
 	case IDC_EDIT_FOOT1:
 	case IDC_EDIT_FOOT2:
 	case IDC_EDIT_FOOT3:
 		UpdatePrintableLineAndColumn();
-		break;	// ‚±‚±‚Å‚Ís‚ÆŒ…‚ÌXV—v‹‚Ì‚İBŒã‚Ìˆ—‚ÍCDialog‚É”C‚¹‚éB
+		break;	// ã“ã“ã§ã¯è¡Œã¨æ¡ã®æ›´æ–°è¦æ±‚ã®ã¿ã€‚å¾Œã®å‡¦ç†ã¯CDialogã«ä»»ã›ã‚‹ã€‚
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnEnKillFocus( hwndCtl, wID );
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgPrintSetting::SetData( void )
 {
 	HDC		hdc;
@@ -448,7 +448,7 @@ void CDlgPrintSetting::SetData( void )
 	int	nSelectIdx;
 
 
-	/* ƒtƒHƒ“ƒgˆê—— */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä¸€è¦§ */
 	hdc = ::GetDC( m_hwndParent );
 	hwndComboFont = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
 	Combo_ResetContent( hwndComboFont );
@@ -462,17 +462,17 @@ void CDlgPrintSetting::SetData( void )
 	);
 	::ReleaseDC( m_hwndParent, hdc );
 
-	/* —p†ƒTƒCƒYˆê—— */
+	/* ç”¨ç´™ã‚µã‚¤ã‚ºä¸€è¦§ */
 	hwndComboPaper = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
 	Combo_ResetContent( hwndComboPaper );
-	// 2006.08.14 Moca —p†–¼ˆê——‚Ìd•¡íœ
+	// 2006.08.14 Moca ç”¨ç´™åä¸€è¦§ã®é‡è¤‡å‰Šé™¤
 	for( i = 0; i < CPrint::m_nPaperInfoArrNum; ++i ){
 		nItemIdx = Combo_AddString( hwndComboPaper, CPrint::m_paperInfoArr[i].m_pszName );
 		Combo_SetItemData( hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
 	}
 
 
-	/* ˆóüİ’è–¼ˆê—— */
+	/* å°åˆ·è¨­å®šåä¸€è¦§ */
 	hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
 	Combo_ResetContent( hwndComboSettingName );
 	nSelectIdx = 0;
@@ -485,7 +485,7 @@ void CDlgPrintSetting::SetData( void )
 	}
 	Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
 
-	/* İ’è‚Ìƒ^ƒCƒv‚ª•Ï‚í‚Á‚½ */
+	/* è¨­å®šã®ã‚¿ã‚¤ãƒ—ãŒå¤‰ã‚ã£ãŸ */
 	OnChangeSettingType( FALSE );
 
 	return;
@@ -494,21 +494,21 @@ void CDlgPrintSetting::SetData( void )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸ FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgPrintSetting::GetData( void )
 {
 	HWND	hwndCtrl;
 	int		nIdx1;
 	int		nWork;
 
-	/* ƒtƒHƒ“ƒgˆê—— */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan
 	);
-	/* ƒtƒHƒ“ƒgˆê—— */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	Combo_GetLBText( hwndCtrl, nIdx1,
@@ -520,7 +520,7 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, NULL, FALSE );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, NULL, FALSE ) * 10;
 
-	/* “ü—Í’l(”’l)‚ÌƒGƒ‰[ƒ`ƒFƒbƒN‚ğ‚µ‚Ä³‚µ‚¢’l‚ğ•Ô‚· */
+	/* å…¥åŠ›å€¤(æ•°å€¤)ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ã‚’ã—ã¦æ­£ã—ã„å€¤ã‚’è¿”ã™ */
 	nWork = DataCheckAndCorrect( IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight );
 	if( nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight ){
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = nWork;
@@ -544,14 +544,14 @@ int CDlgPrintSetting::GetData( void )
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10, FALSE );
 	}
 
-	/* —p†ƒTƒCƒYˆê—— */
+	/* ç”¨ç´™ã‚µã‚¤ã‚ºä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
 		(short)Combo_GetItemData( hwndCtrl, nIdx1 );
 
-	// —p†‚ÌŒü‚«
-	// 2006.08.14 Moca —p†•ûŒüƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğ”p~‚µAƒ{ƒ^ƒ“‚ğ—LŒø‰»
+	// ç”¨ç´™ã®å‘ã
+	// 2006.08.14 Moca ç”¨ç´™æ–¹å‘ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’å»ƒæ­¢ã—ã€ãƒœã‚¿ãƒ³ã‚’æœ‰åŠ¹åŒ–
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_PORTRAIT ) ){
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;
 	}else{
@@ -563,7 +563,7 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINLX, NULL, FALSE ) * 10;
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, NULL, FALSE ) * 10;
 
-	/* “ü—Í’l(”’l)‚ÌƒGƒ‰[ƒ`ƒFƒbƒN‚ğ‚µ‚Ä³‚µ‚¢’l‚ğ•Ô‚· */
+	/* å…¥åŠ›å€¤(æ•°å€¤)ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ã‚’ã—ã¦æ­£ã—ã„å€¤ã‚’è¿”ã™ */
 	nWork = DataCheckAndCorrect( IDC_EDIT_MARGINTY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10 );
 	if( nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10 ){
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY = nWork * 10;
@@ -585,40 +585,40 @@ int CDlgPrintSetting::GetData( void )
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 	}
 
-	// s”Ô†‚ğˆóü
+	// è¡Œç•ªå·ã‚’å°åˆ·
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintLineNumber = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_LINENUMBER );
-	// ‰p•¶ƒ[ƒhƒ‰ƒbƒv
+	// è‹±æ–‡ãƒ¯ãƒ¼ãƒ‰ãƒ©ãƒƒãƒ—
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_WORDWRAP );
 
-	//s“ª‹Ö‘¥	//@@@ 2002.04.09 MIK
+	//è¡Œé ­ç¦å‰‡	//@@@ 2002.04.09 MIK
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PS_KINSOKUHEAD );
-	//s––‹Ö‘¥	//@@@ 2002.04.09 MIK
+	//è¡Œæœ«ç¦å‰‡	//@@@ 2002.04.09 MIK
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PS_KINSOKUTAIL );
-	//‰üs•¶š‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.13 MIK
+	//æ”¹è¡Œæ–‡å­—ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.13 MIK
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PS_KINSOKURET );
-	//‹å“Ç“_‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.17 MIK
+	//å¥èª­ç‚¹ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.17 MIK
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO );
 
-	// ƒJƒ‰[ˆóü
+	// ã‚«ãƒ©ãƒ¼å°åˆ·
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bColorPrint =
 		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_COLORPRINT ) );
 
 	//@@@ 2002.2.4 YAZAKI
-	/* ƒwƒbƒ_[ */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[1], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[2], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
+	/* ãƒ˜ãƒƒãƒ€ãƒ¼ */
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[1], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[2], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
 
-	/* ƒtƒbƒ^[ */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
+	/* ãƒ•ãƒƒã‚¿ãƒ¼ */
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[0], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
 
-	// ƒwƒbƒ_ƒtƒHƒ“ƒg
+	// ãƒ˜ãƒƒãƒ€ãƒ•ã‚©ãƒ³ãƒˆ
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_HEAD )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT) );
 	}
-	// ƒtƒbƒ^ƒtƒHƒ“ƒg
+	// ãƒ•ãƒƒã‚¿ãƒ•ã‚©ãƒ³ãƒˆ
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_FOOT )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT) );
 	}
@@ -627,7 +627,7 @@ int CDlgPrintSetting::GetData( void )
 }
 
 
-/* İ’è‚Ìƒ^ƒCƒv‚ª•Ï‚í‚Á‚½ */
+/* è¨­å®šã®ã‚¿ã‚¤ãƒ—ãŒå¤‰ã‚ã£ãŸ */
 void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 {
 	HWND	hwndComboSettingName;
@@ -648,12 +648,12 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	}
 	m_nCurrentPrintSetting = Combo_GetItemData( hwndComboSettingName, nIdx1 );
 
-	/* ƒtƒHƒ“ƒgˆê—— */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
 	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
-	/* ƒtƒHƒ“ƒgˆê—— */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
 	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
 	Combo_SetCurSel( hwndCtrl, nIdx1 );
@@ -663,7 +663,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10, FALSE );
 
-	/* —p†ƒTƒCƒYˆê—— */
+	/* ç”¨ç´™ã‚µã‚¤ã‚ºä¸€è¦§ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
 	nItemNum = Combo_GetCount( hwndCtrl );
 	for( i = 0; i < nItemNum; ++i ){
@@ -674,52 +674,52 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 		}
 	}
 
-	// —p†‚ÌŒü‚«
-	// 2006.08.14 Moca —p†•ûŒüƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğ”p~‚µAƒ{ƒ^ƒ“‚ğ—LŒø‰»
+	// ç”¨ç´™ã®å‘ã
+	// 2006.08.14 Moca ç”¨ç´™æ–¹å‘ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’å»ƒæ­¢ã—ã€ãƒœã‚¿ãƒ³ã‚’æœ‰åŠ¹åŒ–
 	bool bIsPortrait = ( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation == DMORIENT_PORTRAIT );
 	CheckDlgButtonBool( GetHwnd(), IDC_RADIO_PORTRAIT, bIsPortrait );
 	CheckDlgButtonBool( GetHwnd(), IDC_RADIO_LANDSCAPE, !bIsPortrait );
 
-	// —]”’
+	// ä½™ç™½
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINTY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINBY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10, FALSE );
 
-	// s”Ô†‚ğˆóü
+	// è¡Œç•ªå·ã‚’å°åˆ·
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_LINENUMBER, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintLineNumber );
-	// ‰p•¶ƒ[ƒhƒ‰ƒbƒv
+	// è‹±æ–‡ãƒ¯ãƒ¼ãƒ‰ãƒ©ãƒƒãƒ—
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_WORDWRAP, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap );
 
-	// s“ª‹Ö‘¥	//@@@ 2002.04.09 MIK
+	// è¡Œé ­ç¦å‰‡	//@@@ 2002.04.09 MIK
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKUHEAD, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead );
-	// s––‹Ö‘¥	//@@@ 2002.04.09 MIK
+	// è¡Œæœ«ç¦å‰‡	//@@@ 2002.04.09 MIK
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKUTAIL, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail );
 
-	// ‰üs•¶š‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.13 MIK
+	// æ”¹è¡Œæ–‡å­—ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.13 MIK
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKURET, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet );
-	// ‹å“Ç“_‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.17 MIK
+	// å¥èª­ç‚¹ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.17 MIK
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto );
 
-	// ƒJƒ‰[ˆóü
+	// ã‚«ãƒ©ãƒ¼å°åˆ·
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_COLORPRINT, 
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_bColorPrint ? BST_CHECKED : BST_UNCHECKED);
 
-	/* ƒwƒbƒ_[ */
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
+	/* ãƒ˜ãƒƒãƒ€ãƒ¼ */
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_CENTER] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_RIGHT] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
 
-	/* ƒtƒbƒ^[ */
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
-	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100•¶š‚Å§ŒÀ‚µ‚È‚¢‚ÆBBB
+	/* ãƒ•ãƒƒã‚¿ãƒ¼ */
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_LEFT] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100æ–‡å­—ã§åˆ¶é™ã—ãªã„ã¨ã€‚ã€‚ã€‚
 
-	// ƒwƒbƒ_ƒtƒHƒ“ƒg
+	// ãƒ˜ãƒƒãƒ€ãƒ•ã‚©ãƒ³ãƒˆ
 	SetFontName( IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize );
-	// ƒtƒbƒ^ƒtƒHƒ“ƒg
+	// ãƒ•ãƒƒã‚¿ãƒ•ã‚©ãƒ³ãƒˆ
 	SetFontName( IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize );
@@ -744,7 +744,7 @@ const struct {
 	{ IDC_EDIT_MARGINRX,	0,	50 },	//!< mm
 };
 
-/* ƒXƒsƒ“ƒRƒ“ƒgƒ[ƒ‹‚Ìˆ— */
+/* ã‚¹ãƒ”ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®å‡¦ç† */
 void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 {
 	int		nData = 0;
@@ -769,14 +769,14 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
  		}else{
 			nData += nDiff;
  		}
-		/* “ü—Í’l(”’l)‚ÌƒGƒ‰[ƒ`ƒFƒbƒN‚ğ‚µ‚Ä³‚µ‚¢’l‚ğ•Ô‚· */
+		/* å…¥åŠ›å€¤(æ•°å€¤)ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ã‚’ã—ã¦æ­£ã—ã„å€¤ã‚’è¿”ã™ */
 		nData = DataCheckAndCorrect( nCtrlIdEDIT, nData );
 		::SetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nData, FALSE );
 	}
 }
 
 
-/* “ü—Í’l(”’l)‚ÌƒGƒ‰[ƒ`ƒFƒbƒN‚ğ‚µ‚Ä³‚µ‚¢’l‚ğ•Ô‚· */
+/* å…¥åŠ›å€¤(æ•°å€¤)ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ã‚’ã—ã¦æ­£ã—ã„å€¤ã‚’è¿”ã™ */
 int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 {
 	int nIdx = -1;
@@ -803,53 +803,53 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 
 
 /*!
-	ˆóš‰Â”\s”‚ÆŒ…”‚ğŒvZ
-	@date 2013.05.05 aroka OnTimer‚©‚çˆÚ“®
-	@retval ˆóš‰Â”\—Ìˆæ‚ª‚ ‚ê‚Î TRUE  // 2013.05.20 aroka
+	å°å­—å¯èƒ½è¡Œæ•°ã¨æ¡æ•°ã‚’è¨ˆç®—
+	@date 2013.05.05 aroka OnTimerã‹ã‚‰ç§»å‹•
+	@retval å°å­—å¯èƒ½é ˜åŸŸãŒã‚ã‚Œã° TRUE  // 2013.05.20 aroka
 */
 BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 {
-	int				nEnableColumns;		/* s‚ ‚½‚è‚Ì•¶š” */
-	int				nEnableLines;		/* c•ûŒü‚Ìs” */
-	MYDEVMODE		dmDummy;			// 2003.05.18 ‚©‚ë‚Æ Œ^•ÏX
-	short			nPaperAllWidth;		/* —p†• */
-	short			nPaperAllHeight;	/* —p†‚‚³ */
+	int				nEnableColumns;		/* è¡Œã‚ãŸã‚Šã®æ–‡å­—æ•° */
+	int				nEnableLines;		/* ç¸¦æ–¹å‘ã®è¡Œæ•° */
+	MYDEVMODE		dmDummy;			// 2003.05.18 ã‹ã‚ã¨ å‹å¤‰æ›´
+	short			nPaperAllWidth;		/* ç”¨ç´™å¹… */
+	short			nPaperAllHeight;	/* ç”¨ç´™é«˜ã• */
 	PRINTSETTING*	pPS;
 
-	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	GetData();
 	pPS = &m_PrintSettingArr[m_nCurrentPrintSetting];
 
 	dmDummy.dmFields = DM_PAPERSIZE | DMORIENT_LANDSCAPE;
 	dmDummy.dmPaperSize = pPS->m_nPrintPaperSize;
 	dmDummy.dmOrientation = pPS->m_nPrintPaperOrientation;
-	/* —p†‚Ì•A‚‚³ */
+	/* ç”¨ç´™ã®å¹…ã€é«˜ã• */
 	if( !CPrint::GetPaperSize(
 		&nPaperAllWidth,
 		&nPaperAllHeight,
 		&dmDummy
 	) ){
-	// 2001.12.21 hor GetPaperSize¸”s‚Í‚»‚Ì‚Ü‚ÜI—¹
-	//	nPaperAllWidth = 210 * 10;		/* —p†• */
-	//	nPaperAllHeight = 297 * 10;		/* —p†‚‚³ */
+	// 2001.12.21 hor GetPaperSizeå¤±æ•—æ™‚ã¯ãã®ã¾ã¾çµ‚äº†
+	//	nPaperAllWidth = 210 * 10;		/* ç”¨ç´™å¹… */
+	//	nPaperAllHeight = 297 * 10;		/* ç”¨ç´™é«˜ã• */
 		return FALSE;
 	}
-	/* s‚ ‚½‚è‚Ì•¶š”(s”Ô†‚İ) */
-	nEnableColumns = CPrint::CalculatePrintableColumns( pPS, nPaperAllWidth, pPS->m_bPrintLineNumber?m_nLineNumberColumns:0 );	/* ˆóš‰Â”\Œ…”/ƒy[ƒW */
-	/* c•ûŒü‚Ìs” */
-	nEnableLines = CPrint::CalculatePrintableLines( pPS, nPaperAllHeight );			/* ˆóš‰Â”\s”/ƒy[ƒW */
+	/* è¡Œã‚ãŸã‚Šã®æ–‡å­—æ•°(è¡Œç•ªå·è¾¼ã¿) */
+	nEnableColumns = CPrint::CalculatePrintableColumns( pPS, nPaperAllWidth, pPS->m_bPrintLineNumber?m_nLineNumberColumns:0 );	/* å°å­—å¯èƒ½æ¡æ•°/ãƒšãƒ¼ã‚¸ */
+	/* ç¸¦æ–¹å‘ã®è¡Œæ•° */
+	nEnableLines = CPrint::CalculatePrintableLines( pPS, nPaperAllHeight );			/* å°å­—å¯èƒ½è¡Œæ•°/ãƒšãƒ¼ã‚¸ */
 
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLECOLUMNS, nEnableColumns, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLELINES, nEnableLines, FALSE );
 
-	// ƒtƒHƒ“ƒg‚Ìƒ|ƒCƒ“ƒg”	2013/5/9 Uchi
+	// ãƒ•ã‚©ãƒ³ãƒˆã®ãƒã‚¤ãƒ³ãƒˆæ•°	2013/5/9 Uchi
 	// 1pt = 1/72in = 25.4/72mm
 	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
 	TCHAR	szFontPoints[20];
 	auto_sprintf_s( szFontPoints, _countof(szFontPoints), _T("%d.%dpt"), nFontPoints/10, nFontPoints%10 );
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
-	// ˆóš‰Â”\—Ìˆæ‚ª‚È‚¢ê‡‚Í OK ‚ğ‰Ÿ‚¹‚È‚­‚·‚é 2013.5.10 aroka
+	// å°å­—å¯èƒ½é ˜åŸŸãŒãªã„å ´åˆã¯ OK ã‚’æŠ¼ã›ãªãã™ã‚‹ 2013.5.10 aroka
 	if( nEnableColumns == 0 || nEnableLines == 0 ){
 		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
 		return FALSE;
@@ -860,8 +860,8 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 }
 
 
-// s”‚ÆŒ…”‚ÌXV‚ğ—v‹iƒƒbƒZ[ƒWƒLƒ…[‚Éƒ|ƒXƒg‚·‚éj
-// ƒ_ƒCƒAƒƒO‰Šú‰»‚Ì“r’†‚Å EN_CHANGE ‚É”½‰‚·‚é‚ÆŒvZ‚ª‚¨‚©‚µ‚­‚È‚é‚½‚ßAŠÖ”ŒÄ‚Ño‚µ‚Å‚Í‚È‚­PostMessage‚Åˆ— 2013.5.5 aroka
+// è¡Œæ•°ã¨æ¡æ•°ã®æ›´æ–°ã‚’è¦æ±‚ï¼ˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚­ãƒ¥ãƒ¼ã«ãƒã‚¹ãƒˆã™ã‚‹ï¼‰
+// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°åˆæœŸåŒ–ã®é€”ä¸­ã§ EN_CHANGE ã«åå¿œã™ã‚‹ã¨è¨ˆç®—ãŒãŠã‹ã—ããªã‚‹ãŸã‚ã€é–¢æ•°å‘¼ã³å‡ºã—ã§ã¯ãªãPostMessageã§å‡¦ç† 2013.5.5 aroka
 void CDlgPrintSetting::UpdatePrintableLineAndColumn()
 {
 	m_bPrintableLinesAndColumnInvalid = true;
@@ -877,7 +877,7 @@ LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 //@@@ 2002.01.18 add end
 
 
-// ƒtƒHƒ“ƒg–¼/g—pƒ{ƒ^ƒ“‚Ìİ’è
+// ãƒ•ã‚©ãƒ³ãƒˆå/ä½¿ç”¨ãƒœã‚¿ãƒ³ã®è¨­å®š
 void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize )
 {
 	TCHAR	szName[100];
@@ -888,23 +888,23 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 	if (bUseFont) {
 		LOGFONT	lft;
 		lft = lf;
-		lft.lfHeight = m_nFontHeight;		// ƒtƒHƒ“ƒgƒTƒCƒY‚ğƒ_ƒCƒAƒƒO‚É‡‚¹‚é
+		lft.lfHeight = m_nFontHeight;		// ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã«åˆã›ã‚‹
 
 		HFONT	hFontOld = (HFONT)::SendMessage(::GetDlgItem( GetHwnd(), idTxt ), WM_GETFONT, 0, 0 );
 
-		// ˜_—ƒtƒHƒ“ƒg‚ğì¬
+		// è«–ç†ãƒ•ã‚©ãƒ³ãƒˆã‚’ä½œæˆ
 		HFONT	hFont = ::CreateFontIndirect( &lft );
 		if (hFont) {
-			// ƒtƒHƒ“ƒg‚Ìİ’è
+			// ãƒ•ã‚©ãƒ³ãƒˆã®è¨­å®š
 			::SendMessage( ::GetDlgItem( GetHwnd(), idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
 		}
 		if (m_hFontDlg != hFontOld) {
-			// ŒÃ‚¢ƒtƒHƒ“ƒg‚Ì”jŠü
+			// å¤ã„ãƒ•ã‚©ãƒ³ãƒˆã®ç ´æ£„
 			::DeleteObject( hFontOld );
 		}
 
-		// ƒtƒHƒ“ƒg–¼/ƒTƒCƒY‚Ìì¬
-		int		nMM = MulDiv( nPointSize, 254, 720 );	// ƒtƒHƒ“ƒgƒTƒCƒYŒvZ(pt->1/10mm)
+		// ãƒ•ã‚©ãƒ³ãƒˆå/ã‚µã‚¤ã‚ºã®ä½œæˆ
+		int		nMM = MulDiv( nPointSize, 254, 720 );	// ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºè¨ˆç®—(pt->1/10mm)
 		auto_sprintf(szName, nPointSize%10 ? _T("%.32s(%.1fpt/%d.%dmm)") : _T("%.32s(%.0fpt/%d.%dmm)"),
 					lf.lfFaceName,
 					double(nPointSize)/10,

@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ŒŸõƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date	1998/12/02 Äì¬
+	@date	1998/12/02 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,7 +20,7 @@
 
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 class CDlgFind : public CDialog
 {
@@ -32,29 +32,29 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-//	int DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	HWND DoModeless( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
+//	int DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 	void ChangeView( LPARAM );
 
-	SSearchOption m_sSearchOption;	// ŒŸõƒIƒvƒVƒ‡ƒ“
-	int		m_bNOTIFYNOTFOUND;	// ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ğ•\¦
-	std::wstring	m_strText;	// ŒŸõ•¶š—ñ
+	SSearchOption m_sSearchOption;	// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	int		m_bNOTIFYNOTFOUND;	// æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+	std::wstring	m_strText;	// æ¤œç´¢æ–‡å­—åˆ—
 
-	CLogicPoint	m_ptEscCaretPos_PHY;	// ŒŸõŠJn‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‘Ş”ğƒGƒŠƒA
+	CLogicPoint	m_ptEscCaretPos_PHY;	// æ¤œç´¢é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®é€€é¿ã‚¨ãƒªã‚¢
 
 	CRecentSearch			m_cRecentSearch;
 	SComboBoxItemDeleter	m_comboDel;
 	CFontAutoDeleter		m_cFontText;
 
 protected:
-//@@@ 2002.2.2 YAZAKI CShareData‚ÉˆÚ“®
+//@@@ 2002.2.2 YAZAKI CShareDataã«ç§»å‹•
 //	void AddToSearchKeyArr( const char* );
-	/* ƒI[ƒo[ƒ‰ƒCƒh? */
+	/* ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰? */
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	int GetData( void );		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-	void SetCombosList( void );	/* ŒŸõ•¶š—ñ/’uŠ·Œã•¶š—ñƒŠƒXƒg‚Ìİ’è */
-	void SetData( void );		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	int GetData( void );		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	void SetCombosList( void );	/* æ¤œç´¢æ–‡å­—åˆ—/ç½®æ›å¾Œæ–‡å­—åˆ—ãƒªã‚¹ãƒˆã®è¨­å®š */
+	void SetData( void );		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnDestroy();
 	BOOL OnBnClicked( int );

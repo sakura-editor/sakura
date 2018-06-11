@@ -1,5 +1,5 @@
-/*!	@file
-	@brief GREP’uŠ·ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief GREPç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
 */
@@ -29,35 +29,35 @@
 #include "sakura.hh"
 
 const DWORD p_helpids[] = {
-	IDC_BUTTON_FOLDER,				HIDC_GREP_REP_BUTTON_FOLDER,			//ƒtƒHƒ‹ƒ_
-	IDC_BUTTON_CURRENTFOLDER,		HIDC_GREP_REP_BUTTON_CURRENTFOLDER,		//Œ»ƒtƒHƒ‹ƒ_
-	IDOK,							HIDOK_GREP_REP,							//’uŠ·ŠJn
-	IDCANCEL,						HIDCANCEL_GREP_REP,						//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_GREP_REP_BUTTON_HELP,				//ƒwƒ‹ƒv
-	IDC_CHK_PASTE,					HIDC_GREP_REP_CHK_PASTE,				//ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯
-	IDC_CHK_WORD,					HIDC_GREP_REP_CHK_WORD,					//’PŒê’PˆÊ
-	IDC_CHK_SUBFOLDER,				HIDC_GREP_REP_CHK_SUBFOLDER,			//ƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
-//	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//‚±‚Ìƒtƒ@ƒCƒ‹‚©‚ç
-	IDC_CHK_LOHICASE,				HIDC_GREP_REP_CHK_LOHICASE,				//‘å•¶š¬•¶š
-	IDC_CHK_REGULAREXP,				HIDC_GREP_REP_CHK_REGULAREXP,			//³‹K•\Œ»
-	IDC_CHK_BACKUP,					HIDC_GREP_REP_CHK_BACKUP,				//ƒoƒbƒNƒAƒbƒvì¬
-	IDC_COMBO_CHARSET,				HIDC_GREP_REP_COMBO_CHARSET,			//•¶šƒR[ƒhƒZƒbƒg
+	IDC_BUTTON_FOLDER,				HIDC_GREP_REP_BUTTON_FOLDER,			//ãƒ•ã‚©ãƒ«ãƒ€
+	IDC_BUTTON_CURRENTFOLDER,		HIDC_GREP_REP_BUTTON_CURRENTFOLDER,		//ç¾ãƒ•ã‚©ãƒ«ãƒ€
+	IDOK,							HIDOK_GREP_REP,							//ç½®æ›é–‹å§‹
+	IDCANCEL,						HIDCANCEL_GREP_REP,						//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_GREP_REP_BUTTON_HELP,				//ãƒ˜ãƒ«ãƒ—
+	IDC_CHK_PASTE,					HIDC_GREP_REP_CHK_PASTE,				//ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘
+	IDC_CHK_WORD,					HIDC_GREP_REP_CHK_WORD,					//å˜èªå˜ä½
+	IDC_CHK_SUBFOLDER,				HIDC_GREP_REP_CHK_SUBFOLDER,			//ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
+//	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰
+	IDC_CHK_LOHICASE,				HIDC_GREP_REP_CHK_LOHICASE,				//å¤§æ–‡å­—å°æ–‡å­—
+	IDC_CHK_REGULAREXP,				HIDC_GREP_REP_CHK_REGULAREXP,			//æ­£è¦è¡¨ç¾
+	IDC_CHK_BACKUP,					HIDC_GREP_REP_CHK_BACKUP,				//ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆ
+	IDC_COMBO_CHARSET,				HIDC_GREP_REP_COMBO_CHARSET,			//æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	IDC_CHECK_CP,					HIDC_GREP_REP_CHECK_CP,					//CP
-	IDC_COMBO_TEXT,					HIDC_GREP_REP_COMBO_TEXT,				//’uŠ·‘O
-	IDC_COMBO_TEXT2,				HIDC_GREP_REP_COMBO_TEXT2,				//’uŠ·Œã
-	IDC_COMBO_FILE,					HIDC_GREP_REP_COMBO_FILE,				//ƒtƒ@ƒCƒ‹
-	IDC_COMBO_FOLDER,				HIDC_GREP_REP_COMBO_FOLDER,				//ƒtƒHƒ‹ƒ_
-	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_REP_BUTTON_FOLDER_UP,			//ã
-	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_REP_RADIO_OUTPUTLINE,			//Œ‹‰Êo—ÍFs’PˆÊ
-	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_REP_RADIO_OUTPUTMARKED,		//Œ‹‰Êo—ÍFŠY“–•”•ª
-	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE1,		//Œ‹‰Êo—ÍŒ`®Fƒm[ƒ}ƒ‹
-	IDC_RADIO_OUTPUTSTYLE2,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE2,		//Œ‹‰Êo—ÍŒ`®Fƒtƒ@ƒCƒ‹–ˆ
-	IDC_RADIO_OUTPUTSTYLE3,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE3,		//Œ‹‰Êo—ÍŒ`®FŒ‹‰Ê‚Ì‚İ
-	IDC_STATIC_JRE32VER,			HIDC_GREP_REP_STATIC_JRE32VER,			//³‹K•\Œ»ƒo[ƒWƒ‡ƒ“
-	IDC_CHK_DEFAULTFOLDER,			HIDC_GREP_REP_CHK_DEFAULTFOLDER,		//ƒtƒHƒ‹ƒ_‚Ì‰Šú’l‚ğƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚É‚·‚é
-	IDC_CHECK_FILE_ONLY,			HIDC_GREP_REP_CHECK_FILE_ONLY,			//ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ
-	IDC_CHECK_BASE_PATH,			HIDC_GREP_REP_CHECK_BASE_PATH,			//ƒx[ƒXƒtƒHƒ‹ƒ_•\¦
-	IDC_CHECK_SEP_FOLDER,			HIDC_GREP_REP_CHECK_SEP_FOLDER,			//ƒtƒHƒ‹ƒ_–ˆ‚É•\¦
+	IDC_COMBO_TEXT,					HIDC_GREP_REP_COMBO_TEXT,				//ç½®æ›å‰
+	IDC_COMBO_TEXT2,				HIDC_GREP_REP_COMBO_TEXT2,				//ç½®æ›å¾Œ
+	IDC_COMBO_FILE,					HIDC_GREP_REP_COMBO_FILE,				//ãƒ•ã‚¡ã‚¤ãƒ«
+	IDC_COMBO_FOLDER,				HIDC_GREP_REP_COMBO_FOLDER,				//ãƒ•ã‚©ãƒ«ãƒ€
+	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_REP_BUTTON_FOLDER_UP,			//ä¸Š
+	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_REP_RADIO_OUTPUTLINE,			//çµæœå‡ºåŠ›ï¼šè¡Œå˜ä½
+	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_REP_RADIO_OUTPUTMARKED,		//çµæœå‡ºåŠ›ï¼šè©²å½“éƒ¨åˆ†
+	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE1,		//çµæœå‡ºåŠ›å½¢å¼ï¼šãƒãƒ¼ãƒãƒ«
+	IDC_RADIO_OUTPUTSTYLE2,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE2,		//çµæœå‡ºåŠ›å½¢å¼ï¼šãƒ•ã‚¡ã‚¤ãƒ«æ¯
+	IDC_RADIO_OUTPUTSTYLE3,			HIDC_GREP_REP_RADIO_OUTPUTSTYLE3,		//çµæœå‡ºåŠ›å½¢å¼ï¼šçµæœã®ã¿
+	IDC_STATIC_JRE32VER,			HIDC_GREP_REP_STATIC_JRE32VER,			//æ­£è¦è¡¨ç¾ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	IDC_CHK_DEFAULTFOLDER,			HIDC_GREP_REP_CHK_DEFAULTFOLDER,		//ãƒ•ã‚©ãƒ«ãƒ€ã®åˆæœŸå€¤ã‚’ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ã™ã‚‹
+	IDC_CHECK_FILE_ONLY,			HIDC_GREP_REP_CHECK_FILE_ONLY,			//ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢
+	IDC_CHECK_BASE_PATH,			HIDC_GREP_REP_CHECK_BASE_PATH,			//ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+	IDC_CHECK_SEP_FOLDER,			HIDC_GREP_REP_CHECK_SEP_FOLDER,			//ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º
 	0, 0
 };
 
@@ -71,22 +71,22 @@ CDlgGrepReplace::CDlgGrepReplace()
 
 
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath, LPARAM lParam )
 {
-	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: ƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// ŒŸõƒIƒvƒVƒ‡ƒ“
-	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// •¶šƒR[ƒhƒZƒbƒg
-	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// s‚ğo—Í‚·‚é‚©ŠY“–•”•ª‚¾‚¯o—Í‚·‚é‚©
-	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: o—ÍŒ`®
+	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// è¡Œã‚’å‡ºåŠ›ã™ã‚‹ã‹è©²å½“éƒ¨åˆ†ã ã‘å‡ºåŠ›ã™ã‚‹ã‹
+	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: å‡ºåŠ›å½¢å¼
 	m_bPaste = false;
 	m_bBackup = m_pShareData->m_Common.m_sSearch.m_bGrepBackup;
 
 	if( m_szFile[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* ŒŸõƒtƒ@ƒCƒ‹ */
+		_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 	}
 	if( m_szFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* ŒŸõƒtƒHƒ‹ƒ_ */
+		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	}
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
@@ -99,7 +99,7 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹ */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT2 ), WM_GETFONT, 0, 0 );
@@ -140,16 +140,16 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 			}
 		}
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDlgGrep::OnBnClicked( wID );
 }
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgGrepReplace::SetData( void )
 {
-	/* ’uŠ·Œã */
+	/* ç½®æ›å¾Œ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	HWND	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
 	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
@@ -164,14 +164,14 @@ void CDlgGrepReplace::SetData( void )
 
 
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
-	TRUE==³í  FALSE==“ü—ÍƒGƒ‰[
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
+	TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼
 */
 int CDlgGrepReplace::GetData( void )
 {
 	m_bPaste = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_PASTE );
 
-	/* ’uŠ·Œã */
+	/* ç½®æ›å¾Œ */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
 	std::vector<TCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);

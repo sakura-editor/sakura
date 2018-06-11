@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒo[ƒWƒ‡ƒ“î•ñƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date 1998/05/22 ì¬
-	@date 1999/12/05 Äì¬
+	@date 1998/05/22 ä½œæˆ
+	@date 1999/12/05 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -18,10 +18,10 @@
 
 #include "dlg/CDialog.h"
 /*!
-	@brief About BoxŠÇ—
+	@brief About Boxç®¡ç†
 	
-	DispatchEvent‚ğ“Æ©‚É’è‹`‚·‚é‚±‚Æ‚ÅCCDialog‚ÅƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢
-	ƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚éD
+	DispatchEventã‚’ç‹¬è‡ªã«å®šç¾©ã™ã‚‹ã“ã¨ã§ï¼ŒCDialogã§ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ãªã„
+	ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹ï¼
 */
 
 class CUrlWnd
@@ -43,8 +43,8 @@ protected:
 class CDlgAbout : public CDialog
 {
 public:
-	int DoModal( HINSTANCE, HWND );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	//	Nov. 7, 2000 genta	•W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	int DoModal( HINSTANCE, HWND );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	//	Nov. 7, 2000 genta	æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );

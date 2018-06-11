@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ^ƒOƒtƒ@ƒCƒ‹ì¬ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2003.5.12
@@ -38,11 +38,11 @@
 #include "sakura.hh"
 
 const DWORD p_helpids[] = {	//13700
-	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//ƒ^ƒOì¬ƒtƒHƒ‹ƒ_
-	IDC_BUTTON_TAG_MAKE_REF,	HIDC_BUTTON_TAG_MAKE_REF,	//ŽQÆ
-	IDC_BUTTON_FOLDER_UP,		HIDC_BUTTON_TAG_MAKE_FOLDER_UP,	// ã
-	IDC_EDIT_TAG_MAKE_CMDLINE,	HIDC_EDIT_TAG_MAKE_CMDLINE,	//ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“
-	IDC_CHECK_TAG_MAKE_RECURSE,	HIDC_CHECK_TAG_MAKE_RECURSE,	//ƒTƒuƒtƒHƒ‹ƒ_‚à‘ÎÛ
+	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//ã‚¿ã‚°ä½œæˆãƒ•ã‚©ãƒ«ãƒ€
+	IDC_BUTTON_TAG_MAKE_REF,	HIDC_BUTTON_TAG_MAKE_REF,	//å‚ç…§
+	IDC_BUTTON_FOLDER_UP,		HIDC_BUTTON_TAG_MAKE_FOLDER_UP,	// ä¸Š
+	IDC_EDIT_TAG_MAKE_CMDLINE,	HIDC_EDIT_TAG_MAKE_CMDLINE,	//ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³
+	IDC_CHECK_TAG_MAKE_RECURSE,	HIDC_CHECK_TAG_MAKE_RECURSE,	//ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚å¯¾è±¡
 	IDOK,						HIDC_TAG_MAKE_IDOK,
 	IDCANCEL,					HIDC_TAG_MAKE_IDCANCEL,
 	IDC_BUTTON_HELP,			HIDC_BUTTON_TAG_MAKE_HELP,
@@ -58,12 +58,12 @@ CDlgTagsMake::CDlgTagsMake()
 	return;
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgTagsMake::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
 	LPARAM			lParam,
-	const TCHAR*	pszPath		//ƒpƒX
+	const TCHAR*	pszPath		//ãƒ‘ã‚¹
 )
 {
 	_tcscpy( m_szPath, pszPath );
@@ -76,11 +76,11 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 	switch( wID )
 	{
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TAGS_MAKE) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ãƒ˜ãƒ«ãƒ— */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TAGS_MAKE) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 
-	case IDC_BUTTON_TAG_MAKE_REF:	/* ŽQÆ */
+	case IDC_BUTTON_TAG_MAKE_REF:	/* å‚ç…§ */
 		SelectFolder( GetHwnd() );
 		return TRUE;
 
@@ -96,7 +96,7 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 		return TRUE;
 
 	case IDOK:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌŽæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), GetData() );
 		return TRUE;
 
@@ -106,25 +106,25 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 /*!
-	ƒtƒHƒ‹ƒ_‚ð‘I‘ð‚·‚é
+	ãƒ•ã‚©ãƒ«ãƒ€ã‚’é¸æŠžã™ã‚‹
 	
-	@param hwndDlg [in] ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg [in] ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 {
 	TCHAR	szPath[_MAX_PATH + 1];
 
-	/* ƒtƒHƒ‹ƒ_ */
+	/* ãƒ•ã‚©ãƒ«ãƒ€ */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
 	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
 	{
-		//––”ö‚É\\ƒ}[ƒN‚ð’Ç‰Á‚·‚éD
+		//æœ«å°¾ã«\\ãƒžãƒ¼ã‚¯ã‚’è¿½åŠ ã™ã‚‹ï¼Ž
 		int pos = _tcslen( szPath );
 		if( pos > 0 && szPath[ pos - 1 ] != _T('\\') )
 		{
@@ -136,18 +136,18 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 	}
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌÝ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgTagsMake::SetData( void )
 {
-	//ì¬ƒtƒHƒ‹ƒ_
+	//ä½œæˆãƒ•ã‚©ãƒ«ãƒ€
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
-	//ƒIƒvƒVƒ‡ƒ“
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	m_nTagsOpt = m_pShareData->m_nTagsOpt;
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
-	//ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“
+	//ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
 	_tcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
@@ -155,11 +155,11 @@ void CDlgTagsMake::SetData( void )
 	return;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌŽæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgTagsMake::GetData( void )
 {
-	//ƒtƒHƒ‹ƒ_
+	//ãƒ•ã‚©ãƒ«ãƒ€
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
 	int length = _tcslen( m_szPath );
 	if( length > 0 )
@@ -167,12 +167,12 @@ int CDlgTagsMake::GetData( void )
 		if( m_szPath[ length - 1 ] != _T('\\') ) _tcscat( m_szPath, _T("\\") );
 	}
 
-	//CTAGSƒIƒvƒVƒ‡ƒ“
+	//CTAGSã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	m_nTagsOpt = 0;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE ) == BST_CHECKED ) m_nTagsOpt |= 0x0001;
 	m_pShareData->m_nTagsOpt = m_nTagsOpt;
 
-	//ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“
+	//ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
 	_tcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
 

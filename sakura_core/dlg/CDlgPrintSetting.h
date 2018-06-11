@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ˆóüİ’èƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief å°åˆ·è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 */
@@ -34,9 +34,9 @@
 #include "config/maxdata.h" // MAX_PRINTSETTINGARR
 #include "print/CPrint.h" //PRINTSETTING
 
-/*!	ˆóüİ’èƒ_ƒCƒAƒƒO
+/*!	å°åˆ·è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 class CDlgPrintSetting : public CDialog
 {
@@ -48,22 +48,22 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING*, int );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING*, int );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 private:
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
-	int				m_nLineNumberColumns;					// s”Ô†•\¦‚·‚éê‡‚ÌŒ…”
+	int				m_nLineNumberColumns;					// è¡Œç•ªå·è¡¨ç¤ºã™ã‚‹å ´åˆã®æ¡æ•°
 	bool			m_bPrintableLinesAndColumnInvalid;
-	HFONT			m_hFontDlg;								// ƒ_ƒCƒAƒƒO‚ÌƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹
-	int				m_nFontHeight;							// ƒ_ƒCƒAƒƒO‚ÌƒtƒHƒ“ƒg‚ÌƒTƒCƒY
+	HFONT			m_hFontDlg;								// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
+	int				m_nFontHeight;							// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚©ãƒ³ãƒˆã®ã‚µã‚¤ã‚º
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnDestroy( void );
 	BOOL OnNotify( WPARAM,  LPARAM );
@@ -74,12 +74,12 @@ protected:
 	BOOL OnEnKillFocus( HWND hwndCtl, int wID );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void OnChangeSettingType( BOOL );	/* İ’è‚Ìƒ^ƒCƒv‚ª•Ï‚í‚Á‚½ */
-	void OnSpin( int , BOOL );	/* ƒXƒsƒ“ƒRƒ“ƒgƒ[ƒ‹‚Ìˆ— */
-	int DataCheckAndCorrect( int , int );	/* “ü—Í’l(”’l)‚ÌƒGƒ‰[ƒ`ƒFƒbƒN‚ğ‚µ‚Ä³‚µ‚¢’l‚ğ•Ô‚· */
-	BOOL CalcPrintableLineAndColumn();	/* s”‚ÆŒ…”‚ğŒvZ */
-	void UpdatePrintableLineAndColumn();	/* s”‚ÆŒ…”‚ÌŒvZ—v‹ */
-	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// ƒtƒHƒ“ƒg–¼/g—pƒ{ƒ^ƒ“‚Ìİ’è
+	void OnChangeSettingType( BOOL );	/* è¨­å®šã®ã‚¿ã‚¤ãƒ—ãŒå¤‰ã‚ã£ãŸ */
+	void OnSpin( int , BOOL );	/* ã‚¹ãƒ”ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®å‡¦ç† */
+	int DataCheckAndCorrect( int , int );	/* å…¥åŠ›å€¤(æ•°å€¤)ã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ã‚’ã—ã¦æ­£ã—ã„å€¤ã‚’è¿”ã™ */
+	BOOL CalcPrintableLineAndColumn();	/* è¡Œæ•°ã¨æ¡æ•°ã‚’è¨ˆç®— */
+	void UpdatePrintableLineAndColumn();	/* è¡Œæ•°ã¨æ¡æ•°ã®è¨ˆç®—è¦æ±‚ */
+	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// ãƒ•ã‚©ãƒ³ãƒˆå/ä½¿ç”¨ãƒœã‚¿ãƒ³ã®è¨­å®š
 };
 
 

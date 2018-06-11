@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹”äŠrƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«æ¯”è¼ƒãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
 */
@@ -18,7 +18,7 @@ class CDlgCompare;
 
 #include "dlg/CDialog.h"
 /*!
-	@brief ƒtƒ@ƒCƒ‹”äŠrƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«æ¯”è¼ƒãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 class CDlgCompare : public CDialog
 {
@@ -31,28 +31,28 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, TCHAR*, HWND* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, TCHAR*, HWND* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 	const TCHAR*	m_pszPath;
 	TCHAR*			m_pszCompareLabel;
 	HWND*			m_phwndCompareWnd;
-	BOOL			m_bCompareAndTileHorz;/* ¶‰E‚É•À‚×‚Ä•\¦ */
+	BOOL			m_bCompareAndTileHorz;/* å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// •W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL OnMinMaxInfo( LPARAM lParam );
 
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 private:
 	POINT			m_ptDefaultSize;

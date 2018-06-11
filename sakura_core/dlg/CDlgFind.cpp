@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ŒŸõƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date	1998/12/12 Äì¬
-	@date 2001/06/23 N.Nakatani ’PŒê’PˆÊ‚ÅŒŸõ‚·‚é‹@”\‚ðŽÀ‘•
+	@date	1998/12/12 å†ä½œæˆ
+	@date 2001/06/23 N.Nakatani å˜èªžå˜ä½ã§æ¤œç´¢ã™ã‚‹æ©Ÿèƒ½ã‚’å®Ÿè£…
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -25,21 +25,21 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-//ŒŸõ CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
+//æ¤œç´¢ CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//11800
-	IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//ŽŸ‚ðŒŸõ
-	IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//‘O‚ðŒŸõ
-	IDCANCEL,						HIDCANCEL_FIND,						//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_FIND_BUTTON_HELP,				//ƒwƒ‹ƒv
-	IDC_CHK_WORD,					HIDC_FIND_CHK_WORD,					//’PŒê’PˆÊ
-	IDC_CHK_LOHICASE,				HIDC_FIND_CHK_LOHICASE,				//‘å•¶Žš¬•¶Žš
-	IDC_CHK_REGULAREXP,				HIDC_FIND_CHK_REGULAREXP,			//³‹K•\Œ»
-	IDC_CHECK_NOTIFYNOTFOUND,		HIDC_FIND_CHECK_NOTIFYNOTFOUND,		//Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚É’Ê’m
-	IDC_CHECK_bAutoCloseDlgFind,	HIDC_FIND_CHECK_bAutoCloseDlgFind,	//Ž©“®“I‚É•Â‚¶‚é
-	IDC_COMBO_TEXT,					HIDC_FIND_COMBO_TEXT,				//ŒŸõ•¶Žš—ñ
-	IDC_STATIC_JRE32VER,			HIDC_FIND_STATIC_JRE32VER,			//³‹K•\Œ»ƒo[ƒWƒ‡ƒ“
-	IDC_BUTTON_SETMARK,				HIDC_FIND_BUTTON_SETMARK,			//2002.01.16 hor ŒŸõŠY“–s‚ðƒ}[ƒN
-	IDC_CHECK_SEARCHALL,			HIDC_FIND_CHECK_SEARCHALL,			//2002.01.26 hor æ“ªi––”öj‚©‚çÄŒŸõ
+	IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//æ¬¡ã‚’æ¤œç´¢
+	IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//å‰ã‚’æ¤œç´¢
+	IDCANCEL,						HIDCANCEL_FIND,						//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_FIND_BUTTON_HELP,				//ãƒ˜ãƒ«ãƒ—
+	IDC_CHK_WORD,					HIDC_FIND_CHK_WORD,					//å˜èªžå˜ä½
+	IDC_CHK_LOHICASE,				HIDC_FIND_CHK_LOHICASE,				//å¤§æ–‡å­—å°æ–‡å­—
+	IDC_CHK_REGULAREXP,				HIDC_FIND_CHK_REGULAREXP,			//æ­£è¦è¡¨ç¾
+	IDC_CHECK_NOTIFYNOTFOUND,		HIDC_FIND_CHECK_NOTIFYNOTFOUND,		//è¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«é€šçŸ¥
+	IDC_CHECK_bAutoCloseDlgFind,	HIDC_FIND_CHECK_bAutoCloseDlgFind,	//è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+	IDC_COMBO_TEXT,					HIDC_FIND_COMBO_TEXT,				//æ¤œç´¢æ–‡å­—åˆ—
+	IDC_STATIC_JRE32VER,			HIDC_FIND_STATIC_JRE32VER,			//æ­£è¦è¡¨ç¾ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	IDC_BUTTON_SETMARK,				HIDC_FIND_BUTTON_SETMARK,			//2002.01.16 hor æ¤œç´¢è©²å½“è¡Œã‚’ãƒžãƒ¼ã‚¯
+	IDC_CHECK_SEARCHALL,			HIDC_FIND_CHECK_SEARCHALL,			//2002.01.26 hor å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -52,9 +52,9 @@ CDlgFind::CDlgFind()
 
 
 /*!
-	ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒhƒƒbƒvƒ_ƒEƒ“ƒƒbƒZ[ƒW‚ð•ß‘¨‚·‚é
+	ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 
-	@date 2013.03.24 novice V‹Kì¬
+	@date 2013.03.24 novice æ–°è¦ä½œæˆ
 */
 BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 {
@@ -71,17 +71,17 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
 
-/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// ŒŸõƒIƒvƒVƒ‡ƒ“
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ð•\Ž¦
-	m_ptEscCaretPos_PHY = ((CEditView*)lParam)->GetCaret().GetCaretLogicPos();	// ŒŸõŠJŽnŽž‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‘Þ”ð
-	((CEditView*)lParam)->m_bSearch = TRUE;							// ŒŸõŠJŽnˆÊ’u‚Ì“o˜^—L–³		02/07/28 ai
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+	m_ptEscCaretPos_PHY = ((CEditView*)lParam)->GetCaret().GetCaretLogicPos();	// æ¤œç´¢é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®é€€é¿
+	((CEditView*)lParam)->m_bSearch = TRUE;							// æ¤œç´¢é–‹å§‹ä½ç½®ã®ç™»éŒ²æœ‰ç„¡		02/07/28 ai
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
 }
 
-/* ƒ‚[ƒhƒŒƒXŽžFŒŸõ‘ÎÛ‚Æ‚È‚éƒrƒ…[‚Ì•ÏX */
+/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹æ™‚ï¼šæ¤œç´¢å¯¾è±¡ã¨ãªã‚‹ãƒ“ãƒ¥ãƒ¼ã®å¤‰æ›´ */
 void CDlgFind::ChangeView( LPARAM pcEditView )
 {
 	m_lParam = pcEditView;
@@ -97,7 +97,7 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	m_comboDel.pRecent = &m_cRecentSearch;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDel);
 
-	// ƒtƒHƒ“ƒgÝ’è	2012/11/27 Uchi
+	// ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
 	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
@@ -114,55 +114,55 @@ BOOL CDlgFind::OnDestroy()
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌÝ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgFind::SetData( void )
 {
 //	MYTRACE( _T("CDlgFind::SetData()") );
 
 	/*****************************
-	*           ‰Šú‰»           *
+	*           åˆæœŸåŒ–           *
 	*****************************/
 	// Here Jun. 26, 2001 genta
-	// ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ‚É‚æ‚èjre.dll”»’è‚ðíœ
+	// æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—ã«ã‚ˆã‚Šjre.dllåˆ¤å®šã‚’å‰Šé™¤
 
-	/* ƒ†[ƒU[‚ªƒRƒ“ƒ{ ƒ{ƒbƒNƒX‚ÌƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ð§ŒÀ‚·‚é */
-	// 2011.12.18 ’·‚³§ŒÀ“P”p
+	/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚³ãƒ³ãƒœ ãƒœãƒƒã‚¯ã‚¹ã®ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
+	// 2011.12.18 é•·ã•åˆ¶é™æ’¤å»ƒ
 	// Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ðŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹ */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
 
 
 	/*****************************
-	*         ƒf[ƒ^Ý’è         *
+	*         ãƒ‡ãƒ¼ã‚¿è¨­å®š         *
 	*****************************/
-	/* ŒŸõ•¶Žš—ñ */
-	// ŒŸõ•¶Žš—ñƒŠƒXƒg‚ÌÝ’è(ŠÖ”‰»)	2010/5/28 Uchi
+	/* æ¤œç´¢æ–‡å­—åˆ— */
+	// æ¤œç´¢æ–‡å­—åˆ—ãƒªã‚¹ãƒˆã®è¨­å®š(é–¢æ•°åŒ–)	2010/5/28 Uchi
 	SetCombosList();
 
-	/* ‰p‘å•¶Žš‚Æ‰p¬•¶Žš‚ð‹æ•Ê‚·‚é */
+	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
 	// 2001/06/23 Norio Nakatani
-	/* ’PŒê’PˆÊ‚ÅŒŸõ */
+	/* å˜èªžå˜ä½ã§æ¤œç´¢ */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 
-	/* ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ð•\Ž¦ */
+	/* æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
 
 	// From Here Jun. 29, 2001 genta
-	// ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
-	// ˆ—ƒtƒ[‹y‚Ñ”»’èðŒ‚ÌŒ©’¼‚µB•K‚¸³‹K•\Œ»‚Ìƒ`ƒFƒbƒN‚Æ
-	// –³ŠÖŒW‚ÉCheckRegexpVersion‚ð’Ê‰ß‚·‚é‚æ‚¤‚É‚µ‚½B
+	// æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
+	// å‡¦ç†ãƒ•ãƒ­ãƒ¼åŠã³åˆ¤å®šæ¡ä»¶ã®è¦‹ç›´ã—ã€‚å¿…ãšæ­£è¦è¡¨ç¾ã®ãƒã‚§ãƒƒã‚¯ã¨
+	// ç„¡é–¢ä¿‚ã«CheckRegexpVersionã‚’é€šéŽã™ã‚‹ã‚ˆã†ã«ã—ãŸã€‚
 	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false )
 		&& m_sSearchOption.bRegularExp){
-		/* ‰p‘å•¶Žš‚Æ‰p¬•¶Žš‚ð‹æ•Ê‚·‚é */
+		/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );
-//³‹K•\Œ»‚ªON‚Å‚àA‘å•¶Žš¬•¶Žš‚ð‹æ•Ê‚·‚é^‚µ‚È‚¢‚ð‘I‘ð‚Å‚«‚é‚æ‚¤‚ÉB
+//æ­£è¦è¡¨ç¾ãŒONã§ã‚‚ã€å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ï¼ã—ãªã„ã‚’é¸æŠžã§ãã‚‹ã‚ˆã†ã«ã€‚
 //		::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
 //		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
-		/* ’PŒê’PˆÊ‚Å’T‚· */
+		/* å˜èªžå˜ä½ã§æŽ¢ã™ */
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
 	}
 	else {
@@ -170,23 +170,23 @@ void CDlgFind::SetData( void )
 	}
 	// To Here Jun. 29, 2001 genta
 
-	/* ŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é */
+	/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind );
 
-	/* æ“ªi––”öj‚©‚çÄŒŸõ 2002.01.26 hor */
+	/* å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ 2002.01.26 hor */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
 
 	return;
 }
 
 
-// ŒŸõ•¶Žš—ñƒŠƒXƒg‚ÌÝ’è
+// æ¤œç´¢æ–‡å­—åˆ—ãƒªã‚¹ãƒˆã®è¨­å®š
 //	2010/5/28 Uchi
 void CDlgFind::SetCombosList( void )
 {
 	HWND	hwndCombo;
 
-	/* ŒŸõ•¶Žš—ñ */
+	/* æ¤œç´¢æ–‡å­—åˆ— */
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
@@ -200,55 +200,55 @@ void CDlgFind::SetCombosList( void )
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌŽæ“¾ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CDlgFind::GetData( void )
 {
 //	MYTRACE( _T("CDlgFind::GetData()") );
 
-	/* ‰p‘å•¶Žš‚Æ‰p¬•¶Žš‚ð‹æ•Ê‚·‚é */
+	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
 
 	// 2001/06/23 Norio Nakatani
-	/* ’PŒê’PˆÊ‚ÅŒŸõ */
+	/* å˜èªžå˜ä½ã§æ¤œç´¢ */
 	m_sSearchOption.bWordOnly = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_WORD ));
 
-	/* ˆê’v‚·‚é’PŒê‚Ì‚ÝŒŸõ‚·‚é */
-	/* ³‹K•\Œ» */
+	/* ä¸€è‡´ã™ã‚‹å˜èªžã®ã¿æ¤œç´¢ã™ã‚‹ */
+	/* æ­£è¦è¡¨ç¾ */
 	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
 
-	/* ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ð•\Ž¦ */
+	/* æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ð•\Ž¦
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
 
-	/* ŒŸõ•¶Žš—ñ */
+	/* æ¤œç´¢æ–‡å­—åˆ— */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
 	std::vector<TCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 
-	/* ŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é */
+	/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );
 
-	/* æ“ªi––”öj‚©‚çÄŒŸõ 2002.01.26 hor */
+	/* å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ 2002.01.26 hor */
 	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
 
 	if( 0 < m_strText.length() ){
-		/* ³‹K•\Œ»H */
+		/* æ­£è¦è¡¨ç¾ï¼Ÿ */
 		// From Here Jun. 26, 2001 genta
-		//	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
+		//	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
 		int nFlag = 0x00;
 		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag ) ){
 			return -1;
 		}
-		// To Here Jun. 26, 2001 genta ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ·‚µ‘Ö‚¦
+		// To Here Jun. 26, 2001 genta æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå·®ã—æ›¿ãˆ
 
-		/* ŒŸõ•¶Žš—ñ */
-		//@@@ 2002.2.2 YAZAKI CShareData‚ÉˆÚ“®
+		/* æ¤œç´¢æ–‡å­—åˆ— */
+		//@@@ 2002.2.2 YAZAKI CShareDataã«ç§»å‹•
 		if( m_strText.size() < _MAX_PATH ){
 			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// ŒŸõƒIƒvƒVƒ‡ƒ“
+			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		}
 		CEditView*	pcEditView = (CEditView*)m_lParam;
 		if( pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption ){
@@ -259,9 +259,9 @@ int CDlgFind::GetData( void )
 		}
 		pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		if( !m_bModal ){
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌÝ’è */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 			//SetData();
-			SetCombosList();		//	ƒRƒ“ƒ{‚Ì‚Ý‚Ì‰Šú‰»	2010/5/28 Uchi
+			SetCombosList();		//	ã‚³ãƒ³ãƒœã®ã¿ã®åˆæœŸåŒ–	2010/5/28 Uchi
 		}
 		return 1;
 	}else{
@@ -277,113 +277,113 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	CEditView*	pcEditView = (CEditView*)m_lParam;
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uŒŸõv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘æŽlˆø”‚ðA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ð’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO C³˜R‚ê‚ð’Ç‰Á	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œæ¤œç´¢ã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO ä¿®æ­£æ¼ã‚Œã‚’è¿½åŠ 	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		break;
-	case IDC_CHK_REGULAREXP:	/* ³‹K•\Œ» */
+	case IDC_CHK_REGULAREXP:	/* æ­£è¦è¡¨ç¾ */
 //		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
 
 			// From Here Jun. 26, 2001 genta
-			//	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
+			//	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
 			if( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, true ) ){
 				::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
 			}else{
 			// To Here Jun. 26, 2001 genta
 
-				/* ‰p‘å•¶Žš‚Æ‰p¬•¶Žš‚ð‹æ•Ê‚·‚é */
+				/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 				//	Jan. 31, 2002 genta
-				//	‘å•¶ŽšE¬•¶Žš‚Ì‹æ•Ê‚Í³‹K•\Œ»‚ÌÝ’è‚ÉŠÖ‚í‚ç‚¸•Û‘¶‚·‚é
+				//	å¤§æ–‡å­—ãƒ»å°æ–‡å­—ã®åŒºåˆ¥ã¯æ­£è¦è¡¨ç¾ã®è¨­å®šã«é–¢ã‚ã‚‰ãšä¿å­˜ã™ã‚‹
 				//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
 				//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 Norio Nakatani
-				/* ’PŒê’PˆÊ‚ÅŒŸõ */
+				/* å˜èªžå˜ä½ã§æ¤œç´¢ */
 				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
 			}
 		}else{
-			/* ‰p‘å•¶Žš‚Æ‰p¬•¶Žš‚ð‹æ•Ê‚·‚é */
+			/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 			//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
-			//	‘å•¶ŽšE¬•¶Žš‚Ì‹æ•Ê‚Í³‹K•\Œ»‚ÌÝ’è‚ÉŠÖ‚í‚ç‚¸•Û‘¶‚·‚é
+			//	å¤§æ–‡å­—ãƒ»å°æ–‡å­—ã®åŒºåˆ¥ã¯æ­£è¦è¡¨ç¾ã®è¨­å®šã«é–¢ã‚ã‚‰ãšä¿å­˜ã™ã‚‹
 			//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
 			// 2001/06/23 Norio Nakatani
-			/* ’PŒê’PˆÊ‚ÅŒŸõ */
+			/* å˜èªžå˜ä½ã§æ¤œç´¢ */
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), TRUE );
 		}
 		break;
-	case IDC_BUTTON_SEARCHPREV:	/* ãŒŸõ */	//Feb. 13, 2001 JEPRO ƒ{ƒ^ƒ“–¼‚ð[IDC_BUTTON1]¨[IDC_BUTTON_SERACHPREV]‚É•ÏX
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌŽæ“¾ */
+	case IDC_BUTTON_SEARCHPREV:	/* ä¸Šæ¤œç´¢ */	//Feb. 13, 2001 JEPRO ãƒœã‚¿ãƒ³åã‚’[IDC_BUTTON1]â†’[IDC_BUTTON_SERACHPREV]ã«å¤‰æ›´
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if( m_bModal ){		/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚© */
+			if( m_bModal ){		/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‹ */
 				CloseDialog( 1 );
 			}else{
-				/* ‘O‚ðŒŸõ */
+				/* å‰ã‚’æ¤œç´¢ */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
-				/* Ä•`‰æ 2005.04.06 zenryaku 0•¶Žš•ƒ}ƒbƒ`‚ÅƒLƒƒƒŒƒbƒg‚ð•\Ž¦‚·‚é‚½‚ß */
-				pcEditView->Redraw();	// ‘O‰ñ0•¶Žš•ƒ}ƒbƒ`‚ÌÁ‹Ž‚É‚à•K—v
+				/* å†æç”» 2005.04.06 zenryaku 0æ–‡å­—å¹…ãƒžãƒƒãƒã§ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’è¡¨ç¤ºã™ã‚‹ãŸã‚ */
+				pcEditView->Redraw();	// å‰å›ž0æ–‡å­—å¹…ãƒžãƒƒãƒã®æ¶ˆåŽ»ã«ã‚‚å¿…è¦
 
 				// 02/06/26 ai Start
-				// ŒŸõŠJŽnˆÊ’u‚ð“o˜^
+				// æ¤œç´¢é–‹å§‹ä½ç½®ã‚’ç™»éŒ²
 				if( FALSE != pcEditView->m_bSearch ){
-					// ŒŸõŠJŽnŽž‚ÌƒJ[ƒ\ƒ‹ˆÊ’u“o˜^ðŒ•ÏX 02/07/28 ai start
+					// æ¤œç´¢é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ç™»éŒ²æ¡ä»¶å¤‰æ›´ 02/07/28 ai start
 					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 					pcEditView->m_bSearch = FALSE;
 					// 02/07/28 ai end
 				}//  02/06/26 ai End
 
-				/* ŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é */
+				/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
 			}
 		}
 		else if (nRet == 0){
-			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// ŒŸõðŒ‚ðŽw’è‚µ‚Ä‚­‚¾‚³‚¢B
+			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// æ¤œç´¢æ¡ä»¶ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
 		}
 		return TRUE;
-	case IDC_BUTTON_SEARCHNEXT:		/* ‰ºŒŸõ */	//Feb. 13, 2001 JEPRO ƒ{ƒ^ƒ“–¼‚ð[IDOK]¨[IDC_BUTTON_SERACHNEXT]‚É•ÏX
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚ÌŽæ“¾ */
+	case IDC_BUTTON_SEARCHNEXT:		/* ä¸‹æ¤œç´¢ */	//Feb. 13, 2001 JEPRO ãƒœã‚¿ãƒ³åã‚’[IDOK]â†’[IDC_BUTTON_SERACHNEXT]ã«å¤‰æ›´
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if( m_bModal ){		/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚© */
+			if( m_bModal ){		/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‹ */
 				CloseDialog( 2 );
 			}
 			else{
-				/* ŽŸ‚ðŒŸõ */
+				/* æ¬¡ã‚’æ¤œç´¢ */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
-				/* Ä•`‰æ 2005.04.06 zenryaku 0•¶Žš•ƒ}ƒbƒ`‚ÅƒLƒƒƒŒƒbƒg‚ð•\Ž¦‚·‚é‚½‚ß */
-				pcEditView->Redraw();	// ‘O‰ñ0•¶Žš•ƒ}ƒbƒ`‚ÌÁ‹Ž‚É‚à•K—v
+				/* å†æç”» 2005.04.06 zenryaku 0æ–‡å­—å¹…ãƒžãƒƒãƒã§ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’è¡¨ç¤ºã™ã‚‹ãŸã‚ */
+				pcEditView->Redraw();	// å‰å›ž0æ–‡å­—å¹…ãƒžãƒƒãƒã®æ¶ˆåŽ»ã«ã‚‚å¿…è¦
 
-				// ŒŸõŠJŽnˆÊ’u‚ð“o˜^
+				// æ¤œç´¢é–‹å§‹ä½ç½®ã‚’ç™»éŒ²
 				if( FALSE != pcEditView->m_bSearch ){
-					// ŒŸõŠJŽnŽž‚ÌƒJ[ƒ\ƒ‹ˆÊ’u“o˜^ðŒ•ÏX 02/07/28 ai start
+					// æ¤œç´¢é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ç™»éŒ²æ¡ä»¶å¤‰æ›´ 02/07/28 ai start
 					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 					pcEditView->m_bSearch = FALSE;
 				}
 
-				/* ŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é */
+				/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
 			}
 		}
 		else if (nRet == 0){
-			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// ŒŸõðŒ‚ðŽw’è‚µ‚Ä‚­‚¾‚³‚¢B
+			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// æ¤œç´¢æ¡ä»¶ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
 		}
 		return TRUE;
-	case IDC_BUTTON_SETMARK:	//2002.01.16 hor ŠY“–sƒ}[ƒN
+	case IDC_BUTTON_SETMARK:	//2002.01.16 hor è©²å½“è¡Œãƒžãƒ¼ã‚¯
 		if( 0 < GetData() ){
-			if( m_bModal ){		/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚© */
+			if( m_bModal ){		/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‹ */
 				CloseDialog( 2 );
 			}else{
 				pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
-				/* ŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é */
+				/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
@@ -402,11 +402,11 @@ BOOL CDlgFind::OnBnClicked( int wID )
 
 BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 {
-	// 0•¶Žš•ƒ}ƒbƒ`•`‰æ‚ÌON/OFF	// 2009.11.29 ryoji
+	// 0æ–‡å­—å¹…ãƒžãƒƒãƒæç”»ã®ON/OFF	// 2009.11.29 ryoji
 	CEditView*	pcEditView = (CEditView*)m_lParam;
 	CLayoutRange cRangeSel = pcEditView->GetSelectionInfo().m_sSelect;
 	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
-		pcEditView->InvalidateRect(NULL);	// ƒAƒNƒeƒBƒu‰»^”ñƒAƒNƒeƒBƒu‰»‚ªŠ®—¹‚µ‚Ä‚©‚çÄ•`‰æ
+		pcEditView->InvalidateRect(NULL);	// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ï¼éžã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ãŒå®Œäº†ã—ã¦ã‹ã‚‰å†æç”»
 
 	return CDialog::OnActivate(wParam, lParam);
 }

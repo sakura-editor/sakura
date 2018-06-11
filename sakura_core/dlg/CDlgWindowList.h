@@ -1,5 +1,5 @@
-/*!	@file
-	@brief �t�@�C���ꗗ�_�C�A���O�{�b�N�X
+﻿/*!	@file
+	@brief ファイル一覧ダイアログボックス
 
 	@author Moca
 	@date 2015.03.07

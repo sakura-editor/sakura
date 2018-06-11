@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ŠO•”ƒRƒ}ƒ“ƒhÀsƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 */
@@ -19,7 +19,7 @@
 #include "StdAfx.h"
 #include "dlg/CDlgExec.h"
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
-#include "func/Funccode.h"	//Stonee, 2001/03/12  ƒRƒƒ“ƒgƒAƒEƒg‚³‚ê‚Ä‚½‚Ì‚ğ—LŒø‚É‚µ‚½
+#include "func/Funccode.h"	//Stonee, 2001/03/12  ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã•ã‚Œã¦ãŸã®ã‚’æœ‰åŠ¹ã«ã—ãŸ
 #include "util/shell.h"
 #include "util/window.h"
 #include "_main/CAppMode.h"
@@ -27,29 +27,29 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-//ŠO•”ƒRƒ}ƒ“ƒh CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
+//å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰ CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12100
-	IDC_BUTTON_REFERENCE,			HIDC_EXEC_BUTTON_REFERENCE,		//QÆ
-	IDOK,							HIDOK_EXEC,						//Às
-	IDCANCEL,						HIDCANCEL_EXEC,					//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_EXEC_BUTTON_HELP,			//ƒwƒ‹ƒv
-	IDC_CHECK_GETSTDOUT,			HIDC_EXEC_CHECK_GETSTDOUT,		//•W€o—Í‚ğ“¾‚é
-	IDC_COMBO_CODE_GET,				HIDC_COMBO_CODE_GET,			//•W€o—Í•¶šƒR[ƒh
-	IDC_COMBO_m_szCommand,			HIDC_EXEC_COMBO_m_szCommand,	//ƒRƒ}ƒ“ƒh
-	IDC_RADIO_OUTPUT,				HIDC_RADIO_OUTPUT,				//•W€o—ÍƒŠƒ_ƒCƒŒƒNƒgæFƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE
-	IDC_RADIO_EDITWINDOW,			HIDC_RADIO_EDITWINDOW,			//•W€o—ÍƒŠƒ_ƒCƒŒƒNƒgæF•ÒW’†‚ÌƒEƒBƒ“ƒhƒE
-	IDC_CHECK_SENDSTDIN,			HIDC_CHECK_SENDSTDIN,			//•W€“ü—Í‚É‘—‚é
-	IDC_COMBO_CODE_SEND,			HIDC_COMBO_CODE_SEND,			//•W€o—Í•¶šƒR[ƒh
-	IDC_CHECK_CUR_DIR,				HIDC_CHECK_CUR_DIR,				//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ
-	IDC_COMBO_CUR_DIR,				HIDC_COMBO_CUR_DIR,				//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠw’è
-	IDC_BUTTON_REFERENCE2,			HIDC_COMBO_CUR_DIR,				//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠw’è(QÆ)
+	IDC_BUTTON_REFERENCE,			HIDC_EXEC_BUTTON_REFERENCE,		//å‚ç…§
+	IDOK,							HIDOK_EXEC,						//å®Ÿè¡Œ
+	IDCANCEL,						HIDCANCEL_EXEC,					//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_EXEC_BUTTON_HELP,			//ãƒ˜ãƒ«ãƒ—
+	IDC_CHECK_GETSTDOUT,			HIDC_EXEC_CHECK_GETSTDOUT,		//æ¨™æº–å‡ºåŠ›ã‚’å¾—ã‚‹
+	IDC_COMBO_CODE_GET,				HIDC_COMBO_CODE_GET,			//æ¨™æº–å‡ºåŠ›æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	IDC_COMBO_m_szCommand,			HIDC_EXEC_COMBO_m_szCommand,	//ã‚³ãƒãƒ³ãƒ‰
+	IDC_RADIO_OUTPUT,				HIDC_RADIO_OUTPUT,				//æ¨™æº–å‡ºåŠ›ãƒªãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆå…ˆï¼šã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	IDC_RADIO_EDITWINDOW,			HIDC_RADIO_EDITWINDOW,			//æ¨™æº–å‡ºåŠ›ãƒªãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆå…ˆï¼šç·¨é›†ä¸­ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	IDC_CHECK_SENDSTDIN,			HIDC_CHECK_SENDSTDIN,			//æ¨™æº–å…¥åŠ›ã«é€ã‚‹
+	IDC_COMBO_CODE_SEND,			HIDC_COMBO_CODE_SEND,			//æ¨™æº–å‡ºåŠ›æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	IDC_CHECK_CUR_DIR,				HIDC_CHECK_CUR_DIR,				//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	IDC_COMBO_CUR_DIR,				HIDC_COMBO_CUR_DIR,				//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®š
+	IDC_BUTTON_REFERENCE2,			HIDC_COMBO_CUR_DIR,				//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®š(å‚ç…§)
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
 CDlgExec::CDlgExec()
 {
-	m_szCommand[0] = _T('\0');	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ */
+	m_szCommand[0] = _T('\0');	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ */
 	return;
 }
 
@@ -58,10 +58,10 @@ static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 
 
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_szCommand[0] = _T('\0');	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ */
+	m_szCommand[0] = _T('\0');	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ */
 	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
@@ -94,7 +94,7 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	return bRet;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgExec::SetData( void )
 {
 //	MYTRACE( _T("CDlgExec::SetData()") );
@@ -102,20 +102,20 @@ void CDlgExec::SetData( void )
 	HWND	hwndCombo;
 
 	/*****************************
-	*           ‰Šú             *
+	*           åˆæœŸ             *
 	*****************************/
-	/* ƒ†[ƒU[‚ªƒRƒ“ƒ{ ƒ{ƒbƒNƒX‚ÌƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+	/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚³ãƒ³ãƒœ ãƒœãƒƒã‚¯ã‚¹ã®ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹ */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), TRUE );
 
-	{	//	From Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
-		//	ƒ}ƒNƒ‚©‚ç‚ÌŒÄ‚Ño‚µ‚Å‚ÍShareData‚É•Û‘¶‚³‚¹‚È‚¢‚æ‚¤‚ÉCShareData‚Æ‚Ìó‚¯“n‚µ‚ÍExecCmd‚ÌŠO‚Å
+	{	//	From Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
+		//	ãƒã‚¯ãƒ­ã‹ã‚‰ã®å‘¼ã³å‡ºã—ã§ã¯ShareDataã«ä¿å­˜ã•ã›ãªã„ã‚ˆã†ã«ï¼ŒShareDataã¨ã®å—ã‘æ¸¡ã—ã¯ExecCmdã®å¤–ã§
 		int nExecFlgOpt;
 		nExecFlgOpt = m_pShareData->m_nExecFlgOpt;
 		
-		// ƒrƒ…[ƒ‚[ƒh‚âã‘‚«‹Ö~‚Ì‚Æ‚«‚Í•ÒW’†ƒEƒBƒ“ƒhƒE‚Ö‚Ío—Í‚µ‚È‚¢	// 2009.02.21 ryoji
+		// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‚„ä¸Šæ›¸ãç¦æ­¢ã®ã¨ãã¯ç·¨é›†ä¸­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ã¯å‡ºåŠ›ã—ãªã„	// 2009.02.21 ryoji
 		if( !m_bEditable ){
 			nExecFlgOpt &= ~0x02;
 		}
@@ -128,14 +128,14 @@ void CDlgExec::SetData( void )
 
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable)? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// •W€o—ÍOffAUnicode‚ğg—p‚·‚é‚ğDesable‚·‚é	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// •W€“ü—ÍOffAUnicode‚ğg—p‚·‚é‚ğDesable‚·‚é	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// æ¨™æº–å‡ºåŠ›Offæ™‚ã€Unicodeã‚’ä½¿ç”¨ã™ã‚‹ã‚’Desableã™ã‚‹	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// æ¨™æº–å…¥åŠ›Offæ™‚ã€Unicodeã‚’ä½¿ç”¨ã™ã‚‹ã‚’Desableã™ã‚‹	2008/6/20 Uchi
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REFERENCE2 ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
-	}	//	To Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
+	}	//	To Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
 
 	/*****************************
-	*         ƒf[ƒ^İ’è         *
+	*         ãƒ‡ãƒ¼ã‚¿è¨­å®š         *
 	*****************************/
 	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand );
@@ -179,7 +179,7 @@ void CDlgExec::SetData( void )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CDlgExec::GetData( void )
 {
 	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
@@ -188,20 +188,20 @@ int CDlgExec::GetData( void )
 	}else{
 		m_szCurDir[0] = _T('\0');
 	}
-	{	//	From Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
-		//	ƒ}ƒNƒ‚©‚ç‚ÌŒÄ‚Ño‚µ‚Å‚ÍShareData‚É•Û‘¶‚³‚¹‚È‚¢‚æ‚¤‚ÉCShareData‚Æ‚Ìó‚¯“n‚µ‚ÍExecCmd‚ÌŠO‚Å
+	{	//	From Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
+		//	ãƒã‚¯ãƒ­ã‹ã‚‰ã®å‘¼ã³å‡ºã—ã§ã¯ShareDataã«ä¿å­˜ã•ã›ãªã„ã‚ˆã†ã«ï¼ŒShareDataã¨ã®å—ã‘æ¸¡ã—ã¯ExecCmdã®å¤–ã§
 		int nFlgOpt = 0;
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) ) ? 0x01 : 0;	// •W€o—Í‚ğ“¾‚é
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_EDITWINDOW ) ) ? 0x02 : 0;	// •W€o—Í‚ğ•ÒW’†‚ÌƒEƒCƒ“ƒhƒE‚Ö
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// •ÒW’†ƒtƒ@ƒCƒ‹‚ğ•W€“ü—Í‚Ö
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) ) ? 0x200 : 0;	// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠw’è
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) ) ? 0x01 : 0;	// æ¨™æº–å‡ºåŠ›ã‚’å¾—ã‚‹
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_EDITWINDOW ) ) ? 0x02 : 0;	// æ¨™æº–å‡ºåŠ›ã‚’ç·¨é›†ä¸­ã®ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã¸
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¨™æº–å…¥åŠ›ã¸
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) ) ? 0x200 : 0;	// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®š
 		int sel;
 		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_GET ) );
 		nFlgOpt |= codeTable1[sel];
 		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_SEND ) );
 		nFlgOpt |= codeTable2[sel];
 		m_pShareData->m_nExecFlgOpt = nFlgOpt;
-	}	//	To Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
+	}	//	To Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
 	return 1;
 }
 
@@ -211,20 +211,20 @@ BOOL CDlgExec::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_CHECK_GETSTDOUT:
-		{	//	From Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
+		{	//	From Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE );	// ƒrƒ…[ƒ‚[ƒh‚âã‘‚«‹Ö~‚ÌğŒ’Ç‰Á	// 2009.02.21 ryoji
-		}	//	To Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
+			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE );	// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‚„ä¸Šæ›¸ãç¦æ­¢ã®æ¡ä»¶è¿½åŠ 	// 2009.02.21 ryoji
+		}	//	To Here 2007.01.02 maru å¼•æ•°ã‚’æ‹¡å¼µã®ãŸã‚
 
-		// •W€o—ÍOffAUnicode‚ğg—p‚·‚é‚ğDesable‚·‚é	2008/6/20 Uchi
+		// æ¨™æº–å‡ºåŠ›Offæ™‚ã€Unicodeã‚’ä½¿ç”¨ã™ã‚‹ã‚’Desableã™ã‚‹	2008/6/20 Uchi
 		::EnableWindow(
 			GetItemHwnd( IDC_COMBO_CODE_GET ), 
 			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT )
 		);
 		break;
-	case IDC_CHECK_SENDSTDIN:	// •W€“ü—ÍOffAUnicode‚ğg—p‚·‚é‚ğDesable‚·‚é	2008/6/20 Uchi
+	case IDC_CHECK_SENDSTDIN:	// æ¨™æº–å…¥åŠ›Offæ™‚ã€Unicodeã‚’ä½¿ç”¨ã™ã‚‹ã‚’Desableã™ã‚‹	2008/6/20 Uchi
 		::EnableWindow( GetItemHwnd( IDC_COMBO_CODE_SEND ), 
 			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) );
 		break;
@@ -236,20 +236,20 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		break;
 
 	case IDC_BUTTON_HELP:
-		/* uŒŸõv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECMD_DIALOG) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œæ¤œç´¢ã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_EXECMD_DIALOG) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		break;
 
 	//From Here Mar. 28, 2001 JEPRO
-	case IDC_BUTTON_REFERENCE:	/* ƒtƒ@ƒCƒ‹–¼‚ÌuQÆ...vƒ{ƒ^ƒ“ */
+	case IDC_BUTTON_REFERENCE:	/* ãƒ•ã‚¡ã‚¤ãƒ«åã®ã€Œå‚ç…§...ã€ãƒœã‚¿ãƒ³ */
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			TCHAR			szPath[_MAX_PATH + 1];
 			int				size = _countof(szPath) - 1;
 			_tcsncpy( szPath, m_szCommand, size);
 			szPath[size] = _T('\0');
-			/* ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰» */
+			/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ– */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
@@ -273,8 +273,8 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		}
 		return TRUE;
 
-	case IDOK:			/* ‰ºŒŸõ */
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	case IDOK:			/* ä¸‹æ¤œç´¢ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		GetData();
 		CloseDialog( 1 );
 		return TRUE;

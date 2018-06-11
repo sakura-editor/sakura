@@ -1,8 +1,8 @@
-/*!	@file
-	@brief w’ès‚Ö‚ÌƒWƒƒƒ“ƒvƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æŒ‡å®šè¡Œã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date	1998/05/31 ì¬
+	@date	1998/05/31 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,23 +20,23 @@
 #include "doc/CEditDoc.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "outline/CFuncInfo.h"
-#include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ƒwƒbƒ_®—
+#include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ãƒ˜ãƒƒãƒ€æ•´ç†
 #include "util/shell.h"
 #include "window/CEditWnd.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-// ƒWƒƒƒ“ƒv CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
+// ã‚¸ãƒ£ãƒ³ãƒ— CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12800
-	IDC_BUTTON_JUMP,				HIDC_JUMP_BUTTON_JUMP,			//ƒWƒƒƒ“ƒv
-	IDCANCEL,						HIDCANCEL_JUMP,					//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_JUMP_BUTTON_HELP,			//ƒwƒ‹ƒv
+	IDC_BUTTON_JUMP,				HIDC_JUMP_BUTTON_JUMP,			//ã‚¸ãƒ£ãƒ³ãƒ—
+	IDCANCEL,						HIDCANCEL_JUMP,					//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_JUMP_BUTTON_HELP,			//ãƒ˜ãƒ«ãƒ—
 	IDC_CHECK_PLSQL,				HIDC_JUMP_CHECK_PLSQL,			//PL/SQL
 	IDC_COMBO_PLSQLBLOCKS,			HIDC_JUMP_COMBO_PLSQLBLOCKS,	//
-	IDC_EDIT_LINENUM,				HIDC_JUMP_EDIT_LINENUM,			//s”Ô†
+	IDC_EDIT_LINENUM,				HIDC_JUMP_EDIT_LINENUM,			//è¡Œç•ªå·
 	IDC_EDIT_PLSQL_E1,				HIDC_JUMP_EDIT_PLSQL_E1,		//
-	IDC_RADIO_LINENUM_LAYOUT,		HIDC_JUMP_RADIO_LINENUM_LAYOUT,	//Ü‚è•Ô‚µ’PˆÊ
-	IDC_RADIO_LINENUM_CRLF,			HIDC_JUMP_RADIO_LINENUM_CRLF,	//‰üs’PˆÊ
+	IDC_RADIO_LINENUM_LAYOUT,		HIDC_JUMP_RADIO_LINENUM_LAYOUT,	//æŠ˜ã‚Šè¿”ã—å˜ä½
+	IDC_RADIO_LINENUM_CRLF,			HIDC_JUMP_RADIO_LINENUM_CRLF,	//æ”¹è¡Œå˜ä½
 	IDC_SPIN_LINENUM,				HIDC_JUMP_EDIT_LINENUM,			//12870,	//
 	IDC_SPIN_PLSQL_E1,				HIDC_JUMP_EDIT_PLSQL_E1,		//12871,	//
 //	IDC_STATIC,						-1,
@@ -45,8 +45,8 @@ const DWORD p_helpids[] = {	//12800
 
 CDlgJump::CDlgJump()
 {
-	m_nLineNum = 0;			/* s”Ô† */
-	m_bPLSQL = FALSE;		/* PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
+	m_nLineNum = 0;			/* è¡Œç•ªå· */
+	m_bPLSQL = FALSE;		/* PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
 	m_nPLSQL_E1 = 1;
 	m_nPLSQL_E2 = 1;
 
@@ -54,7 +54,7 @@ CDlgJump::CDlgJump()
 	return;
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgJump::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
@@ -65,8 +65,8 @@ int CDlgJump::DoModal(
 }
 
 
-// From Here Oct. 6, 2000 JEPRO added s”Ô†“ü—Íƒ{ƒbƒNƒX‚ÉƒXƒsƒ“ƒRƒ“ƒgƒ[ƒ‹‚ğ•t‚¯‚é‚½‚ß
-// CDlgPrintSetting.cpp‚ÌOnNotify‚ÆOnSpin‹y‚ÑCpropComFile.cpp‚ÌDispatchEvent_p2“à‚Ìcase WM_NOTIFY‚ğQl‚É‚µ‚½
+// From Here Oct. 6, 2000 JEPRO added è¡Œç•ªå·å…¥åŠ›ãƒœãƒƒã‚¯ã‚¹ã«ã‚¹ãƒ”ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚’ä»˜ã‘ã‚‹ãŸã‚
+// CDlgPrintSetting.cppã®OnNotifyã¨OnSpinåŠã³CpropComFile.cppã®DispatchEvent_p2å†…ã®case WM_NOTIFYã‚’å‚è€ƒã«ã—ãŸ
 BOOL CDlgJump::OnNotify( WPARAM wParam, LPARAM lParam )
 {
 	NM_UPDOWN*		pMNUD;
@@ -74,10 +74,10 @@ BOOL CDlgJump::OnNotify( WPARAM wParam, LPARAM lParam )
 	int				nData;
 	idCtrl = (int)wParam;
 	pMNUD  = (NM_UPDOWN*)lParam;
-/* ƒXƒsƒ“ƒRƒ“ƒgƒ[ƒ‹‚Ìˆ— */
+/* ã‚¹ãƒ”ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®å‡¦ç† */
 	switch( idCtrl ){
 	case IDC_SPIN_LINENUM:
-	/* ƒWƒƒƒ“ƒv‚µ‚½‚¢s”Ô†‚Ìw’è */
+	/* ã‚¸ãƒ£ãƒ³ãƒ—ã—ãŸã„è¡Œç•ªå·ã®æŒ‡å®š */
 		nData = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, NULL, FALSE );
 		if( pMNUD->iDelta < 0 ){
 			++nData;
@@ -129,11 +129,11 @@ BOOL CDlgJump::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uw’ès‚ÖƒWƒƒƒ“ƒvv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP_DIALOG) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€ŒæŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_JUMP_DIALOG) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
-	case IDC_CHECK_PLSQL:		/* PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
+	case IDC_CHECK_PLSQL:		/* PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
 		if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL ) ){
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
@@ -154,7 +154,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), TRUE );
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), TRUE );
 		}
-		/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+		/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 		if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT, FALSE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_LINENUM_CRLF, TRUE );
@@ -163,33 +163,33 @@ BOOL CDlgJump::OnBnClicked( int wID )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_LINENUM_CRLF, FALSE );
 		}
 		return TRUE;
-	case IDC_BUTTON_JUMP:			/* w’ès‚ÖƒWƒƒƒ“ƒv */	//Feb. 20, 2001 JEPRO ƒ{ƒ^ƒ“–¼‚ğ[IDOK]¨[IDC_BUTTON_JUMP]‚É•ÏX
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-		//From Here Feb. 20, 2001 JEPRO Ÿs‚ğƒRƒƒ“ƒgƒAƒEƒg (CEditView_Command.cpp ‚Ì Command_JUMP ‚àŠÖŒW‚µ‚Ä‚¢‚é‚Ì‚ÅQÆ‚Ì‚±‚Æ)
+	case IDC_BUTTON_JUMP:			/* æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ— */	//Feb. 20, 2001 JEPRO ãƒœã‚¿ãƒ³åã‚’[IDOK]â†’[IDC_BUTTON_JUMP]ã«å¤‰æ›´
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+		//From Here Feb. 20, 2001 JEPRO æ¬¡è¡Œã‚’ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ (CEditView_Command.cpp ã® Command_JUMP ã‚‚é–¢ä¿‚ã—ã¦ã„ã‚‹ã®ã§å‚ç…§ã®ã“ã¨)
 //		::EndDialog( GetHwnd(), GetData() );
-//		Ÿs‚©‚ç’Ç‰Á
+//		æ¬¡è¡Œã‹ã‚‰è¿½åŠ 
 		if( 0 < GetData() ){
 			CloseDialog( 1 );
 		}else{
 			OkMessage( GetHwnd(), LS(STR_DLGJUMP1) );
 		}
 //To Here Feb. 20, 2001
-		{	//@@@ 2002.2.2 YAZAKI w’ès‚ÖƒWƒƒƒ“ƒv‚ğAƒ_ƒCƒAƒƒO‚ğ•\¦‚·‚éƒRƒ}ƒ“ƒh‚ÆAÀÛ‚ÉƒWƒƒƒ“ƒv‚·‚éƒRƒ}ƒ“ƒh‚É•ª—£B
+		{	//@@@ 2002.2.2 YAZAKI æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ã‚’ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ã¨ã€å®Ÿéš›ã«ã‚¸ãƒ£ãƒ³ãƒ—ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ã«åˆ†é›¢ã€‚
 			CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-			pCEditDoc->m_pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ƒWƒƒƒ“ƒvƒRƒ}ƒ“ƒh”­s
+			pCEditDoc->m_pcEditWnd->GetActiveView().GetCommander().HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ã‚¸ãƒ£ãƒ³ãƒ—ã‚³ãƒãƒ³ãƒ‰ç™ºè¡Œ
 		}
 		return TRUE;
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgJump::SetData( void )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
@@ -197,26 +197,26 @@ void CDlgJump::SetData( void )
 	int				i;
 	HWND			hwndCtrl;
 	wchar_t			szText[1024];
-	int				nIndexCurSel = 0;	//	Sep. 11, 2004 genta ‰Šú‰»
+	int				nIndexCurSel = 0;	//	Sep. 11, 2004 genta åˆæœŸåŒ–
 	int				nIndex;
-	int				nWorkLine; //$$ ğŒ‚É‚æ‚èAƒŒƒCƒAƒEƒgEƒƒWƒbƒN‚Ì’PˆÊ‚ª¬İ‚·‚é‚½‚ßAƒ~ƒX‚ÌŒ´ˆö‚É‚È‚è‚â‚·‚¢
+	int				nWorkLine; //$$ æ¡ä»¶ã«ã‚ˆã‚Šã€ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆãƒ»ãƒ­ã‚¸ãƒƒã‚¯ã®å˜ä½ãŒæ··åœ¨ã™ã‚‹ãŸã‚ã€ãƒŸã‚¹ã®åŸå› ã«ãªã‚Šã‚„ã™ã„
 	int				nPLSQLBlockNum;
 
 //	GetHwnd() = hwndDlg;
-//From Here Oct. 7, 2000 JEPRO ‘O‰ñ“ü—Í‚µ‚½s”Ô†‚ğ•Û‚·‚é‚æ‚¤‚É‰ºs‚ğ•ÏX
-//	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* s”Ô† */
+//From Here Oct. 7, 2000 JEPRO å‰å›å…¥åŠ›ã—ãŸè¡Œç•ªå·ã‚’ä¿æŒã™ã‚‹ã‚ˆã†ã«ä¸‹è¡Œã‚’å¤‰æ›´
+//	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* è¡Œç•ªå· */
 	if( 0 == m_nLineNum ){
-		::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, _T("") );	/* s”Ô† */
+		::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, _T("") );	/* è¡Œç•ªå· */
 	}else{
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* ‘O‰ñ‚Ìs”Ô† */
+		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* å‰å›ã®è¡Œç•ªå· */
 	}
 //To Here Oct. 7, 2000
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, m_nPLSQL_E1, FALSE );
 
-	/* PL/SQLŠÖ”ƒŠƒXƒgì¬ */
+	/* PL/SQLé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS );
 
-/* ƒ^ƒCƒv•Ê‚Éİ’è‚³‚ê‚½ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
+/* ã‚¿ã‚¤ãƒ—åˆ¥ã«è¨­å®šã•ã‚ŒãŸã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
 	if( OUTLINE_PLSQL == pCEditDoc->m_cDocType.GetDocumentAttribute().m_eDefaultOutline ){
 		pCEditDoc->m_cDocOutline.MakeFuncList_PLSQL( &cFuncInfoArr );
 	}
@@ -228,7 +228,7 @@ void CDlgJump::SetData( void )
 			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
@@ -240,7 +240,7 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndex = Combo_AddString( hwndCtrl, szText );
-			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}
 			else{
@@ -249,7 +249,7 @@ void CDlgJump::SetData( void )
 			nPLSQLBlockNum++;
 		}
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
@@ -261,7 +261,7 @@ void CDlgJump::SetData( void )
 				);
 			}
 			nIndexCurSel = nIndex = Combo_AddString( hwndCtrl, szText );
-			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
 				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
@@ -273,16 +273,16 @@ void CDlgJump::SetData( void )
 	}
 	Combo_SetCurSel( hwndCtrl, nIndexCurSel );
 
-	/* PL/SQL‚ÌƒpƒbƒP[ƒW–{‘Ì‚ªŒŸo‚³‚ê‚½ê‡ */
+	/* PL/SQLã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸æœ¬ä½“ãŒæ¤œå‡ºã•ã‚ŒãŸå ´åˆ */
 	if( -1 != nWorkLine ){
 		m_nPLSQL_E1 = nWorkLine;
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, m_nPLSQL_E1, FALSE );
 	}
-	/* PL/SQL‚ÌƒpƒbƒP[ƒWƒuƒƒbƒN‚ªŒŸo‚³‚ê‚½ê‡ */
+	/* PL/SQLã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ãƒ–ãƒ­ãƒƒã‚¯ãŒæ¤œå‡ºã•ã‚ŒãŸå ´åˆ */
 	if( 0 < nPLSQLBlockNum ){
 		m_bPLSQL = TRUE;
 	}
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_PLSQL, m_bPLSQL );	/* PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_PLSQL, m_bPLSQL );	/* PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL ) ){
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
@@ -303,7 +303,7 @@ void CDlgJump::SetData( void )
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), TRUE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), TRUE );
 	}
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 	if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT, FALSE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_LINENUM_CRLF, TRUE );
@@ -317,20 +317,20 @@ void CDlgJump::SetData( void )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/*   TRUE==³í   FALSE==“ü—ÍƒGƒ‰[  */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/*   TRUE==æ­£å¸¸   FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼  */
 int CDlgJump::GetData( void )
 {
 	BOOL	pTranslated;
 
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ) ){
 		m_pShareData->m_bLineNumIsCRLF_ForJump = false;
 	}else{
 		m_pShareData->m_bLineNumIsCRLF_ForJump = true;
 	}
 
-	/* PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
+	/* PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
 	m_bPLSQL = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL );
 	m_nPLSQL_E1 = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, &pTranslated, FALSE );
 	if( m_nPLSQL_E1 == 0 && !pTranslated ){
@@ -342,7 +342,7 @@ int CDlgJump::GetData( void )
 //		m_nPLSQL_E2 = 1;
 //	}
 
-	/* s”Ô† */
+	/* è¡Œç•ªå· */
 	m_nLineNum = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, &pTranslated, FALSE );
 	if( m_nLineNum == 0 && !pTranslated ){
 		return FALSE;

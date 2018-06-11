@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ^ƒOƒtƒ@ƒCƒ‹ì¬ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2003.5.12
@@ -35,7 +35,7 @@ class CDlgTagsMake;
 
 #include "dlg/CDialog.h"
 /*!
-	@brief ƒ^ƒOƒtƒ@ƒCƒ‹ì¬ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 class CDlgTagsMake : public CDialog
 {
@@ -48,21 +48,21 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
-	TCHAR	m_szPath[_MAX_PATH+1];	/* ƒtƒHƒ‹ƒ_ */
-	TCHAR	m_szTagsCmdLine[_MAX_PATH];	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“(ŒÂ•Ê) */
-	int		m_nTagsOpt;				/* CTAGSƒIƒvƒVƒ‡ƒ“(ƒ`ƒFƒbƒN) */
+	TCHAR	m_szPath[_MAX_PATH+1];	/* ãƒ•ã‚©ãƒ«ãƒ€ */
+	TCHAR	m_szTagsCmdLine[_MAX_PATH];	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³(å€‹åˆ¥) */
+	int		m_nTagsOpt;				/* CTAGSã‚ªãƒ—ã‚·ãƒ§ãƒ³(ãƒã‚§ãƒƒã‚¯) */
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnBnClicked( int );
 	LPVOID	GetHelpIdTable(void);
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 private:
 	void SelectFolder( HWND hwndDlg );
