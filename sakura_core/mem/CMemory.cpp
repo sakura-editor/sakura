@@ -312,10 +312,6 @@ void CMemory::AllocBuffer( int nNewDataLen )
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
-			// 頻繁な再確保を行わないようにする為、必要量の倍のサイズを確保する
-			if (nWorkLen < std::numeric_limits<int>::max() / 2) {
-				nWorkLen *= 2;
-			}
 			// 2014.06.25 有効データ長が0の場合はfree & malloc
 			if( m_nRawLen == 0 ){
 				free( m_pRawData );
@@ -399,7 +395,7 @@ void CMemory::SetRawDataHoldBuffer( const CMemory& pcmemData )
 void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
 {
 	if(nDataLenBytes<=0)return;
-	AllocBuffer( m_nRawLen + nDataLenBytes );
+	_ReallocIfNeeded( nDataLenBytes );
 	_AddData( pData, nDataLenBytes );
 }
 
@@ -412,7 +408,7 @@ void CMemory::AppendRawData( const CMemory* pcmemData )
 	}
 	int	nDataLen;
 	const void*	pData = pcmemData->GetRawPtr( &nDataLen );
-	AllocBuffer( m_nRawLen + nDataLen );
+	_ReallocIfNeeded( nDataLen );
 	_AddData( pData, nDataLen );
 }
 
@@ -425,12 +421,10 @@ void CMemory::_Empty( void )
 	return;
 }
 
-
-
 void CMemory::_AppendSz(const char* str)
 {
 	int len=strlen(str);
-	AllocBuffer( m_nRawLen + len );
+	_ReallocIfNeeded(len);
 	_AddData(str,len);
 }
 
@@ -443,3 +437,15 @@ void CMemory::_SetRawLength(int nLength)
 	m_pRawData[m_nRawLen  ]=0;
 	m_pRawData[m_nRawLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }
+
+void CMemory::_ReallocIfNeeded(int appendLength)
+{
+	assert(appendLength >= 0);
+	if(m_nDataBufSize - 2 - m_nRawLen < appendLength) {
+		int64_t newSize1 = (int64_t)m_nRawLen + 2 + appendLength;
+		int64_t newSize2 = (int64_t)m_nDataBufSize * 2;
+		int64_t newSize = std::min(std::max(newSize1, newSize2), (int64_t)std::numeric_limits<int>::max());
+		AllocBuffer( (int)newSize );
+	}
+}
+
