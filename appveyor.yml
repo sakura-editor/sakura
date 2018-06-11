@@ -1,10 +1,10 @@
 version: 1.0.{build}
 image: Visual Studio 2017
-clone_folder: C:\projects\$(APPVEYOR_ACCOUNT_NAME)\$(APPVEYOR_PROJECT_NAME)_$(APPVEYOR_BUILD_VERSION)
 init:
 - ps: Set-WinSystemLocale ja-JP
 - ps: Start-Sleep -s 5
 - ps: Restart-Computer
+- ps: Start-Sleep -s 5
 
 configuration:
   - Release
