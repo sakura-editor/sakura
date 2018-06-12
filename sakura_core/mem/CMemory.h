@@ -87,7 +87,6 @@ protected:
 	*/
 	void _Empty( void ); //!< ‰ð•ú‚·‚éBm_pRawData‚ÍNULL‚É‚È‚éB
 	void _AddData( const void*, int );
-	void _ReallocIfNeeded(int appendLength);
 public:
 	void _AppendSz(const char* str);
 	void _SetRawLength(int nLength);

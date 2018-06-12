@@ -180,7 +180,7 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepBackup
 )
 {
-	MY_RUNNINGTIMER(cRunningTimer, "CEditView::DoGrep");
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DoGrep" );
 
 	// 再入不可
 	if( this->m_bGrepRunning ){
@@ -582,8 +582,8 @@ DWORD CGrepAgent::DoGrep(
 		}
 		nGrepTreeResult += nTreeRet;
 	}
-	if (0 < cmemMessage.GetStringLength()) {
-		AddTail(pcViewDst, cmemMessage, sGrepOption.bGrepStdout);
+	if( 0 < cmemMessage.GetStringLength() ) {
+		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 		cmemMessage._SetStringLength(0);
 	}
 	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
@@ -693,7 +693,7 @@ int CGrepAgent::DoGrepTree(
 		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
 
 		DWORD dwNow = ::GetTickCount();
-		if (dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC) {
+		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
 			m_dwTickUICheck = dwNow;
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
@@ -770,7 +770,7 @@ int CGrepAgent::DoGrepTree(
 				// データ検索のときファイルの合計が最大10MBを超えたら表示
 				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
 			}
-			if (10000 < nWork) {
+			if( 10000 < nWork ){
 				nHitCountOld = -100; // 即表示
 			}
 		}
@@ -802,7 +802,7 @@ int CGrepAgent::DoGrepTree(
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
 			DWORD dwNow = ::GetTickCount();
-			if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
 				m_dwTickUICheck = dwNow;
 				//サブフォルダの探索を再帰呼び出し。
 				/* 処理中のユーザー操作を可能にする */
@@ -1672,10 +1672,10 @@ int CGrepAgent::DoGrepReplaceFile(
 		++nLine;
 
 		DWORD dwNow = ::GetTickCount();
-		if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
 			m_dwTickUICheck = dwNow;
 			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook(pcDlgCancel->GetHwnd()) ){
+			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 				return -1;
 			}
 			/* 中断ボタン押下チェック */
