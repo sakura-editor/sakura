@@ -2128,19 +2128,13 @@ void CTabWnd::AdjustWindowPlacement( void )
 	@author ryoji
 	@date 2007.11.30 êVãKçÏê¨
 */
-int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl, HWND hwndDst/* = NULL*/ )
+int CTabWnd::SetCarmWindowPlacement(
+	_In_ HWND hwnd,
+	_In_ const WINDOWPLACEMENT* pWndpl,
+	_In_opt_ HWND hwndDst
+)
 {
 	WINDOWPLACEMENT wp = *pWndpl;
-	if( hwndDst )
-	{
-		RECT rcSnap, rcUnsnap;
-		if( GetAeroSnapRect(hwndDst, &rcSnap, &rcUnsnap) ){
-			wp.rcNormalPosition = rcSnap;
-			SetVirtualSnapRect(hwnd, &rcSnap, &rcUnsnap);
-			::PostMessage(hwnd, MYWM_SETAEROSNAP, 0, 0);
-		}
-	}
-
 	if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
 	{
 		WINDOWPLACEMENT wpCur;
@@ -2165,6 +2159,15 @@ int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl, H
 		wp.showCmd = SW_SHOWNOACTIVATE;
 	}
 	::SetWindowPlacement( hwnd, &wp );
+	if( hwndDst )
+	{
+		RECT rcSnap, rcUnsnap;
+		if( GetAeroSnapRect(hwndDst, &rcSnap, &rcUnsnap) ){
+			wp.rcNormalPosition = rcSnap;
+			SetVirtualSnapRect(hwnd, &rcSnap, &rcUnsnap);
+			::PostMessage(hwnd, MYWM_SETAEROSNAP, 0, 0);
+		}
+	}
 	return wp.showCmd;
 }
 
