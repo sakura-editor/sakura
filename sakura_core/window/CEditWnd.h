@@ -115,7 +115,7 @@ public:
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
-	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
+	void _GetTabGroupInfo(_Inout_ int& nGroup, _Out_ STabGroupInfo* pTabGroupInfo);
 	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);

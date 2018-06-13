@@ -424,52 +424,55 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	return hwndResult;
 }
 
-void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+/*!
+ * タブグループ情報取得
+ *
+ * @date 2003/05/31 MIK タブウインドウの場合は現状値を指定
+ * @date 2003/09/11 MIK 新規TABウィンドウの位置が上にずれないように
+ * @date 2007/06/20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
+ * @date 2018/06/13 berryzplus リファクタリング。引数の順番を変更。rcTopに設定するものを変更。
+ */
+void CEditWnd::_GetTabGroupInfo(_Inout_ int& nGroup, _Out_ STabGroupInfo* pTabGroupInfo)
 {
-	HWND hwndTop = NULL;
-	WINDOWPLACEMENT	wpTop = {0};
-	RECT rcTop = {0};
+	// 指定グループの先頭ウィンドウ(実質的な戻り値)を初期化
+	HWND &hwndTop = pTabGroupInfo->hwndTop = NULL;
 
-	//From Here @@@ 2003.05.31 MIK
-	//タブウインドウの場合は現状値を指定
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
-	{
-		if( nGroup < 0 )	// 不正なグループID
-			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
-		EditNode*	pEditNode = CAppNodeGroupHandle(nGroup).GetEditNodeAt(0);	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
-		hwndTop = pEditNode? pEditNode->GetHwnd(): NULL;
-
-		if( hwndTop )
-		{
-			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
-			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
-
-			wpTop.length = sizeof(wpTop);
-			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
-				if( wpTop.showCmd == SW_SHOWMINIMIZED )
-					wpTop.showCmd = pEditNode->m_showCmdRestore;
-				rcTop = wpTop.rcNormalPosition;
-
-				// AeroSnap 時の補正
-				if( ::IsIconic( hwndTop ) && pEditNode->m_showCmdRestore == SW_SHOWNORMAL )
-					ShowWindow( hwndTop, SW_RESTORE );	// AeroSnap 矩形取得のため先に戻しておく
-				RECT rcSnap, rcUnsnap;
-				if( GetAeroSnapRect( hwndTop, &rcSnap, &rcUnsnap ) ){
-					rcTop = rcSnap;
-					wpTop.rcNormalPosition = rcUnsnap;
-				}
-			}
-			else{
-				hwndTop = NULL;
-			}
-		}
+	// タブウインドウでない場合は処理なし
+	if (!(m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin)) {
+		return;
 	}
-	//To Here @@@ 2003.05.31 MIK
 
-	//結果
-	pTabGroupInfo->hwndTop = hwndTop;
-	pTabGroupInfo->wpTop = wpTop;
-	pTabGroupInfo->rcTop = rcTop;
+	// 不正なグループIDが指定された場合は補正する
+	if (nGroup < 0) {
+		nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
+	}
+
+	// 指定グループの先頭ウィンドウ情報を取得
+	EditNode* pEditNode = CAppNodeGroupHandle(nGroup).GetEditNodeAt(0);
+	if (!pEditNode || !pEditNode->GetHwnd() || !::IsWindow(pEditNode->GetHwnd())) {
+		return;
+	}
+
+	// 指定グループの先頭ウィンドウを確定する
+	hwndTop = pEditNode->GetHwnd();
+
+	// ウィンドウ表示情報を取得
+	WINDOWPLACEMENT	&wpTop = pTabGroupInfo->wpTop;
+	wpTop.length = sizeof(WINDOWPLACEMENT);
+	if (!::GetWindowPlacement(hwndTop, &wpTop)) {
+		hwndTop = NULL;
+		return;
+	}
+
+	if (wpTop.showCmd == SW_SHOWMINIMIZED) {
+		wpTop.showCmd = pEditNode->m_showCmdRestore;
+}
+	// ウィンドウ矩形を取得
+	RECT &rcTop = pTabGroupInfo->rcTop;
+	if (!::GetWindowRect(hwndTop, &rcTop)) {
+		hwndTop = NULL;
+		return;
+	}
 }
 
 void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
@@ -674,7 +677,7 @@ HWND CEditWnd::Create(
 
 	//タブグループ情報取得
 	STabGroupInfo sTabGroupInfo;
-	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
+	_GetTabGroupInfo(nGroup, &sTabGroupInfo);
 
 
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
