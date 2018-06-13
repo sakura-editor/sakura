@@ -1,8 +1,24 @@
 set platform=%1
 set configuration=%2
+set WORKDIR=sakura-%platform%-%configuration%
 set OUTFILE=sakura-%platform%-%configuration%.zip
 
-7z a %OUTFILE% %platform%\%configuration%\*.exe
-7z a %OUTFILE% %platform%\%configuration%\*.dll
-7z a %OUTFILE% %platform%\%configuration%\*.pdb
+@rem cleanup for local testing
+if exist "%OUTFILE%" (
+	del %OUTFILE%
+)
+if exist "%WORKDIR%" (
+	rmdir /s /q %WORKDIR%
+)
+
+mkdir %WORKDIR%
+copy %platform%\%configuration%\*.exe %WORKDIR%\
+copy %platform%\%configuration%\*.dll %WORKDIR%\
+copy %platform%\%configuration%\*.pdb %WORKDIR%\
+
+7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
+
+if exist %WORKDIR% (
+	rmdir /s /q %WORKDIR%
+)
