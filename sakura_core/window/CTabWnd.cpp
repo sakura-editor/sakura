@@ -2090,7 +2090,6 @@ void CTabWnd::AdjustWindowPlacement( void )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		HWND hwnd = GetParentHwnd();	// 自身の編集ウィンドウ
-		WINDOWPLACEMENT wp;
 		if( !::IsWindowVisible( hwnd ) )	// 可視化するときだけ引き継ぐ
 		{
 			// なるべく画面を手前に出さずに可視化する
@@ -2109,14 +2108,16 @@ void CTabWnd::AdjustWindowPlacement( void )
 				::ShowWindow( hwnd, SW_SHOWNA );
 				return;
 			}
+
 			HWND hwndInsertAfter = pEditNode->m_hWnd;
-			wp.length = sizeof( wp );
+			if (::IsIconic(hwndInsertAfter))
+			{
+				ShowWindow(hwndInsertAfter, SW_RESTORE);	// AeroSnap 矩形取得のため先に戻しておく
+			}
+
+			WINDOWPLACEMENT wp = { sizeof(wp) };
 			::GetWindowPlacement( hwndInsertAfter, &wp );
-			if( wp.showCmd == SW_SHOWMINIMIZED )
-				wp.showCmd = pEditNode->m_showCmdRestore;
-			if( ::IsIconic( hwndInsertAfter ) && pEditNode->m_showCmdRestore == SW_SHOWNORMAL )
-				ShowWindow( hwndInsertAfter, SW_RESTORE );	// AeroSnap 矩形取得のため先に戻しておく
-			::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
 			SetCarmWindowPlacement( hwnd, &wp, hwndInsertAfter );	// 位置を復元する
 			::UpdateWindow( hwnd );	// 強制描画
 		}
