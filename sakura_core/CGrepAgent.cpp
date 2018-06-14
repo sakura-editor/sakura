@@ -22,9 +22,14 @@
 #include <deque>
 #include "sakura_rc.h"
 
+#define UICHECK_INTERVAL_MILLISEC 50	// UI確認の時間間隔
+#define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
+
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
+, m_dwTickAddTail( 0 )
+, m_dwTickUICheck( 0 )
 {
 }
 
@@ -124,6 +129,7 @@ std::tstring CGrepAgent::ChopYen( const std::tstring& str )
 
 void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout )
 {
+	m_dwTickAddTail = ::GetTickCount();
 	if( bAddStdout ){
 		HANDLE out = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		if( out && out != INVALID_HANDLE_VALUE ){
@@ -136,6 +142,9 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 		}
 	}else{
 		pcEditView->GetCommander().Command_ADDTAIL( cmem.GetStringPtr(), cmem.GetStringLength() );
+		pcEditView->GetCommander().Command_GOFILEEND( FALSE );
+		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+			CEditWnd::getInstance()->RedrawAllViews( pcEditView );	//	他のペインの表示を更新
 	}
 }
 
@@ -171,9 +180,7 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepBackup
 )
 {
-#ifdef _DEBUG
-	CRunningTimer cRunningTimer( "CEditView::DoGrep" );
-#endif
+	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DoGrep" );
 
 	// 再入不可
 	if( this->m_bGrepRunning ){
@@ -524,7 +531,7 @@ DWORD CGrepAgent::DoGrep(
 	if( 0 < nWork && sGrepOption.bGrepHeader ){
 		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 	}
-	cmemMessage.Clear(); // もういらない
+	cmemMessage._SetStringLength(0);
 	pszWork = NULL;
 	
 	//	2007.07.22 genta バージョンを取得するために，
@@ -566,13 +573,18 @@ DWORD CGrepAgent::DoGrep(
 			&cRegexp,
 			0,
 			bOutputBaseFolder,
-			&nHitCount
+			&nHitCount,
+			cmemMessage
 		);
 		if( nTreeRet == -1 ){
 			nGrepTreeResult = -1;
 			break;
 		}
 		nGrepTreeResult += nTreeRet;
+	}
+	if( 0 < cmemMessage.GetStringLength() ) {
+		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+		cmemMessage._SetStringLength(0);
 	}
 	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
 		const wchar_t* p = LSW( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
@@ -590,7 +602,7 @@ DWORD CGrepAgent::DoGrep(
 		CNativeW cmemOutput;
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TIME_MEASURE)
 		auto_sprintf( szBuffer, LSW(STR_GREP_TIMER), cRunningTimer.Read() );
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
@@ -658,14 +670,12 @@ int CGrepAgent::DoGrepTree(
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int						nNest,				//!< [in] ネストレベル
 	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダ名出力
-	int*					pnHitCount			//!< [i/o] ヒット数の合計
+	int*					pnHitCount,			//!< [i/o] ヒット数の合計
+	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
 )
 {
-	::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszPath );
-
 	int			i;
 	int			count;
-	CNativeW	cmemMessage;
 	LPCTSTR		lpFileName;
 	int			nWork = 0;
 	int			nHitCountOld = -100;
@@ -682,19 +692,23 @@ int CGrepAgent::DoGrepTree(
 	for( i = 0; i < count; i++ ){
 		lpFileName = cGrepEnumFilterFiles.GetFileName( i );
 
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			goto cancel_return;
-		}
-		/* 中断ボタン押下チェック */
-		if( pcDlgCancel->IsCanceled() ){
-			goto cancel_return;
-		}
+		DWORD dwNow = ::GetTickCount();
+		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+			m_dwTickUICheck = dwNow;
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+				goto cancel_return;
+			}
+			/* 中断ボタン押下チェック */
+			if( pcDlgCancel->IsCanceled() ){
+				goto cancel_return;
+			}
 
-		/* 表示設定をチェック */
-		CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-			0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-		);
+			/* 表示設定をチェック */
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			);
+		}
 
 		//GREP実行！
 		::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
@@ -756,35 +770,23 @@ int CGrepAgent::DoGrepTree(
 				// データ検索のときファイルの合計が最大10MBを超えたら表示
 				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
 			}
-			if( *pnHitCount - nHitCountOld && 
-				( *pnHitCount < 20 || 10000 < nWork ) ){
+			if( 10000 < nWork ){
 				nHitCountOld = -100; // 即表示
 			}
 		}
-		if( *pnHitCount - nHitCountOld  >= 10 ){
-			/* 結果出力 */
-			if( 0 < cmemMessage.GetStringLength() ){
-				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-				pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-				if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-					CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-				cmemMessage.Clear();
-			}
+		/* 結果出力 */
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (*pnHitCount - nHitCountOld) >= 10 &&
+		   (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC
+		){
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			cmemMessage._SetStringLength(0);
 			nWork = 0;
 			nHitCountOld = *pnHitCount;
 		}
 		if( -1 == nRet ){
 			goto cancel_return;
 		}
-	}
-
-	// 2010.08.25 フォルダ移動前に残りを先に出力
-	if( 0 < cmemMessage.GetStringLength() ){
-		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-		pcViewDst->GetCommander().Command_GOFILEEND( false );
-		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
-			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-		cmemMessage.Clear();
 	}
 
 	/*
@@ -799,19 +801,23 @@ int CGrepAgent::DoGrepTree(
 		for( i = 0; i < count; i++ ){
 			lpFileName = cGrepEnumFilterFolders.GetFileName( i );
 
-			//サブフォルダの探索を再帰呼び出し。
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				goto cancel_return;
+			DWORD dwNow = ::GetTickCount();
+			if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+				m_dwTickUICheck = dwNow;
+				//サブフォルダの探索を再帰呼び出し。
+				/* 処理中のユーザー操作を可能にする */
+				if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+					goto cancel_return;
+				}
+				/* 中断ボタン押下チェック */
+				if( pcDlgCancel->IsCanceled() ){
+					goto cancel_return;
+				}
+				/* 表示設定をチェック */
+				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+				);
 			}
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				goto cancel_return;
-			}
-			/* 表示設定をチェック */
-			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-			);
 
 			//フォルダ名を作成する。
 			// 2010.08.01 キャンセルでメモリーリークしてました
@@ -835,7 +841,8 @@ int CGrepAgent::DoGrepTree(
 				pRegexp,
 				nNest + 1,
 				bOutputBaseFolder,
-				pnHitCount
+				pnHitCount,
+				cmemMessage
 			);
 			if( -1 == nGrepTreeResult ){
 				goto cancel_return;
@@ -853,10 +860,7 @@ cancel_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
 		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-		pcViewDst->GetCommander().Command_GOFILEEND( false );
-		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
-			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-		cmemMessage.Clear();
+		cmemMessage._SetStringLength(0);
 	}
 
 	return -1;
@@ -1041,7 +1045,7 @@ int CGrepAgent::DoGrepFile(
 	const TCHAR*			pszRelPath,			//!< [in] 相対パス File.ext(bGrepSeparateFolder) または  SubFolder\File.ext(!bGrepSeparateFolder)
 	bool&					bOutputBaseFolder,	//!< 
 	bool&					bOutputFolderName,	//!< 
-	CNativeW&				cmemMessage			//!< 
+	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
 )
 {
 	int		nHitCount;
@@ -1178,13 +1182,17 @@ int CGrepAgent::DoGrepFile(
 		}
 	}
 
-//	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-		return -1;
-	}
-	/* 中断ボタン押下チェック */
-	if( pcDlgCancel->IsCanceled() ){
-		return -1;
+	DWORD dwNow = ::GetTickCount();
+	if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+		m_dwTickUICheck = dwNow;
+		/* 処理中のユーザー操作を可能にする */
+		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+			return -1;
+		}
+		/* 中断ボタン押下チェック */
+		if( pcDlgCancel->IsCanceled() ){
+			return -1;
+		}
 	}
 	int nOutputHitCount = 0;
 
@@ -1209,29 +1217,37 @@ int CGrepAgent::DoGrepFile(
 
 		/* 処理中のユーザー操作を可能にする */
 		// 2010.08.31 間隔を1/32にする
-		if( ((0 == nLine % 32)|| 10000 < nLineLen ) && !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			return -1;
-		}
-		if( 0 == nLine % 64 ){
-			/* 中断ボタン押下チェック */
-			if( pcDlgCancel->IsCanceled() ){
-				return -1;
-			}
-			//	2003.06.23 Moca 表示設定をチェック
-			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
-			);
-			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
-			if( 5000000 < cfl.GetFileSize() ){
-				int nPercent = cfl.GetPercent();
-				if( 5 <= nPercent - nOldPercent ){
-					nOldPercent = nPercent;
-					TCHAR szWork[10];
-					::auto_sprintf( szWork, _T(" (%3d%%)"), nPercent );
-					std::tstring str;
-					str = str + pszFile + szWork;
-					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
+		if( 0 == nLine % 32 ) {
+			DWORD dwNow = ::GetTickCount();
+			if ( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ) {
+				m_dwTickUICheck = dwNow;
+				if (!::BlockingHook( pcDlgCancel->GetHwnd() )) {
+					return -1;
 				}
+				/* 中断ボタン押下チェック */
+				if( pcDlgCancel->IsCanceled() ){
+					return -1;
+				}
+				//	2003.06.23 Moca 表示設定をチェック
+				CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
+					0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+				);
+				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
+				if( 5000000 < cfl.GetFileSize() ){
+					int nPercent = cfl.GetPercent();
+					if( 5 <= nPercent - nOldPercent ){
+						nOldPercent = nPercent;
+						TCHAR szWork[10];
+						::auto_sprintf( szWork, _T(" (%3d%%)"), nPercent );
+						std::tstring str;
+						str = str + pszFile + szWork;
+						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
+					}
+				}else{
+					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, pszFile );
+				}
+				::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
 			}
 		}
 		int nHitOldLine = nHitCount;
@@ -1276,9 +1292,6 @@ int CGrepAgent::DoGrepFile(
 							nLine, nIndex + 1, pLine, nLineLen, nEolCodeLen,
 							pLine + nIndex, matchlen, sGrepOption
 						);
-						if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-							::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-						}
 					}
 					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
@@ -1327,10 +1340,6 @@ int CGrepAgent::DoGrepFile(
 						nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
 						pszRes, nMatchLen, sGrepOption
 					);
-					//	May 22, 2000 genta
-					if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-						::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					}
 				}
 
 				// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
@@ -1370,10 +1379,6 @@ int CGrepAgent::DoGrepFile(
 						nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
 						pszRes, nKeyLen, sGrepOption
 					);
-					//	May 22, 2000 genta
-					if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-						::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-					}
 				}
 				
 				//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
@@ -1410,18 +1415,14 @@ int CGrepAgent::DoGrepFile(
 					nLine, 1, pLine, nLineLen, nEolCodeLen,
 					pLine, nLineLen, sGrepOption
 				);
-				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				}
 			}
 		}
-		// 2014.09.23 データが多い時はバッファ出力
-		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (nHitCount - nOutputHitCount >= 10) &&
+		   (::GetTickCount() - m_dwTickAddTail) >= ADDTAIL_INTERVAL_MILLISEC
+		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-			pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-			if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 			cmemMessage._SetStringLength(0);
 		}
 
@@ -1670,12 +1671,13 @@ int CGrepAgent::DoGrepReplaceFile(
 		nEolCodeLen = cEol.GetLen();
 		++nLine;
 
-		/* 処理中のユーザー操作を可能にする */
-		// 2010.08.31 間隔を1/32にする
-		if( ((0 == nLine % 32)|| 10000 < nLineLen ) && !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-			return -1;
-		}
-		if( 0 == nLine % 64 ){
+		DWORD dwNow = ::GetTickCount();
+		if( dwNow - m_dwTickUICheck > UICHECK_INTERVAL_MILLISEC ){
+			m_dwTickUICheck = dwNow;
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+				return -1;
+			}
 			/* 中断ボタン押下チェック */
 			if( pcDlgCancel->IsCanceled() ){
 				return -1;
@@ -1743,9 +1745,6 @@ int CGrepAgent::DoGrepReplaceFile(
 				output.OutputHead();
 				++nHitCount;
 				++(*pnHitCount);
-				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				}
 				if( !sGrepOption.bGrepPaste ){
 					// gオプションでは行末まで一度に置換済み
 					nHitCount += nMatchNum - 1;
@@ -1813,10 +1812,6 @@ int CGrepAgent::DoGrepReplaceFile(
 				output.OutputHead();
 				++nHitCount;
 				++(*pnHitCount);
-				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				}
 				if( 0 < pszRes - pLine - nOutputPos ){
 					cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
 				}
@@ -1859,10 +1854,6 @@ int CGrepAgent::DoGrepReplaceFile(
 				output.OutputHead();
 				++nHitCount;
 				++(*pnHitCount);
-				//	May 22, 2000 genta
-				if( 0 == ( (*pnHitCount) % 128 ) || *pnHitCount < 128 ){
-					::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-				}
 				if( nColumn ){
 					cOutBuffer.AppendString( pCompareData, nColumn );
 				}
@@ -1880,13 +1871,11 @@ int CGrepAgent::DoGrepReplaceFile(
 		}
 		output.AppendBuffer(cOutBuffer);
 
-		// 2014.09.23 データが多い時はバッファ出力
-		if( 0 < cmemMessage.GetStringLength() && 2800 < nHitCount - nOutputHitCount ){
+		if( 0 < cmemMessage.GetStringLength() &&
+		   (::GetTickCount() - m_dwTickAddTail > ADDTAIL_INTERVAL_MILLISEC)
+		){
 			nOutputHitCount = nHitCount;
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-			pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-			if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 			cmemMessage._SetStringLength(0);
 		}
 	}
