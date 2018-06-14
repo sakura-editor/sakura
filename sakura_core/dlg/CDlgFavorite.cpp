@@ -1,5 +1,5 @@
-/*!	@file
-	@brief —š—ğ‚ÌŠÇ—ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief å±¥æ­´ã®ç®¡ç†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2003.4.8
@@ -47,24 +47,24 @@
 #include "sakura.hh"
 
 const DWORD p_helpids[] = {
-	IDC_TAB_FAVORITE,				HIDC_TAB_FAVORITE,				//ƒ^ƒu
-	IDC_LIST_FAVORITE_FILE,			HIDC_LIST_FAVORITE_FILE,		//ƒtƒ@ƒCƒ‹
-	IDC_LIST_FAVORITE_FOLDER,		HIDC_LIST_FAVORITE_FOLDER,		//ƒtƒHƒ‹ƒ_
-	IDC_LIST_FAVORITE_EXCEPTMRU,	HIDC_LIST_FAVORITE_EXCEPTMRU,	//MRUœŠO
-	IDC_LIST_FAVORITE_SEARCH,		HIDC_LIST_FAVORITE_SEARCH,		//ŒŸõ
-	IDC_LIST_FAVORITE_REPLACE,		HIDC_LIST_FAVORITE_REPLACE,		//’uŠ·
-	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPƒtƒ@ƒCƒ‹
-	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPƒtƒHƒ‹ƒ_
-	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//ƒRƒ}ƒ“ƒh
-	IDC_LIST_FAVORITE_CUR_DIR,		HIDC_LIST_FAVORITE_CUR_DIR,		//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ
+	IDC_TAB_FAVORITE,				HIDC_TAB_FAVORITE,				//ã‚¿ãƒ–
+	IDC_LIST_FAVORITE_FILE,			HIDC_LIST_FAVORITE_FILE,		//ãƒ•ã‚¡ã‚¤ãƒ«
+	IDC_LIST_FAVORITE_FOLDER,		HIDC_LIST_FAVORITE_FOLDER,		//ãƒ•ã‚©ãƒ«ãƒ€
+	IDC_LIST_FAVORITE_EXCEPTMRU,	HIDC_LIST_FAVORITE_EXCEPTMRU,	//MRUé™¤å¤–
+	IDC_LIST_FAVORITE_SEARCH,		HIDC_LIST_FAVORITE_SEARCH,		//æ¤œç´¢
+	IDC_LIST_FAVORITE_REPLACE,		HIDC_LIST_FAVORITE_REPLACE,		//ç½®æ›
+	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPãƒ•ã‚¡ã‚¤ãƒ«
+	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPãƒ•ã‚©ãƒ«ãƒ€
+	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//ã‚³ãƒãƒ³ãƒ‰
+	IDC_LIST_FAVORITE_CUR_DIR,		HIDC_LIST_FAVORITE_CUR_DIR,		//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 //	IDC_STATIC_BUTTONS,				-1,
-	IDC_BUTTON_CLEAR,				HIDC_BUTTON_FAVORITE_CLEAR,		//‚·‚×‚Ä	// 2006.10.10 ryoji
-	IDC_BUTTON_DELETE_NOFAVORATE,   HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE,  //‚¨‹C‚É“ü‚èˆÈŠO
-	IDC_BUTTON_DELETE_NOTFOUND,		HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND		,  //‘¶İ‚µ‚È‚¢€–Ú
-	IDC_BUTTON_DELETE_SELECTED,     HIDC_BUTTON_FAVORITE_DELETE_SELECTED,    //‘I‘ğ€–Ú
-	IDC_BUTTON_ADD_FAVORITE,        HIDC_BUTTON_ADD_FAVORITE,		// ’Ç‰Á
-	IDOK,							HIDC_FAVORITE_IDOK,				//•Â‚¶‚é
-	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ƒwƒ‹ƒv
+	IDC_BUTTON_CLEAR,				HIDC_BUTTON_FAVORITE_CLEAR,		//ã™ã¹ã¦	// 2006.10.10 ryoji
+	IDC_BUTTON_DELETE_NOFAVORATE,   HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE,  //ãŠæ°—ã«å…¥ã‚Šä»¥å¤–
+	IDC_BUTTON_DELETE_NOTFOUND,		HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND		,  //å­˜åœ¨ã—ãªã„é …ç›®
+	IDC_BUTTON_DELETE_SELECTED,     HIDC_BUTTON_FAVORITE_DELETE_SELECTED,    //é¸æŠé …ç›®
+	IDC_BUTTON_ADD_FAVORITE,        HIDC_BUTTON_ADD_FAVORITE,		// è¿½åŠ 
+	IDOK,							HIDC_FAVORITE_IDOK,				//é–‰ã˜ã‚‹
+	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ãƒ˜ãƒ«ãƒ—
 //	IDC_STATIC_FAVORITE_MSG,		-1,
 	0, 0
 };
@@ -82,7 +82,7 @@ static const SAnchorList anchorList[] = {
 	{IDC_STATIC_FAVORITE_MSG, 		ANCHOR_BOTTOM},
 };
 
-//SDK‚É‚µ‚©’è‹`‚³‚ê‚Ä‚¢‚È‚¢B
+//SDKã«ã—ã‹å®šç¾©ã•ã‚Œã¦ã„ãªã„ã€‚
 #ifndef	ListView_SetCheckState
 //#if (_WIN32_IE >= 0x0300)
 #define ListView_SetCheckState(hwndLV, i, fCheck) \
@@ -103,11 +103,11 @@ struct CompareListViewLParam
 };
 
 /*
-	CRecent‚ÌŠeÀ‘•ƒNƒ‰ƒX‚Í DLLSHAREDATA ‚Ö’¼ÚƒAƒNƒZƒX‚µ‚Ä‚¢‚éB
-	—š—ğ‚Í‚Ù‚©‚ÌƒEƒBƒ“ƒhƒE‚ª‘‚«Š·‚¦‚é‰Â”\«‚ª‚ ‚é‚½‚ßA
-	ƒ_ƒCƒAƒƒO‚ªƒAƒNƒeƒBƒu‚É‚È‚Á‚½Û‚É•ÏX‚ğŠm”F‚µÄæ“¾‚·‚é‚æ‚¤‚É‚È‚Á‚Ä‚¢‚éB
-	•ÒW’†‚Í•ÏX‚ğŠm”F‚µ‚Ä‚¢‚È‚¢‚Ì‚ÅA— ‚ÅDLLSHAREDATA‚ğ•ÏX‚³‚ê‚é‚ÆListView‚Æ
-	DLLSHAREDATA‚ªˆê’v‚µ‚È‚¢‰Â”\«‚à‚ ‚éB
+	CRecentã®å„å®Ÿè£…ã‚¯ãƒ©ã‚¹ã¯ DLLSHAREDATA ã¸ç›´æ¥ã‚¢ã‚¯ã‚»ã‚¹ã—ã¦ã„ã‚‹ã€‚
+	å±¥æ­´ã¯ã»ã‹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒæ›¸ãæ›ãˆã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ãŸã‚ã€
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸéš›ã«å¤‰æ›´ã‚’ç¢ºèªã—å†å–å¾—ã™ã‚‹ã‚ˆã†ã«ãªã£ã¦ã„ã‚‹ã€‚
+	ç·¨é›†ä¸­ã¯å¤‰æ›´ã‚’ç¢ºèªã—ã¦ã„ãªã„ã®ã§ã€è£ã§DLLSHAREDATAã‚’å¤‰æ›´ã•ã‚Œã‚‹ã¨ListViewã¨
+	DLLSHAREDATAãŒä¸€è‡´ã—ãªã„å¯èƒ½æ€§ã‚‚ã‚ã‚‹ã€‚
 */
 
 
@@ -119,7 +119,7 @@ CDlgFavorite::CDlgFavorite()
 	m_nCurrentTab = 0;
 	_tcscpy( m_szMsg, _T("") );
 
-	/* ƒTƒCƒY•ÏX‚ÉˆÊ’u‚ğ§Œä‚·‚éƒRƒ“ƒgƒ[ƒ‹” */
+	/* ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã«ä½ç½®ã‚’åˆ¶å¾¡ã™ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æ•° */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	{
@@ -233,7 +233,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bEditable  = false;
 		m_aFavoriteInfo[i].m_bAddExcept = false;
 
-		/* ‚±‚êˆÈã‘‚â‚·‚Æ‚«‚Íƒe[ƒuƒ‹ƒTƒCƒY‚à‘‚«Š·‚¦‚Ä‚Ë */
+		/* ã“ã‚Œä»¥ä¸Šå¢—ã‚„ã™ã¨ãã¯ãƒ†ãƒ¼ãƒ–ãƒ«ã‚µã‚¤ã‚ºã‚‚æ›¸ãæ›ãˆã¦ã­ */
 		assert( i < _countof(m_aFavoriteInfo) );
 	}
 	for( i = 0; i < FAVORITE_INFO_MAX; i++ ){
@@ -253,7 +253,7 @@ CDlgFavorite::~CDlgFavorite()
 	}
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgFavorite::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
@@ -263,7 +263,7 @@ int CDlgFavorite::DoModal(
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_FAVORITE, lParam );
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgFavorite::SetData( void )
 {
 	int		nTab;
@@ -280,9 +280,9 @@ void CDlgFavorite::SetData( void )
 	return;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ì1‚Â‚Ìƒ^ƒu‚Ìİ’èEXV
-	@param nIndex       ƒ^ƒu‚ÌIndex
-	@param nLvItemIndex ‘I‘ğE•\¦‚µ‚½‚¢ListView‚ÌIndexB-1‚Å‘I‘ğ‚µ‚È‚¢
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®1ã¤ã®ã‚¿ãƒ–ã®è¨­å®šãƒ»æ›´æ–°
+	@param nIndex       ã‚¿ãƒ–ã®Index
+	@param nLvItemIndex é¸æŠãƒ»è¡¨ç¤ºã—ãŸã„ListViewã®Indexã€‚-1ã§é¸æŠã—ãªã„
 */
 void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 {
@@ -292,9 +292,9 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 
 	const CRecent*  pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
 
-	/* ƒŠƒXƒg */
+	/* ãƒªã‚¹ãƒˆ */
 	hwndList = ::GetDlgItem( GetHwnd(), m_aFavoriteInfo[nIndex].m_nId );
-	ListView_DeleteAllItems( hwndList );  /* ƒŠƒXƒg‚ğ‹ó‚É‚·‚é */
+	ListView_DeleteAllItems( hwndList );  /* ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹ */
 
 	const int   nViewCount = pRecent->GetViewCount();
 	const int   nItemCount = pRecent->GetItemCount();
@@ -328,7 +328,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 	}
 
 	if( -1 != m_aListViewInfo[nIndex].nSortColumn ){
-		//ƒ\[ƒg‚ğˆÛ
+		//ã‚½ãƒ¼ãƒˆã‚’ç¶­æŒ
 		ListViewSort( m_aListViewInfo[nIndex], pRecent, m_aListViewInfo[nIndex].nSortColumn, false );
 	}
 
@@ -337,7 +337,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 		nNewFocus = nLvItemIndex;
 	}
 
-	//ƒAƒCƒeƒ€‚ª‚ ‚Á‚Ä‚Ç‚ê‚à”ñ‘I‘ğ‚È‚çA—v‹‚É‹ß‚¢ƒAƒCƒeƒ€(æ“ª‚©––”ö)‚ğ‘I‘ğ
+	//ã‚¢ã‚¤ãƒ†ãƒ ãŒã‚ã£ã¦ã©ã‚Œã‚‚éé¸æŠãªã‚‰ã€è¦æ±‚ã«è¿‘ã„ã‚¢ã‚¤ãƒ†ãƒ (å…ˆé ­ã‹æœ«å°¾)ã‚’é¸æŠ
 	if( nItemCount > 0 && -1 != nLvItemIndex && nNewFocus == -1 )
 	{
 		nNewFocus = (0 < nLvItemIndex ? nItemCount - 1: 0);
@@ -352,9 +352,9 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 	return;
 }
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚ğæ“¾‚µA‹¤—Lƒf[ƒ^‚Ì‚¨‹C‚É“ü‚è‚ğXV
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã€å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ãŠæ°—ã«å…¥ã‚Šã‚’æ›´æ–°
 	
-	@retval TRUE ³í(¡‚Ì‚Æ‚±‚ëFALSE‚Í•Ô‚³‚È‚¢)
+	@retval TRUE æ­£å¸¸(ä»Šã®ã¨ã“ã‚FALSEã¯è¿”ã•ãªã„)
 */
 int CDlgFavorite::GetData( void )
 {
@@ -366,7 +366,7 @@ int CDlgFavorite::GetData( void )
 		{
 			GetFavorite( nTab );
 
-			//ƒŠƒXƒg‚ğXV‚·‚éB
+			//ãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹ã€‚
 			CRecent* pRecent = m_aFavoriteInfo[nTab].m_pRecent;
 			pRecent->UpdateView();
 		}
@@ -409,7 +409,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
 
-	//ƒŠƒXƒgƒrƒ…[‚Ì•\¦ˆÊ’u‚ğæ“¾‚·‚éB
+	//ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®è¡¨ç¤ºä½ç½®ã‚’å–å¾—ã™ã‚‹ã€‚
 	m_nCurrentTab = 0;
 	hwndBaseList = ::GetDlgItem( hwndDlg, m_aFavoriteInfo[0].m_nId );
 	{
@@ -418,7 +418,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_rcListDefault = rc;
 	}
 
-	// ƒEƒBƒ“ƒhƒE‚ÌƒŠƒTƒCƒY
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒªã‚µã‚¤ã‚º
 	SetDialogPosSize();
 
 	hwndTab = ::GetDlgItem( hwndDlg, IDC_TAB_FAVORITE );
@@ -426,22 +426,22 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
 
-	// ƒŠƒXƒgƒrƒ…[‚ÌItem/SubItem•‚ğŒvZ
+	// ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®Item/SubItemå¹…ã‚’è¨ˆç®—
 	std::tstring pszFavTest = LS( STR_DLGFAV_FAVORITE );
 	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(pszFavTest.c_str());
 	const int nListViewWidthClient = rc.right - rc.left
 		 - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
-	// ‰Šú’l‚Í]—ˆ•û®‚Ì%w’è
+	// åˆæœŸå€¤ã¯å¾“æ¥æ–¹å¼ã®%æŒ‡å®š
 	int nItemCx = nListViewWidthClient * 16 / 100;
 	int nSubItem1Cx = nListViewWidthClient * 79 / 100;
 	
 	{
-		// “K—p‚³‚ê‚Ä‚¢‚éƒtƒHƒ“ƒg‚©‚çZo
+		// é©ç”¨ã•ã‚Œã¦ã„ã‚‹ãƒ•ã‚©ãƒ³ãƒˆã‹ã‚‰ç®—å‡º
 		CTextWidthCalc calc( hwndBaseList );
 		calc.SetTextWidthIfMax( pszFAVORITE_TEXT, CTextWidthCalc::WIDTH_LV_HEADER );
 		TCHAR szBuf[200];
 		for(int i = 0; i < 40; i++ ){
-			// uM (”ñ•\¦)v“™‚Ì•‚ğ‹‚ß‚é
+			// ã€ŒM (éè¡¨ç¤º)ã€ç­‰ã®å¹…ã‚’æ±‚ã‚ã‚‹
 			FormatFavoriteColumn( szBuf, _countof(szBuf), i, false);
 			calc.SetTextWidthIfMax( szBuf, CTextWidthCalc::WIDTH_LV_ITEM_CHECKBOX );
 		}
@@ -474,13 +474,13 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
-		/* s‘I‘ğ */
+		/* è¡Œé¸æŠ */
 		lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 		lngStyle |= LVS_EX_FULLROWSELECT;
 		if( m_aFavoriteInfo[nTab].m_bHaveFavorite ) lngStyle |= LVS_EX_CHECKBOXES;
 		ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
-		/* ƒ^ƒu€–Ú’Ç‰Á */
+		/* ã‚¿ãƒ–é …ç›®è¿½åŠ  */
 		tcitem.mask = TCIF_TEXT;
 		tcitem.pszText = const_cast<TCHAR*>(m_aFavoriteInfo[nTab].m_pszCaption);
 		TabCtrl_InsertItem( hwndTab, nTab, &tcitem );
@@ -499,31 +499,31 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	switch( wID )
 	{
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID( F_FAVORITE ) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ãƒ˜ãƒ«ãƒ— */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID( F_FAVORITE ) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 
 	case IDOK:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), (BOOL)GetData() );
 		return TRUE;
 
 	case IDCANCEL:
-		// 2010.03.20 ƒLƒƒƒ“ƒZƒ‹‚ğ”p~BOK‚Æ“¯‚¶‚É‚·‚éB
-		// [X]ƒ{ƒ^ƒ“‚ğ‰Ÿ‚·‚Æ’Ê‰ß‚·‚é
+		// 2010.03.20 ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã‚’å»ƒæ­¢ã€‚OKã¨åŒã˜ã«ã™ã‚‹ã€‚
+		// [X]ãƒœã‚¿ãƒ³ã‚’æŠ¼ã™ã¨é€šéã™ã‚‹
 		::EndDialog( GetHwnd(), (BOOL)GetData() );
 		return TRUE;
 
-	// 2010.03.20 Moca u‚¨‹C‚É“ü‚èˆÈŠO‚©‚·‚×‚Äíœv‘I‘ğƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ğ”p~‚µ
-	//     ‚»‚ê‚¼‚ê‚Ìƒ{ƒ^ƒ“‚É•ÏX
-	//‚·‚×‚Äíœ
+	// 2010.03.20 Moca ã€ŒãŠæ°—ã«å…¥ã‚Šä»¥å¤–ã‹ã™ã¹ã¦å‰Šé™¤ã€é¸æŠãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã‚’å»ƒæ­¢ã—
+	//     ãã‚Œãã‚Œã®ãƒœã‚¿ãƒ³ã«å¤‰æ›´
+	//ã™ã¹ã¦å‰Šé™¤
 	case IDC_BUTTON_CLEAR:
 		{
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			CRecent	*pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_FAV ),	// "Å‹ßg‚Á‚½%ts‚Ì—š—ğ‚ğíœ‚µ‚Ü‚·B\n‚æ‚ë‚µ‚¢‚Å‚·‚©H\n"
+					LS( STR_DLGFAV_CONF_DEL_FAV ),	// "æœ€è¿‘ä½¿ã£ãŸ%tsã®å±¥æ­´ã‚’å‰Šé™¤ã—ã¾ã™ã€‚\nã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ\n"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				if( IDYES == nRet ){
 					pRecent->DeleteAllItem();
@@ -533,13 +533,13 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			}
 		}
 		return TRUE;
-	//‚¨‹C‚É“ü‚èˆÈŠOíœ
+	//ãŠæ°—ã«å…¥ã‚Šä»¥å¤–å‰Šé™¤
 	case IDC_BUTTON_DELETE_NOFAVORATE:
 		{
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite ){
 				int const nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "Å‹ßg‚Á‚½%ts‚Ì—š—ğ‚Ì‚¨‹C‚É“ü‚èˆÈŠO‚ğíœ‚µ‚Ü‚·B\n‚æ‚ë‚µ‚¢‚Å‚·‚©H"
+					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "æœ€è¿‘ä½¿ã£ãŸ%tsã®å±¥æ­´ã®ãŠæ°—ã«å…¥ã‚Šä»¥å¤–ã‚’å‰Šé™¤ã—ã¾ã™ã€‚\nã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
@@ -552,19 +552,19 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			}
 		}
 		return TRUE;
-	// ‘¶İ‚µ‚È‚¢€–Ú ‚ğíœ
+	// å­˜åœ¨ã—ãªã„é …ç›® ã‚’å‰Šé™¤
 	case IDC_BUTTON_DELETE_NOTFOUND:
 		{
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bFilePath ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "Å‹ßg‚Á‚½%ts‚Ì‘¶İ‚µ‚È‚¢ƒpƒX‚ğíœ‚µ‚Ü‚·B\n‚æ‚ë‚µ‚¢‚Å‚·‚©H"
+					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "æœ€è¿‘ä½¿ã£ãŸ%tsã®å­˜åœ¨ã—ãªã„ãƒ‘ã‚¹ã‚’å‰Šé™¤ã—ã¾ã™ã€‚\nã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
 					GetFavorite( m_nCurrentTab );
 
-					// ‘¶İ‚µ‚È‚¢ƒpƒX‚Ìíœ
+					// å­˜åœ¨ã—ãªã„ãƒ‘ã‚¹ã®å‰Šé™¤
 					for( int i = pRecent->GetItemCount() - 1; i >= 0; i-- ){
 						size_t nLen = auto_strlen(pRecent->GetItemText(i));
 						std::vector<TCHAR> vecPath(nLen + 2);
@@ -582,7 +582,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			}
 		}
 		return TRUE;
-	//‘I‘ğ€–Ú‚Ìíœ
+	//é¸æŠé …ç›®ã®å‰Šé™¤
 	case IDC_BUTTON_DELETE_SELECTED:
 		{
 			DeleteSelected();
@@ -595,7 +595,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
@@ -635,7 +635,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 				}
 				return TRUE;
 
-			// ListViewƒwƒbƒ_ƒNƒŠƒbƒN:ƒ\[ƒg‚·‚é
+			// ListViewãƒ˜ãƒƒãƒ€ã‚¯ãƒªãƒƒã‚¯:ã‚½ãƒ¼ãƒˆã™ã‚‹
 			case LVN_COLUMNCLICK:
 				ListViewSort(
 					m_aListViewInfo[m_nCurrentTab],
@@ -643,7 +643,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 					pnlv->iSubItem, true );
 				return TRUE;
 			
-			// ListView‚ÅDeleteƒL[‚ª‰Ÿ‚³‚ê‚½:íœ
+			// ListViewã§Deleteã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸ:å‰Šé™¤
 			case LVN_KEYDOWN:
 				switch( ((NMLVKEYDOWN*)lParam)->wVKey )
 				{
@@ -685,7 +685,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnNotify( wParam, lParam );
 }
 
@@ -696,11 +696,11 @@ void CDlgFavorite::TabSelectChange(bool bSetFocus)
 	int nIndex = TabCtrl_GetCurSel( hwndTab );
 	if( -1 != nIndex )
 	{
-		//V‚µ‚­•\¦‚·‚éB
+		//æ–°ã—ãè¡¨ç¤ºã™ã‚‹ã€‚
 		HWND hwndList = GetItemHwnd( m_aFavoriteInfo[nIndex].m_nId );
 		::ShowWindow( hwndList, SW_SHOW );
 
-		//Œ»İ•\¦’†‚ÌƒŠƒXƒg‚ğ‰B‚·B
+		//ç¾åœ¨è¡¨ç¤ºä¸­ã®ãƒªã‚¹ãƒˆã‚’éš ã™ã€‚
 		HWND hwndList2 = GetItemHwnd( m_aFavoriteInfo[m_nCurrentTab].m_nId );
 		::ShowWindow( hwndList2, SW_HIDE );
 
@@ -732,7 +732,7 @@ BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnActivate( wParam, lParam );
 }
 
@@ -742,7 +742,7 @@ LPVOID CDlgFavorite::GetHelpIdTable( void )
 }
 
 /*
-	ƒŠƒXƒg‚ğXV‚·‚éB
+	ãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹ã€‚
 */
 bool CDlgFavorite::RefreshList( void )
 {
@@ -754,7 +754,7 @@ bool CDlgFavorite::RefreshList( void )
 	_tcscpy( msg, _T("") );
 	_tcscpy( m_szMsg, _T("") );
 
-	//‘SƒŠƒXƒg‚ÌŒ»İ‘I‘ğ’†‚ÌƒAƒCƒeƒ€‚ğæ“¾‚·‚éB
+	//å…¨ãƒªã‚¹ãƒˆã®ç¾åœ¨é¸æŠä¸­ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–å¾—ã™ã‚‹ã€‚
 	for( nTab = 0; NULL != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		bret = RefreshListOne( nTab );
@@ -770,7 +770,7 @@ bool CDlgFavorite::RefreshList( void )
 	if( ret_val )
 	{
 		auto_snprintf_s( m_szMsg, _countof(m_szMsg),
-			LS( STR_DLGFAV_FAV_REFRESH ),	// "—š—ğ(%ts)‚ªXV‚³‚ê‚½‚½‚ß•ÒW’†î•ñ‚ğ”jŠü‚µÄ•\¦‚µ‚Ü‚µ‚½B"
+			LS( STR_DLGFAV_FAV_REFRESH ),	// "å±¥æ­´(%ts)ãŒæ›´æ–°ã•ã‚ŒãŸãŸã‚ç·¨é›†ä¸­æƒ…å ±ã‚’ç ´æ£„ã—å†è¡¨ç¤ºã—ã¾ã—ãŸã€‚"
 			msg );
 	}
 
@@ -778,7 +778,7 @@ bool CDlgFavorite::RefreshList( void )
 }
 
 /*
-	—š—ğí•ÊƒŠƒXƒg‚Ì‚¤‚¿1ŒÂ‚ÌƒŠƒXƒgƒrƒ…[‚ğXV‚·‚éB
+	å±¥æ­´ç¨®åˆ¥ãƒªã‚¹ãƒˆã®ã†ã¡1å€‹ã®ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã‚’æ›´æ–°ã™ã‚‹ã€‚
 */
 bool CDlgFavorite::RefreshListOne( int nIndex )
 {
@@ -797,9 +797,9 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 	nCurrentIndex = ListView_GetNextItem( hwndList, -1, LVNI_SELECTED );
 	if( -1 == nCurrentIndex ) nCurrentIndex = ListView_GetNextItem( hwndList, -1, LVNI_FOCUSED );
 
-	if( nItemCount != nCount ) goto changed;	//ŒÂ”‚ª•Ï‚í‚Á‚½‚Ì‚ÅÄ\’z
+	if( nItemCount != nCount ) goto changed;	//å€‹æ•°ãŒå¤‰ã‚ã£ãŸã®ã§å†æ§‹ç¯‰
 
-	//‚¨‹C‚É“ü‚è”‚ª•Ï‚í‚Á‚½‚Ì‚ÅÄ\’z
+	//ãŠæ°—ã«å…¥ã‚Šæ•°ãŒå¤‰ã‚ã£ãŸã®ã§å†æ§‹ç¯‰
 	if( m_aFavoriteInfo[nIndex].m_nViewCount != pRecent->GetViewCount() ) goto changed;
 
 	for( i = 0; i < nCount; i++ )
@@ -813,9 +813,9 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 		lvitem.iItem      = i;
 		lvitem.iSubItem   = 1;
 		bret = ListView_GetItem( hwndList, &lvitem );
-		if( !bret ) goto changed;	//ƒGƒ‰[‚È‚Ì‚ÅÄ\’z
+		if( !bret ) goto changed;	//ã‚¨ãƒ©ãƒ¼ãªã®ã§å†æ§‹ç¯‰
 
-		//ƒAƒCƒeƒ€“à—e‚ª•Ï‚í‚Á‚½‚Ì‚ÅÄ\’z
+		//ã‚¢ã‚¤ãƒ†ãƒ å†…å®¹ãŒå¤‰ã‚ã£ãŸã®ã§å†æ§‹ç¯‰
 		if( lvitem.lParam != pRecent->FindItemByText( szText ) ) goto changed;
 	}
 
@@ -828,7 +828,7 @@ changed:
 	return true;
 }
 
-// ‚¨‹C‚É“ü‚è‚Ìƒtƒ‰ƒO‚¾‚¯“K—p
+// ãŠæ°—ã«å…¥ã‚Šã®ãƒ•ãƒ©ã‚°ã ã‘é©ç”¨
 void CDlgFavorite::GetFavorite( int nIndex )
 {
 	CRecent * const pRecent  = m_aFavoriteInfo[nIndex].m_pRecent;
@@ -845,8 +845,8 @@ void CDlgFavorite::GetFavorite( int nIndex )
 
 
 /*
-	‘I‘ğ’†‚Ì€–Ú‚ğíœ
-	ƒŠƒXƒg‚ÌXV‚à‚·‚é
+	é¸æŠä¸­ã®é …ç›®ã‚’å‰Šé™¤
+	ãƒªã‚¹ãƒˆã®æ›´æ–°ã‚‚ã™ã‚‹
 */
 int CDlgFavorite::DeleteSelected()
 {
@@ -873,7 +873,7 @@ int CDlgFavorite::DeleteSelected()
 				}
 			}
 			std::sort(selRecIndexs.rbegin(),selRecIndexs.rend());
-			// ‘å‚«‚¢‚Ù‚¤‚©‚çíœ‚µ‚È‚¢‚ÆACRecent‘¤‚Ìindex‚ª‚¸‚ê‚é
+			// å¤§ãã„ã»ã†ã‹ã‚‰å‰Šé™¤ã—ãªã„ã¨ã€CRecentå´ã®indexãŒãšã‚Œã‚‹
 			size_t nSize = selRecIndexs.size();
 			for( size_t n = 0; n < nSize; n++ )
 			{
@@ -884,25 +884,25 @@ int CDlgFavorite::DeleteSelected()
 			if( 0 < nDelItemCount ){
 				int nItem = nLastSelectedItem;
 				if( -1 != nItem ){
-					nItem += 1; // íœ‚µ‚½ƒAƒCƒeƒ€‚ÌŸ‚ÌƒAƒCƒeƒ€
-					nItem -= nDelItemCount; // V‚µ‚¢ˆÊ’u‚ÍAíœ‚µ‚½•ª‚¾‚¯‚¸‚ê‚é
+					nItem += 1; // å‰Šé™¤ã—ãŸã‚¢ã‚¤ãƒ†ãƒ ã®æ¬¡ã®ã‚¢ã‚¤ãƒ†ãƒ 
+					nItem -= nDelItemCount; // æ–°ã—ã„ä½ç½®ã¯ã€å‰Šé™¤ã—ãŸåˆ†ã ã‘ãšã‚Œã‚‹
 					if( pRecent->GetItemCount() <= nItem ){
-						// ‹Œƒf[ƒ^‚ÌÅŒã‚Ì—v‘f‚ªíœ‚³‚ê‚Ä‚¢‚é‚Æ‚«‚ÍA
-						// Vƒf[ƒ^‚ÌÅŒã‚ğ‘I‘ğ
+						// æ—§ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã®è¦ç´ ãŒå‰Šé™¤ã•ã‚Œã¦ã„ã‚‹ã¨ãã¯ã€
+						// æ–°ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã‚’é¸æŠ
 						nItem = pRecent->GetItemCount() -1;
 					}
 				}
 				int nLvTopIndex = ListView_GetTopIndex(hwndList);
 				SetDataOne(m_nCurrentTab, nItem);
 				if( 1 == nDelItemCount ){
-					// 1‚Âíœ‚Ì‚Æ‚«‚ÍAYƒXƒNƒ[ƒ‹ˆÊ’u‚ğ•Û
-					// 2‚ÂˆÈã‚Í•¡G‚È‚Ì‚ÅSetDataOne‚É‚¨‚Ü‚©‚¹‚·‚é
+					// 1ã¤å‰Šé™¤ã®ã¨ãã¯ã€Yã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ä½ç½®ã‚’ä¿æŒ
+					// 2ã¤ä»¥ä¸Šã¯è¤‡é›‘ãªã®ã§SetDataOneã«ãŠã¾ã‹ã›ã™ã‚‹
 					nLvTopIndex = t_max(0, t_min(pRecent->GetItemCount() - 1, nLvTopIndex));
 					int nNowLvTopIndex = ListView_GetTopIndex(hwndList);
 					if( nNowLvTopIndex != nLvTopIndex ){
 						CMyRect rect;
 						if( ListView_GetItemRect(hwndList, nNowLvTopIndex, &rect, LVIR_BOUNDS) ){
-							// ListView_Scroll‚ÌYÀ•W‚Ípixel’PˆÊ‚ÅƒXƒNƒ[ƒ‹•Ï‰»•ª‚ğw’è
+							// ListView_Scrollã®Yåº§æ¨™ã¯pixelå˜ä½ã§ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å¤‰åŒ–åˆ†ã‚’æŒ‡å®š
 							ListView_Scroll(hwndList, 0,
 								(nLvTopIndex - nNowLvTopIndex) * (rect.bottom - rect.top) );
 						}
@@ -922,7 +922,7 @@ void CDlgFavorite::UpdateUIState()
 	DlgItem_Enable( GetHwnd(), IDC_BUTTON_ADD_FAVORITE,
 		m_aFavoriteInfo[m_nCurrentTab].m_bEditable && recent.GetItemCount() <= recent.GetArrayCount() );
 
-	// íœ‚Ì—LŒøE–³Œø‰»
+	// å‰Šé™¤ã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹åŒ–
 	DlgItem_Enable( GetHwnd(), IDC_BUTTON_CLEAR,
 		0 < recent.GetItemCount() );
 
@@ -1027,15 +1027,15 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
 	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_SELECTED, LS( STR_DLGFAV_MENU_DEL_SEL ) );
 
-	// ƒƒjƒ…[‚ğ•\¦‚·‚é
+	// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹
 	POINT pt = menuPos;
 	RECT rcWork;
-	GetMonitorWorkRect( pt, &rcWork );	// ƒ‚ƒjƒ^‚Ìƒ[ƒNƒGƒŠƒA
+	GetMonitorWorkRect( pt, &rcWork );	// ãƒ¢ãƒ‹ã‚¿ã®ãƒ¯ãƒ¼ã‚¯ã‚¨ãƒªã‚¢
 	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 								( pt.x > rcWork.left )? pt.x: rcWork.left,
 								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
 								0, GetHwnd(), NULL);
-	::DestroyMenu( hMenu );	// ƒTƒuƒƒjƒ…[‚ÍÄ‹A“I‚É”jŠü‚³‚ê‚é
+	::DestroyMenu( hMenu );	// ã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¯å†å¸°çš„ã«ç ´æ£„ã•ã‚Œã‚‹
 
 	switch( nId ){
 	case MENU_EDIT:
@@ -1061,7 +1061,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 						}
 					}
 					if( bAddFalse ){
-						WarningMessage(GetHwnd(), LS( STR_DLGFAV_LIST_LIMIT_OVER ) );	// "œŠOƒŠƒXƒg‚ª‚¢‚Á‚Ï‚¢‚Å’Ç‰Á‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B"
+						WarningMessage(GetHwnd(), LS( STR_DLGFAV_LIST_LIMIT_OVER ) );	// "é™¤å¤–ãƒªã‚¹ãƒˆãŒã„ã£ã±ã„ã§è¿½åŠ ã§ãã¾ã›ã‚“ã§ã—ãŸã€‚"
 					}
 					SetDataOne(m_nExceptTab, -1);
 					UpdateUIState();
@@ -1089,7 +1089,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 
 int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 {
-	// 2010.03.21 Moca Text‚É˜A”Ô‚ğİ’è‚·‚é‚±‚Æ‚É‚æ‚Á‚ÄƒAƒNƒZƒXƒL[‚É‚·‚é
+	// 2010.03.21 Moca Textã«é€£ç•ªã‚’è¨­å®šã™ã‚‹ã“ã¨ã«ã‚ˆã£ã¦ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã«ã™ã‚‹
 	// 0 - 9 A - Z
 	const int mod = index % 36;
 	const TCHAR c = (TCHAR)(((mod) <= 9)?(_T('0') + mod):(_T('A') + mod - 10));
@@ -1098,7 +1098,7 @@ int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 
 
 /*!
-	ListView‚ÌItem(index)‚©‚çLParam‚ğintŒ^‚Æ‚µ‚Äæ“¾
+	ListViewã®Item(index)ã‹ã‚‰LParamã‚’intå‹ã¨ã—ã¦å–å¾—
 */
 static int ListView_GetLParamInt( HWND hwndList, int lvIndex )
 {
@@ -1115,34 +1115,34 @@ static int ListView_GetLParamInt( HWND hwndList, int lvIndex )
 
 /*!
 	
-	@param info [in,out] ƒŠƒXƒgƒrƒ…[‚Ìƒ\[ƒgó‘Ôî•ñ
-	@param pRecent       ƒ\[ƒgƒAƒCƒeƒ€
-	@param column          ƒ\[ƒg‚µ‚½‚¢—ñ”Ô†
-	@param bReverse      ƒ\[ƒgÏ‚İ‚Ìê‡‚É~‡‚ÉØ‚è‘Ö‚¦‚é
+	@param info [in,out] ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®ã‚½ãƒ¼ãƒˆçŠ¶æ…‹æƒ…å ±
+	@param pRecent       ã‚½ãƒ¼ãƒˆã‚¢ã‚¤ãƒ†ãƒ 
+	@param column          ã‚½ãƒ¼ãƒˆã—ãŸã„åˆ—ç•ªå·
+	@param bReverse      ã‚½ãƒ¼ãƒˆæ¸ˆã¿ã®å ´åˆã«é™é †ã«åˆ‡ã‚Šæ›¿ãˆã‚‹
 */
 // static
 void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse )
 {
 	CompareListViewLParam lparamInfo;
-	// ƒ\[ƒg‡‚ÌŒˆ’è
+	// ã‚½ãƒ¼ãƒˆé †ã®æ±ºå®š
 	if( info.nSortColumn != column ){
 		info.bSortAscending = true;
 	}else{
-		// ƒ\[ƒg‹t‡(~‡)
+		// ã‚½ãƒ¼ãƒˆé€†é †(é™é †)
 		info.bSortAscending = (bReverse ? (!info.bSortAscending): true);
 	}
 	
-	// ƒwƒbƒ_‘‚«Š·‚¦
+	// ãƒ˜ãƒƒãƒ€æ›¸ãæ›ãˆ
 	TCHAR szHeader[200];
 	LV_COLUMN	col;
 	if( -1 != info.nSortColumn ){
-		// Œ³‚Ìƒ\[ƒg‚Ìu ¥v‚ğæ‚èœ‚­
+		// å…ƒã®ã‚½ãƒ¼ãƒˆã®ã€Œ â–¼ã€ã‚’å–ã‚Šé™¤ã
 		col.mask = LVCF_TEXT;
 		col.pszText = szHeader;
 		col.cchTextMax = _countof(szHeader);
 		col.iSubItem = 0;
 		ListView_GetColumn( info.hListView, info.nSortColumn, &col );
-		int nLen = (int)_tcslen(szHeader) - _tcslen(_T("¥"));
+		int nLen = (int)_tcslen(szHeader) - _tcslen(_T("â–¼"));
 		if( 0 <= nLen ){
 			szHeader[nLen] = _T('\0');
 		}
@@ -1151,13 +1151,13 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		col.iSubItem = 0;
 		ListView_SetColumn( info.hListView, info.nSortColumn, &col );
 	}
-	// u¥v‚ğ•t‰Á
+	// ã€Œâ–¼ã€ã‚’ä»˜åŠ 
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.cchTextMax = _countof(szHeader) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	_tcscat(szHeader, info.bSortAscending ? _T("¥") : _T("£"));
+	_tcscat(szHeader, info.bSortAscending ? _T("â–¼") : _T("â–²"));
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;
@@ -1200,7 +1200,7 @@ INT_PTR CDlgFavorite::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 
 BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnSize( wParam, lParam );
 
 	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog );

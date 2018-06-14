@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
 */
@@ -15,12 +15,12 @@
 
 CDlgCancel::CDlgCancel()
 {
-	m_bCANCEL = FALSE;	/* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ */
+	m_bCANCEL = FALSE;	/* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸ */
 	m_bAutoCleanup = false;
 }
 
-/** •W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
-	@date 2008.05.28 ryoji V‹Kì¬
+/** æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
+	@date 2008.05.28 ryoji æ–°è¦ä½œæˆ
 */
 INT_PTR CDlgCancel::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -43,8 +43,8 @@ INT_PTR CDlgCancel::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM l
 	return result;
 }
 
-/** ©“®”jŠü‚ğ’x‰„Às‚·‚é
-	@date 2008.05.28 ryoji V‹Kì¬
+/** è‡ªå‹•ç ´æ£„ã‚’é…å»¶å®Ÿè¡Œã™ã‚‹
+	@date 2008.05.28 ryoji æ–°è¦ä½œæˆ
 */
 void CDlgCancel::DeleteAsync( void )
 {
@@ -52,16 +52,16 @@ void CDlgCancel::DeleteAsync( void )
 	::PostMessageAny( GetHwnd(), WM_CLOSE, 0, 0 );
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgCancel::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
-	m_bCANCEL = FALSE;	/* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ */
+	m_bCANCEL = FALSE;	/* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸ */
 	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL );
 }
-/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
-	m_bCANCEL = FALSE;	/* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ */
+	m_bCANCEL = FALSE;	/* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸ */
 	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL, SW_SHOW );
 }
 
@@ -78,7 +78,7 @@ BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)hIcon );
 
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
@@ -87,7 +87,7 @@ BOOL CDlgCancel::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDCANCEL:
-		m_bCANCEL = TRUE;	/* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ */
+		m_bCANCEL = TRUE;	/* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸ */
 //		CloseDialog( 0 );
 		return TRUE;
 	}

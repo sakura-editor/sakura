@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh“ü—Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰å…¥åŠ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2002.6.2
@@ -35,9 +35,9 @@ class CDlgCtrlCode;
 
 #include "dlg/CDialog.h"
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh“ü—Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰å…¥åŠ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
-//2007.10.18 kobake GetCharCode()‚ğì¬B
+//2007.10.18 kobake GetCharCode()ã‚’ä½œæˆã€‚
 class CDlgCtrlCode : public CDialog
 {
 public:
@@ -49,27 +49,27 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
-	wchar_t GetCharCode() const{ return m_nCode; } //!< ‘I‘ğ‚³‚ê‚½•¶šƒR[ƒh‚ğæ“¾
+	wchar_t GetCharCode() const{ return m_nCode; } //!< é¸æŠã•ã‚ŒãŸæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
 
 private:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked( int );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 private:
 	/*
-	|| ƒƒ“ƒo•Ï”
+	|| ãƒ¡ãƒ³ãƒå¤‰æ•°
 	*/
-	wchar_t		m_nCode;	// ƒR[ƒh
+	wchar_t		m_nCode;	// ã‚³ãƒ¼ãƒ‰
 };
 
 

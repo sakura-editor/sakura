@@ -1,5 +1,5 @@
-/*!	@file
-	@brief —š—ğ‚ÌŠÇ—ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief å±¥æ­´ã®ç®¡ç†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2003.4.8
@@ -37,8 +37,8 @@
 #include "dlg/CDialog.h"
 #include "recent/CRecent.h"
 
-//!u—š—ğ‚Æ‚¨‹C‚É“ü‚è‚ÌŠÇ—vƒ_ƒCƒAƒƒO
-//ƒAƒNƒZƒX•û–@F[İ’è] - [—š—ğ‚ÌŠÇ—]
+//!ã€Œå±¥æ­´ã¨ãŠæ°—ã«å…¥ã‚Šã®ç®¡ç†ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+//ã‚¢ã‚¯ã‚»ã‚¹æ–¹æ³•ï¼š[è¨­å®š] - [å±¥æ­´ã®ç®¡ç†]
 class CDlgFavorite : public CDialog
 {
 public:
@@ -51,28 +51,28 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked( int );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// •W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 	void	TabSelectChange( bool );
 	bool	RefreshList( void );
-	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	bool	RefreshListOne( int nIndex );
 	//void	ChangeSlider( int nIndex );
 	void	UpdateUIState();
@@ -95,21 +95,21 @@ private:
 	CRecentCurDir		m_cRecentCurDir;
 
 	enum {
-		// ! ŠÇ—”
-		FAVORITE_INFO_MAX = 10 // ŠÇ—” +1(”Ô•º)
+		// ! ç®¡ç†æ•°
+		FAVORITE_INFO_MAX = 10 // ç®¡ç†æ•° +1(ç•ªå…µ)
 	};
 
 	struct FavoriteInfo {
-		CRecent*	m_pRecent;			//ƒIƒuƒWƒFƒNƒg‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		std::tstring	m_strCaption;	//ƒLƒƒƒvƒVƒ‡ƒ“
-		const TCHAR*	m_pszCaption;	//ƒLƒƒƒvƒVƒ‡ƒ“
-		int			m_nId;				//ƒRƒ“ƒgƒ[ƒ‹‚ÌID
-		bool		m_bHaveFavorite;	//‚¨‹C‚É“ü‚è‚ğ‚Á‚Ä‚¢‚é‚©H
-		bool		m_bHaveView;		//•\¦”•ÏX‹@”\‚ğ‚à‚Á‚Ä‚¢‚é‚©H
-		bool		m_bFilePath;		//ƒtƒ@ƒCƒ‹/ƒtƒHƒ‹ƒ_‚©H
-		bool		m_bEditable;		//•ÒW‰Â”\
-		bool		m_bAddExcept;		//œŠO‚Ö’Ç‰Á
-		int			m_nViewCount;		//ƒJƒŒƒ“ƒg‚Ì•\¦”
+		CRecent*	m_pRecent;			//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		std::tstring	m_strCaption;	//ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³
+		const TCHAR*	m_pszCaption;	//ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³
+		int			m_nId;				//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®ID
+		bool		m_bHaveFavorite;	//ãŠæ°—ã«å…¥ã‚Šã‚’æŒã£ã¦ã„ã‚‹ã‹ï¼Ÿ
+		bool		m_bHaveView;		//è¡¨ç¤ºæ•°å¤‰æ›´æ©Ÿèƒ½ã‚’ã‚‚ã£ã¦ã„ã‚‹ã‹ï¼Ÿ
+		bool		m_bFilePath;		//ãƒ•ã‚¡ã‚¤ãƒ«/ãƒ•ã‚©ãƒ«ãƒ€ã‹ï¼Ÿ
+		bool		m_bEditable;		//ç·¨é›†å¯èƒ½
+		bool		m_bAddExcept;		//é™¤å¤–ã¸è¿½åŠ 
+		int			m_nViewCount;		//ã‚«ãƒ¬ãƒ³ãƒˆã®è¡¨ç¤ºæ•°
 		FavoriteInfo():
 			m_pRecent(NULL)
 			,m_pszCaption(NULL)
@@ -123,9 +123,9 @@ private:
 		{};
 	};
 	struct ListViewSortInfo {
-		HWND	hListView; //!< ƒŠƒXƒgƒrƒ…[‚Ì HWND
-		int		nSortColumn; //!< ƒ\[ƒg—ñ -1‚Å–¢w’è
-		bool	bSortAscending; //!< ƒ\[ƒg‚ª¸‡
+		HWND	hListView; //!< ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã® HWND
+		int		nSortColumn; //!< ã‚½ãƒ¼ãƒˆåˆ— -1ã§æœªæŒ‡å®š
+		bool	bSortAscending; //!< ã‚½ãƒ¼ãƒˆãŒæ˜‡é †
 	};
 
 	FavoriteInfo        m_aFavoriteInfo[FAVORITE_INFO_MAX];

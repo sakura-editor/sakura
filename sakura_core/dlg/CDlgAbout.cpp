@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒo[ƒWƒ‡ƒ“î•ñƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date	1998/3/13 ì¬
+	@date	1998/3/13 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -25,10 +25,10 @@
 #include "util/file.h"
 #include "util/module.h"
 #include "gitrev.h"
-#include "sakura_rc.h" // 2002/2/10 aroka •œ‹A
+#include "sakura_rc.h" // 2002/2/10 aroka å¾©å¸°
 #include "sakura.hh"
 
-// ƒo[ƒWƒ‡ƒ“î•ñ CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
+// ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12900
 	IDOK,					HIDOK_ABOUT,
 	IDC_EDIT_ABOUT,			HIDC_ABOUT_EDIT_ABOUT,
@@ -41,8 +41,8 @@ const DWORD p_helpids[] = {	//12900
 };	//@@@ 2002.01.07 add end MIK
 
 //	From Here Feb. 7, 2002 genta
-// 2006.01.17 Moca COMPILER_VER‚ð’Ç‰Á
-// 2010.04.15 Moca icc/dmc‚ð’Ç‰Á‚µCPU‚ð•ª—£
+// 2006.01.17 Moca COMPILER_VERã‚’è¿½åŠ 
+// 2010.04.15 Moca icc/dmcã‚’è¿½åŠ ã—CPUã‚’åˆ†é›¢
 #if defined(_M_IA64)
 #  define TARGET_M_SUFFIX "_I64"
 #elif defined(_M_AMD64)
@@ -100,7 +100,7 @@ const DWORD p_helpids[] = {	//12900
 
 //	From Here Nov. 7, 2000 genta
 /*!
-	•W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ð•ß‘¨‚·‚é
+	æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 */
 INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -109,7 +109,7 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	switch( wMsg ){
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
-		// EDIT‚à READONLY ‚© DISABLE‚Ìê‡ WM_CTLCOLORSTATIC ‚É‚È‚è‚Ü‚·
+		// EDITã‚‚ READONLY ã‹ DISABLEã®å ´åˆ WM_CTLCOLORSTATIC ã«ãªã‚Šã¾ã™
 		if( (HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT) ){
 			::SetTextColor( (HDC)wParam, RGB( 102, 102, 102 ) );
 		} else {
@@ -121,16 +121,16 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 }
 //	To Here Nov. 7, 2000 genta
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
 }
 
-/*! ‰Šú‰»ˆ—
-	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
-	@date 2011.04.10 nasukoji	Še‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰ž
-	@date 2013.04.07 novice svn revision î•ñ’Ç‰Á
+/*! åˆæœŸåŒ–å‡¦ç†
+	@date 2008.05.05 novice GetModuleHandle(NULL)â†’NULLã«å¤‰æ›´
+	@date 2011.04.10 nasukoji	å„å›½èªžãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹å¯¾å¿œ
+	@date 2013.04.07 novice svn revision æƒ…å ±è¿½åŠ 
 */
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -139,31 +139,31 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	TCHAR			szMsg[2048];
 	TCHAR			szFile[_MAX_PATH];
 
-	/* ‚±‚ÌŽÀsƒtƒ@ƒCƒ‹‚Ìî•ñ */
+	/* ã“ã®å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ± */
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
-	//	Oct. 22, 2005 genta ƒ^ƒCƒ€ƒXƒ^ƒ“ƒvŽæ“¾‚Ì‹¤’ÊŠÖ”—˜—p
+	//	Oct. 22, 2005 genta ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—å–å¾—ã®å…±é€šé–¢æ•°åˆ©ç”¨
 
-	/* ƒo[ƒWƒ‡ƒ“î•ñ */
-	//	Nov. 6, 2000 genta	Unofficial Release‚Ìƒo[ƒWƒ‡ƒ“‚Æ‚µ‚ÄÝ’è
-	//	Jun. 8, 2001 genta	GPL‰»‚É”º‚¢AOfficial‚ÈRelease‚Æ‚µ‚Ä‚Ì“¹‚ð•à‚ÝŽn‚ß‚é
-	//	Feb. 7, 2002 genta ƒRƒ“ƒpƒCƒ‰î•ñ’Ç‰Á
-	//	2004.05.13 Moca ƒo[ƒWƒ‡ƒ“”Ô†‚ÍAƒvƒƒZƒX‚²‚Æ‚ÉŽæ“¾‚·‚é
-	//	2010.04.15 Moca ƒRƒ“ƒpƒCƒ‰î•ñ‚ð•ª—£/WINƒwƒbƒ_,N_SHAREDATA_VERSION’Ç‰Á
+	/* ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± */
+	//	Nov. 6, 2000 genta	Unofficial Releaseã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¨ã—ã¦è¨­å®š
+	//	Jun. 8, 2001 genta	GPLåŒ–ã«ä¼´ã„ã€OfficialãªReleaseã¨ã—ã¦ã®é“ã‚’æ­©ã¿å§‹ã‚ã‚‹
+	//	Feb. 7, 2002 genta ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©æƒ…å ±è¿½åŠ 
+	//	2004.05.13 Moca ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã¯ã€ãƒ—ãƒ­ã‚»ã‚¹ã”ã¨ã«å–å¾—ã™ã‚‹
+	//	2010.04.15 Moca ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©æƒ…å ±ã‚’åˆ†é›¢/WINãƒ˜ãƒƒãƒ€,N_SHAREDATA_VERSIONè¿½åŠ 
 
-	// ˆÈ‰º‚ÌŒ`Ž®‚Åo—Í
-	//ƒTƒNƒ‰ƒGƒfƒBƒ^   Ver. 2.0.0.0
+	// ä»¥ä¸‹ã®å½¢å¼ã§å‡ºåŠ›
+	//ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿   Ver. 2.0.0.0
 	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
 	//      Last Modified: 1999/9/9 00:00:00
-	//      (‚ ‚ê‚ÎSKR_PATCH_INFO‚Ì•¶Žš—ñ‚ª‚»‚Ì‚Ü‚Ü•\Ž¦)
+	//      (ã‚ã‚Œã°SKR_PATCH_INFOã®æ–‡å­—åˆ—ãŒãã®ã¾ã¾è¡¨ç¤º)
 	CNativeT cmemMsg;
 	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME));
 	cmemMsg.AppendString(_T("   "));
 
-	// ƒo[ƒWƒ‡ƒ“&ƒŠƒrƒWƒ‡ƒ“î•ñ
+	// ãƒãƒ¼ã‚¸ãƒ§ãƒ³&ãƒªãƒ“ã‚¸ãƒ§ãƒ³æƒ…å ±
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 #if defined(GIT_COMMIT_HASH)
@@ -185,13 +185,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	cmemMsg.AppendString( _T("\r\n") );
 
-	// ‹¤—Lƒƒ‚ƒŠî•ñ
+	// å…±æœ‰ãƒ¡ãƒ¢ãƒªæƒ…å ±
 	auto_sprintf( szMsg,  _T("      Share Ver: %3d\r\n"),
 		N_SHAREDATA_VERSION
 	);
 	cmemMsg.AppendString( szMsg );
 
-	// ƒRƒ“ƒpƒCƒ‹î•ñ
+	// ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æƒ…å ±
 	cmemMsg.AppendString( _T("      Compile Info: ") );
 	int Compiler_ver = COMPILER_VER;
 	auto_sprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ")
@@ -201,7 +201,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( szMsg );
 
-	// XV“úî•ñ
+	// æ›´æ–°æ—¥æƒ…å ±
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	auto_sprintf( szMsg,  _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
@@ -214,7 +214,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( szMsg );
 
-	// ƒpƒbƒ`‚Ìî•ñ‚ðƒRƒ“ƒpƒCƒ‹Žž‚É“n‚¹‚é‚æ‚¤‚É‚·‚é
+	// ãƒ‘ãƒƒãƒã®æƒ…å ±ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã«æ¸¡ã›ã‚‹ã‚ˆã†ã«ã™ã‚‹
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( _T("      ") );
 	const TCHAR* ptszPatchInfo = to_tchar(SKR_PATCH_INFO);
@@ -226,8 +226,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
 	//	From Here Jun. 8, 2001 genta
-	//	Edit Box‚ÉƒƒbƒZ[ƒW‚ð’Ç‰Á‚·‚éD
-	// 2011.06.01 nasukoji	Še‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰ž
+	//	Edit Boxã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿½åŠ ã™ã‚‹ï¼Ž
+	// 2011.06.01 nasukoji	å„å›½èªžãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹å¯¾å¿œ
 	LPCTSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
 	if( _tcslen(pszDesc) > 0 ){
 		_tcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
@@ -237,7 +237,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	To Here Jun. 8, 2001 genta
 
 	//	From Here Dec. 2, 2002 genta
-	//	ƒAƒCƒRƒ“‚ðƒJƒXƒ^ƒ}ƒCƒYƒAƒCƒRƒ“‚É‡‚í‚¹‚é
+	//	ã‚¢ã‚¤ã‚³ãƒ³ã‚’ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚ºã‚¢ã‚¤ã‚³ãƒ³ã«åˆã‚ã›ã‚‹
 	HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
 	HWND hIconWnd = GetDlgItem( GetHwnd(), IDC_STATIC_MYICON );
 	
@@ -246,13 +246,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
-	// URLƒEƒBƒ“ƒhƒE‚ðƒTƒuƒNƒ‰ƒX‰»‚·‚é
+	// URLã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã™ã‚‹
 	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
 
-	//	Oct. 22, 2005 genta Œ´ìŽÒƒz[ƒ€ƒy[ƒW‚ª–³‚­‚È‚Á‚½‚Ì‚Åíœ
+	//	Oct. 22, 2005 genta åŽŸä½œè€…ãƒ›ãƒ¼ãƒ ãƒšãƒ¼ã‚¸ãŒç„¡ããªã£ãŸã®ã§å‰Šé™¤
 	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_ORG ) );
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
@@ -275,10 +275,10 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 BOOL CDlgAbout::OnStnClicked( int wID )
 {
 	switch( wID ){
-	//	2006.07.27 genta Œ´ìŽÒ˜A—æ‚Ìƒ{ƒ^ƒ“‚ðíœ (ƒwƒ‹ƒv‚©‚çíœ‚³‚ê‚Ä‚¢‚é‚½‚ß)
+	//	2006.07.27 genta åŽŸä½œè€…é€£çµ¡å…ˆã®ãƒœã‚¿ãƒ³ã‚’å‰Šé™¤ (ãƒ˜ãƒ«ãƒ—ã‹ã‚‰å‰Šé™¤ã•ã‚Œã¦ã„ã‚‹ãŸã‚)
 	case IDC_STATIC_URL_UR:
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
-		//	Web Browser‚Ì‹N“®
+		//	Web Browserã®èµ·å‹•
 		{
 			TCHAR buf[512];
 			::GetWindowText( ::GetDlgItem( GetHwnd(), wID ), buf, _countof(buf) );
@@ -286,7 +286,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 			return TRUE;
 		}
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnStnClicked( wID );
 }
 
@@ -298,14 +298,14 @@ LPVOID CDlgAbout::GetHelpIdTable(void)
 
 BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 {
-	// STATICƒEƒBƒ“ƒhƒE‚ðƒTƒuƒNƒ‰ƒX‰»‚·‚é
-	// Œ³‚ÌSTATIC‚Í WS_TABSTOP, SS_NOTIFY ƒXƒ^ƒCƒ‹‚Ì‚à‚Ì‚ðŽg—p‚·‚é‚±‚Æ
+	// STATICã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã™ã‚‹
+	// å…ƒã®STATICã¯ WS_TABSTOP, SS_NOTIFY ã‚¹ã‚¿ã‚¤ãƒ«ã®ã‚‚ã®ã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨
 	if( GetHwnd() != NULL )
 		return FALSE;
 	if( !IsWindow( hWnd ) )
 		return FALSE;
 
-	// ƒTƒuƒNƒ‰ƒX‰»‚ðŽÀs‚·‚é
+	// ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã‚’å®Ÿè¡Œã™ã‚‹
 	LONG_PTR lptr;
 	SetLastError( 0 );
 	lptr = SetWindowLongPtr( hWnd, GWLP_USERDATA, (LONG_PTR)this );
@@ -316,7 +316,7 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		return FALSE;
 	m_hWnd = hWnd;
 
-	// ‰ºü•t‚«ƒtƒHƒ“ƒg‚É•ÏX‚·‚é
+	// ä¸‹ç·šä»˜ããƒ•ã‚©ãƒ³ãƒˆã«å¤‰æ›´ã™ã‚‹
 	HFONT hFont;
 	LOGFONT lf;
 	hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
@@ -339,27 +339,27 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 	switch ( msg ) {
 	case WM_SETCURSOR:
-		// ƒJ[ƒ\ƒ‹Œ`ó•ÏX
-		SetHandCursor();		// Hand Cursor‚ðÝ’è 2013/1/29 Uchi
+		// ã‚«ãƒ¼ã‚½ãƒ«å½¢çŠ¶å¤‰æ›´
+		SetHandCursor();		// Hand Cursorã‚’è¨­å®š 2013/1/29 Uchi
 		return (LRESULT)0;
 	case WM_LBUTTONDOWN:
-		// ƒL[ƒ{[ƒhƒtƒH[ƒJƒX‚ðŽ©•ª‚É“–‚Ä‚é
+		// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è‡ªåˆ†ã«å½“ã¦ã‚‹
 		SendMessageAny( GetParent(hWnd), WM_NEXTDLGCTL, (WPARAM)hWnd, (LPARAM)1 );
 		break;
 	case WM_SETFOCUS:
 	case WM_KILLFOCUS:
-		// Ä•`‰æ
+		// å†æç”»
 		InvalidateRect( hWnd, NULL, TRUE );
 		UpdateWindow( hWnd );
 		break;
 	case WM_GETDLGCODE:
-		// ƒfƒtƒHƒ‹ƒgƒvƒbƒVƒ…ƒ{ƒ^ƒ“‚Ì‚æ‚¤‚ÉU•‘‚¤iEnterƒL[‚Ì—LŒø‰»j
-		// •ûŒüƒL[‚Í–³Œø‰»iIE‚Ìƒo[ƒWƒ‡ƒ“î•ñƒ_ƒCƒAƒƒO‚Æ“¯—lj
+		// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ—ãƒƒã‚·ãƒ¥ãƒœã‚¿ãƒ³ã®ã‚ˆã†ã«æŒ¯èˆžã†ï¼ˆEnterã‚­ãƒ¼ã®æœ‰åŠ¹åŒ–ï¼‰
+		// æ–¹å‘ã‚­ãƒ¼ã¯ç„¡åŠ¹åŒ–ï¼ˆIEã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã¨åŒæ§˜ï¼‰
 		return DLGC_DEFPUSHBUTTON | DLGC_WANTARROWS;
 	case WM_MOUSEMOVE:
-		// ƒJ[ƒ\ƒ‹‚ªƒEƒBƒ“ƒhƒE“à‚É“ü‚Á‚½‚çƒ^ƒCƒ}[‹N“®
-		// ƒEƒBƒ“ƒhƒEŠO‚Éo‚½‚çƒ^ƒCƒ}[íœ
-		// Šeƒ^ƒCƒ~ƒ“ƒO‚ÅÄ•`‰æ
+		// ã‚«ãƒ¼ã‚½ãƒ«ãŒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å†…ã«å…¥ã£ãŸã‚‰ã‚¿ã‚¤ãƒžãƒ¼èµ·å‹•
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¤–ã«å‡ºãŸã‚‰ã‚¿ã‚¤ãƒžãƒ¼å‰Šé™¤
+		// å„ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å†æç”»
 		BOOL bHilighted;
 		pt.x = LOWORD( lParam );
 		pt.y = HIWORD( lParam );
@@ -375,7 +375,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		}
 		break;
 	case WM_TIMER:
-		// ƒJ[ƒ\ƒ‹‚ªƒEƒBƒ“ƒhƒEŠO‚É‚ ‚éê‡‚É‚à WM_MOUSEMOVE ‚ð‘—‚é
+		// ã‚«ãƒ¼ã‚½ãƒ«ãŒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¤–ã«ã‚ã‚‹å ´åˆã«ã‚‚ WM_MOUSEMOVE ã‚’é€ã‚‹
 		GetCursorPos( &pt );
 		ScreenToClient( hWnd, &pt );
 		GetClientRect( hWnd, &rc );
@@ -383,7 +383,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			SendMessageAny( hWnd, WM_MOUSEMOVE, 0, MAKELONG( pt.x, pt.y ) );
 		break;
 	case WM_PAINT:
-		// ƒEƒBƒ“ƒhƒE‚Ì•`‰æ
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æç”»
 		PAINTSTRUCT ps;
 		HFONT hFont;
 		HFONT hFontOld;
@@ -391,19 +391,19 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 		hdc = BeginPaint( hWnd, &ps );
 
-		// Œ»Ý‚ÌƒNƒ‰ƒCƒAƒ“ƒg‹éŒ`AƒeƒLƒXƒgAƒtƒHƒ“ƒg‚ðŽæ“¾‚·‚é
+		// ç¾åœ¨ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆçŸ©å½¢ã€ãƒ†ã‚­ã‚¹ãƒˆã€ãƒ•ã‚©ãƒ³ãƒˆã‚’å–å¾—ã™ã‚‹
 		GetClientRect( hWnd, &rc );
 		GetWindowText( hWnd, szText, _countof(szText) );
 		hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 
-		// ƒeƒLƒXƒg•`‰æ
+		// ãƒ†ã‚­ã‚¹ãƒˆæç”»
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
 		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
-		// ƒtƒH[ƒJƒX˜g•`‰æ
+		// ãƒ•ã‚©ãƒ¼ã‚«ã‚¹æž æç”»
 		if( GetFocus() == hWnd )
 			DrawFocusRect( hdc, &rc );
 
@@ -413,13 +413,13 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		hdc = (HDC)wParam;
 		GetClientRect( hWnd, &rc );
 
-		// ”wŒi•`‰æ
+		// èƒŒæ™¯æç”»
 		if( pUrlWnd->m_bHilighted ){
-			// ƒnƒCƒ‰ƒCƒgŽž”wŒi•`‰æ
+			// ãƒã‚¤ãƒ©ã‚¤ãƒˆæ™‚èƒŒæ™¯æç”»
 			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
 			::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 		}else{
-			// e‚ÉWM_CTLCOLORSTATIC‚ð‘—‚Á‚Ä”wŒiƒuƒ‰ƒV‚ðŽæ“¾‚µA”wŒi•`‰æ‚·‚é
+			// è¦ªã«WM_CTLCOLORSTATICã‚’é€ã£ã¦èƒŒæ™¯ãƒ–ãƒ©ã‚·ã‚’å–å¾—ã—ã€èƒŒæ™¯æç”»ã™ã‚‹
 			HBRUSH hbr;
 			HBRUSH hbrOld;
 			hbr = (HBRUSH)SendMessageAny( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
@@ -429,7 +429,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		}
 		return (LRESULT)1;
 	case WM_DESTROY:
-		// ŒãŽn––
+		// å¾Œå§‹æœ«
 		KillTimer( hWnd, 1 );
 		SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)pUrlWnd->m_pOldProc );
 		if( pUrlWnd->m_hFont != NULL )

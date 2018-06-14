@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒvƒƒpƒeƒBƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date 1999/02/31 V‹Kì¬
-	@date 1999/12/05 Äì¬
+	@date 1999/02/31 æ–°è¦ä½œæˆ
+	@date 1999/12/05 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -36,18 +36,18 @@ class CDlgProperty;
 
 #include "dlg/CDialog.h"
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 class CDlgProperty : public CDialog
 {
 public:
-	int DoModal( HINSTANCE, HWND, LPARAM  );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM  );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnBnClicked( int );
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
 ///////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“İ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Uchi
 	@date 2010/3/22
@@ -35,18 +35,18 @@
 
 class CPropPlugin;
 
-/*!	@brief uƒvƒ‰ƒOƒCƒ“İ’èvƒ_ƒCƒAƒƒO
+/*!	@brief ã€Œãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
-	‹¤’Êİ’è‚Ìƒvƒ‰ƒOƒCƒ“İ’è‚ÅCw’èƒvƒ‰ƒOƒCƒ“‚ÌƒIƒvƒVƒ‡ƒ“‚ğİ’è‚·‚é‚½‚ß‚É
-	g—p‚³‚ê‚éƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	å…±é€šè¨­å®šã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šã§ï¼ŒæŒ‡å®šãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹ãŸã‚ã«
+	ä½¿ç”¨ã•ã‚Œã‚‹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 
-// •ÒWÅ‘å’·
+// ç·¨é›†æœ€å¤§é•·
 #define MAX_LENGTH_VALUE	1024
 
 typedef std::wstring wstring;
 
-// Œ^ 
+// å‹ 
 static const wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
 static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
 static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
@@ -64,11 +64,11 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, CPropPlugin*, int );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, CPropPlugin*, int );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked( int );
@@ -78,23 +78,23 @@ protected:
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
-	void	ChangeListPosition( void );					// •ÒW—Ìˆæ‚ğƒŠƒXƒgƒrƒ…[‚É‡‚¹‚ÄØ‘Ö‚¦‚é
-	void	MoveFocusToEdit( void );					// •ÒW—Ìˆæ‚ÉƒtƒH[ƒJƒX‚ğˆÚ‚·
+	void	ChangeListPosition( void );					// ç·¨é›†é ˜åŸŸã‚’ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã«åˆã›ã¦åˆ‡æ›¿ãˆã‚‹
+	void	MoveFocusToEdit( void );					// ç·¨é›†é ˜åŸŸã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»ã™
 	void	SetToEdit( int );
 	void	SetFromEdit( int );
-	void	SelectEdit( int );							// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
-	void	SepSelect( wstring, wstring*, wstring* );	// ‘I‘ğ—p•¶š—ñ•ª‰ğ
-	void	SelectDirectory( int iLine );				// ƒfƒBƒŒƒNƒgƒŠ‚ğ‘I‘ğ‚·‚é
+	void	SelectEdit( int );							// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
+	void	SepSelect( wstring, wstring*, wstring* );	// é¸æŠç”¨æ–‡å­—åˆ—åˆ†è§£
+	void	SelectDirectory( int iLine );				// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’é¸æŠã™ã‚‹
 
 private:
 	CPlugin*		m_cPlugin;
 	CPropPlugin*	m_cPropPlugin;
-	int 			m_ID;			// ƒvƒ‰ƒOƒCƒ“”Ô†iƒGƒfƒBƒ^‚ª‚Ó‚é”Ô†j
-	int				m_Line;			// Œ»İ•ÒW’†‚ÌƒIƒvƒVƒ‡ƒ“s”Ô†
-	std::tstring	m_sReadMeName;	// ReadMe ƒtƒ@ƒCƒ‹–¼
+	int 			m_ID;			// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç•ªå·ï¼ˆã‚¨ãƒ‡ã‚£ã‚¿ãŒãµã‚‹ç•ªå·ï¼‰
+	int				m_Line;			// ç¾åœ¨ç·¨é›†ä¸­ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³è¡Œç•ªå·
+	std::tstring	m_sReadMeName;	// ReadMe ãƒ•ã‚¡ã‚¤ãƒ«å
 };
 
 #endif /* SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_ */

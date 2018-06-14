@@ -1,9 +1,9 @@
-/*!	@file
-	@brief w’ès‚Ö‚ÌƒWƒƒƒ“ƒvƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æŒ‡å®šè¡Œã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/05/31 ì¬
-	@date 1999/12/05 Äì¬
+	@date 1998/05/31 ä½œæˆ
+	@date 1999/12/05 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,7 +20,7 @@ class CDlgJump;
 #define _CDLGJUMP_H_
 
 #include "dlg/CDialog.h"
-//! w’ès‚Ö‚ÌƒWƒƒƒ“ƒvƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+//! æŒ‡å®šè¡Œã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 class CDlgJump : public CDialog
 {
 public:
@@ -31,22 +31,22 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
-	int			m_nLineNum;		/*!< s”Ô† */
-	BOOL		m_bPLSQL;		/*!< PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
+	int			m_nLineNum;		/*!< è¡Œç•ªå· */
+	BOOL		m_bPLSQL;		/*!< PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
 	int			m_nPLSQL_E1;
 	int			m_nPLSQL_E2;
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnNotify( WPARAM,  LPARAM );	//	Oct. 6, 2000 JEPRO added for Spin control
 	BOOL OnCbnSelChange( HWND, int );
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 };
 
 

@@ -1,15 +1,15 @@
-/*!	@file
-	@brief ƒEƒBƒ“ƒhƒEˆê——ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Moca
-	@date 2015.03.07 Moca CDlgWindowList.cpp‚ğŒ³‚Éì¬
+	@date 2015.03.07 Moca CDlgWindowList.cppã‚’å…ƒã«ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, Stonee, genta, JEPRO, YAZAKI
 	Copyright (C) 2002, aroka, MIK, Moca
 	Copyright (C) 2003, MIK, genta
-	Copyright (C) 2004, MIK, genta, ‚¶‚ã‚¤‚¶
+	Copyright (C) 2004, MIK, genta, ã˜ã‚…ã†ã˜
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2015, Moca
@@ -46,14 +46,14 @@ static const SAnchorList anchorList[] = {
 CDlgWindowList::CDlgWindowList()
 	: CDialog(true)
 {
-	/* ƒTƒCƒY•ÏX‚ÉˆÊ’u‚ğ§Œä‚·‚éƒRƒ“ƒgƒ[ƒ‹” */
+	/* ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã«ä½ç½®ã‚’åˆ¶å¾¡ã™ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æ•° */
 	assert(_countof(anchorList) == _countof(m_rcItems));
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
 	return;
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgWindowList::DoModal(
 	HINSTANCE			hInstance,
 	HWND				hwndParent,
@@ -67,7 +67,7 @@ BOOL CDlgWindowList::OnBnClicked(int wID)
 {
 	switch(wID){
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
+		/* ãƒ˜ãƒ«ãƒ— */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DLGWINLIST));
 		return TRUE;
 	case IDC_BUTTON_SAVE:
