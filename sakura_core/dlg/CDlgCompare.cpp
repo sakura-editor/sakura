@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹”äŠrƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«æ¯”è¼ƒãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
 */
@@ -26,15 +26,15 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-// ƒtƒ@ƒCƒ‹“à—e”äŠr CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
+// ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12300
 //	IDC_STATIC,						-1,
 	IDOK,							HIDOK_CMP,					//OK
-	IDCANCEL,						HIDCANCEL_CMP,				//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_CMP_BUTTON_HELP,		//ƒwƒ‹ƒv
-	IDC_CHECK_TILE_H,				HIDC_CMP_CHECK_TILE_H,		//¶‰E‚É•\¦
-	IDC_LIST_FILES,					HIDC_CMP_LIST_FILES,		//ƒtƒ@ƒCƒ‹ˆê——
-	IDC_STATIC_COMPARESRC,			HIDC_CMP_STATIC_COMPARESRC,	//ƒ\[ƒXƒtƒ@ƒCƒ‹
+	IDCANCEL,						HIDCANCEL_CMP,				//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_CMP_BUTTON_HELP,		//ãƒ˜ãƒ«ãƒ—
+	IDC_CHECK_TILE_H,				HIDC_CMP_CHECK_TILE_H,		//å·¦å³ã«è¡¨ç¤º
+	IDC_LIST_FILES,					HIDC_CMP_LIST_FILES,		//ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§
+	IDC_STATIC_COMPARESRC,			HIDC_CMP_STATIC_COMPARESRC,	//ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
@@ -50,10 +50,10 @@ static const SAnchorList anchorList[] = {
 CDlgCompare::CDlgCompare()
 	: CDialog(true)
 {
-	/* ƒTƒCƒY•ÏX‚ÉˆÊ’u‚ğ§Œä‚·‚éƒRƒ“ƒgƒ[ƒ‹” */
+	/* ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã«ä½ç½®ã‚’åˆ¶å¾¡ã™ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æ•° */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
-	m_bCompareAndTileHorz = TRUE;	/* ¶‰E‚É•À‚×‚Ä•\¦ */
+	m_bCompareAndTileHorz = TRUE;	/* å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
@@ -61,7 +61,7 @@ CDlgCompare::CDlgCompare()
 }
 
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgCompare::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
@@ -81,19 +81,19 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* u“à—e”äŠrv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œå†…å®¹æ¯”è¼ƒã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
-//	From Here Oct. 10, 2000 JEPRO added  Ref. code ‚ÍCDlgFind.cpp ‚Ì OnBnClicked
-//	ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğƒ{ƒ^ƒ“‰»‚µ‚ÄCDlgCompare.cpp‚É’¼Ú‘‚«‚ñ‚Å‚İ‚½‚ª¸”s
-//	ƒ_ƒCƒAƒƒO‚Ìƒ{ƒ^ƒ“‚Í‰º‚É•s‰Â‹‰»‚µ‚Ä‚¨‚¢‚Ä‚ ‚è‚Ü‚·B
-//	ˆÈ‰º‚Ì’Ç‰ÁƒR[ƒh‚Í‘S•”Á‚µ‚ÄŒ‹\‚Å‚·‚©‚ç’N‚©ì‚Á‚Ä‚­‚¾‚³‚¢B…•½ƒXƒNƒ[ƒ‹‚à“ü‚ê‚Ä‚­‚ê‚é‚Æ‚È‚¨‚¤‚ê‚µ‚¢‚Å‚·B
-//	case IDC_BUTTON1:	/* ã‰º‚É•\¦ */
-//		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+//	From Here Oct. 10, 2000 JEPRO added  Ref. code ã¯CDlgFind.cpp ã® OnBnClicked
+//	ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã‚’ãƒœã‚¿ãƒ³åŒ–ã—ã¦CDlgCompare.cppã«ç›´æ¥æ›¸ãè¾¼ã‚“ã§ã¿ãŸãŒå¤±æ•—
+//	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒœã‚¿ãƒ³ã¯ä¸‹ã«ä¸å¯è¦–åŒ–ã—ã¦ãŠã„ã¦ã‚ã‚Šã¾ã™ã€‚
+//	ä»¥ä¸‹ã®è¿½åŠ ã‚³ãƒ¼ãƒ‰ã¯å…¨éƒ¨æ¶ˆã—ã¦çµæ§‹ã§ã™ã‹ã‚‰èª°ã‹ä½œã£ã¦ãã ã•ã„ã€‚æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚‚å…¥ã‚Œã¦ãã‚Œã‚‹ã¨ãªãŠã†ã‚Œã—ã„ã§ã™ã€‚
+//	case IDC_BUTTON1:	/* ä¸Šä¸‹ã«è¡¨ç¤º */
+//		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 //		return TRUE;
-//	case IDOK:			/* ¶‰E‚É•\¦ */
-//		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+//	case IDOK:			/* å·¦å³ã«è¡¨ç¤º */
+//		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 //		HWND	hwndCompareWnd;
 //		HWND*	phwndArr;
 //		int		i;
@@ -110,20 +110,20 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 //		CloseDialog( 0 );
 //		return TRUE;
 //	To Here Oct. 10, 2000
-	case IDOK:			/* ¶‰E‚É•\¦ */
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	case IDOK:			/* å·¦å³ã«è¡¨ç¤º */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), GetData() );
 		return TRUE;
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgCompare::SetData( void )
 {
 	HWND			hwndList;
@@ -137,58 +137,58 @@ void CDlgCompare::SetData( void )
 
 	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
 
-//	2002/2/10 aroka ƒtƒ@ƒCƒ‹–¼‚Å”äŠr‚µ‚È‚¢‚½‚ß•s—p (2001.12.26 YAZAKI‚³‚ñ)
-//	//	Oct. 15, 2001 genta ƒtƒ@ƒCƒ‹–¼”»’è‚Ì stricmp‚ğbcc‚Å‚àŠú‘Ò’Ê‚è“®‚©‚·‚½‚ß
+//	2002/2/10 aroka ãƒ•ã‚¡ã‚¤ãƒ«åã§æ¯”è¼ƒã—ãªã„ãŸã‚ä¸ç”¨ (2001.12.26 YAZAKIã•ã‚“)
+//	//	Oct. 15, 2001 genta ãƒ•ã‚¡ã‚¤ãƒ«ååˆ¤å®šã® stricmpã‚’bccã§ã‚‚æœŸå¾…é€šã‚Šå‹•ã‹ã™ãŸã‚
 //	setlocale ( LC_ALL, "C" );
 
-	/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg‚ğƒƒjƒ…[‚É‚·‚é */
+	/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆã‚’ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã™ã‚‹ */
 	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
-		// …•½ƒXƒNƒ[ƒ‹•‚ÍÀÛ‚É•\¦‚·‚é•¶š—ñ‚Ì•‚ğŒv‘ª‚µ‚ÄŒˆ‚ß‚é	// 2009.09.26 ryoji
+		// æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å¹…ã¯å®Ÿéš›ã«è¡¨ç¤ºã™ã‚‹æ–‡å­—åˆ—ã®å¹…ã‚’è¨ˆæ¸¬ã—ã¦æ±ºã‚ã‚‹	// 2009.09.26 ryoji
 		CTextWidthCalc calc(hwndList);
 		int score = 0;
 		TCHAR		szFile1[_MAX_PATH];
 		SplitPath_FolderAndFile(m_pszPath, NULL, szFile1);
 		for( i = 0; i < nRowNum; ++i ){
-			/* ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹–¼—v‹’Ê’m */
+			/* ãƒˆãƒ¬ã‚¤ã‹ã‚‰ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åè¦æ±‚é€šçŸ¥ */
 			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-//@@@ 2001.12.26 YAZAKI ƒtƒ@ƒCƒ‹–¼‚Å”äŠr‚·‚é‚Æ(–³‘è)‚¾‚Á‚½‚Æ‚«‚É–â‘è“¯m‚Ì”äŠr‚ª‚Å‚«‚È‚¢
+//@@@ 2001.12.26 YAZAKI ãƒ•ã‚¡ã‚¤ãƒ«åã§æ¯”è¼ƒã™ã‚‹ã¨(ç„¡é¡Œ)ã ã£ãŸã¨ãã«å•é¡ŒåŒå£«ã®æ¯”è¼ƒãŒã§ããªã„
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
-				// 2010.07.30 ©•ª‚Ì–¼‘O‚à‚±‚±‚©‚çİ’è‚·‚é
+				// 2010.07.30 è‡ªåˆ†ã®åå‰ã‚‚ã“ã“ã‹ã‚‰è¨­å®šã™ã‚‹
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
 				::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );
 				continue;
 			}
-			// ”Ô†‚Í ƒEƒBƒ“ƒhƒEƒŠƒXƒg‚Æ“¯‚¶‚É‚È‚é‚æ‚¤‚É‚·‚é
+			// ç•ªå·ã¯ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã¨åŒã˜ã«ãªã‚‹ã‚ˆã†ã«ã™ã‚‹
 			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i, calc.GetDC() );
 
 			nItem = ::List_AddString( hwndList, szMenu );
 			List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
 
-			// ‰¡•‚ğŒvZ‚·‚é
+			// æ¨ªå¹…ã‚’è¨ˆç®—ã™ã‚‹
 			calc.SetTextWidthIfMax(szMenu);
 
-			// ƒtƒ@ƒCƒ‹–¼ˆê’v‚ÌƒXƒRƒA‚ğŒvZ‚·‚é
+			// ãƒ•ã‚¡ã‚¤ãƒ«åä¸€è‡´ã®ã‚¹ã‚³ã‚¢ã‚’è¨ˆç®—ã™ã‚‹
 			TCHAR szFile2[_MAX_PATH];
 			SplitPath_FolderAndFile( pfi->m_szPath, NULL, szFile2 );
 			int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
 			if( score < scoreTemp ){
-				// ƒXƒRƒA‚Ì‚¢‚¢‚à‚Ì‚ğ‘I‘ğ
+				// ã‚¹ã‚³ã‚¢ã®ã„ã„ã‚‚ã®ã‚’é¸æŠ
 				score = scoreTemp;
 				selIndex = nItem;
 			}
 		}
 		delete [] pEditNodeArr;
-		// 2002/11/01 Moca ’Ç‰Á ƒŠƒXƒgƒrƒ…[‚Ì‰¡•‚ğİ’èB‚±‚ê‚ğ‚â‚ç‚È‚¢‚Æ…•½ƒXƒNƒ[ƒ‹ƒo[‚ªg‚¦‚È‚¢
+		// 2002/11/01 Moca è¿½åŠ  ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®æ¨ªå¹…ã‚’è¨­å®šã€‚ã“ã‚Œã‚’ã‚„ã‚‰ãªã„ã¨æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ãŒä½¿ãˆãªã„
 		List_SetHorizontalExtent( hwndList, calc.GetCx() );
 	}
 	List_SetCurSel( hwndList, selIndex );
 
-	/* ¶‰E‚É•À‚×‚Ä•\¦ */
+	/* å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 	//@@@ 2003.06.12 MIK
-	// TAB 1ƒEƒBƒ“ƒhƒE•\¦‚Ì‚Æ‚«‚Í•À‚×‚Ä”äŠr‚Å‚«‚È‚­‚·‚é
+	// TAB 1ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã®ã¨ãã¯ä¸¦ã¹ã¦æ¯”è¼ƒã§ããªãã™ã‚‹
 	if( FALSE != m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
@@ -202,8 +202,8 @@ void CDlgCompare::SetData( void )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgCompare::GetData( void )
 {
 	HWND			hwndList;
@@ -215,16 +215,16 @@ int CDlgCompare::GetData( void )
 		return FALSE;
 	}else{
 		*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
-		/* ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹–¼—v‹’Ê’m */
+		/* ãƒˆãƒ¬ã‚¤ã‹ã‚‰ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åè¦æ±‚é€šçŸ¥ */
 		::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-		// 2010.07.30 ƒpƒX–¼‚Í‚â‚ß‚Ä•\¦–¼‚É•ÏX
+		// 2010.07.30 ãƒ‘ã‚¹åã¯ã‚„ã‚ã¦è¡¨ç¤ºåã«å¤‰æ›´
 		int nId = CAppNodeManager::getInstance()->GetEditNode( *m_phwndCompareWnd )->GetId();
 		CTextWidthCalc calc(hwndList);
-		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*’·‚³•s–¾*/, pfi, nId, -1, calc.GetDC() );
+		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*é•·ã•ä¸æ˜*/, pfi, nId, -1, calc.GetDC() );
 	
-		/* ¶‰E‚É•À‚×‚Ä•\¦ */
+		/* å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 		m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );
 
 		return TRUE;
@@ -279,7 +279,7 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnSize( wParam, lParam );
 
 	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog );

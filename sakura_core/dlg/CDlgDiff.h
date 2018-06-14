@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DIFF·•ª•\¦ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief DIFFå·®åˆ†è¡¨ç¤ºãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2002.5.27
@@ -36,9 +36,9 @@ class CDlgDiff;
 
 #include "dlg/CDialog.h"
 /*!
-	@brief DIFF·•ª•\¦ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief DIFFå·®åˆ†è¡¨ç¤ºãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
-//	Feb. 28, 2004 genta ÅŒã‚É‘I‘ğ‚³‚ê‚Ä‚¢‚½”Ô†‚ğ•Û‘¶‚·‚é
+//	Feb. 28, 2004 genta æœ€å¾Œã«é¸æŠã•ã‚Œã¦ã„ãŸç•ªå·ã‚’ä¿å­˜ã™ã‚‹
 class CDlgDiff : public CDialog
 {
 public:
@@ -50,39 +50,39 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnBnClicked( int );
 	BOOL	OnLbnSelChange( HWND hwndCtl, int wID );
 	BOOL	OnLbnDblclk( int wID );
 	BOOL	OnEnChange( HWND hwndCtl, int wID );
 	LPVOID	GetHelpIdTable(void);
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// •W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL OnMinMaxInfo( LPARAM lParam );
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 private:
-	int			m_nIndexSave;		// ÅŒã‚É‘I‘ğ‚³‚ê‚Ä‚¢‚½”Ô†
+	int			m_nIndexSave;		// æœ€å¾Œã«é¸æŠã•ã‚Œã¦ã„ãŸç•ªå·
 	POINT		m_ptDefaultSize;
 	RECT		m_rcItems[22];
 
 public:
-	SFilePath	m_szFile1;			// ©ƒtƒ@ƒCƒ‹
-	SFilePath	m_szFile2;			// ‘Šèƒtƒ@ƒCƒ‹
-	bool		m_bIsModifiedDst;	// ‘Šèƒtƒ@ƒCƒ‹XV’†
-	ECodeType	m_nCodeTypeDst;		// ‘Šèƒtƒ@ƒCƒ‹‚Ì•¶šƒR[ƒh
-	bool		m_bBomDst;			// ‘Šèƒtƒ@ƒCƒ‹‚ÌBOM
-	int			m_nDiffFlgOpt;		// DIFFƒIƒvƒVƒ‡ƒ“
-	HWND		m_hWnd_Dst;			// ‘ŠèƒEƒCƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	SFilePath	m_szFile1;			// è‡ªãƒ•ã‚¡ã‚¤ãƒ«
+	SFilePath	m_szFile2;			// ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«
+	bool		m_bIsModifiedDst;	// ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ä¸­
+	ECodeType	m_nCodeTypeDst;		// ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	bool		m_bBomDst;			// ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«ã®BOM
+	int			m_nDiffFlgOpt;		// DIFFã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	HWND		m_hWnd_Dst;			// ç›¸æ‰‹ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 
 };
 

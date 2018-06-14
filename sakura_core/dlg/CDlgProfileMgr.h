@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒƒtƒ@ƒCƒ‹ƒ}ƒl[ƒWƒƒ
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒãƒ¼ã‚¸ãƒ£
 
 	@author Moca
 	@date 2013.12.31
@@ -52,17 +52,17 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int		DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int		DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
 
 	BOOL	OnBnClicked( int );
 	INT_PTR	DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 
-	void	SetData();	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	void	SetData( int );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int		GetData();	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-	int		GetData( bool );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData();	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	void	SetData( int );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int		GetData();	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	int		GetData( bool );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	LPVOID	GetHelpIdTable(void);
 
 	void	UpdateIni();

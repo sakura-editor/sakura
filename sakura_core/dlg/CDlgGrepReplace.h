@@ -1,8 +1,8 @@
-/*!	@file
-	@brief GREP’uŠ·ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief GREPç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date 2011.12.15 CDlgFrep.h‚©‚çì¬
+	@date 2011.12.15 CDlgFrep.hã‹ã‚‰ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -21,7 +21,7 @@ class CDlgGrep;
 #include "dlg/CDialog.h"
 #include "dlg/CDlgGrep.h"
 
-//! GREP’uŠ·ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+//! GREPç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 class CDlgGrepReplace : public CDlgGrep
 {
 public:
@@ -32,27 +32,27 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, const TCHAR*, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, const TCHAR*, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 	bool		m_bPaste;
 	bool		m_bBackup;
 
-	std::wstring	m_strText2;				//!< ’uŠ·Œã
-	int				m_nReplaceKeySequence;	//!< ’uŠ·ŒãƒV[ƒPƒ“ƒX
+	std::wstring	m_strText2;				//!< ç½®æ›å¾Œ
+	int				m_nReplaceKeySequence;	//!< ç½®æ›å¾Œã‚·ãƒ¼ã‚±ãƒ³ã‚¹
 
 protected:
 	CFontAutoDeleter		m_cFontText2;
 
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnDestroy();
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 };
 
 

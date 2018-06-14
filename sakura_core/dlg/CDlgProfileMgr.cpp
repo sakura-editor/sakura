@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒƒtƒ@ƒCƒ‹ƒ}ƒl[ƒWƒƒ
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒãƒ¼ã‚¸ãƒ£
 
 	@author Moca
 	@date 2013.12.31
@@ -38,16 +38,16 @@
 #include "sakura.hh"
 
 const DWORD p_helpids[] = {
-	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//ƒvƒƒtƒ@ƒCƒ‹ˆê——
-	IDC_CHECK_PROF_DEFSTART,		HIDC_CHECK_PROF_DEFSTART,		//ƒfƒtƒHƒ‹ƒgİ’è‚É‚µ‚Ä‹N“®
-	IDOK,							HIDOK_PROFILEMGR,				//‹N“®
-	IDCANCEL,						HIDCANCEL_PROFILEMGR,			//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_PROFILEMGR_BUTTON_HELP,	//ƒwƒ‹ƒv
-	IDC_BUTTON_PROF_CREATE,			HIDC_BUTTON_PROF_CREATE,		//V‹Kì¬
-	IDC_BUTTON_PROF_RENAME,			HIDC_BUTTON_PROF_RENAME,		//–¼‘O•ÏX
-	IDC_BUTTON_PROF_DELETE,			HIDC_BUTTON_PROF_DELETE,		//íœ
-	IDC_BUTTON_PROF_DEFSET,			HIDC_BUTTON_PROF_DEFSET,		//ƒfƒtƒHƒ‹ƒgİ’è
-	IDC_BUTTON_PROF_DEFCLEAR,		HIDC_BUTTON_PROF_DEFCLEAR,		//ƒfƒtƒHƒ‹ƒg‰ğœ
+	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§
+	IDC_CHECK_PROF_DEFSTART,		HIDC_CHECK_PROF_DEFSTART,		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®šã«ã—ã¦èµ·å‹•
+	IDOK,							HIDOK_PROFILEMGR,				//èµ·å‹•
+	IDCANCEL,						HIDCANCEL_PROFILEMGR,			//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_PROFILEMGR_BUTTON_HELP,	//ãƒ˜ãƒ«ãƒ—
+	IDC_BUTTON_PROF_CREATE,			HIDC_BUTTON_PROF_CREATE,		//æ–°è¦ä½œæˆ
+	IDC_BUTTON_PROF_RENAME,			HIDC_BUTTON_PROF_RENAME,		//åå‰å¤‰æ›´
+	IDC_BUTTON_PROF_DELETE,			HIDC_BUTTON_PROF_DELETE,		//å‰Šé™¤
+	IDC_BUTTON_PROF_DEFSET,			HIDC_BUTTON_PROF_DEFSET,		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®š
+	IDC_BUTTON_PROF_DEFCLEAR,		HIDC_BUTTON_PROF_DEFCLEAR,		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè§£é™¤
 	0, 0
 };
 
@@ -57,7 +57,7 @@ CDlgProfileMgr::CDlgProfileMgr()
 	return;
 }
 
-/*! ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/*! ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
@@ -98,7 +98,7 @@ static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 }
 
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgProfileMgr::SetData()
 {
 	SetData( -1 );
@@ -158,7 +158,7 @@ static bool MyList_GetText(HWND hwndList, int index, TCHAR* szText)
 }
 
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CDlgProfileMgr::GetData()
 {
 	return GetData(true);
@@ -230,7 +230,7 @@ BOOL CDlgProfileMgr::OnBnClicked( int wID )
 		break;
 
 	case IDC_BUTTON_HELP:
-		/* uŒŸõv‚Ìƒwƒ‹ƒv */
+		/* ã€Œæ¤œç´¢ã€ã®ãƒ˜ãƒ«ãƒ— */
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PROFILEMGR) );
 		break;
 
@@ -388,7 +388,7 @@ void CDlgProfileMgr::RenameProf()
 		return;
 	}
 	if( 0 == auto_strcmp( szTextOld, szText ) ){
-		return; // –¢•ÏX
+		return; // æœªå¤‰æ›´
 	}
 	std::wstring strText = to_wchar(szText);
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
@@ -410,13 +410,13 @@ void CDlgProfileMgr::RenameProf()
 	std::tstring strProfDir = GetProfileMgrFileName(szText);
 	if( IsFileExists(strProfDirOld.c_str(), false) ){
 		if( !IsFileExists(strProfDirOld.c_str(), true) ){
-			// ƒvƒƒtƒ@ƒCƒ‹–¼‚ÍƒfƒBƒŒƒNƒgƒŠ
+			// ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«åã¯ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 			if( FALSE == ::MoveFile( strProfDirOld.c_str(), strProfDir.c_str() ) ){
 				ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_RENAME) );
 				return;
 			}
 		}else{
-			// ‹Œƒvƒƒtƒ@ƒCƒ‹–¼‚Íƒtƒ@ƒCƒ‹‚¾‚Á‚½‚Ì‚ÅV‹Kƒvƒƒtƒ@ƒCƒ‹‚Æ‚µ‚Äì¬Šm”F
+			// æ—§ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«åã¯ãƒ•ã‚¡ã‚¤ãƒ«ã ã£ãŸã®ã§æ–°è¦ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ã¨ã—ã¦ä½œæˆç¢ºèª
 			if( IsFileExists(strProfDir.c_str(), true) ){
 				ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_FILE) );
 				return;
@@ -479,7 +479,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	for(int i = 0; i < nCount; i++){
 		wchar_t szKey[64];
 		std::tstring strProfName;
-		swprintf( szKey, L"P[%d]", i + 1 ); // 1ŠJn
+		swprintf( szKey, L"P[%d]", i + 1 ); // 1é–‹å§‹
 		if( bWrite ){
 			strProfName = settings.m_vProfList[i];
 			std::wstring wstrProfName = to_wchar(strProfName.c_str());

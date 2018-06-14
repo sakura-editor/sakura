@@ -1,7 +1,7 @@
-/*! @file
-	@brief �X�V�ʒm�y�ъm�F�_�C�A���O
+﻿/*! @file
+	@brief 更新通知及び確認ダイアログ
 
-	�t�@�C���̍X�V�ʒm�Ɠ���̊m�F���s���_�C�A���O�{�b�N�X
+	ファイルの更新通知と動作の確認を行うダイアログボックス
 
 	@author genta
 	@date 2002.12.04
@@ -35,11 +35,11 @@
 #include "dlg/CDialog.h"
 
 enum EFileUpdateQuery {
-	EFUQ_CLOSE			= 0,	//!< ����
-	EFUQ_RELOAD			= 1,	//!< �ēǍ�
-	EFUQ_NOTIFYONLY		= 2,	//!< �Ȍ�ʒm���b�Z�[�W�̂�
-	EFUQ_NOSUPERVISION	= 3,	//!< �Ȍ�X�V���Ď����Ȃ�
-	EFUQ_AUTOLOAD		= 4		//!< �Ȍ㖢�ҏW�ōă��[�h
+	EFUQ_CLOSE			= 0,	//!< 閉じる
+	EFUQ_RELOAD			= 1,	//!< 再読込
+	EFUQ_NOTIFYONLY		= 2,	//!< 以後通知メッセージのみ
+	EFUQ_NOSUPERVISION	= 3,	//!< 以後更新を監視しない
+	EFUQ_AUTOLOAD		= 4		//!< 以後未編集で再ロード
 };
 
 class CDlgFileUpdateQuery : public CDialog {

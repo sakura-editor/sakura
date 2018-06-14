@@ -1,9 +1,9 @@
-/*!	@file
-	@brief GREPƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief GREPãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date 1998.09/07  V‹Kì¬
-	@date 1999.12/05 Äì¬
+	@date 1998.09/07  æ–°è¦ä½œæˆ
+	@date 1999.12/05 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,7 +22,7 @@ class CDlgGrep;
 #include "recent/CRecent.h"
 #include "util/window.h"
 
-//! GREPƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+//! GREPãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 class CDlgGrep : public CDialog
 {
 public:
@@ -34,27 +34,27 @@ public:
 	||  Attributes & Operations
 	*/
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
-//	HWND DoModeless( HINSTANCE, HWND, const char* );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+//	HWND DoModeless( HINSTANCE, HWND, const char* );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 
-	BOOL		m_bSubFolder;/*!< ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é */
-	BOOL		m_bFromThisText;/*!< ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é */
+	BOOL		m_bSubFolder;/*!< ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹ */
+	BOOL		m_bFromThisText;/*!< ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹ */
 
-	SSearchOption	m_sSearchOption;	//!< ŒŸõƒIƒvƒVƒ‡ƒ“
+	SSearchOption	m_sSearchOption;	//!< æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 
-	ECodeType	m_nGrepCharSet;			/*!< •¶šƒR[ƒhƒZƒbƒg */
-	int			m_nGrepOutputStyle;		/*!< Grep: o—ÍŒ`® */
-	int			m_nGrepOutputLineType;		//!< Œ‹‰Êo—ÍFs‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s
-	bool		m_bGrepOutputFileOnly;		/*!< ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ */
-	bool		m_bGrepOutputBaseFolder;	/*!< ƒx[ƒXƒtƒHƒ‹ƒ_•\¦ */
-	bool		m_bGrepSeparateFolder;		/*!< ƒtƒHƒ‹ƒ_–ˆ‚É•\¦ */
+	ECodeType	m_nGrepCharSet;			/*!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	int			m_nGrepOutputStyle;		/*!< Grep: å‡ºåŠ›å½¢å¼ */
+	int			m_nGrepOutputLineType;		//!< çµæœå‡ºåŠ›ï¼šè¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ
+	bool		m_bGrepOutputFileOnly;		/*!< ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢ */
+	bool		m_bGrepOutputBaseFolder;	/*!< ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º */
+	bool		m_bGrepSeparateFolder;		/*!< ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º */
 
 
-	std::wstring	m_strText;				/*!< ŒŸõ•¶š—ñ */
-	bool			m_bSetText;				//!< ŒŸõ•¶š—ñ‚ğİ’è‚µ‚½‚©
-	SFilePathLong	m_szFile;				//!< ŒŸõƒtƒ@ƒCƒ‹
-	SFilePathLong	m_szFolder;				//!< ŒŸõƒtƒHƒ‹ƒ_
+	std::wstring	m_strText;				/*!< æ¤œç´¢æ–‡å­—åˆ— */
+	bool			m_bSetText;				//!< æ¤œç´¢æ–‡å­—åˆ—ã‚’è¨­å®šã—ãŸã‹
+	SFilePathLong	m_szFile;				//!< æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ«
+	SFilePathLong	m_szFolder;				//!< æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€
 	SFilePath	m_szCurrentFilePath;
 protected:
 	SComboBoxItemDeleter	m_comboDelText;
@@ -66,16 +66,16 @@ protected:
 	CFontAutoDeleter		m_cFontText;
 
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnDestroy();
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-	void SetDataFromThisText( bool );	/* Œ»İ•ÒW’†ƒtƒ@ƒCƒ‹‚©‚çŒŸõƒ`ƒFƒbƒN‚Å‚Ìİ’è */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	void SetDataFromThisText( bool );	/* ç¾åœ¨ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰æ¤œç´¢ãƒã‚§ãƒƒã‚¯ã§ã®è¨­å®š */
 };
 
 

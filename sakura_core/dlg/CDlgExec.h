@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ŠO•”ƒRƒ}ƒ“ƒhÀsƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 */
@@ -18,7 +18,7 @@
 #define _CDLGEXEC_H_
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 class CDlgExec : public CDialog
 {
@@ -30,11 +30,11 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, LPARAM );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
-	TCHAR	m_szCommand[1024 + 1];	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ */
-	SFilePath	m_szCurDir;	/* ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ */
-	bool	m_bEditable;			/* •ÒWƒEƒBƒ“ƒhƒE‚Ö‚Ì“ü—Í‰Â”\ */	// 2009.02.21 ryoji
+	TCHAR	m_szCommand[1024 + 1];	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ */
+	SFilePath	m_szCurDir;	/* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª */
+	bool	m_bEditable;			/* ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ã®å…¥åŠ›å¯èƒ½ */	// 2009.02.21 ryoji
 
 
 protected:
@@ -43,9 +43,9 @@ protected:
 	SComboBoxItemDeleter m_comboDelCur;
 	CRecentCurDir m_cRecentCur;
 
-	/* ƒI[ƒo[ƒ‰ƒCƒh? */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-	void SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	/* ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰? */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	void SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add

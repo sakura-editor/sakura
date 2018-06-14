@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •¶šƒR[ƒhƒZƒbƒgİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Uchi
-	@date 2010/6/14  V‹Kì¬
+	@date 2010/6/14  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2010, Uchi
@@ -16,7 +16,7 @@
 
 #include "dlg/CDialog.h"
 
-//! •¶šƒR[ƒhƒZƒbƒgİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+//! æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 class CDlgSetCharSet : public CDialog
 {
 public:
@@ -27,10 +27,10 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, ECodeType*, bool* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	int DoModal( HINSTANCE, HWND, ECodeType*, bool* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 
-	ECodeType*	m_pnCharSet;			// •¶šƒR[ƒhƒZƒbƒg
+	ECodeType*	m_pnCharSet;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 	bool*		m_pbBom;				// BOM
 	bool		m_bCP;
 
@@ -39,17 +39,17 @@ public:
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL	OnBnClicked( int );
 	BOOL	OnCbnSelChange( HWND, int );
 	LPVOID	GetHelpIdTable( void );
 
-	void	SetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int 	GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void	SetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int 	GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
-	void	SetBOM( void );		// BOM ‚Ìİ’è
+	void	SetBOM( void );		// BOM ã®è¨­å®š
 };
 
 

@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒ^ƒOƒWƒƒƒ“ƒvƒŠƒXƒgƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒªã‚¹ãƒˆãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
 	@date 2003.4.13
-	@date 2005.03.31 MIK ƒL[ƒ[ƒhw’èTagJump‘Î‰‚Ì‚½‚ß‘å•‚É•ÏX
+	@date 2005.03.31 MIK ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šTagJumpå¯¾å¿œã®ãŸã‚å¤§å¹…ã«å¤‰æ›´
 */
 /*
 	Copyright (C) 2003, MIK
@@ -47,11 +47,11 @@
 
 
 const DWORD p_helpids[] = {
-	IDC_LIST_TAGJUMP,		HIDC_LIST_TAGJUMPLIST,			//ƒtƒ@ƒCƒ‹
+	IDC_LIST_TAGJUMP,		HIDC_LIST_TAGJUMPLIST,			//ãƒ•ã‚¡ã‚¤ãƒ«
 	IDOK,					HIDC_TAGJUMPLIST_IDOK,			//OK
-	IDCANCEL,				HIDC_TAGJUMPLIST_IDCANCEL,		//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,		HIDC_BUTTON_TAGJUMPLIST_HELP,	//ƒwƒ‹ƒv
-	IDC_KEYWORD,			HDIC_TAGJUMPLIST_KEYWORD,		//ƒL[ƒ[ƒh
+	IDCANCEL,				HIDC_TAGJUMPLIST_IDCANCEL,		//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,		HIDC_BUTTON_TAGJUMPLIST_HELP,	//ãƒ˜ãƒ«ãƒ—
+	IDC_KEYWORD,			HDIC_TAGJUMPLIST_KEYWORD,		//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 	IDC_CHECK_ICASE,		HIDC_CHECK_ICASE,
 	IDC_CHECK_ANYWHERE,		HIDC_CHECK_ANYWHERE,
 	IDC_BUTTON_NEXTTAG,		HIDC_BUTTON_NEXTTAG,
@@ -75,8 +75,8 @@ static const SAnchorList anchorList[] = {
 };
 
 
-//ƒ^ƒOƒtƒ@ƒCƒ‹‚ÌƒtƒH[ƒ}ƒbƒg	//	@@ 2005.03.31 MIK ’è”‰»
-//	@@ 2005.04.03 MIK ƒL[ƒ[ƒh‚É‹ó”’‚ªŠÜ‚Ü‚ê‚éê‡‚Ìl—¶
+//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ	//	@@ 2005.03.31 MIK å®šæ•°åŒ–
+//	@@ 2005.04.03 MIK ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«ç©ºç™½ãŒå«ã¾ã‚Œã‚‹å ´åˆã®è€ƒæ…®
 #define TAG_FORMAT_2_A       "%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%s\t%s"
 #define TAG_FORMAT_1_A       "%[^\t\r\n]\t%[^\t\r\n]\t%d"
 #define TAG_FILE_INFO_A      "%[^\t\r\n]\t%[^\t\r\n]\t%[^\t\r\n]"
@@ -84,13 +84,13 @@ static const SAnchorList anchorList[] = {
 // #define TAG_FORMAT_E_NAME_A  "%[^\x7f\r\n]\x7f%[^\x7ff\r\n\x01]\x01%d,%d"
 
 //	@@ 2005.03.31 MIK
-//ƒL[ƒ[ƒh‚ğ“ü—Í‚µ‚ÄŠY“–‚·‚éî•ñ‚ğ•\¦‚·‚é‚Ü‚Å‚ÌŠÔ(ƒ~ƒŠ•b)
+//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›ã—ã¦è©²å½“ã™ã‚‹æƒ…å ±ã‚’è¡¨ç¤ºã™ã‚‹ã¾ã§ã®æ™‚é–“(ãƒŸãƒªç§’)
 #define TAGJUMP_TIMER_DELAY 700
 #define TAGJUMP_TIMER_DELAY_SHORT 50
 
 
 /*
-	ctags.exe ‚ªo—Í‚·‚éAŠg’£q‚Æ‘Î‰‚·‚éí—Ş
+	ctags.exe ãŒå‡ºåŠ›ã™ã‚‹ã€æ‹¡å¼µå­ã¨å¯¾å¿œã™ã‚‹ç¨®é¡
 */
 static const TCHAR *p_extentions[] = {
 	/*asm*/			_T("asm,s"),								_T("d=define,l=label,m=macro,t=type"),
@@ -153,10 +153,10 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_psFind0Match( NULL ),
 	  m_strOldKeyword( L"" )
 {
-	/* ƒTƒCƒY•ÏX‚ÉˆÊ’u‚ğ§Œä‚·‚éƒRƒ“ƒgƒ[ƒ‹” */
+	/* ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã«ä½ç½®ã‚’åˆ¶å¾¡ã™ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æ•° */
 	assert( _countof(anchorList) == _countof(m_rcItems) );
 
-	// 2010.07.22 Moca ƒy[ƒWƒ“ƒOÌ—p‚Å Å‘å’l‚ğ100¨50‚ÉŒ¸‚ç‚·
+	// 2010.07.22 Moca ãƒšãƒ¼ã‚¸ãƒ³ã‚°æ¡ç”¨ã§ æœ€å¤§å€¤ã‚’100â†’50ã«æ¸›ã‚‰ã™
 	m_pcList = new CSortedTagJumpList(50);
 	m_psFindPrev = new STagFindState();
 	m_psFind0Match = new STagFindState();
@@ -181,10 +181,10 @@ CDlgTagJumpList::~CDlgTagJumpList()
 }
 
 /*!
-	ƒ^ƒCƒ}[’â~
+	ã‚¿ã‚¤ãƒãƒ¼åœæ­¢
 
 	@author MIK
-	@date 2005.03.31 V‹Kì¬
+	@date 2005.03.31 æ–°è¦ä½œæˆ
 */
 void CDlgTagJumpList::StopTimer( void )
 {
@@ -195,13 +195,13 @@ void CDlgTagJumpList::StopTimer( void )
 }
 
 /*!
-	ƒ^ƒCƒ}[ŠJn
+	ã‚¿ã‚¤ãƒãƒ¼é–‹å§‹
 	
-	ƒL[ƒ[ƒhw’èCˆê’èŠúŠÔ•¶š“ü—Í‚ª‚È‚¯‚ê‚ÎƒŠƒXƒg‚ğXV‚·‚é‚½‚ß
-	uˆê’èŠúŠÔv‚ğŒv‚éƒ^ƒCƒ}[‚ª•K—v
+	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šæ™‚ï¼Œä¸€å®šæœŸé–“æ–‡å­—å…¥åŠ›ãŒãªã‘ã‚Œã°ãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹ãŸã‚
+	ã€Œä¸€å®šæœŸé–“ã€ã‚’è¨ˆã‚‹ã‚¿ã‚¤ãƒãƒ¼ãŒå¿…è¦
 
 	@author MIK
-	@date 2005.03.31 V‹Kì¬
+	@date 2005.03.31 æ–°è¦ä½œæˆ
 */
 void CDlgTagJumpList::StartTimer( int nDelay = TAGJUMP_TIMER_DELAY )
 {
@@ -210,10 +210,10 @@ void CDlgTagJumpList::StartTimer( int nDelay = TAGJUMP_TIMER_DELAY )
 }
 
 /*!
-	ƒŠƒXƒg‚ÌƒNƒŠƒA
+	ãƒªã‚¹ãƒˆã®ã‚¯ãƒªã‚¢
 
 	@author MIK
-	@date 2005.03.31 V‹Kì¬
+	@date 2005.03.31 æ–°è¦ä½œæˆ
 */
 void CDlgTagJumpList::Empty( void )
 {
@@ -222,9 +222,9 @@ void CDlgTagJumpList::Empty( void )
 }
 
 /*
-	ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦
+	ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 
-	@param[in] lParam 0=ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv, 1=ƒL[ƒ[ƒh‚ğw’è‚µ‚Äƒ^ƒOƒWƒƒƒ“ƒv
+	@param[in] lParam 0=ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—, 1=ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æŒ‡å®šã—ã¦ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
 */
 int CDlgTagJumpList::DoModal(
 	HINSTANCE	hInstance,
@@ -237,7 +237,7 @@ int CDlgTagJumpList::DoModal(
 	return ret;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgTagJumpList::SetData( void )
 {
 	if( IsDirectTagJump() ){
@@ -251,7 +251,7 @@ void CDlgTagJumpList::SetData( void )
 			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 	}
-	//	From Here 2005.04.03 MIK İ’è’l‚Ì“Ç‚İ‚İ
+	//	From Here 2005.04.03 MIK è¨­å®šå€¤ã®èª­ã¿è¾¼ã¿
 	else{
 		HWND hwndKey;
 		hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );
@@ -274,23 +274,23 @@ void CDlgTagJumpList::SetData( void )
 		}
 		cRecentTagJump.Terminate();
 	}
-	//	To Here 2005.04.03 MIK İ’è’l‚Ì“Ç‚İ‚İ
+	//	To Here 2005.04.03 MIK è¨­å®šå€¤ã®èª­ã¿è¾¼ã¿
 	
 
 	SetTextDir();
 
 	UpdateData(true);
 
-	// ”O‚Ì‚½‚ßã‚©‚çUpdateData‚ÌŒã‚ÉˆÚ“®
+	// å¿µã®ãŸã‚ä¸Šã‹ã‚‰UpdateDataã®å¾Œã«ç§»å‹•
 	if( ! IsDirectTagJump() ){
-		StartTimer( TAGJUMP_TIMER_DELAY_SHORT ); // Å‰‚Í‹K’èŠÔ‘Ò‚½‚È‚¢
+		StartTimer( TAGJUMP_TIMER_DELAY_SHORT ); // æœ€åˆã¯è¦å®šæ™‚é–“å¾…ãŸãªã„
 	}
 }
 
-/*! @brief JumpŒó•â‚ÌXV
+/*! @brief Jumpå€™è£œã®æ›´æ–°
 
 	@date 2005.03.31 MIK 
-		ƒ_ƒCƒAƒƒOOpenˆÈŠO‚É‚àXV‚ª•K—v‚È‚½‚ßSetData()‚æ‚è•ª—£
+		ãƒ€ã‚¤ã‚¢ãƒ­ã‚°Openæ™‚ä»¥å¤–ã«ã‚‚æ›´æ–°ãŒå¿…è¦ãªãŸã‚SetData()ã‚ˆã‚Šåˆ†é›¢
 */
 void CDlgTagJumpList::UpdateData( bool bInit )
 {
@@ -341,10 +341,10 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 
 	const TCHAR* pszMsgText = NULL;
 
-	//	”‚ª‘½‚·‚¬‚éê‡‚ÍØ‚èÌ‚Ä‚½|‚ğ––”ö‚É‘}“ü
+	//	æ•°ãŒå¤šã™ãã‚‹å ´åˆã¯åˆ‡ã‚Šæ¨ã¦ãŸæ—¨ã‚’æœ«å°¾ã«æŒ¿å…¥
 //	if( m_pcList->IsOverflow() ){
-		// 2010.04.03 uŸvu‘Ovƒ{ƒ^ƒ“’Ç‰Á‚µ‚Ä Overflow‚µ‚È‚­‚È‚Á‚½
-//		pszMsgText = _T("(‚±‚êˆÈ~‚ÍØ‚èÌ‚Ä‚Ü‚µ‚½)");
+		// 2010.04.03 ã€Œæ¬¡ã€ã€Œå‰ã€ãƒœã‚¿ãƒ³è¿½åŠ ã—ã¦ Overflowã—ãªããªã£ãŸ
+//		pszMsgText = _T("(ã“ã‚Œä»¥é™ã¯åˆ‡ã‚Šæ¨ã¦ã¾ã—ãŸ)");
 //	}
 	if( (! bInit) && m_pcList->GetCount() == 0 ){
 		pszMsgText = LS(STR_DLGTAGJMP2);
@@ -364,7 +364,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 	}
 
 	if( IsDirectTagJump() && 0 == m_nTop && ! m_bNextItem ){
-		// ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv‚ÅAƒy[ƒWƒ“ƒO‚Ì•K—v‚ª‚È‚¢‚Æ‚«‚Í”ñ•\¦
+		// ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã§ã€ãƒšãƒ¼ã‚¸ãƒ³ã‚°ã®å¿…è¦ãŒãªã„ã¨ãã¯éè¡¨ç¤º
 		::ShowWindow( GetItemHwnd( IDC_BUTTON_NEXTTAG ), SW_HIDE );
 		::ShowWindow( GetItemHwnd( IDC_BUTTON_PREVTAG ), SW_HIDE );
 	}else{
@@ -382,11 +382,11 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 	return;
 }
 
-/*!	ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+/*!	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
-	@return TRUE: ³í, FALSE: “ü—ÍƒGƒ‰[
+	@return TRUE: æ­£å¸¸, FALSE: å…¥åŠ›ã‚¨ãƒ©ãƒ¼
 
-	@date 2005.04.03 MIK İ’è’l‚Ì•Û‘¶ˆ—’Ç‰Á
+	@date 2005.04.03 MIK è¨­å®šå€¤ã®ä¿å­˜å‡¦ç†è¿½åŠ 
 */
 int CDlgTagJumpList::GetData( void )
 {
@@ -395,12 +395,12 @@ int CDlgTagJumpList::GetData( void )
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
 	m_nIndex = ListView_GetNextItem( hwndList, -1, LVIS_SELECTED );
 
-	//	From Here 2005.04.03 MIK İ’è’l‚Ì•Û‘¶
+	//	From Here 2005.04.03 MIK è¨­å®šå€¤ã®ä¿å­˜
 	if( !IsDirectTagJump() )
 	{
 		m_pShareData->m_sTagJump.m_bTagJumpICase = m_bTagJumpICase;
 		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
-		// 2010.07.22 Œó•â‚ª‹ó‚Å‚àƒWƒƒƒ“ƒv‚Å•Â‚¶‚½‚Æ‚«‚ÍAƒIƒvƒVƒ‡ƒ“‚ğ•Û‘¶‚·‚é
+		// 2010.07.22 å€™è£œãŒç©ºã§ã‚‚ã‚¸ãƒ£ãƒ³ãƒ—ã§é–‰ã˜ãŸã¨ãã¯ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä¿å­˜ã™ã‚‹
 		if( m_nIndex == -1 || m_nIndex >= m_pcList->GetCapacity() ){
 			return FALSE;
 		}
@@ -409,7 +409,7 @@ int CDlgTagJumpList::GetData( void )
 		::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, _countof( tmp ) );
 		SetKeyword( tmp );
 
-		//İ’è‚ğ•Û‘¶
+		//è¨­å®šã‚’ä¿å­˜
 		CRecentTagjumpKeyword cRecentTagJumpKeyword;
 		cRecentTagJumpKeyword.AppendItem( m_pszKeyword );
 		cRecentTagJumpKeyword.Terminate();
@@ -422,7 +422,7 @@ int CDlgTagJumpList::GetData( void )
 
 /*!
 	@date 2005.03.31 MIK
-		ŠK‘wƒJƒ‰ƒ€‚Ì’Ç‰ÁDƒL[ƒ[ƒhw’è—“‚Ì’Ç‰Á
+		éšå±¤ã‚«ãƒ©ãƒ ã®è¿½åŠ ï¼ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šæ¬„ã®è¿½åŠ 
 */
 BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -455,10 +455,10 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
 
-	// ƒEƒBƒ“ƒhƒE‚ÌƒŠƒTƒCƒY
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒªã‚µã‚¤ã‚º
 	SetDialogPosSize();
 
-	//ƒŠƒXƒgƒrƒ…[‚Ì•\¦ˆÊ’u‚ğæ“¾‚·‚éB
+	//ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®è¡¨ç¤ºä½ç½®ã‚’å–å¾—ã™ã‚‹ã€‚
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_TAGJUMP );
 	//ListView_DeleteAllItems( hwndList );
 	rc.left = rc.top = rc.right = rc.bottom = 0;
@@ -508,12 +508,12 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.iSubItem = 5;
 	ListView_InsertColumn( hwndList, 5, &col );
 
-	/* s‘I‘ğ */
+	/* è¡Œé¸æŠ */
 	lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 	lngStyle |= LVS_EX_FULLROWSELECT;
 	ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
-	// ƒ_ƒCƒŒƒNƒgƒ^ƒuƒWƒƒƒ“ƒv‚Ì‚ÍAƒL[ƒ[ƒh‚ğ”ñ•\¦
+	// ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ãƒ–ã‚¸ãƒ£ãƒ³ãƒ—ã®æ™‚ã¯ã€ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’éè¡¨ç¤º
 	HWND hwndKey = GetItemHwnd( IDC_KEYWORD );
 	int nShowFlag = (IsDirectTagJump() ? SW_HIDE : SW_SHOW);
 	::ShowWindow( GetItemHwnd( IDC_STATIC_KEYWORD ), nShowFlag );
@@ -521,10 +521,10 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::ShowWindow( GetItemHwnd( IDC_CHECK_ICASE ), nShowFlag );
 	::ShowWindow( GetItemHwnd( IDC_CHECK_ANYWHERE ), nShowFlag );
 	if( IsDirectTagJump() ){
-		//ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv
+		//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
 		bRet = TRUE;
 	}else{
-		//ƒL[ƒ[ƒhw’è
+		//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®š
 		::SetFocus( hwndKey );
 		bRet = FALSE;	//for set focus
 	}
@@ -533,7 +533,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDel.pRecent = &m_cRecentKeyword;
 	SetComboBoxDeleter(hwndKey, &m_comboDel);
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 	
 	return bRet;
@@ -544,13 +544,13 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 	switch( wID )
 	{
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ãƒ˜ãƒ«ãƒ— */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID( F_TAGJUMP_LIST ) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 
-	case IDOK:			/* ¶‰E‚É•\¦ */
+	case IDOK:			/* å·¦å³ã«è¡¨ç¤º */
 		StopTimer();
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), (BOOL)GetData() );
 		return TRUE;
 
@@ -559,7 +559,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 
-	// From Here 2005.04.03 MIK ŒŸõğŒİ’è
+	// From Here 2005.04.03 MIK æ¤œç´¢æ¡ä»¶è¨­å®š
 	case IDC_CHECK_ICASE:
 		m_bTagJumpICase = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ICASE ) == BST_CHECKED;
 		StartTimer( TAGJUMP_TIMER_DELAY_SHORT );
@@ -569,7 +569,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		m_bTagJumpAnyWhere = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ANYWHERE ) == BST_CHECKED;
 		StartTimer( TAGJUMP_TIMER_DELAY_SHORT );
 		return TRUE;
-	// To Here 2005.04.03 MIK ŒŸõğŒİ’è
+	// To Here 2005.04.03 MIK æ¤œç´¢æ¡ä»¶è¨­å®š
 
 	case IDC_BUTTON_NEXTTAG:
 		m_nTop += m_pcList->GetCapacity();
@@ -583,7 +583,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
@@ -604,7 +604,7 @@ INT_PTR CDlgTagJumpList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPA
 
 BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnSize( wParam, lParam );
 
 	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
@@ -657,7 +657,7 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 
 	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
 
-	//	Œó•âˆê——ƒŠƒXƒgƒ{ƒbƒNƒX
+	//	å€™è£œä¸€è¦§ãƒªã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹
 	if( hwndList == pNMHDR->hwndFrom )
 	{
 		switch( pNMHDR->code )
@@ -669,14 +669,14 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnNotify( wParam, lParam );
 }
 
 /*!
-	ƒ^ƒCƒ}[Œo‰ß
+	ã‚¿ã‚¤ãƒãƒ¼çµŒé
 
-	ƒ^ƒCƒ}[‚ğ’â~‚µCŒó•âƒŠƒXƒg‚ğXV‚·‚é
+	ã‚¿ã‚¤ãƒãƒ¼ã‚’åœæ­¢ã—ï¼Œå€™è£œãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹
 */
 BOOL CDlgTagJumpList::OnTimer( WPARAM wParam )
 {
@@ -688,15 +688,15 @@ BOOL CDlgTagJumpList::OnTimer( WPARAM wParam )
 }
 
 /*!
-	ƒ^ƒCƒ}[Œo‰ß
+	ã‚¿ã‚¤ãƒãƒ¼çµŒé
 
-	ƒ^ƒCƒ}[‚ğŠJn‚µCŒó•âƒŠƒXƒg‚ğXV‚·‚é€”õ‚ğ‚·‚é
+	ã‚¿ã‚¤ãƒãƒ¼ã‚’é–‹å§‹ã—ï¼Œå€™è£œãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹æº–å‚™ã‚’ã™ã‚‹
 */
 BOOL CDlgTagJumpList::OnCbnEditChange( HWND hwndCtl, int wID )
 {
 	StartTimer();
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnCbnEditChange( hwndCtl, wID );
 }
 
@@ -704,7 +704,7 @@ BOOL CDlgTagJumpList::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	StartTimer();
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnCbnSelChange( hwndCtl, wID );
 }
 
@@ -713,7 +713,7 @@ BOOL CDlgTagJumpList::OnEnChange( HWND hwndCtl, int wID )
 {
 	StartTimer();
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 #endif
@@ -726,7 +726,7 @@ LPVOID CDlgTagJumpList::GetHelpIdTable( void )
 #if 0
 bool CDlgTagJumpList::AddParamA( const ACHAR *s0, const ACHAR *s1, int n2, const ACHAR *s3, const ACHAR *s4, int depth, int fileBase )
 {
-	if( -1 == m_nIndex ) m_nIndex = 0;	//‹K’è’l
+	if( -1 == m_nIndex ) m_nIndex = 0;	//è¦å®šå€¤
 
 	ClearPrevFindInfo();
 	m_bNextItem = false;
@@ -747,8 +747,8 @@ bool CDlgTagJumpList::GetSelectedFullPathAndLine( TCHAR *fullPath, int count, in
 }
 
 /*
-	@param lineNum [out] ƒIƒvƒVƒ‡ƒ“
-	@param depth [out] ƒIƒvƒVƒ‡ƒ“
+	@param lineNum [out] ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	@param depth [out] ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 */
 bool CDlgTagJumpList::GetFullPathAndLine( int index, TCHAR *fullPath, int count, int *lineNum, int *depth )
 {
@@ -764,7 +764,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, TCHAR *fullPath, int count,
 		*depth = tempDepth;
 	}
 	const TCHAR* fileNamePath;
-	// ƒtƒ@ƒCƒ‹–¼AƒfƒBƒŒƒNƒgƒŠw’èAŠî€ƒtƒ@ƒCƒ‹ƒpƒXA‚Ì‡‚É“K—pB“r’†‚Åƒtƒ‹ƒpƒX‚È‚ç‚»‚Ì‚Ü‚ÜB
+	// ãƒ•ã‚¡ã‚¤ãƒ«åã€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®šã€åŸºæº–ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã€ã®é †ã«é©ç”¨ã€‚é€”ä¸­ã§ãƒ•ãƒ«ãƒ‘ã‚¹ãªã‚‰ãã®ã¾ã¾ã€‚
 	if( dirFileName[0] ){
 		AddLastYenFromDirectoryPath( dirFileName );
 		const TCHAR	*p = fileName;
@@ -777,7 +777,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, TCHAR *fullPath, int count,
 		}else if( _istalpha( p[0] ) && p[1] == _T(':') ){
 			auto_strcpy( dirFileName, p );
 		}else{
-			// ‘Š‘ÎƒpƒXF˜AŒ‹‚·‚é
+			// ç›¸å¯¾ãƒ‘ã‚¹ï¼šé€£çµã™ã‚‹
 			auto_strcat( dirFileName, p );
 		}
 		fileNamePath = dirFileName;
@@ -794,7 +794,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, TCHAR *fullPath, int count,
 }
 
 /*!
-	@return u.extvŒ`®‚Ìƒ^ƒCƒvî•ñB free‚·‚é‚±‚Æ
+	@return ã€Œ.extã€å½¢å¼ã®ã‚¿ã‚¤ãƒ—æƒ…å ±ã€‚ freeã™ã‚‹ã“ã¨
 */
 TCHAR *CDlgTagJumpList::GetNameByType( const TCHAR type, const TCHAR *name )
 {
@@ -805,7 +805,7 @@ TCHAR *CDlgTagJumpList::GetNameByType( const TCHAR type, const TCHAR *name )
 	TCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
 	p = _tcsrchr( name, _T('.') );
-	if( ! p ) p = _T(".c");	//Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚Í ".c" ‚Æ‘z’è‚·‚éB
+	if( ! p ) p = _T(".c");	//è¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã¯ ".c" ã¨æƒ³å®šã™ã‚‹ã€‚
 	p++;
 
 	for( i = 0; p_extentions[i]; i += 2 )
@@ -839,7 +839,7 @@ TCHAR *CDlgTagJumpList::GetNameByType( const TCHAR type, const TCHAR *name )
 }
 
 /*!
-	Šî€ƒtƒ@ƒCƒ‹–¼‚ğİ’è
+	åŸºæº–ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¨­å®š
 */
 void CDlgTagJumpList::SetFileName( const TCHAR *pszFileName )
 {
@@ -854,7 +854,7 @@ void CDlgTagJumpList::SetFileName( const TCHAR *pszFileName )
 }
 
 /*!
-	ŒŸõƒL[ƒ[ƒh‚Ìİ’è
+	æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®è¨­å®š
 
 */
 void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
@@ -889,16 +889,16 @@ typedef struct tagTagPathInfo {
 } TagPathInfo;
 
 /*!
-	“¾‚ç‚ê‚½Œó•â‚©‚çÅ‚àŠú‘Ò‚É‹ß‚¢‚Æv‚í‚ê‚é‚à‚Ì‚ğ
-	‘I‚Ño‚·D(‰Šú‘I‘ğˆÊ’uŒˆ’è‚Ì‚½‚ß)
+	å¾—ã‚‰ã‚ŒãŸå€™è£œã‹ã‚‰æœ€ã‚‚æœŸå¾…ã«è¿‘ã„ã¨æ€ã‚ã‚Œã‚‹ã‚‚ã®ã‚’
+	é¸ã³å‡ºã™ï¼(åˆæœŸé¸æŠä½ç½®æ±ºå®šã®ãŸã‚)
 
-	@return ‘I‘ğ‚³‚ê‚½ƒAƒCƒeƒ€‚Ìindex
+	@return é¸æŠã•ã‚ŒãŸã‚¢ã‚¤ãƒ†ãƒ ã®index
 
-	@date 2014.06.14 ƒtƒ@ƒCƒ‹–¼EŠg’£qˆÈŠO‚Éƒhƒ‰ƒCƒuEƒpƒX‚àl—¶‚·‚é‚æ‚¤‚É
+	@date 2014.06.14 ãƒ•ã‚¡ã‚¤ãƒ«åãƒ»æ‹¡å¼µå­ä»¥å¤–ã«ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ»ãƒ‘ã‚¹ã‚‚è€ƒæ…®ã™ã‚‹ã‚ˆã†ã«
 */
 int CDlgTagJumpList::SearchBestTag( void )
 {
-	if( m_pcList->GetCount() <= 0 ) return -1;	//‘I‚×‚Ü‚¹‚ñB
+	if( m_pcList->GetCount() <= 0 ) return -1;	//é¸ã¹ã¾ã›ã‚“ã€‚
 	if( NULL == m_pszFileName ) return 0;
 
 	std::auto_ptr<TagPathInfo> mem_lpPathInfo( new TagPathInfo );
@@ -927,7 +927,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 
 	for( i = 0; i < count; i++ )
 	{
-		// ƒ^ƒO‚Ìƒtƒ@ƒCƒ‹–¼•”•ª‚ğƒtƒ‹ƒpƒX‚É‚·‚é
+		// ã‚¿ã‚°ã®ãƒ•ã‚¡ã‚¤ãƒ«åéƒ¨åˆ†ã‚’ãƒ•ãƒ«ãƒ‘ã‚¹ã«ã™ã‚‹
 		lpPathInfo->szFileNameDst[0] = _T('\0');
 		{
 			TCHAR szPath[_MAX_PATH];
@@ -948,21 +948,21 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->nExtDst = _tcslen(lpPathInfo->szExtDst);
 		
 		if(_tcsicmp(m_pszFileName, lpPathInfo->szFileNameDst) == 0){
-			return i;	//“¯ˆêƒtƒ@ƒCƒ‹‚ğŒ©‚Â‚¯‚½
+			return i;	//åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¦‹ã¤ã‘ãŸ
 		}
 
 		if((nMatch1 == -1)
 		&& (_tcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
 		&& (_tcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)
 		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
-			//ƒtƒ@ƒCƒ‹–¼‚Ü‚Åˆê’v
+			//ãƒ•ã‚¡ã‚¤ãƒ«åã¾ã§ä¸€è‡´
 			nMatch1 = i;
 		}
 
 		if((nMatch2 == -1)
 		&& (_tcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
 		&& (_tcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)){
-			//ƒpƒX–¼‚Ü‚Åˆê’v
+			//ãƒ‘ã‚¹åã¾ã§ä¸€è‡´
 			nMatch2 = i;
 		}
 
@@ -993,13 +993,13 @@ int CDlgTagJumpList::SearchBestTag( void )
 		if((nMatch3 == -1)
 		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
 		&& (_tcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
-			//ƒtƒ@ƒCƒ‹–¼EŠg’£q‚ªˆê’v
+			//ãƒ•ã‚¡ã‚¤ãƒ«åãƒ»æ‹¡å¼µå­ãŒä¸€è‡´
 			nMatch3 = i;
 		}
 
 		if((nMatch4 == -1)
 		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
-			//ƒtƒ@ƒCƒ‹–¼‚ªˆê’v
+			//ãƒ•ã‚¡ã‚¤ãƒ«åãŒä¸€è‡´
 			nMatch4 = i;
 		}
 	}
@@ -1016,7 +1016,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 }
 
 /*!
-	@param bNewFind V‚µ‚¢ŒŸõğŒ(ŸE‘O‚Ì‚Æ‚«false)
+	@param bNewFind æ–°ã—ã„æ¤œç´¢æ¡ä»¶(æ¬¡ãƒ»å‰ã®ã¨ãfalse)
 */
 void CDlgTagJumpList::FindNext( bool bNewFind )
 {
@@ -1024,13 +1024,13 @@ void CDlgTagJumpList::FindNext( bool bNewFind )
 	szKey[0] = L'\0';
 	::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, _countof( szKey ) );
 	if( bNewFind ){
-		// ‘O‰ñ‚ÌƒL[ƒ[ƒh‚©‚ç‚ÌiŒŸõ‚Ì‚Æ‚«‚ÅAtags‚ğƒXƒLƒbƒv‚Å‚«‚é‚Æ‚«‚ÍƒXƒLƒbƒv
+		// å‰å›ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‹ã‚‰ã®çµè¾¼æ¤œç´¢ã®ã¨ãã§ã€tagsã‚’ã‚¹ã‚­ãƒƒãƒ—ã§ãã‚‹ã¨ãã¯ã‚¹ã‚­ãƒƒãƒ—
 		if( -1 < m_psFind0Match->m_nDepth
 			&& (m_bTagJumpAnyWhere == m_bOldTagJumpAnyWhere || FALSE == m_bTagJumpAnyWhere)
 			&& (m_bTagJumpICase    == m_bOldTagJumpICase    || FALSE == m_bTagJumpICase)
 			&& 0 == wcsncmp( m_strOldKeyword.GetStringPtr(), szKey, m_strOldKeyword.GetStringLength() ) ){
-			// Œ³‚ÌƒL[ƒ[ƒh‚Å‚PŒ‚àƒqƒbƒg‚µ‚È‚¢tags‚ª‚ ‚é‚Ì‚Å”ò‚Î‚·
-			// ğŒ‚Í“¯‚¶‚©AŒµ‚µ‚­‚È‚é‚È‚ç–â‘è‚È‚¢
+			// å…ƒã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ï¼‘ä»¶ã‚‚ãƒ’ãƒƒãƒˆã—ãªã„tagsãŒã‚ã‚‹ã®ã§é£›ã°ã™
+			// æ¡ä»¶ã¯åŒã˜ã‹ã€å³ã—ããªã‚‹ãªã‚‰å•é¡Œãªã„
 		}else{
 			ClearPrevFindInfo();
 		}
@@ -1041,17 +1041,17 @@ void CDlgTagJumpList::FindNext( bool bNewFind )
 }
 
 /*!
-	ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒvŒŸõ(DoModal‘O‚ÉÀs)
+	ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ¤œç´¢(DoModalå‰ã«å®Ÿè¡Œ)
 */
 int CDlgTagJumpList::FindDirectTagJump()
 {
 	return find_key_core(
-		0,	// 0ŠJn
+		0,	// 0é–‹å§‹
 		m_pszKeyword,
-		false, // •”•ªˆê’v
-		true,  // Š®‘Sˆê’v
-		false, // ‘å¬‚ğ‹æ•Ê
-		true,  // ©“®ƒ‚[ƒh
+		false, // éƒ¨åˆ†ä¸€è‡´
+		true,  // å®Œå…¨ä¸€è‡´
+		false, // å¤§å°ã‚’åŒºåˆ¥
+		true,  // è‡ªå‹•ãƒ¢ãƒ¼ãƒ‰
 		m_pShareData->m_Common.m_sSearch.m_nTagJumpMode
 	);
 }
@@ -1075,25 +1075,25 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 }
 
 /*!
-	ƒ^ƒOƒtƒ@ƒCƒ‹‚©‚çƒL[ƒ[ƒh‚Éƒ}ƒbƒ`‚·‚éƒf[ƒ^‚ğ’Šo‚µCm_cList‚Éİ’è‚·‚é
+	ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«ãƒãƒƒãƒã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’æŠ½å‡ºã—ï¼Œm_cListã«è¨­å®šã™ã‚‹
 
-	@date 2007.03.13 genta ƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“b’è‘Îˆ‚Åƒoƒbƒtƒ@ƒTƒCƒY•ÏX
-	@date 2010.04.02 Moca ‚¢‚ë‚¢‚ë•ÏXBSJIS‚Å“Ç‚ŞBƒy[ƒWƒ“ƒO, format=1‚Ì‰ğßAƒ^ƒOƒtƒ@ƒCƒ‹î•ñ‚Ì—˜—p
-		u‘Stags‚ÌŒŸõŒ‹‰Ê‚ğƒ\[ƒg‚µ‚Äæ“ª‚©‚çCapaticy‚Ü‚Åv‚ğutagsƒtƒ@ƒCƒ‹‡(=depth)‡AƒL[ƒ[ƒh‡v‚É•ÏX
-	@date 2010.07.21 find_key¨find_key_core‚É‚µ‚ÄACViewCommander::Command_TagJumpByTagsFile‚Æ“‡
+	@date 2007.03.13 genta ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³æš«å®šå¯¾å‡¦ã§ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºå¤‰æ›´
+	@date 2010.04.02 Moca ã„ã‚ã„ã‚å¤‰æ›´ã€‚SJISã§èª­ã‚€ã€‚ãƒšãƒ¼ã‚¸ãƒ³ã‚°, format=1ã®è§£é‡ˆã€ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã®åˆ©ç”¨
+		ã€Œå…¨tagsã®æ¤œç´¢çµæœã‚’ã‚½ãƒ¼ãƒˆã—ã¦å…ˆé ­ã‹ã‚‰Capaticyã¾ã§ã€ã‚’ã€Œtagsãƒ•ã‚¡ã‚¤ãƒ«é †(=depth)é †ã€ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é †ã€ã«å¤‰æ›´
+	@date 2010.07.21 find_keyâ†’find_key_coreã«ã—ã¦ã€CViewCommander::Command_TagJumpByTagsFileã¨çµ±åˆ
 */
 int CDlgTagJumpList::find_key_core(
 	int  nTop,
 	const wchar_t* keyword,
-	bool bTagJumpAnyWhere, // •”•ªˆê’v
-	bool bTagJumpExactMatch, // Š®‘Sˆê’v
+	bool bTagJumpAnyWhere, // éƒ¨åˆ†ä¸€è‡´
+	bool bTagJumpExactMatch, // å®Œå…¨ä¸€è‡´
 	bool bTagJumpICase,
-	bool bTagJumpICaseByTags, // Tagƒtƒ@ƒCƒ‹‘¤‚Ìƒ\[ƒg‚É]‚¤
+	bool bTagJumpICaseByTags, // Tagãƒ•ã‚¡ã‚¤ãƒ«å´ã®ã‚½ãƒ¼ãƒˆã«å¾“ã†
 	int  nDefaultNextMode
 ){
 	assert_warning( !(bTagJumpAnyWhere && bTagJumpExactMatch) );
 
-	// to_achar‚Íˆêƒoƒbƒtƒ@‚Å”j‰ó‚³‚ê‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅƒRƒs[
+	// to_acharã¯ä¸€æ™‚ãƒãƒƒãƒ•ã‚¡ã§ç ´å£Šã•ã‚Œã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼
 	CNativeA cmemKeyA = CNativeA(to_achar(keyword));
 	const ACHAR* paszKeyword = cmemKeyA.GetStringPtr();
 	int	length = cmemKeyA.GetStringLength();
@@ -1109,7 +1109,7 @@ int CDlgTagJumpList::find_key_core(
 		ClearPrevFindInfo();
 		return -1;
 	}
-	// ‰•œ•ÏŠ·‚µ‚Ä‚İ‚Äˆê’v‚µ‚È‚©‚Á‚½‚çAŒŸõƒL[‚É‚Íˆê’v‚µ‚È‚¢‚Æ‚¢‚¤‚±‚Æ‚É‚·‚é
+	// å¾€å¾©å¤‰æ›ã—ã¦ã¿ã¦ä¸€è‡´ã—ãªã‹ã£ãŸã‚‰ã€æ¤œç´¢ã‚­ãƒ¼ã«ã¯ä¸€è‡´ã—ãªã„ã¨ã„ã†ã“ã¨ã«ã™ã‚‹
 	if( 0 != wcscmp( to_wchar( paszKeyword ), keyword ) ){
 		ClearPrevFindInfo();
 		return -1;
@@ -1121,42 +1121,42 @@ int CDlgTagJumpList::find_key_core(
 	state.m_nMatchAll = 0;
 	state.m_nNextMode = nDefaultNextMode;
 	state.m_nLoop     = -1;
-	state.m_bJumpPath = false;	// eˆÈŠO‚ÌƒpƒX‚ÌˆÚ“®æw’è
+	state.m_bJumpPath = false;	// è¦ªä»¥å¤–ã®ãƒ‘ã‚¹ã®ç§»å‹•å…ˆæŒ‡å®š
 	state.m_szCurPath[0] = 0;
 	
-	// ‘O‰ñ‚ÌŒ‹‰Ê‚©‚çŒŸõ‘ÎÛtags‚ği‚é
+	// å‰å›ã®çµæœã‹ã‚‰æ¤œç´¢å¯¾è±¡tagsã‚’çµã‚‹
 	if( m_psFindPrev->m_nMatchAll <= nTop && -1 < m_psFindPrev->m_nMatchAll ){
-		// w’èƒy[ƒW‚ÌŒŸõ‚ğƒXƒLƒbƒv
+		// æŒ‡å®šãƒšãƒ¼ã‚¸ã®æ¤œç´¢ã‚’ã‚¹ã‚­ãƒƒãƒ—
 		state = *m_psFindPrev;
 		DEBUG_TRACE( _T("skip count  d:%d m:%d n:%d\n"), state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
 	}else if( 0 <= m_psFind0Match->m_nDepth ){
-		// depth‚ªó‚¢‡‚Éƒqƒbƒg‚µ‚È‚©‚Á‚½•ª‚ğƒXƒLƒbƒv
+		// depthãŒæµ…ã„é †ã«ãƒ’ãƒƒãƒˆã—ãªã‹ã£ãŸåˆ†ã‚’ã‚¹ã‚­ãƒƒãƒ—
 		state = *m_psFind0Match;
 		DEBUG_TRACE( _T("skip 0match d:%d m:%d n:%d\n"), state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
 	}else{
-		// ‰‰ñorg‚¦‚È‚¢‚Æ‚«‚ÍƒNƒŠƒA
+		// åˆå›orä½¿ãˆãªã„ã¨ãã¯ã‚¯ãƒªã‚¢
 		ClearPrevFindInfo();
-		// ƒtƒ@ƒCƒ‹–¼‚ğƒRƒs[‚µ‚½‚ ‚ÆAƒfƒBƒŒƒNƒgƒŠ(ÅŒã\)‚Ì‚İ‚É‚·‚é
+		// ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼ã—ãŸã‚ã¨ã€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª(æœ€å¾Œ\)ã®ã¿ã«ã™ã‚‹
 		_tcscpy( state.m_szCurPath, GetFilePath() );
 		state.m_szCurPath[ GetFileName() - GetFilePath() ] = _T('\0');
 		state.m_nLoop = m_nLoop;
 	}
 	
-	TCHAR	szTagFile[1024];		//ƒ^ƒOƒtƒ@ƒCƒ‹
-	TCHAR	szNextPath[1024];		//ŸŒŸõƒtƒHƒ‹ƒ_
-	ACHAR	szLineData[1024];		//sƒoƒbƒtƒ@
+	TCHAR	szTagFile[1024];		//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«
+	TCHAR	szNextPath[1024];		//æ¬¡æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€
+	ACHAR	szLineData[1024];		//è¡Œãƒãƒƒãƒ•ã‚¡
 	ACHAR	s[4][1024];
 	int		n2;
 	szNextPath[0] = _T('\0');
 	vector_ex<std::tstring> seachDirs;
 
-	// ƒpƒX‚ÌJump‚ÅzŠÂ‚µ‚Ä‚¢‚éê‡‚ÉÅ‘å’l‚ğ‹K§‚·‚é
+	// ãƒ‘ã‚¹ã®Jumpã§å¾ªç’°ã—ã¦ã„ã‚‹å ´åˆã«æœ€å¤§å€¤ã‚’è¦åˆ¶ã™ã‚‹
 	for( ; state.m_nDepth <= state.m_nLoop && state.m_nDepth < (_MAX_PATH/2); state.m_nDepth++ )
 	{
-		// 0 Ÿ‚Ìƒtƒ@ƒCƒ‹‚ÍŒŸõ‚µ‚È‚¢
-		// 1 1‚Â‚Å‚àƒqƒbƒg‚µ‚½‚çŸ‚ÍŒŸõ‚µ‚È‚¢
-		// 2 Š®‘Sˆê’v‚Ì‚Æ‚«‚Í1‚É“¯‚¶B ‚»‚êˆÈŠO‚Í3‚É“¯‚¶
-		// 3 •K‚¸Ÿ‚àŒŸõ
+		// 0 æ¬¡ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ¤œç´¢ã—ãªã„
+		// 1 1ã¤ã§ã‚‚ãƒ’ãƒƒãƒˆã—ãŸã‚‰æ¬¡ã¯æ¤œç´¢ã—ãªã„
+		// 2 å®Œå…¨ä¸€è‡´ã®ã¨ãã¯1ã«åŒã˜ã€‚ ãã‚Œä»¥å¤–ã¯3ã«åŒã˜
+		// 3 å¿…ãšæ¬¡ã‚‚æ¤œç´¢
 		if( 0 == state.m_nNextMode ) break;
 		if( 1 == state.m_nNextMode && 0 < state.m_nMatchAll ) break;
 		if( 2 == state.m_nNextMode && bTagJumpExactMatch && 0 < state.m_nMatchAll ) break; 
@@ -1164,24 +1164,24 @@ int CDlgTagJumpList::find_key_core(
 		{
 			std::tstring curPath = state.m_szCurPath;
 			if( seachDirs.exist( curPath ) ){
-				// ŒŸõÏ‚İ =>I—¹
+				// æ¤œç´¢æ¸ˆã¿ =>çµ‚äº†
 				break;
 			}
 			seachDirs.push_back( curPath );
 		}
 
-		//ƒ^ƒOƒtƒ@ƒCƒ‹–¼‚ğì¬‚·‚éB
+		//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œæˆã™ã‚‹ã€‚
 		auto_sprintf( szTagFile, _T("%ts%ts"), state.m_szCurPath, TAG_FILENAME_T );
 		DEBUG_TRACE( _T("tag: %ts\n"), szTagFile );
 		
-		//ƒ^ƒOƒtƒ@ƒCƒ‹‚ğŠJ‚­B
+		//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãã€‚
 		FILE* fp = _tfopen( szTagFile, _T("rb") );
 		if( fp )
 		{
 			DEBUG_TRACE( _T("open tags\n") );
 			bool bSorted = true;
 			bool bFoldcase = false;
-			int  nTagFormat = 2; // 2‚Í1‚à“Ç‚ß‚é‚Ì‚ÅƒfƒtƒHƒ‹ƒg‚Í2
+			int  nTagFormat = 2; // 2ã¯1ã‚‚èª­ã‚ã‚‹ã®ã§ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯2
 			int  nLines = 0;
 			int  baseDirId = 0;
 			if( state.m_bJumpPath ){
@@ -1189,24 +1189,24 @@ int CDlgTagJumpList::find_key_core(
 			}
 			state.m_nNextMode = nDefaultNextMode;
 
-			// ƒoƒbƒtƒ@‚ÌŒã‚ë‚©‚ç2•¶š–Ú‚ª\0‚©‚Ç‚¤‚©‚ÅAs––‚Ü‚Å“Ç‚İ‚ñ‚¾‚©Šm”F‚·‚é
+			// ãƒãƒƒãƒ•ã‚¡ã®å¾Œã‚ã‹ã‚‰2æ–‡å­—ç›®ãŒ\0ã‹ã©ã†ã‹ã§ã€è¡Œæœ«ã¾ã§èª­ã¿è¾¼ã‚“ã ã‹ç¢ºèªã™ã‚‹
 			const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
 			szLineData[nLINEDATA_LAST_CHAR] = '\0';
 			while( fgets( szLineData, _countof( szLineData ), fp ) )
 			{
 				nLines++;
 				int  nRet;
-				// fgets‚ªs‚·‚×‚Ä‚ğ“Ç‚İ‚ß‚Ä‚¢‚È‚¢ê‡‚Ìl—¶
+				// fgetsãŒè¡Œã™ã¹ã¦ã‚’èª­ã¿è¾¼ã‚ã¦ã„ãªã„å ´åˆã®è€ƒæ…®
 				if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
 				    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
-					// ‰üsƒR[ƒh‚Ü‚Å‚ğÌ‚Ä‚é
+					// æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã¾ã§ã‚’æ¨ã¦ã‚‹
 					int ch = fgetc( fp );
 					while( ch != '\n' && ch != EOF ){
 						ch = fgetc( fp );
 					}
 				}
 				if( 1 == nLines && szLineData[0] == '\x0c' ){
-					// etags‚È‚Ì‚ÅŸ‚Ìƒtƒ@ƒCƒ‹
+					// etagsãªã®ã§æ¬¡ã®ãƒ•ã‚¡ã‚¤ãƒ«
 					break;
 				}
 				if( '!' == szLineData[0] ){
@@ -1214,7 +1214,7 @@ int CDlgTagJumpList::find_key_core(
 						s[0][0] = s[1][0] = s[2][0] = 0;
 						nRet = sscanf(
 							szLineData, 
-							TAG_FILE_INFO_A,	//tagsƒtƒ@ƒCƒ‹î•ñ
+							TAG_FILE_INFO_A,	//tagsãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±
 							s[0], s[1], s[2]
 						);
 						if( nRet < 2 ) goto next_line;
@@ -1232,28 +1232,28 @@ int CDlgTagJumpList::find_key_core(
 								bTagJumpICase = bFoldcase;
 							}
 						}else if( 0 == strncmp_literal( pTag, "S_SEARCH_NEXT" ) ){
-							// “Æ©Šg’£:Ÿ‚ÉŒŸõ‚·‚étagƒtƒ@ƒCƒ‹‚Ìw’è
+							// ç‹¬è‡ªæ‹¡å¼µ:æ¬¡ã«æ¤œç´¢ã™ã‚‹tagãƒ•ã‚¡ã‚¤ãƒ«ã®æŒ‡å®š
 							if( '0' <= s[1][0] && s[1][0] <= '3' ){
 								n2 = atoi( s[1] );
 								if( 0 <= n2 && n2 <= 3 ){
 									state.m_nNextMode = n2;
 								}
 								if( 1 <= n2 && s[2][0] ){
-									// s[2] == â‘ÎƒpƒX(ƒfƒBƒŒƒNƒgƒŠ)
+									// s[2] == çµ¶å¯¾ãƒ‘ã‚¹(ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª)
 									TCHAR baseWork[1024];
 									CopyDirDir( baseWork, to_tchar(s[2]), state.m_szCurPath );
 									szNextPath[0] = 0;
 									if( !GetLongFileName( baseWork, szNextPath ) ){
-										// ƒGƒ‰[‚È‚ç•ÏŠ·‘O‚ğ“K—p
+										// ã‚¨ãƒ©ãƒ¼ãªã‚‰å¤‰æ›å‰ã‚’é©ç”¨
 										auto_strcpy( szNextPath, baseWork );
 									}
 								}
 							}
 						}else if( 0 == strncmp_literal( pTag, "S_FILE_BASEDIR" ) ){
 							TCHAR baseWork[1024];
-							// “Æ©Šg’£:ƒtƒ@ƒCƒ‹–¼‚ÌŠî€ƒfƒBƒŒƒNƒgƒŠ
+							// ç‹¬è‡ªæ‹¡å¼µ:ãƒ•ã‚¡ã‚¤ãƒ«åã®åŸºæº–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 							if( state.m_bJumpPath ){
-								// ƒpƒXe“Ç‚İ‘Ö‚¦’†‚ÍA‘Š‘ÎƒpƒX‚¾‚Á‚½ê‡‚É˜AŒ‹‚ª•K—v
+								// ãƒ‘ã‚¹è¦ªèª­ã¿æ›¿ãˆä¸­ã¯ã€ç›¸å¯¾ãƒ‘ã‚¹ã ã£ãŸå ´åˆã«é€£çµãŒå¿…è¦
 								CopyDirDir( baseWork, to_tchar(s[1]), state.m_szCurPath );
 								baseDirId = cList.AddBaseDir( baseWork );
 							}else{
@@ -1263,27 +1263,27 @@ int CDlgTagJumpList::find_key_core(
 							}
 						}
 					}
-					goto next_line;	//ƒRƒƒ“ƒg‚È‚çƒXƒLƒbƒv
+					goto next_line;	//ã‚³ãƒ¡ãƒ³ãƒˆãªã‚‰ã‚¹ã‚­ãƒƒãƒ—
 				}
 				if( szLineData[0] < '!' ) goto next_line;
 				//chop( szLineData );
 
 				s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
 				n2 = 0;
-				//	@@ 2005.03.31 MIK TAG_FORMAT’è”‰»
+				//	@@ 2005.03.31 MIK TAG_FORMATå®šæ•°åŒ–
 				if( 2 == nTagFormat ){
 					nRet = sscanf(
 						szLineData, 
-						TAG_FORMAT_2_A,	//Šg’£tagsƒtƒH[ƒ}ƒbƒg
+						TAG_FORMAT_2_A,	//æ‹¡å¼µtagsãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 						s[0], s[1], &n2, s[2], s[3]
 						);
-					// 2010.04.02 nRet < 4 ‚ğ3‚É•ÏXB•W€ƒtƒH[ƒ}ƒbƒg‚à“Ç‚İ‚Ş
+					// 2010.04.02 nRet < 4 ã‚’3ã«å¤‰æ›´ã€‚æ¨™æº–ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚‚èª­ã¿è¾¼ã‚€
 					if( nRet < 3 ) goto next_line;
-					if( n2 <= 0 ) goto next_line;	//s”Ô†•s³(-excmd=n‚ªw’è‚³‚ê‚Ä‚È‚¢‚©‚à)
+					if( n2 <= 0 ) goto next_line;	//è¡Œç•ªå·ä¸æ­£(-excmd=nãŒæŒ‡å®šã•ã‚Œã¦ãªã„ã‹ã‚‚)
 				}else{
 					nRet = sscanf(
 						szLineData, 
-						TAG_FORMAT_1_A,	//tagsƒtƒH[ƒ}ƒbƒg
+						TAG_FORMAT_1_A,	//tagsãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 						s[0], s[1], &n2
 						);
 					if( nRet < 2 ) goto next_line;
@@ -1299,14 +1299,14 @@ int CDlgTagJumpList::find_key_core(
 					}
 				}else{
 					if( bTagJumpExactMatch ){
-						// Š®‘Sˆê’v
+						// å®Œå…¨ä¸€è‡´
 						if( bTagJumpICase ){
 							cmp = auto_stricmp( s[0], paszKeyword );
 						}else{
 							cmp = auto_strcmp( s[0], paszKeyword );
 						}
 					}else{
-						// ‘O•ûˆê’v
+						// å‰æ–¹ä¸€è‡´
 						if( bTagJumpICase ){
 							cmp = my_strnicmp( s[0], paszKeyword, length );
 						}else{
@@ -1320,18 +1320,18 @@ int CDlgTagJumpList::find_key_core(
 						if( cList.GetCount() < nCap ){
 							cList.AddParamA( s[0], s[1], n2, s[2][0], s[3], state.m_nDepth, baseDirId );
 						}else{
-							// ’Tõ‘Å‚¿Ø‚è(Ÿƒy[ƒW‚Å‚â‚è’¼‚µ)
+							// æ¢ç´¢æ‰“ã¡åˆ‡ã‚Š(æ¬¡ãƒšãƒ¼ã‚¸ã§ã‚„ã‚Šç›´ã—)
 							m_bNextItem = true;
 							break;
 						}
 					}
 				}
 				else if( 0 < cmp ){
-					//	tags‚Íƒ\[ƒg‚³‚ê‚Ä‚¢‚é‚Ì‚ÅCæ“ª‚©‚ç‚Ìcase sensitive‚È
-					//	”äŠrŒ‹‰Ê‚É‚æ‚Á‚ÄŒŸõ‚Ì‚Íˆ—‚Ì‘Å‚¿Ø‚è‚ª‰Â”\
-					//	2005.04.05 MIK ƒoƒOC³
+					//	tagsã¯ã‚½ãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ã®ã§ï¼Œå…ˆé ­ã‹ã‚‰ã®case sensitiveãª
+					//	æ¯”è¼ƒçµæœã«ã‚ˆã£ã¦æ¤œç´¢ã®æ™‚ã¯å‡¦ç†ã®æ‰“ã¡åˆ‡ã‚ŠãŒå¯èƒ½
+					//	2005.04.05 MIK ãƒã‚°ä¿®æ­£
 					if( (!bTagJumpICase) && bSorted && (!bTagJumpAnyWhere) ) break;
-					// 2010.07.21 Foldcase‚à‘Å‚¿Ø‚éB‚½‚¾‚µtags‚ÆƒTƒNƒ‰‘¤‚Ìƒ\[ƒg‡‚ª“¯‚¶‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+					// 2010.07.21 Foldcaseæ™‚ã‚‚æ‰“ã¡åˆ‡ã‚‹ã€‚ãŸã ã—tagsã¨ã‚µã‚¯ãƒ©å´ã®ã‚½ãƒ¼ãƒˆé †ãŒåŒã˜ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„
 					if( bTagJumpICase  && bFoldcase && (!bTagJumpAnyWhere) ) break;
 				}
 next_line:
@@ -1339,7 +1339,7 @@ next_line:
 				szLineData[nLINEDATA_LAST_CHAR] = '\0';
 			}
 
-			//ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚éB
+			//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹ã€‚
 			fclose( fp );
 			DEBUG_TRACE( _T("close m:%d\n "), state.m_nMatchAll );
 		}
@@ -1354,20 +1354,20 @@ next_line:
 			szNextPath[0] = 0;
 		}else{
 //			_tcscat( state.m_szCurPath, _T("..\\") );
-			//ƒJƒŒƒ“ƒgƒpƒX‚ğ1ŠK‘wã‚ÖB
+			//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‘ã‚¹ã‚’1éšå±¤ä¸Šã¸ã€‚
 			DirUp( state.m_szCurPath );
 		}
 		
 		if( 0 != state.m_nMatchAll && false == m_bNextItem ){
-			// 0 ƒy[ƒW‚ß‚­‚è—p: ‘Å‚¿Ø‚ç‚ê‚Ä‚¢‚È‚¢‚Ì‚ÅŸ‚Ìƒy[ƒW‚Å‚ÍA‚±‚Ìtags‚ÌŸ‚©‚çŒŸõ‚Å‚«‚é
-			// (ÅŒã‚É’Ê‰ß‚µ‚½‚à‚Ì‚ğ•Û)
+			// 0 ãƒšãƒ¼ã‚¸ã‚ãã‚Šç”¨: æ‰“ã¡åˆ‡ã‚‰ã‚Œã¦ã„ãªã„ã®ã§æ¬¡ã®ãƒšãƒ¼ã‚¸ã§ã¯ã€ã“ã®tagsã®æ¬¡ã‹ã‚‰æ¤œç´¢ã§ãã‚‹
+			// (æœ€å¾Œã«é€šéã—ãŸã‚‚ã®ã‚’ä¿æŒ)
 			*m_psFindPrev = state;
 			++(m_psFindPrev->m_nDepth);
 			DEBUG_TRACE( _T("FindPrev udpate: d:%d m:%d n:%d L:%d j:%d\n") , m_psFindPrev->m_nDepth, m_psFindPrev->m_nMatchAll, m_psFindPrev->m_nNextMode, m_psFindPrev->m_nLoop, (int)m_psFindPrev->m_bJumpPath );
 		}
 		if( 0 == state.m_nMatchAll ){
-			// ƒL[ƒ[ƒhi‚İ—p: Ÿ‚Ìi‚è‚İŒŸõ‚Å‚ÍA‚±‚Ìtags‚ÌŸ‚©‚çŒŸõ‚Å‚«‚é
-			// (ÅŒã‚É’Ê‰ß‚µ‚½‚à‚Ì‚ğ•Û)
+			// ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰çµè¾¼ã¿ç”¨: æ¬¡ã®çµã‚Šè¾¼ã¿æ¤œç´¢ã§ã¯ã€ã“ã®tagsã®æ¬¡ã‹ã‚‰æ¤œç´¢ã§ãã‚‹
+			// (æœ€å¾Œã«é€šéã—ãŸã‚‚ã®ã‚’ä¿æŒ)
 			*m_psFind0Match = state;
 			++(m_psFind0Match->m_nDepth);
 			DEBUG_TRACE( _T("Find0Match udpate: d:%d m:%d n:%d L:%d j:%d\n") , m_psFind0Match->m_nDepth, m_psFind0Match->m_nMatchAll, m_psFind0Match->m_nNextMode, m_psFind0Match->m_nLoop, (int)m_psFind0Match->m_bJumpPath );
@@ -1380,7 +1380,7 @@ next_line:
 }
 
 /*!
-	ƒpƒX‚©‚çƒtƒ@ƒCƒ‹–¼•”•ª‚Ì‚İ‚ğæ‚èo‚·D(2ƒoƒCƒg‘Î‰)
+	ãƒ‘ã‚¹ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åéƒ¨åˆ†ã®ã¿ã‚’å–ã‚Šå‡ºã™ï¼(2ãƒã‚¤ãƒˆå¯¾å¿œ)
 */
 const TCHAR* CDlgTagJumpList::GetFileName( void )
 {
@@ -1404,18 +1404,18 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const TCHAR* p )
 {
 	int loop = CalcDirectoryDepth( p );
 	if( loop <  0 ) loop =  0;
-	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...‚Ì‚æ‚¤‚È‚Æ‚«1ƒtƒHƒ‹ƒ_‚Å2•¶šÁ”ï‚·‚é‚Ì‚Å...
+	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...ã®ã‚ˆã†ãªã¨ã1ãƒ•ã‚©ãƒ«ãƒ€ã§2æ–‡å­—æ¶ˆè²»ã™ã‚‹ã®ã§...
 	return loop;
 }
 
 /*!
 	
-	@date 2010.04.02 Moca Command_TagJumpByTagsFileKeyword‚©‚ç•ª—£EˆÚ“®
-	@param basePath [in,out] \•tƒfƒBƒŒƒNƒgƒŠƒpƒXâ‘ÎƒpƒX„§B‘‚«Š·‚í‚é‚Ì‚É’ˆÓ
-	@param fileName [in] ‘Š‘ÎEâ‘Îƒtƒ@ƒCƒ‹–¼ƒpƒX
-	@param depth    [in] fineName‚ªâ‘ÎƒpƒX‚Ì–³‹B1==1‚Âã‚ÌƒfƒBƒŒƒNƒgƒŠ
-	@retval pszOutput ¬Œ÷ uC:\dir1\filename.txtv‚ÌŒ`®(..\•t‰Á‚Í”p~)
-	@retval NULL   ¸”s
+	@date 2010.04.02 Moca Command_TagJumpByTagsFileKeywordã‹ã‚‰åˆ†é›¢ãƒ»ç§»å‹•
+	@param basePath [in,out] \ä»˜ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒ‘ã‚¹çµ¶å¯¾ãƒ‘ã‚¹æ¨å¥¨ã€‚æ›¸ãæ›ã‚ã‚‹ã®ã«æ³¨æ„
+	@param fileName [in] ç›¸å¯¾ãƒ»çµ¶å¯¾ãƒ•ã‚¡ã‚¤ãƒ«åãƒ‘ã‚¹
+	@param depth    [in] fineNameãŒçµ¶å¯¾ãƒ‘ã‚¹ã®æ™‚ç„¡è¦–ã€‚1==1ã¤ä¸Šã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	@retval pszOutput æˆåŠŸ ã€ŒC:\dir1\filename.txtã€ã®å½¢å¼(..\ä»˜åŠ ã¯å»ƒæ­¢)
+	@retval NULL   å¤±æ•—
 */
 TCHAR* CDlgTagJumpList::GetFullPathFromDepth( TCHAR* pszOutput, int count,
 	TCHAR* basePath, const TCHAR* fileName, int depth )
@@ -1423,17 +1423,17 @@ TCHAR* CDlgTagJumpList::GetFullPathFromDepth( TCHAR* pszOutput, int count,
 	DEBUG_TRACE( _T("base  %ts\n"), basePath );
 	DEBUG_TRACE( _T("file  %ts\n"), fileName );
 	DEBUG_TRACE( _T("depth %d\n"),  depth );
-	//Š®‘SƒpƒX–¼‚ğì¬‚·‚éB
+	//å®Œå…¨ãƒ‘ã‚¹åã‚’ä½œæˆã™ã‚‹ã€‚
 	const TCHAR	*p = fileName;
-	if( p[0] == _T('\\') ){	//ƒhƒ‰ƒCƒu‚È‚µâ‘ÎƒpƒX‚©H
-		if( p[1] == _T('\\') ){	//ƒlƒbƒgƒ[ƒNƒpƒX‚©H
-			_tcscpy( pszOutput, p );	//‰½‚à‰ÁH‚µ‚È‚¢B
+	if( p[0] == _T('\\') ){	//ãƒ‰ãƒ©ã‚¤ãƒ–ãªã—çµ¶å¯¾ãƒ‘ã‚¹ã‹ï¼Ÿ
+		if( p[1] == _T('\\') ){	//ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ‘ã‚¹ã‹ï¼Ÿ
+			_tcscpy( pszOutput, p );	//ä½•ã‚‚åŠ å·¥ã—ãªã„ã€‚
 		}else{
-			//ƒhƒ‰ƒCƒu‰ÁH‚µ‚½‚Ù‚¤‚ª‚æ‚¢H
-			_tcscpy( pszOutput, p );	//‰½‚à‰ÁH‚µ‚È‚¢B
+			//ãƒ‰ãƒ©ã‚¤ãƒ–åŠ å·¥ã—ãŸã»ã†ãŒã‚ˆã„ï¼Ÿ
+			_tcscpy( pszOutput, p );	//ä½•ã‚‚åŠ å·¥ã—ãªã„ã€‚
 		}
-	}else if( _istalpha( p[0] ) && p[1] == _T(':') ){	//â‘ÎƒpƒX‚©H
-		_tcscpy( pszOutput, p );	//‰½‚à‰ÁH‚µ‚È‚¢B
+	}else if( _istalpha( p[0] ) && p[1] == _T(':') ){	//çµ¶å¯¾ãƒ‘ã‚¹ã‹ï¼Ÿ
+		_tcscpy( pszOutput, p );	//ä½•ã‚‚åŠ å·¥ã—ãªã„ã€‚
 	}else{
 		for( int i = 0; i < depth; i++ ){
 			//_tcscat( basePath, _T("..\\") );
@@ -1447,7 +1447,7 @@ TCHAR* CDlgTagJumpList::GetFullPathFromDepth( TCHAR* pszOutput, int count,
 }
 
 /*!
-	ƒfƒBƒŒƒNƒgƒŠ‚ÆƒfƒBƒŒƒNƒgƒŠ‚ğ˜AŒ‹‚·‚é
+	ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’é€£çµã™ã‚‹
 */
 TCHAR* CDlgTagJumpList::CopyDirDir( TCHAR* dest, const TCHAR* target, const TCHAR* base )
 {
@@ -1463,14 +1463,14 @@ TCHAR* CDlgTagJumpList::CopyDirDir( TCHAR* dest, const TCHAR* target, const TCHA
 }
 
 /*
-	@param dir [in,out] ƒtƒHƒ‹ƒ_‚ÌƒpƒX 
+	@param dir [in,out] ãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ 
 	in == C:\dir\subdir\
 	out == C:\dir\
 */
 TCHAR* CDlgTagJumpList::DirUp( TCHAR* dir )
 {
 	CutLastYenFromDirectoryPath( dir );
-	const TCHAR *p = GetFileTitlePointer(dir); //ÅŒã‚Ì\‚ÌŸ‚Ì•¶š‚ğæ“¾ last_index_of('\\') + 1;
+	const TCHAR *p = GetFileTitlePointer(dir); //æœ€å¾Œã®\ã®æ¬¡ã®æ–‡å­—ã‚’å–å¾— last_index_of('\\') + 1;
 	if( 0 < p - dir){
 		dir[p - dir] = '\0';
 	}

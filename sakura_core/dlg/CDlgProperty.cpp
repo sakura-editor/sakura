@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒvƒƒpƒeƒBƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 */
@@ -46,18 +46,18 @@
 #include "util/shell.h"
 #include "sakura_rc.h"
 
-// ƒvƒƒpƒeƒB CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
+// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
 const DWORD p_helpids[] = {	//12600
 	IDOK,					HIDOK_PROP,
-//	IDCANCEL,				HIDCANCEL_PROP,			// –¢g—p del 2008/7/4 Uchi
+//	IDCANCEL,				HIDCANCEL_PROP,			// æœªä½¿ç”¨ del 2008/7/4 Uchi
 	IDC_BUTTON_HELP,		HIDC_PROP_BUTTON_HELP,
 	IDC_EDIT_PROPERTY,		HIDC_PROP_EDIT1,		// IDC_EDIT1->IDC_EDIT_PROPERTY	2008/7/3 Uchi
 //	IDC_STATIC,				-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgProperty::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROPERTY_FILE, lParam );
@@ -67,26 +67,26 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒBv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PROPERTY_FILE) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PROPERTY_FILE) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
-	case IDOK:			/* ‰ºŒŸõ */
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	case IDOK:			/* ä¸‹æ¤œç´¢ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
-//	case IDCANCEL:							// –¢g—p del 2008/7/4 Uchi
+//	case IDCANCEL:							// æœªä½¿ç”¨ del 2008/7/4 Uchi
 //		::EndDialog( GetHwnd(), FALSE );
 //		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 void CDlgProperty::SetData( void )
 {
@@ -97,7 +97,7 @@ void CDlgProperty::SetData( void )
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
 
-	//	Aug. 16, 2000 genta	‘SŠp‰»
+	//	Aug. 16, 2000 genta	å…¨è§’åŒ–
 	cmemProp.AppendString( LS(STR_DLGFLPROP_FILENAME) );
 	cmemProp.AppendString( pCEditDoc->m_cDocFile.GetFilePath() );
 	cmemProp.AppendString( _T("\r\n") );
@@ -126,7 +126,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendString( szWork );
 
 	if( CAppMode::getInstance()->IsViewMode() ){
-		cmemProp.AppendString( LS(STR_DLGFLPROP_VIEW_MODE) );	// 2009.04.11 ryoji uã‘‚«‹Ö~ƒ‚[ƒhv¨uƒrƒ…[ƒ‚[ƒhv
+		cmemProp.AppendString( LS(STR_DLGFLPROP_VIEW_MODE) );	// 2009.04.11 ryoji ã€Œä¸Šæ›¸ãç¦æ­¢ãƒ¢ãƒ¼ãƒ‰ã€â†’ã€Œãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã€
 	}
 	if( pCEditDoc->m_cDocEditor.IsModified() ){
 		cmemProp.AppendString( LS(STR_DLGFLPROP_MODIFIED) );
@@ -247,7 +247,7 @@ void CDlgProperty::SetData( void )
 	char*					pBuf;
 	int						nBufLen;
 	CNativeT				ctext;
-	/* ƒƒ‚ƒŠŠm•Û & ƒtƒ@ƒCƒ‹“Ç‚İ‚İ */
+	/* ãƒ¡ãƒ¢ãƒªç¢ºä¿ & ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ */
 	hgData = NULL;
 	CBinaryInputStream in(pCEditDoc->m_cDocFile.GetFilePath());
 	if(!in){
@@ -266,7 +266,7 @@ void CDlgProperty::SetData( void )
 	in.Read( pBuf, nBufLen );
 	in.Close();
 
-	//CESI‚ÌƒfƒoƒbƒOî•ñ
+	//CESIã®ãƒ‡ãƒãƒƒã‚°æƒ…å ±
 	CESI::GetDebugInfo(pBuf,nBufLen,&ctext);
 	cmemProp.AppendNativeData(ctext);
 

@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“ƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date 1998/09/09 ì¬
-    @date 1999/12/02 Äì¬
+	@date 1998/09/09 ä½œæˆ
+    @date 1999/12/02 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,7 +22,7 @@ class CDlgCancel;
 
 
 /*!
-	@brief ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“ƒ_ƒCƒAƒƒO
+	@brief ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 */
 class CDlgCancel : public CDialog
 {
@@ -31,29 +31,29 @@ public:
 	||  Constructors
 	*/
 	CDlgCancel();
-//	void Create( HINSTANCE, HWND );	/* ‰Šú‰» */
+//	void Create( HINSTANCE, HWND );	/* åˆæœŸåŒ– */
 
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
-	HWND DoModeless( HINSTANCE, HWND, int );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+	int DoModal( HINSTANCE, HWND, int );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	HWND DoModeless( HINSTANCE, HWND, int );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 //	HWND Open( LPCTSTR );
-//	void Close( void );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ìíœ */
-	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚©H */
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ƒ_ƒCƒAƒƒO‚ÌƒƒbƒZ[ƒWˆ— *//* BOOL->INT_PTR 2008/7/18 Uchi*/
-	void DeleteAsync( void );	/* Ž©“®”jŠü‚ð’x‰„ŽÀs‚·‚é */	// 2008.05.28 ryoji
+//	void Close( void );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®å‰Šé™¤ */
+	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‹ï¼Ÿ */
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† *//* BOOL->INT_PTR 2008/7/18 Uchi*/
+	void DeleteAsync( void );	/* è‡ªå‹•ç ´æ£„ã‚’é…å»¶å®Ÿè¡Œã™ã‚‹ */	// 2008.05.28 ryoji
 
-//	HINSTANCE	m_hInstance;	/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹ */
-//	HWND		m_hwndParent;	/* ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹ */
-//	HWND		m_hWnd;			/* ‚±‚Ìƒ_ƒCƒAƒƒO‚Ìƒnƒ“ƒhƒ‹ */
-	BOOL		m_bCANCEL;		/* IDCANCELƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ */
-	bool		m_bAutoCleanup;	/* Ž©“®Œãˆ—Œ^ */	// 2008.05.28 ryoji
+//	HINSTANCE	m_hInstance;	/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ« */
+//	HWND		m_hwndParent;	/* ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ« */
+//	HWND		m_hWnd;			/* ã“ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒãƒ³ãƒ‰ãƒ« */
+	BOOL		m_bCANCEL;		/* IDCANCELãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸ */
+	bool		m_bAutoCleanup;	/* è‡ªå‹•å¾Œå‡¦ç†åž‹ */	// 2008.05.28 ryoji
 
 protected:
 	/*
-	||  ŽÀ‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );

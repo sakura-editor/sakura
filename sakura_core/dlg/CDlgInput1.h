@@ -1,8 +1,8 @@
-/*!	@file
-	@brief 1s“ü—Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief 1è¡Œå…¥åŠ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date	1998/05/31 ì¬
+	@date	1998/05/31 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -17,10 +17,10 @@ class CDlgInput1;
 #define _CDLGINPUT1_H_
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ‚Ps“ü—Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief ï¼‘è¡Œå…¥åŠ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 class CDlgInput1
 {
@@ -30,25 +30,25 @@ public:
 	*/
 	CDlgInput1();
 	~CDlgInput1();
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , TCHAR*  );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , NOT_TCHAR*  );	/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , TCHAR*  );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , NOT_TCHAR*  );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ƒ_ƒCƒAƒƒO‚ÌƒƒbƒZ[ƒWˆ— */
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 
-	HINSTANCE	m_hInstance;	/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹ */
-	HWND		m_hwndParent;	/* ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹ */
-	HWND		m_hWnd;			/* ‚±‚Ìƒ_ƒCƒAƒƒO‚Ìƒnƒ“ƒhƒ‹ */
+	HINSTANCE	m_hInstance;	/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ« */
+	HWND		m_hwndParent;	/* ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ« */
+	HWND		m_hWnd;			/* ã“ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒãƒ³ãƒ‰ãƒ« */
 
-	const TCHAR*	m_pszTitle;		/* ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹ */
-	const TCHAR*	m_pszMessage;	/* ƒƒbƒZ[ƒW */
-	int			m_nMaxTextLen;	/* “ü—ÍƒTƒCƒYãŒÀ */
-//	char*		m_pszText;		/* ƒeƒLƒXƒg */
-	CNativeT	m_cmemText;		/* ƒeƒLƒXƒg */
+	const TCHAR*	m_pszTitle;		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ« */
+	const TCHAR*	m_pszMessage;	/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ */
+	int			m_nMaxTextLen;	/* å…¥åŠ›ã‚µã‚¤ã‚ºä¸Šé™ */
+//	char*		m_pszText;		/* ãƒ†ã‚­ã‚¹ãƒˆ */
+	CNativeT	m_cmemText;		/* ãƒ†ã‚­ã‚¹ãƒˆ */
 protected:
 	/*
-	||  ŽÀ‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 };
 

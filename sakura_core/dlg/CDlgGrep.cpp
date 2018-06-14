@@ -1,5 +1,5 @@
-/*!	@file
-	@brief GREPƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief GREPãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
 */
@@ -33,32 +33,32 @@
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000
-	IDC_BUTTON_FOLDER,				HIDC_GREP_BUTTON_FOLDER,			//ƒtƒHƒ‹ƒ_
-	IDC_BUTTON_CURRENTFOLDER,		HIDC_GREP_BUTTON_CURRENTFOLDER,		//Œ»ƒtƒHƒ‹ƒ_
-	IDOK,							HIDOK_GREP,							//ŒŸõ
-	IDCANCEL,						HIDCANCEL_GREP,						//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ƒwƒ‹ƒv
-	IDC_CHK_WORD,					HIDC_GREP_CHK_WORD,					//’PŒê’PˆÊ
-	IDC_CHK_SUBFOLDER,				HIDC_GREP_CHK_SUBFOLDER,			//ƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
-	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_CHK_FROMTHISTEXT,			//‚±‚Ìƒtƒ@ƒCƒ‹‚©‚ç
-	IDC_CHK_LOHICASE,				HIDC_GREP_CHK_LOHICASE,				//‘å•¶š¬•¶š
-	IDC_CHK_REGULAREXP,				HIDC_GREP_CHK_REGULAREXP,			//³‹K•\Œ»
-	IDC_COMBO_CHARSET,				HIDC_GREP_COMBO_CHARSET,			//•¶šƒR[ƒhƒZƒbƒg
-	IDC_CHECK_CP,					HIDC_GREP_CHECK_CP,					//ƒR[ƒhƒy[ƒW
-	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//ğŒ
-	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ƒtƒ@ƒCƒ‹
-	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//ƒtƒHƒ‹ƒ_
-	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//ã
-	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//Œ‹‰Êo—ÍFs’PˆÊ
-	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//Œ‹‰Êo—ÍFŠY“–•”•ª
-	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_RADIO_OUTPUTSTYLE1,		//Œ‹‰Êo—ÍŒ`®Fƒm[ƒ}ƒ‹
-	IDC_RADIO_OUTPUTSTYLE2,			HIDC_GREP_RADIO_OUTPUTSTYLE2,		//Œ‹‰Êo—ÍŒ`®Fƒtƒ@ƒCƒ‹–ˆ
-	IDC_RADIO_OUTPUTSTYLE3,			HIDC_RADIO_OUTPUTSTYLE3,			//Œ‹‰Êo—ÍŒ`®FŒ‹‰Ê‚Ì‚İ
-	IDC_STATIC_JRE32VER,			HIDC_GREP_STATIC_JRE32VER,			//³‹K•\Œ»ƒo[ƒWƒ‡ƒ“
-	IDC_CHK_DEFAULTFOLDER,			HIDC_GREP_CHK_DEFAULTFOLDER,		//ƒtƒHƒ‹ƒ_‚Ì‰Šú’l‚ğƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚É‚·‚é
-	IDC_CHECK_FILE_ONLY,			HIDC_CHECK_FILE_ONLY,				//ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ
-	IDC_CHECK_BASE_PATH,			HIDC_CHECK_BASE_PATH,				//ƒx[ƒXƒtƒHƒ‹ƒ_•\¦
-	IDC_CHECK_SEP_FOLDER,			HIDC_CHECK_SEP_FOLDER,				//ƒtƒHƒ‹ƒ_–ˆ‚É•\¦
+	IDC_BUTTON_FOLDER,				HIDC_GREP_BUTTON_FOLDER,			//ãƒ•ã‚©ãƒ«ãƒ€
+	IDC_BUTTON_CURRENTFOLDER,		HIDC_GREP_BUTTON_CURRENTFOLDER,		//ç¾ãƒ•ã‚©ãƒ«ãƒ€
+	IDOK,							HIDOK_GREP,							//æ¤œç´¢
+	IDCANCEL,						HIDCANCEL_GREP,						//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ãƒ˜ãƒ«ãƒ—
+	IDC_CHK_WORD,					HIDC_GREP_CHK_WORD,					//å˜èªå˜ä½
+	IDC_CHK_SUBFOLDER,				HIDC_GREP_CHK_SUBFOLDER,			//ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
+	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_CHK_FROMTHISTEXT,			//ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰
+	IDC_CHK_LOHICASE,				HIDC_GREP_CHK_LOHICASE,				//å¤§æ–‡å­—å°æ–‡å­—
+	IDC_CHK_REGULAREXP,				HIDC_GREP_CHK_REGULAREXP,			//æ­£è¦è¡¨ç¾
+	IDC_COMBO_CHARSET,				HIDC_GREP_COMBO_CHARSET,			//æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	IDC_CHECK_CP,					HIDC_GREP_CHECK_CP,					//ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
+	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//æ¡ä»¶
+	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ãƒ•ã‚¡ã‚¤ãƒ«
+	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//ãƒ•ã‚©ãƒ«ãƒ€
+	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//ä¸Š
+	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//çµæœå‡ºåŠ›ï¼šè¡Œå˜ä½
+	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//çµæœå‡ºåŠ›ï¼šè©²å½“éƒ¨åˆ†
+	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_RADIO_OUTPUTSTYLE1,		//çµæœå‡ºåŠ›å½¢å¼ï¼šãƒãƒ¼ãƒãƒ«
+	IDC_RADIO_OUTPUTSTYLE2,			HIDC_GREP_RADIO_OUTPUTSTYLE2,		//çµæœå‡ºåŠ›å½¢å¼ï¼šãƒ•ã‚¡ã‚¤ãƒ«æ¯
+	IDC_RADIO_OUTPUTSTYLE3,			HIDC_RADIO_OUTPUTSTYLE3,			//çµæœå‡ºåŠ›å½¢å¼ï¼šçµæœã®ã¿
+	IDC_STATIC_JRE32VER,			HIDC_GREP_STATIC_JRE32VER,			//æ­£è¦è¡¨ç¾ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	IDC_CHK_DEFAULTFOLDER,			HIDC_GREP_CHK_DEFAULTFOLDER,		//ãƒ•ã‚©ãƒ«ãƒ€ã®åˆæœŸå€¤ã‚’ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ã™ã‚‹
+	IDC_CHECK_FILE_ONLY,			HIDC_CHECK_FILE_ONLY,				//ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢
+	IDC_CHECK_BASE_PATH,			HIDC_CHECK_BASE_PATH,				//ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+	IDC_CHECK_SEP_FOLDER,			HIDC_CHECK_SEP_FOLDER,				//ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -67,12 +67,12 @@ static void SetGrepFolder( HWND hwndCtrl, LPCTSTR folder );
 
 CDlgGrep::CDlgGrep()
 {
-	m_bSubFolder = FALSE;				// ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é
-	m_bFromThisText = FALSE;			// ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é
-	m_sSearchOption.Reset();			// ŒŸõƒIƒvƒVƒ‡ƒ“
-	m_nGrepCharSet = CODE_SJIS;			// •¶šƒR[ƒhƒZƒbƒg
-	m_nGrepOutputLineType = 1;			// s‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s ‚ğo—Í
-	m_nGrepOutputStyle = 1;				// Grep: o—ÍŒ`®
+	m_bSubFolder = FALSE;				// ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹
+	m_bFromThisText = FALSE;			// ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹
+	m_sSearchOption.Reset();			// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	m_nGrepCharSet = CODE_SJIS;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	m_nGrepOutputLineType = 1;			// è¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ ã‚’å‡ºåŠ›
+	m_nGrepOutputStyle = 1;				// Grep: å‡ºåŠ›å½¢å¼
 	m_bGrepOutputFileOnly = false;
 	m_bGrepOutputBaseFolder = false;
 	m_bGrepSeparateFolder = false;
@@ -84,9 +84,9 @@ CDlgGrep::CDlgGrep()
 }
 
 /*!
-	ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒhƒƒbƒvƒ_ƒEƒ“ƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 
-	@date 2013.03.24 novice V‹Kì¬
+	@date 2013.03.24 novice æ–°è¦ä½œæˆ
 */
 BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 {
@@ -119,25 +119,25 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath )
 {
-	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: ƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// ŒŸõƒIƒvƒVƒ‡ƒ“
-	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// •¶šƒR[ƒhƒZƒbƒg
-	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// s‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s ‚ğo—Í
-	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: o—ÍŒ`®
+	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// è¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ ã‚’å‡ºåŠ›
+	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: å‡ºåŠ›å½¢å¼
 	m_bGrepOutputFileOnly = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
 
-	// 2013.05.21 ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çDoModal‚ÉˆÚ“®
-	// m_strText ‚ÍŒÄ‚Ño‚µŒ³‚Åİ’èÏ‚İ
+	// 2013.05.21 ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰DoModalã«ç§»å‹•
+	// m_strText ã¯å‘¼ã³å‡ºã—å…ƒã§è¨­å®šæ¸ˆã¿
 	if( m_szFile[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* ŒŸõƒtƒ@ƒCƒ‹ */
+		_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 	}
 	if( m_szFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* ŒŸõƒtƒHƒ‹ƒ_ */
+		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	}
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
@@ -155,20 +155,20 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	/* ƒ†[ƒU[‚ªƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+	/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
 
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚Ìƒ†[ƒU[ ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğŠg’£ƒCƒ“ƒ^[ƒtƒF[ƒX‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’æ‹¡å¼µã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã«ã™ã‚‹ */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), TRUE );
 
-	/* ƒ_ƒCƒAƒƒO‚ÌƒAƒCƒRƒ“ */
-//2002.02.08 GrepƒAƒCƒRƒ“‚à‘å‚«‚¢ƒAƒCƒRƒ“‚Æ¬‚³‚¢ƒAƒCƒRƒ“‚ğ•ÊX‚É‚·‚éB
+	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ã‚¢ã‚¤ã‚³ãƒ³ */
+//2002.02.08 Grepã‚¢ã‚¤ã‚³ãƒ³ã‚‚å¤§ãã„ã‚¢ã‚¤ã‚³ãƒ³ã¨å°ã•ã„ã‚¢ã‚¤ã‚³ãƒ³ã‚’åˆ¥ã€…ã«ã™ã‚‹ã€‚
 	HICON	hIconBig, hIconSmall;
-	//	Dec, 2, 2002 genta ƒAƒCƒRƒ““Ç‚İ‚İ•û–@•ÏX
+	//	Dec, 2, 2002 genta ã‚¢ã‚¤ã‚³ãƒ³èª­ã¿è¾¼ã¿æ–¹æ³•å¤‰æ›´
 	hIconBig   = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, false );
 	hIconSmall = GetAppIcon( m_hInstance, ICON_DEFAULT_GREP, FN_GREP_ICON, true );
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall );
@@ -176,7 +176,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 2002/09/22 Moca Add
 	int i;
-	/* •¶šƒR[ƒhƒZƒbƒg‘I‘ğƒRƒ“ƒ{ƒ{ƒbƒNƒX‰Šú‰» */
+	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆé¸æŠã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹åˆæœŸåŒ– */
 	CCodeTypesForCombobox cCodeTypes;
 	for( i = 0; i < cCodeTypes.GetCount(); ++i ){
 		int idx = Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), cCodeTypes.GetName(i) );
@@ -198,20 +198,20 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
 
-	// ƒtƒHƒ“ƒgİ’è	2012/11/27 Uchi
+	// ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
 	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-/*! @brief ƒtƒHƒ‹ƒ_w’èEditBox‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ”
+/*! @brief ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šEditBoxã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 
-	@date 2007.02.09 bosagami V‹Kì¬
-	@date 2007.09.02 genta ƒfƒBƒŒƒNƒgƒŠƒ`ƒFƒbƒN‚ğ‹­‰»
+	@date 2007.02.09 bosagami æ–°è¦ä½œæˆ
+	@date 2007.09.02 genta ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒã‚§ãƒƒã‚¯ã‚’å¼·åŒ–
 */
 LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
@@ -226,12 +226,12 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		DragQueryFile((HDROP)wparam, 0, sPath, _countof2(sPath) - 1);
 		::DragFinish((HDROP)wparam);
 
-		//ƒtƒ@ƒCƒ‹ƒpƒX‚Ì‰ğŒˆ
+		//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®è§£æ±º
 		CSakuraEnvironment::ResolvePath(sPath);
 		
-		//	ƒtƒ@ƒCƒ‹‚ªƒhƒƒbƒv‚³‚ê‚½ê‡‚ÍƒtƒHƒ‹ƒ_‚ğØ‚èo‚·
-		//	ƒtƒHƒ‹ƒ_‚Ìê‡‚ÍÅŒã‚ª¸‚í‚ê‚é‚Ì‚Åsplit‚µ‚Ä‚Í‚¢‚¯‚È‚¢D
-		if( IsFileExists( sPath, true )){	//	‘æ2ˆø”‚ªtrue‚¾‚ÆƒfƒBƒŒƒNƒgƒŠ‚Í‘ÎÛŠO
+		//	ãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ‰ãƒ­ãƒƒãƒ—ã•ã‚ŒãŸå ´åˆã¯ãƒ•ã‚©ãƒ«ãƒ€ã‚’åˆ‡ã‚Šå‡ºã™
+		//	ãƒ•ã‚©ãƒ«ãƒ€ã®å ´åˆã¯æœ€å¾ŒãŒå¤±ã‚ã‚Œã‚‹ã®ã§splitã—ã¦ã¯ã„ã‘ãªã„ï¼
+		if( IsFileExists( sPath, true )){	//	ç¬¬2å¼•æ•°ãŒtrueã ã¨ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¯å¯¾è±¡å¤–
 			SFilePath szWork;
 			SplitPath_FolderAndFile( sPath, szWork, NULL );
 			_tcscpy( sPath, szWork );
@@ -254,16 +254,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uGrepv‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_DIALOG) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€ŒGrepã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_DIALOG) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
-	case IDC_CHK_FROMTHISTEXT:	/* ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é */
-		// 2010.05.30 ŠÖ”‰»
+	case IDC_CHK_FROMTHISTEXT:	/* ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹ */
+		// 2010.05.30 é–¢æ•°åŒ–
 		SetDataFromThisText( 0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_FROMTHISTEXT ) );
 		return TRUE;
-	case IDC_BUTTON_CURRENTFOLDER:	/* Œ»İ•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ÌƒtƒHƒ‹ƒ_ */
-		/* ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚¢‚é‚© */
+	case IDC_BUTTON_CURRENTFOLDER:	/* ç¾åœ¨ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ã‚©ãƒ«ãƒ€ */
+		/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã„ã‚‹ã‹ */
 		if( m_szCurrentFilePath[0] != _T('\0') ){
 			TCHAR	szWorkFolder[MAX_PATH];
 			TCHAR	szWorkFile[MAX_PATH];
@@ -271,7 +271,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
 		else{
-			/* Œ»İ‚ÌƒvƒƒZƒX‚ÌƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğæ“¾‚µ‚Ü‚· */
+			/* ç¾åœ¨ã®ãƒ—ãƒ­ã‚»ã‚¹ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å–å¾—ã—ã¾ã™ */
 			TCHAR	szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
@@ -286,7 +286,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			std::vector<std::tstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
-				// ÅŒã‚ÌƒpƒX‚ª‘€ì‘ÎÛ
+				// æœ€å¾Œã®ãƒ‘ã‚¹ãŒæ“ä½œå¯¾è±¡
 				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
 				szFolder[nMaxPath-1] = _T('\0');
 				if( DirectoryUp( szFolder ) ){
@@ -316,49 +316,49 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 
 
-//	case IDC_CHK_LOHICASE:	/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
+//	case IDC_CHK_LOHICASE:	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 //		MYTRACE( _T("IDC_CHK_LOHICASE\n") );
 //		return TRUE;
-	case IDC_CHK_REGULAREXP:	/* ³‹K•\Œ» */
+	case IDC_CHK_REGULAREXP:	/* æ­£è¦è¡¨ç¾ */
 //		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
-			//	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
+			//	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
 			if( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, true ) ){
 				::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
 			}else{
 				//	To Here Jun. 26, 2001 genta
-				/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
-				//	³‹K•\Œ»‚Ì‚Æ‚«‚à‘I‘ğ‚Å‚«‚é‚æ‚¤‚ÉB
+				/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
+				//	æ­£è¦è¡¨ç¾ã®ã¨ãã‚‚é¸æŠã§ãã‚‹ã‚ˆã†ã«ã€‚
 //				::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
 //				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
 
 				//2001/06/23 N.Nakatani
-				/* ’PŒê’PˆÊ‚ÅŒŸõ */
+				/* å˜èªå˜ä½ã§æ¤œç´¢ */
 				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
 			}
 		}else{
-			/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
-			//	³‹K•\Œ»‚Ì‚Æ‚«‚à‘I‘ğ‚Å‚«‚é‚æ‚¤‚ÉB
+			/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
+			//	æ­£è¦è¡¨ç¾ã®ã¨ãã‚‚é¸æŠã§ãã‚‹ã‚ˆã†ã«ã€‚
 //			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), TRUE );
 //			::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
 
 //2001/06/23 N.Nakatani
-//’PŒê’PˆÊ‚Ìgrep‚ªÀ‘•‚³‚ê‚½‚çƒRƒƒ“ƒg‚ğŠO‚·‚Æv‚¢‚Ü‚·
-//2002/03/07À‘•‚µ‚Ä‚İ‚½B
-			/* ’PŒê’PˆÊ‚ÅŒŸõ */
+//å˜èªå˜ä½ã®grepãŒå®Ÿè£…ã•ã‚ŒãŸã‚‰ã‚³ãƒ¡ãƒ³ãƒˆã‚’å¤–ã™ã¨æ€ã„ã¾ã™
+//2002/03/07å®Ÿè£…ã—ã¦ã¿ãŸã€‚
+			/* å˜èªå˜ä½ã§æ¤œç´¢ */
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), TRUE );
 
 		}
 		return TRUE;
 
 	case IDC_BUTTON_FOLDER:
-		/* ƒtƒHƒ‹ƒ_QÆƒ{ƒ^ƒ“ */
+		/* ãƒ•ã‚©ãƒ«ãƒ€å‚ç…§ãƒœã‚¿ãƒ³ */
 		{
 			const int nMaxPath = MAX_GREP_PATH;
 			TCHAR	szFolder[nMaxPath];
-			/* ŒŸõƒtƒHƒ‹ƒ_ */
+			/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 			::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, szFolder, nMaxPath - 1 );
 			if( szFolder[0] == _T('\0') ){
 				::GetCurrentDirectory( nMaxPath, szFolder );
@@ -379,7 +379,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_CHK_DEFAULTFOLDER:
-		/* ƒtƒHƒ‹ƒ_‚Ì‰Šú’l‚ğƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚É‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®åˆæœŸå€¤ã‚’ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ã™ã‚‹ */
 		{
 			m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_DEFAULTFOLDER );
 		}
@@ -398,7 +398,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 		break;
 	case IDOK:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		if( GetData() ){
 //			::EndDialog( hwndDlg, TRUE );
 			CloseDialog( TRUE );
@@ -410,22 +410,22 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgGrep::SetData( void )
 {
-	/* ŒŸõ•¶š—ñ */
+	/* æ¤œç´¢æ–‡å­—åˆ— */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
-	/* ŒŸõƒtƒ@ƒCƒ‹ */
+	/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, m_szFile );
 
-	/* ŒŸõƒtƒHƒ‹ƒ_ */
+	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder );
 
 	if((m_szFolder[0] == _T('\0') || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
@@ -437,29 +437,29 @@ void CDlgGrep::SetData( void )
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 	}
 
-	/* ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é */
+	/* ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹ */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, m_bSubFolder );
 
-	// ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é
+	// ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹
 	::CheckDlgButton( GetHwnd(), IDC_CHK_FROMTHISTEXT, m_bFromThisText );
-	// 2010.05.30 ŠÖ”‰»
+	// 2010.05.30 é–¢æ•°åŒ–
 	SetDataFromThisText( m_bFromThisText != FALSE );
 
-	/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
+	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
-	// 2001/06/23 N.Nakatani Œ»“_‚Å‚ÍGrep‚Å‚Í’PŒê’PˆÊ‚ÌŒŸõ‚ÍƒTƒ|[ƒg‚Å‚«‚Ä‚¢‚Ü‚¹‚ñ
-	// 2002/03/07 ƒeƒXƒgƒTƒ|[ƒg
-	/* ˆê’v‚·‚é’PŒê‚Ì‚İŒŸõ‚·‚é */
+	// 2001/06/23 N.Nakatani ç¾æ™‚ç‚¹ã§ã¯Grepã§ã¯å˜èªå˜ä½ã®æ¤œç´¢ã¯ã‚µãƒãƒ¼ãƒˆã§ãã¦ã„ã¾ã›ã‚“
+	// 2002/03/07 ãƒ†ã‚¹ãƒˆã‚µãƒãƒ¼ãƒˆ
+	/* ä¸€è‡´ã™ã‚‹å˜èªã®ã¿æ¤œç´¢ã™ã‚‹ */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
-//	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ) , false );	//ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğg—p•s‰Â‚É‚·‚à
+//	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ) , false );	//ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã‚’ä½¿ç”¨ä¸å¯ã«ã™ã‚‚
 
 
-	/* •¶šƒR[ƒh©“®”»•Ê */
+	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥ */
 //	::CheckDlgButton( GetHwnd(), IDC_CHK_KANJICODEAUTODETECT, m_bKanjiCode_AutoDetect );
 
 	// 2002/09/22 Moca Add
-	/* •¶šƒR[ƒhƒZƒbƒg */
+	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
 	{
 		int		nIdx, nCurIdx = -1;
 		ECodeType nCharSet;
@@ -484,7 +484,7 @@ void CDlgGrep::SetData( void )
 		}
 	}
 
-	/* s‚ğo—Í‚·‚é‚©ŠY“–•”•ª‚¾‚¯o—Í‚·‚é‚© */
+	/* è¡Œã‚’å‡ºåŠ›ã™ã‚‹ã‹è©²å½“éƒ¨åˆ†ã ã‘å‡ºåŠ›ã™ã‚‹ã‹ */
 	if( m_nGrepOutputLineType == 1 ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTLINE, TRUE );
 	}else if( m_nGrepOutputLineType == 2 ){
@@ -495,7 +495,7 @@ void CDlgGrep::SetData( void )
 
 	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_BASE_PATH ), TRUE );
 	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_SEP_FOLDER ),TRUE );
-	/* Grep: o—ÍŒ`® */
+	/* Grep: å‡ºåŠ›å½¢å¼ */
 	if( 1 == m_nGrepOutputStyle ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE );
 	}else
@@ -511,19 +511,19 @@ void CDlgGrep::SetData( void )
 	}
 
 	// From Here Jun. 29, 2001 genta
-	// ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
-	// ˆ—ƒtƒ[‹y‚Ñ”»’èğŒ‚ÌŒ©’¼‚µB•K‚¸³‹K•\Œ»‚Ìƒ`ƒFƒbƒN‚Æ
-	// –³ŠÖŒW‚ÉCheckRegexpVersion‚ğ’Ê‰ß‚·‚é‚æ‚¤‚É‚µ‚½B
+	// æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
+	// å‡¦ç†ãƒ•ãƒ­ãƒ¼åŠã³åˆ¤å®šæ¡ä»¶ã®è¦‹ç›´ã—ã€‚å¿…ãšæ­£è¦è¡¨ç¾ã®ãƒã‚§ãƒƒã‚¯ã¨
+	// ç„¡é–¢ä¿‚ã«CheckRegexpVersionã‚’é€šéã™ã‚‹ã‚ˆã†ã«ã—ãŸã€‚
 	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false )
 		&& m_sSearchOption.bRegularExp){
-		/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
+		/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );
-		//	³‹K•\Œ»‚Ì‚Æ‚«‚à‘I‘ğ‚Å‚«‚é‚æ‚¤‚ÉB
+		//	æ­£è¦è¡¨ç¾ã®ã¨ãã‚‚é¸æŠã§ãã‚‹ã‚ˆã†ã«ã€‚
 //		::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
 //		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
-		/* ’PŒê’PˆÊ‚Å’T‚· */
+		/* å˜èªå˜ä½ã§æ¢ã™ */
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
 	}
 	else {
@@ -541,7 +541,7 @@ void CDlgGrep::SetData( void )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_BASE_PATH, m_bGrepOutputBaseFolder );
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_SEP_FOLDER, m_bGrepSeparateFolder );
 
-	// ƒtƒHƒ‹ƒ_‚Ì‰Šú’l‚ğƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚É‚·‚é
+	// ãƒ•ã‚©ãƒ«ãƒ€ã®åˆæœŸå€¤ã‚’ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ã™ã‚‹
 	::CheckDlgButton( GetHwnd(), IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder );
 
 	return;
@@ -549,7 +549,7 @@ void CDlgGrep::SetData( void )
 
 
 /*!
-	Œ»İ•ÒW’†ƒtƒ@ƒCƒ‹‚©‚çŒŸõƒ`ƒFƒbƒN‚Å‚Ìİ’è
+	ç¾åœ¨ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰æ¤œç´¢ãƒã‚§ãƒƒã‚¯ã§ã®è¨­å®š
 */
 void CDlgGrep::SetDataFromThisText( bool bChecked )
 {
@@ -557,7 +557,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	if( 0 != m_szCurrentFilePath[0] && bChecked ){
 		TCHAR	szWorkFolder[MAX_PATH];
 		TCHAR	szWorkFile[MAX_PATH];
-		// 2003.08.01 Moca ƒtƒ@ƒCƒ‹–¼‚ÍƒXƒy[ƒX‚È‚Ç‚Í‹æØ‚è‹L†‚É‚È‚é‚Ì‚ÅA""‚ÅˆÍ‚¢AƒGƒXƒP[ƒv‚·‚é
+		// 2003.08.01 Moca ãƒ•ã‚¡ã‚¤ãƒ«åã¯ã‚¹ãƒšãƒ¼ã‚¹ãªã©ã¯åŒºåˆ‡ã‚Šè¨˜å·ã«ãªã‚‹ã®ã§ã€""ã§å›²ã„ã€ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã™ã‚‹
 		szWorkFile[0] = _T('"');
 		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
 		_tcscat( szWorkFile, _T("\"") ); // 2003.08.01 Moca
@@ -575,32 +575,32 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	return;
 }
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
-	@retval TRUE  ³í
-	@retval FALSE “ü—ÍƒGƒ‰[
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
+	@retval TRUE  æ­£å¸¸
+	@retval FALSE å…¥åŠ›ã‚¨ãƒ©ãƒ¼
 */
 int CDlgGrep::GetData( void )
 {
-	/* ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é*/
+	/* ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹*/
 	m_bSubFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_SUBFOLDER );
 
-	/* ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é */
+	/* ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹ */
 	m_bFromThisText = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_FROMTHISTEXT );
 
-	/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
+	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
 	m_sSearchOption.bLoHiCase = (0!=::IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
 
 	//2001/06/23 N.Nakatani
-	/* ’PŒê’PˆÊ‚ÅŒŸõ */
+	/* å˜èªå˜ä½ã§æ¤œç´¢ */
 	m_sSearchOption.bWordOnly = (0!=::IsDlgButtonChecked( GetHwnd(), IDC_CHK_WORD ));
 
-	/* ³‹K•\Œ» */
+	/* æ­£è¦è¡¨ç¾ */
 	m_sSearchOption.bRegularExp = (0!=::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
 
-	/* •¶šƒR[ƒh©“®”»•Ê */
+	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥ */
 //	m_bKanjiCode_AutoDetect = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_KANJICODEAUTODETECT );
 
-	/* •¶šƒR[ƒhƒZƒbƒg */
+	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
 	{
 		int		nIdx;
 		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
@@ -609,7 +609,7 @@ int CDlgGrep::GetData( void )
 	}
 
 
-	/* s‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s ‚ğo—Í */
+	/* è¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ ã‚’å‡ºåŠ› */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTLINE ) ){
 		m_nGrepOutputLineType = 1;
 	}else if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_NOHIT ) ){
@@ -618,12 +618,12 @@ int CDlgGrep::GetData( void )
 		m_nGrepOutputLineType = 0;
 	}
 
-	/* Grep: o—ÍŒ`® */
+	/* Grep: å‡ºåŠ›å½¢å¼ */
 	if( FALSE != ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTSTYLE1 ) ){
-		m_nGrepOutputStyle = 1;				/* Grep: o—ÍŒ`® */
+		m_nGrepOutputStyle = 1;				/* Grep: å‡ºåŠ›å½¢å¼ */
 	}
 	if( FALSE != ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTSTYLE2 ) ){
-		m_nGrepOutputStyle = 2;				/* Grep: o—ÍŒ`® */
+		m_nGrepOutputStyle = 2;				/* Grep: å‡ºåŠ›å½¢å¼ */
 	}
 	if( FALSE != ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTSTYLE3 ) ){
 		m_nGrepOutputStyle = 3;
@@ -634,29 +634,24 @@ int CDlgGrep::GetData( void )
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
 
 
-	/* ŒŸõ•¶š—ñ */
+	/* æ¤œç´¢æ–‡å­—åˆ— */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
 	std::vector<TCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 	m_bSetText = true;
-	/* ŒŸõƒtƒ@ƒCƒ‹ */
+	/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
-	/* ŒŸõƒtƒHƒ‹ƒ_ */
+	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
 
-	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// •¶šƒR[ƒh©“®”»•Ê
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// s‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s ‚ğo—Í
-	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: o—ÍŒ`®
+	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// è¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ ã‚’å‡ºåŠ›
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: å‡ºåŠ›å½¢å¼
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 
-//‚â‚ß‚Ü‚µ‚½
-//	if( 0 == wcslen( m_szText ) ){
-//		WarningMessage(	GetHwnd(), _T("ŒŸõ‚ÌƒL[ƒ[ƒh‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B") );
-//		return FALSE;
-//	}
 	if( 0 != auto_strlen( m_szFile ) ){
 		CGrepEnumKeys enumKeys;
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
@@ -668,11 +663,11 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 	}
-	/* ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é */
+	/* ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹ */
 	if( m_szFile[0] == _T('\0') ){
 		//	Jun. 16, 2003 Moca
-		//	ŒŸõƒpƒ^[ƒ“‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÌƒƒbƒZ[ƒW•\¦‚ğ‚â‚ßA
-		//	u*.*v‚ªw’è‚³‚ê‚½‚à‚Ì‚ÆŒ©‚È‚·D
+		//	æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºã‚’ã‚„ã‚ã€
+		//	ã€Œ*.*ã€ãŒæŒ‡å®šã•ã‚ŒãŸã‚‚ã®ã¨è¦‹ãªã™ï¼
 		_tcscpy( m_szFile, _T("*.*") );
 	}
 	if( m_szFolder[0] == _T('\0') ){
@@ -681,10 +676,10 @@ int CDlgGrep::GetData( void )
 	}
 
 	{
-		//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğ•Û‘¶B‚±‚ÌƒuƒƒbƒN‚©‚ç”²‚¯‚é‚Æ‚«‚É©“®‚ÅƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Í•œŒ³‚³‚ê‚éB
+		//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ä¿å­˜ã€‚ã“ã®ãƒ–ãƒ­ãƒƒã‚¯ã‹ã‚‰æŠœã‘ã‚‹ã¨ãã«è‡ªå‹•ã§ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¯å¾©å…ƒã•ã‚Œã‚‹ã€‚
 		CCurrentDirectoryBackupPoint cCurDirBackup;
 
-		// 2011.11.24 Moca •¡”ƒtƒHƒ‹ƒ_w’è
+		// 2011.11.24 Moca è¤‡æ•°ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®š
 		std::vector<std::tstring> vPaths;
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
 		int nFolderLen = 0;
@@ -692,14 +687,14 @@ int CDlgGrep::GetData( void )
 		TCHAR szFolder[nMaxPath];
 		szFolder[0] = _T('\0');
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
-			// ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX
+			// ç›¸å¯¾ãƒ‘ã‚¹â†’çµ¶å¯¾ãƒ‘ã‚¹
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP5) );
 				return FALSE;
 			}
 			TCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
-			// ;‚ªƒtƒHƒ‹ƒ_–¼‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚½‚ç""‚ÅˆÍ‚¤
+			// ;ãŒãƒ•ã‚©ãƒ«ãƒ€åã«å«ã¾ã‚Œã¦ã„ãŸã‚‰""ã§å›²ã†
 			if( auto_strchr( szFolderItem, _T(';') ) ){
 				szFolderItem[0] = _T('"');
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
@@ -719,36 +714,36 @@ int CDlgGrep::GetData( void )
 		auto_strcpy( m_szFolder, szFolder );
 	}
 
-//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()’Ç‰Á‚É”º‚¤•ÏX
-	/* ŒŸõ•¶š—ñ */
+//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()è¿½åŠ ã«ä¼´ã†å¤‰æ›´
+	/* æ¤œç´¢æ–‡å­—åˆ— */
 	if( 0 < m_strText.size() ){
 		// From Here Jun. 26, 2001 genta
-		//	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦‚É”º‚¤ˆ—‚ÌŒ©’¼‚µ
+		//	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆã«ä¼´ã†å‡¦ç†ã®è¦‹ç›´ã—
 		int nFlag = 0;
 		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( m_sSearchOption.bRegularExp  && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag) ){
 			return FALSE;
 		}
-		// To Here Jun. 26, 2001 genta ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ·‚µ‘Ö‚¦
+		// To Here Jun. 26, 2001 genta æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå·®ã—æ›¿ãˆ
 		if( m_strText.size() < _MAX_PATH ){
 			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// ŒŸõƒIƒvƒVƒ‡ƒ“
+			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		}
 	}else{
-		// 2014.07.01 ‹óƒL[‚à“o˜^‚·‚é
+		// 2014.07.01 ç©ºã‚­ãƒ¼ã‚‚ç™»éŒ²ã™ã‚‹
 		CSearchKeywordManager().AddToSearchKeyArr( L"" );
 	}
 
-	// ‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚éê‡A—š—ğ‚Éc‚³‚È‚¢	Uchi 2008/5/23
-	// 2016.03.08 Moca u‚±‚Ìƒtƒ@ƒCƒ‹‚©‚çŒŸõv‚Ìê‡‚ÍƒTƒuƒtƒHƒ‹ƒ_‹¤’Êİ’è‚ğXV‚µ‚È‚¢
+	// ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹å ´åˆã€å±¥æ­´ã«æ®‹ã•ãªã„	Uchi 2008/5/23
+	// 2016.03.08 Moca ã€Œã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰æ¤œç´¢ã€ã®å ´åˆã¯ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€å…±é€šè¨­å®šã‚’æ›´æ–°ã—ãªã„
 	if (!m_bFromThisText) {
-		/* ŒŸõƒtƒ@ƒCƒ‹ */
+		/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 		CSearchKeywordManager().AddToGrepFileArr( m_szFile );
 
-		/* ŒŸõƒtƒHƒ‹ƒ_ */
+		/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 		CSearchKeywordManager().AddToGrepFolderArr( m_szFolder );
 
-		// GrepFƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
+		// Grepï¼šã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;
 	}
 

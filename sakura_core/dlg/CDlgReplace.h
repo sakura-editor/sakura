@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ’uŠ·ƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date 1998/10/02  V‹Kì¬
+	@date 1998/10/02  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -23,10 +23,10 @@
 #include "util/window.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ’uŠ·ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	@brief ç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 class CDlgReplace : public CDialog
 {
@@ -38,23 +38,23 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	void ChangeView( LPARAM );	/* ƒ‚[ƒhƒŒƒXF’uŠ·EŒŸõ‘ÎÛ‚Æ‚È‚éƒrƒ…[‚Ì•ÏX */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	void ChangeView( LPARAM );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹æ™‚ï¼šç½®æ›ãƒ»æ¤œç´¢å¯¾è±¡ã¨ãªã‚‹ãƒ“ãƒ¥ãƒ¼ã®å¤‰æ›´ */
 
-	SSearchOption	m_sSearchOption;	// ŒŸõƒIƒvƒVƒ‡ƒ“
-	int				m_bConsecutiveAll;	/* u‚·‚×‚Ä’uŠ·v‚Í’uŠ·‚ÌŒJ•Ô‚µ */	// 2007.01.16 ryoji
-	std::wstring	m_strText;	// ŒŸõ•¶š—ñ
-	std::wstring	m_strText2;	// ’uŠ·Œã•¶š—ñ
-	int				m_nReplaceKeySequence;	//’uŠ·ŒãƒV[ƒPƒ“ƒX
-	BOOL			m_bSelectedArea;	/* ‘I‘ğ”ÍˆÍ“à’uŠ· */
-	int				m_bNOTIFYNOTFOUND;				/* ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ğ•\¦ */
-	BOOL			m_bSelected;	/* ƒeƒLƒXƒg‘I‘ğ’†‚© */
-	int				m_nReplaceTarget;	/* ’uŠ·‘ÎÛ */	// 2001.12.03 hor
-	int				m_nPaste;			/* “\‚è•t‚¯H */	// 2001.12.03 hor
-	int				m_nReplaceCnt;		//‚·‚×‚Ä’uŠ·‚ÌÀsŒ‹‰Ê		// 2002.02.08 hor
-	bool			m_bCanceled;		//‚·‚×‚Ä’uŠ·‚Å’†’f‚µ‚½‚©	// 2002.02.08 hor
+	SSearchOption	m_sSearchOption;	// æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	int				m_bConsecutiveAll;	/* ã€Œã™ã¹ã¦ç½®æ›ã€ã¯ç½®æ›ã®ç¹°è¿”ã— */	// 2007.01.16 ryoji
+	std::wstring	m_strText;	// æ¤œç´¢æ–‡å­—åˆ—
+	std::wstring	m_strText2;	// ç½®æ›å¾Œæ–‡å­—åˆ—
+	int				m_nReplaceKeySequence;	//ç½®æ›å¾Œã‚·ãƒ¼ã‚±ãƒ³ã‚¹
+	BOOL			m_bSelectedArea;	/* é¸æŠç¯„å›²å†…ç½®æ› */
+	int				m_bNOTIFYNOTFOUND;				/* æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º */
+	BOOL			m_bSelected;	/* ãƒ†ã‚­ã‚¹ãƒˆé¸æŠä¸­ã‹ */
+	int				m_nReplaceTarget;	/* ç½®æ›å¯¾è±¡ */	// 2001.12.03 hor
+	int				m_nPaste;			/* è²¼ã‚Šä»˜ã‘ï¼Ÿ */	// 2001.12.03 hor
+	int				m_nReplaceCnt;		//ã™ã¹ã¦ç½®æ›ã®å®Ÿè¡Œçµæœ		// 2002.02.08 hor
+	bool			m_bCanceled;		//ã™ã¹ã¦ç½®æ›ã§ä¸­æ–­ã—ãŸã‹	// 2002.02.08 hor
 
-	CLogicPoint		m_ptEscCaretPos_PHY;	// ŒŸõ/’uŠ·ŠJn‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‘Ş”ğƒGƒŠƒA
+	CLogicPoint		m_ptEscCaretPos_PHY;	// æ¤œç´¢/ç½®æ›é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®é€€é¿ã‚¨ãƒªã‚¢
 
 protected:
 	CRecentSearch			m_cRecentSearch;
@@ -65,7 +65,7 @@ protected:
 	CFontAutoDeleter		m_cFontText2;
 
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
@@ -74,9 +74,9 @@ protected:
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void SetData( void );		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	void SetCombosList( void );	/* ŒŸõ•¶š—ñ/’uŠ·Œã•¶š—ñƒŠƒXƒg‚Ìİ’è */
-	int GetData( void );		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData( void );		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	void SetCombosList( void );	/* æ¤œç´¢æ–‡å­—åˆ—/ç½®æ›å¾Œæ–‡å­—åˆ—ãƒªã‚¹ãƒˆã®è¨­å®š */
+	int GetData( void );		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 };
 
 
