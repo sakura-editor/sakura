@@ -142,6 +142,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/source-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -211,6 +212,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/source-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
