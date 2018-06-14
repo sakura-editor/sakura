@@ -29,10 +29,10 @@ build_script:
 
     echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
          %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
+    
+    call zipArtifacts.bat %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml
 
 artifacts:
-- path: '$(platform)\$(configuration)\*.exe'
-- path: '$(platform)\$(configuration)\*.dll'
-- path: '$(platform)\$(configuration)\*.pdb'
+- path: 'sakura-$(platform)-$(configuration).zip'
