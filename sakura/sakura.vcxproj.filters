@@ -1085,6 +1085,9 @@
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
     <ClInclude Include="..\sakura_core\gitrev.h" />
+    <ClInclude Include="..\sakura_core\version.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sakura_core\Funccode_x.hsrc">

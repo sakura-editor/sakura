@@ -14,6 +14,7 @@ for /f "usebackq" %%s in (`git show -s --format^=%%h`) do (
 )
 
 type nul                                  > %GITREV_H%
+echo #pragma once                        >> %GITREV_H%
 if "%COMMITID%" == "" (
 	type nul                                  >> %GITREV_H%
 ) else (
