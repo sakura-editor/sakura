@@ -78,14 +78,14 @@ inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(
 inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
 
 
-#define GWL_SNAP_LEFT		16
-#define GWL_SNAP_TOP		20
-#define GWL_SNAP_RIGHT		24
-#define GWL_SNAP_BOTTOM		28
-#define GWL_UNSNAP_LEFT		32
-#define GWL_UNSNAP_TOP		36
-#define GWL_UNSNAP_RIGHT	40
-#define GWL_UNSNAP_BOTTOM	44
+#define GWL_SNAP_LEFT		( 4 * sizeof(LONG_PTR) )
+#define GWL_SNAP_TOP		( 5 * sizeof(LONG_PTR) )
+#define GWL_SNAP_RIGHT		( 6 * sizeof(LONG_PTR) )
+#define GWL_SNAP_BOTTOM		( 7 * sizeof(LONG_PTR) )
+#define GWL_UNSNAP_LEFT		( 8 * sizeof(LONG_PTR) )
+#define GWL_UNSNAP_TOP		( 9 * sizeof(LONG_PTR) )
+#define GWL_UNSNAP_RIGHT	( 10 * sizeof(LONG_PTR) )
+#define GWL_UNSNAP_BOTTOM	( 11 * sizeof(LONG_PTR) )
 
 bool GetVirtualSnapRect( HWND hWnd, RECT* prcSnap = NULL, RECT* prcUnsnap = NULL );
 void SetVirtualSnapRect( HWND hWnd, const RECT* prcSnap, const RECT* prcUnsnap );

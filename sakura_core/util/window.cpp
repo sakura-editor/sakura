@@ -105,15 +105,15 @@ bool GetVirtualSnapRect( HWND hWnd, RECT* prcSnap/* = NULL*/, RECT* prcUnsnap/* 
 	// Note. Unsnap サイズだけでなく Snap サイズも Window Byte に記憶している理由
 	//   SetAeroSnap() 操作途中のウィンドウは一時的に Unsnap サイズにされるが、
 	//   このタイミングで呼ばれた場合にも Snap サイズを返せるように。
-	rcSnap.left = ::GetWindowLong(hWnd, GWL_SNAP_LEFT);
-	rcSnap.top = ::GetWindowLong(hWnd, GWL_SNAP_TOP);
-	rcSnap.right = ::GetWindowLong(hWnd, GWL_SNAP_RIGHT);
-	rcSnap.bottom = ::GetWindowLong(hWnd, GWL_SNAP_BOTTOM);
+	rcSnap.left = ::GetWindowLongPtr(hWnd, GWL_SNAP_LEFT);
+	rcSnap.top = ::GetWindowLongPtr(hWnd, GWL_SNAP_TOP);
+	rcSnap.right = ::GetWindowLongPtr(hWnd, GWL_SNAP_RIGHT);
+	rcSnap.bottom = ::GetWindowLongPtr(hWnd, GWL_SNAP_BOTTOM);
 
-	rcUnsnap.left = ::GetWindowLong(hWnd, GWL_UNSNAP_LEFT);
-	rcUnsnap.top = ::GetWindowLong(hWnd, GWL_UNSNAP_TOP);
-	rcUnsnap.right = ::GetWindowLong(hWnd, GWL_UNSNAP_RIGHT);
-	rcUnsnap.bottom = ::GetWindowLong(hWnd, GWL_UNSNAP_BOTTOM);
+	rcUnsnap.left = ::GetWindowLongPtr(hWnd, GWL_UNSNAP_LEFT);
+	rcUnsnap.top = ::GetWindowLongPtr(hWnd, GWL_UNSNAP_TOP);
+	rcUnsnap.right = ::GetWindowLongPtr(hWnd, GWL_UNSNAP_RIGHT);
+	rcUnsnap.bottom = ::GetWindowLongPtr(hWnd, GWL_UNSNAP_BOTTOM);
 
 	bool bRet = (!::IsRectEmpty(&rcSnap) && !::IsRectEmpty(&rcUnsnap));
 	if (bRet)
@@ -126,15 +126,15 @@ bool GetVirtualSnapRect( HWND hWnd, RECT* prcSnap/* = NULL*/, RECT* prcUnsnap/* 
 
 void SetVirtualSnapRect( HWND hWnd, const RECT* prcSnap, const RECT* prcUnsnap )
 {
-	::SetWindowLong(hWnd, GWL_SNAP_LEFT, prcSnap->left);
-	::SetWindowLong(hWnd, GWL_SNAP_TOP, prcSnap->top);
-	::SetWindowLong(hWnd, GWL_SNAP_RIGHT, prcSnap->right);
-	::SetWindowLong(hWnd, GWL_SNAP_BOTTOM, prcSnap->bottom);
+	::SetWindowLongPtr(hWnd, GWL_SNAP_LEFT, prcSnap->left);
+	::SetWindowLongPtr(hWnd, GWL_SNAP_TOP, prcSnap->top);
+	::SetWindowLongPtr(hWnd, GWL_SNAP_RIGHT, prcSnap->right);
+	::SetWindowLongPtr(hWnd, GWL_SNAP_BOTTOM, prcSnap->bottom);
 
-	::SetWindowLong(hWnd, GWL_UNSNAP_LEFT, prcUnsnap->left);
-	::SetWindowLong(hWnd, GWL_UNSNAP_TOP, prcUnsnap->top);
-	::SetWindowLong(hWnd, GWL_UNSNAP_RIGHT, prcUnsnap->right);
-	::SetWindowLong(hWnd, GWL_UNSNAP_BOTTOM, prcUnsnap->bottom);
+	::SetWindowLongPtr(hWnd, GWL_UNSNAP_LEFT, prcUnsnap->left);
+	::SetWindowLongPtr(hWnd, GWL_UNSNAP_TOP, prcUnsnap->top);
+	::SetWindowLongPtr(hWnd, GWL_UNSNAP_RIGHT, prcUnsnap->right);
+	::SetWindowLongPtr(hWnd, GWL_UNSNAP_BOTTOM, prcUnsnap->bottom);
 }
 
 void SetVirtualSnapRectEmpty( HWND hWnd )
