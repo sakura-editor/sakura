@@ -665,9 +665,6 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 		if( wp.showCmd != SW_SHOWMAXIMIZED )
 		{
 			// 移動元の先頭ウィンドウのサイズで画面内を相対移動する
-			RECT rcSnap;
-			if( GetAeroSnapRect(hwndTop, &rcSnap) )
-				::OffsetRect(&wp.rcNormalPosition, rcSnap.left - wp.rcNormalPosition.left, rcSnap.top - wp.rcNormalPosition.top);
 			wp.rcNormalPosition.left += (ptDrop.x - ptDrag.x);
 			wp.rcNormalPosition.right += (ptDrop.x - ptDrag.x);
 			wp.rcNormalPosition.top += (ptDrop.y - ptDrag.y);
@@ -2160,13 +2157,13 @@ int CTabWnd::SetCarmWindowPlacement(
 		wp.showCmd = SW_SHOWNOACTIVATE;
 	}
 	::SetWindowPlacement( hwnd, &wp );
-	if( hwndDst )
+	// AeroSnap対応
+	if (hwndDst)
 	{
-		RECT rcSnap, rcUnsnap;
-		if( GetAeroSnapRect(hwndDst, &rcSnap, &rcUnsnap) ){
-			wp.rcNormalPosition = rcSnap;
-			SetVirtualSnapRect(hwnd, &rcSnap, &rcUnsnap);
-			::PostMessage(hwnd, MYWM_SETAEROSNAP, 0, 0);
+		RECT rcSnap;
+		if (::GetWindowRect(hwndDst, &rcSnap))
+		{
+			CEditWnd::getInstance()->CheckAndTriggerAeroSnap(rcSnap, wp.rcNormalPosition, hwndDst);
 		}
 	}
 	return wp.showCmd;

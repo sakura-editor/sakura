@@ -652,7 +652,6 @@ enum e_PM_CHANGESETTING_SELECT {
 };
 //!座標位置情報の保存
 #define MYWM_SAVEEDITSTATE  (WM_APP+1521)
-#define MYWM_SETAEROSNAP	(WM_APP+1529)
 
 //! タスクトレイからの通知メッセージ
 #define MYWM_NOTIFYICON		(WM_APP+100)

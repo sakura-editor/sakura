@@ -243,6 +243,7 @@ public:
 	//                      ウィンドウ操作                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void WindowTopMost( int ); // 2004.09.21 Moca
+	void CheckAndTriggerAeroSnap(_In_ const RECT &rcSnap, _In_ const RECT &rcUnsnap, _In_ HWND hWndDest);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ビュー管理                           //
@@ -311,6 +312,9 @@ protected:
 	// メニュー
 	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
 	void CheckFreeSubMenuSub( HMENU, int );			// メニューバーの無効化を検査	2010/6/18 Uchi
+
+	// AeroSnap
+	bool SetAeroSnap(void);
 
 //public:
 	//! 周期内でm_nTimerCountをインクリメント
@@ -428,6 +432,7 @@ private:
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
+	WORD				m_wVkArrow;		//!< Aero Snap 操作を判定
 
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
