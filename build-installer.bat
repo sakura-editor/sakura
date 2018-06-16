@@ -25,7 +25,11 @@ copy %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
 
-copy %INSTALLER_RESOURCES_BRON%\*.dll                 %INSTALLER_WORK%\
+if "%platform%" == "x64" (
+	copy %INSTALLER_RESOURCES_BRON%\x64\*.dll         %INSTALLER_WORK%\
+) else (
+	copy %INSTALLER_RESOURCES_BRON%\*.dll             %INSTALLER_WORK%\
+)
 copy %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
 
 copy help\sakura\sakura.chm                      %INSTALLER_WORK%\
