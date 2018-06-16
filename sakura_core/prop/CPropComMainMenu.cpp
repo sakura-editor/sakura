@@ -187,6 +187,47 @@ static LRESULT CALLBACK WindowProcEdit(
 	return CallWindowProc( m_wpEdit, hwndEdit, uMsg, wParam, lParam );
 }
 
+static void SetDlgItemsEnableState(
+	HWND	hwndDlg,
+	HWND	hwndTreeRes,
+	HWND	hwndComboFuncKind,
+	HWND	hwndListFunc,
+	CFuncLookup& cLookup
+)
+{
+	HTREEITEM	nIdxMenu = TreeView_GetSelection( hwndTreeRes );
+	int			nIdxFIdx = Combo_GetCurSel( hwndComboFuncKind );
+	int			nIdxFunc = List_GetCurSel( hwndListFunc );
+	//i = List_GetCount( hwndTreeRes );
+	if (nIdxMenu == NULL) {
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ),     FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ),   FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RIGHT ),  FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_LEFT ),   FALSE );
+	}
+	else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ),     NULL != TreeView_GetPrevSibling( hwndTreeRes, nIdxMenu ) );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ),   NULL != TreeView_GetNextSibling( hwndTreeRes, nIdxMenu ) );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RIGHT ),  NULL != TreeView_GetPrevSibling( hwndTreeRes, nIdxMenu ) );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_LEFT ),   NULL != TreeView_GetParent( hwndTreeRes, nIdxMenu ) );
+	}
+	if (LB_ERR == nIdxFunc ||
+		( CB_ERR != nIdxFIdx && LB_ERR != nIdxFunc &&
+		(cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) == 0 && nIdxFIdx != nSpecialFuncsNum))) {
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
+	}
+	else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), NULL != nIdxMenu );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), NULL != nIdxMenu );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
+	}
+
+}
+
 /* Menu メッセージ処理 */
 INT_PTR CPropMainMenu::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -205,7 +246,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 	int			i;
 
-	HTREEITEM	nIdxMenu;
 	int			nIdxFIdx;
 	int			nIdxFunc;
 	WCHAR		szLabel[256+10];
@@ -246,6 +286,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		m_wpTreeView = (WNDPROC)SetWindowLongPtr( hwndTreeRes, GWLP_WNDPROC, (LONG_PTR)TreeViewProc );
 
 		::SetTimer( hwndDlg, 1, 300, NULL );
+
+		SetDlgItemsEnableState( hwndDlg, hwndTreeRes, hwndComboFunkKind, hwndListFunk, m_cLookup );
 
 		bInMove = false;
 
@@ -759,36 +801,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		break;
 
 	case WM_TIMER:
-		nIdxMenu = TreeView_GetSelection( hwndTreeRes );
-		nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
-		nIdxFunc = List_GetCurSel( hwndListFunk );
-		i = List_GetCount( hwndTreeRes );
-		if (nIdxMenu == NULL) {
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ),     FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ),   FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RIGHT ),  FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_LEFT ),   FALSE );
-		}
-		else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ),     NULL != TreeView_GetPrevSibling( hwndTreeRes, nIdxMenu ) );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ),   NULL != TreeView_GetNextSibling( hwndTreeRes, nIdxMenu ) );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RIGHT ),  NULL != TreeView_GetPrevSibling( hwndTreeRes, nIdxMenu ) );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_LEFT ),   NULL != TreeView_GetParent( hwndTreeRes, nIdxMenu ) );
-		}
-		if (LB_ERR == nIdxFunc ||
-		  ( CB_ERR != nIdxFIdx && LB_ERR != nIdxFunc &&
-		    (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) == 0 && nIdxFIdx != nSpecialFuncsNum))) {
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
-		}
-		else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), NULL != nIdxMenu );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), NULL != nIdxMenu );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
-		}
+		SetDlgItemsEnableState( hwndDlg, hwndTreeRes, hwndComboFunkKind, hwndListFunk, m_cLookup );
 		break;
 	case WM_DESTROY:
 		::KillTimer( hwndDlg, 1 );
