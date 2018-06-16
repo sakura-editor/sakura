@@ -19,8 +19,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install2-1-1-2
-VersionInfoVersion=2.1.1.2
+OutputBaseFilename=sakura_install2-3-0-0
+VersionInfoVersion=2.3.0.0
 
 ; OSバージョン制限
 MinVersion=0,5.0
@@ -52,6 +52,8 @@ Name: sendto;      Description: "送るに追加(&T)";                     Components
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
 Source: "sakura\bsd_license.txt";      DestDir: "{app}";         Components: main
+Source: "sakura\perl_license.txt";     DestDir: "{app}";         Components: main
+Source: "sakura\perl_license_jp.txt";  DestDir: "{app}";         Components: main
 Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.chm";           DestDir: "{app}";         Components: help
