@@ -29,7 +29,9 @@ build_script:
 
     echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
          %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
-    
+
+    call build-chm.bat
+
     call zipArtifacts.bat %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml
