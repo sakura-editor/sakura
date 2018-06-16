@@ -16,6 +16,10 @@ copy %platform%\%configuration%\*.exe %WORKDIR%\
 copy %platform%\%configuration%\*.dll %WORKDIR%\
 copy %platform%\%configuration%\*.pdb %WORKDIR%\
 
+copy help\macro\macro.chm    %WORKDIR%\
+copy help\plugin\plugin.chm  %WORKDIR%\
+copy help\sakura\sakura.chm  %WORKDIR%\
+
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
 
