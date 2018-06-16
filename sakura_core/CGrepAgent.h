@@ -118,7 +118,8 @@ private:
 		int						nNest,				//!< [in] ネストレベル
 		bool&					bOutputBaseFolder,
 		int*					pnHitCount,			//!< [i/o] ヒット数の合計
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	// Grep実行
@@ -138,7 +139,8 @@ private:
 		const TCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	int DoGrepReplaceFile(
@@ -158,7 +160,8 @@ private:
 		const TCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	// Grep結果をpszWorkに格納
