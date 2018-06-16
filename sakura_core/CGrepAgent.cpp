@@ -22,14 +22,16 @@
 #include <deque>
 #include "sakura_rc.h"
 
-#define UICHECK_INTERVAL_MILLISEC 50	// UI確認の時間間隔
+#define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
+#define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
 , m_dwTickAddTail( 0 )
 , m_dwTickUICheck( 0 )
+, m_dwTickUIFileName( 0 )
 {
 }
 
@@ -714,8 +716,11 @@ int CGrepAgent::DoGrepTree(
 			);
 		}
 
-		//GREP実行！
-		::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
+		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
+			m_dwTickUIFileName = dwNow;
+			//GREP実行！
+			::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
+		}
 
 		std::tstring currentFile = pszPath;
 		currentFile += _T("\\");

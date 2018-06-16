@@ -186,6 +186,7 @@ private:
 
 	DWORD m_dwTickAddTail;	// AddTail() を呼び出した時間
 	DWORD m_dwTickUICheck;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
+	DWORD m_dwTickUIFileName;	// Cancelダイアログのファイル名表示更新を行った時間
 
 public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか
