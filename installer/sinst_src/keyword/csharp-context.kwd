@@ -1,0 +1,23 @@
+// C#コンテキスト  キーワード定義ファイル
+
+add
+alias
+ascending
+descending
+dynamic
+from
+get
+global
+group
+into
+join
+let
+orderby
+partial
+remove
+select
+set
+value
+var
+where
+yield

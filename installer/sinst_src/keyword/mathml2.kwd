@@ -1,0 +1,402 @@
+// MathML 2.0 キーワードファイル
+// 2002/07/11  Moca
+// 
+// Element 及び Attribute は大文字小文字を区別します
+// Attribute value は区別しない場合と区別する場合の両方があります
+// このファイルには要素、属性、属性の値(一部)を含んでいます
+// 実体参照(&pi;等のこと)は含んでいません
+// sakuraが区切り文字として認識するため強調表示できないもの("-"のこと)は "//skr "で
+// コメントアウトしてあります。それ以外のコメントは"// "で始まっています
+
+// MathML用DOCTYPE
+// <!DOCTYPE math PUBLIC "-//W3C//DTD MathML 2.0//EN"
+//          "http://www.w3.org/TR/MathML2/dtd/mathml2.dtd">
+// html1.1 + mathml用DOCTYPE
+// <!DOCTYPE html
+//     PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+//            "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" >
+// namespace
+//  http://www.w3.org/1998/Math/MathML
+// MIME type
+//  application/mathml+xml
+// MathML 1.0 MIME type
+//  text/mathml
+// 拡張子
+//  .mml
+
+// Element
+
+abs
+and
+annotation
+//skr annotation-xml
+apply
+approx
+arccos
+arccosh
+arccot
+arccoth
+arccsc
+arccsch
+arcsec
+arcsech
+arcsin
+arcsinh
+arctan
+arctanh
+arg
+bvar
+card
+cartesianproduct
+ceiling
+ci
+cn
+codomain
+complexes
+compose
+condition
+conjugate
+cos
+cosh
+cot
+coth
+csc
+csch
+csymbol
+curl
+declare
+degree
+determinant
+diff
+divergence
+divide
+domain
+domainofapplication
+emptyset
+eq
+equivalent
+eulergamma
+exists
+exp
+exp
+exponentiale
+factorial
+factorof
+false
+floor
+fn
+forall
+gcd
+geq
+grad
+gt
+ident
+image
+imaginary
+imaginaryi
+implies
+in
+infinity
+int
+integers
+intersect
+interval
+inverse
+lambda
+laplacian
+lcm
+leq
+limit
+list
+ln
+log
+logbase
+lowlimit
+lt
+maction
+maligngroup
+malignmark
+math
+matrix
+matrixrow
+max
+mean
+median
+menclose
+merror
+mfenced
+mfrac
+mglyph
+mi
+min
+minus
+mlabeledtr
+mmultiscripts
+mn
+mo
+mode
+moment
+momentabout
+mover
+mpadded
+mphantom
+mprescripts
+mroot
+mrow
+ms
+mspace
+msqrt
+mstyle
+msub
+msubsup
+msup
+mtable
+mtd
+mtext
+mtr
+munder
+munderover
+naturalnumbers
+neq
+not
+notanumber
+notin
+notprsubset
+notsubset
+or
+otherwise
+outerproduct
+partialdiff
+pi
+piece
+piecewise
+plus
+power
+primes
+product
+prsubset
+quotient
+rationals
+real
+reals
+reln
+rem
+root
+scalarproduct
+sdev
+sec
+sech
+selector
+semantics
+seq
+set
+setdiff
+sin
+sinh
+subset
+sum
+tan
+tanh
+tendsto
+times
+transpose
+true
+union
+uplimit
+variance
+vector
+vectorproduct
+xor
+
+// Attribute
+
+accent
+accentunder
+actiontype
+align
+alignmentscope
+alt
+altimg
+alttext
+background
+base
+baseline
+bevelled
+class
+close
+closure
+color
+columnalign
+columnlines
+columnspacing
+columnspan
+columnwidth
+definitionURL
+denomalign
+depth
+display
+displaystyle
+edge
+encoding
+equalcolumns
+equalrows
+fence
+fontfamily
+fontsize
+fontstyle
+fontweight
+form
+frame
+framespacing
+groupalign
+height
+id
+index
+largeop
+linebreak
+linethickness
+lquote
+lspace
+macros
+mathbackground
+mathcolor
+mathsize
+mathvariant
+maxsize
+mediummathspace
+minlabelspacing
+minsize
+mode
+movablelimits
+name
+nargs
+notation
+numalign
+occurrence
+open
+order
+other
+overflow
+rowalign
+rowlines
+rowspacing
+rowspan
+rquote
+rspace
+scope
+scriptlevel
+scriptminsize
+scriptsizemultiplier
+selection
+separator
+separators
+side
+stretchy
+style
+subscriptshift
+superscriptshift
+symmetric
+thickmathspace
+thinmathspace
+type
+verythickmathspace
+verythinmathspace
+veryverythickmathspace
+veryverythinmathspace
+width
+xref
+
+// Attribute value
+
+MathML
+//skr MathML-Content
+//skr MathML-Presentation
+above
+actuarial
+algebraic
+all
+auto
+axis
+badbreak
+baseline
+below
+big
+bold
+//skr bold-fraktur
+//skr bold-italic
+//skr bold-sans-serif
+//skr bold-script
+bottom
+center
+closed
+//skr closed-open
+column
+complex
+//skr complex-cartesian
+//skr complex-polar
+constant
+dashed
+//skr double-struck
+//skr e-notation
+elide
+exicographic
+false
+fit
+float
+//skr floating-point
+fraktur
+function
+//skr function-model
+global
+goodbreak
+indentingnewline
+infinity
+infix
+inherited
+integer
+italic
+left
+leftoverlap
+lexicographic
+list
+local
+longdiv
+matrix
+medium
+monospace
+multiset
+namedspace
+newline
+nobreak
+none
+normal
+numeric
+// open
+//skr open-closed
+postfix
+prefix
+principal_branch
+radical
+rational
+// real
+right
+rightoverlap
+row
+//skr sans-serif
+//skr sans-serif-bold-italic
+//skr sans-serif-italic
+scale
+script
+scroll
+// set
+small
+solid
+symbolic
+thick
+thin
+top
+transparent
+true
+truncate
+//skr two-sided
+vector

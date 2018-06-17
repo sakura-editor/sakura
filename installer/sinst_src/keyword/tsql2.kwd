@@ -1,0 +1,39 @@
+//=========================================================
+// Transact-SQL 第二キーワード定義ファイル
+//  2001/07/09 ver1.0   Stonee
+//
+// 大文字小文字を区別しない
+// ファイル拡張子     存在してなさそうなやつを適当に
+// ブロックコメント1  /*    */
+// ラインコメント1    --
+// ラインコメント2   （空欄）
+// エスケープ         PL/SQL風("""")
+//=========================================================
+
+// データ型
+
+BINARY
+BIT
+CHAR
+//CURSOR
+DECIMAL
+DATETIME
+FLOAT
+IMAGE
+INT
+MONEY
+NCHAR
+NTEXT
+NUMERIC
+NVARCHAR
+REAL
+SMALLDATETIME
+SMALLINT
+SMALLMONEY
+TIMESTAMP
+TINYINT
+TEXT
+UNIQUEIDENTIFIER
+VARBINARY
+VARCHAR
+

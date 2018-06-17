@@ -1,0 +1,224 @@
+#AllowSameLineComments /// #AllowSameLineComments
+#ClipboardTimeout /// #ClipboardTimeout milliseconds
+#CommentFlag /// #CommentFlag NewString
+#ErrorStdOut /// #ErrorStdOut
+#EscapeChar /// #EscapeChar NewChar
+#HotkeyInterval /// #HotkeyInterval Value
+#HotkeyModifierTimeout /// #HotkeyModifierTimeout milliseconds
+#Hotstring /// #Hotstring NewOptions
+#Include /// #Include FileName
+#IncludeAgain /// #IncludeAgain FileName
+#InstallKeybdHook /// #InstallKeybdHook
+#InstallMouseHook /// #InstallMouseHook
+#KeyHistory /// #KeyHistory MaxEvents
+#LTrim /// #LTrim On|Off
+#MaxHotkeysPerInterval /// #MaxHotkeysPerInterval Value
+#MaxMem /// #MaxMem ValueInMegabytes
+#MaxThreads /// #MaxThreads Value
+#MaxThreadsBuffer /// #MaxThreadsBuffer On|Off
+#MaxThreadsPerHotkey /// #MaxThreadsPerHotkey Value
+#NoTrayIcon /// #NoTrayIcon
+#Persistent /// #Persistent
+#SingleInstance /// #SingleInstance [force|ignore|off]
+#UseHook /// #UseHook [On|Off]
+#WinActivateForce /// #WinActivateForce
+AutoTrim /// AutoTrim, On|Off
+BlockInput /// BlockInput, On|Off|Send|Mouse|SendAndMouse|Default
+Break /// Break
+ClipWait /// ClipWait [, SecondsToWait, 1]
+Continue /// Continue
+Control /// Control, Cmd [, Value, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlClick /// ControlClick [, Control-or-Pos, WinTitle, WinText, WhichButton, ClickCount, Options, ExcludeTitle, ExcludeText]
+ControlFocus /// ControlFocus [, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlGet /// ControlGet, OutputVar, Cmd [, Value, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlGetFocus /// ControlGetFocus, OutputVar [WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlGetPos /// ControlGetPos [, X, Y, Width, Height, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlGetText /// ControlGetText, OutputVar [, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlMove /// ControlMove, Control, X, Y, Width, Height [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlSend /// ControlSend [, Control, Keys, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlSendRaw /// ControlSendRaw [, Control, Keys, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ControlSetText /// ControlSetText, Control, NewText [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+CoordMode /// CoordMode, ToolTip|Pixel|Mouse [, Screen|Relative]
+DetectHiddenText /// DetectHiddenText, On|Off
+DetectHiddenWindows /// DetectHiddenWindows, On|Off
+Drive /// Drive, Sub-command [, Drive , Value]
+DriveGet /// DriveGet, OutputVar, Cmd [, Value]
+DriveSpaceFree /// DriveSpaceFree, OutputVar, C:\
+Edit /// Edit
+Else /// Else
+EndRepeat /// EndRepeat
+EnvAdd /// EnvAdd, Var, Value [, TimeUnits]
+EnvDiv /// EnvDiv, Var, Value
+EnvMult /// EnvMult, Var, Value
+EnvSet /// EnvSet, EnvVar, Value
+EnvSub /// EnvSub, Var, Value [, TimeUnits]
+EnvUpdate /// EnvUpdate
+Exit /// Exit [, ExitCode]
+ExitApp /// ExitApp [, ExitCode]
+FileAppend /// FileAppend [, Text, Filename]
+FileCopy /// FileCopy, Source, Dest [, Flag (1 = overwrite)]
+FileCopyDir /// FileCopyDir, Source, Dest [, Flag]
+FileCreateDir /// FileCreateDir, Path
+FileCreateShortcut /// FileCreateShortcut, Target, C:\My Shortcut.lnk [, WorkingDir, Args, Description, IconFile, ShortcutKey, IconNumber, RunState]
+FileDelete /// FileDelete, Path
+FileGetAttrib /// FileGetAttrib, OutputVar [, Filename]
+FileGetShortcut /// FileGetShortcut, LinkFile [, OutTarget, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState]
+FileGetSize /// FileGetSize, OutputVar [, Filename, Units]
+FileGetTime /// FileGetTime, OutputVar [, Filename, WhichTime (M, C, or A -- default is M)]
+FileGetVersion /// FileGetVersion, OutputVar [, Filename]
+FileInstall /// FileInstall, Source, Dest, Flag (1 = overwrite)
+FileMove /// FileMove, Source, Dest [, Flag (1 = overwrite)]
+FileMoveDir /// FileMoveDir, Source, Dest [, Flag (1 = overwrite)]
+FileRead /// FileRead, OutputVar, Filename
+FileReadLine /// FileReadLine, OutputVar, Filename, LineNum
+FileRecycle /// FileRecycle, Path
+FileRecycleEmpty /// FileRecycleEmpty [, C:\]
+FileRemoveDir /// FileRemoveDir, Path [, Recurse? (1 = yes)]
+FileSelectFile /// FileSelectFile, OutputVar [, Options, RootDir[\DefaultFilename], Prompt, Filter]
+FileSelectFolder /// FileSelectFolder, OutputVar [, RootDir, Options, Prompt]
+FileSetAttrib /// FileSetAttrib, Attributes [, FilePattern, OperateOnFolders?, Recurse?]
+FileSetTime /// FileSetTime [, YYYYMMDDHH24MISS, FilePattern, WhichTime (M|C|A), OperateOnFolders?, Recurse?]
+FormatTime /// FormatTime, OutputVar [, YYYYMMDDHH24MISS, Format]
+GetKeyState /// GetKeyState, OutputVar, WhichKey [, Mode (P|T)]
+Gosub /// Gosub, Label
+Goto /// Goto, Label
+GroupActivate /// GroupActivate, GroupName [, R]
+GroupAdd /// GroupAdd, GroupName, WinTitle [, WinText, Label, ExcludeTitle, ExcludeText]
+GroupClose /// GroupClose, GroupName [, A|R]
+GroupDeactivate /// GroupDeactivate, GroupName [, R]
+Gui /// Gui, sub-command [, Param2, Param3, Param4]
+GuiControl /// GuiControl, Sub-command, ControlID [, Param3]
+GuiControlGet /// GuiControlGet, OutputVar [, Sub-command, ControlID, Param4]
+HideAutoItWin /// HideAutoItWin, On|Off
+Hotkey /// Hotkey, KeyName [, Label, Options]
+If /// If Var = Value | IfWinExist, WinTitle | etc.`n{`n`tcommand1`n`tcommand2`n}`nElse`n{`n`tcommand1`n`tcommand2`n}\nIf Var [not] between Low and High\nIf Var [not] contains value1,value2,...\nIf /// If Var [not] in value1,value2,...\nIf /// If Var is [not] type
+IfEqual /// IfEqual, var, value
+IfExist /// IfExist, File|Dir|Pattern
+IfGreater /// IfGreater, var, value
+IfGreaterOrEqual /// IfGreaterOrEqual, var, value
+IfInString /// IfInString, Var, SearchString
+IfLess /// IfLess, var, value
+IfLessOrEqual /// IfLessOrEqual, var, value
+IfMsgBox /// IfMsgBox, Yes|No|OK|Cancel|Abort|Ignore|Retry|Timeout
+IfNotEqual /// IfNotEqual, var, value
+IfNotExist /// IfNotExist, File|Dir|Pattern
+IfNotInString /// IfNotInString, Var, SearchString
+IfWinActive /// IfWinActive [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+IfWinExist /// IfWinExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+IfWinNotActive /// IfWinNotActive [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+IfWinNotExist /// IfWinNotExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+ImageSearch /// ImageSearch, OutputVarX, OutputVarY, X1, Y1, X2, Y2, ImageFile
+IniDelete /// IniDelete, Filename, Section [, Key]
+IniRead /// IniRead, OutputVar, Filename, Section, Key [, Default]
+IniWrite /// IniWrite, Value, Filename, Section, Key
+Input /// Input [, OutputVar, Options, EndKeys, MatchList]
+InputBox /// InputBox, OutputVar [, Title, Prompt, HIDE, Width, Height, X, Y, Font, Timeout, Default]
+KeyHistory /// KeyHistory
+KeyHistory /// KeyHistory
+KeyWait /// KeyWait, KeyName [, Options]
+ListHotkeys /// ListHotkeys
+ListLines /// ListLines
+ListVars /// ListVars
+Loop /// Loop, `n{`n`tcommand1`n`tcommand2`n}\nLoop /// Loop, FilePattern, IncludeFolders?, Recurse?]`n{`n`tcommand1`n`tcommand2`n}\nLoop /// Loop, Parse, InputVar [, Delimiters|CSV, OmitChars]`n{`n`tcommand1`n`tcommand2`n}\nLoop /// Loop, Read, InputFile [, OutputFile]`n{`n`tcommand1`n`tcommand2`n}\nLoop /// Loop, Reg, Key, IncludeSubkeys?, Recurse?]`n{`n`tcommand1`n`tcommand2`n}
+Menu /// Menu, MenuName, Command [, Param3, Param4]
+MouseClick /// MouseClick, WhichButton [, X, Y, ClickCount, Speed, D|U, R]
+MouseClickDrag /// MouseClickDrag, WhichButton, X1, Y1, X2, Y2 [, Speed, R]
+MouseGetPos /// MouseGetPos, OutputVarX [, OutputVarY, OuputVarID, OutputVarControl]
+MouseMove /// MouseMove, X, Y [, Speed, R]
+MsgBox /// MsgBox [, Options, Title, Text, Timeout]
+OnExit /// OnExit [, Label]
+OutputDebug /// OutputDebug, Text
+Pause /// Pause [, On|Off|Toggle]
+PixelGetColor /// PixelGetColor, OutputVar, X, Y [, RGB]
+Pixelsearch /// Pixelsearch, OutputVarX, OutputVarY, X1, Y1, X2, Y2, ColorID [, Variation, Fast|RGB]
+PostMessage /// PostMessage, Msg [, wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+Process /// Process, Cmd, PID-or-Name [, Param3]
+Progress /// Progress [, Param1, SubText, MainText, WinTitle, FontName]
+Random /// Random, OutputVar [, Min, Max]
+RegDelete /// RegDelete, HKLM|HKU|HKCU|HKCR|HKCC, SubKey [, ValueName]
+RegRead /// RegRead, OutputVar, HKLM|HKU|HKCU|HKCR|HKCC, SubKey [, ValueName]
+RegWrite /// RegWrite, ValueType, HKLM|HKU|HKCU|HKCR|HKCC, SubKey [, ValueName, Value]
+Reload /// Reload
+Repeat /// Repeat
+Return /// Return [, Expression]
+Run /// Run, Target [, WorkingDir, Max|Min|Hide|UseErrorLevel, OutputVarPID]
+RunAs /// RunAs [, User, Password, Domain] 
+RunWait /// RunWait, Target [, WorkingDir, Max|Min|Hide|UseErrorLevel]
+Send /// Send, Keys
+SendMessage /// SendMessage, Msg [, wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
+SendRaw /// SendRaw, Keys
+SetBatchLines /// SetBatchLines, 10ms
+SetCapsLockState /// SetCapsLockState, On|Off|AlwaysOn|AlwaysOff
+SetControlDelay /// SetControlDelay , Delay
+SetDefaultMouseSpeed /// SetDefaultMouseSpeed, Speed
+SetEnv /// SetEnv, Var, Value
+SetFormat /// SetFormat, float|integer, TotalWidth.DecimalPlaces|hex|d
+SetKeyDelay /// SetKeyDelay, Delay
+SetMouseDelay /// SetMouseDelay, Delay
+SetNumLockState /// SetNumLockState, On|Off|AlwaysOn|AlwaysOff
+SetScrollLockState /// SetScrollLockState, On|Off|AlwaysOn|AlwaysOff
+SetStoreCapslockMode /// SetStoreCapslockMode, On|Off
+SetTimer /// SetTimer, Label [, Period|On|Off]
+SetTitleMatchMode /// SetTitleMatchMode, Fast|Slow|1|2|3
+SetWinDelay /// SetWinDelay, Delay
+SetWorkingDir /// SetWorkingDir, DirName
+Shutdown /// Shutdown, Code
+Sleep /// Sleep, Delay
+Sort /// Sort, VarName [, Options]
+SoundBeep /// SoundBeep [, Frequency, Duration]
+SoundGet /// SoundGet, OutputVar [, ComponentType, ControlType, DeviceNumber]
+SoundGetWaveVolume /// SoundGetWaveVolume, OutputVar [, DeviceNumber]
+SoundPlay /// SoundPlay, Filename [, wait]
+SoundSet /// SoundSet, NewSetting [, ComponentType, ControlType, DeviceNumber]
+SoundSetWaveVolume /// SoundSetWaveVolume, Percent [, DeviceNumber]
+SplashImage /// SplashImage [, ImageFile, Options, SubText, MainText, WinTitle, FontName]
+SplashTextOff /// SplashTextOff
+SplashTextOn /// SplashTextOn [, Width, Height, Title, Text]
+SplitPath /// SplitPath, InputVar [, OutName, OutDir, OutExt, OutNameNoExt, OutDrive]
+StatusBarGetText /// StatusBarGetText, OutputVar [, Part, WinTitle, WinText, ExcludeTitle, ExcludeText]
+StatusBarWait /// StatusBarWait [, BarText, Seconds, Part, WinTitle, WinText, Interval, ExcludeTitle, ExcludeText]
+StringCaseSense /// StringCaseSense, On|Off
+StringGetPos /// StringGetPos, OutputVar, InputVar, SearchText [, Ln|Rn, Offset]
+StringLeft /// StringLeft, OutputVar, InputVar, Count
+StringLen /// StringLen, OutputVar, InputVar
+StringLower /// StringLower, OutputVar, InputVar [, T]
+StringMid /// StringMid, OutputVar, InputVar, StartChar, Count [, L]
+StringReplace /// StringReplace, OutputVar, InputVar, SearchText [, ReplaceText, All]
+StringRight /// StringRight, OutputVar, InputVar, Count
+StringSplit /// StringSplit, OutputArray, InputVar [, Delimiters, OmitChars]
+StringTrimLeft /// StringTrimLeft, OutputVar, InputVar, Count
+StringTrimRight /// StringTrimRight, OutputVar, InputVar, Count
+StringUpper /// StringUpper, OutputVar, InputVar [, T]
+Suspend /// Suspend [, On|Off|Toggle|Permit]
+SysGet /// SysGet, OutputVar, Sub-command [, Param3]
+Thread /// Thread, Setting, P2 [, P3]
+ToolTip /// ToolTip [, Text, X, Y, WhichToolTip]
+Transform /// Transform, OutputVar, Cmd, Value1 [, Value2]
+TrayTip /// TrayTip [, Title, Text, Seconds, Options]
+URLDownloadToFile /// URLDownloadToFile, URL, Filename
+WinActivate /// WinActivate [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinActivateBottom /// WinActivateBottom [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinClose /// WinClose [, WinTitle, WinText, SecondsToWait, ExcludeTitle, ExcludeText]
+WinGet /// WinGet, OutputVar [, Cmd, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinGetActiveStats /// WinGetActiveStats, Title, Width, Height, X, Y
+WinGetActiveTitle /// WinGetActiveTitle, OutputVar
+WinGetClass /// WinGetClass, OutputVar [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinGetPos /// WinGetPos [X, Y, Width, Height, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinGetText /// WinGetText, OutputVar [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinGetTitle /// WinGetTitle, OutputVar [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinHide /// WinHide [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinKill /// WinKill [, WinTitle, WinText, SecondsToWait, ExcludeTitle, ExcludeText]
+WinMaximize /// WinMaximize [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinMenuSelectItem /// WinMenuSelectItem, WinTitle, WinText, Menu [, SubMenu1, SubMenu2, SubMenu3, SubMenu4, SubMenu5, SubMenu6, ExcludeTitle, ExcludeText]
+WinMinimize /// WinMinimize [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinMinimizeAll /// WinMinimizeAll
+WinMinimizeAllUndo /// WinMinimizeAllUndo
+WinMove /// WinMove, WinTitle, WinText, X, Y [, Width, Height, ExcludeTitle, ExcludeText]
+WinRestore /// WinRestore [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinSet /// WinSet, AlwaysOnTop|Trans, On|Off|Toggle|Value(0-255) [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinSetTitle /// WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
+WinShow /// WinShow [, WinTitle, WinText, ExcludeTitle, ExcludeText]
+WinWait /// WinWait, WinTitle, WinText, Seconds [, ExcludeTitle, ExcludeText]
+WinWaitActive /// WinWaitActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]
+WinWaitClose /// WinWaitClose, WinTitle, WinText, Seconds [, ExcludeTitle, ExcludeText]
+WinWaitNotActive /// WinWaitNotActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]

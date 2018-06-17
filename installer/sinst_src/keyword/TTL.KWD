@@ -1,0 +1,228 @@
+// Tera Term Pro version 2.3 用 MACRO キーワード定義ファイル
+//2002/07/24	すい
+// --------------------------------------------------
+// Tera Term Pro 付属ヘルプより抜粋
+// オリジナル：http://hp.vector.co.jp/authors/VA002416/
+// 日本語化　：http://www.sakurachan.org/soft/teraterm-j/
+// --------------------------------------------------
+// ※ この設定ファイルの最新版は
+// 　 http://www.egroups.co.jp/files/sakura-editor/User/Data/ にあります。
+// ※ このファイルの履歴はファイル末尾にあります。
+// ************************************************************************* //
+// ＜設定手順＞
+//
+// １．メニュー操作で [ツール(T)]→[共通設定(C)]（または [Ctrl]+[6]）にて
+// 　　「共通設定」を出す。そして [強調キーワード] タブにて
+//
+// 　　(1)[セット追加] ボタン押して名称「Tera Term Pro」と入力し、
+// 　　   [OK]ボタンを押して設定する。
+// 　　(2)次に [インポート] ボタンを押して、このファイルを指定して取り込む。
+// 　　(3)「キーワードの英大文字小文字区別(C)」にはチェックが *付いていない* 
+// 　　   事を確認する。（チェックが付いていたらチェックをはずす）
+// 　　(4)「共通設定」を [OK] ボタンを押して閉じる。
+//
+// ２．メニュー操作で [ツール(T)]→[タイプ別設定一覧(L)]（または [Ctrl]+[4]）
+// 　　にて「タイプ別設定一覧」を出す。
+// 　　そこで、空いている設定（または自分にとっていらない不要な設定）を選択して
+// 　　[設定変更] ボタンを押して「タイプ別設定」を出す。
+// 　　そこで以下のように設定する。設定後、[OK]ボタンを押して「タイプ別設定」を
+// 　　閉じて設定終了。
+//
+// 　　[スクリーン]
+// 　　　　設定の名前                   [Tera Term Pro]
+// 　　　　ファイル拡張子               [ttl]
+// 　　　　スマートインデント           [なし]
+// 　　　　その他のインデント対象文字   [    ]          # 空欄
+// 　　　　アウトライン解析方法
+// 　　　　└ ルールファイル            [～～\TTL.RL ]  # 同梱の TTL.RL を指定
+//
+// 　　　　※ ルールファイル
+// 　　　　　 　　編集中に [F11] を押した時の解析画面の解析ルールを指定する
+// 　　　　　 　　ファイルです。
+//
+// 　　[カラー]
+// 　　　　強調キーワード1      [Tera Term Pro]
+// 　　　　コメントスタイル
+// 　　　　├ ブロック型        [  ]～[  ]              # 空欄
+// 　　　　├ ブロック型        [  ]～[  ]              # 空欄
+// 　　　　├ 行型              [;   ]                  # セミコロン１文字
+// 　　　　├ 行型              [    ]                  # 空欄
+// 　　　　└ 行型              [    ]                  # 空欄
+// 　　　　エスケープ           [PL/SQL風: """"]
+//
+// 　　[支援]
+// 　　　　入力補完機能
+// 　　　　├ 単語ファイル      [～～\TTL.KWD ]     # このファイルを指定する。
+// 　　　　└ [レ] 英大文字小文字を同一視する(I)    # チェックする
+// 　　　　キーワードヘルプ機能
+// 　　　　├ [レ] キーワードヘルプ機能を使う(K)	# チェックする
+// 　　　　└ 辞書ファイル		[～～\TTL.KHP]		# 同梱の TTL.KHP を指定
+//
+// 　　　　※ 入力補完機能
+// 　　　　　 　　単語を途中まで入力した状態で [Ctrl]+[  ](スペース)操作時の
+// 　　　　　 　　機能です。
+// 　　　　※ キーワードヘルプ機能
+// 　　　　　 　　単語を範囲選択した場合や入力補完機能時に登場する説明文です。
+//
+// 以上で基本的な設定は終了です。
+// 他、配色など、色々自分の好みで設定してみてください。
+// ************************************************************************* //
+
+// システム変数
+inputstr
+param2
+param3
+result
+timeout
+
+// 通信コマンド
+bplusrecv
+bplussend
+changedir
+clearscreen
+closett
+connect
+disconnect
+enablekeyb
+flushrecv
+gettitle
+kmtfinish
+kmtget
+kmtrecv
+kmtsend
+loadkeymap
+logclose
+logopen
+logpause
+logstart
+logwrite
+quickvanrecv
+quickvansend
+recvln
+restoresetup
+send
+sendbreak
+sendfile
+sendkcode
+sendln
+setecho
+setsync
+settitle
+showtt
+testlink
+unlink
+wait
+waitevent
+waitln
+waitrecv
+xmodemrecv
+xmodemsend
+zmodemrecv
+zmodemsend
+
+// 制御コマンド
+call
+end
+execcmnd
+exit
+for
+next
+goto
+if
+then
+elseif
+else
+endif
+include
+pause
+return
+while
+endwhile
+
+// 文字列操作コマンド
+code2str
+int2str
+str2code
+str2int
+strcompare
+strconcat
+strcopy
+strlen
+strscan
+
+// ファイル操作コマンド
+fileclose
+fileconcat
+filecopy
+filecreate
+filedelete
+filemarkptr
+fileopen
+filereadln
+filerename
+filesearch
+fileseek
+fileseekback
+filestrseek
+filestrseek2
+filewrite
+filewriteln
+findfirst
+findnext
+findclose
+getdir
+makepath
+setdir
+
+// パスワードコマンド
+delpassword
+getpassword
+passwordbox
+
+// その他のコマンド
+beep
+closesbox
+exec
+getdate
+getenv
+gettime
+inputbox
+messagebox
+setdate
+setdlgpos
+setenv
+//※↑setenv は Tera Term Pro Ver.2.2 で追加され、Ver.2.3 で削除されました。
+setexitcode
+settime
+show
+statusbox
+yesnobox
+
+// --------------------------------------------------
+//	履歴です。
+//	
+//	2000/08/20	公開初版
+//
+//	2002/07/10-21時公開
+//		・ファイル先頭の注釈部分を「設定手順」に変更した。
+//		・ルールファイル,キーワードヘルプの辞書ファイルを同梱。
+//		　このファイルの定義内容は変わっていません。
+//
+//	2002/07/11
+//		・Ver.2.3 で削除された setenv についてもキーワードヘルプに
+//		　文法の説明文を記述した。
+//
+//	2002/07/12-23時公開
+//		・公開
+//
+//	2002/07/17-18時公開
+//		・キーワードヘルプ辞書ファイルを整理した。
+//		　キーワードを「then,elseif /// 」のようにまとめられる事を忘れてました。
+//		　「then,elseif,else,endif」「for,next」「while,endwhile」をまとめた。
+//
+//	2002/07/24-20時公開
+//		・エスケープの設定は [C言語風: "\""] よりも [PL/SQL風: """"] の方が
+//		　適していそうなので、「設定手順」の記述を修正した。
+//		　（Tera Term Pro マクロの文字列の仕様に完全にマッチするタイプはありません）
+//
+// ende.

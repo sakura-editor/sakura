@@ -1,0 +1,165 @@
+;//==========================================================
+;//
+;//		サクラエディタ用
+;//		スタイルシート/CSS2/CSS2.1 キーワードヘルプ定義ファイル
+;//		Rev1.00 2006/09/15
+;//		(C) 2006 かえで All rights reserved.
+;//
+;//==========================================================
+;//CSS2.1 プロパティ
+azimuth /// 横方向の音源の方向を指定\n azimuth: <degree> | [[ left-side | far-left | left | center-left | center |\n center-right | right | far-right | right-side] || behind ] |\n leftwards | rightwards | inherit
+background /// 背景要素一括指定\nbackgtound: [<'background-color'> || <'background-image'> ||\n <'background-repeat'> || <'background-attachment'> <'background-position'>] | inherit
+background-attachment /// 背景画像のスクロール方法を指定\nbackground-attachment: scroll | fixed | inherit
+background-color /// 背景色の指定\nbackground-color: <color> | transparent | inherit
+background-image /// 背景画像の指定\nbackground-image: <uri> | none | inherit
+background-position /// 背景画像の位置の初期値を指定\nbackground-position: [ [<percentage> | <length>]{1,2} | [ [top | center | bottom] ||\n [left | center | right] ] ] ] | inherit
+background-repeat /// 背景画像の繰り返し方法を指定\nbackground-repeat: repeat | repeat-x | repeat-y | no-repeat | inherit
+border /// ボーダーの一括指定\n border [<'border-width'> || <'border-style'> || <color>] | inherit
+border-collapse /// プロパティ'display'の値がtableかinline-tableである要素に指定可能\nテーブルのボーダーが隣接セルと分離しているか一致しているかを指定\n border-collapse: collapse | separate | inherit
+border-color /// ボーダーの色の一括指定\n border-color: <color>{1,4} | transparent | inherit
+border-spacing /// プロパティ'display'の値がtableかinline-tableである要素に指定可能\n分離モデルの隣接セルのボーダー間の距離を指定\n border-spacing: <length>{1,2} | inherit
+border-style /// ボーダーの種類の一括指定\n border-style: <border-style>{1,4} | inherit
+border-top /// 上部ボーダーの一括指定\n border-top: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-right /// 右部ボーダーの一括指定\n border-right: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-bottom /// 下部ボーダーの一括指定\n border-bottom: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-left /// 左部ボーダーの一括指定\n border-left: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-top-color /// 上部ボーダーの色の指定\n border-top-color: <'color'> | inherit
+border-right-color /// 右部ボーダーの色の指定\n border-right-color: <'color'> | inherit
+border-bottom-color /// 下部ボーダーの色の指定\n border-bottom-color: <'color'> | inherit
+border-left-color /// 左部ボーダーの色の指定\n border-left-color: <'color'> | inherit
+border-top-style /// 上部ボーダーの線種の指定\n border-top-style: <border-style> | inherit
+border-right-style /// 右部ボーダーの線種の指定\n border-right-style: <border-style> | inherit
+border-bottom-style /// 下部ボーダーの線種の指定\n border-bottom-style: <border-style> | inherit
+border-left-style /// 左部ボーダーの線種の指定\n border-left-style: <border-style> | inherit
+border-width /// ボーダーの太さの一括指定\n border-width: <border-width>{1,4} | inherit
+border-top-width /// 上部ボーダーの太さの指定\n border-top-width: <border-width> | inherit
+border-right-width /// 右部ボーダーの太さの指定\n border-right-width: <border-width> | inherit
+border-bottom-width /// 下部ボーダーの太さの指定\n border-bottom-width: <border-width> | inherit
+border-left-width /// 左部ボーダーの太さの指定\n border-left-width: <border-width> | inherit
+bottom /// 'position'の値がstatic以外の場合に指定可能\n ボックスの包含ブロックに対するオフセット値を指定\n bottom: <length> | percentage | auto | inherit
+caption-side /// プロパティ'display'の値がtable-captionの要素に指定可能\nテーブルキャプションのデーブルに対する位置を指定\n caption-side top | bottom | left | right | inherit
+clear /// ブロックレベル要素に指定可能\n対象が生成するボックスのどの側が先行するボックスに隣接しないかを指定\n clear: none | left | right | both | inherit
+clip /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n対象のトリミングされる領域を指定\n clip <shape> | auto | inherit
+color /// セレクタにマッチした対象の前景色を指定\n color: <color> | inherit
+content /// :before疑似要素と:after疑似要素に指定可能\n対象に挿入する内容を指定\n content: [ <string> | <uri> | <counter> | attr(X) |\n open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit
+counter-increment /// 'content'プロパティの値に指定されるcounter()とconters()の制御に使用\nカウンタの増加を指定\n counter-increment: [ <identifier> <integer>? ]+ | none | inherit
+counter-reset /// 'content'プロパティの値に指定されるcounter()とconters()の制御に使用\nカウンタの初期化を指定\n counter-reset: [ <identifier> <integer>? ]+ | none | inherit
+cue-after /// 要素同士を区切る為に、指定した要素の後で再生する音を指定\n cue-after: <uri> | none
+cue-before /// 要素同士を区切る為に、指定した要素の前で再生する音を指定\n cue-before: <uri> | none
+cue /// 要素同士を区切る為に、指定した要素の前後で再生する音を指定\n cue: <uri>{1,2} | none
+cursor /// 対象に対するポインティング・デバイスのカーソルの形状を指定\n cursor: [ [<uri> ,]* [ auto | crosshair | default | pointer | move |\n e-resize | ne-resize | nw-resize | n-resize | se-resize | s-resize | w-resize |\n text | wait | help | progress] ] | inherit
+direction /// 文字の基本方向を指定\n direction: ltr | rtl | inherit
+display /// 対象が生成するボックスの種類を指定\n display: inline | block | list-item | run-in | compact | marker | table |\n inline-table | table-row-group | table-header-group | table-footer-group |\n table-row | table-column-group | table-column | table-cell | table-caption |\n none | inherit
+elevation /// 上下方向の音源の位置を指定\n elevation: <degree> | below | level | above | higher | lower | inherit
+empty-cells /// 'display'の値がtable-cellである要素に指定可能\n分離モデルで空のセルの周囲のボーダーを表示するかどうかを指定\n table-cell: show | hide | inherit
+float /// 'position'がabsoluteかfixedで以外の要素に指定可能\n対象が生成するボックスの浮動化方法を指定\n float: left | right | none | inherit
+font-family /// フォントのデザインの種類を指定\n font-family: [[ <family-name> | <generic-family ],]*\n [ <family-name> | <generic-family> ] | inherit
+font-size /// フォントの大きさを指定\n font-size: <absolute-size> | <relative-size> | <length> | <percentage> | inherit
+font-style /// フォントの書体を指定\n font-style: normal | italic | oblique | inherit
+font-variant /// 英数文字の場合に小文字/Small Capsを区別して指定\n font-variant: normal | small-caps | inherit
+font-weight /// フォントの太さを指定\n font-weight: normal | bold | bolder | lighter |\n 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
+font /// フォントの一括指定('font-stretch'と'font-size-adjust'を除く)\nline-heightを指定する場合は値の直前に/(スラッシュ)が必要\n font: [ [<'font-style'> || <'font-variant'> || <'font-weight'> ]\n <'font-size'> [ /<'line-height'> ] <'font-family'> ]\n | caption | icon | menu | message-box | small-caption | status-bar | inherit
+height /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の高さを指定\n height: <length> | <percentage> | auto | inherit
+left /// 'position'の値がstatic以外の場合に指定可能\n ボックスの包含ブロックに対するオフセット値を指定\n left: <length> | percentage | auto | inherit
+letter-spacing /// 対象のテキストの文字間のスペースを指定\n letter-spacing: normal | <length> | inherit
+line-height /// 対象のインラインボックスの最初の高さを指定\n line-height: normal | <number> | <length> | <percentage> | auto | inherit
+list-style-image /// 'display'の値がlist-itemの要素に指定可能\n 対象のマーカボックスに使用する画像を指定\n list-style-image: <uri> | none | inherit
+list-style-position /// 'display'の値がlist-itemの要素に指定可能\n 対象のマーカボックスの基本ボックスに対する位置を指定\n list-style-position: inside | outside | inherit
+list-style-type /// 'display'の値がlist-itemの要素に指定可能\n 対象のマーカボックスと基本ボックスの距離を指定\n list-style-type: disc | circle | square | decimal | decimal-leading-zero |\n lower-roman | upper-roman | lower-greek | lower-alpha | lower-latin | upper-alpha | upper-latin |\n hebrew | armenian | georgian | cjk-ideographic | hiragana | katakana |\n hiragana-iroha | katakana-iroha | none | inherit
+list-style /// 'display'の値がlist-itemの要素に指定可能\n 対象のリスト関係の要素を一括指定\n list-style: [ <'list-style-type'> || <'list-style-position'> || <'list-style-image'> ] | inherit
+margin-right /// 要素と他の要素との右側のスペース(余白)を指定\n margin-right: <margin-width> | inherit
+margin-left /// 要素と他の要素との左側のスペース(余白)を指定\n margin-left: <margin-width> | inherit
+margin-top /// 要素と他の要素との上側のスペース(余白)を指定\n margin-top: <margin-width> | inherit
+margin-bottom /// 要素と他の要素との下側のスペース(余白)を指定\n margin-bottom: <margin-width> | inherit
+margin /// 要素と他の要素とのスペース(余白)を指定\n margin: <margin-width>{1,4} | inherit
+max-height /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の高さの最大値を指定\n max-height: <length> | <percentage> | none | inherit
+max-width /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の幅の最大値を指定\n max-width: <length> | <percentage> | none | inherit
+min-height /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の高さの最小値を指定\n min-height: <length> | <percentage> | inherit
+min-width /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の幅の最小値を指定\n max-width: <length> | <percentage> | inherit
+orphans /// 'page-break'の拡張\n ページの最後に残さなければならない最小行数を指定\n orphans: <integer> | inherit
+outline-color /// 対象に対するアウトラインの色を指定\n outline-color: <border-color> | inherit
+outline-style /// 対象に対するアウトラインの形状を指定\n outline-style: <border-style> | inherit
+outline-width /// 対象に対するアウトラインの太さを指定\n outline-width: <border-width> | inherit
+outline /// 対象に対するアウトラインの形状を一括指定\n outline: [<'outline-color'> || <'outline-style'> || <'outline-width'>] | inherit
+overflow /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロックが包含ブロックのボックスからはみ出す場合の視覚効果を指定\n overflow: visible | hidden | scroll | auto | inherit
+padding-top /// 要素の上側パディングを指定\n padding-top: <padding-width> | inherit
+padding-right /// 要素の右側パディングを指定\n padding-right: <padding-width> | inherit
+padding-bottom /// 要素の下側パディングを指定\n padding-bottom: <padding-width> | inherit
+padding-left /// 要素の左側パディングを指定\n padding-left: <padding-width> | inherit
+padding /// 要素のパディングの一括指定を指定\n padding: <padding-width>{1,4} | inherit
+page-break-after /// ブロックレベル要素に指定可能\n 対象の要素の後での改ページの有無を指定\n page-break-after: auto | always | avoid | left | right |inherit
+page-break-before /// ブロックレベル要素に指定可能\n 対象の要素の前での改ページの有無を指定\n page-break-before: auto | always | avoid | left | right |inherit
+page-break-inside /// ブロックレベル要素に指定可能\n 対象の要素の中での改ページの有無を指定\n page-break-inside: avoid | auto | inherit
+pause-after /// 対象の後に指定しただけ無音の時間を生成\n pause-after: <time> | <percentage> | inherit
+pause-before /// 対象の前に指定しただけ無音の時間を生成\n pause-before: <time> | <percentage> | inherit
+pause /// 対象に指定しただけ無音の時間を生成\n pause: [<time> | <percentage>]{1,2} | inherit
+pitch-range /// 平均ピッチ('pitch')を基準とした抑揚の範囲を指定\n pitch-range: <number> | inherit
+pitch /// 話し声の平均ピッチ(平均周波数)を指定\n pitch: <frequence> | x-low | low | medium | high | x-high | inherit
+play-during /// 背景音を指定\n play-during: <uri> | mix? | repeat? | auto | none | inherit
+position /// 対象が生成するボックスの位置の計算方法を指定\n position: static | relative | absolute | fixed | inherit
+quotes /// 引用符のレンダリング方法を指定\n 引用符を挿入するかどうかは'content'で指定\n quotes: [<string> <string>]+ | none | inherit
+richness /// 話し声の豊かさを指定\n richness: <number>(0～100) | inherit
+right /// 'position'の値がstatic以外の場合に指定可能\n ボックスの包含ブロックに対するオフセット値を指定\n right: <length> | percentage | auto | inherit
+speak-header /// 表のヘッダの音声読み上げ方法を指定\n speak-header: once | always | inherit
+speak-numeral /// 数字の読み方を指定\n speak-numeral: digits | continuous | inherit
+speak-punctuation /// 区切り文字の読み方を指定\n speak-punctuation: code | none | inherit
+speak /// テキストを音声出力するか、するならばどのような方式かを指定\n speak: normal | none | spell-out | inherit
+speech-rate /// 読み上げスピードを指定\n <number> | x-slow | slow | medium | fast | x-fast | faster | slower | inherit
+stress /// アクセントの強さを指定\n stress: <number> | inherit
+table-layout /// 'display'の値がtableかinline-tableである要素に指定可能\nテーブルのレンダリング方法を指定\n table-layout: auto | fixed | inherit
+text-align /// ブロックレベル要素に指定可能\n 対象の内容の行毎のブロック内での配置方法を指定\n text-align: left | right | center | justify | <string> | inherit
+text-decoration /// 対象の装飾方法を指定\n text-decoration: none | [underline || overline || line-through || blink ] | inherit
+text-indent /// 対象の内容の行毎の先頭の字下げサイズを指定\n text-indent: <length> | <percentage> | inherit
+text-transform /// 対象のテキストの大文字化を指定\n text-transform: capitalize | uppercase | lowercase | none | inherit
+top /// 'position'の値がstatic以外の場合に指定可能\n ボックスの包含ブロックに対するオフセット値を指定\n top: <length> | percentage | auto | inherit
+unicode-bidi /// 対象が従うUnicodeの制御双方向アルゴリズムに対する制御を提供\n unicode-bidi: normal | embed | bidi-override | inherit
+vertical-align /// インラインレベルの要素と'table-cell'要素に指定可能\n 対象のインラインボックスの行ボックス内部での上下方向の位置を指定\n vertical-align: baseline | sub | super | top |\n text-top | middle | bottom | text-bottom | <length> | <percentage> | inherit
+visibility /// 対象のボックスの可視性を指定\n 非可視化されてもボックスは生成される為、後続のレンダリングに影響します\n visibility: visible | hidden | collapse | inherit
+voice-family /// 音声のファミリーを指定\n voice-family [ [<固有音声> | <総称音声>],]* [<固有音声> | <総称音声>] | inherit
+volume /// 音の大きさを指定\n volume: <number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit
+white-space /// 空白文字の取扱方法を指定\n white-space: normal | pre | nowrap | inherit
+widows /// 'page-break'の拡張\n ページの上部に残さなければならない最小行数を指定\n widows: <integer> | inherit
+width /// ブロックレベル要素と置換要素(img, input, textarea, select, object)に指定可能\n 対象のブロック内容の幅を指定\n width: <length> | <percentage> | auto | inherit
+word-spacing /// 対象のテキストの半角スペース区切りの単語間のスペースを指定\n word-spacing: normal | <length> | inherit
+z-index /// 対象が生成するボックスの上下関係を指定\n z-index: auto | <integer> | inherit
+;//CSS2でのみ規定されているプロパティ
+font-size-adjust /// 使用されているフォントのアスペクト値を指定\nW3C勧告候補のCSS2.1では外されました\nfont-size-adjust: <number> | none | inherit
+font-stretch /// フォントのグリフの幅を指定\nW3C勧告候補のCSS2.1では外されました\n font-stretch: normal | wider | nallower | ultra-condensed | extra-condensed |\n condensed | semi-condensed | semi-expanded | expanded |\n extra-expanded | ultra-expanded | inherit
+marker-offset /// 'display'の値がmarkerの要素に指定可能\n 対象のマーカーボックスと基本ボックスとの距離を指定\n W3C勧告候補のCSS2.1では外されました \nmarker-offset: <length> | auto | inherit
+marks ///印刷時に紙の裁断と位置調整に使用するトンボをページボックスのすぐ外側に表示するかを指定\n W3C勧告候補のCSS2.1では外されました\n marks: [crop || cross] | none | inherit
+text-shadow /// 対象の影の効果を指定\n W3C勧告候補のCSS2.1では外されました\n text-shadow: none | [<color> || <length> <length> <length>? ,]*\n [<color> || <length> <length> <length>? ] | inherit
+;//MSIE独自実装
+;_background-position-x
+;_background-position-y
+;_layout-flow
+;_writing-mode
+;_overflow-x
+;_overflow-y
+;_text-overflow
+;_ruby-align
+;_ruby-overhang
+;_ruby-position
+;_layout-grid-char
+;_layout-grid-line
+;_layout-grid-mode
+;_layout-grid-type
+;_layout-grid
+;_line-break
+;_word-break
+;_text-autospace
+;_text-justify
+;_text-align-last
+;_text-kashida-space
+;_text-underline-position
+;_word-wrap
+;_scrollbar-darkshadow-color
+;_scrollbar-face-color
+;_scrollbar-3dlight-color
+;_scrollbar-highlight-color
+;_scrollbar-arrow-color
+;_scrollbar-base-color
+;_scrollbar-track-color
+;_ime-mode
+;_zoom
+;_filter:progid:DXImageTransform.Microsoft
+;_filter

@@ -1,0 +1,47 @@
+// MortScript 正規表現キーワード Ver 4.2
+
+// 文字列なのに強調キーワードになってしまうのを回避
+RxKey[000]=WQT,/\"(off|end)\"/ki
+
+// ForEach 構文の後続部分を補足
+RxKey[001]=KW1,/\bin\s+(values|array|split|charsOf|iniSections)\b/ki
+RxKey[002]=KW1,/\bin\s+(iniKeys|regSubkeys|regValues|files|directories)\b/ki
+
+// Choice がフロー制御でなくコマンドとして使われているところを区別
+RxKey[003]=KW2,/\s\=\s+Choice\b/ki
+
+// 演算子
+RxKey[004]=KW3,/(\-|\^|\=|\+|\*|\/|\\|\&|\>|\<|\,)/k
+RxKey[005]=KW3,/\b(NOT|MOD|AND|OR)\b/ki
+RxKey[006]=KW3,/\W(\?|\:)\W/k
+RxKey[007]=KW3,/\W(\&\&|\|\|)\W/k
+RxKey[008]=KW3,/\b(gt|ge|lt|le|eq|ne)\b/ki
+
+// 定義済み変数など
+RxKey[009]=KW4,/\barg(c|v)\b/ki
+RxKey[010]=KW4,/\b(TRUE|FALSE|YES|NO|ON|OFF)\b/ki
+RxKey[011]=KW4,/\b(CANCEL|PI|SQRT2|PHI|EULER)\b/ki
+RxKey[012]=KW4,/\b(HKCU|HKLM|HKCR|HKUS)\b/ki
+RxKey[013]=KW4,/\b(BYTES|KB|MB|GB)\b/ki
+RxKey[014]=KW4,/\bDC_(FILES|DIRS|ALL)\b/ki
+RxKey[015]=KW4,/\bST_(HIDDEN|LIST|MESSAGE)\b/ki
+RxKey[016]=KW4,/\bVAR_(EMPTY|INT|FLOAT|STRING|ARRAY)\b/ki
+RxKey[017]=KW4,/%[a-zA-Z]\w+%/k
+
+// 古い表記で使えるけど推奨されないモノ
+RxKey[018]=KW5,/\b(Eval|Input|SubStr|Find|ReverseFind)\s/ki
+RxKey[019]=KW5,/\b(IniRead|ReadFile|Input)\s/ki
+RxKey[020]=KW5,/\bGet(ActiveWindow|Part|RGB|ColorAt|ClipText)\s/ki
+RxKey[021]=KW5,/\bGet(SystemPath|MortScriptType|Version|WindowText)\s/ki
+RxKey[022]=KW5,/\bGetActive(Process|Window)\s/ki
+RxKey[023]=KW5,/\bMake(Upper|Lower)\s/ki
+RxKey[024]=KW5,/\bRegRead(String|DWord|Binary)\s/ki
+RxKey[025]=KW5,/\b(equals|expression)\s/ki
+RxKey[026]=KW5,/\bregKeyEquals(String|DWord)\s/ki
+RxKey[027]=KW5,/\b(wndActive|question|screen|regKeyExists)\s/ki
+RxKey[028]=KW5,/\b(fileExists|dirExists|procExists|wndExists)\s/ki
+RxKey[029]=KW5,/\bRnd\b/ki
+
+// マニュアル上表記がないが使えるモノ（ベータ版機能など？）
+RxKey[030]=KW6,/\b(RepeatString|VarType)\b/ki
+RxKey[031]=KW6,/\bTime(StampUTC|ZoneBias|ZoneDST|ZoneName)\b/ki
