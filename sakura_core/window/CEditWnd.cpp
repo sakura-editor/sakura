@@ -5096,6 +5096,23 @@ bool CEditWnd::SetAeroSnap(void)
 		::SetActiveWindow(hWnd);
 	}
 
+	// これらのキー押下状態は操作に影響を与える
+	int keys[] = {
+		VK_LSHIFT,
+		VK_RSHIFT,
+		VK_LCONTROL,
+		VK_RCONTROL,
+		VK_LMENU,
+		VK_RMENU,
+	};
+
+	// 操作前の押下状態をバックアップしておく
+	for (int i = 0; i < _countof(keys); ++i) {
+		auto &key = keys[i];
+		auto keyPressed = ::GetAsyncKeyState(key);
+		if (!keyPressed) key = NULL;
+	}
+
 	// 入力操作に必要な拡張パラメータを取得しておく
 	LPARAM extraInfo = ::GetMessageExtraInfo();
 
@@ -5172,6 +5189,21 @@ bool CEditWnd::SetAeroSnap(void)
 
 		// ポインタ位置を元に戻す
 		::SetCursorPos(ptCursor.x, ptCursor.y);
+	}
+
+	// バックアップしておいた押下状態を復元する
+	for (int i = 0; i < _countof(keys); ++i) {
+		auto &key = keys[i];
+		if (!key) continue;
+		INPUT inputs[1];
+		auto &input = inputs[0];
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = key;
+		input.ki.wScan = ::MapVirtualKey(input.ki.wVk, 0);
+		input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY; //指定キーを押下
+		input.ki.time = 0;
+		input.ki.dwExtraInfo = extraInfo;
+		::SendInput(_countof(inputs), inputs, sizeof(INPUT));
 	}
 
 	// 一時的に変更したものを元に戻す
