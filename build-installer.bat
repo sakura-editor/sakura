@@ -37,6 +37,7 @@ copy help\plugin\plugin.chm                      %INSTALLER_WORK%\
 copy help\macro\macro.chm                        %INSTALLER_WORK%\
 
 copy %platform%\%configuration%\*.exe            %INSTALLER_WORK%\
+copy %platform%\%configuration%\*.dll            %INSTALLER_WORK%\
 
 "C:\Program Files (x86)\Inno Setup 5\ISCC.exe" installer\sakura.iss || (echo error && exit /b 1)
 
