@@ -160,15 +160,15 @@ begin
   Result := UsingWinNT and (( GetWindowsVersion shr 24) >= 5 );
 end;
 
-function IsWin10 : Boolean;
+function IsWin10OrLater : Boolean;
 var
   Version: TWindowsVersion;
   S: String;
 begin
   GetWindowsVersionEx(Version);
-  if (Version.Major = 10) and
-     (Version.Minor = 0) and
-     (Version.ProductType = VER_NT_WORKSTATION) then
+  if (Version.Major = 10)
+{     (Version.Minor = 0) and
+     (Version.ProductType = VER_NT_WORKSTATION) } then
   begin
     Result := True;
   end else begin
@@ -179,7 +179,7 @@ function InTopMenu( TopMenu : Boolean ) : Boolean;
 begin
   if ( TopMenu = True ) then
   begin
-    if ( IsWin10 = True ) then
+    if ( IsWin10OrLater = True ) then
     begin
       Result := True;
     end else begin
