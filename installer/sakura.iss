@@ -78,7 +78,7 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command
 
 [Icons]
 Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: isNotWin10; Tasks: startmenu;
-Name: "{group}\..\サクラエディタ";                                             Filename: "{app}\sakura.exe";                         Components: main; Check: isWin10;Tasks: startmenu;
+Name: "{userstartmenu}\サクラエディタ";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: isWin10;Tasks: startmenu;
 Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
 Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
 Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
