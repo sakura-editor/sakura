@@ -166,8 +166,8 @@ var
   S: String;
 begin
   GetWindowsVersionEx(Version);
-  if (Version.Major = 10)
-{     (Version.Minor = 0) and
+  if (Version.Major >= 10)
+{    and (Version.Minor = 0) and
      (Version.ProductType = VER_NT_WORKSTATION) } then
   begin
     Result := True;
