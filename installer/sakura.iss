@@ -77,8 +77,8 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: 
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: isNotWin10; Tasks: startmenu;
-Name: "{userstartmenu}\サクラエディタ";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: isWin10;Tasks: startmenu;
+Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
+Name: "{userstartmenu}\サクラエディタ";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
 Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
 Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
 Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
@@ -168,26 +168,23 @@ begin
   GetWindowsVersionEx(Version);
   if (Version.Major = 10) and
      (Version.Minor = 0) and
-     (Version.ProductType = 1) then
+     (Version.ProductType = VER_NT_WORKSTATION) then
   begin
     Result := True;
-    Exit;
   end else begin
     Result := False;
   end;
 end;
-function IsNotWin10 : Boolean;
-var
-  Version: TWindowsVersion;
-  S: String;
+function InTopMenu( TopMenu : Boolean ) : Boolean;
 begin
-  GetWindowsVersionEx(Version);
-  if (Version.Major = 10) and
-     (Version.Minor = 0) and
-     (Version.ProductType = 1) then
+  if ( TopMenu = True ) then
   begin
-    Result := False;
-    Exit;
+    if ( IsWin10 = True ) then
+    begin
+      Result := True;
+    end else begin
+      Result := False;
+    end
   end else begin
     Result := True;
   end;
