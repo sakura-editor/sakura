@@ -163,7 +163,6 @@ end;
 function IsWin10OrLater : Boolean;
 var
   Version: TWindowsVersion;
-  S: String;
 begin
   GetWindowsVersionEx(Version);
   if (Version.Major >= 10) then
@@ -175,9 +174,9 @@ begin
 end;
 function InTopMenu( TopMenu : Boolean ) : Boolean;
 begin
-  if ( TopMenu = True ) then
+  if TopMenu then
   begin
-    if ( IsWin10OrLater = True ) then
+    if IsWin10OrLater then
     begin
       Result := True;
     end else begin
