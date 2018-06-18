@@ -1386,30 +1386,31 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return OnSize( wParam, lParam );
 
-	//From here 2003.05.31 MIK
+	// @date 2003/05/31 MIK
+	// @date 2004/05/13 Moca ウィンドウ位置継承
+	// @date 2005/11/23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
+	// @date 2018/06/13 berryzplus リファクタリング。処理は何も変えていない。
 	case WM_MOVE:
-		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
-			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
-				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
-				// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
-				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
-				RECT rcWin;
-				WINDOWPLACEMENT wp;
-				wp.length = sizeof(wp);
-				::GetWindowPlacement( GetHwnd(), &wp );	// ワークエリア座標
-				rcWin = wp.rcNormalPosition;
-				RECT rcWork, rcMon;
-				GetMonitorWorkRect( GetHwnd(), &rcWork, &rcMon );
-				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
-				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
-				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
-			}
+		if (WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos
+			&& !::IsZoomed(GetHwnd())
+			&& !::IsIconic(GetHwnd())) {
+			// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
+			// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
+			WINDOWPLACEMENT wp = { sizeof(wp) };
+			::GetWindowPlacement(GetHwnd(), &wp);	// ワークエリア座標
+
+			RECT rcWorkArea, rcMonitor;
+			GetMonitorWorkRect(GetHwnd(), &rcWorkArea, &rcMonitor);
+
+			RECT &rcWin = wp.rcNormalPosition;
+			::OffsetRect(&rcWin, rcWorkArea.left - rcMonitor.left, rcWorkArea.top - rcMonitor.top);	// スクリーン座標に変換
+
+			m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
+			m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 		}
-		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
-	//To here 2003.05.31 MIK
+
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
