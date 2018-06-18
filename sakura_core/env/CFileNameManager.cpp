@@ -39,6 +39,7 @@
 #include "util/window.h"
 #include "_main/CCommandLine.h"
 #include "_os/COsVersionInfo.h"
+#include "CDataProfile.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //
@@ -527,9 +528,15 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	pszPrivateIniFile[0] = _T('\0');
 	if( IsWin2000_or_later() ){
 		auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".exe.ini") );
-		int nEnable = ::GetPrivateProfileInt(_T("Settings"), _T("MultiUser"), 0, szPath );
+		CDataProfile cProfile;
+		cProfile.SetReadingMode();
+		cProfile.ReadProfile(szPath);
+		const WCHAR szSection[] = L"Settings";
+		int nEnable = 0;
+		cProfile.IOProfileData(szSection, L"MultiUser", nEnable);
 		if( nEnable ){
-			int nFolder = ::GetPrivateProfileInt(_T("Settings"), _T("UserRootFolder"), 0, szPath );
+			int nFolder = 0;
+			cProfile.IOProfileData(szSection, L"UserRootFolder", nFolder);
 			switch( nFolder ){
 			case 1:
 				nFolder = CSIDL_PROFILE;			// ユーザのルートフォルダ
@@ -544,7 +551,8 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 				nFolder = CSIDL_APPDATA;			// ユーザのアプリケーションデータフォルダ
 				break;
 			}
-			::GetPrivateProfileString(_T("Settings"), _T("UserSubFolder"), _T("sakura"), szDir, _MAX_DIR, szPath );
+			::_tcscpy_s(szDir, _T("sakura"));
+			cProfile.IOProfileData(szSection, L"UserSubFolder", MakeStringBufferT(szDir));
 			if( szDir[0] == _T('\0') )
 				::lstrcpy( szDir, _T("sakura") );
 			if( GetSpecialFolderPath( nFolder, szPath ) ){
