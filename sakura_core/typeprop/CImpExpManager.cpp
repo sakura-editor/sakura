@@ -322,13 +322,14 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	// 読み込み
 	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_Types, szSecTypes );
 
-	m_Types.m_nIdx = m_nIdx;
+	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
 		_tcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
 		_tcscpy( m_Types.m_szTypeExts, _T("") );
 		m_Types.m_id = 0;
 	}else{
+		// 基本じゃなかった場合、id番号をランダムに仮採番(あとで振りなおす)
 		m_Types.m_id = (::GetTickCount() & 0x3fffffff) + m_nIdx * 0x10000;
 	}
 
