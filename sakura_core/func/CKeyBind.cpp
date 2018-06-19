@@ -253,6 +253,52 @@ int CKeyBind::CreateKeyBindList(
 			}
 		}
 	}
+	// ホットキー用
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+	WORD wHotKeyMods = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods;
+	WORD wHotKeyCode = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
+	if ( 0 != wHotKeyMods && 0 != wHotKeyCode)
+	{
+		nValidKeys++;
+
+		/* 割り当てキー */
+		UINT uScanCode = ::MapVirtualKey(wHotKeyCode, 0);
+		if ((wHotKeyMods & HOTKEYF_SHIFT) == HOTKEYF_SHIFT) {
+			cMemList.AppendString(pszSHIFT);
+		}
+		if ((wHotKeyMods & HOTKEYF_CONTROL) == HOTKEYF_CONTROL) {
+			cMemList.AppendString(pszCTRL);
+		}
+		if ((wHotKeyMods & HOTKEYF_ALT) == HOTKEYF_ALT) {
+			cMemList.AppendString(pszALT);
+		}
+
+		// デモンストレーションなので、windowsが保持するキー名を表示させる。
+		// https://msdn.microsoft.com/ja-jp/library/cc364675.aspx
+		::GetKeyNameText(MAKELPARAM(0, uScanCode), pszStr, _countof(pszStr) - 1);
+		cMemList.AppendString(pszStr);
+
+		/* 機能名 → タスクトレイ左クリックメニュー */
+		cMemList.AppendString(pszTAB);
+		// デモンストレーションなのでベタ書きする
+		cMemList.AppendString(LTEXT("タスクトレイ左クリックメニュー"));
+
+		/* 関数名 → なし(固定) */
+		szFuncName[0] = LTEXT('\0');
+		cMemList.AppendString(pszTAB);
+		cMemList.AppendString(szFuncName);
+
+		/* 機能番号 → なし(固定) */
+		cMemList.AppendString(pszTAB);
+		cMemList.AppendString(LTEXT(""));
+
+		/* キーマクロに記録可能な機能か？ → 不可(固定) */
+		cMemList.AppendString(pszTAB);
+		cMemList.AppendString(LTEXT("×"));
+
+		cMemList.AppendString(pszCR);
+	}
+
 	return nValidKeys;
 }
 
