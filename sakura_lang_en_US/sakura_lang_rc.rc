@@ -2814,8 +2814,8 @@ BEGIN
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor Language DLL\0"
             VALUE "ProductVersion", PR_VER_STR
-#if (SVN_REV != 0)
-                " (Rev." SVN_REV_STR ")"
+#if defined(GIT_SHORT_COMMIT_HASH)
+                " (GitHash " GIT_SHORT_COMMIT_HASH ")"
 #endif
 #ifdef _DEBUG
                 " Debug version"
