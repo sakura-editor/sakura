@@ -30,6 +30,7 @@
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
+#include <sstream>
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。
@@ -171,6 +172,44 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , _T(""));
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
+	// ホットキー用
+	const int F_SHOWTRAYMENU = 32820;
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+	WORD wHotKeyMods = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods;
+	WORD wHotKeyCode = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
+	if (0 != wHotKeyMods && 0 != wHotKeyCode)
+	{
+		const WCHAR szCtrl[] = LTEXT("Ctrl+");
+		const WCHAR szAlt[] = LTEXT("Alt+");
+		const WCHAR szShift[] = LTEXT("Shift+");
+		const WCHAR szMenuName[] = _T("ホットキー");
+		const WCHAR szFuncName[] = _T("タスクトレイ左クリックメニュー");
+
+		std::wostringstream out;
+		out << szFuncName << '\t';
+
+		UINT uScanCode = ::MapVirtualKey(wHotKeyCode, 0);
+		if ((wHotKeyMods & HOTKEYF_CONTROL) == HOTKEYF_CONTROL) {
+			out << szCtrl;
+		}
+		if ((wHotKeyMods & HOTKEYF_ALT) == HOTKEYF_ALT) {
+			out << szAlt;
+		}
+		if ((wHotKeyMods & HOTKEYF_SHIFT) == HOTKEYF_SHIFT) {
+			out << szShift;
+		}
+		// デモンストレーションなので、windowsが保持するキー名を表示させる。
+		// https://msdn.microsoft.com/ja-jp/library/cc364675.aspx
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646300(v=vs.85).aspx
+		WCHAR szStr[MAX_PATH];
+		::GetKeyNameText(MAKELPARAM(0, uScanCode), szStr, _countof(szStr) - 1);
+		out << szStr;
+
+		hMenuPopUp = ::CreatePopupMenu();
+		uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
+		pCEditWnd->GetMenuDrawer().MyAppendMenu(hMenuPopUp, uFlags, F_SHOWTRAYMENU, out.str().data(), L"");
+		pCEditWnd->GetMenuDrawer().MyAppendMenu(hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, szMenuName, _T(""));
+	}
 
 	nId = ::TrackPopupMenu(
 		hMenu,
@@ -186,6 +225,11 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 		NULL
 	);
 	::DestroyMenu( hMenu );
+	if (F_SHOWTRAYMENU == nId) {
+		// デモンストレーションなので、共有メモリのハンドル値を使って簡易呼出し。
+		::PostMessage(pShareData->m_sHandles.m_hwndTray, MYWM_NOTIFYICON, 0, WM_LBUTTONUP);
+		return;
+	}
 	if( 0 != nId ){
 		/* コマンドコードによる処理振り分け */
 //		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
