@@ -20,6 +20,8 @@ copy help\macro\macro.chm    %WORKDIR%\
 copy help\plugin\plugin.chm  %WORKDIR%\
 copy help\sakura\sakura.chm  %WORKDIR%\
 
+copy installer\Output\*.exe  %WORKDIR%\
+
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
 
