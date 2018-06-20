@@ -173,13 +173,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		HIWORD(dwVersionLS),
 		LOWORD(dwVersionLS)
 	);
-#else
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),
-		HIWORD( dwVersionMS ),
-		LOWORD( dwVersionMS ),
-		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS )
-	);
 #endif
 	cmemMsg.AppendString( szMsg );
 
