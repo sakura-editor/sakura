@@ -166,16 +166,17 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-#if defined(GIT_COMMIT_HASH)
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(GitHash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 		HIWORD(dwVersionMS),
 		LOWORD(dwVersionMS),
 		HIWORD(dwVersionLS),
 		LOWORD(dwVersionLS)
 	);
+	cmemMsg.AppendString(szMsg);
+#if defined(GIT_COMMIT_HASH)
+	auto_sprintf(szMsg, _T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
+	cmemMsg.AppendString(szMsg);
 #endif
-	cmemMsg.AppendString( szMsg );
-
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 共有メモリ情報
