@@ -5,7 +5,6 @@
 #ifndef SAKURA_LANG_RESOURCE
 	#include "sakura_rc.h"
 	#include "Funccode_define.h"
-	#include "svnrev.h"
 	#include "String_define.h"
 #else
 	#include "sakura_lang.h"
