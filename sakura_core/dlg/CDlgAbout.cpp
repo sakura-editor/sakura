@@ -174,8 +174,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString(szMsg);
 #if defined(GIT_COMMIT_HASH)
-	auto_sprintf(szMsg, _T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
-	cmemMsg.AppendString(szMsg);
+	cmemMsg.AppendString(_T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
 #endif
 	cmemMsg.AppendString( _T("\r\n") );
 
