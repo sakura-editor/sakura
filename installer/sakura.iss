@@ -1,3 +1,9 @@
+#if VER < EncodeVer(5,6,1)
+  #define MySendTo "{sendto}"
+#else
+  #define MySendTo "{usersendto}"
+#endif
+
 [Setup]
 AppName=サクラエディタ
 AppId=sakura editor
@@ -19,8 +25,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install2-1-1-2
-VersionInfoVersion=2.1.1.2
+OutputBaseFilename=sakura_install2-3-0-0
+VersionInfoVersion=2.3.0.0
 
 ; OSバージョン制限
 MinVersion=0,5.0
@@ -50,8 +56,11 @@ Name: sendto;      Description: "送るに追加(&T)";                     Components
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
+Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
 Source: "sakura\bsd_license.txt";      DestDir: "{app}";         Components: main
+Source: "sakura\perl_license.txt";     DestDir: "{app}";         Components: main
+Source: "sakura\perl_license_jp.txt";  DestDir: "{app}";         Components: main
 Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.chm";           DestDir: "{app}";         Components: help
@@ -80,7 +89,7 @@ Name: "{userdesktop}\サクラエディタ";                                          F
 Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
 Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
-Name: "{sendto}\サクラエディタ";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
+Name: "{#MySendTo}\サクラエディタ";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
