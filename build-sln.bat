@@ -11,8 +11,8 @@ if "%APPVEYOR%"=="True" (
 
 set MSBUILD_EXE="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
 
-@echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
-      %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
+@echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%      /t:"Clean","Rebuild"  %EXTRA_CMD%
+      %MSBUILD_EXE% %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%      /t:"Clean","Rebuild"  %EXTRA_CMD%
 if %errorlevel% neq 0 (echo error && exit /b 1)
 
 exit /b 0
