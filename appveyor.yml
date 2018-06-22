@@ -21,14 +21,7 @@ build_script:
 
     echo CONFIGURATION %CONFIGURATION%
 
-    set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-
-    set MSBUILD_EXE="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
-
-
-
-    echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
-         %MSBUILD_EXE% %SLN_FILE% /p:Platform=%PLATFORM% /p:Configuration=%CONFIGURATION%      /t:"Clean","Rebuild"  %EXTRA_CMD%
+    call build-sln.bat %PLATFORM% %CONFIGURATION%
 
     call build-chm.bat
 
