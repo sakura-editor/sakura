@@ -5,11 +5,11 @@
 #ifndef SAKURA_LANG_RESOURCE
 	#include "sakura_rc.h"
 	#include "Funccode_define.h"
-	#include "gitrev.h"
 	#include "String_define.h"
 #else
 	#include "sakura_lang.h"
 #endif
+#include "gitrev.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
