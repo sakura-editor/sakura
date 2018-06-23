@@ -35,12 +35,17 @@ if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`git show -s --format^=%%h`) do (
 		set SHORT_COMMITID=%%s
 	)
+	for /f "usebackq" %%s in (`git config --get remote.origin.url`) do (
+		set GIT_URL=%%s
+	)
 ) else (
 	set SHORT_COMMITID=
 	set COMMITID=
+	set GIT_URL=
 )
 @echo SHORT_COMMITID: %SHORT_COMMITID%
 @echo COMMITID: %COMMITID%
+@echo GIT_URL: %GIT_URL%
 
 : Output gitrev.h
 set GITREV_H=..\sakura_core\gitrev.h
@@ -54,6 +59,11 @@ if "%SHORT_COMMITID%" == "" (
 	type nul                                              >> %GITREV_H%
 ) else (
 	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%" >> %GITREV_H%
+)
+if "%GIT_URL%" == "" (
+	type nul                                              >> %GITREV_H%
+) else (
+	echo #define GIT_URL "%GIT_URL%"                      >> %GITREV_H%
 )
 
 ENDLOCAL
