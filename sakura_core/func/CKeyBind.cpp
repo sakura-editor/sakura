@@ -253,50 +253,65 @@ int CKeyBind::CreateKeyBindList(
 			}
 		}
 	}
-	// ホットキー用
+	// ホットキー
 	DLLSHAREDATA* pShareData = &GetDllShareData();
-	WORD wHotKeyMods = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods;
 	WORD wHotKeyCode = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
-	if ( 0 != wHotKeyMods && 0 != wHotKeyCode)
+	if (wHotKeyCode)
 	{
-		nValidKeys++;
-
-		/* 割り当てキー */
-		UINT uScanCode = ::MapVirtualKey(wHotKeyCode, 0);
-		if ((wHotKeyMods & HOTKEYF_SHIFT) == HOTKEYF_SHIFT) {
-			cMemList.AppendString(pszSHIFT);
-		}
-		if ((wHotKeyMods & HOTKEYF_CONTROL) == HOTKEYF_CONTROL) {
-			cMemList.AppendString(pszCTRL);
-		}
-		if ((wHotKeyMods & HOTKEYF_ALT) == HOTKEYF_ALT) {
-			cMemList.AppendString(pszALT);
+		// キー割り当てデータを作ってキー名を取り込む
+		KEYDATA	hotkeyData = { 0 };
+		for (int k = 0; k < nKeyNameArrNum; ++k) {
+			auto &keyName = pKeyNameArr[k];
+			if (keyName.m_nKeyCode != wHotKeyCode) continue;
+			UINT uScanCode = ::MapVirtualKey(keyName.m_nKeyCode, MAPVK_VK_TO_VSC);
+			hotkeyData.m_nKeyCode = ::MapVirtualKey(uScanCode, MAPVK_VSC_TO_VK);
+			::wcscpy_s(hotkeyData.m_szKeyName, keyName.m_szKeyName);
+			break;
 		}
 
-		// デモンストレーションなので、windowsが保持するキー名を表示させる。
-		// https://msdn.microsoft.com/ja-jp/library/cc364675.aspx
-		::GetKeyNameText(MAKELPARAM(0, uScanCode), pszStr, _countof(pszStr) - 1);
-		cMemList.AppendString(pszStr);
+		// キー名が探せた場合のみ
+		if (hotkeyData.m_nKeyCode)
+		{
+			nValidKeys++;
 
-		/* 機能名 → タスクトレイ左クリックメニュー */
-		cMemList.AppendString(pszTAB);
-		// デモンストレーションなのでベタ書きする
-		cMemList.AppendString(LTEXT("タスクトレイ左クリックメニュー"));
+			/* 修飾キー */
+			WORD wHotKeyMods = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods;
+			if ((wHotKeyMods & HOTKEYF_SHIFT) == HOTKEYF_SHIFT) {
+				cMemList.AppendString(pszSHIFT);
+			}
+			if ((wHotKeyMods & HOTKEYF_CONTROL) == HOTKEYF_CONTROL) {
+				cMemList.AppendString(pszCTRL);
+			}
+			if ((wHotKeyMods & HOTKEYF_ALT) == HOTKEYF_ALT) {
+				cMemList.AppendString(pszALT);
+			}
+			/* ホットキー */
+			cMemList.AppendString(to_wchar(hotkeyData.m_szKeyName));
 
-		/* 関数名 → なし(固定) */
-		szFuncName[0] = LTEXT('\0');
-		cMemList.AppendString(pszTAB);
-		cMemList.AppendString(szFuncName);
+			/* 機能名 → タスクトレイ左クリックメニュー */
+			if (!pcFuncLookup->Funccode2Name(
+				F_SHOWTRAYMENU,
+				szFuncNameJapanese, _countof(szFuncNameJapanese) - 1)) {
+				auto_strcpy(szFuncNameJapanese, LSW(STR_ERR_DLGKEYBIND2));
+			}
+			cMemList.AppendString(pszTAB);
+			cMemList.AppendString(szFuncNameJapanese);
 
-		/* 機能番号 → なし(固定) */
-		cMemList.AppendString(pszTAB);
-		cMemList.AppendString(LTEXT(""));
+			/* 関数名 → なし(固定) */
+			szFuncName[0] = LTEXT('\0');
+			cMemList.AppendString(pszTAB);
+			cMemList.AppendString(szFuncName);
 
-		/* キーマクロに記録可能な機能か？ → 不可(固定) */
-		cMemList.AppendString(pszTAB);
-		cMemList.AppendString(LTEXT("×"));
+			/* 機能番号 → なし(固定) */
+			cMemList.AppendString(pszTAB);
+			cMemList.AppendString(LTEXT(""));
 
-		cMemList.AppendString(pszCR);
+			/* キーマクロに記録可能な機能か？ → 不可(固定) */
+			cMemList.AppendString(pszTAB);
+			cMemList.AppendString(LTEXT("×"));
+
+			cMemList.AppendString(pszCR);
+		}
 	}
 
 	return nValidKeys;
@@ -386,6 +401,51 @@ int CKeyBind::GetKeyStr(
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < MOUSEFUNCTION_KEYBEGIN; /* 1を加えてはいけない */ ){
 			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j, cMemList, nFuncId, bGetDefFuncCode )){
+				return 1;
+			}
+		}
+	}
+
+	// タスクトレイ左クリックメニュー
+	if (nFuncId == F_SHOWTRAYMENU)
+	{
+		// ホットキーの設定を参照
+		DLLSHAREDATA* pShareData = &GetDllShareData();
+		WORD wHotKeyCode = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
+		WORD wHotKeyMods = pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods;
+		if (wHotKeyCode)
+		{
+			// キー割り当てデータを作ってキー名を取り込む
+			KEYDATA	hotkeyData = { 0 };
+			for (int k = 0; k < nKeyNameArrNum; ++k) {
+				auto &keyName = pKeyNameArr[k];
+				if (keyName.m_nKeyCode != wHotKeyCode) continue;
+				UINT uScanCode = ::MapVirtualKey(keyName.m_nKeyCode, MAPVK_VK_TO_VSC);
+				hotkeyData.m_nKeyCode = ::MapVirtualKey(uScanCode, MAPVK_VSC_TO_VK);
+				::wcscpy_s(hotkeyData.m_szKeyName, keyName.m_szKeyName);
+				break;
+			}
+			// 想定しないVKは表示できない
+			if (!hotkeyData.m_nKeyCode)
+			{
+				return 0;
+			}
+
+			// 修飾キーをインデックスに変換
+			j = 0;
+			if ((wHotKeyMods & HOTKEYF_SHIFT) == HOTKEYF_SHIFT) {
+				j |= _SHIFT;
+			}
+			if ((wHotKeyMods & HOTKEYF_CONTROL) == HOTKEYF_CONTROL) {
+				j |= _CTRL;
+			}
+			if ((wHotKeyMods & HOTKEYF_ALT) == HOTKEYF_ALT) {
+				j |= _ALT;
+			}
+			hotkeyData.m_nFuncCodeArr[j] = F_SHOWTRAYMENU;
+
+			i = 0;
+			if (GetKeyStrSub(i, 1, &hotkeyData, j, cMemList, nFuncId, bGetDefFuncCode)) {
 				return 1;
 			}
 		}

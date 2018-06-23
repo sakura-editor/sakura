@@ -3478,6 +3478,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_MENU_RBUTTON          "右クリックメニュー"
+    F_SHOWTRAYMENU          "タスクトレイ左クリックメニュー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -4116,6 +4117,7 @@ BEGIN
 	STR_ERR_DLGFUNCLKUP02		"カスタムメニュー"
 	STR_ERR_DLGFUNCLKUP03		"マクロ %d (未登録)"
 	STR_ERR_DLGFUNCLKUP19		"プラグイン"
+	STR_ERR_DLGFUNCLKUP20		"ホットキー"
 
 	// Related Commands Menu
 	STR_ERR_DLGFUNCLKUP04		"ファイル操作系"

@@ -3481,6 +3481,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_MENU_RBUTTON          "Right Click Menu"
+	F_SHOWTRAYMENU          "Task Tray Left Click Menu"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -4122,6 +4123,7 @@ BEGIN
 	STR_ERR_DLGFUNCLKUP02		"Custom Menu"
 	STR_ERR_DLGFUNCLKUP03		"Macro %d (Unregistered)"
 	STR_ERR_DLGFUNCLKUP19		"Plugin"
+	STR_ERR_DLGFUNCLKUP20		"HotKey"
 
 	// Related Commands Menu
 	STR_ERR_DLGFUNCLKUP04		"File related"		
