@@ -29,7 +29,7 @@ Visual Studio Community 2017 で `sakura.sln` を開いてビルド。
 https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master
 
 最新のビルド結果（バイナリ）はここから取得できます。  
-https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts
+https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts  
 [`これ`](installer/warning.txt) を読んでからご利用ください。
 
 最新以外のビルド結果は以下から参照できます。  
