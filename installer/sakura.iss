@@ -1,17 +1,17 @@
-#define MyAppVer GetFileVersion("sakura\sakura.exe")
+ï»¿#define MyAppVer GetFileVersion("sakura\sakura.exe")
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
 
 [Setup]
-AppName=ƒTƒNƒ‰ƒGƒfƒBƒ^
+AppName=ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿
 AppId=sakura editor
-AppVerName=sakura editor(ƒTƒNƒ‰ƒGƒfƒBƒ^)
+AppVerName=sakura editor(ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿)
 AppMutex=MutexSakuraEditor
-AppPublisher=ƒTƒNƒ‰ƒGƒfƒBƒ^ŠJ”­ƒ`[ƒ€
+AppPublisher=ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿é–‹ç™ºãƒãƒ¼ãƒ 
 AppPublisherURL=http://sakura-editor.sourceforge.net
 AppSupportURL=http://sakura-editor.sourceforge.net
 AppUpdatesURL=http://sourceforge.net/projects/sakura-editor/
 DefaultDirName={code:getDefautDirName|sakura}
-DefaultGroupName=ƒTƒNƒ‰ƒGƒfƒBƒ^
+DefaultGroupName=ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿
 UninstallDisplayIcon={app}\sakura.exe
 InfoBeforeFile="instmaterials\info.txt"
 
@@ -21,11 +21,11 @@ DisableStartupPrompt=no
 
 PrivilegesRequired=None
 
-; ƒGƒfƒBƒ^‚Ìƒo[ƒWƒ‡ƒ“‚É‰‚¶‚Ä‘‚«Š·‚¦‚éêŠ
+; ã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã«å¿œã˜ã¦æ›¸ãæ›ãˆã‚‹å ´æ‰€
 OutputBaseFilename=sakura_install{#MyAppVerH}
 VersionInfoVersion={#MyAppVer}
 
-; OSƒo[ƒWƒ‡ƒ“§ŒÀ
+; OSãƒãƒ¼ã‚¸ãƒ§ãƒ³åˆ¶é™
 MinVersion=0,5.0
 
 [Languages]
@@ -35,21 +35,21 @@ Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: all;                Description: "All"
 Name: editorwithhelp;     Description: "Editor with Help"
 Name: editoronly;         Description: "Editor Only"
-Name: custom;             Description: "ƒJƒXƒ^ƒ€"; Flags: iscustom
+Name: custom;             Description: "ã‚«ã‚¹ã‚¿ãƒ "; Flags: iscustom
 
 [Components]
-Name: main;        Description: "ƒTƒNƒ‰ƒGƒfƒBƒ^–{‘Ì";             Types: all editorwithhelp editoronly custom; Flags: fixed
-Name: help;        Description: "ƒwƒ‹ƒvƒtƒ@ƒCƒ‹";                 Types: all editorwithhelp
-Name: keyword;     Description: "KeyWordƒtƒ@ƒCƒ‹";                Types: all
+Name: main;        Description: "ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿æœ¬ä½“";             Types: all editorwithhelp editoronly custom; Flags: fixed
+Name: help;        Description: "ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«";                 Types: all editorwithhelp
+Name: keyword;     Description: "KeyWordãƒ•ã‚¡ã‚¤ãƒ«";                Types: all
 
 [Tasks]
-Name: startmenu;   Description: "ƒXƒ^[ƒgƒƒjƒ…[‚ğì¬(&S)";         Components: main;
-Name: quicklaunch; Description: "Quick Launch‚ÉƒAƒCƒRƒ“ì¬(&Q)";     Components: main;
-Name: proglist;    Description: "ƒvƒƒOƒ‰ƒ€ˆê——‚É’Ç‰Á(&P)"; Components: main;
-Name: desktopicon; Description: "ƒfƒXƒNƒgƒbƒv‚ÉƒAƒCƒRƒ“ì¬(&D)";     Components: main; Flags: unchecked;
-Name: fileassoc;   Description: "uSAKURA‚ÅŠJ‚­vƒƒjƒ…[‚Ì’Ç‰Á(&E)"; Components: main; Flags: unchecked;
-Name: startup;     Description: "‹N“®‚Éí’“(&B)";                   Components: main; Flags: unchecked;
-Name: sendto;      Description: "‘—‚é‚É’Ç‰Á(&T)";                     Components: main; Flags: unchecked;
+Name: startmenu;   Description: "ã‚¹ã‚¿ãƒ¼ãƒˆãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ä½œæˆ(&S)";         Components: main;
+Name: quicklaunch; Description: "Quick Launchã«ã‚¢ã‚¤ã‚³ãƒ³ä½œæˆ(&Q)";     Components: main;
+Name: proglist;    Description: "ãƒ—ãƒ­ã‚°ãƒ©ãƒ ä¸€è¦§ã«è¿½åŠ (&P)"; Components: main;
+Name: desktopicon; Description: "ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ã‚¢ã‚¤ã‚³ãƒ³ä½œæˆ(&D)";     Components: main; Flags: unchecked;
+Name: fileassoc;   Description: "ã€ŒSAKURAã§é–‹ãã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¿½åŠ (&E)"; Components: main; Flags: unchecked;
+Name: startup;     Description: "èµ·å‹•æ™‚ã«å¸¸é§(&B)";                   Components: main; Flags: unchecked;
+Name: sendto;      Description: "é€ã‚‹ã«è¿½åŠ (&T)";                     Components: main; Flags: unchecked;
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
@@ -67,31 +67,31 @@ Source: "sakura\keyword\*"; DestDir: "{app}\keyword"; Components: keyword; Flags
 
 [Registry]
 ; registry for all user (Admin only)
-Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURA‚ÅŠJ‚­(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURAã§é–‹ã(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 ; registry for each user (non-Admin only)
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURA‚ÅŠJ‚­(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURAã§é–‹ã(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\ƒTƒNƒ‰ƒGƒfƒBƒ^";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
-Name: "{userstartmenu}\ƒTƒNƒ‰ƒGƒfƒBƒ^";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
-Name: "{group}\ƒwƒ‹ƒvƒtƒ@ƒCƒ‹";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
-Name: "{group}\İ’èƒtƒHƒ‹ƒ_";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
-Name: "{userdesktop}\ƒTƒNƒ‰ƒGƒfƒBƒ^";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
-Name: "{group}\ƒAƒ“ƒCƒ“ƒXƒg[ƒ‹";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\ƒTƒNƒ‰ƒGƒfƒBƒ^"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
-Name: "{userstartup}\ƒTƒNƒ‰ƒGƒfƒBƒ^í’“";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
-Name: "{sendto}\ƒTƒNƒ‰ƒGƒfƒBƒ^";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
+Name: "{group}\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
+Name: "{userstartmenu}\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
+Name: "{group}\ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
+Name: "{group}\è¨­å®šãƒ•ã‚©ãƒ«ãƒ€";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
+Name: "{userdesktop}\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
+Name: "{group}\ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
+Name: "{userstartup}\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿å¸¸é§";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
+Name: "{sendto}\ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
-FileName: "{app}\sakura.exe"; Description: "¡‚·‚®ƒTƒNƒ‰ƒGƒfƒBƒ^‚ğ‹N“®"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
+FileName: "{app}\sakura.exe"; Description: "ä»Šã™ãã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã‚’èµ·å‹•"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
 
 [UninstallDelete]
-;Uninstall‚ÉŠm”F–³‚­Á‚³‚ê‚é‚Ì‚ÅƒRƒƒ“ƒgƒAƒEƒg
+;Uninstallæ™‚ã«ç¢ºèªç„¡ãæ¶ˆã•ã‚Œã‚‹ã®ã§ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
 ;Type: files; Name: "{app}\sakura.ini"
 
 [Dirs]
@@ -219,8 +219,8 @@ begin
       ( MultiUserPage.Values[0] = False ) then
       begin
          selected := MsgBox(
-{          'Program Files“™‚ÌƒVƒXƒeƒ€ƒtƒHƒ‹ƒ_‚ÖƒCƒ“ƒXƒg[ƒ‹‚·‚éê‡‚ÍUAC‚ğ–³Œø‚É‚µ‚È‚¢‚Æİ’è‚ª•Û‘¶‚Å‚«‚Ü‚¹‚ñ‚ª‚æ‚ë‚µ‚¢‚Å‚·‚©H',}
-          'ŒİŠ·ƒ‚[ƒh‚ÅƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·DƒVƒXƒeƒ€ƒtƒ@ƒCƒ‹‚¨‚æ‚ÑƒvƒƒOƒ‰ƒ€‚ğƒ†[ƒUŒ ŒÀ‚Å•ÒW‚·‚é‚Æ•ÒWŒ‹‰Ê‚ª‘¼‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚©‚çQÆ‚Å‚«‚È‚¢‚±‚Æ‚ª‚ ‚è‚Ü‚·D(VirtualStore‹@”\)',
+{          'Program Filesç­‰ã®ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ«ãƒ€ã¸ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã™ã‚‹å ´åˆã¯UACã‚’ç„¡åŠ¹ã«ã—ãªã„ã¨è¨­å®šãŒä¿å­˜ã§ãã¾ã›ã‚“ãŒã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ',}
+          'äº’æ›ãƒ¢ãƒ¼ãƒ‰ã§ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ï¼ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚¡ã‚¤ãƒ«ãŠã‚ˆã³ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’ãƒ¦ãƒ¼ã‚¶æ¨©é™ã§ç·¨é›†ã™ã‚‹ã¨ç·¨é›†çµæœãŒä»–ã®ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‹ã‚‰å‚ç…§ã§ããªã„ã“ã¨ãŒã‚ã‚Šã¾ã™ï¼(VirtualStoreæ©Ÿèƒ½)',
           mbConfirmation,
           ( MB_OKCANCEL ));
         if selected = IDCANCEL then
@@ -259,10 +259,10 @@ end;
 procedure InitializeWizard;
 begin
   { Create multi user page }
-  MultiUserPage := CreateInputOptionPage( wpSelectComponents, 'İ’è•Û‘¶•û–@‚Ì‘I‘ğ',
-    'İ’è‚ğƒ†[ƒU–ˆ‚É•Û‘¶‚·‚é‚©Àsƒtƒ@ƒCƒ‹‚ÌêŠ‚Ö•Û‘¶‚·‚é‚©‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢',
-    '‚æ‚­‚í‚©‚ç‚È‚¢ê‡‚Í•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢', False, False );
-  MultiUserPage.Add( 'İ’è‚ğƒ†[ƒU–ˆ‚ÉŒÂ•Ê‚ÉŠÇ—‚·‚é' );
+  MultiUserPage := CreateInputOptionPage( wpSelectComponents, 'è¨­å®šä¿å­˜æ–¹æ³•ã®é¸æŠ',
+    'è¨­å®šã‚’ãƒ¦ãƒ¼ã‚¶æ¯ã«ä¿å­˜ã™ã‚‹ã‹å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®å ´æ‰€ã¸ä¿å­˜ã™ã‚‹ã‹ã‚’é¸æŠã—ã¦ãã ã•ã„',
+    'ã‚ˆãã‚ã‹ã‚‰ãªã„å ´åˆã¯å¤‰æ›´ã—ãªã„ã§ãã ã•ã„', False, False );
+  MultiUserPage.Add( 'è¨­å®šã‚’ãƒ¦ãƒ¼ã‚¶æ¯ã«å€‹åˆ¥ã«ç®¡ç†ã™ã‚‹' );
   MultiUserPage.Values[0] := False;
   MultiUserPage.OnShouldSkipPage := @ShoudSkipMultiUser;
   MultiUserPage.OnNextButtonClick := @NextButtonClickMultiUser;
@@ -294,18 +294,18 @@ function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoType
 var
   MemoMuitiUser, MemoVirtualStore : String;
 begin
-  MemoMuitiUser := 'İ’èƒtƒ@ƒCƒ‹“™Ši”[êŠ' + NewLine + Space;
+  MemoMuitiUser := 'è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ç­‰æ ¼ç´å ´æ‰€' + NewLine + Space;
   MemoVirtualStore := 'VirtualStore' + NewLine + Space;
 
   if isMultiUserEnabled then
     begin
-      MemoMuitiUser := MemoMuitiUser + 'ƒ†[ƒUŒÂ•ÊƒfƒBƒŒƒNƒgƒŠ';
-      MemoVirtualStore := MemoVirtualStore + '–³Œø';
+      MemoMuitiUser := MemoMuitiUser + 'ãƒ¦ãƒ¼ã‚¶å€‹åˆ¥ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª';
+      MemoVirtualStore := MemoVirtualStore + 'ç„¡åŠ¹';
     end
   else
     begin
-      MemoMuitiUser := MemoMuitiUser + 'Àsƒtƒ@ƒCƒ‹‚Æ“¯ˆêƒfƒBƒŒƒNƒgƒŠ';
-      MemoVirtualStore := MemoVirtualStore + '—LŒø';
+      MemoMuitiUser := MemoMuitiUser + 'å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã¨åŒä¸€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª';
+      MemoVirtualStore := MemoVirtualStore + 'æœ‰åŠ¹';
     end;
 
   if IsVistaOrLater then
