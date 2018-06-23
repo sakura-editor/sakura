@@ -1,5 +1,6 @@
 set platform=%1
 set configuration=%2
+set SLN_FILE=sakura.sln
 
 @rem https://www.appveyor.com/docs/environment-variables/
 
