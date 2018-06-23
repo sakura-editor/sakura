@@ -15,8 +15,6 @@ platform:
 
 build_script:
 - cmd: >-
-    set SLN_FILE=sakura.sln
-
     echo PLATFORM      %PLATFORM%
 
     echo CONFIGURATION %CONFIGURATION%
