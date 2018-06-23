@@ -1,3 +1,6 @@
+#define MyAppVer GetFileVersion("sakura\sakura.exe")
+#define MyAppVerH StringChange(MyAppVer, ".", "-")
+
 [Setup]
 AppName=サクラエディタ
 AppId=sakura editor
@@ -19,8 +22,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install2-1-1-2
-VersionInfoVersion=2.1.1.2
+OutputBaseFilename=sakura_install{#MyAppVerH}
+VersionInfoVersion={#MyAppVer}
 
 ; OSバージョン制限
 MinVersion=0,5.0
@@ -50,6 +53,7 @@ Name: sendto;      Description: "送るに追加(&T)";                     Components
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
+Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
 Source: "sakura\bsd_license.txt";      DestDir: "{app}";         Components: main
 Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
@@ -73,7 +77,8 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: 
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Tasks: startmenu;
+Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
+Name: "{userstartmenu}\サクラエディタ";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
 Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
 Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
 Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
@@ -155,6 +160,32 @@ begin
   Result := UsingWinNT and (( GetWindowsVersion shr 24) >= 5 );
 end;
 
+function IsWin10OrLater : Boolean;
+var
+  Version: TWindowsVersion;
+begin
+  GetWindowsVersionEx(Version);
+  if (Version.Major >= 10) then
+  begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+function InTopMenu( TopMenu : Boolean ) : Boolean;
+begin
+  if TopMenu then
+  begin
+    if IsWin10OrLater then
+    begin
+      Result := True;
+    end else begin
+      Result := False;
+    end
+  end else begin
+    Result := True;
+  end;
+end;
 { **********************************
    Custom Wizard Page
   ********************************** }

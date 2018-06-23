@@ -166,23 +166,19 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-#if defined(GIT_COMMIT_HASH)
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n(GitHash ") _T(GIT_COMMIT_HASH) _T(")\r\n"),
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 		HIWORD(dwVersionMS),
 		LOWORD(dwVersionMS),
 		HIWORD(dwVersionLS),
 		LOWORD(dwVersionLS)
 	);
-#else
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (Rev.") _T(SVN_REV_STR) _T(")\r\n"),
-		HIWORD( dwVersionMS ),
-		LOWORD( dwVersionMS ),
-		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS )
-	);
+	cmemMsg.AppendString(szMsg);
+#if defined(GIT_COMMIT_HASH)
+	cmemMsg.AppendString(_T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
 #endif
-	cmemMsg.AppendString( szMsg );
-
+#if defined(GIT_URL)
+	cmemMsg.AppendString(_T("(GitURL " GIT_URL ")\r\n"));
+#endif
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 共有メモリ情報
@@ -248,6 +244,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
+	m_UrlGitWnd.SetSubclassWindow(GetDlgItem( GetHwnd(), IDC_STATIC_URL_GIT));
+#ifdef GIT_URL
+	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), _T(GIT_URL));
+#else
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_GIT_CAPTION), SW_HIDE);
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), SW_HIDE);
+#endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_ORG ) );
@@ -277,6 +280,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 	switch( wID ){
 	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
 	case IDC_STATIC_URL_UR:
+	case IDC_STATIC_URL_GIT:
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{

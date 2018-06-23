@@ -74,7 +74,7 @@ public:
 
 	static void CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>& vPaths );
 	static std::tstring ChopYen( const std::tstring& str );
-	static void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
+	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
 
 	// Grep実行
 	DWORD DoGrep(
@@ -117,7 +117,8 @@ private:
 		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 		int						nNest,				//!< [in] ネストレベル
 		bool&					bOutputBaseFolder,
-		int*					pnHitCount			//!< [i/o] ヒット数の合計
+		int*					pnHitCount,			//!< [i/o] ヒット数の合計
+		CNativeW&				cmemMessage
 	);
 
 	// Grep実行
@@ -179,6 +180,9 @@ private:
 		// オプション
 		const SGrepOption&	sGrepOption
 	);
+
+	DWORD m_dwTickAddTail;	// AddTail() を呼び出した時間
+	DWORD m_dwTickUICheck;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
 
 public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか

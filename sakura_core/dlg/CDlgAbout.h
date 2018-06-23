@@ -53,6 +53,7 @@ protected:
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 private:
 	CUrlWnd m_UrlUrWnd;
+	CUrlWnd m_UrlGitWnd;
 	CUrlWnd m_UrlOrgWnd;
 };
 
