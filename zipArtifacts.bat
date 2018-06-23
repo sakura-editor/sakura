@@ -38,6 +38,9 @@ copy help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy help\sakura\sakura.chm  %WORKDIR_EXE%\
 
 copy installer\warning.txt   %WORKDIR%\
+if "%ALPHA%" == "1" (
+	copy installer\warning-alpha.txt   %WORKDIR%\
+)
 copy installer\Output\*.exe  %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log %WORKDIR_LOG%\
 
