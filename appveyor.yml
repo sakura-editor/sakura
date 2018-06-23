@@ -25,6 +25,8 @@ build_script:
 
     call build-chm.bat
 
+    call build-installer.bat %PLATFORM% %CONFIGURATION%
+
     call zipArtifacts.bat %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml

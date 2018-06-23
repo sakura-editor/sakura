@@ -50,6 +50,7 @@ Name: sendto;      Description: "‘—‚é‚É’Ç‰Á(&T)";                     Components
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
+Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
 Source: "sakura\bsd_license.txt";      DestDir: "{app}";         Components: main
 Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
