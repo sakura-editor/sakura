@@ -15,17 +15,7 @@ platform:
 
 build_script:
 - cmd: >-
-    echo PLATFORM      %PLATFORM%
-
-    echo CONFIGURATION %CONFIGURATION%
-
-    call build-sln.bat %PLATFORM% %CONFIGURATION%
-
-    call build-chm.bat
-
-    call build-installer.bat %PLATFORM% %CONFIGURATION%
-
-    call zipArtifacts.bat %PLATFORM% %CONFIGURATION%
+    call build-all.bat %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml
 
