@@ -5,8 +5,11 @@
 #endif
 #define MyAppVer GetFileVersion("sakura\sakura.exe")
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
+#define MyArchitecture "x64"
 
 [Setup]
+ArchitecturesInstallIn64BitMode={#MyArchitecture}
+ArchitecturesAllowed={#MyArchitecture}
 AppName=サクラエディタ
 AppId=sakura editor
 AppVersion={#MyAppVer}
