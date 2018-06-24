@@ -9,7 +9,8 @@
 [Setup]
 AppName=サクラエディタ
 AppId=sakura editor
-AppVerName=sakura editor(サクラエディタ)
+AppVersion={#MyAppVer}
+AppVerName=sakura editor(サクラエディタ) {#MyAppVer}
 AppMutex=MutexSakuraEditor
 AppPublisher=サクラエディタ開発チーム
 AppPublisherURL=http://sakura-editor.sourceforge.net
@@ -29,6 +30,7 @@ PrivilegesRequired=None
 ; エディタのバージョンに応じて書き換える場所
 OutputBaseFilename=sakura_install{#MyAppVerH}
 VersionInfoVersion={#MyAppVer}
+VersionInfoProductVersion={#MyAppVer}
 
 ; OSバージョン制限
 MinVersion=0,5.0
