@@ -48,6 +48,8 @@ if "%GIT_ENABLED%" == "1" (
 @echo GIT_URL: %GIT_URL%
 @echo APPVEYOR_URL          : %APPVEYOR_URL%
 @echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
+@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
+@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 @echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
 @echo APPVEYOR_BUILD_NUMBER : %APPVEYOR_BUILD_NUMBER%
 
@@ -80,6 +82,18 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 	type nul                                                          >> %GITREV_H%
 ) else (
 	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"            >> %GITREV_H%
+)
+
+if "%APPVEYOR_ACCOUNT_NAME%" == "" (
+	type nul                                                          >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"      >> %GITREV_H%
+)
+
+if "%APPVEYOR_PROJECT_SLUG%" == "" (
+	type nul                                                          >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"      >> %GITREV_H%
 )
 
 if "%APPVEYOR_BUILD_VERSION%" == "" (
