@@ -39,11 +39,7 @@ copy help\macro\macro.chm                        %INSTALLER_WORK%\
 copy %platform%\%configuration%\*.exe            %INSTALLER_WORK%\
 copy %platform%\%configuration%\*.dll            %INSTALLER_WORK%\
 
-set SAKURA_ISS=installer\sakura.iss
-if "%platform%" == "x64" (
-	set SAKURA_ISS=installer\sakura-x64.iss
-)
-
+set SAKURA_ISS=installer\sakura-%platform%.iss
 "C:\Program Files (x86)\Inno Setup 5\ISCC.exe" %SAKURA_ISS% || (echo error && exit /b 1)
 
 if exist "%INSTALLER_RESOURCES%" rmdir /s /q "%INSTALLER_RESOURCES%"
