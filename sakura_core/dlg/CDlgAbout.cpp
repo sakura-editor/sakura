@@ -166,13 +166,17 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
+	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d"),
 		HIWORD(dwVersionMS),
 		LOWORD(dwVersionMS),
 		HIWORD(dwVersionLS),
 		LOWORD(dwVersionLS)
 	);
 	cmemMsg.AppendString(szMsg);
+#if defined(ALPHA_VERSION)
+	cmemMsg.AppendString(_APP_NAME_3_(_T));
+#endif
+	cmemMsg.AppendString(_T("\r\n") );
 #if defined(GIT_COMMIT_HASH)
 	cmemMsg.AppendString(_T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
 #endif

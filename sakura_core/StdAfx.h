@@ -16,6 +16,16 @@
 #define STRICT 1
 #endif
 
+#if _WIN64
+#define ALPHA_VERSION
+#endif
+
+#if defined(ALPHA_VERSION)
+#pragma message("----------------------------------------------------------------------------------------")
+#pragma message("---  This is an alpha version and under development. Be careful to use this version. ---")
+#pragma message("----------------------------------------------------------------------------------------")
+#endif
+
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 
 //#pragma warning(disable: 4786)
