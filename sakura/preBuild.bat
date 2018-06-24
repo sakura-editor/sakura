@@ -91,7 +91,8 @@ if "%APPVEYOR_BUILD_VERSION%" == "" (
 if "%APPVEYOR_BUILD_NUMBER%" == "" (
 	type nul                                                          >> %GITREV_H%
 ) else (
-	echo #define APPVEYOR_BUILD_NUMBER "%APPVEYOR_BUILD_NUMBER%"      >> %GITREV_H%
+	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"      >> %GITREV_H%
+	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%       >> %GITREV_H%
 )
 
 ENDLOCAL
