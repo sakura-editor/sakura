@@ -31,7 +31,7 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install{#MyAppVerH}
+OutputBaseFilename=sakura_install{#MyAppVerH}-{#MyArchitecture}
 VersionInfoVersion={#MyAppVer}
 VersionInfoProductVersion={#MyAppVer}
 

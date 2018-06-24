@@ -5,6 +5,7 @@
 #endif
 #define MyAppVer GetFileVersion("sakura\sakura.exe")
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
+#define MyArchitecture "x86"
 
 [Setup]
 AppName=サクラエディタ
@@ -28,7 +29,7 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install{#MyAppVerH}
+OutputBaseFilename=sakura_install{#MyAppVerH}-{#MyArchitecture}
 VersionInfoVersion={#MyAppVer}
 VersionInfoProductVersion={#MyAppVer}
 
