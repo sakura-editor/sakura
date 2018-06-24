@@ -9,7 +9,6 @@
 #else
 	#include "sakura_lang.h"
 #endif
-#include "gitrev.h"
 #include "version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
