@@ -66,5 +66,29 @@ if "%GIT_URL%" == "" (
 	echo #define GIT_URL "%GIT_URL%"                      >> %GITREV_H%
 )
 
+if "%APPVEYOR_URL%" == "" (
+	type nul                                              >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_URL "%APPVEYOR_URL%"            >> %GITREV_H%
+)
+
+if "%APPVEYOR_REPO_NAME%" == "" (
+	type nul                                                          >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"            >> %GITREV_H%
+)
+
+if "%APPVEYOR_BUILD_VERSION%" == "" (
+	type nul                                                          >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"    >> %GITREV_H%
+)
+
+if "%APPVEYOR_BUILD_NUMBER%" == "" (
+	type nul                                                          >> %GITREV_H%
+) else (
+	echo #define APPVEYOR_BUILD_NUMBER "%APPVEYOR_BUILD_NUMBER%"      >> %GITREV_H%
+)
+
 ENDLOCAL
 rem exit 0
