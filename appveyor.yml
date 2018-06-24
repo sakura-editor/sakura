@@ -30,4 +30,4 @@ build_script:
     echo appveyor_yml
 
 artifacts:
-- path: 'sakura-$(platform)-$(configuration).zip'
+- path: 'sakura-$(platform)-$(configuration)*.zip'
