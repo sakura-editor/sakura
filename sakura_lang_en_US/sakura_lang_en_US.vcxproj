@@ -159,7 +159,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Link>
@@ -241,7 +241,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Link>
