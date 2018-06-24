@@ -1,4 +1,9 @@
-﻿#define MyAppVer GetFileVersion("sakura\sakura.exe")
+﻿#if VER < EncodeVer(5,6,1)
+  #define MySendTo "{sendto}"
+#else
+  #define MySendTo "{usersendto}"
+#endif
+#define MyAppVer GetFileVersion("sakura\sakura.exe")
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
 
 [Setup]
@@ -85,7 +90,7 @@ Name: "{userdesktop}\サクラエディタ";                                    
 Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
 Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
-Name: "{sendto}\サクラエディタ";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
+Name: "{#MySendTo}\サクラエディタ";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
