@@ -194,6 +194,8 @@ CControlProcess::~CControlProcess()
 	::CloseHandle( m_hMutex );
 };
 
+//他プロセスのコマンドラインを取得する
+std::wstring getCommandLine(_In_ HANDLE hProcess);
 
 /*!
  * @brief コントロールプロセスを起動したエディタプロセスを取得する
@@ -248,8 +250,155 @@ bool CControlProcess::IsEditorProcess(const std::wstring &profileName) const
 			continue;
 		}
 
-		return true; // エディタプロセスを見付けた！
+		// コマンドラインを取得
+		std::wstring cmdline;
+		try {
+			cmdline = getCommandLine(hProcess);
+			::CloseHandle(hProcess);
+		}
+		catch (const std::exception& /* ex */) {
+			::CloseHandle(hProcess);
+			return false;
+		}
+
+		// コマンドラインを解析
+		CCommandLine cmdlineObj;
+		cmdlineObj.ParseCommandLine(cmdline.c_str(), false);
+
+		// プロファイル指定が一致
+		if (0 == _tcsicmp(profileName.c_str(), cmdlineObj.GetProfileName())) {
+			return true; // エディタプロセスを見付けた！
+		}
 	}
 	return false; // エディタプロセスは見つからなかった
 }
 
+#include "_os\NtQueryProcessInformation.h"
+
+
+//他プロセスの生コマンドラインを取得する
+std::wstring getRawCommandLine(_In_ HANDLE hProcess);
+
+//他プロセスのコマンドラインを取得する
+std::wstring getCommandLine(_In_ HANDLE hProcess)
+{
+	// CommandLine
+	std::wstring rawCmdline(getRawCommandLine(hProcess));
+
+	// WinMainのMinGW向けコードからパクってきたコード
+	LPCWSTR pszCommandLine = rawCmdline.c_str();
+	{
+		// 実行ファイル名をスキップする
+		if (_T('\"') == *pszCommandLine) {
+			pszCommandLine++;
+			while (_T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine) {
+				pszCommandLine++;
+			}
+			if (_T('\"') == *pszCommandLine) {
+				pszCommandLine++;
+			}
+		}
+		else {
+			while (_T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
+				&& _T('\0') != *pszCommandLine) {
+				pszCommandLine++;
+			}
+		}
+		// 次のトークンまで進める
+		while (_T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine) {
+			pszCommandLine++;
+		}
+	}
+	return std::wstring(pszCommandLine);
+}
+
+
+//他プロセスの環境ブロックを取得する
+void readProcessEnvironmentBlock(_In_ HANDLE hProcess, _Out_ PPEB ppeb);
+
+//他プロセスのプロセスパラメータを取得する
+void readUserProcessParameters(_In_ HANDLE hProcess, _Out_ PRTL_USER_PROCESS_PARAMETERS pupp);
+
+//他プロセスの生コマンドラインを取得する
+std::wstring getRawCommandLine(_In_ HANDLE hProcess)
+{
+	// 他プロセスのコマンドラインにアクセスするには、
+	// プロセスの環境ブロック(PEB)にあるパラメータを参照する必要がある。
+
+	// User Process Parameters
+	RTL_USER_PROCESS_PARAMETERS upp;
+
+	// read User Process Parameters
+	readUserProcessParameters(hProcess, &upp);
+
+	if (!upp.CommandLine.Length)
+	{
+		throw std::exception("upp.CommandLine is empty.");
+	}
+
+	// CommandLine
+	std::wstring rawCmdline(upp.CommandLine.Length, '\0');
+
+	// Try to read CommandLine
+	SIZE_T cbRead = 0;
+	if (!ReadProcessMemory(hProcess, upp.CommandLine.Buffer, &*rawCmdline.begin(), upp.CommandLine.Length, &cbRead))
+	{
+		throw std::exception("failed to ReadProcessMemory for CommandLine.");
+	}
+
+	return std::move(rawCmdline);
+}
+
+
+//他プロセスのプロセスパラメータを取得する
+void readUserProcessParameters(_In_ HANDLE hProcess, _Out_ PRTL_USER_PROCESS_PARAMETERS pupp)
+{
+	// Process Environment Block(PEB)
+	PEB peb;
+
+	// read Process Environment Block (PEB)
+	readProcessEnvironmentBlock(hProcess, &peb);
+
+	// try to read User Process Parameters
+	SIZE_T cbRead = 0;
+	if (!ReadProcessMemory(hProcess, peb.ProcessParameters, pupp, sizeof(pupp), &cbRead))
+	{
+		throw std::exception("failed to ReadProcessMemory for USER_PROCESS_PARAMETERS.");
+	}
+}
+
+
+//他プロセスの環境ブロックを取得する
+void readProcessEnvironmentBlock(_In_ HANDLE hProcess, _Out_ PPEB ppeb)
+{
+	NtQueryInformationProcessT NtQueryInformationProcess;
+
+	std::unique_ptr<BYTE> pbiBuf(new BYTE[sizeof(PROCESS_BASIC_INFORMATION)]);
+	for (DWORD size = sizeof(PROCESS_BASIC_INFORMATION);;) {
+		ULONG sizeNeeded = 0;
+		NTSTATUS status = NtQueryInformationProcess(hProcess, ProcessBasicInformation, (PPROCESS_BASIC_INFORMATION) &*pbiBuf, size, &sizeNeeded);
+		if (status)
+		{
+			if (size < sizeNeeded) {
+				size = sizeNeeded;
+				pbiBuf = std::unique_ptr<BYTE>(new BYTE[size]);
+				continue;
+			}
+			throw std::exception("failed NtQueryInformationProcess.");
+		}
+		break;
+	}
+
+	PPROCESS_BASIC_INFORMATION pbi = (PPROCESS_BASIC_INFORMATION) &*pbiBuf;
+	if (pbi->PebBaseAddress == NULL)
+	{
+		throw std::exception("pbi->PebBaseAddress is NULL.");
+	}
+
+	// try to read Process Environment Block (PEB)
+	SIZE_T cbRead = 0;
+	if (!ReadProcessMemory(hProcess, pbi->PebBaseAddress, ppeb, sizeof(*ppeb), &cbRead))
+	{
+		throw std::exception("failed to ReadProcessMemory for PEB.");
+	}
+}
