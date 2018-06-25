@@ -29,6 +29,8 @@
 #include <io.h>
 #include <tchar.h>
 
+#include "_os\getMessageFromSystem.h"
+
 class CProcess;
 
 
@@ -217,6 +219,7 @@ bool CProcessFactory::IsExistControlProcess()
 	return false;	// コントロールプロセスは存在していないか、まだ CreateMutex() してない
 }
 
+
 //	From Here Aug. 28, 2001 genta
 /*!
 	@brief コントロールプロセスを起動する
@@ -275,19 +278,8 @@ bool CProcessFactory::StartControlProcess()
 	);
 	if( !bCreateResult ){
 		//	失敗
-		TCHAR* pMsg;
-		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-						FORMAT_MESSAGE_IGNORE_INSERTS |
-						FORMAT_MESSAGE_FROM_SYSTEM,
-						NULL,
-						::GetLastError(),
-						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPTSTR)&pMsg,
-						0,
-						NULL
-		);
-		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
-		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
+		std::wstring msg(getMessageFromSystem(::GetLastError()));
+		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
 		return false;
 	}
 
