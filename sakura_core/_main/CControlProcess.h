@@ -49,6 +49,9 @@ protected:
 	virtual void OnExitProcess();
 
 private:
+	bool	IsEditorProcess(const std::wstring &profileName) const;
+
+private:
 	HANDLE			m_hMutex;				//!< アプリケーション実行検出用ミューテックス
 	HANDLE			m_hMutexCP;				//!< コントロールプロセスミューテックス
 	HANDLE			m_hEventCPInitialized;	//!< コントロールプロセス初期化完了イベント 2006.04.10 ryoji

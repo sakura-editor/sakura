@@ -24,6 +24,15 @@
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 
+#include "_os\ProcessEntryIterator.h"
+
+#include <Psapi.h>
+#if _WIN32_WINNT < _WIN32_WINNT_WIN7
+	// リンカ指定
+	#if PSAPI_VERSION < 2
+	#pragma comment(lib, "Psapi.lib")
+	#endif
+#endif
 
 //-------------------------------------------------
 
@@ -98,6 +107,14 @@ bool CControlProcess::InitializeProcess()
 		CShareData_IO::SaveShareData();
 		if( CCommandLine::getInstance()->IsWriteQuit() ){
 			return false;
+		}
+	}
+
+	// 常駐しない設定の場合
+	if (!GetDllShareData().m_Common.m_sGeneral.m_bStayTaskTray) {
+		// 先行して起動したエディタプロセスを検索する
+		if (!IsEditorProcess(strProfileName)) {
+			return false;	// エディタプロセスが見つからなければ終了
 		}
 	}
 
@@ -177,4 +194,62 @@ CControlProcess::~CControlProcess()
 	::CloseHandle( m_hMutex );
 };
 
+
+/*!
+ * @brief コントロールプロセスを起動したエディタプロセスを取得する
+ *
+ * @param [in] profileName プロファイル名
+ * @date 2017/06/25 berryzplus		新規作成
+ */
+bool CControlProcess::IsEditorProcess(const std::wstring &profileName) const
+{
+	// 自プロセスのフルパスを取得する
+	TCHAR szMyPath[MAX_PATH];
+	::GetModuleFileName(NULL, szMyPath, _countof(szMyPath) - 1);
+
+	// 自プロセスのファイル名を取得する
+	TCHAR szMyFilename[MAX_PATH];
+	::SplitPath_FolderAndFile(szMyPath, NULL, szMyFilename);
+
+	// 自プロセスのプロセスIDを取得する
+	DWORD myProcessId = ::GetCurrentProcessId();
+
+	// エディタプロセスを見付けるか、全プロセスのチェックが終わるまでループ
+	bool editorExists = false;
+	ProcessEntryIterator processIter(myProcessId);
+	ProcessEntryIterator processEnd;
+	for (; processIter != processEnd; ++processIter) {
+		// プロセス情報を取得
+		PROCESSENTRY32 &pe = *processIter;
+
+		// 自プロセスはスキップ
+		if (myProcessId == pe.th32ProcessID)continue;
+
+		// ファイル名が異なるものはスキップ
+		if (szMyFilename[0] != pe.szExeFile[0] || 0 != _tcsicmp(szMyFilename, pe.szExeFile)) continue;
+
+		// プロセスIDを使ってプロセスハンドルを開く。
+		HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
+
+		// プロセスを開けなければスキップ(おそらく権限エラー)
+		if (!hProcess) continue;
+
+		// プロセスのフルパスを取得
+		TCHAR szFullname[MAX_PATH];
+		if (!::GetModuleFileNameEx(hProcess, NULL, szFullname, _countof(szFullname) - 1)) {
+			::CloseHandle(hProcess);
+			continue;
+		}
+
+		// パスが一致しなければスキップ
+		if (0 != _tcsicmp(szMyPath, szFullname))
+		{
+			::CloseHandle(hProcess);
+			continue;
+		}
+
+		return true; // エディタプロセスを見付けた！
+	}
+	return false; // エディタプロセスは見つからなかった
+}
 
