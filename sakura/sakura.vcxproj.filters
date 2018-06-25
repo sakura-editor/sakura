@@ -1094,6 +1094,9 @@
     <ClInclude Include="..\sakura_core\_os\ProcessEntryIterator.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\_os\NtQueryProcessInformation.h">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sakura_core\Funccode_x.hsrc">

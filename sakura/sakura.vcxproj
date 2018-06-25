@@ -555,6 +555,7 @@
     <ClInclude Include="..\sakura_core\_os\CDropTarget.h" />
     <ClInclude Include="..\sakura_core\_os\COsVersionInfo.h" />
     <ClInclude Include="..\sakura_core\_os\getMessageFromSystem.h" />
+    <ClInclude Include="..\sakura_core\_os\NtQueryProcessInformation.h" />
     <ClInclude Include="..\sakura_core\_os\OleTypes.h" />
     <ClInclude Include="..\sakura_core\_os\ProcessEntryIterator.h" />
   </ItemGroup>
