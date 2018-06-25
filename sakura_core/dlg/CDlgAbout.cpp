@@ -165,26 +165,35 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// バージョン情報・コンフィグ情報 //
 #ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")\r\n"
-#else
-#define VER_GITHASH ""
+#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
 #endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	auto_sprintf(szMsg,
-		_T(
-			"v%d.%d.%d.%d  %hs  %hs\r\n"
-			"%hs"
-		),
-		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS), // e.g. {2, 3, 2, 0}
-		VER_PLATFORM, // e.g. "64bit", "32bit"
-		VER_CONFIG, // e.g. "DEBUG", ""
-		VER_GITHASH // e.g. "(GitHash 4a0de5798394409af14ec69c310ba0c86efdfc05)\r\n", ""
+		_T("v%d.%d.%d.%d"),
+		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
+	
+	// 1行目
 	cmemMsg.AppendString( szMsg );
-#if defined(GIT_URL)
-	cmemMsg.AppendString(_T("(GitURL " GIT_URL ")\r\n"));
+	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
+	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
+#ifdef ALPHA_VERSION
+	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
 #endif
+	cmemMsg.AppendString( _T("\r\n") );
+
+	// 2行目
+#ifdef VER_GITHASH
+	cmemMsg.AppendString( _T(VER_GITHASH) _T("\r\n"));
+#endif
+
+	// 3行目
+#ifdef GIT_URL
+	cmemMsg.AppendString( _T("(GitURL ") _T(GIT_URL) _T(")\r\n"));
+#endif
+
+	// 段落区切り
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 共有メモリ情報

@@ -26,7 +26,14 @@
 #define SPACE_WHEN_DEBUG ""
 #endif
 
+#ifdef ALPHA_VERSION
+#define ALPHA_VERSION_STR     "Alpha Version"
+#define ALPHA_VERSION_VER_STR " " ALPHA_VERSION_STR
+#else
+#define ALPHA_VERSION_VER_STR ""
+#endif
+
 // リソース埋め込み用バージョン文字列
 // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit DEBUG"
 // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit"
-#define RESOURCE_VERSION_STRING(_VersionString) _VersionString " (" GIT_SHORT_COMMIT_HASH ") " VER_CHARSET " " VER_PLATFORM SPACE_WHEN_DEBUG VER_CONFIG
+#define RESOURCE_VERSION_STRING(_VersionString) _VersionString " (" GIT_SHORT_COMMIT_HASH ") " VER_CHARSET " " VER_PLATFORM SPACE_WHEN_DEBUG VER_CONFIG ALPHA_VERSION_VER_STR

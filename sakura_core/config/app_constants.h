@@ -41,7 +41,14 @@
 	#define _APP_NAME_2_(TYPE) TYPE("")
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakura(デバッグ版)")
+#ifdef ALPHA_VERSION
+	#define _APP_NAME_3_(TYPE) TYPE("(Alpha Version)")
+#else
+	#define _APP_NAME_3_(TYPE) TYPE("")
+#endif
+
+//例:UNICODEデバッグ→_T("sakura(デバッグ版)")
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_3_(TYPE)
 
 #define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
 #define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))
