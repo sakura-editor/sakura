@@ -20,6 +20,13 @@
 #define VER_CONFIG ""
 #endif
 
+#ifdef _DEBUG
+#define SPACE_WHEN_DEBUG " "
+#else
+#define SPACE_WHEN_DEBUG ""
+#endif
+
 // リソース埋め込み用バージョン文字列
 // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit DEBUG"
-#define RESOURCE_VERSION_STRING(_VersionString) _VersionString " (" GIT_SHORT_COMMIT_HASH ") " VER_CHARSET " " VER_PLATFORM " " VER_CONFIG
+// e.g. "2.3.2.0 (4a0de579) UNICODE 64bit"
+#define RESOURCE_VERSION_STRING(_VersionString) _VersionString " (" GIT_SHORT_COMMIT_HASH ") " VER_CHARSET " " VER_PLATFORM SPACE_WHEN_DEBUG VER_CONFIG
