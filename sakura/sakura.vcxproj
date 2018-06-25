@@ -554,6 +554,7 @@
     <ClInclude Include="..\sakura_core\_os\CClipboard.h" />
     <ClInclude Include="..\sakura_core\_os\CDropTarget.h" />
     <ClInclude Include="..\sakura_core\_os\COsVersionInfo.h" />
+    <ClInclude Include="..\sakura_core\_os\getMessageFromSystem.h" />
     <ClInclude Include="..\sakura_core\_os\OleTypes.h" />
   </ItemGroup>
   <ItemGroup>
