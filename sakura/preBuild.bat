@@ -50,6 +50,7 @@ if "%GIT_ENABLED%" == "1" (
 : Output gitrev.h
 set GITREV_H=..\sakura_core\gitrev.h
 type nul                                  > %GITREV_H%
+echo #pragma once                        >> %GITREV_H%
 if "%COMMITID%" == "" (
 	type nul                                  >> %GITREV_H%
 ) else (

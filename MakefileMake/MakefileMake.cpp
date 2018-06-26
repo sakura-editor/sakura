@@ -386,7 +386,7 @@ int main(int argc, char* argv[])
 	fclose(out);
 #ifdef _DEBUG
 	// %d個のオブジェクトファイル名が出力されました
-	printf("... Wrote %d object file lines to tmpfile[%s].\n", file_list.size(), tmp_file);
+	printf("... Wrote %Id object file lines to tmpfile[%s].\n", file_list.size(), tmp_file);
 #endif
 
 	// ファイルの入換え
