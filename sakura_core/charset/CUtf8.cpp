@@ -96,7 +96,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	if( (void*)&cSrc == (void*)pDstMem )
+	if( &cSrc == pDstMem->_GetMemory() )
 	{
 		// 必要なバッファサイズを調べて確保する
 		wchar_t* pDst;

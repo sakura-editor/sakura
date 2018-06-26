@@ -116,7 +116,7 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	if( (void*)&cSrc == (void*)pDstMem )
+	if( &cSrc == pDstMem->_GetMemory() )
 	{
 		// 変換先バッファサイズを設定してメモリ領域確保
 		wchar_t* pDst;
