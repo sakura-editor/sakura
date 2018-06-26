@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,16 +31,16 @@
 class CCesu8 : public CCodeBase {
 public:
 
-	//CCodeBaseÉCÉìÉ^Å[ÉtÉFÅ[ÉX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< ì¡íËÉRÅ[Éh Å® UNICODE    ïœä∑
+	//CCodeBase„Ç§„É≥„Çø„Éº„Éï„Çß„Éº„Çπ
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< ÁâπÂÆö„Ç≥„Éº„Éâ ‚Üí UNICODE    Â§âÊèõ
 		return CUtf8::CESU8ToUnicode(cSrc, pDst);
 	}
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    Å® ì¡íËÉRÅ[Éh ïœä∑
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    ‚Üí ÁâπÂÆö„Ç≥„Éº„Éâ Â§âÊèõ
 		return CUtf8::UnicodeToCESU8(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom);																			//!< BOMÉfÅ[É^éÊìæ
-// GetEolÇÕCCodeBaseÇ…à⁄ìÆ	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE Å® Hex ïœä∑
+	void GetBom(CMemory* pcmemBom);																			//!< BOM„Éá„Éº„ÇøÂèñÂæó
+// GetEol„ÅØCCodeBase„Å´ÁßªÂãï	2010/6/13 Uchi
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE ‚Üí Hex Â§âÊèõ
 		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 

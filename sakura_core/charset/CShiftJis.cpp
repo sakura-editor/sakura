@@ -1,26 +1,26 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CShiftJis.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 
-// ”ñˆË‘¶„§
+// éä¾å­˜æ¨å¥¨
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
 /*!
-	@param[in] pData ˆÊ’u‚ğ‹‚ß‚½‚¢•¶š—ñ‚Ìæ“ª
-	@param[in] nDataLen •¶š—ñ’·
-	@param[in] nIdx ˆÊ’u(0ƒIƒŠƒWƒ“)
-	@retval 1  1ƒoƒCƒg•¶š
-	@retval 2  2ƒoƒCƒg•¶š
-	@retval 0  ƒGƒ‰[
+	@param[in] pData ä½ç½®ã‚’æ±‚ã‚ãŸã„æ–‡å­—åˆ—ã®å…ˆé ­
+	@param[in] nDataLen æ–‡å­—åˆ—é•·
+	@param[in] nIdx ä½ç½®(0ã‚ªãƒªã‚¸ãƒ³)
+	@retval 1  1ãƒã‚¤ãƒˆæ–‡å­—
+	@retval 2  2ãƒã‚¤ãƒˆæ–‡å­—
+	@retval 0  ã‚¨ãƒ©ãƒ¼
 
-	@date 2005-09-02 D.S.Koba ì¬
+	@date 2005-09-02 D.S.Koba ä½œæˆ
 
-	@note nIdx‚Í—\‚ß•¶š‚Ìæ“ªˆÊ’u‚Æ‚í‚©‚Á‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢D
-	2ƒoƒCƒg•¶š‚Ì2ƒoƒCƒg–Ú‚ğnIdx‚É—^‚¦‚é‚Æ³‚µ‚¢Œ‹‰Ê‚ª“¾‚ç‚ê‚È‚¢D
+	@note nIdxã¯äºˆã‚æ–‡å­—ã®å…ˆé ­ä½ç½®ã¨ã‚ã‹ã£ã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„ï¼
+	2ãƒã‚¤ãƒˆæ–‡å­—ã®2ãƒã‚¤ãƒˆç›®ã‚’nIdxã«ä¸ãˆã‚‹ã¨æ­£ã—ã„çµæœãŒå¾—ã‚‰ã‚Œãªã„ï¼
 */
 int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 {
@@ -41,7 +41,7 @@ int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 
 
 /*!
-	SJIS ¨ Unicode •ÏŠ·
+	SJIS â†’ Unicode å¤‰æ›
 */
 int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
 {
@@ -65,34 +65,34 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 	for( ; (nclen = CheckSjisChar(reinterpret_cast<const char*>(pr), pr_end-pr, &echarset)) != 0; pr += nclen ){
 		switch( echarset ){
 		case CHARSET_ASCII7:
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( nclen != 1 ){
 				nclen = 1;
 			}
-			// 7-bit ASCII •¶š‚ğ•ÏŠ·
+			// 7-bit ASCII æ–‡å­—ã‚’å¤‰æ›
 			*pw = static_cast<unsigned short>( *pr );
 			pw += 1;
 			break;
 		case CHARSET_JIS_ZENKAKU:
 		case CHARSET_JIS_HANKATA:
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( echarset == CHARSET_JIS_ZENKAKU && nclen != 2 ){
 				nclen = 2;
 			}
 			if( echarset == CHARSET_JIS_HANKATA && nclen != 1 ){
 				nclen = 1;
 			}
-			// ‘SŠp•¶š‚Ü‚½‚Í”¼ŠpƒJƒ^ƒJƒi•¶š‚ğ•ÏŠ·
+			// å…¨è§’æ–‡å­—ã¾ãŸã¯åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—ã‚’å¤‰æ›
 			pw += _SjisToUni_char( pr, pw, echarset, &berror_tmp );
 			if( berror_tmp == true ){
 				berror = true;
 			}
 			break;
 		default:/* CHARSET_BINARY:*/
-			if( nclen != 1 ){	// •ÛŒìƒR[ƒh
+			if( nclen != 1 ){	// ä¿è­·ã‚³ãƒ¼ãƒ‰
 				nclen = 1;
 			}
-			// ƒGƒ‰[‚ªŒ©‚Â‚©‚Á‚½
+			// ã‚¨ãƒ©ãƒ¼ãŒè¦‹ã¤ã‹ã£ãŸ
 			pw += BinToText( pr, nclen, pw );
 		}
 	}
@@ -106,17 +106,17 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 
 
 
-/* ƒR[ƒh•ÏŠ· SJIS¨Unicode */
+/* ã‚³ãƒ¼ãƒ‰å¤‰æ› SJISâ†’Unicode */
 EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool bError;
 
-	//ƒ\[ƒXæ“¾
+	//ã‚½ãƒ¼ã‚¹å–å¾—
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚ğİ’è‚µ‚Äƒƒ‚ƒŠ—ÌˆæŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’è¨­å®šã—ã¦ãƒ¡ãƒ¢ãƒªé ˜åŸŸç¢ºä¿
 	wchar_t* pDst;
 	try{
 		pDst = new wchar_t[nSrcLen];
@@ -127,13 +127,13 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = SjisToUni( pSrc, nSrcLen, pDst, &bError );
 
-	// pDst‚ğXV
+	// pDstã‚’æ›´æ–°
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete [] pDst;
 
 	if( bError == false ){
@@ -172,7 +172,7 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
 	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
 			nclen = 1;
@@ -213,18 +213,18 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 
 
 
-/* ƒR[ƒh•ÏŠ· Unicode¨SJIS */
+/* ã‚³ãƒ¼ãƒ‰å¤‰æ› Unicodeâ†’SJIS */
 EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem )
 {
-	// ó‘Ô
+	// çŠ¶æ…‹
 	bool berror;
 	const CMemory* pMem = cSrc._GetMemory();
 
-	// ƒ\[ƒXæ“¾
+	// ã‚½ãƒ¼ã‚¹å–å¾—
 	const wchar_t* pSrc = reinterpret_cast<const wchar_t*>( pMem->GetRawPtr() );
 	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚ğİ’è‚µ‚Äƒoƒbƒtƒ@‚ğŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’è¨­å®šã—ã¦ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 	char* pDst;
 	try{
 		pDst = new char[ nSrcLen * 2 ];
@@ -235,16 +235,16 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = UniToSjis( pSrc, nSrcLen, pDst, &berror );
 
-	// pMem‚ğXV
+	// pMemã‚’æ›´æ–°
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete[] pDst;
 
-	// Œ‹‰Ê
+	// çµæœ
 	if( berror == true ){
 		return RESULT_LOSESOME;
 	}else{
@@ -253,7 +253,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 }
 
 
-// •¶šƒR[ƒh•\¦—p	UNICODE ¨ Hex •ÏŠ·	2008/6/9 Uchi
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨	UNICODE â†’ Hex å¤‰æ›	2008/6/9 Uchi
 EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
@@ -265,7 +265,7 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInSjis) {
-		// Unicode‚Å•\¦
+		// Unicodeã§è¡¨ç¤º
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 
@@ -275,13 +275,13 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 		bbinary = true;
 	}
 
-	// SJIS •ÏŠ·
+	// SJIS å¤‰æ›
 	res = UnicodeToSJIS(cCharBuffer, cCharBuffer._GetMemory());
 	if (res != RESULT_COMPLETE) {
 		return RESULT_LOSESOME;
 	}
 
-	// Hex•ÏŠ·
+	// Hexå¤‰æ›
 	ps = reinterpret_cast<unsigned char*>( cCharBuffer._GetMemory()->GetRawPtr() );
 	pd = pDst;
 	if( bbinary == false ){

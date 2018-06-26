@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,31 +30,31 @@ class CJis : public CCodeBase{
 public:
 	CJis(bool base64decode = true) : m_base64decode(base64decode) { }
 public:
-	//CCodeBaseÉCÉìÉ^Å[ÉtÉFÅ[ÉX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return JISToUnicode(cSrc, pDst, m_base64decode); }	//!< ì¡íËÉRÅ[Éh Å® UNICODE    ïœä∑
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToJIS(cSrc, pDst); }	//!< UNICODE    Å® ì¡íËÉRÅ[Éh ïœä∑
-// GetEolÇÕCCodeBaseÇ…à⁄ìÆ	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE Å® Hex ïœä∑
+	//CCodeBase„Ç§„É≥„Çø„Éº„Éï„Çß„Éº„Çπ
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return JISToUnicode(cSrc, pDst, m_base64decode); }	//!< ÁâπÂÆö„Ç≥„Éº„Éâ ‚Üí UNICODE    Â§âÊèõ
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToJIS(cSrc, pDst); }	//!< UNICODE    ‚Üí ÁâπÂÆö„Ç≥„Éº„Éâ Â§âÊèõ
+// GetEol„ÅØCCodeBase„Å´ÁßªÂãï	2010/6/13 Uchi
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ‚Üí Hex Â§âÊèõ
 
 public:
-	//é¿ëï
-	static EConvertResult JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool base64decode = true);	// E-Mail(JISÅ®Unicode)ÉRÅ[Éhïœä∑	//2007.08.13 kobake í«â¡
-	static EConvertResult UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   Å® JISÉRÅ[Éhïœä∑
+	//ÂÆüË£Ö
+	static EConvertResult JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool base64decode = true);	// E-Mail(JIS‚ÜíUnicode)„Ç≥„Éº„ÉâÂ§âÊèõ	//2007.08.13 kobake ËøΩÂä†
+	static EConvertResult UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   ‚Üí JIS„Ç≥„Éº„ÉâÂ§âÊèõ
 
 protected:
-	// 2008.11.10  ïœä∑ÉçÉWÉbÉNÇèëÇ´íºÇ∑
+	// 2008.11.10  Â§âÊèõ„É≠„Ç∏„ÉÉ„ÇØ„ÇíÊõ∏„ÅçÁõ¥„Åô
 	static int _JisToUni_block( const unsigned char*, const int, unsigned short*, const EMyJisEscseq, bool* pbError );
 	static int JisToUni( const char*, const int, wchar_t*, bool* pbError );
 	static int _SjisToJis_char( const unsigned char*, unsigned char*, const ECharSet, bool* pbError );
 	static int UniToJis( const wchar_t*, const int, char*, bool* pbError );
 
 private:
-	//ïœä∑ï˚êj
+	//Â§âÊèõÊñπÈáù
 	bool m_base64decode;
 
 public:
-	//äeéÌîªíËíËêî
-	// JIS ÉRÅ[ÉhÇÃÉGÉXÉPÅ[ÉvÉVÅ[ÉPÉìÉXï∂éöóÒÉfÅ[É^
+	//ÂêÑÁ®ÆÂà§ÂÆöÂÆöÊï∞
+	// JIS „Ç≥„Éº„Éâ„ÅÆ„Ç®„Çπ„Ç±„Éº„Éó„Ç∑„Éº„Ç±„É≥„ÇπÊñáÂ≠óÂàó„Éá„Éº„Çø
 	static const char JISESCDATA_ASCII7[];
 	static const char JISESCDATA_JISX0201Latin[];
 	static const char JISESCDATA_JISX0201Latin_OLD[];
@@ -67,32 +67,32 @@ public:
 };
 
 
-#if 0 // codechecker.h Ç…íËã`Ç≥ÇÍÇƒÇ¢ÇÈ
-/*! JIS ÉRÅ[ÉhÇÃÉGÉXÉPÅ[ÉvÉVÅ[ÉPÉìÉXÇΩÇø */
+#if 0 // codechecker.h „Å´ÂÆöÁæ©„Åï„Çå„Å¶„ÅÑ„Çã
+/*! JIS „Ç≥„Éº„Éâ„ÅÆ„Ç®„Çπ„Ç±„Éº„Éó„Ç∑„Éº„Ç±„É≥„Çπ„Åü„Å° */
 /*
-	ïÑçÜâªï∂éöèWçá       16êiï\åª            ï∂éöóÒï\åª[*1]
+	Á¨¶Âè∑ÂåñÊñáÂ≠óÈõÜÂêà       16ÈÄ≤Ë°®Áèæ            ÊñáÂ≠óÂàóË°®Áèæ[*1]
 	------------------------------------------------------------
 	JIS C 6226-1978      1b 24 40            ESC $ @
 	JIS X 0208-1983      1b 24 42            ESC $ B
 	JIS X 0208-1990      1b 26 40 1b 24 42   ESC & @ ESC $ B
 	JIS X 0212-1990      1b 24 28 44         ESC $ ( D
-	JIS X 0213:2000 1ñ   1b 24 28 4f         ESC $ ( O
-	JIS X 0213:2004 1ñ   1b 24 28 51         ESC $ ( Q
-	JIS X 0213:2000 2ñ   1b 24 28 50         ESC $ ( P
-	JIS X 0201 ÉâÉeÉì    1b 28 4a            ESC ( J
-	JIS X 0201 ÉâÉeÉì    1b 28 48            ESC ( H         (óéjìI[*2])
-	JIS X 0201 ï–âºñº    1b 28 49            ESC ( I
+	JIS X 0213:2000 1Èù¢  1b 24 28 4f         ESC $ ( O
+	JIS X 0213:2004 1Èù¢  1b 24 28 51         ESC $ ( Q
+	JIS X 0213:2000 2Èù¢  1b 24 28 50         ESC $ ( P
+	JIS X 0201 „É©„ÉÜ„É≥    1b 28 4a            ESC ( J
+	JIS X 0201 „É©„ÉÜ„É≥    1b 28 48            ESC ( H         (Ê≠¥Âè≤ÁöÑ[*2])
+	JIS X 0201 Áâá‰ªÆÂêç    1b 28 49            ESC ( I
 	ISO/IEC 646 IRV      1b 28 42            ESC ( B
 	
 	
-	  [*1] äeÉoÉCÉgÇï÷ãXìIÇ…ISO/IEC 646 IRVÇÃï∂éöÇ≈ï\ÇµÇΩÇ‡ÇÃÅB
-	       ÇΩÇæÇµESCÇÕÉoÉCÉgíl1bÇï\Ç∑ÅB
+	  [*1] ÂêÑ„Éê„Ç§„Éà„Çí‰æøÂÆúÁöÑ„Å´ISO/IEC 646 IRV„ÅÆÊñáÂ≠ó„ÅßË°®„Åó„Åü„ÇÇ„ÅÆ„ÄÇ
+	       „Åü„Å†„ÅóESC„ÅØ„Éê„Ç§„ÉàÂÄ§1b„ÇíË°®„Åô„ÄÇ
 	
-	  [*2] JIS X 0201ÇÃéwé¶Ç∆ÇµÇƒÇÕégópÇ∑Ç◊Ç´Ç≈Ç»Ç¢Ç™ÅAå√Ç¢ÉfÅ[É^Ç≈ÇÕ
-	       égÇÌÇÍÇƒÇ¢ÇÈâ¬î\ê´Ç™Ç†ÇÈÅB
+	  [*2] JIS X 0201„ÅÆÊåáÁ§∫„Å®„Åó„Å¶„ÅØ‰ΩøÁî®„Åô„Åπ„Åç„Åß„Å™„ÅÑ„Åå„ÄÅÂè§„ÅÑ„Éá„Éº„Çø„Åß„ÅØ
+	       ‰Ωø„Çè„Çå„Å¶„ÅÑ„ÇãÂèØËÉΩÊÄß„Åå„ÅÇ„Çã„ÄÇ
 	
-	èoìWÅFhttp://www.asahi-net.or.jp/~wq6k-yn/code/
-	éQçlÅFhttp://homepage2.nifty.com/zaco/code/
+	Âá∫Â±ïÔºöhttp://www.asahi-net.or.jp/~wq6k-yn/code/
+	ÂèÇËÄÉÔºöhttp://homepage2.nifty.com/zaco/code/
 */
 enum EJisESCSeqType {
 	JISESC_UNKNOWN,

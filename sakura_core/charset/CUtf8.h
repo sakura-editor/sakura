@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,33 +32,33 @@ struct CommonSetting_Statusbar;
 class CUtf8 : public CCodeBase{
 public:
 
-	//CCodeBaseƒCƒ“ƒ^[ƒtƒF[ƒX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
+	//CCodeBaseã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
 		return UTF8ToUnicode(cSrc, pDst);
 	}
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
 		return UnicodeToUTF8(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom);																			//!< BOMƒf[ƒ^æ“¾
+	void GetBom(CMemory* pcmemBom);																			//!< BOMãƒ‡ãƒ¼ã‚¿å–å¾—
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);
-	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE ¨ Hex •ÏŠ·
+	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE â†’ Hex å¤‰æ›
 	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, TCHAR* pd, const CommonSetting_Statusbar* psStatusbar){ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 
 public:
-	// UTF-8 / CESU-8 <-> UnicodeƒR[ƒh•ÏŠ·
-	//2007.08.13 kobake ’Ç‰Á
-	//2009.01.08        CESU-8 ‚É‘Î‰
+	// UTF-8 / CESU-8 <-> Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+	//2007.08.13 kobake è¿½åŠ 
+	//2009.01.08        CESU-8 ã«å¯¾å¿œ
 	static EConvertResult _UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode );
 	static EConvertResult _UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bool bCESU8Mode );
-	inline static EConvertResult UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, false); }	// UTF-8 -> UnicodeƒR[ƒh•ÏŠ·
-	inline static EConvertResult CESU8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, true); }	// CESU-8 -> UnicodeƒR[ƒh•ÏŠ·
-	inline static EConvertResult UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDst ){ return  _UnicodeToUTF8(cSrc, pDst, false); }	// Unicode ¨ UTF-8ƒR[ƒh•ÏŠ·
-	inline static EConvertResult UnicodeToCESU8( const CNativeW& cSrc, CMemory* pDst ){ return _UnicodeToUTF8(cSrc, pDst, true); }	// Unicode ¨ CESU-8ƒR[ƒh•ÏŠ·
+	inline static EConvertResult UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, false); }	// UTF-8 -> Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+	inline static EConvertResult CESU8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, true); }	// CESU-8 -> Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+	inline static EConvertResult UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDst ){ return  _UnicodeToUTF8(cSrc, pDst, false); }	// Unicode â†’ UTF-8ã‚³ãƒ¼ãƒ‰å¤‰æ›
+	inline static EConvertResult UnicodeToCESU8( const CNativeW& cSrc, CMemory* pDst ){ return _UnicodeToUTF8(cSrc, pDst, true); }	// Unicode â†’ CESU-8ã‚³ãƒ¼ãƒ‰å¤‰æ›
 
 protected:
 
-	//•ÏŠ·‚ÌÀ‘•
-	// 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
+	//å¤‰æ›ã®å®Ÿè£…
+	// 2008.11.10 å¤‰æ›ãƒ­ã‚¸ãƒƒã‚¯ã‚’æ›¸ãç›´ã™
 	inline static int _Utf8ToUni_char( const unsigned char*, const int, unsigned short*, bool bCESU8Mode );
 	static int Utf8ToUni( const char*, const int, wchar_t*, bool bCESU8Mode );
 	inline static int _UniToUtf8_char( const unsigned short*, const int, unsigned char*, const bool bCSU8Mode );
@@ -68,11 +68,11 @@ protected:
 
 
 /*!
-	UTF-8 ‚Ìˆê•¶š•ÏŠ·
+	UTF-8 ã®ä¸€æ–‡å­—å¤‰æ›
 
-	UTF-8 ‚Æ CESU-8 ‚Æ‚ğê‡•ª‚¯‚µ‚ÄA‚»‚ê‚¼‚ê•ÏŠ·‚·‚é
+	UTF-8 ã¨ CESU-8 ã¨ã‚’å ´åˆåˆ†ã‘ã—ã¦ã€ãã‚Œãã‚Œå¤‰æ›ã™ã‚‹
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 
 */
 inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bCESUMode )
@@ -84,32 +84,32 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 	}
 
 	if( bCESUMode != true ){
-		// UTF-8 ‚Ìˆ—
+		// UTF-8 ã®å‡¦ç†
 		if( nSrcLen < 4 ){
 			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
 			nret = 1;
 		}else if( nSrcLen == 4 ){
-			// UTF-8 ƒTƒƒQ[ƒg—Ìˆæ‚Ìˆ—
+			// UTF-8 ã‚µãƒ­ã‚²ãƒ¼ãƒˆé ˜åŸŸã®å‡¦ç†
 			wchar32_t wc32 = DecodeUtf8( pSrc, 4 );
 			EncodeUtf16Surrog( wc32, pDst );
 			nret = 2;
 		}else{
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			pDst[0] = L'?';
 			nret = 1;
 		}
 	}else{
-		// CESU-8 ‚Ìˆ—
+		// CESU-8 ã®å‡¦ç†
 		if( nSrcLen < 4 ){
 			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
 			nret = 1;
 		}else if( nSrcLen == 6 ){
-			// CESU-8 ƒTƒƒQ[ƒg—Ìˆæ‚Ìˆ—
+			// CESU-8 ã‚µãƒ­ã‚²ãƒ¼ãƒˆé ˜åŸŸã®å‡¦ç†
 			pDst[0] = static_cast<unsigned short>( DecodeUtf8(&pSrc[0], 3) & 0x0000ffff );
 			pDst[1] = static_cast<unsigned short>( DecodeUtf8(&pSrc[3], 3) & 0x0000ffff );
 			nret = 2;
 		}else{
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			pDst[0] = L'?';
 			nret = 1;
 		}
@@ -121,11 +121,11 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 
 
 /*!
-	Unicode -> UTF-8 ‚Ìˆê•¶š•ÏŠ·
+	Unicode -> UTF-8 ã®ä¸€æ–‡å­—å¤‰æ›
 
-	nSrcLen ‚Í 1 ‚Ü‚½‚Í 2
+	nSrcLen ã¯ 1 ã¾ãŸã¯ 2
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst, bool bCESU8Mode )
 {
@@ -136,7 +136,7 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 	}
 
 	if( bCESU8Mode != true ){
-		// UTF-8 ‚Ìˆ—
+		// UTF-8 ã®å‡¦ç†
 		wchar32_t wc32;
 		if( nSrcLen == 2 ){
 			wc32 = DecodeUtf16Surrog( pSrc[0], pSrc[1] );
@@ -147,7 +147,7 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 		}
 		nret = EncodeUtf8( wc32, &pDst[0] );
 	}else{
-		// CESU-8 ‚Ìˆ—
+		// CESU-8 ã®å‡¦ç†
 		int nclen = 0;
 		nclen += EncodeUtf8( pSrc[0], &pDst[0] );
 		if( nSrcLen == 2 ){

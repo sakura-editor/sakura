@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,21 +28,21 @@
 
 class CUtf7 : public CCodeBase{
 public:
-	//CCodeBaseÉCÉìÉ^Å[ÉtÉFÅ[ÉX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UTF7ToUnicode(cSrc, pDst); }	//!< ì¡íËÉRÅ[Éh Å® UNICODE    ïœä∑
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    Å® ì¡íËÉRÅ[Éh ïœä∑
-	void GetBom(CMemory* pcmemBom);	//!< BOMÉfÅ[É^éÊìæ
+	//CCodeBase„Ç§„É≥„Çø„Éº„Éï„Çß„Éº„Çπ
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UTF7ToUnicode(cSrc, pDst); }	//!< ÁâπÂÆö„Ç≥„Éº„Éâ ‚Üí UNICODE    Â§âÊèõ
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    ‚Üí ÁâπÂÆö„Ç≥„Éº„Éâ Â§âÊèõ
+	void GetBom(CMemory* pcmemBom);	//!< BOM„Éá„Éº„ÇøÂèñÂæó
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);
 
 public:
-	//é¿ëï
-	static EConvertResult UTF7ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// UTF-7     Å® UnicodeÉRÅ[Éhïœä∑ //2007.08.13 kobake í«â¡
-	static EConvertResult UnicodeToUTF7(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   Å® UTF-7ÉRÅ[Éhïœä∑
-//	static int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64ÉGÉìÉRÅ[Éh */  // convert/convert_util2.h Ç÷à⁄ìÆ
+	//ÂÆüË£Ö
+	static EConvertResult UTF7ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// UTF-7     ‚Üí Unicode„Ç≥„Éº„ÉâÂ§âÊèõ //2007.08.13 kobake ËøΩÂä†
+	static EConvertResult UnicodeToUTF7(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   ‚Üí UTF-7„Ç≥„Éº„ÉâÂ§âÊèõ
+//	static int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64„Ç®„É≥„Ç≥„Éº„Éâ */  // convert/convert_util2.h „Å∏ÁßªÂãï
 
 protected:
 
-	// 2008.11.10 ïœä∑ÉçÉWÉbÉNÇèëÇ´íºÇ∑
+	// 2008.11.10 Â§âÊèõ„É≠„Ç∏„ÉÉ„ÇØ„ÇíÊõ∏„ÅçÁõ¥„Åô
 	static int _Utf7SetDToUni_block( const char*, const int, wchar_t* );
 	static int _Utf7SetBToUni_block( const char*, const int, wchar_t*, bool* );
 	static int Utf7ToUni( const char*, const int, wchar_t*, bool* pbError );

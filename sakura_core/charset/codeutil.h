@@ -1,4 +1,4 @@
-// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô‚Ì‚½‚ß‚Ì‚à‚Ì‚Å‚·B
+ï»¿// ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ã®ãŸã‚ã®ã‚‚ã®ã§ã™ã€‚
 /*
 	Copyright (C) 2008, kobake
 
@@ -27,9 +27,9 @@
 
 #include <Windows.h>
 
-#if 0  // –¢g—p
+#if 0  // æœªä½¿ç”¨
 //	Oct. 3, 2002 genta
-//	2008.11.10 ˆø”‚Æ–ß‚è’l‚ÌŒ^‚ğ _mbcjmstojis ‚É—‚¹‚é
+//	2008.11.10 å¼•æ•°ã¨æˆ»ã‚Šå€¤ã®å‹ã‚’ _mbcjmstojis ã«ä¼¼ã›ã‚‹
 unsigned int _mbcjmstojis_ex( unsigned int );
 #endif
 
@@ -125,24 +125,24 @@ inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
 
 
 /*!
-	”»•Êƒe[ƒuƒ‹   WinAPI ŠÖ” WideCharToMultiByte ‚Ì“Áê‚È•ÏŠ·i‘ŠŒİ•ÏŠ·‚Å‚«‚È‚¢•ÏŠ·j‚©
+	åˆ¤åˆ¥ãƒ†ãƒ¼ãƒ–ãƒ«   WinAPI é–¢æ•° WideCharToMultiByte ã®ç‰¹æ®Šãªå¤‰æ›ï¼ˆç›¸äº’å¤‰æ›ã§ããªã„å¤‰æ›ï¼‰ã‹
 */
 extern const bool TABLE_WctombSpec[];
 
 /*!
-	WinAPI ŠÖ” WideCharToMultiByte ‚Ì“Áê‚È•ÏŠ·‚ğ”»•Ê
+	WinAPI é–¢æ•° WideCharToMultiByte ã®ç‰¹æ®Šãªå¤‰æ›ã‚’åˆ¤åˆ¥
 
-	‚±‚ÌŠÖ”‚ª true ‚ğ•Ô‚· Unicode •¶š‚ÍA
+	ã“ã®é–¢æ•°ãŒ true ã‚’è¿”ã™ Unicode æ–‡å­—ã¯ã€
 		@code
 		::WideCharToMultiByte( 932, 0, src, srclen, dest, destlen, NULL, &bUsedDefaultChar );
 		@endcode
-	‚Å‚Ì•ÏŠ·ˆ—‚É’Ê‰ß‚·‚é‚à‚Ì‚ÌASJIS(CP 932) ‚Ö‚Ì“KØ‚È•ÏŠ·‚ª‚È‚³‚ê‚È‚¢•¶šB
+	ã§ã®å¤‰æ›å‡¦ç†ã«é€šéã™ã‚‹ã‚‚ã®ã®ã€SJIS(CP 932) ã¸ã®é©åˆ‡ãªå¤‰æ›ãŒãªã•ã‚Œãªã„æ–‡å­—ã€‚
 
-	Win98 ‚©‚çg‚¦‚é WC_NO_BEST_FIT_CHARS ƒtƒ‰ƒO‚Ìg—p‚Í”ğ‚¯‚Ä—~‚µ‚¢‚ç‚µ‚¢B\n
-	ihttp://blogs.msdn.com/shawnste/archive/2006/01/19/515047.aspxj
+	Win98 ã‹ã‚‰ä½¿ãˆã‚‹ WC_NO_BEST_FIT_CHARS ãƒ•ãƒ©ã‚°ã®ä½¿ç”¨ã¯é¿ã‘ã¦æ¬²ã—ã„ã‚‰ã—ã„ã€‚\n
+	ï¼ˆhttp://blogs.msdn.com/shawnste/archive/2006/01/19/515047.aspxï¼‰
 */
 inline bool IsWctombcNonroundtrip( const unsigned int wc ){
-	if( wc == 0x3094/* ©•½‰¼–¼‚Ì ‚¤ ‚É‘÷“_‚ğ‚Â‚¯‚½‚â‚ÂB */ ){
+	if( wc == 0x3094/* â†å¹³ä»®åã® ã† ã«æ¿ç‚¹ã‚’ã¤ã‘ãŸã‚„ã¤ã€‚ */ ){
 		return true;
 	}
 	if( 0x00a0 <= wc && wc <= 0x00ff && TABLE_WctombSpec[wc-0x00a0] ){
@@ -152,16 +152,16 @@ inline bool IsWctombcNonroundtrip( const unsigned int wc ){
 }
 
 /*!
-	WideCharToMultiByte ‚Ìƒ‰ƒbƒp[ŠÖ”
+	WideCharToMultiByte ã®ãƒ©ãƒƒãƒ‘ãƒ¼é–¢æ•°
 
-	@param[in] nSrcLen  1 ‚© 2 ‚ğ“n‚·
+	@param[in] nSrcLen  1 ã‹ 2 ã‚’æ¸¡ã™
 */
 inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst ){
 	int nret;
 	BOOL blost;
 	int nsrclen;
 
-	// •ÛŒìƒR[ƒh
+	// ä¿è­·ã‚³ãƒ¼ãƒ‰
 	if( nSrcLen > 2 || nSrcLen < 1 ){
 		nsrclen = 1;
 	}else{
@@ -181,11 +181,11 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 
 
 /*!
-	MultiByteToWideChar ‚Ìƒ‰ƒbƒp[ŠÖ”
+	MultiByteToWideChar ã®ãƒ©ãƒƒãƒ‘ãƒ¼é–¢æ•°
 
-	@param[out] pbNonroundtrip •ÔŠÒ‚É¬Œ÷‚µ‚½‚à‚Ì‚ÌA‘ŠŒİ•ÏŠ·«‚ª¸‚í‚ê‚½ê‡‚É true
+	@param[out] pbNonroundtrip è¿”é‚„ã«æˆåŠŸã—ãŸã‚‚ã®ã®ã€ç›¸äº’å¤‰æ›æ€§ãŒå¤±ã‚ã‚ŒãŸå ´åˆã« true
 
-	nSrcLen ‚Í 1 ‚© 2
+	nSrcLen ã¯ 1 ã‹ 2
 */
 inline int MyMultiByteToWideChar_JP( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bKeepRt = true )
 {

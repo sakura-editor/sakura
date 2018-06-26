@@ -1,4 +1,4 @@
-// 2008.11.10  •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
+ï»¿// 2008.11.10  å¤‰æ›ãƒ­ã‚¸ãƒƒã‚¯ã‚’æ›¸ãç›´ã™
 
 #include "StdAfx.h"
 #include <mbstring.h>
@@ -7,26 +7,26 @@
 #include "charset/codeutil.h"
 #include "charset/codechecker.h"
 
-// ”ñˆË‘¶„§
+// éä¾å­˜æ¨å¥¨
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       Šeí”»’è’è”                          //
+//                       å„ç¨®åˆ¤å®šå®šæ•°                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //	@author D. S. Koba
-//	¯ƒ}[ƒN‚ğ“Y‚¦‚Ä‚ ‚é‚à‚Ì‚ÍA‘‚«‚İ‚Åg‚í‚ê‚éB
-const char CJis::JISESCDATA_ASCII7[]			= "\x1b" "(B";  // ™
+//	æ˜Ÿãƒãƒ¼ã‚¯ã‚’æ·»ãˆã¦ã‚ã‚‹ã‚‚ã®ã¯ã€æ›¸ãè¾¼ã¿ã§ä½¿ã‚ã‚Œã‚‹ã€‚
+const char CJis::JISESCDATA_ASCII7[]			= "\x1b" "(B";  // â˜†
 const char CJis::JISESCDATA_JISX0201Latin[]		= "\x1b" "(J";
 const char CJis::JISESCDATA_JISX0201Latin_OLD[]	= "\x1b" "(H";
-const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // ™
+const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // â˜†
 const char CJis::JISESCDATA_JISX0208_1978[]		= "\x1b" "$@";
-const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // ™
+const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // â˜†
 const char CJis::JISESCDATA_JISX0208_1990[]		= "\x1b" "&@""\x1b""$B";
 
-#if 0 // –¢g—p
+#if 0 // æœªä½¿ç”¨
 const int CJis::TABLE_JISESCLEN[] = {
 	0,		// JISESC_UNKNOWN
 	3,		// JISESC_ASCII
@@ -50,9 +50,9 @@ const char* CJis::TABLE_JISESCDATA[] = {
 #endif
 
 /*!
-	JIS ‚ÌˆêƒuƒƒbƒNiƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚ÆƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚ÌŠÔ‚Ì‹æŠÔj‚ğ•ÏŠ· 
+	JIS ã®ä¸€ãƒ–ãƒ­ãƒƒã‚¯ï¼ˆã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã¨ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã®é–“ã®åŒºé–“ï¼‰ã‚’å¤‰æ› 
 
-	eMyJisesc ‚ÍAMYJISESC_HANKATA ‚© MYJISESC_ZENKAKUB
+	eMyJisesc ã¯ã€MYJISESC_HANKATA ã‹ MYJISESC_ZENKAKUã€‚
 */
 int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError )
 {
@@ -89,9 +89,9 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 	case MYJISESC_HANKATA:
 		for( ; pr < pSrc+nSrcLen; ++pr ){
 			if( IsJisHankata(static_cast<const char>(*pr)) ){
-				// JIS ¨ SJIS
+				// JIS â†’ SJIS
 				chankata = (*pr | 0x80);
-				// SJIS ¨ Unicode
+				// SJIS â†’ Unicode
 				nret = MyMultiByteToWideChar_JP( &chankata, 1, pw, false );
 				if( nret < 1 ){
 					nret = 1;
@@ -110,20 +110,20 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 				// JIS -> SJIS
 				ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
 				if( ctemp != 0 ){
-				// •ÏŠ·‚É¬Œ÷B
-					// SJIS ¨ Unicode
+				// å¤‰æ›ã«æˆåŠŸã€‚
+					// SJIS â†’ Unicode
 					czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
 					czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
 					nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pw, false );
 					if( nret < 1 ){
-						// SJIS ¨ Unicode •ÏŠ·‚É¸”s
+						// SJIS â†’ Unicode å¤‰æ›ã«å¤±æ•—
 	  					berror = true;
 						pw[0] = L'?';
 						nret = 1;
 					}
 					pw += nret;
 				}else{
-				// •ÏŠ·‚É¸”sB
+				// å¤‰æ›ã«å¤±æ•—ã€‚
 					berror = true;
 					pw[0] = L'?';
 					++pw;
@@ -147,7 +147,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 		}
 		break;
 	default:
-		// ’v–½“IƒGƒ‰[‰ñ”ğƒR[ƒh
+		// è‡´å‘½çš„ã‚¨ãƒ©ãƒ¼å›é¿ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		for( ; pr < pSrc+nSrcLen; ++pr ){
 			pw[0] = L'?';
@@ -166,7 +166,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 
 
 /*
-	JIS ¨ Unicode •ÏŠ·
+	JIS â†’ Unicode å¤‰æ›
 */
 int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
@@ -198,29 +198,29 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 //	};
 
 	do{
-		// ƒV[ƒPƒ“ƒX‚Ìƒ`ƒFƒbƒN
+		// ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã®ãƒã‚§ãƒƒã‚¯
 		switch( esctype ){
 		case MYJISESC_ASCII7:
-			// ASCII7 ƒuƒƒbƒN‚ğƒ`ƒFƒbƒN
+			// ASCII7 ãƒ–ãƒ­ãƒƒã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 			nblocklen = CheckJisAscii7Part(
 				reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		case MYJISESC_HANKATA:
-			// ”¼ŠpƒJƒ^ƒJƒiƒuƒƒbƒN‚ğƒ`ƒFƒbƒN
+			// åŠè§’ã‚«ã‚¿ã‚«ãƒŠãƒ–ãƒ­ãƒƒã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 			nblocklen = CheckJisHankataPart(
 				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		case MYJISESC_ZENKAKU:
-			// ‘SŠpƒuƒƒbƒN‚ğƒ`ƒFƒbƒN
+			// å…¨è§’ãƒ–ãƒ­ãƒƒã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 			nblocklen = CheckJisZenkakuPart(
 				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		default: // MYJISESC_UNKNOWN:
-			// •s–¾‚ÈƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚©‚çn‚Ü‚éƒuƒƒbƒN‚ğƒ`ƒFƒbƒN
+			// ä¸æ˜ãªã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‹ã‚‰å§‹ã¾ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 			nblocklen = CheckJisUnknownPart(
 				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 		}
-		// •ÏŠ·Às
+		// å¤‰æ›å®Ÿè¡Œ
 		pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
 		if( berror_tmp == true ){
 			berror = true;
@@ -239,28 +239,28 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-/* E-Mail(JIS¨Unicode)ƒR[ƒh•ÏŠ· */
-//2007.08.13 kobake ’Ç‰Á
+/* E-Mail(JISâ†’Unicode)ã‚³ãƒ¼ãƒ‰å¤‰æ› */
+//2007.08.13 kobake è¿½åŠ 
 EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool base64decode)
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool berror;
 
-	// ƒ\[ƒX‚ğæ“¾
+	// ã‚½ãƒ¼ã‚¹ã‚’å–å¾—
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	// ƒ\[ƒXƒoƒbƒtƒ@ƒ|ƒCƒ“ƒ^‚Æƒ\[ƒX‚Ì’·‚³
+	// ã‚½ãƒ¼ã‚¹ãƒãƒƒãƒ•ã‚¡ãƒã‚¤ãƒ³ã‚¿ã¨ã‚½ãƒ¼ã‚¹ã®é•·ã•
 	const char* psrc = pSrc;
 	int nsrclen = nSrcLen;
 	CMemory cmem;
 
 	if( base64decode == true ){
-		// ISO-2202-J —p‚Ì MIME ƒwƒbƒ_[‚ğƒfƒR[ƒh
+		// ISO-2202-J ç”¨ã® MIME ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’ãƒ‡ã‚³ãƒ¼ãƒ‰
 		bool bret = MIMEHeaderDecode( pSrc, nSrcLen, &cmem, CODE_JIS );
 		if( bret == true ){
 			psrc = reinterpret_cast<const char*>( cmem.GetRawPtr() );
@@ -269,7 +269,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	}
 
 
-	// •ÏŠ·æƒoƒbƒtƒ@‚ğæ“¾
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—
 	wchar_t* pDst;
 	try{
 		pDst = new wchar_t[nsrclen * 3 + 1];
@@ -280,10 +280,10 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = JisToUni( psrc, nsrclen, pDst, &berror );
 
-	// pDstMem ‚ÉƒZƒbƒg
+	// pDstMem ã«ã‚»ãƒƒãƒˆ
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen * sizeof(wchar_t) );
 
 	
@@ -298,7 +298,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 
 
 /*!
-	SJIS -> JIS •ÏŠ·
+	SJIS -> JIS å¤‰æ›
 */
 int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, ECharSet eCharset, bool* pbError )
 {
@@ -321,21 +321,21 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 		ctemp_ = SjisFilter_ibm2nec( ctemp_ );
 		ctemp = _mbcjmstojis( ctemp_ );
 		if( ctemp != 0 ){
-			// •ÔŠÒ‚É¬Œ÷B
+			// è¿”é‚„ã«æˆåŠŸã€‚
 			pDst[0] = static_cast<char>( (ctemp & 0x0000ff00) >> 8 );
 			pDst[1] = static_cast<char>( ctemp & 0x000000ff );
 			nret = 2;
 		}else{
-			// •ÏŠ·‚É¸”s
+			// å¤‰æ›ã«å¤±æ•—
 			berror = true;
-			// 'E'  0x2126(JIS) ‚ğo—Í
+			// 'ãƒ»'  0x2126(JIS) ã‚’å‡ºåŠ›
 			pDst[0] = 0x21;
 			pDst[1] = 0x26;
 			nret = 2;
 		}
 		break;
 	default:
-		// ƒGƒ‰[‰ñ”ğƒR[ƒh
+		// ã‚¨ãƒ©ãƒ¼å›é¿ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		*pDst = '?';
 		nret = 1;
@@ -375,28 +375,28 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 		// Unicode -> SJIS
 		nlen = MyWideCharToMultiByte_JP( pr, nclen, &cbuf[0] );
 		if( nlen < 1 ){
-			// Unicode -> SJIS ‚É¸”s
+			// Unicode -> SJIS ã«å¤±æ•—
 			berror = true;
 			if( echarset_cur == CHARSET_ASCII7 ){
 				*pw = '?';
 				++pw;
 			}else if( echarset_cur == CHARSET_JIS_HANKATA ){
-				// '¥' 0x25(JIS) ‚ğo—Í
+				// 'ï½¥' 0x25(JIS) ã‚’å‡ºåŠ›
 				*pw = 0x25;
 				++pw;
 			}else if( echarset_cur == CHARSET_JIS_ZENKAKU ){
-				// 'E' 0x2126(JIS) ‚ğo—Í
+				// 'ãƒ»' 0x2126(JIS) ã‚’å‡ºåŠ›
 				pw[0] = 0x21;
 				pw[1] = 0x26;
 				pw += 2;
 			}else{
-				// •ÛŒìƒR[ƒh
+				// ä¿è­·ã‚³ãƒ¼ãƒ‰
 				*pw = '?';
 				++pw;
 			}
 			pr += nclen;
 		}else{
-			// •¶šƒZƒbƒg‚ğŠm”F
+			// æ–‡å­—ã‚»ãƒƒãƒˆã‚’ç¢ºèª
 			if( nlen == 1 ){
 				if( IsAscii7(cbuf[0]) ){
 					echarset = CHARSET_ASCII7;
@@ -406,17 +406,17 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 			}else if( nlen == 2 ){
 				echarset = CHARSET_JIS_ZENKAKU;
 			}else{
-				// ƒGƒ‰[‰ñ”ğƒR[ƒh
+				// ã‚¨ãƒ©ãƒ¼å›é¿ã‚³ãƒ¼ãƒ‰
 				echarset = CHARSET_ASCII7;
 				nlen = 1;
 			}
 
-			// const char CJis::JISESCDATA_ASCII[]				= "\x1b" "(B";  // ™
-			// const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // ™
-			// const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // ™
+			// const char CJis::JISESCDATA_ASCII[]				= "\x1b" "(B";  // â˜†
+			// const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // â˜†
+			// const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // â˜†
 			if( echarset != echarset_cur ){
-				// •¶šƒZƒbƒg‚ª•Ï‚í‚ê‚ÎA
-				// ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX•¶š—ñ‚ğo—Í
+				// æ–‡å­—ã‚»ãƒƒãƒˆãŒå¤‰ã‚ã‚Œã°ã€
+				// ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹æ–‡å­—åˆ—ã‚’å‡ºåŠ›
 				switch( echarset ){
 				case CHARSET_JIS_HANKATA:
 					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_JISX0201Katakana, 3 );
@@ -431,7 +431,7 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 					pw += 3;
 					break;
 				}
-				echarset_cur = echarset; // Œ»İ‚Ì•¶šƒZƒbƒg‚ğİ’è
+				echarset_cur = echarset; // ç¾åœ¨ã®æ–‡å­—ã‚»ãƒƒãƒˆã‚’è¨­å®š
 			}
 
 			// SJIS -> JIS
@@ -442,8 +442,8 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 			pr += nclen;
 		}
 	}
-	// CHARSET_ASCII7 ‚Åƒf[ƒ^‚ªI—¹‚µ‚È‚¢ê‡‚ÍA•ÏŠ·ƒf[ƒ^‚ÌÅŒã‚É
-	// CHARSET_ASCII7 ‚ÌƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚ğo—Í
+	// CHARSET_ASCII7 ã§ãƒ‡ãƒ¼ã‚¿ãŒçµ‚äº†ã—ãªã„å ´åˆã¯ã€å¤‰æ›ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã«
+	// CHARSET_ASCII7 ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã‚’å‡ºåŠ›
 	if( echarset_cur != CHARSET_ASCII7 ){
 		strncpy( reinterpret_cast<char*>(pw), JISESCDATA_ASCII7, 3 );
 		pw += 3;
@@ -461,11 +461,11 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 {
 	bool berror=false;
 
-	// ƒ\[ƒX‚ğæ“¾
+	// ã‚½ãƒ¼ã‚¹ã‚’å–å¾—
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
-	// •K—v‚Èƒoƒbƒtƒ@—e—Ê‚ğŠm”F‚µ‚Äƒoƒbƒtƒ@‚ğŠm•Û
+	// å¿…è¦ãªãƒãƒƒãƒ•ã‚¡å®¹é‡ã‚’ç¢ºèªã—ã¦ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 	char* pDst;
 	try{
 		pDst = new char[nSrcLen * 8];
@@ -476,10 +476,10 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = UniToJis( pSrc, nSrcLen, pDst, &berror );
 
-	// pDstMem ‚ğƒZƒbƒg
+	// pDstMem ã‚’ã‚»ãƒƒãƒˆ
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
 	delete [] pDst;
@@ -495,7 +495,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 
 
 
-// •¶šƒR[ƒh•\¦—p	UNICODE ¨ Hex •ÏŠ·	2008/6/9 Uchi
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨	UNICODE â†’ Hex å¤‰æ›	2008/6/9 Uchi
 EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
@@ -506,20 +506,20 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* p
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInJis) {
-		// Unicode‚Å•\¦
+		// Unicodeã§è¡¨ç¤º
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 
-	// 1•¶šƒf[ƒ^ƒoƒbƒtƒ@
+	// 1æ–‡å­—ãƒ‡ãƒ¼ã‚¿ãƒãƒƒãƒ•ã‚¡
 	cCharBuffer.SetString(cSrc, 1);
 
-	// JIS •ÏŠ·
+	// JIS å¤‰æ›
 	res = UnicodeToJIS(cCharBuffer, cCharBuffer._GetMemory());
 	if (res != RESULT_COMPLETE) {
 		return res;
 	}
 
-	// Hex•ÏŠ·
+	// Hexå¤‰æ›
 	bool	bInEsc;
 	bInEsc = false;
 	pd = pDst;

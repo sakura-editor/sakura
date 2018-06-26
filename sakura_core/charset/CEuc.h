@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,20 +30,20 @@
 
 class CEuc : public CCodeBase{
 public:
-	//CCodeBaseƒCƒ“ƒ^[ƒtƒF[ƒX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return EUCToUnicode(cSrc, pDst); }	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToEUC(cSrc, pDst); }	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
-// GetEol‚ÍCCodeBase‚ÉˆÚ“®	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ¨ Hex •ÏŠ·
+	//CCodeBaseã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return EUCToUnicode(cSrc, pDst); }	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToEUC(cSrc, pDst); }	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
+// GetEolã¯CCodeBaseã«ç§»å‹•	2010/6/13 Uchi
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE â†’ Hex å¤‰æ›
 
 public:
-	//À‘•
-	static EConvertResult EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// EUC       ¨ UnicodeƒR[ƒh•ÏŠ·  //2007.08.13 kobake ’Ç‰Á
-	static EConvertResult UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   ¨ EUCƒR[ƒh•ÏŠ·
+	//å®Ÿè£…
+	static EConvertResult EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// EUC       â†’ Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›  //2007.08.13 kobake è¿½åŠ 
+	static EConvertResult UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   â†’ EUCã‚³ãƒ¼ãƒ‰å¤‰æ›
 
 public:
-	// À‘•
-	// 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
+	// å®Ÿè£…
+	// 2008.11.10 å¤‰æ›ãƒ­ã‚¸ãƒƒã‚¯ã‚’æ›¸ãç›´ã™
 	inline static int _EucjpToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError, bool* pbHex );
 protected:
 	static int EucjpToUni( const char*, const int, wchar_t*, bool* pbError );
@@ -54,11 +54,11 @@ protected:
 
 
 /*!
-	EUCJP(CP51932) ‚Ì‘SŠpˆê•¶š‚Ü‚½‚Í”¼Šp•Ğ‰¼–¼ˆê•¶š‚Ì•ÏŠ·
+	EUCJP(CP51932) ã®å…¨è§’ä¸€æ–‡å­—ã¾ãŸã¯åŠè§’ç‰‡ä»®åä¸€æ–‡å­—ã®å¤‰æ›
 
-	eCharset ‚Í CHARSET_JIS_HANKATA ‚© CHARSET_JIS_ZENKAKU .
+	eCharset ã¯ CHARSET_JIS_HANKATA ã‹ CHARSET_JIS_ZENKAKU .
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = NULL )
 {
@@ -70,24 +70,24 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 
 	switch( eCharset ){
 	case CHARSET_JIS_HANKATA:
-		// ”¼ŠpƒJƒ^ƒJƒi‚ğˆ—BƒGƒ‰[‚Í‹N‚±‚ç‚È‚¢
+		// åŠè§’ã‚«ã‚¿ã‚«ãƒŠã‚’å‡¦ç†ã€‚ã‚¨ãƒ©ãƒ¼ã¯èµ·ã“ã‚‰ãªã„
 		nret = MyMultiByteToWideChar_JP( &pSrc[1], 1, pDst );
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		if( nret < 1 ){
 			nret = 1;
 		}
 		break;
 	case CHARSET_JIS_ZENKAKU:
-		// EUCJP(CP51932) ¨ JIS
+		// EUCJP(CP51932) â†’ JIS
 		czenkaku[0] = (pSrc[0] & 0x7f);
 		czenkaku[1] = (pSrc[1] & 0x7f);
-		// JIS ¨ SJIS
+		// JIS â†’ SJIS
 		ctemp = _mbcjistojms( (static_cast<unsigned int>(czenkaku[0]) << 8) | czenkaku[1] );
 		if( ctemp != 0 ){
-			// NEC‘I’èIBMŠg’£ƒR[ƒhƒ|ƒCƒ“ƒg‚ğ‚ğIBMŠg’£ƒR[ƒhƒ|ƒCƒ“ƒg‚É‚É•ÏŠ·
+			// NECé¸å®šIBMæ‹¡å¼µã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ã‚’IBMæ‹¡å¼µã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã«ã«å¤‰æ›
 			unsigned int ctemp_ = SjisFilter_nec2ibm( ctemp );
 			ctemp = ctemp_;
-			// SJIS ¨ Unicode
+			// SJIS â†’ Unicode
 			czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
 			czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
 			nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pDst );
@@ -96,14 +96,14 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 				hex = true;
 			}
 		}else{
-			// JIS -> SJIS ‚Ì•ÏŠ·ƒGƒ‰[
-			// ƒGƒ‰[ˆ—ŠÖ”‚ğg‚¤
+			// JIS -> SJIS ã®å¤‰æ›ã‚¨ãƒ©ãƒ¼
+			// ã‚¨ãƒ©ãƒ¼å‡¦ç†é–¢æ•°ã‚’ä½¿ã†
 			nret = BinToText( pSrc, 2, pDst );
 			hex = true;
 		}
 		break;
 	default:
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		hex = true;
 		pDst[0] = '?';
@@ -122,9 +122,9 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 
 
 /*
-	Unicode -> EUCJP ˆê•¶š•ÏŠ·
+	Unicode -> EUCJP ä¸€æ–‡å­—å¤‰æ›
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError )
 {
@@ -134,31 +134,31 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 	bool berror=false;
 
 	if( eCharset == CHARSET_UNI_SURROG ){
-		// ƒTƒƒQ[ƒg‚Í SJIS ‚É•ÏŠ·‚Å‚«‚È‚¢B
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆã¯ SJIS ã«å¤‰æ›ã§ããªã„ã€‚
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;
 	}else if( eCharset == CHARSET_UNI_NORMAL ){
 		nclen = MyWideCharToMultiByte_JP( pSrc, 1, cbuf );
 		if( nclen < 1 ){
-			// Uni -> SJIS ‚Å•ÏŠ·ƒGƒ‰[
+			// Uni -> SJIS ã§å¤‰æ›ã‚¨ãƒ©ãƒ¼
 			berror = true;
 			pDst[0] = '?';
 			nret = 1;
 		}else if( nclen == 1 && IsAscii7(cbuf[0]) ){
-			// 7bit ASCII ‚Ìˆ—
+			// 7bit ASCII ã®å‡¦ç†
 			pDst[0] = cbuf[0];
 			nret = 1;
 		}else if( nclen == 1 && IsSjisHankata(cbuf[0]) ){
-			// ”¼ŠpƒJƒ^ƒJƒi•¶š‚Ìˆ—F
+			// åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—ã®å‡¦ç†ï¼š
 			pDst[0] = 0x8e;
 			pDst[1] = cbuf[0];
 			nret = 2;
 		}else if( nclen == 2/* && IsSjisZen(reinterpret_cast<char*>(cbuf)) */){
-			// ‘SŠp•¶š‚Ìˆ—F
+			// å…¨è§’æ–‡å­—ã®å‡¦ç†ï¼š
 			// SJIS -> JIS
 			unsigned int ctemp_ = SjisFilter_ibm2nec( (static_cast<unsigned int>(cbuf[0]) << 8) | cbuf[1] );
-				// < IBMŠg’£•¶š‚ğNEC‘I’èIBMŠg’£•¶š‚É•ÏŠ·
+				// < IBMæ‹¡å¼µæ–‡å­—ã‚’NECé¸å®šIBMæ‹¡å¼µæ–‡å­—ã«å¤‰æ›
 			ctemp = _mbcjmstojis( ctemp_ );
 			if( ctemp == 0 ){
 				berror = true;
@@ -171,13 +171,13 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 				nret = 2;
 			}
 		}else{
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			berror = true;
 			pDst[0] = '?';
 			nret = 1;
 		}
 	}else{
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;

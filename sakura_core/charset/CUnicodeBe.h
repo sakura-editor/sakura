@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,18 +30,18 @@
 
 class CUnicodeBe : public CCodeBase{
 public:
-	//CCodeBaseÉCÉìÉ^Å[ÉtÉFÅ[ÉX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UnicodeBEToUnicode(cSrc, pDst); }	//!< ì¡íËÉRÅ[Éh Å® UNICODE    ïœä∑
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUnicodeBE(cSrc, pDst); }	//!< UNICODE    Å® ì¡íËÉRÅ[Éh ïœä∑
-	void GetBom(CMemory* pcmemBom);	//!< BOMÉfÅ[É^éÊìæ
-	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< â¸çsÉfÅ[É^éÊìæ
+	//CCodeBase„Ç§„É≥„Çø„Éº„Éï„Çß„Éº„Çπ
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UnicodeBEToUnicode(cSrc, pDst); }	//!< ÁâπÂÆö„Ç≥„Éº„Éâ ‚Üí UNICODE    Â§âÊèõ
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUnicodeBE(cSrc, pDst); }	//!< UNICODE    ‚Üí ÁâπÂÆö„Ç≥„Éº„Éâ Â§âÊèõ
+	void GetBom(CMemory* pcmemBom);	//!< BOM„Éá„Éº„ÇøÂèñÂæó
+	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< ÊîπË°å„Éá„Éº„ÇøÂèñÂæó
 
 public:
 
 	inline static EConvertResult UnicodeBEToUnicode(const CMemory& cSrc, CNativeW* pDst)
-		{ return CUnicode::_UnicodeToUnicode_in(cSrc, pDst, true); }	// UnicodeBE Å® UnicodeÉRÅ[Éhïœä∑ //2007.08.13 kobake í«â¡
+		{ return CUnicode::_UnicodeToUnicode_in(cSrc, pDst, true); }	// UnicodeBE ‚Üí Unicode„Ç≥„Éº„ÉâÂ§âÊèõ //2007.08.13 kobake ËøΩÂä†
 	inline static EConvertResult UnicodeToUnicodeBE(const CNativeW& cSrc, CMemory* pDst)
-		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   Å® UnicodeBEÉRÅ[Éhïœä∑
+		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   ‚Üí UnicodeBE„Ç≥„Éº„ÉâÂ§âÊèõ
 
 };
 

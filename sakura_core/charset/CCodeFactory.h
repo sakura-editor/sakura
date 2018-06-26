@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,10 +28,10 @@ class CCodeBase;
 
 class CCodeFactory{
 public:
-	//! eCodeType‚É“K‡‚·‚é CCodeBaseƒCƒ“ƒXƒ^ƒ“ƒX ‚ğ¶¬
+	//! eCodeTypeã«é©åˆã™ã‚‹ CCodeBaseã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ ã‚’ç”Ÿæˆ
 	static CCodeBase* CreateCodeBase(
-		ECodeType	eCodeType,		//!< •¶šƒR[ƒh
-		int			nFlag			//!< bit 0: MIME Encode‚³‚ê‚½ƒwƒbƒ_‚ğdecode‚·‚é‚©‚Ç‚¤‚©
+		ECodeType	eCodeType,		//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰
+		int			nFlag			//!< bit 0: MIME Encodeã•ã‚ŒãŸãƒ˜ãƒƒãƒ€ã‚’decodeã™ã‚‹ã‹ã©ã†ã‹
 	);
 };
 

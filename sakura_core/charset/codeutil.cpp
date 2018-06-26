@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include <mbstring.h>
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
@@ -6,53 +6,53 @@
 
 #if 0
 /*!
-	@brief Šg’£”Å SJIS¨JIS•ÏŠ·
+	@brief æ‹¡å¼µç‰ˆ SJISâ†’JISå¤‰æ›
 
-	SJISƒR[ƒh‚ðJIS‚É•ÏŠ·‚·‚éD‚»‚ÌÛCJIS‚É‘Î‰ž—Ìˆæ‚Ì‚È‚¢IBMŠg’£•¶Žš‚ð
-	NEC‘I’èIBMŠg’£•¶Žš‚É•ÏŠ·‚·‚éD
+	SJISã‚³ãƒ¼ãƒ‰ã‚’JISã«å¤‰æ›ã™ã‚‹ï¼Žãã®éš›ï¼ŒJISã«å¯¾å¿œé ˜åŸŸã®ãªã„IBMæ‹¡å¼µæ–‡å­—ã‚’
+	NECé¸å®šIBMæ‹¡å¼µæ–‡å­—ã«å¤‰æ›ã™ã‚‹ï¼Ž
 
-	Shift_JIS fa40`fc4b ‚Ì”ÍˆÍ‚Ì•¶Žš‚Í 8754`879a ‚Ü‚½‚Í ed40`eefc ‚É
-	ŽUÝ‚·‚é•¶Žš‚É•ÏŠ·‚³‚ê‚½Œã‚ÉCJIS‚É•ÏŠ·‚³‚ê‚Ü‚·D
+	Shift_JIS fa40ï½žfc4b ã®ç¯„å›²ã®æ–‡å­—ã¯ 8754ï½ž879a ã¾ãŸã¯ ed40ï½žeefc ã«
+	æ•£åœ¨ã™ã‚‹æ–‡å­—ã«å¤‰æ›ã•ã‚ŒãŸå¾Œã«ï¼ŒJISã«å¤‰æ›ã•ã‚Œã¾ã™ï¼Ž
 	
-	@param pszSrc [in] •ÏŠ·‚·‚é•¶Žš—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^ (Shift JIS)
+	@param pszSrc [in] å¤‰æ›ã™ã‚‹æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ (Shift JIS)
 	
-	@author ‚·‚¢
-	@date 2002.10.03 1•¶Žš‚Ì‚Ýˆµ‚¢C•ÏŠ·‚Ü‚Ås‚¤‚æ‚¤‚É•ÏX genta
+	@author ã™ã„
+	@date 2002.10.03 1æ–‡å­—ã®ã¿æ‰±ã„ï¼Œå¤‰æ›ã¾ã§è¡Œã†ã‚ˆã†ã«å¤‰æ›´ genta
 */
 unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 {
-	unsigned int	tmpw;	/* © int ‚ª 16 bit ˆÈã‚Å‚ ‚éŽ–‚ðŠú‘Ò‚µ‚Ä‚¢‚Ü‚·B */
+	unsigned int	tmpw;	/* â† int ãŒ 16 bit ä»¥ä¸Šã§ã‚ã‚‹äº‹ã‚’æœŸå¾…ã—ã¦ã„ã¾ã™ã€‚ */
 	bool bnonrt = false;
 	
 	unsigned char c0 = static_cast<unsigned char>((nSrc & 0x0000ff00) >> 8);
 	unsigned char c1 = static_cast<unsigned char>(nSrc & 0x000000ff);
 
-	if(	IsSjisZen1( static_cast<char>(c0) )	/* Shift_JIS ‘SŠp•¶Žš‚Ì 1ƒoƒCƒg–Ú */
-	 && IsSjisZen2( static_cast<char>(c1) )	/* Shift_JIS ‘SŠp•¶Žš‚Ì 2ƒoƒCƒg–Ú */
-	){	/* Shift_JIS‘SŠp•¶Žš‚Å‚ ‚é */
+	if(	IsSjisZen1( static_cast<char>(c0) )	/* Shift_JIS å…¨è§’æ–‡å­—ã® 1ãƒã‚¤ãƒˆç›® */
+	 && IsSjisZen2( static_cast<char>(c1) )	/* Shift_JIS å…¨è§’æ–‡å­—ã® 2ãƒã‚¤ãƒˆç›® */
+	){	/* Shift_JISå…¨è§’æ–‡å­—ã§ã‚ã‚‹ */
 		tmpw = static_cast<unsigned int>(c0 << 8) | static_cast<unsigned int>(c1);
 		//tmpw = ( ((unsigned int)*pszSrc) << 8 ) | ( (unsigned int)*(pszSrc + 1) );
 		if(
 			( c0 == 0x0fa ) ||
 			( c0 == 0x0fb ) ||
 			( ( c0 == 0x0fc ) && ( c1 <= 0x04b ) )
-		) {		/* fa40`fc4b ‚Ì•¶Žš‚Å‚ ‚éB */
-			/* •¶ŽšƒR[ƒh•ÏŠ·ˆ— */
-			if		  ( tmpw <= 0xfa49 ) {	tmpw -= 0x0b51;	}	/* fa40`fa49 ¨ eeef`eef8 (ú@`úI) */
-			else	if( tmpw <= 0xfa53 ) {	tmpw -= 0x72f6;	}	/* fa4a`fa53 ¨ 8754`875d (‡T`‡]) */
-			else	if( tmpw <= 0xfa57 ) {	tmpw -= 0x0b5b;	}	/* fa54`fa57 ¨ eef9`eefc (Ê`úW) */
-			else	if( tmpw == 0xfa58 ) {	tmpw  = 0x878a;	}	/* ‡Š */
-			else	if( tmpw == 0xfa59 ) {	tmpw  = 0x8782;	}	/* ‡‚ */
-			else	if( tmpw == 0xfa5a ) {	tmpw  = 0x8784;	}	/* ‡„ */
-			else	if( tmpw == 0xfa5b ) {	tmpw  = 0x879a;	}	/* æ */
-			else	if( tmpw <= 0xfa7e ) {	tmpw -= 0x0d1c;	}	/* fa5c`fa7e ¨ ed40`ed62 (ú\`ú~) */
-			else	if( tmpw <= 0xfa9b ) {	tmpw -= 0x0d1d;	}	/* fa80`fa9b ¨ ed63`ed7e (ú€`ú›) */
-			else	if( tmpw <= 0xfafc ) {	tmpw -= 0x0d1c;	}	/* fa9c`fafc ¨ ed80`ede0 (úœ`úü) */
-			else	if( tmpw <= 0xfb5b ) {	tmpw -= 0x0d5f;	}	/* fb40`fb5b ¨ ede1`edfc (û@`û[) */
-			else	if( tmpw <= 0xfb7e ) {	tmpw -= 0x0d1c;	}	/* fb5c`fb7e ¨ ee40`ee62 (û\`û~) */
-			else	if( tmpw <= 0xfb9b ) {	tmpw -= 0x0d1d;	}	/* fb80`fb9b ¨ ee63`ee7e (û€`û›) */
-			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9c`fbfc ¨ ee80`eee0 (ûœ`ûü) */
-			else{							tmpw -= 0x0d5f;	}	/* fc40`fc4b ¨ eee1`eeec (ü@`üK) */
+		) {		/* fa40ï½žfc4b ã®æ–‡å­—ã§ã‚ã‚‹ã€‚ */
+			/* æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›å‡¦ç† */
+			if		  ( tmpw <= 0xfa49 ) {	tmpw -= 0x0b51;	}	/* fa40ï½žfa49 â†’ eeefï½žeef8 (â…°ï½žâ…¹) */
+			else	if( tmpw <= 0xfa53 ) {	tmpw -= 0x72f6;	}	/* fa4aï½žfa53 â†’ 8754ï½ž875d (â… ï½žâ…©) */
+			else	if( tmpw <= 0xfa57 ) {	tmpw -= 0x0b5b;	}	/* fa54ï½žfa57 â†’ eef9ï½žeefc (ï¿¢ï½žï¼‚) */
+			else	if( tmpw == 0xfa58 ) {	tmpw  = 0x878a;	}	/* ãˆ± */
+			else	if( tmpw == 0xfa59 ) {	tmpw  = 0x8782;	}	/* â„– */
+			else	if( tmpw == 0xfa5a ) {	tmpw  = 0x8784;	}	/* â„¡ */
+			else	if( tmpw == 0xfa5b ) {	tmpw  = 0x879a;	}	/* âˆµ */
+			else	if( tmpw <= 0xfa7e ) {	tmpw -= 0x0d1c;	}	/* fa5cï½žfa7e â†’ ed40ï½žed62 (çºŠï½žå…Š) */
+			else	if( tmpw <= 0xfa9b ) {	tmpw -= 0x0d1d;	}	/* fa80ï½žfa9b â†’ ed63ï½žed7e (å…¤ï½žï¨) */
+			else	if( tmpw <= 0xfafc ) {	tmpw -= 0x0d1c;	}	/* fa9cï½žfafc â†’ ed80ï½žede0 (ï¨ï½žæµ¯) */
+			else	if( tmpw <= 0xfb5b ) {	tmpw -= 0x0d5f;	}	/* fb40ï½žfb5b â†’ ede1ï½žedfc (æ¶–ï½žçŠ±) */
+			else	if( tmpw <= 0xfb7e ) {	tmpw -= 0x0d1c;	}	/* fb5cï½žfb7e â†’ ee40ï½žee62 (çŠ¾ï½žï¨™) */
+			else	if( tmpw <= 0xfb9b ) {	tmpw -= 0x0d1d;	}	/* fb80ï½žfb9b â†’ ee63ï½žee7e (ï¨šï½žè•™) */
+			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9cï½žfbfc â†’ ee80ï½žeee0 (è•«ï½žé«™) */
+			else{							tmpw -= 0x0d5f;	}	/* fc40ï½žfc4b â†’ eee1ï½žeeec (é«œï½žé»‘) */
 		}
 		return _mbcjmstojis( tmpw );
 	}
@@ -65,8 +65,8 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 
 
 /*
-	”»•Êƒe[ƒuƒ‹   WinAPI ŠÖ” WideCharToMultiByte ‚Ì“ÁŽê‚È•ÏŠ·i‘ŠŒÝ•ÏŠ·‚Å‚«‚È‚¢•ÏŠ·j‚©
-	“Y‚¦Žš‚Ì’è‹`ˆæF0x00 ` 0x5f(=0x00ff - 0x00a0)
+	åˆ¤åˆ¥ãƒ†ãƒ¼ãƒ–ãƒ«   WinAPI é–¢æ•° WideCharToMultiByte ã®ç‰¹æ®Šãªå¤‰æ›ï¼ˆç›¸äº’å¤‰æ›ã§ããªã„å¤‰æ›ï¼‰ã‹
+	æ·»ãˆå­—ã®å®šç¾©åŸŸï¼š0x00 ï½ž 0x5f(=0x00ff - 0x00a0)
 */
 static const bool bNA = false;
 const bool TABLE_WctombSpec[] = {
@@ -87,158 +87,158 @@ const bool TABLE_WctombSpec[] = {
 
 
 //
-//	”»•ÊE•ÏŠ·ƒe[ƒuƒ‹   SJIS ‚Ìd•¡•„†‰»‚³‚ê‚Ä‚¢‚é•¶Žš‚ð‰ðŒˆ‚·‚é•â•“I‚È•\
+//	åˆ¤åˆ¥ãƒ»å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«   SJIS ã®é‡è¤‡ç¬¦å·åŒ–ã•ã‚Œã¦ã„ã‚‹æ–‡å­—ã‚’è§£æ±ºã™ã‚‹è£œåŠ©çš„ãªè¡¨
 //
-//	ŽQlŽ‘—¿ˆê——F
-//		Windows-31J ‚Ì•¶ŽšƒZƒbƒgCXŽR «”V
+//	å‚è€ƒè³‡æ–™ä¸€è¦§ï¼š
+//		Windows-31J ã®æ–‡å­—ã‚»ãƒƒãƒˆï¼Œæ£®å±± å°†ä¹‹
 //		    http://www2d.biglobe.ne.jp/~msyk/charcode/cp932/Windows-31J-charset.html
-//		JIS Šî–{Š¿ŽšCCyber Librarian
+//		JIS åŸºæœ¬æ¼¢å­—ï¼ŒCyber Librarian
 //		    http://www.asahi-net.or.jp/~ax2s-kmtn/ref/jisx0208.html
-//		Šg’£•¶ŽšƒR[ƒh•ÏŠ·ƒ}ƒNƒC‚·‚¢
+//		æ‹¡å¼µæ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›ãƒžã‚¯ãƒ­ï¼Œã™ã„
 //		    http://sakura.qp.land.to/?Macro%2F%C5%EA%B9%C6%2F126
-//		[PRB] SHIFT - JIS ‚Æ Unicode ŠÔ‚Ì•ÏŠ·–â‘èCMicrosoft
+//		[PRB] SHIFT - JIS ã¨ Unicode é–“ã®å¤‰æ›å•é¡Œï¼ŒMicrosoft
 //		    http://support.microsoft.com/default.aspx?scid=kb;ja;Q170559
 //
 
 //
-//	2‹æ‚Æ13‹æ‚É‚ ‚éd•¡•¶Žš‚ÌŠù’èƒR[ƒhƒ|ƒCƒ“ƒg‚ð—^‚¦‚é•\
+//	2åŒºã¨13åŒºã«ã‚ã‚‹é‡è¤‡æ–‡å­—ã®æ—¢å®šã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ä¸Žãˆã‚‹è¡¨
 //
 static const unsigned short TABLE_SjisPoorcodeDef[] = {
-	0x81be, // ¾
-	0x81bf, // ¿
-	0x81ca, // Ê  (0xeef9 ‚©‚ç•ÏX)
-	0x81da, // Ú
-	0x81db, // Û
-	0x81df, // ß
-	0x81e0, // à
-	0x81e3, // ã
-	0x81e6, // æ  (0x879a ‚©‚ç•ÏX)
-	0x81e7, // ç
-	0x8754, // ‡T
-	0x8755, // ‡U
-	0x8756, // ‡V
-	0x8757, // ‡W
-	0x8758, // ‡X
-	0x8759, // ‡Y
-	0x875a, // ‡Z
-	0x875b, // ‡[
-	0x875c, // ‡\
-	0x875d, // ‡]
-	0x8782, // ‡‚
-	0x8784, // ‡„
-	0x878a, // ‡Š
+	0x81be, // âˆª
+	0x81bf, // âˆ©
+	0x81ca, // ï¿¢  (0xeef9 ã‹ã‚‰å¤‰æ›´)
+	0x81da, // âˆ 
+	0x81db, // âŠ¥
+	0x81df, // â‰¡
+	0x81e0, // â‰’
+	0x81e3, // âˆš
+	0x81e6, // âˆµ  (0x879a ã‹ã‚‰å¤‰æ›´)
+	0x81e7, // âˆ«
+	0x8754, // â… 
+	0x8755, // â…¡
+	0x8756, // â…¢
+	0x8757, // â…£
+	0x8758, // â…¤
+	0x8759, // â…¥
+	0x875a, // â…¦
+	0x875b, // â…§
+	0x875c, // â…¨
+	0x875d, // â…©
+	0x8782, // â„–
+	0x8784, // â„¡
+	0x878a, // ãˆ±
 };
 
 //
-//	2‹æ‚Æ13‹æ‚Ìd•¡•¶Žš‚ðŠù’èƒR[ƒhƒ|ƒCƒ“ƒg‚Ö•ÏŠ·‚·‚é•\
+//	2åŒºã¨13åŒºã®é‡è¤‡æ–‡å­—ã‚’æ—¢å®šã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã¸å¤‰æ›ã™ã‚‹è¡¨
 //
 static const unsigned  short TABLE_SjisPoorcodeIndex[][2] = {
-//  { d•¡•¶Žš’l, ‘Î‰ž‚·‚é TABLE_SjisPoorcodeDef “à‚ÌˆÊ’u }
-	{ 0x8790,  6 }, // à
-	{ 0x8791,  5 }, // ß
-	{ 0x8792,  9 }, // ç
-	{ 0x8795,  7 }, // ã
-	{ 0x8796,  4 }, // Û
-	{ 0x8797,  3 }, // Ú
-	{ 0x879a,  8 }, // æ
-	{ 0x879b,  1 }, // ¿
-	{ 0x879c,  0 }, // ¾
-	{ 0xeef9,  2 }, // Ê
-	{ 0xfa4a, 10 }, // ‡T
-	{ 0xfa4b, 11 }, // ‡U
-	{ 0xfa4c, 12 }, // ‡V
-	{ 0xfa4d, 13 }, // ‡W
-	{ 0xfa4e, 14 }, // ‡X
-	{ 0xfa4f, 15 }, // ‡Y
-	{ 0xfa51, 16 }, // ‡Z
-	{ 0xfa52, 17 }, // ‡[
-	{ 0xfa53, 18 }, // ‡\
-	{ 0xfa54,  2 }, // Ê
-	{ 0xfa54, 19 }, // ‡]
-	{ 0xfa58, 22 }, // ‡Š
-	{ 0xfa59, 20 }, // ‡‚
-	{ 0xfa5a, 21 }, // ‡„
-	{ 0xfa5b,  8 }, // æ
+//  { é‡è¤‡æ–‡å­—å€¤, å¯¾å¿œã™ã‚‹ TABLE_SjisPoorcodeDef å†…ã®ä½ç½® }
+	{ 0x8790,  6 }, // â‰’
+	{ 0x8791,  5 }, // â‰¡
+	{ 0x8792,  9 }, // âˆ«
+	{ 0x8795,  7 }, // âˆš
+	{ 0x8796,  4 }, // âŠ¥
+	{ 0x8797,  3 }, // âˆ 
+	{ 0x879a,  8 }, // âˆµ
+	{ 0x879b,  1 }, // âˆ©
+	{ 0x879c,  0 }, // âˆª
+	{ 0xeef9,  2 }, // ï¿¢
+	{ 0xfa4a, 10 }, // â… 
+	{ 0xfa4b, 11 }, // â…¡
+	{ 0xfa4c, 12 }, // â…¢
+	{ 0xfa4d, 13 }, // â…£
+	{ 0xfa4e, 14 }, // â…¤
+	{ 0xfa4f, 15 }, // â…¥
+	{ 0xfa51, 16 }, // â…¦
+	{ 0xfa52, 17 }, // â…§
+	{ 0xfa53, 18 }, // â…¨
+	{ 0xfa54,  2 }, // ï¿¢
+	{ 0xfa54, 19 }, // â…©
+	{ 0xfa58, 22 }, // ãˆ±
+	{ 0xfa59, 20 }, // â„–
+	{ 0xfa5a, 21 }, // â„¡
+	{ 0xfa5b,  8 }, // âˆµ
 };
 static const int TABLESIZE_SjisPoorcodeIndex = 23;
 
-//  Šm”F‚Ì‚½‚ß‚Ìƒe[ƒuƒ‹ŒQ‚Æà–¾
+//  ç¢ºèªã®ãŸã‚ã®ãƒ†ãƒ¼ãƒ–ãƒ«ç¾¤ã¨èª¬æ˜Ž
 
 //	typedef struct tag_SjisPoorcodeResolvTable {
-//		uint16_t codeDefined;  // Šù’èƒR[ƒhƒ|ƒCƒ“ƒg
-//		uint16_t pcodeAlias[2];  // ƒGƒCƒŠƒAƒXƒR[ƒhƒ|ƒCƒ“ƒg
+//		uint16_t codeDefined;  // æ—¢å®šã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆ
+//		uint16_t pcodeAlias[2];  // ã‚¨ã‚¤ãƒªã‚¢ã‚¹ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆ
 //	} SJIS_POORCODE_RESOLV_TABLE;
 //
 //
-//	JIS X 0208 ‚É‚æ‚è‘æ2‹æ‚É‚Ä’è‹`‚³‚ê‚½‹L†‚É‚Â‚¢‚Ä
+//	JIS X 0208 ã«ã‚ˆã‚Šç¬¬2åŒºã«ã¦å®šç¾©ã•ã‚ŒãŸè¨˜å·ã«ã¤ã„ã¦
 //
-//	2‹æ‚Å’è‹`‚³‚ê‚Ä‚¢‚é•¶Žš‚É‘Î‚µ‚Ä‚ÍA2‹æ‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚ðŽg‚¤B
+//	2åŒºã§å®šç¾©ã•ã‚Œã¦ã„ã‚‹æ–‡å­—ã«å¯¾ã—ã¦ã¯ã€2åŒºã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ä½¿ã†ã€‚
 //
 //	const SJIS_POORCODE_RESOLV_TABLE TABLE_cSPCR_block2[] = {
-//		{ 0x81be, { 0x879c, 0      } }, // 00. ¾
-//		{ 0x81bf, { 0x879b, 0      } }, // 01. ¿
-//		{ 0x81ca, { 0xeef9, 0xfa54 } }, // 02. Ê
-//		{ 0x81da, { 0x8797, 0      } }, // 03. Ú
-//		{ 0x81db, { 0x8796, 0      } }, // 04. Û
-//		{ 0x81df, { 0x8791, 0      } }, // 05. ß
-//		{ 0x81e0, { 0x8790, 0      } }, // 06. à
-//		{ 0x81e3, { 0x8795, 0      } }, // 07. ã
-//		{ 0x81e6, { 0x879a, 0xfa5b } }, // 08. æ
-//		{ 0x81e7, { 0x8792, 0      } }, // 09. ç
+//		{ 0x81be, { 0x879c, 0      } }, // 00. âˆª
+//		{ 0x81bf, { 0x879b, 0      } }, // 01. âˆ©
+//		{ 0x81ca, { 0xeef9, 0xfa54 } }, // 02. ï¿¢
+//		{ 0x81da, { 0x8797, 0      } }, // 03. âˆ 
+//		{ 0x81db, { 0x8796, 0      } }, // 04. âŠ¥
+//		{ 0x81df, { 0x8791, 0      } }, // 05. â‰¡
+//		{ 0x81e0, { 0x8790, 0      } }, // 06. â‰’
+//		{ 0x81e3, { 0x8795, 0      } }, // 07. âˆš
+//		{ 0x81e6, { 0x879a, 0xfa5b } }, // 08. âˆµ
+//		{ 0x81e7, { 0x8792, 0      } }, // 09. âˆ«
 //	};
 //
 //
-//	NEC ‚Ì“s‡‚É‚æ‚è‘æ13‹æ‚É’è‹`‚³‚ê‚½•¶Žš‚É‚Â‚¢‚Ä
+//	NEC ã®éƒ½åˆã«ã‚ˆã‚Šç¬¬13åŒºã«å®šç¾©ã•ã‚ŒãŸæ–‡å­—ã«ã¤ã„ã¦
 //
-//	2‹æ‚Å’è‹`Ï‚Ý‚Ì•¶Žš‚ðœ‚¢‚ÄA
-//	Žc‚Á‚½•¶Žš‚É‘Î‚µ‚Ä‚±‚Ì13‹æiNEC“ÁŽê•¶Žšj‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚ðŽg‚¤B
+//	2åŒºã§å®šç¾©æ¸ˆã¿ã®æ–‡å­—ã‚’é™¤ã„ã¦ã€
+//	æ®‹ã£ãŸæ–‡å­—ã«å¯¾ã—ã¦ã“ã®13åŒºï¼ˆNECç‰¹æ®Šæ–‡å­—ï¼‰ã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ä½¿ã†ã€‚
 //
 //	const SJIS_POORCODE_RESOLV_TABLE TABLE_cSPCR_block13 = {
-//		{ 0x8754, { 0xfa4a, 0 } }, // 10. ‡T
-//		{ 0x8755, { 0xfa4b, 0 } }, // 11. ‡U
-//		{ 0x8756, { 0xfa4c, 0 } }, // 12. ‡V
-//		{ 0x8757, { 0xfa4d, 0 } }, // 13. ‡W
-//		{ 0x8758, { 0xfa4e, 0 } }, // 14. ‡X
-//		{ 0x8759, { 0xfa4f, 0 } }, // 15. ‡Y
-//		{ 0x875a, { 0xfa51, 0 } }, // 16. ‡Z
-//		{ 0x875b, { 0xfa52, 0 } }, // 17. ‡[
-//		{ 0x875c, { 0xfa53, 0 } }, // 18. ‡\
-//		{ 0x875d, { 0xfa54, 0 } }, // 19. ‡]
-//		{ 0x8782, { 0xfa59, 0 } }, // 20. ‡‚
-//		{ 0x8784, { 0xfa5a, 0 } }, // 21. ‡„
-//		{ 0x878a, { 0xfa58, 0 } }, // 22. ‡Š
+//		{ 0x8754, { 0xfa4a, 0 } }, // 10. â… 
+//		{ 0x8755, { 0xfa4b, 0 } }, // 11. â…¡
+//		{ 0x8756, { 0xfa4c, 0 } }, // 12. â…¢
+//		{ 0x8757, { 0xfa4d, 0 } }, // 13. â…£
+//		{ 0x8758, { 0xfa4e, 0 } }, // 14. â…¤
+//		{ 0x8759, { 0xfa4f, 0 } }, // 15. â…¥
+//		{ 0x875a, { 0xfa51, 0 } }, // 16. â…¦
+//		{ 0x875b, { 0xfa52, 0 } }, // 17. â…§
+//		{ 0x875c, { 0xfa53, 0 } }, // 18. â…¨
+//		{ 0x875d, { 0xfa54, 0 } }, // 19. â…©
+//		{ 0x8782, { 0xfa59, 0 } }, // 20. â„–
+//		{ 0x8784, { 0xfa5a, 0 } }, // 21. â„¡
+//		{ 0x878a, { 0xfa58, 0 } }, // 22. ãˆ±
 //	}
 //
 //
 //
-//	IBM ‚Ì“s‡‚É‚æ‚è‘æ115‹æ`119‹æ‚É’è‹`‚³‚ê‚½•¶Žš‚É‚Â‚¢‚Ä
+//	IBM ã®éƒ½åˆã«ã‚ˆã‚Šç¬¬115åŒºï½ž119åŒºã«å®šç¾©ã•ã‚ŒãŸæ–‡å­—ã«ã¤ã„ã¦
 //
-//	2‹æ‚Æ 13‹æ‚Å’è‹`Ï‚Ý‚Ì•¶Žš‚ðœ‚¢‚ÄŽc‚Á‚½•¶Žš‚É‘Î‚µ‚Ä‚ÍA
-//	<del>89‹æ‚©‚ç92‹æ‚É‚ ‚éA‚»‚ê‚Æ“™‰¿‚È NEC‘I’èIBMŠg’£•¶ŽšƒR[ƒhƒ|ƒCƒ“ƒg‚ðŽg‚¤B</del>
-//  115‹æ‚©‚ç 119‹æ‚É‚ ‚é IBMŠg’£•¶Žš‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚ðŽg‚¤B
-//	0xfa5c ‚©‚ç 0xfc4bA
-//	0xfa40 ‚©‚ç 0xfa49A
-//	0xfa55 ‚©‚ç 0xfa57 ‚Ì SJIS ƒR[ƒhƒ|ƒCƒ“ƒg‚ð‹K’è‚Æ‚·‚éB
-//	‚»‚ê‚ç‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚ÌƒGƒCƒŠƒAƒX‚ÍA‚»‚ê‚¼‚êA
-//	0xed40 ‚©‚ç 0xeeecA
-//	0xeeef ‚©‚ç 0xeef8A
-//	0xeefa ‚©‚ç 0xeefc ‚Ì SJIS ƒR[ƒhƒ|ƒCƒ“ƒg‚Å‚ ‚éB
+//	2åŒºã¨ 13åŒºã§å®šç¾©æ¸ˆã¿ã®æ–‡å­—ã‚’é™¤ã„ã¦æ®‹ã£ãŸæ–‡å­—ã«å¯¾ã—ã¦ã¯ã€
+//	<del>89åŒºã‹ã‚‰92åŒºã«ã‚ã‚‹ã€ãã‚Œã¨ç­‰ä¾¡ãª NECé¸å®šIBMæ‹¡å¼µæ–‡å­—ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ä½¿ã†ã€‚</del>
+//  115åŒºã‹ã‚‰ 119åŒºã«ã‚ã‚‹ IBMæ‹¡å¼µæ–‡å­—ã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’ä½¿ã†ã€‚
+//	0xfa5c ã‹ã‚‰ 0xfc4bã€
+//	0xfa40 ã‹ã‚‰ 0xfa49ã€
+//	0xfa55 ã‹ã‚‰ 0xfa57 ã® SJIS ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã‚’è¦å®šã¨ã™ã‚‹ã€‚
+//	ãã‚Œã‚‰ã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã®ã‚¨ã‚¤ãƒªã‚¢ã‚¹ã¯ã€ãã‚Œãžã‚Œã€
+//	0xed40 ã‹ã‚‰ 0xeeecã€
+//	0xeeef ã‹ã‚‰ 0xeef8ã€
+//	0xeefa ã‹ã‚‰ 0xeefc ã® SJIS ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§ã‚ã‚‹ã€‚
 //
 
 
 
 
 /*!
-	SJIS ƒtƒBƒ‹ƒ^  2‹æ‚Æ13‹æ‚É‚ ‚é•¶Žš‚Ì³í‰»
+	SJIS ãƒ•ã‚£ãƒ«ã‚¿  2åŒºã¨13åŒºã«ã‚ã‚‹æ–‡å­—ã®æ­£å¸¸åŒ–
 
-	2‹æ‚Å’è‹`‚³‚ê‚Ä‚¢‚é•¶Žš‚ð2‹æ‚ÖˆÚ“®‚µA13‹æ‚Å’è‹`‚³‚ê‚Ä‚¢‚Ä2‹æ‚É‚Í‚È‚¢•¶Žš‚ð13‹æ‚ÖˆÚ“®‚³‚¹‚éB
+	2åŒºã§å®šç¾©ã•ã‚Œã¦ã„ã‚‹æ–‡å­—ã‚’2åŒºã¸ç§»å‹•ã—ã€13åŒºã§å®šç¾©ã•ã‚Œã¦ã„ã¦2åŒºã«ã¯ãªã„æ–‡å­—ã‚’13åŒºã¸ç§»å‹•ã•ã›ã‚‹ã€‚
 */
 unsigned int __fastcall SjisFilter_basis( const unsigned int uCode )
 {
 	int ni = 0, nleft, nright;
 	unsigned int code_tmp;
 
-	/* “ñ•ªŒŸõŠJŽn */
+	/* äºŒåˆ†æ¤œç´¢é–‹å§‹ */
 	nleft = 0;
 	nright = TABLESIZE_SjisPoorcodeIndex -1;
 	while( nleft <= nright ){
@@ -249,7 +249,7 @@ unsigned int __fastcall SjisFilter_basis( const unsigned int uCode )
 		}else if( code_tmp < uCode ){
 			nleft = ni + 1;
 		}else{
-			break; // ”­Œ©
+			break; // ç™ºè¦‹
 		}
 	}
 
@@ -261,10 +261,10 @@ unsigned int __fastcall SjisFilter_basis( const unsigned int uCode )
 
 
 /*!
-	SJIS ƒtƒBƒ‹ƒ^  IBMŠg’£•¶Žš ¨ NEC ‘I’èIBMŠg’£•¶Žš
+	SJIS ãƒ•ã‚£ãƒ«ã‚¿  IBMæ‹¡å¼µæ–‡å­— â†’ NEC é¸å®šIBMæ‹¡å¼µæ–‡å­—
 
-	IBM Šg’£•¶Žš‚ð‚»‚Ì•¶Žš‚Æ“™‰¿‚È NEC ‘I’è IBM Šg’£—Ìˆæ‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚Ö
-	‰Â”\‚ÈŒÀ‚èˆÚ“®‚³‚¹‚éB
+	IBM æ‹¡å¼µæ–‡å­—ã‚’ãã®æ–‡å­—ã¨ç­‰ä¾¡ãª NEC é¸å®š IBM æ‹¡å¼µé ˜åŸŸã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã¸
+	å¯èƒ½ãªé™ã‚Šç§»å‹•ã•ã›ã‚‹ã€‚
 */
 unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int uCode )
 {
@@ -272,27 +272,27 @@ unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int uCode )
 	unsigned int code = (unsigned int) uCode;
 
 	/*
-		‘z’è‚³‚ê‚é“ü—Í’lF
+		æƒ³å®šã•ã‚Œã‚‹å…¥åŠ›å€¤ï¼š
 
-		fa40 ` fa7e, fa80 ` fafc
-		fb40 ` fb7e, fb80 ` fbfc
-		fc40 ` fc4b
+		fa40 ï½ž fa7e, fa80 ï½ž fafc
+		fb40 ï½ž fb7e, fb80 ï½ž fbfc
+		fc40 ï½ž fc4b
 	*/
 	c1 = static_cast<unsigned char>( (code >> 8) & 0x000000ff );
 	c2 = static_cast<unsigned char>( code & 0x000000ff );
 	if( c1 == 0xfa || c1 == 0xfb || (c1 == 0xfc && c2 <= 0x4b) ){
-		if     ( code <= 0xfa49 ) { code -= 0x0b51; }	/* fa40`fa49 ¨ eeef`eef8 (ú@`úI) */
+		if     ( code <= 0xfa49 ) { code -= 0x0b51; }	/* fa40ï½žfa49 â†’ eeefï½žeef8 (â…°ï½žâ…¹) */
 		else if( code <= 0xfa54 ) { ; }
-		else if( code <= 0xfa57 ) { code -= 0x0b5b; }	/* fa55`fa57 ¨ eefa`eefc (úU`úW) */
+		else if( code <= 0xfa57 ) { code -= 0x0b5b; }	/* fa55ï½žfa57 â†’ eefaï½žeefc (ï¿¤ï½žï¼‚) */
 		else if( code <= 0xfa5b ) { ; }
-		else if( code <= 0xfa7e ) { code -= 0x0d1c; }	/* fa5c`fa7e ¨ ed40`ed62 (ú\`ú~) */
-		else if( code <= 0xfa9b ) { code -= 0x0d1d; }	/* fa80`fa9b ¨ ed63`ed7e (ú€`ú›) */
-		else if( code <= 0xfafc ) { code -= 0x0d1c; }	/* fa9c`fafc ¨ ed80`ede0 (úœ`úü) */
-		else if( code <= 0xfb5b ) { code -= 0x0d5f; }	/* fb40`fb5b ¨ ede1`edfc (û@`û[) */
-		else if( code <= 0xfb7e ) { code -= 0x0d1c; }	/* fb5c`fb7e ¨ ee40`ee62 (û\`û~) */
-		else if( code <= 0xfb9b ) { code -= 0x0d1d; }	/* fb80`fb9b ¨ ee63`ee7e (û€`û›) */
-		else if( code <= 0xfbfc ) { code -= 0x0d1c; }	/* fb9c`fbfc ¨ ee80`eee0 (ûœ`ûü) */
-		else                      { code -= 0x0d5f; }	/* fc40`fc4b ¨ eee1`eeec (ü@`üK) */
+		else if( code <= 0xfa7e ) { code -= 0x0d1c; }	/* fa5cï½žfa7e â†’ ed40ï½žed62 (çºŠï½žå…Š) */
+		else if( code <= 0xfa9b ) { code -= 0x0d1d; }	/* fa80ï½žfa9b â†’ ed63ï½žed7e (å…¤ï½žï¨) */
+		else if( code <= 0xfafc ) { code -= 0x0d1c; }	/* fa9cï½žfafc â†’ ed80ï½žede0 (ï¨ï½žæµ¯) */
+		else if( code <= 0xfb5b ) { code -= 0x0d5f; }	/* fb40ï½žfb5b â†’ ede1ï½žedfc (æ¶–ï½žçŠ±) */
+		else if( code <= 0xfb7e ) { code -= 0x0d1c; }	/* fb5cï½žfb7e â†’ ee40ï½žee62 (çŠ¾ï½žï¨™) */
+		else if( code <= 0xfb9b ) { code -= 0x0d1d; }	/* fb80ï½žfb9b â†’ ee63ï½žee7e (ï¨šï½žè•™) */
+		else if( code <= 0xfbfc ) { code -= 0x0d1c; }	/* fb9cï½žfbfc â†’ ee80ï½žeee0 (è•«ï½žé«™) */
+		else                      { code -= 0x0d5f; }	/* fc40ï½žfc4b â†’ eee1ï½žeeec (é«œï½žé»‘) */
 	}
 
 	return code;
@@ -300,10 +300,10 @@ unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int uCode )
 
 
 /*!
-	SJIS ƒtƒBƒ‹ƒ^  NEC ‘I’èIBMŠg’£•¶Žš ¨ IBMŠg’£•¶Žš
+	SJIS ãƒ•ã‚£ãƒ«ã‚¿  NEC é¸å®šIBMæ‹¡å¼µæ–‡å­— â†’ IBMæ‹¡å¼µæ–‡å­—
 
-	NEC ‘I’è IBM Šg’£•¶Žš‚ð‚»‚Ì•¶Žš‚Æ“™‰¿‚È IBM Šg’£•¶Žš—Ìˆæ‚ÌƒR[ƒhƒ|ƒCƒ“ƒg‚Ö
-	‰Â”\‚ÈŒÀ‚èˆÚ“®‚³‚¹‚éB
+	NEC é¸å®š IBM æ‹¡å¼µæ–‡å­—ã‚’ãã®æ–‡å­—ã¨ç­‰ä¾¡ãª IBM æ‹¡å¼µæ–‡å­—é ˜åŸŸã®ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã¸
+	å¯èƒ½ãªé™ã‚Šç§»å‹•ã•ã›ã‚‹ã€‚
 */
 unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int uCode )
 {
@@ -311,25 +311,25 @@ unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int uCode )
 	unsigned int code = (unsigned int) uCode;
 
 	/*
-		‘z’è‚³‚ê‚½“ü—Í’lF
+		æƒ³å®šã•ã‚ŒãŸå…¥åŠ›å€¤ï¼š
 
-		ed40 ` ed7e, ed80 ` edfc
-		ee40 ` ee7e, ee80 ` eefc
+		ed40 ï½ž ed7e, ed80 ï½ž edfc
+		ee40 ï½ž ee7e, ee80 ï½ž eefc
 	*/
 	c1 = static_cast<unsigned char>( (code >> 8) & 0x000000ff );
 	if( c1 == 0xed || c1 == 0xee ){
-		if     ( code <= 0xed62 ) { code += 0x0d1c; }	/* ed40`ed62 ¨ fa5c`fa7e (ú\`ú~) */
-		else if( code <= 0xed7e ) { code += 0x0d1d; }	/* ed63`ed7e ¨ fa80`fa9b (ú€`ú›) */
-		else if( code <= 0xede0 ) { code += 0x0d1c; }	/* ed80`ede0 ¨ fa9c`fafc (úœ`úü) */
-		else if( code <= 0xedfc ) { code += 0x0d5f; }	/* ede1`edfc ¨ fb40`fb5b (û@`û[) */
-		else if( code <= 0xee62 ) { code += 0x0d1c; }	/* ee40`ee62 ¨ fb5c`fb7e (û\`û~) */
-		else if( code <= 0xee7e ) { code += 0x0d1d; }	/* ee63`ee7e ¨ fb80`fb9b (û€`û›) */
-		else if( code <= 0xeee0 ) { code += 0x0d1c; }	/* ee80`eee0 ¨ fb9c`fbf0 (ûœ`ûü) */
-		else if( code <= 0xeeec ) { code += 0x0d5f; }	/* eee1`eeec ¨ fc40`fc4b (ü@`üK) */
+		if     ( code <= 0xed62 ) { code += 0x0d1c; }	/* ed40ï½žed62 â†’ fa5cï½žfa7e (çºŠï½žå…Š) */
+		else if( code <= 0xed7e ) { code += 0x0d1d; }	/* ed63ï½žed7e â†’ fa80ï½žfa9b (å…¤ï½žï¨) */
+		else if( code <= 0xede0 ) { code += 0x0d1c; }	/* ed80ï½žede0 â†’ fa9cï½žfafc (ï¨ï½žæµ¯) */
+		else if( code <= 0xedfc ) { code += 0x0d5f; }	/* ede1ï½žedfc â†’ fb40ï½žfb5b (æ¶–ï½žçŠ±) */
+		else if( code <= 0xee62 ) { code += 0x0d1c; }	/* ee40ï½žee62 â†’ fb5cï½žfb7e (çŠ¾ï½žï¨™) */
+		else if( code <= 0xee7e ) { code += 0x0d1d; }	/* ee63ï½žee7e â†’ fb80ï½žfb9b (ï¨šï½žè•™) */
+		else if( code <= 0xeee0 ) { code += 0x0d1c; }	/* ee80ï½žeee0 â†’ fb9cï½žfbf0 (è•«ï½žé«™) */
+		else if( code <= 0xeeec ) { code += 0x0d5f; }	/* eee1ï½žeeec â†’ fc40ï½žfc4b (é«œï½žé»‘) */
 		else if( code <= 0xeeee ) { ; }
-		else if( code <= 0xeef8 ) { code += 0x0b51; }	/* eeef`eef8 ¨ fa40`fa49 (ú@`úI) */
+		else if( code <= 0xeef8 ) { code += 0x0b51; }	/* eeefï½žeef8 â†’ fa40ï½žfa49 (â…°ï½žâ…¹) */
 		else if( code == 0xeef9 ) { ; }
-		else                      { code += 0x0b5b; }	/* eefa`eefc ¨ fa55`fa57 (úU`úW) */
+		else                      { code += 0x0b5b; }	/* eefaï½žeefc â†’ fa55ï½žfa57 (ï¿¤ï½žï¼‚) */
 	}
 
 	return code;

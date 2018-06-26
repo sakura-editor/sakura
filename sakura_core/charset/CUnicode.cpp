@@ -1,4 +1,4 @@
-//	‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·DÁ‚³‚È‚¢‚Å‚­‚¾‚³‚¢
+ï»¿//	ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ç”¨ã§ã™ï¼æ¶ˆã•ãªã„ã§ãã ã•ã„
 
 #include "StdAfx.h"
 #include "CUnicode.h"
@@ -8,7 +8,7 @@
 
 EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pDstMem, const bool bBigEndian )
 {
-	// ƒ\[ƒXæ“¾
+	// ã‚½ãƒ¼ã‚¹å–å¾—
 	int nSrcLen;
 	const unsigned char* pSrc = reinterpret_cast<const unsigned char*>( cSrc.GetRawPtr(&nSrcLen) );
 	CMemory* pDstMem2 = pDstMem->_GetMemory();
@@ -16,7 +16,7 @@ EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pD
 	EConvertResult res = RESULT_COMPLETE;
 	bool bCopy = false;
 	if( nSrcLen % 2 == 1 ){
-		// •s‘«•ª‚ÌÅI1ƒoƒCƒg‚Æ‚µ‚Ä 0x00 ‚ğ•â‚¤B
+		// ä¸è¶³åˆ†ã®æœ€çµ‚1ãƒã‚¤ãƒˆã¨ã—ã¦ 0x00 ã‚’è£œã†ã€‚
 		pDstMem2->AllocBuffer( nSrcLen + 1 );
 		unsigned char* pDst  = reinterpret_cast<unsigned char*>( pDstMem2->GetRawPtr() );
 		if( pDstMem2->GetRawPtr() != NULL ){
@@ -34,7 +34,7 @@ EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pD
 
 	if( bBigEndian ){
 		if( &cSrc != pDstMem2 && !bCopy ){
-			// ƒRƒs[‚µ‚Â‚Â UnicodeBe -> Unicode
+			// ã‚³ãƒ”ãƒ¼ã—ã¤ã¤ UnicodeBe -> Unicode
 			pDstMem2->SwabHLByte(cSrc);
 		}else{
 			pDstMem2->SwapHLByte();  // UnicodeBe -> Unicode
@@ -58,11 +58,11 @@ EConvertResult CUnicode::_UnicodeToUnicode_out( const CNativeW& cSrc, CMemory* p
 		if( cSrc._GetMemory() != pDstMem ){
 			pDstMem->SetRawDataHoldBuffer(*(cSrc._GetMemory()));
 		}else{
-			// ‰½‚à‚µ‚È‚¢
+			// ä½•ã‚‚ã—ãªã„
 		}
 	}
 
-	return RESULT_COMPLETE;   // ‰½‚à‚µ‚È‚¢
+	return RESULT_COMPLETE;   // ä½•ã‚‚ã—ãªã„
 }
 
 

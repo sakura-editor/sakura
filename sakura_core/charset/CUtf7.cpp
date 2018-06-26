@@ -1,4 +1,4 @@
-// 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
+ï»¿// 2008.11.10 å¤‰æ›ãƒ­ã‚¸ãƒƒã‚¯ã‚’æ›¸ãç›´ã™
 
 
 #include "StdAfx.h"
@@ -12,7 +12,7 @@
 
 
 /*!
-	UTF-7 Set D •”•ª‚Ì“Ç‚İ‚İB
+	UTF-7 Set D éƒ¨åˆ†ã®èª­ã¿è¾¼ã¿ã€‚
 */
 int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
 {
@@ -31,7 +31,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 }
 
 /*!
-	UTF-7 Set B •”•ª‚Ì“Ç‚İ‚İ
+	UTF-7 Set B éƒ¨åˆ†ã®èª­ã¿è¾¼ã¿
 */
 int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
@@ -50,7 +50,7 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
 		int nModLen = ndecoded_len % sizeof(wchar_t);
 		ndecoded_len = ndecoded_len - nModLen;
-		CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE ‚ğ UTF-16 LE ‚É’¼‚·
+		CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE ã‚’ UTF-16 LE ã«ç›´ã™
 		memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
 		if( nModLen ){
 			ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
@@ -83,27 +83,27 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 	pw = pDst;
 
 	do{
-		// UTF-7 Set D •”•ª‚Ìƒ`ƒFƒbƒN
+		// UTF-7 Set D éƒ¨åˆ†ã®ãƒã‚§ãƒƒã‚¯
 		nblocklen = CheckUtf7DPart( pr, pr_end-pr, &pr_next, &berror_tmp );
 		if( berror_tmp == true ){
 			berror = true;
 		}
 		pw += _Utf7SetDToUni_block( pr, nblocklen, pw );
 
-		pr = pr_next;  // Ÿ‚Ì“Ç‚İ‚İˆÊ’u‚ğæ“¾
+		pr = pr_next;  // æ¬¡ã®èª­ã¿è¾¼ã¿ä½ç½®ã‚’å–å¾—
 		if( pr_next >= pr_end ){
 			break;
 		}
 
-		// UTF-7 Set B •”•ª‚Ìƒ`ƒFƒbƒN
+		// UTF-7 Set B éƒ¨åˆ†ã®ãƒã‚§ãƒƒã‚¯
 		nblocklen = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror_tmp, UC_LOOSE );
 		{
-			// ƒGƒ‰[‚ª‚ ‚Á‚Ä‚à‚Å‚«‚é‚Æ‚±‚ë‚Ü‚ÅƒfƒR[ƒh
+			// ã‚¨ãƒ©ãƒ¼ãŒã‚ã£ã¦ã‚‚ã§ãã‚‹ã¨ã“ã‚ã¾ã§ãƒ‡ã‚³ãƒ¼ãƒ‰
 			if( berror_tmp ){
 				berror = true;
 			}
 			if( nblocklen < 1 && *(pr_next-1) == '-' ){
-				// +- ¨ + •ÏŠ·
+				// +- â†’ + å¤‰æ›
 				*pw = L'+';
 				++pw;
 			}else{
@@ -113,7 +113,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 				}
 			}
 		}
-		pr = pr_next;  // Ÿ‚Ì“Ç‚İ‚İˆÊ’u‚ğæ“¾
+		pr = pr_next;  // æ¬¡ã®èª­ã¿è¾¼ã¿ä½ç½®ã‚’å–å¾—
 	}while( pr_next < pr_end );
 
 	if( pbError ){
@@ -124,18 +124,18 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 }
 
 
-//! UTF-7¨UnicodeƒR[ƒh•ÏŠ·
-// 2007.08.13 kobake ì¬
+//! UTF-7â†’Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+// 2007.08.13 kobake ä½œæˆ
 EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
-	// ƒGƒ‰[ó‘ÔF
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹ï¼š
 	bool bError;
 
-	// ƒf[ƒ^æ“¾
+	// ãƒ‡ãƒ¼ã‚¿å–å¾—
 	int nDataLen;
 	const char* pData = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nDataLen) );
 
-	// •K—v‚Èƒoƒbƒtƒ@ƒTƒCƒY‚ğ’²‚×‚ÄŠm•Û
+	// å¿…è¦ãªãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’èª¿ã¹ã¦ç¢ºä¿
 	wchar_t* pDst;
 	try{
 		pDst = new wchar_t[nDataLen + 1];
@@ -146,10 +146,10 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = Utf7ToUni( pData, nDataLen, pDst, &bError );
 
-	// pDstMem ‚ğİ’è
+	// pDstMem ã‚’è¨­å®š
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
 
 	delete [] pDst;
@@ -198,11 +198,11 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 		return 0;
 	}
 
-	// // UTF-16 LE ¨ UTF-16 BE
+	// // UTF-16 LE â†’ UTF-16 BE
 	wcsncpy( &psrc[0], pSrc, nSrcLen );
 	CMemory::SwapHLByte( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t) );
 
-	// ‘‚«‚İ
+	// æ›¸ãè¾¼ã¿
 	pw = pDst;
 	pw[0] = '+';
 	++pw;
@@ -239,7 +239,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 		pr_base = pr;
 
 		if( *pr == L'+' ){
-			// '+' ¨ "+-"
+			// '+' â†’ "+-"
 			pw[0] = '+';
 			pw[1] = '-';
 			++pr;
@@ -260,21 +260,21 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 
 
 
-/*! ƒR[ƒh•ÏŠ· Unicode¨UTF-7
-	@date 2002.10.25 Moca UTF-7‚Å’¼ÚƒGƒ“ƒR[ƒh‚Å‚«‚é•¶š‚ğRFC‚É‡‚í‚¹‚Ä§ŒÀ‚µ‚½
+/*! ã‚³ãƒ¼ãƒ‰å¤‰æ› Unicodeâ†’UTF-7
+	@date 2002.10.25 Moca UTF-7ã§ç›´æ¥ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã§ãã‚‹æ–‡å­—ã‚’RFCã«åˆã‚ã›ã¦åˆ¶é™ã—ãŸ
 */
 EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 {
 
-	// ƒf[ƒ^æ“¾
+	// ãƒ‡ãƒ¼ã‚¿å–å¾—
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
-	// o—Íæƒoƒbƒtƒ@‚ÌŠm•Û
+	// å‡ºåŠ›å…ˆãƒãƒƒãƒ•ã‚¡ã®ç¢ºä¿
 	char *pDst;
 	try{
-		// Å‘å‚ÅA•ÏŠ·Œ³‚Ìƒf[ƒ^’·‚Ì‚T”{B
-		pDst = new char[ nSrcLen * 5 + 1 ];  // * ¨ +ACo-
+		// æœ€å¤§ã§ã€å¤‰æ›å…ƒã®ãƒ‡ãƒ¼ã‚¿é•·ã®ï¼•å€ã€‚
+		pDst = new char[ nSrcLen * 5 + 1 ];  // * â†’ +ACo-
 	}catch( ... ){
 		pDst = NULL;
 	}
@@ -282,10 +282,10 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = UniToUtf7( pSrc, nSrcLen, pDst );
 
-	// pMem ‚Éƒf[ƒ^‚ğƒZƒbƒg
+	// pMem ã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
 	delete [] pDst;
@@ -293,7 +293,7 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 	return RESULT_COMPLETE;
 }
 
-//! BOMƒf[ƒ^æ“¾
+//! BOMãƒ‡ãƒ¼ã‚¿å–å¾—
 void CUtf7::GetBom(CMemory* pcmemBom)
 {
 	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
