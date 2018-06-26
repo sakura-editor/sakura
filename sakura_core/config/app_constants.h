@@ -24,6 +24,8 @@
 #ifndef SAKURA_APP_CONSTANTS_AD36E2CE_B62E_497D_806F_6B9738310127_H_
 #define SAKURA_APP_CONSTANTS_AD36E2CE_B62E_497D_806F_6B9738310127_H_
 
+#include "version.h"
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -41,7 +43,14 @@
 	#define _APP_NAME_2_(TYPE) TYPE("")
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakura(デバッグ版)")
+#ifdef ALPHA_VERSION
+	#define _APP_NAME_3_(TYPE) TYPE("(Alpha Version)")
+#else
+	#define _APP_NAME_3_(TYPE) TYPE("")
+#endif
+
+//例:UNICODEデバッグ→_T("sakura(デバッグ版)")
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_3_(TYPE)
 
 #define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
 #define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))

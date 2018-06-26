@@ -21,6 +21,7 @@
 /*.user
 # /*.vcxproj
 /Win32
+/x64
 /Toolkit2003Env.bat
 /_UpgradeReport_Files
 /ipch
