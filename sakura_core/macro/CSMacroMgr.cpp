@@ -1,10 +1,10 @@
-/*!	@file
-	@brief �}�N��
+﻿/*!	@file
+	@brief マクロ
 
 	@author Norio Nakatani
 	@author genta
-	@date Sep. 29, 2001 �쐬
-	@date 20011229 aroka �o�O�C���A�R�����g�ǉ�
+	@date Sep. 29, 2001 作成
+	@date 20011229 aroka バグ修正、コメント追加
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -14,7 +14,7 @@
 	Copyright (C) 2003, MIK, genta, Moca
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, FILE
-	Copyright (C) 2006, �����, fon, ryoji
+	Copyright (C) 2006, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
@@ -42,446 +42,446 @@ MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
-//	�@�\�ԍ�			�֐���			����				��Ɨp�o�b�t�@
+//	機能番号			関数名			引数				作業用バッファ
 
-	/* �t�@�C������n */
-	{F_FILENEW,						LTEXT("FileNew"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�V�K�쐬
-	// {F_FILEOPEN,					LTEXT("FileOpen"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J��
-	{F_FILEOPEN2,					LTEXT("FileOpen"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_BSTR},	VT_EMPTY,	NULL}, //�J��2
-	{F_FILESAVE,					LTEXT("FileSave"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�㏑���ۑ�
-	{F_FILESAVEALL,					LTEXT("FileSaveAll"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�㏑���ۑ�
-	{F_FILESAVEAS_DIALOG,			LTEXT("FileSaveAsDialog"),		{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //���O��t���ĕۑ�(�_�C�A���O) 2013.05.02
-	{F_FILESAVEAS,					LTEXT("FileSaveAs"),			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //���O��t���ĕۑ�
-	{F_FILECLOSE,					LTEXT("FileClose"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //����(����)	//Oct. 17, 2000 jepro �u�t�@�C�������v�Ƃ����L���v�V������ύX
-	{F_FILECLOSE_OPEN,				LTEXT("FileCloseOpen"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���ĊJ��
-	{F_FILE_REOPEN,					LTEXT("FileReopen"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J������	//Dec. 4, 2002 genta
-	{F_FILE_REOPEN_SJIS,			LTEXT("FileReopenSJIS"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJIS�ŊJ������
-	{F_FILE_REOPEN_JIS,				LTEXT("FileReopenJIS"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JIS�ŊJ������
-	{F_FILE_REOPEN_EUC,				LTEXT("FileReopenEUC"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUC�ŊJ������
-	{F_FILE_REOPEN_LATIN1,			LTEXT("FileReopenLatin1"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Latin1�ŊJ������	// 2010/3/20 Uchi
-	{F_FILE_REOPEN_UNICODE,			LTEXT("FileReopenUNICODE"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode�ŊJ������
-	{F_FILE_REOPEN_UNICODEBE,		LTEXT("FileReopenUNICODEBE"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBE�ŊJ������
-	{F_FILE_REOPEN_UTF8,			LTEXT("FileReopenUTF8"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8�ŊJ������
-	{F_FILE_REOPEN_CESU8,			LTEXT("FileReopenCESU8"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CESU-8�ŊJ������
-	{F_FILE_REOPEN_UTF7,			LTEXT("FileReopenUTF7"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7�ŊJ������
-	{F_PRINT,						LTEXT("Print"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���
-//	{F_PRINT_DIALOG,				LTEXT("PrintDialog"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //����_�C�A���O
-	{F_PRINT_PREVIEW,				LTEXT("PrintPreview"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //����v���r���[
-	{F_PRINT_PAGESETUP,				LTEXT("PrintPageSetup"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //����y�[�W�ݒ�	//Sept. 14, 2000 jepro �u����̃y�[�W���C�A�E�g�̐ݒ�v����ύX
-	{F_OPEN_HfromtoC,				LTEXT("OpenHfromtoC"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //������C/C++�w�b�_(�\�[�X)���J��	//Feb. 7, 2001 JEPRO �ǉ�
-//	{F_OPEN_HHPP,					LTEXT("OpenHHpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //������C/C++�w�b�_�t�@�C�����J��	//Feb. 9, 2001 jepro�u.c�܂���.cpp�Ɠ�����.h���J���v����ύX		del 2008/6/23 Uchi
-//	{F_OPEN_CCPP,					LTEXT("OpenCCpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //������C/C++�\�[�X�t�@�C�����J��	//Feb. 9, 2001 jepro�u.h�Ɠ�����.c(�Ȃ����.cpp)���J���v����ύX	del 2008/6/23 Uchi
-	{F_ACTIVATE_SQLPLUS,			LTEXT("ActivateSQLPLUS"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plus���A�N�e�B�u�\�� */
-	{F_PLSQL_COMPILE_ON_SQLPLUS,	LTEXT("ExecSQLPLUS"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plus�Ŏ��s */
-	{F_BROWSE,						LTEXT("Browse"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�u���E�Y
-	{F_VIEWMODE,					LTEXT("ViewMode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�r���[���[�h
-	{F_VIEWMODE,					LTEXT("ReadOnly"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�r���[���[�h(��)
-	{F_PROPERTY_FILE,				LTEXT("PropertyFile"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�t�@�C���̃v���p�e�B
-	{F_EXITALLEDITORS,				LTEXT("ExitAllEditors"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�ҏW�̑S�I��	// 2007.02.13 ryoji �ǉ�
-	{F_EXITALL,						LTEXT("ExitAll"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�T�N���G�f�B�^�̑S�I��	//Dec. 27, 2000 JEPRO �ǉ�
-	{F_PUTFILE,						LTEXT("PutFile"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // ��ƒ��t�@�C���̈ꎞ�o�� 2006.12.10 maru
-	{F_INSFILE,						LTEXT("InsFile"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // �L�����b�g�ʒu�Ƀt�@�C���}�� 2006.12.10 maru
+	/* ファイル操作系 */
+	{F_FILENEW,						LTEXT("FileNew"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規作成
+	// {F_FILEOPEN,					LTEXT("FileOpen"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //開く
+	{F_FILEOPEN2,					LTEXT("FileOpen"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_BSTR},	VT_EMPTY,	NULL}, //開く2
+	{F_FILESAVE,					LTEXT("FileSave"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上書き保存
+	{F_FILESAVEALL,					LTEXT("FileSaveAll"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上書き保存
+	{F_FILESAVEAS_DIALOG,			LTEXT("FileSaveAsDialog"),		{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //名前を付けて保存(ダイアログ) 2013.05.02
+	{F_FILESAVEAS,					LTEXT("FileSaveAs"),			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //名前を付けて保存
+	{F_FILECLOSE,					LTEXT("FileClose"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	{F_FILECLOSE_OPEN,				LTEXT("FileCloseOpen"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて開く
+	{F_FILE_REOPEN,					LTEXT("FileReopen"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //開き直す	//Dec. 4, 2002 genta
+	{F_FILE_REOPEN_SJIS,			LTEXT("FileReopenSJIS"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
+	{F_FILE_REOPEN_JIS,				LTEXT("FileReopenJIS"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
+	{F_FILE_REOPEN_EUC,				LTEXT("FileReopenEUC"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
+	{F_FILE_REOPEN_LATIN1,			LTEXT("FileReopenLatin1"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Latin1で開き直す	// 2010/3/20 Uchi
+	{F_FILE_REOPEN_UNICODE,			LTEXT("FileReopenUNICODE"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UNICODEBE,		LTEXT("FileReopenUNICODEBE"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBEで開き直す
+	{F_FILE_REOPEN_UTF8,			LTEXT("FileReopenUTF8"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
+	{F_FILE_REOPEN_CESU8,			LTEXT("FileReopenCESU8"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CESU-8で開き直す
+	{F_FILE_REOPEN_UTF7,			LTEXT("FileReopenUTF7"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
+	{F_PRINT,						LTEXT("Print"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷
+//	{F_PRINT_DIALOG,				LTEXT("PrintDialog"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ダイアログ
+	{F_PRINT_PREVIEW,				LTEXT("PrintPreview"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷プレビュー
+	{F_PRINT_PAGESETUP,				LTEXT("PrintPageSetup"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	{F_OPEN_HfromtoC,				LTEXT("OpenHfromtoC"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	{F_OPEN_HHPP,					LTEXT("OpenHHpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+//	{F_OPEN_CCPP,					LTEXT("OpenCCpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
+	{F_ACTIVATE_SQLPLUS,			LTEXT("ActivateSQLPLUS"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusをアクティブ表示 */
+	{F_PLSQL_COMPILE_ON_SQLPLUS,	LTEXT("ExecSQLPLUS"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusで実行 */
+	{F_BROWSE,						LTEXT("Browse"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブラウズ
+	{F_VIEWMODE,					LTEXT("ViewMode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ビューモード
+	{F_VIEWMODE,					LTEXT("ReadOnly"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ビューモード(旧)
+	{F_PROPERTY_FILE,				LTEXT("PropertyFile"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルのプロパティ
+	{F_EXITALLEDITORS,				LTEXT("ExitAllEditors"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //編集の全終了	// 2007.02.13 ryoji 追加
+	{F_EXITALL,						LTEXT("ExitAll"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	{F_PUTFILE,						LTEXT("PutFile"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // 作業中ファイルの一時出力 2006.12.10 maru
+	{F_INSFILE,						LTEXT("InsFile"),				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // キャレット位置にファイル挿入 2006.12.10 maru
 
-	/* �ҏW�n */
-	{F_WCHAR,				LTEXT("Char"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��������
-	{F_IME_CHAR,			LTEXT("CharIme"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�S�p��������
-	{F_UNDO,				LTEXT("Undo"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���ɖ߂�(Undo)
-	{F_REDO,				LTEXT("Redo"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��蒼��(Redo)
-	{F_DELETE,				LTEXT("Delete"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�폜
-	{F_DELETE_BACK,			LTEXT("DeleteBack"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\���O���폜
-	{F_WordDeleteToStart,	LTEXT("WordDeleteToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��̍��[�܂ō폜
-	{F_WordDeleteToEnd,		LTEXT("WordDeleteToEnd"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��̉E�[�܂ō폜
-	{F_WordCut,				LTEXT("WordCut"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��؂���
-	{F_WordDelete,			LTEXT("WordDelete"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��폜
-	{F_LineCutToStart,		LTEXT("LineCutToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���܂Ő؂���(���s�P��)
-	{F_LineCutToEnd,		LTEXT("LineCutToEnd"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���܂Ő؂���(���s�P��)
-	{F_LineDeleteToStart,	LTEXT("LineDeleteToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���܂ō폜(���s�P��)
-	{F_LineDeleteToEnd,		LTEXT("LineDeleteToEnd"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���܂ō폜(���s�P��)
-	{F_CUT_LINE,			LTEXT("CutLine"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s�؂���(�܂�Ԃ��P��)
-	{F_DELETE_LINE,			LTEXT("DeleteLine"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s�폜(�܂�Ԃ��P��)
-	{F_DUPLICATELINE,		LTEXT("DuplicateLine"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s�̓�d��(�܂�Ԃ��P��)
-	{F_INDENT_TAB,			LTEXT("IndentTab"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //TAB�C���f���g
-	{F_UNINDENT_TAB,		LTEXT("UnindentTab"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�tTAB�C���f���g
-	{F_INDENT_SPACE,		LTEXT("IndentSpace"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SPACE�C���f���g
-	{F_UNINDENT_SPACE,		LTEXT("UnindentSpace"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�tSPACE�C���f���g
-//	{F_WORDSREFERENCE,		LTEXT("WordReference"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P�ꃊ�t�@�����X
-	{F_LTRIM,				LTEXT("LTrim"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��(�擪)�̋󔒂��폜 2001.12.03 hor
-	{F_RTRIM,				LTEXT("RTrim"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�E(����)�̋󔒂��폜 2001.12.03 hor
-	{F_SORT_ASC,			LTEXT("SortAsc"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I���s�̏����\�[�g 2001.12.06 hor
-	{F_SORT_DESC,			LTEXT("SortDesc"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I���s�̍~���\�[�g 2001.12.06 hor
-	{F_MERGE,				LTEXT("Merge"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I���s�̃}�[�W 2001.12.06 hor
+	/* 編集系 */
+	{F_WCHAR,				LTEXT("Char"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字入力
+	{F_IME_CHAR,			LTEXT("CharIme"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //全角文字入力
+	{F_UNDO,				LTEXT("Undo"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //元に戻す(Undo)
+	{F_REDO,				LTEXT("Redo"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //やり直し(Redo)
+	{F_DELETE,				LTEXT("Delete"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //削除
+	{F_DELETE_BACK,			LTEXT("DeleteBack"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル前を削除
+	{F_WordDeleteToStart,	LTEXT("WordDeleteToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の左端まで削除
+	{F_WordDeleteToEnd,		LTEXT("WordDeleteToEnd"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の右端まで削除
+	{F_WordCut,				LTEXT("WordCut"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語切り取り
+	{F_WordDelete,			LTEXT("WordDelete"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語削除
+	{F_LineCutToStart,		LTEXT("LineCutToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭まで切り取り(改行単位)
+	{F_LineCutToEnd,		LTEXT("LineCutToEnd"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末まで切り取り(改行単位)
+	{F_LineDeleteToStart,	LTEXT("LineDeleteToStart"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭まで削除(改行単位)
+	{F_LineDeleteToEnd,		LTEXT("LineDeleteToEnd"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末まで削除(改行単位)
+	{F_CUT_LINE,			LTEXT("CutLine"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行切り取り(折り返し単位)
+	{F_DELETE_LINE,			LTEXT("DeleteLine"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行削除(折り返し単位)
+	{F_DUPLICATELINE,		LTEXT("DuplicateLine"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行の二重化(折り返し単位)
+	{F_INDENT_TAB,			LTEXT("IndentTab"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //TABインデント
+	{F_UNINDENT_TAB,		LTEXT("UnindentTab"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //逆TABインデント
+	{F_INDENT_SPACE,		LTEXT("IndentSpace"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SPACEインデント
+	{F_UNINDENT_SPACE,		LTEXT("UnindentSpace"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //逆SPACEインデント
+//	{F_WORDSREFERENCE,		LTEXT("WordReference"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語リファレンス
+	{F_LTRIM,				LTEXT("LTrim"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左(先頭)の空白を削除 2001.12.03 hor
+	{F_RTRIM,				LTEXT("RTrim"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //右(末尾)の空白を削除 2001.12.03 hor
+	{F_SORT_ASC,			LTEXT("SortAsc"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行の昇順ソート 2001.12.06 hor
+	{F_SORT_DESC,			LTEXT("SortDesc"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行の降順ソート 2001.12.06 hor
+	{F_MERGE,				LTEXT("Merge"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択行のマージ 2001.12.06 hor
 
-	/* �J�[�\���ړ��n */
-	{F_UP,					LTEXT("Up"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\����ړ�
-	{F_DOWN,				LTEXT("Down"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\�����ړ�
-	{F_LEFT,				LTEXT("Left"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\�����ړ�
-	{F_RIGHT,				LTEXT("Right"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\���E�ړ�
-	{F_UP2,					LTEXT("Up2"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\����ړ�(�Q�s����)
-	{F_DOWN2,				LTEXT("Down2"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\�����ړ�(�Q�s����)
-	{F_WORDLEFT,			LTEXT("WordLeft"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��̍��[�Ɉړ�
-	{F_WORDRIGHT,			LTEXT("WordRight"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P��̉E�[�Ɉړ�
-	{F_GOLINETOP,			LTEXT("GoLineTop"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���Ɉړ�(�܂�Ԃ��P��/���s�P��)
-	{F_GOLINEEND,			LTEXT("GoLineEnd"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�s���Ɉړ�(�܂�Ԃ��P��)
-	{F_HalfPageUp,			LTEXT("HalfPageUp"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	{F_HalfPageDown,		LTEXT("HalfPageDown"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	{F_1PageUp,				LTEXT("PageUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	{F_1PageUp,				LTEXT("1PageUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	{F_1PageDown,			LTEXT("PageDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	{F_1PageDown,			LTEXT("1PageDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	{F_GOFILETOP,			LTEXT("GoFileTop"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�t�@�C���̐擪�Ɉړ�
-	{F_GOFILEEND,			LTEXT("GoFileEnd"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�t�@�C���̍Ō�Ɉړ�
-	{F_CURLINECENTER,		LTEXT("CurLineCenter"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\���s���E�B���h�E������
-	{F_JUMPHIST_PREV,		LTEXT("MoveHistPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�ړ�����: �O��
-	{F_JUMPHIST_NEXT,		LTEXT("MoveHistNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�ړ�����: ����
-	{F_JUMPHIST_SET,		LTEXT("MoveHistSet"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���݈ʒu���ړ������ɓo�^
-	{F_WndScrollDown,		LTEXT("F_WndScrollDown"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�e�L�X�g���P�s���փX�N���[��	// 2001/06/20 asa-o
-	{F_WndScrollUp,			LTEXT("F_WndScrollUp"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�e�L�X�g���P�s��փX�N���[��	// 2001/06/20 asa-o
-	{F_GONEXTPARAGRAPH,		LTEXT("GoNextParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̒i���ֈړ�
-	{F_GOPREVPARAGRAPH,		LTEXT("GoPrevParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̒i���ֈړ�
-	{F_MODIFYLINE_NEXT,		LTEXT("GoModifyLineNext"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̕ύX�s�ֈړ�
-	{F_MODIFYLINE_PREV,		LTEXT("GoModifyLinePrev"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̕ύX�s�ֈړ�
-	{F_MOVECURSOR,			LTEXT("MoveCursor"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\���ړ�
-	{F_MOVECURSORLAYOUT,	LTEXT("MoveCursorLayout"),	{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //�J�[�\���ړ�(���C�A�E�g�P��)
-	{F_WHEELUP,				LTEXT("WheelUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���A�b�v
-	{F_WHEELDOWN,			LTEXT("WheelDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���_�E��
-	{F_WHEELLEFT,			LTEXT("WheelLeft"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[����
-	{F_WHEELRIGHT,			LTEXT("WheelRight"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���E
-	{F_WHEELPAGEUP,			LTEXT("WheelPageUp"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���y�[�W�A�b�v
-	{F_WHEELPAGEDOWN,		LTEXT("WheelPageDown"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���y�[�W�_�E��
-	{F_WHEELPAGELEFT,		LTEXT("WheelPageLeft"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���y�[�W��
-	{F_WHEELPAGERIGHT,		LTEXT("WheelPageRight"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�z�C�[���y�[�W�E
+	/* カーソル移動系 */
+	{F_UP,					LTEXT("Up"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル上移動
+	{F_DOWN,				LTEXT("Down"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル下移動
+	{F_LEFT,				LTEXT("Left"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル左移動
+	{F_RIGHT,				LTEXT("Right"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル右移動
+	{F_UP2,					LTEXT("Up2"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル上移動(２行ごと)
+	{F_DOWN2,				LTEXT("Down2"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル下移動(２行ごと)
+	{F_WORDLEFT,			LTEXT("WordLeft"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の左端に移動
+	{F_WORDRIGHT,			LTEXT("WordRight"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //単語の右端に移動
+	{F_GOLINETOP,			LTEXT("GoLineTop"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行頭に移動(折り返し単位/改行単位)
+	{F_GOLINEEND,			LTEXT("GoLineEnd"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //行末に移動(折り返し単位)
+	{F_HalfPageUp,			LTEXT("HalfPageUp"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_HalfPageDown,		LTEXT("HalfPageDown"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_1PageUp,				LTEXT("PageUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageUp,				LTEXT("1PageUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageDown,			LTEXT("PageDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_1PageDown,			LTEXT("1PageDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_GOFILETOP,			LTEXT("GoFileTop"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの先頭に移動
+	{F_GOFILEEND,			LTEXT("GoFileEnd"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの最後に移動
+	{F_CURLINECENTER,		LTEXT("CurLineCenter"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ中央へ
+	{F_JUMPHIST_PREV,		LTEXT("MoveHistPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 前へ
+	{F_JUMPHIST_NEXT,		LTEXT("MoveHistNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 次へ
+	{F_JUMPHIST_SET,		LTEXT("MoveHistSet"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置を移動履歴に登録
+	{F_WndScrollDown,		LTEXT("F_WndScrollDown"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行下へスクロール	// 2001/06/20 asa-o
+	{F_WndScrollUp,			LTEXT("F_WndScrollUp"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
+	{F_GONEXTPARAGRAPH,		LTEXT("GoNextParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の段落へ移動
+	{F_GOPREVPARAGRAPH,		LTEXT("GoPrevParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の段落へ移動
+	{F_MODIFYLINE_NEXT,		LTEXT("GoModifyLineNext"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の変更行へ移動
+	{F_MODIFYLINE_PREV,		LTEXT("GoModifyLinePrev"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の変更行へ移動
+	{F_MOVECURSOR,			LTEXT("MoveCursor"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル移動
+	{F_MOVECURSORLAYOUT,	LTEXT("MoveCursorLayout"),	{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル移動(レイアウト単位)
+	{F_WHEELUP,				LTEXT("WheelUp"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールアップ
+	{F_WHEELDOWN,			LTEXT("WheelDown"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールダウン
+	{F_WHEELLEFT,			LTEXT("WheelLeft"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイール左
+	{F_WHEELRIGHT,			LTEXT("WheelRight"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイール右
+	{F_WHEELPAGEUP,			LTEXT("WheelPageUp"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールページアップ
+	{F_WHEELPAGEDOWN,		LTEXT("WheelPageDown"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールページダウン
+	{F_WHEELPAGELEFT,		LTEXT("WheelPageLeft"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールページ左
+	{F_WHEELPAGERIGHT,		LTEXT("WheelPageRight"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ホイールページ右
 
-	/* �I���n */	//Oct. 15, 2000 JEPRO �u�J�[�\���ړ��n�v�������Ȃ����̂Łu�I���n�v�Ƃ��ēƗ���(�T�u���j���[���͍\����ł��Ȃ��̂�)
-	{F_SELECTWORD,			LTEXT("SelectWord"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���݈ʒu�̒P��I��
-	{F_SELECTALL,			LTEXT("SelectAll"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���ׂđI��
-	{F_SELECTLINE,			LTEXT("SelectLine"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //1�s�I��	// 2007.10.13 nasukoji
-	{F_BEGIN_SEL,			LTEXT("BeginSelect"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�͈͑I���J�n Mar. 5, 2001 genta ���̏C��
-	{F_UP_SEL,				LTEXT("Up_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\����ړ�
-	{F_DOWN_SEL,			LTEXT("Down_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\�����ړ�
-	{F_LEFT_SEL,			LTEXT("Left_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\�����ړ�
-	{F_RIGHT_SEL,			LTEXT("Right_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\���E�ړ�
-	{F_UP2_SEL,				LTEXT("Up2_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\����ړ�(�Q�s����)
-	{F_DOWN2_SEL,			LTEXT("Down2_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�J�[�\�����ړ�(�Q�s����)
-	{F_WORDLEFT_SEL,		LTEXT("WordLeft_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P��̍��[�Ɉړ�
-	{F_WORDRIGHT_SEL,		LTEXT("WordRight_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P��̉E�[�Ɉړ�
-	{F_GOLINETOP_SEL,		LTEXT("GoLineTop_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��/���s�P��)
-	{F_GOLINEEND_SEL,		LTEXT("GoLineEnd_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��)
-	{F_HalfPageUp_Sel,		LTEXT("HalfPageUp_Sel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	{F_HalfPageDown_Sel,	LTEXT("HalfPageDown_Sel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	{F_1PageUp_Sel,			LTEXT("PageUp_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	{F_1PageUp_Sel,			LTEXT("1PageUp_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	{F_1PageDown_Sel,		LTEXT("PageDown_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	{F_1PageDown_Sel,		LTEXT("1PageDown_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	{F_GOFILETOP_SEL,		LTEXT("GoFileTop_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�t�@�C���̐擪�Ɉړ�
-	{F_GOFILEEND_SEL,		LTEXT("GoFileEnd_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�t�@�C���̍Ō�Ɉړ�
-	{F_GONEXTPARAGRAPH_SEL,	LTEXT("GoNextParagraph_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)���̒i���ֈړ�
-	{F_GOPREVPARAGRAPH_SEL,	LTEXT("GoPrevParagraph_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�O�̒i���ֈړ�
-	{F_MODIFYLINE_NEXT_SEL,	LTEXT("GoModifyLineNext_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)���̕ύX�s�ֈړ�
-	{F_MODIFYLINE_PREV_SEL,	LTEXT("GoModifyLinePrev_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(�͈͑I��)�O�̕ύX�s�ֈړ�
+	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
+	{F_SELECTWORD,			LTEXT("SelectWord"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置の単語選択
+	{F_SELECTALL,			LTEXT("SelectAll"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて選択
+	{F_SELECTLINE,			LTEXT("SelectLine"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //1行選択	// 2007.10.13 nasukoji
+	{F_BEGIN_SEL,			LTEXT("BeginSelect"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //範囲選択開始 Mar. 5, 2001 genta 名称修正
+	{F_UP_SEL,				LTEXT("Up_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル上移動
+	{F_DOWN_SEL,			LTEXT("Down_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル下移動
+	{F_LEFT_SEL,			LTEXT("Left_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル左移動
+	{F_RIGHT_SEL,			LTEXT("Right_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル右移動
+	{F_UP2_SEL,				LTEXT("Up2_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル上移動(２行ごと)
+	{F_DOWN2_SEL,			LTEXT("Down2_Sel"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)カーソル下移動(２行ごと)
+	{F_WORDLEFT_SEL,		LTEXT("WordLeft_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)単語の左端に移動
+	{F_WORDRIGHT_SEL,		LTEXT("WordRight_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)単語の右端に移動
+	{F_GOLINETOP_SEL,		LTEXT("GoLineTop_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)行頭に移動(折り返し単位/改行単位)
+	{F_GOLINEEND_SEL,		LTEXT("GoLineEnd_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)行末に移動(折り返し単位)
+	{F_HalfPageUp_Sel,		LTEXT("HalfPageUp_Sel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_HalfPageDown_Sel,	LTEXT("HalfPageDown_Sel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	{F_1PageUp_Sel,			LTEXT("PageUp_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageUp_Sel,			LTEXT("1PageUp_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	{F_1PageDown_Sel,		LTEXT("PageDown_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_1PageDown_Sel,		LTEXT("1PageDown_Sel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	{F_GOFILETOP_SEL,		LTEXT("GoFileTop_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)ファイルの先頭に移動
+	{F_GOFILEEND_SEL,		LTEXT("GoFileEnd_Sel"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)ファイルの最後に移動
+	{F_GONEXTPARAGRAPH_SEL,	LTEXT("GoNextParagraph_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)次の段落へ移動
+	{F_GOPREVPARAGRAPH_SEL,	LTEXT("GoPrevParagraph_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)前の段落へ移動
+	{F_MODIFYLINE_NEXT_SEL,	LTEXT("GoModifyLineNext_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)次の変更行へ移動
+	{F_MODIFYLINE_PREV_SEL,	LTEXT("GoModifyLinePrev_Sel"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(範囲選択)前の変更行へ移動
 
-	/* ��`�I���n */	//Oct. 17, 2000 JEPRO (��`�I��)���V�݂��ꎟ�悱���ɂ���
-	{F_BEGIN_BOX,			LTEXT("BeginBoxSelect"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��`�͈͑I���J�n
-	{F_UP_BOX,				LTEXT("Up_BoxSel"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\����ړ�
-	{F_DOWN_BOX,			LTEXT("Down_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\�����ړ�
-	{F_LEFT_BOX,			LTEXT("Left_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\�����ړ�
-	{F_RIGHT_BOX,			LTEXT("Right_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\���E�ړ�
-	{F_UP2_BOX,				LTEXT("Up2_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\����ړ�(�Q�s����)
-	{F_DOWN2_BOX,			LTEXT("Down2_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�J�[�\�����ړ�(�Q�s����)
-	{F_WORDLEFT_BOX,		LTEXT("WordLeft_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P��̍��[�Ɉړ�
-	{F_WORDRIGHT_BOX,		LTEXT("WordRight_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P��̉E�[�Ɉړ�
-	{F_GOLOGICALLINETOP_BOX,LTEXT("GoLogicalLineTop_BoxSel"),{VT_I4,   VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�s���Ɉړ�(���s�P��)
-	{F_GOLINETOP_BOX,		LTEXT("GoLineTop_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��/���s�P��)
-	{F_GOLINEEND_BOX,		LTEXT("GoLineEnd_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��)
-	{F_HalfPageUp_BOX,		LTEXT("HalfPageUp_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)���y�[�W�A�b�v
-	{F_HalfPageDown_BOX,	LTEXT("HalfPageDown_BoxSel"),	{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)���y�[�W�_�E��
-	{F_1PageUp_BOX,			LTEXT("PageUp_BoxSel"),			{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P�y�[�W�A�b�v
-	{F_1PageUp_BOX,			LTEXT("1PageUp_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P�y�[�W�A�b�v
-	{F_1PageDown_BOX,		LTEXT("PageDown_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P�y�[�W�_�E��
-	{F_1PageDown_BOX,		LTEXT("1PageDown_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�P�y�[�W�_�E��
-	{F_GOFILETOP_BOX,		LTEXT("GoFileTop_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�t�@�C���̐擪�Ɉړ�
-	{F_GOFILEEND_BOX,		LTEXT("GoFileEnd_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(��`�I��)�t�@�C���̍Ō�Ɉړ�
+	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
+	{F_BEGIN_BOX,			LTEXT("BeginBoxSelect"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //矩形範囲選択開始
+	{F_UP_BOX,				LTEXT("Up_BoxSel"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル上移動
+	{F_DOWN_BOX,			LTEXT("Down_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル下移動
+	{F_LEFT_BOX,			LTEXT("Left_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル左移動
+	{F_RIGHT_BOX,			LTEXT("Right_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル右移動
+	{F_UP2_BOX,				LTEXT("Up2_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル上移動(２行ごと)
+	{F_DOWN2_BOX,			LTEXT("Down2_BoxSel"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)カーソル下移動(２行ごと)
+	{F_WORDLEFT_BOX,		LTEXT("WordLeft_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)単語の左端に移動
+	{F_WORDRIGHT_BOX,		LTEXT("WordRight_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)単語の右端に移動
+	{F_GOLOGICALLINETOP_BOX,LTEXT("GoLogicalLineTop_BoxSel"),{VT_I4,   VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)行頭に移動(改行単位)
+	{F_GOLINETOP_BOX,		LTEXT("GoLineTop_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)行頭に移動(折り返し単位/改行単位)
+	{F_GOLINEEND_BOX,		LTEXT("GoLineEnd_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)行末に移動(折り返し単位)
+	{F_HalfPageUp_BOX,		LTEXT("HalfPageUp_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)半ページアップ
+	{F_HalfPageDown_BOX,	LTEXT("HalfPageDown_BoxSel"),	{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)半ページダウン
+	{F_1PageUp_BOX,			LTEXT("PageUp_BoxSel"),			{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)１ページアップ
+	{F_1PageUp_BOX,			LTEXT("1PageUp_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)１ページアップ
+	{F_1PageDown_BOX,		LTEXT("PageDown_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)１ページダウン
+	{F_1PageDown_BOX,		LTEXT("1PageDown_BoxSel"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)１ページダウン
+	{F_GOFILETOP_BOX,		LTEXT("GoFileTop_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)ファイルの先頭に移動
+	{F_GOFILEEND_BOX,		LTEXT("GoFileEnd_BoxSel"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //(矩形選択)ファイルの最後に移動
 
-	/* �N���b�v�{�[�h�n */
-	{F_CUT,						LTEXT("Cut"),						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�؂���(�I��͈͂��N���b�v�{�[�h�ɃR�s�[���č폜)
-	{F_COPY,					LTEXT("Copy"),						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�R�s�[(�I��͈͂��N���b�v�{�[�h�ɃR�s�[)
-	{F_PASTE,					LTEXT("Paste"),						{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�\��t��(�N���b�v�{�[�h����\��t��)
-	{F_COPY_ADDCRLF,			LTEXT("CopyAddCRLF"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�܂�Ԃ��ʒu�ɉ��s�����ăR�s�[
-	{F_COPY_CRLF,				LTEXT("CopyCRLF"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CRLF���s�ŃR�s�[(�I��͈͂����s�R�[�h=CRLF�ŃR�s�[)
-	{F_PASTEBOX,				LTEXT("PasteBox"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��`�\��t��(�N���b�v�{�[�h�����`�\��t��)
-	{F_INSBOXTEXT,				LTEXT("InsBoxText"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ��`�e�L�X�g�}��
-	{F_INSTEXT_W,				LTEXT("InsText"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �e�L�X�g��\��t��
-	{F_ADDTAIL_W,				LTEXT("AddTail"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �Ō�Ƀe�L�X�g��ǉ�
-	{F_COPYLINES,				LTEXT("CopyLines"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I��͈͓��S�s�R�s�[
-	{F_COPYLINESASPASSAGE,		LTEXT("CopyLinesAsPassage"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I��͈͓��S�s���p���t���R�s�[
-	{F_COPYLINESWITHLINENUMBER,	LTEXT("CopyLinesWithLineNumber"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I��͈͓��S�s�s�ԍ��t���R�s�[
-	{F_COPY_COLOR_HTML,			LTEXT("CopyColorHtml"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I��͈͓��F�t��HTML�R�s�[
-	{F_COPY_COLOR_HTML_LINENUMBER,	LTEXT("CopyColorHtmlWithLineNumber"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�I��͈͓��s�ԍ��F�t��HTML�R�s�[
-	{F_COPYPATH,				LTEXT("CopyPath"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃t�@�C���̃p�X�����N���b�v�{�[�h�ɃR�s�[
-	{F_COPYFNAME,				LTEXT("CopyFilename"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃t�@�C�������N���b�v�{�[�h�ɃR�s�[ // 2002/2/3 aroka
-	{F_COPYTAG,					LTEXT("CopyTag"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃t�@�C���̃p�X���ƃJ�[�\���ʒu���R�s�[	//Sept. 15, 2000 jepro ��Ɠ��������ɂȂ��Ă����̂��C��
-	{F_CREATEKEYBINDLIST,		LTEXT("CopyKeyBindList"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�L�[���蓖�Ĉꗗ���R�s�[	//Sept. 15, 2000 JEPRO �ǉ� //Dec. 25, 2000 ����
+	/* クリップボード系 */
+	{F_CUT,						LTEXT("Cut"),						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //切り取り(選択範囲をクリップボードにコピーして削除)
+	{F_COPY,					LTEXT("Copy"),						{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コピー(選択範囲をクリップボードにコピー)
+	{F_PASTE,					LTEXT("Paste"),						{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //貼り付け(クリップボードから貼り付け)
+	{F_COPY_ADDCRLF,			LTEXT("CopyAddCRLF"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //折り返し位置に改行をつけてコピー
+	{F_COPY_CRLF,				LTEXT("CopyCRLF"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
+	{F_PASTEBOX,				LTEXT("PasteBox"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //矩形貼り付け(クリップボードから矩形貼り付け)
+	{F_INSBOXTEXT,				LTEXT("InsBoxText"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 矩形テキスト挿入
+	{F_INSTEXT_W,				LTEXT("InsText"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // テキストを貼り付け
+	{F_ADDTAIL_W,				LTEXT("AddTail"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 最後にテキストを追加
+	{F_COPYLINES,				LTEXT("CopyLines"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行コピー
+	{F_COPYLINESASPASSAGE,		LTEXT("CopyLinesAsPassage"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行引用符付きコピー
+	{F_COPYLINESWITHLINENUMBER,	LTEXT("CopyLinesWithLineNumber"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行行番号付きコピー
+	{F_COPY_COLOR_HTML,			LTEXT("CopyColorHtml"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内色付きHTMLコピー
+	{F_COPY_COLOR_HTML_LINENUMBER,	LTEXT("CopyColorHtmlWithLineNumber"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内行番号色付きHTMLコピー
+	{F_COPYPATH,				LTEXT("CopyPath"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名をクリップボードにコピー
+	{F_COPYFNAME,				LTEXT("CopyFilename"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイル名をクリップボードにコピー // 2002/2/3 aroka
+	{F_COPYTAG,					LTEXT("CopyTag"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
+	{F_CREATEKEYBINDLIST,		LTEXT("CopyKeyBindList"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
 
-	/* �}���n */
-	{F_INS_DATE,				LTEXT("InsertDate"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ���t�}��
-	{F_INS_TIME,				LTEXT("InsertTime"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �����}��
-	{F_CTRL_CODE_DIALOG,		LTEXT("CtrlCodeDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�R���g���[���R�[�h�̓���(�_�C�A���O)	//@@@ 2002.06.02 MIK
-	{F_CTRL_CODE,				LTEXT("CtrlCode"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�R���g���[���R�[�h�̓��� 2013.12.12
+	/* 挿入系 */
+	{F_INS_DATE,				LTEXT("InsertDate"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 日付挿入
+	{F_INS_TIME,				LTEXT("InsertTime"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 時刻挿入
+	{F_CTRL_CODE_DIALOG,		LTEXT("CtrlCodeDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+	{F_CTRL_CODE,				LTEXT("CtrlCode"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //コントロールコードの入力 2013.12.12
 
-	/* �ϊ��n */
-	{F_TOLOWER,		 			LTEXT("ToLower"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //������
-	{F_TOUPPER,		 			LTEXT("ToUpper"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�啶��
-	{F_TOHANKAKU,		 		LTEXT("ToHankaku"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �S�p�����p */
-	{F_TOHANKATA,		 		LTEXT("ToHankata"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �S�p�J�^�J�i�����p�J�^�J�i */	//Aug. 29, 2002 ai
-	{F_TOZENEI,		 			LTEXT("ToZenEi"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���p�p�����S�p�p�� */			//July. 30, 2001 Misaka
-	{F_TOHANEI,		 			LTEXT("ToHanEi"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �S�p�p�������p�p�� */
-	{F_TOZENKAKUKATA,	 		LTEXT("ToZenKata"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���p�{�S�Ђ灨�S�p�E�J�^�J�i */	//Sept. 17, 2000 jepro �������u���p���S�p�J�^�J�i�v����ύX
-	{F_TOZENKAKUHIRA,	 		LTEXT("ToZenHira"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���p�{�S�J�^���S�p�E�Ђ炪�� */	//Sept. 17, 2000 jepro �������u���p���S�p�Ђ炪�ȁv����ύX
-	{F_HANKATATOZENKATA,	LTEXT("HanKataToZenKata"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���p�J�^�J�i���S�p�J�^�J�i */
-	{F_HANKATATOZENHIRA,	LTEXT("HanKataToZenHira"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���p�J�^�J�i���S�p�Ђ炪�� */
-	{F_TABTOSPACE,				LTEXT("TABToSPACE"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* TAB���� */
-	{F_SPACETOTAB,				LTEXT("SPACEToTAB"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �󔒁�TAB */ //---- Stonee, 2001/05/27
-	{F_CODECNV_AUTO2SJIS,		LTEXT("AutoToSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �������ʁ�SJIS�R�[�h�ϊ� */
-	{F_CODECNV_EMAIL,			LTEXT("JIStoSJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //E-Mail(JIS��SJIS)�R�[�h�ϊ�
-	{F_CODECNV_EUC2SJIS,		LTEXT("EUCtoSJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUC��SJIS�R�[�h�ϊ�
-	{F_CODECNV_UNICODE2SJIS,	LTEXT("CodeCnvUNICODEtoSJIS"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode��SJIS�R�[�h�ϊ�
-	{F_CODECNV_UNICODEBE2SJIS,	LTEXT("CodeCnvUNICODEBEtoSJIS"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // UnicodeBE��SJIS�R�[�h�ϊ�
-	{F_CODECNV_UTF82SJIS,		LTEXT("UTF8toSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-8��SJIS�R�[�h�ϊ� */
-	{F_CODECNV_UTF72SJIS,		LTEXT("UTF7toSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-7��SJIS�R�[�h�ϊ� */
-	{F_CODECNV_SJIS2JIS,		LTEXT("SJIStoJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS��JIS�R�[�h�ϊ� */
-	{F_CODECNV_SJIS2EUC,		LTEXT("SJIStoEUC"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS��EUC�R�[�h�ϊ� */
-	{F_CODECNV_SJIS2UTF8,		LTEXT("SJIStoUTF8"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS��UTF-8�R�[�h�ϊ� */
-	{F_CODECNV_SJIS2UTF7,		LTEXT("SJIStoUTF7"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS��UTF-7�R�[�h�ϊ� */
-	{F_BASE64DECODE,	 		LTEXT("Base64Decode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Base64�f�R�[�h���ĕۑ�
-	{F_UUDECODE,		 		LTEXT("Uudecode"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //uudecode���ĕۑ�	//Oct. 17, 2000 jepro �������u�I�𕔕���UUENCODE�f�R�[�h�v����ύX
+	/* 変換系 */
+	{F_TOLOWER,		 			LTEXT("ToLower"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //小文字
+	{F_TOUPPER,		 			LTEXT("ToUpper"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //大文字
+	{F_TOHANKAKU,		 		LTEXT("ToHankaku"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角→半角 */
+	{F_TOHANKATA,		 		LTEXT("ToHankata"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
+	{F_TOZENEI,		 			LTEXT("ToZenEi"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	{F_TOHANEI,		 			LTEXT("ToHanEi"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角英数→半角英数 */
+	{F_TOZENKAKUKATA,	 		LTEXT("ToZenKata"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+	{F_TOZENKAKUHIRA,	 		LTEXT("ToZenHira"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	{F_HANKATATOZENKATA,	LTEXT("HanKataToZenKata"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角カタカナ */
+	{F_HANKATATOZENHIRA,	LTEXT("HanKataToZenHira"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角ひらがな */
+	{F_TABTOSPACE,				LTEXT("TABToSPACE"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* TAB→空白 */
+	{F_SPACETOTAB,				LTEXT("SPACEToTAB"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 空白→TAB */ //---- Stonee, 2001/05/27
+	{F_CODECNV_AUTO2SJIS,		LTEXT("AutoToSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 自動判別→SJISコード変換 */
+	{F_CODECNV_EMAIL,			LTEXT("JIStoSJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //E-Mail(JIS→SJIS)コード変換
+	{F_CODECNV_EUC2SJIS,		LTEXT("EUCtoSJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUC→SJISコード変換
+	{F_CODECNV_UNICODE2SJIS,	LTEXT("CodeCnvUNICODEtoSJIS"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicode→SJISコード変換
+	{F_CODECNV_UNICODEBE2SJIS,	LTEXT("CodeCnvUNICODEBEtoSJIS"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // UnicodeBE→SJISコード変換
+	{F_CODECNV_UTF82SJIS,		LTEXT("UTF8toSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-8→SJISコード変換 */
+	{F_CODECNV_UTF72SJIS,		LTEXT("UTF7toSJIS"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* UTF-7→SJISコード変換 */
+	{F_CODECNV_SJIS2JIS,		LTEXT("SJIStoJIS"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→JISコード変換 */
+	{F_CODECNV_SJIS2EUC,		LTEXT("SJIStoEUC"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→EUCコード変換 */
+	{F_CODECNV_SJIS2UTF8,		LTEXT("SJIStoUTF8"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→UTF-8コード変換 */
+	{F_CODECNV_SJIS2UTF7,		LTEXT("SJIStoUTF7"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→UTF-7コード変換 */
+	{F_BASE64DECODE,	 		LTEXT("Base64Decode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Base64デコードして保存
+	{F_UUDECODE,		 		LTEXT("Uudecode"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
 
-	/* �����n */
-	{F_SEARCH_DIALOG,			LTEXT("SearchDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //����(�P�ꌟ���_�C�A���O)
-	{F_SEARCH_NEXT,				LTEXT("SearchNext"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��������
-	{F_SEARCH_PREV,				LTEXT("SearchPrev"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O������
-	{F_REPLACE_DIALOG,			LTEXT("ReplaceDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�u��(�u���_�C�A���O)
-	{F_REPLACE,					LTEXT("Replace"),			{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //�u��(���s)
-	{F_REPLACE_ALL,				LTEXT("ReplaceAll"),		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //���ׂĒu��(���s)
-	{F_SEARCH_CLEARMARK,		LTEXT("SearchClearMark"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�����}�[�N�̃N���A
-	{F_JUMP_SRCHSTARTPOS,		LTEXT("SearchStartPos"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�����J�n�ʒu�֖߂�			// 02/06/26 ai
+	/* 検索系 */
+	{F_SEARCH_DIALOG,			LTEXT("SearchDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索(単語検索ダイアログ)
+	{F_SEARCH_NEXT,				LTEXT("SearchNext"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次を検索
+	{F_SEARCH_PREV,				LTEXT("SearchPrev"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前を検索
+	{F_REPLACE_DIALOG,			LTEXT("ReplaceDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //置換(置換ダイアログ)
+	{F_REPLACE,					LTEXT("Replace"),			{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //置換(実行)
+	{F_REPLACE_ALL,				LTEXT("ReplaceAll"),		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて置換(実行)
+	{F_SEARCH_CLEARMARK,		LTEXT("SearchClearMark"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索マークのクリア
+	{F_JUMP_SRCHSTARTPOS,		LTEXT("SearchStartPos"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索開始位置へ戻る			// 02/06/26 ai
 	{F_GREP,					LTEXT("Grep"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	&s_MacroInfoEx_i}, //Grep
-	{F_GREP_REPLACE,			LTEXT("GrepReplace"),		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR },	VT_EMPTY,	&s_MacroInfoEx_ii}, //Grep�u��
-	{F_JUMP,					LTEXT("Jump"),				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�w��s�w�W�����v
-	{F_OUTLINE,					LTEXT("Outline"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�A�E�g���C�����
-	{F_TAGJUMP,					LTEXT("TagJump"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�O�W�����v�@�\
-	{F_TAGJUMPBACK,				LTEXT("TagJumpBack"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�O�W�����v�o�b�N�@�\
-	{F_TAGS_MAKE,				LTEXT("TagMake"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�O�t�@�C���̍쐬	//@@@ 2003.04.13 MIK
-	{F_DIRECT_TAGJUMP,			LTEXT("DirectTagJump"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�_�C���N�g�^�O�W�����v�@�\	//@@@ 2003.04.15 MIK
-	{F_TAGJUMP_KEYWORD,			LTEXT("KeywordTagJump"),	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�L�[���[�h���w�肵�ă_�C���N�g�^�O�W�����v�@�\ //@@@ 2005.03.31 MIK
-	{F_COMPARE,					LTEXT("Compare"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�t�@�C�����e��r
-	{F_DIFF_DIALOG,				LTEXT("DiffDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF�����\��(�_�C�A���O)	//@@@ 2002.05.25 MIK
-	{F_DIFF,					LTEXT("Diff"),				{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF�����\��				//@@@ 2002.05.25 MIK	// 2005.10.03 maru
-	{F_DIFF_NEXT,				LTEXT("DiffNext"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF�����\��(����)			//@@@ 2002.05.25 MIK
-	{F_DIFF_PREV,				LTEXT("DiffPrev"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF�����\��(�O��)			//@@@ 2002.05.25 MIK
-	{F_DIFF_RESET,				LTEXT("DiffReset"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF�����\��(�S����)		//@@@ 2002.05.25 MIK
-	{F_BRACKETPAIR,				LTEXT("BracketPair"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�Ί��ʂ̌���
+	{F_GREP_REPLACE,			LTEXT("GrepReplace"),		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR },	VT_EMPTY,	&s_MacroInfoEx_ii}, //Grep置換
+	{F_JUMP,					LTEXT("Jump"),				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //指定行ヘジャンプ
+	{F_OUTLINE,					LTEXT("Outline"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトライン解析
+	{F_TAGJUMP,					LTEXT("TagJump"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプ機能
+	{F_TAGJUMPBACK,				LTEXT("TagJumpBack"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプバック機能
+	{F_TAGS_MAKE,				LTEXT("TagMake"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグファイルの作成	//@@@ 2003.04.13 MIK
+	{F_DIRECT_TAGJUMP,			LTEXT("DirectTagJump"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ダイレクトタグジャンプ機能	//@@@ 2003.04.15 MIK
+	{F_TAGJUMP_KEYWORD,			LTEXT("KeywordTagJump"),	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キーワードを指定してダイレクトタグジャンプ機能 //@@@ 2005.03.31 MIK
+	{F_COMPARE,					LTEXT("Compare"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイル内容比較
+	{F_DIFF_DIALOG,				LTEXT("DiffDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+	{F_DIFF,					LTEXT("Diff"),				{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示				//@@@ 2002.05.25 MIK	// 2005.10.03 maru
+	{F_DIFF_NEXT,				LTEXT("DiffNext"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(次へ)			//@@@ 2002.05.25 MIK
+	{F_DIFF_PREV,				LTEXT("DiffPrev"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(前へ)			//@@@ 2002.05.25 MIK
+	{F_DIFF_RESET,				LTEXT("DiffReset"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
+	{F_BRACKETPAIR,				LTEXT("BracketPair"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //対括弧の検索
 // From Here 2001.12.03 hor
-	{F_BOOKMARK_SET,			LTEXT("BookmarkSet"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�u�b�N�}�[�N�ݒ�E����
-	{F_BOOKMARK_NEXT,			LTEXT("BookmarkNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃u�b�N�}�[�N��
-	{F_BOOKMARK_PREV,			LTEXT("BookmarkPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̃u�b�N�}�[�N��
-	{F_BOOKMARK_RESET,			LTEXT("BookmarkReset"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�u�b�N�}�[�N�̑S����
-	{F_BOOKMARK_VIEW,			LTEXT("BookmarkView"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�u�b�N�}�[�N�̈ꗗ
+	{F_BOOKMARK_SET,			LTEXT("BookmarkSet"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマーク設定・解除
+	{F_BOOKMARK_NEXT,			LTEXT("BookmarkNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のブックマークへ
+	{F_BOOKMARK_PREV,			LTEXT("BookmarkPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のブックマークへ
+	{F_BOOKMARK_RESET,			LTEXT("BookmarkReset"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマークの全解除
+	{F_BOOKMARK_VIEW,			LTEXT("BookmarkView"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブックマークの一覧
 // To Here 2001.12.03 hor
-	{F_BOOKMARK_PATTERN,		LTEXT("BookmarkPattern"),	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 2002.01.16 hor �w��p�^�[���Ɉ�v����s���}�[�N
-	{F_FUNCLIST_NEXT,			LTEXT("FuncListNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̊֐����X�g�}�[�N��
-	{F_FUNCLIST_PREV,			LTEXT("FuncListPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̊֐����X�g�}�[�N��
+	{F_BOOKMARK_PATTERN,		LTEXT("BookmarkPattern"),	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 2002.01.16 hor 指定パターンに一致する行をマーク
+	{F_FUNCLIST_NEXT,			LTEXT("FuncListNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の関数リストマークへ
+	{F_FUNCLIST_PREV,			LTEXT("FuncListPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の関数リストマークへ
 
-	/* ���[�h�؂�ւ��n */
-	{F_CHGMOD_INS,				LTEXT("ChgmodINS"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�}���^�㏑�����[�h�؂�ւ�
-	{F_CHG_CHARSET,				LTEXT("ChgCharSet"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�����R�[�h�Z�b�g�w��		2010/6/14 Uchi
-	{F_CHGMOD_EOL,				LTEXT("ChgmodEOL"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���͉��s�R�[�h�w�� 2003.06.23 Moca
-	{F_CANCEL_MODE,				LTEXT("CancelMode"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�e�탂�[�h�̎�����
+	/* モード切り替え系 */
+	{F_CHGMOD_INS,				LTEXT("ChgmodINS"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //挿入／上書きモード切り替え
+	{F_CHG_CHARSET,				LTEXT("ChgCharSet"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字コードセット指定		2010/6/14 Uchi
+	{F_CHGMOD_EOL,				LTEXT("ChgmodEOL"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //入力改行コード指定 2003.06.23 Moca
+	{F_CANCEL_MODE,				LTEXT("CancelMode"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //各種モードの取り消し
 
-	/* �}�N���n */
-	{F_EXECEXTMACRO,			LTEXT("ExecExternalMacro"),	{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���O���w�肵�ă}�N�����s
+	/* マクロ系 */
+	{F_EXECEXTMACRO,			LTEXT("ExecExternalMacro"),	{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //名前を指定してマクロ実行
 
-	/* �ݒ�n */
-	{F_SHOWTOOLBAR,				LTEXT("ShowToolbar"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �c�[���o�[�̕\�� */
-	{F_SHOWFUNCKEY,				LTEXT("ShowFunckey"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �t�@���N�V�����L�[�̕\�� */
-	{F_SHOWTAB,					LTEXT("ShowTab"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �^�u�̕\�� */	//@@@ 2003.06.10 MIK
-	{F_SHOWSTATUSBAR,			LTEXT("ShowStatusbar"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �X�e�[�^�X�o�[�̕\�� */
-	{F_SHOWMINIMAP,				LTEXT("ShowMiniMap"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �~�j�}�b�v�̕\��
-	{F_TYPE_LIST,				LTEXT("TypeList"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �^�C�v�ʐݒ�ꗗ */
-	{F_CHANGETYPE,				LTEXT("ChangeType"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�C�v�ʐݒ�ꎞ�K�p 2013.05.02
-	{F_OPTION_TYPE,				LTEXT("OptionType"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �^�C�v�ʐݒ� */
-	{F_OPTION,					LTEXT("OptionCommon"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���ʐݒ� */
-	{F_FONT,					LTEXT("SelectFont"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �t�H���g�ݒ� */
-	{F_SETFONTSIZE,				LTEXT("SetFontSize"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, /* �t�H���g�T�C�Y�ݒ� */
-	{F_WRAPWINDOWWIDTH,			LTEXT("WrapWindowWidth"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���݂̃E�B���h�E���Ő܂�Ԃ� */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH �� WRAPWINDOWWIDTH �ɕύX
-	{F_FAVORITE,				LTEXT("OptionFavorite"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �����̊Ǘ� */	//@@@ 2003.04.08 MIK
-	{F_SET_QUOTESTRING,			LTEXT("SetMsgQuoteStr"),	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���ʐݒ聨���������p���̐ݒ� */	//Jan. 29, 2005 genta
-	{F_TEXTWRAPMETHOD,			LTEXT("TextWrapMethod"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �e�L�X�g�̐܂�Ԃ����@ */	// 2008.05.30 nasukoji
-	{F_SELECT_COUNT_MODE,		LTEXT("SelectCountMode"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�����J�E���g���@
-	//	Oct. 9, 2001 genta �ǉ�
-	{F_EXECMD,					LTEXT("ExecCommand"),		{VT_BSTR,  VT_I4,    VT_BSTR,  VT_EMPTY},	VT_EMPTY,	NULL}, /* �O���R�}���h���s */
-	{F_EXECMD_DIALOG,			LTEXT("ExecCommandDialog"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O���R�}���h���s(�_�C�A���O)
+	/* 設定系 */
+	{F_SHOWTOOLBAR,				LTEXT("ShowToolbar"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ツールバーの表示 */
+	{F_SHOWFUNCKEY,				LTEXT("ShowFunckey"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ファンクションキーの表示 */
+	{F_SHOWTAB,					LTEXT("ShowTab"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タブの表示 */	//@@@ 2003.06.10 MIK
+	{F_SHOWSTATUSBAR,			LTEXT("ShowStatusbar"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ステータスバーの表示 */
+	{F_SHOWMINIMAP,				LTEXT("ShowMiniMap"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ミニマップの表示
+	{F_TYPE_LIST,				LTEXT("TypeList"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定一覧 */
+	{F_CHANGETYPE,				LTEXT("ChangeType"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タイプ別設定一時適用 2013.05.02
+	{F_OPTION_TYPE,				LTEXT("OptionType"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定 */
+	{F_OPTION,					LTEXT("OptionCommon"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定 */
+	{F_FONT,					LTEXT("SelectFont"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォント設定 */
+	{F_SETFONTSIZE,				LTEXT("SetFontSize"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, /* フォントサイズ設定 */
+	{F_WRAPWINDOWWIDTH,			LTEXT("WrapWindowWidth"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+	{F_FAVORITE,				LTEXT("OptionFavorite"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 履歴の管理 */	//@@@ 2003.04.08 MIK
+	{F_SET_QUOTESTRING,			LTEXT("SetMsgQuoteStr"),	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定→書式→引用符の設定 */	//Jan. 29, 2005 genta
+	{F_TEXTWRAPMETHOD,			LTEXT("TextWrapMethod"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* テキストの折り返し方法 */	// 2008.05.30 nasukoji
+	{F_SELECT_COUNT_MODE,		LTEXT("SelectCountMode"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字カウント方法
+	//	Oct. 9, 2001 genta 追加
+	{F_EXECMD,					LTEXT("ExecCommand"),		{VT_BSTR,  VT_I4,    VT_BSTR,  VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
+	{F_EXECMD_DIALOG,			LTEXT("ExecCommandDialog"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //外部コマンド実行(ダイアログ)
 
-	/* �J�X�^�����j���[ */
-	{F_MENU_RBUTTON,			LTEXT("RMenu"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �E�N���b�N���j���[ */
-	{F_CUSTMENU_1,				LTEXT("CustMenu1"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[1 */
-	{F_CUSTMENU_2,				LTEXT("CustMenu2"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[2 */
-	{F_CUSTMENU_3,				LTEXT("CustMenu3"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[3 */
-	{F_CUSTMENU_4,				LTEXT("CustMenu4"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[4 */
-	{F_CUSTMENU_5,				LTEXT("CustMenu5"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[5 */
-	{F_CUSTMENU_6,				LTEXT("CustMenu6"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[6 */
-	{F_CUSTMENU_7,				LTEXT("CustMenu7"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[7 */
-	{F_CUSTMENU_8,				LTEXT("CustMenu8"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[8 */
-	{F_CUSTMENU_9,				LTEXT("CustMenu9"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[9 */
-	{F_CUSTMENU_10,				LTEXT("CustMenu10"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[10 */
-	{F_CUSTMENU_11,				LTEXT("CustMenu11"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[11 */
-	{F_CUSTMENU_12,				LTEXT("CustMenu12"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[12 */
-	{F_CUSTMENU_13,				LTEXT("CustMenu13"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[13 */
-	{F_CUSTMENU_14,				LTEXT("CustMenu14"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[14 */
-	{F_CUSTMENU_15,				LTEXT("CustMenu15"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[15 */
-	{F_CUSTMENU_16,				LTEXT("CustMenu16"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[16 */
-	{F_CUSTMENU_17,				LTEXT("CustMenu17"), 		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[17 */
-	{F_CUSTMENU_18,				LTEXT("CustMenu18"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[18 */
-	{F_CUSTMENU_19,				LTEXT("CustMenu19"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[19 */
-	{F_CUSTMENU_20,				LTEXT("CustMenu20"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[20 */
-	{F_CUSTMENU_21,				LTEXT("CustMenu21"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[21 */
-	{F_CUSTMENU_22,				LTEXT("CustMenu22"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[22 */
-	{F_CUSTMENU_23,				LTEXT("CustMenu23"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[23 */
-	{F_CUSTMENU_24,				LTEXT("CustMenu24"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �J�X�^�����j���[24 */
+	/* カスタムメニュー */
+	{F_MENU_RBUTTON,			LTEXT("RMenu"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 右クリックメニュー */
+	{F_CUSTMENU_1,				LTEXT("CustMenu1"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー1 */
+	{F_CUSTMENU_2,				LTEXT("CustMenu2"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー2 */
+	{F_CUSTMENU_3,				LTEXT("CustMenu3"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー3 */
+	{F_CUSTMENU_4,				LTEXT("CustMenu4"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー4 */
+	{F_CUSTMENU_5,				LTEXT("CustMenu5"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー5 */
+	{F_CUSTMENU_6,				LTEXT("CustMenu6"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー6 */
+	{F_CUSTMENU_7,				LTEXT("CustMenu7"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー7 */
+	{F_CUSTMENU_8,				LTEXT("CustMenu8"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー8 */
+	{F_CUSTMENU_9,				LTEXT("CustMenu9"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー9 */
+	{F_CUSTMENU_10,				LTEXT("CustMenu10"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー10 */
+	{F_CUSTMENU_11,				LTEXT("CustMenu11"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー11 */
+	{F_CUSTMENU_12,				LTEXT("CustMenu12"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー12 */
+	{F_CUSTMENU_13,				LTEXT("CustMenu13"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー13 */
+	{F_CUSTMENU_14,				LTEXT("CustMenu14"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー14 */
+	{F_CUSTMENU_15,				LTEXT("CustMenu15"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー15 */
+	{F_CUSTMENU_16,				LTEXT("CustMenu16"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー16 */
+	{F_CUSTMENU_17,				LTEXT("CustMenu17"), 		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー17 */
+	{F_CUSTMENU_18,				LTEXT("CustMenu18"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー18 */
+	{F_CUSTMENU_19,				LTEXT("CustMenu19"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー19 */
+	{F_CUSTMENU_20,				LTEXT("CustMenu20"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー20 */
+	{F_CUSTMENU_21,				LTEXT("CustMenu21"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー21 */
+	{F_CUSTMENU_22,				LTEXT("CustMenu22"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー22 */
+	{F_CUSTMENU_23,				LTEXT("CustMenu23"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー23 */
+	{F_CUSTMENU_24,				LTEXT("CustMenu24"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* カスタムメニュー24 */
 
-	/* �E�B���h�E�n */
-	{F_SPLIT_V,					LTEXT("SplitWinV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�㉺�ɕ���	//Sept. 17, 2000 jepro �����́u�c�v���u�㉺�Ɂv�ɕύX
-	{F_SPLIT_H,					LTEXT("SplitWinH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���E�ɕ���	//Sept. 17, 2000 jepro �����́u���v���u���E�Ɂv�ɕύX
-	{F_SPLIT_VH,				LTEXT("SplitWinVH"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�c���ɕ���	//Sept. 17, 2000 jepro �����Ɂu�Ɂv��ǉ�
-	{F_WINCLOSE,				LTEXT("WinClose"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�E�B���h�E�����
-	{F_WIN_CLOSEALL,			LTEXT("WinCloseAll"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���ׂẴE�B���h�E�����	//Oct. 17, 2000 JEPRO ���O��ύX(F_FILECLOSEALL��F_WIN_CLOSEALL)
-	{F_CASCADE,					LTEXT("CascadeWin"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�d�˂ĕ\��
-	{F_TILE_V,					LTEXT("TileWinV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�㉺�ɕ��ׂĕ\��
-	{F_TILE_H,					LTEXT("TileWinH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���E�ɕ��ׂĕ\��
-	{F_NEXTWINDOW,				LTEXT("NextWindow"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃E�B���h�E
-	{F_PREVWINDOW,				LTEXT("PrevWindow"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̃E�B���h�E
-	{F_WINLIST,					LTEXT("WindowList"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�E�B���h�E�ꗗ�|�b�v�A�b�v�\��	// 2006.03.23 fon
-	{F_MAXIMIZE_V,				LTEXT("MaximizeV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�c�����ɍő剻
-	{F_MAXIMIZE_H,				LTEXT("MaximizeH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�������ɍő剻 //2001.02.10 by MIK
-	{F_MINIMIZE_ALL,			LTEXT("MinimizeAll"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���ׂčŏ���	//Sept. 17, 2000 jepro �����́u�S�āv���u���ׂāv�ɓ���
-	{F_REDRAW,					LTEXT("ReDraw"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�ĕ`��
-	{F_WIN_OUTPUT,				LTEXT("ActivateWinOutput"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�A�E�g�v�b�g�E�B���h�E�\��
-	{F_TRACEOUT,				LTEXT("TraceOut"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�}�N���p�A�E�g�v�b�g�E�B���h�E�ɏo��	2006.04.26 maru
-	{F_TOPMOST,					LTEXT("WindowTopMost"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //��Ɏ�O�ɕ\��
-	{F_GROUPCLOSE,				LTEXT("GroupClose"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O���[�v�����	// 2007.06.20 ryoji
-	{F_NEXTGROUP,				LTEXT("NextGroup"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃O���[�v	// 2007.06.20 ryoji
-	{F_PREVGROUP,				LTEXT("PrevGroup"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̃O���[�v	// 2007.06.20 ryoji
-	{F_TAB_MOVERIGHT,			LTEXT("TabMoveRight"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�u���E�Ɉړ�	// 2007.06.20 ryoji
-	{F_TAB_MOVELEFT,			LTEXT("TabMoveLeft"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�^�u�����Ɉړ�	// 2007.06.20 ryoji
-	{F_TAB_SEPARATE,			LTEXT("TabSeparate"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�V�K�O���[�v	// 2007.06.20 ryoji
-	{F_TAB_JOINTNEXT,			LTEXT("TabJointNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
-	{F_TAB_JOINTPREV,			LTEXT("TabJointPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�O�̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
-	{F_TAB_CLOSEOTHER,			LTEXT("TabCloseOther"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //���̃^�u�ȊO�����	// 2010/3/14 Uchi
-	{F_TAB_CLOSELEFT,			LTEXT("TabCloseLeft"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�������ׂĕ���		// 2010/3/14 Uchi
-	{F_TAB_CLOSERIGHT,			LTEXT("TabCloseRight"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�E�����ׂĕ���		// 2010/3/14 Uchi
+	/* ウィンドウ系 */
+	{F_SPLIT_V,					LTEXT("SplitWinV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
+	{F_SPLIT_H,					LTEXT("SplitWinH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
+	{F_SPLIT_VH,				LTEXT("SplitWinVH"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	{F_WINCLOSE,				LTEXT("WinClose"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ウィンドウを閉じる
+	{F_WIN_CLOSEALL,			LTEXT("WinCloseAll"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+	{F_CASCADE,					LTEXT("CascadeWin"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //重ねて表示
+	{F_TILE_V,					LTEXT("TileWinV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上下に並べて表示
+	{F_TILE_H,					LTEXT("TileWinH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左右に並べて表示
+	{F_NEXTWINDOW,				LTEXT("NextWindow"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のウィンドウ
+	{F_PREVWINDOW,				LTEXT("PrevWindow"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のウィンドウ
+	{F_WINLIST,					LTEXT("WindowList"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
+	{F_MAXIMIZE_V,				LTEXT("MaximizeV"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //縦方向に最大化
+	{F_MAXIMIZE_H,				LTEXT("MaximizeH"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //横方向に最大化 //2001.02.10 by MIK
+	{F_MINIMIZE_ALL,			LTEXT("MinimizeAll"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	{F_REDRAW,					LTEXT("ReDraw"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //再描画
+	{F_WIN_OUTPUT,				LTEXT("ActivateWinOutput"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトプットウィンドウ表示
+	{F_TRACEOUT,				LTEXT("TraceOut"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //マクロ用アウトプットウィンドウに出力	2006.04.26 maru
+	{F_TOPMOST,					LTEXT("WindowTopMost"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //常に手前に表示
+	{F_GROUPCLOSE,				LTEXT("GroupClose"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //グループを閉じる	// 2007.06.20 ryoji
+	{F_NEXTGROUP,				LTEXT("NextGroup"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループ	// 2007.06.20 ryoji
+	{F_PREVGROUP,				LTEXT("PrevGroup"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループ	// 2007.06.20 ryoji
+	{F_TAB_MOVERIGHT,			LTEXT("TabMoveRight"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タブを右に移動	// 2007.06.20 ryoji
+	{F_TAB_MOVELEFT,			LTEXT("TabMoveLeft"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タブを左に移動	// 2007.06.20 ryoji
+	{F_TAB_SEPARATE,			LTEXT("TabSeparate"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規グループ	// 2007.06.20 ryoji
+	{F_TAB_JOINTNEXT,			LTEXT("TabJointNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループに移動	// 2007.06.20 ryoji
+	{F_TAB_JOINTPREV,			LTEXT("TabJointPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループに移動	// 2007.06.20 ryoji
+	{F_TAB_CLOSEOTHER,			LTEXT("TabCloseOther"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このタブ以外を閉じる	// 2010/3/14 Uchi
+	{F_TAB_CLOSELEFT,			LTEXT("TabCloseLeft"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左をすべて閉じる		// 2010/3/14 Uchi
+	{F_TAB_CLOSERIGHT,			LTEXT("TabCloseRight"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //右をすべて閉じる		// 2010/3/14 Uchi
 
-	/* �x�� */
-	{F_HOKAN,					LTEXT("Complete"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ���͕⊮ */	//Oct. 15, 2000 JEPRO �����ĂȂ������̂ŉp����t���ē���Ă݂�
-	{F_TOGGLE_KEY_SEARCH,		LTEXT("ToggleKeyHelpSearch"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�L�[���[�h�w���v�����\�� 2013.05.03
-	{F_HELP_CONTENTS,			LTEXT("HelpContents"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �w���v�ڎ� */			//Nov. 25, 2000 JEPRO �ǉ�
-	{F_HELP_SEARCH,				LTEXT("HelpSearch"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �w���v�L�[���[�h���� */	//Nov. 25, 2000 JEPRO �ǉ�
-	{F_MENU_ALLFUNC,			LTEXT("CommandList"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �R�}���h�ꗗ */
-	{F_EXTHELP1,				LTEXT("ExtHelp1"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �O���w���v�P */
-	//	Jul. 5, 2002 genta �����ǉ�
-	{F_EXTHTMLHELP,				LTEXT("ExtHtmlHelp"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �O��HTML�w���v */
-	{F_ABOUT,					LTEXT("About"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* �o�[�W������� */	//Dec. 24, 2000 JEPRO �ǉ�
+	/* 支援 */
+	{F_HOKAN,					LTEXT("Complete"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
+	{F_TOGGLE_KEY_SEARCH,		LTEXT("ToggleKeyHelpSearch"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キーワードヘルプ自動表示 2013.05.03
+	{F_HELP_CONTENTS,			LTEXT("HelpContents"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプ目次 */			//Nov. 25, 2000 JEPRO 追加
+	{F_HELP_SEARCH,				LTEXT("HelpSearch"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ヘルプキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
+	{F_MENU_ALLFUNC,			LTEXT("CommandList"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* コマンド一覧 */
+	{F_EXTHELP1,				LTEXT("ExtHelp1"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部ヘルプ１ */
+	//	Jul. 5, 2002 genta 引数追加
+	{F_EXTHTMLHELP,				LTEXT("ExtHtmlHelp"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部HTMLヘルプ */
+	{F_ABOUT,					LTEXT("About"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
-	/*�}�N���p*/
-	{F_STATUSMSG,				LTEXT("StatusMsg"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //�X�e�[�^�X���b�Z�[�W
-	{F_MSGBEEP,					LTEXT("MsgBeep"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Beep��
-	{F_COMMITUNDOBUFFER,		LTEXT("CommitUndoBuffer"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK�R�~�b�g
+	/*マクロ用*/
+	{F_STATUSMSG,				LTEXT("StatusMsg"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ステータスメッセージ
+	{F_MSGBEEP,					LTEXT("MsgBeep"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Beep音
+	{F_COMMITUNDOBUFFER,		LTEXT("CommitUndoBuffer"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlKコミット
 	{F_ADDREFUNDOBUFFER,		LTEXT("AddRefUndoBuffer"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK AddRef
 	{F_SETUNDOBUFFER,			LTEXT("SetUndoBuffer"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK Release
-	{F_APPENDUNDOBUFFERCURSOR,	L"AppendUndoBufferCursor",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK �ɃJ�[�\���ʒu��ǉ�
+	{F_APPENDUNDOBUFFERCURSOR,	L"AppendUndoBufferCursor",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK にカーソル位置を追加
 	{F_CLIPBOARDEMPTY,			LTEXT("ClipboardEmpty"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
-	{F_SETVIEWTOP,				L"SetViewTop",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �r���[�̏�̍s����ݒ�
-	{F_SETVIEWLEFT,				L"SetViewLeft",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // �r���[�̍��[�̌�����ݒ�
+	{F_SETVIEWTOP,				L"SetViewTop",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ビューの上の行数を設定
+	{F_SETVIEWLEFT,				L"SetViewLeft",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // ビューの左端の桁数を設定
 
-	//	�I�[
+	//	終端
 	//	Jun. 27, 2002 genta
-	//	�I�[�Ƃ��Ă͌����Č���Ȃ����̂��g���ׂ��Ȃ̂ŁC
-	//	FuncID��-1�ɕύX�D(0�͎g����)
+	//	終端としては決して現れないものを使うべきなので，
+	//	FuncIDを-1に変更．(0は使われる)
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
-	//ID					�֐���							����										�߂�l�̌^	m_pszData
-	{F_GETFILENAME,			LTEXT("GetFilename"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�t�@�C������Ԃ�
-	{F_GETSAVEFILENAME,		LTEXT("GetSaveFilename"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�ۑ����̃t�@�C������Ԃ� 2006.09.04 ryoji
-	{F_GETSELECTED,			LTEXT("GetSelectedString"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�I�𕔕�
-	{F_EXPANDPARAMETER,		LTEXT("ExpandParameter"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //���ꕶ���̓W�J
-	{F_GETLINESTR,			LTEXT("GetLineStr"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, // �w��_���s�̎擾 2003.06.01 Moca
-	{F_GETLINECOUNT,		LTEXT("GetLineCount"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �S�_���s���̎擾 2003.06.01 Moca
-	{F_CHGTABWIDTH,			LTEXT("ChangeTabWidth"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�^�u�T�C�Y�ύX 2004.03.16 zenryaku
-	{F_ISTEXTSELECTED,		LTEXT("IsTextSelected"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�e�L�X�g���I������Ă��邩 2005.7.30 maru
-	{F_GETSELLINEFROM,		LTEXT("GetSelectLineFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���J�n�s�̎擾 2005.7.30 maru
-	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColmFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���J�n���̎擾 2005.7.30 maru
-	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColumnFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���J�n���̎擾 2005.7.30 maru
-	{F_GETSELLINETO,		LTEXT("GetSelectLineTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���I���s�̎擾 2005.7.30 maru
-	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColmTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���I�����̎擾 2005.7.30 maru
-	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColumnTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �I���I�����̎擾 2005.7.30 maru
-	{F_ISINSMODE,			LTEXT("IsInsMode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �}���^�㏑�����[�h�̎擾 2005.7.30 maru
-	{F_GETCHARCODE,			LTEXT("GetCharCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �����R�[�h�擾 2005.07.31 maru
-	{F_GETLINECODE,			LTEXT("GetLineCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // ���s�R�[�h�擾 2005.08.05 maru
-	{F_ISPOSSIBLEUNDO,		LTEXT("IsPossibleUndo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Undo�\�����ׂ� 2005.08.05 maru
-	{F_ISPOSSIBLEREDO,		LTEXT("IsPossibleRedo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Redo�\�����ׂ� 2005.08.05 maru
-	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�܂�Ԃ����ύX 2008.06.19 ryoji
-	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColumn"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�܂�Ԃ����ύX 2008.06.19 ryoji
-	{F_ISCURTYPEEXT,		LTEXT("IsCurTypeExt"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �w�肵���g���q�����݂̃^�C�v�ʐݒ�Ɋ܂܂�Ă��邩�ǂ����𒲂ׂ� 2006.09.04 ryoji
-	{F_ISSAMETYPEEXT,		LTEXT("IsSameTypeExt"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // �Q�̊g���q�������^�C�v�ʐݒ�Ɋ܂܂�Ă��邩�ǂ����𒲂ׂ� 2006.09.04 ryoji
-	{F_INPUTBOX,			LTEXT("InputBox"),				{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //�e�L�X�g���̓_�C�A���O�̕\��
-	{F_MESSAGEBOX,			LTEXT("MessageBox"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�̕\��
-	{F_ERRORMSG,			LTEXT("ErrorMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�i�G���[�j�̕\��
-	{F_WARNMSG,				LTEXT("WarnMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�i�x���j�̕\��
-	{F_INFOMSG,				LTEXT("InfoMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�i���j�̕\��
-	{F_OKCANCELBOX,			LTEXT("OkCancelBox"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�i�m�F�FOK�^�L�����Z���j�̕\��
-	{F_YESNOBOX,			LTEXT("YesNoBox"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���b�Z�[�W�{�b�N�X�i�m�F�F�͂��^�������j�̕\��
-	{F_COMPAREVERSION,		LTEXT("CompareVersion"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�o�[�W�����ԍ��̔�r
-	{F_MACROSLEEP,			LTEXT("Sleep"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�w�肵�����ԁi�~���b�j��~
-	{F_FILEOPENDIALOG,		LTEXT("FileOpenDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�t�@�C�����J���_�C�A���O�̕\��
-	{F_FILESAVEDIALOG,		LTEXT("FileSaveDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�t�@�C����ۑ��_�C�A���O�̕\��
-	{F_FOLDERDIALOG,		LTEXT("FolderDialog"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�t�H���_���J���_�C�A���O�̕\��
-	{F_GETCLIPBOARD,		LTEXT("GetClipboard"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //�N���b�v�{�[�h�̕�������擾
-	{F_SETCLIPBOARD,		LTEXT("SetClipboard"),			{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�N���b�v�{�[�h�ɕ������ݒ�
-	{F_LAYOUTTOLOGICLINENUM,LTEXT("LayoutToLogicLineNum"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���W�b�N�s�ԍ��擾
-	{F_LOGICTOLAYOUTLINENUM,LTEXT("LogicToLayoutLineNum"),	{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���C�A�E�g�s�ԍ��擾
-	{F_LINECOLUMNTOINDEX,	LTEXT("LineColumnToIndex"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���W�b�N���ԍ��擾
-	{F_LINEINDEXTOCOLUMN,	LTEXT("LineIndexToColumn"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���C�A�E�g���ԍ��擾
-	{F_GETCOOKIE,			LTEXT("GetCookie"),				{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Cookie�擾
-	{F_GETCOOKIEDEFAULT,	LTEXT("GetCookieDefault"),		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_EMPTY},	VT_BSTR,	NULL }, //Cookie�擾�f�t�H���g�l
-	{F_SETCOOKIE,			LTEXT("SetCookie"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_EMPTY},	VT_I4,		NULL }, //Cookie�ݒ�
-	{F_DELETECOOKIE,		LTEXT("DeleteCookie"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //Cookie�폜
-	{F_GETCOOKIENAMES,		LTEXT("GetCookieNames"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Cookie���O�擾
-	{F_SETDRAWSWITCH,		LTEXT("SetDrawSwitch"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�ĕ`��X�C�b�`�ݒ�
-	{F_GETDRAWSWITCH,		LTEXT("GetDrawSwitch"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�ĕ`��X�C�b�`�擾
-	{F_ISSHOWNSTATUS,		LTEXT("IsShownStatus"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�X�e�[�^�X�o�[���\������Ă��邩
-	{F_GETSTRWIDTH,			LTEXT("GetStrWidth"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�����񕝎擾
-	{F_GETSTRLAYOUTLENGTH,	LTEXT("GetStrLayoutLength"),	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //������̃��C�A�E�g���擾
-	{F_GETDEFAULTCHARLENGTH,	L"GetDefaultCharLength",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�f�t�H���g�������̎擾
-	{F_ISINCLUDECLIPBOARDFORMAT,L"IsIncludeClipboardFormat",{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�N���b�v�{�[�h�̌`���擾
-	{F_GETCLIPBOARDBYFORMAT,	L"GetClipboardByFormat",	{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //�N���b�v�{�[�h�̎w��`���Ŏ擾
-	{F_SETCLIPBOARDBYFORMAT,	L"SetClipboardByFormat",	{VT_BSTR,  VT_BSTR,  VT_I4,    VT_I4,    },	VT_I4,		NULL }, //�N���b�v�{�[�h�̎w��`���Őݒ�
-	{F_GETLINEATTRIBUTE,		L"GetLineAttribute",		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�s�����擾
-	{F_ISTEXTSELECTINGLOCK,		L"IsTextSelectingLock",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�I����Ԃ̃��b�N���擾
-	{F_GETVIEWLINES,			L"GetViewLines",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�r���[�̍s���擾
-	{F_GETVIEWCOLUMNS,			L"GetViewColumns",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //�r���[�̗񐔎擾
-	{F_CREATEMENU,				L"CreateMenu",				{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //���j���[�쐬
+	//ID					関数名							引数										戻り値の型	m_pszData
+	{F_GETFILENAME,			LTEXT("GetFilename"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイル名を返す
+	{F_GETSAVEFILENAME,		LTEXT("GetSaveFilename"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //保存時のファイル名を返す 2006.09.04 ryoji
+	{F_GETSELECTED,			LTEXT("GetSelectedString"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //選択部分
+	{F_EXPANDPARAMETER,		LTEXT("ExpandParameter"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //特殊文字の展開
+	{F_GETLINESTR,			LTEXT("GetLineStr"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, // 指定論理行の取得 2003.06.01 Moca
+	{F_GETLINECOUNT,		LTEXT("GetLineCount"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 全論理行数の取得 2003.06.01 Moca
+	{F_CHGTABWIDTH,			LTEXT("ChangeTabWidth"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //タブサイズ変更 2004.03.16 zenryaku
+	{F_ISTEXTSELECTED,		LTEXT("IsTextSelected"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //テキストが選択されているか 2005.7.30 maru
+	{F_GETSELLINEFROM,		LTEXT("GetSelectLineFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始行の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColmFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColumnFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELLINETO,		LTEXT("GetSelectLineTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了行の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColmTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColumnTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_ISINSMODE,			LTEXT("IsInsMode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 挿入／上書きモードの取得 2005.7.30 maru
+	{F_GETCHARCODE,			LTEXT("GetCharCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 文字コード取得 2005.07.31 maru
+	{F_GETLINECODE,			LTEXT("GetLineCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 改行コード取得 2005.08.05 maru
+	{F_ISPOSSIBLEUNDO,		LTEXT("IsPossibleUndo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Undo可能か調べる 2005.08.05 maru
+	{F_ISPOSSIBLEREDO,		LTEXT("IsPossibleRedo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Redo可能か調べる 2005.08.05 maru
+	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColumn"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_ISCURTYPEEXT,		LTEXT("IsCurTypeExt"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_ISSAMETYPEEXT,		LTEXT("IsSameTypeExt"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_INPUTBOX,			LTEXT("InputBox"),				{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //テキスト入力ダイアログの表示
+	{F_MESSAGEBOX,			LTEXT("MessageBox"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックスの表示
+	{F_ERRORMSG,			LTEXT("ErrorMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（エラー）の表示
+	{F_WARNMSG,				LTEXT("WarnMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（警告）の表示
+	{F_INFOMSG,				LTEXT("InfoMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（情報）の表示
+	{F_OKCANCELBOX,			LTEXT("OkCancelBox"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（確認：OK／キャンセル）の表示
+	{F_YESNOBOX,			LTEXT("YesNoBox"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（確認：はい／いいえ）の表示
+	{F_COMPAREVERSION,		LTEXT("CompareVersion"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //バージョン番号の比較
+	{F_MACROSLEEP,			LTEXT("Sleep"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //指定した時間（ミリ秒）停止
+	{F_FILEOPENDIALOG,		LTEXT("FileOpenDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイルを開くダイアログの表示
+	{F_FILESAVEDIALOG,		LTEXT("FileSaveDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイルを保存ダイアログの表示
+	{F_FOLDERDIALOG,		LTEXT("FolderDialog"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //フォルダを開くダイアログの表示
+	{F_GETCLIPBOARD,		LTEXT("GetClipboard"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //クリップボードの文字列を取得
+	{F_SETCLIPBOARD,		LTEXT("SetClipboard"),			{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //クリップボードに文字列を設定
+	{F_LAYOUTTOLOGICLINENUM,LTEXT("LayoutToLogicLineNum"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ロジック行番号取得
+	{F_LOGICTOLAYOUTLINENUM,LTEXT("LogicToLayoutLineNum"),	{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //レイアウト行番号取得
+	{F_LINECOLUMNTOINDEX,	LTEXT("LineColumnToIndex"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ロジック桁番号取得
+	{F_LINEINDEXTOCOLUMN,	LTEXT("LineIndexToColumn"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //レイアウト桁番号取得
+	{F_GETCOOKIE,			LTEXT("GetCookie"),				{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Cookie取得
+	{F_GETCOOKIEDEFAULT,	LTEXT("GetCookieDefault"),		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_EMPTY},	VT_BSTR,	NULL }, //Cookie取得デフォルト値
+	{F_SETCOOKIE,			LTEXT("SetCookie"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_EMPTY},	VT_I4,		NULL }, //Cookie設定
+	{F_DELETECOOKIE,		LTEXT("DeleteCookie"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //Cookie削除
+	{F_GETCOOKIENAMES,		LTEXT("GetCookieNames"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Cookie名前取得
+	{F_SETDRAWSWITCH,		LTEXT("SetDrawSwitch"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ設定
+	{F_GETDRAWSWITCH,		LTEXT("GetDrawSwitch"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ取得
+	{F_ISSHOWNSTATUS,		LTEXT("IsShownStatus"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ステータスバーが表示されているか
+	{F_GETSTRWIDTH,			LTEXT("GetStrWidth"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //文字列幅取得
+	{F_GETSTRLAYOUTLENGTH,	LTEXT("GetStrLayoutLength"),	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //文字列のレイアウト幅取得
+	{F_GETDEFAULTCHARLENGTH,	L"GetDefaultCharLength",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //デフォルト文字幅の取得
+	{F_ISINCLUDECLIPBOARDFORMAT,L"IsIncludeClipboardFormat",{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //クリップボードの形式取得
+	{F_GETCLIPBOARDBYFORMAT,	L"GetClipboardByFormat",	{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //クリップボードの指定形式で取得
+	{F_SETCLIPBOARDBYFORMAT,	L"SetClipboardByFormat",	{VT_BSTR,  VT_BSTR,  VT_I4,    VT_I4,    },	VT_I4,		NULL }, //クリップボードの指定形式で設定
+	{F_GETLINEATTRIBUTE,		L"GetLineAttribute",		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //行属性取得
+	{F_ISTEXTSELECTINGLOCK,		L"IsTextSelectingLock",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //選択状態のロックを取得
+	{F_GETVIEWLINES,			L"GetViewLines",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ビューの行数取得
+	{F_GETVIEWCOLUMNS,			L"GetViewColumns",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ビューの列数取得
+	{F_CREATEMENU,				L"CreateMenu",				{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メニュー作成
 
-	//	�I�[
+	//	終端
 	//	Jun. 27, 2002 genta
-	//	�I�[�Ƃ��Ă͌����Č���Ȃ����̂��g���ׂ��Ȃ̂ŁC
-	//	FuncID��-1�ɕύX�D(0�͎g����)
+	//	終端としては決して現れないものを使うべきなので，
+	//	FuncIDを-1に変更．(0は使われる)
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
 /*!
-	@date 2002.02.17 YAZAKI CShareData�̃C���X�^���X�́ACProcess�ɂЂƂ���̂݁B
-	@date 2002.04.29 genta �I�u�W�F�N�g�̎��͎̂��s���܂Ő������Ȃ��B
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	@date 2002.04.29 genta オブジェクトの実体は実行時まで生成しない。
 */
 CSMacroMgr::CSMacroMgr()
 {
@@ -511,10 +511,10 @@ CSMacroMgr::~CSMacroMgr()
 	ClearAll();
 	
 	//	Jun. 16, 2002 genta
-	//	ClearAll�Ɠ��������������̂ō폜
+	//	ClearAllと同じ処理だったので削除
 }
 
-/*! �L�[�}�N���̃o�b�t�@���N���A���� */
+/*! キーマクロのバッファをクリアする */
 void CSMacroMgr::ClearAll( void )
 {
 	int i;
@@ -530,16 +530,16 @@ void CSMacroMgr::ClearAll( void )
 	m_pTempMacro = NULL;
 }
 
-/*! @brief�L�[�}�N���̃o�b�t�@�Ƀf�[�^�ǉ�
+/*! @briefキーマクロのバッファにデータ追加
 
-	@param mbuf [in] �ǂݍ��ݐ�}�N���o�b�t�@
+	@param mbuf [in] 読み込み先マクロバッファ
 	
-	@date 2002.06.16 genta �L�[�}�N���̑���Ή��̂��ߕύX
+	@date 2002.06.16 genta キーマクロの多種対応のため変更
 */
 int CSMacroMgr::Append(
 	int				idx,		//!<
-	EFunctionCode	nFuncID,	//!< [in] �@�\�ԍ�
-	const LPARAM*	lParams,	//!< [in] �p�����[�^�B
+	EFunctionCode	nFuncID,	//!< [in] 機能番号
+	const LPARAM*	lParams,	//!< [in] パラメータ。
 	CEditView*		pcEditView	//!< 
 )
 {
@@ -547,9 +547,9 @@ int CSMacroMgr::Append(
 	if (idx == STAND_KEYMACRO){
 		CKeyMacroMgr* pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
 		if( pKeyMacro == NULL ){
-			//	1. ���̂��܂������ꍇ
-			//	2. CKeyMacroMgr�ȊO�̕��������Ă����ꍇ
-			//	������ɂ��Ă��Đ�������D
+			//	1. 実体がまだ無い場合
+			//	2. CKeyMacroMgr以外の物が入っていた場合
+			//	いずれにしても再生成する．
 			delete m_pKeyMacro;
 			m_pKeyMacro = new CKeyMacroMgr;
 			pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
@@ -560,26 +560,26 @@ int CSMacroMgr::Append(
 }
 
 
-/*!	@brief �L�[�{�[�h�}�N���̎��s
+/*!	@brief キーボードマクロの実行
 
-	CShareData����t�@�C�������擾���A���s����B
+	CShareDataからファイル名を取得し、実行する。
 
-	@param hInstance [in] �C���X�^���X
-	@param hwndParent [in] �e�E�B���h�E��
-	@param pViewClass [in] macro���s�Ώۂ�View
-	@param idx [in] �}�N���ԍ��B
-	@param flags [in] �}�N�����s�t���O�DHandleCommand�ɓn���I�v�V�����D
+	@param hInstance [in] インスタンス
+	@param hwndParent [in] 親ウィンドウの
+	@param pViewClass [in] macro実行対象のView
+	@param idx [in] マクロ番号。
+	@param flags [in] マクロ実行フラグ．HandleCommandに渡すオプション．
 
-	@date 2007.07.16 genta flags�ǉ�
+	@date 2007.07.16 genta flags追加
 */
 BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
 {
 	if( idx == STAND_KEYMACRO ){
 		//	Jun. 16, 2002 genta
-		//	�L�[�}�N���ȊO�̃T�|�[�g�ɂ��NULL�̉\�����o�Ă����̂Ŕ���ǉ�
+		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
 		if( m_pKeyMacro != NULL ){
 			//	Sep. 15, 2005 FILE
-			//	Jul. 01, 2007 �}�N���̑��d���s���ɔ����Ē��O�̃}�N���ԍ���ޔ�
+			//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
 			int prevmacro = SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
@@ -589,7 +589,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			return FALSE;
 		}
 	}
-	if( idx == TEMP_KEYMACRO ){		// �ꎞ�}�N��
+	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
 		if( m_pTempMacro != NULL ){
 			int prevmacro = SetCurrentIdx( idx );
 			m_pTempMacro->ExecKeyMacro2( pcEditView, flags );
@@ -600,15 +600,15 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			return FALSE;
 		}
 	}
-	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	�͈̓`�F�b�N
+	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
 		return FALSE;
 
-	/* �ǂݍ��ݑO���A����ǂݍ��ސݒ�̏ꍇ�́A�t�@�C����ǂݍ��݂Ȃ��� */
+	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
 	//	Apr. 29, 2002 genta
 	if( m_cSavedKeyMacro[idx] == NULL || CShareData::getInstance()->BeReloadWhenExecuteMacro( idx )){
-		//	CShareData����A�}�N���t�@�C�������擾
-		//	Jun. 08, 2003 Moca �Ăяo�����Ńp�X����p��
-		//	Jun. 16, 2003 genta ������������ƕύX
+		//	CShareDataから、マクロファイル名を取得
+		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
+		//	Jun. 16, 2003 genta 書式をちょっと変更
 		TCHAR ptr[_MAX_PATH * 2];
 		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, _countof(ptr) );
 		if ( n <= 0 ){
@@ -620,7 +620,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	}
 
 	//	Sep. 15, 2005 FILE
-	//	Jul. 01, 2007 �}�N���̑��d���s���ɔ����Ē��O�̃}�N���ԍ���ޔ�
+	//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
 	int prevmacro = SetCurrentIdx( idx );
 	SetCurrentIdx( idx );
 	m_cSavedKeyMacro[idx]->ExecKeyMacro2(pcEditView, flags);
@@ -629,14 +629,14 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	return TRUE;
 }
 
-/*! �L�[�{�[�h�}�N���̓ǂݍ���
+/*! キーボードマクロの読み込み
 
-	@param idx [in] �ǂݍ��ݐ�}�N���o�b�t�@�ԍ�
-	@param pszPath [in] �}�N���t�@�C�����A�܂��̓R�[�h������
-	@param pszType [in] ��ʁBNULL�̏ꍇ�t�@�C������ǂݍ��ށBNULL�ȊO�̏ꍇ�͌���̊g���q
+	@param idx [in] 読み込み先マクロバッファ番号
+	@param pszPath [in] マクロファイル名、またはコード文字列
+	@param pszType [in] 種別。NULLの場合ファイルから読み込む。NULL以外の場合は言語の拡張子
 
-	�ǂݍ��݂Ɏ��s�����Ƃ��̓}�N���o�b�t�@�̃I�u�W�F�N�g�͉������C
-	NULL���ݒ肳���D
+	読み込みに失敗したときはマクロバッファのオブジェクトは解放され，
+	NULLが設定される．
 
 	@author Norio Nakatani, YAZAKI, genta
 */
@@ -648,26 +648,26 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 		DEBUG_TRACE( _T("CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n"), idx, pszPath);
 	}
 
-	//	�o�b�t�@�N���A
+	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
 	
 	const TCHAR *ext;
-	if( pszType == NULL ){				//�t�@�C���w��
-		//�t�@�C���̊g���q���擾����
+	if( pszType == NULL ){				//ファイル指定
+		//ファイルの拡張子を取得する
 		ext = _tcsrchr( pszPath, _T('.'));
-		//	Feb. 02, 2004 genta .�������ꍇ��ext==NULL�ƂȂ�̂�NULL�`�F�b�N�ǉ�
+		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
 		if( ext != NULL ){
 			const TCHAR *chk = _tcsrchr( ext, _T('\\') );
-			if( chk != NULL ){	//	.�̂��Ƃ�\���������炻��͊g���q�̋�؂�ł͂Ȃ�
-								//	\��������2�o�C�g�ڂ̏ꍇ���g���q�ł͂Ȃ��B
+			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
+								//	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;
 			}
 		}
 		if(ext != NULL){
 			++ext;
 		}
-	}else{								//�R�[�h�w��
+	}else{								//コード指定
 		ext = pszType;
 	}
 
@@ -686,7 +686,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 	}
 
 	//	From Here Jun. 16, 2002 genta
-	//	�ǂݍ��݃G���[���̓C���X�^���X�폜
+	//	読み込みエラー時はインスタンス削除
 	if( bRet ){
 		return TRUE;
 	}
@@ -698,12 +698,12 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 	return FALSE;
 }
 
-/** �}�N���I�u�W�F�N�g�����ׂĔj������(�L�[�{�[�h�}�N���ȊO)
+/** マクロオブジェクトをすべて破棄する(キーボードマクロ以外)
 
-	�}�N���̓o�^��ύX�����ꍇ�ɁC�ύX�O�̃}�N����
-	�����������s����Ă��܂��̂�h���D
+	マクロの登録を変更した場合に，変更前のマクロが
+	引き続き実行されてしまうのを防ぐ．
 
-	@date 2007.10.19 genta �V�K�쐬
+	@date 2007.10.19 genta 新規作成
 */
 void CSMacroMgr::UnloadAll(void)
 {
@@ -714,11 +714,11 @@ void CSMacroMgr::UnloadAll(void)
 
 }
 
-/*! �L�[�{�[�h�}�N���̕ۑ�
+/*! キーボードマクロの保存
 
-	@param idx [in] �ǂݍ��ݐ�}�N���o�b�t�@�ԍ�
-	@param pszPath [in] �}�N���t�@�C����
-	@param hInstance [in] �C���X�^���X�n���h��
+	@param idx [in] 読み込み先マクロバッファ番号
+	@param pszPath [in] マクロファイル名
+	@param hInstance [in] インスタンスハンドル
 
 	@author YAZAKI
 */
@@ -731,7 +731,7 @@ BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
 			return pKeyMacro->SaveKeyMacro(hInstance, pszPath );
 		}
 		//	Jun. 27, 2002 genta
-		//	��}�N���̏ꍇ�͐���I���ƌ��Ȃ��D
+		//	空マクロの場合は正常終了と見なす．
 		if( m_pKeyMacro == NULL ){
 			return TRUE;
 		}
@@ -744,9 +744,9 @@ BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
 }
 
 /*
-	�w�肳�ꂽ�}�N�����N���A����
+	指定されたマクロをクリアする
 	
-	@param idx [in] �}�N���ԍ�(0-), STAND_KEYMACRO�͕W���L�[�}�N���o�b�t�@��\���D
+	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファを表す．
 */
 void CSMacroMgr::Clear( int idx )
 {
@@ -761,20 +761,20 @@ void CSMacroMgr::Clear( int idx )
 ||  Attributes & Operations
 */
 /*
-	�w�肳�ꂽID�ɑΉ�����MacroInfo�\���̂ւ̃|�C���^��Ԃ��D
-	�Y������ID�ɑΉ�����\���̂��Ȃ����NULL��Ԃ��D
+	指定されたIDに対応するMacroInfo構造体へのポインタを返す．
+	該当するIDに対応する構造体がなければNULLを返す．
 
-	@param nFuncID [in] �@�\�ԍ�
-	@return �\���̂ւ̃|�C���^�D������Ȃ����NULL
+	@param nFuncID [in] 機能番号
+	@return 構造体へのポインタ．見つからなければNULL
 	
 	@date 2002.06.16 genta
-	@date 2003.02.24 m_MacroFuncInfoArr�������Ώۂɂ���
+	@date 2003.02.24 m_MacroFuncInfoArrも検索対象にする
 */
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {
 	int i;
 	//	Jun. 27, 2002 genta
-	//	�Ԑl���R�[�h0�Ƃ��ďE���Ă��܂��̂ŁC�z��T�C�Y�ɂ�锻�����߂��D
+	//	番人をコード0として拾ってしまうので，配列サイズによる判定をやめた．
 	for( i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoCommandArr[i].m_nFuncID == nFuncID ){
 			return &m_MacroFuncInfoCommandArr[i];
@@ -789,24 +789,24 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 }
 
 /*!
-	�@�\�ԍ�����֐����Ƌ@�\�����{����擾
+	機能番号から関数名と機能名日本語を取得
 	
-	@return ���������Ƃ���pszFuncName�D������Ȃ������Ƃ���NULL�D
+	@return 成功したときはpszFuncName．見つからなかったときはNULL．
 	
 	@note
-	���ꂼ��C������i�[�̈�̎w���悪NULL�̎��͕�������i�[���Ȃ��D
-	�������CpszFuncName��NULL�ɂ��Ă��܂��Ɩ߂�l�����NULL�ɂȂ���
-	�������肪�s���Ȃ��Ȃ�D
-	�e���ꃁ�b�Z�[�W���\�[�X�Ή��ɂ��@�\�������{��łȂ��ꍇ������	
+	それぞれ，文字列格納領域の指す先がNULLの時は文字列を格納しない．
+	ただし，pszFuncNameをNULLにしてしまうと戻り値が常にNULLになって
+	成功判定が行えなくなる．
+	各国語メッセージリソース対応により機能名が日本語でない場合がある	
 
-	@date 2002.06.16 genta �V�݂�GetFuncInfoById(int)������Ŏg���悤�ɁD
-	@date 2011.04.10 nasukoji �e���ꃁ�b�Z�[�W���\�[�X�Ή�
+	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
+	@date 2011.04.10 nasukoji 各国語メッセージリソース対応
 */
 WCHAR* CSMacroMgr::GetFuncInfoByID(
-	HINSTANCE	hInstance,			//!< [in] ���\�[�X�擾�̂��߂�Instance Handle
-	int			nFuncID,			//!< [in] �@�\�ԍ�
-	WCHAR*		pszFuncName,		//!< [out] �֐����D���̐�ɂ͍Œ��֐����{1�o�C�g�̃��������K�v�D
-	WCHAR*		pszFuncNameJapanese	//!< [out] �@�\�����{��DNULL���e. ���̐�ɂ�256�o�C�g�̃��������K�v�D
+	HINSTANCE	hInstance,			//!< [in] リソース取得のためのInstance Handle
+	int			nFuncID,			//!< [in] 機能番号
+	WCHAR*		pszFuncName,		//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
@@ -822,7 +822,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 				p++;
 			}
 		}
-		//	Jun. 16, 2002 genta NULL�̂Ƃ��͉������Ȃ��D
+		//	Jun. 16, 2002 genta NULLのときは何もしない．
 		if( pszFuncNameJapanese != NULL ){
 			wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
 		}
@@ -832,26 +832,26 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 }
 
 /*!
-	�֐����iS_xxxx�j����@�\�ԍ��Ƌ@�\�����{����擾�D
-	�֐�����S_�Ŏn�܂�ꍇ�Ǝn�܂�Ȃ��ꍇ�̗����ɑΉ��D
+	関数名（S_xxxx）から機能番号と機能名日本語を取得．
+	関数名はS_で始まる場合と始まらない場合の両方に対応．
 
-	@return ���������Ƃ��͋@�\�ԍ��D������Ȃ������Ƃ���-1�D
+	@return 成功したときは機能番号．見つからなかったときは-1．
 	
 	@note
-	pszFuncNameJapanese �̎w���悪NULL�̎��͓��{�ꖼ���i�[���Ȃ��D
+	pszFuncNameJapanese の指す先がNULLの時は日本語名を格納しない．
 	
-	@date 2002.06.16 genta ���[�v���̕�����R�s�[��r��
+	@date 2002.06.16 genta ループ内の文字列コピーを排除
 */
 EFunctionCode CSMacroMgr::GetFuncInfoByName(
-	HINSTANCE		hInstance,				//!< [in]  ���\�[�X�擾�̂��߂�Instance Handle
-	const WCHAR*	pszFuncName,			//!< [in]  �֐���
-	WCHAR*			pszFuncNameJapanese		//!< [out] �@�\�����{��D���̐�ɂ�256�o�C�g�̃��������K�v�D
+	HINSTANCE		hInstance,				//!< [in]  リソース取得のためのInstance Handle
+	const WCHAR*	pszFuncName,			//!< [in]  関数名
+	WCHAR*			pszFuncNameJapanese		//!< [out] 機能名日本語．この先には256バイトのメモリが必要．
 )
 {
 	//	Jun. 16, 2002 genta
 	const WCHAR* normalizedFuncName;
 	
-	//	S_�Ŏn�܂��Ă��邩
+	//	S_で始まっているか
 	if( pszFuncName == NULL ){
 		return F_INVALID;
 	}
@@ -862,7 +862,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		normalizedFuncName = pszFuncName;
 	}
 
-	// �R�}���h�֐�������
+	// コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
@@ -873,7 +873,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 			return nFuncID;
 		}
 	}
-	// ��R�}���h�֐�������
+	// 非コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
@@ -887,330 +887,330 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	return F_INVALID;
 }
 
-/* �L�[�}�N���ɋL�^�\�ȋ@�\���ǂ����𒲂ׂ� */
+/* キーマクロに記録可能な機能かどうかを調べる */
 BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 {
 	switch( nFuncID ){
-	/* �t�@�C������n */
-//	case F_FILENEW					://�V�K�쐬
-//	case F_FILEOPEN					://�J��
-//	case F_FILESAVE					://�㏑���ۑ�
-//	case F_FILESAVEAS_DIALOG		://���O��t���ĕۑ�
-//	case F_FILECLOSE				://����(����)	//Oct. 17, 2000 jepro �u�t�@�C�������v�Ƃ����L���v�V������ύX
-//	case F_FILECLOSE_OPEN			://���ĊJ��
-	case F_FILE_REOPEN				://�J������	//Dec. 4, 2002 genta
-	case F_FILE_REOPEN_SJIS			://SJIS�ŊJ������
-	case F_FILE_REOPEN_JIS			://JIS�ŊJ������
-	case F_FILE_REOPEN_EUC			://EUC�ŊJ������
-	case F_FILE_REOPEN_LATIN1		://Latin1�ŊJ������	// 2010/3/20 Uchi
-	case F_FILE_REOPEN_UNICODE		://Unicode�ŊJ������
-	case F_FILE_REOPEN_UNICODEBE	://UnicodeBE�ŊJ������
-	case F_FILE_REOPEN_UTF8			://UTF-8�ŊJ������
-	case F_FILE_REOPEN_CESU8		://CESU-8�ŊJ������	// 2010/3/20 Uchi
-	case F_FILE_REOPEN_UTF7			://UTF-7�ŊJ������
-//	case F_PRINT					://���
-//	case F_PRINT_DIALOG				://����_�C�A���O
-//	case F_PRINT_PREVIEW			://����v���r���[
-//	case F_PRINT_PAGESETUP			://����y�[�W�ݒ�	//Sept. 14, 2000 jepro �u����̃y�[�W���C�A�E�g�̐ݒ�v����ύX
-//	case F_OPEN_HfromtoC:			://������C/C++�w�b�_(�\�[�X)���J��	//Feb. 9, 2001 JEPRO �ǉ�
-//	case F_OPEN_HHPP				://������C/C++�w�b�_�t�@�C�����J��	//Feb. 9, 2001 jepro�u.c�܂���.cpp�Ɠ�����.h���J���v����ύX
-//	case F_OPEN_CCPP				://������C/C++�\�[�X�t�@�C�����J��	//Feb. 9, 2001 jepro�u.h�Ɠ�����.c(�Ȃ����.cpp)���J���v����ύX
-//	case F_ACTIVATE_SQLPLUS			:/* Oracle SQL*Plus���A�N�e�B�u�\�� */
-//	case F_PLSQL_COMPILE_ON_SQLPLUS	:/* Oracle SQL*Plus�Ŏ��s */	//Sept. 17, 2000 jepro �����́u�R���p�C���v���u���s�v�ɓ���
-///	case F_BROWSE					://�u���E�Y
-//	case F_PROPERTY_FILE			://�t�@�C���̃v���p�e�B
-//	case F_EXITALLEDITORS			://�ҏW�̑S�I��	// 2007.02.13 ryoji �ǉ�
-//	case F_EXITALL					://�T�N���G�f�B�^�̑S�I��	//Dec. 27, 2000 JEPRO �ǉ�
-//	case F_PUTFILE					://��ƒ��t�@�C���̈ꎞ�o��	2006.12.10 maru
-//	case F_INSFILE					://�L�����b�g�ʒu�Ƀt�@�C���}��	2006.12.10 maru
+	/* ファイル操作系 */
+//	case F_FILENEW					://新規作成
+//	case F_FILEOPEN					://開く
+//	case F_FILESAVE					://上書き保存
+//	case F_FILESAVEAS_DIALOG		://名前を付けて保存
+//	case F_FILECLOSE				://閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+//	case F_FILECLOSE_OPEN			://閉じて開く
+	case F_FILE_REOPEN				://開き直す	//Dec. 4, 2002 genta
+	case F_FILE_REOPEN_SJIS			://SJISで開き直す
+	case F_FILE_REOPEN_JIS			://JISで開き直す
+	case F_FILE_REOPEN_EUC			://EUCで開き直す
+	case F_FILE_REOPEN_LATIN1		://Latin1で開き直す	// 2010/3/20 Uchi
+	case F_FILE_REOPEN_UNICODE		://Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8			://UTF-8で開き直す
+	case F_FILE_REOPEN_CESU8		://CESU-8で開き直す	// 2010/3/20 Uchi
+	case F_FILE_REOPEN_UTF7			://UTF-7で開き直す
+//	case F_PRINT					://印刷
+//	case F_PRINT_DIALOG				://印刷ダイアログ
+//	case F_PRINT_PREVIEW			://印刷プレビュー
+//	case F_PRINT_PAGESETUP			://印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+//	case F_OPEN_HfromtoC:			://同名のC/C++ヘッダ(ソース)を開く	//Feb. 9, 2001 JEPRO 追加
+//	case F_OPEN_HHPP				://同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+//	case F_OPEN_CCPP				://同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+//	case F_ACTIVATE_SQLPLUS			:/* Oracle SQL*Plusをアクティブ表示 */
+//	case F_PLSQL_COMPILE_ON_SQLPLUS	:/* Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
+///	case F_BROWSE					://ブラウズ
+//	case F_PROPERTY_FILE			://ファイルのプロパティ
+//	case F_EXITALLEDITORS			://編集の全終了	// 2007.02.13 ryoji 追加
+//	case F_EXITALL					://サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+//	case F_PUTFILE					://作業中ファイルの一時出力	2006.12.10 maru
+//	case F_INSFILE					://キャレット位置にファイル挿入	2006.12.10 maru
 
 
-	/* �ҏW�n */
-	case F_WCHAR					://��������
-	case F_IME_CHAR					://�S�p��������
-	case F_UNDO						://���ɖ߂�(Undo)
-	case F_REDO						://��蒼��(Redo)
-	case F_DELETE					://�폜
-	case F_DELETE_BACK				://�J�[�\���O���폜
-	case F_WordDeleteToStart		://�P��̍��[�܂ō폜
-	case F_WordDeleteToEnd			://�P��̉E�[�܂ō폜
-	case F_WordCut					://�P��؂���
-	case F_WordDelete				://�P��폜
-	case F_LineCutToStart			://�s���܂Ő؂���(���s�P��)
-	case F_LineCutToEnd				://�s���܂Ő؂���(���s�P��)
-	case F_LineDeleteToStart		://�s���܂ō폜(���s�P��)
-	case F_LineDeleteToEnd			://�s���܂ō폜(���s�P��)
-	case F_CUT_LINE					://�s�؂���(�܂�Ԃ��P��)
-	case F_DELETE_LINE				://�s�폜(�܂�Ԃ��P��)
-	case F_DUPLICATELINE			://�s�̓�d��(�܂�Ԃ��P��)
-	case F_INDENT_TAB				://TAB�C���f���g
-	case F_UNINDENT_TAB				://�tTAB�C���f���g
-	case F_INDENT_SPACE				://SPACE�C���f���g
-	case F_UNINDENT_SPACE			://�tSPACE�C���f���g
+	/* 編集系 */
+	case F_WCHAR					://文字入力
+	case F_IME_CHAR					://全角文字入力
+	case F_UNDO						://元に戻す(Undo)
+	case F_REDO						://やり直し(Redo)
+	case F_DELETE					://削除
+	case F_DELETE_BACK				://カーソル前を削除
+	case F_WordDeleteToStart		://単語の左端まで削除
+	case F_WordDeleteToEnd			://単語の右端まで削除
+	case F_WordCut					://単語切り取り
+	case F_WordDelete				://単語削除
+	case F_LineCutToStart			://行頭まで切り取り(改行単位)
+	case F_LineCutToEnd				://行末まで切り取り(改行単位)
+	case F_LineDeleteToStart		://行頭まで削除(改行単位)
+	case F_LineDeleteToEnd			://行末まで削除(改行単位)
+	case F_CUT_LINE					://行切り取り(折り返し単位)
+	case F_DELETE_LINE				://行削除(折り返し単位)
+	case F_DUPLICATELINE			://行の二重化(折り返し単位)
+	case F_INDENT_TAB				://TABインデント
+	case F_UNINDENT_TAB				://逆TABインデント
+	case F_INDENT_SPACE				://SPACEインデント
+	case F_UNINDENT_SPACE			://逆SPACEインデント
 	case F_LTRIM					:// 2001.12.03 hor
 	case F_RTRIM					:// 2001.12.03 hor
 	case F_SORT_ASC					:// 2001.12.06 hor
 	case F_SORT_DESC				:// 2001.12.06 hor
 	case F_MERGE					:// 2001.12.06 hor
 
-	/* �J�[�\���ړ��n */
-	case F_UP						://�J�[�\����ړ�
-	case F_DOWN						://�J�[�\�����ړ�
-	case F_LEFT						://�J�[�\�����ړ�
-	case F_RIGHT					://�J�[�\���E�ړ�
-//	case F_ROLLDOWN					://�X�N���[���_�E��
-//	case F_ROLLUP					://�X�N���[���A�b�v
-	// 2014.01.15 (Half)Page[Up/down] ��L����
-	case F_HalfPageUp				://���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	case F_HalfPageDown				://���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	case F_1PageUp					://�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	case F_1PageDown				://�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	case F_UP2						://�J�[�\����ړ�(�Q�s����)
-	case F_DOWN2					://�J�[�\�����ړ�(�Q�s����)
-	case F_GOLINETOP				://�s���Ɉړ�(�܂�Ԃ��P��)
-	case F_GOLINEEND				://�s���Ɉړ�(�܂�Ԃ��P��)
-	case F_GOFILETOP				://�t�@�C���̐擪�Ɉړ�
-	case F_GOFILEEND				://�t�@�C���̍Ō�Ɉړ�
-	case F_WORDLEFT					://�P��̍��[�Ɉړ�
-	case F_WORDRIGHT				://�P��̉E�[�Ɉړ�
-	case F_CURLINECENTER			://�J�[�\���s���E�B���h�E������
-	case F_JUMPHIST_PREV			://�ړ�����: �O��
-	case F_JUMPHIST_NEXT			://�ړ�����: ����
-	case F_JUMPHIST_SET				://���݈ʒu���ړ������ɓo�^
-	case F_MODIFYLINE_NEXT			://���̕ύX�s�ֈړ�
-	case F_MODIFYLINE_PREV			://�O�̕ύX�s�ֈړ�
+	/* カーソル移動系 */
+	case F_UP						://カーソル上移動
+	case F_DOWN						://カーソル下移動
+	case F_LEFT						://カーソル左移動
+	case F_RIGHT					://カーソル右移動
+//	case F_ROLLDOWN					://スクロールダウン
+//	case F_ROLLUP					://スクロールアップ
+	// 2014.01.15 (Half)Page[Up/down] を有効化
+	case F_HalfPageUp				://半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_HalfPageDown				://半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_1PageUp					://１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	case F_1PageDown				://１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	case F_UP2						://カーソル上移動(２行ごと)
+	case F_DOWN2					://カーソル下移動(２行ごと)
+	case F_GOLINETOP				://行頭に移動(折り返し単位)
+	case F_GOLINEEND				://行末に移動(折り返し単位)
+	case F_GOFILETOP				://ファイルの先頭に移動
+	case F_GOFILEEND				://ファイルの最後に移動
+	case F_WORDLEFT					://単語の左端に移動
+	case F_WORDRIGHT				://単語の右端に移動
+	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
+	case F_JUMPHIST_PREV			://移動履歴: 前へ
+	case F_JUMPHIST_NEXT			://移動履歴: 次へ
+	case F_JUMPHIST_SET				://現在位置を移動履歴に登録
+	case F_MODIFYLINE_NEXT			://次の変更行へ移動
+	case F_MODIFYLINE_PREV			://前の変更行へ移動
 
-	/* �I���n */	//Oct. 15, 2000 JEPRO �u�J�[�\���ړ��n�v�������Ȃ����̂œƗ�������(�I��)���ړ�(�T�u���j���[���͍\����ł��Ȃ��̂�)
-	case F_SELECTWORD				://���݈ʒu�̒P��I��
-	case F_SELECTALL				://���ׂđI��
-	case F_SELECTLINE				://1�s�I��	// 2007.10.06 nasukoji
-	case F_BEGIN_SEL				://�͈͑I���J�n
-	case F_UP_SEL					://(�͈͑I��)�J�[�\����ړ�
-	case F_DOWN_SEL					://(�͈͑I��)�J�[�\�����ړ�
-	case F_LEFT_SEL					://(�͈͑I��)�J�[�\�����ړ�
-	case F_RIGHT_SEL				://(�͈͑I��)�J�[�\���E�ړ�
-	case F_UP2_SEL					://(�͈͑I��)�J�[�\����ړ�(�Q�s����)
-	case F_DOWN2_SEL				://(�͈͑I��)�J�[�\�����ړ�(�Q�s����)
-	case F_WORDLEFT_SEL				://(�͈͑I��)�P��̍��[�Ɉړ�
-	case F_WORDRIGHT_SEL			://(�͈͑I��)�P��̉E�[�Ɉړ�
-	case F_GOLINETOP_SEL			://(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��)
-	case F_GOLINEEND_SEL			://(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��)
-//	case F_ROLLDOWN_SEL				://(�͈͑I��)�X�N���[���_�E��
-//	case F_ROLLUP_SEL				://(�͈͑I��)�X�N���[���A�b�v
-	// 2014.01.15 (Half)Page[Up/down] ��L����
-	case F_HalfPageUp_Sel			://(�͈͑I��)���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	case F_HalfPageDown_Sel			://(�͈͑I��)���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-	case F_1PageUp_Sel				://(�͈͑I��)�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-	case F_1PageDown_Sel			://(�͈͑I��)�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-	case F_GOFILETOP_SEL			://(�͈͑I��)�t�@�C���̐擪�Ɉړ�
-	case F_GOFILEEND_SEL			://(�͈͑I��)�t�@�C���̍Ō�Ɉړ�
-	case F_MODIFYLINE_NEXT_SEL		://(�͈͑I��)���̕ύX�s�ֈړ�
-	case F_MODIFYLINE_PREV_SEL		://(�͈͑I��)�O�̕ύX�s�ֈړ�
+	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので独立化して(選択)を移動(サブメニュー化は構造上できないので)
+	case F_SELECTWORD				://現在位置の単語選択
+	case F_SELECTALL				://すべて選択
+	case F_SELECTLINE				://1行選択	// 2007.10.06 nasukoji
+	case F_BEGIN_SEL				://範囲選択開始
+	case F_UP_SEL					://(範囲選択)カーソル上移動
+	case F_DOWN_SEL					://(範囲選択)カーソル下移動
+	case F_LEFT_SEL					://(範囲選択)カーソル左移動
+	case F_RIGHT_SEL				://(範囲選択)カーソル右移動
+	case F_UP2_SEL					://(範囲選択)カーソル上移動(２行ごと)
+	case F_DOWN2_SEL				://(範囲選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_SEL				://(範囲選択)単語の左端に移動
+	case F_WORDRIGHT_SEL			://(範囲選択)単語の右端に移動
+	case F_GOLINETOP_SEL			://(範囲選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_SEL			://(範囲選択)行末に移動(折り返し単位)
+//	case F_ROLLDOWN_SEL				://(範囲選択)スクロールダウン
+//	case F_ROLLUP_SEL				://(範囲選択)スクロールアップ
+	// 2014.01.15 (Half)Page[Up/down] を有効化
+	case F_HalfPageUp_Sel			://(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_HalfPageDown_Sel			://(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	case F_1PageUp_Sel				://(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	case F_1PageDown_Sel			://(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	case F_GOFILETOP_SEL			://(範囲選択)ファイルの先頭に移動
+	case F_GOFILEEND_SEL			://(範囲選択)ファイルの最後に移動
+	case F_MODIFYLINE_NEXT_SEL		://(範囲選択)次の変更行へ移動
+	case F_MODIFYLINE_PREV_SEL		://(範囲選択)前の変更行へ移動
 
-	/* ��`�I���n */	//Oct. 17, 2000 JEPRO (��`�I��)���V�݂��ꎟ�悱���ɂ���
-//	case F_BOXSELALL				//��`�ł��ׂđI��
-	case F_BEGIN_BOX				://��`�͈͑I���J�n
+	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
+//	case F_BOXSELALL				//矩形ですべて選択
+	case F_BEGIN_BOX				://矩形範囲選択開始
 
-	case F_UP_BOX					://(��`�I��)�J�[�\����ړ�
-	case F_DOWN_BOX					://(��`�I��)�J�[�\�����ړ�
-	case F_LEFT_BOX					://(��`�I��)�J�[�\�����ړ�
-	case F_RIGHT_BOX				://(��`�I��)�J�[�\���E�ړ�
-	case F_UP2_BOX					://(��`�I��)�J�[�\����ړ�(�Q�s����)
-	case F_DOWN2_BOX				://(��`�I��)�J�[�\�����ړ�(�Q�s����)
-	case F_WORDLEFT_BOX				://(��`�I��)�P��̍��[�Ɉړ�
-	case F_WORDRIGHT_BOX			://(��`�I��)�P��̉E�[�Ɉړ�
-	case F_GOLOGICALLINETOP_BOX		://(��`�I��)�s���Ɉړ�(���s�P��)
-	case F_GOLINETOP_BOX			://(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��)
-	case F_GOLINEEND_BOX			://(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��)
-	case F_HalfPageUp_BOX			://(��`�I��)���y�[�W�A�b�v
-	case F_HalfPageDown_BOX			://(��`�I��)���y�[�W�_�E��
-	case F_1PageUp_BOX				://(��`�I��)�P�y�[�W�A�b�v
-	case F_1PageDown_BOX			://(��`�I��)�P�y�[�W�_�E��
-	case F_GOFILETOP_BOX			://(��`�I��)�t�@�C���̐擪�Ɉړ�
-	case F_GOFILEEND_BOX			://(��`�I��)�t�@�C���̍Ō�Ɉړ�
+	case F_UP_BOX					://(矩形選択)カーソル上移動
+	case F_DOWN_BOX					://(矩形選択)カーソル下移動
+	case F_LEFT_BOX					://(矩形選択)カーソル左移動
+	case F_RIGHT_BOX				://(矩形選択)カーソル右移動
+	case F_UP2_BOX					://(矩形選択)カーソル上移動(２行ごと)
+	case F_DOWN2_BOX				://(矩形選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_BOX				://(矩形選択)単語の左端に移動
+	case F_WORDRIGHT_BOX			://(矩形選択)単語の右端に移動
+	case F_GOLOGICALLINETOP_BOX		://(矩形選択)行頭に移動(改行単位)
+	case F_GOLINETOP_BOX			://(矩形選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_BOX			://(矩形選択)行末に移動(折り返し単位)
+	case F_HalfPageUp_BOX			://(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX			://(矩形選択)半ページダウン
+	case F_1PageUp_BOX				://(矩形選択)１ページアップ
+	case F_1PageDown_BOX			://(矩形選択)１ページダウン
+	case F_GOFILETOP_BOX			://(矩形選択)ファイルの先頭に移動
+	case F_GOFILEEND_BOX			://(矩形選択)ファイルの最後に移動
 
-	/* �N���b�v�{�[�h�n */
-	case F_CUT						://�؂���(�I��͈͂��N���b�v�{�[�h�ɃR�s�[���č폜)
-	case F_COPY						://�R�s�[(�I��͈͂��N���b�v�{�[�h�ɃR�s�[)
-	case F_COPY_ADDCRLF				://�܂�Ԃ��ʒu�ɉ��s�����ăR�s�[
-	case F_COPY_CRLF				://CRLF���s�ŃR�s�[(�I��͈͂����s�R�[�h=CRLF�ŃR�s�[)
-	case F_PASTE					://�\��t��(�N���b�v�{�[�h����\��t��)
-	case F_PASTEBOX					://��`�\��t��(�N���b�v�{�[�h�����`�\��t��)
-	case F_INSTEXT_W					://�e�L�X�g��\��t��
-//	case F_ADDTAIL_W					://�Ō�Ƀe�L�X�g��ǉ�
-	case F_COPYLINES				://�I��͈͓��S�s�R�s�[
-	case F_COPYLINESASPASSAGE		://�I��͈͓��S�s���p���t���R�s�[
-	case F_COPYLINESWITHLINENUMBER 	://�I��͈͓��S�s�s�ԍ��t���R�s�[
-	case F_COPY_COLOR_HTML			://�I��͈͓��F�t��HTML�R�s�[
-	case F_COPY_COLOR_HTML_LINENUMBER://�I��͈͓��s�ԍ��F�t��HTML�R�s�[
-	case F_COPYPATH					://���̃t�@�C���̃p�X�����N���b�v�{�[�h�ɃR�s�[
-	case F_COPYTAG					://���̃t�@�C���̃p�X���ƃJ�[�\���ʒu���R�s�[	//Sept. 15, 2000 jepro ��Ɠ��������ɂȂ��Ă����̂��C��
-	case F_COPYFNAME				://���̃t�@�C�������N���b�v�{�[�h�ɃR�s�[ // 2002/2/3 aroka
-	case F_CREATEKEYBINDLIST		://�L�[���蓖�Ĉꗗ���R�s�[	//Sept. 15, 2000 JEPRO �ǉ�	//Dec. 25, 2000 ����
+	/* クリップボード系 */
+	case F_CUT						://切り取り(選択範囲をクリップボードにコピーして削除)
+	case F_COPY						://コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF				://折り返し位置に改行をつけてコピー
+	case F_COPY_CRLF				://CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
+	case F_PASTE					://貼り付け(クリップボードから貼り付け)
+	case F_PASTEBOX					://矩形貼り付け(クリップボードから矩形貼り付け)
+	case F_INSTEXT_W					://テキストを貼り付け
+//	case F_ADDTAIL_W					://最後にテキストを追加
+	case F_COPYLINES				://選択範囲内全行コピー
+	case F_COPYLINESASPASSAGE		://選択範囲内全行引用符付きコピー
+	case F_COPYLINESWITHLINENUMBER 	://選択範囲内全行行番号付きコピー
+	case F_COPY_COLOR_HTML			://選択範囲内色付きHTMLコピー
+	case F_COPY_COLOR_HTML_LINENUMBER://選択範囲内行番号色付きHTMLコピー
+	case F_COPYPATH					://このファイルのパス名をクリップボードにコピー
+	case F_COPYTAG					://このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
+	case F_COPYFNAME				://このファイル名をクリップボードにコピー // 2002/2/3 aroka
+	case F_CREATEKEYBINDLIST		://キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加	//Dec. 25, 2000 復活
 
-	/* �}���n */
-	case F_INS_DATE					:// ���t�}��
-	case F_INS_TIME					:// �����}��
-//	case F_CTRL_CODE_DIALOG			://�R���g���[���R�[�h�̓���(�_�C�A���O)	//@@@ 2002.06.02 MIK
-	case F_CTRL_CODE				://�R���g���[���R�[�h�̓��� 2013.12.12
+	/* 挿入系 */
+	case F_INS_DATE					:// 日付挿入
+	case F_INS_TIME					:// 時刻挿入
+//	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+	case F_CTRL_CODE				://コントロールコードの入力 2013.12.12
 
-	/* �ϊ��n */
-	case F_TOLOWER		 			://������
-	case F_TOUPPER		 			://�啶��
-	case F_TOHANKAKU		 		:/* �S�p�����p */
-	case F_TOHANKATA		 		:/* �S�p�J�^�J�i�����p�J�^�J�i */	//Aug. 29, 2002 ai
-	case F_TOZENEI			 		:/* ���p�p�����S�p�p�� */			//July. 30, 2001 Misaka
-	case F_TOHANEI			 		:/* �S�p�p�������p�p�� */
-	case F_TOZENKAKUKATA	 		:/* ���p�{�S�Ђ灨�S�p�E�J�^�J�i */	//Sept. 17, 2000 jepro �������u���p���S�p�J�^�J�i�v����ύX
-	case F_TOZENKAKUHIRA	 		:/* ���p�{�S�J�^���S�p�E�Ђ炪�� */	//Sept. 17, 2000 jepro �������u���p���S�p�Ђ炪�ȁv����ύX
-	case F_HANKATATOZENKATA			:/* ���p�J�^�J�i���S�p�J�^�J�i */
-	case F_HANKATATOZENHIRA			:/* ���p�J�^�J�i���S�p�Ђ炪�� */
-	case F_TABTOSPACE				:/* TAB���� */
-	case F_SPACETOTAB				:/* �󔒁�TAB */  //---- Stonee, 2001/05/27
-	case F_CODECNV_AUTO2SJIS		:/* �������ʁ�SJIS�R�[�h�ϊ� */
-	case F_CODECNV_EMAIL			://E-Mail(JIS��SJIS)�R�[�h�ϊ�
-	case F_CODECNV_EUC2SJIS			://EUC��SJIS�R�[�h�ϊ�
-	case F_CODECNV_UNICODE2SJIS		://Unicode��SJIS�R�[�h�ϊ�
-	case F_CODECNV_UNICODEBE2SJIS	://UnicodeBE��SJIS�R�[�h�ϊ�
-	case F_CODECNV_UTF82SJIS		:/* UTF-8��SJIS�R�[�h�ϊ� */
-	case F_CODECNV_UTF72SJIS		:/* UTF-7��SJIS�R�[�h�ϊ� */
-	case F_CODECNV_SJIS2JIS			:/* SJIS��JIS�R�[�h�ϊ� */
-	case F_CODECNV_SJIS2EUC			:/* SJIS��EUC�R�[�h�ϊ� */
-	case F_CODECNV_SJIS2UTF8		:/* SJIS��UTF-8�R�[�h�ϊ� */
-	case F_CODECNV_SJIS2UTF7		:/* SJIS��UTF-7�R�[�h�ϊ� */
-//	case F_BASE64DECODE	 			://Base64�f�R�[�h���ĕۑ�
-//	case F_UUDECODE		 			://uudecode���ĕۑ�	//Oct. 17, 2000 jepro �������u�I�𕔕���UUENCODE�f�R�[�h�v����ύX
+	/* 変換系 */
+	case F_TOLOWER		 			://小文字
+	case F_TOUPPER		 			://大文字
+	case F_TOHANKAKU		 		:/* 全角→半角 */
+	case F_TOHANKATA		 		:/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
+	case F_TOZENEI			 		:/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
+	case F_TOHANEI			 		:/* 全角英数→半角英数 */
+	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+	case F_TOZENKAKUHIRA	 		:/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+	case F_HANKATATOZENKATA			:/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA			:/* 半角カタカナ→全角ひらがな */
+	case F_TABTOSPACE				:/* TAB→空白 */
+	case F_SPACETOTAB				:/* 空白→TAB */  //---- Stonee, 2001/05/27
+	case F_CODECNV_AUTO2SJIS		:/* 自動判別→SJISコード変換 */
+	case F_CODECNV_EMAIL			://E-Mail(JIS→SJIS)コード変換
+	case F_CODECNV_EUC2SJIS			://EUC→SJISコード変換
+	case F_CODECNV_UNICODE2SJIS		://Unicode→SJISコード変換
+	case F_CODECNV_UNICODEBE2SJIS	://UnicodeBE→SJISコード変換
+	case F_CODECNV_UTF82SJIS		:/* UTF-8→SJISコード変換 */
+	case F_CODECNV_UTF72SJIS		:/* UTF-7→SJISコード変換 */
+	case F_CODECNV_SJIS2JIS			:/* SJIS→JISコード変換 */
+	case F_CODECNV_SJIS2EUC			:/* SJIS→EUCコード変換 */
+	case F_CODECNV_SJIS2UTF8		:/* SJIS→UTF-8コード変換 */
+	case F_CODECNV_SJIS2UTF7		:/* SJIS→UTF-7コード変換 */
+//	case F_BASE64DECODE	 			://Base64デコードして保存
+//	case F_UUDECODE		 			://uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
-	/* �����n */
-//	case F_SEARCH_DIALOG			://����(�P�ꌟ���_�C�A���O)
-	case F_SEARCH_NEXT				://��������
-	case F_SEARCH_PREV				://�O������
-	case F_REPLACE					://�u��(���s)
-	case F_REPLACE_ALL				://���ׂĒu��(���s)
-	case F_SEARCH_CLEARMARK			://�����}�[�N�̃N���A
-	case F_JUMP_SRCHSTARTPOS		://�����J�n�ʒu�֖߂�		// 02/06/26 ai
+	/* 検索系 */
+//	case F_SEARCH_DIALOG			://検索(単語検索ダイアログ)
+	case F_SEARCH_NEXT				://次を検索
+	case F_SEARCH_PREV				://前を検索
+	case F_REPLACE					://置換(実行)
+	case F_REPLACE_ALL				://すべて置換(実行)
+	case F_SEARCH_CLEARMARK			://検索マークのクリア
+	case F_JUMP_SRCHSTARTPOS		://検索開始位置へ戻る		// 02/06/26 ai
 	case F_GREP						://Grep
-//	case F_JUMP_DIALOG				://�w��s�w�W�����v
-	case F_JUMP						://�w��s�փW�����v @@@ 2002.2.2 YAZAKI
-//	case F_OUTLINE					://�A�E�g���C�����
-	case F_TAGJUMP					://�^�O�W�����v�@�\
-	case F_TAGJUMPBACK				://�^�O�W�����v�o�b�N�@�\
-//	case F_TAGS_MAKE				://�^�O�t�@�C���̍쐬	//@@@ 2003.04.13 MIK
-//	case F_COMPARE					://�t�@�C�����e��r
-//	case F_DIFF_DIALOG				://DIFF�����\��(�_�C�A���O)	//@@@ 2002.05.25 MIK
-//	case F_DIFF						://DIFF�����\��				//@@@ 2002.05.25 MIK
-//	case F_DIFF_NEXT				://DIFF�����\��(����)		//@@@ 2002.05.25 MIK
-//	case F_DIFF_PREV				://DIFF�����\��(�O��)		//@@@ 2002.05.25 MIK
-//	case F_DIFF_RESET				://DIFF�����\��(�S����)		//@@@ 2002.05.25 MIK
-	case F_BRACKETPAIR				://�Ί��ʂ̌���
+//	case F_JUMP_DIALOG				://指定行ヘジャンプ
+	case F_JUMP						://指定行へジャンプ @@@ 2002.2.2 YAZAKI
+//	case F_OUTLINE					://アウトライン解析
+	case F_TAGJUMP					://タグジャンプ機能
+	case F_TAGJUMPBACK				://タグジャンプバック機能
+//	case F_TAGS_MAKE				://タグファイルの作成	//@@@ 2003.04.13 MIK
+//	case F_COMPARE					://ファイル内容比較
+//	case F_DIFF_DIALOG				://DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+//	case F_DIFF						://DIFF差分表示				//@@@ 2002.05.25 MIK
+//	case F_DIFF_NEXT				://DIFF差分表示(次へ)		//@@@ 2002.05.25 MIK
+//	case F_DIFF_PREV				://DIFF差分表示(前へ)		//@@@ 2002.05.25 MIK
+//	case F_DIFF_RESET				://DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
+	case F_BRACKETPAIR				://対括弧の検索
 // From Here 2001.12.03 hor
-	case F_BOOKMARK_SET				://�u�b�N�}�[�N�ݒ�E����
-	case F_BOOKMARK_NEXT			://���̃u�b�N�}�[�N��
-	case F_BOOKMARK_PREV			://�O�̃u�b�N�}�[�N��
-	case F_BOOKMARK_RESET			://�u�b�N�}�[�N�̑S����
-//	case F_BOOKMARK_VIEW			://�u�b�N�}�[�N�̈ꗗ
+	case F_BOOKMARK_SET				://ブックマーク設定・解除
+	case F_BOOKMARK_NEXT			://次のブックマークへ
+	case F_BOOKMARK_PREV			://前のブックマークへ
+	case F_BOOKMARK_RESET			://ブックマークの全解除
+//	case F_BOOKMARK_VIEW			://ブックマークの一覧
 // To Here 2001.12.03 hor
-	case F_BOOKMARK_PATTERN			://���������ĊY���s���}�[�N	// 2002.02.08 hor
-	case F_FUNCLIST_NEXT			://���̊֐����X�g�}�[�N��
-	case F_FUNCLIST_PREV			://�O�̊֐����X�g�}�[�N��
+	case F_BOOKMARK_PATTERN			://検索しして該当行をマーク	// 2002.02.08 hor
+	case F_FUNCLIST_NEXT			://次の関数リストマークへ
+	case F_FUNCLIST_PREV			://前の関数リストマークへ
 
-	/* ���[�h�؂�ւ��n */
-	case F_CHGMOD_INS				://�}���^�㏑�����[�h�؂�ւ�
-	case F_CHG_CHARSET				://�����R�[�h�Z�b�g�w��	2010/6/14 Uchi
-	case F_CHGMOD_EOL				://���͉��s�R�[�h�w��	2003.06.23 Moca
+	/* モード切り替え系 */
+	case F_CHGMOD_INS				://挿入／上書きモード切り替え
+	case F_CHG_CHARSET				://文字コードセット指定	2010/6/14 Uchi
+	case F_CHGMOD_EOL				://入力改行コード指定	2003.06.23 Moca
 
-	case F_CANCEL_MODE				://�e�탂�[�h�̎�����
+	case F_CANCEL_MODE				://各種モードの取り消し
 
-	/* �}�N���n */
-//	case F_RECKEYMACRO				://�L�[�}�N���̋L�^�J�n�^�I��
-//	case F_SAVEKEYMACRO				://�L�[�}�N���̕ۑ�
-//	case F_LOADKEYMACRO				://�L�[�}�N���̓ǂݍ���
-//	case F_EXECKEYMACRO				://�L�[�}�N���̎��s
-	case F_EXECEXTMACRO				://���O���w�肵�ă}�N�����s
+	/* マクロ系 */
+//	case F_RECKEYMACRO				://キーマクロの記録開始／終了
+//	case F_SAVEKEYMACRO				://キーマクロの保存
+//	case F_LOADKEYMACRO				://キーマクロの読み込み
+//	case F_EXECKEYMACRO				://キーマクロの実行
+	case F_EXECEXTMACRO				://名前を指定してマクロ実行
 
-	/* �ݒ�n */
-//	case F_SHOWTOOLBAR				:/* �c�[���o�[�̕\�� */
-//	case F_SHOWFUNCKEY				:/* �t�@���N�V�����L�[�̕\�� */
-//	case F_SHOWTAB					:/* �^�u�̕\�� */
-//	case F_SHOWSTATUSBAR			:/* �X�e�[�^�X�o�[�̕\�� */
-//	case F_TYPE_LIST				:/* �^�C�v�ʐݒ�ꗗ */
-//	case F_OPTION_TYPE				:/* �^�C�v�ʐݒ� */
-//	case F_OPTION					:/* ���ʐݒ� */
-//	case F_FONT						:/* �t�H���g�ݒ� */
-	case F_SETFONTSIZE				:// �t�H���g�T�C�Y�ݒ�
-//	case F_WRAPWINDOWWIDTH			:/* ���݂̃E�B���h�E���Ő܂�Ԃ� */	//Oct. 15, 2000 JEPRO
-//	case F_FAVORITE					:/* �����̊Ǘ� */	//@@@ 2003.04.08 MIK
-//	case F_TMPWRAPNOWRAP			:// �܂�Ԃ��Ȃ��i�ꎞ�ݒ�j		// 2008.05.30 nasukoji
-//	case F_TMPWRAPSETTING			:// �w�茅�Ő܂�Ԃ��i�ꎞ�ݒ�j	// 2008.05.30 nasukoji
-//	case F_TMPWRAPWINDOW			:// �E�[�Ő܂�Ԃ��i�ꎞ�ݒ�j		// 2008.05.30 nasukoji
-	case F_TEXTWRAPMETHOD			:// �e�L�X�g�̐܂�Ԃ����@			// 2008.05.30 nasukoji
-	case F_SELECT_COUNT_MODE		:// �����J�E���g�̕��@���擾�A�ݒ�	// 2009.07.06 syat
+	/* 設定系 */
+//	case F_SHOWTOOLBAR				:/* ツールバーの表示 */
+//	case F_SHOWFUNCKEY				:/* ファンクションキーの表示 */
+//	case F_SHOWTAB					:/* タブの表示 */
+//	case F_SHOWSTATUSBAR			:/* ステータスバーの表示 */
+//	case F_TYPE_LIST				:/* タイプ別設定一覧 */
+//	case F_OPTION_TYPE				:/* タイプ別設定 */
+//	case F_OPTION					:/* 共通設定 */
+//	case F_FONT						:/* フォント設定 */
+	case F_SETFONTSIZE				:// フォントサイズ設定
+//	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
+//	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
+//	case F_TMPWRAPNOWRAP			:// 折り返さない（一時設定）		// 2008.05.30 nasukoji
+//	case F_TMPWRAPSETTING			:// 指定桁で折り返す（一時設定）	// 2008.05.30 nasukoji
+//	case F_TMPWRAPWINDOW			:// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TEXTWRAPMETHOD			:// テキストの折り返し方法			// 2008.05.30 nasukoji
+	case F_SELECT_COUNT_MODE		:// 文字カウントの方法を取得、設定	// 2009.07.06 syat
 
-	case F_EXECMD					:/* �O���R�}���h���s */	//@@@2002.2.2 YAZAKI �ǉ�
+	case F_EXECMD					:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
 
-	/* �J�X�^�����j���[ */
-//	case F_MENU_RBUTTON				:/* �E�N���b�N���j���[ */
-//	case F_CUSTMENU_1				:/* �J�X�^�����j���[1 */
-//	case F_CUSTMENU_2				:/* �J�X�^�����j���[2 */
-//	case F_CUSTMENU_3				:/* �J�X�^�����j���[3 */
-//	case F_CUSTMENU_4				:/* �J�X�^�����j���[4 */
-//	case F_CUSTMENU_5				:/* �J�X�^�����j���[5 */
-//	case F_CUSTMENU_6				:/* �J�X�^�����j���[6 */
-//	case F_CUSTMENU_7				:/* �J�X�^�����j���[7 */
-//	case F_CUSTMENU_8				:/* �J�X�^�����j���[8 */
-//	case F_CUSTMENU_9				:/* �J�X�^�����j���[9 */
-//	case F_CUSTMENU_10				:/* �J�X�^�����j���[10 */
-//	case F_CUSTMENU_11				:/* �J�X�^�����j���[11 */
-//	case F_CUSTMENU_12				:/* �J�X�^�����j���[12 */
-//	case F_CUSTMENU_13				:/* �J�X�^�����j���[13 */
-//	case F_CUSTMENU_14				:/* �J�X�^�����j���[14 */
-//	case F_CUSTMENU_15				:/* �J�X�^�����j���[15 */
-//	case F_CUSTMENU_16				:/* �J�X�^�����j���[16 */
-//	case F_CUSTMENU_17				:/* �J�X�^�����j���[17 */
-//	case F_CUSTMENU_18				:/* �J�X�^�����j���[18 */
-//	case F_CUSTMENU_19				:/* �J�X�^�����j���[19 */
-//	case F_CUSTMENU_20				:/* �J�X�^�����j���[20 */
-//	case F_CUSTMENU_21				:/* �J�X�^�����j���[21 */
-//	case F_CUSTMENU_22				:/* �J�X�^�����j���[22 */
-//	case F_CUSTMENU_23				:/* �J�X�^�����j���[23 */
-//	case F_CUSTMENU_24				:/* �J�X�^�����j���[24 */
+	/* カスタムメニュー */
+//	case F_MENU_RBUTTON				:/* 右クリックメニュー */
+//	case F_CUSTMENU_1				:/* カスタムメニュー1 */
+//	case F_CUSTMENU_2				:/* カスタムメニュー2 */
+//	case F_CUSTMENU_3				:/* カスタムメニュー3 */
+//	case F_CUSTMENU_4				:/* カスタムメニュー4 */
+//	case F_CUSTMENU_5				:/* カスタムメニュー5 */
+//	case F_CUSTMENU_6				:/* カスタムメニュー6 */
+//	case F_CUSTMENU_7				:/* カスタムメニュー7 */
+//	case F_CUSTMENU_8				:/* カスタムメニュー8 */
+//	case F_CUSTMENU_9				:/* カスタムメニュー9 */
+//	case F_CUSTMENU_10				:/* カスタムメニュー10 */
+//	case F_CUSTMENU_11				:/* カスタムメニュー11 */
+//	case F_CUSTMENU_12				:/* カスタムメニュー12 */
+//	case F_CUSTMENU_13				:/* カスタムメニュー13 */
+//	case F_CUSTMENU_14				:/* カスタムメニュー14 */
+//	case F_CUSTMENU_15				:/* カスタムメニュー15 */
+//	case F_CUSTMENU_16				:/* カスタムメニュー16 */
+//	case F_CUSTMENU_17				:/* カスタムメニュー17 */
+//	case F_CUSTMENU_18				:/* カスタムメニュー18 */
+//	case F_CUSTMENU_19				:/* カスタムメニュー19 */
+//	case F_CUSTMENU_20				:/* カスタムメニュー20 */
+//	case F_CUSTMENU_21				:/* カスタムメニュー21 */
+//	case F_CUSTMENU_22				:/* カスタムメニュー22 */
+//	case F_CUSTMENU_23				:/* カスタムメニュー23 */
+//	case F_CUSTMENU_24				:/* カスタムメニュー24 */
 
-	/* �E�B���h�E�n */
-//	case F_SPLIT_V					://�㉺�ɕ���	//Sept. 16, 2000 jepro �������u�c�v����u�㉺�Ɂv�ɕύX
-//	case F_SPLIT_H					://���E�ɕ���	//Sept. 16, 2000 jepro �������u���v����u���E�Ɂv�ɕύX
-//	case F_SPLIT_VH					://�c���ɕ���	//Sept. 17, 2000 jepro �����Ɂu�Ɂv��ǉ�
-//	case F_WINCLOSE					://�E�B���h�E�����
-//	case F_WIN_CLOSEALL				://���ׂẴE�B���h�E�����	//Oct. 17, 2000 JEPRO ���O��ύX(F_FILECLOSEALL��F_WIN_CLOSEALL)
-//	case F_NEXTWINDOW				://���̃E�B���h�E
-//	case F_PREVWINDOW				://�O�̃E�B���h�E
-//	case F_CASCADE					://�d�˂ĕ\��
-//	case F_TILE_V					://�㉺�ɕ��ׂĕ\��
-//	case F_TILE_H					://���E�ɕ��ׂĕ\��
-//	case F_MAXIMIZE_V				://�c�����ɍő剻
-//	case F_MINIMIZE_ALL				://���ׂčŏ���	//Sept. 17, 2000 jepro �����́u�S�āv���u���ׂāv�ɓ���
-	case F_REDRAW					://�ĕ`��
-	case F_WIN_OUTPUT				://�A�E�g�v�b�g�E�B���h�E�\��
-//	case F_TRACEOUT					://�}�N���p�A�E�g�v�b�g�E�B���h�E�ɕ\��	2006.04.26 maru
-	case F_TOPMOST					://��Ɏ�O�ɕ\��
-//	case F_GROUPCLOSE				://�O���[�v�����	// 2007.06.20 ryoji
-//	case F_NEXTGROUP				://���̃O���[�v	// 2007.06.20 ryoji
-//	case F_PREVGROUP				://�O�̃O���[�v	// 2007.06.20 ryoji
-//	case F_TAB_MOVERIGHT			://�^�u���E�Ɉړ�	// 2007.06.20 ryoji
-//	case F_TAB_MOVELEFT				://�^�u�����Ɉړ�	// 2007.06.20 ryoji
-//	case F_TAB_SEPARATE				://�V�K�O���[�v	// 2007.06.20 ryoji
-//	case F_TAB_JOINTNEXT			://���̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
-//	case F_TAB_JOINTPREV			://�O�̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
+	/* ウィンドウ系 */
+//	case F_SPLIT_V					://上下に分割	//Sept. 16, 2000 jepro 説明を「縦」から「上下に」に変更
+//	case F_SPLIT_H					://左右に分割	//Sept. 16, 2000 jepro 説明を「横」から「左右に」に変更
+//	case F_SPLIT_VH					://縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+//	case F_WINCLOSE					://ウィンドウを閉じる
+//	case F_WIN_CLOSEALL				://すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+//	case F_NEXTWINDOW				://次のウィンドウ
+//	case F_PREVWINDOW				://前のウィンドウ
+//	case F_CASCADE					://重ねて表示
+//	case F_TILE_V					://上下に並べて表示
+//	case F_TILE_H					://左右に並べて表示
+//	case F_MAXIMIZE_V				://縦方向に最大化
+//	case F_MINIMIZE_ALL				://すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	case F_REDRAW					://再描画
+	case F_WIN_OUTPUT				://アウトプットウィンドウ表示
+//	case F_TRACEOUT					://マクロ用アウトプットウィンドウに表示	2006.04.26 maru
+	case F_TOPMOST					://常に手前に表示
+//	case F_GROUPCLOSE				://グループを閉じる	// 2007.06.20 ryoji
+//	case F_NEXTGROUP				://次のグループ	// 2007.06.20 ryoji
+//	case F_PREVGROUP				://前のグループ	// 2007.06.20 ryoji
+//	case F_TAB_MOVERIGHT			://タブを右に移動	// 2007.06.20 ryoji
+//	case F_TAB_MOVELEFT				://タブを左に移動	// 2007.06.20 ryoji
+//	case F_TAB_SEPARATE				://新規グループ	// 2007.06.20 ryoji
+//	case F_TAB_JOINTNEXT			://次のグループに移動	// 2007.06.20 ryoji
+//	case F_TAB_JOINTPREV			://前のグループに移動	// 2007.06.20 ryoji
 
-	/* �x�� */
-//  case F_HOKAN					:/* ���͕⊮ */				//Oct. 15, 2000 JEPRO �����ĂȂ������̂œ���Ă݂�
-//	case F_HELP_CONTENTS			:/* �w���v�ڎ� */			//Dec. 25, 2000 JEPRO �ǉ�
-//	case F_HELP_SEARCH				:/* �w���v�L�[���[�h���� */	//Dec. 25, 2000 JEPRO �ǉ�
-//	case F_MENU_ALLFUNC				:/* �R�}���h�ꗗ */
-//	case F_EXTHELP1					:/* �O���w���v�P */
-//	case F_EXTHTMLHELP				:/* �O��HTML�w���v */
-//	case F_ABOUT					:/* �o�[�W������� */		//Dec. 25, 2000 JEPRO �ǉ�
+	/* 支援 */
+//  case F_HOKAN					:/* 入力補完 */				//Oct. 15, 2000 JEPRO 入ってなかったので入れてみた
+//	case F_HELP_CONTENTS			:/* ヘルプ目次 */			//Dec. 25, 2000 JEPRO 追加
+//	case F_HELP_SEARCH				:/* ヘルプキーワード検索 */	//Dec. 25, 2000 JEPRO 追加
+//	case F_MENU_ALLFUNC				:/* コマンド一覧 */
+//	case F_EXTHELP1					:/* 外部ヘルプ１ */
+//	case F_EXTHTMLHELP				:/* 外部HTMLヘルプ */
+//	case F_ABOUT					:/* バージョン情報 */		//Dec. 25, 2000 JEPRO 追加
 
-	/* ���̑� */
+	/* その他 */
 		return TRUE;
 	}
 	return FALSE;
@@ -1218,15 +1218,15 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 }
 
 /*!
-	�}�N���ԍ�����Ή�����}�N���I�u�W�F�N�g�i�[�ʒu�ւ̃|�C���^�ւ̕ϊ�
+	マクロ番号から対応するマクロオブジェクト格納位置へのポインタへの変換
 	
-	@param idx [in] �}�N���ԍ�(0-), STAND_KEYMACRO�͕W���L�[�}�N���o�b�t�@�ATEMP_KEYMACRO�͈ꎞ�}�N���o�b�t�@��\���D
-	@return �I�u�W�F�N�g�ʒu�ւ̃|�C���^�D�}�N���ԍ����s���ȏꍇ��NULL�D
+	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファ、TEMP_KEYMACROは一時マクロバッファを表す．
+	@return オブジェクト位置へのポインタ．マクロ番号が不当な場合はNULL．
 */
 CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 {
 	//	Jun. 16, 2002 genta
-	//	�L�[�}�N���ȊO�̃}�N����ǂݍ��߂�悤��
+	//	キーマクロ以外のマクロを読み込めるように
 	if ( idx == STAND_KEYMACRO ){
 		return &m_pKeyMacro;
 	}
@@ -1243,10 +1243,10 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 }
 
 /*!
-	�L�[�{�[�h�}�N���̕ۑ����\���ǂ���
+	キーボードマクロの保存が可能かどうか
 	
-	@retval true �ۑ��\
-	@retval false �ۑ��s��
+	@retval true 保存可能
+	@retval false 保存不可
 */
 bool CSMacroMgr::IsSaveOk(void)
 {
@@ -1254,10 +1254,10 @@ bool CSMacroMgr::IsSaveOk(void)
 }
 
 /*!
-	�ꎞ�}�N������������
+	一時マクロを交換する
 	
-	@param newMacro [in] �V�����}�N���o�b�t�@�̃|�C���^�D
-	@return �O�̈ꎞ�}�N���o�b�t�@�̃|�C���^�D
+	@param newMacro [in] 新しいマクロバッファのポインタ．
+	@return 前の一時マクロバッファのポインタ．
 */
 CMacroManagerBase* CSMacroMgr::SetTempMacro( CMacroManagerBase *newMacro )
 {

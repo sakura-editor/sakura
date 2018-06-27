@@ -1,11 +1,11 @@
-/*!	@file
-	@brief WSHƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒgŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŸºæœ¬ã‚¯ãƒ©ã‚¹
 
-	@date 2009.10.29 syat CWSH.h‚©‚çØ‚èo‚µ
+	@date 2009.10.29 syat CWSH.hã‹ã‚‰åˆ‡ã‚Šå‡ºã—
 
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 	Copyright (C) 2009, syat
 
 	This software is provided 'as-is', without any express or implied
@@ -36,7 +36,7 @@
 #include "_os/OleTypes.h"
 class CEditView;
 
-//COMˆê”Ê
+//COMä¸€èˆ¬
 
 template<class Base>
 class ImplementsIUnknown: public Base
@@ -60,25 +60,25 @@ public:
 	virtual ~ImplementsIUnknown(){}
 };
 
-//WSHˆê”Ê
+//WSHä¸€èˆ¬
 
 class CIfObj;
 typedef HRESULT (CIfObj::*CIfObjMethod)(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
-//CIfObj‚ª•K—v‚Æ‚·‚éWSHClient‚ÌƒCƒ“ƒ^ƒtƒF[ƒX
+//CIfObjãŒå¿…è¦ã¨ã™ã‚‹WSHClientã®ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹
 class IWSHClient
 {
 public:
 	virtual void* GetData() const = 0;
 };
 
-//ƒXƒNƒŠƒvƒg‚É“n‚³‚ê‚éƒIƒuƒWƒFƒNƒg
+//ã‚¹ã‚¯ãƒªãƒ—ãƒˆã«æ¸¡ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 class CIfObj
 : public ImplementsIUnknown<IDispatch>
 {
 public:
-	// Œ^’è‹`
+	// å‹å®šç¾©
 	struct CMethodInfo
 	{
 		FUNCDESC		Desc;
@@ -89,19 +89,19 @@ public:
 	};
 	typedef std::vector<CMethodInfo> CMethodInfoList;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CIfObj(const wchar_t* name, bool isGlobal);
 	virtual ~CIfObj();
 
-	// ƒtƒB[ƒ‹ƒhEƒAƒNƒZƒT
-	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg–¼
-	bool IsGlobal() const { return this->m_isGlobal; } //ƒIƒuƒWƒFƒNƒg–¼‚ÌÈ—ª‰Â”Û
-	IWSHClient* Owner() const { return this->m_Owner; } // ƒI[ƒi[IWSHClient
+	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ãƒ»ã‚¢ã‚¯ã‚»ã‚µ
+	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå
+	bool IsGlobal() const { return this->m_isGlobal; } //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåã®çœç•¥å¯å¦
+	IWSHClient* Owner() const { return this->m_Owner; } // ã‚ªãƒ¼ãƒŠãƒ¼IWSHClient
 	std::wstring m_sName;
 	bool m_isGlobal;
 	IWSHClient *m_Owner;
 
-	// ‘€ì
+	// æ“ä½œ
 	void AddMethod(const wchar_t* Name, int ID, VARTYPE *ArgumentTypes,
 		int ArgumentCount, VARTYPE ResultType, CIfObjMethod Method);
 	void ReserveMethods(int Count)
@@ -109,7 +109,7 @@ public:
 		m_Methods.reserve(Count);
 	}
 
-	// À‘•
+	// å®Ÿè£…
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject);
 	virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(
 					REFIID riid,
@@ -134,8 +134,8 @@ public:
 					/* [out] */ UINT __RPC_FAR *pctinfo);
 
 private:
-	// ƒƒ“ƒo•Ï”
-	CMethodInfoList m_Methods;			//ƒƒ\ƒbƒhî•ñƒŠƒXƒg
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
+	CMethodInfoList m_Methods;			//ãƒ¡ã‚½ãƒƒãƒ‰æƒ…å ±ãƒªã‚¹ãƒˆ
 	ITypeInfo* m_TypeInfo;
 };
 

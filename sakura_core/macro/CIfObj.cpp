@@ -1,13 +1,13 @@
-/*!	@file
-	@brief WSHƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒgŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŸºæœ¬ã‚¯ãƒ©ã‚¹
 
-	@date 2009.10.29 syat CWSH.cpp‚©‚çØ‚èo‚µ
+	@date 2009.10.29 syat CWSH.cppã‹ã‚‰åˆ‡ã‚Šå‡ºã—
 
 	@par TODO
-	@li GetIDsOfNames‚ÌÅ“K‰» ¨ std::map‚ğg‚¦‚ÎŠy‚»‚¤c‚µ‚©‚µ„‚ÍSTL‚É‘a‚¢‚Ì‚Å(;_;
+	@li GetIDsOfNamesã®æœ€é©åŒ– â†’ std::mapã‚’ä½¿ãˆã°æ¥½ãã†â€¦ã—ã‹ã—ç§ã¯STLã«ç–ã„ã®ã§(;_;
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 	Copyright (C) 2003, FILE
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
@@ -36,13 +36,13 @@
 #include "StdAfx.h"
 #include "macro/CIfObj.h"
 
-//ƒgƒŒ[ƒXƒƒbƒZ[ƒW—L–³
+//ãƒˆãƒ¬ãƒ¼ã‚¹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æœ‰ç„¡
 #if defined( _DEBUG ) && defined( _UNICODE )
 #define TEST
 #endif
 
 /////////////////////////////////////////////
-//ƒXƒNƒŠƒvƒg‚É“n‚³‚ê‚éƒIƒuƒWƒFƒNƒg‚ÌŒ^î•ñ
+//ã‚¹ã‚¯ãƒªãƒ—ãƒˆã«æ¸¡ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹æƒ…å ±
 class CIfObjTypeInfo: public ImplementsIUnknown<ITypeInfo>
 {
 private:
@@ -130,8 +130,8 @@ public:
 	    /* [out] */ BSTR __RPC_FAR *pBstrHelpFile)
 	{
 		//	Feb. 08, 2004 genta
-		//	‚Æ‚è‚ ‚¦‚¸‘S•”NULL‚ğ•Ô‚· (î•ñ–³‚µ)
-		//	2014.02.12 Šeƒpƒ‰ƒ[ƒ^‚ğİ’è‚·‚é‚æ‚¤‚É
+		//	ã¨ã‚Šã‚ãˆãšå…¨éƒ¨NULLã‚’è¿”ã™ (æƒ…å ±ç„¡ã—)
+		//	2014.02.12 å„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹ã‚ˆã†ã«
 		if( memid == -1 ){
 			if( pBstrName ){
 				*pBstrName = SysAllocString( m_sName.c_str() );
@@ -222,7 +222,7 @@ CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, const std
 				: ImplementsIUnknown<ITypeInfo>(), m_MethodsRef(methods), m_sName(sName)
 { 
 	ZeroMemory(&m_TypeAttr, sizeof(m_TypeAttr));
-	m_TypeAttr.cImplTypes = 0; //eƒNƒ‰ƒX‚ÌITypeInfo‚Ì”
+	m_TypeAttr.cImplTypes = 0; //è¦ªã‚¯ãƒ©ã‚¹ã®ITypeInfoã®æ•°
 	m_TypeAttr.cFuncs = (WORD)m_MethodsRef.size();
 }
 
@@ -254,22 +254,22 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
 
 
 /////////////////////////////////////////////
-//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg
+//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CIfObj::CIfObj(const wchar_t* name, bool isGlobal)
 : ImplementsIUnknown<IDispatch>(), m_sName(name), m_isGlobal(isGlobal), m_Owner(0), m_Methods(), m_TypeInfo(NULL)
 { 
 };
 
-//ƒfƒXƒgƒ‰ƒNƒ^
+//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CIfObj::~CIfObj()
 {
 	if(m_TypeInfo != NULL)
 		m_TypeInfo->Release();
 }
 	
-//IUnknownÀ‘•
+//IUnknownå®Ÿè£…
 HRESULT STDMETHODCALLTYPE CIfObj::QueryInterface(REFIID iid, void ** ppvObject) 
 {
 	if(ppvObject == NULL) 
@@ -284,7 +284,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::QueryInterface(REFIID iid, void ** ppvObject)
 		return E_NOINTERFACE;
 }
 
-//IDispatchÀ‘•
+//IDispatchå®Ÿè£…
 HRESULT STDMETHODCALLTYPE CIfObj::Invoke(
 				DISPID dispidMember,
 				REFIID riid,
@@ -337,13 +337,13 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 	for(unsigned i = 0; i < cNames; ++i)
 	{
 #ifdef TEST
-		//‘å—Ê‚ÉƒƒbƒZ[ƒW‚ªo‚é‚Ì‚Å’ˆÓB
+		//å¤§é‡ã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒå‡ºã‚‹ã®ã§æ³¨æ„ã€‚
 		//DEBUG_TRACE( _T("GetIDsOfNames: %ls\n"), rgszNames[i] );
 #endif
 		size_t nSize = m_Methods.size();
 		for(size_t j = 0; j < nSize; ++j)
 		{
-			//	Nov. 10, 2003 FILE Win9X‚Å‚ÍA[lstrcmpiW]‚ª–³Œø‚Ì‚½‚ßA[_wcsicmp]‚ÉC³
+			//	Nov. 10, 2003 FILE Win9Xã§ã¯ã€[lstrcmpiW]ãŒç„¡åŠ¹ã®ãŸã‚ã€[_wcsicmp]ã«ä¿®æ­£
 			if(_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0)
 			{
 				rgdispid[i] = j;
@@ -357,7 +357,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 	return S_OK;
 }
 
-//Œ^î•ñ‚Éƒƒ\ƒbƒh‚ğ’Ç‰Á‚·‚é
+//å‹æƒ…å ±ã«ãƒ¡ã‚½ãƒƒãƒ‰ã‚’è¿½åŠ ã™ã‚‹
 void CIfObj::AddMethod(
 	const wchar_t*	Name,
 	int				ID,
@@ -368,15 +368,15 @@ void CIfObj::AddMethod(
 )
 {
 	/*
-		this->m_TypeInfo‚ª NULL‚Å‚È‚¯‚ê‚Î AddMethod()‚Í”½‰f‚³‚ê‚È‚¢B
+		this->m_TypeInfoãŒ NULLã§ãªã‘ã‚Œã° AddMethod()ã¯åæ˜ ã•ã‚Œãªã„ã€‚
 	*/
 	m_Methods.push_back(CMethodInfo());
 	CMethodInfo *Info = &m_Methods[m_Methods.size() - 1];
 	ZeroMemory(Info, sizeof(CMethodInfo));
 	Info->Desc.invkind = INVOKE_FUNC;
-	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //–ß‚è’l‚Ì•ª
+	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //æˆ»ã‚Šå€¤ã®åˆ†
 	Info->Desc.lprgelemdescParam = Info->Arguments;
-	//	Nov. 10, 2003 FILE Win9X‚Å‚ÍA[lstrcpyW]‚ª–³Œø‚Ì‚½‚ßA[wcscpy]‚ÉC³
+	//	Nov. 10, 2003 FILE Win9Xã§ã¯ã€[lstrcpyW]ãŒç„¡åŠ¹ã®ãŸã‚ã€[wcscpy]ã«ä¿®æ­£
 	assert( auto_strlen(Name)<_countof(Info->Name) );
 	wcscpy(Info->Name, Name);
 	Info->Method = Method;

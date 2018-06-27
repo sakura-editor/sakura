@@ -1,10 +1,10 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief PPA Library Handler
 
-	PPA.DLL‚ğ—˜—p‚·‚é‚½‚ß‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+	PPA.DLLã‚’åˆ©ç”¨ã™ã‚‹ãŸã‚ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
 	@author YAZAKI
-	@date 2002”N1Œ26“ú
+	@date 2002å¹´1æœˆ26æ—¥
 */
 /*
 	Copyright (C) 2001, YAZAKI
@@ -61,10 +61,10 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 bool CPPA::Execute(CEditView* pcEditView, int flags )
 {
-	//PPA‚Ì‘½d‹N“®‹Ö~ 2008.10.22 syat
+	//PPAã®å¤šé‡èµ·å‹•ç¦æ­¢ 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
 		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LS(STR_ERR_DLGPPA1) );
 		m_fnAbort();
@@ -80,15 +80,15 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
 	
-	//	Às‘O‚ÉƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‘Ò”ğ‚·‚é
+	//	å®Ÿè¡Œå‰ã«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å¾…é¿ã™ã‚‹
 	PpaExecInfo* old_instance = m_CurInstance;
 	m_CurInstance = &info;
 	m_fnExecute();
 	
-	//	ƒ}ƒNƒÀsŠ®—¹Œã‚Í‚±‚±‚É–ß‚Á‚Ä‚­‚é
+	//	ãƒã‚¯ãƒ­å®Ÿè¡Œå®Œäº†å¾Œã¯ã“ã“ã«æˆ»ã£ã¦ãã‚‹
 	m_CurInstance = old_instance;
 
-	//PPA‚Ì‘½d‹N“®‹Ö~ 2008.10.22 syat
+	//PPAã®å¤šé‡èµ·å‹•ç¦æ­¢ 2008.10.22 syat
 	CPPA::m_bIsRunning = false;
 	return !info.m_bError;
 }
@@ -99,20 +99,20 @@ LPCTSTR CPPA::GetDllNameImp(int nIndex)
 }
 
 /*!
-	DLL‚Ì‰Šú‰»
+	DLLã®åˆæœŸåŒ–
 
-	ŠÖ”‚ÌƒAƒhƒŒƒX‚ğæ“¾‚µ‚Äƒƒ“ƒo‚É•ÛŠÇ‚·‚éD
+	é–¢æ•°ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã—ã¦ãƒ¡ãƒ³ãƒã«ä¿ç®¡ã™ã‚‹ï¼
 
-	@retval true ¬Œ÷
-	@retval false ƒAƒhƒŒƒXæ“¾‚É¸”s
+	@retval true æˆåŠŸ
+	@retval false ã‚¢ãƒ‰ãƒ¬ã‚¹å–å¾—ã«å¤±æ•—
 */
 bool CPPA::InitDllImp()
 {
-	/* PPA.DLL‚ª‚Á‚Ä‚¢‚éŠÖ”‚ğ€”õ */
+	/* PPA.DLLãŒæŒã£ã¦ã„ã‚‹é–¢æ•°ã‚’æº–å‚™ */
 
-	//	Apr. 15, 2002 genta const‚ğ•t‚¯‚½
-	//	ƒAƒhƒŒƒX‚Ì“ü‚êêŠ‚ÍƒIƒuƒWƒFƒNƒg‚ÉˆË‘¶‚·‚é‚Ì‚Å
-	//	static”z—ñ‚É‚Í‚Å‚«‚È‚¢B
+	//	Apr. 15, 2002 genta constã‚’ä»˜ã‘ãŸ
+	//	ã‚¢ãƒ‰ãƒ¬ã‚¹ã®å…¥ã‚Œå ´æ‰€ã¯ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ä¾å­˜ã™ã‚‹ã®ã§
+	//	staticé…åˆ—ã«ã¯ã§ããªã„ã€‚
 	const ImportTable table[] = 
 	{
 		{ &m_fnExecute,		"Execute" },
@@ -161,7 +161,7 @@ bool CPPA::InitDllImp()
 	};
 
 	//	Apr. 15, 2002 genta
-	//	CDllImp‚Ì‹¤’ÊŠÖ”‰»‚µ‚½
+	//	CDllImpã®å…±é€šé–¢æ•°åŒ–ã—ãŸ
 	if( ! RegisterEntries(table) )
 		return false;
 
@@ -169,57 +169,57 @@ bool CPPA::InitDllImp()
 	SetStrFunc((void *)CPPA::stdStrFunc);
 	SetProc((void *)CPPA::stdProc);
 
-	// 2003.06.01 Moca ƒGƒ‰[ƒƒbƒZ[ƒW‚ğ’Ç‰Á
+	// 2003.06.01 Moca ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿½åŠ 
 	SetErrProc((void *)CPPA::stdError);
-	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMes—p
+	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMesç”¨
 #if PPADLL_VER >= 123
 	SetFinishProc((void *)CPPA::stdFinishProc);
 #endif
 
-	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAƒGƒfƒBƒ^—p“Æ©ŠÖ”‚ğ€”õ
-	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 ƒfƒoƒbƒO—p•¶š—ñ•Ï”‚ğ—pˆÓ
+	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAã‚¨ãƒ‡ã‚£ã‚¿ç”¨ç‹¬è‡ªé–¢æ•°ã‚’æº–å‚™
+	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 ãƒ‡ãƒãƒƒã‚°ç”¨æ–‡å­—åˆ—å¤‰æ•°ã‚’ç”¨æ„
 
 	int i;
 	
-	//	Jun. 16, 2003 genta ˆêì‹ÆƒGƒŠƒA
+	//	Jun. 16, 2003 genta ä¸€æ™‚ä½œæ¥­ã‚¨ãƒªã‚¢
 	char buf[1024];
-	// ƒRƒ}ƒ“ƒh‚É’u‚«Š·‚¦‚ç‚ê‚È‚¢ŠÖ”  PPA–³‚µ‚Å‚Íg‚¦‚È‚¢BBB
+	// ã‚³ãƒãƒ³ãƒ‰ã«ç½®ãæ›ãˆã‚‰ã‚Œãªã„é–¢æ•° ï¼ PPAç„¡ã—ã§ã¯ä½¿ãˆãªã„ã€‚ã€‚ã€‚
 	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
-		//	2003.06.08 Moca ƒƒ‚ƒŠ[ƒŠ[ƒN‚ÌC³
-		//	2003.06.16 genta ƒoƒbƒtƒ@‚ğŠO‚©‚ç—^‚¦‚é‚æ‚¤‚É
-		//	ŠÖ”“o˜^—p•¶š—ñ‚ğì¬‚·‚é
+		//	2003.06.08 Moca ãƒ¡ãƒ¢ãƒªãƒ¼ãƒªãƒ¼ã‚¯ã®ä¿®æ­£
+		//	2003.06.16 genta ãƒãƒƒãƒ•ã‚¡ã‚’å¤–ã‹ã‚‰ä¸ãˆã‚‹ã‚ˆã†ã«
+		//	é–¢æ•°ç™»éŒ²ç”¨æ–‡å­—åˆ—ã‚’ä½œæˆã™ã‚‹
 		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
 		SetDefProc( buf );
 	}
 
-	// ƒRƒ}ƒ“ƒh‚É’u‚«Š·‚¦‚ç‚ê‚éŠÖ”  PPA–³‚µ‚Å‚àg‚¦‚éB
+	// ã‚³ãƒãƒ³ãƒ‰ã«ç½®ãæ›ãˆã‚‰ã‚Œã‚‹é–¢æ•° ï¼ PPAç„¡ã—ã§ã‚‚ä½¿ãˆã‚‹ã€‚
 	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; i++) {
-		//	2003.06.08 Moca ƒƒ‚ƒŠ[ƒŠ[ƒN‚ÌC³
-		//	2003.06.16 genta ƒoƒbƒtƒ@‚ğŠO‚©‚ç—^‚¦‚é‚æ‚¤‚É
-		//	ŠÖ”“o˜^—p•¶š—ñ‚ğì¬‚·‚é
+		//	2003.06.08 Moca ãƒ¡ãƒ¢ãƒªãƒ¼ãƒªãƒ¼ã‚¯ã®ä¿®æ­£
+		//	2003.06.16 genta ãƒãƒƒãƒ•ã‚¡ã‚’å¤–ã‹ã‚‰ä¸ãˆã‚‹ã‚ˆã†ã«
+		//	é–¢æ•°ç™»éŒ²ç”¨æ–‡å­—åˆ—ã‚’ä½œæˆã™ã‚‹
 		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
 		SetDefProc( buf );
 	}
 	return true; 
 }
 
-/*! PPA‚ÉŠÖ”‚ğ“o˜^‚·‚é‚½‚ß‚Ì•¶š—ñ‚ğì¬‚·‚é
+/*! PPAã«é–¢æ•°ã‚’ç™»éŒ²ã™ã‚‹ãŸã‚ã®æ–‡å­—åˆ—ã‚’ä½œæˆã™ã‚‹
 
-	@param cMacroFuncInfo [in]	ƒ}ƒNƒƒf[ƒ^
-	@param szBuffer [out]		¶¬‚µ‚½•¶š—ñ‚ğ“ü‚ê‚éƒoƒbƒtƒ@‚Ö‚Ìƒ|ƒCƒ“ƒ^
+	@param cMacroFuncInfo [in]	ãƒã‚¯ãƒ­ãƒ‡ãƒ¼ã‚¿
+	@param szBuffer [out]		ç”Ÿæˆã—ãŸæ–‡å­—åˆ—ã‚’å…¥ã‚Œã‚‹ãƒãƒƒãƒ•ã‚¡ã¸ã®ãƒã‚¤ãƒ³ã‚¿
 
-	@note ƒoƒbƒtƒ@ƒTƒCƒY‚Í 9 + 3 + ƒƒ\ƒbƒh–¼‚Ì’·‚³ + 13 * 4 + 9 + 5 ‚ÍÅ’á•K—v
+	@note ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã¯ 9 + 3 + ãƒ¡ã‚½ãƒƒãƒ‰åã®é•·ã• + 13 * 4 + 9 + 5 ã¯æœ€ä½å¿…è¦
 
 	@date 2003.06.01 Moca
-				ƒXƒ^ƒeƒBƒbƒNƒƒ“ƒo‚É•ÏX
-				cMacroFuncInfo.m_pszData‚ğ‘‚«Š·‚¦‚È‚¢‚æ‚¤‚É•ÏX
+				ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ãƒ³ãƒã«å¤‰æ›´
+				cMacroFuncInfo.m_pszDataã‚’æ›¸ãæ›ãˆãªã„ã‚ˆã†ã«å¤‰æ›´
 
-	@date 2003.06.16 genta –³‘Ê‚Ènew/delete‚ğ”ğ‚¯‚é‚½‚ßƒoƒbƒtƒ@‚ğŠO‚©‚ç—^‚¦‚é‚æ‚¤‚É
+	@date 2003.06.16 genta ç„¡é§„ãªnew/deleteã‚’é¿ã‘ã‚‹ãŸã‚ãƒãƒƒãƒ•ã‚¡ã‚’å¤–ã‹ã‚‰ä¸ãˆã‚‹ã‚ˆã†ã«
 */
 char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer )
 {
-	char szType[20];			//	procedure/function—pƒoƒbƒtƒ@
-	char szReturn[20];			//	–ß‚è’lŒ^—pƒoƒbƒtƒ@
+	char szType[20];			//	procedure/functionç”¨ãƒãƒƒãƒ•ã‚¡
+	char szReturn[20];			//	æˆ»ã‚Šå€¤å‹ç”¨ãƒãƒƒãƒ•ã‚¡
 	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
 		strcpy( szType, "procedure" );
 		szReturn[0] = '\0';
@@ -237,7 +237,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		}
 	}
 	
-	char szArguments[8][20];	//	ˆø”—pƒoƒbƒtƒ@
+	char szArguments[8][20];	//	å¼•æ•°ç”¨ãƒãƒƒãƒ•ã‚¡
 	int i;
 	for (i=0; i<8; i++){
 		VARTYPE type = VT_EMPTY;
@@ -263,10 +263,10 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 			strcpy( szArguments[i], "u0: Unknown" );
 		}
 	}
-	if ( i > 0 ){	//	ˆø”‚ª‚ ‚Á‚½‚Æ‚«
+	if ( i > 0 ){	//	å¼•æ•°ãŒã‚ã£ãŸã¨ã
 		int j;
 		char szArgument[8*20];
-		// 2002.12.06 Moca Œ´ˆö•s–¾‚¾‚ªCstrcat‚ªVC6Pro‚Å‚¤‚Ü‚­“®‚©‚È‚©‚Á‚½‚½‚ßCstrcpy‚É‚µ‚Ä‚İ‚½‚ç“®‚¢‚½
+		// 2002.12.06 Moca åŸå› ä¸æ˜ã ãŒï¼ŒstrcatãŒVC6Proã§ã†ã¾ãå‹•ã‹ãªã‹ã£ãŸãŸã‚ï¼Œstrcpyã«ã—ã¦ã¿ãŸã‚‰å‹•ã„ãŸ
 		strcpy( szArgument, szArguments[0] );
 		for ( j=1; j<i; j++){
 			strcat( szArgument, "; " );
@@ -294,8 +294,8 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 
 
 
-/*! ƒ†[ƒU[’è‹`•¶š—ñŒ^ƒIƒuƒWƒFƒNƒg
-	Œ»İ‚ÍAƒfƒoƒbƒO—p•¶š—ñ‚ğİ’è‚·‚éˆ×‚Ì‚İ
+/*! ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©æ–‡å­—åˆ—å‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	ç¾åœ¨ã¯ã€ãƒ‡ãƒãƒƒã‚°ç”¨æ–‡å­—åˆ—ã‚’è¨­å®šã™ã‚‹ç‚ºã®ã¿
 */
 void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value)
 {
@@ -318,16 +318,16 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 }
 
 
-/*! ƒ†[ƒU[’è‹`ŠÖ”‚ÌƒGƒ‰[ƒƒbƒZ[ƒW‚Ìì¬
+/*! ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©é–¢æ•°ã®ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ä½œæˆ
 
-	stdProc, stdIntFunc, stdStrFunc ‚ªƒGƒ‰[ƒR[ƒh‚ğ•Ô‚µ‚½ê‡APPA‚©‚çŒÄ‚Ño‚³‚ê‚éB
-	ˆÙíI—¹/•s³ˆø”‚ÌƒGƒ‰[ƒƒbƒZ[ƒW‚ğ“Æ©‚Éw’è‚·‚éB
+	stdProc, stdIntFunc, stdStrFunc ãŒã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’è¿”ã—ãŸå ´åˆã€PPAã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
+	ç•°å¸¸çµ‚äº†/ä¸æ­£å¼•æ•°æ™‚ã®ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ç‹¬è‡ªã«æŒ‡å®šã™ã‚‹ã€‚
 	@author Moca
-	@param Err_CD IN  0ˆÈŠOŠeƒR[ƒ‹ƒoƒbƒNŠÖ”‚ªİ’è‚µ‚½’l
-			 1ˆÈã FuncID + 1
-			 0     PPA‚ÌƒGƒ‰[
-			-1ˆÈ‰º ‚»‚Ì‘¼ƒ†[ƒU’è‹`ƒGƒ‰[
-	@param Err_Mes IN ƒGƒ‰[ƒƒbƒZ[ƒW
+	@param Err_CD IN  0ä»¥å¤–å„ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°ãŒè¨­å®šã—ãŸå€¤
+			 1ä»¥ä¸Š FuncID + 1
+			 0     PPAã®ã‚¨ãƒ©ãƒ¼
+			-1ä»¥ä¸‹ ãã®ä»–ãƒ¦ãƒ¼ã‚¶å®šç¾©ã‚¨ãƒ©ãƒ¼
+	@param Err_Mes IN ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 
 	@date 2003.06.01 Moca
 */
@@ -336,9 +336,9 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	if( false != m_CurInstance->m_bError ){
 		return;
 	}
-	m_CurInstance->m_bError = true; // ŠÖ”“à‚ÅŠÖ”‚ğŒÄ‚Ôê‡“™A2‰ñ•\¦‚³‚ê‚é‚Ì‚ğ–h‚®
+	m_CurInstance->m_bError = true; // é–¢æ•°å†…ã§é–¢æ•°ã‚’å‘¼ã¶å ´åˆç­‰ã€2å›è¡¨ç¤ºã•ã‚Œã‚‹ã®ã‚’é˜²ã
 
-	TCHAR szMes[2048]; // 2048‚ ‚ê‚Î‘«‚è‚é‚©‚Æ
+	TCHAR szMes[2048]; // 2048ã‚ã‚Œã°è¶³ã‚Šã‚‹ã‹ã¨
 	const TCHAR* pszErr;
 	pszErr = szMes;
 	if( 0 < Err_CD ){
@@ -366,8 +366,8 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
 	}else{
-		//	2007.07.26 genta : ƒlƒXƒgÀs‚µ‚½ê‡‚ÉPPA‚ª•s³‚Èƒ|ƒCƒ“ƒ^‚ğ“n‚·‰Â”\«‚ğl—¶D
-		//	ÀÛ‚É‚Í•s³‚ÈƒGƒ‰[‚Í‘S‚ÄPPA.DLL“à•”‚Åƒgƒ‰ƒbƒv‚³‚ê‚é‚æ‚¤‚¾‚ª”O‚Ì‚½‚ßD
+		//	2007.07.26 genta : ãƒã‚¹ãƒˆå®Ÿè¡Œã—ãŸå ´åˆã«PPAãŒä¸æ­£ãªãƒã‚¤ãƒ³ã‚¿ã‚’æ¸¡ã™å¯èƒ½æ€§ã‚’è€ƒæ…®ï¼
+		//	å®Ÿéš›ã«ã¯ä¸æ­£ãªã‚¨ãƒ©ãƒ¼ã¯å…¨ã¦PPA.DLLå†…éƒ¨ã§ãƒˆãƒ©ãƒƒãƒ—ã•ã‚Œã‚‹ã‚ˆã†ã ãŒå¿µã®ãŸã‚ï¼
 		if( IsBadStringPtrA( Err_Mes, 256 )){
 			pszErr = LS(STR_ERR_DLGPPA6);
 		}else{
@@ -395,9 +395,9 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 
 
 //----------------------------------------------------------------------
-/** ƒvƒƒV[ƒWƒƒÀscallback
+/** ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£å®Ÿè¡Œcallback
 
-	@date 2007.07.20 genta Index‚Æˆê‚Éƒtƒ‰ƒO‚ğ“n‚·
+	@date 2007.07.20 genta Indexã¨ä¸€ç·’ã«ãƒ•ãƒ©ã‚°ã‚’æ¸¡ã™
 */
 void __stdcall CPPA::stdProc(
 	const char*		FuncName,
@@ -412,7 +412,7 @@ void __stdcall CPPA::stdProc(
 
 	*Err_CD = 0;
 
-	//Argument‚ğwchar_t[]‚É•ÏŠ· -> tmpArguments
+	//Argumentã‚’wchar_t[]ã«å¤‰æ› -> tmpArguments
 	WCHAR** tmpArguments2=new WCHAR*[ArgSize];
 	int* tmpArgLengths = new int[ArgSize];
 	for(int i=0;i<ArgSize;i++){
@@ -427,13 +427,13 @@ void __stdcall CPPA::stdProc(
 	}
 	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
-	//ˆ—
+	//å‡¦ç†
 	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments,tmpArgLengths, ArgSize );
 	if( !bRet ){
 		*Err_CD = Index + 1;
 	}
 
-	//tmpArguments‚ğ‰ğ•ú
+	//tmpArgumentsã‚’è§£æ”¾
 	for(int i=0;i<ArgSize;i++){
 		if(tmpArguments2[i]){
 			WCHAR* p=const_cast<WCHAR*>(tmpArguments2[i]);
@@ -446,9 +446,9 @@ void __stdcall CPPA::stdProc(
 
 //----------------------------------------------------------------------
 /*!
-	®”’l‚ğ•Ô‚·ŠÖ”‚ğˆ—‚·‚é
+	æ•´æ•°å€¤ã‚’è¿”ã™é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 
-	PPA‚©‚çŒÄ‚Ñ‚¾‚³‚ê‚é
+	PPAã‹ã‚‰å‘¼ã³ã ã•ã‚Œã‚‹
 	@author Moca
 	@date 2003.02.24 Moca
 */
@@ -475,7 +475,7 @@ void __stdcall CPPA::stdIntFunc(
 			*ResultValue = Ret.uintVal;
 			break;
 		default:
-			*Err_CD = -2; // 2003.06.01 Moca ’l•ÏX
+			*Err_CD = -2; // 2003.06.01 Moca å€¤å¤‰æ›´
 		}
 		::VariantClear(&Ret);
 		return;
@@ -487,10 +487,10 @@ void __stdcall CPPA::stdIntFunc(
 
 //----------------------------------------------------------------------
 /*!
-	•¶š—ñ‚ğ•Ô‚·ŠÖ”‚ğˆ—‚·‚é
+	æ–‡å­—åˆ—ã‚’è¿”ã™é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 
-	PPA‚©‚çŒÄ‚Ñ‚¾‚³‚ê‚é
-	@date 2003.02.24 Moca CallHandleFunction‘Î‰
+	PPAã‹ã‚‰å‘¼ã³ã ã•ã‚Œã‚‹
+	@date 2003.02.24 Moca CallHandleFunctionå¯¾å¿œ
 */
 void __stdcall CPPA::stdStrFunc(
 	const char* FuncName, const int Index,
@@ -521,9 +521,9 @@ void __stdcall CPPA::stdStrFunc(
 }
 
 /*!
-	ˆø”Œ^•ÏŠ·
+	å¼•æ•°å‹å¤‰æ›
 
-	•¶š—ñ‚Å—^‚¦‚ç‚ê‚½ˆø”‚ğVARIANT/BSTR‚É•ÏŠ·‚µ‚ÄCMacro::HandleFunction()‚ğŒÄ‚Ñ‚¾‚·
+	æ–‡å­—åˆ—ã§ä¸ãˆã‚‰ã‚ŒãŸå¼•æ•°ã‚’VARIANT/BSTRã«å¤‰æ›ã—ã¦CMacro::HandleFunction()ã‚’å‘¼ã³ã ã™
 	@author Moca
 */
 bool CPPA::CallHandleFunction(
@@ -594,13 +594,13 @@ bool CPPA::CallHandleFunction(
 #if PPADLL_VER >= 123
 
 /*!
-	PPAƒ}ƒNƒ‚ÌÀsI—¹‚ÉŒÄ‚Î‚ê‚é
+	PPAãƒã‚¯ãƒ­ã®å®Ÿè¡Œçµ‚äº†æ™‚ã«å‘¼ã°ã‚Œã‚‹
 	
 	@date 2003.06.01 Moca
 */
 void __stdcall CPPA::stdFinishProc()
 {
-	// 2007.07.26 genta : I—¹ˆ—‚Í•s—v
+	// 2007.07.26 genta : çµ‚äº†å‡¦ç†ã¯ä¸è¦
 }
 
 #endif

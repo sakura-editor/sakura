@@ -1,10 +1,10 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief PPA Library Handler
 
-	PPA.DLL‚ğ—˜—p‚·‚é‚½‚ß‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+	PPA.DLLã‚’åˆ©ç”¨ã™ã‚‹ãŸã‚ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
 	@author YAZAKI
-	@date 2002”N1Œ26“ú
+	@date 2002å¹´1æœˆ26æ—¥
 */
 /*
 	Copyright (C) 2001, YAZAKI, genta
@@ -32,13 +32,13 @@
 		   distribution.
 */
 /*
-PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚ÌPascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|[ƒlƒ“ƒg‚Å‚·B
+PPA(Poor-Pascal for Application)ã¯Delphi/C++Builderç”¨ã®Pascalã‚¤ãƒ³ã‚¿ãƒ—ãƒªã‚¿ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã§ã™ã€‚
 */
 
 #ifndef _DLL_CPPA_H_
 #define _DLL_CPPA_H_
 
-#include <ObjIdl.h>  // VARIANT“™
+#include <ObjIdl.h>  // VARIANTç­‰
 #include <stdio.h>
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
@@ -46,24 +46,24 @@ PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚ÌPascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|
 #define PPADLL_VER 123
 
 /*
-PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚Ì
-PascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|[ƒlƒ“ƒg‚Å‚·B
-ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Éƒ}ƒNƒ‹@”\‚ğ“‹Ú‚·‚é–‚ğ–Ú“I‚Éì¬‚³‚ê‚Ä‚¢‚Ü‚·B
+PPA(Poor-Pascal for Application)ã¯Delphi/C++Builderç”¨ã®
+Pascalã‚¤ãƒ³ã‚¿ãƒ—ãƒªã‚¿ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã§ã™ã€‚
+ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã«ãƒã‚¯ãƒ­æ©Ÿèƒ½ã‚’æ­è¼‰ã™ã‚‹äº‹ã‚’ç›®çš„ã«ä½œæˆã•ã‚Œã¦ã„ã¾ã™ã€‚
 */
 
 /*!
-	@brief PPA.DLL ‚ğƒTƒ|[ƒg‚·‚éƒNƒ‰ƒX
+	@brief PPA.DLL ã‚’ã‚µãƒãƒ¼ãƒˆã™ã‚‹ã‚¯ãƒ©ã‚¹
 
-	DLL‚Ì“®“Iƒ[ƒh‚ğs‚¤‚½‚ßADllHandler‚ğŒp³‚µ‚Ä‚¢‚éB
+	DLLã®å‹•çš„ãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ãŸã‚ã€DllHandlerã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã€‚
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 class CPPA : public CDllImp {
 public:
 	CPPA();
 	virtual ~CPPA();
 
-	const char* GetVersion(){		//!< DLL‚Ìƒo[ƒWƒ‡ƒ“î•ñ‚ğæ“¾Bm_szMsg‚ğ‰ó‚·
+	const char* GetVersion(){		//!< DLLã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã‚’å–å¾—ã€‚m_szMsgã‚’å£Šã™
 		if ( IsAvailable() ){
 			auto_sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
@@ -71,21 +71,21 @@ public:
 		return "";
 	}
 
-	//! PPAƒƒbƒZ[ƒW‚ğæ“¾‚·‚é
+	//! PPAãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å–å¾—ã™ã‚‹
 	const char* GetLastMessage(void) const { return m_szMsg; }
 
-	//	Jun. 16, 2003 genta ˆø”’Ç‰Á
+	//	Jun. 16, 2003 genta å¼•æ•°è¿½åŠ 
 	static char* GetDeclarations( const MacroFuncInfo&, char* buf );
 
 protected:
-	//	Jul. 5, 2001 genta ƒCƒ“ƒ^[ƒtƒF[ƒX•ÏX‚É”º‚¤ˆø”’Ç‰Á
+	//	Jul. 5, 2001 genta ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹å¤‰æ›´ã«ä¼´ã†å¼•æ•°è¿½åŠ 
 public:
 	virtual LPCTSTR GetDllNameImp(int nIndex);
 protected:
 	virtual bool InitDllImp();
 
 private:
-	//	DLL Interface‚Ìó‚¯M
+	//	DLL Interfaceã®å—ã‘çš¿
 	typedef void (WINAPI *PPA_Execute)();
 	typedef void (WINAPI *PPA_SetSource) (const char* ss);
 	typedef void (WINAPI *PPA_SetDeclare)(const char* ss);
@@ -113,7 +113,7 @@ private:
 	typedef BOOL (WINAPI *PPA_SetIntVar) (const char*, int);
 	typedef BOOL (WINAPI *PPA_SetStrVar) (const char*, const char*);
 
-	// ˆÈ‰º‚Í PPA.DLL Version 1.20 ‚Å’Ç‰Á‚³‚ê‚½ŠÖ” --
+	// ä»¥ä¸‹ã¯ PPA.DLL Version 1.20 ã§è¿½åŠ ã•ã‚ŒãŸé–¢æ•° --
 	#if PPADLL_VER >= 120
 	typedef void   (WINAPI *PPA_AddRealVar)(const char*, double, BOOL);
 	typedef void   (WINAPI *PPA_SetRealObj)(void* p);
@@ -124,7 +124,7 @@ private:
 	typedef DWORD  (WINAPI *PPA_GetArgReal)(int);
 	#endif // PPADLL_VER >= 120
 
-	// ˆÈ‰º‚Í PPA.DLL Version 1.23 ‚Å’Ç‰Á‚³‚ê‚½ŠÖ” --
+	// ä»¥ä¸‹ã¯ PPA.DLL Version 1.23 ã§è¿½åŠ ã•ã‚ŒãŸé–¢æ•° --
 	#if PPADLL_VER >= 123
 	typedef BYTE (WINAPI *PPA_IsRunning)();
 	typedef void (WINAPI *PPA_SetFinishProc)(void* p);	//	2003.06.01 Moca
@@ -174,7 +174,7 @@ private:
 
 public:
 	// exported
-	//	2007.07.22 genta : flags’Ç‰Á
+	//	2007.07.22 genta : flagsè¿½åŠ 
 	bool Execute(class CEditView* pcEditView, int flags );
 	void SetSource(const char* ss)
 		{ m_fnSetSource(ss); }
@@ -252,7 +252,7 @@ public:
 #endif
 
 private:
-	// ƒR[ƒ‹ƒoƒbƒNƒvƒƒV[ƒWƒƒŒQ
+	// ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ç¾¤
 	static void __stdcall stdStrObj(const char*, int, BYTE, int*, char**);	//	2003.06.01 Moca
 
 	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
@@ -264,33 +264,33 @@ private:
 	static void __stdcall stdError( int, const char* );	//	2003.06.01 Moca
 	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
 
-	//	ƒƒ“ƒo•Ï”
-	char		m_szMsg[80];		//!< CPPA‚©‚ç‚ÌƒƒbƒZ[ƒW‚ğ•Û‚·‚é
+	//	ãƒ¡ãƒ³ãƒå¤‰æ•°
+	char		m_szMsg[80];		//!< CPPAã‹ã‚‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä¿æŒã™ã‚‹
 
-	//	2007.07.26 genta : PPA‚ÌƒlƒXƒg‚ğ‹–—e‚·‚é‚½‚ß‚ÉC•Êƒf[ƒ^\‘¢‚Æ‚·‚éD
+	//	2007.07.26 genta : PPAã®ãƒã‚¹ãƒˆã‚’è¨±å®¹ã™ã‚‹ãŸã‚ã«ï¼Œåˆ¥ãƒ‡ãƒ¼ã‚¿æ§‹é€ ã¨ã™ã‚‹ï¼
 	
 	struct PpaExecInfo {
-		CNativeA		m_cMemRet;		//!< ƒR[ƒ‹ƒoƒbƒN‚©‚çDLL‚É“n‚·•¶š—ñ‚ğ•Û
+		CNativeA		m_cMemRet;		//!< ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‹ã‚‰DLLã«æ¸¡ã™æ–‡å­—åˆ—ã‚’ä¿æŒ
 		CEditView*		m_pcEditView;	//	2003.06.01 Moca
 		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-		bool			m_bError;		//!< ƒGƒ‰[‚ª2‰ñ•\¦‚³‚ê‚é‚Ì‚ğ–h‚®	2003.06.01 Moca
-		CNativeA		m_cMemDebug;	//!< ƒfƒoƒbƒO—p•Ï”UserErrorMes 2003.06.01 Moca
-		/** ƒIƒvƒVƒ‡ƒ“ƒtƒ‰ƒO
+		bool			m_bError;		//!< ã‚¨ãƒ©ãƒ¼ãŒ2å›è¡¨ç¤ºã•ã‚Œã‚‹ã®ã‚’é˜²ã	2003.06.01 Moca
+		CNativeA		m_cMemDebug;	//!< ãƒ‡ãƒãƒƒã‚°ç”¨å¤‰æ•°UserErrorMes 2003.06.01 Moca
+		/** ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°
 		
-			CEditView::HandleCommand()‚ÉƒRƒ}ƒ“ƒh‚Æˆê‚É“n‚·‚±‚Æ‚Å
-			ƒRƒ}ƒ“ƒh‚Ì‘f«‚ğ‹³‚¦‚éD
+			CEditView::HandleCommand()ã«ã‚³ãƒãƒ³ãƒ‰ã¨ä¸€ç·’ã«æ¸¡ã™ã“ã¨ã§
+			ã‚³ãƒãƒ³ãƒ‰ã®ç´ æ€§ã‚’æ•™ãˆã‚‹ï¼
 		*/
 		int				m_commandflags;	//!< 
 	};
-	//	2007.07.26 genta : Œ»İÀs’†‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	//	2007.07.26 genta : ç¾åœ¨å®Ÿè¡Œä¸­ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	static PpaExecInfo* m_CurInstance;
-	//PPA‚Ì‘½d‹N“®‹Ö~ 2008.10.22 syat
-	static bool				m_bIsRunning;	//!< PPA‚ª“¯Às‚³‚ê‚é‚Ì‚ğ–h‚®
+	//PPAã®å¤šé‡èµ·å‹•ç¦æ­¢ 2008.10.22 syat
+	static bool				m_bIsRunning;	//!< PPAãŒåŒæ™‚å®Ÿè¡Œã•ã‚Œã‚‹ã®ã‚’é˜²ã
 
 
-/*	ŠÖ”–¼‚ÍCMacro‚ª‚ÂB
+/*	é–¢æ•°åã¯CMacroãŒæŒã¤ã€‚
 	static struct MacroFuncInfo	S_Table[];
-	static int					m_nFuncNum;	//	SAKURAƒGƒfƒBƒ^—pŠÖ”‚Ì”
+	static int					m_nFuncNum;	//	SAKURAã‚¨ãƒ‡ã‚£ã‚¿ç”¨é–¢æ•°ã®æ•°
 */
 };
 

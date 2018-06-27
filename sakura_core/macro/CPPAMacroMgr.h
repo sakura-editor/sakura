@@ -1,8 +1,8 @@
-/*!	@file
-	@brief PPA.DLLƒ}ƒNƒ
+ï»¿/*!	@file
+	@brief PPA.DLLãƒã‚¯ãƒ­
 
 	@author YAZAKI
-	@date 2002”N1Œ26“ú
+	@date 2002å¹´1æœˆ26æ—¥
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -21,9 +21,9 @@
 #include "CPPA.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-//! PPAƒ}ƒNƒ
+//! PPAãƒã‚¯ãƒ­
 class CPPAMacroMgr: public CMacroManagerBase
 {
 public:
@@ -34,11 +34,11 @@ public:
 	~CPPAMacroMgr();
 
 	/*
-	||	PPA.DLL‚ÉˆÏ÷‚·‚é•”•ª
+	||	PPA.DLLã«å§”è­²ã™ã‚‹éƒ¨åˆ†
 	*/
-	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* PPAƒ}ƒNƒ‚ÌÀs */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚İACMacro‚Ì—ñ‚É•ÏŠ· */
-	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğ•¶š—ñ‚©‚ç“Ç‚İ‚İACMacro‚Ì—ñ‚É•ÏŠ· */
+	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* PPAãƒã‚¯ãƒ­ã®å®Ÿè¡Œ */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã¿ã€CMacroã®åˆ—ã«å¤‰æ› */
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’æ–‡å­—åˆ—ã‹ã‚‰èª­ã¿è¾¼ã¿ã€CMacroã®åˆ—ã«å¤‰æ› */
 
 	static class CPPA m_cPPA;
 

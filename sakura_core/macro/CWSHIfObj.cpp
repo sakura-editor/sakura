@@ -1,10 +1,10 @@
-/*!	@file
-	@brief WSHƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒgŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŸºæœ¬ã‚¯ãƒ©ã‚¹
 
-	@date 2009.10.29 syat CWSH.cpp‚©‚çØ‚èo‚µ
+	@date 2009.10.29 syat CWSH.cppã‹ã‚‰åˆ‡ã‚Šå‡ºã—
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 	Copyright (C) 2003, FILE
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
@@ -38,24 +38,24 @@
 #include "util/other_util.h" // auto_array_ptr
 
 
-//ƒRƒ}ƒ“ƒhEŠÖ”‚ğ€”õ‚·‚é
+//ã‚³ãƒãƒ³ãƒ‰ãƒ»é–¢æ•°ã‚’æº–å‚™ã™ã‚‹
 void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
 {
 	this->m_pView = pView;
-	//	 2007.07.20 genta : ƒRƒ}ƒ“ƒh‚É¬‚º‚Şƒtƒ‰ƒO‚ğ“n‚·
+	//	 2007.07.20 genta : ã‚³ãƒãƒ³ãƒ‰ã«æ··ãœè¾¼ã‚€ãƒ•ãƒ©ã‚°ã‚’æ¸¡ã™
 	ReadyCommands(GetMacroCommandInfo(), flags | FA_FROMMACRO );
 	ReadyCommands(GetMacroFuncInfo(), 0);
-	/* CWSHIfObj‚ğŒp³‚µ‚½ƒTƒuƒNƒ‰ƒX‚©‚çReadyMethods‚ğŒÄ‚Ño‚µ‚½ê‡A
-	 * ƒTƒuƒNƒ‰ƒX‚ÌGetMacroCommandInfo,GetMacroFuncInfo‚ªŒÄ‚Ño‚³‚ê‚éB */
+	/* CWSHIfObjã‚’ç¶™æ‰¿ã—ãŸã‚µãƒ–ã‚¯ãƒ©ã‚¹ã‹ã‚‰ReadyMethodsã‚’å‘¼ã³å‡ºã—ãŸå ´åˆã€
+	 * ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®GetMacroCommandInfo,GetMacroFuncInfoãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚ */
 }
 
-/** WSHƒ}ƒNƒƒGƒ“ƒWƒ“‚ÖƒRƒ}ƒ“ƒh“o˜^‚ğs‚¤
+/** WSHãƒã‚¯ãƒ­ã‚¨ãƒ³ã‚¸ãƒ³ã¸ã‚³ãƒãƒ³ãƒ‰ç™»éŒ²ã‚’è¡Œã†
 
-	@date 2007.07.20 genta flags’Ç‰ÁDflag‚ÍƒRƒ}ƒ“ƒh“o˜^’iŠK‚Å¬‚º‚Ä‚¨‚­D
+	@date 2007.07.20 genta flagsè¿½åŠ ï¼flagã¯ã‚³ãƒãƒ³ãƒ‰ç™»éŒ²æ®µéšã§æ··ãœã¦ãŠãï¼
 */
 void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 {
-	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta ”Ôl‚Ì’l‚ª•ÏX‚³‚ê‚½‚Ì‚Å‚±‚±‚à•ÏX
+	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta ç•ªäººã®å€¤ãŒå¤‰æ›´ã•ã‚ŒãŸã®ã§ã“ã“ã‚‚å¤‰æ›´
 	{
 		wchar_t FuncName[256];
 		wcscpy(FuncName, Info->m_pszFuncName);
@@ -81,7 +81,7 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 				}
 			}
 		}
-		//	2007.07.21 genta : flag‚ğ‰Á‚¦‚½’l‚ğ“o˜^‚·‚é
+		//	2007.07.21 genta : flagã‚’åŠ ãˆãŸå€¤ã‚’ç™»éŒ²ã™ã‚‹
 		this->AddMethod(
 			FuncName,
 			(Info->m_nFuncID | flags),
@@ -89,8 +89,8 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 			ArgCount,
 			Info->m_varResult,
 			reinterpret_cast<CIfObjMethod>(&CWSHIfObj::MacroCommand)
-			/* CWSHIfObj‚ğŒp³‚µ‚½ƒTƒuƒNƒ‰ƒX‚©‚çReadyCommands‚ğŒÄ‚Ño‚µ‚½ê‡A
-			 * ƒTƒuƒNƒ‰ƒX‚ÌMacroCommand‚ªŒÄ‚Ño‚³‚ê‚éB */
+			/* CWSHIfObjã‚’ç¶™æ‰¿ã—ãŸã‚µãƒ–ã‚¯ãƒ©ã‚¹ã‹ã‚‰ReadyCommandsã‚’å‘¼ã³å‡ºã—ãŸå ´åˆã€
+			 * ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®MacroCommandãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚ */
 		);
 		delete [] varArgTmp;
 		++Info;
@@ -98,10 +98,10 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 }
 
 /*!
-	ƒ}ƒNƒƒRƒ}ƒ“ƒh‚ÌÀs
+	ãƒã‚¯ãƒ­ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œ
 
-	@date 2005.06.27 zenryaku –ß‚è’l‚Ìó‚¯æ‚è‚ª–³‚­‚Ä‚àƒGƒ‰[‚É‚¹‚¸‚ÉŠÖ”‚ğÀs‚·‚é
-	@date 2013.06.07 Moca 5‚ÂˆÈã‚Ìˆø”‚Ì‚¸‚ê‚é‚Ì‚ğC³BNUL‚ğŠÜ‚Ş•¶š—ñ‘Î‰
+	@date 2005.06.27 zenryaku æˆ»ã‚Šå€¤ã®å—ã‘å–ã‚ŠãŒç„¡ãã¦ã‚‚ã‚¨ãƒ©ãƒ¼ã«ã›ãšã«é–¢æ•°ã‚’å®Ÿè¡Œã™ã‚‹
+	@date 2013.06.07 Moca 5ã¤ä»¥ä¸Šã®å¼•æ•°ã®æ™‚ãšã‚Œã‚‹ã®ã‚’ä¿®æ­£ã€‚NULã‚’å«ã‚€æ–‡å­—åˆ—å¯¾å¿œ
 */
 HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
@@ -109,20 +109,20 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 	int ArgCount = Arguments->cArgs;
 
 	const EFunctionCode ID = static_cast<EFunctionCode>(IntID);
-	//	2007.07.22 genta : ƒRƒ}ƒ“ƒh‚Í‰ºˆÊ16ƒrƒbƒg‚Ì‚İ
+	//	2007.07.22 genta : ã‚³ãƒãƒ³ãƒ‰ã¯ä¸‹ä½16ãƒ“ãƒƒãƒˆã®ã¿
 	if(LOWORD(ID) >= F_FUNCTION_FIRST)
 	{
-		VARIANT ret; // 2005.06.27 zenryaku –ß‚è’l‚Ìó‚¯æ‚è‚ª–³‚­‚Ä‚àŠÖ”‚ğÀs‚·‚é
+		VARIANT ret; // 2005.06.27 zenryaku æˆ»ã‚Šå€¤ã®å—ã‘å–ã‚ŠãŒç„¡ãã¦ã‚‚é–¢æ•°ã‚’å®Ÿè¡Œã™ã‚‹
 		VariantInit(&ret);
 
-		// 2011.3.18 syat ˆø”‚Ì‡˜‚ğ³‚µ‚¢‡‚É‚·‚é
+		// 2011.3.18 syat å¼•æ•°ã®é †åºã‚’æ­£ã—ã„é †ã«ã™ã‚‹
 		auto_array_ptr<VARIANTARG> rgvargParam( new VARIANTARG[ArgCount] );
 		for(I = 0; I < ArgCount; I++){
 			::VariantInit(&rgvargParam[ArgCount - I - 1]);
 			::VariantCopy(&rgvargParam[ArgCount - I - 1], &Arguments->rgvarg[I]);
 		}
 
-		// 2009.9.5 syat HandleFunction‚ÍƒTƒuƒNƒ‰ƒX‚ÅƒI[ƒo[ƒ‰ƒCƒh‚·‚é
+		// 2009.9.5 syat HandleFunctionã¯ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã§ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹
 		bool r = HandleFunction(m_pView, ID, &rgvargParam[0], ArgCount, ret);
 		if(Result) {::VariantCopyInd(Result, &ret);}
 		VariantClear(&ret);
@@ -133,17 +133,17 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 	}
 	else
 	{
-		// Å’á4‚Â‚ÍŠm•Û
+		// æœ€ä½4ã¤ã¯ç¢ºä¿
 		int argCountMin = t_max(4, ArgCount);
-		//	Nov. 29, 2005 FILE ˆø”‚ğ•¶š—ñ‚Åæ“¾‚·‚é
+		//	Nov. 29, 2005 FILE å¼•æ•°ã‚’æ–‡å­—åˆ—ã§å–å¾—ã™ã‚‹
 		auto_array_ptr<LPWSTR> StrArgs( new LPWSTR[argCountMin] );
 		auto_array_ptr<int> strLengths( new int[argCountMin] );
 		for(I = ArgCount; I < argCountMin; I++ ){
 			StrArgs[I] = NULL;
 			strLengths[I] = 0;
 		}
-		WCHAR *S = NULL;								// ‰Šú‰»•K{
-		Variant varCopy;							// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
+		WCHAR *S = NULL;								// åˆæœŸåŒ–å¿…é ˆ
+		Variant varCopy;							// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
 		int Len;
 		for(I = 0; I < ArgCount; ++I)
 		{
@@ -157,14 +157,14 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 				S[0] = 0;
 				Len = 0;
 			}
-			StrArgs[ArgCount - I - 1] = S;			// DISPPARAMS‚Íˆø”‚Ì‡˜‚ª‹t“]‚µ‚Ä‚¢‚é‚½‚ß³‚µ‚¢‡‚É’¼‚·
+			StrArgs[ArgCount - I - 1] = S;			// DISPPARAMSã¯å¼•æ•°ã®é †åºãŒé€†è»¢ã—ã¦ã„ã‚‹ãŸã‚æ­£ã—ã„é †ã«ç›´ã™
 			strLengths[ArgCount - I - 1] = Len;
 		}
 
-		// 2009.10.29 syat HandleCommand‚ÍƒTƒuƒNƒ‰ƒX‚ÅƒI[ƒo[ƒ‰ƒCƒh‚·‚é
+		// 2009.10.29 syat HandleCommandã¯ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã§ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹
 		HandleCommand(m_pView, ID, const_cast<WCHAR const **>(&StrArgs[0]), &strLengths[0], ArgCount);
 
-		//	Nov. 29, 2005 FILE ”z—ñ‚Ì”jŠü‚È‚Ì‚ÅA[Š‡ŒÊ]‚ğ’Ç‰Á
+		//	Nov. 29, 2005 FILE é…åˆ—ã®ç ´æ£„ãªã®ã§ã€[æ‹¬å¼§]ã‚’è¿½åŠ 
 		for(int J = 0; J < ArgCount; ++J)
 			delete [] StrArgs[J];
 

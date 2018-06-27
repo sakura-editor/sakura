@@ -1,18 +1,18 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief WSH Manager
 
-	@author ‹S, genta
-	@date 2002”N4Œ28“ú,5Œ3“ú,5Œ5“ú,5Œ6“ú,5Œ13“ú,5Œ16“ú
-	@date 2002.08.25 genta CWSH.h‚æ‚è•ª—£
+	@author é¬¼, genta
+	@date 2002å¹´4æœˆ28æ—¥,5æœˆ3æ—¥,5æœˆ5æ—¥,5æœˆ6æ—¥,5æœˆ13æ—¥,5æœˆ16æ—¥
+	@date 2002.08.25 genta CWSH.hã‚ˆã‚Šåˆ†é›¢
 
 	@par TODO
-	@li –¢’m‚ÌƒGƒ“ƒWƒ“‚É‘Î‰‚Å‚«‚é‚æ‚¤CMacroFactory‚ğ•ÏX ¨ —v‹c˜_
-	@li CEditView::HandleCommand‚ğg‚¤ ¨ CMacro::HandleCommand‚Å‚à‚È‚É‚©‚â‚Á‚Ä‚é‚æ‚¤‚È‚Ì‚Å‚¢‚¶‚ç‚È‚¢•û‚ªH
-	@li vector::reserve‚ğg‚¤ ¨ CSMacroMgr‚ÅŒÂ”‚ªéŒ¾‚³‚ê‚Ä–³‚¢‚Ì‚ÅŒ©‘—‚è
-	@li Ä•`‰æ‚Ì‘ã‚í‚è‚ÉShowEditCaret ¨ protected‚Å‚·‚æ[
+	@li æœªçŸ¥ã®ã‚¨ãƒ³ã‚¸ãƒ³ã«å¯¾å¿œã§ãã‚‹ã‚ˆã†CMacroFactoryã‚’å¤‰æ›´ â†’ è¦è­°è«–
+	@li CEditView::HandleCommandã‚’ä½¿ã† â†’ CMacro::HandleCommandã§ã‚‚ãªã«ã‹ã‚„ã£ã¦ã‚‹ã‚ˆã†ãªã®ã§ã„ã˜ã‚‰ãªã„æ–¹ãŒï¼Ÿ
+	@li vector::reserveã‚’ä½¿ã† â†’ CSMacroMgrã§å€‹æ•°ãŒå®£è¨€ã•ã‚Œã¦ç„¡ã„ã®ã§è¦‹é€ã‚Š
+	@li å†æç”»ã®ä»£ã‚ã‚Šã«ShowEditCaret â†’ protectedã§ã™ã‚ˆãƒ¼
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -37,7 +37,7 @@ public:
 	CWSHMacroManager(std::wstring const AEngineName);
 	virtual ~CWSHMacroManager();
 
-	//	2007.07.20 genta : flags’Ç‰Á
+	//	2007.07.20 genta : flagsè¿½åŠ 
 	virtual bool ExecKeyMacro(CEditView *EditView, int flags) const;
 	virtual BOOL LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath);
 	virtual BOOL LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* pszCode);
@@ -45,15 +45,15 @@ public:
 	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();
 
-	void AddParam( CWSHIfObj* param );				//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg‚ğ’Ç‰Á‚·‚é
-	void AddParam( CWSHIfObj::List& params );		//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg’B‚ğ’Ç‰Á‚·‚é
-	void ClearParam();								//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚é
+	void AddParam( CWSHIfObj* param );				//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿½åŠ ã™ã‚‹
+	void AddParam( CWSHIfObj::List& params );		//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆé”ã‚’è¿½åŠ ã™ã‚‹
+	void ClearParam();								//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;
 	CWSHIfObj::List m_Params;
-	//2009.10.29 syat CWSHIfObj‚ÖˆÚ“®
-	////	2007.07.20 genta : flags’Ç‰Á
+	//2009.10.29 syat CWSHIfObjã¸ç§»å‹•
+	////	2007.07.20 genta : flagsè¿½åŠ 
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
 #endif
