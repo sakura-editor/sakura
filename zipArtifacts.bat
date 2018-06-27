@@ -1,10 +1,21 @@
 set platform=%1
 set configuration=%2
-set WORKDIR=sakura-%platform%-%configuration%
+if "%platform%" == "x64" (
+	set ALPHA=1
+) else (
+	set ALPHA=0
+)
+if "%ALPHA%" == "1" (
+	set SUFFIX=-alpha
+) else (
+	set SUFFIX=""
+)
+set BASENAME=sakura-%platform%-%configuration%%SUFFIX%
+set WORKDIR=%BASENAME%
 set WORKDIR_LOG=%WORKDIR%\Log
 set WORKDIR_EXE=%WORKDIR%\EXE
 set WORKDIR_INST=%WORKDIR%\Installer
-set OUTFILE=sakura-%platform%-%configuration%.zip
+set OUTFILE=%BASENAME%.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -27,6 +38,9 @@ copy help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy help\sakura\sakura.chm  %WORKDIR_EXE%\
 
 copy installer\warning.txt   %WORKDIR%\
+if "%ALPHA%" == "1" (
+	copy installer\warning-alpha.txt   %WORKDIR%\
+)
 copy installer\Output\*.exe  %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log %WORKDIR_LOG%\
 

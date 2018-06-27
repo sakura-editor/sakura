@@ -32,5 +32,8 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master
 https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts  
 [`これ`](installer/warning.txt) を読んでからご利用ください。
 
+[`x64 版は alpha 版`](installer/warning-alpha.txt)です。  
+対応中のため予期せぬ不具合がある可能性があります。  
+
 最新以外のビルド結果は以下から参照できます。  
 https://ci.appveyor.com/project/sakuraeditor/sakura/history

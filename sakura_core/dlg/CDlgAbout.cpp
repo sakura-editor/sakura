@@ -24,8 +24,8 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
-#include "gitrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
+#include "version.h"
 #include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
@@ -160,25 +160,40 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeT cmemMsg;
-	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME));
+	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
 	cmemMsg.AppendString(_T("   "));
 
-	// バージョン&リビジョン情報
+	// バージョン情報・コンフィグ情報 //
+#ifdef GIT_COMMIT_HASH
+#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
+#endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	auto_sprintf(szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
-		HIWORD(dwVersionMS),
-		LOWORD(dwVersionMS),
-		HIWORD(dwVersionLS),
-		LOWORD(dwVersionLS)
+	auto_sprintf(szMsg,
+		_T("v%d.%d.%d.%d"),
+		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	cmemMsg.AppendString(szMsg);
-#if defined(GIT_COMMIT_HASH)
-	cmemMsg.AppendString(_T("(GitHash " GIT_COMMIT_HASH ")\r\n"));
+	
+	// 1行目
+	cmemMsg.AppendString( szMsg );
+	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
+	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
+#ifdef ALPHA_VERSION
+	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
 #endif
-#if defined(GIT_URL)
-	cmemMsg.AppendString(_T("(GitURL " GIT_URL ")\r\n"));
+	cmemMsg.AppendString( _T("\r\n") );
+
+	// 2行目
+#ifdef VER_GITHASH
+	cmemMsg.AppendString( _T(VER_GITHASH) _T("\r\n"));
 #endif
+
+	// 3行目
+#ifdef GIT_URL
+	cmemMsg.AppendString( _T("(GitURL ") _T(GIT_URL) _T(")\r\n"));
+#endif
+
+	// 段落区切り
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 共有メモリ情報

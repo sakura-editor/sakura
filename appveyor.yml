@@ -12,6 +12,7 @@ configuration:
 
 platform:
   - Win32
+  - x64
 
 build_script:
 - cmd: >-
@@ -30,4 +31,4 @@ build_script:
     echo appveyor_yml
 
 artifacts:
-- path: 'sakura-$(platform)-$(configuration).zip'
+- path: 'sakura-$(platform)-$(configuration)*.zip'
