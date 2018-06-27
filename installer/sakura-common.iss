@@ -7,6 +7,10 @@
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
 
 [Setup]
+#if MyArchitecture != "x86"
+ArchitecturesInstallIn64BitMode={#MyArchitecture}
+ArchitecturesAllowed={#MyArchitecture}
+#endif
 AppName=サクラエディタ
 AppId=sakura editor
 AppVersion={#MyAppVer}
@@ -28,7 +32,7 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sakura_install{#MyAppVerH}
+OutputBaseFilename=sakura_install{#MyAppVerH}-{#MyArchitecture}
 VersionInfoVersion={#MyAppVer}
 VersionInfoProductVersion={#MyAppVer}
 
