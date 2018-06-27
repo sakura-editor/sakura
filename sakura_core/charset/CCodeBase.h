@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,11 +24,11 @@
 #ifndef SAKURA_CCODEBASE_79FA6B92_246A_4427_89C9_92E1F1335EB9_H_
 #define SAKURA_CCODEBASE_79FA6B92_246A_4427_89C9_92E1F1335EB9_H_
 
-//’è”
+//å®šæ•°
 enum EConvertResult{
-	RESULT_COMPLETE, //!< ƒf[ƒ^‚ğ¸‚¤‚±‚Æ‚È‚­•ÏŠ·‚ªŠ®—¹‚µ‚½B
-	RESULT_LOSESOME, //!< •ÏŠ·‚ªŠ®—¹‚µ‚½‚ªAˆê•”‚Ìƒf[ƒ^‚ª¸‚í‚ê‚½B
-	RESULT_FAILURE,  //!< ‰½‚ç‚©‚ÌŒ´ˆö‚É‚æ‚è¸”s‚µ‚½B
+	RESULT_COMPLETE, //!< ãƒ‡ãƒ¼ã‚¿ã‚’å¤±ã†ã“ã¨ãªãå¤‰æ›ãŒå®Œäº†ã—ãŸã€‚
+	RESULT_LOSESOME, //!< å¤‰æ›ãŒå®Œäº†ã—ãŸãŒã€ä¸€éƒ¨ã®ãƒ‡ãƒ¼ã‚¿ãŒå¤±ã‚ã‚ŒãŸã€‚
+	RESULT_FAILURE,  //!< ä½•ã‚‰ã‹ã®åŸå› ã«ã‚ˆã‚Šå¤±æ•—ã—ãŸã€‚
 };
 
 class CMemory;
@@ -37,45 +37,45 @@ struct CommonSetting_Statusbar;
 enum EEolType;
 
 /*!
-	•¶šƒR[ƒhŠî’êƒNƒ‰ƒXB
+	æ–‡å­—ã‚³ãƒ¼ãƒ‰åŸºåº•ã‚¯ãƒ©ã‚¹ã€‚
 	
-	‚±‚±‚ÅŒ¾‚¤u“Á’èƒR[ƒhv‚Æ‚ÍA
-	CCodeBase‚ğŒp³‚µ‚½qƒNƒ‰ƒX‚ª’è‚ß‚éAˆêˆÓ‚Ì•¶šƒR[ƒh‚Ì‚±‚Æ‚Å‚·B
+	ã“ã“ã§è¨€ã†ã€Œç‰¹å®šã‚³ãƒ¼ãƒ‰ã€ã¨ã¯ã€
+	CCodeBaseã‚’ç¶™æ‰¿ã—ãŸå­ã‚¯ãƒ©ã‚¹ãŒå®šã‚ã‚‹ã€ä¸€æ„ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®ã“ã¨ã§ã™ã€‚
 */
 class CCodeBase{
 public:
 	virtual ~CCodeBase(){}
-//	virtual bool IsCode(const CMemory* pMem){return false;}  //!< “Á’èƒR[ƒh‚Å‚ ‚ê‚Îtrue
+//	virtual bool IsCode(const CMemory* pMem){return false;}  //!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ã§ã‚ã‚Œã°true
 
-	//•¶šƒR[ƒh•ÏŠ·
-	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
-	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
-	//! UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
+	//æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›
+	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
+	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
+	//! UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
 	virtual EConvertResult UnicodeToCode(const CStringRef& cSrc, CMemory* pDst){
 		CNativeW mem(cSrc.GetPtr(), cSrc.GetLength());
 		return UnicodeToCode(mem, pDst);
 	}
 
-	//ƒtƒ@ƒCƒ‹Œ`®
-	virtual void GetBom(CMemory* pcmemBom);											//!< BOMƒf[ƒ^æ“¾
-	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType){ S_GetEol(pcmemEol,eEolType); }	//!< ‰üsƒf[ƒ^æ“¾
+	//ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼
+	virtual void GetBom(CMemory* pcmemBom);											//!< BOMãƒ‡ãƒ¼ã‚¿å–å¾—
+	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType){ S_GetEol(pcmemEol,eEolType); }	//!< æ”¹è¡Œãƒ‡ãƒ¼ã‚¿å–å¾—
 
-	// •¶šƒR[ƒh•\¦—p		2008/6/9 Uchi
-	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ¨ Hex •ÏŠ·
+	// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨		2008/6/9 Uchi
+	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE â†’ Hex å¤‰æ›
 
-	// •ÏŠ·ƒGƒ‰[ˆ—i‚PƒoƒCƒg <-> U+D800 ‚©‚ç U+D8FFj
+	// å¤‰æ›ã‚¨ãƒ©ãƒ¼å‡¦ç†ï¼ˆï¼‘ãƒã‚¤ãƒˆ <-> U+D800 ã‹ã‚‰ U+D8FFï¼‰
 	static int BinToText( const unsigned char*, const int, unsigned short* );
 	static int TextToBin( const unsigned short );
 
-	// MIME Header ƒfƒR[ƒ_
+	// MIME Header ãƒ‡ã‚³ãƒ¼ãƒ€
 	static bool MIMEHeaderDecode( const char*, const int, CMemory*, const ECodeType );
 
-	// CShiftJis‚æ‚èˆÚ“® 2010/6/13 Uchi
-	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< ‰üsƒf[ƒ^æ“¾
+	// CShiftJisã‚ˆã‚Šç§»å‹• 2010/6/13 Uchi
+	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< æ”¹è¡Œãƒ‡ãƒ¼ã‚¿å–å¾—
 };
 
 /*!
-	ƒoƒCƒiƒŠ‚PƒoƒCƒg‚ğ U+DC00 ‚©‚ç U+DCFF ‚Ü‚Å‚É‘Î‰•t‚¯‚é
+	ãƒã‚¤ãƒŠãƒªï¼‘ãƒã‚¤ãƒˆã‚’ U+DC00 ã‹ã‚‰ U+DCFF ã¾ã§ã«å¯¾å¿œä»˜ã‘ã‚‹
 */
 inline int CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsigned short *pDst )
 {
@@ -90,7 +90,7 @@ inline int CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsi
 
 
 /*!
-	U+DC00 ‚©‚ç U+DCFF ‚©‚çƒoƒCƒiƒŠ1ƒoƒCƒg‚ğ•œŒ³
+	U+DC00 ã‹ã‚‰ U+DCFF ã‹ã‚‰ãƒã‚¤ãƒŠãƒª1ãƒã‚¤ãƒˆã‚’å¾©å…ƒ
 */
 inline int CCodeBase::TextToBin( const unsigned short cSrc )
 {

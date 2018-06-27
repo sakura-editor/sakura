@@ -1,10 +1,10 @@
-/*!	@file
-	@brief �����R�[�h�F���E���ʎx���֐����C�u����
+﻿/*!	@file
+	@brief 文字コード認識・判別支援関数ライブラリ
 
 	@author Sakura-Editor collaborators
-	@date 1998/03/06 �V�K�쐬
-	@date 2006/03/06 ���̕ύX�i�����F�����R�[�h�萔�̒�`�j
-	@date 2007/03/19 ���̉���i�����F�����R�[�h�F�����C�u�����j
+	@date 1998/03/06 新規作成
+	@date 2006/03/06 名称変更（旧名：文字コード定数の定義）
+	@date 2007/03/19 名称改定（旧名：文字コード認識ライブラリ）
 */
 /*
 	Copyright (C) 2006, D. S. Koba, genta
@@ -44,7 +44,7 @@
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
 
-                         �f�[�^�\�ƕϊ��⏕
+                         データ表と変換補助
 
 
 *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
@@ -54,10 +54,10 @@
 
 
 /*
-	���ʃe�[�u��  UTF-7 �̂ǂ̃Z�b�g�̕�����
+	判別テーブル  UTF-7 のどのセットの文字か
 
 	@author D. S. Koba
-	@date 2007.04.29 UTF-7 �Z�b�g O �̏���ǉ� by rastiv.
+	@date 2007.04.29 UTF-7 セット O の情報を追加 by rastiv.
 */
 // !"#$%&*;<=>@[]^_`{|}
 const char TABLE_IsUtf7Direct[] = {
@@ -80,10 +80,10 @@ const char TABLE_IsUtf7Direct[] = {
 };
 
 
-#if 0 // ���g�p�����ǁA�Q�l�̂��߂ɏ����c��
+#if 0 // 未使用だけど、参考のために書き残し
 
 /*
-	JIS �G�X�P�[�v�V�[�P���X�f�[�^
+	JIS エスケープシーケンスデータ
 	@author D. S. Koba
 */
 const char JISESCDATA_ASCII[]				= "\x1b""(B";
@@ -94,7 +94,7 @@ const char JISESCDATA_JISX0208_1978[]		= "\x1b""$@";
 const char JISESCDATA_JISX0208_1983[]		= "\x1b""$B";
 const char JISESCDATA_JISX0208_1990[]		= "\x1b""&@""\x1b""$B";
 
-// ������ enumJISEscSeqType �Ɉˑ� (charcode.h �ɂĒ�`����Ă���)
+// 順序は enumJISEscSeqType に依存 (charcode.h にて定義されている)
 const int TABLE_JISESCLEN[] = {
 	0,		// JISESC_UNKNOWN
 	3,		// JISESC_ASCII
@@ -136,7 +136,7 @@ const char* TABLE_JISESCDATA[] = {
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
 
-                         �����R�[�h���ʎx��
+                         文字コード判別支援
 
 
 *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
@@ -146,25 +146,25 @@ const char* TABLE_JISESCDATA[] = {
 
 
 /*
-	SJIS �̂���.
+	SJIS のこと.
 
-	��P�o�C�g |  1000 0001(0x81)         |   1110 0000(0xE0)         |   1010 0001(0xA1)
-	           | �` 1001 1111(0x9F)       |  �` 1110 1111(0xEF)       |  �` 1101 1111(0xDF)
-	           | �� SJIS �S�p�������ȃJ�i |  �� SJIS �S�p�����J�i���� |  �� ���p�J�i
+	第１バイト |  1000 0001(0x81)         |   1110 0000(0xE0)         |   1010 0001(0xA1)
+	           | ～ 1001 1111(0x9F)       |  ～ 1110 1111(0xEF)       |  ～ 1101 1111(0xDF)
+	           | → SJIS 全角漢字かなカナ |  → SJIS 全角漢字カナかな |  → 半角カナ
 	-----------+--------------------------+---------------------------+-------------------------
-	��Q�o�C�g |        0100 0000(0x40)  �`  1111 1100(0xFC)          |      ----
-	           |         ������ 0111 1111(0x7F) �͏���.               |
+	第２バイト |        0100 0000(0x40)  ～  1111 1100(0xFC)          |      ----
+	           |         ただし 0111 1111(0x7F) は除く.               |
 
-	�Q�l�F�u��G-PROJECT�� -���{�ꕶ���R�[�h�̔��ʁvhttp://www.gprj.net/dev/tips/other/kanji.shtml
-	      �u�~�P�l�R�̕����R�[�h�̕����vhttp://mikeneko.creator.club.ne.jp/~lab/kcode/index.html
+	参考：「■G-PROJECT■ -日本語文字コードの判別」http://www.gprj.net/dev/tips/other/kanji.shtml
+	      「ミケネコの文字コードの部屋」http://mikeneko.creator.club.ne.jp/~lab/kcode/index.html
 */
 
 /*!
-	SJIS �������`�F�b�N
+	SJIS 文字をチェック
 
-	@param[out] pnCharset �m�F���������R�[�h�̎�ʂ��i�[�����
+	@param[out] pnCharset 確認した文字コードの種別が格納される
 
-	@return �m�F���������̒���
+	@return 確認した文字の長さ
 */
 int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
 {
@@ -173,21 +173,21 @@ int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
 	if( 0 < nLen ){
 		uc = pS[0];
 		if( (uc & 0x80) == 0 ){
-			// ASCII �܂��̓��[�}��(JIS X 0201 Roman)
+			// ASCII またはローマ字(JIS X 0201 Roman)
 			if( peCharset ){
 				*peCharset = CHARSET_ASCII7;
 			}
 			return 1;
 		}
 		if( IsSjisHankata(static_cast<char>(uc)) ){
-			// ���p�J�i(JIS X 0201 Kana)
+			// 半角カナ(JIS X 0201 Kana)
 			if( peCharset ){
 				*peCharset = CHARSET_JIS_HANKATA;
 			}
 			return 1;
 		}
 		if( 1 < nLen && IsSjisZen(pS) ){
-			// SJIS �����E�S�p�J�i����  (JIS X 0208)
+			// SJIS 漢字・全角カナかな  (JIS X 0208)
 			if( peCharset ){
 				*peCharset = CHARSET_JIS_ZENKAKU;
 			}
@@ -205,27 +205,27 @@ int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
 
 
 /*
-	EUC-JP �̂���.
+	EUC-JP のこと.
 
-	��1�o�C�g |   1000 1110(0x8E)   |  1000 1111(0x8F)    |  1010 0001(0xA1) �` 1111 1110(0xFE)
-	          |   �� ���p�J�i       |  �� �⏕����        |  �� �������ȃJ�i
+	第1バイト |   1000 1110(0x8E)   |  1000 1111(0x8F)    |  1010 0001(0xA1) ～ 1111 1110(0xFE)
+	          |   → 半角カナ       |  → 補助漢字        |  → 漢字かなカナ
 	----------+---------------------+---------------------+-------------------------------------
-	��2�o�C�g |  1010 0001(0xA1)    |   1010 0001(0xA1)   |      1010 0001(0xA1)
-	          | �` 1101 1111(0xDF)  |  �` 1111 1110(0xFE) |     �` 1111 1110(0xFE)
+	第2バイト |  1010 0001(0xA1)    |   1010 0001(0xA1)   |      1010 0001(0xA1)
+	          | ～ 1101 1111(0xDF)  |  ～ 1111 1110(0xFE) |     ～ 1111 1110(0xFE)
 	----------+---------------------+---------------------+-------------------------------------
-	��3�o�C�g |        ----         |   1010 0001(0xA1)   |        ----
-	          |                     |  �` 1111 1110(0xFE) |
+	第3バイト |        ----         |   1010 0001(0xA1)   |        ----
+	          |                     |  ～ 1111 1110(0xFE) |
 
-	�Q�l�F�u��G-PROJECT�� -���{�ꕶ���R�[�h�̔��ʁvhttp://www.gprj.net/dev/tips/other/kanji.shtml
-	      �u�~�P�l�R�̕����R�[�h�̕����vhttp://mikeneko.creator.club.ne.jp/~lab/kcode/index.html
+	参考：「■G-PROJECT■ -日本語文字コードの判別」http://www.gprj.net/dev/tips/other/kanji.shtml
+	      「ミケネコの文字コードの部屋」http://mikeneko.creator.club.ne.jp/~lab/kcode/index.html
 */
 
 /*!
-	EUC-JP �������`�F�b�N
+	EUC-JP 文字をチェック
 
 	@sa CheckSjisChar()
 
-	@date 2006.09.23 EUCJP ���p�J�^�J�i���ʂ��Ԉ���Ă����̂��C���Dgenta
+	@date 2006.09.23 EUCJP 半角カタカナ判別が間違っていたのを修正．genta
 */
 int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 {
@@ -234,7 +234,7 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 	if( 0 < nLen ){
 		uc = pS[0];
 		if( (uc & 0x80) == 0 ){
-			// ASCII �܂��̓��[�}���ł�.  (JIS X 0201 Roman.)
+			// ASCII またはローマ字です.  (JIS X 0201 Roman.)
 			if( peCharset ){
 				*peCharset = CHARSET_ASCII7;
 			}
@@ -242,14 +242,14 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 		}
 		if( 1 < nLen ){
 			if( IsEucjpZen(pS) ){
-				// EUC-JP �����E���ȃJ�i �ł�.  (JIS X 0208.)
+				// EUC-JP 漢字・かなカナ です.  (JIS X 0208.)
 				if( peCharset ){
 					*peCharset = CHARSET_JIS_ZENKAKU;
 				}
 				return 2;
 			}
 			if( IsEucjpHankata(pS) ){
-				// ���p�J�i�ł�.  (JIS X 0201 Kana.)
+				// 半角カナです.  (JIS X 0201 Kana.)
 				if( peCharset ){
 					*peCharset = CHARSET_JIS_HANKATA;
 				}
@@ -257,7 +257,7 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 			}
 			if( 2 < nLen ){
 				if( IsEucjpSupplemtal(pS) ){
-					// EUC-JP �⏕�����ł�.  (JIS X 0212.)
+					// EUC-JP 補助漢字です.  (JIS X 0212.)
 					if( peCharset ){
 						*peCharset = CHARSET_JIS_SUPPLEMENTAL;
 					}
@@ -279,19 +279,19 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 
 
 /*!
-	JIS �� �G�X�P�[�v����������o����
+	JIS の エスケープ文字列を検出する
 
-	@param [in]  pS         �����f�[�^
-	@param [in]  nLen       �����f�[�^��
-	@param [out] peEscType  ���o���ꂽ�G�X�P�[�v������̎��
+	@param [in]  pS         調査データ
+	@param [in]  nLen       調査データ長
+	@param [out] peEscType  検出されたエスケープ文字列の種類
 
-	@retval n == 0 �����f�[�^���Ȃ�
-	@retval n > 0 �G�X�P�[�v�V�[�P���X�̒���
-	@retval n < 0 �G�X�P�[�v�V�[�P���X�����o����Ȃ�����
+	@retval n == 0 調査データがない
+	@retval n > 0 エスケープシーケンスの長さ
+	@retval n < 0 エスケープシーケンスが検出されなかった
 
 	@note
-		�߂�l���[�����傫���ꍇ�Ɍ���C*pnEscType ���X�V�����D\n
-		pnEscType �� NULL �ł��ǂ��D\n
+		戻り値がゼロより大きい場合に限り，*pnEscType が更新される．\n
+		pnEscType は NULL でも良い．\n
 */
 int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 {
@@ -319,17 +319,17 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 				if( pr[1] == 'B' ){
 					ejisesc = JISESC_ASCII;				// ESC ( B  -  ASCII
 				}else if( pr[1] == 'J'){
-					ejisesc = JISESC_JISX0201Latin;		// ESC ( J  -  JIS X 0201 ���e��
+					ejisesc = JISESC_JISX0201Latin;		// ESC ( J  -  JIS X 0201 ラテン
 				}else if( pr[1] == 'H'){
-					ejisesc = JISESC_JISX0201Latin_OLD;	// ESC ( H  -  JIS X 0201 ���e��
+					ejisesc = JISESC_JISX0201Latin_OLD;	// ESC ( H  -  JIS X 0201 ラテン
 				}else if( pr[1] == 'I' ){
-					ejisesc = JISESC_JISX0201Katakana;	// ESC ( I  -  JIS X 0201 �Љ���
+					ejisesc = JISESC_JISX0201Katakana;	// ESC ( I  -  JIS X 0201 片仮名
 				}
 			}else if( pr[0] == '$' ){
 				if( pr[1] == 'B' ){
 					ejisesc = JISESC_JISX0208_1983;		// ESC $ B  -  JIS X 0208-1983
 				}else if( pr[1] == '@' ){
-					ejisesc = JISESC_JISX0208_1978;		// ESC $ @  -  JIS X 0208-1978  (��JIS)
+					ejisesc = JISESC_JISX0208_1978;		// ESC $ @  -  JIS X 0208-1978  (旧JIS)
 				}
 			}
 		}else if( pr + 4 < pr_end ){
@@ -340,8 +340,8 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 		}
 	}
 
-	// ���o���ꂽJIS �G�X�P�[�v�V�[�P���X���ʂh�c��
-	// ������ JIS �G�X�P�[�v�V�[�P���X���ʂh�c�ɕϊ�
+	// 検出されたJIS エスケープシーケンス識別ＩＤを
+	// 内部の JIS エスケープシーケンス識別ＩＤに変換
 	switch( ejisesc ){
 	case JISESC_ASCII:
 	case JISESC_JISX0201Latin_OLD:
@@ -371,18 +371,18 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 
 
 /*!
-	JIS ��������`�F�b�N
+	JIS 文字列をチェック
 
-	���̃G�X�P�[�v�V�[�P���X���玟�̃G�X�P�[�v�V�[�P���X�ɕς��Ԃ��u���b�N�ƕ֋X�I�ɌĂ�ł��܂��B
+	今のエスケープシーケンスから次のエスケープシーケンスに変わる間をブロックと便宜的に呼んでいます。
 */
 int _CheckJisAnyPart(
-		const char *pS,			// [in]    �`�F�b�N�ΏۂƂȂ�o�b�t�@�|�C���^
-		const int nLen,			// [in]    �`�F�b�N�ΏۂƂȂ�o�b�t�@�̒���
-		const char **ppNextChar,		// [out]   ���̃G�X�P�[�v�V�[�P���X������̎��̕����ւ̃|�C���^
-								//       �܂�A���Ɍ������J�n���镶����i�擪�̃G�X�P�[�v�V�[�P���X���܂߂Ȃ��j�ւ̃|�C���^
-		EMyJisEscseq *peNextEsc,// [out]   ���̃G�X�P�[�v�V�[�P���X�̎��
-		int *pnErrorCount,		// [out]   �u���b�N���̕s��������
-		const int nType			// [in]    ���̃G�X�P�[�v�V�[�P���X�̎��
+		const char *pS,			// [in]    チェック対象となるバッファポインタ
+		const int nLen,			// [in]    チェック対象となるバッファの長さ
+		const char **ppNextChar,		// [out]   次のエスケープシーケンス文字列の次の文字へのポインタ
+								//       つまり、次に検査を開始する文字列（先頭のエスケープシーケンスを含めない）へのポインタ
+		EMyJisEscseq *peNextEsc,// [out]   次のエスケープシーケンスの種類
+		int *pnErrorCount,		// [out]   ブロック中の不正文字数
+		const int nType			// [in]    今のエスケープシーケンスの種類
 )
 {
 	EMyJisEscseq emyesc = MYJISESC_NONE;
@@ -403,9 +403,9 @@ int _CheckJisAnyPart(
 	pr_end = pS + nLen;
 
 	for( ; pr < pr_end; pr++ ){
-		nesclen = DetectJisEscseq( pr, pr_end-pr, &emyesc );  // ���̃G�X�P�[�v�V�[�P���X������
+		nesclen = DetectJisEscseq( pr, pr_end-pr, &emyesc );  // 次のエスケープシーケンスを検索
 		if( emyesc != MYJISESC_NONE || nesclen > 0 ){
-			// ���� nesclen �� JIS �G�X�P�[�v�V�[�P���X�i��� emyesc�j����������
+			// 長さ nesclen の JIS エスケープシーケンス（種類 emyesc）が見つかった
 			break;
 		}
 		if( pnErrorCount ){
@@ -463,31 +463,31 @@ int _CheckJisAnyPart(
 
 
 /*
-	UTF-16 �T���Q�[�g�����̂���.
+	UTF-16 サロゲート処理のこと.
 
-	U+10000 ���� U+10FFFF �̕����l a0 �ɑ΂��Ă�,
+	U+10000 から U+10FFFF の文字値 a0 に対しては,
 
-		a0 = HHHHHHHHHHLLLLLLLLLL  U+10000 �` U+10FFFF
-		w1 = 110110HH HHHHHHHH     ��ʃT���Q�[�g�FU+D800 �` U+DBFF
-		w2 = 110111LL LLLLLLLL     ���ʃT���Q�[�g�FU+DC00 �` U+DFFF
+		a0 = HHHHHHHHHHLLLLLLLLLL  U+10000 ～ U+10FFFF
+		w1 = 110110HH HHHHHHHH     上位サロゲート：U+D800 ～ U+DBFF
+		w2 = 110111LL LLLLLLLL     下位サロゲート：U+DC00 ～ U+DFFF
 
-	1. 0x10000 ������, 20�r�b�g�̕����l a1 (0x00000 �` 0xFFFFF) �ŕ\��������,
-	     a1 �� a0 - 0x10000
-	2. ��� 10�r�b�g�� w1, ���� 10�r�b�g�� w2 �ɕ���,
-	     w1 �� (a1 & 0xFFC0) >> 6
-	     w2 ��  a1 & 0x03FF
-	3. w1, w2 �̏�� 6�r�b�g���̋󂫗̈��, ���ꂼ�� 110110 �� 110111 �Ŗ��߂�.
-	     w1 �� w1 | 0xD800
-	     w2 �� w2 | 0xDC00
+	1. 0x10000 を引き, 20ビットの文字値 a1 (0x00000 ～ 0xFFFFF) で表現した後,
+	     a1 ← a0 - 0x10000
+	2. 上位 10ビットを w1, 下位 10ビットを w2 に分け,
+	     w1 ← (a1 & 0xFFC0) >> 6
+	     w2 ←  a1 & 0x03FF
+	3. w1, w2 の上位 6ビット分の空き領域を, それぞれ 110110 と 110111 で埋める.
+	     w1 ← w1 | 0xD800
+	     w2 ← w2 | 0xDC00
 
 
-	U+FFFE, U+FFFF ��, ����`�l.
+	U+FFFE, U+FFFF は, 未定義値.
 
-	�Q�l�����F�uUCS��UTF�vhttp://homepage1.nifty.com/nomenclator/unicode/ucs_utf.htm
+	参考資料：「UCSとUTF」http://homepage1.nifty.com/nomenclator/unicode/ucs_utf.htm
 */
 
 /*!
-	UTF-16 LE/BE �������`�F�b�N�@(�g�ݍ��킹������l���Ȃ�)
+	UTF-16 LE/BE 文字をチェック　(組み合わせ文字列考慮なし)
 */
 int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
 {
@@ -501,7 +501,7 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 
 	echarset = CHARSET_UNI_NORMAL;
 
-	// ������ǂݍ���
+	// 文字を読み込む
 
 	wc1 = pS[0];
 	if( bBigEndian == true ){
@@ -516,7 +516,7 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 
 	if( 2 <= nLen ){
 
-		// �T���Q�[�g�y�A�̊m�F
+		// サロゲートペアの確認
 
 		if( IsUtf16SurrogHi(wc1) && IsUtf16SurrogLow(wc2) ){
 			echarset = CHARSET_UNI_SURROG;
@@ -525,7 +525,7 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 		}
 	}
 
-	// �T���Q�[�g�f�Ђ̊m�F
+	// サロゲート断片の確認
 
 	if( IsUtf16SurrogHi(wc1) || IsUtf16SurrogLow(wc1) ){
 		echarset = CHARSET_BINARY;
@@ -533,10 +533,10 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 		goto EndFunc;
 	}
 
-	// �T���Q�[�g�y�A�łȂ�����
+	// サロゲートペアでない文字
 	ncwidth = 1;
 
-	// �񕶎��Ɨ\��R�[�h�|�C���g�̊m�F
+	// 非文字と予約コードポイントの確認
 	if( nOption != 0 && echarset != CHARSET_BINARY ){
 		if( ncwidth == 1 ){
 			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc1) ){
@@ -550,7 +550,7 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 				ncwidth = 1;
 			}
 		}else{
-			// �ی�R�[�h
+			// 保護コード
 			echarset = CHARSET_BINARY;
 			ncwidth = 1;
 		}
@@ -572,31 +572,31 @@ EndFunc:;
 
 
 /* -------------------------------------------------------------------------------------------------------------- *
-UTF-8�̃R�[�h
-�r�b�g��		���e
-0xxx xxxx	1�o�C�g�R�[�h�̐擪
-110x xxxx	2�o�C�g�R�[�h�̐擪
-1110 xxxx	3�o�C�g�R�[�h�̐擪
-1111 0xxx	4�o�C�g�R�[�h�̐擪
-10xx xxxx	UTF-8 �o�C�g�R�[�h�� 2 �o�C�g�ڈȍ~
+UTF-8のコード
+ビット列		内容
+0xxx xxxx	1バイトコードの先頭
+110x xxxx	2バイトコードの先頭
+1110 xxxx	3バイトコードの先頭
+1111 0xxx	4バイトコードの先頭
+10xx xxxx	UTF-8 バイトコードの 2 バイト目以降
 
-UTF-8�̃G���R�[�f�B���O
+UTF-8のエンコーディング
 
-�r�b�g��                  MSB -         UCS �r�b�g��         - LSB     ��1�o�C�g  ��2�o�C�g  ��3�o�C�g  ��4�o�C�g
-\u0�`\u7F         (UCS2)  0000 0000 0000 0000  0000 0000 0aaa bbbb  -> 0aaa bbbb     ---        ---        ---
-\u80�`\u7FF       (UCS2)  0000 0000 0000 0000  0000 0aaa bbbb cccc  -> 110a aabb  10bb cccc     ---        ---
-\u800�`\uFFFF     (UCS2)  0000 0000 0000 0000  aaaa bbbb cccc dddd  -> 1110 aaaa  10bb bbcc  10cc dddd     ---
-\u10000�`\u1FFFFF (UCS4)  0000 0000 000a bbbb  cccc dddd eeee ffff  -> 1111 0abb  10bb cccc  10dd ddee  10ee ffff
+ビット列                  MSB -         UCS ビット列         - LSB     第1バイト  第2バイト  第3バイト  第4バイト
+\u0～\u7F         (UCS2)  0000 0000 0000 0000  0000 0000 0aaa bbbb  -> 0aaa bbbb     ---        ---        ---
+\u80～\u7FF       (UCS2)  0000 0000 0000 0000  0000 0aaa bbbb cccc  -> 110a aabb  10bb cccc     ---        ---
+\u800～\uFFFF     (UCS2)  0000 0000 0000 0000  aaaa bbbb cccc dddd  -> 1110 aaaa  10bb bbcc  10cc dddd     ---
+\u10000～\u1FFFFF (UCS4)  0000 0000 000a bbbb  cccc dddd eeee ffff  -> 1111 0abb  10bb cccc  10dd ddee  10ee ffff
 
-�Q�l�����F�uUCS��UTF�vhttp://nomenclator.la.coocan.jp/unicode/ucs_utf.htm
+参考資料：「UCSとUTF」http://nomenclator.la.coocan.jp/unicode/ucs_utf.htm
 * --------------------------------------------------------------------------------------------------------------- */
 
 /*!
-	UTF-8 �������`�F�b�N�@(�g�ݍ��킹������l���Ȃ�)
+	UTF-8 文字をチェック　(組み合わせ文字列考慮なし)
 
 	@sa CheckSjisChar()
 
-	@date 2008/11/01 syat UTF8�t�@�C���ŉ��Ă̓��ꕶ�����ǂݍ��߂Ȃ��s����C��
+	@date 2008/11/01 syat UTF8ファイルで欧米の特殊文字が読み込めない不具合を修正
 */
 int CheckUtf8Char( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
@@ -611,67 +611,67 @@ int CheckUtf8Char( const char *pS, const int nLen, ECharSet *peCharset, const bo
 	echarset = CHARSET_UNI_NORMAL;
 	c0 = pS[0];
 
-	if( c0 < 0x80 ){	// ��P�o�C�g�� 0aaabbbb �̏ꍇ
-		ncwidth = 1;	// �P�o�C�g�R�[�h�ł���
+	if( c0 < 0x80 ){	// 第１バイトが 0aaabbbb の場合
+		ncwidth = 1;	// １バイトコードである
 		goto EndFunc;
 	}else
-	if( 1 < nLen && (c0 & 0xe0) == 0xc0 ){	// ��P�o�C�g��110aaabb�̏ꍇ
+	if( 1 < nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
 		c1 = pS[1];
-		// ��Q�o�C�g��10bbcccc�̏ꍇ
+		// 第２バイトが10bbccccの場合
 		if( (c1 & 0xc0) == 0x80 ){
-			ncwidth = 2;	// �Q�o�C�g�R�[�h�ł���
-			// ��P�o�C�g��aaabb=0000x�̏ꍇ�i\u80�����ɕϊ������j
+			ncwidth = 2;	// ２バイトコードである
+			// 第１バイトがaaabb=0000xの場合（\u80未満に変換される）
 			if( (c0 & 0x1e) == 0 ){
-				// �f�R�[�h�ł��Ȃ�.(�����ϊ��s�̈�)
+				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
 			goto EndFunc;
 		}
 	}else
-	if( 2 < nLen && (c0 & 0xf0) == 0xe0 ){	// ��P�o�C�g��1110aaaa�̏ꍇ
+	if( 2 < nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
 		c1 = pS[1];
 		c2 = pS[2];
-		// ��Q�o�C�g��10bbbbcc�A��R�o�C�g��10ccdddd�̏ꍇ
+		// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
 		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
-			ncwidth = 3;	// �R�o�C�g�R�[�h�ł���
-			// ��P�o�C�g��aaaa=0000�A��Q�o�C�g��bbbb=0xxx�̏ꍇ(\u800�����ɕϊ������)
+			ncwidth = 3;	// ３バイトコードである
+			// 第１バイトのaaaa=0000、第２バイトのbbbb=0xxxの場合(\u800未満に変換される)
 			if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
-				// �f�R�[�h�ł��Ȃ�.(�����ϊ��s�̈�)
+				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
 			//if( (c0 & 0x0f) == 0x0f && (c1 & 0x3f) == 0x3f && (c2 & 0x3e) == 0x3e ){
-			//	// Unicode �łȂ�����(U+FFFE, U+FFFF)
+			//	// Unicode でない文字(U+FFFE, U+FFFF)
 			//	charset = CHARSET_BINARY;
 			//	ncwidth = 1;
 			//}
 			if( bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0 ){
-				// �T���Q�[�g�̈� (U+D800 ���� U+DFFF)
+				// サロゲート領域 (U+D800 から U+DFFF)
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
 			goto EndFunc;
 		}
 	}else
-	if( 3 < nLen && (c0 & 0xf8) == 0xf0 ){	// ��P�o�C�g��11110abb�̏ꍇ
+	if( 3 < nLen && (c0 & 0xf8) == 0xf0 ){	// 第１バイトが11110abbの場合
 		c1 = pS[1];
 		c2 = pS[2];
 		c3 = pS[3];
-		// ��2�o�C�g��10bbcccc�A��3�o�C�g��10ddddee�A��4�o�C�g��10ddddee�̏ꍇ
+		// 第2バイトが10bbcccc、第3バイトが10ddddee、第4バイトが10ddddeeの場合
 		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 && (c3 & 0xc0) == 0x80 ){
-			ncwidth = 4;  // �S�o�C�g�R�[�h�ł���
-			echarset = CHARSET_UNI_SURROG;  // �T���Q�[�g�y�A�̕����i�������j
-			// ��1�o�C�g��abb=000�A��2�o�C�g��bb=00�̏ꍇ�i\u10000�����ɕϊ������j
+			ncwidth = 4;  // ４バイトコードである
+			echarset = CHARSET_UNI_SURROG;  // サロゲートペアの文字（初期化）
+			// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
 			if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
-				// �f�R�[�h�ł��Ȃ�.(�����ϊ��s�̈�)
+				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
-			// �P�o�C�g�ڂ� 11110xxx=11110100�̂Ƃ��A
-			// ���A1111 01xx : 10xx oooo �� x �̂Ƃ���ɒl������Ƃ�
+			// １バイト目が 11110xxx=11110100のとき、
+			// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
 			if( (c0 & 0x04) != 0 && ((c0 & 0x03) != 0 || (c1 & 0x30) != 0) ){
-				// �l���傫�����i0x10ffff���傫���j
+				// 値が大きすぎ（0x10ffffより大きい）
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
@@ -683,13 +683,13 @@ int CheckUtf8Char( const char *pS, const int nLen, ECharSet *peCharset, const bo
 		}
 	}
 
-	// �K��O�̃t�H�[�}�b�g
+	// 規定外のフォーマット
 	echarset = CHARSET_BINARY;
 	ncwidth = 1;
 
 EndFunc:
 
-	// �񕶎��Ɨ\��R�[�h�|�C���g���`�F�b�N
+	// 非文字と予約コードポイントをチェック
 	if( nOption != 0 && echarset != CHARSET_BINARY ){
 		wchar32_t wc32;
 		wc32 = DecodeUtf8( reinterpret_cast<const unsigned char*>(pS), ncwidth );
@@ -697,7 +697,7 @@ EndFunc:
 			echarset = CHARSET_BINARY;
 			ncwidth = 1;
 		}else{
-			// �ی�R�[�h
+			// 保護コード
 			echarset = CHARSET_BINARY;
 			ncwidth = 1;
 		}
@@ -710,11 +710,11 @@ EndFunc:
 }
 
 /*!
-	UTF-8 �������`�F�b�N�@(�g�ݍ��킹������l���Ȃ�)
+	UTF-8 文字をチェック　(組み合わせ文字列考慮なし)
 
-	@note �r���܂�UTF-8�̃G���R�[�f�B���O�������Ă���΁ACHARSET_BINARY2��ݒ肷��
+	@note 途中までUTF-8のエンコーディングが合っていれば、CHARSET_BINARY2を設定する
 
-	@date 2015.12.30 novice  ��P�o�C�g��11110abb�̂Ƃ��AnLen���傫���l��Ԃ��̂��C��
+	@date 2015.12.30 novice  第１バイトが11110abbのとき、nLenより大きい値を返すのを修正
 */
 int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
@@ -729,41 +729,41 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 	ncwidth = CheckUtf8Char( pS, nLen, &echarset, true, 0 );
 	c0 = pS[0];
 	if( echarset == CHARSET_BINARY ){
-		if( 1 == nLen && (c0 & 0xe0) == 0xc0 ){	// ��P�o�C�g��110aaabb�̏ꍇ
-			echarset = CHARSET_BINARY2; // ������f��(�p���p)
+		if( 1 == nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
+			echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 			ncwidth = 1;
 			goto EndFunc;
 		}else
-		if( 2 == nLen && (c0 & 0xf0) == 0xe0 ){	// ��P�o�C�g��1110aaaa�̏ꍇ
+		if( 2 == nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
 			c1 = pS[1];
-			// ��Q�o�C�g��10bbbbcc�A��R�o�C�g��10ccdddd�̏ꍇ
+			// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
 			if( (c1 & 0xc0) == 0x80 ){
-				echarset = CHARSET_BINARY2; // ������f��(�p���p)
-				ncwidth = 2;	// �R�o�C�g�R�[�h�̐擪2�o�C�g�ł���
+				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
+				ncwidth = 2;	// ３バイトコードの先頭2バイトである
 				if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
-					// �f�R�[�h�ł��Ȃ�.(�����ϊ��s�̈�)
+					// デコードできない.(往復変換不可領域)
 					echarset = CHARSET_BINARY;
 					ncwidth = 1;
 				}
 				//if( (c0 & 0x0f) == 0x0f && (c1 & 0x3f) == 0x3f && (c2 & 0x3e) == 0x3e ){
-				//	// Unicode �łȂ�����(U+FFFE, U+FFFF)
+				//	// Unicode でない文字(U+FFFE, U+FFFF)
 				//	charset = CHARSET_BINARY;
 				//	ncwidth = 1;
 				//}
 				if( bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0 ){
-					// �T���Q�[�g�̈� (U+D800 ���� U+DFFF)
+					// サロゲート領域 (U+D800 から U+DFFF)
 					echarset = CHARSET_BINARY;
 					ncwidth = 1;
 				}
 				goto EndFunc;
 			}
 		}else
-		if( 1 == nLen && (c0 & 0xf0) == 0xe0 ){	// ��P�o�C�g��1110aaaa�̏ꍇ
-			echarset = CHARSET_BINARY2; // ������f��(�p���p)
+		if( 1 == nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
+			echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 			ncwidth = 1;
 			goto EndFunc;
 		}else
-		if( 0 < nLen && nLen <= 3 && (c0 & 0xf8) == 0xf0 ){	// ��P�o�C�g��11110abb�̏ꍇ
+		if( 0 < nLen && nLen <= 3 && (c0 & 0xf8) == 0xf0 ){	// 第１バイトが11110abbの場合
 			if( 1 < nLen ){
 				c1 = pS[1];
 			}else{
@@ -774,20 +774,20 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 			}else{
 				c2 = 0xbf;
 			}
-			// ��2�o�C�g��10bbcccc�A��3�o�C�g��10ddddee
+			// 第2バイトが10bbcccc、第3バイトが10ddddee
 			if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
-				ncwidth = nLen;  // �S�o�C�g�R�[�h�ł���
-				echarset = CHARSET_BINARY2; // ������f��(�p���p)
-				// ��1�o�C�g��abb=000�A��2�o�C�g��bb=00�̏ꍇ�i\u10000�����ɕϊ������j
+				ncwidth = nLen;  // ４バイトコードである
+				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
+				// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
 				if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
-					// �f�R�[�h�ł��Ȃ�.(�����ϊ��s�̈�)
+					// デコードできない.(往復変換不可領域)
 					echarset = CHARSET_BINARY;
 					ncwidth = 1;
 				}
-				// �P�o�C�g�ڂ� 11110xxx=11110100�̂Ƃ��A
-				// ���A1111 01xx : 10xx oooo �� x �̂Ƃ���ɒl������Ƃ�
+				// １バイト目が 11110xxx=11110100のとき、
+				// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
 				if( (c0 & 0x04) != 0 && (c0 & 0x03) != 0 ){
-					// �l���傫�����i0x10ffff���傫���j
+					// 値が大きすぎ（0x10ffffより大きい）
 					echarset = CHARSET_BINARY;
 					ncwidth = 1;
 				}
@@ -802,7 +802,7 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 		goto EndFunc;
 	}
 
-	// �K��O�̃t�H�[�}�b�g
+	// 規定外のフォーマット
 	echarset = CHARSET_BINARY;
 	ncwidth = 1;
 
@@ -815,7 +815,7 @@ EndFunc:
 }
 
 /*
-	CESU-8 �����̃`�F�b�N�@(�g�ݍ��킹������l���Ȃ�)
+	CESU-8 文字のチェック　(組み合わせ文字列考慮なし)
 */
 int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const int nOption )
 {
@@ -826,28 +826,28 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 		return 0;
 	}
 
-	// �P�����ڂ̃X�L����
+	// １文字目のスキャン
 	nclen1 = CheckUtf8Char( &pS[0], nLen, &echarset1, false, 0 );
 
-	// ���������R�����̏ꍇ
+	// 文字長が３未満の場合
 	if( nclen1 < 3 ){
-		// echarset == BAINARY �̏ꍇ�́A����Ȃ� nclen1 < 3
+		// echarset == BAINARY の場合は、からなず nclen1 < 3
 		eret_charset = echarset1;
 		nret_clen = nclen1;
 	}else
-	// ���������R�̏ꍇ
+	// 文字長が３の場合
 	if( nclen1 == 3 ){
-		// ����ȂR�o�C�g�������������B
+		// 正常な３バイト文字があった。
 
-		// �Q�����ڂ̃X�L����
+		// ２文字目のスキャン
 		nclen2 = CheckUtf8Char( &pS[3], nLen-3, &echarset2, false, 0 );
 
-		// &pS[3]����̕��������R�łȂ��� echarset2 �� CHARSET_BINARY �������ꍇ�B
+		// &pS[3]からの文字長が３でないか echarset2 が CHARSET_BINARY だった場合。
 		if( nclen2 != 3 || echarset2 == CHARSET_BINARY ){
-			// nclen1 �� echarset1 �����ʂƂ���B
+			// nclen1 と echarset1 を結果とする。
 			eret_charset = echarset1;
 			nret_clen = nclen1;
-			// &pS[0] ����R�o�C�g���T���Q�[�g�Ђ������ꍇ�B
+			// &pS[0] から３バイトがサロゲート片だった場合。
 			if( IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]) ){
 				eret_charset = CHARSET_BINARY;
 				nret_clen = 1;
@@ -856,29 +856,29 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 		}
 
 		//    nclen1 == 3 && echarset1 != CHARSET_BINARY
-		// && nclen2 == 3 && echarset2 != CHARSET_BINARY �̏ꍇ�B
+		// && nclen2 == 3 && echarset2 != CHARSET_BINARY の場合。
 
-		// UTF-8�ŃT���Q�[�g�y�A���m�F�B
+		// UTF-8版サロゲートペアを確認。
 		if( IsUtf8SurrogHi(&pS[0]) && IsUtf8SurrogLow(&pS[3]) ){
-			// CESU-8 �ł��邩�ǂ������`�F�b�N
+			// CESU-8 であるかどうかをチェック
 			eret_charset = CHARSET_UNI_SURROG;
-			nret_clen = 6;  // CESU-8 �̃T���Q�[�g�ł���
+			nret_clen = 6;  // CESU-8 のサロゲートである
 		}else
-		// &pS[0] ����R�o�C�g���T���Q�[�g�Ђ������ꍇ�B
+		// &pS[0] から３バイトがサロゲート片だった場合。
 		if( IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]) ){
 			eret_charset = CHARSET_BINARY;
 			nret_clen = 1;
 		}else
-		// �ʏ�̂R�o�C�g����
+		// 通常の３バイト文字
 		{
 			eret_charset = echarset1;
 			nret_clen = 3;
 		}
 	}else
-	// ���������R���傫���ꍇ
+	// 文字長が３より大きい場合
 	{  // nclen1 == 4
-		// UTF-16 �T���Q�[�g�ɕϊ������̈�
-		// 4�o�C�g�R�[�h�͋֎~
+		// UTF-16 サロゲートに変換される領域
+		// 4バイトコードは禁止
 		eret_charset = CHARSET_BINARY;
 		nret_clen = 1;
 	}
@@ -886,7 +886,7 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 EndFunc:;
 
 
-	// �񕶎��Ɨ\��R�[�h�|�C���g���m�F
+	// 非文字と予約コードポイントを確認
 	if( nOption != 0 && eret_charset != CHARSET_BINARY ){
 		wchar32_t wc32;
 		if( nret_clen < 4 ){
@@ -904,7 +904,7 @@ EndFunc:;
 				nret_clen = 1;
 			}
 		}else{
-			// �ی�R�[�h
+			// 保護コード
 			eret_charset = CHARSET_BINARY;
 			nret_clen = 1;
 		}
@@ -920,33 +920,33 @@ EndFunc:;
 
 
 /*
-	UTF-7 �̂���.
+	UTF-7 のこと.
 
-	UTF-7 �Z�b�gD�F�@���p�p�����A'(),-./:?�A����сATAB SP CR LF
-	UTF-7 �Z�b�gO�F�@!"#$%&*;<=>@[]^_`{|}
-	UTF-7 �Z�b�gB�F�@�p�b�h���������� BASE64 ���� (Modified Base 64)
+	UTF-7 セットD：　半角英数字、'(),-./:?、および、TAB SP CR LF
+	UTF-7 セットO：　!"#$%&*;<=>@[]^_`{|}
+	UTF-7 セットB：　パッド文字を除く BASE64 文字 (Modified Base 64)
 
-	1. �Z�b�gD �܂��� �Z�b�gO �ɂ��郆�j�R�[�h������, ������ ASCII �����ŕ\�������.
-	2. �Z�b�gD �܂��� �Z�b�gO �ɂȂ����j�R�[�h������, Modified Base 64 ����������, �Z�b�gB ������ɂ���ĕ\�������.
-	3. �Z�b�gB �̊J�n��, ASCII ���� '+' �ɂ����, �Z�b�gB ������̏I�[��, �Z�b�gB �ɂȂ������̏o���ɂ���ĔF�������.
-	   �Z�b�gB ������̏I�[�����ɂ�, �Z�b�gB �ɂȂ� ASCII ���� '-' �����Ă��悢���ƂɂȂ��Ă���,
-	   ���̏I�[������, �f�R�[�_�[�ɂ��, �����莟��폜�����.
-	4. �Z�b�gB �J�n�����ł��� ASCII ���� '+' ���̂�, "+-" �Ƃ���������ŕ\�����.
+	1. セットD または セットO にあるユニコード文字は, 等価な ASCII 文字で表現される.
+	2. セットD または セットO にないユニコード文字は, Modified Base 64 符号化され, セットB 文字列によって表現される.
+	3. セットB の開始は, ASCII 文字 '+' によって, セットB 文字列の終端は, セットB にない文字の出現によって認識される.
+	   セットB 文字列の終端部分には, セットB にない ASCII 文字 '-' を入れてもよいことになっていて,
+	   その終端文字は, デコーダーにより, 見つかり次第削除される.
+	4. セットB 開始文字である ASCII 文字 '+' 自体は, "+-" という文字列で表される.
 
-	�Q�l�����F�uUCS��UTF�vhttp://homepage1.nifty.com/nomenclator/unicode/ucs_utf.htm
-	          �uRFC 2152�vhttp://www.ietf.org/rfc/rfc2152.txt
+	参考資料：「UCSとUTF」http://homepage1.nifty.com/nomenclator/unicode/ucs_utf.htm
+	          「RFC 2152」http://www.ietf.org/rfc/rfc2152.txt
 */
 
 /*!
-	UTF-7 �Z�b�g�c�̕�����
+	UTF-7 セットＤの文字列か
 
-	@return �Z�b�g�c�̕�����̒���
+	@return セットＤの文字列の長さ
 
-	@param[out] ppNextChar ���̃u���b�N�iUTF-7�Z�b�gB�����j�̐擪�����̃|�C���^���i�[�����B�i'+'���΂��j
+	@param[out] ppNextChar 次のブロック（UTF-7セットB部分）の先頭文字のポインタが格納される。（'+'を飛ばす）
 
-	pbError �� NULL �ȊO�ɐݒ肵�Ă��āApbError �� true ���i�[���ꂽ�ꍇ�A
-	�߂�l�� ppNextChar �Ɋi�[�����|�C���^�͎g���Ȃ��B
-	1�ȏ�̃G���[��������Ό�₩��O���̂ł��������K���Ȏd�l�ɁB
+	pbError を NULL 以外に設定していて、pbError に true が格納された場合、
+	戻り値と ppNextChar に格納されるポインタは使えない。
+	1つ以上のエラーが見つかれば候補から外れるのでそういう適当な仕様に。
 */
 int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbError )
 {
@@ -968,11 +968,11 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 			break;
 		}
 		if( !IsUtf7Direct(*pr) ){
-			// UTF-7�Z�b�gD�̕����W���łȂ����̂��P�����ł������Ă���ꍇ�A
-			// �G���[��Ԃ��B*pbError == true �̏ꍇ�́A
-			// *ppNextChar �͕s��ƂȂ�B
+			// UTF-7セットDの文字集合でないものが１文字でも入っている場合、
+			// エラーを返す。*pbError == true の場合は、
+			// *ppNextChar は不定となる。
 			berror = true;
-//			break;    // �������[�v�ɂȂ�̂ł����� break ���Ȃ��B
+//			break;    // 無限ループになるのでここで break しない。
 		}
 	}
 	if( pbError ){
@@ -980,7 +980,7 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	}
 
 	if( pr < pr_end ){
-		// '+' ���X�L�b�v
+		// '+' をスキップ
 		*ppNextChar = const_cast<char*>(pr) + 1;
 	}else{
 		*ppNextChar = const_cast<char*>(pr);
@@ -992,13 +992,13 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 
 
 /*!
-	UTF-7 �Z�b�g�a�̕�����
+	UTF-7 セットＢの文字列か
 
-	@return �Z�b�g�a������̒���
+	@return セットＢ文字列の長さ
 
-	@param[out] ppNextChar ���̃u���b�N�iUTF-7�Z�b�gD�����j�̐擪�����̃|�C���^���i�[�����i����'-'���΂��j
+	@param[out] ppNextChar 次のブロック（UTF-7セットD部分）の先頭文字のポインタが格納される（文字'-'を飛ばす）
 
-	@note ���̊֐��̑O�� CheckUtf7DPart() �����s�����K�v������B
+	@note この関数の前に CheckUtf7DPart() が実行される必要がある。
 */
 int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbError, const int nOption, bool* pbNoAddPoint )
 {
@@ -1029,7 +1029,7 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	pr_end = pS + nLen;
 
 	for( ; pr < pr_end; ++pr ){
-		// �Z�b�g�a�̕����łȂ��Ȃ�܂Ń��[�v
+		// セットＢの文字でなくなるまでループ
 		if( !IsBase64(*pr) ){
 			if( *pr == '-' ){
 				bminus_found= true;
@@ -1042,25 +1042,25 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 
 	nchecklen = pr - pS;
 
-	// �ی�R�[�h
+	// 保護コード
 	if( nchecklen < 1 ){
 		nchecklen = 0;
 	}
 
 
 	/*
-	�� �f�R�[�h��̃f�[�^���̊m�F
+	◆ デコード後のデータ長の確認
 
-	�������Ă����f�[�^�� nchecklen(= pr - pS) ���W�Ŋ����Ă݂�.
-	���̗]��̒l����l������r�b�g��́c
+	調査してきたデータ長 nchecklen(= pr - pS) を８で割ってみる.
+	その余りの値から考えられるビット列は…
 
-	             |----------------------------- Base64 �\�� --------------------------------------------|
-	             ��1�o�C�g  ��2�o�C�g  ��3�o�C�g  ��4�o�C�g  ��5�o�C�g  ��6�o�C�g  ��7�o�C�g  ��8�o�C�g
-	�c��P����   00xx xxxx  00xx xxxx  00xx xx00     ---        ---        ---        ---        ---
-	�c��Q����   00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx 0000     ---        ---
-	�c��R����   00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx
+	             |----------------------------- Base64 表現 --------------------------------------------|
+	             第1バイト  第2バイト  第3バイト  第4バイト  第5バイト  第6バイト  第7バイト  第8バイト
+	残り１文字   00xx xxxx  00xx xxxx  00xx xx00     ---        ---        ---        ---        ---
+	残り２文字   00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx 0000     ---        ---
+	残り３文字   00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx  00xx xxxx
 
-	��L�R�ʂ�̂��Â�ɂ����Ă͂܂�Ȃ��ꍇ�͑S�f�[�^�𗎂Ƃ��i�s���o�C�g�Ƃ���j.
+	上記３通りのいづれにも当てはまらない場合は全データを落とす（不正バイトとする）.
 	*/
 	const char *pr_ = pr - 1;
 	switch( nchecklen % 8 ){
@@ -1077,7 +1077,7 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 		}
 		break;
 	case 8:
-		// nchecklen == 0 �̏ꍇ
+		// nchecklen == 0 の場合
 		break;
 	default:
 		berror_found = true;
@@ -1087,16 +1087,16 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 		goto EndFunc;
 	}
 
-	// UTF-7������ "+-" �̃`�F�b�N
+	// UTF-7文字列 "+-" のチェック
 
 	if( pr < pr_end && (nchecklen < 1 && bminus_found != true) ){
-		// �ǂݎ��|�C���^���f�[�^�̏I�[���w���Ă��Ȃ���
-		// �m�F�ł��� Set B ������̒������[���̏ꍇ�́A
-		// �K���I�[���� '-' �����݂��Ă��邱�Ƃ��m�F����B
+		// 読み取りポインタがデータの終端を指していなくて
+		// 確認できた Set B 文字列の長さがゼロの場合は、
+		// 必ず終端文字 '-' が存在していることを確認する。
 		berror_found = true;
 	}
 
-	// ���ۂɃf�R�[�h���ē��e���m�F����B
+	// 実際にデコードして内容を確認する。
 
 	if( berror_found == true || nchecklen < 1 ){
 		goto EndFunc;
@@ -1128,15 +1128,15 @@ EndFunc:;
 	}
 
 	if( (berror_found == false || UC_LOOSE == (nOption & UC_LOOSE)) && (pr < pr_end && bminus_found == true) ){
-		// '-' ���X�L�b�v�B
+		// '-' をスキップ。
 		*ppNextChar = const_cast<char*>(pr) + 1;
 	}else{
 		*ppNextChar = const_cast<char*>(pr);
 
 		if( (UC_LOOSE != (nOption & UC_LOOSE)) && bminus_found == false ){
-			// 2015.03.05 Moca �G���R�[�h�`�F�b�N���ɏI�[��'-'���Ȃ��ꍇ�̓|�C���g�����Z���Ȃ�
+			// 2015.03.05 Moca エンコードチェック時に終端の'-'がない場合はポイントを加算しない
 			if( pr < pr_end ){
-				// �o�b�t�@�̏I�[�̏ꍇ������
+				// バッファの終端の場合を除く
 				if( pbNoAddPoint ){
 					*pbNoAddPoint = true;
 				}

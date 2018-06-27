@@ -1,10 +1,10 @@
-/*!	@file
-	@brief •¶šƒR[ƒh”F¯E”»•Êx‰‡ŠÖ”ƒ‰ƒCƒuƒ‰ƒŠ
+ï»¿/*!	@file
+	@brief æ–‡å­—ã‚³ãƒ¼ãƒ‰èªè­˜ãƒ»åˆ¤åˆ¥æ”¯æ´é–¢æ•°ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 
 	@author Sakura-Editor collaborators
-	@date 1998/03/06 V‹Kì¬
-	@date 2006/03/06 –¼Ì•ÏXi‹Œ–¼F•¶šƒR[ƒh’è”‚Ì’è‹`j
-	@date 2007/03/19 –¼Ì‰ü’èi‹Œ–¼F•¶šƒR[ƒh”F¯ƒ‰ƒCƒuƒ‰ƒŠj
+	@date 1998/03/06 æ–°è¦ä½œæˆ
+	@date 2006/03/06 åç§°å¤‰æ›´ï¼ˆæ—§åï¼šæ–‡å­—ã‚³ãƒ¼ãƒ‰å®šæ•°ã®å®šç¾©ï¼‰
+	@date 2007/03/19 åç§°æ”¹å®šï¼ˆæ—§åï¼šæ–‡å­—ã‚³ãƒ¼ãƒ‰èªè­˜ãƒ©ã‚¤ãƒ–ãƒ©ãƒªï¼‰
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -40,12 +40,12 @@
 
 
 /*!
-	”F¯‚·‚é•¶šƒR[ƒhí•Ê
+	èªè­˜ã™ã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰ç¨®åˆ¥
 */
-//enum ECodeType;     charset/charset.h ‚É’è‹`‚³‚ê‚Ä‚¢‚é
+//enum ECodeType;     charset/charset.h ã«å®šç¾©ã•ã‚Œã¦ã„ã‚‹
 #if 0
 enum ECodeType {
-	CODE_SJIS,				// MS-CP932(Windows-31J), ƒVƒtƒgJIS(Shift_JIS)
+	CODE_SJIS,				// MS-CP932(Windows-31J), ã‚·ãƒ•ãƒˆJIS(Shift_JIS)
 	CODE_JIS,				// MS-CP5022x(ISO-2022-JP-MS)
 	CODE_EUC,				// MS-CP51932, eucJP-ms(eucJP-open)
 	CODE_UNICODE,			// UTF-16 LittleEndian(UCS-2)
@@ -54,21 +54,21 @@ enum ECodeType {
 	CODE_UNICODEBE,			// UTF-16 BigEndian(UCS-2)
 	// ...
 	CODE_CODEMAX,
-	CODE_AUTODETECT = 99,	/* •¶šƒR[ƒh©“®”»•Ê */
-	CODE_DEFAULT    = CODE_SJIS,	/* ƒfƒtƒHƒ‹ƒg‚Ì•¶šƒR[ƒh */
+	CODE_AUTODETECT = 99,	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥ */
+	CODE_DEFAULT    = CODE_SJIS,	/* ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ */
 
 	/*
 		- MS-CP50220
-			Unicode ‚©‚ç cp50220 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚Í JIS X 0208 ‚Ì•Ğ‰¼–¼‚É’uŠ·‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50220 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ JIS X 0208 ã®ç‰‡ä»®åã«ç½®æ›ã•ã‚Œã‚‹
 		- MS-CP50221
-			Unicode ‚©‚ç cp50221 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚ÍAG0 W‡‚Ö‚Ìw¦‚ÌƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX ESC ( I ‚ğ—p‚¢‚ÄƒGƒ“ƒR[ƒh‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50221 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ã€G0 é›†åˆã¸ã®æŒ‡ç¤ºã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ ESC ( I ã‚’ç”¨ã„ã¦ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã‚‹
 		- MS-CP50222
-			Unicode ‚©‚ç cp50222 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚ÍASO/SI ‚ğ—p‚¢‚ÄƒGƒ“ƒR[ƒh‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50222 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ã€SO/SI ã‚’ç”¨ã„ã¦ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã‚‹
 
-		Ql
+		å‚è€ƒ
 		http://legacy-encoding.sourceforge.jp/wiki/
 	*/
 };
@@ -78,30 +78,30 @@ enum ECodeType {
 
 
 /*!
-	“à•”“I‚É”F¯‚·‚é•¶šW‡
+	å†…éƒ¨çš„ã«èªè­˜ã™ã‚‹æ–‡å­—é›†åˆ
 */
 enum ECharSet {
-	CHARSET_BINARY,					//!< ”CˆÓ’l
-	CHARSET_ASCII7,					//!< 7ƒrƒbƒg ASCII •¶š  (ISO/IEC 646 IRV)
-	CHARSET_JIS_HANKATA,			//!< “ú–{Œê‚Ì”¼ŠpƒJƒ^ƒJƒi•¶š  (JIS X 0201)
-	CHARSET_JIS_ZENKAKU,			//!< “ú–{Œê‚Ì‘SŠp•¶š  (JIS X 0208 { MS Šg’£•¶š)
-	CHARSET_JIS_SUPPLEMENTAL,		//!< “ú–{Œê‚Ì•â•Š¿š•¶š  (JIS X 0213)
-	CHARSET_UNI_NORMAL,			//!< ƒTƒƒQ[ƒg—Ìˆæ‚ğœ‚¢‚½ƒ†ƒjƒR[ƒh•¶š
-	CHARSET_UNI_SURROG,			//!< ƒ†ƒjƒR[ƒh‚ÌƒTƒƒQ[ƒg—Ìˆæ‚É‚ ‚é•¶š
-	CHARSET_BINARY2,			//!< •¶š—ñ’f•Ğ(Œp‘±—p)
+	CHARSET_BINARY,					//!< ä»»æ„å€¤
+	CHARSET_ASCII7,					//!< 7ãƒ“ãƒƒãƒˆ ASCII æ–‡å­—  (ISO/IEC 646 IRV)
+	CHARSET_JIS_HANKATA,			//!< æ—¥æœ¬èªã®åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—  (JIS X 0201)
+	CHARSET_JIS_ZENKAKU,			//!< æ—¥æœ¬èªã®å…¨è§’æ–‡å­—  (JIS X 0208 ï¼‹ MS æ‹¡å¼µæ–‡å­—)
+	CHARSET_JIS_SUPPLEMENTAL,		//!< æ—¥æœ¬èªã®è£œåŠ©æ¼¢å­—æ–‡å­—  (JIS X 0213)
+	CHARSET_UNI_NORMAL,			//!< ã‚µãƒ­ã‚²ãƒ¼ãƒˆé ˜åŸŸã‚’é™¤ã„ãŸãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ‰æ–‡å­—
+	CHARSET_UNI_SURROG,			//!< ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ‰ã®ã‚µãƒ­ã‚²ãƒ¼ãƒˆé ˜åŸŸã«ã‚ã‚‹æ–‡å­—
+	CHARSET_BINARY2,			//!< æ–‡å­—åˆ—æ–­ç‰‡(ç¶™ç¶šç”¨)
 	/*
-		– CHARSET_JIS_SUPPLEMENTAL ‚ÍAJIS_ZENKAKU ‚Æˆê•”d‚È‚è‡‚¤‚½‚ß
-		@ ‚ ‚Ü‚è‚²—˜‰v‚ª‚È‚³‚»‚¤‚¾‚ªAˆê‰’m‚ç‚ê‚Ä‚¢‚é‚à‚ÌB
-		–@CHARSET_BINARY ‚Í•¶šW‡‚Å‚Í‚È‚¢W‡B
+		ï¼Š CHARSET_JIS_SUPPLEMENTAL ã¯ã€JIS_ZENKAKU ã¨ä¸€éƒ¨é‡ãªã‚Šåˆã†ãŸã‚
+		ã€€ ã‚ã¾ã‚Šã”åˆ©ç›ŠãŒãªã•ãã†ã ãŒã€ä¸€å¿œçŸ¥ã‚‰ã‚Œã¦ã„ã‚‹ã‚‚ã®ã€‚
+		ï¼Šã€€CHARSET_BINARY ã¯æ–‡å­—é›†åˆã§ã¯ãªã„é›†åˆã€‚
 	*/
 };
 
 
 
 /*!
-	JIS ƒR[ƒh‚ÌƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚½‚¿
+	JIS ã‚³ãƒ¼ãƒ‰ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ãŸã¡
 
-	@note ‡”Ô•Ï‚¦‚é‚ÆŠëŒ¯
+	@note é †ç•ªå¤‰ãˆã‚‹ã¨å±é™º
 */
 enum EJisEscseq {
 	JISESC_UNKNOWN,
@@ -114,31 +114,31 @@ enum EJisEscseq {
 	JISESC_JISX0208_1990,
 
 	/*
-		•„†‰»•¶šW‡       16i•\Œ»            •¶š—ñ•\Œ»
+		ç¬¦å·åŒ–æ–‡å­—é›†åˆ       16é€²è¡¨ç¾            æ–‡å­—åˆ—è¡¨ç¾
 		------------------------------------------------------------
 		JIS C 6226-1978      1b 24 40            ESC $ @
 		JIS X 0208-1983      1b 24 42            ESC $ B
 		JIS X 0208-1990      1b 26 40 1b 24 42   ESC & @ ESC $ B
 		JIS X 0212-1990      1b 24 28 44         ESC $ ( D
-		JIS X 0213:2000 1–Ê  1b 24 28 4f         ESC $ ( O
-		JIS X 0213:2004 1–Ê  1b 24 28 51         ESC $ ( Q
-		JIS X 0213:2000 2–Ê  1b 24 28 50         ESC $ ( P
-		JIS X 0201 ƒ‰ƒeƒ“    1b 28 4a            ESC ( J
-		JIS X 0201 ƒ‰ƒeƒ“    1b 28 48            ESC ( H         —ğj“I [*]
-		JIS X 0201 •Ğ‰¼–¼    1b 28 49            ESC ( I
+		JIS X 0213:2000 1é¢  1b 24 28 4f         ESC $ ( O
+		JIS X 0213:2004 1é¢  1b 24 28 51         ESC $ ( Q
+		JIS X 0213:2000 2é¢  1b 24 28 50         ESC $ ( P
+		JIS X 0201 ãƒ©ãƒ†ãƒ³    1b 28 4a            ESC ( J
+		JIS X 0201 ãƒ©ãƒ†ãƒ³    1b 28 48            ESC ( H         æ­´å²çš„ [*]
+		JIS X 0201 ç‰‡ä»®å    1b 28 49            ESC ( I
 		ISO/IEC 646 IRV      1b 28 42            ESC ( B
 
-		  [*] —ğj“I‚È——R‚É‚æ‚èoŒ»‚µ‚½ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒXD
-		      JIS X 0201‚Ìw¦‚Æ‚µ‚Ä‚Íg—p‚·‚×‚«‚Å‚È‚¢D
+		  [*] æ­´å²çš„ãªç†ç”±ã«ã‚ˆã‚Šå‡ºç¾ã—ãŸã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ï¼
+		      JIS X 0201ã®æŒ‡ç¤ºã¨ã—ã¦ã¯ä½¿ç”¨ã™ã¹ãã§ãªã„ï¼
 
-		o“WFhttp://www.asahi-net.or.jp/~wq6k-yn/code/
-		QlFhttp://homepage2.nifty.com/zaco/code/
+		å‡ºå±•ï¼šhttp://www.asahi-net.or.jp/~wq6k-yn/code/
+		å‚è€ƒï¼šhttp://homepage2.nifty.com/zaco/code/
 	*/
 };
 
 
 /*!
-	“à•”“I‚É”F¯‚·‚é JIS ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚Ìí—Ş
+	å†…éƒ¨çš„ã«èªè­˜ã™ã‚‹ JIS ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã®ç¨®é¡
 */
 enum EMyJisEscseq {
 	MYJISESC_NONE,
@@ -155,26 +155,26 @@ enum EMyJisEscseq {
 
 
 /* ------------------------------------------------------------------------
-      ƒf[ƒ^•\‚Æ•ÏŠ·•â•
+      ãƒ‡ãƒ¼ã‚¿è¡¨ã¨å¤‰æ›è£œåŠ©
    ------------------------------------------------------------------------
 
 */
 
-// UTF7 •¶š‚ğ”»•Ê‚·‚éƒe[ƒuƒ‹
+// UTF7 æ–‡å­—ã‚’åˆ¤åˆ¥ã™ã‚‹ãƒ†ãƒ¼ãƒ–ãƒ«
 extern const char TABLE_IsUtf7Direct[];
-#if 0  // –¢g—p
-// JIS ƒR[ƒh‚ÌƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX•¶š—ñƒf[ƒ^
+#if 0  // æœªä½¿ç”¨
+// JIS ã‚³ãƒ¼ãƒ‰ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹æ–‡å­—åˆ—ãƒ‡ãƒ¼ã‚¿
 extern const int TABLE_JISESCLEN[];
 extern const char* TABLE_JISESCDATA[];
 #endif
 
 
-// Unicode ”»•ÊŠÖŒW
+// Unicode åˆ¤åˆ¥é–¢ä¿‚
 
 /*!
-	Unicode ‚Ì Noncharacter ‚ğŠm”F
+	Unicode ã® Noncharacter ã‚’ç¢ºèª
 
-	Ql‘—¿Fhttp://unicode.org/versions/Unicode4.0.0/ch15.pdf
+	å‚è€ƒè³‡æ–™ï¼šhttp://unicode.org/versions/Unicode4.0.0/ch15.pdf
 */
 inline bool IsUnicodeNoncharacter( const wchar32_t wc )
 {
@@ -193,7 +193,7 @@ inline bool IsUnicodeNoncharacter( const wchar32_t wc )
 
 
 /* ------------------------------------------------------------------------
-      •¶šƒR[ƒh”»•Êx‰‡
+      æ–‡å­—ã‚³ãƒ¼ãƒ‰åˆ¤åˆ¥æ”¯æ´
    ------------------------------------------------------------------------
 
 */
@@ -205,21 +205,21 @@ inline bool IsUnicodeNoncharacter( const wchar32_t wc )
 #define CHARCODE__IS_EUCJP_HANKATA2(x) ( 0xa1 <= (x) && (x) <= 0xdf )
 #define CHARCODE__IS_JIS(x) ( 0x21 <= (x) && (x) <= 0x7e )
 
-//! 7bit ASCII ‚©
+//! 7bit ASCII ã‹
 template< typename Tchar >
 inline bool IsAscii7( const Tchar c ){
 	unsigned int c_ = c;
 	return ( c_ < 0x80 );
 }
-//! SJIS ‘SŠp•¶š 1 ƒoƒCƒg–Ú‚©
+//! SJIS å…¨è§’æ–‡å­— 1 ãƒã‚¤ãƒˆç›®ã‹
 inline bool IsSjisZen1( const char c ){
 	return CHARCODE__IS_SJIS_ZEN1(static_cast<unsigned char>(c));
 }
-//! SJIS ‘SŠp•¶š 2 ƒoƒCƒg–Ú‚©
+//! SJIS å…¨è§’æ–‡å­— 2 ãƒã‚¤ãƒˆç›®ã‹
 inline bool IsSjisZen2( const char c ){
 	return CHARCODE__IS_SJIS_ZEN2(static_cast<unsigned char>(c));
 }
-//! SJIS ‘SŠp•¶š‚©
+//! SJIS å…¨è§’æ–‡å­—ã‹
 inline bool IsSjisZen( const char* pC ){
 	return ( CHARCODE__IS_SJIS_ZEN1(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_SJIS_ZEN2(static_cast<unsigned char>(pC[1])) );
@@ -250,19 +250,19 @@ inline int my_iskanji2( int c )
 	return IsSjisZen2(static_cast<char>(c & 0x00ff));
 }
 
-//! SJIS ”¼ŠpƒJƒ^ƒJƒi‚©
+//! SJIS åŠè§’ã‚«ã‚¿ã‚«ãƒŠã‹
 inline bool IsSjisHankata( const char c ){
 	return ( 0xa1 <= static_cast<unsigned char>(c) && static_cast<unsigned char>(c) <= 0xdf );
 }
-//! EUCJP ‘SŠp•¶š 1 ƒoƒCƒg–Ú‚©
+//! EUCJP å…¨è§’æ–‡å­— 1 ãƒã‚¤ãƒˆç›®ã‹
 inline bool IsEucjpZen1( const char c ){
 	return CHARCODE__IS_EUCJP_ZEN1(static_cast<unsigned char>(c));
 }
-//! EUCJP ‘SŠp•¶š 2 ƒoƒCƒg–Ú‚©
+//! EUCJP å…¨è§’æ–‡å­— 2 ãƒã‚¤ãƒˆç›®ã‹
 inline bool IsEucjpZen2( const char c ){
 	return CHARCODE__IS_EUCJP_ZEN2(static_cast<unsigned char>(c));
 }
-//! EUCJP ‘SŠp•¶š‚©
+//! EUCJP å…¨è§’æ–‡å­—ã‹
 inline bool IsEucjpZen( const char* pC ){
 	return ( CHARCODE__IS_EUCJP_ZEN1(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_EUCJP_ZEN2(static_cast<unsigned char>(pC[1])) );
@@ -273,29 +273,29 @@ inline bool IsEucZen_hirakata( const char* pC ){
 	return ( (c0 == 0xa4 && (c1 >= 0xa1 && c1 <= 0xf3))
 	      || (c0 == 0xa5 && (c1 >= 0xa1 && c1 <= 0xf6)) );
 }
-//! EUCJP ‘SŠp•¶š@•â•Š¿š‚©
+//! EUCJP å…¨è§’æ–‡å­—ã€€è£œåŠ©æ¼¢å­—ã‹
 inline bool IsEucjpSupplemtal( const char* pC){
 	return ( static_cast<unsigned char>(pC[0]) == 0x8f
 	      && CHARCODE__IS_EUCJP_ZEN1(static_cast<unsigned char>(pC[1]))
 	      && CHARCODE__IS_EUCJP_ZEN2(static_cast<unsigned char>(pC[2])) );
 }
-//! EUCJP ”¼ŠpƒJƒ^ƒJƒi•¶š 2 ƒoƒCƒg–Ú‚©  added by genta
+//! EUCJP åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­— 2 ãƒã‚¤ãƒˆç›®ã‹  added by genta
 inline bool IsEucjpHankata2( const char c ){
 	return CHARCODE__IS_EUCJP_HANKATA2(static_cast<unsigned char>(c));
 }
-//! EUCJP ”¼ŠpƒJƒ^ƒJƒi•¶š‚©
+//! EUCJP åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—ã‹
 inline bool IsEucjpHankata( const char *pC ){
 	return ( static_cast<unsigned char>(pC[0]) == 0x8e && CHARCODE__IS_EUCJP_HANKATA2(static_cast<unsigned char>(pC[1])) );
 }
-//! ISO-2022-JP(JIS) ‚©
+//! ISO-2022-JP(JIS) ã‹
 inline bool IsJis( const char c ){
 	return CHARCODE__IS_JIS(static_cast<unsigned char>(c));
 }
-//! ISO-2022-JP(JIS) ”¼ŠpƒJƒ^ƒJƒi•¶š‚©
+//! ISO-2022-JP(JIS) åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—ã‹
 inline bool IsJisHankata( const char c ){
 	return ( 0x21 <= static_cast<unsigned char>(c) && static_cast<unsigned char>(c) <= 0x7e );
 }
-//! ISO-2022-JP(JIS) ‘SŠp•¶š‚©
+//! ISO-2022-JP(JIS) å…¨è§’æ–‡å­—ã‹
 inline bool IsJisZen( const char* pC ){
 	return ( CHARCODE__IS_JIS(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_JIS(static_cast<unsigned char>(pC[1])) );
@@ -310,17 +310,17 @@ inline bool IsJisZen( const char* pC ){
 #undef CHARCODE__IS_JIS
 
 
-//! UTF16 ãˆÊƒTƒƒQ[ƒg‚©
+//! UTF16 ä¸Šä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‹
 inline bool IsUtf16SurrogHi( const wchar_t wc ){
 //	return ( 0xd800 <= wc && wc <= 0xdbff );
 	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xd800 );
 }
-//! UTF16 ‰ºˆÊƒTƒƒQ[ƒg•¶š‚©
+//! UTF16 ä¸‹ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆæ–‡å­—ã‹
 inline bool IsUtf16SurrogLow( const wchar_t wc ){
 //	return ( 0xdc00 <= wc && wc <= 0xdfff );
 	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xdc00 );
 }
-//! UtF-8”Å ãˆÊƒTƒƒQ[ƒg‚©
+//! UtF-8ç‰ˆ ä¸Šä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‹
 inline bool IsUtf8SurrogHi( const char* pS ) {
 	const unsigned char* ps = reinterpret_cast<const unsigned char*>( pS );
 	if( (ps[0] & 0xff) == 0xed && (ps[1] & 0xf0) == 0xa0 ){
@@ -328,7 +328,7 @@ inline bool IsUtf8SurrogHi( const char* pS ) {
 	}
 	return false;
 }
-//! UtF-8”Å ‰ºˆÊƒTƒƒQ[ƒg‚©
+//! UtF-8ç‰ˆ ä¸‹ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‹
 inline bool IsUtf8SurrogLow( const char* pS ) {
 	const unsigned char* ps = reinterpret_cast<const unsigned char*>( pS );
 	if( (ps[0] & 0xff) == 0xed && (ps[1] & 0xf0) == 0xb0 ){
@@ -336,26 +336,26 @@ inline bool IsUtf8SurrogLow( const char* pS ) {
 	}
 	return false;
 }
-//! UTF-7 Set D ‚Ì•¶š‚©
+//! UTF-7 Set D ã®æ–‡å­—ã‹
 template< typename CHAR_TYPE >
 inline bool IsUtf7SetD( const CHAR_TYPE c ){
 	unsigned int c_ = c;
 	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 1 );
 }
-//! UTF-7 Set O ‚Ì•¶š‚©
+//! UTF-7 Set O ã®æ–‡å­—ã‹
 template< typename CHAR_TYPE >
 inline bool IsUtf7SetO( const CHAR_TYPE c ){
 	unsigned int c_ = c;
 	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 2 );
 }
-//! UTF-7 ‚Å’¼ÚƒGƒ“ƒR[ƒh‚³‚ê“¾‚é•¶š‚©
+//! UTF-7 ã§ç›´æ¥ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œå¾—ã‚‹æ–‡å­—ã‹
 template< typename CHAR_TYPE >
 inline bool IsUtf7Direct( const CHAR_TYPE c ){
 	return IsUtf7SetD( c ) || IsUtf7SetO( c );
-	// 2012.11.08 Set O ‚à“Ç‚İ‚ß‚é‚æ‚¤‚É
+	// 2012.11.08 Set O ã‚‚èª­ã¿è¾¼ã‚ã‚‹ã‚ˆã†ã«
 }
 
-//! UTF-7 Set B (Modified BASE64) ‚Ì•¶š‚©
+//! UTF-7 Set B (Modified BASE64) ã®æ–‡å­—ã‹
 template< class CHAR_TYPE >
 inline bool IsBase64( const CHAR_TYPE c ){
 	unsigned int c_ = c;
@@ -367,17 +367,17 @@ inline bool IsBinaryOnSurrogate( const wchar_t wc ){
 	return ( 0xdc00 <= wc_ && wc_ <= 0xdcff );
 }
 
-//! ‚ˆÊƒTƒƒQ[ƒgƒGƒŠƒA‚©H	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+//! é«˜ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‚¨ãƒªã‚¢ã‹ï¼Ÿ	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
 inline bool IsUTF16High( wchar_t c ){
 	return IsUtf16SurrogHi(c);
 }
-//! ‰ºˆÊƒTƒƒQ[ƒgƒGƒŠƒA‚©H	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+//! ä¸‹ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‚¨ãƒªã‚¢ã‹ï¼Ÿ	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
 inline bool IsUTF16Low( wchar_t c ){
 	return IsUtf16SurrogLow(c);
 }
 
 
-//! ãˆÊƒoƒCƒg‚Æ‰ºˆÊƒoƒCƒg‚ğŒğŠ· (å‚É UTF-16 LE/BE Œü‚¯)
+//! ä¸Šä½ãƒã‚¤ãƒˆã¨ä¸‹ä½ãƒã‚¤ãƒˆã‚’äº¤æ› (ä¸»ã« UTF-16 LE/BE å‘ã‘)
 inline unsigned short _SwapHLByte( const unsigned short wc ){
 	unsigned short wc1 = static_cast<unsigned short>( (static_cast<unsigned int>(wc) << 8) & 0x0000ffff );
 	unsigned short wc2 = static_cast<unsigned short>( (static_cast<unsigned int>(wc) >> 8) & 0x0000ffff );
@@ -385,22 +385,22 @@ inline unsigned short _SwapHLByte( const unsigned short wc ){
 }
 
 /*
-	•¶š’·‚Ì„‘ª
+	æ–‡å­—é•·ã®æ¨æ¸¬
 */
 //
-// ---- ƒf[ƒ^“ü—Í—p
+// ---- ãƒ‡ãƒ¼ã‚¿å…¥åŠ›ç”¨
 //
-//! SJIS ‚Ì•¶š’·‚ğ„‘ª
+//! SJIS ã®æ–‡å­—é•·ã‚’æ¨æ¸¬
 inline int GuessSjisCharsz( const char uc ){
 	if( IsSjisZen1(uc) ){ return 2; }
 	return 1;
 }
-//! UTF-16 ‚Ì•¶š’·‚ğ„‘ªi‘g‚İ‡‚í‚¹•¶š—ñ‚Ìl—¶‚È‚µj
+//! UTF-16 ã®æ–‡å­—é•·ã‚’æ¨æ¸¬ï¼ˆçµ„ã¿åˆã‚ã›æ–‡å­—åˆ—ã®è€ƒæ…®ãªã—ï¼‰
 inline int GuessUtf16Charsz( const wchar_t wc ){
 	if( IsUtf16SurrogHi(wc) ){ return 2; }
 	return 1;
 }
-//! UTF-8 ‚Ì•¶š’·‚ğ„‘ªi‘g‚İ‡‚í‚¹•¶š—ñ‚Ìl—¶‚È‚µj
+//! UTF-8 ã®æ–‡å­—é•·ã‚’æ¨æ¸¬ï¼ˆçµ„ã¿åˆã‚ã›æ–‡å­—åˆ—ã®è€ƒæ…®ãªã—ï¼‰
 inline int GuessUtf8Charsz( const char uc_ ){
 	unsigned char uc = uc_;
 	if( (uc & 0xe0) == 0xc0 ){ return 2; }
@@ -408,14 +408,14 @@ inline int GuessUtf8Charsz( const char uc_ ){
 	if( (uc & 0xf8) == 0xf0 ){ return 4; }
 	return 1;
 }
-//! CESU-8 ‚Ì•¶š’·‚ğ„‘ª
+//! CESU-8 ã®æ–‡å­—é•·ã‚’æ¨æ¸¬
 inline int GuessCesu8Charsz( const char uc_ ){
 	unsigned char uc = uc_;
 	if( (uc & 0xe0) == 0xc0 ){ return 2; }
 	if( (uc & 0xf0) == 0xe0 ){ return 6; }
 	return 1;
 }
-//! EUCJP ‚Ì•¶š’·‚ğ„‘ª
+//! EUCJP ã®æ–‡å­—é•·ã‚’æ¨æ¸¬
 inline int GuessEucjpCharsz( const char uc_ ){
 	unsigned char uc = uc_;
 	if( uc == 0x8f ){ return 3; }
@@ -424,12 +424,12 @@ inline int GuessEucjpCharsz( const char uc_ ){
 }
 
 /*
-	•¶š’·ŒŸ¸
+	æ–‡å­—é•·æ¤œæŸ»
 */
-/* --- ƒ[ƒJƒ‹•¶šƒR[ƒhƒ`ƒFƒbƒN */
+/* --- ãƒ­ãƒ¼ã‚«ãƒ«æ–‡å­—ã‚³ãƒ¼ãƒ‰ãƒã‚§ãƒƒã‚¯ */
 int CheckSjisChar( const char*, const int, ECharSet* );
 int CheckEucjpChar( const char*, const int, ECharSet* );
-int DetectJisEscseq( const char*, const int, EMyJisEscseq* ); // JIS ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒXŒŸoŠí
+int DetectJisEscseq( const char*, const int, EMyJisEscseq* ); // JIS ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹æ¤œå‡ºå™¨
 int _CheckJisAnyPart( const char*, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
 enum EJisChecker{
 	JISCHECK_ASCII7,
@@ -452,13 +452,13 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_UNKNOWN ); }
 
 
-// _CheckUtf16Char ‚ÌƒIƒvƒVƒ‡ƒ“’è‹`
-#define UC_NONCHARACTER 1  //!< ”ñ•¶š‚ğ•s³•¶š‚Æ‚·‚é
-// CheckUtf7BPart ‚ÌƒIƒvƒVƒ‡ƒ“’è‹`
+// _CheckUtf16Char ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©
+#define UC_NONCHARACTER 1  //!< éæ–‡å­—ã‚’ä¸æ­£æ–‡å­—ã¨ã™ã‚‹
+// CheckUtf7BPart ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©
 #define UC_LOOSE 0x02
 
 
-/* --- Unicode ŒnƒR[ƒhƒ`ƒFƒbƒN */
+/* --- Unicode ç³»ã‚³ãƒ¼ãƒ‰ãƒã‚§ãƒƒã‚¯ */
 int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
 inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, false ); }
 inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
@@ -466,7 +466,7 @@ inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const i
 int CheckUtf8Char( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
 int CheckUtf8Char2( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
 int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
-// UTF-7 ƒtƒH[ƒ}ƒbƒgƒ`ƒFƒbƒN
+// UTF-7 ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãƒã‚§ãƒƒã‚¯
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );
 

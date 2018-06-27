@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒR[ƒhƒy[ƒW
+ï»¿/*!	@file
+	@brief ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
 	
 	@author Sakura-Editor collaborators
 */
@@ -49,27 +49,27 @@ enum EEncodingTrait
 
 
 /*
-	ƒVƒXƒeƒ€ƒR[ƒhƒy[ƒW‚É‚æ‚é•¶šƒR[ƒh•ÏŠ·
+	ã‚·ã‚¹ãƒ†ãƒ ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸ã«ã‚ˆã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›
 */
 class CCodePage : public CCodeBase{
 public:
 	CCodePage(int codepageEx) : m_nCodePageEx(codepageEx) { }
 	
-	//CCodeBaseƒCƒ“ƒ^[ƒtƒF[ƒX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
-	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< ‰üsƒf[ƒ^æ“¾
-	void GetBom(CMemory* pcmemBom);	//!< BOMƒf[ƒ^æ“¾
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ¨ Hex •ÏŠ·
+	//CCodeBaseã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
+	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< æ”¹è¡Œãƒ‡ãƒ¼ã‚¿å–å¾—
+	void GetBom(CMemory* pcmemBom);	//!< BOMãƒ‡ãƒ¼ã‚¿å–å¾—
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE â†’ Hex å¤‰æ›
 
 public:
-	//À‘•
-	static EConvertResult CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx);		// CodePage  ¨ UnicodeƒR[ƒh•ÏŠ· 
-	static EConvertResult UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int codepageEx);		// Unicode   ¨ CodePageƒR[ƒh•ÏŠ·
+	//å®Ÿè£…
+	static EConvertResult CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx);		// CodePage  â†’ Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ› 
+	static EConvertResult UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int codepageEx);		// Unicode   â†’ CodePageã‚³ãƒ¼ãƒ‰å¤‰æ›
 
 	typedef std::vector<std::pair<int, std::wstring> > CodePageList;
 	
-	//GUI—p•â•ŠÖ”
+	//GUIç”¨è£œåŠ©é–¢æ•°
 	static CCodePage::CodePageList& GetCodePageList();
 	static int GetNameNormal(LPTSTR outName, int charcodeEx);
 	static int GetNameShort(LPTSTR outName, int charcodeEx);
@@ -77,11 +77,11 @@ public:
 	static int GetNameBracket(LPTSTR outName, int charcodeEx);
 	static int AddComboCodePages(HWND hwnd, HWND combo, int nSelCode);
 	
-	//CP•â•î•ñ
+	//CPè£œåŠ©æƒ…å ±
 	static EEncodingTrait GetEncodingTrait(int charcodeEx);
 	
 protected:
-	// À‘•
+	// å®Ÿè£…
 	static EConvertResult CPToUni( const char*, const int, wchar_t*, int, int&, UINT );
 	static EConvertResult UniToCP( const wchar_t*, const int, char*, int, int&, UINT );
 	

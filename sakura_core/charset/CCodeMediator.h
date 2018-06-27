@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,7 +29,7 @@ class CEditDoc;
 
 class CCodeMediator{
 protected:
-	// CESI.cpp ‚Ì”»’èŠÖ”‚ğ‚±‚±‚ÉˆÚ‚·
+	// CESI.cpp ã®åˆ¤å®šé–¢æ•°ã‚’ã“ã“ã«ç§»ã™
 	static ECodeType DetectMBCode( CESI* );
 	static ECodeType DetectUnicode( CESI* );
 
@@ -39,12 +39,12 @@ public:
 
 	static ECodeType DetectUnicodeBom( const char* pS, const int nLen );
 
-	/* “ú–{ŒêƒR[ƒhƒZƒbƒg”»•Ê */
+	/* æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤åˆ¥ */
 	ECodeType CheckKanjiCode( const char*, int );
-	/* ƒtƒ@ƒCƒ‹‚Ì“ú–{ŒêƒR[ƒhƒZƒbƒg”»•Ê */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã®æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤åˆ¥ */
 	ECodeType CheckKanjiCodeOfFile( const TCHAR* );
 
-	static ECodeType CheckKanjiCode( CESI* );  // CESI \‘¢‘ÌiHj‚ğŠO•”‚Å\’z‚µ‚½ê‡‚Ég—p
+	static ECodeType CheckKanjiCode( CESI* );  // CESI æ§‹é€ ä½“ï¼ˆï¼Ÿï¼‰ã‚’å¤–éƒ¨ã§æ§‹ç¯‰ã—ãŸå ´åˆã«ä½¿ç”¨
 
 private:
 	const SEncodingConfig* m_pEncodingConfig;

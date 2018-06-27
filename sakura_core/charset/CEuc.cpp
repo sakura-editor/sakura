@@ -1,12 +1,12 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CEuc.h"
 
-// ”ñˆË‘¶„§
+// éä¾å­˜æ¨å¥¨
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
 /*!
-	EUCJP ¨ Unicode •ÏŠ·ŠÖ”
+	EUCJP â†’ Unicode å¤‰æ›é–¢æ•°
 */
 int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
@@ -30,35 +30,35 @@ int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 	for( ; (nclen = CheckEucjpChar(reinterpret_cast<const char*>(pr), pr_end-pr, &echarset)) != 0; pr += nclen ){
 		switch( echarset ){
 		case CHARSET_ASCII7:
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( nclen != 1 ){
 				nclen = 1;
 			}
-			// 7-bit ASCII ‚Ì•ÏŠ·
+			// 7-bit ASCII ã®å¤‰æ›
 			*pw = *pr;
 			++pw;
 			break;
 		case CHARSET_JIS_HANKATA:
 		case CHARSET_JIS_ZENKAKU:
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( echarset == CHARSET_JIS_HANKATA && nclen != 2 ){
 				nclen = 2;
 			}
 			if( echarset == CHARSET_JIS_ZENKAKU && nclen != 2 ){
 				nclen = 2;
 			}
-			// ‘SŠp•¶šE”¼ŠpƒJƒ^ƒJƒi•¶š‚Ì•ÏŠ·
+			// å…¨è§’æ–‡å­—ãƒ»åŠè§’ã‚«ã‚¿ã‚«ãƒŠæ–‡å­—ã®å¤‰æ›
 			pw += _EucjpToUni_char( pr, pw, echarset, &berror_tmp );
 			if( berror_tmp == true ){
 				berror = true;
 			}
 			break;
 		default:// case CHARSET_BINARY:
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( nclen != 1 ){
 				nclen = 1;
 			}
-			// “Ç‚İ‚İƒGƒ‰[‚É‚È‚Á‚½•¶š‚ğ PUA ‚É‘Î‰‚Ã‚¯‚é
+			// èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼ã«ãªã£ãŸæ–‡å­—ã‚’ PUA ã«å¯¾å¿œã¥ã‘ã‚‹
 			pw += BinToText( pr, nclen, pw );
 		}
 	}
@@ -71,18 +71,18 @@ int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 }
 
 
-/* EUC¨UnicodeƒR[ƒh•ÏŠ· */
-//2007.08.13 kobake ’Ç‰Á
+/* EUCâ†’Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ› */
+//2007.08.13 kobake è¿½åŠ 
 EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool bError = false;
 
-	// ƒ\[ƒXæ“¾
+	// ã‚½ãƒ¼ã‚¹å–å¾—
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚Æ‚»‚ÌŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã¨ãã®ç¢ºä¿
 	wchar_t* pDst;
 	try{
 		pDst = new wchar_t[nSrcLen];
@@ -93,17 +93,17 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = EucjpToUni( pSrc, nSrcLen, pDst, &bError );
 
-	// pDstMem ‚ğXV
+	// pDstMem ã‚’æ›´æ–°
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete [] pDst;
 
-	//$$ SJIS‚ğ‰î‚µ‚Ä‚¢‚é‚Ì‚Å–³‘Ê‚Éƒf[ƒ^‚ğ¸‚¤‚©‚àH
-	// ƒGƒ‰[‚ğ•Ô‚·‚æ‚¤‚É‚·‚éB	2008/5/12 Uchi
+	//$$ SJISã‚’ä»‹ã—ã¦ã„ã‚‹ã®ã§ç„¡é§„ã«ãƒ‡ãƒ¼ã‚¿ã‚’å¤±ã†ã‹ã‚‚ï¼Ÿ
+	// ã‚¨ãƒ©ãƒ¼ã‚’è¿”ã™ã‚ˆã†ã«ã™ã‚‹ã€‚	2008/5/12 Uchi
 	if( bError == false ){
 		return RESULT_COMPLETE;
 	}else{
@@ -128,7 +128,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
 	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
 			nclen = 1;
@@ -142,7 +142,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 		}
 		if( echarset != CHARSET_BINARY ){
 			pw += _UniToEucjp_char( pr, pw, echarset, &berror_tmp );
-			// •ÛŒìƒR[ƒh
+			// ä¿è­·ã‚³ãƒ¼ãƒ‰
 			if( berror_tmp == true ){
 				berror = true;
 			}
@@ -152,7 +152,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 				*pw = static_cast<unsigned char>( TextToBin(*pr) & 0x00ff );
 				++pw;
 			}else{
-				// •ÛŒìƒR[ƒh
+				// ä¿è­·ã‚³ãƒ¼ãƒ‰
 				berror = true;
 				*pw = '?';
 				++pw;
@@ -171,13 +171,13 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 
 EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool bError = false;
 
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
-	// •K—v‚Èƒoƒbƒtƒ@ƒTƒCƒY‚ğ’²‚×‚Äƒƒ‚ƒŠ‚ğŠm•Û
+	// å¿…è¦ãªãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’èª¿ã¹ã¦ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿
 	char* pDst;
 	try{
 		pDst = new char[nSrcLen * 2];
@@ -188,13 +188,13 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = UniToEucjp( pSrc, nSrcLen, pDst, &bError );
 
-	// pDstMem ‚ğXV
+	// pDstMem ã‚’æ›´æ–°
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete [] pDst;
 
 	if( bError == false ){
@@ -207,7 +207,7 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 
 
 
-// •¶šƒR[ƒh•\¦—p	UNICODE ¨ Hex •ÏŠ·	2008/6/9 Uchi
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨	UNICODE â†’ Hex å¤‰æ›	2008/6/9 Uchi
 EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
@@ -219,24 +219,24 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* p
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInEuc) {
-		// Unicode‚Å•\¦
+		// Unicodeã§è¡¨ç¤º
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 
-	// 1•¶šƒf[ƒ^ƒoƒbƒtƒ@
+	// 1æ–‡å­—ãƒ‡ãƒ¼ã‚¿ãƒãƒƒãƒ•ã‚¡
 	cCharBuffer.SetString(cSrc, 1);
 
 	if( IsBinaryOnSurrogate(cSrc[0]) ){
 		bbinary = true;
 	}
 
-	// EUC-JP •ÏŠ·
+	// EUC-JP å¤‰æ›
 	res = UnicodeToEUC(cCharBuffer, cCharBuffer._GetMemory());
 	if (res != RESULT_COMPLETE) {
 		return res;
 	}
 
-	// Hex•ÏŠ·
+	// Hexå¤‰æ›
 	ps = reinterpret_cast<unsigned char*>( cCharBuffer._GetMemory()->GetRawPtr() );
 	pd = pDst;
 	if( bbinary == false ){

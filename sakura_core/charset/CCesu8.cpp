@@ -1,11 +1,11 @@
-// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·B
+ï»¿// ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ç”¨ã§ã™ã€‚
 #include "StdAfx.h"
 #include "CCesu8.h"
 #include "CEol.h"
 
 
 
-//! BOMƒf[ƒ^æ“¾
+//! BOMãƒ‡ãƒ¼ã‚¿å–å¾—
 void CCesu8::GetBom(CMemory* pcmemBom)
 {
 	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};

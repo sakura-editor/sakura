@@ -1,10 +1,10 @@
-/*! @file
-	@brief •¶šƒR[ƒhƒZƒbƒg‚ÌŠÇ—
+ï»¿/*! @file
+	@brief æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®ç®¡ç†
 
 	@author kobake
 	@date 2008
-	@date 2010/6/21	Uchi	‘S–Ê“I‚Éì‚è•Ï‚¦(ƒ}[ƒW‚Í2013/1/4)
-							interface‚Í‚ ‚Ü‚è•Ï‚¦‚È‚¢—l‚É‚µ‚½
+	@date 2010/6/21	Uchi	å…¨é¢çš„ã«ä½œã‚Šå¤‰ãˆ(ãƒãƒ¼ã‚¸ã¯2013/1/4)
+							interfaceã¯ã‚ã¾ã‚Šå¤‰ãˆãªã„æ§˜ã«ã—ãŸ
 */
 /*
 	Copyright (C) 2008, kobake
@@ -44,34 +44,34 @@ struct SCodeSet {
 	const WCHAR*	m_sNormal;
 	const WCHAR*	m_sShort;
 	const WCHAR*	m_sLong;		// for Combo
-	bool			m_bUseBom;		// BOM‚ªg‚¦‚é‚©
-	bool			m_bIsBomDefOn;	// BOM‚ÌƒfƒtƒHƒ‹ƒg‚ªOn‚©
-	bool			m_bCanDefault;	// ƒfƒtƒHƒ‹ƒg•¶šƒR[ƒh‚É‚È‚ê‚é‚©
+	bool			m_bUseBom;		// BOMãŒä½¿ãˆã‚‹ã‹
+	bool			m_bIsBomDefOn;	// BOMã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãŒOnã‹
+	bool			m_bCanDefault;	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ–‡å­—ã‚³ãƒ¼ãƒ‰ã«ãªã‚Œã‚‹ã‹
 };
 
-// •¶šƒR[ƒhƒZƒbƒg(‰Šúƒf[ƒ^)
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ(åˆæœŸãƒ‡ãƒ¼ã‚¿)
 static	SCodeSet	ASCodeSet[] = {
-	{ CODE_AUTODETECT,	L"Auto",	L"Auto",	L"©“®‘I‘ğ",	false,	false,	false },	//!< •¶šƒR[ƒh©“®”»•Ê	//map‚É‚Í“ü‚ê‚È‚¢
-	{ CODE_SJIS,		L"SJIS",	L"SJIS",	L"SJIS",		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), ƒVƒtƒgJIS(Shift_JIS))
+	{ CODE_AUTODETECT,	L"Auto",	L"Auto",	L"è‡ªå‹•é¸æŠ",	false,	false,	false },	//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥	//mapã«ã¯å…¥ã‚Œãªã„
+	{ CODE_SJIS,		L"SJIS",	L"SJIS",	L"SJIS",		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), ã‚·ãƒ•ãƒˆJIS(Shift_JIS))
 	{ CODE_JIS,			L"JIS",		L"JIS",		L"JIS",			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
-	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)‚Å‚Í‚È‚¢
-	{ CODE_LATIN1,		L"Latin1",	L"Latin1",	L"Latin1",		false,	false,	true  },	//!< Latin1				(‰¢•¶, Windows-932, Windows Codepage 1252 West European)
+	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ã§ã¯ãªã„
+	{ CODE_LATIN1,		L"Latin1",	L"Latin1",	L"Latin1",		false,	false,	true  },	//!< Latin1				(æ¬§æ–‡, Windows-932, Windows Codepage 1252 West European)
 	{ CODE_UNICODE,		L"UTF-16",	L"UTF-16",	L"UTF-16",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
 	{ CODE_UNICODEBE,	L"U16BE",	L"U16BE",	L"UTF-16BE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
 	{ CODE_UTF8,		L"UTF-8",	L"UTF-8",	L"UTF-8",		true,	false,	true  },	//!< UTF-8
-	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2‚©‚çUTF-8‰»)
+	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2ã‹ã‚‰UTF-8åŒ–)
 	{ CODE_UTF7,		L"UTF-7",	L"UTF-7",	L"UTF-7",		true,	false,	false },	//!< UTF-7
 };
 
-// •¶šƒR[ƒhƒZƒbƒg
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 typedef	std::map<int, SCodeSet>	MSCodeSet;
 static MSCodeSet				msCodeSet;
-// •\¦‡
+// è¡¨ç¤ºé †
 static std::vector<ECodeType>	vDispIdx;
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ‰Šú‰»                            //
+//                           åˆæœŸåŒ–                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void InitCodeSet()
@@ -89,18 +89,18 @@ void InitCodeSet()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ”»’è                              //
+//                           åˆ¤å®š                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 extern bool IsValidCodeType(int code)
 {
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	InitCodeSet();
 	return (msCodeSet.find( code ) != msCodeSet.end());
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           –¼‘O                              //
+//                           åå‰                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 LPCTSTR CCodeTypeName::Normal() const
@@ -127,7 +127,7 @@ LPCTSTR CCodeTypeName::Bracket() const
 
 //	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
 	static	std::wstring	sWork;
-	sWork = std::wstring(L"  [") + msCodeSet[m_eCodeType].m_sShort + L"]";	// •Ï”‚Ì’è‹`‚Æ’l‚Ìİ’è‚ğˆê‚É‚â‚é‚ÆƒoƒO‚é—l‚È‚Ì‚Å•ª—£	// 2013/4/20 Uchi
+	sWork = std::wstring(L"  [") + msCodeSet[m_eCodeType].m_sShort + L"]";	// å¤‰æ•°ã®å®šç¾©ã¨å€¤ã®è¨­å®šã‚’ä¸€ç·’ã«ã‚„ã‚‹ã¨ãƒã‚°ã‚‹æ§˜ãªã®ã§åˆ†é›¢	// 2013/4/20 Uchi
 
 	return to_tchar( sWork.c_str() );
 }
@@ -171,7 +171,7 @@ bool CCodeTypeName::CanDefault()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒRƒ“ƒ{ƒ{ƒbƒNƒX                         //
+//                      ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 int CCodeTypesForCombobox::GetCount() const
