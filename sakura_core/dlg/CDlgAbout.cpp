@@ -98,6 +98,20 @@ const DWORD p_helpids[] = {	//12900
 	#define MY_WIN32_WINNT 0
 #endif
 
+#if defined(APPVEYOR_URL) && defined(APPVEYOR_ACCOUNT_NAME) && defined(APPVEYOR_PROJECT_SLUG) && defined(APPVEYOR_BUILD_VERSION)
+#define APPVEYOR_BUILD_URL	APPVEYOR_URL "/project/" APPVEYOR_ACCOUNT_NAME "/" APPVEYOR_PROJECT_SLUG "/build/" APPVEYOR_BUILD_VERSION
+#endif
+#if defined(APPVEYOR_BUILD_NUMBER)
+#define APPVEYOR_BUILD_TEXT	"Build " APPVEYOR_BUILD_NUMBER
+#endif
+
+#if defined(APPVEYOR_BUILD_URL)
+#pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
+#endif
+#if defined(APPVEYOR_BUILD_TEXT)
+#pragma message("APPVEYOR_BUILD_TEXT: " APPVEYOR_BUILD_TEXT)
+#endif
+
 //	From Here Nov. 7, 2000 genta
 /*!
 	標準以外のメッセージを捕捉する
@@ -260,11 +274,18 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
 	m_UrlGitWnd.SetSubclassWindow(GetDlgItem( GetHwnd(), IDC_STATIC_URL_GIT));
+	m_UrlBuildLinkWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD));
 #ifdef GIT_URL
 	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), _T(GIT_URL));
 #else
 	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_GIT_CAPTION), SW_HIDE);
 	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), SW_HIDE);
+#endif
+#if defined(APPVEYOR_BUILD_TEXT)
+	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
+#else
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
@@ -302,6 +323,15 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 			TCHAR buf[512];
 			::GetWindowText( ::GetDlgItem( GetHwnd(), wID ), buf, _countof(buf) );
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			return TRUE;
+		}
+	case IDC_STATIC_URL_APPVEYOR_BUILD:
+		{
+#if defined(APPVEYOR_BUILD_URL)
+			::ShellExecute(GetHwnd(), NULL, _T(APPVEYOR_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+#elif defined(GIT_URL)
+			::ShellExecute(GetHwnd(), NULL, _T(GIT_URL), NULL, NULL, SW_SHOWNORMAL);
+#endif
 			return TRUE;
 		}
 	}
