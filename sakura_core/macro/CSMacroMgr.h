@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒL[ƒ{[ƒhƒ}ƒNƒ(’¼ÚÀs—p)
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­(ç›´æ¥å®Ÿè¡Œç”¨)
 
 	@author genta
-	@date Sep. 29, 2001 ì¬
+	@date Sep. 29, 2001 ä½œæˆ
 */
 /*
 	Copyright (C) 2001, genta
@@ -45,9 +45,9 @@
 class CEditView;
 
 
-const int STAND_KEYMACRO	= -1;	//!< •W€ƒ}ƒNƒ(ƒL[ƒ}ƒNƒ)
-const int TEMP_KEYMACRO		= -2;	//!< ˆêƒ}ƒNƒ(–¼‘O‚ğw’è‚µ‚Äƒ}ƒNƒÀs)
-const int INVALID_MACRO_IDX	= -3;	//!< –³Œø‚Èƒ}ƒNƒ‚ÌƒCƒ“ƒfƒbƒNƒX”Ô† @date Sep. 15, 2005 FILE
+const int STAND_KEYMACRO	= -1;	//!< æ¨™æº–ãƒã‚¯ãƒ­(ã‚­ãƒ¼ãƒã‚¯ãƒ­)
+const int TEMP_KEYMACRO		= -2;	//!< ä¸€æ™‚ãƒã‚¯ãƒ­(åå‰ã‚’æŒ‡å®šã—ã¦ãƒã‚¯ãƒ­å®Ÿè¡Œ)
+const int INVALID_MACRO_IDX	= -3;	//!< ç„¡åŠ¹ãªãƒã‚¯ãƒ­ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç•ªå· @date Sep. 15, 2005 FILE
 
 struct MacroFuncInfoEx
 {
@@ -56,32 +56,32 @@ struct MacroFuncInfoEx
 	VARTYPE*	m_pVarArgEx;
 };
 
-//ƒ}ƒNƒŠÖ”î•ñ\‘¢‘Ì
-//	ŠÖ”–¼‚ÍCSMacroMgr‚ª‚Â
+//ãƒã‚¯ãƒ­é–¢æ•°æƒ…å ±æ§‹é€ ä½“
+//	é–¢æ•°åã¯CSMacroMgrãŒæŒã¤
 struct MacroFuncInfo {
 	int				m_nFuncID;
 	const WCHAR*	m_pszFuncName;
-	VARTYPE			m_varArguments[4];	//!< ˆø”‚ÌŒ^‚Ì”z—ñ
-	VARTYPE			m_varResult;		//!< –ß‚è’l‚ÌŒ^ VT_EMPTY‚È‚çprocedure‚Æ‚¢‚¤‚±‚Æ‚Å
+	VARTYPE			m_varArguments[4];	//!< å¼•æ•°ã®å‹ã®é…åˆ—
+	VARTYPE			m_varResult;		//!< æˆ»ã‚Šå€¤ã®å‹ VT_EMPTYãªã‚‰procedureã¨ã„ã†ã“ã¨ã§
 	MacroFuncInfoEx*	m_pData;
 };
-//ƒ}ƒNƒŠÖ”î•ñ\‘¢‘Ì”z—ñ
+//ãƒã‚¯ãƒ­é–¢æ•°æƒ…å ±æ§‹é€ ä½“é…åˆ—
 typedef MacroFuncInfo* MacroFuncInfoArray;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
-@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 -----------------------------------------------------------------------*/
 class CSMacroMgr
 {
-	//	ƒf[ƒ^‚ÌŒ^éŒ¾
-	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	ƒL[ƒ}ƒNƒ‚ğƒJƒXƒ^ƒ€ƒƒjƒ…[‚Ì”‚¾‚¯ŠÇ—
+	//	ãƒ‡ãƒ¼ã‚¿ã®å‹å®£è¨€
+	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	ã‚­ãƒ¼ãƒã‚¯ãƒ­ã‚’ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æ•°ã ã‘ç®¡ç†
 	//	Jun. 16, 2002 genta
-	//	ƒL[ƒ}ƒNƒ‚É•W€ƒ}ƒNƒˆÈŠO‚Ìƒ}ƒNƒ‚ğ“Ç‚İ‚ß‚é‚æ‚¤‚É
-	CMacroManagerBase* m_pKeyMacro;	//	•W€‚Ìi•Û‘¶‚ª‚Å‚«‚éjƒL[ƒ}ƒNƒ‚àŠÇ—
+	//	ã‚­ãƒ¼ãƒã‚¯ãƒ­ã«æ¨™æº–ãƒã‚¯ãƒ­ä»¥å¤–ã®ãƒã‚¯ãƒ­ã‚’èª­ã¿è¾¼ã‚ã‚‹ã‚ˆã†ã«
+	CMacroManagerBase* m_pKeyMacro;	//	æ¨™æº–ã®ï¼ˆä¿å­˜ãŒã§ãã‚‹ï¼‰ã‚­ãƒ¼ãƒã‚¯ãƒ­ã‚‚ç®¡ç†
 
-	//@ˆêƒ}ƒNƒi–¼‘O‚ğw’è‚µ‚Äƒ}ƒNƒÀsj‚ğŠÇ—
+	//ã€€ä¸€æ™‚ãƒã‚¯ãƒ­ï¼ˆåå‰ã‚’æŒ‡å®šã—ã¦ãƒã‚¯ãƒ­å®Ÿè¡Œï¼‰ã‚’ç®¡ç†
 	CMacroManagerBase* m_pTempMacro;
 
 public:
@@ -96,34 +96,34 @@ public:
 	||  Attributes & Operations
 	*/
 	void Clear( int idx );
-	void ClearAll( void );	/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚é */
+	void ClearAll( void );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ */
 
-	//! ƒL[ƒ{[ƒhƒ}ƒNƒ‚ÌÀs
+	//! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®å®Ÿè¡Œ
 	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
 	
-	//!	Às‰Â”\‚©HCShareData‚É–â‚¢‡‚í‚¹
+	//!	å®Ÿè¡Œå¯èƒ½ã‹ï¼ŸCShareDataã«å•ã„åˆã‚ã›
 	bool IsEnabled(int idx) const {
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() : false;
 	}
 	
-	//!	•\¦‚·‚é–¼‘O‚Ìæ“¾
+	//!	è¡¨ç¤ºã™ã‚‹åå‰ã®å–å¾—
 	const TCHAR* GetTitle(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
-	//!	•\¦–¼‚Ìæ“¾
+	//!	è¡¨ç¤ºåã®å–å¾—
 	const TCHAR* GetName(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szName : NULL;
 	}
 	
-	/*!	@brief ƒtƒ@ƒCƒ‹–¼‚Ìæ“¾
+	/*!	@brief ãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾—
 	
-		@param idx [in] ƒ}ƒNƒ”Ô†
+		@param idx [in] ãƒã‚¯ãƒ­ç•ªå·
 	*/
 	const TCHAR* GetFile(int idx) const
 	{
@@ -133,27 +133,27 @@ public:
 		m_sMacroPath.c_str() : NULL;
 	}
 
-	/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì“Ç‚İ‚İ */
+	/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ */
 	BOOL Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const TCHAR* pszType );
 	BOOL Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath );
 	void UnloadAll(void);
 
-	/*! ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á */
+	/*! ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ  */
 	int Append( int idx, EFunctionCode nFuncID, const LPARAM* lParams, CEditView* pcEditView );
 
 	/*
 	||  Attributes & Operations
 	*/
-	static WCHAR* GetFuncInfoByID( HINSTANCE , int , WCHAR* , WCHAR* );	/* ‹@”\ID¨ŠÖ”–¼C‹@”\–¼“ú–{Œê */
-	static EFunctionCode GetFuncInfoByName( HINSTANCE , const WCHAR* , WCHAR* );	/* ŠÖ”–¼¨‹@”\IDC‹@”\–¼“ú–{Œê */
-	static BOOL CanFuncIsKeyMacro( int );	/* ƒL[ƒ}ƒNƒ‚É‹L˜^‰Â”\‚È‹@”\‚©‚Ç‚¤‚©‚ğ’²‚×‚é */
+	static WCHAR* GetFuncInfoByID( HINSTANCE , int , WCHAR* , WCHAR* );	/* æ©Ÿèƒ½IDâ†’é–¢æ•°åï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+	static EFunctionCode GetFuncInfoByName( HINSTANCE , const WCHAR* , WCHAR* );	/* é–¢æ•°åâ†’æ©Ÿèƒ½IDï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+	static BOOL CanFuncIsKeyMacro( int );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã«è¨˜éŒ²å¯èƒ½ãªæ©Ÿèƒ½ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ */
 	
 	//	Jun. 16, 2002 genta
 	static const MacroFuncInfo* GetFuncInfoByID( int );
 	
 	bool IsSaveOk(void);
 
-	//	Sep. 15, 2005 FILE	Às’†ƒ}ƒNƒ‚ÌƒCƒ“ƒfƒbƒNƒX”Ô†‘€ì (INVALID_MACRO_IDX:–³Œø)
+	//	Sep. 15, 2005 FILE	å®Ÿè¡Œä¸­ãƒã‚¯ãƒ­ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç•ªå·æ“ä½œ (INVALID_MACRO_IDX:ç„¡åŠ¹)
 	int GetCurrentIdx( void ) const {
 		return m_CurrentIdx;
 	}
@@ -163,23 +163,23 @@ public:
 		return oldIdx;
 	}
 
-	//  Oct. 22, 2008 syat ˆêƒ}ƒNƒ“±“ü
+	//  Oct. 22, 2008 syat ä¸€æ™‚ãƒã‚¯ãƒ­å°å…¥
 	CMacroManagerBase* SetTempMacro( CMacroManagerBase *newMacro );
 
 private:
 	DLLSHAREDATA*	m_pShareData;
 	CMacroManagerBase** Idx2Ptr(int idx);
 
-	/*!	Às’†ƒ}ƒNƒ‚ÌƒCƒ“ƒfƒbƒNƒX”Ô† (INVALID_MACRO_IDX:–³Œø)
+	/*!	å®Ÿè¡Œä¸­ãƒã‚¯ãƒ­ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç•ªå· (INVALID_MACRO_IDX:ç„¡åŠ¹)
 		@date Sep. 15, 2005 FILE
 	*/
 	int m_CurrentIdx;
 
-	std::tstring	m_sMacroPath;	// Load‚µ‚½ƒ}ƒNƒ–¼
+	std::tstring	m_sMacroPath;	// Loadã—ãŸãƒã‚¯ãƒ­å
 
 public:
-	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// ƒRƒ}ƒ“ƒhî•ñ(–ß‚è’l‚È‚µ)
-	static MacroFuncInfo	m_MacroFuncInfoArr[];		// ŠÖ”î•ñ(–ß‚è’l‚ ‚è)
+	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// ã‚³ãƒãƒ³ãƒ‰æƒ…å ±(æˆ»ã‚Šå€¤ãªã—)
+	static MacroFuncInfo	m_MacroFuncInfoArr[];		// é–¢æ•°æƒ…å ±(æˆ»ã‚Šå€¤ã‚ã‚Š)
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);

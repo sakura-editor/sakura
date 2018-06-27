@@ -1,5 +1,5 @@
-/*!	@file
-	@brief Cookieƒ}ƒl[ƒWƒƒ
+ï»¿/*!	@file
+	@brief Cookieãƒãƒãƒ¼ã‚¸ãƒ£
 
 */
 /*

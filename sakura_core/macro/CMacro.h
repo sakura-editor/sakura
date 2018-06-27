@@ -1,14 +1,14 @@
-/*!	@file
-	@brief ƒL[ƒ{[ƒhƒ}ƒNƒ
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 
-	CMacro‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ğ‚Æ‚Â‚ªA1ƒRƒ}ƒ“ƒh‚É‚È‚éB
+	CMacroã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã²ã¨ã¤ãŒã€1ã‚³ãƒãƒ³ãƒ‰ã«ãªã‚‹ã€‚
 
 	@author Norio Nakatani
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
-	Copyright (C) 2003, ‹S
+	Copyright (C) 2003, é¬¼
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@
 #define SAKURA_CMACRO_500D8D68_B51E_4B8B_9752_2B130EA3310B_H_
 
 #include <Windows.h>
-#include <ObjIdl.h>  // VARIANT“™
+#include <ObjIdl.h>  // VARIANTç­‰
 #include "func/Funccode.h"
 
 class CTextOutputStream;
@@ -77,20 +77,20 @@ struct CMacroParam{
 	void SetIntParam( const int nParam );
 };
 
-/*! @brief ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì1ƒRƒ}ƒ“ƒh
+/*! @brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®1ã‚³ãƒãƒ³ãƒ‰
 
-	ˆø”‚ğƒŠƒXƒg\‘¢‚É‚µ‚ÄA‚¢‚­‚Â‚Å‚à‚Ä‚é‚æ‚¤‚É‚µ‚Ä‚İ‚Ü‚µ‚½B
-	ƒXƒ^ƒbƒN‚É‚·‚é‚Ì‚ª’Ê—á‚È‚Ì‚©‚à‚µ‚ê‚Ü‚¹‚ñi‚æ‚­‚í‚©‚è‚Ü‚¹‚ñjB
+	å¼•æ•°ã‚’ãƒªã‚¹ãƒˆæ§‹é€ ã«ã—ã¦ã€ã„ãã¤ã§ã‚‚æŒã¦ã‚‹ã‚ˆã†ã«ã—ã¦ã¿ã¾ã—ãŸã€‚
+	ã‚¹ã‚¿ãƒƒã‚¯ã«ã™ã‚‹ã®ãŒé€šä¾‹ãªã®ã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ï¼ˆã‚ˆãã‚ã‹ã‚Šã¾ã›ã‚“ï¼‰ã€‚
 	
-	¡ŒãA§Œä\‘¢‚ª“ü‚Á‚Ä‚à¢‚ç‚È‚¢‚æ‚¤‚É‚µ‚æ‚¤‚Æv‚Á‚½‚Ì‚Å‚·‚ªAÁÜ‚µ‚Ü‚µ‚½B
+	ä»Šå¾Œã€åˆ¶å¾¡æ§‹é€ ãŒå…¥ã£ã¦ã‚‚å›°ã‚‰ãªã„ã‚ˆã†ã«ã—ã‚ˆã†ã¨æ€ã£ãŸã®ã§ã™ãŒã€æŒ«æŠ˜ã—ã¾ã—ãŸã€‚
 	
-	‚³‚ÄA‚±‚ÌƒNƒ‰ƒX‚ÍŸ‚Ì‚æ‚¤‚È‘O’ñ‚Å“®ì‚µ‚Ä‚¢‚éB
+	ã•ã¦ã€ã“ã®ã‚¯ãƒ©ã‚¹ã¯æ¬¡ã®ã‚ˆã†ãªå‰æã§å‹•ä½œã—ã¦ã„ã‚‹ã€‚
 
-	@li ˆø”‚ÌƒŠƒXƒg‚ğAm_pParamTop‚©‚ç‚ÌƒŠƒXƒg\‘¢‚Å•ÛB
-	@li ˆø”‚ğV‚½‚É’Ç‰Á‚·‚é‚É‚ÍAAddParam()‚ğg—p‚·‚éB
-	  AddParam‚É‚Ç‚ñ‚È’l‚ª“n‚³‚ê‚Ä‚à‚æ‚¢‚æ‚¤‚É€”õ‚·‚éƒRƒgB
-	  “n‚³‚ê‚½’l‚ª”’l‚È‚Ì‚©A•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚È‚Ì‚©‚ÍAm_nFuncIDi‹@”\ IDj‚É‚æ‚Á‚ÄA‚±‚ÌƒNƒ‰ƒX“à‚Å”»•Ê‚µA‚æ‚ë‚µ‚­‚â‚é‚±‚ÆB
-	@li ˆø”‚ÍACMacro“à•”‚Å‚Í‚·‚×‚Ä•¶š—ñ‚Å•Û‚·‚é‚±‚Æi”’l97‚ÍA"97"‚Æ‚µ‚Ä•Ûji‚¢‚Ü‚Ì‚Æ‚±‚ëj
+	@li å¼•æ•°ã®ãƒªã‚¹ãƒˆã‚’ã€m_pParamTopã‹ã‚‰ã®ãƒªã‚¹ãƒˆæ§‹é€ ã§ä¿æŒã€‚
+	@li å¼•æ•°ã‚’æ–°ãŸã«è¿½åŠ ã™ã‚‹ã«ã¯ã€AddParam()ã‚’ä½¿ç”¨ã™ã‚‹ã€‚
+	  AddParamã«ã©ã‚“ãªå€¤ãŒæ¸¡ã•ã‚Œã¦ã‚‚ã‚ˆã„ã‚ˆã†ã«æº–å‚™ã™ã‚‹ã‚³ãƒˆã€‚
+	  æ¸¡ã•ã‚ŒãŸå€¤ãŒæ•°å€¤ãªã®ã‹ã€æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãªã®ã‹ã¯ã€m_nFuncIDï¼ˆæ©Ÿèƒ½ IDï¼‰ã«ã‚ˆã£ã¦ã€ã“ã®ã‚¯ãƒ©ã‚¹å†…ã§åˆ¤åˆ¥ã—ã€ã‚ˆã‚ã—ãã‚„ã‚‹ã“ã¨ã€‚
+	@li å¼•æ•°ã¯ã€CMacroå†…éƒ¨ã§ã¯ã™ã¹ã¦æ–‡å­—åˆ—ã§ä¿æŒã™ã‚‹ã“ã¨ï¼ˆæ•°å€¤97ã¯ã€"97"ã¨ã—ã¦ä¿æŒï¼‰ï¼ˆã„ã¾ã®ã¨ã“ã‚ï¼‰
 */
 class CMacro
 {
@@ -98,17 +98,17 @@ public:
 	/*
 	||  Constructors
 	*/
-	CMacro( EFunctionCode nFuncID );	//	‹@”\ID‚ğw’è‚µ‚Ä‰Šú‰»
+	CMacro( EFunctionCode nFuncID );	//	æ©Ÿèƒ½IDã‚’æŒ‡å®šã—ã¦åˆæœŸåŒ–
 	~CMacro();
 	void ClearMacroParam();
 
 	void SetNext(CMacro* pNext){ m_pNext = pNext; }
 	CMacro* GetNext(){ return m_pNext; }
-	// 2007.07.20 genta : flags’Ç‰Á
-	bool Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake const’Ç‰Á
-	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake const’Ç‰Á
+	// 2007.07.20 genta : flagsè¿½åŠ 
+	bool Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake constè¿½åŠ 
+	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake constè¿½åŠ 
 	
-	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditView‚à“n‚·
+	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewã‚‚æ¸¡ã™
 	void AddStringParam( const WCHAR* szParam, int nLength = -1 );
 	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
 	void AddIntParam( const int nParam );
@@ -116,26 +116,26 @@ public:
 
 	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
-	//2009.10.29 syat HandleCommand‚ÆHandleFunction‚Ìˆø”‚ğ­‚µ‚»‚ë‚¦‚½
+	//2009.10.29 syat HandleCommandã¨HandleFunctionã®å¼•æ•°ã‚’å°‘ã—ãã‚ãˆãŸ
 #if 0
 	/*
 	||  Attributes & Operations
 	*/
-	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* ‹@”\ID¨ŠÖ”–¼C‹@”\–¼“ú–{Œê */
-	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* ŠÖ”–¼¨‹@”\IDC‹@”\–¼“ú–{Œê */
-	static BOOL CanFuncIsKeyMacro( int );	/* ƒL[ƒ}ƒNƒ‚É‹L˜^‰Â”\‚È‹@”\‚©‚Ç‚¤‚©‚ğ’²‚×‚é */
+	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* æ©Ÿèƒ½IDâ†’é–¢æ•°åï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* é–¢æ•°åâ†’æ©Ÿèƒ½IDï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+	static BOOL CanFuncIsKeyMacro( int );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã«è¨˜éŒ²å¯èƒ½ãªæ©Ÿèƒ½ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ */
 #endif
 
 protected:
 	static WCHAR* GetParamAt(CMacroParam*, int);
 
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	EFunctionCode	m_nFuncID;		//	‹@”\ID
-	CMacroParam*	m_pParamTop;	//	ƒpƒ‰ƒ[ƒ^
+	EFunctionCode	m_nFuncID;		//	æ©Ÿèƒ½ID
+	CMacroParam*	m_pParamTop;	//	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 	CMacroParam*	m_pParamBot;
-	CMacro*			m_pNext;		//	Ÿ‚Ìƒ}ƒNƒ‚Ö‚Ìƒ|ƒCƒ“ƒ^
+	CMacro*			m_pNext;		//	æ¬¡ã®ãƒã‚¯ãƒ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿
 };
 
 

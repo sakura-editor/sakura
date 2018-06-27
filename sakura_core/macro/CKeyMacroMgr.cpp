@@ -1,10 +1,10 @@
-/*!	@file
-	@brief ƒL[ƒ{[ƒhƒ}ƒNƒ
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 
 	@author Norio Nakatani
 
-	@date 20011229 aroka ƒoƒOC³AƒRƒƒ“ƒg’Ç‰Á
-	YAZAKI ‘g‘Ö‚¦
+	@date 20011229 aroka ãƒã‚°ä¿®æ­£ã€ã‚³ãƒ¡ãƒ³ãƒˆè¿½åŠ 
+	YAZAKI çµ„æ›¿ãˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -33,19 +33,19 @@ CKeyMacroMgr::CKeyMacroMgr()
 	m_pBot = NULL;
 //	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
 	//	Apr. 29, 2002 genta
-	//	m_nReady‚ÍCMacroManagerBase‚Ö
+	//	m_nReadyã¯CMacroManagerBaseã¸
 	return;
 }
 
 CKeyMacroMgr::~CKeyMacroMgr()
 {
-	/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚é */
+	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ */
 	ClearAll();
 	return;
 }
 
 
-/*! ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚é */
+/*! ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ */
 void CKeyMacroMgr::ClearAll( void )
 {
 	CMacro* p = m_pTop;
@@ -62,9 +62,9 @@ void CKeyMacroMgr::ClearAll( void )
 
 }
 
-/*! ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á
-	‹@”\”Ô†‚ÆAˆø”‚Ğ‚Æ‚Â‚ğ’Ç‰Á”ÅB
-	@date 2002.2.2 YAZAKI pcEditView‚à“n‚·‚æ‚¤‚É‚µ‚½B
+/*! ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ 
+	æ©Ÿèƒ½ç•ªå·ã¨ã€å¼•æ•°ã²ã¨ã¤ã‚’è¿½åŠ ç‰ˆã€‚
+	@date 2002.2.2 YAZAKI pcEditViewã‚‚æ¸¡ã™ã‚ˆã†ã«ã—ãŸã€‚
 */
 void CKeyMacroMgr::Append(
 	EFunctionCode	nFuncID,
@@ -77,8 +77,8 @@ void CKeyMacroMgr::Append(
 	Append(macro);
 }
 
-/*! ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á
-	CMacro‚ğw’è‚µ‚Ä’Ç‰Á‚·‚é”Å
+/*! ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ 
+	CMacroã‚’æŒ‡å®šã—ã¦è¿½åŠ ã™ã‚‹ç‰ˆ
 */
 void CKeyMacroMgr::Append( CMacro* macro )
 {
@@ -96,8 +96,8 @@ void CKeyMacroMgr::Append( CMacro* macro )
 
 
 
-/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì•Û‘¶
-	ƒGƒ‰[ƒƒbƒZ[ƒW‚Ío‚µ‚Ü‚¹‚ñBŒÄ‚Ño‚µ‘¤‚Å‚æ‚«‚É‚Í‚©‚ç‚Á‚Ä‚­‚¾‚³‚¢B
+/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®ä¿å­˜
+	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯å‡ºã—ã¾ã›ã‚“ã€‚å‘¼ã³å‡ºã—å´ã§ã‚ˆãã«ã¯ã‹ã‚‰ã£ã¦ãã ã•ã„ã€‚
 */
 BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) const
 {
@@ -106,10 +106,10 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 		return FALSE;
 	}
 
-	//Å‰‚ÌƒRƒƒ“ƒg
+	//æœ€åˆã®ã‚³ãƒ¡ãƒ³ãƒˆ
 	out.WriteF(LSW(STR_ERR_DLGKEYMACMGR1));
 
-	//ƒ}ƒNƒ“à—e
+	//ãƒã‚¯ãƒ­å†…å®¹
 	CMacro* p = m_pTop;
 	while (p){
 		p->Save( hInstance, out );
@@ -122,11 +122,11 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 
 
 
-/** ƒL[ƒ{[ƒhƒ}ƒNƒ‚ÌÀs
-	CMacro‚ÉˆÏ÷B
+/** ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®å®Ÿè¡Œ
+	CMacroã«å§”è­²ã€‚
 	
-	@date 2007.07.20 genta flags’Ç‰ÁDCMacro::Exec()‚É
-		FA_FROMMACRO‚ğŠÜ‚ß‚½’l‚ğ“n‚·D
+	@date 2007.07.20 genta flagsè¿½åŠ ï¼CMacro::Exec()ã«
+		FA_FROMMACROã‚’å«ã‚ãŸå€¤ã‚’æ¸¡ã™ï¼
 */
 bool CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
@@ -143,12 +143,12 @@ bool CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 	return bRet;
 }
 
-/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì“Ç‚İ‚İ
-	ƒGƒ‰[ƒƒbƒZ[ƒW‚Ío‚µ‚Ü‚¹‚ñBŒÄ‚Ño‚µ‘¤‚Å‚æ‚«‚É‚Í‚©‚ç‚Á‚Ä‚­‚¾‚³‚¢B
+/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿
+	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯å‡ºã—ã¾ã›ã‚“ã€‚å‘¼ã³å‡ºã—å´ã§ã‚ˆãã«ã¯ã‹ã‚‰ã£ã¦ãã ã•ã„ã€‚
 */
 BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 {
-	/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚é */
+	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ */
 	ClearAll();
 
 	CTextInputStream in( pszPath );
@@ -165,38 +165,38 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 	CMacro* macro = NULL;
 
 	//	Jun. 16, 2002 genta
-	m_nReady = true;	//	ƒGƒ‰[‚ª‚ ‚ê‚Îfalse‚É‚È‚é
+	m_nReady = true;	//	ã‚¨ãƒ©ãƒ¼ãŒã‚ã‚Œã°falseã«ãªã‚‹
 	std::tstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
 	const TCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
 
-	int line = 1;	//	ƒGƒ‰[‚És”Ô†‚ğ’Ê’m‚·‚é‚½‚ßD1n‚Ü‚èD
+	int line = 1;	//	ã‚¨ãƒ©ãƒ¼æ™‚ã«è¡Œç•ªå·ã‚’é€šçŸ¥ã™ã‚‹ãŸã‚ï¼1å§‹ã¾ã‚Šï¼
 	for( ; in.Good() ; ++line ){
 		std::wstring strLine = in.ReadLineW();
-		const WCHAR* szLine = strLine.c_str(); // '\0'I’[•¶š—ñ‚ğæ“¾
+		const WCHAR* szLine = strLine.c_str(); // '\0'çµ‚ç«¯æ–‡å­—åˆ—ã‚’å–å¾—
 		using namespace WCODE;
 
 		int nLineLen = strLine.length();
-		// æs‚·‚é‹ó”’‚ğƒXƒLƒbƒv
+		// å…ˆè¡Œã™ã‚‹ç©ºç™½ã‚’ã‚¹ã‚­ãƒƒãƒ—
 		for( i = 0; i < nLineLen; ++i ){
 			if( szLine[i] != SPACE && szLine[i] != TAB ){
 				break;
 			}
 		}
 		nBgn = i;
-		//	Jun. 16, 2002 genta ‹ós‚ğ–³‹‚·‚é
+		//	Jun. 16, 2002 genta ç©ºè¡Œã‚’ç„¡è¦–ã™ã‚‹
 		if( nBgn == nLineLen || szLine[nBgn] == LTEXT('\0') ){
 			continue;
 		}
-		// ƒRƒƒ“ƒgs‚ÌŒŸo
-		//# ƒpƒtƒH[ƒ}ƒ“ƒXF'/'‚Ì‚Æ‚«‚¾‚¯‚Q•¶š–Ú‚ğƒeƒXƒg
+		// ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã®æ¤œå‡º
+		//# ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ï¼š'/'ã®ã¨ãã ã‘ï¼’æ–‡å­—ç›®ã‚’ãƒ†ã‚¹ãƒˆ
 		if( szLine[nBgn] == LTEXT('/') && nBgn + 1 < nLineLen && szLine[nBgn + 1] == LTEXT('/') ){
 			continue;
 		}
 
-		// ŠÖ”–¼‚Ìæ“¾
-		szFuncName[0]='\0';// ‰Šú‰»
+		// é–¢æ•°åã®å–å¾—
+		szFuncName[0]='\0';// åˆæœŸåŒ–
 		for( ; i < nLineLen; ++i ){
-			//# ƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“ƒ`ƒFƒbƒN
+			//# ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³ãƒã‚§ãƒƒã‚¯
 			if( szLine[i] == LTEXT('(') && (i - nBgn)< _countof(szFuncName) ){
 				auto_memcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = L'\0';
@@ -205,14 +205,14 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 				break;
 			}
 		}
-		// ŠÖ”–¼‚ÉS_‚ª•t‚¢‚Ä‚¢‚½‚ç
+		// é–¢æ•°åã«S_ãŒä»˜ã„ã¦ã„ãŸã‚‰
 
-		/* ŠÖ”–¼¨‹@”\IDC‹@”\–¼“ú–{Œê */
-		//@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ğCSMacroMgr‚É“ˆê
+		/* é–¢æ•°åâ†’æ©Ÿèƒ½IDï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+		//@@@ 2002.2.2 YAZAKI ãƒã‚¯ãƒ­ã‚’CSMacroMgrã«çµ±ä¸€
 		nFuncID = CSMacroMgr::GetFuncInfoByName( hInstance, szFuncName, szFuncNameJapanese );
 		if( -1 != nFuncID ){
 			macro = new CMacro( nFuncID );
-			// Jun. 16, 2002 genta ƒvƒƒgƒ^ƒCƒvƒ`ƒFƒbƒN—p‚É’Ç‰Á
+			// Jun. 16, 2002 genta ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—ãƒã‚§ãƒƒã‚¯ç”¨ã«è¿½åŠ 
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
 			int nArgSizeMax = _countof( mInfo->m_varArguments );
@@ -220,7 +220,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
 			}
 			for(nArgs = 0; szLine[i] ; ++nArgs ) {
-				// Jun. 16, 2002 genta ƒvƒƒgƒ^ƒCƒvƒ`ƒFƒbƒN
+				// Jun. 16, 2002 genta ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—ãƒã‚§ãƒƒã‚¯
 				if( nArgs >= nArgSizeMax ){
 					::MYMESSAGEBOX(
 						NULL,
@@ -245,11 +245,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 				while( szLine[i] == LTEXT(' ') || szLine[i] == LTEXT('\t') )
 					i++;
 
-				//@@@ 2002.2.2 YAZAKI PPA.DLLƒ}ƒNƒ‚É‚ ‚í‚¹‚Äd—l•ÏXB•¶š—ñ‚Í''‚ÅˆÍ‚ŞB
-				//	Jun. 16, 2002 genta double quotation‚à‹–—e‚·‚é
-				if( LTEXT('\'') == szLine[i] || LTEXT('\"') == szLine[i]  ){	//	'‚Ån‚Ü‚Á‚½‚ç•¶š—ñ‚¾‚æ‚«‚Á‚ÆB
-					// Jun. 16, 2002 genta ƒvƒƒgƒ^ƒCƒvƒ`ƒFƒbƒN
-					// Jun. 27, 2002 genta —]•ª‚Èˆø”‚ğ–³‹‚·‚é‚æ‚¤CVT_EMPTY‚ğ‹–—e‚·‚éD
+				//@@@ 2002.2.2 YAZAKI PPA.DLLãƒã‚¯ãƒ­ã«ã‚ã‚ã›ã¦ä»•æ§˜å¤‰æ›´ã€‚æ–‡å­—åˆ—ã¯''ã§å›²ã‚€ã€‚
+				//	Jun. 16, 2002 genta double quotationã‚‚è¨±å®¹ã™ã‚‹
+				if( LTEXT('\'') == szLine[i] || LTEXT('\"') == szLine[i]  ){	//	'ã§å§‹ã¾ã£ãŸã‚‰æ–‡å­—åˆ—ã ã‚ˆãã£ã¨ã€‚
+					// Jun. 16, 2002 genta ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—ãƒã‚§ãƒƒã‚¯
+					// Jun. 27, 2002 genta ä½™åˆ†ãªå¼•æ•°ã‚’ç„¡è¦–ã™ã‚‹ã‚ˆã†ï¼ŒVT_EMPTYã‚’è¨±å®¹ã™ã‚‹ï¼
 					if( type != VT_BSTR && 
 						type != VT_EMPTY ){
 						::MYMESSAGEBOX(
@@ -267,19 +267,19 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 					WCHAR cQuote = szLine[i];
 					++i;
-					nBgn = nEnd = i;	//	nBgn‚Íˆø”‚Ìæ“ª‚Ì•¶š
+					nBgn = nEnd = i;	//	nBgnã¯å¼•æ•°ã®å…ˆé ­ã®æ–‡å­—
 					//	Jun. 16, 2002 genta
-					//	s––‚ÌŒŸo‚Ì‚½‚ßCƒ‹[ƒv‰ñ”‚ğ1‘‚â‚µ‚½
-					for( ; i <= nLineLen; ++i ){		//	ÅŒã‚Ì•¶š+1‚Ü‚ÅƒXƒLƒƒƒ“
-						if( szLine[i] == LTEXT('\\') ){	// ƒGƒXƒP[ƒv‚ÌƒXƒLƒbƒv
+					//	è¡Œæœ«ã®æ¤œå‡ºã®ãŸã‚ï¼Œãƒ«ãƒ¼ãƒ—å›æ•°ã‚’1å¢—ã‚„ã—ãŸ
+					for( ; i <= nLineLen; ++i ){		//	æœ€å¾Œã®æ–‡å­—+1ã¾ã§ã‚¹ã‚­ãƒ£ãƒ³
+						if( szLine[i] == LTEXT('\\') ){	// ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã®ã‚¹ã‚­ãƒƒãƒ—
 							++i;
 							continue;
 						}
-						if( szLine[i] == cQuote ){	//	n‚Ü‚è‚Æ“¯‚¶quotation‚ÅI—¹B
-							nEnd = i;	//	nEnd‚ÍI‚í‚è‚ÌŸ‚Ì•¶ši'j
+						if( szLine[i] == cQuote ){	//	å§‹ã¾ã‚Šã¨åŒã˜quotationã§çµ‚äº†ã€‚
+							nEnd = i;	//	nEndã¯çµ‚ã‚ã‚Šã®æ¬¡ã®æ–‡å­—ï¼ˆ'ï¼‰
 							break;
 						}
-						if( i == nLineLen ){	//	s––‚É—ˆ‚Ä‚µ‚Ü‚Á‚½
+						if( i == nLineLen ){	//	è¡Œæœ«ã«æ¥ã¦ã—ã¾ã£ãŸ
 							::MYMESSAGEBOX(
 								NULL,
 								MB_OK | MB_ICONSTOP | MB_TOPMOST,
@@ -291,7 +291,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 								cQuote
 							);
 							m_nReady = false;
-							nEnd = i - 1;	//	nEnd‚ÍI‚í‚è‚ÌŸ‚Ì•¶ši'j
+							nEnd = i - 1;	//	nEndã¯çµ‚ã‚ã‚Šã®æ¬¡ã®æ–‡å­—ï¼ˆ'ï¼‰
 							break;
 						}
 					}
@@ -302,17 +302,17 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 
 					CNativeW cmemWork;
 					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
-					// 2014.01.28 u"\\'"v‚Ì‚æ‚¤‚Èê‡‚Ì•s‹ï‡‚ğC³
-					cmemWork.Replace( L"\\\\", L"\\\1" ); // ˆê’uŠ·(Å‰‚É•K—v)
+					// 2014.01.28 ã€Œ"\\'"ã€ã®ã‚ˆã†ãªå ´åˆã®ä¸å…·åˆã‚’ä¿®æ­£
+					cmemWork.Replace( L"\\\\", L"\\\1" ); // ä¸€æ™‚ç½®æ›(æœ€åˆã«å¿…è¦)
 					cmemWork.Replace( LTEXT("\\\'"), LTEXT("\'") );
 
-					//	Jun. 16, 2002 genta double quotation‚àƒGƒXƒP[ƒv‰ğœ
+					//	Jun. 16, 2002 genta double quotationã‚‚ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—è§£é™¤
 					cmemWork.Replace( LTEXT("\\\""), LTEXT("\"") );
 					cmemWork.Replace( L"\\r", L"\r" );
 					cmemWork.Replace( L"\\n", L"\n" );
 					cmemWork.Replace( L"\\t", L"\t" );
 					{
-						// \uXXXX ’uŠ·
+						// \uXXXX ç½®æ›
 						size_t nLen = cmemWork.GetStringLength();
 						size_t nBegin = 0;
 						const wchar_t* p = cmemWork.GetStringPtr();
@@ -345,12 +345,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 							cmemWork.swap( cmemTemp );
 						}
 					}
-					cmemWork.Replace( L"\\\1", L"\\" ); // ˆê’uŠ·‚ğ\‚É–ß‚·(ÅŒã‚Å‚È‚¢‚Æ‚¢‚¯‚È‚¢)
-					macro->AddStringParam( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );	//	ˆø”‚ğ•¶š—ñ‚Æ‚µ‚Ä’Ç‰Á
+					cmemWork.Replace( L"\\\1", L"\\" ); // ä¸€æ™‚ç½®æ›ã‚’\ã«æˆ»ã™(æœ€å¾Œã§ãªã„ã¨ã„ã‘ãªã„)
+					macro->AddStringParam( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );	//	å¼•æ•°ã‚’æ–‡å­—åˆ—ã¨ã—ã¦è¿½åŠ 
 				}
- 				else if ( Is09(szLine[i]) || szLine[i] == L'-' ){	//	”š‚Ån‚Ü‚Á‚½‚ç”š—ñ‚¾(-‹L†‚àŠÜ‚Ş)B
-					// Jun. 16, 2002 genta ƒvƒƒgƒ^ƒCƒvƒ`ƒFƒbƒN
-					// Jun. 27, 2002 genta —]•ª‚Èˆø”‚ğ–³‹‚·‚é‚æ‚¤CVT_EMPTY‚ğ‹–—e‚·‚éD
+ 				else if ( Is09(szLine[i]) || szLine[i] == L'-' ){	//	æ•°å­—ã§å§‹ã¾ã£ãŸã‚‰æ•°å­—åˆ—ã (-è¨˜å·ã‚‚å«ã‚€)ã€‚
+					// Jun. 16, 2002 genta ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—ãƒã‚§ãƒƒã‚¯
+					// Jun. 27, 2002 genta ä½™åˆ†ãªå¼•æ•°ã‚’ç„¡è¦–ã™ã‚‹ã‚ˆã†ï¼ŒVT_EMPTYã‚’è¨±å®¹ã™ã‚‹ï¼
 					if( type != VT_I4 &&
 						type != VT_EMPTY){
 						::MYMESSAGEBOX(
@@ -366,15 +366,15 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 						m_nReady = false;
 						break;
 					}
-					nBgn = nEnd = i;	//	nBgn‚Íˆø”‚Ìæ“ª‚Ì•¶š
-					//	s––‚ÌŒŸo‚Ì‚½‚ßCƒ‹[ƒv‰ñ”‚ğ1‘‚â‚µ‚½
-					for( i = nBgn + 1; i <= nLineLen; ++i ){		//	ÅŒã‚Ì•¶š+1‚Ü‚ÅƒXƒLƒƒƒ“
-						if( Is09(szLine[i]) ){	// ‚Ü‚¾”’l
+					nBgn = nEnd = i;	//	nBgnã¯å¼•æ•°ã®å…ˆé ­ã®æ–‡å­—
+					//	è¡Œæœ«ã®æ¤œå‡ºã®ãŸã‚ï¼Œãƒ«ãƒ¼ãƒ—å›æ•°ã‚’1å¢—ã‚„ã—ãŸ
+					for( i = nBgn + 1; i <= nLineLen; ++i ){		//	æœ€å¾Œã®æ–‡å­—+1ã¾ã§ã‚¹ã‚­ãƒ£ãƒ³
+						if( Is09(szLine[i]) ){	// ã¾ã æ•°å€¤
 //							++i;
 							continue;
 						}
 						else {
-							nEnd = i;	//	”š‚ÌÅŒã‚Ì•¶š
+							nEnd = i;	//	æ•°å­—ã®æœ€å¾Œã®æ–‡å­—
 							i--;
 							break;
 						}
@@ -383,18 +383,18 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					CNativeW cmemWork;
 					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
 					// Jun. 16, 2002 genta
-					//	”š‚Ì’†‚Équotation‚Í“ü‚Á‚Ä‚¢‚È‚¢‚æ
+					//	æ•°å­—ã®ä¸­ã«quotationã¯å…¥ã£ã¦ã„ãªã„ã‚ˆ
 					//cmemWork.Replace( L"\\\'", L"\'" );
 					//cmemWork.Replace( L"\\\\", L"\\" );
-					macro->AddIntParam( _wtoi(cmemWork.GetStringPtr()) );	//	ˆø”‚ğ”š‚Æ‚µ‚Ä’Ç‰Á
+					macro->AddIntParam( _wtoi(cmemWork.GetStringPtr()) );	//	å¼•æ•°ã‚’æ•°å­—ã¨ã—ã¦è¿½åŠ 
 				}
 				//	Jun. 16, 2002 genta
 				else if( szLine[i] == LTEXT(')') ){
-					//	ˆø”–³‚µ
+					//	å¼•æ•°ç„¡ã—
 					break;
 				}
 				else {
-					//	Parse Error:•¶–@ƒGƒ‰[‚Á‚Û‚¢B
+					//	Parse Error:æ–‡æ³•ã‚¨ãƒ©ãƒ¼ã£ã½ã„ã€‚
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
@@ -403,8 +403,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					break;
 				}
 
-				for( ; i < nLineLen; ++i ){		//	ÅŒã‚Ì•¶š‚Ü‚ÅƒXƒLƒƒƒ“
-					if( szLine[i] == LTEXT(')') || szLine[i] == LTEXT(',') ){	//	,‚à‚µ‚­‚Í)‚ğ“Ç‚İ”ò‚Î‚·
+				for( ; i < nLineLen; ++i ){		//	æœ€å¾Œã®æ–‡å­—ã¾ã§ã‚¹ã‚­ãƒ£ãƒ³
+					if( szLine[i] == LTEXT(')') || szLine[i] == LTEXT(',') ){	//	,ã‚‚ã—ãã¯)ã‚’èª­ã¿é£›ã°ã™
 						i++;
 						break;
 					}
@@ -415,11 +415,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 			}
 			//	Jun. 16, 2002 genta
 			if( !m_nReady ){
-				//	‚Ç‚±‚©‚ÅƒGƒ‰[‚ª‚ ‚Á‚½‚ç‚µ‚¢
+				//	ã©ã“ã‹ã§ã‚¨ãƒ©ãƒ¼ãŒã‚ã£ãŸã‚‰ã—ã„
 				delete macro;
 				break;
 			}
-			/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á */
+			/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ  */
 			Append( macro );
 		}
 		else {
@@ -433,27 +433,27 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 	in.Close();
 
 	//	Jun. 16, 2002 genta
-	//	ƒ}ƒNƒ’†‚ÉƒGƒ‰[‚ª‚ ‚Á‚½‚çˆÙíI—¹‚Å‚«‚é‚æ‚¤‚É‚·‚éD
+	//	ãƒã‚¯ãƒ­ä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒã‚ã£ãŸã‚‰ç•°å¸¸çµ‚äº†ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹ï¼
 	return m_nReady ? TRUE : FALSE;
 }
 
-/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğ•¶š—ñ‚©‚ç“Ç‚İ‚İ */
+/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’æ–‡å­—åˆ—ã‹ã‚‰èª­ã¿è¾¼ã¿ */
 BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 {
-	// ˆêƒtƒ@ƒCƒ‹–¼‚ğì¬
+	// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œæˆ
 	TCHAR szTempDir[_MAX_PATH];
 	TCHAR szTempFile[_MAX_PATH];
 	if( 0 == ::GetTempPath( _MAX_PATH, szTempDir ) )return FALSE;
 	if( 0 == ::GetTempFileName( szTempDir, _T("mac"), 0, szTempFile ) )return FALSE;
-	// ˆêƒtƒ@ƒCƒ‹‚É‘‚«‚Ş
+	// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã‚€
 	CTextOutputStream out = CTextOutputStream( szTempFile );
 	out.WriteString( to_wchar( pszCode ) );
 	out.Close();
 
-	// ƒ}ƒNƒ“Ç‚İ‚İ
+	// ãƒã‚¯ãƒ­èª­ã¿è¾¼ã¿
 	BOOL bRet = LoadKeyMacro( hInstance, szTempFile );
 
-	::DeleteFile( szTempFile );			// ˆêƒtƒ@ƒCƒ‹íœ
+	::DeleteFile( szTempFile );			// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«å‰Šé™¤
 
 	return bRet;
 }
@@ -462,10 +462,10 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 /*!
 	Factory
 
-	@param ext [in] ƒIƒuƒWƒFƒNƒg¶¬‚Ì”»’è‚Ég‚¤Šg’£q(¬•¶š)
+	@param ext [in] ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã®åˆ¤å®šã«ä½¿ã†æ‹¡å¼µå­(å°æ–‡å­—)
 
-	@date 2004-01-31 genta RegisterExt‚Ì”p~‚Ì‚½‚ßRegisterCreator‚É’u‚«Š·‚¦
-		‚»‚Ì‚½‚ßC‰ß‚Á‚½ƒIƒuƒWƒFƒNƒg¶¬‚ğs‚í‚È‚¢‚½‚ß‚ÉŠg’£qƒ`ƒFƒbƒN‚Í•K{D
+	@date 2004-01-31 genta RegisterExtã®å»ƒæ­¢ã®ãŸã‚RegisterCreatorã«ç½®ãæ›ãˆ
+		ãã®ãŸã‚ï¼Œéã£ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã‚’è¡Œã‚ãªã„ãŸã‚ã«æ‹¡å¼µå­ãƒã‚§ãƒƒã‚¯ã¯å¿…é ˆï¼
 */
 CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
 {
@@ -475,13 +475,13 @@ CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
 	return NULL;
 }
 
-/*!	CKeyMacroManager‚Ì“o˜^
+/*!	CKeyMacroManagerã®ç™»éŒ²
 
-	@date 2004.01.31 genta RegisterExt‚Ì”p~‚Ì‚½‚ßRegisterCreator‚É’u‚«Š·‚¦
+	@date 2004.01.31 genta RegisterExtã®å»ƒæ­¢ã®ãŸã‚RegisterCreatorã«ç½®ãæ›ãˆ
 */
 void CKeyMacroMgr::declare (void)
 {
-	//	í‚ÉÀs
+	//	å¸¸ã«å®Ÿè¡Œ
 	CMacroFactory::getInstance()->RegisterCreator( Creator );
 }
 //	To Here Apr. 29, 2002 genta

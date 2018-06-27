@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ}ƒNƒƒGƒ“ƒWƒ“
+ï»¿/*!	@file
+	@brief ãƒã‚¯ãƒ­ã‚¨ãƒ³ã‚¸ãƒ³
 
 	@author genta
 	@date 2002.4.29
@@ -59,7 +59,7 @@ void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flag
 	}else{
 		COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 		if( opeBlk ){
-			opeBlk->SetRefCount(1); // ‹­§“I‚ÉƒŠƒZƒbƒg‚·‚é‚½‚ß1‚ğw’è
+			opeBlk->SetRefCount(1); // å¼·åˆ¶çš„ã«ãƒªã‚»ãƒƒãƒˆã™ã‚‹ãŸã‚1ã‚’æŒ‡å®š
 			pcEditView->SetUndoBuffer();
 		}
 	}
@@ -67,7 +67,7 @@ void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flag
 }
 
 // CMacroManagerBase
-//	ƒfƒtƒHƒ‹ƒg‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+//	ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 
 CMacroManagerBase::CMacroManagerBase()
  : m_nReady( false )

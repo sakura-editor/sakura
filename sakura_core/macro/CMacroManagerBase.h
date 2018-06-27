@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ}ƒNƒƒGƒ“ƒWƒ“
+ï»¿/*!	@file
+	@brief ãƒã‚¯ãƒ­ã‚¨ãƒ³ã‚¸ãƒ³
 
 	@author genta
 	@date 2002.4.29
@@ -46,53 +46,53 @@ private:
 };
 
 /*!
-	@brief ƒ}ƒNƒ‚ğˆ—‚·‚éƒGƒ“ƒWƒ“•”•ª‚ÌŠî’êƒNƒ‰ƒX
+	@brief ãƒã‚¯ãƒ­ã‚’å‡¦ç†ã™ã‚‹ã‚¨ãƒ³ã‚¸ãƒ³éƒ¨åˆ†ã®åŸºåº•ã‚¯ãƒ©ã‚¹
 
 */
 class CMacroManagerBase : CMacroBeforeAfter {
 public:
 
-	/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚ÌÀs
+	/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®å®Ÿè¡Œ
 	
-		@param[in] pcEditView ƒ}ƒNƒÀs‘ÎÛ‚Ì•ÒWƒEƒBƒ“ƒhƒE
-		@param[in] flags ƒ}ƒNƒÀs‘®«D
+		@param[in] pcEditView ãƒã‚¯ãƒ­å®Ÿè¡Œå¯¾è±¡ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+		@param[in] flags ãƒã‚¯ãƒ­å®Ÿè¡Œå±æ€§ï¼
 		
-		@date 2007.07.20 genta ƒ}ƒNƒÀs‘®«‚ğ“n‚·‚½‚ß‚Éflags‚ğ’Ç‰Á
+		@date 2007.07.20 genta ãƒã‚¯ãƒ­å®Ÿè¡Œå±æ€§ã‚’æ¸¡ã™ãŸã‚ã«flagsã‚’è¿½åŠ 
 	*/
 	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const = 0;
 	virtual void ExecKeyMacro2( class CEditView* pcEditView, int flags );
 	
-	/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚Ş
+	/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚€
 
 		@param hInstance [in]
-		@param pszPath [in] ƒtƒ@ƒCƒ‹–¼
+		@param pszPath [in] ãƒ•ã‚¡ã‚¤ãƒ«å
 	*/
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) = 0;
 
-	/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğ•¶š—ñ‚©‚ç“Ç‚İ‚Ş
+	/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’æ–‡å­—åˆ—ã‹ã‚‰èª­ã¿è¾¼ã‚€
 
 		@param hInstance [in]
-		@param pszCode [in] ƒ}ƒNƒƒR[ƒh
+		@param pszCode [in] ãƒã‚¯ãƒ­ã‚³ãƒ¼ãƒ‰
 	*/
 	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode ) = 0;
 
 	//static CMacroManagerBase* Creator( const char* str );
-	//ƒˆ‰¼‘zƒNƒ‰ƒX‚ÍÀ‘Ì‰»‚Å‚«‚È‚¢‚Ì‚ÅFactory‚Í•s—vB
-	//Œp³æƒNƒ‰ƒX‚Å‚Í•K—vB
+	//ç´”ç²‹ä»®æƒ³ã‚¯ãƒ©ã‚¹ã¯å®Ÿä½“åŒ–ã§ããªã„ã®ã§Factoryã¯ä¸è¦ã€‚
+	//ç¶™æ‰¿å…ˆã‚¯ãƒ©ã‚¹ã§ã¯å¿…è¦ã€‚
 	
-	//	ƒfƒXƒgƒ‰ƒNƒ^‚Ìvirtual‚ğ–Y‚ê‚¸‚É
+	//	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®virtualã‚’å¿˜ã‚Œãšã«
 	virtual ~CMacroManagerBase();
 	
 
 protected:
-	//!	LoadÏ‚İ‚©‚Ç‚¤‚©‚ğ•\‚·ƒtƒ‰ƒO true...LoadÏ‚İAfalse...–¢LoadB
+	//!	Loadæ¸ˆã¿ã‹ã©ã†ã‹ã‚’è¡¨ã™ãƒ•ãƒ©ã‚° true...Loadæ¸ˆã¿ã€false...æœªLoadã€‚
 	bool m_nReady;
 
 public:
-	/*!	LoadÏ‚İ‚©‚Ç‚¤‚©
+	/*!	Loadæ¸ˆã¿ã‹ã©ã†ã‹
 
-		@retval true LoadÏ‚İ
-		@retval false –¢Load
+		@retval true Loadæ¸ˆã¿
+		@retval false æœªLoad
 	*/
 	bool IsReady(){ return m_nReady; }
 
