@@ -71,6 +71,62 @@ INT_PTR CALLBACK CPropCustmenu::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
+static void SetDlgItemsEnableState(
+	HWND hwndDlg,
+	HWND hwndCOMBO_MENU,
+	HWND hwndLIST_RES,
+	HWND hwndCOMBO_FUNCKIND,
+	HWND hwndLIST_FUNC,
+	const CFuncLookup& cLookup,
+	const CommonSetting& common
+)
+{
+	int nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
+	int nIdx2 = List_GetCurSel( hwndLIST_RES );
+	int nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
+	int nIdx4 = List_GetCurSel( hwndLIST_FUNC );
+	int i = List_GetCount( hwndLIST_RES );
+	if( LB_ERR == nIdx2	){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
+		if( nIdx2 <= 0 ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), TRUE );
+		}
+		if( nIdx2 + 1 >= i ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), TRUE );
+		}
+	}
+	if( LB_ERR == nIdx2 || LB_ERR == nIdx4 ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), TRUE );
+	}
+	if( LB_ERR == nIdx4 ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
+	}
+	if( MAX_CUSTOM_MENU_ITEMS <= common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERTSEPARATOR ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
+	}
+	if( CB_ERR != nIdx3 && LB_ERR != nIdx4 &&
+		cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 &&
+		!(nIdx3 == nSpecialFuncsNum && 0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num)
+	){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
+	}
+}
+
 /* Custom menu メッセージ処理 */
 INT_PTR CPropCustmenu::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -117,6 +173,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
 
 		::SetTimer( hwndDlg, 1, 300, NULL );
+		SetDlgItemsEnableState( hwndDlg, hwndCOMBO_MENU, hwndLIST_RES, hwndCOMBO_FUNCKIND, hwndLIST_FUNC, m_cLookup, m_Common );
 
 		return TRUE;
 
@@ -547,50 +604,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		break;
 
 	case WM_TIMER:
-		nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
-		nIdx2 = List_GetCurSel( hwndLIST_RES );
-		nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
-		nIdx4 = List_GetCurSel( hwndLIST_FUNC );
-		i = List_GetCount( hwndLIST_RES );
-		if( LB_ERR == nIdx2	){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
-			if( nIdx2 <= 0 ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
-			}else{
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), TRUE );
-			}
-			if( nIdx2 + 1 >= i ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
-			}else{
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), TRUE );
-			}
-		}
-		if( LB_ERR == nIdx2 || LB_ERR == nIdx4 ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), TRUE );
-		}
-		if( LB_ERR == nIdx4 ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
-		}
-		if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERTSEPARATOR ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
-		}
-		if( CB_ERR != nIdx3 && LB_ERR != nIdx4 &&
-		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 &&
-			!(nIdx3 == nSpecialFuncsNum && 0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num)
-		){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
-		}
+		SetDlgItemsEnableState( hwndDlg, hwndCOMBO_MENU, hwndLIST_RES, hwndCOMBO_FUNCKIND, hwndLIST_FUNC, m_cLookup, m_Common );
 		break;
 	case WM_DESTROY:
 		::KillTimer( hwndDlg, 1 );

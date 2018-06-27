@@ -129,6 +129,44 @@ int Listbox_ADDDATA(
 
 static int nToolBarListBoxTopMargin = 0;
 
+static void SetDlgItemsEnableState(
+	HWND	hwndDlg,
+	HWND	hwndResList,
+	HWND	hwndFuncList
+)
+{
+	int nIndex1 = List_GetCurSel( hwndResList );
+	int nIndex2 = List_GetCurSel( hwndFuncList );
+	int i = List_GetCount( hwndResList );
+	if( LB_ERR == nIndex1 ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
+		if( nIndex1 <= 0 ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), TRUE );
+		}
+		if( nIndex1 + 1 >= i ){
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
+		}else{
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), TRUE );
+		}
+	}
+	if( LB_ERR == nIndex1 || LB_ERR == nIndex2 ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), TRUE );
+	}
+	if( LB_ERR == nIndex2 ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
+	}
+
+}
 
 /* Toolbar メッセージ処理 */
 INT_PTR CPropToolbar::DispatchEvent(
@@ -186,6 +224,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 //	To Here Oct. 14, 2000
 
 		::SetTimer( hwndDlg, 1, 300, NULL );
+		SetDlgItemsEnableState( hwndDlg, hwndResList, hwndFuncList );
 
 		return TRUE;
 
@@ -402,36 +441,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 		break;
 
 	case WM_TIMER:
-		nIndex1 = List_GetCurSel( hwndResList );
-		nIndex2 = List_GetCurSel( hwndFuncList );
-		i = List_GetCount( hwndResList );
-		if( LB_ERR == nIndex1 ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), TRUE );
-			if( nIndex1 <= 0 ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
-			}else{
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), TRUE );
-			}
-			if( nIndex1 + 1 >= i ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), FALSE );
-			}else{
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DOWN ), TRUE );
-			}
-		}
-		if( LB_ERR == nIndex1 || LB_ERR == nIndex2 ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), TRUE );
-		}
-		if( LB_ERR == nIndex2 ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
-		}
+		SetDlgItemsEnableState( hwndDlg, hwndResList, hwndFuncList );
 		break;
 
 	case WM_DESTROY:
