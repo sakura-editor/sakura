@@ -1,0 +1,5 @@
+// 正規表現キーワード Ver1
+RxKey[000]=RAP,m#<!--\{/?(plain|if|else|iterate|repeat|replace|include|fragment|[^/]).*?\}-->#k
+RxKey[001]=RAP,m#<!--{{|}}-->|<!--{//.*?}-->#k
+RxKey[002]=RAP,/\{.*?[^\\]\}/k
+RxKey[003]=CMT,/<!--.*?-->/k

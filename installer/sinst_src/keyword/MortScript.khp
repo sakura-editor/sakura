@@ -1,0 +1,283 @@
+// MortScript v4.2 キーワードヘルプ辞書ファイル
+
+AND /// 論理積「and」
+ActiveProcess /// アクティブなウィンドウのプロセス名
+ActiveWindow /// 現在アクティブなウィンドウタイトルを取得する
+AppData /// 「Application Data」
+Array /// 変数のリストから配列を生成する
+BatteryPercentage,BackupBatteryPercentage /// 現在のバッテリレベル
+BigMessage /// スクロールバー付きの大きなメッセージ
+CANCEL /// "2" で初期化されています。
+CallScript,CallScriptFunction /// 他のスクリプトをサブルーチンとして呼び出す
+ChDir /// ディレクトリを移動する
+CharAt /// 文字列中の指定位置の一文字を返す
+Choice /// リストからの選択
+Choice,ChoiceDefault /// 選択ダイアログによる分岐
+Clear /// 変数や配列を取り除く
+ClipText /// クリップボードのテキストを取得する
+Close /// ウィンドウを閉じる／アプリケーションを終了する
+CloseConnection,Disconnect /// 切断する
+ColorAt /// ある座標の色コードを取得する
+CompareFloat /// 浮動小数値を比較する
+Connect /// 接続を確立する
+Connected,InternetConnected /// 接続をチェックする
+Copy /// ひとつのファイルを複製する
+CreateShortcut /// ショートカットを作成する
+CurrentCursor /// 現在のカーソルの種類を取得する
+DelTree /// サブディレクトリ以下のものを含む複数のファイルを消去する
+Delete /// デリートキー送信
+Delete /// 複数のファイルを消去する
+DirContents /// ディレクトリ中のファイル／フォルダ名を取得する
+Documents /// 「My Documents」。PPC2002機では働きません。
+Download /// ダウンロード
+EULER /// "2.7182818284590452353602874713527"（e） で初期化されています。
+ElementCount /// 配列要素の数を取得する
+ErrorLevel /// エラー処理（ErrorLevel )
+Eval /// 文字列を式として扱う
+Exit /// スクリプトを中止する
+ExternalPowered /// 外部電源使用中かどうかチェックする
+FALSE,OFF,NO /// "0" で初期化されています。
+FileAttribute /// ファイル属性を取得する
+FileCreateTime /// ファイル作成日時を取得する
+FileExists,DirExists /// ファイル／ディレクトリが存在するかチェック
+FileModifyTime /// ファイル更新日時を取得する
+FilePath,FileBase,FileExt /// ファイルパス中の部分を返す
+FileSize /// ファイルサイズを取得する
+FileVersion,GetVersion /// ファイルのバージョン番号を取得する
+Find /// 文字列の中の或る文字列を検索する
+For /// 単純イテレーション
+ForEach /// 複数の値によるイテレーション
+Format /// フォーマットして出力する数学関数
+FormatTime /// フォーマットして出力
+FreeDiskSpace /// ディスクの空き容量をチェックする
+FreeMemory /// メインメモリの空き領域
+GetTime /// 現在の時刻を複数の変数にセットする
+GetWindowPos,WndLeft,WndRight,WndTop,WndBottom /// ウィンドウの位置を取得する
+HKCR /// HKEY_CLASSES_ROOT
+HKCU /// HKEY_CURRENT_USER
+HKLM /// HKEY_LOCAL_MACHINE
+IdleTimerReset /// 自動電源オフを回避する
+If /// 単純分岐
+Include /// 他のスクリプトのサブルーチンをインクルードする
+IniRead /// INIファイルの値を読み込む
+IniWrite /// INIファイルに値を書き込む
+Input /// 自由に文を入力する
+IsEmpty /// 変数が代入済みかどうかチェックする
+Kill /// 起動中のプロセスを強制終了する
+KillScript /// 起動中のスクリプトを終了させる
+Length /// 文字列の長さを取得する
+Local,Global /// 変数スコープ
+Log,Log10 /// 対数
+MOD /// 乗算、除算、除算の余り
+Map /// 文字列インデックス付きの配列を生成する
+Max,Min /// 最大／最小値を取得する
+MaxIndex /// 最大インデックスを取得する
+Message /// メッセージ
+Minimize /// ウィンドウを最小化する／隠す
+MkDir /// ディレクトリを作成する
+MortScriptType /// MortScript の"版"を取得する
+MortScriptVersion,GetMortScriptVersion /// MortScript のバージョンを取得する
+MouseClick /// シングルクリック
+MouseDblClick /// ダブルクリック
+MouseDown,MouseUp /// マウスボタンを押す／放す
+Move /// 複数のファイルを移動する
+NOT /// 否定
+New /// 新規文書／要素を作成する
+NumberToHex,HexToNumber /// 16進数と10進数を相互に変換する
+OR /// 論理和「or」
+OkCancel /// 「ＯＫ」と「キャンセル」を表示
+PC /// PC
+PHI /// "1.6180339887498948482045868343656" （φ）で初期化されています。
+PI /// "3.1415926535897932384626433832795" （π）で初期化されています。
+PNA /// PocketNavigation
+PPC /// PocketPC
+Part /// 文字列を分割してひとつの部分を返す
+PlaySound /// WAVファイルを再生する
+PowerOff /// デバイスの電源をオフにする
+ProcExists /// プロセスの存在をチェックする
+ProgramFiles /// 「Program Files」。PPC2002機では働きません。
+ProgramsMenu /// スタートメニューの「プログラム」
+Question /// シンプルな質問
+RGB /// RGB値から色コードを生成する
+ReadFile,ReadLine /// テキストファイルを読み込む
+Red,Green,Blue /// 色コードから赤／緑／青の値を取得する
+RedrawTday /// Todayスクリーンを再表示する
+RegDelete /// レジストリの値を削除する
+RegDeleteKey /// レジストリのサブキーを削除する
+RegKeyExists /// サブキー（レジストリパス）の存在をチェックする
+RegRead /// レジストリの値を読み取る
+RegValueExists /// 値の存在をチェックする
+RegWriteString,RegWriteDWord,RegWriteBinary,RegWriteMultiString /// レジストリに書き込む
+RemoveNotifications /// 「Notification Queue」からアプリケーションを取り除く
+Rename /// ひとつのファイルの名前を変更する／移動する
+Repeat /// 固定数による繰り返し
+RepeatString /// 文字列を繰り返し回数の数だけ連接したものを取得する
+Replace /// 文字列を置換する
+Reset /// デバイスを再起動する
+RetryCancel /// 「再試行」と「キャンセル」を表示
+Return /// 戻り値を設定する
+ReverseFind /// 文字を後ろから検索する
+RmDir /// ディレクトリを消去する
+Rnd /// 乱数を生成する
+Rotate /// 画面を回転させる
+Round,Floor,Ceil /// 小数値を丸める
+Run /// アプリケーション／文書を開いてスクリプトを継続する
+RunAt /// アプリケーションを指定の時刻に実行する
+RunOnPowerOn /// パワーオン時にアプリケーションを実行する
+RunWait /// アプリケーション／文書を開いて実行終了まで待機する
+SP /// スマートフォン
+SQRT2 /// "1.4142135623730950488016887242097" （√2）で初期化されています。
+ST_HIDDEN /// ステイタスウィンドウを非表示:0
+ST_LIST /// リスト形式でメッセージ行を表示:1
+ST_MESSAGE /// 最新のメッセージ行のみを表示:2
+Screen /// スクリーンの状態（方向／解像度）をチェックする
+ScreenToChars /// スクリーンの一部を文字列に変換する
+ScreenWidth,ScreenHeight /// スクリーンのサイズを取得する
+ScriptExe /// 「MortScript.exe」へのディレクトリパス。ファイル名は含みません。スマートフォンでは働きません。
+ScriptExt /// 現在のスクリプトの拡張子（".mscr"）。
+ScriptName /// 現在のスクリプト名。パスと拡張子は含みません。
+ScriptPath /// 現在のスクリプトへのディレクトリパス。ファイル名は含みません。
+ScriptProcExists /// スクリプトプロセスの存在をチェックする
+SelectDirectory /// ディレクトリを選択する
+SelectFile /// ファイルを選択する
+SendBackspace /// バックスペースキー送信
+SendCR /// リターンキー送信
+SendCommand,SendMessage,PostMessage /// さらに高度なコマンド／メッセージを送る
+SendContext /// WM5 スマートフォン／PPCの「コンテクストメニュー」
+SendCtrlKey /// Ctrl+キーを送る
+SendDown /// ↓方向キー送信
+SendEnd /// ENDキー送信
+SendEsc /// エスケイプキー送信
+SendHome /// HOMEキー送信
+SendInsert /// 「Ins.」キー送信
+SendKeys /// 文字列を送る
+SendLeft /// ←方向キー送信
+SendLeftSoft /// WM5／PPCの左ソフトキー送信
+SendOK,SendCancel,SendYes,SendNo /// ウィンドウに特定のコマンドを送る
+SendPageDown /// ページDownキー送信
+SendPageUp /// ページUpキー送信
+SendRight /// →方向キー送信
+SendRightSoft /// WM5／PPCの右ソフトキー送信
+SendSpace /// スペースキー送信
+SendSpecial /// 特殊なキーストロークを送る（方向キーなど）
+SendTab /// タブキー送信
+SendUp /// ↑方向キー送信
+SendWin /// Windowsキー送信
+Set /// 変数の代入
+SetBacklight /// バックライトの明るさを設定する
+SetChoiceEntryFormat /// Choice ダイアログの選択肢欄のサイズとフォントを設定する
+SetClipText /// テキストをクリップボードにコピーする
+SetComInfo /// シリアルポートにアクセスする
+SetFileAttribute,SetFileAttribs /// ファイル属性を設定する
+SetInput /// インプットパネルの種類を設定する
+SetMessageFont /// BigMessage 等のフォントを指定する
+SetProxy /// プロクシを設定する
+SetTime,SetDate /// 現在の日時を設定する
+SetVolume /// システム音量を変更する
+Show /// ウィンドウをアクティブにして前面に出す
+ShowInput,HideInput /// インプットパネルを表示する／隠す
+ShowWaitCursor,HideWaitCursor /// 処理中カーソルを表示する／隠す
+Sin,Cos,Tan /// 三角関数
+Sleep /// 一定ミリ秒待機する
+SleepMessage /// カウントダウン／条件付きのメッセージ
+SleepMessage /// カウントダウン／条件付きの待機メッセージ
+Snapshot /// スクリーンの内容をクリップボードにコピーする
+Split /// 文字列を複数の変数／配列要素に分割する
+Sqrt /// ２乗根
+StartMenu /// 「スタート メニュー」。スマートフォンでは利用できません。
+Startup /// 「スタートアップ」
+StatusHistorySize /// リスト形式の表示数を設定する
+StatusInfo /// ウィンドウタイトルと但し書きを設定する
+StatusListEntryFormat /// リスト形式の表示を設定する
+StatusMessage,StatusMessageAppend /// ステイタスメッセージを追加する
+StatusRemoveLastMessage,StatusClear /// ステイタスメッセージを消去する
+StatusShow /// ステイタスウィンドウを可視化する
+StatusType /// 表示タイプを設定する
+Sub,Call,CallFunction /// サブルーチン（Sub, Call/CallFunction)
+SubStr /// 文字列から或る範囲の文字列を抽出する
+SupportsProcHandling /// プロセス用関数が利用可能かどうか？
+Switch /// 値による分岐
+SystemPath /// システムパスを取得する
+SystemVersion /// システムのバージョンを取得する
+TRUE,ON,YES /// "1" で初期化されています。
+TimeStamp,MakeTimeStamp /// Unix タイムスタンプ
+TimeStampUTC /// 協定世界時(UTC)（≒グリニッヂ標準時(GMT)）
+TimeZoneBias /// 協定世界時(UTC)とローカルタイムの時差（分単位）
+TimeZoneDST /// 夏時間(サマータイム)か？論理値
+TimeZoneName /// タイムゾーン名（日本版Windowsでは「東京（標準時）」）
+ToUpper,ToLower /// 大文字／小文字に変換する
+ToggleDisplay /// ディスプレイをオン／オフする
+TotalDiskSpace /// ディスクサイズをチェックする
+TotalMemory /// メインメモリの合計
+UcChar,UcValue /// 文字とユニコード値を相互に変換する
+UnzipAll /// アーカイブ全体を解凍する
+UnzipFile /// 単一のファイルを解凍する
+UnzipPath /// アーカイブ内のパスを解凍する
+VAR_ARRAY /// 配列:4
+VAR_EMPTY /// 空:0
+VAR_FLOAT /// 実数:2
+VAR_INT /// 整数:1
+VAR_STRING /// 文字列:3
+VarType /// 変数のタイプを取得する
+Vibrate /// バイブレート
+WaitFor /// ウィンドウが存在するまで待機する
+WaitFor,WaitForActive /// ウィンドウを待機
+WaitForActive /// ウィンドウがアクティブになるまで待機する
+While /// 条件つきループ
+WindowProcess /// 指定のウィンドウのプロセス名
+WindowText /// ウィンドウのタイトル／要素の内容を取得する
+WndActive /// ウィンドウがアクティブかどうかチェックする
+WndExists /// ウィンドウが存在するかどうかチェックする
+WriteFile /// テキストファイルに書き込む
+WriteStatusHistory /// ステイタスメッセージをファイルに書き出す
+XCopy /// 複数のファイルを複製する
+YesNo /// 「はい」と「いいえ」（デフォルト）を表示
+YesNoCancel /// 「はい」「いいえ」「キャンセル」を表示
+ZipFile /// 単一のファイルを圧縮する
+ZipFiles /// 複数のファイルを圧縮する
+^CR^ /// キャリッジ・リターン　
+^LF^ /// ライン・フィード　
+^NL^ /// ニュー・ライン　Windows/DOSの改行コード。CR+LF
+^TAB^ /// タブ
+archive /// アーカイブかどうか
+argc /// サブルーチンに渡された引数の数を格納した定義済みローカル変数
+argv /// サブルーチンに渡された引数全てを格納した定義済みローカル配列
+build /// ビルドナンバーを返します
+chinesesimp /// 簡体中国語
+chinesetrad /// 繁体中国語
+directory /// 指定のファイル名がディレクトリかどうか
+eq /// equals
+ge /// greater/equal
+gt /// greater than
+hidden /// 隠しファイルかどうか
+in array /// 与えられた配列の各要素の値が、各繰り返し毎に変数に代入されます。配列の要素のうち、インデックス1からアクセスを開始し、インデックスとして定義されていない最初の数字までで止めます。0以下のインデックスや、インデックス数字が飛んでいる場合や、文字列インデックスを持つ要素は、無視されます。（※「7.6 配列
+in charsOf /// 文字列中の一文字一文字が、各繰り返し毎に変数に代入
+in directories /// 検索に一致したファイルパス／ディレクトリパスが、変数に代入
+in files /// 検索に一致したファイルパス／ディレクトリパスが、変数に代入
+in iniKeys /// INIファイルのセクションの内容が、各繰り返し毎に変数に代入
+in iniSections /// INIファイルのセクション名がひとつひとつ、各繰り返し毎に変数に代入
+in regSubkeys /// 指定のレジストリキー以下の全てのサブキーが、各繰り返し毎に変数に代入
+in regValues /// 指定のレジストリキーの値が、各繰り返し毎に指定の変数に代入
+in split /// 文字列を複数の変数／配列要素に分割する（Split）」参照）と同様ですが、各部分がひとつずつ変数に代入されます。
+in values /// 与えられた複数の値が、各繰り返し毎に変数に代入されます。
+jis /// 日本語 ※7bit JIS ではなく、Shift_JIS です。
+johab /// 韓国語
+landscape /// ランドスケープモードかどうか
+latin1 /// 西欧
+latin2 /// 主に東欧
+lt /// less than
+major /// メジャー・バージョンナンバー（整数値）を返します
+minor /// マイナー・バージョンナンバー（整数値）を返します
+ne /// not equals
+platform /// プラットフォームを返します。Win95（98とMeを含む）、WinNT（XPとVistaを含む）、WinCE（スマートフォン、PPCとWindows Mobileを含む）のどれかです。
+portrait /// ポートレートモードかどうか
+qbga /// QVGAかどうか
+readonly /// 読み取り専用かどうか
+squere /// 正方形スクリーンかどうか
+system /// システムファイルかどうか
+unicode /// ２バイト文字 BOM 無しUTF-16 リトルエンディアン
+unicode-prefix /// いわゆる「Unicode」
+utf8 /// いわゆる「UTF-8N」
+utf8-prefix /// いわゆる「UTF-8」
+vga /// VGAかどうか。デフォルト／リアル／トゥルーVGAは区別しません。
+wansung /// 韓国語

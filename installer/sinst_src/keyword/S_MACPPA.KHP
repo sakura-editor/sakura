@@ -1,0 +1,342 @@
+===============================================================================
+PPA.DLL ‚Ìƒwƒ‹ƒv‚æ‚è”²ˆ
+
+š •¶
+begin /// [PPA.DLL]\nend ‚Æ‘Î‚Å•¡•¶‚ð•\‚·Bi CŒ¾Œê‚Ì { } ‚É‘Š“–‚·‚éBj\n\nif ` then •¶ else •¶ G\nwhile ` do •¶ G\nfor ` to ` do •¶ G\ncase ` of   `F •¶G   `F •¶G   endG\n‚È‚Ç‚Å‚ÍA•¶iƒRƒ}ƒ“ƒhj‚Í‚PŒÂ‚µ‚©‹Lq‚Å‚«‚È‚¢B\n\n‚±‚Ì‚æ‚¤‚ÈêŠ‚Å•¡”‚Ì•¶iƒRƒ}ƒ“ƒhj•¶1`•¶n ‚ðŽÀs‚µ‚½‚¢ŽžA\nu begin  •¶1 G  •¶2 G  ... •¶n G end v\n‚Ì‚æ‚¤‚É‚µ‚Ä‚PŒÂ‚Ì •¶ ‚É‚Ü‚Æ‚ß‚Ä‚©‚ç if ` then ‚â while ` do ‚Ì\n•¶ ‚Ì‰ÓŠ‚É‹Lq‚·‚é‚±‚Æ‚É‚æ‚Á‚ÄA•¡”‚ÌƒRƒ}ƒ“ƒh‚ðŽÀs‚³‚¹‚é‚±‚Æ\n‚ª‰Â”\‚Æ‚È‚éB\n- - - - - - - -\nif  `  then\n  begin\n      •¶1G\n      •¶2G\n      ... G\n  end\nelse\n  begin\n      •¶1G\n      ... G\n  end\nG\n- - - - - - - -
+end /// [PPA.DLL]\nbegin ‚Ü‚½‚Í case ‚ÌI‚í‚èB\nÚ×‚Í begin C case ‚ðŽQÆB
+
+š •Ï”
+var /// var      [PPA.DLL]\n•Ï”‚ðéŒ¾i—pˆÓj‚·‚éB\n\nvar  // «•Ï”‚ðéŒ¾i—pˆÓj‚·‚é\n    str1Cstr2 F String G    // •¶Žš—ñŒ^ str1Cstr2 ‚ð—pˆÓ\n    num1Cnum2 F Real G    // ŽÀ”Œ^ num1Cnum2 ‚ð—pˆÓ\n    inum1Cinum2 F Integer G // ®”Œ^ inum1Cinum2 ‚ð—pˆÓ\nbegin  // «ˆÈ‰ºAˆ—“à—e\n    ƒRƒ}ƒ“ƒhG\n    ƒRƒ}ƒ“ƒhG\nend
+Integer /// •Ï”–¼ F Integer G      [PPA.DLL]\n®”‚Ì”’l•Ï”‚ð—pˆÓ‚·‚éB\n\nvar  // «•Ï”‚ðéŒ¾i—pˆÓj‚·‚é\n    inum1Cinum2 F Integer G // ®”Œ^ inum1Cinum2 ‚ð—pˆÓ\nbegin  // «ˆÈ‰ºAˆ—“à—e\n    ƒRƒ}ƒ“ƒhG\n    ƒRƒ}ƒ“ƒhG\nend.
+Real /// •Ï”–¼ F Real G      [PPA.DLL]\nŽÀ”‚Ì”’l•Ï”‚ð—pˆÓ‚·‚éB\n\nvar  // «•Ï”‚ðéŒ¾i—pˆÓj‚·‚é\n    num1Cnum2 F Real G      // ŽÀ”Œ^ num1Cnum2 ‚ð—pˆÓ\nbegin  // «ˆÈ‰ºAˆ—“à—e\n    ƒRƒ}ƒ“ƒhG\n    ƒRƒ}ƒ“ƒhG\nend.
+String /// •Ï”–¼ F String G      [PPA.DLL]\n•¶Žš—ñ•Ï”‚ð—pˆÓ‚·‚éB\n\nvar  // «•Ï”‚ðéŒ¾i—pˆÓj‚·‚é\n    str1Cstr2 F String G    // •¶Žš—ñŒ^ str1Cstr2 ‚ð—pˆÓ\nbegin  // «ˆÈ‰ºAˆ—“à—e\n    ƒRƒ}ƒ“ƒhG\n    ƒRƒ}ƒ“ƒhG\nend.
+
+š ’è”
+True /// [PPA.DLL]\n’è”Bí‚É True = -1 G
+False /// [PPA.DLL]\n’è”Bí‚É False = 0 G
+nil /// [PPA.DLL]\n’è”Bí‚É nil = '' G i‹ó•¶Žš—ñj
+
+š §Œä\•¶
+if,then,else /// - - - - - - - -      [PPA.DLL]\nif Ž® then •¶1 G\nif Ž® then •¶1 else •¶2 G\n- - - - - - - -\nŽ® ‚Ì•]‰¿Œ‹‰Ê‚Ì®”’l‚ª True(-1)iðŒ‚ª¬—§‚µ‚½j‚Ìê‡‚Ì‚Ý •¶1 ‚ðŽÀs‚µA\n‚»‚êˆÈŠO‚Ìê‡‚Í •¶2 ‚ðŽÀs‚·‚éB\n- - - - - - - -\nif Ž® then\n    •¶1\nelse\n    •¶2 G\n- - - - - - - -\nif Ž® then\nbegin\n    •¶1-1 G\n    •¶1-2 G\n    ... G\nend\nelse\nbegin\n    •¶2-1 G\n    •¶2-2 G\n    ... G\nend G\n- - - - - - - -
+repeat,until /// - - - - - - - -      [PPA.DLL]\nrepeat\n    •¶1 G\n    ... G\n    •¶n G\nuntil Ž® G\n- - - - - - - -\nŽ® ‚Ì•]‰¿Œ‹‰Ê‚Ì®”’l‚ª True(-1) ‚Å‚Í‚È‚¢ŒÀ‚è •¶1`•¶n ‚ð\nŽÀs‚·‚éBTrue(-1)iðŒ‚ª¬—§j ‚É‚È‚é‚Æƒ‹[ƒv‚ðI—¹‚·‚éB\n\nŽ® ‚Í •¶1`•¶n ‚ªI—¹Œã‚É•]‰¿‚³‚ê‚é‚Ì‚ÅAÅ’á‚Å‚à‚P‰ñ‚Í\n•¶1`•¶n ‚ªˆ—‚³‚ê‚éB
+while,do /// - - - - - - - -      [PPA.DLL]\nwhile Ž® do •¶ G\n- - - - - - - -\nŽ® ‚Ì•]‰¿Œ‹‰Ê‚Ì®”’l‚ª True(-1) ‚Å‚ ‚éiðŒ‚ª¬—§‚µ‚Ä‚¢‚éjŒÀ‚è\n•¶ ‚ðŽÀs‚·‚éB\n\n•¶‚ÌŽÀs‘O‚É Ž® ‚ª•]‰¿‚³‚ê‚é‚Ì‚ÅAÅ‰‚©‚çðŒ‚ª¬—§‚µ‚È‚¢ê‡‚Í\n‚P‰ñ‚à•¶‚ÍŽÀs‚³‚ê‚È‚¢B\n- - - - - - - -\nwhile Ž® do\nbegin\n    •¶1 G\n    •¶2 G\n    ... G\nend G\n- - - - - - - -
+for,to,downto,do /// - - - - - - - -      [PPA.DLL]\nfor ƒJƒEƒ“ƒ^ F= ‰Šú’l to	I’l do •¶ G\nfor ƒJƒEƒ“ƒ^ F= ‰Šú’l downto	I’l do •¶ G\n- - - - - - - -\nƒJƒEƒ“ƒ^i®””’l•Ï”j‚É‰Šú’l‚ð‘ã“ü‚µ‚Ä‚©‚ç •¶ ‚ðŽÀsŒãAƒJƒEƒ“ƒ^‚ð‚»‚ê‚¼‚ê\nEfor ` to	‚Ìê‡FƒCƒ“ƒNƒŠƒƒ“ƒg(1‰ÁŽZ)\nEfor ` downto	‚Ìê‡FƒfƒNƒŠƒƒ“ƒg(1Œ¸ŽZ)\n‚µ‚È‚ª‚çAƒJƒEƒ“ƒ^‚ªI’l‚Æ“¯‚¶’l‚É‚È‚é‚Ü‚Å•¶‚ðŒJ‚è•Ô‚µŽÀs‚µ‚Ü‚·B\n\nƒJƒEƒ“ƒ^‚ªI’l‚Æ“¯‚¶’l‚É‚È‚é‚ÆA*‚à‚¤ˆê“x •¶ ‚ðŽÀsŒã*Aƒ‹[ƒv‚ðI—¹‚µ‚Ü‚·B\nÅ‰‚©‚ç‰Šú’l‚ÆI’l‚ª“¯‚¶ê‡‚Í‚P‰ñ‚¾‚¯ •¶ ‚ªŽÀs‚³‚ê‚Ü‚·B\nƒ‹[ƒvI—¹ŒãAƒJƒEƒ“ƒ^‚Ì’l‚ÍI’l‚É‚È‚Á‚Ä‚¢‚Ü‚·B\n\nfor ` to	‚Å ( ‰Šú’l > I’l ) ‚Ìê‡A‚Ü‚½‚Í\nfor ` downto	‚Å ( ‰Šú’l < I’l ) ‚Ìê‡A\n•¶‚Íˆê“x‚àŽÀs‚³‚ê‚¸AƒJƒEƒ“ƒ^‚Ì’l‚Í–¢’è‹`‚É‚È‚è‚Ü‚·B\n\n‰Šú’l‚ÆI’l‚Ì•]‰¿i‰Šú’lEI’l‚ªŒvŽZŽ®‚È‚Ç‚Ìê‡A‚»‚ê‚ç‚Ì’l‚ð‹‚ß‚éˆ—j‚ÍA\nƒ‹[ƒvŠJŽnŽž‚É‚P‰ñ‚¾‚¯ŽÀs‚³‚ê‚Ü‚·B\n]‚Á‚ÄA‰Šú’l‚âI’l‚É•¡ŽG‚ÈŒvŽZŽ®‚ðŽw’è‚µ‚Ä‚àAƒ‹[ƒv’†‚ÌŽÀs‘¬“x‚Í’x‚­‚È‚è‚Ü\n‚¹‚ñB‚Ü‚½Aƒ‹[ƒv“à‚ÅI’lŽ®‚ÌŒvŽZŒ‹‰Ê‚ª•Ï‚í‚é‚æ‚¤‚Èˆ—‚ð‚µ‚Ä‚àƒ‹[ƒv‰ñ”‚Í\n•Ï‚í‚è‚Ü‚¹‚ñB\n- - - - - - - -\nfor cnt F= 0 to 3 do\nbegin\n	•¶1 G\n	•¶2 G\n	... G\nend G\n- - - - - - - -
+case,of /// - - - - - - - -      [PPA.DLL]\ncase ƒZƒŒƒNƒ^Ž® of\n    ƒP[ƒXƒŠƒXƒg1F  •¶1G\n    ƒP[ƒXƒŠƒXƒg2F  •¶2G\n    DDD\n    ƒP[ƒXƒŠƒXƒgnF  •¶nG\nend G\n- - - - - - - -\nƒZƒŒƒNƒ^Ž® ‚Ì•]‰¿Œ‹‰Ê‚Ì®”’l‚ª ƒP[ƒXƒŠƒXƒg1`n ‚Ì‚¢‚¸‚ê‚©‚ÉŠY“–‚·‚éŽž‚É\n‚»‚Ì ƒP[ƒXƒŠƒXƒg ‚É‘Î‰ž‚µ‚½ •¶ ‚ðŽÀs‚·‚éB\n\nƒP[ƒXƒŠƒXƒg‚É‚Í®”Ž®‚ðŽg—p‚·‚éŽ–‚ªo—ˆ‚éB\n- - - - - - - -\ncase   i   of\n    0F		•¶1G	// i ‚ª 0 ‚È‚ç •¶1 ‚ðŽÀs‚·‚éB\n    2C4C6C8F	•¶2G	// i ‚ª 2C4C6C8 ‚Ì‚¢‚¸‚ê‚©‚È‚ç •¶2 ‚ðŽÀs‚·‚éB\n    1DD5 C 9F	•¶3G	// i ‚ª 1`5 ‚©A‚Ü‚½‚Í 9 ‚È‚ç •¶3 ‚ðŽÀs‚·‚éB\nend G\n// ¦ ª‚±‚Ìê‡Ai ‚ª 6 ‚È‚ç •¶2 ‚¾‚¯‚ªAi ‚ª 2 ‚È‚ç •¶2C•¶3 ‚Ì—¼•û‚ªŽÀs‚³‚ê‚éB\n// ¦ i ‚â 1DD5 C 9 ‚È‚Ç‚ÌŠeX‚Ì”’l•”•ª‚É‚Í”Ž®‚àŽg—p‰Â”\B\n- - - - - - - -
+
+š ‰‰ŽZŽq
+not /// not ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB”Û’èiƒrƒbƒg”½“]jBiCŒ¾Œê‚Ì ~ ‘Š“–j\n\n—áF a  F=  not  i G   // CŒ¾Œê a = ~ i G ‘Š“–\ni ‚Ìƒrƒbƒg”½“]’l‚ð a ‚Ö‘ã“ü‚·‚éB
+div /// ®” div ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB®”œŽZB®”‚ÌŒvŽZŽ®‚ÅœŽZ‚ð‚¨‚±‚È‚¤Žž‚ÉŽg—p‚·‚éB\nŽÀ”‚ÌŒvŽZŽ®‚Å‚Í / ‚ðŽg—p‚·‚é‚±‚ÆB\n\nE®”‚ÌŒvŽZŽ®‚Å / ‚ðŽg‚¤‚±‚Æ‚Í‚Å‚«‚È‚¢B\nEŽÀ”‚ÌŒvŽZŽ®‚Å div ‚ðŽg‚¤‚±‚Æ‚Í‚Å‚«‚È‚¢B\n—áFŽÀ” R1CR2 C®” i1Ci2 ‚ª‚ ‚éê‡\n›Fi1 div i2 G\n~Fi1  /  i2 G\n~FR1 div R2 G\n›FR1  /  R2 G\n~FR1 div i1 G\n›FR1  /  i1 G\n~Fi1 div R1 G  ©ƒGƒ‰[\n~Fi1  /  R1 G\n\n¦ ‘¼‚ÌŽl‘¥‰‰ŽZ(˜aC·CÏ)‚Å‚Í ®”CŽÀ” ‹¤A‰‰ŽZŽq‚Í“¯‚¶(+C-C*)‚Å‚ ‚éB\n@ œŽZ‚Ì‚Ý®”‚ÆŽÀ”‚Å‰‰ŽZŽq‚ªˆÙ‚È‚éB
+mod /// ®” mod ®” G      [PPA.DLL]\n\n‰‰ŽZŽqBè—]BiCŒ¾Œê‚Ì % ‘Š“–j\n\n—áF a  F=  i  mod  j G   // CŒ¾Œê a = i % j G ‘Š“–\ni ‚ð j ‚Å®”œŽZŽž‚Ì—]‚è‚ð a ‚Ö‘ã“ü‚·‚éB
+and /// ®” and ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB˜_—ÏBiCŒ¾Œê‚Ì && ‘Š“–j\n\n—áF a  F=  i  and  j G   // CŒ¾Œê a = i && j G ‘Š“–\ni ‚Æ j ‚Ì˜_—Ï‚ð a ‚Ö‘ã“ü‚·‚éB
+shl /// ®” shl ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB˜_—¶ƒVƒtƒgBiCŒ¾Œê‚Ì << ‘Š“–j\n\n—áF a  F=  i  shl  j G   // CŒ¾Œê a = i << j G ‘Š“–\ni ‚ð j bit ¶‚ÖƒVƒtƒg‚µ‚½’l‚ð a ‚Ö‘ã“ü‚·‚éB
+shr /// ®” shr ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB˜_—‰EƒVƒtƒgBiCŒ¾Œê‚Ì >> ‘Š“–j\n\n—áF a  F=  i  shr  j G   // CŒ¾Œê a = i >> j G ‘Š“–\ni ‚ð j bit ‰E‚ÖƒVƒtƒg‚µ‚½’l‚ð a ‚Ö‘ã“ü‚·‚éB
+or /// ®” or ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB˜_—˜aBiCŒ¾Œê‚Ì | ‘Š“–j\n\n—áF a  F=  i  or  j G   // CŒ¾Œê a = i | j G ‘Š“–\ni ‚Æ j ‚Ì˜_—˜a‚ð a ‚Ö‘ã“ü‚·‚éB
+xor /// ®” xor ®” G      [PPA.DLL]\n\n‰‰ŽZŽqB”r‘¼“I˜_—˜aBiCŒ¾Œê‚Ì ^ ‘Š“–j\n\n—áF a  F=  i  xor  j G   // CŒ¾Œê a = i ^ j G ‘Š“–\ni ‚Æ j ‚Ì”r‘¼“I˜_—˜a‚ð a ‚Ö‘ã“ü‚·‚éB
+
+š =-=-= PPA ƒrƒ‹ƒgƒCƒ“Žè‘±‚«/ŠÖ” =-=-= š
+
+š •¶Žš—ñˆ—ƒ‹[ƒ`ƒ“
+CompareStr /// CompareStr (S1C S2) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\n\n2 ‚Â‚Ì•¶Žš—ñ S1CS2 ‚ð”äŠr‚µ‚Ü‚·B\n‰p‘å¬•¶Žš‚Í‹æ•Ê‚³‚ê‚Ü‚·B\n\n@ðŒ@@@–ß‚è’l\nS1 > S2 @@ > 0\nS1 < S2 @@ < 0\nS1 = S2 @@ = 0
+Copy /// Copy ( S C i1 C i2 ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\ni1Ci2 F ®””’l(Ž®)\n\n•¶Žš—ñ S ‚Ì i1 ƒoƒCƒg–Ú‚©‚ç i2 ƒoƒCƒg‚Ì•¶Žš‚ðŽæ‚èo‚µ‚Ä•Ô‚·B\ni Delete ‚Ì‹t‚Ìˆ—Bj\ni1 ‚Íæ“ªˆÊ’u‚Ì•¶Žš‚ð 1 ‚Æ‚·‚éB\ni1 ‚É 0 ‚ðŽwŽ¦‚µ‚½ê‡‚Í i1 ‚É 1 ‚ðŽwŽ¦‚µ‚½ê‡‚Æ“¯‚¶Œ‹‰Ê‚Æ‚È‚éB\n\nES ‚Ì•¶Žš’·‚æ‚è‚à i1 ‚ÌŽwŽ¦‚ª‘å‚«‚¢ê‡A‹ó•¶Žš—ñ‚ª•Ô‚éB\nEi2 ‚ÌŽwŽ¦‚ª S ‚©‚çŽæ‚èo‚¹‚é•¶Žš”‚æ‚è‚à‘å‚«‚¢ê‡A\n@i1 ƒoƒCƒg–Ú‚©‚ç S ‚ÌI‚í‚è‚Ü‚Å‚Ì•¶Žš—ñ‚ª•Ô‚éB
+Delete /// Delete ( S C i1 C i2 ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\ni1Ci2 F ®””’l(Ž®)\n\n•¶Žš—ñ S ‚Ì i1 ƒoƒCƒg–Ú‚©‚ç i2 ƒoƒCƒg‚ðíœ‚µ‚½•¶Žš—ñ‚ð•Ô‚·B\ni Copy ‚Ì‹t‚Ìˆ—Bj\ni1 ‚Íæ“ªˆÊ’u‚Ì•¶Žš‚ð 1 ‚Æ‚·‚éB\ni1 ‚É 0 ‚ðŽwŽ¦‚·‚é‚Æ‰½‚àíœ‚³‚ê‚¸ S ‚ª‚»‚Ì‚Ü‚Ü•Ô‚éB\n\nES ‚Ì•¶Žš’·‚æ‚è‚à i1 ‚ÌŽwŽ¦‚ª‘å‚«‚¢ê‡A‰½‚àíœ‚³‚ê‚¸\n@S ‚ª‚»‚Ì‚Ü‚Ü•Ô‚éB\nEi2 ‚ÌŽwŽ¦‚ª S ‚©‚çíœ‚³‚ê‚é•¶Žš”‚æ‚è‚à‘å‚«‚¢ê‡A\n@i1 ƒoƒCƒg–Ú‚©‚ç S ‚ÌI‚í‚è‚Ü‚Å‚ðíœ‚µ‚½•¶Žš—ñ‚ª•Ô‚éB
+Insert /// Insert ( S1 C S2 C i ) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\ni F ®””’l(Ž®)\n\nS1 ‚ð S2 ‚Ì i ƒoƒCƒg–Ú‚ÌˆÊ’u‚É‘}“ü‚µ‚½•¶Žš—ñ‚ð•Ô‚·B\nS2 ‚Ìæ“ª‚É S1 ‚ð‘}“ü‚·‚éê‡‚Í i ‚ÌŽwŽ¦‚ð 1 ‚Æ‚·‚éB\ni ‚É 0 ‚ðŽwŽ¦‚µ‚½ê‡‚Í i ‚É 1 ‚ðŽwŽ¦‚µ‚½ê‡‚Æ“¯‚¶Œ‹‰Ê‚Æ‚È‚éB
+Length /// Length ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ‚Ì•¶Žš”iƒoƒCƒg”j‚ð•Ô‚·B
+LowerCase /// LowerCase ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ’†‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg—Þ‚ð¬•¶Žš‚É•ÏŠ·‚·‚éB\ni UpperCase ‚Ì‹t‚Ìˆ—Bj\n\n”¼Šp•¶Žš‚Ì A`Z ¨ a`z ‚¾‚¯‚Å‚Í‚È‚­A\nE‘SŠp•¶Žš‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg ‚``‚y ¨ ‚`‚š \nE‘SŠp•¶Žš‚ÌƒMƒŠƒVƒƒ•¶Žš ƒŸ`ƒ¶ ¨ ƒ¿`ƒÖ\nE‘SŠp•¶Žš‚ÌƒƒVƒA•¶Žš „@`„` ¨ „p`„‘\nE‘SŠp•¶Žš‚Ì”Žš ‡T`‡] ¨ îï`îø\n‚È‚Ç‚àˆ—‘ÎÛ‚É‚È‚Á‚Ä‚¢‚éB
+Pos /// Pos ( S1 C S2 ) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S2 ‚©‚ç•”•ª•¶Žš—ñ S1 ‚ð’T‚µAŒ©‚Â‚©‚Á‚½ˆÊ’uiæ“ª‚©‚ç‰½ƒoƒCƒg–Új‚ð•Ô‚·B\n•¶Žš—ñ‚Ìæ“ªˆÊ’u‚È‚ç 1A•¶Žš—ñ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡ 0 ‚ª•Ô‚éB\n\nEŒŸõ‚Å‚Í‰p‘å¬•¶Žš‚Í‹æ•Ê‚³‚ê‚éB\nE“ú–{Œê•¶Žš(‘SŠp•¶Žš)‚ÉŠ®‘S‚É‘Î‰ž‚µ‚Ä‚¢‚éB—á‚¦‚Î pos('\','•\'); ‚È‚ç 0 ‚ª•Ô‚éB
+Trim /// Trim ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ‚©‚ç æ“ª‚¨‚æ‚Ñ––”ö‚Ì ‹ó”’‚Æ§Œä•¶Žš ‚ðŽæ‚èœ‚¢‚½•¶Žš—ñ‚ð•Ô‚·B
+TrimLeft /// TrimLeft ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ‚©‚ç æ“ª‚Ì ‹ó”’‚Æ§Œä•¶Žš ‚ðŽæ‚èœ‚¢‚½•¶Žš—ñ‚ð•Ô‚·B
+TrimRight /// TrimRight ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ‚©‚ç ––”ö‚Ì ‹ó”’‚Æ§Œä•¶Žš ‚ðŽæ‚èœ‚¢‚½•¶Žš—ñ‚ð•Ô‚·B
+UpperCase /// UpperCase ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ S ’†‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg—Þ‚ð‘å•¶Žš‚É•ÏŠ·‚·‚éB\ni LowerCase ‚Ì‹t‚Ìˆ—Bj\n\n”¼Šp•¶Žš‚Ì a`z ¨ A`Z ‚¾‚¯‚Å‚Í‚È‚­A\nE‘SŠp•¶Žš‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg ‚`‚š ¨ ‚``‚y \nE‘SŠp•¶Žš‚ÌƒMƒŠƒVƒƒ•¶Žš ƒ¿`ƒÖ ¨ ƒŸ`ƒ¶\nE‘SŠp•¶Žš‚ÌƒƒVƒA•¶Žš „p`„‘ ¨ „@`„`\nE‘SŠp•¶Žš‚Ì”Žš îï`îø ¨ ‡T`‡]\n‚È‚Ç‚àˆ—‘ÎÛ‚É‚È‚Á‚Ä‚¢‚éB
+
+š ”’lˆ—ƒ‹[ƒ`ƒ“
+FloatToStr /// FloatToStr ( f ) G      [PPA.DLL]\nf F ŽÀ””’l(Ž®)\n\nŽÀ” f ‚ð 10i”•\Œ»‚Ì•¶Žš—ñ‚É•ÏŠ·‚µ‚½•¨‚ð•Ô‚·B
+IntToStr /// IntToStr ( i ) G      [PPA.DLL]\ni F ®””’l(Ž®)\n\n®” i ‚ð 10i”•\Œ»‚Ì•¶Žš—ñ‚É•ÏŠ·‚µ‚½•¨‚ð•Ô‚·B
+StrToFloat /// StrToFloat ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n10i”‚Ü‚½‚Í Žw”•\‹L‚ÌŽÀ””’l‚ð•\‚·•¶Žš—ñ S ‚ðŽÀ””’l‚É•ÏŠ·‚µ‚½•¨‚ð•Ô‚·B\n•¶Žš—ñ S ‚ªŽÀ””’l‚Æ‚µ‚Ä—LŒø‚Å‚Í‚È‚¢ê‡‚Í 0.0 ‚ð•Ô‚·B\n\n¦uæ“ª‚Ì”’l‚Æ‚µ‚Ä—LŒø‚È•”•ª‚Ì‚ÝŽæ‚èˆµ‚í‚ê‚év‚Æ‚¢‚¤‚í‚¯ *‚Å‚Í‚È‚¢* Ž–‚É’ˆÓB\n@•¶Žš—ñ’†‚ÉŽÀ””’l‚Æ‚µ‚Ä‚Ó‚³‚í‚µ‚­‚È‚¢•¶ŽšiƒAƒ‹ƒtƒ@ƒxƒbƒg“™j‚ª‚P•¶Žš‚Å‚à\n@‚Ç‚±‚©‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚é‚ÆA•Ô’l‚Í 0.0 ‚É‚È‚Á‚Ä‚µ‚Ü‚¤B
+StrToInt /// StrToInt ( S ) G      [PPA.DLL]\nS F •¶Žš—ñ(Ž®)\n\n10i”‚Ü‚½‚Í 16i”•\‹L( '0x01' C '$01' )‚Ì®””’l‚ð•\‚·•¶Žš—ñ S ‚ð®””’l‚É\n•ÏŠ·‚µ‚½•¨‚ð•Ô‚·B\n•¶Žš—ñ S ‚ª®””’l‚Æ‚µ‚Ä—LŒø‚Å‚Í‚È‚¢ê‡‚Í 0‚ð•Ô‚·B\n\n¦uæ“ª‚Ì”’l‚Æ‚µ‚Ä—LŒø‚È•”•ª‚Ì‚ÝŽæ‚èˆµ‚í‚ê‚év‚Æ‚¢‚¤‚í‚¯ *‚Å‚Í‚È‚¢* Ž–‚É’ˆÓB\n@•¶Žš—ñ’†‚É®””’l‚Æ‚µ‚Ä‚Ó‚³‚í‚µ‚­‚È‚¢•¶Žši¬”“_‚âƒAƒ‹ƒtƒ@ƒxƒbƒg“™j‚ª\n@‚P•¶Žš‚Å‚à ‚Ç‚±‚©‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚é‚ÆA•Ô’l‚Í 0 ‚É‚È‚Á‚Ä‚µ‚Ü‚¤B
+
+š ŒvŽZƒ‹[ƒ`ƒ“
+Frac /// Frac ( f ) G      [PPA.DLL]\nf F ŽÀ””’l(Ž®)\n\nf ‚Ì¬”•”‚ð•Ô‚·B\nFrac ( 5D3 ) G ‚È‚ç 0D3 ‚ª•Ô‚éB\nFrac ( -5D3 ) G ‚È‚ç -0D3 ‚ª•Ô‚éB
+Int /// Int ( f ) G      [PPA.DLL]\nf F ŽÀ””’l(Ž®)\n\nf ‚Ì®”•”‚ð ŽÀ”Œ^ ‚Å•Ô‚·B\nInt ( 5D9 ) G ‚È‚ç 5 (Real) ‚ª•Ô‚éB\nInt ( -5D9 ) G ‚È‚ç -5 (Real) ‚ª•Ô‚éB
+Round /// Round ( f ) G      [PPA.DLL]\nf F ŽÀ””’l(Ž®)\n\nf ‚ðŠÛ‚ßAÅ‚à‹ß‚¢®”’l‚ð ®”Œ^ ‚Å•Ô‚·B\n¬”•”‚ª 0D5 ‚Ìê‡‚ÍÅ‚à‹ß‚¢‹ô”‚Ì®”‚É‚È‚éB\nRound ( 2D5   )G ‚È‚ç 2 ‚ª•Ô‚éB\nRound ( 2D501 )G ‚È‚ç 3 ‚ª•Ô‚éB\nRound ( 3D5   )G ‚È‚ç 4 ‚ª•Ô‚éB
+Trunc /// Trunc ( f ) G      [PPA.DLL]\nf F ŽÀ””’l(Ž®)\n\nf ‚Ì¬”•”‚ðØ‚èŽÌ‚Ä‚½®”’l‚ð ®”Œ^ ‚Å•Ô‚·B\nTrunc ( 5D9 ) G ‚È‚ç 5 (Integer) ‚ª•Ô‚éB\nTrunc ( -5D9 ) G ‚È‚ç -5 (Integer) ‚ª•Ô‚éB
+
+š ƒ_ƒCƒAƒƒO‚¨‚æ‚ÑƒƒbƒZ[ƒWƒ‹[ƒ`ƒ“
+InputBox /// InputBox ( S1 C S2 C S3 ) G      [PPA.DLL]\nS1CS2CS3 F •¶Žš—ñ(Ž®)\n\n•¶Žš—ñ‚ð“ü—Í‚·‚é“ü—Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ð•\Ž¦‚µA“ü—Í‚³‚ê‚½•¶Žš—ñ‚ð•Ô‚·B\nS1 ‚ªƒ^ƒCƒgƒ‹C S2 ‚ªƒƒbƒZ[ƒW•¶C S3 ‚Í“ü—Í•”‚ÌƒfƒtƒHƒ‹ƒg’lB
+MessageBox /// MessageBox ( S1 C S2 C i ) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\ni F ®””’l(Ž®)\n\nƒ^ƒCƒgƒ‹ S2 CƒƒbƒZ[ƒW•¶ S1 ‚Ìƒ_ƒCƒAƒƒO‚ð•\Ž¦‚µA‰Ÿ‚³‚ê‚½ƒ{ƒ^ƒ“‚É‰ž‚¶‚½®””’l‚ð•Ô‚·B\ni ‚ÉŽw’è‚·‚éŽå‚È”’l‚Í‰º‹LB(‡Œv’l‚ÅŽw’è‚·‚é)Ú×‚Í Win32API MessageBoxŠÖ”ŽQÆB\n- - - - - - - - - - - - - - - - - - - - - - - - - \nš ƒ{ƒ^ƒ“‚ÌŽí—Þ 			/ «•Ô’l\n$0F[OK]				/ í‚É 1 ‚ª•Ô‚é\n$1F[OK] [ƒLƒƒƒ“ƒZƒ‹]			/ OKF1 C ƒLƒƒƒ“ƒZƒ‹F2\n$2F[’†Ž~(A)] [ÄŽŽs(R)] [–³Ž‹(I)]	/ ’†Ž~F3 C ÄŽŽsF4 C –³Ž‹F5\n$3F[‚Í‚¢(Y)] [‚¢‚¢‚¦(N)] [ƒLƒƒƒ“ƒZƒ‹]	/ ‚Í‚¢F6 C ‚¢‚¢‚¦F7 C ƒLƒƒƒ“ƒZƒ‹F2\n$4F[‚Í‚¢(Y)] [‚¢‚¢‚¦(N)]		/ ‚Í‚¢F6 C ‚¢‚¢‚¦F7\n$5F[ÄŽŽs(R)] [ƒLƒƒƒ“ƒZƒ‹]		/ ÄŽŽsF4 C ƒLƒƒƒ“ƒZƒ‹F2\n- - - - - - - - - - - - - - - - - - - - - - - - - \nš •\Ž¦‚·‚éƒAƒCƒRƒ“‚ÌŽí—Þ\n$00FƒAƒCƒRƒ“–³‚µ\n$10FÔ‚¢ ›	 ‚Ì’†‚É ”’‚¢ ~\n$20F”’‚¢‚«o‚µ‚Ì’†‚É Â‚¢ H\n$30F‰©F‚¢ ¢	 ‚Ì’†‚É •‚¢ I\n$40F”’‚¢‚«o‚µ‚Ì’†‚É Â‚¢ ‚‰\n- - - - - - - - - - - - - - - - - - - - - - - - - \nš ƒfƒtƒHƒ‹ƒgƒ{ƒ^ƒ“F[Enter] ‚âƒXƒy[ƒXƒo[‚Å‰Ÿ‚³‚ê‚éƒ{ƒ^ƒ“\n$000Fˆê”Ô¶‚Ìƒ{ƒ^ƒ“\n$100F¶‚©‚ç2ŒÂ–Ú‚Ìƒ{ƒ^ƒ“\n$200F¶‚©‚ç3ŒÂ–Ú‚Ìƒ{ƒ^ƒ“\n- - - - - - - - - - - - - - - - - - - - - - - - - \n—áFMessageBox( '‚Ù‚ñ‚Ü‚É‚¦‚¥‚ñ‚©H' C '‚¿‚å‚¢Šm”F‚â ' C $134 )G ‚Ìê‡\n•\Ž¦‚³‚ê‚éƒ{ƒ^ƒ“‚Í [‚Í‚¢(Y)] [‚¢‚¢‚¦(N)] ‚Å [‚Í‚¢(Y)] ‚ª‰Ÿ‚³‚ê‚ê‚Î 6 ‚ªA\n[‚¢‚¢‚¦(N)] ‚ª‰Ÿ‚³‚ê‚ê‚Î 7 ‚ª•Ô‚éBu‰©F‚¢¢‚Ì’†‚É•‚¢Iv‚ÌƒAƒCƒRƒ“B\n¶‚©‚ç‚QŒÂ–Ú‚Ì [‚¢‚¢‚¦(N)] ‚ªƒfƒtƒHƒ‹ƒgƒ{ƒ^ƒ“B
+
+š ƒVƒXƒeƒ€ƒ‹[ƒ`ƒ“
+Exec /// Exec ( S1 C S2 C i ) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\ni F ®””’l(Ž®)\n\nŽÀs‰Â”\ƒtƒ@ƒCƒ‹ S1 ‚ðAƒIƒvƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^ S2 ‚ð•t‚¯‚ÄŽÀs‚·‚éB\ni ‚É True(-1) ‚ðŽw’è‚·‚é‚ÆƒvƒƒOƒ‰ƒ€‚ªI—¹‚·‚é‚Ü‚Å‘Ò‚ÂB\ni ‚É False(0) ‚ðŽw’è‚·‚é‚ÆƒvƒƒOƒ‰ƒ€‚ÌI—¹‘Ò‚¿‚ð‚¨‚±‚È‚í‚È‚¢B\n\n³íI—¹‚µ‚½ê‡\n„¥> I—¹‘Ò‚¿ ( i = True )FƒvƒƒOƒ‰ƒ€‚Ì–ß‚è’l‚ª•Ô‚éB\n„¤> I—¹‚ð‘Ò‚½‚È‚¢ ( i = False )FTrue(-1) ‚ª•Ô‚éB\nˆÙíI—¹‚µ‚½ê‡FFalse(0) ‚ª•Ô‚éB
+ProcessMessages /// ProcessMessagesG      [PPA.DLL]\n\nWindowsƒVƒXƒeƒ€‚ªƒƒbƒZ[ƒWƒLƒ…[’†‚ÌƒƒbƒZ[ƒW‚Ì\nˆ—‚ð‚¨‚±‚È‚¤Ž–‚ð‹–‰Â‚µ‚Ü‚·B\nƒƒbƒZ[ƒWƒ‹[ƒv‚ª‹ó‚É‚È‚é‚Æ–ß‚Á‚Ä‚«‚Ü‚·B
+Shell /// Shell ( S1 C S2 ) G      [PPA.DLL]\nS1CS2 F •¶Žš—ñ(Ž®)\n\nƒtƒ@ƒCƒ‹ S1 ‚ðŠÖ˜A•t‚¯ŽÀs(open)‚·‚éB\nS1 ‚ÉŽÀs‰Â”\ƒtƒ@ƒCƒ‹‚ðŽw’è‚µ‚½ê‡‚Í S2 ‚ÉƒIƒvƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^‚ð\nŽw’è‚·‚éŽ–‚ª‚Å‚«‚éB\n\n³íI—¹Žž‚ÍAŽÀsƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹‚ª•Ô‚éB\nˆÙíŽž‚Í32ˆÈ‰º‚ÌƒGƒ‰[’l‚ª•Ô‚éB\nƒGƒ‰[’l‚ÌÚ×‚Í Win32API ShellExecuteŠÖ”ŽQÆB
+Sleep /// Sleep ( i ) G      [PPA.DLL]\ni F ®””’l(Ž®)\n\nˆ—‚ð i (ms) ’†’f‚·‚éB  ¦ ms ƒ~ƒŠ•b = 1/1000 •b\ni ‚É 0 ‚ðŽw’è‚·‚é‚ÆAƒ^ƒCƒ€ƒXƒ‰ƒCƒX‚ÌŽc‚è‚ð‘¼‚É÷‚éB
+
+š ƒtƒ[§Œäƒ‹[ƒ`ƒ“
+Break /// BreakG      [PPA.DLL]\nforCwhileCrepeat ‚Ìƒ‹[ƒv‚ðI—¹‚µ‚Ü‚·B
+Continue /// ContinueG      [PPA.DLL]\nforCwhileCrepeat ‚ÌŽŸ‚ÌŒJ‚è•Ô‚µ‚ð‚¨‚±‚È‚¢‚Ü‚·B
+Exit /// ExitG      [PPA.DLL]\nƒ}ƒNƒ‚ðI—¹‚µ‚Ü‚·B
+
+š PPAƒ‹[ƒ`ƒ“
+IsDefine /// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“Ž¯•Êî•ñ‚ª“o˜^‚³‚ê‚Ä‚¢‚é‚©‚ð”»•Ê‚µ‚Ü‚·B\n- - - - - - - -\nif not IsDefine('TEAD') then\nbegin\n    Messagebox('TEADê—p‚Ìƒ}ƒNƒ‚Å‚·'C'ƒGƒ‰['C0) G\n    Exit G\nend G\n- - - - - - - -\n\n...‚¦‚Á‚ÆƒTƒNƒ‰ƒGƒfƒBƒ^‚Ìê‡A'TEAD' ‚Ì•”•ª‚ÍDDD ...(((( (;^^
+Pause /// ¦ Žg‚Á‚¿‚á‘Ê–Ú‚æB(‚Í‚Ÿ‚Æ)    ƒ}ƒNƒ‚ÌŽÀs‚ðˆêŽž’†’f‚µ‚Ü‚·B\n\nƒTƒNƒ‰ƒGƒfƒBƒ^‚Å‚ÍƒGƒfƒBƒ^‚ÌI—¹ˆÈŠO‚Ì‘€ì‚ðŽó‚¯•t‚¯‚È‚¢ó‘Ô‚É‚È‚èA\n•œ‹A‚Å‚«‚Ü‚¹‚ñB
+
+===============================================================================
+ˆÈ‰º‚Í CSMacroMgr.cpp ‚©‚ç”²‚«o‚µ‚Ü‚µ‚½B
+
+S_GetFilename /// string  S_GetFilename ( ) G\nƒtƒ@ƒCƒ‹–¼‚ð•Ô‚·
+
+š ƒtƒ@ƒCƒ‹‘€ìŒn
+S_FileNew /// void  S_FileNew ( ) G\nV‹Kì¬
+S_FileOpen /// void  S_FileOpen ( S1 ) G\nŠJ‚­\n\nS1F•¶Žš—ñFŠJ‚­ƒtƒ@ƒCƒ‹–¼\n\n—áFS_FileOpen ( fCF\AUTOEXECDBATf ) G
+S_FileSave /// void  S_FileSave ( ) G\nã‘‚«•Û‘¶
+S_FileSaveAs /// void  S_FileSaveAs ( S1 C i1 C i2 ) G\n–¼‘O‚ð•t‚¯‚Ä•Û‘¶\n\nS1F•¶Žš—ñF•Û‘¶‚·‚éƒtƒ@ƒCƒ‹–¼\n\ni1F®””’lF•¶ŽšƒR[ƒhƒZƒbƒg {\n    0FShift_JIS\n    1FJIS\n    2FEUC\n    3FUnicode\n    4FUTF-8\n    5FUTF-7\n    6FUnicodeBE\n}\n\ni2F®””’lF‰üsƒR[ƒh {\n    0F•ÏX‚µ‚È‚¢\n    1FCRLF\n    2FLF\n    3FCR\n}
+S_FileClose /// void  S_FileClose ( ) G\n•Â‚¶‚Ä(–³‘è)
+S_FileCloseOpen /// void  S_FileCloseOpen ( ) G\n•Â‚¶‚ÄŠJ‚­
+S_FileReopenSJIS /// void  S_FileReopenSJIS ( ) G\nSJIS‚ÅŠJ‚«’¼‚·
+S_FileReopenJIS /// void  S_FileReopenJIS ( ) G\nJIS‚ÅŠJ‚«’¼‚·
+S_FileReopenEUC /// void  S_FileReopenEUC ( ) G\nEUC‚ÅŠJ‚«’¼‚·
+S_FileReopenUNICODE /// void  S_FileReopenUNICODE ( ) G\nUnicode‚ÅŠJ‚«’¼‚·
+S_FileReopenUNICODEBE /// void  S_FileReopenUNICODEBE ( ) G\nUnicodeBE‚ÅŠJ‚«’¼‚·
+S_FileReopenUTF8 /// void  S_FileReopenUTF8 ( ) G\nUTF-8‚ÅŠJ‚«’¼‚·
+S_FileReopenUTF7 /// void  S_FileReopenUTF7 ( ) G\nUTF-7‚ÅŠJ‚«’¼‚·
+S_Print /// void  S_Print ( ) G\nˆóü
+S_PrintPreview /// void  S_PrintPreview ( ) G\nˆóüƒvƒŒƒrƒ…[
+S_PrintPageSetup /// void  S_PrintPageSetup ( ) G\nˆóüƒy[ƒWÝ’è
+S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) G\n“¯–¼‚ÌC/C++ƒwƒbƒ_(ƒ\[ƒX)‚ðŠJ‚­
+S_OpenHHpp /// void  S_OpenHHpp ( ) G\n“¯–¼‚ÌC/C++ƒwƒbƒ_ƒtƒ@ƒCƒ‹‚ðŠJ‚­
+S_OpenCCpp /// void  S_OpenCCpp ( ) G\n“¯–¼‚ÌC/C++ƒ\[ƒXƒtƒ@ƒCƒ‹‚ðŠJ‚­
+S_ActivateSQLPLUS /// void  S_ActivateSQLPLUS ( ) G\nOracle SQL*Plus‚ðƒAƒNƒeƒBƒu•\Ž¦
+S_ExecSQLPLUS /// void  S_ExecSQLPLUS ( ) G\nOracle SQL*Plus‚ÅŽÀs
+S_Browse /// void  S_Browse ( ) G\nƒuƒ‰ƒEƒY
+S_ReadOnly /// void  S_ReadOnly ( ) G\n“Ç‚ÝŽæ‚èê—p
+S_PropertyFile /// void  S_PropertyFile ( ) G\nƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒB
+S_ExitAll /// void  S_ExitAll ( ) G\nƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹
+
+š •ÒWŒn
+S_Char /// void  S_Char ( i1 ) G\n•¶Žš“ü—Í\n\ni1F®””’lF“ü—Í‚µ‚½‚¢•¶Žš‚ð10i”‚Ì ASCIIƒR[ƒh‚ÅŽw’è‚·‚éB\n\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n\n‚±‚ÌŠÖ”‚Å‚Í”¼Šp•¶Žš‚Ì“ü—Í‚µ‚©‚Å‚«‚È‚¢B\n‘SŠp•¶Žš‚Ì“ü—Í‚É‚Í S_InsText ( ) ‚ðŽg—p‚·‚éB‚ÆŒ¾‚¤‚æ‚è‚àA\n’Êí‚Ì•¶Žš“ü—Í‚É‚Í S_InsText ( ) ‚ðŽg‚¤•û‚ª•ª‚©‚èˆÕ‚¢‚µŠyB
+S_CharIme /// void  S_CharIme ( ) G\n‘SŠp•¶Žš“ü—Í\n\n“®ì‚µ‚È‚¢B–³‚­‚Ä‚à¢‚ç‚È‚¢B\n¨ S_InsText ( ) ‚ðŽg‚¦‚âB\n\n¦uS_Char ( ) ‚Å‚Í”¼Šp•¶Žš‚µ‚©“ü—Í‚Å‚«‚È‚¢‚Ì‚ÅA‘SŠp•¶Žš‚ð\n“ü—Í‚·‚é‚½‚ß‚Éì‚ç‚ê‚½•¨v‚Á‚Û‚¢‚Ì‚¾‚©AŒ^éŒ¾•”‚Å‚Íuˆø”‚È‚µv\n‚Æ’è‹`‚³‚ê‚Ä‚¨‚èAŽÀÛ‚Ì“à•”ƒvƒƒOƒ‰ƒ€‚Å‚Íuˆø”•K{v‚É‚È‚Á‚Ä\n‚¢‚é‚½‚ßA“®ì‚µ‚È‚¢‚ç‚µ‚¢B
+S_Undo /// void  S_Undo ( ) G\nŒ³‚É–ß‚·(Undo)
+S_Redo /// void  S_Redo ( ) G\n‚â‚è’¼‚µ(Redo)
+S_Delete /// void  S_Delete ( ) G\níœ
+S_DeleteBack /// void  S_DeleteBack ( ) G\nƒJ[ƒ\ƒ‹‘O‚ðíœ
+S_WordDeleteToStart /// void  S_WordDeleteToStart ( ) G\n’PŒê‚Ì¶’[‚Ü‚Åíœ
+S_WordDeleteToEnd /// void  S_WordDeleteToEnd ( ) G\n’PŒê‚Ì‰E’[‚Ü‚Åíœ
+S_WordCut /// void  S_WordCut ( ) G\n’PŒêØ‚èŽæ‚è
+S_WordDelete /// void  S_WordDelete ( ) G\n’PŒêíœ
+S_LineCutToStart /// void  S_LineCutToStart ( ) G\ns“ª‚Ü‚ÅØ‚èŽæ‚è(‰üs’PˆÊ)
+S_LineCutToEnd /// void  S_LineCutToEnd ( ) G\ns––‚Ü‚ÅØ‚èŽæ‚è(‰üs’PˆÊ)
+S_LineDeleteToStart /// void  S_LineDeleteToStart ( ) G\ns“ª‚Ü‚Åíœ(‰üs’PˆÊ)
+S_LineDeleteToEnd /// void  S_LineDeleteToEnd ( ) G\ns––‚Ü‚Åíœ(‰üs’PˆÊ)
+S_CutLine /// void  S_CutLine ( ) G\nsØ‚èŽæ‚è(Ü‚è•Ô‚µ’PˆÊ)
+S_DeleteLine /// void  S_DeleteLine ( ) G\nsíœ(Ü‚è•Ô‚µ’PˆÊ)
+S_DuplicateLine /// void  S_DuplicateLine ( ) G\ns‚Ì“ñd‰»(Ü‚è•Ô‚µ’PˆÊ)
+S_IndentTab /// void  S_IndentTab ( ) G\nTABƒCƒ“ƒfƒ“ƒg
+S_UnindentTab /// void  S_UnindentTab ( ) G\n‹tTABƒCƒ“ƒfƒ“ƒg
+S_IndentSpace /// void  S_IndentSpace ( ) G\nSPACEƒCƒ“ƒfƒ“ƒg
+S_UnindentSpace /// void  S_UnindentSpace ( ) G\n‹tSPACEƒCƒ“ƒfƒ“ƒg
+S_LTrim /// void  S_LTrim ( ) G\n¶(æ“ª)‚Ì‹ó”’‚ðíœ
+S_RTrim /// void  S_RTrim ( ) G\n‰E(––”ö)‚Ì‹ó”’‚ðíœ
+S_SortAsc /// void  S_SortAsc ( ) G\n‘I‘ðs‚Ì¸‡ƒ\[ƒg
+S_SortDesc /// void  S_SortDesc ( ) G\n‘I‘ðs‚Ì~‡ƒ\[ƒg
+S_Merge /// void  S_Merge ( ) G\n‘I‘ðs‚Ìƒ}[ƒW
+
+š ƒJ[ƒ\ƒ‹ˆÚ“®Œn
+S_Up /// void  S_Up ( ) G\nƒJ[ƒ\ƒ‹ãˆÚ“®
+S_Down /// void  S_Down ( ) G\nƒJ[ƒ\ƒ‹‰ºˆÚ“®
+S_Left /// void  S_Left ( ) G\nƒJ[ƒ\ƒ‹¶ˆÚ“®
+S_Right /// void  S_Right ( ) G\nƒJ[ƒ\ƒ‹‰EˆÚ“®
+S_Up2 /// void  S_Up2 ( ) G\nƒJ[ƒ\ƒ‹ãˆÚ“®(‚Qs‚²‚Æ)
+S_Down2 /// void  S_Down2 ( ) G\nƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)
+S_WordLeft /// void  S_WordLeft ( ) G\n’PŒê‚Ì¶’[‚ÉˆÚ“®
+S_WordRight /// void  S_WordRight ( ) G\n’PŒê‚Ì‰E’[‚ÉˆÚ“®
+S_GoLineTop /// void  S_GoLineTop ( i1 ) G\ns“ª‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)\n\ni1F®””’lF {\n    bit0F1=s“ª‚ÌƒXƒy[ƒX‚ð–³Ž‹‚·‚é\n    bit1F- No Use -\n    bit2F0=”ñ‘I‘ðó‘Ô‚ÅˆÚ“® / 1=‘I‘ðó‘Ô‚ÅˆÚ“®\n    bit3F0=Ü‚è•Ô‚µ’PˆÊ‚ÅˆÚ“® / 1=‰üs’PˆÊ‚ÅˆÚ“®\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_GoLineEnd /// void  S_GoLineEnd ( ) G\ns––‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)
+S_HalfPageUp /// void  S_HalfPageUp ( ) G\n”¼ƒy[ƒWƒAƒbƒv
+S_HalfPageDown /// void  S_HalfPageDown ( ) G\n”¼ƒy[ƒWƒ_ƒEƒ“
+S_1PageUp /// void  S_1PageUp ( ) G\n‚Pƒy[ƒWƒAƒbƒv
+S_1PageDown /// void  S_1PageDown ( ) G\n‚Pƒy[ƒWƒ_ƒEƒ“
+S_GoFileTop /// void  S_GoFileTop ( ) G\nƒtƒ@ƒCƒ‹‚Ìæ“ª‚ÉˆÚ“®
+S_GoFileEnd /// void  S_GoFileEnd ( ) G\nƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“®
+S_CurLineCenter /// void  S_CurLineCenter ( ) G\nƒJ[ƒ\ƒ‹s‚ðƒEƒBƒ“ƒhƒE’†‰›‚Ö
+S_MoveHistPrev /// void  S_MoveHistPrev ( ) G\nˆÚ“®—š—ð: ‘O‚Ö
+S_MoveHistNext /// void  S_MoveHistNext ( ) G\nˆÚ“®—š—ð: ŽŸ‚Ö
+S_MoveHistSet /// void  S_MoveHistSet ( ) G\nŒ»ÝˆÊ’u‚ðˆÚ“®—š—ð‚É“o˜^
+S_F_WndScrollDown /// void  S_F_WndScrollDown ( ) G\nƒeƒLƒXƒg‚ð‚Ps‰º‚ÖƒXƒNƒ[ƒ‹
+S_F_WndScrollUp /// void  S_F_WndScrollUp ( ) G\nƒeƒLƒXƒg‚ð‚Psã‚ÖƒXƒNƒ[ƒ‹
+S_GoNextParagraph /// void  S_GoNextParagraph ( ) G\nŽŸ‚Ì’i—Ž‚ÖˆÚ“®
+S_GoPrevParagraph /// void  S_GoPrevParagraph ( ) G\n‘O‚Ì’i—Ž‚ÖˆÚ“®
+
+š ‘I‘ðŒn
+S_SelectWord /// void  S_SelectWord ( ) G\nŒ»ÝˆÊ’u‚Ì’PŒê‘I‘ð
+S_SelectAll /// void  S_SelectAll ( ) G\n‚·‚×‚Ä‘I‘ð
+S_BeginSelect /// void  S_BeginSelect ( ) G\n”ÍˆÍ‘I‘ðŠJŽn
+S_Up_Sel /// void  S_Up_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹ãˆÚ“®
+S_Down_Sel /// void  S_Down_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹‰ºˆÚ“®
+S_Left_Sel /// void  S_Left_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹¶ˆÚ“®
+S_Right_Sel /// void  S_Right_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹‰EˆÚ“®
+S_Up2_Sel /// void  S_Up2_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹ãˆÚ“®(‚Qs‚²‚Æ)
+S_Down2_Sel /// void  S_Down2_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)
+S_WordLeft_Sel /// void  S_WordLeft_Sel ( ) G\n(”ÍˆÍ‘I‘ð)’PŒê‚Ì¶’[‚ÉˆÚ“®
+S_WordRight_Sel /// void  S_WordRight_Sel ( ) G\n(”ÍˆÍ‘I‘ð)’PŒê‚Ì‰E’[‚ÉˆÚ“®
+S_GoLineTop_Sel /// void  S_GoLineTop_Sel ( ) G\n(”ÍˆÍ‘I‘ð)s“ª‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)
+S_GoLineEnd_Sel /// void  S_GoLineEnd_Sel ( ) G\n(”ÍˆÍ‘I‘ð)s––‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)
+S_HalfPageUp_Sel /// void  S_HalfPageUp_Sel ( ) G\n(”ÍˆÍ‘I‘ð)”¼ƒy[ƒWƒAƒbƒv
+S_HalfPageDown_Sel /// void  S_HalfPageDown_Sel ( ) G\n(”ÍˆÍ‘I‘ð)”¼ƒy[ƒWƒ_ƒEƒ“
+S_1PageUp_Sel /// void  S_1PageUp_Sel ( ) G\n(”ÍˆÍ‘I‘ð)‚Pƒy[ƒWƒAƒbƒv
+S_1PageDown_Sel /// void  S_1PageDown_Sel ( ) G\n(”ÍˆÍ‘I‘ð)‚Pƒy[ƒWƒ_ƒEƒ“
+S_GoFileTop_Sel /// void  S_GoFileTop_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒtƒ@ƒCƒ‹‚Ìæ“ª‚ÉˆÚ“®
+S_GoFileEnd_Sel /// void  S_GoFileEnd_Sel ( ) G\n(”ÍˆÍ‘I‘ð)ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“®
+S_GoNextParagraph_Sel /// void  S_GoNextParagraph_Sel ( ) G\nŽŸ‚Ì’i—Ž‚ÖˆÚ“®
+S_GoPrevParagraph_Sel /// void  S_GoPrevParagraph_Sel ( ) G\n‘O‚Ì’i—Ž‚ÖˆÚ“®
+
+š ‹éŒ`‘I‘ðŒn
+S_BeginBoxSelect /// void  S_BeginBoxSelect ( ) G\n‹éŒ`”ÍˆÍ‘I‘ðŠJŽn
+
+š ƒNƒŠƒbƒvƒ{[ƒhŒn
+S_Cut /// void  S_Cut ( ) G\nØ‚èŽæ‚è(‘I‘ð”ÍˆÍ‚ðƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚µ‚Äíœ)
+S_Copy /// void  S_Copy ( ) G\nƒRƒs[(‘I‘ð”ÍˆÍ‚ðƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[)
+S_Paste /// void  S_Paste ( ) G\n“\‚è•t‚¯(ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯)
+S_CopyAddCRLF /// void  S_CopyAddCRLF ( ) G\nÜ‚è•Ô‚µˆÊ’u‚É‰üs‚ð‚Â‚¯‚ÄƒRƒs[
+S_CopyCRLF /// void  S_CopyCRLF ( ) G\nCRLF‰üs‚ÅƒRƒs[(‘I‘ð”ÍˆÍ‚ð‰üsƒR[ƒh=CRLF‚ÅƒRƒs[)
+S_PasteBox /// void  S_PasteBox ( ) G\n‹éŒ`“\‚è•t‚¯(ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç‹éŒ`“\‚è•t‚¯)
+S_InsText /// void  S_InsText ( S1 ) G\nƒeƒLƒXƒg‚ð“\‚è•t‚¯\n\nS1F•¶Žš—ñF“ü—Í‚µ‚½‚¢•¶Žš—ñ‚ðŽw’è‚·‚éB\n\n‰üs‚Ì“ü—Í‚É‚Í S_Char ( 13 )G ‚ðŽg—p‚·‚éB\n- - - - - - - -\nS_InsText ( f‚±‚Ì•¶Žš—ñ‚ð‘‚«ž‚Ý‚Ü‚·Bf ) G\nS_Char ( 13 ) G   // © ‰üs‚ð‘‚«ž‚Þ\n- - - - - - - -
+S_AddTail /// void  S_AddTail ( S1 ) G\nÅŒã‚ÉƒeƒLƒXƒg‚ð’Ç‰Á - ƒtƒ@ƒCƒ‹––”ö‚Ö”ò‚ñ‚Ås‚«A\n‚»‚±‚ÉŽw’è‚³‚ê‚½•¶Žš—ñ‚ð‘‚«ž‚ÞB\n\nS1F•¶Žš—ñFƒtƒ@ƒCƒ‹––”ö‚É’Ç‹L‚·‚é•¶Žš—ñ
+S_CopyLines /// void  S_CopyLines ( ) G\n‘I‘ð”ÍˆÍ“à‘SsƒRƒs[
+S_CopyLinesAsPassage /// void  S_CopyLinesAsPassage ( ) G\n‘I‘ð”ÍˆÍ“à‘Ssˆø—p•„•t‚«ƒRƒs[
+S_CopyLinesWithLineNumber /// void  S_CopyLinesWithLineNumber ( ) G\n‘I‘ð”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[
+S_CopyPath /// void  S_CopyPath ( ) G\n‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ðƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[
+S_CopyFilename /// void  S_CopyFilename ( ) G\n‚±‚Ìƒtƒ@ƒCƒ‹–¼‚ðƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[
+S_CopyTag /// void  S_CopyTag ( ) G\n‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ÆƒJ[ƒ\ƒ‹ˆÊ’u‚ðƒRƒs[
+S_CopyKeyBindList /// void  S_CopyKeyBindList ( ) G\nƒL[Š„‚è“–‚Äˆê——‚ðƒRƒs[
+
+š ‘}“üŒn
+S_InsertDate /// void  S_InsertDate ( ) G\n“ú•t‘}“ü
+S_InsertTime /// void  S_InsertTime ( ) G\nŽž‘}“ü
+S_CtrlCodeDialog /// void  S_CtrlCodeDialog ( ) G\nƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚Ì“ü—Í(ƒ_ƒCƒAƒƒO)
+
+š •ÏŠ·Œn
+S_ToLower /// void  S_ToLower ( ) G\n‰p‘å•¶Žš¨‰p¬•¶Žš
+S_ToUpper /// void  S_ToUpper ( ) G\n‰p¬•¶Žš¨‰p‘å•¶Žš
+S_ToHankaku /// void  S_ToHankaku ( ) G\n‘SŠp¨”¼Šp
+S_ToHankata /// void  S_ToHankata ( ) G\n‘SŠpƒJƒ^ƒJƒi¨”¼ŠpƒJƒ^ƒJƒi
+S_ToZenEi /// void  S_ToZenEi ( ) G\n”¼Šp‰p”¨‘SŠp‰p”
+S_ToHanEi /// void  S_ToHanEi ( ) G\n‘SŠp‰p”¨”¼Šp‰p”
+S_ToZenKata /// void  S_ToZenKata ( ) G\n”¼Šp{‘S‚Ð‚ç¨‘SŠpEƒJƒ^ƒJƒi
+S_ToZenHira /// void  S_ToZenHira ( ) G\n”¼Šp{‘SƒJƒ^¨‘SŠpE‚Ð‚ç‚ª‚È
+S_HanKataToZenKata /// void  S_HanKataToZenKata ( ) G\n”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒi
+S_HanKataToZenHira /// void  S_HanKataToZenHira ( ) G\n”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ð‚ç‚ª‚È
+S_TABToSPACE /// void  S_TABToSPACE ( ) G\nTAB¨‹ó”’
+S_SPACEToTAB /// void  S_SPACEToTAB ( ) G\n‹ó”’¨TAB
+S_AutoToSJIS /// void  S_AutoToSJIS ( ) G\nŽ©“®”»•Ê¨SJISƒR[ƒh•ÏŠ·
+S_JIStoSJIS /// void  S_JIStoSJIS ( ) G\nE-Mail(JIS¨SJIS)ƒR[ƒh•ÏŠ·
+S_EUCtoSJIS /// void  S_EUCtoSJIS ( ) G\nEUC¨SJISƒR[ƒh•ÏŠ·
+S_CodeCnvUNICODEtoSJIS /// void  S_CodeCnvUNICODEtoSJIS ( ) G\nUnicode¨SJISƒR[ƒh•ÏŠ·
+S_CodeCnvUNICODEBEtoSJIS /// void  S_CodeCnvUNICODEBEtoSJIS ( ) G\nUnicodeBE¨SJISƒR[ƒh•ÏŠ·
+S_UTF8toSJIS /// void  S_UTF8toSJIS ( ) G\nUTF-8¨SJISƒR[ƒh•ÏŠ·
+S_UTF7toSJIS /// void  S_UTF7toSJIS ( ) G\nUTF-7¨SJISƒR[ƒh•ÏŠ·
+S_SJIStoJIS /// void  S_SJIStoJIS ( ) G\nSJIS¨JISƒR[ƒh•ÏŠ·
+S_SJIStoEUC /// void  S_SJIStoEUC ( ) G\nSJIS¨EUCƒR[ƒh•ÏŠ·
+S_SJIStoUTF8 /// void  S_SJIStoUTF8 ( ) G\nSJIS¨UTF-8ƒR[ƒh•ÏŠ·
+S_SJIStoUTF7 /// void  S_SJIStoUTF7 ( ) G\nSJIS¨UTF-7ƒR[ƒh•ÏŠ·
+S_Base64Decode /// void  S_Base64Decode ( ) G\nBase64ƒfƒR[ƒh‚µ‚Ä•Û‘¶
+S_Uudecode /// void  S_Uudecode ( ) G\nuudecode‚µ‚Ä•Û‘¶
+
+š ŒŸõŒn
+S_SearchDialog /// void  S_SearchDialog ( ) G\nŒŸõ(’PŒêŒŸõƒ_ƒCƒAƒƒO)
+S_SearchNext /// void  S_SearchNext ( S1 C i1 ) G\nŽŸ‚ðŒŸõ«\n¦ ŒŸõƒ_ƒCƒAƒƒO‚Å [‰ºŒŸõ(&D)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ìB\nE[ãŒŸõ(&U)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchPrev ( ) G\nE[ŠY“–sƒ}[ƒN(&B)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_BookmarkPattern ( ) G\n\nS1F•¶Žš—ñF«•ûŒü‚É’T‚·•¶Žš—ñB\n    ‹ó•¶Žš—ñ (ff) ‚ðŽw’è‚·‚é‚ÆAŒ»ÝŒŸõ‘ÎÛ‚É‚È‚Á‚Ä‚¢‚é•¶Žš—ñ‚ð’T‚·B\n\ni1F®””’lFŒŸõƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0F’PŒê’PˆÊ‚Å’T‚·\n    bit1F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit2F³‹K•\Œ»\n    bit3FŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦\n    bit4FŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é\n    bit5Fæ“ªi––”öj‚©‚çÄŒŸõ‚·‚é\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_SearchPrev /// void  S_SearchPrev ( S1 C i1 ) G\n‘O‚ðŒŸõª\n¦ ŒŸõƒ_ƒCƒAƒƒO‚Å [ãŒŸõ(&U)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ìB\nE[‰ºŒŸõ(&D)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchNext ( ) G\nE[ŠY“–sƒ}[ƒN(&B)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_BookmarkPattern ( ) G\n\nS1F•¶Žš—ñFª•ûŒü‚É’T‚·•¶Žš—ñB\n    ‹ó•¶Žš—ñ (ff) ‚ðŽw’è‚·‚é‚ÆAŒ»ÝŒŸõ‘ÎÛ‚É‚È‚Á‚Ä‚¢‚é•¶Žš—ñ‚ð’T‚·B\n\ni1F®””’lFŒŸõƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0F’PŒê’PˆÊ‚Å’T‚·\n    bit1F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit2F³‹K•\Œ»\n    bit3FŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦\n    bit4FŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é\n    bit5Fæ“ªi––”öj‚©‚çÄŒŸõ‚·‚é\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_ReplaceDialog /// void  S_ReplaceDialog ( ) G\n’uŠ·(’uŠ·ƒ_ƒCƒAƒƒO)
+S_Replace /// void  S_Replace ( S1 C S2 C i1 ) G\n’uŠ·(ŽÀs)\n¦ ’uŠ·ƒ_ƒCƒAƒƒO‚Å [’uŠ·(&R)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ìB\nE[‚·‚×‚Ä’uŠ·(&A)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_ReplaceAll ( ) G\nE[ãŒŸõ(&U)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchPrev ( ) G\nE[‰ºŒŸõ(&D)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchNext ( ) G\nE[ŠY“–sƒ}[ƒN(&B)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_BookmarkPattern ( ) G\n\nS1F•¶Žš—ñF’uŠ·‘O‚Ì•¶Žš—ñB¦‹ó•¶Žš—ñ (ff) ‚ÍŽó‚¯•t‚¯‚È‚¢B\nS2F•¶Žš—ñF’uŠ·Œã‚Ì•¶Žš—ñB\n\ni1F®””’lF’uŠ·ƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0F’PŒê’PˆÊ‚Å’T‚·\n    bit1F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit2F³‹K•\Œ»\n    bit3FŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦\n    bit4F’uŠ·ƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é\n    bit5Fæ“ªi––”öj‚©‚çÄŒŸõ‚·‚é\n    bit6FƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯‚é\n\n    bit7F0=ƒtƒ@ƒCƒ‹‘S‘Ì / 1=‘I‘ð”ÍˆÍ\n    bit9,8F00=‘I‘ð•¶Žš / 01=‘I‘ðŽn“_‘}“ü / 10=‘I‘ðI“_’Ç‰Á\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_ReplaceAll /// void  S_ReplaceAll ( S1 C S2 C i1 ) G\n‚·‚×‚Ä’uŠ·(ŽÀs)\n¦ ’uŠ·ƒ_ƒCƒAƒƒO‚Å [‚·‚×‚Ä’uŠ·(&A)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ìB\nE[’uŠ·(&R)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_Replace ( ) G\nE[ãŒŸõ(&U)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchPrev ( ) G\nE[‰ºŒŸõ(&D)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchNext ( ) G\nE[ŠY“–sƒ}[ƒN(&B)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_BookmarkPattern ( ) G\n\nS1F•¶Žš—ñF’uŠ·‘O‚Ì•¶Žš—ñB¦‹ó•¶Žš—ñ (ff) ‚ÍŽó‚¯•t‚¯‚È‚¢B\nS2F•¶Žš—ñF’uŠ·Œã‚Ì•¶Žš—ñB\n\ni1F®””’lF’uŠ·ƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0F’PŒê’PˆÊ‚Å’T‚·\n    bit1F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit2F³‹K•\Œ»\n    bit3FŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦\n    bit4F’uŠ·ƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é\n    bit5Fæ“ªi––”öj‚©‚çÄŒŸõ‚·‚é\n    bit6FƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯‚é\n\n    bit7F0=ƒtƒ@ƒCƒ‹‘S‘Ì / 1=‘I‘ð”ÍˆÍ\n    bit9,8F00=‘I‘ð•¶Žš / 01=‘I‘ðŽn“_‘}“ü / 10=‘I‘ðI“_’Ç‰Á\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_SearchClearMark /// void  S_SearchClearMark ( ) G\nŒŸõƒ}[ƒN‚ÌƒNƒŠƒA
+S_SearchStartPos /// void  S_SearchStartPos ( ) G\nŒŸõŠJŽnˆÊ’u‚Ö–ß‚é
+S_Grep /// void  S_Grep ( S1 C S2 C S3 C i1 ) G\nGrep\n\nS1F•¶Žš—ñFŒŸõ•¶Žš—ñ\nS2F•¶Žš—ñFŒŸõ‘ÎÛƒtƒ@ƒCƒ‹\nS3F•¶Žš—ñFŒŸõ‘ÎÛƒtƒHƒ‹ƒ_\n\ni1F®””’lFGrep ƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0FƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é\n    bit1F- No Use -\n    bit2F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit3F³‹K•\Œ»\n    bit4F•¶ŽšƒR[ƒhƒZƒbƒgŽ©“®”»•Ê\n\n    bit5F0=ŠY“–s / 1=ŠY“–•”•ª\n    bit6F0=ƒm[ƒ}ƒ‹ / 1=ƒtƒ@ƒCƒ‹–ˆ\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_Jump /// void  S_Jump ( i1 C i2 ) G\nŽw’èsƒwƒWƒƒƒ“ƒv\n\ni1F®””’lFƒWƒƒƒ“ƒvæ‚Ìs”Ô†‚ð10i””’l‚ÅŽw’è‚·‚éB\n\ni2F®””’lFŽw’ès‚ÖƒWƒƒƒ“ƒv ƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    bit0F0=Ü‚è•Ô‚µ’PˆÊ‚Ìs”Ô† / 1=‰üs’PˆÊ‚Ìs”Ô†\n    bit1FPL/SQLƒRƒ“ƒpƒCƒ‹ƒGƒ‰[s‚ðˆ—‚·‚é - 0=OFF / 1=ON\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+S_Outline /// void  S_Outline ( ) G\nƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
+S_TagJump /// void  S_TagJump ( ) G\nƒ^ƒOƒWƒƒƒ“ƒv‹@”\
+S_TagJumpBack /// void  S_TagJumpBack ( ) G\nƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒN‹@”\
+S_Compare /// void  S_Compare ( ) G\nƒtƒ@ƒCƒ‹“à—e”äŠr
+S_DiffDialog /// void  S_DiffDialog ( ) G\nDIFF·•ª•\Ž¦(ƒ_ƒCƒAƒƒO)
+S_Diff /// void  S_Diff ( ) G\nDIFF·•ª•\Ž¦
+S_DiffNext /// void  S_DiffNext ( ) G\nDIFF·•ª•\Ž¦(ŽŸ‚Ö)
+S_DiffPrev /// void  S_DiffPrev ( ) G\nDIFF·•ª•\Ž¦(‘O‚Ö)
+S_DiffReset /// void  S_DiffReset ( ) G\nDIFF·•ª•\Ž¦(‘S‰ðœ)
+S_BracketPair /// void  S_BracketPair ( ) G\n‘ÎŠ‡ŒÊ‚ÌŒŸõ
+S_BookmarkSet /// void  S_BookmarkSet ( ) G\nƒuƒbƒNƒ}[ƒNÝ’èE‰ðœ
+S_BookmarkNext /// void  S_BookmarkNext ( ) G\nŽŸ‚ÌƒuƒbƒNƒ}[ƒN‚Ö
+S_BookmarkPrev /// void  S_BookmarkPrev ( ) G\n‘O‚ÌƒuƒbƒNƒ}[ƒN‚Ö
+S_BookmarkReset /// void  S_BookmarkReset ( ) G\nƒuƒbƒNƒ}[ƒN‚Ì‘S‰ðœ
+S_BookmarkView /// void  S_BookmarkView ( ) G\nƒuƒbƒNƒ}[ƒN‚Ìˆê——
+S_BookmarkPattern /// void  S_BookmarkPattern ( S1 C i1 ) G\nŽw’èƒpƒ^[ƒ“‚Éˆê’v‚·‚és‚ðƒ}[ƒN\n¦ ŒŸõƒ_ƒCƒAƒƒO‚Å [ŠY“–sƒ}[ƒN(&B)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ìB\nE[ãŒŸõ(&U)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchPrev ( ) G\nE[‰ºŒŸõ(&D)] ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½Žž‚Ì“®ì ¨ S_SearchNext ( ) G\n\nS1F•¶Žš—ñF’T‚·•¶Žš—ñB\n    ‹ó•¶Žš—ñ (ff) ‚ðŽw’è‚·‚é‚ÆAŒ»ÝŒŸõ‘ÎÛ‚É‚È‚Á‚Ä‚¢‚é•¶Žš—ñ‚ð’T‚·B\n\ni1F®””’lFŒŸõƒ_ƒCƒAƒƒO‚Ìó‘Ô‚ð10i””’l‚ÅŽw’è‚·‚éB\n{\n    ‚»‚ê‚¼‚ê‚Ì bit ‚ª 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON\n    bit0F’PŒê’PˆÊ‚Å’T‚·\n    bit1F‰p‘å•¶Žš‚Æ¬•¶Žš‚ð‹æ•Ê‚·‚é\n    bit2F³‹K•\Œ»\n    bit3FŒ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦\n    bit4FŒŸõƒ_ƒCƒAƒƒO‚ðŽ©“®“I‚É•Â‚¶‚é\n    bit5Fæ“ªi––”öj‚©‚çÄŒŸõ‚·‚é\n}\n¦PPA‚Ìƒ}ƒNƒ’†‚Å‚Í $41 ‚È‚Ç‚Ì 16i”•\‹L‚â•Ï”E”Ž®EŠÖ”‚Ì\n@ Žg—p‚à‰Â”\‚¾‚ªAMAC‚Ìƒ}ƒNƒ’†‚Å‚Í 65 ‚È‚Ç‚Ì 10i”‚Ì’è”\n@ •\‹L‚µ‚©Žó‚¯•t‚¯‚È‚¢B\n¦bit‚Å‚ÌŽw’è•û–@‚ª•ª‚©‚ç‚È‚¢ê‡‚ÍA•¶Žš—ñubitv‚ÌƒL[ƒ[ƒh\n@ ƒwƒ‹ƒv‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B(ubitv‚Æ•¶Žš“ü—Í‚µA”ÍˆÍ‘I‘ð‚·‚é)
+
+š ƒ‚[ƒhØ‚è‘Ö‚¦Œn
+S_ChgmodINS /// void  S_ChgmodINS ( ) G\n‘}“ü^ã‘‚«ƒ‚[ƒhØ‚è‘Ö‚¦
+S_CancelMode /// void  S_CancelMode ( ) G\nŠeŽíƒ‚[ƒh‚ÌŽæ‚èÁ‚µ
+
+š Ý’èŒn
+S_ShowToolbar /// void  S_ShowToolbar ( ) G\nƒc[ƒ‹ƒo[‚Ì•\Ž¦
+S_ShowFunckey /// void  S_ShowFunckey ( ) G\nƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\Ž¦
+S_ShowStatusbar /// void  S_ShowStatusbar ( ) G\nƒXƒe[ƒ^ƒXƒo[‚Ì•\Ž¦
+S_TypeList /// void  S_TypeList ( ) G\nƒ^ƒCƒv•ÊÝ’èˆê——
+S_OptionType /// void  S_OptionType ( ) G\nƒ^ƒCƒv•ÊÝ’è
+S_OptionCommon /// void  S_OptionCommon ( ) G\n‹¤’ÊÝ’è
+S_SelectFont /// void  S_SelectFont ( ) G\nƒtƒHƒ“ƒgÝ’è
+S_WrapWindowWidth /// void  S_WrapWindowWidth ( ) G\nŒ»Ý‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µ
+S_ExecCommand /// void  S_ExecCommand ( S1 C i1 ) G\nŠO•”ƒRƒ}ƒ“ƒhŽÀs\n\nS1F•¶Žš—ñFŽÀs‚·‚éƒRƒ}ƒ“ƒh•¶Žš—ñ\ni1F®””’lF•W€o—Í‚ð“¾‚é { 0=ƒ`ƒFƒbƒNOFF / 1=ƒ`ƒFƒbƒNON }
+
+š ƒJƒXƒ^ƒ€ƒƒjƒ…[
+S_RMenu /// void  S_RMenu ( ) G\n‰EƒNƒŠƒbƒNƒƒjƒ…[
+S_CustMenu1 /// void  S_CustMenu1 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[1
+S_CustMenu2 /// void  S_CustMenu2 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[2
+S_CustMenu3 /// void  S_CustMenu3 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[3
+S_CustMenu4 /// void  S_CustMenu4 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[4
+S_CustMenu5 /// void  S_CustMenu5 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[5
+S_CustMenu6 /// void  S_CustMenu6 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[6
+S_CustMenu7 /// void  S_CustMenu7 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[7
+S_CustMenu8 /// void  S_CustMenu8 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[8
+S_CustMenu9 /// void  S_CustMenu9 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[9
+S_CustMenu10 /// void  S_CustMenu10 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[10
+S_CustMenu11 /// void  S_CustMenu11 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[11
+S_CustMenu12 /// void  S_CustMenu12 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[12
+S_CustMenu13 /// void  S_CustMenu13 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[13
+S_CustMenu14 /// void  S_CustMenu14 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[14
+S_CustMenu15 /// void  S_CustMenu15 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[15
+S_CustMenu16 /// void  S_CustMenu16 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[16
+S_CustMenu17 /// void  S_CustMenu17 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[17
+S_CustMenu18 /// void  S_CustMenu18 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[18
+S_CustMenu19 /// void  S_CustMenu19 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[19
+S_CustMenu20 /// void  S_CustMenu20 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[20
+S_CustMenu21 /// void  S_CustMenu21 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[21
+S_CustMenu22 /// void  S_CustMenu22 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[22
+S_CustMenu23 /// void  S_CustMenu23 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[23
+S_CustMenu24 /// void  S_CustMenu24 ( ) G\nƒJƒXƒ^ƒ€ƒƒjƒ…[24
+
+š ƒEƒBƒ“ƒhƒEŒn
+S_SplitWinV /// void  S_SplitWinV ( ) G\nã‰º‚É•ªŠ„
+S_SplitWinH /// void  S_SplitWinH ( ) G\n¶‰E‚É•ªŠ„
+S_SplitWinVH /// void  S_SplitWinVH ( ) G\nc‰¡‚É•ªŠ„
+S_WinClose /// void  S_WinClose ( ) G\nƒEƒBƒ“ƒhƒE‚ð•Â‚¶‚é
+S_WinCloseAll /// void  S_WinCloseAll ( ) G\n‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ð•Â‚¶‚é
+S_CascadeWin /// void  S_CascadeWin ( ) G\nd‚Ë‚Ä•\Ž¦
+S_TileWinV /// void  S_TileWinV ( ) G\nã‰º‚É•À‚×‚Ä•\Ž¦
+S_TileWinH /// void  S_TileWinH ( ) G\n¶‰E‚É•À‚×‚Ä•\Ž¦
+S_NextWindow /// void  S_NextWindow ( ) G\nŽŸ‚ÌƒEƒBƒ“ƒhƒE
+S_PrevWindow /// void  S_PrevWindow ( ) G\n‘O‚ÌƒEƒBƒ“ƒhƒE
+S_MaximizeV /// void  S_MaximizeV ( ) G\nc•ûŒü‚ÉÅ‘å‰»
+S_MaximizeH /// void  S_MaximizeH ( ) G\n‰¡•ûŒü‚ÉÅ‘å‰»
+S_MinimizeAll /// void  S_MinimizeAll ( ) G\n‚·‚×‚ÄÅ¬‰»
+S_ReDraw /// void  S_ReDraw ( ) G\nÄ•`‰æ
+S_ActivateWinOutput /// void  S_ActivateWinOutput ( ) G\nƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE•\Ž¦
+
+š Žx‰‡
+S_Complete /// void  S_Complete ( ) G\n“ü—Í•âŠ®
+S_HelpContents /// void  S_HelpContents ( ) G\nƒwƒ‹ƒv–ÚŽŸ
+S_HelpSearch /// void  S_HelpSearch ( ) G\nƒwƒ‹ƒvƒL[ƒ[ƒhŒŸõ
+S_CommandList /// void  S_CommandList ( ) G\nƒRƒ}ƒ“ƒhˆê——
+S_ExtHelp1 /// void  S_ExtHelp1 ( ) G\nŠO•”ƒwƒ‹ƒv‚P
+S_ExtHtmlHelp /// void  S_ExtHtmlHelp ( S1 C S2 ) G\nŠO•”HTMLƒwƒ‹ƒv\n\nS1F•¶Žš—ñFHTMLƒwƒ‹ƒvƒtƒ@ƒCƒ‹–¼\nS2F•¶Žš—ñF•\Ž¦‚³‚¹‚½‚¢ƒL[ƒ[ƒh
+S_About /// void  S_About ( ) G\nƒo[ƒWƒ‡ƒ“î•ñ
+
+bit ///               ----- bit ‚Å‚Ì”’lŽw’è•û–@ -----\nŠÖ”‚É‚æ‚Á‚Ä‚ÍƒIƒvƒVƒ‡ƒ“‚ð bit ‚Å”’lŽw’è‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B\n‚»‚ÌŽw’è•û–@‚ð‹Lq‚µ‚Ä‚¨‚«‚Ü‚·B\n\n—áFS_GoLineTop ( i1 )G is“ª‚ÉˆÚ“®j‚ðAs“ª‚ÌƒXƒy[ƒX‚ð–³Ž‹‚µA\n”ñ‘I‘ðó‘Ô‚ÅA‰üs’PˆÊ‚Ås“ª‚ÉˆÚ“®‚·‚éê‡B\n> S_GoLineTop ( i1 )¨ i1F®””’lF {\n>     bit0F1=s“ª‚ÌƒXƒy[ƒX‚ð–³Ž‹‚·‚é\n>     bit1F- No Use -\n>     bit2F0=”ñ‘I‘ðó‘Ô‚ÅˆÚ“® / 1=‘I‘ðó‘Ô‚ÅˆÚ“®\n>     bit3F0=Ü‚è•Ô‚µ’PˆÊ‚ÅˆÚ“® / 1=‰üs’PˆÊ‚ÅˆÚ“®\n> }\n‚æ‚Á‚Ä«\nEbit0 = 1 (s“ª‚ÌƒXƒy[ƒX‚ð–³Ž‹)\nEbit1 = 0 (© ‰½‚à‹@”\‚©–³‚¢‚Ì‚ÅA0‚Å‚à1‚Å‚à—Ç‚¢)\nEbit2 = 0 (”ñ‘I‘ðó‘Ô)\nEbit3 = 1 (‰üs’PˆÊ)\nª‚±‚ê‚ç‚ð bit ‚Ì‘å‚«‚¢‡ ( bit 3,2,1,0 ) ‚É•À‚×‚é‚Æ  = 1001 ‚Æ‚È‚éB\n‚±‚Ì 1001 ‚ª 2i””’l‚ÅA‚±‚ê‚ð 10i”‚É•ÏŠ·‚µ‚ÄŽg—p‚µ‚Ü‚·B\n- - - - - - - - < 2i”¨10i”•ÏŠ·•û–@ > - - - - - - - - \n1.[ƒXƒ^[ƒg] ¨ ƒvƒƒOƒ‰ƒ€ ¨ ƒAƒNƒZƒTƒŠ ¨ “d‘ì\n  ‚Å“d‘ì‚ð‹N“®‚·‚éB\n\n2.“d‘ì‚Ìƒƒjƒ…[‘€ì [“d‘ì‚ÌŽí—Þ(V)] ¨ [ŠÖ”“d‘ì(S)]\n  ‚ÅAŠÖ”“d‘ì‚É‚·‚éB\n\n3.[2i] ‘I‘ðó‘Ô‚Å 1001 ‚Æ 2i””’l‚ð“ü—ÍŒãA[10i] ‚ð‘I‘ð‚·‚é‚ÆA\n  “ü—Í‚µ‚½”’l 1001(2i”)‚ª 9(10i”)‚É•ÏŠ·‚³‚ê‚Ä•\Ž¦‚³‚ê‚éB\n¦‹t‚É [10i] ‘I‘ðó‘Ô‚Å 10i””’l‚ð“ü—ÍŒãA[2i] ‚ð‘I‘ð‚µ‚ÄA\n@10i” ¨ 2i”‚Ì•ÏŠ·‚ð‚¨‚±‚È‚¤‚±‚Æ‚à‚Å‚«‚Ü‚·B\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n‚æ‚Á‚Ä S_GoLineTop ( 9 ) G ‚Æ‚·‚ê‚Î—Ç‚¢B
+
+end of file
+

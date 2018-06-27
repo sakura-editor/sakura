@@ -1,0 +1,5 @@
+// 正規表現キーワード Ver1
+RxKey[000]=RK1,/^[^ ;][a-zA-Z0-9:+^#!+$~\-><& ]+:(?!=)/k
+RxKey[001]=RK1,/^[a-zA-Z0-9]+(?=\()/k
+RxKey[002]=RK2,/ahk_class|ahk_id|ahk_pid|ahk_group/k
+RxKey[003]=RK3,/%[a-zA-Z_]+%/k

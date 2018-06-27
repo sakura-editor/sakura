@@ -1,0 +1,3 @@
+// 正規表現キーワード Ver1
+RxKey[000]=RK1,/^\*[a-zA-Z1-9_]+/k
+RxKey[001]=RK1,/^#module|#modinit|#modfunc|#deffunc|#global/k

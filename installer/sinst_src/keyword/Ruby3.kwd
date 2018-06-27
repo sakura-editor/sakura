@@ -1,0 +1,33 @@
+// Ruby  キーワード定義ファイル２ 組込みクラス／モジュール
+// クラス
+Bignum
+Class
+Dir
+Exception
+File
+Stat
+Fixnum
+Hash
+IO
+MatchData
+Module
+Numeric
+Object
+Proc
+Range
+Struct
+Symbol
+Thread
+Time
+
+//モジュール
+Comparable
+Enumerable
+Constants
+FileTest
+GC
+Kernel
+Math
+ObjectSpace
+Precision
+Process
