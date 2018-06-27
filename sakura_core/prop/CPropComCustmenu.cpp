@@ -77,8 +77,8 @@ static void SetDlgItemsEnableState(
 	HWND hwndLIST_RES,
 	HWND hwndCOMBO_FUNCKIND,
 	HWND hwndLIST_FUNC,
-	CFuncLookup& cLookup,
-	CommonSetting&	common
+	const CFuncLookup& cLookup,
+	const CommonSetting& common
 )
 {
 	int nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );

@@ -192,7 +192,7 @@ static void SetDlgItemsEnableState(
 	HWND	hwndTreeRes,
 	HWND	hwndComboFuncKind,
 	HWND	hwndListFunc,
-	CFuncLookup& cLookup
+	const CFuncLookup& cLookup
 )
 {
 	HTREEITEM	nIdxMenu = TreeView_GetSelection( hwndTreeRes );
