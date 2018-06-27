@@ -794,6 +794,8 @@
 #define IDC_LIST_WINDOW                 1724
 #define IDC_BUTTON_SAVE                 1725
 #define IDC_BUTTON_CLOSE                1726
+#define IDC_STATIC_URL_GIT              1727
+#define IDC_STATIC_GIT_CAPTION          1728
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -836,7 +838,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1727
+#define _APS_NEXT_CONTROL_VALUE         1729
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

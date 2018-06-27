@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒR[ƒhƒy[ƒW
+ï»¿/*!	@file
+	@brief ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
 
 	@author Sakura-Editor collaborators
 */
@@ -40,7 +40,7 @@ typedef BOOL (WINAPI *pfn_GetCPInfoExT_t)(UINT, DWORD, CPINFOEX*);
 const DWORD nToWideCharFlags  = 0;
 const DWORD nToMultiByteFlags = WC_SEPCHARS;
 
-// “Á’èƒR[ƒh‚Å‚Í0‚ğw’è‚µ‚È‚¢‚ÆƒGƒ‰[‚É‚È‚é
+// ç‰¹å®šã‚³ãƒ¼ãƒ‰ã§ã¯0ã‚’æŒ‡å®šã—ãªã„ã¨ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹
 DWORD GetMultiByteFlgas(UINT codepage){
 	switch(codepage){
 	case 4:
@@ -68,11 +68,11 @@ DWORD GetMultiByteFlgas(UINT codepage){
 	return nToMultiByteFlags;
 }
 
-// •\‹LF
-// ECodeType‚ÆCP_ACP‚Í’l‚ªÕ“Ë‚µ‚Ä‚¢‚éBCODE_CPACP != CP_ACP
-// charcodeEx: ECodeType + CODE_CPACP + CODE_CPOEM + ƒR[ƒhƒy[ƒW
-// codepageEx: CODE_CPACP + CODE_CPOEM + ƒR[ƒhƒy[ƒW
-// codepage: ƒR[ƒhƒy[ƒW + CP_ACP, CP_OEMCP
+// è¡¨è¨˜ï¼š
+// ECodeTypeã¨CP_ACPã¯å€¤ãŒè¡çªã—ã¦ã„ã‚‹ã€‚CODE_CPACP != CP_ACP
+// charcodeEx: ECodeType + CODE_CPACP + CODE_CPOEM + ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
+// codepageEx: CODE_CPACP + CODE_CPOEM + ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
+// codepage: ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸ + CP_ACP, CP_OEMCP
 inline UINT CodePageExToMSCP(int codepageEx)
 {
 	if( codepageEx == CODE_CPACP ){
@@ -84,9 +84,9 @@ inline UINT CodePageExToMSCP(int codepageEx)
 }
 
 /*!
-	CODEPAGE ¨ Unicode •ÏŠ·ŠÖ”
-	@param pbError NULL‹–—e
-	@return •ÏŠ·‚µ‚½•¶š—ñ‚Ì’·‚³(WCHAR’PˆÊ)
+	CODEPAGE â†’ Unicode å¤‰æ›é–¢æ•°
+	@param pbError NULLè¨±å®¹
+	@return å¤‰æ›ã—ãŸæ–‡å­—åˆ—ã®é•·ã•(WCHARå˜ä½)
 */
 EConvertResult CCodePage::CPToUni(const char* pSrc, const int nSrcLen, wchar_t* pDst, int nDstCchLen, int& nRetLen, UINT codepage)
 {
@@ -106,20 +106,20 @@ EConvertResult CCodePage::CPToUni(const char* pSrc, const int nSrcLen, wchar_t* 
 }
 
 
-/*!	CODEPAGE¨UnicodeƒR[ƒh•ÏŠ·
+/*!	CODEPAGEâ†’Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
 */
 EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx)
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool bError = false;
 
-	// ƒ\[ƒXæ“¾
+	// ã‚½ãƒ¼ã‚¹å–å¾—
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
 	UINT codepage = CodePageExToMSCP(codepageEx);
 	int nDstCch = MultiByteToWideChar2(codepage, nToWideCharFlags, pSrc, nSrcLen, NULL, 0);
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚Æ‚»‚ÌŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã¨ãã®ç¢ºä¿
 	wchar_t* pDstBuffer;
 	try{
 		pDstBuffer = new wchar_t[nDstCch];
@@ -130,7 +130,7 @@ EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int c
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen; // cch
 	EConvertResult ret = CPToUni(pSrc, nSrcLen, pDstBuffer, nDstCch, nDstLen, codepage);
 
@@ -187,8 +187,8 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 	}
 	UINT codepage = CodePageExToMSCP(codepageEx);
 
-	// •K—v‚Èƒoƒbƒtƒ@ƒTƒCƒY‚ğ’²‚×‚Äƒƒ‚ƒŠ‚ğŠm•Û
-	// ‚È‚ñ‚¾‚¯‚ÇAWindows 2000‚Å‚Í 50220,50221,50222(ISO-2022-JPŒn)‚ğg‚¤‚Æ’l‚ª‚¨‚©‚µ‚¢‚±‚Æ‚ª‚ ‚é‚Æ‚©
+	// å¿…è¦ãªãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’èª¿ã¹ã¦ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿
+	// ãªã‚“ã ã‘ã©ã€Windows 2000ã§ã¯ 50220,50221,50222(ISO-2022-JPç³»)ã‚’ä½¿ã†ã¨å€¤ãŒãŠã‹ã—ã„ã“ã¨ãŒã‚ã‚‹ã¨ã‹
 	DWORD flag = GetMultiByteFlgas(codepage);
 	int nBuffSize = WideCharToMultiByte2(codepage, flag, pSrc, nSrcLen, NULL, 0);
 	if( 0 == nBuffSize ){
@@ -219,10 +219,10 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen;
 	EConvertResult ret = UniToCP(pSrc, nSrcLen, pDstBuffer, nBuffSize, nDstLen, codepage);
-	// pMem ‚ğXV
+	// pMem ã‚’æ›´æ–°
 	pDst->SetRawDataHoldBuffer(pDstBuffer, nDstLen);
 	delete [] pDstBuffer;
 	return ret;
@@ -235,7 +235,7 @@ void CCodePage::GetEol(CMemory* pcmemEol, EEolType eEolType)
 	UnicodeToCode(temp, pcmemEol);
 	CNativeW temp2;
 	CodeToUnicode(*pcmemEol, &temp2);
-	// ‘o•ûŒü•ÏŠ·‚ª‚Å‚«‚éê‡‚¾‚¯İ’è
+	// åŒæ–¹å‘å¤‰æ›ãŒã§ãã‚‹å ´åˆã ã‘è¨­å®š
 	if( !CNativeW::IsEqual(temp, temp2) ){
 		pcmemEol->Clear();
 	}
@@ -254,10 +254,10 @@ void CCodePage::GetBom(CMemory* pcmemBom)
 }
 
 
-// •¶šƒR[ƒh•\¦—p	UNICODE ¨ Hex •ÏŠ·
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨	UNICODE â†’ Hex å¤‰æ›
 EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
-	// ƒR[ƒh‚Ì“Á«‚ª‚í‚©‚ç‚È‚¢‚Ì‚Å‰½‚à‚µ‚È‚¢
+	// ã‚³ãƒ¼ãƒ‰ã®ç‰¹æ€§ãŒã‚ã‹ã‚‰ãªã„ã®ã§ä½•ã‚‚ã—ãªã„
 	return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 }
 
@@ -416,7 +416,7 @@ struct sortByCodePage{
 CCodePage::CodePageList& CCodePage::GetCodePageList()
 {
 	static CCodePage::CodePageList result;
-	// ƒ}ƒ‹ƒ`ƒXƒŒƒbƒh:s_list‚ÉƒƒbƒN‚ª•K—v
+	// ãƒãƒ«ãƒã‚¹ãƒ¬ãƒƒãƒ‰:s_listã«ãƒ­ãƒƒã‚¯ãŒå¿…è¦
 	if( NULL != s_list ){
 		return result;
 	}
@@ -427,8 +427,8 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 	}
 	s_list = NULL;
 
-	// –¼‘O‚ğæ“¾
-	// GetCPInfoEx 98, 2000ˆÈã
+	// åå‰ã‚’å–å¾—
+	// GetCPInfoEx 98, 2000ä»¥ä¸Š
 	HMODULE hDLLkernel = ::GetModuleHandleA("kernel32");
 	
 #ifdef UNICODE
@@ -449,7 +449,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 			it->second += L")";
 		}
 	}
-	// “Æ©À‘••”•ª‚ğ’è‹`
+	// ç‹¬è‡ªå®Ÿè£…éƒ¨åˆ†ã‚’å®šç¾©
 	result.push_back( CCodePage::CodePageList::value_type(12000, L"12000 (UTF-32LE)") );
 	result.push_back( CCodePage::CodePageList::value_type(12001, L"12001 (UTF-32BE)") );
 
@@ -460,7 +460,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 //static
 BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCTSTR pCodePageString )
 {
-	// pCodePageString ‚Í•¶š—ñ‚ÉŠi”[‚³‚ê‚½”š
+	// pCodePageString ã¯æ–‡å­—åˆ—ã«æ ¼ç´ã•ã‚ŒãŸæ•°å­—
 	CCodePage::CodePageList* pList = const_cast<CCodePage::CodePageList*>(s_list);
 	pList->push_back(CCodePage::CodePageList::value_type(_ttoi( pCodePageString ), to_wchar(pCodePageString)));
 	return TRUE;
@@ -490,10 +490,10 @@ int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 			nSel = nIdx;
 		}
 	}
-	// •‚ğ•ÏX
+	// å¹…ã‚’å¤‰æ›´
 	CDialog::OnCbnDropDown(combo, true);
 
-	// CP‚Ìƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªDisable‚É‚È‚é‚Ì‚ÅƒtƒH[ƒJƒX‚ğˆÚ“®
+	// CPã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒDisableã«ãªã‚‹ã®ã§ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹•
 	::SetFocus(combo);
 	return nSel;
 }
@@ -518,7 +518,7 @@ int CCodePage::WideCharToMultiByte2( UINT codepage, int flags, const wchar_t* pS
 	if( ret == 0 && nSrcLen != 0 ){
 		DWORD errorCd = GetLastError();
 		if( errorCd == ERROR_INVALID_FLAGS ){
-			// flags‚ğ0‚É‚µ‚ÄÄ’§í
+			// flagsã‚’0ã«ã—ã¦å†æŒ‘æˆ¦
 			ret = ::WideCharToMultiByte(codepage, 0, pSrc, nSrcLen, pDst, nDstLen, NULL, NULL);
 		}
 	}
@@ -536,7 +536,7 @@ int CCodePage::S_UTF32LEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 				if( pSrcByte[i+3] == 0x00 && pSrcByte[i+2] == 0x00 ){
 					wchar_t c = static_cast<wchar_t>(pSrcByte[i+1] << 8 | pSrcByte[i]);
 					if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
-						// ƒTƒƒQ[ƒg’f•ĞBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+						// ã‚µãƒ­ã‚²ãƒ¼ãƒˆæ–­ç‰‡ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 						nDstUseLen += 4;
 					}else{
 						nDstUseLen++;
@@ -544,7 +544,7 @@ int CCodePage::S_UTF32LEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 				}else if( pSrcByte[i+3] == 0x00 && pSrcByte[i+2] <= 0x10 ){
 					nDstUseLen += 2;
 				}else{
-					// UCS-4(UTF-16”ÍˆÍŠOBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+					// UCS-4(UTF-16ç¯„å›²å¤–ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 					nDstUseLen += 4;
 				}
 				i+=4;
@@ -593,7 +593,7 @@ int CCodePage::S_UTF32LEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 				}
 				i+=4;
 			}else{
-				// UCS-4(UTF-16”ÍˆÍŠOBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+				// UCS-4(UTF-16ç¯„å›²å¤–ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 				nDstUseCharLen = 4;
 				if( nDstUseLen + nDstUseCharLen <= nDstLen ){
 					BinToText(pSrcByte +i, nDstUseCharLen, pDstShort + nDstUseLen);
@@ -627,7 +627,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 				if( pSrcByte[i+1] == 0x00 && pSrcByte[i] == 0x00 ){
 					wchar_t c = static_cast<wchar_t>(pSrcByte[i+1] << 8 | pSrcByte[i]);
 					if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
-						// ƒTƒƒQ[ƒg’f•ĞBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+						// ã‚µãƒ­ã‚²ãƒ¼ãƒˆæ–­ç‰‡ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 						nDstUseLen += 4;
 					}else{
 						nDstUseLen++;
@@ -635,7 +635,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 				}else if( pSrcByte[i+1] <= 0x10 && pSrcByte[i] == 0x00 ){
 					nDstUseLen += 2;
 				}else{
-					// UCS-4(UTF-16”ÍˆÍŠOBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+					// UCS-4(UTF-16ç¯„å›²å¤–ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 					nDstUseLen += 4;
 				}
 				i+=4;
@@ -682,7 +682,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 					return 0;
 				}
 			}else{
-				// UCS-4(UTF-16”ÍˆÍŠOBƒoƒCƒg‚²‚Æ‚Éo—Í‚·‚é)
+				// UCS-4(UTF-16ç¯„å›²å¤–ã€‚ãƒã‚¤ãƒˆã”ã¨ã«å‡ºåŠ›ã™ã‚‹)
 				nDstUseCharLen = 4;
 				if( nDstUseLen + nDstUseCharLen <= nDstLen ){
 					BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
@@ -728,7 +728,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 		int nBinaryLen = 0;
 		int i = 0;
 		for(; i < nSrcLen; ){
-			// 4Byte‚É–‚½‚È‚¢ƒoƒCƒiƒŠƒf[ƒ^‚Í4Byte’PˆÊ‚Åo—Í
+			// 4Byteã«æº€ãŸãªã„ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã¯4Byteå˜ä½ã§å‡ºåŠ›
 			if( i + 1 < nSrcLen && IsUtf16SurrogHi( pSrc[i] ) && IsUtf16SurrogLow( pSrc[i+1] ) ){
 				if( nBinaryLen != 0 ){
 					nDstUseLen += 4;
@@ -754,7 +754,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 			}
 		}
 		if( nBinaryLen != 0 ){
-			// ––”ö‚Ì‚ ‚Ü‚è‚ÍA‚»‚ÌƒoƒCƒg”‚Ì‚İo—Í
+			// æœ«å°¾ã®ã‚ã¾ã‚Šã¯ã€ãã®ãƒã‚¤ãƒˆæ•°ã®ã¿å‡ºåŠ›
 			nDstUseLen += nBinaryLen;
 		}
 		return nDstUseLen;
@@ -820,7 +820,7 @@ int CCodePage::S_UnicodeToUTF32LE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 			i++;
 		}
 	}
-	// ƒtƒ@ƒCƒ‹––”ö‚Ì’[”‚ÍA‚»‚Ì‚Ü‚Ü‚Ì’·‚³‚Åo—Í
+	// ãƒ•ã‚¡ã‚¤ãƒ«æœ«å°¾ã®ç«¯æ•°ã¯ã€ãã®ã¾ã¾ã®é•·ã•ã§å‡ºåŠ›
 	if( nBinaryLen != 0 ){
 		if( nDstUseLen + nBinaryLen <= nDstLen ){
 			for( int k = 0; k < nBinaryLen; k++ ){
@@ -842,7 +842,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 		int nBinaryLen = 0;
 		int i = 0;
 		for(; i < nSrcLen; ){
-			// 4Byte‚É–‚½‚È‚¢ƒoƒCƒiƒŠƒf[ƒ^‚Í4Byte’PˆÊ‚Åo—Í
+			// 4Byteã«æº€ãŸãªã„ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã¯4Byteå˜ä½ã§å‡ºåŠ›
 			if( i + 1 < nSrcLen && IsUtf16SurrogHi( pSrc[i] ) && IsUtf16SurrogLow( pSrc[i+1] ) ){
 				if( nBinaryLen != 0 ){
 					nDstUseLen += 4;
@@ -868,7 +868,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 			}
 		}
 		if( nBinaryLen != 0 ){
-			// ––”ö‚Ì‚ ‚Ü‚è‚ÍA‚»‚ÌƒoƒCƒg”‚Ì‚İo—Í
+			// æœ«å°¾ã®ã‚ã¾ã‚Šã¯ã€ãã®ãƒã‚¤ãƒˆæ•°ã®ã¿å‡ºåŠ›
 			nDstUseLen += nBinaryLen;
 		}
 		return nDstUseLen;
@@ -934,7 +934,7 @@ int CCodePage::S_UnicodeToUTF32BE( const wchar_t* pSrc, int nSrcLen, char* pDst,
 			i++;
 		}
 	}
-	// ƒtƒ@ƒCƒ‹––”ö‚Ì’[”‚ÍA‚»‚Ì‚Ü‚Ü‚Ì’·‚³‚Åo—Í
+	// ãƒ•ã‚¡ã‚¤ãƒ«æœ«å°¾ã®ç«¯æ•°ã¯ã€ãã®ã¾ã¾ã®é•·ã•ã§å‡ºåŠ›
 	if( nBinaryLen != 0 ){
 		if( nDstUseLen + nBinaryLen <= nDstLen ){
 			for( int k = 0; k < nBinaryLen; k++ ){

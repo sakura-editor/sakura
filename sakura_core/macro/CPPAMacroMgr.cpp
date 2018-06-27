@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒL[ƒ{[ƒhƒ}ƒNƒ
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 
 	@author YAZAKI
-	@date 2002”N1Œ26“ú
+	@date 2002å¹´1æœˆ26æ—¥
 */
 /*
 	Copyright (C) 2002, YAZAKI, genta
@@ -29,11 +29,11 @@ CPPAMacroMgr::~CPPAMacroMgr()
 {
 }
 
-/** PPAƒ}ƒNƒ‚ÌÀs
+/** PPAãƒã‚¯ãƒ­ã®å®Ÿè¡Œ
 
-	PPA.DLL‚ÉAƒoƒbƒtƒ@“à—e‚ğ“n‚µ‚ÄÀsB
+	PPA.DLLã«ã€ãƒãƒƒãƒ•ã‚¡å†…å®¹ã‚’æ¸¡ã—ã¦å®Ÿè¡Œã€‚
 
-	@date 2007.07.20 genta flags’Ç‰Á
+	@date 2007.07.20 genta flagsè¿½åŠ 
 */
 bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
@@ -41,8 +41,8 @@ bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 	return m_cPPA.Execute(pcEditView, flags);
 }
 
-/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì“Ç‚İ‚İiƒtƒ@ƒCƒ‹‚©‚çj
-	ƒGƒ‰[ƒƒbƒZ[ƒW‚Ío‚µ‚Ü‚¹‚ñBŒÄ‚Ño‚µ‘¤‚Å‚æ‚«‚É‚Í‚©‚ç‚Á‚Ä‚­‚¾‚³‚¢B
+/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ï¼‰
+	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯å‡ºã—ã¾ã›ã‚“ã€‚å‘¼ã³å‡ºã—å´ã§ã‚ˆãã«ã¯ã‹ã‚‰ã£ã¦ãã ã•ã„ã€‚
 */
 BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 {
@@ -54,7 +54,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 
 	CNativeW cmemWork;
 
-	// ƒoƒbƒtƒ@icmemWorkj‚Éƒtƒ@ƒCƒ‹“à—e‚ğ“Ç‚İ‚İAm_cPPA‚É“n‚·B
+	// ãƒãƒƒãƒ•ã‚¡ï¼ˆcmemWorkï¼‰ã«ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ã‚’èª­ã¿è¾¼ã¿ã€m_cPPAã«æ¸¡ã™ã€‚
 	while( in ){
 		wstring szLine = in.ReadLineW();
 		szLine += L"\n";
@@ -62,18 +62,18 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 	}
 	in.Close();
 
-	m_cBuffer.SetNativeData( cmemWork );	//	m_cBuffer‚ÉƒRƒs[
+	m_cBuffer.SetNativeData( cmemWork );	//	m_cBufferã«ã‚³ãƒ”ãƒ¼
 
 	m_nReady = true;
 	return TRUE;
 }
 
-/*! ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ì“Ç‚İ‚İi•¶š—ñ‚©‚çj
-	ƒGƒ‰[ƒƒbƒZ[ƒW‚Ío‚µ‚Ü‚¹‚ñBŒÄ‚Ño‚µ‘¤‚Å‚æ‚«‚É‚Í‚©‚ç‚Á‚Ä‚­‚¾‚³‚¢B
+/*! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ï¼ˆæ–‡å­—åˆ—ã‹ã‚‰ï¼‰
+	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã¯å‡ºã—ã¾ã›ã‚“ã€‚å‘¼ã³å‡ºã—å´ã§ã‚ˆãã«ã¯ã‹ã‚‰ã£ã¦ãã ã•ã„ã€‚
 */
 BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 {
-	m_cBuffer.SetNativeData( to_wchar( pszCode ) );	//	m_cBuffer‚ÉƒRƒs[
+	m_cBuffer.SetNativeData( to_wchar( pszCode ) );	//	m_cBufferã«ã‚³ãƒ”ãƒ¼
 
 	m_nReady = true;
 	return TRUE;
@@ -83,10 +83,10 @@ BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 /*!
 	@brief Factory
 
-	@param ext [in] ƒIƒuƒWƒFƒNƒg¶¬‚Ì”»’è‚Ég‚¤Šg’£q(¬•¶š)
+	@param ext [in] ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã®åˆ¤å®šã«ä½¿ã†æ‹¡å¼µå­(å°æ–‡å­—)
 
-	@date 2004.01.31 genta RegisterExt‚Ì”p~‚Ì‚½‚ßRegisterCreator‚É’u‚«Š·‚¦
-		‚»‚Ì‚½‚ßC‰ß‚Á‚½ƒIƒuƒWƒFƒNƒg¶¬‚ğs‚í‚È‚¢‚½‚ß‚ÉŠg’£qƒ`ƒFƒbƒN‚Í•K{D
+	@date 2004.01.31 genta RegisterExtã®å»ƒæ­¢ã®ãŸã‚RegisterCreatorã«ç½®ãæ›ãˆ
+		ãã®ãŸã‚ï¼Œéã£ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã‚’è¡Œã‚ãªã„ãŸã‚ã«æ‹¡å¼µå­ãƒã‚§ãƒƒã‚¯ã¯å¿…é ˆï¼
 
 */
 CMacroManagerBase* CPPAMacroMgr::Creator(const TCHAR* ext)
@@ -97,11 +97,11 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const TCHAR* ext)
 	return NULL;
 }
 
-/*!	CPPAMacroManager‚Ì“o˜^
+/*!	CPPAMacroManagerã®ç™»éŒ²
 
-	PPA‚ª—˜—p‚Å‚«‚È‚¢‚Æ‚«‚Í‰½‚à‚µ‚È‚¢B
+	PPAãŒåˆ©ç”¨ã§ããªã„ã¨ãã¯ä½•ã‚‚ã—ãªã„ã€‚
 
-	@date 2004.01.31 genta RegisterExt‚Ì”p~‚Ì‚½‚ßRegisterCreator‚É’u‚«Š·‚¦
+	@date 2004.01.31 genta RegisterExtã®å»ƒæ­¢ã®ãŸã‚RegisterCreatorã«ç½®ãæ›ãˆ
 */
 void CPPAMacroMgr::declare (void)
 {

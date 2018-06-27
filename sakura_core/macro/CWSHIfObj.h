@@ -1,11 +1,11 @@
-/*!	@file
-	@brief WSHƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒgŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŸºæœ¬ã‚¯ãƒ©ã‚¹
 
-	@date 2009.10.29 syat CWSH.h‚©‚çØ‚èo‚µ
+	@date 2009.10.29 syat CWSH.hã‹ã‚‰åˆ‡ã‚Šå‡ºã—
 
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 	Copyright (C) 2009, syat
 
 	This software is provided 'as-is', without any express or implied
@@ -38,23 +38,23 @@
 #include "macro/CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
 class CEditView;
 
-/* CWSHIfObj - ƒvƒ‰ƒOƒCƒ“‚âƒ}ƒNƒ‚ÉŒöŠJ‚·‚éƒIƒuƒWƒFƒNƒg
- * g—pã‚Ì’ˆÓ:
- *   1. ¶¬‚Ínew‚ÅB
- *      QÆƒJƒEƒ“ƒ^‚ğ‚Â‚Ì‚ÅA©“®•Ï”‚Å¶¬‚·‚é‚ÆƒXƒR[ƒv”²‚¯‚Ä‰ğ•ú‚³‚ê‚é‚Æ‚«‚Éƒq[ƒvƒGƒ‰[‚ªo‚Ü‚·B
- *   2. ¶¬‚µ‚½‚çAddRef()A•s—v‚É‚È‚Á‚½‚çRelease()‚ğŒÄ‚Ô‚±‚ÆB
- *   3. V‚µ‚¢IfObj‚ğì‚é‚ÍCWSHIfObj‚ğŒp³‚µAˆÈ‰º‚Ì4‚Â‚ğƒI[ƒo[ƒ‰ƒCƒh‚·‚é‚±‚ÆB
+/* CWSHIfObj - ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚„ãƒã‚¯ãƒ­ã«å…¬é–‹ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+ * ä½¿ç”¨ä¸Šã®æ³¨æ„:
+ *   1. ç”Ÿæˆã¯newã§ã€‚
+ *      å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã‚’æŒã¤ã®ã§ã€è‡ªå‹•å¤‰æ•°ã§ç”Ÿæˆã™ã‚‹ã¨ã‚¹ã‚³ãƒ¼ãƒ—æŠœã‘ã¦è§£æ”¾ã•ã‚Œã‚‹ã¨ãã«ãƒ’ãƒ¼ãƒ—ã‚¨ãƒ©ãƒ¼ãŒå‡ºã¾ã™ã€‚
+ *   2. ç”Ÿæˆã—ãŸã‚‰AddRef()ã€ä¸è¦ã«ãªã£ãŸã‚‰Release()ã‚’å‘¼ã¶ã“ã¨ã€‚
+ *   3. æ–°ã—ã„IfObjã‚’ä½œã‚‹æ™‚ã¯CWSHIfObjã‚’ç¶™æ‰¿ã—ã€ä»¥ä¸‹ã®4ã¤ã‚’ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹ã“ã¨ã€‚
  *      GetMacroCommandInfo, GetMacroFuncInfo, HandleCommand, HandleFunction
  */
 class CWSHIfObj
 : public CIfObj
 {
 public:
-	// Œ^’è‹`
+	// å‹å®šç¾©
 	typedef std::list<CWSHIfObj*> List;
 	typedef List::const_iterator ListIter;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CWSHIfObj(const wchar_t* name, bool isGlobal)
 	: CIfObj(name, isGlobal)
 	{}
@@ -62,17 +62,17 @@ public:
 	virtual void ReadyMethods( CEditView* pView, int flags );
 
 protected:
-	// ‘€ì
-	//	2007.07.20 genta : flags’Ç‰Á
-	//  2009.09.05 syat CWSHManager‚©‚çˆÚ“®
+	// æ“ä½œ
+	//	2007.07.20 genta : flagsè¿½åŠ 
+	//  2009.09.05 syat CWSHManagerã‹ã‚‰ç§»å‹•
 	void ReadyCommands(MacroFuncInfo *Info, int flags);
 	HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
-	// ”ñÀ‘•’ñ‹Ÿ
-	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result) = 0;	//ŠÖ”‚ğˆ—‚·‚é
-	virtual bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) = 0;	//ƒRƒ}ƒ“ƒh‚ğˆ—‚·‚é
-	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0;	//ƒRƒ}ƒ“ƒhî•ñ‚ğæ“¾‚·‚é
-	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//ŠÖ”î•ñ‚ğæ“¾‚·‚é
+	// éå®Ÿè£…æä¾›
+	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result) = 0;	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
+	virtual bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize) = 0;	//ã‚³ãƒãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
+	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0;	//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
+	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 
 	CEditView* m_pView;
 };

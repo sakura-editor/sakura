@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,24 +32,24 @@ struct CommonSetting_Statusbar;
 class CShiftJis : public CCodeBase{
 
 public:
-	//CCodeBaseƒCƒ“ƒ^[ƒtƒF[ƒX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return SJISToUnicode(cSrc, pDst); }	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToSJIS(cSrc, pDst); }	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
-// GetEol‚ÍCCodeBase‚ÉˆÚ“®	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ¨ Hex •ÏŠ·
+	//CCodeBaseã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return SJISToUnicode(cSrc, pDst); }	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToSJIS(cSrc, pDst); }	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
+// GetEolã¯CCodeBaseã«ç§»å‹•	2010/6/13 Uchi
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE â†’ Hex å¤‰æ›
 
 public:
-	//À‘•
-	static EConvertResult SJISToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// SJIS      ¨ UnicodeƒR[ƒh•ÏŠ·
-	static EConvertResult UnicodeToSJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   ¨ SJISƒR[ƒh•ÏŠ·
-//	S_GetEol‚ÍCCodeBase‚ÉˆÚ“®	2010/6/13 Uchi
+	//å®Ÿè£…
+	static EConvertResult SJISToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// SJIS      â†’ Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+	static EConvertResult UnicodeToSJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   â†’ SJISã‚³ãƒ¼ãƒ‰å¤‰æ›
+//	S_GetEolã¯CCodeBaseã«ç§»å‹•	2010/6/13 Uchi
 	// 2005-09-02 D.S.Koba
-	// 2007.08.14 kobake CMemory‚©‚çCShiftJis‚ÖˆÚ“®
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
+	// 2007.08.14 kobake CMemoryã‹ã‚‰CShiftJisã¸ç§»å‹•
+	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
 
 protected:
-	// À‘•
-	// 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
+	// å®Ÿè£…
+	// 2008.11.10 å¤‰æ›ãƒ­ã‚¸ãƒƒã‚¯ã‚’æ›¸ãç›´ã™
 	inline static int _SjisToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError );
 	static int SjisToUni( const char*, const int, wchar_t *, bool* pbError );
 	inline static int _UniToSjis_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
@@ -59,11 +59,11 @@ protected:
 
 
 /*!
-	SJIS ‚Ì‘SŠpˆê•¶š‚Ü‚½‚Í”¼Špˆê•¶š‚ÌUnicode‚Ö‚Ì•ÏŠ·
+	SJIS ã®å…¨è§’ä¸€æ–‡å­—ã¾ãŸã¯åŠè§’ä¸€æ–‡å­—ã®Unicodeã¸ã®å¤‰æ›
 
-	eCharset ‚Í CHARSET_JIS_ZENKAKU ‚Ü‚½‚Í CHARSET_JIS_HANKATA B
+	eCharset ã¯ CHARSET_JIS_ZENKAKU ã¾ãŸã¯ CHARSET_JIS_HANKATA ã€‚
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset, bool* pbError )
 {
@@ -72,23 +72,23 @@ inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short
 
 	switch( eCharset ){
 	case CHARSET_JIS_HANKATA:
-		// ”¼ŠpƒJƒ^ƒJƒi‚ğˆ—
-		// ƒGƒ‰[‚Í‹N‚±‚ç‚È‚¢B
+		// åŠè§’ã‚«ã‚¿ã‚«ãƒŠã‚’å‡¦ç†
+		// ã‚¨ãƒ©ãƒ¼ã¯èµ·ã“ã‚‰ãªã„ã€‚
 		nret = MyMultiByteToWideChar_JP( pSrc, 1, pDst );
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		if( nret < 1 ){
 			nret = 1;
 		}
 		break;
 	case CHARSET_JIS_ZENKAKU:
-		// ‘SŠp•¶š‚ğˆ—
+		// å…¨è§’æ–‡å­—ã‚’å‡¦ç†
 		nret = MyMultiByteToWideChar_JP( pSrc, 2, pDst );
-		if( nret < 1 ){	// SJIS -> Unicode •ÏŠ·‚É¸”s
+		if( nret < 1 ){	// SJIS -> Unicode å¤‰æ›ã«å¤±æ•—
 			nret = BinToText( pSrc, 2, pDst );
 		}
 		break;
 	default:
-		// ’v–½“IƒGƒ‰[‰ñ”ğƒR[ƒh
+		// è‡´å‘½çš„ã‚¨ãƒ©ãƒ¼å›é¿ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		pDst[0] = L'?';
 		nret = 1;
@@ -105,11 +105,11 @@ inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short
 
 
 /*!
-	UNICODE -> SJIS ˆê•¶š•ÏŠ·
+	UNICODE -> SJIS ä¸€æ–‡å­—å¤‰æ›
 
-	eCharset ‚Í CHARSET_UNI_NORMAL ‚Ü‚½‚Í CHARSET_UNI_SURROGB
+	eCharset ã¯ CHARSET_UNI_NORMAL ã¾ãŸã¯ CHARSET_UNI_SURROGã€‚
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CShiftJis::_UniToSjis_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError )
 {
@@ -119,18 +119,18 @@ inline int CShiftJis::_UniToSjis_char( const unsigned short* pSrc, unsigned char
 	if( eCharset == CHARSET_UNI_NORMAL ){
 		nret = MyWideCharToMultiByte_JP( pSrc, 1, pDst );
 		if( nret < 1 ){
-			// Uni -> SJIS •ÏŠ·‚É¸”s
+			// Uni -> SJIS å¤‰æ›ã«å¤±æ•—
 			berror = true;
 			pDst[0] = '?';
 			nret = 1;
 		}
 	}else if( eCharset == CHARSET_UNI_SURROG ){
-		// ƒTƒƒQ[ƒgƒyƒA‚Í SJIS ‚É•ÏŠ·‚Å‚«‚È‚¢B
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ã¯ SJIS ã«å¤‰æ›ã§ããªã„ã€‚
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;
 	}else{
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;

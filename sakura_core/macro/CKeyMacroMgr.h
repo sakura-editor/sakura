@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒL[ƒ{[ƒhƒ}ƒNƒ
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 
 	@author Norio Nakatani
 */
@@ -24,11 +24,11 @@ class CMacro;
 //#define MAX_STRLEN			70
 //#define MAX_KEYMACRONUM		10000
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-//! ƒL[ƒ{[ƒhƒ}ƒNƒ
+//! ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 /*!
-	ƒL[ƒ{[ƒhƒ}ƒNƒƒNƒ‰ƒX
+	ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚¯ãƒ©ã‚¹
 */
 class CKeyMacroMgr : public CMacroManagerBase
 {
@@ -42,24 +42,24 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void ClearAll( void );				/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚ğƒNƒŠƒA‚·‚é */
-	void Append( EFunctionCode, const LPARAM*, class CEditView* pcEditView );		/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á */
-	void Append( class CMacro* macro );		/* ƒL[ƒ}ƒNƒ‚Ìƒoƒbƒtƒ@‚Éƒf[ƒ^’Ç‰Á */
+	void ClearAll( void );				/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ */
+	void Append( EFunctionCode, const LPARAM*, class CEditView* pcEditView );		/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ  */
+	void Append( class CMacro* macro );		/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿è¿½åŠ  */
 	
-	/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğ‚Ü‚Æ‚ß‚Äæ‚èˆµ‚¤ */
-	BOOL SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) const;	/* CMacro‚Ì—ñ‚ğAƒL[ƒ{[ƒhƒ}ƒNƒ‚É•Û‘¶ */
-	//@@@2002.2.2 YAZAKI PPA.DLLƒAƒŠ/ƒiƒV‹¤‘¶‚Ì‚½‚ßvirtual‚ÉB
-	//	2007.07.20 genta flags’Ç‰Á
-	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ÌÀs */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚Ş */
-	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ğ•¶š—ñ‚©‚ç“Ç‚İ‚Ş */
+	/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’ã¾ã¨ã‚ã¦å–ã‚Šæ‰±ã† */
+	BOOL SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) const;	/* CMacroã®åˆ—ã‚’ã€ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã«ä¿å­˜ */
+	//@@@2002.2.2 YAZAKI PPA.DLLã‚¢ãƒª/ãƒŠã‚·å…±å­˜ã®ãŸã‚virtualã«ã€‚
+	//	2007.07.20 genta flagsè¿½åŠ 
+	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®å®Ÿè¡Œ */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚€ */
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã‚’æ–‡å­—åˆ—ã‹ã‚‰èª­ã¿è¾¼ã‚€ */
 	
 	// Apr. 29, 2002 genta
 	static CMacroManagerBase* Creator(const TCHAR* ext);
 	static void declare(void);
 
 protected:
-	CMacro*	m_pTop;	//	æ“ª‚ÆI’[‚ğ•Û
+	CMacro*	m_pTop;	//	å…ˆé ­ã¨çµ‚ç«¯ã‚’ä¿æŒ
 	CMacro*	m_pBot;
 };
 

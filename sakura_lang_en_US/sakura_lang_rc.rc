@@ -5,11 +5,11 @@
 #ifndef SAKURA_LANG_RESOURCE
 	#include "sakura_rc.h"
 	#include "Funccode_define.h"
-	#include "svnrev.h"
 	#include "String_define.h"
 #else
 	#include "sakura_lang.h"
 #endif
+#include "../sakura_core/version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,11 @@ BEGIN
     LTEXT           "https://sakura-editor.github.io/",
                     IDC_STATIC_URL_UR,101,88,120,8,SS_NOTIFY | NOT WS_GROUP | 
                     WS_TABSTOP
-    EDITTEXT        IDC_EDIT_ABOUT,5,107,233,67,ES_MULTILINE | ES_READONLY | 
+    LTEXT           "Source URL:", IDC_STATIC_GIT_CAPTION,33,98,71,8,NOT WS_GROUP
+    LTEXT           "https://sakura-editor.github.io/",
+                    IDC_STATIC_URL_GIT,101,98,120,8,SS_NOTIFY | NOT WS_GROUP | 
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ABOUT,5,111,233,63,ES_MULTILINE | ES_READONLY | 
                     WS_VSCROLL | NOT WS_TABSTOP
 END
 
@@ -2786,7 +2790,6 @@ END
 //
 // Version
 //
-
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION    FL_VER
  PRODUCTVERSION PR_VER
@@ -2813,16 +2816,7 @@ BEGIN
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor Language DLL\0"
-            VALUE "ProductVersion", PR_VER_STR
-#if (SVN_REV != 0)
-                " (Rev." SVN_REV_STR ")"
-#endif
-#ifdef _DEBUG
-                " Debug version"
-#endif
-#ifndef _UNICODE
-                " ANSI"
-#endif
+            VALUE "ProductVersion", RESOURCE_VERSION_STRING(PR_VER_STR) // e.g. "2.3.2.0 4a0de579 UNICODE 64bit DEBUG"
         END
     END
     BLOCK "VarFileInfo"

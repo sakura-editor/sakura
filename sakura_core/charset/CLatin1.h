@@ -1,8 +1,8 @@
-/*!	@file
-	@brief Latin1 (Latin1, ‰¢•¶, Windows-1252, Windows Codepage 1252 West European) ‘Î‰ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief Latin1 (Latin1, æ¬§æ–‡, Windows-1252, Windows Codepage 1252 West European) å¯¾å¿œã‚¯ãƒ©ã‚¹
 
 	@author Uchi
-	@date 20010/03/20 V‹Kì¬
+	@date 20010/03/20 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 20010, Uchi
@@ -35,30 +35,30 @@
 class CLatin1 : public CCodeBase{
 
 public:
-	//CCodeBaseƒCƒ“ƒ^[ƒtƒF[ƒX
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return Latin1ToUnicode(cSrc, pDst); }	//!< “Á’èƒR[ƒh ¨ UNICODE    •ÏŠ·
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToLatin1(cSrc, pDst); }	//!< UNICODE    ¨ “Á’èƒR[ƒh •ÏŠ·
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE ¨ Hex •ÏŠ·
+	//CCodeBaseã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return Latin1ToUnicode(cSrc, pDst); }	//!< ç‰¹å®šã‚³ãƒ¼ãƒ‰ â†’ UNICODE    å¤‰æ›
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToLatin1(cSrc, pDst); }	//!< UNICODE    â†’ ç‰¹å®šã‚³ãƒ¼ãƒ‰ å¤‰æ›
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE â†’ Hex å¤‰æ›
 
 public:
-	//À‘•
-	static EConvertResult Latin1ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// Latin1   ¨ UnicodeƒR[ƒh•ÏŠ·
-	static EConvertResult UnicodeToLatin1(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode  ¨ Latin1ƒR[ƒh•ÏŠ·
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
+	//å®Ÿè£…
+	static EConvertResult Latin1ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// Latin1   â†’ Unicodeã‚³ãƒ¼ãƒ‰å¤‰æ›
+	static EConvertResult UnicodeToLatin1(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode  â†’ Latin1ã‚³ãƒ¼ãƒ‰å¤‰æ›
+	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
 
 protected:
-	// À‘•
+	// å®Ÿè£…
 	static int Latin1ToUni( const char*, const int, wchar_t *, bool* pbError );
 	inline static int _UniToLatin1_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
 	static int UniToLatin1( const wchar_t*, const int, char*, bool *pbError );
 };
 
 /*!
-	UNICODE -> Latin1 ˆê•¶š•ÏŠ·
+	UNICODE -> Latin1 ä¸€æ–‡å­—å¤‰æ›
 
-	eCharset ‚Í CHARSET_UNI_NORMAL ‚Ü‚½‚Í CHARSET_UNI_SURROGB
+	eCharset ã¯ CHARSET_UNI_NORMAL ã¾ãŸã¯ CHARSET_UNI_SURROGã€‚
 
-	‚‘¬‰»‚Ì‚½‚ßAƒCƒ“ƒ‰ƒCƒ“‰»
+	é«˜é€ŸåŒ–ã®ãŸã‚ã€ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–
 */
 inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError )
 {
@@ -68,26 +68,26 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 
 	if( eCharset == CHARSET_UNI_NORMAL ){
 		if ((pSrc[0] >= 0 && pSrc[0] <= 0x7f) || (pSrc[0] >= 0xa0 && pSrc[0] <= 0xff)) {
-			// ISO 58859-1‚Ì”ÍˆÍ
+			// ISO 58859-1ã®ç¯„å›²
 			pDst[0] = (unsigned char)pSrc[0];
 			nret = 1;
 		} else {
-			// ISO 8859-1ˆÈŠO
+			// ISO 8859-1ä»¥å¤–
 			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const wchar_t*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, NULL, &blost );
 			if( blost != FALSE ){
-				// Uni -> CLatin1 •ÏŠ·‚É¸”s
+				// Uni -> CLatin1 å¤‰æ›ã«å¤±æ•—
 				berror = true;
 				pDst[0] = '?';
 				nret = 1;
 			}
 		}
 	}else if( eCharset == CHARSET_UNI_SURROG ){
-		// ƒTƒƒQ[ƒgƒyƒA‚Í CLatin1 ‚É•ÏŠ·‚Å‚«‚È‚¢B
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ã¯ CLatin1 ã«å¤‰æ›ã§ããªã„ã€‚
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;
 	}else{
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		berror = true;
 		pDst[0] = '?';
 		nret = 1;

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "charset/CCodeMediator.h"
 #include "charset/charcode.h"
 #include "charset/CESI.h"
@@ -8,14 +8,14 @@
 
 
 /*!
-	•¶š—ñ‚Ìæ“ª‚ÉUnicodeŒnBOM‚ª•t‚¢‚Ä‚¢‚é‚©H
+	æ–‡å­—åˆ—ã®å…ˆé ­ã«Unicodeç³»BOMãŒä»˜ã„ã¦ã„ã‚‹ã‹ï¼Ÿ
 
 	@retval CODE_UNICODE   UTF-16 LE
 	@retval CODE_UTF8      UTF-8
 	@retval CODE_UNICODEBE UTF-16 BE
-	@retval CODE_NONE      –¢ŒŸo
+	@retval CODE_NONE      æœªæ¤œå‡º
 
-	@date 2007.08.11 charcode.cpp ‚©‚çˆÚ“®
+	@date 2007.08.11 charcode.cpp ã‹ã‚‰ç§»å‹•
 */
 ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 {
@@ -38,8 +38,8 @@ ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 		}
 	}
 #if 0
-// 2015.03.05 Moca UTF-7 BOM‚Í–³Œø‚É•ÏX
-// ‚à‚µƒf[ƒ^‚ªASCIIŒİŠ·‚ÅUTF-7‚Æ‚µ‚Ä³‚µ‚¯‚ê‚ÎA•¶šƒR[ƒh”äŠr‚ÅUTF-7‚É‚È‚é‚Í‚¸
+// 2015.03.05 Moca UTF-7 BOMã¯ç„¡åŠ¹ã«å¤‰æ›´
+// ã‚‚ã—ãƒ‡ãƒ¼ã‚¿ãŒASCIIäº’æ›ã§UTF-7ã¨ã—ã¦æ­£ã—ã‘ã‚Œã°ã€æ–‡å­—ã‚³ãƒ¼ãƒ‰æ¯”è¼ƒã§UTF-7ã«ãªã‚‹ã¯ãš
 	if( 4 <= nLen ){
 		if( memcmp( pBuf, "+/v", 3 ) == 0
 			&& ( pBuf[3] == '8' || pBuf[3] == '9' || pBuf[3] == '+' || pBuf[3] == '/' ) ){
@@ -54,19 +54,19 @@ ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 
 
 /*!
-	SJIS, JIS, EUCJP, UTF-8, UTF-7 ‚ğ”»’è (‰ü)
+	SJIS, JIS, EUCJP, UTF-8, UTF-7 ã‚’åˆ¤å®š (æ”¹)
 
-	@return SJIS, JIS, EUCJP, UTF-8, UTF-7 ‚Ì‰½‚ê‚©‚Ì ID ‚ğ•Ô‚·D
+	@return SJIS, JIS, EUCJP, UTF-8, UTF-7 ã®ä½•ã‚Œã‹ã® ID ã‚’è¿”ã™ï¼
 
-	@note “KØ‚ÈŒŸo‚ªs‚í‚ê‚½ê‡‚ÍAm_dwStatus ‚É CESI_MB_DETECTED ƒtƒ‰ƒO‚ªŠi”[‚³‚ê‚éB
+	@note é©åˆ‡ãªæ¤œå‡ºãŒè¡Œã‚ã‚ŒãŸå ´åˆã¯ã€m_dwStatus ã« CESI_MB_DETECTED ãƒ•ãƒ©ã‚°ãŒæ ¼ç´ã•ã‚Œã‚‹ã€‚
 */
 ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 {
 //	pcesi->m_dwStatus = ESI_NOINFORMATION;
 
 	if( pcesi->GetDataLen() < (pcesi->m_apMbcInfo[0]->nSpecific - pcesi->m_apMbcInfo[0]->nPoints) * 2000 ){
-		// •s³ƒoƒCƒg‚ÌŠ„‡‚ªA‘S‘Ì‚Ì 0.05% –¢–‚Å‚ ‚é‚±‚Æ‚ğŠm”FB
-		// ‘S‘Ì‚Ì0.05%‚Ù‚Ç‚Ì•s³ƒoƒCƒg‚ÍA–³‹‚·‚éB
+		// ä¸æ­£ãƒã‚¤ãƒˆã®å‰²åˆãŒã€å…¨ä½“ã® 0.05% æœªæº€ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã€‚
+		// å…¨ä½“ã®0.05%ã»ã©ã®ä¸æ­£ãƒã‚¤ãƒˆã¯ã€ç„¡è¦–ã™ã‚‹ã€‚
 		pcesi->SetStatus( ESI_NODETECTED );
 		return CODE_NONE;
 	}
@@ -76,7 +76,7 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 	}
 
 	/*
-		”»’èó‹µ‚ğŠm”F
+		åˆ¤å®šçŠ¶æ³ã‚’ç¢ºèª
 	*/
 	pcesi->SetStatus( ESI_MBC_DETECTED );
 	return pcesi->m_apMbcInfo[0]->eCodeID;
@@ -85,11 +85,11 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 
 
 /*!
-	UTF-16 LE/BE ‚ğ”»’è.
+	UTF-16 LE/BE ã‚’åˆ¤å®š.
 
-	@retval CODE_UNICODE    UTF-16 LE ‚ªŒŸo‚³‚ê‚½
-	@retval CODE_UNICODEBE  UTF-16 BE ‚ªŒŸo‚³‚ê‚½
-	@retval 0               UTF-16 LE/BE ‚Æ‚à‚ÉŒŸo‚³‚ê‚È‚©‚Á‚½
+	@retval CODE_UNICODE    UTF-16 LE ãŒæ¤œå‡ºã•ã‚ŒãŸ
+	@retval CODE_UNICODEBE  UTF-16 BE ãŒæ¤œå‡ºã•ã‚ŒãŸ
+	@retval 0               UTF-16 LE/BE ã¨ã‚‚ã«æ¤œå‡ºã•ã‚Œãªã‹ã£ãŸ
 
 */
 ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
@@ -105,9 +105,9 @@ ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
 		return CODE_NONE;
 	}
 
-	// 1s‚Ì•½‹ÏŒ…”‚ª200‚ğ’´‚¦‚Ä‚¢‚éê‡‚ÍUnicode–¢ŒŸo‚Æ‚·‚é
+	// 1è¡Œã®å¹³å‡æ¡æ•°ãŒ200ã‚’è¶…ãˆã¦ã„ã‚‹å ´åˆã¯Unicodeæœªæ¤œå‡ºã¨ã™ã‚‹
 	ndatalen = pcesi->GetDataLen();
-	nlinebreak = pcesi->m_aWcInfo[ebom_type].nSpecific;  // ‰üs”‚ğ nlinebreak‚Éæ“¾
+	nlinebreak = pcesi->m_aWcInfo[ebom_type].nSpecific;  // æ”¹è¡Œæ•°ã‚’ nlinebreakã«å–å¾—
 	if( static_cast<double>(ndatalen) / nlinebreak > 200 ){
 		pcesi->SetStatus( ESI_NODETECTED );
 		return CODE_NONE;
@@ -121,16 +121,16 @@ ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
 
 
 /*
-	“ú–{ŒêƒR[ƒhƒZƒbƒg”»’è
+	æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤å®š
 */
 ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
 {
 	ECodeType nret;
 
 	/*
-		”»’èó‹µ‚ÍA
-		DetectMBCode(), DetectUnicode() “à‚Å
-		cesi.m_dwStatus ‚É‹L˜^‚·‚éB
+		åˆ¤å®šçŠ¶æ³ã¯ã€
+		DetectMBCode(), DetectUnicode() å†…ã§
+		cesi.m_dwStatus ã«è¨˜éŒ²ã™ã‚‹ã€‚
 	*/
 
 	if( pcesi == NULL ){
@@ -148,15 +148,15 @@ ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
 		return nret;
 	}
 
-	// ƒfƒtƒHƒ‹ƒg•¶šƒR[ƒh‚ğ•Ô‚·
+	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’è¿”ã™
 	return pcesi->m_pEncodingConfig->m_eDefaultCodetype;
 }
 
 
 /*
-	“ú–{ŒêƒR[ƒhƒZƒbƒg”»•Ê
+	æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤åˆ¥
 
-	–ß‚è’lz2007.08.14 kobake –ß‚è’l‚ğint‚©‚çECodeType‚Ö•ÏX
+	æˆ»ã‚Šå€¤ã€‘2007.08.14 kobake æˆ»ã‚Šå€¤ã‚’intã‹ã‚‰ECodeTypeã¸å¤‰æ›´
 	SJIS		CODE_SJIS
 	JIS			CODE_JIS
 	EUC			CODE_EUC
@@ -170,9 +170,9 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 	CESI cesi(*m_pEncodingConfig);
 
 	/*
-		”»’èó‹µ‚ÍA
-		DetectMBCode(), DetectUnicode() “à‚Å
-		cesi.m_dwStatus ‚É‹L˜^‚·‚éB
+		åˆ¤å®šçŠ¶æ³ã¯ã€
+		DetectMBCode(), DetectUnicode() å†…ã§
+		cesi.m_dwStatus ã«è¨˜éŒ²ã™ã‚‹ã€‚
 	*/
 
 	cesi.SetInformation( pBuf, nBufLen/*, CODE_SJIS*/ );
@@ -182,9 +182,9 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 
 
 /*
-|| ƒtƒ@ƒCƒ‹‚Ì“ú–{ŒêƒR[ƒhƒZƒbƒg”»•Ê
+|| ãƒ•ã‚¡ã‚¤ãƒ«ã®æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤åˆ¥
 ||
-|| y–ß‚è’lz2007.08.14 kobake –ß‚è’l‚ğint‚©‚çECodeType‚Ö•ÏX
+|| ã€æˆ»ã‚Šå€¤ã€‘2007.08.14 kobake æˆ»ã‚Šå€¤ã‚’intã‹ã‚‰ECodeTypeã¸å¤‰æ›´
 ||	SJIS		CODE_SJIS
 ||	JIS			CODE_JIS
 ||	EUC			CODE_EUC
@@ -192,42 +192,42 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 ||	UTF-8		CODE_UTF8
 ||	UTF-7		CODE_UTF7
 ||	UnicodeBE	CODE_UNICODEBE
-||	ƒGƒ‰[		CODE_ERROR
+||	ã‚¨ãƒ©ãƒ¼		CODE_ERROR
 */
 ECodeType CCodeMediator::CheckKanjiCodeOfFile( const TCHAR* pszFile )
 {
-	// ƒI[ƒvƒ“
+	// ã‚ªãƒ¼ãƒ—ãƒ³
 	CBinaryInputStream in(pszFile);
 	if(!in){
 		return CODE_ERROR;
 	}
 
-	// ƒf[ƒ^’·æ“¾
+	// ãƒ‡ãƒ¼ã‚¿é•·å–å¾—
 	int nBufLen = in.GetLength();
 	if( nBufLen > CheckKanjiCode_MAXREADLENGTH ){
 		nBufLen = CheckKanjiCode_MAXREADLENGTH;
 	}
 
-	// 0ƒoƒCƒg‚È‚çƒ^ƒCƒv•Ê‚ÌƒfƒtƒHƒ‹ƒgİ’è
+	// 0ãƒã‚¤ãƒˆãªã‚‰ã‚¿ã‚¤ãƒ—åˆ¥ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®š
 	if( 0 == nBufLen ){
 		return m_pEncodingConfig->m_eDefaultCodetype;
 	}
 
-	// ƒf[ƒ^Šm•Û
+	// ãƒ‡ãƒ¼ã‚¿ç¢ºä¿
 	CMemory cMem;
 	cMem.AllocBuffer(nBufLen);
 	void* pBuf = cMem.GetRawPtr();
 
-	// “Ç‚İ‚İ
+	// èª­ã¿è¾¼ã¿
 	nBufLen = in.Read(pBuf, nBufLen);
 
-	// ƒNƒ[ƒY
+	// ã‚¯ãƒ­ãƒ¼ã‚º
 	in.Close();
 
-	// “ú–{ŒêƒR[ƒhƒZƒbƒg”»•Ê
+	// æ—¥æœ¬èªã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåˆ¤åˆ¥
 	ECodeType nCodeType = DetectUnicodeBom( reinterpret_cast<const char*>(pBuf), nBufLen );
 	if( nCodeType == CODE_NONE ){
-		// Unicode BOM ‚ÍŒŸo‚³‚ê‚Ü‚¹‚ñ‚Å‚µ‚½D
+		// Unicode BOM ã¯æ¤œå‡ºã•ã‚Œã¾ã›ã‚“ã§ã—ãŸï¼
 		nCodeType = CheckKanjiCode( reinterpret_cast<const char*>(pBuf), nBufLen );
 	}
 

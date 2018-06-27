@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ}ƒNƒí•ÊŠÇ—
+ï»¿/*!	@file
+	@brief ãƒã‚¯ãƒ­ç¨®åˆ¥ç®¡ç†
 
 	@author genta
 	@date 2002.4.29
@@ -39,13 +39,13 @@ CMacroFactory::CMacroFactory()
 {}
 
 /*!
-	—^‚¦‚ç‚ê‚½Šg’£q‚ğmap‚Ìkey‚É•ÏŠ·‚·‚é
+	ä¸ãˆã‚‰ã‚ŒãŸæ‹¡å¼µå­ã‚’mapã®keyã«å¤‰æ›ã™ã‚‹
 	
-	@param ext [in] Šg’£q
+	@param ext [in] æ‹¡å¼µå­
 	
 	@par Rule
-	@li NULL‚Í""‚É‚·‚éB
-	@li ƒAƒ‹ƒtƒ@ƒxƒbƒg‚Í¬•¶š‚É“ˆê
+	@li NULLã¯""ã«ã™ã‚‹ã€‚
+	@li ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã¯å°æ–‡å­—ã«çµ±ä¸€
 */
 std::tstring CMacroFactory::Ext2Key(const TCHAR *ext)
 {
@@ -60,16 +60,16 @@ std::tstring CMacroFactory::Ext2Key(const TCHAR *ext)
 }
 
 /*!
-	Creator‚Ì“o˜^
+	Creatorã®ç™»éŒ²
 	
-	Šg’£q‚Ì‘Î‰‚ğ‰Šú‚É“o˜^‚µ‚È‚¢Creator‚ğ“o˜^‚·‚éD
-	‚½‚¾‚µCˆê’U‘Î‰‚ª‚í‚©‚Á‚½‚çŸ‰ñˆÈ~‚Í‘Î‰•\‚ªg‚í‚ê‚éD
+	æ‹¡å¼µå­ã®å¯¾å¿œã‚’åˆæœŸã«ç™»éŒ²ã—ãªã„Creatorã‚’ç™»éŒ²ã™ã‚‹ï¼
+	ãŸã ã—ï¼Œä¸€æ—¦å¯¾å¿œãŒã‚ã‹ã£ãŸã‚‰æ¬¡å›ä»¥é™ã¯å¯¾å¿œè¡¨ãŒä½¿ã‚ã‚Œã‚‹ï¼
 	
-	@param f [in] “o˜^‚·‚éFactoryŠÖ”
+	@param f [in] ç™»éŒ²ã™ã‚‹Factoryé–¢æ•°
 	
 	@sa CMacroFactory::RegisterExts
 
-	@date 2002.08.25 genta ’Ç‰Á
+	@date 2002.08.25 genta è¿½åŠ 
 */
 bool CMacroFactory::RegisterCreator( Creator f )
 {
@@ -82,24 +82,24 @@ bool CMacroFactory::RegisterCreator( Creator f )
 }
 
 /*!
-	Creator‚Ì“o˜^‰ğœ
+	Creatorã®ç™»éŒ²è§£é™¤
 	
-	@param f [in] “o˜^‰ğœ‚·‚éCreator
+	@param f [in] ç™»éŒ²è§£é™¤ã™ã‚‹Creator
 */
 bool CMacroFactory::Unregister( Creator f )
 {
-	//	Creator List‚©‚ç‚Ìíœ
+	//	Creator Listã‹ã‚‰ã®å‰Šé™¤
 	MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
 	while( c_it != m_mMacroCreators.end() ){
 		if( *c_it == f ){
 			MacroEngineRep::iterator tmp_it;
 
-			//	‚¢‚«‚È‚èíœ‚·‚é‚Æiterator‚ª–³Œø‚É‚È‚é‚Ì‚ÅC
-			//	iterator‚ğ1‚Âi‚ß‚Ä‚©‚çŒ»İˆÊ’u‚ğíœ‚·‚éD
+			//	ã„ããªã‚Šå‰Šé™¤ã™ã‚‹ã¨iteratorãŒç„¡åŠ¹ã«ãªã‚‹ã®ã§ï¼Œ
+			//	iteratorã‚’1ã¤é€²ã‚ã¦ã‹ã‚‰ç¾åœ¨ä½ç½®ã‚’å‰Šé™¤ã™ã‚‹ï¼
 			tmp_it = c_it++;
 			m_mMacroCreators.erase( tmp_it );
-			//	d•¡“o˜^‚³‚ê‚Ä‚¢‚éê‡‚ğl—¶‚µ‚ÄC
-			//	1‚ÂŒ©‚Â‚©‚Á‚Ä‚àÅŒã‚Ü‚Åƒ`ƒFƒbƒN‚·‚é
+			//	é‡è¤‡ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å ´åˆã‚’è€ƒæ…®ã—ã¦ï¼Œ
+			//	1ã¤è¦‹ã¤ã‹ã£ã¦ã‚‚æœ€å¾Œã¾ã§ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 		}
 		else {
 			++ c_it;
@@ -112,17 +112,17 @@ bool CMacroFactory::Unregister( Creator f )
 /*
 	Object Factory
 	
-	“o˜^‚³‚ê‚½Factory Object‚ğ‡‚ÉŒÄ‚Ño‚µ‚ÄA
-	Object‚ª“¾‚ç‚ê‚½‚ç‚»‚ê‚ğ•Ô‚·B
+	ç™»éŒ²ã•ã‚ŒãŸFactory Objectã‚’é †ã«å‘¼ã³å‡ºã—ã¦ã€
+	ObjectãŒå¾—ã‚‰ã‚ŒãŸã‚‰ãã‚Œã‚’è¿”ã™ã€‚
 
-	@pararm ext [in] Šg’£q
-	@return MacroƒIƒuƒWƒFƒNƒgB“KØ‚È‚à‚Ì‚ªŒ©‚Â‚©‚ç‚È‚¯‚ê‚ÎNULLB
+	@pararm ext [in] æ‹¡å¼µå­
+	@return Macroã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚é©åˆ‡ãªã‚‚ã®ãŒè¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°NULLã€‚
 */
 CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 {
 	std::tstring key = Ext2Key( ext );
 
-	//	Creator‚ğ‡‚É‚·
+	//	Creatorã‚’é †ã«è©¦ã™
 	for( MacroEngineRep::iterator c_it = m_mMacroCreators.begin();
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());

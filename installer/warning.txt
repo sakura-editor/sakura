@@ -1,0 +1,12 @@
+﻿Appveyor で取得する実行ファイル、インストーラに関する注意事項です。
+
+この成果物を解凍するときには Windows 標準の機能で解凍せずに 
+7-Zip (https://sevenzip.osdn.jp/) 等のツールを使用して解凍してください。
+
+Windows 標準の機能で解凍した場合、実行ファイルまたはインストーラの起動時に
+SmartScreen という機能により警告が表示されます。
+
+7-Zip 等のツールで解凍することによりこの警告が表示されません。
+
+参考
+http://www.atmarkit.co.jp/ait/articles/1603/11/news050.html

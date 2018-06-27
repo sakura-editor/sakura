@@ -1,8 +1,8 @@
-/*!	@file
-	@brief Latin1 (Latin1, ‰¢•¶, Windows-1252, Windows Codepage 1252 West European) ‘Î‰ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief Latin1 (Latin1, æ¬§æ–‡, Windows-1252, Windows Codepage 1252 West European) å¯¾å¿œã‚¯ãƒ©ã‚¹
 
 	@author Uchi
-	@date 20010/03/20 V‹Kì¬
+	@date 20010/03/20 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 20010, Uchi
@@ -37,17 +37,17 @@
 
 
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
 /*!
-	@param[in] pData ˆÊ’u‚ğ‹‚ß‚½‚¢•¶š—ñ‚Ìæ“ª
-	@param[in] nDataLen •¶š—ñ’·
-	@param[in] nIdx ˆÊ’u(0ƒIƒŠƒWƒ“)
-	@retval 1  1ƒoƒCƒg•¶š
-	@retval 0  ƒGƒ‰[
+	@param[in] pData ä½ç½®ã‚’æ±‚ã‚ãŸã„æ–‡å­—åˆ—ã®å…ˆé ­
+	@param[in] nDataLen æ–‡å­—åˆ—é•·
+	@param[in] nIdx ä½ç½®(0ã‚ªãƒªã‚¸ãƒ³)
+	@retval 1  1ãƒã‚¤ãƒˆæ–‡å­—
+	@retval 0  ã‚¨ãƒ©ãƒ¼
 
-	@date 2010/3/20 Uchi ì¬
+	@date 2010/3/20 Uchi ä½œæˆ
 
-	ƒGƒ‰[‚Å‚È‚¯‚ê‚Î1‚ğ•Ô‚·
+	ã‚¨ãƒ©ãƒ¼ã§ãªã‘ã‚Œã°1ã‚’è¿”ã™
 */
 int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 {
@@ -61,7 +61,7 @@ int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 
 
 /*!
-	Latin1 ¨ Unicode •ÏŠ·
+	Latin1 â†’ Unicode å¤‰æ›
 */
 int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
 {
@@ -82,7 +82,7 @@ int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 
 	for( ; pr < pr_end; pr++ ){
 		if (*pr >= 0x80 && *pr <=0x9f) {
-			// Windows Šg’£•”
+			// Windows æ‹¡å¼µéƒ¨
 			nret = ::MultiByteToWideChar( 1252, 0, reinterpret_cast<const char*>(pr), 1, reinterpret_cast<wchar_t*>(pw), 4 );
 			if( nret == 0 ){
 				*pw = static_cast<unsigned short>( *pr );
@@ -99,17 +99,17 @@ int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 
 
 
-/* ƒR[ƒh•ÏŠ· Latin1¨Unicode */
+/* ã‚³ãƒ¼ãƒ‰å¤‰æ› Latin1â†’Unicode */
 EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
-	// ƒGƒ‰[ó‘Ô
+	// ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹
 	bool bError;
 
-	//ƒ\[ƒXæ“¾
+	//ã‚½ãƒ¼ã‚¹å–å¾—
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚ğİ’è‚µ‚Äƒƒ‚ƒŠ—ÌˆæŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’è¨­å®šã—ã¦ãƒ¡ãƒ¢ãƒªé ˜åŸŸç¢ºä¿
 	wchar_t* pDst;
 	try{
 		pDst = new wchar_t[nSrcLen];
@@ -120,13 +120,13 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = Latin1ToUni( pSrc, nSrcLen, pDst, &bError );
 
-	// pDstMem‚ğXV
+	// pDstMemã‚’æ›´æ–°
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete [] pDst;
 
 	if( bError == false ){
@@ -165,7 +165,7 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
 	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
-		// •ÛŒìƒR[ƒh
+		// ä¿è­·ã‚³ãƒ¼ãƒ‰
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
 			nclen = 1;
@@ -206,17 +206,17 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 
 
 
-/* ƒR[ƒh•ÏŠ· Unicode¨Latin1 */
+/* ã‚³ãƒ¼ãƒ‰å¤‰æ› Unicodeâ†’Latin1 */
 EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem )
 {
-	// ó‘Ô
+	// çŠ¶æ…‹
 	bool berror;
 
-	// ƒ\[ƒXæ“¾
+	// ã‚½ãƒ¼ã‚¹å–å¾—
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
-	// •ÏŠ·æƒoƒbƒtƒ@ƒTƒCƒY‚ğİ’è‚µ‚Äƒoƒbƒtƒ@‚ğŠm•Û
+	// å¤‰æ›å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚’è¨­å®šã—ã¦ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 	char* pDst;
 	try{
 		pDst = new char[ nSrcLen * 2 ];
@@ -227,16 +227,16 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 		return RESULT_FAILURE;
 	}
 
-	// •ÏŠ·
+	// å¤‰æ›
 	int nDstLen = UniToLatin1( pSrc, nSrcLen, pDst, &berror );
 
-	// pDstMem‚ğXV
+	// pDstMemã‚’æ›´æ–°
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
 
-	// Œãn––
+	// å¾Œå§‹æœ«
 	delete[] pDst;
 
-	// Œ‹‰Ê
+	// çµæœ
 	if( berror == true ){
 		return RESULT_LOSESOME;
 	}else{
@@ -245,7 +245,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 }
 
 
-// •¶šƒR[ƒh•\¦—p	UNICODE ¨ Hex •ÏŠ·	2008/6/9 Uchi
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡¨ç¤ºç”¨	UNICODE â†’ Hex å¤‰æ›	2008/6/9 Uchi
 EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
@@ -257,7 +257,7 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInSjis) {
-		// Unicode‚Å•\¦
+		// Unicodeã§è¡¨ç¤º
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 
@@ -267,13 +267,13 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR
 		bbinary = true;
 	}
 
-	// Latin1 •ÏŠ·
+	// Latin1 å¤‰æ›
 	res = UnicodeToLatin1(cCharBuffer, cCharBuffer._GetMemory());
 	if (res != RESULT_COMPLETE) {
 		return RESULT_LOSESOME;
 	}
 
-	// Hex•ÏŠ·
+	// Hexå¤‰æ›
 	ps = reinterpret_cast<unsigned char*>( cCharBuffer._GetMemory()->GetRawPtr() );
 	pd = pDst;
 	if( bbinary == false ){

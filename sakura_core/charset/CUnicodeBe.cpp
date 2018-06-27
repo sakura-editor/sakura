@@ -1,4 +1,4 @@
-//	‚±‚Ìs‚Í•¶Žš‰»‚¯‘Îô—p‚Å‚·DÁ‚³‚È‚¢‚Å‚­‚¾‚³‚¢
+ï»¿//	ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ç”¨ã§ã™ï¼Žæ¶ˆã•ãªã„ã§ãã ã•ã„
 
 #include "StdAfx.h"
 #include "CUnicodeBe.h"

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief EditorƒIƒuƒWƒFƒNƒg
+ï»¿/*!	@file
+	@brief Editorã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 */
 /*
@@ -34,15 +34,15 @@
 
 class CEditorIfObj : public CWSHIfObj
 {
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CEditorIfObj() : CWSHIfObj( L"Editor", true ){}
 
-	// À‘•
-	MacroFuncInfoArray GetMacroCommandInfo() const;	//ƒRƒ}ƒ“ƒhî•ñ‚ğæ“¾‚·‚é
-	MacroFuncInfoArray GetMacroFuncInfo() const;	//ŠÖ”î•ñ‚ğæ“¾‚·‚é
-	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//ŠÖ”‚ğˆ—‚·‚é
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//ƒRƒ}ƒ“ƒh‚ğˆ—‚·‚é
+	// å®Ÿè£…
+	MacroFuncInfoArray GetMacroCommandInfo() const;	//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
+	MacroFuncInfoArray GetMacroFuncInfo() const;	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
+	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//ã‚³ãƒãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
 };
 
 

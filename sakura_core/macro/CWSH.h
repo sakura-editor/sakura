@@ -1,14 +1,14 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief WSH Handler
 
-	@author ‹S
-	@date 2002”N4Œ28“ú,5Œ3“ú,5Œ5“ú,5Œ6“ú,5Œ13“ú,5Œ16“ú
-	@date 2002.08.25 genta ƒŠƒ“ƒNƒGƒ‰[‰ñ”ğ‚Ì‚½‚ßCWSHManager.h‚ÉƒGƒfƒBƒ^‚Ì
-		ƒ}ƒNƒƒCƒ“ƒ^[ƒtƒF[ƒX•”‚ğ•ª—£D
-	@date 2009.10.29 syat ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg•”•ª‚ğCWSHIfObj.h‚É•ª—£
+	@author é¬¼
+	@date 2002å¹´4æœˆ28æ—¥,5æœˆ3æ—¥,5æœˆ5æ—¥,5æœˆ6æ—¥,5æœˆ13æ—¥,5æœˆ16æ—¥
+	@date 2002.08.25 genta ãƒªãƒ³ã‚¯ã‚¨ãƒ©ãƒ¼å›é¿ã®ãŸã‚CWSHManager.hã«ã‚¨ãƒ‡ã‚£ã‚¿ã®
+		ãƒã‚¯ãƒ­ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹éƒ¨ã‚’åˆ†é›¢ï¼
+	@date 2009.10.29 syat ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆéƒ¨åˆ†ã‚’CWSHIfObj.hã«åˆ†é›¢
 */
 /*
-	Copyright (C) 2002, ‹S, genta
+	Copyright (C) 2002, é¬¼, genta
 	Copyright (C) 2009, syat
 
 	This source code is designed for sakura editor.
@@ -20,10 +20,10 @@
 #define __WSH_H__
 
 #include <ActivScp.h>
-//ªMicrosoft Platform SDK ‚æ‚è
+//â†‘Microsoft Platform SDK ã‚ˆã‚Š
 #include "macro/CIfObj.h"
 
-/* 2009.10.29 syat ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg•”•ª‚ğCWSHIfObj.h‚É•ª—£
+/* 2009.10.29 syat ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆéƒ¨åˆ†ã‚’CWSHIfObj.hã«åˆ†é›¢
 template<class Base>
 class ImplementsIUnknown: public Base
 
@@ -34,26 +34,26 @@ typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 class CWSHClient : IWSHClient
 {
 public:
-	// Œ^’è‹`
-	typedef std::vector<CIfObj*> List;      // Š—L‚µ‚Ä‚¢‚éƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg‚ÌƒŠƒXƒg
-	typedef List::const_iterator ListIter;	// ‚»‚ÌƒCƒeƒŒ[ƒ^
+	// å‹å®šç¾©
+	typedef std::vector<CIfObj*> List;      // æ‰€æœ‰ã—ã¦ã„ã‚‹ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒªã‚¹ãƒˆ
+	typedef List::const_iterator ListIter;	// ãã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
 	~CWSHClient();
 
-	// ƒtƒB[ƒ‹ƒhEƒAƒNƒZƒT
+	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ãƒ»ã‚¢ã‚¯ã‚»ã‚µ
 	ScriptErrorHandler m_OnError;
 	void *m_Data;
-	bool m_Valid; ///< true‚Ìê‡ƒXƒNƒŠƒvƒgƒGƒ“ƒWƒ“‚ªg—p‰Â”\Bfalse‚É‚È‚éê‡‚Í ScriptErrorHandler‚ÉƒGƒ‰[“à—e‚ª’Ê’m‚³‚ê‚Ä‚¢‚éB
+	bool m_Valid; ///< trueã®å ´åˆã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚¨ãƒ³ã‚¸ãƒ³ãŒä½¿ç”¨å¯èƒ½ã€‚falseã«ãªã‚‹å ´åˆã¯ ScriptErrorHandlerã«ã‚¨ãƒ©ãƒ¼å†…å®¹ãŒé€šçŸ¥ã•ã‚Œã¦ã„ã‚‹ã€‚
 	virtual /*override*/ void* GetData() const { return this->m_Data; }
 	const List& GetInterfaceObjects() {	return this->m_IfObjArr; }
 
-	// ‘€ì
+	// æ“ä½œ
 	void AddInterfaceObject( CIfObj* obj );
 	bool Execute(const wchar_t *AScript);
-	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandler‚ğŒÄ‚Ño‚·B
-	void Error(const wchar_t* Description);          ///< ScriptErrorHandler‚ğŒÄ‚Ño‚·B
+	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerã‚’å‘¼ã³å‡ºã™ã€‚
+	void Error(const wchar_t* Description);          ///< ScriptErrorHandlerã‚’å‘¼ã³å‡ºã™ã€‚
 
 private:
 	IActiveScript *m_Engine;

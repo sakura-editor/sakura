@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ}ƒNƒí•ÊŠÇ—
+ï»¿/*!	@file
+	@brief ãƒã‚¯ãƒ­ç¨®åˆ¥ç®¡ç†
 
 	@author genta
 	@date 2002.4.29
@@ -40,16 +40,16 @@
 class CMacroManagerBase;
 
 /*!
-	@brief ƒ}ƒNƒHandler¶¬ƒNƒ‰ƒX
+	@brief ãƒã‚¯ãƒ­Handlerç”Ÿæˆã‚¯ãƒ©ã‚¹
 	
-	@par ‰Šú‰»
-	CMacroManagerBase::declare() ‚É‚æ‚èCMacroEngine‚ÌCreater‚Ì“o˜^
-	RegisterEngine() ‹y‚Ñ ‘Î‰Šg’£q‚Ì“o˜^ RegisterExt() ‚ªŒÄ‚Ño‚³‚ê‚éD
+	@par åˆæœŸåŒ–
+	CMacroManagerBase::declare() ã«ã‚ˆã‚Šï¼ŒMacroEngineã®Createrã®ç™»éŒ²
+	RegisterEngine() åŠã³ å¯¾å¿œæ‹¡å¼µå­ã®ç™»éŒ² RegisterExt() ãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ï¼
 	
-	@par ŒÄ‚Ño‚µ
-	CMacroFactory::Create()‚ğŠg’£q‚ğˆø”‚É‚µ‚ÄŒÄ‚Ño‚·‚Æ‘Î‰‚·‚é
-	ƒ}ƒNƒƒGƒ“ƒWƒ“‚ª•Ô‚³‚ê‚éD“¾‚ç‚ê‚½Engine‚É‘Î‚µ‚ÄLoadKeyMacro()‹y‚Ñ
-	ExecKeyMacro() ‚ğŒÄ‚Ño‚·‚±‚Æ‚Åƒ}ƒNƒ‚Ì“Ç‚İ‚İEÀs‚ªs‚í‚ê‚éD
+	@par å‘¼ã³å‡ºã—
+	CMacroFactory::Create()ã‚’æ‹¡å¼µå­ã‚’å¼•æ•°ã«ã—ã¦å‘¼ã³å‡ºã™ã¨å¯¾å¿œã™ã‚‹
+	ãƒã‚¯ãƒ­ã‚¨ãƒ³ã‚¸ãƒ³ãŒè¿”ã•ã‚Œã‚‹ï¼å¾—ã‚‰ã‚ŒãŸEngineã«å¯¾ã—ã¦LoadKeyMacro()åŠã³
+	ExecKeyMacro() ã‚’å‘¼ã³å‡ºã™ã“ã¨ã§ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ãƒ»å®Ÿè¡ŒãŒè¡Œã‚ã‚Œã‚‹ï¼
 
 	Singleton
 */
@@ -62,7 +62,7 @@ public:
 
 	bool RegisterCreator( Creator );
 	// Jan. 31, 2004 genta
-	// ƒoƒCƒiƒŠƒTƒCƒYíŒ¸‚Ì‚½‚ßm_mMacroExts‚ğíœ
+	// ãƒã‚¤ãƒŠãƒªã‚µã‚¤ã‚ºå‰Šæ¸›ã®ãŸã‚m_mMacroExtsã‚’å‰Šé™¤
 	//bool RegisterExt( const char*, Creator );
 	bool Unregister( Creator );
 
@@ -72,16 +72,16 @@ private:
 	std::tstring Ext2Key(const TCHAR *ext);
 
 	// Jan. 31, 2004 genta
-	// ƒoƒCƒiƒŠƒTƒCƒYíŒ¸‚Ì‚½‚ßŠg’£q•Û—pmap‚ğíœ
+	// ãƒã‚¤ãƒŠãƒªã‚µã‚¤ã‚ºå‰Šæ¸›ã®ãŸã‚æ‹¡å¼µå­ä¿æŒç”¨mapã‚’å‰Šé™¤
 	//	typedef std::map<std::string, Creator> MacroTypeRep;
 	typedef std::list<Creator> MacroEngineRep;
 
 	// Jan. 31, 2004 genta
-	// ƒoƒCƒiƒŠƒTƒCƒYíŒ¸‚Ì‚½‚ß
-	//MacroTypeRep m_mMacroExts;	/*!< Šg’£q‘Î‰•\ */
+	// ãƒã‚¤ãƒŠãƒªã‚µã‚¤ã‚ºå‰Šæ¸›ã®ãŸã‚
+	//MacroTypeRep m_mMacroExts;	/*!< æ‹¡å¼µå­å¯¾å¿œè¡¨ */
 	/*!
-		CreatorƒŠƒXƒg
-		@date 2002.08.25 genta ’Ç‰Á
+		Creatorãƒªã‚¹ãƒˆ
+		@date 2002.08.25 genta è¿½åŠ 
 	*/
 	MacroEngineRep m_mMacroCreators;
 

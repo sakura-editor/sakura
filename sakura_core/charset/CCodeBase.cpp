@@ -1,4 +1,4 @@
-// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô‚Ì‚½‚ß‚Ì‚à‚Ì‚Å‚·B
+ï»¿// ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ã®ãŸã‚ã®ã‚‚ã®ã§ã™ã€‚
 #include "StdAfx.h"
 #include "CCodeBase.h"
 #include "charcode.h"
@@ -6,17 +6,17 @@
 #include "charset/codechecker.h"
 #include "CEol.h"
 
-// ”ñˆË‘¶„§
+// éä¾å­˜æ¨å¥¨
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
-void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMƒf[ƒ^æ“¾
+void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMãƒ‡ãƒ¼ã‚¿å–å¾—
 
-// •\¦—p16•\¦	UNICODE ¨ Hex •ÏŠ·	2008/6/9 Uchi
+// è¡¨ç¤ºç”¨16è¡¨ç¤º	UNICODE â†’ Hex å¤‰æ›	2008/6/9 Uchi
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
-		// ƒTƒƒQ[ƒgƒyƒA
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢
 		if (psStatusbar->m_bDispSPCodepoint) {
 			auto_sprintf( pDst, _T("U+%05X"), 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
 		}
@@ -40,16 +40,16 @@ EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 
 
 /*!
-	MIME ƒfƒR[ƒ_[
+	MIME ãƒ‡ã‚³ãƒ¼ãƒ€ãƒ¼
 
-	@param[out] pcMem ƒfƒR[ƒhÏ‚İ‚Ì•¶š—ñ‚ğŠi”[
+	@param[out] pcMem ãƒ‡ã‚³ãƒ¼ãƒ‰æ¸ˆã¿ã®æ–‡å­—åˆ—ã‚’æ ¼ç´
 */
 bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
 {
 	ECodeType ecodetype;
 	int nskip_bytes;
 
-	// ƒ\[ƒX‚ğæ“¾
+	// ã‚½ãƒ¼ã‚¹ã‚’å–å¾—
 	pcMem->AllocBuffer( nSrcLen );
 	char* pdst = reinterpret_cast<char*>( pcMem->GetRawPtr() );
 	if( pdst == NULL ){
@@ -74,8 +74,8 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 			++j;
 		}else{
 			if( ecodetype == eCodetype ){
-				// eChartype ‚ª ecodetype ‚Æˆê’v‚µ‚Ä‚¢‚éê‡‚É‚¾‚¯A
-				// •ÏŠ·Œ‹‰Ê‚ğƒRƒs[
+				// eChartype ãŒ ecodetype ã¨ä¸€è‡´ã—ã¦ã„ã‚‹å ´åˆã«ã ã‘ã€
+				// å¤‰æ›çµæœã‚’ã‚³ãƒ”ãƒ¼
 				memcpy( &pdst[j], cmembuf.GetRawPtr(), cmembuf.GetRawLength() );
 				i += nskip_bytes;
 				j += cmembuf.GetRawLength();
@@ -92,9 +92,9 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 }
 
 /*!
-	‰üsƒf[ƒ^æ“¾
+	æ”¹è¡Œãƒ‡ãƒ¼ã‚¿å–å¾—
 */
-// CShiftJis‚æ‚èˆÚ“® 2010/6/13 Uchi
+// CShiftJisã‚ˆã‚Šç§»å‹• 2010/6/13 Uchi
 void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 {
 	static const struct{

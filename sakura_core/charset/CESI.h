@@ -1,10 +1,10 @@
-/*!	@file
-	@brief �����R�[�h�̔��蒲�����鎞�Ɏg��������
+﻿/*!	@file
+	@brief 文字コードの判定調査する時に使う情報入れ
 
 	@author Sakura-Editor collaborators
-	@date 2006/12/10 �V�K�쐬
-	@date 2007/10/26 �N���X�̐����ύX (���F�����R�[�h�������ێ��N���X)
-	@date 2008/19/17 �N���X�̐����ύX�i���F�����R�[�h�𒲍����鎞�Ɏg���C���^�[�t�F�[�X�N���X�j
+	@date 2006/12/10 新規作成
+	@date 2007/10/26 クラスの説明変更 (旧：文字コード調査情報保持クラス)
+	@date 2008/19/17 クラスの説明変更（旧：文字コードを調査する時に使うインターフェースクラス）
 */
 /*
 	Copyright (C) 2006
@@ -39,26 +39,26 @@ struct SEncodingConfig;
 
 
 struct tagEncodingInfo {
-	ECodeType eCodeID;  // �����R�[�h���ʔԍ�
-	int nSpecific;	// �]���l1
-	int nPoints;	// �]���l2
+	ECodeType eCodeID;  // 文字コード識別番号
+	int nSpecific;	// 評価値1
+	int nPoints;	// 評価値2
 };
 typedef struct tagEncodingInfo  MBCODE_INFO, WCCODE_INFO;
 
 /*
-	���@�]���l�̎g�����@��
+	○　評価値の使い方　○
 
-	SJIS, JIS, EUCJP, UTF-8, UTF-7 �̏ꍇ�F
+	SJIS, JIS, EUCJP, UTF-8, UTF-7 の場合：
 
-	typedef�� MBCODE_INFO
-	�]���l�P �� �ŗL�o�C�g��
-	�]���l�Q �� �|�C���g���i���L�o�C�g�� �| �s���o�C�g���j
+	typedef名 MBCODE_INFO
+	評価値１ → 固有バイト数
+	評価値２ → ポイント数（特有バイト数 － 不正バイト数）
 
-	UTF-16 UTF-16BE �̏ꍇ�F
+	UTF-16 UTF-16BE の場合：
 
-	typedef�� WCCODE_INFO
-	�]���l�P �� ���C�h�����̉��s�̌�
-	�]���l�Q �� �s���o�C�g��
+	typedef名 WCCODE_INFO
+	評価値１ → ワイド文字の改行の個数
+	評価値２ → 不正バイト数
 */
 
 static const DWORD ESI_NOINFORMATION		= 0;
@@ -67,13 +67,13 @@ static const DWORD ESI_WC_DETECTED			= 2;
 static const DWORD ESI_NODETECTED			= 4;
 
 
-// ���C�h�����̂Q��ނ�����̂̊i�[�ʒu
+// ワイド文字の２種類あるものの格納位置
 enum EStoreID4WCInfo {
 	ESI_WCIDX_UTF16LE,
 	ESI_WCIDX_UTF16BE,
 	ESI_WCIDX_MAX,
 };
-// BOM �^�C�v
+// BOM タイプ
 enum EBOMType {
 	ESI_BOMTYPE_UNKNOWN = -1,
 	ESI_BOMTYPE_LE =0,
@@ -83,7 +83,7 @@ enum EBOMType {
 
 
 /*!
-	�����R�[�h�𒲍����鎞�ɐ�������i�[�N���X
+	文字コードを調査する時に生じる情報格納クラス
 //*/
 
 class CESI {
@@ -96,36 +96,36 @@ public:
 		m_eMetaName = CODE_NONE;
 	}
 
-	//! �������ʂ̏����i�[
+	//! 調査結果の情報を格納
 	void SetInformation( const char*, const int );
 
 protected:
 
-	//! �Y�����Ɏg����D�揇�ʕ\���쐬
+	//! 添え字に使われる優先順位表を作成
 	void InitPriorityTable( void );
 
-	//	**** �S��
-	// �}���`�o�C�g�n��UNICODE�n�Ƃł��ꂼ����̊i�[�悪�Ⴄ�B
-	// �ȉ��̊֐��ŋz������
-	int GetIndexById( const ECodeType ) const; //!< �����R�[�hID ������i�[��C���f�b�N�X�𐶐�
+	//	**** 全般
+	// マルチバイト系とUNICODE系とでそれぞれ情報の格納先が違う。
+	// 以下の関数で吸収する
+	int GetIndexById( const ECodeType ) const; //!< 文字コードID から情報格納先インデックスを生成
 
-	// �f�[�^�Z�b�^/�Q�b�^�[
+	// データセッタ/ゲッター
 	void SetEvaluation( const ECodeType, const int, const int );
 	void GetEvaluation( const ECodeType, int *, int * ) const;
 
-	//! �����ΏۂƂȂ����f�[�^�̒����i8bit �P�ʁj
+	//! 調査対象となったデータの長さ（8bit 単位）
 	int m_nTargetDataLen;
 
-	//! ���茋�ʂ��i�[�������
+	//! 判定結果を格納するもの
 	unsigned int m_dwStatus;
 
 public:
 
-	// m_dwStatus �̃Z�b�^�[�^�Q�b�^�[
+	// m_dwStatus のセッター／ゲッター
 	void SetStatus( DWORD inf ){ m_dwStatus |= inf; }
 	DWORD GetStatus( void ) const { return m_dwStatus; }
 
-	// m_nTargetDataLen �̃Z�b�^�[�^�Q�b�^�[
+	// m_nTargetDataLen のセッター／ゲッター
 protected:
 	void SetDataLen( const int n ){ if( n < 1 ){ m_nTargetDataLen = 0; }else{ m_nTargetDataLen = n; } }
 public:
@@ -133,7 +133,7 @@ public:
 
 protected:
 	/*
-		������̕����R�[�h�������W����
+		文字列の文字コード情報を収集する
 	*/
 	void ScanCode( const char *, const int );
 
@@ -154,22 +154,22 @@ protected:
 
 public:
 	//
-	//	**** �}���`�o�C�g����֌W�̕ϐ����̑�
+	//	**** マルチバイト判定関係の変数その他
 	//
 	static const int NUM_OF_MBCODE = (CODE_CODEMAX - 2);
-	MBCODE_INFO m_aMbcInfo[NUM_OF_MBCODE];   //!< SJIS, JIS, EUCJP, UTF8, UTF7 ���i�D��x�ɏ]���Ċi�[�����j
-	MBCODE_INFO* m_apMbcInfo[NUM_OF_MBCODE]; //!< �]�����Ƀ\�[�g���ꂽ SJIS, JIS, EUCJP, UTF8, UTF7, CESU8 �̏��
-	int m_nMbcSjisHankata;                   //!< SJIS ���p�J�^�J�i�̃o�C�g��
-	int m_nMbcEucZenHirakata;                //!< EUC �S�p�Ђ炪�ȃJ�^�J�i�̃o�C�g��
-	int m_nMbcEucZen;                        //!< EUC �S�p�̃o�C�g��
+	MBCODE_INFO m_aMbcInfo[NUM_OF_MBCODE];   //!< SJIS, JIS, EUCJP, UTF8, UTF7 情報（優先度に従って格納される）
+	MBCODE_INFO* m_apMbcInfo[NUM_OF_MBCODE]; //!< 評価順にソートされた SJIS, JIS, EUCJP, UTF8, UTF7, CESU8 の情報
+	int m_nMbcSjisHankata;                   //!< SJIS 半角カタカナのバイト数
+	int m_nMbcEucZenHirakata;                //!< EUC 全角ひらがなカタカナのバイト数
+	int m_nMbcEucZen;                        //!< EUC 全角のバイト数
 
-	//! �}���`�o�C�g�n�̑{�����ʂ��A�|�C���g���傫�����Ƀ\�[�g�B �\�[�g�������ʂ́Am_apMbcInfo �Ɋi�[
+	//! マルチバイト系の捜査結果を、ポイントが大きい順にソート。 ソートした結果は、m_apMbcInfo に格納
 	void SortMBCInfo( void );
 
-	//! EUC �� SJIS �����̃g�b�v�Q�ɏオ���Ă��邩�ǂ���
+	//! EUC と SJIS が候補のトップ２に上がっているかどうか
 	bool IsAmbiguousEucAndSjis( void ){
-		// EUC �� SJIS ���g�b�v2�ɏオ������
-		// ���AEUC �� SJIS �̃|�C���g���������̂Ƃ�
+		// EUC と SJIS がトップ2に上がった時
+		// かつ、EUC と SJIS のポイント数が同数のとき
 		if( (m_apMbcInfo[0]->eCodeID == CODE_SJIS && m_apMbcInfo[1]->eCodeID == CODE_EUC
 		     || m_apMbcInfo[1]->eCodeID == CODE_SJIS && m_apMbcInfo[0]->eCodeID == CODE_EUC)
 		 && m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints
@@ -179,10 +179,10 @@ public:
 		return false;
 	}
 
-	//! SJIS �� UTF-8 �����̃g�b�v2�ɏオ���Ă��邩�ǂ���
+	//! SJIS と UTF-8 が候補のトップ2に上がっているかどうか
 	bool IsAmbiguousUtf8AndCesu8( void ){
-		// UTF-8 �� SJIS ���g�b�v2�ɏオ������
-		// ���AUTF-8 �� SJIS �̃|�C���g���������̂Ƃ�
+		// UTF-8 と SJIS がトップ2に上がった時
+		// かつ、UTF-8 と SJIS のポイント数が同数のとき
 		if( (m_apMbcInfo[0]->eCodeID == CODE_UTF8 && m_apMbcInfo[1]->eCodeID == CODE_CESU8
 		     || m_apMbcInfo[1]->eCodeID == CODE_UTF8 && m_apMbcInfo[0]->eCodeID == CODE_CESU8)
 		 && m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints
@@ -193,21 +193,21 @@ public:
 	}
 
 protected:
-	void GuessEucOrSjis( void );	//!< EUC �� SJIS ���𔻒�
-	void GuessUtf8OrCesu8( void );	//!< UTF-8 �� CESU-8 ���𔻒�
+	void GuessEucOrSjis( void );	//!< EUC か SJIS かを判定
+	void GuessUtf8OrCesu8( void );	//!< UTF-8 か CESU-8 かを判定
 public:
 	//
-	// 	**** UTF-16 ����֌W�̕ϐ����̑�
+	// 	**** UTF-16 判定関係の変数その他
 	//
-	WCCODE_INFO m_aWcInfo[ESI_WCIDX_MAX];  //!< UTF-16 LE/BE ���
-	EBOMType m_eWcBomType;          //!< m_pWcInfo ���琄������� BOM �̎��
-	ECodeType m_eMetaName;          //!< �G���R�[�f�B���O������̎�ޔ���
+	WCCODE_INFO m_aWcInfo[ESI_WCIDX_MAX];  //!< UTF-16 LE/BE 情報
+	EBOMType m_eWcBomType;          //!< m_pWcInfo から推測される BOM の種類
+	ECodeType m_eMetaName;          //!< エンコーディング名からの種類判別
 
 	EBOMType GetBOMType(void) const { return m_eWcBomType; }
 	ECodeType GetMetaName() const { return m_eMetaName; }
 
 protected:
-	//! BOM�̎�ނ𐄑����� m_eWcBomType ��ݒ�
+	//! BOMの種類を推測して m_eWcBomType を設定
 	void GuessUtf16Bom( void );
 	ECodeType AutoDetectByXML( const char*, int );
 	ECodeType AutoDetectByHTML( const char*, int );
