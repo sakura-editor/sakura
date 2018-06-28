@@ -14,7 +14,7 @@ HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.
 MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
 
 @echo.
-@echo ---- Make gitrev.h ----
+@echo ---- Make gitHash.h ----
 : Git enabled checking
 set GIT_ENABLED=1
 where git 1>nul 2>&1
@@ -53,8 +53,8 @@ if "%GIT_ENABLED%" == "1" (
 @echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
 @echo APPVEYOR_BUILD_NUMBER : %APPVEYOR_BUILD_NUMBER%
 
-: Output gitrev.h
-set GITREV_H=..\sakura_core\gitrev.h
+: Output gitHash.h
+set GITREV_H=..\sakura_core\gitHash.h
 type nul                                  > %GITREV_H%
 echo #pragma once                        >> %GITREV_H%
 if "%COMMITID%" == "" (
