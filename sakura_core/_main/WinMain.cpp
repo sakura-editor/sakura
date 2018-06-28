@@ -42,29 +42,33 @@ namespace _os {
  * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
  */
 inline
-_Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR pszCommandLine) noexcept
+_Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR lpCmdLine) noexcept
 {
-		// 実行ファイル名をスキップする
-		if( _T('\"') == *pszCommandLine ){
-			pszCommandLine++;
-			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-			if( _T('\"') == *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}else{
-			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
-				&& _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}
-		// 次のトークンまで進める
-		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
-			pszCommandLine++;
-		}
+	// 内部定数(空白文字)
+	const WCHAR whiteSpace[] = L"\t\x20";
 
-	return pszCommandLine;
+	// 文字列がダブルクォーテーションで始まっているかチェック
+	if (L'\x22' == lpCmdLine[0]) {
+		// 文字列ポインタを進める
+		lpCmdLine++;
+		// 閉じクォーテーションを探す(パス文字列なのでエスケープの考慮は不要)
+		WCHAR *p = ::wcschr(lpCmdLine, L'\x22');
+		if (p) {
+			// 文字列ポインタを進める
+			lpCmdLine = ++p;
+		}
+	}
+	else {
+		// 最初のトークンをスキップする
+		// ※Windows 環境で実行する場合、この部分はデッドコードになる
+		//   Wine等によるエミュレータ実行を考慮して実装だけはしておく
+		size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
+		lpCmdLine = &lpCmdLine[nPos];
+	}
+
+	// 次のトークンまで進める
+	size_t nPos = ::wcsspn(lpCmdLine, whiteSpace);
+	return &lpCmdLine[nPos];
 }
 
 
