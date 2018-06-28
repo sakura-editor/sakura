@@ -27,6 +27,49 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 
+
+namespace _os {
+
+
+/*!
+ * @brief WinMainの引数「コマンドライン文字列」を取得する
+ *
+ *  入力: "\"C:\Program Files (x86)\\sakura\\sakura.exe\" -NOWIN"
+ *  出力: "-NOWIN"
+ *  ※ポインタ位置を進めているだけ。
+ *
+ * @param [in] lpCmdLine GetCommandLineW()の戻り値。
+ * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
+ */
+_Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR pszCommandLine) noexcept
+{
+		// 実行ファイル名をスキップする
+		if( _T('\"') == *pszCommandLine ){
+			pszCommandLine++;
+			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
+				pszCommandLine++;
+			}
+			if( _T('\"') == *pszCommandLine ){
+				pszCommandLine++;
+			}
+		}else{
+			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
+				&& _T('\0') != *pszCommandLine ){
+				pszCommandLine++;
+			}
+		}
+		// 次のトークンまで進める
+		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
+			pszCommandLine++;
+		}
+
+	return pszCommandLine;
+}
+
+
+}; // end of namespace _os
+
+
 /*!
 	Windows Entry point
 
@@ -95,25 +138,7 @@ int WINAPI _tWinMain(
 #ifdef __MINGW32__
 		LPTSTR pszCommandLine;
 		pszCommandLine = ::GetCommandLine();
-		// 実行ファイル名をスキップする
-		if( _T('\"') == *pszCommandLine ){
-			pszCommandLine++;
-			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-			if( _T('\"') == *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}else{
-			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
-				&& _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}
-		// 次のトークンまで進める
-		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
-			pszCommandLine++;
-		}
+		pszCommandLine = _os::SkipExeNameOfCommandLine(pszCommandLine);
 		process = aFactory.Create( hInstance, pszCommandLine );
 #else
 		process = aFactory.Create( hInstance, lpCmdLine );
