@@ -23,56 +23,10 @@
 #include <Ole2.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
+#include "_os/SkipExeNameOfCommandLine.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
-
-
-namespace _os {
-
-
-/*!
- * @brief WinMainの引数「コマンドライン文字列」を取得する
- *
- *  入力: "\"C:\Program Files (x86)\\sakura\\sakura.exe\" -NOWIN"
- *  出力: "-NOWIN"
- *  ※ポインタ位置を進めているだけ。
- *
- * @param [in] lpCmdLine GetCommandLineW()の戻り値。
- * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
- */
-inline
-_Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR lpCmdLine) noexcept
-{
-	// 内部定数(空白文字)
-	const WCHAR whiteSpace[] = L"\t\x20";
-
-	// 文字列がダブルクォーテーションで始まっているかチェック
-	if (L'\x22' == lpCmdLine[0]) {
-		// 文字列ポインタを進める
-		lpCmdLine++;
-		// 閉じクォーテーションを探す(パス文字列なのでエスケープの考慮は不要)
-		WCHAR *p = ::wcschr(lpCmdLine, L'\x22');
-		if (p) {
-			// 文字列ポインタを進める
-			lpCmdLine = ++p;
-		}
-	}
-	else {
-		// 最初のトークンをスキップする
-		// ※Windows 環境で実行する場合、この部分はデッドコードになる
-		//   Wine等によるエミュレータ実行を考慮して実装だけはしておく
-		size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
-		lpCmdLine = &lpCmdLine[nPos];
-	}
-
-	// 次のトークンまで進める
-	size_t nPos = ::wcsspn(lpCmdLine, whiteSpace);
-	return &lpCmdLine[nPos];
-}
-
-
-}; // end of namespace _os
 
 
 /*!

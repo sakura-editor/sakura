@@ -1088,6 +1088,9 @@
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\_os\SkipExeNameOfCommandLine.h">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sakura_core\Funccode_x.hsrc">
