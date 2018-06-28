@@ -41,6 +41,7 @@ namespace _os {
  * @param [in] lpCmdLine GetCommandLineW()の戻り値。
  * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
  */
+inline
 _Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR pszCommandLine) noexcept
 {
 		// 実行ファイル名をスキップする
@@ -80,21 +81,12 @@ _Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR pszCommandLine) noexcept
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
-#ifdef __MINGW32__
-int WINAPI WinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPSTR		lpCmdLineA,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
-)
-#else
 int WINAPI _tWinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPTSTR		lpCmdLine,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
+	_In_		HINSTANCE	hInstance,		//!< handle to current instance
+	_In_opt_	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	_In_		LPTSTR		lpCmdLine,		//!< pointer to command line
+	_In_		int			nCmdShow		//!< show state of window
 )
-#endif
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
@@ -135,14 +127,7 @@ int WINAPI _tWinMain(
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
-#ifdef __MINGW32__
-		LPTSTR pszCommandLine;
-		pszCommandLine = ::GetCommandLine();
-		pszCommandLine = _os::SkipExeNameOfCommandLine(pszCommandLine);
-		process = aFactory.Create( hInstance, pszCommandLine );
-#else
 		process = aFactory.Create( hInstance, lpCmdLine );
-#endif
 		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
 	}
 	catch(...){
@@ -157,3 +142,25 @@ int WINAPI _tWinMain(
 }
 
 
+#if defined( __MINGW32__ ) && defined( _UNICODE )
+/*!
+	Windows Entry point for MinGW Unicode Build.
+
+	MinGW環境では wWinMain をエントリポイントとして起動できないため、
+	自前でコマンドラインを取得して lpCmdLine を作成する
+	wWinMainに入ったあとは普通の Windows アプリと同じ。
+ */
+int WINAPI WinMain(
+	_In_		HINSTANCE	hInstance,		//!< handle to current instance
+	_In_opt_	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	_In_		LPSTR		lpCmdLineA,		//!< pointer to command line
+	_In_		int			nCmdShow		//!< show state of window
+)
+{
+	// コマンドラインを取得して実行ファイル名をスキップする
+	LPTSTR pszCommandLine;
+	pszCommandLine = ::GetCommandLine();
+	pszCommandLine = _os::SkipExeNameOfCommandLine(pszCommandLine);
+	return _tWinMain( hInstance, hPrevInstance, pszCommandLine, nCmdShow );
+}
+#endif /* defined( __MINGW32__ ) && defined( _UNICODE ) */
