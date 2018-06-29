@@ -1,17 +1,22 @@
 @echo off
 set EXEDIR=%1
+set SRCDIR=..\sakura_core
+set DSTDIR=%SRCDIR%
+set MAKEFILEDIR=%SRCDIR%
+set TOPDIR=%SRCDIR%
+
 @echo =======================
 @echo preBuild
 @echo =======================
 
 @echo.
 @echo ---- HeaderMake ----
-%EXEDIR%HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
-%EXEDIR%HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode
+%EXEDIR%HeaderMake -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_define.h -mode=define
+%EXEDIR%HeaderMake -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 @echo.
 @echo ---- MakefileMake ----
-%EXEDIR%MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
+%EXEDIR%MakefileMake -file=%MAKEFILEDIR%\Makefile -dir=%TOPDIR%
 
 @echo.
 @echo ---- Make githash.h ----
