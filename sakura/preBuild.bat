@@ -1,17 +1,17 @@
 @echo off
-
+set EXEDIR=%1
 @echo =======================
 @echo preBuild
 @echo =======================
 
 @echo.
 @echo ---- HeaderMake ----
-HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
-HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode
+%EXEDIR%HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
+%EXEDIR%HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 @echo.
 @echo ---- MakefileMake ----
-MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
+%EXEDIR%MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
 
 @echo.
 @echo ---- Make githash.h ----
