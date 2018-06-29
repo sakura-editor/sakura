@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "gitHash.h"
+#include "githash.h"
 
 #ifdef _UNICODE
 #define VER_CHARSET "UNICODE"
