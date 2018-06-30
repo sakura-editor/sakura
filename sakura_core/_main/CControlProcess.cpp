@@ -44,14 +44,6 @@ bool CControlProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
-	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
-	if( NULL == m_hMutex ){
-		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
-		return false;
-	}
-
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 
 	/* コントロールプロセスの目印 */
@@ -75,6 +67,14 @@ bool CControlProcess::InitializeProcess()
 	{
 		ErrorBeep();
 		TopErrorMessage( NULL, _T("CreateEvent()失敗。\n終了します。") );
+		return false;
+	}
+
+	// アプリケーション実行検出用(インストーラで使用)
+	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
+	if( NULL == m_hMutex ){
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
 
@@ -162,6 +162,11 @@ CControlProcess::~CControlProcess()
 {
 	delete m_pcTray;
 
+	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
+	if( m_hMutex ){
+		::ReleaseMutex( m_hMutex );
+	}
+	::CloseHandle( m_hMutex );
 	if( m_hEventCPInitialized ){
 		::ResetEvent( m_hEventCPInitialized );
 	}
@@ -170,11 +175,6 @@ CControlProcess::~CControlProcess()
 		::ReleaseMutex( m_hMutexCP );
 	}
 	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
 };
 
 
