@@ -22,7 +22,7 @@ def writeHash(hashFile, topdir):
 				full_path = os.path.join(root, file)
 				checksum = getSha256(full_path)
 				fout.write(checksum + "\t" + full_path + "\n")
-				print checksum + "\t" + full_path
+				print (checksum + "\t" + full_path)
 
 hashFile = sys.argv[1]
 topdir   = sys.argv[2]
