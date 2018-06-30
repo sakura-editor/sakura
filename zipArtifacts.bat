@@ -42,8 +42,9 @@ if "%ALPHA%" == "1" (
 	copy installer\warning-alpha.txt   %WORKDIR%\
 )
 copy installer\Output\*.exe  %WORKDIR_INST%\
-copy msbuild-%platform%-%configuration%.log %WORKDIR_LOG%\
-copy sakura_core\githash.h                  %WORKDIR_LOG%\
+copy msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
+copy msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
+copy sakura_core\githash.h                      %WORKDIR_LOG%\
 
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
