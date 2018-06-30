@@ -14,7 +14,7 @@ HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.
 MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
 
 @echo.
-@echo ---- Make gitrev.h ----
+@echo ---- Make githash.h ----
 : Git enabled checking
 set GIT_ENABLED=1
 where git 1>nul 2>&1
@@ -53,61 +53,61 @@ if "%GIT_ENABLED%" == "1" (
 @echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
 @echo APPVEYOR_BUILD_NUMBER : %APPVEYOR_BUILD_NUMBER%
 
-: Output gitrev.h
-set GITREV_H=..\sakura_core\gitrev.h
-type nul                                  > %GITREV_H%
-echo #pragma once                        >> %GITREV_H%
+: Output githash.h
+set GITHASH_H=..\sakura_core\githash.h
+type nul                                  > %GITHASH_H%
+echo #pragma once                        >> %GITHASH_H%
 if "%COMMITID%" == "" (
-	type nul                                  >> %GITREV_H%
+	type nul                                  >> %GITHASH_H%
 ) else (
-	echo #define GIT_COMMIT_HASH "%COMMITID%" >> %GITREV_H%
+	echo #define GIT_COMMIT_HASH "%COMMITID%" >> %GITHASH_H%
 )
 if "%SHORT_COMMITID%" == "" (
-	type nul                                              >> %GITREV_H%
+	type nul                                              >> %GITHASH_H%
 ) else (
-	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%" >> %GITREV_H%
+	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%" >> %GITHASH_H%
 )
 if "%GIT_URL%" == "" (
-	type nul                                              >> %GITREV_H%
+	type nul                                              >> %GITHASH_H%
 ) else (
-	echo #define GIT_URL "%GIT_URL%"                      >> %GITREV_H%
+	echo #define GIT_URL "%GIT_URL%"                      >> %GITHASH_H%
 )
 
 if "%APPVEYOR_URL%" == "" (
-	type nul                                              >> %GITREV_H%
+	type nul                                              >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_URL "%APPVEYOR_URL%"            >> %GITREV_H%
+	echo #define APPVEYOR_URL "%APPVEYOR_URL%"            >> %GITHASH_H%
 )
 
 if "%APPVEYOR_REPO_NAME%" == "" (
-	type nul                                                          >> %GITREV_H%
+	type nul                                                          >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"            >> %GITREV_H%
+	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"            >> %GITHASH_H%
 )
 
 if "%APPVEYOR_ACCOUNT_NAME%" == "" (
-	type nul                                                          >> %GITREV_H%
+	type nul                                                          >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"      >> %GITREV_H%
+	echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"      >> %GITHASH_H%
 )
 
 if "%APPVEYOR_PROJECT_SLUG%" == "" (
-	type nul                                                          >> %GITREV_H%
+	type nul                                                          >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"      >> %GITREV_H%
+	echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"      >> %GITHASH_H%
 )
 
 if "%APPVEYOR_BUILD_VERSION%" == "" (
-	type nul                                                          >> %GITREV_H%
+	type nul                                                          >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"    >> %GITREV_H%
+	echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"    >> %GITHASH_H%
 )
 
 if "%APPVEYOR_BUILD_NUMBER%" == "" (
-	type nul                                                          >> %GITREV_H%
+	type nul                                                          >> %GITHASH_H%
 ) else (
-	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"      >> %GITREV_H%
-	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%       >> %GITREV_H%
+	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"      >> %GITHASH_H%
+	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%       >> %GITHASH_H%
 )
 
 ENDLOCAL
