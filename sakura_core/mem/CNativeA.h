@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -33,18 +33,18 @@ public:
 	CNativeA(const char* szData);
 	CNativeA(const char* pData, int nLength);
 
-	//ƒlƒCƒeƒBƒuİ’è
-	void SetString( const char* pszData );                  //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
-	void SetString( const char* pData, int nDataLen );      //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBnDataLen‚Í•¶š’PˆÊB
-	void SetNativeData( const CNativeA& pcNative );         //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
-	void AppendString( const char* pszData );               //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
-	void AppendString( const char* pszData, int nLength );  //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBnLength‚Í•¶š’PˆÊB
-	void AppendNativeData( const CNativeA& pcNative );      //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
-	void AllocStringBuffer( int nDataLen );            //!< (d—vFnDataLen‚Í•¶š’PˆÊ) ƒoƒbƒtƒ@ƒTƒCƒY‚Ì’²®B•K—v‚É‰‚¶‚ÄŠg‘å‚·‚éB
+	//ãƒã‚¤ãƒ†ã‚£ãƒ–è¨­å®š
+	void SetString( const char* pszData );                  //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
+	void SetString( const char* pData, int nDataLen );      //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚nDataLenã¯æ–‡å­—å˜ä½ã€‚
+	void SetNativeData( const CNativeA& pcNative );         //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
+	void AppendString( const char* pszData );               //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
+	void AppendString( const char* pszData, int nLength );  //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚nLengthã¯æ–‡å­—å˜ä½ã€‚
+	void AppendNativeData( const CNativeA& pcNative );      //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
+	void AllocStringBuffer( int nDataLen );            //!< (é‡è¦ï¼šnDataLenã¯æ–‡å­—å˜ä½) ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®èª¿æ•´ã€‚å¿…è¦ã«å¿œã˜ã¦æ‹¡å¤§ã™ã‚‹ã€‚
 
-	//ƒlƒCƒeƒBƒuæ“¾
+	//ãƒã‚¤ãƒ†ã‚£ãƒ–å–å¾—
 	int GetStringLength() const;
-	char operator[](int nIndex) const;                 //!< ”CˆÓˆÊ’u‚Ì•¶šæ“¾BnIndex‚Í•¶š’PˆÊB
+	char operator[](int nIndex) const;                 //!< ä»»æ„ä½ç½®ã®æ–‡å­—å–å¾—ã€‚nIndexã¯æ–‡å­—å˜ä½ã€‚
 	const char* GetStringPtr() const
 	{
 		return reinterpret_cast<const char*>(GetRawPtr());
@@ -53,45 +53,45 @@ public:
 	{
 		return reinterpret_cast<char*>(GetRawPtr());
 	}
-	const char* GetStringPtr(int* pnLength) const; //[out]pnLength‚Í•¶š’PˆÊB
+	const char* GetStringPtr(int* pnLength) const; //[out]pnLengthã¯æ–‡å­—å˜ä½ã€‚
 
-	//‰‰Zq
+	//æ¼”ç®—å­
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           •ÏŠ·                              //
+	//                           å¤‰æ›                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//ƒlƒCƒeƒBƒu•ÏŠ·
-	void Replace( const char* pszFrom, const char* pszTo );   //!< •¶š—ñ’uŠ·
-	void Replace_j( const char* pszFrom, const char* pszTo ); //!< •¶š—ñ’uŠ·i“ú–{Œêl—¶”Åj
+	//ãƒã‚¤ãƒ†ã‚£ãƒ–å¤‰æ›
+	void Replace( const char* pszFrom, const char* pszTo );   //!< æ–‡å­—åˆ—ç½®æ›
+	void Replace_j( const char* pszFrom, const char* pszTo ); //!< æ–‡å­—åˆ—ç½®æ›ï¼ˆæ—¥æœ¬èªè€ƒæ…®ç‰ˆï¼‰
 	void ReplaceT( const char* pszFrom, const char* pszTo ){
 		Replace_j( pszFrom, pszTo );
 	}
 
-	//ˆê”ÊŠÖ”
-	void ToLower(); // ¨¬•¶š
-	void ToUpper(); // ¨‘å•¶š
+	//ä¸€èˆ¬é–¢æ•°
+	void ToLower(); // â†’å°æ–‡å­—
+	void ToUpper(); // â†’å¤§æ–‡å­—
 
-	void ToZenkaku( int, int );  // ”¼Šp¨‘SŠp
+	void ToZenkaku( int, int );  // åŠè§’â†’å…¨è§’
 
-	void TABToSPACE( int ); // TAB¨‹ó”’
-	void SPACEToTAB( int ); // ‹ó”’¨TAB  //---- Stonee, 2001/05/27
+	void TABToSPACE( int ); // TABâ†’ç©ºç™½
+	void SPACEToTAB( int ); // ç©ºç™½â†’TAB  //---- Stonee, 2001/05/27
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  Œ^ŒÀ’èƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+	//                  å‹é™å®šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// g—p‚Í‚Å‚«‚é‚¾‚¯T‚¦‚é‚Ì‚ª–]‚Ü‚µ‚¢B
-	// ‚Ğ‚Æ‚Â‚ÍƒI[ƒo[ƒwƒbƒh‚ğ—}‚¦‚éˆÓ–¡‚ÅB
-	// ‚Ğ‚Æ‚Â‚Í•ÏŠ·‚É‚æ‚éƒf[ƒ^‘r¸‚ğ—}‚¦‚éˆÓ–¡‚ÅB
+	// ä½¿ç”¨ã¯ã§ãã‚‹ã ã‘æ§ãˆã‚‹ã®ãŒæœ›ã¾ã—ã„ã€‚
+	// ã²ã¨ã¤ã¯ã‚ªãƒ¼ãƒãƒ¼ãƒ˜ãƒƒãƒ‰ã‚’æŠ‘ãˆã‚‹æ„å‘³ã§ã€‚
+	// ã²ã¨ã¤ã¯å¤‰æ›ã«ã‚ˆã‚‹ãƒ‡ãƒ¼ã‚¿å–ªå¤±ã‚’æŠ‘ãˆã‚‹æ„å‘³ã§ã€‚
 
 	//WCHAR
 	void SetStringNew(const wchar_t* wszData, int nDataLen);
 	void SetStringNew(const wchar_t* wszData);
-	void AppendStringNew( const wchar_t* pszData );               //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
-	void AppendStringNew( const wchar_t* pszData, int nDataLen ); //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBnDataLen‚Í•¶š’PˆÊB
+	void AppendStringNew( const wchar_t* pszData );               //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
+	void AppendStringNew( const wchar_t* pszData, int nDataLen ); //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚nDataLenã¯æ–‡å­—å˜ä½ã€‚
 	void SetStringW(const wchar_t* pszData)				{ return SetStringNew(pszData); }
 	void SetStringW(const wchar_t* pData, int nLength)		{ return SetStringNew(pData,nLength); }
 	void AppendStringW(const wchar_t* pszData)				{ return AppendStringNew(pszData); }
@@ -108,10 +108,10 @@ public:
 #endif
 
 public:
-	// -- -- staticƒCƒ“ƒ^[ƒtƒF[ƒX -- -- //
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
-	static const char* GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚ÌŸ‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚·
-	static const char* GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚Ì’¼‘O‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚·
+	// -- -- staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ -- -- //
+	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
+	static const char* GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®æ¬¡ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™
+	static const char* GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®ç›´å‰ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™
 };
 
 #endif /* SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_ */

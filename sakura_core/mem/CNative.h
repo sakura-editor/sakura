@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,16 +26,16 @@
 
 #include "mem/CMemory.h"
 
-//¦CMemory‚ğprotectŒp³‚·‚é‚±‚Æ‚É‚æ‚èA‚ ‚Ü‚è©—R‚ÉCMemory‚ğg‚¦‚È‚¢‚æ‚¤‚É‚µ‚Ä‚¨‚­
+//â€»CMemoryã‚’protectç¶™æ‰¿ã™ã‚‹ã“ã¨ã«ã‚ˆã‚Šã€ã‚ã¾ã‚Šè‡ªç”±ã«CMemoryã‚’ä½¿ãˆãªã„ã‚ˆã†ã«ã—ã¦ãŠã
 class CNative : protected CMemory{
 public:
-	//CMemory*ƒ|ƒCƒ“ƒ^‚ğ“¾‚é
+	//CMemory*ãƒã‚¤ãƒ³ã‚¿ã‚’å¾—ã‚‹
 	CMemory* _GetMemory(){ return static_cast<CMemory*>(this); }
 	const CMemory* _GetMemory() const{ return static_cast<const CMemory*>(this); }
 
 public:
-	//”Ä—p
-	void Clear(); //!< ‹ó‚Á‚Û‚É‚·‚é
+	//æ±ç”¨
+	void Clear(); //!< ç©ºã£ã½ã«ã™ã‚‹
 };
 
 #include "mem/CNativeA.h"

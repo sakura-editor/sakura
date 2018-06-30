@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,7 +30,7 @@
 #include "debug/Debug2.h" //assert
 
 
-//! •¶š—ñ‚Ö‚ÌQÆ‚ğæ“¾‚·‚éƒCƒ“ƒ^[ƒtƒF[ƒX
+//! æ–‡å­—åˆ—ã¸ã®å‚ç…§ã‚’å–å¾—ã™ã‚‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 class IStringRef{
 public:
 	virtual const wchar_t*	GetPtr()	const = 0;
@@ -38,7 +38,7 @@ public:
 };
 
 
-//! •¶š—ñ‚Ö‚ÌQÆ‚ğ•Û‚·‚éƒNƒ‰ƒX
+//! æ–‡å­—åˆ—ã¸ã®å‚ç…§ã‚’ä¿æŒã™ã‚‹ã‚¯ãƒ©ã‚¹
 class CStringRef : public IStringRef{
 public:
 	CStringRef() : m_pData(NULL), m_nDataLen(0) { }
@@ -46,7 +46,7 @@ public:
 	const wchar_t*	GetPtr()		const{ return m_pData;    }
 	int				GetLength()		const{ return m_nDataLen; }
 
-	//########•â•
+	//########è£œåŠ©
 	bool			IsValid()		const{ return m_pData!=NULL; }
 	wchar_t			At(int nIndex)	const{ assert(nIndex>=0 && nIndex<m_nDataLen); return m_pData[nIndex]; }
 private:
@@ -55,30 +55,30 @@ private:
 };
 
 
-//! UNICODE•¶š—ñŠÇ—ƒNƒ‰ƒX
+//! UNICODEæ–‡å­—åˆ—ç®¡ç†ã‚¯ãƒ©ã‚¹
 class CNativeW : public CNative{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CNativeW();
 	CNativeW( const CNativeW& );
-	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLen‚Í•¶š’PˆÊB
+	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenã¯æ–‡å­—å˜ä½ã€‚
 	CNativeW( const wchar_t* pData);
 
-	//ŠÇ—
-	void AllocStringBuffer( int nDataLen );                    //!< (d—vFnDataLen‚Í•¶š’PˆÊ) ƒoƒbƒtƒ@ƒTƒCƒY‚Ì’²®B•K—v‚É‰‚¶‚ÄŠg‘å‚·‚éB
+	//ç®¡ç†
+	void AllocStringBuffer( int nDataLen );                    //!< (é‡è¦ï¼šnDataLenã¯æ–‡å­—å˜ä½) ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®èª¿æ•´ã€‚å¿…è¦ã«å¿œã˜ã¦æ‹¡å¤§ã™ã‚‹ã€‚
 
 	//WCHAR
-	void SetString( const wchar_t* pData, int nDataLen );      //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBnDataLen‚Í•¶š’PˆÊB
-	void SetString( const wchar_t* pszData );                  //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+	void SetString( const wchar_t* pData, int nDataLen );      //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚nDataLenã¯æ–‡å­—å˜ä½ã€‚
+	void SetString( const wchar_t* pszData );                  //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 	void SetStringHoldBuffer( const wchar_t* pData, int nDataLen );
-	void AppendString( const wchar_t* pszData );               //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
-	void AppendString( const wchar_t* pszData, int nLength );  //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBnLength‚Í•¶š’PˆÊB¬Œ÷‚·‚ê‚ÎtrueBƒƒ‚ƒŠŠm•Û‚É¸”s‚µ‚½‚çfalse‚ğ•Ô‚·B
+	void AppendString( const wchar_t* pszData );               //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
+	void AppendString( const wchar_t* pszData, int nLength );  //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚nLengthã¯æ–‡å­—å˜ä½ã€‚æˆåŠŸã™ã‚Œã°trueã€‚ãƒ¡ãƒ¢ãƒªç¢ºä¿ã«å¤±æ•—ã—ãŸã‚‰falseã‚’è¿”ã™ã€‚
 
 	//CNativeW
-	void SetNativeData( const CNativeW& pcNative );            //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
-	void AppendNativeData( const CNativeW& );                  //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+	void SetNativeData( const CNativeW& pcNative );            //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
+	void AppendNativeData( const CNativeW& );                  //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 
-	//‰‰Zq
+	//æ¼”ç®—å­
 	const CNativeW& operator+=(wchar_t wch)				{ AppendString(&wch,1);   return *this; }
 	const CNativeW& operator=(wchar_t wch)				{ SetString(&wch,1);      return *this; }
 	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }
@@ -86,9 +86,9 @@ public:
 	CNativeW operator+(const CNativeW& rhs) const		{ CNativeW tmp=*this; return tmp+=rhs; }
 
 
-	//ƒlƒCƒeƒBƒuæ“¾ƒCƒ“ƒ^[ƒtƒF[ƒX
-	wchar_t operator[](int nIndex) const;                    //!< ”CˆÓˆÊ’u‚Ì•¶šæ“¾BnIndex‚Í•¶š’PˆÊB
-	CLogicInt GetStringLength() const                        //!< •¶š—ñ’·‚ğ•Ô‚·B•¶š’PˆÊB
+	//ãƒã‚¤ãƒ†ã‚£ãƒ–å–å¾—ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	wchar_t operator[](int nIndex) const;                    //!< ä»»æ„ä½ç½®ã®æ–‡å­—å–å¾—ã€‚nIndexã¯æ–‡å­—å˜ä½ã€‚
+	CLogicInt GetStringLength() const                        //!< æ–‡å­—åˆ—é•·ã‚’è¿”ã™ã€‚æ–‡å­—å˜ä½ã€‚
 	{
 		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
 	}
@@ -100,13 +100,13 @@ public:
 	{
 		return reinterpret_cast<wchar_t*>(GetRawPtr());
 	}
-	const wchar_t* GetStringPtr(int* pnLength) const //[out]pnLength‚Í•¶š’PˆÊB
+	const wchar_t* GetStringPtr(int* pnLength) const //[out]pnLengthã¯æ–‡å­—å˜ä½ã€‚
 	{
 		*pnLength=GetStringLength();
 		return reinterpret_cast<const wchar_t*>(GetRawPtr());
 	}
 #ifdef USE_STRICT_INT
-	const wchar_t* GetStringPtr(CLogicInt* pnLength) const //[out]pnLength‚Í•¶š’PˆÊB
+	const wchar_t* GetStringPtr(CLogicInt* pnLength) const //[out]pnLengthã¯æ–‡å­—å˜ä½ã€‚
 	{
 		int n;
 		const wchar_t* p=GetStringPtr(&n);
@@ -115,12 +115,12 @@ public:
 	}
 #endif
 
-	//“Áê
+	//ç‰¹æ®Š
 	void _SetStringLength(int nLength)
 	{
 		_GetMemory()->_SetRawLength(nLength*sizeof(wchar_t));
 	}
-	//––”ö‚ğ1•¶ší‚é
+	//æœ«å°¾ã‚’1æ–‡å­—å‰Šã‚‹
 	void Chop()
 	{
 		int n = GetStringLength();
@@ -138,38 +138,38 @@ public:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ”»’è                              //
+	//                           åˆ¤å®š                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	
-	//! “¯ˆê‚Ì•¶š—ñ‚È‚çtrue
+	//! åŒä¸€ã®æ–‡å­—åˆ—ãªã‚‰true
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           •ÏŠ·                              //
+	//                           å¤‰æ›                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< •¶š—ñ’uŠ·
+	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< æ–‡å­—åˆ—ç½®æ›
 	void ReplaceT( const wchar_t* pszFrom, const wchar_t* pszTo ){
 		Replace( pszFrom, pszTo );
 	}
-	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< •¶š—ñ’uŠ·
+	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< æ–‡å­—åˆ—ç½®æ›
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  Œ^ŒÀ’èƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+	//                  å‹é™å®šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// g—p‚Í‚Å‚«‚é‚¾‚¯T‚¦‚é‚Ì‚ª–]‚Ü‚µ‚¢B
-	// ‚Ğ‚Æ‚Â‚ÍƒI[ƒo[ƒwƒbƒh‚ğ—}‚¦‚éˆÓ–¡‚ÅB
-	// ‚Ğ‚Æ‚Â‚Í•ÏŠ·‚É‚æ‚éƒf[ƒ^‘r¸‚ğ—}‚¦‚éˆÓ–¡‚ÅB
+	// ä½¿ç”¨ã¯ã§ãã‚‹ã ã‘æ§ãˆã‚‹ã®ãŒæœ›ã¾ã—ã„ã€‚
+	// ã²ã¨ã¤ã¯ã‚ªãƒ¼ãƒãƒ¼ãƒ˜ãƒƒãƒ‰ã‚’æŠ‘ãˆã‚‹æ„å‘³ã§ã€‚
+	// ã²ã¨ã¤ã¯å¤‰æ›ã«ã‚ˆã‚‹ãƒ‡ãƒ¼ã‚¿å–ªå¤±ã‚’æŠ‘ãˆã‚‹æ„å‘³ã§ã€‚
 
 	//ACHAR
-	void SetStringOld( const char* pData, int nDataLen );    //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBpData‚ÍSJISBnDataLen‚Í•¶š’PˆÊB
-	void SetStringOld( const char* pszData );                //!< ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBpszData‚ÍSJISB
-	void AppendStringOld( const char* pData, int nDataLen ); //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBpszData‚ÍSJISB
-	void AppendStringOld( const char* pszData );             //!< ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBpszData‚ÍSJISB
-	const char* GetStringPtrOld() const; //ShiftJIS‚É•ÏŠ·‚µ‚Ä•Ô‚·
+	void SetStringOld( const char* pData, int nDataLen );    //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚pDataã¯SJISã€‚nDataLenã¯æ–‡å­—å˜ä½ã€‚
+	void SetStringOld( const char* pszData );                //!< ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚pszDataã¯SJISã€‚
+	void AppendStringOld( const char* pData, int nDataLen ); //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚pszDataã¯SJISã€‚
+	void AppendStringOld( const char* pszData );             //!< ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚pszDataã¯SJISã€‚
+	const char* GetStringPtrOld() const; //ShiftJISã«å¤‰æ›ã—ã¦è¿”ã™
 
 	//WCHAR
 	void SetStringW(const wchar_t* pszData)				{ return SetString(pszData); }
@@ -198,18 +198,18 @@ public:
 #if _DEBUG
 private:
 	typedef wchar_t* PWCHAR;
-	PWCHAR& m_pDebugData; //ƒfƒoƒbƒO—pBCMemory‚Ì“à—e‚ğwchar_t*Œ^‚ÅƒEƒHƒbƒ`‚·‚é‚½‚ß‚Ìƒ‚ƒm
+	PWCHAR& m_pDebugData; //ãƒ‡ãƒãƒƒã‚°ç”¨ã€‚CMemoryã®å†…å®¹ã‚’wchar_t*å‹ã§ã‚¦ã‚©ãƒƒãƒã™ã‚‹ãŸã‚ã®ãƒ¢ãƒ
 #endif
 
 public:
-	// -- -- staticƒCƒ“ƒ^[ƒtƒF[ƒX -- -- //
-	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ªwchar_t‰½ŒÂ•ª‚©‚ğ•Ô‚·
+	// -- -- staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ -- -- //
+	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒwchar_tä½•å€‹åˆ†ã‹ã‚’è¿”ã™
 	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx );
-	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª”¼Šp‰½ŒÂ•ª‚©‚ğ•Ô‚·
-	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚ÌŸ‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚·
-	static const wchar_t* GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚Ì’¼‘O‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚·
+	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒåŠè§’ä½•å€‹åˆ†ã‹ã‚’è¿”ã™
+	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®æ¬¡ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™
+	static const wchar_t* GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®ç›´å‰ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™
 
-	static CKetaXInt GetKetaOfChar( const CStringRef& cStr, int nIdx ) //!< w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª”¼Šp‰½ŒÂ•ª‚©‚ğ•Ô‚·
+	static CKetaXInt GetKetaOfChar( const CStringRef& cStr, int nIdx ) //!< æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒåŠè§’ä½•å€‹åˆ†ã‹ã‚’è¿”ã™
 	{
 		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
 	}

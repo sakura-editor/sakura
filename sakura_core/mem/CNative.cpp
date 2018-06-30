@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CNative.h"
 
-//! ‹ó‚Á‚Û‚É‚·‚é
+//! ç©ºã£ã½ã«ã™ã‚‹
 void CNative::Clear()
 {
 	this->SetRawData("",0);

@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "mem/CNativeW.h"
 #include "CEol.h"
 #include "charset/CShiftJis.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 CNativeW::CNativeW()
 #if _DEBUG
@@ -21,7 +21,7 @@ CNativeW::CNativeW(const CNativeW& rhs)
 	SetNativeData(rhs);
 }
 
-//! nDataLen‚Í•¶š’PˆÊB
+//! nDataLenã¯æ–‡å­—å˜ä½ã€‚
 CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
 #if _DEBUG
 : m_pDebugData((PWCHAR&)_DebugGetPointerRef())
@@ -39,17 +39,17 @@ CNativeW::CNativeW( const wchar_t* pData)
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒuİ’èƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–è¨­å®šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeW::SetString( const wchar_t* pData, int nDataLen )
 {
 	CNative::SetRawData(pData,nDataLen * sizeof(wchar_t));
 }
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeW::SetString( const wchar_t* pszData )
 {
 	CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
@@ -60,39 +60,39 @@ void CNativeW::SetStringHoldBuffer( const wchar_t* pData, int nDataLen )
 	CNative::SetRawDataHoldBuffer(pData, nDataLen * sizeof(wchar_t));
 }
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeW::SetNativeData( const CNativeW& pcNative )
 {
 	CNative::SetRawData(pcNative);
 }
 
-//! (d—vFnDataLen‚Í•¶š’PˆÊ) ƒoƒbƒtƒ@ƒTƒCƒY‚Ì’²®B•K—v‚É‰‚¶‚ÄŠg‘å‚·‚éB
+//! (é‡è¦ï¼šnDataLenã¯æ–‡å­—å˜ä½) ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®èª¿æ•´ã€‚å¿…è¦ã«å¿œã˜ã¦æ‹¡å¤§ã™ã‚‹ã€‚
 void CNativeW::AllocStringBuffer( int nDataLen )
 {
 	CNative::AllocBuffer(nDataLen * sizeof(wchar_t));
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 void CNativeW::AppendString( const wchar_t* pszData )
 {
 	CNative::AppendRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBnLength‚Í•¶š’PˆÊB
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚nLengthã¯æ–‡å­—å˜ä½ã€‚
 void CNativeW::AppendString( const wchar_t* pszData, int nLength )
 {
 	CNative::AppendRawData(pszData, nLength * sizeof(wchar_t));
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
 	CNative::AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
 }
 
-// -- -- char‚©‚ç‚ÌˆÚs—p -- -- //
+// -- -- charã‹ã‚‰ã®ç§»è¡Œç”¨ -- -- //
 
-//! ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBnDataLen‚Í•¶š’PˆÊB
+//! ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚nDataLenã¯æ–‡å­—å˜ä½ã€‚
 void CNativeW::SetStringOld( const char* pData, int nDataLen )
 {
 	int nLen;
@@ -101,7 +101,7 @@ void CNativeW::SetStringOld( const char* pData, int nDataLen )
 	delete[] szTmp;
 }
 
-//! ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+//! ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeW::SetStringOld( const char* pszData )
 {
 	SetStringOld(pszData,strlen(pszData));
@@ -115,7 +115,7 @@ void CNativeW::AppendStringOld( const char* pData, int nDataLen )
 	delete[] szTmp;
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBpszData‚ÍSJISB
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚pszDataã¯SJISã€‚
 void CNativeW::AppendStringOld( const char* pszData )
 {
 	AppendStringOld(pszData,strlen(pszData));
@@ -123,10 +123,10 @@ void CNativeW::AppendStringOld( const char* pszData )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒuæ“¾ƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–å–å¾—ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// GetAt()‚Æ“¯‹@”\
+// GetAt()ã¨åŒæ©Ÿèƒ½
 wchar_t CNativeW::operator[](int nIndex) const
 {
 	if( nIndex < GetStringLength() ){
@@ -137,7 +137,7 @@ wchar_t CNativeW::operator[](int nIndex) const
 }
 
 
-/* “™‚µ‚¢“à—e‚© */
+/* ç­‰ã—ã„å†…å®¹ã‹ */
 bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 {
 	if(&cmem1==&cmem2)return true;
@@ -159,10 +159,10 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒu•ÏŠ·ƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–å¤‰æ›ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! •¶š—ñ’uŠ·
+//! æ–‡å­—åˆ—ç½®æ›
 void CNativeW::Replace( const wchar_t* pszFrom, const wchar_t* pszTo )
 {
 	int			nFromLen = wcslen( pszFrom );
@@ -210,19 +210,19 @@ void CNativeW::Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* psz
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  staticƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+//                  staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ªwchar_t‰½ŒÂ•ª‚©‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒwchar_tä½•å€‹åˆ†ã‹ã‚’è¿”ã™
 CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 {
 	if( nIdx >= nDataLen )
 		return CLogicInt(0);
 
-	// ƒTƒƒQ[ƒgƒ`ƒFƒbƒN					2008/7/5 Uchi
+	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒã‚§ãƒƒã‚¯					2008/7/5 Uchi
 	if (IsUTF16High(pData[nIdx])) {
 		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
-			// ƒTƒƒQ[ƒgƒyƒA 2ŒÂ•ª
+			// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ 2å€‹åˆ†
 			return CLogicInt(2);
 		}
 	}
@@ -230,23 +230,23 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 	return CLogicInt(1);
 }
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª”¼Šp‰½ŒÂ•ª‚©‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒåŠè§’ä½•å€‹åˆ†ã‹ã‚’è¿”ã™
 CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 {
-	//•¶š—ñ”ÍˆÍŠO‚È‚ç 0
+	//æ–‡å­—åˆ—ç¯„å›²å¤–ãªã‚‰ 0
 	if( nIdx >= nDataLen )
 		return CKetaXInt(0);
 
-	// ƒTƒƒQ[ƒgƒ`ƒFƒbƒN BMP ˆÈŠO‚Í‘SŠpˆµ‚¢		2008/7/5 Uchi
+	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒã‚§ãƒƒã‚¯ BMP ä»¥å¤–ã¯å…¨è§’æ‰±ã„		2008/7/5 Uchi
 	if (IsUTF16High(pData[nIdx])) {
-		return CKetaXInt(2);	// ‰¼
+		return CKetaXInt(2);	// ä»®
 	}
 	if (IsUTF16Low(pData[nIdx])) {
 		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1])) {
-			// ƒTƒƒQ[ƒgƒyƒAi‰ºˆÊj
+			// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ï¼ˆä¸‹ä½ï¼‰
 			return CKetaXInt(0);
 		}
-		// ’P“Æiƒuƒ[ƒNƒ“ƒyƒAj
+		// å˜ç‹¬ï¼ˆãƒ–ãƒ­ãƒ¼ã‚¯ãƒ³ãƒšã‚¢ï¼‰
 		// return CKetaXInt(2);
 		 if( IsBinaryOnSurrogate(pData[nIdx]) )
 			return CKetaXInt(1);
@@ -254,40 +254,40 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 			return CKetaXInt(2);
 	}
 
-	//”¼Šp•¶š‚È‚ç 1
+	//åŠè§’æ–‡å­—ãªã‚‰ 1
 	if(WCODE::IsHankaku(pData[nIdx]) )
 		return CKetaXInt(1);
 
-	//‘SŠp•¶š‚È‚ç 2
+	//å…¨è§’æ–‡å­—ãªã‚‰ 2
 	else
 		return CKetaXInt(2);
 }
 
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚Ì•¶š•‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ã®æ–‡å­—å¹…ã‚’è¿”ã™
 CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 {
-	//•¶š—ñ”ÍˆÍŠO‚È‚ç 0
+	//æ–‡å­—åˆ—ç¯„å›²å¤–ãªã‚‰ 0
 	if( nIdx >= nDataLen ){
 		return CHabaXInt(0);
 	}
-	// HACK:‰üsƒR[ƒh‚É‘Î‚µ‚Ä1‚ğ•Ô‚·
+	// HACK:æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã«å¯¾ã—ã¦1ã‚’è¿”ã™
 	if( WCODE::IsLineDelimiter(pData[nIdx], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 		return CHabaXInt(1);
 	}
 
-	// ƒTƒƒQ[ƒgƒ`ƒFƒbƒN
+	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒã‚§ãƒƒã‚¯
 	if(IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
 		return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
 	}else if(IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
-		// ƒTƒƒQ[ƒgƒyƒAi‰ºˆÊj
-		return CHabaXInt(0); // •s³ˆÊ’u
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ï¼ˆä¸‹ä½ï¼‰
+		return CHabaXInt(0); // ä¸æ­£ä½ç½®
 	}
 	return CHabaXInt(WCODE::CalcPxWidthByFont(pData[nIdx]));
 }
 
-/* ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚ÌŸ‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚· */
-/* Ÿ‚É‚ ‚é•¶š‚ªƒoƒbƒtƒ@‚ÌÅŒã‚ÌˆÊ’u‚ğ‰z‚¦‚éê‡‚Í&pData[nDataLen]‚ğ•Ô‚µ‚Ü‚· */
+/* ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®æ¬¡ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™ */
+/* æ¬¡ã«ã‚ã‚‹æ–‡å­—ãŒãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã®ä½ç½®ã‚’è¶Šãˆã‚‹å ´åˆã¯&pData[nDataLen]ã‚’è¿”ã—ã¾ã™ */
 const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent )
 {
 	const wchar_t* pNext = pDataCurrent + 1;
@@ -296,7 +296,7 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 		return &pData[nDataLen];
 	}
 
-	// ƒTƒƒQ[ƒgƒyƒA‘Î‰	2008/7/6 Uchi
+	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾å¿œ	2008/7/6 Uchi
 	if (IsUTF16High(*pDataCurrent)) {
 		if (IsUTF16Low(*pNext)) {
 			pNext += 1;
@@ -306,8 +306,8 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 	return pNext;
 }
 
-/* ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚Ì’¼‘O‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚· */
-/* ’¼‘O‚É‚ ‚é•¶š‚ªƒoƒbƒtƒ@‚Ìæ“ª‚ÌˆÊ’u‚ğ‰z‚¦‚éê‡‚ÍpData‚ğ•Ô‚µ‚Ü‚· */
+/* ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®ç›´å‰ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™ */
+/* ç›´å‰ã«ã‚ã‚‹æ–‡å­—ãŒãƒãƒƒãƒ•ã‚¡ã®å…ˆé ­ã®ä½ç½®ã‚’è¶Šãˆã‚‹å ´åˆã¯pDataã‚’è¿”ã—ã¾ã™ */
 const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent )
 {
 	const wchar_t* pPrev = pDataCurrent - 1;
@@ -315,7 +315,7 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 		return pData;
 	}
 
-	// ƒTƒƒQ[ƒgƒyƒA‘Î‰	2008/7/6 Uchi
+	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾å¿œ	2008/7/6 Uchi
 	if (IsUTF16Low(*pPrev)) {
 		if (IsUTF16High(*(pPrev-1))) {
 			pPrev -= 1;
@@ -327,7 +327,7 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 }
 
 
-//ShiftJIS‚É•ÏŠ·‚µ‚Ä•Ô‚·
+//ShiftJISã«å¤‰æ›ã—ã¦è¿”ã™
 const char* CNativeW::GetStringPtrOld() const
 {
 	return to_achar(GetStringPtr(),GetStringLength());
