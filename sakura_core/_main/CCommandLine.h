@@ -92,7 +92,7 @@ public:
 	LPCWSTR GetProfileName() const{ return m_cmProfile.GetStringPtr(); }
 	bool IsSetProfile() const{ return m_bSetProfile; }
 	void SetProfileName(LPCWSTR s){
-		m_bSetProfile = true;
+		m_bSetProfile = (s && s[0]); // ˆø”s‚ª‹ó•¶š‚Å‚È‚¢ê‡‚Étrue
 		m_cmProfile.SetString(s);
 	}
 	bool IsProfileMgr() { return m_bProfileMgr; }
