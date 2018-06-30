@@ -45,6 +45,14 @@ copy installer\Output\*.exe  %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log %WORKDIR_LOG%\
 copy sakura_core\githash.h                  %WORKDIR_LOG%\
 
+set HASHFILE=sha256.txt
+if exist "%HASHFILE%" (
+	del %HASHFILE%
+)
+call calc-hash.bat %HASHFILE% %WORKDIR%\
+if exist "%HASHFILE%" (
+	copy %HASHFILE%           %WORKDIR%\
+)
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
 
