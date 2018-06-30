@@ -74,9 +74,6 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		}
 	}
 	else{
-		if( !IsExistControlProcess() ){
-			StartControlProcess();
-		}
 		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
 			process = new CNormalProcess( hInstance, lpCmdLine );
 		}
@@ -320,6 +317,9 @@ bool CProcessFactory::StartControlProcess()
 */
 bool CProcessFactory::WaitForInitializedControlProcess()
 {
+		if( !IsExistControlProcess() ){
+			StartControlProcess();
+		}
 	// 初期化完了イベントを待つ
 	//
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
