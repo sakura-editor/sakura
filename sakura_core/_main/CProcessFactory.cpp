@@ -276,27 +276,32 @@ bool CProcessFactory::StartControlProcess()
 	if( !bCreateResult ){
 		//	失敗
 		std::wstring msg(getMessageFromSystem(::GetLastError()));
-		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
-		return false;
+		DEBUG_TRACE( _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
 	}
-
-	// 起動したプロセスが完全に立ち上がるまでちょっと待つ．
-	//
-	// Note: この待ちにより、ここで起動したコントロールプロセスが競争に生き残れなかった場合でも、
-	// 唯一生き残ったコントロールプロセスが多重起動防止用ミューテックスを作成しているはず。
-	//
-	int nResult;
-	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
-	if( 0 != nResult ){
-		ErrorMessage( NULL, _T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
+	else {
+		// スレッド／プロセスのハンドルは後続処理で使わないので先に閉じておく
 		::CloseHandle( p.hThread );
 		::CloseHandle( p.hProcess );
+	}
+	
+	// IsExistControlProcess()がtrueを返すまでちょっと待つ
+	bool isControlProcess = false;
+	const int MAX_RETRY_NUTEX_OPEN = 10;				//リトライ回数
+	const int WAIT_INTERVAL_VERY_SHORT = 1000 / 60;		//待機間隔(ミリ秒) = 60分の1秒(格ゲーの1フレーム分)
+	for (int n = 0; n < MAX_RETRY_NUTEX_OPEN; ++n) {
+		if (IsExistControlProcess()) {
+			isControlProcess = true;
+			break;
+		}
+		::Sleep(WAIT_INTERVAL_VERY_SHORT);
+	}
+
+	// IsExistControlProcess()がtrueにならなかった場合
+	if (!isControlProcess) {
+		ErrorMessage( NULL, _T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
 		return false;
 	}
 
-	::CloseHandle( p.hThread );
-	::CloseHandle( p.hProcess );
-	
 	return true;
 }
 //	To Here Aug. 28, 2001 genta
