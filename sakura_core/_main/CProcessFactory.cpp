@@ -317,9 +317,16 @@ bool CProcessFactory::StartControlProcess()
 */
 bool CProcessFactory::WaitForInitializedControlProcess()
 {
-		if( !IsExistControlProcess() ){
-			StartControlProcess();
+	// コントロールプロセスが起動しているかチェック
+	if (!IsExistControlProcess()) {
+		// コントロールプロセスを起動する
+		if (!StartControlProcess())
+		{
+			return false; //コントロールプロセスの起動に失敗
 		}
+		assert(IsExistControlProcess());
+	}
+
 	// 初期化完了イベントを待つ
 	//
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
