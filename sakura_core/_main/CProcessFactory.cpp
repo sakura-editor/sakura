@@ -335,16 +335,9 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	HANDLE hEvent;
 	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
 	if( NULL == hEvent ){
-		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
-		//
-		// Note: Ver1.5.9.91以前のバージョンは初期化完了イベントを作らない。
-		// このため、コントロールプロセスが常駐していないときに複数ウィンドウをほぼ
-		// 同時に起動すると、競争に生き残れなかったコントロールプロセスの親プロセスや、
-		// 僅かに出遅れてコントロールプロセスを作成しなかったプロセスでも、
-		// コントロールプロセスの初期化処理を追い越してしまい、異常終了したり、
-		// 「タブバーが表示されない」のような問題が発生していた。
-		//
-		return true;
+		std::wstring msg(getMessageFromSystem(::GetLastError()));
+		TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。\n%ts"), msg.c_str());
+		return false;
 	}
 	DWORD dwRet;
 	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
