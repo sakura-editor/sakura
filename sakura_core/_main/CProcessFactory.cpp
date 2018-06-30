@@ -320,15 +320,6 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	}
 
 	// 初期化完了イベントを待つ
-	//
-	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
-	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
-	//
-	if( !IsExistControlProcess() ){
-		// コントロールプロセスが多重起動防止用のミューテックス作成前に異常終了した場合など
-		return false;
-	}
-
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
