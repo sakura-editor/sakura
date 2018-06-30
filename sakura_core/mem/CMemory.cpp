@@ -1,15 +1,15 @@
-/*!	@file
-	ƒƒ‚ƒŠƒoƒbƒtƒ@ƒNƒ‰ƒX
+ï»¿/*!	@file
+	ãƒ¡ãƒ¢ãƒªãƒãƒƒãƒ•ã‚¡ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/03/06 V‹Kì¬
+	@date 1998/03/06 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, mik, misaka, Stonee, hor
 	Copyright (C) 2002, Moca, sui, aroka, genta
-	Copyright (C) 2003, genta, Moca, ‚©‚ë‚Æ
+	Copyright (C) 2003, genta, Moca, ã‹ã‚ã¨
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca, D.S.Koba
 
@@ -39,7 +39,7 @@
 #include "_main/global.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CMemory::_init_members()
@@ -55,11 +55,11 @@ CMemory::CMemory()
 }
 
 /*
-	@note Ši”[ƒf[ƒ^‚É‚ÍNULL‚ğŠÜ‚Ş‚±‚Æ‚ª‚Å‚«‚é
+	@note æ ¼ç´ãƒ‡ãƒ¼ã‚¿ã«ã¯NULLã‚’å«ã‚€ã“ã¨ãŒã§ãã‚‹
 */
 CMemory::CMemory(
-	const void*	pData,			//!< Ši”[ƒf[ƒ^ƒAƒhƒŒƒX
-	int			nDataLenBytes	//!< Ši”[ƒf[ƒ^‚Ì—LŒø’·
+	const void*	pData,			//!< æ ¼ç´ãƒ‡ãƒ¼ã‚¿ã‚¢ãƒ‰ãƒ¬ã‚¹
+	int			nDataLenBytes	//!< æ ¼ç´ãƒ‡ãƒ¼ã‚¿ã®æœ‰åŠ¹é•·
 )
 {
 	_init_members();
@@ -82,7 +82,7 @@ CMemory::~CMemory()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ‰‰Zq                             //
+//                          æ¼”ç®—å­                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 const CMemory& CMemory::operator = ( const CMemory& rhs )
@@ -97,14 +97,14 @@ const CMemory& CMemory::operator = ( const CMemory& rhs )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 
 
 /*
-|| ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éiprotectƒƒ“ƒo
+|| ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ï¼ˆprotectãƒ¡ãƒ³ãƒ
 */
 void CMemory::_AddData( const void* pData, int nDataLen )
 {
@@ -114,7 +114,7 @@ void CMemory::_AddData( const void* pData, int nDataLen )
 	memcpy( &m_pRawData[m_nRawLen], pData, nDataLen );
 	m_nRawLen += nDataLen;
 	m_pRawData[m_nRawLen]   = '\0';
-	m_pRawData[m_nRawLen+1] = '\0'; //I’['\0'‚ğ2‚Â•t‰Á‚·‚é('\0''\0'==L'\0')B 2007.08.13 kobake ’Ç‰Á
+	m_pRawData[m_nRawLen+1] = '\0'; //çµ‚ç«¯'\0'ã‚’2ã¤ä»˜åŠ ã™ã‚‹('\0''\0'==L'\0')ã€‚ 2007.08.13 kobake è¿½åŠ 
 	return;
 }
 
@@ -131,7 +131,7 @@ void CMemory::_AddData( const void* pData, int nDataLen )
 
 
 
-/* “™‚µ‚¢“à—e‚© */
+/* ç­‰ã—ã„å†…å®¹ã‹ */
 int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 {
 	const char*	psz1;
@@ -165,12 +165,12 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 
 
 
-/* !ãˆÊƒoƒCƒg‚Æ‰ºˆÊƒoƒCƒg‚ğŒğŠ·‚·‚é
+/* !ä¸Šä½ãƒã‚¤ãƒˆã¨ä¸‹ä½ãƒã‚¤ãƒˆã‚’äº¤æ›ã™ã‚‹
 
 	@author Moca
 	@date 2002/5/27
 	
-	@note	nBufLen ‚ª2‚Ì”{”‚Å‚È‚¢‚Æ‚«‚ÍAÅŒã‚Ì1ƒoƒCƒg‚ÍŒğŠ·‚³‚ê‚È‚¢
+	@note	nBufLen ãŒ2ã®å€æ•°ã§ãªã„ã¨ãã¯ã€æœ€å¾Œã®1ãƒã‚¤ãƒˆã¯äº¤æ›ã•ã‚Œãªã„
 */
 void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	unsigned char *p;
@@ -187,7 +187,7 @@ void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	if( nBufLen < 2){
 		return;
 	}
-	// ‚‘¬‰»‚Ì‚½‚ß
+	// é«˜é€ŸåŒ–ã®ãŸã‚
 	pdwchar = (unsigned int*)pBuf;
 	if( (size_t)pBuf % 2 == 0){
 		if( (size_t)pBuf % 4 == 2 ){
@@ -211,12 +211,12 @@ void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 }
 
 
-/* !ãˆÊƒoƒCƒg‚Æ‰ºˆÊƒoƒCƒg‚ğŒğŠ·‚·‚é
+/* !ä¸Šä½ãƒã‚¤ãƒˆã¨ä¸‹ä½ãƒã‚¤ãƒˆã‚’äº¤æ›ã™ã‚‹
 
 	@author Moca
 	@date 2002/5/27
 	
-	@note	nBufLen ‚ª2‚Ì”{”‚Å‚È‚¢‚Æ‚«‚ÍAÅŒã‚Ì1ƒoƒCƒg‚ÍŒğŠ·‚³‚ê‚È‚¢
+	@note	nBufLen ãŒ2ã®å€æ•°ã§ãªã„ã¨ãã¯ã€æœ€å¾Œã®1ãƒã‚¤ãƒˆã¯äº¤æ›ã•ã‚Œãªã„
 */
 void CMemory::SwapHLByte( void ){
 	char *pBuf;
@@ -238,7 +238,7 @@ void CMemory::SwapHLByte( void ){
 	if( nBufLen < 2){
 		return;
 	}
-	// ‚‘¬‰»‚Ì‚½‚ß
+	// é«˜é€ŸåŒ–ã®ãŸã‚
 	if( (size_t)pBuf % 2 == 0){
 		if( (size_t)pBuf % 4 == 2 ){
 			ctemp = pBuf[0];
@@ -276,7 +276,7 @@ bool CMemory::SwabHLByte( const CMemory& mem )
 	}
 	int nSize = mem.GetRawLength();
 	if( m_pRawData && nSize + 2 <= m_nDataBufSize ) {
-		// ƒf[ƒ^‚ª’Z‚¢‚Íƒoƒbƒtƒ@‚ÌÄ—˜—p
+		// ãƒ‡ãƒ¼ã‚¿ãŒçŸ­ã„æ™‚ã¯ãƒãƒƒãƒ•ã‚¡ã®å†åˆ©ç”¨
 		_SetRawLength(0);
 	}else{
 		_Empty();
@@ -295,24 +295,24 @@ bool CMemory::SwabHLByte( const CMemory& mem )
 
 
 /*
-|| ƒoƒbƒtƒ@ƒTƒCƒY‚Ì’²®
+|| ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®èª¿æ•´
 */
 void CMemory::AllocBuffer( int nNewDataLen )
 {
 	int		nWorkLen;
 	char*	pWork = NULL;
 
-	// 2ƒoƒCƒg‘½‚­ƒƒ‚ƒŠŠm•Û‚µ‚Ä‚¨‚­('\0'‚Ü‚½‚ÍL'\0'‚ğ“ü‚ê‚é‚½‚ß) 2007.08.13 kobake •ÏX
-	nWorkLen = ((nNewDataLen + 2) + 7) & (~7); // 8Byte‚²‚Æ‚É®—ñ
+	// 2ãƒã‚¤ãƒˆå¤šããƒ¡ãƒ¢ãƒªç¢ºä¿ã—ã¦ãŠã('\0'ã¾ãŸã¯L'\0'ã‚’å…¥ã‚Œã‚‹ãŸã‚) 2007.08.13 kobake å¤‰æ›´
+	nWorkLen = ((nNewDataLen + 2) + 7) & (~7); // 8Byteã”ã¨ã«æ•´åˆ—
 
 	if( m_nDataBufSize == 0 ){
-		/* –¢Šm•Û‚Ìó‘Ô */
+		/* æœªç¢ºä¿ã®çŠ¶æ…‹ */
 		pWork = malloc_char( nWorkLen );
 		m_nDataBufSize = nWorkLen;
 	}else{
-		/* Œ»İ‚Ìƒoƒbƒtƒ@ƒTƒCƒY‚æ‚è‘å‚«‚­‚È‚Á‚½ê‡‚Ì‚İÄŠm•Û‚·‚é */
+		/* ç¾åœ¨ã®ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‚ˆã‚Šå¤§ãããªã£ãŸå ´åˆã®ã¿å†ç¢ºä¿ã™ã‚‹ */
 		if( m_nDataBufSize < nWorkLen ){
-			// 2014.06.25 —LŒøƒf[ƒ^’·‚ª0‚Ìê‡‚Ífree & malloc
+			// 2014.06.25 æœ‰åŠ¹ãƒ‡ãƒ¼ã‚¿é•·ãŒ0ã®å ´åˆã¯free & malloc
 			if( m_nRawLen == 0 ){
 				free( m_pRawData );
 				m_pRawData = NULL;
@@ -332,7 +332,7 @@ void CMemory::AllocBuffer( int nNewDataLen )
 			LS(STR_ERR_DLGMEM1), nNewDataLen
 		);
 		if( NULL != m_pRawData && 0 != nWorkLen ){
-			/* ŒÃ‚¢ƒoƒbƒtƒ@‚ğ‰ğ•ú‚µ‚Ä‰Šú‰» */
+			/* å¤ã„ãƒãƒƒãƒ•ã‚¡ã‚’è§£æ”¾ã—ã¦åˆæœŸåŒ– */
 			_Empty();
 		}
 		return;
@@ -343,7 +343,7 @@ void CMemory::AllocBuffer( int nNewDataLen )
 
 
 
-/* ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é */
+/* ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ */
 void CMemory::SetRawData( const void* pData, int nDataLen )
 {
 	_Empty();
@@ -352,7 +352,7 @@ void CMemory::SetRawData( const void* pData, int nDataLen )
 	return;
 }
 
-/* ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é */
+/* ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ */
 void CMemory::SetRawData( const CMemory& pcmemData )
 {
 	const void*	pData;
@@ -364,10 +364,10 @@ void CMemory::SetRawData( const CMemory& pcmemData )
 	return;
 }
 
-/*! ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é */
+/*! ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ */
 void CMemory::SetRawDataHoldBuffer( const void* pData, int nDataLen )
 {
-	// this d•¡•s‰Â
+	// this é‡è¤‡ä¸å¯
 	assert( m_pRawData != pData );
 	if( m_nRawLen != 0 ){
 		_SetRawLength(0);
@@ -377,7 +377,7 @@ void CMemory::SetRawDataHoldBuffer( const void* pData, int nDataLen )
 	return;
 }
 
-/*! ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é */
+/*! ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ */
 void CMemory::SetRawDataHoldBuffer( const CMemory& pcmemData )
 {
 	if( this == &pcmemData ){
@@ -391,7 +391,7 @@ void CMemory::SetRawDataHoldBuffer( const CMemory& pcmemData )
 }
 
 
-/* ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éipublicƒƒ“ƒoj*/
+/* ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ï¼ˆpublicãƒ¡ãƒ³ãƒï¼‰*/
 void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
 {
 	if(nDataLenBytes<=0)return;
@@ -399,7 +399,7 @@ void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
 	_AddData( pData, nDataLenBytes );
 }
 
-/* ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éipublicƒƒ“ƒoj*/
+/* ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ï¼ˆpublicãƒ¡ãƒ³ãƒï¼‰*/
 void CMemory::AppendRawData( const CMemory* pcmemData )
 {
 	if( this == pcmemData ){
@@ -437,5 +437,5 @@ void CMemory::_SetRawLength(int nLength)
 	m_nRawLen = nLength;
 	assert(m_nRawLen <= m_nDataBufSize-2);
 	m_pRawData[m_nRawLen  ]=0;
-	m_pRawData[m_nRawLen+1]=0; //I’['\0'‚ğ2‚Â•t‰Á‚·‚é('\0''\0'==L'\0')B
+	m_pRawData[m_nRawLen+1]=0; //çµ‚ç«¯'\0'ã‚’2ã¤ä»˜åŠ ã™ã‚‹('\0''\0'==L'\0')ã€‚
 }

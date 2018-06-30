@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CLayout‚ÆCDocLine‚ÌƒCƒeƒŒ[ƒ^
+ï»¿/*!	@file
+	@brief CLayoutã¨CDocLineã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 
 	@author Yazaki
-	@date 2002/09/25 V‹Kì¬
+	@date 2002/09/25 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2002, Yazaki
@@ -21,18 +21,18 @@
 #include "doc/layout/CTsvModeInfo.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-// 2007.10.23 kobake ƒeƒ“ƒvƒŒ[ƒg‚Å‚ ‚é•K—v‚à–³‚¢‚Ì‚ÅA”ñƒeƒ“ƒvƒŒ[ƒg‚É•ÏXB
+// 2007.10.23 kobake ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã§ã‚ã‚‹å¿…è¦ã‚‚ç„¡ã„ã®ã§ã€éãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã«å¤‰æ›´ã€‚
 
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"
 
-//! ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+//! ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 class CMemoryIterator
 {
 public:
-	//CDocLine—pƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//CDocLineç”¨ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
@@ -46,7 +46,7 @@ public:
 		first();
 	}
 
-	//CLayout—pƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//CLayoutç”¨ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : NULL )
 	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
@@ -60,7 +60,7 @@ public:
 		first();
 	}
 
-	//! Œ…ˆÊ’u‚ğs‚Ìæ“ª‚ÉƒZƒbƒg
+	//! æ¡ä½ç½®ã‚’è¡Œã®å…ˆé ­ã«ã‚»ãƒƒãƒˆ
 	void first()
 	{
 		m_nIndex = CLogicInt(0);
@@ -69,26 +69,26 @@ public:
 		m_nColumn_Delta = CLayoutInt(0);
 	}
 
-	/*! s––‚©‚Ç‚¤‚©
-		@return true: s––, false: s––‚Å‚Í‚È‚¢
+	/*! è¡Œæœ«ã‹ã©ã†ã‹
+		@return true: è¡Œæœ«, false: è¡Œæœ«ã§ã¯ãªã„
 	 */
 	bool end() const
 	{
 		return (m_nLineLen <= m_nIndex);
 	}
 
-	//	Ÿ‚Ì•¶š‚ğŠm”F‚µ‚ÄŸ‚Ì•¶š‚Æ‚Ì·‚ğ‹‚ß‚é
+	//	æ¬¡ã®æ–‡å­—ã‚’ç¢ºèªã—ã¦æ¬¡ã®æ–‡å­—ã¨ã®å·®ã‚’æ±‚ã‚ã‚‹
 	void scanNext()
 	{
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		// 2007.09.04 kobake UNICODE‰»Fƒf[ƒ^‘•ª‚ÆŒ…‘•ª‚ğ•ÊX‚Ì’l‚Æ‚µ‚ÄŒvZ‚·‚éB
+		// 2007.09.04 kobake UNICODEåŒ–ï¼šãƒ‡ãƒ¼ã‚¿å¢—åˆ†ã¨æ¡å¢—åˆ†ã‚’åˆ¥ã€…ã®å€¤ã¨ã—ã¦è¨ˆç®—ã™ã‚‹ã€‚
 
-		//ƒf[ƒ^‘•ª‚ğŒvZ
+		//ãƒ‡ãƒ¼ã‚¿å¢—åˆ†ã‚’è¨ˆç®—
 		m_nIndex_Delta = CNativeW::GetSizeOfChar(m_pLine, m_nLineLen, m_nIndex);
 		if( 0 == m_nIndex_Delta )
 			m_nIndex_Delta = CLogicInt(1);
 
-		//Œ…‘•ª‚ğŒvZ
+		//æ¡å¢—åˆ†ã‚’è¨ˆç®—
 		if (m_pLine[m_nIndex] == WCODE::TAB){
 			if (m_tsvInfo.m_nTsvMode == TSV_MODE_TSV) {
 				m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
@@ -106,18 +106,18 @@ public:
 			if( m_nSpacing ){
 				m_nColumn_Delta += CLayoutXInt(CNativeW::GetKetaOfChar(m_pLine, m_nLineLen, m_nIndex) * m_nSpacing);
 			}
-//			if( 0 == m_nColumn_Delta )				// íœ ƒTƒƒQ[ƒgƒyƒA‘Îô	2008/7/5 Uchi
+//			if( 0 == m_nColumn_Delta )				// å‰Šé™¤ ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾ç­–	2008/7/5 Uchi
 //				m_nColumn_Delta = CLayoutInt(1);
 		}
 	}
 	
-	/*! —\‚ßŒvZ‚µ‚½·•ª‚ğŒ…ˆÊ’u‚É‰Á‚¦‚éD
+	/*! äºˆã‚è¨ˆç®—ã—ãŸå·®åˆ†ã‚’æ¡ä½ç½®ã«åŠ ãˆã‚‹ï¼
 		@sa scanNext()
 	 */
 	void addDelta(){
 		m_nColumn += m_nColumn_Delta;
 		m_nIndex += m_nIndex_Delta;
-	}	//	ƒ|ƒCƒ“ƒ^‚ğ‚¸‚ç‚·
+	}	//	ãƒã‚¤ãƒ³ã‚¿ã‚’ãšã‚‰ã™
 	
 	CLogicInt	getIndex()			const {	return m_nIndex;	}
 	CLayoutInt	getColumn()			const {	return m_nColumn;	}
@@ -126,28 +126,28 @@ public:
 
 	//	2002.10.07 YAZAKI
 	const wchar_t getCurrentChar(){	return m_pLine[m_nIndex];	}
-	//	Jul. 20, 2003 genta ’Ç‰Á
-	//	memcpy‚ğ‚·‚é‚Ì‚Éƒ|ƒCƒ“ƒ^‚ª‚Æ‚ê‚È‚¢‚Æ–Ê“|
+	//	Jul. 20, 2003 genta è¿½åŠ 
+	//	memcpyã‚’ã™ã‚‹ã®ã«ãƒã‚¤ãƒ³ã‚¿ãŒã¨ã‚Œãªã„ã¨é¢å€’
 	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	}
 
 
 private:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Åó‚¯æ‚Á‚½ƒpƒ‰ƒ[ƒ^ (ŒÅ’è)
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§å—ã‘å–ã£ãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ (å›ºå®š)
 	const wchar_t*		m_pLine;
-	const int			m_nLineLen;  //ƒf[ƒ^’·B•¶š’PˆÊB
+	const int			m_nLineLen;  //ãƒ‡ãƒ¼ã‚¿é•·ã€‚æ–‡å­—å˜ä½ã€‚
 	const CLayoutInt	m_nTabSpace;
 	const CTsvModeInfo&	m_tsvInfo;
 	const CLayoutInt	m_nIndent;
 
-	const CPixelXInt	m_nSpacing;		//•¶šŒ„ŠÔ(px)
-	const CPixelXInt	m_nTabPadding;	//ƒ^ƒu•Å­’l-1
-	const CPixelXInt	m_nTabSpaceDx;	//ƒ^ƒu•ŒvZ—p(m_nTabSpace + m_nTabPadding - 1)
+	const CPixelXInt	m_nSpacing;		//æ–‡å­—éš™é–“(px)
+	const CPixelXInt	m_nTabPadding;	//ã‚¿ãƒ–å¹…æœ€å°‘å€¤-1
+	const CPixelXInt	m_nTabSpaceDx;	//ã‚¿ãƒ–å¹…è¨ˆç®—ç”¨(m_nTabSpace + m_nTabPadding - 1)
 
-	//ó‘Ô•Ï”
-	CLogicInt	m_nIndex;        //ƒf[ƒ^ˆÊ’uB•¶š’PˆÊB
-	CLayoutInt	m_nColumn;       //ƒŒƒCƒAƒEƒgˆÊ’uBŒ…(”¼Šp•)’PˆÊB
-	CLogicInt	m_nIndex_Delta;  //index‘•ª
-	CLayoutInt	m_nColumn_Delta; //column‘•ª
+	//çŠ¶æ…‹å¤‰æ•°
+	CLogicInt	m_nIndex;        //ãƒ‡ãƒ¼ã‚¿ä½ç½®ã€‚æ–‡å­—å˜ä½ã€‚
+	CLayoutInt	m_nColumn;       //ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã€‚æ¡(åŠè§’å¹…)å˜ä½ã€‚
+	CLogicInt	m_nIndex_Delta;  //indexå¢—åˆ†
+	CLayoutInt	m_nColumn_Delta; //columnå¢—åˆ†
 
 };
 

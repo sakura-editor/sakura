@@ -1,7 +1,7 @@
-//�ꎞ�I�ȃ������u���b�N�����[�e�[�V�������Ďg���܂킷���߂̃��m
-//Get�Ŏ擾�����������u���b�N�́A�u������x�̊��ԁv�㏑������Ȃ����Ƃ��ۏႳ���B
-//���́u���ԁv�Ƃ́AGet���Ă�ł���ēxCHAIN_COUNT��AGet���Ăяo���܂ł̊Ԃł���B
-//�擾�����������u���b�N��CRecycledBuffer�̊Ǘ����ɂ��邽�߁A������Ă͂����Ȃ��B
+﻿//一時的なメモリブロックをローテーションして使いまわすためのモノ
+//Getで取得したメモリブロックは、「ある程度の期間」上書きされないことが保障される。
+//その「期間」とは、Getを呼んでから再度CHAIN_COUNT回、Getを呼び出すまでの間である。
+//取得したメモリブロックはCRecycledBufferの管理下にあるため、解放してはいけない。
 /*
 	Copyright (C) 2008, kobake
 
@@ -29,24 +29,24 @@
 #define SAKURA_CRECYCLEDBUFFER_865628A4_D60A_4F2E_8021_EA83D0D438819_H_
 
 class CRecycledBuffer{
-//�R���t�B�O
+//コンフィグ
 private:
-	static const int BLOCK_SIZE  = 1024; //�u���b�N�T�C�Y�B�o�C�g�P�ʁB
-	static const int CHAIN_COUNT = 64;   //�ė��p�\�ȃu���b�N���B
+	static const int BLOCK_SIZE  = 1024; //ブロックサイズ。バイト単位。
+	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
 
-//�R���X�g���N�^�E�f�X�g���N�^
+//コンストラクタ・デストラクタ
 public:
 	CRecycledBuffer()
 	{
 		m_current=0;
 	}
 
-//�C���^�[�t�F�[�X
+//インターフェース
 public:
-	//!�ꎞ�I�Ɋm�ۂ��ꂽ�������u���b�N���擾�B���̃������u���b�N��������Ă͂����Ȃ��B
+	//!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
 	template <class T>
 	T* GetBuffer(
-		size_t* nCount //!< [out] �̈�̗v�f�����󂯎��BT�P�ʁB
+		size_t* nCount //!< [out] 領域の要素数を受け取る。T単位。
 	)
 	{
 		if(nCount)*nCount=BLOCK_SIZE/sizeof(T);
@@ -54,7 +54,7 @@ public:
 		return reinterpret_cast<T*>(m_buf[m_current]);
 	}
 
-	//!�̈�̗v�f�����擾�BT�P��
+	//!領域の要素数を取得。T単位
 	template <class T>
 	size_t GetMaxCount() const
 	{
@@ -62,7 +62,7 @@ public:
 	}
 
 
-//�����o�ϐ�
+//メンバ変数
 private:
 	BYTE m_buf[CHAIN_COUNT][BLOCK_SIZE];
 	int  m_current;
@@ -71,11 +71,11 @@ private:
 
 
 class CRecycledBufferDynamic{
-//�R���t�B�O
+//コンフィグ
 private:
-	static const int CHAIN_COUNT = 64;   //�ė��p�\�ȃu���b�N���B
+	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
 
-//�R���X�g���N�^�E�f�X�g���N�^
+//コンストラクタ・デストラクタ
 public:
 	CRecycledBufferDynamic()
 	{
@@ -91,24 +91,24 @@ public:
 		}
 	}
 
-//�C���^�[�t�F�[�X
+//インターフェース
 public:
-	//!�ꎞ�I�Ɋm�ۂ��ꂽ�������u���b�N���擾�B���̃������u���b�N��������Ă͂����Ȃ��B
+	//!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
 	template <class T>
 	T* GetBuffer(
-		size_t nCount //!< [in] �m�ۂ���v�f���BT�P�ʁB
+		size_t nCount //!< [in] 確保する要素数。T単位。
 	)
 	{
 		m_current = (m_current+1) % CHAIN_COUNT;
 
-		//�������m��
+		//メモリ確保
 		if(m_buf[m_current])delete[] m_buf[m_current];
 		m_buf[m_current]=new BYTE[nCount*sizeof(T)];
 
 		return reinterpret_cast<T*>(m_buf[m_current]);
 	}
 
-//�����o�ϐ�
+//メンバ変数
 private:
 	BYTE* m_buf[CHAIN_COUNT];
 	int   m_current;
