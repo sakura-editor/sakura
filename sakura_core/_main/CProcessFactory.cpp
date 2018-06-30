@@ -329,7 +329,16 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
 	HANDLE hEvent;
-	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
+	const int MAX_RETRY_EVENT_OPEN = 10;				//リトライ回数
+	const int WAIT_INTERVAL_VERY_SHORT = 1000 / 60;		//待機間隔(ミリ秒) = 60分の1秒(格ゲーの1フレーム分)
+	for (int n = 0; n < MAX_RETRY_EVENT_OPEN; ++n) {
+		hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
+		// イベントをオープンできた場合
+		if (NULL != hEvent) break;
+		// 想定外のエラーが出た場合
+		if (ERROR_FILE_NOT_FOUND != ::GetLastError()) break;
+		::Sleep(WAIT_INTERVAL_VERY_SHORT);
+	}
 	if( NULL == hEvent ){
 		std::wstring msg(getMessageFromSystem(::GetLastError()));
 		TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。\n%ts"), msg.c_str());
