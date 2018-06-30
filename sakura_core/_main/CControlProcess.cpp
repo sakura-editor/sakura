@@ -54,17 +54,6 @@ bool CControlProcess::InitializeProcess()
 
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 
-	// 初期化完了イベントを作成する
-	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	strInitEvent += strProfileName;
-	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
-	if( NULL == m_hEventCPInitialized )
-	{
-		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateEvent()失敗。\n終了します。") );
-		return false;
-	}
-
 	/* コントロールプロセスの目印 */
 	std::tstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += strProfileName;
@@ -78,6 +67,17 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	
+	// 初期化完了イベントを作成する
+	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	strInitEvent += strProfileName;
+	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
+	if( NULL == m_hEventCPInitialized )
+	{
+		ErrorBeep();
+		TopErrorMessage( NULL, _T("CreateEvent()失敗。\n終了します。") );
+		return false;
+	}
+
 	/* 共有メモリを初期化 */
 	if( !CProcess::InitializeProcess() ){
 		return false;
