@@ -2,10 +2,17 @@
 
 #include "githash.h"
 
-#define VER_A   2
-#define VER_B   3
-#define VER_C   2
-#define VER_D   0
+// バージョン定義 //
+// ver a.b.c.d
+// 例: ver 2.3.2.0
+//       a  => 2
+//       b  => 3
+//       c  => 2
+//       d  => 0
+#define VER_A   2 // a of ver a.b.c.d
+#define VER_B   3 // b of ver a.b.c.d
+#define VER_C   2 // c of ver a.b.c.d
+#define VER_D   0 // d of ver a.b.c.d
 
 #define TO_STR(arg)                            #arg
 #define MAKE_VERSION_STR(a, b, c, d, sep)      TO_STR(a) sep TO_STR(b) sep TO_STR(c) sep TO_STR(d)
