@@ -44,6 +44,14 @@ bool CControlProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
+	// プロセス優先度を取得する
+	DWORD dwPriority = ::GetPriorityClass(::GetCurrentProcess());
+
+	if (HIGH_PRIORITY_CLASS != dwPriority) {
+		// プロセス優先度を「高」にする
+		::SetPriorityClass(::GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	}
+
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
@@ -78,6 +86,9 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	
+	// プロセス優先度を元に戻す
+	::SetPriorityClass(::GetCurrentProcess(), dwPriority);
+
 	/* 共有メモリを初期化 */
 	if( !CProcess::InitializeProcess() ){
 		return false;
