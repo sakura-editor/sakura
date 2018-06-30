@@ -45,13 +45,13 @@
 
 // バージョン情報埋め込み用 Git ハッシュ文字列 (存在しない場合には空文字列)
 #ifdef GIT_SHORT_COMMIT_HASH
-#define VER_GITHASH " (" GIT_SHORT_COMMIT_HASH ")"
+#define VER_GIT_SHORTHASH " (" GIT_SHORT_COMMIT_HASH ")"
 #else
-#define VER_GITHASH ""
+#define VER_GIT_SHORTHASH ""
 #endif
 
 // リソース埋め込み用バージョン文字列
 // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit DEBUG" … デバッグビルド時の例
 // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit"       … リリースビルド時の例
 // e.g. "2.3.2.0 UNICODE 64bit"                  … Git 情報無い場合の例
-#define RESOURCE_VERSION_STRING(_VersionString) _VersionString VER_GITHASH " " VER_CHARSET " " VER_PLATFORM SPACE_WHEN_DEBUG VER_CONFIG ALPHA_VERSION_STR_WITH_SPACE
+#define RESOURCE_VERSION_STRING(_VersionString) _VersionString VER_GIT_SHORTHASH " " VER_CHARSET " " VER_PLATFORM SPACE_WHEN_DEBUG VER_CONFIG ALPHA_VERSION_STR_WITH_SPACE
