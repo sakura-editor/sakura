@@ -2,6 +2,19 @@
 
 #include "githash.h"
 
+#define VER_A   2
+#define VER_B   3
+#define VER_C   2
+#define VER_D   0
+
+#define TO_STR(arg)                         #arg
+#define MAKE_VERSION_STR(a,b,c,d, sep)      TO_STR(a) sep TO_STR(b) sep TO_STR(c) sep TO_STR(d)
+#define MAKE_VERSION_STR_PERIOD(a,b,c,d)    MAKE_VERSION_STR(a,b,c,d, ".")
+#define MAKE_VERSION_COMMA(a,b,c,d)         a,b,c,d
+
+#define PR_VER_STR  MAKE_VERSION_STR_PERIOD(VER_A, VER_B, VER_C, VER_D)
+#define PR_VER      MAKE_VERSION_COMMA(VER_A, VER_B, VER_C, VER_D)
+
 #ifdef _UNICODE
 #define VER_CHARSET "UNICODE"
 #else
