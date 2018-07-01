@@ -13,18 +13,9 @@ regMessage   = r'(?P<message>.+)$'
 regEx        = regLilePath + regLineNumer + r':' + regError + r':' + regMessage
 regFromTo    = r"from '(?P<source>[^']+)' to '(?P<dest>[^']+)'"
 
-
-def customsort(x, y):
-	if x['key'] < y['key']:
-		return 1
-	elif x['key'] > y['key']:
-		return -1
-	else:
-		return 0
-
 data = []
 with open(infile, "r") as fin:
-	print "open " + infile
+	print ("open " + infile)
 	for line in fin:
 		text = line.replace('\n','')
 		text = text.replace('\r','')
@@ -71,9 +62,10 @@ with open(infile, "r") as fin:
 			entry['key'] = ' '.join(temp)
 			data.append(entry)
 
-data = sorted(data, cmp=customsort)
+from operator import itemgetter
+data = sorted(data, key=itemgetter('key'))
 
-with open(outfile, "wb") as fout:
+with open(outfile, "w") as fout:
 	fieldnames = [
 		'type',
 		'code',
@@ -83,7 +75,7 @@ with open(outfile, "wb") as fout:
 		'lineNumber',
 		'message',
 	]
-	writer = csv.writer(fout)
+	writer = csv.writer(fout, lineterminator='\n')
 	writer.writerow(fieldnames)
 
 	for entry in data:
@@ -92,4 +84,4 @@ with open(outfile, "wb") as fout:
 			temp.append(entry[key])
 		writer.writerow(temp)
 
-	print "wrote " + outfile
+	print ("wrote " + outfile)
