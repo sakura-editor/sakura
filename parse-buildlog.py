@@ -8,7 +8,7 @@ outfile = infile + '.csv'
 
 regLilePath  = r'(?P<filePath>[a-zA-Z]:([^(]+))'
 regLineNumer = r'\((?P<lineNumber>\d+)\)'
-regError     = r'\s*(?P<type>\w+)\s*(?P<code>\w+)\s*'
+regError     = r'\s*(?P<type>\w+)\s+(?P<code>\w+)\s*'
 regMessage   = r'(?P<message>.+)$'
 regEx        = regLilePath + regLineNumer + r':' + regError + r':' + regMessage
 regFromTo    = r"from '(?P<source>[^']+)' to '(?P<dest>[^']+)'"
