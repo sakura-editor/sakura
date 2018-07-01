@@ -1090,7 +1090,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sakura_core\Funccode_x.hsrc">
+    <None Include="..\sakura_core\Funccode_x.h">
       <Filter>Other Files</Filter>
     </None>
     <None Include="..\resource\auto_scroll_center.cur">

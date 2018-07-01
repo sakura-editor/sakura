@@ -577,7 +577,7 @@
     <None Include="..\resource\cursor_tab_join.cur" />
     <None Include="..\resource\cursor_tab_separate.cur" />
     <None Include="..\resource\MainMenu.ini" />
-    <None Include="..\sakura_core\Funccode_x.hsrc" />
+    <None Include="..\sakura_core\Funccode_x.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
