@@ -5,18 +5,29 @@ set DSTDIR=%SRCDIR%
 set MAKEFILEDIR=%SRCDIR%
 set TOPDIR=%SRCDIR%
 
+set EXE_HEADERMAKE=HeaderMake
+set EXE_MAKEFILEMAKE=MakefileMake
+
+if not "%EXEDIR%" == "" (
+	set HEADERMAKE=%EXEDIR%\%EXE_HEADERMAKE%
+	set MAKEFILEMAKE=%EXEDIR%\%EXE_MAKEFILEMAKE%
+) else (
+	set HEADERMAKE=%EXE_HEADERMAKE%
+	set MAKEFILEMAKE=%EXE_MAKEFILEMAKE%
+)
+
 @echo =======================
 @echo preBuild
 @echo =======================
 
 @echo.
 @echo ---- HeaderMake ----
-%EXEDIR%HeaderMake -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_define.h -mode=define
-%EXEDIR%HeaderMake -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_enum.h -mode=enum -enum=EFunctionCode
+%HEADERMAKE% -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_define.h -mode=define
+%HEADERMAKE% -in=%SRCDIR%\Funccode_x.hsrc -out=%DSTDIR%\Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 @echo.
 @echo ---- MakefileMake ----
-%EXEDIR%MakefileMake -file=%MAKEFILEDIR%\Makefile -dir=%TOPDIR%
+%MAKEFILEMAKE% -file=%MAKEFILEDIR%\Makefile -dir=%TOPDIR%
 
 @echo.
 @echo ---- Make githash.h ----
