@@ -3,10 +3,10 @@
 
 enum EFunctionCode{
 	#define DEF_COMMAND(   id, val )													id = val,
-	#define DEF_MACROFUNC( id, val, name, param0, param1, param2, param3, ret, ext )	id = val,
 	#define DEF_MACROCMD(  id, val, name, param0, param1, param2, param3, ret, ext )	id = val,
-	#define DEF_MACROFUNC2(id,      name, param0, param1, param2, param3, ret, ext )
+	#define DEF_MACROFUNC( id,      name, param0, param1, param2, param3, ret, ext )	id,
 	#define DEF_MACROCMD2( id,      name, param0, param1, param2, param3, ret, ext )
+	#define DEF_MACROFUNC2(id,      name, param0, param1, param2, param3, ret, ext )
 	
 	#include "Funccode_x.h"
 };

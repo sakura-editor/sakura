@@ -42,9 +42,12 @@ MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
+	// 何もしない
 	#define DEF_COMMAND(   id, val )
-	#define DEF_MACROFUNC( id, val, name, param0, param1, param2, param3, ret, ext )
-	#define DEF_MACROFUNC2(id,      name, param0, param1, param2, param3, ret, ext )
+	#define DEF_MACROFUNC( id, name, param0, param1, param2, param3, ret, ext )
+	#define DEF_MACROFUNC2(id, name, param0, param1, param2, param3, ret, ext )
+	
+	// マクロコマンド定義
 	#define DEF_MACROCMD(  id, val, name, param0, param1, param2, param3, ret, ext ) \
 		{ id, name, { param0, param1, param2, param3 }, ret, ext },
 	#define DEF_MACROCMD2( id,      name, param0, param1, param2, param3, ret, ext ) \
@@ -61,12 +64,15 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
+	// 何もしない
 	#define DEF_COMMAND(   id, val )
 	#define DEF_MACROCMD(  id, val, name, param0, param1, param2, param3, ret, ext )
 	#define DEF_MACROCMD2( id,      name, param0, param1, param2, param3, ret, ext )
-	#define DEF_MACROFUNC( id, val, name, param0, param1, param2, param3, ret, ext ) \
+	
+	// マクロ専用関数定義
+	#define DEF_MACROFUNC( id, name, param0, param1, param2, param3, ret, ext ) \
 		{ id, name, { param0, param1, param2, param3 }, ret, ext },
-	#define DEF_MACROFUNC2(id,      name, param0, param1, param2, param3, ret, ext ) \
+	#define DEF_MACROFUNC2(id, name, param0, param1, param2, param3, ret, ext ) \
 		{ id, name, { param0, param1, param2, param3 }, ret, ext },
 	
 	#include "Funccode_x.h"
