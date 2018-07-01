@@ -115,5 +115,9 @@ static const bool UNICODE_BOOL=false;
 	//‚»‚ê‚ÆAWinMain‚Ìæ“ª‚Å _CrtSetDbgFlag() ‚ğŒÄ‚Ô
 #endif
 
+#if _WIN64
+#define ALPHA_VERSION
+#endif
+
 #endif /* SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_ */
 /*[EOF]*/

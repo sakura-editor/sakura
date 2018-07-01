@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "config/build_config.h"
 #include "githash.h"
 
 // バージョン定義 //
@@ -44,10 +45,6 @@
 #define SPACE_WHEN_DEBUG " "
 #else
 #define SPACE_WHEN_DEBUG ""
-#endif
-
-#if _WIN64
-#define ALPHA_VERSION
 #endif
 
 #if defined(ALPHA_VERSION)
