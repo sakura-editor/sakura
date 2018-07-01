@@ -90,10 +90,9 @@ public:
 	LPCWSTR GetMacro() const{ return m_cmMacro.GetStringPtr(); }
 	LPCWSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
 	LPCWSTR GetProfileName() const{ return m_cmProfile.GetStringPtr(); }
-	bool IsSetProfile() const{ return m_bSetProfile; }
+	bool IsSetProfile() const{ return *GetProfileName() != '\0'; } //有効な文字列がセットされていたらtrue
 	void SetProfileName(LPCWSTR s){
-		m_bSetProfile = (s && s[0]); // 引数sが空文字でない場合にtrue
-		m_cmProfile.SetString(s);
+		m_cmProfile.SetString(s ? s : L""); //NULL引数対策
 	}
 	bool IsProfileMgr() { return m_bProfileMgr; }
 	int GetFileNum(void) { return m_vFiles.size(); }
@@ -109,7 +108,6 @@ private:
 	bool		m_bNoWindow;		//! [out] TRUE: 編集Windowを開かない
 	bool		m_bWriteQuit;		//! [out] TRUE: 設定を保存して終了	// 2007.05.19 ryoji sakuext用に追加
 	bool		m_bProfileMgr;
-	bool		m_bSetProfile;
 	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
 	bool		m_bViewMode;		//! [out] TRUE: Read Only

@@ -494,7 +494,6 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca ’Ç‰Á
 				m_cmProfile.SetStringT( arg );
-				m_bSetProfile = true;
 				break;
 			case CMDLINEOPT_PROFMGR:
 				m_bProfileMgr = true;
@@ -534,7 +533,6 @@ CCommandLine::CCommandLine()
 	m_bNoWindow				= false;
 	m_bWriteQuit			= false;
 	m_bProfileMgr			= false;
-	m_bSetProfile			= false;
 	m_gi.bGrepSubFolder		= false;
 	m_gi.sGrepSearchOption.Reset();
 	m_gi.bGrepCurFolder		= false;
