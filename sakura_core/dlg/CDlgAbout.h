@@ -55,6 +55,8 @@ private:
 	CUrlWnd m_UrlUrWnd;
 	CUrlWnd m_UrlGitWnd;
 	CUrlWnd m_UrlBuildLinkWnd;
+	CUrlWnd m_UrlGitHubCommitWnd;
+	CUrlWnd m_UrlGitHubPRWnd;
 	CUrlWnd m_UrlOrgWnd;
 };
 

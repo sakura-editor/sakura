@@ -275,6 +275,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
 	m_UrlGitWnd.SetSubclassWindow(GetDlgItem( GetHwnd(), IDC_STATIC_URL_GIT));
 	m_UrlBuildLinkWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD));
+#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
+	m_UrlGitHubCommitWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT));
+#endif
+#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
+	m_UrlGitHubPRWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR));
+#endif
+
 #ifdef GIT_URL
 	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), _T(GIT_URL));
 #else
@@ -286,6 +293,25 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #else
 	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
 	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
+#endif
+
+	// GitHub の Commit のリンク
+#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
+	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT), _T(APPVEYOR_SHORTHASH));
+#else
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
+#endif
+
+	// GitHub の PR のリンク
+#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
+	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR), _T("PR ") _T(APPVEYOR_PULL_REQUEST_NUMBER));
+#else
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR), SW_HIDE);
+#endif
+
+	// GitHub のリンクのテキスト
+#if !defined(GITHUB_COMMIT_URL) && !defined(GITHUB_COMMIT_URL_PR_HEAD)
+	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
@@ -334,6 +360,16 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 #endif
 			return TRUE;
 		}
+	case IDC_STATIC_URL_GITHUB_COMMIT:
+#if defined(GITHUB_COMMIT_URL)
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
+#endif
+		return TRUE;
+	case IDC_STATIC_URL_GITHUB_PR:
+#if defined(GITHUB_COMMIT_URL_PR_HEAD)
+		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL_PR_HEAD), NULL, NULL, SW_SHOWNORMAL);
+#endif
+		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );

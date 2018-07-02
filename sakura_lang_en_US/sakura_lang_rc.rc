@@ -130,7 +130,14 @@ BEGIN
     LTEXT           "Build No.",
                     IDC_STATIC_URL_APPVEYOR_BUILD, 101, 108,120,8,SS_NOTIFY | NOT WS_GROUP |
                     WS_TABSTOP
-     EDITTEXT        IDC_EDIT_ABOUT,5,121,233,63,ES_MULTILINE | ES_READONLY | 
+    LTEXT           "GitHub URL:", IDC_STATIC_URL_GITHUB_CAPTION,33,118,50,8,NOT WS_GROUP
+    LTEXT           "Commit",
+                    IDC_STATIC_URL_GITHUB_COMMIT, 101, 118,30,8,SS_NOTIFY | NOT WS_GROUP |
+                    WS_TABSTOP
+    LTEXT           "PR.",
+                    IDC_STATIC_URL_GITHUB_PR, 150, 118,30,8,SS_NOTIFY | NOT WS_GROUP |
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ABOUT,5,131,233,53,ES_MULTILINE | ES_READONLY | 
                     WS_VSCROLL | NOT WS_TABSTOP
 END
 
