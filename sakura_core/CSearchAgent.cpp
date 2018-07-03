@@ -10,6 +10,8 @@
 #include "util/string_ex.h"
 #include <algorithm>
 #include "sakura_rc.h"
+#include "CEditApp.h"
+#include "CGrepAgent.h"
 
 //#define MEASURE_SEARCH_TIME
 #ifdef MEASURE_SEARCH_TIME
@@ -822,13 +824,15 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 	CDLgCandelCloser closer(pCDlgCancel);
 	const CLogicInt nDelLines = pArg->sDelRange.GetTo().y - pArg->sDelRange.GetFrom().y;
 	const CLogicInt nEditLines = std::max<CLogicInt>(CLogicInt(1), nDelLines + CLogicInt(pArg->pInsData ? pArg->pInsData->size(): 0));
-	if( 3000 < nEditLines ){
-		/* 進捗ダイアログの表示 */
-		pCDlgCancel = new CDlgCancel;
-		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
-			hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-			Progress_SetRange( hwndProgress, 0, 101 );
- 			Progress_SetPos( hwndProgress, 0 );
+	if( !CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning ){
+		if( 3000 < nEditLines ){
+			/* 進捗ダイアログの表示 */
+			pCDlgCancel = new CDlgCancel;
+			if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
+				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
+				Progress_SetRange( hwndProgress, 0, 101 );
+ 				Progress_SetPos( hwndProgress, 0 );
+			}
 		}
 	}
 	int nProgressOld = 0;
