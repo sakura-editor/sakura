@@ -45,7 +45,7 @@ bool CControlProcess::InitializeProcess()
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
 	// プロセス優先度を「高」にする
-	ProcessPriority processPriority(HIGH_PRIORITY_CLASS);
+	sakura::_os::ProcessPriority processPriority(HIGH_PRIORITY_CLASS);
 
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );

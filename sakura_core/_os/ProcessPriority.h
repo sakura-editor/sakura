@@ -36,12 +36,13 @@ namespace sakura {
 
 /*!
  * @brief プロセス優先度クラス
- *   コンストラクタで優先度を設定し、デストラクタで元に戻す。
+ *   コンストラクタで実行中プロセスのプロセス優先度を保存し、デストラクタで元に戻す。
  *
  * @sa https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-setpriorityclass
  * @date 2018/07/02 berryzplus		新規作成
  */
-class ProcessPriority {
+class ProcessPriority
+{
 private:
 	HANDLE _hProcess;			//!< プロセスハンドル(キャッシュ)
 	DWORD _dwDefaultPriority;	//!< 変更前のプロセス優先度
@@ -49,39 +50,38 @@ private:
 public:
 	ProcessPriority(_In_ DWORD dwDesiredPriority)
 		: _hProcess(::GetCurrentProcess())
-		, _dwDefaultPriority(::GetPriorityClass(_hProcess)) {
+		, _dwDefaultPriority(::GetPriorityClass(_hProcess))
+	{
 		// プロセス優先度を設定する
 		set(dwDesiredPriority);
 	}
-	virtual ~ProcessPriority() {
+	virtual ~ProcessPriority()
+	{
 		reset();
 	}
 
 public:
 	//!プロセス優先度を設定する
-	void set(_In_ DWORD dwDesiredPriority) {
-		if (dwDesiredPriority != _dwDefaultPriority) {
-			BOOL bRet = ::SetPriorityClass(_hProcess, dwDesiredPriority);
-			assert(bRet && "SetPriorityClass failed.");
+	bool set(_In_ DWORD dwDesiredPriority)
+	{
+		BOOL bRet = FALSE;
+		if (get() != dwDesiredPriority) {
+			bRet = ::SetPriorityClass(_hProcess, dwDesiredPriority);
 		}
+		return bRet;
 	}
 	//!プロセス優先度を取得する
-	DWORD get() const {
+	DWORD get() const 
+	{
 		return ::GetPriorityClass(_hProcess);
 	}
 	//!プロセス優先度を元に戻す
-	void reset() {
-		if (get() != _dwDefaultPriority) {
-			BOOL bRet = ::SetPriorityClass(_hProcess, _dwDefaultPriority);
-			assert(bRet && "SetPriorityClass failed.");
-		}
+	void reset()
+	{
+		set(_dwDefaultPriority);
 	}
 };
 
 
 	}; // end of namespace _os
 }; // end of namespace sakura
-
-
-//名前空間を意識せずに扱えるようにusingしておく。
-using sakura::_os::ProcessPriority;
