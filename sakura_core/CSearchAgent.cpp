@@ -831,7 +831,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				Progress_SetRange( hwndProgress, 0, 101 );
- 				Progress_SetPos( hwndProgress, 0 );
+				Progress_SetPos( hwndProgress, 0 );
 			}
 		}
 	}
