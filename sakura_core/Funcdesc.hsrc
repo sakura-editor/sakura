@@ -1,0 +1,632 @@
+//	@file
+//	@author Project Sakura-Editor
+//
+//
+//	This software is provided 'as-is', without any express or implied
+//	warranty. In no event will the authors be held liable for any damages
+//	arising from the use of this software.
+//
+//	Permission is granted to anyone to use this software for any purpose,
+//	including commercial applications, and to alter it and redistribute it
+//	freely, subject to the following restrictions:
+//
+//		1. The origin of this software must not be misrepresented;
+//		   you must not claim that you wrote the original software.
+//		   If you use this software in a product, an acknowledgment
+//		   in the product documentation would be appreciated but is
+//		   not required.
+//
+//		2. Altered source versions must be plainly marked as such,
+//		   and must not be misrepresented as being the original software.
+//
+//		3. This notice may not be removed or altered from any source
+//		   distribution.
+//
+//
+//	このファイルから、Funccode_define.h Funccode_enum.h CSMacroMgr_func.h が生成されます。
+//	
+//	ID, CMD, FUNC, ALIAS 構文を用いて，コマンド番号，マクロ関数情報等を定義する．
+//		ID, <id>, <val>
+//			コマンド番号のシンボル (F_FILEOPEN 等) と実際のコマンド番号を定義する．
+//			コマンド，マクロ関数を割り当てず，シンボルのみを割り当てる場合に使用する．
+//		
+//		CMD, <id>, <val>, <name>[, <retarg>[, <ext>]]
+//			キーやメニューに割り当てることができるコマンド用に，
+//			マクロ関数の情報を定義する．
+//		
+//		FUNC, <id>, <val>, <name>[, <retarg>[, <ext>]]
+//			キーやメニューに割り当てることができないマクロ専用の関数用に，
+//			関数の情報を定義する．
+//		
+//		ALIAS, <id>, <name>
+//			ViewMode と ReadOnly のように，同一の id を持つ異なるマクロ関数
+//			が複数ある場合，2つ目以降のマクロ関数を ALIAS 構文で定義する．
+//	
+//	パラメータの説明
+//		id:	F_FILENEW 等の，コマンド番号のシンボルを指定する
+//		
+//		val:
+//			エディタ内部で使われるコマンド番号を定義する．16bitの数値．
+//			
+//			'*' を指定すると enum では，値の指定が省略され，直前の enum 値 + 1 が自動的に割り当てられる．
+//				define では，そのシンボルは出力されない．
+//				基本的に F_FUNCTION_FIRST 以降で使用される．
+//			
+//			Windows 95では32768以上のコマンドをメニューやアクセラレータに設定すると動作しない．
+//			20000-21999 : プラグインコマンド機能番号（20個×100）
+//			30000-32767 : 機能番号．メニューやキーに割り当てられる．
+//			32768-      : メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能，
+//						  マクロ関数，
+//						  変換コマンド (状況に応じて機能を置き換える場合に用いる)．
+//			
+//			HandleCommandの引数としては32bit幅だが，上位16bitはコマンドが送られた状況を
+//			通知するために使用する．
+//			[参考]
+//			10000- : ウィンドウ一覧で使用する
+//			11000- : 最近使ったファイルで使用する
+//			12000- : 最近使ったフォルダで使用する
+//			
+//			* : enum では，値の指定が省略され，直前の enum 値 + 1 が自動的に割り当てられる．
+//			    define では，そのシンボルは出力されない．
+//		
+//		name: マクロで呼び出されるときの関数名．"..." で囲まない．
+//		
+//		retarg:
+//			マクロ関数の返り値の型，引数の型を最大 5 文字で指定する．
+//			1文字目: 返り値の型．
+//				E: VT_EMPTY (なし)
+//				S: VT_BSTR  (文字列型)
+//				I: VT_I4    (整数型)
+//			2～5文字目: 1～4番目の引数の型．指定できる文字は 1文字目と同じ．
+//			
+//			retarg 後端の連続する E (正規表現で /E+$/) は省略することができる．
+//			例:
+//				S		SEEEE と等しい．このマクロ関数は，引数は取らず，文字列型の返り値を返す．
+//				EII		EIIEE と等しい．このマクロ関数は，2つの int 型引数をとり，返り値はない．
+//						II とは省略できないので注意．
+//				(空)	EEEEE と等しい．このマクロ関数は，引数も返り値も無い．
+//		
+//		ext:
+//			MacroFuncInfo クラスの m_pData に指定するパラメータを指定する．
+//			省略時は nullptr が指定されたとみなす．
+//			詳細は GrepReplace を参照．
+
+
+ID,		F_INVALID,					-1		
+ID,		F_DEFAULT,					0		
+ID,		F_0,						0		
+
+// 未定義用(ダミーとしても使う)
+ID,		F_DISABLE,					0		//未使用
+ID,		F_NODE,						0		//ノード(Main Menu用)
+ID,		F_SEPARATOR,				1		//セパレータ
+ID,		F_TOOLBARWRAP,				2		//ツールバー折返
+ID,		F_MACRO_EXTRA,				2		//外部マクロ（50番以上）
+ID,		F_PLUGCOMMAND,				3		//プラグイン
+ID,		F_DUMMY_MAX_CODE,			10		//特別10である必要はないけど 10まで予約
+
+//	2007.07.07 genta 状況通知フラグ
+//	コマンドが送られた状況をコマンドと併せて通知する．
+ID,		FA_FROMKEYBOARD,			0x00010000//!< キーボードアクセラレータからのコマンド
+ID,		FA_FROMMACRO,				0x00020000//!< マクロからのコマンド実行
+ID,		FA_NONRECORD,				0x00040000//!< マクロへの記録を抑制する
+
+ID,		F_PLUGCOMMAND_FIRST,		20000	
+ID,		F_PLUGCOMMAND_LAST,			21999	
+
+// Main Menu 特殊機能
+ID,		F_WINDOW_LIST,				29001	// ウィンドウリスト
+ID,		F_FILE_USED_RECENTLY,		29002	// 最近使ったファイル
+ID,		F_FOLDER_USED_RECENTLY,		29003	// 最近使ったフォルダ
+ID,		F_CUSTMENU_LIST,			29004	// カスタムメニューリスト
+ID,		F_USERMACRO_LIST,			29005	// 登録済みマクロリスト
+ID,		F_PLUGIN_LIST,				29006	// プラグインコマンドリスト
+ID,		F_SPECIAL_FIRST,			F_WINDOW_LIST
+ID,		F_SPECIAL_LAST,				F_PLUGIN_LIST
+
+ID,		F_MENU_FIRST,				30000	
+
+// ファイル操作系
+CMD,	F_FILENEW,					30101,	FileNew							//新規作成
+ID,		F_FILEOPEN,					30102	//開く
+CMD,	F_FILESAVE,					30103,	FileSave						//上書き保存
+CMD,	F_FILESAVEAS_DIALOG,		30104,	FileSaveAsDialog,		ESII	//名前を付けて保存
+CMD,	F_FILESAVEAS,				30106,	FileSaveAs,				ESII	//名前を付けて保存
+CMD,	F_FILECLOSE,				30105,	FileClose						//閉じて(無題)
+CMD,	F_FILECLOSE_OPEN,			30107,	FileCloseOpen					//閉じて開く
+ID,		F_FILEOPEN_DROPDOWN,		30108	//開く(ドロップダウン)
+ID,		F_FILESAVECLOSE,			30109	//保存して閉じる
+ID,		F_FILENEW_NEWWINDOW,		30110	//新規作成（新しいウインドウで開く）
+CMD,	F_FILE_REOPEN_SJIS,			30111,	FileReopenSJIS,			EI		//SJISで開き直す
+CMD,	F_FILE_REOPEN_JIS,			30112,	FileReopenJIS,			EI		//JISで開き直す
+CMD,	F_FILE_REOPEN_EUC,			30113,	FileReopenEUC,			EI		//EUCで開き直す
+CMD,	F_FILE_REOPEN_UNICODE,		30114,	FileReopenUNICODE,		EI		//Unicodeで開き直す
+CMD,	F_FILE_REOPEN_UTF8,			30115,	FileReopenUTF8,			EI		//UTF-8で開き直す
+CMD,	F_FILE_REOPEN_UTF7,			30116,	FileReopenUTF7,			EI		//UTF-7で開き直す
+CMD,	F_FILE_REOPEN_UNICODEBE,	30117,	FileReopenUNICODEBE,	EI		//UnicodeBEで開き直す
+CMD,	F_FILE_REOPEN_CESU8,		30118,	FileReopenCESU8,		EI		//CESU-8で開き直す
+CMD,	F_FILE_REOPEN,				30119,	FileReopen,				EI		//現在と同じ文字コードで開き直す
+CMD,	F_FILESAVEALL,				30120,	FileSaveAll						//すべて上書き保存
+ID,		F_FILESAVE_QUIET,			30121	//上書き保存(限定動作)
+CMD,	F_FILE_REOPEN_LATIN1,		30122,	FileReopenLatin1,		EI		//Latin1で開き直す
+CMD,	F_PRINT,					30150,	Print							//印刷
+CMD,	F_PRINT_PREVIEW,			30151,	PrintPreview					//印刷プレビュー
+CMD,	F_PRINT_PAGESETUP,			30152,	PrintPageSetup					//印刷ページ設定
+CMD,	F_OPEN_HfromtoC,			30162,	OpenHfromtoC					//同名のC/C++ヘッダ(ソース)を開く
+CMD,	F_ACTIVATE_SQLPLUS,			30170,	ActivateSQLPLUS					//Oracle SQL*Plusをアクティブ表示
+CMD,	F_PLSQL_COMPILE_ON_SQLPLUS,	30171,	ExecSQLPLUS						//Oracle SQL*Plusで実行
+CMD,	F_BROWSE,					30180,	Browse							//ブラウズ
+CMD,	F_VIEWMODE,					30185,	ViewMode						//ビューモード
+ALIAS,	F_VIEWMODE,							ReadOnly
+CMD,	F_PROPERTY_FILE,			30190,	PropertyFile					//ファイルのプロパティ
+ID,		F_PROFILEMGR,				30191	//プロファイルマネージャ
+CMD,	F_EXITALLEDITORS,			30194,	ExitAllEditors					//編集の全終了
+CMD,	F_EXITALL,					30195,	ExitAll							//サクラエディタの全終了
+
+// 編集系
+CMD,	F_WCHAR,					30200,	Char,					EI		//文字入力
+CMD,	F_IME_CHAR,					30201,	CharIme,				EI		//全角文字入力
+CMD,	F_UNDO,						30210,	Undo							//元に戻す(Undo)
+CMD,	F_REDO,						30211,	Redo							//やり直し(Redo)
+CMD,	F_DELETE,					30221,	Delete							//削除
+CMD,	F_DELETE_BACK,				30222,	DeleteBack						//カーソル前を削除
+CMD,	F_WordDeleteToStart,		30230,	WordDeleteToStart				//単語の左端まで削除
+CMD,	F_WordDeleteToEnd,			30231,	WordDeleteToEnd					//単語の右端まで削除
+CMD,	F_WordCut,					30232,	WordCut							//単語切り取り
+CMD,	F_WordDelete,				30233,	WordDelete						//単語削除
+CMD,	F_LineCutToStart,			30240,	LineCutToStart					//行頭まで切り取り(改行単位)
+CMD,	F_LineCutToEnd,				30241,	LineCutToEnd					//行末まで切り取り(改行単位)
+CMD,	F_LineDeleteToStart,		30242,	LineDeleteToStart				//行頭まで削除(改行単位)
+CMD,	F_LineDeleteToEnd,			30243,	LineDeleteToEnd					//行末まで削除(改行単位)
+CMD,	F_CUT_LINE,					30244,	CutLine							//行切り取り(折り返し単位)
+CMD,	F_DELETE_LINE,				30245,	DeleteLine						//行削除(折り返し単位)
+CMD,	F_DUPLICATELINE,			30250,	DuplicateLine					//行の二重化(折り返し単位)
+CMD,	F_INDENT_TAB,				30260,	IndentTab						//TABインデント
+CMD,	F_UNINDENT_TAB,				30261,	UnindentTab						//逆TABインデント
+CMD,	F_INDENT_SPACE,				30262,	IndentSpace						//SPACEインデント
+CMD,	F_UNINDENT_SPACE,			30263,	UnindentSpace					//逆SPACEインデント
+CMD,	F_LTRIM,					30280,	LTrim							//左(先頭)の空白を削除
+CMD,	F_RTRIM,					30281,	RTrim							//右(末尾)の空白を削除
+CMD,	F_SORT_ASC,					30282,	SortAsc							//選択行の昇順ソート
+CMD,	F_SORT_DESC,				30283,	SortDesc						//選択行の降順ソート
+CMD,	F_MERGE,					30284,	Merge							//選択行のマージ
+ID,		F_RECONVERT,				30285	//再変換
+
+
+// カーソル移動系
+CMD,	F_UP,						30311,	Up								//カーソル上移動
+CMD,	F_DOWN,						30312,	Down							//カーソル下移動
+CMD,	F_LEFT,						30313,	Left							//カーソル左移動
+CMD,	F_RIGHT,					30314,	Right							//カーソル右移動
+CMD,	F_UP2,						30315,	Up2								//カーソル上移動(２行ごと)
+CMD,	F_DOWN2,					30316,	Down2							//カーソル下移動(２行ごと)
+CMD,	F_WORDLEFT,					30320,	WordLeft						//単語の左端に移動
+CMD,	F_WORDRIGHT,				30321,	WordRight						//単語の右端に移動
+CMD,	F_GOLINETOP,				30332,	GoLineTop,				EI		//行頭に移動(折り返し単位)
+CMD,	F_GOLINEEND,				30333,	GoLineEnd,				EI		//行末に移動(折り返し単位)
+CMD,	F_HalfPageUp,				30340,	HalfPageUp,				EI		//半ページアップ
+CMD,	F_HalfPageDown,				30341,	HalfPageDown,			EI		//半ページダウン
+CMD,	F_1PageUp,					30342,	PageUp,					EI		//１ページアップ
+ALIAS,	F_1PageUp,							1PageUp
+CMD,	F_1PageDown,				30343,	PageDown,				EI		//１ページダウン
+ALIAS,	F_1PageDown,						1PageDown
+CMD,	F_GOFILETOP,				30350,	GoFileTop						//ファイルの先頭に移動
+CMD,	F_GOFILEEND,				30351,	GoFileEnd						//ファイルの最後に移動
+CMD,	F_CURLINECENTER,			30360,	CurLineCenter					//カーソル行をウィンドウ中央へ
+CMD,	F_JUMPHIST_PREV,			30370,	MoveHistPrev					//移動履歴: 前へ
+CMD,	F_JUMPHIST_NEXT,			30371,	MoveHistNext					//移動履歴: 次へ
+CMD,	F_JUMPHIST_SET,				30372,	MoveHistSet						//現在位置を移動履歴に登録
+CMD,	F_WndScrollDown,			30380,	F_WndScrollDown					//テキストを１行下へスクロール
+CMD,	F_WndScrollUp,				30381,	F_WndScrollUp					//テキストを１行上へスクロール
+CMD,	F_GONEXTPARAGRAPH,			30382,	GoNextParagraph					//次の段落へ
+CMD,	F_GOPREVPARAGRAPH,			30383,	GoPrevParagraph					//前の段落へ
+ID,		F_AUTOSCROLL,				30384	//オートスクロール
+ID,		F_WHEEL_FIRST,				30385	
+CMD,	F_WHEELUP,					30385,	WheelUp,				EI		//ホイールアップ
+CMD,	F_WHEELDOWN,				30386,	WheelDown,				EI		//ホイールダウン
+CMD,	F_WHEELLEFT,				30387,	WheelLeft,				EI		//ホイール左
+CMD,	F_WHEELRIGHT,				30388,	WheelRight,				EI		//ホイール右
+CMD,	F_WHEELPAGEUP,				30389,	WheelPageUp,			EI		//ホイールページアップ
+CMD,	F_WHEELPAGEDOWN,			30390,	WheelPageDown,			EI		//ホイールページダウン
+CMD,	F_WHEELPAGELEFT,			30391,	WheelPageLeft,			EI		//ホイールページ左
+CMD,	F_WHEELPAGERIGHT,			30392,	WheelPageRight,			EI		//ホイールページ右
+ID,		F_WHEEL_LAST,				30392	
+CMD,	F_MODIFYLINE_NEXT,			30393,	GoModifyLineNext				//次の変更行へ
+CMD,	F_MODIFYLINE_PREV,			30394,	GoModifyLinePrev				//前の変更行へ
+
+// 選択系
+CMD,	F_SELECTWORD,				30400,	SelectWord						//現在位置の単語選択
+CMD,	F_SELECTALL,				30401,	SelectAll						//すべて選択
+CMD,	F_SELECTLINE,				30403,	SelectLine,				EI		//1行選択
+CMD,	F_BEGIN_SEL,				30410,	BeginSelect						//範囲選択開始
+CMD,	F_UP_SEL,					30411,	Up_Sel							//(範囲選択)カーソル上移動
+CMD,	F_DOWN_SEL,					30412,	Down_Sel						//(範囲選択)カーソル下移動
+CMD,	F_LEFT_SEL,					30413,	Left_Sel						//(範囲選択)カーソル左移動
+CMD,	F_RIGHT_SEL,				30414,	Right_Sel						//(範囲選択)カーソル右移動
+CMD,	F_UP2_SEL,					30415,	Up2_Sel							//(範囲選択)カーソル上移動(２行ごと)
+CMD,	F_DOWN2_SEL,				30416,	Down2_Sel						//(範囲選択)カーソル下移動(２行ごと)
+CMD,	F_WORDLEFT_SEL,				30420,	WordLeft_Sel					//(範囲選択)単語の左端に移動
+CMD,	F_WORDRIGHT_SEL,			30421,	WordRight_Sel					//(範囲選択)単語の右端に移動
+CMD,	F_GOLINETOP_SEL,			30432,	GoLineTop_Sel,			EI		//(範囲選択)行頭に移動(折り返し単位)
+CMD,	F_GOLINEEND_SEL,			30433,	GoLineEnd_Sel,			EI		//(範囲選択)行末に移動(折り返し単位)
+CMD,	F_HalfPageUp_Sel,			30440,	HalfPageUp_Sel,			EI		//(範囲選択)半ページアップ
+CMD,	F_HalfPageDown_Sel,			30441,	HalfPageDown_Sel,		EI		//(範囲選択)半ページダウン
+CMD,	F_1PageUp_Sel,				30442,	PageUp_Sel,				EI		//(範囲選択)１ページアップ
+ALIAS,	F_1PageUp_Sel,						1PageUp_Sel
+CMD,	F_1PageDown_Sel,			30443,	PageDown_Sel,			EI		//(範囲選択)１ページダウン
+ALIAS,	F_1PageDown_Sel,					1PageDown_Sel
+CMD,	F_GOFILETOP_SEL,			30450,	GoFileTop_Sel					//(範囲選択)ファイルの先頭に移動
+CMD,	F_GOFILEEND_SEL,			30451,	GoFileEnd_Sel					//(範囲選択)ファイルの最後に移動
+CMD,	F_GONEXTPARAGRAPH_SEL,		30482,	GoNextParagraph_Sel				//(範囲選択)次の段落へ
+CMD,	F_GOPREVPARAGRAPH_SEL,		30483,	GoPrevParagraph_Sel				//(範囲選択)前の段落へ
+CMD,	F_MODIFYLINE_NEXT_SEL,		30484,	GoModifyLineNext_Sel			//(範囲選択)次の変更行へ
+CMD,	F_MODIFYLINE_PREV_SEL,		30485,	GoModifyLinePrev_Sel			//(範囲選択)前の変更行へ
+
+
+// 矩形選択系
+CMD,	F_BEGIN_BOX,				30510,	BeginBoxSelect					//矩形範囲選択開始
+//Oct. 17, 2000 JEPRO 以下に矩形選択のコマンド名のみ準備しておいた
+CMD,	F_UP_BOX,					30511,	Up_BoxSel,				EI		//(矩形選択)カーソル上移動
+CMD,	F_DOWN_BOX,					30512,	Down_BoxSel,			EI		//(矩形選択)カーソル下移動
+CMD,	F_LEFT_BOX,					30513,	Left_BoxSel,			EI		//(矩形選択)カーソル左移動
+CMD,	F_RIGHT_BOX,				30514,	Right_BoxSel,			EI		//(矩形選択)カーソル右移動
+CMD,	F_UP2_BOX,					30515,	Up2_BoxSel,				EI		//(矩形選択)カーソル上移動(２行ごと)
+CMD,	F_DOWN2_BOX,				30516,	Down2_BoxSel,			EI		//(矩形選択)カーソル下移動(２行ごと)
+CMD,	F_WORDLEFT_BOX,				30520,	WordLeft_BoxSel,		EI		//(矩形選択)単語の左端に移動
+CMD,	F_WORDRIGHT_BOX,			30521,	WordRight_BoxSel,		EI		//(矩形選択)単語の右端に移動
+CMD,	F_GOLOGICALLINETOP_BOX,		30530,	GoLogicalLineTop_BoxSel,EII		//(矩形選択)行頭に移動(改行単位)
+CMD,	F_GOLINETOP_BOX,			30532,	GoLineTop_BoxSel,		EII		//(矩形選択)行頭に移動(折り返し単位)
+CMD,	F_GOLINEEND_BOX,			30533,	GoLineEnd_BoxSel,		EII		//(矩形選択)行末に移動(折り返し単位)
+CMD,	F_HalfPageUp_BOX,			30540,	HalfPageUp_BoxSel,		EII		//(矩形選択)半ページアップ
+CMD,	F_HalfPageDown_BOX,			30541,	HalfPageDown_BoxSel,	EII		//(矩形選択)半ページダウン
+CMD,	F_1PageUp_BOX,				30542,	PageUp_BoxSel,			EII		//(矩形選択)１ページアップ
+ALIAS,	F_1PageUp_BOX,						1PageUp_BoxSel
+CMD,	F_1PageDown_BOX,			30543,	PageDown_BoxSel,		EII		//(矩形選択)１ページダウン
+ALIAS,	F_1PageDown_BOX,					1PageDown_BoxSel
+CMD,	F_GOFILETOP_BOX,			30550,	GoFileTop_BoxSel,		EI		//(矩形選択)ファイルの先頭に移動
+CMD,	F_GOFILEEND_BOX,			30551,	GoFileEnd_BoxSel,		EI		//(矩形選択)ファイルの最後に移動
+
+
+// クリップボード系
+CMD,	F_CUT,						30601,	Cut								//切り取り(選択範囲をクリップボードにコピーして削除)
+CMD,	F_COPY,						30602,	Copy							//コピー(選択範囲をクリップボードにコピー)
+CMD,	F_COPY_ADDCRLF,				30608,	CopyAddCRLF						//折り返し位置に改行をつけてコピー
+CMD,	F_COPY_CRLF,				30603,	CopyCRLF						//CRLF改行でコピー
+CMD,	F_PASTE,					30604,	Paste,					EI		//貼り付け(クリップボードから貼り付け)
+CMD,	F_PASTEBOX,					30605,	PasteBox,				EI		//矩形貼り付け(クリップボードから矩形貼り付け)
+
+//2007.09.18 kobake WCHARを求めるメッセージのメッセージ名を変更: 「*」→「*_W」
+CMD,	F_INSTEXT_W,				30606,	InsText,				ES		//テキストを貼り付け
+CMD,	F_ADDTAIL_W,				30607,	AddTail,				ES		//最後にテキストを追加
+CMD,	F_COPYLINES,				30610,	CopyLines						//選択範囲内全行コピー
+CMD,	F_COPYLINESASPASSAGE,		30611,	CopyLinesAsPassage				//選択範囲内全行引用符付きコピー
+CMD,	F_COPYLINESWITHLINENUMBER,	30612,	CopyLinesWithLineNumber			//選択範囲内全行行番号付きコピー
+CMD,	F_COPY_COLOR_HTML,			30613,	CopyColorHtml					//選択範囲内色付きHTMLコピー
+CMD,	F_COPY_COLOR_HTML_LINENUMBER,30614,	CopyColorHtmlWithLineNumber		//選択範囲内行番号色付きHTMLコピー
+CMD,	F_COPYPATH,					30620,	CopyPath						//このファイルのパス名をクリップボードにコピー
+CMD,	F_COPYTAG,					30621,	CopyTag							//このファイルのパス名とカーソル位置をコピー
+CMD,	F_COPYFNAME,				30622,	CopyFilename					//このファイル名をクリップボードにコピー
+CMD,	F_CREATEKEYBINDLIST,		30630,	CopyKeyBindList					//キー割り当て一覧をコピー
+
+
+// 挿入系
+CMD,	F_INS_DATE,					30790,	InsertDate						//日付挿入
+CMD,	F_INS_TIME,					30791,	InsertTime						//時刻挿入
+CMD,	F_CTRL_CODE_DIALOG,			30792,	CtrlCodeDialog					//コントロールコードの入力(ダイアログ)
+CMD,	F_CTRL_CODE,				30793,	CtrlCode,				EI		//コントロールコードの入力
+
+
+// 変換系
+CMD,	F_TOLOWER,					30800,	ToLower							//小文字
+CMD,	F_TOUPPER,					30801,	ToUpper							//大文字
+CMD,	F_TOHANKAKU,				30810,	ToHankaku						//全角→半角 
+CMD,	F_TOHANKATA,				30817,	ToHankata						//全角カタカナ→半角カタカナ
+CMD,	F_TOZENKAKUKATA,			30811,	ToZenKata						//半角＋全ひら→全角・カタカナ
+CMD,	F_TOZENKAKUHIRA,			30812,	ToZenHira						//半角＋全カタ→全角・ひらがな
+CMD,	F_HANKATATOZENKATA,			30813,	HanKataToZenKata				//半角カタカナ→全角カタカナ
+CMD,	F_HANKATATOZENHIRA,			30814,	HanKataToZenHira				//半角カタカナ→全角ひらがな
+CMD,	F_TOZENEI,					30815,	ToZenEi							//半角英数→全角英数
+CMD,	F_TOHANEI,					30816,	ToHanEi							//全角英数→半角英数
+CMD,	F_TABTOSPACE,				30830,	TABToSPACE						//TAB→空白 
+CMD,	F_SPACETOTAB,				30831,	SPACEToTAB						//空白→TAB
+CMD,	F_CODECNV_AUTO2SJIS,		30850,	AutoToSJIS						//自動判別→SJISコード変換 
+CMD,	F_CODECNV_EMAIL,			30851,	JIStoSJIS						//E-Mail(JIS→SJIS)コード変換
+CMD,	F_CODECNV_EUC2SJIS,			30852,	EUCtoSJIS						//EUC→SJISコード変換
+CMD,	F_CODECNV_UNICODE2SJIS,		30853,	CodeCnvUNICODEtoSJIS			//Unicode→SJISコード変換
+CMD,	F_CODECNV_UNICODEBE2SJIS,	30856,	CodeCnvUNICODEBEtoSJIS			//UnicodeBE→SJISコード変換
+CMD,	F_CODECNV_UTF82SJIS,		30854,	UTF8toSJIS						//UTF-8→SJISコード変換 
+CMD,	F_CODECNV_UTF72SJIS,		30855,	UTF7toSJIS						//UTF-7→SJISコード変換 
+CMD,	F_CODECNV_SJIS2JIS,			30860,	SJIStoJIS						//SJIS→JISコード変換 
+CMD,	F_CODECNV_SJIS2EUC,			30861,	SJIStoEUC						//SJIS→EUCコード変換 
+CMD,	F_CODECNV_SJIS2UTF8,		30862,	SJIStoUTF8						//SJIS→UTF-8コード変換 
+CMD,	F_CODECNV_SJIS2UTF7,		30863,	SJIStoUTF7						//SJIS→UTF-7コード変換 
+CMD,	F_BASE64DECODE,				30870,	Base64Decode					//Base64デコードして保存
+CMD,	F_UUDECODE,					30880,	Uudecode						//uudecodeして保存
+
+
+// 検索系 
+CMD,	F_SEARCH_DIALOG,			30901,	SearchDialog					//検索(単語検索ダイアログ)
+CMD,	F_SEARCH_NEXT,				30902,	SearchNext,				ESI		//次を検索
+CMD,	F_SEARCH_PREV,				30903,	SearchPrev,				ESI		//前を検索
+CMD,	F_REPLACE_DIALOG,			30904,	ReplaceDialog					//置換(置換ダイアログ)
+CMD,	F_REPLACE,					30906,	Replace,				ESSI	//置換(実行)
+CMD,	F_REPLACE_ALL,				30907,	ReplaceAll,				ESSI	//すべて置換(実行)
+CMD,	F_SEARCH_CLEARMARK,			30905,	SearchClearMark					//検索マークの切替え
+CMD,	F_JUMP_SRCHSTARTPOS,		30909,	SearchStartPos					//検索開始位置へ戻る
+ID,		F_SEARCH_BOX,				30908	//検索(ボックス)
+ID,		F_GREP_DIALOG,				30910	//Grep
+CMD,	F_GREP,						30911,	Grep,					ESSSI, &s_MacroInfoEx_i//Grep
+ID,		F_GREP_REPLACE_DLG,			30912	//Grep置換
+CMD,	F_GREP_REPLACE,				30913,	GrepReplace,			ESSSS, &s_MacroInfoEx_ii//Grep置換
+ID,		F_JUMP_DIALOG,				30920	//指定行へジャンプ
+CMD,	F_JUMP,						30921,	Jump,					EII		//指定行へジャンプ
+CMD,	F_OUTLINE,					30930,	Outline,				EI		//アウトライン解析
+ID,		F_OUTLINE_TOGGLE,			30931	//アウトライン解析(toggle)
+CMD,	F_TAGJUMP,					30940,	TagJump							//タグジャンプ
+CMD,	F_TAGJUMPBACK,				30941,	TagJumpBack						//タグジャンプバック
+ID,		F_TAGJUMP_LIST,				30942	//タグジャンプリスト
+CMD,	F_TAGS_MAKE,				30943,	TagMake							//タグファイルの作成
+CMD,	F_DIRECT_TAGJUMP,			30944,	DirectTagJump					//ダイレクトタグジャンプ
+ID,		F_TAGJUMP_CLOSE,			30945	//閉じてタグジャンプ(元ウィンドウclose)
+CMD,	F_TAGJUMP_KEYWORD,			30946,	KeywordTagJump,			ES		//キーワードを指定してダイレクトタグジャンプ
+CMD,	F_COMPARE,					30950,	Compare							//ファイル内容比較
+CMD,	F_BRACKETPAIR,				30960,	BracketPair						//対括弧の検索
+CMD,	F_BOOKMARK_SET,				30970,	BookmarkSet						//ブックマーク設定・解除
+CMD,	F_BOOKMARK_NEXT,			30971,	BookmarkNext					//次のブックマークへ
+CMD,	F_BOOKMARK_PREV,			30972,	BookmarkPrev					//前のブックマークへ
+CMD,	F_BOOKMARK_RESET,			30973,	BookmarkReset					//ブックマークの全解除
+CMD,	F_BOOKMARK_VIEW,			30974,	BookmarkView					//ブックマークの一覧
+CMD,	F_BOOKMARK_PATTERN,			30975,	BookmarkPattern,		ESI		//パターンに一致する行をマーク
+CMD,	F_DIFF_DIALOG,				30976,	DiffDialog						//DIFF差分表示(ダイアログ)
+CMD,	F_DIFF,						30977,	Diff,					ESI		//DIFF差分表示
+CMD,	F_DIFF_NEXT,				30978,	DiffNext						//次の差分へ
+CMD,	F_DIFF_PREV,				30979,	DiffPrev						//前の差分へ
+CMD,	F_DIFF_RESET,				30980,	DiffReset						//差分の全解除
+ID,		F_ISEARCH_NEXT,				30981	//前方インクリメンタルサーチ
+ID,		F_ISEARCH_PREV,				30982	//後方インクリメンタルサーチ
+ID,		F_ISEARCH_REGEXP_NEXT,		30983	//前方正規表現インクリメンタルサーチ
+ID,		F_ISEARCH_REGEXP_PREV,		30984	//後方正規表現インクリメンタルサーチ
+ID,		F_ISEARCH_MIGEMO_NEXT,		30985	//前方MIGEMOインクリメンタルサーチ
+ID,		F_ISEARCH_MIGEMO_PREV,		30986	//後方MIGEMOインクリメンタルサーチ
+CMD,	F_FUNCLIST_NEXT,			30988,	FuncListNext					//次の関数リストマークへ
+CMD,	F_FUNCLIST_PREV,			30989,	FuncListPrev					//前の関数リストマークへ
+ID,		F_FILETREE,					30990	//ファイルツリー
+
+// モード切り替え系 
+CMD,	F_CHGMOD_INS,				31001,	ChgmodINS						//挿入／上書きモード切り替え
+CMD,	F_CHG_CHARSET,				31010,	ChgCharSet,				EII		//文字コードセット指定
+ID,		F_CHGMOD_EOL_CRLF,			31081	//入力改行コード指定(CRLF)
+ID,		F_CHGMOD_EOL_LF,			31082	//入力改行コード指定(LF)
+ID,		F_CHGMOD_EOL_CR,			31083	//入力改行コード指定(CR)
+CMD,	F_CANCEL_MODE,				31099,	CancelMode						//各種モードの取り消し
+
+// 設定系 
+CMD,	F_SHOWTOOLBAR,				31100,	ShowToolbar						//ツールバーの表示
+CMD,	F_SHOWFUNCKEY,				31101,	ShowFunckey						//ファンクションキーの表示 
+CMD,	F_SHOWSTATUSBAR,			31102,	ShowStatusbar					//ステータスバーの表示 
+CMD,	F_SHOWTAB,					31103,	ShowTab							//タブの表示
+CMD,	F_SHOWMINIMAP,				31104,	ShowMiniMap						//ミニマップの表示
+CMD,	F_TYPE_LIST,				31110,	TypeList						//タイプ別設定一覧 
+CMD,	F_OPTION_TYPE,				31111,	OptionType						//タイプ別設定 
+CMD,	F_OPTION,					31112,	OptionCommon					//共通設定 
+CMD,	F_FAVORITE,					31113,	OptionFavorite					//履歴の管理
+CMD,	F_FONT,						31120,	SelectFont						// フォント設定
+CMD,	F_SETFONTSIZE,				31121,	SetFontSize,			EIII	// フォントサイズ設定
+ID,		F_SETFONTSIZEUP,			31122	// フォントサイズ拡大
+ID,		F_SETFONTSIZEDOWN,			31123	// フォントサイズ縮小
+CMD,	F_WRAPWINDOWWIDTH,			31140,	WrapWindowWidth					// 現在のウィンドウ幅で折り返し
+ID,		F_TMPWRAPNOWRAP,			31141	// 折り返さない（一時設定）
+ID,		F_TMPWRAPSETTING,			31142	// 指定桁で折り返す（一時設定）
+ID,		F_TMPWRAPWINDOW,			31143	// 右端で折り返す（一時設定）
+CMD,	F_SELECT_COUNT_MODE,		31144,	SelectCountMode,		EI		// 文字カウントの方法を取得、設定する
+
+ID,		F_TYPE_SCREEN,				31115	// タイプ別設定『スクリーン』
+ID,		F_TYPE_COLOR,				31116	// タイプ別設定『カラー』
+ID,		F_TYPE_WINDOW,				31114	// タイプ別設定『ウィンドウ』
+ID,		F_TYPE_HELPER,				31117	// タイプ別設定『支援』
+ID,		F_TYPE_REGEX_KEYWORD,		31118	// タイプ別設定『正規表現キーワード』
+ID,		F_TYPE_KEYHELP,				31119	// タイプ別設定『キーワードヘルプ』
+ID,		F_OPTION_GENERAL,			32000	// 共通設定『全般』 
+ID,		F_OPTION_WINDOW,			32001	// 共通設定『ウィンドウ』
+ID,		F_OPTION_EDIT,				32002	// 共通設定『編集』 
+ID,		F_OPTION_FILE,				32003	// 共通設定『ファイル』 
+ID,		F_OPTION_BACKUP,			32004	// 共通設定『バックアップ』
+ID,		F_OPTION_FORMAT,			32005	// 共通設定『書式』
+ID,		F_OPTION_GREP,				32007	// 共通設定『Grep』
+ID,		F_OPTION_KEYBIND,			32008	// 共通設定『キー割り当て』
+ID,		F_OPTION_CUSTMENU,			32009	// 共通設定『カスタムメニュー』
+ID,		F_OPTION_TOOLBAR,			32010	// 共通設定『ツールバー』
+ID,		F_OPTION_KEYWORD,			32011	// 共通設定『強調キーワード』
+ID,		F_OPTION_HELPER,			32012	// 共通設定『支援』
+ID,		F_OPTION_MACRO,				32013	// 共通設定『マクロ』
+ID,		F_OPTION_FNAME,				32014	// 共通設定『ファイル名表示』
+ID,		F_OPTION_TAB,				32015	// 共通設定『タブ』
+ID,		F_OPTION_STATUSBAR,			32016	// 共通設定『ステータスバー』
+ID,		F_OPTION_PLUGIN,			32017	// 共通設定『プラグイン』
+ID,		F_OPTION_MAINMENU,			32018	// 共通設定『メインメニュー』
+
+// マクロ系
+ID,		F_RECKEYMACRO,				31250	// キーマクロの記録開始／終了
+ID,		F_SAVEKEYMACRO,				31251	// キーマクロの保存
+ID,		F_LOADKEYMACRO,				31252	// キーマクロの読み込み
+ID,		F_EXECKEYMACRO,				31253	// キーマクロの実行
+CMD,	F_EXECEXTMACRO,				31254,	ExecExternalMacro,		ESS		// 名前を指定してマクロ実行
+CMD,	F_EXECMD_DIALOG,			31270,	ExecCommandDialog				// 外部コマンド実行
+CMD,	F_EXECMD,					31271,	ExecCommand,			ESIS	// 外部コマンド実行
+
+// ウィンドウ系
+CMD,	F_SPLIT_V,					31310,	SplitWinV						//上下に分割
+CMD,	F_SPLIT_H,					31311,	SplitWinH						//左右に分割
+CMD,	F_SPLIT_VH,					31312,	SplitWinVH						//縦横に分割
+CMD,	F_WINCLOSE,					31320,	WinClose						//閉じる
+CMD,	F_WIN_CLOSEALL,				31321,	WinCloseAll						//すべて閉じる
+CMD,	F_CASCADE,					31330,	CascadeWin						//重ねて表示
+CMD,	F_TILE_V,					31331,	TileWinV						//上下に並べて表示
+CMD,	F_TILE_H,					31332,	TileWinH						//左右に並べて表示
+ID,		F_BIND_WINDOW,				31333	//グループ化
+CMD,	F_TOPMOST,					31334,	WindowTopMost,			EI		//常に手前に表示
+CMD,	F_NEXTWINDOW,				31340,	NextWindow						//次のウィンドウ
+CMD,	F_PREVWINDOW,				31341,	PrevWindow						//前のウィンドウ
+CMD,	F_WINLIST,					31336,	WindowList						//ウィンドウ一覧
+ID,		F_DLGWINLIST,				31337	//ウィンドウ一覧ダイアログ
+CMD,	F_MAXIMIZE_V,				31350,	MaximizeV						//縦方向に最大化
+CMD,	F_MINIMIZE_ALL,				31351,	MinimizeAll						//すべて最小化
+CMD,	F_MAXIMIZE_H,				31352,	MaximizeH						//横方向に最大化
+CMD,	F_REDRAW,					31360,	ReDraw							//再描画
+CMD,	F_WIN_OUTPUT,				31370,	ActivateWinOutput				//アウトプットウィンドウ表示
+CMD,	F_GROUPCLOSE,				31380,	GroupClose						// グループを閉じる
+CMD,	F_NEXTGROUP,				31381,	NextGroup						// 次のグループ
+CMD,	F_PREVGROUP,				31382,	PrevGroup						// 前のグループ
+CMD,	F_TAB_MOVERIGHT,			31383,	TabMoveRight					// タブを右に移動
+CMD,	F_TAB_MOVELEFT,				31384,	TabMoveLeft						// タブを左に移動
+CMD,	F_TAB_SEPARATE,				31385,	TabSeparate						// 新規グループ
+CMD,	F_TAB_JOINTNEXT,			31386,	TabJointNext					// 次のグループに移動
+CMD,	F_TAB_JOINTPREV,			31387,	TabJointPrev					// 前のグループに移動
+CMD,	F_TAB_CLOSEOTHER,			31388,	TabCloseOther					// このタブ以外を閉じる
+CMD,	F_TAB_CLOSELEFT,			31389,	TabCloseLeft					// 左をすべて閉じる
+CMD,	F_TAB_CLOSERIGHT,			31390,	TabCloseRight					// 右をすべて閉じる
+
+
+// 支援
+CMD,	F_HOKAN,					31430,	Complete						// 入力補完
+CMD,	F_TOGGLE_KEY_SEARCH,		31431,	ToggleKeyHelpSearch,	EI		// キーワードヘルプ自動表示
+CMD,	F_HELP_CONTENTS,			31440,	HelpContents					// ヘルプ目次
+CMD,	F_HELP_SEARCH,				31441,	HelpSearch						// ヘルプキーワード検索
+CMD,	F_MENU_ALLFUNC,				31445,	CommandList						// コマンド一覧
+CMD,	F_EXTHELP1,					31450,	ExtHelp1						// 外部ヘルプ１
+CMD,	F_EXTHTMLHELP,				31451,	ExtHtmlHelp,			ESS		// 外部HTMLヘルプ
+CMD,	F_ABOUT,					31455,	About							// バージョン情報
+
+
+//	Jul. 4, 2000 genta
+ID,		F_USERMACRO_0,				31600	// 登録マクロ開始
+
+
+// カスタムメニュー
+CMD,	F_MENU_RBUTTON,				31580,	RMenu							// 右クリックメニュー
+CMD,	F_CUSTMENU_1,				31501,	CustMenu1						// カスタムメニュー1
+CMD,	F_CUSTMENU_2,				31502,	CustMenu2						// カスタムメニュー2
+CMD,	F_CUSTMENU_3,				31503,	CustMenu3						// カスタムメニュー3
+CMD,	F_CUSTMENU_4,				31504,	CustMenu4						// カスタムメニュー4
+CMD,	F_CUSTMENU_5,				31505,	CustMenu5						// カスタムメニュー5
+CMD,	F_CUSTMENU_6,				31506,	CustMenu6						// カスタムメニュー6
+CMD,	F_CUSTMENU_7,				31507,	CustMenu7						// カスタムメニュー7
+CMD,	F_CUSTMENU_8,				31508,	CustMenu8						// カスタムメニュー8
+CMD,	F_CUSTMENU_9,				31509,	CustMenu9						// カスタムメニュー9
+CMD,	F_CUSTMENU_10,				31510,	CustMenu10						// カスタムメニュー10
+CMD,	F_CUSTMENU_11,				31511,	CustMenu11						// カスタムメニュー11
+CMD,	F_CUSTMENU_12,				31512,	CustMenu12						// カスタムメニュー12
+CMD,	F_CUSTMENU_13,				31513,	CustMenu13						// カスタムメニュー13
+CMD,	F_CUSTMENU_14,				31514,	CustMenu14						// カスタムメニュー14
+CMD,	F_CUSTMENU_15,				31515,	CustMenu15						// カスタムメニュー15
+CMD,	F_CUSTMENU_16,				31516,	CustMenu16						// カスタムメニュー16
+CMD,	F_CUSTMENU_17,				31517,	CustMenu17						// カスタムメニュー17
+CMD,	F_CUSTMENU_18,				31518,	CustMenu18						// カスタムメニュー18
+CMD,	F_CUSTMENU_19,				31519,	CustMenu19						// カスタムメニュー19
+CMD,	F_CUSTMENU_20,				31520,	CustMenu20						// カスタムメニュー20
+CMD,	F_CUSTMENU_21,				31521,	CustMenu21						// カスタムメニュー21
+CMD,	F_CUSTMENU_22,				31522,	CustMenu22						// カスタムメニュー22
+CMD,	F_CUSTMENU_23,				31523,	CustMenu23						// カスタムメニュー23
+CMD,	F_CUSTMENU_24,				31524,	CustMenu24						// カスタムメニュー24
+ID,		F_CUSTMENU_LAST,			F_CUSTMENU_24
+
+ID,		F_CUSTMENU_BASE,			31500	// カスタムメニュー基準番号
+
+// その他
+
+//	Windows 95の制約により，WM_COMMANDで使う機能番号として32768以上の値を用いることができません．
+//	メニュー等で使われないマクロ専用のコマンドにはそれ以上の値を割り当てましょう．
+
+//	メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
+ID,		F_MENU_NOT_USED_FIRST,		32768	
+CMD,	F_CHGMOD_EOL,				32800,	ChgmodEOL,				EI		// 入力改行コード指定
+CMD,	F_SET_QUOTESTRING,			32801,	SetMsgQuoteStr,			ES		// 共通設定: 引用符の設定
+CMD,	F_TRACEOUT,					32802,	TraceOut,				ESI		// マクロ用アウトプットウインドウに出力
+CMD,	F_PUTFILE,					32803,	PutFile,				ESII	// 作業中ファイルの一時出力 2006.12.10 maru
+CMD,	F_INSFILE,					32804,	InsFile,				ESII	// キャレット位置にファイル挿入 2006.12.10 maru
+CMD,	F_TEXTWRAPMETHOD,			32805,	TextWrapMethod,			EI		// テキストの折り返し方法
+CMD,	F_INSBOXTEXT,				32806,	InsBoxText,				ES		// 矩形テキスト挿入
+CMD,	F_MOVECURSOR,				32807,	MoveCursor,				EIII	// カーソル移動
+CMD,	F_MOVECURSORLAYOUT,			32808,	MoveCursorLayout,		EIII	// カーソル移動(レイアウト)
+CMD,	F_STATUSMSG,				32809,	StatusMsg,				ESI		// ステータスメッセージ
+CMD,	F_MSGBEEP,					32810,	MsgBeep,				EI		// ビープ音
+CMD,	F_CHANGETYPE,				32811,	ChangeType,				EI		// タイプ別設定一時適用
+CMD,	F_FILEOPEN2,				32812,	FileOpen,				ESIIS	// 開く2
+CMD,	F_COMMITUNDOBUFFER,			32813,	CommitUndoBuffer				// OpeBlKコミット
+CMD,	F_ADDREFUNDOBUFFER,			32814,	AddRefUndoBuffer				// OpeBlK AddRef
+CMD,	F_SETUNDOBUFFER,			32815,	SetUndoBuffer					// OpeBlK Release
+CMD,	F_APPENDUNDOBUFFERCURSOR,	32816,	AppendUndoBufferCursor			// OpeBlK にカーソル位置を追加
+CMD,	F_CLIPBOARDEMPTY,			32817,	ClipboardEmpty					// クリップボードクリア
+CMD,	F_SETVIEWTOP,				32818,	SetViewTop,				EI		// ビューの上の行数を設定
+CMD,	F_SETVIEWLEFT,				32819,	SetViewLeft,			EI		// ビューの左端の桁数を設定
+
+
+ID,		F_FUNCTION_FIRST,			*		// 2003-02-21 鬼 これ以上だと関数
+// ここ以降の id はビルドごとに値が変わっても問題ないので，id は * でよい
+
+FUNC,	F_GETFILENAME,				*,		GetFilename,			S		// 編集中のファイル名を取得する
+FUNC,	F_GETSAVEFILENAME,			*,		GetSaveFilename,		S		// 保存時のファイル名を取得する
+FUNC,	F_GETSELECTED,				*,		GetSelectedString,		SI		// 選択範囲の取得
+FUNC,	F_EXPANDPARAMETER,			*,		ExpandParameter,		SS		// コマンドラインパラメータ展開
+FUNC,	F_GETLINESTR,				*,		GetLineStr,				SI		// 指定行論理データを取得する
+FUNC,	F_GETLINECOUNT,				*,		GetLineCount,			II		// 論理行数を取得する
+FUNC,	F_CHGTABWIDTH,				*,		ChangeTabWidth,			II		// タブサイズを取得、設定する
+FUNC,	F_ISTEXTSELECTED,			*,		IsTextSelected,			I		// テキストが選択されているか
+FUNC,	F_GETSELLINEFROM,			*,		GetSelectLineFrom,		I		// 選択開始行の取得
+FUNC,	F_GETSELCOLUMNFROM,			*,		GetSelectColmFrom,		I		// 選択開始桁の取得
+ALIAS,	F_GETSELCOLUMNFROM,					GetSelectColumnFrom
+FUNC,	F_GETSELLINETO,				*,		GetSelectLineTo,		I		// 選択終了行の取得
+FUNC,	F_GETSELCOLUMNTO,			*,		GetSelectColmTo,		I		// 選択終了桁の取得
+ALIAS,	F_GETSELCOLUMNTO,					GetSelectColumnTo
+FUNC,	F_ISINSMODE,				*,		IsInsMode,				I		// 挿入／上書きモードの取得
+FUNC,	F_GETCHARCODE,				*,		GetCharCode,			I		// 文字コード取得
+FUNC,	F_GETLINECODE,				*,		GetLineCode,			I		// 改行コード取得
+FUNC,	F_ISPOSSIBLEUNDO,			*,		IsPossibleUndo,			I		// Undo可能か調べる
+FUNC,	F_ISPOSSIBLEREDO,			*,		IsPossibleRedo,			I		// Redo可能か調べる
+FUNC,	F_CHGWRAPCOLUMN,			*,		ChangeWrapColm,			II		// 折り返し桁を取得、設定する 2008.06.19 ryoji
+ALIAS,	F_CHGWRAPCOLUMN,					ChangeWrapColumn
+FUNC,	F_ISCURTYPEEXT,				*,		IsCurTypeExt,			IS		// 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+FUNC,	F_ISSAMETYPEEXT,			*,		IsSameTypeExt,			ISS		// ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+FUNC,	F_INPUTBOX,					*,		InputBox,				SSSI	// テキスト入力ダイアログの表示
+FUNC,	F_MESSAGEBOX,				*,		MessageBox,				ISI		// メッセージボックスの表示
+FUNC,	F_ERRORMSG,					*,		ErrorMsg,				IS		// メッセージボックス（エラー）の表示
+FUNC,	F_WARNMSG,					*,		WarnMsg,				IS		// メッセージボックス（警告）の表示
+FUNC,	F_INFOMSG,					*,		InfoMsg,				IS		// メッセージボックス（情報）の表示
+FUNC,	F_OKCANCELBOX,				*,		OkCancelBox,			IS		// メッセージボックス（確認：OK／キャンセル）の表示
+FUNC,	F_YESNOBOX,					*,		YesNoBox,				IS		// メッセージボックス（確認：はい／いいえ）の表示
+FUNC,	F_COMPAREVERSION,			*,		CompareVersion,			ISS		// バージョン番号の比較
+FUNC,	F_MACROSLEEP,				*,		Sleep,					II		// 指定した時間（ミリ秒）停止
+FUNC,	F_FILEOPENDIALOG,			*,		FileOpenDialog,			SSS		// ファイルを開くダイアログの表示
+FUNC,	F_FILESAVEDIALOG,			*,		FileSaveDialog,			SSS		// ファイルを保存ダイアログの表示
+FUNC,	F_FOLDERDIALOG,				*,		FolderDialog,			SSS		// フォルダを開くダイアログの表示
+FUNC,	F_GETCLIPBOARD,				*,		GetClipboard,			SI		// クリップボードの文字列を取得
+FUNC,	F_SETCLIPBOARD,				*,		SetClipboard,			IIS		// クリップボードに文字列を設定
+FUNC,	F_LAYOUTTOLOGICLINENUM,		*,		LayoutToLogicLineNum,	II		// ロジック行番号取得
+FUNC,	F_LOGICTOLAYOUTLINENUM,		*,		LogicToLayoutLineNum,	III		// レイアウト行番号取得
+FUNC,	F_LINECOLUMNTOINDEX,		*,		LineColumnToIndex,		III		// ロジック桁番号取得
+FUNC,	F_LINEINDEXTOCOLUMN,		*,		LineIndexToColumn,		III		// レイアウト桁番号取得
+FUNC,	F_GETCOOKIE,				*,		GetCookie,				SSS		// Cookie取得
+FUNC,	F_GETCOOKIEDEFAULT,			*,		GetCookieDefault,		SSSS	// Cookie取得デフォルト値
+FUNC,	F_SETCOOKIE,				*,		SetCookie,				ISSS	// Cookie設定
+FUNC,	F_DELETECOOKIE,				*,		DeleteCookie,			ISS		// Cookie削除
+FUNC,	F_GETCOOKIENAMES,			*,		GetCookieNames,			SS		// Cookie名前取得
+FUNC,	F_SETDRAWSWITCH,			*,		SetDrawSwitch,			II		// 再描画スイッチ設定
+FUNC,	F_GETDRAWSWITCH,			*,		GetDrawSwitch,			I		// 再描画スイッチ取得
+FUNC,	F_ISSHOWNSTATUS,			*,		IsShownStatus,			I		// ステータスウィンドウが表示されているか
+FUNC,	F_GETSTRWIDTH,				*,		GetStrWidth,			ISI		// 文字列幅取得
+FUNC,	F_GETSTRLAYOUTLENGTH,		*,		GetStrLayoutLength,		ISI		// 文字列のレイアウト幅取得
+FUNC,	F_GETDEFAULTCHARLENGTH,		*,		GetDefaultCharLength,	I		// デフォルト文字幅の取得
+FUNC,	F_ISINCLUDECLIPBOARDFORMAT,	*,		IsIncludeClipboardFormat,IS		// クリップボードの形式取得
+FUNC,	F_GETCLIPBOARDBYFORMAT,		*,		GetClipboardByFormat,	SSII	// クリップボードの指定形式で取得
+FUNC,	F_SETCLIPBOARDBYFORMAT,		*,		SetClipboardByFormat,	ISSII	// クリップボードの指定形式で設定
+FUNC,	F_GETLINEATTRIBUTE,			*,		GetLineAttribute,		III		// 行属性取得
+FUNC,	F_ISTEXTSELECTINGLOCK,		*,		IsTextSelectingLock,	I		// 選択状態のロックを取得
+FUNC,	F_GETVIEWLINES,				*,		GetViewLines,			I		// ビューの行数取得
+FUNC,	F_GETVIEWCOLUMNS,			*,		GetViewColumns,			I		// ビューの列数取得
+FUNC,	F_CREATEMENU,				*,		CreateMenu,				IIS		// メニュー作成
+
+
+// 2005.01.10 genta ISearch用補助コード
+ID,		F_ISEARCH_ADD_CHAR,			*
+ID,		F_ISEARCH_ADD_STR,			*
+ID,		F_ISEARCH_DEL_BACK,			*

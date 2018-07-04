@@ -1088,11 +1088,11 @@
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\Funcdesc_CSMacroMgr.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sakura_core\Funccode_x.hsrc">
-      <Filter>Other Files</Filter>
-    </None>
     <None Include="..\resource\auto_scroll_center.cur">
       <Filter>Resource Files</Filter>
     </None>
@@ -1152,6 +1152,9 @@
     </None>
     <None Include="..\resource\MainMenu.ini">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\sakura_core\Funcdesc.hsrc">
+      <Filter>Other Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

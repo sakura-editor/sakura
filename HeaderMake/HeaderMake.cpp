@@ -65,6 +65,8 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <errno.h>
+#include <regex>
+#include <unordered_map>
 using namespace std;
 
 #define PREPROCESSOR "cl.exe /EP %s"
@@ -101,27 +103,238 @@ void fopen_s(
 #endif	// VC2003
 #endif	// _MSC_VER
 
+#define BUF_SIZE	1024
+
+/*** Funccode_x.hsrc の引数の順番を定義 *************************************/
+/*
+	TYPE, ID の位置は全 type 共通
+	ALIAS 以外は，TYPE ～ VAL の位置は共通
+	引数の _MIN, _MAX 数も定義する (引数が省略できる type 用)
+*/
+enum {
+	ID_TYPE,
+	ID_ID,
+	ID_VAL,
+	ID__MAX,
+	ID__MIN = ID__MAX,
+};
+
+enum {
+	CMD_TYPE,
+	CMD_ID,
+	CMD_VAL,
+	CMD_NAME,
+	CMD_RETARG,
+	CMD_EXT,
+	CMD__MAX,
+	CMD__MIN = CMD_NAME + 1,
+};
+
+enum {
+	FUNC_TYPE,
+	FUNC_ID,
+	FUNC_VAL,
+	FUNC_NAME,
+	FUNC_RETARG,
+	FUNC_EXT,
+	FUNC__MAX,
+	FUNC__MIN = FUNC_NAME + 1,
+};
+
+enum {
+	ALIAS_TYPE,
+	ALIAS_ID,
+	ALIAS_NAME,
+	ALIAS__MAX,
+	ALIAS__MIN = ALIAS__MAX,
+};
+
+// retarg の最大長，MacroFuncInfo.m_varArguments[] の要素数 + 1
+#define MAX_RETARG_NUM	5
+
+/*** 正規表現を使用する場所で wregex するためのヘルパ関数 *******************/
+// 書きやすさ最優先で，実行効率は求めない．
+
+unordered_map<wstring, wregex *> RegTbl;
+
+wregex &regex_helper( const wstring& strRe, const char *file, const int line ){
+	wregex **regex = &RegTbl[ strRe ];
+	
+	if( *regex == NULL ){
+		try {
+			*regex = new wregex( strRe );
+		}catch( std::regex_error& e ){
+			printf( "%s(%d): %s\n", file, line, e.what());
+			exit( 1 );
+		}
+	}
+	
+	return **regex;
+}
+
+#define re( reg ) regex_helper( wstring( L##reg ), __FILE__, __LINE__ )
+
+/*** ALIAS 参照先を取得 *****************************************************/
+// 見つからなければ NULL
+
+vector<wstring>* FindAlias(
+	vector<vector<wstring>>& FuncTbl,					// Funccode データ本体
+	unordered_map<wstring, unsigned int>& FuncTblHash,	// ID->index map
+	wstring& strName,									// ALIAS name (メッセージ表示用)
+	wstring& strId,										// ALIAS ID
+	wchar_t* szTargetType								// 対象 type (CMD of FUNC)
+){
+	// ID が一致するデータを検索
+	auto FindData = FuncTblHash.find( strId );
+	
+	// ALIAS の参照先が存在しない
+	if( FindData == FuncTblHash.end()){
+		wprintf(
+			L"Error: name:%s: id:%s not found\n",
+			strName.c_str(),
+			strId.c_str()
+		);
+		
+		return NULL;
+	}
+	
+	// ALIAS の参照先が期待する type ではない
+	if( FuncTbl[ FindData->second ][ ID_TYPE ] != szTargetType ) return NULL;
+	
+	return &FuncTbl[ FindData->second ];
+}
+
+/*** 返り値，引数型出力 *****************************************************/
+
+wchar_t *TypeCharToStr( wchar_t c ){
+	switch( c ){
+		case L'E':
+		case L'\0': return L"VT_EMPTY";
+		case L'S':  return L"VT_BSTR";
+		case L'I':  return L"VT_I4";
+	}
+	
+	return NULL;
+}
+
+int OutputRetarg(
+	FILE *out,
+	const wchar_t *szRetArg
+){
+	if( !szRetArg ) szRetArg = L"";
+	int iLen = wcslen( szRetArg );
+	if( iLen > MAX_RETARG_NUM ) return 1;
+	
+	fprintf( out, "{" );
+	
+	wchar_t* szType;
+	
+	// 引数型
+	int i;
+	for( i = 1; i < iLen; ++i ){
+		if(( szType = TypeCharToStr( szRetArg[ i ])) == NULL ){
+			return 1;
+		}
+		
+		fwprintf( out, L"%s%s,\t", szType, i == MAX_RETARG_NUM - 1 ? L"}" : L"" );
+	}
+	
+	for( ; i < MAX_RETARG_NUM; ++i ){
+		fwprintf( out, L"VT_EMPTY%s,\t", i == MAX_RETARG_NUM - 1 ? L"}" : L"" );
+	}
+	
+	// 返り値型
+	if(( szType = TypeCharToStr( szRetArg[ 0 ])) == NULL ){
+		return 1;
+	}
+	fwprintf( out, L"%s,\t", szType );
+	
+	return 0;
+}
+
+/*** 関数テーブル出力 *******************************************************/
+
+int OutputFuncTable(
+	FILE *out,
+	vector<vector<wstring>>& FuncTbl,					// Funccode データ本体
+	unordered_map<wstring, unsigned int>& FuncTblHash,	// ID->index map
+	const char *class_name,
+	int	iType											// 0:cmd 1:func
+){
+	fprintf( out,
+		"MacroFuncInfo %s::m_MacroFuncInfo%sArr[] =\n{\n", class_name,
+		iType ? "" : "Command"
+	);
+	
+	wchar_t*		szTypeStr	= iType ? L"FUNC"     : L"CMD";
+	unsigned int	uIdxName	= iType ? FUNC_NAME   : CMD_NAME;
+	unsigned int	uIdxRetArg	= iType ? FUNC_RETARG : CMD_RETARG;
+	unsigned int	uIdxExt		= iType ? FUNC_EXT    : CMD_EXT;
+	
+	for( auto itr = FuncTbl.begin(); itr != FuncTbl.end(); ++itr ){
+		vector<wstring>* pData = &*itr;
+		wstring *pstrName;	// ALIAS の name 挿げ替え用
+		
+		if(( *pData )[ CMD_TYPE ] == szTypeStr ){
+			pstrName = &( *pData )[ uIdxName ];
+		}else if(( *pData )[ CMD_TYPE ] == L"ALIAS" ){
+			pstrName = &( *pData )[ ALIAS_NAME ];
+			
+			// ALIAS の参照先を検索
+			pData = FindAlias( FuncTbl, FuncTblHash, ( *pData )[ ALIAS_NAME ], ( *pData )[ ALIAS_ID ], szTypeStr );
+			if( !pData ) continue;
+		}else{
+			// CMD, ALIAS 以外はスキップ
+			continue;
+		}
+		
+		// 出力
+		fwprintf( out, L"\t{ %s,\tL\"%s\",\t",
+			( *pData )[ CMD_ID ].c_str(),
+			pstrName->c_str()
+		);
+		
+		// 返り値，引数型 出力
+		int iRet = OutputRetarg( out, pData->size() > uIdxRetArg ? ( *pData )[ uIdxRetArg ].c_str() : NULL );
+		if( iRet ){
+			wprintf( L"Error: %s: invalid retarg\n", ( *pData )[ CMD_ID ].c_str());
+			return iRet;
+		}
+		
+		fwprintf( out, L"%s },\n",
+			pData->size() > uIdxExt ? ( *pData )[ uIdxExt ].c_str() : L"NULL"
+		);
+	}
+	
+	fprintf( out, "\t{ F_INVALID },\n};\n\n" );
+	return 0;
+}
+
+/****************************************************************************/
+
 enum EMode{
 	MODE_INVALID,
 
 	MODE_ENUM,
 	MODE_DEFINE,
+	MODE_FUNC,
 };
 
 int usage()
 {
 	printf(
-		"\nUsage: HeaderMake -in=<InputFile.hsrc> -out=<OutputFile.h> -mode=<Mode> [-enum=<EnumName>]\n"
+		"\nUsage: HeaderMake -in=<InputFile.hsrc> -out=<OutputFile.h> -mode=<Mode> [-class=<ClassName>]\n"
 		"\n"
 		"  Argument parameters\n"
-		"    InputFile           : Input .hsrc file path\n"
-		"    OutputFile          : Output .h file path\n"
-		"    Mode                : define|enum\n"
-		"    EnumName (Optional) : Enum name (when enum mode only)\n"
+		"    InputFile            : Input .hsrc file path\n"
+		"    OutputFile           : Output .h file path\n"
+		"    Mode                 : define|enum\n"
+		"    ClassName (Optional) : Enum name (when enum mode only) / class name (when func mode only)\n"
 		"\n"
 		"  Mode\n"
 		"    define : Output .h file as #define list\n"
 		"    enum   : Output .h file as enum list\n"
+		"    func   : Output macro function table\n"
 	);
 	return 1;
 }
@@ -157,7 +370,7 @@ int main_impl(
 	const char* in_file,
 	const char* out_file,
 	const char* mode_name,
-	const char* enum_name
+	const char* class_name
 );
 
 int main(int argc, char* argv[])
@@ -170,7 +383,7 @@ int main(int argc, char* argv[])
 	const char* in_file = NULL;
 	const char* out_file = NULL;
 	const char* mode_name = NULL;
-	const char* enum_name = "";
+	const char* class_name = "";
 	for (int i = 1; i<argc; i++) {
 		char* p = argv[i];
 		if (*p == '/')*p = '-';
@@ -189,10 +402,10 @@ int main(int argc, char* argv[])
 			if (*p != '\0') { if (*p == '=')p++; mode_name = p; }
 			else mode_name = argv[++i];
 		}
-		else if (strncmp(p, "-enum", 5) == 0) {
-			p += 5;
-			if (*p != '\0') { if (*p == '=')p++; enum_name = p; }
-			else enum_name = argv[++i];
+		else if (strncmp(p, "-class", 6) == 0) {
+			p += 6;
+			if (*p != '\0') { if (*p == '=')p++; class_name = p; }
+			else class_name = argv[++i];
 		}
 		else {
 			printf("Error: Unknown argument[%s]\n", p);
@@ -212,7 +425,7 @@ int main(int argc, char* argv[])
 	printf("\n\n");
 
 	// 処理
-	main_impl(in_file, out_file, mode_name, enum_name);
+	main_impl(in_file, out_file, mode_name, class_name);
 
 	// 終了メッセージ
 	printf("\nEND HeaderMake.\n\n");
@@ -222,13 +435,14 @@ int main_impl(
 	const char* in_file,
 	const char* out_file,
 	const char* mode_name,
-	const char* enum_name
+	const char* class_name
 )
 {
 	//モード解釈
 	EMode mode=MODE_INVALID;
-	if(_stricmp(mode_name,"DEFINE")==0)mode=MODE_DEFINE;
-	else if(_stricmp(mode_name,"ENUM")==0)mode=MODE_ENUM;
+	if(      _stricmp (mode_name, "DEFINE" ) == 0) mode = MODE_DEFINE;
+	else if( _stricmp( mode_name, "ENUM"   ) == 0) mode = MODE_ENUM;
+	else if( _stricmp( mode_name, "FUNC"   ) == 0) mode = MODE_FUNC;
 	else{
 		printf("Error: Unknown mode[%s].\n", mode_name);
 		return 2;
@@ -238,19 +452,88 @@ int main_impl(
 	//ファイル更新時刻比較 (なんか、VSのカスタムビルドがうまくいかないので、ここで判定(汗) )
 	struct _stat in_stat;
 	struct _stat out_stat;
-	if(-1==_stat(in_file, &in_stat ))goto next;
-	if(-1==_stat(out_file,&out_stat))goto next;
-	//入力ファイルが新しければ処理を続行する
-	if(in_stat.st_mtime>out_stat.st_mtime)goto next;
-	else{ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
+	if(
+		-1 != _stat(in_file, &in_stat ) &&
+		-1 != _stat(out_file,&out_stat) &&
+		//入力ファイルが新しければ処理を続行する
+		in_stat.st_mtime < out_stat.st_mtime
+	){ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
 
-
-next:
+#ifdef USE_CPP
 	// プリプロセス済みストリームオープン
 	char in_file2[_MAX_PATH];
 	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
 	FILE* in = _popen(in_file2, "rt");
 	if (!in) { printf("Error: Failed to open process[%s]\n", in_file2); return 1; }
+#else
+	FILE* in = NULL; fopen_s(&in, in_file, "rt,ccs=UTF-8");
+	if (!in) { printf("Error: Failed to open OutputFile[%s] as read mode\n", in_file); return 1; }
+#endif
+	
+	/*** 入力 *****************************************************************/
+	
+	wchar_t line[ BUF_SIZE ];
+	
+	// Funccode_x.hsrc の内容を単なる 2次元配列的に収めたもの
+	vector<vector<wstring>> FuncTbl;
+	
+	// ID をキーとして 1行分のデータを参照できる map
+	unordered_map<wstring, unsigned int> FuncTblHash;
+	
+	while( fgetws( line, BUF_SIZE, in )){
+		
+		wstring str( line );
+		
+		// 改行削除
+		str = regex_replace( str, re( "[\\x0D\\x0A]" ), L"" );
+		
+		// コメント, # 削除
+		str = regex_replace( str, re( "\\s*(?://|#).*" ), L"" );
+		
+		// 行末スペース削除
+		str = regex_replace( str, re( "\\s+$" ), L"" );
+		
+		// 空行スキップ
+		if( regex_match( str, re( "\\s*" ))) continue;
+		
+		// ',' で split
+		wsregex_token_iterator begin{ str.begin(), str.end(), re( "\\s*,\\s*" ), -1 }, end;
+		FuncTbl.emplace_back();
+		auto& Data = FuncTbl.back();
+		copy( begin, end, back_inserter( Data ));
+		
+		// type の確認
+		if(
+			Data[ ID_TYPE ] != L"ID"	&&
+			Data[ ID_TYPE ] != L"CMD"	&&
+			Data[ ID_TYPE ] != L"FUNC"	&&
+			Data[ ID_TYPE ] != L"ALIAS"
+		){
+			wprintf( L"unknown type: %s", line );
+			continue;
+		}
+		
+		// 引数の数チェック
+		#define CheckArgNum( type ) \
+			( Data[ ID_TYPE ] == L## #type && type##__MIN <= Data.size() && Data.size() <= type##__MAX)
+		
+		if(
+			!CheckArgNum( ID ) &&
+			!CheckArgNum( CMD ) &&
+			!CheckArgNum( FUNC ) &&
+			!CheckArgNum( ALIAS )
+		){
+			wprintf( L"invalid argument num: %s", line );
+			continue;
+		}
+		
+		// id と Data の map 登録
+		FuncTblHash.emplace( Data[ ID_ID ], FuncTbl.size() - 1 );
+	}
+	
+	fclose(in);
+	
+	/*** 出力 ***************************************************************/
 	
 	// 出力ファイルオープン
 	FILE* out = NULL; fopen_s(&out, out_file, "wt");
@@ -258,99 +541,60 @@ next:
 
 
 	//処理
-
-	if(mode==MODE_DEFINE){
-		fprintf(out,
-			"#ifndef SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
-			"#define SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
-			"\n"
-		);	// インクルードガードを挿入（define 用）
-	}else if(mode==MODE_ENUM){
-		fprintf(out,
-			"#ifndef SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
-			"#define SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
-			"\n"
-		);	// インクルードガードを挿入（enum 用）
-	}else{
-		; // 何も出力しない
-	}
-
-	char line[1024];
 	fprintf(out,
+		"#pragma once\n"
+		"/* HeaderMake generate start */\n"
+		"\n"
 		"// This file is generated by HeaderMake with %s.\n"
 		"// Don't edit this file manually.\n\n",
 		GetFileTitlePointer(in_file)
 	);
-	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enum開始
-	while(NULL!=fgets(line,_countof(line),in))
-	{
-		// #無視(for MinGW)
-		if('#' == line[0]){
-			continue;
-		}
-
-		//改行除去
-		{
-			char* p=strrchr(line,'\n');
-			if(p && *(p+1)=='\0')*p='\0';
-		}
-
-		//トークン抽出開始
-		const char* p=line;
-		const char* q;
-
-		//ID文字列 -> id
-		char id[256];
-		while(*p && !is_token(*p))p++;
-		q=p;
-		while(*q && is_token(*q))q++;
-		strncpy_s(id,_countof(id),p,q-p);
-		id[q-p]='\0';
-		p=q;
-
-		//値 -> value
-		char value[256];
-		while(*p && !is_token(*p))p++;
-		q=p;
-		while(*q && is_token(*q))q++;
-		strncpy_s(value,_countof(value),p,q-p);
-		value[q-p]='\0';
-		p=q;
-
-		//出力
-		if(*id && *value){
-			if(mode==MODE_ENUM){
-				fprintf(out,"\t%s = %s,\n",id,value);
-			}
-			else if(mode==MODE_DEFINE){
-				fprintf(out,"#define %s %s\n",id,value);
-			}else{
-				; // mode が不正の場合は何も出力しない
-			}
-		}
-	}
-
-	if(mode==MODE_DEFINE){
-		fprintf(out,
-			"\n"
-			"#endif /* SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_ */\n"
-			"/*[EOF]*/\n"
-		);	// インクルードガード終了（define 用）
-	}else if(mode==MODE_ENUM){
-		fprintf(out,
-			"};\n"
-			"\n"
-			"#endif /* SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_ */\n"
-			"/*[EOF]*/\n"
-		);	// インクルードガード終了（enum 用）
+	
+	if( mode == MODE_FUNC ){
+		
+		int iRet;
+		// m_MacroFuncInfoCommandArr[] の出力
+		// type が CMD, ALIAS(がCMDを指しているもの) が対象となる
+		if( iRet = OutputFuncTable( out, FuncTbl, FuncTblHash, class_name, 0 )) return iRet;
+		
+		// m_MacroFuncInfoArr[] の出力
+		// type が FUNC, ALIAS(がFUNCを指しているもの) が対象となる
+		if( iRet = OutputFuncTable( out, FuncTbl, FuncTblHash, class_name, 1 )) return iRet;
+		
 	}else{
-		; // 何も出力しない
+		// define, enum の出力
+		// ALIAS 以外の id, val を出力する
+		
+		if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",class_name); //enum開始
+		
+		for( auto itr = FuncTbl.begin(); itr != FuncTbl.end(); ++itr ){
+			auto Data = *itr;
+			
+			if( Data[ ID_TYPE ] == L"ALIAS" ) continue;
+			
+			if(mode==MODE_ENUM){
+				if( Data[ ID_VAL ] == L"*" ){
+					fwprintf( out, L"\t%s,\n", Data[ ID_ID ].c_str());
+				}else{
+					fwprintf( out, L"\t%s = %s,\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				}
+			}else if(mode==MODE_DEFINE){
+				if( Data[ ID_VAL ] != L"*" ){
+					fwprintf( out, L"#define %s %s\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				}
+			}
+		}
+
+		if(mode==MODE_ENUM) fprintf( out, "};\n" );
 	}
 
+	fprintf(out,
+		"\n"
+		"/* HeaderMake generate end */\n"
+	);
 
 	//後始末
 	fclose(out);
-	fclose(in);
 
 	return 0;
 }
