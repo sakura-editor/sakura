@@ -573,9 +573,15 @@ int main_impl(
 			if( Data[ ID_TYPE ] == L"ALIAS" ) continue;
 			
 			if(mode==MODE_ENUM){
-				fwprintf( out, L"\t%s = %s,\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				if( Data[ ID_VAL ] == L"*" ){
+					fwprintf( out, L"\t%s,\n", Data[ ID_ID ].c_str());
+				}else{
+					fwprintf( out, L"\t%s = %s,\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				}
 			}else if(mode==MODE_DEFINE){
-				fwprintf( out, L"#define %s %s\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				if( Data[ ID_VAL ] != L"*" ){
+					fwprintf( out, L"#define %s %s\n", Data[ ID_ID ].c_str(), Data[ ID_VAL ].c_str());
+				}
 			}
 		}
 

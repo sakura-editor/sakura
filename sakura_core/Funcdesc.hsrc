@@ -1,4 +1,4 @@
-﻿//	@file
+//	@file
 //	@author Project Sakura-Editor
 //
 //
@@ -561,72 +561,72 @@ CMD,	F_SETVIEWTOP,				32818,	SetViewTop,				EI		// ビューの上の行数を�
 CMD,	F_SETVIEWLEFT,				32819,	SetViewLeft,			EI		// ビューの左端の桁数を設定
 
 
-ID,		F_FUNCTION_FIRST,			40000	// 2003-02-21 鬼 これ以上だと関数
+ID,		F_FUNCTION_FIRST,			*		// 2003-02-21 鬼 これ以上だと関数
+// ここ以降の id はビルドごとに値が変わっても問題ないので，id は * でよい
 
-FUNC,	F_GETFILENAME,				40001,	GetFilename,			S		// 編集中のファイル名を取得する
-FUNC,	F_GETSAVEFILENAME,			40018,	GetSaveFilename,		S		// 保存時のファイル名を取得する
-FUNC,	F_GETSELECTED,				40002,	GetSelectedString,		SI		// 選択範囲の取得
-FUNC,	F_EXPANDPARAMETER,			40003,	ExpandParameter,		SS		// コマンドラインパラメータ展開
-FUNC,	F_GETLINESTR,				40004,	GetLineStr,				SI		// 指定行論理データを取得する
-FUNC,	F_GETLINECOUNT,				40005,	GetLineCount,			II		// 論理行数を取得する
-FUNC,	F_CHGTABWIDTH,				40006,	ChangeTabWidth,			II		// タブサイズを取得、設定する
-FUNC,	F_ISTEXTSELECTED,			40007,	IsTextSelected,			I		// テキストが選択されているか
-FUNC,	F_GETSELLINEFROM,			40008,	GetSelectLineFrom,		I		// 選択開始行の取得
-FUNC,	F_GETSELCOLUMNFROM,			40009,	GetSelectColmFrom,		I		// 選択開始桁の取得
+FUNC,	F_GETFILENAME,				*,		GetFilename,			S		// 編集中のファイル名を取得する
+FUNC,	F_GETSAVEFILENAME,			*,		GetSaveFilename,		S		// 保存時のファイル名を取得する
+FUNC,	F_GETSELECTED,				*,		GetSelectedString,		SI		// 選択範囲の取得
+FUNC,	F_EXPANDPARAMETER,			*,		ExpandParameter,		SS		// コマンドラインパラメータ展開
+FUNC,	F_GETLINESTR,				*,		GetLineStr,				SI		// 指定行論理データを取得する
+FUNC,	F_GETLINECOUNT,				*,		GetLineCount,			II		// 論理行数を取得する
+FUNC,	F_CHGTABWIDTH,				*,		ChangeTabWidth,			II		// タブサイズを取得、設定する
+FUNC,	F_ISTEXTSELECTED,			*,		IsTextSelected,			I		// テキストが選択されているか
+FUNC,	F_GETSELLINEFROM,			*,		GetSelectLineFrom,		I		// 選択開始行の取得
+FUNC,	F_GETSELCOLUMNFROM,			*,		GetSelectColmFrom,		I		// 選択開始桁の取得
 ALIAS,	F_GETSELCOLUMNFROM,					GetSelectColumnFrom
-FUNC,	F_GETSELLINETO,				40010,	GetSelectLineTo,		I		// 選択終了行の取得
-FUNC,	F_GETSELCOLUMNTO,			40011,	GetSelectColmTo,		I		// 選択終了桁の取得
+FUNC,	F_GETSELLINETO,				*,		GetSelectLineTo,		I		// 選択終了行の取得
+FUNC,	F_GETSELCOLUMNTO,			*,		GetSelectColmTo,		I		// 選択終了桁の取得
 ALIAS,	F_GETSELCOLUMNTO,					GetSelectColumnTo
-FUNC,	F_ISINSMODE,				40012,	IsInsMode,				I		// 挿入／上書きモードの取得
-FUNC,	F_GETCHARCODE,				40013,	GetCharCode,			I		// 文字コード取得
-FUNC,	F_GETLINECODE,				40014,	GetLineCode,			I		// 改行コード取得
-FUNC,	F_ISPOSSIBLEUNDO,			40015,	IsPossibleUndo,			I		// Undo可能か調べる
-FUNC,	F_ISPOSSIBLEREDO,			40016,	IsPossibleRedo,			I		// Redo可能か調べる
-FUNC,	F_CHGWRAPCOLUMN,			40017,	ChangeWrapColm,			II		// 折り返し桁を取得、設定する 2008.06.19 ryoji
+FUNC,	F_ISINSMODE,				*,		IsInsMode,				I		// 挿入／上書きモードの取得
+FUNC,	F_GETCHARCODE,				*,		GetCharCode,			I		// 文字コード取得
+FUNC,	F_GETLINECODE,				*,		GetLineCode,			I		// 改行コード取得
+FUNC,	F_ISPOSSIBLEUNDO,			*,		IsPossibleUndo,			I		// Undo可能か調べる
+FUNC,	F_ISPOSSIBLEREDO,			*,		IsPossibleRedo,			I		// Redo可能か調べる
+FUNC,	F_CHGWRAPCOLUMN,			*,		ChangeWrapColm,			II		// 折り返し桁を取得、設定する 2008.06.19 ryoji
 ALIAS,	F_CHGWRAPCOLUMN,					ChangeWrapColumn
-FUNC,	F_ISCURTYPEEXT,				40019,	IsCurTypeExt,			IS		// 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-FUNC,	F_ISSAMETYPEEXT,			40020,	IsSameTypeExt,			ISS		// ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-FUNC,	F_INPUTBOX,					40021,	InputBox,				SSSI	// テキスト入力ダイアログの表示
-FUNC,	F_MESSAGEBOX,				40023,	MessageBox,				ISI		// メッセージボックスの表示
-FUNC,	F_ERRORMSG,					40024,	ErrorMsg,				IS		// メッセージボックス（エラー）の表示
-FUNC,	F_WARNMSG,					40025,	WarnMsg,				IS		// メッセージボックス（警告）の表示
-FUNC,	F_INFOMSG,					40026,	InfoMsg,				IS		// メッセージボックス（情報）の表示
-FUNC,	F_OKCANCELBOX,				40027,	OkCancelBox,			IS		// メッセージボックス（確認：OK／キャンセル）の表示
-FUNC,	F_YESNOBOX,					40028,	YesNoBox,				IS		// メッセージボックス（確認：はい／いいえ）の表示
-FUNC,	F_COMPAREVERSION,			40029,	CompareVersion,			ISS		// バージョン番号の比較
-FUNC,	F_MACROSLEEP,				40030,	Sleep,					II		// 指定した時間（ミリ秒）停止
-FUNC,	F_FILEOPENDIALOG,			40031,	FileOpenDialog,			SSS		// ファイルを開くダイアログの表示
-FUNC,	F_FILESAVEDIALOG,			40032,	FileSaveDialog,			SSS		// ファイルを保存ダイアログの表示
-FUNC,	F_FOLDERDIALOG,				40033,	FolderDialog,			SSS		// フォルダを開くダイアログの表示
-FUNC,	F_GETCLIPBOARD,				40034,	GetClipboard,			SI		// クリップボードの文字列を取得
-FUNC,	F_SETCLIPBOARD,				40035,	SetClipboard,			IIS		// クリップボードに文字列を設定
-FUNC,	F_LAYOUTTOLOGICLINENUM,		40036,	LayoutToLogicLineNum,	II		// ロジック行番号取得
-FUNC,	F_LOGICTOLAYOUTLINENUM,		40037,	LogicToLayoutLineNum,	III		// レイアウト行番号取得
-FUNC,	F_LINECOLUMNTOINDEX,		40038,	LineColumnToIndex,		III		// ロジック桁番号取得
-FUNC,	F_LINEINDEXTOCOLUMN,		40039,	LineIndexToColumn,		III		// レイアウト桁番号取得
-FUNC,	F_GETCOOKIE,				40040,	GetCookie,				SSS		// Cookie取得
-FUNC,	F_GETCOOKIEDEFAULT,			40041,	GetCookieDefault,		SSSS	// Cookie取得デフォルト値
-FUNC,	F_SETCOOKIE,				40042,	SetCookie,				ISSS	// Cookie設定
-FUNC,	F_DELETECOOKIE,				40043,	DeleteCookie,			ISS		// Cookie削除
-FUNC,	F_GETCOOKIENAMES,			40044,	GetCookieNames,			SS		// Cookie名前取得
-FUNC,	F_SETDRAWSWITCH,			40045,	SetDrawSwitch,			II		// 再描画スイッチ設定
-FUNC,	F_GETDRAWSWITCH,			40046,	GetDrawSwitch,			I		// 再描画スイッチ取得
-FUNC,	F_ISSHOWNSTATUS,			40047,	IsShownStatus,			I		// ステータスウィンドウが表示されているか
-FUNC,	F_GETSTRWIDTH,				40048,	GetStrWidth,			ISI		// 文字列幅取得
-FUNC,	F_GETSTRLAYOUTLENGTH,		40049,	GetStrLayoutLength,		ISI		// 文字列のレイアウト幅取得
-FUNC,	F_GETDEFAULTCHARLENGTH,		40050,	GetDefaultCharLength,	I		// デフォルト文字幅の取得
-FUNC,	F_ISINCLUDECLIPBOARDFORMAT,	40051,	IsIncludeClipboardFormat,IS		// クリップボードの形式取得
-FUNC,	F_GETCLIPBOARDBYFORMAT,		40052,	GetClipboardByFormat,	SSII	// クリップボードの指定形式で取得
-FUNC,	F_SETCLIPBOARDBYFORMAT,		40053,	SetClipboardByFormat,	ISSII	// クリップボードの指定形式で設定
-FUNC,	F_GETLINEATTRIBUTE,			40054,	GetLineAttribute,		III		// 行属性取得
-FUNC,	F_ISTEXTSELECTINGLOCK,		40055,	IsTextSelectingLock,	I		// 選択状態のロックを取得
-FUNC,	F_GETVIEWLINES,				40056,	GetViewLines,			I		// ビューの行数取得
-FUNC,	F_GETVIEWCOLUMNS,			40057,	GetViewColumns,			I		// ビューの列数取得
-FUNC,	F_CREATEMENU,				40058,	CreateMenu,				IIS		// メニュー作成
+FUNC,	F_ISCURTYPEEXT,				*,		IsCurTypeExt,			IS		// 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+FUNC,	F_ISSAMETYPEEXT,			*,		IsSameTypeExt,			ISS		// ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+FUNC,	F_INPUTBOX,					*,		InputBox,				SSSI	// テキスト入力ダイアログの表示
+FUNC,	F_MESSAGEBOX,				*,		MessageBox,				ISI		// メッセージボックスの表示
+FUNC,	F_ERRORMSG,					*,		ErrorMsg,				IS		// メッセージボックス（エラー）の表示
+FUNC,	F_WARNMSG,					*,		WarnMsg,				IS		// メッセージボックス（警告）の表示
+FUNC,	F_INFOMSG,					*,		InfoMsg,				IS		// メッセージボックス（情報）の表示
+FUNC,	F_OKCANCELBOX,				*,		OkCancelBox,			IS		// メッセージボックス（確認：OK／キャンセル）の表示
+FUNC,	F_YESNOBOX,					*,		YesNoBox,				IS		// メッセージボックス（確認：はい／いいえ）の表示
+FUNC,	F_COMPAREVERSION,			*,		CompareVersion,			ISS		// バージョン番号の比較
+FUNC,	F_MACROSLEEP,				*,		Sleep,					II		// 指定した時間（ミリ秒）停止
+FUNC,	F_FILEOPENDIALOG,			*,		FileOpenDialog,			SSS		// ファイルを開くダイアログの表示
+FUNC,	F_FILESAVEDIALOG,			*,		FileSaveDialog,			SSS		// ファイルを保存ダイアログの表示
+FUNC,	F_FOLDERDIALOG,				*,		FolderDialog,			SSS		// フォルダを開くダイアログの表示
+FUNC,	F_GETCLIPBOARD,				*,		GetClipboard,			SI		// クリップボードの文字列を取得
+FUNC,	F_SETCLIPBOARD,				*,		SetClipboard,			IIS		// クリップボードに文字列を設定
+FUNC,	F_LAYOUTTOLOGICLINENUM,		*,		LayoutToLogicLineNum,	II		// ロジック行番号取得
+FUNC,	F_LOGICTOLAYOUTLINENUM,		*,		LogicToLayoutLineNum,	III		// レイアウト行番号取得
+FUNC,	F_LINECOLUMNTOINDEX,		*,		LineColumnToIndex,		III		// ロジック桁番号取得
+FUNC,	F_LINEINDEXTOCOLUMN,		*,		LineIndexToColumn,		III		// レイアウト桁番号取得
+FUNC,	F_GETCOOKIE,				*,		GetCookie,				SSS		// Cookie取得
+FUNC,	F_GETCOOKIEDEFAULT,			*,		GetCookieDefault,		SSSS	// Cookie取得デフォルト値
+FUNC,	F_SETCOOKIE,				*,		SetCookie,				ISSS	// Cookie設定
+FUNC,	F_DELETECOOKIE,				*,		DeleteCookie,			ISS		// Cookie削除
+FUNC,	F_GETCOOKIENAMES,			*,		GetCookieNames,			SS		// Cookie名前取得
+FUNC,	F_SETDRAWSWITCH,			*,		SetDrawSwitch,			II		// 再描画スイッチ設定
+FUNC,	F_GETDRAWSWITCH,			*,		GetDrawSwitch,			I		// 再描画スイッチ取得
+FUNC,	F_ISSHOWNSTATUS,			*,		IsShownStatus,			I		// ステータスウィンドウが表示されているか
+FUNC,	F_GETSTRWIDTH,				*,		GetStrWidth,			ISI		// 文字列幅取得
+FUNC,	F_GETSTRLAYOUTLENGTH,		*,		GetStrLayoutLength,		ISI		// 文字列のレイアウト幅取得
+FUNC,	F_GETDEFAULTCHARLENGTH,		*,		GetDefaultCharLength,	I		// デフォルト文字幅の取得
+FUNC,	F_ISINCLUDECLIPBOARDFORMAT,	*,		IsIncludeClipboardFormat,IS		// クリップボードの形式取得
+FUNC,	F_GETCLIPBOARDBYFORMAT,		*,		GetClipboardByFormat,	SSII	// クリップボードの指定形式で取得
+FUNC,	F_SETCLIPBOARDBYFORMAT,		*,		SetClipboardByFormat,	ISSII	// クリップボードの指定形式で設定
+FUNC,	F_GETLINEATTRIBUTE,			*,		GetLineAttribute,		III		// 行属性取得
+FUNC,	F_ISTEXTSELECTINGLOCK,		*,		IsTextSelectingLock,	I		// 選択状態のロックを取得
+FUNC,	F_GETVIEWLINES,				*,		GetViewLines,			I		// ビューの行数取得
+FUNC,	F_GETVIEWCOLUMNS,			*,		GetViewColumns,			I		// ビューの列数取得
+FUNC,	F_CREATEMENU,				*,		CreateMenu,				IIS		// メニュー作成
 
 
-//	= 2005,.01.10 genta ISearch用補助コード
-//	2007.07.07 genta 16bit以内に収めないと状況コードと衝突するのでコードを変更
-ID,		F_ISEARCH_ADD_CHAR,			0xC001	//
-ID,		F_ISEARCH_ADD_STR,			0xC002	//
-ID,		F_ISEARCH_DEL_BACK,			0xC003	//
+// 2005.01.10 genta ISearch用補助コード
+ID,		F_ISEARCH_ADD_CHAR,			*
+ID,		F_ISEARCH_ADD_STR,			*
+ID,		F_ISEARCH_DEL_BACK,			*
