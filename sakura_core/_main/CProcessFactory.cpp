@@ -29,6 +29,8 @@
 #include <io.h>
 #include <tchar.h>
 
+#include "_os\getMessageFromSystem.h"
+
 class CProcess;
 
 
@@ -74,9 +76,6 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		}
 	}
 	else{
-		if( !IsExistControlProcess() ){
-			StartControlProcess();
-		}
 		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
 			process = new CNormalProcess( hInstance, lpCmdLine );
 		}
@@ -217,6 +216,7 @@ bool CProcessFactory::IsExistControlProcess()
 	return false;	// コントロールプロセスは存在していないか、まだ CreateMutex() してない
 }
 
+
 //	From Here Aug. 28, 2001 genta
 /*!
 	@brief コントロールプロセスを起動する
@@ -275,39 +275,33 @@ bool CProcessFactory::StartControlProcess()
 	);
 	if( !bCreateResult ){
 		//	失敗
-		TCHAR* pMsg;
-		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-						FORMAT_MESSAGE_IGNORE_INSERTS |
-						FORMAT_MESSAGE_FROM_SYSTEM,
-						NULL,
-						::GetLastError(),
-						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPTSTR)&pMsg,
-						0,
-						NULL
-		);
-		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
-		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
-		return false;
+		std::wstring msg(getMessageFromSystem(::GetLastError()));
+		DEBUG_TRACE( _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
 	}
-
-	// 起動したプロセスが完全に立ち上がるまでちょっと待つ．
-	//
-	// Note: この待ちにより、ここで起動したコントロールプロセスが競争に生き残れなかった場合でも、
-	// 唯一生き残ったコントロールプロセスが多重起動防止用ミューテックスを作成しているはず。
-	//
-	int nResult;
-	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
-	if( 0 != nResult ){
-		ErrorMessage( NULL, _T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
+	else {
+		// スレッド／プロセスのハンドルは後続処理で使わないので先に閉じておく
 		::CloseHandle( p.hThread );
 		::CloseHandle( p.hProcess );
+	}
+	
+	// IsExistControlProcess()がtrueを返すまでちょっと待つ
+	bool isControlProcess = false;
+	const int MAX_RETRY_NUTEX_OPEN = 10;				//リトライ回数
+	const int WAIT_INTERVAL_VERY_SHORT = 1000 / 60;		//待機間隔(ミリ秒) = 60分の1秒(格ゲーの1フレーム分)
+	for (int n = 0; n < MAX_RETRY_NUTEX_OPEN; ++n) {
+		if (IsExistControlProcess()) {
+			isControlProcess = true;
+			break;
+		}
+		::Sleep(WAIT_INTERVAL_VERY_SHORT);
+	}
+
+	// IsExistControlProcess()がtrueにならなかった場合
+	if (!isControlProcess) {
+		ErrorMessage( NULL, _T("\'%ls\'\nコントロールプロセスの起動に失敗しました。"), szEXE );
 		return false;
 	}
 
-	::CloseHandle( p.hThread );
-	::CloseHandle( p.hProcess );
-	
 	return true;
 }
 //	To Here Aug. 28, 2001 genta
@@ -320,32 +314,35 @@ bool CProcessFactory::StartControlProcess()
 */
 bool CProcessFactory::WaitForInitializedControlProcess()
 {
-	// 初期化完了イベントを待つ
-	//
-	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
-	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
-	//
-	if( !IsExistControlProcess() ){
-		// コントロールプロセスが多重起動防止用のミューテックス作成前に異常終了した場合など
-		return false;
+	// コントロールプロセスが起動しているかチェック
+	if (!IsExistControlProcess()) {
+		// コントロールプロセスを起動する
+		if (!StartControlProcess())
+		{
+			return false; //コントロールプロセスの起動に失敗
+		}
+		assert(IsExistControlProcess());
 	}
 
+	// 初期化完了イベントを待つ
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
 	HANDLE hEvent;
-	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
+	const int MAX_RETRY_EVENT_OPEN = 10;				//リトライ回数
+	const int WAIT_INTERVAL_VERY_SHORT = 1000 / 60;		//待機間隔(ミリ秒) = 60分の1秒(格ゲーの1フレーム分)
+	for (int n = 0; n < MAX_RETRY_EVENT_OPEN; ++n) {
+		hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
+		// イベントをオープンできた場合
+		if (NULL != hEvent) break;
+		// 想定外のエラーが出た場合
+		if (ERROR_FILE_NOT_FOUND != ::GetLastError()) break;
+		::Sleep(WAIT_INTERVAL_VERY_SHORT);
+	}
 	if( NULL == hEvent ){
-		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
-		//
-		// Note: Ver1.5.9.91以前のバージョンは初期化完了イベントを作らない。
-		// このため、コントロールプロセスが常駐していないときに複数ウィンドウをほぼ
-		// 同時に起動すると、競争に生き残れなかったコントロールプロセスの親プロセスや、
-		// 僅かに出遅れてコントロールプロセスを作成しなかったプロセスでも、
-		// コントロールプロセスの初期化処理を追い越してしまい、異常終了したり、
-		// 「タブバーが表示されない」のような問題が発生していた。
-		//
-		return true;
+		std::wstring msg(getMessageFromSystem(::GetLastError()));
+		TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。\n%ts"), msg.c_str());
+		return false;
 	}
 	DWORD dwRet;
 	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ

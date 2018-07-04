@@ -22,8 +22,8 @@
 #include "CCommandLine.h"
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
+#include "_os\ProcessPriority.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
-
 
 //-------------------------------------------------
 
@@ -43,6 +43,9 @@
 bool CControlProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
+
+	// プロセス優先度を「高」にする
+	sakura::_os::ProcessPriority processPriority(HIGH_PRIORITY_CLASS);
 
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
@@ -78,6 +81,9 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	
+	// プロセス優先度を元に戻す
+	processPriority.reset();
+
 	/* 共有メモリを初期化 */
 	if( !CProcess::InitializeProcess() ){
 		return false;
