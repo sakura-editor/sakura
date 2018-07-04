@@ -318,11 +318,16 @@ int main_impl(
 		in_stat.st_mtime < out_stat.st_mtime
 	){ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
 
+#ifdef USE_CPP
 	// プリプロセス済みストリームオープン
 	char in_file2[_MAX_PATH];
 	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
 	FILE* in = _popen(in_file2, "rt");
 	if (!in) { printf("Error: Failed to open process[%s]\n", in_file2); return 1; }
+#else
+	FILE* in = NULL; fopen_s(&in, in_file, "rt,ccs=UTF-8");
+	if (!in) { printf("Error: Failed to open OutputFile[%s] as read mode\n", in_file); return 1; }
+#endif
 	
 	/*** 入力 *****************************************************************/
 	
