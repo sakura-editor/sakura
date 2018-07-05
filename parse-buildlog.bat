@@ -6,4 +6,4 @@ if not "%ERRORLEVEL%" == "0" (
 	python parse-buildlog.py %1
 )
 @echo on
-exit /b 0
+exit /b %ERRORLEVEL%

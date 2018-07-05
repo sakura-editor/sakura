@@ -4,6 +4,10 @@ import re
 import os
 import csv
 
+if len(sys.argv) < 2:
+	print ("usage: " + sys.argv[0] + " <logfile name>")
+	sys.exit(1)
+
 infile = sys.argv[1]
 outfile = infile + '.csv'
 
