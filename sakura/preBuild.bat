@@ -43,6 +43,30 @@ if "%GIT_ENABLED%" == "1" (
 	set COMMITID=
 	set GIT_URL=
 )
+
+set PREFIX_GITHUB=https://github.com
+if "%APPVEYOR_REPO_PROVIDER%" == "gitHub" (
+	set GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/commit/%APPVEYOR_REPO_COMMIT%
+	@rem Not Pull Request
+	if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+		@rem No PR
+	) else (
+		@rem PR URL
+		set GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/pull/%APPVEYOR_PULL_REQUEST_NUMBER%/commits/%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
+	)
+)
+
+if not "%APPVEYOR_REPO_COMMIT%" == "" (
+	set APPVEYOR_SHORTHASH=%APPVEYOR_REPO_COMMIT:~0,8%
+) else (
+	set APPVEYOR_SHORTHASH=
+)
+if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
+	set APPVEYOR_SHORTHASH_PR_HEAD=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
+) else (
+	set APPVEYOR_SHORTHASH_PR_HEAD=
+)
+
 @echo SHORT_COMMITID: %SHORT_COMMITID%
 @echo COMMITID: %COMMITID%
 @echo GIT_URL: %GIT_URL%
@@ -52,6 +76,10 @@ if "%GIT_ENABLED%" == "1" (
 @echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 @echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
 @echo APPVEYOR_BUILD_NUMBER : %APPVEYOR_BUILD_NUMBER%
+@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
+@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
+@echo APPVEYOR_SHORTHASH          : %APPVEYOR_SHORTHASH%
+@echo APPVEYOR_SHORTHASH_PR_HEAD  : %APPVEYOR_SHORTHASH_PR_HEAD%
 
 : Output githash.h
 set GITHASH_H=..\sakura_core\githash.h
@@ -109,6 +137,37 @@ if "%APPVEYOR_BUILD_NUMBER%" == "" (
 ) else (
 	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"      >> %GITHASH_H_TMP%
 	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%       >> %GITHASH_H_TMP%
+)
+
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+	type nul                                                                            >> %GITHASH_H_TMP%
+) else (
+	echo #define APPVEYOR_PULL_REQUEST_NUMBER     "%APPVEYOR_PULL_REQUEST_NUMBER%"      >> %GITHASH_H_TMP%
+	echo #define APPVEYOR_PULL_REQUEST_NUMBER_INT  %APPVEYOR_PULL_REQUEST_NUMBER%       >> %GITHASH_H_TMP%
+)
+
+if "%GITHUB_COMMIT_URL%" == "" (
+	type nul                                                          >> %GITHASH_H_TMP%
+) else (
+	echo #define GITHUB_COMMIT_URL             "%GITHUB_COMMIT_URL%"  >> %GITHASH_H_TMP%
+)
+
+if "%GITHUB_COMMIT_URL_PR_HEAD%" == "" (
+	type nul                                                                    >> %GITHASH_H_TMP%
+) else (
+	echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"    >> %GITHASH_H_TMP%
+)
+
+if "%APPVEYOR_SHORTHASH%" == "" (
+	type nul                                                                    >> %GITHASH_H_TMP%
+) else (
+	echo #define APPVEYOR_SHORTHASH             "%APPVEYOR_SHORTHASH%"          >> %GITHASH_H_TMP%
+)
+
+if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
+	type nul                                                                    >> %GITHASH_H_TMP%
+) else (
+	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"  >> %GITHASH_H_TMP%
 )
 
 fc %GITHASH_H% %GITHASH_H_TMP% 1>nul 2>&1
