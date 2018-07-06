@@ -98,10 +98,19 @@ with open(outfile, "w") as fout:
 	writer = csv.writer(fout, lineterminator='\n')
 	writer.writerow(fieldnames)
 
+	# msbuild-xxx-xxx.log のログに警告が重複して出現することに対する Workaround 用
+	duplicateCheck = {}
+
 	for entry in data:
-		temp = []
-		for key in keys:
-			temp.append(entry[key])
-		writer.writerow(temp)
+		# msbuild-xxx-xxx.log のログに同じ警告が重複して出現することに対する Workaround
+		# entry['key'] で警告を一意に識別できるので同じ値の場合に CSV に出力しない
+		logKey = entry['key']
+		duplicateCheck[logKey] = duplicateCheck.get(logKey, 0) + 1
+
+		if duplicateCheck[logKey] == 1:
+			temp = []
+			for key in keys:
+				temp.append(entry[key])
+			writer.writerow(temp)
 
 	print ("wrote " + outfile)
