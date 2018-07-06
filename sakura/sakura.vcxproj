@@ -119,7 +119,7 @@
       <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call preBuild.bat</Command>
+      <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -155,7 +155,7 @@
       <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call preBuild.bat</Command>
+      <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -190,7 +190,7 @@
       <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call preBuild.bat</Command>
+      <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -224,7 +224,7 @@
       <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call preBuild.bat</Command>
+      <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
