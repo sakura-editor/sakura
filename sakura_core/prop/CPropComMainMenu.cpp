@@ -74,7 +74,7 @@ struct SMainMenuWork {
 	bool			m_bIsNode;		// ノードか否か（ノードでもm_nFuncがF_NODE(0)でないものがあるため）
 };
 
-static	std::map<int, SMainMenuWork>	msMenu;	// 一時データ
+static	std::map<INT_PTR, SMainMenuWork>	msMenu;	// 一時データ
 static	int		nMenuCnt = 0;					// 一時データ番号
 
 
