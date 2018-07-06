@@ -789,7 +789,7 @@ void CDlgFuncList::SetData()
 
 
 
-bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tstring* pPath, int* pnItem)
+bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tstring* pPath, INT_PTR* pnItem)
 {
 	*pPath = _T("");
 	*pnItem = -1;
@@ -823,7 +823,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tst
 /*! lParamからFuncInfoの番号を算出
 	vecにはダミーのlParam番号が入っているのでずれている数を数える
 */
-static int TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
+static INT_PTR TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
 {
 	// vec = { 3,6,7 }
 	// lParam 0,1,2,3,4,5,6,7,8
@@ -881,7 +881,7 @@ int CDlgFuncList::GetData( void )
 			if( TreeView_GetItem( hwndTree, &tvi ) ){
 				// lParamが-1以下は pcFuncInfoArrには含まれない項目
 				if( 0 <= tvi.lParam ){
-					int nIndex;
+					INT_PTR nIndex;
 					if( m_bDummyLParamMode ){
 						// ダミー要素を排除:SetTreeJava
 						nIndex = TreeDummylParamToFuncInfoIndex(m_vecDummylParams, tvi.lParam);
@@ -894,7 +894,7 @@ int CDlgFuncList::GetData( void )
 				}else{
 					if( m_nListType == OUTLINE_FILETREE ){
 						if( tvi.lParam == -1 ){
-							int nItem;
+							INT_PTR nItem;
 							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem ) ){
 								m_sJumpFile = _T(""); // error
 							}
@@ -1761,7 +1761,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const TCHAR* pszFile )
 	HTREEITEM hItemSelected = NULL;
 
 	std::tstring basePath;
-	int nItem = 0; // 設定Item番号
+	INT_PTR nItem = 0; // 設定Item番号
 	if( !GetTreeFileFullName( hwndTree, hParent, &basePath, &nItem ) ){
 		return; // error
 	}
