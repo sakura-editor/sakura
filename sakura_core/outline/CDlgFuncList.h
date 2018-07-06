@@ -177,7 +177,7 @@ protected:
 	BOOL PostOutlineNotifyToAllEditors( WPARAM wParam, LPARAM lParam );
 	EDockSide GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, bool bForceFloat );
 	BOOL Track( POINT ptDrag );
-	bool GetTreeFileFullName(HWND, HTREEITEM, std::tstring*, int*);
+	bool GetTreeFileFullName(HWND, HTREEITEM, std::tstring*, INT_PTR*);
 	bool TagJumpTimer(const TCHAR*, CMyPoint, bool);
 
 private:

@@ -616,7 +616,7 @@ try_again:;
 */
 void CViewCommander::Command_GOLINETOP(
 	bool	bSelect,	//!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
-	int		lparam		/*!< [in] マクロから使用する拡張フラグ
+	LPARAM	lparam		/*!< [in] マクロから使用する拡張フラグ
 								  @li 0: キー操作と同一(default)
 								  @li 1: カーソル位置に関係なく行頭に移動(合成可)
 								  @li 4: 選択して移動(合成可)
@@ -700,7 +700,7 @@ void CViewCommander::Command_GOLINETOP(
 /*! 行末に移動(折り返し単位)
 	@praram nOption	0x08 改行単位(合成可)
 */
-void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection, int nOption )
+void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection, LPARAM nOption )
 {
 	if( nOption & 4 ){
 		bSelect = true;

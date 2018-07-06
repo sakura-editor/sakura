@@ -365,7 +365,7 @@ void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 
 /*	ˆø”‚É”’l‚ğ’Ç‰ÁB
 */
-void CMacro::AddIntParam( const int nParam )
+void CMacro::AddIntParam( const LPARAM nParam )
 {
 	CMacroParam* param = new CMacroParam();
 
