@@ -102,7 +102,7 @@ void CViewCommander::Command_SELECTALL( void )
 
 	@date 2007.11.15 nasukoji	新規作成
 */
-void CViewCommander::Command_SELECTLINE( int lparam )
+void CViewCommander::Command_SELECTLINE(LPARAM	lparam )
 {
 	// 改行単位で1行選択する
 	Command_GOLINETOP( false, 0x9 );	// 物理行頭に移動

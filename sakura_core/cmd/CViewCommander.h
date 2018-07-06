@@ -166,8 +166,8 @@ public:
 	void Command_WORDLEFT( bool bSelect );			/* 単語の左端に移動 */
 	void Command_WORDRIGHT( bool bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
-	void Command_GOLINETOP( bool bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND( bool bSelect, int , int);		/* 行末に移動（折り返し単位） */
+	void Command_GOLINETOP( bool bSelect, LPARAM lparam );	/* 行頭に移動（折り返し単位） */
+	void Command_GOLINEEND( bool bSelect, int , LPARAM);		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
 	void Command_HalfPageUp( bool bSelect, CLayoutYInt );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -199,7 +199,7 @@ public:
 	/* 選択系 */
 	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
-	void Command_SELECTLINE( int lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
+	void Command_SELECTLINE(LPARAM lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
 
 	/* 矩形選択系 */
@@ -408,7 +408,7 @@ private:
 	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
-	void Sub_BoxSelectLock( int flags );
+	void Sub_BoxSelectLock(LPARAM flags );
 
 };
 
