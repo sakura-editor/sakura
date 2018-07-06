@@ -10,6 +10,16 @@ if "%platform%" == "x64" (
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
 @rem ----------------------------------------------------------------
+@echo checking APPVEYOR_ACCOUNT_NAME %APPVEYOR_ACCOUNT_NAME%
+set PREFIX=
+if "%APPVEYOR_ACCOUNT_NAME%" == "sakuraeditor" (
+	set PREFIX=
+) else if "%APPVEYOR_ACCOUNT_NAME%" == "" (
+	set PREFIX=
+) else (
+	set PREFIX=%APPVEYOR_ACCOUNT_NAME%-
+)
+
 @echo checking APPVEYOR_BUILD_NUMBER %APPVEYOR_BUILD_NUMBER%
 if not "%APPVEYOR_BUILD_NUMBER%" == "" (
 	set BUILD_NUMBER=build%APPVEYOR_BUILD_NUMBER%
@@ -43,7 +53,7 @@ if "%ALPHA%" == "1" (
 @rem ----------------------------------------------------------------
 @rem build BASENAME
 @rem ----------------------------------------------------------------
-set BASENAME=sakura
+set BASENAME=%PREFIX%sakura
 
 @echo adding platform and configuration
 set BASENAME=%BASENAME%-%platform%-%configuration%
