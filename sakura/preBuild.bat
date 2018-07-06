@@ -172,6 +172,8 @@ if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
 	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"  >> %GITHASH_H_TMP%
 )
 
+call removeTailSpace.bat %GITHASH_H_TMP%
+
 fc %GITHASH_H% %GITHASH_H_TMP% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
 	del %GITHASH_H_TMP%
