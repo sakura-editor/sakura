@@ -12,7 +12,7 @@ if exist "%SED%" (
 
 if exist "%UNIX2DOS%" (
 	@echo ---- converting EOL to DOS/Windows Format ----
-	"%UNIX2DOS%" "%TARGET%"
+	"%UNIX2DOS%" -q "%TARGET%"
 )
 
 ENDLOCAL
