@@ -55,10 +55,6 @@ if "%ALPHA%" == "1" (
 @rem ----------------------------------------------------------------
 set BASENAME=%PREFIX%sakura
 
-@echo adding platform and configuration
-set BASENAME=%BASENAME%-%platform%-%configuration%
-@echo BASENAME = %BASENAME%
-
 @echo adding TAG_NAME
 if not "%TAG_NAME%" == "" (
 	set BASENAME=%BASENAME%-%TAG_NAME%
@@ -81,6 +77,10 @@ if not "%BUILD_NUMBER%" == "" (
 if not "%SHORTHASH%" == "" (
 	set BASENAME=%BASENAME%-%SHORTHASH%
 )
+@echo BASENAME = %BASENAME%
+
+@echo adding platform and configuration
+set BASENAME=%BASENAME%-%platform%-%configuration%
 @echo BASENAME = %BASENAME%
 
 @echo adding RELEASE_PHASE
