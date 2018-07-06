@@ -57,7 +57,7 @@ void CFuncInfoArr::Empty( void )
 
 /* 0<=の指定番号のデータを返す */
 /* データがない場合はNULLを返す */
-CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
+CFuncInfo* CFuncInfoArr::GetAt(INT_PTR nIdx )
 {
 	if( nIdx >= m_nFuncInfoArrNum ){
 		return NULL;
