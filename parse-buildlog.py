@@ -26,19 +26,6 @@ fieldnames = [
 	'message',
 ]
 
-# main 関数
-def main():
-	if len(sys.argv) < 2:
-		print ("usage: " + sys.argv[0] + " <logfile name>")
-		sys.exit(1)
-
-	infile = sys.argv[1]
-	outcsvfile = infile + '.csv'
-
-	data = parse_buildlog(infile)
-	writeToCSV(outcsvfile, data)
-
-
 # infile: msbuild のビルドログ・ファイル名
 # 戻り値: ログの解析結果が入ったハッシュの配列
 def parse_buildlog(infile):
@@ -131,6 +118,18 @@ def writeToCSV(outfile, data):
 			writer.writerow(temp)
 
 		print ("wrote " + outfile)
+
+# main 関数
+def main():
+	if len(sys.argv) < 2:
+		print ("usage: " + sys.argv[0] + " <logfile name>")
+		sys.exit(1)
+
+	infile = sys.argv[1]
+	outcsvfile = infile + '.csv'
+
+	data = parse_buildlog(infile)
+	writeToCSV(outcsvfile, data)
 
 if __name__ == '__main__':
 	main()
