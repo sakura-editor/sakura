@@ -89,6 +89,7 @@ set WORKDIR_LOG=%WORKDIR%\Log
 set WORKDIR_EXE=%WORKDIR%\EXE
 set WORKDIR_INST=%WORKDIR%\Installer
 set OUTFILE=%BASENAME%.zip
+set OUTFILE_LOG=%BASENAME%-Log.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -129,6 +130,9 @@ if exist "%HASHFILE%" (
 )
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
+
+7z a %OUTFILE_LOG%  -r %WORKDIR_LOG%
+7z l %OUTFILE_LOG%
 
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
