@@ -100,6 +100,18 @@ if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 @echo APPVEYOR_SHORTHASH          : %APPVEYOR_SHORTHASH%
 @echo APPVEYOR_SHORTHASH_PR_HEAD  : %APPVEYOR_SHORTHASH_PR_HEAD%
 
+@rem -- build APPVEYOR_BUILD_URL variable start ----
+set APPVEYOR_BUILD_URL_VALID=1
+if "%APPVEYOR_URL%"           == ""  set APPVEYOR_BUILD_URL_VALID=0
+if "%APPVEYOR_ACCOUNT_NAME%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
+if "%APPVEYOR_PROJECT_SLUG%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
+if "%APPVEYOR_BUILD_VERSION%" == ""  set APPVEYOR_BUILD_URL_VALID=0
+if "%APPVEYOR_BUILD_URL_VALID%" == "1" (
+	set APPVEYOR_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
+)
+@echo APPVEYOR_BUILD_URL          : %APPVEYOR_BUILD_URL%
+@rem -- build APPVEYOR_BUILD_URL variable end   ----
+
 : Output githash.h
 set GITHASH_H=..\sakura_core\githash.h
 set GITHASH_H_TMP=%GITHASH_H%.tmp
@@ -205,6 +217,12 @@ if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
 	echo // APPVEYOR_SHORTHASH_PR_HEAD is not defined
 ) else (
 	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"
+)
+
+if "%APPVEYOR_BUILD_URL%" == "" (
+	echo // APPVEYOR_BUILD_URL is not defined
+) else (
+	echo #define APPVEYOR_BUILD_URL             "%APPVEYOR_BUILD_URL%"
 )
 
 exit /b
