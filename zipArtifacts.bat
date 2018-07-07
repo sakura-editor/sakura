@@ -95,6 +95,9 @@ set OUTFILE_LOG=%BASENAME%-Log.zip
 if exist "%OUTFILE%" (
 	del %OUTFILE%
 )
+if exist "%OUTFILE_LOG%" (
+	del %OUTFILE_LOG%
+)
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
 )
