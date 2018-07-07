@@ -15,17 +15,6 @@ logHashKeys = [
 	'message',
 ]
 
-# 解析結果を CSV に出力するときのフィールド名
-fieldnames = [
-	'type',
-	'code',
-	'source',
-	'dest',
-	'path',
-	'lineNumber',
-	'message',
-]
-
 # infile: msbuild のビルドログ・ファイル名
 # 戻り値: ログの解析結果が入ったハッシュの配列
 def parse_buildlog(infile):
@@ -109,7 +98,7 @@ def writeToCSV(outfile, data):
 	# 解析結果を CSV ファイルに出力する
 	with open(outfile, "w") as fout:
 		writer = csv.writer(fout, lineterminator='\n')
-		writer.writerow(fieldnames)
+		writer.writerow(logHashKeys)
 
 		for entry in data:
 			temp = []
