@@ -106,9 +106,9 @@ mkdir %WORKDIR%
 mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_INST%
-copy %platform%\%configuration%\*.exe %WORKDIR_EXE%\
-copy %platform%\%configuration%\*.dll %WORKDIR_EXE%\
-copy %platform%\%configuration%\*.pdb %WORKDIR_EXE%\
+copy %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
+copy %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
+copy %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
 
 copy help\macro\macro.chm    %WORKDIR_EXE%\
 copy help\plugin\plugin.chm  %WORKDIR_EXE%\
