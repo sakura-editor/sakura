@@ -100,95 +100,8 @@ if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 : Output githash.h
 set GITHASH_H=..\sakura_core\githash.h
 set GITHASH_H_TMP=%GITHASH_H%.tmp
-type nul                                  > %GITHASH_H_TMP%
-echo #pragma once                        >> %GITHASH_H_TMP%
-if "%COMMITID%" == "" (
-	echo // GIT_COMMIT_HASH is not defined    >> %GITHASH_H_TMP%
-) else (
-	echo #define GIT_COMMIT_HASH "%COMMITID%" >> %GITHASH_H_TMP%
-)
-if "%SHORT_COMMITID%" == "" (
-	echo // GIT_SHORT_COMMIT_HASH is not defined          >> %GITHASH_H_TMP%
-) else (
-	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%" >> %GITHASH_H_TMP%
-)
-if "%GIT_URL%" == "" (
-	echo // GIT_URL is not defined                        >> %GITHASH_H_TMP%
-) else (
-	echo #define GIT_URL "%GIT_URL%"                      >> %GITHASH_H_TMP%
-)
 
-if "%APPVEYOR_URL%" == "" (
-	echo // APPVEYOR_URL is not defined                   >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_URL "%APPVEYOR_URL%"            >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_REPO_NAME%" == "" (
-	echo // APPVEYOR_REPO_NAME is not defined                         >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"            >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_ACCOUNT_NAME%" == "" (
-	echo // APPVEYOR_ACCOUNT_NAME is not defined                      >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"      >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_PROJECT_SLUG%" == "" (
-	echo // APPVEYOR_PROJECT_SLUG is not defined                      >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"      >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_BUILD_VERSION%" == "" (
-	echo // APPVEYOR_BUILD_VERSION is not defined                     >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"    >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_BUILD_NUMBER%" == "" (
-	echo // APPVEYOR_BUILD_NUMBER     is not defined                      >> %GITHASH_H_TMP%
-	echo // APPVEYOR_BUILD_NUMBER_INT is not defined                      >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"      >> %GITHASH_H_TMP%
-	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%       >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
-	echo // APPVEYOR_PULL_REQUEST_NUMBER     is not defined                             >> %GITHASH_H_TMP%
-	echo // APPVEYOR_PULL_REQUEST_NUMBER_INT is not defined                             >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_PULL_REQUEST_NUMBER     "%APPVEYOR_PULL_REQUEST_NUMBER%"      >> %GITHASH_H_TMP%
-	echo #define APPVEYOR_PULL_REQUEST_NUMBER_INT  %APPVEYOR_PULL_REQUEST_NUMBER%       >> %GITHASH_H_TMP%
-)
-
-if "%GITHUB_COMMIT_URL%" == "" (
-	echo // GITHUB_COMMIT_URL is not defined                          >> %GITHASH_H_TMP%
-) else (
-	echo #define GITHUB_COMMIT_URL             "%GITHUB_COMMIT_URL%"  >> %GITHASH_H_TMP%
-)
-
-if "%GITHUB_COMMIT_URL_PR_HEAD%" == "" (
-	echo // GITHUB_COMMIT_URL_PR_HEAD is not defined                            >> %GITHASH_H_TMP%
-) else (
-	echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"    >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_SHORTHASH%" == "" (
-	echo // APPVEYOR_SHORTHASH is not defined                                   >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_SHORTHASH             "%APPVEYOR_SHORTHASH%"          >> %GITHASH_H_TMP%
-)
-
-if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
-	echo // APPVEYOR_SHORTHASH_PR_HEAD is not defined                           >> %GITHASH_H_TMP%
-) else (
-	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"  >> %GITHASH_H_TMP%
-)
-
-call removeTailSpace.bat %GITHASH_H_TMP%
+call :output_githash > %GITHASH_H_TMP%
 
 fc %GITHASH_H% %GITHASH_H_TMP% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
@@ -201,4 +114,94 @@ if "%ERRORLEVEL%" == "0" (
 )
 
 ENDLOCAL
-rem exit 0
+exit /b
+
+:output_githash
+echo #pragma once
+if "%COMMITID%" == "" (
+	echo // GIT_COMMIT_HASH is not defined
+) else (
+	echo #define GIT_COMMIT_HASH "%COMMITID%"
+)
+if "%SHORT_COMMITID%" == "" (
+	echo // GIT_SHORT_COMMIT_HASH is not defined
+) else (
+	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%"
+)
+if "%GIT_URL%" == "" (
+	echo // GIT_URL is not defined
+) else (
+	echo #define GIT_URL "%GIT_URL%"
+)
+
+if "%APPVEYOR_URL%" == "" (
+	echo // APPVEYOR_URL is not defined
+) else (
+	echo #define APPVEYOR_URL "%APPVEYOR_URL%"
+)
+
+if "%APPVEYOR_REPO_NAME%" == "" (
+	echo // APPVEYOR_REPO_NAME is not defined
+) else (
+	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"
+)
+
+if "%APPVEYOR_ACCOUNT_NAME%" == "" (
+	echo // APPVEYOR_ACCOUNT_NAME is not defined
+) else (
+	echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"
+)
+
+if "%APPVEYOR_PROJECT_SLUG%" == "" (
+	echo // APPVEYOR_PROJECT_SLUG is not defined
+) else (
+	echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
+)
+
+if "%APPVEYOR_BUILD_VERSION%" == "" (
+	echo // APPVEYOR_BUILD_VERSION is not defined
+) else (
+	echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"
+)
+
+if "%APPVEYOR_BUILD_NUMBER%" == "" (
+	echo // APPVEYOR_BUILD_NUMBER     is not defined
+	echo // APPVEYOR_BUILD_NUMBER_INT is not defined
+) else (
+	echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"
+	echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%
+)
+
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+	echo // APPVEYOR_PULL_REQUEST_NUMBER     is not defined
+	echo // APPVEYOR_PULL_REQUEST_NUMBER_INT is not defined
+) else (
+	echo #define APPVEYOR_PULL_REQUEST_NUMBER     "%APPVEYOR_PULL_REQUEST_NUMBER%"
+	echo #define APPVEYOR_PULL_REQUEST_NUMBER_INT  %APPVEYOR_PULL_REQUEST_NUMBER%
+)
+
+if "%GITHUB_COMMIT_URL%" == "" (
+	echo // GITHUB_COMMIT_URL is not defined
+) else (
+	echo #define GITHUB_COMMIT_URL             "%GITHUB_COMMIT_URL%"
+)
+
+if "%GITHUB_COMMIT_URL_PR_HEAD%" == "" (
+	echo // GITHUB_COMMIT_URL_PR_HEAD is not defined
+) else (
+	echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"
+)
+
+if "%APPVEYOR_SHORTHASH%" == "" (
+	echo // APPVEYOR_SHORTHASH is not defined
+) else (
+	echo #define APPVEYOR_SHORTHASH             "%APPVEYOR_SHORTHASH%"
+)
+
+if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
+	echo // APPVEYOR_SHORTHASH_PR_HEAD is not defined
+) else (
+	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"
+)
+
+exit /b
