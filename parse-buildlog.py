@@ -5,7 +5,7 @@ import os
 import csv
 
 # 解析結果を格納するハッシュのキー
-keys = [
+logHashKeys = [
 	'type',
 	'code',
 	'source',
@@ -86,7 +86,7 @@ def parse_buildlog(infile):
 				entry['message']    = message
 
 				temp = []
-				for key in keys:
+				for key in logHashKeys:
 					temp.append(entry[key])
 				entry['key'] = ' '.join(temp)
 
@@ -113,7 +113,7 @@ def writeToCSV(outfile, data):
 
 		for entry in data:
 			temp = []
-			for key in keys:
+			for key in logHashKeys:
 				temp.append(entry[key])
 			writer.writerow(temp)
 
