@@ -1,4 +1,7 @@
 @echo off
+
+SETLOCAL
+
 set EXEDIR=%1
 set SRCDIR=..\sakura_core
 set DSTDIR=%SRCDIR%
