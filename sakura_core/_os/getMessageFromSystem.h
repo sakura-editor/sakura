@@ -33,18 +33,19 @@
 #endif  /* !defined(_WINBASE_) || !defined(_WINNT_) */
 
 
-//名前空間
-namespace sakura {
-	namespace _os {
+namespace _os {
 
 
 /*!
  * @brief システムメッセージを取得する
  *
+ *		Windows API呼出失敗時の定型処理を抽出したもの。
+ *
  * @param [in]		dwMessageCode	メッセージコード。
  *									::GetLastError()の戻り値を指定する。
  * @param [in,opt]	dwLanguageId	言語識別子。
- *									省略した場合、::FormatMessage()の挙動に準ずる。
+ *									省略した場合、ニュートラル言語。
+ *									詳細は::FormatMessage()のマニュアルを参照。
  * @retval msg						システムメッセージ。
  *									該当するメッセージがない場合、空文字列を返す。
  * @sa https://docs.microsoft.com/en-us/windows/desktop/api/winbase/nf-winbase-formatmessage
@@ -73,9 +74,4 @@ std::wstring getMessageFromSystem(
 }
 
 
-	}; // end of namespace _os
-}; // end of namespace sakura
-
-
-//名前空間を意識せずに扱えるようにusingしておく。
-using sakura::_os::getMessageFromSystem;
+}; // end of namespace _os

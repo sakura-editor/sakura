@@ -23,13 +23,13 @@
 #include "CCommandLine.h"
 #include "CControlTray.h"
 #include "_os/COsVersionInfo.h"
+#include "_os/getMessageFromSystem.h"
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
 #include <io.h>
 #include <tchar.h>
 
-#include "_os\getMessageFromSystem.h"
 
 class CProcess;
 
@@ -278,7 +278,7 @@ bool CProcessFactory::StartControlProcess()
 	);
 	if( !bCreateResult ){
 		//	失敗
-		std::wstring msg(getMessageFromSystem(::GetLastError()));
+		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
 		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
 		return false;
 	}
