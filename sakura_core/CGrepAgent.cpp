@@ -231,7 +231,7 @@ DWORD CGrepAgent::DoGrep(
 		if( bGrepPaste ){
 			// 矩形・ラインモード貼り付けは未サポート
 			bool bColmnSelect;
-			bool bLineSelect;
+			bool bLineSelect = false;
 			if( !pcViewDst->MyGetClipboardData( cmemReplace, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
 				this->m_bGrepRunning = false;
 				pcViewDst->m_bDoing_UndoRedo = false;
