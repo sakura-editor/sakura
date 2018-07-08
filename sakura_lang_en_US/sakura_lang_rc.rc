@@ -34,7 +34,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #pragma code_page(932)
 #endif //_WIN32
 
-#define	S_COPYRIGHT	"Copyright (C) 2011-2017  by Lucien & Collaborators"
+#define	S_COPYRIGHT	"Copyright (C) 2011-2018  by Lucien & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
