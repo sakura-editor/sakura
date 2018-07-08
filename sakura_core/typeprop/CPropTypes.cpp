@@ -24,6 +24,7 @@
 #include "StdAfx.h"
 #include "CPropTypes.h"
 #include "CEditApp.h"
+#include "_os/getMessageFromSystem.h"
 #include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
@@ -202,25 +203,13 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 
 	if( -1 == nRet ){
-		TCHAR*	pszMsgBuf;
-		::FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			::GetLastError(),
-			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), // デフォルト言語
-			(LPTSTR)&pszMsgBuf,
-			0,
-			NULL
-		);
+		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
 		PleaseReportToAuthor(
 			NULL,
 			LS(STR_PROPTYPE_ERR),
 			psh.nStartPage,
-			pszMsgBuf
+			msg.c_str()
 		);
-		::LocalFree( pszMsgBuf );
 	}
 
 	// カスタム色を共有メモリに設定
