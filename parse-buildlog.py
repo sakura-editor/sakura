@@ -3,6 +3,7 @@ import sys
 import re
 import os
 import csv
+import platform
 
 # 解析結果を格納するハッシュのキー
 logHashKeys = [
@@ -107,6 +108,53 @@ def writeToCSV(outfile, data):
 			writer.writerow(temp)
 
 		print ("wrote " + outfile)
+		
+# outfile: 出力ファイル名
+# data   : ログの解析結果が入ったハッシュの配列 ( parse_buildlog() の戻り値 )
+def writeToXLSX(outfile, data):
+	# CELL に設定する値を変換する関数を返す
+	def getEntryConverter():
+		def converterPython3(value):
+			return value.encode('utf_8')
+	
+		def converterPython2(value):
+			return value.decode('shiftjis').encode('utf_8')
+
+		(major, minor, patchlevel) = platform.python_version_tuple()
+		if int(major) >= 3:
+			return converterPython3
+		else:
+			return converterPython2
+
+	try:
+		import openpyxl
+		wb = openpyxl.Workbook()
+		ws = wb.active
+
+		y = 0
+		for x, item in enumerate(logHashKeys):
+			cell = ws.cell(row=y+1, column=x+1)
+			cell.value = item
+		y = y + 1
+
+		converter = getEntryConverter()
+
+		for entry in data:
+			for x, key in enumerate(logHashKeys):
+				cell = ws.cell(row=y+1, column=x+1)
+				entryKey = entry[key]
+				val  = converter(entry[key])
+				if val.isdigit():
+					cell.value = int(val)
+				else:
+					cell.value = val
+
+			y = y + 1
+
+		wb.save(outfile)
+		print ("wrote " + outfile)
+	except ImportError:
+		print ("please run '<python root>\\Scripts\\pip install openpyxl --user'")
 
 # main 関数
 def main():
@@ -116,9 +164,11 @@ def main():
 
 	infile = sys.argv[1]
 	outcsvfile = infile + '.csv'
+	outxlsxfile = infile + '.xlsx'
 
 	data = parse_buildlog(infile)
 	writeToCSV(outcsvfile, data)
+	writeToXLSX(outxlsxfile, data)
 
 if __name__ == '__main__':
 	main()

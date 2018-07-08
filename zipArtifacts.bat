@@ -151,6 +151,9 @@ if "%ALPHA%" == "1" (
 copy installer\Output\*.exe  %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
 copy msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
+if exist "msbuild-%platform%-%configuration%.log.xlsx" (
+	copy "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
+)
 copy sakura_core\githash.h                      %WORKDIR_LOG%\
 
 set HASHFILE=sha256.txt
