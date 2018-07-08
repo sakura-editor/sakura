@@ -36,7 +36,7 @@
 
 #include <Windows.h>
 #include <string>
-#include <vector>
+#include <list>
 #include <map>
 
 /*-----------------------------------------------------------------------
@@ -79,14 +79,14 @@ protected:
 	bool _WriteFile( const tstring& strFilename, const std::vector< wstring >& vecLine);
 
 
-	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);
+	bool GetProfileDataImp( const WCHAR* strSectionName, const WCHAR* strEntryKey, wstring*& pStrEntryValue);
 
 	bool SetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, const wstring& strEntryValue );
 
 protected:
 	// メンバ変数
 	tstring					m_strProfileName;	//!< 最後に読み書きしたファイル名
-	std::vector< Section >	m_ProfileData;
+	std::list< Section >	m_ProfileData;
 	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
 };
 

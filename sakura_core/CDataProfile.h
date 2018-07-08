@@ -221,11 +221,11 @@ public:
 		//“Ç‚İ‚İ
 		if(m_bRead){
 			//•¶š—ñ“Ç‚İ‚İ
-			wstring buf;
+			wstring* buf;
 			bool ret=GetProfileDataImp( pszSectionName, pszEntryKey, buf);
 			if(ret){
 				//T‚É•ÏŠ·
-				profile_to_value(buf, &tEntryValue);
+				profile_to_value(*buf, &tEntryValue);
 			}
 			return ret;
 		}
