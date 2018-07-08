@@ -204,12 +204,8 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 
 	if( -1 == nRet ){
 		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
-		PleaseReportToAuthor(
-			NULL,
-			LS(STR_PROPTYPE_ERR),
-			psh.nStartPage,
-			msg.c_str()
-		);
+		//"CPropTypes::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗。\n\n%ts\n"
+		PleaseReportToAuthor(NULL, LS(STR_PROPTYPE_ERR), psh.nStartPage, msg.c_str());
 	}
 
 	// カスタム色を共有メモリに設定

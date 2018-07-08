@@ -279,7 +279,8 @@ bool CProcessFactory::StartControlProcess()
 	if( !bCreateResult ){
 		//	失敗
 		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
-		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, msg.c_str() );
+		//"'%ts'\nプロセスの起動に失敗しました。\n%ts"
+		ErrorMessage( NULL, LS(STR_ERR_DLGPROCFACT3), szEXE, msg.c_str() );
 		return false;
 	}
 

@@ -295,12 +295,8 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
 		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
-		PleaseReportToAuthor(
-			NULL,
-			LS(STR_ERR_DLGPROPCOMMON24),
-			psh.nStartPage,
-			msg.c_str()
-		);
+		//"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%ts\n"
+		PleaseReportToAuthor(NULL, LS(STR_ERR_DLGPROPCOMMON24), psh.nStartPage, msg.c_str());
 	}
 
 	return nRet;

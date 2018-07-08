@@ -1256,12 +1256,8 @@ bool CControlTray::OpenNewEditor(
 	if( !bCreateResult ){
 		//	失敗
 		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
-		ErrorMessage(
-			hWndParent,
-			LS(STR_TRAY_CREATEPROC1),
-			szEXE,
-			msg.c_str()
-		);
+		//"'%ts'\nプロセスの起動に失敗しました。\n%ts"
+		ErrorMessage(hWndParent,LS(STR_TRAY_CREATEPROC1),szEXE,msg.c_str());
 		return false;
 	}
 
