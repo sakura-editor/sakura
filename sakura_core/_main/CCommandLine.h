@@ -76,6 +76,10 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 			_ttoi( arg + 1 ) : _ttoi( arg );
 	}
 
+public:
+	// WinMainの引数「コマンドライン文字列」を取得する
+	static _Ret_z_ LPCWSTR SkipExeNameOfCommandLine(_In_z_ LPCWSTR lpCmdLine) noexcept;
+
 // member accessor method
 public:
 	bool IsNoWindow() const {return m_bNoWindow;}

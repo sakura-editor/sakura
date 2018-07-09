@@ -62,6 +62,52 @@
 #define CMDLINEOPT_PROF			501  //!< プロファイルを選択
 #define CMDLINEOPT_PROFMGR		502  //!< プロファイルマネージャを起動時に表示
 
+
+/*!
+ * @brief WinMainの引数「コマンドライン文字列」を取得する
+ *
+ *  入力: "\"C:\Program Files (x86)\\sakura\\sakura.exe\" -NOWIN"
+ *  出力: "-NOWIN"
+ *  ※ポインタ位置を進めているだけ。
+ *
+ * @param [in] lpCmdLine GetCommandLineW()の戻り値。
+ * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
+ */
+_Ret_z_ LPCWSTR CCommandLine::SkipExeNameOfCommandLine(_In_z_ LPCWSTR lpCmdLine) noexcept
+{
+	// 内部定数(空白文字)
+	const WCHAR whiteSpace[] = L"\t\x20";
+
+	// 文字列がダブルクォーテーションで始まっているかチェック
+	if (L'\x22' == lpCmdLine[0]) {
+		// 文字列ポインタを進める
+		lpCmdLine++;
+		// 閉じクォーテーションを探す(パス文字列なのでエスケープの考慮は不要)
+		const WCHAR *p = ::wcschr(lpCmdLine, L'\x22');
+		if (p) {
+			// 文字列ポインタを進める
+			lpCmdLine = ++p;
+		}
+		else {
+			// 最初のトークンをスキップする
+			// ※コマンドラインを手打ちして閉じ引用符を忘れた場合ここに来る
+			size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
+			lpCmdLine = &lpCmdLine[nPos];
+		}
+	}
+	else {
+		// 最初のトークンをスキップする
+		// ※コマンドラインを手打ちして引用符を付けなかった場合ここに来る
+		size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
+		lpCmdLine = &lpCmdLine[nPos];
+	}
+
+	// 次のトークンまで進める
+	size_t nPos = ::wcsspn(lpCmdLine, whiteSpace);
+	return &lpCmdLine[nPos];
+}
+
+
 /*!
 	コマンドラインのチェックを行って、オプション番号と
 	引数がある場合はその先頭アドレスを返す。

@@ -23,9 +23,11 @@
 #include <Ole2.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
+#include "CCommandLine.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
+
 
 /*!
 	Windows Entry point
@@ -37,21 +39,12 @@
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
-#ifdef __MINGW32__
-int WINAPI WinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPSTR		lpCmdLineA,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
-)
-#else
 int WINAPI _tWinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPTSTR		lpCmdLine,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
+	_In_        HINSTANCE   hInstance,      //!< handle to current instance
+	_In_opt_    HINSTANCE   hPrevInstance,  //!< handle to previous instance
+	_In_        LPTSTR      lpCmdLine,      //!< pointer to command line
+	_In_        int         nCmdShow        //!< show state of window
 )
-#endif
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
@@ -92,32 +85,7 @@ int WINAPI _tWinMain(
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
-#ifdef __MINGW32__
-		LPTSTR pszCommandLine;
-		pszCommandLine = ::GetCommandLine();
-		// 実行ファイル名をスキップする
-		if( _T('\"') == *pszCommandLine ){
-			pszCommandLine++;
-			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-			if( _T('\"') == *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}else{
-			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
-				&& _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}
-		// 次のトークンまで進める
-		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
-			pszCommandLine++;
-		}
-		process = aFactory.Create( hInstance, pszCommandLine );
-#else
 		process = aFactory.Create( hInstance, lpCmdLine );
-#endif
 		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
 	}
 	catch(...){
@@ -130,5 +98,3 @@ int WINAPI _tWinMain(
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }
-
-
