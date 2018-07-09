@@ -23,7 +23,7 @@
 #include <Ole2.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
-#include "_os/SkipExeNameOfCommandLine.h"
+#include "CCommandLine.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
@@ -118,7 +118,7 @@ int WINAPI WinMain(
 	// コマンドラインを取得して実行ファイル名をスキップする
 	LPTSTR pszCommandLine;
 	pszCommandLine = ::GetCommandLine();
-	pszCommandLine = const_cast<LPTSTR>(_os::SkipExeNameOfCommandLine(pszCommandLine));
+	pszCommandLine = const_cast<LPTSTR>(CCommandLine::SkipExeNameOfCommandLine(pszCommandLine));
 	return _tWinMain( hInstance, hPrevInstance, pszCommandLine, nCmdShow );
 }
 #endif /* defined( __MINGW32__ ) && defined( _UNICODE ) */
