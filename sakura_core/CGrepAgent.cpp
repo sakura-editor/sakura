@@ -716,9 +716,9 @@ int CGrepAgent::DoGrepTree(
 			);
 		}
 
+		// 定期的に grep 中のファイル名表示を更新
 		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
 			m_dwTickUIFileName = dwNow;
-			//GREP実行！
 			::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
 		}
 
