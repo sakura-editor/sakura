@@ -5,3 +5,9 @@ Backup
 UpgradeLog.htm
 /Win32
 /x64
+/.vs
+sakura-*.zip
+msbuild-*.log
+msbuild-*.log.csv
+msbuild-*.log.xlsx
+sha256.txt
