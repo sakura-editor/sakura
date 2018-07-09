@@ -98,27 +98,3 @@ int WINAPI _tWinMain(
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }
-
-
-#if defined( __MINGW32__ ) && defined( _UNICODE )
-/*!
-	Windows Entry point for MinGW Unicode Build.
-
-	MinGW環境では wWinMain をエントリポイントとして起動できないため、
-	自前でコマンドラインを取得して lpCmdLine を作成する
-	wWinMainに入ったあとは普通の Windows アプリと同じ。
- */
-int WINAPI WinMain(
-	_In_        HINSTANCE   hInstance,      //!< handle to current instance
-	_In_opt_    HINSTANCE   hPrevInstance,  //!< handle to previous instance
-	_In_        LPSTR       lpCmdLineA,     //!< pointer to command line
-	_In_        int         nCmdShow        //!< show state of window
-)
-{
-	// コマンドラインを取得して実行ファイル名をスキップする
-	LPTSTR pszCommandLine;
-	pszCommandLine = ::GetCommandLine();
-	pszCommandLine = const_cast<LPTSTR>(CCommandLine::SkipExeNameOfCommandLine(pszCommandLine));
-	return _tWinMain( hInstance, hPrevInstance, pszCommandLine, nCmdShow );
-}
-#endif /* defined( __MINGW32__ ) && defined( _UNICODE ) */
