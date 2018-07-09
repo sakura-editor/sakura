@@ -2,9 +2,9 @@ version: 1.0.{build}
 image: Visual Studio 2017
 install:
 - ps: Set-WinSystemLocale ja-JP
-- ps: Start-Sleep -s 5
+- ps: Start-Sleep -s 10
 - ps: Restart-Computer
-- ps: Start-Sleep -s 5
+- ps: Start-Sleep -s 10
 
 configuration:
   - Release
