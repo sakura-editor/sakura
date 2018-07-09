@@ -40,10 +40,10 @@
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
 int WINAPI _tWinMain(
-	_In_		HINSTANCE	hInstance,		//!< handle to current instance
-	_In_opt_	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	_In_		LPTSTR		lpCmdLine,		//!< pointer to command line
-	_In_		int			nCmdShow		//!< show state of window
+	_In_        HINSTANCE   hInstance,      //!< handle to current instance
+	_In_opt_    HINSTANCE   hPrevInstance,  //!< handle to previous instance
+	_In_        LPTSTR      lpCmdLine,      //!< pointer to command line
+	_In_        int         nCmdShow        //!< show state of window
 )
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
@@ -109,16 +109,16 @@ int WINAPI _tWinMain(
 	wWinMainに入ったあとは普通の Windows アプリと同じ。
  */
 int WINAPI WinMain(
-	_In_		HINSTANCE	hInstance,		//!< handle to current instance
-	_In_opt_	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	_In_		LPSTR		lpCmdLineA,		//!< pointer to command line
-	_In_		int			nCmdShow		//!< show state of window
+	_In_        HINSTANCE   hInstance,      //!< handle to current instance
+	_In_opt_    HINSTANCE   hPrevInstance,  //!< handle to previous instance
+	_In_        LPSTR       lpCmdLineA,     //!< pointer to command line
+	_In_        int         nCmdShow        //!< show state of window
 )
 {
 	// コマンドラインを取得して実行ファイル名をスキップする
 	LPTSTR pszCommandLine;
 	pszCommandLine = ::GetCommandLine();
-	pszCommandLine = _os::SkipExeNameOfCommandLine(pszCommandLine);
+	pszCommandLine = const_cast<LPTSTR>(_os::SkipExeNameOfCommandLine(pszCommandLine));
 	return _tWinMain( hInstance, hPrevInstance, pszCommandLine, nCmdShow );
 }
 #endif /* defined( __MINGW32__ ) && defined( _UNICODE ) */

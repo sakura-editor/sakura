@@ -47,7 +47,7 @@ namespace _os {
  * @retval lpCmdLine wWinMain形式のコマンドライン文字列。
  */
 inline
-_Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR lpCmdLine) noexcept
+_Ret_z_ LPCWSTR SkipExeNameOfCommandLine(_In_z_ LPCWSTR lpCmdLine) noexcept
 {
 	// 内部定数(空白文字)
 	const WCHAR whiteSpace[] = L"\t\x20";
@@ -57,7 +57,7 @@ _Ret_z_ LPWSTR SkipExeNameOfCommandLine(_In_z_ LPWSTR lpCmdLine) noexcept
 		// 文字列ポインタを進める
 		lpCmdLine++;
 		// 閉じクォーテーションを探す(パス文字列なのでエスケープの考慮は不要)
-		WCHAR *p = ::wcschr(lpCmdLine, L'\x22');
+		const WCHAR *p = ::wcschr(lpCmdLine, L'\x22');
 		if (p) {
 			// 文字列ポインタを進める
 			lpCmdLine = ++p;
