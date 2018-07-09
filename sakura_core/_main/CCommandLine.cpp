@@ -88,11 +88,16 @@ _Ret_z_ LPCWSTR CCommandLine::SkipExeNameOfCommandLine(_In_z_ LPCWSTR lpCmdLine)
 			// 文字列ポインタを進める
 			lpCmdLine = ++p;
 		}
+		else {
+			// 最初のトークンをスキップする
+			// ※コマンドラインを手打ちして閉じ引用符を忘れた場合ここに来る
+			size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
+			lpCmdLine = &lpCmdLine[nPos];
+		}
 	}
 	else {
 		// 最初のトークンをスキップする
-		// ※Windows 環境で実行する場合、この部分はデッドコードになる
-		//   Wine等によるエミュレータ実行を考慮して実装だけはしておく
+		// ※コマンドラインを手打ちして引用符を付けなかった場合ここに来る
 		size_t nPos = ::wcscspn(lpCmdLine, whiteSpace);
 		lpCmdLine = &lpCmdLine[nPos];
 	}
