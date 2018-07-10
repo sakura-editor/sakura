@@ -107,6 +107,13 @@ void ActivateFrameWindow( HWND hwnd )
 	DLLSHAREDATA* pShareData = &GetDllShareData();
 	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 		if( IsSakuraMainWindow( hwnd ) ){
+			// 既にアクティブなら何もしない
+			// ※ 多重にアクティブ化（SetWindowPlacement）すると AeroSnap が解除されてしまう
+			//    （例）「同名のC/C++ヘッダ（ソース）を開く」から不要なのに呼ばれている
+			HWND hwndActivate = ::IsWindowEnabled( hwnd )? hwnd: ::GetLastActivePopup( hwnd );
+			if( hwndActivate == ::GetForegroundWindow() )
+				return;
+
 			if( pShareData->m_sFlags.m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
 			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
@@ -135,7 +142,13 @@ void ActivateFrameWindow( HWND hwnd )
 		::ShowWindow( hwnd, SW_MAXIMIZE );
 	}
 	else {
-		::ShowWindow( hwnd, SW_SHOW );
+		// SW_SHOW -> SW_SHOWNAに変更（SW_SHOW だと既に Aero Snap 状態の場合に解除されてしまう）
+		// （例）ファイル1を開いたエディタ1が Snap 状態で起動している状態で、
+		//       更に起動パラメータにファイル1を指定してエディタ2を起動すると
+		//       エディタ2がエディタ1をアクティブにする際、SW_SHOW だと Snap 解除されてしまうことがある
+		//       ↑エディタ1から[ファイル]-[開く]操作でファイルダイアログのファイル名エディットボックス
+		//         にファイル1、ファイル2の2ファイルを入力して[開く]ボタンを押すと再現
+		::ShowWindow( hwnd, SW_SHOWNA );
 	}
 	::SetForegroundWindow( hwndActivate );
 	::BringWindowToTop( hwndActivate );

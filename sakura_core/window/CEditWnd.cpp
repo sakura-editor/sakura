@@ -72,6 +72,8 @@
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
+#include <windowsx.h>
+
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
@@ -224,6 +226,7 @@ CEditWnd::CEditWnd()
 , m_bDragMode( false )
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
+, m_wVkArrow( 0 )
 {
 	g_pcEditWnd=this;
 }
@@ -356,13 +359,15 @@ void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGr
 	// 必要なら、タブグループにフィットするよう、変更
 	if(sTabGroupInfo.IsValid()){
 		RECT rcWork, rcMon;
-		GetMonitorWorkRect( sTabGroupInfo.hwndTop, &rcWork, &rcMon );
+		GetMonitorWorkRect(sTabGroupInfo.hwndTop, &rcWork, &rcMon);
 
-		const WINDOWPLACEMENT& wpTop = sTabGroupInfo.wpTop;
-		nWinCX = wpTop.rcNormalPosition.right  - wpTop.rcNormalPosition.left;
-		nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
-		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
-		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
+		CMyRect rcTop(sTabGroupInfo.wpTop.rcNormalPosition);
+		::OffsetRect(&rcTop, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
+
+		nWinOX = rcTop.left;
+		nWinOY = rcTop.top;
+		nWinCX = rcTop.Width();
+		nWinCY = rcTop.Height();
 	}
 
 	//結果
@@ -420,40 +425,55 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	return hwndResult;
 }
 
-void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+/*!
+ * タブグループ情報取得
+ *
+ * @date 2003/05/31 MIK タブウインドウの場合は現状値を指定
+ * @date 2003/09/11 MIK 新規TABウィンドウの位置が上にずれないように
+ * @date 2007/06/20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
+ * @date 2018/06/13 berryzplus リファクタリング。引数の順番を変更。rcTopに設定するものを変更。
+ */
+void CEditWnd::_GetTabGroupInfo(_Inout_ int& nGroup, _Out_ STabGroupInfo* pTabGroupInfo)
 {
-	HWND hwndTop = NULL;
-	WINDOWPLACEMENT	wpTop = {0};
+	// 指定グループの先頭ウィンドウ(実質的な戻り値)を初期化
+	HWND &hwndTop = pTabGroupInfo->hwndTop = NULL;
 
-	//From Here @@@ 2003.05.31 MIK
-	//タブウインドウの場合は現状値を指定
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
-	{
-		if( nGroup < 0 )	// 不正なグループID
-			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
-		EditNode*	pEditNode = CAppNodeGroupHandle(nGroup).GetEditNodeAt(0);	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
-		hwndTop = pEditNode? pEditNode->GetHwnd(): NULL;
-
-		if( hwndTop )
-		{
-			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
-			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
-
-			wpTop.length = sizeof(wpTop);
-			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
-				if( wpTop.showCmd == SW_SHOWMINIMIZED )
-					wpTop.showCmd = pEditNode->m_showCmdRestore;
-			}
-			else{
-				hwndTop = NULL;
-			}
-		}
+	// タブウインドウでない場合は処理なし
+	if (!(m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin)) {
+		return;
 	}
-	//To Here @@@ 2003.05.31 MIK
 
-	//結果
-	pTabGroupInfo->hwndTop = hwndTop;
-	pTabGroupInfo->wpTop = wpTop;
+	// 不正なグループIDが指定された場合は補正する
+	if (nGroup < 0) {
+		nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
+	}
+
+	// 指定グループの先頭ウィンドウ情報を取得
+	EditNode* pEditNode = CAppNodeGroupHandle(nGroup).GetEditNodeAt(0);
+	if (!pEditNode || !pEditNode->GetHwnd() || !::IsWindow(pEditNode->GetHwnd())) {
+		return;
+	}
+
+	// 指定グループの先頭ウィンドウを確定する
+	hwndTop = pEditNode->GetHwnd();
+
+	// ウィンドウ表示情報を取得
+	WINDOWPLACEMENT	&wpTop = pTabGroupInfo->wpTop;
+	wpTop.length = sizeof(WINDOWPLACEMENT);
+	if (!::GetWindowPlacement(hwndTop, &wpTop)) {
+		hwndTop = NULL;
+		return;
+	}
+
+	if (wpTop.showCmd == SW_SHOWMINIMIZED) {
+		wpTop.showCmd = pEditNode->m_showCmdRestore;
+}
+	// ウィンドウ矩形を取得
+	RECT &rcTop = pTabGroupInfo->rcTop;
+	if (!::GetWindowRect(hwndTop, &rcTop)) {
+		hwndTop = NULL;
+		return;
+	}
 }
 
 void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
@@ -658,7 +678,7 @@ HWND CEditWnd::Create(
 
 	//タブグループ情報取得
 	STabGroupInfo sTabGroupInfo;
-	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
+	_GetTabGroupInfo(nGroup, &sTabGroupInfo);
 
 
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
@@ -670,6 +690,12 @@ HWND CEditWnd::Create(
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
 	// ※起動元での起動先アイドリング検出については CControlTray::OpenNewEditor を参照
 	::SetTimer( GetHwnd(), IDT_FIRST_IDLE, 0, NULL );
+
+	// 既存タブに追加する場合の追加処理
+	if (sTabGroupInfo.IsValid())
+	{
+		CheckAndTriggerAeroSnap(sTabGroupInfo.rcTop, sTabGroupInfo.wpTop.rcNormalPosition, sTabGroupInfo.hwndTop);
+	}
 
 	/* 編集ウィンドウリストへの登録 */
 	// 2011.01.12 ryoji この処理は以前はウィンドウ可視化よりも後の位置にあった
@@ -1370,30 +1396,32 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return OnSize( wParam, lParam );
 
-	//From here 2003.05.31 MIK
+	// @date 2003/05/31 MIK
+	// @date 2004/05/13 Moca ウィンドウ位置継承
+	// @date 2005/11/23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
+	// @date 2018/06/13 berryzplus リファクタリング。処理は何も変えていない。
 	case WM_MOVE:
-		// From Here 2004.05.13 Moca ウィンドウ位置継承
+	//case WM_EXITSIZEMOVE:
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
-			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
-				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
-				// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
-				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
-				RECT rcWin;
-				WINDOWPLACEMENT wp;
-				wp.length = sizeof(wp);
-				::GetWindowPlacement( GetHwnd(), &wp );	// ワークエリア座標
-				rcWin = wp.rcNormalPosition;
-				RECT rcWork, rcMon;
-				GetMonitorWorkRect( GetHwnd(), &rcWork, &rcMon );
-				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
-				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
-				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
-			}
+		if (WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos
+			&& !::IsZoomed(GetHwnd())
+			&& !::IsIconic(GetHwnd())) {
+			// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
+			// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
+			WINDOWPLACEMENT wp = { sizeof(wp) };
+			::GetWindowPlacement(GetHwnd(), &wp);	// ワークエリア座標
+
+			RECT rcWorkArea, rcMonitor;
+			GetMonitorWorkRect(GetHwnd(), &rcWorkArea, &rcMonitor);
+
+			RECT &rcWin = wp.rcNormalPosition;
+			::OffsetRect(&rcWin, rcWorkArea.left - rcMonitor.left, rcWorkArea.top - rcMonitor.top);	// スクリーン座標に変換
+
+			m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
+			m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 		}
-		// To Here 2004.05.13 Moca ウィンドウ位置継承
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
-	//To here 2003.05.31 MIK
+
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 		//	Feb. 11, 2007 genta 動作を選べるように(MDI風と従来動作)
@@ -2938,6 +2966,11 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		CAppNodeGroupHandle(0).PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
 		::PostMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_FIRST_IDLE, (WPARAM)::GetCurrentProcessId(), (LPARAM)0 );
 		::KillTimer( m_hWnd, wParam );
+		break;
+	case IDT_SETAEROSNAP:
+		::KillTimer( GetHwnd(), wParam );
+		if( !SetAeroSnap() )
+			::SetTimer( GetHwnd(), wParam, 100, NULL );
 		break;
 	default:
 		return 1L;
@@ -4982,4 +5015,206 @@ void CEditWnd::ClearViewCaretPosInfo()
 	for( int v = 0; v < GetAllViewCount(); ++v ){
 		GetView(v).GetCaret().ClearCaretPosInfoCache();
 	}
+}
+
+
+/*!
+ * AeroSnap発動
+ *
+ * @author berryzplus
+ */
+void CEditWnd::CheckAndTriggerAeroSnap(_In_ const RECT &rcSnap, _In_ const RECT &rcUnsnap, _In_ HWND hWndDest)
+{
+	// 矩形が同じならAeroSnap発動しない
+	if (::EqualRect(&rcSnap, &rcUnsnap)) {
+		return;
+	}
+
+	// モニター矩形とワークエリア矩形を取得
+	RECT rcWorkArea, rcMonitor;
+	GetMonitorWorkRect(hWndDest, &rcWorkArea, &rcMonitor);
+
+	// ウインドウ矩形を補正
+	CMyRect rcWnd(rcSnap);
+	::OffsetRect(&rcWnd, rcWorkArea.left - rcMonitor.left, rcWorkArea.top - rcMonitor.top);
+
+	// Aero Snap 操作を判定
+	m_wVkArrow = 0;					// タイトルバーの上端をダブルクリック操作
+	if (rcWorkArea.left == rcWnd.left) {
+		m_wVkArrow = VK_LEFT;		// 「Win + ←」のキー操作
+	}
+	else if (rcWorkArea.right == rcWnd.right) {
+		m_wVkArrow = VK_RIGHT;		// 「Win + →」のキー操作
+	}
+
+	::SetTimer(GetHwnd(), IDT_SETAEROSNAP, 0, NULL);	// Aero Snap 設定用タイマを開始する
+}
+
+
+/*!
+ * ウインドウを Aero Snap モードに切り替える
+ *
+ * @author ryoji & berryzplus
+ * @note キーボード/マウス操作を生成してAeroSnapを発動します。
+ * @note デバッグで止めると入力操作がデバッガに飛ぶのでステップインする場合は要注意。
+ */
+bool CEditWnd::SetAeroSnap(void)
+{
+	HWND hWnd = GetHwnd();
+
+	if (!::IsWindowVisible(hWnd)
+		|| ::IsZoomed(hWnd)
+		|| ::IsIconic(hWnd)) {
+		return true;
+	}
+
+	DLLSHAREDATA* pShareData = &GetDllShareData();
+	if (!pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+		|| pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
+		return true;
+	}
+
+	if (GetWindowThreadProcessId(::GetForegroundWindow(), NULL) != GetWindowThreadProcessId(hWnd, NULL))
+	{
+		return false;
+	}
+
+	// Aero Snap 操作できるように、強制的にエディタウィンドウをアクティブ化する
+	// （メッセージボックス表示中など Aero Snap 不可状態でも一時的に可能にする）
+	HWND hWndActiveOld = ::GetActiveWindow();
+	BOOL bEnableOld = ::IsWindowEnabled(hWnd);
+	if (!bEnableOld)
+	{
+		::EnableWindow(hWnd, TRUE); //無効化解除！
+	}
+	if (hWnd == hWndActiveOld)
+	{
+		hWndActiveOld = NULL;
+	}
+	else if (hWndActiveOld)
+	{
+		::SetActiveWindow(hWnd);
+	}
+
+	// これらのキー押下状態は操作に影響を与える
+	int keys[] = {
+		VK_LSHIFT,
+		VK_RSHIFT,
+		VK_LCONTROL,
+		VK_RCONTROL,
+		VK_LMENU,
+		VK_RMENU,
+	};
+
+	// 操作前の押下状態をバックアップしておく
+	for (int i = 0; i < _countof(keys); ++i) {
+		auto &key = keys[i];
+		auto keyPressed = ::GetAsyncKeyState(key);
+		if (!keyPressed) key = NULL;
+	}
+
+	// 入力操作に必要な拡張パラメータを取得しておく
+	LPARAM extraInfo = ::GetMessageExtraInfo();
+
+	// 操作内容で分岐(マウス or キーボード)
+	if (m_wVkArrow)
+	{
+		// キー操作を注入して Aero Snap モードに移行させる
+		INPUT inputs[3 + 4];
+		inputs[0].ki.wVk = VK_CONTROL;
+		inputs[1].ki.wVk = VK_SHIFT;
+		inputs[2].ki.wVk = VK_MENU;
+		inputs[3].ki.wVk = VK_LWIN;
+		inputs[4].ki.wVk = m_wVkArrow;
+		inputs[5].ki.wVk = m_wVkArrow;
+		inputs[6].ki.wVk = VK_LWIN;
+		for (int i = 0; i < _countof(inputs); ++i)
+		{
+			auto &input = inputs[i];
+			input.type = INPUT_KEYBOARD;
+			input.ki.wScan = ::MapVirtualKey(input.ki.wVk, 0);
+			input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP; //指定キーを解放
+			input.ki.time = 0;
+			input.ki.dwExtraInfo = extraInfo;
+		}
+		inputs[3].ki.dwFlags = KEYEVENTF_EXTENDEDKEY; //指定キーを押下
+		inputs[4].ki.dwFlags = KEYEVENTF_EXTENDEDKEY; //指定キーを押下
+
+		// メッセージキューを空にする
+		BlockingHook(NULL);
+
+		// キー操作発動
+		::SendInput(_countof(inputs), inputs, sizeof(INPUT));
+	}
+	else
+	{
+		// マウス操作を注入して Aero Snap モードに移行させる
+		INPUT inputs[3 + 1];
+		inputs[0].ki.wVk = VK_CONTROL;
+		inputs[1].ki.wVk = VK_SHIFT;
+		inputs[2].ki.wVk = VK_MENU;
+		for (int i = 0; i < 3; ++i)
+		{
+			auto &input = inputs[i];
+			input.type = INPUT_KEYBOARD;
+			input.ki.wScan = ::MapVirtualKey(input.ki.wVk, 0);
+			input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP; //指定キーを解放
+			input.ki.time = 0;
+			input.ki.dwExtraInfo = extraInfo;
+		}
+		auto &input = inputs[3];
+		input.type = INPUT_MOUSE;
+		input.mi.dx = 0;
+		input.mi.dy = 0;
+		input.mi.mouseData = NULL;
+		input.mi.time = 0;
+		input.mi.dwExtraInfo = extraInfo;
+		input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP; // 左クリック
+
+		// 操作前のポインタ位置を退避
+		POINT ptCursor;
+		::GetCursorPos(&ptCursor);
+
+		// ダブルクリックさせたい位置にポインタを移動
+		CMyRect rcWnd;
+		::GetWindowRect(hWnd, &rcWnd);
+		::SetCursorPos(rcWnd.left + rcWnd.Width() / 2, rcWnd.top + ::GetSystemMetrics(SM_CYFRAME));
+
+		// メッセージキューを空にする
+		BlockingHook(NULL);
+
+		// ダブルクリック発動
+		::SendInput(_countof(inputs), inputs, sizeof(INPUT));
+		::SendInput(_countof(inputs), inputs, sizeof(INPUT));
+
+		// ポインタ位置を元に戻す
+		::SetCursorPos(ptCursor.x, ptCursor.y);
+	}
+
+	// バックアップしておいた押下状態を復元する
+	for (int i = 0; i < _countof(keys); ++i) {
+		auto &key = keys[i];
+		if (!key) continue;
+		INPUT inputs[1];
+		auto &input = inputs[0];
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = key;
+		input.ki.wScan = ::MapVirtualKey(input.ki.wVk, 0);
+		input.ki.dwFlags = KEYEVENTF_EXTENDEDKEY; //指定キーを押下
+		input.ki.time = 0;
+		input.ki.dwExtraInfo = extraInfo;
+		::SendInput(_countof(inputs), inputs, sizeof(INPUT));
+	}
+
+	// 一時的に変更したものを元に戻す
+	if (hWndActiveOld)
+	{
+		::SetActiveWindow(hWndActiveOld);
+	}
+	if (!bEnableOld)
+	{
+		::EnableWindow(hWnd, FALSE);
+	}
+
+	return true;
 }

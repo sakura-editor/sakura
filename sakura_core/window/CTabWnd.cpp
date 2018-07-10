@@ -726,7 +726,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 			::GetWindowPlacement( hwndDst, &wp );
 			if( wp.showCmd == SW_SHOWMINIMIZED )
 				wp.showCmd = showCmdRestore;
-			SetCarmWindowPlacement( hwndSrc, &wp );
+			SetCarmWindowPlacement( hwndSrc, &wp, hwndDst );
 			::ShowWindow( hwndDst, SW_HIDE );	// 移動先の以前の先頭ウィンドウを消す
 		}
 	}
@@ -2087,7 +2087,6 @@ void CTabWnd::AdjustWindowPlacement( void )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		HWND hwnd = GetParentHwnd();	// 自身の編集ウィンドウ
-		WINDOWPLACEMENT wp;
 		if( !::IsWindowVisible( hwnd ) )	// 可視化するときだけ引き継ぐ
 		{
 			// なるべく画面を手前に出さずに可視化する
@@ -2106,13 +2105,17 @@ void CTabWnd::AdjustWindowPlacement( void )
 				::ShowWindow( hwnd, SW_SHOWNA );
 				return;
 			}
+
 			HWND hwndInsertAfter = pEditNode->m_hWnd;
-			wp.length = sizeof( wp );
+			if (::IsIconic(hwndInsertAfter))
+			{
+				ShowWindow(hwndInsertAfter, SW_RESTORE);	// AeroSnap 矩形取得のため先に戻しておく
+			}
+
+			WINDOWPLACEMENT wp = { sizeof(wp) };
 			::GetWindowPlacement( hwndInsertAfter, &wp );
-			if( wp.showCmd == SW_SHOWMINIMIZED )
-				wp.showCmd = pEditNode->m_showCmdRestore;
-			::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
-			SetCarmWindowPlacement( hwnd, &wp );	// 位置を復元する
+
+			SetCarmWindowPlacement( hwnd, &wp, hwndInsertAfter );	// 位置を復元する
 			::UpdateWindow( hwnd );	// 強制描画
 		}
 	}
@@ -2123,7 +2126,11 @@ void CTabWnd::AdjustWindowPlacement( void )
 	@author ryoji
 	@date 2007.11.30 新規作成
 */
-int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl )
+int CTabWnd::SetCarmWindowPlacement(
+	_In_ HWND hwnd,
+	_In_ const WINDOWPLACEMENT* pWndpl,
+	_In_opt_ HWND hwndDst
+)
 {
 	WINDOWPLACEMENT wp = *pWndpl;
 	if( wp.showCmd == SW_SHOWMAXIMIZED && ::IsZoomed( hwnd ) )
@@ -2150,6 +2157,15 @@ int CTabWnd::SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl )
 		wp.showCmd = SW_SHOWNOACTIVATE;
 	}
 	::SetWindowPlacement( hwnd, &wp );
+	// AeroSnap対応
+	if (hwndDst)
+	{
+		RECT rcSnap;
+		if (::GetWindowRect(hwndDst, &rcSnap))
+		{
+			CEditWnd::getInstance()->CheckAndTriggerAeroSnap(rcSnap, wp.rcNormalPosition, hwndDst);
+		}
+	}
 	return wp.showCmd;
 }
 

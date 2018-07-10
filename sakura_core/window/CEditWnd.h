@@ -78,12 +78,14 @@ struct DLLSHAREDATA;
 #define IDT_TOOLBAR		456
 #define IDT_CAPTION		457
 #define IDT_FIRST_IDLE	458
+#define IDT_SETAEROSNAP	477
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
 struct STabGroupInfo{
 	HWND			hwndTop;
 	WINDOWPLACEMENT	wpTop;
+	RECT rcTop;
 
 	STabGroupInfo() : hwndTop(NULL) { }
 	bool IsValid() const{ return hwndTop!=NULL; }
@@ -113,7 +115,7 @@ public:
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
-	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
+	void _GetTabGroupInfo(_Inout_ int& nGroup, _Out_ STabGroupInfo* pTabGroupInfo);
 	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
@@ -241,6 +243,7 @@ public:
 	//                      ウィンドウ操作                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void WindowTopMost( int ); // 2004.09.21 Moca
+	void CheckAndTriggerAeroSnap(_In_ const RECT &rcSnap, _In_ const RECT &rcUnsnap, _In_ HWND hWndDest);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ビュー管理                           //
@@ -309,6 +312,9 @@ protected:
 	// メニュー
 	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
 	void CheckFreeSubMenuSub( HMENU, int );			// メニューバーの無効化を検査	2010/6/18 Uchi
+
+	// AeroSnap
+	bool SetAeroSnap(void);
 
 //public:
 	//! 周期内でm_nTimerCountをインクリメント
@@ -426,6 +432,7 @@ private:
 	//その他フラグ
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
+	WORD				m_wVkArrow;		//!< Aero Snap 操作を判定
 
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
