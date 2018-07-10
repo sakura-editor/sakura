@@ -59,8 +59,10 @@ struct GrepInfo {
 */
 class CCommandLine  : public TSingleton<CCommandLine> {
 	friend class TSingleton<CCommandLine>;
+public:
 	CCommandLine();
 
+private:
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ

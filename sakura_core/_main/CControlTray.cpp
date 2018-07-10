@@ -476,7 +476,7 @@ LRESULT CControlTray::DispatchEvent(
 					}
 				}
 			}while( bDelFound );
-			if( bDelete && m_pShareData->m_sNodes.m_nEditArrNum == 0 ){
+			if( bDelete || m_pShareData->m_sNodes.m_nEditArrNum == 0 ){
 				PostMessageAny( hwnd, MYWM_DELETE_ME, 0, 0 );
 			}
 		}
