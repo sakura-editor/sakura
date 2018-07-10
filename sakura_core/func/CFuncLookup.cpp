@@ -40,6 +40,7 @@
 const int LUOFFSET_MACRO = 0;
 const int LUOFFSET_CUSTMENU = 1;
 const int LUOFFSET_PLUGIN = 2;
+const int LUOFFSET_HOTKEY = 3;
 
 /*!	@brief 分類中の位置に対応する機能番号を返す．
 
@@ -78,7 +79,13 @@ EFunctionCode CFuncLookup::Pos2FuncCode( int category, int position, bool bGetUn
 		//	プラグイン
 		return CJackManager::getInstance()->GetCommandCode( position );
 	}
-	return F_DISABLE;
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_HOTKEY) {
+		//	ホットキー
+		if (position == 0) {
+			return F_SHOWTRAYMENU;
+		}
+	}
+	return F_DISABLE;//
 }
 
 /*!	@brief 分類中の位置に対応する機能名称を返す．
@@ -151,6 +158,14 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 			return true;	// プラグインコマンド
 		}
 	}
+	else if (F_SHOWTRAYMENU == funccode) {
+		if (GetDllShareData().m_Common.m_sGeneral.m_wTrayMenuHotKeyCode
+			&& (pszStr = LSW(funccode))[0] != L'\0') {
+			wcsncpy(ptr, pszStr, bufsize);
+			ptr[bufsize - 1] = LTEXT('\0');
+			return true;	// ホットキーのコマンド
+		}
+	}
 
 	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
 	if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
@@ -194,6 +209,9 @@ const TCHAR* CFuncLookup::Category2Name( int category ) const
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		return LS( STR_ERR_DLGFUNCLKUP19 );
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_HOTKEY) {
+		return LS( STR_ERR_DLGFUNCLKUP20 );
 	}
 	return NULL;
 }
@@ -271,6 +289,10 @@ int CFuncLookup::GetItemCount(int category) const
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		//	プラグインコマンド
 		return CJackManager::getInstance()->GetCommandCount();
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_HOTKEY) {
+		//	ホットキー
+		return 1;
 	}
 	return 0;
 }

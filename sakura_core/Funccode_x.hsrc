@@ -507,6 +507,7 @@ F_APPENDUNDOBUFFERCURSOR	= 32816,	// OpeBlK にカーソル位置を追加
 F_CLIPBOARDEMPTY		= 32817,		// クリップボードクリア
 F_SETVIEWTOP			= 32818,		// ビューの上の行数を設定					CLayoutYInt nLineNumber
 F_SETVIEWLEFT			= 32819,		// ビューの左端の桁数を設定					CLayoutXInt nColumnIndex
+F_SHOWTRAYMENU			= 32820,		// タスクトレイ左クリックメニューを表示
 
 
 F_FUNCTION_FIRST	= 40000,	// 2003-02-21 鬼 これ以上だと関数

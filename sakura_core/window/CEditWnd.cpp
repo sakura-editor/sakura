@@ -2296,6 +2296,11 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				}
 			}
 		}
+		else if (wID == F_SHOWTRAYMENU) {
+			// デモンストレーションなので、共有メモリのハンドル値を使って簡易呼出し。
+			::PostMessage(m_pShareData->m_sHandles.m_hwndTray, MYWM_NOTIFYICON, 0, WM_LBUTTONUP);
+			return;
+		}
 		//その他コマンド
 		else{
 			//ビューにフォーカスを移動しておく

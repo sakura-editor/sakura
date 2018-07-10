@@ -171,7 +171,6 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , _T(""));
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
-
 	nId = ::TrackPopupMenu(
 		hMenu,
 		TPM_TOPALIGN
