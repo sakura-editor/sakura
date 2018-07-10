@@ -50,6 +50,7 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
+#include "_os/getMessageFromSystem.h"
 #include "sakura_rc.h"
 
 #define IDT_EDITCHECK 2
@@ -1254,24 +1255,9 @@ bool CControlTray::OpenNewEditor(
 	);
 	if( !bCreateResult ){
 		//	失敗
-		TCHAR* pMsg;
-		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-						FORMAT_MESSAGE_IGNORE_INSERTS |
-						FORMAT_MESSAGE_FROM_SYSTEM,
-						NULL,
-						GetLastError(),
-						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPTSTR)&pMsg,
-						0,
-						NULL
-		);
-		ErrorMessage(
-			hWndParent,
-			LS(STR_TRAY_CREATEPROC1),
-			szEXE,
-			pMsg
-		);
-		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
+		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
+		//"'%ts'\nプロセスの起動に失敗しました。\n%ts"
+		ErrorMessage(hWndParent,LS(STR_TRAY_CREATEPROC1),szEXE,msg.c_str());
 		return false;
 	}
 

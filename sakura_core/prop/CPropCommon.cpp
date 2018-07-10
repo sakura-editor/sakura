@@ -43,6 +43,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
 #include "CEditApp.h"
+#include "_os/getMessageFromSystem.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
 
@@ -293,25 +294,9 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
-		TCHAR*	pszMsgBuf;
-		::FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			::GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),	// デフォルト言語
-			(LPTSTR)&pszMsgBuf,
-			0,
-			NULL
-		);
-		PleaseReportToAuthor(
-			NULL,
-			LS(STR_ERR_DLGPROPCOMMON24),
-			psh.nStartPage,
-			pszMsgBuf
-		);
-		::LocalFree( pszMsgBuf );
+		std::wstring msg(_os::getMessageFromSystem(::GetLastError()));
+		//"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%ts\n"
+		PleaseReportToAuthor(NULL, LS(STR_ERR_DLGPROPCOMMON24), psh.nStartPage, msg.c_str());
 	}
 
 	return nRet;
