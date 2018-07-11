@@ -1027,7 +1027,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 	for( int i = 0; i + 14 < nSize; i++ ){
 		// 「<meta http-equiv="Content-Type" content="text/html; Charset=Shift_JIS">」
 		// 「<meta charset="utf-8">」
-		if( 0 == memicmp(pBuf + i, "<meta", 5) && IsXMLWhiteSpace(pBuf[i+5]) ){
+		if( pBuf[i] == '<' && 0 == memicmp(&pBuf[i+1], "meta", 4) && IsXMLWhiteSpace(pBuf[i+5]) ){
 			i += 5;
 			ECodeType encoding = CODE_NONE;
 			bool bContentType = false;

@@ -118,7 +118,8 @@ private:
 		int						nNest,				//!< [in] ネストレベル
 		bool&					bOutputBaseFolder,
 		int*					pnHitCount,			//!< [i/o] ヒット数の合計
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	// Grep実行
@@ -138,7 +139,8 @@ private:
 		const TCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	int DoGrepReplaceFile(
@@ -158,7 +160,8 @@ private:
 		const TCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
-		CNativeW&				cmemMessage
+		CNativeW&				cmemMessage,
+		CNativeW&				cUnicodeBuffer
 	);
 
 	// Grep結果をpszWorkに格納
@@ -183,6 +186,7 @@ private:
 
 	DWORD m_dwTickAddTail;	// AddTail() を呼び出した時間
 	DWORD m_dwTickUICheck;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
+	DWORD m_dwTickUIFileName;	// Cancelダイアログのファイル名表示更新を行った時間
 
 public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか

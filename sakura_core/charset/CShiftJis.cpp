@@ -116,25 +116,39 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
-	// 変換先バッファサイズを設定してメモリ領域確保
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nSrcLen];
-	}catch( ... ){
-		pDst = NULL;
+	if( &cSrc == pDstMem->_GetMemory() )
+	{
+		// 変換先バッファサイズを設定してメモリ領域確保
+		wchar_t* pDst;
+		try{
+			pDst = new wchar_t[nSrcLen];
+		}catch( ... ){
+			pDst = NULL;
+		}
+		if( pDst == NULL ){
+			return RESULT_FAILURE;
+		}
+
+		// 変換
+		int nDstLen = SjisToUni( pSrc, nSrcLen, pDst, &bError );
+
+		// pDstを更新
+		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+
+		// 後始末
+		delete [] pDst;
 	}
-	if( pDst == NULL ){
-		return RESULT_FAILURE;
+	else
+	{
+		// 変換先バッファサイズを設定してメモリ領域確保
+		pDstMem->AllocStringBuffer( nSrcLen + 1 );
+		wchar_t* pDst = pDstMem->GetStringPtr();
+
+		// 変換
+		int nDstLen = SjisToUni( pSrc, nSrcLen, pDst, &bError );
+
+		pDstMem->_SetStringLength( nDstLen );
 	}
-
-	// 変換
-	int nDstLen = SjisToUni( pSrc, nSrcLen, pDst, &bError );
-
-	// pDstを更新
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
-
-	// 後始末
-	delete [] pDst;
 
 	if( bError == false ){
 		return RESULT_COMPLETE;

@@ -22,14 +22,16 @@
 #include <deque>
 #include "sakura_rc.h"
 
-#define UICHECK_INTERVAL_MILLISEC 50	// UI確認の時間間隔
+#define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
+#define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
 , m_dwTickAddTail( 0 )
 , m_dwTickUICheck( 0 )
+, m_dwTickUIFileName( 0 )
 {
 }
 
@@ -196,6 +198,7 @@ DWORD CGrepAgent::DoGrep(
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp	cRegexp;
 	CNativeW	cmemMessage;
+	CNativeW	cUnicodeBuffer;
 	int			nWork;
 	SGrepOption	sGrepOption;
 
@@ -203,6 +206,7 @@ DWORD CGrepAgent::DoGrep(
 	|| バッファサイズの調整
 	*/
 	cmemMessage.AllocStringBuffer( 4000 );
+	cUnicodeBuffer.AllocStringBuffer( 4000 );
 
 	pcViewDst->m_bDoing_UndoRedo		= true;
 
@@ -574,7 +578,8 @@ DWORD CGrepAgent::DoGrep(
 			0,
 			bOutputBaseFolder,
 			&nHitCount,
-			cmemMessage
+			cmemMessage,
+			cUnicodeBuffer
 		);
 		if( nTreeRet == -1 ){
 			nGrepTreeResult = -1;
@@ -671,7 +676,8 @@ int CGrepAgent::DoGrepTree(
 	int						nNest,				//!< [in] ネストレベル
 	bool&					bOutputBaseFolder,	//!< [i/o] ベースフォルダ名出力
 	int*					pnHitCount,			//!< [i/o] ヒット数の合計
-	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
+	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
+	CNativeW&				cUnicodeBuffer
 )
 {
 	int			i;
@@ -710,8 +716,11 @@ int CGrepAgent::DoGrepTree(
 			);
 		}
 
-		//GREP実行！
-		::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
+		// 定期的に grep 中のファイル名表示を更新
+		if( dwNow - m_dwTickUIFileName > UIFILENAME_INTERVAL_MILLISEC ){
+			m_dwTickUIFileName = dwNow;
+			::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
+		}
 
 		std::tstring currentFile = pszPath;
 		currentFile += _T("\\");
@@ -741,7 +750,8 @@ int CGrepAgent::DoGrepTree(
 				(sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1),
 				bOutputBaseFolder,
 				bOutputFolderName,
-				cmemMessage
+				cmemMessage,
+				cUnicodeBuffer
 			);
 		}else{
 			nRet = DoGrepFile(
@@ -760,7 +770,8 @@ int CGrepAgent::DoGrepTree(
 				(sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1),
 				bOutputBaseFolder,
 				bOutputFolderName,
-				cmemMessage
+				cmemMessage,
+				cUnicodeBuffer
 			);
 		}
 
@@ -842,7 +853,8 @@ int CGrepAgent::DoGrepTree(
 				nNest + 1,
 				bOutputBaseFolder,
 				pnHitCount,
-				cmemMessage
+				cmemMessage,
+				cUnicodeBuffer
 			);
 			if( -1 == nGrepTreeResult ){
 				goto cancel_return;
@@ -1045,7 +1057,8 @@ int CGrepAgent::DoGrepFile(
 	const TCHAR*			pszRelPath,			//!< [in] 相対パス File.ext(bGrepSeparateFolder) または  SubFolder\File.ext(!bGrepSeparateFolder)
 	bool&					bOutputBaseFolder,	//!< 
 	bool&					bOutputFolderName,	//!< 
-	CNativeW&				cmemMessage			//!< [i/o] Grep結果文字列
+	CNativeW&				cmemMessage,		//!< [i/o] Grep結果文字列
+	CNativeW&				cUnicodeBuffer
 )
 {
 	int		nHitCount;
@@ -1205,7 +1218,6 @@ int CGrepAgent::DoGrepFile(
 	}
 
 	// 注意 : cfl.ReadLine が throw する可能性がある
-	CNativeW cUnicodeBuffer;
 	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 	{
 		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
@@ -1606,7 +1618,8 @@ int CGrepAgent::DoGrepReplaceFile(
 	const TCHAR*			pszRelPath,
 	bool&					bOutputBaseFolder,
 	bool&					bOutputFolderName,
-	CNativeW&				cmemMessage
+	CNativeW&				cmemMessage,
+	CNativeW&				cUnicodeBuffer
 )
 {
 	LONGLONG	nLine = 0;

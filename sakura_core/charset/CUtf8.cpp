@@ -95,39 +95,41 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	// データ取得
 	int nSrcLen;
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
- 
-	const char* psrc = pSrc;
-	int nsrclen = nSrcLen;
 
-//	CMemory cmem;
-//	// MIME ヘッダーデコード
-//	if( decodeMime == true ){
-//		bool bret = MIMEHeaderDecode( pSrc, nSrcLen, &cmem, CODE_UTF8 );
-//		if( bret == true ){
-//			psrc = reinterpret_cast<char*>( cmem.GetRawPtr() );
-//			nsrclen = cmem.GetRawLength();
-//		}
-//	}
+	if( &cSrc == pDstMem->_GetMemory() )
+	{
+		// 必要なバッファサイズを調べて確保する
+		wchar_t* pDst;
+		try{
+			pDst = new wchar_t[nSrcLen];
+		}catch( ... ){
+			pDst = NULL;
+		}
+		if( pDst == NULL ){
+			return RESULT_FAILURE;
+		}
 
-	// 必要なバッファサイズを調べて確保する
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nsrclen];
-	}catch( ... ){
-		pDst = NULL;
+		// 変換
+		int nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode );
+
+		// pDstMem を更新
+		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+
+		// 後始末
+		delete [] pDst;
 	}
-	if( pDst == NULL ){
-		return RESULT_FAILURE;
+	else
+	{
+		// 変換先バッファサイズを設定してメモリ領域確保
+		pDstMem->AllocStringBuffer( nSrcLen + 1 );
+		wchar_t* pDst = pDstMem->GetStringPtr();
+
+		// 変換
+		size_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode);
+
+		// pDstMem を更新
+		pDstMem->_SetStringLength( nDstLen );
 	}
-
-	// 変換
-	int nDstLen = Utf8ToUni( psrc, nsrclen, pDst, bCESU8Mode );
-
-	// pDstMem を更新
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
-
-	// 後始末
-	delete [] pDst;
 
 	if( bError == false ){
 		return RESULT_COMPLETE;
