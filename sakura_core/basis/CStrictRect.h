@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,25 +31,25 @@ public:
 	typedef INT_TYPE	IntType;
 	typedef POINT_TYPE	PointType;
 public:
-	//ƒƒ“ƒo•Ï”‚ÍŒöŠJ
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°ã¯å…¬é–‹
 	IntType left;
 	IntType top;
 	IntType right;
 	IntType bottom;
 
 public:
-	//!¶ãÀ•W (TopLeft)
+	//!å·¦ä¸Šåº§æ¨™ (TopLeft)
 	PointType UpperLeft() const
 	{
 		return PointType(left,top);
 	}
-	//!‰E‰ºÀ•W (BottomRight)
+	//!å³ä¸‹åº§æ¨™ (BottomRight)
 	PointType LowerRight() const
 	{
 		return PointType(right,bottom);
 	}
 
-	//!ƒqƒbƒgƒ`ƒFƒbƒN
+	//!ãƒ’ãƒƒãƒˆãƒã‚§ãƒƒã‚¯
 	bool PtInRect(const PointType& pt) const
 	{
 		return pt.x>=left && pt.x<right && pt.y>=top && pt.y<bottom;

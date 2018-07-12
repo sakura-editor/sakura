@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,15 +28,15 @@
 
 class CMySize : public SIZE{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
-	CMySize(){} //¦‰Šú‰»‚È‚µ
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	CMySize(){} //â€»åˆæœŸåŒ–ãªã—
 	CMySize(int _cx,int _cy){ cx=_cx; cy=_cy; }
 	CMySize(const SIZE& rhs){ cx=rhs.cx; cy=rhs.cy; }
 
-	//ŠÖ”
+	//é–¢æ•°
 	void Set(int _cx,int _cy){ cx=_cx; cy=_cy; }
 
-	//‰‰Zq
+	//æ¼”ç®—å­
 	bool operator == (const SIZE& rhs) const{ return cx==rhs.cx && cy==rhs.cy; }
 	bool operator != (const SIZE& rhs) const{ return !operator==(rhs); }
 };

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,7 +29,7 @@ class CRangeBase{
 public:
 	typedef typename PointType::IntType IntType;
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CRangeBase()
 	{
 	}
@@ -43,7 +43,7 @@ public:
 		m_ptTo=_ptTo;
 	}
 
-	//‘ã“ü
+	//ä»£å…¥
 	CRangeBase& operator = (const CRangeBase& rhs)
 	{
 		m_ptFrom=rhs.m_ptFrom;
@@ -51,7 +51,7 @@ public:
 		return *this;
 	}
 
-	//”äŠr
+	//æ¯”è¼ƒ
 	bool operator == (const CRangeBase& rhs) const
 	{
 		return m_ptFrom == rhs.m_ptFrom && m_ptTo == rhs.m_ptTo;
@@ -61,8 +61,8 @@ public:
 		return !operator==(rhs);
 	}
 
-	//”»’è
-	//! 1•¶š‚µ‚©‘I‘ğ‚µ‚Ä‚È‚¢ó‘Ô‚È‚çtrue
+	//åˆ¤å®š
+	//! 1æ–‡å­—ã—ã‹é¸æŠã—ã¦ãªã„çŠ¶æ…‹ãªã‚‰true
 	bool IsOne() const
 	{
 		return m_ptFrom==m_ptTo;
@@ -71,12 +71,12 @@ public:
 	{
 		return m_ptFrom.y==m_ptTo.y;
 	}
-	bool IsValid() const //!—LŒø‚È”ÍˆÍ‚È‚çtrue
+	bool IsValid() const //!æœ‰åŠ¹ãªç¯„å›²ãªã‚‰true
 	{
 		return m_ptFrom.BothNatural() && m_ptTo.BothNatural();
 	}
 
-	//æ“¾
+	//å–å¾—
 	PointType GetFrom() const
 	{
 		return m_ptFrom;
@@ -86,7 +86,7 @@ public:
 		return m_ptTo;
 	}
 
-	//“Áê
+	//ç‰¹æ®Š
 	PointType* GetFromPointer()
 	{
 		return &m_ptFrom;
@@ -97,7 +97,7 @@ public:
 	}
 
 
-	//İ’è
+	//è¨­å®š
 	void Clear(int n)
 	{
 		m_ptFrom.Set(IntType(n),IntType(n));
@@ -147,7 +147,7 @@ public:
 		m_ptTo.y = nY;
 	}
 
-	//“Áêİ’è
+	//ç‰¹æ®Šè¨­å®š
 	void SetLine(IntType nY)					{ m_ptFrom.y = nY;     m_ptTo.y = nY;   }
 	void SetXs(IntType nXFrom, IntType nXTo)	{ m_ptFrom.x = nXFrom; m_ptTo.x = nXTo; }
 private:

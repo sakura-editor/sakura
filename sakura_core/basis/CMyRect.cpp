@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "CMyRect.h"
 
 CMyRect MergeRect(const CMyRect& rc1, const CMyRect& rc2)

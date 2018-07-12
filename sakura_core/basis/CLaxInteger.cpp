@@ -1,3 +1,3 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "CLaxInteger.h"
 

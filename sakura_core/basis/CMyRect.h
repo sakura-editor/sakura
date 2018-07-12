@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,7 +29,7 @@
 
 class CMyRect : public RECT{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMyRect()
 	{
 		SetLTRB(0,0,0,0);
@@ -44,9 +44,9 @@ public:
 		*p=rc;
 	}
 
-	//‰‰Zq
+	//æ¼”ç®—å­
 
-	//‘ã“ü
+	//ä»£å…¥
 	void SetLTRB(int l,int t,int r,int b)
 	{
 		left  =l;
@@ -76,7 +76,7 @@ public:
 	}
 
 
-	//ŒvZ
+	//è¨ˆç®—
 	int Width() const
 	{
 		return right-left;
@@ -85,12 +85,12 @@ public:
 	{
 		return bottom-top;
 	}
-	//!¶ãÀ•W (TopLeft)
+	//!å·¦ä¸Šåº§æ¨™ (TopLeft)
 	CMyPoint UpperLeft() const
 	{
 		return CMyPoint(left,top);
 	}
-	//!‰E‰ºÀ•W (BottomRight)
+	//!å³ä¸‹åº§æ¨™ (BottomRight)
 	CMyPoint LowerRight() const
 	{
 		return CMyPoint(right,bottom);
@@ -98,7 +98,7 @@ public:
 
 };
 
-//!CRect‡¬Brc1,rc2‚ğŠÜ‚ŞÅ¬‚Ì‹éŒ`‚ğ¶¬‚·‚éB
+//!CRectåˆæˆã€‚rc1,rc2ã‚’å«ã‚€æœ€å°ã®çŸ©å½¢ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 CMyRect MergeRect(const CMyRect& rc1, const CMyRect& rc2);
 
 #endif /* SAKURA_CMYRECT_25A0FB5F_E06F_4F51_B046_E6951B95B0059_H_ */

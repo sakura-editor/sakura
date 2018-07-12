@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -23,9 +23,9 @@
 */
 
 #include "StdAfx.h"
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005�ȍ~�Ȃ�
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら
 #ifdef _DEBUG
-#define USE_STRICT_INT //��������R�����g�A�E�g����ƌ��i��int�������ɂȂ�܂��B�����[�X�r���h�ł͏�ɖ����B
+#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効。
 #endif
 #endif
 

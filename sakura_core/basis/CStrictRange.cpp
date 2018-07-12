@@ -1,2 +1,2 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "CStrictRange.h"
