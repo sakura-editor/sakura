@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -41,7 +41,7 @@ public:
 	CViewCommander(CEditView* pEditView);
 
 public:
-	//ŠO•”ˆË‘¶
+	//å¤–éƒ¨ä¾å­˜
 	CEditDoc* GetDocument();
 	CEditWnd* GetEditWindow();
 	HWND GetMainWindow();
@@ -55,7 +55,7 @@ private:
 	CSMacroMgr*		m_pcSMacroMgr;
 
 public:
-	/* ƒL[ƒŠƒs[ƒgó‘Ô */
+	/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆçŠ¶æ…‹ */
 	int				m_bPrevCommand;
 
 
@@ -67,7 +67,7 @@ private:
 		INDENT_SPACE
 	};
 
-	// -- -- -- -- ˆÈ‰ºAƒRƒ}ƒ“ƒhˆ—ŠÖ”ŒQ -- -- -- -- //
+	// -- -- -- -- ä»¥ä¸‹ã€ã‚³ãƒãƒ³ãƒ‰å‡¦ç†é–¢æ•°ç¾¤ -- -- -- -- //
 public:
 	BOOL HandleCommand(
 		EFunctionCode	nCommand,
@@ -78,12 +78,12 @@ public:
 		LPARAM			lparam4
 	);
 
-	/* ƒtƒ@ƒCƒ‹‘€ìŒn */
-	void Command_FILENEW( void );				/* V‹Kì¬ */
-	void Command_FILENEW_NEWWINDOW( void );		/* V‹Kì¬iƒ^ƒu‚ÅŠJ‚­”Åj */
-	/* ƒtƒ@ƒCƒ‹‚ğŠJ‚­ */
-	// Oct. 2, 2001 genta ƒ}ƒNƒ—p‚É‹@”\Šg’£
-	// Mar. 30, 2003 genta ˆø”’Ç‰Á
+	/* ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œç³» */
+	void Command_FILENEW( void );				/* æ–°è¦ä½œæˆ */
+	void Command_FILENEW_NEWWINDOW( void );		/* æ–°è¦ä½œæˆï¼ˆã‚¿ãƒ–ã§é–‹ãç‰ˆï¼‰ */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã */
+	// Oct. 2, 2001 genta ãƒã‚¯ãƒ­ç”¨ã«æ©Ÿèƒ½æ‹¡å¼µ
+	// Mar. 30, 2003 genta å¼•æ•°è¿½åŠ 
 	void Command_FILEOPEN(
 		const WCHAR*	filename		= NULL,
 		ECodeType		nCharCode		= CODE_AUTODETECT,
@@ -91,100 +91,100 @@ public:
 		const WCHAR*	defaultName		= NULL
 	);
 
-	/* ã‘‚«•Û‘¶ */ // Feb. 28, 2004 genta ˆø”’Ç‰Á, Jan. 24, 2005 genta ˆø”’Ç‰Á
+	/* ä¸Šæ›¸ãä¿å­˜ */ // Feb. 28, 2004 genta å¼•æ•°è¿½åŠ , Jan. 24, 2005 genta å¼•æ•°è¿½åŠ 
 	bool Command_FILESAVE( bool warnbeep = true, bool askname = true );
-	bool Command_FILESAVEAS_DIALOG(const WCHAR*, ECodeType, EEolType);		/* –¼‘O‚ğ•t‚¯‚Ä•Û‘¶ */
-	BOOL Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType);	/* –¼‘O‚ğ•t‚¯‚Ä•Û‘¶ */
-	BOOL Command_FILESAVEALL( void );					/* ‘S‚Äã‘‚«•Û‘¶ */ // Jan. 23, 2005 genta
-	void Command_FILECLOSE( void );						/* ŠJ‚¶‚Ä(–³‘è) */	//Oct. 17, 2000 jepro uƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚év‚Æ‚¢‚¤ƒLƒƒƒvƒVƒ‡ƒ“‚ğ•ÏX
-	/* •Â‚¶‚ÄŠJ‚­*/
-	// Mar. 30, 2003 genta ˆø”’Ç‰Á
+	bool Command_FILESAVEAS_DIALOG(const WCHAR*, ECodeType, EEolType);		/* åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ */
+	BOOL Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType);	/* åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ */
+	BOOL Command_FILESAVEALL( void );					/* å…¨ã¦ä¸Šæ›¸ãä¿å­˜ */ // Jan. 23, 2005 genta
+	void Command_FILECLOSE( void );						/* é–‹ã˜ã¦(ç„¡é¡Œ) */	//Oct. 17, 2000 jepro ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹ã€ã¨ã„ã†ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã‚’å¤‰æ›´
+	/* é–‰ã˜ã¦é–‹ã*/
+	// Mar. 30, 2003 genta å¼•æ•°è¿½åŠ 
 	void Command_FILECLOSE_OPEN( LPCWSTR filename = NULL,
 		ECodeType nCharCode = CODE_AUTODETECT, bool bViewMode = false );
 
-	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );		/* ÄƒI[ƒvƒ“ */	//Dec. 4, 2002 genta ˆø”’Ç‰Á
+	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );		/* å†ã‚ªãƒ¼ãƒ—ãƒ³ */	//Dec. 4, 2002 genta å¼•æ•°è¿½åŠ 
 
-	void Command_PRINT( void );					/* ˆóü*/
-	void Command_PRINT_PREVIEW( void );			/* ˆóüƒvƒŒƒrƒ…[*/
-	void Command_PRINT_PAGESETUP( void );		/* ˆóüƒy[ƒWİ’è */	//Sept. 14, 2000 jepro uˆóü‚Ìƒy[ƒWƒŒƒCƒAƒEƒg‚Ìİ’èv‚©‚ç•ÏX
-	BOOL Command_OPEN_HfromtoC( BOOL );			/* “¯–¼‚ÌC/C++ƒwƒbƒ_(ƒ\[ƒX)‚ğŠJ‚­ */	//Feb. 7, 2001 JEPRO ’Ç‰Á
-	BOOL Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* “¯–¼‚ÌC/C++ƒwƒbƒ_ƒtƒ@ƒCƒ‹‚ğŠJ‚­ */	//Feb. 9, 2001 jeprou.c‚Ü‚½‚Í.cpp‚Æ“¯–¼‚Ì.h‚ğŠJ‚­v‚©‚ç•ÏX
-	BOOL Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* “¯–¼‚ÌC/C++ƒ\[ƒXƒtƒ@ƒCƒ‹‚ğŠJ‚­ */	//Feb. 9, 2001 jeprou.h‚Æ“¯–¼‚Ì.c(‚È‚¯‚ê‚Î.cpp)‚ğŠJ‚­v‚©‚ç•ÏX
-	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plus‚ğƒAƒNƒeƒBƒu•\¦ */
-	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plus‚ÅÀs */
-	void Command_BROWSE( void );				/* ƒuƒ‰ƒEƒY */
-	void Command_VIEWMODE( void );				/* ƒrƒ…[ƒ‚[ƒh */
-	void Command_PROPERTY_FILE( void );			/* ƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒB */
-	void Command_PROFILEMGR( void );			// ƒvƒƒtƒ@ƒCƒ‹ƒ}ƒl[ƒWƒƒ
-	void Command_EXITALLEDITORS( void );		/* •ÒW‚Ì‘SI—¹ */	// 2007.02.13 ryoji ’Ç‰Á
-	void Command_EXITALL( void );				/* ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹ */	//Dec. 27, 2000 JEPRO ’Ç‰Á
-	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* ì‹Æ’†ƒtƒ@ƒCƒ‹‚Ìˆêo—Í maru 2006.12.10 */
-	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* ƒLƒƒƒŒƒbƒgˆÊ’u‚Éƒtƒ@ƒCƒ‹‘}“ü maru 2006.12.10 */
+	void Command_PRINT( void );					/* å°åˆ·*/
+	void Command_PRINT_PREVIEW( void );			/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼*/
+	void Command_PRINT_PAGESETUP( void );		/* å°åˆ·ãƒšãƒ¼ã‚¸è¨­å®š */	//Sept. 14, 2000 jepro ã€Œå°åˆ·ã®ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®è¨­å®šã€ã‹ã‚‰å¤‰æ›´
+	BOOL Command_OPEN_HfromtoC( BOOL );			/* åŒåã®C/C++ãƒ˜ãƒƒãƒ€(ã‚½ãƒ¼ã‚¹)ã‚’é–‹ã */	//Feb. 7, 2001 JEPRO è¿½åŠ 
+	BOOL Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* åŒåã®C/C++ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã */	//Feb. 9, 2001 jeproã€Œ.cã¾ãŸã¯.cppã¨åŒåã®.hã‚’é–‹ãã€ã‹ã‚‰å¤‰æ›´
+	BOOL Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* åŒåã®C/C++ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã */	//Feb. 9, 2001 jeproã€Œ.hã¨åŒåã®.c(ãªã‘ã‚Œã°.cpp)ã‚’é–‹ãã€ã‹ã‚‰å¤‰æ›´
+	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤º */
+	void Command_PLSQL_COMPILE_ON_SQLPLUS( void );/* Oracle SQL*Plusã§å®Ÿè¡Œ */
+	void Command_BROWSE( void );				/* ãƒ–ãƒ©ã‚¦ã‚º */
+	void Command_VIEWMODE( void );				/* ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ */
+	void Command_PROPERTY_FILE( void );			/* ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ */
+	void Command_PROFILEMGR( void );			// ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒãƒ¼ã‚¸ãƒ£
+	void Command_EXITALLEDITORS( void );		/* ç·¨é›†ã®å…¨çµ‚äº† */	// 2007.02.13 ryoji è¿½åŠ 
+	void Command_EXITALL( void );				/* ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº† */	//Dec. 27, 2000 JEPRO è¿½åŠ 
+	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* ä½œæ¥­ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¸€æ™‚å‡ºåŠ› maru 2006.12.10 */
+	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã«ãƒ•ã‚¡ã‚¤ãƒ«æŒ¿å…¥ maru 2006.12.10 */
 
-	/* •ÒWŒn */
-	void Command_WCHAR( wchar_t, bool bConvertEOL = true );			/* •¶š“ü—Í */ //2007.09.02 kobake Command_CHAR(char)¨Command_WCHAR(wchar_t)‚É•ÏX
-	void Command_IME_CHAR( WORD );			/* ‘SŠp•¶š“ü—Í */
-	void Command_UNDO( void );				/* Œ³‚É–ß‚·(Undo) */
-	void Command_REDO( void );				/* ‚â‚è’¼‚µ(Redo) */
-	void Command_DELETE( void );			/* ƒJ[ƒ\ƒ‹ˆÊ’u‚Ü‚½‚Í‘I‘ğƒGƒŠƒA‚ğíœ */
-	void Command_DELETE_BACK( void );		/* ƒJ[ƒ\ƒ‹‘O‚ğíœ */
-	void Command_WordDeleteToStart( void );	/* ’PŒê‚Ì¶’[‚Ü‚Åíœ */
-	void Command_WordDeleteToEnd( void );	/* ’PŒê‚Ì‰E’[‚Ü‚Åíœ */
-	void Command_WordCut( void );			/* ’PŒêØ‚èæ‚è */
-	void Command_WordDelete( void );		/* ’PŒêíœ */
-	void Command_LineCutToStart( void );	//s“ª‚Ü‚ÅØ‚èæ‚è(‰üs’PˆÊ)
-	void Command_LineCutToEnd( void );		//s––‚Ü‚ÅØ‚èæ‚è(‰üs’PˆÊ)
-	void Command_LineDeleteToStart( void );	/* s“ª‚Ü‚Åíœ(‰üs’PˆÊ) */
-	void Command_LineDeleteToEnd( void );  	//s––‚Ü‚Åíœ(‰üs’PˆÊ)
-	void Command_CUT_LINE( void );			/* sØ‚èæ‚è(Ü‚è•Ô‚µ’PˆÊ) */
-	void Command_DELETE_LINE( void );		/* síœ(Ü‚è•Ô‚µ’PˆÊ) */
-	void Command_DUPLICATELINE( void );		/* s‚Ì“ñd‰»(Ü‚è•Ô‚µ’PˆÊ) */
-	void Command_INDENT( wchar_t cChar, EIndentType = INDENT_NONE ); /* ƒCƒ“ƒfƒ“ƒg ver 1 */
+	/* ç·¨é›†ç³» */
+	void Command_WCHAR( wchar_t, bool bConvertEOL = true );			/* æ–‡å­—å…¥åŠ› */ //2007.09.02 kobake Command_CHAR(char)â†’Command_WCHAR(wchar_t)ã«å¤‰æ›´
+	void Command_IME_CHAR( WORD );			/* å…¨è§’æ–‡å­—å…¥åŠ› */
+	void Command_UNDO( void );				/* å…ƒã«æˆ»ã™(Undo) */
+	void Command_REDO( void );				/* ã‚„ã‚Šç›´ã—(Redo) */
+	void Command_DELETE( void );			/* ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã¾ãŸã¯é¸æŠã‚¨ãƒªã‚¢ã‚’å‰Šé™¤ */
+	void Command_DELETE_BACK( void );		/* ã‚«ãƒ¼ã‚½ãƒ«å‰ã‚’å‰Šé™¤ */
+	void Command_WordDeleteToStart( void );	/* å˜èªã®å·¦ç«¯ã¾ã§å‰Šé™¤ */
+	void Command_WordDeleteToEnd( void );	/* å˜èªã®å³ç«¯ã¾ã§å‰Šé™¤ */
+	void Command_WordCut( void );			/* å˜èªåˆ‡ã‚Šå–ã‚Š */
+	void Command_WordDelete( void );		/* å˜èªå‰Šé™¤ */
+	void Command_LineCutToStart( void );	//è¡Œé ­ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)
+	void Command_LineCutToEnd( void );		//è¡Œæœ«ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)
+	void Command_LineDeleteToStart( void );	/* è¡Œé ­ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½) */
+	void Command_LineDeleteToEnd( void );  	//è¡Œæœ«ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½)
+	void Command_CUT_LINE( void );			/* è¡Œåˆ‡ã‚Šå–ã‚Š(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+	void Command_DELETE_LINE( void );		/* è¡Œå‰Šé™¤(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+	void Command_DUPLICATELINE( void );		/* è¡Œã®äºŒé‡åŒ–(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+	void Command_INDENT( wchar_t cChar, EIndentType = INDENT_NONE ); /* ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ver 1 */
 // From Here 2001.12.03 hor
-//	void Command_INDENT( const char*, int );/* ƒCƒ“ƒfƒ“ƒg ver0 */
-	void Command_INDENT( const wchar_t*, CLogicInt , EIndentType = INDENT_NONE );/* ƒCƒ“ƒfƒ“ƒg ver0 */
+//	void Command_INDENT( const char*, int );/* ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ver0 */
+	void Command_INDENT( const wchar_t*, CLogicInt , EIndentType = INDENT_NONE );/* ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ver0 */
 // To Here 2001.12.03 hor
-	void Command_UNINDENT( wchar_t wcChar );	/* ‹tƒCƒ“ƒfƒ“ƒg */
-//	void Command_WORDSREFERENCE( void );	/* ’PŒêƒŠƒtƒ@ƒŒƒ“ƒX */
+	void Command_UNINDENT( wchar_t wcChar );	/* é€†ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ */
+//	void Command_WORDSREFERENCE( void );	/* å˜èªãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ */
 	void Command_TRIM(BOOL);				// 2001.12.03 hor
 	void Command_SORT(BOOL);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
-	void Command_Reconvert(void);			/* ƒƒjƒ…[‚©‚ç‚ÌÄ•ÏŠ·‘Î‰ minfu 2002.04.09 */
-	void Command_CtrlCode_Dialog(void);		/* ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚Ì“ü—Í(ƒ_ƒCƒAƒƒO) */	//@@@ 2002.06.02 MIK
+	void Command_Reconvert(void);			/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰ã®å†å¤‰æ›å¯¾å¿œ minfu 2002.04.09 */
+	void Command_CtrlCode_Dialog(void);		/* ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰ã®å…¥åŠ›(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°) */	//@@@ 2002.06.02 MIK
 
 
-	/* ƒJ[ƒ\ƒ‹ˆÚ“®Œn */
-	//	Oct. 24, 2001 genta ‹@”\Šg’£‚Ì‚½‚ßˆø”’Ç‰Á
+	/* ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ç³» */
+	//	Oct. 24, 2001 genta æ©Ÿèƒ½æ‹¡å¼µã®ãŸã‚å¼•æ•°è¿½åŠ 
 	void Command_MOVECURSOR(CLogicPoint pos, int option);
 	void Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option);
-	int Command_UP( bool bSelect, bool bRepeat, int line = 0 );			/* ƒJ[ƒ\ƒ‹ãˆÚ“® */
-	int Command_DOWN( bool bSelect, bool bRepeat );			/* ƒJ[ƒ\ƒ‹‰ºˆÚ“® */
-	int  Command_LEFT( bool, bool );			/* ƒJ[ƒ\ƒ‹¶ˆÚ“® */
-	void Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, bool bRepeat );	/* ƒJ[ƒ\ƒ‹‰EˆÚ“® */
-	void Command_UP2( bool bSelect );				/* ƒJ[ƒ\ƒ‹ãˆÚ“®i‚Qs‚Ã‚Âj */
-	void Command_DOWN2( bool bSelect );				/* ƒJ[ƒ\ƒ‹‰ºˆÚ“®i‚Qs‚Ã‚Âj */
-	void Command_WORDLEFT( bool bSelect );			/* ’PŒê‚Ì¶’[‚ÉˆÚ“® */
-	void Command_WORDRIGHT( bool bSelect );			/* ’PŒê‚Ì‰E’[‚ÉˆÚ“® */
-	//	Oct. 29, 2001 genta ƒ}ƒNƒŒü‚¯‹@”\Šg’£
-	void Command_GOLINETOP( bool bSelect, int lparam );	/* s“ª‚ÉˆÚ“®iÜ‚è•Ô‚µ’PˆÊj */
-	void Command_GOLINEEND( bool bSelect, int , int);		/* s––‚ÉˆÚ“®iÜ‚è•Ô‚µ’PˆÊj */
-//	void Command_ROLLDOWN( int );			/* ƒXƒNƒ[ƒ‹ƒ_ƒEƒ“ */
-//	void Command_ROLLUP( int );				/* ƒXƒNƒ[ƒ‹ƒAƒbƒv */
-	void Command_HalfPageUp( bool bSelect, CLayoutYInt );			//”¼ƒy[ƒWƒAƒbƒv	//Oct. 6, 2000 JEPRO –¼Ì‚ğPC-ATŒİŠ·‹@Œn‚É•ÏX(ROLL¨PAGE) //Oct. 10, 2000 JEPRO –¼Ì•ÏX
-	void Command_HalfPageDown( bool bSelect, CLayoutYInt );		//”¼ƒy[ƒWƒ_ƒEƒ“	//Oct. 6, 2000 JEPRO –¼Ì‚ğPC-ATŒİŠ·‹@Œn‚É•ÏX(ROLL¨PAGE) //Oct. 10, 2000 JEPRO –¼Ì•ÏX
-	void Command_1PageUp( bool bSelect, CLayoutYInt );			//‚Pƒy[ƒWƒAƒbƒv	//Oct. 10, 2000 JEPRO ]—ˆ‚Ìƒy[ƒWƒAƒbƒv‚ğ”¼ƒy[ƒWƒAƒbƒv‚Æ–¼Ì•ÏX‚µ‚Pƒy[ƒWƒAƒbƒv‚ğ’Ç‰Á
-	void Command_1PageDown( bool bSelect, CLayoutYInt );			//‚Pƒy[ƒWƒ_ƒEƒ“	//Oct. 10, 2000 JEPRO ]—ˆ‚Ìƒy[ƒWƒ_ƒEƒ“‚ğ”¼ƒy[ƒWƒ_ƒEƒ“‚Æ–¼Ì•ÏX‚µ‚Pƒy[ƒWƒ_ƒEƒ“‚ğ’Ç‰Á
-	void Command_GOFILETOP( bool bSelect );			/* ƒtƒ@ƒCƒ‹‚Ìæ“ª‚ÉˆÚ“® */
-	void Command_GOFILEEND( bool bSelect );			/* ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“® */
-	void Command_CURLINECENTER( void );		/* ƒJ[ƒ\ƒ‹s‚ğƒEƒBƒ“ƒhƒE’†‰›‚Ö */
-	void Command_JUMPHIST_PREV(void);		// ˆÚ“®—š—ğ: ‘O‚Ö
-	void Command_JUMPHIST_NEXT(void);		// ˆÚ“®—š—ğ: Ÿ‚Ö
-	void Command_JUMPHIST_SET(void);		// Œ»İˆÊ’u‚ğˆÚ“®—š—ğ‚É“o˜^
-	void Command_WndScrollDown(void);		// ƒeƒLƒXƒg‚ğ‚Ps‰º‚ÖƒXƒNƒ[ƒ‹	// 2001/06/20 asa-o
-	void Command_WndScrollUp(void);			// ƒeƒLƒXƒg‚ğ‚Psã‚ÖƒXƒNƒ[ƒ‹	// 2001/06/20 asa-o
-	void Command_GONEXTPARAGRAPH( bool bSelect );	// Ÿ‚Ì’i—‚Öi‚Ş
-	void Command_GOPREVPARAGRAPH( bool bSelect );	// ‘O‚Ì’i—‚Ö–ß‚é
-	void Command_AUTOSCROLL();		// ƒI[ƒgƒXƒNƒ[ƒ‹
+	int Command_UP( bool bSelect, bool bRepeat, int line = 0 );			/* ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹• */
+	int Command_DOWN( bool bSelect, bool bRepeat );			/* ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹• */
+	int  Command_LEFT( bool, bool );			/* ã‚«ãƒ¼ã‚½ãƒ«å·¦ç§»å‹• */
+	void Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, bool bRepeat );	/* ã‚«ãƒ¼ã‚½ãƒ«å³ç§»å‹• */
+	void Command_UP2( bool bSelect );				/* ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•ï¼ˆï¼’è¡Œã¥ã¤ï¼‰ */
+	void Command_DOWN2( bool bSelect );				/* ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•ï¼ˆï¼’è¡Œã¥ã¤ï¼‰ */
+	void Command_WORDLEFT( bool bSelect );			/* å˜èªã®å·¦ç«¯ã«ç§»å‹• */
+	void Command_WORDRIGHT( bool bSelect );			/* å˜èªã®å³ç«¯ã«ç§»å‹• */
+	//	Oct. 29, 2001 genta ãƒã‚¯ãƒ­å‘ã‘æ©Ÿèƒ½æ‹¡å¼µ
+	void Command_GOLINETOP( bool bSelect, int lparam );	/* è¡Œé ­ã«ç§»å‹•ï¼ˆæŠ˜ã‚Šè¿”ã—å˜ä½ï¼‰ */
+	void Command_GOLINEEND( bool bSelect, int , int);		/* è¡Œæœ«ã«ç§»å‹•ï¼ˆæŠ˜ã‚Šè¿”ã—å˜ä½ï¼‰ */
+//	void Command_ROLLDOWN( int );			/* ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³ */
+//	void Command_ROLLUP( int );				/* ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚¢ãƒƒãƒ— */
+	void Command_HalfPageUp( bool bSelect, CLayoutYInt );			//åŠãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—	//Oct. 6, 2000 JEPRO åç§°ã‚’PC-ATäº’æ›æ©Ÿç³»ã«å¤‰æ›´(ROLLâ†’PAGE) //Oct. 10, 2000 JEPRO åç§°å¤‰æ›´
+	void Command_HalfPageDown( bool bSelect, CLayoutYInt );		//åŠãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³	//Oct. 6, 2000 JEPRO åç§°ã‚’PC-ATäº’æ›æ©Ÿç³»ã«å¤‰æ›´(ROLLâ†’PAGE) //Oct. 10, 2000 JEPRO åç§°å¤‰æ›´
+	void Command_1PageUp( bool bSelect, CLayoutYInt );			//ï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—	//Oct. 10, 2000 JEPRO å¾“æ¥ã®ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—ã‚’åŠãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—ã¨åç§°å¤‰æ›´ã—ï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—ã‚’è¿½åŠ 
+	void Command_1PageDown( bool bSelect, CLayoutYInt );			//ï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³	//Oct. 10, 2000 JEPRO å¾“æ¥ã®ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³ã‚’åŠãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³ã¨åç§°å¤‰æ›´ã—ï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³ã‚’è¿½åŠ 
+	void Command_GOFILETOP( bool bSelect );			/* ãƒ•ã‚¡ã‚¤ãƒ«ã®å…ˆé ­ã«ç§»å‹• */
+	void Command_GOFILEEND( bool bSelect );			/* ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã«ç§»å‹• */
+	void Command_CURLINECENTER( void );		/* ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸­å¤®ã¸ */
+	void Command_JUMPHIST_PREV(void);		// ç§»å‹•å±¥æ­´: å‰ã¸
+	void Command_JUMPHIST_NEXT(void);		// ç§»å‹•å±¥æ­´: æ¬¡ã¸
+	void Command_JUMPHIST_SET(void);		// ç¾åœ¨ä½ç½®ã‚’ç§»å‹•å±¥æ­´ã«ç™»éŒ²
+	void Command_WndScrollDown(void);		// ãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸‹ã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«	// 2001/06/20 asa-o
+	void Command_WndScrollUp(void);			// ãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸Šã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«	// 2001/06/20 asa-o
+	void Command_GONEXTPARAGRAPH( bool bSelect );	// æ¬¡ã®æ®µè½ã¸é€²ã‚€
+	void Command_GOPREVPARAGRAPH( bool bSelect );	// å‰ã®æ®µè½ã¸æˆ»ã‚‹
+	void Command_AUTOSCROLL();		// ã‚ªãƒ¼ãƒˆã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
 	void Command_WHEELUP(int);
 	void Command_WHEELDOWN(int);
 	void Command_WHEELLEFT(int);
@@ -193,219 +193,219 @@ public:
 	void Command_WHEELPAGEDOWN(int);
 	void Command_WHEELPAGELEFT(int);
 	void Command_WHEELPAGERIGHT(int);
-	void Command_MODIFYLINE_NEXT( bool bSelect );	// Ÿ‚Ì•ÏXs‚Ö
-	void Command_MODIFYLINE_PREV( bool bSelect );	// ‘O‚Ì•ÏXs‚Ö
+	void Command_MODIFYLINE_NEXT( bool bSelect );	// æ¬¡ã®å¤‰æ›´è¡Œã¸
+	void Command_MODIFYLINE_PREV( bool bSelect );	// å‰ã®å¤‰æ›´è¡Œã¸
 
-	/* ‘I‘ğŒn */
-	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* Œ»İˆÊ’u‚Ì’PŒê‘I‘ğ */
-	void Command_SELECTALL( void );			/* ‚·‚×‚Ä‘I‘ğ */
-	void Command_SELECTLINE( int lparam );	/* 1s‘I‘ğ */	// 2007.10.13 nasukoji
-	void Command_BEGIN_SELECT( void );		/* ”ÍˆÍ‘I‘ğŠJn */
+	/* é¸æŠç³» */
+	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* ç¾åœ¨ä½ç½®ã®å˜èªé¸æŠ */
+	void Command_SELECTALL( void );			/* ã™ã¹ã¦é¸æŠ */
+	void Command_SELECTLINE( int lparam );	/* 1è¡Œé¸æŠ */	// 2007.10.13 nasukoji
+	void Command_BEGIN_SELECT( void );		/* ç¯„å›²é¸æŠé–‹å§‹ */
 
-	/* ‹éŒ`‘I‘ğŒn */
-//	void Command_BOXSELECTALL( void );		/* ‹éŒ`‚Å‚·‚×‚Ä‘I‘ğ */
-	void Command_BEGIN_BOXSELECT( bool bSelectingLock = false );	/* ‹éŒ`”ÍˆÍ‘I‘ğŠJn */
-//	int Command_UP_BOX( BOOL );				/* (‹éŒ`‘I‘ğ)ƒJ[ƒ\ƒ‹ãˆÚ“® */
+	/* çŸ©å½¢é¸æŠç³» */
+//	void Command_BOXSELECTALL( void );		/* çŸ©å½¢ã§ã™ã¹ã¦é¸æŠ */
+	void Command_BEGIN_BOXSELECT( bool bSelectingLock = false );	/* çŸ©å½¢ç¯„å›²é¸æŠé–‹å§‹ */
+//	int Command_UP_BOX( BOOL );				/* (çŸ©å½¢é¸æŠ)ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹• */
 
-	/* ƒNƒŠƒbƒvƒ{[ƒhŒn */
-	void Command_CUT( void );						/* Ø‚èæ‚èi‘I‘ğ”ÍˆÍ‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚µ‚Äíœj*/
-	void Command_COPY( bool, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* ƒRƒs[(‘I‘ğ”ÍˆÍ‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[) */
-	void Command_PASTE( int option );						/* “\‚è•t‚¯iƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯j*/
-	void Command_PASTEBOX( int option );					/* ‹éŒ`“\‚è•t‚¯iƒNƒŠƒbƒvƒ{[ƒh‚©‚ç‹éŒ`“\‚è•t‚¯j*/
+	/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ç³» */
+	void Command_CUT( void );						/* åˆ‡ã‚Šå–ã‚Šï¼ˆé¸æŠç¯„å›²ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã—ã¦å‰Šé™¤ï¼‰*/
+	void Command_COPY( bool, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* ã‚³ãƒ”ãƒ¼(é¸æŠç¯„å›²ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼) */
+	void Command_PASTE( int option );						/* è²¼ã‚Šä»˜ã‘ï¼ˆã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘ï¼‰*/
+	void Command_PASTEBOX( int option );					/* çŸ©å½¢è²¼ã‚Šä»˜ã‘ï¼ˆã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰çŸ©å½¢è²¼ã‚Šä»˜ã‘ï¼‰*/
 	//<< 2002/03/29 Azumaiya
-	/* ‹éŒ`“\‚è•t‚¯iˆø”“n‚µ‚Å‚Ì’£‚è•t‚¯j*/
+	/* çŸ©å½¢è²¼ã‚Šä»˜ã‘ï¼ˆå¼•æ•°æ¸¡ã—ã§ã®å¼µã‚Šä»˜ã‘ï¼‰*/
 	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
-	void Command_INSBOXTEXT( const wchar_t *, int ); // ‹éŒ`“\‚è•t‚¯
+	void Command_INSBOXTEXT( const wchar_t *, int ); // çŸ©å½¢è²¼ã‚Šä»˜ã‘
 	void Command_INSTEXT( bool bRedraw, const wchar_t*, CLogicInt, bool bNoWaitCursor,
-		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = NULL ); // 2004.05.14 Moca ƒeƒLƒXƒg‚ğ“\‚è•t‚¯ '\0'‘Î‰
-	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* ÅŒã‚ÉƒeƒLƒXƒg‚ğ’Ç‰Á */
-	void Command_COPYFILENAME( void );				/* ‚±‚Ìƒtƒ@ƒCƒ‹–¼‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[ */ //2002/2/3 aroka
-	void Command_COPYPATH( void );					/* ‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[ */
-	void Command_COPYTAG( void );					/* ‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ÆƒJ[ƒ\ƒ‹ˆÊ’u‚ğƒRƒs[ */
-	void Command_COPYLINES( void );					/* ‘I‘ğ”ÍˆÍ“à‘SsƒRƒs[ */
-	void Command_COPYLINESASPASSAGE( void );		/* ‘I‘ğ”ÍˆÍ“à‘Ssˆø—p•„•t‚«ƒRƒs[ */
-	void Command_COPYLINESWITHLINENUMBER( void );	/* ‘I‘ğ”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[ */
-	void Command_COPY_COLOR_HTML(bool bLineNumber = false);	//‘I‘ğ”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[
-	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//‘I‘ğ”ÍˆÍ“àF•t‚«HTMLƒRƒs[
+		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = NULL ); // 2004.05.14 Moca ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘ '\0'å¯¾å¿œ
+	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* æœ€å¾Œã«ãƒ†ã‚­ã‚¹ãƒˆã‚’è¿½åŠ  */
+	void Command_COPYFILENAME( void );				/* ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ */ //2002/2/3 aroka
+	void Command_COPYPATH( void );					/* ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ */
+	void Command_COPYTAG( void );					/* ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã¨ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ã‚³ãƒ”ãƒ¼ */
+	void Command_COPYLINES( void );					/* é¸æŠç¯„å›²å†…å…¨è¡Œã‚³ãƒ”ãƒ¼ */
+	void Command_COPYLINESASPASSAGE( void );		/* é¸æŠç¯„å›²å†…å…¨è¡Œå¼•ç”¨ç¬¦ä»˜ãã‚³ãƒ”ãƒ¼ */
+	void Command_COPYLINESWITHLINENUMBER( void );	/* é¸æŠç¯„å›²å†…å…¨è¡Œè¡Œç•ªå·ä»˜ãã‚³ãƒ”ãƒ¼ */
+	void Command_COPY_COLOR_HTML(bool bLineNumber = false);	//é¸æŠç¯„å›²å†…å…¨è¡Œè¡Œç•ªå·ä»˜ãã‚³ãƒ”ãƒ¼
+	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//é¸æŠç¯„å›²å†…è‰²ä»˜ãHTMLã‚³ãƒ”ãƒ¼
 	CColorStrategy* GetColorStrategyHTML(const CStringRef&, int, const CColorStrategyPool*, CColorStrategy**, CColorStrategy**, bool& bChange);
-	void Command_CREATEKEYBINDLIST( void );			// ƒL[Š„‚è“–‚Äˆê——‚ğƒRƒs[ //Sept. 15, 2000 JEPRO	Command_‚Ìì‚è•û‚ª‚í‚©‚ç‚È‚¢‚Ì‚ÅE‚µ‚Ä‚ ‚é
+	void Command_CREATEKEYBINDLIST( void );			// ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ä¸€è¦§ã‚’ã‚³ãƒ”ãƒ¼ //Sept. 15, 2000 JEPRO	Command_ã®ä½œã‚Šæ–¹ãŒã‚ã‹ã‚‰ãªã„ã®ã§æ®ºã—ã¦ã‚ã‚‹
 
 
-	/* ‘}“üŒn */
-	void Command_INS_DATE( void );	//“ú•t‘}“ü
-	void Command_INS_TIME( void );	//‘}“ü
+	/* æŒ¿å…¥ç³» */
+	void Command_INS_DATE( void );	//æ—¥ä»˜æŒ¿å…¥
+	void Command_INS_TIME( void );	//æ™‚åˆ»æŒ¿å…¥
 
-	/* •ÏŠ·Œn */
-	void Command_TOLOWER( void );				/* ¬•¶š */
-	void Command_TOUPPER( void );				/* ‘å•¶š */
-	void Command_TOZENKAKUKATA( void );			/* ”¼Šp{‘S‚Ğ‚ç¨‘SŠpEƒJƒ^ƒJƒi */	//Sept. 17, 2000 jepro à–¾‚ğu”¼Šp¨‘SŠpƒJƒ^ƒJƒiv‚©‚ç•ÏX
-	void Command_TOZENKAKUHIRA( void );			/* ”¼Šp{‘SƒJƒ^¨‘SŠpE‚Ğ‚ç‚ª‚È */	//Sept. 17, 2000 jepro à–¾‚ğu”¼Šp¨‘SŠp‚Ğ‚ç‚ª‚Èv‚©‚ç•ÏX
-	void Command_TOHANKAKU( void );				/* ‘SŠp¨”¼Šp */
-	void Command_TOHANKATA( void );				/* ‘SŠpƒJƒ^ƒJƒi¨”¼ŠpƒJƒ^ƒJƒi */	//Aug. 29, 2002 ai
-	void Command_TOZENEI( void );				/* ”¼Šp‰p”¨‘SŠp‰p” */ //July. 30, 2001 Misaka
-	void Command_TOHANEI( void );				/* ‘SŠp‰p”¨”¼Šp‰p” */ //@@@ 2002.2.11 YAZAKI
-	void Command_HANKATATOZENKAKUKATA( void );	/* ”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒi */
-	void Command_HANKATATOZENKAKUHIRA( void );	/* ”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ğ‚ç‚ª‚È */
-	void Command_TABTOSPACE( void );			/* TAB¨‹ó”’ */
-	void Command_SPACETOTAB( void );			/* ‹ó”’¨TAB */  //---- Stonee, 2001/05/27
-	void Command_CODECNV_AUTO2SJIS( void );		/* ©“®”»•Ê¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_EMAIL( void );			/* E-Mail(JIS¨SJIS)ƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_EUC2SJIS( void );		/* EUC¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_UNICODE2SJIS( void );	/* Unicode¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_UNICODEBE2SJIS( void );	/* UnicodeBE¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_UTF82SJIS( void );		/* UTF-8¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_UTF72SJIS( void );		/* UTF-7¨SJISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_SJIS2JIS( void );		/* SJIS¨JISƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_SJIS2EUC( void );		/* SJIS¨EUCƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_SJIS2UTF8( void );		/* SJIS¨UTF-8ƒR[ƒh•ÏŠ· */
-	void Command_CODECNV_SJIS2UTF7( void );		/* SJIS¨UTF-7ƒR[ƒh•ÏŠ· */
-	void Command_BASE64DECODE( void );			/* Base64ƒfƒR[ƒh‚µ‚Ä•Û‘¶ */
-	void Command_UUDECODE( void );				/* uudecode‚µ‚Ä•Û‘¶ */	//Oct. 17, 2000 jepro à–¾‚ğu‘I‘ğ•”•ª‚ğUUENCODEƒfƒR[ƒhv‚©‚ç•ÏX
+	/* å¤‰æ›ç³» */
+	void Command_TOLOWER( void );				/* å°æ–‡å­— */
+	void Command_TOUPPER( void );				/* å¤§æ–‡å­— */
+	void Command_TOZENKAKUKATA( void );			/* åŠè§’ï¼‹å…¨ã²ã‚‰â†’å…¨è§’ãƒ»ã‚«ã‚¿ã‚«ãƒŠ */	//Sept. 17, 2000 jepro èª¬æ˜ã‚’ã€ŒåŠè§’â†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠã€ã‹ã‚‰å¤‰æ›´
+	void Command_TOZENKAKUHIRA( void );			/* åŠè§’ï¼‹å…¨ã‚«ã‚¿â†’å…¨è§’ãƒ»ã²ã‚‰ãŒãª */	//Sept. 17, 2000 jepro èª¬æ˜ã‚’ã€ŒåŠè§’â†’å…¨è§’ã²ã‚‰ãŒãªã€ã‹ã‚‰å¤‰æ›´
+	void Command_TOHANKAKU( void );				/* å…¨è§’â†’åŠè§’ */
+	void Command_TOHANKATA( void );				/* å…¨è§’ã‚«ã‚¿ã‚«ãƒŠâ†’åŠè§’ã‚«ã‚¿ã‚«ãƒŠ */	//Aug. 29, 2002 ai
+	void Command_TOZENEI( void );				/* åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•° */ //July. 30, 2001 Misaka
+	void Command_TOHANEI( void );				/* å…¨è§’è‹±æ•°â†’åŠè§’è‹±æ•° */ //@@@ 2002.2.11 YAZAKI
+	void Command_HANKATATOZENKAKUKATA( void );	/* åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ */
+	void Command_HANKATATOZENKAKUHIRA( void );	/* åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª */
+	void Command_TABTOSPACE( void );			/* TABâ†’ç©ºç™½ */
+	void Command_SPACETOTAB( void );			/* ç©ºç™½â†’TAB */  //---- Stonee, 2001/05/27
+	void Command_CODECNV_AUTO2SJIS( void );		/* è‡ªå‹•åˆ¤åˆ¥â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_EMAIL( void );			/* E-Mail(JISâ†’SJIS)ã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_EUC2SJIS( void );		/* EUCâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_UNICODE2SJIS( void );	/* Unicodeâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_UNICODEBE2SJIS( void );	/* UnicodeBEâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_UTF82SJIS( void );		/* UTF-8â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_UTF72SJIS( void );		/* UTF-7â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_SJIS2JIS( void );		/* SJISâ†’JISã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_SJIS2EUC( void );		/* SJISâ†’EUCã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_SJIS2UTF8( void );		/* SJISâ†’UTF-8ã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_CODECNV_SJIS2UTF7( void );		/* SJISâ†’UTF-7ã‚³ãƒ¼ãƒ‰å¤‰æ› */
+	void Command_BASE64DECODE( void );			/* Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦ä¿å­˜ */
+	void Command_UUDECODE( void );				/* uudecodeã—ã¦ä¿å­˜ */	//Oct. 17, 2000 jepro èª¬æ˜ã‚’ã€Œé¸æŠéƒ¨åˆ†ã‚’UUENCODEãƒ‡ã‚³ãƒ¼ãƒ‰ã€ã‹ã‚‰å¤‰æ›´
 
-	/* ŒŸõŒn */
-	void Command_SEARCH_BOX( void );					/* ŒŸõ(ƒ{ƒbƒNƒX) */	// 2006.06.04 yukihane
-	void Command_SEARCH_DIALOG( void );					/* ŒŸõ(’PŒêŒŸõƒ_ƒCƒAƒƒO) */
-	void Command_SEARCH_NEXT( bool, bool, bool, HWND, const WCHAR*, CLogicRange* = NULL );/* Ÿ‚ğŒŸõ */
-	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* ‘O‚ğŒŸõ */
-	void Command_REPLACE_DIALOG( void );				/* ’uŠ·(’uŠ·ƒ_ƒCƒAƒƒO) */
-	void Command_REPLACE( HWND hwndParent );			/* ’uŠ·(Às) 2002/04/08 YAZAKI eƒEƒBƒ“ƒhƒE‚ğw’è‚·‚é‚æ‚¤‚É•ÏX */
-	void Command_REPLACE_ALL();							/* ‚·‚×‚Ä’uŠ·(Às) */
-	void Command_SEARCH_CLEARMARK( void );				/* ŒŸõƒ}[ƒN‚ÌƒNƒŠƒA */
-	void Command_JUMP_SRCHSTARTPOS( void );				/* ŒŸõŠJnˆÊ’u‚Ö–ß‚é */	// 02/06/26 ai
+	/* æ¤œç´¢ç³» */
+	void Command_SEARCH_BOX( void );					/* æ¤œç´¢(ãƒœãƒƒã‚¯ã‚¹) */	// 2006.06.04 yukihane
+	void Command_SEARCH_DIALOG( void );					/* æ¤œç´¢(å˜èªæ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°) */
+	void Command_SEARCH_NEXT( bool, bool, bool, HWND, const WCHAR*, CLogicRange* = NULL );/* æ¬¡ã‚’æ¤œç´¢ */
+	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* å‰ã‚’æ¤œç´¢ */
+	void Command_REPLACE_DIALOG( void );				/* ç½®æ›(ç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°) */
+	void Command_REPLACE( HWND hwndParent );			/* ç½®æ›(å®Ÿè¡Œ) 2002/04/08 YAZAKI è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æŒ‡å®šã™ã‚‹ã‚ˆã†ã«å¤‰æ›´ */
+	void Command_REPLACE_ALL();							/* ã™ã¹ã¦ç½®æ›(å®Ÿè¡Œ) */
+	void Command_SEARCH_CLEARMARK( void );				/* æ¤œç´¢ãƒãƒ¼ã‚¯ã®ã‚¯ãƒªã‚¢ */
+	void Command_JUMP_SRCHSTARTPOS( void );				/* æ¤œç´¢é–‹å§‹ä½ç½®ã¸æˆ»ã‚‹ */	// 02/06/26 ai
 
 
-	void Command_GREP_DIALOG( void );					/* Grepƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	void Command_GREP_DIALOG( void );					/* Grepãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	void Command_GREP( void );							/* Grep */
-	void Command_GREP_REPLACE_DLG( void );				/* Grep’uŠ·ƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	void Command_GREP_REPLACE( void );					/* Grep’uŠ· */
-	void Command_JUMP_DIALOG( void );					/* w’èsƒwƒWƒƒƒ“ƒvƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	void Command_JUMP( void );							/* w’èsƒwƒWƒƒƒ“ƒv */
+	void Command_GREP_REPLACE_DLG( void );				/* Grepç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	void Command_GREP_REPLACE( void );					/* Grepç½®æ› */
+	void Command_JUMP_DIALOG( void );					/* æŒ‡å®šè¡Œãƒ˜ã‚¸ãƒ£ãƒ³ãƒ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	void Command_JUMP( void );							/* æŒ‡å®šè¡Œãƒ˜ã‚¸ãƒ£ãƒ³ãƒ— */
 // From Here 2001.12.03 hor
-	BOOL Command_FUNCLIST( int nAction, EOutlineType nOutlineType );	/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ */ // 20060201 aroka
+	BOOL Command_FUNCLIST( int nAction, EOutlineType nOutlineType );	/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ */ // 20060201 aroka
 // To Here 2001.12.03 hor
-	// Apr. 03, 2003 genta ˆø”’Ç‰Á
-	bool Command_TAGJUMP( bool bClose = false );		/* ƒ^ƒOƒWƒƒƒ“ƒv‹@”\ */
-	void Command_TAGJUMPBACK( void );					/* ƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒN‹@”\ */
-	bool Command_TagJumpByTagsFileMsg( bool );				//ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv(’Ê’m‚Â‚«)
-	bool Command_TagJumpByTagsFile( bool );				//ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv	//@@@ 2003.04.13 MIK
+	// Apr. 03, 2003 genta å¼•æ•°è¿½åŠ 
+	bool Command_TAGJUMP( bool bClose = false );		/* ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½ */
+	void Command_TAGJUMPBACK( void );					/* ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒã‚¯æ©Ÿèƒ½ */
+	bool Command_TagJumpByTagsFileMsg( bool );				//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—(é€šçŸ¥ã¤ã)
+	bool Command_TagJumpByTagsFile( bool );				//ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—	//@@@ 2003.04.13 MIK
 
-	bool Command_TagsMake( void );						//ƒ^ƒOƒtƒ@ƒCƒ‹‚Ìì¬	//@@@ 2003.04.13 MIK
+	bool Command_TagsMake( void );						//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆ	//@@@ 2003.04.13 MIK
 	bool Command_TagJumpByTagsFileKeyword( const wchar_t* keyword );	//	@@ 2005.03.31 MIK
-	void Command_COMPARE( void );						/* ƒtƒ@ƒCƒ‹“à—e”äŠr */
-	void Command_Diff_Dialog( void );					/* DIFF·•ª•\¦ƒ_ƒCƒAƒƒO */	//@@@ 2002.05.25 MIK
-	void Command_Diff( const WCHAR* szTmpFile2, int nFlgOpt );	/* DIFF·•ª•\¦ */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
-	void Command_Diff_Next( void );						/* Ÿ‚Ì·•ª‚Ö */	//@@@ 2002.05.25 MIK
-	void Command_Diff_Prev( void );						/* ‘O‚Ì·•ª‚Ö */	//@@@ 2002.05.25 MIK
-	void Command_Diff_Reset( void );					/* ·•ª‚Ì‘S‰ğœ */	//@@@ 2002.05.25 MIK
-	void Command_BRACKETPAIR( void );					/* ‘ÎŠ‡ŒÊ‚ÌŒŸõ */
+	void Command_COMPARE( void );						/* ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ */
+	void Command_Diff_Dialog( void );					/* DIFFå·®åˆ†è¡¨ç¤ºãƒ€ã‚¤ã‚¢ãƒ­ã‚° */	//@@@ 2002.05.25 MIK
+	void Command_Diff( const WCHAR* szTmpFile2, int nFlgOpt );	/* DIFFå·®åˆ†è¡¨ç¤º */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
+	void Command_Diff_Next( void );						/* æ¬¡ã®å·®åˆ†ã¸ */	//@@@ 2002.05.25 MIK
+	void Command_Diff_Prev( void );						/* å‰ã®å·®åˆ†ã¸ */	//@@@ 2002.05.25 MIK
+	void Command_Diff_Reset( void );					/* å·®åˆ†ã®å…¨è§£é™¤ */	//@@@ 2002.05.25 MIK
+	void Command_BRACKETPAIR( void );					/* å¯¾æ‹¬å¼§ã®æ¤œç´¢ */
 // From Here 2001.12.03 hor
-	void Command_BOOKMARK_SET( void );					/* ƒuƒbƒNƒ}[ƒNİ’èE‰ğœ */
-	void Command_BOOKMARK_NEXT( void );					/* Ÿ‚ÌƒuƒbƒNƒ}[ƒN‚Ö */
-	void Command_BOOKMARK_PREV( void );					/* ‘O‚ÌƒuƒbƒNƒ}[ƒN‚Ö */
-	void Command_BOOKMARK_RESET( void );				/* ƒuƒbƒNƒ}[ƒN‚Ì‘S‰ğœ */
+	void Command_BOOKMARK_SET( void );					/* ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯è¨­å®šãƒ»è§£é™¤ */
+	void Command_BOOKMARK_NEXT( void );					/* æ¬¡ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã¸ */
+	void Command_BOOKMARK_PREV( void );					/* å‰ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã¸ */
+	void Command_BOOKMARK_RESET( void );				/* ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã®å…¨è§£é™¤ */
 // To Here 2001.12.03 hor
-	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor w’èƒpƒ^[ƒ“‚Éˆê’v‚·‚és‚ğƒ}[ƒN
-	void Command_FUNCLIST_NEXT( void );					// Ÿ‚ÌŠÖ”ƒŠƒXƒgƒ}[ƒN	2014.01.05
-	void Command_FUNCLIST_PREV( void );					// ‘O‚ÌŠÖ”ƒŠƒXƒgƒ}[ƒN	2014.01.05
+	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor æŒ‡å®šãƒ‘ã‚¿ãƒ¼ãƒ³ã«ä¸€è‡´ã™ã‚‹è¡Œã‚’ãƒãƒ¼ã‚¯
+	void Command_FUNCLIST_NEXT( void );					// æ¬¡ã®é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯	2014.01.05
+	void Command_FUNCLIST_PREV( void );					// å‰ã®é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯	2014.01.05
 
 
 
-	/* ƒ‚[ƒhØ‚è‘Ö‚¦Œn */
-	void Command_CHGMOD_INS( void );	/* ‘}“ü^ã‘‚«ƒ‚[ƒhØ‚è‘Ö‚¦ */
-	void Command_CHG_CHARSET( ECodeType, bool );	/* •¶šƒR[ƒhƒZƒbƒgw’è */	// 2010/6/15 Uchi
-	void Command_CHGMOD_EOL( EEolType );	/* “ü—Í‚·‚é‰üsƒR[ƒh‚ğİ’è 2003.06.23 moca */
-	void Command_CANCEL_MODE( int whereCursorIs = 0 );	/* Šeíƒ‚[ƒh‚Ìæ‚èÁ‚µ */
+	/* ãƒ¢ãƒ¼ãƒ‰åˆ‡ã‚Šæ›¿ãˆç³» */
+	void Command_CHGMOD_INS( void );	/* æŒ¿å…¥ï¼ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰åˆ‡ã‚Šæ›¿ãˆ */
+	void Command_CHG_CHARSET( ECodeType, bool );	/* æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆæŒ‡å®š */	// 2010/6/15 Uchi
+	void Command_CHGMOD_EOL( EEolType );	/* å…¥åŠ›ã™ã‚‹æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’è¨­å®š 2003.06.23 moca */
+	void Command_CANCEL_MODE( int whereCursorIs = 0 );	/* å„ç¨®ãƒ¢ãƒ¼ãƒ‰ã®å–ã‚Šæ¶ˆã— */
 
-	/* İ’èŒn */
-	void Command_SHOWTOOLBAR( void );		/* ƒc[ƒ‹ƒo[‚Ì•\¦/”ñ•\¦ */
-	void Command_SHOWFUNCKEY( void );		/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\¦/”ñ•\¦ */
-	void Command_SHOWTAB( void );			/* ƒ^ƒu‚Ì•\¦/”ñ•\¦ */	//@@@ 2003.06.10 MIK
-	void Command_SHOWSTATUSBAR( void );		/* ƒXƒe[ƒ^ƒXƒo[‚Ì•\¦/”ñ•\¦ */
-	void Command_SHOWMINIMAP( void );		// ƒ~ƒjƒ}ƒbƒv‚Ì•\¦/”ñ•\¦
-	void Command_TYPE_LIST( void );			/* ƒ^ƒCƒv•Êİ’èˆê—— */
-	void Command_CHANGETYPE( int nTypePlusOne );	// ƒ^ƒCƒv•Êİ’èˆê“K—p
-	void Command_OPTION_TYPE( void );		/* ƒ^ƒCƒv•Êİ’è */
-	void Command_OPTION( void );			/* ‹¤’Êİ’è */
-	void Command_FONT( void );				/* ƒtƒHƒ“ƒgİ’è */
-	void Command_SETFONTSIZE( int, int, int );	/* ƒtƒHƒ“ƒgƒTƒCƒYİ’è */
-	void Command_WRAPWINDOWWIDTH( void );	/* Œ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µ */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH ‚ğ WRAPWINDOWWIDTH ‚É•ÏX
-	void Command_Favorite( void );			//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
-	void Command_SET_QUOTESTRING( const wchar_t* );	//	Jan. 29, 2005 genta ˆø—p•„‚Ìİ’è
-	void Command_TEXTWRAPMETHOD( int );				/* ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@‚ğ•ÏX‚·‚é */		// 2008.05.30 nasukoji
-	void Command_SELECT_COUNT_MODE( int nMode );	/* •¶šƒJƒEƒ“ƒg•û–@ */	//2009.07.06 syat
+	/* è¨­å®šç³» */
+	void Command_SHOWTOOLBAR( void );		/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤º/éè¡¨ç¤º */
+	void Command_SHOWFUNCKEY( void );		/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®è¡¨ç¤º/éè¡¨ç¤º */
+	void Command_SHOWTAB( void );			/* ã‚¿ãƒ–ã®è¡¨ç¤º/éè¡¨ç¤º */	//@@@ 2003.06.10 MIK
+	void Command_SHOWSTATUSBAR( void );		/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®è¡¨ç¤º/éè¡¨ç¤º */
+	void Command_SHOWMINIMAP( void );		// ãƒŸãƒ‹ãƒãƒƒãƒ—ã®è¡¨ç¤º/éè¡¨ç¤º
+	void Command_TYPE_LIST( void );			/* ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§ */
+	void Command_CHANGETYPE( int nTypePlusOne );	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€æ™‚é©ç”¨
+	void Command_OPTION_TYPE( void );		/* ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š */
+	void Command_OPTION( void );			/* å…±é€šè¨­å®š */
+	void Command_FONT( void );				/* ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š */
+	void Command_SETFONTSIZE( int, int, int );	/* ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºè¨­å®š */
+	void Command_WRAPWINDOWWIDTH( void );	/* ç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã§æŠ˜ã‚Šè¿”ã— */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH ã‚’ WRAPWINDOWWIDTH ã«å¤‰æ›´
+	void Command_Favorite( void );			//å±¥æ­´ã®ç®¡ç†	//@@@ 2003.04.08 MIK
+	void Command_SET_QUOTESTRING( const wchar_t* );	//	Jan. 29, 2005 genta å¼•ç”¨ç¬¦ã®è¨­å®š
+	void Command_TEXTWRAPMETHOD( int );				/* ãƒ†ã‚­ã‚¹ãƒˆã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã‚’å¤‰æ›´ã™ã‚‹ */		// 2008.05.30 nasukoji
+	void Command_SELECT_COUNT_MODE( int nMode );	/* æ–‡å­—ã‚«ã‚¦ãƒ³ãƒˆæ–¹æ³• */	//2009.07.06 syat
 
-	/* ƒ}ƒNƒŒn */
-	void Command_RECKEYMACRO( void );	/* ƒL[ƒ}ƒNƒ‚Ì‹L˜^ŠJn^I—¹ */
-	void Command_SAVEKEYMACRO( void );	/* ƒL[ƒ}ƒNƒ‚Ì•Û‘¶ */
-	void Command_LOADKEYMACRO( void );	/* ƒL[ƒ}ƒNƒ‚Ì“Ç‚İ‚İ */
-	void Command_EXECKEYMACRO( void );	/* ƒL[ƒ}ƒNƒ‚ÌÀs */
-	void Command_EXECEXTMACRO( const WCHAR* path, const WCHAR* type );	/* –¼‘O‚ğw’è‚µ‚Äƒ}ƒNƒÀs */
-//	From Here 2006.12.03 maru ˆø”‚ÌŠg’£D
-//	From Here Sept. 20, 2000 JEPRO –¼ÌCMMAND‚ğCOMMAND‚É•ÏX
-//	void Command_EXECCMMAND( void );	/* ŠO•”ƒRƒ}ƒ“ƒhÀs */
-	//	Oct. 9, 2001 genta ƒ}ƒNƒ‘Î‰‚Ì‚½‚ß‹@”\Šg’£
-//	void Command_EXECCOMMAND_DIALOG( const WCHAR* cmd );	/* ŠO•”ƒRƒ}ƒ“ƒhÀsƒ_ƒCƒAƒƒO•\¦ */
-//	void Command_EXECCOMMAND( const WCHAR* cmd );	/* ŠO•”ƒRƒ}ƒ“ƒhÀs */
-	void Command_EXECCOMMAND_DIALOG( void );	/* ŠO•”ƒRƒ}ƒ“ƒhÀsƒ_ƒCƒAƒƒO•\¦ */	//	ˆø”g‚Á‚Ä‚È‚¢‚İ‚½‚¢‚È‚Ì‚Å
-	//	ƒ}ƒNƒ‚©‚ç‚ÌŒÄ‚Ño‚µ‚Å‚ÍƒIƒvƒVƒ‡ƒ“‚ğ•Û‘¶‚³‚¹‚È‚¢‚½‚ßACommand_EXECCOMMAND_DIALOG“à‚Åˆ—‚µ‚Ä‚¨‚­D
-	void Command_EXECCOMMAND( LPCWSTR cmd, const int nFlgOpt, LPCWSTR );	/* ŠO•”ƒRƒ}ƒ“ƒhÀs */
+	/* ãƒã‚¯ãƒ­ç³» */
+	void Command_RECKEYMACRO( void );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®è¨˜éŒ²é–‹å§‹ï¼çµ‚äº† */
+	void Command_SAVEKEYMACRO( void );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ä¿å­˜ */
+	void Command_LOADKEYMACRO( void );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ */
+	void Command_EXECKEYMACRO( void );	/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã®å®Ÿè¡Œ */
+	void Command_EXECEXTMACRO( const WCHAR* path, const WCHAR* type );	/* åå‰ã‚’æŒ‡å®šã—ã¦ãƒã‚¯ãƒ­å®Ÿè¡Œ */
+//	From Here 2006.12.03 maru å¼•æ•°ã®æ‹¡å¼µï¼
+//	From Here Sept. 20, 2000 JEPRO åç§°CMMANDã‚’COMMANDã«å¤‰æ›´
+//	void Command_EXECCMMAND( void );	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œ */
+	//	Oct. 9, 2001 genta ãƒã‚¯ãƒ­å¯¾å¿œã®ãŸã‚æ©Ÿèƒ½æ‹¡å¼µ
+//	void Command_EXECCOMMAND_DIALOG( const WCHAR* cmd );	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤º */
+//	void Command_EXECCOMMAND( const WCHAR* cmd );	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œ */
+	void Command_EXECCOMMAND_DIALOG( void );	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤º */	//	å¼•æ•°ä½¿ã£ã¦ãªã„ã¿ãŸã„ãªã®ã§
+	//	ãƒã‚¯ãƒ­ã‹ã‚‰ã®å‘¼ã³å‡ºã—ã§ã¯ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä¿å­˜ã•ã›ãªã„ãŸã‚ã€Command_EXECCOMMAND_DIALOGå†…ã§å‡¦ç†ã—ã¦ãŠãï¼
+	void Command_EXECCOMMAND( LPCWSTR cmd, const int nFlgOpt, LPCWSTR );	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œ */
 //	To Here Sept. 20, 2000
-//	To Here 2006.12.03 maru ˆø”‚ÌŠg’£
+//	To Here 2006.12.03 maru å¼•æ•°ã®æ‹¡å¼µ
 
-	/* ƒJƒXƒ^ƒ€ƒƒjƒ…[ */
-	void Command_MENU_RBUTTON( void );	/* ‰EƒNƒŠƒbƒNƒƒjƒ…[ */
-	int Command_CUSTMENU( int );		/* ƒJƒXƒ^ƒ€ƒƒjƒ…[•\¦ */
+	/* ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ */
+	void Command_MENU_RBUTTON( void );	/* å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ */
+	int Command_CUSTMENU( int );		/* ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¡¨ç¤º */
 
-	/* ƒEƒBƒ“ƒhƒEŒn */
-	void Command_SPLIT_V( void );		/* ã‰º‚É•ªŠ„ */	//Sept. 17, 2000 jepro à–¾‚Ìucv‚ğuã‰º‚Év‚É•ÏX
-	void Command_SPLIT_H( void );		/* ¶‰E‚É•ªŠ„ */	//Sept. 17, 2000 jepro à–¾‚Ìu‰¡v‚ğu¶‰E‚Év‚É•ÏX
-	void Command_SPLIT_VH( void );		/* c‰¡‚É•ªŠ„ */	//Sept. 17, 2000 jepro à–¾‚Éu‚Év‚ğ’Ç‰Á
-	void Command_WINCLOSE( void );		/* ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é */
-	void Command_FILECLOSEALL( void );	/* ‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é */	//Oct. 7, 2000 jepro u•ÒWƒEƒBƒ“ƒhƒE‚Ì‘SI—¹v‚Æ‚¢‚¤à–¾‚ğ¶‹L‚Ì‚æ‚¤‚É•ÏX
-	void Command_BIND_WINDOW( void );	/* Œ‹‡‚µ‚Ä•\¦ */	//2004.07.14 Kazika V‹K’Ç‰Á
-	void Command_CASCADE( void );		/* d‚Ë‚Ä•\¦ */
-	void Command_TILE_V( void );		/* ã‰º‚É•À‚×‚Ä•\¦ */
-	void Command_TILE_H( void );		/* ¶‰E‚É•À‚×‚Ä•\¦ */
-	void Command_MAXIMIZE_V( void );	/* c•ûŒü‚ÉÅ‘å‰» */
-	void Command_MAXIMIZE_H( void );	/* ‰¡•ûŒü‚ÉÅ‘å‰» */  //2001.02.10 by MIK
-	void Command_MINIMIZE_ALL( void );	/* ‚·‚×‚ÄÅ¬‰» */
-	void Command_REDRAW( void );		/* Ä•`‰æ */
-	void Command_WIN_OUTPUT( void );	//ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE•\¦
-	void Command_TRACEOUT( const wchar_t* outputstr , int, int );	//ƒ}ƒNƒ—pƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE‚É•\¦ maru 2006.04.26
-	void Command_WINTOPMOST( LPARAM );		// í‚Éè‘O‚É•\¦ 2004.09.21 Moca
-	void Command_WINLIST( int nCommandFrom );		/* ƒEƒBƒ“ƒhƒEˆê——ƒ|ƒbƒvƒAƒbƒv•\¦ˆ— */	// 2006.03.23 fon // 2006.05.19 genta ˆø”’Ç‰Á
-	void Command_DLGWINLIST( void );	// ƒEƒBƒ“ƒhƒEˆê——ƒ_ƒCƒAƒƒO // 2015.03.07 Moca
-	void Command_GROUPCLOSE( void );	/* ƒOƒ‹[ƒv‚ğ•Â‚¶‚é */		// 2007.06.20 ryoji
-	void Command_NEXTGROUP( void );		/* Ÿ‚ÌƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void Command_PREVGROUP( void );		/* ‘O‚ÌƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void Command_TAB_MOVERIGHT( void );	/* ƒ^ƒu‚ğ‰E‚ÉˆÚ“® */		// 2007.06.20 ryoji
-	void Command_TAB_MOVELEFT( void );	/* ƒ^ƒu‚ğ¶‚ÉˆÚ“® */		// 2007.06.20 ryoji
-	void Command_TAB_SEPARATE( void );	/* V‹KƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void Command_TAB_JOINTNEXT( void );	/* Ÿ‚ÌƒOƒ‹[ƒv‚ÉˆÚ“® */	// 2007.06.20 ryoji
-	void Command_TAB_JOINTPREV( void );	/* ‘O‚ÌƒOƒ‹[ƒv‚ÉˆÚ“® */	// 2007.06.20 ryoji
-	void Command_TAB_CLOSEOTHER( void );/* ‚±‚Ìƒ^ƒuˆÈŠO‚ğ•Â‚¶‚é */	// 2008.11.22 syat
-	void Command_TAB_CLOSELEFT( void );	/* ¶‚ğ‚·‚×‚Ä•Â‚¶‚é */		// 2008.11.22 syat
-	void Command_TAB_CLOSERIGHT( void );/* ‰E‚ğ‚·‚×‚Ä•Â‚¶‚é */		// 2008.11.22 syat
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç³» */
+	void Command_SPLIT_V( void );		/* ä¸Šä¸‹ã«åˆ†å‰² */	//Sept. 17, 2000 jepro èª¬æ˜ã®ã€Œç¸¦ã€ã‚’ã€Œä¸Šä¸‹ã«ã€ã«å¤‰æ›´
+	void Command_SPLIT_H( void );		/* å·¦å³ã«åˆ†å‰² */	//Sept. 17, 2000 jepro èª¬æ˜ã®ã€Œæ¨ªã€ã‚’ã€Œå·¦å³ã«ã€ã«å¤‰æ›´
+	void Command_SPLIT_VH( void );		/* ç¸¦æ¨ªã«åˆ†å‰² */	//Sept. 17, 2000 jepro èª¬æ˜ã«ã€Œã«ã€ã‚’è¿½åŠ 
+	void Command_WINCLOSE( void );		/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ */
+	void Command_FILECLOSEALL( void );	/* ã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ */	//Oct. 7, 2000 jepro ã€Œç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å…¨çµ‚äº†ã€ã¨ã„ã†èª¬æ˜ã‚’å·¦è¨˜ã®ã‚ˆã†ã«å¤‰æ›´
+	void Command_BIND_WINDOW( void );	/* çµåˆã—ã¦è¡¨ç¤º */	//2004.07.14 Kazika æ–°è¦è¿½åŠ 
+	void Command_CASCADE( void );		/* é‡ã­ã¦è¡¨ç¤º */
+	void Command_TILE_V( void );		/* ä¸Šä¸‹ã«ä¸¦ã¹ã¦è¡¨ç¤º */
+	void Command_TILE_H( void );		/* å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
+	void Command_MAXIMIZE_V( void );	/* ç¸¦æ–¹å‘ã«æœ€å¤§åŒ– */
+	void Command_MAXIMIZE_H( void );	/* æ¨ªæ–¹å‘ã«æœ€å¤§åŒ– */  //2001.02.10 by MIK
+	void Command_MINIMIZE_ALL( void );	/* ã™ã¹ã¦æœ€å°åŒ– */
+	void Command_REDRAW( void );		/* å†æç”» */
+	void Command_WIN_OUTPUT( void );	//ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤º
+	void Command_TRACEOUT( const wchar_t* outputstr , int, int );	//ãƒã‚¯ãƒ­ç”¨ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«è¡¨ç¤º maru 2006.04.26
+	void Command_WINTOPMOST( LPARAM );		// å¸¸ã«æ‰‹å‰ã«è¡¨ç¤º 2004.09.21 Moca
+	void Command_WINLIST( int nCommandFrom );		/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—è¡¨ç¤ºå‡¦ç† */	// 2006.03.23 fon // 2006.05.19 genta å¼•æ•°è¿½åŠ 
+	void Command_DLGWINLIST( void );	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚° // 2015.03.07 Moca
+	void Command_GROUPCLOSE( void );	/* ã‚°ãƒ«ãƒ¼ãƒ—ã‚’é–‰ã˜ã‚‹ */		// 2007.06.20 ryoji
+	void Command_NEXTGROUP( void );		/* æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void Command_PREVGROUP( void );		/* å‰ã®ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void Command_TAB_MOVERIGHT( void );	/* ã‚¿ãƒ–ã‚’å³ã«ç§»å‹• */		// 2007.06.20 ryoji
+	void Command_TAB_MOVELEFT( void );	/* ã‚¿ãƒ–ã‚’å·¦ã«ç§»å‹• */		// 2007.06.20 ryoji
+	void Command_TAB_SEPARATE( void );	/* æ–°è¦ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void Command_TAB_JOINTNEXT( void );	/* æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«ç§»å‹• */	// 2007.06.20 ryoji
+	void Command_TAB_JOINTPREV( void );	/* å‰ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«ç§»å‹• */	// 2007.06.20 ryoji
+	void Command_TAB_CLOSEOTHER( void );/* ã“ã®ã‚¿ãƒ–ä»¥å¤–ã‚’é–‰ã˜ã‚‹ */	// 2008.11.22 syat
+	void Command_TAB_CLOSELEFT( void );	/* å·¦ã‚’ã™ã¹ã¦é–‰ã˜ã‚‹ */		// 2008.11.22 syat
+	void Command_TAB_CLOSERIGHT( void );/* å³ã‚’ã™ã¹ã¦é–‰ã˜ã‚‹ */		// 2008.11.22 syat
 
 
-	void Command_ToggleKeySearch( int );	/* ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê‚ğ«‘ŒŸõ‚·‚é‹@”\ON-OFF */	// 2006.03.24 fon
+	void Command_ToggleKeySearch( int );	/* ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªã‚’è¾æ›¸æ¤œç´¢ã™ã‚‹æ©Ÿèƒ½ON-OFF */	// 2006.03.24 fon
 
-	void Command_HOKAN( void );			/* “ü—Í•âŠ® */
-	void Command_HELP_CONTENTS( void );	/* ƒwƒ‹ƒv–ÚŸ */			//Nov. 25, 2000 JEPRO added
-	void Command_HELP_SEARCH( void );	/* ƒwƒ‹ƒvƒL[ƒ[ƒhŒŸõ */	//Nov. 25, 2000 JEPRO added
-	void Command_MENU_ALLFUNC( void );	/* ƒRƒ}ƒ“ƒhˆê—— */
-	void Command_EXTHELP1( void );		/* ŠO•”ƒwƒ‹ƒv‚P */
+	void Command_HOKAN( void );			/* å…¥åŠ›è£œå®Œ */
+	void Command_HELP_CONTENTS( void );	/* ãƒ˜ãƒ«ãƒ—ç›®æ¬¡ */			//Nov. 25, 2000 JEPRO added
+	void Command_HELP_SEARCH( void );	/* ãƒ˜ãƒ«ãƒ—ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢ */	//Nov. 25, 2000 JEPRO added
+	void Command_MENU_ALLFUNC( void );	/* ã‚³ãƒãƒ³ãƒ‰ä¸€è¦§ */
+	void Command_EXTHELP1( void );		/* å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘ */
 	//	Jul. 5, 2002 genta
-	void Command_EXTHTMLHELP( const WCHAR* helpfile = NULL, const WCHAR* kwd = NULL );	/* ŠO•”HTMLƒwƒ‹ƒv */
-	void Command_ABOUT( void );			/* ƒo[ƒWƒ‡ƒ“î•ñ */	//Dec. 24, 2000 JEPRO ’Ç‰Á
+	void Command_EXTHTMLHELP( const WCHAR* helpfile = NULL, const WCHAR* kwd = NULL );	/* å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ— */
+	void Command_ABOUT( void );			/* ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± */	//Dec. 24, 2000 JEPRO è¿½åŠ 
 
-	/* ‚»‚Ì‘¼ */
+	/* ãã®ä»– */
 
 private:
 	void AlertNotFound(HWND hwnd, bool, LPCTSTR format, ...);
-	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// ã‘‚«—p‚Ìˆê•¶šíœ	// 2009.04.11 ryoji
-	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // ƒ^ƒOƒWƒƒƒ“ƒv‚Ì‘Oˆ—
+	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// ä¸Šæ›¸ãç”¨ã®ä¸€æ–‡å­—å‰Šé™¤	// 2009.04.11 ryoji
+	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã®å‰å‡¦ç†
 public:
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock( int flags );

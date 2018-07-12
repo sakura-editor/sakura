@@ -1,7 +1,7 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(x‰‡)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(æ”¯æ´)é–¢æ•°ç¾¤
 
-	2012/12/16	CViewCommander_Hokan.cpp‚ÉcppCViewCommander.cpp‚©‚çx‰‡ŠÖ˜A‚ğ•ª—£‚µCViewCommander_Support.cpp‚É–¼Ì•ÏX
+	2012/12/16	CViewCommander_Hokan.cppã«cppCViewCommander.cppã‹ã‚‰æ”¯æ´é–¢é€£ã‚’åˆ†é›¢ã—CViewCommander_Support.cppã«åç§°å¤‰æ›´
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -26,29 +26,29 @@
 
 #include "CPropertyManager.h"
 #include "CEditApp.h"
-#include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO ’Ç‰Á
+#include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO è¿½åŠ 
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
 
-/*!	“ü—Í•âŠ®
-	Ctrl+Space‚Å‚±‚±‚É“’…B
-	CEditView::m_bHokanF Œ»İ•âŠ®ƒEƒBƒ“ƒhƒE‚ª•\¦‚³‚ê‚Ä‚¢‚é‚©‚ğ•\‚·ƒtƒ‰ƒOB
+/*!	å…¥åŠ›è£œå®Œ
+	Ctrl+Spaceã§ã“ã“ã«åˆ°ç€ã€‚
+	CEditView::m_bHokanï¼š ç¾åœ¨è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ã‹ã‚’è¡¨ã™ãƒ•ãƒ©ã‚°ã€‚
 
-    @date 2001/06/19 asa-o ‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é
-                     Œó•â‚ª1‚Â‚Ì‚Æ‚«‚Í‚»‚ê‚ÉŠm’è‚·‚é
-	@date 2001/06/14 asa-o QÆƒf[ƒ^•ÏX
-	                 ŠJ‚­ƒvƒƒpƒeƒBƒV[ƒg‚ğƒ^ƒCƒv•Ê‚É•ÏXy
-	@date 2000/09/15 JEPRO [Esc]ƒL[‚Æ[x]ƒ{ƒ^ƒ“‚Å‚à’†~‚Å‚«‚é‚æ‚¤‚É•ÏX
-	@date 2005/01/10 genta CEditView_Command‚©‚çˆÚ“®
+    @date 2001/06/19 asa-o è‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹
+                     å€™è£œãŒ1ã¤ã®ã¨ãã¯ãã‚Œã«ç¢ºå®šã™ã‚‹
+	@date 2001/06/14 asa-o å‚ç…§ãƒ‡ãƒ¼ã‚¿å¤‰æ›´
+	                 é–‹ããƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã‚’ã‚¿ã‚¤ãƒ—åˆ¥ã«å¤‰æ›´y
+	@date 2000/09/15 JEPRO [Esc]ã‚­ãƒ¼ã¨[x]ãƒœã‚¿ãƒ³ã§ã‚‚ä¸­æ­¢ã§ãã‚‹ã‚ˆã†ã«å¤‰æ›´
+	@date 2005/01/10 genta CEditView_Commandã‹ã‚‰ç§»å‹•
 */
 void CViewCommander::Command_HOKAN( void )
 {
 #if 0
-// 2011.06.24 Moca Plugin“±“ü‚É]‚¢–¢İ’è‚ÌŠm”F‚ğ‚â‚ß‚é
+// 2011.06.24 Moca Pluginå°å…¥ã«å¾“ã„æœªè¨­å®šã®ç¢ºèªã‚’ã‚„ã‚ã‚‹
 retry:;
-	/* •âŠ®Œó•âˆê——ƒtƒ@ƒCƒ‹‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«‚ÍAİ’è‚·‚é‚æ‚¤‚É‘£‚·B */
-	// 2003.06.22 Moca ƒtƒ@ƒCƒ‹“à‚©‚çŒŸõ‚·‚éê‡‚É‚Í•âŠ®ƒtƒ@ƒCƒ‹‚Ìİ’è‚Í•K{‚Å‚Í‚È‚¢
+	/* è£œå®Œå€™è£œä¸€è¦§ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„ã¨ãã¯ã€è¨­å®šã™ã‚‹ã‚ˆã†ã«ä¿ƒã™ã€‚ */
+	// 2003.06.22 Moca ãƒ•ã‚¡ã‚¤ãƒ«å†…ã‹ã‚‰æ¤œç´¢ã™ã‚‹å ´åˆã«ã¯è£œå®Œãƒ•ã‚¡ã‚¤ãƒ«ã®è¨­å®šã¯å¿…é ˆã§ã¯ãªã„
 	if( m_pCommanderView->m_pTypeData->m_bUseHokanByFile == FALSE &&
 		m_pCommanderView->m_pTypeData->m_bUseHokanByKeyword == false &&
 		_T('\0') == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
@@ -57,7 +57,7 @@ retry:;
 		if( IDYES == ::ConfirmMessage( GetMainWindow(),
 			LS(STR_ERR_DLGEDITVWHOKAN1)
 		) ){
-			/* ƒ^ƒCƒv•Êİ’è ƒvƒƒpƒeƒBƒV[ƒg */
+			/* ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( 2, GetDocument()->m_cDocType.GetDocumentType() ) ){
 				return;
 			}
@@ -66,24 +66,24 @@ retry:;
 	}
 #endif
 	CNativeW	cmemData;
-	/* ƒJ[ƒ\ƒ‹’¼‘O‚Ì’PŒê‚ğæ“¾ */
+	/* ã‚«ãƒ¼ã‚½ãƒ«ç›´å‰ã®å˜èªã‚’å–å¾— */
 	if( 0 < m_pCommanderView->GetParser().GetLeftWord( &cmemData, 100 ) ){
 		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
 	}else{
-		InfoBeep(); //2010.04.03 Error¨Info
-		m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ƒXƒe[ƒ^ƒX‚Å•\¦
+		InfoBeep(); //2010.04.03 Errorâ†’Info
+		m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§è¡¨ç¤º
 	}
 	return;
 }
 
 
 
-/*! ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê‚ğ«‘ŒŸõON-OFF
+/*! ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªã‚’è¾æ›¸æ¤œç´¢ON-OFF
 
-	@date 2006.03.24 fon V‹Kì¬
+	@date 2006.03.24 fon æ–°è¦ä½œæˆ
 */
 void CViewCommander::Command_ToggleKeySearch( int option )
-{	/* ‹¤’Êİ’èƒ_ƒCƒAƒƒO‚Ìİ’è‚ğƒL[Š„‚è“–‚Ä‚Å‚àØ‚è‘Ö‚¦‚ç‚ê‚é‚æ‚¤‚É */
+{	/* å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¨­å®šã‚’ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã§ã‚‚åˆ‡ã‚Šæ›¿ãˆã‚‰ã‚Œã‚‹ã‚ˆã†ã« */
 	if( option == 0 ){
 		if( GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord ){
 			GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
@@ -99,25 +99,25 @@ void CViewCommander::Command_ToggleKeySearch( int option )
 
 
 
-/* ƒwƒ‹ƒv–ÚŸ */
+/* ãƒ˜ãƒ«ãƒ—ç›®æ¬¡ */
 void CViewCommander::Command_HELP_CONTENTS( void )
 {
-	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	–ÚŸ‚ğ•\¦‚·‚é
+	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	ç›®æ¬¡ã‚’è¡¨ç¤ºã™ã‚‹
 	return;
 }
 
 
 
-/* ƒwƒ‹ƒvƒL[ƒ[ƒhŒŸõ */
+/* ãƒ˜ãƒ«ãƒ—ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢ */
 void CViewCommander::Command_HELP_SEARCH( void )
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 	return;
 }
 
 
 
-/* ƒRƒ}ƒ“ƒhˆê—— */
+/* ã‚³ãƒãƒ³ãƒ‰ä¸€è¦§ */
 void CViewCommander::Command_MENU_ALLFUNC( void )
 {
 
@@ -131,12 +131,12 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	int		nId;
 
 //	From Here Sept. 15, 2000 JEPRO
-//	ƒTƒuƒƒjƒ…[A“Á‚Éu‚»‚Ì‘¼v‚ÌƒRƒ}ƒ“ƒh‚É‘Î‚µ‚ÄƒXƒe[ƒ^ƒXƒo[‚É•\¦‚³‚ê‚éƒL[ƒAƒTƒCƒ“î•ñ‚ª
-//	ƒƒjƒ…[‚Å‰B‚ê‚È‚¢‚æ‚¤‚É‰E‚É‚¸‚ç‚µ‚½
-//	(–{“–‚Í‚±‚ÌuƒRƒ}ƒ“ƒhˆê——vƒƒjƒ…[‚ğƒ_ƒCƒAƒƒO‚É•ÏX‚µƒo[‚ğ‚Â‚Ü‚ñ‚Å©—R‚ÉˆÚ“®‚Å‚«‚é‚æ‚¤‚É‚µ‚½‚¢)
+//	ã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã€ç‰¹ã«ã€Œãã®ä»–ã€ã®ã‚³ãƒãƒ³ãƒ‰ã«å¯¾ã—ã¦ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã«è¡¨ç¤ºã•ã‚Œã‚‹ã‚­ãƒ¼ã‚¢ã‚µã‚¤ãƒ³æƒ…å ±ãŒ
+//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã§éš ã‚Œãªã„ã‚ˆã†ã«å³ã«ãšã‚‰ã—ãŸ
+//	(æœ¬å½“ã¯ã“ã®ã€Œã‚³ãƒãƒ³ãƒ‰ä¸€è¦§ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã«å¤‰æ›´ã—ãƒãƒ¼ã‚’ã¤ã¾ã‚“ã§è‡ªç”±ã«ç§»å‹•ã§ãã‚‹ã‚ˆã†ã«ã—ãŸã„)
 //	po.x = 0;
 	po.x = 540;
-//	To Here Sept. 15, 2000 (Oct. 7, 2000 300¨500; Nov. 3, 2000 500¨540)
+//	To Here Sept. 15, 2000 (Oct. 7, 2000 300â†’500; Nov. 3, 2000 500â†’540)
 	po.y = 0;
 
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
@@ -152,13 +152,13 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	CFuncLookup& FuncLookup = GetDocument()->m_cFuncLookup;
 
 	hMenu = ::CreatePopupMenu();
-//Oct. 14, 2000 JEPRO u--–¢’è‹`--v‚ğ•\¦‚³‚¹‚È‚¢‚æ‚¤‚É•ÏX‚µ‚½‚±‚Æ‚Å1”Ô(ƒJ[ƒ\ƒ‹ˆÚ“®Œn)‚ª‘O‚ÉƒVƒtƒg‚³‚ê‚½(‚±‚Ì•ÏX‚É‚æ‚Á‚Ä i=1¨i=0 ‚Æ•ÏX)
+//Oct. 14, 2000 JEPRO ã€Œ--æœªå®šç¾©--ã€ã‚’è¡¨ç¤ºã•ã›ãªã„ã‚ˆã†ã«å¤‰æ›´ã—ãŸã“ã¨ã§1ç•ª(ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ç³»)ãŒå‰ã«ã‚·ãƒ•ãƒˆã•ã‚ŒãŸ(ã“ã®å¤‰æ›´ã«ã‚ˆã£ã¦ i=1â†’i=0 ã¨å¤‰æ›´)
 	//	Oct. 3, 2001 genta
 	for( i = 0; i < FuncLookup.GetCategoryCount(); i++ ){
 		hMenuPopUp = ::CreatePopupMenu();
 		for( j = 0; j < FuncLookup.GetItemCount(i); j++ ){
 			//	Oct. 3, 2001 genta
-			int code = FuncLookup.Pos2FuncCode( i, j, false );	// 2007.11.02 ryoji –¢“o˜^ƒ}ƒNƒ”ñ•\¦‚ğ–¾¦w’è
+			int code = FuncLookup.Pos2FuncCode( i, j, false );	// 2007.11.02 ryoji æœªç™»éŒ²ãƒã‚¯ãƒ­éè¡¨ç¤ºã‚’æ˜ç¤ºæŒ‡å®š
 			if( code != 0 ){
 				WCHAR	szLabel[300];
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
@@ -187,7 +187,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	);
 	::DestroyMenu( hMenu );
 	if( 0 != nId ){
-		/* ƒRƒ}ƒ“ƒhƒR[ƒh‚É‚æ‚éˆ—U‚è•ª‚¯ */
+		/* ã‚³ãƒãƒ³ãƒ‰ã‚³ãƒ¼ãƒ‰ã«ã‚ˆã‚‹å‡¦ç†æŒ¯ã‚Šåˆ†ã‘ */
 //		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
 	}
@@ -196,8 +196,8 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 
 
 
-/* ŠO•”ƒwƒ‹ƒv‚P
-	@date 2012.09.26 Moca HTMLHELP‘Î‰
+/* å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘
+	@date 2012.09.26 Moca HTMLHELPå¯¾å¿œ
 */
 void CViewCommander::Command_EXTHELP1( void )
 {
@@ -206,12 +206,12 @@ retry:;
 //	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
-//		[Esc]ƒL[‚Æ[x]ƒ{ƒ^ƒ“‚Å‚à’†~‚Å‚«‚é‚æ‚¤‚É•ÏX
+//		[Esc]ã‚­ãƒ¼ã¨[x]ãƒœã‚¿ãƒ³ã§ã‚‚ä¸­æ­¢ã§ãã‚‹ã‚ˆã†ã«å¤‰æ›´
 		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 //To Here Sept. 15, 2000
 			LS(STR_ERR_CEDITVIEW_CMD01)
 		) ){
-			/* ‹¤’Êİ’è ƒvƒƒpƒeƒBƒV[ƒg */
+			/* å…±é€šè¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PROPCOM_PAGENUM_HELPER ) ){
 				return;
 			}
@@ -226,17 +226,17 @@ retry:;
 	CNativeW		cmemCurText;
 	const TCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 
-	/* Œ»İƒJ[ƒ\ƒ‹ˆÊ’u’PŒê‚Ü‚½‚Í‘I‘ğ”ÍˆÍ‚æ‚èŒŸõ“™‚ÌƒL[‚ğæ“¾ */
+	/* ç¾åœ¨ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å˜èªã¾ãŸã¯é¸æŠç¯„å›²ã‚ˆã‚Šæ¤œç´¢ç­‰ã®ã‚­ãƒ¼ã‚’å–å¾— */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );
 	TCHAR path[_MAX_PATH];
 	if( _IS_REL_PATH( helpfile ) ){
-		// 2003.06.23 Moca ‘Š‘ÎƒpƒX‚ÍÀsƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX
-		// 2007.05.21 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+		// 2003.06.23 Moca ç›¸å¯¾ãƒ‘ã‚¹ã¯å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹
+		// 2007.05.21 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 		GetInidirOrExedir( path, helpfile );
 	}else{
 		auto_strcpy( path, helpfile );
 	}
-	// 2012.09.26 Moca HTMLHELP‘Î‰
+	// 2012.09.26 Moca HTMLHELPå¯¾å¿œ
 	TCHAR	szExt[_MAX_EXT];
 	_tsplitpath( path, NULL, NULL, NULL, szExt );
 	if( 0 == _tcsicmp(szExt, _T(".chi")) || 0 == _tcsicmp(szExt, _T(".chm")) || 0 == _tcsicmp(szExt, _T(".col")) ){
@@ -251,11 +251,11 @@ retry:;
 
 
 /*!
-	ŠO•”HTMLƒwƒ‹ƒv
+	å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—
 	
-	@param helpfile [in] HTMLƒwƒ‹ƒvƒtƒ@ƒCƒ‹–¼DNULL‚Ì‚Æ‚«‚Íƒ^ƒCƒv•Ê‚Éİ’è‚³‚ê‚½ƒtƒ@ƒCƒ‹D
-	@param kwd [in] ŒŸõƒL[ƒ[ƒhDNULL‚Ì‚Æ‚«‚ÍƒJ[ƒ\ƒ‹ˆÊ’uor‘I‘ğ‚³‚ê‚½ƒ[ƒh
-	@date 2002.07.05 genta ”CˆÓ‚Ìƒtƒ@ƒCƒ‹EƒL[ƒ[ƒh‚Ìw’è‚ª‚Å‚«‚é‚æ‚¤ˆø”’Ç‰Á
+	@param helpfile [in] HTMLãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼NULLã®ã¨ãã¯ã‚¿ã‚¤ãƒ—åˆ¥ã«è¨­å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ï¼
+	@param kwd [in] æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼NULLã®ã¨ãã¯ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®oré¸æŠã•ã‚ŒãŸãƒ¯ãƒ¼ãƒ‰
+	@date 2002.07.05 genta ä»»æ„ã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æŒ‡å®šãŒã§ãã‚‹ã‚ˆã†å¼•æ•°è¿½åŠ 
 */
 void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
 {
@@ -275,14 +275,14 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
-	//		[Esc]ƒL[‚Æ[x]ƒ{ƒ^ƒ“‚Å‚à’†~‚Å‚«‚é‚æ‚¤‚É•ÏX
+	//		[Esc]ã‚­ãƒ¼ã¨[x]ãƒœã‚¿ãƒ³ã§ã‚‚ä¸­æ­¢ã§ãã‚‹ã‚ˆã†ã«å¤‰æ›´
 			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 	//	To Here Sept. 15, 2000
 				LS(STR_ERR_CEDITVIEW_CMD02)
 			) ){
 				return;
 			}
-			/* ‹¤’Êİ’è ƒvƒƒpƒeƒBƒV[ƒg */
+			/* å…±é€šè¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PROPCOM_PAGENUM_HELPER ) ){
 				return;
 			}
@@ -295,21 +295,21 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	To Here Jul. 5, 2002 genta
 
 	//	Jul. 5, 2002 genta
-	//	ƒL[ƒ[ƒh‚ÌŠO•”w’è‚ğ‰Â”\‚É
+	//	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å¤–éƒ¨æŒ‡å®šã‚’å¯èƒ½ã«
 	CNativeW	cmemCurText;
 	if( kwd != NULL && kwd[0] != _T('\0') ){
 		cmemCurText.SetString( kwd );
 	}
 	else {
-		/* Œ»İƒJ[ƒ\ƒ‹ˆÊ’u’PŒê‚Ü‚½‚Í‘I‘ğ”ÍˆÍ‚æ‚èŒŸõ“™‚ÌƒL[‚ğæ“¾ */
+		/* ç¾åœ¨ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å˜èªã¾ãŸã¯é¸æŠç¯„å›²ã‚ˆã‚Šæ¤œç´¢ç­‰ã®ã‚­ãƒ¼ã‚’å–å¾— */
 		m_pCommanderView->GetCurrentTextForSearch( cmemCurText );
 	}
 
-	/* HtmlHelpƒrƒ…[ƒA‚Í‚Ğ‚Æ‚Â */
+	/* HtmlHelpãƒ“ãƒ¥ãƒ¼ã‚¢ã¯ã²ã¨ã¤ */
 	if( CHelpManager().HTMLHelpIsSingle( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
-		// ƒ^ƒXƒNƒgƒŒƒC‚ÌƒvƒƒZƒX‚ÉHtmlHelp‚ğ‹N“®‚³‚¹‚é
-		// 2003.06.23 Moca ‘Š‘ÎƒpƒX‚ÍÀsƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX
-		// 2007.05.21 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+		// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ãƒ—ãƒ­ã‚»ã‚¹ã«HtmlHelpã‚’èµ·å‹•ã•ã›ã‚‹
+		// 2003.06.23 Moca ç›¸å¯¾ãƒ‘ã‚¹ã¯å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹
+		// 2007.05.21 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 		TCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<TCHAR>();
 		if( _IS_REL_PATH( filename ) ){
 			GetInidirOrExedir( pWork, filename );
@@ -326,7 +326,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		);
 	}
 	else{
-		/* ©•ª‚ÅHtmlHelp‚ğ‹N“®‚³‚¹‚é */
+		/* è‡ªåˆ†ã§HtmlHelpã‚’èµ·å‹•ã•ã›ã‚‹ */
 		HH_AKLINK	link;
 		link.cbStruct = sizeof( link ) ;
 		link.fReserved = FALSE ;
@@ -337,12 +337,12 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		link.pszWindow = NULL;
 		link.fIndexOnFail = TRUE;
 
-		// 2003.06.23 Moca ‘Š‘ÎƒpƒX‚ÍÀsƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX
-		// 2007.05.21 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+		// 2003.06.23 Moca ç›¸å¯¾ãƒ‘ã‚¹ã¯å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹
+		// 2007.05.21 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 		if( _IS_REL_PATH( filename ) ){
 			TCHAR path[_MAX_PATH];
 			GetInidirOrExedir( path, filename );
-			//	Jul. 6, 2001 genta HtmlHelp‚ÌŒÄ‚Ño‚µ•û–@•ÏX
+			//	Jul. 6, 2001 genta HtmlHelpã®å‘¼ã³å‡ºã—æ–¹æ³•å¤‰æ›´
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				path, //	Jul. 5, 2002 genta
@@ -350,7 +350,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				(DWORD_PTR)&link
 			);
 		}else{
-			//	Jul. 6, 2001 genta HtmlHelp‚ÌŒÄ‚Ño‚µ•û–@•ÏX
+			//	Jul. 6, 2001 genta HtmlHelpã®å‘¼ã³å‡ºã—æ–¹æ³•å¤‰æ›´
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				filename, //	Jul. 5, 2002 genta
@@ -360,7 +360,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}
 	}
 
-	//	Jul. 6, 2001 genta hwndHtmlHelp‚Ìƒ`ƒFƒbƒN‚ğ’Ç‰Á
+	//	Jul. 6, 2001 genta hwndHtmlHelpã®ãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
 	if( hwndHtmlHelp != NULL ){
 		::BringWindowToTop( hwndHtmlHelp );
 	}
@@ -370,7 +370,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 
 
 
-/* ƒo[ƒWƒ‡ƒ“î•ñ */
+/* ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± */
 void CViewCommander::Command_ABOUT( void )
 {
 	CDlgAbout cDlgAbout;

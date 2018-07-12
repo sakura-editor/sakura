@@ -1,7 +1,7 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(ŒŸõŒn ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒžãƒ³ãƒ‰(æ¤œç´¢ç³» ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž)é–¢æ•°ç¾¤
 
-	2012/12/17	CViewCommander.cpp‚©‚ç•ª—£
+	2012/12/17	CViewCommander.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -28,24 +28,24 @@
 #include "sakura_rc.h"
 
 
-/*!	ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
+/*!	ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
 
-	@date 2002/03/13 YAZAKI nOutlineType‚ÆnListType‚ð“‡B
-	@date 2006/02/01 aroka ƒgƒOƒ‹—p‚Ìƒtƒ‰ƒO‚É•ÏX
+	@date 2002/03/13 YAZAKI nOutlineTypeã¨nListTypeã‚’çµ±åˆã€‚
+	@date 2006/02/01 aroka ãƒˆã‚°ãƒ«ç”¨ã®ãƒ•ãƒ©ã‚°ã«å¤‰æ›´
 */
 BOOL CViewCommander::Command_FUNCLIST(
 	int nAction,
 	EOutlineType nOutlineType = OUTLINE_DEFAULT
 )
 {
-	static bool bIsProcessing = false;	//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍˆ—’†ƒtƒ‰ƒO
+	static bool bIsProcessing = false;	//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžå‡¦ç†ä¸­ãƒ•ãƒ©ã‚°
 
-	//ƒAƒEƒgƒ‰ƒCƒ“ƒvƒ‰ƒOƒCƒ““à‚Å‚ÌEditor.OutlineŒÄ‚Ño‚µ‚É‚æ‚éÄ“ü‚ð‹ÖŽ~‚·‚é
+	//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å†…ã§ã®Editor.Outlineå‘¼ã³å‡ºã—ã«ã‚ˆã‚‹å†å…¥ã‚’ç¦æ­¢ã™ã‚‹
 	if( bIsProcessing )return FALSE;
 
 	bIsProcessing = true;
 
-	// Ž©ƒvƒƒZƒX‚ª‘O–Ê‚É‚¢‚é‚©‚Ç‚¤‚©’²‚×‚é
+	// è‡ªãƒ—ãƒ­ã‚»ã‚¹ãŒå‰é¢ã«ã„ã‚‹ã‹ã©ã†ã‹èª¿ã¹ã‚‹
 	DWORD dwPid1, dwPid2;
 	dwPid1 = ::GetCurrentProcessId();
 	::GetWindowThreadProcessId( ::GetForegroundWindow(), &dwPid2 );
@@ -56,18 +56,18 @@ BOOL CViewCommander::Command_FUNCLIST(
 //	}
 
 	static CFuncInfoArr	cFuncInfoArr;
-	std::tstring sTitleOverride;				//ƒvƒ‰ƒOƒCƒ“‚É‚æ‚éƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹ã‘‚«
+	std::tstring sTitleOverride;				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã«ã‚ˆã‚‹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ä¸Šæ›¸ã
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
-		/* ƒ^ƒCƒv•Ê‚ÉÝ’è‚³‚ê‚½ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@ */
+		/* ã‚¿ã‚¤ãƒ—åˆ¥ã«è¨­å®šã•ã‚ŒãŸã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³• */
 		nOutlineType = m_pCommanderView->m_pTypeData->m_eDefaultOutline;
 	}
 
 	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
 		switch(nAction ){
-		case SHOW_NORMAL: // ƒAƒNƒeƒBƒu‚É‚·‚é
-			//	ŠJ‚¢‚Ä‚¢‚é‚à‚Ì‚ÆŽí•Ê‚ª“¯‚¶‚È‚çActive‚É‚·‚é‚¾‚¯DˆÙ‚È‚ê‚ÎÄ‰ðÍ
+		case SHOW_NORMAL: // ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
+			//	é–‹ã„ã¦ã„ã‚‹ã‚‚ã®ã¨ç¨®åˆ¥ãŒåŒã˜ãªã‚‰Activeã«ã™ã‚‹ã ã‘ï¼Žç•°ãªã‚Œã°å†è§£æž
 			GetEditWindow()->m_cDlgFuncList.SyncColor();
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
 				if( bForeground ){
@@ -77,8 +77,8 @@ BOOL CViewCommander::Command_FUNCLIST(
 				return TRUE;
 			}
 			break;
-		case SHOW_TOGGLE: // •Â‚¶‚é
-			//	ŠJ‚¢‚Ä‚¢‚é‚à‚Ì‚ÆŽí•Ê‚ª“¯‚¶‚È‚ç•Â‚¶‚éDˆÙ‚È‚ê‚ÎÄ‰ðÍ
+		case SHOW_TOGGLE: // é–‰ã˜ã‚‹
+			//	é–‹ã„ã¦ã„ã‚‹ã‚‚ã®ã¨ç¨®åˆ¥ãŒåŒã˜ãªã‚‰é–‰ã˜ã‚‹ï¼Žç•°ãªã‚Œã°å†è§£æž
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
 				if( GetEditWindow()->m_cDlgFuncList.IsDocking() )
 					::DestroyWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
@@ -93,19 +93,19 @@ BOOL CViewCommander::Command_FUNCLIST(
 		}
 	}
 
-	/* ‰ðÍŒ‹‰Êƒf[ƒ^‚ð‹ó‚É‚·‚é */
+	/* è§£æžçµæžœãƒ‡ãƒ¼ã‚¿ã‚’ç©ºã«ã™ã‚‹ */
 	cFuncInfoArr.Empty();
 	int		nListType = nOutlineType;			//2011.06.25 syat
 
 	switch( nOutlineType ){
-	// 2015.11.14 uCvuC++vuC/C++v‚©‚ç‘I‚×‚é‚æ‚¤‚É
-	case OUTLINE_C:			// C/C++ ‚Í MakeFuncList_C
+	// 2015.11.14 ã€ŒCã€ã€ŒC++ã€ã€ŒC/C++ã€ã‹ã‚‰é¸ã¹ã‚‹ã‚ˆã†ã«
+	case OUTLINE_C:			// C/C++ ã¯ MakeFuncList_C
 	case OUTLINE_C_CPP:
 	case OUTLINE_CPP:
 		{
 			GetDocument()->m_cDocOutline.MakeFuncList_C( &cFuncInfoArr,
 				nOutlineType, GetDocument()->m_cDocFile.GetFilePath() );
-			nListType = nOutlineType; // •ÏX‚³‚ê‚½‰Â”\«‚ ‚è
+			nListType = nOutlineType; // å¤‰æ›´ã•ã‚ŒãŸå¯èƒ½æ€§ã‚ã‚Š
 			break;
 		}
 	case OUTLINE_PLSQL:		GetDocument()->m_cDocOutline.MakeFuncList_PLSQL( &cFuncInfoArr );break;
@@ -114,52 +114,52 @@ BOOL CViewCommander::Command_FUNCLIST(
 	case OUTLINE_ASM:		GetDocument()->m_cDocOutline.MakeTopicList_asm( &cFuncInfoArr );break;
 	case OUTLINE_PERL:		GetDocument()->m_cDocOutline.MakeFuncList_Perl( &cFuncInfoArr );break;	//	Sep. 8, 2000 genta
 	case OUTLINE_VB:		GetDocument()->m_cDocOutline.MakeFuncList_VisualBasic( &cFuncInfoArr );break;	//	June 23, 2001 N.Nakatani
-	case OUTLINE_WZTXT:		GetDocument()->m_cDocOutline.MakeTopicList_wztxt(&cFuncInfoArr);break;		// 2003.05.20 zenryaku ŠK‘w•tƒeƒLƒXƒg ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
-	case OUTLINE_HTML:		GetDocument()->m_cDocOutline.MakeTopicList_html(&cFuncInfoArr, false);break;		// 2003.05.20 zenryaku HTML ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
-	case OUTLINE_TEX:		GetDocument()->m_cDocOutline.MakeTopicList_tex(&cFuncInfoArr);break;		// 2003.07.20 naoh TeX ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
+	case OUTLINE_WZTXT:		GetDocument()->m_cDocOutline.MakeTopicList_wztxt(&cFuncInfoArr);break;		// 2003.05.20 zenryaku éšŽå±¤ä»˜ãƒ†ã‚­ã‚¹ãƒˆ ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
+	case OUTLINE_HTML:		GetDocument()->m_cDocOutline.MakeTopicList_html(&cFuncInfoArr, false);break;		// 2003.05.20 zenryaku HTML ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
+	case OUTLINE_TEX:		GetDocument()->m_cDocOutline.MakeTopicList_tex(&cFuncInfoArr);break;		// 2003.07.20 naoh TeX ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
 	case OUTLINE_BOOKMARK:	GetDocument()->m_cDocOutline.MakeFuncList_BookMark( &cFuncInfoArr );break;	//	2001.12.03 hor
-	case OUTLINE_FILE:		GetDocument()->m_cDocOutline.MakeFuncList_RuleFile( &cFuncInfoArr, sTitleOverride );break;	//	2002.04.01 YAZAKI ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚Éƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ð“±“ü
-//	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO Žg‚í‚È‚¢‚æ‚¤‚É•ÏX
+	case OUTLINE_FILE:		GetDocument()->m_cDocOutline.MakeFuncList_RuleFile( &cFuncInfoArr, sTitleOverride );break;	//	2002.04.01 YAZAKI ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å°Žå…¥
+//	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO ä½¿ã‚ãªã„ã‚ˆã†ã«å¤‰æ›´
 	case OUTLINE_PYTHON:	GetDocument()->m_cDocOutline.MakeFuncList_python(&cFuncInfoArr);break;		// 2007.02.08 genta
 	case OUTLINE_ERLANG:	GetDocument()->m_cDocOutline.MakeFuncList_Erlang(&cFuncInfoArr);break;		// 2009.08.10 genta
 	case OUTLINE_XML:		GetDocument()->m_cDocOutline.MakeTopicList_html(&cFuncInfoArr, true);break;		// 2014.12.25 Moca
-	case OUTLINE_FILETREE:	/* “Á‚É‰½‚à‚µ‚È‚¢*/ ;break;	// 2013.12.08 Moca
+	case OUTLINE_FILETREE:	/* ç‰¹ã«ä½•ã‚‚ã—ãªã„*/ ;break;	// 2013.12.08 Moca
 	case OUTLINE_TEXT:
 		//	fall though
-		//	‚±‚±‚É‚Í‰½‚à“ü‚ê‚Ä‚Í‚¢‚¯‚È‚¢ 2007.02.28 genta ’ˆÓ‘‚«
+		//	ã“ã“ã«ã¯ä½•ã‚‚å…¥ã‚Œã¦ã¯ã„ã‘ãªã„ 2007.02.28 genta æ³¨æ„æ›¸ã
 	default:
-		//ƒvƒ‰ƒOƒCƒ“‚©‚çŒŸõ‚·‚é
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‹ã‚‰æ¤œç´¢ã™ã‚‹
 		{
 			CPlug::Array plugs;
 			CJackManager::getInstance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
-				//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg€”õ
+				//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæº–å‚™
 				CWSHIfObj::List params;
 				COutlineIfObj* objOutline = new COutlineIfObj( cFuncInfoArr );
 				objOutline->AddRef();
 				params.push_back( objOutline );
-				//ƒvƒ‰ƒOƒCƒ“ŒÄ‚Ño‚µ
+				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å‘¼ã³å‡ºã—
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );
 
-				nListType = objOutline->m_nListType;			//ƒ_ƒCƒAƒƒO‚Ì•\Ž¦•û–@‚ð‚ðã‘‚«
-				sTitleOverride = objOutline->m_sOutlineTitle;	//ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚ðã‘‚«
+				nListType = objOutline->m_nListType;			//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤ºæ–¹æ³•ã‚’ã‚’ä¸Šæ›¸ã
+				sTitleOverride = objOutline->m_sOutlineTitle;	//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã‚’ä¸Šæ›¸ã
 
 				objOutline->Release();
 				break;
 			}
 		}
 
-		//‚»‚êˆÈŠO
+		//ãã‚Œä»¥å¤–
 		GetDocument()->m_cDocOutline.MakeTopicList_txt( &cFuncInfoArr );
 		break;
 	}
 
-	/* ‰ðÍ‘ÎÛƒtƒ@ƒCƒ‹–¼ */
+	/* è§£æžå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«å */
 	_tcscpy( cFuncInfoArr.m_szFilePath, GetDocument()->m_cDocFile.GetFilePath() );
 
-	/* ƒAƒEƒgƒ‰ƒCƒ“ ƒ_ƒCƒAƒƒO‚Ì•\Ž¦ */
+	/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
 	if( NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
 		GetEditWindow()->m_cDlgFuncList.DoModeless(
@@ -171,17 +171,17 @@ BOOL CViewCommander::Command_FUNCLIST(
 			poCaret.GetX2() + CLayoutInt(1),
 			nOutlineType,
 			nListType,
-			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF	/* s”Ô†‚Ì•\Ž¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 		);
 	}else{
-		/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+		/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 		if( bForeground ){
 			::SetFocus( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
 		}
 	}
 
-	// ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚ðã‘‚«
+	// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã‚’ä¸Šæ›¸ã
 	if( ! sTitleOverride.empty() ){
 		GetEditWindow()->m_cDlgFuncList.SetWindowText( sTitleOverride.c_str() );
 	}

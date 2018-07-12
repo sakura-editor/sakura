@@ -1,7 +1,7 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(ƒWƒƒƒ“ƒv&ƒuƒbƒNƒ}[ƒN)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(ã‚¸ãƒ£ãƒ³ãƒ—&ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯)é–¢æ•°ç¾¤
 
-	2012/12/17	CViewCommander.cpp,CViewCommander_New.cpp‚©‚ç•ª—£
+	2012/12/17	CViewCommander.cpp,CViewCommander_New.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,7 +20,7 @@
 
 
 //	from CViewCommander_New.cpp
-/*!	ŒŸõŠJnˆÊ’u‚Ö–ß‚é
+/*!	æ¤œç´¢é–‹å§‹ä½ç½®ã¸æˆ»ã‚‹
 	@author	ai
 	@date	02/06/26
 */
@@ -29,12 +29,12 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 	if( m_pCommanderView->m_ptSrchStartPos_PHY.BothNatural() )
 	{
 		CLayoutPoint pt;
-		/* ”ÍˆÍ‘I‘ğ’†‚© */
+		/* ç¯„å›²é¸æŠä¸­ã‹ */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			m_pCommanderView->m_ptSrchStartPos_PHY,
 			&pt
 		);
-		//	2006.07.09 genta ‘I‘ğó‘Ô‚ğ•Û‚Â
+		//	2006.07.09 genta é¸æŠçŠ¶æ…‹ã‚’ä¿ã¤
 		m_pCommanderView->MoveCursorSelecting( pt, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}
 	else
@@ -46,7 +46,7 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 
 
 
-/*! w’ès‚ÖƒWƒƒƒ“ƒvƒ_ƒCƒAƒƒO‚Ì•\¦
+/*! æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 	2002.2.2 YAZAKI
 */
 void CViewCommander::Command_JUMP_DIALOG( void )
@@ -60,7 +60,7 @@ void CViewCommander::Command_JUMP_DIALOG( void )
 
 
 
-/* w’èsƒwƒWƒƒƒ“ƒv */
+/* æŒ‡å®šè¡Œãƒ˜ã‚¸ãƒ£ãƒ³ãƒ— */
 void CViewCommander::Command_JUMP( void )
 {
 	const wchar_t*	pLine;
@@ -74,21 +74,21 @@ void CViewCommander::Command_JUMP( void )
 		return;
 	}
 
-	/* s”Ô† */
-	int	nLineNum; //$$ ’PˆÊ¬İ
+	/* è¡Œç•ªå· */
+	int	nLineNum; //$$ å˜ä½æ··åœ¨
 	nLineNum = GetEditWindow()->m_cDlgJump.m_nLineNum;
 
-	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLƒ\[ƒX‚Ì—LŒøs‚© */
-		/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLã‚½ãƒ¼ã‚¹ã®æœ‰åŠ¹è¡Œã‹ */
+		/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 		if( GetDllShareData().m_bLineNumIsCRLF_ForJump ){
 			if( CLogicInt(0) >= nLineNum ){
 				nLineNum = CLogicInt(1);
 			}
 			/*
-			  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-			  ƒƒWƒbƒNˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-			  ¨
-			  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+			  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+			  ãƒ­ã‚¸ãƒƒã‚¯ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+			  â†’
+			  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 			*/
 			CLayoutPoint ptPosXY;
 			GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -107,7 +107,7 @@ void CViewCommander::Command_JUMP( void )
 		}
 		//	Sep. 8, 2000 genta
 		m_pCommanderView->AddCurrentLineToHistory();
-		//	2006.07.09 genta ‘I‘ğó‘Ô‚ğ‰ğœ‚µ‚È‚¢‚æ‚¤‚É
+		//	2006.07.09 genta é¸æŠçŠ¶æ…‹ã‚’è§£é™¤ã—ãªã„ã‚ˆã†ã«
 		m_pCommanderView->MoveCursorSelecting( CLayoutPoint(0, nLineNum - 1), m_pCommanderView->GetSelectionInfo().m_bSelectingLock, _CARETMARGINRATE / 3 );
 		return;
 	}
@@ -117,16 +117,16 @@ void CViewCommander::Command_JUMP( void )
 	nMode = 0;
 	nCurrentLine = GetEditWindow()->m_cDlgJump.m_nPLSQL_E2 - 1;
 
-	int	nLineCount; //$$ ’PˆÊ¬İ
+	int	nLineCount; //$$ å˜ä½æ··åœ¨
 	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
 
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
-	if( !m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF ){ //ƒŒƒCƒAƒEƒg’PˆÊ
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
+	if( !m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF ){ //ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
 		/*
-		  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-		  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
-		  ¨
-		  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
+		  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+		  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
+		  â†’
+		  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
 		*/
 		CLogicPoint ptPosXY;
 		GetDocument()->m_cLayoutMgr.LayoutToLogic(
@@ -151,7 +151,7 @@ void CViewCommander::Command_JUMP( void )
 		}
 		nBgn = i;
 		for( i = nBgn; i < nLineLen; ++i ){
-			/* ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
+			/* ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			if( 20 == nMode ){
 				bValidLine = TRUE;
 				if( L'\'' == pLine[i] ){
@@ -163,7 +163,7 @@ void CViewCommander::Command_JUMP( void )
 				}else{
 				}
 			}else
-			/* ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
+			/* ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			if( 21 == nMode ){
 				bValidLine = TRUE;
 				if( L'"' == pLine[i] ){
@@ -175,7 +175,7 @@ void CViewCommander::Command_JUMP( void )
 				}else{
 				}
 			}else
-			/* ƒRƒƒ“ƒg“Ç‚İ‚İ’† */
+			/* ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­ */
 			if( 8 == nMode ){
 				if( i < nLineLen - 1 && L'*' == pLine[i] &&  L'/' == pLine[i + 1] ){
 					if( /*nCommentBegin != nLineCount &&*/ nCommentBegin != 0){
@@ -187,9 +187,9 @@ void CViewCommander::Command_JUMP( void )
 				}else{
 				}
 			}else
-			/* ƒm[ƒ}ƒ‹ƒ‚[ƒh */
+			/* ãƒãƒ¼ãƒãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 			if( 0 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter( pLine[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol )
@@ -218,12 +218,12 @@ void CViewCommander::Command_JUMP( void )
 				}
 			}
 		}
-		/* ƒRƒƒ“ƒg“Ç‚İ‚İ’† */
+		/* ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­ */
 		if( 8 == nMode ){
 			if( nCommentBegin != 0){
 				bValidLine = TRUE;
 			}
-			/* ƒRƒƒ“ƒgƒuƒƒbƒN“à‚Ì‰üs‚¾‚¯‚Ìs */
+			/* ã‚³ãƒ¡ãƒ³ãƒˆãƒ–ãƒ­ãƒƒã‚¯å†…ã®æ”¹è¡Œã ã‘ã®è¡Œ */
 			if( WCODE::IsLineDelimiter(pLine[nBgn], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 				bValidLine = FALSE;
 			}
@@ -236,10 +236,10 @@ void CViewCommander::Command_JUMP( void )
 		}
 	}
 	/*
-	  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-	  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-	  ¨
-	  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+	  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+	  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+	  â†’
+	  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 	*/
 	CLayoutPoint ptPos;
 	GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -248,14 +248,14 @@ void CViewCommander::Command_JUMP( void )
 	);
 	//	Sep. 8, 2000 genta
 	m_pCommanderView->AddCurrentLineToHistory();
-	//	2006.07.09 genta ‘I‘ğó‘Ô‚ğ‰ğœ‚µ‚È‚¢‚æ‚¤‚É
+	//	2006.07.09 genta é¸æŠçŠ¶æ…‹ã‚’è§£é™¤ã—ãªã„ã‚ˆã†ã«
 	m_pCommanderView->MoveCursorSelecting( ptPos, m_pCommanderView->GetSelectionInfo().m_bSelectingLock, _CARETMARGINRATE / 3 );
 }
 
 
 
 //	from CViewCommander_New.cpp
-//! ƒuƒbƒNƒ}[ƒN‚Ìİ’èE‰ğœ‚ğs‚¤(ƒgƒOƒ‹“®ì)
+//! ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã®è¨­å®šãƒ»è§£é™¤ã‚’è¡Œã†(ãƒˆã‚°ãƒ«å‹•ä½œ)
 void CViewCommander::Command_BOOKMARK_SET(void)
 {
 	CDocLine*	pCDocLine;
@@ -282,14 +282,14 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 		if(pCDocLine)cBookmark.SetBookmark(!cBookmark.IsBookmarked());
 	}
 
-	// 2002.01.16 hor •ªŠ„‚µ‚½ƒrƒ…[‚àXV
+	// 2002.01.16 hor åˆ†å‰²ã—ãŸãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°
 	GetEditWindow()->Views_Redraw();
 }
 
 
 
 //	from CViewCommander_New.cpp
-//! Ÿ‚ÌƒuƒbƒNƒ}[ƒN‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚é
+//! æ¬¡ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹
 void CViewCommander::Command_BOOKMARK_NEXT(void)
 {
 	int			nYOld;				// hor
@@ -307,17 +307,17 @@ re_do:;								// hor
 		bFound = TRUE;
 		CLayoutPoint ptLayout;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY,&ptLayout);
-		//	2006.07.09 genta V‹KŠÖ”‚É‚Ü‚Æ‚ß‚½
+		//	2006.07.09 genta æ–°è¦é–¢æ•°ã«ã¾ã¨ã‚ãŸ
 		m_pCommanderView->MoveCursorSelecting( ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
-		if(!bFound	&&		// Œ©‚Â‚©‚ç‚È‚©‚Á‚½
-			bRedo			// Å‰‚ÌŒŸõ
+		if(!bFound	&&		// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ
+			bRedo			// æœ€åˆã®æ¤œç´¢
 		){
 			ptXY.y=-1;	//	2002/06/01 MIK
 			bRedo=FALSE;
-			goto re_do;		// æ“ª‚©‚çÄŒŸõ
+			goto re_do;		// å…ˆé ­ã‹ã‚‰å†æ¤œç´¢
 		}
 	}
 	if(bFound){
@@ -332,7 +332,7 @@ re_do:;								// hor
 
 
 //	from CViewCommander_New.cpp
-//! ‘O‚ÌƒuƒbƒNƒ}[ƒN‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚éD
+//! å‰ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹ï¼
 void CViewCommander::Command_BOOKMARK_PREV(void)
 {
 	int			nYOld;				// hor
@@ -350,18 +350,18 @@ re_do:;								// hor
 		bFound = TRUE;				// hor
 		CLayoutPoint ptLayout;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY,&ptLayout);
-		//	2006.07.09 genta V‹KŠÖ”‚É‚Ü‚Æ‚ß‚½
+		//	2006.07.09 genta æ–°è¦é–¢æ•°ã«ã¾ã¨ã‚ãŸ
 		m_pCommanderView->MoveCursorSelecting( ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}
     // 2002.01.26 hor
 	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
-		if(!bFound	&&	// Œ©‚Â‚©‚ç‚È‚©‚Á‚½
-			bRedo		// Å‰‚ÌŒŸõ
+		if(!bFound	&&	// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ
+			bRedo		// æœ€åˆã®æ¤œç´¢
 		){
-			// 2011.02.02 m_cLayoutMgr¨m_cDocLineMgr
+			// 2011.02.02 m_cLayoutMgrâ†’m_cDocLineMgr
 			ptXY.y= GetDocument()->m_cDocLineMgr.GetLineCount();	// 2002/06/01 MIK
 			bRedo=FALSE;
-			goto re_do;	// ––”ö‚©‚çÄŒŸõ
+			goto re_do;	// æœ«å°¾ã‹ã‚‰å†æ¤œç´¢
 		}
 	}
 	if(bFound){
@@ -376,34 +376,34 @@ re_do:;								// hor
 
 
 //	from CViewCommander_New.cpp
-//! ƒuƒbƒNƒ}[ƒN‚ğƒNƒŠƒA‚·‚é
+//! ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 void CViewCommander::Command_BOOKMARK_RESET(void)
 {
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).ResetAllBookMark();
-	// 2002.01.16 hor •ªŠ„‚µ‚½ƒrƒ…[‚àXV
+	// 2002.01.16 hor åˆ†å‰²ã—ãŸãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°
 	GetEditWindow()->Views_Redraw();
 }
 
 
 
 //	from CViewCommander_New.cpp
-//w’èƒpƒ^[ƒ“‚Éˆê’v‚·‚és‚ğƒ}[ƒN 2002.01.16 hor
-//ƒL[ƒ}ƒNƒ‚Å‹L˜^‚Å‚«‚é‚æ‚¤‚É	2002.02.08 hor
+//æŒ‡å®šãƒ‘ã‚¿ãƒ¼ãƒ³ã«ä¸€è‡´ã™ã‚‹è¡Œã‚’ãƒãƒ¼ã‚¯ 2002.01.16 hor
+//ã‚­ãƒ¼ãƒã‚¯ãƒ­ã§è¨˜éŒ²ã§ãã‚‹ã‚ˆã†ã«	2002.02.08 hor
 void CViewCommander::Command_BOOKMARK_PATTERN( void )
 {
-	//ŒŸõor’uŠ·ƒ_ƒCƒAƒƒO‚©‚çŒÄ‚Ño‚³‚ê‚½
+	//æ¤œç´¢orç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‹ã‚‰å‘¼ã³å‡ºã•ã‚ŒãŸ
 	if( !m_pCommanderView->ChangeCurRegexp(false) ) return;
 	
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
 		m_pCommanderView->m_sSearchPattern
 	);
-	// 2002.01.16 hor •ªŠ„‚µ‚½ƒrƒ…[‚àXV
+	// 2002.01.16 hor åˆ†å‰²ã—ãŸãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°
 	GetEditWindow()->Views_Redraw();
 }
 
 
 
-//! Ÿ‚ÌŠÖ”ƒŠƒXƒgƒ}[ƒN‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚é
+//! æ¬¡ã®é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹
 void CViewCommander::Command_FUNCLIST_NEXT(void)
 {
 	CLogicPoint	ptXY(0, GetCaret().GetCaretLogicPos().y);
@@ -433,7 +433,7 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 
 
 
-//! ‘O‚ÌƒuƒbƒNƒ}[ƒN‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚éD
+//! å‰ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹ï¼
 void CViewCommander::Command_FUNCLIST_PREV(void)
 {
 

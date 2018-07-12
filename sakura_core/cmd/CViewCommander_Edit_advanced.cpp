@@ -1,17 +1,17 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(•ÒWŒn ‚“x‚È‘€ì(œ’PŒê/s‘€ì))ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(ç·¨é›†ç³» é«˜åº¦ãªæ“ä½œ(é™¤å˜èª/è¡Œæ“ä½œ))é–¢æ•°ç¾¤
 
-	2012/12/17	CViewCommander.cpp,CViewCommander_New.cpp‚©‚ç•ª—£
+	2012/12/17	CViewCommander.cpp,CViewCommander_New.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, jepro, genta, ‚İ‚Â
+	Copyright (C) 2000-2001, jepro, genta, ã¿ã¤
 	Copyright (C) 2001, MIK, Stonee, Misaka, asa-o, novice, hor, YAZAKI
-	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, ‚·‚È‚Ó‚«, Moca, ai
-	Copyright (C) 2003, MIK, genta, ‚©‚ë‚Æ, zenryaku, Moca, ryoji, naoh, KEITA, ‚¶‚ã‚¤‚¶
-	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, ‚İ‚¿‚Î‚È, Kazika
-	Copyright (C) 2005, genta, novice, ‚©‚ë‚Æ, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, ‚©‚ë‚Æ, fon, yukihane, Moca
+	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, ã™ãªãµã, Moca, ai
+	Copyright (C) 2003, MIK, genta, ã‹ã‚ã¨, zenryaku, Moca, ryoji, naoh, KEITA, ã˜ã‚…ã†ã˜
+	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, ã¿ã¡ã°ãª, Kazika
+	Copyright (C) 2005, genta, novice, ã‹ã‚ã¨, MIK, Moca, D.S.Koba, aroka, ryoji, maru
+	Copyright (C) 2006, genta, aroka, ryoji, ã‹ã‚ã¨, fon, yukihane, Moca
 	Copyright (C) 2007, ryoji, maru, Uchi
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji
@@ -44,15 +44,15 @@ using namespace std; // 2002/2/3 aroka to here
 #endif
 
 
-/* ƒCƒ“ƒfƒ“ƒg ver1 */
+/* ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 {
 	using namespace WCODE;
 
-#if 1	// «‚±‚±‚ğc‚¹‚Î‘I‘ğ•ƒ[ƒ‚ğÅ‘å‚É‚·‚éi]—ˆŒİŠ·‹““®jB–³‚­‚Ä‚à Command_INDENT() ver0 ‚ª“KØ‚É“®ì‚·‚é‚æ‚¤‚É•ÏX‚³‚ê‚½‚Ì‚ÅAíœ‚µ‚Ä‚à“Á‚É•s“s‡‚É‚Í‚È‚ç‚È‚¢B
+#if 1	// â†“ã“ã“ã‚’æ®‹ã›ã°é¸æŠå¹…ã‚¼ãƒ­ã‚’æœ€å¤§ã«ã™ã‚‹ï¼ˆå¾“æ¥äº’æ›æŒ™å‹•ï¼‰ã€‚ç„¡ãã¦ã‚‚ Command_INDENT() ver0 ãŒé©åˆ‡ã«å‹•ä½œã™ã‚‹ã‚ˆã†ã«å¤‰æ›´ã•ã‚ŒãŸã®ã§ã€å‰Šé™¤ã—ã¦ã‚‚ç‰¹ã«ä¸éƒ½åˆã«ã¯ãªã‚‰ãªã„ã€‚
 	// From Here 2001.12.03 hor
-	/* SPACEorTABƒCƒ“ƒ“ƒfƒ“ƒg‚Å‹éŒ`‘I‘ğŒ…‚ªƒ[ƒ‚Ì‚Í‘I‘ğ”ÍˆÍ‚ğÅ‘å‚É‚·‚é */
-	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ğLayoutMgr‚©‚çæ“¾‚·‚é‚æ‚¤‚É
+	/* SPACEorTABã‚¤ãƒ³ãƒ³ãƒ‡ãƒ³ãƒˆã§çŸ©å½¢é¸æŠæ¡ãŒã‚¼ãƒ­ã®æ™‚ã¯é¸æŠç¯„å›²ã‚’æœ€å¤§ã«ã™ã‚‹ */
+	//	Aug. 14, 2005 genta æŠ˜ã‚Šè¿”ã—å¹…ã‚’LayoutMgrã‹ã‚‰å–å¾—ã™ã‚‹ã‚ˆã†ã«
 	if( INDENT_NONE != eIndent && m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && GetSelect().GetFrom().x==GetSelect().GetTo().x ){
 		GetSelect().SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		m_pCommanderView->RedrawAll();
@@ -66,17 +66,17 @@ void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 
 
 
-/* ƒCƒ“ƒfƒ“ƒg ver0 */
+/* ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ver0 */
 /*
-	‘I‘ğ‚³‚ê‚½Šes‚Ì”ÍˆÍ‚Ì’¼‘O‚ÉA—^‚¦‚ç‚ê‚½•¶š—ñ( pData )‚ğ‘}“ü‚·‚éB
-	@param eIndent ƒCƒ“ƒfƒ“ƒg‚Ìí•Ê
+	é¸æŠã•ã‚ŒãŸå„è¡Œã®ç¯„å›²ã®ç›´å‰ã«ã€ä¸ãˆã‚‰ã‚ŒãŸæ–‡å­—åˆ—( pData )ã‚’æŒ¿å…¥ã™ã‚‹ã€‚
+	@param eIndent ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®ç¨®åˆ¥
 */
 void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt nDataLen, EIndentType eIndent )
 {
 	if( nDataLen <= 0 ) return;
 
-	CLayoutRange sSelectOld;		//”ÍˆÍ‘I‘ğ
-	CLayoutPoint ptInserted;		//‘}“üŒã‚Ì‘}“üˆÊ’u
+	CLayoutRange sSelectOld;		//ç¯„å›²é¸æŠ
+	CLayoutPoint ptInserted;		//æŒ¿å…¥å¾Œã®æŒ¿å…¥ä½ç½®
 	const struct IsIndentCharSpaceTab{
 		IsIndentCharSpaceTab(){}
 		bool operator()( const wchar_t ch ) const
@@ -93,10 +93,10 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			}
 			return m_szTab;
 		}
-		// TAB=4 ‚¾‚Æ‚µ‚Ä‚àATAB="x"•*4 ‚È‚Ì‚ÅSP‚Æ‚Í•‚ªˆá‚¤‚Ì‚ÅAPPFont‚¾‚ÆƒŒƒCƒAƒEƒgã‚ÍŒ…‚ªˆê’v‚µ‚Ü‚¹‚ñ
+		// TAB=4 ã ã¨ã—ã¦ã‚‚ã€TAB="x"å¹…*4 ãªã®ã§SPã¨ã¯å¹…ãŒé•ã†ã®ã§ã€PPFontã ã¨ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä¸Šã¯æ¡ãŒä¸€è‡´ã—ã¾ã›ã‚“
 		// @see CConvert_TabToSpace::DoConvert() convert/CConvert_TabToSpace.cpp
-		// ‚Æ‚è‚ ‚¦‚¸CMemoryIterator/CLayoutMgr::GetActualTabSpaceŒİŠ·‚ÅŒvZ‚µ‚Äx•‚Å‚ÌŒÂ”•ª‚ğ’Ç‰Á‚·‚é
-		// nCol‚Ü‚Å‚Ì•¶š‚ÌGetKetaOfChar‚ÆGetTabSpaceKetas‚ğg‚¤‚ÆTABw’è•¶š”•ª‚É‚È‚é
+		// ã¨ã‚Šã‚ãˆãšCMemoryIterator/CLayoutMgr::GetActualTabSpaceäº’æ›ã§è¨ˆç®—ã—ã¦xå¹…ã§ã®å€‹æ•°åˆ†ã‚’è¿½åŠ ã™ã‚‹
+		// nColã¾ã§ã®æ–‡å­—ã®GetKetaOfCharã¨GetTabSpaceKetasã‚’ä½¿ã†ã¨TABæŒ‡å®šæ–‡å­—æ•°åˆ†ã«ãªã‚‹
 		int Len( CLayoutInt nCol ) { return (m_nTab + m_nXWidth - ((Int)nCol + m_nXWidth) % m_nTab) / m_nSpWidth; }
 		wchar_t* m_szTab;
 		int m_nTab;
@@ -107,13 +107,13 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	const bool bSoftTab = ( eIndent == INDENT_TAB && m_pCommanderView->m_pTypeData->m_bInsSpace );
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 		if( INDENT_NONE != eIndent && !bSoftTab ){
-			// ¦‹éŒ`‘I‘ğ‚Å‚Í‚È‚¢‚Ì‚Å Command_WCHAR ‚©‚çŒÄ‚Ñ–ß‚µ‚³‚ê‚é‚æ‚¤‚È‚±‚Æ‚Í‚È‚¢
-			Command_WCHAR( pData[0] );	// 1•¶š“ü—Í
+			// â€»çŸ©å½¢é¸æŠã§ã¯ãªã„ã®ã§ Command_WCHAR ã‹ã‚‰å‘¼ã³æˆ»ã—ã•ã‚Œã‚‹ã‚ˆã†ãªã“ã¨ã¯ãªã„
+			Command_WCHAR( pData[0] );	// 1æ–‡å­—å…¥åŠ›
 		}
 		else{
-			// ¦‹éŒ`‘I‘ğ‚Å‚Í‚È‚¢‚Ì‚Å‚±‚±‚Ö—ˆ‚é‚Ì‚ÍÀÛ‚É‚Íƒ\ƒtƒgƒ^ƒu‚Ì‚Æ‚«‚¾‚¯
+			// â€»çŸ©å½¢é¸æŠã§ã¯ãªã„ã®ã§ã“ã“ã¸æ¥ã‚‹ã®ã¯å®Ÿéš›ã«ã¯ã‚½ãƒ•ãƒˆã‚¿ãƒ–ã®ã¨ãã ã‘
 			if( bSoftTab && !m_pCommanderView->IsInsMode() ){
 				DelCharForOverwrite(pData, nDataLen);
 			}
@@ -130,13 +130,13 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		return;
 	}
 	const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
-	/* ‹éŒ`”ÍˆÍ‘I‘ğ’†‚© */
+	/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ã‹ */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-// 2012.10.31 Moca ã‘‚«ƒ‚[ƒh‚Ì‚Æ‚«‚Ì‘I‘ğ”ÍˆÍíœ‚ğ‚â‚ß‚é
-// 2014.06.02 Moca ‹Œd—l‚ğ‘I‚×‚é‚æ‚¤‚É
+// 2012.10.31 Moca ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰ã®ã¨ãã®é¸æŠç¯„å›²å‰Šé™¤ã‚’ã‚„ã‚ã‚‹
+// 2014.06.02 Moca æ—§ä»•æ§˜ã‚’é¸ã¹ã‚‹ã‚ˆã†ã«
 		if( GetDllShareData().m_Common.m_sEdit.m_bOverWriteBoxDelete ){
 			// From Here 2001.12.03 hor
-			/* ã‘ƒ‚[ƒh‚Ì‚Æ‚«‚Í‘I‘ğ”ÍˆÍíœ */
+			/* ä¸Šæ›¸ãƒ¢ãƒ¼ãƒ‰ã®ã¨ãã¯é¸æŠç¯„å›²å‰Šé™¤ */
 			if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */){
 				sSelectOld = GetSelect();
 				m_pCommanderView->DeleteData( false );
@@ -146,38 +146,38 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			// To Here 2001.12.03 hor
 		}
 
-		/* 2“_‚ğ‘ÎŠp‚Æ‚·‚é‹éŒ`‚ğ‹‚ß‚é */
+		/* 2ç‚¹ã‚’å¯¾è§’ã¨ã™ã‚‹çŸ©å½¢ã‚’æ±‚ã‚ã‚‹ */
 		CLayoutRange rcSel;
 		TwoPointToRange(
 			&rcSel,
-			GetSelect().GetFrom(),	// ”ÍˆÍ‘I‘ğŠJn
-			GetSelect().GetTo()		// ”ÍˆÍ‘I‘ğI—¹
+			GetSelect().GetFrom(),	// ç¯„å›²é¸æŠé–‹å§‹
+			GetSelect().GetTo()		// ç¯„å›²é¸æŠçµ‚äº†
 		);
-		/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
+		/* ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™ */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false/*true 2002.01.25 hor*/ );
 
 		/*
-			•¶š‚ğ’¼‘O‚É‘}“ü‚³‚ê‚½•¶š‚ªA‚»‚ê‚É‚æ‚èŒ³‚ÌˆÊ’u‚©‚ç‚Ç‚ê‚¾‚¯Œã‚ë‚É‚¸‚ê‚½‚©B
-			‚±‚ê‚É]‚¢‹éŒ`‘I‘ğ”ÍˆÍ‚ğŒã‚ë‚É‚¸‚ç‚·B
+			æ–‡å­—ã‚’ç›´å‰ã«æŒ¿å…¥ã•ã‚ŒãŸæ–‡å­—ãŒã€ãã‚Œã«ã‚ˆã‚Šå…ƒã®ä½ç½®ã‹ã‚‰ã©ã‚Œã ã‘å¾Œã‚ã«ãšã‚ŒãŸã‹ã€‚
+			ã“ã‚Œã«å¾“ã„çŸ©å½¢é¸æŠç¯„å›²ã‚’å¾Œã‚ã«ãšã‚‰ã™ã€‚
 		*/
 		CLayoutInt minOffset( -1 );
 		/*
-			¡‘SŠp•¶š‚Ì¶‘¤‚ÌŒ…‘µ‚¦‚É‚Â‚¢‚Ä
-			(1) eIndent == INDENT_TAB ‚Ì‚Æ‚«
-				‘I‘ğ”ÍˆÍ‚ªƒ^ƒu‹«ŠE‚É‚ ‚é‚Æ‚«‚Éƒ^ƒu‚ğ“ü—Í‚·‚é‚ÆA‘SŠp•¶š‚Ì‘O”¼‚ª‘I‘ğ”ÍˆÍ‚©‚ç
-				‚Í‚İo‚µ‚Ä‚¢‚és‚Æ‚»‚¤‚Å‚È‚¢s‚Åƒ^ƒu‚Ì•‚ªA1‚©‚çİ’è‚³‚ê‚½Å‘å‚Ü‚Å‚Æ‘å‚«‚­ˆÙ‚È‚èA
-				Å‰‚É‘I‘ğ‚³‚ê‚Ä‚¢‚½•¶š‚ğ‘I‘ğ”ÍˆÍ“à‚É‚Æ‚Ç‚ß‚Ä‚¨‚­‚±‚Æ‚ª‚Å‚«‚È‚­‚È‚éB
-				Å‰‚Í‹éŒ`‘I‘ğ”ÍˆÍ“à‚É‚«‚ê‚¢‚Éû‚Ü‚Á‚Ä‚¢‚és‚É‚Íƒ^ƒu‚ğ‘}“ü‚¹‚¸A‚¿‚å‚Á‚Æ‚¾‚¯‚Í‚İ
-				o‚µ‚Ä‚¢‚és‚É‚¾‚¯ƒ^ƒu‚ğ‘}“ü‚·‚é‚±‚Æ‚Æ‚µA‚»‚ê‚Å‚Í‚Ç‚Ìs‚É‚àƒ^ƒu‚ª‘}“ü‚³‚ê‚È‚¢
-				‚Æ‚í‚©‚Á‚½‚Æ‚«‚Í‚â‚è’¼‚µ‚Äƒ^ƒu‚ğ‘}“ü‚·‚éB
-			(2) eIndent == INDENT_SPACE ‚Ì‚Æ‚«i¦]—ˆŒİŠ·“I‚È“®ìj
-				•1‚Å‘I‘ğ‚µ‚Ä‚¢‚éê‡‚Ì‚İ‘SŠp•¶š‚Ì¶‘¤‚ğŒ…‘µ‚¦‚·‚éB
-				Å‰‚Í‹éŒ`‘I‘ğ”ÍˆÍ“à‚É‚«‚ê‚¢‚Éû‚Ü‚Á‚Ä‚¢‚és‚É‚ÍƒXƒy[ƒX‚ğ‘}“ü‚¹‚¸A‚¿‚å‚Á‚Æ‚¾‚¯‚Í‚İ
-				o‚µ‚Ä‚¢‚és‚É‚¾‚¯ƒXƒy[ƒX‚ğ‘}“ü‚·‚é‚±‚Æ‚Æ‚µA‚»‚ê‚Å‚Í‚Ç‚Ìs‚É‚àƒXƒy[ƒX‚ª‘}“ü‚³‚ê‚È‚¢
-				‚Æ‚í‚©‚Á‚½‚Æ‚«‚Í‚â‚è’¼‚µ‚ÄƒXƒy[ƒX‚ğ‘}“ü‚·‚éB
+			â– å…¨è§’æ–‡å­—ã®å·¦å´ã®æ¡æƒãˆã«ã¤ã„ã¦
+			(1) eIndent == INDENT_TAB ã®ã¨ã
+				é¸æŠç¯„å›²ãŒã‚¿ãƒ–å¢ƒç•Œã«ã‚ã‚‹ã¨ãã«ã‚¿ãƒ–ã‚’å…¥åŠ›ã™ã‚‹ã¨ã€å…¨è§’æ–‡å­—ã®å‰åŠãŒé¸æŠç¯„å›²ã‹ã‚‰
+				ã¯ã¿å‡ºã—ã¦ã„ã‚‹è¡Œã¨ãã†ã§ãªã„è¡Œã§ã‚¿ãƒ–ã®å¹…ãŒã€1ã‹ã‚‰è¨­å®šã•ã‚ŒãŸæœ€å¤§ã¾ã§ã¨å¤§ããç•°ãªã‚Šã€
+				æœ€åˆã«é¸æŠã•ã‚Œã¦ã„ãŸæ–‡å­—ã‚’é¸æŠç¯„å›²å†…ã«ã¨ã©ã‚ã¦ãŠãã“ã¨ãŒã§ããªããªã‚‹ã€‚
+				æœ€åˆã¯çŸ©å½¢é¸æŠç¯„å›²å†…ã«ãã‚Œã„ã«åã¾ã£ã¦ã„ã‚‹è¡Œã«ã¯ã‚¿ãƒ–ã‚’æŒ¿å…¥ã›ãšã€ã¡ã‚‡ã£ã¨ã ã‘ã¯ã¿
+				å‡ºã—ã¦ã„ã‚‹è¡Œã«ã ã‘ã‚¿ãƒ–ã‚’æŒ¿å…¥ã™ã‚‹ã“ã¨ã¨ã—ã€ãã‚Œã§ã¯ã©ã®è¡Œã«ã‚‚ã‚¿ãƒ–ãŒæŒ¿å…¥ã•ã‚Œãªã„
+				ã¨ã‚ã‹ã£ãŸã¨ãã¯ã‚„ã‚Šç›´ã—ã¦ã‚¿ãƒ–ã‚’æŒ¿å…¥ã™ã‚‹ã€‚
+			(2) eIndent == INDENT_SPACE ã®ã¨ãï¼ˆâ€»å¾“æ¥äº’æ›çš„ãªå‹•ä½œï¼‰
+				å¹…1ã§é¸æŠã—ã¦ã„ã‚‹å ´åˆã®ã¿å…¨è§’æ–‡å­—ã®å·¦å´ã‚’æ¡æƒãˆã™ã‚‹ã€‚
+				æœ€åˆã¯çŸ©å½¢é¸æŠç¯„å›²å†…ã«ãã‚Œã„ã«åã¾ã£ã¦ã„ã‚‹è¡Œã«ã¯ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ¿å…¥ã›ãšã€ã¡ã‚‡ã£ã¨ã ã‘ã¯ã¿
+				å‡ºã—ã¦ã„ã‚‹è¡Œã«ã ã‘ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ¿å…¥ã™ã‚‹ã“ã¨ã¨ã—ã€ãã‚Œã§ã¯ã©ã®è¡Œã«ã‚‚ã‚¹ãƒšãƒ¼ã‚¹ãŒæŒ¿å…¥ã•ã‚Œãªã„
+				ã¨ã‚ã‹ã£ãŸã¨ãã¯ã‚„ã‚Šç›´ã—ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ¿å…¥ã™ã‚‹ã€‚
 		*/
 		bool alignFullWidthChar = eIndent == INDENT_TAB && 0 == rcSel.GetFrom().x % this->GetDocument()->m_cLayoutMgr.GetTabSpace();
-#if 1	// «‚±‚±‚ğc‚¹‚Î‘I‘ğ•1‚ÌSPACEƒCƒ“ƒfƒ“ƒg‚Å‘SŠp•¶š‚ğ‘µ‚¦‚é‹@”\(2)‚ª’Ç‰Á‚³‚ê‚éB
+#if 1	// â†“ã“ã“ã‚’æ®‹ã›ã°é¸æŠå¹…1ã®SPACEã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã§å…¨è§’æ–‡å­—ã‚’æƒãˆã‚‹æ©Ÿèƒ½(2)ãŒè¿½åŠ ã•ã‚Œã‚‹ã€‚
 		alignFullWidthChar = alignFullWidthChar || (eIndent == INDENT_SPACE && 1 == rcSel.GetTo().x - rcSel.GetFrom().x);
 #endif
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < rcSel.GetTo().y - rcSel.GetFrom().y );
@@ -190,13 +190,13 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			minOffset = CLayoutInt( -1 );
 			for( CLayoutInt nLineNum = rcSel.GetFrom().y; nLineNum <= rcSel.GetTo().y; ++nLineNum ){
 				const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-				//	Nov. 6, 2002 genta NULLƒ`ƒFƒbƒN’Ç‰Á
-				//	‚±‚ê‚ª‚È‚¢‚ÆEOFs‚ğŠÜ‚Ş‹éŒ`‘I‘ğ’†‚Ì•¶š—ñ“ü—Í‚Å—‚¿‚é
+				//	Nov. 6, 2002 genta NULLãƒã‚§ãƒƒã‚¯è¿½åŠ 
+				//	ã“ã‚ŒãŒãªã„ã¨EOFè¡Œã‚’å«ã‚€çŸ©å½¢é¸æŠä¸­ã®æ–‡å­—åˆ—å…¥åŠ›ã§è½ã¡ã‚‹
 				CLogicInt nIdxFrom, nIdxTo;
 				CLayoutInt xLayoutFrom, xLayoutTo;
 				bool reachEndOfLayout = false;
 				if( pcLayout ) {
-					/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é */
+					/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 					const struct {
 						CLayoutInt keta;
 						CLogicInt* outLogicX;
@@ -231,37 +231,37 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 					(pcLayout && pcLayout->GetLayoutEol() != EOL_NONE) ? xLayoutFrom == xLayoutTo : xLayoutTo < rcSel.GetFrom().x
 				);
 
-				// “ü—Í•¶š‚Ì‘}“üˆÊ’u
+				// å…¥åŠ›æ–‡å­—ã®æŒ¿å…¥ä½ç½®
 				const CLayoutPoint ptInsert( selectionIsOutOfLine ? rcSel.GetFrom().x : xLayoutFrom, nLineNum );
 
-				/* TAB‚âƒXƒy[ƒXƒCƒ“ƒfƒ“ƒg‚Ì */
+				/* TABã‚„ã‚¹ãƒšãƒ¼ã‚¹ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®æ™‚ */
 				if( INDENT_NONE != eIndent ) {
 					if( emptyLine || selectionIsOutOfLine ) {
-						continue; // ƒCƒ“ƒfƒ“ƒg•¶š‚ğƒCƒ“ƒfƒ“ƒg‘ÎÛ‚ª‘¶İ‚µ‚È‚¢•”•ª(‰üs•¶š‚ÌŒã‚ë‚â‹ós)‚É‘}“ü‚µ‚È‚¢B
+						continue; // ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ–‡å­—ã‚’ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¯¾è±¡ãŒå­˜åœ¨ã—ãªã„éƒ¨åˆ†(æ”¹è¡Œæ–‡å­—ã®å¾Œã‚ã‚„ç©ºè¡Œ)ã«æŒ¿å…¥ã—ãªã„ã€‚
 					}
 					/*
-						“ü—Í‚ªƒCƒ“ƒfƒ“ƒg—p‚Ì•¶š‚Ì‚Æ‚«A‚ ‚éğŒ‚Å“ü—Í•¶š‚ğ‘}“ü‚µ‚È‚¢‚±‚Æ‚Å
-						ƒCƒ“ƒfƒ“ƒg‚ğ‘µ‚¦‚é‚±‚Æ‚ª‚Å‚«‚éB
+						å…¥åŠ›ãŒã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆç”¨ã®æ–‡å­—ã®ã¨ãã€ã‚ã‚‹æ¡ä»¶ã§å…¥åŠ›æ–‡å­—ã‚’æŒ¿å…¥ã—ãªã„ã“ã¨ã§
+						ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚’æƒãˆã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
 						http://sakura-editor.sourceforge.net/cgi-bin/cyclamen/cyclamen.cgi?log=dev&v=4103
 					*/
-					if( nIdxFrom == nIdxTo // ‹éŒ`‘I‘ğ”ÍˆÍ‚Ì‰E’[‚Ü‚Å‚É”ÍˆÍ‚Ì¶’[‚É‚ ‚é•¶š‚Ì––”ö‚ªŠÜ‚Ü‚ê‚Ä‚¨‚ç‚¸A
-						&& ! selectionIsOutOfLine && pcLayout && IsIndentChar( pcLayout->GetPtr()[nIdxFrom] ) // ‚»‚ÌA––”ö‚ÌŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢•¶š‚ªƒCƒ“ƒfƒ“ƒg•¶š‚Å‚ ‚èA
-						&& rcSel.GetFrom().x < rcSel.GetTo().x // •0‹éŒ`‘I‘ğ‚Å‚Í‚È‚¢(<<ŒİŠ·«‚ÆƒCƒ“ƒfƒ“ƒg•¶š‘}“ü‚Ìg‚¢Ÿè‚Ì‚½‚ß‚ÉœŠO‚·‚é)‚Æ‚«B
+					if( nIdxFrom == nIdxTo // çŸ©å½¢é¸æŠç¯„å›²ã®å³ç«¯ã¾ã§ã«ç¯„å›²ã®å·¦ç«¯ã«ã‚ã‚‹æ–‡å­—ã®æœ«å°¾ãŒå«ã¾ã‚Œã¦ãŠã‚‰ãšã€
+						&& ! selectionIsOutOfLine && pcLayout && IsIndentChar( pcLayout->GetPtr()[nIdxFrom] ) // ãã®ã€æœ«å°¾ã®å«ã¾ã‚Œã¦ã„ãªã„æ–‡å­—ãŒã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ–‡å­—ã§ã‚ã‚Šã€
+						&& rcSel.GetFrom().x < rcSel.GetTo().x // å¹…0çŸ©å½¢é¸æŠã§ã¯ãªã„(<<äº’æ›æ€§ã¨ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ–‡å­—æŒ¿å…¥ã®ä½¿ã„å‹æ‰‹ã®ãŸã‚ã«é™¤å¤–ã™ã‚‹)ã¨ãã€‚
 					) {
 						continue;
 					}
 					/*
-						‘SŠp•¶š‚Ì¶‘¤‚ÌŒ…‘µ‚¦
+						å…¨è§’æ–‡å­—ã®å·¦å´ã®æ¡æƒãˆ
 					*/
 					if( alignFullWidthChar
 						&& (ptInsert.x == rcSel.GetFrom().x || (pcLayout && IsIndentChar( pcLayout->GetPtr()[nIdxFrom] )))
-					) {	// •¶š‚Ì¶‘¤‚ª”ÍˆÍ‚É‚Ò‚Á‚½‚èû‚Ü‚Á‚Ä‚¢‚é
+					) {	// æ–‡å­—ã®å·¦å´ãŒç¯„å›²ã«ã´ã£ãŸã‚Šåã¾ã£ã¦ã„ã‚‹
 						minOffset = CLayoutInt(0);
 						continue;
 					}
 				}
 
-				/* Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü */
+				/* ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥ */
 				m_pCommanderView->InsertData_CEditView(
 					ptInsert,
 					!bSoftTab? pData: stabData,
@@ -288,7 +288,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				}
 			}
 			if( insertionWasDone || !alignFullWidthChar ) {
-				break; // ƒ‹[ƒv‚Ì•K—v‚Í‚È‚¢B(1.•¶š‚Ì‘}“ü‚ªs‚í‚ê‚½‚©‚çB2.‚»‚¤‚Å‚Í‚È‚¢‚ª•¶š‚Ì‘}“ü‚ğT‚¦‚½‚¹‚¢‚Å‚Í‚È‚¢‚©‚ç)
+				break; // ãƒ«ãƒ¼ãƒ—ã®å¿…è¦ã¯ãªã„ã€‚(1.æ–‡å­—ã®æŒ¿å…¥ãŒè¡Œã‚ã‚ŒãŸã‹ã‚‰ã€‚2.ãã†ã§ã¯ãªã„ãŒæ–‡å­—ã®æŒ¿å…¥ã‚’æ§ãˆãŸã›ã„ã§ã¯ãªã„ã‹ã‚‰)
 			}
 		}
 
@@ -296,35 +296,35 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			::ShowWindow( hwndProgress, SW_HIDE );
 		}
 
-		// ‘}“ü‚³‚ê‚½•¶š‚Ì•ª‚¾‚¯‘I‘ğ”ÍˆÍ‚ğŒã‚ë‚É‚¸‚ç‚µArcSel‚ÉƒZƒbƒg‚·‚éB
+		// æŒ¿å…¥ã•ã‚ŒãŸæ–‡å­—ã®åˆ†ã ã‘é¸æŠç¯„å›²ã‚’å¾Œã‚ã«ãšã‚‰ã—ã€rcSelã«ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
 		if( 0 < minOffset ) {
 			rcSel.GetFromPointer()->x = t_min( rcSel.GetFrom().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 			rcSel.GetToPointer()->x = t_min( rcSel.GetTo().x + minOffset, this->GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		}
 
-		/* ƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+		/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 		GetCaret().MoveCursor( rcSel.GetFrom(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
-			/* ‘€ì‚Ì’Ç‰Á */
+		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
+			/* æ“ä½œã®è¿½åŠ  */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}
-		GetSelect().SetFrom(rcSel.GetFrom());	//”ÍˆÍ‘I‘ğŠJnˆÊ’u
-		GetSelect().SetTo(rcSel.GetTo());		//”ÍˆÍ‘I‘ğI—¹ˆÊ’u
+		GetSelect().SetFrom(rcSel.GetFrom());	//ç¯„å›²é¸æŠé–‹å§‹ä½ç½®
+		GetSelect().SetTo(rcSel.GetTo());		//ç¯„å›²é¸æŠçµ‚äº†ä½ç½®
 		m_pCommanderView->GetSelectionInfo().SetBoxSelect(true);
 	}
-	else if( GetSelect().IsLineOne() ){	// ’Êí‘I‘ğ(1s“à)
+	else if( GetSelect().IsLineOne() ){	// é€šå¸¸é¸æŠ(1è¡Œå†…)
 		if( INDENT_NONE != eIndent && !bSoftTab ){
-			// ¦‹éŒ`‘I‘ğ‚Å‚Í‚È‚¢‚Ì‚Å Command_WCHAR ‚©‚çŒÄ‚Ñ–ß‚µ‚³‚ê‚é‚æ‚¤‚È‚±‚Æ‚Í‚È‚¢
-			Command_WCHAR( pData[0] );	// 1•¶š“ü—Í
+			// â€»çŸ©å½¢é¸æŠã§ã¯ãªã„ã®ã§ Command_WCHAR ã‹ã‚‰å‘¼ã³æˆ»ã—ã•ã‚Œã‚‹ã‚ˆã†ãªã“ã¨ã¯ãªã„
+			Command_WCHAR( pData[0] );	// 1æ–‡å­—å…¥åŠ›
 		}
 		else{
-			// ¦‹éŒ`‘I‘ğ‚Å‚Í‚È‚¢‚Ì‚Å‚±‚±‚Ö—ˆ‚é‚Ì‚ÍÀÛ‚É‚Íƒ\ƒtƒgƒ^ƒu‚Ì‚Æ‚«‚¾‚¯
+			// â€»çŸ©å½¢é¸æŠã§ã¯ãªã„ã®ã§ã“ã“ã¸æ¥ã‚‹ã®ã¯å®Ÿéš›ã«ã¯ã‚½ãƒ•ãƒˆã‚¿ãƒ–ã®ã¨ãã ã‘
 			m_pCommanderView->DeleteData( false );
 			m_pCommanderView->InsertData_CEditView(
 				GetCaret().GetCaretLayoutPos(),
@@ -337,14 +337,14 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
 	}
-	else{	// ’Êí‘I‘ğ(•¡”s)
+	else{	// é€šå¸¸é¸æŠ(è¤‡æ•°è¡Œ)
 		sSelectOld.SetFrom(CLayoutPoint(CLayoutInt(0),GetSelect().GetFrom().y));
 		sSelectOld.SetTo  (CLayoutPoint(CLayoutInt(0),GetSelect().GetTo().y  ));
 		if( GetSelect().GetTo().x > 0 ){
 			sSelectOld.GetToPointer()->y++;
 		}
 
-		// Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚·
+		// ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < sSelectOld.GetTo().GetY2() - sSelectOld.GetFrom().GetY2() );
@@ -357,17 +357,17 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
 			CLayoutInt nLineCountPrev = GetDocument()->m_cLayoutMgr.GetLineCount();
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( i );
-			if( NULL == pcLayout ||						//	ƒeƒLƒXƒg‚ª–³‚¢EOL‚Ìs‚Í–³‹
-				pcLayout->GetLogicOffset() > 0 ||				//	Ü‚è•Ô‚µs‚Í–³‹
-				pcLayout->GetLengthWithoutEOL() == 0 ){	//	‰üs‚Ì‚İ‚Ìs‚Í–³‹‚·‚éB
+			if( NULL == pcLayout ||						//	ãƒ†ã‚­ã‚¹ãƒˆãŒç„¡ã„EOLã®è¡Œã¯ç„¡è¦–
+				pcLayout->GetLogicOffset() > 0 ||				//	æŠ˜ã‚Šè¿”ã—è¡Œã¯ç„¡è¦–
+				pcLayout->GetLengthWithoutEOL() == 0 ){	//	æ”¹è¡Œã®ã¿ã®è¡Œã¯ç„¡è¦–ã™ã‚‹ã€‚
 				continue;
 			}
 
-			/* ƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+			/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-			/* Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü */
+			/* ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥ */
 			m_pCommanderView->InsertData_CEditView(
 				CLayoutPoint(CLayoutInt(0),i),
 				!bSoftTab? pData: stabData,
@@ -375,12 +375,12 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				&ptInserted,
 				false
 			);
-			/* ƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+			/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 			GetCaret().MoveCursor( ptInserted, false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 			if ( nLineCountPrev != GetDocument()->m_cLayoutMgr.GetLineCount() ){
-				//	s”‚ª•Ï‰»‚µ‚½!!
+				//	è¡Œæ•°ãŒå¤‰åŒ–ã—ãŸ!!
 				sSelectOld.GetToPointer()->y += GetDocument()->m_cLayoutMgr.GetLineCount() - nLineCountPrev;
 			}
 			if( hwndProgress ){
@@ -402,16 +402,16 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		// From Here 2001.12.03 hor
 		GetCaret().MoveCursor( GetSelect().GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}
 		// To Here 2001.12.03 hor
 	}
-	/* Ä•`‰æ */
+	/* å†æç”» */
 	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	// 2002.01.25 hor
 	m_pCommanderView->RedrawAll();			// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
@@ -419,17 +419,17 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 
 
 
-/* ‹tƒCƒ“ƒfƒ“ƒg */
+/* é€†ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ */
 void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 {
 	//	Aug. 9, 2003 genta
-	//	‘I‘ğ‚³‚ê‚Ä‚¢‚È‚¢ê‡‚É‹tƒCƒ“ƒfƒ“ƒg‚µ‚½ê‡‚É
-	//	’ˆÓƒƒbƒZ[ƒW‚ğo‚·
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	//	é¸æŠã•ã‚Œã¦ã„ãªã„å ´åˆã«é€†ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã—ãŸå ´åˆã«
+	//	æ³¨æ„ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºã™
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 		EIndentType eIndent;
 		switch( wcChar ){
 		case WCODE::TAB:
-			eIndent = INDENT_TAB;	// ¦[SPACE‚Ì‘}“ü]ƒIƒvƒVƒ‡ƒ“‚ª ON ‚È‚çƒ\ƒtƒgƒ^ƒu‚É‚·‚éiWiki BugReport/66j
+			eIndent = INDENT_TAB;	// â€»[SPACEã®æŒ¿å…¥]ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãŒ ON ãªã‚‰ã‚½ãƒ•ãƒˆã‚¿ãƒ–ã«ã™ã‚‹ï¼ˆWiki BugReport/66ï¼‰
 			break;
 		case WCODE::SPACE:
 			eIndent = INDENT_SPACE;
@@ -442,24 +442,24 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		return;
 	}
 
-	/* ‹éŒ`”ÍˆÍ‘I‘ğ’†‚© */
+	/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ã‹ */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 		ErrorBeep();
 //**********************************************
-//	 ” Œ^‹tƒCƒ“ƒfƒ“ƒg‚É‚Â‚¢‚Ä‚ÍA•Û—¯‚Æ‚·‚é (1998.10.22)
+//	 ç®±å‹é€†ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã«ã¤ã„ã¦ã¯ã€ä¿ç•™ã¨ã™ã‚‹ (1998.10.22)
 //**********************************************
 	}
 	else{
 		GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
-		CLayoutRange sSelectOld;	//”ÍˆÍ‘I‘ğ
+		CLayoutRange sSelectOld;	//ç¯„å›²é¸æŠ
 		sSelectOld.SetFrom(CLayoutPoint(CLayoutInt(0),GetSelect().GetFrom().y));
 		sSelectOld.SetTo  (CLayoutPoint(CLayoutInt(0),GetSelect().GetTo().y  ));
 		if( GetSelect().GetTo().x > 0 ){
 			sSelectOld.GetToPointer()->y++;
 		}
 
-		/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
+		/* ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™ */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < sSelectOld.GetTo().GetY() - sSelectOld.GetFrom().GetY() );
@@ -476,7 +476,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 			const CLayout*	pcLayout;
 			CLogicInt		nLineLen;
 			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( i, &nLineLen, &pcLayout );
-			if( NULL == pcLayout || pcLayout->GetLogicOffset() > 0 ){ //Ü‚è•Ô‚µˆÈ~‚Ìs‚ÍƒCƒ“ƒfƒ“ƒgˆ—‚ğs‚í‚È‚¢
+			if( NULL == pcLayout || pcLayout->GetLogicOffset() > 0 ){ //æŠ˜ã‚Šè¿”ã—ä»¥é™ã®è¡Œã¯ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå‡¦ç†ã‚’è¡Œã‚ãªã„
 				continue;
 			}
 
@@ -485,14 +485,14 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 					nDelLen = CLogicInt(1);
 				}
 				else{
-					//í‚èæ‚é”¼ŠpƒXƒy[ƒX” (1`ƒ^ƒu••ª) -> nDelLen
+					//å‰Šã‚Šå–ã‚‹åŠè§’ã‚¹ãƒšãƒ¼ã‚¹æ•° (1ï½ã‚¿ãƒ–å¹…åˆ†) -> nDelLen
 					CLogicInt i;
 					CLogicInt nTabSpaces = CLogicInt((Int)GetDocument()->m_cLayoutMgr.GetTabSpaceKetas());
 					for( i = CLogicInt(0); i < nLineLen; i++ ){
 						if( WCODE::SPACE != pLine[i] ){
 							break;
 						}
-						//	Sep. 23, 2002 genta LayoutMgr‚Ì’l‚ğg‚¤
+						//	Sep. 23, 2002 genta LayoutMgrã®å€¤ã‚’ä½¿ã†
 						if( i >= nTabSpaces ){
 							break;
 						}
@@ -510,18 +510,18 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 				nDelLen = CLogicInt(1);
 			}
 
-			/* ƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+			/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-			/* w’èˆÊ’u‚Ìw’è’·ƒf[ƒ^íœ */
+			/* æŒ‡å®šä½ç½®ã®æŒ‡å®šé•·ãƒ‡ãƒ¼ã‚¿å‰Šé™¤ */
 			m_pCommanderView->DeleteData2(
 				CLayoutPoint(CLayoutInt(0),i),
 				nDelLen,	// 2001.12.03 hor
 				NULL
 			);
 			if ( nLineCountPrev != GetDocument()->m_cLayoutMgr.GetLineCount() ){
-				//	s”‚ª•Ï‰»‚µ‚½!!
+				//	è¡Œæ•°ãŒå¤‰åŒ–ã—ãŸ!!
 				sSelectOld.GetToPointer()->y += GetDocument()->m_cLayoutMgr.GetLineCount() - nLineCountPrev;
 			}
 			if( hwndProgress ){
@@ -536,22 +536,22 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		if( hwndProgress ){
 			::ShowWindow( hwndProgress, SW_HIDE );
 		}
-		GetSelect() = sSelectOld;	//”ÍˆÍ‘I‘ğ
+		GetSelect() = sSelectOld;	//ç¯„å›²é¸æŠ
 
 		// From Here 2001.12.03 hor
 		GetCaret().MoveCursor( GetSelect().GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 			GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}
 		// To Here 2001.12.03 hor
 	}
 
-	/* Ä•`‰æ */
+	/* å†æç”» */
 	m_pCommanderView->RedrawAll();	// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 }
 
@@ -559,18 +559,18 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 
 //	from CViewCommander_New.cpp
 /*! TRIM Step1
-	”ñ‘I‘ğ‚ÍƒJƒŒƒ“ƒgs‚ğ‘I‘ğ‚µ‚Ä m_pCommanderView->ConvSelectedArea ¨ ConvMemory ‚Ö
+	éé¸æŠæ™‚ã¯ã‚«ãƒ¬ãƒ³ãƒˆè¡Œã‚’é¸æŠã—ã¦ m_pCommanderView->ConvSelectedArea â†’ ConvMemory ã¸
 	@author hor
-	@date 2001.12.03 hor V‹Kì¬
+	@date 2001.12.03 hor æ–°è¦ä½œæˆ
 */
 void CViewCommander::Command_TRIM(
-	BOOL bLeft	//!<  [in] FALSE: ‰ETRIM / ‚»‚êˆÈŠO: ¶TRIM
+	BOOL bLeft	//!<  [in] FALSE: å³TRIM / ãã‚Œä»¥å¤–: å·¦TRIM
 )
 {
 	bool bBeDisableSelectArea = false;
 	CViewSelect& cViewSelect = m_pCommanderView->GetSelectionInfo();
 
-	if(!cViewSelect.IsTextSelected()){	//	”ñ‘I‘ğ‚Ís‘I‘ğ‚É•ÏX
+	if(!cViewSelect.IsTextSelected()){	//	éé¸æŠæ™‚ã¯è¡Œé¸æŠã«å¤‰æ›´
 		cViewSelect.m_sSelect.SetFrom(
 			CLayoutPoint(
 				CLayoutInt(0),
@@ -600,7 +600,7 @@ void CViewCommander::Command_TRIM(
 
 
 //	from CViewCommander_New.cpp
-/*!	•¨—s‚Ìƒ\[ƒg‚Ég‚¤\‘¢‘Ì*/
+/*!	ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆã«ä½¿ã†æ§‹é€ ä½“*/
 struct SORTDATA {
 	const CNativeW* pCmemLine;
 	CStringRef sKey;
@@ -608,15 +608,15 @@ struct SORTDATA {
 
 inline int CNativeW_comp(const CNativeW& lhs, const CNativeW& rhs )
 {
-	// ”äŠr’·‚É‚ÍI’[NUL‚ğŠÜ‚ß‚È‚¢‚Æ‚¢‚¯‚È‚¢
+	// æ¯”è¼ƒé•·ã«ã¯çµ‚ç«¯NULã‚’å«ã‚ãªã„ã¨ã„ã‘ãªã„
 	return wmemcmp(lhs.GetStringPtr(), rhs.GetStringPtr(),
 			t_min(lhs.GetStringLength() + 1, rhs.GetStringLength() + 1));
 }
 
-/*!	•¨—s‚Ìƒ\[ƒg‚Ég‚¤ŠÖ”(¸‡) */
+/*!	ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆã«ä½¿ã†é–¢æ•°(æ˜‡é †) */
 bool SortByLineAsc (SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) < 0;}
 
-/*!	•¨—s‚Ìƒ\[ƒg‚Ég‚¤ŠÖ”(~‡) */
+/*!	ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆã«ä½¿ã†é–¢æ•°(é™é †) */
 bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) > 0;}
 
 inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
@@ -628,25 +628,25 @@ inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
 	return ret;
 }
 
-/*!	•¨—s‚Ìƒ\[ƒg‚Ég‚¤ŠÖ”(¸‡) */
+/*!	ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆã«ä½¿ã†é–¢æ•°(æ˜‡é †) */
 bool SortByKeyAsc(SORTDATA* pst1, SORTDATA* pst2)  {return CStringRef_comp(pst1->sKey, pst2->sKey) < 0 ;}
 
-/*!	•¨—s‚Ìƒ\[ƒg‚Ég‚¤ŠÖ”(~‡) */
+/*!	ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆã«ä½¿ã†é–¢æ•°(é™é †) */
 bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return CStringRef_comp(pst1->sKey, pst2->sKey) > 0 ;}
 
-/*!	@brief •¨—s‚Ìƒ\[ƒg
+/*!	@brief ç‰©ç†è¡Œã®ã‚½ãƒ¼ãƒˆ
 
-	”ñ‘I‘ğ‚Í‰½‚àÀs‚µ‚È‚¢D‹éŒ`‘I‘ğ‚ÍA‚»‚Ì”ÍˆÍ‚ğƒL[‚É‚µ‚Ä•¨—s‚ğƒ\[ƒgD
+	éé¸æŠæ™‚ã¯ä½•ã‚‚å®Ÿè¡Œã—ãªã„ï¼çŸ©å½¢é¸æŠæ™‚ã¯ã€ãã®ç¯„å›²ã‚’ã‚­ãƒ¼ã«ã—ã¦ç‰©ç†è¡Œã‚’ã‚½ãƒ¼ãƒˆï¼
 	
-	@note ‚Æ‚è‚ ‚¦‚¸‰üsƒR[ƒh‚ğŠÜ‚Şƒf[ƒ^‚ğƒ\[ƒg‚µ‚Ä‚¢‚é‚Ì‚ÅA
-	ƒtƒ@ƒCƒ‹‚ÌÅIs‚Íƒ\[ƒg‘ÎÛŠO‚É‚µ‚Ä‚¢‚Ü‚·
+	@note ã¨ã‚Šã‚ãˆãšæ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å«ã‚€ãƒ‡ãƒ¼ã‚¿ã‚’ã‚½ãƒ¼ãƒˆã—ã¦ã„ã‚‹ã®ã§ã€
+	ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€çµ‚è¡Œã¯ã‚½ãƒ¼ãƒˆå¯¾è±¡å¤–ã«ã—ã¦ã„ã¾ã™
 	@author hor
-	@date 2001.12.03 hor V‹Kì¬
-	@date 2001.12.21 hor ‘I‘ğ”ÍˆÍ‚Ì’²®ƒƒWƒbƒN‚ğ’ù³
-	@date 2010.07.27 sƒ\[ƒg‚ÅƒRƒs[‚ğŒ¸‚ç‚·/NUL‚æ‚èŒã‚ë‚à”äŠr‘ÎÆ‚É
-	@date 2013.06.19 Moca ‹éŒ`‘I‘ğÅIs‚É‰üs‚ª‚È‚¢ê‡‚Í•t‰Á+ƒ\[ƒgŒã‚ÌÅIs‚Ì‰üs‚ğíœ
+	@date 2001.12.03 hor æ–°è¦ä½œæˆ
+	@date 2001.12.21 hor é¸æŠç¯„å›²ã®èª¿æ•´ãƒ­ã‚¸ãƒƒã‚¯ã‚’è¨‚æ­£
+	@date 2010.07.27 è¡Œã‚½ãƒ¼ãƒˆã§ã‚³ãƒ”ãƒ¼ã‚’æ¸›ã‚‰ã™/NULã‚ˆã‚Šå¾Œã‚ã‚‚æ¯”è¼ƒå¯¾ç…§ã«
+	@date 2013.06.19 Moca çŸ©å½¢é¸æŠæ™‚æœ€çµ‚è¡Œã«æ”¹è¡ŒãŒãªã„å ´åˆã¯ä»˜åŠ +ã‚½ãƒ¼ãƒˆå¾Œã®æœ€çµ‚è¡Œã®æ”¹è¡Œã‚’å‰Šé™¤
 */
-void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
+void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=æ˜‡é †,FALSE=é™é †
 {
 	CLayoutRange sRangeA;
 	CLogicRange sSelectOld;
@@ -660,14 +660,14 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 	int			j;
 	std::vector<SORTDATA*> sta;
 
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 		return;
 	}
 
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 		sRangeA=m_pCommanderView->GetSelectionInfo().m_sSelect;
 		if( m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().x==m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().x ){
-			//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ğLayoutMgr‚©‚çæ“¾‚·‚é‚æ‚¤‚É
+			//	Aug. 14, 2005 genta æŠ˜ã‚Šè¿”ã—å¹…ã‚’LayoutMgrã‹ã‚‰å–å¾—ã™ã‚‹ã‚ˆã†ã«
 			m_pCommanderView->GetSelectionInfo().m_sSelect.SetToX( GetDocument()->m_cLayoutMgr.GetMaxLineLayout() );
 		}
 		if(m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().x<m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().x){
@@ -689,10 +689,10 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		sSelectOld.GetToPointer()->y++;
 	}
 	else{
-		// ƒJ[ƒ\ƒ‹ˆÊ’u‚ªs“ª‚¶‚á‚È‚¢ • ‘I‘ğ”ÍˆÍ‚ÌI’[‚É‰üsƒR[ƒh‚ª‚ ‚éê‡‚Í
-		// ‚»‚Ìs‚à‘I‘ğ”ÍˆÍ‚É‰Á‚¦‚é
+		// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ãŒè¡Œé ­ã˜ã‚ƒãªã„ ï¼† é¸æŠç¯„å›²ã®çµ‚ç«¯ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒã‚ã‚‹å ´åˆã¯
+		// ãã®è¡Œã‚‚é¸æŠç¯„å›²ã«åŠ ãˆã‚‹
 		if ( sSelectOld.GetTo().x > 0 ) {
-			// 2006.03.31 Moca nSelectLineToOld‚ÍA•¨—s‚È‚Ì‚ÅLayoutŒn‚©‚çDocLineŒn‚ÉC³
+			// 2006.03.31 Moca nSelectLineToOldã¯ã€ç‰©ç†è¡Œãªã®ã§Layoutç³»ã‹ã‚‰DocLineç³»ã«ä¿®æ­£
 			const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
 			if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
 				sSelectOld.GetToPointer()->y++;
@@ -702,7 +702,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 	sSelectOld.SetFromX(CLogicInt(0));
 	sSelectOld.SetToX(CLogicInt(0));
 
-	//s‘I‘ğ‚³‚ê‚Ä‚È‚¢
+	//è¡Œé¸æŠã•ã‚Œã¦ãªã„
 	if(sSelectOld.IsLineOne()){
 		return;
 	}
@@ -718,20 +718,20 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		if( bBeginBoxSelectOld ){
 			nColumnFrom = m_pCommanderView->LineColumnToIndex( pcDocLine, nCF );
 			nColumnTo   = m_pCommanderView->LineColumnToIndex( pcDocLine, nCT );
-			if(nColumnTo<nLineLenWithoutEOL){	// BOX‘I‘ğ”ÍˆÍ‚Ì‰E’[‚ªs“à‚Éû‚Ü‚Á‚Ä‚¢‚éê‡
-				// 2006.03.31 genta std::string::assign‚ğg‚Á‚Äˆê•Ï”íœ
+			if(nColumnTo<nLineLenWithoutEOL){	// BOXé¸æŠç¯„å›²ã®å³ç«¯ãŒè¡Œå†…ã«åã¾ã£ã¦ã„ã‚‹å ´åˆ
+				// 2006.03.31 genta std::string::assignã‚’ä½¿ã£ã¦ä¸€æ™‚å¤‰æ•°å‰Šé™¤
 				pst->sKey = CStringRef( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
-			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOX‘I‘ğ”ÍˆÍ‚Ì‰E’[‚ªs––‚æ‚è‰E‚É‚Í‚İo‚µ‚Ä‚¢‚éê‡
+			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOXé¸æŠç¯„å›²ã®å³ç«¯ãŒè¡Œæœ«ã‚ˆã‚Šå³ã«ã¯ã¿å‡ºã—ã¦ã„ã‚‹å ´åˆ
 				pst->sKey = CStringRef( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
-				// ‘I‘ğ”ÍˆÍ‚Ì¶’[‚à‚Í‚İo‚µ‚Ä‚¢‚é==ƒf[ƒ^‚È‚µ
+				// é¸æŠç¯„å›²ã®å·¦ç«¯ã‚‚ã¯ã¿å‡ºã—ã¦ã„ã‚‹==ãƒ‡ãƒ¼ã‚¿ãªã—
 				pst->sKey = CStringRef( L"", 0 );
 			}
 		}
 		pst->pCmemLine = &cmemLine;
 		sta.push_back(pst);
 	}
-	const wchar_t* pStrLast = NULL; // ÅŒã‚Ìs‚É‰üs‚ª‚È‚¯‚ê‚Î‚»‚Ìƒ|ƒCƒ“ƒ^
+	const wchar_t* pStrLast = NULL; // æœ€å¾Œã®è¡Œã«æ”¹è¡ŒãŒãªã‘ã‚Œã°ãã®ãƒã‚¤ãƒ³ã‚¿
 	if( 0 < sta.size() ){
 		pStrLast = sta[sta.size()-1]->pCmemLine->GetStringPtr();
 		int nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
@@ -762,13 +762,13 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		repData[i].nSeq = opeSeq;
 		repData[i].cmemLine.SetString( sta[i]->pCmemLine->GetStringPtr(), sta[i]->pCmemLine->GetStringLength() );
 		if( pStrLast == sta[i]->pCmemLine->GetStringPtr() ){
-			// Œ³ÅIs‚É‰üs‚ª‚È‚¢‚Ì‚Å‚Â‚¯‚é
+			// å…ƒæœ€çµ‚è¡Œã«æ”¹è¡ŒãŒãªã„ã®ã§ã¤ã‘ã‚‹
 			CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
 			repData[i].cmemLine.AppendString( cWork.GetValue2(), cWork.GetLen() );
 		}
 	}
 	if( pStrLast ){
-		// ÅIs‚Ì‰üs‚ğíœ
+		// æœ€çµ‚è¡Œã®æ”¹è¡Œã‚’å‰Šé™¤
 		CLineData& lastData = repData[repData.size()-1];
 		int nLen = lastData.cmemLine.GetStringLength();
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -778,7 +778,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		lastData.cmemLine._SetStringLength(nLen);
 	}
 	{
-		// 2016.03.04 Moca sta“àƒf[ƒ^‚Ìíœ–Y‚êC³
+		// 2016.03.04 Moca staå†…ãƒ‡ãƒ¼ã‚¿ã®å‰Šé™¤å¿˜ã‚Œä¿®æ­£
 		int nSize = (int)sta.size();
 		for(int k = 0; k < nSize; k++){
 			delete sta[k];
@@ -797,7 +797,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		NULL
 	);
 
-	//	‘I‘ğƒGƒŠƒA‚Ì•œŒ³
+	//	é¸æŠã‚¨ãƒªã‚¢ã®å¾©å…ƒ
 	if(bBeginBoxSelectOld){
 		m_pCommanderView->GetSelectionInfo().SetBoxSelect(bBeginBoxSelectOld);
 		m_pCommanderView->GetSelectionInfo().m_sSelect=sRangeA;
@@ -810,10 +810,10 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		GetCaret().MoveCursor( m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo(), true );
 	}
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
-	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+				GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 			)
 		);
 	}
@@ -823,18 +823,18 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 
 
 //	from CViewCommander_New.cpp
-/*! @brief •¨—s‚Ìƒ}[ƒW
+/*! @brief ç‰©ç†è¡Œã®ãƒãƒ¼ã‚¸
 
-	˜A‘±‚·‚é•¨—s‚Å“à—e‚ª“¯ˆê‚Ì•¨‚ğ1s‚É‚Ü‚Æ‚ß‚Ü‚·D
+	é€£ç¶šã™ã‚‹ç‰©ç†è¡Œã§å†…å®¹ãŒåŒä¸€ã®ç‰©ã‚’1è¡Œã«ã¾ã¨ã‚ã¾ã™ï¼
 	
-	‹éŒ`‘I‘ğ‚Í‚È‚É‚àÀs‚µ‚Ü‚¹‚ñD
+	çŸ©å½¢é¸æŠæ™‚ã¯ãªã«ã‚‚å®Ÿè¡Œã—ã¾ã›ã‚“ï¼
 	
-	@note ‰üsƒR[ƒh‚ğŠÜ‚Şƒf[ƒ^‚ğ”äŠr‚µ‚Ä‚¢‚é‚Ì‚ÅA
-	ƒtƒ@ƒCƒ‹‚ÌÅIs‚Íƒ\[ƒg‘ÎÛŠO‚É‚µ‚Ä‚¢‚Ü‚·
+	@note æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å«ã‚€ãƒ‡ãƒ¼ã‚¿ã‚’æ¯”è¼ƒã—ã¦ã„ã‚‹ã®ã§ã€
+	ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€çµ‚è¡Œã¯ã‚½ãƒ¼ãƒˆå¯¾è±¡å¤–ã«ã—ã¦ã„ã¾ã™
 	
 	@author hor
-	@date 2001.12.03 hor V‹Kì¬
-	@date 2001.12.21 hor ‘I‘ğ”ÍˆÍ‚Ì’²®ƒƒWƒbƒN‚ğ’ù³
+	@date 2001.12.03 hor æ–°è¦ä½œæˆ
+	@date 2001.12.21 hor é¸æŠç¯„å›²ã®èª¿æ•´ãƒ­ã‚¸ãƒƒã‚¯ã‚’è¨‚æ­£
 */
 void CViewCommander::Command_MERGE(void)
 {
@@ -844,7 +844,7 @@ void CViewCommander::Command_MERGE(void)
 	int			j;
 	CLayoutInt		nMergeLayoutLines;
 
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 		return;
 	}
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
@@ -852,24 +852,24 @@ void CViewCommander::Command_MERGE(void)
 	}
 
 	nCaretPosYOLD=GetCaret().GetCaretLayoutPos().GetY();
-	CLogicRange sSelectOld; //”ÍˆÍ‘I‘ğ
+	CLogicRange sSelectOld; //ç¯„å›²é¸æŠ
 	GetDocument()->m_cLayoutMgr.LayoutToLogic(
 		m_pCommanderView->GetSelectionInfo().m_sSelect,
 		&sSelectOld
 	);
 
 	// 2001.12.21 hor
-	// ƒJ[ƒ\ƒ‹ˆÊ’u‚ªs“ª‚¶‚á‚È‚¢ • ‘I‘ğ”ÍˆÍ‚ÌI’[‚É‰üsƒR[ƒh‚ª‚ ‚éê‡‚Í
-	// ‚»‚Ìs‚à‘I‘ğ”ÍˆÍ‚É‰Á‚¦‚é
+	// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ãŒè¡Œé ­ã˜ã‚ƒãªã„ ï¼† é¸æŠç¯„å›²ã®çµ‚ç«¯ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒã‚ã‚‹å ´åˆã¯
+	// ãã®è¡Œã‚‚é¸æŠç¯„å›²ã«åŠ ãˆã‚‹
 	if ( sSelectOld.GetTo().x > 0 ) {
 #if 0
-		const CLayout* pcLayout=GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().GetY2()); //2007.10.09 kobake ’PˆÊ¬İƒoƒOC³
+		const CLayout* pcLayout=GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().GetY2()); //2007.10.09 kobake å˜ä½æ··åœ¨ãƒã‚°ä¿®æ­£
 		if( NULL != pcLayout && EOL_NONE != pcLayout->GetLayoutEol() ){
 			sSelectOld.GetToPointer()->y++;
 			//sSelectOld.GetTo().y++;
 		}
 #else
-		// 2010.08.22 Moca ƒ\[ƒg‚Æd—l‚ğ‡‚í‚¹‚é
+		// 2010.08.22 Moca ã‚½ãƒ¼ãƒˆã¨ä»•æ§˜ã‚’åˆã‚ã›ã‚‹
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
 		if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
 			sSelectOld.GetToPointer()->y++;
@@ -880,7 +880,7 @@ void CViewCommander::Command_MERGE(void)
 	sSelectOld.SetFromX(CLogicInt(0));
 	sSelectOld.SetToX(CLogicInt(0));
 
-	//s‘I‘ğ‚³‚ê‚Ä‚È‚¢
+	//è¡Œé¸æŠã•ã‚Œã¦ãªã„
 	if(sSelectOld.IsLineOne()){
 		return;
 	}
@@ -891,7 +891,7 @@ void CViewCommander::Command_MERGE(void)
 	CLayoutRange sSelectOld_Layout;
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
 
-	// 2010.08.22 NUL‘Î‰C³
+	// 2010.08.22 NULå¯¾å¿œä¿®æ­£
 	std::vector<CStringRef> lineArr;
 	pLinew=NULL;
 	int nLineLenw = 0;
@@ -927,15 +927,15 @@ void CViewCommander::Command_MERGE(void)
 			NULL
 		);
 	}else{
-		// 2010.08.23 –¢•ÏX‚È‚ç•ÏX‚µ‚È‚¢
+		// 2010.08.23 æœªå¤‰æ›´ãªã‚‰å¤‰æ›´ã—ãªã„
 	}
 
 	j-=GetDocument()->m_cDocLineMgr.GetLineCount();
 	nMergeLayoutLines -= GetDocument()->m_cLayoutMgr.GetLineCount();
 
-	//	‘I‘ğƒGƒŠƒA‚Ì•œŒ³
+	//	é¸æŠã‚¨ãƒªã‚¢ã®å¾©å…ƒ
 	m_pCommanderView->GetSelectionInfo().m_sSelect=sSelectOld_Layout;
-	// 2010.08.22 À•W¬İƒoƒO
+	// 2010.08.22 åº§æ¨™æ··åœ¨ãƒã‚°
 	m_pCommanderView->GetSelectionInfo().m_sSelect.GetToPointer()->y -= nMergeLayoutLines;
 
 	if(nCaretPosYOLD==m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().y){
@@ -944,10 +944,10 @@ void CViewCommander::Command_MERGE(void)
 		GetCaret().MoveCursor( m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo(), true );
 	}
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
-	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+				GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 			)
 		);
 	}
@@ -963,91 +963,91 @@ void CViewCommander::Command_MERGE(void)
 
 
 //	from CViewCommander_New.cpp
-/* ƒƒjƒ…[‚©‚ç‚ÌÄ•ÏŠ·‘Î‰ minfu 2002.04.09
+/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰ã®å†å¤‰æ›å¯¾å¿œ minfu 2002.04.09
 
-	@date 2002.04.11 YAZAKI COsVersionInfo‚ÌƒJƒvƒZƒ‹‰»‚ğç‚è‚Ü‚µ‚å‚¤B
-	@date 2010.03.17 ATOK—p‚ÍSCS_SETRECONVERTSTRING => ATRECONVERTSTRING_SET‚É•ÏX
-		2002.11.20 Stonee‚³‚ñ‚Ìî•ñ
+	@date 2002.04.11 YAZAKI COsVersionInfoã®ã‚«ãƒ—ã‚»ãƒ«åŒ–ã‚’å®ˆã‚Šã¾ã—ã‚‡ã†ã€‚
+	@date 2010.03.17 ATOKç”¨ã¯SCS_SETRECONVERTSTRING => ATRECONVERTSTRING_SETã«å¤‰æ›´
+		2002.11.20 Stoneeã•ã‚“ã®æƒ…å ±
 */
 void CViewCommander::Command_Reconvert(void)
 {
 	const int ATRECONVERTSTRING_SET = 1;
 
-	//ƒTƒCƒY‚ğæ“¾
+	//ã‚µã‚¤ã‚ºã‚’å–å¾—
 	int nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL);
-	if( 0 == nSize )  // ƒTƒCƒY‚O‚Ì‚Í‰½‚à‚µ‚È‚¢
+	if( 0 == nSize )  // ã‚µã‚¤ã‚ºï¼ã®æ™‚ã¯ä½•ã‚‚ã—ãªã„
 		return ;
 
 	bool bUseUnicodeATOK = false;
-	//ƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN
+	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯
 	if( !OsSupportReconvert() ){
 		
-		// MSIME‚©‚Ç‚¤‚©
+		// MSIMEã‹ã©ã†ã‹
 		HWND hWnd = ImmGetDefaultIMEWnd(m_pCommanderView->GetHwnd());
 		if (SendMessage(hWnd, m_pCommanderView->m_uWM_MSIME_RECONVERTREQUEST, FID_RECONVERT_VERSION, 0)){
 			SendMessage(hWnd, m_pCommanderView->m_uWM_MSIME_RECONVERTREQUEST, 0, (LPARAM)m_pCommanderView->GetHwnd());
 			return ;
 		}
 
-		// ATOK‚ªg‚¦‚é‚©‚Ç‚¤‚©
+		// ATOKãŒä½¿ãˆã‚‹ã‹ã©ã†ã‹
 		TCHAR sz[256];
-		ImmGetDescription(GetKeyboardLayout(0),sz,_countof(sz)); //à–¾‚Ìæ“¾
+		ImmGetDescription(GetKeyboardLayout(0),sz,_countof(sz)); //èª¬æ˜ã®å–å¾—
 		if ( (_tcsncmp(sz,_T("ATOK"),4) == 0) && (NULL != m_pCommanderView->m_AT_ImmSetReconvertString) ){
 			bUseUnicodeATOK = true;
 		}else{
-			//‘Î‰IME‚È‚µ
+			//å¯¾å¿œIMEãªã—
 			return;
 		}
 	}else{
-		//Œ»İ‚ÌIME‚ª‘Î‰‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
-		//IME‚ÌƒvƒƒpƒeƒB
+		//ç¾åœ¨ã®IMEãŒå¯¾å¿œã—ã¦ã„ã‚‹ã‹ã©ã†ã‹
+		//IMEã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 		if ( !(ImmGetProperty(GetKeyboardLayout(0),IGP_SETCOMPSTR) & SCS_CAP_SETRECONVERTSTRING) ){
-			//‘Î‰IME‚È‚µ
+			//å¯¾å¿œIMEãªã—
 			return ;
 		}
 	}
 
-	//ƒTƒCƒYæ“¾‚µ’¼‚µ
+	//ã‚µã‚¤ã‚ºå–å¾—ã—ç›´ã—
 	if (!UNICODE_BOOL && bUseUnicodeATOK) {
 		nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL || bUseUnicodeATOK);
-		if( 0 == nSize )  // ƒTƒCƒY‚O‚Ì‚Í‰½‚à‚µ‚È‚¢
+		if( 0 == nSize )  // ã‚µã‚¤ã‚ºï¼ã®æ™‚ã¯ä½•ã‚‚ã—ãªã„
 			return ;
 	}
 
-	//IME‚ÌƒRƒ“ƒeƒLƒXƒgæ“¾
+	//IMEã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå–å¾—
 	HIMC hIMC = ::ImmGetContext( m_pCommanderView->GetHwnd() );
 	
-	//—ÌˆæŠm•Û
+	//é ˜åŸŸç¢ºä¿
 	PRECONVERTSTRING pReconv = (PRECONVERTSTRING)::HeapAlloc(
 		GetProcessHeap(),
 		HEAP_GENERATE_EXCEPTIONS,
 		nSize
 	);
 	
-	//\‘¢‘Ìİ’è
-	// Size‚Íƒoƒbƒtƒ@Šm•Û‘¤‚ªİ’è
+	//æ§‹é€ ä½“è¨­å®š
+	// Sizeã¯ãƒãƒƒãƒ•ã‚¡ç¢ºä¿å´ãŒè¨­å®š
 	pReconv->dwSize = nSize;
 	pReconv->dwVersion = 0;
 	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL || bUseUnicodeATOK);
 	
-	//•ÏŠ·”ÍˆÍ‚Ì’²®
+	//å¤‰æ›ç¯„å›²ã®èª¿æ•´
 	if(bUseUnicodeATOK){
 		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 	}
 
-	//’²®‚µ‚½•ÏŠ·”ÍˆÍ‚ğ‘I‘ğ‚·‚é
+	//èª¿æ•´ã—ãŸå¤‰æ›ç¯„å›²ã‚’é¸æŠã™ã‚‹
 	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL || bUseUnicodeATOK);
 	
-	//Ä•ÏŠ·Às
+	//å†å¤‰æ›å®Ÿè¡Œ
 	if(bUseUnicodeATOK){
 		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
 	}
 
-	//—Ìˆæ‰ğ•ú
+	//é ˜åŸŸè§£æ”¾
 	::HeapFree(GetProcessHeap(),0,(LPVOID)pReconv);
 	::ImmReleaseContext( m_pCommanderView->GetHwnd(), hIMC);
 }

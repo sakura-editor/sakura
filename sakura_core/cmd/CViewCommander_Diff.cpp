@@ -1,7 +1,7 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(Diff)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(Diff)é–¢æ•°ç¾¤
 
-	2007.10.25 kobake CEditView_Diff‚©‚ç•ª—£
+	2007.10.25 kobake CEditView_Diffã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -33,7 +33,7 @@
 
 
 /*!
-	@return true:³íI—¹ / false:ƒGƒ‰[I—¹
+	@return true:æ­£å¸¸çµ‚äº† / false:ã‚¨ãƒ©ãƒ¼çµ‚äº†
 */
 static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
@@ -51,32 +51,32 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 		for(;;){
 			pLineSrc = docMgr.GetLine(poSrc.y)->GetDocLineStrWithEOL(&nLineLenSrc);
 			do{
-				// m_sWorkBuffer#m_Work‚Ì”r‘¼§ŒäBŠO•”ƒRƒ}ƒ“ƒho—Í/TraceOut/Diff‚ª‘ÎÛ
+				// m_sWorkBuffer#m_Workã®æ’ä»–åˆ¶å¾¡ã€‚å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å‡ºåŠ›/TraceOut/DiffãŒå¯¾è±¡
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
-				// s(‰üs’PˆÊ)ƒf[ƒ^‚Ì—v‹
+				// è¡Œ(æ”¹è¡Œå˜ä½)ãƒ‡ãƒ¼ã‚¿ã®è¦æ±‚
 				nLineLenDes = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
 				if( nLineLenDes < 0 ){
 					return false;
 				}
-				// ‚Ç‚Á‚¿‚àÅIs(EOF)‚É“’BB“¯ˆê‚Æ”»’è
+				// ã©ã£ã¡ã‚‚æœ€çµ‚è¡Œ(EOF)ã«åˆ°é”ã€‚åŒä¸€ã¨åˆ¤å®š
 				if( pLineSrc == NULL && 0 == nLineLenDes ){
 					bDifferent = false;
 					return true;
 				}
-				// ‚Ç‚¿‚ç‚©‚¾‚¯‚ªAÅIs‚É“’B
+				// ã©ã¡ã‚‰ã‹ã ã‘ãŒã€æœ€çµ‚è¡Œã«åˆ°é”
 				if( pLineSrc == NULL || 0 == nLineLenDes ){
 					return true;
 				}
 				int nDstEndPos = std::min( nLineLenDes, max_size ) + nLineOffset;
 				if( poDes.x < nLineOffset ){
-					// 1s–Ús“ªƒf[ƒ^“Ç‚İ”ò‚Î‚µ
+					// 1è¡Œç›®è¡Œé ­ãƒ‡ãƒ¼ã‚¿èª­ã¿é£›ã°ã—
 					if( nLineLenDes < poDes.x ){
 						poDes.x = nLineLenDes - 1;
 						return true;
 					}
 					nLineOffset = poDes.x;
 				}else{
-					// Note: ƒTƒƒQ[ƒg/‰üs‚Ì“r’†‚ÉƒJ[ƒ\ƒ‹‚ª‚­‚é‚±‚Æ‚ª‚ ‚é
+					// Note: ã‚µãƒ­ã‚²ãƒ¼ãƒˆ/æ”¹è¡Œã®é€”ä¸­ã«ã‚«ãƒ¼ã‚½ãƒ«ãŒãã‚‹ã“ã¨ãŒã‚ã‚‹
 					while( poDes.x < nDstEndPos ){
 						if( nLineLenSrc <= poSrc.x ){
 							return true;
@@ -105,7 +105,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 	return false;
 }
 
-/* ƒtƒ@ƒCƒ‹“à—e”äŠr */
+/* ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ */
 void CViewCommander::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd = NULL;
@@ -113,7 +113,7 @@ void CViewCommander::Command_COMPARE( void )
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
-	/* ”äŠrŒãA¶‰E‚É•À‚×‚Ä•\¦ */
+	/* æ¯”è¼ƒå¾Œã€å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 	cDlgCompare.m_bCompareAndTileHorz = GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
 		G_AppInstance(),
@@ -126,10 +126,10 @@ void CViewCommander::Command_COMPARE( void )
 	if( !bDlgCompareResult ){
 		return;
 	}
-	/* ”äŠrŒãA¶‰E‚É•À‚×‚Ä•\¦ */
+	/* æ¯”è¼ƒå¾Œã€å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
 	GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
-	//ƒ^ƒuƒEƒCƒ“ƒhƒE‚Í‹Ö~	//@@@ 2003.06.12 MIK
+	//ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦æ™‚ã¯ç¦æ­¢	//@@@ 2003.06.12 MIK
 	if( FALSE != GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
 	 && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
@@ -143,10 +143,10 @@ void CViewCommander::Command_COMPARE( void )
 
 
 	/*
-	  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-	  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
-	  ¨
-	  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
+	  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+	  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
+	  â†’
+	  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
 	*/
 	CLogicPoint	poSrc;
 	GetDocument()->m_cLayoutMgr.LayoutToLogic(
@@ -154,7 +154,7 @@ void CViewCommander::Command_COMPARE( void )
 		&poSrc
 	);
 
-	// ƒJ[ƒ\ƒ‹ˆÊ’uæ“¾ -> poDes
+	// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å–å¾— -> poDes
 	CLogicPoint	poDes;
 	{
 		::SendMessageAny( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
@@ -163,33 +163,33 @@ void CViewCommander::Command_COMPARE( void )
 		poDes.y = ppoCaretDes->y;
 	}
 	bool bDifferent = false;
-	// –{ˆ—
+	// æœ¬å‡¦ç†
 	Commander_COMPARE_core(*this, bDifferent, hwndCompareWnd, poSrc, poDes);
 
-	/* ”äŠrŒãA¶‰E‚É•À‚×‚Ä•\¦ */
-//From Here Oct. 10, 2000 JEPRO	ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğƒ{ƒ^ƒ“‰»‚·‚ê‚ÎˆÈ‰º‚Ìs(To Here ‚Ü‚Å)‚Í•s—v‚Ì‚Í‚¸‚¾‚ª
-//	‚¤‚Ü‚­‚¢‚©‚È‚©‚Á‚½‚Ì‚ÅŒ³‚É–ß‚µ‚Ä‚ ‚éc
+	/* æ¯”è¼ƒå¾Œã€å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */
+//From Here Oct. 10, 2000 JEPRO	ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã‚’ãƒœã‚¿ãƒ³åŒ–ã™ã‚Œã°ä»¥ä¸‹ã®è¡Œ(To Here ã¾ã§)ã¯ä¸è¦ã®ã¯ãšã ãŒ
+//	ã†ã¾ãã„ã‹ãªã‹ã£ãŸã®ã§å…ƒã«æˆ»ã—ã¦ã‚ã‚‹â€¦
 	if( GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz ){
 		HWND* phwndArr = new HWND[2];
 		phwndArr[0] = GetMainWindow();
 		phwndArr[1] = hwndCompareWnd;
 		
-		int i;	// Jan. 28, 2002 genta ƒ‹[ƒv•Ï” int‚ÌéŒ¾‚ğ‘O‚Éo‚µ‚½D
-				// ŒİŠ·«‘ÎôDfor‚Ì()“à‚ÅéŒ¾‚·‚é‚ÆŒÃ‚¢‹KŠi‚ÆV‚µ‚¢‹KŠi‚Å–µ‚‚·‚é‚Ì‚ÅD
+		int i;	// Jan. 28, 2002 genta ãƒ«ãƒ¼ãƒ—å¤‰æ•° intã®å®£è¨€ã‚’å‰ã«å‡ºã—ãŸï¼
+				// äº’æ›æ€§å¯¾ç­–ï¼forã®()å†…ã§å®£è¨€ã™ã‚‹ã¨å¤ã„è¦æ ¼ã¨æ–°ã—ã„è¦æ ¼ã§çŸ›ç›¾ã™ã‚‹ã®ã§ï¼
 		for( i = 0; i < 2; ++i ){
 			if( ::IsZoomed( phwndArr[i] ) ){
 				::ShowWindow( phwndArr[i], SW_RESTORE );
 			}
 		}
-		//	ƒfƒXƒNƒgƒbƒvƒTƒCƒY‚ğ“¾‚é 2002.1.24 YAZAKI
+		//	ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã‚µã‚¤ã‚ºã‚’å¾—ã‚‹ 2002.1.24 YAZAKI
 		RECT	rcDesktop;
-		//	May 01, 2004 genta ƒ}ƒ‹ƒ`ƒ‚ƒjƒ^‘Î‰
+		//	May 01, 2004 genta ãƒãƒ«ãƒãƒ¢ãƒ‹ã‚¿å¯¾å¿œ
 		::GetMonitorWorkRect( phwndArr[0], &rcDesktop );
 		int width = (rcDesktop.right - rcDesktop.left ) / 2;
 		for( i = 1; i >= 0; i-- ){
 			::SetWindowPos(
 				phwndArr[i], 0,
-				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta ƒ^ƒXƒNƒo[‚ª¶‚É‚ ‚éê‡‚ğl—¶
+				width * i + rcDesktop.left, rcDesktop.top, // Oct. 18, 2003 genta ã‚¿ã‚¹ã‚¯ãƒãƒ¼ãŒå·¦ã«ã‚ã‚‹å ´åˆã‚’è€ƒæ…®
 				width, rcDesktop.bottom - rcDesktop.top,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
@@ -199,26 +199,26 @@ void CViewCommander::Command_COMPARE( void )
 	}
 //To Here Oct. 10, 2000
 
-	//	2002/05/11 YAZAKI eƒEƒBƒ“ƒhƒE‚ğ‚¤‚Ü‚­İ’è‚µ‚Ä‚İ‚éB
+	//	2002/05/11 YAZAKI è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã†ã¾ãè¨­å®šã—ã¦ã¿ã‚‹ã€‚
 	if( !bDifferent ){
 		TopInfoMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD22) );
 	}
 	else{
 //		TopInfoMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );
-		/* ƒJ[ƒ\ƒ‹‚ğˆÚ“®‚³‚¹‚é
-			”äŠr‘Šè‚ÍA•ÊƒvƒƒZƒX‚È‚Ì‚ÅƒƒbƒZ[ƒW‚ğ”ò‚Î‚·B
+		/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•ã•ã›ã‚‹
+			æ¯”è¼ƒç›¸æ‰‹ã¯ã€åˆ¥ãƒ—ãƒ­ã‚»ã‚¹ãªã®ã§ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é£›ã°ã™ã€‚
 		*/
 		GetDllShareData().m_sWorkBuffer.m_LogicPoint = poDes;
 		::SendMessageAny( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
-		/* ƒJ[ƒ\ƒ‹‚ğˆÚ“®‚³‚¹‚é */
+		/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•ã•ã›ã‚‹ */
 		GetDllShareData().m_sWorkBuffer.m_LogicPoint = poSrc;
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
-		TopWarningMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );	// ˆÊ’u‚ğ•ÏX‚µ‚Ä‚©‚çƒƒbƒZ[ƒW	2008/4/27 Uchi
+		TopWarningMessage( hwndMsgBox, LS(STR_ERR_CEDITVIEW_CMD23) );	// ä½ç½®ã‚’å¤‰æ›´ã—ã¦ã‹ã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸	2008/4/27 Uchi
 	}
 
-	/* ŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
-	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+	/* é–‹ã„ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
+	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 	ActivateFrameWindow( GetMainWindow() );
 	return;
 }
@@ -245,10 +245,10 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 
 
 
-/*!	·•ª•\¦
-	@note	HandleCommand‚©‚ç‚ÌŒÄ‚Ño‚µ‘Î‰(ƒ_ƒCƒAƒƒO‚È‚µ”Å)
+/*!	å·®åˆ†è¡¨ç¤º
+	@note	HandleCommandã‹ã‚‰ã®å‘¼ã³å‡ºã—å¯¾å¿œ(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãªã—ç‰ˆ)
 	@author	maru
-	@date	2005/10/28 ‚±‚ê‚Ü‚Å‚ÌCommand_Diff‚Ím_pCommanderView->ViewDiffInfo‚É–¼Ì•ÏX
+	@date	2005/10/28 ã“ã‚Œã¾ã§ã®Command_Diffã¯m_pCommanderView->ViewDiffInfoã«åç§°å¤‰æ›´
 */
 void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
@@ -264,13 +264,13 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		return;
 	}
 
-	//©ƒtƒ@ƒCƒ‹
-	// 2013.06.21 Unicode‚Ì‚Æ‚«‚ÍA‚¢‚Â‚àƒtƒ@ƒCƒ‹o—Í
+	//è‡ªãƒ•ã‚¡ã‚¤ãƒ«
+	// 2013.06.21 Unicodeã®ã¨ãã¯ã€ã„ã¤ã‚‚ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›
 	ECodeType code = GetDocument()->GetDocumentEncoding();
 	ECodeType saveCode = GetDiffCreateTempFileCode(code);
 	ECodeType code2 = GetFileCharCode(szDiffFile2);
 	ECodeType saveCode2 = GetDiffCreateTempFileCode(code2);
-	// 2014.10.24 ƒR[ƒh‚ªˆá‚¤‚Æ‚«‚Í•K‚¸UTF-8ƒtƒ@ƒCƒ‹o—Í
+	// 2014.10.24 ã‚³ãƒ¼ãƒ‰ãŒé•ã†ã¨ãã¯å¿…ãšUTF-8ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›
 	if( saveCode != saveCode2 ){
 		saveCode = CODE_UTF8;
 		saveCode2 = CODE_UTF8;
@@ -278,7 +278,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 
 	if( GetDocument()->m_cDocEditor.IsModified()
 		|| saveCode != code
-		|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/ƒAƒEƒgƒvƒbƒg‚à‘ÎÛ‚É‚·‚é
+		|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚‚å¯¾è±¡ã«ã™ã‚‹
 	){
 		if( !m_pCommanderView->MakeDiffTmpFile(szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist()) ){
 			return;
@@ -305,10 +305,10 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		bUTF8io = false;
 	}
 
-	//·•ª•\¦
+	//å·®åˆ†è¡¨ç¤º
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt, bUTF8io);
 
-	//ˆêƒtƒ@ƒCƒ‹‚ğíœ‚·‚é
+	//ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹
 	if( bTmpFile1 ) _tunlink( szTmpFile1 );
 	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
@@ -318,19 +318,19 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 
 
 
-/*!	·•ª•\¦
-	@note	HandleCommand‚©‚ç‚ÌŒÄ‚Ño‚µ‘Î‰(ƒ_ƒCƒAƒƒO‚ ‚è”Å)
+/*!	å·®åˆ†è¡¨ç¤º
+	@note	HandleCommandã‹ã‚‰ã®å‘¼ã³å‡ºã—å¯¾å¿œ(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ã‚Šç‰ˆ)
 	@author	MIK
 	@date	2002/05/25
-	@date	2002/11/09 •ÒW’†ƒtƒ@ƒCƒ‹‚ğ‹–‰Â
-	@date	2005/10/29 maru ˆêƒtƒ@ƒCƒ‹ì¬ˆ—‚ğm_pCommanderView->MakeDiffTmpFile‚ÖˆÚ“®
+	@date	2002/11/09 ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¨±å¯
+	@date	2005/10/29 maru ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆå‡¦ç†ã‚’m_pCommanderView->MakeDiffTmpFileã¸ç§»å‹•
 */
 void CViewCommander::Command_Diff_Dialog( void )
 {
 	CDlgDiff	cDlgDiff;
 	bool	bTmpFile1 = false, bTmpFile2 = false;
 
-	//DIFF·•ª•\¦ƒ_ƒCƒAƒƒO‚ğ•\¦‚·‚é
+	//DIFFå·®åˆ†è¡¨ç¤ºãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã™ã‚‹
 	int nDiffDlgResult = cDlgDiff.DoModal(
 		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
@@ -341,26 +341,26 @@ void CViewCommander::Command_Diff_Dialog( void )
 		return;
 	}
 	
-	//©ƒtƒ@ƒCƒ‹
+	//è‡ªãƒ•ã‚¡ã‚¤ãƒ«
 	TCHAR	szTmpFile1[_MAX_PATH * 2];
 	ECodeType code = GetDocument()->GetDocumentEncoding();
 	ECodeType saveCode = GetDiffCreateTempFileCode(code);
 	ECodeType code2 = cDlgDiff.m_nCodeTypeDst;
 	if( CODE_ERROR == code2 ){
 		if( cDlgDiff.m_szFile2[0] != _T('\0') ){
-			// ƒtƒ@ƒCƒ‹–¼w’è
+			// ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®š
 			code2 = GetFileCharCode(cDlgDiff.m_szFile2);
 		}
 	}
 	ECodeType saveCode2 = GetDiffCreateTempFileCode(code2);
-	// 2014.10.24 ƒR[ƒh‚ªˆá‚¤‚Æ‚«‚Í•K‚¸UTF-8ƒtƒ@ƒCƒ‹o—Í
+	// 2014.10.24 ã‚³ãƒ¼ãƒ‰ãŒé•ã†ã¨ãã¯å¿…ãšUTF-8ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›
 	if( saveCode != saveCode2 ){
 		saveCode = CODE_UTF8;
 		saveCode2 = CODE_UTF8;
 	}
 	if( GetDocument()->m_cDocEditor.IsModified()
 			|| code != saveCode
-			|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/ƒAƒEƒgƒvƒbƒg‚à‘ÎÛ‚É‚·‚é
+			|| !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() // 2014.06.25 Grep/ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚‚å¯¾è±¡ã«ã™ã‚‹
 	){
 		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
 		bTmpFile1 = true;
@@ -368,16 +368,16 @@ void CViewCommander::Command_Diff_Dialog( void )
 		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 		
-	//‘Šèƒtƒ@ƒCƒ‹
-	// UNICODE,UNICODEBE‚Ìê‡‚Íí‚Éˆêƒtƒ@ƒCƒ‹‚ÅUTF-8‚É‚·‚é
+	//ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«
+	// UNICODE,UNICODEBEã®å ´åˆã¯å¸¸ã«ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã§UTF-8ã«ã™ã‚‹
 	TCHAR	szTmpFile2[_MAX_PATH * 2];
-	// 2014.06.25 ƒtƒ@ƒCƒ‹–¼‚ª‚È‚¢(=–³‘è,Grep,ƒAƒEƒgƒvƒbƒg)‚àTmpFileMode‚É‚·‚é
+	// 2014.06.25 ãƒ•ã‚¡ã‚¤ãƒ«åãŒãªã„(=ç„¡é¡Œ,Grep,ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆ)ã‚‚TmpFileModeã«ã™ã‚‹
 	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == _T('\0');
 	if( !bTmpFileMode ){
-		// –¢•ÏX‚Åƒtƒ@ƒCƒ‹‚ ‚è‚ÅASCIIŒnƒR[ƒh‚Ìê‡‚Ì‚İ,‚»‚Ì‚Ü‚Üƒtƒ@ƒCƒ‹‚ğ—˜—p‚·‚é
+		// æœªå¤‰æ›´ã§ãƒ•ã‚¡ã‚¤ãƒ«ã‚ã‚Šã§ASCIIç³»ã‚³ãƒ¼ãƒ‰ã®å ´åˆã®ã¿,ãã®ã¾ã¾ãƒ•ã‚¡ã‚¤ãƒ«ã‚’åˆ©ç”¨ã™ã‚‹
 		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
 	}else if( cDlgDiff.m_hWnd_Dst ){
-		// ƒtƒ@ƒCƒ‹ˆê——‚©‚ç‘I‘ğ
+		// ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§ã‹ã‚‰é¸æŠ
 		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){
 			bTmpFile2 = true;
 		}else {
@@ -385,7 +385,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 			return;
 		}
 	}else{
-		// ƒtƒ@ƒCƒ‹–¼w’è‚Å”ñASCIIŒn‚¾‚Á‚½ê‡
+		// ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šã§éASCIIç³»ã ã£ãŸå ´åˆ
 		if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, cDlgDiff.m_szFile2, code2, saveCode2 ) ){
 			bTmpFile2 = true;
 		}else{
@@ -400,11 +400,11 @@ void CViewCommander::Command_Diff_Dialog( void )
 		bUTF8io = false;
 	}
 
-	//·•ª•\¦
+	//å·®åˆ†è¡¨ç¤º
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt, bUTF8io);
 	
 	
-	//ˆêƒtƒ@ƒCƒ‹‚ğíœ‚·‚é
+	//ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹
 	if( bTmpFile1 ) _tunlink( szTmpFile1 );
 	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
@@ -413,7 +413,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 
 
-/*!	Ÿ‚Ì·•ª‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚é
+/*!	æ¬¡ã®å·®åˆ†ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹
 */
 void CViewCommander::Command_Diff_Next( void )
 {
@@ -445,11 +445,11 @@ re_do:;
 
 
 	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
-		// Œ©‚Â‚©‚ç‚È‚©‚Á‚½B‚©‚ÂAÅ‰‚ÌŒŸõ
+		// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã€‚ã‹ã¤ã€æœ€åˆã®æ¤œç´¢
 		if( !bFound	&& bRedo ){
-			ptXY.y = 0 - 1;	// 1ŒÂè‘O‚ğw’è
+			ptXY.y = 0 - 1;	// 1å€‹æ‰‹å‰ã‚’æŒ‡å®š
 			bRedo = FALSE;
-			goto re_do;		// æ“ª‚©‚çÄŒŸõ
+			goto re_do;		// å…ˆé ­ã‹ã‚‰å†æ¤œç´¢
 		}
 	}
 
@@ -466,7 +466,7 @@ re_do:;
 
 
 
-/*!	‘O‚Ì·•ª‚ğ’T‚µCŒ©‚Â‚©‚Á‚½‚çˆÚ“®‚·‚é
+/*!	å‰ã®å·®åˆ†ã‚’æ¢ã—ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰ç§»å‹•ã™ã‚‹
 */
 void CViewCommander::Command_Diff_Prev( void )
 {
@@ -497,12 +497,12 @@ re_do:;
 	}
 
 	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
-		// Œ©‚Â‚©‚ç‚È‚©‚Á‚½A‚©‚ÂAÅ‰‚ÌŒŸõ
+		// è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã€ã‹ã¤ã€æœ€åˆã®æ¤œç´¢
 		if( !bFound	&& bRedo ){
-			// 2011.02.02 m_cLayoutMgr¨m_cDocLineMgr
-			ptXY.y = GetDocument()->m_cDocLineMgr.GetLineCount();	// 1ŒÂè‘O‚ğw’è
+			// 2011.02.02 m_cLayoutMgrâ†’m_cDocLineMgr
+			ptXY.y = GetDocument()->m_cDocLineMgr.GetLineCount();	// 1å€‹æ‰‹å‰ã‚’æŒ‡å®š
 			bRedo = FALSE;
-			goto re_do;	// ––”ö‚©‚çÄŒŸõ
+			goto re_do;	// æœ«å°¾ã‹ã‚‰å†æ¤œç´¢
 		}
 	}
 
@@ -519,7 +519,7 @@ re_do:;
 
 
 
-/*!	·•ª•\¦‚Ì‘S‰ğœ
+/*!	å·®åˆ†è¡¨ç¤ºã®å…¨è§£é™¤
 	@author	MIK
 	@date	2002/05/26
 */
@@ -527,7 +527,7 @@ void CViewCommander::Command_Diff_Reset( void )
 {
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
-	//•ªŠ„‚µ‚½ƒrƒ…[‚àXV
+	//åˆ†å‰²ã—ãŸãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°
 	GetEditWindow()->Views_Redraw();
 	return;
 }
