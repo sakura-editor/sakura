@@ -1,13 +1,13 @@
-/*! @file
-	@brief �V�X�e���萔
+﻿/*! @file
+	@brief システム定数
 
-	@date 2002.01.08 aroka  �R���g���[���v���Z�X�ƋN�������̂��߂Ƀ~���[�e�b�N�X����ǉ�
-	@date 2006.04.10 ryoji  �R���g���[���v���Z�X�����������������C�x���g�t���O����ǉ�
-	@date 2007.09.05 kobake ANSI�łƏՓ˂�����邽�߁A���O�ύX
-	@date 2007.09.20 kobake ANSI�ł�UNICODE�łŕʂ̖��O��p����
-	@date 2009.01.17 nasukoji	�}�E�X�T�C�h�{�^���̃L�[�R�[�h��`�ǉ��i_WIN32_WINNT�̓s���ɂ��V�X�e�����Œ�`����Ȃ��ׁj
-	@date 2009.02.11 ryoji		���L����������ǉ�, NUM_TO_STR�}�N���ǉ�
-	@date 2010.08.21 Moca		Win64��萔�ŕ���
+	@date 2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
+	@date 2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
+	@date 2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
+	@date 2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
+	@date 2009.01.17 nasukoji	マウスサイドボタンのキーコード定義追加（_WIN32_WINNTの都合によりシステム側で定義されない為）
+	@date 2009.02.11 ryoji		共有メモリ履歴追加, NUM_TO_STRマクロ追加
+	@date 2010.08.21 Moca		Win64を定数で分離
 */
 /*
 	Copyright (C) 2008, kobake
@@ -37,27 +37,27 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       �萔�����⏕                          //
+//                       定数命名補助                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//���l�萔�̕����� 2009.02.11 ryoji
+//数値定数の文字列化 2009.02.11 ryoji
 #define _NUM_TO_STR(n) #n
 #define NUM_TO_STR(n) _NUM_TO_STR(n)
 
-//! �f�o�b�O���ʁA�萔�T�t�B�b�N�X 2007.09.20 kobake
+//! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
 	#define _DEBUG_SUFFIX_ "_DEBUG"
 #else
 	#define _DEBUG_SUFFIX_ ""
 #endif
 
-//! �r���h�R�[�h���ʁA�萔�T�t�B�b�N�X 2007.09.20 kobake
+//! ビルドコード判別、定数サフィックス 2007.09.20 kobake
 #ifdef _UNICODE
 	#define _CODE_SUFFIX_ "WP"
 #else
 	#define _CODE_SUFFIX_ "AP"
 #endif
 
-//! �^�[�Q�b�g�}�V������ 2010.08.21 Moca �ǉ�
+//! ターゲットマシン判別 2010.08.21 Moca 追加
 #ifdef _WIN64
 	#define CON_SKR_MACHINE_SUFFIX_ "M64"
 #else
@@ -65,482 +65,482 @@
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ���L������                           //
+//                        共有メモリ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//!	���L�������̃o�[�W����
+//!	共有メモリのバージョン
 /*!
-	���L�������̃o�[�W�����ԍ��B���L�������̌`����ύX�����Ƃ��͂�����1���₷�B
+	共有メモリのバージョン番号。共有メモリの形式を変更したときはここを1増やす。
 
-	���̒l�͋��L�������̃o�[�W�����t�B�[���h�Ɋi�[����A�قȂ�\���̋��L��������
-	�g���G�f�B�^�������ɋN�����Ȃ��悤�ɂ���B
+	この値は共有メモリのバージョンフィールドに格納され、異なる構造の共有メモリを
+	使うエディタが同時に起動しないようにする。
 
-	�ݒ�\�Ȓl�� 1�`unsinged int�̍ő�l
+	設定可能な値は 1～unsinged intの最大値
 
 	@sa Init()
 
-	Version 1�`24:
-	���낢��
+	Version 1～24:
+	いろいろ
 	
 	Version 25:
-	m_bStopsBothEndsWhenSearchWord�ǉ�
+	m_bStopsBothEndsWhenSearchWord追加
 	
 	Version 26:
-	MacroRec�ɁAm_bReloadWhenExecute��ǉ� 2002/03/11 YAZAKI
-	EditInfo�ɁAm_szDocType�ǉ� Mar. 7, 2002 genta
+	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
+	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
 	
 	Version 27:
-	STypeConfig�ɁAm_szOutlineRuleFilename��ǉ� 2002.04.01 YAZAKI 
+	STypeConfigに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
 	
 	Version 28:
-	PRINTSETTING�ɁAm_bPrintKinsokuHead�Am_bPrintKinsokuTail��ǉ� 2002.04.09 MIK
-	STypeConfig�ɁAm_bKinsokuHead�Am_bKinsokuTail�Am_szKinsokuHead�Am_szKinsokuTail��ǉ� 2002.04.09 MIK
+	PRINTSETTINGに、m_bPrintKinsokuHead、m_bPrintKinsokuTailを追加 2002.04.09 MIK
+	STypeConfigに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
 
 	Version 29:
-	PRINTSETTING�ɁAm_bPrintKinsokuRet��ǉ� 2002.04.13 MIK
-	STypeConfig�ɁAm_bKinsokuRet��ǉ� 2002.04.13 MIK
+	PRINTSETTINGに、m_bPrintKinsokuRetを追加 2002.04.13 MIK
+	STypeConfigに、m_bKinsokuRetを追加 2002.04.13 MIK
 
 	Version 30:
-	PRINTSETTING�ɁAm_bPrintKinsokuKuto��ǉ� 2002.04.17 MIK
-	STypeConfig�ɁAm_bKinsokuKuto��ǉ� 2002.04.17 MIK
+	PRINTSETTINGに、m_bPrintKinsokuKutoを追加 2002.04.17 MIK
+	STypeConfigに、m_bKinsokuKutoを追加 2002.04.17 MIK
 
 	Version 31:
-	Common�ɁAm_bStopsBothEndsWhenSearchParagraph��ǉ� 2002/04/26 YAZAKI
+	Commonに、m_bStopsBothEndsWhenSearchParagraphを追加 2002/04/26 YAZAKI
 
 	Version 32:
-	Common����STypeConfig�ցAm_bAutoIndent�Am_bAutoIndent_ZENSPACE���ړ� 2002/04/30 YAZAKI
+	CommonからSTypeConfigへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
 
 	Version 33:
-	Common�ɁAm_lf_kh(���CommonSetting_Helper::m_lf)��ǉ� 2002/05/21 ai
-	m_nDiffFlgOpt��ǉ� 2002.05.27 MIK
-	STypeConfig-Color��COLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETE��ǉ�
+	Commonに、m_lf_kh(後にCommonSetting_Helper::m_lf)を追加 2002/05/21 ai
+	m_nDiffFlgOptを追加 2002.05.27 MIK
+	STypeConfig-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 
 	Version 34:
-	STypeConfig��m_bUseDocumentIcon �ǉ��D 2002.09.10 genta
+	STypeConfigにm_bUseDocumentIcon 追加． 2002.09.10 genta
 	
 	Version 35:
-	Common��m_nLineNumRightSpace �ǉ��D2002.09.18 genta
+	Commonにm_nLineNumRightSpace 追加．2002.09.18 genta
 
 	Version 36:
-	Common��m_bGrepKanjiCode_AutoDetect���폜�Am_nGrepCharSet��ǉ� 2002/09/21 Moca
+	Commonのm_bGrepKanjiCode_AutoDetectを削除、m_nGrepCharSetを追加 2002/09/21 Moca
 
 	Version 37:
-	STypeConfig��LineComment�֘A��m_cLineComment�ɕύX�D  @@@ 2002.09.23 YAZAKI
-	STypeConfig��BlockComment�֘A��m_cBlockComments�ɕύX�D@@@ 2002.09.23 YAZAKI
+	STypeConfigのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
+	STypeConfigのBlockComment関連をm_cBlockCommentsに変更．@@@ 2002.09.23 YAZAKI
 
 	Version 38:
-	STypeConfig��m_bIndentLayout��ǉ�. @@@ 2002.09.29 YAZAKI
-	2002.10.01 genta m_nIndentLayout�ɖ��O�ύX
+	STypeConfigにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
+	2002.10.01 genta m_nIndentLayoutに名前変更
 
 	Version 39:
-	Common��m_nFUNCKEYWND_GroupNum��ǉ��D 2002/11/04 Moca
+	Commonにm_nFUNCKEYWND_GroupNumを追加． 2002/11/04 Moca
 
 	Version 40:
-	�t�@�C�����ȈՕ\�L�֘A��ǉ��D 2002/12/08�`2003/01/15 Moca
+	ファイル名簡易表記関連を追加． 2002/12/08～2003/01/15 Moca
 
 	Version 41:
-	STypeConfig��m_szTabViewString�T�C�Y�g��
-	m_nWindowSizeX/Y m_nWindowOriginX/Y�ǉ� 2003.01.26 aroka
+	STypeConfigのm_szTabViewStringサイズ拡張
+	m_nWindowSizeX/Y m_nWindowOriginX/Y追加 2003.01.26 aroka
 
 	Version 42:
-	STypeConfig�ɓƎ�TAB�}�[�N�t���O�ǉ� 2003.03.28 MIK
+	STypeConfigに独自TABマークフラグ追加 2003.03.28 MIK
 
 	Version 43:
-	�ŋߎg�����t�@�C���E�t�H���_�ɂ��C�ɓ����ǉ� 2003.04.08 MIK
+	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
 
 	Version 44:
-	Window Caption������̈��Common�ɒǉ� 2003.04.05 genta
+	Window Caption文字列領域をCommonに追加 2003.04.05 genta
 
 	Version 45:
-	�^�O�t�@�C���쐬�p�R�}���h�I�v�V�����ۑ��̈�(m_nTagsOpt,m_szTagsCmdLine)��ǉ� 2003.05.12 MIK
+	タグファイル作成用コマンドオプション保存領域(m_nTagsOpt,m_szTagsCmdLine)を追加 2003.05.12 MIK
 
 	Version 46:
-	�ҏW�E�C���h�E���C���A�^�u�E�C���h�E�p���ǉ�
+	編集ウインドウ数修正、タブウインドウ用情報追加
 
 	Version 47:
-	�t�@�C������̕⊮��STypeConfig�ɒǉ� 2003.06.28 Moca
+	ファイルからの補完をSTypeConfigに追加 2003.06.28 Moca
 
 	Version 48:
-	Grep���A���^�C���\���ǉ� 2003.06.28 Moca
+	Grepリアルタイム表示追加 2003.06.28 Moca
 
 	Version 49:
-	�t�@�C������IsDebug�ǉ� (�^�u�\���p) 2003.10.13 MIK
+	ファイル情報にIsDebug追加 (タブ表示用) 2003.10.13 MIK
 	
 	Version 50:
-	�E�B���h�E�ʒu�Œ�E�p����ǉ� 2004.05.13 Moca
+	ウィンドウ位置固定・継承を追加 2004.05.13 Moca
 
 	Version 51:
-	�^�O�W�����v�@�\�ǉ� 2004/06/21 novice
+	タグジャンプ機能追加 2004/06/21 novice
 
 	Version 52:
-	�O��ƈقȂ镶���R�[�h�̂Ƃ��ɖ₢���킹���s�����ǂ����̃t���O�ǉ�	2004.10.03 genta
+	前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ追加	2004.10.03 genta
 
 	Version 53:
-	���݂��Ȃ��t�@�C�����J�����Ƃ����ꍇ�Ɍx������t���O�̒ǉ�	2004.10.09 genta
+	存在しないファイルを開こうとした場合に警告するフラグの追加	2004.10.09 genta
 
 	Version 54:
-	�}�E�X�T�C�h�{�^���Ή� 2004/10/10 novice
+	マウスサイドボタン対応 2004/10/10 novice
 
 	Version 55:
-	�}�E�X���{�^���Ή� 2004/10/11 novice
+	マウス中ボタン対応 2004/10/11 novice
 
 	Version 56:
-	�C���N�������^���T�[�`(Migemo path�p) 2004/10/13 isearch
+	インクリメンタルサーチ(Migemo path用) 2004/10/13 isearch
 	
 	Version 57:
-	�����L�[���[�h�w��g�� 2005/01/13 MIK
+	強調キーワード指定拡大 2005/01/13 MIK
 	
 	Version 58:
-	�����L�[���[�h�Z�b�g�ϒ����蓖�� 2005/01/25 Moca
+	強調キーワードセット可変長割り当て 2005/01/25 Moca
 
 	Version 59:
-	�}�N�����𑝂₵�� 2005/01/30 genta
+	マクロ数を増やした 2005/01/30 genta
 	
 	Version 60:
-	�L�[���[�h�w��^�O�W�����v����ۑ� 2005/04/03 MIK
+	キーワード指定タグジャンプ履歴保存 2005/04/03 MIK
 
 	Version 61:
-	���s�ōs���̋󔒂��폜����I�v�V����(�^�C�v�ʐݒ�) 2005/10/11 ryoji
+	改行で行末の空白を削除するオプション(タイプ別設定) 2005/10/11 ryoji
 
 	Version 62:
-	�o�b�N�A�b�v�t�H���_ 2005.11.07 aroka
+	バックアップフォルダ 2005.11.07 aroka
 
 	Version 63:
-	�w�茅�c���\���ǉ� 2005.11.08 Moca
+	指定桁縦線表示追加 2005.11.08 Moca
 
 	Version 64:
-	�^�u�̋@�\�g��(�����A�A�C�R���\��) 2006/01/28 ryoji
-	�A�E�g�v�b�g�E�B���h�E�ʒu 2006.02.01 aroka
+	タブの機能拡張(等幅、アイコン表示) 2006/01/28 ryoji
+	アウトプットウィンドウ位置 2006.02.01 aroka
 
 	Version 65:
-	�^�u�ꗗ���\�[�g���� 2006/05/10 ryoji
+	タブ一覧をソートする 2006/05/10 ryoji
 
 	Version 66:
-	�L�[���[�h�w���v�@�\�g�� 2006.04.10 fon
-		�L�[���[�h�w���v�@�\�ݒ��ʃ^�u�Ɉړ�, �����̕������ɑΉ�, �L�����b�g�ʒu�L�[���[�h�����ǉ�
+	キーワードヘルプ機能拡張 2006.04.10 fon
+		キーワードヘルプ機能設定を別タブに移動, 辞書の複数化に対応, キャレット位置キーワード検索追加
 
 	Version 67:
-	�L�����b�g�F�w���ǉ� 2006.12.07 ryoji
+	キャレット色指定を追加 2006.12.07 ryoji
 
 	Version 68:
-	�t�@�C���_�C�A���O�̃t�B���^�ݒ� 2006.11.16 ryoji
+	ファイルダイアログのフィルタ設定 2006.11.16 ryoji
 
 	Version 69:
-	�u���ׂĒu���v�͒u���̌J�Ԃ� 2006.11.16 ryoji
+	「すべて置換」は置換の繰返し 2006.11.16 ryoji
 
 	Version 70:
-	[���ׂĕ���]�ő��ɕҏW�p�̃E�B���h�E������Ίm�F���� 2006.12.25 ryoji
+	[すべて閉じる]で他に編集用のウィンドウがあれば確認する 2006.12.25 ryoji
 
 	Version 71:
-	�^�u����铮��𐧌䂷��I�v�V����2��ǉ� 2007.02.11 genta
+	タブを閉じる動作を制御するオプション2つを追加 2007.02.11 genta
 		m_bRetainEmptyTab, m_bCloseOneWinInTabMode
 
 	Version 72:
-	�^�u�ꗗ���t���p�X�\������ 2007.02.28 ryoji
+	タブ一覧をフルパス表示する 2007.02.28 ryoji
 
 	Version 73:
-	�ҏW�E�B���h�E�ؑ֒� 2007.04.03 ryoji
+	編集ウィンドウ切替中 2007.04.03 ryoji
 
 	Version 74:
-	�J�[�\���ʒu�̕�������f�t�H���g�̌���������ɂ��� 2006.08.23 ryoji
+	カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 
 	Version 75:
-	�}�E�X�z�C�[���ŃE�B���h�E�؂�ւ� 2006.03.26 ryoji
+	マウスホイールでウィンドウ切り替え 2006.03.26 ryoji
 
 	Version 76:
-	�^�u�̃O���[�v�� 2007.06.20 ryoji
+	タブのグループ化 2007.06.20 ryoji
 
 	Version 77:
-	ini�t�H���_�ݒ� 2007.05.31 ryoji
+	iniフォルダ設定 2007.05.31 ryoji
 
 	Version 78:
-	�G�f�B�^�|�g���C�Ԃł�UI���������m�F�̂��߂̃o�[�W�������킹 2007.06.07 ryoji
+	エディタ－トレイ間でのUI特権分離確認のためのバージョン合わせ 2007.06.07 ryoji
 
 	Version 79:
-	�O���R�}���h���s�̃I�v�V�����g�� 2007.04.29 maru
+	外部コマンド実行のオプション拡張 2007.04.29 maru
 
 	Version 80:
-	���K�\�����C�u�����̐؂�ւ� 2007.07.22 genta
+	正規表現ライブラリの切り替え 2007.07.22 genta
 
 	Version 81:
-	�}�E�X�N���b�N�ɂăA�N�e�B�x�[�g���ꂽ���̓J�[�\���ʒu���ړ����Ȃ� 2007.10.02 nasukoji
+	マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji
 
 	Version 82:
-	���C�����[�h�\��t�����\�ɂ��� 2007.10.08 ryoji
+	ラインモード貼り付けを可能にする 2007.10.08 ryoji
 
 	Version 83:
-	�I���Ȃ��ŃR�s�[���\�ɂ��� 2007.11.18 ryoji
+	選択なしでコピーを可能にする 2007.11.18 ryoji
 
 	Version 84:
-	��ʃL���b�V�����g�� 2007.09.09 Moca
+	画面キャッシュを使う 2007.09.09 Moca
 
 	Version 85:
-	�L�[���[�h�Z�b�g�ő�l���� 2007.12.01 genta
+	キーワードセット最大値増加 2007.12.01 genta
 
 	Version 86:
-	�^�C�v�ʐݒ�ő�l���� 2007.12.13 ryoji
+	タイプ別設定最大値増加 2007.12.13 ryoji
 
 	Version 87:
-	�e�L�X�g�̐܂�Ԃ����@�ǉ� 2008.05.30 nasukoji
+	テキストの折り返し方法追加 2008.05.30 nasukoji
 
 	Version 88:
-	�}�E�X�̒��{�^���������̃z�C�[���X�N���[���ł̓y�[�W�X�N���[������ 2008.10.07 nasukoji
+	マウスの中ボタン押下中のホイールスクロールではページスクロールする 2008.10.07 nasukoji
 
 	Version 89:
-	�z�C�[���X�N���[���𗘗p�����y�[�W�X�N���[���E���X�N���[���Ή��iVer.88�ǉ������͍폜�j 2009.01.17 nasukoji
+	ホイールスクロールを利用したページスクロール・横スクロール対応（Ver.88追加部分は削除） 2009.01.17 nasukoji
 
 	Version 90:
-	STypeConfig��m_szTabViewString�T�C�Y�g���iVersion 41�j�̖߂� 2009.02.11 ryoji
+	STypeConfigのm_szTabViewStringサイズ拡張（Version 41）の戻し 2009.02.11 ryoji
 
 	Version 91
-	�u�J�����Ƃ����t�@�C�����傫���ꍇ�Ɍx���v�@�\�ǉ�  2009.05.24
+	「開こうとしたファイルが大きい場合に警告」機能追加  2009.05.24
 
 	Version 92
-	�f�t�H���g�����R�[�h��CESU-8���ʃI�v�V�����Ή�		2009.06.15
+	デフォルト文字コードとCESU-8判別オプション対応		2009.06.15
 
 	Version 93
-	�I�𕶎����J�E���g�P�ʃI�v�V�����Ή�				2009.06.25
+	選択文字数カウント単位オプション対応				2009.06.25
 
 	Version 94
-	��Ǔ_�Ԃ牺������ 2009.08.07 ryoji
+	句読点ぶら下げ文字 2009.08.07 ryoji
 
 	Version 95
-	�E�B���h�E���ɃA�N�Z�����[�^�e�[�u�����쐬����(Wine�p) 2009.08.15 nasukoji
+	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用) 2009.08.15 nasukoji
 
 	Version 96:
-	�������s�}�N�� 2006/08/31 ryoji
+	自動実行マクロ 2006/08/31 ryoji
 
 	Version 97:
-	��DPI�p�Ƀt�H���g�T�C�Y�i1/10�|�C���g�P�ʁj��ǉ� 2009/10/01 ryoji
+	高DPI用にフォントサイズ（1/10ポイント単位）を追加 2009/10/01 ryoji
 
 	Version 98:
-	WSH�v���O�C�� 2010/03/03 syat
+	WSHプラグイン 2010/03/03 syat
 
 	Version 99:
-	Backup Removable Media �Ή�  2010/5/27 Uchi
+	Backup Removable Media 対応  2010/5/27 Uchi
 
 	Version 100:
-	ICON�����ׂẴR�}���h�Ɋ��蓖�Ă�	2010/6/12 Uchi
+	ICONをすべてのコマンドに割り当てる	2010/6/12 Uchi
 
 	Version 101:
-	���C���j���[�ݒ�	2010/5/18 Uchi
+	メインニュー設定	2010/5/18 Uchi
 
 	Version 102:
-	Plugin��ini�t�@�C���ւ̏������݂̕�����	2010/7/15 Uchi
+	Pluginのiniファイルへの書き込みの文字列化	2010/7/15 Uchi
 
 	Version 103:
-	�A�E�g���C����͉�ʂ̃h�b�L���O�@�\�ǉ� 2010.06.05 ryoji
+	アウトライン解析画面のドッキング機能追加 2010.06.05 ryoji
 
 	Version 104:
-	�f�t�H���g�̉��s�R�[�h��BOM 2011.01.24 ryoji
+	デフォルトの改行コードとBOM 2011.01.24 ryoji
 
 	Version 105:
-	�w�i�摜�\�� 2010.09.17 Moca
+	背景画像表示 2010.09.17 Moca
 
 	Version 106:
-	�㏑���֎~���o���͕ҏW�֎~�ɂ��� 2011.02.19 ryoji
+	上書き禁止検出時は編集禁止にする 2011.02.19 ryoji
 
 	Version 107:
-	�I��͈͐F�w�� 2011.05.18 Moca
+	選択範囲色指定 2011.05.18 Moca
 
 	Version 108:
-	MRU�Ƀ^�C�v�ʐݒ�ǉ� 2011.06.13 Moca
+	MRUにタイプ別設定追加 2011.06.13 Moca
 
 	Version 109:
-	�P�ꌟ���ŕ������� 2011.11.15 ds14050, syat
+	単語検索で複数検索 2011.11.15 ds14050, syat
 
 	Version 110:
-	���s�R�[�h��ϊ����ē\��t���� 2011.11.22 salarm, Moca
+	改行コードを変換して貼り付ける 2011.11.22 salarm, Moca
 	
 	Version 111:
-	�^�u�o�[�t�H���g�w�� 2011.12.04 Moca
+	タブバーフォント指定 2011.12.04 Moca
 	
 	Version 112:
-	���͕⊮�v���O�C�� 2011.06.24 Moca
+	入力補完プラグイン 2011.06.24 Moca
 
 	Version 113:
-	�}�N����~�_�C�A���O 2011.08.04 syat
+	マクロ停止ダイアログ 2011.08.04 syat
 
 	Version 114:
-	CCodeMediator/CESI��CEditDoc�ˑ��̏C�� 2012.10.12 Moca
+	CCodeMediator/CESIのCEditDoc依存の修正 2012.10.12 Moca
 
 	Version 115:
-	�����E�u���L�[���[�h�̕����񒷐����P�p/���̃r���[�̌��������������p�� 2011.12.18 Moca
+	検索・置換キーワードの文字列長制限撤廃/他のビューの検索条件を引き継ぐ 2011.12.18 Moca
 
 	Version 116:
-	MRU���O���X�g 2012.10.30 Moca
+	MRU除外リスト 2012.10.30 Moca
 
 	Version 117:
-	�����Ǎ����x�� 2012.11.20 Uchi
+	自動読込時遅延 2012.11.20 Uchi
 
 	Version 118:
-	���K�\���L�[���[�h�ϒ� 2012.12.01 Moca
+	正規表現キーワード可変長 2012.12.01 Moca
 
 	Version 119:
-	CommonSetting_KeyBind �̃����o�ϐ��ǉ� 2012.11.25 aroka
+	CommonSetting_KeyBind のメンバ変数追加 2012.11.25 aroka
 
 	Version 120:
-	�E�[�ŐܕԂ����̂Ԃ牺�����B����ǉ� 2012.11.30 Uchi
+	右端で折返す時のぶら下げを隠すを追加 2012.11.30 Uchi
 
 	Version 121:
-	CommonSetting_KeyBind �L�[�̖��O 2012.12.11 aroka
+	CommonSetting_KeyBind キーの名前 2012.12.11 aroka
 
 	Version 122:
-	�����L�[���[�h�̕⊮ 2012.10.13 Moca
+	強調キーワードの補完 2012.10.13 Moca
 
 	Version 123:
-	�t�@�C���_�C�A���O�̏����ʒu 2012.11.23 Moca
+	ファイルダイアログの初期位置 2012.11.23 Moca
 
 	Version 124:
-	����ԍ� Moca2013.01.14
+	無題番号 Moca2013.01.14
 
 	Version 125:
-	�������ɍ��킹�ăX�y�[�X���l�߂� 2012.10.24 Moca
+	文字幅に合わせてスペースを詰める 2012.10.24 Moca
 
 	Version 126:
-	�J�[�\���s�̔w�i�F 2012.11.22 Moca
+	カーソル行の背景色 2012.11.22 Moca
 
 	Version 127:
-	�_�C�A���O�T�C�Y�L�� 2013.03.27 Moca
+	ダイアログサイズ記憶 2013.03.27 Moca
 
 	Version 128:
-	�t�H���g���L���b�V������ 2013.04.05 aroka
+	フォント幅キャッシュ整理 2013.04.05 aroka
 
 	Version 129:
-	�u�I�����A���s�̈�v����������v��ǉ� 2013.04.14 Uchi
+	「終了時、改行の一致を検査する」を追加 2013.04.14 Uchi
 
 	Version 130:
-	�A�E�g���C���̍~���\�[�g
+	アウトラインの降順ソート
 
 	Version 131:
-	�J���[���
+	カラー印刷
 
 	Version 132:
-	����̃w�b�_��t�b�^�̃t�H���g�w��
+	印刷のヘッダ･フッタのフォント指定
 
 	Version 133:
-	�O���R�}���h���s�̃J�����g�f�B���N�g�� 2013.02.22 Moca
+	外部コマンド実行のカレントディレクトリ 2013.02.22 Moca
 
 	Version 134:
-	�q�A�h�L�������g 2013.04.19 Moca
+	ヒアドキュメント 2013.04.19 Moca
 
 	Version 135:
-	�^�u�����{�^�� 2012.04.14 syat
+	タブを閉じるボタン 2012.04.14 syat
 
 	Version 136:
-	����ԍ��̏C�� 2013.02.22 Moca
+	無題番号の修正 2013.02.22 Moca
 
 	Version 137:
-	�^�C�v�ʃt�H���g 2013.03.25 aroka
+	タイプ別フォント 2013.03.25 aroka
 
 	Version 138:
-	�����L�[���[�h�X�V���b�N 2013.06.10 Moca
+	強調キーワード更新ロック 2013.06.10 Moca
 
 	Version 139:
-	Grep�g�� 2012.07.17 Moca
+	Grep拡張 2012.07.17 Moca
 
 	Version 140:
-	TAB�\���Ή�(�����w��/�Z�����/�������)
+	TAB表示対応(文字指定/短い矢印/長い矢印)
 
 	Version 141:
-	�}�E�X�X�N���[���L�[���蓖�� 2013.06.12 Moca
+	マウススクロールキー割り当て 2013.06.12 Moca
 
 	Version 142:
-	�J�X�^�����j���[�̃T�u���j���[�Ƃ��ĕ\�� 2013.06.16 Moca
+	カスタムメニューのサブメニューとして表示 2013.06.16 Moca
 
 	Version 143:
-	�^�u�̕���{�^��(�Ȃ�/��ɕ\��/�����\��) 2013.08.01 ryoji
+	タブの閉じるボタン(なし/常に表示/自動表示) 2013.08.01 ryoji
 
 	Version 144:
-	STypeConfig�\���̂̃����o�ϐ��^�ύX 2013.09.12 novice
+	STypeConfig構造体のメンバ変数型変更 2013.09.12 novice
 
 	Version 145:
-	m_bCreateAccelTblEachWin�폜 2013.10.19 novice
+	m_bCreateAccelTblEachWin削除 2013.10.19 novice
 
 	Version 146:
-	�e���ꃁ�b�Z�[�W���\�[�X�Ή� 2013.08.02
+	各国語メッセージリソース対応 2013.08.02
 
 	Version 147:
-	�^�C�v�ʐݒ�̋��L�f�[�^�O���� 2012.07.17 Moca
+	タイプ別設定の共有データ外だし 2012.07.17 Moca
 
 	Version 148:
-	�h�b�L���O�ł̃u�b�N�}�[�N�\���̓��� 2013.12.23 Moca
+	ドッキングでのブックマーク表示の同期 2013.12.23 Moca
 
 	Version 149:
-	�����s�̔w�i�F 2013.12.30 Moca
+	偶数行の背景色 2013.12.30 Moca
 
 	Version 150:
-	�J�X�^���p���b�g 2014.05.01 novice
+	カスタムパレット 2014.05.01 novice
 
 	Version 151:
-	DLLSHAREDATA�̃T�C�Y�`�F�b�N 2014.01.08 Moca
+	DLLSHAREDATAのサイズチェック 2014.01.08 Moca
 
 	Version 152:
-	NEL���̊g�����s�R�[�h�I�v�V���� 2014.06.29 Moca
+	NEL等の拡張改行コードオプション 2014.06.29 Moca
 
 	Version 153:
-	�m�[�g�� 2013.12.21 Moca
+	ノート線 2013.12.21 Moca
 
 	Version 154:
-	�^�u���i�\��/�^�u�ʒu 2014.02.09 Moca
+	タブ多段表示/タブ位置 2014.02.09 Moca
 
 	Version 155:
-	�㏑�����[�h�ł̋�`���͂őI��͈͂��폜����I�v�V���� 2014.06.02 Moca
+	上書きモードでの矩形入力で選択範囲を削除するオプション 2014.06.02 Moca
 
 	Version 156:
-	�p�X�̏ȗ��\�L 2014.06.11 Moca
+	パスの省略表記 2014.06.11 Moca
 
 	Version 157:
-	�^�O�W�����v�I�v�V���� 2014.07.10
+	タグジャンプオプション 2014.07.10
 
 	Version 158:
-	�s�ԍ��̍ŏ����� 2014.08.02 katze
+	行番号の最小桁数 2014.08.02 katze
 
 	Version 159:
-	EditInfo��BOM��ǉ� 2013.06.24 Moca
+	EditInfoにBOMを追加 2013.06.24 Moca
 
 	Version 160:
-	Grep�u��
+	Grep置換
 
 	Version 161:
-	�t�@�C���c���[ 2014.01.08 Moca
+	ファイルツリー 2014.01.08 Moca
 
 	Version 162:
-	�~�j�}�b�v 2014.07.14 Moca
+	ミニマップ 2014.07.14 Moca
 
 	Version 163:
-	MYWM_GETLINEDATA,MYWM_SETCARETPOS,MYWM_GETCARETPOS�ύX 2014.05.07 Moca
+	MYWM_GETLINEDATA,MYWM_SETCARETPOS,MYWM_GETCARETPOS変更 2014.05.07 Moca
 
 	Version 164:
-	��`�I���̃��b�N 2014.07.11 Moca
+	矩形選択のロック 2014.07.11 Moca
 
 	Version 165:
-	���C�����j���[�����X�V 2015.02.26 Moca
+	メインメニュー自動更新 2015.02.26 Moca
 
 	Version 166:
-	�^�u�o�[�̍ő�E�ŏ��l�ݒ� 2014.07.04 Moca
+	タブバーの最大・最小値設定 2014.07.04 Moca
 
 	Version 167:
-	�C���f���g�ڍאݒ� 2013.12.20 Moca
+	インデント詳細設定 2013.12.20 Moca
 
 	Version 168:
-	�v���|�[�V���i���t�H���g
+	プロポーショナルフォント
 
 	Version 169:
-	���E���s�[�g������ 2014.01.08 Moca
+	左右リピート文字数 2014.01.08 Moca
 
 	Version 170:
-	ini�ǂݎ���p�I�v�V���� 2014.12.08 Moca
+	ini読み取り専用オプション 2014.12.08 Moca
 
 	Version 171:
-	Grep�t�@�C���E�t�H���_����512(MAX_GREP_PATH)�ɕύX
+	Grepファイル・フォルダ長を512(MAX_GREP_PATH)に変更
 
 	Version 172:
-	�L�[���[�h�w���v�̉E�N���b�N���j���[�\���I��
+	キーワードヘルプの右クリックメニュー表示選択
 
-	-- �������ꂽ�̂Ō��ɖ߂��i1000�`1023���g�p�ς݁j 	2008.11.16 nasukoji
+	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
-	-- �o�[�W����1000�ȍ~��{�Ɠ����܂ł̊ԁA�g�킹�Ă��������B���Ȃ�p�ɂɍ\�����ύX�����Ǝv����̂ŁBby kobake 2008.03.02
+	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
 #define N_SHAREDATA_VERSION		172
@@ -549,75 +549,75 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      �~���[�e�b�N�X                         //
+//                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! �A�v���P�[�V�������s���o�p(�C���X�g�[���Ŏg�p)
+//! アプリケーション実行検出用(インストーラで使用)
 #define	GSTR_MUTEX_SAKURA					_T("MutexSakuraEditor")
 
-//! �R���g���[���v���Z�X
+//! コントロールプロセス
 #define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//! �m�[�}���v���Z�X����������
+//! ノーマルプロセス初期化同期
 #define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//! �m�[�h���쓯��
+//! ノード操作同期
 #define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//DLLSHARE Work���쓯��
+//DLLSHARE Work操作同期
 #define	GSTR_MUTEX_SAKURA_SHAREWORK			(_T("MutexSakuraEditorShareWork")		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//! �����L�[���[�h���b�N
+//! 強調キーワードロック
 #define	GSTR_MUTEX_SAKURA_KEYWORD			(_T("MutexSakuraEditorKeyword")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//�^�C�v�ʐݒ�]���p
+//タイプ別設定転送用
 #define	GSTR_MUTEX_SAKURA_DOCTYPE			(_T("MutexSakuraEditorDocType")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         �C�x���g                            //
+//                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! �����������C�x���g
+//! 初期化完了イベント
 #define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     �E�B���h�E�N���X                        //
+//                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! �R���g���[���g���C
+//! コントロールトレイ
 #define	GSTR_CEDITAPP		(_T("CControlTray") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
 
-//! ���C���E�B���h�E
+//! メインウィンドウ
 #define	GSTR_EDITWINDOWNAME	(_T("TextEditorWindow") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//! �r���[
+//! ビュー
 #define	GSTR_VIEWNAME		(_T("SakuraView")												_T(STR_SHAREDATA_VERSION))
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ���\�[�X                            //
+//                         リソース                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	Dec. 2, 2002 genta
-//	�Œ�t�@�C����
+//	固定ファイル名
 #define FN_APP_ICON  _T("my_appicon.ico")
 #define FN_GREP_ICON _T("my_grepicon.ico")
 #define FN_TOOL_BMP  _T("my_icons.bmp")
 
-//	�W���A�v���P�[�V�����A�C�R�����\�[�X��
+//	標準アプリケーションアイコンリソース名
 #define ICON_DEFAULT_APP IDI_ICON_STD
 #define ICON_DEFAULT_GREP IDI_ICON_GREP
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      �p�t�H�[�}���X                         //
+//                      パフォーマンス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//�o�b�t�@�T�C�Y
-const int LINEREADBUFSIZE	= 10240;	//!< �t�@�C������1�s���f�[�^��ǂݍ��ނƂ��̃o�b�t�@�T�C�Y
+//バッファサイズ
+const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          �t���O                             //
+//                          フラグ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #define _SHIFT	0x00000001
@@ -627,131 +627,131 @@ const int LINEREADBUFSIZE	= 10240;	//!< �t�@�C������1�s���f�[�^��ǂݍ��ނƂ��̃
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ���b�Z�[�W                           //
+//                        メッセージ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //wParam: X
 //lParam: Y
 #define MYWM_DOSPLIT        (WM_APP+1500)	
 
-//wParam: �Ȃ񂩂̃C���f�b�N�X
-//lParam: bool���ۂ�����
+//wParam: なんかのインデックス
+//lParam: boolっぽい何か
 #define MYWM_SETACTIVEPANE  (WM_APP+1510)
 
-//!�ݒ肪�ύX���ꂽ���Ƃ̒ʒm���b�Z�[�W
-//wParam:PM_CHANGESETTING_TYPE�̂Ƃ��A�^�C�v�ʐݒ�Index�B����ȊO�Ȃ��B
+//!設定が変更されたことの通知メッセージ
+//wParam:PM_CHANGESETTING_TYPEのとき、タイプ別設定Index。それ以外なし。
 #define MYWM_CHANGESETTING  (WM_APP+1520)
-//! MYWM_CHANGESETTING���b�Z�[�W��lParam
+//! MYWM_CHANGESETTINGメッセージのlParam
 enum e_PM_CHANGESETTING_SELECT {
-	PM_CHANGESETTING_ALL		= 0, //!< �S��
-	PM_CHANGESETTING_FONT		= 1, //!< �t�H���g�ύX
-	PM_CHANGESETTING_FONTSIZE	= 2, //!< �t�H���g�T�C�Y�ύX(WPARAM �^�C�v�ʔԍ��B-1�ŋ��ʐݒ�ύX)
-	PM_CHANGESETTING_TYPE		= 3, //!< �^�C�v�ʐݒ�
-	PM_CHANGESETTING_TYPE2		= 4, //!< �^�C�v�ʐݒ�(�ēǂݍ��݂Ȃ�)
-	PM_PRINTSETTING				= 5, //!< �v�����g�ݒ�
+	PM_CHANGESETTING_ALL		= 0, //!< 全部
+	PM_CHANGESETTING_FONT		= 1, //!< フォント変更
+	PM_CHANGESETTING_FONTSIZE	= 2, //!< フォントサイズ変更(WPARAM タイプ別番号。-1で共通設定変更)
+	PM_CHANGESETTING_TYPE		= 3, //!< タイプ別設定
+	PM_CHANGESETTING_TYPE2		= 4, //!< タイプ別設定(再読み込みなし)
+	PM_PRINTSETTING				= 5, //!< プリント設定
 };
-//!���W�ʒu���̕ۑ�
+//!座標位置情報の保存
 #define MYWM_SAVEEDITSTATE  (WM_APP+1521)
 
-//! �^�X�N�g���C����̒ʒm���b�Z�[�W
+//! タスクトレイからの通知メッセージ
 #define MYWM_NOTIFYICON		(WM_APP+100)
 
 
 
-/*! �g���C����G�f�B�^�ւ̏I���v�� */
+/*! トレイからエディタへの終了要求 */
 #define	MYWM_CLOSE			(WM_APP+200)
 enum e_PM_CLOSE_WPARAM {
-	PM_CLOSE_EXIT				= 1, //!< �S�I��
-	PM_CLOSE_GREPNOCONFIRM		= 2, //!< Grep�ŏI���m�F���Ȃ�
+	PM_CLOSE_EXIT				= 1, //!< 全終了
+	PM_CLOSE_GREPNOCONFIRM		= 2, //!< Grepで終了確認しない
 };
 #define	MYWM_ALLOWACTIVATE	(WM_APP+201)
 
-/*! �g���C����G�f�B�^�ւ̕ҏW�t�@�C����� �v���ʒm */
+/*! トレイからエディタへの編集ファイル情報 要求通知 */
 #define	MYWM_GETFILEINFO	(WM_APP+203)
 
-/*! �J�[�\���ʒu�ύX�ʒm */
+/*! カーソル位置変更通知 */
 #define	MYWM_SETCARETPOS	(WM_APP+204)
-//! MYWM_SETCARETPOS���b�Z�[�W��lParam
+//! MYWM_SETCARETPOSメッセージのlParam
 enum e_PM_SETCARETPOS_SELECTSTATE {
-	PM_SETCARETPOS_NOSELECT		= 0, //!< �I������
-	PM_SETCARETPOS_SELECT		= 1, //!< �I���J�n�E�ύX
-	PM_SETCARETPOS_KEEPSELECT	= 2, //!< ���݂̑I����Ԃ�ۂ��Ĉړ�
+	PM_SETCARETPOS_NOSELECT		= 0, //!< 選択解除
+	PM_SETCARETPOS_SELECT		= 1, //!< 選択開始・変更
+	PM_SETCARETPOS_KEEPSELECT	= 2, //!< 現在の選択状態を保って移動
 };
 
-/*! �J�[�\���ʒu�擾�v�� */
+/*! カーソル位置取得要求 */
 #define	MYWM_GETCARETPOS	(WM_APP+205)
 
-//! ���g�p
-//wParam:���g�p
-//lParam:���g�p
+//! 未使用
+//wParam:未使用
+//lParam:未使用
 #define	MYWM_ADDSTRING		(WM_APP+206)
 
-/*! �^�O�W�����v���ʒm */
+/*! タグジャンプ元通知 */
 #define	MYWM_SETREFERER		(WM_APP+207)
 
-/*! �s(���s�P��)�f�[�^�̗v��(Send)
-	���L�f�[�^�F EditWnd:Write���Ăяo����Read
-	wParam:CLogicInt ���W�b�N�s
-	lParam:ClogicInt ���W�b�N��I�t�Z�b�g
-	@retval 0�F�s�Ȃ�����I���BEOF�ŏI�s
-	@retval 1�ȏ�F�s�f�[�^����B�s�f�[�^��
-	@retval -1�ȉ��F�G���[
-	@date 2014.05.07 �d�l�ύX�B�߂�l�̃}�C�i�X lParam�ɈӖ���ǉ�
+/*! 行(改行単位)データの要求(Send)
+	共有データ： EditWnd:Write→呼び出し元Read
+	wParam:CLogicInt ロジック行
+	lParam:ClogicInt ロジック列オフセット
+	@retval 0：行なし正常終了。EOF最終行
+	@retval 1以上：行データあり。行データ長
+	@retval -1以下：エラー
+	@date 2014.05.07 仕様変更。戻り値のマイナス lParamに意味を追加
 */
 #define	MYWM_GETLINEDATA	(WM_APP+208)
 
 
-/*! �ҏW�E�B���h�E�I�u�W�F�N�g����̃I�u�W�F�N�g�폜�v�� */
+/*! 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 #define	MYWM_DELETE_ME		(WM_APP+209)
 
-/*! �V�����ҏW�E�B���h�E�̍쐬�˗�(�R�}���h���C����n��) */
+/*! 新しい編集ウィンドウの作成依頼(コマンドラインを渡す) */
 #define	MYWM_OPENNEWEDITOR	(WM_APP+210)
 
-//�w���v���ۂ�����
+//ヘルプっぽい何か
 #define	MYWM_HTMLHELP			(WM_APP+212)
 
-/*! �^�u�E�C���h�E�p���b�Z�[�W */
+/*! タブウインドウ用メッセージ */
 #define	MYWM_TAB_WINDOW_NOTIFY	(WM_APP+213)	//@@@ 2003.05.31 MIK
 
-/*! �o�[�̕\���E��\���ύX���b�Z�[�W */
+/*! バーの表示・非表示変更メッセージ */
 #define	MYWM_BAR_CHANGE_NOTIFY	(WM_APP+214)	//@@@ 2003.06.10 MIK
 
-/*! �G�f�B�^�|�g���C�Ԃł�UI���������̊m�F���b�Z�[�W */
+/*! エディタ－トレイ間でのUI特権分離の確認メッセージ */
 #define	MYWM_UIPI_CHECK	(WM_APP+215)	//@@@ 2007.06.07 ryoji
 
-/*! �|�b�v�A�b�v�E�B���h�E�̕\���ؑ֎w�� */
+/*! ポップアップウィンドウの表示切替指示 */
 #define MYWM_SHOWOWNEDPOPUPS (WM_APP+216)	//@@@ 2007.10.22 ryoji
 
-/*! �v���Z�X�̏���A�C�h�����O�ʒm */
+/*! プロセスの初回アイドリング通知 */
 #define MYWM_FIRST_IDLE (WM_APP+217)	//@@@ 2008.04.19 ryoji
 
-/*! �Ǝ��̃h���b�v�t�@�C���ʒm */
+/*! 独自のドロップファイル通知 */
 #define MYWM_DROPFILES (WM_APP+218)	//@@@ 2008.06.18 ryoji
 
-//! �e�L�X�g�ǉ��ʒm(���L�f�[�^�o�R)
-// wParam:�ǉ����镶����(WCHAR�P��)
-// lParam:���g�p
-// @2010.05.11 Moca ���b�Z�[�W�ǉ�
+//! テキスト追加通知(共有データ経由)
+// wParam:追加する文字数(WCHAR単位)
+// lParam:未使用
+// @2010.05.11 Moca メッセージ追加
 #define	MYWM_ADDSTRINGLEN_W (WM_APP+219)
 
-/*! �A�E�g���C����͉�ʂ̒ʒm */
+/*! アウトライン解析画面の通知 */
 #define MYWM_OUTLINE_NOTIFY (WM_APP+220)	//@@@ 2010.06.06 ryoji
 
-//! �^�C�v�ʂ�ݒ�
-// wParam:�^�C�v�ʔԍ�
+//! タイプ別を設定
+// wParam:タイプ別番号
 #define MYWM_SET_TYPESETTING (WM_APP+221)
-//! �^�C�v�ʂ��擾
+//! タイプ別を取得
 #define MYWM_GET_TYPESETTING (WM_APP+222)
 
-//! �^�C�v�ʂ�ǉ�
+//! タイプ別を追加
 #define MYWM_ADD_TYPESETTING (WM_APP+223)
-//! �^�C�v�ʂ��폜
+//! タイプ別を削除
 #define MYWM_DEL_TYPESETTING (WM_APP+224)
 
-//! �E�B���h�E�ꗗ�\��
+//! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
 
-/* �ĕϊ��Ή� */ // 20020331 aroka
+/* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST
 #define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
 #else
@@ -761,8 +761,8 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #define RWM_RECONVERT TEXT("MSIMEReconvert")
 
 #ifndef VK_XBUTTON1
-#define	VK_XBUTTON1		0x05	// �}�E�X�T�C�h�{�^��1�iWindows2000�ȍ~�Ŏg�p�\�j	// 2009.01.17 nasukoji
-#define	VK_XBUTTON2		0x06    // �}�E�X�T�C�h�{�^��2�iWindows2000�ȍ~�Ŏg�p�\�j	// 2009.01.17 nasukoji
+#define	VK_XBUTTON1		0x05	// マウスサイドボタン1（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
+#define	VK_XBUTTON2		0x06    // マウスサイドボタン2（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
 #endif
 
 #ifndef WM_MOUSEHWHEEL
