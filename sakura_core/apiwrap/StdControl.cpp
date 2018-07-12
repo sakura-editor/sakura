@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "StdControl.h"
 #include "util/tchar_receive.h"
 
@@ -11,7 +11,7 @@ namespace ApiWrap{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
 			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<ACHAR>(str,nCount+1) );	// +1: NULL •¶š•ª
+		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<ACHAR>(str,nCount+1) );	// +1: NULL æ–‡å­—åˆ†
 	}
 
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* str)
@@ -19,7 +19,7 @@ namespace ApiWrap{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
 			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL •¶š•ª
+		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL æ–‡å­—åˆ†
 	}
 
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, ACHAR* str, int nMaxCount)
@@ -49,7 +49,7 @@ namespace ApiWrap{
 		return FALSE != ret;
 	}
 
-	// TreeView ‘SŠJ¥‘S•Â
+	// TreeView å…¨é–‹ï½¥å…¨é–‰
 	void TreeView_ExpandAll(HWND hwndTree, bool bExpand, int nMaxDepth)
 	{
 		HTREEITEM	htiCur;
@@ -60,7 +60,7 @@ namespace ApiWrap{
 
 		htiCur = htiItem = TreeView_GetSelection( hwndTree );
 		if (!bExpand && htiCur != NULL) {
-			// •Â‚¶‚é‚Íƒgƒbƒv‚É•ÏX
+			// é–‰ã˜ã‚‹æ™‚ã¯ãƒˆãƒƒãƒ—ã«å¤‰æ›´
 			for (htiNext = htiCur; htiNext !=  NULL; ) {
 				htiItem = htiNext;
 				htiNext = TreeView_GetParent( hwndTree, htiItem );
@@ -75,7 +75,7 @@ namespace ApiWrap{
 		HTREEITEM item = TreeView_GetRoot(hwndTree);
 		while( 0 < tree.size() || item != NULL ){
 			while(item != NULL && (int)tree.size() < nMaxDepth ){
-				// æ‚É“WŠJ‚µ‚Ä‚©‚çGetChild‚µ‚È‚¢‚ÆAƒtƒ@ƒCƒ‹ƒcƒŠ[‚ÌƒTƒuƒAƒCƒeƒ€‚ª“WŠJ‚³‚ê‚È‚¢
+				// å…ˆã«å±•é–‹ã—ã¦ã‹ã‚‰GetChildã—ãªã„ã¨ã€ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼ã®ã‚µãƒ–ã‚¢ã‚¤ãƒ†ãƒ ãŒå±•é–‹ã•ã‚Œãªã„
 				TreeView_Expand(hwndTree, item, bExpand ? TVE_EXPAND : TVE_COLLAPSE);
 				tree.push_back(item);
 				item = TreeView_GetChild(hwndTree, item);
@@ -85,7 +85,7 @@ namespace ApiWrap{
 			item = TreeView_GetNextSibling(hwndTree, item);
 		}
 
-		// ‘I‘ğˆÊ’u‚ğ–ß‚·
+		// é¸æŠä½ç½®ã‚’æˆ»ã™
 		if (htiCur == NULL) {
 			if (bExpand ) {
 				htiItem = TreeView_GetRoot( hwndTree );

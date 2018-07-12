@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include <vector>
 #include "StdApi.h"
 #include "charset/charcode.h"
@@ -8,19 +8,19 @@ using namespace std;
 
 #ifndef _UNICODE
 /*!
-	ƒƒCƒh•¶š—ñ‚©‚çƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚ğ¶¬‚·‚éB
-	ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚Ì‚½‚ß‚ÉV‚µ‚¢ƒƒ‚ƒŠ—Ìˆæ‚ªŠm•Û‚³‚ê‚é‚Ì‚ÅA
-	g‚¢I‚í‚Á‚½‚çDestroyMbString‚ğŒÄ‚Ô‚±‚ÆI
+	ãƒ¯ã‚¤ãƒ‰æ–‡å­—åˆ—ã‹ã‚‰ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+	ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã®ãŸã‚ã«æ–°ã—ã„ãƒ¡ãƒ¢ãƒªé ˜åŸŸãŒç¢ºä¿ã•ã‚Œã‚‹ã®ã§ã€
+	ä½¿ã„çµ‚ã‚ã£ãŸã‚‰DestroyMbStringã‚’å‘¼ã¶ã“ã¨ï¼
 
-	@retval •ÏŠ·‚³‚ê‚½ACHAR•¶š—ñ
+	@retval å¤‰æ›ã•ã‚ŒãŸACHARæ–‡å­—åˆ—
 */
 static ACHAR* CreateMbString(
-	const WCHAR*	pWideString,	//!< [in]  Œ³‚ÌWCHAR•¶š—ñ
-	int				nWideLength,	//!< [in]  Œ³‚ÌWCHAR•¶š—ñ‚Ì’·‚³B•¶š’PˆÊB
-	int*			pnMbLength		//!< [out] •ÏŠ·‚³‚ê‚½ACHAR•¶š—ñ‚Ì’·‚³‚Ìó‚¯æ‚èæB•¶š’PˆÊB
+	const WCHAR*	pWideString,	//!< [in]  å…ƒã®WCHARæ–‡å­—åˆ—
+	int				nWideLength,	//!< [in]  å…ƒã®WCHARæ–‡å­—åˆ—ã®é•·ã•ã€‚æ–‡å­—å˜ä½ã€‚
+	int*			pnMbLength		//!< [out] å¤‰æ›ã•ã‚ŒãŸACHARæ–‡å­—åˆ—ã®é•·ã•ã®å—ã‘å–ã‚Šå…ˆã€‚æ–‡å­—å˜ä½ã€‚
 )
 {
-	//•K—v‚È—ÌˆæƒTƒCƒY‚ğæ“¾
+	//å¿…è¦ãªé ˜åŸŸã‚µã‚¤ã‚ºã‚’å–å¾—
 	int nNewLen=WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -32,10 +32,10 @@ static ACHAR* CreateMbString(
 		NULL
 	);
 
-	//—Ìˆæ‚ğŠm•Û
+	//é ˜åŸŸã‚’ç¢ºä¿
 	ACHAR* buf=new ACHAR[nNewLen+1];
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nNewLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -48,13 +48,13 @@ static ACHAR* CreateMbString(
 	);
 	buf[nNewLen]='\0';
 
-	//Œ‹‰Ê
+	//çµæœ
 	if(pnMbLength)*pnMbLength=nNewLen;
 	return buf;
 }
 
 /*!
-	CreateMbString ‚ÅŠm•Û‚µ‚½ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š—ñ‚ğ‰ğ•ú‚·‚é
+	CreateMbString ã§ç¢ºä¿ã—ãŸãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—åˆ—ã‚’è§£æ”¾ã™ã‚‹
 */
 static void DestroyMbString(ACHAR* pMbString)
 {
@@ -69,22 +69,22 @@ namespace ApiWrap{
 
 
 	/*!
-		MakeSureDirectoryPathExists ‚Ì UNICODE ”ÅB
-		szDirPath ‚Åw’è‚³‚ê‚½‚·‚×‚Ä‚ÌƒfƒBƒŒƒNƒgƒŠ‚ğì¬‚µ‚Ü‚·B
-		ƒfƒBƒŒƒNƒgƒŠ‚Ì‹Lq‚ÍAƒ‹[ƒg‚©‚çŠJn‚µ‚Ü‚·B
+		MakeSureDirectoryPathExists ã® UNICODE ç‰ˆã€‚
+		szDirPath ã§æŒ‡å®šã•ã‚ŒãŸã™ã¹ã¦ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ä½œæˆã—ã¾ã™ã€‚
+		ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®è¨˜è¿°ã¯ã€ãƒ«ãƒ¼ãƒˆã‹ã‚‰é–‹å§‹ã—ã¾ã™ã€‚
 
 		@param DirPath
-			—LŒø‚ÈƒpƒX–¼‚ğw’è‚·‚éAnull ‚ÅI‚í‚é•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğw’è‚µ‚Ü‚·B
-			ƒpƒX‚ÌÅŒã‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒtƒ@ƒCƒ‹–¼‚Å‚Í‚È‚­ƒfƒBƒŒƒNƒgƒŠ‚Å‚ ‚éê‡A
-			•¶š—ñ‚ÌÅŒã‚É‰~‹L†i\j‚ğ‹Lq‚µ‚È‚¯‚ê‚Î‚È‚è‚Ü‚¹‚ñB 
+			æœ‰åŠ¹ãªãƒ‘ã‚¹åã‚’æŒ‡å®šã™ã‚‹ã€null ã§çµ‚ã‚ã‚‹æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’æŒ‡å®šã—ã¾ã™ã€‚
+			ãƒ‘ã‚¹ã®æœ€å¾Œã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒãƒ•ã‚¡ã‚¤ãƒ«åã§ã¯ãªããƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã§ã‚ã‚‹å ´åˆã€
+			æ–‡å­—åˆ—ã®æœ€å¾Œã«å††è¨˜å·ï¼ˆ\ï¼‰ã‚’è¨˜è¿°ã—ãªã‘ã‚Œã°ãªã‚Šã¾ã›ã‚“ã€‚ 
 
 		@returns
-			ŠÖ”‚ª¬Œ÷‚·‚é‚ÆATRUE ‚ª•Ô‚è‚Ü‚·B
-			ŠÖ”‚ª¸”s‚·‚é‚ÆAFALSE ‚ª•Ô‚è‚Ü‚·B
+			é–¢æ•°ãŒæˆåŠŸã™ã‚‹ã¨ã€TRUE ãŒè¿”ã‚Šã¾ã™ã€‚
+			é–¢æ•°ãŒå¤±æ•—ã™ã‚‹ã¨ã€FALSE ãŒè¿”ã‚Šã¾ã™ã€‚
 
 		@note
-			w’è‚³‚ê‚½ŠeƒfƒBƒŒƒNƒgƒŠ‚ª‚Ü‚¾‘¶İ‚µ‚È‚¢ê‡A‚»‚ê‚ç‚ÌƒfƒBƒŒƒNƒgƒŠ‚ğ‡‚Éì¬‚µ‚Ü‚·B
-			ˆê•”‚ÌƒfƒBƒŒƒNƒgƒŠ‚Ì‚İ‚ğì¬‚µ‚½ê‡A‚±‚ÌŠÖ”‚Í FALSE ‚ğ•Ô‚µ‚Ü‚·B
+			æŒ‡å®šã•ã‚ŒãŸå„ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒã¾ã å­˜åœ¨ã—ãªã„å ´åˆã€ãã‚Œã‚‰ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’é †ã«ä½œæˆã—ã¾ã™ã€‚
+			ä¸€éƒ¨ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ã¿ã‚’ä½œæˆã—ãŸå ´åˆã€ã“ã®é–¢æ•°ã¯ FALSE ã‚’è¿”ã—ã¾ã™ã€‚
 
 		@author
 			kobake
@@ -97,19 +97,19 @@ namespace ApiWrap{
 		const wchar_t* p=szDirPath-1;
 		for (;;) {
 			p=wcschr(p+1,L'\\');
-			if(!p)break; //'\\'‚ğ‘–¸‚µI‚í‚Á‚½‚Ì‚ÅI—¹
+			if(!p)break; //'\\'ã‚’èµ°æŸ»ã—çµ‚ã‚ã£ãŸã®ã§çµ‚äº†
 
-			//æ“ª‚©‚çp‚Ü‚Å‚Ì•”•ª•¶š—ñ -> szBuf
+			//å…ˆé ­ã‹ã‚‰pã¾ã§ã®éƒ¨åˆ†æ–‡å­—åˆ— -> szBuf
 			wchar_t szBuf[_MAX_PATH];
 			wcsncpy_s(szBuf,_countof(szBuf),szDirPath,p-szDirPath);
 
-			//‘¶İ‚·‚é‚©
+			//å­˜åœ¨ã™ã‚‹ã‹
 			int nAcc = _waccess(szBuf,0);
-			if(nAcc==0)continue; //‘¶İ‚·‚é‚È‚çAŸ‚Ö
+			if(nAcc==0)continue; //å­˜åœ¨ã™ã‚‹ãªã‚‰ã€æ¬¡ã¸
 
-			//ƒfƒBƒŒƒNƒgƒŠì¬
+			//ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä½œæˆ
 			int nDir = _wmkdir(szBuf);
-			if(nDir==-1)return FALSE; //ƒGƒ‰[‚ª”­¶‚µ‚½‚Ì‚ÅAFALSE‚ğ•Ô‚·
+			if(nDir==-1)return FALSE; //ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã®ã§ã€FALSEã‚’è¿”ã™
 		}
 		return TRUE;
 	}
@@ -118,12 +118,12 @@ namespace ApiWrap{
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              WŒn•`‰æAPI (ANSI”Å‚Å‚à—˜—p‰Â”\)                //
+	//              Wç³»æç”»API (ANSIç‰ˆã§ã‚‚åˆ©ç”¨å¯èƒ½)                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	/*!
-		ANSI”Å‚Å‚àg‚¦‚éExtTextOutW_AnyBuildB
-		•¶š”§ŒÀ1024”¼Šp•¶šB(•¶šŠÔŠu”z—ñ‚ğ1024”¼Šp•¶š•ª‚µ‚©—pˆÓ‚µ‚Ä‚¢‚È‚¢‚½‚ß)
+		ANSIç‰ˆã§ã‚‚ä½¿ãˆã‚‹ExtTextOutW_AnyBuildã€‚
+		æ–‡å­—æ•°åˆ¶é™1024åŠè§’æ–‡å­—ã€‚(æ–‡å­—é–“éš”é…åˆ—ã‚’1024åŠè§’æ–‡å­—åˆ†ã—ã‹ç”¨æ„ã—ã¦ã„ãªã„ãŸã‚)
 	*/
 #ifdef _UNICODE
 #else
@@ -142,20 +142,20 @@ namespace ApiWrap{
 		if(cbCount>1024)return FALSE;
 
 		int nNewLength=0;
-		//ANSI•¶š—ñ‚ğ¶¬
+		//ANSIæ–‡å­—åˆ—ã‚’ç”Ÿæˆ
 		ACHAR* pNewString = CreateMbString(
 			lpwString,
 			cbCount==-1?wcslen(lpwString):cbCount,
 			&nNewLength
 		);
 
-		//•¶šŠÔŠu”z—ñ‚ğ¶¬
+		//æ–‡å­—é–“éš”é…åˆ—ã‚’ç”Ÿæˆ
 		int nHankakuDx;
 		const int* lpDxNew=NULL;
 		if(lpDx){
 			if(WCODE::IsHankaku(lpwString[0]))nHankakuDx=lpDx[0];
 			else nHankakuDx=lpDx[0]/2;
-			static int aDx[1024]={0}; //1024”¼Šp•¶š‚Ü‚Å
+			static int aDx[1024]={0}; //1024åŠè§’æ–‡å­—ã¾ã§
 			if(aDx[0]!=nHankakuDx){
 				for(int i=0;i<_countof(aDx);i++){
 					aDx[i]=nHankakuDx;
@@ -164,10 +164,10 @@ namespace ApiWrap{
 			lpDxNew=aDx;
 		}
 
-		//APIƒR[ƒ‹
+		//APIã‚³ãƒ¼ãƒ«
 		BOOL ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,pNewString,nNewLength,lpDxNew);
 
-		//Œãn––
+		//å¾Œå§‹æœ«
 		DestroyMbString(pNewString);
 		DEBUG_SETPIXEL(hdc);
 		return ret;
@@ -202,7 +202,7 @@ namespace ApiWrap{
 		LPCWSTR lpsz
 	)
 	{
-		//$$ ƒTƒƒQ[ƒgƒyƒA–³‹
+		//$$ ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ç„¡è¦–
 		if(*lpsz)return const_cast<LPWSTR>(lpsz+1);
 		else return const_cast<LPWSTR>(lpsz);
 	}
@@ -212,7 +212,7 @@ namespace ApiWrap{
 		LPCWSTR lpszCurrent
 	)
 	{
-		//$$ ƒTƒƒQ[ƒgƒyƒA–³‹
+		//$$ ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ç„¡è¦–
 		if(lpszCurrent>lpszStart)return const_cast<LPWSTR>(lpszCurrent-1);
 		else return const_cast<LPWSTR>(lpszStart);
 	}
@@ -237,7 +237,7 @@ namespace ApiWrap{
 #endif
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             ‚»‚Ì‘¼WŒnAPI (ANSI”Å‚Å‚à—˜—p‰Â”\)               //
+	//             ãã®ä»–Wç³»API (ANSIç‰ˆã§ã‚‚åˆ©ç”¨å¯èƒ½)               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #ifdef _UNICODE
@@ -246,56 +246,56 @@ namespace ApiWrap{
 		HINSTANCE	hInstance,
 		UINT		uID,
 		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< ƒoƒbƒtƒ@‚ÌƒTƒCƒYB•¶š’PˆÊB
+		int			nBufferCount	//!< ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚ºã€‚æ–‡å­—å˜ä½ã€‚
 	)
 	{
-		//‚Ü‚¸‚ÍACHAR‚Åƒ[ƒh
+		//ã¾ãšã¯ACHARã§ãƒ­ãƒ¼ãƒ‰
 		int nTmpCnt = nBufferCount*2+2;
 		ACHAR* pTmp = new ACHAR[nTmpCnt];
 		int ret=LoadStringA(hInstance, uID, pTmp, nTmpCnt);
 
-		//WCHAR‚É•ÏŠ·
+		//WCHARã«å¤‰æ›
 		mbstowcs2(lpBuffer, pTmp, nBufferCount);
 		int ret2=wcslen(lpBuffer);
 
-		//Œãn––
+		//å¾Œå§‹æœ«
 		delete[] pTmp;
 
-		//Œ‹‰Ê
+		//çµæœ
 		return ret2;
 	}
 #endif
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                    •`‰æAPI •s‹ï‡ƒ‰ƒbƒv                     //
+	//                    æç”»API ä¸å…·åˆãƒ©ãƒƒãƒ—                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	/*
-		Vista‚ÅSetPixel‚ª“®‚©‚È‚¢‚½‚ßA‘ã‘ÖŠÖ”‚ğ—pˆÓB
+		Vistaã§SetPixelãŒå‹•ã‹ãªã„ãŸã‚ã€ä»£æ›¿é–¢æ•°ã‚’ç”¨æ„ã€‚
 
-		QlFhttp://forums.microsoft.com/MSDN-JA/ShowPost.aspx?PostID=3228018&SiteID=7
-		> Vista ‚Å Aero ‚ğ OFF ‚É‚·‚é‚Æ SetPixel ‚ª‚¤‚Ü‚­“®‚©‚È‚¢‚»‚¤‚Å‚·B
-		> ‚µ‚©‚àASP1 ‚Å‚àC³‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚©B
+		å‚è€ƒï¼šhttp://forums.microsoft.com/MSDN-JA/ShowPost.aspx?PostID=3228018&SiteID=7
+		> Vista ã§ Aero ã‚’ OFF ã«ã™ã‚‹ã¨ SetPixel ãŒã†ã¾ãå‹•ã‹ãªã„ãã†ã§ã™ã€‚
+		> ã—ã‹ã‚‚ã€SP1 ã§ã‚‚ä¿®æ­£ã•ã‚Œã¦ã„ãªã„ã¨ã‹ã€‚
 	*/
 	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c)
 	{
 		if (!IsWinVista_or_later()) {
-		//Vista‚æ‚è‘OFSetPixel’¼ŒÄ‚Ño‚µ
+		//Vistaã‚ˆã‚Šå‰ï¼šSetPixelç›´å‘¼ã³å‡ºã—
 			::SetPixel(hdc,x,y,c);
 		}
 		else {
-		//VistaˆÈ~FSetPixelƒGƒ~ƒ…ƒŒ[ƒg
+		//Vistaä»¥é™ï¼šSetPixelã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ãƒˆ
 			static HPEN hPen = NULL;
 			static COLORREF clrPen = 0;
 			if(hPen && c!=clrPen){
 				DeleteObject(hPen);
 				hPen = NULL;
 			}
-			//ƒyƒ“¶¬
+			//ãƒšãƒ³ç”Ÿæˆ
 			if(!hPen){
 				hPen = CreatePen(PS_SOLID,1,clrPen = c);
 			}
-			//•`‰æ
+			//æç”»
 			HPEN hpnOld = (HPEN)SelectObject(hdc,hPen);
 			::MoveToEx(hdc,x,y,NULL);
 			::LineTo(hdc,x+1,y+1);

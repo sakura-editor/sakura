@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,14 +26,14 @@
 
 /*
 2007.09.17 kobake
-“à•”ƒR[ƒh‚ªWCHAR‚È‚Ì‚ÅAŒŸõƒL[ƒ[ƒh‚È‚Ç‚àWCHAR‚Å•Û‚·‚éB
-‚»‚Ì‚½‚ßAŒŸõƒ_ƒCƒAƒƒO‚ÌƒRƒ“ƒ{ƒ{ƒbƒNƒX‚È‚Ç‚ÉAWCHAR‚ğİ’è‚·‚éê–Ê‚ªo‚Ä‚­‚éB
-UNICODE”Å‚Å‚Í–â‘è–³‚¢‚ªAANSI”Å‚Å‚Íİ’è‚Ì‘O‚ÉƒR[ƒh•ÏŠ·‚·‚é•K—v‚ª‚ ‚éB
-ŒÄ‚Ño‚µ‘¤‚Å•ÏŠ·‚µ‚Ä‚à—Ç‚¢‚ªA•p“x‚ª‘½‚¢‚Ì‚ÅAWCHAR‚ğ’¼Úó‚¯æ‚éAPIƒ‰ƒbƒvŠÖ”‚ğ’ñ‹Ÿ‚·‚éB
+å†…éƒ¨ã‚³ãƒ¼ãƒ‰ãŒWCHARãªã®ã§ã€æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãªã©ã‚‚WCHARã§ä¿æŒã™ã‚‹ã€‚
+ãã®ãŸã‚ã€æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ãªã©ã«ã€WCHARã‚’è¨­å®šã™ã‚‹å ´é¢ãŒå‡ºã¦ãã‚‹ã€‚
+UNICODEç‰ˆã§ã¯å•é¡Œç„¡ã„ãŒã€ANSIç‰ˆã§ã¯è¨­å®šã®å‰ã«ã‚³ãƒ¼ãƒ‰å¤‰æ›ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
+å‘¼ã³å‡ºã—å´ã§å¤‰æ›ã—ã¦ã‚‚è‰¯ã„ãŒã€é »åº¦ãŒå¤šã„ã®ã§ã€WCHARã‚’ç›´æ¥å—ã‘å–ã‚‹APIãƒ©ãƒƒãƒ—é–¢æ•°ã‚’æä¾›ã™ã‚‹ã€‚
 
-‚Ü‚½ASendMessage‚Ì’¼ÚŒÄ‚Ño‚µ‚ÍA‚Ç‚¤‚µ‚Ä‚àWPARAM,LPARAM‚Ö‚Ì‹­§ƒLƒƒƒXƒg‚ª¶‚¶‚é‚½‚ßA
-ƒRƒ“ƒpƒCƒ‰‚ÌŒ^ƒ`ƒFƒbƒN‚ª“­‚©‚¸Awchar_t, char‚Ì¬İ‚·‚éƒ\[ƒXƒR[ƒh‚Ì’†‚Å‚ÍƒoƒO‚Ì‰·°‚É‚È‚è‚â‚·‚¢B
-‚»‚¤‚¢‚Á‚½ˆÓ–¡‚Å‚àA‚±‚Ìƒtƒ@ƒCƒ‹“à‚Ìƒ‰ƒbƒvŠÖ”‚ğg‚¤‚±‚Æ‚ğ„§‚·‚éB
+ã¾ãŸã€SendMessageã®ç›´æ¥å‘¼ã³å‡ºã—ã¯ã€ã©ã†ã—ã¦ã‚‚WPARAM,LPARAMã¸ã®å¼·åˆ¶ã‚­ãƒ£ã‚¹ãƒˆãŒç”Ÿã˜ã‚‹ãŸã‚ã€
+ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã®å‹ãƒã‚§ãƒƒã‚¯ãŒåƒã‹ãšã€wchar_t, charã®æ··åœ¨ã™ã‚‹ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã®ä¸­ã§ã¯ãƒã‚°ã®æ¸©åºŠã«ãªã‚Šã‚„ã™ã„ã€‚
+ãã†ã„ã£ãŸæ„å‘³ã§ã‚‚ã€ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«å†…ã®ãƒ©ãƒƒãƒ—é–¢æ•°ã‚’ä½¿ã†ã“ã¨ã‚’æ¨å¥¨ã™ã‚‹ã€‚
 */
 
 #include "../util/tchar_convert.h"
@@ -42,7 +42,7 @@ UNICODE”Å‚Å‚Í–â‘è–³‚¢‚ªAANSI”Å‚Å‚Íİ’è‚Ì‘O‚ÉƒR[ƒh•ÏŠ·‚·‚é•K—v‚ª‚ ‚éB
 namespace ApiWrap{
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒEƒBƒ“ƒhƒE‹¤’Ê                         //
+	//                      ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å…±é€š                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline BOOL Wnd_SetText(HWND hwnd, const ACHAR* str)
 	{
@@ -59,7 +59,7 @@ namespace ApiWrap{
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒRƒ“ƒ{ƒ{ƒbƒNƒX                         //
+	//                      ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline LRESULT Combo_AddString(HWND hwndCombo, const ACHAR* str)
 	{
@@ -103,7 +103,7 @@ namespace ApiWrap{
 	inline BOOL Combo_GetDroppedState(HWND hwndCtl)						{ return (BOOL)(DWORD)::SendMessage(hwndCtl, CB_GETDROPPEDSTATE, 0L, 0L ); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒŠƒXƒgƒ{ƒbƒNƒX                         //
+	//                      ãƒªã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	LRESULT List_GetText(HWND hwndList, int nIndex, ACHAR* str);
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* str);
@@ -142,7 +142,7 @@ namespace ApiWrap{
 	inline int List_SetTopIndex(HWND hwndCtl, int indexTop)				{ return (int)(DWORD)::SendMessage(hwndCtl, LB_SETTOPINDEX, (WPARAM)indexTop, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹                //
+	//                      ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline void EditCtl_LimitText(HWND hwndCtl, int cchLimit)			{ ::SendMessage(hwndCtl, EM_LIMITTEXT, (WPARAM)(cchLimit), 0L); }
 	inline void EditCtl_SetSel(HWND hwndCtl, int ichStart, int ichEnd)	{ ::SendMessage(hwndCtl, EM_SETSEL, ichStart, ichEnd); }
@@ -150,18 +150,18 @@ namespace ApiWrap{
 	inline void EditCtl_ReplaceSel(HWND hwndCtl, const TCHAR* lpsz)		{ ::SendMessage(hwndCtl, EM_REPLACESEL, 0, (LPARAM)lpsz); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒ{ƒ^ƒ“ ƒRƒ“ƒgƒ[ƒ‹                    //
+	//                      ãƒœã‚¿ãƒ³ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«                    //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline int BtnCtl_GetCheck(HWND hwndCtl)							{ return (int)(DWORD)::SendMessage(hwndCtl, BM_GETCHECK, 0L, 0L); }
 	inline void BtnCtl_SetCheck(HWND hwndCtl, int check)				{ ::SendMessage(hwndCtl, BM_SETCHECK, (WPARAM)check, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒXƒ^ƒeƒBƒbƒN ƒRƒ“ƒgƒ[ƒ‹              //
+	//                      ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline HICON StCtl_SetIcon(HWND hwndCtl, HICON hIcon)				{ return (HICON)(UINT_PTR)::SendMessage(hwndCtl, STM_SETICON, (WPARAM)hIcon, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ƒ_ƒCƒAƒƒO“à                          //
+	//                       ãƒ€ã‚¤ã‚¢ãƒ­ã‚°å†…                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline BOOL DlgItem_SetText(HWND hwndDlg, int nIDDlgItem, const ACHAR* str)
 	{
