@@ -42,9 +42,9 @@
 
 	@date 2007.10.18 kobake
 */
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら//
 #ifdef _DEBUG
-#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効。
+#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効.
 #endif
 #endif
 
@@ -53,7 +53,7 @@
 //#define USE_UNFIXED_FONT
 
 
-//UNICODE BOOL定数
+//UNICODE BOOL定数.
 #ifdef _UNICODE
 static const bool UNICODE_BOOL=true;
 #else
@@ -71,7 +71,7 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか（デバッグ用）
+//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef _DEBUG
 //#define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
@@ -100,7 +100,7 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか（デバッグ用）
+//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	//new演算子をオーバーライドするヘッダはcrtdbg.hの前にincludeしないとコンパイルエラーとなる	
 	//参考：http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
@@ -112,7 +112,7 @@ static const bool UNICODE_BOOL=false;
 	#include <crtdbg.h>
 	#define new DEBUG_NEW
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ
+	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ.
 #endif
 
 #if _WIN64
