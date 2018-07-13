@@ -1,12 +1,12 @@
-/*!	@file
-	@brief í’“•”
+ï»¿/*!	@file
+	@brief å¸¸é§éƒ¨
 	
-	ƒ^ƒXƒNƒgƒŒƒCƒAƒCƒRƒ“‚ÌŠÇ—Cƒ^ƒXƒNƒgƒŒƒCƒƒjƒ…[‚ÌƒAƒNƒVƒ‡ƒ“C
-	MRUAƒL[Š„‚è“–‚ÄA‹¤’Êİ’èA•ÒWƒEƒBƒ“ƒhƒE‚ÌŠÇ—‚È‚Ç
+	ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®ç®¡ç†ï¼Œã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ï¼Œ
+	MRUã€ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã€å…±é€šè¨­å®šã€ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç®¡ç†ãªã©
 
 	@author Norio Nakatani
-	@date 1998/05/13 V‹Kì¬
-	@date 2001/06/03 N.Nakatani grep’PŒê’PˆÊ‚ÅŒŸõ‚ğÀ‘•‚·‚é‚Æ‚«‚Ì‚½‚ß‚ÉƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“‚Ìˆ—’Ç‰Á
+	@date 1998/05/13 æ–°è¦ä½œæˆ
+	@date 2001/06/03 N.Nakatani grepå˜èªå˜ä½ã§æ¤œç´¢ã‚’å®Ÿè£…ã™ã‚‹ã¨ãã®ãŸã‚ã«ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®å‡¦ç†è¿½åŠ 
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -53,17 +53,17 @@
 #include "sakura_rc.h"
 
 #define IDT_EDITCHECK 2
-// 3•b
+// 3ç§’
 #define IDT_EDITCHECK_INTERVAL 3000
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
 //Stonee, 2001/03/21
-//Stonee, 2001/07/01  ‘½d‹N“®‚³‚ê‚½ê‡‚Í‘O‰ñ‚Ìƒ_ƒCƒAƒƒO‚ğ‘O–Ê‚Éo‚·‚æ‚¤‚É‚µ‚½B
+//Stonee, 2001/07/01  å¤šé‡èµ·å‹•ã•ã‚ŒãŸå ´åˆã¯å‰å›ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’å‰é¢ã«å‡ºã™ã‚ˆã†ã«ã—ãŸã€‚
 void CControlTray::DoGrep()
 {
 	//Stonee, 2001/06/30
-	//‘O‰ñ‚Ìƒ_ƒCƒAƒƒO‚ª‚ ‚ê‚Î‘O–Ê‚É (suggested by genta)
+	//å‰å›ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãŒã‚ã‚Œã°å‰é¢ã« (suggested by genta)
 	if ( ::IsWindow(m_cDlgGrep.GetHwnd()) ){
 		::OpenIcon(m_cDlgGrep.GetHwnd());
 		::BringWindowToTop(m_cDlgGrep.GetHwnd());
@@ -75,13 +75,13 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		_tcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* ŒŸõƒtƒ@ƒCƒ‹ */
+		_tcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* æ¤œç´¢ãƒ•ã‚¡ã‚¤ãƒ« */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* ŒŸõƒtƒHƒ‹ƒ_ */
+		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	}
 
-	/* Grepƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	/* Grepãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
 	if( !nRet || GetTrayHwnd() == NULL ){
 		return;
@@ -93,8 +93,8 @@ void CControlTray::DoGrep()
 void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep& cDlgGrep)
 {
 
-	/*======= Grep‚ÌÀs =============*/
-	/* GrepŒ‹‰ÊƒEƒBƒ“ƒhƒE‚Ì•\¦ */
+	/*======= Grepã®å®Ÿè¡Œ =============*/
+	/* Grepçµæœã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º */
 
 	CNativeW		cmWork1;
 	CNativeT		cmWork2;
@@ -119,16 +119,16 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	auto_sprintf( szTemp, _T("%d"), cDlgGrep.m_nGrepCharSet );
 	cCmdLine.AppendString(szTemp);
 
-	//GOPTƒIƒvƒVƒ‡ƒ“
+	//GOPTã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	TCHAR pOpt[64] = _T("");
-	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, _T("L") );	// ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// ³‹K•\Œ»
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, _T("P") );	// s‚ğo—Í‚·‚é
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, _T("N") );	// ”Ûƒqƒbƒgs‚ğo—Í‚·‚é 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// ’PŒê’PˆÊ‚Å’T‚·
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: o—ÍŒ`®
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: o—ÍŒ`®
+	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, _T("L") );	// è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// æ­£è¦è¡¨ç¾
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, _T("P") );	// è¡Œã‚’å‡ºåŠ›ã™ã‚‹
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, _T("N") );	// å¦ãƒ’ãƒƒãƒˆè¡Œã‚’å‡ºåŠ›ã™ã‚‹ 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// å˜èªå˜ä½ã§æ¢ã™
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: å‡ºåŠ›å½¢å¼
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: å‡ºåŠ›å½¢å¼
 	if( 3 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("3") );
 	if( cDlgGrep.m_bGrepOutputFileOnly		)_tcscat( pOpt, _T("F") );
 	if( cDlgGrep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, _T("B") );
@@ -138,7 +138,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 		cCmdLine.AppendString( pOpt );
 	}
 
-	/* V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á ver 0 */
+	/* æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  ver 0 */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
@@ -148,7 +148,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 }
 
 
-/* ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚¶‚á */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã˜ã‚ƒ */
 static LRESULT CALLBACK CControlTrayWndProc(
 	HWND	hwnd,	// handle of window
 	UINT	uMsg,	// message identifier
@@ -180,20 +180,20 @@ static LRESULT CALLBACK CControlTrayWndProc(
 
 /////////////////////////////////////////////////////////////////////////////
 // CControlTray
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 CControlTray::CControlTray()
 //	Apr. 24, 2001 genta
 : m_pcPropertyManager(NULL)
 , m_hInstance( NULL )
 , m_hWnd( NULL )
-, m_bCreatedTrayIcon( FALSE )	//ƒgƒŒƒC‚ÉƒAƒCƒRƒ“‚ğì‚Á‚½
+, m_bCreatedTrayIcon( FALSE )	//ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œã£ãŸ
 , m_nCurSearchKeySequence(-1)
 , m_uCreateTaskBarMsg( ::RegisterWindowMessage( TEXT("TaskbarCreated") ) )
 {
-	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 	m_pShareData = &GetDllShareData();
 
-	// ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹ì¬
+	// ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 	CreateAccelTbl();
 
 	m_bUseTrayMenu = false;
@@ -209,17 +209,17 @@ CControlTray::~CControlTray()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CControlTray ƒƒ“ƒoŠÖ”
+// CControlTray ãƒ¡ãƒ³ãƒé–¢æ•°
 
 
 
 
-/* ì¬ */
+/* ä½œæˆ */
 HWND CControlTray::Create( HINSTANCE hInstance )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CControlTray::Create" );
 
-	//“¯–¼“¯ƒNƒ‰ƒX‚ÌƒEƒBƒ“ƒhƒE‚ªŠù‚É‘¶İ‚µ‚Ä‚¢‚½‚çA¸”s
+	//åŒååŒã‚¯ãƒ©ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒæ—¢ã«å­˜åœ¨ã—ã¦ã„ãŸã‚‰ã€å¤±æ•—
 	m_hInstance = hInstance;
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strCEditAppName = GSTR_CEDITAPP;
@@ -229,7 +229,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		return NULL;
 	}
 
-	//ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX“o˜^
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ç™»éŒ²
 	WNDCLASS	wc;
 	{
 		wc.style			=	CS_HREDRAW |
@@ -252,7 +252,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		}
 	}
 
-	// ƒEƒBƒ“ƒhƒEì¬ (WM_CREATE‚ÅAGetHwnd() ‚É HWND ‚ªŠi”[‚³‚ê‚é)
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ (WM_CREATEã§ã€GetHwnd() ã« HWND ãŒæ ¼ç´ã•ã‚Œã‚‹)
 	::CreateWindow(
 		strCEditAppName.c_str(),			// pointer to registered class name
 		strCEditAppName.c_str(),			// pointer to window name
@@ -267,10 +267,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 		(LPVOID)this						// pointer to window-creation data(lpCreateParams)
 	);
 
-	// Å‘O–Ê‚É‚·‚éiƒgƒŒƒC‚©‚ç‚Ìƒ|ƒbƒvƒAƒbƒvƒEƒBƒ“ƒhƒE‚ªÅ‘O–Ê‚É‚È‚é‚æ‚¤‚Éj
+	// æœ€å‰é¢ã«ã™ã‚‹ï¼ˆãƒˆãƒ¬ã‚¤ã‹ã‚‰ã®ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒæœ€å‰é¢ã«ãªã‚‹ã‚ˆã†ã«ï¼‰
 	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
-	// ƒ^ƒXƒNƒgƒŒƒCƒAƒCƒRƒ“ì¬
+	// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ä½œæˆ
 	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
 	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
@@ -285,19 +285,19 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	return GetTrayHwnd();
 }
 
-//! ƒ^ƒXƒNƒgƒŒƒC‚ÉƒAƒCƒRƒ“‚ğ“o˜^‚·‚é
+//! ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’ç™»éŒ²ã™ã‚‹
 bool CControlTray::CreateTrayIcon( HWND hWnd )
 {
-	// ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ğì‚é
-	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ğg‚¤ */
+	// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œã‚‹
+	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½¿ã† */
 		//	Dec. 02, 2002 genta
 		HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
-//From Here Jan. 12, 2001 JEPRO ƒgƒŒƒCƒAƒCƒRƒ“‚Éƒ|ƒCƒ“ƒg‚·‚é‚Æƒo[ƒWƒ‡ƒ“no.‚ª•\¦‚³‚ê‚é‚æ‚¤‚ÉC³
+//From Here Jan. 12, 2001 JEPRO ãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã«ãƒã‚¤ãƒ³ãƒˆã™ã‚‹ã¨ãƒãƒ¼ã‚¸ãƒ§ãƒ³no.ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã‚ˆã†ã«ä¿®æ­£
 //			TrayMessage( GetTrayHwnd(), NIM_ADD, 0,  hIcon, GSTR_APPNAME );
-		/* ƒo[ƒWƒ‡ƒ“î•ñ */
-		//	UR version no.‚ğİ’è (cf. cDlgAbout.cpp)
+		/* ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± */
+		//	UR version no.ã‚’è¨­å®š (cf. cDlgAbout.cpp)
 		TCHAR	pszTips[64 + _MAX_PATH];
-		//	2004.05.13 Moca ƒo[ƒWƒ‡ƒ“”Ô†‚ÍAƒvƒƒZƒX‚²‚Æ‚Éæ“¾‚·‚é
+		//	2004.05.13 Moca ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã¯ã€ãƒ—ãƒ­ã‚»ã‚¹ã”ã¨ã«å–å¾—ã™ã‚‹
 		DWORD dwVersionMS, dwVersionLS;
 		GetAppVersionInfo( NULL, VS_VERSION_INFO,
 			&dwVersionMS, &dwVersionLS );
@@ -307,7 +307,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			profname = L" ";
 			profname += CCommandLine::getInstance()->GetProfileName();
 		}
-		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR ‚Í‚à‚¤•t‚¯‚È‚­‚È‚Á‚½‚Ì‚ğ–Y‚ê‚Ä‚¢‚½
+		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR ã¯ã‚‚ã†ä»˜ã‘ãªããªã£ãŸã®ã‚’å¿˜ã‚Œã¦ã„ãŸ
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -317,7 +317,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 		);
 		TrayMessage( GetTrayHwnd(), NIM_ADD, 0,  hIcon, pszTips );
 //To Here Jan. 12, 2001
-		m_bCreatedTrayIcon = TRUE;	/* ƒgƒŒƒC‚ÉƒAƒCƒRƒ“‚ğì‚Á‚½ */
+		m_bCreatedTrayIcon = TRUE;	/* ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œã£ãŸ */
 	}
 	return true;
 }
@@ -325,14 +325,14 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 
 
 
-/* ƒƒbƒZ[ƒWƒ‹[ƒv */
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ— */
 void CControlTray::MessageLoop( void )
 {
-//•¡”ƒvƒƒZƒX”Å
+//è¤‡æ•°ãƒ—ãƒ­ã‚»ã‚¹ç‰ˆ
 	MSG	msg;
 	int ret;
 	
-	//2004.02.17 Moca GetMessage‚ÌƒGƒ‰[ƒ`ƒFƒbƒN
+	//2004.02.17 Moca GetMessageã®ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
 	while ( GetTrayHwnd() != NULL && (ret = ::GetMessage(&msg, NULL, 0, 0 )) != 0 ){
 		if( ret == -1 ){
 			break;
@@ -347,7 +347,7 @@ void CControlTray::MessageLoop( void )
 
 
 
-/* ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ÉŠÖ‚·‚éˆ— */
+/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã«é–¢ã™ã‚‹å‡¦ç† */
 BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const TCHAR* pszTip )
 {
 	BOOL			res;
@@ -374,8 +374,8 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 
 
 
-/* ƒƒbƒZ[ƒWˆ— */
-//@@@ 2001.12.26 YAZAKI MRUƒŠƒXƒg‚ÍACMRU‚ÉˆË—Š‚·‚é
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
+//@@@ 2001.12.26 YAZAKI MRUãƒªã‚¹ãƒˆã¯ã€CMRUã«ä¾é ¼ã™ã‚‹
 LRESULT CControlTray::DispatchEvent(
 	HWND	hwnd,	// handle of window
 	UINT	uMsg,	// message identifier
@@ -393,21 +393,21 @@ LRESULT CControlTray::DispatchEvent(
 
 	static WORD		wHotKeyMods;
 	static WORD		wHotKeyCode;
-	LPMEASUREITEMSTRUCT	lpmis;	/* €–ÚƒTƒCƒYî•ñ */
-	LPDRAWITEMSTRUCT	lpdis;	/* €–Ú•`‰æî•ñ */
+	LPMEASUREITEMSTRUCT	lpmis;	/* é …ç›®ã‚µã‚¤ã‚ºæƒ…å ± */
+	LPDRAWITEMSTRUCT	lpdis;	/* é …ç›®æç”»æƒ…å ± */
 	int					nItemWidth;
 	int					nItemHeight;
-	static bool			bLDClick = false;	/* ¶ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚ğ‚µ‚½‚© 03/02/20 ai */
+	static bool			bLDClick = false;	/* å·¦ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã‚’ã—ãŸã‹ 03/02/20 ai */
 
 	switch ( uMsg ){
 	case WM_MENUCHAR:
-		/* ƒƒjƒ…[ƒAƒNƒZƒXƒL[‰Ÿ‰º‚Ìˆ—(WM_MENUCHARˆ—) */
+		/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼æŠ¼ä¸‹æ™‚ã®å‡¦ç†(WM_MENUCHARå‡¦ç†) */
 		return m_cMenuDrawer.OnMenuChar( hwnd, uMsg, wParam, lParam );
 	case WM_DRAWITEM:
-		lpdis = (DRAWITEMSTRUCT*) lParam;	/* €–Ú•`‰æî•ñ */
+		lpdis = (DRAWITEMSTRUCT*) lParam;	/* é …ç›®æç”»æƒ…å ± */
 		switch( lpdis->CtlType ){
-		case ODT_MENU:	/* ƒI[ƒi[•`‰æƒƒjƒ…[ */
-			/* ƒƒjƒ…[ƒAƒCƒeƒ€•`‰æ */
+		case ODT_MENU:	/* ã‚ªãƒ¼ãƒŠãƒ¼æç”»ãƒ¡ãƒ‹ãƒ¥ãƒ¼ */
+			/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ãƒ†ãƒ æç”» */
 			m_cMenuDrawer.DrawItem( lpdis );
 			return TRUE;
 		}
@@ -415,8 +415,8 @@ LRESULT CControlTray::DispatchEvent(
 	case WM_MEASUREITEM:
 		lpmis = (MEASUREITEMSTRUCT*) lParam;	// item-size information
 		switch( lpmis->CtlType ){
-		case ODT_MENU:	/* ƒI[ƒi[•`‰æƒƒjƒ…[ */
-			/* ƒƒjƒ…[ƒAƒCƒeƒ€‚Ì•`‰æƒTƒCƒY‚ğŒvZ */
+		case ODT_MENU:	/* ã‚ªãƒ¼ãƒŠãƒ¼æç”»ãƒ¡ãƒ‹ãƒ¥ãƒ¼ */
+			/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ãƒ†ãƒ ã®æç”»ã‚µã‚¤ã‚ºã‚’è¨ˆç®— */
 			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( 0 < nItemWidth ){
 				lpmis->itemWidth = nItemWidth;
@@ -430,7 +430,7 @@ LRESULT CControlTray::DispatchEvent(
 		break;
 
 
-	/* ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[‚Ö‚ÌƒVƒ‡[ƒgƒJƒbƒgƒL[“o˜^ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¸ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚­ãƒ¼ç™»éŒ² */
 	case WM_HOTKEY:
 		{
 			int		idHotKey = (int) wParam;				// identifier of hot key
@@ -452,16 +452,16 @@ LRESULT CControlTray::DispatchEvent(
 			 && wHotKeyCode == uVirtKey
 			){
 				// Jan. 1, 2003 AROKA
-				// ƒ^ƒXƒNƒgƒŒƒCƒƒjƒ…[‚Ì•\¦ƒ^ƒCƒ~ƒ“ƒO‚ğLBUTTONDOWN¨LBUTTONUP‚É•ÏX‚µ‚½‚±‚Æ‚É‚æ‚é
+				// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¡¨ç¤ºã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’LBUTTONDOWNâ†’LBUTTONUPã«å¤‰æ›´ã—ãŸã“ã¨ã«ã‚ˆã‚‹
 				::PostMessageAny( GetTrayHwnd(), MYWM_NOTIFYICON, 0, WM_LBUTTONUP );
 			}
 		}
 		return 0;
 
 	case WM_TIMER:
-		// ƒ^ƒCƒ}ƒƒbƒZ[ƒW
+		// ã‚¿ã‚¤ãƒãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 		if( IDT_EDITCHECK == wParam ){
-			// 2010.08.26 ƒEƒBƒ“ƒhƒE‘¶İŠm”FBÁ‚¦‚½ƒEƒBƒ“ƒhƒE‚ğ–•Á‚·‚é
+			// 2010.08.26 ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å­˜åœ¨ç¢ºèªã€‚æ¶ˆãˆãŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æŠ¹æ¶ˆã™ã‚‹
 			bool bDelete = false;
 			bool bDelFound;
 			do {
@@ -471,7 +471,7 @@ LRESULT CControlTray::DispatchEvent(
 					if( ! IsSakuraMainWindow( target ) ){
 						CAppNodeGroupHandle(m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup).DeleteEditWndList( target );
 						bDelete = bDelFound = true;
-						// 1‚Âíœ‚µ‚½‚ç‚â‚è’¼‚µ
+						// 1ã¤å‰Šé™¤ã—ãŸã‚‰ã‚„ã‚Šç›´ã—
 						break;
 					}
 				}
@@ -483,20 +483,20 @@ LRESULT CControlTray::DispatchEvent(
 		return 0;
 
 	case MYWM_UIPI_CHECK:
-		/* ƒGƒfƒBƒ^|ƒgƒŒƒCŠÔ‚Å‚ÌUI“ÁŒ •ª—£‚ÌŠm”FƒƒbƒZ[ƒW */	// 2007.06.07 ryoji
-		::SendMessage( (HWND)lParam, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)0 );	// •Ô–‚ğ•Ô‚·
+		/* ã‚¨ãƒ‡ã‚£ã‚¿ï¼ãƒˆãƒ¬ã‚¤é–“ã§ã®UIç‰¹æ¨©åˆ†é›¢ã®ç¢ºèªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ */	// 2007.06.07 ryoji
+		::SendMessage( (HWND)lParam, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)0 );	// è¿”äº‹ã‚’è¿”ã™
 		return 0L;
 
 	case MYWM_HTMLHELP:
 		{
 			TCHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<TCHAR>();
 
-			//szHtmlFileæ“¾
+			//szHtmlFileå–å¾—
 			TCHAR	szHtmlHelpFile[1024];
 			_tcscpy( szHtmlHelpFile, pWork );
 			int		nLen = _tcslen( szHtmlHelpFile );
 
-			//	Jul. 6, 2001 genta HtmlHelp‚ÌŒÄ‚Ño‚µ•û–@•ÏX
+			//	Jul. 6, 2001 genta HtmlHelpã®å‘¼ã³å‡ºã—æ–¹æ³•å¤‰æ›´
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL,
 				szHtmlHelpFile,
@@ -515,7 +515,7 @@ LRESULT CControlTray::DispatchEvent(
 			link.pszWindow		= NULL;
 			link.fIndexOnFail	= TRUE;
 
-			//	Jul. 6, 2001 genta HtmlHelp‚ÌŒÄ‚Ño‚µ•û–@•ÏX
+			//	Jul. 6, 2001 genta HtmlHelpã®å‘¼ã³å‡ºã—æ–¹æ³•å¤‰æ›´
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL,
 				szHtmlHelpFile,
@@ -527,16 +527,16 @@ LRESULT CControlTray::DispatchEvent(
 		return (LRESULT)hwndHtmlHelp;
 
 
-	/* •ÒWƒEƒBƒ“ƒhƒEƒIƒuƒWƒFƒNƒg‚©‚ç‚ÌƒIƒuƒWƒFƒNƒgíœ—v‹ */
+	/* ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå‰Šé™¤è¦æ±‚ */
 	case MYWM_DELETE_ME:
-		// ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ğí’“‚µ‚È‚¢A‚Ü‚½‚ÍAƒgƒŒƒC‚ÉƒAƒCƒRƒ“‚ğì‚Á‚Ä‚¢‚È‚¢
+		// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’å¸¸é§ã—ãªã„ã€ã¾ãŸã¯ã€ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œã£ã¦ã„ãªã„
 		if( !(m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray && m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray) || !m_bCreatedTrayIcon ){
-			// Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg
+			// ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆ
 			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if( 0 < nRowNum ){
 				delete [] pEditNodeArr;
 			}
-			// •ÒWƒEƒBƒ“ƒhƒE‚Ì”‚ª0‚É‚È‚Á‚½‚çI—¹
+			// ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ•°ãŒ0ã«ãªã£ãŸã‚‰çµ‚äº†
 			if( 0 == nRowNum ){
 				::SendMessage( hwnd, WM_CLOSE, 0, 0 );
 			}
@@ -561,7 +561,7 @@ LRESULT CControlTray::DispatchEvent(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( GetTrayHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
-		/* ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[‚Ö‚ÌƒVƒ‡[ƒgƒJƒbƒgƒL[“o˜^ */
+		/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¸ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚­ãƒ¼ç™»éŒ² */
 		wHotKeyMods = 0;
 		if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 			wHotKeyMods |= MOD_SHIFT;
@@ -582,7 +582,7 @@ LRESULT CControlTray::DispatchEvent(
 			);
 		}
 
-		// 2006.07.09 ryoji ÅŒã‚Ì•û‚ÅƒVƒƒƒbƒgƒ_ƒEƒ“‚·‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚É‚·‚é
+		// 2006.07.09 ryoji æœ€å¾Œã®æ–¹ã§ã‚·ãƒ£ãƒƒãƒˆãƒ€ã‚¦ãƒ³ã™ã‚‹ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã«ã™ã‚‹
 		BOOL (WINAPI *pfnSetProcessShutdownParameters)( DWORD dwLevel, DWORD dwFlags );
 		HINSTANCE hDll;
 		hDll = ::GetModuleHandle(_T("KERNEL32"));
@@ -593,7 +593,7 @@ LRESULT CControlTray::DispatchEvent(
 			}
 		}
 
-		// 2010.08.26 ƒEƒBƒ“ƒhƒE‘¶İŠm”F
+		// 2010.08.26 ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å­˜åœ¨ç¢ºèª
 		::SetTimer( hwnd, IDT_EDITCHECK, IDT_EDITCHECK_INTERVAL, NULL );
 		return 0L;
 
@@ -622,7 +622,7 @@ LRESULT CControlTray::DispatchEvent(
 					if( bChangeLang ){
 						CShareData::getInstance()->ConvertLangValues(values, true);
 					}
-					/* Œ¾Œê‚ğ‘I‘ğ‚·‚é */
+					/* è¨€èªã‚’é¸æŠã™ã‚‹ */
 					CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 					if( bChangeLang ){
 						CShareData::getInstance()->ConvertLangValues(values, false);
@@ -630,7 +630,7 @@ LRESULT CControlTray::DispatchEvent(
 				}
 
 				::UnregisterHotKey( GetTrayHwnd(), ID_HOTKEY_TRAYMENU );
-				/* ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[‚Ö‚ÌƒVƒ‡[ƒgƒJƒbƒgƒL[“o˜^ */
+				/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¸ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚­ãƒ¼ç™»éŒ² */
 				wHotKeyMods = 0;
 				if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 					wHotKeyMods |= MOD_SHIFT;
@@ -651,13 +651,13 @@ LRESULT CControlTray::DispatchEvent(
 					);
 				}
 
-//@@			/* ‹¤—Lƒf[ƒ^‚Ì•Û‘¶ */
+//@@			/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜ */
 //@@			m_cShareData.SaveShareData();
 
-				/* ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹‚ÌÄì¬ */
-				// ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹”jŠü
+				/* ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã®å†ä½œæˆ */
+				// ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ç ´æ£„
 				DeleteAccelTbl();
-				// ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹ì¬
+				// ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 				CreateAccelTbl();
 				break;
 			default:
@@ -698,14 +698,14 @@ LRESULT CControlTray::DispatchEvent(
 		case MYWM_ADD_TYPESETTING:
 			{
 				int nInsert = (int)wParam;
-				// "‹¤’Ê"‚Ì‘O‚É‚Í“ü‚ê‚È‚¢
+				// "å…±é€š"ã®å‰ã«ã¯å…¥ã‚Œãªã„
 				if( 0 < nInsert && nInsert <= m_pShareData->m_nTypesCount && nInsert < MAX_TYPES ){
 					std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
 					STypeConfig* type = new STypeConfig();
-					*type = *types[0]; // Šî–{‚ğƒRƒs[
+					*type = *types[0]; // åŸºæœ¬ã‚’ã‚³ãƒ”ãƒ¼
 					type->m_nIdx = nInsert;
 					type->m_id = (::GetTickCount() & 0x3fffffff) + nInsert * 0x10000;
-					// “¯‚¶–¼‘O‚Ì‚à‚Ì‚ª‚ ‚Á‚½‚ç‚»‚ÌŸ‚É‚·‚é
+					// åŒã˜åå‰ã®ã‚‚ã®ãŒã‚ã£ãŸã‚‰ãã®æ¬¡ã«ã™ã‚‹
 					int nAddNameNum = nInsert + 1;
 					auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 					for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
@@ -761,26 +761,26 @@ LRESULT CControlTray::DispatchEvent(
 		case MYWM_NOTIFYICON:
 //			MYTRACE( _T("MYWM_NOTIFYICON\n") );
 			switch (lParam){
-//ƒL[ƒ[ƒhFƒgƒŒƒC‰EƒNƒŠƒbƒNƒƒjƒ…[İ’è
-//	From Here Oct. 12, 2000 JEPRO ¶‰E‚Æ‚à“¯ˆêˆ—‚É‚È‚Á‚Ä‚¢‚½‚Ì‚ğ•ÊX‚Éˆ—‚·‚é‚æ‚¤‚É•ÏX
-			case WM_RBUTTONUP:	// Dec. 24, 2002 towest UP‚É•ÏX
+//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼šãƒˆãƒ¬ã‚¤å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¨­å®š
+//	From Here Oct. 12, 2000 JEPRO å·¦å³ã¨ã‚‚åŒä¸€å‡¦ç†ã«ãªã£ã¦ã„ãŸã®ã‚’åˆ¥ã€…ã«å‡¦ç†ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
+			case WM_RBUTTONUP:	// Dec. 24, 2002 towest UPã«å¤‰æ›´
 				::SetActiveWindow( GetTrayHwnd() );
 				::SetForegroundWindow( GetTrayHwnd() );
-				/* ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[(ƒgƒŒƒC‰Eƒ{ƒ^ƒ“) */
+				/* ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼(ãƒˆãƒ¬ã‚¤å³ãƒœã‚¿ãƒ³) */
 				nId = CreatePopUpMenu_R();
 				switch( nId ){
 				case F_HELP_CONTENTS:
-					/* ƒwƒ‹ƒv–ÚŸ */
-					ShowWinHelpContents( GetTrayHwnd() );	//	–ÚŸ‚ğ•\¦‚·‚é
+					/* ãƒ˜ãƒ«ãƒ—ç›®æ¬¡ */
+					ShowWinHelpContents( GetTrayHwnd() );	//	ç›®æ¬¡ã‚’è¡¨ç¤ºã™ã‚‹
 					break;
 				case F_HELP_SEARCH:
-					/* ƒwƒ‹ƒvƒL[ƒ[ƒhŒŸõ */
-					MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+					/* ãƒ˜ãƒ«ãƒ—ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢ */
+					MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 					break;
 				case F_EXTHELP1:
-					/* ŠO•”ƒwƒ‹ƒv‚P */
+					/* å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘ */
 					do{
-						if( CHelpManager().ExtWinHelpIsSet() ) {	//	‹¤’Êİ’è‚Ì‚İŠm”F
+						if( CHelpManager().ExtWinHelpIsSet() ) {	//	å…±é€šè¨­å®šã®ã¿ç¢ºèª
 							break;
 						}
 						else{
@@ -794,30 +794,30 @@ LRESULT CControlTray::DispatchEvent(
 
 					break;
 				case F_EXTHTMLHELP:
-					/* ŠO•”HTMLƒwƒ‹ƒv */
+					/* å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ— */
 					{
 //						CEditView::Command_EXTHTMLHELP();
 					}
 					break;
-				case F_TYPE_LIST:	// ƒ^ƒCƒv•Êİ’èˆê——
+				case F_TYPE_LIST:	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§
 					{
 						CDlgTypeList			cDlgTypeList;
 						CDlgTypeList::SResult	sResult;
 						sResult.cDocumentType = CTypeConfig(0);
 						sResult.bTempChange = false;
 						if( cDlgTypeList.DoModal( G_AppInstance(), GetTrayHwnd(), &sResult ) ){
-							// ƒ^ƒCƒv•Êİ’è
+							// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š
 							CPluginManager::getInstance()->LoadAllPlugin();
 							m_pcPropertyManager->OpenPropertySheetTypes( NULL, -1, sResult.cDocumentType );
 							CPluginManager::getInstance()->UnloadAllPlugin();
 						}
 					}
 					break;
-				case F_OPTION:	// ‹¤’Êİ’è
+				case F_OPTION:	// å…±é€šè¨­å®š
 					{
 						CPluginManager::getInstance()->LoadAllPlugin();
 						{
-							// ƒAƒCƒRƒ“‚Ì“o˜^
+							// ã‚¢ã‚¤ã‚³ãƒ³ã®ç™»éŒ²
 							const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 							m_cMenuDrawer.m_pcIcons->ResetExtend();
 							for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
@@ -835,16 +835,16 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					break;
 				case F_ABOUT:
-					/* ƒo[ƒWƒ‡ƒ“î•ñ */
+					/* ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ± */
 					{
 						CDlgAbout cDlgAbout;
 						cDlgAbout.DoModal( m_hInstance, GetTrayHwnd() );
 					}
 					break;
 //				case IDM_EXITALL:
-				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_‚É•ÏX
-					/* ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹ */
-					CControlTray::TerminateApplication( GetTrayHwnd() );	// 2006.12.25 ryoji ˆø”’Ç‰Á
+				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_ã«å¤‰æ›´
+					/* ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº† */
+					CControlTray::TerminateApplication( GetTrayHwnd() );	// 2006.12.25 ryoji å¼•æ•°è¿½åŠ 
 					break;
 				default:
 					break;
@@ -853,12 +853,12 @@ LRESULT CControlTray::DispatchEvent(
 //	To Here Oct. 12, 2000
 
 			case WM_LBUTTONDOWN:
-				//	Mar. 29, 2003 genta ”O‚Ì‚½‚ßƒtƒ‰ƒOƒNƒŠƒA
+				//	Mar. 29, 2003 genta å¿µã®ãŸã‚ãƒ•ãƒ©ã‚°ã‚¯ãƒªã‚¢
 				bLDClick = false;
 				return 0L;
-			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UP‚É•ÏX
+			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPã«å¤‰æ›´
 //				MYTRACE( _T("WM_LBUTTONDOWN\n") );
-				/* 03/02/20 ¶ƒ_ƒuƒ‹ƒNƒŠƒbƒNŒã‚Íƒƒjƒ…[‚ğ•\¦‚µ‚È‚¢ ai Start */
+				/* 03/02/20 å·¦ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯å¾Œã¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’è¡¨ç¤ºã—ãªã„ ai Start */
 				if( bLDClick ){
 					bLDClick = false;
 					return 0L;
@@ -866,21 +866,21 @@ LRESULT CControlTray::DispatchEvent(
 				/* 03/02/20 ai End */
 				::SetActiveWindow( GetTrayHwnd() );
 				::SetForegroundWindow( GetTrayHwnd() );
-				/* ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[(ƒgƒŒƒC¶ƒ{ƒ^ƒ“) */
+				/* ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼(ãƒˆãƒ¬ã‚¤å·¦ãƒœã‚¿ãƒ³) */
 				nId = CreatePopUpMenu_L();
 				switch( nId ){
-				case F_FILENEW:	/* V‹Kì¬ */
-					/* V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á */
+				case F_FILENEW:	/* æ–°è¦ä½œæˆ */
+					/* æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  */
 					OnNewEditor( false );
 					break;
-				case F_FILEOPEN:	/* ŠJ‚­ */
+				case F_FILEOPEN:	/* é–‹ã */
 					{
-						// ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰»
+						// ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ–
 						SLoadInfo sLoadInfo;
 						sLoadInfo.cFilePath = _T("");
-						sLoadInfo.eCharCode = CODE_AUTODETECT;	// •¶šƒR[ƒh©“®”»•Ê
+						sLoadInfo.eCharCode = CODE_AUTODETECT;	// æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥
 						sLoadInfo.bViewMode = false;
-						// 2013.03.21 novice ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ•ÏX(MRU‚Íg—p‚µ‚È‚¢)
+						// 2013.03.21 novice ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå¤‰æ›´(MRUã¯ä½¿ç”¨ã—ãªã„)
 						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
@@ -888,7 +888,7 @@ LRESULT CControlTray::DispatchEvent(
 							_T("*.*"),
 							CSakuraEnvironment::GetDlgInitialDir(true).c_str(),
 							CMRUFile().GetPathList(),
-							CMRUFolder().GetPathList()	// OPENFOLDERƒŠƒXƒg‚Ìƒtƒ@ƒCƒ‹‚ÌƒŠƒXƒg
+							CMRUFolder().GetPathList()	// OPENFOLDERãƒªã‚¹ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒªã‚¹ãƒˆ
 						);
 						std::vector<std::tstring> files;
 						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
@@ -898,7 +898,7 @@ LRESULT CControlTray::DispatchEvent(
 							break;
 						}
 						
-						// V‚½‚È•ÒWƒEƒBƒ“ƒhƒE‚ğ‹N“®
+						// æ–°ãŸãªç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èµ·å‹•
 						size_t nSize = files.size();
 						for( size_t f = 0; f < nSize; f++ ){
 							sLoadInfo.cFilePath = files[f].c_str();
@@ -909,9 +909,9 @@ LRESULT CControlTray::DispatchEvent(
 					break;
 				case F_GREP_DIALOG:
 					/* Grep */
-					DoGrep();  //Stonee, 2001/03/21  Grep‚ğ•ÊŠÖ”‚É
+					DoGrep();  //Stonee, 2001/03/21  Grepã‚’åˆ¥é–¢æ•°ã«
 					break;
-				case F_FILESAVEALL:	// Jan. 24, 2005 genta ‘S‚Äã‘‚«•Û‘¶
+				case F_FILESAVEALL:	// Jan. 24, 2005 genta å…¨ã¦ä¸Šæ›¸ãä¿å­˜
 					CAppNodeGroupHandle(0).PostMessageToAllEditors(
 						WM_COMMAND,
 						MAKELONG( F_FILESAVE_QUIET, 0 ),
@@ -919,25 +919,25 @@ LRESULT CControlTray::DispatchEvent(
 						NULL
 					);
 					break;
-				case F_EXITALLEDITORS:	//Oct. 17, 2000 JEPRO –¼‘O‚ğ•ÏX(F_FILECLOSEALL¨F_WIN_CLOSEALL)	// 2007.02.13 ryoji ¨F_EXITALLEDITORS
-					/* •ÒW‚Ì‘SI—¹ */
-					CControlTray::CloseAllEditor( TRUE, GetTrayHwnd(), TRUE, 0 );	// 2006.12.25, 2007.02.13 ryoji ˆø”’Ç‰Á
+				case F_EXITALLEDITORS:	//Oct. 17, 2000 JEPRO åå‰ã‚’å¤‰æ›´(F_FILECLOSEALLâ†’F_WIN_CLOSEALL)	// 2007.02.13 ryoji â†’F_EXITALLEDITORS
+					/* ç·¨é›†ã®å…¨çµ‚äº† */
+					CControlTray::CloseAllEditor( TRUE, GetTrayHwnd(), TRUE, 0 );	// 2006.12.25, 2007.02.13 ryoji å¼•æ•°è¿½åŠ 
 					break;
-				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_‚É•ÏX
-					/* ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹ */
-					CControlTray::TerminateApplication( GetTrayHwnd() );	// 2006.12.25 ryoji ˆø”’Ç‰Á
+				case F_EXITALL:	//Dec. 26, 2000 JEPRO F_ã«å¤‰æ›´
+					/* ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº† */
+					CControlTray::TerminateApplication( GetTrayHwnd() );	// 2006.12.25 ryoji å¼•æ•°è¿½åŠ 
 					break;
 				default:
 					if( nId - IDM_SELWINDOW  >= 0 && nId - IDM_SELWINDOW  < m_pShareData->m_sNodes.m_nEditArrNum ){
 						hwndWork = m_pShareData->m_sNodes.m_pEditArr[nId - IDM_SELWINDOW].GetHwnd();
 
-						/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+						/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 						ActivateFrameWindow( hwndWork );
 					}
 					else if( nId-IDM_SELMRU >= 0 && nId-IDM_SELMRU < 999 ){
 
-						/* V‚µ‚¢•ÒWƒEƒBƒ“ƒhƒE‚ğŠJ‚­ */
-						//	From Here Oct. 27, 2000 genta	ƒJ[ƒ\ƒ‹ˆÊ’u‚ğ•œŒ³‚µ‚È‚¢‹@”\
+						/* æ–°ã—ã„ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã */
+						//	From Here Oct. 27, 2000 genta	ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’å¾©å…ƒã—ãªã„æ©Ÿèƒ½
 						const CMRUFile cMRU;
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
@@ -964,18 +964,18 @@ LRESULT CControlTray::DispatchEvent(
 						//	To Here Oct. 27, 2000 genta
 					}
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
-						/* MRUƒŠƒXƒg‚Ìƒtƒ@ƒCƒ‹‚ÌƒŠƒXƒg */
+						/* MRUãƒªã‚¹ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒªã‚¹ãƒˆ */
 						const CMRUFile cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
-						/* OPENFOLDERƒŠƒXƒg‚Ìƒtƒ@ƒCƒ‹‚ÌƒŠƒXƒg */
+						/* OPENFOLDERãƒªã‚¹ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒªã‚¹ãƒˆ */
 						const CMRUFolder cMRUFolder;
 						std::vector<LPCTSTR> vOPENFOLDER = cMRUFolder.GetPathList();
 
-						//Stonee, 2001/12/21 UNC‚Å‚ ‚ê‚ÎÚ‘±‚ğ‚İ‚é
+						//Stonee, 2001/12/21 UNCã§ã‚ã‚Œã°æ¥ç¶šã‚’è©¦ã¿ã‚‹
 						NetConnect( cMRUFolder.GetPath( nId - IDM_SELOPENFOLDER ) );
 
-						/* ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰» */
+						/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ– */
 						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
@@ -994,7 +994,7 @@ LRESULT CControlTray::DispatchEvent(
 							break;
 						}
 
-						// V‚½‚È•ÒWƒEƒBƒ“ƒhƒE‚ğ‹N“®
+						// æ–°ãŸãªç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èµ·å‹•
 						size_t nSize = files.size();
 						for( size_t f = 0; f < nSize; f++ ){
 							sLoadInfo.cFilePath = files[f].c_str();
@@ -1007,9 +1007,9 @@ LRESULT CControlTray::DispatchEvent(
 				return 0L;
 			case WM_LBUTTONDBLCLK:
 				bLDClick = true;		/* 03/02/20 ai */
-				/* V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á */
+				/* æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  */
 				OnNewEditor( m_pShareData->m_Common.m_sTabBar.m_bNewWindow != FALSE );
-				// Apr. 1, 2003 genta ‚±‚ÌŒã‚Å•\¦‚³‚ê‚½ƒƒjƒ…[‚Í•Â‚¶‚é
+				// Apr. 1, 2003 genta ã“ã®å¾Œã§è¡¨ç¤ºã•ã‚ŒãŸãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¯é–‰ã˜ã‚‹
 				::PostMessageAny( GetTrayHwnd(), WM_CANCELMODE, 0, 0 );
 				return 0L;
 			case WM_RBUTTONDBLCLK:
@@ -1018,37 +1018,37 @@ LRESULT CControlTray::DispatchEvent(
 			break;
 
 		case WM_QUERYENDSESSION:
-			/* ‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é */	//Oct. 7, 2000 jepro u•ÒWƒEƒBƒ“ƒhƒE‚Ì‘SI—¹v‚Æ‚¢‚¤à–¾‚ğ¶‹L‚Ì‚æ‚¤‚É•ÏX
-			if( CloseAllEditor( FALSE, GetTrayHwnd(), TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji ˆø”’Ç‰Á
+			/* ã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ */	//Oct. 7, 2000 jepro ã€Œç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å…¨çµ‚äº†ã€ã¨ã„ã†èª¬æ˜ã‚’å·¦è¨˜ã®ã‚ˆã†ã«å¤‰æ›´
+			if( CloseAllEditor( FALSE, GetTrayHwnd(), TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji å¼•æ•°è¿½åŠ 
 				//	Jan. 31, 2000 genta
-				//	‚±‚Ì“_‚Å‚ÍWindows‚ÌI—¹‚ªŠm’è‚µ‚Ä‚¢‚È‚¢‚Ì‚Åí’“‰ğœ‚·‚×‚«‚Å‚Í‚È‚¢D
+				//	ã“ã®æ™‚ç‚¹ã§ã¯Windowsã®çµ‚äº†ãŒç¢ºå®šã—ã¦ã„ãªã„ã®ã§å¸¸é§è§£é™¤ã™ã¹ãã§ã¯ãªã„ï¼
 				//	::DestroyWindow( hwnd );
 				return TRUE;
 			}else{
 				return FALSE;
 			}
 		case WM_CLOSE:
-			/* ‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é */	//Oct. 7, 2000 jepro u•ÒWƒEƒBƒ“ƒhƒE‚Ì‘SI—¹v‚Æ‚¢‚¤à–¾‚ğ¶‹L‚Ì‚æ‚¤‚É•ÏX
-			if( CloseAllEditor( FALSE, GetTrayHwnd(), TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji ˆø”’Ç‰Á
+			/* ã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ */	//Oct. 7, 2000 jepro ã€Œç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å…¨çµ‚äº†ã€ã¨ã„ã†èª¬æ˜ã‚’å·¦è¨˜ã®ã‚ˆã†ã«å¤‰æ›´
+			if( CloseAllEditor( FALSE, GetTrayHwnd(), TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji å¼•æ•°è¿½åŠ 
 				::DestroyWindow( hwnd );
 			}
 			return 0L;
 
-		//	From Here Jan. 31, 2000 genta	WindowsI—¹‚ÌŒãˆ—D
-		//	WindowsI—¹‚ÍWM_CLOSE‚ªŒÄ‚Î‚ê‚È‚¢ãCDestroyWindow‚ğ
-		//	ŒÄ‚Ño‚·•K—v‚à‚È‚¢D‚Ü‚½CƒƒbƒZ[ƒWƒ‹[ƒv‚É–ß‚ç‚È‚¢‚Ì‚Å
-		//	ƒƒbƒZ[ƒWƒ‹[ƒv‚ÌŒã‚ë‚Ìˆ—‚ğ‚±‚±‚ÅŠ®—¹‚³‚¹‚é•K—v‚ª‚ ‚éD
+		//	From Here Jan. 31, 2000 genta	Windowsçµ‚äº†æ™‚ã®å¾Œå‡¦ç†ï¼
+		//	Windowsçµ‚äº†æ™‚ã¯WM_CLOSEãŒå‘¼ã°ã‚Œãªã„ä¸Šï¼ŒDestroyWindowã‚’
+		//	å‘¼ã³å‡ºã™å¿…è¦ã‚‚ãªã„ï¼ã¾ãŸï¼Œãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—ã«æˆ»ã‚‰ãªã„ã®ã§
+		//	ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—ã®å¾Œã‚ã®å‡¦ç†ã‚’ã“ã“ã§å®Œäº†ã•ã›ã‚‹å¿…è¦ãŒã‚ã‚‹ï¼
 		case WM_ENDSESSION:
-			//	‚à‚µWindows‚ÌI—¹‚ª’†’f‚³‚ê‚½‚Ì‚È‚ç‰½‚à‚µ‚È‚¢
+			//	ã‚‚ã—Windowsã®çµ‚äº†ãŒä¸­æ–­ã•ã‚ŒãŸã®ãªã‚‰ä½•ã‚‚ã—ãªã„
 			if( wParam != FALSE )
-				OnDestroy();	// 2006.07.09 ryoji WM_DESTROY ‚Æ“¯‚¶ˆ—‚ğ‚·‚éiƒgƒŒƒCƒAƒCƒRƒ“‚Ì”jŠü‚È‚Ç‚àNTŒn‚Å‚Í•K—vj
+				OnDestroy();	// 2006.07.09 ryoji WM_DESTROY ã¨åŒã˜å‡¦ç†ã‚’ã™ã‚‹ï¼ˆãƒˆãƒ¬ã‚¤ã‚¢ã‚¤ã‚³ãƒ³ã®ç ´æ£„ãªã©ã‚‚NTç³»ã§ã¯å¿…è¦ï¼‰
 
-			return 0;	//	‚à‚¤‚±‚ÌƒvƒƒZƒX‚É§Œä‚ª–ß‚é‚±‚Æ‚Í‚È‚¢
+			return 0;	//	ã‚‚ã†ã“ã®ãƒ—ãƒ­ã‚»ã‚¹ã«åˆ¶å¾¡ãŒæˆ»ã‚‹ã“ã¨ã¯ãªã„
 		//	To Here Jan. 31, 2000 genta
 		case WM_DESTROY:
 			OnDestroy();
 
-			/* Windows ‚ÉƒXƒŒƒbƒh‚ÌI—¹‚ğ—v‹‚µ‚Ü‚·B*/
+			/* Windows ã«ã‚¹ãƒ¬ãƒƒãƒ‰ã®çµ‚äº†ã‚’è¦æ±‚ã—ã¾ã™ã€‚*/
 			::PostQuitMessage( 0 );
 			return 0L;
 		case MYWM_ALLOWACTIVATE:
@@ -1056,10 +1056,10 @@ LRESULT CControlTray::DispatchEvent(
 			return 0L;
 		default:
 // << 20010412 by aroka
-//	Apr. 24, 2001 genta RegisterWindowMessage‚ğg‚¤‚æ‚¤‚ÉC³
+//	Apr. 24, 2001 genta RegisterWindowMessageã‚’ä½¿ã†ã‚ˆã†ã«ä¿®æ­£
 			if( uMsg == m_uCreateTaskBarMsg ){
-				/* TaskTray Icon‚ÌÄ“o˜^‚ğ—v‹‚·‚éƒƒbƒZ[ƒWD
-					Explorer‚ªÄ‹N“®‚µ‚½‚Æ‚«‚É‘—o‚³‚ê‚éD*/
+				/* TaskTray Iconã®å†ç™»éŒ²ã‚’è¦æ±‚ã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼
+					ExplorerãŒå†èµ·å‹•ã—ãŸã¨ãã«é€å‡ºã•ã‚Œã‚‹ï¼*/
 				CreateTrayIcon( GetTrayHwnd() ) ;
 			}
 			break;	/* default */
@@ -1071,11 +1071,11 @@ LRESULT CControlTray::DispatchEvent(
 
 
 
-/* WM_COMMANDƒƒbƒZ[ƒWˆ— */
+/* WM_COMMANDãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
 	switch( wNotifyCode ){
-	/* ƒƒjƒ…[‚©‚ç‚ÌƒƒbƒZ[ƒW */
+	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ */
 	case 0:
 		break;
 	}
@@ -1083,20 +1083,20 @@ void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 }
 
 /*!
-	@brief V‹KƒEƒBƒ“ƒhƒE‚ğì¬‚·‚é
+	@brief æ–°è¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã™ã‚‹
 
 	@author genta
-	@date 2003.05.30 V‹Kì¬
-	@date 2013.03.21 novice MRU‚Íg—p‚µ‚È‚¢
+	@date 2003.05.30 æ–°è¦ä½œæˆ
+	@date 2013.03.21 novice MRUã¯ä½¿ç”¨ã—ãªã„
 */
 void CControlTray::OnNewEditor( bool bNewWindow )
 {
-	// V‹KƒEƒBƒ“ƒhƒE‚ÅŠJ‚­ƒIƒvƒVƒ‡ƒ“‚ÍAƒ^ƒuƒo[•ƒOƒ‹[ƒv‰»‚ğ‘O’ñ‚Æ‚·‚é
+	// æ–°è¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é–‹ãã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯ã€ã‚¿ãƒ–ãƒãƒ¼ï¼†ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã‚’å‰æã¨ã™ã‚‹
 	bNewWindow = bNewWindow
 				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != FALSE
 				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin == FALSE;
 
-	// •ÒWƒEƒCƒ“ƒhƒE‚ğŠJ‚­
+	// ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
@@ -1106,61 +1106,61 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 }
 
 /*!
-	V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á ver 0
+	æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  ver 0
 
-	@date 2000.10.24 genta WinExec -> CreateProcessD“¯Šú‹@”\‚ğ•t‰Á
-	@date 2002.02.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-	@date 2003.05.30 genta ŠO•”ƒvƒƒZƒX‹N“®‚ÌƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠw’è‚ğ‰Â”\‚ÉD
-	@date 2007.06.26 ryoji V‹K•ÒWƒEƒBƒ“ƒhƒE‚Í hWndParent ‚Æ“¯‚¶ƒOƒ‹[ƒv‚ğw’è‚µ‚Ä‹N“®‚·‚é
-	@date 2008.04.19 ryoji MYWM_FIRST_IDLE ‘Ò‚¿‚ğ’Ç‰Á
-	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
+	@date 2000.10.24 genta WinExec -> CreateProcessï¼åŒæœŸæ©Ÿèƒ½ã‚’ä»˜åŠ 
+	@date 2002.02.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+	@date 2003.05.30 genta å¤–éƒ¨ãƒ—ãƒ­ã‚»ã‚¹èµ·å‹•æ™‚ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®šã‚’å¯èƒ½ã«ï¼
+	@date 2007.06.26 ryoji æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯ hWndParent ã¨åŒã˜ã‚°ãƒ«ãƒ¼ãƒ—ã‚’æŒ‡å®šã—ã¦èµ·å‹•ã™ã‚‹
+	@date 2008.04.19 ryoji MYWM_FIRST_IDLE å¾…ã¡ã‚’è¿½åŠ 
+	@date 2008.05.05 novice GetModuleHandle(NULL)â†’NULLã«å¤‰æ›´
 */
 bool CControlTray::OpenNewEditor(
-	HINSTANCE			hInstance,			//!< [in] ƒCƒ“ƒXƒ^ƒ“ƒXID (À‚Í–¢g—p)
-	HWND				hWndParent,			//!< [in] eƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹DƒGƒ‰[ƒƒbƒZ[ƒW•\¦—p
+	HINSTANCE			hInstance,			//!< [in] ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ID (å®Ÿã¯æœªä½¿ç”¨)
+	HWND				hWndParent,			//!< [in] è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ï¼ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºç”¨
 	const SLoadInfo&	sLoadInfo,			//!< [in]
-	const TCHAR*		szCmdLineOption,	//!< [in] ’Ç‰Á‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“
-	bool				sync,				//!< [in] true‚È‚çV‹KƒGƒfƒBƒ^‚Ì‹N“®‚Ü‚Å‘Ò‹@‚·‚é
-	const TCHAR*		pszCurDir,			//!< [in] V‹KƒGƒfƒBƒ^‚ÌƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ(NULL‰Â)
-	bool				bNewWindow			//!< [in] V‹KƒGƒfƒBƒ^‚ğV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­
+	const TCHAR*		szCmdLineOption,	//!< [in] è¿½åŠ ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	bool				sync,				//!< [in] trueãªã‚‰æ–°è¦ã‚¨ãƒ‡ã‚£ã‚¿ã®èµ·å‹•ã¾ã§å¾…æ©Ÿã™ã‚‹
+	const TCHAR*		pszCurDir,			//!< [in] æ–°è¦ã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª(NULLå¯)
+	bool				bNewWindow			//!< [in] æ–°è¦ã‚¨ãƒ‡ã‚£ã‚¿ã‚’æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã
 )
 {
-	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 	DLLSHAREDATA*	pShareData = &GetDllShareData();
 
-	/* •ÒWƒEƒBƒ“ƒhƒE‚ÌãŒÀƒ`ƒFƒbƒN */
-	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//Å‘å’lC³	//@@@ 2003.05.31 MIK
+	/* ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸Šé™ãƒã‚§ãƒƒã‚¯ */
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//æœ€å¤§å€¤ä¿®æ­£	//@@@ 2003.05.31 MIK
 		OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
 
-	// -- -- -- -- ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñ‚ğ¶¬ -- -- -- -- //
+	// -- -- -- -- ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ã‚’ç”Ÿæˆ -- -- -- -- //
 	CCommandLineString cCmdLineBuf;
 
-	//ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒpƒX
+	//ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‘ã‚¹
 	TCHAR szEXE[MAX_PATH + 1];
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
 	cCmdLineBuf.AppendF( _T("\"%ts\""), szEXE );
 
-	// ƒtƒ@ƒCƒ‹–¼
+	// ãƒ•ã‚¡ã‚¤ãƒ«å
 	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
 
-	// ƒR[ƒhw’è
+	// ã‚³ãƒ¼ãƒ‰æŒ‡å®š
 	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
 
-	// ƒrƒ…[ƒ‚[ƒhw’è
+	// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰æŒ‡å®š
 	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( _T(" -R") );
 
-	// ƒOƒ‹[ƒvID
-	if( false == bNewWindow ){	// V‹KƒGƒfƒBƒ^‚ğƒEƒCƒ“ƒhƒE‚ÅŠJ‚­
-		// ƒOƒ‹[ƒvID‚ğeƒEƒBƒ“ƒhƒE‚©‚çæ“¾
+	// ã‚°ãƒ«ãƒ¼ãƒ—ID
+	if( false == bNewWindow ){	// æ–°è¦ã‚¨ãƒ‡ã‚£ã‚¿ã‚’ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã
+		// ã‚°ãƒ«ãƒ¼ãƒ—IDã‚’è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‹ã‚‰å–å¾—
 		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
 		if( nGroup > 0 ){
 			cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
 		}
 	}else{
-		// ‹ó‚¢‚Ä‚¢‚éƒOƒ‹[ƒvID‚ğg—p‚·‚é
+		// ç©ºã„ã¦ã„ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—IDã‚’ä½¿ç”¨ã™ã‚‹
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::getInstance()->GetFreeGroupId() );
 	}
 
@@ -1168,7 +1168,7 @@ bool CControlTray::OpenNewEditor(
 		cCmdLineBuf.AppendF( _T(" -PROF=\"%ls\""), CCommandLine::getInstance()->GetProfileName() );
 	}
 
-	// ’Ç‰Á‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“
+	// è¿½åŠ ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	TCHAR szResponseFile[_MAX_PATH] = _T("");
 	struct CResponsefileDeleter{
 		LPCTSTR fileName;
@@ -1182,7 +1182,7 @@ bool CControlTray::OpenNewEditor(
 	};
 	CResponsefileDeleter respDeleter;
 	if( szCmdLineOption ){
-		// Grep‚È‚Ç‚Å“ü‚è‚«‚ç‚È‚¢ê‡‚ÍƒŒƒXƒ|ƒ“ƒXƒtƒ@ƒCƒ‹‚ğ—˜—p‚·‚é
+		// Grepãªã©ã§å…¥ã‚Šãã‚‰ãªã„å ´åˆã¯ãƒ¬ã‚¹ãƒãƒ³ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’åˆ©ç”¨ã™ã‚‹
 		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
 			TCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
@@ -1199,7 +1199,7 @@ bool CControlTray::OpenNewEditor(
 				return false;
 			}
 			respDeleter.fileName = szResponseFile;
-			// o—Í
+			// å‡ºåŠ›
 			output.WriteString(to_wchar(szCmdLineOption));
 			output.Close();
 			sync = true;
@@ -1208,9 +1208,9 @@ bool CControlTray::OpenNewEditor(
 			cCmdLineBuf.AppendF(_T(" %ts"), szCmdLineOption);
 		}
 	}
-	// -- -- -- -- ƒvƒƒZƒX¶¬ -- -- -- -- //
+	// -- -- -- -- ãƒ—ãƒ­ã‚»ã‚¹ç”Ÿæˆ -- -- -- -- //
 
-	// –³Œø‚ÈƒfƒBƒŒƒNƒgƒŠ‚Ì‚Æ‚«‚ÍNULL‚É•ÏX
+	// ç„¡åŠ¹ãªãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ã¨ãã¯NULLã«å¤‰æ›´
 	if( pszCurDir ){
 		DWORD attr = GetFileAttributes( pszCurDir );
 		if( ( attr != -1) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
@@ -1219,7 +1219,7 @@ bool CControlTray::OpenNewEditor(
 		}
 	}
 
-	//	ƒvƒƒZƒX‚Ì‹N“®
+	//	ãƒ—ãƒ­ã‚»ã‚¹ã®èµ·å‹•
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;
 
@@ -1233,27 +1233,27 @@ bool CControlTray::OpenNewEditor(
 	s.cbReserved2 = 0;
 	s.lpReserved2 = NULL;
 
-	//	May 30, 2003 genta ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠw’è‚ğ‰Â”\‚É
-	//ƒGƒfƒBƒ^ƒvƒƒZƒX‚ğ‹N“®
+	//	May 30, 2003 genta ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡å®šã‚’å¯èƒ½ã«
+	//ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã‚’èµ·å‹•
 	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
 #ifdef _DEBUG
-//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake ƒfƒoƒbƒO—pƒtƒ‰ƒO
+//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake ãƒ‡ãƒãƒƒã‚°ç”¨ãƒ•ãƒ©ã‚°
 #endif
 	TCHAR szCmdLine[1024]; _tcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
-		szEXE,					// Às‰Â”\ƒ‚ƒWƒ…[ƒ‹‚Ì–¼‘O
-		szCmdLine,				// ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚Ì•¶š—ñ
-		NULL,					// ƒZƒLƒ…ƒŠƒeƒB‹Lqq
-		NULL,					// ƒZƒLƒ…ƒŠƒeƒB‹Lqq
-		FALSE,					// ƒnƒ“ƒhƒ‹‚ÌŒp³ƒIƒvƒVƒ‡ƒ“
-		dwCreationFlag,			// ì¬‚Ìƒtƒ‰ƒO
-		NULL,					// V‚µ‚¢ŠÂ‹«ƒuƒƒbƒN
-		pszCurDir,				// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Ì–¼‘O
-		&s,						// ƒXƒ^[ƒgƒAƒbƒvî•ñ
-		&p						// ƒvƒƒZƒXî•ñ
+		szEXE,					// å®Ÿè¡Œå¯èƒ½ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®åå‰
+		szCmdLine,				// ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®æ–‡å­—åˆ—
+		NULL,					// ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		NULL,					// ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		FALSE,					// ãƒãƒ³ãƒ‰ãƒ«ã®ç¶™æ‰¿ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+		dwCreationFlag,			// ä½œæˆã®ãƒ•ãƒ©ã‚°
+		NULL,					// æ–°ã—ã„ç’°å¢ƒãƒ–ãƒ­ãƒƒã‚¯
+		pszCurDir,				// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®åå‰
+		&s,						// ã‚¹ã‚¿ãƒ¼ãƒˆã‚¢ãƒƒãƒ—æƒ…å ±
+		&p						// ãƒ—ãƒ­ã‚»ã‚¹æƒ…å ±
 	);
 	if( !bCreateResult ){
-		//	¸”s
+		//	å¤±æ•—
 		TCHAR* pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
@@ -1271,14 +1271,14 @@ bool CControlTray::OpenNewEditor(
 			szEXE,
 			pMsg
 		);
-		::LocalFree( (HLOCAL)pMsg );	//	ƒGƒ‰[ƒƒbƒZ[ƒWƒoƒbƒtƒ@‚ğ‰ğ•ú
+		::LocalFree( (HLOCAL)pMsg );	//	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒãƒƒãƒ•ã‚¡ã‚’è§£æ”¾
 		return false;
 	}
 
 	bool bRet = true;
 	if( sync ){
-		//	‹N“®‚µ‚½ƒvƒƒZƒX‚ªŠ®‘S‚É—§‚¿ã‚ª‚é‚Ü‚Å‚¿‚å‚Á‚Æ‘Ò‚ÂD
-		int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	Å‘å10•bŠÔ‘Ò‚Â
+		//	èµ·å‹•ã—ãŸãƒ—ãƒ­ã‚»ã‚¹ãŒå®Œå…¨ã«ç«‹ã¡ä¸ŠãŒã‚‹ã¾ã§ã¡ã‚‡ã£ã¨å¾…ã¤ï¼
+		int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	æœ€å¤§10ç§’é–“å¾…ã¤
 		if( nResult != 0 ){
 			ErrorMessage(
 				hWndParent,
@@ -1289,16 +1289,16 @@ bool CControlTray::OpenNewEditor(
 		}
 	}
 	else{
-		// ƒ^ƒu‚Ü‚Æ‚ß‚Í‹N“®‚µ‚½ƒvƒƒZƒX‚ª—§‚¿ã‚ª‚é‚Ü‚Å‚µ‚Î‚ç‚­ƒ^ƒCƒgƒ‹ƒo[‚ğƒAƒNƒeƒBƒu‚É•Û‚Â	// 2007.02.03 ryoji
+		// ã‚¿ãƒ–ã¾ã¨ã‚æ™‚ã¯èµ·å‹•ã—ãŸãƒ—ãƒ­ã‚»ã‚¹ãŒç«‹ã¡ä¸ŠãŒã‚‹ã¾ã§ã—ã°ã‚‰ãã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ä¿ã¤	// 2007.02.03 ryoji
 		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 			WaitForInputIdle( p.hProcess, 3000 );
 			sync = true;
 		}
 	}
 
-	// MYWM_FIRST_IDLE ‚ª“Í‚­‚Ü‚Å‚¿‚å‚Á‚Æ‚¾‚¯—]•ª‚É‘Ò‚Â	// 2008.04.19 ryoji
-	// Note. ‹N“®æƒvƒƒZƒX‚ª‰Šú‰»ˆ—’†‚É COM ŠÖ”iSHGetFileInfo API ‚È‚Ç‚àŠÜ‚Şj‚ğÀs‚·‚é‚ÆA
-	//       ‚»‚Ì“_‚Å COM ‚Ì“¯Šú‹@\‚ª“®‚¢‚Ä WaitForInputIdle ‚ÍI—¹‚µ‚Ä‚µ‚Ü‚¤‰Â”\«‚ª‚ ‚éi‚ç‚µ‚¢jB
+	// MYWM_FIRST_IDLE ãŒå±Šãã¾ã§ã¡ã‚‡ã£ã¨ã ã‘ä½™åˆ†ã«å¾…ã¤	// 2008.04.19 ryoji
+	// Note. èµ·å‹•å…ˆãƒ—ãƒ­ã‚»ã‚¹ãŒåˆæœŸåŒ–å‡¦ç†ä¸­ã« COM é–¢æ•°ï¼ˆSHGetFileInfo API ãªã©ã‚‚å«ã‚€ï¼‰ã‚’å®Ÿè¡Œã™ã‚‹ã¨ã€
+	//       ãã®æ™‚ç‚¹ã§ COM ã®åŒæœŸæ©Ÿæ§‹ãŒå‹•ã„ã¦ WaitForInputIdle ã¯çµ‚äº†ã—ã¦ã—ã¾ã†å¯èƒ½æ€§ãŒã‚ã‚‹ï¼ˆã‚‰ã—ã„ï¼‰ã€‚
 	if( sync && bRet )
 	{
 		int i;
@@ -1306,18 +1306,18 @@ bool CControlTray::OpenNewEditor(
 			MSG msg;
 			DWORD dwExitCode;
 			if( ::PeekMessage( &msg, 0, MYWM_FIRST_IDLE, MYWM_FIRST_IDLE, PM_REMOVE ) ){
-				if( msg.message == WM_QUIT ){	// w’è”ÍˆÍŠO‚Å‚à WM_QUIT ‚Íæ‚èo‚³‚ê‚é
+				if( msg.message == WM_QUIT ){	// æŒ‡å®šç¯„å›²å¤–ã§ã‚‚ WM_QUIT ã¯å–ã‚Šå‡ºã•ã‚Œã‚‹
 					::PostQuitMessage( msg.wParam );
 					break;
 				}
-				// ŠÄ‹‘ÎÛƒvƒƒZƒX‚©‚ç‚ÌƒƒbƒZ[ƒW‚È‚ç”²‚¯‚é
-				// ‚»‚¤‚Å‚È‚¯‚ê‚Î”jŠü‚µ‚ÄŸ‚ğæ‚èo‚·
+				// ç›£è¦–å¯¾è±¡ãƒ—ãƒ­ã‚»ã‚¹ã‹ã‚‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãªã‚‰æŠœã‘ã‚‹
+				// ãã†ã§ãªã‘ã‚Œã°ç ´æ£„ã—ã¦æ¬¡ã‚’å–ã‚Šå‡ºã™
 				if( msg.wParam == p.dwProcessId ){
 					break;
 				}
 			}
 			if( ::GetExitCodeProcess( p.hProcess, &dwExitCode ) && dwExitCode != STILL_ACTIVE ){
-				break;	// ŠÄ‹‘ÎÛƒvƒƒZƒX‚ªI—¹‚µ‚½
+				break;	// ç›£è¦–å¯¾è±¡ãƒ—ãƒ­ã‚»ã‚¹ãŒçµ‚äº†ã—ãŸ
 			}
 			::Sleep(10);
 		}
@@ -1330,10 +1330,10 @@ bool CControlTray::OpenNewEditor(
 }
 
 
-/*!	V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á ver 2:
+/*!	æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  ver 2:
 
 	@date Oct. 24, 2000 genta create.
-	@date Feb. 25, 2012 novice -CODE/-R‚ÍOpenNewEditor‘¤‚Åˆ—‚·‚é‚Ì‚Åíœ
+	@date Feb. 25, 2012 novice -CODE/-Rã¯OpenNewEditorå´ã§å‡¦ç†ã™ã‚‹ã®ã§å‰Šé™¤
 */
 bool CControlTray::OpenNewEditor2(
 	HINSTANCE		hInstance,
@@ -1341,21 +1341,21 @@ bool CControlTray::OpenNewEditor2(
 	const EditInfo*	pfi,
 	bool			bViewMode,
 	bool			sync,
-	bool			bNewWindow			//!< [in] V‹KƒGƒfƒBƒ^‚ğV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­
+	bool			bNewWindow			//!< [in] æ–°è¦ã‚¨ãƒ‡ã‚£ã‚¿ã‚’æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã
 )
 {
 	DLLSHAREDATA*	pShareData;
 
-	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 	pShareData = &GetDllShareData();
 
-	/* •ÒWƒEƒBƒ“ƒhƒE‚ÌãŒÀƒ`ƒFƒbƒN */
-	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//Å‘å’lC³	//@@@ 2003.05.31 MIK
+	/* ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸Šé™ãƒã‚§ãƒƒã‚¯ */
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//æœ€å¤§å€¤ä¿®æ­£	//@@@ 2003.05.31 MIK
 		OkMessage( NULL, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
 
-	// ’Ç‰Á‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“
+	// è¿½åŠ ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	CCommandLineString cCmdLine;
 	if( pfi != NULL ){
 		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( _T(" -X=%d"), pfi->m_ptCursor.x +1 );
@@ -1375,11 +1375,11 @@ bool CControlTray::OpenNewEditor2(
 
 void CControlTray::ActiveNextWindow(HWND hwndParent)
 {
-	/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg‚ğ“¾‚é */
+	/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆã‚’å¾—ã‚‹ */
 	EditNode*	pEditNodeArr;
 	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
-		/* ©•ª‚ÌƒEƒBƒ“ƒhƒE‚ğ’²‚×‚é */
+		/* è‡ªåˆ†ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èª¿ã¹ã‚‹ */
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
@@ -1390,7 +1390,7 @@ void CControlTray::ActiveNextWindow(HWND hwndParent)
 			}
 		}
 		if( i < nRowNum ){
-			// ‘O‚ÌƒEƒBƒ“ƒhƒE
+			// å‰ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 			int		j;
 			for( j = i - 1; j >= 0; --j ){
 				if( nGroup == pEditNodeArr[j].m_nGroup )
@@ -1402,10 +1402,10 @@ void CControlTray::ActiveNextWindow(HWND hwndParent)
 						break;
 				}
 			}
-			/* ‘O‚ÌƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
+			/* å‰ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 			HWND	hwndWork = pEditNodeArr[j].GetHwnd();
 			ActivateFrameWindow( hwndWork );
-			/* ÅŒã‚ÌƒyƒCƒ“‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
+			/* æœ€å¾Œã®ãƒšã‚¤ãƒ³ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 			::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
 		}
 		delete [] pEditNodeArr;
@@ -1414,11 +1414,11 @@ void CControlTray::ActiveNextWindow(HWND hwndParent)
 
 void CControlTray::ActivePrevWindow(HWND hwndParent)
 {
-	/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg‚ğ“¾‚é */
+	/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆã‚’å¾—ã‚‹ */
 	EditNode*	pEditNodeArr;
 	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
-		/* ©•ª‚ÌƒEƒBƒ“ƒhƒE‚ğ’²‚×‚é */
+		/* è‡ªåˆ†ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èª¿ã¹ã‚‹ */
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
@@ -1428,7 +1428,7 @@ void CControlTray::ActivePrevWindow(HWND hwndParent)
 			}
 		}
 		if( i < nRowNum ){
-			// Ÿ‚ÌƒEƒBƒ“ƒhƒE
+			// æ¬¡ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 			int		j;
 			for( j = i + 1; j < nRowNum; ++j ){
 				if( nGroup == pEditNodeArr[j].m_nGroup )
@@ -1440,10 +1440,10 @@ void CControlTray::ActivePrevWindow(HWND hwndParent)
 						break;
 				}
 			}
-			/* Ÿ‚ÌƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
+			/* æ¬¡ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 			HWND	hwndWork = pEditNodeArr[j].GetHwnd();
 			ActivateFrameWindow( hwndWork );
-			/* Å‰‚ÌƒyƒCƒ“‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
+			/* æœ€åˆã®ãƒšã‚¤ãƒ³ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 			::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
 		}
 		delete [] pEditNodeArr;
@@ -1452,19 +1452,19 @@ void CControlTray::ActivePrevWindow(HWND hwndParent)
 
 
 
-/*!	ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹
+/*!	ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº†
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-	@date 2006.12.25 ryoji •¡”‚Ì•ÒWƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é‚Æ‚«‚ÌŠm”Fiˆø”’Ç‰Áj
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+	@date 2006.12.25 ryoji è¤‡æ•°ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã¨ãã®ç¢ºèªï¼ˆå¼•æ•°è¿½åŠ ï¼‰
 */
 void CControlTray::TerminateApplication(
-	HWND hWndFrom	//!< [in] ŒÄ‚Ño‚µŒ³‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	HWND hWndFrom	//!< [in] å‘¼ã³å‡ºã—å…ƒã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 )
 {
-	DLLSHAREDATA* pShareData = &GetDllShareData();	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	DLLSHAREDATA* pShareData = &GetDllShareData();	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 
-	/* Œ»İ‚Ì•ÒWƒEƒBƒ“ƒhƒE‚Ì”‚ğ’²‚×‚é */
-	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//I—¹‚ÌŠm”F
+	/* ç¾åœ¨ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ•°ã‚’èª¿ã¹ã‚‹ */
+	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//çµ‚äº†æ™‚ã®ç¢ºèª
 		if( 0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
@@ -1476,9 +1476,9 @@ void CControlTray::TerminateApplication(
 			}
 		}
 	}
-	/* u‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚év—v‹ */	//Oct. 7, 2000 jepro u•ÒWƒEƒBƒ“ƒhƒE‚Ì‘SI—¹v‚Æ‚¢‚¤à–¾‚ğ¶‹L‚Ì‚æ‚¤‚É•ÏX
-	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji I—¹Šm”FÏ‚İ‚È‚ç‚»‚êˆÈã‚ÍŠm”F‚µ‚È‚¢
-	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji ˆø”’Ç‰Á
+	/* ã€Œã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã€è¦æ±‚ */	//Oct. 7, 2000 jepro ã€Œç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å…¨çµ‚äº†ã€ã¨ã„ã†èª¬æ˜ã‚’å·¦è¨˜ã®ã‚ˆã†ã«å¤‰æ›´
+	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji çµ‚äº†ç¢ºèªæ¸ˆã¿ãªã‚‰ãã‚Œä»¥ä¸Šã¯ç¢ºèªã—ãªã„
+	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji å¼•æ•°è¿½åŠ 
 		::PostMessageAny( pShareData->m_sHandles.m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
@@ -1487,19 +1487,19 @@ void CControlTray::TerminateApplication(
 
 
 
-/*!	‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é
+/*!	ã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹
 
-	@date Oct. 7, 2000 jepro u•ÒWƒEƒBƒ“ƒhƒE‚Ì‘SI—¹v‚Æ‚¢‚¤à–¾‚ğ¶‹L‚Ì‚æ‚¤‚É•ÏX
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-	@date 2006.12.25 ryoji •¡”‚Ì•ÒWƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é‚Æ‚«‚ÌŠm”Fiˆø”’Ç‰Áj
-	@date 2007.02.13 ryoji u•ÒW‚Ì‘SI—¹v‚ğ¦‚·ˆø”(bExit)‚ğ’Ç‰Á
-	@date 2007.06.20 ryoji nGroupˆø”‚ğ’Ç‰Á
+	@date Oct. 7, 2000 jepro ã€Œç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å…¨çµ‚äº†ã€ã¨ã„ã†èª¬æ˜ã‚’å·¦è¨˜ã®ã‚ˆã†ã«å¤‰æ›´
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+	@date 2006.12.25 ryoji è¤‡æ•°ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã¨ãã®ç¢ºèªï¼ˆå¼•æ•°è¿½åŠ ï¼‰
+	@date 2007.02.13 ryoji ã€Œç·¨é›†ã®å…¨çµ‚äº†ã€ã‚’ç¤ºã™å¼•æ•°(bExit)ã‚’è¿½åŠ 
+	@date 2007.06.20 ryoji nGroupå¼•æ•°ã‚’è¿½åŠ 
 */
 BOOL CControlTray::CloseAllEditor(
-	BOOL	bCheckConfirm,	//!< [in] [‚·‚×‚Ä•Â‚¶‚é]Šm”FƒIƒvƒVƒ‡ƒ“‚É]‚Á‚Ä–â‚¢‡‚í‚¹‚ğ‚·‚é‚©‚Ç‚¤‚©
-	HWND	hWndFrom,		//!< [in] ŒÄ‚Ño‚µŒ³‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-	BOOL	bExit,			//!< [in] TRUE: •ÒW‚Ì‘SI—¹ / FALSE: ‚·‚×‚Ä•Â‚¶‚é
-	int		nGroup			//!< [in] ƒOƒ‹[ƒvID
+	BOOL	bCheckConfirm,	//!< [in] [ã™ã¹ã¦é–‰ã˜ã‚‹]ç¢ºèªã‚ªãƒ—ã‚·ãƒ§ãƒ³ã«å¾“ã£ã¦å•ã„åˆã‚ã›ã‚’ã™ã‚‹ã‹ã©ã†ã‹
+	HWND	hWndFrom,		//!< [in] å‘¼ã³å‡ºã—å…ƒã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+	BOOL	bExit,			//!< [in] TRUE: ç·¨é›†ã®å…¨çµ‚äº† / FALSE: ã™ã¹ã¦é–‰ã˜ã‚‹
+	int		nGroup			//!< [in] ã‚°ãƒ«ãƒ¼ãƒ—ID
 )
 {
 	EditNode*	pWndArr;
@@ -1510,8 +1510,8 @@ BOOL CControlTray::CloseAllEditor(
 		return TRUE;
 	}
 	
-	/* ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖI—¹—v‹‚ğo‚· */
-	BOOL	bRes = CAppNodeGroupHandle(nGroup).RequestCloseEditor( pWndArr, n, bExit, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExit‚ğˆø‚«Œp‚®
+	/* å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸çµ‚äº†è¦æ±‚ã‚’å‡ºã™ */
+	BOOL	bRes = CAppNodeGroupHandle(nGroup).RequestCloseEditor( pWndArr, n, bExit, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExitã‚’å¼•ãç¶™ã
 	delete []pWndArr;
 	return bRes;
 }
@@ -1519,7 +1519,7 @@ BOOL CControlTray::CloseAllEditor(
 
 
 
-/*! ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[(ƒgƒŒƒC¶ƒ{ƒ^ƒ“) */
+/*! ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼(ãƒˆãƒ¬ã‚¤å·¦ãƒœã‚¿ãƒ³) */
 int	CControlTray::CreatePopUpMenu_L( void )
 {
 	int			i;
@@ -1533,14 +1533,14 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	RECT		rc;
 	EditInfo*	pfi;
 
-	//–{“–‚ÍƒZƒ}ƒtƒH‚É‚µ‚È‚¢‚Æ‚¾‚ß
+	//æœ¬å½“ã¯ã‚»ãƒãƒ•ã‚©ã«ã—ãªã„ã¨ã ã‚
 	if( m_bUseTrayMenu ) return -1;
 	m_bUseTrayMenu = true;
 
 	m_cMenuDrawer.ResetContents();
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
-	// ƒŠƒ\[ƒX‚ğg‚í‚È‚¢‚æ‚¤‚É
+	// ãƒªã‚½ãƒ¼ã‚¹ã‚’ä½¿ã‚ãªã„ã‚ˆã†ã«
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
 	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayL", L"" );
@@ -1551,15 +1551,15 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T(""), _T("G"), FALSE );
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
-	/* MRUƒŠƒXƒg‚Ìƒtƒ@ƒCƒ‹‚ÌƒŠƒXƒg‚ğƒƒjƒ…[‚É‚·‚é */
-//@@@ 2001.12.26 YAZAKI MRUƒŠƒXƒg‚ÍACMRU‚ÉˆË—Š‚·‚é
+	/* MRUãƒªã‚¹ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒªã‚¹ãƒˆã‚’ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã™ã‚‹ */
+//@@@ 2001.12.26 YAZAKI MRUãƒªã‚¹ãƒˆã¯ã€CMRUã«ä¾é ¼ã™ã‚‹
 	const CMRUFile cMRU;
-	hMenuPopUp = cMRU.CreateMenu( &m_cMenuDrawer );	//	ƒtƒ@ƒCƒ‹ƒƒjƒ…[
+	hMenuPopUp = cMRU.CreateMenu( &m_cMenuDrawer );	//	ãƒ•ã‚¡ã‚¤ãƒ«ãƒ¡ãƒ‹ãƒ¥ãƒ¼
 	int nEnable = (cMRU.MenuLength() > 0 ? 0 : MF_GRAYED);
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), _T("F") );
 
-	/* Å‹ßg‚Á‚½ƒtƒHƒ‹ƒ_‚Ìƒƒjƒ…[‚ğì¬ */
-//@@@ 2001.12.26 YAZAKI OPENFOLDERƒŠƒXƒg‚ÍACMRUFolder‚É‚·‚×‚ÄˆË—Š‚·‚é
+	/* æœ€è¿‘ä½¿ã£ãŸãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ä½œæˆ */
+//@@@ 2001.12.26 YAZAKI OPENFOLDERãƒªã‚¹ãƒˆã¯ã€CMRUFolderã«ã™ã¹ã¦ä¾é ¼ã™ã‚‹
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );
 	nEnable = (cMRUFolder.MenuLength() > 0 ? 0 : MF_GRAYED);
@@ -1568,7 +1568,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T(""), _T("Z"), FALSE );	// Jan. 24, 2005 genta
 
-	/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒW‘‹‚ÌƒŠƒXƒg‚ğƒƒjƒ…[‚É‚·‚é */
+	/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†çª“ã®ãƒªã‚¹ãƒˆã‚’ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã™ã‚‹ */
 	j = 0;
 	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
@@ -1587,11 +1587,11 @@ int	CControlTray::CreatePopUpMenu_L( void )
 		j = 0;
 		for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
 			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
-				/* ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹–¼—v‹’Ê’m */
+				/* ãƒˆãƒ¬ã‚¤ã‹ã‚‰ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åè¦æ±‚é€šçŸ¥ */
 				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-				// ƒƒjƒ…[ƒ‰ƒxƒ‹B1‚©‚çƒAƒNƒZƒXƒL[‚ğU‚é
+				// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ©ãƒ™ãƒ«ã€‚1ã‹ã‚‰ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã‚’æŒ¯ã‚‹
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
 				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
 				++j;
@@ -1599,14 +1599,14 @@ int	CControlTray::CreatePopUpMenu_L( void )
 		}
 	}
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO –¼‘O‚ğ•ÏX(F_FILECLOSEALL¨F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO ƒAƒNƒZƒXƒL[•ÏX(L¨Q)	// 2006.10.21 ryoji •\¦•¶š—ñ•ÏX	// 2007.02.13 ryoji ¨F_EXITALLEDITORS
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO åå‰ã‚’å¤‰æ›´(F_FILECLOSEALLâ†’F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼å¤‰æ›´(Lâ†’Q)	// 2006.10.21 ryoji è¡¨ç¤ºæ–‡å­—åˆ—å¤‰æ›´	// 2007.02.13 ryoji â†’F_EXITALLEDITORS
 	if( j == 0 ){
-		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO –¼‘O‚ğ•ÏX(F_FILECLOSEALL¨F_WIN_CLOSEALL)	// 2007.02.13 ryoji ¨F_EXITALLEDITORS
+		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO åå‰ã‚’å¤‰æ›´(F_FILECLOSEALLâ†’F_WIN_CLOSEALL)	// 2007.02.13 ryoji â†’F_EXITALLEDITORS
 		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
-	//	Jun. 9, 2001 genta ƒ\ƒtƒgƒEƒFƒA–¼‰üÌ
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_‚É•ÏX
+	//	Jun. 9, 2001 genta ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢åæ”¹ç§°
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_ã«å¤‰æ›´
 
 	po.x = 0;
 	po.y = 0;
@@ -1642,10 +1642,10 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	return nId;
 }
 
-//ƒL[ƒ[ƒhFƒgƒŒƒC‰EƒNƒŠƒbƒNƒƒjƒ…[‡˜
-//	Oct. 12, 2000 JEPRO ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[(ƒgƒŒƒC¶ƒ{ƒ^ƒ“) ‚ğQl‚É‚µ‚ÄV‚½‚É’Ç‰Á‚µ‚½•”•ª
+//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼šãƒˆãƒ¬ã‚¤å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼é †åº
+//	Oct. 12, 2000 JEPRO ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼(ãƒˆãƒ¬ã‚¤å·¦ãƒœã‚¿ãƒ³) ã‚’å‚è€ƒã«ã—ã¦æ–°ãŸã«è¿½åŠ ã—ãŸéƒ¨åˆ†
 
-/*! ƒ|ƒbƒvƒAƒbƒvƒƒjƒ…[(ƒgƒŒƒC‰Eƒ{ƒ^ƒ“) */
+/*! ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ãƒ¡ãƒ‹ãƒ¥ãƒ¼(ãƒˆãƒ¬ã‚¤å³ãƒœã‚¿ãƒ³) */
 int	CControlTray::CreatePopUpMenu_R( void )
 {
 	int		nId;
@@ -1654,27 +1654,27 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	POINT	po;
 	RECT	rc;
 
-	//–{“–‚ÍƒZƒ}ƒtƒH‚É‚µ‚È‚¢‚Æ‚¾‚ß
+	//æœ¬å½“ã¯ã‚»ãƒãƒ•ã‚©ã«ã—ãªã„ã¨ã ã‚
 	if( m_bUseTrayMenu ) return -1;
 	m_bUseTrayMenu = true;
 
 	m_cMenuDrawer.ResetContents();
 
-	// ƒŠƒ\[ƒX‚ğg‚í‚È‚¢‚æ‚¤‚É
+	// ãƒªã‚½ãƒ¼ã‚¹ã‚’ä½¿ã‚ãªã„ã‚ˆã†ã«
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
 	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayR", L"" );
 
-	/* ƒgƒŒƒC‰EƒNƒŠƒbƒN‚Ìuƒwƒ‹ƒvvƒƒjƒ…[ */
+	/* ãƒˆãƒ¬ã‚¤å³ã‚¯ãƒªãƒƒã‚¯ã®ã€Œãƒ˜ãƒ«ãƒ—ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ */
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO uƒgƒsƒbƒN‚Ìv¨uƒL[ƒ[ƒhv‚É•ÏX
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO ã€Œãƒˆãƒ”ãƒƒã‚¯ã®ã€â†’ã€Œã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã€ã«å¤‰æ›´
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T(""), _T("L"), FALSE );
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T(""), _T("C"), FALSE );
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_‚É•ÏX
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_ã«å¤‰æ›´
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	//	Jun. 18, 2001 genta ƒ\ƒtƒgƒEƒFƒA–¼‰üÌ
+	//	Jun. 18, 2001 genta ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢åæ”¹ç§°
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );
 
 	po.x = 0;
@@ -1711,8 +1711,8 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	return nId;
 }
 
-/*! ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹ì¬
-	@date 2013.04.20 novice ‹¤’Êˆ—‚ğŠÖ”‰»
+/*! ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
+	@date 2013.04.20 novice å…±é€šå‡¦ç†ã‚’é–¢æ•°åŒ–
 */
 void CControlTray::CreateAccelTbl( void )
 {
@@ -1729,8 +1729,8 @@ void CControlTray::CreateAccelTbl( void )
 	}
 }
 
-/*! ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹”jŠü
-	@date 2013.04.20 novice ‹¤’Êˆ—‚ğŠÖ”‰»
+/*! ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ç ´æ£„
+	@date 2013.04.20 novice å…±é€šå‡¦ç†ã‚’é–¢æ•°åŒ–
 */
 void CControlTray::DeleteAccelTbl( void )
 {
@@ -1741,29 +1741,29 @@ void CControlTray::DeleteAccelTbl( void )
 }
 
 /*!
-	@brief WM_DESTROY ˆ—
-	@date 2006.07.09 ryoji V‹Kì¬
+	@brief WM_DESTROY å‡¦ç†
+	@date 2006.07.09 ryoji æ–°è¦ä½œæˆ
 */
 void CControlTray::OnDestroy()
 {
 	HWND hwndExitingDlg = 0;
 
 	if (GetTrayHwnd() == NULL)
-		return;	// Šù‚É”jŠü‚³‚ê‚Ä‚¢‚é
+		return;	// æ—¢ã«ç ´æ£„ã•ã‚Œã¦ã„ã‚‹
 
-	// ƒzƒbƒgƒL[‚Ì”jŠü
+	// ãƒ›ãƒƒãƒˆã‚­ãƒ¼ã®ç ´æ£„
 	::UnregisterHotKey( GetTrayHwnd(), ID_HOTKEY_TRAYMENU );
 
-	// 2006.07.09 ryoji ‹¤—Lƒf[ƒ^•Û‘¶‚ğ CControlProcess::Terminate() ‚©‚çˆÚ“®
+	// 2006.07.09 ryoji å…±æœ‰ãƒ‡ãƒ¼ã‚¿ä¿å­˜ã‚’ CControlProcess::Terminate() ã‹ã‚‰ç§»å‹•
 	//
-	// uƒ^ƒXƒNƒgƒŒƒC‚Éí’“‚µ‚È‚¢vİ’è‚ÅƒGƒfƒBƒ^‰æ–ÊiNormal Processj‚ğ—§‚¿ã‚°‚½‚Ü‚Ü
-	// ƒZƒbƒVƒ‡ƒ“I—¹‚·‚é‚æ‚¤‚Èê‡‚Å‚à‹¤—Lƒf[ƒ^•Û‘¶‚ªs‚í‚ê‚È‚©‚Á‚½‚è’†’f‚³‚ê‚é‚±‚Æ‚ª
-	// –³‚¢‚æ‚¤A‚±‚±‚ÅƒEƒBƒ“ƒhƒE‚ª”jŠü‚³‚ê‚é‘O‚É•Û‘¶‚·‚é
+	// ã€Œã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«å¸¸é§ã—ãªã„ã€è¨­å®šã§ã‚¨ãƒ‡ã‚£ã‚¿ç”»é¢ï¼ˆNormal Processï¼‰ã‚’ç«‹ã¡ä¸Šã’ãŸã¾ã¾
+	// ã‚»ãƒƒã‚·ãƒ§ãƒ³çµ‚äº†ã™ã‚‹ã‚ˆã†ãªå ´åˆã§ã‚‚å…±æœ‰ãƒ‡ãƒ¼ã‚¿ä¿å­˜ãŒè¡Œã‚ã‚Œãªã‹ã£ãŸã‚Šä¸­æ–­ã•ã‚Œã‚‹ã“ã¨ãŒ
+	// ç„¡ã„ã‚ˆã†ã€ã“ã“ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒç ´æ£„ã•ã‚Œã‚‹å‰ã«ä¿å­˜ã™ã‚‹
 	//
 
-	/* I—¹ƒ_ƒCƒAƒƒO‚ğ•\¦‚·‚é */
+	/* çµ‚äº†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã™ã‚‹ */
 	if( m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
-		/* I—¹’†ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+		/* çµ‚äº†ä¸­ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 		hwndExitingDlg = ::CreateDialog(
 			m_hInstance,
 			MAKEINTRESOURCE( IDD_EXITING ),
@@ -1773,28 +1773,28 @@ void CControlTray::OnDestroy()
 		::ShowWindow( hwndExitingDlg, SW_SHOW );
 	}
 
-	/* ‹¤—Lƒf[ƒ^‚Ì•Û‘¶ */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜ */
 	CShareData_IO::SaveShareData();
 
-	/* I—¹ƒ_ƒCƒAƒƒO‚ğ•\¦‚·‚é */
+	/* çµ‚äº†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã™ã‚‹ */
 	if( m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
-		/* I—¹’†ƒ_ƒCƒAƒƒO‚Ì”jŠü */
+		/* çµ‚äº†ä¸­ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ç ´æ£„ */
 		::DestroyWindow( hwndExitingDlg );
 	}
 
-	if( m_bCreatedTrayIcon ){	/* ƒgƒŒƒC‚ÉƒAƒCƒRƒ“‚ğì‚Á‚½ */
+	if( m_bCreatedTrayIcon ){	/* ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½œã£ãŸ */
 		TrayMessage( GetTrayHwnd(), NIM_DELETE, 0, NULL, NULL );
 	}
 
-	// ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹‚Ìíœ
+	// ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã®å‰Šé™¤
 	DeleteAccelTbl();
 
 	m_hWnd = NULL;
 }
 
 /*!
-	@brief I—¹ƒ_ƒCƒAƒƒO—pƒvƒƒV[ƒWƒƒ
-	@date 2006.07.02 ryoji CControlProcess ‚©‚çˆÚ“®
+	@brief çµ‚äº†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ç”¨ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+	@date 2006.07.02 ryoji CControlProcess ã‹ã‚‰ç§»å‹•
 */
 INT_PTR CALLBACK CControlTray::ExitingDlgProc(
 	HWND	hwndDlg,	// handle to dialog box
