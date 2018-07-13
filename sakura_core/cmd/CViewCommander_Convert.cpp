@@ -1,7 +1,7 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(•ÏŠ·Œn)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(å¤‰æ›ç³»)é–¢æ•°ç¾¤
 
-	2012/12/20	CViewCommander.cpp‚©‚ç•ª—£
+	2012/12/20	CViewCommander.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,138 +22,138 @@
 #include "io/CBinaryStream.h"
 
 
-/* ¬•¶š */
+/* å°æ–‡å­— */
 void CViewCommander::Command_TOLOWER( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOLOWER );
 	return;
 }
 
 
 
-/* ‘å•¶š */
+/* å¤§æ–‡å­— */
 void CViewCommander::Command_TOUPPER( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOUPPER );
 	return;
 }
 
 
 
-/* ‘SŠp¨”¼Šp */
+/* å…¨è§’â†’åŠè§’ */
 void CViewCommander::Command_TOHANKAKU( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOHANKAKU );
 	return;
 }
 
 
 
-/* ”¼Šp{‘S‚Ğ‚ç¨‘SŠpEƒJƒ^ƒJƒi */	//Sept. 17, 2000 jepro à–¾‚ğu”¼Šp¨‘SŠpƒJƒ^ƒJƒiv‚©‚ç•ÏX
+/* åŠè§’ï¼‹å…¨ã²ã‚‰â†’å…¨è§’ãƒ»ã‚«ã‚¿ã‚«ãƒŠ */	//Sept. 17, 2000 jepro èª¬æ˜ã‚’ã€ŒåŠè§’â†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠã€ã‹ã‚‰å¤‰æ›´
 void CViewCommander::Command_TOZENKAKUKATA( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOZENKAKUKATA );
 	return;
 }
 
 
 
-/* ”¼Šp{‘SƒJƒ^¨‘SŠpE‚Ğ‚ç‚ª‚È */	//Sept. 17, 2000 jepro à–¾‚ğu”¼Šp¨‘SŠp‚Ğ‚ç‚ª‚Èv‚©‚ç•ÏX
+/* åŠè§’ï¼‹å…¨ã‚«ã‚¿â†’å…¨è§’ãƒ»ã²ã‚‰ãŒãª */	//Sept. 17, 2000 jepro èª¬æ˜ã‚’ã€ŒåŠè§’â†’å…¨è§’ã²ã‚‰ãŒãªã€ã‹ã‚‰å¤‰æ›´
 void CViewCommander::Command_TOZENKAKUHIRA( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOZENKAKUHIRA );
 	return;
 }
 
 
 
-/*! ”¼Šp‰p”¨‘SŠp‰p” */			//July. 30, 2001 Misaka
+/*! åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•° */			//July. 30, 2001 Misaka
 void CViewCommander::Command_TOZENEI( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOZENEI );
 	return;
 }
 
 
 
-/*! ‘SŠp‰p”¨”¼Šp‰p” */
+/*! å…¨è§’è‹±æ•°â†’åŠè§’è‹±æ•° */
 void CViewCommander::Command_TOHANEI( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOHANEI );
 	return;
 }
 
 
 
-/* ‘SŠpƒJƒ^ƒJƒi¨”¼ŠpƒJƒ^ƒJƒi */		//Aug. 29, 2002 ai
+/* å…¨è§’ã‚«ã‚¿ã‚«ãƒŠâ†’åŠè§’ã‚«ã‚¿ã‚«ãƒŠ */		//Aug. 29, 2002 ai
 void CViewCommander::Command_TOHANKATA( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TOHANKATA );
 	return;
 }
 
 
 
-/* ”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒi */
+/* åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ */
 void CViewCommander::Command_HANKATATOZENKAKUKATA( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENKATA );
 	return;
 }
 
 
 
-/* ”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ğ‚ç‚ª‚È */
+/* åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª */
 void CViewCommander::Command_HANKATATOZENKAKUHIRA( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_HANKATATOZENHIRA );
 	return;
 }
 
 
 
-/* TAB¨‹ó”’ */
+/* TABâ†’ç©ºç™½ */
 void CViewCommander::Command_TABTOSPACE( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_TABTOSPACE );
 	return;
 }
 
-/* ‹ó”’¨TAB */ //---- Stonee, 2001/05/27
+/* ç©ºç™½â†’TAB */ //---- Stonee, 2001/05/27
 void CViewCommander::Command_SPACETOTAB( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_SPACETOTAB );
 	return;
 }
 
 
 
-/* ©“®”»•Ê¨SJISƒR[ƒh•ÏŠ· */
+/* è‡ªå‹•åˆ¤åˆ¥â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_AUTO2SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_AUTO2SJIS );
 	return;
 }
 
 
 
-/* E-Mail(JIS¨SJIS)ƒR[ƒh•ÏŠ· */
+/* E-Mail(JISâ†’SJIS)ã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_EMAIL( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_EMAIL );
 	return;
 }
@@ -161,113 +161,113 @@ void CViewCommander::Command_CODECNV_EMAIL( void )
 
 
 
-/* EUC¨SJISƒR[ƒh•ÏŠ· */
+/* EUCâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_EUC2SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_EUC2SJIS );
 	return;
 }
 
 
 
-/* Unicode¨SJISƒR[ƒh•ÏŠ· */
+/* Unicodeâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_UNICODE2SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UNICODE2SJIS );
 	return;
 }
 
 
 
-/* UnicodeBE¨SJISƒR[ƒh•ÏŠ· */
+/* UnicodeBEâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_UNICODEBE2SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UNICODEBE2SJIS );
 	return;
 }
 
 
 
-/* UTF-8¨SJISƒR[ƒh•ÏŠ· */
+/* UTF-8â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_UTF82SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UTF82SJIS );
 	return;
 }
 
 
 
-/* UTF-7¨SJISƒR[ƒh•ÏŠ· */
+/* UTF-7â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_UTF72SJIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_UTF72SJIS );
 	return;
 }
 
 
 
-/* SJIS¨JISƒR[ƒh•ÏŠ· */
+/* SJISâ†’JISã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_SJIS2JIS( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2JIS );
 	return;
 }
 
 
 
-/* SJIS¨EUCƒR[ƒh•ÏŠ· */
+/* SJISâ†’EUCã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_SJIS2EUC( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2EUC );
 	return;
 }
 
 
 
-/* SJIS¨UTF-8ƒR[ƒh•ÏŠ· */
+/* SJISâ†’UTF-8ã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_SJIS2UTF8( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2UTF8 );
 	return;
 }
 
 
 
-/* SJIS¨UTF-7ƒR[ƒh•ÏŠ· */
+/* SJISâ†’UTF-7ã‚³ãƒ¼ãƒ‰å¤‰æ› */
 void CViewCommander::Command_CODECNV_SJIS2UTF7( void )
 {
-	/* ‘I‘ğƒGƒŠƒA‚ÌƒeƒLƒXƒg‚ğw’è•û–@‚Å•ÏŠ· */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®šæ–¹æ³•ã§å¤‰æ› */
 	m_pCommanderView->ConvSelectedArea( F_CODECNV_SJIS2UTF7 );
 	return;
 }
 
 
 
-/* Base64ƒfƒR[ƒh‚µ‚Ä•Û‘¶ */
+/* Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦ä¿å­˜ */
 void CViewCommander::Command_BASE64DECODE( void )
 {
-	/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		ErrorBeep();
 		return;
 	}
-	/* ‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ */
-	/* ³í‚ÍTRUE,”ÍˆÍ–¢‘I‘ğ‚Ìê‡‚ÍFALSE‚ğ•Ô‚· */
+	/* é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
+	/* æ­£å¸¸æ™‚ã¯TRUE,ç¯„å›²æœªé¸æŠã®å ´åˆã¯FALSEã‚’è¿”ã™ */
 	CNativeW	ctextBuf;
 	if( !m_pCommanderView->GetSelectedDataSimple(ctextBuf) ){
 		ErrorBeep();
 		return;
 	}
 
-	/* Base64ƒfƒR[ƒh */
+	/* Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ */
 	CMemory cmemBuf;
 	bool bret = CDecode_Base64Decode().CallDecode(ctextBuf, &cmemBuf);
 	if( !bret ){
@@ -275,17 +275,17 @@ void CViewCommander::Command_BASE64DECODE( void )
 	}
 	ctextBuf.Clear();
 
-	/* •Û‘¶ƒ_ƒCƒAƒƒO ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	/* ä¿å­˜ãƒ€ã‚¤ã‚¢ãƒ­ã‚° ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	TCHAR		szPath[_MAX_PATH] = _T("");
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){
 		return;
 	}
 
-	//ƒf[ƒ^
+	//ãƒ‡ãƒ¼ã‚¿
 	int nDataLen;
 	const void* pData = cmemBuf.GetRawPtr(&nDataLen);
 
-	//ƒJƒLƒR
+	//ã‚«ã‚­ã‚³
 	CBinaryOutputStream out(szPath);
 	if(!out)goto err;
 	if( nDataLen != out.Write(pData, nDataLen) )goto err;
@@ -300,24 +300,24 @@ err:
 
 
 
-/* uudecode‚µ‚Ä•Û‘¶ */
+/* uudecodeã—ã¦ä¿å­˜ */
 void CViewCommander::Command_UUDECODE( void )
 {
-	/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		ErrorBeep();
 		return;
 	}
 
-	// ‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ -> cmemBuf
-	// ³í‚ÍTRUE,”ÍˆÍ–¢‘I‘ğ‚Ìê‡‚ÍFALSE‚ğ•Ô‚·
+	// é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— -> cmemBuf
+	// æ­£å¸¸æ™‚ã¯TRUE,ç¯„å›²æœªé¸æŠã®å ´åˆã¯FALSEã‚’è¿”ã™
 	CNativeW	ctextBuf;
 	if( !m_pCommanderView->GetSelectedDataSimple(ctextBuf) ){
 		ErrorBeep();
 		return;
 	}
 
-	// uudecode(ƒfƒR[ƒh)  ctextBuf -> cmemBin, szPath
+	// uudecode(ãƒ‡ã‚³ãƒ¼ãƒ‰)  ctextBuf -> cmemBin, szPath
 	CMemory cmemBin;
 	TCHAR szPath[_MAX_PATH]=_T("");
 	CDecode_UuDecode decoder;
@@ -327,21 +327,21 @@ void CViewCommander::Command_UUDECODE( void )
 	decoder.CopyFilename( szPath );
 	ctextBuf.Clear();
 
-	/* •Û‘¶ƒ_ƒCƒAƒƒO ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	/* ä¿å­˜ãƒ€ã‚¤ã‚¢ãƒ­ã‚° ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){
 		return;
 	}
 
-	//ƒf[ƒ^
+	//ãƒ‡ãƒ¼ã‚¿
 	int nDataLen;
 	const void* pData = cmemBin.GetRawPtr(&nDataLen);
 
-	//ƒJƒLƒR
+	//ã‚«ã‚­ã‚³
 	CBinaryOutputStream out(szPath);
 	if( !out )goto err;
 	if( nDataLen != out.Write(pData,nDataLen) )goto err;
 
-	//Š®—¹
+	//å®Œäº†
 	return;
 
 err:
