@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,7 +24,7 @@
 #ifndef SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
 #define SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
 
-// -- -- -- -- ˜_—Œ^ -- -- -- -- //
+// -- -- -- -- è«–ç†å‹ -- -- -- -- //
 
 // novice 2002/09/14
 #ifndef TRUE
@@ -40,21 +40,21 @@
 #endif
 
 
-// -- -- -- -- ’è” -- -- -- -- //
+// -- -- -- -- å®šæ•° -- -- -- -- //
 
 #ifndef NULL
 #define NULL 0
 #endif
 
 
-// -- -- -- -- •¶š -- -- -- -- //
+// -- -- -- -- æ–‡å­— -- -- -- -- //
 
-//char,wchar_t ‚Ì•Ï‚í‚è‚ÉA•Ê–¼‚Ì ACHAR,WCHAR ‚ğg‚¤‚ÆAƒ\[ƒX®Œ`‚ª‚µ‚â‚·‚¢ƒP[ƒX‚ª‚ ‚éB
+//char,wchar_t ã®å¤‰ã‚ã‚Šã«ã€åˆ¥åã® ACHAR,WCHAR ã‚’ä½¿ã†ã¨ã€ã‚½ãƒ¼ã‚¹æ•´å½¢ãŒã—ã‚„ã™ã„ã‚±ãƒ¼ã‚¹ãŒã‚ã‚‹ã€‚
 typedef char ACHAR;
 
 
-//TCHAR’Ç‰Á‹@”\
-//TCHAR‚Æ‹t‚Ì•¶šŒ^‚ğNOT_TCHAR‚Æ‚µ‚Ä’è‹`‚·‚é
+//TCHARè¿½åŠ æ©Ÿèƒ½
+//TCHARã¨é€†ã®æ–‡å­—å‹ã‚’NOT_TCHARã¨ã—ã¦å®šç¾©ã™ã‚‹
 #ifdef _UNICODE
 typedef char NOT_TCHAR;
 #else
@@ -62,30 +62,30 @@ typedef wchar_t NOT_TCHAR;
 #endif
 
 
-//WIN_CHAR (WinAPI‚É“n‚·‚Ì‚ÅA•K‚¸TCHAR‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢‚à‚Ì)
+//WIN_CHAR (WinAPIã«æ¸¡ã™ã®ã§ã€å¿…ãšTCHARã§ãªã‘ã‚Œã°ãªã‚‰ãªã„ã‚‚ã®)
 typedef TCHAR WIN_CHAR;
 #define _WINT(A) _T(A)
 
 
 //EDIT_CHAR
-typedef wchar_t WChar;      //ƒGƒfƒBƒ^‚Å—p‚¢‚éƒeƒLƒXƒgŠÇ—ƒf[ƒ^Œ^
+typedef wchar_t WChar;      //ã‚¨ãƒ‡ã‚£ã‚¿ã§ç”¨ã„ã‚‹ãƒ†ã‚­ã‚¹ãƒˆç®¡ç†ãƒ‡ãƒ¼ã‚¿å‹
 typedef wchar_t EDIT_CHAR;
 #define _EDITL(A) LTEXT(A)
 
 
-//•¶šƒR[ƒh•ÊA•¶šŒ^
-typedef unsigned char	uchar_t;		//  unsigned char ‚Ì•Ê–¼D
-typedef unsigned short	uchar16_t;		//  UTF-16 —pD
-typedef unsigned long	uchar32_t;		//  UTF-32 —pD
+//æ–‡å­—ã‚³ãƒ¼ãƒ‰åˆ¥ã€æ–‡å­—å‹
+typedef unsigned char	uchar_t;		//  unsigned char ã®åˆ¥åï¼
+typedef unsigned short	uchar16_t;		//  UTF-16 ç”¨ï¼
+typedef unsigned long	uchar32_t;		//  UTF-32 ç”¨ï¼
 typedef long			wchar32_t;
 
 
 
-// -- -- -- -- ‚»‚Ì‘¼ -- -- -- -- //
+// -- -- -- -- ãã®ä»– -- -- -- -- //
 
 typedef char KEYCODE;
 
-//intŒİŠ·
+//intäº’æ›
 #ifdef USE_STRICT_INT
 	#include "CLaxInteger.h"
 	typedef CLaxInteger Int;

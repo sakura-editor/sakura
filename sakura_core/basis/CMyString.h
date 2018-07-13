@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,7 +31,7 @@
 
 class CMyString{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMyString(WCHAR wc)								: m_wstr(1,wc),          m_str_cache(NULL) { }
 	CMyString(const WCHAR* szData=L"")				: m_wstr(szData),        m_str_cache(NULL) { }
 	CMyString(const WCHAR* pData, size_t nLength)	: m_wstr(pData,nLength), m_str_cache(NULL) { }
@@ -41,19 +41,19 @@ public:
 	CMyString(const CMyString& rhs) : m_wstr(rhs.c_wstr()), m_str_cache(NULL) { }
 	~CMyString();
 
-	//‰‰Zq
+	//æ¼”ç®—å­
 	operator const wchar_t* () const{ return c_wstr(); }
 	operator const char* () const{ return c_astr(); }
 	CMyString& operator = (const CMyString& rhs){ set(rhs); return *this; }
 
-	//İ’è
+	//è¨­å®š
 	void set(const wchar_t* wszData){ m_wstr=wszData; m_delete2(m_str_cache); }
 	void set(const wchar_t* wszData, int nLength){ m_wstr.assign(wszData, nLength); m_delete2(m_str_cache); }
 	void set(const char* szData);
 	void set(const char* szData, int nLength);
 	void set(const CMyString& cszData){ set(cszData.c_wstr()); }
 
-	//æ“¾
+	//å–å¾—
 	const wchar_t* c_wstr() const{ return m_wstr.c_str(); }
 	const char* c_astr() const;
 	int wlength() const{ return wcslen(c_wstr()); }
@@ -69,10 +69,10 @@ public:
 
 private:
 	std::wstring m_wstr;
-	mutable char* m_str_cache; //c_str—pƒLƒƒƒbƒVƒ…Bm_wstr‚ª•ÏX(set)‚³‚ê‚½‚ç‚±‚ê‚ğ‰ğ•ú‚µANULL‚É‚µ‚Ä‚¨‚­‚Ì‚ªƒ‹[ƒ‹B
+	mutable char* m_str_cache; //c_strç”¨ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã€‚m_wstrãŒå¤‰æ›´(set)ã•ã‚ŒãŸã‚‰ã“ã‚Œã‚’è§£æ”¾ã—ã€NULLã«ã—ã¦ãŠãã®ãŒãƒ«ãƒ¼ãƒ«ã€‚
 };
 
-//std::string ‚Ì TCHAR ‘Î‰—pƒ}ƒNƒ’è‹`
+//std::string ã® TCHAR å¯¾å¿œç”¨ãƒã‚¯ãƒ­å®šç¾©
 #ifdef _UNICODE
 #define tstring wstring
 #else
@@ -82,11 +82,11 @@ private:
 
 
 
-//‹¤’Êƒ}ƒNƒ
+//å…±é€šãƒã‚¯ãƒ­
 #define _FT _T
 #include "util/StaticType.h"
 
-//‹¤’ÊŒ^
+//å…±é€šå‹
 typedef StaticString<TCHAR,_MAX_PATH> SFilePath;
 typedef StaticString<TCHAR, MAX_GREP_PATH> SFilePathLong;
 class CFilePath : public StaticString<TCHAR,_MAX_PATH>{
@@ -107,7 +107,7 @@ public:
 		_tcscat( szDirPath, szDir );
 		return szDirPath;
 	}
-	//Šg’£q‚ğæ“¾‚·‚é
+	//æ‹¡å¼µå­ã‚’å–å¾—ã™ã‚‹
 	LPCTSTR GetExt( bool bWithoutDot = false ) const
 	{
 		const TCHAR* head = c_str();
@@ -119,7 +119,7 @@ public:
 			p--;
 		}
 		if(p>=head && *p==_T('.')){
-			return bWithoutDot ? p+1 : p;	//bWithoutDot==true‚È‚çƒhƒbƒg‚È‚µ‚ğ•Ô‚·
+			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueãªã‚‰ãƒ‰ãƒƒãƒˆãªã—ã‚’è¿”ã™
 		}else{
 			return auto_strchr(head,_T('\0'));
 		}
@@ -127,7 +127,7 @@ public:
 };
 
 
-//$$ ‰¼
+//$$ ä»®
 class CCommandLineString{
 public:
 	CCommandLineString()

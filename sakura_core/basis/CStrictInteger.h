@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ŒµŠi‚Á‚Õ‚è‚ğƒJƒXƒ^ƒ}ƒCƒY‰Â”\‚È®”ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief å³æ ¼ã£ã·ã‚Šã‚’ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºå¯èƒ½ãªæ•´æ•°ã‚¯ãƒ©ã‚¹
 	       Integer class, which is static-type-checked strict and flexible at compile.
 
 	@author kobake
@@ -31,7 +31,7 @@
 #ifndef SAKURA_CSTRICTINTEGER_6F202774_0F82_4BB7_B107_37DE5443309E_H_
 #define SAKURA_CSTRICTINTEGER_6F202774_0F82_4BB7_B107_37DE5443309E_H_
 
-//intˆÈŠO‚Ì®”Œ^‚àint‚ÉƒLƒƒƒXƒg‚µ‚Äˆµ‚¤
+//intä»¥å¤–ã®æ•´æ•°å‹ã‚‚intã«ã‚­ãƒ£ã‚¹ãƒˆã—ã¦æ‰±ã†
 #define STRICTINT_OTHER_TYPE_AS_INT(TYPE) \
 	Me& operator += (TYPE rhs)			{ return operator += ((int)rhs); } \
 	Me& operator -= (TYPE rhs)			{ return operator -= ((int)rhs); } \
@@ -45,13 +45,13 @@
 	bool operator != (TYPE rhs) const	{ return operator != ((int)rhs); }
 
 
-//! ˆÃ–Ù‚Ì•ÏŠ·‚ğ‹–‚³‚È‚¢A®”ƒNƒ‰ƒX
+//! æš—é»™ã®å¤‰æ›ã‚’è¨±ã•ãªã„ã€æ•´æ•°ã‚¯ãƒ©ã‚¹
 template <
-	int STRICT_ID,			//!< Œ^‚ğ•ª‚¯‚é‚½‚ß‚Ì”’lB0 or 1B
-	bool ALLOW_CMP_INT,		//!< int‚Æ‚Ì”äŠr‚ğ‹–‚·‚©‚Ç‚¤‚©
-	bool ALLOW_ADDSUB_INT,	//!< int‚Æ‚Ì‰ÁŒ¸Z‚ğ‹–‚·‚©‚Ç‚¤‚©
-	bool ALLOW_CAST_INT,	//!< int‚Ö‚ÌˆÃ–Ù‚Ì•ÏŠ·‚ğ‹–‚·‚©‚Ç‚¤‚©
-	bool ALLOW_ASSIGNOP_INT	//!< int‚Ì‘ã“ü‚ğ‹–‚·‚©‚Ç‚¤‚©
+	int STRICT_ID,			//!< å‹ã‚’åˆ†ã‘ã‚‹ãŸã‚ã®æ•°å€¤ã€‚0 or 1ã€‚
+	bool ALLOW_CMP_INT,		//!< intã¨ã®æ¯”è¼ƒã‚’è¨±ã™ã‹ã©ã†ã‹
+	bool ALLOW_ADDSUB_INT,	//!< intã¨ã®åŠ æ¸›ç®—ã‚’è¨±ã™ã‹ã©ã†ã‹
+	bool ALLOW_CAST_INT,	//!< intã¸ã®æš—é»™ã®å¤‰æ›ã‚’è¨±ã™ã‹ã©ã†ã‹
+	bool ALLOW_ASSIGNOP_INT	//!< intã®ä»£å…¥ã‚’è¨±ã™ã‹ã©ã†ã‹
 >
 class CStrictInteger{
 private:
@@ -65,7 +65,7 @@ private:
 	static const int NOT_STRICT_ID = (1-STRICT_ID);
 
 private:
-	//!ƒSƒ~ƒNƒ‰ƒX
+	//!ã‚´ãƒŸã‚¯ãƒ©ã‚¹
 	class CDummy{
 	public:
 		CDummy();
@@ -74,19 +74,19 @@ private:
 	template<bool t, bool=false> struct ChooseIntOrDummy {
 		typedef int Type;
 	};
-	// ƒNƒ‰ƒX“à‚Åƒeƒ“ƒvƒŒ[ƒg‚Ì“Áê‰»‚ğ‚·‚é‚ÆG++‚É“{‚ç‚ê‚é‚Ì‚Å•”•ª“Áê‰»‚É‚·‚é
+	// ã‚¯ãƒ©ã‚¹å†…ã§ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ç‰¹æ®ŠåŒ–ã‚’ã™ã‚‹ã¨G++ã«æ€’ã‚‰ã‚Œã‚‹ã®ã§éƒ¨åˆ†ç‰¹æ®ŠåŒ–ã«ã™ã‚‹
 	template<bool _> struct ChooseIntOrDummy<false, _> {
 		typedef CDummy Type;
 	};
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CStrictInteger(){ m_value=0; }
 	CStrictInteger(const Me& rhs){ m_value=rhs.m_value; }
 
-	//int‚©‚ç‚Ì•ÏŠ·‚ÍAu–¾¦“I‚Éw’è‚µ‚½‚Æ‚«‚Ì‚İv‰Â”\
+	//intã‹ã‚‰ã®å¤‰æ›ã¯ã€ã€Œæ˜ç¤ºçš„ã«æŒ‡å®šã—ãŸã¨ãã®ã¿ã€å¯èƒ½
 	explicit CStrictInteger(int value){ m_value=value; }
 
-	//Zp‰‰Zq (‰ÁZAŒ¸Z‚Í“¯ƒNƒ‰ƒX“¯m‚Å‚µ‚©‹–‚³‚È‚¢)
+	//ç®—è¡“æ¼”ç®—å­ (åŠ ç®—ã€æ¸›ç®—ã¯åŒã‚¯ãƒ©ã‚¹åŒå£«ã§ã—ã‹è¨±ã•ãªã„)
 	Me& operator += (const Me& rhs)	{ m_value += rhs.m_value; return *this; }
 	Me& operator -= (const Me& rhs)	{ m_value -= rhs.m_value; return *this; }
 	Me& operator *= (int n)			{ m_value *= n; return *this; }
@@ -94,7 +94,7 @@ public:
 	Me& operator %= (int n)			{ m_value %= n; return *this; }
 	Me& operator %= (const Me& rhs)	{ m_value %= rhs.m_value; return *this; }
 
-	//Zp‰‰Zq‚Q (‰ÁZAŒ¸Z‚Í“¯ƒNƒ‰ƒX“¯m‚Å‚µ‚©‹–‚³‚È‚¢)
+	//ç®—è¡“æ¼”ç®—å­ï¼’ (åŠ ç®—ã€æ¸›ç®—ã¯åŒã‚¯ãƒ©ã‚¹åŒå£«ã§ã—ã‹è¨±ã•ãªã„)
 	Me operator + (const Me& rhs)	const{ Me ret=*this; return ret+=rhs; }
 	Me operator - (const Me& rhs)	const{ Me ret=*this; return ret-=rhs; }
 	Me operator * (int n)			const{ Me ret=*this; return ret*=n; }
@@ -102,19 +102,19 @@ public:
 	Me operator % (int n)			const{ Me ret=*this; return ret%=n; }
 	Me operator % (const Me& rhs)	const{ Me ret=*this; return ret%=rhs; }
 
-	//Zp‰‰Zq‚R
+	//ç®—è¡“æ¼”ç®—å­ï¼“
 	int operator ++ ()   { return ++m_value; }	//++c;
 	int operator ++ (int){ return m_value++; }	//c++;
 	int operator -- ()   { return --m_value; }	//--c;
 	int operator -- (int){ return m_value--; }	//c--;
 
-	//Zp‰‰Zq‚S
+	//ç®—è¡“æ¼”ç®—å­ï¼”
 	Me operator - () const{ return Me(-m_value); }
 
-	//‘ã“ü‰‰Zq
+	//ä»£å…¥æ¼”ç®—å­
 	Me& operator = (const Me& rhs){ m_value=rhs.m_value; return *this; }
 
-	//”äŠr‰‰Zq
+	//æ¯”è¼ƒæ¼”ç®—å­
 	bool operator <  (const Me& rhs) const{ return m_value <  rhs.m_value; }
 	bool operator <= (const Me& rhs) const{ return m_value <= rhs.m_value; }
 	bool operator >  (const Me& rhs) const{ return m_value >  rhs.m_value; }
@@ -122,19 +122,19 @@ public:
 	bool operator == (const Me& rhs) const{ return m_value == rhs.m_value; }
 	bool operator != (const Me& rhs) const{ return m_value != rhs.m_value; }
 
-	//ŠÖ”
+	//é–¢æ•°
 	int GetValue() const{ return m_value; }
 	void SetValue(int n){ m_value=n; }
 
-	//Int(CLaxInt)‚Ö‚Ì•ÏŠ·‚Íí‚É‹–‚·
+	//Int(CLaxInt)ã¸ã®å¤‰æ›ã¯å¸¸ã«è¨±ã™
 	operator Int() const{ return Int(m_value); }
 
-	//intˆÈŠO‚Ì®”Œ^‚àint‚ÉƒLƒƒƒXƒg‚µ‚Äˆµ‚¤
+	//intä»¥å¤–ã®æ•´æ•°å‹ã‚‚intã«ã‚­ãƒ£ã‚¹ãƒˆã—ã¦æ‰±ã†
 	STRICTINT_OTHER_TYPE_AS_INT(short)
 	STRICTINT_OTHER_TYPE_AS_INT(size_t)
 	STRICTINT_OTHER_TYPE_AS_INT(LONG)
 
-	// -- -- -- -- •Êí‚ÌCStrictInteger‚Æ‚Ì‰‰Z‚Íâ‘Î‹–‚³‚ñ(‚â‚è‚½‚«‚áint‚Å‚à‰î‚µ‚Ä‚­‚¾‚³‚¢) -- -- -- -- //
+	// -- -- -- -- åˆ¥ç¨®ã®CStrictIntegerã¨ã®æ¼”ç®—ã¯çµ¶å¯¾è¨±ã•ã‚“(ã‚„ã‚ŠãŸãã‚ƒintã§ã‚‚ä»‹ã—ã¦ãã ã•ã„) -- -- -- -- //
 private:
 	template <bool B0,bool B1,bool B2,bool B3> Me&  operator += (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&);
 	template <bool B0,bool B1,bool B2,bool B3> Me&  operator -= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&);
@@ -149,7 +149,7 @@ private:
 	template <bool B0,bool B1,bool B2,bool B3> bool operator != (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
 
 
-	// -- -- -- -- ALLOW_ADDSUB_INT‚ªtrue‚Ìê‡‚ÍAint‚Æ‚Ì‰ÁŒ¸Z‚ğ‹–‚· -- -- -- -- //
+	// -- -- -- -- ALLOW_ADDSUB_INTãŒtrueã®å ´åˆã¯ã€intã¨ã®åŠ æ¸›ç®—ã‚’è¨±ã™ -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_ADDSUB_INT>::Type AddsubIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_ADDSUB_INT>::Type NotAddsubIntegerType;
@@ -159,14 +159,14 @@ public:
 	Me  operator +  (AddsubIntegerType rhs) const{ Me ret=*this; return ret+=rhs; }
 	Me  operator -  (AddsubIntegerType rhs) const{ Me ret=*this; return ret-=rhs; }
 private:
-	//¦ALLOW_ADDSUB_INT‚ªfalse‚Ìê‡‚ÍAprivateƒƒ“ƒo‚ğ’u‚­‚±‚Æ‚É‚æ‚èAu–¾¦“I‚Év‰ÁŒ¸Z‚ğ‹Ö~‚·‚éB
+	//â€»ALLOW_ADDSUB_INTãŒfalseã®å ´åˆã¯ã€privateãƒ¡ãƒ³ãƒã‚’ç½®ãã“ã¨ã«ã‚ˆã‚Šã€ã€Œæ˜ç¤ºçš„ã«ã€åŠ æ¸›ç®—ã‚’ç¦æ­¢ã™ã‚‹ã€‚
 	Me& operator += (NotAddsubIntegerType rhs);
 	Me& operator -= (NotAddsubIntegerType rhs);
 	Me  operator +  (NotAddsubIntegerType rhs) const;
 	Me  operator -  (NotAddsubIntegerType rhs) const;
 
 
-	// -- -- -- -- ALLOW_CMP_INT‚ªtrue‚Ìê‡‚ÍAint‚Æ‚Ì”äŠr‚ğ‹–‚· -- -- -- -- //
+	// -- -- -- -- ALLOW_CMP_INTãŒtrueã®å ´åˆã¯ã€intã¨ã®æ¯”è¼ƒã‚’è¨±ã™ -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_CMP_INT>::Type CmpIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_CMP_INT>::Type NotCmpIntegerType;
@@ -178,7 +178,7 @@ public:
 	bool operator == (CmpIntegerType rhs) const{ return m_value == rhs; }
 	bool operator != (CmpIntegerType rhs) const{ return m_value != rhs; }
 private:
-	//¦ALLOW_CMP_INT‚ªfalse‚Ìê‡‚ÍAprivateƒƒ“ƒo‚ğ’u‚­‚±‚Æ‚É‚æ‚èAu–¾¦“I‚Év”äŠr‚ğ‹Ö~‚·‚éB
+	//â€»ALLOW_CMP_INTãŒfalseã®å ´åˆã¯ã€privateãƒ¡ãƒ³ãƒã‚’ç½®ãã“ã¨ã«ã‚ˆã‚Šã€ã€Œæ˜ç¤ºçš„ã«ã€æ¯”è¼ƒã‚’ç¦æ­¢ã™ã‚‹ã€‚
 	bool operator <  (NotCmpIntegerType rhs) const;
 	bool operator <= (NotCmpIntegerType rhs) const;
 	bool operator >  (NotCmpIntegerType rhs) const;
@@ -187,36 +187,36 @@ private:
 	bool operator != (NotCmpIntegerType rhs) const;
 
 
-	// -- -- -- -- ALLOW_CAST_INT‚ªtrue‚Ìê‡‚ÍAint‚Ö‚ÌˆÃ–Ù‚Ì•ÏŠ·‚ğ‹–‚· -- -- -- -- //
+	// -- -- -- -- ALLOW_CAST_INTãŒtrueã®å ´åˆã¯ã€intã¸ã®æš—é»™ã®å¤‰æ›ã‚’è¨±ã™ -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_CAST_INT>::Type CastIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_CAST_INT>::Type NotCastIntegerType;
 public:
 	operator CastIntegerType() const{ return m_value; }
 private:
-	//¦ALLOW_CAST_INT‚ªfalse‚Ìê‡‚ÍAprivateƒƒ“ƒo‚ğ’u‚­‚±‚Æ‚É‚æ‚èAu–¾¦“I‚ÉvˆÃ–Ù•ÏŠ·‚ğ‹Ö~‚·‚éB
+	//â€»ALLOW_CAST_INTãŒfalseã®å ´åˆã¯ã€privateãƒ¡ãƒ³ãƒã‚’ç½®ãã“ã¨ã«ã‚ˆã‚Šã€ã€Œæ˜ç¤ºçš„ã«ã€æš—é»™å¤‰æ›ã‚’ç¦æ­¢ã™ã‚‹ã€‚
 	operator NotCastIntegerType() const;
 
 
-	// -- -- -- -- ALLOW_ASSIGNOP_INT‚ªtrue‚Ìê‡‚ÍAint‚Ì‘ã“ü‚ğ‹–‚· -- -- -- -- //
+	// -- -- -- -- ALLOW_ASSIGNOP_INTãŒtrueã®å ´åˆã¯ã€intã®ä»£å…¥ã‚’è¨±ã™ -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_ASSIGNOP_INT>::Type AssignIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_ASSIGNOP_INT>::Type NotAssignIntegerType;
 public:
 	Me& operator = (const AssignIntegerType& rhs){ m_value = rhs; return *this; }
 private:
-	//¦ALLOW_ASSIGNOP_INT‚ªfalse‚Ìê‡‚ÍAprivateƒƒ“ƒo‚ğ’u‚­‚±‚Æ‚É‚æ‚èAu–¾¦“I‚Év‘ã“ü‚ğ‹Ö~‚·‚éB
+	//â€»ALLOW_ASSIGNOP_INTãŒfalseã®å ´åˆã¯ã€privateãƒ¡ãƒ³ãƒã‚’ç½®ãã“ã¨ã«ã‚ˆã‚Šã€ã€Œæ˜ç¤ºçš„ã«ã€ä»£å…¥ã‚’ç¦æ­¢ã™ã‚‹ã€‚
 	Me& operator = (const NotAssignIntegerType&);
 
 
-	// -- -- -- -- ƒƒ“ƒo•Ï” -- -- -- -- //
+	// -- -- -- -- ãƒ¡ãƒ³ãƒå¤‰æ•° -- -- -- -- //
 private:
 	int m_value;
 };
 
 
 
-//¶•Ó‚ªint“™‚Ìê‡‚Ì‰‰Zq
+//å·¦è¾ºãŒintç­‰ã®å ´åˆã®æ¼”ç®—å­
 #define STRICTINT_LEFT_INT_CMP(TYPE) \
 	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <  (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs> lhs; } \
 	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <= (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs>=lhs; } \

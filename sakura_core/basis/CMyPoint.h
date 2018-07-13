@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,31 +28,31 @@
 
 class CMyPoint : public POINT{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMyPoint(){ x=0; y=0; }
 	CMyPoint(int _x,int _y){ x=_x; y=_y; }
 	CMyPoint(const POINT& rhs){ x=rhs.x; y=rhs.y; }
 
-	//Zp‰‰Zq
+	//ç®—è¡“æ¼”ç®—å­
 	CMyPoint& operator += (const POINT& rhs){ x+=rhs.x; y+=rhs.y; return *this; }
 	CMyPoint& operator -= (const POINT& rhs){ x-=rhs.x; y-=rhs.y; return *this; }
 	CMyPoint& operator *= (int n){ x*=n; y*=n; return *this; }
 	CMyPoint& operator /= (int n){ x/=n; y/=n; return *this; }
 
-	//Zp‰‰Zq‚Q
+	//ç®—è¡“æ¼”ç®—å­ï¼’
 	CMyPoint operator + (const POINT& rhs) const{ CMyPoint tmp=*this; tmp+=rhs; return tmp; }
 	CMyPoint operator - (const POINT& rhs) const{ CMyPoint tmp=*this; tmp-=rhs; return tmp; }
 	CMyPoint operator * (int n) const{ CMyPoint tmp=*this; tmp*=n; return tmp; }
 	CMyPoint operator / (int n) const{ CMyPoint tmp=*this; tmp/=n; return tmp; }
 
-	//‘ã“ü‰‰Zq
+	//ä»£å…¥æ¼”ç®—å­
 	CMyPoint& operator = (const POINT& rhs){ x=rhs.x; y=rhs.y; return *this; }
 
-	//”äŠr‰‰Zq
+	//æ¯”è¼ƒæ¼”ç®—å­
 	bool operator == (const POINT& rhs) const{ return x==rhs.x && y==rhs.y; }
 	bool operator != (const POINT& rhs) const{ return !this->operator==(rhs); }
 
-	//İ’è
+	//è¨­å®š
 	void Set(int _x,int _y){ x=_x; y=_y; }
 	void Set(const CMyPoint& pt){ x=pt.x; y=pt.y; }
 	void SetX(int _x){ x=_x; }
@@ -60,18 +60,18 @@ public:
 	void Offset(int _x,int _y){ x+=_x; y+=_y; }
 	void Offset(const CMyPoint& pt){ x+=pt.x; y+=pt.y; }
 
-	//æ“¾
+	//å–å¾—
 	int GetX() const{ return (int)x; }
 	int GetY() const{ return (int)y; }
 	CMyPoint Get() const{ return *this; }
 
-	//! x,y ‚¢‚¸‚ê‚©‚ª 0 ‚æ‚è¬‚³‚¢ê‡‚É true ‚ğ•Ô‚·
+	//! x,y ã„ãšã‚Œã‹ãŒ 0 ã‚ˆã‚Šå°ã•ã„å ´åˆã« true ã‚’è¿”ã™
 	bool HasNegative() const
 	{
 		return x<0 || y<0;
 	}
 
-	//! x,y ‚Ç‚¿‚ç‚à©‘R”‚Å‚ ‚ê‚Î true
+	//! x,y ã©ã¡ã‚‰ã‚‚è‡ªç„¶æ•°ã§ã‚ã‚Œã° true
 	bool BothNatural() const
 	{
 		return x>=0 && y>=0;
@@ -80,8 +80,8 @@ public:
 
 
 /*!
-	pt1 - pt2‚ÌŒ‹‰Ê‚ğ•Ô‚·
-	Y‚ğ—Dæ‚µ‚Ä”äŠrBY‚ª“¯ˆê‚È‚çAX‚Å”äŠrB
+	pt1 - pt2ã®çµæœã‚’è¿”ã™
+	Yã‚’å„ªå…ˆã—ã¦æ¯”è¼ƒã€‚YãŒåŒä¸€ãªã‚‰ã€Xã§æ¯”è¼ƒã€‚
 
 	@return <0 pt1 <  pt2
 	@return 0  pt1 == pt2
@@ -95,7 +95,7 @@ inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
 }
 
 
-//! 2“_‚ğ‘ÎŠp‚Æ‚·‚é‹éŒ`‚ğ‹‚ß‚é
+//! 2ç‚¹ã‚’å¯¾è§’ã¨ã™ã‚‹çŸ©å½¢ã‚’æ±‚ã‚ã‚‹
 template <class POINT_T>
 inline void TwoPointToRect(
 	RECT*	prcRect,

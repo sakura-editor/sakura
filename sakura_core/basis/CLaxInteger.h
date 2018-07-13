@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,18 +24,18 @@
 #ifndef SAKURA_CLAXINTEGER_A4B639A5_3AD6_4C99_882B_4674CB0C155B9_H_
 #define SAKURA_CLAXINTEGER_A4B639A5_3AD6_4C99_882B_4674CB0C155B9_H_
 
-//!Œ^ƒ`ƒFƒbƒN‚ÌŠÉ‚¢®”Œ^
+//!å‹ãƒã‚§ãƒƒã‚¯ã®ç·©ã„æ•´æ•°å‹
 class CLaxInteger{
 private:
 	typedef CLaxInteger Me;
 
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CLaxInteger(){ m_value=0; }
 	CLaxInteger(const Me& rhs){ m_value=rhs.m_value; }
 	CLaxInteger(int value){ m_value=value; }
 
-	//ˆÃ–Ù‚Ì•ÏŠ·
+	//æš—é»™ã®å¤‰æ›
 	operator const int&() const{ return m_value; }
 	operator       int&()      { return m_value; }
 

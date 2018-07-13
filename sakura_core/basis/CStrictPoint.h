@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,7 +24,7 @@
 #ifndef SAKURA_CSTRICTPOINT_56029CB9_EAD4_489E_9300_5990D582337F_H_
 #define SAKURA_CSTRICTPOINT_56029CB9_EAD4_489E_9300_5990D582337F_H_
 
-//’PˆÊ‚ª–¾¦“I‚É‹æ•Ê‚³‚ê‚½ƒ|ƒCƒ“ƒgŒ^B¦POINT‚ÍŒp³‚µ‚È‚¢‚±‚Æ‚É‚µ‚½
+//å˜ä½ãŒæ˜ç¤ºçš„ã«åŒºåˆ¥ã•ã‚ŒãŸãƒã‚¤ãƒ³ãƒˆå‹ã€‚â€»POINTã¯ç¶™æ‰¿ã—ãªã„ã“ã¨ã«ã—ãŸ
 /*
 template <int TYPE> class CStrictPoint : public CMyPoint{
 public:
@@ -32,7 +32,7 @@ public:
 	CStrictPoint(int _x,int _y) : CMyPoint(_x,_y) { }
 	CStrictPoint(const CStrictPoint& rhs) : CMyPoint(rhs) { }
 
-	//¦POINT‚©‚ç‚Ì•ÏŠ·‚ÍAu–¾¦“I‚Éw’è‚³‚ê‚½‚Æ‚«‚Ì‚İv‹–‰Â‚·‚éB
+	//â€»POINTã‹ã‚‰ã®å¤‰æ›ã¯ã€ã€Œæ˜ç¤ºçš„ã«æŒ‡å®šã•ã‚ŒãŸã¨ãã®ã¿ã€è¨±å¯ã™ã‚‹ã€‚
 	explicit CStrictPoint(const POINT& rhs) : CMyPoint(rhs) { }
 };
 */
@@ -45,7 +45,7 @@ public:
 public:
 	using SUPER::x;
 	using SUPER::y;
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CStrictPoint(){ x=SuperIntType(0); y=SuperIntType(0); }
 	CStrictPoint(int _x,int _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
 #ifdef USE_STRICT_INT
@@ -53,30 +53,30 @@ public:
 #endif
 	CStrictPoint(const SUPER& rhs){ x=rhs.x; y=rhs.y; }
 
-	//‘¼‚ÌŒ^‚©‚ç‚àAu–¾¦“I‚Éw’è‚·‚ê‚Îv•ÏŠ·‚ª‰Â”\
+	//ä»–ã®å‹ã‹ã‚‰ã‚‚ã€ã€Œæ˜ç¤ºçš„ã«æŒ‡å®šã™ã‚Œã°ã€å¤‰æ›ãŒå¯èƒ½
 	template <class SRC>
 	explicit CStrictPoint(const SRC& rhs){ x=(SuperIntType)rhs.x; y=(SuperIntType)rhs.y; }
 
-	//Zp‰‰Zq
+	//ç®—è¡“æ¼”ç®—å­
 	CStrictPoint& operator += (const SUPER& rhs){ x+=rhs.x; y+=rhs.y; return *this; }
 	CStrictPoint& operator -= (const SUPER& rhs){ x-=rhs.x; y-=rhs.y; return *this; }
 	CStrictPoint& operator *= (int n){ x*=n; y*=n; return *this; }
 	CStrictPoint& operator /= (int n){ x/=n; y/=n; return *this; }
 
-	//Zp‰‰Zq‚Q
+	//ç®—è¡“æ¼”ç®—å­ï¼’
 	CStrictPoint operator + (const SUPER& rhs) const{ CStrictPoint tmp=*this; tmp+=rhs; return tmp; }
 	CStrictPoint operator - (const SUPER& rhs) const{ CStrictPoint tmp=*this; tmp-=rhs; return tmp; }
 	CStrictPoint operator * (int n) const{ CStrictPoint tmp=*this; tmp*=n; return tmp; }
 	CStrictPoint operator / (int n) const{ CStrictPoint tmp=*this; tmp/=n; return tmp; }
 
-	//‘ã“ü‰‰Zq
+	//ä»£å…¥æ¼”ç®—å­
 	CStrictPoint& operator = (const SUPER& rhs){ x=rhs.x; y=rhs.y; return *this; }
 
-	//”äŠr‰‰Zq
+	//æ¯”è¼ƒæ¼”ç®—å­
 	bool operator == (const SUPER& rhs) const{ return x==rhs.x && y==rhs.y; }
 	bool operator != (const SUPER& rhs) const{ return !this->operator==(rhs); }
 
-	//İ’è
+	//è¨­å®š
 	void Clear(){ x=SuperIntType(0); y=SuperIntType(0); }
 	void Set(INT_TYPE _x, INT_TYPE _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
 	void Set(const SUPER& pt){ x=pt.x; y=pt.y; }
@@ -85,26 +85,26 @@ public:
 	void Offset(int _x,int _y){ x+=_x; y+=_y; }
 	void Offset(const SUPER& pt){ x+=pt.x; y+=pt.y; }
 
-	//æ“¾
+	//å–å¾—
 	SuperIntType GetX() const{ return x; }
 	SuperIntType GetY() const{ return y; }
 	SUPER Get() const{ return *this; }
 	INT_TYPE GetX2() const{ return INT_TYPE(x); }
 	INT_TYPE GetY2() const{ return INT_TYPE(y); }
 
-	//! x,y ‚¢‚¸‚ê‚©‚ª 0 ‚æ‚è¬‚³‚¢ê‡‚É true ‚ğ•Ô‚·
+	//! x,y ã„ãšã‚Œã‹ãŒ 0 ã‚ˆã‚Šå°ã•ã„å ´åˆã« true ã‚’è¿”ã™
 	bool HasNegative() const
 	{
 		return x<0 || y<0;
 	}
 
-	//! x,y ‚Ç‚¿‚ç‚à©‘R”‚Å‚ ‚ê‚Î true
+	//! x,y ã©ã¡ã‚‰ã‚‚è‡ªç„¶æ•°ã§ã‚ã‚Œã° true
 	bool BothNatural() const
 	{
 		return x>=0 && y>=0;
 	}
 
-	//“Áê
+	//ç‰¹æ®Š
 	POINT GetPOINT() const
 	{
 		POINT pt={(Int)x,(Int)y};

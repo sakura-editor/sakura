@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,41 +27,41 @@
 #include <Windows.h> //POINT,LONG
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ‚PŸŒ³Œ^‚Ì’è‹`                         //
+//                      ï¼‘æ¬¡å…ƒå‹ã®å®šç¾©                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
 #ifdef USE_STRICT_INT
-	// -- -- ŒµŠi‚Èint‚Å’PˆÊŒ^‚ğ’è‹` -- -- //
+	// -- -- å³æ ¼ãªintã§å˜ä½å‹ã‚’å®šç¾© -- -- //
 
 	#include "CStrictInteger.h"
 
-	//ƒƒWƒbƒN’PˆÊ
+	//ãƒ­ã‚¸ãƒƒã‚¯å˜ä½
 	typedef CStrictInteger <
-		0,		//!< Œ^‚ğ•ª‚¯‚é‚½‚ß‚Ì”’lB
-		true,	//!< int‚Æ‚Ì”äŠr‚ğ‹–‚·‚©‚Ç‚¤‚©
-		true,	//!< int‚Æ‚Ì‰ÁŒ¸Z‚ğ‹–‚·‚©‚Ç‚¤‚©
-		true,	//!< int‚Ö‚ÌˆÃ–Ù‚Ì•ÏŠ·‚ğ‹–‚·‚©‚Ç‚¤‚©
-		true	//!< int‚Ì‘ã“ü‚ğ‹–‚·‚©‚Ç‚¤‚©
+		0,		//!< å‹ã‚’åˆ†ã‘ã‚‹ãŸã‚ã®æ•°å€¤ã€‚
+		true,	//!< intã¨ã®æ¯”è¼ƒã‚’è¨±ã™ã‹ã©ã†ã‹
+		true,	//!< intã¨ã®åŠ æ¸›ç®—ã‚’è¨±ã™ã‹ã©ã†ã‹
+		true,	//!< intã¸ã®æš—é»™ã®å¤‰æ›ã‚’è¨±ã™ã‹ã©ã†ã‹
+		true	//!< intã®ä»£å…¥ã‚’è¨±ã™ã‹ã©ã†ã‹
 	>
 	CLogicInt;
 
-	//ƒŒƒCƒAƒEƒg’PˆÊ
+	//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
 	typedef CStrictInteger <
-		1,		//!< Œ^‚ğ•ª‚¯‚é‚½‚ß‚Ì”’lB
-		true,	//!< int‚Æ‚Ì”äŠr‚ğ‹–‚·‚©‚Ç‚¤‚©
-		true,	//!< int‚Æ‚Ì‰ÁŒ¸Z‚ğ‹–‚·‚©‚Ç‚¤‚©
-		false,	//!< int‚Ö‚ÌˆÃ–Ù‚Ì•ÏŠ·‚ğ‹–‚·‚©‚Ç‚¤‚©
-		true	//!< int‚Ì‘ã“ü‚ğ‹–‚·‚©‚Ç‚¤‚©
+		1,		//!< å‹ã‚’åˆ†ã‘ã‚‹ãŸã‚ã®æ•°å€¤ã€‚
+		true,	//!< intã¨ã®æ¯”è¼ƒã‚’è¨±ã™ã‹ã©ã†ã‹
+		true,	//!< intã¨ã®åŠ æ¸›ç®—ã‚’è¨±ã™ã‹ã©ã†ã‹
+		false,	//!< intã¸ã®æš—é»™ã®å¤‰æ›ã‚’è¨±ã™ã‹ã©ã†ã‹
+		true	//!< intã®ä»£å…¥ã‚’è¨±ã™ã‹ã©ã†ã‹
 	>
 	CLayoutInt;
 
 #else
-	// -- -- ’Êí‚Ìint‚Å’PˆÊŒ^‚ğ’è‹`
+	// -- -- é€šå¸¸ã®intã§å˜ä½å‹ã‚’å®šç¾©
 
-	//ƒƒWƒbƒN’PˆÊ
+	//ãƒ­ã‚¸ãƒƒã‚¯å˜ä½
 	typedef int CLogicInt;
 
-	//ƒŒƒCƒAƒEƒg’PˆÊ
+	//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
 	typedef int CLayoutInt;
 
 #endif
@@ -78,37 +78,37 @@ typedef int         CKetaXInt;
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ‚QŸŒ³Œ^‚Ì’è‹`                         //
+//                      ï¼’æ¬¡å…ƒå‹ã®å®šç¾©                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
 #include "CStrictRange.h"
 #include "CStrictPoint.h"
 #include "CStrictRect.h"
 
-//ƒƒWƒbƒN’PˆÊ
-struct SLogicPoint{ CLogicInt x; CLogicInt y; }; //Šî’ê\‘¢‘Ì
+//ãƒ­ã‚¸ãƒƒã‚¯å˜ä½
+struct SLogicPoint{ CLogicInt x; CLogicInt y; }; //åŸºåº•æ§‹é€ ä½“
 typedef CStrictPoint<SLogicPoint, CLogicInt>	CLogicPoint;
 typedef CRangeBase<CLogicPoint>					CLogicRange;
 typedef CStrictRect<CLogicInt, CLogicPoint>		CLogicRect;
 
-//ƒŒƒCƒAƒEƒg’PˆÊ
-struct SLayoutPoint{ CLayoutInt x; CLayoutInt y; }; //Šî’ê\‘¢‘Ì
+//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
+struct SLayoutPoint{ CLayoutInt x; CLayoutInt y; }; //åŸºåº•æ§‹é€ ä½“
 typedef CStrictPoint<SLayoutPoint, CLayoutInt>	CLayoutPoint;
 typedef CRangeBase<CLayoutPoint>				CLayoutRange;
 typedef CStrictRect<CLayoutInt, CLayoutPoint>	CLayoutRect;
 
-//‚ä‚é‚¢’PˆÊ
+//ã‚†ã‚‹ã„å˜ä½
 #include "CMyPoint.h"
 typedef CRangeBase<CMyPoint>     SelectionRange;
 
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒc[ƒ‹                             //
+//                          ãƒ„ãƒ¼ãƒ«                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #include "CMyRect.h"
 
-//•ÏŠ·ŠÖ”
+//å¤‰æ›é–¢æ•°
 template <class POINT_T>
 inline void TwoPointToRange(
 	CRangeBase<POINT_T>* prangeDst,
@@ -123,7 +123,7 @@ inline void TwoPointToRange(
 }
 
 
-//! 2“_‚ğ‘ÎŠp‚Æ‚·‚é‹éŒ`‚ğ‹‚ß‚é
+//! 2ç‚¹ã‚’å¯¾è§’ã¨ã™ã‚‹çŸ©å½¢ã‚’æ±‚ã‚ã‚‹
 template <class T, class INT_TYPE>
 inline void TwoPointToRect(
 	CStrictRect<INT_TYPE, CStrictPoint<T,INT_TYPE> >*	prcRect,
