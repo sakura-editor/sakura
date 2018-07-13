@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,10 +25,10 @@
 #define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 
 
-//�����^�C����񃉃C�u�����ɃA�N�Z�X����Windows�w�b�_���Q�Ƃ���
-//c++�K�i�ւ̏������������Ȃ������߁AWindowsSDK������enum��typedef����R�[�h���{����B
+//ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
+//c++規格への準拠が厳しくなったため、WindowsSDKが無名enumをtypedefするコードが怒られる。
 #if defined(_MSC_VER) && _MSC_VER >= 1900
-	//�ꎞ�I�Ɍx���𖳌��ɂ��ăC���N���[�h����
+	//一時的に警告を無効にしてインクルードする
 	#pragma warning(push)
 	#pragma warning(disable:4091)
 	#include <ImageHlp.h> //MakeSureDirectoryPathExists
@@ -38,11 +38,11 @@
 #endif
 
 
-//�f�o�b�O�p�B
-//Vista����ExtTextOut�̌��ʂ������f����Ȃ��B���̊֐���p����Ƒ����f�����̂ŁA
-//�f�o�b�O���X�e�b�v���s����ۂɕ֗��ɂȂ�B�������A���R�d���Ȃ�B
+//デバッグ用。
+//VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
+//デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。
 #ifdef _DEBUG
-#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixel������ƁA���ʂ������f�����B
+#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixelをすると、結果が即反映される。
 #else
 #define DEBUG_SETPIXEL(hdc)
 #endif
@@ -50,9 +50,9 @@
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//          W�n�����݂��Ȃ�API�̂��߂́A�V�����֐���`         //
+	//          W系が存在しないAPIのための、新しい関数定義         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//W�ł������̂ŁA����
+	//W版が無いので、自作
 	BOOL MakeSureDirectoryPathExistsW(LPCWSTR wszDirPath);
 #ifdef _UNICODE
 	#define MakeSureDirectoryPathExistsT MakeSureDirectoryPathExistsW
@@ -62,12 +62,12 @@ namespace ApiWrap
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              W�n�`��API (ANSI�łł����p�\)                //
+	//              W系描画API (ANSI版でも利用可能)                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	/*!
-		ANSI�łł��g����ExtTextOutW_AnyBuild�B
-		����������1024���p�����B(�����Ԋu�z���1024���p�����������p�ӂ��Ă��Ȃ�����)
+		ANSI版でも使えるExtTextOutW_AnyBuild。
+		文字数制限1024半角文字。(文字間隔配列を1024半角文字分しか用意していないため)
 	*/
 #ifdef _UNICODE
 	inline BOOL ExtTextOutW_AnyBuild(
@@ -144,7 +144,7 @@ namespace ApiWrap
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             ���̑�W�nAPI (ANSI�łł����p�\)               //
+	//             その他W系API (ANSI版でも利用可能)               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #ifdef _UNICODE
@@ -152,7 +152,7 @@ namespace ApiWrap
 		HINSTANCE	hInstance,
 		UINT		uID,
 		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< �o�b�t�@�̃T�C�Y�B�����P�ʁB
+		int			nBufferCount	//!< バッファのサイズ。文字単位。
 	)
 	{
 		return ::LoadStringW(hInstance, uID, lpBuffer, nBufferCount);
@@ -162,44 +162,44 @@ namespace ApiWrap
 		HINSTANCE	hInstance,
 		UINT		uID,
 		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< �o�b�t�@�̃T�C�Y�B�����P�ʁB
+		int			nBufferCount	//!< バッファのサイズ。文字単位。
 	);
 #endif
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                    �`��API �s����b�v                     //
+	//                    描画API 不具合ラップ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//Vista��SetPixel�������Ȃ����߁A��֊֐���p�ӁB
+	//VistaでSetPixelが動かないため、代替関数を用意。
 	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      �悭�g�������l                         //
+	//                      よく使う引数値                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! �悭�g��ExtTextOutW_AnyBuild�̃I�v�V����
+	//! よく使うExtTextOutW_AnyBuildのオプション
 	inline UINT ExtTextOutOption()
 	{
 		return ETO_CLIPPED | ETO_OPAQUE;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       �悭�g���p�@                          //
+	//                       よく使う用法                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! SHIFT�������Ă��邩�ǂ���
+	//! SHIFTを押しているかどうか
 	inline bool GetKeyState_Shift()
 	{
 		return (::GetKeyState(VK_SHIFT)&0x8000)!=0;
 	}
 
-	//! CTRL�������Ă��邩�ǂ���
+	//! CTRLを押しているかどうか
 	inline bool GetKeyState_Control()
 	{
 		return (::GetKeyState(VK_CONTROL)&0x8000)!=0;
 	}
 
-	//! ALT�������Ă��邩�ǂ���
+	//! ALTを押しているかどうか
 	inline bool GetKeyState_Alt()
 	{
 		return (::GetKeyState(VK_MENU)&0x8000)!=0;
@@ -207,11 +207,11 @@ namespace ApiWrap
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           �萔                              //
+	//                           定数                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//	Jun. 29, 2002 ������
-	//	Windows 95�΍�DProperty Sheet�̃T�C�Y��Windows95���F���ł��镨�ɌŒ肷��D
+	//	Jun. 29, 2002 こおり
+	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
 	#if defined(_WIN64) || defined(_UNICODE)
 		static const size_t sizeof_old_PROPSHEETHEADER = sizeof(PROPSHEETHEADER);
 	#else
@@ -219,8 +219,8 @@ namespace ApiWrap
 	#endif
 
 	//	Jan. 29, 2002 genta
-	//	Win95/NT���[������sizeof( MENUITEMINFO )
-	//	����ȊO�̒l��^����ƌÂ�OS�ł����Ɠ����Ă���Ȃ��D
+	//	Win95/NTが納得するsizeof( MENUITEMINFO )
+	//	これ以外の値を与えると古いOSでちゃんと動いてくれない．
 	#if defined(_WIN64) || defined(_UNICODE)
 		static const int SIZEOF_MENUITEMINFO = sizeof(MENUITEMINFO);
 	#else
@@ -229,21 +229,21 @@ namespace ApiWrap
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             SendMessage,PostMessage�Ӗ��t��                 //
+	//             SendMessage,PostMessage意味付け                 //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// �ߋ���UNICODE���̖��c�ł��B
-	// ���݂ƂȂ��ẮA���ɈӖ��͂���܂���B
+	// 過去のUNICODE化の名残です。
+	// 現在となっては、特に意味はありません。
 
-	//�����R�[�h�Ɋ֌W�̂Ȃ������� SendMessage �� SendMessageAny �ɍ����ւ��Ă����B
+	//文字コードに関係のなさそうな SendMessage は SendMessageAny に差し替えておく。
 	#define SendMessageAny SendMessage
 
-	//WM_COMMAND�n�� SendMessage �� SendMessageCmd �ɍ����ւ��Ă����B
+	//WM_COMMAND系の SendMessage は SendMessageCmd に差し替えておく。
 	#define SendMessageCmd SendMessage
 
-	//�����R�[�h�Ɋ֌W�̂Ȃ������� PostMessage �� PostMessageAny �ɍ����ւ��Ă����B
+	//文字コードに関係のなさそうな PostMessage は PostMessageAny に差し替えておく。
 	#define PostMessageAny PostMessage
 
-	//WM_COMMAND�n�� PostMessage �� PostMessageCmd �ɍ����ւ��Ă����B
+	//WM_COMMAND系の PostMessage は PostMessageCmd に差し替えておく。
 	#define PostMessageCmd PostMessage
 
 }
@@ -253,7 +253,7 @@ using namespace ApiWrap;
 
 
 //	Sep. 22, 2003 MIK
-//	�Â�SDK�΍�D�V����SDK�ł͕s�v
+//	古いSDK対策．新しいSDKでは不要
 #ifndef _WIN64
 #ifndef DWORD_PTR
 #define DWORD_PTR DWORD
