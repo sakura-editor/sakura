@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,10 +27,10 @@
 #include "build_config.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           –¼‘O                              //
+//                           åå‰                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// ƒAƒvƒŠ–¼B2007.09.21 kobake ®—
+// ã‚¢ãƒ—ãƒªåã€‚2007.09.21 kobake æ•´ç†
 #ifdef _UNICODE
 	#define _APP_NAME_(TYPE) TYPE("sakura")
 #else
@@ -38,7 +38,7 @@
 #endif
 
 #ifdef _DEBUG
-	#define _APP_NAME_2_(TYPE) TYPE("(ƒfƒoƒbƒO”Å)")
+	#define _APP_NAME_2_(TYPE) TYPE("(ãƒ‡ãƒãƒƒã‚°ç‰ˆ)")
 #else
 	#define _APP_NAME_2_(TYPE) TYPE("")
 #endif
@@ -49,7 +49,7 @@
 	#define _APP_NAME_3_(TYPE) TYPE("")
 #endif
 
-//—á:UNICODEƒfƒoƒbƒO¨_T("sakura(ƒfƒoƒbƒO”Å)")
+//ä¾‹:UNICODEãƒ‡ãƒãƒƒã‚°â†’_T("sakura(ãƒ‡ãƒãƒƒã‚°ç‰ˆ)")
 #define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_3_(TYPE)
 
 #define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
@@ -58,20 +58,20 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒeƒLƒXƒgƒGƒŠƒA                         //
+//                      ãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒªã‚¢                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// Feb. 18, 2003 genta Å‘å’l‚Ì’è”‰»‚Æ’l•ÏX
+// Feb. 18, 2003 genta æœ€å¤§å€¤ã®å®šæ•°åŒ–ã¨å€¤å¤‰æ›´
 const int LINESPACE_MAX = 128;
 const int COLUMNSPACE_MAX = 64;
 
-//	Aug. 14, 2005 genta ’è”’è‹`’Ç‰Á
-// 2007.09.07 kobake ’è”–¼•ÏX: MAXLINESIZE¨MAXLINEKETAS
-// 2007.09.07 kobake ’è”–¼•ÏX: MINLINESIZE¨MINLINEKETAS
-const int MAXLINEKETAS		= 10240;	//!< 1s‚ÌŒ…”‚ÌÅ‘å’l
-const int MINLINEKETAS		= 10;		//!< 1s‚ÌŒ…”‚ÌÅ¬’l
+//	Aug. 14, 2005 genta å®šæ•°å®šç¾©è¿½åŠ 
+// 2007.09.07 kobake å®šæ•°åå¤‰æ›´: MAXLINESIZEâ†’MAXLINEKETAS
+// 2007.09.07 kobake å®šæ•°åå¤‰æ›´: MINLINESIZEâ†’MINLINEKETAS
+const int MAXLINEKETAS		= 10240;	//!< 1è¡Œã®æ¡æ•°ã®æœ€å¤§å€¤
+const int MINLINEKETAS		= 10;		//!< 1è¡Œã®æ¡æ•°ã®æœ€å°å€¤
 
-// 2014.08.02 ’è”’è‹`’Ç‰Á katze
+// 2014.08.02 å®šæ•°å®šç¾©è¿½åŠ  katze
 const int LINENUMWIDTH_MIN = 2;
 const int LINENUMWIDTH_MAX = 11;
 
