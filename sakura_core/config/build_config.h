@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,36 +24,36 @@
 #ifndef SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_
 #define SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_
 
-//�r���h(�R���p�C��)�ݒ�
-//2007.10.18 kobake �쐬
-//2009.09.10 syat ���������[�N�`�F�b�N��ǉ�
+//ビルド(コンパイル)設定
+//2007.10.18 kobake 作成
+//2009.09.10 syat メモリリークチェックを追加
 
 /*!
-	���i��int���g�����ǂ����B
+	厳格なintを使うかどうか。
 
-	��ɃG�f�B�^�����̍��W�n�P�ʂɊւ���
-	�R���p�C�����ɐÓI�Ȍ^�`�F�b�N�������悤�ɂȂ�܂��B
-	���������̕��R���p�C�����Ԃ�������܂��B
+	主にエディタ部分の座標系単位に関して
+	コンパイル時に静的な型チェックがされるようになります。
+	ただしその分コンパイル時間もかかります。
 
-	���s�������͕ω������B
-	���s���I�[�o�[�w�b�h�s���B�R���p�C����������΃I�[�o�[�w�b�h�[���B
+	実行時挙動は変化無し。
+	実行時オーバーヘッド不明。コンパイラが賢ければオーバーヘッドゼロ。
 
-	�����[�X�r���h�ł͖����ɂ��Ă����Ɨǂ��B
+	リリースビルドでは無効にしておくと良い。
 
 	@date 2007.10.18 kobake
 */
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005�ȍ~�Ȃ�
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら//
 #ifdef _DEBUG
-#define USE_STRICT_INT //��������R�����g�A�E�g����ƌ��i��int�������ɂȂ�܂��B�����[�X�r���h�ł͏�ɖ����B
+#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効.
 #endif
 #endif
 
 
-//! USE_UNFIXED_FONT ���`����ƁA�t�H���g�I���_�C�A���O�œ����t�H���g�ȊO���I�ׂ�悤�ɂȂ�
+//! USE_UNFIXED_FONT を定義すると、フォント選択ダイアログで等幅フォント以外も選べるようになる
 //#define USE_UNFIXED_FONT
 
 
-//UNICODE BOOL�萔
+//UNICODE BOOL定数.
 #ifdef _UNICODE
 static const bool UNICODE_BOOL=true;
 #else
@@ -61,32 +61,32 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
-//DebugMonitorLib(��)���g�����ǂ���
+//DebugMonitorLib(仮)を使うかどうか
 //#define USE_DEBUGMON
 
 
-//new���ꂽ�̈���킴�Ɖ������ǂ��� (�f�o�b�O�p)
+//newされた領域をわざと汚すかどうか (デバッグ用)
 #ifdef _DEBUG
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
 
-//crtdbg.h�ɂ�郁�����[���[�N�`�F�b�N���g�����ǂ����i�f�o�b�O�p�j
+//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef _DEBUG
 //#define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
 
-// -- -- �d�l�ύX -- -- //
+// -- -- 仕様変更 -- -- //
 
-//�S�p�X�y�[�X�`��
-//#define NEW_ZENSPACE //�V�����`�惋�[�`�� (�S�p�X�y�[�X��j����`�ŕ`��) ���̗p
-
-
-
-// -- -- -- -- ���ȏ�A�r���h�ݒ芮�� -- -- -- -- //
+//全角スペース描画
+//#define NEW_ZENSPACE //新しい描画ルーチン (全角スペースを破線矩形で描画) を採用
 
 
-//�f�o�b�O���ؗp�Fnew���ꂽ�̈���킴�Ɖ����B2007.11.27 kobake
+
+// -- -- -- -- ↑以上、ビルド設定完了 -- -- -- -- //
+
+
+//デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
 	void* operator new(size_t nSize);
 	#ifdef _MSC_VER
@@ -100,10 +100,10 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
-//crtdbg.h�ɂ�郁�����[���[�N�`�F�b�N���g�����ǂ����i�f�o�b�O�p�j
+//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	//new���Z�q���I�[�o�[���C�h����w�b�_��crtdbg.h�̑O��include���Ȃ��ƃR���p�C���G���[�ƂȂ�	
-	//�Q�l�Fhttp://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
+	//new演算子をオーバーライドするヘッダはcrtdbg.hの前にincludeしないとコンパイルエラーとなる	
+	//参考：http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
 	#include <xiosbase>
 	#include <xlocale>
 	#include <xmemory>
@@ -112,7 +112,7 @@ static const bool UNICODE_BOOL=false;
 	#include <crtdbg.h>
 	#define new DEBUG_NEW
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	//����ƁAWinMain�̐擪�� _CrtSetDbgFlag() ���Ă�
+	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ.
 #endif
 
 #if _WIN64

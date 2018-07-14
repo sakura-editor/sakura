@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,20 +24,20 @@
 #ifndef SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
 #define SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
 
-/*! Å‘å’l’è‹`
-	@date 2007.10.19 kobake V‹Kì¬
+/*! æœ€å¤§å€¤å®šç¾©
+	@date 2007.10.19 kobake æ–°è¦ä½œæˆ
 */
 enum maxdata{
-	MAX_EDITWINDOWS				= 256,	//!< •ÒWƒEƒBƒ“ƒhƒE”
-	MAX_SEARCHKEY				=  30,	//!< ŒŸõƒL[
-	MAX_REPLACEKEY				=  30,	//!< ’uŠ·ƒL[
-	MAX_GREPFILE				=  30,	//!< Grepƒtƒ@ƒCƒ‹
-	MAX_GREPFOLDER				=  30,	//!< GrepƒtƒHƒ‹ƒ_
-	MAX_GREP_PATH				= 512,	//!< Grepƒtƒ@ƒCƒ‹ƒpƒX’·
-	MAX_TYPES					=  60,	//!< ƒ^ƒCƒv•Êİ’è
-	MAX_TYPES_NAME				=  64,	//!< ƒ^ƒCƒv‘®«F–¼Ì ƒoƒbƒtƒ@ƒTƒCƒY
-	MAX_TYPES_EXTS				=  64,	//!< ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg ƒoƒbƒtƒ@ƒTƒCƒY
-	MAX_PRINTSETTINGARR			=   8,	//!< ˆóüƒy[ƒWİ’è
+	MAX_EDITWINDOWS				= 256,	//!< ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ•°
+	MAX_SEARCHKEY				=  30,	//!< æ¤œç´¢ã‚­ãƒ¼
+	MAX_REPLACEKEY				=  30,	//!< ç½®æ›ã‚­ãƒ¼
+	MAX_GREPFILE				=  30,	//!< Grepãƒ•ã‚¡ã‚¤ãƒ«
+	MAX_GREPFOLDER				=  30,	//!< Grepãƒ•ã‚©ãƒ«ãƒ€
+	MAX_GREP_PATH				= 512,	//!< Grepãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹é•·
+	MAX_TYPES					=  60,	//!< ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š
+	MAX_TYPES_NAME				=  64,	//!< ã‚¿ã‚¤ãƒ—å±æ€§ï¼šåç§° ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚º
+	MAX_TYPES_EXTS				=  64,	//!< ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚º
+	MAX_PRINTSETTINGARR			=   8,	//!< å°åˆ·ãƒšãƒ¼ã‚¸è¨­å®š
 
 	//	From Here Sep. 14, 2001 genta
 	MACRONAME_MAX				= 64,
@@ -56,33 +56,33 @@ enum maxdata{
 	MAX_DOCTYPE_LEN				= 7,
 	MAX_TRANSFORM_FILENAME		= 16,	/// 2002.11.24 Moca
 
-	/*! “o˜^‚Å‚«‚éƒ}ƒNƒ‚Ì”
-		@date 2005.01.30 genta 50‚É‘‚â‚µ‚½
+	/*! ç™»éŒ²ã§ãã‚‹ãƒã‚¯ãƒ­ã®æ•°
+		@date 2005.01.30 genta 50ã«å¢—ã‚„ã—ãŸ
 	*/
 	MAX_CUSTMACRO				= 50,
-	MAX_CUSTMACRO_ICO			= 50,	// ƒAƒCƒRƒ“‚Éê—pˆÊ’u‚ğŠ„‚è“–‚Ä‚Ä‚¢‚é”	// 2010.06.25 Moca ’Ç‰Á
+	MAX_CUSTMACRO_ICO			= 50,	// ã‚¢ã‚¤ã‚³ãƒ³ã«å°‚ç”¨ä½ç½®ã‚’å‰²ã‚Šå½“ã¦ã¦ã„ã‚‹æ•°	// 2010.06.25 Moca è¿½åŠ 
 
-	// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-	MAX_TAGJUMPNUM				= 100,	// ƒ^ƒuƒWƒƒƒ“ƒvî•ñÅ‘å’l
-	MAX_TAGJUMP_KEYWORD			= 30,	//ƒ^ƒOƒWƒƒƒ“ƒv—pƒL[ƒ[ƒhÅ‘å“o˜^”2005.04.04 MIK
-	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) ƒ^ƒCƒv•Êİ’è–ˆ‚ÌƒL[ƒ[ƒhƒZƒbƒg”
-	MAX_VERTLINES = 10,	// 2005.11.08 Moca w’èŒ…cü
+	// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+	MAX_TAGJUMPNUM				= 100,	// ã‚¿ãƒ–ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±æœ€å¤§å€¤
+	MAX_TAGJUMP_KEYWORD			= 30,	//ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ç”¨ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æœ€å¤§ç™»éŒ²æ•°2005.04.04 MIK
+	MAX_KEYWORDSET_PER_TYPE		= 10,	// 2004.01.23 genta (for MIK) ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šæ¯ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆæ•°
+	MAX_VERTLINES = 10,	// 2005.11.08 Moca æŒ‡å®šæ¡ç¸¦ç·š
 
-	//	MRUƒŠƒXƒg‚ÉŠÖŒW‚·‚émaxdata
-	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z ‚Å36ŒÂ‚É‚È‚é‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚Ä30¨36‚É•ÏXB2007.10.23 kobake maxdata‚ÉˆÚ“®B
-	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z ‚Å36ŒÂ‚É‚È‚é‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚Ä30¨36‚É•ÏX
+	//	MRUãƒªã‚¹ãƒˆã«é–¢ä¿‚ã™ã‚‹maxdata
+	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z ã§36å€‹ã«ãªã‚‹ã®ã§ãã‚Œã«åˆã‚ã›ã¦30â†’36ã«å¤‰æ›´ã€‚2007.10.23 kobake maxdataã«ç§»å‹•ã€‚
+	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z ã§36å€‹ã«ãªã‚‹ã®ã§ãã‚Œã«åˆã‚ã›ã¦30â†’36ã«å¤‰æ›´
 
-	MAX_PLUGIN					= 40,	// “o˜^‚Å‚«‚éƒvƒ‰ƒOƒCƒ“‚Ì”
-	MAX_PLUG_CMD				= 50,	// “o˜^‚Å‚«‚éƒvƒ‰ƒOƒCƒ“ ƒRƒ}ƒ“ƒh‚Ì”+1(1 origin•ª)
-	MAX_PLUG_OPTION				= 100,	// “o˜^‚Å‚«‚éƒvƒ‰ƒOƒCƒ“ƒIƒvƒVƒ‡ƒ“‚Ì”
-	MAX_PLUGIN_ID				= 63+1,	// ƒvƒ‰ƒOƒCƒ“ID‚ÌÅ‘å’·‚³
-	MAX_PLUGIN_NAME				= 63+1,	// ƒvƒ‰ƒOƒCƒ“–¼‚ÌÅ‘å’·‚³
-	MAX_PLUG_STRING				= 100,	// “o˜^‚Å‚«‚éƒvƒ‰ƒOƒCƒ“•¶š—ñ‚Ì”
+	MAX_PLUGIN					= 40,	// ç™»éŒ²ã§ãã‚‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®æ•°
+	MAX_PLUG_CMD				= 50,	// ç™»éŒ²ã§ãã‚‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ ã‚³ãƒãƒ³ãƒ‰ã®æ•°+1(1 originåˆ†)
+	MAX_PLUG_OPTION				= 100,	// ç™»éŒ²ã§ãã‚‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®æ•°
+	MAX_PLUGIN_ID				= 63+1,	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³IDã®æœ€å¤§é•·ã•
+	MAX_PLUGIN_NAME				= 63+1,	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³åã®æœ€å¤§é•·ã•
+	MAX_PLUG_STRING				= 100,	// ç™»éŒ²ã§ãã‚‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æ–‡å­—åˆ—ã®æ•°
 
 	// MainMenu
-	MAX_MAINMENU				= 500,	// “o˜^‚Å‚«‚éƒƒCƒ“ƒƒjƒ…[‚Ì”
-	MAX_MAINMENU_TOP			= 20,	// “o˜^‚Å‚«‚éƒƒCƒ“ƒƒjƒ…[‚Ì”
-	MAX_MAIN_MENU_NAME_LEN		= 40,	// ƒƒCƒ“ƒƒjƒ…[–¼•¶š—ñ’·
+	MAX_MAINMENU				= 500,	// ç™»éŒ²ã§ãã‚‹ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æ•°
+	MAX_MAINMENU_TOP			= 20,	// ç™»éŒ²ã§ãã‚‹ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æ•°
+	MAX_MAIN_MENU_NAME_LEN		= 40,	// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼åæ–‡å­—åˆ—é•·
 };
 
 #endif /* SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_ */
