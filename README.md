@@ -1,4 +1,21 @@
 # Sakura Editor
+
+<!-- TOC -->
+
+- [Sakura Editor](#sakura-editor)
+    - [Web Site](#web-site)
+    - [開発参加ポリシー](#開発参加ポリシー)
+    - [Build Requirements](#build-requirements)
+        - [Visual Studio Community 2017](#visual-studio-community-2017)
+            - [Visual Studio Install options required](#visual-studio-install-options-required)
+    - [How to build](#how-to-build)
+    - [CI Build (AppVeyor)](#ci-build-appveyor)
+        - [ビルドの仕組み](#ビルドの仕組み)
+        - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
+        - [ビルド成果物](#ビルド成果物)
+
+<!-- /TOC -->
+
 [![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
 
 A free Japanese text editor for Windows
