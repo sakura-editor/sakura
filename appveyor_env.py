@@ -128,31 +128,50 @@ class AppveyorEnv():
 						]
 						self.var["GITHUB_COMMIT_URL_PR_HEAD"] = '/'.join(temp)
 
+	# msbuild のログに現れる小文字に変換されてしまったファイルパスを
+	# もともとの大文字小文字を保存したパスに変換する。
+	# os.walk() でファイルシステムを走査して、大文字小文字を区別しないで
+	# 比較して一致したらそのパスを返す。
+	def convertRealPath(self, path):
+		pathLower = path.lower()
+		dirname = os.path.dirname(path)
+		for rootdir, dirs, files in os.walk(dirname):
+			for file in files:
+				work_path = os.path.join(rootdir, file)
+				if work_path.lower() == pathLower:
+					return work_path
+		return path
+
 	def getBlobURL(self, path):
 		if "APPVEYOR_BUILD_FOLDER" in self.env:
 			relpath = os.path.relpath(path, self.env["APPVEYOR_BUILD_FOLDER"])
 		else:
 			relpath = path
+			
+		relpath = self.convertRealPath(relpath)
+		print (relpath)
 		relpath = relpath.replace('\\', '/')
 
 		blobURL = ""
 		if "GITHUB_BLOB_ROOT_URL" in self.var:
 			blobURL = self.joinFunc(self.var["GITHUB_BLOB_ROOT_URL"], relpath)
-		return blobURL
+		return (blobURL, relpath)
 
 	def getBlobURLWithLine(self, path, startLine):
-		blobURL = self.getBlobURL(path)
+		(blobURL, relpath) = self.getBlobURL(path)
 		if blobURL:
-			return blobURL + "#" + "L" + str(startLine)
+			targetURL = blobURL + "#" + "L" + str(startLine)
+			return (targetURL, relpath)
 		else:
-			return ""
+			return ("", relpath)
 
 	def getBlobURLWithLines(self, path, startLine, endLine):
-		blobURL = self.getBlobURL(path)
+		(blobURL, relpath) = self.getBlobURL(path)
 		if blobURL:
-			return blobURL + "#" + "L" + str(startLine) + "-"  + "L" + str(endLine)
+			targetURL = blobURL + "#" + "L" + str(startLine) + "-"  + "L" + str(endLine)
+			return (targetURL, relpath)
 		else:
-			return ""
+			return ("", relpath)
 
 	def printAll(self):
 		for key in self.env.keys():
