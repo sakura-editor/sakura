@@ -40,3 +40,4 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 test
 test2
+test3
