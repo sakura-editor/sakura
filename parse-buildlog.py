@@ -164,10 +164,12 @@ def writeToXLSX(outfile, data):
 		wb = openpyxl.Workbook()
 		ws = wb.active
 
+		maxWidths = []
 		y = 0
 		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
 			cell.value = item
+			maxWidths.append(0)
 		y = y + 1
 
 		converter = getEntryConverter()
@@ -183,12 +185,18 @@ def writeToXLSX(outfile, data):
 					entryKey = entry[key]
 					val  = converter(entry[key])
 
+				width = len(val) + 1
+				if maxWidths[x] < width:
+					maxWidths[x] = width
 				if val.isdigit():
 					cell.value = int(val)
 				else:
 					cell.value = val
 
 			y = y + 1
+
+		for x, item in enumerate(excelKeys):
+			ws.column_dimensions[openpyxl.utils.get_column_letter(x+1)].width = maxWidths[x]
 
 		wb.save(outfile)
 		print ("wrote " + outfile)
