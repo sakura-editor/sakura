@@ -46,12 +46,10 @@ public:
 
 	//操作
 	std::wstring ReadLineW(); //!< 1行読込。改行は削る
-	CNativeW& CTextInputStream::ReadLine();
+	void ReadLine(CMemory& mem, CNativeW& line);
 
 private:
 	bool m_bIsUtf8; //!< UTF-8ならtrue
-	CMemory m_mem;
-	CNativeW m_line;
 };
 
 //テキスト出力ストリーム

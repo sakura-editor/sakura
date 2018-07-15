@@ -34,9 +34,6 @@ CTextInputStream::CTextInputStream(const TCHAR* tszPath)
 	else{
 		m_bIsUtf8 = false;
 	}
-
-	m_mem.AllocBuffer(128);
-	m_line.AllocStringBuffer(128);
 }
 
 /*
@@ -51,36 +48,39 @@ CTextInputStream::~CTextInputStream()
 {
 }
 
-CNativeW& CTextInputStream::ReadLine()
+void CTextInputStream::ReadLine(CMemory& mem, CNativeW& line)
 {
-	m_mem._SetRawLength(0);
-	m_line._GetMemory()->_SetRawLength(0);
+	mem._SetRawLength(0);
+	line._GetMemory()->_SetRawLength(0);
 	for (;;) {
 		int c=getc(GetFp());
 		if(c==EOF)break; //EOFÇ≈èIóπ
 		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" Ç‹ÇΩÇÕ "\r\n" Ç≈èIóπ
 		if(c=='\n')break; //"\n" Ç≈èIóπ
-		if( m_mem.capacity() < m_mem.GetRawLength() + 10 ){
-			m_mem.AllocBuffer( m_mem.GetRawLength() * 2 );
+		if( mem.capacity() < mem.GetRawLength() + 10 ){
+			mem.AllocBuffer( mem.GetRawLength() * 2 );
 		}
-		m_mem.AppendRawData(&c,sizeof(char));
+		mem.AppendRawData(&c,sizeof(char));
 	}
 
 	//UTF-8 Å® UNICODE
 	if(m_bIsUtf8){
-		CUtf8::UTF8ToUnicode(m_mem, &m_line);
+		CUtf8::UTF8ToUnicode(mem, &line);
 	}
 	//Shift_JIS Å® UNICODE
 	else{
-		CShiftJis::SJISToUnicode(m_mem, &m_line);
+		CShiftJis::SJISToUnicode(mem, &line);
 	}
-	return m_line;
 }
 
 wstring CTextInputStream::ReadLineW()
 {
-	ReadLine();
-	return wstring().assign( m_line.GetStringPtr(), m_line.GetStringLength() );	// EOL Ç‹Ç≈ NULL ï∂éöÇ‡ä‹ÇﬂÇÈ
+	CMemory mem;
+	CNativeW line;
+	mem.AllocBuffer(128);
+	line.AllocStringBuffer(128);
+	ReadLine(mem, line);
+	return wstring( line.GetStringPtr(), line.GetStringLength() );	// EOL Ç‹Ç≈ NULL ï∂éöÇ‡ä‹ÇﬂÇÈ
 }
 
 

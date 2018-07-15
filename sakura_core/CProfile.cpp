@@ -79,7 +79,7 @@ void CProfile::ReadOneline(
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
 			&& line.find( LTEXT("=") ) == line.npos
 			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
-		m_ProfileData.emplace_back(Section());
+		m_ProfileData.emplace_back();
 		auto& Buffer = m_ProfileData.back();
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
 	}
@@ -116,9 +116,13 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 
 	try{
 		wstring wstr;
+		CMemory mem;
+		CNativeW line;
+		mem.AllocBuffer(128);
+		line.AllocStringBuffer(128);
 		while( in ){
 			//1行読込
-			CNativeW& line=in.ReadLine();
+			in.ReadLine(mem, line);
 			wstr.assign(line.GetStringPtr(), line.GetStringLength());
 			//解析
 			ReadOneline(wstr);
@@ -320,15 +324,13 @@ bool CProfile::_WriteFile(
 
 /*! エントリ値をProfileから読み込む
 	
-	@retval true 成功
-	@retval false 失敗
+	@retval エントリ値のポインタ
 
 	@date 2003-10-22 D.S.Koba 作成
 */
-bool CProfile::GetProfileDataImp(
+const wstring* CProfile::GetProfileDataImp(
 	const WCHAR*	strSectionName,	//!< [in] セクション名
-	const WCHAR*	strEntryKey,	//!< [in] エントリ名
-	wstring*&		pStrEntryValue	//!< [out] エントリ値
+	const WCHAR*	strEntryKey		//!< [in] エントリ名
 )
 {
 	std::list< Section >::iterator iter;
@@ -338,13 +340,11 @@ bool CProfile::GetProfileDataImp(
 		if( wcscmp(iter->strSectionName.c_str(), strSectionName) == 0 ) {
 			mapiter = iter->mapEntries.find( strEntryKey );
 			if( iter->mapEntries.end() != mapiter ) {
-				pStrEntryValue = &mapiter->second;
-				return true;
+				return &mapiter->second;
 			}
 		}
 	}
-	pStrEntryValue = nullptr;
-	return false;
+	return nullptr;
 }
 
 /*! エントリをProfileへ書き込む
