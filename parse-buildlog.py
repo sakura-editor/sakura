@@ -199,6 +199,11 @@ def writeToXLSX(outfile, data):
 
 		for x, item in enumerate(excelKeys):
 			ws.column_dimensions[openpyxl.utils.get_column_letter(x+1)].width = maxWidths[x]
+		
+		# Excel の列にフィルタを設定する
+		start = openpyxl.utils.get_column_letter(1)
+		end   = openpyxl.utils.get_column_letter(len(excelKeys)+1)
+		ws.auto_filter.ref = start + ":" + end
 
 		wb.save(outfile)
 		print ("wrote " + outfile)
