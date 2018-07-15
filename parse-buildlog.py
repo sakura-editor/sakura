@@ -160,6 +160,7 @@ def writeToXLSX(outfile, data):
 		import openpyxl
 		from openpyxl.styles import colors
 		from openpyxl.styles import Font, Color
+		from openpyxl.styles.fills import PatternFill
 
 		wb = openpyxl.Workbook()
 		ws = wb.active
@@ -169,7 +170,8 @@ def writeToXLSX(outfile, data):
 		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
 			cell.value = item
-			maxWidths.append(0)
+			cell.fill  = PatternFill(patternType='solid', start_color=colors.YELLOW, end_color=colors.YELLOW)
+			maxWidths.append(len(cell.value) + 1)
 		y = y + 1
 
 		converter = getEntryConverter()
