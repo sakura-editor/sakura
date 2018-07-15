@@ -8,7 +8,7 @@
     - [呼び出し構造](#呼び出し構造)
     - [ビルドに使用するバッチファイルの引数](#ビルドに使用するバッチファイルの引数)
     - [バッチファイルの仕組み](#バッチファイルの仕組み)
-        - [sakura\preBuild.bat の構造](#sakura\prebuildbat-の構造)
+        - [preBuild.bat の構造](#prebuildbat-の構造)
             - [生成する環境変数](#生成する環境変数)
             - [処理の流れ](#処理の流れ)
         - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
@@ -88,7 +88,7 @@
 
 ## バッチファイルの仕組み
 
-### sakura\preBuild.bat の構造
+### preBuild.bat の構造
 
 #### 生成する環境変数
 
