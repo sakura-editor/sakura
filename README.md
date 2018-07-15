@@ -39,3 +39,4 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts
 https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 test
+test2
