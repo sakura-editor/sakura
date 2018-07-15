@@ -46,3 +46,7 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts
 
 最新以外のビルド結果は以下から参照できます。  
 https://ci.appveyor.com/project/sakuraeditor/sakura/history
+
+test
+test2
+test3
