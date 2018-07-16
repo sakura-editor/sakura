@@ -184,14 +184,16 @@ def main():
 	appveyor.printAll()
 	
 	file = r"appveyor_env.py"
-	print (appveyor.getBlobURL(file))
-	print (appveyor.getBlobURLWithLine(file, 1))
-	print (appveyor.getBlobURLWithLines(file, 9, 15))
+	if os.path.exists(file):
+		print (appveyor.getBlobURL(file))
+		print (appveyor.getBlobURLWithLine(file, 1))
+		print (appveyor.getBlobURLWithLines(file, 9, 15))
 	
 	file = r"sakura\preBuild.bat"
-	print (appveyor.getBlobURL(file))
-	print (appveyor.getBlobURLWithLine(file, 1))
-	print (appveyor.getBlobURLWithLines(file, 9, 15))
+	if os.path.exists(file):
+		print (appveyor.getBlobURL(file))
+		print (appveyor.getBlobURLWithLine(file, 1))
+		print (appveyor.getBlobURLWithLines(file, 9, 15))
 
 if __name__ == '__main__':
 	main()
