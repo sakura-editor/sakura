@@ -204,6 +204,9 @@ def writeToXLSX(outfile, data):
 		start = openpyxl.utils.get_column_letter(1)
 		end   = openpyxl.utils.get_column_letter(len(excelKeys)+1)
 		ws.auto_filter.ref = start + ":" + end
+		
+		# 1行目を固定
+		ws.freeze_panes = 'A2'
 
 		wb.save(outfile)
 		print ("wrote " + outfile)
