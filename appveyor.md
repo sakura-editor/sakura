@@ -75,7 +75,9 @@
                 - git.exe : git や appveyor 関連の情報を githash.h に出力する
             - [sakura\postBuild.bat](sakura/postBuild.bat) : 何もしない
         - [parse-buildlog.bat](parse-buildlog.bat) : ビルドログを解析する
+            - [appveyor_env.py](appveyor_env.py)
             - [parse-buildlog.py](parse-buildlog.py)
+                - [appveyor_env.py](appveyor_env.py)
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
         - hhc.exe (Visual Studio 2017 に同梱)
     - [build-installer.bat](build-installer.bat) : Installer をビルドする

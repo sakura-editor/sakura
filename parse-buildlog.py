@@ -4,6 +4,7 @@ import re
 import os
 import csv
 import platform
+import appveyor_env
 
 # 解析結果を格納するハッシュのキー
 logHashKeys = [
@@ -14,6 +15,29 @@ logHashKeys = [
 	'path',
 	'lineNumber',
 	'message',
+	'relpath',
+	'blobURL',
+]
+
+csvKeys = [
+	'type',
+	'code',
+	'source',
+	'dest',
+	'path',
+	'lineNumber',
+	'message',
+]
+
+excelKeys = [
+	'type',
+	'code',
+	'source',
+	'dest',
+	'relpath',
+	'message',
+	'path',
+	'lineNumber',
 ]
 
 # infile: msbuild のビルドログ・ファイル名
@@ -43,6 +67,8 @@ def parse_buildlog(infile):
 	with open(infile, "r") as fin:
 		# msbuild-xxx-xxx.log のログに警告が重複して出現することに対する Workaround 用
 		duplicateCheck = {}
+
+		appveyor = appveyor_env.AppveyorEnv()
 
 		print ("open " + infile)
 		for line in fin:
@@ -74,6 +100,10 @@ def parse_buildlog(infile):
 				entry['path']       = path
 				entry['lineNumber'] = lineNumber
 				entry['message']    = message
+				
+				(blobURL, relpath) = appveyor.getBlobURLWithLine(path, lineNumber)
+				entry['relpath'] = relpath
+				entry['blobURL'] = blobURL
 
 				temp = []
 				for key in logHashKeys:
@@ -99,11 +129,11 @@ def writeToCSV(outfile, data):
 	# 解析結果を CSV ファイルに出力する
 	with open(outfile, "w") as fout:
 		writer = csv.writer(fout, lineterminator='\n')
-		writer.writerow(logHashKeys)
+		writer.writerow(csvKeys)
 
 		for entry in data:
 			temp = []
-			for key in logHashKeys:
+			for key in csvKeys:
 				temp.append(entry[key])
 			writer.writerow(temp)
 
@@ -128,28 +158,65 @@ def writeToXLSX(outfile, data):
 
 	try:
 		import openpyxl
+		from openpyxl.styles import colors
+		from openpyxl.styles import Font, Color
+		from openpyxl.styles.fills import PatternFill
+
 		wb = openpyxl.Workbook()
 		ws = wb.active
 
+		# 列幅に必要なサイズを保持する配列
+		maxWidths = []
+		
+		# ヘッダ部分を設定する
 		y = 0
-		for x, item in enumerate(logHashKeys):
+		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
 			cell.value = item
+			cell.fill  = PatternFill(patternType='solid', start_color=colors.YELLOW, end_color=colors.YELLOW)
+			maxWidths.append(len(cell.value) + 1)
 		y = y + 1
 
+		# 各エントリーを設定するときのコンバーターを取得する (python 2/3 の違いを吸収するためのもの)
 		converter = getEntryConverter()
 
+		# ログの解析結果を設定する
 		for entry in data:
-			for x, key in enumerate(logHashKeys):
+			for x, key in enumerate(excelKeys):
 				cell = ws.cell(row=y+1, column=x+1)
-				entryKey = entry[key]
-				val  = converter(entry[key])
+				if key == "relpath":
+					val            = entry['relpath'] + " line: " + entry['lineNumber']
+					cell.hyperlink = entry['blobURL']
+					cell.font      = Font(u='single', color=colors.BLUE)
+				else:
+					entryKey = entry[key]
+					val  = converter(entry[key])
+
+				# 列幅を設定するために必要なサイズを計算する
+				width = len(val) + 1
+				if maxWidths[x] < width:
+					maxWidths[x] = width
+					
+				# セルに値を設定する
 				if val.isdigit():
 					cell.value = int(val)
 				else:
 					cell.value = val
 
+			# 行番号を更新する
 			y = y + 1
+
+		# 列幅を設定する
+		for x, item in enumerate(excelKeys):
+			ws.column_dimensions[openpyxl.utils.get_column_letter(x+1)].width = maxWidths[x]
+		
+		# Excel の列にフィルタを設定する
+		start = openpyxl.utils.get_column_letter(1)
+		end   = openpyxl.utils.get_column_letter(len(excelKeys))
+		ws.auto_filter.ref = start + ":" + end
+		
+		# ウィンドウ枠を固定
+		ws.freeze_panes = 'F2'
 
 		wb.save(outfile)
 		print ("wrote " + outfile)
