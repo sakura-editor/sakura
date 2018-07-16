@@ -165,7 +165,10 @@ def writeToXLSX(outfile, data):
 		wb = openpyxl.Workbook()
 		ws = wb.active
 
+		# 列幅に必要なサイズを保持する配列
 		maxWidths = []
+		
+		# ヘッダ部分を設定する
 		y = 0
 		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
@@ -174,8 +177,10 @@ def writeToXLSX(outfile, data):
 			maxWidths.append(len(cell.value) + 1)
 		y = y + 1
 
+		# 各エントリーを設定するときのコンバーターを取得する (python 2/3 の違いを吸収するためのもの)
 		converter = getEntryConverter()
 
+		# ログの解析結果を設定する
 		for entry in data:
 			for x, key in enumerate(excelKeys):
 				cell = ws.cell(row=y+1, column=x+1)
@@ -187,16 +192,21 @@ def writeToXLSX(outfile, data):
 					entryKey = entry[key]
 					val  = converter(entry[key])
 
+				# 列幅を設定するために必要なサイズを計算する
 				width = len(val) + 1
 				if maxWidths[x] < width:
 					maxWidths[x] = width
+					
+				# セルに値を設定する
 				if val.isdigit():
 					cell.value = int(val)
 				else:
 					cell.value = val
 
+			# 行番号を更新する
 			y = y + 1
 
+		# 列幅を設定する
 		for x, item in enumerate(excelKeys):
 			ws.column_dimensions[openpyxl.utils.get_column_letter(x+1)].width = maxWidths[x]
 		
