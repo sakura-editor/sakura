@@ -212,7 +212,7 @@ def writeToXLSX(outfile, data):
 		
 		# Excel の列にフィルタを設定する
 		start = openpyxl.utils.get_column_letter(1)
-		end   = openpyxl.utils.get_column_letter(len(excelKeys)+1)
+		end   = openpyxl.utils.get_column_letter(len(excelKeys))
 		ws.auto_filter.ref = start + ":" + end
 		
 		# ウィンドウ枠を固定
