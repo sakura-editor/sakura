@@ -1,5 +1,8 @@
 ﻿//Microsoft Developer Studio generated resource script.
 //
+// CodePage: 65001 (UTF-8)
+#pragma code_page(65001)
+
 //#define SAKURA_LANG_RESOURCE
 
 #ifndef SAKURA_LANG_RESOURCE
@@ -29,7 +32,6 @@
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 #ifdef _WIN32
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
-#pragma code_page(932)
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 1998-2018  by Norio Nakatani & Collaborators"
