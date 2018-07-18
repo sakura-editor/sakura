@@ -1,10 +1,10 @@
-/*!	@file
-	@brief •¶‘ƒf[ƒ^1s
+ï»¿/*!	@file
+	@brief æ–‡æ›¸ãƒ‡ãƒ¼ã‚¿1è¡Œ
 
 	@author Norio Nakatani
 
-	@date 2001/12/03 hor ‚µ‚¨‚è(bookmark)‹@”\’Ç‰Á‚É”º‚¤ƒƒ“ƒo[’Ç‰Á
-	@date 2001/12/18 hor bookmark, C³ƒtƒ‰ƒO‚ÌƒAƒNƒZƒXŠÖ”‰»
+	@date 2001/12/03 hor ã—ãŠã‚Š(bookmark)æ©Ÿèƒ½è¿½åŠ ã«ä¼´ã†ãƒ¡ãƒ³ãƒãƒ¼è¿½åŠ 
+	@date 2001/12/18 hor bookmark, ä¿®æ­£ãƒ•ãƒ©ã‚°ã®ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°åŒ–
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -30,24 +30,24 @@
 class CDocLine;
 class COpeBlk;
 
-//!	•¶‘ƒf[ƒ^1s
+//!	æ–‡æ›¸ãƒ‡ãƒ¼ã‚¿1è¡Œ
 class CDocLine{
 protected:
-	friend class CDocLineMgr; //######‰¼
+	friend class CDocLineMgr; //######ä»®
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CDocLine();
 	~CDocLine();
 
-	//”»’è
-	bool			IsEmptyLine() const;		//	‚±‚ÌCDocLine‚ª‹ósiƒXƒy[ƒXAƒ^ƒuA‰üs‹L†‚Ì‚İ‚Ìsj‚©‚Ç‚¤‚©B
+	//åˆ¤å®š
+	bool			IsEmptyLine() const;		//	ã“ã®CDocLineãŒç©ºè¡Œï¼ˆã‚¹ãƒšãƒ¼ã‚¹ã€ã‚¿ãƒ–ã€æ”¹è¡Œè¨˜å·ã®ã¿ã®è¡Œï¼‰ã‹ã©ã†ã‹ã€‚
 
-	//ƒf[ƒ^æ“¾
-	CLogicInt		GetLengthWithoutEOL() const			{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< –ß‚è’l‚Í•¶š’PˆÊB
+	//ãƒ‡ãƒ¼ã‚¿å–å¾—
+	CLogicInt		GetLengthWithoutEOL() const			{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< æˆ»ã‚Šå€¤ã¯æ–‡å­—å˜ä½ã€‚
 	const wchar_t*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
-	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIterator—p
+	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIteratorç”¨
 #ifdef USE_STRICT_INT
-	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###‰¼‚Ì–¼‘OA‰¼‚Ì‘Îˆ
+	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###ä»®ã®åå‰ã€ä»®ã®å¯¾å‡¦
 	{
 		CLogicInt n;
 		const wchar_t* p = GetDocLineStrWithEOL(&n);
@@ -55,7 +55,7 @@ public:
 		return p;
 	}
 #endif
-	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###‰¼‚Ì–¼‘OA‰¼‚Ì‘Îˆ
+	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###ä»®ã®åå‰ã€ä»®ã®å¯¾å‡¦
 	{
 		if(this){
 			*pnLen = GetLengthWithEOL(); return GetPtr();
@@ -64,7 +64,7 @@ public:
 			*pnLen = 0; return NULL;
 		}
 	}
-	CStringRef GetStringRefWithEOL() const //###‰¼‚Ì–¼‘OA‰¼‚Ì‘Îˆ
+	CStringRef GetStringRefWithEOL() const //###ä»®ã®åå‰ã€ä»®ã®å¯¾å‡¦
 	{
 		if(this){
 			return CStringRef(GetPtr(),GetLengthWithEOL());
@@ -75,17 +75,17 @@ public:
 	}
 	const CEol& GetEol() const{ return m_cEol; }
 	void SetEol(const CEol& cEol, COpeBlk* pcOpeBlk);
-	void SetEol(); // Œ»İ‚Ìƒoƒbƒtƒ@‚©‚çİ’è
+	void SetEol(); // ç¾åœ¨ã®ãƒãƒƒãƒ•ã‚¡ã‹ã‚‰è¨­å®š
 
-	const CNativeW& _GetDocLineDataWithEOL() const { return m_cLine; } //###‰¼
+	const CNativeW& _GetDocLineDataWithEOL() const { return m_cLine; } //###ä»®
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
-	//ƒf[ƒ^İ’è
+	//ãƒ‡ãƒ¼ã‚¿è¨­å®š
 	void SetDocLineString(const wchar_t* pData, int nLength);
 	void SetDocLineString(const CNativeW& cData);
 	void SetDocLineStringMove(CNativeW* pcData);
 
-	//ƒ`ƒF[ƒ“‘®«
+	//ãƒã‚§ãƒ¼ãƒ³å±æ€§
 	CDocLine* GetPrevLine(){ return m_pPrev; }
 	const CDocLine* GetPrevLine() const { return m_pPrev; }
 	CDocLine* GetNextLine(){ return m_pNext; }
@@ -95,18 +95,18 @@ public:
 	
 
 private: //####
-	CDocLine*	m_pPrev;	//!< ˆê‚Â‘O‚Ì—v‘f
-	CDocLine*	m_pNext;	//!< ˆê‚ÂŒã‚Ì—v‘f
+	CDocLine*	m_pPrev;	//!< ä¸€ã¤å‰ã®è¦ç´ 
+	CDocLine*	m_pNext;	//!< ä¸€ã¤å¾Œã®è¦ç´ 
 private:
-	CNativeW	m_cLine;	//!< ƒf[ƒ^  2007.10.11 kobake ƒ|ƒCƒ“ƒ^‚Å‚Í‚È‚­AÀ‘Ì‚ğ‚Â‚æ‚¤‚É•ÏX
-	CEol		m_cEol;		//!< s––ƒR[ƒh
+	CNativeW	m_cLine;	//!< ãƒ‡ãƒ¼ã‚¿  2007.10.11 kobake ãƒã‚¤ãƒ³ã‚¿ã§ã¯ãªãã€å®Ÿä½“ã‚’æŒã¤ã‚ˆã†ã«å¤‰æ›´
+	CEol		m_cEol;		//!< è¡Œæœ«ã‚³ãƒ¼ãƒ‰
 public:
-	//Šg’£î•ñ $$•ª—£’†
+	//æ‹¡å¼µæƒ…å ± $$åˆ†é›¢ä¸­
 	struct MarkType{
-		CLineModified	m_cModified;	//•ÏXƒtƒ‰ƒO
-		CLineBookmarked	m_cBookmarked;	//ƒuƒbƒNƒ}[ƒN
-		CLineFuncList	m_cFuncList;	//ŠÖ”ƒŠƒXƒgƒ}[ƒN
-		CLineDiffed		m_cDiffmarked;	//DIFF·•ªî•ñ
+		CLineModified	m_cModified;	//å¤‰æ›´ãƒ•ãƒ©ã‚°
+		CLineBookmarked	m_cBookmarked;	//ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯
+		CLineFuncList	m_cFuncList;	//é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯
+		CLineDiffed		m_cDiffmarked;	//DIFFå·®åˆ†æƒ…å ±
 	};
 	MarkType m_sMark;
 

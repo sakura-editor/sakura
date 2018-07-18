@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -22,24 +22,24 @@
 		   distribution.
 */
 
-// 2000.10.08 JEPRO  �w�i�F��^����RGB(255,255,255)��(255,251,240)�ɕύX(ῂ�������������)
-// 2000.12.09 Jepro  note: color setting (�ڍׂ� CshareData.h ���Q�Ƃ̂���)
-// 2000.09.04 JEPRO  �V���O���N�H�[�e�[�V����������ɐF�����蓖�Ă邪�F�����\���͂��Ȃ�
-// 2000.10.17 JEPRO  �F�����\������悤�ɕύX(�ŏ���FALSE��TRUE)
-// 2008.03.27 kobake �吮��
+// 2000.10.08 JEPRO  背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
+// 2000.12.09 Jepro  note: color setting (詳細は CshareData.h を参照のこと)
+// 2000.09.04 JEPRO  シングルクォーテーション文字列に色を割り当てるが色分け表示はしない
+// 2000.10.17 JEPRO  色分け表示するように変更(最初のFALSE→TRUE)
+// 2008.03.27 kobake 大整理
 
 #include "StdAfx.h"
 #include "CDocTypeSetting.h"
 
 
-//! �F�ݒ�(�ۑ��p)
+//! 色設定(保存用)
 struct ColorInfoIni {
-	int				m_nNameId;			//!< ���ږ�
-	ColorInfoBase	m_sColorInfo;		//!< �F�ݒ�
+	int				m_nNameId;			//!< 項目名
+	ColorInfoBase	m_sColorInfo;		//!< 色設定
 };
 
 static ColorInfoIni ColorInfo_DEFAULT[] = {
-//	���ږ�,									�\��,		����,		����,		�����F,					�w�i�F,
+//	項目名,									表示,		太字,		下線,		文字色,					背景色,
 	{ STR_COLOR_TEXT,						{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_RULER,						{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_CURSOR,						{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ) } } },	// 2006.12.07 ryoji
@@ -51,7 +51,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_LINE_NO,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_LINE_NO_CHANGE,				{ TRUE,		{ TRUE,		FALSE },	{ RGB(   0,   0, 255 ),	RGB( 239, 239, 239 ) } } },
 	{ STR_COLOR_EVEN_LINE_BG,				{ FALSE,	{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 243, 243, 243 ) } } },	// 2013.12.30 Moca
-	{ STR_COLOR_TAB,						{ TRUE,		{ FALSE,	FALSE },	{ RGB( 128, 128, 128 ),	RGB( 255, 251, 240 ) } } },	//Jan. 19, 2001 JEPRO RGB(192,192,192)���Z���O���[�ɕύX
+	{ STR_COLOR_TAB,						{ TRUE,		{ FALSE,	FALSE },	{ RGB( 128, 128, 128 ),	RGB( 255, 251, 240 ) } } },	//Jan. 19, 2001 JEPRO RGB(192,192,192)より濃いグレーに変更
 	{ STR_COLOR_HALF_SPACE,					{ FALSE,	{ FALSE,	FALSE },	{ RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ) } } }, //2002.04.28 Add by KK
 	{ STR_COLOR_FULL_SPACE,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_CTRL_CODE,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 255,   0 ),	RGB( 255, 251, 240 ) } } },
@@ -59,7 +59,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_WRAP_MARK,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255,   0, 255 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_VERT_LINE,					{ FALSE,	{ FALSE,	FALSE },	{ RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ) } } }, //2005.11.08 Moca
 	{ STR_COLOR_EOF,						{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0, 255, 255 ),	RGB(   0,   0,   0 ) } } },
-	{ STR_COLOR_NUMBER,						{ FALSE,	{ FALSE,	FALSE },	{ RGB( 235,   0,   0 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)��ύX  Mar.10, 2001 �W���͐F�Ȃ���
+	{ STR_COLOR_NUMBER,						{ FALSE,	{ FALSE,	FALSE },	{ RGB( 235,   0,   0 ),	RGB( 255, 251, 240 ) } } },	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
 	{ STR_COLOR_BRACKET,					{ FALSE,	{ TRUE,		FALSE },	{ RGB( 128,   0,   0 ),	RGB( 255, 251, 240 ) } } },	// 02/09/18 ai
 	{ STR_COLOR_SELECTED_AREA,				{ TRUE,		{ FALSE,	FALSE },	{ RGB(  49, 106, 197 ),	RGB(  49, 106, 197 ) } } },	//2011.05.18
 	{ STR_COLOR_SEARCH_WORD1,				{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0,   0 ),	RGB( 255, 255,   0 ) } } },
@@ -73,8 +73,8 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	{ STR_COLOR_HERE_DOCUMENT,				{ FALSE,	{ FALSE,	FALSE },	{ RGB( 128,   0,  64 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_URL,						{ TRUE,		{ FALSE,	TRUE  },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_KEYWORD1,					{ TRUE,		{ FALSE,	FALSE },	{ RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ) } } },
-	{ STR_COLOR_KEYWORD2,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO �L�[���[�h1�Ƃ͈Ⴄ�F�ɕύX
-	{ STR_COLOR_KEYWORD3,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO �L�[���[�h1�Ƃ͈Ⴄ�F�ɕύX
+	{ STR_COLOR_KEYWORD2,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
+	{ STR_COLOR_KEYWORD3,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
 	{ STR_COLOR_KEYWORD4,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_KEYWORD5,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },
 	{ STR_COLOR_KEYWORD6,					{ TRUE,		{ FALSE,	FALSE },	{ RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ) } } },

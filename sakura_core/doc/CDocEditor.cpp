@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -38,24 +38,24 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 , m_cNewLineCode( EOL_CRLF )		//	New Line Type
 , m_pcOpeBlk( NULL )
 , m_bInsMode( true )	// Oct. 2, 2005 genta
-, m_bIsDocModified( false )	/* •ÏXƒtƒ‰ƒO */ // Jan. 22, 2002 genta Œ^•ÏX
+, m_bIsDocModified( false )	/* å¤‰æ›´ãƒ•ãƒ©ã‚° */ // Jan. 22, 2002 genta åž‹å¤‰æ›´
 {
-	//	Oct. 2, 2005 genta ‘}“üƒ‚[ƒh
+	//	Oct. 2, 2005 genta æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰
 	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 }
 
 
-/*! •ÏXƒtƒ‰ƒO‚ÌÝ’è
+/*! å¤‰æ›´ãƒ•ãƒ©ã‚°ã®è¨­å®š
 
-	@param flag [in] Ý’è‚·‚é’lDtrue: •ÏX—L‚è / false: •ÏX–³‚µ
-	@param redraw [in] true: ƒ^ƒCƒgƒ‹‚ÌÄ•`‰æ‚ðs‚¤ / false: s‚í‚È‚¢
+	@param flag [in] è¨­å®šã™ã‚‹å€¤ï¼Žtrue: å¤‰æ›´æœ‰ã‚Š / false: å¤‰æ›´ç„¡ã—
+	@param redraw [in] true: ã‚¿ã‚¤ãƒˆãƒ«ã®å†æç”»ã‚’è¡Œã† / false: è¡Œã‚ãªã„
 	
 	@author genta
-	@date 2002.01.22 V‹Kì¬
+	@date 2002.01.22 æ–°è¦ä½œæˆ
 */
 void CDocEditor::SetModified( bool flag, bool redraw)
 {
-	if( m_bIsDocModified == flag )	//	•ÏX‚ª‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
+	if( m_bIsDocModified == flag )	//	å¤‰æ›´ãŒãªã‘ã‚Œã°ä½•ã‚‚ã—ãªã„
 		return;
 
 	m_bIsDocModified = flag;
@@ -65,7 +65,7 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 
 void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
-	//ƒrƒ…[‚ÌƒeƒLƒXƒg‘I‘ð‰ðœ
+	//ãƒ“ãƒ¥ãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆé¸æŠžè§£é™¤
 	GetListeningDoc()->m_pcEditWnd->Views_DisableSelectArea(true);
 }
 
@@ -74,11 +74,11 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	//	May 12, 2000 genta
-	//	•ÒW—p‰üsƒR[ƒh‚ÌÝ’è
+	//	ç·¨é›†ç”¨æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®è¨­å®š
 	{
 		const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
 		if ( pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype ){
-			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji ƒfƒtƒHƒ‹ƒgEOL
+			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆEOL
 		}
 		else{
 			SetNewLineCode( EOL_CRLF );
@@ -93,34 +93,34 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	}
 
 	//	Nov. 20, 2000 genta
-	//	IMEó‘Ô‚ÌÝ’è
+	//	IMEçŠ¶æ…‹ã®è¨­å®š
 	this->SetImeMode( pcDoc->m_cDocType.GetDocumentAttribute().m_nImeState );
 
-	// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Ì•ÏX
+	// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®å¤‰æ›´
 	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
 
-	CAppMode::getInstance()->SetViewMode(sLoadInfo.bViewMode);		// ƒrƒ…[ƒ‚[ƒh	##‚±‚±‚àAƒAƒŠ‚©‚È
+	CAppMode::getInstance()->SetViewMode(sLoadInfo.bViewMode);		// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰	##ã“ã“ã‚‚ã€ã‚¢ãƒªã‹ãª
 }
 
 void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	this->SetModified(false,false);	//	Jan. 22, 2002 genta ŠÖ”‰» XVƒtƒ‰ƒO‚ÌƒNƒŠƒA
+	this->SetModified(false,false);	//	Jan. 22, 2002 genta é–¢æ•°åŒ– æ›´æ–°ãƒ•ãƒ©ã‚°ã®ã‚¯ãƒªã‚¢
 
-	/* Œ»ÝˆÊ’u‚Å–³•ÏX‚Èó‘Ô‚É‚È‚Á‚½‚±‚Æ‚ð’Ê’m */
+	/* ç¾åœ¨ä½ç½®ã§ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸã“ã¨ã‚’é€šçŸ¥ */
 	this->m_cOpeBuf.SetNoModified();
 
-	// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Ì•ÏX
+	// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®å¤‰æ›´
 	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
 }
 
 
 
 //	From Here Nov. 20, 2000 genta
-/*!	IMEó‘Ô‚ÌÝ’è
+/*!	IMEçŠ¶æ…‹ã®è¨­å®š
 	
-	@param mode [in] IME‚Ìƒ‚[ƒh
+	@param mode [in] IMEã®ãƒ¢ãƒ¼ãƒ‰
 	
 	@date Nov 20, 2000 genta
 */
@@ -130,9 +130,9 @@ void CDocEditor::SetImeMode( int mode )
 	HIMC	hIme;
 	HWND	hwnd = m_pcDocRef->m_pcEditWnd->GetActiveView().GetHwnd();
 
-	hIme = ImmGetContext( hwnd ); //######‘åä•vH // 2013.06.04 EditWnd‚©‚çView‚É•ÏX
+	hIme = ImmGetContext( hwnd ); //######å¤§ä¸ˆå¤«ï¼Ÿ // 2013.06.04 EditWndã‹ã‚‰Viewã«å¤‰æ›´
 
-	//	Å‰ºˆÊƒrƒbƒg‚ÍIMEŽ©g‚ÌOn/Off§Œä
+	//	æœ€ä¸‹ä½ãƒ“ãƒƒãƒˆã¯IMEè‡ªèº«ã®On/Offåˆ¶å¾¡
 	if( ( mode & 3 ) == 2 ){
 		ImmSetOpenStatus( hIme, FALSE );
 	}
@@ -161,7 +161,7 @@ void CDocEditor::SetImeMode( int mode )
 	if( ( mode & 3 ) == 1 ){
 		ImmSetOpenStatus( hIme, TRUE );
 	}
-	ImmReleaseContext( hwnd, hIme ); //######‘åä•vH
+	ImmReleaseContext( hwnd, hIme ); //######å¤§ä¸ˆå¤«ï¼Ÿ
 }
 //	To Here Nov. 20, 2000 genta
 
@@ -175,21 +175,21 @@ void CDocEditor::SetImeMode( int mode )
 
 
 /*!
-	––”ö‚És‚ð’Ç‰Á
+	æœ«å°¾ã«è¡Œã‚’è¿½åŠ 
 
 	@version 1.5
 
-	@param pData    [in] ’Ç‰Á‚·‚é•¶Žš—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param nDataLen [in] •¶Žš—ñ‚Ì’·‚³B•¶Žš’PˆÊB
-	@param cEol     [in] s––ƒR[ƒh
+	@param pData    [in] è¿½åŠ ã™ã‚‹æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param nDataLen [in] æ–‡å­—åˆ—ã®é•·ã•ã€‚æ–‡å­—å˜ä½ã€‚
+	@param cEol     [in] è¡Œæœ«ã‚³ãƒ¼ãƒ‰
 
 */
 void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 {
-	//ƒ`ƒF[ƒ““K—p
+	//ãƒã‚§ãƒ¼ãƒ³é©ç”¨
 	CDocLine* pDocLine = m_pcDocLineMgr->AddNewLine();
 
-	//ƒCƒ“ƒXƒ^ƒ“ƒXÝ’è
+	//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹è¨­å®š
 	pDocLine->SetDocLineString(pData, nDataLen);
 }
 

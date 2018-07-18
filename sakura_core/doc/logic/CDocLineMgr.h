@@ -1,10 +1,10 @@
-/*!	@file
-	@brief sƒf[ƒ^‚ÌŠÇ—
+ï»¿/*!	@file
+	@brief è¡Œãƒ‡ãƒ¼ã‚¿ã®ç®¡ç†
 
 	@author Norio Nakatani
-	@date 1998/3/5  V‹Kì¬
-	@date 2001/06/23 N.Nakatani WhereCurrentWord_2()’Ç‰Á staticƒƒ“ƒo
-	@date 2001/12/03 hor ‚µ‚¨‚è(bookmark)‹@”\’Ç‰Á‚É”º‚¤ŠÖ”’Ç‰Á
+	@date 1998/3/5  æ–°è¦ä½œæˆ
+	@date 2001/06/23 N.Nakatani WhereCurrentWord_2()è¿½åŠ  staticãƒ¡ãƒ³ãƒ
+	@date 2001/12/03 hor ã—ãŠã‚Š(bookmark)æ©Ÿèƒ½è¿½åŠ ã«ä¼´ã†é–¢æ•°è¿½åŠ 
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -30,70 +30,70 @@ class CDocLine; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
 
 struct DocLineReplaceArg {
-	CLogicRange		sDelRange;			//!< [in] íœ”ÍˆÍBƒƒWƒbƒN’PˆÊB
-	COpeLineData*	pcmemDeleted;		//!< [out] íœ‚³‚ê‚½ƒf[ƒ^‚ğ•Û‘¶
-	COpeLineData*	pInsData;			//!< [in,out] ‘}“ü‚·‚éƒf[ƒ^(’†g‚ªˆÚ“®‚·‚é)
-	CLogicInt		nDeletedLineNum;	//!< [out] íœ‚µ‚½s‚Ì‘”
-	CLogicInt		nInsLineNum;		//!< [out] ‘}“ü‚É‚æ‚Á‚Ä‘‚¦‚½s‚Ì”
-	CLogicPoint		ptNewPos;			//!< [out] ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u
-	int				nDelSeq;			//!< [in] íœs‚ÌOpeƒV[ƒPƒ“ƒX
-	int				nInsSeq;			//!< [out] ‘}“üs‚ÌŒ³‚ÌƒV[ƒPƒ“ƒX
+	CLogicRange		sDelRange;			//!< [in] å‰Šé™¤ç¯„å›²ã€‚ãƒ­ã‚¸ãƒƒã‚¯å˜ä½ã€‚
+	COpeLineData*	pcmemDeleted;		//!< [out] å‰Šé™¤ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’ä¿å­˜
+	COpeLineData*	pInsData;			//!< [in,out] æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿(ä¸­èº«ãŒç§»å‹•ã™ã‚‹)
+	CLogicInt		nDeletedLineNum;	//!< [out] å‰Šé™¤ã—ãŸè¡Œã®ç·æ•°
+	CLogicInt		nInsLineNum;		//!< [out] æŒ¿å…¥ã«ã‚ˆã£ã¦å¢—ãˆãŸè¡Œã®æ•°
+	CLogicPoint		ptNewPos;			//!< [out] æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®
+	int				nDelSeq;			//!< [in] å‰Šé™¤è¡Œã®Opeã‚·ãƒ¼ã‚±ãƒ³ã‚¹
+	int				nInsSeq;			//!< [out] æŒ¿å…¥è¡Œã®å…ƒã®ã‚·ãƒ¼ã‚±ãƒ³ã‚¹
 };
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-//2007.09.30 kobake WhereCurrentWord_2 ‚ğ CWordParse ‚ÉˆÚ“®
+//2007.09.30 kobake WhereCurrentWord_2 ã‚’ CWordParse ã«ç§»å‹•
 class CDocLineMgr{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CDocLineMgr();
 	~CDocLineMgr();
 
-	//ó‘Ô
-	CLogicInt GetLineCount() const{ return m_nLines; }	//!< ‘Ss”‚ğ•Ô‚·
+	//çŠ¶æ…‹
+	CLogicInt GetLineCount() const{ return m_nLines; }	//!< å…¨è¡Œæ•°ã‚’è¿”ã™
 
-	//sƒf[ƒ^‚Ö‚ÌƒAƒNƒZƒX
-	const CDocLine* GetLine( CLogicInt nLine ) const;						//!< w’ès‚ğæ“¾
+	//è¡Œãƒ‡ãƒ¼ã‚¿ã¸ã®ã‚¢ã‚¯ã‚»ã‚¹
+	const CDocLine* GetLine( CLogicInt nLine ) const;						//!< æŒ‡å®šè¡Œã‚’å–å¾—
 	CDocLine* GetLine( CLogicInt nLine ){
 		return const_cast<CDocLine*>(const_cast<CDocLine*>(static_cast<const CDocLineMgr*>(this)->GetLine( nLine )));
 	}
-	const CDocLine* GetDocLineTop() const { return m_pDocLineTop; }		//!< æ“ªs‚ğæ“¾
-	CDocLine* GetDocLineTop() { return m_pDocLineTop; }		//!< æ“ªs‚ğæ“¾
-	const CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }	//!< ÅIs‚ğæ“¾
-	CDocLine* GetDocLineBottom() { return m_pDocLineBot; }	//!< ÅIs‚ğæ“¾
+	const CDocLine* GetDocLineTop() const { return m_pDocLineTop; }		//!< å…ˆé ­è¡Œã‚’å–å¾—
+	CDocLine* GetDocLineTop() { return m_pDocLineTop; }		//!< å…ˆé ­è¡Œã‚’å–å¾—
+	const CDocLine* GetDocLineBottom() const { return m_pDocLineBot; }	//!< æœ€çµ‚è¡Œã‚’å–å¾—
+	CDocLine* GetDocLineBottom() { return m_pDocLineBot; }	//!< æœ€çµ‚è¡Œã‚’å–å¾—
 
-	//sƒf[ƒ^‚ÌŠÇ—
-	CDocLine* InsertNewLine(CDocLine* pPos);	//!< pPos‚Ì’¼‘O‚ÉV‚µ‚¢s‚ğ‘}“ü
-	CDocLine* AddNewLine();						//!< Å‰º•”‚ÉV‚µ‚¢s‚ğ‘}“ü
-	void DeleteAllLine();						//!< ‘S‚Ä‚Ìs‚ğíœ‚·‚é
-	void DeleteLine( CDocLine* );				//!< s‚Ìíœ
+	//è¡Œãƒ‡ãƒ¼ã‚¿ã®ç®¡ç†
+	CDocLine* InsertNewLine(CDocLine* pPos);	//!< pPosã®ç›´å‰ã«æ–°ã—ã„è¡Œã‚’æŒ¿å…¥
+	CDocLine* AddNewLine();						//!< æœ€ä¸‹éƒ¨ã«æ–°ã—ã„è¡Œã‚’æŒ¿å…¥
+	void DeleteAllLine();						//!< å…¨ã¦ã®è¡Œã‚’å‰Šé™¤ã™ã‚‹
+	void DeleteLine( CDocLine* );				//!< è¡Œã®å‰Šé™¤
 
-	//ƒfƒoƒbƒO
+	//ãƒ‡ãƒãƒƒã‚°
 	void DUMP();
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         À‘••â•                            //
+	//                         å®Ÿè£…è£œåŠ©                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
 	void _Init();
-	// -- -- ƒ`ƒF[ƒ“ŠÖ” -- -- // 2007.10.11 kobake ì¬
-	void _PushBottom(CDocLine* pDocLineNew);             //!< Å‰º•”‚É‘}“ü
-	void _InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos); //!< pPos‚Ì’¼‘O‚É‘}“ü
-	void _InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos); //!< pPos‚Ì’¼Œã‚É‘}“ü
+	// -- -- ãƒã‚§ãƒ¼ãƒ³é–¢æ•° -- -- // 2007.10.11 kobake ä½œæˆ
+	void _PushBottom(CDocLine* pDocLineNew);             //!< æœ€ä¸‹éƒ¨ã«æŒ¿å…¥
+	void _InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos); //!< pPosã®ç›´å‰ã«æŒ¿å…¥
+	void _InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos); //!< pPosã®ç›´å¾Œã«æŒ¿å…¥
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ƒƒ“ƒo•Ï”                           //
+	//                        ãƒ¡ãƒ³ãƒå¤‰æ•°                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	CDocLine*	m_pDocLineTop;		//!< Å‰‚Ìs
-	CDocLine*	m_pDocLineBot;		//!< ÅŒã‚Ìs(¦1s‚µ‚©‚È‚¢ê‡‚Ím_pDocLineTop‚Æ“™‚µ‚­‚È‚é)
-	CLogicInt	m_nLines;			//!< ‘Ss”
+	CDocLine*	m_pDocLineTop;		//!< æœ€åˆã®è¡Œ
+	CDocLine*	m_pDocLineBot;		//!< æœ€å¾Œã®è¡Œ(â€»1è¡Œã—ã‹ãªã„å ´åˆã¯m_pDocLineTopã¨ç­‰ã—ããªã‚‹)
+	CLogicInt	m_nLines;			//!< å…¨è¡Œæ•°
 
 public:
-	//$$ kobake’: ˆÈ‰ºAâ‘Î‚ÉØ‚è—£‚µ‚½‚¢iÅ’áØ‚è—£‚¹‚È‚­‚Ä‚àA•Ï”‚ÌˆÓ–¡‚ğƒRƒƒ“ƒg‚Å–¾Šm‚É‹L‚·‚×‚«j•Ï”ŒQ
-	mutable CDocLine*	m_pDocLineCurrent;	//!< ‡ƒAƒNƒZƒX‚ÌŒ»İˆÊ’u
+	//$$ kobakeæ³¨: ä»¥ä¸‹ã€çµ¶å¯¾ã«åˆ‡ã‚Šé›¢ã—ãŸã„ï¼ˆæœ€ä½åˆ‡ã‚Šé›¢ã›ãªãã¦ã‚‚ã€å¤‰æ•°ã®æ„å‘³ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã§æ˜ç¢ºã«è¨˜ã™ã¹ãï¼‰å¤‰æ•°ç¾¤
+	mutable CDocLine*	m_pDocLineCurrent;	//!< é †ã‚¢ã‚¯ã‚»ã‚¹æ™‚ã®ç¾åœ¨ä½ç½®
 	mutable CLogicInt	m_nPrevReferLine;
 	mutable CDocLine*	m_pCodePrevRefer;
 

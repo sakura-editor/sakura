@@ -1,5 +1,5 @@
-/*!	@file
-	@brief •¶‘ƒf[ƒ^1s
+ï»¿/*!	@file
+	@brief æ–‡æ›¸ãƒ‡ãƒ¼ã‚¿1è¡Œ
 
 	@author Norio Nakatani
 */
@@ -25,9 +25,9 @@ CDocLine::~CDocLine()
 {
 }
 
-/* ‹ósiƒXƒy[ƒXAƒ^ƒuA‰üs‹L†‚Ì‚İ‚Ìsj‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é
-	trueF‹ós‚¾B
-	falseF‹ós‚¶‚á‚È‚¢‚¼B
+/* ç©ºè¡Œï¼ˆã‚¹ãƒšãƒ¼ã‚¹ã€ã‚¿ãƒ–ã€æ”¹è¡Œè¨˜å·ã®ã¿ã®è¡Œï¼‰ã‹ã©ã†ã‹ã‚’å–å¾—ã™ã‚‹
+	trueï¼šç©ºè¡Œã ã€‚
+	falseï¼šç©ºè¡Œã˜ã‚ƒãªã„ãã€‚
 
 	2002/04/26 YAZAKI
 */
@@ -38,17 +38,17 @@ bool CDocLine::IsEmptyLine() const
 	int i;
 	for ( i = 0; i < nLineLen; i++ ){
 		if (pLine[i] != L' ' && pLine[i] != L'\t'){
-			return false;	//	ƒXƒy[ƒX‚Å‚àƒ^ƒu‚Å‚à‚È‚¢•¶š‚ª‚ ‚Á‚½‚çfalseB
+			return false;	//	ã‚¹ãƒšãƒ¼ã‚¹ã§ã‚‚ã‚¿ãƒ–ã§ã‚‚ãªã„æ–‡å­—ãŒã‚ã£ãŸã‚‰falseã€‚
 		}
 	}
-	return true;	//	‚·‚×‚ÄƒXƒy[ƒX‚©ƒ^ƒu‚¾‚¯‚¾‚Á‚½‚çtrueB
+	return true;	//	ã™ã¹ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‹ã‚¿ãƒ–ã ã‘ã ã£ãŸã‚‰trueã€‚
 }
 
 void CDocLine::SetEol()
 {
 	const wchar_t* pData = m_cLine.GetStringPtr();
 	int nLength = m_cLine.GetStringLength();
-	//‰üsƒR[ƒhİ’è
+	//æ”¹è¡Œã‚³ãƒ¼ãƒ‰è¨­å®š
 	const wchar_t* p = &pData[nLength] - 1;
 	while(p>=pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))p--;
 	p++;
@@ -80,12 +80,12 @@ void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom)
 
 void CDocLine::SetEol(const CEol& cEol, COpeBlk* pcOpeBlk)
 {
-	//‰üsƒR[ƒh‚ğíœ
+	//æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤
 	for(int i=0;i<(Int)m_cEol.GetLen();i++){
 		m_cLine.Chop();
 	}
 
-	//‰üsƒR[ƒh‚ğ‘}“ü
+	//æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æŒ¿å…¥
 	m_cEol = cEol;
 	m_cLine += cEol.GetValue2();
 }

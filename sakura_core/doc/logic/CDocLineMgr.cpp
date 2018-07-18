@@ -1,20 +1,20 @@
-/*!	@file
-	@brief sƒf[ƒ^‚ÌŠÇ—
+ï»¿/*!	@file
+	@brief è¡Œãƒ‡ãƒ¼ã‚¿ã®ç®¡ç†
 
 	@author Norio Nakatani
-	@date 1998/03/05  V‹Kì¬
-	@date 2001/06/23 N.Nakatani ’PŒê’PˆÊ‚ÅŒŸõ‚·‚é‹@”\‚ğÀ‘•
-	@date 2001/06/23 N.Nakatani WhereCurrentWord()•ÏX WhereCurrentWord_2‚ğƒR[ƒ‹‚·‚é‚æ‚¤‚É‚µ‚½
-	@date 2005/09/25 D.S.Koba GetSizeOfChar‚Å‘‚«Š·‚¦
+	@date 1998/03/05  æ–°è¦ä½œæˆ
+	@date 2001/06/23 N.Nakatani å˜èªå˜ä½ã§æ¤œç´¢ã™ã‚‹æ©Ÿèƒ½ã‚’å®Ÿè£…
+	@date 2001/06/23 N.Nakatani WhereCurrentWord()å¤‰æ›´ WhereCurrentWord_2ã‚’ã‚³ãƒ¼ãƒ«ã™ã‚‹ã‚ˆã†ã«ã—ãŸ
+	@date 2005/09/25 D.S.Koba GetSizeOfCharã§æ›¸ãæ›ãˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta, ao
 	Copyright (C) 2001, genta, jepro, hor
 	Copyright (C) 2002, hor, aroka, MIK, Moca, genta, frozen, Azumaiya, YAZAKI
-	Copyright (C) 2003, Moca, ryoji, genta, ‚©‚ë‚Æ
+	Copyright (C) 2003, Moca, ryoji, genta, ã‹ã‚ã¨
 	Copyright (C) 2004, genta, Moca
-	Copyright (C) 2005, D.S.Koba, ryoji, ‚©‚ë‚Æ
+	Copyright (C) 2005, D.S.Koba, ryoji, ã‹ã‚ã¨
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,12 +26,12 @@
 #include <io.h>
 #include <list>
 #include "CDocLineMgr.h"
-#include "CDocLine.h"// 2002/2/10 aroka ƒwƒbƒ_®—
+#include "CDocLine.h"// 2002/2/10 aroka ãƒ˜ãƒƒãƒ€æ•´ç†
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeMediator.h"
-//	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
+//	Jun. 26, 2001 genta	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆ
 #include "extmodule/CBregexp.h"
 #include "_main/global.h"
 
@@ -48,7 +48,7 @@
 #include "debug/CRunningTimer.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDocLineMgr::CDocLineMgr()
@@ -64,11 +64,11 @@ CDocLineMgr::~CDocLineMgr()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      sƒf[ƒ^‚ÌŠÇ—                         //
+//                      è¡Œãƒ‡ãƒ¼ã‚¿ã®ç®¡ç†                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-//! pPos‚Ì’¼‘O‚ÉV‚µ‚¢s‚ğ‘}“ü
+//! pPosã®ç›´å‰ã«æ–°ã—ã„è¡Œã‚’æŒ¿å…¥
 CDocLine* CDocLineMgr::InsertNewLine(CDocLine* pPos)
 {
 	CDocLine* pcDocLineNew = new CDocLine;
@@ -76,7 +76,7 @@ CDocLine* CDocLineMgr::InsertNewLine(CDocLine* pPos)
 	return pcDocLineNew;
 }
 
-//! Å‰º•”‚ÉV‚µ‚¢s‚ğ‘}“ü
+//! æœ€ä¸‹éƒ¨ã«æ–°ã—ã„è¡Œã‚’æŒ¿å…¥
 CDocLine* CDocLineMgr::AddNewLine()
 {
 	CDocLine* pcDocLineNew = new CDocLine;
@@ -84,7 +84,7 @@ CDocLine* CDocLineMgr::AddNewLine()
 	return pcDocLineNew;
 }
 
-//! ‘S‚Ä‚Ìs‚ğíœ‚·‚é
+//! å…¨ã¦ã®è¡Œã‚’å‰Šé™¤ã™ã‚‹
 void CDocLineMgr::DeleteAllLine()
 {
 	CDocLine* pDocLine = m_pDocLineTop;
@@ -97,10 +97,10 @@ void CDocLineMgr::DeleteAllLine()
 }
 
 
-//! s‚Ìíœ
+//! è¡Œã®å‰Šé™¤
 void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 {
-	//PrevØ‚è—£‚µ
+	//Prevåˆ‡ã‚Šé›¢ã—
 	if( pcDocLineDel->GetPrevLine() ){
 		pcDocLineDel->GetPrevLine()->m_pNext = pcDocLineDel->GetNextLine();
 	}
@@ -108,7 +108,7 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 		m_pDocLineTop = pcDocLineDel->GetNextLine();
 	}
 
-	//NextØ‚è—£‚µ
+	//Nextåˆ‡ã‚Šé›¢ã—
 	if( pcDocLineDel->GetNextLine() ){
 		pcDocLineDel->m_pNext->m_pPrev = pcDocLineDel->GetPrevLine();
 	}
@@ -116,32 +116,32 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 		m_pDocLineBot = pcDocLineDel->GetPrevLine();
 	}
 	
-	//QÆØ‚è—£‚µ
+	//å‚ç…§åˆ‡ã‚Šé›¢ã—
 	if( m_pCodePrevRefer == pcDocLineDel ){
 		m_pCodePrevRefer = pcDocLineDel->GetNextLine();
 	}
 
-	//ƒf[ƒ^íœ
+	//ãƒ‡ãƒ¼ã‚¿å‰Šé™¤
 	delete pcDocLineDel;
 
-	//s”Œ¸Z
+	//è¡Œæ•°æ¸›ç®—
 	m_nLines--;
 	if( CLogicInt(0) == m_nLines ){
-		// ƒf[ƒ^‚ª‚È‚­‚È‚Á‚½
+		// ãƒ‡ãƒ¼ã‚¿ãŒãªããªã£ãŸ
 		_Init();
 	}
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   sƒf[ƒ^‚Ö‚ÌƒAƒNƒZƒX                      //
+//                   è¡Œãƒ‡ãƒ¼ã‚¿ã¸ã®ã‚¢ã‚¯ã‚»ã‚¹                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
-	w’è‚³‚ê‚½”Ô†‚Ìs‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
+	æŒ‡å®šã•ã‚ŒãŸç•ªå·ã®è¡Œã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
 
-	@param nLine [in] s”Ô†
-	@return sƒIƒuƒWƒFƒNƒg‚Ö‚Ìƒ|ƒCƒ“ƒ^BŠY“–s‚ª‚È‚¢ê‡‚ÍNULLB
+	@param nLine [in] è¡Œç•ªå·
+	@return è¡Œã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®ãƒã‚¤ãƒ³ã‚¿ã€‚è©²å½“è¡ŒãŒãªã„å ´åˆã¯NULLã€‚
 */
 const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 {
@@ -150,11 +150,11 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	if( CLogicInt(0) == m_nLines ){
 		return NULL;
 	}
-	// 2004.03.28 Moca nLine‚ª•‰‚Ìê‡‚Ìƒ`ƒFƒbƒN‚ğ’Ç‰Á
+	// 2004.03.28 Moca nLineãŒè² ã®å ´åˆã®ãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
 	if( CLogicInt(0) > nLine || nLine >= m_nLines ){
 		return NULL;
 	}
-	// 2004.03.28 Moca m_pCodePrevRefer‚æ‚èATop,Bot‚Ì‚Ù‚¤‚ª‹ß‚¢ê‡‚ÍA‚»‚¿‚ç‚ğ—˜—p‚·‚é
+	// 2004.03.28 Moca m_pCodePrevReferã‚ˆã‚Šã€Top,Botã®ã»ã†ãŒè¿‘ã„å ´åˆã¯ã€ãã¡ã‚‰ã‚’åˆ©ç”¨ã™ã‚‹
 	CLogicInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLine );
 	if( m_pCodePrevRefer == NULL
 	  || nLine < nPrevToLineNumDiff
@@ -240,7 +240,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CDocLineMgr::_Init()
@@ -251,11 +251,11 @@ void CDocLineMgr::_Init()
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = NULL;
 	m_pDocLineCurrent = NULL;
-	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFFg—p’† */	//@@@ 2002.05.25 MIK     //##Œã‚ÅCDocListener::OnClear (OnAfterClose) ‚ğì¬‚µA‚»‚±‚ÉˆÚ“®
+	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFFä½¿ç”¨ä¸­ */	//@@@ 2002.05.25 MIK     //##å¾Œã§CDocListener::OnClear (OnAfterClose) ã‚’ä½œæˆã—ã€ãã“ã«ç§»å‹•
 }
 
-// -- -- ƒ`ƒF[ƒ“ŠÖ” -- -- // 2007.10.11 kobake ì¬
-//!Å‰º•”‚É‘}“ü
+// -- -- ãƒã‚§ãƒ¼ãƒ³é–¢æ•° -- -- // 2007.10.11 kobake ä½œæˆ
+//!æœ€ä¸‹éƒ¨ã«æŒ¿å…¥
 void CDocLineMgr::_PushBottom(CDocLine* pDocLineNew)
 {
 	if( !m_pDocLineTop ){
@@ -272,13 +272,13 @@ void CDocLineMgr::_PushBottom(CDocLine* pDocLineNew)
 	++m_nLines;
 }
 
-//!pPos‚Ì’¼‘O‚É‘}“üBpPos‚ÉNULL‚ğw’è‚µ‚½ê‡‚ÍAÅ‰º•”‚É’Ç‰ÁB
+//!pPosã®ç›´å‰ã«æŒ¿å…¥ã€‚pPosã«NULLã‚’æŒ‡å®šã—ãŸå ´åˆã¯ã€æœ€ä¸‹éƒ¨ã«è¿½åŠ ã€‚
 void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 {
-	//New.Next‚ğİ’è
+	//New.Nextã‚’è¨­å®š
 	pDocLineNew->m_pNext = pPos;
 
-	//New.Prev, Other.Prev‚ğİ’è
+	//New.Prev, Other.Prevã‚’è¨­å®š
 	if(pPos){
 		pDocLineNew->m_pPrev = pPos->GetPrevLine();
 		pPos->m_pPrev = pDocLineNew;
@@ -288,7 +288,7 @@ void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 		m_pDocLineBot = pDocLineNew;
 	}
 
-	//Other.Next‚ğİ’è
+	//Other.Nextã‚’è¨­å®š
 	if( pDocLineNew->GetPrevLine() ){
 		pDocLineNew->GetPrevLine()->m_pNext = pDocLineNew;
 	}
@@ -296,17 +296,17 @@ void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 		m_pDocLineTop = pDocLineNew;
 	}
 
-	//s”‚ğ‰ÁZ
+	//è¡Œæ•°ã‚’åŠ ç®—
 	++m_nLines;
 }
 
-//! pPos‚Ì’¼Œã‚É‘}“üBpPos‚ÉNULL‚ğw’è‚µ‚½ê‡‚ÍAæ“ª‚É’Ç‰ÁB
+//! pPosã®ç›´å¾Œã«æŒ¿å…¥ã€‚pPosã«NULLã‚’æŒ‡å®šã—ãŸå ´åˆã¯ã€å…ˆé ­ã«è¿½åŠ ã€‚
 void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 {
-	//New.Prev‚ğİ’è
+	//New.Prevã‚’è¨­å®š
 	pDocLineNew->m_pPrev = pPos;
 
-	//New.Next, Other.Next‚ğİ’è
+	//New.Next, Other.Nextã‚’è¨­å®š
 	if( pPos ){
 		pDocLineNew->m_pNext = pPos->GetNextLine();
 		pPos->m_pNext = pDocLineNew;
@@ -316,7 +316,7 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 		m_pDocLineTop = pDocLineNew;
 	}
 
-	//Other.Prev‚ğİ’è
+	//Other.Prevã‚’è¨­å®š
 	if( pDocLineNew->GetNextLine() ){
 		pDocLineNew->m_pNext->m_pPrev = pDocLineNew;
 	}
@@ -324,20 +324,20 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 		m_pDocLineBot = pDocLineNew;
 	}
 
-	//s”‚ğ‰ÁZ
+	//è¡Œæ•°ã‚’åŠ ç®—
 	m_nLines++;
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒfƒoƒbƒO                            //
+//                         ãƒ‡ãƒãƒƒã‚°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*!	@brief CDocLineMgrDEBUG—p
+/*!	@brief CDocLineMgrDEBUGç”¨
 
 	@date 2004.03.18 Moca
-		m_pDocLineCurrent‚Æm_pCodePrevRefer‚ªƒf[ƒ^ƒ`ƒF[ƒ“‚Ì
-		—v‘f‚ğw‚µ‚Ä‚¢‚é‚©‚ÌŒŸØ‹@”\‚ğ’Ç‰ÁD
+		m_pDocLineCurrentã¨m_pCodePrevReferãŒãƒ‡ãƒ¼ã‚¿ãƒã‚§ãƒ¼ãƒ³ã®
+		è¦ç´ ã‚’æŒ‡ã—ã¦ã„ã‚‹ã‹ã®æ¤œè¨¼æ©Ÿèƒ½ã‚’è¿½åŠ ï¼
 
 */
 void CDocLineMgr::DUMP()
@@ -350,7 +350,7 @@ void CDocLineMgr::DUMP()
 	CDocLine* pDocLineEnd = NULL;
 	pDocLine = m_pDocLineTop;
 
-	// ³“–«‚ğ’²‚×‚é
+	// æ­£å½“æ€§ã‚’èª¿ã¹ã‚‹
 	bool bIncludeCurrent = false;
 	bool bIncludePrevRefer = false;
 	CLogicInt nNum = CLogicInt(0);

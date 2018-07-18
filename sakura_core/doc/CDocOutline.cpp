@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ
+ï»¿/*!	@file
+	@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ
 
 	@author genta
-	@date	2004.08.08 ì¬
+	@date	2004.08.08 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -10,7 +10,7 @@
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, frozen
 	Copyright (C) 2003, zenryaku
-	Copyright (C) 2005, genta, D.S.Koba, ‚¶‚ã‚¤‚¶
+	Copyright (C) 2005, genta, D.S.Koba, ã˜ã‚…ã†ã˜
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -31,34 +31,34 @@
 
 
 
-/*! ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚Ì1s‚ğŠÇ—‚·‚é\‘¢‘Ì
+/*! ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®1è¡Œã‚’ç®¡ç†ã™ã‚‹æ§‹é€ ä½“
 
 	@date 2002.04.01 YAZAKI
-	@date 2007.11.29 kobake –¼‘O•ÏX: oneRule¨SOneRule
+	@date 2007.11.29 kobake åå‰å¤‰æ›´: oneRuleâ†’SOneRule
 */
 struct SOneRule {
 	wchar_t szMatch[256];
 	int		nLength;
-	wchar_t szText[256]; // RegexReplace‚Ì’uŠ·Œã•¶š—ñ
+	wchar_t szText[256]; // RegexReplaceæ™‚ã®ç½®æ›å¾Œæ–‡å­—åˆ—
 	wchar_t szGroupName[256];
 	int		nLv;
 	int		nRegexOption;
-	int		nRegexMode; // 0 ==uMode=Regexv, 1 == uMode=RegexReplacev
+	int		nRegexMode; // 0 ==ã€ŒMode=Regexã€, 1 == ã€ŒMode=RegexReplaceã€
 };
 
 
 
-/*! ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚İAƒ‹[ƒ‹\‘¢‘Ì‚Ì”z—ñ‚ğì¬‚·‚é
+/*! ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã¿ã€ãƒ«ãƒ¼ãƒ«æ§‹é€ ä½“ã®é…åˆ—ã‚’ä½œæˆã™ã‚‹
 
 	@date 2002.04.01 YAZAKI
-	@date 2002.11.03 Moca ˆø”nMaxCount‚ğ’Ç‰ÁBƒoƒbƒtƒ@’·ƒ`ƒFƒbƒN‚ğ‚·‚é‚æ‚¤‚É•ÏX
-	@date 2013.06.02 _tfopen_absini,fgetws‚ğCTextInputStream_AbsIni‚É•ÏXBUTF-8‘Î‰BRegex‘Î‰
-	@date 2014.06.20 RegexReplace ³‹K•\Œ»’uŠ·ƒ‚[ƒh’Ç‰Á
+	@date 2002.11.03 Moca å¼•æ•°nMaxCountã‚’è¿½åŠ ã€‚ãƒãƒƒãƒ•ã‚¡é•·ãƒã‚§ãƒƒã‚¯ã‚’ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
+	@date 2013.06.02 _tfopen_absini,fgetwsã‚’CTextInputStream_AbsIniã«å¤‰æ›´ã€‚UTF-8å¯¾å¿œã€‚Regexå¯¾å¿œ
+	@date 2014.06.20 RegexReplace æ­£è¦è¡¨ç¾ç½®æ›ãƒ¢ãƒ¼ãƒ‰è¿½åŠ 
 */
 int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )
 {
-	// 2003.06.23 Moca ‘Š‘ÎƒpƒX‚ÍÀsƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚Æ‚µ‚ÄŠJ‚­
-	// 2007.05.19 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+	// 2003.06.23 Moca ç›¸å¯¾ãƒ‘ã‚¹ã¯å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã¨ã—ã¦é–‹ã
+	// 2007.05.19 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 	CTextInputStream_AbsIni	file = CTextInputStream_AbsIni( pszFilename );
 	if( !file.Good() ){
 		return 0;
@@ -77,11 +77,11 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 	title = L"";
 	int regexOption = CBregexp::optCaseSensitive;
 
-	// ’Êíƒ‚[ƒh
+	// é€šå¸¸ãƒ¢ãƒ¼ãƒ‰
 	// key1,key2 /// GroupName,Lv=1
-	// ³‹K•\Œ»ƒ‚[ƒh
+	// æ­£è¦è¡¨ç¾ãƒ¢ãƒ¼ãƒ‰
 	// RegexMode /// GroupName,Lv=1
-	// ³‹K•\Œ»’uŠ·ƒ‚[ƒh
+	// æ­£è¦è¡¨ç¾ç½®æ›ãƒ¢ãƒ¼ãƒ‰
 	// RegexReplace /// TitleReplace /// GroupName
 	while( file.Good() && nCount < nMaxCount ){
 		strLine = file.ReadLineW();
@@ -89,37 +89,37 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 		if( NULL != pszWork && 0 < strLine.length() && strLine[0] != cComment ){
 			int nLen = pszWork - strLine.c_str();
 			if( nLen < LINEREADBUFSIZE ){
-				// szLine == ukey1,key2v
+				// szLine == ã€Œkey1,key2ã€
 				wmemcpy(szLine, strLine.c_str(), nLen);
 				szLine[nLen] = L'\0';
 			}else{
-				// ‚±‚Ìs‚Í’·‚·‚¬‚é
+				// ã“ã®è¡Œã¯é•·ã™ãã‚‹
 				continue;
 			}
 			pszWork += nDelimitLen;
 
-			/* Å‰‚Ìƒg[ƒNƒ“‚ğæ“¾‚µ‚Ü‚·B */
+			/* æœ€åˆã®ãƒˆãƒ¼ã‚¯ãƒ³ã‚’å–å¾—ã—ã¾ã™ã€‚ */
 			const wchar_t* pszTextReplace = L"";
 			wchar_t* pszToken;
 			bool bTopDummy = false;
 			bool bRegexRep2 = false;
 			if( bRegex ){
-				// regex‚Ì‚Æ‚«‚Í,‹æØ‚è‚É‚µ‚È‚¢
+				// regexã®ã¨ãã¯,åŒºåˆ‡ã‚Šã«ã—ãªã„
 				pszToken = szLine;
 				if( szLine[0] == L'\0' ){
 					if( 0 < nCount ){
-						// ‹ó‚ÌKey ‚Í–³‹
+						// ç©ºã®Key ã¯ç„¡è¦–
 						pszToken = NULL;
 					}else{
-						// Å‰‚Ì—v‘f‚ª‹ó‚ÌKey‚¾‚Á‚½‚çƒ_ƒ~[—v‘f
+						// æœ€åˆã®è¦ç´ ãŒç©ºã®Keyã ã£ãŸã‚‰ãƒ€ãƒŸãƒ¼è¦ç´ 
 						bTopDummy = true;
 					}
 				}
 				if( bRegexReplace && pszToken ){
 					const wchar_t* pszGroupDel = wcsstr( pszWork, pszDelimit );
 					if( NULL != pszGroupDel && 0 < pszWork[0] != L'\0' ){
-						// pszWork = utitleRep /// groupv
-						// pszGroupDel = u /// groupv
+						// pszWork = ã€ŒtitleRep /// groupã€
+						// pszGroupDel = ã€Œ /// groupã€
 						int nTitleLen = pszGroupDel - pszWork; // Len == 0 OK
 						if( nTitleLen < _countof(szText) ){
 							wcsncpy_s(szText, _countof(szText), pszWork, nTitleLen);
@@ -152,7 +152,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 				pcOneRule[nCount].nLv = nLv;
 				pcOneRule[nCount].nLength = wcslen(pcOneRule[nCount].szMatch);
 				pcOneRule[nCount].nRegexOption = regexOption;
-				pcOneRule[nCount].nRegexMode = bRegexRep2 ? 1 : 0; // •¶š—ñ‚ª³‚µ‚¢‚¾‚¯ReplaceMode
+				pcOneRule[nCount].nRegexMode = bRegexRep2 ? 1 : 0; // æ–‡å­—åˆ—ãŒæ­£ã—ã„æ™‚ã ã‘ReplaceMode
 				nCount++;
 				if( bTopDummy || bRegex ){
 					pszToken = NULL;
@@ -207,17 +207,17 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 	return nCount;
 }
 
-/*! ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ğŒ³‚ÉAƒgƒsƒbƒNƒŠƒXƒg‚ğì¬
+/*! ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…ƒã«ã€ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆã‚’ä½œæˆ
 
 	@date 2002.04.01 YAZAKI
-	@date 2002.11.03 Moca ƒlƒXƒg‚Ì[‚³‚ªÅ‘å’l‚ğ’´‚¦‚é‚Æƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“‚·‚é‚Ì‚ğC³
-		Å‘å’lˆÈã‚Í’Ç‰Á‚¹‚¸‚É–³‹‚·‚é
-	@date 2007.11.29 kobake SOneRule test[1024] ‚ÅƒXƒ^ƒbƒN‚ªˆì‚ê‚Ä‚¢‚½‚Ì‚ğC³
+	@date 2002.11.03 Moca ãƒã‚¹ãƒˆã®æ·±ã•ãŒæœ€å¤§å€¤ã‚’è¶…ãˆã‚‹ã¨ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³ã™ã‚‹ã®ã‚’ä¿®æ­£
+		æœ€å¤§å€¤ä»¥ä¸Šã¯è¿½åŠ ã›ãšã«ç„¡è¦–ã™ã‚‹
+	@date 2007.11.29 kobake SOneRule test[1024] ã§ã‚¹ã‚¿ãƒƒã‚¯ãŒæº¢ã‚Œã¦ã„ãŸã®ã‚’ä¿®æ­£
 */
 void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstring& sTitleOverride )
 {
-	/* ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚Ì“à—e‚ğƒoƒbƒtƒ@‚É“Ç‚İ‚Ş */
-	auto_array_ptr<SOneRule> test(new SOneRule[1024]);	// 1024ŒÂ‹–‰ÂB 2007.11.29 kobake ƒXƒ^ƒbƒNg‚¢‚·‚¬‚È‚Ì‚ÅAƒq[ƒv‚ÉŠm•Û‚·‚é‚æ‚¤‚ÉC³B
+	/* ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®å†…å®¹ã‚’ãƒãƒƒãƒ•ã‚¡ã«èª­ã¿è¾¼ã‚€ */
+	auto_array_ptr<SOneRule> test(new SOneRule[1024]);	// 1024å€‹è¨±å¯ã€‚ 2007.11.29 kobake ã‚¹ã‚¿ãƒƒã‚¯ä½¿ã„ã™ããªã®ã§ã€ãƒ’ãƒ¼ãƒ—ã«ç¢ºä¿ã™ã‚‹ã‚ˆã†ã«ä¿®æ­£ã€‚
 	bool bRegex;
 	std::wstring title;
 	int nCount = ReadRuleFile(m_pcDocRef->m_cDocType.GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024, bRegex, title );
@@ -228,14 +228,14 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		sTitleOverride = to_tchar(title.c_str());
 	}
 
-	/*	ƒlƒXƒg‚Ì[‚³‚ÍA32ƒŒƒxƒ‹‚Ü‚ÅA‚Ğ‚Æ‚Â‚Ìƒwƒbƒ_‚ÍAÅ’·256•¶š‚Ü‚Å‹æ•Ê
-		i256•¶š‚Ü‚Å“¯‚¶‚¾‚Á‚½‚ç“¯‚¶‚à‚Ì‚Æ‚µ‚Äˆµ‚¢‚Ü‚·j
+	/*	ãƒã‚¹ãƒˆã®æ·±ã•ã¯ã€32ãƒ¬ãƒ™ãƒ«ã¾ã§ã€ã²ã¨ã¤ã®ãƒ˜ãƒƒãƒ€ã¯ã€æœ€é•·256æ–‡å­—ã¾ã§åŒºåˆ¥
+		ï¼ˆ256æ–‡å­—ã¾ã§åŒã˜ã ã£ãŸã‚‰åŒã˜ã‚‚ã®ã¨ã—ã¦æ‰±ã„ã¾ã™ï¼‰
 	*/
-	const int	nMaxStack = 32;	//	ƒlƒXƒg‚ÌÅ[
-	int			nDepth = 0;				//	‚¢‚Ü‚ÌƒAƒCƒeƒ€‚Ì[‚³‚ğ•\‚·”’lB
+	const int	nMaxStack = 32;	//	ãƒã‚¹ãƒˆã®æœ€æ·±
+	int			nDepth = 0;				//	ã„ã¾ã®ã‚¢ã‚¤ãƒ†ãƒ ã®æ·±ã•ã‚’è¡¨ã™æ•°å€¤ã€‚
 	wchar_t		pszStack[nMaxStack][256];
 	wchar_t		nLvStack[nMaxStack];
-	wchar_t		szTitle[256];			//	ˆê—Ìˆæ
+	wchar_t		szTitle[256];			//	ä¸€æ™‚é ˜åŸŸ
 	CBregexp*	pRegex = NULL;
 	if( bRegex ){
 		pRegex = new CBregexp[nCount];
@@ -269,8 +269,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			}
 		}
 	}
-	// 1‚Â‚ß‚ª‹ós‚¾‚Á‚½ê‡‚ÍAƒ‹[ƒg—v‘f‚Æ‚·‚é
-	// €–Ú–¼‚ÍƒOƒ‹[ƒv–¼
+	// 1ã¤ã‚ãŒç©ºè¡Œã ã£ãŸå ´åˆã¯ã€ãƒ«ãƒ¼ãƒˆè¦ç´ ã¨ã™ã‚‹
+	// é …ç›®åã¯ã‚°ãƒ«ãƒ¼ãƒ—å
 	if( test[0].nLength == 0 ){
 		const wchar_t* g = test[0].szGroupName;
 		wcscpy(pszStack[0], g);
@@ -289,18 +289,18 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 	}
 	for( CLogicInt nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount )
 	{
-		//sæ“¾
+		//è¡Œå–å¾—
 		CLogicInt		nLineLen;
 		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ){
 			break;
 		}
 
-		//s“ª‚Ì‹ó”’”ò‚Î‚µ
+		//è¡Œé ­ã®ç©ºç™½é£›ã°ã—
 		int		i = 0;
 		if( !bRegex ){
 			for( i = 0; i < nLineLen; ++i ){
-				if( pLine[i] == L' ' || pLine[i] == L'\t' || pLine[i] == L'@'){
+				if( pLine[i] == L' ' || pLine[i] == L'\t' || pLine[i] == L'ã€€'){
 					continue;
 				}
 				break;
@@ -310,7 +310,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			}
 		}
 
-		//æ“ª•¶š‚ªŒ©o‚µ‹L†‚Ì‚¢‚¸‚ê‚©‚Å‚ ‚ê‚ÎAŸ‚Öi‚Ş
+		//å…ˆé ­æ–‡å­—ãŒè¦‹å‡ºã—è¨˜å·ã®ã„ãšã‚Œã‹ã§ã‚ã‚Œã°ã€æ¬¡ã¸é€²ã‚€
 		const wchar_t*		pszText = NULL;
 		std::wstring strText;
 		int		j;
@@ -324,8 +324,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 				}else{
 					if( 0 < test[j].nLength && 0 < pRegex[j].Replace( pLine, nLineLen, 0 ) ){
 						// pLine = "ABC123DEF"
-						// test‚ÌszMatch = "\d+"
-						// test‚ÌszText = "$&456"
+						// testã®szMatch = "\d+"
+						// testã®szText = "$&456"
 						// GetString() = "ABC123456DEF"
 						// pszText = "123456"
 						int nIndex = pRegex[j].GetIndex();
@@ -351,11 +351,11 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			continue;
 		}
 
-		/*	ƒ‹[ƒ‹‚Éƒ}ƒbƒ`‚µ‚½s‚ÍAƒAƒEƒgƒ‰ƒCƒ“Œ‹‰Ê‚É•\¦‚·‚éB
+		/*	ãƒ«ãƒ¼ãƒ«ã«ãƒãƒƒãƒã—ãŸè¡Œã¯ã€ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³çµæœã«è¡¨ç¤ºã™ã‚‹ã€‚
 		*/
 
-		//s•¶š—ñ‚©‚ç‰üs‚ğæ‚èœ‚­ pLine -> pszText
-		// ³‹K•\Œ»’uŠ·‚Ì‚Æ‚«‚Íİ’èÏ‚İ
+		//è¡Œæ–‡å­—åˆ—ã‹ã‚‰æ”¹è¡Œã‚’å–ã‚Šé™¤ã pLine -> pszText
+		// æ­£è¦è¡¨ç¾ç½®æ›ã®ã¨ãã¯è¨­å®šæ¸ˆã¿
 		if( NULL == pszText ){
 			pszText = &pLine[i];
 			nLineLen -= i;
@@ -370,10 +370,10 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 		}
 
 		/*
-		  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-		  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-		  ¨
-		  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+		  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+		  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+		  â†’
+		  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 		*/
 		CLayoutPoint ptPos;
 		m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -381,7 +381,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			&ptPos
 		);
 
-		/* nDepth‚ğŒvZ */
+		/* nDepthã‚’è¨ˆç®— */
 		int k;
 		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
@@ -391,13 +391,13 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			}
 		}
 		if ( k < nDepth ){
-			//	ƒ‹[ƒv“r’†‚Åbreak;‚µ‚Ä‚«‚½B¡‚Ü‚Å‚É“¯‚¶Œ©o‚µ‚ª‘¶İ‚µ‚Ä‚¢‚½B
-			//	‚Ì‚ÅA“¯‚¶ƒŒƒxƒ‹‚É‡‚í‚¹‚ÄAppendData.
+			//	ãƒ«ãƒ¼ãƒ—é€”ä¸­ã§break;ã—ã¦ããŸã€‚ï¼ä»Šã¾ã§ã«åŒã˜è¦‹å‡ºã—ãŒå­˜åœ¨ã—ã¦ã„ãŸã€‚
+			//	ã®ã§ã€åŒã˜ãƒ¬ãƒ™ãƒ«ã«åˆã‚ã›ã¦AppendData.
 			nDepth = k;
 		}
 		else if( nMaxStack > k ){
-			//	‚¢‚Ü‚Ü‚Å‚É“¯‚¶Œ©o‚µ‚ª‘¶İ‚µ‚È‚©‚Á‚½B
-			//	Lv‚ª‚‚¢ê‡‚ÍAˆê’v‚·‚é‚Ü‚Å‚³‚©‚Ì‚Ú‚é
+			//	ã„ã¾ã¾ã§ã«åŒã˜è¦‹å‡ºã—ãŒå­˜åœ¨ã—ãªã‹ã£ãŸã€‚
+			//	LvãŒé«˜ã„å ´åˆã¯ã€ä¸€è‡´ã™ã‚‹ã¾ã§ã•ã‹ã®ã¼ã‚‹
 			for ( k = nDepth - 1; 0 <= k ; k-- ){
 				if ( nLvStack[k] <= test[j].nLv ){
 					k++;
@@ -411,7 +411,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 			nLvStack[k] = test[j].nLv;
 			nDepth = k;
 		}else{
-			// 2002.11.03 Moca Å‘å’l‚ğ’´‚¦‚é‚Æƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“‚·‚é‚©‚ç‹K§‚·‚é
+			// 2002.11.03 Moca æœ€å¤§å€¤ã‚’è¶…ãˆã‚‹ã¨ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³ã™ã‚‹ã‹ã‚‰è¦åˆ¶ã™ã‚‹
 			// nDepth = nMaxStack;
 			bAppend = false;
 		}
@@ -427,12 +427,12 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 
 
 
-/*! ƒuƒbƒNƒ}[ƒNƒŠƒXƒgì¬i–³—–î—Ij
+/*! ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ãƒªã‚¹ãƒˆä½œæˆï¼ˆç„¡ç†çŸ¢ç†ï¼ï¼‰
 
-	@date 2001.12.03 hor   V‹Kì¬
-	@date 2002.01.19 aroka ‹ós‚ğƒ}[ƒN‘ÎÛ‚É‚·‚éƒtƒ‰ƒO bMarkUpBlankLineEnable ‚ğ“±“ü‚µ‚Ü‚µ‚½B
-	@date 2005.10.11 ryoji "‚@" ‚Ì‰E‚QƒoƒCƒg‚ª‘SŠp‹ó”’‚Æ”»’è‚³‚ê‚é–â‘è‚Ì‘Îˆ
-	@date 2005.11.03 genta •¶š—ñ’·C³D‰E’[‚ÌƒSƒ~‚ğœ‹
+	@date 2001.12.03 hor   æ–°è¦ä½œæˆ
+	@date 2002.01.19 aroka ç©ºè¡Œã‚’ãƒãƒ¼ã‚¯å¯¾è±¡ã«ã™ã‚‹ãƒ•ãƒ©ã‚° bMarkUpBlankLineEnable ã‚’å°å…¥ã—ã¾ã—ãŸã€‚
+	@date 2005.10.11 ryoji "ï½@" ã®å³ï¼’ãƒã‚¤ãƒˆãŒå…¨è§’ç©ºç™½ã¨åˆ¤å®šã•ã‚Œã‚‹å•é¡Œã®å¯¾å‡¦
+	@date 2005.11.03 genta æ–‡å­—åˆ—é•·ä¿®æ­£ï¼å³ç«¯ã®ã‚´ãƒŸã‚’é™¤å»
 */
 void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -440,7 +440,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	CLogicInt		nLineLen;
 	CLogicInt		nLineCount;
 	int		leftspace, pos_wo_space, k;
-	BOOL	bMarkUpBlankLineEnable = GetDllShareData().m_Common.m_sOutline.m_bMarkUpBlankLineEnable;	//! ‹ós‚ğƒ}[ƒN‘ÎÛ‚É‚·‚éƒtƒ‰ƒO 20020119 aroka
+	BOOL	bMarkUpBlankLineEnable = GetDllShareData().m_Common.m_sOutline.m_bMarkUpBlankLineEnable;	//! ç©ºè¡Œã‚’ãƒãƒ¼ã‚¯å¯¾è±¡ã«ã™ã‚‹ãƒ•ãƒ©ã‚° 20020119 aroka
 	int		nNewLineLen	= m_pcDocRef->m_cDocEditor.m_cNewLineCode.GetLen();
 	CLogicInt	nLineLast	= m_pcDocRef->m_cDocLineMgr.GetLineCount();
 	int		nCharChars;
@@ -470,7 +470,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 				continue;
 			}
 		}// RTrim
-		// 2005.10.11 ryoji ‰E‚©‚ç‘k‚é‚Ì‚Å‚Í‚È‚­¶‚©‚ç’T‚·‚æ‚¤‚ÉC³i"‚@" ‚Ì‰E‚QƒoƒCƒg‚ª‘SŠp‹ó”’‚Æ”»’è‚³‚ê‚é–â‘è‚Ì‘Îˆj
+		// 2005.10.11 ryoji å³ã‹ã‚‰é¡ã‚‹ã®ã§ã¯ãªãå·¦ã‹ã‚‰æ¢ã™ã‚ˆã†ã«ä¿®æ­£ï¼ˆ"ï½@" ã®å³ï¼’ãƒã‚¤ãƒˆãŒå…¨è§’ç©ºç™½ã¨åˆ¤å®šã•ã‚Œã‚‹å•é¡Œã®å¯¾å‡¦ï¼‰
 		k = pos_wo_space = leftspace;
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		while( k < nLineLen ){
@@ -485,7 +485,7 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 			}
 			k += nCharChars;
 		}
-		//	Nov. 3, 2005 genta •¶š—ñ’·ŒvZ®‚ÌC³
+		//	Nov. 3, 2005 genta æ–‡å­—åˆ—é•·è¨ˆç®—å¼ã®ä¿®æ­£
 		std::wstring strText( &pLine[leftspace], pos_wo_space - leftspace );
 
 		CLayoutPoint ptXY;

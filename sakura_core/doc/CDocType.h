@@ -1,7 +1,7 @@
-/*
-	ƒhƒLƒ…ƒƒ“ƒgí•Ê‚ÌŠÇ—
+ï»¿/*
+	ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆç¨®åˆ¥ã®ç®¡ç†
 
-	2008.01`03 kobake ì¬
+	2008.01ï½03 kobake ä½œæˆ
 */
 /*
 	Copyright (C) 2008, kobake
@@ -34,38 +34,38 @@
 
 class CDocType{
 public:
-	//¶¬‚Æ”jŠü
+	//ç”Ÿæˆã¨ç ´æ£„
 	CDocType(CEditDoc* pcDoc);
 	
-	//ƒƒbƒN‹@”\	//	Nov. 29, 2000 genta İ’è‚Ìˆê•ÏX‚ÉŠg’£q‚É‚æ‚é‹­§“I‚Èİ’è•ÏX‚ğ–³Œø‚É‚·‚é
+	//ãƒ­ãƒƒã‚¯æ©Ÿèƒ½	//	Nov. 29, 2000 genta è¨­å®šã®ä¸€æ™‚å¤‰æ›´æ™‚ã«æ‹¡å¼µå­ã«ã‚ˆã‚‹å¼·åˆ¶çš„ãªè¨­å®šå¤‰æ›´ã‚’ç„¡åŠ¹ã«ã™ã‚‹
 	void LockDocumentType(){ m_nSettingTypeLocked = true; }
 	void UnlockDocumentType(){ m_nSettingTypeLocked = false; }
 	bool GetDocumentLockState(){ return m_nSettingTypeLocked; }
 	
-	// •¶‘í•Ê‚Ìİ’è‚Ææ“¾		// Nov. 23, 2000 genta
-	void SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly = false);	//!< •¶‘í•Ê‚Ìİ’è
+	// æ–‡æ›¸ç¨®åˆ¥ã®è¨­å®šã¨å–å¾—		// Nov. 23, 2000 genta
+	void SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly = false);	//!< æ–‡æ›¸ç¨®åˆ¥ã®è¨­å®š
 	void SetDocumentTypeIdx( int id = -1, bool force = false);
-	CTypeConfig GetDocumentType() const					//!< •¶‘í•Ê‚Ìæ“¾
+	CTypeConfig GetDocumentType() const					//!< æ–‡æ›¸ç¨®åˆ¥ã®å–å¾—
 	{
 		return m_nSettingType;
 	}
-	const STypeConfig& GetDocumentAttribute() const						//!< •¶‘í•Ê‚ÌÚ×î•ñ
+	const STypeConfig& GetDocumentAttribute() const						//!< æ–‡æ›¸ç¨®åˆ¥ã®è©³ç´°æƒ…å ±
 	{
 		return m_typeConfig;
 	}
-	STypeConfig& GetDocumentAttributeWrite()						//!< •¶‘í•Ê‚ÌÚ×î•ñ
+	STypeConfig& GetDocumentAttributeWrite()						//!< æ–‡æ›¸ç¨®åˆ¥ã®è©³ç´°æƒ…å ±
 	{
 		return m_typeConfig;
 	}
 
-	// Šg’£‹@”\
-	void SetDocumentIcon();	//ƒAƒCƒRƒ“‚Ìİ’è	//Sep. 10, 2002 genta
+	// æ‹¡å¼µæ©Ÿèƒ½
+	void SetDocumentIcon();	//ã‚¢ã‚¤ã‚³ãƒ³ã®è¨­å®š	//Sep. 10, 2002 genta
 
 private:
 	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
 	STypeConfig				m_typeConfig;
-	bool					m_nSettingTypeLocked;		//!< •¶‘í•Ê‚Ìˆêİ’èó‘Ô
+	bool					m_nSettingTypeLocked;		//!< æ–‡æ›¸ç¨®åˆ¥ã®ä¸€æ™‚è¨­å®šçŠ¶æ…‹
 };
 
 #endif /* SAKURA_CDOCTYPE_BB51F346_E9F1_42DD_8B28_2F5BAFCE7CE09_H_ */

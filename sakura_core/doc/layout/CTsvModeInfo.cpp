@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2015, syat
 
 	This software is provided 'as-is', without any express or implied
@@ -26,7 +26,7 @@
 #include "doc/logic/CDocLine.h"
 #include "doc/logic/CDocLineMgr.h"
 
-// ƒ^ƒuˆÊ’u‚ğÄŒvZ‚·‚é
+// ã‚¿ãƒ–ä½ç½®ã‚’å†è¨ˆç®—ã™ã‚‹
 void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 {
 	int i;
@@ -87,7 +87,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 	}
 }
 
-// w’è‚µ‚½ƒŒƒCƒAƒEƒgˆÊ’u‚Ìƒ^ƒu•‚ğæ“¾iÜ‚è•Ô‚µ‚Íl—¶‚µ‚È‚¢j
+// æŒ‡å®šã—ãŸãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã®ã‚¿ãƒ–å¹…ã‚’å–å¾—ï¼ˆæŠ˜ã‚Šè¿”ã—ã¯è€ƒæ…®ã—ãªã„ï¼‰
 CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos, CLayoutInt px) const
 {
 	unsigned int i;

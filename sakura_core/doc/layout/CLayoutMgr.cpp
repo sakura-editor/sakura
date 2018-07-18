@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒeƒLƒXƒg‚ÌƒŒƒCƒAƒEƒgî•ñŠÇ—
+ï»¿/*!	@file
+	@brief ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ç®¡ç†
 
 	@author Norio Nakatani
 */
@@ -33,23 +33,23 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ¶¬‚Æ”jŠü                           //
+//                        ç”Ÿæˆã¨ç ´æ£„                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 ƒƒ“ƒo[ŠÖ”ƒ|ƒCƒ“ƒ^‚É‚ÍƒNƒ‰ƒX–¼‚ª•K—v
+: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 ãƒ¡ãƒ³ãƒãƒ¼é–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã«ã¯ã‚¯ãƒ©ã‚¹åãŒå¿…è¦
 {
 	m_pcDocLineMgr = NULL;
 	m_pTypeConfig = NULL;
 	m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 	m_nTabSpace = CKetaXInt(4);
 	m_tsvInfo.m_nTsvMode = TSV_MODE_NONE;
-	m_pszKinsokuHead_1.clear();						/* s“ª‹Ö‘¥ */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuTail_1.clear();						/* s––‹Ö‘¥ */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuKuto_1.clear();						/* ‹å“Ç“_‚Ô‚ç‚³‚° */	//@@@ 2002.04.17 MIK
+	m_pszKinsokuHead_1.clear();						/* è¡Œé ­ç¦å‰‡ */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_1.clear();						/* è¡Œæœ«ç¦å‰‡ */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1.clear();						/* å¥èª­ç‚¹ã¶ã‚‰ã•ã’ */	//@@@ 2002.04.17 MIK
 
-	m_nTextWidth = CLayoutInt(0);			// ƒeƒLƒXƒgÅ‘å•‚Ì‹L‰¯		// 2009.08.28 nasukoji
-	m_nTextWidthMaxLine = CLayoutInt(0);	// Å‘å•‚ÌƒŒƒCƒAƒEƒgs		// 2009.08.28 nasukoji
+	m_nTextWidth = CLayoutInt(0);			// ãƒ†ã‚­ã‚¹ãƒˆæœ€å¤§å¹…ã®è¨˜æ†¶		// 2009.08.28 nasukoji
+	m_nTextWidthMaxLine = CLayoutInt(0);	// æœ€å¤§å¹…ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ		// 2009.08.28 nasukoji
 
 	Init();
 }
@@ -58,22 +58,22 @@ CLayoutMgr::~CLayoutMgr()
 {
 	_Empty();
 
-	m_pszKinsokuHead_1.clear();	/* s“ª‹Ö‘¥ */
-	m_pszKinsokuTail_1.clear();	/* s––‹Ö‘¥ */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuKuto_1.clear();	/* ‹å“Ç“_‚Ô‚ç‚³‚° */	//@@@ 2002.04.17 MIK
+	m_pszKinsokuHead_1.clear();	/* è¡Œé ­ç¦å‰‡ */
+	m_pszKinsokuTail_1.clear();	/* è¡Œæœ«ç¦å‰‡ */	//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1.clear();	/* å¥èª­ç‚¹ã¶ã‚‰ã•ã’ */	//@@@ 2002.04.17 MIK
 }
 
 
 /*
 ||
-|| sƒf[ƒ^ŠÇ—ƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^‚ğ‰Šú‰»‚µ‚Ü‚·
+|| è¡Œãƒ‡ãƒ¼ã‚¿ç®¡ç†ã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿ã‚’åˆæœŸåŒ–ã—ã¾ã™
 ||
 */
 void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
 {
 	_Empty();
 	Init();
-	//	Jun. 20, 2003 genta EditDoc‚Ö‚Ìƒ|ƒCƒ“ƒ^’Ç‰Á
+	//	Jun. 20, 2003 genta EditDocã¸ã®ãƒã‚¤ãƒ³ã‚¿è¿½åŠ 
 	m_pcEditDoc = pcEditDoc;
 	m_pcDocLineMgr = pcDocLineMgr;
 }
@@ -84,10 +84,10 @@ void CLayoutMgr::Init()
 	m_pLayoutBot = NULL;
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
-	m_nLines = CLayoutInt(0);			/* ‘S•¨—s” */
+	m_nLines = CLayoutInt(0);			/* å…¨ç‰©ç†è¡Œæ•° */
 	m_nLineTypeBot = COLORIDX_DEFAULT;
 
-	// EOFƒŒƒCƒAƒEƒgˆÊ’u‹L‰¯	//2006.10.07 Moca
+	// EOFãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®è¨˜æ†¶	//2006.10.07 Moca
 	m_nEOFLine = CLayoutInt(-1);
 	m_nEOFColumn = CLayoutInt(-1);
 }
@@ -107,9 +107,9 @@ void CLayoutMgr::_Empty()
 
 
 
-/*! ƒŒƒCƒAƒEƒgî•ñ‚Ì•ÏX
-	@param bDoLayout [in] ƒŒƒCƒAƒEƒgî•ñ‚ÌÄì¬
-	@param refType [in] ƒ^ƒCƒv•Êİ’è
+/*! ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã®å¤‰æ›´
+	@param bDoLayout [in] ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã®å†ä½œæˆ
+	@param refType [in] ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š
 */
 void CLayoutMgr::SetLayoutInfo(
 	bool				bDoLayout,
@@ -127,7 +127,7 @@ void CLayoutMgr::SetLayoutInfo(
 	assert_warning( (!bDoLayout && m_nMaxLineKetas == nMaxLineKetas) || bDoLayout );
 	assert_warning( (!bDoLayout && m_nTabSpace == refType.m_nTabSpace) || bDoLayout );
 
-	//ƒ^ƒCƒv•Êİ’è
+	//ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š
 	m_pTypeConfig = &refType;
 	m_nMaxLineKetas = nMaxLineKetas;
 	m_nTabSpace = nTabSpace;
@@ -139,7 +139,7 @@ void CLayoutMgr::SetLayoutInfo(
 	m_nSpacing = refType.m_nColumnSpace;
 	if( nCharLayoutXPerKeta == -1 )
 	{
-		// View‚ª‚Á‚Ä‚éƒtƒHƒ“ƒgî•ñ‚ÍŒÃ‚¢A‚µ‚å‚¤‚ª‚È‚¢‚Ì‚Å©•ª‚Åì‚é
+		// ViewãŒæŒã£ã¦ã‚‹ãƒ•ã‚©ãƒ³ãƒˆæƒ…å ±ã¯å¤ã„ã€ã—ã‚‡ã†ãŒãªã„ã®ã§è‡ªåˆ†ã§ä½œã‚‹
 		HWND hwnd = NULL;
 		HDC hdc = ::GetDC(hwnd);
 		CViewFont viewFont(pLogfont);
@@ -150,17 +150,17 @@ void CLayoutMgr::SetLayoutInfo(
 	}else{
 		m_nCharLayoutXPerKeta = nCharLayoutXPerKeta;
 	}
-	// Å‘å•¶š•‚ÌŒvZ
+	// æœ€å¤§æ–‡å­—å¹…ã®è¨ˆç®—
 	m_tsvInfo.m_nMaxCharLayoutX = WCODE::CalcPxWidthByFont(L'W');
 	if (m_tsvInfo.m_nMaxCharLayoutX < m_nCharLayoutXPerKeta) {
 		m_tsvInfo.m_nMaxCharLayoutX = m_nCharLayoutXPerKeta;
 	}
 
-	//	Oct. 1, 2002 genta ƒ^ƒCƒv‚É‚æ‚Á‚Äˆ—ŠÖ”‚ğ•ÏX‚·‚é
-	//	”‚ª‘‚¦‚Ä‚«‚½‚çƒe[ƒuƒ‹‚É‚·‚×‚«
-	switch ( refType.m_nIndentLayout ){	/* Ü‚è•Ô‚µ‚Í2s–ÚˆÈ~‚ğš‰º‚°•\¦ */	//@@@ 2002.09.29 YAZAKI
+	//	Oct. 1, 2002 genta ã‚¿ã‚¤ãƒ—ã«ã‚ˆã£ã¦å‡¦ç†é–¢æ•°ã‚’å¤‰æ›´ã™ã‚‹
+	//	æ•°ãŒå¢—ãˆã¦ããŸã‚‰ãƒ†ãƒ¼ãƒ–ãƒ«ã«ã™ã¹ã
+	switch ( refType.m_nIndentLayout ){	/* æŠ˜ã‚Šè¿”ã—ã¯2è¡Œç›®ä»¥é™ã‚’å­—ä¸‹ã’è¡¨ç¤º */	//@@@ 2002.09.29 YAZAKI
 	case 1:
-		//	Nov. 16, 2002 ƒƒ“ƒo[ŠÖ”ƒ|ƒCƒ“ƒ^‚É‚ÍƒNƒ‰ƒX–¼‚ª•K—v
+		//	Nov. 16, 2002 ãƒ¡ãƒ³ãƒãƒ¼é–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã«ã¯ã‚¯ãƒ©ã‚¹åãŒå¿…è¦
 		m_getIndentOffset = &CLayoutMgr::getIndentOffset_Tx2x;
 		break;
 	case 2:
@@ -171,17 +171,17 @@ void CLayoutMgr::SetLayoutInfo(
 		break;
 	}
 
-	//‹å“Ç“_‚Ô‚ç‰º‚°•¶š	// 2009.08.07 ryoji
-	//refType.m_szKinsokuKuto ¨ m_pszKinsokuKuto_1
+	//å¥èª­ç‚¹ã¶ã‚‰ä¸‹ã’æ–‡å­—	// 2009.08.07 ryoji
+	//refType.m_szKinsokuKuto â†’ m_pszKinsokuKuto_1
 	m_pszKinsokuKuto_1.clear();
-	if(refType.m_bKinsokuKuto){	// 2009.08.06 ryoji m_bKinsokuKuto‚ÅU‚è•ª‚¯‚é(Fix)
+	if(refType.m_bKinsokuKuto){	// 2009.08.06 ryoji m_bKinsokuKutoã§æŒ¯ã‚Šåˆ†ã‘ã‚‹(Fix)
 		for( const wchar_t* p = refType.m_szKinsokuKuto; *p; p++ ){
 			m_pszKinsokuKuto_1.push_back_unique(*p);
 		}
 	}
 
-	//s“ª‹Ö‘¥•¶š
-	//refType.m_szKinsokuHead ¨ (‹å“Ç“_ˆÈŠO) m_pszKinsokuHead_1
+	//è¡Œé ­ç¦å‰‡æ–‡å­—
+	//refType.m_szKinsokuHead â†’ (å¥èª­ç‚¹ä»¥å¤–) m_pszKinsokuHead_1
 	m_pszKinsokuHead_1.clear();
 	for( const wchar_t* p = refType.m_szKinsokuHead; *p; p++ ){
 		if(m_pszKinsokuKuto_1.exist(*p)){
@@ -192,14 +192,14 @@ void CLayoutMgr::SetLayoutInfo(
 		}
 	}
 
-	//s––‹Ö‘¥•¶š
-	//refType.m_szKinsokuTail ¨ m_pszKinsokuTail_1
+	//è¡Œæœ«ç¦å‰‡æ–‡å­—
+	//refType.m_szKinsokuTail â†’ m_pszKinsokuTail_1
 	m_pszKinsokuTail_1.clear();
 	for( const wchar_t* p = refType.m_szKinsokuTail; *p; p++ ){
 		m_pszKinsokuTail_1.push_back_unique(*p);
 	}
 
-	//ƒŒƒCƒAƒEƒg
+	//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
 	if( bDoLayout ){
 		_DoLayout(bBlockingHook);
 	}
@@ -209,9 +209,9 @@ void CLayoutMgr::SetLayoutInfo(
 
 
 /*!
-	@brief w’è‚³‚ê‚½•¨—s‚ÌƒŒƒCƒAƒEƒgî•ñ‚ğæ“¾
+	@brief æŒ‡å®šã•ã‚ŒãŸç‰©ç†è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã‚’å–å¾—
 
-	@param nLineNum [in] •¨—s”Ô† (0`)
+	@param nLineNum [in] ç‰©ç†è¡Œç•ªå· (0ï½)
 */
 const CLayout* CLayoutMgr::SearchLineByLayoutY(
 	CLayoutInt nLineLayout
@@ -225,14 +225,14 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 		return NULL;
 	}
 
-	//	Mar. 19, 2003 Moca nLineNum‚ª•‰‚Ìê‡‚Ìƒ`ƒFƒbƒN‚ğ’Ç‰Á
+	//	Mar. 19, 2003 Moca nLineNumãŒè² ã®å ´åˆã®ãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
 	if( CLayoutInt(0) > nLineNum || nLineNum >= m_nLines ){
 		if( CLayoutInt(0) > nLineNum ){
 			DEBUG_TRACE( _T("CLayoutMgr::SearchLineByLayoutY() nLineNum = %d\n"), nLineNum );
 		}
 		return NULL;
 	}
-//	/*+++++++ ’á‘¬”Å +++++++++*/
+//	/*+++++++ ä½é€Ÿç‰ˆ +++++++++*/
 //	if( nLineNum < (m_nLines / 2) ){
 //		nCount = 0;
 //		pLayout = m_pLayoutTop;
@@ -260,8 +260,8 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 //	}
 
 
-	/*+++++++‚í‚¸‚©‚É‚‘¬”Å+++++++*/
-	// 2004.03.28 Moca m_pLayoutPrevRefer‚æ‚èATop,Bot‚Ì‚Ù‚¤‚ª‹ß‚¢ê‡‚ÍA‚»‚¿‚ç‚ğ—˜—p‚·‚é
+	/*+++++++ã‚ãšã‹ã«é«˜é€Ÿç‰ˆ+++++++*/
+	// 2004.03.28 Moca m_pLayoutPrevReferã‚ˆã‚Šã€Top,Botã®ã»ã†ãŒè¿‘ã„å ´åˆã¯ã€ãã¡ã‚‰ã‚’åˆ©ç”¨ã™ã‚‹
 	CLayoutInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLineNum );
 	if( m_pLayoutPrevRefer == NULL
 	  || nLineNum < nPrevToLineNumDiff
@@ -327,7 +327,7 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 }
 
 
-//@@@ 2002.09.23 YAZAKI CLayout*‚ğì¬‚·‚é‚Æ‚±‚ë‚Í•ª—£‚µ‚ÄAInsertLineNext()‚Æ‹¤’Ê‰»
+//@@@ 2002.09.23 YAZAKI CLayout*ã‚’ä½œæˆã™ã‚‹ã¨ã“ã‚ã¯åˆ†é›¢ã—ã¦ã€InsertLineNext()ã¨å…±é€šåŒ–
 void CLayoutMgr::AddLineBottom( CLayout* pLayout )
 {
 	if(	CLayoutInt(0) == m_nLines ){
@@ -343,32 +343,32 @@ void CLayoutMgr::AddLineBottom( CLayout* pLayout )
 	return;
 }
 
-//@@@ 2002.09.23 YAZAKI CLayout*‚ğì¬‚·‚é‚Æ‚±‚ë‚Í•ª—£‚µ‚ÄAAddLineBottom()‚Æ‹¤’Ê‰»
+//@@@ 2002.09.23 YAZAKI CLayout*ã‚’ä½œæˆã™ã‚‹ã¨ã“ã‚ã¯åˆ†é›¢ã—ã¦ã€AddLineBottom()ã¨å…±é€šåŒ–
 CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 {
 	CLayout* pLayoutNext;
 
 	if(	CLayoutInt(0) == m_nLines ){
-		/* ‰ */
+		/* åˆ */
 		m_pLayoutBot = m_pLayoutTop = pLayout;
 		m_pLayoutTop->m_pPrev = NULL;
 		m_pLayoutTop->m_pNext = NULL;
 	}
 	else if( NULL == pLayoutPrev ){
-		/* æ“ª‚É‘}“ü */
+		/* å…ˆé ­ã«æŒ¿å…¥ */
 		m_pLayoutTop->m_pPrev = pLayout;
 		pLayout->m_pPrev = NULL;
 		pLayout->m_pNext = m_pLayoutTop;
 		m_pLayoutTop = pLayout;
 	}else
 	if( NULL == pLayoutPrev->GetNextLayout() ){
-		/* ÅŒã‚É‘}“ü */
+		/* æœ€å¾Œã«æŒ¿å…¥ */
 		m_pLayoutBot->m_pNext = pLayout;
 		pLayout->m_pPrev = m_pLayoutBot;
 		pLayout->m_pNext = NULL;
 		m_pLayoutBot = pLayout;
 	}else{
-		/* “r’†‚É‘}“ü */
+		/* é€”ä¸­ã«æŒ¿å…¥ */
 		pLayoutNext = pLayoutPrev->GetNextLayout();
 		pLayoutPrev->m_pNext = pLayout;
 		pLayoutNext->m_pPrev = pLayout;
@@ -379,9 +379,9 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 	return pLayout;
 }
 
-/* CLayout‚ğì¬‚·‚é
+/* CLayoutã‚’ä½œæˆã™ã‚‹
 	@@@ 2002.09.23 YAZAKI
-	@date 2009.08.28 nasukoji	ƒŒƒCƒAƒEƒg’·‚ğˆø”‚É’Ç‰Á
+	@date 2009.08.28 nasukoji	ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆé•·ã‚’å¼•æ•°ã«è¿½åŠ 
 */
 CLayout* CLayoutMgr::CreateLayout(
 	CDocLine*		pCDocLine,
@@ -403,22 +403,22 @@ CLayout* CLayoutMgr::CreateLayout(
 	);
 
 	if( EOL_NONE == pCDocLine->GetEol() ){
-		pLayout->m_cEol.SetType( EOL_NONE );/* ‰üsƒR[ƒh‚Ìí—Ş */
+		pLayout->m_cEol.SetType( EOL_NONE );/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡ */
 	}else{
 		if( pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() >
 			pCDocLine->GetLengthWithEOL() - pCDocLine->GetEol().GetLen()
 		){
-			pLayout->m_cEol = pCDocLine->GetEol();/* ‰üsƒR[ƒh‚Ìí—Ş */
+			pLayout->m_cEol = pCDocLine->GetEol();/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡ */
 		}else{
-			pLayout->m_cEol = EOL_NONE;/* ‰üsƒR[ƒh‚Ìí—Ş */
+			pLayout->m_cEol = EOL_NONE;/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡ */
 		}
 	}
 
-	// 2009.08.28 nasukoji	uÜ‚è•Ô‚³‚È‚¢v‘I‘ğ‚Ì‚İƒŒƒCƒAƒEƒg’·‚ğ‹L‰¯‚·‚é
-	// uÜ‚è•Ô‚³‚È‚¢vˆÈŠO‚ÅŒvZ‚µ‚È‚¢‚Ì‚ÍƒpƒtƒH[ƒ}ƒ“ƒX’á‰º‚ğ–h‚®–Ú“I‚È‚Ì‚ÅA
-	// ƒpƒtƒH[ƒ}ƒ“ƒX‚Ì’á‰º‚ª‹C‚É‚È‚ç‚È‚¢’ö‚È‚ç‘S‚Ä‚ÌÜ‚è•Ô‚µ•û–@‚ÅŒvZ‚·‚é
-	// ‚æ‚¤‚É‚µ‚Ä‚à—Ç‚¢‚Æv‚¤B
-	// i‚»‚Ìê‡CLayoutMgr::CalculateTextWidth()‚ÌŒÄ‚Ño‚µ‰ÓŠ‚ğƒ`ƒFƒbƒNj
+	// 2009.08.28 nasukoji	ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€é¸æŠæ™‚ã®ã¿ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆé•·ã‚’è¨˜æ†¶ã™ã‚‹
+	// ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€ä»¥å¤–ã§è¨ˆç®—ã—ãªã„ã®ã¯ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ä½ä¸‹ã‚’é˜²ãç›®çš„ãªã®ã§ã€
+	// ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã®ä½ä¸‹ãŒæ°—ã«ãªã‚‰ãªã„ç¨‹ãªã‚‰å…¨ã¦ã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã§è¨ˆç®—ã™ã‚‹
+	// ã‚ˆã†ã«ã—ã¦ã‚‚è‰¯ã„ã¨æ€ã†ã€‚
+	// ï¼ˆãã®å ´åˆCLayoutMgr::CalculateTextWidth()ã®å‘¼ã³å‡ºã—ç®‡æ‰€ã‚’ãƒã‚§ãƒƒã‚¯ï¼‰
 	pLayout->SetLayoutWidth( ( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ) ? nPosX : CLayoutInt(0) );
 
 	return pLayout;
@@ -426,11 +426,11 @@ CLayout* CLayoutMgr::CreateLayout(
 
 
 /*
-|| w’è‚³‚ê‚½•¨—s‚Ìƒf[ƒ^‚Ö‚Ìƒ|ƒCƒ“ƒ^‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· Ver0
+|| æŒ‡å®šã•ã‚ŒãŸç‰©ç†è¡Œã®ãƒ‡ãƒ¼ã‚¿ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã¨ãã®é•·ã•ã‚’è¿”ã™ Ver0
 
-	@date 2002/2/10 aroka CMemory•ÏX
+	@date 2002/2/10 aroka CMemoryå¤‰æ›´
 */
-const wchar_t* CLayoutMgr::GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const //#####‚¢‚ç‚ñ‚â‚ë
+const wchar_t* CLayoutMgr::GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const //#####ã„ã‚‰ã‚“ã‚„ã‚
 {
 	const CLayout* pLayout;
 	if( NULL == ( pLayout = SearchLineByLayoutY( nLine )	) ){
@@ -440,8 +440,8 @@ const wchar_t* CLayoutMgr::GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) 
 	return pLayout->GetDocLineRef()->GetPtr() + pLayout->GetLogicOffset();
 }
 
-/*!	w’è‚³‚ê‚½•¨—s‚Ìƒf[ƒ^‚Ö‚Ìƒ|ƒCƒ“ƒ^‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· Ver1
-	@date 2002/03/24 YAZAKI GetLineStr( int nLine, int* pnLineLen )‚Æ“¯‚¶“®ì‚É•ÏXB
+/*!	æŒ‡å®šã•ã‚ŒãŸç‰©ç†è¡Œã®ãƒ‡ãƒ¼ã‚¿ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã¨ãã®é•·ã•ã‚’è¿”ã™ Ver1
+	@date 2002/03/24 YAZAKI GetLineStr( int nLine, int* pnLineLen )ã¨åŒã˜å‹•ä½œã«å¤‰æ›´ã€‚
 */
 const wchar_t* CLayoutMgr::GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, const CLayout** ppcLayoutDes ) const
 {
@@ -453,7 +453,7 @@ const wchar_t* CLayoutMgr::GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, c
 }
 
 /*
-|| w’è‚³‚ê‚½ˆÊ’u‚ªƒŒƒCƒAƒEƒgs‚Ì“r’†‚Ìs––‚©‚Ç‚¤‚©’²‚×‚é
+|| æŒ‡å®šã•ã‚ŒãŸä½ç½®ãŒãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®é€”ä¸­ã®è¡Œæœ«ã‹ã©ã†ã‹èª¿ã¹ã‚‹
 
 	@date 2002/4/27 MIK
 */
@@ -469,23 +469,23 @@ bool CLayoutMgr::IsEndOfLine(
 	}
 
 	if( EOL_NONE == pLayout->GetLayoutEol().GetType() )
-	{	/* ‚±‚Ìs‚É‰üs‚Í‚È‚¢ */
-		/* ‚±‚Ìs‚ÌÅŒã‚©H */
-		if( ptLinePos.x == (Int)pLayout->GetLengthWithEOL() ) return true; //$$ ’PˆÊ¬İ
+	{	/* ã“ã®è¡Œã«æ”¹è¡Œã¯ãªã„ */
+		/* ã“ã®è¡Œã®æœ€å¾Œã‹ï¼Ÿ */
+		if( ptLinePos.x == (Int)pLayout->GetLengthWithEOL() ) return true; //$$ å˜ä½æ··åœ¨
 	}
 
 	return false;
 }
 
-/*!	@brief ƒtƒ@ƒCƒ‹––”ö‚ÌƒŒƒCƒAƒEƒgˆÊ’u‚ğæ“¾‚·‚é
+/*!	@brief ãƒ•ã‚¡ã‚¤ãƒ«æœ«å°¾ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã‚’å–å¾—ã™ã‚‹
 
-	ƒtƒ@ƒCƒ‹––”ö‚Ü‚Å‘I‘ğ‚·‚éê‡‚É³Šm‚ÈˆÊ’uî•ñ‚ğ—^‚¦‚é‚½‚ß
+	ãƒ•ã‚¡ã‚¤ãƒ«æœ«å°¾ã¾ã§é¸æŠã™ã‚‹å ´åˆã«æ­£ç¢ºãªä½ç½®æƒ…å ±ã‚’ä¸ãˆã‚‹ãŸã‚
 
-	Šù‘¶‚ÌŠÖ”‚Å‚Í•¨—s‚©‚çƒŒƒCƒAƒEƒgˆÊ’u‚ğ•ÏŠ·‚·‚é•K—v‚ª‚ ‚èC
-	ˆ—‚É–³‘Ê‚ª‘½‚¢‚½‚ßCê—pŠÖ”‚ğì¬
+	æ—¢å­˜ã®é–¢æ•°ã§ã¯ç‰©ç†è¡Œã‹ã‚‰ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã‚’å¤‰æ›ã™ã‚‹å¿…è¦ãŒã‚ã‚Šï¼Œ
+	å‡¦ç†ã«ç„¡é§„ãŒå¤šã„ãŸã‚ï¼Œå°‚ç”¨é–¢æ•°ã‚’ä½œæˆ
 	
 	@date 2006.07.29 genta
-	@date 2006.10.01 Moca ƒƒ“ƒo‚Å•Û‚·‚é‚æ‚¤‚ÉBƒf[ƒ^•ÏX‚É‚ÍA_DoLayout/DoLayout_Range‚Å–³Œø‚É‚·‚éB
+	@date 2006.10.01 Moca ãƒ¡ãƒ³ãƒã§ä¿æŒã™ã‚‹ã‚ˆã†ã«ã€‚ãƒ‡ãƒ¼ã‚¿å¤‰æ›´æ™‚ã«ã¯ã€_DoLayout/DoLayout_Rangeã§ç„¡åŠ¹ã«ã™ã‚‹ã€‚
 */
 void CLayoutMgr::GetEndLayoutPos(
 	CLayoutPoint* ptLayoutEnd //[out]
@@ -498,7 +498,7 @@ void CLayoutMgr::GetEndLayoutPos(
 	}
 
 	if( CLayoutInt(0) == m_nLines || m_pLayoutBot == NULL ){
-		// ƒf[ƒ^‚ª‹ó
+		// ãƒ‡ãƒ¼ã‚¿ãŒç©º
 		ptLayoutEnd->x = CLayoutInt(0);
 		ptLayoutEnd->y = CLayoutInt(0);
 		m_nEOFColumn = ptLayoutEnd->x;
@@ -508,7 +508,7 @@ void CLayoutMgr::GetEndLayoutPos(
 
 	CLayout *btm = m_pLayoutBot;
 	if( btm->m_cEol != EOL_NONE ){
-		//	––”ö‚É‰üs‚ª‚ ‚é
+		//	æœ«å°¾ã«æ”¹è¡ŒãŒã‚ã‚‹
 		ptLayoutEnd->Set(CLayoutInt(0), GetLineCount());
 	}
 	else {
@@ -518,8 +518,8 @@ void CLayoutMgr::GetEndLayoutPos(
 			it.addDelta();
 		}
 		ptLayoutEnd->Set(it.getColumn(), GetLineCount() - CLayoutInt(1));
-		// [EOF]‚Ì‚İÜ‚è•Ô‚·‚Ì‚Í‚â‚ß‚é	// 2009.02.17 ryoji
-		//// 2006.10.01 Moca Start [EOF]‚Ì‚İ‚ÌƒŒƒCƒAƒEƒgsˆ—‚ª”²‚¯‚Ä‚¢‚½ƒoƒO‚ğC³
+		// [EOF]ã®ã¿æŠ˜ã‚Šè¿”ã™ã®ã¯ã‚„ã‚ã‚‹	// 2009.02.17 ryoji
+		//// 2006.10.01 Moca Start [EOF]ã®ã¿ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œå‡¦ç†ãŒæŠœã‘ã¦ã„ãŸãƒã‚°ã‚’ä¿®æ­£
 		//if( GetMaxLineKetas() <= ptLayoutEnd->GetX2() ){
 		//	ptLayoutEnd->SetX(CLayoutInt(0));
 		//	ptLayoutEnd->y++;
@@ -537,8 +537,8 @@ void CLayoutMgr::GetEndLayoutPos(
 
 
 
-/* ˜_—s‚Ìw’è”ÍˆÍ‚ÉŠY“–‚·‚éƒŒƒCƒAƒEƒgî•ñ‚ğíœ‚µ‚Ä */
-/* íœ‚µ‚½”ÍˆÍ‚Ì’¼‘O‚ÌƒŒƒCƒAƒEƒgî•ñ‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚· */
+/* è«–ç†è¡Œã®æŒ‡å®šç¯„å›²ã«è©²å½“ã™ã‚‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã‚’å‰Šé™¤ã—ã¦ */
+/* å‰Šé™¤ã—ãŸç¯„å›²ã®ç›´å‰ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™ */
 CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	CLayout*	pLayoutInThisArea,
 	CLayoutInt	nLineOf_pLayoutInThisArea,
@@ -553,7 +553,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	CLayout* pLayoutNext;
 
 	*pnDeleteLines = CLayoutInt(0);
-	if( CLayoutInt(0) == m_nLines){	/* ‘S•¨—s” */
+	if( CLayoutInt(0) == m_nLines){	/* å…¨ç‰©ç†è¡Œæ•° */
 		return NULL;
 	}
 	if( NULL == pLayoutInThisArea ){
@@ -565,7 +565,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
 
 
-	/* ”ÍˆÍ“àæ“ª‚ÉŠY“–‚·‚éƒŒƒCƒAƒEƒgî•ñ‚ğƒT[ƒ` */
+	/* ç¯„å›²å†…å…ˆé ­ã«è©²å½“ã™ã‚‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã‚’ã‚µãƒ¼ãƒ */
 	pLayoutWork = pLayoutInThisArea->GetPrevLayout();
 	while( NULL != pLayoutWork && nLineFrom <= pLayoutWork->GetLogicLineNo()){
 		pLayoutWork = pLayoutWork->GetPrevLayout();
@@ -584,7 +584,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 		pLayoutNext = pLayout->GetNextLayout();
 		if( NULL == pLayoutWork ){
-			/* æ“ªs‚Ìˆ— */
+			/* å…ˆé ­è¡Œã®å‡¦ç† */
 			m_pLayoutTop = pLayout->GetNextLayout();
 			if( NULL != pLayout->GetNextLayout() ){
 				pLayout->m_pNext->m_pPrev = NULL;
@@ -596,7 +596,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			}
 		}
 //		if( m_pLayoutPrevRefer == pLayout ){
-//			// 1999.12.22 ‘O‚É‚¸‚ç‚·‚¾‚¯‚Å‚æ‚¢‚Ì‚Å‚Í
+//			// 1999.12.22 å‰ã«ãšã‚‰ã™ã ã‘ã§ã‚ˆã„ã®ã§ã¯
 //			m_pLayoutPrevRefer = pLayout->GetPrevLayout();
 //			--m_nPrevReferLine;
 //		}
@@ -609,12 +609,12 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 
 		if( m_pLayoutPrevRefer == pLayout ){
-			DEBUG_TRACE( _T("ƒoƒOƒoƒO\n") );
+			DEBUG_TRACE( _T("ãƒã‚°ãƒã‚°\n") );
 		}
 
 		delete pLayout;
 
-		m_nLines--;	/* ‘S•¨—s” */
+		m_nLines--;	/* å…¨ç‰©ç†è¡Œæ•° */
 		if( NULL == pLayoutNext ){
 			m_pLayoutBot = pLayoutWork;
 		}
@@ -628,9 +628,9 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 
 
 
-/* w’ès‚æ‚èŒã‚Ìs‚ÌƒŒƒCƒAƒEƒgî•ñ‚É‚Â‚¢‚ÄA˜_—s”Ô†‚ğw’ès”‚¾‚¯ƒVƒtƒg‚·‚é */
-/* ˜_—s‚ªíœ‚³‚ê‚½ê‡‚Í‚O‚æ‚è¬‚³‚¢s” */
-/* ˜_—s‚ª‘}“ü‚³‚ê‚½ê‡‚Í‚O‚æ‚è‘å‚«‚¢s” */
+/* æŒ‡å®šè¡Œã‚ˆã‚Šå¾Œã®è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã«ã¤ã„ã¦ã€è«–ç†è¡Œç•ªå·ã‚’æŒ‡å®šè¡Œæ•°ã ã‘ã‚·ãƒ•ãƒˆã™ã‚‹ */
+/* è«–ç†è¡ŒãŒå‰Šé™¤ã•ã‚ŒãŸå ´åˆã¯ï¼ã‚ˆã‚Šå°ã•ã„è¡Œæ•° */
+/* è«–ç†è¡ŒãŒæŒ¿å…¥ã•ã‚ŒãŸå ´åˆã¯ï¼ã‚ˆã‚Šå¤§ãã„è¡Œæ•° */
 void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, CLogicInt nShiftLines )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::ShiftLogicalLineNum" );
@@ -644,9 +644,9 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, CLogicInt nShiftLine
 	}else{
 		pLayout = pLayoutPrev->GetNextLayout();
 	}
-	/* ƒŒƒCƒAƒEƒgî•ñ‘S‘Ì‚ğXV‚·‚é(‚È‚ÈA‚È‚ñ‚Æ!!!) */
+	/* ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±å…¨ä½“ã‚’æ›´æ–°ã™ã‚‹(ãªãªã€ãªã‚“ã¨!!!) */
 	while( NULL != pLayout ){
-		pLayout->OffsetLogicLineNo(nShiftLines);	/* ‘Î‰‚·‚é˜_—s”Ô† */
+		pLayout->OffsetLogicLineNo(nShiftLines);	/* å¯¾å¿œã™ã‚‹è«–ç†è¡Œç•ªå· */
 		pLayout = pLayout->GetNextLayout();
 	}
 	return;
@@ -679,7 +679,7 @@ bool CLayoutMgr::ChangeLayoutParam(
 
 
 
-/* Œ»İˆÊ’u‚Ì’PŒê‚Ì”ÍˆÍ‚ğ’²‚×‚é */
+/* ç¾åœ¨ä½ç½®ã®å˜èªã®ç¯„å›²ã‚’èª¿ã¹ã‚‹ */
 bool CLayoutMgr::WhereCurrentWord(
 	CLayoutInt		nLineNum,
 	CLogicInt		nIdx,
@@ -693,7 +693,7 @@ bool CLayoutMgr::WhereCurrentWord(
 		return false;
 	}
 
-	// Œ»İˆÊ’u‚Ì’PŒê‚Ì”ÍˆÍ‚ğ’²‚×‚é -> ƒƒWƒbƒN’PˆÊpSelect, pcmemWord, pcmemWordLeft
+	// ç¾åœ¨ä½ç½®ã®å˜èªã®ç¯„å›²ã‚’èª¿ã¹ã‚‹ -> ãƒ­ã‚¸ãƒƒã‚¯å˜ä½pSelect, pcmemWord, pcmemWordLeft
 	CLogicInt nFromX;
 	CLogicInt nToX;
 	bool nRetCode = CSearchAgent(m_pcDocLineMgr).WhereCurrentWord(
@@ -706,7 +706,7 @@ bool CLayoutMgr::WhereCurrentWord(
 	);
 
 	if( nRetCode ){
-		/* ˜_—ˆÊ’u¨ƒŒƒCƒAƒEƒgˆÊ’u•ÏŠ· */
+		/* è«–ç†ä½ç½®â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®å¤‰æ› */
 		CLayoutPoint ptFrom;
 		LogicToLayout( CLogicPoint(nFromX, pLayout->GetLogicLineNo()), &ptFrom, nLineNum );
 		pSelect->SetFrom(ptFrom);
@@ -723,7 +723,7 @@ bool CLayoutMgr::WhereCurrentWord(
 
 
 
-/* Œ»İˆÊ’u‚Ì¶‰E‚Ì’PŒê‚Ìæ“ªˆÊ’u‚ğ’²‚×‚é */
+/* ç¾åœ¨ä½ç½®ã®å·¦å³ã®å˜èªã®å…ˆé ­ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 int CLayoutMgr::PrevOrNextWord(
 	CLayoutInt		nLineNum,
 	CLogicInt		nIdx,
@@ -737,7 +737,7 @@ int CLayoutMgr::PrevOrNextWord(
 		return FALSE;
 	}
 
-	// Œ»İˆÊ’u‚Ì¶‰E‚Ì’PŒê‚Ìæ“ªˆÊ’u‚ğ’²‚×‚é
+	// ç¾åœ¨ä½ç½®ã®å·¦å³ã®å˜èªã®å…ˆé ­ä½ç½®ã‚’èª¿ã¹ã‚‹
 	CLogicInt	nPosNew;
 	int			nRetCode = CSearchAgent(m_pcDocLineMgr).PrevOrNextWord(
 		pLayout->GetLogicLineNo(),
@@ -748,7 +748,7 @@ int CLayoutMgr::PrevOrNextWord(
 	);
 
 	if( nRetCode ){
-		/* ˜_—ˆÊ’u¨ƒŒƒCƒAƒEƒgˆÊ’u•ÏŠ· */
+		/* è«–ç†ä½ç½®â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®å¤‰æ› */
 		LogicToLayout(
 			CLogicPoint(nPosNew,pLayout->GetLogicLineNo()),
 			pptLayoutNew,
@@ -762,15 +762,15 @@ int CLayoutMgr::PrevOrNextWord(
 
 
 
-//! ’PŒêŒŸõ
+//! å˜èªæ¤œç´¢
 /*
-	@retval 0 Œ©‚Â‚©‚ç‚È‚¢
+	@retval 0 è¦‹ã¤ã‹ã‚‰ãªã„
 */
 int CLayoutMgr::SearchWord(
-	CLayoutInt				nLine,				//!< [in] ŒŸõŠJnƒŒƒCƒAƒEƒgs
-	CLogicInt				nIdx,				//!< [in] ŒŸõŠJnƒf[ƒ^ˆÊ’u
-	ESearchDirection		eSearchDirection,	//!< [in] ŒŸõ•ûŒü
-	CLayoutRange*			pMatchRange,		//!< [out] ƒ}ƒbƒ`ƒŒƒCƒAƒEƒg”ÍˆÍ
+	CLayoutInt				nLine,				//!< [in] æ¤œç´¢é–‹å§‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ
+	CLogicInt				nIdx,				//!< [in] æ¤œç´¢é–‹å§‹ãƒ‡ãƒ¼ã‚¿ä½ç½®
+	ESearchDirection		eSearchDirection,	//!< [in] æ¤œç´¢æ–¹å‘
+	CLayoutRange*			pMatchRange,		//!< [out] ãƒãƒƒãƒãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆç¯„å›²
 	const CSearchStringPattern&	pattern
 )
 {
@@ -781,7 +781,7 @@ int CLayoutMgr::SearchWord(
 		return FALSE;
 	}
 
-	// ’PŒêŒŸõ -> cLogicRange (ƒf[ƒ^ˆÊ’u)
+	// å˜èªæ¤œç´¢ -> cLogicRange (ãƒ‡ãƒ¼ã‚¿ä½ç½®)
 	CLogicRange cLogicRange;
 	nRetCode = CSearchAgent(m_pcDocLineMgr).SearchWord(
 		CLogicPoint(pLayout->GetLogicOffset() + nIdx, pLayout->GetLogicLineNo()),
@@ -790,7 +790,7 @@ int CLayoutMgr::SearchWord(
 		pattern
 	);
 
-	// ˜_—ˆÊ’u¨ƒŒƒCƒAƒEƒgˆÊ’u•ÏŠ·
+	// è«–ç†ä½ç½®â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®å¤‰æ›
 	// cLogicRange -> pMatchRange
 	if( nRetCode ){
 		LogicToLayout(
@@ -806,21 +806,21 @@ int CLayoutMgr::SearchWord(
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ’PˆÊ‚Ì•ÏŠ·                           //
+//                        å˜ä½ã®å¤‰æ›                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
-	@brief ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ· •¨—¨ƒŒƒCƒAƒEƒg
+	@brief ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ› ç‰©ç†â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
 
-	•¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-	¨ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+	ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+	â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 
-	@param[in]  ptLogic   ƒƒWƒbƒNˆÊ’u
-	@param[out] pptLayout ƒŒƒCƒAƒEƒgˆÊ’u
-	@param[in]  nLineHint ƒŒƒCƒAƒEƒgY’l‚Ìƒqƒ“ƒgB‹‚ß‚é’l‚É‹ß‚¢’l‚ğ“n‚·‚Æ‚‘¬‚ÉŒŸõ‚Å‚«‚éB
+	@param[in]  ptLogic   ãƒ­ã‚¸ãƒƒã‚¯ä½ç½®
+	@param[out] pptLayout ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®
+	@param[in]  nLineHint ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆYå€¤ã®ãƒ’ãƒ³ãƒˆã€‚æ±‚ã‚ã‚‹å€¤ã«è¿‘ã„å€¤ã‚’æ¸¡ã™ã¨é«˜é€Ÿã«æ¤œç´¢ã§ãã‚‹ã€‚
 
-	@date 2004.06.16 Moca ƒCƒ“ƒfƒ“ƒg•\¦‚ÌÛ‚ÌTAB‚ğŠÜ‚Şs‚ÌÀ•W‚¸‚êC³
-	@date 2007.09.06 kobake ŠÖ”–¼‚ğCaretPos_Phys2Log‚©‚çLogicToLayout‚É•ÏX
+	@date 2004.06.16 Moca ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆè¡¨ç¤ºã®éš›ã®TABã‚’å«ã‚€è¡Œã®åº§æ¨™ãšã‚Œä¿®æ­£
+	@date 2007.09.06 kobake é–¢æ•°åã‚’CaretPos_Phys2Logã‹ã‚‰LogicToLayoutã«å¤‰æ›´
 */
 void CLayoutMgr::LogicToLayout(
 	const CLogicPoint&	ptLogic,
@@ -830,21 +830,21 @@ void CLayoutMgr::LogicToLayout(
 {
 	pptLayout->Clear();
 
-	if(GetLineCount()==0)return; //•ÏŠ·•s‰Â
+	if(GetLineCount()==0)return; //å¤‰æ›ä¸å¯
 
-	// ƒT[ƒ`ŠJn’n“_ -> pLayout, nCaretPosX, nCaretPosY
+	// ã‚µãƒ¼ãƒé–‹å§‹åœ°ç‚¹ -> pLayout, nCaretPosX, nCaretPosY
 	CLayoutInt		nCaretPosX = CLayoutInt(0);
 	CLayoutInt		nCaretPosY;
 	const CLayout*	pLayout;
-	// 2013.05.15 ƒqƒ“ƒgA‚ ‚è‚È‚µ‚Ìˆ—‚ğ“‡
+	// 2013.05.15 ãƒ’ãƒ³ãƒˆã€ã‚ã‚Šãªã—ã®å‡¦ç†ã‚’çµ±åˆ
 	{
 		nLineHint = t_min(GetLineCount() - 1, nLineHint);
 		nCaretPosY = t_max(CLayoutInt(ptLogic.y), nLineHint);
 
-		// 2013.05.12 m_pLayoutPrevRefer‚ğŒ©‚é
+		// 2013.05.12 m_pLayoutPrevReferã‚’è¦‹ã‚‹
 		if( nCaretPosY <= m_nPrevReferLine && m_pLayoutPrevRefer
 			&& m_pLayoutPrevRefer->GetLogicLineNo() <= ptLogic.y ){
-			// ƒqƒ“ƒg‚æ‚èŒ»İˆÊ’u‚Ì‚Ù‚¤‚ªŒã‚ë‚©“¯‚¶‚®‚ç‚¢‚Å‹ß‚¢
+			// ãƒ’ãƒ³ãƒˆã‚ˆã‚Šç¾åœ¨ä½ç½®ã®ã»ã†ãŒå¾Œã‚ã‹åŒã˜ãã‚‰ã„ã§è¿‘ã„
 			nCaretPosY = CLayoutInt(ptLogic.y - m_pLayoutPrevRefer->GetLogicLineNo()) + m_nPrevReferLine;
 			pLayout = SearchLineByLayoutY(nCaretPosY);
 		}else{
@@ -855,13 +855,13 @@ void CLayoutMgr::LogicToLayout(
 			return;
 		}
 
-		//ƒƒWƒbƒNY‚ª‚Å‚©‚·‚¬‚éê‡‚ÍAˆê’v‚·‚é‚Ü‚ÅƒfƒNƒŠƒƒ“ƒg (
+		//ãƒ­ã‚¸ãƒƒã‚¯YãŒã§ã‹ã™ãã‚‹å ´åˆã¯ã€ä¸€è‡´ã™ã‚‹ã¾ã§ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆ (
 		while(pLayout->GetLogicLineNo() > ptLogic.GetY2()){
 			pLayout = pLayout->GetPrevLayout();
 			nCaretPosY--;
 		}
 
-		//ƒƒWƒbƒNY‚ª“¯‚¶‚ÅOffset‚ªs‚«‰ß‚¬‚Ä‚¢‚éê‡‚Í–ß‚é
+		//ãƒ­ã‚¸ãƒƒã‚¯YãŒåŒã˜ã§OffsetãŒè¡Œãéãã¦ã„ã‚‹å ´åˆã¯æˆ»ã‚‹
 		if(pLayout->GetLogicLineNo() == ptLogic.GetY2()){
 			while( pLayout && pLayout->GetPrevLayout() && pLayout->GetPrevLayout()->GetLogicLineNo() == ptLogic.GetY2()
 				&& ptLogic.x < pLayout->GetLogicOffset() ){
@@ -872,10 +872,10 @@ void CLayoutMgr::LogicToLayout(
 	}
 
 
-	//	Layout‚ğ‚P‚Â‚¸‚Âæ‚Éi‚ß‚È‚ª‚çptLogic.y‚ª•¨—s‚Éˆê’v‚·‚éLayout‚ğ’T‚·
+	//	Layoutã‚’ï¼‘ã¤ãšã¤å…ˆã«é€²ã‚ãªãŒã‚‰ptLogic.yãŒç‰©ç†è¡Œã«ä¸€è‡´ã™ã‚‹Layoutã‚’æ¢ã™
 	while( pLayout ){
 		if( ptLogic.GetY2() == pLayout->GetLogicLineNo() ){
-			// 2013.05.10 Moca ‚‘¬‰»
+			// 2013.05.10 Moca é«˜é€ŸåŒ–
 			const CLayout* pLayoutNext = pLayout->GetNextLayout();
 			if( pLayoutNext && ptLogic.GetY2() ==pLayoutNext->GetLogicLineNo()
 					&& pLayoutNext->GetLogicOffset() <= ptLogic.x ){
@@ -884,11 +884,11 @@ void CLayoutMgr::LogicToLayout(
 				continue;
 			}
 
-			//	2004.06.16 Moca ƒCƒ“ƒfƒ“ƒg•\¦‚ÌÛ‚ÉˆÊ’u‚ª‚¸‚ê‚é(TABˆÊ’u‚¸‚ê‚É‚æ‚é)
-			//	TAB•‚ğ³Šm‚ÉŒvZ‚·‚é‚É‚Í“–‰‚©‚çƒCƒ“ƒfƒ“ƒg•ª‚ğ‰Á‚¦‚Ä‚¨‚­•K—v‚ª‚ ‚éD
+			//	2004.06.16 Moca ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆè¡¨ç¤ºã®éš›ã«ä½ç½®ãŒãšã‚Œã‚‹(TABä½ç½®ãšã‚Œã«ã‚ˆã‚‹)
+			//	TABå¹…ã‚’æ­£ç¢ºã«è¨ˆç®—ã™ã‚‹ã«ã¯å½“åˆã‹ã‚‰ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆåˆ†ã‚’åŠ ãˆã¦ãŠãå¿…è¦ãŒã‚ã‚‹ï¼
 			nCaretPosX = pLayout->GetIndent();
 			const wchar_t*	pData;
-			pData = pLayout->GetDocLineRef()->GetPtr() + pLayout->GetLogicOffset(); // 2002/2/10 aroka CMemory•ÏX
+			pData = pLayout->GetDocLineRef()->GetPtr() + pLayout->GetLogicOffset(); // 2002/2/10 aroka CMemoryå¤‰æ›´
 			CLogicInt	nDataLen = (CLogicInt)pLayout->GetLengthWithEOL();
 
 			CLogicInt i;
@@ -897,12 +897,12 @@ void CLayoutMgr::LogicToLayout(
 					break;
 				}
 
-				//•¶šƒƒWƒbƒN• -> nCharChars
+				//æ–‡å­—ãƒ­ã‚¸ãƒƒã‚¯å¹… -> nCharChars
 				CLogicInt nCharChars = CNativeW::GetSizeOfChar( pData, nDataLen, i );
 				if( nCharChars == 0 )
 					nCharChars = CLogicInt(1);
 
-				//•¶šƒŒƒCƒAƒEƒg• -> nCharKetas
+				//æ–‡å­—ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå¹… -> nCharKetas
 				CLayoutInt nCharKetas;
 				if( pData[i] ==	WCODE::TAB || ( pData[i] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) ){
 					nCharKetas = GetActualTsvSpace( nCaretPosX, pData[i] );
@@ -910,47 +910,47 @@ void CLayoutMgr::LogicToLayout(
 				else{
 					nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
 				}
-//				if( nCharKetas == 0 )				// íœ ƒTƒƒQ[ƒgƒyƒA‘Îô	2008/7/5 Uchi
+//				if( nCharKetas == 0 )				// å‰Šé™¤ ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾ç­–	2008/7/5 Uchi
 //					nCharKetas = CLayoutInt(1);
 
-				//ƒŒƒCƒAƒEƒg‰ÁZ
+				//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåŠ ç®—
 				nCaretPosX += nCharKetas;
 
-				//ƒƒWƒbƒN‰ÁZ
+				//ãƒ­ã‚¸ãƒƒã‚¯åŠ ç®—
 				if( pData[i] ==	WCODE::TAB ){
 					nCharChars = CLogicInt(1);
 				}
 				i += nCharChars - CLogicInt(1);
 			}
 			if( i < nDataLen ){
-				//	ptLogic.x, ptLogic.y‚ª‚±‚Ìs‚Ì’†‚ÉŒ©‚Â‚©‚Á‚½‚çƒ‹[ƒv‘Å‚¿Ø‚è
+				//	ptLogic.x, ptLogic.yãŒã“ã®è¡Œã®ä¸­ã«è¦‹ã¤ã‹ã£ãŸã‚‰ãƒ«ãƒ¼ãƒ—æ‰“ã¡åˆ‡ã‚Š
 				break;
 			}
 
 			if( !pLayout->GetNextLayout() ){
-				//	“–ŠYˆÊ’u‚É’B‚µ‚Ä‚¢‚È‚­‚Ä‚àCƒŒƒCƒAƒEƒg––”ö‚È‚çƒf[ƒ^––”ö‚ÌƒŒƒCƒAƒEƒgˆÊ’u‚ğ•Ô‚·D
+				//	å½“è©²ä½ç½®ã«é”ã—ã¦ã„ãªãã¦ã‚‚ï¼Œãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæœ«å°¾ãªã‚‰ãƒ‡ãƒ¼ã‚¿æœ«å°¾ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã‚’è¿”ã™ï¼
 				nCaretPosX = pLayout->CalcLayoutWidth(*this) + CLayoutInt(pLayout->GetLayoutEol().GetLen()>0?1+m_nSpacing:0);
 				break;
 			}
 
 			if( ptLogic.y < pLayout->m_pNext->GetLogicLineNo() ){
-				//	Ÿ‚ÌLayout‚ª“–ŠY•¨—s‚ğ‰ß‚¬‚Ä‚µ‚Ü‚¤ê‡‚Íƒf[ƒ^––”ö‚ÌƒŒƒCƒAƒEƒgˆÊ’u‚ğ•Ô‚·D
+				//	æ¬¡ã®LayoutãŒå½“è©²ç‰©ç†è¡Œã‚’éãã¦ã—ã¾ã†å ´åˆã¯ãƒ‡ãƒ¼ã‚¿æœ«å°¾ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã‚’è¿”ã™ï¼
 				nCaretPosX = pLayout->CalcLayoutWidth(*this) + CLayoutInt(pLayout->GetLayoutEol().GetLen()>0?1+m_nSpacing:0);
 				break;
 			}
 		}
 		if( ptLogic.GetY2() < pLayout->GetLogicLineNo() ){
-			//	‚Ó‚Â‚¤‚Í‚±‚±‚É‚Í—ˆ‚È‚¢‚Æv‚¤‚ª... (genta)
-			//	Layout‚Ìw‚·•¨—s‚ª’T‚µ‚Ä‚¢‚és‚æ‚èæ‚ğw‚µ‚Ä‚¢‚½‚ç‘Å‚¿Ø‚è
+			//	ãµã¤ã†ã¯ã“ã“ã«ã¯æ¥ãªã„ã¨æ€ã†ãŒ... (genta)
+			//	Layoutã®æŒ‡ã™ç‰©ç†è¡ŒãŒæ¢ã—ã¦ã„ã‚‹è¡Œã‚ˆã‚Šå…ˆã‚’æŒ‡ã—ã¦ã„ãŸã‚‰æ‰“ã¡åˆ‡ã‚Š
 			break;
 		}
 
-		//	Ÿ‚Ìs‚Öi‚Ş
+		//	æ¬¡ã®è¡Œã¸é€²ã‚€
 		nCaretPosY++;
 		pLayout = pLayout->GetNextLayout();
 	}
 
-	//	2004.06.16 Moca ƒCƒ“ƒfƒ“ƒg•\¦‚ÌÛ‚ÌˆÊ’u‚¸‚êC³
+	//	2004.06.16 Moca ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆè¡¨ç¤ºã®éš›ã®ä½ç½®ãšã‚Œä¿®æ­£
 	pptLayout->Set(
 		pLayout ? nCaretPosX : CLayoutInt(0),
 		nCaretPosY
@@ -958,23 +958,23 @@ void CLayoutMgr::LogicToLayout(
 }
 
 /*!
-	@brief ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·  ƒŒƒCƒAƒEƒg¨•¨—
+	@brief ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆâ†’ç‰©ç†
 
-	ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
-	¨•¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
+	ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
+	â†’ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
 
-	@date 2007.09.06 kobake ŠÖ”–¼‚ğCaretPos_Log2Phys¨LayoutToLogic‚É•ÏX
+	@date 2007.09.06 kobake é–¢æ•°åã‚’CaretPos_Log2Physâ†’LayoutToLogicã«å¤‰æ›´
 */
 void CLayoutMgr::LayoutToLogicEx(
-	const CLayoutPoint&	ptLayout,	//!< [in]  ƒŒƒCƒAƒEƒgˆÊ’u
-	CLogicPointEx*		pptLogic	//!< [out] ƒƒWƒbƒNˆÊ’u
+	const CLayoutPoint&	ptLayout,	//!< [in]  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®
+	CLogicPointEx*		pptLogic	//!< [out] ãƒ­ã‚¸ãƒƒã‚¯ä½ç½®
 ) const
 {
 	pptLogic->Set(CLogicInt(0), CLogicInt(0));
 	pptLogic->ext = 0;
 	pptLogic->haba = m_nCharLayoutXPerKeta;
 	if( ptLayout.GetY2() > m_nLines ){
-		//2007.10.11 kobake Y’l‚ªŠÔˆá‚Á‚Ä‚¢‚½‚Ì‚ÅC³
+		//2007.10.11 kobake Yå€¤ãŒé–“é•ã£ã¦ã„ãŸã®ã§ä¿®æ­£
 		//pptLogic->Set(0, m_nLines);
 		pptLogic->Set(CLogicInt(0), m_pcDocLineMgr->GetLineCount());
 		return;
@@ -984,7 +984,7 @@ void CLayoutMgr::LayoutToLogicEx(
 	const wchar_t*	pData;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ‚x’l‚ÌŒˆ’è                           //
+	//                        ï¼¹å€¤ã®æ±ºå®š                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	BOOL			bEOF = FALSE;
 	CLayoutInt		nX;
@@ -1003,7 +1003,7 @@ void CLayoutMgr::LayoutToLogicEx(
 					return;
 				}
 				else{
-					pptLogic->y = m_pcDocLineMgr->GetLineCount() - 1; // 2002/2/10 aroka CDocLineMgr•ÏX
+					pptLogic->y = m_pcDocLineMgr->GetLineCount() - 1; // 2002/2/10 aroka CDocLineMgrå¤‰æ›´
 					bEOF = TRUE;
 					// nX = CLayoutInt(MAXLINEKETAS);
 					nX = pcLayout->GetIndent();
@@ -1012,7 +1012,7 @@ void CLayoutMgr::LayoutToLogicEx(
 				}
 			}
 		}
-		//2007.10.11 kobake Y’l‚ªŠÔˆá‚Á‚Ä‚¢‚½‚Ì‚ÅC³
+		//2007.10.11 kobake Yå€¤ãŒé–“é•ã£ã¦ã„ãŸã®ã§ä¿®æ­£
 		//pptLogic->Set(0, m_nLines);
 		pptLogic->Set(CLogicInt(0), m_pcDocLineMgr->GetLineCount());
 		return;
@@ -1023,7 +1023,7 @@ void CLayoutMgr::LayoutToLogicEx(
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ‚w’l‚ÌŒˆ’è                           //
+	//                        ï¼¸å€¤ã®æ±ºå®š                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	pData = GetLineStr( ptLayout.GetY2(), &nDataLen );
 	nX = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
@@ -1032,13 +1032,13 @@ checkloop:;
 	CLogicInt	i;
 	for( i = CLogicInt(0); i < nDataLen; ++i )
 	{
-		//•¶šƒƒWƒbƒN• -> nCharChars
+		//æ–‡å­—ãƒ­ã‚¸ãƒƒã‚¯å¹… -> nCharChars
 		CLogicInt	nCharChars;
 		nCharChars = CNativeW::GetSizeOfChar( pData, nDataLen, i );
 		if( nCharChars == 0 )
 			nCharChars = CLogicInt(1);
 		
-		//•¶šƒŒƒCƒAƒEƒg• -> nCharKetas
+		//æ–‡å­—ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå¹… -> nCharKetas
 		CLayoutInt	nCharKetas;
 		if( pData[i] == WCODE::TAB || (pData[i] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV ) ){
 			nCharKetas = GetActualTsvSpace( nX, pData[i] );
@@ -1046,16 +1046,16 @@ checkloop:;
 		else{
 			nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
 		}
-//		if( nCharKetas == 0 )				// íœ ƒTƒƒQ[ƒgƒyƒA‘Îô	2008/7/5 Uchi
+//		if( nCharKetas == 0 )				// å‰Šé™¤ ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾ç­–	2008/7/5 Uchi
 //			nCharKetas = CLayoutInt(1);
 
-		//ƒŒƒCƒAƒEƒg‰ÁZ
+		//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåŠ ç®—
 		if( nX + nCharKetas > ptLayout.GetX2() && !bEOF ){
 			break;
 		}
 		nX += nCharKetas;
 
-		//ƒƒWƒbƒN‰ÁZ
+		//ãƒ­ã‚¸ãƒƒã‚¯åŠ ç®—
 		if( pData[i] ==	WCODE::TAB ){
 			nCharChars = CLogicInt(1);
 		}
@@ -1078,10 +1078,10 @@ void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLo
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒfƒoƒbƒO                            //
+//                         ãƒ‡ãƒãƒƒã‚°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* ƒeƒXƒg—p‚ÉƒŒƒCƒAƒEƒgî•ñ‚ğƒ_ƒ“ƒv */
+/* ãƒ†ã‚¹ãƒˆç”¨ã«ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã‚’ãƒ€ãƒ³ãƒ— */
 void CLayoutMgr::DUMP()
 {
 #ifdef _DEBUG

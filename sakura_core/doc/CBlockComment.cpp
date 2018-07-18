@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
 	@author Yazaki
-	@date 2002/09/17 V‹Kì¬
+	@date 2002/09/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -25,11 +25,11 @@ CBlockComment::CBlockComment()
 }
 
 /*!
-	ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğƒRƒs[‚·‚é
+	ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 */
 void CBlockComment::SetBlockCommentRule(
-	const wchar_t*	pszFrom,	//!< [in] ƒRƒƒ“ƒgŠJn•¶š—ñ
-	const wchar_t*	pszTo		//!< [in] ƒRƒƒ“ƒgI—¹•¶š—ñ
+	const wchar_t*	pszFrom,	//!< [in] ã‚³ãƒ¡ãƒ³ãƒˆé–‹å§‹æ–‡å­—åˆ—
+	const wchar_t*	pszTo		//!< [in] ã‚³ãƒ¡ãƒ³ãƒˆçµ‚äº†æ–‡å­—åˆ—
 )
 {
 	int nStrLen = wcslen( pszFrom );
@@ -53,26 +53,26 @@ void CBlockComment::SetBlockCommentRule(
 }
 
 /*!
-	n”Ô–Ú‚ÌƒuƒƒbƒNƒRƒƒ“ƒg‚ÌAnPos‚©‚ç‚Ì•¶š—ñ‚ªŠJn•¶š—ñ(From)‚É“–‚Ä‚Í‚Ü‚é‚©Šm”F‚·‚éB
+	nç•ªç›®ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆã®ã€nPosã‹ã‚‰ã®æ–‡å­—åˆ—ãŒé–‹å§‹æ–‡å­—åˆ—(From)ã«å½“ã¦ã¯ã¾ã‚‹ã‹ç¢ºèªã™ã‚‹ã€‚
 
-	@retval true  ˆê’v‚µ‚½
-	@retval false ˆê’v‚µ‚È‚©‚Á‚½
+	@retval true  ä¸€è‡´ã—ãŸ
+	@retval false ä¸€è‡´ã—ãªã‹ã£ãŸ
 */
 bool CBlockComment::Match_CommentFrom(
-	int					nPos,		//!< [in] ’TõŠJnˆÊ’u
-	const CStringRef&	cStr		//!< [in] ’Tõ‘ÎÛ•¶š—ñ ¦’TõŠJnˆÊ’u‚Ìƒ|ƒCƒ“ƒ^‚Å‚Í‚È‚¢‚±‚Æ‚É’ˆÓ
+	int					nPos,		//!< [in] æ¢ç´¢é–‹å§‹ä½ç½®
+	const CStringRef&	cStr		//!< [in] æ¢ç´¢å¯¾è±¡æ–‡å­—åˆ— â€»æ¢ç´¢é–‹å§‹ä½ç½®ã®ãƒã‚¤ãƒ³ã‚¿ã§ã¯ãªã„ã“ã¨ã«æ³¨æ„
 	/*
-	int				nLineLen,	//!< [in] pLine‚Ì’·‚³
-	const wchar_t*	pLine		//!< [in] ’Tõs‚Ìæ“ªD
+	int				nLineLen,	//!< [in] pLineã®é•·ã•
+	const wchar_t*	pLine		//!< [in] æ¢ç´¢è¡Œã®å…ˆé ­ï¼
 	*/
 ) const
 {
 	if (
 		L'\0' != m_szBlockCommentFrom[0] &&
 		L'\0' != m_szBlockCommentTo[0]  &&
-		nPos <= cStr.GetLength() - m_nBlockFromLen &&	/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^(From) */
-		//0 == auto_memicmp( &cStr.GetPtr()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//”ñASCII‚à‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢	//###locale ˆË‘¶
-		0 == wmemicmp_ascii( &cStr.GetPtr()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//ASCII‚Ì‚İ‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢i‚‘¬j
+		nPos <= cStr.GetLength() - m_nBlockFromLen &&	/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿(From) */
+		//0 == auto_memicmp( &cStr.GetPtr()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//éASCIIã‚‚å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„	//###locale ä¾å­˜
+		0 == wmemicmp_ascii( &cStr.GetPtr()[nPos], m_szBlockCommentFrom, m_nBlockFromLen )	//ASCIIã®ã¿å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„ï¼ˆé«˜é€Ÿï¼‰
 	){
 		return true;
 	}
@@ -80,22 +80,22 @@ bool CBlockComment::Match_CommentFrom(
 }
 
 /*!
-	n”Ô–Ú‚ÌƒuƒƒbƒNƒRƒƒ“ƒg‚ÌAŒãÒ(To)‚É“–‚Ä‚Í‚Ü‚é•¶š—ñ‚ğnPosˆÈ~‚©‚ç’T‚·
+	nç•ªç›®ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆã®ã€å¾Œè€…(To)ã«å½“ã¦ã¯ã¾ã‚‹æ–‡å­—åˆ—ã‚’nPosä»¥é™ã‹ã‚‰æ¢ã™
 
-	@return “–‚Ä‚Í‚Ü‚Á‚½ˆÊ’u‚ğ•Ô‚·‚ªA“–‚Ä‚Í‚Ü‚ç‚È‚©‚Á‚½‚Æ‚«‚ÍAnLineLen‚ğ‚»‚Ì‚Ü‚Ü•Ô‚·B
+	@return å½“ã¦ã¯ã¾ã£ãŸä½ç½®ã‚’è¿”ã™ãŒã€å½“ã¦ã¯ã¾ã‚‰ãªã‹ã£ãŸã¨ãã¯ã€nLineLenã‚’ãã®ã¾ã¾è¿”ã™ã€‚
 */
 int CBlockComment::Match_CommentTo(
-	int					nPos,		//!< [in] ’TõŠJnˆÊ’u
-	const CStringRef&	cStr		//!< [in] ’Tõ‘ÎÛ•¶š—ñ ¦’TõŠJnˆÊ’u‚Ìƒ|ƒCƒ“ƒ^‚Å‚Í‚È‚¢‚±‚Æ‚É’ˆÓ
+	int					nPos,		//!< [in] æ¢ç´¢é–‹å§‹ä½ç½®
+	const CStringRef&	cStr		//!< [in] æ¢ç´¢å¯¾è±¡æ–‡å­—åˆ— â€»æ¢ç´¢é–‹å§‹ä½ç½®ã®ãƒã‚¤ãƒ³ã‚¿ã§ã¯ãªã„ã“ã¨ã«æ³¨æ„
 	/*
-	int				nLineLen,	//!< [in] pLine‚Ì’·‚³
-	const wchar_t*	pLine		//!< [in] ’Tõs‚Ìæ“ªD’TõŠJnˆÊ’u‚Ìƒ|ƒCƒ“ƒ^‚Å‚Í‚È‚¢‚±‚Æ‚É’ˆÓ
+	int				nLineLen,	//!< [in] pLineã®é•·ã•
+	const wchar_t*	pLine		//!< [in] æ¢ç´¢è¡Œã®å…ˆé ­ï¼æ¢ç´¢é–‹å§‹ä½ç½®ã®ãƒã‚¤ãƒ³ã‚¿ã§ã¯ãªã„ã“ã¨ã«æ³¨æ„
 	*/
 ) const
 {
 	for( int i = nPos; i <= cStr.GetLength() - m_nBlockToLen; ++i ){
-		//if( 0 == auto_memicmp( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//”ñASCII‚à‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢	//###locale ˆË‘¶
-		if( 0 == wmemicmp_ascii( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//ASCII‚Ì‚İ‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢i‚‘¬j
+		//if( 0 == auto_memicmp( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//éASCIIã‚‚å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„	//###locale ä¾å­˜
+		if( 0 == wmemicmp_ascii( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//ASCIIã®ã¿å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„ï¼ˆé«˜é€Ÿï¼‰
 			return i + m_nBlockToLen;
 		}
 	}

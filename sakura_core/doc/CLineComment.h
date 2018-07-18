@@ -1,8 +1,8 @@
-/*!	@file
-	@brief sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
 	@author Yazaki
-	@date 2002/09/17 V‹Kì¬
+	@date 2002/09/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2002, Yazaki
@@ -18,25 +18,25 @@
 #include "_main/global.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 #define COMMENT_DELIMITER_NUM	3
 #define COMMENT_DELIMITER_BUFFERSIZE	16
 
-/*! sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+/*! è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
-	@note CLineComment‚ÍA‹¤—Lƒƒ‚ƒŠSTypeConfig‚ÉŠÜ‚Ü‚ê‚é‚Ì‚ÅAƒƒ“ƒo•Ï”‚Íí‚ÉÀ‘Ì‚ğ‚Á‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
+	@note CLineCommentã¯ã€å…±æœ‰ãƒ¡ãƒ¢ãƒªSTypeConfigã«å«ã¾ã‚Œã‚‹ã®ã§ã€ãƒ¡ãƒ³ãƒå¤‰æ•°ã¯å¸¸ã«å®Ÿä½“ã‚’æŒã£ã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
 */
 class CLineComment
 {
 public:
 	/*
-	||  ConstructorsFƒRƒ“ƒpƒCƒ‰•W€‚ğg—pB
+	||  Constructorsï¼šã‚³ãƒ³ãƒ‘ã‚¤ãƒ©æ¨™æº–ã‚’ä½¿ç”¨ã€‚
 	*/
 	CLineComment();
 
-	void CopyTo( const int n, const wchar_t* buffer, int nCommentPos );	//	sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğƒRƒs[‚·‚é
-	bool Match( int nPos, const CStringRef& cStr ) const;	//	sƒRƒƒ“ƒg‚É’l‚·‚é‚©Šm”F‚·‚é
+	void CopyTo( const int n, const wchar_t* buffer, int nCommentPos );	//	è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
+	bool Match( int nPos, const CStringRef& cStr ) const;	//	è¡Œã‚³ãƒ¡ãƒ³ãƒˆã«å€¤ã™ã‚‹ã‹ç¢ºèªã™ã‚‹
 
 	const wchar_t* getLineComment( const int n ){
 		return m_pszLineComment[n];
@@ -46,9 +46,9 @@ public:
 	}
 
 private:
-	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	//!< sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^
-	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< sƒRƒƒ“ƒg‚ÌŠJnˆÊ’u(•‰”‚Íw’è–³‚µ)
-	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< sƒRƒƒ“ƒg•¶š—ñ‚Ì’·‚³
+	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	//!< è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿
+	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< è¡Œã‚³ãƒ¡ãƒ³ãƒˆã®é–‹å§‹ä½ç½®(è² æ•°ã¯æŒ‡å®šç„¡ã—)
+	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< è¡Œã‚³ãƒ¡ãƒ³ãƒˆæ–‡å­—åˆ—ã®é•·ã•
 };
 
 

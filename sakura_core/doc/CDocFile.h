@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Uchi
 
@@ -29,7 +29,7 @@
 #include "util/file.h"
 class CEditDoc;
 
-//####–{—ˆ‚Í‚±‚±‚É‚ ‚é‚×‚«‚Å‚Í–³‚¢
+//####æœ¬æ¥ã¯ã“ã“ã«ã‚ã‚‹ã¹ãã§ã¯ç„¡ã„
 struct SFileInfo{
 	friend class CDocFile;
 protected:
@@ -46,8 +46,8 @@ public:
 		bBomExist = bBomExistLoad = false;
 		cFileTime.ClearFILETIME();
 	}
-	void	SetCodeSet(ECodeType eSet, bool bBom)	{ eCharCode = eCharCodeLoad = eSet; bBomExist = bBomExistLoad = bBom; }	//!< •¶šƒR[ƒhƒZƒbƒg‚ğİ’è
-	void	SetBomExist(bool bBom)					{ bBomExist = bBomExistLoad = bBom; }	//!< BOM•t‰Á‚ğİ’è
+	void	SetCodeSet(ECodeType eSet, bool bBom)	{ eCharCode = eCharCodeLoad = eSet; bBomExist = bBomExistLoad = bBom; }	//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‚’è¨­å®š
+	void	SetBomExist(bool bBom)					{ bBomExist = bBomExistLoad = bBom; }	//!< BOMä»˜åŠ ã‚’è¨­å®š
 	void	SetFileTime( FILETIME& Time )			{ cFileTime.SetFILETIME( Time ); }
 };
 
@@ -56,27 +56,27 @@ class CDocFile : public CFile{
 public:
 	CDocFile(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) {}
 
-	void			SetCodeSet(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.SetCodeSet(eCodeSet, bBomExist); }	//!< •¶šƒR[ƒhƒZƒbƒg‚ğİ’è
-	void			SetCodeSetChg(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.eCharCode = eCodeSet; m_sFileInfo.bBomExist = bBomExist; }	//!< •¶šƒR[ƒhƒZƒbƒg‚ğİ’è(•¶šƒR[ƒhw’è—p)
-	ECodeType		GetCodeSet() const			{ return m_sFileInfo.eCharCode; }		//!< •¶šƒR[ƒhƒZƒbƒg‚ğæ“¾
-	void			SetBomDefoult()				{ m_sFileInfo.bBomExist= CCodeTypeName( m_sFileInfo.eCharCode ).IsBomDefOn(); }	//!< BOM•t‰Á‚ÌƒfƒtƒHƒ‹ƒg’l‚ğİ’è‚·‚é
-	void			CancelChgCodeSet()			{ m_sFileInfo.eCharCode = m_sFileInfo.eCharCodeLoad; m_sFileInfo.bBomExist = m_sFileInfo.bBomExistLoad; }		//!< •¶šƒR[ƒhƒZƒbƒg1‚Ì•ÏX‚ğƒLƒƒƒ“ƒZƒ‹‚·‚é
-	bool			IsBomExist() const			{ return m_sFileInfo.bBomExist; }		//!< •Û‘¶‚ÉBOM‚ğ•t‰Á‚·‚é‚©‚Ç‚¤‚©‚ğæ“¾
-	bool			IsChgCodeSet() const		{ return (!IsFileTimeZero()) && ((m_sFileInfo.eCharCode != m_sFileInfo.eCharCodeLoad) || (m_sFileInfo.bBomExist != m_sFileInfo.bBomExistLoad)); }		//!< •¶šƒR[ƒhƒZƒbƒg‚ª•ÏX‚³‚ê‚½‚©H
+	void			SetCodeSet(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.SetCodeSet(eCodeSet, bBomExist); }	//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‚’è¨­å®š
+	void			SetCodeSetChg(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.eCharCode = eCodeSet; m_sFileInfo.bBomExist = bBomExist; }	//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‚’è¨­å®š(æ–‡å­—ã‚³ãƒ¼ãƒ‰æŒ‡å®šç”¨)
+	ECodeType		GetCodeSet() const			{ return m_sFileInfo.eCharCode; }		//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‚’å–å¾—
+	void			SetBomDefoult()				{ m_sFileInfo.bBomExist= CCodeTypeName( m_sFileInfo.eCharCode ).IsBomDefOn(); }	//!< BOMä»˜åŠ ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã‚’è¨­å®šã™ã‚‹
+	void			CancelChgCodeSet()			{ m_sFileInfo.eCharCode = m_sFileInfo.eCharCodeLoad; m_sFileInfo.bBomExist = m_sFileInfo.bBomExistLoad; }		//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ1ã®å¤‰æ›´ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã™ã‚‹
+	bool			IsBomExist() const			{ return m_sFileInfo.bBomExist; }		//!< ä¿å­˜æ™‚ã«BOMã‚’ä»˜åŠ ã™ã‚‹ã‹ã©ã†ã‹ã‚’å–å¾—
+	bool			IsChgCodeSet() const		{ return (!IsFileTimeZero()) && ((m_sFileInfo.eCharCode != m_sFileInfo.eCharCodeLoad) || (m_sFileInfo.bBomExist != m_sFileInfo.bBomExistLoad)); }		//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆãŒå¤‰æ›´ã•ã‚ŒãŸã‹ï¼Ÿ
 
 	CFileTime&		GetFileTime()				{ return m_sFileInfo.cFileTime; }
 	void			ClearFileTime()				{ m_sFileInfo.cFileTime.ClearFILETIME(); }
-	bool			IsFileTimeZero() const		{ return m_sFileInfo.cFileTime.IsZero(); }	// V‹Kƒtƒ@ƒCƒ‹H
+	bool			IsFileTimeZero() const		{ return m_sFileInfo.cFileTime.IsZero(); }	// æ–°è¦ãƒ•ã‚¡ã‚¤ãƒ«ï¼Ÿ
 	const SYSTEMTIME	GetFileSysTime() const	{ return m_sFileInfo.cFileTime.GetSYSTEMTIME(); }
 	void			SetFileTime( FILETIME& Time )	{ m_sFileInfo.cFileTime.SetFILETIME( Time ); }
 
-	const TCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ƒtƒ@ƒCƒ‹–¼(ƒpƒX‚È‚µ)‚ğæ“¾
+	const TCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ãƒ•ã‚¡ã‚¤ãƒ«å(ãƒ‘ã‚¹ãªã—)ã‚’å–å¾—
 	const TCHAR*	GetSaveFilePath(void) const;
 	void			SetSaveFilePath(LPCTSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
 	CEditDoc*	m_pcDocRef;
 	SFileInfo	m_sFileInfo;
-	CFilePath	m_szSaveFilePath;	/* •Û‘¶‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒXiƒ}ƒNƒ—pj */	// 2006.09.04 ryoji
+	CFilePath	m_szSaveFilePath;	/* ä¿å­˜æ™‚ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ï¼ˆãƒã‚¯ãƒ­ç”¨ï¼‰ */	// 2006.09.04 ryoji
 };
 
 #endif /* SAKURA_CDOCFILE_C6DA01C5_5BB2_4361_9B6A_648953CB9CA19_H_ */
