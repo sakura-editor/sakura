@@ -1,4 +1,4 @@
-/*!	@file
+﻿/*!	@file
 	@brief DebugMonitorLib用関数
 
 */

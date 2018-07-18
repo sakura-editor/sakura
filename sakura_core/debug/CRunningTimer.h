@@ -1,10 +1,10 @@
-/*!	@file
-	@brief �������v���Ԃ̌v���N���X
+﻿/*!	@file
+	@brief 処理所要時間の計測クラス
 
-	�f�o�b�O�ړI�ŗp����
+	デバッグ目的で用いる
 
 	@author Norio Nakatani
-	@date 1998/03/06  �V�K�쐬
+	@date 1998/03/06  新規作成
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -35,20 +35,20 @@
 #define _CRUNNINGTIMER_H_
 
 #include <windows.h>
-// RunningTimer�Ōo�ߎ��Ԃ̑�����s���ꍇ�ɂ̓R�����g���O���Ă�������
+// RunningTimerで経過時間の測定を行う場合にはコメントを外してください
 //#define TIME_MEASURE
 
 /*-----------------------------------------------------------------------
-�N���X�̐錾
+クラスの宣言
 -----------------------------------------------------------------------*/
 /*!
-	@brief �������v���Ԃ̌v���N���X
+	@brief 処理所要時間の計測クラス
 
-	��`�̐؂�ւ��݂̂Ń^�C�}�[��ON/OFF���s����悤�ɂ��邽�߁C
-	���̃N���X�𒼐ڎg�킸�C���ɂ���MY_RUNNINGTIMER��MY_TRACETIME��
-	�g�����ƁD
+	定義の切り替えのみでタイマーのON/OFFを行えるようにするため，
+	このクラスを直接使わず，後ろにあるMY_RUNNINGTIMERとMY_TRACETIMEを
+	使うこと．
 
-	@date 2002/10/16  genta WriteTrace�y�у}�N���ǉ�
+	@date 2002/10/16  genta WriteTrace及びマクロ追加
 */
 class CRunningTimer
 {
@@ -60,7 +60,7 @@ public:
 	~CRunningTimer();
 
 	/*
-	|| �֐�
+	|| 関数
 	*/
 	void Reset();
 	DWORD Read();
@@ -69,8 +69,8 @@ public:
 
 protected:
 	DWORD	m_nStartTime;
-	char	m_szText[100];	//!< �^�C�}�[��
-	int		m_nDeapth;	//!< ���̃I�u�W�F�N�g�̃l�X�g�̐[��
+	char	m_szText[100];	//!< タイマー名
+	int		m_nDeapth;	//!< このオブジェクトのネストの深さ
 
 #ifdef _DEBUG
 	static int m_nNestCount;
@@ -78,7 +78,7 @@ protected:
 };
 
 //	Oct. 16, 2002 genta
-//	#ifdef _DEBUG�`#endif�Œ���͂܂Ȃ��Ă��ȒP�Ƀ^�C�}�[��ON/OFF���s�����߂̃}�N��
+//	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
 #if defined(_DEBUG) && defined(TIME_MEASURE)
   #define MY_TRACETIME(c,m) (c).WriteTrace(m)
   #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m)

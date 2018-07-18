@@ -1,5 +1,5 @@
-/*!	@file
-	@brief assertŠÖ”
+ï»¿/*!	@file
+	@brief asserté–¢æ•°
 
 */
 /*
@@ -28,7 +28,7 @@
 #ifndef SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
 #define SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
 
-//2007.08.30 kobake ’Ç‰Á
+//2007.08.30 kobake è¿½åŠ 
 #ifdef assert
 #undef assert
 #endif
