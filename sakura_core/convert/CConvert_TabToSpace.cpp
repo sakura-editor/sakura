@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_TabToSpace.h"
 #include "charset/charcode.h"
 #include "CEol.h"
 #include "util/string_ex2.h"
 
-//! TAB¨‹ó”’
+//! TABâ†’ç©ºç™½
 bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 {
 	using namespace WCODE;
@@ -20,10 +20,10 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	CEol		cEol;
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ð•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
-			// æ“ªs‚É‚Â‚¢‚Ä‚ÍŠJŽnŒ…ˆÊ’u‚ðl—¶‚·‚éi‚³‚ç‚ÉÜ‚è•Ô‚µŠÖ˜A‚Ì‘Îô‚ª•K—vHj
+			// å…ˆé ­è¡Œã«ã¤ã„ã¦ã¯é–‹å§‹æ¡ä½ç½®ã‚’è€ƒæ…®ã™ã‚‹ï¼ˆã•ã‚‰ã«æŠ˜ã‚Šè¿”ã—é–¢é€£ã®å¯¾ç­–ãŒå¿…è¦ï¼Ÿï¼‰
 			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;
 			for( i = 0; i < nLineLen; ++i ){
 				if( TAB == pLine[i]	){
@@ -33,7 +33,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 				}else{
 					nPosDes++;
 					nPosX++;
-					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//‘SŠp•¶Žš‚¸‚ê‘Î‰ž 2008.10.15 matsumo
+					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//å…¨è§’æ–‡å­—ãšã‚Œå¯¾å¿œ 2008.10.15 matsumo
 				}
 			}
 		}
@@ -45,10 +45,10 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 	pDes = new wchar_t[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ð•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
-			// æ“ªs‚É‚Â‚¢‚Ä‚ÍŠJŽnŒ…ˆÊ’u‚ðl—¶‚·‚éi‚³‚ç‚ÉÜ‚è•Ô‚µŠÖ˜A‚Ì‘Îô‚ª•K—vHj
+			// å…ˆé ­è¡Œã«ã¤ã„ã¦ã¯é–‹å§‹æ¡ä½ç½®ã‚’è€ƒæ…®ã™ã‚‹ï¼ˆã•ã‚‰ã«æŠ˜ã‚Šè¿”ã—é–¢é€£ã®å¯¾ç­–ãŒå¿…è¦ï¼Ÿï¼‰
 			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;
 			for( i = 0; i < nLineLen; ++i ){
 				if( TAB == pLine[i]	){
@@ -60,7 +60,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
 					nPosX++;
-					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//‘SŠp•¶Žš‚¸‚ê‘Î‰ž 2008.10.15 matsumo
+					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//å…¨è§’æ–‡å­—ãšã‚Œå¯¾å¿œ 2008.10.15 matsumo
 				}
 			}
 		}

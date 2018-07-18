@@ -1,4 +1,4 @@
-// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô‚Ì‚à‚Ì‚Å‚·B
+ï»¿// ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ã®ã‚‚ã®ã§ã™ã€‚
 #include "StdAfx.h"
 #include "CDecode_UuDecode.h"
 #include "charset/charcode.h"
@@ -6,7 +6,7 @@
 #include "util/string_ex2.h"
 #include "CEol.h"
 
-/* Uudecode (ƒfƒR[ƒhj*/
+/* Uudecode (ãƒ‡ã‚³ãƒ¼ãƒ‰ï¼‰*/
 bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 {
 	const WCHAR *psrc, *pline;
@@ -27,7 +27,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 	pcDst->AllocBuffer( (nsrclen / 4) * 3 + 10 );
 	pw_base = pw = static_cast<char *>( pcDst->GetRawPtr() );
 
-	// æ“ª‚Ì‰üsE‹ó”’•¶š‚ğƒXƒLƒbƒv
+	// å…ˆé ­ã®æ”¹è¡Œãƒ»ç©ºç™½æ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( ncuridx = 0; ncuridx < nsrclen; ++ncuridx ){
 		WCHAR c = psrc[ncuridx];
 		if( !WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t' ){
@@ -35,14 +35,14 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 		}
 	}
 
-	// ƒwƒbƒ_[‚ğ‰ğÍ
+	// ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’è§£æ
 	pline = GetNextLineW( psrc, nsrclen, &nlinelen, &ncuridx, &ceol, false );
 	if( !CheckUUHeader(pline, nlinelen, m_aFilename) ){
 		pcDst->_AppendSz("");
 		return false;
 	}
 
-	// ƒ{ƒfƒB[‚ğˆ—
+	// ãƒœãƒ‡ã‚£ãƒ¼ã‚’å‡¦ç†
 	while( (pline = GetNextLineW(psrc, nsrclen, &nlinelen, &ncuridx, &ceol, false)) != NULL ){
 		if( ceol.GetType() != EOL_CRLF ){
 			pcDst->_AppendSz("");
@@ -53,7 +53,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 			return false;
 		}
 		if( nlinelen == 1 ){
-			// ƒf[ƒ^‚ÌÅŒã‚Å‚ ‚éê‡
+			// ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã§ã‚ã‚‹å ´åˆ
 			if( pline[0] == L' ' || pline[0] == L'`' || pline[0] == L'~' ){
 				bsuccess = true;
 				break;
@@ -65,9 +65,9 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 		return false;
 	}
 
-	pline += 3;  // '`' 'CR' 'LF' ‚Ì•ª‚ğƒXƒLƒbƒv
+	pline += 3;  // '`' 'CR' 'LF' ã®åˆ†ã‚’ã‚¹ã‚­ãƒƒãƒ—
 
-	// ƒtƒbƒ^[‚ğ‰ğÍ
+	// ãƒ•ãƒƒã‚¿ãƒ¼ã‚’è§£æ
 	if( !CheckUUFooter(pline, nsrclen-ncuridx) ){
 		pcDst->_AppendSz("");
 		return false;

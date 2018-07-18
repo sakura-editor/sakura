@@ -1,29 +1,29 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_ToZenhira.h"
 #include "convert_util.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//!‚Å‚«‚éŒÀ‚è‘SŠp‚Ğ‚ç‚ª‚È‚É‚·‚é
+//!ã§ãã‚‹é™ã‚Šå…¨è§’ã²ã‚‰ãŒãªã«ã™ã‚‹
 bool CConvert_ToZenhira::DoConvert(CNativeW* pcData)
 {
-	//”¼ƒJƒi¨‘SŠpƒJƒi
-	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //•¶š”‚ªŒ¸‚é‚±‚Æ‚Í‚ ‚Á‚Ä‚à‘‚¦‚é‚±‚Æ‚Í–³‚¢‚Ì‚ÅA‚±‚ê‚Å‚n‚j
+	//åŠã‚«ãƒŠâ†’å…¨è§’ã‚«ãƒŠ
+	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //æ–‡å­—æ•°ãŒæ¸›ã‚‹ã“ã¨ã¯ã‚ã£ã¦ã‚‚å¢—ãˆã‚‹ã“ã¨ã¯ç„¡ã„ã®ã§ã€ã“ã‚Œã§ï¼¯ï¼«
 	int nBufLen = 0;
 	Convert_HankataToZenkata(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nBufLen);
 
-	//‘SƒJƒi¨‘SŠp‚Ğ‚ç‚ª‚È
+	//å…¨ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª
 	Convert_ZenkataToZenhira(pBuf, nBufLen);
 
-	//”¼Šp‰p”¨‘SŠp‰p”
+	//åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•°
 	Convert_HaneisuToZeneisu(pBuf, nBufLen);
 
-	//İ’è
+	//è¨­å®š
 	pcData->SetString(pBuf, nBufLen);
 
-	//ƒoƒbƒtƒ@‰ğ•ú
+	//ãƒãƒƒãƒ•ã‚¡è§£æ”¾
 	delete[] pBuf;
 
 	return true;

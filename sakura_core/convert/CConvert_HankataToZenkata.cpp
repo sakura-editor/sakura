@@ -1,16 +1,16 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_HankataToZenkata.h"
 #include "convert_util.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//!”¼ŠpƒJƒi¨‘SŠpƒJƒi
+//!åŠè§’ã‚«ãƒŠâ†’å…¨è§’ã‚«ãƒŠ
 bool CConvert_HankataToZenkata::DoConvert(CNativeW* pcData)
 {
-	//”¼ŠpƒJƒi¨‘SŠpƒJƒi
-	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //•¶Žš”‚ªŒ¸‚é‚±‚Æ‚Í‚ ‚Á‚Ä‚à‘‚¦‚é‚±‚Æ‚Í–³‚¢‚Ì‚ÅA‚±‚ê‚Å‚n‚j
+	//åŠè§’ã‚«ãƒŠâ†’å…¨è§’ã‚«ãƒŠ
+	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //æ–‡å­—æ•°ãŒæ¸›ã‚‹ã“ã¨ã¯ã‚ã£ã¦ã‚‚å¢—ãˆã‚‹ã“ã¨ã¯ç„¡ã„ã®ã§ã€ã“ã‚Œã§ï¼¯ï¼«
 	int nDstLen = 0;
 	Convert_HankataToZenkata(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nDstLen);
 	pcData->SetString(pBuf, nDstLen);

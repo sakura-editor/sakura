@@ -1,4 +1,4 @@
-// ���̍s�͕��������΍�̂��̂ł�
+﻿// この行は文字化け対策のものです
 /*!	@file
 	@brief Unix-to-Unix Decode
 

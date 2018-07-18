@@ -1,16 +1,16 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_ToHankaku.h"
 #include "convert_util.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//!”¼Šp‚É‚Å‚«‚é‚à‚Ì‚Í‘S•””¼Šp‚É•ÏŠ·
+//!åŠè§’ã«ã§ãã‚‹ã‚‚ã®ã¯å…¨éƒ¨åŠè§’ã«å¤‰æ›
 bool CConvert_ToHankaku::DoConvert(CNativeW* pcData)
 {
-	//‘SŠp¨”¼Šp
-	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()*2+1]; //‘÷“_“™‚Ì‰e‹¿‚ÅAÅ‘å2”{‚É‚Ü‚Å–c‚êã‚ª‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅA2”{‚Ìƒoƒbƒtƒ@‚ðŠm•Û
+	//å…¨è§’â†’åŠè§’
+	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()*2+1]; //æ¿ç‚¹ç­‰ã®å½±éŸ¿ã§ã€æœ€å¤§2å€ã«ã¾ã§è†¨ã‚Œä¸ŠãŒã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ã€2å€ã®ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 	int nDstLen = 0;
 	Convert_ToHankaku(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nDstLen);
 	pcData->SetString(pBuf, nDstLen);

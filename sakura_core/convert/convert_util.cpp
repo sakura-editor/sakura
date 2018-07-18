@@ -1,66 +1,66 @@
-#include "StdAfx.h"
+Ôªø#include "StdAfx.h"
 #include "convert_util.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ïœä∑ÉeÅ[ÉuÉã                          //
+//                       Â§âÊèõ„ÉÜ„Éº„Éñ„É´                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//ëSäpÉJÉi
+//ÂÖ®Ëßí„Ç´„Éä
 static const wchar_t tableZenkata_Normal[]=
-	L"ÉAÉCÉEÉGÉIÉJÉLÉNÉPÉRÉTÉVÉXÉZÉ\É^É`ÉcÉeÉgÉiÉjÉkÉlÉm"	//ïÅí 
-	L"ÉnÉqÉtÉwÉzÉ}É~ÉÄÉÅÉÇÉÑÉÜÉàÉâÉäÉãÉåÉçÉèÉêÉëÉíÉì"		//      Å¶ÅuÉêÅvÅuÉëÅvÇÕÅuÉCÅvÅuÉGÅvÇ…ïœä∑ÅB(ANSIî≈Çì•èP) 2012.06.09 syat
-	L"É@ÉBÉDÉFÉHÉbÉÉÉÖÉá" L"\u30ee\u30f5\u30f6"				//è¨    Å¶å„îº3ï∂éöÇÕÅuÉéÅvÅuÉïÅvÅuÉñÅv
+	L"„Ç¢„Ç§„Ç¶„Ç®„Ç™„Ç´„Ç≠„ÇØ„Ç±„Ç≥„Çµ„Ç∑„Çπ„Çª„ÇΩ„Çø„ÉÅ„ÉÑ„ÉÜ„Éà„Éä„Éã„Éå„Éç„Éé"	//ÊôÆÈÄö
+	L"„Éè„Éí„Éï„Éò„Éõ„Éû„Éü„É†„É°„É¢„É§„É¶„É®„É©„É™„É´„É¨„É≠„ÉØ„É∞„É±„É≤„É≥"		//      ‚Äª„Äå„É∞„Äç„Äå„É±„Äç„ÅØ„Äå„Ç§„Äç„Äå„Ç®„Äç„Å´Â§âÊèõ„ÄÇ(ANSIÁâà„ÇíË∏èË•≤) 2012.06.09 syat
+	L"„Ç°„Ç£„Ç•„Çß„Ç©„ÉÉ„É£„É•„Éß" L"\u30ee\u30f5\u30f6"				//Â∞è    ‚ÄªÂæåÂçä3ÊñáÂ≠ó„ÅØ„Äå„ÉÆ„Äç„Äå„Éµ„Äç„Äå„É∂„Äç
 ;
 static const wchar_t tableZenkata_Dakuten[]=
-	L"ÉîÉKÉMÉOÉQÉSÉUÉWÉYÉ[É]É_ÉaÉdÉfÉh"						//ë˜ì_
-	L"ÉoÉrÉuÉxÉ{" L"\u30f7\u30f8\u30f9\u30fa"				//Å¶å„îº4ï∂éöÇÕÅuÉèÅJÅvÅuÉêÅJÅvÅuÉëÅJÅvÅuÉíÅJÅv
+	L"„É¥„Ç¨„ÇÆ„Ç∞„Ç≤„Ç¥„Ç∂„Ç∏„Ç∫„Çº„Çæ„ÉÄ„ÉÇ„ÉÖ„Éá„Éâ"						//ÊøÅÁÇπ
+	L"„Éê„Éì„Éñ„Éô„Éú" L"\u30f7\u30f8\u30f9\u30fa"				//‚ÄªÂæåÂçä4ÊñáÂ≠ó„ÅØ„Äå„ÉØ„Çõ„Äç„Äå„É∞„Çõ„Äç„Äå„É±„Çõ„Äç„Äå„É≤„Çõ„Äç
 ;
 static const wchar_t tableZenkata_HanDakuten[]=
-	L"ÉpÉsÉvÉyÉ|"											//îºë˜ì_
+	L"„Éë„Éî„Éó„Éö„Éù"											//ÂçäÊøÅÁÇπ
 ;
 static const wchar_t tableZenkata_Cho[]=
-	L"Å["													//í∑âπ
+	L"„Éº"													//Èï∑Èü≥
 ;
 	static const wchar_t tableZenkata_Daku[]=
-	L"ÅJÅK"	L"\u3099\u309A"									//ë˜ì_ÅEîºë˜ì_   Å¶å„îº2ï∂éöÇÕåãçáï∂éöÇÃë˜ì_ÅEîºë˜ì_
-;															//Å¶ëSäpÉJÉiÅ®îºäpÉJÉiïœä∑Ç≈ÅAëOÇÃï∂éöÇ™âºñºÇ©Ç«Ç§Ç©É`ÉFÉbÉNÇ∑ÇÈ
+	L"„Çõ„Çú"	L"\u3099\u309A"									//ÊøÅÁÇπ„ÉªÂçäÊøÅÁÇπ   ‚ÄªÂæåÂçä2ÊñáÂ≠ó„ÅØÁµêÂêàÊñáÂ≠ó„ÅÆÊøÅÁÇπ„ÉªÂçäÊøÅÁÇπ
+;															//‚ÄªÂÖ®Ëßí„Ç´„Éä‚ÜíÂçäËßí„Ç´„ÉäÂ§âÊèõ„Åß„ÄÅÂâç„ÅÆÊñáÂ≠ó„Åå‰ªÆÂêç„Åã„Å©„ÅÜ„Åã„ÉÅ„Çß„ÉÉ„ÇØ„Åô„Çã
 static const wchar_t tableZenkata_Kigo[]=
-	L"ÅBÅAÅuÅvÅE"											//ãLçÜ
+	L"„ÄÇ„ÄÅ„Äå„Äç„Éª"											//Ë®òÂè∑
 ;
 
-//îºäpÉJÉi
+//ÂçäËßí„Ç´„Éä
 static const wchar_t tableHankata_Normal[]=
-	L"±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…"
-	L" ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹≤¥¶›"
-	L"ß®©™´Ø¨≠Æ‹∂π"
+	L"ÔΩ±ÔΩ≤ÔΩ≥ÔΩ¥ÔΩµÔΩ∂ÔΩ∑ÔΩ∏ÔΩπÔΩ∫ÔΩªÔΩºÔΩΩÔΩæÔΩøÔæÄÔæÅÔæÇÔæÉÔæÑÔæÖÔæÜÔæáÔæàÔæâ"
+	L"ÔæäÔæãÔæåÔæçÔæéÔæèÔæêÔæëÔæíÔæìÔæîÔæïÔæñÔæóÔæòÔæôÔæöÔæõÔæúÔΩ≤ÔΩ¥ÔΩ¶Ôæù"
+	L"ÔΩßÔΩ®ÔΩ©ÔΩ™ÔΩ´ÔΩØÔΩ¨ÔΩ≠ÔΩÆÔæúÔΩ∂ÔΩπ"
 ;
 static const wchar_t tableHankata_Dakuten[]=
-	L"≥∂∑∏π∫ªºΩæø¿¡¬√ƒ"
-	L" ÀÃÕŒ" L"‹≤¥¶"
+	L"ÔΩ≥ÔΩ∂ÔΩ∑ÔΩ∏ÔΩπÔΩ∫ÔΩªÔΩºÔΩΩÔΩæÔΩøÔæÄÔæÅÔæÇÔæÉÔæÑ"
+	L"ÔæäÔæãÔæåÔæçÔæé" L"ÔæúÔΩ≤ÔΩ¥ÔΩ¶"
 ;
 static const wchar_t tableHankata_HanDakuten[]=
-	L" ÀÃÕŒ"
+	L"ÔæäÔæãÔæåÔæçÔæé"
 ;
 static const wchar_t tableHankata_Cho[] =
-	L"∞"
+	L"ÔΩ∞"
 ;
 static const wchar_t tableHankata_Daku[] =
-	L"ﬁﬂﬁﬂ"
+	L"ÔæûÔæüÔæûÔæü"
 ;
 static const wchar_t tableHankata_Kigo[] =
-	L"°§¢£•"
+	L"ÔΩ°ÔΩ§ÔΩ¢ÔΩ£ÔΩ•"
 ;
 
-//ëSäpâpãLçÜÅBï∂éöÇÃï¿Ç—Ç…ê[Ç¢à”ñ°ÇÕÇ†ÇËÇ‹ÇπÇÒÅBÉoÉbÉNÉXÉâÉbÉVÉÖÇÕñ≥éãÅB
+//ÂÖ®ËßíËã±Ë®òÂè∑„ÄÇÊñáÂ≠ó„ÅÆ‰∏¶„Å≥„Å´Ê∑±„ÅÑÊÑèÂë≥„ÅØ„ÅÇ„Çä„Åæ„Åõ„Çì„ÄÇ„Éê„ÉÉ„ÇØ„Çπ„É©„ÉÉ„Ç∑„É•„ÅØÁÑ°Ë¶ñ„ÄÇ
 static const wchar_t tableZenKigo[] =
-	L"Å@ÅCÅD"
-	L"Å{Å|ÅñÅ^ÅìÅÅÅbÅï"
-	L"ÅOÅèÅóÅGÅF"
-	L"ÅhÅeÅfÅÉÅÑÅiÅjÅoÅpÅmÅn"
-	L"ÅIÅHÅîÅêÅPÅQ"
+	L"„ÄÄÔºåÔºé"
+	L"ÔºãÔºçÔºäÔºèÔºÖÔºùÔΩúÔºÜ"
+	L"ÔºæÔø•Ôº†ÔºõÔºö"
+	L"‚Äù‚Äò‚ÄôÔºúÔºûÔºàÔºâÔΩõÔΩùÔºªÔºΩ"
+	L"ÔºÅÔºüÔºÉÔºÑÔø£Ôºø"
 ;
 
-//îºäpâpãLçÜ
+//ÂçäËßíËã±Ë®òÂè∑
 static const wchar_t tableHanKigo[] =
 	L" ,."
 	L"+-*/%=|&"
@@ -70,13 +70,13 @@ static const wchar_t tableHanKigo[] =
 ;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         é¿ëïï‚èï                            //
+//                         ÂÆüË£ÖË£úÂä©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
-	wcschr ÇÃåãâ ÇÉCÉìÉfÉbÉNÉXÇ≈éÛÇØéÊÇÈî≈ÅB
-	c Ç™å©Ç¬Ç©Ç¡ÇΩÇ∆Ç´ÇÕÅAÇªÇÃà íuÇ idx Ç…äiî[ÇµÅAtrue Çï‘Ç∑ÅB
-	å©Ç¬Ç©ÇÁÇ»Ç¢Ç∆Ç´ÇÕ idx ÇïœçXÇπÇ∏Ç… false Çï‘Ç∑ÅB
+	wcschr „ÅÆÁµêÊûú„Çí„Ç§„É≥„Éá„ÉÉ„ÇØ„Çπ„ÅßÂèó„ÅëÂèñ„ÇãÁâà„ÄÇ
+	c „ÅåË¶ã„Å§„Åã„Å£„Åü„Å®„Åç„ÅØ„ÄÅ„Åù„ÅÆ‰ΩçÁΩÆ„Çí idx „Å´Ê†ºÁ¥ç„Åó„ÄÅtrue „ÇíËøî„Åô„ÄÇ
+	Ë¶ã„Å§„Åã„Çâ„Å™„ÅÑ„Å®„Åç„ÅØ idx „ÇíÂ§âÊõ¥„Åõ„Åö„Å´ false „ÇíËøî„Åô„ÄÇ
 */
 bool wcschr_idx(const wchar_t* str, wchar_t c, int* idx)
 {
@@ -86,13 +86,13 @@ bool wcschr_idx(const wchar_t* str, wchar_t c, int* idx)
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ïœä∑é¿ëï                            //
+//                         Â§âÊèõÂÆüË£Ö                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 
-//! ëSäpÇ–ÇÁÇ™Ç»Å®ëSäpÉJÉ^ÉJÉi (ï∂éöêîÇÕïsïœ)
-inline wchar_t ZenhiraToZenkata_(wchar_t c){ return ((c>=L'Çü' && c<=L'\u3096') || (c>=L'ÅT' && c<=L'ÅU'))? L'É@'+(c-L'Çü'): c; }
+//! ÂÖ®Ëßí„Å≤„Çâ„Åå„Å™‚ÜíÂÖ®Ëßí„Ç´„Çø„Ç´„Éä (ÊñáÂ≠óÊï∞„ÅØ‰∏çÂ§â)
+inline wchar_t ZenhiraToZenkata_(wchar_t c){ return ((c>=L'„ÅÅ' && c<=L'\u3096') || (c>=L'„Çù' && c<=L'„Çû'))? L'„Ç°'+(c-L'„ÅÅ'): c; }
 void Convert_ZenhiraToZenkata(wchar_t* pData, int nLength)
 {
 	wchar_t* p=pData;
@@ -103,9 +103,9 @@ void Convert_ZenhiraToZenkata(wchar_t* pData, int nLength)
 	}
 }
 
-//! ëSäpÉJÉ^ÉJÉiÅ®ëSäpÇ–ÇÁÇ™Ç» (ï∂éöêîÇÕïsïœ)
-// 2012.06.17 syat ÅuÉïÅvÅuÉñÅvÇÅuÇ©ÅvÅuÇØÅvÇ…ïœä∑ÇµÇ»Ç¢
-inline wchar_t ZenkataToZenhira_(wchar_t c){ return ((c>=L'É@' && c<=L'Éî') || (c>=L'ÅR' && c<=L'ÅS'))? L'Çü'+(c-L'É@'): c; }
+//! ÂÖ®Ëßí„Ç´„Çø„Ç´„Éä‚ÜíÂÖ®Ëßí„Å≤„Çâ„Åå„Å™ (ÊñáÂ≠óÊï∞„ÅØ‰∏çÂ§â)
+// 2012.06.17 syat „Äå„Éµ„Äç„Äå„É∂„Äç„Çí„Äå„Åã„Äç„Äå„Åë„Äç„Å´Â§âÊèõ„Åó„Å™„ÅÑ
+inline wchar_t ZenkataToZenhira_(wchar_t c){ return ((c>=L'„Ç°' && c<=L'„É¥') || (c>=L'„ÉΩ' && c<=L'„Éæ'))? L'„ÅÅ'+(c-L'„Ç°'): c; }
 void Convert_ZenkataToZenhira(wchar_t* pData, int nLength)
 {
 	wchar_t* p=pData;
@@ -117,15 +117,15 @@ void Convert_ZenkataToZenhira(wchar_t* pData, int nLength)
 }
 
 
-//! ëSäpâpêîÅ®îºäpâpêî (ï∂éöêîÇÕïsïœ)
+//! ÂÖ®ËßíËã±Êï∞‚ÜíÂçäËßíËã±Êï∞ (ÊñáÂ≠óÊï∞„ÅØ‰∏çÂ§â)
 inline wchar_t ZeneisuToHaneisu_(wchar_t c)
 {
 	int n;
 
-	     if(c>=L'Ç`' && c<=L'Çy'){ c=L'A'+(c-L'Ç`'); }
-	else if(c>=L'ÇÅ' && c<=L'Çö'){ c=L'a'+(c-L'ÇÅ'); }
-	else if(c>=L'ÇO' && c<=L'ÇX'){ c=L'0'+(c-L'ÇO'); }
-	//àÍïîÇÃãLçÜÇ‡ïœä∑Ç∑ÇÈ
+	     if(c>=L'Ôº°' && c<=L'Ôº∫'){ c=L'A'+(c-L'Ôº°'); }
+	else if(c>=L'ÔΩÅ' && c<=L'ÔΩö'){ c=L'a'+(c-L'ÔΩÅ'); }
+	else if(c>=L'Ôºê' && c<=L'Ôºô'){ c=L'0'+(c-L'Ôºê'); }
+	//‰∏ÄÈÉ®„ÅÆË®òÂè∑„ÇÇÂ§âÊèõ„Åô„Çã
 	else if(wcschr_idx(tableZenKigo,c,&n)){ c=tableHanKigo[n]; }
 
 	return c;
@@ -141,15 +141,15 @@ void Convert_ZeneisuToHaneisu(wchar_t* pData, int nLength)
 }
 
 
-//! îºäpâpêîÅ®ëSäpâpêî (ï∂éöêîÇÕïsïœ)
+//! ÂçäËßíËã±Êï∞‚ÜíÂÖ®ËßíËã±Êï∞ (ÊñáÂ≠óÊï∞„ÅØ‰∏çÂ§â)
 inline wchar_t HaneisuToZeneisu_(wchar_t c)
 {
 	int n;
 
-	     if(c>=L'A' && c<=L'Z'){ c=L'Ç`'+(c-L'A'); }
-	else if(c>=L'a' && c<=L'z'){ c=L'ÇÅ'+(c-L'a'); }
-	else if(c>=L'0' && c<=L'9'){ c=L'ÇO'+(c-L'0'); }
-	//àÍïîÇÃãLçÜÇ‡ïœä∑Ç∑ÇÈ
+	     if(c>=L'A' && c<=L'Z'){ c=L'Ôº°'+(c-L'A'); }
+	else if(c>=L'a' && c<=L'z'){ c=L'ÔΩÅ'+(c-L'a'); }
+	else if(c>=L'0' && c<=L'9'){ c=L'Ôºê'+(c-L'0'); }
+	//‰∏ÄÈÉ®„ÅÆË®òÂè∑„ÇÇÂ§âÊèõ„Åô„Çã
 	else if(wcschr_idx(tableHanKigo,c,&n)){ c=tableZenKigo[n]; }
 
 	return c;
@@ -166,12 +166,12 @@ void Convert_HaneisuToZeneisu(wchar_t* pData, int nLength)
 
 
 /*!
-	ëSäpÉJÉ^ÉJÉiÅ®îºäpÉJÉ^ÉJÉi
-	ë˜ì_ÇÃï™ÇæÇØÅAï∂éöêîÇÕëùÇ¶ÇÈâ¬î\ê´Ç™Ç†ÇÈÅBç≈ëÂÇ≈2î{Ç…Ç»ÇÈÅB
-	pDstÇ…ÇÕÇ†ÇÁÇ©Ç∂Çﬂè\ï™Ç»ÉÅÉÇÉäÇämï€ÇµÇƒÇ®Ç≠Ç±Ç∆ÅB
+	ÂÖ®Ëßí„Ç´„Çø„Ç´„Éä‚ÜíÂçäËßí„Ç´„Çø„Ç´„Éä
+	ÊøÅÁÇπ„ÅÆÂàÜ„Å†„Åë„ÄÅÊñáÂ≠óÊï∞„ÅØÂ¢ó„Åà„ÇãÂèØËÉΩÊÄß„Åå„ÅÇ„Çã„ÄÇÊúÄÂ§ß„Åß2ÂÄç„Å´„Å™„Çã„ÄÇ
+	pDst„Å´„ÅØ„ÅÇ„Çâ„Åã„Åò„ÇÅÂçÅÂàÜ„Å™„É°„É¢„É™„ÇíÁ¢∫‰øù„Åó„Å¶„Åä„Åè„Åì„Å®„ÄÇ
 
-	@date 2013.08.28 ÅuÉKÅ[ÅvìôÇÃë˜ì_ÅEîºë˜ì_Ç…ë±Ç≠í∑âπÇÃïœä∑Ç™Ç≈Ç´ÇƒÇ¢Ç»Ç©Ç¡ÇΩÇÃÇèCê≥ÅB
-		ÇΩÇæÇµÅAANSIî≈Ç∆ÇÕà·Ç¢íºëOÇÃï∂éöÇ™tableZenkata_KigoÇÃèÍçáÇÕïœä∑ÇµÇ»Ç¢ÅB
+	@date 2013.08.28 „Äå„Ç¨„Éº„ÄçÁ≠â„ÅÆÊøÅÁÇπ„ÉªÂçäÊøÅÁÇπ„Å´Á∂ö„ÅèÈï∑Èü≥„ÅÆÂ§âÊèõ„Åå„Åß„Åç„Å¶„ÅÑ„Å™„Åã„Å£„Åü„ÅÆ„Çí‰øÆÊ≠£„ÄÇ
+		„Åü„Å†„Åó„ÄÅANSIÁâà„Å®„ÅØÈÅï„ÅÑÁõ¥Ââç„ÅÆÊñáÂ≠ó„ÅåtableZenkata_Kigo„ÅÆÂ†¥Âêà„ÅØÂ§âÊèõ„Åó„Å™„ÅÑ„ÄÇ
 */
 void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
@@ -179,19 +179,19 @@ void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 	const wchar_t* src_end = src + nSrcLength;
 	wchar_t* dst = pDst;
 	int n;
-	bool bInKataNormal = false;				// ëOÇÃï∂éöÇ™ÉJÉ^ÉJÉi(ë˜ì_ÅAîºë˜ì_ÇèúÇ≠)ÇæÇ¡ÇΩÇ»ÇÁÅAtrueÇ∆ÇµÅAë˜ì_ÅAîºë˜ì_ÇîºäpÇ÷ïœä∑â¬î\Ç∆Ç∑ÇÈ
-	bool bInKata = false;				// ëOÇÃï∂éöÇ™ÉJÉ^ÉJÉiorÇ–ÇÁÇ™Ç»ÇæÇ¡ÇΩÇ»ÇÁÅAtrueÇ∆ÇµÅAí∑âπÅAë˜ì_ÅAîºë˜ì_ÇîºäpÇ÷ïœä∑â¬î\Ç∆Ç∑ÇÈ
+	bool bInKataNormal = false;				// Ââç„ÅÆÊñáÂ≠ó„Åå„Ç´„Çø„Ç´„Éä(ÊøÅÁÇπ„ÄÅÂçäÊøÅÁÇπ„ÇíÈô§„Åè)„Å†„Å£„Åü„Å™„Çâ„ÄÅtrue„Å®„Åó„ÄÅÊøÅÁÇπ„ÄÅÂçäÊøÅÁÇπ„ÇíÂçäËßí„Å∏Â§âÊèõÂèØËÉΩ„Å®„Åô„Çã
+	bool bInKata = false;				// Ââç„ÅÆÊñáÂ≠ó„Åå„Ç´„Çø„Ç´„Éäor„Å≤„Çâ„Åå„Å™„Å†„Å£„Åü„Å™„Çâ„ÄÅtrue„Å®„Åó„ÄÅÈï∑Èü≥„ÄÅÊøÅÁÇπ„ÄÅÂçäÊøÅÁÇπ„ÇíÂçäËßí„Å∏Â§âÊèõÂèØËÉΩ„Å®„Åô„Çã
 
 	while(src<src_end){
 		wchar_t c=*src;
-		//ÉqÉbÉgÇ∑ÇÈï∂éöÇ™Ç†ÇÍÇŒïœä∑ÇçsÇ§
+		//„Éí„ÉÉ„Éà„Åô„ÇãÊñáÂ≠ó„Åå„ÅÇ„Çå„Å∞Â§âÊèõ„ÇíË°å„ÅÜ
 		     if(wcschr_idx(tableZenkata_Normal    ,c,&n)){ *dst++=tableHankata_Normal[n]; bInKataNormal = true; bInKata = true; }
-		else if(wcschr_idx(tableZenkata_Dakuten   ,c,&n)){ *dst++=tableHankata_Dakuten[n];    *dst++=L'ﬁ'; bInKataNormal = false; bInKata = true; }
-		else if(wcschr_idx(tableZenkata_HanDakuten,c,&n)){ *dst++=tableHankata_HanDakuten[n]; *dst++=L'ﬂ'; bInKataNormal = false; bInKata = true; }
+		else if(wcschr_idx(tableZenkata_Dakuten   ,c,&n)){ *dst++=tableHankata_Dakuten[n];    *dst++=L'Ôæû'; bInKataNormal = false; bInKata = true; }
+		else if(wcschr_idx(tableZenkata_HanDakuten,c,&n)){ *dst++=tableHankata_HanDakuten[n]; *dst++=L'Ôæü'; bInKataNormal = false; bInKata = true; }
 		else if(wcschr_idx(tableZenkata_Cho       ,c,&n)){ *dst++=(bInKata ? tableHankata_Cho[n] : c); bInKataNormal = false; }
 		else if(wcschr_idx(tableZenkata_Daku      ,c,&n)){ *dst++=(bInKataNormal ? tableHankata_Daku[n] : c); bInKataNormal = false; bInKata = true; }
 		else if(wcschr_idx(tableZenkata_Kigo      ,c,&n)){ *dst++=tableHankata_Kigo[n]; bInKataNormal = false; bInKata = false; }
-		//ñ≥ïœä∑
+		//ÁÑ°Â§âÊèõ
 		else { *dst++=c; bInKataNormal = false; bInKata = false; }
 		src++;
 	}
@@ -200,9 +200,9 @@ void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 }
 
 /*!
-	ëSäpÅ®îºäp
-	ë˜ì_ÇÃï™ÇæÇØÅAï∂éöêîÇÕëùÇ¶ÇÈâ¬î\ê´Ç™Ç†ÇÈÅBç≈ëÂÇ≈2î{Ç…Ç»ÇÈÅB
-	pDstÇ…ÇÕÇ†ÇÁÇ©Ç∂Çﬂè\ï™Ç»ÉÅÉÇÉäÇämï€ÇµÇƒÇ®Ç≠Ç±Ç∆ÅB
+	ÂÖ®Ëßí‚ÜíÂçäËßí
+	ÊøÅÁÇπ„ÅÆÂàÜ„Å†„Åë„ÄÅÊñáÂ≠óÊï∞„ÅØÂ¢ó„Åà„ÇãÂèØËÉΩÊÄß„Åå„ÅÇ„Çã„ÄÇÊúÄÂ§ß„Åß2ÂÄç„Å´„Å™„Çã„ÄÇ
+	pDst„Å´„ÅØ„ÅÇ„Çâ„Åã„Åò„ÇÅÂçÅÂàÜ„Å™„É°„É¢„É™„ÇíÁ¢∫‰øù„Åó„Å¶„Åä„Åè„Åì„Å®„ÄÇ
 */
 void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
@@ -213,24 +213,24 @@ void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* 
 
 	while(src<src_end){
 		wchar_t c=*src;
-		//ëSäpâpêîÇîºäpâpêîÇ…ïœä∑Ç∑ÇÈ
+		//ÂÖ®ËßíËã±Êï∞„ÇíÂçäËßíËã±Êï∞„Å´Â§âÊèõ„Åô„Çã
 		wchar_t d = ZeneisuToHaneisu_(c);
 		if(d != c){ *dst++ = d; }
 		else {
-			//è¨Ç≥Ç¢ÅuÅTÅvÅuÅUÅvÇÕëSäpÉJÉ^ÉJÉiÅiÅuÅRÅvÅuÅSÅvÅjÇ…ÇÕïœä∑Ç≈Ç´ÇƒÇ‡îºäpÉJÉ^ÉJÉiÇ‹Ç≈ÇÕïœä∑Ç≈Ç´Ç»Ç¢ÇÃÇ≈ñ≥ïœä∑
-			//è¨Ç≥Ç¢ÅuÇ©ÅvÅuÇØÅvÅAÅuåãçáÅJ(u3099)ÅvÅuåãçáÅK(u309A)ÅvÅuÅJ(u309B)ÅvÅuÅK(u309C)ÅvÇÕïœä∑â¬î\  //2012.06.09 syat
+			//Â∞è„Åï„ÅÑ„Äå„Çù„Äç„Äå„Çû„Äç„ÅØÂÖ®Ëßí„Ç´„Çø„Ç´„ÉäÔºà„Äå„ÉΩ„Äç„Äå„Éæ„ÄçÔºâ„Å´„ÅØÂ§âÊèõ„Åß„Åç„Å¶„ÇÇÂçäËßí„Ç´„Çø„Ç´„Éä„Åæ„Åß„ÅØÂ§âÊèõ„Åß„Åç„Å™„ÅÑ„ÅÆ„ÅßÁÑ°Â§âÊèõ
+			//Â∞è„Åï„ÅÑ„Äå„Åã„Äç„Äå„Åë„Äç„ÄÅ„ÄåÁµêÂêà„Çõ(u3099)„Äç„ÄåÁµêÂêà„Çú(u309A)„Äç„Äå„Çõ(u309B)„Äç„Äå„Çú(u309C)„Äç„ÅØÂ§âÊèõÂèØËÉΩ  //2012.06.09 syat
 			if( (c>=L'\u3097' && c<=L'\u3098') || (c>=L'\u309D' && c<=L'\u309F') ){ *dst++ = c; }
 			else{
-				//ëSäpÇ–ÇÁÇ™Ç»ÇëSäpÉJÉ^ÉJÉiÇ…ÇµÇƒÇ©ÇÁîºäpÉJÉ^ÉJÉiÇ…ïœä∑Ç∑ÇÈ
+				//ÂÖ®Ëßí„Å≤„Çâ„Åå„Å™„ÇíÂÖ®Ëßí„Ç´„Çø„Ç´„Éä„Å´„Åó„Å¶„Åã„ÇâÂçäËßí„Ç´„Çø„Ç´„Éä„Å´Â§âÊèõ„Åô„Çã
 				c = ZenhiraToZenkata_(c);
-				//ÉqÉbÉgÇ∑ÇÈï∂éöÇ™Ç†ÇÍÇŒïœä∑ÇçsÇ§
+				//„Éí„ÉÉ„Éà„Åô„ÇãÊñáÂ≠ó„Åå„ÅÇ„Çå„Å∞Â§âÊèõ„ÇíË°å„ÅÜ
 				     if(wcschr_idx(tableZenkata_Normal    ,c,&n)){ *dst++=tableHankata_Normal[n];                  }
-				else if(wcschr_idx(tableZenkata_Dakuten   ,c,&n)){ *dst++=tableHankata_Dakuten[n];    *dst++=L'ﬁ'; }
-				else if(wcschr_idx(tableZenkata_HanDakuten,c,&n)){ *dst++=tableHankata_HanDakuten[n]; *dst++=L'ﬂ'; }
+				else if(wcschr_idx(tableZenkata_Dakuten   ,c,&n)){ *dst++=tableHankata_Dakuten[n];    *dst++=L'Ôæû'; }
+				else if(wcschr_idx(tableZenkata_HanDakuten,c,&n)){ *dst++=tableHankata_HanDakuten[n]; *dst++=L'Ôæü'; }
 				else if(wcschr_idx(tableZenkata_Cho       ,c,&n)){ *dst++=tableHankata_Cho[n];                     }
 				else if(wcschr_idx(tableZenkata_Daku      ,c,&n)){ *dst++=tableHankata_Daku[n];                    }
 				else if(wcschr_idx(tableZenkata_Kigo      ,c,&n)){ *dst++=tableHankata_Kigo[n];                    }
-				//ñ≥ïœä∑
+				//ÁÑ°Â§âÊèõ
 				else { *dst++=c; }
 			}
 		}
@@ -241,9 +241,9 @@ void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* 
 }
 
 /*!
-	îºäpÉJÉ^ÉJÉiÅ®ëSäpÉJÉ^ÉJÉi
-	ë˜ì_ÇÃï™ÇæÇØÅAï∂éöêîÇÕå∏ÇÈâ¬î\ê´Ç™Ç†ÇÈÅBç≈è¨Ç≈2ï™ÇÃ1Ç…Ç»ÇÈÅB
-	pDstÇ…ÇÕÇ†ÇÁÇ©Ç∂Çﬂè\ï™Ç»ÉÅÉÇÉäÇämï€ÇµÇƒÇ®Ç≠Ç±Ç∆ÅB
+	ÂçäËßí„Ç´„Çø„Ç´„Éä‚ÜíÂÖ®Ëßí„Ç´„Çø„Ç´„Éä
+	ÊøÅÁÇπ„ÅÆÂàÜ„Å†„Åë„ÄÅÊñáÂ≠óÊï∞„ÅØÊ∏õ„ÇãÂèØËÉΩÊÄß„Åå„ÅÇ„Çã„ÄÇÊúÄÂ∞è„Åß2ÂàÜ„ÅÆ1„Å´„Å™„Çã„ÄÇ
+	pDst„Å´„ÅØ„ÅÇ„Çâ„Åã„Åò„ÇÅÂçÅÂàÜ„Å™„É°„É¢„É™„ÇíÁ¢∫‰øù„Åó„Å¶„Åä„Åè„Åì„Å®„ÄÇ
 */
 void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
@@ -254,16 +254,16 @@ void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 
 	while(src<src_end){
 		wchar_t c=*src;
-		wchar_t next=(src+1<src_end)?*(src+1):0; //éüÇÃ1ï∂éöÇêÊì«Ç›
-		//ë˜ì_ÅAîºë˜ì_ÇÃÉ`ÉFÉbÉNÇêÊçsÇµÇƒçsÇ§
-		     if(next==L'ﬁ' && wcschr_idx(tableHankata_Dakuten   ,c,&n)){ *dst++=tableZenkata_Dakuten[n];    src++; }
-		else if(next==L'ﬂ' && wcschr_idx(tableHankata_HanDakuten,c,&n)){ *dst++=tableZenkata_HanDakuten[n]; src++; }
-		//ÇªÇÍà»äOÇÃï∂éöÉ`ÉFÉbÉNÇçsÇ§
+		wchar_t next=(src+1<src_end)?*(src+1):0; //Ê¨°„ÅÆ1ÊñáÂ≠ó„ÇíÂÖàË™≠„Åø
+		//ÊøÅÁÇπ„ÄÅÂçäÊøÅÁÇπ„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíÂÖàË°å„Åó„Å¶Ë°å„ÅÜ
+		     if(next==L'Ôæû' && wcschr_idx(tableHankata_Dakuten   ,c,&n)){ *dst++=tableZenkata_Dakuten[n];    src++; }
+		else if(next==L'Ôæü' && wcschr_idx(tableHankata_HanDakuten,c,&n)){ *dst++=tableZenkata_HanDakuten[n]; src++; }
+		//„Åù„Çå‰ª•Â§ñ„ÅÆÊñáÂ≠ó„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ
 		else if(              wcschr_idx(tableHankata_Normal    ,c,&n)){ *dst++=tableZenkata_Normal[n];            }
 		else if(              wcschr_idx(tableHankata_Cho       ,c,&n)){ *dst++=tableZenkata_Cho[n];               }
 		else if(              wcschr_idx(tableHankata_Daku      ,c,&n)){ *dst++=tableZenkata_Daku[n];              }
 		else if(              wcschr_idx(tableHankata_Kigo      ,c,&n)){ *dst++=tableZenkata_Kigo[n];              }
-		//ñ≥ïœä∑
+		//ÁÑ°Â§âÊèõ
 		else { *dst++=c; }
 		src++;
 	}
@@ -272,9 +272,9 @@ void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 }
 
 /*!
-	îºäpÉJÉ^ÉJÉiÅ®ëSäpÇ–ÇÁÇ™Ç»
-	ë˜ì_ÇÃï™ÇæÇØÅAï∂éöêîÇÕå∏ÇÈâ¬î\ê´Ç™Ç†ÇÈÅBç≈è¨Ç≈2ï™ÇÃ1Ç…Ç»ÇÈÅB
-	pDstÇ…ÇÕÇ†ÇÁÇ©Ç∂Çﬂè\ï™Ç»ÉÅÉÇÉäÇämï€ÇµÇƒÇ®Ç≠Ç±Ç∆ÅB
+	ÂçäËßí„Ç´„Çø„Ç´„Éä‚ÜíÂÖ®Ëßí„Å≤„Çâ„Åå„Å™
+	ÊøÅÁÇπ„ÅÆÂàÜ„Å†„Åë„ÄÅÊñáÂ≠óÊï∞„ÅØÊ∏õ„ÇãÂèØËÉΩÊÄß„Åå„ÅÇ„Çã„ÄÇÊúÄÂ∞è„Åß2ÂàÜ„ÅÆ1„Å´„Å™„Çã„ÄÇ
+	pDst„Å´„ÅØ„ÅÇ„Çâ„Åã„Åò„ÇÅÂçÅÂàÜ„Å™„É°„É¢„É™„ÇíÁ¢∫‰øù„Åó„Å¶„Åä„Åè„Åì„Å®„ÄÇ
 */
 void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
@@ -285,21 +285,21 @@ void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 
 	while(src<src_end){
 		wchar_t c=*src;
-		wchar_t next=(src+1<src_end)?*(src+1):0; //éüÇÃ1ï∂éöÇêÊì«Ç›
-		bool hit = true;	//îºäpÉJÉ^ÉJÉiÅ®ëSäpÉJÉ^ÉJÉiïœä∑Çé¿é{ÇµÇΩÇ©Ç«Ç§Ç©Çé¶Ç∑ÉtÉâÉO
-		//ë˜ì_ÅAîºë˜ì_ÇÃÉ`ÉFÉbÉNÇêÊçsÇµÇƒçsÇ§
-		//Å¶Åu‹ﬁÅvÅu¶ﬁÅvÇÕÇPéöÇÃëSäpÉJÉ^ÉJÉiÇ…ÇÕïœä∑Ç≈Ç´ÇƒÇ‡ëSäpÇ–ÇÁÇ™Ç»Ç‹Ç≈ÇÕïœä∑Ç≈Ç´Ç»Ç¢ÇÃÇ≈ë˜ì_ÇêÿÇËó£ÇµÇƒïœä∑
-		     if(              wcschr_idx(L"‹¶"                  ,c,&n)){ *dst++=L"ÉèÉí"[n];            }
-		else if(next==L'ﬁ' && wcschr_idx(tableHankata_Dakuten   ,c,&n)){ *dst++=tableZenkata_Dakuten[n];    src++; }
-		else if(next==L'ﬂ' && wcschr_idx(tableHankata_HanDakuten,c,&n)){ *dst++=tableZenkata_HanDakuten[n]; src++; }
-		//ÇªÇÍà»äOÇÃï∂éöÉ`ÉFÉbÉNÇçsÇ§
+		wchar_t next=(src+1<src_end)?*(src+1):0; //Ê¨°„ÅÆ1ÊñáÂ≠ó„ÇíÂÖàË™≠„Åø
+		bool hit = true;	//ÂçäËßí„Ç´„Çø„Ç´„Éä‚ÜíÂÖ®Ëßí„Ç´„Çø„Ç´„ÉäÂ§âÊèõ„ÇíÂÆüÊñΩ„Åó„Åü„Åã„Å©„ÅÜ„Åã„ÇíÁ§∫„Åô„Éï„É©„Ç∞
+		//ÊøÅÁÇπ„ÄÅÂçäÊøÅÁÇπ„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíÂÖàË°å„Åó„Å¶Ë°å„ÅÜ
+		//‚Äª„ÄåÔæúÔæû„Äç„ÄåÔΩ¶Ôæû„Äç„ÅØÔºëÂ≠ó„ÅÆÂÖ®Ëßí„Ç´„Çø„Ç´„Éä„Å´„ÅØÂ§âÊèõ„Åß„Åç„Å¶„ÇÇÂÖ®Ëßí„Å≤„Çâ„Åå„Å™„Åæ„Åß„ÅØÂ§âÊèõ„Åß„Åç„Å™„ÅÑ„ÅÆ„ÅßÊøÅÁÇπ„ÇíÂàá„ÇäÈõ¢„Åó„Å¶Â§âÊèõ
+		     if(              wcschr_idx(L"ÔæúÔΩ¶"                  ,c,&n)){ *dst++=L"„ÉØ„É≤"[n];            }
+		else if(next==L'Ôæû' && wcschr_idx(tableHankata_Dakuten   ,c,&n)){ *dst++=tableZenkata_Dakuten[n];    src++; }
+		else if(next==L'Ôæü' && wcschr_idx(tableHankata_HanDakuten,c,&n)){ *dst++=tableZenkata_HanDakuten[n]; src++; }
+		//„Åù„Çå‰ª•Â§ñ„ÅÆÊñáÂ≠ó„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ
 		else if(              wcschr_idx(tableHankata_Normal    ,c,&n)){ *dst++=tableZenkata_Normal[n];            }
 		else if(              wcschr_idx(tableHankata_Cho       ,c,&n)){ *dst++=tableZenkata_Cho[n];               }
 		else if(              wcschr_idx(tableHankata_Daku      ,c,&n)){ *dst++=tableZenkata_Daku[n];              }
 		else if(              wcschr_idx(tableHankata_Kigo      ,c,&n)){ *dst++=tableZenkata_Kigo[n];              }
-		//ñ≥ïœä∑
+		//ÁÑ°Â§âÊèõ
 		else { *dst++=c; hit = false; }
-		if(hit){ *(dst-1)=ZenkataToZenhira_(*(dst-1)); }	//îºäpÉJÉ^ÉJÉiÇ©ÇÁïœä∑ÇµÇΩëSäpÉJÉ^ÉJÉiÇëSäpÇ–ÇÁÇ™Ç»Ç…ïœä∑ÅiÅ¶Ç‡Ç∆Ç‡Ç∆ëSäpÇæÇ¡ÇΩÉJÉ^ÉJÉiÇÕñ≥ïœä∑Åj
+		if(hit){ *(dst-1)=ZenkataToZenhira_(*(dst-1)); }	//ÂçäËßí„Ç´„Çø„Ç´„Éä„Åã„ÇâÂ§âÊèõ„Åó„ÅüÂÖ®Ëßí„Ç´„Çø„Ç´„Éä„ÇíÂÖ®Ëßí„Å≤„Çâ„Åå„Å™„Å´Â§âÊèõÔºà‚Äª„ÇÇ„Å®„ÇÇ„Å®ÂÖ®Ëßí„Å†„Å£„Åü„Ç´„Çø„Ç´„Éä„ÅØÁÑ°Â§âÊèõÔºâ
 		src++;
 	}
 	*dst=L'\0';

@@ -1,15 +1,15 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_HaneisuToZeneisu.h"
 #include "convert_util.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//!”¼Šp‰p”¨‘SŠp‰p”
+//!åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•°
 bool CConvert_HaneisuToZeneisu::DoConvert(CNativeW* pcData)
 {
-	//”¼Šp‰p”¨‘SŠp‰p”
+	//åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•°
 	Convert_HaneisuToZeneisu(pcData->GetStringPtr(), pcData->GetStringLength());
 
 	return true;

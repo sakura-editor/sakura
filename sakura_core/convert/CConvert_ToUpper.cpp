@@ -1,44 +1,44 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_ToUpper.h"
 
-// ‘å•¶Žš‚Ö•ÏŠ·
-//	•ÏŠ·‚Å‚«‚È‚¢ƒLƒŠƒ‹•¶Žš„v‚ÌC³	2010/6/5 Uchi
-//	ƒ‰ƒeƒ“ƒAƒ‹ƒtƒ@ƒxƒbƒg‚ÌŠg’£‘Î‰ž(ƒ‰ƒeƒ“•â•AŠg’£ABAŠg’£’Ç‰Á)	2010/6/5 Uchi
+// å¤§æ–‡å­—ã¸å¤‰æ›
+//	å¤‰æ›ã§ããªã„ã‚­ãƒªãƒ«æ–‡å­—Ñ‘ã®ä¿®æ­£	2010/6/5 Uchi
+//	ãƒ©ãƒ†ãƒ³ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã®æ‹¡å¼µå¯¾å¿œ(ãƒ©ãƒ†ãƒ³è£œåŠ©ã€æ‹¡å¼µABã€æ‹¡å¼µè¿½åŠ )	2010/6/5 Uchi
 bool CConvert_ToUpper::DoConvert(CNativeW* pcData)
 {
 	WCHAR* p = pcData->GetStringPtr();
 	WCHAR* end = p + pcData->GetStringLength();
 	while(p < end){
 		WCHAR& c=*p++;
-		// a-z ¨ A-Z
+		// a-z â†’ A-Z
 		if(c>=0x0061 && c<=0x007A){
 			c=0x0041+(c-0x0061);
 		}
-		// ‚-‚š ¨ ‚`-‚y
+		// ï½-ï½š â†’ ï¼¡-ï¼º
 		else if( c>=0xFF41 && c<=0xFF5A){
 			c=0xFF21+(c-0xFF41);
 		}
-		// ƒMƒŠƒVƒƒ•¶Žš•ÏŠ·
+		// ã‚®ãƒªã‚·ãƒ£æ–‡å­—å¤‰æ›
 		else if( c>=0x03B1 && c<=0x03C9){
 			c=0x0391+(c-0x03B1);
 		}
-		// ƒLƒŠƒ‹•¶Žš•ÏŠ·
+		// ã‚­ãƒªãƒ«æ–‡å­—å¤‰æ›
 		else if( c>=0x0430 && c<=0x044F){
 			c=0x0410+(c-0x0430);
 		}
-		// ƒLƒŠƒ‹•¶ŽšiŠg’£j•ÏŠ·
+		// ã‚­ãƒªãƒ«æ–‡å­—ï¼ˆæ‹¡å¼µï¼‰å¤‰æ›
 		else if (c>=0x0450 && c<=0x045F) {
 			c=0x0400+(c-0x0450);
 		}
-		// iso8859-1(Latin-1 Supplement)•ÏŠ·
+		// iso8859-1(Latin-1 Supplement)å¤‰æ›
 		else if (c>=0x00E0 && c<=0x00FE && c!=0x00F7) {
 			c=0x00C0+(c-0x00E0);
 		}
 		else if (c == 0x00FF) {
 			c = 0x0178;
 		}
-		// Latin Extended-A •ÏŠ·(ŠÜ“Œ‰¢“™)
-		else if (c==0x0131) { // 2014.11.25 0x0131=>0x0130‚ÍŠÔˆá‚¢B0x0131=>0x0049‚É•ÏX
+		// Latin Extended-A å¤‰æ›(å«æ±æ¬§ç­‰)
+		else if (c==0x0131) { // 2014.11.25 0x0131=>0x0130ã¯é–“é•ã„ã€‚0x0131=>0x0049ã«å¤‰æ›´
 			c = 0x0049; // I
 		}
 		else if ((c>=0x0100 && c<=0x0137) || (c>=0x014A && c<=0x0177)) {
@@ -47,7 +47,7 @@ bool CConvert_ToUpper::DoConvert(CNativeW* pcData)
 		else if (((c>=0x0139 && c<=0x0148) || (c>=0x0179 && c<=0x017E)) && ((c&1) == 0)) {
 			c--;
 		}
-		// Latin Extended-B •ÏŠ·(ŠÜPinyin—p)
+		// Latin Extended-B å¤‰æ›(å«Pinyinç”¨)
 		else if ((c>=0x0180 && c<=0x0185) || (c>=0x0198 && c<=0x0199) || (c>=0x01A0 && c<=0x01A5) || (c>=0x01AC && c<=0x01AD) || (c>=0x01B8 && c<=0x01B9) || (c>=0x01BC && c<=0x01BD) || (c>=0x01DE && c<=0x01EF) || (c>=0x01F4 && c<=0x01F5) || (c>=0x01F8 && c<=0x01FF)) {
 			c = (c & ~0x0001);
 		}
@@ -70,7 +70,7 @@ bool CConvert_ToUpper::DoConvert(CNativeW* pcData)
 		else if (c == 0x01BF) {
 			c = 0x01F7;
 		}
-		// Latin Extended Additional •ÏŠ·(ŠÜƒxƒgƒiƒ€Œê—p)
+		// Latin Extended Additional å¤‰æ›(å«ãƒ™ãƒˆãƒŠãƒ èªžç”¨)
 		else if ((c>=0x1E00 && c<=0x1E95) || (c>=0x1EA0 && c<=0x1EFF)) {
 			c = (c & ~0x0001);
 		}
