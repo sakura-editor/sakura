@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -33,11 +33,11 @@ CBregexpDll2::~CBregexpDll2()
 }
 
 /*!
-	@date 2001.07.05 genta ˆø”’Ç‰ÁB‚½‚¾‚µA‚±‚±‚Å‚Íg‚í‚È‚¢B
-	@date 2007.06.25 genta •¡”‚ÌDLL–¼‚É‘Î‰
-	@date 2007.09.13 genta ƒT[ƒ`ƒ‹[ƒ‹‚ğ•ÏX
-		@li w’è—L‚è‚Ìê‡‚Í‚»‚ê‚Ì‚İ‚ğ•Ô‚·
-		@li w’è–³‚µ(NULL‚Ü‚½‚Í‹ó•¶š—ñ)‚Ìê‡‚ÍBREGONIG, BREGEXP‚Ì‡‚Å‚İ‚é
+	@date 2001.07.05 genta å¼•æ•°è¿½åŠ ã€‚ãŸã ã—ã€ã“ã“ã§ã¯ä½¿ã‚ãªã„ã€‚
+	@date 2007.06.25 genta è¤‡æ•°ã®DLLåã«å¯¾å¿œ
+	@date 2007.09.13 genta ã‚µãƒ¼ãƒãƒ«ãƒ¼ãƒ«ã‚’å¤‰æ›´
+		@li æŒ‡å®šæœ‰ã‚Šã®å ´åˆã¯ãã‚Œã®ã¿ã‚’è¿”ã™
+		@li æŒ‡å®šç„¡ã—(NULLã¾ãŸã¯ç©ºæ–‡å­—åˆ—)ã®å ´åˆã¯BREGONIG, BREGEXPã®é †ã§è©¦ã¿ã‚‹
 */
 LPCTSTR CBregexpDll2::GetDllNameImp( int index )
 {
@@ -46,16 +46,16 @@ LPCTSTR CBregexpDll2::GetDllNameImp( int index )
 
 
 /*!
-	DLL‚Ì‰Šú‰»
+	DLLã®åˆæœŸåŒ–
 
-	ŠÖ”‚ÌƒAƒhƒŒƒX‚ğæ“¾‚µ‚Äƒƒ“ƒo‚É•ÛŠÇ‚·‚éD
+	é–¢æ•°ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã—ã¦ãƒ¡ãƒ³ãƒã«ä¿ç®¡ã™ã‚‹ï¼
 
-	@retval true ¬Œ÷
-	@retval false ƒAƒhƒŒƒXæ“¾‚É¸”s
+	@retval true æˆåŠŸ
+	@retval false ã‚¢ãƒ‰ãƒ¬ã‚¹å–å¾—ã«å¤±æ•—
 */
 bool CBregexpDll2::InitDllImp()
 {
-	//DLL“àŠÖ”–¼ƒŠƒXƒg
+	//DLLå†…é–¢æ•°åãƒªã‚¹ãƒˆ
 	const ImportTable table[] = {
 		{ &m_BMatch,			"BMatchW" },
 		{ &m_BSubst,			"BSubstW" },

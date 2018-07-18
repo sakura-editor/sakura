@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -40,20 +40,20 @@ typedef struct bregexp {
 	int nparens;				/* number of parentheses */
 } BREGEXP_W;
 
-//!BREGONIG.DLL‚ğƒ‰ƒbƒv‚µ‚½‚à‚ÌB
-//2007.09.13 kobake ì¬
+//!BREGONIG.DLLã‚’ãƒ©ãƒƒãƒ—ã—ãŸã‚‚ã®ã€‚
+//2007.09.13 kobake ä½œæˆ
 class CBregexpDll2 : public CDllImp{
 public:
 	CBregexpDll2();
 	virtual ~CBregexpDll2();
 
 protected:
-	// CDllImpƒCƒ“ƒ^ƒtƒF[ƒX
-	virtual LPCTSTR GetDllNameImp(int nIndex); // Jul. 5, 2001 genta ƒCƒ“ƒ^[ƒtƒF[ƒX•ÏX‚É”º‚¤ˆø”’Ç‰Á
+	// CDllImpã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹
+	virtual LPCTSTR GetDllNameImp(int nIndex); // Jul. 5, 2001 genta ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹å¤‰æ›´ã«ä¼´ã†å¼•æ•°è¿½åŠ 
 	virtual bool InitDllImp();
 
 protected:
-	// DLLŠÖ”‚ÌŒ^
+	// DLLé–¢æ•°ã®å‹
 	typedef int            (__cdecl *BREGEXP_BMatchW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
 	typedef int            (__cdecl *BREGEXP_BSubstW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
 	typedef int            (__cdecl *BREGEXP_BTransW2)        (const wchar_t* str, wchar_t* target, wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
@@ -64,7 +64,7 @@ protected:
 	typedef int            (__cdecl *BREGEXP_BSubstExW2)      (const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
 
 public:
-	// UNICODEƒCƒ“ƒ^[ƒtƒF[ƒX‚ğ’ñ‹Ÿ‚·‚é
+	// UNICODEã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã‚’æä¾›ã™ã‚‹
 	int BMatch(const wchar_t* str, const wchar_t* target,const wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
 	{
 		return m_BMatch(str,target,targetendp,rxp,msg);
@@ -98,12 +98,12 @@ public:
 		return m_BSubstEx(str,targetbeg,target,targetendp,rxp,msg);
 	}
 
-	// ŠÖ”‚ª‚ ‚é‚©‚Ç‚¤‚©
+	// é–¢æ•°ãŒã‚ã‚‹ã‹ã©ã†ã‹
 	bool ExistBMatchEx() const{ return m_BMatchEx!=NULL; }
 	bool ExistBSubstEx() const{ return m_BSubstEx!=NULL; }
 
 private:
-	//DLL“àŠÖ”ƒ|ƒCƒ“ƒ^
+	//DLLå†…é–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	BREGEXP_BMatchW2         m_BMatch;
 	BREGEXP_BSubstW2         m_BSubst;
 	BREGEXP_BTransW2         m_BTrans;

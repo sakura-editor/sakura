@@ -1,8 +1,8 @@
-/*!	@file
-	@brief C/Migemo ƒCƒ“ƒ^[ƒtƒF[ƒX
+ï»¿/*!	@file
+	@brief C/Migemo ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
 	@author isearch
-	@date 2004.09.14 V‹Kì¬
+	@date 2004.09.14 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2004, isearch
@@ -24,12 +24,12 @@
 #include "util/module.h"
 #include "util/file.h"
 
-/*! @brief PCRE ƒƒ^ƒLƒƒƒ‰ƒNƒ^‚ÌƒGƒXƒP[ƒvˆ—‚ğs‚¤B
- iCMigemo::migemo_setproc_int2char ‚Ìˆø”‚Æ‚µ‚Äg—pj
- @param[in] in “ü—Í•¶šƒR[ƒh(unsigned int)
- @param[out] out o—ÍƒoƒCƒg—ñ(unsigned char*)
- @return o—Í‚³‚ê‚½•¶š—ñ‚ÌƒoƒCƒg”B
-  0‚ğ•Ô‚¹‚ÎƒfƒtƒHƒ‹ƒg‚ÌƒvƒƒV[ƒWƒƒ‚ªÀs‚³‚ê‚éB
+/*! @brief PCRE ãƒ¡ã‚¿ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—å‡¦ç†ã‚’è¡Œã†ã€‚
+ ï¼ˆCMigemo::migemo_setproc_int2char ã®å¼•æ•°ã¨ã—ã¦ä½¿ç”¨ï¼‰
+ @param[in] in å…¥åŠ›æ–‡å­—ã‚³ãƒ¼ãƒ‰(unsigned int)
+ @param[out] out å‡ºåŠ›ãƒã‚¤ãƒˆåˆ—(unsigned char*)
+ @return å‡ºåŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã®ãƒã‚¤ãƒˆæ•°ã€‚
+  0ã‚’è¿”ã›ã°ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãŒå®Ÿè¡Œã•ã‚Œã‚‹ã€‚
 */
 static int __cdecl pcre_int2char(unsigned int in, unsigned char* out);	// 2009.04.30 miau
 
@@ -38,11 +38,11 @@ int __cdecl pcre_char2int_utf8(const unsigned char*, unsigned int*);
 int __cdecl pcre_int2char_utf8(unsigned int, unsigned char*);
 
 //-----------------------------------------
-//	DLL ‰Šú‰»ŠÖ”
+//	DLL åˆæœŸåŒ–é–¢æ•°
 //-----------------------------------------
 bool CMigemo::InitDllImp()
 {
-	//	static‚É‚µ‚Ä‚Í‚¢‚¯‚È‚¢‚ç‚µ‚¢
+	//	staticã«ã—ã¦ã¯ã„ã‘ãªã„ã‚‰ã—ã„
 	
 	const ImportTable table[] = {
 		{ &m_migemo_open              ,"migemo_open"              },
@@ -73,10 +73,10 @@ bool CMigemo::InitDllImp()
 	m_migemo_load_s             = (Proc_migemo_load_s)            m_migemo_load;
 	m_migemo_is_enable_s        = (Proc_migemo_is_enable_s)       m_migemo_is_enable;
 
-	// IA64/x64‚Í‘Î‰•s—v
+	// IA64/x64ã¯å¯¾å¿œä¸è¦
 #ifdef _WIN64
 #else
-	// ver 1.3 ˆÈ~‚Í stdcall
+	// ver 1.3 ä»¥é™ã¯ stdcall
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( GetInstance(), VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
@@ -116,7 +116,7 @@ LPCTSTR CMigemo::GetDllNameImp(int nIndex)
 		}
 		else{
 			if(_IS_REL_PATH(szDll)){
-				GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+				GetInidirOrExedir(szDllName , szDll);	// 2007.05.21 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 				szDll = szDllName;
 			}
 			return szDll;
@@ -287,18 +287,18 @@ int CMigemo::migemo_load_all()
 		TCHAR *ppath;
 		
 		if (szDict[0] == _T('\0')){
-			GetInidirOrExedir(path,_T("dict"));	// 2007.05.20 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+			GetInidirOrExedir(path,_T("dict"));	// 2007.05.20 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 		}
 		else{
 			if (_IS_REL_PATH(szDict)){
-				GetInidirOrExedir(path,szDict);	// 2007.05.19 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+				GetInidirOrExedir(path,szDict);	// 2007.05.19 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 			}else{
 				_tcscpy(path,szDict);
 			}
 		}
 		ppath = &path[_tcslen(path)];
 		*(ppath++) = _T('\\');
-		// ver1.3 utf8‘Î‰
+		// ver1.3 utf8å¯¾å¿œ
 		_tcscpy(ppath,_T("utf-8\\migemo-dict"));
 		if(fexist(path)){
 			_tcscpy(ppath,_T("utf-8\\"));
@@ -324,7 +324,7 @@ int CMigemo::migemo_load_all()
 		_tcscpy(ppath,_T("zen2han.dat"));
 		migemo_load_t(MIGEMO_DICTID_ZEN2HAN,path);
 
-		// 2011.12.11 Moca «‘“o˜^Œã‚Å‚È‚¢‚Æmigemo“à‘Ÿ‚Ì‚à‚Ì‚É•ÏX‚³‚ê‚Ä‚µ‚Ü‚¤
+		// 2011.12.11 Moca è¾æ›¸ç™»éŒ²å¾Œã§ãªã„ã¨migemoå†…è‡“ã®ã‚‚ã®ã«å¤‰æ›´ã•ã‚Œã¦ã—ã¾ã†
 		if( m_bUtf8 ){
 			migemo_setproc_char2int(pcre_char2int_utf8);
 			migemo_setproc_int2char(pcre_int2char_utf8);
@@ -358,10 +358,10 @@ int __cdecl pcre_char2int_sjis(const unsigned char* in, unsigned int* out)
 
 
 
-// C/Migemo ƒ\[ƒX’†‚Ì rxgen.c:default_int2char ‚ğŒ³‚Éì¬B	// 2009.04.30 miau
+// C/Migemo ã‚½ãƒ¼ã‚¹ä¸­ã® rxgen.c:default_int2char ã‚’å…ƒã«ä½œæˆã€‚	// 2009.04.30 miau
 static int __cdecl pcre_int2char(unsigned int in, unsigned char* out)
 {
-    /* out‚ÍÅ’á‚Å‚à16ƒoƒCƒg‚Í‚ ‚éA‚Æ‚¢‚¤‰¼’è‚ğ’u‚­ */
+    /* outã¯æœ€ä½ã§ã‚‚16ãƒã‚¤ãƒˆã¯ã‚ã‚‹ã€ã¨ã„ã†ä»®å®šã‚’ç½®ã */
     if (in >= 0x100)
     {
 	if (out)
