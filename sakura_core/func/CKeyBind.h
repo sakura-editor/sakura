@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒL[Š„‚è“–‚Ä‚ÉŠÖ‚·‚éƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/03/25 V‹Kì¬
-	@date 1998/05/16 ƒNƒ‰ƒX“à‚Éƒf[ƒ^‚ğ‚½‚È‚¢‚æ‚¤‚É•ÏX
+	@date 1998/03/25 æ–°è¦ä½œæˆ
+	@date 1998/05/16 ã‚¯ãƒ©ã‚¹å†…ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒãŸãªã„ã‚ˆã†ã«å¤‰æ›´
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,47 +20,47 @@
 
 class CFuncLookup;
 
-//! ƒL[î•ñ‚ğ•Û‚·‚é
+//! ã‚­ãƒ¼æƒ…å ±ã‚’ä¿æŒã™ã‚‹
 struct KEYDATA {
-	/*! ƒL[ƒR[ƒh	*/
+	/*! ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰	*/
 	short			m_nKeyCode;
 	
-	/*!	ƒL[‚Ì–¼‘O	*/
+	/*!	ã‚­ãƒ¼ã®åå‰	*/
 	TCHAR			m_szKeyName[30];
 	
-	/*!	‘Î‰‚·‚é‹@”\”Ô†
+	/*!	å¯¾å¿œã™ã‚‹æ©Ÿèƒ½ç•ªå·
 
-		SHIFT, CTRL, ALT‚Ì‚R‚Â‚ÌƒVƒtƒgó‘Ô‚Ì‚»‚ê‚¼‚ê‚É‘Î‚µ‚Ä
-		‹@”\‚ğŠ„‚è“–‚Ä‚é‚½‚ßA”z—ñ‚É‚È‚Á‚Ä‚¢‚éB
+		SHIFT, CTRL, ALTã®ï¼“ã¤ã®ã‚·ãƒ•ãƒˆçŠ¶æ…‹ã®ãã‚Œãã‚Œã«å¯¾ã—ã¦
+		æ©Ÿèƒ½ã‚’å‰²ã‚Šå½“ã¦ã‚‹ãŸã‚ã€é…åˆ—ã«ãªã£ã¦ã„ã‚‹ã€‚
 	*/
 	EFunctionCode	m_nFuncCodeArr[8];
 };
 
-/*! ‰¼‘zƒL[ƒR[ƒh“Æ©Šg’£ */
-#define VKEX_DBL_CLICK		0x0100	// ƒ_ƒuƒ‹ƒNƒŠƒbƒN
-#define VKEX_R_CLICK		0x0101	// ‰EƒNƒŠƒbƒN
-#define VKEX_MDL_CLICK		0x0102	// ’†ƒNƒŠƒbƒN
-#define VKEX_LSD_CLICK		0x0103	// ¶ƒTƒCƒhƒNƒŠƒbƒN
-#define VKEX_RSD_CLICK		0x0104	// ‰EƒTƒCƒhƒNƒŠƒbƒN
+/*! ä»®æƒ³ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ç‹¬è‡ªæ‹¡å¼µ */
+#define VKEX_DBL_CLICK		0x0100	// ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯
+#define VKEX_R_CLICK		0x0101	// å³ã‚¯ãƒªãƒƒã‚¯
+#define VKEX_MDL_CLICK		0x0102	// ä¸­ã‚¯ãƒªãƒƒã‚¯
+#define VKEX_LSD_CLICK		0x0103	// å·¦ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯
+#define VKEX_RSD_CLICK		0x0104	// å³ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯
 
-#define VKEX_TRI_CLICK		0x0105	// ƒgƒŠƒvƒ‹ƒNƒŠƒbƒN
-#define VKEX_QUA_CLICK		0x0106	// ƒNƒAƒhƒ‰ƒvƒ‹ƒNƒŠƒbƒN
+#define VKEX_TRI_CLICK		0x0105	// ãƒˆãƒªãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯
+#define VKEX_QUA_CLICK		0x0106	// ã‚¯ã‚¢ãƒ‰ãƒ©ãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯
 
-#define VKEX_WHEEL_UP		0x0107	// ƒzƒC[ƒ‹ƒAƒbƒv
-#define VKEX_WHEEL_DOWN		0x0108	// ƒzƒC[ƒ‹ƒ_ƒEƒ“
-#define VKEX_WHEEL_LEFT		0x0109	// ƒzƒC[ƒ‹¶
-#define VKEX_WHEEL_RIGHT	0x010A	// ƒzƒC[ƒ‹‰E
+#define VKEX_WHEEL_UP		0x0107	// ãƒ›ã‚¤ãƒ¼ãƒ«ã‚¢ãƒƒãƒ—
+#define VKEX_WHEEL_DOWN		0x0108	// ãƒ›ã‚¤ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
+#define VKEX_WHEEL_LEFT		0x0109	// ãƒ›ã‚¤ãƒ¼ãƒ«å·¦
+#define VKEX_WHEEL_RIGHT	0x010A	// ãƒ›ã‚¤ãƒ¼ãƒ«å³
 
 extern const TCHAR* jpVKEXNames[];
 extern const int jpVKEXNamesLen;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒL[Š„‚è“–‚ÄŠÖ˜Aƒ‹[ƒ`ƒ“
+	@brief ã‚­ãƒ¼å‰²ã‚Šå½“ã¦é–¢é€£ãƒ«ãƒ¼ãƒãƒ³
 	
-	‚·‚×‚Ä‚ÌŠÖ”‚Ístatic‚Å•Û‚·‚éƒf[ƒ^‚Í‚È‚¢B
+	ã™ã¹ã¦ã®é–¢æ•°ã¯staticã§ä¿æŒã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã¯ãªã„ã€‚
 */
 class CKeyBind
 {
@@ -72,24 +72,24 @@ public:
 	~CKeyBind();
 
 	/*
-	||  QÆŒnƒƒ“ƒoŠÖ”
+	||  å‚ç…§ç³»ãƒ¡ãƒ³ãƒé–¢æ•°
 	*/
 	static HACCEL CreateAccerelator( int, KEYDATA* );
 	static EFunctionCode GetFuncCode( WORD nAccelCmd, int nKeyNameArrNum, KEYDATA* pKeyNameArr, BOOL bGetDefFuncCode = TRUE );
-	static EFunctionCode GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE );	/* “Á’è‚ÌƒL[î•ñ‚©‚ç‹@”\ƒR[ƒh‚ğæ“¾‚·‚é */	// 2007.02.24 ryoji
-	static EFunctionCode GetDefFuncCode( int nKeyCode, int nState );	/* ƒL[‚ÌƒfƒtƒHƒ‹ƒg‹@”\‚ğæ“¾‚·‚é */	// 2007.02.22 ryoji
+	static EFunctionCode GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE );	/* ç‰¹å®šã®ã‚­ãƒ¼æƒ…å ±ã‹ã‚‰æ©Ÿèƒ½ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ */	// 2007.02.24 ryoji
+	static EFunctionCode GetDefFuncCode( int nKeyCode, int nState );	/* ã‚­ãƒ¼ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ */	// 2007.02.22 ryoji
 
-	//! ƒL[Š„‚è“–‚Äˆê——‚ğì¬‚·‚é
+	//! ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ä¸€è¦§ã‚’ä½œæˆã™ã‚‹
 	static int CreateKeyBindList( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CNativeW& cMemList, CFuncLookup* pcFuncLookup, BOOL bGetDefFuncCode = TRUE );
-	static int GetKeyStr( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CNativeT& cMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚Ìæ“¾ */
-	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CNativeT*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚Ìæ“¾(•¡”) */
-	static TCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, TCHAR* pszLabel, const TCHAR* pszKey, BOOL bKeyStr, int nLabelSize, BOOL bGetDefFuncCode = TRUE );	/* ƒƒjƒ…[ƒ‰ƒxƒ‹‚Ìì¬ */	// add pszKey	2010/5/17 Uchi
+	static int GetKeyStr( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CNativeT& cMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®å–å¾— */
+	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CNativeT*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®å–å¾—(è¤‡æ•°) */
+	static TCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, TCHAR* pszLabel, const TCHAR* pszKey, BOOL bKeyStr, int nLabelSize, BOOL bGetDefFuncCode = TRUE );	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ©ãƒ™ãƒ«ã®ä½œæˆ */	// add pszKey	2010/5/17 Uchi
 
 	static TCHAR* MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey);
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
 			int nShiftState, CNativeT& cMemList, int nFuncId, BOOL bGetDefFuncCode );

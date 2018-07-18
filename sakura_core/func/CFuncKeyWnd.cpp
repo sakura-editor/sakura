@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[ƒEƒBƒ“ƒhƒE
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
 	@author Norio Nakatani
 */
@@ -52,30 +52,30 @@ LRESULT CALLBACK CFuncKeyWndProc(
 
 
 
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 CFuncKeyWnd::CFuncKeyWnd()
 : CWnd(_T("::CFuncKeyWnd"))
 {
 	int		i;
 	LOGFONT	lf;
 	m_pcEditDoc = NULL;
-	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 	m_pShareData = &GetDllShareData();
 	m_nCurrentKeyState = -1;
 	for( i = 0; i < _countof(m_szFuncNameArr); ++i ){
 		m_szFuncNameArr[i][0] = LTEXT('\0');
 	}
-//	2002.11.04 Moca Open()‘¤‚Åİ’è
+//	2002.11.04 Moca Open()å´ã§è¨­å®š
 //	m_nButtonGroupNum = 4;
 
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
 		m_hwndButtonArr[i] = NULL;
 	}
 
-	/* •\¦—pƒtƒHƒ“ƒg */
-	/* LOGFONT‚Ì‰Šú‰» */
+	/* è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
+	/* LOGFONTã®åˆæœŸåŒ– */
 	memset_raw( &lf, 0, sizeof(lf) );
-	lf.lfHeight			= DpiPointsToPixels(-9);	// 2009.10.01 ryoji ‚DPI‘Î‰iƒ|ƒCƒ“ƒg”‚©‚çZoj
+	lf.lfHeight			= DpiPointsToPixels(-9);	// 2009.10.01 ryoji é«˜DPIå¯¾å¿œï¼ˆãƒã‚¤ãƒ³ãƒˆæ•°ã‹ã‚‰ç®—å‡ºï¼‰
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
 	lf.lfOrientation	= 0;
@@ -88,7 +88,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	_tcscpy( lf.lfFaceName, _T("‚l‚r ‚oƒSƒVƒbƒN") );
+	_tcscpy( lf.lfFaceName, _T("ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯") );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	m_bSizeBox = false;
@@ -103,7 +103,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 
 CFuncKeyWnd::~CFuncKeyWnd()
 {
-	/* •\¦—pƒtƒHƒ“ƒg */
+	/* è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
 	::DeleteObject( m_hFont );
 	return;
 }
@@ -111,7 +111,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 
 
 
-/* ƒEƒBƒ“ƒhƒE ƒI[ƒvƒ“ */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚ªãƒ¼ãƒ—ãƒ³ */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
 	LPCTSTR pszClassName = _T("CFuncKeyWnd");
@@ -121,13 +121,13 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	m_hwndSizeBox = NULL;
 	m_nCurrentKeyState = -1;
 
-	// 2002.11.04 Moca •ÏX‚Å‚«‚é‚æ‚¤‚É
+	// 2002.11.04 Moca å¤‰æ›´ã§ãã‚‹ã‚ˆã†ã«
 	m_nButtonGroupNum = m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum;
 	if( 1 > m_nButtonGroupNum || 12 < m_nButtonGroupNum ){
 		m_nButtonGroupNum = 4;
 	}
 
-	/* ƒEƒBƒ“ƒhƒEƒNƒ‰ƒXì¬ */
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ä½œæˆ */
 	RegisterWC(
 		hInstance,
 		NULL,// Handle to the class icon.
@@ -138,16 +138,16 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒoŒÄ‚Ño‚µ */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒå‘¼ã³å‡ºã— */
 	CWnd::Create(
 		hwndParent,
 		0, // extended window style
 		pszClassName,	// Pointer to a null-terminated string or is an atom.
 		pszClassName, // pointer to window name
-		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN ’Ç‰Á	// 2007.03.08 ryoji WS_VISIBLE œ‹
+		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN, // window style	// 2006.06.17 ryoji WS_CLIPCHILDREN è¿½åŠ 	// 2007.03.08 ryoji WS_VISIBLE é™¤å»
 		CW_USEDEFAULT, // horizontal position of window
 		0, // vertical position of window
-		0, // window width	// 2007.02.05 ryoji 100->0i”¼’[‚ÈƒTƒCƒY‚Åˆêu•\¦‚³‚ê‚é‚æ‚èŒ©‚¦‚È‚¢‚Ù‚¤‚ª‚¢‚¢j
+		0, // window width	// 2007.02.05 ryoji 100->0ï¼ˆåŠç«¯ãªã‚µã‚¤ã‚ºã§ä¸€ç¬è¡¨ç¤ºã•ã‚Œã‚‹ã‚ˆã‚Šè¦‹ãˆãªã„ã»ã†ãŒã„ã„ï¼‰
 		::GetSystemMetrics( SM_CYMENU ), // window height
 		NULL // handle to menu, or child-window identifier
 	);
@@ -171,11 +171,11 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		);
 	}
 
-	/* ƒ{ƒ^ƒ“‚Ì¶¬ */
+	/* ãƒœã‚¿ãƒ³ã®ç”Ÿæˆ */
 	CreateButtons();
 
 	Timer_ONOFF( true ); // 20060126 aroka
-	OnTimer( GetHwnd(), WM_TIMER, IDT_FUNCWND, ::GetTickCount() );	// ‰‰ñXV	// 2006.12.20 ryoji
+	OnTimer( GetHwnd(), WM_TIMER, IDT_FUNCWND, ::GetTickCount() );	// åˆå›æ›´æ–°	// 2006.12.20 ryoji
 
 	return GetHwnd();
 }
@@ -183,7 +183,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 
 
 
-/* ƒEƒBƒ“ƒhƒE ƒNƒ[ƒY */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚¯ãƒ­ãƒ¼ã‚º */
 void CFuncKeyWnd::Close( void )
 {
 	this->DestroyWindow();
@@ -193,12 +193,12 @@ void CFuncKeyWnd::Close( void )
 
 
 
-///* WM_SIZEˆ— */
+///* WM_SIZEå‡¦ç† */
 //void CFuncKeyWnd::OnSize(
 //	WPARAM	wParam,	// first message parameter
 //	LPARAM	lParam 	// second message parameter
 
-// WM_SIZEˆ—
+// WM_SIZEå‡¦ç†
 LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	int			nButtonWidth;
@@ -215,7 +215,7 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 	nButtonNum = _countof( m_hwndButtonArr );
 
-	/* ƒ{ƒ^ƒ“‚ÌƒTƒCƒY‚ğŒvZ */
+	/* ãƒœã‚¿ãƒ³ã®ã‚µã‚¤ã‚ºã‚’è¨ˆç®— */
 	nButtonWidth = CalcButtonSize();
 
 	::GetWindowRect( GetHwnd(), &rcParent );
@@ -229,7 +229,7 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::MoveWindow( m_hwndButtonArr[i], nX, 1, nButtonWidth, nButtonHeight, TRUE );
 		nX += nButtonWidth + 1;
 	}
-	::InvalidateRect( GetHwnd(), NULL, TRUE );	//Ä•`‰æ‚µ‚Ä‚ËB	//@@@ 2003.06.11 MIK
+	::InvalidateRect( GetHwnd(), NULL, TRUE );	//å†æç”»ã—ã¦ã­ã€‚	//@@@ 2003.06.11 MIK
 	return 0L;
 }
 
@@ -288,7 +288,7 @@ LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 
-// WM_TIMERƒ^ƒCƒ}[‚Ìˆ—
+// WM_TIMERã‚¿ã‚¤ãƒãƒ¼ã®å‡¦ç†
 LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 // 	HWND hwnd,	// handle of window for timer messages
@@ -302,7 +302,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 
-	if( ::GetActiveWindow() != GetParentHwnd() && m_nCurrentKeyState != -1 ) {	//	2002/06/02 MIK	// 2006.12.20 ryoji ‰‰ñXV‚Íˆ—‚·‚é
+	if( ::GetActiveWindow() != GetParentHwnd() && m_nCurrentKeyState != -1 ) {	//	2002/06/02 MIK	// 2006.12.20 ryoji åˆå›æ›´æ–°ã¯å‡¦ç†ã™ã‚‹
 		return 0;
 	}
 
@@ -311,15 +311,15 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	int			i;
 
 // novice 2004/10/10
-	/* Shift,Ctrl,AltƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚© */
+	/* Shift,Ctrl,Altã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ãŸã‹ */
 	nIdx = getCtrlKeyState();
-	/* ALT,Shift,CtrlƒL[‚Ìó‘Ô‚ª•Ï‰»‚µ‚½‚© */
+	/* ALT,Shift,Ctrlã‚­ãƒ¼ã®çŠ¶æ…‹ãŒå¤‰åŒ–ã—ãŸã‹ */
 	if( nIdx != m_nCurrentKeyState ){
 		m_nTimerCount = TIMER_CHECKFUNCENABLE + 1;
 
-		/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì‹@”\–¼‚ğæ“¾ */
+		/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®æ©Ÿèƒ½åã‚’å–å¾— */
 		for( i = 0; i < _countof( m_szFuncNameArr ); ++i ){
-			// 2007.02.22 ryoji CKeyBind::GetFuncCode()‚ğg‚¤
+			// 2007.02.22 ryoji CKeyBind::GetFuncCode()ã‚’ä½¿ã†
 			EFunctionCode	nFuncCode = CKeyBind::GetFuncCode(
 					(WORD)(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
 					m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
@@ -346,7 +346,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		nIdx != m_nCurrentKeyState
 	){
 		m_nTimerCount = 0;
-		/* ‹@”\‚ª—˜—p‰Â”\‚©’²‚×‚é */
+		/* æ©Ÿèƒ½ãŒåˆ©ç”¨å¯èƒ½ã‹èª¿ã¹ã‚‹ */
 		for( i = 0; i < _countof(	m_szFuncNameArr ); ++i ){
 			if( IsFuncEnable( (CEditDoc*)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
 				::EnableWindow( m_hwndButtonArr[i], TRUE );
@@ -360,15 +360,15 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 
-// WM_DESTROYˆ—
+// WM_DESTROYå‡¦ç†
 LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	int i;
 
-	/* ƒ^ƒCƒ}[‚ğíœ */
+	/* ã‚¿ã‚¤ãƒãƒ¼ã‚’å‰Šé™¤ */
 	Timer_ONOFF( false ); // 20060126 aroka
 
-	/* ƒ{ƒ^ƒ“‚ğíœ */
+	/* ãƒœã‚¿ãƒ³ã‚’å‰Šé™¤ */
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
 		if( NULL != m_hwndButtonArr[i] ){
 			::DestroyWindow( m_hwndButtonArr[i]	);
@@ -376,7 +376,7 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 	}
 
-	/* ƒTƒCƒYƒ{ƒbƒNƒX‚ğíœ */
+	/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã‚’å‰Šé™¤ */
 	if( NULL != m_hwndSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
@@ -389,7 +389,7 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 
 
-/*! ƒ{ƒ^ƒ“‚ÌƒTƒCƒY‚ğŒvZ */
+/*! ãƒœã‚¿ãƒ³ã®ã‚µã‚¤ã‚ºã‚’è¨ˆç®— */
 int CFuncKeyWnd::CalcButtonSize( void )
 {
 	int			nButtonNum;
@@ -404,7 +404,7 @@ int CFuncKeyWnd::CalcButtonSize( void )
 //		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 		nCxVScroll = 0;
 	}else{
-		/* ƒTƒCƒYƒ{ƒbƒNƒX‚ÌˆÊ’uAƒTƒCƒY•ÏX */
+		/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®ä½ç½®ã€ã‚µã‚¤ã‚ºå¤‰æ›´ */
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
 		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 		::MoveWindow( m_hwndSizeBox,  rc.right - rc.left - nCxVScroll, rc.bottom - rc.top - nCyHScroll, nCxVScroll, nCyHScroll, TRUE );
@@ -418,8 +418,8 @@ int CFuncKeyWnd::CalcButtonSize( void )
 
 
 
-/*! ƒ{ƒ^ƒ“‚Ì¶¬
-	@date 2007.02.05 ryoji ƒ{ƒ^ƒ“‚Ì…•½ˆÊ’uE•‚Ìİ’èˆ—‚ğíœiOnSize‚ÅÄ”z’u‚³‚ê‚é‚Ì‚Å•s—vj
+/*! ãƒœã‚¿ãƒ³ã®ç”Ÿæˆ
+	@date 2007.02.05 ryoji ãƒœã‚¿ãƒ³ã®æ°´å¹³ä½ç½®ãƒ»å¹…ã®è¨­å®šå‡¦ç†ã‚’å‰Šé™¤ï¼ˆOnSizeã§å†é…ç½®ã•ã‚Œã‚‹ã®ã§ä¸è¦ï¼‰
 */
 void CFuncKeyWnd::CreateButtons( void )
 {
@@ -450,7 +450,7 @@ void CFuncKeyWnd::CreateButtons( void )
 			(HINSTANCE) GetWindowLongPtr(GetHwnd(), GWLP_HINSTANCE),	// Modified by KEITA for WIN64 2003.9.6
 			NULL				// pointer not needed
 		);
-		/* ƒtƒHƒ“ƒg•ÏX */
+		/* ãƒ•ã‚©ãƒ³ãƒˆå¤‰æ›´ */
 		::SendMessageAny( m_hwndButtonArr[i], WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 	}
 	m_nCurrentKeyState = -1;
@@ -460,7 +460,7 @@ void CFuncKeyWnd::CreateButtons( void )
 
 
 
-/*! ƒTƒCƒYƒ{ƒbƒNƒX‚Ì•\¦^”ñ•\¦Ø‚è‘Ö‚¦ */
+/*! ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤ºï¼éè¡¨ç¤ºåˆ‡ã‚Šæ›¿ãˆ */
 void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 {
 
@@ -498,20 +498,20 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 
 
 
-// ƒ^ƒCƒ}[‚ÌXV‚ğŠJn^’â~‚·‚éB 20060126 aroka
-// ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[•\¦‚Íƒ^ƒCƒ}[‚É‚æ‚èXV‚µ‚Ä‚¢‚é‚ªA
-// ƒAƒvƒŠ‚ÌƒtƒH[ƒJƒX‚ªŠO‚ê‚½‚Æ‚«‚ÉeƒEƒBƒ“ƒhƒE‚©‚çON/OFF‚ğ
-//	ŒÄ‚Ño‚µ‚Ä‚à‚ç‚¤‚±‚Æ‚É‚æ‚èA—]Œv‚È•‰‰×‚ğ’â~‚µ‚½‚¢B
+// ã‚¿ã‚¤ãƒãƒ¼ã®æ›´æ–°ã‚’é–‹å§‹ï¼åœæ­¢ã™ã‚‹ã€‚ 20060126 aroka
+// ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼è¡¨ç¤ºã¯ã‚¿ã‚¤ãƒãƒ¼ã«ã‚ˆã‚Šæ›´æ–°ã—ã¦ã„ã‚‹ãŒã€
+// ã‚¢ãƒ—ãƒªã®ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒå¤–ã‚ŒãŸã¨ãã«è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‹ã‚‰ON/OFFã‚’
+//	å‘¼ã³å‡ºã—ã¦ã‚‚ã‚‰ã†ã“ã¨ã«ã‚ˆã‚Šã€ä½™è¨ˆãªè² è·ã‚’åœæ­¢ã—ãŸã„ã€‚
 void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 {
 	if( NULL != GetHwnd() ){
 		if( bStart ){
-			/* ƒ^ƒCƒ}[‚ğ‹N“® */
+			/* ã‚¿ã‚¤ãƒãƒ¼ã‚’èµ·å‹• */
 			if( 0 == ::SetTimer( GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL ) ){
 				WarningMessage(	GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1) );
 			}
 		} else {
-			/* ƒ^ƒCƒ}[‚ğíœ */
+			/* ã‚¿ã‚¤ãƒãƒ¼ã‚’å‰Šé™¤ */
 			::KillTimer( GetHwnd(), IDT_FUNCWND );
 			m_nCurrentKeyState = -1;
 		}

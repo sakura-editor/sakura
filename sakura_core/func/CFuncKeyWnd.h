@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[ƒEƒBƒ“ƒhƒE
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
 	@author Norio Nakatani
 */
@@ -21,8 +21,8 @@
 struct DLLSHAREDATA;
 class CEditDoc; // 2002/2/10 aroka
 
-//! ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[ƒEƒBƒ“ƒhƒE
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ð‚Æ‚Â‚ ‚é‚Ì‚ÝB
+//! ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 class CFuncKeyWnd : public CWnd
 {
 public:
@@ -32,43 +32,43 @@ public:
 	CFuncKeyWnd();
 	virtual ~CFuncKeyWnd();
 	/*
-	|| ƒƒ“ƒoŠÖ”
+	|| ãƒ¡ãƒ³ãƒé–¢æ•°
 	*/
-	HWND Open( HINSTANCE, HWND, CEditDoc*, bool );	/* ƒEƒBƒ“ƒhƒE ƒI[ƒvƒ“ */
-	void Close( void );	/* ƒEƒBƒ“ƒhƒE ƒNƒ[ƒY */
-	void SizeBox_ONOFF( bool );	/* ƒTƒCƒYƒ{ƒbƒNƒX‚Ì•\Ž¦^”ñ•\Ž¦Ø‚è‘Ö‚¦ */
-	void Timer_ONOFF( bool ); /* XV‚ÌŠJŽn^’âŽ~ 20060126 aroka */
+	HWND Open( HINSTANCE, HWND, CEditDoc*, bool );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚ªãƒ¼ãƒ—ãƒ³ */
+	void Close( void );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚¯ãƒ­ãƒ¼ã‚º */
+	void SizeBox_ONOFF( bool );	/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤ºï¼éžè¡¨ç¤ºåˆ‡ã‚Šæ›¿ãˆ */
+	void Timer_ONOFF( bool ); /* æ›´æ–°ã®é–‹å§‹ï¼åœæ­¢ 20060126 aroka */
 	/*
-	|| ƒƒ“ƒo•Ï”
+	|| ãƒ¡ãƒ³ãƒå¤‰æ•°
 	*/
 private:
-	// 20060126 aroka ‚·‚×‚ÄPrivate‚É‚µ‚ÄA‰Šú‰»‡˜‚É‡‚í‚¹‚Ä•À‚×‘Ö‚¦
+	// 20060126 aroka ã™ã¹ã¦Privateã«ã—ã¦ã€åˆæœŸåŒ–é †åºã«åˆã‚ã›ã¦ä¸¦ã¹æ›¿ãˆ
 	CEditDoc*		m_pcEditDoc;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nCurrentKeyState;
 	WCHAR			m_szFuncNameArr[12][256];
 	HWND			m_hwndButtonArr[12];
-	HFONT			m_hFont;	/*!< •\Ž¦—pƒtƒHƒ“ƒg */
+	HFONT			m_hFont;	/*!< è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
 	bool			m_bSizeBox;
 	HWND			m_hwndSizeBox;
 	int				m_nTimerCount;
-	int				m_nButtonGroupNum; // Open‚Å‰Šú‰»
-	EFunctionCode	m_nFuncCodeArr[12]; // Open->CreateButtons‚Å‰Šú‰»
+	int				m_nButtonGroupNum; // Openã§åˆæœŸåŒ–
+	EFunctionCode	m_nFuncCodeArr[12]; // Open->CreateButtonsã§åˆæœŸåŒ–
 protected:
 	/*
-	|| ŽÀ‘•ƒwƒ‹ƒpŒn
+	|| å®Ÿè£…ãƒ˜ãƒ«ãƒ‘ç³»
 	*/
-	void CreateButtons( void );	/* ƒ{ƒ^ƒ“‚Ì¶¬ */
-	int CalcButtonSize( void );	/* ƒ{ƒ^ƒ“‚ÌƒTƒCƒY‚ðŒvŽZ */
+	void CreateButtons( void );	/* ãƒœã‚¿ãƒ³ã®ç”Ÿæˆ */
+	int CalcButtonSize( void );	/* ãƒœã‚¿ãƒ³ã®ã‚µã‚¤ã‚ºã‚’è¨ˆç®— */
 
-	/* ‰¼‘zŠÖ” */
-	virtual void AfterCreateWindow( void ){}	// ƒEƒBƒ“ƒhƒEì¬Œã‚Ìˆ—	// 2007.03.13 ryoji ‰ÂŽ‹‰»‚µ‚È‚¢
+	/* ä»®æƒ³é–¢æ•° */
+	virtual void AfterCreateWindow( void ){}	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå¾Œã®å‡¦ç†	// 2007.03.13 ryoji å¯è¦–åŒ–ã—ãªã„
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ— Ú‚µ‚­‚ÍŽÀ‘•‚ðŽQÆ */
-	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );	// WM_TIMERƒ^ƒCƒ}[‚Ìˆ—
-	virtual LRESULT OnCommand( HWND, UINT, WPARAM, LPARAM );	// WM_COMMANDˆ—
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );// WM_SIZEˆ—
-	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );// WM_DESTROYˆ—
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† è©³ã—ãã¯å®Ÿè£…ã‚’å‚ç…§ */
+	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );	// WM_TIMERã‚¿ã‚¤ãƒžãƒ¼ã®å‡¦ç†
+	virtual LRESULT OnCommand( HWND, UINT, WPARAM, LPARAM );	// WM_COMMANDå‡¦ç†
+	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );// WM_SIZEå‡¦ç†
+	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );// WM_DESTROYå‡¦ç†
 };
 
 

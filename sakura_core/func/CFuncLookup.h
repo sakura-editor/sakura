@@ -1,7 +1,7 @@
-/*!	@file
-	@brief •\¦—p•¶š—ñ“™‚Ìæ“¾
+ï»¿/*!	@file
+	@brief è¡¨ç¤ºç”¨æ–‡å­—åˆ—ç­‰ã®å–å¾—
 
-	‹@”\–¼C‹@”\•ª—ŞC‹@”\”Ô†‚È‚Ç‚Ì•ÏŠ·Dİ’è‰æ–Ê‚Å‚Ì•\¦—p•¶š—ñ‚ğ—pˆÓ‚·‚éD
+	æ©Ÿèƒ½åï¼Œæ©Ÿèƒ½åˆ†é¡ï¼Œæ©Ÿèƒ½ç•ªå·ãªã©ã®å¤‰æ›ï¼è¨­å®šç”»é¢ã§ã®è¡¨ç¤ºç”¨æ–‡å­—åˆ—ã‚’ç”¨æ„ã™ã‚‹ï¼
 
 	@author genta
 	@date Oct. 1, 2001
@@ -42,26 +42,26 @@
 struct MacroRec;// 2007.11.02 ryoji
 struct CommonSetting;// 2002/2/10 aroka
 
-//! ƒ}ƒNƒî•ñ
+//! ãƒã‚¯ãƒ­æƒ…å ±
 struct MacroRec {
-	TCHAR	m_szName[MACRONAME_MAX];	//!< •\¦–¼
-	TCHAR	m_szFile[_MAX_PATH+1];	//!< ƒtƒ@ƒCƒ‹–¼(ƒfƒBƒŒƒNƒgƒŠ‚ğŠÜ‚Ü‚È‚¢)
-	bool	m_bReloadWhenExecute;	//	Às‚É“Ç‚İ‚İ‚È‚¨‚·‚©iƒfƒtƒHƒ‹ƒgonj
+	TCHAR	m_szName[MACRONAME_MAX];	//!< è¡¨ç¤ºå
+	TCHAR	m_szFile[_MAX_PATH+1];	//!< ãƒ•ã‚¡ã‚¤ãƒ«å(ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å«ã¾ãªã„)
+	bool	m_bReloadWhenExecute;	//	å®Ÿè¡Œæ™‚ã«èª­ã¿è¾¼ã¿ãªãŠã™ã‹ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆonï¼‰
 	
 	bool IsEnabled() const { return m_szFile[0] != _T('\0'); }
-	const TCHAR* GetTitle() const { return m_szName[0] == _T('\0') ? m_szFile: m_szName; }	// 2007.11.02 ryoji ’Ç‰Á
+	const TCHAR* GetTitle() const { return m_szName[0] == _T('\0') ? m_szFile: m_szName; }	// 2007.11.02 ryoji è¿½åŠ 
 };
 
 /*!
-	@brief •\¦—p•¶š—ñ“™‚Ìæ“¾
+	@brief è¡¨ç¤ºç”¨æ–‡å­—åˆ—ç­‰ã®å–å¾—
 
-	‹@”\C‹@”\•ª—Ş‚ÆˆÊ’uC‹@”\”Ô†C•¶š—ñ‚È‚Ç‚Ì‘Î‰‚ğW–ñ‚·‚éD
+	æ©Ÿèƒ½ï¼Œæ©Ÿèƒ½åˆ†é¡ã¨ä½ç½®ï¼Œæ©Ÿèƒ½ç•ªå·ï¼Œæ–‡å­—åˆ—ãªã©ã®å¯¾å¿œã‚’é›†ç´„ã™ã‚‹ï¼
 */
 class CFuncLookup {
 
 public:
-	//	Oct. 15, 2001 genta ˆø”’Ç‰Á
-	// 2007.11.02 ryoji ˆø”•ÏXiCSMacroMgr->MacroRecj
+	//	Oct. 15, 2001 genta å¼•æ•°è¿½åŠ 
+	// 2007.11.02 ryoji å¼•æ•°å¤‰æ›´ï¼ˆCSMacroMgr->MacroRecï¼‰
 //	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
 //		: m_pMacroRec( pMacroRec ), m_pCommon( pCom ) {}
 	CFuncLookup() : m_pMacroRec( NULL ){}
@@ -71,7 +71,7 @@ public:
 		m_pCommon = pCom;
 	}
 
-	EFunctionCode Pos2FuncCode( int category, int position, bool bGetUnavailable = true ) const;	// 2007.10.31 ryoji bGetUnavailableƒpƒ‰ƒ[ƒ^’Ç‰Á
+	EFunctionCode Pos2FuncCode( int category, int position, bool bGetUnavailable = true ) const;	// 2007.10.31 ryoji bGetUnavailableãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¿½åŠ 
 	bool Pos2FuncName( int category, int position, WCHAR* ptr, int bufsize ) const;
 	bool Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const ;
 	const TCHAR* Category2Name( int category ) const;
@@ -81,16 +81,16 @@ public:
 	void SetListItem( HWND hListBox, int category ) const;
 	
 	int GetCategoryCount(void) const {
-		return nsFuncCode::nFuncKindNum + 3;	//•ª—Ş{ŠO•”ƒ}ƒNƒ{ƒJƒXƒ^ƒ€ƒƒjƒ…[{ƒvƒ‰ƒOƒCƒ“
+		return nsFuncCode::nFuncKindNum + 3;	//åˆ†é¡ï¼‹å¤–éƒ¨ãƒã‚¯ãƒ­ï¼‹ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ï¼‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 	}
 	
 	int GetItemCount(int category) const;
 
 
 private:
-	MacroRec* m_pMacroRec;	//!< ƒ}ƒNƒî•ñ	// 2007.11.02 ryoji ƒƒ“ƒo•ÏXiCSMacroMgr->MacroRecj
+	MacroRec* m_pMacroRec;	//!< ãƒã‚¯ãƒ­æƒ…å ±	// 2007.11.02 ryoji ãƒ¡ãƒ³ãƒå¤‰æ›´ï¼ˆCSMacroMgr->MacroRecï¼‰
 	
-	CommonSetting* m_pCommon;	//! ‹¤’Êİ’èƒf[ƒ^—Ìˆæ‚Ö‚Ìƒ|ƒCƒ“ƒ^
+	CommonSetting* m_pCommon;	//! å…±é€šè¨­å®šãƒ‡ãƒ¼ã‚¿é ˜åŸŸã¸ã®ãƒã‚¤ãƒ³ã‚¿
 
 };
 
