@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CMainStatusBar.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
@@ -11,21 +11,21 @@ CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 }
 
 
-//	ƒL[ƒ[ƒhFƒXƒe[ƒ^ƒXƒo[‡˜
-/* ƒXƒe[ƒ^ƒXƒo[ì¬ */
+//	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼šã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼é †åº
+/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ä½œæˆ */
 void CMainStatusBar::CreateStatusBar()
 {
 	if( m_hwndStatusBar )return;
 
-	/* ƒXƒe[ƒ^ƒXƒo[ */
+	/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ */
 	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE œ‹
+		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE é™¤å»
 		_T(""),
 		m_pOwner->GetHwnd(),
 		IDW_STATUSBAR
 	);
 
-	/* ƒvƒƒOƒŒƒXƒo[ */
+	/* ãƒ—ãƒ­ã‚°ãƒ¬ã‚¹ãƒãƒ¼ */
 	m_hwndProgressBar = ::CreateWindowEx(
 		WS_EX_TOOLWINDOW,
 		PROGRESS_CLASS,
@@ -45,12 +45,12 @@ void CMainStatusBar::CreateStatusBar()
 		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( FALSE );
 	}
 
-	//ƒXƒvƒŠƒbƒ^[‚ÌAƒTƒCƒYƒ{ƒbƒNƒX‚ÌˆÊ’u‚ğ•ÏX
+	//ã‚¹ãƒ—ãƒªãƒƒã‚¿ãƒ¼ã®ã€ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®ä½ç½®ã‚’å¤‰æ›´
 	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1);
 }
 
 
-/* ƒXƒe[ƒ^ƒXƒo[”jŠü */
+/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ç ´æ£„ */
 void CMainStatusBar::DestroyStatusBar()
 {
 	if( NULL != m_hwndProgressBar ){
@@ -62,42 +62,42 @@ void CMainStatusBar::DestroyStatusBar()
 
 	if( NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd() ){
 		bool bSizeBox;
-		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[•\¦ˆÊ’u^0:ã 1:‰º */
-			/* ƒTƒCƒYƒ{ƒbƒNƒX‚Ì•\¦^”ñ•\¦Ø‚è‘Ö‚¦ */
+		if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼è¡¨ç¤ºä½ç½®ï¼0:ä¸Š 1:ä¸‹ */
+			/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤ºï¼éè¡¨ç¤ºåˆ‡ã‚Šæ›¿ãˆ */
 			bSizeBox = false;
 		}
 		else{
 			bSizeBox = true;
-			/* ƒXƒe[ƒ^ƒXƒp[‚ğ•\¦‚µ‚Ä‚¢‚éê‡‚ÍƒTƒCƒYƒ{ƒbƒNƒX‚ğ•\¦‚µ‚È‚¢ */
+			/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ‘ãƒ¼ã‚’è¡¨ç¤ºã—ã¦ã„ã‚‹å ´åˆã¯ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã‚’è¡¨ç¤ºã—ãªã„ */
 			if( NULL != m_hwndStatusBar ){
 				bSizeBox = false;
 			}
 		}
 		m_pOwner->m_cFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 	}
-	//ƒXƒvƒŠƒbƒ^[‚ÌAƒTƒCƒYƒ{ƒbƒNƒX‚ÌˆÊ’u‚ğ•ÏX
+	//ã‚¹ãƒ—ãƒªãƒƒã‚¿ãƒ¼ã®ã€ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã®ä½ç½®ã‚’å¤‰æ›´
 	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1 );
 }
 
 
 /*!
-	@brief ƒƒbƒZ[ƒW‚Ì•\¦
+	@brief ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤º
 	
-	w’è‚³‚ê‚½ƒƒbƒZ[ƒW‚ğƒXƒe[ƒ^ƒXƒo[‚É•\¦‚·‚éD
-	ƒƒjƒ…[ƒo[‰E’[‚É“ü‚ç‚È‚¢‚à‚Ì‚âCŒ…ˆÊ’u•\¦‚ğ‰B‚µ‚½‚­‚È‚¢‚à‚Ì‚Ég‚¤
+	æŒ‡å®šã•ã‚ŒãŸãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã«è¡¨ç¤ºã™ã‚‹ï¼
+	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼å³ç«¯ã«å…¥ã‚‰ãªã„ã‚‚ã®ã‚„ï¼Œæ¡ä½ç½®è¡¨ç¤ºã‚’éš ã—ãŸããªã„ã‚‚ã®ã«ä½¿ã†
 	
-	ŒÄ‚Ño‚µ‘O‚ÉSendStatusMessage2IsEffective()‚Åˆ—‚Ì—L–³‚ğ
-	Šm”F‚·‚é‚±‚Æ‚Å–³‘Ê‚Èˆ—‚ğÈ‚­‚±‚Æ‚ªo—ˆ‚éD
+	å‘¼ã³å‡ºã—å‰ã«SendStatusMessage2IsEffective()ã§å‡¦ç†ã®æœ‰ç„¡ã‚’
+	ç¢ºèªã™ã‚‹ã“ã¨ã§ç„¡é§„ãªå‡¦ç†ã‚’çœãã“ã¨ãŒå‡ºæ¥ã‚‹ï¼
 
-	@param msg [in] •\¦‚·‚éƒƒbƒZ[ƒW
-	@date 2005.07.09 genta V‹Kì¬
+	@param msg [in] è¡¨ç¤ºã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@date 2005.07.09 genta æ–°è¦ä½œæˆ
 	
 	@sa SendStatusMessage2IsEffective
 */
 void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
-		// ƒXƒe[ƒ^ƒXƒo[‚Ö
+		// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã¸
 		StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
 	}
 }

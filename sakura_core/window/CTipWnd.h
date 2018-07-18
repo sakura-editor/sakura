@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒc[ƒ‹ƒ`ƒbƒv
+ï»¿/*!	@file
+	@brief ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—
 
 	@author Norio Nakatani
-	@date 1998/10/30 V‹Kì¬
+	@date 1998/10/30 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,7 +22,7 @@ class CTipWnd;
 #include "CWnd.h"
 #include "mem/CMemory.h"
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 class CTipWnd : public CWnd
 {
@@ -32,14 +32,14 @@ public:
 	*/
 	CTipWnd();
 	~CTipWnd();
-	void Create( HINSTANCE, HWND );	/* ‰Šú‰» */
+	void Create( HINSTANCE, HWND );	/* åˆæœŸåŒ– */
 
 	/*
 	||  Attributes & Operations
 	*/
-	void Show( int, int, const TCHAR*, RECT* pRect = NULL );	/* Tip‚ğ•\¦ */
-	void Hide( void );	/* Tip‚ğÁ‚· */
-	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ƒEƒBƒ“ƒhƒE‚ÌƒTƒCƒY‚ğ“¾‚é
+	void Show( int, int, const TCHAR*, RECT* pRect = NULL );	/* Tipã‚’è¡¨ç¤º */
+	void Hide( void );	/* Tipã‚’æ¶ˆã™ */
+	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚µã‚¤ã‚ºã‚’å¾—ã‚‹
 
 	void ChangeFont( LOGFONT* lf ){
 		if ( m_hFont ){
@@ -48,31 +48,31 @@ public:
 		m_hFont = ::CreateFontIndirect( lf );
 	}
 
-protected: // 2002/2/10 aroka ƒAƒNƒZƒXŒ •ÏX
+protected: // 2002/2/10 aroka ã‚¢ã‚¯ã‚»ã‚¹æ¨©å¤‰æ›´
 	HFONT		m_hFont;
 
 public:
-	CNativeW	m_cKey;			/* ƒL[‚Ì“à—eƒf[ƒ^ */
-	BOOL		m_KeyWasHit;	/* ƒL[‚ªƒqƒbƒg‚µ‚½‚© */
-	int			m_nSearchLine;	/* «‘‚Ìƒqƒbƒgs */	// 2006.04.10 fon
-	int			m_nSearchDict;	/* ƒqƒbƒg«‘”Ô† */	// 2006.04.10 fon
+	CNativeW	m_cKey;			/* ã‚­ãƒ¼ã®å†…å®¹ãƒ‡ãƒ¼ã‚¿ */
+	BOOL		m_KeyWasHit;	/* ã‚­ãƒ¼ãŒãƒ’ãƒƒãƒˆã—ãŸã‹ */
+	int			m_nSearchLine;	/* è¾æ›¸ã®ãƒ’ãƒƒãƒˆè¡Œ */	// 2006.04.10 fon
+	int			m_nSearchDict;	/* ãƒ’ãƒƒãƒˆè¾æ›¸ç•ªå· */	// 2006.04.10 fon
 
-	CNativeT	m_cInfo;		/* Tip‚Ì“à—eƒf[ƒ^ */
-	bool		m_bAlignLeft;	// ‰E‘¤‘µ‚¦‚Åƒ`ƒbƒv‚ğ•\¦
+	CNativeT	m_cInfo;		/* Tipã®å†…å®¹ãƒ‡ãƒ¼ã‚¿ */
+	bool		m_bAlignLeft;	// å³å´æƒãˆã§ãƒãƒƒãƒ—ã‚’è¡¨ç¤º
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	void ComputeWindowSize( HDC, HFONT, const TCHAR*, RECT* );	/* ƒEƒBƒ“ƒhƒE‚ÌƒTƒCƒY‚ğŒˆ‚ß‚é */
-	void DrawTipText( HDC, HFONT, const TCHAR* );	/* ƒEƒBƒ“ƒhƒE‚ÌƒeƒLƒXƒg‚ğ•\¦ */
+	void ComputeWindowSize( HDC, HFONT, const TCHAR*, RECT* );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚µã‚¤ã‚ºã‚’æ±ºã‚ã‚‹ */
+	void DrawTipText( HDC, HFONT, const TCHAR* );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’è¡¨ç¤º */
 
-	/* ‰¼‘zŠÖ” */
+	/* ä»®æƒ³é–¢æ•° */
 	//	Jan. 9, 2006 genta
 	virtual void AfterCreateWindow( void );
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ— Ú‚µ‚­‚ÍÀ‘•‚ğQÆ */
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );/* •`‰æˆ— */
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† è©³ã—ãã¯å®Ÿè£…ã‚’å‚ç…§ */
+	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );/* æç”»å‡¦ç† */
 };
 
 

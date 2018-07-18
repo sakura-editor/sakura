@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake, ryoji
 	Copyright (C) 2008, kobake
 	Copyright (C) 2010, Uchi, Moca
@@ -48,66 +48,66 @@ void CMainToolBar::Create( CImageListMgr* pcIcons )
 	m_pcIcons = pcIcons;
 }
 
-/*! ŒŸõƒ{ƒbƒNƒX‚Å‚Ìˆ— */
+/*! æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã§ã®å‡¦ç† */
 void CMainToolBar::ProcSearchBox( MSG *msg )
 {
 	if( msg->message == WM_KEYDOWN /* && ::GetParent( msg->hwnd ) == m_hwndSearchBox */ )
 	{
-		if( msg->wParam == VK_RETURN )  //ƒŠƒ^[ƒ“ƒL[
+		if( msg->wParam == VK_RETURN )  //ãƒªã‚¿ãƒ¼ãƒ³ã‚­ãƒ¼
 		{
-			//ŒŸõƒL[ƒ[ƒh‚ğæ“¾
+			//æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å–å¾—
 			std::wstring strText;
-			if( 0 < GetSearchKey(strText) )	//ƒL[•¶š—ñ‚ª‚ ‚é
+			if( 0 < GetSearchKey(strText) )	//ã‚­ãƒ¼æ–‡å­—åˆ—ãŒã‚ã‚‹
 			{
 				if( strText.size() < _MAX_PATH ){
-					//ŒŸõƒL[‚ğ“o˜^
+					//æ¤œç´¢ã‚­ãƒ¼ã‚’ç™»éŒ²
 					CSearchKeywordManager().AddToSearchKeyArr( strText.c_str() );
 				}
 				m_pOwner->GetActiveView().m_strCurSearchKey = strText;
 				m_pOwner->GetActiveView().m_bCurSearchUpdate = true;
 				m_pOwner->GetActiveView().ChangeCurRegexp();
 
-				//ŒŸõƒ{ƒbƒNƒX‚ğXV	// 2010/6/6 Uchi
+				//æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã‚’æ›´æ–°	// 2010/6/6 Uchi
 				AcceptSharedSearchKey();
 
-				//::SetFocus( m_hWnd );	//æ‚ÉƒtƒH[ƒJƒX‚ğˆÚ“®‚µ‚Ä‚¨‚©‚È‚¢‚ÆƒLƒƒƒŒƒbƒg‚ªÁ‚¦‚é
+				//::SetFocus( m_hWnd );	//å…ˆã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹•ã—ã¦ãŠã‹ãªã„ã¨ã‚­ãƒ£ãƒ¬ãƒƒãƒˆãŒæ¶ˆãˆã‚‹
 				m_pOwner->GetActiveView().SetFocus();
 
-				// ŒŸõŠJn‚ÌƒJ[ƒ\ƒ‹ˆÊ’u“o˜^ğŒ‚ğ•ÏX 02/07/28 ai start
+				// æ¤œç´¢é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ç™»éŒ²æ¡ä»¶ã‚’å¤‰æ›´ 02/07/28 ai start
 				m_pOwner->GetActiveView().m_ptSrchStartPos_PHY = m_pOwner->GetActiveView().GetCaret().GetCaretLogicPos();
 				// 02/07/28 ai end
 
-				//Ÿ‚ğŒŸõ
-				m_pOwner->OnCommand( (WORD)0 /*ƒƒjƒ…[*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
+				//æ¬¡ã‚’æ¤œç´¢
+				m_pOwner->OnCommand( (WORD)0 /*ãƒ¡ãƒ‹ãƒ¥ãƒ¼*/, (WORD)F_SEARCH_NEXT, (HWND)0 );
 			}
 		}
-		else if( msg->wParam == VK_TAB )	//ƒ^ƒuƒL[
+		else if( msg->wParam == VK_TAB )	//ã‚¿ãƒ–ã‚­ãƒ¼
 		{
-			//ƒtƒH[ƒJƒX‚ğˆÚ“®
-			//	2004.10.27 MIK IME•\¦ˆÊ’u‚Ì‚¸‚êC³
+			//ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹•
+			//	2004.10.27 MIK IMEè¡¨ç¤ºä½ç½®ã®ãšã‚Œä¿®æ­£
 			::SetFocus( m_pOwner->GetHwnd()  );
 		}
 	}
 }
 
-/*! ƒTƒuƒNƒ‰ƒX‰»‚µ‚½ƒc[ƒ‹ƒo[‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+/*! ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã—ãŸãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 	@author ryoji
 	@date 2006.09.06 ryoji
 */
-static WNDPROC g_pOldToolBarWndProc;	// ƒc[ƒ‹ƒo[‚Ì–{—ˆ‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+static WNDPROC g_pOldToolBarWndProc;	// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®æœ¬æ¥ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 
 static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
 	{
-	// WinXP Visual Style ‚Ì‚Æ‚«‚Éƒc[ƒ‹ƒo[ã‚Å‚Ìƒ}ƒEƒX¶‰Eƒ{ƒ^ƒ““¯‰Ÿ‚µ‚Å–³‰“š‚É‚È‚é
-	//iƒ}ƒEƒX‚ğƒLƒƒƒvƒ`ƒƒ[‚µ‚½‚Ü‚Ü•ú‚³‚È‚¢j –â‘è‚ğ‰ñ”ğ‚·‚é‚½‚ß‚É‰Eƒ{ƒ^ƒ“‚ğ–³‹‚·‚é
+	// WinXP Visual Style ã®ã¨ãã«ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ä¸Šã§ã®ãƒã‚¦ã‚¹å·¦å³ãƒœã‚¿ãƒ³åŒæ™‚æŠ¼ã—ã§ç„¡å¿œç­”ã«ãªã‚‹
+	//ï¼ˆãƒã‚¦ã‚¹ã‚’ã‚­ãƒ£ãƒ—ãƒãƒ£ãƒ¼ã—ãŸã¾ã¾æ”¾ã•ãªã„ï¼‰ å•é¡Œã‚’å›é¿ã™ã‚‹ãŸã‚ã«å³ãƒœã‚¿ãƒ³ã‚’ç„¡è¦–ã™ã‚‹
 	case WM_RBUTTONDOWN:
 	case WM_RBUTTONUP:
-		return 0L;				// ‰Eƒ{ƒ^ƒ“‚Ì UP/DOWN ‚Í–{—ˆ‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚É“n‚³‚È‚¢
+		return 0L;				// å³ãƒœã‚¿ãƒ³ã® UP/DOWN ã¯æœ¬æ¥ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã«æ¸¡ã•ãªã„
 
 	case WM_DESTROY:
-		// ƒTƒuƒNƒ‰ƒX‰»‰ğœ
+		// ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–è§£é™¤
 		::SetWindowLongPtr( hWnd, GWLP_WNDPROC, (LONG_PTR)g_pOldToolBarWndProc );
 		break;
 	}
@@ -115,10 +115,10 @@ static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
 }
 
 
-/* ƒc[ƒ‹ƒo[ì¬
-	@date @@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
-	@date 2005.08.29 aroka ƒc[ƒ‹ƒo[‚ÌÜ‚è•Ô‚µ
-	@date 2006.06.17 ryoji ƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹‚ª—LŒø‚Ìê‡‚Íƒc[ƒ‹ƒo[‚ğ Rebar ‚É“ü‚ê‚ÄƒTƒCƒY•ÏX‚Ì‚¿‚ç‚Â‚«‚ğ–³‚­‚·
+/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ä½œæˆ
+	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
+	@date 2005.08.29 aroka ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®æŠ˜ã‚Šè¿”ã—
+	@date 2006.06.17 ryoji ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¹ã‚¿ã‚¤ãƒ«ãŒæœ‰åŠ¹ã®å ´åˆã¯ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’ Rebar ã«å…¥ã‚Œã¦ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã®ã¡ã‚‰ã¤ãã‚’ç„¡ãã™
 */
 void CMainToolBar::CreateToolBar( void )
 {
@@ -134,13 +134,13 @@ void CMainToolBar::CreateToolBar( void )
 	nFlag = 0;
 
 	// 2006.06.17 ryoji
-	// Rebar ƒEƒBƒ“ƒhƒE‚Ìì¬
-	if( IsVisualStyle() ){	// ƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹—LŒø
+	// Rebar ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ
+	if( IsVisualStyle() ){	// ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¹ã‚¿ã‚¤ãƒ«æœ‰åŠ¹
 		m_hwndReBar = ::CreateWindowEx(
 			WS_EX_TOOLWINDOW,
-			REBARCLASSNAME, //ƒŒƒo[ƒRƒ“ƒgƒ[ƒ‹
+			REBARCLASSNAME, //ãƒ¬ãƒãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 			NULL,
-			WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |	// 2007.03.08 ryoji WS_VISIBLE œ‹
+			WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPSIBLINGS | WS_CLIPCHILDREN |	// 2007.03.08 ryoji WS_VISIBLE é™¤å»
 			RBS_BANDBORDERS | CCS_NODIVIDER,
 			0, 0, 0, 0,
 			m_pOwner->GetHwnd(),
@@ -154,23 +154,23 @@ void CMainToolBar::CreateToolBar( void )
 			return;
 		}
 
-		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ƒtƒ‰ƒbƒgƒc[ƒ‹ƒo[‚É‚·‚é^‚µ‚È‚¢ */
-			PreventVisualStyle( m_hwndReBar );	// ƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹”ñ“K—p‚Ìƒtƒ‰ƒbƒg‚È Rebar ‚É‚·‚é
+		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ãƒ•ãƒ©ãƒƒãƒˆãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ã™ã‚‹ï¼ã—ãªã„ */
+			PreventVisualStyle( m_hwndReBar );	// ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¹ã‚¿ã‚¤ãƒ«éé©ç”¨ã®ãƒ•ãƒ©ãƒƒãƒˆãª Rebar ã«ã™ã‚‹
 		}
 
 		::ZeroMemory(&rbi, sizeof(rbi));
 		rbi.cbSize = sizeof(rbi);
 		Rebar_SetbarInfo(m_hwndReBar, &rbi);
 
-		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ƒc[ƒ‹ƒo[‚Ö‚Ì’Ç‰ÁƒXƒ^ƒCƒ‹
+		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã¸ã®è¿½åŠ ã‚¹ã‚¿ã‚¤ãƒ«
 	}
 
-	/* ƒc[ƒ‹ƒo[ƒEƒBƒ“ƒhƒE‚Ìì¬ */
+	/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ */
 	m_hwndToolBar = ::CreateWindowEx(
 		0,
 		TOOLBARCLASSNAME,
 		NULL,
-		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN ’Ç‰Á	// 2007.03.08 ryoji WS_VISIBLE œ‹
+		WS_CHILD/* | WS_VISIBLE*/ | WS_CLIPCHILDREN | /*WS_BORDER | */	// 2006.06.17 ryoji WS_CLIPCHILDREN è¿½åŠ 	// 2007.03.08 ryoji WS_VISIBLE é™¤å»
 /*		WS_EX_WINDOWEDGE| */
 		TBSTYLE_TOOLTIPS |
 //		TBSTYLE_WRAPABLE |
@@ -185,44 +185,44 @@ void CMainToolBar::CreateToolBar( void )
 		NULL
 	);
 	if( NULL == m_hwndToolBar ){
-		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ƒtƒ‰ƒbƒgƒc[ƒ‹ƒo[‚É‚·‚é^‚µ‚È‚¢ */
+		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ãƒ•ãƒ©ãƒƒãƒˆãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ã™ã‚‹ï¼ã—ãªã„ */
 			GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
 		TopWarningMessage( m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND05) );
 		DestroyToolBar();	// 2006.06.17 ryoji
 	}
 	else{
-		// 2006.09.06 ryoji ƒc[ƒ‹ƒo[‚ğƒTƒuƒNƒ‰ƒX‰»‚·‚é
+		// 2006.09.06 ryoji ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã™ã‚‹
 		g_pOldToolBarWndProc = (WNDPROC)::SetWindowLongPtr(
 			m_hwndToolBar,
 			GWLP_WNDPROC,
 			(LONG_PTR)ToolBarWndProc
 		);
 
-		Toolbar_SetButtonSize( m_hwndToolBar, DpiScaleX(22), DpiScaleY(22) );	// 2009.10.01 ryoji ‚DPI‘Î‰ƒXƒP[ƒŠƒ“ƒO
+		Toolbar_SetButtonSize( m_hwndToolBar, DpiScaleX(22), DpiScaleY(22) );	// 2009.10.01 ryoji é«˜DPIå¯¾å¿œã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
 		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
-		//	Šù‚É—pˆÓ‚³‚ê‚Ä‚¢‚éImage List‚ğƒAƒCƒRƒ“‚Æ‚µ‚Ä“o˜^
+		//	æ—¢ã«ç”¨æ„ã•ã‚Œã¦ã„ã‚‹Image Listã‚’ã‚¢ã‚¤ã‚³ãƒ³ã¨ã—ã¦ç™»éŒ²
 		m_pcIcons->SetToolBarImages( m_hwndToolBar );
-		/* ƒc[ƒ‹ƒo[‚Éƒ{ƒ^ƒ“‚ğ’Ç‰Á */
+		/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ãƒœã‚¿ãƒ³ã‚’è¿½åŠ  */
 		int count = 0;	//@@@ 2002.06.15 MIK
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
 		//	From Here 2005.08.29 aroka
-		// ‚Í‚¶‚ß‚Éƒc[ƒ‹ƒo[\‘¢‘Ì‚Ì”z—ñ‚ğì‚Á‚Ä‚¨‚­
+		// ã¯ã˜ã‚ã«ãƒ„ãƒ¼ãƒ«ãƒãƒ¼æ§‹é€ ä½“ã®é…åˆ—ã‚’ä½œã£ã¦ãŠã
 		TBBUTTON *pTbbArr = new TBBUTTON[GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum];
 		for( i = 0; i < GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
 			nIdx = GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i];
 			pTbbArr[nToolBarButtonNum] = m_pOwner->GetMenuDrawer().getButton(nIdx);
-			// ƒZƒpƒŒ[ƒ^‚ª‘±‚­‚Æ‚«‚Í‚Ğ‚Æ‚Â‚É‚Ü‚Æ‚ß‚é
-			// Ü‚è•Ô‚µƒ{ƒ^ƒ“‚àTBSTYLE_SEP‘®«‚ğ‚Á‚Ä‚¢‚é‚Ì‚Å
-			// Ü‚è•Ô‚µ‚Ì‘O‚ÌƒZƒpƒŒ[ƒ^‚Í‘S‚Äíœ‚³‚ê‚éD
+			// ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿ãŒç¶šãã¨ãã¯ã²ã¨ã¤ã«ã¾ã¨ã‚ã‚‹
+			// æŠ˜ã‚Šè¿”ã—ãƒœã‚¿ãƒ³ã‚‚TBSTYLE_SEPå±æ€§ã‚’æŒã£ã¦ã„ã‚‹ã®ã§
+			// æŠ˜ã‚Šè¿”ã—ã®å‰ã®ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿ã¯å…¨ã¦å‰Šé™¤ã•ã‚Œã‚‹ï¼
 			if( (pTbbArr[nToolBarButtonNum].fsStyle & TBSTYLE_SEP) && (nToolBarButtonNum!=0)){
 				if( (pTbbArr[nToolBarButtonNum-1].fsStyle & TBSTYLE_SEP) ){
 					pTbbArr[nToolBarButtonNum-1] = pTbbArr[nToolBarButtonNum];
 					nToolBarButtonNum--;
 				}
 			}
-			// ‰¼‘zÜ•Ô‚µƒ{ƒ^ƒ“‚ª‚«‚½‚ç’¼‘O‚Ìƒ{ƒ^ƒ“‚ÉÜ•Ô‚µ‘®«‚ğ•t‚¯‚é
+			// ä»®æƒ³æŠ˜è¿”ã—ãƒœã‚¿ãƒ³ãŒããŸã‚‰ç›´å‰ã®ãƒœã‚¿ãƒ³ã«æŠ˜è¿”ã—å±æ€§ã‚’ä»˜ã‘ã‚‹
 			if( pTbbArr[nToolBarButtonNum].fsState & TBSTATE_WRAP ){
 				if( nToolBarButtonNum!=0 ){
 					pTbbArr[nToolBarButtonNum-1].fsState |= TBSTATE_WRAP;
@@ -239,14 +239,14 @@ void CMainToolBar::CreateToolBar( void )
 			//@@@ 2002.06.15 MIK start
 			switch( tbb.fsStyle )
 			{
-			case TBSTYLE_DROPDOWN:	//ƒhƒƒbƒvƒ_ƒEƒ“
-				//Šg’£ƒXƒ^ƒCƒ‹‚Éİ’è
+			case TBSTYLE_DROPDOWN:	//ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³
+				//æ‹¡å¼µã‚¹ã‚¿ã‚¤ãƒ«ã«è¨­å®š
 				Toolbar_SetExtendedStyle( m_hwndToolBar, TBSTYLE_EX_DRAWDDARROWS );
 				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
 				break;
 
-			case TBSTYLE_COMBOBOX:	//ƒRƒ“ƒ{ƒ{ƒbƒNƒX
+			case TBSTYLE_COMBOBOX:	//ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹
 				{
 					RECT			rc;
 					TBBUTTONINFO	tbi;
@@ -261,28 +261,28 @@ void CMainToolBar::CreateToolBar( void )
 							break;
 						}
 						
-						//ƒZƒpƒŒ[ƒ^ì‚é
+						//ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿ä½œã‚‹
 						memset_raw( &my_tbb, 0, sizeof(my_tbb) );
-						my_tbb.fsStyle   = TBSTYLE_BUTTON;  //ƒ{ƒ^ƒ“‚É‚µ‚È‚¢‚Æ•`‰æ‚ª—‚ê‚é 2005/8/29 aroka
-						my_tbb.idCommand = tbb.idCommand;	//“¯‚¶ID‚É‚µ‚Ä‚¨‚­
-						if( tbb.fsState & TBSTATE_WRAP ){   //Ü‚è•Ô‚µ 2005/8/29 aroka
+						my_tbb.fsStyle   = TBSTYLE_BUTTON;  //ãƒœã‚¿ãƒ³ã«ã—ãªã„ã¨æç”»ãŒä¹±ã‚Œã‚‹ 2005/8/29 aroka
+						my_tbb.idCommand = tbb.idCommand;	//åŒã˜IDã«ã—ã¦ãŠã
+						if( tbb.fsState & TBSTATE_WRAP ){   //æŠ˜ã‚Šè¿”ã— 2005/8/29 aroka
 							my_tbb.fsState |=  TBSTATE_WRAP;
 						}
 						Toolbar_AddButtons( m_hwndToolBar, 1, &my_tbb );
 						count++;
 
-						//ƒTƒCƒY‚ğİ’è‚·‚é
+						//ã‚µã‚¤ã‚ºã‚’è¨­å®šã™ã‚‹
 						tbi.cbSize = sizeof(tbi);
 						tbi.dwMask = TBIF_SIZE;
-						tbi.cx     = (WORD)DpiScaleX(160);	//ƒ{ƒbƒNƒX‚Ì•	// 2009.10.01 ryoji ‚DPI‘Î‰ƒXƒP[ƒŠƒ“ƒO
+						tbi.cx     = (WORD)DpiScaleX(160);	//ãƒœãƒƒã‚¯ã‚¹ã®å¹…	// 2009.10.01 ryoji é«˜DPIå¯¾å¿œã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
 						Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
 
-						//ˆÊ’u‚ÆƒTƒCƒY‚ğæ“¾‚·‚é
+						//ä½ç½®ã¨ã‚µã‚¤ã‚ºã‚’å–å¾—ã™ã‚‹
 						rc.right = rc.left = rc.top = rc.bottom = 0;
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
-						//ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğì‚é
-						//	Mar. 8, 2003 genta ŒŸõƒ{ƒbƒNƒX‚ğ1ƒhƒbƒg‰º‚É‚¸‚ç‚µ‚½
+						//ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’ä½œã‚‹
+						//	Mar. 8, 2003 genta æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã‚’1ãƒ‰ãƒƒãƒˆä¸‹ã«ãšã‚‰ã—ãŸ
 						m_hwndSearchBox = CreateWindow( _T("COMBOBOX"), _T("Combo"),
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
@@ -294,7 +294,7 @@ void CMainToolBar::CreateToolBar( void )
 
 							lf = m_pOwner->GetLogfont();
 							//memset_raw( &lf, 0, sizeof(lf) );
-							lf.lfHeight			= DpiPointsToPixels(-9); // Jan. 14, 2003 genta ƒ_ƒCƒAƒƒO‚É‚ ‚í‚¹‚Ä‚¿‚å‚Á‚Æ¬‚³‚­	// 2009.10.01 ryoji ‚DPI‘Î‰iƒ|ƒCƒ“ƒg”‚©‚çZoj
+							lf.lfHeight			= DpiPointsToPixels(-9); // Jan. 14, 2003 genta ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã«ã‚ã‚ã›ã¦ã¡ã‚‡ã£ã¨å°ã•ã	// 2009.10.01 ryoji é«˜DPIå¯¾å¿œï¼ˆãƒã‚¤ãƒ³ãƒˆæ•°ã‹ã‚‰ç®—å‡ºï¼‰
 							lf.lfWidth			= 0;
 							lf.lfEscapement		= 0;
 							lf.lfOrientation	= 0;
@@ -303,24 +303,24 @@ void CMainToolBar::CreateToolBar( void )
 							lf.lfUnderline		= FALSE;
 							lf.lfStrikeOut		= FALSE;
 							//lf.lfCharSet		= GetDllShareData().m_Common.m_sView.m_lf.lfCharSet;
-							lf.lfOutPrecision	= OUT_TT_ONLY_PRECIS;		// Raster Font ‚ğg‚í‚È‚¢‚æ‚¤‚É
+							lf.lfOutPrecision	= OUT_TT_ONLY_PRECIS;		// Raster Font ã‚’ä½¿ã‚ãªã„ã‚ˆã†ã«
 							//lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
 							//lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
 							//lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
-							//_tcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// ‰æ–Ê‚ÌƒtƒHƒ“ƒg‚Éİ’è	2012/11/27 Uchi
+							//_tcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// ç”»é¢ã®ãƒ•ã‚©ãƒ³ãƒˆã«è¨­å®š	2012/11/27 Uchi
 							m_hFontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_hFontSearchBox )
 							{
 								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_hFontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
-							// //“ü—Í’·§ŒÀ
+							// //å…¥åŠ›é•·åˆ¶é™
 							// Combo_LimitText( m_hwndSearchBox, (WPARAM)_MAX_PATH - 1 );
 
-							//ŒŸõƒ{ƒbƒNƒX‚ğXV	// ŠÖ”‰» 2010/6/6 Uchi
+							//æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã‚’æ›´æ–°	// é–¢æ•°åŒ– 2010/6/6 Uchi
 							AcceptSharedSearchKey();
 
-							m_comboDel = SComboBoxItemDeleter(); // Ä•\¦—p‚Ì‰Šú‰»
+							m_comboDel = SComboBoxItemDeleter(); // å†è¡¨ç¤ºç”¨ã®åˆæœŸåŒ–
 							m_comboDel.pRecent = &m_cRecentSearch;
 							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
 						}
@@ -332,8 +332,8 @@ void CMainToolBar::CreateToolBar( void )
 				}
 				break;
 
-			case TBSTYLE_BUTTON:	//ƒ{ƒ^ƒ“
-			case TBSTYLE_SEP:		//ƒZƒpƒŒ[ƒ^
+			case TBSTYLE_BUTTON:	//ãƒœã‚¿ãƒ³
+			case TBSTYLE_SEP:		//ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿
 			default:
 				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
@@ -341,7 +341,7 @@ void CMainToolBar::CreateToolBar( void )
 			}
 			//@@@ 2002.06.15 MIK end
 		}
-		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ƒtƒ‰ƒbƒgƒc[ƒ‹ƒo[‚É‚·‚é^‚µ‚È‚¢ */
+		if( GetDllShareData().m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* ãƒ•ãƒ©ãƒƒãƒˆãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ã™ã‚‹ï¼ã—ãªã„ */
 			lToolType = ::GetWindowLongPtr(m_hwndToolBar, GWL_STYLE);
 			lToolType |= (TBSTYLE_FLAT);
 			::SetWindowLongPtr(m_hwndToolBar, GWL_STYLE, lToolType);
@@ -351,23 +351,23 @@ void CMainToolBar::CreateToolBar( void )
 	}
 
 	// 2006.06.17 ryoji
-	// ƒc[ƒ‹ƒo[‚ğ Rebar ‚É“ü‚ê‚é
+	// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’ Rebar ã«å…¥ã‚Œã‚‹
 	if( m_hwndReBar && m_hwndToolBar ){
-		// ƒc[ƒ‹ƒo[‚Ì‚‚³‚ğæ“¾‚·‚é
+		// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã•ã‚’å–å¾—ã™ã‚‹
 		DWORD dwBtnSize = Toolbar_GetButtonSize( m_hwndToolBar );
 		DWORD dwRows = Toolbar_GetRows( m_hwndToolBar );
 
-		// ƒoƒ“ƒhî•ñ‚ğİ’è‚·‚é
-		// ˆÈ‘O‚Ìƒvƒ‰ƒbƒgƒtƒH[ƒ€‚É _WIN32_WINNT >= 0x0600 ‚Å’è‹`‚³‚ê‚é\‘¢‘Ì‚Ìƒtƒ‹ƒTƒCƒY‚ğ“n‚·‚Æ¸”s‚·‚é	// 2007.12.21 ryoji
+		// ãƒãƒ³ãƒ‰æƒ…å ±ã‚’è¨­å®šã™ã‚‹
+		// ä»¥å‰ã®ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã« _WIN32_WINNT >= 0x0600 ã§å®šç¾©ã•ã‚Œã‚‹æ§‹é€ ä½“ã®ãƒ•ãƒ«ã‚µã‚¤ã‚ºã‚’æ¸¡ã™ã¨å¤±æ•—ã™ã‚‹	// 2007.12.21 ryoji
 		rbBand.cbSize = CCSIZEOF_STRUCT( REBARBANDINFO, wID );
 		rbBand.fMask  = RBBIM_STYLE | RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_SIZE;
 		rbBand.fStyle = RBBS_CHILDEDGE;
-		rbBand.hwndChild  = m_hwndToolBar;	// ƒc[ƒ‹ƒo[
+		rbBand.hwndChild  = m_hwndToolBar;	// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼
 		rbBand.cxMinChild = 0;
 		rbBand.cyMinChild = HIWORD(dwBtnSize) * dwRows;
 		rbBand.cx         = 250;
 
-		// ƒoƒ“ƒh‚ğ’Ç‰Á‚·‚é
+		// ãƒãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
 		Rebar_InsertBand( m_hwndReBar, -1, &rbBand );
 		::ShowWindow( m_hwndToolBar, SW_SHOW );
 	}
@@ -399,7 +399,7 @@ void CMainToolBar::DestroyToolBar( void )
 		//if( m_cTabWnd.m_pOwner->GetHwnd() ) ::UpdateWindow( m_cTabWnd.m_pOwner->GetHwnd() );
 	}
 
-	// 2006.06.17 ryoji Rebar ‚ğ”jŠü‚·‚é
+	// 2006.06.17 ryoji Rebar ã‚’ç ´æ£„ã™ã‚‹
 	if( m_hwndReBar )
 	{
 		::DestroyWindow( m_hwndReBar );
@@ -409,10 +409,10 @@ void CMainToolBar::DestroyToolBar( void )
 	return;
 }
 
-//! ƒƒbƒZ[ƒWˆ—B‚È‚ñ‚©ˆ—‚µ‚½‚È‚ç true ‚ğ•Ô‚·B
+//! ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†ã€‚ãªã‚“ã‹å‡¦ç†ã—ãŸãªã‚‰ true ã‚’è¿”ã™ã€‚
 bool CMainToolBar::EatMessage(MSG* msg)
 {
-	if( m_hwndSearchBox && ::IsDialogMessage( m_hwndSearchBox, msg ) ){	//ŒŸõƒRƒ“ƒ{ƒ{ƒbƒNƒX
+	if( m_hwndSearchBox && ::IsDialogMessage( m_hwndSearchBox, msg ) ){	//æ¤œç´¢ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹
 		ProcSearchBox( msg );
 		return true;
 	}
@@ -420,30 +420,30 @@ bool CMainToolBar::EatMessage(MSG* msg)
 }
 
 
-/*!	@brief ToolBar‚ÌOwnerDraw
+/*!	@brief ToolBarã®OwnerDraw
 
-	@param pnmh [in] Owner Drawî•ñ
+	@param pnmh [in] Owner Drawæƒ…å ±
 
-	@note Common Control V4.71ˆÈ~‚ÍNMTBCUSTOMDRAW‚ğ‘—‚Á‚Ä‚­‚é‚ªC
-	Common Control V4.70‚ÍLPNMCUSTOMDRAW‚µ‚©‘—‚Á‚Ä‚±‚È‚¢‚Ì‚Å
-	ˆÀ‘S‚Ì‚½‚ß¬‚³‚¢•û‚É‡‚í‚¹‚Äˆ—‚ğs‚¤D
+	@note Common Control V4.71ä»¥é™ã¯NMTBCUSTOMDRAWã‚’é€ã£ã¦ãã‚‹ãŒï¼Œ
+	Common Control V4.70ã¯LPNMCUSTOMDRAWã—ã‹é€ã£ã¦ã“ãªã„ã®ã§
+	å®‰å…¨ã®ãŸã‚å°ã•ã„æ–¹ã«åˆã‚ã›ã¦å‡¦ç†ã‚’è¡Œã†ï¼
 	
 	@author genta
-	@date 2003.07.21 ì¬
+	@date 2003.07.21 ä½œæˆ
 
 */
 LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 {
 	switch( pnmh->dwDrawStage ){
 	case CDDS_PREPAINT:
-		//	•`‰æŠJn‘O
-		//	ƒAƒCƒeƒ€‚ğ©‘O‚Å•`‰æ‚·‚é|‚ğ’Ê’m‚·‚é
+		//	æç”»é–‹å§‹å‰
+		//	ã‚¢ã‚¤ãƒ†ãƒ ã‚’è‡ªå‰ã§æç”»ã™ã‚‹æ—¨ã‚’é€šçŸ¥ã™ã‚‹
 		return CDRF_NOTIFYITEMDRAW;
 	
 	case CDDS_ITEMPREPAINT:
-		//	–Ê“|‚­‚³‚¢‚Ì‚ÅC˜g‚ÍToolbar‚É•`‚¢‚Ä‚à‚ç‚¤
-		//	ƒAƒCƒRƒ“‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å’†g‚Í‰½‚à•`‚©‚ê‚È‚¢
-		// 2010.07.15 Moca ŒŸõ(ƒ{ƒbƒNƒX)‚È‚ç˜g‚ğ•`‚©‚È‚¢
+		//	é¢å€’ãã•ã„ã®ã§ï¼Œæ ã¯Toolbarã«æã„ã¦ã‚‚ã‚‰ã†
+		//	ã‚¢ã‚¤ã‚³ãƒ³ãŒç™»éŒ²ã•ã‚Œã¦ã„ãªã„ã®ã§ä¸­èº«ã¯ä½•ã‚‚æã‹ã‚Œãªã„
+		// 2010.07.15 Moca æ¤œç´¢(ãƒœãƒƒã‚¯ã‚¹)ãªã‚‰æ ã‚’æã‹ãªã„
 		if( pnmh->dwItemSpec == F_SEARCH_BOX ){
 			return CDRF_SKIPDEFAULT;
 		}
@@ -451,14 +451,14 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	
 	case CDDS_ITEMPOSTPAINT:
 		{
-			//	•`‰æ
-			// ƒRƒ}ƒ“ƒh”Ô†ipnmh->dwItemSpecj‚©‚çƒAƒCƒRƒ“”Ô†‚ğæ“¾‚·‚é	// 2007.11.02 ryoji
+			//	æç”»
+			// ã‚³ãƒãƒ³ãƒ‰ç•ªå·ï¼ˆpnmh->dwItemSpecï¼‰ã‹ã‚‰ã‚¢ã‚¤ã‚³ãƒ³ç•ªå·ã‚’å–å¾—ã™ã‚‹	// 2007.11.02 ryoji
 			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
 
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_pcIcons->cy()) / 2;		// ƒAƒCƒeƒ€‹éŒ`‚©‚ç‚Ì‰æ‘œ‚ÌƒIƒtƒZƒbƒg	// 2007.03.25 ryoji
-			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚½‚ç‚¿‚å‚Á‚Æ‰æ‘œ‚ğ‚¸‚ç‚·
+			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_pcIcons->cy()) / 2;		// ã‚¢ã‚¤ãƒ†ãƒ çŸ©å½¢ã‹ã‚‰ã®ç”»åƒã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ	// 2007.03.25 ryoji
+			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ãƒœã‚¿ãƒ³ã‚’æŠ¼ã•ã‚ŒãŸã‚‰ã¡ã‚‡ã£ã¨ç”»åƒã‚’ãšã‚‰ã™
 
-			//	Sep. 6, 2003 genta ‰Ÿ‰º‚Í‰E‚¾‚¯‚Å‚È‚­‰º‚É‚à‚¸‚ç‚·
+			//	Sep. 6, 2003 genta æŠ¼ä¸‹æ™‚ã¯å³ã ã‘ã§ãªãä¸‹ã«ã‚‚ãšã‚‰ã™
 			m_pcIcons->Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
 				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
@@ -471,34 +471,34 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 }
 
 
-/*! ƒc[ƒ‹ƒo[XV—pƒ^ƒCƒ}[‚Ìˆ—
-	@date 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
-	@date 2003.08.29 wmlhq, ryoji nTimerCount‚Ì“±“ü
-	@date 2006.01.28 aroka OnTimer‚©‚ç•ª—£
-	@date 2007.04.03 ryoji ƒpƒ‰ƒ[ƒ^–³‚µ‚É‚µ‚½
-	@date 2008.10.05 nasukoji ƒc[ƒ‹ƒo[XV•”•ª‚ğŠO‚Éo‚µ‚½
-	@date 2012.11.29 aroka OnTimer‚©‚ç•ª—£‚µ‚½‚Æ‚«‚ÌƒoƒOC³
+/*! ãƒ„ãƒ¼ãƒ«ãƒãƒ¼æ›´æ–°ç”¨ã‚¿ã‚¤ãƒãƒ¼ã®å‡¦ç†
+	@date 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
+	@date 2003.08.29 wmlhq, ryoji nTimerCountã®å°å…¥
+	@date 2006.01.28 aroka OnTimerã‹ã‚‰åˆ†é›¢
+	@date 2007.04.03 ryoji ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ç„¡ã—ã«ã—ãŸ
+	@date 2008.10.05 nasukoji ãƒ„ãƒ¼ãƒ«ãƒãƒ¼æ›´æ–°éƒ¨åˆ†ã‚’å¤–ã«å‡ºã—ãŸ
+	@date 2012.11.29 aroka OnTimerã‹ã‚‰åˆ†é›¢ã—ãŸã¨ãã®ãƒã‚°ä¿®æ­£
 */
 void CMainToolBar::OnToolbarTimer( void )
 {
-	// 2012.11.29 aroka ‚±‚±‚Å‚ÍƒJƒEƒ“ƒgƒAƒbƒv•s—v
+	// 2012.11.29 aroka ã“ã“ã§ã¯ã‚«ã‚¦ãƒ³ãƒˆã‚¢ãƒƒãƒ—ä¸è¦
 	//m_pOwner->IncrementTimerCount(10);
-	UpdateToolbar();	// 2008.09.23 nasukoji	ƒc[ƒ‹ƒo[‚Ì•\¦‚ğXV‚·‚é
+	UpdateToolbar();	// 2008.09.23 nasukoji	ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤ºã‚’æ›´æ–°ã™ã‚‹
 }
 
 /*!
-	@brief ƒc[ƒ‹ƒo[‚Ì•\¦‚ğXV‚·‚é
+	@brief ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤ºã‚’æ›´æ–°ã™ã‚‹
 	
-	@note ‘¼‚©‚çŒÄ‚×‚é‚æ‚¤‚ÉOnToolbarTimer()‚æ‚èØ‚èo‚µ‚½
+	@note ä»–ã‹ã‚‰å‘¼ã¹ã‚‹ã‚ˆã†ã«OnToolbarTimer()ã‚ˆã‚Šåˆ‡ã‚Šå‡ºã—ãŸ
 	
 	@date 2008.10.05 nasukoji
 */
 void CMainToolBar::UpdateToolbar( void )
 {
-	// ˆóüƒvƒŒƒrƒ…[’†‚È‚çA‰½‚à‚µ‚È‚¢B
+	// å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ä¸­ãªã‚‰ã€ä½•ã‚‚ã—ãªã„ã€‚
 	if( m_pOwner->IsInPreviewMode() )return;
 	
-	// ƒc[ƒ‹ƒo[‚Ìó‘ÔXV
+	// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®çŠ¶æ…‹æ›´æ–°
 	if( m_hwndToolBar )
 	{
 		for( int i = 0; i < GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonNum; ++i )
@@ -507,14 +507,14 @@ void CMainToolBar::UpdateToolbar( void )
 				GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i]
 			);
 
-			// ‹@”\‚ª—˜—p‰Â”\‚©’²‚×‚é
+			// æ©Ÿèƒ½ãŒåˆ©ç”¨å¯èƒ½ã‹èª¿ã¹ã‚‹
 			Toolbar_EnableButton(
 				m_hwndToolBar,
 				tbb.idCommand,
 				IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 
-			// ‹@”\‚ªƒ`ƒFƒbƒNó‘Ô‚©’²‚×‚é
+			// æ©Ÿèƒ½ãŒãƒã‚§ãƒƒã‚¯çŠ¶æ…‹ã‹èª¿ã¹ã‚‹
 			Toolbar_CheckButton(
 				m_hwndToolBar,
 				tbb.idCommand,
@@ -524,13 +524,13 @@ void CMainToolBar::UpdateToolbar( void )
 	}
 }
 
-//ŒŸõƒ{ƒbƒNƒX‚ğXV
+//æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã‚’æ›´æ–°
 void CMainToolBar::AcceptSharedSearchKey()
 {
 	if( m_hwndSearchBox )
 	{
 		int	i;
-		// 2013.05.28 Combo_ResetContent‚¾‚Æ‚¿‚ç‚Â‚­‚Ì‚ÅDeleteString‚ÅƒŠƒXƒg‚¾‚¯íœ
+		// 2013.05.28 Combo_ResetContentã ã¨ã¡ã‚‰ã¤ãã®ã§DeleteStringã§ãƒªã‚¹ãƒˆã ã‘å‰Šé™¤
 		while (Combo_GetCount(m_hwndSearchBox) > 0) {
 			Combo_DeleteString(m_hwndSearchBox, 0);
 		}
@@ -575,8 +575,8 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 
 
 /*!
-ƒc[ƒ‹ƒo[‚ÌŒŸõƒ{ƒbƒNƒX‚ÉƒtƒH[ƒJƒX‚ğˆÚ“®‚·‚é.
-	@date 2006.06.04 yukihane V‹Kì¬
+ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹•ã™ã‚‹.
+	@date 2006.06.04 yukihane æ–°è¦ä½œæˆ
 */
 void CMainToolBar::SetFocusSearchBox( void ) const
 {

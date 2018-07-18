@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒEƒBƒ“ƒhƒE‚ÌŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŸºæœ¬ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 2000/01/11 V‹Kì¬
+	@date 2000/01/11 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2000-2001, Norio Nakatani
@@ -21,17 +21,17 @@
 #include "_main/global.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-//!	ƒEƒBƒ“ƒhƒE‚ÌŠî–{ƒNƒ‰ƒX
+//!	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŸºæœ¬ã‚¯ãƒ©ã‚¹
 /*!
-	@par CWndƒNƒ‰ƒX‚ÌŠî–{“I‚È‹@”\
-	@li ƒEƒBƒ“ƒhƒEì¬
-	@li ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW”z‘—
+	@par CWndã‚¯ãƒ©ã‚¹ã®åŸºæœ¬çš„ãªæ©Ÿèƒ½
+	@li ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
+	@li ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é…é€
 
-	@par •’Ê?‚ÌƒEƒBƒ“ƒhƒE‚Ìg—p•û–@‚ÍˆÈ‰º‚Ìè‡
-	@li RegisterWC()	ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX“o˜^
-	@li Create()		ƒEƒBƒ“ƒhƒEì¬
+	@par æ™®é€š?ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½¿ç”¨æ–¹æ³•ã¯ä»¥ä¸‹ã®æ‰‹é †
+	@li RegisterWC()	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ç™»éŒ²
+	@li Create()		ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 */
 class CWnd
 {
@@ -45,7 +45,7 @@ public:
 	||  Attributes & Operations
 	*/
 
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX“o˜^
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ç™»éŒ²
 	ATOM RegisterWC(
 		HINSTANCE	hInstance,
 		HICON		hIcon,			// Handle to the class icon.
@@ -56,7 +56,7 @@ public:
 		LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
 	);
 
-	//ƒEƒBƒ“ƒhƒEì¬
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 	HWND Create(
 		HWND		hwndParent,
 		DWORD		dwExStyle,		// extended window style
@@ -70,14 +70,14 @@ public:
 		HMENU		hMenu			// handle to menu, or child-window identifier
 	);
 
-	virtual LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );/* ƒƒbƒZ[ƒW”z‘— */
+	virtual LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é…é€ */
 protected:
-	/* ‰¼‘zŠÖ” */
-	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“’è‹`‚ÌƒƒbƒZ[ƒW(WM_APP <= msg <= 0xBFFF) */
-	virtual void PreviCreateWindow( void ){return;}/* ƒEƒBƒ“ƒhƒEì¬‘O‚Ìˆ—(ƒNƒ‰ƒX“o˜^‘O) ( virtual )*/
-	virtual void AfterCreateWindow( void ){::ShowWindow( m_hWnd, SW_SHOW );}/* ƒEƒBƒ“ƒhƒEì¬Œã‚Ìˆ— ( virtual )*/
+	/* ä»®æƒ³é–¢æ•° */
+	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®šç¾©ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(WM_APP <= msg <= 0xBFFF) */
+	virtual void PreviCreateWindow( void ){return;}/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå‰ã®å‡¦ç†(ã‚¯ãƒ©ã‚¹ç™»éŒ²å‰) ( virtual )*/
+	virtual void AfterCreateWindow( void ){::ShowWindow( m_hWnd, SW_SHOW );}/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå¾Œã®å‡¦ç† ( virtual )*/
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ—(ƒfƒtƒHƒ‹ƒg“®ì) */
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå‹•ä½œ) */
 	#define DECLH(method) LRESULT method( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ){return CallDefWndProc( hwnd, msg, wp, lp );}
 	virtual DECLH( OnCreate			);	// WM_CREATE
 	virtual DECLH( OnCommand		);	// WM_COMMAND
@@ -107,25 +107,25 @@ protected:
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
-	/* ƒfƒtƒHƒ‹ƒgƒƒbƒZ[ƒWˆ— */
+	/* ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
 public:
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	HWND GetHwnd() const{ return m_hWnd; }
 	HWND GetParentHwnd() const{ return m_hwndParent; }
 	HINSTANCE GetAppInstance() const{ return m_hInstance; }
 
-	//“ÁêƒCƒ“ƒ^[ƒtƒF[ƒX (g—p‚ÍD‚Ü‚µ‚­‚È‚¢)
+	//ç‰¹æ®Šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ (ä½¿ç”¨ã¯å¥½ã¾ã—ããªã„)
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
-	//ƒEƒBƒ“ƒhƒE•W€‘€ì
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¨™æº–æ“ä½œ
 	void DestroyWindow();
 
-private: // 2002/2/10 aroka ƒAƒNƒZƒXŒ •ÏX
-	HINSTANCE	m_hInstance;	// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-	HWND		m_hwndParent;	// ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹
-	HWND		m_hWnd;			// ‚±‚Ìƒ_ƒCƒAƒƒO‚Ìƒnƒ“ƒhƒ‹
+private: // 2002/2/10 aroka ã‚¢ã‚¯ã‚»ã‚¹æ¨©å¤‰æ›´
+	HINSTANCE	m_hInstance;	// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+	HWND		m_hwndParent;	// ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«
+	HWND		m_hWnd;			// ã“ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒãƒ³ãƒ‰ãƒ«
 #ifdef _DEBUG
 	TCHAR		m_szClassInheritances[1024];
 #endif

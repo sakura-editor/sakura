@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -36,43 +36,43 @@ public:
 
 	void Create( CImageListMgr* pcIcons );
 
-	//ì¬E”jŠü
-	void CreateToolBar( void );		//!< ƒc[ƒ‹ƒo[ì¬
-	void DestroyToolBar( void );	//!< ƒc[ƒ‹ƒo[”jŠü
+	//ä½œæˆãƒ»ç ´æ£„
+	void CreateToolBar( void );		//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ä½œæˆ
+	void DestroyToolBar( void );	//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ç ´æ£„
 
-	//ƒƒbƒZ[ƒW
-	bool EatMessage(MSG* msg);		//!< ƒƒbƒZ[ƒWˆ—B‚È‚ñ‚©ˆ—‚µ‚½‚È‚ç true ‚ğ•Ô‚·B
-	void ProcSearchBox( MSG* );		//!< ŒŸõƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒƒbƒZ[ƒWˆ—
+	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	bool EatMessage(MSG* msg);		//!< ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†ã€‚ãªã‚“ã‹å‡¦ç†ã—ãŸãªã‚‰ true ã‚’è¿”ã™ã€‚
+	void ProcSearchBox( MSG* );		//!< æ¤œç´¢ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†
 
-	//ƒCƒxƒ“ƒg
-	void OnToolbarTimer( void );	//!< ƒ^ƒCƒ}[‚Ìˆ— 20060128 aroka
-	void UpdateToolbar( void );		//!< ƒc[ƒ‹ƒo[‚Ì•\¦‚ğXV‚·‚é		// 2008.09.23 nasukoji
+	//ã‚¤ãƒ™ãƒ³ãƒˆ
+	void OnToolbarTimer( void );	//!< ã‚¿ã‚¤ãƒãƒ¼ã®å‡¦ç† 20060128 aroka
+	void UpdateToolbar( void );		//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤ºã‚’æ›´æ–°ã™ã‚‹		// 2008.09.23 nasukoji
 
-	//•`‰æ
+	//æç”»
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
 
-	//‹¤—Lƒf[ƒ^‚Æ‚Ì“¯Šú
+	//å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã¨ã®åŒæœŸ
 	void AcceptSharedSearchKey();
 
-	//æ“¾
+	//å–å¾—
 	HWND GetToolbarHwnd() const{ return m_hwndToolBar; }
 	HWND GetRebarHwnd() const{ return m_hwndReBar; }
 	HWND GetSearchHwnd() const{ return m_hwndSearchBox; }
-	int GetSearchKey(std::wstring&); //!< ŒŸõƒL[‚ğæ“¾B–ß‚è’l‚ÍŒŸõƒL[‚Ì•¶š”B
+	int GetSearchKey(std::wstring&); //!< æ¤œç´¢ã‚­ãƒ¼ã‚’å–å¾—ã€‚æˆ»ã‚Šå€¤ã¯æ¤œç´¢ã‚­ãƒ¼ã®æ–‡å­—æ•°ã€‚
 
-	//‘€ì
-	void SetFocusSearchBox( void ) const;		/* ƒc[ƒ‹ƒo[ŒŸõƒ{ƒbƒNƒX‚ÖƒtƒH[ƒJƒX‚ğˆÚ“® */	// 2006.06.04 yukihane
+	//æ“ä½œ
+	void SetFocusSearchBox( void ) const;		/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼æ¤œç´¢ãƒœãƒƒã‚¯ã‚¹ã¸ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»å‹• */	// 2006.06.04 yukihane
 
 private:
 	CEditWnd*	m_pOwner;
     HWND		m_hwndToolBar;
 
-	//qƒEƒBƒ“ƒhƒE
-    HWND		m_hwndReBar;		//!< Rebar ƒEƒBƒ“ƒhƒE	//@@@ 2006.06.17 ryoji
-	HWND		m_hwndSearchBox;	//!< ŒŸõƒRƒ“ƒ{ƒ{ƒbƒNƒX
+	//å­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+    HWND		m_hwndReBar;		//!< Rebar ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦	//@@@ 2006.06.17 ryoji
+	HWND		m_hwndSearchBox;	//!< æ¤œç´¢ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹
 
-	//ƒtƒHƒ“ƒg
-	HFONT		m_hFontSearchBox;	//!< ŒŸõƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒtƒHƒ“ƒg
+	//ãƒ•ã‚©ãƒ³ãƒˆ
+	HFONT		m_hFontSearchBox;	//!< æ¤œç´¢ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ•ã‚©ãƒ³ãƒˆ
 
 	SComboBoxItemDeleter	m_comboDel;
 	CRecentSearch			m_cRecentSearch;

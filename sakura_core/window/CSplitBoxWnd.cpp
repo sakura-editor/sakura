@@ -1,9 +1,9 @@
-/*!	@file
-	@brief •ªŠ„ƒ{ƒbƒNƒXƒEƒBƒ“ƒhƒEƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
 
-	@date 2002/2/3 aroka –¢g—pƒR[ƒhœ‹
+	@date 2002/2/3 aroka æœªä½¿ç”¨ã‚³ãƒ¼ãƒ‰é™¤å»
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -19,7 +19,7 @@
 CSplitBoxWnd::CSplitBoxWnd()
 : CWnd(_T("::CSplitBoxWnd"))
 {
-	m_bVertical = TRUE;	/* ‚’¼•ªŠ„ƒ{ƒbƒNƒX‚© */
+	m_bVertical = TRUE;	/* å‚ç›´åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã‹ */
 	return;
 }
 
@@ -38,7 +38,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	HCURSOR		hCursor;
 	LPCTSTR		pszClassName;
 
-	/* ƒEƒBƒ“ƒhƒEƒNƒ‰ƒXì¬ */
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ä½œæˆ */
 	if( bVertical ){
 		pszClassName = _T("VSplitBoxWnd");
 		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
@@ -58,14 +58,14 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	);
 
 	m_bVertical = bVertical;
-	/* ƒVƒXƒeƒ€ƒ}ƒgƒŠƒbƒNƒX‚Ìæ“¾ */
-	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
-	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì• */
+	/* ã‚·ã‚¹ãƒ†ãƒ ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®å–å¾— */
+	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
+	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®å¹… */
 
-	/* eƒEƒBƒ“ƒhƒE‚ÌƒNƒ‰ƒCƒAƒ“ƒg—Ìˆæ‚ÌƒTƒCƒY‚ğæ“¾ */
+	/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆé ˜åŸŸã®ã‚µã‚¤ã‚ºã‚’å–å¾— */
 	::GetClientRect( GetParentHwnd(), &rc );
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒoŒÄ‚Ño‚µ */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒå‘¼ã³å‡ºã— */
 	return CWnd::Create(
 		hwndParent,
 		0, // extended window style
@@ -83,7 +83,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 
 
 
-/* •`‰æˆ— */
+/* æç”»å‡¦ç† */
 void CSplitBoxWnd::Draw3dRect( HDC hdc, int x, int y, int cx, int cy,
 	COLORREF clrTopLeft, COLORREF clrBottomRight )
 {
@@ -127,19 +127,19 @@ LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	PAINTSTRUCT	ps;
 	int			nCyHScroll;
 	int			nCxVScroll;
-	int			nVSplitHeight;	/* ‚’¼•ªŠ„ƒ{ƒbƒNƒX‚Ì‚‚³ */
-	int			nHSplitWidth;	/* …•½•ªŠ„ƒ{ƒbƒNƒX‚Ì• */
+	int			nVSplitHeight;	/* å‚ç›´åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®é«˜ã• */
+	int			nHSplitWidth;	/* æ°´å¹³åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®å¹… */
 
 	hdc = ::BeginPaint( hwnd, &ps );
 
 	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
 
-	nVSplitHeight = 7;	/* ‚’¼•ªŠ„ƒ{ƒbƒNƒX‚Ì‚‚³ */
-	nHSplitWidth = 7;	/* …•½•ªŠ„ƒ{ƒbƒNƒX‚Ì• */
+	nVSplitHeight = 7;	/* å‚ç›´åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®é«˜ã• */
+	nHSplitWidth = 7;	/* æ°´å¹³åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®å¹… */
 
 	if( m_bVertical ){
-		/* ‚’¼•ªŠ„ƒ{ƒbƒNƒX‚Ì•`‰æ */
+		/* å‚ç›´åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®æç”» */
 		Draw3dRect( hdc, 0, 0, nCxVScroll, nVSplitHeight,
 			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
 		 );
@@ -147,7 +147,7 @@ LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
 		 );
 	}else{
-		/* …•½•ªŠ„ƒ{ƒbƒNƒX‚Ì•`‰æ */
+		/* æ°´å¹³åˆ†å‰²ãƒœãƒƒã‚¯ã‚¹ã®æç”» */
 		Draw3dRect( hdc, 0, 0, nHSplitWidth, nCyHScroll,
 			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
 		 );
@@ -185,7 +185,7 @@ LRESULT CSplitBoxWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		::SetROP2( hdc, R2_XORPEN );
 		::SetBkMode( hdc, TRANSPARENT );
 		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
-		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
+		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
 		rc.bottom -= nCyHScroll;
 
 		rc2.left = -1;
@@ -244,7 +244,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	}
 	if( m_bVertical ){
 		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
-		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
+		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
 		rc.bottom -= nCyHScroll;
 
 		::GetCursorPos( &po );
@@ -298,7 +298,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 	}else{
 		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
-		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì• */
+		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®å¹… */
 		rc.right -= nCxVScroll;
 
 		::GetCursorPos( &po );
@@ -372,7 +372,7 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	}
 	if( m_bVertical ){
 		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
-		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
+		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
 		rc.bottom -= nCyHScroll;
 
 		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
@@ -392,12 +392,12 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		::DeleteObject( hBrush );
 		::ReleaseDC( ::GetParent( GetParentHwnd() ), hdc );
 
-		/* eƒEƒBƒ“ƒhƒE‚ÉAƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)0, (LPARAM)m_nDragPosY );
 
 	}else{
 		::GetClientRect( ::GetParent( GetParentHwnd() ), &rc );
-		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì• */
+		nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );	/* å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®å¹… */
 		rc.right -= nCxVScroll;
 
 		hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
@@ -418,7 +418,7 @@ LRESULT CSplitBoxWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		::DeleteObject( hBrush );
 		::ReleaseDC( GetParentHwnd(), hdc );
 
-		/* eƒEƒBƒ“ƒhƒE‚ÉAƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)m_nDragPosX, (LPARAM)0 );
 	}
 	::ReleaseCapture();
@@ -435,18 +435,18 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	int			nCyHScroll;
 	if( m_bVertical ){
 		::GetClientRect( GetParentHwnd(), &rc );
-		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
+		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
 		rc.bottom -= nCyHScroll;
 
-		/* eƒEƒBƒ“ƒhƒE‚ÉAƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)0, (LPARAM)(rc.bottom / 2) );
 	}
 	else{
 		::GetClientRect( GetParentHwnd(), &rc );
-		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* …•½ƒXƒNƒ[ƒ‹ƒo[‚Ì‚‚³ */
+		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®é«˜ã• */
 		rc.bottom -= nCyHScroll;
 
-		/* eƒEƒBƒ“ƒhƒE‚ÉAƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		::PostMessageAny( GetParentHwnd(), MYWM_DOSPLIT, (WPARAM)(rc.right / 2), (LPARAM)0 );
 	}
 	return 0L;
