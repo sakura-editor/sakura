@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -26,7 +26,7 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h> //CSIDL_PROFILE“™
+#include <ShlObj.h> //CSIDL_PROFILEç­‰
 
 #include "DLLSHAREDATA.h"
 #include "CFileNameManager.h"
@@ -41,16 +41,16 @@
 #include "_os/COsVersionInfo.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒtƒ@ƒCƒ‹–¼ŠÇ—                         //
+//                      ãƒ•ã‚¡ã‚¤ãƒ«åç®¡ç†                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-/*!	‹¤—Lƒf[ƒ^‚Ìİ’è‚É]‚Á‚ÄƒpƒX‚ğk¬•\‹L‚É•ÏŠ·‚·‚é
-	@param pszSrc   [in]  ƒtƒ@ƒCƒ‹–¼
-	@param pszDest  [out] •ÏŠ·Œã‚Ìƒtƒ@ƒCƒ‹–¼‚ÌŠi”[æ
-	@param nDestLen [in]  I’[‚ÌNULL‚ğŠÜ‚ŞpszDest‚ÌTCHAR’PˆÊ‚Ì’·‚³ _MAX_PATH ‚Ü‚Å
-	@date 2003.01.27 Moca V‹Kì¬
-	@note ˜A‘±‚µ‚ÄŒÄ‚Ño‚·ê‡‚Ì‚½‚ßA“WŠJÏ‚İƒƒ^•¶š—ñ‚ğƒLƒƒƒbƒVƒ…‚µ‚Ä‚‘¬‰»‚µ‚Ä‚¢‚éB
+/*!	å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®è¨­å®šã«å¾“ã£ã¦ãƒ‘ã‚¹ã‚’ç¸®å°è¡¨è¨˜ã«å¤‰æ›ã™ã‚‹
+	@param pszSrc   [in]  ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param pszDest  [out] å¤‰æ›å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«åã®æ ¼ç´å…ˆ
+	@param nDestLen [in]  çµ‚ç«¯ã®NULLã‚’å«ã‚€pszDestã®TCHARå˜ä½ã®é•·ã• _MAX_PATH ã¾ã§
+	@date 2003.01.27 Moca æ–°è¦ä½œæˆ
+	@note é€£ç¶šã—ã¦å‘¼ã³å‡ºã™å ´åˆã®ãŸã‚ã€å±•é–‹æ¸ˆã¿ãƒ¡ã‚¿æ–‡å­—åˆ—ã‚’ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã—ã¦é«˜é€ŸåŒ–ã—ã¦ã„ã‚‹ã€‚
 */
 LPTSTR CFileNameManager::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen, HDC hDC, bool bFitMode, int cchMaxWidth )
 {
@@ -88,17 +88,17 @@ LPTSTR CFileNameManager::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDes
 	}else if( nPxWidth != -1 ){
 		GetShortViewPath( pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode );
 	}else{
-		// •ÏŠ·‚·‚é•K—v‚ª‚È‚¢ ƒRƒs[‚¾‚¯‚·‚é
+		// å¤‰æ›ã™ã‚‹å¿…è¦ãŒãªã„ ã‚³ãƒ”ãƒ¼ã ã‘ã™ã‚‹
 		_tcsncpy( pszDest, pszSrc, nDestLen - 1 );
 		pszDest[nDestLen - 1] = '\0';
 	}
 	return pszDest;
 }
 
-/*!	“WŠJÏ‚İƒƒ^•¶š—ñ‚ÌƒLƒƒƒbƒVƒ…‚ğì¬EXV‚·‚é
-	@retval —LŒø‚È“WŠJÏ‚İ’uŠ·‘O•¶š—ñ‚Ì”
-	@date 2003.01.27 Moca V‹Kì¬
-	@date 2003.06.23 Moca ŠÖ”–¼•ÏX
+/*!	å±•é–‹æ¸ˆã¿ãƒ¡ã‚¿æ–‡å­—åˆ—ã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’ä½œæˆãƒ»æ›´æ–°ã™ã‚‹
+	@retval æœ‰åŠ¹ãªå±•é–‹æ¸ˆã¿ç½®æ›å‰æ–‡å­—åˆ—ã®æ•°
+	@date 2003.01.27 Moca æ–°è¦ä½œæˆ
+	@date 2003.06.23 Moca é–¢æ•°åå¤‰æ›´
 */
 int CFileNameManager::TransformFileName_MakeCache( void ){
 	int i;
@@ -107,7 +107,7 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 		if( L'\0' != m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ){
 			if( ExpandMetaToFolder( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i],
 			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
-				// m_szTransformFileNameTo‚Æm_szTransformFileNameFromExp‚Ì”Ô†‚ª‚¸‚ê‚é‚±‚Æ‚ª‚ ‚é‚Ì‚Å‹L˜^‚µ‚Ä‚¨‚­
+				// m_szTransformFileNameToã¨m_szTransformFileNameFromExpã®ç•ªå·ãŒãšã‚Œã‚‹ã“ã¨ãŒã‚ã‚‹ã®ã§è¨˜éŒ²ã—ã¦ãŠã
 				m_nTransformFileNameOrgId[nCount] = i;
 				nCount++;
 			}
@@ -118,9 +118,9 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 }
 
 
-/*!	ƒtƒ@ƒCƒ‹EƒtƒHƒ‹ƒ_–¼‚ğ’uŠ·‚µ‚ÄAŠÈˆÕ•\¦–¼‚ğæ“¾‚·‚é
-	@date 2002.11.27 Moca V‹Kì¬
-	@note ‘å¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢BnDestLen‚É’B‚µ‚½‚Æ‚«‚ÍŒã‚ë‚ğØ‚èÌ‚Ä‚ç‚ê‚é
+/*!	ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ•ã‚©ãƒ«ãƒ€åã‚’ç½®æ›ã—ã¦ã€ç°¡æ˜“è¡¨ç¤ºåã‚’å–å¾—ã™ã‚‹
+	@date 2002.11.27 Moca æ–°è¦ä½œæˆ
+	@note å¤§å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„ã€‚nDestLenã«é”ã—ãŸã¨ãã¯å¾Œã‚ã‚’åˆ‡ã‚Šæ¨ã¦ã‚‰ã‚Œã‚‹
 */
 LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen, LPCTSTR pszFrom, LPCTSTR pszTo )
 {
@@ -148,14 +148,14 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 			i += nFromLen - 1;
 		}else{
 #if defined(_MBCS)
-// SJIS ê—pˆ—
+// SJIS å°‚ç”¨å‡¦ç†
 			if( _IS_SJIS_1( (unsigned char)pszSrc[i] ) && i + 1 < nSrcLen && _IS_SJIS_2( (unsigned char)pszSrc[i + 1] ) ){
 				if( j + 1 < nDestLen ){
 					pszDest[j] = pszSrc[i];
 					j++;
 					i++;
 				}else{
-					// SJIS‚ÌæsƒoƒCƒg‚¾‚¯ƒRƒs[‚³‚ê‚é‚Ì‚ğ–h‚®
+					// SJISã®å…ˆè¡Œãƒã‚¤ãƒˆã ã‘ã‚³ãƒ”ãƒ¼ã•ã‚Œã‚‹ã®ã‚’é˜²ã
 					break;// goto end_of_func;
 				}
 			}
@@ -170,14 +170,14 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 }
 
 
-/*!	%MYDOC%‚È‚Ç‚Ìƒpƒ‰ƒ[ƒ^w’è‚ğÀÛ‚ÌƒpƒX–¼‚É•ÏŠ·‚·‚é
+/*!	%MYDOC%ãªã©ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æŒ‡å®šã‚’å®Ÿéš›ã®ãƒ‘ã‚¹åã«å¤‰æ›ã™ã‚‹
 
-	@param pszSrc  [in]  •ÏŠ·‘O•¶š—ñ
-	@param pszDes  [out] •ÏŠ·Œã•¶š—ñ
-	@param nDesLen [in]  pszDes‚ÌNULL‚ğŠÜ‚ŞTCHAR’PˆÊ‚Ì’·‚³
-	@retval true  ³í‚É•ÏŠ·‚Å‚«‚½
-	@retval false ƒoƒbƒtƒ@‚ª‘«‚è‚È‚©‚Á‚½C‚Ü‚½‚ÍƒGƒ‰[BpszDes‚Í•s’è
-	@date 2002.11.27 Moca ì¬ŠJn
+	@param pszSrc  [in]  å¤‰æ›å‰æ–‡å­—åˆ—
+	@param pszDes  [out] å¤‰æ›å¾Œæ–‡å­—åˆ—
+	@param nDesLen [in]  pszDesã®NULLã‚’å«ã‚€TCHARå˜ä½ã®é•·ã•
+	@retval true  æ­£å¸¸ã«å¤‰æ›ã§ããŸ
+	@retval false ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãªã‹ã£ãŸï¼Œã¾ãŸã¯ã‚¨ãƒ©ãƒ¼ã€‚pszDesã¯ä¸å®š
+	@date 2002.11.27 Moca ä½œæˆé–‹å§‹
 */
 bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen )
 {
@@ -220,7 +220,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 			continue;
 		}
 
-		// %% ‚Í %
+		// %% ã¯ %
 		if( _T('%') == ps[1] ){
 			*pd = _T('%');
 			pd++;
@@ -238,17 +238,17 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 			ps++;
 			// %SAKURA%
 			if( 0 == auto_strnicmp( _T("SAKURA%"), ps, 7 ) ){
-				// exe‚Ì‚ ‚éƒtƒHƒ‹ƒ_
+				// exeã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
 			else if( 0 == auto_strnicmp( _T("SAKURADATA%"), ps, 11 ) ){
-				// ini‚Ì‚ ‚éƒtƒHƒ‹ƒ_
+				// iniã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€
 				GetInidir( szPath );
 				nMetaLen = 10;
 			}
-			// ƒƒ^•¶š—ñ‚Á‚Û‚¢
+			// ãƒ¡ã‚¿æ–‡å­—åˆ—ã£ã½ã„
 			else if( NULL != (pStr = _tcschr( ps, _T('%') ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
@@ -260,10 +260,10 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 					return false;
 				}
 #ifdef _USE_META_ALIAS
-				// ƒƒ^•¶š—ñ‚ªƒGƒCƒŠƒAƒX–¼‚È‚ç‘‚«Š·‚¦‚é
+				// ãƒ¡ã‚¿æ–‡å­—åˆ—ãŒã‚¨ã‚¤ãƒªã‚¢ã‚¹åãªã‚‰æ›¸ãæ›ãˆã‚‹
 				const MetaAlias* pAlias;
 				for( pAlias = &AliasList[0]; nMetaLen < pAlias->nLenth; pAlias++ )
-					; // “Ç‚İ”ò‚Î‚·
+					; // èª­ã¿é£›ã°ã™
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
 					if( 0 == auto_stricmp( pAlias->szAlias, szMeta ) ){
 						_tcscpy( szMeta, pAlias->szOrig );
@@ -271,7 +271,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 					}
 				}
 #endif
-				// ’¼ÚƒŒƒWƒXƒgƒŠ‚Å’²‚×‚é
+				// ç›´æ¥ãƒ¬ã‚¸ã‚¹ãƒˆãƒªã§èª¿ã¹ã‚‹
 				szPath[0] = _T('\0');
 				bFolderPath = ReadRegistry( HKEY_CURRENT_USER,
 					_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
@@ -283,7 +283,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 				}
 				if( false == bFolderPath || _T('\0') == szPath[0] ){
 					pStr = _tgetenv( szMeta );
-					// ŠÂ‹«•Ï”
+					// ç’°å¢ƒå¤‰æ•°
 					if( NULL != pStr ){
 						nPathLen = _tcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
@@ -293,7 +293,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 							return false;
 						}
 					}
-					// –¢’è‹`‚Ìƒƒ^•¶š—ñ‚Í “ü—Í‚³‚ê‚½%...%‚ğC‚»‚Ì‚Ü‚Ü•¶š‚Æ‚µ‚Äˆ—‚·‚é
+					// æœªå®šç¾©ã®ãƒ¡ã‚¿æ–‡å­—åˆ—ã¯ å…¥åŠ›ã•ã‚ŒãŸ%...%ã‚’ï¼Œãã®ã¾ã¾æ–‡å­—ã¨ã—ã¦å‡¦ç†ã™ã‚‹
 					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
 						*pd = _T('%');
 						auto_memcpy( &pd[1], ps, nMetaLen );
@@ -307,14 +307,14 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 					}
 				}
 			}else{
-				// %...%‚ÌI‚í‚è‚Ì%‚ª‚È‚¢ ‚Æ‚è‚ ‚¦‚¸C%‚ğƒRƒs[
+				// %...%ã®çµ‚ã‚ã‚Šã®%ãŒãªã„ ã¨ã‚Šã‚ãˆãšï¼Œ%ã‚’ã‚³ãƒ”ãƒ¼
 				*pd = _T('%');
 				pd++;
-				ps--; // æ‚Éps++‚µ‚Ä‚µ‚Ü‚Á‚½‚Ì‚Å–ß‚·
+				ps--; // å…ˆã«ps++ã—ã¦ã—ã¾ã£ãŸã®ã§æˆ»ã™
 				continue;
 			}
 
-			// ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚É‚·‚é
+			// ãƒ­ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã«ã™ã‚‹
 			nPathLen = _tcslen( szPath );
 			LPTSTR pStr2 = szPath;
 			if( nPathLen < _MAX_PATH && 0 != nPathLen ){
@@ -323,12 +323,12 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 				}
 			}
 
-			// ÅŒã‚ÌƒtƒHƒ‹ƒ_‹æØ‚è‹L†‚ğíœ‚·‚é
-			// [A:\]‚È‚Ç‚Ìƒ‹[ƒg‚Å‚ ‚Á‚Ä‚àíœ
+			// æœ€å¾Œã®ãƒ•ã‚©ãƒ«ãƒ€åŒºåˆ‡ã‚Šè¨˜å·ã‚’å‰Šé™¤ã™ã‚‹
+			// [A:\]ãªã©ã®ãƒ«ãƒ¼ãƒˆã§ã‚ã£ã¦ã‚‚å‰Šé™¤
 			for(nPathLen = 0; pStr2[nPathLen] != _T('\0'); nPathLen++ ){
 #ifdef _MBCS
 				if( _IS_SJIS_1( (unsigned char)pStr2[nPathLen] ) && _IS_SJIS_2( (unsigned char)pStr2[nPathLen + 1] ) ){
-					// SJIS“Ç‚İ”ò‚Î‚µ
+					// SJISèª­ã¿é£›ã°ã—
 					nPathLen++; // 2003/01/17 sui
 				}else
 #endif
@@ -347,7 +347,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 				return false;
 			}
 		}else{
-			// ÅŒã‚Ì•¶š‚ª%‚¾‚Á‚½
+			// æœ€å¾Œã®æ–‡å­—ãŒ%ã ã£ãŸ
 			*pd = *ps;
 			pd++;
 		}
@@ -387,9 +387,9 @@ static void GetAccessKeyLabelByIndex(TCHAR* pszLabel, bool bEspaceAmp, int index
 }
 
 /*
-	@param editInfo      ƒEƒBƒ“ƒhƒEî•ñBNUL‚Å•s–¾ˆµ‚¢
-	@param index         ‚¢‚Â‚à0origin‚Åw’èB -1‚Å”ñ•\¦
-	@param bZeroOrigin   ƒAƒNƒZƒXƒL[‚ğ0‚©‚çU‚é
+	@param editInfo      ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã€‚NULã§ä¸æ˜æ‰±ã„
+	@param index         ã„ã¤ã‚‚0originã§æŒ‡å®šã€‚ -1ã§éè¡¨ç¤º
+	@param bZeroOrigin   ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã‚’0ã‹ã‚‰æŒ¯ã‚‹
 */
 bool CFileNameManager::GetMenuFullLabel(
 	TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp,
@@ -406,16 +406,16 @@ bool CFileNameManager::GetMenuFullLabel(
 	}else if( pfi->m_bIsGrep ){
 		
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
-		//pfi->m_szGrepKeyShort ¨ cmemDes
+		//pfi->m_szGrepKeyShort â†’ cmemDes
 		CNativeW	cmemDes;
 		int nGrepKeyLen = wcslen(pfi->m_szGrepKey);
 		const int GREPKEY_LIMIT_LEN = 64;
-		// CSakuraEnvironment::ExpandParameter ‚Å‚Í 32•¶š§ŒÀ
-		// ƒƒjƒ…[‚Í 64•¶š§ŒÀ
+		// CSakuraEnvironment::ExpandParameter ã§ã¯ 32æ–‡å­—åˆ¶é™
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã¯ 64æ–‡å­—åˆ¶é™
 		LimitStringLengthW( pfi->m_szGrepKey, nGrepKeyLen, GREPKEY_LIMIT_LEN, cmemDes );
 		
 		const TCHAR* pszKey;
-		TCHAR szMenu2[GREPKEY_LIMIT_LEN*2*2+1]; // WCHAR=>ACHAR‚Å2”{A&‚Å2”{
+		TCHAR szMenu2[GREPKEY_LIMIT_LEN*2*2+1]; // WCHAR=>ACHARã§2å€ã€&ã§2å€
 		if( bEspaceAmp ){
 			dupamp( cmemDes.GetStringT(), szMenu2 );
 			pszKey = szMenu2;
@@ -423,10 +423,10 @@ bool CFileNameManager::GetMenuFullLabel(
 			pszKey = cmemDes.GetStringT();
 		}
 
-		//szMenu‚ğì‚é
+		//szMenuã‚’ä½œã‚‹
 		//	Jan. 19, 2002 genta
-		//	&‚Ìd•¡ˆ—‚ğ’Ç‰Á‚µ‚½‚½‚ßŒp‘±”»’è‚ğáŠ±•ÏX
-		//	20100729 ExpandParameter‚É‚ ‚í‚¹‚ÄAEEE‚ğ...‚É•ÏX
+		//	&ã®é‡è¤‡å‡¦ç†ã‚’è¿½åŠ ã—ãŸãŸã‚ç¶™ç¶šåˆ¤å®šã‚’è‹¥å¹²å¤‰æ›´
+		//	20100729 ExpandParameterã«ã‚ã‚ã›ã¦ã€ãƒ»ãƒ»ãƒ»ã‚’...ã«å¤‰æ›´
 		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_GREP),
 			szAccKey, pszKey,
 			( nGrepKeyLen > cmemDes.GetStringLength() ) ? _T("..."):_T("")
@@ -455,9 +455,9 @@ bool CFileNameManager::GetMenuFullLabel(
 	if( pszFile[0] ){
 		this->GetTransformFileNameFast( pszFile, szFileName, _MAX_PATH, hDC );
 
-		// szFileName ¨ szMenu2
+		// szFileName â†’ szMenu2
 		//	Jan. 19, 2002 genta
-		//	ƒƒjƒ…[•¶š—ñ‚Ì&‚ğl—¶
+		//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼æ–‡å­—åˆ—ã®&ã‚’è€ƒæ…®
 		if( bEspaceAmp ){
 			dupamp( szFileName, szMenu2 );
 			pszName = szMenu2;
@@ -482,7 +482,7 @@ bool CFileNameManager::GetMenuFullLabel(
 	}
 	
 	int ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts%ts%ts %ts%ts"),
-		szAccKey, (bFavorite ? _T("š ") : _T("")), pszName,
+		szAccKey, (bFavorite ? _T("â˜… ") : _T("")), pszName,
 		(bModified ? _T("*"):_T(" ")), pszCharset
 	);
 	return 0 < ret;
@@ -490,16 +490,16 @@ bool CFileNameManager::GetMenuFullLabel(
 
 
 /**
-	\¬İ’èƒtƒ@ƒCƒ‹‚©‚çiniƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é
+	æ§‹æˆè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰iniãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹
 
-	sakura.exe.ini‚©‚çsakura.ini‚ÌŠi”[ƒtƒHƒ‹ƒ_‚ğæ“¾‚µAƒtƒ‹ƒpƒX–¼‚ğ•Ô‚·
+	sakura.exe.iniã‹ã‚‰sakura.iniã®æ ¼ç´ãƒ•ã‚©ãƒ«ãƒ€ã‚’å–å¾—ã—ã€ãƒ•ãƒ«ãƒ‘ã‚¹åã‚’è¿”ã™
 
-	@param[out] pszPrivateIniFile ƒ}ƒ‹ƒ`ƒ†[ƒU—p‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX
-	@param[out] pszIniFile EXEŠî€‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX
+	@param[out] pszPrivateIniFile ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	@param[out] pszIniFile EXEåŸºæº–ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
 
 	@author ryoji
-	@date 2007.09.04 ryoji V‹Kì¬
-	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
+	@date 2007.09.04 ryoji æ–°è¦ä½œæˆ
+	@date 2008.05.05 novice GetModuleHandle(NULL)â†’NULLã«å¤‰æ›´
 */
 void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile, LPCTSTR pszProfName )
 {
@@ -521,9 +521,9 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts\\%ts%ts"), szDrive, szDir, pszProfName, szFname, _T(".ini") );
 	}
 
-	// ƒ}ƒ‹ƒ`ƒ†[ƒU—p‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX
-	//		exe‚Æ“¯‚¶ƒtƒHƒ‹ƒ_‚É’u‚©‚ê‚½ƒ}ƒ‹ƒ`ƒ†[ƒU\¬İ’èƒtƒ@ƒCƒ‹isakura.exe.inij‚Ì“à—e
-	//		‚É]‚Á‚Äƒ}ƒ‹ƒ`ƒ†[ƒU—p‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX‚ğŒˆ‚ß‚é
+	// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	//		exeã¨åŒã˜ãƒ•ã‚©ãƒ«ãƒ€ã«ç½®ã‹ã‚ŒãŸãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶æ§‹æˆè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆsakura.exe.iniï¼‰ã®å†…å®¹
+	//		ã«å¾“ã£ã¦ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’æ±ºã‚ã‚‹
 	pszPrivateIniFile[0] = _T('\0');
 	if( IsWin2000_or_later() ){
 		auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".exe.ini") );
@@ -532,16 +532,16 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 			int nFolder = ::GetPrivateProfileInt(_T("Settings"), _T("UserRootFolder"), 0, szPath );
 			switch( nFolder ){
 			case 1:
-				nFolder = CSIDL_PROFILE;			// ƒ†[ƒU‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_
+				nFolder = CSIDL_PROFILE;			// ãƒ¦ãƒ¼ã‚¶ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€
 				break;
 			case 2:
-				nFolder = CSIDL_PERSONAL;			// ƒ†[ƒU‚ÌƒhƒLƒ…ƒƒ“ƒgƒtƒHƒ‹ƒ_
+				nFolder = CSIDL_PERSONAL;			// ãƒ¦ãƒ¼ã‚¶ã®ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€
 				break;
 			case 3:
-				nFolder = CSIDL_DESKTOPDIRECTORY;	// ƒ†[ƒU‚ÌƒfƒXƒNƒgƒbƒvƒtƒHƒ‹ƒ_
+				nFolder = CSIDL_DESKTOPDIRECTORY;	// ãƒ¦ãƒ¼ã‚¶ã®ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ãƒ•ã‚©ãƒ«ãƒ€
 				break;
 			default:
-				nFolder = CSIDL_APPDATA;			// ƒ†[ƒU‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒf[ƒ^ƒtƒHƒ‹ƒ_
+				nFolder = CSIDL_APPDATA;			// ãƒ¦ãƒ¼ã‚¶ã®ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚©ãƒ«ãƒ€
 				break;
 			}
 			::GetPrivateProfileString(_T("Settings"), _T("UserSubFolder"), _T("sakura"), szDir, _MAX_DIR, szPath );
@@ -559,23 +559,23 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 }
 
 /**
-	iniƒtƒ@ƒCƒ‹–¼‚Ìæ“¾
+	iniãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾—
 
-	‹¤—Lƒf[ƒ^‚©‚çsakura.ini‚ÌŠi”[ƒtƒHƒ‹ƒ_‚ğæ“¾‚µAƒtƒ‹ƒpƒX–¼‚ğ•Ô‚·
-	i‹¤—Lƒf[ƒ^–¢İ’è‚Ì‚Æ‚«‚Í‹¤—Lƒf[ƒ^İ’è‚ğs‚¤j
+	å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰sakura.iniã®æ ¼ç´ãƒ•ã‚©ãƒ«ãƒ€ã‚’å–å¾—ã—ã€ãƒ•ãƒ«ãƒ‘ã‚¹åã‚’è¿”ã™
+	ï¼ˆå…±æœ‰ãƒ‡ãƒ¼ã‚¿æœªè¨­å®šã®ã¨ãã¯å…±æœ‰ãƒ‡ãƒ¼ã‚¿è¨­å®šã‚’è¡Œã†ï¼‰
 
-	@param[out] pszIniFileName iniƒtƒ@ƒCƒ‹–¼iƒtƒ‹ƒpƒXj
-	@param[in] bRead true: “Ç‚İ‚İ / false: ‘‚«‚İ
+	@param[out] pszIniFileName iniãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆãƒ•ãƒ«ãƒ‘ã‚¹ï¼‰
+	@param[in] bRead true: èª­ã¿è¾¼ã¿ / false: æ›¸ãè¾¼ã¿
 
 	@author ryoji
-	@date 2007.05.19 ryoji V‹Kì¬
+	@date 2007.05.19 ryoji æ–°è¦ä½œæˆ
 */
 void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfName, BOOL bRead/*=FALSE*/ )
 {
 	if( !m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit ){
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// ‰Šú‰»Ïƒtƒ‰ƒO
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// ƒ}ƒ‹ƒ`ƒ†[ƒU—pini‚©‚ç‚Ì“Ç‚İo‚µƒtƒ‰ƒO
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// ƒ}ƒ‹ƒ`ƒ†[ƒU—pini‚Ö‚Ì‘‚«‚İƒtƒ‰ƒO
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// åˆæœŸåŒ–æ¸ˆãƒ•ãƒ©ã‚°
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨iniã‹ã‚‰ã®èª­ã¿å‡ºã—ãƒ•ãƒ©ã‚°
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨iniã¸ã®æ›¸ãè¾¼ã¿ãƒ•ãƒ©ã‚°
 
 		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, pszProfName );
 		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
@@ -584,7 +584,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfNam
 			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
 				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
 
-			// ƒ}ƒ‹ƒ`ƒ†[ƒU—p‚ÌiniƒtƒHƒ‹ƒ_‚ğì¬‚µ‚Ä‚¨‚­
+			// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚©ãƒ«ãƒ€ã‚’ä½œæˆã—ã¦ãŠã
 			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){
 				TCHAR szPath[_MAX_PATH];
 				TCHAR szDrive[_MAX_DRIVE];

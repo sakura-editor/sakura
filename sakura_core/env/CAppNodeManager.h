@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,17 +29,17 @@
 
 class CAppNodeGroupHandle;
 
-//! •ÒWƒEƒBƒ“ƒhƒEƒm[ƒh
+//! ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ¼ãƒ‰
 struct EditNode {
 	int				m_nIndex;
-	int				m_nGroup;					//!< ƒOƒ‹[ƒvID								//@@@ 2007.06.20 ryoji
+	int				m_nGroup;					//!< ã‚°ãƒ«ãƒ¼ãƒ—ID								//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
-	int				m_nId;						//!< –³‘èId
-	WIN_CHAR		m_szTabCaption[_MAX_PATH];	//!< ƒ^ƒuƒEƒCƒ“ƒhƒE—pFƒLƒƒƒvƒVƒ‡ƒ“–¼		//@@@ 2003.05.31 MIK
-	SFilePath		m_szFilePath;				//!< ƒ^ƒuƒEƒCƒ“ƒhƒE—pFƒtƒ@ƒCƒ‹–¼			//@@@ 2006.01.28 ryoji
-	bool			m_bIsGrep;					//!< Grep‚ÌƒEƒBƒ“ƒhƒE‚©						//@@@ 2006.01.28 ryoji
-	UINT			m_showCmdRestore;			//!< Œ³‚ÌƒTƒCƒY‚É–ß‚·‚Æ‚«‚ÌƒTƒCƒYí•Ê		//@@@ 2007.06.20 ryoji
-	BOOL			m_bClosing;					//!< I—¹’†‚©iuÅŒã‚Ìƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚Ä‚à(–³‘è)‚ğc‚·v—pj	//@@@ 2007.06.20 ryoji
+	int				m_nId;						//!< ç„¡é¡ŒId
+	WIN_CHAR		m_szTabCaption[_MAX_PATH];	//!< ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ç”¨ï¼šã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³å		//@@@ 2003.05.31 MIK
+	SFilePath		m_szFilePath;				//!< ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ç”¨ï¼šãƒ•ã‚¡ã‚¤ãƒ«å			//@@@ 2006.01.28 ryoji
+	bool			m_bIsGrep;					//!< Grepã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‹						//@@@ 2006.01.28 ryoji
+	UINT			m_showCmdRestore;			//!< å…ƒã®ã‚µã‚¤ã‚ºã«æˆ»ã™ã¨ãã®ã‚µã‚¤ã‚ºç¨®åˆ¥		//@@@ 2007.06.20 ryoji
+	BOOL			m_bClosing;					//!< çµ‚äº†ä¸­ã‹ï¼ˆã€Œæœ€å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã¦ã‚‚(ç„¡é¡Œ)ã‚’æ®‹ã™ã€ç”¨ï¼‰	//@@@ 2007.06.20 ryoji
 
 	HWND GetHwnd() const{ return GetSafeHwnd(); }
 	HWND GetSafeHwnd() const{ if(this)return m_hWnd; else return NULL; }
@@ -49,24 +49,24 @@ struct EditNode {
 	bool IsTopInGroup() const;
 };
 
-//! Šg’£\‘¢‘Ì
+//! æ‹¡å¼µæ§‹é€ ä½“
 struct EditNodeEx{
-	EditNode*	p;			//!< •ÒWƒEƒBƒ“ƒhƒE”z—ñ—v‘f‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int			nGroupMru;	//!< ƒOƒ‹[ƒv’PˆÊ‚ÌMRU”Ô†
+	EditNode*	p;			//!< ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é…åˆ—è¦ç´ ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int			nGroupMru;	//!< ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã®MRUç•ªå·
 };
 
 
-//! ‹¤—Lƒƒ‚ƒŠ“à\‘¢‘Ì
+//! å…±æœ‰ãƒ¡ãƒ¢ãƒªå†…æ§‹é€ ä½“
 struct SShare_Nodes{
-	int					m_nEditArrNum;	//short->int‚ÉC³	//@@@ 2003.05.31 MIK
-	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//Å‘å’lC³	@@@ 2003.05.31 MIK
-	LONG				m_nSequences;	/* ƒEƒBƒ“ƒhƒE˜A”Ô */
-	LONG				m_nNonameSequences;	/* –³‘è˜A”Ô */
-	LONG				m_nGroupSequences;	// ƒ^ƒuƒOƒ‹[ƒv˜A”Ô	// 2007.06.20 ryoji
+	int					m_nEditArrNum;	//short->intã«ä¿®æ­£	//@@@ 2003.05.31 MIK
+	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//æœ€å¤§å€¤ä¿®æ­£	@@@ 2003.05.31 MIK
+	LONG				m_nSequences;	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é€£ç•ª */
+	LONG				m_nNonameSequences;	/* ç„¡é¡Œé€£ç•ª */
+	LONG				m_nGroupSequences;	// ã‚¿ãƒ–ã‚°ãƒ«ãƒ¼ãƒ—é€£ç•ª	// 2007.06.20 ryoji
 };
 
 
-//! ƒm[ƒhƒAƒNƒZƒT
+//! ãƒãƒ¼ãƒ‰ã‚¢ã‚¯ã‚»ã‚µ
 class CAppNodeHandle{
 public:
 	CAppNodeHandle(HWND hwnd);
@@ -75,24 +75,24 @@ private:
 	EditNode* m_pNodeRef;
 };
 
-//! ƒOƒ‹[ƒvƒAƒNƒZƒT
+//! ã‚°ãƒ«ãƒ¼ãƒ—ã‚¢ã‚¯ã‚»ã‚µ
 class CAppNodeGroupHandle{
 public:
 	CAppNodeGroupHandle(int nGroupId) : m_nGroup(nGroupId) { }
 	CAppNodeGroupHandle(HWND hwnd){ m_nGroup = CAppNodeHandle(hwnd)->GetGroup(); }
 
 	EditNode* GetTopEditNode(){ return GetEditNodeAt(0); }	//
-	EditNode* GetEditNodeAt( int nIndex );					//!< w’èˆÊ’u‚Ì•ÒWƒEƒBƒ“ƒhƒEî•ñ‚ğæ“¾‚·‚é
-	BOOL AddEditWndList( HWND );							//!< •ÒWƒEƒBƒ“ƒhƒE‚Ì“o˜^	// 2007.06.26 ryoji nGroupˆø”’Ç‰Á
-	void DeleteEditWndList( HWND );							//!< •ÒWƒEƒBƒ“ƒhƒEƒŠƒXƒg‚©‚ç‚Ìíœ
+	EditNode* GetEditNodeAt( int nIndex );					//!< æŒ‡å®šä½ç½®ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’å–å¾—ã™ã‚‹
+	BOOL AddEditWndList( HWND );							//!< ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç™»éŒ²	// 2007.06.26 ryoji nGroupå¼•æ•°è¿½åŠ 
+	void DeleteEditWndList( HWND );							//!< ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã‹ã‚‰ã®å‰Šé™¤
 	BOOL RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, BOOL bCheckConfirm, HWND hWndFrom );
-															//!< ‚¢‚­‚Â‚©‚ÌƒEƒBƒ“ƒhƒE‚ÖI—¹—v‹‚ğo‚·	// 2007.02.13 ryoji u•ÒW‚Ì‘SI—¹v‚ğ¦‚·ˆø”(bExit)‚ğ’Ç‰Á	// 2007.06.20 ryoji nGroupˆø”’Ç‰Á
+															//!< ã„ãã¤ã‹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸çµ‚äº†è¦æ±‚ã‚’å‡ºã™	// 2007.02.13 ryoji ã€Œç·¨é›†ã®å…¨çµ‚äº†ã€ã‚’ç¤ºã™å¼•æ•°(bExit)ã‚’è¿½åŠ 	// 2007.06.20 ryoji nGroupå¼•æ•°è¿½åŠ 
 
-	int GetEditorWindowsNum( bool bExcludeClosing = true );				/* Œ»İ‚Ì•ÒWƒEƒBƒ“ƒhƒE‚Ì”‚ğ’²‚×‚é */	// 2007.06.20 ryoji nGroupˆø”’Ç‰Á	// 2008.04.19 ryoji bExcludeClosingˆø”’Ç‰Á
+	int GetEditorWindowsNum( bool bExcludeClosing = true );				/* ç¾åœ¨ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ•°ã‚’èª¿ã¹ã‚‹ */	// 2007.06.20 ryoji nGroupå¼•æ•°è¿½åŠ 	// 2008.04.19 ryoji bExcludeClosingå¼•æ•°è¿½åŠ 
 
-	//‘SƒEƒBƒ“ƒhƒEˆêŠ‡‘€ì
-	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast );	/* ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */	// 2007.06.20 ryoji nGroupˆø”’Ç‰Á
-	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast );	/* ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğ‘—‚é‚·‚é */	// 2007.06.20 ryoji nGroupˆø”’Ç‰Á
+	//å…¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€æ‹¬æ“ä½œ
+	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast );	/* å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */	// 2007.06.20 ryoji nGroupå¼•æ•°è¿½åŠ 
+	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast );	/* å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹ã™ã‚‹ */	// 2007.06.20 ryoji nGroupå¼•æ•°è¿½åŠ 
 
 public:
 	bool operator==(const CAppNodeGroupHandle& rhs) const{ return m_nGroup==rhs.m_nGroup; }
@@ -109,27 +109,27 @@ class CAppNodeManager : public TSingleton<CAppNodeManager>{
 	CAppNodeManager(){}
 
 public:
-	//ƒOƒ‹[ƒv
-	void ResetGroupId();									/* ƒOƒ‹[ƒv‚ğIDƒŠƒZƒbƒg‚·‚é */
+	//ã‚°ãƒ«ãƒ¼ãƒ—
+	void ResetGroupId();									/* ã‚°ãƒ«ãƒ¼ãƒ—ã‚’IDãƒªã‚»ãƒƒãƒˆã™ã‚‹ */
 
-	//ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹ ¨ ƒm[ƒh@•ÏŠ·
-	EditNode* GetEditNode( HWND hWnd );							/* •ÒWƒEƒBƒ“ƒhƒEî•ñ‚ğæ“¾‚·‚é */
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ« â†’ ãƒãƒ¼ãƒ‰ã€€å¤‰æ›
+	EditNode* GetEditNode( HWND hWnd );							/* ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’å–å¾—ã™ã‚‹ */
 	int GetNoNameNumber( HWND );
 
-	//ƒ^ƒu
-	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* ƒ^ƒuˆÚ“®‚É”º‚¤ƒEƒBƒ“ƒhƒE‚Ì•À‚Ñ‘Ö‚¦ 2007.07.07 genta */
-	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* ƒ^ƒu•ª—£‚É”º‚¤ƒEƒBƒ“ƒhƒEˆ— 2007.07.07 genta */
+	//ã‚¿ãƒ–
+	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* ã‚¿ãƒ–ç§»å‹•ã«ä¼´ã†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸¦ã³æ›¿ãˆ 2007.07.07 genta */
+	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* ã‚¿ãƒ–åˆ†é›¢ã«ä¼´ã†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å‡¦ç† 2007.07.07 genta */
 
-	//‘‡î•ñ
-	int GetOpenedWindowArr( EditNode** , BOOL, BOOL bGSort = FALSE );				/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒWƒEƒBƒ“ƒhƒE‚Ì”z—ñ‚ğ•Ô‚· */
+	//ç·åˆæƒ…å ±
+	int GetOpenedWindowArr( EditNode** , BOOL, BOOL bGSort = FALSE );				/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é…åˆ—ã‚’è¿”ã™ */
 
 protected:
-	int _GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* Œ»İŠJ‚¢‚Ä‚¢‚é•ÒWƒEƒBƒ“ƒhƒE‚Ì”z—ñ‚ğ•Ô‚·iƒRƒAˆ—•”j */
+	int _GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é…åˆ—ã‚’è¿”ã™ï¼ˆã‚³ã‚¢å‡¦ç†éƒ¨ï¼‰ */
 
 public:
-	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* “¯ˆêƒOƒ‹[ƒv‚©‚Ç‚¤‚©‚ğ’²‚×‚é */
-	int GetFreeGroupId( void );											/* ‹ó‚¢‚Ä‚¢‚éƒOƒ‹[ƒv”Ô†‚ğæ“¾‚·‚é */
-	HWND GetNextTab(HWND hWndCur);										// Close ‚µ‚½‚ÌŸ‚ÌWindow‚ğæ“¾‚·‚é(ƒ^ƒu‚Ü‚Æ‚ß•\¦‚Ìê‡)	2013/4/10 Uchi
+	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* åŒä¸€ã‚°ãƒ«ãƒ¼ãƒ—ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ */
+	int GetFreeGroupId( void );											/* ç©ºã„ã¦ã„ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—ç•ªå·ã‚’å–å¾—ã™ã‚‹ */
+	HWND GetNextTab(HWND hWndCur);										// Close ã—ãŸæ™‚ã®æ¬¡ã®Windowã‚’å–å¾—ã™ã‚‹(ã‚¿ãƒ–ã¾ã¨ã‚è¡¨ç¤ºã®å ´åˆ)	2013/4/10 Uchi
 };
 
 

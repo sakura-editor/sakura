@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ���番��
+﻿/*
+	2008.05.18 kobake CShareData から分離
 */
 /*
 	Copyright (C) 2008, kobake
@@ -27,23 +27,23 @@
 #ifndef SAKURA_CHELPMANAGER_979D10EB_B07B_466F_BB28_AB5A7259E2EA9_H_
 #define SAKURA_CHELPMANAGER_979D10EB_B07B_466F_BB28_AB5A7259E2EA9_H_
 
-// �v��s��`
+// 要先行定義
 // #include "DLLSHAREDATA.h"
 
 
-//!�w���v�Ǘ�
+//!ヘルプ管理
 class CHelpManager{
 public:
 	CHelpManager()
 	{
 		m_pShareData = &GetDllShareData();
 	}
-	//�w���v�֘A	//@@@ 2002.2.3 YAZAKI
-	bool			ExtWinHelpIsSet( const STypeConfig* pType = NULL );		//	�^�C�v��nType�̂Ƃ��ɁA�O���w���v���ݒ肳��Ă��邩�B
-	const TCHAR*	GetExtWinHelp( const STypeConfig* pType = NULL );		//	�^�C�v��nType�̂Ƃ��́A�O���w���v�t�@�C�������擾�B
-	bool			ExtHTMLHelpIsSet( const STypeConfig* pType = NULL );	//	�^�C�v��nType�̂Ƃ��ɁA�O��HTML�w���v���ݒ肳��Ă��邩�B
-	const TCHAR*	GetExtHTMLHelp( const STypeConfig* pType = NULL );		//	�^�C�v��nType�̂Ƃ��́A�O��HTML�w���v�t�@�C�������擾�B
-	bool			HTMLHelpIsSingle( const STypeConfig* pType = NULL );	//	�^�C�v��nType�̂Ƃ��́A�O��HTML�w���v�u�r���[�A�𕡐��N�����Ȃ��v��ON�����擾�B
+	//ヘルプ関連	//@@@ 2002.2.3 YAZAKI
+	bool			ExtWinHelpIsSet( const STypeConfig* pType = NULL );		//	タイプがnTypeのときに、外部ヘルプが設定されているか。
+	const TCHAR*	GetExtWinHelp( const STypeConfig* pType = NULL );		//	タイプがnTypeのときの、外部ヘルプファイル名を取得。
+	bool			ExtHTMLHelpIsSet( const STypeConfig* pType = NULL );	//	タイプがnTypeのときに、外部HTMLヘルプが設定されているか。
+	const TCHAR*	GetExtHTMLHelp( const STypeConfig* pType = NULL );		//	タイプがnTypeのときの、外部HTMLヘルプファイル名を取得。
+	bool			HTMLHelpIsSingle( const STypeConfig* pType = NULL );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 private:
 	DLLSHAREDATA* m_pShareData;
 };

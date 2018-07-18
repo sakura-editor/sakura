@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -27,22 +27,22 @@
 #ifndef SAKURA_CFORMATMANAGER_7FC73E49_281C_4417_BBBC_DE176142E6BC9_H_
 #define SAKURA_CFORMATMANAGER_7FC73E49_281C_4417_BBBC_DE176142E6BC9_H_
 
-// —væs’è‹`
+// è¦å…ˆè¡Œå®šç¾©
 // #include "DLLSHAREDATA.h"
 
-//!‘®ŠÇ—
+//!æ›¸å¼ç®¡ç†
 class CFormatManager{
 public:
 	CFormatManager()
 	{
 		m_pShareData = &GetDllShareData();
 	}
-	//‘® //@@@ 2002.2.9 YAZAKI
-	// ‹¤—LDLLSHAREDATAˆË‘¶
+	//æ›¸å¼ //@@@ 2002.2.9 YAZAKI
+	// å…±æœ‰DLLSHAREDATAä¾å­˜
 	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
 	const TCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen );
 
-	// ‹¤—LDLLSHAREDATA”ñˆË‘¶
+	// å…±æœ‰DLLSHAREDATAéä¾å­˜
 	const TCHAR* MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nDateFormatType, const TCHAR* szDateFormat );
 	const TCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen, int nTimeFormatType, const TCHAR* szTimeFormat );
 private:

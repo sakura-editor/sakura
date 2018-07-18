@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -32,16 +32,16 @@
 
 
 /*!
-	@brief ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚Ì•Û‘¶
+	@brief ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®ä¿å­˜
 
-	ƒ^ƒOƒWƒƒƒ“ƒv‚·‚é‚Æ‚«‚ÉAƒ^ƒOƒWƒƒƒ“ƒvæ‚Ìî•ñ‚ğ•Û‘¶‚·‚éB
+	ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã™ã‚‹ã¨ãã«ã€ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—å…ˆã®æƒ…å ±ã‚’ä¿å­˜ã™ã‚‹ã€‚
 
-	@param[in] pTagJump •Û‘¶‚·‚éƒ^ƒOƒWƒƒƒ“ƒvî•ñ
-	@retval true	•Û‘¶¬Œ÷
-	@retval false	•Û‘¶¸”s
+	@param[in] pTagJump ä¿å­˜ã™ã‚‹ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
+	@retval true	ä¿å­˜æˆåŠŸ
+	@retval false	ä¿å­˜å¤±æ•—
 
-	@date 2004/06/21 V‹Kì¬
-	@date 2004/06/22 Moca ˆê”t‚É‚È‚Á‚½‚çˆê”ÔŒÃ‚¢î•ñ‚ğíœ‚µ‚»‚±‚ÉV‚µ‚¢î•ñ‚ğ“ü‚ê‚é
+	@date 2004/06/21 æ–°è¦ä½œæˆ
+	@date 2004/06/22 Moca ä¸€æ¯ã«ãªã£ãŸã‚‰ä¸€ç•ªå¤ã„æƒ…å ±ã‚’å‰Šé™¤ã—ãã“ã«æ–°ã—ã„æƒ…å ±ã‚’å…¥ã‚Œã‚‹
 */
 void CTagJumpManager::PushTagJump(const TagJump *pTagJump)
 {
@@ -58,16 +58,16 @@ void CTagJumpManager::PushTagJump(const TagJump *pTagJump)
 
 
 /*!
-	@brief ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚ÌQÆ
+	@brief ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®å‚ç…§
 
-	ƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒN‚·‚é‚Æ‚«‚ÉAƒ^ƒOƒWƒƒƒ“ƒvŒ³‚Ìî•ñ‚ğQÆ‚·‚éB
+	ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒã‚¯ã™ã‚‹ã¨ãã«ã€ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—å…ƒã®æƒ…å ±ã‚’å‚ç…§ã™ã‚‹ã€‚
 
-	@param[out] pTagJump QÆ‚·‚éƒ^ƒOƒWƒƒƒ“ƒvî•ñ
-	@retval true	QÆ¬Œ÷
-	@retval false	QÆ¸”s
+	@param[out] pTagJump å‚ç…§ã™ã‚‹ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
+	@retval true	å‚ç…§æˆåŠŸ
+	@retval false	å‚ç…§å¤±æ•—
 
-	@date 2004/06/21 V‹Kì¬
-	@date 2004/06/22 Moca SetTagJump•ÏX‚É‚æ‚éC³
+	@date 2004/06/21 æ–°è¦ä½œæˆ
+	@date 2004/06/22 Moca SetTagJumpå¤‰æ›´ã«ã‚ˆã‚‹ä¿®æ­£
 */
 bool CTagJumpManager::PopTagJump(TagJump *pTagJump)
 {

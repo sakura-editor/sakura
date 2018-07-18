@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -34,15 +34,15 @@ public:
 	static void ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen);
 	static std::tstring GetDlgInitialDir(bool bControlProcess = false);
 
-	static void ResolvePath(TCHAR* pszPath); //!< ƒVƒ‡[ƒgƒJƒbƒg‚Ì‰ðŒˆ‚Æƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚Ö•ÏŠ·‚ðs‚¤B
+	static void ResolvePath(TCHAR* pszPath); //!< ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã®è§£æ±ºã¨ãƒ­ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã¸å¤‰æ›ã‚’è¡Œã†ã€‚
 private:
-	static const wchar_t* _ExParam_SkipCond(const wchar_t* pszSource, int part); // Mar. 31, 2003 genta ExpandParameter•â•ŠÖ”
+	static const wchar_t* _ExParam_SkipCond(const wchar_t* pszSource, int part); // Mar. 31, 2003 genta ExpandParameterè£œåŠ©é–¢æ•°
 	static int _ExParam_Evaluate( const wchar_t* pCond );
 };
 
 
-//ƒEƒBƒ“ƒhƒEŠÇ—
-/* Žw’èƒEƒBƒ“ƒhƒE‚ªA•ÒWƒEƒBƒ“ƒhƒE‚ÌƒtƒŒ[ƒ€ƒEƒBƒ“ƒhƒE‚©‚Ç‚¤‚©’²‚×‚é */
+//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç®¡ç†
+/* æŒ‡å®šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã€ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‹ã©ã†ã‹èª¿ã¹ã‚‹ */
 BOOL IsSakuraMainWindow( HWND hWnd );
 
 

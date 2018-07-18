@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒvƒƒZƒXŠÔ‹¤—Lƒf[ƒ^‚Ö‚ÌƒAƒNƒZƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ­ã‚»ã‚¹é–“å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã¸ã®ã‚¢ã‚¯ã‚»ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/05/26  V‹Kì¬
+	@date 1998/05/26  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,13 +20,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-//2007.09.23 kobake m_nSEARCHKEYArrNum,      m_szSEARCHKEYArr      ‚ğ m_aSearchKeys      ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.09.23 kobake m_nREPLACEKEYArrNum,     m_szREPLACEKEYArr     ‚ğ m_aReplaceKeys     ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.09.23 kobake m_nGREPFILEArrNum,       m_szGREPFILEArr       ‚ğ m_aGrepFiles       ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.09.23 kobake m_nGREPFOLDERArrNum,     m_szGREPFOLDERArr     ‚ğ m_aGrepFolders     ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.09.23 kobake m_szCmdArr,              m_nCmdArrNum          ‚ğ m_aCommands        ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.09.23 kobake m_nTagJumpKeywordArrNum, m_szTagJumpKeywordArr ‚ğ m_aTagJumpKeywords ‚É‚Ü‚Æ‚ß‚Ü‚µ‚½
-//2007.12.13 kobake DLLSHAREDATA‚Ö‚ÌŠÈˆÕƒAƒNƒZƒT‚ğ—pˆÓ
+//2007.09.23 kobake m_nSEARCHKEYArrNum,      m_szSEARCHKEYArr      ã‚’ m_aSearchKeys      ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.09.23 kobake m_nREPLACEKEYArrNum,     m_szREPLACEKEYArr     ã‚’ m_aReplaceKeys     ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.09.23 kobake m_nGREPFILEArrNum,       m_szGREPFILEArr       ã‚’ m_aGrepFiles       ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.09.23 kobake m_nGREPFOLDERArrNum,     m_szGREPFOLDERArr     ã‚’ m_aGrepFolders     ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.09.23 kobake m_szCmdArr,              m_nCmdArrNum          ã‚’ m_aCommands        ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.09.23 kobake m_nTagJumpKeywordArrNum, m_szTagJumpKeywordArr ã‚’ m_aTagJumpKeywords ã«ã¾ã¨ã‚ã¾ã—ãŸ
+//2007.12.13 kobake DLLSHAREDATAã¸ã®ç°¡æ˜“ã‚¢ã‚¯ã‚»ã‚µã‚’ç”¨æ„
 
 
 #ifndef SAKURA_ENV_CSHAREDATA_H_
@@ -36,25 +36,25 @@
 
 class CShareData;
 
-// 2010.04.19 Moca DLLSHAREDATAŠÖ˜A‚ÍDLLSHAREDATA.h“™Å’áŒÀ•K—v‚ÈêŠ‚ÖˆÚ“®
-// CShareData.h‚ÍA©•ª‚ÌInterface‚µ‚©’ñ‹Ÿ‚µ‚Ü‚¹‚ñB•Ê‚ÉDLLSHAREDATA.h‚ğinclude‚·‚é‚±‚ÆB
+// 2010.04.19 Moca DLLSHAREDATAé–¢é€£ã¯DLLSHAREDATA.hç­‰æœ€ä½é™å¿…è¦ãªå ´æ‰€ã¸ç§»å‹•
+// CShareData.hã¯ã€è‡ªåˆ†ã®Interfaceã—ã‹æä¾›ã—ã¾ã›ã‚“ã€‚åˆ¥ã«DLLSHAREDATA.hã‚’includeã™ã‚‹ã“ã¨ã€‚
 struct DLLSHAREDATA;
 struct STypeConfig;
 class CMutex;
 
-/*!	@brief ‹¤—Lƒf[ƒ^‚ÌŠÇ—
+/*!	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ç®¡ç†
 
-	CShareData‚ÍCProcess‚Ìƒƒ“ƒo‚Å‚ ‚é‚½‚ßC—¼Ò‚Ìõ–½‚Í“¯ˆê‚Å‚·D
-	–{—ˆ‚ÍCProcessƒIƒuƒWƒFƒNƒg‚ğ’Ê‚¶‚ÄƒAƒNƒZƒX‚·‚é‚×‚«‚Å‚·‚ªC
-	CProcess“à‚Ìƒf[ƒ^—Ìˆæ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğstatic•Ï”‚É•Û‘¶‚·‚é‚±‚Æ‚Å
-	Singleton‚Ì‚æ‚¤‚É‚Ç‚±‚©‚ç‚Å‚àƒAƒNƒZƒX‚Å‚«‚é\‘¢‚É‚È‚Á‚Ä‚¢‚Ü‚·D
+	CShareDataã¯CProcessã®ãƒ¡ãƒ³ãƒã§ã‚ã‚‹ãŸã‚ï¼Œä¸¡è€…ã®å¯¿å‘½ã¯åŒä¸€ã§ã™ï¼
+	æœ¬æ¥ã¯CProcessã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’é€šã˜ã¦ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ã¹ãã§ã™ãŒï¼Œ
+	CProcesså†…ã®ãƒ‡ãƒ¼ã‚¿é ˜åŸŸã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’staticå¤‰æ•°ã«ä¿å­˜ã™ã‚‹ã“ã¨ã§
+	Singletonã®ã‚ˆã†ã«ã©ã“ã‹ã‚‰ã§ã‚‚ã‚¢ã‚¯ã‚»ã‚¹ã§ãã‚‹æ§‹é€ ã«ãªã£ã¦ã„ã¾ã™ï¼
 
-	‹¤—Lƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğm_pShareData‚É•Û‚µ‚Ü‚·D‚±‚Ìƒƒ“ƒo‚Í
-	ŒöŠJ‚³‚ê‚Ä‚¢‚Ü‚·‚ªCCShareData‚É‚æ‚Á‚ÄMap/Unmap‚³‚ê‚é‚½‚ß‚É
-	ChareData‚ÌÁ–Å‚É‚æ‚Á‚Äƒ|ƒCƒ“ƒ^m_pShareData‚à–³Œø‚É‚È‚é‚±‚Æ‚É
-	’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢D
+	å…±æœ‰ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’m_pShareDataã«ä¿æŒã—ã¾ã™ï¼ã“ã®ãƒ¡ãƒ³ãƒã¯
+	å…¬é–‹ã•ã‚Œã¦ã„ã¾ã™ãŒï¼ŒCShareDataã«ã‚ˆã£ã¦Map/Unmapã•ã‚Œã‚‹ãŸã‚ã«
+	ChareDataã®æ¶ˆæ»…ã«ã‚ˆã£ã¦ãƒã‚¤ãƒ³ã‚¿m_pShareDataã‚‚ç„¡åŠ¹ã«ãªã‚‹ã“ã¨ã«
+	æ³¨æ„ã—ã¦ãã ã•ã„ï¼
 
-	@date 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
+	@date 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
 */
 class CShareData : public TSingleton<CShareData>
 {
@@ -66,43 +66,43 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	bool InitShareData();	/* CShareDataƒNƒ‰ƒX‚Ì‰Šú‰»ˆ— */
-	void RefreshString();	/* Œ¾Œê‘I‘ğŒã‚É‹¤—Lƒƒ‚ƒŠ“à‚Ì•¶š—ñ‚ğXV‚·‚é */
+	bool InitShareData();	/* CShareDataã‚¯ãƒ©ã‚¹ã®åˆæœŸåŒ–å‡¦ç† */
+	void RefreshString();	/* è¨€èªé¸æŠå¾Œã«å…±æœ‰ãƒ¡ãƒ¢ãƒªå†…ã®æ–‡å­—åˆ—ã‚’æ›´æ–°ã™ã‚‹ */
 	
-	//MRUŒn
-	BOOL IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner ); /* w’èƒtƒ@ƒCƒ‹‚ªŠJ‚©‚ê‚Ä‚¢‚é‚©’²‚×‚é */
-	BOOL ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* w’èƒtƒ@ƒCƒ‹‚ªŠJ‚©‚ê‚Ä‚¢‚é‚©’²‚×‚Â‚ÂA‘½dƒI[ƒvƒ“‚Ì•¶šƒR[ƒhÕ“Ë‚àŠm”F */	// 2007.03.16
+	//MRUç³»
+	BOOL IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner ); /* æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‹ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã‚‹ */
+	BOOL ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‹ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã¤ã¤ã€å¤šé‡ã‚ªãƒ¼ãƒ—ãƒ³æ™‚ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰è¡çªã‚‚ç¢ºèª */	// 2007.03.16
 
-	//ƒfƒoƒbƒO  ¡‚Íå‚Éƒ}ƒNƒEŠO•”ƒRƒ}ƒ“ƒhÀs—p
-	void TraceOut( LPCTSTR lpFmt, ...);	/* ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE‚Éo—Í(printfƒtƒH[ƒ}ƒbƒg) */
-	void TraceOutString( const wchar_t* pszStr, int len = -1);	/* ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE‚Éo—Í(–¢‰ÁH•¶š—ñ) */
-	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut‹N“®Œ³ƒEƒBƒ“ƒhƒE‚Ìİ’è */
-	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  ƒfƒoƒbƒOƒEƒBƒ“ƒhƒE‚ğŠJ‚­
+	//ãƒ‡ãƒãƒƒã‚°  ä»Šã¯ä¸»ã«ãƒã‚¯ãƒ­ãƒ»å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œç”¨
+	void TraceOut( LPCTSTR lpFmt, ...);	/* ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«å‡ºåŠ›(printfãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ) */
+	void TraceOutString( const wchar_t* pszStr, int len = -1);	/* ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«å‡ºåŠ›(æœªåŠ å·¥æ–‡å­—åˆ—) */
+	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOutèµ·å‹•å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¨­å®š */
+	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
 
 	BOOL IsPrivateSettings( void );
 
 
-	//ƒ}ƒNƒŠÖ˜A
-	int			GetMacroFilename( int idx, TCHAR* pszPath, int nBufLen ); // idx‚Åw’è‚µ‚½ƒ}ƒNƒƒtƒ@ƒCƒ‹–¼iƒtƒ‹ƒpƒXj‚ğæ“¾‚·‚é	//	Jun. 14, 2003 genta ˆø”’Ç‰ÁD‘®•ÏX
-	bool		BeReloadWhenExecuteMacro( int idx );	//	idx‚Åw’è‚µ‚½ƒ}ƒNƒ‚ÍAÀs‚·‚é‚½‚Ñ‚Éƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Şİ’è‚©H
+	//ãƒã‚¯ãƒ­é–¢é€£
+	int			GetMacroFilename( int idx, TCHAR* pszPath, int nBufLen ); // idxã§æŒ‡å®šã—ãŸãƒã‚¯ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆãƒ•ãƒ«ãƒ‘ã‚¹ï¼‰ã‚’å–å¾—ã™ã‚‹	//	Jun. 14, 2003 genta å¼•æ•°è¿½åŠ ï¼æ›¸å¼å¤‰æ›´
+	bool		BeReloadWhenExecuteMacro( int idx );	//	idxã§æŒ‡å®šã—ãŸãƒã‚¯ãƒ­ã¯ã€å®Ÿè¡Œã™ã‚‹ãŸã³ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€è¨­å®šã‹ï¼Ÿ
 
-	//ƒ^ƒCƒv•Êİ’è(ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXê—p)
+	//ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š(ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹å°‚ç”¨)
 	void CreateTypeSettings();
 	std::vector<STypeConfig*>& GetTypeSettings();
 
-	// ‘Û‰»‘Î‰‚Ì‚½‚ß‚Ì•¶š—ñ‚ğ•ÏX‚·‚é(ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXê—p)
+	// å›½éš›åŒ–å¯¾å¿œã®ãŸã‚ã®æ–‡å­—åˆ—ã‚’å¤‰æ›´ã™ã‚‹(ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹å°‚ç”¨)
 	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);
 
 	static CMutex& GetMutexShareWork();
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 
-	//	Jan. 30, 2005 genta ‰Šú‰»ŠÖ”‚Ì•ªŠ„
+	//	Jan. 30, 2005 genta åˆæœŸåŒ–é–¢æ•°ã®åˆ†å‰²
 	void InitKeyword(DLLSHAREDATA*);
-	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta ‹N“®’†~‚Ì‚½‚ß’l‚ğ•Ô‚·
+	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta èµ·å‹•ä¸­æ­¢ã®ãŸã‚å€¤ã‚’è¿”ã™
 	void RefreshKeyAssignString(DLLSHAREDATA*);
 	void InitToolButtons(DLLSHAREDATA*);
 	void InitTypeConfigs(DLLSHAREDATA*, std::vector<STypeConfig*>&);
@@ -112,11 +112,11 @@ public:
 	static void InitFileTree(SFileTree*);
 
 private:
-	CSelectLang m_cSelectLang;			// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL“Ç‚İ‚İ—piƒvƒƒZƒX‚É1ŒÂj		// 2011.04.10 nasukoji
+	CSelectLang m_cSelectLang;			// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLèª­ã¿è¾¼ã¿ç”¨ï¼ˆãƒ—ãƒ­ã‚»ã‚¹ã«1å€‹ï¼‰		// 2011.04.10 nasukoji
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‚İ)
-	HWND			m_hwndTraceOutSource;	// TraceOutA()‹N“®Œ³ƒEƒBƒ“ƒhƒEi‚¢‚¿‚¢‚¿‹N“®Œ³‚ğw’è‚µ‚È‚­‚Ä‚·‚Ş‚æ‚¤‚Éj
+	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®ã¿)
+	HWND			m_hwndTraceOutSource;	// TraceOutA()èµ·å‹•å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆã„ã¡ã„ã¡èµ·å‹•å…ƒã‚’æŒ‡å®šã—ãªãã¦ã™ã‚€ã‚ˆã†ã«ï¼‰
 
 };
 

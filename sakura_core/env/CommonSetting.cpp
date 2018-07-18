@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,16 +27,16 @@
 #include <vector>
 using namespace std;
 
-//CommonValueŠÇ—
+//CommonValueç®¡ç†
 struct CommonValueInfo{
 	enum EType{
 		TYPE_UNKNOWN,
-		TYPE_ASTR,    //char•¶š—ñ (I’[NULL)
-		TYPE_WSTR,    //wchar_t•¶š—ñ (I’[NULL)
+		TYPE_ASTR,    //charæ–‡å­—åˆ— (çµ‚ç«¯NULL)
+		TYPE_WSTR,    //wchar_tæ–‡å­—åˆ— (çµ‚ç«¯NULL)
 	};
 
-	void* m_pValue;     //!< ’l‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int   m_nValueSize; //!< ’l‚ÌƒTƒCƒYBƒoƒCƒg’PˆÊB
+	void* m_pValue;     //!< å€¤ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int   m_nValueSize; //!< å€¤ã®ã‚µã‚¤ã‚ºã€‚ãƒã‚¤ãƒˆå˜ä½ã€‚
 	char  m_szEntryKey[32];
 	EType m_eType;
 
@@ -50,11 +50,11 @@ struct CommonValueInfo{
 	{
 		printf("%hs=",m_szEntryKey);
 
-		//int‚Æ“¯‚¶ƒTƒCƒY‚È‚çint‚Æ‚µ‚Äo—Í
+		//intã¨åŒã˜ã‚µã‚¤ã‚ºãªã‚‰intã¨ã—ã¦å‡ºåŠ›
 		if(m_nValueSize==sizeof(int)){
 			printf("%d\n",*((int*)m_pValue));
 		}
-		//‚»‚êˆÈŠO‚È‚çƒoƒCƒiƒŠo—Í
+		//ãã‚Œä»¥å¤–ãªã‚‰ãƒã‚¤ãƒŠãƒªå‡ºåŠ›
 		else{
 			for(int i=0;i<m_nValueSize;i++){
 				printf("%%%02X",((BYTE*)m_pValue)[i]);
@@ -71,7 +71,7 @@ void CommonValue_AllSave()
 	}
 }
 
-//CommonValue ¦virtualg‚¤‚Ì‹Ö~
+//CommonValue â€»virtualä½¿ã†ã®ç¦æ­¢
 template <class T>
 class CommonValue{
 private:
@@ -82,7 +82,7 @@ public:
 	}
 	void Regist(const char* szEntryKey)
 	{
-		//CommonValueƒŠƒXƒg‚É©•ª‚ğ’Ç‰Á
+		//CommonValueãƒªã‚¹ãƒˆã«è‡ªåˆ†ã‚’è¿½åŠ 
 		g_commonvalues.push_back(CommonValueInfo(&m_value,sizeof(m_value),szEntryKey));
 	}
 	Me& operator = (const T& rhs){ m_value=rhs; return *this; }

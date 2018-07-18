@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒm[ƒhƒ}ƒl[ƒWƒƒ
+ï»¿/*!	@file
+	@brief ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒãƒ¼ãƒ‰ãƒãƒãƒ¼ã‚¸ãƒ£
 
 	@author kobake
 */
@@ -40,68 +40,68 @@
 #include "_main/CMutex.h"
 
 
-// GetOpenedWindowArr—pÃ“I•Ï”^\‘¢‘Ì
-static BOOL s_bSort;	// ƒ\[ƒgw’è
-static BOOL s_bGSort;	// ƒOƒ‹[ƒvw’è
+// GetOpenedWindowArrç”¨é™çš„å¤‰æ•°ï¼æ§‹é€ ä½“
+static BOOL s_bSort;	// ã‚½ãƒ¼ãƒˆæŒ‡å®š
+static BOOL s_bGSort;	// ã‚°ãƒ«ãƒ¼ãƒ—æŒ‡å®š
 
-/*! @brief CShareData::m_pEditArr•ÛŒì—pMutex
+/*! @brief CShareData::m_pEditArrä¿è­·ç”¨Mutex
 
-	•¡”‚ÌƒGƒfƒBƒ^‚ª”ñ“¯Šú‚ÉˆêÄ“®ì‚µ‚Ä‚¢‚é‚Æ‚«‚Å‚àACShareData::m_pEditArr‚ğ
-	ˆÀ‘S‚É‘€ì‚Å‚«‚é‚æ‚¤‘€ì’†‚ÍMutex‚ğLock()‚·‚éB
+	è¤‡æ•°ã®ã‚¨ãƒ‡ã‚£ã‚¿ãŒéåŒæœŸã«ä¸€æ–‰å‹•ä½œã—ã¦ã„ã‚‹ã¨ãã§ã‚‚ã€CShareData::m_pEditArrã‚’
+	å®‰å…¨ã«æ“ä½œã§ãã‚‹ã‚ˆã†æ“ä½œä¸­ã¯Mutexã‚’Lock()ã™ã‚‹ã€‚
 
-	@pari”ñ“¯ŠúˆêÄ“®ì‚Ì—áj
-		‘½”‚ÌƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚Ä‚¢‚ÄƒOƒ‹[ƒv‰»‚ğ—LŒø‚É‚µ‚½ƒ^ƒXƒNƒo[‚ÅuƒOƒ‹[ƒv‚ğ•Â‚¶‚év‘€ì‚ğ‚µ‚½‚Æ‚«
+	@parï¼ˆéåŒæœŸä¸€æ–‰å‹•ä½œã®ä¾‹ï¼‰
+		å¤šæ•°ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ã¦ã„ã¦ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã‚’æœ‰åŠ¹ã«ã—ãŸã‚¿ã‚¹ã‚¯ãƒãƒ¼ã§ã€Œã‚°ãƒ«ãƒ¼ãƒ—ã‚’é–‰ã˜ã‚‹ã€æ“ä½œã‚’ã—ãŸã¨ã
 
-	@pari•ÛŒì‚·‚é‰ÓŠ‚Ì—áj
-		CShareData::AddEditWndList(): ƒGƒ“ƒgƒŠ‚Ì’Ç‰Á^•À‚Ñ‘Ö‚¦
-		CShareData::DeleteEditWndList(): ƒGƒ“ƒgƒŠ‚Ìíœ
-		CShareData::GetOpenedWindowArr(): ”z—ñ‚ÌƒRƒs[ì¬
+	@parï¼ˆä¿è­·ã™ã‚‹ç®‡æ‰€ã®ä¾‹ï¼‰
+		CShareData::AddEditWndList(): ã‚¨ãƒ³ãƒˆãƒªã®è¿½åŠ ï¼ä¸¦ã³æ›¿ãˆ
+		CShareData::DeleteEditWndList(): ã‚¨ãƒ³ãƒˆãƒªã®å‰Šé™¤
+		CShareData::GetOpenedWindowArr(): é…åˆ—ã®ã‚³ãƒ”ãƒ¼ä½œæˆ
 
-	‰ºè‚É‚Ç‚±‚É‚Å‚à“ü‚ê‚é‚ÆƒfƒbƒhƒƒbƒN‚·‚éŠëŒ¯‚ª‚ ‚é‚Ì‚Å“ü‚ê‚é‚Æ‚«‚ÍTd‚ÉB
-	iLock()ŠúŠÔ’†‚ÉSendMessage()‚È‚Ç‚Å‘¼ƒEƒBƒ“ƒhƒE‚Ì‘€ì‚ğ‚·‚é‚ÆŠëŒ¯«‘åj
-	CShareData::m_pEditArr‚ğ’¼ÚQÆ‚µ‚½‚è•ÏX‚·‚é‚æ‚¤‚È‰ÓŠ‚É‚Íöİ“I‚ÈŠëŒ¯‚ª‚ ‚é‚ªA
-	‘Î˜bŒ^‚Å‡Ÿ‘€ì‚µ‚Ä‚¢‚é”ÍˆÍ‚Å‚ ‚ê‚Î‚Ü‚¸–â‘è‚Í‹N‚«‚È‚¢B
+	ä¸‹æ‰‹ã«ã©ã“ã«ã§ã‚‚å…¥ã‚Œã‚‹ã¨ãƒ‡ãƒƒãƒ‰ãƒ­ãƒƒã‚¯ã™ã‚‹å±é™ºãŒã‚ã‚‹ã®ã§å…¥ã‚Œã‚‹ã¨ãã¯æ…é‡ã«ã€‚
+	ï¼ˆLock()æœŸé–“ä¸­ã«SendMessage()ãªã©ã§ä»–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ“ä½œã‚’ã™ã‚‹ã¨å±é™ºæ€§å¤§ï¼‰
+	CShareData::m_pEditArrã‚’ç›´æ¥å‚ç…§ã—ãŸã‚Šå¤‰æ›´ã™ã‚‹ã‚ˆã†ãªç®‡æ‰€ã«ã¯æ½œåœ¨çš„ãªå±é™ºãŒã‚ã‚‹ãŒã€
+	å¯¾è©±å‹ã§é †æ¬¡æ“ä½œã—ã¦ã„ã‚‹ç¯„å›²ã§ã‚ã‚Œã°ã¾ãšå•é¡Œã¯èµ·ããªã„ã€‚
 
-	@date 2007.07.05 ryoji V‹K“±“ü
-	@date 2007.07.07 genta CShareData‚Ìƒƒ“ƒo‚ÖˆÚ“®
+	@date 2007.07.05 ryoji æ–°è¦å°å…¥
+	@date 2007.07.07 genta CShareDataã®ãƒ¡ãƒ³ãƒã¸ç§»å‹•
 */
 static CMutex g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
 
-// GetOpenedWindowArr—pƒ\[ƒgŠÖ”
+// GetOpenedWindowArrç”¨ã‚½ãƒ¼ãƒˆé–¢æ•°
 static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
 {
-	// ˆÙ‚È‚éƒOƒ‹[ƒv‚Ì‚Æ‚«‚ÍƒOƒ‹[ƒv”äŠr‚·‚é
+	// ç•°ãªã‚‹ã‚°ãƒ«ãƒ¼ãƒ—ã®ã¨ãã¯ã‚°ãƒ«ãƒ¼ãƒ—æ¯”è¼ƒã™ã‚‹
 	int nGroup1;
 	int nGroup2;
 
 	if( s_bGSort )
 	{
-		// ƒIƒŠƒWƒiƒ‹‚ÌƒOƒ‹[ƒv”Ô†‚Ì‚Ù‚¤‚ğŒ©‚é
+		// ã‚ªãƒªã‚¸ãƒŠãƒ«ã®ã‚°ãƒ«ãƒ¼ãƒ—ç•ªå·ã®ã»ã†ã‚’è¦‹ã‚‹
 		nGroup1 = ((EditNodeEx*)e1)->p->m_nGroup;
 		nGroup2 = ((EditNodeEx*)e2)->p->m_nGroup;
 	}
 	else
 	{
-		// ƒOƒ‹[ƒv‚ÌMRU”Ô†‚Ì‚Ù‚¤‚ğŒ©‚é
+		// ã‚°ãƒ«ãƒ¼ãƒ—ã®MRUç•ªå·ã®ã»ã†ã‚’è¦‹ã‚‹
 		nGroup1 = ((EditNodeEx*)e1)->nGroupMru;
 		nGroup2 = ((EditNodeEx*)e2)->nGroupMru;
 	}
 	if( nGroup1 != nGroup2 )
 	{
-		return nGroup1 - nGroup2;	// ƒOƒ‹[ƒv”äŠr
+		return nGroup1 - nGroup2;	// ã‚°ãƒ«ãƒ¼ãƒ—æ¯”è¼ƒ
 	}
 
-	// ƒOƒ‹[ƒv”äŠr‚ªs‚í‚ê‚È‚©‚Á‚½‚Æ‚«‚ÍƒEƒBƒ“ƒhƒE”äŠr‚·‚é
+	// ã‚°ãƒ«ãƒ¼ãƒ—æ¯”è¼ƒãŒè¡Œã‚ã‚Œãªã‹ã£ãŸã¨ãã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¯”è¼ƒã™ã‚‹
 	if( s_bSort )
-		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ƒEƒBƒ“ƒhƒE”Ô†”äŠr
-	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ƒEƒBƒ“ƒhƒEMRU”äŠriƒ\[ƒg‚µ‚È‚¢j
+		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç•ªå·æ¯”è¼ƒ
+	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦MRUæ¯”è¼ƒï¼ˆã‚½ãƒ¼ãƒˆã—ãªã„ï¼‰
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒOƒ‹[ƒv                            //
+//                         ã‚°ãƒ«ãƒ¼ãƒ—                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/** w’èˆÊ’u‚Ì•ÒWƒEƒBƒ“ƒhƒEî•ñ‚ğæ“¾‚·‚é
+/** æŒ‡å®šä½ç½®ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 
 	@date 2007.06.20 ryoji
 */
@@ -130,12 +130,12 @@ EditNode* CAppNodeGroupHandle::GetEditNodeAt( int nIndex )
 }
 
 
-/** •ÒWƒEƒBƒ“ƒhƒEƒŠƒXƒg‚Ö‚Ì“o˜^
+/** ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã¸ã®ç™»éŒ²
 
-	@param hWnd   [in] “o˜^‚·‚é•ÒWƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹
+	@param hWnd   [in] ç™»éŒ²ã™ã‚‹ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«
 
-	@date 2003.06.28 MIK CRecent—˜—p‚Å‘‚«Š·‚¦
-	@date 2007.06.20 ryoji V‹KƒEƒBƒ“ƒhƒE‚É‚ÍƒOƒ‹[ƒvID‚ğ•t—^‚·‚é
+	@date 2003.06.28 MIK CRecentåˆ©ç”¨ã§æ›¸ãæ›ãˆ
+	@date 2007.06.20 ryoji æ–°è¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã¯ã‚°ãƒ«ãƒ¼ãƒ—IDã‚’ä»˜ä¸ã™ã‚‹
 */
 BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 {
@@ -149,16 +149,16 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 	memset_raw( &sMyEditNode, 0, sizeof( sMyEditNode ) );
 	sMyEditNode.m_hWnd = hWnd;
 
-	{	// 2007.07.07 genta Lock—Ìˆæ
+	{	// 2007.07.07 genta Locké ˜åŸŸ
 		LockGuard<CMutex> guard( g_cEditArrMutex );
 
 		CRecentEditNode	cRecentEditNode;
 
-		//“o˜^Ï‚İ‚©H
+		//ç™»éŒ²æ¸ˆã¿ã‹ï¼Ÿ
 		nIndex = cRecentEditNode.FindItemByHwnd( hWnd );
 		if( -1 != nIndex )
 		{
-			//‚à‚¤‚±‚êˆÈã“o˜^‚Å‚«‚È‚¢‚©H
+			//ã‚‚ã†ã“ã‚Œä»¥ä¸Šç™»éŒ²ã§ããªã„ã‹ï¼Ÿ
 			if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
 			{
 				cRecentEditNode.Terminate();
@@ -166,7 +166,7 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 			}
 			nSubCommand = TWNT_ORDER;
 
-			//ˆÈ‘O‚Ìî•ñ‚ğƒRƒs[‚·‚éB
+			//ä»¥å‰ã®æƒ…å ±ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚
 			p = cRecentEditNode.GetItem( nIndex );
 			if( p )
 			{
@@ -174,23 +174,23 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 			}
 		}
 
-		/* ƒEƒBƒ“ƒhƒE˜A”Ô */
+		/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é€£ç•ª */
 
 		if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
 		{
 			pShare->m_sNodes.m_nSequences++;
 			::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)pShare->m_sNodes.m_nSequences );
 
-			//˜A”Ô‚ğXV‚·‚éB
+			//é€£ç•ªã‚’æ›´æ–°ã™ã‚‹ã€‚
 			sMyEditNode.m_nIndex = pShare->m_sNodes.m_nSequences;
 			sMyEditNode.m_nId = -1;
 
-			/* ƒ^ƒuƒOƒ‹[ƒv˜A”Ô */
+			/* ã‚¿ãƒ–ã‚°ãƒ«ãƒ¼ãƒ—é€£ç•ª */
 			if( m_nGroup > 0 )
 			{
-				sMyEditNode.m_nGroup = m_nGroup;	// w’è‚ÌƒOƒ‹[ƒv
+				sMyEditNode.m_nGroup = m_nGroup;	// æŒ‡å®šã®ã‚°ãƒ«ãƒ¼ãƒ—
 				if (pShare->m_sNodes.m_nGroupSequences < m_nGroup ) {
-					// w’èƒOƒ‹[ƒv‚ªŒ»İ‚ÌGroup Sequences‚ğ’´‚¦‚Ä‚¢‚½ê‡‚Ì•â³
+					// æŒ‡å®šã‚°ãƒ«ãƒ¼ãƒ—ãŒç¾åœ¨ã®Group Sequencesã‚’è¶…ãˆã¦ã„ãŸå ´åˆã®è£œæ­£
 					pShare->m_sNodes.m_nGroupSequences = m_nGroup;
 				}
 			}
@@ -198,36 +198,36 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 			{
 				p = cRecentEditNode.GetItem( 0 );
 				if( NULL == p )
-					sMyEditNode.m_nGroup = ++pShare->m_sNodes.m_nGroupSequences;	// V‹KƒOƒ‹[ƒv
+					sMyEditNode.m_nGroup = ++pShare->m_sNodes.m_nGroupSequences;	// æ–°è¦ã‚°ãƒ«ãƒ¼ãƒ—
 				else
-					sMyEditNode.m_nGroup = p->m_nGroup;	// Å‹ßƒAƒNƒeƒBƒu‚ÌƒOƒ‹[ƒv
+					sMyEditNode.m_nGroup = p->m_nGroup;	// æœ€è¿‘ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã®ã‚°ãƒ«ãƒ¼ãƒ—
 			}
 
 			sMyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
 			sMyEditNode.m_bClosing = FALSE;
 		}
 
-		//’Ç‰Á‚Ü‚½‚Íæ“ª‚ÉˆÚ“®‚·‚éB
+		//è¿½åŠ ã¾ãŸã¯å…ˆé ­ã«ç§»å‹•ã™ã‚‹ã€‚
 		cRecentEditNode.AppendItem( &sMyEditNode );
 		cRecentEditNode.Terminate();
-	}	// 2007.07.07 genta Lock—ÌˆæI‚í‚è
+	}	// 2007.07.07 genta Locké ˜åŸŸçµ‚ã‚ã‚Š
 
-	//ƒEƒCƒ“ƒhƒE“o˜^ƒƒbƒZ[ƒW‚ğƒuƒ[ƒhƒLƒƒƒXƒg‚·‚éB
+	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ç™»éŒ²ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆã™ã‚‹ã€‚
 	CAppNodeGroupHandle(hWnd).PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)nSubCommand, (LPARAM)hWnd, hWnd );
 
 	return TRUE;
 }
 
 
-/** •ÒWƒEƒBƒ“ƒhƒEƒŠƒXƒg‚©‚ç‚Ìíœ
+/** ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã‹ã‚‰ã®å‰Šé™¤
 
-	@date 2003.06.28 MIK CRecent—˜—p‚Å‘‚«Š·‚¦
-	@date 2007.07.05 ryoji mutex‚Å•ÛŒì
+	@date 2003.06.28 MIK CRecentåˆ©ç”¨ã§æ›¸ãæ›ãˆ
+	@date 2007.07.05 ryoji mutexã§ä¿è­·
 */
 void CAppNodeGroupHandle::DeleteEditWndList( HWND hWnd )
 {
-	//ƒEƒCƒ“ƒhƒE‚ğƒŠƒXƒg‚©‚çíœ‚·‚éB
-	{	// 2007.07.07 genta Lock—Ìˆæ
+	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã™ã‚‹ã€‚
+	{	// 2007.07.07 genta Locké ˜åŸŸ
 		LockGuard<CMutex> guard( g_cEditArrMutex );
 
 		CRecentEditNode	cRecentEditNode;
@@ -235,25 +235,25 @@ void CAppNodeGroupHandle::DeleteEditWndList( HWND hWnd )
 		cRecentEditNode.Terminate();
 	}
 
-	//ƒEƒCƒ“ƒhƒEíœƒƒbƒZ[ƒW‚ğƒuƒ[ƒhƒLƒƒƒXƒg‚·‚éB
+	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦å‰Šé™¤ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆã™ã‚‹ã€‚
 	CAppNodeGroupHandle(m_nGroup).PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd);
 }
 
-/** ‚¢‚­‚Â‚©‚ÌƒEƒBƒ“ƒhƒE‚ÖI—¹—v‹‚ğo‚·
+/** ã„ãã¤ã‹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸çµ‚äº†è¦æ±‚ã‚’å‡ºã™
 
-	@param pWndArr [in] EditNode‚Ì”z—ñBm_hWnd‚ªNULL‚Ì—v‘f‚Íˆ—‚µ‚È‚¢
-	@param nArrCnt [in] pWndArr‚Ì’·‚³
-	@param bExit [in] TRUE: •ÒW‚Ì‘SI—¹ / FALSE: ‚·‚×‚Ä•Â‚¶‚é
-	@param bCheckConfirm [in] FALSE:•¡”ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é‚Æ‚«‚ÌŒx‚ğo‚³‚È‚¢ / TRUE:Œx‚ğo‚·iİ’è‚É‚æ‚éj
-	@param hWndFrom [in] I—¹—v‹Œ³‚ÌƒEƒBƒ“ƒhƒEiŒxƒƒbƒZ[ƒW‚Ìe‚Æ‚È‚éj
+	@param pWndArr [in] EditNodeã®é…åˆ—ã€‚m_hWndãŒNULLã®è¦ç´ ã¯å‡¦ç†ã—ãªã„
+	@param nArrCnt [in] pWndArrã®é•·ã•
+	@param bExit [in] TRUE: ç·¨é›†ã®å…¨çµ‚äº† / FALSE: ã™ã¹ã¦é–‰ã˜ã‚‹
+	@param bCheckConfirm [in] FALSE:è¤‡æ•°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã¨ãã®è­¦å‘Šã‚’å‡ºã•ãªã„ / TRUE:è­¦å‘Šã‚’å‡ºã™ï¼ˆè¨­å®šã«ã‚ˆã‚‹ï¼‰
+	@param hWndFrom [in] çµ‚äº†è¦æ±‚å…ƒã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆè­¦å‘Šãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¦ªã¨ãªã‚‹ï¼‰
 
-	@date 2007.02.13 ryoji u•ÒW‚Ì‘SI—¹v‚ğ¦‚·ˆø”(bExit)‚ğ’Ç‰Á
-	@date 2007.06.22 ryoji nGroupˆø”‚ğ’Ç‰Á
-	@date 2008.11.22 syat ‘S‚Ä¨‚¢‚­‚Â‚©‚É•ÏXB•¡”ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é‚ÌŒxƒƒbƒZ[ƒW‚ğ’Ç‰Á
+	@date 2007.02.13 ryoji ã€Œç·¨é›†ã®å…¨çµ‚äº†ã€ã‚’ç¤ºã™å¼•æ•°(bExit)ã‚’è¿½åŠ 
+	@date 2007.06.22 ryoji nGroupå¼•æ•°ã‚’è¿½åŠ 
+	@date 2008.11.22 syat å…¨ã¦â†’ã„ãã¤ã‹ã«å¤‰æ›´ã€‚è¤‡æ•°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹æ™‚ã®è­¦å‘Šãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿½åŠ 
 */
 BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, BOOL bCheckConfirm, HWND hWndFrom )
 {
-	/* ƒNƒ[ƒY‘ÎÛƒEƒBƒ“ƒhƒE‚ğ’²‚×‚é */
+	/* ã‚¯ãƒ­ãƒ¼ã‚ºå¯¾è±¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èª¿ã¹ã‚‹ */
 	int iGroup = -1;
 	HWND hWndLast = NULL;
 	int nCloseCount = 0;
@@ -262,17 +262,17 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 			if( IsSakuraMainWindow(pWndArr[i].m_hWnd) ){
 				nCloseCount++;
 				if( iGroup == -1 ){
-					iGroup = pWndArr[i].m_nGroup;	// Å‰‚É•Â‚¶‚éƒOƒ‹[ƒv
+					iGroup = pWndArr[i].m_nGroup;	// æœ€åˆã«é–‰ã˜ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—
 					hWndLast = pWndArr[i].m_hWnd;
 				}
 				else if( iGroup == pWndArr[i].m_nGroup ){
-					hWndLast = pWndArr[i].m_hWnd;	// Å‰‚É•Â‚¶‚éƒOƒ‹[ƒv‚ÌÅŒã‚ÌƒEƒBƒ“ƒhƒE
+					hWndLast = pWndArr[i].m_hWnd;	// æœ€åˆã«é–‰ã˜ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—ã®æœ€å¾Œã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 				}
 			}
 		}
 	}
 
-	if( bCheckConfirm && GetDllShareData().m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é
+	if( bCheckConfirm && GetDllShareData().m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹
 		if( 1 < nCloseCount ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
@@ -285,43 +285,43 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 		}
 	}
 
-	// ƒAƒNƒeƒBƒu‰»§ŒäƒEƒBƒ“ƒhƒE‚ğŒˆ‚ß‚é
-	// EƒƒbƒZ[ƒW‚ğ•\¦‚µ‚Ä‚¢‚È‚¢ŠÔ‚Í‚±‚Ì§ŒäƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É•Û‚Â‚æ‚¤‚É‚·‚é
-	// E•Â‚¶‚ç‚ê‚éƒGƒfƒBƒ^‚ª•Û‘¶Šm”F‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚·‚éê‡‚ÍA‚±‚Ì§ŒäƒEƒBƒ“ƒhƒE‚ÉƒAƒNƒeƒBƒu‰»—v‹iMYWM_ALLOWACTIVATEj‚ğo‚µ‚ÄƒAƒNƒeƒBƒu‚É‚µ‚Ä‚à‚ç‚¤
-	// Eƒ^ƒuƒOƒ‹[ƒv•\¦‚©‚Ç‚¤‚©‚È‚Ç‚ÌğŒ‚É‰‚¶‚ÄA‚¿‚ç‚Â‚«‚ğÅ¬ŒÀ‚É‚·‚é‚Ì‚É“s‡‚Ì—Ç‚¢ƒEƒBƒ“ƒhƒE‚ğ‚±‚±‚Å‘I‘ğ‚µ‚Ä‚¨‚­
+	// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–åˆ¶å¾¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ±ºã‚ã‚‹
+	// ãƒ»ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¦ã„ãªã„é–“ã¯ã“ã®åˆ¶å¾¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ä¿ã¤ã‚ˆã†ã«ã™ã‚‹
+	// ãƒ»é–‰ã˜ã‚‰ã‚Œã‚‹ã‚¨ãƒ‡ã‚£ã‚¿ãŒä¿å­˜ç¢ºèªã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹å ´åˆã¯ã€ã“ã®åˆ¶å¾¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–è¦æ±‚ï¼ˆMYWM_ALLOWACTIVATEï¼‰ã‚’å‡ºã—ã¦ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã—ã¦ã‚‚ã‚‰ã†
+	// ãƒ»ã‚¿ãƒ–ã‚°ãƒ«ãƒ¼ãƒ—è¡¨ç¤ºã‹ã©ã†ã‹ãªã©ã®æ¡ä»¶ã«å¿œã˜ã¦ã€ã¡ã‚‰ã¤ãã‚’æœ€å°é™ã«ã™ã‚‹ã®ã«éƒ½åˆã®è‰¯ã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã“ã“ã§é¸æŠã—ã¦ãŠã
 	HWND hWndActive;
 	bool bTabGroup = (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 	if( bTabGroup ){
-		hWndActive = hWndLast;	// ÅŒã‚É•Â‚¶‚éƒEƒBƒ“ƒhƒE‚ª’S“–
+		hWndActive = hWndLast;	// æœ€å¾Œã«é–‰ã˜ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒæ‹…å½“
 	}else{
-		hWndActive = GetDllShareData().m_sHandles.m_hwndTray;	// ƒ^ƒXƒNƒgƒŒƒC‚ª’S“–
+		hWndActive = GetDllShareData().m_sHandles.m_hwndTray;	// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ãŒæ‹…å½“
 	}
 
-	// ƒAƒNƒeƒBƒu‰»§ŒäƒEƒCƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚µ‚Ä‚¨‚­
+	// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–åˆ¶å¾¡ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã—ã¦ãŠã
 	if( IsSakuraMainWindow(hWndActive) ){
-		ActivateFrameWindow(hWndActive);	// ƒGƒfƒBƒ^ƒEƒBƒ“ƒhƒE
+		ActivateFrameWindow(hWndActive);	// ã‚¨ãƒ‡ã‚£ã‚¿ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	}else{
-		::SetForegroundWindow(hWndActive);	// ƒ^ƒXƒNƒgƒŒƒC
+		::SetForegroundWindow(hWndActive);	// ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤
 	}
 
-	// ƒGƒfƒBƒ^‚Ö‚ÌI—¹—v‹
+	// ã‚¨ãƒ‡ã‚£ã‚¿ã¸ã®çµ‚äº†è¦æ±‚
 	for( int i = 0; i < nArrCnt; i++ ){
 		if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
 			if( IsSakuraMainWindow(pWndArr[i].m_hWnd) ){
-				// ƒ^ƒuƒOƒ‹[ƒv•\¦‚ÅŸ‚É•Â‚¶‚é‚Ì‚ªƒAƒNƒeƒBƒu‰»§ŒäƒEƒBƒ“ƒhƒE‚Ìê‡A
-				// ƒAƒNƒeƒBƒu‰»§ŒäƒEƒBƒ“ƒhƒE‚ğŸ‚ÌƒOƒ‹[ƒv‚ÌÅŒã‚ÌƒEƒBƒ“ƒhƒE‚ÉØ‘Ö‚¦‚é
+				// ã‚¿ãƒ–ã‚°ãƒ«ãƒ¼ãƒ—è¡¨ç¤ºã§æ¬¡ã«é–‰ã˜ã‚‹ã®ãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–åˆ¶å¾¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å ´åˆã€
+				// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–åˆ¶å¾¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ—ã®æœ€å¾Œã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«åˆ‡æ›¿ãˆã‚‹
 				if( bTabGroup && pWndArr[i].m_hWnd == hWndActive ){
 					iGroup = -1;
-					hWndActive = ( IsSakuraMainWindow(hWndFrom) )? hWndFrom: NULL;	// ˆê”ÔÅŒã—p
+					hWndActive = ( IsSakuraMainWindow(hWndFrom) )? hWndFrom: NULL;	// ä¸€ç•ªæœ€å¾Œç”¨
 					for( int j = i + 1; j < nArrCnt; j++ ){
 						if( m_nGroup == 0 || m_nGroup == pWndArr[j].m_nGroup ){
 							if( IsSakuraMainWindow(pWndArr[j].m_hWnd) ){
 								if( iGroup == -1 ){
-									iGroup = pWndArr[j].m_nGroup;	// Ÿ‚É•Â‚¶‚éƒOƒ‹[ƒv
+									iGroup = pWndArr[j].m_nGroup;	// æ¬¡ã«é–‰ã˜ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—
 									hWndActive = pWndArr[j].m_hWnd;
 								}
 								else if( iGroup == pWndArr[j].m_nGroup ){
-									hWndActive = pWndArr[j].m_hWnd;	// Ÿ‚É•Â‚¶‚éƒOƒ‹[ƒv‚ÌÅŒã‚ÌƒEƒBƒ“ƒhƒE
+									hWndActive = pWndArr[j].m_hWnd;	// æ¬¡ã«é–‰ã˜ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—ã®æœ€å¾Œã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 								}
 								else{
 									break;
@@ -332,8 +332,8 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 				}
 				DWORD dwPid;
 				::GetWindowThreadProcessId(pWndArr[i].m_hWnd, &dwPid);
-				::SendMessage(hWndActive, MYWM_ALLOWACTIVATE, dwPid, 0);	// ƒAƒNƒeƒBƒu‰»‚Ì‹–‰Â‚ğˆË—Š‚·‚é
-				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit ? PM_CLOSE_EXIT : 0, (LPARAM)hWndActive ) ){	// 2007.02.13 ryoji bExit‚ğˆø‚«Œp‚®
+				::SendMessage(hWndActive, MYWM_ALLOWACTIVATE, dwPid, 0);	// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ã®è¨±å¯ã‚’ä¾é ¼ã™ã‚‹
+				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit ? PM_CLOSE_EXIT : 0, (LPARAM)hWndActive ) ){	// 2007.02.13 ryoji bExitã‚’å¼•ãç¶™ã
 					return FALSE;
 				}
 			}
@@ -344,12 +344,12 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 }
 
 
-/** Œ»İ‚Ì•ÒWƒEƒBƒ“ƒhƒE‚Ì”‚ğ’²‚×‚é
+/** ç¾åœ¨ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ•°ã‚’èª¿ã¹ã‚‹
 
-	@param bExcludeClosing [in] I—¹’†‚Ì•ÒWƒEƒBƒ“ƒhƒE‚ÍƒJƒEƒ“ƒg‚µ‚È‚¢
+	@param bExcludeClosing [in] çµ‚äº†ä¸­ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯ã‚«ã‚¦ãƒ³ãƒˆã—ãªã„
 
-	@date 2007.06.22 ryoji nGroupˆø”‚ğ’Ç‰Á
-	@date 2008.04.19 ryoji bExcludeClosingˆø”‚ğ’Ç‰Á
+	@date 2007.06.22 ryoji nGroupå¼•æ•°ã‚’è¿½åŠ 
+	@date 2008.04.19 ryoji bExcludeClosingå¼•æ•°ã‚’è¿½åŠ 
 */
 int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 {
@@ -373,16 +373,16 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 }
 
 
-/** ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é
+/** å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹
 
-	@date 2005.01.24 genta hWndLast == NULL‚Ì‚Æ‚«‘S‚­ƒƒbƒZ[ƒW‚ª‘—‚ç‚ê‚È‚©‚Á‚½
-	@date 2007.06.22 ryoji nGroupˆø”‚ğ’Ç‰ÁAƒOƒ‹[ƒv’PˆÊ‚Å‡”Ô‚É‘—‚é
+	@date 2005.01.24 genta hWndLast == NULLã®ã¨ãå…¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€ã‚‰ã‚Œãªã‹ã£ãŸ
+	@date 2007.06.22 ryoji nGroupå¼•æ•°ã‚’è¿½åŠ ã€ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã§é †ç•ªã«é€ã‚‹
 */
 BOOL CAppNodeGroupHandle::PostMessageToAllEditors(
-	UINT		uMsg,		/*!< ƒ|ƒXƒg‚·‚éƒƒbƒZ[ƒW */
-	WPARAM		wParam,		/*!< ‘æ1ƒƒbƒZ[ƒW ƒpƒ‰ƒ[ƒ^ */
-	LPARAM		lParam,		/*!< ‘æ2ƒƒbƒZ[ƒW ƒpƒ‰ƒ[ƒ^ */
-	HWND		hWndLast	/*!< ÅŒã‚É‘—‚è‚½‚¢ƒEƒBƒ“ƒhƒE */
+	UINT		uMsg,		/*!< ãƒã‚¹ãƒˆã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ */
+	WPARAM		wParam,		/*!< ç¬¬1ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
+	LPARAM		lParam,		/*!< ç¬¬2ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
+	HWND		hWndLast	/*!< æœ€å¾Œã«é€ã‚ŠãŸã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ */
 )
 {
 	EditNode*	pWndArr;
@@ -394,25 +394,25 @@ BOOL CAppNodeGroupHandle::PostMessageToAllEditors(
 		return TRUE;
 	}
 
-	// hWndLastˆÈŠO‚Ö‚ÌƒƒbƒZ[ƒW
+	// hWndLastä»¥å¤–ã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	for( i = 0; i < n; ++i ){
-		//	Jan. 24, 2005 genta hWndLast == NULL‚Ì‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ª‘—‚ç‚ê‚é‚æ‚¤‚É
+		//	Jan. 24, 2005 genta hWndLast == NULLã®ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€ã‚‰ã‚Œã‚‹ã‚ˆã†ã«
 		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
 			if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
 				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
-					/* ƒƒbƒZ[ƒW‚ğƒ|ƒXƒg */
+					/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆ */
 					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
 			}
 		}
 	}
 
-	// hWndLast‚Ö‚ÌƒƒbƒZ[ƒW
+	// hWndLastã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	for( i = 0; i < n; ++i ){
 		if( hWndLast == pWndArr[i].m_hWnd ){
 			if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
 				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
-					/* ƒƒbƒZ[ƒW‚ğƒ|ƒXƒg */
+					/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆ */
 					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
 			}
@@ -423,16 +423,16 @@ BOOL CAppNodeGroupHandle::PostMessageToAllEditors(
 	return TRUE;
 }
 
-/** ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğ‘—‚é
+/** å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹
 
-	@date 2005.01.24 genta m_hWndLast == NULL‚Ì‚Æ‚«‘S‚­ƒƒbƒZ[ƒW‚ª‘—‚ç‚ê‚È‚©‚Á‚½
-	@date 2007.06.22 ryoji nGroupˆø”‚ğ’Ç‰ÁAƒOƒ‹[ƒv’PˆÊ‚Å‡”Ô‚É‘—‚é
+	@date 2005.01.24 genta m_hWndLast == NULLã®ã¨ãå…¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€ã‚‰ã‚Œãªã‹ã£ãŸ
+	@date 2007.06.22 ryoji nGroupå¼•æ•°ã‚’è¿½åŠ ã€ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã§é †ç•ªã«é€ã‚‹
 */
 BOOL CAppNodeGroupHandle::SendMessageToAllEditors(
-	UINT		uMsg,		/* ƒ|ƒXƒg‚·‚éƒƒbƒZ[ƒW */
-	WPARAM		wParam,		/* ‘æ1ƒƒbƒZ[ƒW ƒpƒ‰ƒ[ƒ^ */
-	LPARAM		lParam,		/* ‘æ2ƒƒbƒZ[ƒW ƒpƒ‰ƒ[ƒ^ */
-	HWND		hWndLast	/* ÅŒã‚É‘—‚è‚½‚¢ƒEƒBƒ“ƒhƒE */
+	UINT		uMsg,		/* ãƒã‚¹ãƒˆã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ */
+	WPARAM		wParam,		/* ç¬¬1ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
+	LPARAM		lParam,		/* ç¬¬2ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
+	HWND		hWndLast	/* æœ€å¾Œã«é€ã‚ŠãŸã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ */
 )
 {
 	EditNode*	pWndArr;
@@ -444,25 +444,25 @@ BOOL CAppNodeGroupHandle::SendMessageToAllEditors(
 		return TRUE;
 	}
 
-	// hWndLastˆÈŠO‚Ö‚ÌƒƒbƒZ[ƒW
+	// hWndLastä»¥å¤–ã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	for( i = 0; i < n; ++i ){
-		//	Jan. 24, 2005 genta hWndLast == NULL‚Ì‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ª‘—‚ç‚ê‚é‚æ‚¤‚É
+		//	Jan. 24, 2005 genta hWndLast == NULLã®ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒé€ã‚‰ã‚Œã‚‹ã‚ˆã†ã«
 		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
 			if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
 				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
-					/* ƒƒbƒZ[ƒW‚ğ‘—‚é */
+					/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹ */
 					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
 			}
 		}
 	}
 
-	// hWndLast‚Ö‚ÌƒƒbƒZ[ƒW
+	// hWndLastã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	for( i = 0; i < n; ++i ){
 		if( hWndLast == pWndArr[i].m_hWnd ){
 			if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
 				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
-					/* ƒƒbƒZ[ƒW‚ğ‘—‚é */
+					/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€ã‚‹ */
 					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
 			}
@@ -473,10 +473,10 @@ BOOL CAppNodeGroupHandle::SendMessageToAllEditors(
 	return TRUE;
 }
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒ}ƒl[ƒWƒƒ                           //
+//                        ãƒãƒãƒ¼ã‚¸ãƒ£                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/** ƒOƒ‹[ƒv‚ğIDƒŠƒZƒbƒg‚·‚é
+/** ã‚°ãƒ«ãƒ¼ãƒ—ã‚’IDãƒªã‚»ãƒƒãƒˆã™ã‚‹
 
 	@date 2007.06.20 ryoji
 */
@@ -494,14 +494,14 @@ void CAppNodeManager::ResetGroupId()
 	}
 }
 
-/** •ÒWƒEƒBƒ“ƒhƒEî•ñ‚ğæ“¾‚·‚é
+/** ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 
 	@date 2007.06.20 ryoji
 
-	@warning ‚±‚ÌŠÖ”‚Ím_pEditArr“à‚Ì—v‘f‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·D
-	m_pEditArr‚ª•ÏX‚³‚ê‚½Œã‚Å‚ÍƒAƒNƒZƒX‚µ‚È‚¢‚æ‚¤’ˆÓ‚ª•K—vD
+	@warning ã“ã®é–¢æ•°ã¯m_pEditArrå†…ã®è¦ç´ ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™ï¼
+	m_pEditArrãŒå¤‰æ›´ã•ã‚ŒãŸå¾Œã§ã¯ã‚¢ã‚¯ã‚»ã‚¹ã—ãªã„ã‚ˆã†æ³¨æ„ãŒå¿…è¦ï¼
 
-	@note NULL‚ğ•Ô‚·ê‡‚ª‚ ‚é‚Ì‚Å–ß‚è’l‚Ìƒ`ƒFƒbƒN‚ª•K—v‚Å‚·
+	@note NULLã‚’è¿”ã™å ´åˆãŒã‚ã‚‹ã®ã§æˆ»ã‚Šå€¤ã®ãƒã‚§ãƒƒã‚¯ãŒå¿…è¦ã§ã™
 */
 EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 {
@@ -521,7 +521,7 @@ EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 
 
 
-//! –³‘è”Ô†æ“¾
+//! ç„¡é¡Œç•ªå·å–å¾—
 int CAppNodeManager::GetNoNameNumber( HWND hWnd )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
@@ -538,29 +538,29 @@ int CAppNodeManager::GetNoNameNumber( HWND hWnd )
 
 
 
-/** Œ»İŠJ‚¢‚Ä‚¢‚é•ÒWƒEƒBƒ“ƒhƒE‚Ì”z—ñ‚ğ•Ô‚·
+/** ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é…åˆ—ã‚’è¿”ã™
 
-	@param[out] ppEditNode ”z—ñ‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-		–ß‚è’l‚ª0‚Ìê‡‚ÍNULL‚ª•Ô‚³‚ê‚é‚ªC‚»‚ê‚ğŠú‘Ò‚µ‚È‚¢‚±‚ÆD
-		‚Ü‚½C•s—v‚É‚È‚Á‚½‚çdelete []‚µ‚È‚­‚Ä‚Í‚È‚ç‚È‚¢D
-	@param[in] bSort TRUE: ƒ\[ƒg‚ ‚è / FALSE: ƒ\[ƒg–³‚µ
-	@param[in]bGSort TRUE: ƒOƒ‹[ƒvƒ\[ƒg‚ ‚è / FALSE: ƒOƒ‹[ƒvƒ\[ƒg–³‚µ
+	@param[out] ppEditNode é…åˆ—ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+		æˆ»ã‚Šå€¤ãŒ0ã®å ´åˆã¯NULLãŒè¿”ã•ã‚Œã‚‹ãŒï¼Œãã‚Œã‚’æœŸå¾…ã—ãªã„ã“ã¨ï¼
+		ã¾ãŸï¼Œä¸è¦ã«ãªã£ãŸã‚‰delete []ã—ãªãã¦ã¯ãªã‚‰ãªã„ï¼
+	@param[in] bSort TRUE: ã‚½ãƒ¼ãƒˆã‚ã‚Š / FALSE: ã‚½ãƒ¼ãƒˆç„¡ã—
+	@param[in]bGSort TRUE: ã‚°ãƒ«ãƒ¼ãƒ—ã‚½ãƒ¼ãƒˆã‚ã‚Š / FALSE: ã‚°ãƒ«ãƒ¼ãƒ—ã‚½ãƒ¼ãƒˆç„¡ã—
 
-	‚à‚Æ‚Ì•ÒWƒEƒBƒ“ƒhƒEƒŠƒXƒg‚Íƒ\[ƒg‚µ‚È‚¯‚ê‚ÎƒEƒBƒ“ƒhƒE‚ÌMRU‡‚É•À‚ñ‚Å‚¢‚é
+	ã‚‚ã¨ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã¯ã‚½ãƒ¼ãƒˆã—ãªã‘ã‚Œã°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®MRUé †ã«ä¸¦ã‚“ã§ã„ã‚‹
 	-------------------------------------------------
-	bSort	bGSort	ˆ—Œ‹‰Ê
+	bSort	bGSort	å‡¦ç†çµæœ
 	-------------------------------------------------
-	FALSE	FALSE	ƒOƒ‹[ƒvMRU‡|ƒEƒBƒ“ƒhƒEMRU‡
-	TRUE	FALSE	ƒOƒ‹[ƒvMRU‡|ƒEƒBƒ“ƒhƒE”Ô†‡
-	FALSE	TRUE	ƒOƒ‹[ƒv”Ô†‡|ƒEƒBƒ“ƒhƒEMRU‡
-	TRUE	TRUE	ƒOƒ‹[ƒv”Ô†‡|ƒEƒBƒ“ƒhƒE”Ô†‡
+	FALSE	FALSE	ã‚°ãƒ«ãƒ¼ãƒ—MRUé †ï¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦MRUé †
+	TRUE	FALSE	ã‚°ãƒ«ãƒ¼ãƒ—MRUé †ï¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç•ªå·é †
+	FALSE	TRUE	ã‚°ãƒ«ãƒ¼ãƒ—ç•ªå·é †ï¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦MRUé †
+	TRUE	TRUE	ã‚°ãƒ«ãƒ¼ãƒ—ç•ªå·é †ï¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç•ªå·é †
 	-------------------------------------------------
 
-	@return ”z—ñ‚Ì—v‘f”‚ğ•Ô‚·
-	@note —v‘f”>0 ‚Ìê‡‚ÍŒÄ‚Ño‚µ‘¤‚Å”z—ñ‚ğdelete []‚µ‚Ä‚­‚¾‚³‚¢
+	@return é…åˆ—ã®è¦ç´ æ•°ã‚’è¿”ã™
+	@note è¦ç´ æ•°>0 ã®å ´åˆã¯å‘¼ã³å‡ºã—å´ã§é…åˆ—ã‚’delete []ã—ã¦ãã ã•ã„
 
-	@date 2003.06.28 MIK CRecent—˜—p‚Å‘‚«Š·‚¦
-	@date 2007.06.20 ryoji bGroupˆø”’Ç‰ÁAƒ\[ƒgˆ—‚ğ©‘O‚Ì‚à‚Ì‚©‚çqsort‚É•ÏX
+	@date 2003.06.28 MIK CRecentåˆ©ç”¨ã§æ›¸ãæ›ãˆ
+	@date 2007.06.20 ryoji bGroupå¼•æ•°è¿½åŠ ã€ã‚½ãƒ¼ãƒˆå‡¦ç†ã‚’è‡ªå‰ã®ã‚‚ã®ã‹ã‚‰qsortã«å¤‰æ›´
 */
 int CAppNodeManager::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
@@ -572,27 +572,27 @@ int CAppNodeManager::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL
 	return nRet;
 }
 
-// GetOpenedWindowArrŠÖ”ƒRƒAˆ—•”
+// GetOpenedWindowArré–¢æ•°ã‚³ã‚¢å‡¦ç†éƒ¨
 int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
-	//•ÒWƒEƒCƒ“ƒhƒE”‚ğæ“¾‚·‚éB
-	EditNodeEx*	pNode;	// ƒ\[ƒgˆ——p‚ÌŠg’£ƒŠƒXƒg
-	int		nRowNum;	//•ÒWƒEƒCƒ“ƒhƒE”
+	//ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
+	EditNodeEx*	pNode;	// ã‚½ãƒ¼ãƒˆå‡¦ç†ç”¨ã®æ‹¡å¼µãƒªã‚¹ãƒˆ
+	int		nRowNum;	//ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦æ•°
 	int		i;
 
-	//•ÒWƒEƒCƒ“ƒhƒE”‚ğæ“¾‚·‚éB
+	//ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*ppEditNode = NULL;
 	if( pShare->m_sNodes.m_nEditArrNum <= 0 )
 		return 0;
 
-	//•ÒWƒEƒCƒ“ƒhƒEƒŠƒXƒgŠi”[—Ìˆæ‚ğì¬‚·‚éB
+	//ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆæ ¼ç´é ˜åŸŸã‚’ä½œæˆã™ã‚‹ã€‚
 	*ppEditNode = new EditNode[ pShare->m_sNodes.m_nEditArrNum ];
 	if( NULL == *ppEditNode )
 		return 0;
 
-	// Šg’£ƒŠƒXƒg‚ğì¬‚·‚é
+	// æ‹¡å¼µãƒªã‚¹ãƒˆã‚’ä½œæˆã™ã‚‹
 	pNode = new EditNodeEx[ pShare->m_sNodes.m_nEditArrNum ];
 	if( NULL == pNode )
 	{
@@ -601,14 +601,14 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 		return 0;
 	}
 
-	// Šg’£ƒŠƒXƒg‚ÌŠe—v‘f‚É•ÒWƒEƒBƒ“ƒhƒEƒŠƒXƒg‚ÌŠe—v‘f‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğŠi”[‚·‚é
+	// æ‹¡å¼µãƒªã‚¹ãƒˆã®å„è¦ç´ ã«ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆã®å„è¦ç´ ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’æ ¼ç´ã™ã‚‹
 	nRowNum = 0;
 	for( i = 0; i < pShare->m_sNodes.m_nEditArrNum; i++ )
 	{
 		if( IsSakuraMainWindow( pShare->m_sNodes.m_pEditArr[ i ].m_hWnd ) )
 		{
-			pNode[ nRowNum ].p = &pShare->m_sNodes.m_pEditArr[ i ];	// ƒ|ƒCƒ“ƒ^Ši”[
-			pNode[ nRowNum ].nGroupMru = -1;	// ƒOƒ‹[ƒv’PˆÊ‚ÌMRU”Ô†‰Šú‰»
+			pNode[ nRowNum ].p = &pShare->m_sNodes.m_pEditArr[ i ];	// ãƒã‚¤ãƒ³ã‚¿æ ¼ç´
+			pNode[ nRowNum ].nGroupMru = -1;	// ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã®MRUç•ªå·åˆæœŸåŒ–
 			nRowNum++;
 		}
 	}
@@ -620,10 +620,10 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 		return 0;
 	}
 
-	// Šg’£ƒŠƒXƒgã‚ÅƒOƒ‹[ƒv’PˆÊ‚ÌMRU”Ô†‚ğ‚Â‚¯‚é
+	// æ‹¡å¼µãƒªã‚¹ãƒˆä¸Šã§ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã®MRUç•ªå·ã‚’ã¤ã‘ã‚‹
 	if( !bGSort )
 	{
-		int iGroupMru = 0;	// ƒOƒ‹[ƒv’PˆÊ‚ÌMRU”Ô†
+		int iGroupMru = 0;	// ã‚°ãƒ«ãƒ¼ãƒ—å˜ä½ã®MRUç•ªå·
 		int nGroup = -1;
 		for( i = 0; i < nRowNum; i++ )
 		{
@@ -631,9 +631,9 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 			{
 				nGroup = pNode[ i ].p->m_nGroup;
 				iGroupMru++;
-				pNode[ i ].nGroupMru = iGroupMru;	// MRU”Ô†•t—^
+				pNode[ i ].nGroupMru = iGroupMru;	// MRUç•ªå·ä»˜ä¸
 
-				// “¯ˆêƒOƒ‹[ƒv‚ÌƒEƒBƒ“ƒhƒE‚É“¯‚¶MRU”Ô†‚ğ‚Â‚¯‚é
+				// åŒä¸€ã‚°ãƒ«ãƒ¼ãƒ—ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«åŒã˜MRUç•ªå·ã‚’ã¤ã‘ã‚‹
 				int j;
 				for( j = i + 1; j < nRowNum; j++ )
 				{
@@ -644,21 +644,21 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 		}
 	}
 
-	// Šg’£ƒŠƒXƒg‚ğƒ\[ƒg‚·‚é
-	// Note. ƒOƒ‹[ƒv‚ª‚PŒÂ‚¾‚¯‚Ìê‡‚Í]—ˆibGSort ˆø”–³‚µj‚Æ“¯‚¶Œ‹‰Ê‚ª“¾‚ç‚ê‚é
-	//       iƒOƒ‹[ƒv‰»‚·‚éİ’è‚Å‚È‚¯‚ê‚ÎƒOƒ‹[ƒv‚Í‚PŒÂj
+	// æ‹¡å¼µãƒªã‚¹ãƒˆã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹
+	// Note. ã‚°ãƒ«ãƒ¼ãƒ—ãŒï¼‘å€‹ã ã‘ã®å ´åˆã¯å¾“æ¥ï¼ˆbGSort å¼•æ•°ç„¡ã—ï¼‰ã¨åŒã˜çµæœãŒå¾—ã‚‰ã‚Œã‚‹
+	//       ï¼ˆã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã™ã‚‹è¨­å®šã§ãªã‘ã‚Œã°ã‚°ãƒ«ãƒ¼ãƒ—ã¯ï¼‘å€‹ï¼‰
 	s_bSort = bSort;
 	s_bGSort = bGSort;
 	qsort( pNode, nRowNum, sizeof(EditNodeEx), cmpGetOpenedWindowArr );
 
-	// Šg’£ƒŠƒXƒg‚Ìƒ\[ƒgŒ‹‰Ê‚ğ‚à‚Æ‚É•ÒWƒEƒCƒ“ƒhƒEƒŠƒXƒgŠi”[—Ìˆæ‚ÉŒ‹‰Ê‚ğŠi”[‚·‚é
+	// æ‹¡å¼µãƒªã‚¹ãƒˆã®ã‚½ãƒ¼ãƒˆçµæœã‚’ã‚‚ã¨ã«ç·¨é›†ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆæ ¼ç´é ˜åŸŸã«çµæœã‚’æ ¼ç´ã™ã‚‹
 	for( i = 0; i < nRowNum; i++ )
 	{
 		(*ppEditNode)[i] = *pNode[i].p;
 
-		//ƒCƒ“ƒfƒbƒNƒX‚ğ•t‚¯‚éB
-		//‚±‚ÌƒCƒ“ƒfƒbƒNƒX‚Í m_pEditArr ‚Ì”z—ñ”Ô†‚Å‚·B
-		(*ppEditNode)[i].m_nIndex = pNode[i].p - pShare->m_sNodes.m_pEditArr;	// ƒ|ƒCƒ“ƒ^Œ¸Z”z—ñ”Ô†
+		//ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’ä»˜ã‘ã‚‹ã€‚
+		//ã“ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯ m_pEditArr ã®é…åˆ—ç•ªå·ã§ã™ã€‚
+		(*ppEditNode)[i].m_nIndex = pNode[i].p - pShare->m_sNodes.m_pEditArr;	// ãƒã‚¤ãƒ³ã‚¿æ¸›ç®—ï¼é…åˆ—ç•ªå·
 	}
 
 	delete []pNode;
@@ -666,13 +666,13 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 	return nRowNum;
 }
 
-/** ƒEƒBƒ“ƒhƒE‚Ì•À‚Ñ‘Ö‚¦
+/** ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸¦ã³æ›¿ãˆ
 
-	@param[in] hwndSrc ˆÚ“®‚·‚éƒEƒBƒ“ƒhƒE
-	@param[in] hwndDst ˆÚ“®æƒEƒBƒ“ƒhƒE
+	@param[in] hwndSrc ç§»å‹•ã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	@param[in] hwndDst ç§»å‹•å…ˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
 	@author ryoji
-	@date 2007.07.07 genta ƒEƒBƒ“ƒhƒE”z—ñ‘€ì•”‚ğCTabWnd‚æ‚èˆÚ“®
+	@date 2007.07.07 genta ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é…åˆ—æ“ä½œéƒ¨ã‚’CTabWndã‚ˆã‚Šç§»å‹•
 */
 bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 {
@@ -685,7 +685,7 @@ bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	int nSrcTab = -1;
 	int nDstTab = -1;
 	LockGuard<CMutex> guard( g_cEditArrMutex );
-	nCount = _GetOpenedWindowArrCore( &p, TRUE );	// ƒƒbƒN‚Í©•ª‚Å‚â‚Á‚Ä‚¢‚é‚Ì‚Å’¼ÚƒRƒA•”ŒÄ‚Ño‚µ
+	nCount = _GetOpenedWindowArrCore( &p, TRUE );	// ãƒ­ãƒƒã‚¯ã¯è‡ªåˆ†ã§ã‚„ã£ã¦ã„ã‚‹ã®ã§ç›´æ¥ã‚³ã‚¢éƒ¨å‘¼ã³å‡ºã—
 	for( i = 0; i < nCount; i++ )
 	{
 		if( hwndSrc == p[i].m_hWnd )
@@ -700,7 +700,7 @@ bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 		return false;
 	}
 
-	// ƒ^ƒu‚Ì‡˜‚ğ“ü‚ê‘Ö‚¦‚é‚½‚ß‚ÉƒEƒBƒ“ƒhƒE‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ“ü‚ê‘Ö‚¦‚é
+	// ã‚¿ãƒ–ã®é †åºã‚’å…¥ã‚Œæ›¿ãˆã‚‹ãŸã‚ã«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 	int nArr0, nArr1;
 	int	nIndex;
 
@@ -708,7 +708,7 @@ bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	nIndex = pShare->m_sNodes.m_pEditArr[ nArr0 ].m_nIndex;
 	if( nSrcTab < nDstTab )
 	{
-		// ƒ^ƒu¶•ûŒüƒ[ƒe[ƒg
+		// ã‚¿ãƒ–å·¦æ–¹å‘ãƒ­ãƒ¼ãƒ†ãƒ¼ãƒˆ
 		for( i = nDstTab - 1; i >= nSrcTab; i-- )
 		{
 			nArr1 = p[ i ].m_nIndex;
@@ -718,7 +718,7 @@ bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	}
 	else
 	{
-		// ƒ^ƒu‰E•ûŒüƒ[ƒe[ƒg
+		// ã‚¿ãƒ–å³æ–¹å‘ãƒ­ãƒ¼ãƒ†ãƒ¼ãƒˆ
 		for( i = nDstTab + 1; i <= nSrcTab; i++ )
 		{
 			nArr1 = p[ i ].m_nIndex;
@@ -732,17 +732,17 @@ bool CAppNodeManager::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	return true;
 }
 
-/** ƒ^ƒuˆÚ“®‚É”º‚¤ƒEƒBƒ“ƒhƒEˆ—
+/** ã‚¿ãƒ–ç§»å‹•ã«ä¼´ã†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å‡¦ç†
 
-	@param[in] hwndSrc ˆÚ“®‚·‚éƒEƒBƒ“ƒhƒE
-	@param[in] hwndDst ˆÚ“®æƒEƒBƒ“ƒhƒEDV‹K“Æ—§‚ÍNULLD
-	@param[in] bSrcIsTop ˆÚ“®‚·‚éƒEƒBƒ“ƒhƒE‚ª‰Â‹ƒEƒBƒ“ƒhƒE‚È‚çtrue
-	@param[in] notifygroups ƒ^ƒu‚ÌXV‚ª•K—v‚ÈƒOƒ‹[ƒv‚ÌƒOƒ‹[ƒvIDDint[2]‚ğŒÄ‚Ño‚µŒ³‚Å—pˆÓ‚·‚éD
+	@param[in] hwndSrc ç§»å‹•ã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	@param[in] hwndDst ç§»å‹•å…ˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼æ–°è¦ç‹¬ç«‹æ™‚ã¯NULLï¼
+	@param[in] bSrcIsTop ç§»å‹•ã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒå¯è¦–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãªã‚‰true
+	@param[in] notifygroups ã‚¿ãƒ–ã®æ›´æ–°ãŒå¿…è¦ãªã‚°ãƒ«ãƒ¼ãƒ—ã®ã‚°ãƒ«ãƒ¼ãƒ—IDï¼int[2]ã‚’å‘¼ã³å‡ºã—å…ƒã§ç”¨æ„ã™ã‚‹ï¼
 
-	@return XV‚³‚ê‚½hwndDst (ˆÚ“®æ‚ªŠù‚É•Â‚¶‚ç‚ê‚½ê‡‚È‚Ç‚ÉNULL‚É•ÏX‚³‚ê‚é‚±‚Æ‚ª‚ ‚é)
+	@return æ›´æ–°ã•ã‚ŒãŸhwndDst (ç§»å‹•å…ˆãŒæ—¢ã«é–‰ã˜ã‚‰ã‚ŒãŸå ´åˆãªã©ã«NULLã«å¤‰æ›´ã•ã‚Œã‚‹ã“ã¨ãŒã‚ã‚‹)
 
 	@author ryoji
-	@date 2007.07.07 genta CTabWnd::SeparateGroup()‚æ‚è“Æ—§
+	@date 2007.07.07 genta CTabWnd::SeparateGroup()ã‚ˆã‚Šç‹¬ç«‹
 */
 HWND CAppNodeManager::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] )
 {
@@ -757,18 +757,18 @@ HWND CAppNodeManager::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop,
 	if( pDstEditNode == NULL )
 	{
 		hwndDst = NULL;
-		nDstGroup = ++pShare->m_sNodes.m_nGroupSequences;	// V‹KƒOƒ‹[ƒv
+		nDstGroup = ++pShare->m_sNodes.m_nGroupSequences;	// æ–°è¦ã‚°ãƒ«ãƒ¼ãƒ—
 	}
 	else
 	{
-		nDstGroup = pDstEditNode->m_nGroup;	// Šù‘¶ƒOƒ‹[ƒv
+		nDstGroup = pDstEditNode->m_nGroup;	// æ—¢å­˜ã‚°ãƒ«ãƒ¼ãƒ—
 	}
 
 	pSrcEditNode->m_nGroup = nDstGroup;
-	pSrcEditNode->m_nIndex = ++pShare->m_sNodes.m_nSequences;	// ƒ^ƒu•À‚Ñ‚ÌÅŒãi‹N“®‡‚ÌÅŒãj‚É‚à‚Á‚Ä‚¢‚­
+	pSrcEditNode->m_nIndex = ++pShare->m_sNodes.m_nSequences;	// ã‚¿ãƒ–ä¸¦ã³ã®æœ€å¾Œï¼ˆèµ·å‹•é †ã®æœ€å¾Œï¼‰ã«ã‚‚ã£ã¦ã„ã
 
-	// ”ñ•\¦‚Ìƒ^ƒu‚ğŠù‘¶ƒOƒ‹[ƒv‚ÉˆÚ“®‚·‚é‚Æ‚«‚Í”ñ•\¦‚Ì‚Ü‚Ü‚É‚·‚é‚Ì‚Å
-	// “à•”î•ñ‚àæ“ª‚É‚Í‚È‚ç‚È‚¢‚æ‚¤A•K—v‚È‚çæ“ªƒEƒBƒ“ƒhƒE‚ÆˆÊ’u‚ğŒğŠ·‚·‚éB
+	// éè¡¨ç¤ºã®ã‚¿ãƒ–ã‚’æ—¢å­˜ã‚°ãƒ«ãƒ¼ãƒ—ã«ç§»å‹•ã™ã‚‹ã¨ãã¯éè¡¨ç¤ºã®ã¾ã¾ã«ã™ã‚‹ã®ã§
+	// å†…éƒ¨æƒ…å ±ã‚‚å…ˆé ­ã«ã¯ãªã‚‰ãªã„ã‚ˆã†ã€å¿…è¦ãªã‚‰å…ˆé ­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¨ä½ç½®ã‚’äº¤æ›ã™ã‚‹ã€‚
 	if( !bSrcIsTop && pDstEditNode != NULL )
 	{
 		if( pSrcEditNode < pDstEditNode )
@@ -789,12 +789,12 @@ HWND CAppNodeManager::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop,
 
 
 
-/** “¯ˆêƒOƒ‹[ƒv‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+/** åŒä¸€ã‚°ãƒ«ãƒ¼ãƒ—ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 
-	@param[in] hWnd1 ”äŠr‚·‚éƒEƒBƒ“ƒhƒE1
-	@param[in] hWnd2 ”äŠr‚·‚éƒEƒBƒ“ƒhƒE2
+	@param[in] hWnd1 æ¯”è¼ƒã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦1
+	@param[in] hWnd2 æ¯”è¼ƒã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦2
 	
-	@return 2‚Â‚ÌƒEƒBƒ“ƒhƒE‚ª“¯ˆêƒOƒ‹[ƒv‚É‘®‚µ‚Ä‚¢‚ê‚Îtrue
+	@return 2ã¤ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒåŒä¸€ã‚°ãƒ«ãƒ¼ãƒ—ã«å±ã—ã¦ã„ã‚Œã°true
 
 	@date 2007.06.20 ryoji
 */
@@ -812,24 +812,24 @@ bool CAppNodeManager::IsSameGroup( HWND hWnd1, HWND hWnd2 )
 	return false;
 }
 
-/* ‹ó‚¢‚Ä‚¢‚éƒOƒ‹[ƒv”Ô†‚ğæ“¾‚·‚é */
+/* ç©ºã„ã¦ã„ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—ç•ªå·ã‚’å–å¾—ã™ã‚‹ */
 int CAppNodeManager::GetFreeGroupId( void )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
-	return ++pShare->m_sNodes.m_nGroupSequences;	// V‹KƒOƒ‹[ƒv
+	return ++pShare->m_sNodes.m_nGroupSequences;	// æ–°è¦ã‚°ãƒ«ãƒ¼ãƒ—
 }
 
 
-// Close ‚µ‚½‚ÌŸ‚ÌWindow‚ğæ“¾‚·‚é
-//  (ƒ^ƒu‚Ü‚Æ‚ß•\¦‚Ìê‡)
+// Close ã—ãŸæ™‚ã®æ¬¡ã®Windowã‚’å–å¾—ã™ã‚‹
+//  (ã‚¿ãƒ–ã¾ã¨ã‚è¡¨ç¤ºã®å ´åˆ)
 //
-//	@param hWndCur [in] Close‘ÎÛ‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-//	@retval ƒNƒ[ƒYŒãˆÚ“®‚·‚éƒEƒBƒ“ƒhƒE
-//			NULL‚Íƒ^ƒu‚Ü‚Æ‚ß•\¦‚Å–³‚¢‚©ƒOƒ‹[ƒv‚É‘¼‚ÉƒEƒBƒ“ƒhƒE‚ª–³‚¢ê‡
+//	@param hWndCur [in] Closeå¯¾è±¡ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+//	@retval ã‚¯ãƒ­ãƒ¼ã‚ºå¾Œç§»å‹•ã™ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+//			NULLã¯ã‚¿ãƒ–ã¾ã¨ã‚è¡¨ç¤ºã§ç„¡ã„ã‹ã‚°ãƒ«ãƒ¼ãƒ—ã«ä»–ã«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒç„¡ã„å ´åˆ
 //
 //	@date 2013.04.10 Uchi
-//	@date 2013.10.25 Moca Ÿ‚ÌƒEƒBƒ“ƒhƒE‚Íu1‚Â‘O‚ÌƒAƒNƒeƒBƒu‚Èƒ^ƒuv‚É‚·‚é
+//	@date 2013.10.25 Moca æ¬¡ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯ã€Œ1ã¤å‰ã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªã‚¿ãƒ–ã€ã«ã™ã‚‹
 //
 HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 {
@@ -840,7 +840,7 @@ HWND CAppNodeManager::GetNextTab(HWND hWndCur)
 		int			nGroup = 0;
 		bool		bFound = false;
 		EditNode*	p = NULL;
-//		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, TRUE );	// ƒ^ƒu‚Ì•À‚Ñ‡ƒ\[ƒgiƒeƒXƒg—pj
+//		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, TRUE );	// ã‚¿ãƒ–ã®ä¸¦ã³é †ã‚½ãƒ¼ãƒˆï¼ˆãƒ†ã‚¹ãƒˆç”¨ï¼‰
 		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, FALSE, FALSE );
 		if ( nCount > 1 ) {
 			// search Group No.

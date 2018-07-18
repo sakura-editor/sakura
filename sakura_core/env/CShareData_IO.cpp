@@ -1,4 +1,4 @@
-//2008.XX.XX kobake CShareData‚©‚ç•ª—£
+ï»¿//2008.XX.XX kobake CShareDataã‹ã‚‰åˆ†é›¢
 /*
 	Copyright (C) 2008, kobake
 
@@ -50,25 +50,25 @@ void SetValueLimit(T& target, int maxval)
 	SetValueLimit( target, 0, maxval );
 }
 
-/* ‹¤—Lƒf[ƒ^‚Ìƒ[ƒh */
+/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ãƒ­ãƒ¼ãƒ‰ */
 bool CShareData_IO::LoadShareData()
 {
 	return ShareData_IO_2( true );
 }
 
-/* ‹¤—Lƒf[ƒ^‚Ì•Û‘¶ */
+/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜ */
 void CShareData_IO::SaveShareData()
 {
 	ShareData_IO_2( false );
 }
 
 /*!
-	‹¤—Lƒf[ƒ^‚Ì“Ç‚İ‚İ/•Û‘¶ 2
+	å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿/ä¿å­˜ 2
 
-	@param[in] bRead true: “Ç‚İ‚İ / false: ‘‚«‚İ
+	@param[in] bRead true: èª­ã¿è¾¼ã¿ / false: æ›¸ãè¾¼ã¿
 
-	@date 2004-01-11 D.S.Koba CProfile•ÏX‚É‚æ‚éƒR[ƒhŠÈ—ª‰»
-	@date 2005-04-05 D.S.Koba ŠeƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í‚ğŠÖ”‚Æ‚µ‚Ä•ª—£
+	@date 2004-01-11 D.S.Koba CProfileå¤‰æ›´ã«ã‚ˆã‚‹ã‚³ãƒ¼ãƒ‰ç°¡ç•¥åŒ–
+	@date 2005-04-05 D.S.Koba å„ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›ã‚’é–¢æ•°ã¨ã—ã¦åˆ†é›¢
 */
 bool CShareData_IO::ShareData_IO_2( bool bRead )
 {
@@ -86,21 +86,21 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szIniFileName[_MAX_PATH + 1];
-	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é
+	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹
 
-//	MYTRACE( _T("Iniƒtƒ@ƒCƒ‹ˆ—-1 Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( _T("Iniãƒ•ã‚¡ã‚¤ãƒ«å‡¦ç†-1 æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), cRunningTimer.Read() );
 
 
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
-			/* İ’èƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ */
+			/* è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„ */
 			return false;
 		}
 
-		// ƒo[ƒWƒ‡ƒ“ƒAƒbƒv‚ÍƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ğì¬‚·‚é	// 2011.01.28 ryoji
+		// ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚¢ãƒƒãƒ—æ™‚ã¯ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã™ã‚‹	// 2011.01.28 ryoji
 		TCHAR iniVer[256];
 		DWORD mH, mL, lH, lL;
-		mH = mL = lH = lL = 0;	// ¦ ŒÃ`‚¢ ini ‚¾‚Æ "szVersion" ‚Í–³‚¢
+		mH = mL = lH = lL = 0;	// â€» å¤ï½ã„ ini ã ã¨ "szVersion" ã¯ç„¡ã„
 		if( cProfile.IOProfileData( LTEXT("Other"), LTEXT("szVersion"), MakeStringBufferT(iniVer) ) )
 			_stscanf( iniVer, _T("%u.%u.%u.%u"), &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
@@ -115,7 +115,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
 		}
 	}
-//	MYTRACE( _T("Iniƒtƒ@ƒCƒ‹ˆ— 0 Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( _T("Iniãƒ•ã‚¡ã‚¤ãƒ«å‡¦ç† 0 æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), cRunningTimer.Read() );
 
 	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
@@ -151,23 +151,23 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	pcMenuDrawer = NULL;
 
 	if( !bRead ){
-		// 2014.12.08 sakura.ini‚Ì“Ç‚İæ‚èê—p
+		// 2014.12.08 sakura.iniã®èª­ã¿å–ã‚Šå°‚ç”¨
 		if( !GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly ){
-			cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini ƒeƒLƒXƒgƒGƒfƒBƒ^İ’èƒtƒ@ƒCƒ‹") );
+			cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini ãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒ‡ã‚£ã‚¿è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«") );
 		}
 	}
 
-//	MYTRACE( _T("Iniƒtƒ@ƒCƒ‹ˆ— 8 Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), cRunningTimer.Read() );
-//	MYTRACE( _T("Iniƒtƒ@ƒCƒ‹ˆ— Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), cRunningTimerStart.Read() );
+//	MYTRACE( _T("Iniãƒ•ã‚¡ã‚¤ãƒ«å‡¦ç† 8 æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( _T("Iniãƒ•ã‚¡ã‚¤ãƒ«å‡¦ç† æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), cRunningTimerStart.Read() );
 
 	return true;
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌMruƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Mruã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 {
@@ -202,20 +202,20 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark2"), i );
 		if( !cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) ) ){
 			if( cProfile.IsReadingMode() ){
-				auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i ); // ‹ŒverŒİŠ·
+				auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i ); // æ—§veräº’æ›
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
 			}
 		}
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nType"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nTypeId );
-		//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+		//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].bFavorite"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bMRUArrFavorite[i] );
 	}
-	//@@@ 2001.12.26 YAZAKI c‚è‚Ìm_fiMRUArr‚ğ‰Šú‰»B
+	//@@@ 2001.12.26 YAZAKI æ®‹ã‚Šã®m_fiMRUArrã‚’åˆæœŸåŒ–ã€‚
 	if ( cProfile.IsReadingMode() ){
 		EditInfo	fiInit;
-		//	c‚è‚ğfiInit‚Å‰Šú‰»‚µ‚Ä‚¨‚­B
+		//	æ®‹ã‚Šã‚’fiInitã§åˆæœŸåŒ–ã—ã¦ãŠãã€‚
 		fiInit.m_nCharCode = CODE_DEFAULT;
 		fiInit.m_nViewLeftCol = CLayoutInt(0);
 		fiInit.m_nViewTopLine = CLayoutInt(0);
@@ -224,7 +224,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		fiInit.m_szMarkLines[0] = L'\0';	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
 			pShare->m_sHistory.m_fiMRUArr[i] = fiInit;
-			pShare->m_sHistory.m_bMRUArrFavorite[i] = false;	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+			pShare->m_sHistory.m_bMRUArrFavorite[i] = false;	//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 		}
 	}
 
@@ -234,16 +234,16 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("MRUFOLDER[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i] );
-		//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+		//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 		wcscat( szKeyName, LTEXT(".bFavorite") );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
-	//“Ç‚İ‚İ‚Íc‚è‚ğ‰Šú‰»
+	//èª­ã¿è¾¼ã¿æ™‚ã¯æ®‹ã‚Šã‚’åˆæœŸåŒ–
 	if ( cProfile.IsReadingMode() ){
 		for (; i< MAX_OPENFOLDER; ++i){
 			// 2005.04.05 D.S.Koba
 			pShare->m_sHistory.m_szOPENFOLDERArr[i][0] = L'\0';
-			pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] = false;	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+			pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] = false;	//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 		}
 	}
 	
@@ -257,10 +257,10 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌKeysƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Keysã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 {
@@ -289,10 +289,10 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌGrepƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Grepã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 {
@@ -321,27 +321,27 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌFoldersƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Foldersã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Folders( CDataProfile& cProfile )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = LTEXT("Folders");
-	/* ƒ}ƒNƒ—pƒtƒHƒ‹ƒ_ */
+	/* ãƒã‚¯ãƒ­ç”¨ãƒ•ã‚©ãƒ«ãƒ€ */
 	cProfile.IOProfileData( pszSecName, LTEXT("szMACROFOLDER"), pShare->m_Common.m_sMacro.m_szMACROFOLDER );
-	/* İ’èƒCƒ“ƒ|[ƒg—pƒtƒHƒ‹ƒ_ */
+	/* è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆç”¨ãƒ•ã‚©ãƒ«ãƒ€ */
 	cProfile.IOProfileData( pszSecName, LTEXT("szIMPORTFOLDER"), pShare->m_sHistory.m_szIMPORTFOLDER );
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌCmdƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Cmdã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 {
@@ -369,10 +369,10 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌNicknameƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Nicknameã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 {
@@ -393,7 +393,7 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("To%02d"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pShare->m_Common.m_sFileName.m_szTransformFileNameTo[i]) );
 	}
-	// “Ç‚İ‚İCc‚è‚ğNULL‚ÅÄ‰Šú‰»
+	// èª­ã¿è¾¼ã¿æ™‚ï¼Œæ®‹ã‚Šã‚’NULLã§å†åˆæœŸåŒ–
 	if( cProfile.IsReadingMode() ){
 		for( ; i < MAX_TRANSFORM_FILENAME; i++ ){
 			pShare->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
@@ -432,10 +432,10 @@ static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, 
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌCommonƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Commonã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 {
@@ -447,7 +447,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 
 	cProfile.IOProfileData( pszSecName, LTEXT("nCaretType")				, common.m_sGeneral.m_nCaretType );
 	//	Oct. 2, 2005 genta
-	//	‰Šú’l‚ğ‘}“üƒ‚[ƒh‚ÉŒÅ’è‚·‚é‚½‚ßCİ’è‚Ì“Ç‚İ‘‚«‚ğ‚â‚ß‚é
+	//	åˆæœŸå€¤ã‚’æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ã«å›ºå®šã™ã‚‹ãŸã‚ï¼Œè¨­å®šã®èª­ã¿æ›¸ãã‚’ã‚„ã‚ã‚‹
 	//cProfile.IOProfileData( pszSecName, LTEXT("bIsINSMode")				, common.m_bIsINSMode );
 	cProfile.IOProfileData( pszSecName, LTEXT("bIsFreeCursorMode")		, common.m_sGeneral.m_bIsFreeCursorMode );
 	
@@ -466,7 +466,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("nRepeatedScroll_Smooth")	, common.m_sGeneral.m_nRepeatedScroll_Smooth );
 	cProfile.IOProfileData( pszSecName, LTEXT("nPageScrollByWheel")	, common.m_sGeneral.m_nPageScrollByWheel );					// 2009.01.17 nasukoji
 	cProfile.IOProfileData( pszSecName, LTEXT("nHorizontalScrollByWheel")	, common.m_sGeneral.m_nHorizontalScrollByWheel );	// 2009.01.17 nasukoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bCloseAllConfirm")		, common.m_sGeneral.m_bCloseAllConfirm );	/* [‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é */	// 2006.12.25 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bCloseAllConfirm")		, common.m_sGeneral.m_bCloseAllConfirm );	/* [ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹ */	// 2006.12.25 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("bExitConfirm")			, common.m_sGeneral.m_bExitConfirm );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSearchRegularExp")	, common.m_sSearch.m_sSearchOption.bRegularExp );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSearchLoHiCase")		, common.m_sSearch.m_sSearchOption.bLoHiCase );
@@ -485,15 +485,15 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepDefaultFolder")		, common.m_sSearch.m_bGrepDefaultFolder );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepBackup")			, common.m_sSearch.m_bGrepBackup );
 	
-	// 2002/09/21 Moca ’Ç‰Á
+	// 2002/09/21 Moca è¿½åŠ 
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nGrepCharSet")	, common.m_sSearch.m_nGrepCharSet );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepRealTime")			, common.m_sSearch.m_bGrepRealTimeView ); // 2003.06.16 Moca
-	cProfile.IOProfileData( pszSecName, LTEXT("bCaretTextForSearch")	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶š—ñ‚ğƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶š—ñ‚É‚·‚é
+	cProfile.IOProfileData( pszSecName, LTEXT("bCaretTextForSearch")	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ–‡å­—åˆ—ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ¤œç´¢æ–‡å­—åˆ—ã«ã™ã‚‹
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bInheritKeyOtherView")	, common.m_sSearch.m_bInheritKeyOtherView );
 	cProfile.IOProfileData( pszSecName, LTEXT("nTagJumpMode")			, common.m_sSearch.m_nTagJumpMode );
 	cProfile.IOProfileData( pszSecName, LTEXT("nTagJumpModeKeyword")	, common.m_sSearch.m_nTagJumpModeKeyword );
 	
-	/* ³‹K•\Œ»DLL 2007.08.12 genta */
+	/* æ­£è¦è¡¨ç¾DLL 2007.08.12 genta */
 	cProfile.IOProfileData( pszSecName, LTEXT("szRegexpLib")			, MakeStringBufferT(common.m_sSearch.m_szRegexpLib) );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGTJW_RETURN")			, common.m_sSearch.m_bGTJW_RETURN );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGTJW_LDBLCLK")			, common.m_sSearch.m_bGTJW_LDBLCLK );
@@ -506,7 +506,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		int	nDummy;
 		int	nCharChars;
 		nDummy = _tcslen( common.m_sBackup.m_szBackUpFolder );
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ªu”¼Šp‚©‚Â'\\'v‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒã€ŒåŠè§’ã‹ã¤'\\'ã€ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
 			- CNativeT::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
@@ -519,7 +519,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		int	nDummy;
 		int	nCharChars;
 		nDummy = _tcslen( common.m_sBackup.m_szBackUpFolder );
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ªu”¼Šp‚©‚Â'\\'v‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒã€ŒåŠè§’ã‹ã¤'\\'ã€ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
 			- CNativeT::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
@@ -560,26 +560,26 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispFUNCKEYWND")		, common.m_sWindow.m_bDispFUNCKEYWND );
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispMiniMap")			, common.m_sWindow.m_bDispMiniMap );
 	cProfile.IOProfileData( pszSecName, LTEXT("nFUNCKEYWND_Place")		, common.m_sWindow.m_nFUNCKEYWND_Place );
-	cProfile.IOProfileData( pszSecName, LTEXT("nFUNCKEYWND_GroupNum")	, common.m_sWindow.m_nFUNCKEYWND_GroupNum );		// 2002/11/04 Moca ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ÌƒOƒ‹[ƒvƒ{ƒ^ƒ“”
+	cProfile.IOProfileData( pszSecName, LTEXT("nFUNCKEYWND_GroupNum")	, common.m_sWindow.m_nFUNCKEYWND_GroupNum );		// 2002/11/04 Moca ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®ã‚°ãƒ«ãƒ¼ãƒ—ãƒœã‚¿ãƒ³æ•°
 	cProfile.IOProfileData( pszSecName, LTEXT("szLanguageDll")			, MakeStringBufferT( common.m_sWindow.m_szLanguageDll ) );
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapFontSize")		, common.m_sWindow.m_nMiniMapFontSize );
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapQuality")		, common.m_sWindow.m_nMiniMapQuality );
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapWidth")			, common.m_sWindow.m_nMiniMapWidth );
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWnd")			, common.m_sTabBar.m_bDispTabWnd );	//ƒ^ƒuƒEƒCƒ“ƒhƒE	//@@@ 2003.05.31 MIK
-	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWndMultiWin")	, common.m_sTabBar.m_bDispTabWndMultiWin );	//ƒ^ƒuƒEƒCƒ“ƒhƒE	//@@@ 2003.05.31 MIK
+	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWnd")			, common.m_sTabBar.m_bDispTabWnd );	//ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦	//@@@ 2003.05.31 MIK
+	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWndMultiWin")	, common.m_sTabBar.m_bDispTabWndMultiWin );	//ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦	//@@@ 2003.05.31 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("szTabWndCaption")		, MakeStringBufferW(common.m_sTabBar.m_szTabWndCaption) );	//@@@ 2003.06.13 MIK
-	cProfile.IOProfileData( pszSecName, LTEXT("bSameTabWidth")			, common.m_sTabBar.m_bSameTabWidth );	// 2006.01.28 ryoji ƒ^ƒu‚ğ“™•‚É‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabIcon")			, common.m_sTabBar.m_bDispTabIcon );	// 2006.01.28 ryoji ƒ^ƒu‚ÉƒAƒCƒRƒ“‚ğ•\¦‚·‚é
+	cProfile.IOProfileData( pszSecName, LTEXT("bSameTabWidth")			, common.m_sTabBar.m_bSameTabWidth );	// 2006.01.28 ryoji ã‚¿ãƒ–ã‚’ç­‰å¹…ã«ã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabIcon")			, common.m_sTabBar.m_bDispTabIcon );	// 2006.01.28 ryoji ã‚¿ãƒ–ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bDispTabClose")	, common.m_sTabBar.m_bDispTabClose );	// 2012.04.14 syat
-	cProfile.IOProfileData( pszSecName, LTEXT("bSortTabList")			, common.m_sTabBar.m_bSortTabList );	// 2006.05.10 ryoji ƒ^ƒuˆê——‚ğƒ\[ƒg‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("bTab_RetainEmptyWin")	, common.m_sTabBar.m_bTab_RetainEmptyWin );	// ÅŒã‚Ìƒtƒ@ƒCƒ‹‚ª•Â‚¶‚ç‚ê‚½‚Æ‚«(–³‘è)‚ğc‚·	// 2007.02.11 genta
-	cProfile.IOProfileData( pszSecName, LTEXT("bTab_CloseOneWin")	, common.m_sTabBar.m_bTab_CloseOneWin );	// ƒ^ƒuƒ‚[ƒh‚Å‚àƒEƒBƒ“ƒhƒE‚Ì•Â‚¶‚éƒ{ƒ^ƒ“‚ÅŒ»İ‚Ìƒtƒ@ƒCƒ‹‚Ì‚İ•Â‚¶‚é	// 2007.02.11 genta
-	cProfile.IOProfileData( pszSecName, LTEXT("bTab_ListFull")			, common.m_sTabBar.m_bTab_ListFull );	// ƒ^ƒuˆê——‚ğƒtƒ‹ƒpƒX•\¦‚·‚é	// 2007.02.28 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bChgWndByWheel")		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji ƒ}ƒEƒXƒzƒC[ƒ‹‚ÅƒEƒBƒ“ƒhƒEØ‚è‘Ö‚¦
-	cProfile.IOProfileData( pszSecName, LTEXT("bNewWindow")			, common.m_sTabBar.m_bNewWindow );	// ŠO•”‚©‚ç‹N“®‚·‚é‚Æ‚«‚ÍV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­
-	cProfile.IOProfileData( pszSecName, L"bTabMultiLine"			, common.m_sTabBar.m_bTabMultiLine );	// ƒ^ƒu‘½’i
-	cProfile.IOProfileData_WrapInt( pszSecName, L"eTabPosition"		, common.m_sTabBar.m_eTabPosition );	// ƒ^ƒuˆÊ’u
+	cProfile.IOProfileData( pszSecName, LTEXT("bSortTabList")			, common.m_sTabBar.m_bSortTabList );	// 2006.05.10 ryoji ã‚¿ãƒ–ä¸€è¦§ã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("bTab_RetainEmptyWin")	, common.m_sTabBar.m_bTab_RetainEmptyWin );	// æœ€å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‰ã˜ã‚‰ã‚ŒãŸã¨ã(ç„¡é¡Œ)ã‚’æ®‹ã™	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, LTEXT("bTab_CloseOneWin")	, common.m_sTabBar.m_bTab_CloseOneWin );	// ã‚¿ãƒ–ãƒ¢ãƒ¼ãƒ‰ã§ã‚‚ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã§ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿é–‰ã˜ã‚‹	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, LTEXT("bTab_ListFull")			, common.m_sTabBar.m_bTab_ListFull );	// ã‚¿ãƒ–ä¸€è¦§ã‚’ãƒ•ãƒ«ãƒ‘ã‚¹è¡¨ç¤ºã™ã‚‹	// 2007.02.28 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bChgWndByWheel")		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji ãƒã‚¦ã‚¹ãƒ›ã‚¤ãƒ¼ãƒ«ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ‡ã‚Šæ›¿ãˆ
+	cProfile.IOProfileData( pszSecName, LTEXT("bNewWindow")			, common.m_sTabBar.m_bNewWindow );	// å¤–éƒ¨ã‹ã‚‰èµ·å‹•ã™ã‚‹ã¨ãã¯æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã
+	cProfile.IOProfileData( pszSecName, L"bTabMultiLine"			, common.m_sTabBar.m_bTabMultiLine );	// ã‚¿ãƒ–å¤šæ®µ
+	cProfile.IOProfileData_WrapInt( pszSecName, L"eTabPosition"		, common.m_sTabBar.m_eTabPosition );	// ã‚¿ãƒ–ä½ç½®
 
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
 		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );
@@ -588,22 +588,22 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("nTabMinWidth")			, common.m_sTabBar.m_nTabMinWidth );
 	cProfile.IOProfileData( pszSecName, LTEXT("nTabMinWidthOnMulti")	, common.m_sTabBar.m_nTabMinWidthOnMulti );
 
-	// 2001/06/20 asa-o •ªŠ„ƒEƒBƒ“ƒhƒE‚ÌƒXƒNƒ[ƒ‹‚Ì“¯Šú‚ğ‚Æ‚é
+	// 2001/06/20 asa-o åˆ†å‰²ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã®åŒæœŸã‚’ã¨ã‚‹
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndHScroll")	, common.m_sWindow.m_bSplitterWndHScroll );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndVScroll")	, common.m_sWindow.m_bSplitterWndVScroll );
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("szMidashiKigou")		, MakeStringBufferW(common.m_sFormat.m_szMidashiKigou) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szInyouKigou")			, MakeStringBufferW(common.m_sFormat.m_szInyouKigou) );
 	
-	// 2001/06/14 asa-o •âŠ®‚ÆƒL[ƒ[ƒhƒwƒ‹ƒv‚Íƒ^ƒCƒv•Ê‚ÉˆÚ“®‚µ‚½‚Ì‚ÅíœF‚Rs
-	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect ‚Í bGrepCharSet‚É“‡‚µ‚½‚Ì‚Åíœ
-	// 2001/06/19 asa-o ƒ^ƒCƒv•Ê‚ÉˆÚ“®‚µ‚½‚Ì‚ÅíœF1s
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bSaveWindowSize"), common.m_sWindow.m_eSaveWindowSize );	//#####ƒtƒ‰ƒO–¼‚ªŒƒ‚µ‚­‚«‚à‚¢
+	// 2001/06/14 asa-o è£œå®Œã¨ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã¯ã‚¿ã‚¤ãƒ—åˆ¥ã«ç§»å‹•ã—ãŸã®ã§å‰Šé™¤ï¼šï¼“è¡Œ
+	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect ã¯ bGrepCharSetã«çµ±åˆã—ãŸã®ã§å‰Šé™¤
+	// 2001/06/19 asa-o ã‚¿ã‚¤ãƒ—åˆ¥ã«ç§»å‹•ã—ãŸã®ã§å‰Šé™¤ï¼š1è¡Œ
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bSaveWindowSize"), common.m_sWindow.m_eSaveWindowSize );	//#####ãƒ•ãƒ©ã‚°åãŒæ¿€ã—ããã‚‚ã„
 	cProfile.IOProfileData( pszSecName, LTEXT("nWinSizeType")			, common.m_sWindow.m_nWinSizeType );
 	cProfile.IOProfileData( pszSecName, LTEXT("nWinSizeCX")				, common.m_sWindow.m_nWinSizeCX );
 	cProfile.IOProfileData( pszSecName, LTEXT("nWinSizeCY")				, common.m_sWindow.m_nWinSizeCY );
-	// 2004.03.30 Moca *nWinPos*‚ğ’Ç‰Á
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSaveWindowPos")	, common.m_sWindow.m_eSaveWindowPos );	//#####ƒtƒ‰ƒO–¼‚ª‚«‚à‚¢
+	// 2004.03.30 Moca *nWinPos*ã‚’è¿½åŠ 
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSaveWindowPos")	, common.m_sWindow.m_eSaveWindowPos );	//#####ãƒ•ãƒ©ã‚°åãŒãã‚‚ã„
 	cProfile.IOProfileData( pszSecName, LTEXT("nWinPosX")				, common.m_sWindow.m_nWinPosX );
 	cProfile.IOProfileData( pszSecName, LTEXT("nWinPosY")				, common.m_sWindow.m_nWinPosY );
 	cProfile.IOProfileData( pszSecName, LTEXT("bTaskTrayUse")			, common.m_sGeneral.m_bUseTaskTray );
@@ -616,59 +616,59 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispExitingDialog")			, common.m_sGeneral.m_bDispExitingDialog );
 	cProfile.IOProfileData( pszSecName, LTEXT("bEnableUnmodifiedOverwrite")	, common.m_sFile.m_bEnableUnmodifiedOverwrite );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSelectClickedURL")			, common.m_sEdit.m_bSelectClickedURL );
-	cProfile.IOProfileData( pszSecName, LTEXT("bGrepExitConfirm")			, common.m_sSearch.m_bGrepExitConfirm );/* Grepƒ‚[ƒh‚Å•Û‘¶Šm”F‚·‚é‚© */
-//	cProfile.IOProfileData( pszSecName, LTEXT("bRulerDisp")					, common.m_bRulerDisp );/* ƒ‹[ƒ‰[•\¦ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nRulerHeight")				, common.m_sWindow.m_nRulerHeight );/* ƒ‹[ƒ‰[‚‚³ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nRulerBottomSpace")			, common.m_sWindow.m_nRulerBottomSpace );/* ƒ‹[ƒ‰[‚ÆƒeƒLƒXƒg‚ÌŒ„ŠÔ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nRulerType")					, common.m_sWindow.m_nRulerType );/* ƒ‹[ƒ‰[‚Ìƒ^ƒCƒv */
-	//	Sep. 18, 2002 genta ’Ç‰Á
-	cProfile.IOProfileData( pszSecName, LTEXT("nLineNumberRightSpace")		, common.m_sWindow.m_nLineNumRightSpace );/* s”Ô†‚Ì‰E‘¤‚ÌŒ„ŠÔ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bGrepExitConfirm")			, common.m_sSearch.m_bGrepExitConfirm );/* Grepãƒ¢ãƒ¼ãƒ‰ã§ä¿å­˜ç¢ºèªã™ã‚‹ã‹ */
+//	cProfile.IOProfileData( pszSecName, LTEXT("bRulerDisp")					, common.m_bRulerDisp );/* ãƒ«ãƒ¼ãƒ©ãƒ¼è¡¨ç¤º */
+	cProfile.IOProfileData( pszSecName, LTEXT("nRulerHeight")				, common.m_sWindow.m_nRulerHeight );/* ãƒ«ãƒ¼ãƒ©ãƒ¼é«˜ã• */
+	cProfile.IOProfileData( pszSecName, LTEXT("nRulerBottomSpace")			, common.m_sWindow.m_nRulerBottomSpace );/* ãƒ«ãƒ¼ãƒ©ãƒ¼ã¨ãƒ†ã‚­ã‚¹ãƒˆã®éš™é–“ */
+	cProfile.IOProfileData( pszSecName, LTEXT("nRulerType")					, common.m_sWindow.m_nRulerType );/* ãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚¿ã‚¤ãƒ— */
+	//	Sep. 18, 2002 genta è¿½åŠ 
+	cProfile.IOProfileData( pszSecName, LTEXT("nLineNumberRightSpace")		, common.m_sWindow.m_nLineNumRightSpace );/* è¡Œç•ªå·ã®å³å´ã®éš™é–“ */
 	cProfile.IOProfileData( pszSecName, LTEXT("nVertLineOffset")			, common.m_sWindow.m_nVertLineOffset ); // 2005.11.10 Moca
 	cProfile.IOProfileData( pszSecName, LTEXT("bUseCompotibleBMP")			, common.m_sWindow.m_bUseCompatibleBMP ); // 2007.09.09 Moca
-	cProfile.IOProfileData( pszSecName, LTEXT("bCopyAndDisablSelection")	, common.m_sEdit.m_bCopyAndDisablSelection );/* ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ */
-	cProfile.IOProfileData( pszSecName, LTEXT("bEnableNoSelectCopy")		, common.m_sEdit.m_bEnableNoSelectCopy );/* ‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚é */	// 2007.11.18 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bEnableLineModePaste")		, common.m_sEdit.m_bEnableLineModePaste );/* ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é */	// 2007.10.08 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bConvertEOLPaste")			, common.m_sEdit.m_bConvertEOLPaste );	/* ‰üsƒR[ƒh‚ğ•ÏŠ·‚µ‚Ä“\‚è•t‚¯‚é */	// 2009.02.28 salarm
+	cProfile.IOProfileData( pszSecName, LTEXT("bCopyAndDisablSelection")	, common.m_sEdit.m_bCopyAndDisablSelection );/* ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bEnableNoSelectCopy")		, common.m_sEdit.m_bEnableNoSelectCopy );/* é¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.11.18 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bEnableLineModePaste")		, common.m_sEdit.m_bEnableLineModePaste );/* ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.10.08 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bConvertEOLPaste")			, common.m_sEdit.m_bConvertEOLPaste );	/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ã—ã¦è²¼ã‚Šä»˜ã‘ã‚‹ */	// 2009.02.28 salarm
 	cProfile.IOProfileData( pszSecName, LTEXT("bEnableExtEol")				, common.m_sEdit.m_bEnableExtEol );
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("bHtmlHelpIsSingle")			, common.m_sHelper.m_bHtmlHelpIsSingle );/* HtmlHelpƒrƒ…[ƒA‚Í‚Ğ‚Æ‚Â */
-	cProfile.IOProfileData( pszSecName, LTEXT("bCompareAndTileHorz")		, common.m_sCompare.m_bCompareAndTileHorz );/* •¶‘”äŠrŒãA¶‰E‚É•À‚×‚Ä•\¦ */	//Oct. 10, 2000 JEPRO ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğƒ{ƒ^ƒ“‰»‚·‚ê‚Î‚±‚Ìs‚Í•s—v‚Ì‚Í‚¸
-	cProfile.IOProfileData( pszSecName, LTEXT("bDropFileAndClose")			, common.m_sFile.m_bDropFileAndClose );/* ƒtƒ@ƒCƒ‹‚ğƒhƒƒbƒv‚µ‚½‚Æ‚«‚Í•Â‚¶‚ÄŠJ‚­ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nDropFileNumMax")			, common.m_sFile.m_nDropFileNumMax );/* ˆê“x‚Éƒhƒƒbƒv‰Â”\‚Èƒtƒ@ƒCƒ‹” */
-	cProfile.IOProfileData( pszSecName, LTEXT("bCheckFileTimeStamp")		, common.m_sFile.m_bCheckFileTimeStamp );/* XV‚ÌŠÄ‹ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nAutoloadDelay")				, common.m_sFile.m_nAutoloadDelay );/* ©“®“Ç’x‰„ */
-	cProfile.IOProfileData( pszSecName, LTEXT("bUneditableIfUnwritable")	, common.m_sFile.m_bUneditableIfUnwritable );/* ã‘‚«‹Ö~ŒŸo‚Í•ÒW‹Ö~‚É‚·‚é */
-	cProfile.IOProfileData( pszSecName, LTEXT("bNotOverWriteCRLF")			, common.m_sEdit.m_bNotOverWriteCRLF );/* ‰üs‚Íã‘‚«‚µ‚È‚¢ */
-	cProfile.IOProfileData( pszSecName, LTEXT("bOverWriteFixMode")			, common.m_sEdit.m_bOverWriteFixMode );// •¶š•‚É‡‚í‚¹‚ÄƒXƒy[ƒX‚ğ‹l‚ß‚é
+	cProfile.IOProfileData( pszSecName, LTEXT("bHtmlHelpIsSingle")			, common.m_sHelper.m_bHtmlHelpIsSingle );/* HtmlHelpãƒ“ãƒ¥ãƒ¼ã‚¢ã¯ã²ã¨ã¤ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bCompareAndTileHorz")		, common.m_sCompare.m_bCompareAndTileHorz );/* æ–‡æ›¸æ¯”è¼ƒå¾Œã€å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º */	//Oct. 10, 2000 JEPRO ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã‚’ãƒœã‚¿ãƒ³åŒ–ã™ã‚Œã°ã“ã®è¡Œã¯ä¸è¦ã®ã¯ãš
+	cProfile.IOProfileData( pszSecName, LTEXT("bDropFileAndClose")			, common.m_sFile.m_bDropFileAndClose );/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ‰ãƒ­ãƒƒãƒ—ã—ãŸã¨ãã¯é–‰ã˜ã¦é–‹ã */
+	cProfile.IOProfileData( pszSecName, LTEXT("nDropFileNumMax")			, common.m_sFile.m_nDropFileNumMax );/* ä¸€åº¦ã«ãƒ‰ãƒ­ãƒƒãƒ—å¯èƒ½ãªãƒ•ã‚¡ã‚¤ãƒ«æ•° */
+	cProfile.IOProfileData( pszSecName, LTEXT("bCheckFileTimeStamp")		, common.m_sFile.m_bCheckFileTimeStamp );/* æ›´æ–°ã®ç›£è¦– */
+	cProfile.IOProfileData( pszSecName, LTEXT("nAutoloadDelay")				, common.m_sFile.m_nAutoloadDelay );/* è‡ªå‹•èª­è¾¼æ™‚é…å»¶ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bUneditableIfUnwritable")	, common.m_sFile.m_bUneditableIfUnwritable );/* ä¸Šæ›¸ãç¦æ­¢æ¤œå‡ºæ™‚ã¯ç·¨é›†ç¦æ­¢ã«ã™ã‚‹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bNotOverWriteCRLF")			, common.m_sEdit.m_bNotOverWriteCRLF );/* æ”¹è¡Œã¯ä¸Šæ›¸ãã—ãªã„ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bOverWriteFixMode")			, common.m_sEdit.m_bOverWriteFixMode );// æ–‡å­—å¹…ã«åˆã‚ã›ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã‚‹
 	cProfile.IOProfileData( pszSecName, LTEXT("bOverWriteBoxDelete")		, common.m_sEdit.m_bOverWriteBoxDelete );
-	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgFind")			, common.m_sSearch.m_bAutoCloseDlgFind );/* ŒŸõƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é */
-	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgFuncList")		, common.m_sOutline.m_bAutoCloseDlgFuncList );/* ƒAƒEƒgƒ‰ƒCƒ“ ƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é */
-	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgReplace")		, common.m_sSearch.m_bAutoCloseDlgReplace );/* ’uŠ· ƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é */
-	cProfile.IOProfileData( pszSecName, LTEXT("bAutoColmnPaste")			, common.m_sEdit.m_bAutoColumnPaste );/* ‹éŒ`ƒRƒs[‚ÌƒeƒLƒXƒg‚Íí‚É‹éŒ`“\‚è•t‚¯ */ // 2013.5.23 aroka iniƒtƒ@ƒCƒ‹‚Ìtypo–¢C³
-	cProfile.IOProfileData( pszSecName, LTEXT("NoCaretMoveByActivation")	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* ƒ}ƒEƒXƒNƒŠƒbƒN‚É‚ÄƒAƒNƒeƒBƒx[ƒg‚³‚ê‚½‚ÍƒJ[ƒ\ƒ‹ˆÊ’u‚ğˆÚ“®‚µ‚È‚¢ 2007.10.02 nasukoji (add by genta) */
-	cProfile.IOProfileData( pszSecName, LTEXT("bScrollBarHorz")				, common.m_sWindow.m_bScrollBarHorz );/* …•½ƒXƒNƒ[ƒ‹ƒo[‚ğg‚¤ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgFind")			, common.m_sSearch.m_bAutoCloseDlgFind );/* æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgFuncList")		, common.m_sOutline.m_bAutoCloseDlgFuncList );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bAutoCloseDlgReplace")		, common.m_sSearch.m_bAutoCloseDlgReplace );/* ç½®æ› ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bAutoColmnPaste")			, common.m_sEdit.m_bAutoColumnPaste );/* çŸ©å½¢ã‚³ãƒ”ãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã¯å¸¸ã«çŸ©å½¢è²¼ã‚Šä»˜ã‘ */ // 2013.5.23 aroka iniãƒ•ã‚¡ã‚¤ãƒ«ã®typoæœªä¿®æ­£
+	cProfile.IOProfileData( pszSecName, LTEXT("NoCaretMoveByActivation")	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã«ã¦ã‚¢ã‚¯ãƒ†ã‚£ãƒ™ãƒ¼ãƒˆã•ã‚ŒãŸæ™‚ã¯ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ç§»å‹•ã—ãªã„ 2007.10.02 nasukoji (add by genta) */
+	cProfile.IOProfileData( pszSecName, LTEXT("bScrollBarHorz")				, common.m_sWindow.m_bScrollBarHorz );/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’ä½¿ã† */
 
-	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RETURN")			, common.m_sHelper.m_bHokanKey_RETURN );/* VK_RETURN •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
-	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_TAB")				, common.m_sHelper.m_bHokanKey_TAB );/* VK_TAB    •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
-	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RIGHT")			, common.m_sHelper.m_bHokanKey_RIGHT );/* VK_RIGHT  •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
-	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_SPACE")			, common.m_sHelper.m_bHokanKey_SPACE );/* VK_SPACE  •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
+	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RETURN")			, common.m_sHelper.m_bHokanKey_RETURN );/* VK_RETURN è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_TAB")				, common.m_sHelper.m_bHokanKey_TAB );/* VK_TAB    è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_RIGHT")			, common.m_sHelper.m_bHokanKey_RIGHT );/* VK_RIGHT  è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
+	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_SPACE")			, common.m_sHelper.m_bHokanKey_SPACE );/* VK_SPACE  è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("nDateFormatType")			, common.m_sFormat.m_nDateFormatType );/* “ú•t‘®‚Ìƒ^ƒCƒv */
-	cProfile.IOProfileData( pszSecName, LTEXT("szDateFormat")				, MakeStringBufferT(common.m_sFormat.m_szDateFormat) );//“ú•t‘®
-	cProfile.IOProfileData( pszSecName, LTEXT("nTimeFormatType")			, common.m_sFormat.m_nTimeFormatType );/* ‘®‚Ìƒ^ƒCƒv */
-	cProfile.IOProfileData( pszSecName, LTEXT("szTimeFormat")				, MakeStringBufferT(common.m_sFormat.m_szTimeFormat) );//‘®
+	cProfile.IOProfileData( pszSecName, LTEXT("nDateFormatType")			, common.m_sFormat.m_nDateFormatType );/* æ—¥ä»˜æ›¸å¼ã®ã‚¿ã‚¤ãƒ— */
+	cProfile.IOProfileData( pszSecName, LTEXT("szDateFormat")				, MakeStringBufferT(common.m_sFormat.m_szDateFormat) );//æ—¥ä»˜æ›¸å¼
+	cProfile.IOProfileData( pszSecName, LTEXT("nTimeFormatType")			, common.m_sFormat.m_nTimeFormatType );/* æ™‚åˆ»æ›¸å¼ã®ã‚¿ã‚¤ãƒ— */
+	cProfile.IOProfileData( pszSecName, LTEXT("szTimeFormat")				, MakeStringBufferT(common.m_sFormat.m_szTimeFormat) );//æ™‚åˆ»æ›¸å¼
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("bMenuIcon")					, common.m_sWindow.m_bMenuIcon );//ƒƒjƒ…[‚ÉƒAƒCƒRƒ“‚ğ•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("bAutoMIMEdecode")			, common.m_sFile.m_bAutoMIMEdecode );//ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚ÉMIME‚Ìdecode‚ğs‚¤‚©
-	cProfile.IOProfileData( pszSecName, LTEXT("bQueryIfCodeChange")			, common.m_sFile.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta ‘O‰ñ‚ÆˆÙ‚È‚é•¶šƒR[ƒh‚Ì‚Æ‚«‚É–â‚¢‡‚í‚¹‚ğs‚¤‚©
-	cProfile.IOProfileData( pszSecName, LTEXT("bAlertIfFileNotExist")		, common.m_sFile.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta ŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢‚Æ‚«Œx‚·‚é
+	cProfile.IOProfileData( pszSecName, LTEXT("bMenuIcon")					, common.m_sWindow.m_bMenuIcon );//ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("bAutoMIMEdecode")			, common.m_sFile.m_bAutoMIMEdecode );//ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿æ™‚ã«MIMEã®decodeã‚’è¡Œã†ã‹
+	cProfile.IOProfileData( pszSecName, LTEXT("bQueryIfCodeChange")			, common.m_sFile.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta å‰å›ã¨ç•°ãªã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®ã¨ãã«å•ã„åˆã‚ã›ã‚’è¡Œã†ã‹
+	cProfile.IOProfileData( pszSecName, LTEXT("bAlertIfFileNotExist")		, common.m_sFile.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta é–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„ã¨ãè­¦å‘Šã™ã‚‹
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("bNoFilterSaveNew")			, common.m_sFile.m_bNoFilterSaveNew );	// V‹K‚©‚ç•Û‘¶‚Í‘Sƒtƒ@ƒCƒ‹•\¦	// 2006.11.16 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bNoFilterSaveFile")			, common.m_sFile.m_bNoFilterSaveFile );	// V‹KˆÈŠO‚©‚ç•Û‘¶‚Í‘Sƒtƒ@ƒCƒ‹•\¦	// 2006.11.16 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bAlertIfLargeFile")			, common.m_sFile.m_bAlertIfLargeFile );	// ŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹‚ª‘å‚«‚¢ê‡‚ÉŒx‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("nAlertFileSize")				, common.m_sFile.m_nAlertFileSize );	// Œx‚ğŠJn‚·‚éƒtƒ@ƒCƒ‹ƒTƒCƒY(MB’PˆÊ)
+	cProfile.IOProfileData( pszSecName, LTEXT("bNoFilterSaveNew")			, common.m_sFile.m_bNoFilterSaveNew );	// æ–°è¦ã‹ã‚‰ä¿å­˜æ™‚ã¯å…¨ãƒ•ã‚¡ã‚¤ãƒ«è¡¨ç¤º	// 2006.11.16 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bNoFilterSaveFile")			, common.m_sFile.m_bNoFilterSaveFile );	// æ–°è¦ä»¥å¤–ã‹ã‚‰ä¿å­˜æ™‚ã¯å…¨ãƒ•ã‚¡ã‚¤ãƒ«è¡¨ç¤º	// 2006.11.16 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("bAlertIfLargeFile")			, common.m_sFile.m_bAlertIfLargeFile );	// é–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤§ãã„å ´åˆã«è­¦å‘Šã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("nAlertFileSize")				, common.m_sFile.m_nAlertFileSize );	// è­¦å‘Šã‚’é–‹å§‹ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚º(MBå˜ä½)
 	
-	/* uŠJ‚­vƒ_ƒCƒAƒƒO‚ÌƒTƒCƒY‚ÆˆÊ’u */
+	/* ã€Œé–‹ãã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ã‚µã‚¤ã‚ºã¨ä½ç½® */
 	ShareData_IO_RECT( cProfile,  pszSecName, LTEXT("rcOpenDialog"), common.m_sOthers.m_rcOpenDialog );
 	ShareData_IO_RECT( cProfile,  pszSecName, LTEXT("rcCompareDialog"), common.m_sOthers.m_rcCompareDialog );
 	ShareData_IO_RECT( cProfile,  pszSecName, LTEXT("rcDiffDialog"), common.m_sOthers.m_rcDiffDialog );
@@ -680,11 +680,11 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bMarkUpBlankLineEnable")	, common.m_sOutline.m_bMarkUpBlankLineEnable );
 	cProfile.IOProfileData( pszSecName, LTEXT("bFunclistSetFocusOnJump")	, common.m_sOutline.m_bFunclistSetFocusOnJump );
 	
-	//	Apr. 05, 2003 genta ƒEƒBƒ“ƒhƒEƒLƒƒƒvƒVƒ‡ƒ“‚ÌƒJƒXƒ^ƒ}ƒCƒY
+	//	Apr. 05, 2003 genta ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã®ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚º
 	cProfile.IOProfileData( pszSecName, LTEXT("szWinCaptionActive") , MakeStringBufferT(common.m_sWindow.m_szWindowCaptionActive) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szWinCaptionInactive"), MakeStringBufferT(common.m_sWindow.m_szWindowCaptionInactive) );
 	
-	// ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌˆÊ’u‚ÆƒTƒCƒY‚ğ‹L‰¯  20060201 aroka
+	// ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ä½ç½®ã¨ã‚µã‚¤ã‚ºã‚’è¨˜æ†¶  20060201 aroka
 	cProfile.IOProfileData( pszSecName, LTEXT("bRememberOutlineWindowPos"), common.m_sOutline.m_bRememberOutlineWindowPos);
 	if( common.m_sOutline.m_bRememberOutlineWindowPos ){
 		cProfile.IOProfileData( pszSecName, LTEXT("widthOutlineWindow")	, common.m_sOutline.m_widthOutlineWindow);
@@ -727,9 +727,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 }
 
 
-// ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚ğ–¼‘O‚©‚ç‹@”\”Ô†‚Ö•ÏŠ·
+// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã‚’åå‰ã‹ã‚‰æ©Ÿèƒ½ç•ªå·ã¸å¤‰æ›
 EFunctionCode GetPlugCmdInfoByName(
-	const WCHAR*	pszFuncName			//!< [in]  ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh–¼
+	const WCHAR*	pszFuncName			//!< [in]  ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰å
 )
 {
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
@@ -762,17 +762,17 @@ EFunctionCode GetPlugCmdInfoByName(
 	nNo = _wtoi( psCmdName );
 
 	if (nId < 0 || nNo <= 0 || nNo >= MAX_PLUG_CMD) {
-		// ƒvƒ‰ƒOƒCƒ“‚ª‚È‚¢/”Ô†‚ª‚¨‚©‚µ‚¢
+		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãŒãªã„/ç•ªå·ãŒãŠã‹ã—ã„
 		return F_INVALID;
 	}
 	
 	return CPlug::GetPluginFunctionCode( nId, nNo );
 }
 
-// ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚ğ‹@”\”Ô†‚©‚ç–¼‘O‚Ö•ÏŠ·
+// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã‚’æ©Ÿèƒ½ç•ªå·ã‹ã‚‰åå‰ã¸å¤‰æ›
 bool GetPlugCmdInfoByFuncCode(
-	EFunctionCode	eFuncCode,				//!< [in]  ‹@”\ƒR[ƒh
-	WCHAR*			pszFuncName				//!< [out] ‹@”\–¼D‚±‚Ìæ‚É‚ÍMAX_PLUGIN_ID + 20•¶š‚Ìƒƒ‚ƒŠ‚ª•K—vD
+	EFunctionCode	eFuncCode,				//!< [in]  æ©Ÿèƒ½ã‚³ãƒ¼ãƒ‰
+	WCHAR*			pszFuncName				//!< [out] æ©Ÿèƒ½åï¼ã“ã®å…ˆã«ã¯MAX_PLUGIN_ID + 20æ–‡å­—ã®ãƒ¡ãƒ¢ãƒªãŒå¿…è¦ï¼
 )
 {
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
@@ -791,10 +791,10 @@ bool GetPlugCmdInfoByFuncCode(
 }
 
 
-/*! ƒvƒ‰ƒOƒCƒ“–¼or‹@”\”Ô†•¶š—ñ‚ğEFunctionCode‚É‚·‚é
+/*! ãƒ—ãƒ©ã‚°ã‚¤ãƒ³åoræ©Ÿèƒ½ç•ªå·æ–‡å­—åˆ—ã‚’EFunctionCodeã«ã™ã‚‹
 
-	@param[in]	pszFuncName		ƒvƒ‰ƒOƒCƒ“–¼or‹@”\”Ô†•¶š—ñ
-	@return ‹@”\ƒR[ƒh
+	@param[in]	pszFuncName		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³åoræ©Ÿèƒ½ç•ªå·æ–‡å­—åˆ—
+	@return æ©Ÿèƒ½ã‚³ãƒ¼ãƒ‰
 */
 static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 {
@@ -802,7 +802,7 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 	if (pszFuncName == NULL) {
 		n = F_DEFAULT;
 	}else if (wcschr(pszFuncName, L'/') != NULL) {
-		// Plugin–¼
+		// Pluginå
 		n = GetPlugCmdInfoByName(pszFuncName);
 	}else if (WCODE::Is09(pszFuncName[0]) 
 	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
@@ -817,11 +817,11 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌToolbarƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in]		bRead		true: “Ç‚İ‚İ / false: ‘‚«‚İ
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Toolbarã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in]		bRead		true: èª­ã¿è¾¼ã¿ / false: æ›¸ãè¾¼ã¿
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B“Ç‚İ‚İ‚Ì‰Šú‰»‚ğC³
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚èª­ã¿è¾¼ã¿æ™‚ã®åˆæœŸåŒ–ã‚’ä¿®æ­£
 */
 void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer )
 {
@@ -845,17 +845,17 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 		auto_sprintf( szKeyName, LTEXT("nTBB[%03d]"), i );
 		// Plugin String Parametor
 		if( cProfile.IsReadingMode() ){
-			//“Ç‚İ‚İ
+			//èª­ã¿è¾¼ã¿
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szText) );
 			if (wcschr(szText, L'/') == NULL) {
-				// ”Ô†
+				// ç•ªå·
 				toolbar.m_nToolBarButtonIdxArr[i] = _wtoi( szText );
 			}
 			else {
 				// Plugin
 				eFunc = GetPlugCmdInfoByName( szText );
 				if ( eFunc == F_INVALID ) {
-					toolbar.m_nToolBarButtonIdxArr[i] = -1;		// –¢‰ğŒˆ
+					toolbar.m_nToolBarButtonIdxArr[i] = -1;		// æœªè§£æ±º
 				}
 				else {
 					toolbar.m_nToolBarButtonIdxArr[i] = pcMenuDrawer->FindToolbarNoFromCommandId( eFunc, false );
@@ -863,8 +863,8 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 			}
 		}
 		else {
-			//‘‚«‚İ
-			if (toolbar.m_nToolBarButtonIdxArr[i] <= MAX_TOOLBAR_ICON_COUNT + 1) {	// +1‚ÍƒZƒpƒŒ[ƒ^•ª
+			//æ›¸ãè¾¼ã¿
+			if (toolbar.m_nToolBarButtonIdxArr[i] <= MAX_TOOLBAR_ICON_COUNT + 1) {	// +1ã¯ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿åˆ†
 				cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );	
 			}
 			else {
@@ -882,7 +882,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 			}
 		}
 	}
-	//“Ç‚İ‚İ‚Íc‚è‚ğ‰Šú‰»
+	//èª­ã¿è¾¼ã¿æ™‚ã¯æ®‹ã‚Šã‚’åˆæœŸåŒ–
 	if( cProfile.IsReadingMode() ){
 		for(; i< MAX_TOOLBAR_BUTTON_ITEMS; ++i){
 			toolbar.m_nToolBarButtonIdxArr[i] = 0;
@@ -891,10 +891,10 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌCustMenuƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®CustMenuã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2010.08.21 Moca ‹ŒShareData_IO_CustMenu‚ğIO_CustMenu‚É•ÏX
+	@date 2010.08.21 Moca æ—§ShareData_IO_CustMenuã‚’IO_CustMenuã«å¤‰æ›´
 */
 void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile )
 {
@@ -902,12 +902,12 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile )
 }
 
 /*!
-	@brief CustMenu‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
-	@param[in,out]	menu	“üo—Í‘ÎÛ
-	@param	bOutCmdName	o—Í‚Éƒ}ƒNƒ–¼‚Åo—Í
+	@brief CustMenuã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
+	@param[in,out]	menu	å…¥å‡ºåŠ›å¯¾è±¡
+	@param	bOutCmdName	å‡ºåŠ›æ™‚ã«ãƒã‚¯ãƒ­åã§å‡ºåŠ›
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName)
 {
@@ -920,7 +920,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCMN[%02d]"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta Å‘å’·w’è
+		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta æœ€å¤§é•·æŒ‡å®š
 		auto_sprintf( szKeyName, LTEXT("bCMPOP[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_bCustMenuPopupArr[i] );
 		auto_sprintf( szKeyName, LTEXT("nCMIN[%02d]"), i );
@@ -928,7 +928,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemFuncArr[0]) );
 		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
-			// start ƒ}ƒNƒ–¼‚Å‚àİ’è‚Å‚«‚é‚æ‚¤‚É 2008/5/24 Uchi
+			// start ãƒã‚¯ãƒ­åã§ã‚‚è¨­å®šã§ãã‚‹ã‚ˆã†ã« 2008/5/24 Uchi
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
 			if (cProfile.IsReadingMode()) {
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
@@ -967,10 +967,10 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌFontƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Fontã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 {
@@ -985,7 +985,7 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌKeyBindƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®KeyBindã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
 */
 void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 {
@@ -994,14 +994,14 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 }
 
 /*!
-	@brief KeyBindƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
-	@param[in,out]	sKeyBind	ƒL[Š„‚è“–‚Äİ’è
+	@brief KeyBindã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
+	@param[in,out]	sKeyBind	ã‚­ãƒ¼å‰²ã‚Šå½“ã¦è¨­å®š
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
-	@date 2010.08.21 Moca ShareData_IO_KeyBind‚ğIO_KeyBind‚É–¼Ì•ÏX
-	@date 2012.11.20 aroka ˆø”‚ğ CommonSetting_KeyBind ‚É•ÏX
-	@date 2012.11.25 aroka ƒ}ƒEƒXƒR[ƒh‚ÌŒÅ’è‚Æd•¡”rœ
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
+	@date 2010.08.21 Moca ShareData_IO_KeyBindã‚’IO_KeyBindã«åç§°å¤‰æ›´
+	@date 2012.11.20 aroka å¼•æ•°ã‚’ CommonSetting_KeyBind ã«å¤‰æ›´
+	@date 2012.11.25 aroka ãƒã‚¦ã‚¹ã‚³ãƒ¼ãƒ‰ã®å›ºå®šã¨é‡è¤‡æ’é™¤
 */
 void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName)
 {
@@ -1012,16 +1012,16 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
-	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// ÅŒã‚Ì‚P—v‘f‚Íƒ_ƒ~[—p‚É—\–ñ 2012.11.25 aroka
-	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // g—pÏ‚İ—Ìˆæ
+	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// æœ€å¾Œã®ï¼‘è¦ç´ ã¯ãƒ€ãƒŸãƒ¼ç”¨ã«äºˆç´„ 2012.11.25 aroka
+	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // ä½¿ç”¨æ¸ˆã¿é ˜åŸŸ
 
 	if( cProfile.IsReadingMode() ){ 
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
 			bOldVer = true;
 		}
 		else {
-			// VƒXƒ^ƒCƒ‹‚ÌImport‚ÍŠ„‚è“–‚Ä•\ƒTƒCƒY‚¬‚è‚¬‚è‚Ü‚Å“Ç‚İ‚Ş
-			// ‹ŒƒXƒ^ƒCƒ‹‚Í‰Šú’l‚Æˆê’v‚µ‚È‚¢KeyName‚ÍÌ‚Ä‚é‚Ì‚Åƒf[ƒ^”‚É•Ï‰»‚È‚µ
+			// æ–°ã‚¹ã‚¿ã‚¤ãƒ«ã®Importã¯å‰²ã‚Šå½“ã¦è¡¨ã‚µã‚¤ã‚ºãã‚Šãã‚Šã¾ã§èª­ã¿è¾¼ã‚€
+			// æ—§ã‚¹ã‚¿ã‚¤ãƒ«ã¯åˆæœŸå€¤ã¨ä¸€è‡´ã—ãªã„KeyNameã¯æ¨ã¦ã‚‹ã®ã§ãƒ‡ãƒ¼ã‚¿æ•°ã«å¤‰åŒ–ãªã—
 			sKeyBind.m_nKeyNameArrNum = KEYNAME_SIZE;
 		}
 	}
@@ -1048,7 +1048,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
 				}
 			}
-			else {		// Vƒo[ƒWƒ‡ƒ“(ƒL[Š„‚è“–‚Ä‚ÌImport,export ‚Ì‡‚í‚¹‚½)	2008/5/25 Uchi
+			else {		// æ–°ãƒãƒ¼ã‚¸ãƒ§ãƒ³(ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã®Import,export ã®åˆã‚ã›ãŸ)	2008/5/25 Uchi
 				KEYDATA tmpKeydata;
 				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
 				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
@@ -1057,7 +1057,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					int		nRes;
 
 					p = szKeyData;
-					// keycodeæ“¾
+					// keycodeå–å¾—
 					int keycode;
 					pn = auto_strchr(p,',');
 					if (pn == NULL)	continue;
@@ -1067,11 +1067,11 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					tmpKeydata.m_nKeyCode = (short)keycode;
 					p = pn+1;
 
-					//Œã‚É‘±‚­ƒg[ƒNƒ“ 
+					//å¾Œã«ç¶šããƒˆãƒ¼ã‚¯ãƒ³ 
 					for (int j = 0; j < 8; j++) {
 						EFunctionCode n;
-						//‹@”\–¼‚ğ”’l‚É’u‚«Š·‚¦‚éB(”’l‚Ì‹@”\–¼‚à‚ ‚é‚©‚à)
-						//@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ğCSMacroMgr‚É“ˆê
+						//æ©Ÿèƒ½åã‚’æ•°å€¤ã«ç½®ãæ›ãˆã‚‹ã€‚(æ•°å€¤ã®æ©Ÿèƒ½åã‚‚ã‚ã‚‹ã‹ã‚‚)
+						//@@@ 2002.2.2 YAZAKI ãƒã‚¯ãƒ­ã‚’CSMacroMgrã«çµ±ä¸€
 						pn = auto_strchr(p,',');
 						if (pn == NULL)	break;
 						*pn = 0;
@@ -1083,8 +1083,8 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					auto_strncpy(tmpKeydata.m_szKeyName, to_tchar(p), _countof(tmpKeydata.m_szKeyName)-1);
 					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
 
-					if( tmpKeydata.m_nKeyCode <= 0 ){ // ƒ}ƒEƒXƒR[ƒh‚Íæ“ª‚ÉŒÅ’è‚³‚ê‚Ä‚¢‚é KeyCode‚ª“¯‚¶‚È‚Ì‚ÅKeyName‚Å”»•Ê
-						// 2013.10.23 syat ƒ}ƒEƒX‚ÌƒL[ƒR[ƒh‚ğŠg’£‰¼‘zƒL[ƒR[ƒh‚É•ÏXBˆÈ‰º‚ÍŒİŠ·«‚Ì‚½‚ßc‚·B
+					if( tmpKeydata.m_nKeyCode <= 0 ){ // ãƒã‚¦ã‚¹ã‚³ãƒ¼ãƒ‰ã¯å…ˆé ­ã«å›ºå®šã•ã‚Œã¦ã„ã‚‹ KeyCodeãŒåŒã˜ãªã®ã§KeyNameã§åˆ¤åˆ¥
+						// 2013.10.23 syat ãƒã‚¦ã‚¹ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’æ‹¡å¼µä»®æƒ³ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã«å¤‰æ›´ã€‚ä»¥ä¸‹ã¯äº’æ›æ€§ã®ãŸã‚æ®‹ã™ã€‚
 						for( int im=0; im< jpVKEXNamesLen; im++ ){
 							if( _tcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
 								_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName );
@@ -1093,12 +1093,12 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						}
 					}
 					else{
-						// Š„‚è“–‚ÄÏ‚İƒL[ƒR[ƒh‚Íã‘‚«
+						// å‰²ã‚Šå½“ã¦æ¸ˆã¿ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã¯ä¸Šæ›¸ã
 						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
 						if( idx != KEYNAME_SIZE ){
 							_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName );
 							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
-						}else{// –¢Š„‚è“–‚ÄƒL[ƒR[ƒh‚Í––”ö‚É’Ç‰Á
+						}else{// æœªå‰²ã‚Šå½“ã¦ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã¯æœ«å°¾ã«è¿½åŠ 
 							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
 							else{
 								_tcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
@@ -1122,7 +1122,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		//	);
 		//	cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 
-// start Vƒo[ƒWƒ‡ƒ“	2008/5/25 Uchi
+// start æ–°ãƒãƒ¼ã‚¸ãƒ§ãƒ³	2008/5/25 Uchi
 			KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 			auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
 			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
@@ -1135,8 +1135,8 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 				}
 				else {
 					if (bOutCmdName) {
-						//@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ğCSMacroMgr‚É“ˆê
-						// 2010.06.30 Moca “ú–{Œê–¼‚ğæ“¾‚µ‚È‚¢‚æ‚¤‚É
+						//@@@ 2002.2.2 YAZAKI ãƒã‚¯ãƒ­ã‚’CSMacroMgrã«çµ±ä¸€
+						// 2010.06.30 Moca æ—¥æœ¬èªåã‚’å–å¾—ã—ãªã„ã‚ˆã†ã«
 						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
 							0,
 							keydata.m_nFuncCodeArr[j],
@@ -1174,10 +1174,10 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌPrintƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Printã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 {
@@ -1247,14 +1247,14 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_szPrintFontFaceHan) );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFFZ")	, i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_szPrintFontFaceZen) );
-		// ƒwƒbƒ_/ƒtƒbƒ^
+		// ãƒ˜ãƒƒãƒ€/ãƒ•ãƒƒã‚¿
 		for( j = 0; j < 3; ++j ){
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szHF[%d]") , i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szHeaderForm[j]) );
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szFTF[%d]"), i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szFooterForm[j]) );
 		}
-		{ // ƒwƒbƒ_/ƒtƒbƒ^ ƒtƒHƒ“ƒgİ’è
+		{ // ãƒ˜ãƒƒãƒ€/ãƒ•ãƒƒã‚¿ ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
 			WCHAR	szKeyName2[64];
 			WCHAR	szKeyName3[64];
 			auto_sprintf( szKeyName,  LTEXT("PS[%02d].lfHeader"),			i );
@@ -1276,7 +1276,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szOutput"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_mdmDevMode.m_szPrinterOutputName) );
 
-		// 2002.02.16 hor ‚Æ‚è‚ ‚¦‚¸‹Œİ’è‚ğ•ÏŠ·‚µ‚Æ‚­
+		// 2002.02.16 hor ã¨ã‚Šã‚ãˆãšæ—§è¨­å®šã‚’å¤‰æ›ã—ã¨ã
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
@@ -1285,23 +1285,23 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 			auto_strcpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 
-		//‹Ö‘¥	//@@@ 2002.04.09 MIK
+		//ç¦å‰‡	//@@@ 2002.04.09 MIK
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuHead"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuHead );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuTail"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuTail );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuRet"),  i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuRet );	//@@@ 2002.04.13 MIK
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuKuto"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuKuto );	//@@@ 2002.04.17 MIK
 
-		//ƒJƒ‰[ˆóü
+		//ã‚«ãƒ©ãƒ¼å°åˆ·
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bColorPrint"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bColorPrint );	// 2013/4/26 Uchi
 	}
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌSTypeConfigƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®STypeConfigã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
-	@date 2010/04/17 Uchi ƒ‹[ƒv“à‚ğShareData_IO_Type_One‚É•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
+	@date 2010/04/17 Uchi ãƒ«ãƒ¼ãƒ—å†…ã‚’ShareData_IO_Type_Oneã«åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 {
@@ -1311,10 +1311,10 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	
 	int nCountOld = pShare->m_nTypesCount;
 	if( !cProfile.IOProfileData( L"Other", LTEXT("nTypesCount"), pShare->m_nTypesCount ) ){
-		pShare->m_nTypesCount = 30; // ‹Œƒo[ƒWƒ‡ƒ““Ç‚İ‚İ—p
+		pShare->m_nTypesCount = 30; // æ—§ãƒãƒ¼ã‚¸ãƒ§ãƒ³èª­ã¿è¾¼ã¿ç”¨
 	}
 	SetValueLimit( pShare->m_nTypesCount, 1, MAX_TYPES );
-	// ’FƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXê—p
+	// æ³¨ï¼šã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹å°‚ç”¨
 	std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
 	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
 		delete types[i];
@@ -1323,7 +1323,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	types.resize(pShare->m_nTypesCount);
 	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
 		types[i] = new STypeConfig();
-		*types[i] = *types[0]; // Šî–{‚ğƒRƒs[
+		*types[i] = *types[0]; // åŸºæœ¬ã‚’ã‚³ãƒ”ãƒ¼
 		auto_sprintf( types[i]->m_szTypeName, LS(STR_TRAY_TYPE_NAME), i );
 		types[i]->m_nIdx = i;
 		types[i]->m_id = i;
@@ -1345,7 +1345,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 		}
 	}
 	if( cProfile.IsReadingMode() ){
-		// Idd•¡ƒ`ƒFƒbƒNAXV
+		// Idé‡è¤‡ãƒã‚§ãƒƒã‚¯ã€æ›´æ–°
 		for( i = 0; i < pShare->m_nTypesCount - 1; i++ ){
 			STypeConfig& type = *(types[i]);
 			for( int k = i + 1; k < pShare->m_nTypesCount; k++ ){
@@ -1360,12 +1360,12 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 }
 
 /*!
-@brief ‹¤—Lƒf[ƒ^‚ÌSTypeConfigƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í(‚PŒÂ•ª)
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
-	@param[in]		type		ƒ^ƒCƒv•Ê
-	@param[in]		pszSecName	ƒZƒNƒVƒ‡ƒ“–¼
+@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®STypeConfigã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›(ï¼‘å€‹åˆ†)
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
+	@param[in]		type		ã‚¿ã‚¤ãƒ—åˆ¥
+	@param[in]		pszSecName	ã‚»ã‚¯ã‚·ãƒ§ãƒ³å
 
-	@date 2010/04/17 Uchi ShareData_IO_TypesOne‚©‚ç•ª—£B
+	@date 2010/04/17 Uchi ShareData_IO_TypesOneã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName)
 {
@@ -1394,7 +1394,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			types.m_nCurrentPrintSetting	= buf[10];
 			types.m_nTsvMode				= buf[11];
 		}
-		// Ü‚è•Ô‚µ•‚ÌÅ¬’l‚Í10B­‚È‚­‚Æ‚à‚S‚È‚¢‚Æƒnƒ“ƒOƒAƒbƒv‚·‚éB // 20050818 aroka
+		// æŠ˜ã‚Šè¿”ã—å¹…ã®æœ€å°å€¤ã¯10ã€‚å°‘ãªãã¨ã‚‚ï¼”ãªã„ã¨ãƒãƒ³ã‚°ã‚¢ãƒƒãƒ—ã™ã‚‹ã€‚ // 20050818 aroka
 		if( types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS) ){
 			types.m_nMaxLineKetas = CKetaXInt(MINLINEKETAS);
 		}
@@ -1429,7 +1429,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("nKeywordSelect9"),  types.m_nKeyWordSetIdx[8] );
 	cProfile.IOProfileData( pszSecName, LTEXT("nKeywordSelect10"), types.m_nKeyWordSetIdx[9] );
 
-	/* sŠÔ‚Ì‚·‚«‚Ü */
+	/* è¡Œé–“ã®ã™ãã¾ */
 	cProfile.IOProfileData( pszSecName, LTEXT("nLineSpace"), types.m_nLineSpace );
 	if( cProfile.IsReadingMode() ){
 		if( types.m_nLineSpace < -LINESPACE_MAX ){
@@ -1440,7 +1440,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		}
 	}
 
-	/* s”Ô†‚ÌÅ¬Œ…” */	// ‰Á’Ç 2014.08.02 katze
+	/* è¡Œç•ªå·ã®æœ€å°æ¡æ•° */	// åŠ è¿½ 2014.08.02 katze
 	cProfile.IOProfileData( pszSecName, LTEXT("nLineNumWidth"), types.m_nLineNumWidth );
 	if( cProfile.IsReadingMode() ){
 		if( types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
@@ -1470,8 +1470,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	if( cProfile.IsReadingMode() ){
 		//	Block Comment
 		wchar_t buffer[2][ BLOCKCOMMENT_BUFFERSIZE ];
-		//	2004.10.02 Moca ‘Î‚É‚È‚éƒRƒƒ“ƒgİ’è‚ª‚Æ‚à‚É“Ç‚İ‚Ü‚ê‚½‚Æ‚«‚¾‚¯—LŒø‚Èİ’è‚ÆŒ©‚È‚·D
-		//	ƒuƒƒbƒNƒRƒƒ“ƒg‚Ìn‚Ü‚è‚ÆI‚í‚èDsƒRƒƒ“ƒg‚Ì‹L†‚ÆŒ…ˆÊ’u
+		//	2004.10.02 Moca å¯¾ã«ãªã‚‹ã‚³ãƒ¡ãƒ³ãƒˆè¨­å®šãŒã¨ã‚‚ã«èª­ã¿è¾¼ã¾ã‚ŒãŸã¨ãã ã‘æœ‰åŠ¹ãªè¨­å®šã¨è¦‹ãªã™ï¼
+		//	ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆã®å§‹ã¾ã‚Šã¨çµ‚ã‚ã‚Šï¼è¡Œã‚³ãƒ¡ãƒ³ãƒˆã®è¨˜å·ã¨æ¡ä½ç½®
 		bool bRet1, bRet2;
 		buffer[0][0] = buffer[1][0] = L'\0';
 		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom"), MakeStringBufferW(buffer[0]) );			
@@ -1499,8 +1499,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 1, lbuf, pos );
 
 		lbuf[0] = L'\0'; pos = -1;
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szLineComment3")		, MakeStringBufferW(lbuf) );	//Jun. 01, 2001 JEPRO ’Ç‰Á
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO ’Ç‰Á
+		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szLineComment3")		, MakeStringBufferW(lbuf) );	//Jun. 01, 2001 JEPRO è¿½åŠ 
+		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO è¿½åŠ 
 		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 2, lbuf, pos );
 	}
 	else { // write
@@ -1522,7 +1522,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		cProfile.IOProfileData( pszSecName, LTEXT("szLineComment2")		,
 			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(1))) );
 		cProfile.IOProfileData( pszSecName, LTEXT("szLineComment3")		,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(2))) );	//Jun. 01, 2001 JEPRO ’Ç‰Á
+			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(2))) );	//Jun. 01, 2001 JEPRO è¿½åŠ 
 
 		//	From here May 12, 2001 genta
 		int pos;
@@ -1531,7 +1531,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		pos = types.m_cLineComment.getLineCommentPos( 1 );
 		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn2"), pos );
 		pos = types.m_cLineComment.getLineCommentPos( 2 );
-		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO ’Ç‰Á
+		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO è¿½åŠ 
 		//	To here May 12, 2001 genta
 
 	}
@@ -1540,8 +1540,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
 	cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
 
-	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockDisp")			, types.m_bOutlineDockDisp );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•\¦‚Ì—L–³ */
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOutlineDockSide")	, types.m_eOutlineDockSide );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒhƒbƒLƒ“ƒO”z’u */
+	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockDisp")			, types.m_bOutlineDockDisp );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æè¡¨ç¤ºã®æœ‰ç„¡ */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOutlineDockSide")	, types.m_eOutlineDockSide );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æãƒ‰ãƒƒã‚­ãƒ³ã‚°é…ç½® */
 	{
 		const WCHAR* pszKeyName = LTEXT("xyOutlineDock");
 		const WCHAR* pszForm = LTEXT("%d,%d,%d,%d");
@@ -1567,30 +1567,30 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
 		}
 	}
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDockOutline")	, 	types.m_nDockOutline );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ‹[ƒ‹ƒtƒ@ƒCƒ‹ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortCol")		, types.m_nOutlineSortCol );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ\[ƒg—ñ”Ô† */
-	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineSortDesc")		, types.m_bOutlineSortDesc );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ\[ƒg~‡ */
-	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortType")		, types.m_nOutlineSortType );/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ\[ƒgŠî€ */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDockOutline")	, 	types.m_nDockOutline );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ« */
+	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortCol")		, types.m_nOutlineSortCol );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã‚½ãƒ¼ãƒˆåˆ—ç•ªå· */
+	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineSortDesc")		, types.m_bOutlineSortDesc );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã‚½ãƒ¼ãƒˆé™é † */
+	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortType")		, types.m_nOutlineSortType );/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã‚½ãƒ¼ãƒˆåŸºæº– */
 	ShareData_IO_FileTree( cProfile, types.m_sFileTree, pszSecName );
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒgí•Ê */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆç¨®åˆ¥ */
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppStringIgnore")		, types.m_bIndentCppStringIgnore );
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppCommentIgnore")	, types.m_bIndentCppCommentIgnore );
 	cProfile.IOProfileData( pszSecName, LTEXT("bIndentCppUndoSep")	, types.m_bIndentCppUndoSep );
 	//	Nov. 20, 2000 genta
-	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME§Œä
+	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IMEåˆ¶å¾¡
 
-	//	2001/06/14 Start By asa-o: ƒ^ƒCƒv•Ê‚Ì•âŠ®ƒtƒ@ƒCƒ‹
-	//	Oct. 5, 2002 genta _countof()‚ÅŒë‚Á‚Äƒ|ƒCƒ“ƒ^‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ä‚¢‚½‚Ì‚ğC³
-	cProfile.IOProfileData( pszSecName, LTEXT("szHokanFile")		, types.m_szHokanFile );		//	•âŠ®ƒtƒ@ƒCƒ‹
+	//	2001/06/14 Start By asa-o: ã‚¿ã‚¤ãƒ—åˆ¥ã®è£œå®Œãƒ•ã‚¡ã‚¤ãƒ«
+	//	Oct. 5, 2002 genta _countof()ã§èª¤ã£ã¦ãƒã‚¤ãƒ³ã‚¿ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¦ã„ãŸã®ã‚’ä¿®æ­£
+	cProfile.IOProfileData( pszSecName, LTEXT("szHokanFile")		, types.m_szHokanFile );		//	è£œå®Œãƒ•ã‚¡ã‚¤ãƒ«
 	//	2001/06/14 End
-	cProfile.IOProfileData( pszSecName, LTEXT("nHokanType")			, types.m_nHokanType );		//	•âŠ®í•Ê
+	cProfile.IOProfileData( pszSecName, LTEXT("nHokanType")			, types.m_nHokanType );		//	è£œå®Œç¨®åˆ¥
 
 	//	2001/06/19 asa-o
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanLoHiCase")		, types.m_bHokanLoHiCase );
 
-	//	2003.06.23 Moca ƒtƒ@ƒCƒ‹“à‚©‚ç‚Ì“ü—Í•âŠ®‹@”\
+	//	2003.06.23 Moca ãƒ•ã‚¡ã‚¤ãƒ«å†…ã‹ã‚‰ã®å…¥åŠ›è£œå®Œæ©Ÿèƒ½
 	cProfile.IOProfileData( pszSecName, LTEXT("bUseHokanByFile")		, types.m_bUseHokanByFile );
 	cProfile.IOProfileData( pszSecName, LTEXT("bUseHokanByKeyword")		, types.m_bUseHokanByKeyword );
 
@@ -1610,10 +1610,10 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("bRTrimPrevLine")			, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("nIndentLayout")			, types.m_nIndentLayout );
 
-	/* Fİ’è I/O */
+	/* è‰²è¨­å®š I/O */
 	IO_ColorSet( &cProfile, pszSecName, types.m_ColorInfoArr  );
 
-	// 2010.09.17 ”wŒi‰æ‘œ
+	// 2010.09.17 èƒŒæ™¯ç”»åƒ
 	cProfile.IOProfileData( pszSecName, L"bgImgPath", types.m_szBackImgPath );
 	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPos", types.m_backImgPos );
 	cProfile.IOProfileData( pszSecName, L"bgImgScrollX",   types.m_backImgScrollX );
@@ -1623,7 +1623,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetX",  types.m_backImgPosOffset.x );
 	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetY",  types.m_backImgPosOffset.y );
 
-	// 2005.11.08 Moca w’èŒ…cü
+	// 2005.11.08 Moca æŒ‡å®šæ¡ç¸¦ç·š
 	for(j = 0; j < MAX_VERTLINES; j++ ){
 		auto_sprintf( szKeyName, LTEXT("nVertLineIdx%d"), j + 1 );
 		cProfile.IOProfileData( pszSecName, szKeyName, types.m_nVertLineIdx[j] );
@@ -1634,9 +1634,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, L"nNoteLineOffset", types.m_nNoteLineOffset );
 
 //@@@ 2001.11.17 add start MIK
-	{	//³‹K•\Œ»ƒL[ƒ[ƒh
+	{	//æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 		WCHAR	*p;
-		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* ³‹K•\Œ»ƒL[ƒ[ƒhg—p‚·‚é‚©H */
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ä½¿ç”¨ã™ã‚‹ã‹ï¼Ÿ */
 		wchar_t* pKeyword = types.m_RegexKeywordList;
 		int nPos = 0;
 		int nKeywordSize = _countof(types.m_RegexKeywordList);
@@ -1653,7 +1653,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					{
 						*p = LTEXT('\0');
 						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(to_tchar(szKeyData));	//@@@ 2002.04.30
-						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//–¼‘O‚Å‚È‚¢
+						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//åå‰ã§ãªã„
 							types.m_RegexKeywordArr[j].m_nColorIndex = _wtoi(szKeyData);
 						p++;
 						if( 0 < nKeywordSize - nPos - 1 ){
@@ -1669,11 +1669,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 						}
 					}
 				}else{
-					// 2010.06.18 Moca ’l‚ª‚È‚¢ê‡‚ÍI—¹
+					// 2010.06.18 Moca å€¤ãŒãªã„å ´åˆã¯çµ‚äº†
 					break;
 				}
 			}
-			// 2002.02.08 hor –¢’è‹`’l‚ğ–³‹
+			// 2002.02.08 hor æœªå®šç¾©å€¤ã‚’ç„¡è¦–
 			else if(pKeyword[nPos])
 			{
 				auto_sprintf( szKeyData, LTEXT("%ls,%ls"),
@@ -1689,7 +1689,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	}
 //@@@ 2001.11.17 add end MIK
 
-	/* ‹Ö‘¥ */
+	/* ç¦å‰‡ */
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuHead")	, types.m_bKinsokuHead );
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuTail")	, types.m_bKinsokuTail );
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuRet")	, types.m_bKinsokuRet );	//@@@ 2002.04.13 MIK
@@ -1698,20 +1698,20 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuHead")	, MakeStringBufferW(types.m_szKinsokuHead) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuTail")	, MakeStringBufferW(types.m_szKinsokuTail) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuKuto")	, MakeStringBufferW(types.m_szKinsokuKuto) );	// 2009.08.07 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("bUseDocumentIcon")	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta •Ï”–¼Œë‚èC³
+	cProfile.IOProfileData( pszSecName, LTEXT("bUseDocumentIcon")	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta å¤‰æ•°åèª¤ã‚Šä¿®æ­£
 
 //@@@ 2006.04.10 fon ADD-start
-	{	/* ƒL[ƒ[ƒh«‘ */
+	{	/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¾æ›¸ */
 		WCHAR	*pH, *pT;	/* <pH>keyword<pT> */
-		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyWordHelp"), types.m_bUseKeyWordHelp );	/* ƒL[ƒ[ƒh«‘‘I‘ğ‚ğg—p‚·‚é‚©H */
-//		cProfile.IOProfileData( pszSecName, LTEXT("nKeyHelpNum"), types.m_nKeyHelpNum );				/* “o˜^«‘” */
-		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpAllSearch"), types.m_bUseKeyHelpAllSearch );	/* ƒqƒbƒg‚µ‚½Ÿ‚Ì«‘‚àŒŸõ(&A) */
-		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpKeyDisp"), types.m_bUseKeyHelpKeyDisp );		/* 1s–Ú‚ÉƒL[ƒ[ƒh‚à•\¦‚·‚é(&W) */
-		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpPrefix"), types.m_bUseKeyHelpPrefix );		/* ‘I‘ğ”ÍˆÍ‚Å‘O•ûˆê’vŒŸõ(&P) */
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyWordHelp"), types.m_bUseKeyWordHelp );	/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¾æ›¸é¸æŠã‚’ä½¿ç”¨ã™ã‚‹ã‹ï¼Ÿ */
+//		cProfile.IOProfileData( pszSecName, LTEXT("nKeyHelpNum"), types.m_nKeyHelpNum );				/* ç™»éŒ²è¾æ›¸æ•° */
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpAllSearch"), types.m_bUseKeyHelpAllSearch );	/* ãƒ’ãƒƒãƒˆã—ãŸæ¬¡ã®è¾æ›¸ã‚‚æ¤œç´¢(&A) */
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpKeyDisp"), types.m_bUseKeyHelpKeyDisp );		/* 1è¡Œç›®ã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚‚è¡¨ç¤ºã™ã‚‹(&W) */
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseKeyHelpPrefix"), types.m_bUseKeyHelpPrefix );		/* é¸æŠç¯„å›²ã§å‰æ–¹ä¸€è‡´æ¤œç´¢(&P) */
 		cProfile.IOProfileData_WrapInt(pszSecName, LTEXT("nKeyHelpRMenuShowType"), types.m_eKeyHelpRMenuShowType);
 		for(j = 0; j < MAX_KEYHELP_FILE; j++){
 			auto_sprintf( szKeyName, LTEXT("KDct[%02d]"), j );
-			/* “Ç‚İo‚µ */
+			/* èª­ã¿å‡ºã— */
 			if( cProfile.IsReadingMode() ){
 				types.m_KeyHelpArr[j].m_bUse = false;
 				types.m_KeyHelpArr[j].m_szAbout[0] = _T('\0');
@@ -1728,12 +1728,12 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							pH = pT+1;
 							if( L'\0' != (*pH) ){
 								_wcstotcs( types.m_KeyHelpArr[j].m_szPath, pH, _countof2(types.m_KeyHelpArr[j].m_szPath) );
-								types.m_nKeyHelpNum = j+1;	// ini‚É•Û‘¶‚¹‚¸‚ÉA“Ç‚İo‚¹‚½ƒtƒ@ƒCƒ‹•ª‚ğ«‘”‚Æ‚·‚é
+								types.m_nKeyHelpNum = j+1;	// iniã«ä¿å­˜ã›ãšã«ã€èª­ã¿å‡ºã›ãŸãƒ•ã‚¡ã‚¤ãƒ«åˆ†ã‚’è¾æ›¸æ•°ã¨ã™ã‚‹
 							}
 						}
 					}
 				}
-			}/* ‘‚«‚İ */
+			}/* æ›¸ãè¾¼ã¿ */
 			else{
 				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
 					auto_sprintf( szKeyData, LTEXT("%d,%ts,%ts"),
@@ -1745,7 +1745,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				}
 			}
 		}
-		/* ‹Œƒo[ƒWƒ‡ƒ“iniƒtƒ@ƒCƒ‹‚Ì“Ç‚İo‚µƒTƒ|[ƒg */
+		/* æ—§ãƒãƒ¼ã‚¸ãƒ§ãƒ³iniãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿å‡ºã—ã‚µãƒãƒ¼ãƒˆ */
 		if( cProfile.IsReadingMode() ){
 			SFilePath tmp;
 			if(cProfile.IOProfileData( pszSecName, LTEXT("szKeyWordHelpFile"), tmp )){
@@ -1755,10 +1755,10 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	}
 //@@@ 2006.04.10 fon ADD-end
 
-	// •Û‘¶‚É‰üsƒR[ƒh‚Ì¬İ‚ğŒx‚·‚é	2013/4/14 Uchi
+	// ä¿å­˜æ™‚ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®æ··åœ¨ã‚’è­¦å‘Šã™ã‚‹	2013/4/14 Uchi
 	cProfile.IOProfileData( pszSecName, LTEXT("bChkEnterAtEnd")	, types.m_bChkEnterAtEnd );
 
-	{ // ƒtƒHƒ“ƒgİ’è
+	{ // ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseTypeFont"), types.m_bUseTypeFont );
 		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lf", L"nPointSize", L"lfFaceName",
 			types.m_lf, types.m_nPointSize );
@@ -1766,11 +1766,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌKeyWordsƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in]		bRead		true: “Ç‚İ‚İ / false: ‘‚«‚İ
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®KeyWordsã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in]		bRead		true: èª­ã¿è¾¼ã¿ / false: æ›¸ãè¾¼ã¿
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 {
@@ -1786,15 +1786,15 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("nCurrentKeyWordSetIdx")	, pCKeyWordSetMgr->m_nCurrentKeyWordSetIdx );
 	bool bIOSuccess = cProfile.IOProfileData( pszSecName, LTEXT("nKeyWordSetNum"), nKeyWordSetNum );
 	if( cProfile.IsReadingMode() ){
-		// nKeyWordSetNum ‚ª“Ç‚İ‚ß‚Ä‚¢‚ê‚ÎA‚·‚×‚Ä‚Ìî•ñ‚ª‚»‚ë‚Á‚Ä‚¢‚é‚Æ‰¼’è‚µ‚Äˆ—‚ği‚ß‚é
+		// nKeyWordSetNum ãŒèª­ã¿è¾¼ã‚ã¦ã„ã‚Œã°ã€ã™ã¹ã¦ã®æƒ…å ±ãŒãã‚ã£ã¦ã„ã‚‹ã¨ä»®å®šã—ã¦å‡¦ç†ã‚’é€²ã‚ã‚‹
 		if( bIOSuccess ){
-			// 2004.11.25 Moca ƒL[ƒ[ƒhƒZƒbƒg‚Ìî•ñ‚ÍA’¼Ú‘‚«Š·‚¦‚È‚¢‚ÅŠÖ”‚ğ—˜—p‚·‚é
-			// ‰Šúİ’è‚³‚ê‚Ä‚¢‚é‚½‚ßAæ‚Éíœ‚µ‚È‚¢‚ÆŒÅ’èƒƒ‚ƒŠ‚ÌŠm•Û‚É¸”s‚·‚é‰Â”\«‚ª‚ ‚é
+			// 2004.11.25 Moca ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®æƒ…å ±ã¯ã€ç›´æ¥æ›¸ãæ›ãˆãªã„ã§é–¢æ•°ã‚’åˆ©ç”¨ã™ã‚‹
+			// åˆæœŸè¨­å®šã•ã‚Œã¦ã„ã‚‹ãŸã‚ã€å…ˆã«å‰Šé™¤ã—ãªã„ã¨å›ºå®šãƒ¡ãƒ¢ãƒªã®ç¢ºä¿ã«å¤±æ•—ã™ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
 			for( i = 0; i < nKeyWordSetNum; ++i ){
 				bool bKEYWORDCASE = false;
 				int nKeyWordNum = 0;
-				//’l‚Ìæ“¾
+				//å€¤ã®å–å¾—
 				auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 				auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
@@ -1802,10 +1802,10 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 				auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
 				cProfile.IOProfileData( pszSecName, szKeyName, nKeyWordNum );
 
-				//’Ç‰Á
+				//è¿½åŠ 
 				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, bKEYWORDCASE, nKeyWordNum );
 				auto_sprintf( szKeyName, LTEXT("szKW[%02d]"), i );
-				std::wstring sValue;	// wstring ‚Ì‚Ü‚Üó‚¯‚éiŒÃ‚¢ ini ƒtƒ@ƒCƒ‹‚ÌƒL[ƒ[ƒh‚Í’†g‚ª NULL •¶š‹æØ‚è‚È‚Ì‚Å StringBufferW ‚Å‚Í NG ‚¾‚Á‚½j
+				std::wstring sValue;	// wstring ã®ã¾ã¾å—ã‘ã‚‹ï¼ˆå¤ã„ ini ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯ä¸­èº«ãŒ NULL æ–‡å­—åŒºåˆ‡ã‚Šãªã®ã§ StringBufferW ã§ã¯ NG ã ã£ãŸï¼‰
 				if( cProfile.IOProfileData( pszSecName, szKeyName, sValue ) ){
 					pCKeyWordSetMgr->SetKeyWordArr( i, nKeyWordNum, sValue.c_str() );
 				}
@@ -1829,10 +1829,10 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			nMemLen ++;
 			auto_sprintf( szKeyName, LTEXT("szKW[%02d].Size"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
-			wchar_t* pszMem = new wchar_t[nMemLen + 1];	//	May 25, 2003 genta ‹æØ‚è‚ğTAB‚É•ÏX‚µ‚½‚Ì‚ÅCÅŒã‚Ì\0‚Ì•ª‚ğ’Ç‰Á
+			wchar_t* pszMem = new wchar_t[nMemLen + 1];	//	May 25, 2003 genta åŒºåˆ‡ã‚Šã‚’TABã«å¤‰æ›´ã—ãŸã®ã§ï¼Œæœ€å¾Œã®\0ã®åˆ†ã‚’è¿½åŠ 
 			wchar_t* pMem = pszMem;
 			for( j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
-				//	May 25, 2003 genta ‹æØ‚è‚ğTAB‚É•ÏX
+				//	May 25, 2003 genta åŒºåˆ‡ã‚Šã‚’TABã«å¤‰æ›´
 				int kwlen = wcslen( pCKeyWordSetMgr->GetKeyWord( i, j ) );
 				auto_memcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
 				pMem += kwlen;
@@ -1847,10 +1847,10 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌMacroƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Macroã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 {
@@ -1861,8 +1861,8 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 	for( i = 0; i < MAX_CUSTMACRO; ++i ){
 		MacroRec& macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
-		//	Oct. 4, 2001 genta ‚ ‚Ü‚èˆÓ–¡‚ª‚È‚³‚»‚¤‚È‚Ì‚ÅíœF3s
-		// 2002.02.08 hor –¢’è‹`’l‚ğ–³‹
+		//	Oct. 4, 2001 genta ã‚ã¾ã‚Šæ„å‘³ãŒãªã•ãã†ãªã®ã§å‰Šé™¤ï¼š3è¡Œ
+		// 2002.02.08 hor æœªå®šç¾©å€¤ã‚’ç„¡è¦–
 		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == _T('\0') && macrorec.m_szFile[0] == _T('\0') ) continue;
 		auto_sprintf( szKeyName, LTEXT("Name[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(macrorec.m_szName) );
@@ -1871,15 +1871,15 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("ReloadWhenExecute[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
-	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnOpened"), pShare->m_Common.m_sMacro.m_nMacroOnOpened );	/* ƒI[ƒvƒ“Œã©“®Àsƒ}ƒNƒ”Ô† */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnTypeChanged"), pShare->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* ƒ^ƒCƒv•ÏXŒã©“®Àsƒ}ƒNƒ”Ô† */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnSave"), pShare->m_Common.m_sMacro.m_nMacroOnSave );	/* •Û‘¶‘O©“®Àsƒ}ƒNƒ”Ô† */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, LTEXT("nMacroCancelTimer"), pShare->m_Common.m_sMacro.m_nMacroCancelTimer );	// ƒ}ƒNƒ’â~ƒ_ƒCƒAƒƒO•\¦‘Ò‚¿ŠÔ	// 2011.08.04 syat
+	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnOpened"), pShare->m_Common.m_sMacro.m_nMacroOnOpened );	/* ã‚ªãƒ¼ãƒ—ãƒ³å¾Œè‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå· */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnTypeChanged"), pShare->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* ã‚¿ã‚¤ãƒ—å¤‰æ›´å¾Œè‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå· */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("nMacroOnSave"), pShare->m_Common.m_sMacro.m_nMacroOnSave );	/* ä¿å­˜å‰è‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå· */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, LTEXT("nMacroCancelTimer"), pShare->m_Common.m_sMacro.m_nMacroCancelTimer );	// ãƒã‚¯ãƒ­åœæ­¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤ºå¾…ã¡æ™‚é–“	// 2011.08.04 syat
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌStatusbarƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Statusbarã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
 	@date 2008/6/21 Uchi
 */
@@ -1888,19 +1888,19 @@ void CShareData_IO::ShareData_IO_Statusbar( CDataProfile& cProfile )
 	const WCHAR* pszSecName = LTEXT("Statusbar");
 	CommonSetting_Statusbar& statusbar = GetDllShareData().m_Common.m_sStatusbar;
 
-	// •\¦•¶šƒR[ƒh‚Ìw’è
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInSjis")			, statusbar.m_bDispUniInSjis);		// SJIS‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInJis")			, statusbar.m_bDispUniInJis);		// JIS‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInEuc")			, statusbar.m_bDispUniInEuc);		// EUC‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Codepoint")			, statusbar.m_bDispUtf8Codepoint);	// UTF-8‚ğƒR[ƒhƒ|ƒCƒ“ƒg‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// ƒTƒƒQ[ƒgƒyƒA‚ğƒR[ƒhƒ|ƒCƒ“ƒg‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispSelectCountByByte")		, statusbar.m_bDispSelCountByByte);	// ‘I‘ğ•¶š”‚ğ•¶š’PˆÊ‚Å‚Í‚È‚­ƒoƒCƒg’PˆÊ‚Å•\¦‚·‚é
-	cProfile.IOProfileData( pszSecName, LTEXT("DispColByChar")				, statusbar.m_bDispColByChar);		// Œ»İŒ…‚ğƒ‹[ƒ‰[’PˆÊ‚Å‚Í‚È‚­•¶š’PˆÊ‚Å•\¦‚·‚é
+	// è¡¨ç¤ºæ–‡å­—ã‚³ãƒ¼ãƒ‰ã®æŒ‡å®š
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInSjis")			, statusbar.m_bDispUniInSjis);		// SJISã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInJis")			, statusbar.m_bDispUniInJis);		// JISã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUnicodeInEuc")			, statusbar.m_bDispUniInEuc);		// EUCã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Codepoint")			, statusbar.m_bDispUtf8Codepoint);	// UTF-8ã‚’ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ã‚’ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispSelectCountByByte")		, statusbar.m_bDispSelCountByByte);	// é¸æŠæ–‡å­—æ•°ã‚’æ–‡å­—å˜ä½ã§ã¯ãªããƒã‚¤ãƒˆå˜ä½ã§è¡¨ç¤ºã™ã‚‹
+	cProfile.IOProfileData( pszSecName, LTEXT("DispColByChar")				, statusbar.m_bDispColByChar);		// ç¾åœ¨æ¡ã‚’ãƒ«ãƒ¼ãƒ©ãƒ¼å˜ä½ã§ã¯ãªãæ–‡å­—å˜ä½ã§è¡¨ç¤ºã™ã‚‹
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌPluginƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Pluginã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
 	@date 2009/11/30 syat
 */
@@ -1910,16 +1910,16 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 	CommonSetting& common = GetDllShareData().m_Common;
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 
-	cProfile.IOProfileData( pszSecName, LTEXT("EnablePlugin"), plugin.m_bEnablePlugin);		// ƒvƒ‰ƒOƒCƒ“‚ğg—p‚·‚é
+	cProfile.IOProfileData( pszSecName, LTEXT("EnablePlugin"), plugin.m_bEnablePlugin);		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’ä½¿ç”¨ã™ã‚‹
 
-	//ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«
 	int		i;
 	int		j;
 	WCHAR	szKeyName[64];
 	for( i = 0; i < MAX_PLUGIN; ++i ){
 		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
 
-		// 2010.08.04 Moca ‘‚«‚İ’¼‘O‚Éíœƒtƒ‰ƒO‚Åíœˆµ‚¢‚É‚·‚é
+		// 2010.08.04 Moca æ›¸ãè¾¼ã¿ç›´å‰ã«å‰Šé™¤ãƒ•ãƒ©ã‚°ã§å‰Šé™¤æ‰±ã„ã«ã™ã‚‹
 		if( pluginrec.m_state == PLS_DELETED ){
 			pluginrec.m_szName[0] = L'\0';
 			pluginrec.m_szId[0] = L'\0';
@@ -1931,7 +1931,7 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 		auto_sprintf( szKeyName, LTEXT("P[%02d].CmdNum"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pluginrec.m_nCmdNum );	// 2010/7/4 Uchi
 		pluginrec.m_state = ( pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED );
-		// Command ‰¼İ’è	// 2010/7/4 Uchi
+		// Command ä»®è¨­å®š	// 2010/7/4 Uchi
 		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum >0) {
 			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
 				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT, CPlug::GetPluginFunctionCode(i, j) );
@@ -1954,10 +1954,10 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 {
 	IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
 
-	// 2015.02.26 Moca ƒƒCƒ“ƒƒjƒ…[©“®XV
+	// 2015.02.26 Moca ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼è‡ªå‹•æ›´æ–°
 	const WCHAR*	pszSecName = LTEXT("MainMenu");
 	int& nVersion = GetDllShareData().m_Common.m_sMainMenu.m_nVersion;
-	// ¦ƒƒjƒ…[’è‹`‚ğ’Ç‰Á‚µ‚½‚çnCurrentVer‚ğC³
+	// â€»ãƒ¡ãƒ‹ãƒ¥ãƒ¼å®šç¾©ã‚’è¿½åŠ ã—ãŸã‚‰nCurrentVerã‚’ä¿®æ­£
 	const int nCurrentVer = 2;
 	nVersion = nCurrentVer;
 	if( cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuVer"), nVersion) ){
@@ -1965,38 +1965,38 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 		if( cProfile.IsReadingMode() ){
 			int menuNum;
 			if( cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), menuNum) ){
-				// ƒƒCƒ“ƒƒjƒ…[‚ª’è‹`‚³‚ê‚Ä‚¢‚½
-				nVersion = 0; // ‹Œ’è‹`‚ÍVer0
+				// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãŒå®šç¾©ã•ã‚Œã¦ã„ãŸ
+				nVersion = 0; // æ—§å®šç¾©ã¯Ver0
 			}else{
-				// ƒƒCƒ“ƒƒjƒ…[‚·‚ç‚È‚¢ŒÃ‚¢ƒo[ƒWƒ‡ƒ“‚©‚ç‚ÌƒAƒbƒvƒf[ƒg‚Å‚ÍAÅVƒƒjƒ…[‚É‚È‚é‚Ì‚ÅƒpƒX
+				// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã™ã‚‰ãªã„å¤ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‹ã‚‰ã®ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆã§ã¯ã€æœ€æ–°ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ãªã‚‹ã®ã§ãƒ‘ã‚¹
 			}
 		}
 	}
 	if( cProfile.IsReadingMode() && nVersion < nCurrentVer ){
 		CommonSetting_MainMenu& mainmenu = GetDllShareData().m_Common.m_sMainMenu;
 		SMainMenuAddItemInfo addInfos[] = {
-			{1, F_FILENEW_NEWWINDOW, F_FILENEW, L'M', false, false},	// V‚µ‚¢ƒEƒCƒ“ƒhƒE‚ğŠJ‚­
-			{1, F_CHG_CHARSET, F_TOGGLE_KEY_SEARCH, L'A', false, false},	// •¶šƒR[ƒh•ÏX
-			{1, F_CHG_CHARSET, F_VIEWMODE, L'A', false, false}, 	// •¶šƒR[ƒh•ÏX(Sub)
-			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN_EUC, L'L', false, false}, 	// Latin1‚ÅŠJ‚«’¼‚·
-			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN, L'L', false, false}, 	// Latin1‚ÅŠJ‚«’¼‚·(Sub)
-			{1, F_COPY_COLOR_HTML, F_COPYLINESWITHLINENUMBER, L'C', false, false}, 	// ‘I‘ğ”ÍˆÍ“àF•t‚«HTMLƒRƒs[
-			{1, F_COPY_COLOR_HTML_LINENUMBER, F_COPY_COLOR_HTML, L'F', false, false}, 	// ‘I‘ğ”ÍˆÍ“às”Ô†F•t‚«HTMLƒRƒs[
-			// ‹éŒ`‘I‘ğ—Ş‚ÍÈ—ª...
-			{1, F_GREP_REPLACE_DLG, F_GREP_DIALOG, L'\0', false, false}, 	// Grep’uŠ·
-			{1, F_FILETREE, F_OUTLINE, L'E', false, false}, 	// ƒtƒ@ƒCƒ‹ƒcƒŠ[•\¦
-			{1, F_FILETREE, F_OUTLINE_TOGGLE, L'E', false, false}, 	// ƒtƒ@ƒCƒ‹ƒcƒŠ[•\¦(Sub)
-			{1, F_SHOWMINIMAP, F_SHOWSTATUSBAR, L'N', false, false}, 	// ƒ~ƒjƒ}ƒbƒv•\¦
-			{1, F_SHOWMINIMAP, F_SHOWTAB, L'N', false, false}, 	// ƒ~ƒjƒ}ƒbƒv•\¦(Sub)
-			{1, F_SHOWMINIMAP, F_SHOWFUNCKEY, L'N', false, false}, 	// ƒ~ƒjƒ}ƒbƒv•\¦(Sub)
-			{1, F_SHOWMINIMAP, F_SHOWTOOLBAR, L'N', false, false}, 	// ƒ~ƒjƒ}ƒbƒv•\¦(Sub)
-			{1, F_FUNCLIST_NEXT, F_JUMPHIST_SET, L'\0', true, false}, 	// Ÿ‚ÌŠÖ”ƒŠƒXƒgƒ}[ƒN(ƒZƒpƒŒ[ƒ^’Ç‰Á)
-			{1, F_FUNCLIST_PREV, F_FUNCLIST_NEXT, L'\0', false, false}, 	// ‘O‚ÌŠÖ”ƒŠƒXƒgƒ}[ƒN
-			{1, F_MODIFYLINE_NEXT, F_FUNCLIST_PREV, L'\0', false, false}, 	// Ÿ‚Ì•ÏXs‚Ö
-			{1, F_MODIFYLINE_PREV, F_MODIFYLINE_NEXT, L'\0', false, false}, 	// ‘O‚Ì•ÏXs‚Ö
-			{1, F_MODIFYLINE_NEXT_SEL, F_GOFILEEND_SEL, L'\0', true, false}, 	// (‘I‘ğ)Ÿ‚Ì•ÏXs‚Ö
-			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, 	// (‘I‘ğ)‘O‚Ì•ÏXs‚Ö
-			{2, F_DLGWINLIST, F_WIN_OUTPUT, L'D', false, false}, 	// ƒEƒCƒ“ƒhƒEˆê——•\¦
+			{1, F_FILENEW_NEWWINDOW, F_FILENEW, L'M', false, false},	// æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
+			{1, F_CHG_CHARSET, F_TOGGLE_KEY_SEARCH, L'A', false, false},	// æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›´
+			{1, F_CHG_CHARSET, F_VIEWMODE, L'A', false, false}, 	// æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›´(Sub)
+			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN_EUC, L'L', false, false}, 	// Latin1ã§é–‹ãç›´ã™
+			{1, F_FILE_REOPEN_LATIN1, F_FILE_REOPEN, L'L', false, false}, 	// Latin1ã§é–‹ãç›´ã™(Sub)
+			{1, F_COPY_COLOR_HTML, F_COPYLINESWITHLINENUMBER, L'C', false, false}, 	// é¸æŠç¯„å›²å†…è‰²ä»˜ãHTMLã‚³ãƒ”ãƒ¼
+			{1, F_COPY_COLOR_HTML_LINENUMBER, F_COPY_COLOR_HTML, L'F', false, false}, 	// é¸æŠç¯„å›²å†…è¡Œç•ªå·è‰²ä»˜ãHTMLã‚³ãƒ”ãƒ¼
+			// çŸ©å½¢é¸æŠé¡ã¯çœç•¥...
+			{1, F_GREP_REPLACE_DLG, F_GREP_DIALOG, L'\0', false, false}, 	// Grepç½®æ›
+			{1, F_FILETREE, F_OUTLINE, L'E', false, false}, 	// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¡¨ç¤º
+			{1, F_FILETREE, F_OUTLINE_TOGGLE, L'E', false, false}, 	// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¡¨ç¤º(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWSTATUSBAR, L'N', false, false}, 	// ãƒŸãƒ‹ãƒãƒƒãƒ—è¡¨ç¤º
+			{1, F_SHOWMINIMAP, F_SHOWTAB, L'N', false, false}, 	// ãƒŸãƒ‹ãƒãƒƒãƒ—è¡¨ç¤º(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWFUNCKEY, L'N', false, false}, 	// ãƒŸãƒ‹ãƒãƒƒãƒ—è¡¨ç¤º(Sub)
+			{1, F_SHOWMINIMAP, F_SHOWTOOLBAR, L'N', false, false}, 	// ãƒŸãƒ‹ãƒãƒƒãƒ—è¡¨ç¤º(Sub)
+			{1, F_FUNCLIST_NEXT, F_JUMPHIST_SET, L'\0', true, false}, 	// æ¬¡ã®é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯(ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿è¿½åŠ )
+			{1, F_FUNCLIST_PREV, F_FUNCLIST_NEXT, L'\0', false, false}, 	// å‰ã®é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯
+			{1, F_MODIFYLINE_NEXT, F_FUNCLIST_PREV, L'\0', false, false}, 	// æ¬¡ã®å¤‰æ›´è¡Œã¸
+			{1, F_MODIFYLINE_PREV, F_MODIFYLINE_NEXT, L'\0', false, false}, 	// å‰ã®å¤‰æ›´è¡Œã¸
+			{1, F_MODIFYLINE_NEXT_SEL, F_GOFILEEND_SEL, L'\0', true, false}, 	// (é¸æŠ)æ¬¡ã®å¤‰æ›´è¡Œã¸
+			{1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, 	// (é¸æŠ)å‰ã®å¤‰æ›´è¡Œã¸
+			{2, F_DLGWINLIST, F_WIN_OUTPUT, L'D', false, false}, 	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ä¸€è¦§è¡¨ç¤º
 		};
 		for( int i = 0; i < _countof(addInfos); i++ ){
 			SMainMenuAddItemInfo& item = addInfos[i];
@@ -2018,10 +2018,10 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 				nAddSep++;
 			}
 			if( k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < _countof(mainmenu.m_cMainMenuTbl) ){
-				// ƒƒjƒ…[“à‚É‚Ü‚¾’Ç‰Á‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å’Ç‰Á‚·‚é
+				// ãƒ¡ãƒ‹ãƒ¥ãƒ¼å†…ã«ã¾ã è¿½åŠ ã•ã‚Œã¦ã„ãªã„ã®ã§è¿½åŠ ã™ã‚‹
 				for( int r = 0; r < mainmenu.m_nMainMenuNum; r++ ){
 					if( pcMenuTlb[r].m_nFunc == item.m_nPrevFuncCode && 0 < pcMenuTlb[r].m_nLevel ){
-						// ’Ç‰Á•ªŒã‚ë‚É‚¸‚ç‚·
+						// è¿½åŠ åˆ†å¾Œã‚ã«ãšã‚‰ã™
 						for( int n = mainmenu.m_nMainMenuNum - 1; r < n; n-- ){
 							pcMenuTlb[n + 1 + nAddSep] = pcMenuTlb[n];
 						}
@@ -2069,13 +2069,13 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌMainMenuƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
-	@param[in,out]	mainmenu	‹¤’Êİ’èMainMenuƒNƒ‰ƒX
-	@param[in]		bOutCmdName	o—ÍA–¼‘O‚Åo—Í
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®MainMenuã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
+	@param[in,out]	mainmenu	å…±é€šè¨­å®šMainMenuã‚¯ãƒ©ã‚¹
+	@param[in]		bOutCmdName	å‡ºåŠ›æ™‚ã€åå‰ã§å‡ºåŠ›
 
 	@date 2010/5/15 Uchi
-	@date 2014.11.21 Moca pData’Ç‰ÁBƒf[ƒ^‚Ì‚İ‚Ìƒ^ƒCƒv‚ğ’Ç‰Á
+	@date 2014.11.21 Moca pDataè¿½åŠ ã€‚ãƒ‡ãƒ¼ã‚¿ã®ã¿ã®ã‚¿ã‚¤ãƒ—ã‚’è¿½åŠ 
 */
 void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData, CommonSetting_MainMenu& mainmenu, bool bOutCmdName)
 {
@@ -2115,18 +2115,18 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 	}
 
 	if (cProfile.IsReadingMode()) {
-		// Top Level ‰Šú‰»
+		// Top Level åˆæœŸåŒ–
 		memset( mainmenu.m_nMenuTopIdx, -1, sizeof(mainmenu.m_nMenuTopIdx) );
 	}
 
 	nIdx = 0;
 	for (int i = 0; i < mainmenu.m_nMainMenuNum; i++) {
-		//ƒƒCƒ“ƒƒjƒ…[ƒe[ƒuƒ‹
+		//ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ†ãƒ¼ãƒ–ãƒ«
 		pcMenu = &mainmenu.m_cMainMenuTbl[i];
 
 		auto_sprintf( szKeyName, LTEXT("MM[%03d]"), i );
 		if (cProfile.IsReadingMode()) {
-			// “Ç‚İ‚İ‰Šú‰»
+			// èª­ã¿è¾¼ã¿æ™‚åˆæœŸåŒ–
 			pcMenu->m_nType    = T_NODE;
 			pcMenu->m_nFunc    = F_INVALID;
 			pcMenu->m_nLevel   = 0;
@@ -2134,14 +2134,14 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			pcMenu->m_sKey[0]  = L'\0';
 			pcMenu->m_sKey[1]  = L'\0';
 
-			// “Ç‚İo‚µ
+			// èª­ã¿å‡ºã—
 			if( pData ){
 				wcscpy(szLine, data[dataNum++].c_str());
 			}else{
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
 			}
 
-			// ƒŒƒxƒ‹
+			// ãƒ¬ãƒ™ãƒ«
 			p = szLine;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
@@ -2150,7 +2150,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 				continue;
 			}
 
-			// í—Ş
+			// ç¨®é¡
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
@@ -2159,7 +2159,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 				continue;
 			}
 			
-			// ‹@”\(ƒ}ƒNƒ–¼‘Î‰)
+			// æ©Ÿèƒ½(ãƒã‚¯ãƒ­åå¯¾å¿œ)
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
@@ -2169,10 +2169,10 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 				continue;
 			}
 
-			// ƒAƒNƒZƒXƒL[
+			// ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼
 			p = pn;
 			if ( *p == L',' ) {
-				// Key ‚È‚µ or ,
+				// Key ãªã— or ,
 				if ( p[1] == L',') {
 					// Key = ,
 					pcMenu->m_sKey[0]  = *p++;
@@ -2185,7 +2185,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 				continue;
 			}
 
-			// •\¦–¼
+			// è¡¨ç¤ºå
 			p++;
 			auto_strcpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
 		}
@@ -2195,7 +2195,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			}
 			else {
 				if (bOutCmdName) {
-					// ƒ}ƒNƒ–¼‘Î‰
+					// ãƒã‚¯ãƒ­åå¯¾å¿œ
 					p = CSMacroMgr::GetFuncInfoByID(
 						G_AppInstance(),
 						pcMenu->m_nFunc,
@@ -2207,8 +2207,8 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 					auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
 				}
 			}
-			// ‘‚«‚İ
-			// ƒ‰ƒxƒ‹•ÒWŒã‚Ìƒm[ƒh‚Íƒm[ƒh–¼‚ğo—Í‚·‚é 2012.10.14 syat Še‘Œê‘Î‰
+			// æ›¸ãè¾¼ã¿
+			// ãƒ©ãƒ™ãƒ«ç·¨é›†å¾Œã®ãƒãƒ¼ãƒ‰ã¯ãƒãƒ¼ãƒ‰åã‚’å‡ºåŠ›ã™ã‚‹ 2012.10.14 syat å„å›½èªå¯¾å¿œ
 			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 
 				pcMenu->m_nLevel, 
 				pcMenu->m_nType, 
@@ -2219,7 +2219,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 		}
 
 		if (cProfile.IsReadingMode() && pcMenu->m_nLevel == 0) {
-			// Top Levelİ’è
+			// Top Levelè¨­å®š
 			if (nIdx < MAX_MAINMENU_TOP) {
 				mainmenu.m_nMenuTopIdx[nIdx++] = i;
 			}
@@ -2228,36 +2228,36 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 }
 
 /*!
-	@brief ‹¤—Lƒf[ƒ^‚ÌOtherƒZƒNƒVƒ‡ƒ“‚Ì“üo—Í
-	@param[in,out]	cProfile	INIƒtƒ@ƒCƒ‹“üo—ÍƒNƒ‰ƒX
+	@brief å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®Otherã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å…¥å‡ºåŠ›
+	@param[in,out]	cProfile	INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›ã‚¯ãƒ©ã‚¹
 
-	@date 2005-04-07 D.S.Koba ShareData_IO_2‚©‚ç•ª—£B
+	@date 2005-04-07 D.S.Koba ShareData_IO_2ã‹ã‚‰åˆ†é›¢ã€‚
 */
 void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
-	const WCHAR* pszSecName = LTEXT("Other");	//ƒZƒNƒVƒ‡ƒ“‚ğ1ŒÂì¬‚µ‚½B2003.05.12 MIK
+	const WCHAR* pszSecName = LTEXT("Other");	//ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’1å€‹ä½œæˆã—ãŸã€‚2003.05.12 MIK
 	int		i;	
 	WCHAR	szKeyName[64];
 
-	/* **** ‚»‚Ì‘¼‚Ìƒ_ƒCƒAƒƒO **** */
-	/* ŠO•”ƒRƒ}ƒ“ƒhÀs‚Ìu•W€o—Í‚ğ“¾‚év */
-	if(!cProfile.IOProfileData( pszSecName, LTEXT("nExecFlgOpt")	, pShare->m_nExecFlgOpt ) ){ //	2006.12.03 maru ƒIƒvƒVƒ‡ƒ“Šg’£
+	/* **** ãã®ä»–ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚° **** */
+	/* å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œã®ã€Œæ¨™æº–å‡ºåŠ›ã‚’å¾—ã‚‹ã€ */
+	if(!cProfile.IOProfileData( pszSecName, LTEXT("nExecFlgOpt")	, pShare->m_nExecFlgOpt ) ){ //	2006.12.03 maru ã‚ªãƒ—ã‚·ãƒ§ãƒ³æ‹¡å¼µ
 		cProfile.IOProfileData( pszSecName, LTEXT("bGetStdout")		, pShare->m_nExecFlgOpt );
 	}
 
-	/* w’ès‚ÖƒWƒƒƒ“ƒv‚Ìu‰üs’PˆÊ‚Ìs”Ô†v‚©uÜ‚è•Ô‚µ’PˆÊ‚Ìs”Ô†v‚© */
+	/* æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ã®ã€Œæ”¹è¡Œå˜ä½ã®è¡Œç•ªå·ã€ã‹ã€ŒæŠ˜ã‚Šè¿”ã—å˜ä½ã®è¡Œç•ªå·ã€ã‹ */
 	cProfile.IOProfileData( pszSecName, LTEXT("bLineNumIsCRLF")	, pShare->m_bLineNumIsCRLF_ForJump );
 	
-	/* DIFF·•ª•\¦ */	//@@@ 2002.05.27 MIK
+	/* DIFFå·®åˆ†è¡¨ç¤º */	//@@@ 2002.05.27 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("nDiffFlgOpt")	, pShare->m_nDiffFlgOpt );
 	
 	/* CTAGS */	//@@@ 2003.05.12 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("nTagsOpt")		, pShare->m_nTagsOpt );
 	cProfile.IOProfileData( pszSecName, LTEXT("szTagsCmdLine")	, MakeStringBufferT(pShare->m_szTagsCmdLine) );
 	
-	//From Here 2005.04.03 MIK ƒL[ƒ[ƒhw’èƒ^ƒOƒWƒƒƒ“ƒv
+	//From Here 2005.04.03 MIK ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
 	cProfile.IOProfileData( pszSecName, LTEXT("_TagJumpKeyword_Counts"), pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
 	pShare->m_sHistory.m_aCommands.SetSizeLimit();
 	int nSize = pShare->m_sTagJump.m_aTagJumpKeywords.size();
@@ -2270,9 +2270,9 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bTagJumpICase")		, pShare->m_sTagJump.m_bTagJumpICase );
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bTagJumpAnyWhere")		, pShare->m_sTagJump.m_bTagJumpAnyWhere );
-	//From Here 2005.04.03 MIK ƒL[ƒ[ƒhw’èƒ^ƒOƒWƒƒƒ“ƒv‚Ì
+	//From Here 2005.04.03 MIK ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã®
 
-	//	MIK ƒo[ƒWƒ‡ƒ“î•ñi‘‚«‚İ‚Ì‚İj
+	//	MIK ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ï¼ˆæ›¸ãè¾¼ã¿ã®ã¿ï¼‰
 	if( ! cProfile.IsReadingMode() ){
 		TCHAR	iniVer[256];
 		auto_sprintf( iniVer, _T("%d.%d.%d.%d"), 
@@ -2282,7 +2282,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 					LOWORD( pShare->m_sVersion.m_dwProductVersionLS ) );
 		cProfile.IOProfileData( pszSecName, LTEXT("szVersion"), MakeStringBufferT(iniVer) );
 
-		// ‹¤—Lƒƒ‚ƒŠƒo[ƒWƒ‡ƒ“	2010/5/20 Uchi
+		// å…±æœ‰ãƒ¡ãƒ¢ãƒªãƒãƒ¼ã‚¸ãƒ§ãƒ³	2010/5/20 Uchi
 		int		nStructureVersion;
 		nStructureVersion = int(pShare->m_vStructureVersion);
 		cProfile.IOProfileData( pszSecName, LTEXT("vStructureVersion"), nStructureVersion );
@@ -2291,14 +2291,14 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 }
 
 /*!
-	@brief Fİ’è I/O
+	@brief è‰²è¨­å®š I/O
 
-	w’è‚³‚ê‚½Fİ’è‚ğw’è‚³‚ê‚½ƒZƒNƒVƒ‡ƒ“‚É‘‚«‚ŞB‚Ü‚½‚Í
-	w’è‚³‚ê‚½ƒZƒNƒVƒ‡ƒ“‚©‚ç‚¢‚ëİ’è‚ğ“Ç‚İ‚ŞB
+	æŒ‡å®šã•ã‚ŒãŸè‰²è¨­å®šã‚’æŒ‡å®šã•ã‚ŒãŸã‚»ã‚¯ã‚·ãƒ§ãƒ³ã«æ›¸ãè¾¼ã‚€ã€‚ã¾ãŸã¯
+	æŒ‡å®šã•ã‚ŒãŸã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‹ã‚‰ã„ã‚è¨­å®šã‚’èª­ã¿è¾¼ã‚€ã€‚
 
-	@param[in,out]	pcProfile		‘‚«o‚µA“Ç‚İ‚İæProfile object (“üo—Í•ûŒü‚ÍbRead‚ÉˆË‘¶)
-	@param[in]		pszSecName		ƒZƒNƒVƒ‡ƒ“–¼
-	@param[in,out]	pColorInfoArr	‘‚«o‚µA“Ç‚İ‚İ‘ÎÛ‚ÌFİ’è‚Ö‚Ìƒ|ƒCƒ“ƒ^ (“üo—Í•ûŒü‚ÍbRead‚ÉˆË‘¶)
+	@param[in,out]	pcProfile		æ›¸ãå‡ºã—ã€èª­ã¿è¾¼ã¿å…ˆProfile object (å…¥å‡ºåŠ›æ–¹å‘ã¯bReadã«ä¾å­˜)
+	@param[in]		pszSecName		ã‚»ã‚¯ã‚·ãƒ§ãƒ³å
+	@param[in,out]	pColorInfoArr	æ›¸ãå‡ºã—ã€èª­ã¿è¾¼ã¿å¯¾è±¡ã®è‰²è¨­å®šã¸ã®ãƒã‚¤ãƒ³ã‚¿ (å…¥å‡ºåŠ›æ–¹å‘ã¯bReadã«ä¾å­˜)
 */
 void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr )
 {
@@ -2320,13 +2320,13 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 			}
 			else{
 				// 2006.12.07 ryoji
-				// sakura Ver1.5.13.1 ˆÈ‘O‚Ìiniƒtƒ@ƒCƒ‹‚ğ“Ç‚ñ‚¾‚Æ‚«‚ÉƒLƒƒƒŒƒbƒg‚ªƒeƒLƒXƒg”wŒiF‚Æ“¯‚¶‚É‚È‚é‚Æ
-				// ‚¿‚å‚Á‚Æ¢‚é‚Ì‚ÅƒLƒƒƒŒƒbƒgF‚ª“Ç‚ß‚È‚¢‚Æ‚«‚ÍƒLƒƒƒŒƒbƒgF‚ğƒeƒLƒXƒgF‚Æ“¯‚¶‚É‚·‚é
+				// sakura Ver1.5.13.1 ä»¥å‰ã®iniãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã‚“ã ã¨ãã«ã‚­ãƒ£ãƒ¬ãƒƒãƒˆãŒãƒ†ã‚­ã‚¹ãƒˆèƒŒæ™¯è‰²ã¨åŒã˜ã«ãªã‚‹ã¨
+				// ã¡ã‚‡ã£ã¨å›°ã‚‹ã®ã§ã‚­ãƒ£ãƒ¬ãƒƒãƒˆè‰²ãŒèª­ã‚ãªã„ã¨ãã¯ã‚­ãƒ£ãƒ¬ãƒƒãƒˆè‰²ã‚’ãƒ†ã‚­ã‚¹ãƒˆè‰²ã¨åŒã˜ã«ã™ã‚‹
 				if( COLORIDX_CARET == j )
 					pColorInfoArr[j].m_sColorAttr.m_cTEXT = pColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 			}
 			// 2006.12.18 ryoji
-			// –µ‚İ’è‚ª‚ ‚ê‚ÎC•œ‚·‚é
+			// çŸ›ç›¾è¨­å®šãŒã‚ã‚Œã°ä¿®å¾©ã™ã‚‹
 			unsigned int fAttribute = g_ColorAttributeArr[j].fAttribute;
 			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
 				pColorInfoArr[j].m_bDisp = true;
@@ -2351,7 +2351,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize )
@@ -2378,12 +2378,12 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 			lf.lfQuality		= (BYTE)buf[11];
 			lf.lfPitchAndFamily	= (BYTE)buf[12];
 			if( nPointSize != 0 ){
-				// DPI•ÏX‚µ‚Ä‚àƒtƒHƒ“ƒg‚Ìƒ|ƒCƒ“ƒgƒTƒCƒY‚ª•Ï‚í‚ç‚È‚¢‚æ‚¤‚É
-				// ƒ|ƒCƒ“ƒg”‚©‚çƒsƒNƒZƒ‹”‚É•ÏŠ·‚·‚é
-				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ƒ|ƒCƒ“ƒg’PˆÊ‚ÌƒTƒCƒY
+				// DPIå¤‰æ›´ã—ã¦ã‚‚ãƒ•ã‚©ãƒ³ãƒˆã®ãƒã‚¤ãƒ³ãƒˆã‚µã‚¤ã‚ºãŒå¤‰ã‚ã‚‰ãªã„ã‚ˆã†ã«
+				// ãƒã‚¤ãƒ³ãƒˆæ•°ã‹ã‚‰ãƒ”ã‚¯ã‚»ãƒ«æ•°ã«å¤‰æ›ã™ã‚‹
+				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ãƒã‚¤ãƒ³ãƒˆå˜ä½ã®ã‚µã‚¤ã‚º
 			}else{
-				// ‰‰ñ‚Ü‚½‚ÍŒÃ‚¢ƒo[ƒWƒ‡ƒ“‚©‚ç‚ÌXV‚Íƒ|ƒCƒ“ƒg”‚ğƒsƒNƒZƒ‹”‚©‚ç‹tZ‚µ‚Ä‰¼İ’è
-				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight), 10 );		// i]—ˆƒtƒHƒ“ƒgƒ_ƒCƒAƒƒO‚Å¬”“_‚Íw’è•s‰Âj
+				// åˆå›ã¾ãŸã¯å¤ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‹ã‚‰ã®æ›´æ–°æ™‚ã¯ãƒã‚¤ãƒ³ãƒˆæ•°ã‚’ãƒ”ã‚¯ã‚»ãƒ«æ•°ã‹ã‚‰é€†ç®—ã—ã¦ä»®è¨­å®š
+				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight), 10 );		// ï¼ˆå¾“æ¥ãƒ•ã‚©ãƒ³ãƒˆãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã§å°æ•°ç‚¹ã¯æŒ‡å®šä¸å¯ï¼‰
 			}
 		}
 	}else{
