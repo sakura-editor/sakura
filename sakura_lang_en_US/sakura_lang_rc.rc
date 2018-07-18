@@ -1,6 +1,8 @@
 //Microsoft Developer Studio generated resource script.
 
-// このファイルのエンコーディングは UTF-8 です.
+// このファイルのエンコーディングは UTF-8 (BOM無し) です.
+// ※ BOM を付けると Visual Studio のリソースエディタで開けなくなってしまう.
+
 // CodePage: 65001 (UTF-8)
 #pragma code_page(65001)
 
