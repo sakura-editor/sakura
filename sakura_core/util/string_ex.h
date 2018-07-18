@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,52 +25,52 @@
 #define SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_
 
 // 2007.10.19 kobake
-// string.h ‚Å’è‹`‚³‚ê‚Ä‚¢‚éŠÖ”‚ğŠg’£‚µ‚½‚æ‚¤‚Èƒ‚ƒm’B
+// string.h ã§å®šç¾©ã•ã‚Œã¦ã„ã‚‹é–¢æ•°ã‚’æ‹¡å¼µã—ãŸã‚ˆã†ãªãƒ¢ãƒé”
 
 
 /*
-	++ ++ –½–¼Ql(‹K‘¥‚Å‚Í–³‚¢) ++ ++
+	++ ++ å‘½åå‚è€ƒ(è¦å‰‡ã§ã¯ç„¡ã„) ++ ++
 
-	•W€ŠÖ”‚©‚çˆø—p
-	`_s:  ƒoƒbƒtƒ@ƒI[ƒo[ƒtƒ[l—¶”Å (—á: strcpy_s)
-	`i`: ‘å•¶š¬•¶š‹æ•Ê–³‚µ”Å       (—á: stricmp)
+	æ¨™æº–é–¢æ•°ã‹ã‚‰å¼•ç”¨
+	ï½_s:  ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼è€ƒæ…®ç‰ˆ (ä¾‹: strcpy_s)
+	ï½iï½: å¤§æ–‡å­—å°æ–‡å­—åŒºåˆ¥ç„¡ã—ç‰ˆ       (ä¾‹: stricmp)
 
-	“Æ©
-	auto_`:  ˆø”‚ÌŒ^‚É‚æ‚èA©“®‚Åˆ—‚ªŒˆ’è‚³‚ê‚é”Å (—á: auto_strcpy)
+	ç‹¬è‡ª
+	auto_ï½:  å¼•æ•°ã®å‹ã«ã‚ˆã‚Šã€è‡ªå‹•ã§å‡¦ç†ãŒæ±ºå®šã•ã‚Œã‚‹ç‰ˆ (ä¾‹: auto_strcpy)
 */
 
 #include "util/tchar_printf.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒƒ‚ƒŠ                             //
+//                          ãƒ¡ãƒ¢ãƒª                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-// •¶š—ñƒRƒs[‚â•¶š—ñ”äŠr‚ÌÛ‚ÉAmemŒnŠÖ”‚ªg‚í‚ê‚Ä‚¢‚é‰ÓŠ‚ª‘½X‚ ‚è‚Ü‚·‚ªA
-// memŒnŠÖ”‚Ívoidƒ|ƒCƒ“ƒ^‚ğó‚¯æ‚èAŒ^ƒ`ƒFƒbƒN‚ªs‚í‚ê‚È‚¢‚Ì‚ÅŠëŒ¯‚Å‚·B
-// ‚±‚±‚ÉAŒ^ƒ`ƒFƒbƒN•t‚«‚ÌmemŒnŒİŠ·‚ÌŠÖ”‚ğì¬‚µ‚Ü‚µ‚½Bc‚Æ‘‚¢‚½‚¯‚ÇAÀÛ‚Ìƒvƒƒgƒ^ƒCƒv‚Í‚à‚Á‚Æ‰º‚Ì‚Ù‚¤‚ÉBB(auto_mem`)
-// (¦‘ÎÛ‚ªƒƒ‚ƒŠ‚È‚Ì‚ÅA‚»‚à‚»‚à•¶š‚Æ‚¢‚¤ŠT”O‚Í–³‚¢‚ªA
-//    •Ö‹XãAACHARŒn‚Å‚Í1ƒoƒCƒg’PˆÊ‚ğAWCHARŒn‚Å‚Í2ƒoƒCƒg’PˆÊ‚ğA
-//    •¶š‚Æ‚İ‚È‚µ‚Äˆ—‚ğs‚¤A‚Æ‚¢‚¤‚±‚Æ‚Å)
+// æ–‡å­—åˆ—ã‚³ãƒ”ãƒ¼ã‚„æ–‡å­—åˆ—æ¯”è¼ƒã®éš›ã«ã€memç³»é–¢æ•°ãŒä½¿ã‚ã‚Œã¦ã„ã‚‹ç®‡æ‰€ãŒå¤šã€…ã‚ã‚Šã¾ã™ãŒã€
+// memç³»é–¢æ•°ã¯voidãƒã‚¤ãƒ³ã‚¿ã‚’å—ã‘å–ã‚Šã€å‹ãƒã‚§ãƒƒã‚¯ãŒè¡Œã‚ã‚Œãªã„ã®ã§å±é™ºã§ã™ã€‚
+// ã“ã“ã«ã€å‹ãƒã‚§ãƒƒã‚¯ä»˜ãã®memç³»äº’æ›ã®é–¢æ•°ã‚’ä½œæˆã—ã¾ã—ãŸã€‚â€¦ã¨æ›¸ã„ãŸã‘ã©ã€å®Ÿéš›ã®ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—ã¯ã‚‚ã£ã¨ä¸‹ã®ã»ã†ã«ã€‚ã€‚(auto_memï½)
+// (â€»å¯¾è±¡ãŒãƒ¡ãƒ¢ãƒªãªã®ã§ã€ãã‚‚ãã‚‚æ–‡å­—ã¨ã„ã†æ¦‚å¿µã¯ç„¡ã„ãŒã€
+//    ä¾¿å®œä¸Šã€ACHARç³»ã§ã¯1ãƒã‚¤ãƒˆå˜ä½ã‚’ã€WCHARç³»ã§ã¯2ãƒã‚¤ãƒˆå˜ä½ã‚’ã€
+//    æ–‡å­—ã¨ã¿ãªã—ã¦å‡¦ç†ã‚’è¡Œã†ã€ã¨ã„ã†ã“ã¨ã§)
 
-//ƒƒ‚ƒŠ”äŠr
+//ãƒ¡ãƒ¢ãƒªæ¯”è¼ƒ
 inline int amemcmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::memcmp(p1,p2,count); }
 
-//‘å•¶š¬•¶š‚ğ‹æ•Ê‚¹‚¸‚Éƒƒ‚ƒŠ”äŠr
+//å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã›ãšã«ãƒ¡ãƒ¢ãƒªæ¯”è¼ƒ
 inline int amemicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::memicmp(p1,p2,count); }
        int wmemicmp(const WCHAR* p1, const WCHAR* p2, size_t count);
        int wmemicmp(const WCHAR* p1, const WCHAR* p2 );
        int wmemicmp_ascii(const WCHAR* p1, const WCHAR* p2, size_t count);
 
-//Œ³‚ÌŠÖ”‚Æ“¯‚¶ƒVƒOƒjƒ`ƒƒ”ÅB
-//•¶š—ñˆÈŠO‚Ìƒƒ‚ƒŠˆ—‚Åmem`ŒnŠÖ”‚ğg‚¤ê–Ê‚Å‚ÍA‚±‚ÌŠÖ”‚ğg‚Á‚Ä‚¨‚­‚ÆAˆÓ–¡‡‚¢‚ª‚Í‚Á‚«‚è‚µ‚Ä—Ç‚¢B
+//å…ƒã®é–¢æ•°ã¨åŒã˜ã‚·ã‚°ãƒ‹ãƒãƒ£ç‰ˆã€‚
+//æ–‡å­—åˆ—ä»¥å¤–ã®ãƒ¡ãƒ¢ãƒªå‡¦ç†ã§memï½ç³»é–¢æ•°ã‚’ä½¿ã†å ´é¢ã§ã¯ã€ã“ã®é–¢æ•°ã‚’ä½¿ã£ã¦ãŠãã¨ã€æ„å‘³åˆã„ãŒã¯ã£ãã‚Šã—ã¦è‰¯ã„ã€‚
 inline void* memset_raw(void* dest, int c, size_t size){ return ::memset(dest,c,size); }
 inline void* memcpy_raw(void* dest, const void* src, size_t size){ return ::memcpy(dest,src,size); }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           •¶š                              //
+//                           æ–‡å­—                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//•¶š•ÏŠ·
+//æ–‡å­—å¤‰æ›
 inline int my_toupper( int c ){ return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - 'a' + 'A') : (c); }
 inline int my_tolower( int c ){ return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
 inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
@@ -88,16 +88,16 @@ int skr_towlower( int c );
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           Šg’£E“Æ©À‘•                    //
+//                           æ‹¡å¼µãƒ»ç‹¬è‡ªå®Ÿè£…                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//•¶š”‚ÌãŒÀ•t‚«ƒRƒs[
-LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength); //iMaxLength‚Í•¶š’PˆÊB
+//æ–‡å­—æ•°ã®ä¸Šé™ä»˜ãã‚³ãƒ”ãƒ¼
+LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength); //iMaxLengthã¯æ–‡å­—å˜ä½ã€‚
 
 //	Apr. 03, 2003 genta
 char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count);
 
-//‘å•¶š¬•¶š‚ğ‹æ•Ê‚¹‚¸‚É•¶š—ñ‚ğŒŸõ
+//å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã›ãšã«æ–‡å­—åˆ—ã‚’æ¤œç´¢
 const WCHAR* wcsistr( const WCHAR* s1, const WCHAR* s2 );
 const ACHAR* stristr( const ACHAR* s1, const ACHAR* s2 );
 inline WCHAR* wcsistr( WCHAR* s1, const WCHAR* s2 ){ return const_cast<WCHAR*>(wcsistr(static_cast<const WCHAR*>(s1),s2)); }
@@ -108,11 +108,11 @@ inline ACHAR* stristr( ACHAR* s1, const ACHAR* s2 ){ return const_cast<ACHAR*>(s
 #define _tcsistr stristr
 #endif
 
-//‘å•¶š¬•¶š‚ğ‹æ•Ê‚¹‚¸‚É•¶š—ñ‚ğŒŸõi“ú–{Œê‘Î‰”Åj
-const char* strchr_j(const char* s1, char c);				//!< strchr ‚Ì“ú–{Œê‘Î‰”ÅB
-const char* strichr_j( const char* s1, char c );			//!< strchr ‚Ì‘å•¶š¬•¶š“¯ˆê‹•“ú–{Œê‘Î‰”ÅB
-const char* strstr_j(const char* s1, const char* s2);		//!< strstr ‚Ì“ú–{Œê‘Î‰”ÅB
-const char* stristr_j( const char* s1, const char* s2 );	//!< strstr ‚Ì‘å•¶š¬•¶š“¯ˆê‹•“ú–{Œê‘Î‰”ÅB
+//å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã›ãšã«æ–‡å­—åˆ—ã‚’æ¤œç´¢ï¼ˆæ—¥æœ¬èªå¯¾å¿œç‰ˆï¼‰
+const char* strchr_j(const char* s1, char c);				//!< strchr ã®æ—¥æœ¬èªå¯¾å¿œç‰ˆã€‚
+const char* strichr_j( const char* s1, char c );			//!< strchr ã®å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–ï¼†æ—¥æœ¬èªå¯¾å¿œç‰ˆã€‚
+const char* strstr_j(const char* s1, const char* s2);		//!< strstr ã®æ—¥æœ¬èªå¯¾å¿œç‰ˆã€‚
+const char* stristr_j( const char* s1, const char* s2 );	//!< strstr ã®å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–ï¼†æ—¥æœ¬èªå¯¾å¿œç‰ˆã€‚
 inline char* strchr_j ( char* s1, char c         ){ return const_cast<char*>(strchr_j ((const char*)s1, c )); }
 inline char* strichr_j( char* s1, char c         ){ return const_cast<char*>(strichr_j((const char*)s1, c )); }
 inline char* strstr_j ( char* s1, const char* s2 ){ return const_cast<char*>(strstr_j ((const char*)s1, s2)); }
@@ -125,26 +125,26 @@ inline char* stristr_j( char* s1, const char* s2 ){ return const_cast<char*>(str
 
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
-	CHAR_TYPE*			pBuffer,	//[in] •¶š—ñƒoƒbƒtƒ@(I’[‚ª‚ ‚é‚±‚Æ)
-	int					nLen,		//[in] •¶š—ñ‚Ì’·‚³
-	int*				pnOffset,	//[in,out] ƒIƒtƒZƒbƒg
-	const CHAR_TYPE*	pDelimiter	//[in] ‹æØ‚è•¶š
+	CHAR_TYPE*			pBuffer,	//[in] æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡(çµ‚ç«¯ãŒã‚ã‚‹ã“ã¨)
+	int					nLen,		//[in] æ–‡å­—åˆ—ã®é•·ã•
+	int*				pnOffset,	//[in,out] ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+	const CHAR_TYPE*	pDelimiter	//[in] åŒºåˆ‡ã‚Šæ–‡å­—
 );
 
 
-// ¤ ƒVƒOƒjƒ`ƒƒ‚¨‚æ‚Ñ“®ìd—l‚Í•Ï‚í‚ç‚È‚¢‚¯‚ÇA
-// ƒRƒ“ƒpƒCƒ‰‚ÆŒ¾Œêw’è‚É‚æ‚Á‚Ä•s³“®ì‚ğ‚µ‚Ä‚µ‚Ü‚¤‚±‚Æ‚ğ‰ñ”ğ‚·‚é‚½‚ß‚É
-// “Æ©‚ÉÀ‘•‚µ’¼‚µ‚½‚à‚ÌB
+// â–½ ã‚·ã‚°ãƒ‹ãƒãƒ£ãŠã‚ˆã³å‹•ä½œä»•æ§˜ã¯å¤‰ã‚ã‚‰ãªã„ã‘ã©ã€
+// ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã¨è¨€èªæŒ‡å®šã«ã‚ˆã£ã¦ä¸æ­£å‹•ä½œã‚’ã—ã¦ã—ã¾ã†ã“ã¨ã‚’å›é¿ã™ã‚‹ãŸã‚ã«
+// ç‹¬è‡ªã«å®Ÿè£…ã—ç›´ã—ãŸã‚‚ã®ã€‚
 int my_stricmp( const char *s1, const char *s2 );
 int my_strnicmp( const char *s1, const char *s2, size_t n );
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ŒİŠ·                              //
+//                           äº’æ›                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// VS2005ˆÈ~‚ÌˆÀ‘S”Å•¶š—ñŠÖ”
-#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005‚æ‚è‘O‚È‚ç
+// VS2005ä»¥é™ã®å®‰å…¨ç‰ˆæ–‡å­—åˆ—é–¢æ•°
+#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005ã‚ˆã‚Šå‰ãªã‚‰
 	typedef int errno_t;
 #define _TRUNCATE ((size_t)-1)
 	errno_t strcpy_s(char *dest, size_t num, const char *src);
@@ -181,19 +181,19 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//        autoŒni_UNICODE ’è‹`‚ÉˆË‘¶‚µ‚È‚¢ŠÖ”j              //
+//        autoç³»ï¼ˆ_UNICODE å®šç¾©ã«ä¾å­˜ã—ãªã„é–¢æ•°ï¼‰              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//charŒ^‚É‚·‚é‚©wchar_tŒ^‚É‚·‚é‚©Šm’è‚µ‚È‚¢•Ï”‚ª‚ ‚è‚Ü‚·B
-//‰º‹LŠÖ”ŒQ‚ğg‚Á‚Ä•¶š—ñ‘€ì‚ğs‚Á‚½ê‡A
-//«—ˆA‚»‚Ì•Ï”‚ÌŒ^‚ª•Ï‚í‚Á‚Ä‚àA‚»‚Ì‘€ì‰ÓŠ‚ğ‘‚«’¼‚³‚È‚­‚Ä‚à
-//Ï‚Ş‚±‚Æ‚É‚È‚è‚Ü‚·B
+//charå‹ã«ã™ã‚‹ã‹wchar_tå‹ã«ã™ã‚‹ã‹ç¢ºå®šã—ãªã„å¤‰æ•°ãŒã‚ã‚Šã¾ã™ã€‚
+//ä¸‹è¨˜é–¢æ•°ç¾¤ã‚’ä½¿ã£ã¦æ–‡å­—åˆ—æ“ä½œã‚’è¡Œã£ãŸå ´åˆã€
+//å°†æ¥ã€ãã®å¤‰æ•°ã®å‹ãŒå¤‰ã‚ã£ã¦ã‚‚ã€ãã®æ“ä½œç®‡æ‰€ã‚’æ›¸ãç›´ã•ãªãã¦ã‚‚
+//æ¸ˆã‚€ã“ã¨ã«ãªã‚Šã¾ã™ã€‚
 //
-//‹­§ƒLƒƒƒXƒg‚É‚æ‚ég—p‚Í„§‚µ‚Ü‚¹‚ñB
-//‚»‚à‚»‚àA‚±‚ÌŠÖ”ŒÄ‚Ño‚µ‚ÉŒÀ‚ç‚¸A‹­§ƒLƒƒƒXƒg‚ÍÅ’áŒÀ‚É—¯‚ß‚Ä‚­‚¾‚³‚¢B
-//‚¹‚Á‚©‚­‚ÌAC++‚ÌŒµŠi‚ÈŒ^ƒ`ƒFƒbƒN‚Ì‰¶Œb‚ğó‚¯‚é‚±‚Æ‚ª‚Å‚«‚È‚­‚È‚è‚Ü‚·B
+//å¼·åˆ¶ã‚­ãƒ£ã‚¹ãƒˆã«ã‚ˆã‚‹ä½¿ç”¨ã¯æ¨å¥¨ã—ã¾ã›ã‚“ã€‚
+//ãã‚‚ãã‚‚ã€ã“ã®é–¢æ•°å‘¼ã³å‡ºã—ã«é™ã‚‰ãšã€å¼·åˆ¶ã‚­ãƒ£ã‚¹ãƒˆã¯æœ€ä½é™ã«ç•™ã‚ã¦ãã ã•ã„ã€‚
+//ã›ã£ã‹ãã®ã€C++ã®å³æ ¼ãªå‹ãƒã‚§ãƒƒã‚¯ã®æ©æµã‚’å—ã‘ã‚‹ã“ã¨ãŒã§ããªããªã‚Šã¾ã™ã€‚
 
 
-//“]‘—Œn
+//è»¢é€ç³»
 inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        ::memcpy (dest,src,count); return dest; }
 inline WCHAR* auto_memcpy(WCHAR* dest, const WCHAR* src, size_t count){ return ::wmemcpy(dest,src,count);              }
 inline ACHAR* auto_strcpy(ACHAR* dst, const ACHAR* src){ return strcpy(dst,src); }
@@ -209,7 +209,7 @@ inline WCHAR* auto_strcat(WCHAR* dst, const WCHAR* src){ return wcscat(dst,src);
 inline errno_t auto_strcat_s(ACHAR* dst, size_t nDstCount, const ACHAR* src){ return strcat_s(dst,nDstCount,src); }
 inline errno_t auto_strcat_s(WCHAR* dst, size_t nDstCount, const WCHAR* src){ return wcscat_s(dst,nDstCount,src); }
 
-//”äŠrŒn
+//æ¯”è¼ƒç³»
 inline int auto_memcmp (const ACHAR* p1, const ACHAR* p2, size_t count){ return amemcmp(p1,p2,count); }
 inline int auto_memcmp (const WCHAR* p1, const WCHAR* p2, size_t count){ return wmemcmp(p1,p2,count); }
 inline int auto_strcmp (const ACHAR* p1, const ACHAR* p2){ return strcmp(p1,p2); }
@@ -217,23 +217,23 @@ inline int auto_strcmp (const WCHAR* p1, const WCHAR* p2){ return wcscmp(p1,p2);
 inline int auto_strncmp(const ACHAR* str1, const ACHAR* str2, size_t count){ return strncmp(str1,str2,count); }
 inline int auto_strncmp(const WCHAR* str1, const WCHAR* str2, size_t count){ return wcsncmp(str1,str2,count); }
 
-//”äŠrŒniASCII, UCS2 ê—pj
+//æ¯”è¼ƒç³»ï¼ˆASCII, UCS2 å°‚ç”¨ï¼‰
 inline int auto_memicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return amemicmp(p1,p2,count); }
 inline int auto_memicmp(const WCHAR* p1, const WCHAR* p2, size_t count){ return wmemicmp(p1,p2,count); }
 
-//”äŠrŒniSJIS, UTF-16 ê—p)
+//æ¯”è¼ƒç³»ï¼ˆSJIS, UTF-16 å°‚ç”¨)
 inline int auto_strnicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return my_strnicmp(p1,p2,count); }
 inline int auto_strnicmp(const WCHAR* p1, const WCHAR* p2, size_t count){ return wmemicmp(p1,p2,count); } // Stub.
 inline int auto_stricmp(const ACHAR* p1, const ACHAR* p2){ return my_stricmp(p1,p2); }
 inline int auto_stricmp(const WCHAR* p1, const WCHAR* p2){ return wmemicmp(p1,p2); } // Stub.
 
-//’·‚³ŒvZŒn
+//é•·ã•è¨ˆç®—ç³»
 inline size_t auto_strlen(const ACHAR* str){ return strlen(str); }
 inline size_t auto_strlen(const WCHAR* str){ return wcslen(str); }
 inline size_t auto_strnlen(const ACHAR* str, size_t count){ return strnlen(str, count); }
 inline size_t auto_strnlen(const WCHAR* str, size_t count){ return wcsnlen(str, count); }
 
-//ŒŸõŒniSJIS, UCS2 ê—pj
+//æ¤œç´¢ç³»ï¼ˆSJIS, UCS2 å°‚ç”¨ï¼‰
 inline const ACHAR* auto_strstr(const ACHAR* str, const ACHAR* strSearch){ return ::strstr_j(str,strSearch); }
 inline const WCHAR* auto_strstr(const WCHAR* str, const WCHAR* strSearch){ return ::wcsstr  (str,strSearch); }
 inline       ACHAR* auto_strstr(      ACHAR* str, const ACHAR* strSearch){ return ::strstr_j(str,strSearch); }
@@ -243,7 +243,7 @@ inline const WCHAR* auto_strchr(const WCHAR* str, WCHAR c){ return ::wcschr  (st
 inline       ACHAR* auto_strchr(      ACHAR* str, ACHAR c){ return ::strchr_j(str,c); }
 inline       WCHAR* auto_strchr(      WCHAR* str, WCHAR c){ return ::wcschr  (str,c); }
 
-//•ÏŠ·Œn
+//å¤‰æ›ç³»
 inline long auto_atol(const ACHAR* str){ return atol(str);  }
 inline long auto_atol(const WCHAR* str){ return _wtol(str); }
 ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count );
@@ -251,7 +251,7 @@ WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count );
 TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count );
 TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count );
 
-//ˆóšŒn
+//å°å­—ç³»
 #if defined(_MSC_VER) && _MSC_VER>=1400
 #define auto_snprintf_s(buf, count, format, ...) tchar_sprintf_s((buf), count, (format), __VA_ARGS__)
 #define auto_sprintf(buf, format, ...)           tchar_sprintf((buf), (format), __VA_ARGS__)
@@ -272,29 +272,29 @@ inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      •¶šƒR[ƒh•ÏŠ·                         //
+//                      æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #include <vector>
 
-//SJIS¨UNICODEBI’[‚ÉL'\0'‚ğ•t‚¯‚Ä‚­‚ê‚é”ÅB
+//SJISâ†’UNICODEã€‚çµ‚ç«¯ã«L'\0'ã‚’ä»˜ã‘ã¦ãã‚Œã‚‹ç‰ˆã€‚
 size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count);
 size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount);
 
-//UNICODE¨SJISBI’[‚É'\0'‚ğ•t‚¯‚Ä‚­‚ê‚é”ÅB
+//UNICODEâ†’SJISã€‚çµ‚ç«¯ã«'\0'ã‚’ä»˜ã‘ã¦ãã‚Œã‚‹ç‰ˆã€‚
 size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count);
 
-//SJIS¨UNICODEB
-wchar_t*	mbstowcs_new(const char* pszSrc);								//–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·Bg‚¢I‚í‚Á‚½‚çdelete[]‚·‚é‚±‚ÆB
-wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·Bg‚¢I‚í‚Á‚½‚çdelete[]‚·‚é‚±‚ÆB
-void		mbstowcs_vector(const char* src, std::vector<wchar_t>* ret);	//–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
-void		mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret);	//–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
+//SJISâ†’UNICODEã€‚
+wchar_t*	mbstowcs_new(const char* pszSrc);								//æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚ä½¿ã„çµ‚ã‚ã£ãŸã‚‰delete[]ã™ã‚‹ã“ã¨ã€‚
+wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚ä½¿ã„çµ‚ã‚ã£ãŸã‚‰delete[]ã™ã‚‹ã“ã¨ã€‚
+void		mbstowcs_vector(const char* src, std::vector<wchar_t>* ret);	//æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
+void		mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret);	//æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
 
-//UNICODE¨SJIS
-char*	wcstombs_new(const wchar_t* src); //–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·B
-char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·B
-void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
-void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
+//UNICODEâ†’SJIS
+char*	wcstombs_new(const wchar_t* src); //æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚
+char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚
+void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
+void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
 
 //TCHAR
 size_t _tcstowcs(WCHAR* wszDst, const TCHAR* tszSrc, size_t nDstCount);
@@ -309,25 +309,25 @@ int _tctowc(const TCHAR* p,WCHAR* wc);
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒŠƒeƒ‰ƒ‹”äŠr                          //
+//                       ãƒªãƒ†ãƒ©ãƒ«æ¯”è¼ƒ                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-// ƒŠƒeƒ‰ƒ‹‚Æ‚Ì•¶š—ñ”äŠr‚ÌÛ‚ÉAè‘Å‚¿‚Å•¶š”‚ğ“ü—Í‚·‚é‚Ì‚Í
-// èŠÔ‚ªŠ|‚©‚éã‚ÉA•Ûç«‚ª‘¹‚È‚í‚ê‚é‚Ì‚ÅA
-// ƒJƒvƒZƒ‹‰»‚³‚ê‚½ŠÖ”‚âƒ}ƒNƒ‚Éˆ—‚ğ”C‚¹‚é‚Ì‚ª–]‚Ü‚µ‚¢B
+// ãƒªãƒ†ãƒ©ãƒ«ã¨ã®æ–‡å­—åˆ—æ¯”è¼ƒã®éš›ã«ã€æ‰‹æ‰“ã¡ã§æ–‡å­—æ•°ã‚’å…¥åŠ›ã™ã‚‹ã®ã¯
+// æ‰‹é–“ãŒæ›ã‹ã‚‹ä¸Šã«ã€ä¿å®ˆæ€§ãŒæãªã‚ã‚Œã‚‹ã®ã§ã€
+// ã‚«ãƒ—ã‚»ãƒ«åŒ–ã•ã‚ŒãŸé–¢æ•°ã‚„ãƒã‚¯ãƒ­ã«å‡¦ç†ã‚’ä»»ã›ã‚‹ã®ãŒæœ›ã¾ã—ã„ã€‚
 
-//wcsncmp‚Ì•¶š”w’è‚ğszData2‚©‚çwcslen‚Åæ“¾‚µ‚Ä‚­‚ê‚é”Å
+//wcsncmpã®æ–‡å­—æ•°æŒ‡å®šã‚’szData2ã‹ã‚‰wcslenã§å–å¾—ã—ã¦ãã‚Œã‚‹ç‰ˆ
 inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 {
 	return wcsncmp(strData1,szData2,wcslen(szData2));
 }
 
-//wcsncmp‚Ì•¶š”w’è‚ğliteralData2‚Ì‘å‚«‚³‚Åæ“¾‚µ‚Ä‚­‚ê‚é”Å
+//wcsncmpã®æ–‡å­—æ•°æŒ‡å®šã‚’literalData2ã®å¤§ãã•ã§å–å¾—ã—ã¦ãã‚Œã‚‹ç‰ˆ
 #define wcsncmp_literal(strData1, literalData2) \
-	::wcsncmp(strData1, literalData2, _countof(literalData2) - 1 ) //¦I’[ƒkƒ‹‚ğŠÜ‚ß‚È‚¢‚Ì‚ÅA_countof‚©‚çƒ}ƒCƒiƒX1‚·‚é
+	::wcsncmp(strData1, literalData2, _countof(literalData2) - 1 ) //â€»çµ‚ç«¯ãƒŒãƒ«ã‚’å«ã‚ãªã„ã®ã§ã€_countofã‹ã‚‰ãƒã‚¤ãƒŠã‚¹1ã™ã‚‹
 
-//strncmp‚Ì•¶š”w’è‚ğliteralData2‚Ì‘å‚«‚³‚Åæ“¾‚µ‚Ä‚­‚ê‚é”Å
+//strncmpã®æ–‡å­—æ•°æŒ‡å®šã‚’literalData2ã®å¤§ãã•ã§å–å¾—ã—ã¦ãã‚Œã‚‹ç‰ˆ
 #define strncmp_literal(strData1, literalData2) \
-	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //¦I’[ƒkƒ‹‚ğŠÜ‚ß‚È‚¢‚Ì‚ÅA_countof‚©‚çƒ}ƒCƒiƒX1‚·‚é
+	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //â€»çµ‚ç«¯ãƒŒãƒ«ã‚’å«ã‚ãªã„ã®ã§ã€_countofã‹ã‚‰ãƒã‚¤ãƒŠã‚¹1ã™ã‚‹
 
 //TCHAR
 #ifdef _UNICODE

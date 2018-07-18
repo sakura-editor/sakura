@@ -1,8 +1,8 @@
-/*
+ï»¿/*
 2007.10.23 kobake
 
-ƒfƒUƒCƒ“ƒpƒ^[ƒ““I‚Èƒ‚ƒm‚ğ’u‚¯‚é‚Æ—Ç‚¢‚È‚ŸB
-‚¿‚È‚İ‚É TSingleInstance ‚ÍƒVƒ“ƒOƒ‹ƒgƒ“ƒpƒ^[ƒ“‚Æ‚Í—‚Ä”ñ‚È‚éƒ‚ƒm‚Å‚·‚ªB
+ãƒ‡ã‚¶ã‚¤ãƒ³ãƒ‘ã‚¿ãƒ¼ãƒ³çš„ãªãƒ¢ãƒã‚’ç½®ã‘ã‚‹ã¨è‰¯ã„ãªãã€‚
+ã¡ãªã¿ã« TSingleInstance ã¯ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ãƒ‘ã‚¿ãƒ¼ãƒ³ã¨ã¯ä¼¼ã¦éãªã‚‹ãƒ¢ãƒã§ã™ãŒã€‚
 */
 /*
 	Copyright (C) 2008, kobake
@@ -38,14 +38,14 @@
   void operator=(const TypeName&)
 
 /*!
-	Singletonƒpƒ^[ƒ“
+	Singletonãƒ‘ã‚¿ãƒ¼ãƒ³
 
-	2008.03.03 kobake ì¬
+	2008.03.03 kobake ä½œæˆ
 */
 template <class T>
 class TSingleton{
 public:
-	//ŒöŠJƒCƒ“ƒ^[ƒtƒF[ƒX
+	//å…¬é–‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	static T* getInstance()
 	{
 		static T instance;
@@ -59,19 +59,19 @@ private:
 };
 
 /*!
-	1ŒÂ‚µ‚©ƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚µ‚È‚¢ƒNƒ‰ƒX‚©‚ç‚ÌƒCƒ“ƒXƒ^ƒ“ƒXæ“¾ƒCƒ“ƒ^[ƒtƒF[ƒX‚ğstatic‚Å’ñ‹ŸB
-	Singletonƒpƒ^[ƒ“‚Æ‚ÍˆÙ‚È‚èAInstance()ŒÄ‚Ño‚µ‚É‚æ‚èAƒCƒ“ƒXƒ^ƒ“ƒX‚ª©“®¶¬‚³‚ê‚È‚¢“_‚É’ˆÓB
+	1å€‹ã—ã‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå­˜åœ¨ã—ãªã„ã‚¯ãƒ©ã‚¹ã‹ã‚‰ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã‚’staticã§æä¾›ã€‚
+	Singletonãƒ‘ã‚¿ãƒ¼ãƒ³ã¨ã¯ç•°ãªã‚Šã€Instance()å‘¼ã³å‡ºã—ã«ã‚ˆã‚Šã€ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒè‡ªå‹•ç”Ÿæˆã•ã‚Œãªã„ç‚¹ã«æ³¨æ„ã€‚
 
-	2007.10.23 kobake ì¬
+	2007.10.23 kobake ä½œæˆ
 */
 template <class T>
 class TSingleInstance{
 public:
-	//ŒöŠJƒCƒ“ƒ^[ƒtƒF[ƒX
-	static T* getInstance(){ return gm_instance; } //!< ì¬Ï‚İ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·BƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚µ‚È‚¯‚ê‚Î NULLB
+	//å…¬é–‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	static T* getInstance(){ return gm_instance; } //!< ä½œæˆæ¸ˆã¿ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™ã€‚ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå­˜åœ¨ã—ãªã‘ã‚Œã° NULLã€‚
 
 protected:
-	//¦2ŒÂˆÈã‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Í‘z’è‚µ‚Ä‚¢‚Ü‚¹‚ñBassert‚ª”j’]‚ğŒŸo‚µ‚Ü‚·B
+	//â€»2å€‹ä»¥ä¸Šã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯æƒ³å®šã—ã¦ã„ã¾ã›ã‚“ã€‚assertãŒç ´ç¶»ã‚’æ¤œå‡ºã—ã¾ã™ã€‚
 	TSingleInstance(){ assert(gm_instance==NULL); gm_instance=static_cast<T*>(this); }
 	~TSingleInstance(){ assert(gm_instance); gm_instance=NULL; }
 private:
@@ -82,7 +82,7 @@ T* TSingleInstance<T>::gm_instance = NULL;
 
 
 
-//‹L˜^‚à‚·‚é
+//è¨˜éŒ²ã‚‚ã™ã‚‹
 #include <vector>
 template <class T> class TInstanceHolder{
 public:

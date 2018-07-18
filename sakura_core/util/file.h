@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2002, SUI
 	Copyright (C) 2008, kobake
 
@@ -25,65 +25,65 @@
 #ifndef SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
 #define SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
 
-bool fexist(LPCTSTR pszPath); //!< ƒtƒ@ƒCƒ‹‚Ü‚½‚ÍƒfƒBƒŒƒNƒgƒŠ‚ª‘¶Ý‚·‚ê‚Îtrue
+bool fexist(LPCTSTR pszPath); //!< ãƒ•ã‚¡ã‚¤ãƒ«ã¾ãŸã¯ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã™ã‚Œã°true
 
 bool IsFilePath( const wchar_t*, size_t*, size_t*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCTSTR pszPath);	// 2009.08.20 ryoji
 
 //	Apr. 30, 2003 genta
-//	ƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ð’²‚×‚é
+//	ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®æ·±ã•ã‚’èª¿ã¹ã‚‹
 int CalcDirectoryDepth(const TCHAR* path);
 
 // 2005.11.26 aroka
 bool IsLocalDrive( const TCHAR* pszDrive );
 
-//¦ƒTƒNƒ‰ˆË‘¶
+//â€»ã‚µã‚¯ãƒ©ä¾å­˜
 FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
 FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
-//ƒpƒX•¶Žš—ñˆ—
-void CutLastYenFromDirectoryPath( TCHAR* );						/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Ìê‡‚ÍAŽæ‚èœ‚­ "c:\\"“™‚Ìƒ‹[ƒg‚ÍŽæ‚èœ‚©‚È‚¢*/
-void AddLastYenFromDirectoryPath(  CHAR* );						/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
-void AddLastYenFromDirectoryPath( WCHAR* );						/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
-void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ðAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
-void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* ƒtƒHƒ‹ƒ_Aƒtƒ@ƒCƒ‹–¼‚©‚çAŒ‹‡‚µ‚½ƒpƒX‚ðì¬ */
-BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ðŽæ“¾‚·‚é */
-BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* Šg’£Žq‚ð’²‚×‚é */
-const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ƒtƒ@ƒCƒ‹ƒtƒ‹ƒpƒX“à‚Ìƒtƒ@ƒCƒ‹–¼‚ðŽw‚·ƒ|ƒCƒ“ƒ^‚ðŽæ“¾B2007.09.20 kobake ì¬
-bool _IS_REL_PATH(const TCHAR* path);											//!< ‘Š‘ÎƒpƒX‚©”»’è‚·‚éB2003.06.23 Moca
+//ãƒ‘ã‚¹æ–‡å­—åˆ—å‡¦ç†
+void CutLastYenFromDirectoryPath( TCHAR* );						/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã®å ´åˆã¯ã€å–ã‚Šé™¤ã "c:\\"ç­‰ã®ãƒ«ãƒ¼ãƒˆã¯å–ã‚Šé™¤ã‹ãªã„*/
+void AddLastYenFromDirectoryPath(  CHAR* );						/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
+void AddLastYenFromDirectoryPath( WCHAR* );						/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
+void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’ã€ãƒ•ã‚©ãƒ«ãƒ€ã¨ãƒ•ã‚¡ã‚¤ãƒ«åã«åˆ†å‰² */
+void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* ãƒ•ã‚©ãƒ«ãƒ€ã€ãƒ•ã‚¡ã‚¤ãƒ«åã‹ã‚‰ã€çµåˆã—ãŸãƒ‘ã‚¹ã‚’ä½œæˆ */
+BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ãƒ­ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹ */
+BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* æ‹¡å¼µå­ã‚’èª¿ã¹ã‚‹ */
+const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ãƒ«ãƒ‘ã‚¹å†…ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŒ‡ã™ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã€‚2007.09.20 kobake ä½œæˆ
+bool _IS_REL_PATH(const TCHAR* path);											//!< ç›¸å¯¾ãƒ‘ã‚¹ã‹åˆ¤å®šã™ã‚‹ã€‚2003.06.23 Moca
 
-//¦ƒTƒNƒ‰ˆË‘¶
+//â€»ã‚µã‚¯ãƒ©ä¾å­˜
 void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
 void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
 void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
 
 LPCTSTR GetRelPath( LPCTSTR pszPath );
 
-//ƒtƒ@ƒCƒ‹Žž
+//ãƒ•ã‚¡ã‚¤ãƒ«æ™‚åˆ»
 class CFileTime{
 public:
 	CFileTime(){ ClearFILETIME(); }
 	CFileTime(const FILETIME& ftime){ SetFILETIME(ftime); }
-	//Ý’è
+	//è¨­å®š
 	void ClearFILETIME(){ m_ftime.dwLowDateTime = m_ftime.dwHighDateTime = 0; m_bModified = true; }
 	void SetFILETIME(const FILETIME& ftime){ m_ftime = ftime; m_bModified = true; }
-	//Žæ“¾
+	//å–å¾—
 	const FILETIME& GetFILETIME() const{ return m_ftime; }
 	const SYSTEMTIME& GetSYSTEMTIME() const
 	{
-		//ƒLƒƒƒbƒVƒ…XV -> m_systime, m_bModified
+		//ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ›´æ–° -> m_systime, m_bModified
 		if(m_bModified){
 			m_bModified = false;
 			FILETIME ftimeLocal;
 			if(!::FileTimeToLocalFileTime( &m_ftime, &ftimeLocal ) || !::FileTimeToSystemTime( &ftimeLocal, &m_systime )){
-				memset(&m_systime,0,sizeof(m_systime)); //Ž¸”sŽžƒ[ƒƒNƒŠƒA
+				memset(&m_systime,0,sizeof(m_systime)); //å¤±æ•—æ™‚ã‚¼ãƒ­ã‚¯ãƒªã‚¢
 			}
 		}
 		return m_systime;
 	}
 	const SYSTEMTIME* operator->() const{ return &GetSYSTEMTIME(); }
-	//”»’è
+	//åˆ¤å®š
 	bool IsZero() const
 	{
 		return m_ftime.dwLowDateTime == 0 && m_ftime.dwHighDateTime == 0;
@@ -91,13 +91,13 @@ public:
 protected:
 private:
 	FILETIME m_ftime;
-	//ƒLƒƒƒbƒVƒ…
+	//ã‚­ãƒ£ãƒƒã‚·ãƒ¥
 	mutable SYSTEMTIME	m_systime;
 	mutable bool		m_bModified;
 };
 bool GetLastWriteTimestamp( const TCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
 
-//•¶Žš—ñ•ªŠ„
+//æ–‡å­—åˆ—åˆ†å‰²
 void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
 void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
 void my_splitpath_t ( const TCHAR *comln , TCHAR *drv,TCHAR *dir,TCHAR *fnm,TCHAR *ext );

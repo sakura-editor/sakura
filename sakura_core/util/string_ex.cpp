@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "string_ex.h"
 #include "charset/charcode.h"
 #include "util/std_macro.h"
@@ -9,33 +9,33 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           •¶š                              //
+//                           æ–‡å­—                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       Šg’£E“Æ©À‘•                        //
+//                       æ‹¡å¼µãƒ»ç‹¬è‡ªå®Ÿè£…                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*!	‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é•¶š—ñ”äŠr‚ğ‚·‚éB
-	@param s1 [in] •¶š—ñ‚P
-	@param s2 [in] •¶š—ñ‚Q
+/*!	å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹æ–‡å­—åˆ—æ¯”è¼ƒã‚’ã™ã‚‹ã€‚
+	@param s1 [in] æ–‡å­—åˆ—ï¼‘
+	@param s2 [in] æ–‡å­—åˆ—ï¼’
 
-	@retval 0	ˆê’v
+	@retval 0	ä¸€è‡´
  */
 int __cdecl my_stricmp( const char *s1, const char *s2 )
 {
-	/* ƒ`ƒFƒbƒN‚·‚é•¶š”‚ğuintÅ‘å‚Éİ’è‚·‚é */
+	/* ãƒã‚§ãƒƒã‚¯ã™ã‚‹æ–‡å­—æ•°ã‚’uintæœ€å¤§ã«è¨­å®šã™ã‚‹ */
 	//return my_internal_icmp( s1, s2, (unsigned int)(~0), 0, true );
 	return my_internal_icmp( s1, s2, UINT_MAX, 0, true );
 }
 
-/*!	‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é•¶š—ñ’·‚³§ŒÀ”äŠr‚ğ‚·‚éB
-	@param s1 [in] •¶š—ñ‚P
-	@param s2 [in] •¶š—ñ‚Q
-	@param n [in] •¶š’·
+/*!	å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹æ–‡å­—åˆ—é•·ã•åˆ¶é™æ¯”è¼ƒã‚’ã™ã‚‹ã€‚
+	@param s1 [in] æ–‡å­—åˆ—ï¼‘
+	@param s2 [in] æ–‡å­—åˆ—ï¼’
+	@param n [in] æ–‡å­—é•·
 
-	@retval 0	ˆê’v
+	@retval 0	ä¸€è‡´
  */
 int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
 {
@@ -54,7 +54,7 @@ LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 
 
 /*
-	TCHAR ‚Æ WCHAR ‚Ü‚½‚Í ACHAR ‚Ì•ÏŠ·ŠÖ”
+	TCHAR ã¨ WCHAR ã¾ãŸã¯ ACHAR ã®å¤‰æ›é–¢æ•°
 */
 
 ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count){
@@ -98,18 +98,18 @@ TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count )
 }
 
 
-/*! •¶š”§ŒÀ‹@”\•t‚«strncpy
+/*! æ–‡å­—æ•°åˆ¶é™æ©Ÿèƒ½ä»˜ãstrncpy
 
-	ƒRƒs[æ‚Ìƒoƒbƒtƒ@ƒTƒCƒY‚©‚çˆì‚ê‚È‚¢‚æ‚¤‚Éstrncpy‚·‚éB
-	ƒoƒbƒtƒ@‚ª•s‘«‚·‚éê‡‚É‚Í2ƒoƒCƒg•¶š‚ÌØ’f‚à‚ ‚è“¾‚éB
-	––”ö‚Ì\0‚Í•t—^‚³‚ê‚È‚¢‚ªAƒRƒs[‚ÍƒRƒs[æƒoƒbƒtƒ@ƒTƒCƒY-1‚Ü‚Å‚É‚µ‚Ä‚¨‚­B
+	ã‚³ãƒ”ãƒ¼å…ˆã®ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã‹ã‚‰æº¢ã‚Œãªã„ã‚ˆã†ã«strncpyã™ã‚‹ã€‚
+	ãƒãƒƒãƒ•ã‚¡ãŒä¸è¶³ã™ã‚‹å ´åˆã«ã¯2ãƒã‚¤ãƒˆæ–‡å­—ã®åˆ‡æ–­ã‚‚ã‚ã‚Šå¾—ã‚‹ã€‚
+	æœ«å°¾ã®\0ã¯ä»˜ä¸ã•ã‚Œãªã„ãŒã€ã‚³ãƒ”ãƒ¼ã¯ã‚³ãƒ”ãƒ¼å…ˆãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚º-1ã¾ã§ã«ã—ã¦ãŠãã€‚
 
-	@param dst [in] ƒRƒs[æ—Ìˆæ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param dst_count [in] ƒRƒs[æ—Ìˆæ‚ÌƒTƒCƒY
-	@param src [in] ƒRƒs[Œ³
-	@param src_count [in] ƒRƒs[‚·‚é•¶š—ñ‚Ì––”ö
+	@param dst [in] ã‚³ãƒ”ãƒ¼å…ˆé ˜åŸŸã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param dst_count [in] ã‚³ãƒ”ãƒ¼å…ˆé ˜åŸŸã®ã‚µã‚¤ã‚º
+	@param src [in] ã‚³ãƒ”ãƒ¼å…ƒ
+	@param src_count [in] ã‚³ãƒ”ãƒ¼ã™ã‚‹æ–‡å­—åˆ—ã®æœ«å°¾
 
-	@retval ÀÛ‚ÉƒRƒs[‚³‚ê‚½ƒRƒs[æ—Ìˆæ‚Ì1‚ÂŒã‚ğw‚·ƒ|ƒCƒ“ƒ^
+	@retval å®Ÿéš›ã«ã‚³ãƒ”ãƒ¼ã•ã‚ŒãŸã‚³ãƒ”ãƒ¼å…ˆé ˜åŸŸã®1ã¤å¾Œã‚’æŒ‡ã™ãƒã‚¤ãƒ³ã‚¿
 
 	@author genta
 	@date 2003.04.03 genta
@@ -138,7 +138,7 @@ const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
 
 const char* stristr(const char* s1, const char* s2)
 {
-	//$ “ú–{Œêl—¶‚µ‚Ä‚È‚¢‚Ì‚ÅA‚ ‚ñ‚Ü‚è–ğ‚É—§‚½‚È‚¢”ÅBstristr_j‚ğg‚¤‚Ì‚ª–]‚Ü‚µ‚¢B
+	//$ æ—¥æœ¬èªè€ƒæ…®ã—ã¦ãªã„ã®ã§ã€ã‚ã‚“ã¾ã‚Šå½¹ã«ç«‹ãŸãªã„ç‰ˆã€‚stristr_jã‚’ä½¿ã†ã®ãŒæœ›ã¾ã—ã„ã€‚
 	size_t len2=strlen(s2);
 	const char* p=s1;
 	const char* q=strchr(s1,L'\0')-len2;
@@ -150,12 +150,12 @@ const char* stristr(const char* s1, const char* s2)
 }
 
 /*!
-	@date 2005.04.07 MIK    V‹Kì¬
-	@date 2007.10.21 kobake ŠÖ”–¼•ÏX: my_strchri¨strichr_j
+	@date 2005.04.07 MIK    æ–°è¦ä½œæˆ
+	@date 2007.10.21 kobake é–¢æ•°åå¤‰æ›´: my_strchriâ†’strichr_j
 */
 const char* strichr_j( const char* s1, char c2 )
 {
-	if(c2==0)return ::strchr(s1,0); //•¶š—ñI’[‚ğ’T‚·‚½‚ß‚Éc2‚É0‚ğ“n‚µ‚½ê‡‚àA³‚µ‚­ˆ—‚³‚ê‚é‚æ‚¤‚ÉB 2007.10.16 kobake
+	if(c2==0)return ::strchr(s1,0); //æ–‡å­—åˆ—çµ‚ç«¯ã‚’æ¢ã™ãŸã‚ã«c2ã«0ã‚’æ¸¡ã—ãŸå ´åˆã‚‚ã€æ­£ã—ãå‡¦ç†ã•ã‚Œã‚‹ã‚ˆã†ã«ã€‚ 2007.10.16 kobake
 
 	int C2 = my_toupper( c2 );
 	for( const char* p1 = s1; *p1; p1++ ){
@@ -166,12 +166,12 @@ const char* strichr_j( const char* s1, char c2 )
 }
 
 /*!
-	@date 2005.04.07 MIK    V‹Kì¬
-	@date 2007.10.21 kobake ŠÖ”–¼•ÏX: my_strchr¨strchr_j
+	@date 2005.04.07 MIK    æ–°è¦ä½œæˆ
+	@date 2007.10.21 kobake é–¢æ•°åå¤‰æ›´: my_strchrâ†’strchr_j
 */
 const char* strchr_j(const char* str, char c)
 {
-	if(c==0)return ::strchr(str,0); //•¶š—ñI’[‚ğ’T‚·‚½‚ß‚Éc‚É0‚ğ“n‚µ‚½ê‡‚àA³‚µ‚­ˆ—‚³‚ê‚é‚æ‚¤‚ÉB 2007.10.16 kobake
+	if(c==0)return ::strchr(str,0); //æ–‡å­—åˆ—çµ‚ç«¯ã‚’æ¢ã™ãŸã‚ã«cã«0ã‚’æ¸¡ã—ãŸå ´åˆã‚‚ã€æ­£ã—ãå‡¦ç†ã•ã‚Œã‚‹ã‚ˆã†ã«ã€‚ 2007.10.16 kobake
 
 	for( const char* p1 = str; *p1; p1++ ){
 		if( *p1 == c ) return p1;
@@ -181,10 +181,10 @@ const char* strchr_j(const char* str, char c)
 }
 
 /*!
-	strstr()‚Ì2byte code‘Î‰”Å
+	strstr()ã®2byte codeå¯¾å¿œç‰ˆ
 
-	@date 2005.04.07 MIK V‹Kì¬
-	@date 2007.10.21 kobake ŠÖ”–¼•ÏX: my_strstr¨strstr_j
+	@date 2005.04.07 MIK æ–°è¦ä½œæˆ
+	@date 2007.10.21 kobake é–¢æ•°åå¤‰æ›´: my_strstrâ†’strstr_j
 */
 const char* strstr_j(const char* s1, const char* s2)
 {
@@ -197,14 +197,14 @@ const char* strstr_j(const char* s1, const char* s2)
 }
 
 /*!
-	strstr()‚Ì‘å•¶š¬•¶š“¯ˆê‹”Å
+	strstr()ã®å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–ç‰ˆ
 
 	@note
-	Windows API‚É‚ ‚éStrStrI‚ÍIE4‚ª“ü‚Á‚Ä‚¢‚È‚¢PC‚Å‚Íg—p•s‰Â‚Ì‚½‚ß
-	“Æ©‚Éì¬
+	Windows APIã«ã‚ã‚‹StrStrIã¯IE4ãŒå…¥ã£ã¦ã„ãªã„PCã§ã¯ä½¿ç”¨ä¸å¯ã®ãŸã‚
+	ç‹¬è‡ªã«ä½œæˆ
 
-	@date 2005.04.07 MIK    V‹Kì¬
-	@date 2007.10.21 kobake ŠÖ”–¼•ÏX: my_strstri¨stristr_j
+	@date 2005.04.07 MIK    æ–°è¦ä½œæˆ
+	@date 2007.10.21 kobake é–¢æ•°åå¤‰æ›´: my_strstriâ†’stristr_j
 */
 const char* stristr_j( const char* s1, const char* s2 )
 {
@@ -219,13 +219,13 @@ const char* stristr_j( const char* s1, const char* s2 )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ŒİŠ·                              //
+//                           äº’æ›                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005‚æ‚è‘O‚È‚ç
+#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005ã‚ˆã‚Šå‰ãªã‚‰
 errno_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 {
-	// –{•¨‚Í _set_invalid_parameter_handler ‚Åİ’è‚³‚ê‚½ƒnƒ“ƒhƒ‰‚ª‹N“®‚µ‚Ü‚·
+	// æœ¬ç‰©ã¯ _set_invalid_parameter_handler ã§è¨­å®šã•ã‚ŒãŸãƒãƒ³ãƒ‰ãƒ©ãŒèµ·å‹•ã—ã¾ã™
 	if(!szDst)return EINVAL;
 	if(!szSrc)return EINVAL;
 
@@ -233,14 +233,14 @@ errno_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 	if(nDstLen>=nDstCount)return EINVAL;
 
 	size_t nSrcCount=wcslen(szSrc)+1;
-	wchar_t* p=&szDst[nDstLen];           //’Ç‰ÁêŠ
-	int nRestCount = nDstCount-(p-szDst); //szDst‚É’Ç‰Á‚Å‚«‚é—v‘f”
+	wchar_t* p=&szDst[nDstLen];           //è¿½åŠ å ´æ‰€
+	int nRestCount = nDstCount-(p-szDst); //szDstã«è¿½åŠ ã§ãã‚‹è¦ç´ æ•°
 
-	//‚Í‚İo‚³‚È‚¢
+	//ã¯ã¿å‡ºã•ãªã„
 	if((int)nSrcCount<=nRestCount){
 		wmemmove(p,szSrc,nSrcCount);
 	}
-	//‚Í‚İo‚·
+	//ã¯ã¿å‡ºã™
 	else{
 		return ERANGE;
 		//wmemmove(p,szSrc,nRestCount-1); p[nRestCount-1]=L'\0';
@@ -253,7 +253,7 @@ errno_t strcat_s(char *dest, size_t num, const char *src)
 {
 	if(!dest || !src) return EINVAL;
 	size_t size1 = strnlen(dest, num);
-	if(size1 == num) return EINVAL; // dest‚ª–¢I—¹
+	if(size1 == num) return EINVAL; // destãŒæœªçµ‚äº†
 	if(num <= size1+strlen(src)) return ERANGE;
 	strcat(dest, src);
 	return 0;
@@ -316,28 +316,28 @@ size_t wcsnlen(const wchar_t *str, size_t num)
 }
 int vsprintf_s(char *buf, size_t num, const char *fmt, va_list vaarg)
 {
-	// è”²‚«
+	// æ‰‹æŠœã
 	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
 	buf[num-1] = '\0';
 	return _vsnprintf(buf, num-1, fmt, vaarg);
 }
 int vswprintf_s(wchar_t *buf, size_t num, const wchar_t *fmt, va_list vaarg)
 {
-	// è”²‚«
+	// æ‰‹æŠœã
 	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
 	buf[num-1] = L'\0';
 	return _vsnwprintf(buf, num-1, fmt, vaarg);
 }
 int vsnprintf_s(char *buf, size_t num, size_t count, const char *fmt, va_list vaarg)
 {
-	// è”²‚«
+	// æ‰‹æŠœã
 	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
 	buf[num-1] = L'\0';
 	return _vsnprintf(buf, num-1, fmt, vaarg);
 }
 int _vsnwprintf_s(wchar_t *buf, size_t num, size_t count, const wchar_t *fmt, va_list vaarg)
 {
-	// è”²‚«
+	// æ‰‹æŠœã
 	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
 	buf[num-1] = L'\0';
 	return _vsnwprintf(buf, num-1, fmt, vaarg);
@@ -346,11 +346,11 @@ int _vsnwprintf_s(wchar_t *buf, size_t num, size_t count, const wchar_t *fmt, va
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      •¶šƒR[ƒh•ÏŠ·                         //
+//                      æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-//SJIS¨UNICODEBI’[‚ÉL'\0'‚ğ•t‚¯‚Ä‚­‚ê‚é”ÅB
+//SJISâ†’UNICODEã€‚çµ‚ç«¯ã«L'\0'ã‚’ä»˜ã‘ã¦ãã‚Œã‚‹ç‰ˆã€‚
 size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
 {
 	size_t ret=::mbstowcs(dst,src,dst_count-1);
@@ -371,7 +371,7 @@ size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount)
 	return (size_t)ret;
 }
 
-//UNICODE¨SJISBI’[‚É'\0'‚ğ•t‚¯‚Ä‚­‚ê‚é”ÅB
+//UNICODEâ†’SJISã€‚çµ‚ç«¯ã«'\0'ã‚’ä»˜ã‘ã¦ãã‚Œã‚‹ç‰ˆã€‚
 size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
 {
 	size_t ret=::wcstombs(dst,src,dst_count-1);
@@ -379,7 +379,7 @@ size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
 	return ret;
 }
 
-//SJIS¨UNICODEB–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·B
+//SJISâ†’UNICODEã€‚æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚
 wchar_t* mbstowcs_new(const char* src)
 {
 	size_t new_length=mbstowcs(NULL,src,0);
@@ -390,7 +390,7 @@ wchar_t* mbstowcs_new(const char* src)
 }
 wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
 {
-	//•K—v‚È—ÌˆæƒTƒCƒY
+	//å¿…è¦ãªé ˜åŸŸã‚µã‚¤ã‚º
 	int nNewLength = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -400,10 +400,10 @@ wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
 		0
 	);
 	
-	//Šm•Û
+	//ç¢ºä¿
 	wchar_t* pNew = new wchar_t[nNewLength+1];
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nNewLength = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -419,15 +419,15 @@ wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
 	return pNew;
 }
 
-//UNICODE¨SJISB–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·B
+//UNICODEâ†’SJISã€‚æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚
 char* wcstombs_new(const wchar_t* src)
 {
 	return wcstombs_new(src,wcslen(src));
 }
-//–ß‚è’l‚Ínew[]‚ÅŠm•Û‚µ‚Ä•Ô‚·B
+//æˆ»ã‚Šå€¤ã¯new[]ã§ç¢ºä¿ã—ã¦è¿”ã™ã€‚
 char* wcstombs_new(const wchar_t* pSrc,int nSrcLen)
 {
-	//•K—v‚È—ÌˆæƒTƒCƒY
+	//å¿…è¦ãªé ˜åŸŸã‚µã‚¤ã‚º
 	int nNewLength = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -439,10 +439,10 @@ char* wcstombs_new(const wchar_t* pSrc,int nSrcLen)
 		NULL
 	);
 
-	//Šm•Û
+	//ç¢ºä¿
 	char* pNew = new char[nNewLength+1];
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nNewLength = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -458,16 +458,16 @@ char* wcstombs_new(const wchar_t* pSrc,int nSrcLen)
 	return pNew;
 }
 
-//SJIS¨UNICODEB–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
+//SJISâ†’UNICODEã€‚æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
 void mbstowcs_vector(const char* src, std::vector<wchar_t>* ret)
 {
 	mbstowcs_vector(src,strlen(src),ret);
 }
 
-//¦–ß‚è’lret‚É‚¨‚¢‚ÄAret->size()‚ª•¶š—ñ’·‚Å‚Í‚È‚¢‚±‚Æ‚É’ˆÓB³‚µ‚­‚ÍA(ret->size()-1)‚ª•¶š—ñ’·‚Æ‚È‚éB
+//â€»æˆ»ã‚Šå€¤retã«ãŠã„ã¦ã€ret->size()ãŒæ–‡å­—åˆ—é•·ã§ã¯ãªã„ã“ã¨ã«æ³¨æ„ã€‚æ­£ã—ãã¯ã€(ret->size()-1)ãŒæ–‡å­—åˆ—é•·ã¨ãªã‚‹ã€‚
 void mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret)
 {
-	//•K—v‚È—e—Ê
+	//å¿…è¦ãªå®¹é‡
 	int nNewLen = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -477,10 +477,10 @@ void mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret)
 		0
 	);
 
-	//Šm•Û
+	//ç¢ºä¿
 	ret->resize(nNewLen+1);
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nNewLen = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -493,14 +493,14 @@ void mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret)
 }
 
 
-//UNICODE¨SJISB–ß‚è’l‚Ívector‚Æ‚µ‚Ä•Ô‚·B
+//UNICODEâ†’SJISã€‚æˆ»ã‚Šå€¤ã¯vectorã¨ã—ã¦è¿”ã™ã€‚
 void wcstombs_vector(const wchar_t* src, std::vector<char>* ret)
 {
 	wcstombs_vector(src,wcslen(src),ret);
 }
 void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 {
-	//•K—v‚È—e—Ê
+	//å¿…è¦ãªå®¹é‡
 	int nNewLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -512,10 +512,10 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 		NULL
 	);
 
-	//Šm•Û
+	//ç¢ºä¿
 	ret->resize(nNewLen + 1);
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nNewLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -591,13 +591,13 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒƒ‚ƒŠ                             //
+//                          ãƒ¡ãƒ¢ãƒª                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 {
 	for(size_t i=0;i<count;i++){
-		int n=skr_towlower(*p1++)-skr_towlower(*p2++);	//”ñASCII‚à•ÏŠ·
+		int n=skr_towlower(*p1++)-skr_towlower(*p2++);	//éASCIIã‚‚å¤‰æ›
 		if(n!=0)return n;
 	}
 	return 0;
@@ -611,7 +611,7 @@ int wmemicmp(const WCHAR* p1,const WCHAR* p2)
 int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
 {
 	for(size_t i=0;i<count;i++){
-		int n=my_towlower(*p1++)-my_towlower(*p2++);	//ASCII‚Ì‚İ•ÏŠ·i‚‘¬j
+		int n=my_towlower(*p1++)-my_towlower(*p2++);	//ASCIIã®ã¿å¤‰æ›ï¼ˆé«˜é€Ÿï¼‰
 		if(n!=0)return n;
 	}
 	return 0;
@@ -623,16 +623,16 @@ int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
 
 
 /*!
-	‹ó”’‚ğŠÜ‚Şƒtƒ@ƒCƒ‹–¼‚ğl—¶‚µ‚½ƒg[ƒNƒ“‚Ì•ªŠ„
+	ç©ºç™½ã‚’å«ã‚€ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è€ƒæ…®ã—ãŸãƒˆãƒ¼ã‚¯ãƒ³ã®åˆ†å‰²
 	
-	æ“ª‚É‚ ‚é˜A‘±‚µ‚½‹æØ‚è•¶š‚Í–³‹‚·‚éD
+	å…ˆé ­ã«ã‚ã‚‹é€£ç¶šã—ãŸåŒºåˆ‡ã‚Šæ–‡å­—ã¯ç„¡è¦–ã™ã‚‹ï¼
 	
-	@return ƒg[ƒNƒ“
+	@return ãƒˆãƒ¼ã‚¯ãƒ³
 
-	@date 2004.02.15 ‚İ‚­   Å“K‰»
-	@date 2007.10.21 kobake ƒeƒ“ƒvƒŒ[ƒg‰»
+	@date 2004.02.15 ã¿ã   æœ€é©åŒ–
+	@date 2007.10.21 kobake ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆåŒ–
 */
-//$ ‚¢‚¿‚¢‚¿èŠÔ‚©‚©‚éBB
+//$ ã„ã¡ã„ã¡æ‰‹é–“ã‹ã‹ã‚‹ã€‚ã€‚
 namespace{
 	template <class T> struct Charset{};
 	template <> struct Charset<ACHAR>{ static const ACHAR QUOT= '"'; };
@@ -640,17 +640,17 @@ namespace{
 }
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
-	CHAR_TYPE*			pBuffer,	//[in] •¶š—ñƒoƒbƒtƒ@(I’[‚ª‚ ‚é‚±‚Æ)
-	int					nLen,		//[in] •¶š—ñ‚Ì’·‚³
-	int*				pnOffset,	//[in,out] ƒIƒtƒZƒbƒg
-	const CHAR_TYPE*	pDelimiter	//[in] ‹æØ‚è•¶š
+	CHAR_TYPE*			pBuffer,	//[in] æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡(çµ‚ç«¯ãŒã‚ã‚‹ã“ã¨)
+	int					nLen,		//[in] æ–‡å­—åˆ—ã®é•·ã•
+	int*				pnOffset,	//[in,out] ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+	const CHAR_TYPE*	pDelimiter	//[in] åŒºåˆ‡ã‚Šæ–‡å­—
 )
 {
 	int i = *pnOffset;
 	CHAR_TYPE* p;
 
 	do {
-		bool bFlag = false;	//ƒ_ƒuƒ‹ƒR[ƒe[ƒVƒ‡ƒ“‚Ì’†‚©H
+		bool bFlag = false;	//ãƒ€ãƒ–ãƒ«ã‚³ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã®ä¸­ã‹ï¼Ÿ
 		if( i >= nLen ) return NULL;
 		p = &pBuffer[i];
 		for( ; i < nLen; i++ )
@@ -666,10 +666,10 @@ CHAR_TYPE* my_strtok(
 			}
 		}
 		*pnOffset = i;
-	} while( ! *p );	//‹ó‚Ìƒg[ƒNƒ“‚È‚çŸ‚ğ’T‚·
+	} while( ! *p );	//ç©ºã®ãƒˆãƒ¼ã‚¯ãƒ³ãªã‚‰æ¬¡ã‚’æ¢ã™
 	return p;
 }
-//ƒCƒ“ƒXƒ^ƒ“ƒX‰»
+//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–
 template ACHAR* my_strtok(ACHAR*,int,int*,const ACHAR*);
 template WCHAR* my_strtok(WCHAR*,int,int*,const WCHAR*);
 
@@ -677,7 +677,7 @@ template WCHAR* my_strtok(WCHAR*,int,int*,const WCHAR*);
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #ifdef MY_ICMP_MBS
@@ -687,14 +687,14 @@ int my_mbisalpha2( int c );
 #endif  /* MY_ICMP_MBS */
 
 #ifdef MY_ICMP_MBS
-/*!	‘SŠpƒAƒ‹ƒtƒ@ƒxƒbƒg‚Ì‚Q•¶š–Ú‚ğ‘å•¶š‚É•ÏŠ·‚·‚éB
-	@param c [in] •ÏŠ·‚·‚é•¶šƒR[ƒh
+/*!	å…¨è§’ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã®ï¼’æ–‡å­—ç›®ã‚’å¤§æ–‡å­—ã«å¤‰æ›ã™ã‚‹ã€‚
+	@param c [in] å¤‰æ›ã™ã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰
 
 	@note
-		0x8260 - 0x8279 : ‚`...‚y
-		0x8281 - 0x829a : ‚...‚š
+		0x8260 - 0x8279 : ï¼¡...ï¼º
+		0x8281 - 0x829a : ï½...ï½š
 
-	@return •ÏŠ·‚³‚ê‚½•¶šƒR[ƒh
+	@return å¤‰æ›ã•ã‚ŒãŸæ–‡å­—ã‚³ãƒ¼ãƒ‰
 */
 int my_mbtoupper2( int c )
 {
@@ -706,10 +706,10 @@ int my_mbtoupper2( int c )
 
 
 #ifdef MY_ICMP_MBS
-/*!	‘SŠpƒAƒ‹ƒtƒ@ƒxƒbƒg‚Ì‚Q•¶š–Ú‚ğ¬•¶š‚É•ÏŠ·‚·‚éB
-	@param c [in] •ÏŠ·‚·‚é•¶šƒR[ƒh
+/*!	å…¨è§’ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã®ï¼’æ–‡å­—ç›®ã‚’å°æ–‡å­—ã«å¤‰æ›ã™ã‚‹ã€‚
+	@param c [in] å¤‰æ›ã™ã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰
 
-	@return •ÏŠ·‚³‚ê‚½•¶šƒR[ƒh
+	@return å¤‰æ›ã•ã‚ŒãŸæ–‡å­—ã‚³ãƒ¼ãƒ‰
 */
 int my_mbtolower2( int c )
 {
@@ -721,11 +721,11 @@ int my_mbtolower2( int c )
 
 
 #ifdef MY_ICMP_MBS
-/*!	‘SŠpƒAƒ‹ƒtƒ@ƒxƒbƒg‚Ì‚Q•¶š–Ú‚©’²‚×‚éB
-	@param c [in] ŒŸ¸‚·‚é•¶šƒR[ƒh
+/*!	å…¨è§’ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã®ï¼’æ–‡å­—ç›®ã‹èª¿ã¹ã‚‹ã€‚
+	@param c [in] æ¤œæŸ»ã™ã‚‹æ–‡å­—ã‚³ãƒ¼ãƒ‰
 
-	@retval 1	‘SŠpƒAƒ‹ƒtƒ@ƒxƒbƒg‚QƒoƒCƒg–Ú‚Å‚ ‚é
-	@retval 0	‚¿‚ª‚¤
+	@retval 1	å…¨è§’ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆï¼’ãƒã‚¤ãƒˆç›®ã§ã‚ã‚‹
+	@retval 0	ã¡ãŒã†
 */
 int my_mbisalpha2( int c )
 {
@@ -737,25 +737,25 @@ int my_mbisalpha2( int c )
 
 
 
-/*!	‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é•¶š—ñ’·‚³§ŒÀ”äŠr‚ğ‚·‚éB
-	@param s1   [in] •¶š—ñ‚P
-	@param s2   [in] •¶š—ñ‚Q
-	@param n    [in] •¶š’·
-	@param dcount  [in] ƒXƒeƒbƒv’l (1=strnicmp,memicmp, 0=stricmp)
-	@param flag [in] •¶š—ñI’[ƒ`ƒFƒbƒN (true=stricmp,strnicmp, false=memicmp)
+/*!	å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹æ–‡å­—åˆ—é•·ã•åˆ¶é™æ¯”è¼ƒã‚’ã™ã‚‹ã€‚
+	@param s1   [in] æ–‡å­—åˆ—ï¼‘
+	@param s2   [in] æ–‡å­—åˆ—ï¼’
+	@param n    [in] æ–‡å­—é•·
+	@param dcount  [in] ã‚¹ãƒ†ãƒƒãƒ—å€¤ (1=strnicmp,memicmp, 0=stricmp)
+	@param flag [in] æ–‡å­—åˆ—çµ‚ç«¯ãƒã‚§ãƒƒã‚¯ (true=stricmp,strnicmp, false=memicmp)
 
-	@retval 0	ˆê’v
-	@date 2002.11.29 Moca 0ˆÈŠO‚Ì‚Ì–ß‚è’l‚ğCuŒ³‚Ì’l‚Ì·v‚©‚çu‘å•¶š‚Æ‚µ‚½‚Æ‚«‚Ì·v‚É•ÏX
+	@retval 0	ä¸€è‡´
+	@date 2002.11.29 Moca 0ä»¥å¤–ã®æ™‚ã®æˆ»ã‚Šå€¤ã‚’ï¼Œã€Œå…ƒã®å€¤ã®å·®ã€ã‹ã‚‰ã€Œå¤§æ–‡å­—ã¨ã—ãŸã¨ãã®å·®ã€ã«å¤‰æ›´
  */
 int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
 {
 	unsigned int	i;
 	unsigned char	*p1, *p2;
-//	2002.11.29 Moca Œ³‚Ì’l‚ğ•Û‚·‚é•K—v‚ª‚È‚­‚È‚Á‚½‚½‚ß *_lo, *_up‚ğíœ
+//	2002.11.29 Moca å…ƒã®å€¤ã‚’ä¿æŒã™ã‚‹å¿…è¦ãŒãªããªã£ãŸãŸã‚ *_lo, *_upã‚’å‰Šé™¤
 //	int	c1, c1_lo, c1_up;
 //	int	c2, c2_lo, c2_up;
 	int 	c1, c2;
-	bool	prev1, prev2; /* ‘O‚Ì•¶š‚ª SJIS‚Ì‚PƒoƒCƒg–Ú‚© */
+	bool	prev1, prev2; /* å‰ã®æ–‡å­—ãŒ SJISã®ï¼‘ãƒã‚¤ãƒˆç›®ã‹ */
 #ifdef MY_ICMP_MBS
 	bool	mba1, mba2;
 #endif  /* MY_ICMP_MBS */
@@ -767,23 +767,23 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 	mba1 = mba2 = false;
 #endif  /* MY_ICMP_MBS */
 
-	/* w’è’·‚¾‚¯ŒJ‚è•Ô‚· */
+	/* æŒ‡å®šé•·ã ã‘ç¹°ã‚Šè¿”ã™ */
 	for(i = n; i > 0; i -= dcount)
 	{
-		/* ”äŠr‘ÎÛ‚Æ‚È‚é•¶š‚ğæ“¾‚·‚é */
+		/* æ¯”è¼ƒå¯¾è±¡ã¨ãªã‚‹æ–‡å­—ã‚’å–å¾—ã™ã‚‹ */
 //		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
 //		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
 		c1 = (int)((unsigned int)*p1);
 		c2 = (int)((unsigned int)*p2);
 
-		/* 2002.11.29 Moca •¶š—ñ‚ÌI’[‚É’B‚µ‚½‚©’²‚×‚é•”•ª ‚ÍŒã•û‚ÖˆÚ“® */
+		/* 2002.11.29 Moca æ–‡å­—åˆ—ã®çµ‚ç«¯ã«é”ã—ãŸã‹èª¿ã¹ã‚‹éƒ¨åˆ† ã¯å¾Œæ–¹ã¸ç§»å‹• */
 
-		/* •¶š‚P‚Ì“ú–{Œêƒ`ƒFƒbƒN‚ğs‚¢”äŠr—p‚Ì‘å•¶š¬•¶š‚ğƒZƒbƒg‚·‚é */
-		if( prev1 ){	/* ‘O‚Ì•¶š‚ª“ú–{Œê‚PƒoƒCƒg–Ú */
-			/* ¡‰ñ‚Í“ú–{Œê‚QƒoƒCƒg–Ú‚È‚Ì‚Å•ÏŠ·‚µ‚È‚¢ */
+		/* æ–‡å­—ï¼‘ã®æ—¥æœ¬èªãƒã‚§ãƒƒã‚¯ã‚’è¡Œã„æ¯”è¼ƒç”¨ã®å¤§æ–‡å­—å°æ–‡å­—ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ */
+		if( prev1 ){	/* å‰ã®æ–‡å­—ãŒæ—¥æœ¬èªï¼‘ãƒã‚¤ãƒˆç›® */
+			/* ä»Šå›ã¯æ—¥æœ¬èªï¼’ãƒã‚¤ãƒˆç›®ãªã®ã§å¤‰æ›ã—ãªã„ */
 			prev1 = false;
 #ifdef MY_ICMP_MBS
-			/* ‘SŠp•¶š‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg */
+			/* å…¨è§’æ–‡å­—ã®ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆ */
 			if( mba1 ){
 				mba1 = false;
 				if( my_mbisalpha2( c1 ) ){
@@ -793,7 +793,7 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 #endif  /* MY_ICMP_MBS */
 		}
 		else if( my_iskanji1(c1) ){
-			/* ¡‰ñ‚Í“ú–{Œê‚PƒoƒCƒg–Ú‚È‚Ì‚Å•ÏŠ·‚µ‚È‚¢ */
+			/* ä»Šå›ã¯æ—¥æœ¬èªï¼‘ãƒã‚¤ãƒˆç›®ãªã®ã§å¤‰æ›ã—ãªã„ */
 			prev1 = true;
 #ifdef MY_ICMP_MBS
 			if( c1 == 0x82 ) mba1 = true;
@@ -803,12 +803,12 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 			c1 = my_toupper(c1);
 		}
 
-		/* •¶š‚Q‚Ì“ú–{Œêƒ`ƒFƒbƒN‚ğs‚¢”äŠr—p‚Ì‘å•¶š¬•¶š‚ğƒZƒbƒg‚·‚é */
-		if( prev2 ){	/* ‘O‚Ì•¶š‚ª“ú–{Œê‚PƒoƒCƒg–Ú */
-			/* ¡‰ñ‚Í“ú–{Œê‚QƒoƒCƒg–Ú‚È‚Ì‚Å•ÏŠ·‚µ‚È‚¢ */
+		/* æ–‡å­—ï¼’ã®æ—¥æœ¬èªãƒã‚§ãƒƒã‚¯ã‚’è¡Œã„æ¯”è¼ƒç”¨ã®å¤§æ–‡å­—å°æ–‡å­—ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ */
+		if( prev2 ){	/* å‰ã®æ–‡å­—ãŒæ—¥æœ¬èªï¼‘ãƒã‚¤ãƒˆç›® */
+			/* ä»Šå›ã¯æ—¥æœ¬èªï¼’ãƒã‚¤ãƒˆç›®ãªã®ã§å¤‰æ›ã—ãªã„ */
 			prev2 = false;
 #ifdef MY_ICMP_MBS
-			/* ‘SŠp•¶š‚ÌƒAƒ‹ƒtƒ@ƒxƒbƒg */
+			/* å…¨è§’æ–‡å­—ã®ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆ */
 			if( mba2 ){
 				mba2 = false;
 				if( my_mbisalpha2( c2 ) ){
@@ -818,7 +818,7 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 #endif  /* MY_ICMP_MBS */
 		}
 		else if( my_iskanji1(c2) ){
-			/* ¡‰ñ‚Í“ú–{Œê‚PƒoƒCƒg–Ú‚È‚Ì‚Å•ÏŠ·‚µ‚È‚¢ */
+			/* ä»Šå›ã¯æ—¥æœ¬èªï¼‘ãƒã‚¤ãƒˆç›®ãªã®ã§å¤‰æ›ã—ãªã„ */
 			prev2 = true;
 #ifdef MY_ICMP_MBS
 			if( c2 == 0x82 ) mba2 = true;
@@ -828,17 +828,17 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 			c2 = my_toupper(c2);
 		}
 
-		/* ”äŠr‚·‚é */
-//		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* –ß‚è’l‚ÍŒ³‚Ì•¶š‚Ì· */
-		if( c1 - c2 ) return c1 - c2;	/* –ß‚è’l‚Í‘å•¶š‚É•ÏŠ·‚µ‚½•¶š‚Ì· */
+		/* æ¯”è¼ƒã™ã‚‹ */
+//		if( (c1_lo - c2_lo) && (c1_up - c2_up) ) return c1 - c2;	/* æˆ»ã‚Šå€¤ã¯å…ƒã®æ–‡å­—ã®å·® */
+		if( c1 - c2 ) return c1 - c2;	/* æˆ»ã‚Šå€¤ã¯å¤§æ–‡å­—ã«å¤‰æ›ã—ãŸæ–‡å­—ã®å·® */
 
-		/* 2002.11.29 Moca –ß‚è’l‚ğ•ÏX‚µ‚½‚±‚Æ‚É‚æ‚èC¬•¶š¨‘å•¶š•ÏŠ·‚ÌŒã‚ÉˆÚ“®
-		   •Ğ•û‚¾‚¯ NULL•¶š ‚Ìê‡‚Íã‚Ì”äŠr‚µ‚½“_‚Å return ‚·‚é‚½‚ß‚»‚Ìˆ—‚Í•s—v */
+		/* 2002.11.29 Moca æˆ»ã‚Šå€¤ã‚’å¤‰æ›´ã—ãŸã“ã¨ã«ã‚ˆã‚Šï¼Œå°æ–‡å­—â†’å¤§æ–‡å­—å¤‰æ›ã®å¾Œã«ç§»å‹•
+		   ç‰‡æ–¹ã ã‘ NULLæ–‡å­— ã®å ´åˆã¯ä¸Šã®æ¯”è¼ƒã—ãŸæ™‚ç‚¹ã§ return ã™ã‚‹ãŸã‚ãã®å‡¦ç†ã¯ä¸è¦ */
 		if( flag ){
-			/* •¶š—ñ‚ÌI’[‚É’B‚µ‚½‚©’²‚×‚é */
+			/* æ–‡å­—åˆ—ã®çµ‚ç«¯ã«é”ã—ãŸã‹èª¿ã¹ã‚‹ */
 			if( ! c1 ) return 0;
 		}
-		/* ƒ|ƒCƒ“ƒ^‚ği‚ß‚é */
+		/* ãƒã‚¤ãƒ³ã‚¿ã‚’é€²ã‚ã‚‹ */
 		p1++;
 		p2++;
 	}
@@ -850,25 +850,25 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 // skr_towupper() / skr_tolower()
 //
 // 2010.09.28 ryoji
-// BugReport/64: towupper(c) ‚É‚æ‚Á‚Ä U+00e0-U+00fc ‚Æ U+0020 ‚ª“¯ˆê‹‚³‚ê‚é–â‘è‚Ì‘Îô
-// VC ‚Ìƒ‰ƒ“ƒ^ƒCƒ€‚Í c < 256 ‚ÌğŒ‚Å‚Í‚È‚º‚© locale ‚É‘Î‰‚µ‚½ "ANSI Œn‚Ì" •ÏŠ·ƒe[ƒuƒ‹ˆø‚«‚ğs‚Á‚Ä‚¢‚é–Í—l
-// iUnicode Œn•ÏŠ·ŠÖ”‚È‚Ì‚É locale ‚ª "Japanese" ‚¾‚Æ c < 256 ‚Ì”ÍˆÍ‚Å‚Í SJIS —p‚ç‚µ‚«•ÏŠ·ƒe[ƒuƒ‹‚ªg‚í‚ê‚éj
-// ‚»‚ê‚Å‚Í“s‡‚ªˆ«‚¢‚Ì‚Å c < 256 ”ÍˆÍ‚Ì•ÏŠ·‚É "English"(Windows-1252) locale ‚ğ—˜—p‚·‚éB
-//   EUnicode ‚ÌÅ‰‚Ì 256 ŒÂ‚Ì•„†ˆÊ’u‚Í Windows-1252 ‚ÌeÊ‚Ì ISO-8859-1 —R—ˆB
-//   E‘Šˆá‚Í 0x80-0x9F ‚Ì‹æŠÔ‚ÅAWindows-1252 ‚Å‚Í}Œ`•¶šAISO-8859-1(Unicode) ‚Å‚Í§Œä•¶šB
-// ¦ ƒ‰ƒ“ƒ^ƒCƒ€‚Ì towupper(c)/tolower(c) ‚ª«—ˆŠú‘Ò‚·‚é“®ì‚É‚È‚Á‚½‚Æ‚µ‚Ä‚à‚±‚Ì•û–@‚ğg‚¢‘±‚¯‚Ä–â‘è–³‚¢‚Í‚¸
+// BugReport/64: towupper(c) ã«ã‚ˆã£ã¦ U+00e0-U+00fc ã¨ U+0020 ãŒåŒä¸€è¦–ã•ã‚Œã‚‹å•é¡Œã®å¯¾ç­–
+// VC ã®ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã¯ c < 256 ã®æ¡ä»¶ã§ã¯ãªãœã‹ locale ã«å¯¾å¿œã—ãŸ "ANSI ç³»ã®" å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«å¼•ãã‚’è¡Œã£ã¦ã„ã‚‹æ¨¡æ§˜
+// ï¼ˆUnicode ç³»å¤‰æ›é–¢æ•°ãªã®ã« locale ãŒ "Japanese" ã ã¨ c < 256 ã®ç¯„å›²ã§ã¯ SJIS ç”¨ã‚‰ã—ãå¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«ãŒä½¿ã‚ã‚Œã‚‹ï¼‰
+// ãã‚Œã§ã¯éƒ½åˆãŒæ‚ªã„ã®ã§ c < 256 ç¯„å›²ã®å¤‰æ›ã« "English"(Windows-1252) locale ã‚’åˆ©ç”¨ã™ã‚‹ã€‚
+//   ãƒ»Unicode ã®æœ€åˆã® 256 å€‹ã®ç¬¦å·ä½ç½®ã¯ Windows-1252 ã®è¦ªæˆšã® ISO-8859-1 ç”±æ¥ã€‚
+//   ãƒ»ç›¸é•ã¯ 0x80-0x9F ã®åŒºé–“ã§ã€Windows-1252 ã§ã¯å›³å½¢æ–‡å­—ã€ISO-8859-1(Unicode) ã§ã¯åˆ¶å¾¡æ–‡å­—ã€‚
+// â€» ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã® towupper(c)/tolower(c) ãŒå°†æ¥æœŸå¾…ã™ã‚‹å‹•ä½œã«ãªã£ãŸã¨ã—ã¦ã‚‚ã“ã®æ–¹æ³•ã‚’ä½¿ã„ç¶šã‘ã¦å•é¡Œç„¡ã„ã¯ãš
 int skr_towupper( int c )
 {
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005ˆÈ~‚È‚ç
-	static wchar_t szMap[256];	// c < 256 —p‚Ì•ÏŠ·ƒe[ƒuƒ‹
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005ä»¥é™ãªã‚‰
+	static wchar_t szMap[256];	// c < 256 ç”¨ã®å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«
 	static bool bInit = false;
 	if( !bInit ){
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towupper( i );	// ©‘O‚Å•ÏŠ·
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// –³•ÏŠ·i§ŒäƒR[ƒh•”j
-		for( ; i < 255; i++ ) szMap[i] = _towupper_l( (wchar_t)i, locale );	// "English"locale‚Å•ÏŠ·
-		szMap[255] = 0x0178;	// Windows-1252 ‚¾‚Æ 0x9f(§Œä•¶šˆæ) ‚Éƒ}ƒbƒv‚µ‚Ä‚µ‚Ü‚¤‚Ì‚Å
+		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towupper( i );	// è‡ªå‰ã§å¤‰æ›
+		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// ç„¡å¤‰æ›ï¼ˆåˆ¶å¾¡ã‚³ãƒ¼ãƒ‰éƒ¨ï¼‰
+		for( ; i < 255; i++ ) szMap[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeã§å¤‰æ›
+		szMap[255] = 0x0178;	// Windows-1252 ã ã¨ 0x9f(åˆ¶å¾¡æ–‡å­—åŸŸ) ã«ãƒãƒƒãƒ—ã—ã¦ã—ã¾ã†ã®ã§
 		_free_locale( locale );
 		bInit = true;
 	}
@@ -880,15 +880,15 @@ int skr_towupper( int c )
 
 int skr_towlower( int c )
 {
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005ˆÈ~‚È‚ç
-	static wchar_t szMap[256];	// c < 256 —p‚Ì•ÏŠ·ƒe[ƒuƒ‹
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005ä»¥é™ãªã‚‰
+	static wchar_t szMap[256];	// c < 256 ç”¨ã®å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«
 	static bool bInit = false;
 	if( !bInit ){
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towlower( i );	// ©‘O‚Å•ÏŠ·
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// –³•ÏŠ·i§ŒäƒR[ƒh•”j
-		for( ; i < 256; i++ ) szMap[i] = _towlower_l( (wchar_t)i, locale );	// "English"locale‚Å•ÏŠ·
+		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towlower( i );	// è‡ªå‰ã§å¤‰æ›
+		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// ç„¡å¤‰æ›ï¼ˆåˆ¶å¾¡ã‚³ãƒ¼ãƒ‰éƒ¨ï¼‰
+		for( ; i < 256; i++ ) szMap[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeã§å¤‰æ›
 		_free_locale( locale );
 		bInit = true;
 	}

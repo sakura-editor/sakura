@@ -1,5 +1,5 @@
-/*
-	ŠÖ˜A‚ÌŠÇ—
+ï»¿/*
+	é–¢é€£ã®ç®¡ç†
 */
 /*
 	Copyright (C) 2008, kobake
@@ -31,19 +31,19 @@
 class CSubject;
 class CListener;
 
-//! •¡”‚ÌCListener‚©‚çƒEƒHƒbƒ`‚³‚ê‚é
+//! è¤‡æ•°ã®CListenerã‹ã‚‰ã‚¦ã‚©ãƒƒãƒã•ã‚Œã‚‹
 class CSubject{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CSubject();
 	virtual ~CSubject();
 
-	//ŒöŠJƒCƒ“ƒ^[ƒtƒF[ƒX
+	//å…¬é–‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	int GetListenerCount() const{ return (int)m_vListenersRef.size(); }
 	CListener* GetListener(int nIndex) const{ return m_vListenersRef[nIndex]; }
 
 public:
-	//ŠÇ——p
+	//ç®¡ç†ç”¨
 	void _AddListener(CListener* pcListener);
 	void _RemoveListener(CListener* pcListener);
 
@@ -51,14 +51,14 @@ private:
 	std::vector<CListener*> m_vListenersRef;
 };
 
-//! 1‚Â‚ÌCSubject‚ğƒEƒHƒbƒ`‚·‚é
+//! 1ã¤ã®CSubjectã‚’ã‚¦ã‚©ãƒƒãƒã™ã‚‹
 class CListener{
 public:
 	CListener();
 	virtual ~CListener();
 
-	//ŒöŠJƒCƒ“ƒ^[ƒtƒF[ƒX
-	CSubject* Listen(CSubject* pcSubject); //!< ’¼‘O‚ÉƒEƒHƒbƒ`‚µ‚Ä‚¢‚½ƒTƒuƒWƒFƒNƒg‚ğ•Ô‚·
+	//å…¬é–‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	CSubject* Listen(CSubject* pcSubject); //!< ç›´å‰ã«ã‚¦ã‚©ãƒƒãƒã—ã¦ã„ãŸã‚µãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	CSubject* GetListeningSubject() const{ return m_pcSubjectRef; }
 
 private:

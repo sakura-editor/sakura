@@ -1,25 +1,25 @@
-// printf�n���b�v�֐��Q
-// 2007.09.20 kobake �쐬�B
+﻿// printf系ラップ関数群
+// 2007.09.20 kobake 作成。
 //
-// �d�v�ȓ����Ƃ��āA�Ǝ��̃t�B�[���h "%ts" ����� "%tc" ��F�����ď�������A�Ƃ����_������܂��B
-// UNICODE�r���h�ł� "%ts", "%tc" �͂��ꂼ�� "%ls", %lc" �Ƃ��ĔF������A
-// ANSI�r���h�ł�    "%ts", "%tc" �͂��ꂼ�� "%hs", %hc" �Ƃ��ĔF������܂��B
+// 重要な特徴として、独自のフィールド "%ts" および "%tc" を認識して処理する、という点があります。
+// UNICODEビルドでは "%ts", "%tc" はそれぞれ "%ls", %lc" として認識され、
+// ANSIビルドでは    "%ts", "%tc" はそれぞれ "%hs", %hc" として認識されます。
 //
-// "%s", "%c" �͎g�p�֐��ɂ��^���ς��Achar, wchar_t �����݂���R�[�f�B���O���ł̓o�O�̌��ƂȂ�₷���̂ŁA
-// �ł��邾���A��ɋL�����悤�Ȗ����I�Ȍ^�w��������t�B�[���h��p���Ă��������B
+// "%s", "%c" は使用関数により型が変わり、char, wchar_t が混在するコーディング環境ではバグの元となりやすいので、
+// できるだけ、上に記したような明示的な型指定をしたフィールドを用いてください。
 //
-// ���ӁF%10ts %.12ts �̂悤�Ȃ��͖̂��T�|�[�g
+// 注意：%10ts %.12ts のようなものは未サポート
 //
-// ++ ++ ���P�� ++ ++
+// ++ ++ 改善案 ++ ++
 //
-// �����܂ł��W�����C�u����������u���b�v�v���Ă��邾���Ȃ̂ŁA
-// ���̃��b�v�������A�p�t�H�[�}���X�͈����ł��B
-// �W�����C�u�����ɗ��炸�ɑS�Ď��O�Ŏ�������΁A�W�����C�u�������݂̃p�t�H�[�}���X��������͂��ł��B
+// あくまでも標準ライブラリ動作を「ラップ」しているだけなので、
+// そのラップ処理分、パフォーマンスは悪いです。
+// 標準ライブラリに頼らずに全て自前で実装すれば、標準ライブラリ並みのパフォーマンスが得られるはずです。
 //
-// ������Ɗ֐�����������ɂ����̂ŁA�����Ɨǂ����O��W�B
-// ���̂܂܂��ƁA��L������ǂ܂Ȃ���΁A_tsprintf �Ƃ��Ɖ����Ⴄ�́H�Ǝv��ꂿ�Ⴂ�����B�B�B
+// ちょっと関数名が分かりにくいので、もっと良い名前募集。
+// 今のままだと、上記説明を読まなければ、_tsprintf とかと何が違うの？と思われちゃいそう。。。
 //
-// �v���W�F�N�g�S�̂�TCHAR�ɗ���Ȃ��̂ł���΁A�����̊֐��Q�͕s�v�B
+// プロジェクト全体がTCHARに頼らないのであれば、これらの関数群は不要。
 //
 /*
 	Copyright (C) 2008, kobake
@@ -47,27 +47,27 @@
 #ifndef SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_
 #define SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_
 
-// vsprintf_s���b�v
+// vsprintf_sラップ
 int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
 int tchar_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
 
-// vsprintf���b�v
+// vsprintfラップ
 int tchar_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v);
 int tchar_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v);
 
-// vsnprintf_s���b�v
+// vsnprintf_sラップ
 int tchar_vsnprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
 int tchar_vsnprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v);
 
-// sprintf_s���b�v
+// sprintf_sラップ
 int tchar_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...);
 int tchar_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...);
 
-// sprintf���b�v
+// sprintfラップ
 int tchar_sprintf(ACHAR* buf, const ACHAR* format, ...);
 int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...);
 
-// _snprintf_s���b�v
+// _snprintf_sラップ
 int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...);
 int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
 

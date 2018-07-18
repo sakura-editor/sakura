@@ -1,10 +1,10 @@
-/*!	@file
-	@brief MessageBox—pŠÖ”
+ï»¿/*!	@file
+	@brief MessageBoxç”¨é–¢æ•°
 
 	@author Norio Nakatani
 
-	@date 2002/01/17 aroka Œ^‚ÌC³
-	@date 2013/03/03 Uchi Debug1.cpp‚©‚ç•ª—£
+	@date 2002/01/17 aroka å‹ã®ä¿®æ­£
+	@date 2013/03/03 Uchi Debug1.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -38,13 +38,13 @@
 #include "window/CEditWnd.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                 ƒƒbƒZ[ƒWƒ{ƒbƒNƒXFÀ‘•                    //
+//                 ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼šå®Ÿè£…                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 {
 	static int (WINAPI *RealMessageBox)(HWND, LPCTSTR, LPCTSTR, UINT, WORD);
 	static HMODULE hMod = NULL;
-	if( hMod == NULL ){	// ‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í‰Šú‰»‚·‚é
+	if( hMod == NULL ){	// åˆæœŸåŒ–ã•ã‚Œã¦ã„ãªã„å ´åˆã¯åˆæœŸåŒ–ã™ã‚‹
 	hMod = GetModuleHandle(_T("USER32"));
 #ifdef _UNICODE
 		*(FARPROC *)&RealMessageBox = GetProcAddress(hMod, "MessageBoxExW");
@@ -53,9 +53,9 @@ int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 #endif
 	}
 
-	// lpText, lpCaption ‚ğƒ[ƒJƒ‹ƒoƒbƒtƒ@‚ÉƒRƒs[‚µ‚Ä MessageBox API ‚ğŒÄ‚Ño‚·
-	// ¦ g‚¢‰ñ‚µ‚Ìƒoƒbƒtƒ@‚ªg—p‚³‚ê‚Ä‚¢‚Ä‚»‚ê‚ª— ‚Å‘‚«Š·‚¦‚ç‚ê‚½ê‡‚Å‚à
-	//    ƒƒbƒZ[ƒWƒ{ƒbƒNƒXã‚Ì Ctrl+C ‚ª•¶š‰»‚¯‚µ‚È‚¢‚æ‚¤‚É
+	// lpText, lpCaption ã‚’ãƒ­ãƒ¼ã‚«ãƒ«ãƒãƒƒãƒ•ã‚¡ã«ã‚³ãƒ”ãƒ¼ã—ã¦ MessageBox API ã‚’å‘¼ã³å‡ºã™
+	// â€» ä½¿ã„å›ã—ã®ãƒãƒƒãƒ•ã‚¡ãŒä½¿ç”¨ã•ã‚Œã¦ã„ã¦ãã‚ŒãŒè£ã§æ›¸ãæ›ãˆã‚‰ã‚ŒãŸå ´åˆã§ã‚‚
+	//    ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ä¸Šã® Ctrl+C ãŒæ–‡å­—åŒ–ã‘ã—ãªã„ã‚ˆã†ã«
 	return RealMessageBox(hWnd, lpText? std::tstring(lpText).c_str(): NULL,
 		lpCaption? std::tstring(lpCaption).c_str(): NULL, uType, CSelectLang::getDefaultLangId());
 }
@@ -71,24 +71,24 @@ HWND GetMessageBoxOwner(HWND hwndOwner)
 }
 
 /*!
-	‘®•t‚«ƒƒbƒZ[ƒWƒ{ƒbƒNƒX
+	æ›¸å¼ä»˜ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹
 
-	ˆø”‚Å—^‚¦‚ç‚ê‚½î•ñ‚ğƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚Å•\¦‚·‚éD
-	ƒfƒoƒbƒO–Ú“IˆÈŠO‚Å‚àg—p‚Å‚«‚éD
+	å¼•æ•°ã§ä¸ãˆã‚‰ã‚ŒãŸæƒ…å ±ã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã§è¡¨ç¤ºã™ã‚‹ï¼
+	ãƒ‡ãƒãƒƒã‚°ç›®çš„ä»¥å¤–ã§ã‚‚ä½¿ç”¨ã§ãã‚‹ï¼
 */
 int VMessageBoxF(
-	HWND		hwndOwner,	//!< [in] ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹
-	UINT		uType,		//!< [in] ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ÌƒXƒ^ƒCƒ‹ (MessageBox‚Æ“¯‚¶Œ`®)
-	LPCTSTR		lpCaption,	//!< [in] ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚Ìƒ^ƒCƒgƒ‹
-	LPCTSTR		lpText,		//!< [in] •\¦‚·‚éƒeƒLƒXƒgBprintfd—l‚Ì‘®w’è‚ª‰Â”\B
-	va_list&	v			//!< [in,out] ˆø”ƒŠƒXƒg
+	HWND		hwndOwner,	//!< [in] ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«
+	UINT		uType,		//!< [in] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®ã‚¹ã‚¿ã‚¤ãƒ« (MessageBoxã¨åŒã˜å½¢å¼)
+	LPCTSTR		lpCaption,	//!< [in] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®ã‚¿ã‚¤ãƒˆãƒ«
+	LPCTSTR		lpText,		//!< [in] è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆã€‚printfä»•æ§˜ã®æ›¸å¼æŒ‡å®šãŒå¯èƒ½ã€‚
+	va_list&	v			//!< [in,out] å¼•æ•°ãƒªã‚¹ãƒˆ
 )
 {
 	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//®Œ`
+	//æ•´å½¢
 	static TCHAR szBuf[16000];
 	tchar_vsnprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//APIŒÄ‚Ño‚µ
+	//APIå‘¼ã³å‡ºã—
 	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
 }
 
@@ -102,35 +102,35 @@ int MessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, 
 }
 
 
-//ƒGƒ‰[FÔŠÛ‚Éu~v[OK]
+//ã‚¨ãƒ©ãƒ¼ï¼šèµ¤ä¸¸ã«ã€ŒÃ—ã€[OK]
 int ErrorMessage   (HWND hwnd, LPCTSTR format, ...){      va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP                     , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopErrorMessage(HWND hwnd, LPCTSTR format, ...){      va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST        , GSTR_APPNAME,   format, p);va_end(p);return n;}	//(TOPMOST)
 
-//ŒxFOŠp‚Éuiv
+//è­¦å‘Šï¼šä¸‰è§’ã«ã€Œiã€
 int WarningMessage   (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONEXCLAMATION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopWarningMessage(HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
-//î•ñFÂŠÛ‚Éuiv
+//æƒ…å ±ï¼šé’ä¸¸ã«ã€Œiã€
 int InfoMessage   (HWND hwnd, LPCTSTR format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONINFORMATION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopInfoMessage(HWND hwnd, LPCTSTR format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
-//Šm”FF‚«o‚µ‚ÌuHv –ß‚è’l:ID_YES,ID_NO
+//ç¢ºèªï¼šå¹ãå‡ºã—ã®ã€Œï¼Ÿã€ æˆ»ã‚Šå€¤:ID_YES,ID_NO
 int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNO | MB_ICONQUESTION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
-//O‘ğF‚«o‚µ‚ÌuHv –ß‚è’l:ID_YES,ID_NO,ID_CANCEL
+//ä¸‰æŠï¼šå¹ãå‡ºã—ã®ã€Œï¼Ÿã€ æˆ»ã‚Šå€¤:ID_YES,ID_NO,ID_CANCEL
 int Select3Message   (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNOCANCEL | MB_ICONQUESTION              , GSTR_APPNAME, format, p);va_end(p);return n;}
 int TopSelect3Message(HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST , GSTR_APPNAME, format, p);va_end(p);return n;}
 
-//‚»‚Ì‘¼ƒƒbƒZ[ƒW•\¦—pƒ{ƒbƒNƒX
+//ãã®ä»–ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºç”¨ãƒœãƒƒã‚¯ã‚¹
 int OkMessage   (HWND hwnd, LPCTSTR format, ...){         va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK                                   , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopOkMessage(HWND hwnd, LPCTSTR format, ...){         va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_TOPMOST                      , GSTR_APPNAME,   format, p);va_end(p);return n;}	//(TOPMOST)
 
-//ƒ^ƒCƒvw’èƒƒbƒZ[ƒW•\¦—pƒ{ƒbƒNƒX
+//ã‚¿ã‚¤ãƒ—æŒ‡å®šãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºç”¨ãƒœãƒƒã‚¯ã‚¹
 int CustomMessage   (HWND hwnd, UINT uType, LPCTSTR format, ...){   va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, uType                         , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){   va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, uType | MB_TOPMOST            , GSTR_APPNAME,   format, p);va_end(p);return n;}	//(TOPMOST)
 
-//ìÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰[
+//ä½œè€…ã«æ•™ãˆã¦æ¬²ã—ã„ã‚¨ãƒ©ãƒ¼
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, LS(STR_ERR_DLGDOCLMN1), format, p);va_end(p);return n;}
 
 

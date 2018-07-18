@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,10 +25,10 @@
 #define SAKURA_WINDOW_E7B899CD_2106_4A3B_BBA1_EB29FD9640F39_H_
 
 /*!
-	@brief ‰æ–Ê DPI ƒXƒP[ƒŠƒ“ƒO
-	@note 96 DPI ƒsƒNƒZƒ‹‚ğ‘z’è‚µ‚Ä‚¢‚éƒfƒUƒCƒ“‚ğ‚Ç‚ê‚¾‚¯ƒXƒP[ƒŠƒ“ƒO‚·‚é‚©
+	@brief ç”»é¢ DPI ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
+	@note 96 DPI ãƒ”ã‚¯ã‚»ãƒ«ã‚’æƒ³å®šã—ã¦ã„ã‚‹ãƒ‡ã‚¶ã‚¤ãƒ³ã‚’ã©ã‚Œã ã‘ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°ã™ã‚‹ã‹
 
-	@date 2009.10.01 ryoji ‚DPI‘Î‰—p‚Éì¬
+	@date 2009.10.01 ryoji é«˜DPIå¯¾å¿œç”¨ã«ä½œæˆ
 */
 class CDPI{
 	static void Init()
@@ -64,8 +64,8 @@ public:
 		lprc->top = UnscaleY(lprc->top);
 		lprc->bottom = UnscaleY(lprc->bottom);
 	}
-	static int PointsToPixels(int pt, int ptMag = 1){Init(); return ::MulDiv(pt, nDpiY, 72 * ptMag);}	// ptMag: ˆø”‚Ìƒ|ƒCƒ“ƒg”‚É‚©‚©‚Á‚Ä‚¢‚é”{—¦
-	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: –ß‚è’l‚Ìƒ|ƒCƒ“ƒg”‚É‚©‚¯‚é”{—¦
+	static int PointsToPixels(int pt, int ptMag = 1){Init(); return ::MulDiv(pt, nDpiY, 72 * ptMag);}	// ptMag: å¼•æ•°ã®ãƒã‚¤ãƒ³ãƒˆæ•°ã«ã‹ã‹ã£ã¦ã„ã‚‹å€ç‡
+	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: æˆ»ã‚Šå€¤ã®ãƒã‚¤ãƒ³ãƒˆæ•°ã«ã‹ã‘ã‚‹å€ç‡
 };
 
 inline int DpiScaleX(int x){return CDPI::ScaleX(x);}
@@ -77,11 +77,11 @@ inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
 inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
 inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
 
-void ActivateFrameWindow( HWND );	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+void ActivateFrameWindow( HWND );	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 
 /*
-||	ˆ—’†‚Ìƒ†[ƒU[‘€ì‚ğ‰Â”\‚É‚·‚é
-||	ƒuƒƒbƒLƒ“ƒOƒtƒbƒN(?)(ƒƒbƒZ[ƒW”z‘—)
+||	å‡¦ç†ä¸­ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æ“ä½œã‚’å¯èƒ½ã«ã™ã‚‹
+||	ãƒ–ãƒ­ãƒƒã‚­ãƒ³ã‚°ãƒ•ãƒƒã‚¯(?)(ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é…é€)
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
@@ -94,10 +94,10 @@ BOOL BlockingHook( HWND hwndDlgCancel );
 #define GA_ROOTOWNER2	100
 
 
-HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// w’è‚µ‚½ƒEƒBƒ“ƒhƒE‚Ì‘cæ‚Ìƒnƒ“ƒhƒ‹‚ğæ“¾‚·‚é	// 2007.07.01 ryoji
+HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// æŒ‡å®šã—ãŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç¥–å…ˆã®ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—ã™ã‚‹	// 2007.07.01 ryoji
 
 
-//ƒ`ƒFƒbƒNƒ{ƒbƒNƒX
+//ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 inline void CheckDlgButtonBool(HWND hDlg, int nIDButton, bool bCheck)
 {
 	CheckDlgButton(hDlg,nIDButton,bCheck?BST_CHECKED:BST_UNCHECKED);
@@ -107,14 +107,14 @@ inline bool IsDlgButtonCheckedBool(HWND hDlg, int nIDButton)
 	return (IsDlgButtonChecked(hDlg,nIDButton) & BST_CHECKED) != 0;
 }
 
-//ƒ_ƒCƒAƒƒOƒAƒCƒeƒ€‚Ì—LŒø‰»
+//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¢ã‚¤ãƒ†ãƒ ã®æœ‰åŠ¹åŒ–
 inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 {
 	return FALSE != ::EnableWindow( ::GetDlgItem(hwndDlg, nIDDlgItem), nEnable?TRUE:FALSE);
 }
 
-// •ŒvZ•â•ƒNƒ‰ƒX
-// Å‘å‚Ì•‚ğ•ñ‚µ‚Ü‚·
+// å¹…è¨ˆç®—è£œåŠ©ã‚¯ãƒ©ã‚¹
+// æœ€å¤§ã®å¹…ã‚’å ±å‘Šã—ã¾ã™
 class CTextWidthCalc
 {
 public:
@@ -134,16 +134,16 @@ public:
 	int GetTextHeight() const;
 	HDC GetDC() const{ return hDC; }
 	int GetCx(){ return nCx; }
-	// Zo•û–@‚ª‚æ‚­•ª‚©‚ç‚È‚¢‚Ì‚Å’è”‚É‚µ‚Ä‚¨‚­
-	// §Œä•s—v‚È‚ç ListView‚ÍLVSCW_AUTOSIZE“™„§
+	// ç®—å‡ºæ–¹æ³•ãŒã‚ˆãåˆ†ã‹ã‚‰ãªã„ã®ã§å®šæ•°ã«ã—ã¦ãŠã
+	// åˆ¶å¾¡ä¸è¦ãªã‚‰ ListViewã¯LVSCW_AUTOSIZEç­‰æ¨å¥¨
 	enum StaticMagicNambers{
-		//! ƒXƒNƒ[ƒ‹ƒo[‚ÆƒAƒCƒeƒ€‚ÌŠÔ‚ÌŒ„ŠÔ
+		//! ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã¨ã‚¢ã‚¤ãƒ†ãƒ ã®é–“ã®éš™é–“
 		WIDTH_MARGIN_SCROLLBER = 8,
-		//! ƒŠƒXƒgƒrƒ…[ƒwƒbƒ_ ƒ}[ƒWƒ“
+		//! ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ãƒ˜ãƒƒãƒ€ ãƒãƒ¼ã‚¸ãƒ³
 		WIDTH_LV_HEADER = 17,
-		//! ƒŠƒXƒgƒrƒ…[‚Ìƒ}[ƒWƒ“
+		//! ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®ãƒãƒ¼ã‚¸ãƒ³
 		WIDTH_LV_ITEM_NORMAL  = 14,
-		//! ƒŠƒXƒgƒrƒ…[‚Ìƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚Æƒ}[ƒWƒ“‚Ì•
+		//! ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã¨ãƒãƒ¼ã‚¸ãƒ³ã®å¹…
 		WIDTH_LV_ITEM_CHECKBOX = 30,
 	};
 private:

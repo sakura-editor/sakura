@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,24 +26,24 @@
 
 #include "util/string_ex.h"
 
-//! ƒq[ƒv‚ğ—p‚¢‚È‚¢vector
-//2007.09.23 kobake ì¬B
+//! ãƒ’ãƒ¼ãƒ—ã‚’ç”¨ã„ãªã„vector
+//2007.09.23 kobake ä½œæˆã€‚
 template <class ELEMENT_TYPE, int MAX_SIZE, class SET_TYPE = const ELEMENT_TYPE&>
 class StaticVector{
 public:
-	//Œ^
+	//å‹
 	typedef ELEMENT_TYPE ElementType;
 
 public:
-	//‘®«
+	//å±æ€§
 	int size() const{ return m_nCount; }
 	int max_size() const{ return MAX_SIZE; }
 
-	//—v‘fƒAƒNƒZƒX
+	//è¦ç´ ã‚¢ã‚¯ã‚»ã‚¹
 	ElementType&       operator[](int nIndex)      { assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
 	const ElementType& operator[](int nIndex) const{ assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
 
-	//‘€ì
+	//æ“ä½œ
 	void clear(){ m_nCount=0; }
 	void push_back(SET_TYPE e)
 	{
@@ -58,10 +58,10 @@ public:
 		m_nCount = nNewSize;
 	}
 	
-	//! —v‘f”‚ª0‚Å‚à—v‘f‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
+	//! è¦ç´ æ•°ãŒ0ã§ã‚‚è¦ç´ ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 	ElementType*  dataPtr(){ return m_aElements;}
 
-	//“Áê
+	//ç‰¹æ®Š
 	int& _GetSizeRef(){ return m_nCount; }
 	void SetSizeLimit(){
 		if( MAX_SIZE < m_nCount ){
@@ -76,8 +76,8 @@ private:
 	ElementType m_aElements[MAX_SIZE];
 };
 
-//! ƒq[ƒv‚ğ—p‚¢‚È‚¢•¶š—ñƒNƒ‰ƒX
-//2007.09.23 kobake ì¬B
+//! ãƒ’ãƒ¼ãƒ—ã‚’ç”¨ã„ãªã„æ–‡å­—åˆ—ã‚¯ãƒ©ã‚¹
+//2007.09.23 kobake ä½œæˆã€‚
 template <class CHAR_TYPE, int N_BUFFER_COUNT>
 class StaticString{
 private:
@@ -85,28 +85,28 @@ private:
 public:
 	static const int BUFFER_COUNT = N_BUFFER_COUNT;
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	StaticString(){ m_szData[0]=0; }
 	StaticString(const CHAR_TYPE* rhs){ if(!rhs) m_szData[0]=0; else auto_strcpy(m_szData,rhs); }
 
-	//ƒNƒ‰ƒX‘®«
+	//ã‚¯ãƒ©ã‚¹å±æ€§
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }
 
-	//ƒf[ƒ^ƒAƒNƒZƒX
+	//ãƒ‡ãƒ¼ã‚¿ã‚¢ã‚¯ã‚»ã‚¹
 	CHAR_TYPE*       GetBufferPointer()      { return m_szData; }
 	const CHAR_TYPE* GetBufferPointer() const{ return m_szData; }
-	const CHAR_TYPE* c_str()            const{ return m_szData; } //std::string•—
+	const CHAR_TYPE* c_str()            const{ return m_szData; } //std::stringé¢¨
 
-	//ŠÈˆÕƒf[ƒ^ƒAƒNƒZƒX
+	//ç°¡æ˜“ãƒ‡ãƒ¼ã‚¿ã‚¢ã‚¯ã‚»ã‚¹
 	operator       CHAR_TYPE*()      { return m_szData; }
 	operator const CHAR_TYPE*() const{ return m_szData; }
 	CHAR_TYPE At(int nIndex) const{ return m_szData[nIndex]; }
 
-	//ŠÈˆÕƒRƒs[
+	//ç°¡æ˜“ã‚³ãƒ”ãƒ¼
 	void Assign(const CHAR_TYPE* src){ if(!src) m_szData[0]=0; else auto_strcpy_s(m_szData,_countof(m_szData),src); }
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
 
-	//Šeíƒƒ\ƒbƒh
+	//å„ç¨®ãƒ¡ã‚½ãƒƒãƒ‰
 	int Length() const{ return auto_strlen(m_szData); }
 
 private:

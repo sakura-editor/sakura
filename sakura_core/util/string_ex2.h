@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -38,29 +38,29 @@ wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src);
 #define wcs_pushT wcs_pushA
 #endif
 
-int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca ÅŒã‚Ì•¶š‚ªw’è‚³‚ê‚½•¶š‚Å‚È‚¢‚Æ‚«‚Í•t‰Á‚·‚é */
-int LimitStringLengthA( const ACHAR*, int, int, CNativeA& );/* ƒf[ƒ^‚ğw’èu•¶š”vˆÈ“à‚ÉØ‚è‹l‚ß‚é */
-int LimitStringLengthW( const WCHAR*, int, int, CNativeW& );/* ƒf[ƒ^‚ğw’èu•¶š”vˆÈ“à‚ÉØ‚è‹l‚ß‚é */
+int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca æœ€å¾Œã®æ–‡å­—ãŒæŒ‡å®šã•ã‚ŒãŸæ–‡å­—ã§ãªã„ã¨ãã¯ä»˜åŠ ã™ã‚‹ */
+int LimitStringLengthA( const ACHAR*, int, int, CNativeA& );/* ãƒ‡ãƒ¼ã‚¿ã‚’æŒ‡å®šã€Œæ–‡å­—æ•°ã€ä»¥å†…ã«åˆ‡ã‚Šè©°ã‚ã‚‹ */
+int LimitStringLengthW( const WCHAR*, int, int, CNativeW& );/* ãƒ‡ãƒ¼ã‚¿ã‚’æŒ‡å®šã€Œæ–‡å­—æ•°ã€ä»¥å†…ã«åˆ‡ã‚Šè©°ã‚ã‚‹ */
 #ifdef _UNICODE
 #define LimitStringLengthT LimitStringLengthW
 #else
 #define LimitStringLengthT LimitStringLengthA
 #endif
 
-const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
-const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
-const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol*, bool ); // GetNextLine‚Ìwchar_t”Å
-//wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å(ƒrƒbƒNƒGƒ“ƒfƒBƒAƒ“—p)  // –¢g—p
+const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* æŒ‡å®šé•·ä»¥ä¸‹ã®ãƒ†ã‚­ã‚¹ãƒˆã«åˆ‡ã‚Šåˆ†ã‘ã‚‹ */
+const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CRã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã¯è¡Œé•·ã«åŠ ãˆãªã„ */
+const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol*, bool ); // GetNextLineã®wchar_tç‰ˆ
+//wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineã®wchar_tç‰ˆ(ãƒ“ãƒƒã‚¯ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ç”¨)  // æœªä½¿ç”¨
 void GetLineColumn( const wchar_t*, int*, int* );
 
 
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 
 
-/*!	&‚Ì“ñd‰»
-	ƒƒjƒ…[‚ÉŠÜ‚Ü‚ê‚é&‚ğ&&‚É’u‚«Š·‚¦‚é
+/*!	&ã®äºŒé‡åŒ–
+	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«å«ã¾ã‚Œã‚‹&ã‚’&&ã«ç½®ãæ›ãˆã‚‹
 	@author genta
-	@date 2002/01/30 cescape‚ÉŠg’£‚µC
+	@date 2002/01/30 cescapeã«æ‹¡å¼µã—ï¼Œ
 	@date 2004/06/19 genta Generic mapping
 */
 inline void dupamp(const TCHAR* org, TCHAR* out)
@@ -68,17 +68,17 @@ inline void dupamp(const TCHAR* org, TCHAR* out)
 
 
 /*
-	scanf“IˆÀ‘SƒXƒLƒƒƒ“
+	scanfçš„å®‰å…¨ã‚¹ã‚­ãƒ£ãƒ³
 
-	g—p—á:
+	ä½¿ç”¨ä¾‹:
 		int a[3];
 		scan_ints("1,23,4,5", "%d,%d,%d", a);
-		//Œ‹‰Ê: a[0]=1, a[1]=23, a[2]=4 ‚Æ‚È‚éB
+		//çµæœ: a[0]=1, a[1]=23, a[2]=4 ã¨ãªã‚‹ã€‚
 */
 int scan_ints(
-	const wchar_t*	pszData,	//!< [in]  ƒf[ƒ^•¶š—ñ
-	const wchar_t*	pszFormat,	//!< [in]  ƒf[ƒ^ƒtƒH[ƒ}ƒbƒg
-	int*			anBuf		//!< [out] æ“¾‚µ‚½”’l (—v‘f”‚ÍÅ‘å32‚Ü‚Å)
+	const wchar_t*	pszData,	//!< [in]  ãƒ‡ãƒ¼ã‚¿æ–‡å­—åˆ—
+	const wchar_t*	pszFormat,	//!< [in]  ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+	int*			anBuf		//!< [out] å–å¾—ã—ãŸæ•°å€¤ (è¦ç´ æ•°ã¯æœ€å¤§32ã¾ã§)
 );
 
 #endif /* SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_ */

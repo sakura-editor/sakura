@@ -1,8 +1,8 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "tchar_template.h"
 
-// -- -- •K—v‚È•¶ŽšŒQ‚ðŽè“®‚Å’è‹` -- -- //
-//ƒAƒ‹ƒtƒ@ƒxƒbƒg
+// -- -- å¿…è¦ãªæ–‡å­—ç¾¤ã‚’æ‰‹å‹•ã§å®šç¾© -- -- //
+//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆ
 DEFINE_T2('A')
 DEFINE_T2('B')
 DEFINE_T2('C')
@@ -56,7 +56,7 @@ DEFINE_T2('x')
 DEFINE_T2('y')
 DEFINE_T2('z')
 
-//”Žš
+//æ•°å­—
 DEFINE_T2('0')
 DEFINE_T2('1')
 DEFINE_T2('2')
@@ -68,7 +68,7 @@ DEFINE_T2('7')
 DEFINE_T2('8')
 DEFINE_T2('9')
 
-//‹L†
+//è¨˜å·
 DEFINE_T2('-')
 DEFINE_T2('^')
 DEFINE_T2('\\')
@@ -103,7 +103,7 @@ DEFINE_T2('?')
 DEFINE_T2('_')
 DEFINE_T2(' ')
 
-//“ÁŽê•¶Žš
+//ç‰¹æ®Šæ–‡å­—
 DEFINE_T2('\r')
 DEFINE_T2('\n')
 DEFINE_T2('\t')

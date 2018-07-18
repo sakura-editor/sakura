@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,14 +28,14 @@
 
 #define MAX_BUF 0x7FFFFFFF
 
-//ƒeƒ“ƒvƒŒ[ƒg‚Å TEXT<T> g‚¦‚ê‚ÎA‚±‚ñ‚È‰˜‚¢ƒRƒsƒy‚µ‚È‚­‚ÄÏ‚Ş‚Ì‚Éc
+//ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã§ TEXT<T> ä½¿ãˆã‚Œã°ã€ã“ã‚“ãªæ±šã„ã‚³ãƒ”ãƒšã—ãªãã¦æ¸ˆã‚€ã®ã«â€¦
 template <class T>
 inline bool is_field_begin(T c)
 {
 	return c==_T2(T,'%');
 }
 
-//‘®w’è: flag
+//æ›¸å¼æŒ‡å®š: flag
 template <class T>
 inline const T* skip_field_flag(const T* p)
 {
@@ -47,29 +47,29 @@ inline const T* skip_field_flag(const T* p)
 	return p;
 }
 
-//‘®w’è: width
+//æ›¸å¼æŒ‡å®š: width
 template <class T>
 inline const T* skip_field_width(const T* p)
 {
-	if(*p>=_T2(T,'1') && *p<=_T2(T,'9'))p++; else return p; //ˆêŒ…–Ú‚Í0‚ğó‚¯•t‚¯‚È‚¢
+	if(*p>=_T2(T,'1') && *p<=_T2(T,'9'))p++; else return p; //ä¸€æ¡ç›®ã¯0ã‚’å—ã‘ä»˜ã‘ãªã„
 	while(*p>=_T2(T,'0') && *p<=_T2(T,'9'))p++;
 	return p;
 }
 
-//‘®w’è: precision
+//æ›¸å¼æŒ‡å®š: precision
 template <class T>
 inline const T* skip_field_precision(const T* p)
 {
-	if(*p==_T2(T,'.'))p++; else return p; //ƒhƒbƒg‚Ån‚Ü‚é•¶š—ñ‚Ì‚İó‚¯•t‚¯‚é
-	while(*p>=_T2(T,'0') && *p<=_T2(T,'9'))p++; //‚æ‚­‚í‚©‚ç‚ñ‚Ì‚Å‚Æ‚è‚ ‚¦‚¸‘S”š‚ğó‚¯•t‚¯‚é
+	if(*p==_T2(T,'.'))p++; else return p; //ãƒ‰ãƒƒãƒˆã§å§‹ã¾ã‚‹æ–‡å­—åˆ—ã®ã¿å—ã‘ä»˜ã‘ã‚‹
+	while(*p>=_T2(T,'0') && *p<=_T2(T,'9'))p++; //ã‚ˆãã‚ã‹ã‚‰ã‚“ã®ã§ã¨ã‚Šã‚ãˆãšå…¨æ•°å­—ã‚’å—ã‘ä»˜ã‘ã‚‹
 	return p;
 }
 
-//‘®w’è: prefix
+//æ›¸å¼æŒ‡å®š: prefix
 template <class T>
 inline const T* skip_field_prefix(const T* p)
 {
-	if(*p==_T2(T,'t'))return p+1; //“Æ©Šg’£
+	if(*p==_T2(T,'t'))return p+1; //ç‹¬è‡ªæ‹¡å¼µ
 	if(*p==_T2(T,'h'))return p+1;
 	if(p[0]==_T2(T,'l') && p[1]==_T2(T,'l'))return p+2;
 	if(*p==_T2(T,'l'))return p+1;
@@ -79,7 +79,7 @@ inline const T* skip_field_prefix(const T* p)
 	return p;
 }
 
-//‘®w’è: type
+//æ›¸å¼æŒ‡å®š: type
 inline bool is_field_type(char c)
 {
 	return strchr("cCdiouxXeEfgGaAnpsS",c)!=NULL;
@@ -140,7 +140,7 @@ static void my_va_forward(va_list& v, const char* field, const char* prefix)
 	case 'x':
 	case 'X':
 		{
-			// 2014.06.12 64bit’l‘Î‰
+			// 2014.06.12 64bitå€¤å¯¾å¿œ
 			const char *p = prefix;
 			if( p[0]=='I' && p[1]=='6' && p[2]=='4' ){
 				va_arg(v,LONGLONG);
@@ -185,7 +185,7 @@ static void my_va_forward(va_list& v, const wchar_t* field, const wchar_t* prefi
 	case L'u':
 	case L'x':
 	case L'X':
-		// 2014.06.12 64bit’l‘Î‰
+		// 2014.06.12 64bitå€¤å¯¾å¿œ
 		{
 			const wchar_t *p = prefix;
 			if( p[0]==L'I' && p[1]==L'6' && p[2]==L'4' ){
@@ -239,18 +239,18 @@ static void field_convert(wchar_t* src)
 }
 
 
-//"%ts","%tc"‚ğƒTƒ|[ƒg
-//¦“ú–{Œêl—¶‚µ‚È‚¢B(UNICODE”Å‚Å‚Í‚±‚ê‚Å–â‘è‚ª”­¶‚µ‚È‚¢)
+//"%ts","%tc"ã‚’ã‚µãƒãƒ¼ãƒˆ
+//â€»æ—¥æœ¬èªè€ƒæ…®ã—ãªã„ã€‚(UNICODEç‰ˆã§ã¯ã“ã‚Œã§å•é¡ŒãŒç™ºç”Ÿã—ãªã„)
 template <class T>
 int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, bool truncate)
 {
-	T* buf_end=buf+nBufCount; //•ÏŠ·ƒŠƒ~ƒbƒg
+	T* buf_end=buf+nBufCount; //å¤‰æ›ãƒªãƒŸãƒƒãƒˆ
 
-	T* dst=buf;          //•ÏŠ·æƒ[ƒN•Ï”
-	const T* src=format; //•ÏŠ·Œ³ƒ[ƒN•Ï”
+	T* dst=buf;          //å¤‰æ›å…ˆãƒ¯ãƒ¼ã‚¯å¤‰æ•°
+	const T* src=format; //å¤‰æ›å…ƒãƒ¯ãƒ¼ã‚¯å¤‰æ•°
 	while(*src){
 		if(nBufCount!=MAX_BUF && dst>=buf_end-1)break;
-		//‘®w’èƒtƒB[ƒ‹ƒh‚ğæ“¾
+		//æ›¸å¼æŒ‡å®šãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’å–å¾—
 		if(is_field_begin(*src)){
 			const T* field_begin=src;
 			src++;
@@ -264,22 +264,22 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 				src++;
 				const T* field_end=src;
 
-				//ƒtƒB[ƒ‹ƒh‚ğˆê•Ï”‚ÉƒRƒs[
+				//ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’ä¸€æ™‚å¤‰æ•°ã«ã‚³ãƒ”ãƒ¼
 				T field[64];
-				if(field_end-field_begin>=_countof(field))field_end=field_begin+_countof(field)-1; //ƒtƒB[ƒ‹ƒh’·§ŒÀ
+				if(field_end-field_begin>=_countof(field))field_end=field_begin+_countof(field)-1; //ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰é•·åˆ¶é™
 				auto_strncpy(field,field_begin,field_end-field_begin);
 				field[field_end-field_begin] = 0;
 				
-				//ƒtƒB[ƒ‹ƒh“à‚É%ts‚Ü‚½‚Í%tc‚ª‚ ‚Á‚½‚çA“KØ‚É•ÏŠ·
+				//ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰å†…ã«%tsã¾ãŸã¯%tcãŒã‚ã£ãŸã‚‰ã€é©åˆ‡ã«å¤‰æ›
 				field_convert(field);
 
-				//•ÏŠ·ˆ—‚Í•W€ƒ‰ƒCƒuƒ‰ƒŠ‚ÉˆÏ÷
+				//å¤‰æ›å‡¦ç†ã¯æ¨™æº–ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«å§”è­²
 				int ret;
-				va_list tmp_v=v; //¦v‚ğƒRƒs[‚µ‚Ä—p‚¢‚é
+				va_list tmp_v=v; //â€»vã‚’ã‚³ãƒ”ãƒ¼ã—ã¦ç”¨ã„ã‚‹
 				if(truncate){
 					ret=local_vsnprintf_s(dst,buf_end-dst,field,tmp_v);
 					if( ret<0 ){
-						//ƒoƒbƒtƒ@‚É“ü‚è‚«‚ç‚È‚¢•¶š—ñ‚ªØ‚èÌ‚Ä‚ç‚ê‚½
+						//ãƒãƒƒãƒ•ã‚¡ã«å…¥ã‚Šãã‚‰ãªã„æ–‡å­—åˆ—ãŒåˆ‡ã‚Šæ¨ã¦ã‚‰ã‚ŒãŸ
 						return -1;
 					}
 				}
@@ -290,30 +290,30 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 					ret=local_vsprintf(dst,field,tmp_v);
 				}
 
-				//v‚ği‚ß‚éB©M‚È‚Á‚µ‚ñ‚®
+				//vã‚’é€²ã‚ã‚‹ã€‚è‡ªä¿¡ãªã£ã—ã‚“ã
 				my_va_forward(v,field, prefix);
 
-				//•ÏŠ·æƒ[ƒNƒ|ƒCƒ“ƒ^‚ği‚ß‚é
+				//å¤‰æ›å…ˆãƒ¯ãƒ¼ã‚¯ãƒã‚¤ãƒ³ã‚¿ã‚’é€²ã‚ã‚‹
 				if(ret!=-1){
 					dst+=ret;
 				}
 				src=field_end;
 			}
 			else{
-				//—LŒø‚ÈŒ^ƒtƒB[ƒ‹ƒh‚Å‚Í‚È‚©‚Á‚½‚Ì‚ÅA‚»‚Ì‚Ü‚ñ‚Üo—Í‚µ‚¿‚á‚¤
+				//æœ‰åŠ¹ãªå‹ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã§ã¯ãªã‹ã£ãŸã®ã§ã€ãã®ã¾ã‚“ã¾å‡ºåŠ›ã—ã¡ã‚ƒã†
 				*dst++ = *src++;
 			}
 		}
 		else{
-			//–³•ÏŠ·
+			//ç„¡å¤‰æ›
 			*dst++ = *src++;
 		}
 	}
-	//I’[
+	//çµ‚ç«¯
 	*dst = 0;
 
-	if( truncate && *src != '\0' ){		//Ø‚è‹l‚ß‚ ‚è‚ÅAsrc‚Ìˆ—‚ªŠ®—¹‚µ‚Ä‚¢‚È‚¢ê‡
-		return -1;						//Ø‚è‹l‚ß‚ç‚ê‚½
+	if( truncate && *src != '\0' ){		//åˆ‡ã‚Šè©°ã‚ã‚ã‚Šã§ã€srcã®å‡¦ç†ãŒå®Œäº†ã—ã¦ã„ãªã„å ´åˆ
+		return -1;						//åˆ‡ã‚Šè©°ã‚ã‚‰ã‚ŒãŸ
 	}
 	return dst-buf;
 }
@@ -332,8 +332,8 @@ int tchar_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list&
 
 
 
-// vsprintfƒ‰ƒbƒv
-// ¦buf‚É\•ª‚È—e—Ê‚ª‚ ‚é‚±‚Æ‚É©M‚ª‚ ‚é‚Æ‚«‚¾‚¯Ag‚Á‚Ä‚­‚¾‚³‚¢B
+// vsprintfãƒ©ãƒƒãƒ—
+// â€»bufã«ååˆ†ãªå®¹é‡ãŒã‚ã‚‹ã“ã¨ã«è‡ªä¿¡ãŒã‚ã‚‹ã¨ãã ã‘ã€ä½¿ã£ã¦ãã ã•ã„ã€‚
 //
 int tchar_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v)
 {
@@ -345,8 +345,8 @@ int tchar_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v)
 }
 
 
-// vsnprintf_sƒ‰ƒbƒv
-// ƒoƒbƒtƒ@‚ªo—Í•¶š—ñ‚æ‚è¬‚³‚¢ê‡‚Í‰Â”\‚ÈŒÀ‚èo—Í‚µ‚Ä––”ö‚É\0‚ğ•t‚¯A–ß‚è’l-1‚Å•Ô‚è‚Ü‚·B
+// vsnprintf_sãƒ©ãƒƒãƒ—
+// ãƒãƒƒãƒ•ã‚¡ãŒå‡ºåŠ›æ–‡å­—åˆ—ã‚ˆã‚Šå°ã•ã„å ´åˆã¯å¯èƒ½ãªé™ã‚Šå‡ºåŠ›ã—ã¦æœ«å°¾ã«\0ã‚’ä»˜ã‘ã€æˆ»ã‚Šå€¤-1ã§è¿”ã‚Šã¾ã™ã€‚
 //
 int tchar_vsnprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v)
 {
@@ -358,13 +358,13 @@ int tchar_vsnprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list
 }
 
 
-// sprintf_sƒ‰ƒbƒv
+// sprintf_sãƒ©ãƒƒãƒ—
 //
-// (À‘•‚É‚Â‚¢‚Ä)
-//     “à—e‚ª“¯‚¶‚È‚Ì‚ÅAtemplate‚Å‚à—Ç‚©‚Á‚½‚Ì‚Å‚·‚ªA
-//     ‚»‚¤‚·‚é‚ÆAACHAR, WCHAR ˆÈŠO‚ÌŒ^‚©‚ç‚ÌˆÃ–Ù‚ÅˆÀ‘S‚ÈƒLƒƒƒXƒg‚ª
-//     Œø‚©‚È‚­‚È‚èAƒR[ƒfƒBƒ“ƒO‚ª•s•Ö‚É‚È‚é‚½‚ßA
-//     ‚ ‚¦‚ÄAACHAR, WCHAR ‚ÅŠÖ”‚ğ‚Ğ‚Æ‚Â‚¸‚Â’è‹`‚µ‚Ä‚¢‚Ü‚·B
+// (å®Ÿè£…ã«ã¤ã„ã¦)
+//     å†…å®¹ãŒåŒã˜ãªã®ã§ã€templateã§ã‚‚è‰¯ã‹ã£ãŸã®ã§ã™ãŒã€
+//     ãã†ã™ã‚‹ã¨ã€ACHAR, WCHAR ä»¥å¤–ã®å‹ã‹ã‚‰ã®æš—é»™ã§å®‰å…¨ãªã‚­ãƒ£ã‚¹ãƒˆãŒ
+//     åŠ¹ã‹ãªããªã‚Šã€ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãŒä¸ä¾¿ã«ãªã‚‹ãŸã‚ã€
+//     ã‚ãˆã¦ã€ACHAR, WCHAR ã§é–¢æ•°ã‚’ã²ã¨ã¤ãšã¤å®šç¾©ã—ã¦ã„ã¾ã™ã€‚
 //
 int tchar_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...)
 {
@@ -384,14 +384,14 @@ int tchar_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...)
 }
 
 
-// sprintfƒ‰ƒbƒv
-// ¦buf‚É\•ª‚È—e—Ê‚ª‚ ‚é‚±‚Æ‚É©M‚ª‚ ‚é‚Æ‚«‚¾‚¯Ag‚Á‚Ä‚­‚¾‚³‚¢B
+// sprintfãƒ©ãƒƒãƒ—
+// â€»bufã«ååˆ†ãªå®¹é‡ãŒã‚ã‚‹ã“ã¨ã«è‡ªä¿¡ãŒã‚ã‚‹ã¨ãã ã‘ã€ä½¿ã£ã¦ãã ã•ã„ã€‚
 //
-// (À‘•‚É‚Â‚¢‚Ä)
-//     “à—e‚ª“¯‚¶‚È‚Ì‚ÅAtemplate‚Å‚à—Ç‚©‚Á‚½‚Ì‚Å‚·‚ªA
-//     ‚»‚¤‚·‚é‚ÆAACHAR, WCHAR ˆÈŠO‚ÌŒ^‚©‚ç‚ÌˆÃ–Ù‚ÅˆÀ‘S‚ÈƒLƒƒƒXƒg‚ª
-//     Œø‚©‚È‚­‚È‚èAƒR[ƒfƒBƒ“ƒO‚ª•s•Ö‚É‚È‚é‚½‚ßA
-//     ‚ ‚¦‚ÄAACHAR, WCHAR ‚ÅŠÖ”‚ğ‚Ğ‚Æ‚Â‚¸‚Â’è‹`‚µ‚Ä‚¢‚Ü‚·B
+// (å®Ÿè£…ã«ã¤ã„ã¦)
+//     å†…å®¹ãŒåŒã˜ãªã®ã§ã€templateã§ã‚‚è‰¯ã‹ã£ãŸã®ã§ã™ãŒã€
+//     ãã†ã™ã‚‹ã¨ã€ACHAR, WCHAR ä»¥å¤–ã®å‹ã‹ã‚‰ã®æš—é»™ã§å®‰å…¨ãªã‚­ãƒ£ã‚¹ãƒˆãŒ
+//     åŠ¹ã‹ãªããªã‚Šã€ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãŒä¸ä¾¿ã«ãªã‚‹ãŸã‚ã€
+//     ã‚ãˆã¦ã€ACHAR, WCHAR ã§é–¢æ•°ã‚’ã²ã¨ã¤ãšã¤å®šç¾©ã—ã¦ã„ã¾ã™ã€‚
 //
 int tchar_sprintf(ACHAR* buf, const ACHAR* format, ...)
 {
@@ -411,8 +411,8 @@ int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...)
 	return ret;
 }
 
-// snprintf_sƒ‰ƒbƒv
-// ƒoƒbƒtƒ@‚ªo—Í•¶š—ñ‚æ‚è¬‚³‚¢ê‡‚Í‰Â”\‚ÈŒÀ‚èo—Í‚µ‚Ä––”ö‚É\0‚ğ•t‚¯A–ß‚è’l-1‚Å•Ô‚è‚Ü‚·B
+// snprintf_sãƒ©ãƒƒãƒ—
+// ãƒãƒƒãƒ•ã‚¡ãŒå‡ºåŠ›æ–‡å­—åˆ—ã‚ˆã‚Šå°ã•ã„å ´åˆã¯å¯èƒ½ãªé™ã‚Šå‡ºåŠ›ã—ã¦æœ«å°¾ã«\0ã‚’ä»˜ã‘ã€æˆ»ã‚Šå€¤-1ã§è¿”ã‚Šã¾ã™ã€‚
 //
 int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...) 
 {

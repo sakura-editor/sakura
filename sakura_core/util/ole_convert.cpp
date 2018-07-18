@@ -1,16 +1,16 @@
-/*!	@file
-	@brief OLEŒ^iVARIANT, BSTR‚È‚Çj‚Ì•ÏŠ·ŠÖ”
+ï»¿/*!	@file
+	@brief OLEå‹ï¼ˆVARIANT, BSTRãªã©ï¼‰ã®å¤‰æ›é–¢æ•°
 
 */
 #include "StdAfx.h"
 #include "ole_convert.h"
 
-// VARIANT•Ï”‚ğBSTR‚Æ‚İ‚È‚µAwstring‚É•ÏŠ·‚·‚é
-// CMacro::HandleFunction‚ğQl‚Æ‚µ‚½B
+// VARIANTå¤‰æ•°ã‚’BSTRã¨ã¿ãªã—ã€wstringã«å¤‰æ›ã™ã‚‹
+// CMacro::HandleFunctionã‚’å‚è€ƒã¨ã—ãŸã€‚
 bool variant_to_wstr( VARIANT v, std::wstring& wstr )
 {
-	Variant varCopy;	// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
-	if(VariantChangeType(&varCopy.Data, &v, 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+	Variant varCopy;	// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
+	if(VariantChangeType(&varCopy.Data, &v, 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 
 	wchar_t *Source;
 	int SourceLength;
@@ -22,12 +22,12 @@ bool variant_to_wstr( VARIANT v, std::wstring& wstr )
 	return true;
 }
 
-// VARIANT•Ï”‚ğ®”‚Æ‚İ‚È‚µAint‚É•ÏŠ·‚·‚é
-// CMacro::HandleFunction‚ğQl‚Æ‚µ‚½B
+// VARIANTå¤‰æ•°ã‚’æ•´æ•°ã¨ã¿ãªã—ã€intã«å¤‰æ›ã™ã‚‹
+// CMacro::HandleFunctionã‚’å‚è€ƒã¨ã—ãŸã€‚
 bool variant_to_int( VARIANT v, int& n )
 {
-	Variant varCopy;	// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
-	if(VariantChangeType(&varCopy.Data, &v, 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+	Variant varCopy;	// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
+	if(VariantChangeType(&varCopy.Data, &v, 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 
 	n = varCopy.Data.lVal;
 	return true;

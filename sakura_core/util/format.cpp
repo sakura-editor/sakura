@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,20 +26,20 @@
 #include "format.h"
 
 
-/*!	“ú‚ğƒtƒH[ƒ}ƒbƒg
+/*!	æ—¥æ™‚ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 
-	@param[out] ‘®•ÏŠ·Œã‚Ì•¶š—ñ
-	@param[in] ƒoƒbƒtƒ@ƒTƒCƒY
-	@param[in] format ‘®
-	@param[in] systime ‘®‰»‚µ‚½‚¢“ú
+	@param[out] æ›¸å¼å¤‰æ›å¾Œã®æ–‡å­—åˆ—
+	@param[in] ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚º
+	@param[in] format æ›¸å¼
+	@param[in] systime æ›¸å¼åŒ–ã—ãŸã„æ—¥æ™‚
 	@return bool true
 
-	@note  %Y %y %m %d %H %M %S ‚Ì•ÏŠ·‚É‘Î‰
+	@note  %Y %y %m %d %H %M %S ã®å¤‰æ›ã«å¯¾å¿œ
 
 	@author aroka
-	@date 2005.11.21 V‹K
+	@date 2005.11.21 æ–°è¦
 	
-	@todo o—Íƒoƒbƒtƒ@‚ÌƒTƒCƒYƒ`ƒFƒbƒN‚ğs‚¤
+	@todo å‡ºåŠ›ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯ã‚’è¡Œã†
 */
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime )
 {
@@ -101,27 +101,27 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 	return true;
 }
 
-/*!	ƒo[ƒWƒ‡ƒ“”Ô†‚Ì‰ğÍ
+/*!	ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®è§£æ
 
-	@param[in] ƒo[ƒWƒ‡ƒ“”Ô†•¶š—ñ
-	@return UINT32 8biti•„†1bit+”’l7bitj‚¸‚ÂƒƒWƒƒ[Aƒ}ƒCƒi[Aƒrƒ‹ƒhAƒŠƒrƒWƒ‡ƒ“‚ğŠi”[
+	@param[in] ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·æ–‡å­—åˆ—
+	@return UINT32 8bitï¼ˆç¬¦å·1bit+æ•°å€¤7bitï¼‰ãšã¤ãƒ¡ã‚¸ãƒ£ãƒ¼ã€ãƒã‚¤ãƒŠãƒ¼ã€ãƒ“ãƒ«ãƒ‰ã€ãƒªãƒ“ã‚¸ãƒ§ãƒ³ã‚’æ ¼ç´
 
 	@author syat
-	@date 2011.03.18 V‹K
-	@note Ql PHP version_compare http://php.s3.to/man/function.version-compare.html
+	@date 2011.03.18 æ–°è¦
+	@note å‚è€ƒ PHP version_compare http://php.s3.to/man/function.version-compare.html
 */
 UINT32 ParseVersion( const TCHAR* sVer )
 {
 	int nVer;
-	int nShift = 0;	//“Á•Ê‚È•¶š—ñ‚É‚æ‚é‰º‘Ê
-	int nDigit = 0;	//˜A‘±‚·‚é”š‚Ì”
+	int nShift = 0;	//ç‰¹åˆ¥ãªæ–‡å­—åˆ—ã«ã‚ˆã‚‹ä¸‹é§„
+	int nDigit = 0;	//é€£ç¶šã™ã‚‹æ•°å­—ã®æ•°
 	UINT32 ret = 0;
 
 	const TCHAR *p = sVer;
 	int i;
 
 	for( i=0; *p && i<4; i++){
-		//“Á•Ê‚È•¶š—ñ‚Ìˆ—
+		//ç‰¹åˆ¥ãªæ–‡å­—åˆ—ã®å‡¦ç†
 		if( *p == _T('a') ){
 			if( _tcsncmp( _T("alpha"), p, 5 ) == 0 )p += 5;
 			else p++;
@@ -149,18 +149,18 @@ UINT32 ParseVersion( const TCHAR* sVer )
 			nShift = 0;
 		}
 		while( *p && !_istdigit(*p) ){ p++; }
-		//”’l‚Ì’Šo
+		//æ•°å€¤ã®æŠ½å‡º
 		for( nVer = 0, nDigit = 0; _istdigit(*p); p++ ){
-			if( ++nDigit > 2 )break;	//”š‚Í2Œ…‚Ü‚Å‚Å~‚ß‚é
+			if( ++nDigit > 2 )break;	//æ•°å­—ã¯2æ¡ã¾ã§ã§æ­¢ã‚ã‚‹
 			nVer = nVer * 10 + *p - _T('0');
 		}
-		//‹æØ‚è•¶š‚Ìˆ—
+		//åŒºåˆ‡ã‚Šæ–‡å­—ã®å‡¦ç†
 		while( *p && _tcschr( _T(".-_+"), *p ) ){ p++; }
 
 		DEBUG_TRACE(_T("  VersionPart%d: ver=%d,shift=%d\n"), i, nVer, nShift);
 		ret |= ( (nShift + nVer + 128) << (24-8*i) );
 	}
-	for( ; i<4; i++ ){	//c‚è‚Ì•”•ª‚Ísigned 0 (=0x80)‚ğ–„‚ß‚é
+	for( ; i<4; i++ ){	//æ®‹ã‚Šã®éƒ¨åˆ†ã¯signed 0 (=0x80)ã‚’åŸ‹ã‚ã‚‹
 		ret |= ( 128 << (24-8*i) );
 	}
 
@@ -170,14 +170,14 @@ UINT32 ParseVersion( const TCHAR* sVer )
 	return ret;
 }
 
-/*!	ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
+/*!	ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®æ¯”è¼ƒ
 
-	@param[in] ƒo[ƒWƒ‡ƒ“A
-	@param[in] ƒo[ƒWƒ‡ƒ“B
-	@return int 0: ƒo[ƒWƒ‡ƒ“‚Í“™‚µ‚¢A1ˆÈã: A‚ªV‚µ‚¢A-1ˆÈ‰º: B‚ªV‚µ‚¢
+	@param[in] ãƒãƒ¼ã‚¸ãƒ§ãƒ³A
+	@param[in] ãƒãƒ¼ã‚¸ãƒ§ãƒ³B
+	@return int 0: ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯ç­‰ã—ã„ã€1ä»¥ä¸Š: AãŒæ–°ã—ã„ã€-1ä»¥ä¸‹: BãŒæ–°ã—ã„
 
 	@author syat
-	@date 2011.03.18 V‹K
+	@date 2011.03.18 æ–°è¦
 */
 int CompareVersion( const TCHAR* verA, const TCHAR* verB )
 {

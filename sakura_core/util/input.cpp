@@ -1,26 +1,26 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "input.h"
 
-// novice 2004/10/10 ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“‘Î‰
+// novice 2004/10/10 ãƒã‚¦ã‚¹ã‚µã‚¤ãƒ‰ãƒœã‚¿ãƒ³å¯¾å¿œ
 /*!
-	Shift,Ctrl,AltƒL[ó‘Ô‚Ìæ“¾
+	Shift,Ctrl,Altã‚­ãƒ¼çŠ¶æ…‹ã®å–å¾—
 
-	@retval nIdx Shift,Ctrl,AltƒL[ó‘Ô
-	@date 2004.10.10 ŠÖ”‰»
+	@retval nIdx Shift,Ctrl,Altã‚­ãƒ¼çŠ¶æ…‹
+	@date 2004.10.10 é–¢æ•°åŒ–
 */
 int getCtrlKeyState()
 {
 	int nIdx = 0;
 
-	/* ShiftƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚È‚ç */
+	/* Shiftã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ãªã‚‰ */
 	if(GetKeyState_Shift()){
 		nIdx |= _SHIFT;
 	}
-	/* CtrlƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚È‚ç */
+	/* Ctrlã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ãªã‚‰ */
 	if( GetKeyState_Control() ){
 		nIdx |= _CTRL;
 	}
-	/* AltƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚È‚ç */
+	/* Altã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ãªã‚‰ */
 	if( GetKeyState_Alt() ){
 		nIdx |= _ALT;
 	}

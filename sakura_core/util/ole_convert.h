@@ -1,5 +1,5 @@
-/*!	@file
-	@brief OLEŒ^iVARIANT, BSTR‚È‚Çj‚Ì•ÏŠ·ŠÖ”
+ï»¿/*!	@file
+	@brief OLEå‹ï¼ˆVARIANT, BSTRãªã©ï¼‰ã®å¤‰æ›é–¢æ•°
 
 */
 #ifndef SAKURA_OLE_CONVERT_208FE8C1_C742_4ED8_9C9C_25841915706BD_H_
@@ -8,8 +8,8 @@
 #include <string>
 #include "_os/OleTypes.h"
 
-bool variant_to_wstr( VARIANT v, std::wstring& wstr );	// VARIANT•Ï”‚ğBSTR‚Æ‚İ‚È‚µAwstring‚É•ÏŠ·‚·‚é
-bool variant_to_int( VARIANT v, int& n );	// VARIANT•Ï”‚ğ®”‚Æ‚İ‚È‚µAint‚É•ÏŠ·‚·‚é
+bool variant_to_wstr( VARIANT v, std::wstring& wstr );	// VARIANTå¤‰æ•°ã‚’BSTRã¨ã¿ãªã—ã€wstringã«å¤‰æ›ã™ã‚‹
+bool variant_to_int( VARIANT v, int& n );	// VARIANTå¤‰æ•°ã‚’æ•´æ•°ã¨ã¿ãªã—ã€intã«å¤‰æ›ã™ã‚‹
 
 #endif /* SAKURA_OLE_CONVERT_208FE8C1_C742_4ED8_9C9C_25841915706BD_H_ */
 /*[EOF]*/

@@ -1,4 +1,4 @@
-// 2007.10.20 kobake ‘®ŠÖ˜A
+ï»¿// 2007.10.20 kobake æ›¸å¼é–¢é€£
 /*
 	Copyright (C) 2007, kobake
 
@@ -27,8 +27,8 @@
 
 // 20051121 aroka
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
-UINT32 ParseVersion( const TCHAR* ver );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì‰ğÍ
-int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
+UINT32 ParseVersion( const TCHAR* ver );	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®è§£æ
+int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®æ¯”è¼ƒ
 
 #endif /* SAKURA_FORMAT_2E480672_88BC_482E_B204_52BB5D84F20C9_H_ */
 /*[EOF]*/
