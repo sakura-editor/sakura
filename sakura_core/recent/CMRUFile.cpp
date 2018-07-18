@@ -1,8 +1,8 @@
-/*!	@file
-	@brief MRUƒŠƒXƒg‚ÆŒÄ‚Î‚ê‚éƒŠƒXƒg‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief MRUãƒªã‚¹ãƒˆã¨å‘¼ã°ã‚Œã‚‹ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹
 
 	@author YAZAKI
-	@date 2001/12/23  V‹Kì¬
+	@date 2001/12/23  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,58 +22,58 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "uiparts/CMenuDrawer.h"	//	‚±‚ê‚Å‚¢‚¢‚Ì‚©H
+#include "uiparts/CMenuDrawer.h"	//	ã“ã‚Œã§ã„ã„ã®ã‹ï¼Ÿ
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
 
-/*!	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+/*!	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 CMRUFile::CMRUFile()
 {
-	//	‰Šú‰»B
+	//	åˆæœŸåŒ–ã€‚
 	m_pShareData = &GetDllShareData();
 }
 
-/*	ƒfƒXƒgƒ‰ƒNƒ^	*/
+/*	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿	*/
 CMRUFile::~CMRUFile()
 {
 	m_cRecentFile.Terminate();
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹—š—ğƒƒjƒ…[‚Ìì¬
+	ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä½œæˆ
 	
-	@param pCMenuDrawer [in] (out?) ƒƒjƒ…[ì¬‚Å—p‚¢‚éMenuDrawer
+	@param pCMenuDrawer [in] (out?) ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆã§ç”¨ã„ã‚‹MenuDrawer
 	
 	@author Norio Nakantani
-	@return ¶¬‚µ‚½ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
+	@return ç”Ÿæˆã—ãŸãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
 
-	2010/5/21 Uchi ‘g‚İ’¼‚µ
+	2010/5/21 Uchi çµ„ã¿ç›´ã—
 */
 HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
 
-	//	‹óƒƒjƒ…[‚ğì‚é
+	//	ç©ºãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ä½œã‚‹
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 	return CreateMenu( hMenuPopUp, pCMenuDrawer );
 }
 /*!
-	ƒtƒ@ƒCƒ‹—š—ğƒƒjƒ…[‚Ìì¬
+	ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä½œæˆ
 	
-	@param ’Ç‰Á‚·‚éƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
-	@param pCMenuDrawer [in] (out?) ƒƒjƒ…[ì¬‚Å—p‚¢‚éMenuDrawer
+	@param è¿½åŠ ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+	@param pCMenuDrawer [in] (out?) ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆã§ç”¨ã„ã‚‹MenuDrawer
 	
 	@author Norio Nakantani
-	@return ¶¬‚µ‚½ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
+	@return ç”Ÿæˆã—ãŸãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
 
-	2010/5/21 Uchi ‘g‚İ’¼‚µ
+	2010/5/21 Uchi çµ„ã¿ç›´ã—
 */
 HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
-	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	ƒƒjƒ…[ƒLƒƒƒvƒVƒ‡ƒ“
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³
 	int		i;
 	bool	bFavorite;
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
@@ -87,17 +87,17 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 
 	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
-		//	u‹¤’Êİ’èv¨u‘S”Êv¨uƒtƒ@ƒCƒ‹‚Ì—š—ğMAXv‚ğ”½‰f
+		//	ã€Œå…±é€šè¨­å®šã€â†’ã€Œå…¨èˆ¬ã€â†’ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAXã€ã‚’åæ˜ 
 		if ( i >= m_cRecentFile.GetViewCount() ) break;
 		
-		/* MRUƒŠƒXƒg‚Ì’†‚É‚ ‚éŠJ‚©‚ê‚Ä‚¢‚È‚¢ƒtƒ@ƒCƒ‹ */
+		/* MRUãƒªã‚¹ãƒˆã®ä¸­ã«ã‚ã‚‹é–‹ã‹ã‚Œã¦ã„ãªã„ãƒ•ã‚¡ã‚¤ãƒ« */
 
 		const EditInfo	*p = m_cRecentFile.GetItem( i );
 		bFavorite = m_cRecentFile.IsFavorite( i );
 		bool bFavoriteLabel = bFavorite && !bMenuIcon;
 		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
 
-		//	ƒƒjƒ…[‚É’Ç‰ÁB
+		//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¿½åŠ ã€‚
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
@@ -110,31 +110,31 @@ BOOL CMRUFile::DestroyMenu( HMENU hMenuPopUp ) const
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹—š—ğ‚Ìˆê——‚ğ•Ô‚·
+	ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ã®ä¸€è¦§ã‚’è¿”ã™
 	
-	@param ppszMRU [out] •¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^ƒŠƒXƒg‚ğŠi”[‚·‚éD
-	ÅŒã‚Ì—v‘f‚ÌŸ‚É‚ÍNULL‚ª“ü‚éD
-	—\‚ßŒÄ‚Ño‚·‘¤‚ÅÅ‘å’l+1‚Ì—Ìˆæ‚ğŠm•Û‚µ‚Ä‚¨‚­‚±‚ÆD
+	@param ppszMRU [out] æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ãƒªã‚¹ãƒˆã‚’æ ¼ç´ã™ã‚‹ï¼
+	æœ€å¾Œã®è¦ç´ ã®æ¬¡ã«ã¯NULLãŒå…¥ã‚‹ï¼
+	äºˆã‚å‘¼ã³å‡ºã™å´ã§æœ€å¤§å€¤+1ã®é ˜åŸŸã‚’ç¢ºä¿ã—ã¦ãŠãã“ã¨ï¼
 */
 std::vector<LPCTSTR> CMRUFile::GetPathList() const
 {
 	std::vector<LPCTSTR> ret;
 	for( int i = 0; i < m_cRecentFile.GetItemCount(); ++i ){
-		//	u‹¤’Êİ’èv¨u‘S”Êv¨uƒtƒ@ƒCƒ‹‚Ì—š—ğMAXv‚ğ”½‰f
+		//	ã€Œå…±é€šè¨­å®šã€â†’ã€Œå…¨èˆ¬ã€â†’ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAXã€ã‚’åæ˜ 
 		if ( i >= m_cRecentFile.GetViewCount() ) break;
 		ret.push_back(m_cRecentFile.GetItemText(i));
 	}
 	return ret;
 }
 
-/*! ƒAƒCƒeƒ€”‚ğ•Ô‚· */
+/*! ã‚¢ã‚¤ãƒ†ãƒ æ•°ã‚’è¿”ã™ */
 int CMRUFile::Length(void) const
 {
 	return m_cRecentFile.GetItemCount();
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹—š—ğ‚ÌƒNƒŠƒA
+	ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ã®ã‚¯ãƒªã‚¢
 */
 void CMRUFile::ClearAll(void)
 {
@@ -142,13 +142,13 @@ void CMRUFile::ClearAll(void)
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹î•ñ‚Ìæ“¾
+	ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã®å–å¾—
 	
-	@param num [in] —š—ğ”Ô†(0~)
-	@param pfi [out] \‘¢‘Ì‚Ö‚Ìƒ|ƒCƒ“ƒ^Ši”[æ
+	@param num [in] å±¥æ­´ç•ªå·(0~)
+	@param pfi [out] æ§‹é€ ä½“ã¸ã®ãƒã‚¤ãƒ³ã‚¿æ ¼ç´å…ˆ
 	
-	@retval TRUE ƒf[ƒ^‚ªŠi”[‚³‚ê‚½
-	@retval FALSE ³‚µ‚­‚È‚¢”Ô†‚ªw’è‚³‚ê‚½Dƒf[ƒ^‚ÍŠi”[‚³‚ê‚È‚©‚Á‚½D
+	@retval TRUE ãƒ‡ãƒ¼ã‚¿ãŒæ ¼ç´ã•ã‚ŒãŸ
+	@retval FALSE æ­£ã—ããªã„ç•ªå·ãŒæŒ‡å®šã•ã‚ŒãŸï¼ãƒ‡ãƒ¼ã‚¿ã¯æ ¼ç´ã•ã‚Œãªã‹ã£ãŸï¼
 */
 bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 {
@@ -161,15 +161,15 @@ bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 }
 
 /*!
-	w’è‚³‚ê‚½–¼‘O‚Ìƒtƒ@ƒCƒ‹‚ªMRUƒŠƒXƒg‚É‘¶İ‚·‚é‚©’²‚×‚éB‘¶İ‚·‚é‚È‚ç‚Îƒtƒ@ƒCƒ‹î•ñ‚ğ•Ô‚·B
+	æŒ‡å®šã•ã‚ŒãŸåå‰ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒMRUãƒªã‚¹ãƒˆã«å­˜åœ¨ã™ã‚‹ã‹èª¿ã¹ã‚‹ã€‚å­˜åœ¨ã™ã‚‹ãªã‚‰ã°ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã‚’è¿”ã™ã€‚
 
-	@param pszPath [in] ŒŸõ‚·‚éƒtƒ@ƒCƒ‹–¼
-	@param pfi [out] ƒf[ƒ^‚ªŒ©‚Â‚©‚Á‚½‚Æ‚«‚Éƒtƒ@ƒCƒ‹î•ñ‚ğŠi”[‚·‚é—ÌˆæB
-		ŒÄ‚Ño‚µ‘¤‚Å—Ìˆæ‚ğ‚ ‚ç‚©‚¶‚ß—pˆÓ‚·‚é•K—v‚ª‚ ‚éB
-	@retval TRUE  ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚Á‚½Bpfi‚Éƒtƒ@ƒCƒ‹î•ñ‚ªŠi”[‚³‚ê‚Ä‚¢‚éB
-	@retval FALSE w’è‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ÍMRU List‚É–³‚¢B
+	@param pszPath [in] æ¤œç´¢ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param pfi [out] ãƒ‡ãƒ¼ã‚¿ãŒè¦‹ã¤ã‹ã£ãŸã¨ãã«ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹é ˜åŸŸã€‚
+		å‘¼ã³å‡ºã—å´ã§é ˜åŸŸã‚’ã‚ã‚‰ã‹ã˜ã‚ç”¨æ„ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
+	@retval TRUE  ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã£ãŸã€‚pfiã«ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ãŒæ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã€‚
+	@retval FALSE æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ã¯MRU Listã«ç„¡ã„ã€‚
 
-	@date 2001.12.26 CShareData::IsExistInMRUList‚©‚çˆÚ“®‚µ‚½BiYAZAKIj
+	@date 2001.12.26 CShareData::IsExistInMRUListã‹ã‚‰ç§»å‹•ã—ãŸã€‚ï¼ˆYAZAKIï¼‰
 */
 bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 {
@@ -181,23 +181,23 @@ bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 	return true;
 }
 
-/*!	@brief MRUƒŠƒXƒg‚Ö‚Ì“o˜^
+/*!	@brief MRUãƒªã‚¹ãƒˆã¸ã®ç™»éŒ²
 
-	@param pEditInfo [in] ’Ç‰Á‚·‚éƒtƒ@ƒCƒ‹‚Ìî•ñ
+	@param pEditInfo [in] è¿½åŠ ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±
 
-	ŠY“–ƒtƒ@ƒCƒ‹‚ªƒŠƒ€[ƒoƒuƒ‹ƒfƒBƒXƒNã‚É‚ ‚éê‡‚É‚ÍMRU List‚Ö‚Ì“o˜^‚Ís‚í‚È‚¢B
+	è©²å½“ãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ‡ã‚£ã‚¹ã‚¯ä¸Šã«ã‚ã‚‹å ´åˆã«ã¯MRU Listã¸ã®ç™»éŒ²ã¯è¡Œã‚ãªã„ã€‚
 
-	@date 2001.03.29 MIK ƒŠƒ€[ƒoƒuƒ‹ƒfƒBƒXƒNã‚Ìƒtƒ@ƒCƒ‹‚ğ“o˜^‚µ‚È‚¢‚æ‚¤‚É‚µ‚½B
-	@date 2001.12.26 YAZAKI CShareData::AddMRUList‚©‚çˆÚ“®
+	@date 2001.03.29 MIK ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ‡ã‚£ã‚¹ã‚¯ä¸Šã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç™»éŒ²ã—ãªã„ã‚ˆã†ã«ã—ãŸã€‚
+	@date 2001.12.26 YAZAKI CShareData::AddMRUListã‹ã‚‰ç§»å‹•
 */
 void CMRUFile::Add( EditInfo* pEditInfo )
 {
-	//	ƒtƒ@ƒCƒ‹–¼‚ª–³‚¯‚ê‚Î–³‹
+	//	ãƒ•ã‚¡ã‚¤ãƒ«åãŒç„¡ã‘ã‚Œã°ç„¡è¦–
 	if( NULL == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
 		return;
 	}
 	
-	// ‚·‚Å‚É“o˜^‚³‚ê‚Ä‚¢‚éê‡‚ÍAœŠOw’è‚ğ–³‹‚·‚é
+	// ã™ã§ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å ´åˆã¯ã€é™¤å¤–æŒ‡å®šã‚’ç„¡è¦–ã™ã‚‹
 	if( -1 == m_cRecentFile.FindItemByPath( pEditInfo->m_szPath ) ){
 		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
 		for( int i = 0 ; i < nSize; i++ ){
@@ -209,26 +209,26 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 		}
 	}
 	EditInfo tmpEditInfo = *pEditInfo;
-	tmpEditInfo.m_bIsModified = FALSE; // •ÏXƒtƒ‰ƒO‚ğ–³Œø‚É
+	tmpEditInfo.m_bIsModified = FALSE; // å¤‰æ›´ãƒ•ãƒ©ã‚°ã‚’ç„¡åŠ¹ã«
 
 	TCHAR	szDrive[_MAX_DRIVE];
 	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFolder[_MAX_PATH + 1];	//	ƒhƒ‰ƒCƒu{ƒtƒHƒ‹ƒ_
+	TCHAR	szFolder[_MAX_PATH + 1];	//	ãƒ‰ãƒ©ã‚¤ãƒ–ï¼‹ãƒ•ã‚©ãƒ«ãƒ€
 
-	_tsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ƒhƒ‰ƒCƒu‚ÆƒtƒHƒ‹ƒ_‚ğæ‚èo‚·B
+	_tsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ãƒ‰ãƒ©ã‚¤ãƒ–ã¨ãƒ•ã‚©ãƒ«ãƒ€ã‚’å–ã‚Šå‡ºã™ã€‚
 
-	//	Jan.  10, 2006 genta USBƒƒ‚ƒŠ‚ÍRemovable media‚Æ”F¯‚³‚ê‚é‚æ‚¤‚È‚Ì‚ÅC
-	//	ˆê‰–³Œø‰»‚·‚éD
-	//	ƒŠƒ€[ƒoƒuƒ‹‚È‚ç”ñ“o˜^H
-	//if (/* uƒŠƒ€[ƒoƒuƒ‹‚È‚ç“o˜^‚µ‚È‚¢vƒIƒ“ && */ ! IsLocalDrive( szDrive ) ){
+	//	Jan.  10, 2006 genta USBãƒ¡ãƒ¢ãƒªã¯Removable mediaã¨èªè­˜ã•ã‚Œã‚‹ã‚ˆã†ãªã®ã§ï¼Œ
+	//	ä¸€å¿œç„¡åŠ¹åŒ–ã™ã‚‹ï¼
+	//	ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãªã‚‰éç™»éŒ²ï¼Ÿ
+	//if (/* ã€Œãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãªã‚‰ç™»éŒ²ã—ãªã„ã€ã‚ªãƒ³ && */ ! IsLocalDrive( szDrive ) ){
 	//	return;
 	//}
 
-	//	szFolderì¬
+	//	szFolderä½œæˆ
 	_tcscpy( szFolder, szDrive );
 	_tcscat( szFolder, szDir );
 
-	//	Folder‚ğACMRUFolder‚É“o˜^
+	//	Folderã‚’ã€CMRUFolderã«ç™»éŒ²
 	CMRUFolder cMRUFolder;
 	cMRUFolder.Add(szFolder);
 

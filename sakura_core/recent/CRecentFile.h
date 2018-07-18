@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,13 +27,13 @@
 #include "CRecentImp.h"
 #include "EditInfo.h" //EditInfo
 
-//! EditInfo‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_FILE)
+//! EditInfoã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_FILE)
 class CRecentFile : public CRecentImp<EditInfo>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentFile();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const EditInfo* p1, const EditInfo* p2 ) const;
 	void			CopyItem( EditInfo* dst, const EditInfo* src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
@@ -41,7 +41,7 @@ public:
 	bool			TextToDataType( EditInfo* dst, LPCTSTR pszText ) const;
 	bool			ValidateReceiveType( const EditInfo* ) const;
 	size_t			GetTextMaxLength() const;
-	//ŒÅ—LƒCƒ“ƒ^[ƒtƒF[ƒX
+	//å›ºæœ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	int FindItemByPath(const TCHAR* pszPath) const;
 };
 

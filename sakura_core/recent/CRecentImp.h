@@ -1,6 +1,6 @@
-// ŠeCRecentÀ‘•ƒNƒ‰ƒX‚Ìƒx[ƒXƒNƒ‰ƒX
+ï»¿// å„CRecentå®Ÿè£…ã‚¯ãƒ©ã‚¹ã®ãƒ™ãƒ¼ã‚¹ã‚¯ãƒ©ã‚¹
 
-// ƒGƒfƒBƒ^Œnƒtƒ@ƒCƒ‹‚©‚çinclude‚·‚é‚Æ‚«‚Í CRecent.h ‚ğinclude
+// ã‚¨ãƒ‡ã‚£ã‚¿ç³»ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰includeã™ã‚‹ã¨ãã¯ CRecent.h ã‚’include
 /*
 	Copyright (C) 2008, kobake
 
@@ -42,80 +42,80 @@ public:
 	virtual ~CRecentImp(){ Terminate(); }
 
 protected:
-	//¶¬
+	//ç”Ÿæˆ
 	bool Create(
-		DataType*		pszItemArray,	//!< ƒAƒCƒeƒ€”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		size_t			nTextMaxLength,	//!< Å‘åƒeƒLƒXƒg’·(I’[ŠÜ‚Ş)
-		int*			pnItemCount,	//!< ƒAƒCƒeƒ€ŒÂ”‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		bool*			pbItemFavorite,	//!< ‚¨‹C‚É“ü‚è‚Ö‚Ìƒ|ƒCƒ“ƒ^(NULL‹–‰Â)
-		int				nArrayCount,	//!< Å‘åŠÇ—‰Â”\‚ÈƒAƒCƒeƒ€”
-		int*			pnViewCount		//!< •\¦ŒÂ”(NULL‹–‰Â)
+		DataType*		pszItemArray,	//!< ã‚¢ã‚¤ãƒ†ãƒ é…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		size_t			nTextMaxLength,	//!< æœ€å¤§ãƒ†ã‚­ã‚¹ãƒˆé•·(çµ‚ç«¯å«ã‚€)
+		int*			pnItemCount,	//!< ã‚¢ã‚¤ãƒ†ãƒ å€‹æ•°ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		bool*			pbItemFavorite,	//!< ãŠæ°—ã«å…¥ã‚Šã¸ã®ãƒã‚¤ãƒ³ã‚¿(NULLè¨±å¯)
+		int				nArrayCount,	//!< æœ€å¤§ç®¡ç†å¯èƒ½ãªã‚¢ã‚¤ãƒ†ãƒ æ•°
+		int*			pnViewCount		//!< è¡¨ç¤ºå€‹æ•°(NULLè¨±å¯)
 	);
 public:
 	void Terminate();
 	bool IsAvailable() const;
 	void _Recovery();
 
-	//XV
-	bool ChangeViewCount( int nViewCount );	//•\¦”‚Ì•ÏX
+	//æ›´æ–°
+	bool ChangeViewCount( int nViewCount );	//è¡¨ç¤ºæ•°ã®å¤‰æ›´
 	bool UpdateView();
 
-	//ƒvƒƒpƒeƒBæ“¾Œn
-	int GetArrayCount() const { return m_nArrayCount; }	//Å‘å—v‘f”
-	int GetItemCount() const { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//“o˜^ƒAƒCƒeƒ€”
-	int GetViewCount() const { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//•\¦”
+	//ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å–å¾—ç³»
+	int GetArrayCount() const { return m_nArrayCount; }	//æœ€å¤§è¦ç´ æ•°
+	int GetItemCount() const { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//ç™»éŒ²ã‚¢ã‚¤ãƒ†ãƒ æ•°
+	int GetViewCount() const { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//è¡¨ç¤ºæ•°
 
-	//‚¨‹C‚É“ü‚è§ŒäŒn
-	bool SetFavorite( int nIndex, bool bFavorite = true);	//‚¨‹C‚É“ü‚è‚Éİ’è
-	bool ResetFavorite( int nIndex ) { return SetFavorite( nIndex, false ); }	//‚¨‹C‚É“ü‚è‚ğ‰ğœ
-	void ResetAllFavorite();			//‚¨‹C‚É“ü‚è‚ğ‚·‚×‚Ä‰ğœ
-	bool IsFavorite( int nIndex ) const;			//‚¨‹C‚É“ü‚è‚©’²‚×‚é
+	//ãŠæ°—ã«å…¥ã‚Šåˆ¶å¾¡ç³»
+	bool SetFavorite( int nIndex, bool bFavorite = true);	//ãŠæ°—ã«å…¥ã‚Šã«è¨­å®š
+	bool ResetFavorite( int nIndex ) { return SetFavorite( nIndex, false ); }	//ãŠæ°—ã«å…¥ã‚Šã‚’è§£é™¤
+	void ResetAllFavorite();			//ãŠæ°—ã«å…¥ã‚Šã‚’ã™ã¹ã¦è§£é™¤
+	bool IsFavorite( int nIndex ) const;			//ãŠæ°—ã«å…¥ã‚Šã‹èª¿ã¹ã‚‹
 
-	//ƒAƒCƒeƒ€§Œä
-	bool AppendItem( ReceiveType pItemData );	//ƒAƒCƒeƒ€‚ğæ“ª‚É’Ç‰Á
+	//ã‚¢ã‚¤ãƒ†ãƒ åˆ¶å¾¡
+	bool AppendItem( ReceiveType pItemData );	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’å…ˆé ­ã«è¿½åŠ 
 	bool AppendItemText( LPCTSTR pszText );
 	bool EditItemText( int nIndex, LPCTSTR pszText );
-	bool DeleteItem( int nIndex );				//ƒAƒCƒeƒ€‚ğƒNƒŠƒA
+	bool DeleteItem( int nIndex );				//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚¯ãƒªã‚¢
 	bool DeleteItem( ReceiveType pItemData )
 	{
 		return DeleteItem( FindItem( pItemData ) );
 	}
-	bool DeleteItemsNoFavorite();			//‚¨‹C‚É“ü‚èˆÈŠO‚ÌƒAƒCƒeƒ€‚ğƒNƒŠƒA
-	void DeleteAllItem();					//ƒAƒCƒeƒ€‚ğ‚·‚×‚ÄƒNƒŠƒA
+	bool DeleteItemsNoFavorite();			//ãŠæ°—ã«å…¥ã‚Šä»¥å¤–ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚¯ãƒªã‚¢
+	void DeleteAllItem();					//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã™ã¹ã¦ã‚¯ãƒªã‚¢
 
-	//ƒAƒCƒeƒ€æ“¾
+	//ã‚¢ã‚¤ãƒ†ãƒ å–å¾—
 	const DataType* GetItem( int nIndex ) const;
 	DataType* GetItem( int nIndex ){ return const_cast<DataType*>(static_cast<const Me*>(this)->GetItem(nIndex)); }
 	int FindItem( ReceiveType pItemData ) const;
-	bool MoveItem( int nSrcIndex, int nDstIndex );	//ƒAƒCƒeƒ€‚ğˆÚ“®
+	bool MoveItem( int nSrcIndex, int nDstIndex );	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ç§»å‹•
 
 
-	//ƒI[ƒo[ƒ‰ƒCƒh—pƒCƒ“ƒ^[ƒtƒF[ƒX
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ç”¨ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
 	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
 	virtual bool TextToDataType( DataType* dst, LPCTSTR pszText ) const = 0;
 	virtual bool ValidateReceiveType( ReceiveType p ) const = 0;
 
-	//À‘••â•
+	//å®Ÿè£…è£œåŠ©
 private:
 	const DataType* GetItemPointer(int nIndex) const;
 	DataType* GetItemPointer(int nIndex){ return const_cast<DataType*>(static_cast<const Me*>(this)->GetItemPointer(nIndex)); }
-	void   ZeroItem( int nIndex );	//ƒAƒCƒeƒ€‚ğƒ[ƒƒNƒŠƒA‚·‚é
-	int    GetOldestItem( int nIndex, bool bFavorite );	//ÅŒÃ‚ÌƒAƒCƒeƒ€‚ğ’T‚·
+	void   ZeroItem( int nIndex );	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚¼ãƒ­ã‚¯ãƒªã‚¢ã™ã‚‹
+	int    GetOldestItem( int nIndex, bool bFavorite );	//æœ€å¤ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¢ã™
 	bool   CopyItem( int nSrcIndex, int nDstIndex );
 
 protected:
-	//“à•”ƒtƒ‰ƒO
-	bool		m_bCreate;				//!< CreateÏ‚İ‚©
+	//å†…éƒ¨ãƒ•ãƒ©ã‚°
+	bool		m_bCreate;				//!< Createæ¸ˆã¿ã‹
 
-	//ŠO•”QÆ
-	DataType*	m_puUserItemData;		//!< ƒAƒCƒeƒ€”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int*		m_pnUserItemCount;		//!< ƒAƒCƒeƒ€ŒÂ”‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	bool*		m_pbUserItemFavorite;	//!< ‚¨‹C‚É“ü‚è‚Ö‚Ìƒ|ƒCƒ“ƒ^ (NULL‹–‰Â)
-	int			m_nArrayCount;			//!< Å‘åŠÇ—‰Â”\‚ÈƒAƒCƒeƒ€”
-	int*		m_pnUserViewCount;		//!< •\¦ŒÂ” (NULL‹–‰Â)
-	size_t		m_nTextMaxLength;		//!< Å‘åƒeƒLƒXƒg’·(I’[ŠÜ‚Ş)
+	//å¤–éƒ¨å‚ç…§
+	DataType*	m_puUserItemData;		//!< ã‚¢ã‚¤ãƒ†ãƒ é…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int*		m_pnUserItemCount;		//!< ã‚¢ã‚¤ãƒ†ãƒ å€‹æ•°ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	bool*		m_pbUserItemFavorite;	//!< ãŠæ°—ã«å…¥ã‚Šã¸ã®ãƒã‚¤ãƒ³ã‚¿ (NULLè¨±å¯)
+	int			m_nArrayCount;			//!< æœ€å¤§ç®¡ç†å¯èƒ½ãªã‚¢ã‚¤ãƒ†ãƒ æ•°
+	int*		m_pnUserViewCount;		//!< è¡¨ç¤ºå€‹æ•° (NULLè¨±å¯)
+	size_t		m_nTextMaxLength;		//!< æœ€å¤§ãƒ†ã‚­ã‚¹ãƒˆé•·(çµ‚ç«¯å«ã‚€)
 };
 
 #include "CRecentFile.h"

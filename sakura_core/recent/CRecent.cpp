@@ -1,7 +1,7 @@
-/*!	@file
-	@brief �ŋߎg�������X�g
+﻿/*!	@file
+	@brief 最近使ったリスト
 
-	���C�ɓ�����܂ލŋߎg�������X�g���Ǘ�����B
+	お気に入りを含む最近使ったリストを管理する。
 
 	@author MIK
 	@date Apr. 05, 2003

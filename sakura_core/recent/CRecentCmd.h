@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,13 +30,13 @@
 
 typedef StaticString<TCHAR, MAX_CMDLEN> CCmdString;
 
-//! ƒRƒ}ƒ“ƒh‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_CMD)
+//! ã‚³ãƒãƒ³ãƒ‰ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_CMD)
 class CRecentCmd : public CRecentImp<CCmdString, LPCTSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentCmd();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CCmdString* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CCmdString* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

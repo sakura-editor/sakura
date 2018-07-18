@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,25 +26,25 @@
 
 #include "config/maxdata.h"
 
-//‹¤—Lƒƒ‚ƒŠ“à\‘¢‘Ì
+//å…±æœ‰ãƒ¡ãƒ¢ãƒªå†…æ§‹é€ ä½“
 struct SShare_History{
-	//@@@ 2001.12.26 YAZAKI	ˆÈ‰º‚Ì2‚Â‚ÍA’¼ÚƒAƒNƒZƒX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢BCMRU‚ðŒo—R‚µ‚Ä‚­‚¾‚³‚¢B
+	//@@@ 2001.12.26 YAZAKI	ä»¥ä¸‹ã®2ã¤ã¯ã€ç›´æŽ¥ã‚¢ã‚¯ã‚»ã‚¹ã—ãªã„ã§ãã ã•ã„ã€‚CMRUã‚’çµŒç”±ã—ã¦ãã ã•ã„ã€‚
 	int					m_nMRUArrNum;
 	EditInfo			m_fiMRUArr[MAX_MRU];
-	bool				m_bMRUArrFavorite[MAX_MRU];	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+	bool				m_bMRUArrFavorite[MAX_MRU];	//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 
-	//@@@ 2001.12.26 YAZAKI	ˆÈ‰º‚Ì2‚Â‚ÍA’¼ÚƒAƒNƒZƒX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢BCMRUFolder‚ðŒo—R‚µ‚Ä‚­‚¾‚³‚¢B
+	//@@@ 2001.12.26 YAZAKI	ä»¥ä¸‹ã®2ã¤ã¯ã€ç›´æŽ¥ã‚¢ã‚¯ã‚»ã‚¹ã—ãªã„ã§ãã ã•ã„ã€‚CMRUFolderã‚’çµŒç”±ã—ã¦ãã ã•ã„ã€‚
 	int								m_nOPENFOLDERArrNum;
 	StaticString<TCHAR,_MAX_PATH>	m_szOPENFOLDERArr[MAX_OPENFOLDER];
-	bool							m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
+	bool							m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK
 
-	//MRUœŠOƒŠƒXƒgˆê——
+	//MRUé™¤å¤–ãƒªã‚¹ãƒˆä¸€è¦§
 	StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_MRU,  const TCHAR* >	m_aExceptMRU;
 
-	//MRUˆÈŠO‚Ìî•ñ
-	SFilePath													m_szIMPORTFOLDER;	// ƒCƒ“ƒ|[ƒgƒfƒBƒŒƒNƒgƒŠ‚Ì—š—ð
-	StaticVector< StaticString<TCHAR, MAX_CMDLEN>, MAX_CMDARR > m_aCommands;		// ŠO•”ƒRƒ}ƒ“ƒhŽÀs—š—ð
-	StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_CMDARR > m_aCurDirs;		// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ—š—ð
+	//MRUä»¥å¤–ã®æƒ…å ±
+	SFilePath													m_szIMPORTFOLDER;	// ã‚¤ãƒ³ãƒãƒ¼ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®å±¥æ­´
+	StaticVector< StaticString<TCHAR, MAX_CMDLEN>, MAX_CMDARR > m_aCommands;		// å¤–éƒ¨ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œå±¥æ­´
+	StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_CMDARR > m_aCurDirs;		// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå±¥æ­´
 };
 
 #endif /* SAKURA_SSHARE_HISTORY_9F7E6200_FEE2_4CAC_A5D3_32EEC4130CFC_H_ */

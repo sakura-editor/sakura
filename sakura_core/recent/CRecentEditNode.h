@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,13 +27,13 @@
 #include "CRecentImp.h"
 struct EditNode;
 
-//! EditNode(ƒEƒBƒ“ƒhƒEƒŠƒXƒg)‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_EDITNODE)
+//! EditNode(ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒªã‚¹ãƒˆ)ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_EDITNODE)
 class CRecentEditNode : public CRecentImp<EditNode>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentEditNode();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const EditNode* p1, const EditNode* p2 ) const;
 	void			CopyItem( EditNode* dst, const EditNode* src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
@@ -41,7 +41,7 @@ public:
 	bool			TextToDataType( EditNode* dst, LPCTSTR pszText ) const;
 	bool			ValidateReceiveType( const EditNode* ) const;
 	size_t			GetTextMaxLength() const;
-	//ŒÅ—LƒCƒ“ƒ^[ƒtƒF[ƒX
+	//å›ºæœ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	int FindItemByHwnd(HWND hwnd) const;
 	void DeleteItemByHwnd(HWND hwnd);
 };

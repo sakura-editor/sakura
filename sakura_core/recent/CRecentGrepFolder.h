@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,13 +29,13 @@
 
 typedef StaticString<TCHAR, MAX_GREP_PATH> CGrepFolderString;
 
-//! GREPƒtƒHƒ‹ƒ_‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_GREP_FOLDER)
+//! GREPãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_GREP_FOLDER)
 class CRecentGrepFolder : public CRecentImp<CGrepFolderString, LPCTSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentGrepFolder();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CGrepFolderString* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CGrepFolderString* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

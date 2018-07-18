@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,9 +29,9 @@
 
 
 /*
-	ƒAƒCƒeƒ€‚Ì”äŠr—v‘f‚ğæ“¾‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã®æ¯”è¼ƒè¦ç´ ã‚’å–å¾—ã™ã‚‹ã€‚
 
-	@note	æ“¾Œã‚Ìƒ|ƒCƒ“ƒ^‚Íƒ†[ƒUŠÇ—‚Ì\‘¢‘Ì‚ÉƒLƒƒƒXƒg‚µ‚ÄQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+	@note	å–å¾—å¾Œã®ãƒã‚¤ãƒ³ã‚¿ã¯ãƒ¦ãƒ¼ã‚¶ç®¡ç†ã®æ§‹é€ ä½“ã«ã‚­ãƒ£ã‚¹ãƒˆã—ã¦å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 */
 const TCHAR* CRecentFile::GetItemText( int nIndex ) const
 {
@@ -42,7 +42,7 @@ const TCHAR* CRecentFile::GetItemText( int nIndex ) const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ¶¬                              //
+//                           ç”Ÿæˆ                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CRecentFile::CRecentFile()
@@ -93,7 +93,7 @@ size_t CRecentFile::GetTextMaxLength() const
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   ŒÅ—LƒCƒ“ƒ^[ƒtƒF[ƒX                      //
+//                   å›ºæœ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 int CRecentFile::FindItemByPath(const TCHAR* pszPath) const

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
 
@@ -30,13 +30,13 @@
 
 typedef StaticString<TCHAR, _MAX_PATH> CCurDirString;
 
-//! ƒRƒ}ƒ“ƒh‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_CUR_DIR)
+//! ã‚³ãƒãƒ³ãƒ‰ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_CUR_DIR)
 class CRecentCurDir : public CRecentImp<CCurDirString, LPCTSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentCurDir();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CCurDirString* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CCurDirString* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,13 +29,13 @@
 
 typedef StaticString<WCHAR, _MAX_PATH> CSearchString;
 
-//! ŒŸõ‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_SEARCH)
+//! æ¤œç´¢ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_SEARCH)
 class CRecentSearch : public CRecentImp<CSearchString, LPCWSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentSearch();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CSearchString* p1, LPCWSTR p2 ) const;
 	void			CopyItem( CSearchString* dst, LPCWSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

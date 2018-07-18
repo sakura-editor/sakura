@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,13 +29,13 @@
 
 typedef StaticString<TCHAR, _MAX_PATH> CMetaPath;
 
-//! ƒtƒHƒ‹ƒ_‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_FOLDER)
+//! ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_FOLDER)
 class CRecentExceptMRU : public CRecentImp<CMetaPath, LPCTSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentExceptMRU();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CMetaPath* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CMetaPath* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

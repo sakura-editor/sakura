@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
 
@@ -30,7 +30,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ����                              //
+//                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CRecentCurDir::CRecentCurDir()
@@ -46,13 +46,13 @@ CRecentCurDir::CRecentCurDir()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      �I�[�o�[���C�h                         //
+//                      オーバーライド                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	�A�C�e���̔�r�v�f���擾����B
+	アイテムの比較要素を取得する。
 
-	@note	�擾��̃|�C���^�̓��[�U�Ǘ��̍\���̂ɃL���X�g���ĎQ�Ƃ��Ă��������B
+	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
 const TCHAR* CRecentCurDir::GetItemText( int nIndex ) const
 {

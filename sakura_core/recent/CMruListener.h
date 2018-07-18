@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,19 +28,19 @@
 
 class CMruListener : public CDocListenerEx{
 public:
-	//ƒ[ƒh‘OŒã
+	//ãƒ­ãƒ¼ãƒ‰å‰å¾Œ
 //	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo);
 	void OnBeforeLoad(SLoadInfo* sLoadInfo);
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
-	//ƒZ[ƒu‘OŒã
+	//ã‚»ãƒ¼ãƒ–å‰å¾Œ
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-	//ƒNƒ[ƒY‘OŒã
+	//ã‚¯ãƒ­ãƒ¼ã‚ºå‰å¾Œ
 	ECallbackResult OnBeforeClose();
 
 protected:
-	//ƒwƒ‹ƒp
+	//ãƒ˜ãƒ«ãƒ‘
 	void _HoldBookmarks_And_AddToMRU(); // Mar. 30, 2003 genta
 };
 

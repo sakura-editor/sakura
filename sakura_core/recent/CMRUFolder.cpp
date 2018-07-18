@@ -1,8 +1,8 @@
-/*!	@file
-	@brief MRUƒŠƒXƒg‚ÆŒÄ‚Î‚ê‚éƒŠƒXƒg‚ðŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief MRUãƒªã‚¹ãƒˆã¨å‘¼ã°ã‚Œã‚‹ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹
 
 	@author YAZAKI
-	@date 2001/12/23  V‹Kì¬
+	@date 2001/12/23  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -18,34 +18,34 @@
 #include "CMRUFolder.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "uiparts/CMenuDrawer.h"	//	‚±‚ê‚Å‚¢‚¢‚Ì‚©H
+#include "uiparts/CMenuDrawer.h"	//	ã“ã‚Œã§ã„ã„ã®ã‹ï¼Ÿ
 #include "util/string_ex2.h"
 #include "util/window.h"
 
-/*!	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+/*!	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ð‚Æ‚Â‚ ‚é‚Ì‚ÝB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 CMRUFolder::CMRUFolder()
 {
-	//	‰Šú‰»B
+	//	åˆæœŸåŒ–ã€‚
 	m_pShareData = &GetDllShareData();
 }
 
-/*	ƒfƒXƒgƒ‰ƒNƒ^	*/
+/*	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿	*/
 CMRUFolder::~CMRUFolder()
 {
 	m_cRecentFolder.Terminate();
 }
 
 /*!
-	ƒtƒHƒ‹ƒ_—š—ðƒƒjƒ…[‚Ìì¬
+	ãƒ•ã‚©ãƒ«ãƒ€å±¥æ­´ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä½œæˆ
 	
-	@param pCMenuDrawer [in] (out?) ƒƒjƒ…[ì¬‚Å—p‚¢‚éMenuDrawer
+	@param pCMenuDrawer [in] (out?) ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆã§ç”¨ã„ã‚‹MenuDrawer
 	
-	@return ¶¬‚µ‚½ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
+	@return ç”Ÿæˆã—ãŸãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
 
-	2010/5/21 Uchi ‘g‚Ý’¼‚µ
+	2010/5/21 Uchi çµ„ã¿ç›´ã—
 */
 HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
@@ -56,17 +56,17 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 }
 
 /*!
-	ƒtƒHƒ‹ƒ_—š—ðƒƒjƒ…[‚Ìì¬
+	ãƒ•ã‚©ãƒ«ãƒ€å±¥æ­´ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä½œæˆ
 	
-	@param ’Ç‰Á‚·‚éƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
-	@param pCMenuDrawer [in] (out?) ƒƒjƒ…[ì¬‚Å—p‚¢‚éMenuDrawer
+	@param è¿½åŠ ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+	@param pCMenuDrawer [in] (out?) ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆã§ç”¨ã„ã‚‹MenuDrawer
 	
 	@author Norio Nakantani
-	@return ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
+	@return ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
 */
 HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
-	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	ƒƒjƒ…[ƒLƒƒƒvƒVƒ‡ƒ“
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³
 	int		i;
 	bool	bFavorite;
 
@@ -78,7 +78,7 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
-		//	u‹¤’ÊÝ’èv¨u‘S”Êv¨uƒtƒ@ƒCƒ‹‚Ì—š—ðMAXv‚ð”½‰f
+		//	ã€Œå…±é€šè¨­å®šã€â†’ã€Œå…¨èˆ¬ã€â†’ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAXã€ã‚’åæ˜ 
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 
 		const TCHAR* pszFolder = m_cRecentFolder.GetItemText( i );
@@ -86,7 +86,7 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 		bool bFavoriteLabel = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC() );
 
-		//	ƒƒjƒ…[‚É’Ç‰Á
+		//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¿½åŠ 
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
@@ -97,7 +97,7 @@ std::vector<LPCTSTR> CMRUFolder::GetPathList() const
 {
 	std::vector<LPCTSTR> ret;
 	for( int i = 0; i < m_cRecentFolder.GetItemCount(); ++i ){
-		//	u‹¤’ÊÝ’èv¨u‘S”Êv¨uƒtƒHƒ‹ƒ_‚Ì—š—ðMAXv‚ð”½‰f
+		//	ã€Œå…±é€šè¨­å®šã€â†’ã€Œå…¨èˆ¬ã€â†’ã€Œãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´MAXã€ã‚’åæ˜ 
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 		ret.push_back(m_cRecentFolder.GetItemText(i));
 	}
@@ -114,19 +114,19 @@ void CMRUFolder::ClearAll()
 	m_cRecentFolder.DeleteAllItem();
 }
 
-/*	@brief ŠJ‚¢‚½ƒtƒHƒ‹ƒ_ ƒŠƒXƒg‚Ö‚Ì“o˜^
+/*	@brief é–‹ã„ãŸãƒ•ã‚©ãƒ«ãƒ€ ãƒªã‚¹ãƒˆã¸ã®ç™»éŒ²
 
-	@date 2001.12.26  CShareData::AddOPENFOLDERList‚©‚çˆÚ“®‚µ‚½BiYAZAKIj
+	@date 2001.12.26  CShareData::AddOPENFOLDERListã‹ã‚‰ç§»å‹•ã—ãŸã€‚ï¼ˆYAZAKIï¼‰
 */
 void CMRUFolder::Add( const TCHAR* pszFolder )
 {
 	if( NULL == pszFolder
 	 || pszFolder[0] == _T('\0') )
-	{	//	’·‚³‚ª0‚È‚ç”rœB
+	{	//	é•·ã•ãŒ0ãªã‚‰æŽ’é™¤ã€‚
 		return;
 	}
 
-	// ‚·‚Å‚É“o˜^‚³‚ê‚Ä‚¢‚éê‡‚ÍAœŠOŽw’è‚ð–³Ž‹‚·‚é
+	// ã™ã§ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å ´åˆã¯ã€é™¤å¤–æŒ‡å®šã‚’ç„¡è¦–ã™ã‚‹
 	if( -1 == m_cRecentFolder.FindItemByText( pszFolder ) ){
 		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
 		for( int i = 0 ; i < nSize; i++ ){

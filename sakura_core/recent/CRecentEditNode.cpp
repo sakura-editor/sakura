@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,7 +29,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ¶¬                              //
+//                           ç”Ÿæˆ                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CRecentEditNode::CRecentEditNode()
@@ -45,17 +45,17 @@ CRecentEditNode::CRecentEditNode()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒI[ƒo[ƒ‰ƒCƒh                         //
+//                      ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	ƒAƒCƒeƒ€‚Ì”äŠr—v‘f‚ğæ“¾‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã®æ¯”è¼ƒè¦ç´ ã‚’å–å¾—ã™ã‚‹ã€‚
 
-	@note	æ“¾Œã‚Ìƒ|ƒCƒ“ƒ^‚Íƒ†[ƒUŠÇ—‚Ì\‘¢‘Ì‚ÉƒLƒƒƒXƒg‚µ‚ÄQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+	@note	å–å¾—å¾Œã®ãƒã‚¤ãƒ³ã‚¿ã¯ãƒ¦ãƒ¼ã‚¶ç®¡ç†ã®æ§‹é€ ä½“ã«ã‚­ãƒ£ã‚¹ãƒˆã—ã¦å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 */
 const TCHAR* CRecentEditNode::GetItemText( int nIndex ) const
 {
-	return _T("WIN"); //¦ƒeƒLƒXƒgî•ñ‚Í–³‚¢ (GetWindowText‚µ‚Ä‚ ‚°‚Ä‚à—Ç‚¢‚¯‚ÇA‚±‚ÌŠÖ”‚ÍÀs‚³‚ê‚È‚¢‚Ì‚ÅAˆÓ–¡‚Í–³‚¢)
+	return _T("WIN"); //â€»ãƒ†ã‚­ã‚¹ãƒˆæƒ…å ±ã¯ç„¡ã„ (GetWindowTextã—ã¦ã‚ã’ã¦ã‚‚è‰¯ã„ã‘ã©ã€ã“ã®é–¢æ•°ã¯å®Ÿè¡Œã•ã‚Œãªã„ã®ã§ã€æ„å‘³ã¯ç„¡ã„)
 }
 
 bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* src ) const
@@ -90,7 +90,7 @@ size_t CRecentEditNode::GetTextMaxLength() const
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   ŒÅ—LƒCƒ“ƒ^[ƒtƒF[ƒX                      //
+//                   å›ºæœ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 int CRecentEditNode::FindItemByHwnd(HWND hwnd) const
@@ -109,6 +109,6 @@ void CRecentEditNode::DeleteItemByHwnd(HWND hwnd)
 		DeleteItem(n);
 	}
 	else{
-		DEBUG_TRACE( _T("DeleteItemByHwnd¸”s\n") );
+		DEBUG_TRACE( _T("DeleteItemByHwndå¤±æ•—\n") );
 	}
 }
