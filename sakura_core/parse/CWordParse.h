@@ -1,4 +1,4 @@
-//2007.09.30 kobake CDocLineMgr ‚©‚ç•ª—£
+ï»¿//2007.09.30 kobake CDocLineMgr ã‹ã‚‰åˆ†é›¢
 /*
 	Copyright (C) 2008, kobake
 
@@ -28,90 +28,90 @@
 #include "basis/SakuraBasis.h"
 class CNativeW;
 
-//! •¶ší—Ş¯•Êq
+//! æ–‡å­—ç¨®é¡è­˜åˆ¥å­
 enum ECharKind{
 	CK_NULL,			//!< NULL
-	CK_TAB,				//!< ƒ^ƒu 0x9<=c<=0x9
+	CK_TAB,				//!< ã‚¿ãƒ– 0x9<=c<=0x9
 	CK_CR,				//!< CR = 0x0d 
 	CK_LF,				//!< LF = 0x0a 
-	CK_CTRL,			//!< ã‹LˆÈŠO‚Ì c<0x20
+	CK_CTRL,			//!< ä¸Šè¨˜ä»¥å¤–ã® c<0x20
 
-	CK_SPACE,			//!< ”¼Šp‚ÌƒXƒy[ƒX 0x20<=c<=0x20
-	CK_CSYM,			//!< ¯•Êq‚Ég—p‰Â”\‚È•¶š (‰p”šAƒAƒ“ƒ_[ƒXƒRƒA)
-	CK_KATA,			//!< ”¼Šp‚ÌƒJƒ^ƒJƒi 0xA1<=c<=0xFD
-	CK_LATIN,			//!< ƒ‰ƒeƒ“‚P•â•Aƒ‰ƒeƒ“Šg’£‚Ì‚¤‚¿ƒAƒ‹ƒtƒ@ƒxƒbƒg•—‚Ì‚à‚Ì 0x00C0<=c<0x0180
-	CK_UDEF,			//!< ƒ†[ƒU’è‹`ƒL[ƒ[ƒh•¶ši#$@\j
-	CK_ETC,				//!< ”¼Šp‚Ì‚»‚Ì‘¼
+	CK_SPACE,			//!< åŠè§’ã®ã‚¹ãƒšãƒ¼ã‚¹ 0x20<=c<=0x20
+	CK_CSYM,			//!< è­˜åˆ¥å­ã«ä½¿ç”¨å¯èƒ½ãªæ–‡å­— (è‹±æ•°å­—ã€ã‚¢ãƒ³ãƒ€ãƒ¼ã‚¹ã‚³ã‚¢)
+	CK_KATA,			//!< åŠè§’ã®ã‚«ã‚¿ã‚«ãƒŠ 0xA1<=c<=0xFD
+	CK_LATIN,			//!< ãƒ©ãƒ†ãƒ³ï¼‘è£œåŠ©ã€ãƒ©ãƒ†ãƒ³æ‹¡å¼µã®ã†ã¡ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆé¢¨ã®ã‚‚ã® 0x00C0<=c<0x0180
+	CK_UDEF,			//!< ãƒ¦ãƒ¼ã‚¶å®šç¾©ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ–‡å­—ï¼ˆ#$@\ï¼‰
+	CK_ETC,				//!< åŠè§’ã®ãã®ä»–
 
-	CK_ZEN_SPACE,		//!< ‘SŠpƒXƒy[ƒX
-	CK_ZEN_NOBASU,		//!< L‚Î‚·‹L† 0x815B<=c<=0x815B '['
-	CK_ZEN_DAKU,		//!< ‘SŠp‘÷“_ 0x309B<=c<=0x309C uJKv
-	CK_ZEN_CSYM,		//!< ‘SŠp”ÅA¯•Êq‚Ég—p‰Â”\‚È•¶š (‰p”šAƒAƒ“ƒ_[ƒXƒRƒA)
+	CK_ZEN_SPACE,		//!< å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹
+	CK_ZEN_NOBASU,		//!< ä¼¸ã°ã™è¨˜å· 0x815B<=c<=0x815B 'ãƒ¼'
+	CK_ZEN_DAKU,		//!< å…¨è§’æ¿ç‚¹ 0x309B<=c<=0x309C ã€Œã‚›ã‚œã€
+	CK_ZEN_CSYM,		//!< å…¨è§’ç‰ˆã€è­˜åˆ¥å­ã«ä½¿ç”¨å¯èƒ½ãªæ–‡å­— (è‹±æ•°å­—ã€ã‚¢ãƒ³ãƒ€ãƒ¼ã‚¹ã‚³ã‚¢)
 
-	CK_ZEN_KIGO,		//!< ‘SŠp‚Ì‹L†
-	CK_HIRA,			//!< ‚Ğ‚ç‚ª‚È
-	CK_ZEN_KATA,		//!< ‘SŠpƒJƒ^ƒJƒi
-	CK_GREEK,			//!< ƒMƒŠƒVƒƒ•¶š
-	CK_ZEN_ROS,			//!< ƒƒVƒA•¶š:
-	CK_ZEN_SKIGO,		//!< ‘SŠp‚Ì“Áê‹L†
-	CK_ZEN_ETC,			//!< ‘SŠp‚Ì‚»‚Ì‘¼iŠ¿š‚È‚Çj
+	CK_ZEN_KIGO,		//!< å…¨è§’ã®è¨˜å·
+	CK_HIRA,			//!< ã²ã‚‰ãŒãª
+	CK_ZEN_KATA,		//!< å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ
+	CK_GREEK,			//!< ã‚®ãƒªã‚·ãƒ£æ–‡å­—
+	CK_ZEN_ROS,			//!< ãƒ­ã‚·ã‚¢æ–‡å­—:
+	CK_ZEN_SKIGO,		//!< å…¨è§’ã®ç‰¹æ®Šè¨˜å·
+	CK_ZEN_ETC,			//!< å…¨è§’ã®ãã®ä»–ï¼ˆæ¼¢å­—ãªã©ï¼‰
 };
 
 class CWordParse{
 public:
 	//2001.06.23 N.Nakatani
-	//2007.09.30 kobake     CDocLineMgr‚©‚çˆÚ“®
+	//2007.09.30 kobake     CDocLineMgrã‹ã‚‰ç§»å‹•
 	/*!
-		@brief Œ»İˆÊ’u‚Ì’PŒê‚Ì”ÍˆÍ‚ğ’²‚×‚é staticƒƒ“ƒo
+		@brief ç¾åœ¨ä½ç½®ã®å˜èªã®ç¯„å›²ã‚’èª¿ã¹ã‚‹ staticãƒ¡ãƒ³ãƒ
 		@author N.Nakatani
-		@retval true	¬Œ÷ Œ»İˆÊ’u‚Ìƒf[ƒ^‚Íu’PŒêv‚Æ”F¯‚·‚éB
-		@retval false	¸”s Œ»İˆÊ’u‚Ìƒf[ƒ^‚Íu’PŒêv‚Æ‚ÍŒ¾‚¢‚«‚ê‚È‚¢‹C‚ª‚·‚éB
+		@retval true	æˆåŠŸ ç¾åœ¨ä½ç½®ã®ãƒ‡ãƒ¼ã‚¿ã¯ã€Œå˜èªã€ã¨èªè­˜ã™ã‚‹ã€‚
+		@retval false	å¤±æ•— ç¾åœ¨ä½ç½®ã®ãƒ‡ãƒ¼ã‚¿ã¯ã€Œå˜èªã€ã¨ã¯è¨€ã„ãã‚Œãªã„æ°—ãŒã™ã‚‹ã€‚
 	*/
 	static bool WhereCurrentWord_2(
-		const wchar_t*	pLine,			//[in]  ’²‚×‚éƒƒ‚ƒŠ‘S‘Ì‚Ìæ“ªƒAƒhƒŒƒX
-		CLogicInt		nLineLen,		//[in]  ’²‚×‚éƒƒ‚ƒŠ‘S‘Ì‚Ì—LŒø’·
-		CLogicInt		nIdx,			//[out] ’²¸ŠJn’n“_:pLine‚©‚ç‚Ì‘Š‘Î“I‚ÈˆÊ’u
-		CLogicInt*		pnIdxFrom,		//[out] ’PŒê‚ªŒ©‚Â‚©‚Á‚½ê‡‚ÍA’PŒê‚Ìæ“ªƒCƒ“ƒfƒbƒNƒX‚ğ•Ô‚·B
-		CLogicInt*		pnIdxTo,		//[out] ’PŒê‚ªŒ©‚Â‚©‚Á‚½ê‡‚ÍA’PŒê‚ÌI’[‚ÌŸ‚ÌƒoƒCƒg‚Ìæ“ªƒCƒ“ƒfƒbƒNƒX‚ğ•Ô‚·B
-		CNativeW*		pcmcmWord,		//[out] ’PŒê‚ªŒ©‚Â‚©‚Á‚½ê‡‚ÍAŒ»İ’PŒê‚ğØ‚èo‚µ‚Äw’è‚³‚ê‚½CMemoryƒIƒuƒWƒFƒNƒg‚ÉŠi”[‚·‚éBî•ñ‚ª•s—v‚Èê‡‚ÍNULL‚ğw’è‚·‚éB
-		CNativeW*		pcmcmWordLeft	//[out] ’PŒê‚ªŒ©‚Â‚©‚Á‚½ê‡‚ÍAŒ»İ’PŒê‚Ì¶‚ÉˆÊ’u‚·‚é’PŒê‚ğØ‚èo‚µ‚Äw’è‚³‚ê‚½CMemoryƒIƒuƒWƒFƒNƒg‚ÉŠi”[‚·‚éBî•ñ‚ª•s—v‚Èê‡‚ÍNULL‚ğw’è‚·‚éB
+		const wchar_t*	pLine,			//[in]  èª¿ã¹ã‚‹ãƒ¡ãƒ¢ãƒªå…¨ä½“ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
+		CLogicInt		nLineLen,		//[in]  èª¿ã¹ã‚‹ãƒ¡ãƒ¢ãƒªå…¨ä½“ã®æœ‰åŠ¹é•·
+		CLogicInt		nIdx,			//[out] èª¿æŸ»é–‹å§‹åœ°ç‚¹:pLineã‹ã‚‰ã®ç›¸å¯¾çš„ãªä½ç½®
+		CLogicInt*		pnIdxFrom,		//[out] å˜èªãŒè¦‹ã¤ã‹ã£ãŸå ´åˆã¯ã€å˜èªã®å…ˆé ­ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’è¿”ã™ã€‚
+		CLogicInt*		pnIdxTo,		//[out] å˜èªãŒè¦‹ã¤ã‹ã£ãŸå ´åˆã¯ã€å˜èªã®çµ‚ç«¯ã®æ¬¡ã®ãƒã‚¤ãƒˆã®å…ˆé ­ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’è¿”ã™ã€‚
+		CNativeW*		pcmcmWord,		//[out] å˜èªãŒè¦‹ã¤ã‹ã£ãŸå ´åˆã¯ã€ç¾åœ¨å˜èªã‚’åˆ‡ã‚Šå‡ºã—ã¦æŒ‡å®šã•ã‚ŒãŸCMemoryã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«æ ¼ç´ã™ã‚‹ã€‚æƒ…å ±ãŒä¸è¦ãªå ´åˆã¯NULLã‚’æŒ‡å®šã™ã‚‹ã€‚
+		CNativeW*		pcmcmWordLeft	//[out] å˜èªãŒè¦‹ã¤ã‹ã£ãŸå ´åˆã¯ã€ç¾åœ¨å˜èªã®å·¦ã«ä½ç½®ã™ã‚‹å˜èªã‚’åˆ‡ã‚Šå‡ºã—ã¦æŒ‡å®šã•ã‚ŒãŸCMemoryã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«æ ¼ç´ã™ã‚‹ã€‚æƒ…å ±ãŒä¸è¦ãªå ´åˆã¯NULLã‚’æŒ‡å®šã™ã‚‹ã€‚
 	);
 
-	//! Œ»İˆÊ’u‚Ì•¶š‚Ìí—Ş‚ğ’²‚×‚é
+	//! ç¾åœ¨ä½ç½®ã®æ–‡å­—ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹
 	static ECharKind WhatKindOfChar(
 		const wchar_t*	pData,
 		int				pDataLen,
 		int				nIdx
 	);
 
-	//! “ñ‚Â‚Ì•¶š‚ğŒ‹‡‚µ‚½‚à‚Ì‚Ìí—Ş‚ğ’²‚×‚é
+	//! äºŒã¤ã®æ–‡å­—ã‚’çµåˆã—ãŸã‚‚ã®ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹
 	static ECharKind WhatKindOfTwoChars(
 		ECharKind		kindPre,
 		ECharKind		kindCur
 	);
 
-	//! “ñ‚Â‚Ì•¶š‚ğŒ‹‡‚µ‚½‚à‚Ì‚Ìí—Ş‚ğ’²‚×‚é for ‹­’²ƒL[ƒ[ƒh
+	//! äºŒã¤ã®æ–‡å­—ã‚’çµåˆã—ãŸã‚‚ã®ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹ for å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 	static ECharKind WhatKindOfTwoChars4KW(
 		ECharKind		kindPre,
 		ECharKind		kindCur
 	);
 
-	//	pLinei’·‚³FnLineLenj‚Ì•¶š—ñ‚©‚çŸ‚Ì’PŒê‚ğ’T‚·B’T‚µn‚ß‚éˆÊ’u‚ÍnIdx‚Åw’èB
+	//	pLineï¼ˆé•·ã•ï¼šnLineLenï¼‰ã®æ–‡å­—åˆ—ã‹ã‚‰æ¬¡ã®å˜èªã‚’æ¢ã™ã€‚æ¢ã—å§‹ã‚ã‚‹ä½ç½®ã¯nIdxã§æŒ‡å®šã€‚
 	static bool SearchNextWordPosition(
 		const wchar_t*	pLine,
 		CLogicInt		nLineLen,
-		CLogicInt		nIdx,		//	Œ…”
-		CLogicInt*		pnColumnNew,	//	Œ©‚Â‚©‚Á‚½ˆÊ’u
-		BOOL			bStopsBothEnds	//	’PŒê‚Ì—¼’[‚Å~‚Ü‚é
+		CLogicInt		nIdx,		//	æ¡æ•°
+		CLogicInt*		pnColumnNew,	//	è¦‹ã¤ã‹ã£ãŸä½ç½®
+		BOOL			bStopsBothEnds	//	å˜èªã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹
 	);
 
-	//	pLinei’·‚³FnLineLenj‚Ì•¶š—ñ‚©‚çŸ‚Ì’PŒê‚ğ’T‚·B’T‚µn‚ß‚éˆÊ’u‚ÍnIdx‚Åw’èB for ‹­’²ƒL[ƒ[ƒh
+	//	pLineï¼ˆé•·ã•ï¼šnLineLenï¼‰ã®æ–‡å­—åˆ—ã‹ã‚‰æ¬¡ã®å˜èªã‚’æ¢ã™ã€‚æ¢ã—å§‹ã‚ã‚‹ä½ç½®ã¯nIdxã§æŒ‡å®šã€‚ for å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 	static bool SearchNextWordPosition4KW(
 		const wchar_t*	pLine,
 		CLogicInt		nLineLen,
-		CLogicInt		nIdx,		//	Œ…”
-		CLogicInt*		pnColumnNew,	//	Œ©‚Â‚©‚Á‚½ˆÊ’u
-		BOOL			bStopsBothEnds	//	’PŒê‚Ì—¼’[‚Å~‚Ü‚é
+		CLogicInt		nIdx,		//	æ¡æ•°
+		CLogicInt*		pnColumnNew,	//	è¦‹ã¤ã‹ã£ãŸä½ç½®
+		BOOL			bStopsBothEnds	//	å˜èªã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹
 	);
 
 
@@ -125,12 +125,12 @@ protected:
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
-BOOL IsURL( const wchar_t*, int, int* );/* w’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’·‚³‚ğ•Ô‚· */
-BOOL IsMailAddress( const wchar_t*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚ÎANULLˆÈŠO‚ÆA‚»‚Ì’·‚³‚ğ•Ô‚· */
+BOOL IsURL( const wchar_t*, int, int* );/* æŒ‡å®šã‚¢ãƒ‰ãƒ¬ã‚¹ãŒURLã®å…ˆé ­ãªã‚‰ã°TRUEã¨ãã®é•·ã•ã‚’è¿”ã™ */
+BOOL IsMailAddress( const wchar_t*, int, int* );	/* ç¾åœ¨ä½ç½®ãŒãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ãªã‚‰ã°ã€NULLä»¥å¤–ã¨ã€ãã®é•·ã•ã‚’è¿”ã™ */
 
 
 
-// ACHAR ”Å
+// ACHAR ç‰ˆ
 inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )
 {
 	for( int i = 0; pszList[i] != '\0'; i++ ){
@@ -138,7 +138,7 @@ inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )
 	}
 	return false;
 }
-// WCHAR ”Å
+// WCHAR ç‰ˆ
 inline bool CWordParse::_match_charlist( const WCHAR c, const WCHAR *pszList )
 {
 	for( int i = 0; pszList[i] != L'\0'; i++ ){
@@ -148,13 +148,13 @@ inline bool CWordParse::_match_charlist( const WCHAR c, const WCHAR *pszList )
 }
 
 /*!
-	@param [in] pS					•¶š—ñƒoƒbƒtƒ@
-	@param [in] nLen				•¶š—ñƒoƒbƒtƒ@‚Ì’·‚³
-	@param [in] pszSplitCharList	‹æØ‚è•¶š‚½‚¿
-	@param [out] ppWordStart		’PŒê‚ÌŠJnˆÊ’u
-	@param [out] pnWordLen			’PŒê‚Ì’·‚³
+	@param [in] pS					æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡
+	@param [in] nLen				æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡ã®é•·ã•
+	@param [in] pszSplitCharList	åŒºåˆ‡ã‚Šæ–‡å­—ãŸã¡
+	@param [out] ppWordStart		å˜èªã®é–‹å§‹ä½ç½®
+	@param [out] pnWordLen			å˜èªã®é•·ã•
 
-	@return “Ç‚ñ‚¾ƒf[ƒ^‚Ì’·‚³B
+	@return èª­ã‚“ã ãƒ‡ãƒ¼ã‚¿ã®é•·ã•ã€‚
 */
 template< class CHAR_TYPE >
 int CWordParse::GetWord( const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
@@ -170,23 +170,23 @@ int CWordParse::GetWord( const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *p
 		goto end_func;
 	}
 
-	// ‹æØ‚è•¶š‚ğƒXƒLƒbƒv
+	// åŒºåˆ‡ã‚Šæ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( ; pr < pS + nLen; pr++ ){
-		// ‹æØ‚è•¶š‚Å‚È‚¢•¶š‚ÌŠÔƒ‹[ƒv
+		// åŒºåˆ‡ã‚Šæ–‡å­—ã§ãªã„æ–‡å­—ã®é–“ãƒ«ãƒ¼ãƒ—
 		if( !_match_charlist(*pr, pszSplitCharList) ){
 			break;
 		}
 	}
-	pwordstart = const_cast<CHAR_TYPE*>(pr);   // ’PŒê‚Ìæ“ªˆÊ’u‚ğ‹L˜^
+	pwordstart = const_cast<CHAR_TYPE*>(pr);   // å˜èªã®å…ˆé ­ä½ç½®ã‚’è¨˜éŒ²
 
-	// ’PŒê‚ğƒXƒLƒbƒv
+	// å˜èªã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( ; pr < pS + nLen; pr++ ){
-		// ‹æØ‚è•¶š‚ª‚­‚é‚Ü‚Åƒ‹[ƒv
+		// åŒºåˆ‡ã‚Šæ–‡å­—ãŒãã‚‹ã¾ã§ãƒ«ãƒ¼ãƒ—
 		if( _match_charlist(*pr, pszSplitCharList) ){
 			break;
 		}
 	}
-	nwordlen = pr - pwordstart;  // ’PŒê‚Ì’·‚³‚ğ‹L˜^
+	nwordlen = pr - pwordstart;  // å˜èªã®é•·ã•ã‚’è¨˜éŒ²
 
 end_func:
 	if( ppWordStart ){
