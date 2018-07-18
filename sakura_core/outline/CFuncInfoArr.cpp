@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ ƒf[ƒ^”z—ñ
+ï»¿/*!	@file
+	@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ ãƒ‡ãƒ¼ã‚¿é…åˆ—
 
 	@author Norio Nakatani
-	@date	1998/06/23 ì¬
+	@date	1998/06/23 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -18,11 +18,11 @@
 #include "outline/CFuncInfo.h"
 
 
-/* CFuncInfoArrƒNƒ‰ƒX\’z */
+/* CFuncInfoArrã‚¯ãƒ©ã‚¹æ§‹ç¯‰ */
 CFuncInfoArr::CFuncInfoArr()
 {
-	m_nFuncInfoArrNum = 0;	/* ”z—ñ—v‘f” */
-	m_ppcFuncInfoArr = NULL;	/* ”z—ñ */
+	m_nFuncInfoArrNum = 0;	/* é…åˆ—è¦ç´ æ•° */
+	m_ppcFuncInfoArr = NULL;	/* é…åˆ— */
 	m_nAppendTextLenMax = 0;
 	return;
 }
@@ -30,7 +30,7 @@ CFuncInfoArr::CFuncInfoArr()
 
 
 
-/* CFuncInfoArrƒNƒ‰ƒXÁ–Å */
+/* CFuncInfoArrã‚¯ãƒ©ã‚¹æ¶ˆæ»… */
 CFuncInfoArr::~CFuncInfoArr()
 {
 	Empty();
@@ -55,8 +55,8 @@ void CFuncInfoArr::Empty( void )
 }
 
 
-/* 0<=‚Ìw’è”Ô†‚Ìƒf[ƒ^‚ğ•Ô‚· */
-/* ƒf[ƒ^‚ª‚È‚¢ê‡‚ÍNULL‚ğ•Ô‚· */
+/* 0<=ã®æŒ‡å®šç•ªå·ã®ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™ */
+/* ãƒ‡ãƒ¼ã‚¿ãŒãªã„å ´åˆã¯NULLã‚’è¿”ã™ */
 CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
 {
 	if( nIdx >= m_nFuncInfoArrNum ){
@@ -67,7 +67,7 @@ CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
 
 
 
-/*! ”z—ñ‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é */
+/*! é…åˆ—ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ */
 void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 {
 	if( 0 == m_nFuncInfoArrNum){
@@ -82,19 +82,19 @@ void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 
 
 
-/*! ”z—ñ‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+/*! é…åˆ—ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 
-	@date 2002.04.01 YAZAKI [‚³“±“ü
+	@date 2002.04.01 YAZAKI æ·±ã•å°å…¥
 */
 void CFuncInfoArr::AppendData(
-	CLogicInt		nFuncLineCRLF,		//!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ)
-	CLogicInt		nFuncColCRLF,		//!< ŠÖ”‚Ì‚ ‚éŒ…(CRLF’PˆÊ)
-	CLayoutInt		nFuncLineLAYOUT,	//!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ)
-	CLayoutInt		nFuncColLAYOUT,		//!< ŠÖ”‚Ì‚ ‚éŒ…(Ü‚è•Ô‚µ’PˆÊ)
-	const TCHAR*	pszFuncName,		//!< ŠÖ”–¼
-	const TCHAR*	pszFileName,		//!< ƒtƒ@ƒCƒ‹–¼
-	int				nInfo,				//!< •t‰Áî•ñ
-	int				nDepth				//!< [‚³
+	CLogicInt		nFuncLineCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½)
+	CLogicInt		nFuncColCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(CRLFå˜ä½)
+	CLayoutInt		nFuncLineLAYOUT,	//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	CLayoutInt		nFuncColLAYOUT,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	const TCHAR*	pszFuncName,		//!< é–¢æ•°å
+	const TCHAR*	pszFileName,		//!< ãƒ•ã‚¡ã‚¤ãƒ«å
+	int				nInfo,				//!< ä»˜åŠ æƒ…å ±
+	int				nDepth				//!< æ·±ã•
 )
 {
 	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT,
@@ -105,14 +105,14 @@ void CFuncInfoArr::AppendData(
 }
 
 void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ)
-	CLogicInt			nFuncColCRLF,		//!< ŠÖ”‚Ì‚ ‚éŒ…(CRLF’PˆÊ)
-	CLayoutInt			nFuncLineLAYOUT,	//!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ)
-	CLayoutInt			nFuncColLAYOUT,		//!< ŠÖ”‚Ì‚ ‚éŒ…(Ü‚è•Ô‚µ’PˆÊ)
-	const NOT_TCHAR*	pszFuncName,		//!< ŠÖ”–¼
-	const NOT_TCHAR*	pszFileName,		//!< ƒtƒ@ƒCƒ‹–¼
-	int					nInfo,				//!< •t‰Áî•ñ
-	int					nDepth				//!< [‚³
+	CLogicInt			nFuncLineCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½)
+	CLogicInt			nFuncColCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(CRLFå˜ä½)
+	CLayoutInt			nFuncLineLAYOUT,	//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	CLayoutInt			nFuncColLAYOUT,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	const NOT_TCHAR*	pszFuncName,		//!< é–¢æ•°å
+	const NOT_TCHAR*	pszFileName,		//!< ãƒ•ã‚¡ã‚¤ãƒ«å
+	int					nInfo,				//!< ä»˜åŠ æƒ…å ±
+	int					nDepth				//!< æ·±ã•
 )
 {
 	AppendData(nFuncLineCRLF,nFuncColCRLF,nFuncLineLAYOUT,nFuncColLAYOUT,to_tchar(pszFuncName),
@@ -120,11 +120,11 @@ void CFuncInfoArr::AppendData(
 }
 
 void CFuncInfoArr::AppendData(
-	CLogicInt		nFuncLineCRLF,		//!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ)
-	CLayoutInt		nFuncLineLAYOUT,	//!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ)
-	const TCHAR*	pszFuncName,		//!< ŠÖ”–¼
-	int				nInfo,				//!< •t‰Áî•ñ
-	int				nDepth				//!< [‚³
+	CLogicInt		nFuncLineCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½)
+	CLayoutInt		nFuncLineLAYOUT,	//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	const TCHAR*	pszFuncName,		//!< é–¢æ•°å
+	int				nInfo,				//!< ä»˜åŠ æƒ…å ±
+	int				nDepth				//!< æ·±ã•
 )
 {
 	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,NULL,nInfo,nDepth);
@@ -132,11 +132,11 @@ void CFuncInfoArr::AppendData(
 }
 
 void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ)
-	CLayoutInt			nFuncLineLAYOUT,	//!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ)
-	const NOT_TCHAR*	pszFuncName,		//!< ŠÖ”–¼
-	int					nInfo,				//!< •t‰Áî•ñ
-	int					nDepth				//!< [‚³
+	CLogicInt			nFuncLineCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½)
+	CLayoutInt			nFuncLineLAYOUT,	//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	const NOT_TCHAR*	pszFuncName,		//!< é–¢æ•°å
+	int					nInfo,				//!< ä»˜åŠ æƒ…å ±
+	int					nDepth				//!< æ·±ã•
 )
 {
 	AppendData(nFuncLineCRLF,nFuncLineLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
@@ -164,7 +164,7 @@ void CFuncInfoArr::DUMP( void )
 void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 {
 	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
-		// ƒL[‚ª‘¶İ‚µ‚È‚¢ê‡A’Ç‰Á‚·‚é
+		// ã‚­ãƒ¼ãŒå­˜åœ¨ã—ãªã„å ´åˆã€è¿½åŠ ã™ã‚‹
 		std::pair<int, std::wstring> pair(info, s);
 		m_AppendTextArr.insert( pair );
 		if( m_nAppendTextLenMax < (int)s.length() ){
@@ -177,7 +177,7 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 		}
 #endif
 	}else{
-		// ƒL[‚ª‘¶İ‚·‚éê‡A’l‚ğ‘‚«Š·‚¦‚é
+		// ã‚­ãƒ¼ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€å€¤ã‚’æ›¸ãæ›ãˆã‚‹
 		if( overwrite ){
 			m_AppendTextArr[ info ] = s;
 		}
@@ -187,10 +187,10 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 std::wstring CFuncInfoArr::GetAppendText( int info )
 {
 	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
-		// ƒL[‚ª‘¶İ‚µ‚È‚¢ê‡A‹ó•¶š—ñ‚ğ•Ô‚·
+		// ã‚­ãƒ¼ãŒå­˜åœ¨ã—ãªã„å ´åˆã€ç©ºæ–‡å­—åˆ—ã‚’è¿”ã™
 		return std::wstring();
 	}else{
-		// ƒL[‚ª‘¶İ‚·‚éê‡A’l‚ğ•Ô‚·
+		// ã‚­ãƒ¼ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€å€¤ã‚’è¿”ã™
 		return m_AppendTextArr[ info ];
 	}
 }

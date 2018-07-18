@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒcƒŠ[İ’è
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¨­å®š
 
 	@author Moca
 	@date 2014.06.07
@@ -35,7 +35,7 @@
 #include "outline/CDlgFuncList.h"
 
 /*!
-	@brief ƒtƒ@ƒCƒ‹ƒcƒŠ[İ’èƒ_ƒCƒAƒƒO
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 */
 class CDlgFileTree : public CDialog
 {

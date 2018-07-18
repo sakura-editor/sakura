@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒcƒŠ[İ’èƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Moca
 	@date 2014.06.07
@@ -87,11 +87,11 @@ CDlgFileTree::CDlgFileTree()
 	m_bInMove = false;
 }
 
-/*! ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦
-	lParam ‚Í CDlgFuncList*
-	“ü—Í‚ÍlParamŒo—R‚Åæ“¾B
-	Œ‹‰Ê‚Ìİ’è‚ÍCDlgFileTree‚ª’¼Ú‹¤’Êİ’èEƒ^ƒCƒv•ÊEİ’èƒtƒ@ƒCƒ‹‚É‘‚«‚İ‚ğ‚µ‚Ä
-	ŒÄ‚Ño‚µŒ³‚ÍAÄ•\¦‚Åİ’è‚³‚ê‚é
+/*! ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
+	lParam ã¯ CDlgFuncList*
+	å…¥åŠ›ã¯lParamçµŒç”±ã§å–å¾—ã€‚
+	çµæœã®è¨­å®šã¯CDlgFileTreeãŒç›´æ¥å…±é€šè¨­å®šãƒ»ã‚¿ã‚¤ãƒ—åˆ¥ãƒ»è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã¿ã‚’ã—ã¦
+	å‘¼ã³å‡ºã—å…ƒã¯ã€å†è¡¨ç¤ºã§è¨­å®šã•ã‚Œã‚‹
 */
 int CDlgFileTree::DoModal(
 	HINSTANCE	hInstance,
@@ -105,7 +105,7 @@ int CDlgFileTree::DoModal(
 }
 
 
-// LS()‚ğg—p‚µ‚Ä‚¢‚é‚Ì‚Å‚·‚®g‚¤‚±‚Æ
+// LS()ã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹ã®ã§ã™ãä½¿ã†ã“ã¨
 static TCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 {
 	const TCHAR* pszLabel;
@@ -128,7 +128,7 @@ static TCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 	return const_cast<TCHAR*>(pszLabel);
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgFileTree::SetData()
 {
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
@@ -239,8 +239,8 @@ void CDlgFileTree::ChangeEnableAddInsert()
 	}
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgFileTree::GetData()
 {
 	HWND hwndDlg = GetHwnd();
@@ -277,7 +277,7 @@ int CDlgFileTree::GetData()
 		}
 	}
 	if( false == bSaveShareData ){
-		// Œ³‚Ìini‚É•Û‘¶
+		// å…ƒã®iniã«ä¿å­˜
 		CImpExpFileTree cImpExp(items);
 		std::wstring strIni = to_wchar(m_fileTreeSetting.m_szLoadProjectIni);
 		std::wstring strError;
@@ -318,7 +318,7 @@ bool CDlgFileTree::GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem
 int CDlgFileTree::GetDataItem( SFileTreeItem& item )
 {
 	HWND hwndDlg = GetHwnd();
-	item = SFileTreeItem(); // ‰Šú‰»
+	item = SFileTreeItem(); // åˆæœŸåŒ–
 	BOOL bGrepEnable = FALSE;
 	BOOL bPathEnable = FALSE;
 	if( IsDlgButtonCheckedBool(hwndDlg, IDC_RADIO_GREP) ){
@@ -358,7 +358,7 @@ BOOL CDlgFileTree::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_pcDlgFuncList->LoadFileTreeSetting(m_fileTreeSetting, path);
 	SetDataInit();
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnInitDialog(GetHwnd(), wParam, lParam);
 }
 
@@ -406,7 +406,7 @@ HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent,
 		nlParam = m_fileTreeSetting.m_aItems.size();
 		m_fileTreeSetting.m_aItems.push_back(item);
 	}else{
-		// íœƒŠƒXƒg‚©‚ç•œŠˆ‚³‚¹‚é
+		// å‰Šé™¤ãƒªã‚¹ãƒˆã‹ã‚‰å¾©æ´»ã•ã›ã‚‹
 		nlParam = m_aItemRemoveList.back();
 		m_aItemRemoveList.pop_back();
 		m_fileTreeSetting.m_aItems[nlParam] = item;
@@ -422,16 +422,16 @@ HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent,
 }
 
 
-// ƒcƒŠ[‚ÌƒRƒs[
-//		fChild‚ªtrue‚Ì‚Ídst‚Ìq‚Æ‚µ‚ÄƒRƒs[, ‚»‚¤‚Å‚È‚¯‚ê‚Îdst‚ÌŒZ’í‚Æ‚µ‚Ädst‚ÌŒã‚ë‚ÉƒRƒs[
-//		fOnryOne‚ªtrue‚Ì‚Í1‚Â‚¾‚¯ƒRƒs[iq‚ª‚ ‚Á‚½‚çƒRƒs[j
+// ãƒ„ãƒªãƒ¼ã®ã‚³ãƒ”ãƒ¼
+//		fChildãŒtrueã®æ™‚ã¯dstã®å­ã¨ã—ã¦ã‚³ãƒ”ãƒ¼, ãã†ã§ãªã‘ã‚Œã°dstã®å…„å¼Ÿã¨ã—ã¦dstã®å¾Œã‚ã«ã‚³ãƒ”ãƒ¼
+//		fOnryOneãŒtrueã®æ™‚ã¯1ã¤ã ã‘ã‚³ãƒ”ãƒ¼ï¼ˆå­ãŒã‚ã£ãŸã‚‰ã‚³ãƒ”ãƒ¼ï¼‰
 static HTREEITEM FileTreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fChild, bool fOnryOne )
 {
 	HTREEITEM		s;
 	HTREEITEM		ts;
 	HTREEITEM		td = NULL;
-	TV_INSERTSTRUCT	tvis;		// ‘}“ü—p
-	TV_ITEM			tvi;		// æ“¾—p
+	TV_INSERTSTRUCT	tvis;		// æŒ¿å…¥ç”¨
+	TV_ITEM			tvi;		// å–å¾—ç”¨
 	int				n = 0;
 	TCHAR			szLabel[_MAX_PATH];
 
@@ -446,26 +446,26 @@ static HTREEITEM FileTreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool
 		}
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		if (fChild || n != 0) {
-			// dst‚Ìq‹Ÿ‚Æ‚µ‚Äì¬
+			// dstã®å­ä¾›ã¨ã—ã¦ä½œæˆ
 			tvis.hParent = dst;
 			tvis.hInsertAfter = TVI_LAST;
 		}
 		else {
-			//	dst‚ÌŒZ’í‚Æ‚µ‚Äì¬
+			//	dstã®å…„å¼Ÿã¨ã—ã¦ä½œæˆ
 			tvis.hParent = TreeView_GetParent( hwndTree, dst );
 			tvis.hInsertAfter = dst;
 		}
 		tvis.item.pszText = szLabel;
 		tvis.item.lParam = tvi.lParam;
 		tvis.item.cChildren = tvi.cChildren;
-		td = TreeView_InsertItem( hwndTree, &tvis );	//	Item‚Ìì¬
+		td = TreeView_InsertItem( hwndTree, &tvis );	//	Itemã®ä½œæˆ
 
 		if (tvi.cChildren) {
-			ts = TreeView_GetChild( hwndTree, s );	//	q‚Ìæ“¾
+			ts = TreeView_GetChild( hwndTree, s );	//	å­ã®å–å¾—
 			if (ts != NULL) {
 				FileTreeCopy( hwndTree, td, ts, true, false );
 			}
-			// “WŠJ
+			// å±•é–‹
 			if (tvi.state & TVIS_EXPANDEDONCE) {
 				TreeView_Expand( hwndTree, td, TVE_EXPAND );
 			}
@@ -495,7 +495,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				const TCHAR* pszIniFileName;
 				TCHAR szDir[_MAX_PATH * 2];
 				if( _IS_REL_PATH( m_fileTreeSetting.m_szDefaultProjectIni ) ){
-					// sakura.ini‚©‚ç‚Ì‘Š‘ÎƒpƒX
+					// sakura.iniã‹ã‚‰ã®ç›¸å¯¾ãƒ‘ã‚¹
 					GetInidirOrExedir( szDir, m_fileTreeSetting.m_szDefaultProjectIni );
 					pszIniFileName = szDir;
 				}else{
@@ -525,7 +525,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				if( TreeView_GetItem(hwndTree, &tvi)
 				  && m_fileTreeSetting.m_aItems[tvi.lParam].m_eFileTreeItemType ==  EFileTreeItemType_Folder
 				  && NULL != TreeView_GetChild(hwndTree, htiItem) ){
-					// [Folder]ˆÈŠO‚ğq‚ª‚¢‚éFolder‚Éã‘‚«‚·‚é‚Ì‹Ö~
+					// [Folder]ä»¥å¤–ã‚’å­ãŒã„ã‚‹Folderã«ä¸Šæ›¸ãã™ã‚‹ã®ç¦æ­¢
 					bEnableUpdate = FALSE;
 				}
 			}
@@ -584,7 +584,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			pt.x = rc.left;
 			pt.y = rc.bottom;
 			RECT rcWork;
-			GetMonitorWorkRect( pt, &rcWork );	// ƒ‚ƒjƒ^‚Ìƒ[ƒNƒGƒŠƒA
+			GetMonitorWorkRect( pt, &rcWork );	// ãƒ¢ãƒ‹ã‚¿ã®ãƒ¯ãƒ¼ã‚¯ã‚¨ãƒªã‚¢
 			int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 										( pt.x > rcWork.left )? pt.x: rcWork.left,
 										( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
@@ -610,7 +610,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				}
 				HTREEITEM htiTemp = TreeView_GetNextSibling(hwndTree, htiItem);
 				if( htiTemp == NULL ){
-					// ––”ö‚È‚ç‚ÎA‘O‚ğæ‚é
+					// æœ«å°¾ãªã‚‰ã°ã€å‰ã‚’å–ã‚‹
 					htiTemp = TreeView_GetPrevSibling(hwndTree, htiItem);
 				}
 				TreeView_DeleteItem(hwndTree, htiItem);
@@ -628,43 +628,43 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 			HTREEITEM htiInsert = NULL;
 			HTREEITEM htiParent = NULL;
-			// ‘}“üˆÊ’uŒŸõ
+			// æŒ¿å…¥ä½ç½®æ¤œç´¢
 			HTREEITEM htiTemp = TreeView_GetSelection(hwndTree);
 			TV_ITEM tvi;
 			if( htiTemp == NULL ){
 			}else if( wID == IDC_BUTTON_ADD ){
-				// ’Ç‰Á
+				// è¿½åŠ 
 				tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 				tvi.hItem = htiTemp;
 				if( TreeView_GetItem(hwndTree, &tvi) ){
 					if( m_fileTreeSetting.m_aItems[tvi.lParam].m_eFileTreeItemType ==  EFileTreeItemType_Folder ){
-						// ƒm[ƒh
+						// ãƒãƒ¼ãƒ‰
 						htiParent = htiTemp;
 					}else{
-						// q‚ğ•t‚¯‚ç‚ê‚È‚¢‚Ì‚Åe‚É•t‚¯‚éi‘I‘ğƒAƒCƒeƒ€‚Ì‰º‚É•t‚­j
+						// å­ã‚’ä»˜ã‘ã‚‰ã‚Œãªã„ã®ã§è¦ªã«ä»˜ã‘ã‚‹ï¼ˆé¸æŠã‚¢ã‚¤ãƒ†ãƒ ã®ä¸‹ã«ä»˜ãï¼‰
 						htiParent = TreeView_GetParent(hwndTree, htiTemp);
 					}
 				}
 			}else if( wID == IDC_BUTTON_INSERT_A ){
-				// ƒm[ƒh‘}“üA‘}“ü(‰º)
-				// ’Ç‰Áæ‚ğ’T‚é
+				// ãƒãƒ¼ãƒ‰æŒ¿å…¥ã€æŒ¿å…¥(ä¸‹)
+				// è¿½åŠ å…ˆã‚’æ¢ã‚‹
 				tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 				tvi.hItem = htiTemp;
 				if( TreeView_GetItem(hwndTree, &tvi) ){
 					if( m_fileTreeSetting.m_aItems[tvi.lParam].m_eFileTreeItemType ==  EFileTreeItemType_Folder ){
-						// ƒm[ƒh
+						// ãƒãƒ¼ãƒ‰
 						htiParent = htiTemp;
 						htiInsert = TVI_FIRST;
 					}else{
-						// q‚ğ•t‚¯‚ç‚ê‚È‚¢‚Ì‚Åe‚É•t‚¯‚éi‘I‘ğƒAƒCƒeƒ€‚Ì‰º‚É•t‚­j
+						// å­ã‚’ä»˜ã‘ã‚‰ã‚Œãªã„ã®ã§è¦ªã«ä»˜ã‘ã‚‹ï¼ˆé¸æŠã‚¢ã‚¤ãƒ†ãƒ ã®ä¸‹ã«ä»˜ãï¼‰
 						htiParent = TreeView_GetParent(hwndTree, htiTemp);
 						htiInsert = htiTemp;
 					}
 				}
 			}else{
 				assert(wID == IDC_BUTTON_INSERT);
-				// ‘}“ü(ã)
-				// ‘}“üæ‚ğ’T‚é
+				// æŒ¿å…¥(ä¸Š)
+				// æŒ¿å…¥å…ˆã‚’æ¢ã‚‹
 				htiParent = TreeView_GetParent(hwndTree, htiTemp);
 				if( htiParent == NULL ){
 					htiInsert = TVI_FIRST;
@@ -684,7 +684,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			SFileTreeItem item;
 			GetDataItem(item);
 			HTREEITEM htiItem = InsertTreeItem(item, htiParent, htiInsert);
-			// “WŠJ
+			// å±•é–‹
 			if( htiParent != TVI_ROOT ){
 				TreeView_Expand(hwndTree, htiParent, TVE_EXPAND);
 			}
@@ -723,22 +723,22 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 					HTREEITEM htiInsert = NULL;
 					HTREEITEM htiParent = NULL;
-					// ‘}“üˆÊ’uŒŸõ
+					// æŒ¿å…¥ä½ç½®æ¤œç´¢
 					HTREEITEM htiTemp = TreeView_GetSelection(hwndTree);
 					TV_ITEM tvi;
 					if( htiTemp == NULL ){
 					}else{
-						// ƒm[ƒh‘}“üA‘}“ü(‰º)
-						// ’Ç‰Áæ‚ğ’T‚é
+						// ãƒãƒ¼ãƒ‰æŒ¿å…¥ã€æŒ¿å…¥(ä¸‹)
+						// è¿½åŠ å…ˆã‚’æ¢ã‚‹
 						tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 						tvi.hItem = htiTemp;
 						if( TreeView_GetItem(hwndTree, &tvi) ){
 							if( m_fileTreeSetting.m_aItems[tvi.lParam].m_eFileTreeItemType ==  EFileTreeItemType_Folder ){
-								// ƒm[ƒh
+								// ãƒãƒ¼ãƒ‰
 								htiParent = htiTemp;
 								htiInsert = TVI_FIRST;
 							}else{
-								// q‚ğ•t‚¯‚ç‚ê‚È‚¢‚Ì‚Åe‚É•t‚¯‚éi‘I‘ğƒAƒCƒeƒ€‚Ì‰º‚É•t‚­j
+								// å­ã‚’ä»˜ã‘ã‚‰ã‚Œãªã„ã®ã§è¦ªã«ä»˜ã‘ã‚‹ï¼ˆé¸æŠã‚¢ã‚¤ãƒ†ãƒ ã®ä¸‹ã«ä»˜ãï¼‰
 								htiParent = TreeView_GetParent(hwndTree, htiTemp);
 							}
 						}
@@ -762,7 +762,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 							htiItemFirst = htiInsert;
 						}
 					}
-					// “WŠJ
+					// å±•é–‹
 					if( htiParent != TVI_ROOT ){
 						TreeView_Expand(hwndTree, htiParent, TVE_EXPAND);
 					}
@@ -815,13 +815,13 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			}
 			HTREEITEM htiTemp = TreeView_GetPrevSibling(hwndTree, htiItem);
 			if( htiTemp == NULL ){
-				// ‚»‚ÌƒGƒŠƒA‚ÅÅ‰
+				// ãã®ã‚¨ãƒªã‚¢ã§æœ€åˆ
 				break;
 			}
-			// ƒRƒs[
+			// ã‚³ãƒ”ãƒ¼
 			m_bInMove = true;
 			FileTreeCopy(hwndTree, htiItem, htiTemp, false, true);
-			// íœ
+			// å‰Šé™¤
 			TreeView_DeleteItem(hwndTree, htiTemp);
 			m_bInMove = false;
 		}
@@ -835,16 +835,16 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			}
 			HTREEITEM htiTemp = TreeView_GetNextSibling(hwndTree, htiItem);
 			if( htiTemp == NULL ){
-				// ‚»‚ÌƒGƒŠƒA‚ÅÅŒã
+				// ãã®ã‚¨ãƒªã‚¢ã§æœ€å¾Œ
 				break;
 			}
-			// ƒRƒs[
+			// ã‚³ãƒ”ãƒ¼
 			m_bInMove = true;
 			FileTreeCopy(hwndTree, htiTemp, htiItem, false, true);
-			// íœ
+			// å‰Šé™¤
 			TreeView_DeleteItem(hwndTree, htiItem);
 			m_bInMove = false;
-			// ‘I‘ğ
+			// é¸æŠ
 			htiItem = TreeView_GetNextSibling(hwndTree, htiTemp);
 			if( htiItem != NULL ){
 				TreeView_SelectItem(hwndTree, htiItem);
@@ -860,26 +860,26 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			}
 			HTREEITEM htiTemp = TreeView_GetPrevSibling(hwndTree, htiItem);
 			if( htiTemp == NULL ){
-				// ‚»‚ÌƒGƒŠƒA‚ÅÅ‰
+				// ãã®ã‚¨ãƒªã‚¢ã§æœ€åˆ
 				break;
 			}
-			// ƒm[ƒhŠm”F
+			// ãƒãƒ¼ãƒ‰ç¢ºèª
 			TV_ITEM tvi;
 			tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 			tvi.hItem = htiTemp;
 			if( !TreeView_GetItem(hwndTree, &tvi) ){
-				// ƒGƒ‰[
+				// ã‚¨ãƒ©ãƒ¼
 				break;
 			}
 			if( m_fileTreeSetting.m_aItems[tvi.lParam].m_eFileTreeItemType == EFileTreeItemType_Folder ){
-				// ’¼‘O‚ªƒm[ƒh
-				// ƒRƒs[
+				// ç›´å‰ãŒãƒãƒ¼ãƒ‰
+				// ã‚³ãƒ”ãƒ¼
 				m_bInMove = true;
 				HTREEITEM htiTemp2 = FileTreeCopy(hwndTree, htiTemp, htiItem, true, true);
-				// íœ
+				// å‰Šé™¤
 				TreeView_DeleteItem(hwndTree, htiItem);
 				m_bInMove = false;
-				// ‘I‘ğ
+				// é¸æŠ
 				TreeView_SelectItem(hwndTree, htiTemp2);
 			}
 		}
@@ -896,13 +896,13 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				// Root
 				break;
 			}
-			// ƒRƒs[
+			// ã‚³ãƒ”ãƒ¼
 			m_bInMove = true;
 			HTREEITEM htiTemp2 = FileTreeCopy(hwndTree, htiParent, htiItem, false, true);
-			// íœ
+			// å‰Šé™¤
 			TreeView_DeleteItem(hwndTree, htiItem);
 			m_bInMove = false;
-			// ‘I‘ğ
+			// é¸æŠ
 			TreeView_SelectItem(hwndTree, htiTemp2);
 		}
 		return TRUE;
@@ -923,7 +923,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 		return TRUE;
 
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
+		/* ãƒ˜ãƒ«ãƒ— */
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_FILETREE) );
 		return TRUE;
 
@@ -937,7 +937,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
@@ -953,12 +953,12 @@ BOOL CDlgFileTree::OnNotify( WPARAM wParam, LPARAM lParam )
 		if( !m_bInMove
 		  && pNMHDR->hwndFrom == hwndTree
 		  && (htiItem = TreeView_GetSelection( hwndTree )) != NULL ){
-			//•t‘®î•ñ‚ğíœ
+			//ä»˜å±æƒ…å ±ã‚’å‰Šé™¤
 			TV_ITEM tvi;
 			tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 			tvi.hItem = htiItem;
 			if( TreeView_GetItem( hwndTree, &tvi) ){
-				// ƒŠƒXƒg‚©‚çíœ‚·‚é‘ã‚í‚è‚É”Ô†‚ğŠo‚¦‚ÄŒã‚ÅÄ—˜—p
+				// ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã™ã‚‹ä»£ã‚ã‚Šã«ç•ªå·ã‚’è¦šãˆã¦å¾Œã§å†åˆ©ç”¨
 				m_aItemRemoveList.push_back(tvi.lParam);
 			}
 		}
@@ -979,7 +979,7 @@ BOOL CDlgFileTree::OnNotify( WPARAM wParam, LPARAM lParam )
 			}
 		}
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnNotify( wParam, lParam );
 }
 
