@@ -1,5 +1,5 @@
-/*!	@file
-	@brief »ŒvƒJ[ƒ\ƒ‹
+ï»¿/*!	@file
+	@brief ç ‚æ™‚è¨ˆã‚«ãƒ¼ã‚½ãƒ«
 
 	@author Norio Nakatani
 */
@@ -14,7 +14,7 @@
 #include "CWaitCursor.h"
 
 /*!
-	Œ»İ‚ÌƒJ[ƒ\ƒ‹‚ğ•Û‘¶‚µAƒJ[ƒ\ƒ‹‚ğ»Œv‚É‚·‚é
+	ç¾åœ¨ã®ã‚«ãƒ¼ã‚½ãƒ«ã‚’ä¿å­˜ã—ã€ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç ‚æ™‚è¨ˆã«ã™ã‚‹
 */
 CWaitCursor::CWaitCursor( HWND hWnd, bool bEnable )
 {
@@ -29,7 +29,7 @@ CWaitCursor::CWaitCursor( HWND hWnd, bool bEnable )
 
 
 /*!
-	ƒJ[ƒ\ƒ‹Œ`ó‚ğŒ³‚É–ß‚·
+	ã‚«ãƒ¼ã‚½ãƒ«å½¢çŠ¶ã‚’å…ƒã«æˆ»ã™
 */
 CWaitCursor::~CWaitCursor()
 {

@@ -1,8 +1,8 @@
-/*!	@file
-	@brief w·‚µƒJ[ƒ\ƒ‹
+ï»¿/*!	@file
+	@brief æŒ‡å·®ã—ã‚«ãƒ¼ã‚½ãƒ«
 
 	@author Uchi
-	@date 2013”N1Œ29“ú
+	@date 2013å¹´1æœˆ29æ—¥
 */
 /*
 	Copyright (C) 2013, Uchi

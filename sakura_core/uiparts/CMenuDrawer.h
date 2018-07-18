@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒƒjƒ…[ŠÇ—••\¦
+ï»¿/*!	@file
+	@brief ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç®¡ç†ï¼†è¡¨ç¤º
 
 	@author Norio Nakatani
 */
@@ -27,30 +27,30 @@ class CImageListMgr;// 2002/2/10 aroka
 struct DLLSHAREDATA;
 
 //#define MAX_MENUPOS	10
-//	Jul. 2, 2005 genta : ƒ}ƒNƒ‚ğ‚½‚­‚³‚ñ“o˜^‚·‚é‚ÆãŒÀ‚ğ’´‚¦‚Ä‚µ‚Ü‚¤‚Ì‚Å
-//	‰Šú’l‚Ì300‚©‚ç‘‚â‚·
-// #define MAX_MENUITEMS	400 // 2011.11.23 Moca ãŒÀ“P”p
+//	Jul. 2, 2005 genta : ãƒã‚¯ãƒ­ã‚’ãŸãã•ã‚“ç™»éŒ²ã™ã‚‹ã¨ä¸Šé™ã‚’è¶…ãˆã¦ã—ã¾ã†ã®ã§
+//	åˆæœŸå€¤ã®300ã‹ã‚‰å¢—ã‚„ã™
+// #define MAX_MENUITEMS	400 // 2011.11.23 Moca ä¸Šé™æ’¤å»ƒ
 
-//ƒc[ƒ‹ƒo[‚ÌŠg’£	//@@@ 2002.06.15 MIK
-#define TBSTYLE_COMBOBOX	((BYTE)0x40)	//ƒc[ƒ‹ƒo[‚ÉƒRƒ“ƒ{ƒ{ƒbƒNƒX
-#ifndef TBSTYLE_DROPDOWN	//IE3ˆÈã
+//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®æ‹¡å¼µ	//@@@ 2002.06.15 MIK
+#define TBSTYLE_COMBOBOX	((BYTE)0x40)	//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹
+#ifndef TBSTYLE_DROPDOWN	//IE3ä»¥ä¸Š
 	#define TBSTYLE_DROPDOWN	0x0008
 #endif
-#ifndef TB_SETEXTENDEDSTYLE	//IE4ˆÈã
+#ifndef TB_SETEXTENDEDSTYLE	//IE4ä»¥ä¸Š
 	#define TB_SETEXTENDEDSTYLE     (WM_USER + 84)  // For TBSTYLE_EX_*
 #endif
-#ifndef TBSTYLE_EX_DRAWDDARROWS	//IE4ˆÈã
+#ifndef TBSTYLE_EX_DRAWDDARROWS	//IE4ä»¥ä¸Š
 	#define TBSTYLE_EX_DRAWDDARROWS 0x00000001
 #endif
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒƒjƒ…[•\¦•ŠÇ—
+	@brief ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¡¨ç¤ºï¼†ç®¡ç†
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-	@date 20050809 aroka ƒNƒ‰ƒXŠO•”‚©‚çƒAƒNƒZƒX‚³‚ê‚È‚¢ƒƒ“ƒo‚Íprivate‚É‚µ‚½B
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+	@date 20050809 aroka ã‚¯ãƒ©ã‚¹å¤–éƒ¨ã‹ã‚‰ã‚¢ã‚¯ã‚»ã‚¹ã•ã‚Œãªã„ãƒ¡ãƒ³ãƒã¯privateã«ã—ãŸã€‚
 */
 class CMenuDrawer
 {
@@ -67,8 +67,8 @@ public:
 	||  Attributes & Operations
 	*/
 	void ResetContents( void );
-	//void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* ƒƒjƒ…[€–Ú‚ğ’Ç‰Á */
-	void MyAppendMenu( HMENU hMenu, int nFlag, UINT_PTR nFuncId, const TCHAR*     pszLabel, const TCHAR*     pszKey, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* ƒƒjƒ…[€–Ú‚ğ’Ç‰Á */	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
+	//void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã‚’è¿½åŠ  */
+	void MyAppendMenu( HMENU hMenu, int nFlag, UINT_PTR nFuncId, const TCHAR*     pszLabel, const TCHAR*     pszKey, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã‚’è¿½åŠ  */	//ãŠæ°—ã«å…¥ã‚Š	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
 	void MyAppendMenu( HMENU hMenu, int nFlag, UINT_PTR nFuncId, const NOT_TCHAR* pszLabel, const NOT_TCHAR* pszKey, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 )
 	{
 		MyAppendMenu(hMenu,nFlag,nFuncId,to_tchar(pszLabel),to_tchar(pszKey),bAddKeyStr,nForceIconId);
@@ -77,26 +77,26 @@ public:
 	{
 		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,_T(""),bAddKeyStr,nForceIconId);
 	}
-	int MeasureItem( int, int* );	/* ƒƒjƒ…[ƒAƒCƒeƒ€‚Ì•`‰æƒTƒCƒY‚ğŒvZ */
-	void DrawItem( DRAWITEMSTRUCT* );	/* ƒƒjƒ…[ƒAƒCƒeƒ€•`‰æ */
+	int MeasureItem( int, int* );	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ãƒ†ãƒ ã®æç”»ã‚µã‚¤ã‚ºã‚’è¨ˆç®— */
+	void DrawItem( DRAWITEMSTRUCT* );	/* ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ãƒ†ãƒ æç”» */
 	void EndDrawMenu();
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ƒc[ƒ‹ƒo[No‚Ìæ“¾
+	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ãƒ„ãƒ¼ãƒ«ãƒãƒ¼Noã®å–å¾—
 	int GetIconIdByFuncId( int nIndex ) const;
 
 	TBBUTTON getButton( int nToolBarNo ) const; // 20050809 aroka
-	void AddToolButton( int iBitmap, int iCommand );	//ƒc[ƒ‹ƒo[ƒ{ƒ^ƒ“‚ğ’Ç‰Á‚·‚é 2009.11.14 syat
+	void AddToolButton( int iBitmap, int iCommand );	//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒœã‚¿ãƒ³ã‚’è¿½åŠ ã™ã‚‹ 2009.11.14 syat
 	
-	// iBitmap‚É‘Î‰‚·‚é’è”
-	static const int TOOLBAR_ICON_MACRO_INTERNAL = 384;		//ŠO•”ƒ}ƒNƒŠù’èƒAƒCƒRƒ“
-	static const int TOOLBAR_ICON_PLUGCOMMAND_DEFAULT = 283;//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒhŠù’èƒAƒCƒRƒ“
-	// m_tbMyButton‚Ìindex‚É‘Î‰‚·‚é’è”
-	static const int TOOLBAR_BUTTON_F_SEPARATOR = 0;		//ƒZƒpƒŒ[ƒ^iƒ_ƒ~[j
-	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ƒc[ƒ‹ƒo[Ü•Ô‚µƒAƒCƒRƒ“iƒ_ƒ~[j
+	// iBitmapã«å¯¾å¿œã™ã‚‹å®šæ•°
+	static const int TOOLBAR_ICON_MACRO_INTERNAL = 384;		//å¤–éƒ¨ãƒã‚¯ãƒ­æ—¢å®šã‚¢ã‚¤ã‚³ãƒ³
+	static const int TOOLBAR_ICON_PLUGCOMMAND_DEFAULT = 283;//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰æ—¢å®šã‚¢ã‚¤ã‚³ãƒ³
+	// m_tbMyButtonã®indexã«å¯¾å¿œã™ã‚‹å®šæ•°
+	static const int TOOLBAR_BUTTON_F_SEPARATOR = 0;		//ã‚»ãƒ‘ãƒ¬ãƒ¼ã‚¿ï¼ˆãƒ€ãƒŸãƒ¼ï¼‰
+	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼æŠ˜è¿”ã—ã‚¢ã‚¤ã‚³ãƒ³ï¼ˆãƒ€ãƒŸãƒ¼ï¼‰
 
 private:
 	void DeleteCompDC();
-	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ƒc[ƒ‹ƒo[Index‚Ìæ“¾ */// 20050809 aroka
+	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼Indexã®å–å¾— */// 20050809 aroka
 	int Find( int nFuncID );
 	const TCHAR* GetLabel( int nFuncID );
 	TCHAR GetAccelCharFromLabel( const TCHAR* pszLabel );
@@ -108,13 +108,13 @@ private:
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
 
-//@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
-//2009.11.14 syat ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh“®“I’Ç‰Á‚Ì‚½‚ßvector‰»
-	std::vector<TBBUTTON>	m_tbMyButton;	/* ƒc[ƒ‹ƒo[‚Ìƒ{ƒ^ƒ“ */
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
+//2009.11.14 syat ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰å‹•çš„è¿½åŠ ã®ãŸã‚vectoråŒ–
+	std::vector<TBBUTTON>	m_tbMyButton;	/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®ãƒœã‚¿ãƒ³ */
 	int				m_nMyButtonNum;
-	int				m_nMyButtonFixSize;	// ŒÅ’è•”•ª‚ÌÅ‘å”
+	int				m_nMyButtonFixSize;	// å›ºå®šéƒ¨åˆ†ã®æœ€å¤§æ•°
 	
-	// 2011.11.18 MenuItem‚Ìvector‰»
+	// 2011.11.18 MenuItemã®vectoråŒ–
 	struct MyMenuItemInfo{
 		int				m_nBitmapIdx;
 		int				m_nFuncId;
@@ -131,18 +131,18 @@ private:
 	int				m_nCompBitmapWidth;
 
 public:
-	// 2010.01.30 syat ƒAƒCƒRƒ“ƒCƒ[ƒWƒŠƒXƒg‚ğprivate->public
+	// 2010.01.30 syat ã‚¢ã‚¤ã‚³ãƒ³ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã‚’private->public
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons;	//	Image List
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
-//@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
-	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR ) const;	/* TBBUTTON\‘¢‘Ì‚Éƒf[ƒ^‚ğƒZƒbƒg */
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
+	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR ) const;	/* TBBUTTONæ§‹é€ ä½“ã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ */
 };
 
 

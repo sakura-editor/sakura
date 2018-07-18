@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ImageList‚Ìæ‚èˆµ‚¢
+ï»¿/*!	@file
+	@brief ImageListã®å–ã‚Šæ‰±ã„
 
 	@author genta
 	@date Oct. 11, 2000 genta
@@ -22,13 +22,13 @@
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
-//  2010/06/29 syat MAX_X, MAX_Y‚Ì’l‚ğCommonSettings.h‚ÉˆÚ“®
-//	Jul. 21, 2003 genta ‘¼‚Å‚àg‚¤‚Ì‚ÅŠÖ”‚ÌŠO‚Éo‚µ‚½
-//	Oct. 21, 2000 JEPRO İ’è
+//  2010/06/29 syat MAX_X, MAX_Yã®å€¤ã‚’CommonSettings.hã«ç§»å‹•
+//	Jul. 21, 2003 genta ä»–ã§ã‚‚ä½¿ã†ã®ã§é–¢æ•°ã®å¤–ã«å‡ºã—ãŸ
+//	Oct. 21, 2000 JEPRO è¨­å®š
 const int MAX_X = MAX_TOOLBAR_ICON_X;
 const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 
-/*! ƒRƒ“ƒXƒgƒ‰ƒNƒ^ */
+/*! ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ */
 CImageListMgr::CImageListMgr()
 	: m_cx( 16 ), m_cy( 16 )
 	, m_cTrans( RGB( 0, 0, 0 ))
@@ -37,7 +37,7 @@ CImageListMgr::CImageListMgr()
 {
 }
 
-/*!	—Ìˆæ‚ğw’èF‚Å“h‚è‚Â‚Ô‚·
+/*!	é ˜åŸŸã‚’æŒ‡å®šè‰²ã§å¡—ã‚Šã¤ã¶ã™
 
 	@author Nakatani
 */
@@ -55,55 +55,55 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 //	Destructor
 CImageListMgr::~CImageListMgr()
 {
-	//	2003.07.21 Image List‚Ì‘ã‚í‚è‚É•`‰æ—pbitmap‚ğ‰ğ•ú
+	//	2003.07.21 Image Listã®ä»£ã‚ã‚Šã«æç”»ç”¨bitmapã‚’è§£æ”¾
 	if( m_hIconBitmap != NULL ){
 		DeleteObject( m_hIconBitmap );
 	}
 }
 
 /*
-	@brief Image List‚Ìì¬
+	@brief Image Listã®ä½œæˆ
 	
-	ƒŠƒ\[ƒX‚Ü‚½‚Íƒtƒ@ƒCƒ‹‚©‚çbitmap‚ğ“Ç‚İ‚ñ‚Å
-	•`‰æ—p‚É•Û‚·‚éD
+	ãƒªã‚½ãƒ¼ã‚¹ã¾ãŸã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰bitmapã‚’èª­ã¿è¾¼ã‚“ã§
+	æç”»ç”¨ã«ä¿æŒã™ã‚‹ï¼
 	
-	@param hInstance [in] bitmapƒŠƒ\[ƒX‚ğ‚ÂƒCƒ“ƒXƒ^ƒ“ƒX
+	@param hInstance [in] bitmapãƒªã‚½ãƒ¼ã‚¹ã‚’æŒã¤ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	
-	@date 2003.07.21 genta ImageList‚Ì\’z‚Ís‚í‚È‚¢D‘ã‚í‚è‚Ébitmap‚ğ‚»‚Ì‚Ü‚Ü•Û‚·‚éD
+	@date 2003.07.21 genta ImageListã®æ§‹ç¯‰ã¯è¡Œã‚ãªã„ï¼ä»£ã‚ã‚Šã«bitmapã‚’ãã®ã¾ã¾ä¿æŒã™ã‚‹ï¼
 */
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
-	if( m_hIconBitmap != NULL ){	//	Šù‚É\’zÏ‚İ‚È‚ç–³‹‚·‚é
+	if( m_hIconBitmap != NULL ){	//	æ—¢ã«æ§‹ç¯‰æ¸ˆã¿ãªã‚‰ç„¡è¦–ã™ã‚‹
 		return true;
 	}
 
-	HBITMAP	hRscbmp;			//	ƒŠƒ\[ƒX‚©‚ç“Ç‚İ‚ñ‚¾‚Ğ‚Æ‚©‚½‚Ü‚è‚ÌBitmap
-	HBITMAP	hFOldbmp = NULL;	//	SetObject‚Å“¾‚ç‚ê‚½1‚Â‘O‚Ìƒnƒ“ƒhƒ‹‚ğ•Û‚·‚é
-	HDC		dcFrom = 0;			//	•`‰æ—p
-	int		nRetPos;			//	Œãˆ——p
+	HBITMAP	hRscbmp;			//	ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰èª­ã¿è¾¼ã‚“ã ã²ã¨ã‹ãŸã¾ã‚Šã®Bitmap
+	HBITMAP	hFOldbmp = NULL;	//	SetObjectã§å¾—ã‚‰ã‚ŒãŸ1ã¤å‰ã®ãƒãƒ³ãƒ‰ãƒ«ã‚’ä¿æŒã™ã‚‹
+	HDC		dcFrom = 0;			//	æç”»ç”¨
+	int		nRetPos;			//	å¾Œå‡¦ç†ç”¨
 	m_cx = m_cy  = 16;
 
 	nRetPos = 0;
 	do {
 		//	From Here 2001.7.1 GAE
-		//	2001.7.1 GAE ƒŠƒ\[ƒX‚ğƒ[ƒJƒ‹ƒtƒ@ƒCƒ‹(sakuraƒfƒBƒŒƒNƒgƒŠ) my_icons.bmp ‚©‚ç“Ç‚ß‚é‚æ‚¤‚É
-		// 2007.05.19 ryoji İ’èƒtƒ@ƒCƒ‹—Dæ‚É•ÏX
+		//	2001.7.1 GAE ãƒªã‚½ãƒ¼ã‚¹ã‚’ãƒ­ãƒ¼ã‚«ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«(sakuraãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª) my_icons.bmp ã‹ã‚‰èª­ã‚ã‚‹ã‚ˆã†ã«
+		// 2007.05.19 ryoji è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«å„ªå…ˆã«å¤‰æ›´
 		TCHAR szPath[_MAX_PATH];
 		GetInidirOrExedir( szPath, FN_TOOL_BMP );
 		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 
-		if( hRscbmp == NULL ) {	// ƒ[ƒJƒ‹ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ¸”s‚ÍƒŠƒ\[ƒX‚©‚çæ“¾
-			//	‚±‚ÌƒuƒƒbƒN“à‚Í]—ˆ‚Ìˆ—
-			//	ƒŠƒ\[ƒX‚©‚çBitmap‚ğ“Ç‚İ‚Ş
-			//	2003.09.29 wmlhq ŠÂ‹«‚É‚æ‚Á‚ÄƒAƒCƒRƒ“‚ª‚Â‚Ô‚ê‚é
+		if( hRscbmp == NULL ) {	// ãƒ­ãƒ¼ã‚«ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿å¤±æ•—æ™‚ã¯ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰å–å¾—
+			//	ã“ã®ãƒ–ãƒ­ãƒƒã‚¯å†…ã¯å¾“æ¥ã®å‡¦ç†
+			//	ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰Bitmapã‚’èª­ã¿è¾¼ã‚€
+			//	2003.09.29 wmlhq ç’°å¢ƒã«ã‚ˆã£ã¦ã‚¢ã‚¤ã‚³ãƒ³ãŒã¤ã¶ã‚Œã‚‹
 			//hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 			hRscbmp = (HBITMAP)::LoadImage( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ), IMAGE_BITMAP, 0, 0,
 				LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS  );
 			if( hRscbmp == NULL ){
-				//	Oct. 4, 2003 genta ƒGƒ‰[ƒR[ƒh’Ç‰Á
-				//	³íI—¹‚Æ“¯‚¶ƒR[ƒh‚¾‚ÆdcFrom‚ğ•s³‚É‰ğ•ú‚µ‚Ä‚µ‚Ü‚¤
+				//	Oct. 4, 2003 genta ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰è¿½åŠ 
+				//	æ­£å¸¸çµ‚äº†ã¨åŒã˜ã‚³ãƒ¼ãƒ‰ã ã¨dcFromã‚’ä¸æ­£ã«è§£æ”¾ã—ã¦ã—ã¾ã†
 				nRetPos = 2;
 				break;
 			}
@@ -111,58 +111,58 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	To Here 2001.7.1 GAE
 		m_hIconBitmap = hRscbmp;
 
-		//	“§‰ßF‚ğ“¾‚é‚½‚ß‚ÉDC‚Éƒ}ƒbƒv‚·‚é
-		//	2003.07.21 genta “§‰ßF‚ğ“¾‚éˆÈŠO‚Ì–Ú“I‚Å‚Íg‚í‚È‚­‚È‚Á‚½
-		dcFrom = CreateCompatibleDC(0);	//	“]‘—Œ³—p
+		//	é€éè‰²ã‚’å¾—ã‚‹ãŸã‚ã«DCã«ãƒãƒƒãƒ—ã™ã‚‹
+		//	2003.07.21 genta é€éè‰²ã‚’å¾—ã‚‹ä»¥å¤–ã®ç›®çš„ã§ã¯ä½¿ã‚ãªããªã£ãŸ
+		dcFrom = CreateCompatibleDC(0);	//	è»¢é€å…ƒç”¨
 		if( dcFrom == NULL ){
 			nRetPos = 1;
 			break;
 		}
 
-		//	‚Ü‚¸bitmap‚ğdc‚Émap‚·‚é
-		//	‚±‚¤‚·‚é‚±‚Æ‚ÅCreateCompatibleBitmap‚Å
-		//	hRscbmp‚Æ“¯‚¶Œ`®‚Ìbitmap‚ğì‚ê‚éD
-		//	’P‚ÉCreateCompatibleDC(0)‚Åæ“¾‚µ‚½dc‚â
-		//	ƒXƒNƒŠ[ƒ“‚ÌDC‚É‘Î‚µ‚ÄCreateCompatibleBitmap‚ğ
-		//	g‚¤‚Æƒ‚ƒmƒNƒBitmap‚É‚È‚éD
+		//	ã¾ãšbitmapã‚’dcã«mapã™ã‚‹
+		//	ã“ã†ã™ã‚‹ã“ã¨ã§CreateCompatibleBitmapã§
+		//	hRscbmpã¨åŒã˜å½¢å¼ã®bitmapã‚’ä½œã‚Œã‚‹ï¼
+		//	å˜ã«CreateCompatibleDC(0)ã§å–å¾—ã—ãŸdcã‚„
+		//	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã®DCã«å¯¾ã—ã¦CreateCompatibleBitmapã‚’
+		//	ä½¿ã†ã¨ãƒ¢ãƒã‚¯ãƒ­Bitmapã«ãªã‚‹ï¼
 		hFOldbmp = (HBITMAP)SelectObject( dcFrom, hRscbmp );
 		if( hFOldbmp == NULL ){
 			nRetPos = 4;
 			break;
 		}
 
-		m_cTrans = GetPixel( dcFrom, 0, 0 );//	æ“¾‚µ‚½‰æ‘œ‚Ì(0,0)‚ÌF‚ğ”wŒiF‚Æ‚µ‚Äg‚¤
+		m_cTrans = GetPixel( dcFrom, 0, 0 );//	å–å¾—ã—ãŸç”»åƒã®(0,0)ã®è‰²ã‚’èƒŒæ™¯è‰²ã¨ã—ã¦ä½¿ã†
 		
 		//	2003.07.21 genta
-		//	ImageList‚Ö‚Ì“o˜^•”•ª‚Í“–‘R‚Î‚Á‚³‚èíœ
+		//	ImageListã¸ã®ç™»éŒ²éƒ¨åˆ†ã¯å½“ç„¶ã°ã£ã•ã‚Šå‰Šé™¤
 		
-		//	‚à‚Í‚âˆ—‚Æ‚Í–³ŠÖŒW‚¾‚ªCŒãŠw‚Ì‚½‚ß‚ÉƒRƒƒ“ƒg‚Ì‚İc‚µ‚Ä‚¨‚±‚¤
+		//	ã‚‚ã¯ã‚„å‡¦ç†ã¨ã¯ç„¡é–¢ä¿‚ã ãŒï¼Œå¾Œå­¦ã®ãŸã‚ã«ã‚³ãƒ¡ãƒ³ãƒˆã®ã¿æ®‹ã—ã¦ãŠã“ã†
 		//---------------------------------------------------------
-		//	Bitmap‚ªMemoryDC‚ÉAssign‚³‚ê‚Ä‚¢‚éŠÔ‚Íbitmapƒnƒ“ƒhƒ‹‚ğ
-		//	g‚Á‚Ä‚à³‚µ‚¢bitmap‚ªæ“¾‚Å‚«‚È‚¢D
-		//	‚Â‚Ü‚èCDC‚Ö‚Ì•`‰æ–½—ß‚ğ”­s‚µ‚Ä‚à‚»‚Ìê‚ÅBitmap‚É
-		//	”½‰f‚³‚ê‚é‚í‚¯‚Å‚Í‚È‚¢D
-		//	Bitmap‚ğDC‚©‚çæ‚èŠO‚µ‚Ä‰‚ß‚Ä“à—e‚Ì•ÛØ‚ª‚Å‚«‚é
+		//	BitmapãŒMemoryDCã«Assignã•ã‚Œã¦ã„ã‚‹é–“ã¯bitmapãƒãƒ³ãƒ‰ãƒ«ã‚’
+		//	ä½¿ã£ã¦ã‚‚æ­£ã—ã„bitmapãŒå–å¾—ã§ããªã„ï¼
+		//	ã¤ã¾ã‚Šï¼ŒDCã¸ã®æç”»å‘½ä»¤ã‚’ç™ºè¡Œã—ã¦ã‚‚ãã®å ´ã§Bitmapã«
+		//	åæ˜ ã•ã‚Œã‚‹ã‚ã‘ã§ã¯ãªã„ï¼
+		//	Bitmapã‚’DCã‹ã‚‰å–ã‚Šå¤–ã—ã¦åˆã‚ã¦å†…å®¹ã®ä¿è¨¼ãŒã§ãã‚‹
 
-		//	DC‚Ìmap/unmap‚ª‘¬“x‚É‘å‚«‚­‰e‹¿‚·‚é‚½‚ßC
-		//	‰¡’·‚ÌBitmap‚ğì‚Á‚ÄˆêŠ‡“o˜^‚·‚é‚æ‚¤‚É•ÏX
-		//	‚±‚ê‚É‚æ‚Á‚Ä250msec‚­‚ç‚¢‘¬“x‚ª‰ü‘P‚³‚ê‚éD
+		//	DCã®map/unmapãŒé€Ÿåº¦ã«å¤§ããå½±éŸ¿ã™ã‚‹ãŸã‚ï¼Œ
+		//	æ¨ªé•·ã®Bitmapã‚’ä½œã£ã¦ä¸€æ‹¬ç™»éŒ²ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
+		//	ã“ã‚Œã«ã‚ˆã£ã¦250msecãã‚‰ã„é€Ÿåº¦ãŒæ”¹å–„ã•ã‚Œã‚‹ï¼
 		//---------------------------------------------------------
 
-	} while(0);	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
+	} while(0);	//	1å›ã—ã‹é€šã‚‰ãªã„. breakã§ã“ã“ã¾ã§é£›ã¶
 
-	//	Œãˆ—
+	//	å¾Œå‡¦ç†
 	switch( nRetPos ){
 	case 0:
-		//	Oct. 4, 2003 genta hRscBmp‚ğdcFrom‚©‚çØ‚è—£‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚é
-		//	ƒAƒCƒRƒ“•`‰æ•ÏX‚É‰ß‚Á‚Äíœ‚³‚ê‚Ä‚¢‚½
+		//	Oct. 4, 2003 genta hRscBmpã‚’dcFromã‹ã‚‰åˆ‡ã‚Šé›¢ã—ã¦ãŠãå¿…è¦ãŒã‚ã‚‹
+		//	ã‚¢ã‚¤ã‚³ãƒ³æç”»å¤‰æ›´æ™‚ã«éã£ã¦å‰Šé™¤ã•ã‚Œã¦ã„ãŸ
 		SelectObject( dcFrom, hFOldbmp );
 	case 4:
 		DeleteDC( dcFrom );
 	case 2:
 	case 1:
-		//	2003.07.21 genta hRscbmp‚Í m_hIconBitmap ‚Æ‚µ‚ÄƒIƒuƒWƒFƒNƒg‚Æ
-		//	“¯‚¶‚¾‚¯•Û‚³‚ê‚é‚Ì‚Å‰ğ•ú‚µ‚Ä‚Í‚È‚ç‚È‚¢
+		//	2003.07.21 genta hRscbmpã¯ m_hIconBitmap ã¨ã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨
+		//	åŒã˜ã ã‘ä¿æŒã•ã‚Œã‚‹ã®ã§è§£æ”¾ã—ã¦ã¯ãªã‚‰ãªã„
 		break;
 	}
 
@@ -171,12 +171,12 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 }
 
 
-/*! ƒrƒbƒgƒ}ƒbƒv‚Ì•\¦ ŠDF‚ğ“§–¾•`‰æ
+/*! ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã®è¡¨ç¤º ç°è‰²ã‚’é€æ˜æç”»
 
 	@author Nakatani
-	@date 2003.07.21 genta ˆÈ‘O‚ÌCMenuDrawer‚æ‚èˆÚ“]•œŠˆ
-	@date 2003.08.27 Moca ”wŒi‚Í“§‰ßˆ—‚É•ÏX‚µAcolBkColor‚ğíœ
-	@date 2010.01.30 syat “§–¾‚É‚·‚éF‚ğˆø”‚ÉˆÚ“®
+	@date 2003.07.21 genta ä»¥å‰ã®CMenuDrawerã‚ˆã‚Šç§»è»¢å¾©æ´»
+	@date 2003.08.27 Moca èƒŒæ™¯ã¯é€éå‡¦ç†ã«å¤‰æ›´ã—ã€colBkColorã‚’å‰Šé™¤
+	@date 2010.01.30 syat é€æ˜ã«ã™ã‚‹è‰²ã‚’å¼•æ•°ã«ç§»å‹•
 */
 void CImageListMgr::MyBitBlt(
 	HDC drawdc, 
@@ -187,7 +187,7 @@ void CImageListMgr::MyBitBlt(
 	HBITMAP bmp, 
 	int nXSrc, 
 	int nYSrc,
-	COLORREF colToTransParent	/* BMP‚Ì’†‚Ì“§–¾‚É‚·‚éF */
+	COLORREF colToTransParent	/* BMPã®ä¸­ã®é€æ˜ã«ã™ã‚‹è‰² */
 ) const
 {
 //	HBRUSH	brShadow, brHilight;
@@ -203,27 +203,27 @@ void CImageListMgr::MyBitBlt(
 	hdcMask = CreateCompatibleDC(drawdc);
 	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
 	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
-	/* Œ³ƒrƒbƒgƒ}ƒbƒv—pDC */
+	/* å…ƒãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ç”¨DC */
 	hdcMem = ::CreateCompatibleDC( drawdc );
 	bmpMemOld = (HBITMAP)::SelectObject( hdcMem, bmp );
-	/* ì‹Æ—pDC */
+	/* ä½œæ¥­ç”¨DC */
 	hdcMem2 = ::CreateCompatibleDC( drawdc );
 	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight);
 	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
 
 	// build a mask
-//	2003.09.04 Moca bmpMask‚Æbmp‚Ì“]‘—‚·‚é‘å‚«‚³‚ª“¯‚¶‚È‚Ì‚Å•s—v
+//	2003.09.04 Moca bmpMaskã¨bmpã®è»¢é€ã™ã‚‹å¤§ãã•ãŒåŒã˜ãªã®ã§ä¸è¦
 //	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
 	SetBkColor( hdcMem, colToTransParent );
 	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
 
-	/* ƒ}ƒXƒN•`‰æ(“§–¾‚É‚µ‚È‚¢•”•ª‚¾‚¯•‚­•`‰æ) */
-	::SetBkColor( drawdc, RGB( 255, 255, 255 ) /* colBkColor */ ); // 2003.08.27 Moca ì‰æ•û–@•ÏX
+	/* ãƒã‚¹ã‚¯æç”»(é€æ˜ã«ã—ãªã„éƒ¨åˆ†ã ã‘é»’ãæç”») */
+	::SetBkColor( drawdc, RGB( 255, 255, 255 ) /* colBkColor */ ); // 2003.08.27 Moca ä½œç”»æ–¹æ³•å¤‰æ›´
 	::SetTextColor( drawdc, RGB( 0, 0, 0 ) );
-	// 2003.08.27 Moca ì‰æ•û–@•ÏX
+	// 2003.08.27 Moca ä½œç”»æ–¹æ³•å¤‰æ›´
 	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND /* SRCCOPY */ ); 
 
-	/* ƒrƒbƒgƒ}ƒbƒv•`‰æ(“§–¾‚É‚·‚éF‚ğ•‚­‚µ‚Äƒ}ƒXƒN‚ÆOR•`‰æ) */
+	/* ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—æç”»(é€æ˜ã«ã™ã‚‹è‰²ã‚’é»’ãã—ã¦ãƒã‚¹ã‚¯ã¨ORæç”») */
 	::SetBkColor( hdcMem2, colToTransParent/*RGB( 0, 0, 0 )*/ );
 	::SetTextColor( hdcMem2, RGB( 0, 0, 0 ) );
 	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
@@ -241,12 +241,12 @@ void CImageListMgr::MyBitBlt(
 	return;
 }
 
-/*! ƒƒjƒ…[ƒAƒCƒRƒ“‚Ì’WF•\¦
+/*! ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ã‚³ãƒ³ã®æ·¡è‰²è¡¨ç¤º
 
 	@author Nakatani
 	
-	@date 2003.07.21 genta ˆÈ‘O‚ÌCMenuDrawer‚æ‚èˆÚ“]•œŠˆ
-	@date 2003.08.27 Moca ”wŒiF‚Í“§‰ßˆ—‚·‚é
+	@date 2003.07.21 genta ä»¥å‰ã®CMenuDrawerã‚ˆã‚Šç§»è»¢å¾©æ´»
+	@date 2003.08.27 Moca èƒŒæ™¯è‰²ã¯é€éå‡¦ç†ã™ã‚‹
 */
 void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
                         int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const
@@ -260,7 +260,7 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	HBITMAP bmpMem2;
 	HBITMAP bmpMem2Old;
 
-	//COLORREF colToTransParent = RGB( 192, 192, 192 );	/* BMP‚Ì’†‚Ì“§–¾‚É‚·‚éF */
+	//COLORREF colToTransParent = RGB( 192, 192, 192 );	/* BMPã®ä¸­ã®é€æ˜ã«ã™ã‚‹è‰² */
 	COLORREF colToTransParent = m_cTrans;
 
 	// create a monochrome memory DC
@@ -272,13 +272,13 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	bmpMemOld = (HBITMAP)SelectObject( hdcMem, bmp);
 
 	//	Jul. 21, 2003 genta
-	//	hdcMem‚É‘‚«‚Ş‚ÆŒ³‚Ìbitmap‚ğ”j‰ó‚µ‚Ä‚µ‚Ü‚¤
+	//	hdcMemã«æ›¸ãè¾¼ã‚€ã¨å…ƒã®bitmapã‚’ç ´å£Šã—ã¦ã—ã¾ã†
 	hdcMem2 = ::CreateCompatibleDC( drawdc );
 	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight);
 	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
 
 	// build a mask
-	//	2003.09.04 Moca bmpMask‚Æbmp‚Ì“]‘—‚·‚é‘å‚«‚³‚ª“¯‚¶‚È‚Ì‚Å•s—v
+	//	2003.09.04 Moca bmpMaskã¨bmpã®è»¢é€ã™ã‚‹å¤§ãã•ãŒåŒã˜ãªã®ã§ä¸è¦
 	//PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
 	SetBkColor( hdcMem, colToTransParent );
 	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
@@ -288,7 +288,7 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
     //SK: Looks better on the old shell
-	// 2003.08.29 Moca ì‰æ•û–@‚ğ•ÏX
+	// 2003.08.29 Moca ä½œç”»æ–¹æ³•ã‚’å¤‰æ›´
 	COLORREF coltxOld = ::SetTextColor( drawdc, RGB(0, 0, 0) );
 	COLORREF colbkOld = ::SetBkColor( drawdc, RGB(255, 255, 255) );
 	::SetBkColor( hdcMem2, RGB(0, 0, 0));
@@ -324,23 +324,23 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 
 }
 
-/*! @brief ƒAƒCƒRƒ“‚Ì•`‰æ
+/*! @brief ã‚¢ã‚¤ã‚³ãƒ³ã®æç”»
 
-	w’è‚³‚ê‚½DC‚Ìw’è‚³‚ê‚½À•W‚ÉƒAƒCƒRƒ“‚ğ•`‰æ‚·‚éD
+	æŒ‡å®šã•ã‚ŒãŸDCã®æŒ‡å®šã•ã‚ŒãŸåº§æ¨™ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’æç”»ã™ã‚‹ï¼
 
-	@param index [in] •`‰æ‚·‚éƒAƒCƒRƒ“”Ô†
-	@param dc [in] •`‰æ‚·‚éDevice Context
-	@param x [in] •`‰æ‚·‚éXÀ•W
-	@param y [in] •`‰æ‚·‚éYÀ•W
-	@param fstyle [in] •`‰æƒXƒ^ƒCƒ‹
-	@param bgColor [in] ”wŒiF(“§–¾•”•ª‚Ì•`‰æ—p)
+	@param index [in] æç”»ã™ã‚‹ã‚¢ã‚¤ã‚³ãƒ³ç•ªå·
+	@param dc [in] æç”»ã™ã‚‹Device Context
+	@param x [in] æç”»ã™ã‚‹Xåº§æ¨™
+	@param y [in] æç”»ã™ã‚‹Yåº§æ¨™
+	@param fstyle [in] æç”»ã‚¹ã‚¿ã‚¤ãƒ«
+	@param bgColor [in] èƒŒæ™¯è‰²(é€æ˜éƒ¨åˆ†ã®æç”»ç”¨)
 
-	@note •`‰æƒXƒ^ƒCƒ‹‚Æ‚µ‚Ä—LŒø‚È‚Ì‚ÍCILD_NORMAL, ILD_MASK
+	@note æç”»ã‚¹ã‚¿ã‚¤ãƒ«ã¨ã—ã¦æœ‰åŠ¹ãªã®ã¯ï¼ŒILD_NORMAL, ILD_MASK
 	
-	@date 2003.07.21 genta “Æ©•`‰æƒ‹[ƒ`ƒ“‚ğg‚¤
-	@date 2003.08.30 genta ”wŒiF‚ğw’è‚·‚éˆø”‚ğ’Ç‰Á
-	@date 2003.09.06 genta Moca‚³‚ñ‚Ì”wŒiF“§‰ßˆ—‚É”º‚¢C”wŒiFˆø”íœ
-	@date 2007.11.02 ryoji ƒAƒCƒRƒ“”Ô†‚ª•‰‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+	@date 2003.07.21 genta ç‹¬è‡ªæç”»ãƒ«ãƒ¼ãƒãƒ³ã‚’ä½¿ã†
+	@date 2003.08.30 genta èƒŒæ™¯è‰²ã‚’æŒ‡å®šã™ã‚‹å¼•æ•°ã‚’è¿½åŠ 
+	@date 2003.09.06 genta Mocaã•ã‚“ã®èƒŒæ™¯è‰²é€éå‡¦ç†ã«ä¼´ã„ï¼ŒèƒŒæ™¯è‰²å¼•æ•°å‰Šé™¤
+	@date 2007.11.02 ryoji ã‚¢ã‚¤ã‚³ãƒ³ç•ªå·ãŒè² ã®å ´åˆã¯æç”»ã—ãªã„
 */
 bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 {
@@ -360,9 +360,9 @@ bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 	return true;
 }
 
-/*!	ƒAƒCƒRƒ“”‚ğ•Ô‚·
+/*!	ã‚¢ã‚¤ã‚³ãƒ³æ•°ã‚’è¿”ã™
 
-	@date 2003.07.21 genta ŒÂ”‚ğ©•ª‚ÅŠÇ—‚·‚é•K—v‚ª‚ ‚éD
+	@date 2003.07.21 genta å€‹æ•°ã‚’è‡ªåˆ†ã§ç®¡ç†ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ï¼
 */
 int CImageListMgr::Count() const
 {
@@ -370,7 +370,7 @@ int CImageListMgr::Count() const
 //	return MAX_X * MAX_Y;
 }
 
-/*!	ƒAƒCƒRƒ“‚ğ’Ç‰Á‚µ‚Ä‚»‚ÌID‚ğ•Ô‚· */
+/*!	ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¿½åŠ ã—ã¦ãã®IDã‚’è¿”ã™ */
 int CImageListMgr::Add(const TCHAR* szPath)
 {
 	if( (m_nIconCount % MAX_X) == 0 ){
@@ -379,7 +379,7 @@ int CImageListMgr::Add(const TCHAR* szPath)
 	int index = m_nIconCount;
 	m_nIconCount++;
 
-	//ƒAƒCƒRƒ“‚ğ“Ç‚İ‚Ş
+	//ã‚¢ã‚¤ã‚³ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 	HBITMAP hExtBmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION );
 
@@ -387,13 +387,13 @@ int CImageListMgr::Add(const TCHAR* szPath)
 		return -1;
 	}
 
-	//m_hIconBitmap‚ÉƒRƒs[‚·‚é
+	//m_hIconBitmapã«ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	HDC hDestDC = ::CreateCompatibleDC( 0 );
 	HBITMAP hOldDestBmp = (HBITMAP)::SelectObject( hDestDC, m_hIconBitmap );
 
 	HDC hExtDC = ::CreateCompatibleDC( 0 );
 	HBITMAP hOldBmp = (HBITMAP)::SelectObject( hExtDC, hExtBmp );
-	COLORREF cTrans = GetPixel( hExtDC, 0, 0 );//	æ“¾‚µ‚½‰æ‘œ‚Ì(0,0)‚ÌF‚ğ”wŒiF‚Æ‚µ‚Äg‚¤
+	COLORREF cTrans = GetPixel( hExtDC, 0, 0 );//	å–å¾—ã—ãŸç”»åƒã®(0,0)ã®è‰²ã‚’èƒŒæ™¯è‰²ã¨ã—ã¦ä½¿ã†
 	::SelectObject( hExtDC, hOldBmp );
 	::DeleteDC( hExtDC );
 
@@ -406,7 +406,7 @@ int CImageListMgr::Add(const TCHAR* szPath)
 	return index;
 }
 
-// ƒrƒbƒgƒ}ƒbƒv‚ğˆêsiMAX_XŒÂjŠg’£‚·‚é
+// ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä¸€è¡Œï¼ˆMAX_Xå€‹ï¼‰æ‹¡å¼µã™ã‚‹
 void CImageListMgr::Extend(bool bExtend)
 {
 	int curY = m_nIconCount / MAX_X;
@@ -416,14 +416,14 @@ void CImageListMgr::Extend(bool bExtend)
 	HDC hSrcDC = ::CreateCompatibleDC( 0 );
 	HBITMAP hSrcBmpOld = (HBITMAP)::SelectObject( hSrcDC, m_hIconBitmap );
 
-	//1sŠg’£‚µ‚½ƒrƒbƒgƒ}ƒbƒv‚ğì¬
+	//1è¡Œæ‹¡å¼µã—ãŸãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä½œæˆ
 	HDC hDestDC = ::CreateCompatibleDC( hSrcDC );
 	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
 	HBITMAP hDestBmpOld = (HBITMAP)::SelectObject( hDestDC, hDestBmp );
 
 	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
 
-	//Šg’£‚µ‚½•”•ª‚Í“§‰ßF‚Å“h‚é
+	//æ‹¡å¼µã—ãŸéƒ¨åˆ†ã¯é€éè‰²ã§å¡—ã‚‹
 	if( bExtend ){
 		FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
 	}
@@ -435,7 +435,7 @@ void CImageListMgr::Extend(bool bExtend)
 	::SelectObject( hDestDC, hDestBmpOld );
 	::DeleteDC( hDestDC );
 
-	//ƒrƒbƒgƒ}ƒbƒv‚Ì·‚µ‘Ö‚¦
+	//ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã®å·®ã—æ›¿ãˆ
 	m_hIconBitmap = hDestBmp;
 }
 

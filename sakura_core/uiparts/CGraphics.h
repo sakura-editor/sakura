@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,13 +25,13 @@
 #define SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_
 
 /*
-2008.05.20 kobake ì¬
+2008.05.20 kobake ä½œæˆ
 */
 
 #include <Windows.h>
 #include <vector>
 
-//! ƒIƒŠƒWƒiƒ‹’l•Û‘¶ƒNƒ‰ƒX
+//! ã‚ªãƒªã‚¸ãƒŠãƒ«å€¤ä¿å­˜ã‚¯ãƒ©ã‚¹
 template <class T>
 class TOriginalHolder{
 public:
@@ -66,14 +66,14 @@ private:
 };
 
 
-//! ƒtƒHƒ“ƒgî•ñŠÇ—
+//! ãƒ•ã‚©ãƒ³ãƒˆæƒ…å ±ç®¡ç†
 struct SFONT {
 	SFontAttr	m_sFontAttr;
-	HFONT		m_hFont;      //!< ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹
+	HFONT		m_hFont;      //!< ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
 };
 
-//! •`‰æŠÇ—
-//ÅVÀ‘•Fƒuƒ‰ƒV
+//! æç”»ç®¡ç†
+//æœ€æ–°å®Ÿè£…ï¼šãƒ–ãƒ©ã‚·
 class CGraphics{
 public:
 	CGraphics(const CGraphics& rhs){ Init(rhs.m_hdc); }
@@ -83,7 +83,7 @@ public:
 
 	operator HDC() const{ return m_hdc; }
 
-	//ƒNƒŠƒbƒsƒ“ƒO
+	//ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°
 private:
 	void _InitClipping();
 public:
@@ -96,7 +96,7 @@ public:
 		PushClipping(rc);
 	}
 
-	//ƒeƒLƒXƒg•¶šF
+	//ãƒ†ã‚­ã‚¹ãƒˆæ–‡å­—è‰²
 public:
 	void PushTextForeColor(COLORREF color);
 	void PopTextForeColor();
@@ -112,7 +112,7 @@ public:
 		return m_vTextForeColors.back();
 	}
 
-	//ƒeƒLƒXƒg”wŒiF
+	//ãƒ†ã‚­ã‚¹ãƒˆèƒŒæ™¯è‰²
 public:
 	void PushTextBackColor(COLORREF color);
 	void PopTextBackColor();
@@ -128,18 +128,18 @@ public:
 		return m_vTextBackColors.back();
 	}
 
-	//ƒeƒLƒXƒgƒ‚[ƒh
+	//ãƒ†ã‚­ã‚¹ãƒˆãƒ¢ãƒ¼ãƒ‰
 public:
 	void SetTextBackTransparent(bool b)
 	{
 		m_nTextModeOrg.AssignOnce( ::SetBkMode(m_hdc,b?TRANSPARENT:OPAQUE) );
 	}
 
-	//ƒeƒLƒXƒg
+	//ãƒ†ã‚­ã‚¹ãƒˆ
 public:
 	void RestoreTextColors();
 
-	//ƒtƒHƒ“ƒg
+	//ãƒ•ã‚©ãƒ³ãƒˆ
 public:
 	void PushMyFont(HFONT hFont)
 	{
@@ -149,7 +149,7 @@ public:
 	void PushMyFont(const SFONT& sFont);
 	void PopMyFont();
 	void ClearMyFont();
-	//! ƒtƒHƒ“ƒgİ’è
+	//! ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
 	void SetMyFont(const SFONT& sFont)
 	{
 		ClearMyFont();
@@ -171,7 +171,7 @@ public:
 		return  m_vFonts.back().m_sFontAttr;
 	}
 
-	//ƒyƒ“
+	//ãƒšãƒ³
 public:
 	void PushPen(COLORREF color, int nPenWidth, int nStyle = PS_SOLID);
 	void PopPen();
@@ -183,11 +183,11 @@ public:
 	void ClearPen();
 	COLORREF GetPenColor() const;
 
-	//ƒuƒ‰ƒV
+	//ãƒ–ãƒ©ã‚·
 public:
 	void _InitBrushColor();
 	void PushBrushColor(
-		COLORREF color	//!< ƒuƒ‰ƒV‚ÌFB(COLORREF)-1 ‚É‚·‚é‚ÆA“§–¾ƒuƒ‰ƒV‚Æ‚È‚éB
+		COLORREF color	//!< ãƒ–ãƒ©ã‚·ã®è‰²ã€‚(COLORREF)-1 ã«ã™ã‚‹ã¨ã€é€æ˜ãƒ–ãƒ©ã‚·ã¨ãªã‚‹ã€‚
 	);
 	void PopBrushColor();
 	void ClearBrush();
@@ -199,67 +199,67 @@ public:
 	}
 	HBRUSH GetCurrentBrush() const{ return m_vBrushes.size()?m_vBrushes.back():NULL; }
 
-	//•`‰æ
+	//æç”»
 public:
-	//! ’¼ü
+	//! ç›´ç·š
 	void DrawLine(int x1, int y1, int x2, int y2)
 	{
 		::MoveToEx(m_hdc,x1,y1,NULL);
 		::LineTo(m_hdc,x2,y2);
 	}
-	void DrawDotLine(int x1, int y1, int x2, int y2);	//“_ü
-	//! ‹éŒ`“h‚è’×‚µ
+	void DrawDotLine(int x1, int y1, int x2, int y2);	//ç‚¹ç·š
+	//! çŸ©å½¢å¡—ã‚Šæ½°ã—
 	void FillMyRect(const RECT& rc)
 	{
 		::FillRect(m_hdc,&rc,GetCurrentBrush());
 #ifdef _DEBUG
-		::SetPixel(m_hdc,-1,-1,0); //###########ÀŒ±
+		::SetPixel(m_hdc,-1,-1,0); //###########å®Ÿé¨“
 #endif
 	}
-	//! ‹éŒ`“h‚è’×‚µ
+	//! çŸ©å½¢å¡—ã‚Šæ½°ã—
 	void FillSolidMyRect(const RECT& rc, COLORREF color)
 	{
 		PushTextBackColor(color);
 		FillMyRectTextBackColor(rc);
 		PopTextBackColor();
 	}
-	//! ‹éŒ`“h‚è’×‚µ
+	//! çŸ©å½¢å¡—ã‚Šæ½°ã—
 	void FillMyRectTextBackColor(const RECT& rc)
 	{
 		::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, _T(""), 0, NULL);
 	}
 
-	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ƒhƒƒbƒvæ‚Ì‹éŒ`‚ğ•`‰æ‚·‚é
+	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ãƒ‰ãƒ­ãƒƒãƒ—å…ˆã®çŸ©å½¢ã‚’æç”»ã™ã‚‹
 	void DrawRect(int x1, int y1, int x2, int y2);
 	void DrawRect(const RECT& rc){ DrawRect(rc.left, rc.top, rc.right, rc.bottom); }
 
 private:
-	//Œ^
+	//å‹
 	typedef TOriginalHolder<COLORREF>	COrgColor;
 	typedef TOriginalHolder<int>		COrgInt;
 private:
 	HDC					m_hdc;
 
-	//ƒNƒŠƒbƒsƒ“ƒO
+	//ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°
 	std::vector<HRGN>		m_vClippingRgns;
 
-	//ƒeƒLƒXƒg
+	//ãƒ†ã‚­ã‚¹ãƒˆ
 	std::vector<COLORREF>	m_vTextForeColors;
 	std::vector<COLORREF>	m_vTextBackColors;
 	std::vector<SFONT>		m_vFonts;
 
-	//ƒeƒLƒXƒg
+	//ãƒ†ã‚­ã‚¹ãƒˆ
 	COrgInt				m_nTextModeOrg;
 
-	//ƒyƒ“
+	//ãƒšãƒ³
 	HPEN				m_hpnOrg;
 	std::vector<HPEN>	m_vPens;
 
-	//ƒuƒ‰ƒV
+	//ãƒ–ãƒ©ã‚·
 	std::vector<HBRUSH>	m_vBrushes;
 	HBRUSH				m_hbrOrg;
 	HBRUSH				m_hbrCurrent;
-	bool				m_bDynamicBrush;	//m_hbrCurrent‚ğ“®“I‚Éì¬‚µ‚½ê‡‚Ítrue
+	bool				m_bDynamicBrush;	//m_hbrCurrentã‚’å‹•çš„ã«ä½œæˆã—ãŸå ´åˆã¯true
 };
 
 #endif /* SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_ */
