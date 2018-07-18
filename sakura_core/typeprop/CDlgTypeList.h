@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒ^ƒCƒvˆê——ƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
-	@date 1998/12/23 V‹Kì¬
-	@date 1999/12/05 Äì¬
+	@date 1998/12/23 æ–°è¦ä½œæˆ
+	@date 1999/12/05 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -21,32 +21,32 @@ class CDlgTypeList;
 using std::wstring;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒtƒ@ƒCƒ‹ƒ^ƒCƒvˆê——ƒ_ƒCƒAƒƒO
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 */
 class CDlgTypeList : public CDialog
 {
 public:
-	// Œ^
+	// å‹
 	struct SResult{
-		CTypeConfig	cDocumentType;	//!< •¶‘í—Ş
-		bool			bTempChange;	//!< ‹ŒPROP_TEMPCHANGE_FLAG
+		CTypeConfig	cDocumentType;	//!< æ–‡æ›¸ç¨®é¡
+		bool			bTempChange;	//!< æ—§PROP_TEMPCHANGE_FLAG
 	};
 
 public:
-	// ƒCƒ“ƒ^[ƒtƒF[ƒX
-	int DoModal( HINSTANCE, HWND, SResult* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	int DoModal( HINSTANCE, HWND, SResult* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
-	// À‘•ƒwƒ‹ƒpŠÖ”
+	// å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	BOOL OnLbnDblclk( int );
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
-	void SetData();	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	void SetData(int);	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	void SetData();	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	void SetData(int);	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 	bool Import( void );			// 2010/4/12 Uchi
 	bool Export( void );			// 2010/4/12 Uchi
@@ -60,12 +60,12 @@ protected:
 
 private:
 	CTypeConfig				m_nSettingType;
-	// ŠÖ˜A•t‚¯ó‘Ô
-	bool m_bRegistryChecked[ MAX_TYPES ];	//ƒŒƒWƒXƒgƒŠŠm”F –¢^Ï
-	bool m_bExtRMenu[ MAX_TYPES ];			//‰EƒNƒŠƒbƒN“o˜^ –¢^Ï
-	bool m_bExtDblClick[ MAX_TYPES ];		//ƒ_ƒuƒ‹ƒNƒŠƒbƒN –¢^Ï
-	bool m_bAlertFileAssociation;			//ŠÖ˜A•t‚¯Œx‚Ì•\¦ƒtƒ‰ƒO
-	bool m_bEnableTempChange;				//ˆê“K—p‚Ì—LŒø‰»
+	// é–¢é€£ä»˜ã‘çŠ¶æ…‹
+	bool m_bRegistryChecked[ MAX_TYPES ];	//ãƒ¬ã‚¸ã‚¹ãƒˆãƒªç¢ºèª æœªï¼æ¸ˆ
+	bool m_bExtRMenu[ MAX_TYPES ];			//å³ã‚¯ãƒªãƒƒã‚¯ç™»éŒ² æœªï¼æ¸ˆ
+	bool m_bExtDblClick[ MAX_TYPES ];		//ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ æœªï¼æ¸ˆ
+	bool m_bAlertFileAssociation;			//é–¢é€£ä»˜ã‘è­¦å‘Šã®è¡¨ç¤ºãƒ•ãƒ©ã‚°
+	bool m_bEnableTempChange;				//ä¸€æ™‚é©ç”¨ã®æœ‰åŠ¹åŒ–
 };
 
 

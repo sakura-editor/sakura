@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒ^ƒCƒv•Êİ’èƒCƒ“ƒ|[ƒgŠm”Fƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆç¢ºèªãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Uchi
-	@date 2010/4/17 V‹Kì¬
+	@date 2010/4/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2010, Uchi
@@ -35,14 +35,14 @@
 #include "sakura.hh"
 #include "sakura_rc.h"
 
-// ƒ^ƒCƒv•Êİ’èƒCƒ“ƒ|[ƒgŠm”F CDlgTypeAscertain.cpp
+// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆç¢ºèª CDlgTypeAscertain.cpp
 const DWORD p_helpids[] = {
-	IDC_RADIO_TYPE_TO,		HIDC_RADIO_TYPE_TO,		//ƒ^ƒCƒv•Ê–¼
-	IDC_RADIO_TYPE_ADD,		HIDC_RADIO_TYPE_ADD,	//ƒ^ƒCƒv•Ê’Ç‰Á
-	IDC_COMBO_COLORS,		HIDC_COMBO_COLORS,		//Fw’è
+	IDC_RADIO_TYPE_TO,		HIDC_RADIO_TYPE_TO,		//ã‚¿ã‚¤ãƒ—åˆ¥å
+	IDC_RADIO_TYPE_ADD,		HIDC_RADIO_TYPE_ADD,	//ã‚¿ã‚¤ãƒ—åˆ¥è¿½åŠ 
+	IDC_COMBO_COLORS,		HIDC_COMBO_COLORS,		//è‰²æŒ‡å®š
 	IDOK,					HIDOK_DTA,				//OK
-	IDCANCEL,				HIDCANCEL_DTA,			//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,		HIDC_DTA_BUTTON_HELP,	//ƒwƒ‹ƒv
+	IDCANCEL,				HIDCANCEL_DTA,			//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,		HIDC_DTA_BUTTON_HELP,	//ãƒ˜ãƒ«ãƒ—
 //	IDC_STATIC,				-1,
 	0, 0
 };
@@ -53,7 +53,7 @@ CDlgTypeAscertain::CDlgTypeAscertain()
 {
 }
 
-// ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦
+// ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 int CDlgTypeAscertain::DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertainInfo* psAscertainInfo )
 {
 	m_psi = psAscertainInfo;
@@ -63,12 +63,12 @@ int CDlgTypeAscertain::DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertain
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPE_ASCERTAIN, (LPARAM)NULL );
 }
 
-// ƒ{ƒ^ƒ“ƒNƒŠƒbƒN
+// ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯
 BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uƒ^ƒCƒv•Êİ’èƒCƒ“ƒ|[ƒgv‚Ìƒwƒ‹ƒv */
+		/* ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆã€ã®ãƒ˜ãƒ«ãƒ— */
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000338 );
 		return TRUE;
 	case IDOK:
@@ -90,15 +90,15 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgTypeAscertain::SetData( void )
 {
-	// ƒ^ƒCƒv–¼İ’è
+	// ã‚¿ã‚¤ãƒ—åè¨­å®š
 	std::wstring typeNameTo = m_psi->sTypeNameTo + L"(&B)";
 	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_RADIO_TYPE_TO    ), to_tchar(typeNameTo.c_str()) );
 	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_FILE ), to_tchar(m_psi->sTypeNameFile.c_str()) );
@@ -109,29 +109,29 @@ void CDlgTypeAscertain::SetData( void )
 	HWND	hwndCombo;
 	TCHAR	szText[_MAX_PATH + 10];
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS );
-	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğ‹ó‚É‚·‚é */
+	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’ç©ºã«ã™ã‚‹ */
 	Combo_ResetContent( hwndCombo );
-	/* ˆês–Ú‚Í‚»‚Ì‚Ü‚Ü */
+	/* ä¸€è¡Œç›®ã¯ãã®ã¾ã¾ */
 	Combo_AddString( hwndCombo, LSW(STR_DLGTYPEASC_IMPORT) );
 
-	// ƒGƒfƒBƒ^“à‚Ìİ’è
+	// ã‚¨ãƒ‡ã‚£ã‚¿å†…ã®è¨­å®š
 	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
-		if (type->m_szTypeExts[0] != _T('\0') ) {		/* ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg */
+		if (type->m_szTypeExts[0] != _T('\0') ) {		/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ */
 			auto_sprintf( szText, _T("%ts (%ts)"),
-				type->m_szTypeName,	/* ƒ^ƒCƒv‘®«F–¼Ì */
-				type->m_szTypeExts	/* ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg */
+				type->m_szTypeName,	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šåç§° */
+				type->m_szTypeExts	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ */
 			);
 		}
 		else{
 			auto_sprintf( szText, _T("%ts"),
-				type->m_szTypeName	/* ƒ^ƒCƒv‘®«FŠgÌ */
+				type->m_szTypeName	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡ç§° */
 			);
 		}
 		::Combo_AddString( hwndCombo, szText );
 	}
-	// “ÇFİ’èƒtƒ@ƒCƒ‹İ’è
+	// èª­è¾¼è‰²è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«è¨­å®š
 	HANDLE	hFind;
 	WIN32_FIND_DATA	wf;
 	BOOL	bFind;
@@ -143,14 +143,14 @@ void CDlgTypeAscertain::SetData( void )
 		bFind;
 		bFind = FindNextFile( hFind, &wf )) {
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
-			// “ÇFİ’èƒtƒ@ƒCƒ‹”­Œ©
+			// èª­è¾¼è‰²è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ç™ºè¦‹
 			auto_sprintf( szText, _T("File -- %ts"), wf.cFileName );
 			::Combo_AddString( hwndCombo, szText );
 		}
 	}
 	FindClose( hFind );
 
-	// ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒfƒtƒHƒ‹ƒg‘I‘ğ
+	// ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆé¸æŠ
 	Combo_SetCurSel( hwndCombo, 0 );
 	return;
 }

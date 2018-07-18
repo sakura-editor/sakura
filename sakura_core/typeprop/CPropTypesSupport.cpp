@@ -1,13 +1,13 @@
-/*! @file
-	@brief �^�C�v�ʐݒ� - �x��
+﻿/*! @file
+	@brief タイプ別設定 - 支援
 
-	@date 2008.04.12 kobake CPropTypes.cpp���番��
+	@date 2008.04.12 kobake CPropTypes.cppから分離
 */
 /*
 	Copyright (C) 1998-2002, Norio Nakatani
 	Copyright (C) 2000, jepro, genta
 	Copyright (C) 2001, jepro, genta, MIK, hor, Stonee, asa-o
-	Copyright (C) 2002, YAZAKI, aroka, MIK, genta, ������, Moca
+	Copyright (C) 2002, YAZAKI, aroka, MIK, genta, こおり, Moca
 	Copyright (C) 2003, MIK, zenryaku, Moca, naoh, KEITA, genta
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
 	Copyright (C) 2006, ryoji, fon, novice
@@ -30,20 +30,20 @@
 #include "sakura.hh"
 
 static const DWORD p_helpids3[] = {	//11500
-	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//�P��t�@�C����
-	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//���͕⊮ �P��t�@�C���Q��
-	IDC_COMBO_HOKAN_TYPE,			HIDC_COMBO_HOKAN_TYPE,				//���͕⊮�^�C�v
-	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//���͕⊮�̉p�啶��������
-	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//���݂̃t�@�C��������͕⊮
-	IDC_CHECK_HOKANBYKEYWORD,		HIDC_CHECK_HOKANBYKEYWORD,			//�����L�[���[�h������͕⊮
+	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
+	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
+	IDC_COMBO_HOKAN_TYPE,			HIDC_COMBO_HOKAN_TYPE,				//入力補完タイプ
+	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
+	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
+	IDC_CHECK_HOKANBYKEYWORD,		HIDC_CHECK_HOKANBYKEYWORD,			//強調キーワードから入力補完
 
-	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//�O���w���v�t�@�C����	// 2006.08.06 ryoji
-	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//�O���w���v�t�@�C���Q��	// 2006.08.06 ryoji
-	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//�O��HTML�w���v�t�@�C����	// 2006.08.06 ryoji
-	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//�O��HTML�w���v�t�@�C���Q��	// 2006.08.06 ryoji
-	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//�r���[�A�𕡐��N�����Ȃ�	// 2006.08.06 ryoji
+	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//外部ヘルプファイル名	// 2006.08.06 ryoji
+	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//外部ヘルプファイル参照	// 2006.08.06 ryoji
+	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//外部HTMLヘルプファイル名	// 2006.08.06 ryoji
+	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
+	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
 
-	IDC_CHECK_CHKENTERATEND,		HIDC_CHECK_CHKENTERATEND,			//�ۑ����ɉ��s�R�[�h�̍��݂��x������	// 2013/4/14 Uchi
+	IDC_CHECK_CHKENTERATEND,		HIDC_CHECK_CHKENTERATEND,			//保存時に改行コードの混在を警告する	// 2013/4/14 Uchi
 	IDC_CHECK_INDENTCPPSTR,			HIDC_CHECK_INDENTCPPSTR,
 	IDC_CHECK_INDENTCPPCMT,			HIDC_CHECK_INDENTCPPCMT,
 	IDC_CHECK_INDENTCPPUNDO,		HIDC_CHECK_INDENTCPPUNDO,
@@ -64,9 +64,9 @@ static std::vector<SHokanMethod>* GetHokanMethodList()
 }
 
 
-// 2001/06/13 Start By asa-o: �^�C�v�ʐݒ�̎x���^�u�Ɋւ��鏈��
+// 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
-/* ���b�Z�[�W���� */
+/* メッセージ処理 */
 INT_PTR CPropTypesSupport::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
@@ -80,44 +80,44 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* �_�C�A���O�f�[�^�̐ݒ� p2 */
+		/* ダイアログデータの設定 p2 */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ���[�U�[���G�f�B�b�g �R���g���[���ɓ��͂ł���e�L�X�g�̒����𐧌����� */
-		/* ���͕⊮ �P��t�@�C�� */
+		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
+		/* 入力補完 単語ファイル */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), _MAX_PATH - 1 );
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* �ʒm�R�[�h */
-		wID			= LOWORD(wParam);	/* ����ID� �R���g���[��ID� �܂��̓A�N�Z�����[�^ID */
-//		hwndCtl		= (HWND) lParam;	/* �R���g���[���̃n���h�� */
+		wNotifyCode = HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
-		/* �{�^���^�`�F�b�N�{�b�N�X���N���b�N���ꂽ */
+		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			/* �_�C�A���O�f�[�^�̎擾 p2 */
+			/* ダイアログデータの取得 p2 */
 			GetData( hwndDlg );
 			switch( wID ){
-			case IDC_BUTTON_HOKANFILE_REF:	/* ���͕⊮ �P��t�@�C���́u�Q��...�v�{�^�� */
+			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
 				{
-					// 2003.06.23 Moca ���΃p�X�͎��s�t�@�C������̃p�X�Ƃ��ĊJ��
-					// 2007.05.19 ryoji ���΃p�X�͐ݒ�t�@�C������̃p�X��D��
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_HOKANFILE), _T("*.kwd"), true, EFITER_TEXT);
 				}
 				return TRUE;
-			case IDC_BUTTON_TYPEOPENHELP:	/* �O���w���v�P�́u�Q��...�v�{�^�� */
+			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
-					// 2003.06.23 Moca ���΃p�X�͎��s�t�@�C������̃p�X�Ƃ��ĊJ��
-					// 2007.05.21 ryoji ���΃p�X�͐ݒ�t�@�C������̃p�X��D��
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHELP), _T("*.hlp;*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
-			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* �O��HTML�w���v�́u�Q��...�v�{�^�� */
+			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
-					// 2003.06.23 Moca ���΃p�X�͎��s�t�@�C������̃p�X�Ƃ��ĊJ��
-					// 2007.05.21 ryoji ���΃p�X�͐ݒ�t�@�C������̃p�X��D��
+					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP), _T("*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
@@ -130,14 +130,14 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 		pNMHDR = (NMHDR*)lParam;
 //		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
-		case PSN_HELP:	//Jul. 03, 2001 JEPRO �x���^�u�̃w���v��L����
+		case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
 			OnHelp( hwndDlg, IDD_PROP_SUPPORT );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			/* �_�C�A���O�f�[�^�̎擾 p2 */
+			/* ダイアログデータの取得 p2 */
 			GetData( hwndDlg );
 			return TRUE;
-//@@@ 2002.01.03 YAZAKI �Ō�ɕ\�����Ă����V�[�g�𐳂����o���Ă��Ȃ��o�O�C��
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_SUPPORT;
 			return TRUE;
@@ -148,7 +148,7 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -158,7 +158,7 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 //@@@ 2001.11.17 add start MIK
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
@@ -166,10 +166,10 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 	return FALSE;
 }
 
-/* �_�C�A���O�f�[�^�̐ݒ� */
+/* ダイアログデータの設定 */
 void CPropTypesSupport::SetData( HWND hwndDlg )
 {
-	/* ���͕⊮ �P��t�@�C�� */
+	/* 入力補完 単語ファイル */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
 
 	{
@@ -187,10 +187,10 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	}
 
 //	2001/06/19 asa-o
-	/* ���͕⊮�@�\�F�p�啶���������𓯈ꎋ���� */
+	/* 入力補完機能：英大文字小文字を同一視する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Types.m_bHokanLoHiCase ? BST_CHECKED : BST_UNCHECKED);
 
-	// 2003.06.25 Moca �t�@�C������̕⊮�@�\
+	// 2003.06.25 Moca ファイルからの補完機能
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANBYFILE, m_Types.m_bUseHokanByFile ? BST_CHECKED : BST_UNCHECKED);
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD, m_Types.m_bUseHokanByKeyword );
 
@@ -199,7 +199,7 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle ? BST_CHECKED : BST_UNCHECKED);
 
-	// �ۑ����ɉ��s�R�[�h�̍��݂��x������	2013/4/14 Uchi
+	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CHKENTERATEND, m_Types.m_bChkEnterAtEnd ? BST_CHECKED : BST_UNCHECKED);
 
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPSTR,  m_Types.m_bIndentCppStringIgnore );
@@ -207,20 +207,20 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INDENTCPPUNDO, m_Types.m_bIndentCppUndoSep );
 }
 
-/* �_�C�A���O�f�[�^�̎擾 */
+/* ダイアログデータの取得 */
 int CPropTypesSupport::GetData( HWND hwndDlg )
 {
 //	2001/06/19	asa-o
-	/* ���͕⊮�@�\�F�p�啶���������𓯈ꎋ���� */
+	/* 入力補完機能：英大文字小文字を同一視する */
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE ) != 0;
 
 	m_Types.m_bUseHokanByFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANBYFILE ) != 0;
 	m_Types.m_bUseHokanByKeyword = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD );
 
-	/* ���͕⊮ �P��t�@�C�� */
+	/* 入力補完 単語ファイル */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));
 
-	// ���͕⊮���
+	// 入力補完種別
 	{
 		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
 		int i = Combo_GetCurSel( hCombo );
@@ -236,7 +236,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE ) != 0;
 
-	// �ۑ����ɉ��s�R�[�h�̍��݂��x������	2013/4/14 Uchi
+	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	m_Types.m_bChkEnterAtEnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CHKENTERATEND ) != 0;
 
 
@@ -248,7 +248,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 
 // 2001/06/13 End
 
-/*! �⊮��ʂ̒ǉ�
+/*! 補完種別の追加
 /*/
 void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 {

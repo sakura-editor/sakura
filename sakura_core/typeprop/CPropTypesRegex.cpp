@@ -1,8 +1,8 @@
-/*!	@file
-	ƒ^ƒCƒv•Êİ’è - ³‹K•\Œ»ƒL[ƒ[ƒh ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š - æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author MIK
-	@date 2001/11/17  V‹Kì¬
+	@date 2001/11/17  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2001, MIK, Stonee
@@ -31,24 +31,24 @@ using namespace std;
 
 
 static const DWORD p_helpids[] = {	//11600
-	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//ƒCƒ“ƒ|[ƒg
-	IDC_BUTTON_REGEX_EXPORT,	HIDC_BUTTON_REGEX_EXPORT,	//ƒGƒNƒXƒ|[ƒg
-	IDC_BUTTON_REGEX_INS,		HIDC_BUTTON_REGEX_INS,		//‘}“ü
-	IDC_BUTTON_REGEX_ADD,		HIDC_BUTTON_REGEX_ADD,		//’Ç‰Á
-	IDC_BUTTON_REGEX_UPD,		HIDC_BUTTON_REGEX_UPD,		//XV
-	IDC_BUTTON_REGEX_DEL,		HIDC_BUTTON_REGEX_DEL,		//íœ
-	IDC_BUTTON_REGEX_TOP,		HIDC_BUTTON_REGEX_TOP,		//æ“ª
-	IDC_BUTTON_REGEX_LAST,		HIDC_BUTTON_REGEX_LAST,		//ÅI
-	IDC_BUTTON_REGEX_UP,		HIDC_BUTTON_REGEX_UP,		//ã‚Ö
-	IDC_BUTTON_REGEX_DOWN,		HIDC_BUTTON_REGEX_DOWN,		//‰º‚Ö
-	IDC_CHECK_REGEX,			HIDC_CHECK_REGEX,			//³‹K•\Œ»ƒL[ƒ[ƒh‚ğg—p‚·‚é
-	IDC_COMBO_REGEX_COLOR,		HIDC_COMBO_REGEX_COLOR,		//F
-	IDC_EDIT_REGEX,				HIDC_EDIT_REGEX,			//³‹K•\Œ»ƒL[ƒ[ƒh
-	IDC_LIST_REGEX,				HIDC_LIST_REGEX,			//ƒŠƒXƒg
+	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+	IDC_BUTTON_REGEX_EXPORT,	HIDC_BUTTON_REGEX_EXPORT,	//ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
+	IDC_BUTTON_REGEX_INS,		HIDC_BUTTON_REGEX_INS,		//æŒ¿å…¥
+	IDC_BUTTON_REGEX_ADD,		HIDC_BUTTON_REGEX_ADD,		//è¿½åŠ 
+	IDC_BUTTON_REGEX_UPD,		HIDC_BUTTON_REGEX_UPD,		//æ›´æ–°
+	IDC_BUTTON_REGEX_DEL,		HIDC_BUTTON_REGEX_DEL,		//å‰Šé™¤
+	IDC_BUTTON_REGEX_TOP,		HIDC_BUTTON_REGEX_TOP,		//å…ˆé ­
+	IDC_BUTTON_REGEX_LAST,		HIDC_BUTTON_REGEX_LAST,		//æœ€çµ‚
+	IDC_BUTTON_REGEX_UP,		HIDC_BUTTON_REGEX_UP,		//ä¸Šã¸
+	IDC_BUTTON_REGEX_DOWN,		HIDC_BUTTON_REGEX_DOWN,		//ä¸‹ã¸
+	IDC_CHECK_REGEX,			HIDC_CHECK_REGEX,			//æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä½¿ç”¨ã™ã‚‹
+	IDC_COMBO_REGEX_COLOR,		HIDC_COMBO_REGEX_COLOR,		//è‰²
+	IDC_EDIT_REGEX,				HIDC_EDIT_REGEX,			//æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	IDC_LIST_REGEX,				HIDC_LIST_REGEX,			//ãƒªã‚¹ãƒˆ
 	IDC_LABEL_REGEX_KEYWORD,	HIDC_EDIT_REGEX,			
 	IDC_LABEL_REGEX_COLOR,		HIDC_COMBO_REGEX_COLOR,		
 	IDC_FRAME_REGEX,			HIDC_LIST_REGEX,			
-	IDC_LABEL_REGEX_VERSION,	HIDC_LABEL_REGEX_VERSION,	//ƒo[ƒWƒ‡ƒ“
+	IDC_LABEL_REGEX_VERSION,	HIDC_LABEL_REGEX_VERSION,	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -56,12 +56,12 @@ static const DWORD p_helpids[] = {	//11600
 
 
 // Import
-// 2010/4/23 Uchi Import‚ÌŠOo‚µ
+// 2010/4/23 Uchi Importã®å¤–å‡ºã—
 bool CPropTypesRegex::Import(HWND hwndDlg)
 {
 	CImpExpRegex	cImpExpRegex(m_Types);
 
-	// ƒCƒ“ƒ|[ƒg
+	// ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 	bool bImport = cImpExpRegex.ImportUI(m_hInstance, hwndDlg);
 	if( bImport ){
 		SetDataKeywordList(hwndDlg);
@@ -70,17 +70,17 @@ bool CPropTypesRegex::Import(HWND hwndDlg)
 }
 
 // Export
-// 2010/4/23 Uchi Export‚ÌŠOo‚µ
+// 2010/4/23 Uchi Exportã®å¤–å‡ºã—
 bool CPropTypesRegex::Export(HWND hwndDlg)
 {
 	GetData(hwndDlg);
 	CImpExpRegex	cImpExpRegex(m_Types);
 
-	// ƒGƒNƒXƒ|[ƒg
+	// ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 	return cImpExpRegex.ExportUI(m_hInstance, hwndDlg);
 }
 
-/* ³‹K•\Œ»ƒL[ƒ[ƒh ƒƒbƒZ[ƒWˆ— */
+/* æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropTypesRegex::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
@@ -96,12 +96,12 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 	LV_ITEM	lvi;
 	LV_COLUMN	col;
 	RECT		rc;
-	static int nPrevIndex = -1;	//XV‚É‚¨‚©‚µ‚­‚È‚éƒoƒOC³ @@@ 2003.03.26 MIK
+	static int nPrevIndex = -1;	//æ›´æ–°æ™‚ã«ãŠã‹ã—ããªã‚‹ãƒã‚°ä¿®æ­£ @@@ 2003.03.26 MIK
 
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 
-	// ANSIƒrƒ‹ƒh‚Å‚ÍCP932‚¾‚Æ2”{’ö“x•K—v
+	// ANSIãƒ“ãƒ«ãƒ‰ã§ã¯CP932ã ã¨2å€ç¨‹åº¦å¿…è¦
 	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
 	TCHAR	szColorIndex[256];
 
@@ -110,7 +110,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒJƒ‰ƒ€’Ç‰Á */
+		/* ã‚«ãƒ©ãƒ è¿½åŠ  */
 		//ListView_DeleteColumn( hwndList, 1 );
 		//ListView_DeleteColumn( hwndList, 0 );
 		::GetWindowRect( hwndList, &rc );
@@ -128,32 +128,32 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		ListView_InsertColumn( hwndList, 1, &col );
 
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
-		SetData( hwndDlg );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è ³‹K•\Œ»ƒL[ƒ[ƒh */
+		SetData( hwndDlg );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
 			::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE) );
-			//ƒ‰ƒCƒuƒ‰ƒŠ‚ª‚È‚­‚ÄAg—p‚µ‚È‚¢‚É‚È‚Á‚Ä‚¢‚éê‡‚ÍA–³Œø‚É‚·‚éB
+			//ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒãªãã¦ã€ä½¿ç”¨ã—ãªã„ã«ãªã£ã¦ã„ã‚‹å ´åˆã¯ã€ç„¡åŠ¹ã«ã™ã‚‹ã€‚
 			if( ! IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 			{
-				//Disable‚É‚·‚éB
+				//Disableã«ã™ã‚‹ã€‚
 				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 			}
 			else
 			{
-				//g—p‚·‚é‚É‚È‚Á‚Ä‚é‚ñ‚¾‚¯‚ÇDisable‚É‚·‚éB‚à‚¤ƒ†[ƒU‚Í•ÏX‚Å‚«‚È‚¢B
+				//ä½¿ç”¨ã™ã‚‹ã«ãªã£ã¦ã‚‹ã‚“ã ã‘ã©Disableã«ã™ã‚‹ã€‚ã‚‚ã†ãƒ¦ãƒ¼ã‚¶ã¯å¤‰æ›´ã§ããªã„ã€‚
 				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 			}
 		}
 		return TRUE;
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID	= LOWORD(wParam);	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode = HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID	= LOWORD(wParam);	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 		switch( wNotifyCode ){
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_REGEX:	/* ³‹K•\Œ»ƒL[ƒ[ƒh‚ğg‚¤ */
+			case IDC_CHECK_REGEX:	/* æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä½¿ã† */
 				if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 				{
 					if( CheckRegexpVersion( NULL, 0, false ) == false )
@@ -166,7 +166,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 						if( nRet != IDYES )
 						{
 							CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
-							//Disable‚É‚·‚éB
+							//Disableã«ã™ã‚‹ã€‚
 							EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 							return TRUE;
 						}
@@ -176,42 +176,42 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				{
 					if( CheckRegexpVersion( NULL, 0, false ) == false )
 					{
-						//Disable‚É‚·‚éB
+						//Disableã«ã™ã‚‹ã€‚
 						EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 					}
 				}
 				m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();	//Need Compile
 				return TRUE;
 
-			case IDC_BUTTON_REGEX_INS:	/* ‘}“ü */
+			case IDC_BUTTON_REGEX_INS:	/* æŒ¿å…¥ */
 			{
-				//‘}“ü‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//æŒ¿å…¥ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 				szKeyWord[0] = _T('\0');
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
 				if( szKeyWord[0] == _T('\0') ) return FALSE;
-				//“¯‚¶ƒL[‚ª‚È‚¢‚©’²‚×‚éB
+				//åŒã˜ã‚­ãƒ¼ãŒãªã„ã‹èª¿ã¹ã‚‹ã€‚
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
 					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
-				//‘I‘ğ’†‚ÌƒL[‚ğ’T‚·B
+				//é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™ã€‚
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
 				{
-					//‘I‘ğ’†‚Å‚È‚¯‚ê‚ÎÅŒã‚É‚·‚éB
+					//é¸æŠä¸­ã§ãªã‘ã‚Œã°æœ€å¾Œã«ã™ã‚‹ã€‚
 					nIndex = nIndex2;
 				}
 				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
 					return FALSE;
 				}
 				
-				//‘}“ü‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//æŒ¿å…¥ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				auto_memset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
-				//ƒL[î•ñ‚ğ‘}“ü‚·‚éB
+				//ã‚­ãƒ¼æƒ…å ±ã‚’æŒ¿å…¥ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex;
@@ -223,18 +223,18 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//‘}“ü‚µ‚½ƒL[‚ğ‘I‘ğ‚·‚éB
+				//æŒ¿å…¥ã—ãŸã‚­ãƒ¼ã‚’é¸æŠã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_ADD:	/* ’Ç‰Á */
+			case IDC_BUTTON_REGEX_ADD:	/* è¿½åŠ  */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
-				//ÅŒã‚ÌƒL[”Ô†‚ğæ“¾‚·‚éB
+				//æœ€å¾Œã®ã‚­ãƒ¼ç•ªå·ã‚’å–å¾—ã™ã‚‹ã€‚
 				nIndex = ListView_GetItemCount( hwndList );
-				//’Ç‰Á‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//è¿½åŠ ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				szKeyWord[0] = _T('\0');
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
 				if( szKeyWord[0] == L'\0' ) return FALSE;
@@ -247,10 +247,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
 					return FALSE;
 				}
-				//’Ç‰Á‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//è¿½åŠ ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				auto_memset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
-				//ƒL[‚ğ’Ç‰Á‚·‚éB
+				//ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex;
@@ -262,33 +262,33 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//’Ç‰Á‚µ‚½ƒL[‚ğ‘I‘ğ‚·‚éB
+				//è¿½åŠ ã—ãŸã‚­ãƒ¼ã‚’é¸æŠã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_UPD:	/* XV */
+			case IDC_BUTTON_REGEX_UPD:	/* æ›´æ–° */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
-				//‘I‘ğ’†‚ÌƒL[‚ğ’T‚·B
+				//é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™ã€‚
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
 				{
 					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOSEL));
 					return FALSE;
 				}
-				//XV‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//æ›´æ–°ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				szKeyWord[0] = _T('\0');
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
 				if( szKeyWord[0] == L'\0' ) return FALSE;
 				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], nIndex) ){
 					return FALSE;
 				}
-				//’Ç‰Á‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB
+				//è¿½åŠ ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 				auto_memset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
-				//ƒL[‚ğXV‚·‚éB
+				//ã‚­ãƒ¼ã‚’æ›´æ–°ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex;
@@ -302,36 +302,36 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
 
-				//XV‚µ‚½ƒL[‚ğ‘I‘ğ‚·‚éB
+				//æ›´æ–°ã—ãŸã‚­ãƒ¼ã‚’é¸æŠã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_DEL:	/* íœ */
-				//‘I‘ğ’†‚ÌƒL[”Ô†‚ğ’T‚·B
+			case IDC_BUTTON_REGEX_DEL:	/* å‰Šé™¤ */
+				//é¸æŠä¸­ã®ã‚­ãƒ¼ç•ªå·ã‚’æ¢ã™ã€‚
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				//íœ‚·‚éB
+				//å‰Šé™¤ã™ã‚‹ã€‚
 				ListView_DeleteItem( hwndList, nIndex );
-				//“¯‚¶ˆÊ’u‚ÌƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB
+				//åŒã˜ä½ç½®ã®ã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_REGEX_TOP:	/* æ“ª */
+			case IDC_BUTTON_REGEX_TOP:	/* å…ˆé ­ */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 				szKeyWord[0] = _T('\0');
-				//‘I‘ğ’†‚ÌƒL[‚ğ’T‚·B
+				//é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™ã€‚
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				if( 0 == nIndex ) return TRUE;	//‚·‚Å‚Éæ“ª‚É‚ ‚éB
+				if( 0 == nIndex ) return TRUE;	//ã™ã§ã«å…ˆé ­ã«ã‚ã‚‹ã€‚
 				nIndex2 = 0;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-				ListView_DeleteItem(hwndList, nIndex);	//ŒÃ‚¢ƒL[‚ğíœ
-				//ƒL[‚ğ’Ç‰Á‚·‚éB
+				ListView_DeleteItem(hwndList, nIndex);	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
+				//ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex2;
@@ -343,23 +343,23 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB
+				//ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_LAST:	/* ÅI */
+			case IDC_BUTTON_REGEX_LAST:	/* æœ€çµ‚ */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 				szKeyWord[0] = _T('\0');
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if( nIndex2 - 1 == nIndex ) return TRUE;	//‚·‚Å‚ÉÅI‚É‚ ‚éB
+				if( nIndex2 - 1 == nIndex ) return TRUE;	//ã™ã§ã«æœ€çµ‚ã«ã‚ã‚‹ã€‚
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-				//ƒL[‚ğ’Ç‰Á‚·‚éB
+				//ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex2;
@@ -371,27 +371,27 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB
+				//ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				ListView_DeleteItem(hwndList, nIndex);	//ŒÃ‚¢ƒL[‚ğíœ
+				ListView_DeleteItem(hwndList, nIndex);	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_UP:	/* ã‚Ö */
+			case IDC_BUTTON_REGEX_UP:	/* ä¸Šã¸ */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 				szKeyWord[0] = _T('\0');
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				if( 0 == nIndex ) return TRUE;	//‚·‚Å‚Éæ“ª‚É‚ ‚éB
+				if( 0 == nIndex ) return TRUE;	//ã™ã§ã«å…ˆé ­ã«ã‚ã‚‹ã€‚
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-				ListView_DeleteItem(hwndList, nIndex);	//ŒÃ‚¢ƒL[‚ğíœ
-				//ƒL[‚ğ’Ç‰Á‚·‚éB
+				ListView_DeleteItem(hwndList, nIndex);	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
+				//ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex2;
@@ -403,25 +403,25 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB
+				//ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_DOWN:	/* ‰º‚Ö */
+			case IDC_BUTTON_REGEX_DOWN:	/* ä¸‹ã¸ */
 			{
 				auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 				szKeyWord[0] = _T('\0');
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if( nIndex2 - 1 == nIndex ) return TRUE;	//‚·‚Å‚ÉÅI‚É‚ ‚éB
+				if( nIndex2 - 1 == nIndex ) return TRUE;	//ã™ã§ã«æœ€çµ‚ã«ã‚ã‚‹ã€‚
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-				//ƒL[‚ğ’Ç‰Á‚·‚éB
+				//ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex2;
@@ -433,19 +433,19 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				lvi.iSubItem = 1;
 				lvi.pszText  = szColorIndex;
 				ListView_SetItem( hwndList, &lvi );
-				//ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB
+				//ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				ListView_DeleteItem(hwndList, nIndex);	//ŒÃ‚¢ƒL[‚ğíœ
+				ListView_DeleteItem(hwndList, nIndex);	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
 				GetData( hwndDlg );
 				return TRUE;
 			}
 
-			case IDC_BUTTON_REGEX_IMPORT:	/* ƒCƒ“ƒ|[ƒg */
+			case IDC_BUTTON_REGEX_IMPORT:	/* ã‚¤ãƒ³ãƒãƒ¼ãƒˆ */
 				Import(hwndDlg);
-				m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();	//Need Compile	//@@@ 2001.11.17 add MIK ³‹K•\Œ»ƒL[ƒ[ƒh‚Ì‚½‚ß
+				m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();	//Need Compile	//@@@ 2001.11.17 add MIK æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ãŸã‚
 				return TRUE;
 
-			case IDC_BUTTON_REGEX_EXPORT:	/* ƒGƒNƒXƒ|[ƒg */
+			case IDC_BUTTON_REGEX_EXPORT:	/* ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ */
 				Export(hwndDlg);
 				return TRUE;
 			}
@@ -460,10 +460,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_REGEX );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ ³‹K•\Œ»ƒL[ƒ[ƒh */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ */
 			GetData( hwndDlg );
 			return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_REGEX;
 			return TRUE;
@@ -472,23 +472,23 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			{
 				HWND	hwndCombo;
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
-				if( -1 == nIndex )	//íœA”ÍˆÍŠO‚ÅƒNƒŠƒbƒN”½‰f‚³‚ê‚È‚¢ƒoƒOC³	//@@@ 2003.06.17 MIK
+				if( -1 == nIndex )	//å‰Šé™¤ã€ç¯„å›²å¤–ã§ã‚¯ãƒªãƒƒã‚¯æ™‚åæ˜ ã•ã‚Œãªã„ãƒã‚°ä¿®æ­£	//@@@ 2003.06.17 MIK
 				{
 					nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_FOCUSED );
 				}
 				if( -1 == nIndex )
 				{
-					/* ‰Šú’l‚ğİ’è‚·‚é */
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* ³‹K•\Œ» */
+					/* åˆæœŸå€¤ã‚’è¨­å®šã™ã‚‹ */
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* æ­£è¦è¡¨ç¾ */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for( i = 0, j = 0; i < COLORIDX_LAST; i++ )
 					{
 						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
-							0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ƒtƒ‰ƒO—˜—p‚ÅŠÈ‘f‰»
+							0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ãƒ•ãƒ©ã‚°åˆ©ç”¨ã§ç°¡ç´ åŒ–
 						{
 							if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
 							{
-								Combo_SetCurSel( hwndCombo, j );	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒfƒtƒHƒ‹ƒg‘I‘ğ */
+								Combo_SetCurSel( hwndCombo, j );	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆé¸æŠ */
 								break;
 							}
 							j++;
@@ -497,17 +497,17 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				if( nPrevIndex != nIndex )	//@@@ 2003.03.26 MIK
-				{	//XV‚ÉListView‚ÌSubItem‚ğ³‚µ‚­æ“¾‚Å‚«‚È‚¢‚Ì‚ÅA‚»‚Ì‘Îô
+				{	//æ›´æ–°æ™‚ã«ListViewã®SubItemã‚’æ­£ã—ãå–å¾—ã§ããªã„ã®ã§ã€ãã®å¯¾ç­–
 					auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ nKeyWordSize ]);
 					szKeyWord[0] = _T('\0');
 					ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
 					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
-					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0] );	/* ³‹K•\Œ» */
+					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0] );	/* æ­£è¦è¡¨ç¾ */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
 					{
 						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
-							0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ƒtƒ‰ƒO—˜—p‚ÅŠÈ‘f‰»
+							0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ãƒ•ãƒ©ã‚°åˆ©ç”¨ã§ç°¡ç´ åŒ–
 						{
 							if(_tcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
@@ -527,7 +527,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -535,35 +535,35 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 
 	}
 	return FALSE;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è ³‹K•\Œ»ƒL[ƒ[ƒh */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ */
 void CPropTypesRegex::SetData( HWND hwndDlg )
 {
 	HWND		hwndWork;
 	int			i, j;
 
-	/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+	/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), MAX_REGEX_KEYWORDLEN - 1 );
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* ³‹K•\Œ» */
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, _T("//k") );	/* æ­£è¦è¡¨ç¾ */
 
-	/* Fí—Ş‚ÌƒŠƒXƒg */
+	/* è‰²ç¨®é¡ã®ãƒªã‚¹ãƒˆ */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
-	Combo_ResetContent( hwndWork );  /* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ğ‹ó‚É‚·‚é */
+	Combo_ResetContent( hwndWork );  /* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã‚’ç©ºã«ã™ã‚‹ */
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
 		GetDefaultColorInfoName( &m_Types.m_ColorInfoArr[i], i );
 		if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
-			0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ƒtƒ‰ƒO—˜—p‚ÅŠÈ‘f‰»
+			0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji ãƒ•ãƒ©ã‚°åˆ©ç”¨ã§ç°¡ç´ åŒ–
 		{
 			j = Combo_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
 			if( m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1 )
-				Combo_SetCurSel( hwndWork, j );	/* ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒfƒtƒHƒ‹ƒg‘I‘ğ */
+				Combo_SetCurSel( hwndWork, j );	/* ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆé¸æŠ */
 		}
 	}
 
@@ -572,7 +572,7 @@ void CPropTypesRegex::SetData( HWND hwndDlg )
 	else
 		CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
 
-	/* s‘I‘ğ */
+	/* è¡Œé¸æŠ */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	DWORD		dwStyle;
 	dwStyle = ListView_GetExtendedListViewStyle( hwndWork );
@@ -582,16 +582,16 @@ void CPropTypesRegex::SetData( HWND hwndDlg )
 	SetDataKeywordList( hwndDlg );
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è ³‹K•\Œ»ƒL[ƒ[ƒh‚Ìˆê——•”•ª */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ä¸€è¦§éƒ¨åˆ† */
 void CPropTypesRegex::SetDataKeywordList( HWND hwndDlg )
 {
 	LV_ITEM		lvi;
 
-	/* ƒŠƒXƒg */
+	/* ãƒªã‚¹ãƒˆ */
 	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
-	ListView_DeleteAllItems(hwndWork);  /* ƒŠƒXƒg‚ğ‹ó‚É‚·‚é */
+	ListView_DeleteAllItems(hwndWork);  /* ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹ */
 
-	/* ƒf[ƒ^•\¦ */
+	/* ãƒ‡ãƒ¼ã‚¿è¡¨ç¤º */
 	wchar_t *pKeyword = &m_Types.m_RegexKeywordList[0];
 	for(int i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
@@ -616,7 +616,7 @@ void CPropTypesRegex::SetDataKeywordList( HWND hwndDlg )
 	return;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ ³‹K•\Œ»ƒL[ƒ[ƒh */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ */
 int CPropTypesRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
@@ -625,18 +625,18 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 	auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ szKeyWordSize ]);
 	TCHAR	szColorIndex[256];
 
-	//g—p‚·‚éEg—p‚µ‚È‚¢
+	//ä½¿ç”¨ã™ã‚‹ãƒ»ä½¿ç”¨ã—ãªã„
 	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
 		m_Types.m_bUseRegexKeyword = true;
 	else
 		m_Types.m_bUseRegexKeyword = false;
 
-	//ƒŠƒXƒg‚É“o˜^‚³‚ê‚Ä‚¢‚éî•ñ‚ğ”z—ñ‚Éæ‚è‚Ş
+	//ãƒªã‚¹ãƒˆã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’é…åˆ—ã«å–ã‚Šè¾¼ã‚€
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	nIndex = ListView_GetItemCount(hwndList);
 	wchar_t* pKeyword = &m_Types.m_RegexKeywordList[0];
 	wchar_t* pKeywordLast = pKeyword + _countof(m_Types.m_RegexKeywordList) - 1;
-	// key1\0key2\0\0 ‚ÌŒ`®
+	// key1\0key2\0\0 ã®å½¢å¼
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
 		if( i < nIndex )
@@ -648,7 +648,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 			if( pKeyword < pKeywordLast - 1 ){
 				_tcstowcs(pKeyword, &szKeyWord[0], pKeywordLast - pKeyword);
 			}
-			//Fw’è•¶š—ñ‚ğ”Ô†‚É•ÏŠ·‚·‚é
+			//è‰²æŒ‡å®šæ–‡å­—åˆ—ã‚’ç•ªå·ã«å¤‰æ›ã™ã‚‹
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 			for(j = 0; j < COLORIDX_LAST; j++)
 			{
@@ -663,14 +663,14 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 				pKeyword++;
 			}
 		}
-		else	//–¢“o˜^•”•ª‚ÍƒNƒŠƒA‚·‚é
+		else	//æœªç™»éŒ²éƒ¨åˆ†ã¯ã‚¯ãƒªã‚¢ã™ã‚‹
 		{
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 		}
 	}
-	*pKeyword = L'\0'; // ”Ô•º
+	*pKeyword = L'\0'; // ç•ªå…µ
 
-	//ƒ^ƒCƒvİ’è‚Ì•ÏX‚ª‚ ‚Á‚½
+	//ã‚¿ã‚¤ãƒ—è¨­å®šã®å¤‰æ›´ãŒã‚ã£ãŸ
 	m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 //	m_Types.m_nRegexKeyMagicNumber = 0;	//Not Compiled.
 
@@ -678,7 +678,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 }
 
 /*!
-	@date 2010.07.11 Moca ¡‚Ì‚Æ‚±‚ëCRegexKeyword::RegexKeyCheckSyntax‚Æ“¯ˆê‚È‚Ì‚ÅA’†g‚ğíœ‚µ‚Ä“]‘—ŠÖ”‚É•ÏX
+	@date 2010.07.11 Moca ä»Šã®ã¨ã“ã‚CRegexKeyword::RegexKeyCheckSyntaxã¨åŒä¸€ãªã®ã§ã€ä¸­èº«ã‚’å‰Šé™¤ã—ã¦è»¢é€é–¢æ•°ã«å¤‰æ›´
 */
 BOOL CPropTypesRegex::RegexKakomiCheck(const wchar_t *s)
 {
@@ -689,8 +689,8 @@ BOOL CPropTypesRegex::RegexKakomiCheck(const wchar_t *s)
 bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem)
 {
 	int nRet;
-	//‘®‚ğƒ`ƒFƒbƒN‚·‚éB
-	if( !RegexKakomiCheck(to_wchar(szNewKeyWord)) )	//ˆÍ‚İ‚ğƒ`ƒFƒbƒN‚·‚éB
+	//æ›¸å¼ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
+	if( !RegexKakomiCheck(to_wchar(szNewKeyWord)) )	//å›²ã¿ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
 	{
 		nRet = ::MYMESSAGEBOX(
 				hwndDlg,
@@ -708,7 +708,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 				LS(STR_PROPTYPEREGEX_INVALID) );
 		if( nRet != IDYES ) return false;
 	}
-	// d•¡Šm”FE•¶š—ñ’·§ŒÀƒ`ƒFƒbƒN
+	// é‡è¤‡ç¢ºèªãƒ»æ–‡å­—åˆ—é•·åˆ¶é™ãƒã‚§ãƒƒã‚¯
 	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
 	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	int  nIndex  = ListView_GetItemCount(hwndList);
@@ -723,7 +723,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, 
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_ALREADY));
 				return false;
 			}
-			// ’·‚³‚É‚Í\0‚àŠÜ‚Ş
+			// é•·ã•ã«ã¯\0ã‚‚å«ã‚€
 			nKeywordLen += auto_strlen(to_wchar(&szKeyWord[0])) + 1;
 			if( _countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
