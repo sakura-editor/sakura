@@ -1,12 +1,12 @@
-/*!	@file
-	@brief ˆóüƒvƒŒƒrƒ…[ŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 	@author YAZAKI
-	@date 2002/1/11 V‹Kì¬
+	@date 2002/1/11 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2002, YAZAKI
-	Copyright (C) 2003, ‚©‚ë‚Æ
+	Copyright (C) 2003, ã‹ã‚ã¨
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -45,20 +45,20 @@ class CLayout;
 class CLayoutMgr;
 
 class CPrintPreview {
-/* ƒƒ“ƒoŠÖ”éŒ¾ */
+/* ãƒ¡ãƒ³ãƒé–¢æ•°å®£è¨€ */
 public:
 	/*
-	||  ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	||  ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	CPrintPreview( class CEditWnd* pParentWnd );
 	~CPrintPreview();
 	
 	/*
-	||	ƒCƒxƒ“ƒg
+	||	ã‚¤ãƒ™ãƒ³ãƒˆ
 	*/
 	//	Window Messages
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* •`‰æˆ— */
-	LRESULT OnSize( WPARAM, LPARAM );				/* WM_SIZE ˆ— */
+	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* æç”»å‡¦ç† */
+	LRESULT OnSize( WPARAM, LPARAM );				/* WM_SIZE å‡¦ç† */
 	LRESULT OnVScroll( WPARAM wParam, LPARAM lParam );
 	LRESULT OnHScroll( WPARAM wParam, LPARAM lParam );
 	LRESULT OnMouseMove( WPARAM wParam, LPARAM lParam );
@@ -67,31 +67,31 @@ public:
 	//	User Messages
 	void OnChangeSetting();
 	void OnChangePrintSetting( void );
-	void OnPreviewGoPage( int nPage );	/* ƒvƒŒƒrƒ…[ ƒy[ƒWw’è */
-	void OnPreviewGoPreviousPage(){ OnPreviewGoPage( m_nCurPageNum - 1 ); }		//	‘O‚Ìƒy[ƒW‚Ö
-	void OnPreviewGoNextPage(){ OnPreviewGoPage( m_nCurPageNum + 1 ); }		//	‘O‚Ìƒy[ƒW‚Ö
+	void OnPreviewGoPage( int nPage );	/* ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ ãƒšãƒ¼ã‚¸æŒ‡å®š */
+	void OnPreviewGoPreviousPage(){ OnPreviewGoPage( m_nCurPageNum - 1 ); }		//	å‰ã®ãƒšãƒ¼ã‚¸ã¸
+	void OnPreviewGoNextPage(){ OnPreviewGoPage( m_nCurPageNum + 1 ); }		//	å‰ã®ãƒšãƒ¼ã‚¸ã¸
 	void OnPreviewGoDirectPage( void );
 	void OnPreviewZoom( BOOL bZoomUp );
-	void OnPrint( void );	/* ˆóüÀs */
+	void OnPrint( void );	/* å°åˆ·å®Ÿè¡Œ */
 	BOOL OnPrintPageSetting( void );
 	void OnCheckAntialias( void );
 
 	/*
-	||	ƒRƒ“ƒgƒ[ƒ‹
+	||	ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	*/
-	//	ƒXƒNƒ[ƒ‹ƒo[
+	//	ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼
 	void InitPreviewScrollBar( void );
 	
-	//	PrintPreviewƒo[i‰æ–Êã•”‚ÌƒRƒ“ƒgƒ[ƒ‹j
+	//	PrintPreviewãƒãƒ¼ï¼ˆç”»é¢ä¸Šéƒ¨ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ï¼‰
 	void CreatePrintPreviewControls( void );
 	void DestroyPrintPreviewControls( void );
 
 	void SetFocusToPrintPreviewBar( void );
 	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar;	}
-	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< this‚ªNULL‚Å‚àÀs‚Å‚«‚é”ÅB2007.10.29 kobake
+	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< thisãŒNULLã§ã‚‚å®Ÿè¡Œã§ãã‚‹ç‰ˆã€‚2007.10.29 kobake
 	
-	//	PrintPreviewƒo[‚ÌƒƒbƒZ[ƒWˆ—B
-	//	‚Ü‚¸PrintPreviewBar_DlgProc‚ÉƒƒbƒZ[ƒW‚ª“Í‚«ADispatchEvent_PPB‚É“]‘—‚·‚éd‘g‚İ
+	//	PrintPreviewãƒãƒ¼ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†ã€‚
+	//	ã¾ãšPrintPreviewBar_DlgProcã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒå±Šãã€DispatchEvent_PPBã«è»¢é€ã™ã‚‹ä»•çµ„ã¿
 	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(
 		HWND	hwndDlg,	// handle to dialog box
 		UINT	uMsg,		// message
@@ -107,36 +107,36 @@ public:
 
 protected:
 	/*
-	||	•`‰æB
-	||	DrawXXXXX()‚ÍAŒ»İ‚ÌƒtƒHƒ“ƒg‚ğ”¼ŠpƒtƒHƒ“ƒg‚Éİ’è‚µ‚Ä‚©‚çŒÄ‚Ño‚·‚±‚ÆB
-	||	‚Ü‚½ADrawXXXXX()‚©‚ç”²‚¯‚Ä‚«‚½‚Æ‚«‚ÍA”¼ŠpƒtƒHƒ“ƒg‚Éİ’è‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğŠú‘Ò‚µ‚Ä‚æ‚¢B
-	||	ƒtƒHƒ“ƒg‚ÍA”¼ŠpƒtƒHƒ“ƒg‚Æ‘SŠpƒtƒHƒ“ƒg‚µ‚©‚È‚¢‚±‚Æ‚àŠú‘Ò‚µ‚Ä‚æ‚¢B
+	||	æç”»ã€‚
+	||	DrawXXXXX()ã¯ã€ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã‚’åŠè§’ãƒ•ã‚©ãƒ³ãƒˆã«è¨­å®šã—ã¦ã‹ã‚‰å‘¼ã³å‡ºã™ã“ã¨ã€‚
+	||	ã¾ãŸã€DrawXXXXX()ã‹ã‚‰æŠœã‘ã¦ããŸã¨ãã¯ã€åŠè§’ãƒ•ã‚©ãƒ³ãƒˆã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’æœŸå¾…ã—ã¦ã‚ˆã„ã€‚
+	||	ãƒ•ã‚©ãƒ³ãƒˆã¯ã€åŠè§’ãƒ•ã‚©ãƒ³ãƒˆã¨å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆã—ã‹ãªã„ã“ã¨ã‚‚æœŸå¾…ã—ã¦ã‚ˆã„ã€‚
 	*/
 	void DrawHeaderFooter( HDC hdc, const CMyRect& rect , bool bHeader );
 	CColorStrategy* DrawPageTextFirst( int nPageNum );
 	CColorStrategy* DrawPageText( HDC, int, int, int nPageNum, CDlgCancel*, CColorStrategy* pStrategyStart );
 
-	// ˆóü^ƒvƒŒƒrƒ…[ s•`‰æ
+	// å°åˆ·ï¼ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ è¡Œæç”»
 	CColorStrategy* Print_DrawLine(
 		HDC				hdc,
-		POINT			ptDraw,		//!< •`‰æÀ•WBHDC“à•”’PˆÊB
+		POINT			ptDraw,		//!< æç”»åº§æ¨™ã€‚HDCå†…éƒ¨å˜ä½ã€‚
 		const wchar_t*	pLine,
 		int				nDocLineLen,
 		int				nLineStart,
 		int				nLineLen,
-		CLayoutInt		nIndent,	//!< Ü‚è•Ô‚µƒCƒ“ƒfƒ“ƒgŒ…” // 2006.08.14 Moca
-		const CLayout*	pcLayout = NULL,	//!< F•t—pLayout
+		CLayoutInt		nIndent,	//!< æŠ˜ã‚Šè¿”ã—ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ¡æ•° // 2006.08.14 Moca
+		const CLayout*	pcLayout = NULL,	//!< è‰²ä»˜ç”¨Layout
 		CColorStrategy*	pStrategyStart = NULL
 	);
 
-	// ˆóü^ƒvƒŒƒrƒ…[ ƒuƒƒbƒN•`‰æ
+	// å°åˆ·ï¼ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ ãƒ–ãƒ­ãƒƒã‚¯æç”»
 	void Print_DrawBlock(
 		HDC				hdc,
-		POINT			ptDraw,		//!< •`‰æÀ•WBHDC“à•”’PˆÊB
+		POINT			ptDraw,		//!< æç”»åº§æ¨™ã€‚HDCå†…éƒ¨å˜ä½ã€‚
 		const wchar_t*	pPhysicalLine,
 		int				nBlockLen,
-		int				nKind,		//< 0:”¼Šp, 1:‘SŠp
-		const CLayout*	pcLayout,	//!< Fİ’è—pLayout
+		int				nKind,		//< 0:åŠè§’, 1:å…¨è§’
+		const CLayout*	pcLayout,	//!< è‰²è¨­å®šç”¨Layout
 		int				nColorIndex,
 		int				nBgnPhysical,
 		CLayoutInt		nLayoutX,
@@ -144,7 +144,7 @@ protected:
 		const int*		pDxArray
 	);
 
-	// w’èƒƒWƒbƒNˆÊ’u‚ÌCColorStrategy‚ğæ“¾
+	// æŒ‡å®šãƒ­ã‚¸ãƒƒã‚¯ä½ç½®ã®CColorStrategyã‚’å–å¾—
 	CColorStrategy* GetColorStrategy(
 		const CStringRef&	cStringLine,
 		int					iLogic,
@@ -152,13 +152,13 @@ protected:
 		bool&				bChange
 	);
 
-	// ˆóü—pƒtƒHƒ“ƒg‚ğì¬‚·‚é
+	// å°åˆ·ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’ä½œæˆã™ã‚‹
 	void CreateFonts(HDC hdc);
-	// ˆóü—pƒtƒHƒ“ƒg‚ğ”jŠü‚·‚é
+	// å°åˆ·ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’ç ´æ£„ã™ã‚‹
 	void DestroyFonts();
 
 public:
-	//	ƒtƒHƒ“ƒg—ñ‹“
+	//	ãƒ•ã‚©ãƒ³ãƒˆåˆ—æŒ™
 	static int CALLBACK MyEnumFontFamProc(
 		ENUMLOGFONT*	pelf,		// pointer to logical-font data
 		NEWTEXTMETRIC*	pntm,		// pointer to physical-font data
@@ -167,7 +167,7 @@ public:
 	);
 
 	/*
-	||	ƒAƒNƒZƒT
+	||	ã‚¢ã‚¯ã‚»ã‚µ
 	*/
 	void SetPrintSetting( PRINTSETTING* pPrintSetting ){
 		m_sPrintSetting = *pPrintSetting;
@@ -175,96 +175,96 @@ public:
 		m_pPrintSettingOrg = pPrintSetting;
 	}
 	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinter( &m_pPrintSetting->m_mdmDevMode ); }
-	int  GetCurPageNum(){ return m_nCurPageNum; }	/* Œ»İ‚Ìƒy[ƒW */
-	int  GetAllPageNum(){ return m_nAllPageNum; }	/* Œ»İ‚Ìƒy[ƒW */
+	int  GetCurPageNum(){ return m_nCurPageNum; }	/* ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ */
+	int  GetAllPageNum(){ return m_nAllPageNum; }	/* ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ */
 
 	
 	/*
-	||	ƒwƒbƒ_Eƒtƒbƒ^
+	||	ãƒ˜ãƒƒãƒ€ãƒ»ãƒ•ãƒƒã‚¿
 	*/
-	void SetHeader(char* pszWork[]);	//	&f‚È‚Ç‚ğ“o˜^
-	void SetFooter(char* pszWork[]);	//	&p/&P‚È‚Ç‚ğ“o˜^
+	void SetHeader(char* pszWork[]);	//	&fãªã©ã‚’ç™»éŒ²
+	void SetFooter(char* pszWork[]);	//	&p/&Pãªã©ã‚’ç™»éŒ²
 
 protected:
 	void SetPreviewFontHan( const LOGFONT* lf );
 	void SetPreviewFontZen( const LOGFONT* lf );
 
-/* ƒƒ“ƒo•Ï”éŒ¾ */
+/* ãƒ¡ãƒ³ãƒå¤‰æ•°å®£è¨€ */
 public:
 	/* none */
 
 protected:
-	CEditWnd*		m_pParentWnd;	//	e‚ÌCEditDoc*B
+	CEditWnd*		m_pParentWnd;	//	è¦ªã®CEditDoc*ã€‚
 
-	// 2006.08.17 Moca YAZAKI‚³‚ñ‚Ìƒƒ‚‚Ì’Ê‚èDC/BMP‚ğCEditDoc‚©‚çCPrintPreview‚ÖˆÚ“®
-	HDC				m_hdcCompatDC;	//!< Ä•`‰æ—pƒRƒ“ƒpƒ`ƒuƒ‹DC
-	HBITMAP			m_hbmpCompatBMP;	//!< Ä•`‰æ—pƒƒ‚ƒŠBMP
-	HBITMAP			m_hbmpCompatBMPOld;	//!< Ä•`‰æ—pƒƒ‚ƒŠBMP(OLD)
-	int				m_nbmpCompatScale;	//!< BMP‚Ì‰æ–Ê‚Ì10(COMPAT_BMP_BASE)ƒsƒNƒZƒ‹•‚ ‚½‚è‚ÌBMP‚ÌƒsƒNƒZƒ‹•
+	// 2006.08.17 Moca YAZAKIã•ã‚“ã®ãƒ¡ãƒ¢ã®é€šã‚ŠDC/BMPã‚’CEditDocã‹ã‚‰CPrintPreviewã¸ç§»å‹•
+	HDC				m_hdcCompatDC;	//!< å†æç”»ç”¨ã‚³ãƒ³ãƒ‘ãƒãƒ–ãƒ«DC
+	HBITMAP			m_hbmpCompatBMP;	//!< å†æç”»ç”¨ãƒ¡ãƒ¢ãƒªBMP
+	HBITMAP			m_hbmpCompatBMPOld;	//!< å†æç”»ç”¨ãƒ¡ãƒ¢ãƒªBMP(OLD)
+	int				m_nbmpCompatScale;	//!< BMPã®ç”»é¢ã®10(COMPAT_BMP_BASE)ãƒ”ã‚¯ã‚»ãƒ«å¹…ã‚ãŸã‚Šã®BMPã®ãƒ”ã‚¯ã‚»ãƒ«å¹…
 
-	/*	ƒRƒ“ƒgƒ[ƒ‹§Œä—p	*/
-	//	‘€ìƒo[
-	HWND			m_hwndPrintPreviewBar;	/* ˆóüƒvƒŒƒrƒ…[ ‘€ìƒo[ */
-	//	ƒXƒNƒ[ƒ‹ƒo[
-	int				m_nPreviewVScrollPos;	/* ˆóüƒvƒŒƒrƒ…[FƒXƒNƒ[ƒ‹ˆÊ’uc */
-	int				m_nPreviewHScrollPos;	/* ˆóüƒvƒŒƒrƒ…[FƒXƒNƒ[ƒ‹ˆÊ’u‰¡ */
+	/*	ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«åˆ¶å¾¡ç”¨	*/
+	//	æ“ä½œãƒãƒ¼
+	HWND			m_hwndPrintPreviewBar;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ æ“ä½œãƒãƒ¼ */
+	//	ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼
+	int				m_nPreviewVScrollPos;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ä½ç½®ç¸¦ */
+	int				m_nPreviewHScrollPos;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ä½ç½®æ¨ª */
 	BOOL			m_SCROLLBAR_HORZ;
 	BOOL			m_SCROLLBAR_VERT;
-	HWND			m_hwndVScrollBar;	/* ‚’¼ƒXƒNƒ[ƒ‹ƒo[ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹ */
-	HWND			m_hwndHScrollBar;	/* …•½ƒXƒNƒ[ƒ‹ƒo[ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹ */
-	//	ƒTƒCƒYƒ{ƒbƒNƒX
-	HWND			m_hwndSizeBox;		/* ƒTƒCƒYƒ{ƒbƒNƒXƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹ */
-	BOOL			m_SizeBoxCanMove;	/* ƒTƒCƒYƒ{ƒbƒNƒXƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹‚ğ“®‚©‚¹‚é‚©‚Ç‚¤‚© */
+	HWND			m_hwndVScrollBar;	/* å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ« */
+	HWND			m_hwndHScrollBar;	/* æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ« */
+	//	ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹
+	HWND			m_hwndSizeBox;		/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ« */
+	BOOL			m_SizeBoxCanMove;	/* ã‚µã‚¤ã‚ºãƒœãƒƒã‚¯ã‚¹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã‚’å‹•ã‹ã›ã‚‹ã‹ã©ã†ã‹ */
 
-	//	•\¦
-	int				m_nPreview_Zoom;	/* ˆóüƒvƒŒƒrƒ…[F”{—¦ */
+	//	è¡¨ç¤º
+	int				m_nPreview_Zoom;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šå€ç‡ */
 
-	//	ˆóüˆÊ’u‚ğŒˆ’è‚·‚é‚½‚ß‚Ì•Ï”
-	int				m_nPreview_ViewWidth;		/* ˆóüƒvƒŒƒrƒ…[Fƒrƒ…[•(ƒsƒNƒZƒ‹) */
-	int				m_nPreview_ViewHeight;		/* ˆóüƒvƒŒƒrƒ…[Fƒrƒ…[‚‚³(ƒsƒNƒZƒ‹) */
-	int				m_nPreview_ViewMarginLeft;	/* ˆóüƒvƒŒƒrƒ…[Fƒrƒ…[¶’[‚Æ—p†‚ÌŠÔŠu(1/10mm’PˆÊ) */
-	int				m_nPreview_ViewMarginTop;	/* ˆóüƒvƒŒƒrƒ…[Fƒrƒ…[¶’[‚Æ—p†‚ÌŠÔŠu(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperAllWidth;	/* —p†•(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperAllHeight;	/* —p†‚‚³(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperWidth;		/* —p†ˆóü—LŒø•(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperHeight;		/* —p†ˆóü—LŒø‚‚³(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperOffsetLeft;	/* —p†—]”’¶’[(1/10mm’PˆÊ) */
-	short			m_nPreview_PaperOffsetTop;	/* —p†—]”’ã’[(1/10mm’PˆÊ) */
-	CKetaXInt		m_bPreview_EnableColumns;	/* ˆóš‰Â”\Œ…”/ƒy[ƒW */
-	int				m_bPreview_EnableLines;		/* ˆóš‰Â”\s”/ƒy[ƒW */
-	int				m_nPreview_LineNumberColumns;	/* s”Ô†ƒGƒŠƒA‚Ì•i•¶š”j */
-	WORD			m_nAllPageNum;				/* ‘Sƒy[ƒW” */
-	WORD			m_nCurPageNum;				/* Œ»İ‚Ìƒy[ƒW */
+	//	å°åˆ·ä½ç½®ã‚’æ±ºå®šã™ã‚‹ãŸã‚ã®å¤‰æ•°
+	int				m_nPreview_ViewWidth;		/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šãƒ“ãƒ¥ãƒ¼å¹…(ãƒ”ã‚¯ã‚»ãƒ«) */
+	int				m_nPreview_ViewHeight;		/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šãƒ“ãƒ¥ãƒ¼é«˜ã•(ãƒ”ã‚¯ã‚»ãƒ«) */
+	int				m_nPreview_ViewMarginLeft;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šãƒ“ãƒ¥ãƒ¼å·¦ç«¯ã¨ç”¨ç´™ã®é–“éš”(1/10mmå˜ä½) */
+	int				m_nPreview_ViewMarginTop;	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ï¼šãƒ“ãƒ¥ãƒ¼å·¦ç«¯ã¨ç”¨ç´™ã®é–“éš”(1/10mmå˜ä½) */
+	short			m_nPreview_PaperAllWidth;	/* ç”¨ç´™å¹…(1/10mmå˜ä½) */
+	short			m_nPreview_PaperAllHeight;	/* ç”¨ç´™é«˜ã•(1/10mmå˜ä½) */
+	short			m_nPreview_PaperWidth;		/* ç”¨ç´™å°åˆ·æœ‰åŠ¹å¹…(1/10mmå˜ä½) */
+	short			m_nPreview_PaperHeight;		/* ç”¨ç´™å°åˆ·æœ‰åŠ¹é«˜ã•(1/10mmå˜ä½) */
+	short			m_nPreview_PaperOffsetLeft;	/* ç”¨ç´™ä½™ç™½å·¦ç«¯(1/10mmå˜ä½) */
+	short			m_nPreview_PaperOffsetTop;	/* ç”¨ç´™ä½™ç™½ä¸Šç«¯(1/10mmå˜ä½) */
+	CKetaXInt		m_bPreview_EnableColumns;	/* å°å­—å¯èƒ½æ¡æ•°/ãƒšãƒ¼ã‚¸ */
+	int				m_bPreview_EnableLines;		/* å°å­—å¯èƒ½è¡Œæ•°/ãƒšãƒ¼ã‚¸ */
+	int				m_nPreview_LineNumberColumns;	/* è¡Œç•ªå·ã‚¨ãƒªã‚¢ã®å¹…ï¼ˆæ–‡å­—æ•°ï¼‰ */
+	WORD			m_nAllPageNum;				/* å…¨ãƒšãƒ¼ã‚¸æ•° */
+	WORD			m_nCurPageNum;				/* ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ */
 
-	PRINTSETTING*	m_pPrintSetting;			/* Œ»İ‚Ìˆóüİ’è(ƒLƒƒƒbƒVƒ…‚Ö‚Ìƒ|ƒCƒ“ƒ^) */
-	PRINTSETTING*	m_pPrintSettingOrg;			/* Œ»İ‚Ìˆóüİ’è(‹¤—Lƒf[ƒ^) */
-	PRINTSETTING	m_sPrintSetting;			/* Œ»İ‚Ìˆóüİ’è(ƒLƒƒƒbƒVƒ…) */
-	LOGFONT			m_lfPreviewHan;				/* ƒvƒŒƒrƒ…[—pƒtƒHƒ“ƒg */
-	LOGFONT			m_lfPreviewZen;				/* ƒvƒŒƒrƒ…[—pƒtƒHƒ“ƒg */
+	PRINTSETTING*	m_pPrintSetting;			/* ç¾åœ¨ã®å°åˆ·è¨­å®š(ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã¸ã®ãƒã‚¤ãƒ³ã‚¿) */
+	PRINTSETTING*	m_pPrintSettingOrg;			/* ç¾åœ¨ã®å°åˆ·è¨­å®š(å…±æœ‰ãƒ‡ãƒ¼ã‚¿) */
+	PRINTSETTING	m_sPrintSetting;			/* ç¾åœ¨ã®å°åˆ·è¨­å®š(ã‚­ãƒ£ãƒƒã‚·ãƒ¥) */
+	LOGFONT			m_lfPreviewHan;				/* ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
+	LOGFONT			m_lfPreviewZen;				/* ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
 
-	HFONT			m_hFontHan;					// ˆóü—p”¼ŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹
-	HFONT			m_hFontHan_b;				// ˆóü—p”¼ŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‘¾š
-	HFONT			m_hFontHan_u;				// ˆóü—p”¼ŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‰ºü
-	HFONT			m_hFontHan_bu;				// ˆóü—p”¼ŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‘¾šA‰ºü
-	HFONT			m_hFontZen;					// ˆóü—p‘SŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹
-	HFONT			m_hFontZen_b;				// ˆóü—p‘SŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‘¾š
-	HFONT			m_hFontZen_u;				// ˆóü—p‘SŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‰ºü
-	HFONT			m_hFontZen_bu;				// ˆóü—p‘SŠpƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ ‘¾šA‰ºü
-	int				m_nAscentHan;				// ”¼Šp•¶š‚ÌƒAƒZƒ“ƒgi•¶š‚/Šî€ƒ‰ƒCƒ“‚©‚ç‚Ì‚‚³j
-	int				m_nAscentZen;				// ‘SŠp•¶š‚ÌƒAƒZƒ“ƒgi•¶š‚/Šî€ƒ‰ƒCƒ“‚©‚ç‚Ì‚‚³j
+	HFONT			m_hFontHan;					// å°åˆ·ç”¨åŠè§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
+	HFONT			m_hFontHan_b;				// å°åˆ·ç”¨åŠè§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« å¤ªå­—
+	HFONT			m_hFontHan_u;				// å°åˆ·ç”¨åŠè§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« ä¸‹ç·š
+	HFONT			m_hFontHan_bu;				// å°åˆ·ç”¨åŠè§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« å¤ªå­—ã€ä¸‹ç·š
+	HFONT			m_hFontZen;					// å°åˆ·ç”¨å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«
+	HFONT			m_hFontZen_b;				// å°åˆ·ç”¨å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« å¤ªå­—
+	HFONT			m_hFontZen_u;				// å°åˆ·ç”¨å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« ä¸‹ç·š
+	HFONT			m_hFontZen_bu;				// å°åˆ·ç”¨å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« å¤ªå­—ã€ä¸‹ç·š
+	int				m_nAscentHan;				// åŠè§’æ–‡å­—ã®ã‚¢ã‚»ãƒ³ãƒˆï¼ˆæ–‡å­—é«˜/åŸºæº–ãƒ©ã‚¤ãƒ³ã‹ã‚‰ã®é«˜ã•ï¼‰
+	int				m_nAscentZen;				// å…¨è§’æ–‡å­—ã®ã‚¢ã‚»ãƒ³ãƒˆï¼ˆæ–‡å­—é«˜/åŸºæº–ãƒ©ã‚¤ãƒ³ã‹ã‚‰ã®é«˜ã•ï¼‰
 
-	CColorStrategyPool*	m_pool;					// F’è‹`ŠÇ—î•ñ
+	CColorStrategyPool*	m_pool;					// è‰²å®šç¾©ç®¡ç†æƒ…å ±
 
 public:
-	class CLayoutMgr*	m_pLayoutMgr_Print;		/* ˆóü—p‚ÌƒŒƒCƒAƒEƒgŠÇ—î•ñ */
+	class CLayoutMgr*	m_pLayoutMgr_Print;		/* å°åˆ·ç”¨ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆç®¡ç†æƒ…å ± */
 protected:
 	STypeConfig m_typePrint;
 
-	// ƒvƒŒƒrƒ…[‚©‚ço‚Ä‚àŒ»İ‚ÌƒvƒŠƒ“ƒ^î•ñ‚ğ‹L‰¯‚µ‚Ä‚¨‚¯‚é‚æ‚¤‚Éstatic‚É‚·‚é 2003.05.02 ‚©‚ë‚Æ 
-	static CPrint	m_cPrint;					//!< Œ»İ‚ÌƒvƒŠƒ“ƒ^î•ñ
+	// ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ã‹ã‚‰å‡ºã¦ã‚‚ç¾åœ¨ã®ãƒ—ãƒªãƒ³ã‚¿æƒ…å ±ã‚’è¨˜æ†¶ã—ã¦ãŠã‘ã‚‹ã‚ˆã†ã«staticã«ã™ã‚‹ 2003.05.02 ã‹ã‚ã¨ 
+	static CPrint	m_cPrint;					//!< ç¾åœ¨ã®ãƒ—ãƒªãƒ³ã‚¿æƒ…å ±
 
-	bool			m_bLockSetting;				// İ’è‚ÌƒƒbƒN
-	bool			m_bDemandUpdateSetting;		// İ’è‚ÌXV—v‹
+	bool			m_bLockSetting;				// è¨­å®šã®ãƒ­ãƒƒã‚¯
+	bool			m_bDemandUpdateSetting;		// è¨­å®šã®æ›´æ–°è¦æ±‚
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
