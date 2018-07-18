@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -33,18 +33,18 @@
 /* COBOL */
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("COBOL") );
-	_tcscpy( pType->m_szTypeExts, _T("cbl,cpy,pco,cob") );	//Jun. 04, 2001 JEPRO KENCH‚Ì•Œ¾‚É]‚¢’Ç‰Á
+	_tcscpy( pType->m_szTypeExts, _T("cbl,cpy,pco,cob") );	//Jun. 04, 2001 JEPRO KENCHæ°ã®åŠ©è¨€ã«å¾“ã„è¿½åŠ 
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"*", 6 );			//Jun. 02, 2001 JEPRO C³
-	pType->m_cLineComment.CopyTo( 1, L"D", 6 );			//Jun. 04, 2001 JEPRO ’Ç‰Á
-	pType->m_nStringType = STRING_LITERAL_PLSQL;							/* •¶š—ñ‹æØ‚è‹L†ƒGƒXƒP[ƒv•û–@  0=[\"][\'] 1=[""][''] */
-	wcscpy( pType->m_szIndentChars, L"*" );				/* ‚»‚Ì‘¼‚ÌƒCƒ“ƒfƒ“ƒg‘ÎÛ•¶š */
-	pType->m_nKeyWordSetIdx[0] = 3;						/* ƒL[ƒ[ƒhƒZƒbƒg */		//Jul. 10, 2001 JEPRO
-	pType->m_eDefaultOutline = OUTLINE_COBOL;			/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	// w’èŒ…cü	//2005.11.08 Moca
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"*", 6 );			//Jun. 02, 2001 JEPRO ä¿®æ­£
+	pType->m_cLineComment.CopyTo( 1, L"D", 6 );			//Jun. 04, 2001 JEPRO è¿½åŠ 
+	pType->m_nStringType = STRING_LITERAL_PLSQL;							/* æ–‡å­—åˆ—åŒºåˆ‡ã‚Šè¨˜å·ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—æ–¹æ³•  0=[\"][\'] 1=[""][''] */
+	wcscpy( pType->m_szIndentChars, L"*" );				/* ãã®ä»–ã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¯¾è±¡æ–‡å­— */
+	pType->m_nKeyWordSetIdx[0] = 3;						/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */		//Jul. 10, 2001 JEPRO
+	pType->m_eDefaultOutline = OUTLINE_COBOL;			/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	// æŒ‡å®šæ¡ç¸¦ç·š	//2005.11.08 Moca
 	pType->m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = true;
 	pType->m_nVertLineIdx[0] = CKetaXInt(7);
 	pType->m_nVertLineIdx[1] = CKetaXInt(8);
@@ -55,7 +55,7 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 
 
 
-/*! COBOL ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ */
+/*! COBOL ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ */
 void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 {
 	const wchar_t*	pLine;
@@ -79,11 +79,11 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 		if( NULL == pLine ){
 			break;
 		}
-		/* ƒRƒƒ“ƒgs‚© */
+		/* ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã‹ */
 		if( 7 <= nLineLen && pLine[6] == L'*' ){
 			continue;
 		}
-		/* ƒ‰ƒxƒ‹s‚© */
+		/* ãƒ©ãƒ™ãƒ«è¡Œã‹ */
 		if( 8 <= nLineLen && pLine[7] != L' ' ){
 			k = 0;
 			for( i = 7; i < nLineLen; ){
@@ -124,10 +124,10 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				continue;
 			}
 			/*
-			  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-			  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-			  ¨
-			  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+			  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+			  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+			  â†’
+			  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 			*/
 
 			CLayoutPoint ptPos;
@@ -146,7 +146,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-//Jul. 10, 2001 JEPRO ’Ç‰Á
+//Jul. 10, 2001 JEPRO è¿½åŠ 
 const wchar_t* g_ppszKeywordsCOBOL[] = {
 	L"ACCEPT",
 	L"ADD",

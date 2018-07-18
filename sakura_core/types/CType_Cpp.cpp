@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,7 +32,7 @@
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"
 
-//!CPPƒL[ƒ[ƒh‚Ån‚Ü‚Á‚Ä‚¢‚ê‚Î true
+//!CPPã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§å§‹ã¾ã£ã¦ã„ã‚Œã° true
 inline bool IsHeadCppKeyword(const wchar_t* pData)
 {
 	#define HEAD_EQ(DATA,LITERAL) (wcsncmp(DATA,LITERAL,_countof(LITERAL)-1)==0)
@@ -46,26 +46,26 @@ inline bool IsHeadCppKeyword(const wchar_t* pData)
 
 
 /* C/C++ */
-// Oct. 31, 2000 JEPRO VC++‚Ì¶¬‚·‚éƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚à“Ç‚ß‚é‚æ‚¤‚É‚·‚é
-// Jan. 24, 2004 genta ŠÖ˜A‚Ã‚¯ãD‚Ü‚µ‚­‚È‚¢‚Ì‚Ådsw,dsp,dep,mak‚Í‚Í‚¸‚·
-//	2003.06.23 Moca ƒtƒ@ƒCƒ‹“à‚©‚ç‚Ì“ü—Í•âŠ®‹@”\
+// Oct. 31, 2000 JEPRO VC++ã®ç”Ÿæˆã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚‚èª­ã‚ã‚‹ã‚ˆã†ã«ã™ã‚‹
+// Jan. 24, 2004 genta é–¢é€£ã¥ã‘ä¸Šå¥½ã¾ã—ããªã„ã®ã§dsw,dsp,dep,makã¯ã¯ãšã™
+//	2003.06.23 Moca ãƒ•ã‚¡ã‚¤ãƒ«å†…ã‹ã‚‰ã®å…¥åŠ›è£œå®Œæ©Ÿèƒ½
 void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("C/C++") );
 	_tcscpy( pType->m_szTypeExts, _T("c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm") );
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"//", -1 );							/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );			/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_cBlockComments[1].SetBlockCommentRule( L"#if 0", L"#endif" );	/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^2 */	//Jul. 11, 2001 JEPRO
-	pType->m_nKeyWordSetIdx[0] = 0;											/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_eDefaultOutline = OUTLINE_C_CPP;									/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	pType->m_eSmartIndent = SMARTINDENT_CPP;								/* ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒgí•Ê */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//”¼Šp”’l‚ğF•ª‚¯•\¦	//Mar. 10, 2001 JEPRO
-	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta ‘ÎŠ‡ŒÊ‚Ì‹­’²‚ğƒfƒtƒHƒ‹ƒgON‚É
-	pType->m_bUseHokanByFile = true;										/*! “ü—Í•âŠ® ŠJ‚¢‚Ä‚¢‚éƒtƒ@ƒCƒ‹“à‚©‚çŒó•â‚ğ’T‚· */
-	pType->m_bStringLineOnly = true; // •¶š—ñ‚Ís“à‚Ì‚İ
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"//", -1 );							/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );			/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_cBlockComments[1].SetBlockCommentRule( L"#if 0", L"#endif" );	/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿2 */	//Jul. 11, 2001 JEPRO
+	pType->m_nKeyWordSetIdx[0] = 0;											/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_eDefaultOutline = OUTLINE_C_CPP;									/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	pType->m_eSmartIndent = SMARTINDENT_CPP;								/* ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆç¨®åˆ¥ */
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//åŠè§’æ•°å€¤ã‚’è‰²åˆ†ã‘è¡¨ç¤º	//Mar. 10, 2001 JEPRO
+	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta å¯¾æ‹¬å¼§ã®å¼·èª¿ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆONã«
+	pType->m_bUseHokanByFile = true;										/*! å…¥åŠ›è£œå®Œ é–‹ã„ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å†…ã‹ã‚‰å€™è£œã‚’æ¢ã™ */
+	pType->m_bStringLineOnly = true; // æ–‡å­—åˆ—ã¯è¡Œå†…ã®ã¿
 }
 
 
@@ -74,7 +74,7 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 
 
 /*!
-	ŠÖ”‚É—p‚¢‚é‚±‚Æ‚ª‚Å‚«‚é•¶š‚©‚Ç‚¤‚©‚Ì”»’è
+	é–¢æ•°ã«ç”¨ã„ã‚‹ã“ã¨ãŒã§ãã‚‹æ–‡å­—ã‹ã©ã†ã‹ã®åˆ¤å®š
 */
 inline bool C_IsWordChar( wchar_t c )
 {
@@ -92,23 +92,23 @@ inline bool C_IsWordChar( wchar_t c )
 
 //	From Here Apr. 1, 2001 genta
 /*!
-	“Áê‚ÈŠÖ”–¼ "operator" ‚©‚Ç‚¤‚©‚ğ”»’è‚·‚éB
+	ç‰¹æ®Šãªé–¢æ•°å "operator" ã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹ã€‚
 
-	•¶š—ñ‚ª"operator"‚»‚ê©g‚©A‚ ‚é‚¢‚Í::‚ÌŒã‚ë‚Éoperator‚Æ‘±‚¢‚Ä
-	I‚í‚Á‚Ä‚¢‚é‚Æ‚«‚Éoperator‚Æ”»’èB
+	æ–‡å­—åˆ—ãŒ"operator"ãã‚Œè‡ªèº«ã‹ã€ã‚ã‚‹ã„ã¯::ã®å¾Œã‚ã«operatorã¨ç¶šã„ã¦
+	çµ‚ã‚ã£ã¦ã„ã‚‹ã¨ãã«operatorã¨åˆ¤å®šã€‚
 
-	‰‰Zq‚Ì•]‰¿‡˜‚ğ•ÛØ‚·‚é‚½‚ß2‚Â‚Ìif•¶‚É•ª‚¯‚Ä‚ ‚é
+	æ¼”ç®—å­ã®è©•ä¾¡é †åºã‚’ä¿è¨¼ã™ã‚‹ãŸã‚2ã¤ã®ifæ–‡ã«åˆ†ã‘ã¦ã‚ã‚‹
 
-	@param szStr ”»’è‘ÎÛ‚Ì•¶š—ñ
-	@param nLen •¶š—ñ‚Ì’·‚³B
-	–{¿“I‚É‚Í•s—v‚Å‚ ‚é‚ªA‚‘¬‰»‚Ì‚½‚ß‚ÉŠù‚É‚ ‚é’l‚ğ—˜—p‚·‚éB
+	@param szStr åˆ¤å®šå¯¾è±¡ã®æ–‡å­—åˆ—
+	@param nLen æ–‡å­—åˆ—ã®é•·ã•ã€‚
+	æœ¬è³ªçš„ã«ã¯ä¸è¦ã§ã‚ã‚‹ãŒã€é«˜é€ŸåŒ–ã®ãŸã‚ã«æ—¢ã«ã‚ã‚‹å€¤ã‚’åˆ©ç”¨ã™ã‚‹ã€‚
 */
 static bool C_IsOperator( wchar_t* szStr, int nLen	)
 {
 	if( nLen >= 8 && szStr[ nLen - 1 ] == L'r' ){
 		if( nLen > 8 ?
-				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// ƒƒ“ƒo[ŠÖ”‚É‚æ‚é’è‹`
-				wcscmp( szStr, L"operator" ) == 0	// friendŠÖ”‚É‚æ‚é’è‹`
+				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// ãƒ¡ãƒ³ãƒãƒ¼é–¢æ•°ã«ã‚ˆã‚‹å®šç¾©
+				wcscmp( szStr, L"operator" ) == 0	// friendé–¢æ•°ã«ã‚ˆã‚‹å®šç¾©
 		 ){
 		 	return true;
 		}
@@ -118,9 +118,9 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 //	To Here Apr. 1, 2001 genta
 
 /*!
-	‰üs’¼‘O‚ğ \ ‚ÅƒGƒXƒP[ƒv‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©”»’è
+	æ”¹è¡Œç›´å‰ã‚’ \ ã§ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹åˆ¤å®š
 
-	@date 2005.12.06 ‚¶‚ã‚¤‚¶ ÅŒã‚Ì1•¶š‚µ‚©Œ©‚È‚¢‚Æ2ƒoƒCƒgƒR[ƒh‚ÌŒã”¼‚ªƒoƒbƒNƒXƒ‰ƒbƒVƒ…‚Ìê‡‚ÉŒë”F‚·‚é
+	@date 2005.12.06 ã˜ã‚…ã†ã˜ æœ€å¾Œã®1æ–‡å­—ã—ã‹è¦‹ãªã„ã¨2ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã®å¾ŒåŠãŒãƒãƒƒã‚¯ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ã®å ´åˆã«èª¤èªã™ã‚‹
 */
 static bool C_IsLineEsc(const wchar_t *s, int len)
 {
@@ -133,7 +133,7 @@ static bool C_IsLineEsc(const wchar_t *s, int len)
 		} else if ( len == 2 ) {
 			if ( CNativeW::GetSizeOfChar( s, 2 , 0 ) == 1 )
 				return(true);
-		} else { //c‚è‚RƒoƒCƒgˆÈã
+		} else { //æ®‹ã‚Šï¼“ãƒã‚¤ãƒˆä»¥ä¸Š
 			if ( CNativeW::GetSizeOfChar( s, len , len-2 ) == 1 )
 				return(true);
 			if ( CNativeW::GetSizeOfChar( s, len , len-3 ) == 2 )
@@ -159,110 +159,110 @@ static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
 
 
 /*!
-	CƒvƒŠƒvƒƒZƒbƒT‚Ì #if/ifdef/ifndef - #else - #endifó‘ÔŠÇ—ƒNƒ‰ƒX
+	Cãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µã® #if/ifdef/ifndef - #else - #endifçŠ¶æ…‹ç®¡ç†ã‚¯ãƒ©ã‚¹
 
-	ƒlƒXƒgƒŒƒxƒ‹‚Í32ƒŒƒxƒ‹=(sizeof(int) * 8)‚Ü‚Å
+	ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã¯32ãƒ¬ãƒ™ãƒ«=(sizeof(int) * 8)ã¾ã§
 	
-	@date 2007.12.15 genta : m_enablebuf‚Ì‰Šú’l‚ªˆ«‚³‚ğ‚·‚é‚±‚Æ‚ª‚ ‚é‚Ì‚Å0‚É
+	@date 2007.12.15 genta : m_enablebufã®åˆæœŸå€¤ãŒæ‚ªã•ã‚’ã™ã‚‹ã“ã¨ãŒã‚ã‚‹ã®ã§0ã«
 */
 
 class CCppPreprocessMng {
 public:
 	CCppPreprocessMng(void) :
-		// 2007.12.15 genta : m_bitpattern‚ğ0‚É‚µ‚È‚¢‚ÆC
-		// ‚¢‚«‚È‚è#else‚ªŒ»‚ê‚½‚Æ‚«‚Éƒpƒ^[ƒ“‚ª‚¨‚©‚µ‚­‚È‚é
+		// 2007.12.15 genta : m_bitpatternã‚’0ã«ã—ãªã„ã¨ï¼Œ
+		// ã„ããªã‚Š#elseãŒç¾ã‚ŒãŸã¨ãã«ãƒ‘ã‚¿ãƒ¼ãƒ³ãŒãŠã‹ã—ããªã‚‹
 		m_ismultiline( false ), m_maxnestlevel( 32 ), m_stackptr( 0 ), m_bitpattern( 0 ), m_enablebuf( 0 )
 	{}
 
 	CLogicInt ScanLine(const wchar_t*, CLogicInt);
 
 private:
-	bool m_ismultiline; //!< •¡”s‚ÌƒfƒBƒŒƒNƒeƒBƒu
-	int m_maxnestlevel;	//!< ƒlƒXƒgƒŒƒxƒ‹‚ÌÅ‘å’l
+	bool m_ismultiline; //!< è¤‡æ•°è¡Œã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–
+	int m_maxnestlevel;	//!< ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã®æœ€å¤§å€¤
 
-	int m_stackptr;	//!< ƒlƒXƒgƒŒƒxƒ‹
+	int m_stackptr;	//!< ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«
 	/*!
-		ƒlƒXƒgƒŒƒxƒ‹‚É‘Î‰‚·‚éƒrƒbƒgƒpƒ^[ƒ“
+		ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã«å¯¾å¿œã™ã‚‹ãƒ“ãƒƒãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³
 		
-		m_stackptr = n ‚ÌC‰º‚©‚ç(n-1)bit–Ú‚É1‚ª“ü‚Á‚Ä‚¢‚é
+		m_stackptr = n ã®æ™‚ï¼Œä¸‹ã‹ã‚‰(n-1)bitç›®ã«1ãŒå…¥ã£ã¦ã„ã‚‹
 	*/
 	unsigned int m_bitpattern;
-	unsigned int m_enablebuf;	//!< ˆ—‚Ì—L–³‚ğ•Û‘¶‚·‚éƒoƒbƒtƒ@
+	unsigned int m_enablebuf;	//!< å‡¦ç†ã®æœ‰ç„¡ã‚’ä¿å­˜ã™ã‚‹ãƒãƒƒãƒ•ã‚¡
 };
 
 /*!
-	CƒvƒŠƒvƒƒZƒbƒT‚Ì #if/ifdef/ifndef - #else - #endif‚ğŒ³‚É
-	ˆ—‚Ì•K—v«‚ğ”»’è‚·‚éD
+	Cãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µã® #if/ifdef/ifndef - #else - #endifã‚’å…ƒã«
+	å‡¦ç†ã®å¿…è¦æ€§ã‚’åˆ¤å®šã™ã‚‹ï¼
 
-	—^‚¦‚ç‚ê‚½1s‚Ì•¶š—ñ‚ğæ“ª‚©‚ç‘–¸‚µCC/C++‚Å‚Ì‘–¸‚ª•K—v‚Èê‡‚Í
-	æ“ª‚Ì‹ó”’‚ğœ‚¢‚½ŠJnˆÊ’u‚ğC•s—v‚Èê‡‚Ílength‚ğ•Ô‚·D
-	ŒÄ‚Ño‚µ‘¤‚Å‚Í–ß‚è’l‚©‚ç‰ğÍ‚ğn‚ß‚é‚Ì‚ÅC
-	length‚ğ•Ô‚·‚±‚Æ‚Í‚·‚×‚Ä‹ó”’‚ÆŒ©‚È‚·‚±‚Æ‚É‚È‚éD
+	ä¸ãˆã‚‰ã‚ŒãŸ1è¡Œã®æ–‡å­—åˆ—ã‚’å…ˆé ­ã‹ã‚‰èµ°æŸ»ã—ï¼ŒC/C++ã§ã®èµ°æŸ»ãŒå¿…è¦ãªå ´åˆã¯
+	å…ˆé ­ã®ç©ºç™½ã‚’é™¤ã„ãŸé–‹å§‹ä½ç½®ã‚’ï¼Œä¸è¦ãªå ´åˆã¯lengthã‚’è¿”ã™ï¼
+	å‘¼ã³å‡ºã—å´ã§ã¯æˆ»ã‚Šå€¤ã‹ã‚‰è§£æã‚’å§‹ã‚ã‚‹ã®ã§ï¼Œ
+	lengthã‚’è¿”ã™ã“ã¨ã¯ã™ã¹ã¦ç©ºç™½ã¨è¦‹ãªã™ã“ã¨ã«ãªã‚‹ï¼
 
-	ƒlƒXƒg‚ÌÅ‘å‚ğ’´‚¦‚½ê‡‚É‚Í‹L‰¯ˆæ‚ª‚È‚¢‚½‚ß‚É”»’è‚Í•s‰Â”\‚Æ‚È‚é‚ªC
-	ƒlƒXƒgƒŒƒxƒ‹‚¾‚¯‚ÍŠÇ—‚·‚éD
+	ãƒã‚¹ãƒˆã®æœ€å¤§ã‚’è¶…ãˆãŸå ´åˆã«ã¯è¨˜æ†¶åŸŸãŒãªã„ãŸã‚ã«åˆ¤å®šã¯ä¸å¯èƒ½ã¨ãªã‚‹ãŒï¼Œ
+	ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«ã ã‘ã¯ç®¡ç†ã™ã‚‹ï¼
 
-	@param str		[in] 1s‚Ì•¶š—ñ
-	@param length	[in] •¶š—ñ’·
+	@param str		[in] 1è¡Œã®æ–‡å­—åˆ—
+	@param length	[in] æ–‡å­—åˆ—é•·
 
-	@return C‰ğÍŠJnˆÊ’uDˆ—•s—v‚Ìê‡‚Ílength(s––‚Ü‚ÅƒXƒLƒbƒv)D
+	@return Cè§£æé–‹å§‹ä½ç½®ï¼å‡¦ç†ä¸è¦ã®å ´åˆã¯length(è¡Œæœ«ã¾ã§ã‚¹ã‚­ãƒƒãƒ—)ï¼
 	
-	@par elif‚Ìˆµ‚¢
-	if (A) elif (B) elif (C) else (D) endif‚Ì‚æ‚¤‚Èê‡‚É‚Í(A)-(D)‚Ì‚Ç‚ê‚©1‚Â
-	‚¾‚¯‚ªÀs‚³‚ê‚éD‚µ‚©‚µC‚»‚¤‚È‚é‚Æ1ƒrƒbƒg‚Å‚ÍŠÇ—‚Å‚«‚È‚¢‚µƒlƒXƒg‚ğ
-	ˆÍ‚Ş‚æ‚¤‚ÈƒP[ƒX‚Åelif‚ğg‚¤‚±‚Æ‚Í‚ ‚Ü‚è–³‚¢‚ÆŸè‚ÉŒˆ‚ß‚ÄŒ©‚È‚©‚Á‚½‚±‚Æ‚É‚·‚éD
+	@par elifã®æ‰±ã„
+	if (A) elif (B) elif (C) else (D) endifã®ã‚ˆã†ãªå ´åˆã«ã¯(A)-(D)ã®ã©ã‚Œã‹1ã¤
+	ã ã‘ãŒå®Ÿè¡Œã•ã‚Œã‚‹ï¼ã—ã‹ã—ï¼Œãã†ãªã‚‹ã¨1ãƒ“ãƒƒãƒˆã§ã¯ç®¡ç†ã§ããªã„ã—ãƒã‚¹ãƒˆã‚’
+	å›²ã‚€ã‚ˆã†ãªã‚±ãƒ¼ã‚¹ã§elifã‚’ä½¿ã†ã“ã¨ã¯ã‚ã¾ã‚Šç„¡ã„ã¨å‹æ‰‹ã«æ±ºã‚ã¦è¦‹ãªã‹ã£ãŸã“ã¨ã«ã™ã‚‹ï¼
 
 	@author genta
-	@date 2004.08.10 V‹Kì¬
-	@date 2004.08.13 zenryaku •¡”s‚ÌƒfƒBƒŒƒNƒeƒBƒu‚É‘Î‰
-	@date 2007.12.13 ‚¶‚ã‚¤‚¶ : if‚Ì’¼Œã‚ÉƒXƒy[ƒX‚ª‚È‚¢ê‡‚Ì‘Î‰
+	@date 2004.08.10 æ–°è¦ä½œæˆ
+	@date 2004.08.13 zenryaku è¤‡æ•°è¡Œã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–ã«å¯¾å¿œ
+	@date 2007.12.13 ã˜ã‚…ã†ã˜ : ifã®ç›´å¾Œã«ã‚¹ãƒšãƒ¼ã‚¹ãŒãªã„å ´åˆã®å¯¾å¿œ
 
 */
 CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 {
 	int length=_length;
 
-	const wchar_t* lastptr = str + length;	//	ˆ—•¶š—ñ––”ö
-	const wchar_t* p;	//	ˆ—’†‚ÌˆÊ’u
+	const wchar_t* lastptr = str + length;	//	å‡¦ç†æ–‡å­—åˆ—æœ«å°¾
+	const wchar_t* p;	//	å‡¦ç†ä¸­ã®ä½ç½®
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	//	skip whitespace
 	for( p = str; C_IsSpace( *p, bExtEol ) && p < lastptr ; ++p )
 		;
 	if( lastptr <= p )
-		return CLogicInt(length);	//	‹ós‚Ì‚½‚ßˆ—•s—v
+		return CLogicInt(length);	//	ç©ºè¡Œã®ãŸã‚å‡¦ç†ä¸è¦
 
-	if(m_ismultiline){ // •¡”s‚ÌƒfƒBƒŒƒNƒeƒBƒu‚Í–³‹
-		m_ismultiline = C_IsLineEsc(str, length); // s––‚ª \ ‚ÅI‚í‚Á‚Ä‚¢‚È‚¢‚©
+	if(m_ismultiline){ // è¤‡æ•°è¡Œã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–ã¯ç„¡è¦–
+		m_ismultiline = C_IsLineEsc(str, length); // è¡Œæœ«ãŒ \ ã§çµ‚ã‚ã£ã¦ã„ãªã„ã‹
 		return CLogicInt(length);
 	}
 
-	if( *p != L'#' ){	//	ƒvƒŠƒvƒƒZƒbƒTˆÈŠO‚Ìˆ—‚ÍƒƒCƒ“•”‚É”C‚¹‚é
+	if( *p != L'#' ){	//	ãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µä»¥å¤–ã®å‡¦ç†ã¯ãƒ¡ã‚¤ãƒ³éƒ¨ã«ä»»ã›ã‚‹
 		if( m_enablebuf ){
-			return CLogicInt(length);	//	1ƒrƒbƒg‚Å‚à1‚Æ‚È‚Á‚Ä‚¢‚½‚ç–³‹
+			return CLogicInt(length);	//	1ãƒ“ãƒƒãƒˆã§ã‚‚1ã¨ãªã£ã¦ã„ãŸã‚‰ç„¡è¦–
 		}
 		return CLogicInt(p - str);
 	}
 
-	++p; // #‚ğƒXƒLƒbƒv
+	++p; // #ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	
 	//	skip whitespace
 	for( ; C_IsSpace( *p, bExtEol ) && p < lastptr ; ++p )
 		;
 
-	//	‚±‚±‚©‚çPreprocessor directive‰ğÍ
+	//	ã“ã“ã‹ã‚‰Preprocessor directiveè§£æ
 	if( p + 2 + 2 < lastptr && wcsncmp_literal( p, L"if" ) == 0 ){
 		// if
 		p += 2;
 		
-		int enable = 0;	//	0: ˆ—‚µ‚È‚¢, 1: elseˆÈ~‚ª—LŒø, 2: Å‰‚ª—LŒø, 
+		int enable = 0;	//	0: å‡¦ç†ã—ãªã„, 1: elseä»¥é™ãŒæœ‰åŠ¹, 2: æœ€åˆãŒæœ‰åŠ¹, 
 		
-		//	if 0‚ÍÅ‰‚ª–³Œø•”•ª‚Æ‚İ‚È‚·D
-		//	‚»‚êˆÈŠO‚Ìif/ifdef/ifndef‚ÍÅ‰‚ª—LŒø•”•ª‚ÆŒ©‚È‚·
-		//	Å‰‚ÌğŒ‚É‚æ‚Á‚Ä‚±‚Ì“_‚Å‚Íp < lastptr‚È‚Ì‚Å”»’èÈ—ª
-		// 2007/12/13 ‚¶‚ã‚¤‚¶ : #if(0)‚ÆƒXƒy[ƒX‚ğ‹ó‚¯‚È‚¢ê‡‚Ì‘Î‰
+		//	if 0ã¯æœ€åˆãŒç„¡åŠ¹éƒ¨åˆ†ã¨ã¿ãªã™ï¼
+		//	ãã‚Œä»¥å¤–ã®if/ifdef/ifndefã¯æœ€åˆãŒæœ‰åŠ¹éƒ¨åˆ†ã¨è¦‹ãªã™
+		//	æœ€åˆã®æ¡ä»¶ã«ã‚ˆã£ã¦ã“ã®æ™‚ç‚¹ã§ã¯p < lastptrãªã®ã§åˆ¤å®šçœç•¥
+		// 2007/12/13 ã˜ã‚…ã†ã˜ : #if(0)ã¨ã‚¹ãƒšãƒ¼ã‚¹ã‚’ç©ºã‘ãªã„å ´åˆã®å¯¾å¿œ
 		if( C_IsSpace( *p, bExtEol ) || *p == L'(' ){
-			//	if 0 ƒ`ƒFƒbƒN
+			//	if 0 ãƒã‚§ãƒƒã‚¯
 			//	skip whitespace
 			//	2007.12.15 genta
 			for( ; ( C_IsSpace( *p, bExtEol ) || *p == L'(' ) && p < lastptr ; ++p )
@@ -280,7 +280,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			enable = 2;
 		}
 		
-		//	•Û‘¶—Ìˆæ‚ÌŠm•Û‚Æƒrƒbƒgƒpƒ^[ƒ“‚Ìİ’è
+		//	ä¿å­˜é ˜åŸŸã®ç¢ºä¿ã¨ãƒ“ãƒƒãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³ã®è¨­å®š
 		if( enable > 0 ){
 			m_bitpattern = 1 << m_stackptr;
 			++m_stackptr;
@@ -290,7 +290,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		}
 	}
 	else if( p + 4 < lastptr && wcsncmp_literal( p, L"else" ) == 0 ){
-		//	2007.12.14 genta : #if‚ª–³‚­#else‚ªo‚½‚Æ‚«‚ÌƒK[ƒh’Ç‰Á
+		//	2007.12.14 genta : #ifãŒç„¡ã#elseãŒå‡ºãŸã¨ãã®ã‚¬ãƒ¼ãƒ‰è¿½åŠ 
 		if( 0 < m_stackptr && m_stackptr < m_maxnestlevel ){
 			m_enablebuf ^= m_bitpattern;
 		}
@@ -303,39 +303,39 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		}
 	}
 	else{
-		m_ismultiline = C_IsLineEsc(str, length); // s––‚ª \ ‚ÅI‚í‚Á‚Ä‚¢‚È‚¢‚©
+		m_ismultiline = C_IsLineEsc(str, length); // è¡Œæœ«ãŒ \ ã§çµ‚ã‚ã£ã¦ã„ãªã„ã‹
 	}
 
-	return CLogicInt(length);	//	Šî–{“I‚ÉƒvƒŠƒvƒƒZƒbƒTw—ß‚Í–³‹
+	return CLogicInt(length);	//	åŸºæœ¬çš„ã«ãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µæŒ‡ä»¤ã¯ç„¡è¦–
 }
 
 /*!
-	@brief C/C++ŠÖ”ƒŠƒXƒgì¬
+	@brief C/C++é–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ
 
-	@param bVisibleMemberFunc ƒNƒ‰ƒXA\‘¢‘Ì’è‹`“à‚Ìƒƒ“ƒoŠÖ”‚ÌéŒ¾‚ğƒAƒEƒgƒ‰ƒCƒ“‰ğÍŒ‹‰Ê‚É“o˜^‚·‚éê‡‚Ítrue
+	@param bVisibleMemberFunc ã‚¯ãƒ©ã‚¹ã€æ§‹é€ ä½“å®šç¾©å†…ã®ãƒ¡ãƒ³ãƒé–¢æ•°ã®å®£è¨€ã‚’ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æçµæœã«ç™»éŒ²ã™ã‚‹å ´åˆã¯true
 
-	@par MODEˆê——
-	- 0	’Êí
-	- 20	Single quotation•¶š—ñ“Ç‚İ‚İ’†
-	- 21	Double quotation•¶š—ñ“Ç‚İ‚İ’†
-	- 8	ƒRƒƒ“ƒg“Ç‚İ‚İ’†
-	- 1	’PŒê“Ç‚İ‚İ’†
-	- 2	‹L†—ñ“Ç‚İ‚İ’†
-	- 999	’·‰ß‚¬‚é’PŒê–³‹’†
+	@par MODEä¸€è¦§
+	- 0	é€šå¸¸
+	- 20	Single quotationæ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­
+	- 21	Double quotationæ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­
+	- 8	ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­
+	- 1	å˜èªèª­ã¿è¾¼ã¿ä¸­
+	- 2	è¨˜å·åˆ—èª­ã¿è¾¼ã¿ä¸­
+	- 999	é•·éãã‚‹å˜èªç„¡è¦–ä¸­
 
 
-	@par FuncId‚Ì’l‚ÌˆÓ–¡
-	10‚ÌˆÊ‚Å–Ú“I•Ê‚Ég‚¢•ª‚¯‚Ä‚¢‚éDC/C++—p‚Í10ˆÊ‚ª0
-	- 1: éŒ¾
-	- 2: ’Êí‚ÌŠÖ” (’Ç‰Á•¶š—ñ–³‚µ)
-	- 3: ƒNƒ‰ƒX("ƒNƒ‰ƒX")
-	- 4: \‘¢‘Ì ("\‘¢‘Ì")
-	- 5: —ñ‹“‘Ì("—ñ‹“‘Ì")
-	- 6: ‹¤—p‘Ì("‹¤—p‘Ì")
-	- 7: –¼‘O‹óŠÔ("–¼‘O‹óŠÔ")
+	@par FuncIdã®å€¤ã®æ„å‘³
+	10ã®ä½ã§ç›®çš„åˆ¥ã«ä½¿ã„åˆ†ã‘ã¦ã„ã‚‹ï¼C/C++ç”¨ã¯10ä½ãŒ0
+	- 1: å®£è¨€
+	- 2: é€šå¸¸ã®é–¢æ•° (è¿½åŠ æ–‡å­—åˆ—ç„¡ã—)
+	- 3: ã‚¯ãƒ©ã‚¹("ã‚¯ãƒ©ã‚¹")
+	- 4: æ§‹é€ ä½“ ("æ§‹é€ ä½“")
+	- 5: åˆ—æŒ™ä½“("åˆ—æŒ™ä½“")
+	- 6: å…±ç”¨ä½“("å…±ç”¨ä½“")
+	- 7: åå‰ç©ºé–“("åå‰ç©ºé–“")
 
-	@param pcFuncInfoArr [out] ŠÖ”ˆê——‚ğ•Ô‚·‚½‚ß‚ÌƒNƒ‰ƒXB
-	‚±‚±‚ÉŠÖ”‚ÌƒŠƒXƒg‚ğ“o˜^‚·‚éB
+	@param pcFuncInfoArr [out] é–¢æ•°ä¸€è¦§ã‚’è¿”ã™ãŸã‚ã®ã‚¯ãƒ©ã‚¹ã€‚
+	ã“ã“ã«é–¢æ•°ã®ãƒªã‚¹ãƒˆã‚’ç™»éŒ²ã™ã‚‹ã€‚
 */
 void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOutlineType,
 	const TCHAR* pszFileName, bool bVisibleMemberFunc
@@ -347,7 +347,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	const wchar_t*	pLine;
 	CLogicInt	nLineLen;
 	CLogicInt	i;
-	// 2015.11.14 C/C++‚Ìƒtƒ@ƒCƒ‹–¼‚É‚æ‚é”»’è
+	// 2015.11.14 C/C++ã®ãƒ•ã‚¡ã‚¤ãƒ«åã«ã‚ˆã‚‹åˆ¤å®š
 	if( nOutlineType == OUTLINE_C_CPP ){
 		if( CheckEXT( pszFileName, _T("c") ) ){
 			nOutlineType = OUTLINE_C;
@@ -366,95 +366,95 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 		}
 	}
 
-	// 2002/10/27 frozen@‚±‚±‚©‚ç
-	// nNestLevel‚ğ nNestLevel_global ‚ğ nNestLevel_func ‚É•ªŠ„‚µ‚½B
-	int			nNestLevel_global = 0;	// nNestLevel_global ŠÖ”ŠO‚Ì {}‚ÌƒŒƒxƒ‹  
-	int			nNestLevel_func   = 0;	//	nNestLevel_func ŠÖ”‚Ì’è‹`A‚¨‚æ‚ÑŠÖ”“à‚Ì	{}‚ÌƒŒƒxƒ‹
-//	int			nNestLevel2;			//	nNestLevel2	()‚É‘Î‚·‚éˆÊ’u // 2002/10/27 frozen nNastLevel_fparam‚ÆnMode2‚ÌM2_FUNC_NAME_END‚Å‘ã—p
-	int			nNestLevel_fparam = 0;	// ()‚ÌƒŒƒxƒ‹
-	int			nNestPoint_class = 0;	// ŠO‘¤‚©‚ç‰½”Ô–Ú‚Ì{‚ªƒNƒ‰ƒX‚Ì’è‹`‚ğˆÍ‚Ş{‚©H (ˆê”ÔŠO‘¤‚È‚ç1A0‚È‚ç–³‚µBbVisibleMemberFunc‚ªfalse‚Ì‚Ì‚İ—LŒøBtrue‚Å‚Íí‚É0)
-	// 2002/10/27 frozen@‚±‚±‚Ü‚Å
+	// 2002/10/27 frozenã€€ã“ã“ã‹ã‚‰
+	// nNestLevelã‚’ nNestLevel_global ã‚’ nNestLevel_func ã«åˆ†å‰²ã—ãŸã€‚
+	int			nNestLevel_global = 0;	// nNestLevel_global é–¢æ•°å¤–ã® {}ã®ãƒ¬ãƒ™ãƒ«  
+	int			nNestLevel_func   = 0;	//	nNestLevel_func é–¢æ•°ã®å®šç¾©ã€ãŠã‚ˆã³é–¢æ•°å†…ã®	{}ã®ãƒ¬ãƒ™ãƒ«
+//	int			nNestLevel2;			//	nNestLevel2	()ã«å¯¾ã™ã‚‹ä½ç½® // 2002/10/27 frozen nNastLevel_fparamã¨nMode2ã®M2_FUNC_NAME_ENDã§ä»£ç”¨
+	int			nNestLevel_fparam = 0;	// ()ã®ãƒ¬ãƒ™ãƒ«
+	int			nNestPoint_class = 0;	// å¤–å´ã‹ã‚‰ä½•ç•ªç›®ã®{ãŒã‚¯ãƒ©ã‚¹ã®å®šç¾©ã‚’å›²ã‚€{ã‹ï¼Ÿ (ä¸€ç•ªå¤–å´ãªã‚‰1ã€0ãªã‚‰ç„¡ã—ã€‚bVisibleMemberFuncãŒfalseã®æ™‚ã®ã¿æœ‰åŠ¹ã€‚trueã§ã¯å¸¸ã«0)
+	// 2002/10/27 frozenã€€ã“ã“ã¾ã§
 
-	bool bInInitList = false;	// 2010.07.08 ryoji ŠÖ”–¼’²¸‚ÌÛAŒ»İˆÊ’u‚ª‰Šú‰»ƒŠƒXƒgi':'ˆÈŒãj‚É“’B‚µ‚½‚©‚Ç‚¤‚©‚ğ¦‚·
-	int			nNestLevel_template = 0; // template<> func<vector<int>> ‚È‚Ç‚Ì<>‚Ì”
+	bool bInInitList = false;	// 2010.07.08 ryoji é–¢æ•°åèª¿æŸ»ã®éš›ã€ç¾åœ¨ä½ç½®ãŒåˆæœŸåŒ–ãƒªã‚¹ãƒˆï¼ˆ':'ä»¥å¾Œï¼‰ã«åˆ°é”ã—ãŸã‹ã©ã†ã‹ã‚’ç¤ºã™
+	int			nNestLevel_template = 0; // template<> func<vector<int>> ãªã©ã®<>ã®æ•°
 
-	wchar_t		szWordPrev[256];	//	1‚Â‘O‚Ìword
-	wchar_t		szWord[256];		//	Œ»İ‰ğ“Ç’†‚Ìword‚ğ“ü‚ê‚é‚Æ‚±‚ë
+	wchar_t		szWordPrev[256];	//	1ã¤å‰ã®word
+	wchar_t		szWord[256];		//	ç¾åœ¨è§£èª­ä¸­ã®wordã‚’å…¥ã‚Œã‚‹ã¨ã“ã‚
 	int			nWordIdx = 0;
-	int			nMaxWordLeng = 100;	//	‹–—e‚³‚ê‚éword‚ÌÅ‘å’·‚³
-	int			nMode;				//	Œ»İ‚Ìstate
+	int			nMaxWordLeng = 100;	//	è¨±å®¹ã•ã‚Œã‚‹wordã®æœ€å¤§é•·ã•
+	int			nMode;				//	ç¾åœ¨ã®state
 	/*
 		nMode
-		  0 : ‰Šú’l
-		  1 : ’PŒê“Ç‚İ‚İ’†
-		      szWord‚É’PŒê‚ğŠi”[
-		  2 : ‹L†—ñ
-		  8 : ƒuƒƒbƒNƒRƒƒ“ƒg’†
-		 10 : // ƒRƒƒ“ƒg’†
-		 20 : •¶š’è” ''
-		 21 : •¶š—ñ ""
-		999 : ’·‚¢’PŒê–³‹
+		  0 : åˆæœŸå€¤
+		  1 : å˜èªèª­ã¿è¾¼ã¿ä¸­
+		      szWordã«å˜èªã‚’æ ¼ç´
+		  2 : è¨˜å·åˆ—
+		  8 : ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆä¸­
+		 10 : // ã‚³ãƒ¡ãƒ³ãƒˆä¸­
+		 20 : æ–‡å­—å®šæ•° ''
+		 21 : æ–‡å­—åˆ— ""
+		999 : é•·ã„å˜èªç„¡è¦–
 	*/
 
-	// 2002/10/27 frozen@‚±‚±‚©‚ç
-	//! ó‘Ô2
+	// 2002/10/27 frozenã€€ã“ã“ã‹ã‚‰
+	//! çŠ¶æ…‹2
 	enum MODE2
 	{
-		M2_NORMAL			= 0x00,	//!< ’Êí
+		M2_NORMAL			= 0x00,	//!< é€šå¸¸
 		M2_ATTRIBUTE		= 0x02,	//!< C++/CLI attribute : 2007.05.26 genta
-		M2_TEMPLATE			= 0x03, //!< "template<" ‚ÅM2_TEMPLATE‚É‚È‚è '>' ‚ÅM2_NORMAL‚É–ß‚é
-		M2_NAMESPACE_SAVE	= 0x11,	//!< ƒl[ƒ€ƒXƒy[ƒX–¼’²¸’†
-			// u’Êívó‘Ô‚Å’PŒê "class" "struct" "union" "enum" "namespace", "__interface" ‚ğ“Ç‚İ‚Ş‚ÆA‚±‚Ìó‘Ô‚É‚È‚èA';' '{' ',' '>' '='‚ğ“Ç‚İ‚Ş‚Æu’Êív‚É‚È‚éB
-			//	2007.05.26 genta ƒL[ƒ[ƒh‚É__interface’Ç‰Á
+		M2_TEMPLATE			= 0x03, //!< "template<" ã§M2_TEMPLATEã«ãªã‚Š '>' ã§M2_NORMALã«æˆ»ã‚‹
+		M2_NAMESPACE_SAVE	= 0x11,	//!< ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹åèª¿æŸ»ä¸­
+			// ã€Œé€šå¸¸ã€çŠ¶æ…‹ã§å˜èª "class" "struct" "union" "enum" "namespace", "__interface" ã‚’èª­ã¿è¾¼ã‚€ã¨ã€ã“ã®çŠ¶æ…‹ã«ãªã‚Šã€';' '{' ',' '>' '='ã‚’èª­ã¿è¾¼ã‚€ã¨ã€Œé€šå¸¸ã€ã«ãªã‚‹ã€‚
+			//	2007.05.26 genta ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«__interfaceè¿½åŠ 
 			//
-			// ':' ‚ğ“Ç‚İ‚Ş‚Æuƒl[ƒ€ƒXƒy[ƒX–¼’²¸Š®—¹v‚ÖˆÚs‚·‚é‚Æ“¯‚É
-			// szWord‚ğszItemName‚É•Û‘¶‚µA‚ ‚Æ‚Å ':' –”‚Í '{' ‚Ì’¼‘O‚Ì’PŒê‚ª’²‚×‚ç‚ê‚é‚æ‚¤‚É‚µ‚Ä‚¢‚éB
-			// ‚±‚ê‚Í "__declspec( dllexport )"‚Ì‚æ‚¤‚É"class"‚ÆƒNƒ‰ƒX–¼‚ÌŠÔ‚ÉƒL[ƒ[ƒh‚ª‘‚¢‚Ä‚ ‚éê‡‚Å‚àƒNƒ‰ƒX–¼‚ğæ“¾‚Å‚«‚é‚æ‚¤‚É‚·‚é‚½‚ßB
+			// ':' ã‚’èª­ã¿è¾¼ã‚€ã¨ã€Œãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹åèª¿æŸ»å®Œäº†ã€ã¸ç§»è¡Œã™ã‚‹ã¨åŒæ™‚ã«
+			// szWordã‚’szItemNameã«ä¿å­˜ã—ã€ã‚ã¨ã§ ':' åˆã¯ '{' ã®ç›´å‰ã®å˜èªãŒèª¿ã¹ã‚‰ã‚Œã‚‹ã‚ˆã†ã«ã—ã¦ã„ã‚‹ã€‚
+			// ã“ã‚Œã¯ "__declspec( dllexport )"ã®ã‚ˆã†ã«"class"ã¨ã‚¯ãƒ©ã‚¹åã®é–“ã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãŒæ›¸ã„ã¦ã‚ã‚‹å ´åˆã§ã‚‚ã‚¯ãƒ©ã‚¹åã‚’å–å¾—ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã€‚
 			//
-			// '<' ‚ğ“Ç‚İ‚Ş‚Æuƒeƒ“ƒvƒŒ[ƒgƒNƒ‰ƒX–¼’²¸’†v‚ÉˆÚs‚·‚éB
-		M2_TEMPLATE_SAVE	= 0x12, //!< ƒeƒ“ƒvƒŒ[ƒgƒNƒ‰ƒX–¼’²¸’†
-			// ';' '{'‚ğ“Ç‚İ‚Ş‚Æu’Êív‚É‚È‚éB
-			// ‚Ü‚½A‚±‚Ìó‘Ô‚ÌŠÔ‚Í’PŒê‚ğ‹æØ‚é•û–@‚ğˆê“I‚É•ÏX‚µA
-			// utemplate_name <paramA,paramB>v‚Ì‚æ‚¤‚È•¶š—ñ‚ğˆê‚Â‚Ì’PŒê‚ğ‚İ‚È‚·‚æ‚¤‚É‚·‚éB
-			// ‚±‚ê‚Í“Áê‰»‚µ‚½ƒNƒ‰ƒXƒeƒ“ƒvƒŒ[ƒg‚ğÀ‘•‚·‚éÛ‚Ì\•¶‚Å—LŒø‚É“­‚­B	
-		M2_NAMESPACE_END	= 0x13,	//!< ƒl[ƒ€ƒXƒy[ƒX–¼’²¸Š®—¹B(';' '{' ‚ğ“Ç‚İ‚ñ‚¾“_‚Åu’Êív‚É‚È‚éB )
-		M2_OPERATOR_WORD	= 0x14, //!< operator–¼’²¸’†Boperator‚Å '('‚ÅŸ‚É‘JˆÚ@template<> names::operator<T>(x)
-		M2_TEMPLATE_WORD	= 0x15, //!< ƒeƒ“ƒvƒŒ[ƒg“Áê‰»‚ğ’²¸’† func<int>()“™ '’PŒê <'‚ÅM2_TEMPLATE_WORD‚É‚È‚èA'>'(ƒlƒXƒg”F¯)‚ÅM2_NORMAL/M2_OPERATOR_WORD‚É–ß‚é
-		M2_FUNC_NAME_END	= 0x16, //!< ŠÖ”–¼’²¸Š®—¹B(';' '{' ‚ğ“Ç‚İ‚ñ‚¾“_‚Åu’Êív‚É‚È‚éB )
-		M2_AFTER_EQUAL		= 0x05,	//!< '='‚ÌŒãB
-			//u’Êív‚©‚Â nNestLevel_fparam==0 ‚Å'='‚ªŒ©‚Â‚©‚é‚Æ‚±‚Ìó‘Ô‚É‚È‚éBi‚½‚¾‚µ "opreator"‚Ì’¼Œã‚Íœ‚­j
-			// ';'‚ªŒ©‚Â‚©‚é‚Æu’Êív‚É–ß‚éB
+			// '<' ã‚’èª­ã¿è¾¼ã‚€ã¨ã€Œãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚¯ãƒ©ã‚¹åèª¿æŸ»ä¸­ã€ã«ç§»è¡Œã™ã‚‹ã€‚
+		M2_TEMPLATE_SAVE	= 0x12, //!< ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚¯ãƒ©ã‚¹åèª¿æŸ»ä¸­
+			// ';' '{'ã‚’èª­ã¿è¾¼ã‚€ã¨ã€Œé€šå¸¸ã€ã«ãªã‚‹ã€‚
+			// ã¾ãŸã€ã“ã®çŠ¶æ…‹ã®é–“ã¯å˜èªã‚’åŒºåˆ‡ã‚‹æ–¹æ³•ã‚’ä¸€æ™‚çš„ã«å¤‰æ›´ã—ã€
+			// ã€Œtemplate_name <paramA,paramB>ã€ã®ã‚ˆã†ãªæ–‡å­—åˆ—ã‚’ä¸€ã¤ã®å˜èªã‚’ã¿ãªã™ã‚ˆã†ã«ã™ã‚‹ã€‚
+			// ã“ã‚Œã¯ç‰¹æ®ŠåŒ–ã—ãŸã‚¯ãƒ©ã‚¹ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’å®Ÿè£…ã™ã‚‹éš›ã®æ§‹æ–‡ã§æœ‰åŠ¹ã«åƒãã€‚	
+		M2_NAMESPACE_END	= 0x13,	//!< ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹åèª¿æŸ»å®Œäº†ã€‚(';' '{' ã‚’èª­ã¿è¾¼ã‚“ã æ™‚ç‚¹ã§ã€Œé€šå¸¸ã€ã«ãªã‚‹ã€‚ )
+		M2_OPERATOR_WORD	= 0x14, //!< operatoråèª¿æŸ»ä¸­ã€‚operatorã§ '('ã§æ¬¡ã«é·ç§»ã€€template<> names::operator<T>(x)
+		M2_TEMPLATE_WORD	= 0x15, //!< ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆç‰¹æ®ŠåŒ–ã‚’èª¿æŸ»ä¸­ func<int>()ç­‰ 'å˜èª <'ã§M2_TEMPLATE_WORDã«ãªã‚Šã€'>'(ãƒã‚¹ãƒˆèªè­˜)ã§M2_NORMAL/M2_OPERATOR_WORDã«æˆ»ã‚‹
+		M2_FUNC_NAME_END	= 0x16, //!< é–¢æ•°åèª¿æŸ»å®Œäº†ã€‚(';' '{' ã‚’èª­ã¿è¾¼ã‚“ã æ™‚ç‚¹ã§ã€Œé€šå¸¸ã€ã«ãªã‚‹ã€‚ )
+		M2_AFTER_EQUAL		= 0x05,	//!< '='ã®å¾Œã€‚
+			//ã€Œé€šå¸¸ã€ã‹ã¤ nNestLevel_fparam==0 ã§'='ãŒè¦‹ã¤ã‹ã‚‹ã¨ã“ã®çŠ¶æ…‹ã«ãªã‚‹ã€‚ï¼ˆãŸã ã— "opreator"ã®ç›´å¾Œã¯é™¤ãï¼‰
+			// ';'ãŒè¦‹ã¤ã‹ã‚‹ã¨ã€Œé€šå¸¸ã€ã«æˆ»ã‚‹ã€‚
 			// int val=abs(-1);
-			// ‚Ì‚æ‚¤‚È•¶‚ªŠÖ”‚Æ‚İ‚È‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß‚Ég—p‚·‚éB
-		M2_KR_FUNC	= 0x18,	//!< K&RƒXƒ^ƒCƒ‹/C++‚ÌŠÖ”’è‹`‚ğ’²¸‚·‚éBfunc() word ©word‚ª‚ ‚é‚Æ‘JˆÚ‚·‚é
+			// ã®ã‚ˆã†ãªæ–‡ãŒé–¢æ•°ã¨ã¿ãªã•ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã«ä½¿ç”¨ã™ã‚‹ã€‚
+		M2_KR_FUNC	= 0x18,	//!< K&Rã‚¹ã‚¿ã‚¤ãƒ«/C++ã®é–¢æ•°å®šç¾©ã‚’èª¿æŸ»ã™ã‚‹ã€‚func() word â†wordãŒã‚ã‚‹ã¨é·ç§»ã™ã‚‹
 		M2_AFTER_ITEM		= 0x10,
 	} nMode2 = M2_NORMAL;
-	MODE2 nMode2Old = M2_NORMAL; // M2_TEMPLATE_WORD‚É‚È‚é’¼‘O‚ÌnMode2
+	MODE2 nMode2Old = M2_NORMAL; // M2_TEMPLATE_WORDã«ãªã‚‹ç›´å‰ã®nMode2
 	MODE2 nMode2AttOld = M2_NORMAL;
-	bool  bDefinedTypedef = false;	// typedef ‚ª‘‚©‚ê‚Ä‚¢‚éBtrue‚ÌŠÔ‚ÍŠÖ”–¼‚Æ‚µ‚Ä”F¯‚µ‚È‚¢B;‚Å•œ‹A‚·‚é
-	bool  bNoFunction = true; // fparam‚¾‚¯‚ÇŠÖ”’è‹`‚Å‚È‚¢‰Â”\«‚Ìê‡
+	bool  bDefinedTypedef = false;	// typedef ãŒæ›¸ã‹ã‚Œã¦ã„ã‚‹ã€‚trueã®é–“ã¯é–¢æ•°åã¨ã—ã¦èªè­˜ã—ãªã„ã€‚;ã§å¾©å¸°ã™ã‚‹
+	bool  bNoFunction = true; // fparamã ã‘ã©é–¢æ•°å®šç¾©ã§ãªã„å¯èƒ½æ€§ã®å ´åˆ
 
-	const int	nNamespaceNestMax	= 32;			//!< ƒlƒXƒg‰Â”\‚Èƒl[ƒ€ƒXƒy[ƒXAƒNƒ‰ƒX“™‚ÌÅ‘å”
-	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ƒl[ƒ€ƒXƒy[ƒX‘S‘Ì‚Ì’·‚³
-	const int	nNamespaceLenMax 	= 512;			//!< Å‘å‚Ìƒl[ƒ€ƒXƒy[ƒX‘S‘Ì‚Ì’·‚³
-	wchar_t		szNamespace[nNamespaceLenMax];		//!< Œ»İ‚Ìƒl[ƒ€ƒXƒy[ƒX(I’[‚ª\0‚É‚È‚Á‚Ä‚¢‚é‚Æ‚ÍŒÀ‚ç‚È‚¢‚Ì‚Å’ˆÓ)
+	const int	nNamespaceNestMax	= 32;			//!< ãƒã‚¹ãƒˆå¯èƒ½ãªãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ã€ã‚¯ãƒ©ã‚¹ç­‰ã®æœ€å¤§æ•°
+	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å…¨ä½“ã®é•·ã•
+	const int	nNamespaceLenMax 	= 512;			//!< æœ€å¤§ã®ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å…¨ä½“ã®é•·ã•
+	wchar_t		szNamespace[nNamespaceLenMax];		//!< ç¾åœ¨ã®ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹(çµ‚ç«¯ãŒ\0ã«ãªã£ã¦ã„ã‚‹ã¨ã¯é™ã‚‰ãªã„ã®ã§æ³¨æ„)
 	const int 	nItemNameLenMax	 	= 256;
-	wchar_t		szItemName[nItemNameLenMax];		//!< ‚·‚®‘O‚Ì ŠÖ”–¼ or ƒNƒ‰ƒX–¼ or \‘¢‘Ì–¼ or ‹¤—p‘Ì–¼ or —ñ‹“‘Ì–¼ or ƒl[ƒ€ƒXƒy[ƒX–¼
-	wchar_t		szTemplateName[nItemNameLenMax];		//!< ‚·‚®‘O‚Ì ŠÖ”–¼ or ƒNƒ‰ƒX–¼ or \‘¢‘Ì–¼ or ‹¤—p‘Ì–¼ or —ñ‹“‘Ì–¼ or ƒl[ƒ€ƒXƒy[ƒX–¼
-	// —á‚¦‚Î‰º‚ÌƒR[ƒh‚Ì©‚Ì•”•ª‚Å‚Ì
-	// szNamespace‚Í"Namespace\ClassName\"
-	// nMamespaceLen‚Í{10,20}
-	// nNestLevel_global‚Í2‚Æ‚È‚éB
+	wchar_t		szItemName[nItemNameLenMax];		//!< ã™ãå‰ã® é–¢æ•°å or ã‚¯ãƒ©ã‚¹å or æ§‹é€ ä½“å or å…±ç”¨ä½“å or åˆ—æŒ™ä½“å or ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å
+	wchar_t		szTemplateName[nItemNameLenMax];		//!< ã™ãå‰ã® é–¢æ•°å or ã‚¯ãƒ©ã‚¹å or æ§‹é€ ä½“å or å…±ç”¨ä½“å or åˆ—æŒ™ä½“å or ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹å
+	// ä¾‹ãˆã°ä¸‹ã®ã‚³ãƒ¼ãƒ‰ã®â†ã®éƒ¨åˆ†ã§ã®
+	// szNamespaceã¯"Namespace\ClassName\"
+	// nMamespaceLenã¯{10,20}
+	// nNestLevel_globalã¯2ã¨ãªã‚‹ã€‚
 	//
-	//@namespace Namespace{
-	//@class ClassName{
-	//@©
-	//@}}
+	//ã€€namespace Namespace{
+	//ã€€class ClassName{
+	//ã€€â†
+	//ã€€}}
 	wchar_t		szRawStringTag[32];	// C++11 raw string litteral
 	int nRawStringTagLen = 0;
 	int nRawStringTagCompLen = 0;
 
-	CLogicInt	nItemLine(0);		//!< ‚·‚®‘O‚Ì ŠÖ” or ƒNƒ‰ƒX or \‘¢‘Ì or ‹¤—p‘Ì or —ñ‹“‘Ì or ƒl[ƒ€ƒXƒy[ƒX‚Ì‚ ‚és
+	CLogicInt	nItemLine(0);		//!< ã™ãå‰ã® é–¢æ•° or ã‚¯ãƒ©ã‚¹ or æ§‹é€ ä½“ or å…±ç”¨ä½“ or åˆ—æŒ™ä½“ or ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ã®ã‚ã‚‹è¡Œ
 	int			nItemFuncId = 0;
 
 	szWordPrev[0] = L'\0';
@@ -465,7 +465,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	szTemplateName[0] = L'\0';
 	nMode = 0;
 	
-	//	Aug. 10, 2004 genta ƒvƒŠƒvƒƒZƒXˆ—ƒNƒ‰ƒX
+	//	Aug. 10, 2004 genta ãƒ—ãƒªãƒ—ãƒ­ã‚»ã‚¹å‡¦ç†ã‚¯ãƒ©ã‚¹
 	CCppPreprocessMng cCppPMng;
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	
@@ -474,16 +474,16 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 
 		//	From Here Aug. 10, 2004 genta
-		//	ƒvƒŠƒvƒƒZƒXˆ—
-		//	ƒRƒƒ“ƒg’†‚Å‚È‚¯‚ê‚ÎƒvƒŠƒvƒƒZƒbƒTw—ß‚ğæ‚É”»’è‚³‚¹‚é
-		if( 8 != nMode && 10 != nMode ){	/* chg 2005/12/6 ‚¶‚ã‚¤‚¶ Ÿ‚Ìs‚ª‹ó”’‚Å‚à‚æ‚¢	*/
+		//	ãƒ—ãƒªãƒ—ãƒ­ã‚»ã‚¹å‡¦ç†
+		//	ã‚³ãƒ¡ãƒ³ãƒˆä¸­ã§ãªã‘ã‚Œã°ãƒ—ãƒªãƒ—ãƒ­ã‚»ãƒƒã‚µæŒ‡ä»¤ã‚’å…ˆã«åˆ¤å®šã•ã›ã‚‹
+		if( 8 != nMode && 10 != nMode ){	/* chg 2005/12/6 ã˜ã‚…ã†ã˜ æ¬¡ã®è¡ŒãŒç©ºç™½ã§ã‚‚ã‚ˆã„	*/
 			i = cCppPMng.ScanLine( pLine, nLineLen );
 		}
 		else {
 			i = CLogicInt(0);
 		}
-		//	C/C++‚Æ‚µ‚Ä‚Ìˆ—‚ª•s—v‚ÈƒP[ƒX‚Å‚Í i == nLineLen‚Æ‚È‚Á‚Ä‚¢‚é‚Ì‚Å
-		//	ˆÈ‰º‚Ì‰ğÍˆ—‚ÍSKIP‚³‚ê‚éD
+		//	C/C++ã¨ã—ã¦ã®å‡¦ç†ãŒä¸è¦ãªã‚±ãƒ¼ã‚¹ã§ã¯ i == nLineLenã¨ãªã£ã¦ã„ã‚‹ã®ã§
+		//	ä»¥ä¸‹ã®è§£æå‡¦ç†ã¯SKIPã•ã‚Œã‚‹ï¼
 		//	To Here Aug. 10, 2004 genta
 #ifdef TRACE_OUTLINE
 		DEBUG_TRACE(_T("line:%ls"), pLine);
@@ -493,13 +493,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 			DEBUG_TRACE(_T("%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n"), int((Int)i), pLine[i], nMode, nMode2,
 				nNestLevel_global, nNestLevel_func, nNestLevel_fparam, szWord, szWordPrev, szTemplateName, szItemName, nWordIdx );
 #endif
-/* del start 2005/12/6 ‚¶‚ã‚¤‚¶	*/
-			/* ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚Íí‚Éæ‚èœ‚­ */
-			/* ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
-			/* ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
-			// ‚¢‚¸‚ê‚àƒRƒƒ“ƒgˆ—‚ÌŒã‚ÖˆÚ“®
-/* del end 2005/12/6 ‚¶‚ã‚¤‚¶	*/
-			/* ƒRƒƒ“ƒg“Ç‚İ‚İ’† */
+/* del start 2005/12/6 ã˜ã‚…ã†ã˜	*/
+			/* ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã¯å¸¸ã«å–ã‚Šé™¤ã */
+			/* ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
+			/* ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
+			// ã„ãšã‚Œã‚‚ã‚³ãƒ¡ãƒ³ãƒˆå‡¦ç†ã®å¾Œã¸ç§»å‹•
+/* del end 2005/12/6 ã˜ã‚…ã†ã˜	*/
+			/* ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­ */
 			if( 8 == nMode ){
 				if( i < nLineLen - 1 && '*' == pLine[i] &&  '/' == pLine[i + 1] ){
 					++i;
@@ -508,7 +508,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 				}
 			}
-			/* ƒ‰ƒCƒ“ƒRƒƒ“ƒg“Ç‚İ‚İ’† */
+			/* ãƒ©ã‚¤ãƒ³ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­ */
 			// 2003/06/24 zenryaku
 			else if( 10 == nMode)
 			{
@@ -518,12 +518,12 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				i = nLineLen;
 				continue;
 			}
-			/* add start 2005/12/6 ‚¶‚ã‚¤‚¶	*/
-			/* ƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX‚Íí‚Éæ‚èœ‚­ */
+			/* add start 2005/12/6 ã˜ã‚…ã†ã˜	*/
+			/* ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ã¯å¸¸ã«å–ã‚Šé™¤ã */
 			else if( '\\' == pLine[i] && nRawStringTagLen == 0 ){
 				++i;
 			}
-			/* ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
+			/* ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			else if( 20 == nMode ){
 				if( '\'' == pLine[i] ){
 					nMode = 0;
@@ -531,7 +531,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 				}
 			}
-			/* ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
+			/* ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			else if( 21 == nMode ){
 				// operator "" _userliteral
 				if( nMode2 == M2_OPERATOR_WORD ){
@@ -557,8 +557,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 				}
 			}
-			/* add end 2005/12/6 ‚¶‚ã‚¤‚¶	*/
-			/* ’PŒê“Ç‚İ‚İ’† */
+			/* add end 2005/12/6 ã˜ã‚…ã†ã˜	*/
+			/* å˜èªèª­ã¿è¾¼ã¿ä¸­ */
 			else if( 1 == nMode ){
 				if( C_IsWordChar( pLine[i] ) ){
 					++nWordIdx;
@@ -570,7 +570,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							if( pLine[i + 1] == L':' ||  0 < i && pLine[i-1] == L':' ){
 								// name ::class or class :: member
 							}else{
-								// class Klass:base ‚Ì‚æ‚¤‚É:‚Ì‘O‚ÉƒXƒy[ƒX‚ª‚È‚¢ê‡
+								// class Klass:base ã®ã‚ˆã†ã«:ã®å‰ã«ã‚¹ãƒšãƒ¼ã‚¹ãŒãªã„å ´åˆ
 								if(nMode2 == M2_NAMESPACE_SAVE)
 								{
 									if(szWord[0]!='\0')
@@ -588,22 +588,22 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						szWord[nWordIdx + 1] = L'\0';
 					}
 				}else{
-					// 2002/10/27 frozen@‚±‚±‚©‚ç
+					// 2002/10/27 frozenã€€ã“ã“ã‹ã‚‰
 					if( nMode2 == M2_NAMESPACE_SAVE ){
 						if( wcscmp(L"final", szWord) == 0 && wcscmp(LSW(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
-							// strcut name final ‚Ìfinal‚ÍƒNƒ‰ƒX–¼‚Ìˆê•”‚Å‚Í‚È‚¢
-							// ‚½‚¾‚µ struct final‚Í–¼‘O
+							// strcut name final ã®finalã¯ã‚¯ãƒ©ã‚¹åã®ä¸€éƒ¨ã§ã¯ãªã„
+							// ãŸã ã— struct finalã¯åå‰
 						}else{
 							wcscpy( szTemplateName, szWord );
 							wcscpy( szItemName, szWord );
 						}
 					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
-						// strcut name<X> final ‚Ìfinal‚ÍƒNƒ‰ƒX–¼‚Ìˆê•”‚Å‚Í‚È‚¢
-						// struct name<final> ‚Ìfinal‚Íˆê•”
+						// strcut name<X> final ã®finalã¯ã‚¯ãƒ©ã‚¹åã®ä¸€éƒ¨ã§ã¯ãªã„
+						// struct name<final> ã®finalã¯ä¸€éƒ¨
 						if( wcscmp(L"final", szWord) != 0 || nNestLevel_template != 0 ){
 							int nLen = wcslen(szTemplateName);
 							if( 0 < nLen && C_IsWordChar(szTemplateName[nLen - 1]) && szTemplateName[nLen - 1] != L':' && szWord[nWordIdx] != L':' ){
-								// template func<const x>() ‚Ì‚æ‚¤‚Èê‡‚Éconst‚ÌŒã‚ë‚ÉƒXƒy[ƒX‚ğ‘}“ü
+								// template func<const x>() ã®ã‚ˆã†ãªå ´åˆã«constã®å¾Œã‚ã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ¿å…¥
 								if( nLen + 1 < nItemNameLenMax ){
 									wcscat( szTemplateName, L" " );
 									nLen++;
@@ -612,7 +612,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							wcsncat( szTemplateName, szWord, nItemNameLenMax - nLen - 1 );
 						}
 					}
-					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji ŠÖ”Œ^ƒ}ƒNƒŒÄo‚µ‚ğŠÖ”‚ÆŒë”F‚·‚é‚±‚Æ‚ª‚ ‚é–â‘è‘Îô‚Æ‚µ‚Ä nMode2 == M2_FUNC_NAME_END ğŒ‚ğ’Ç‰Á‚µA•â³‚ª‚©‚©‚é‚æ‚¤‚É‚µ‚½B
+					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji é–¢æ•°å‹ãƒã‚¯ãƒ­å‘¼å‡ºã—ã‚’é–¢æ•°ã¨èª¤èªã™ã‚‹ã“ã¨ãŒã‚ã‚‹å•é¡Œå¯¾ç­–ã¨ã—ã¦ nMode2 == M2_FUNC_NAME_END æ¡ä»¶ã‚’è¿½åŠ ã—ã€è£œæ­£ãŒã‹ã‹ã‚‹ã‚ˆã†ã«ã—ãŸã€‚
 					{
 						if( nMode2 == M2_NORMAL )
 							nItemFuncId = 0;
@@ -626,29 +626,29 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							nItemFuncId = FL_OBJ_ENUM;
 						else if( wcscmp(szWord,L"union")==0 )
 							nItemFuncId = FL_OBJ_UNION;
-						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" ‚ğƒNƒ‰ƒX‚É—Ş‚·‚éˆµ‚¢‚É‚·‚é
+						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" ã‚’ã‚¯ãƒ©ã‚¹ã«é¡ã™ã‚‹æ‰±ã„ã«ã™ã‚‹
 							nItemFuncId = FL_OBJ_INTERFACE;
 						else if( wcscmp(szWord,L"typedef") == 0 )
 							bDefinedTypedef = true;
-						if( nItemFuncId != 0 && nItemFuncId != FL_OBJ_FUNCTION )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END ‚Ì‚Æ‚«‚Í nItemFuncId == 2 ‚Ì‚Í‚¸
+						if( nItemFuncId != 0 && nItemFuncId != FL_OBJ_FUNCTION )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END ã®ã¨ãã¯ nItemFuncId == 2 ã®ã¯ãš
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
 							wcscpy(szItemName,LSW(STR_OUTLINE_CPP_NONAME));
 						}
 					}
-					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji ã‚ÅğŒ•ÏX‚µ‚½‚Ì‚Ås“ª‚Ì else ‚ğœ‹
+					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji ä¸Šã§æ¡ä»¶å¤‰æ›´ã—ãŸã®ã§è¡Œé ­ã® else ã‚’é™¤å»
 					{
 						nMode2 = M2_KR_FUNC;
 					}
-					// 2002/10/27 frozen@‚±‚±‚Ü‚Å
+					// 2002/10/27 frozenã€€ã“ã“ã¾ã§
 					if( nMode2 == M2_NORMAL ){
-						// template‚ÍI‚í‚Á‚½
+						// templateã¯çµ‚ã‚ã£ãŸ
 						szTemplateName[0] = L'\0';
 					}
 
 					//	To Here Mar. 31, 2001 genta
-					// 2004/03/12 zenryaku ƒL[ƒ[ƒh‚É _ ‚Æ PARAMS ‚ğg‚í‚¹‚È‚¢ (GNU‚ÌƒR[ƒh‚ªŒ©‚É‚­‚­‚È‚é‚©‚ç)
+					// 2004/03/12 zenryaku ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã« _ ã¨ PARAMS ã‚’ä½¿ã‚ã›ãªã„ (GNUã®ã‚³ãƒ¼ãƒ‰ãŒè¦‹ã«ãããªã‚‹ã‹ã‚‰)
 					if( !( wcscmp(L"PARAMS",szWord) == 0 || wcscmp(L"_",szWord) == 0 ) )
 						wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
@@ -658,7 +658,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					continue;
 				}
 			}else
-			/* ‹L†—ñ“Ç‚İ‚İ’† */
+			/* è¨˜å·åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			if( 2 == nMode ){
 				if( C_IsWordChar( pLine[i] ) ||
 					C_IsSpace( pLine[i], bExtEol ) ||
@@ -697,7 +697,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						const wchar_t* p = &szWord[nWordIdx-8];
 						if(  (8 <= nWordIdx && wcsncmp(L"operator<", p, 9) == 0)
 						 || ((9 <= nWordIdx && wcsncmp(L"operator<<", p-1, 10) == 0) && 0 < i && L'<' == pLine[i-1]) ){
-							// ˆá‚¤Foperator<<const() / operator<<()
+							// é•ã†ï¼šoperator<<const() / operator<<()
 						}else{
 							// operator< <T>() / operator<<<T>() / operator+<T>()
 							nMode2Old = nMode2;
@@ -728,17 +728,17 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 				}
 			}else
-			/* ’·‰ß‚¬‚é’PŒê–³‹’† */
+			/* é•·éãã‚‹å˜èªç„¡è¦–ä¸­ */
 			if( 999 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( C_IsSpace( pLine[i], bExtEol ) ){
 					nMode = 0;
 					continue;
 				}
 			}else
-			/* ƒm[ƒ}ƒ‹ƒ‚[ƒh */
+			/* ãƒãƒ¼ãƒãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 			if( 0 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( C_IsSpace( pLine[i], bExtEol ) )
 					continue;
 
@@ -759,7 +759,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				if( '"' == pLine[i] ){
 					int nLen = (int)wcslen(szWordPrev);
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
-						// ‰‰Zq‚ÌƒIƒyƒŒ[ƒ^‚¾‚Á‚½ operator ""i
+						// æ¼”ç®—å­ã®ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã ã£ãŸ operator ""i
 						if( nLen + 1 < _countof(szWordPrev) ){
 							szWordPrev[nLen] = pLine[i];
 							szWordPrev[nLen + 1] = L'\0';
@@ -792,7 +792,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					continue;
 				}else
 				
-				// 2002/10/27 frozen ‚±‚±‚©‚ç
+				// 2002/10/27 frozen ã“ã“ã‹ã‚‰
 				if( '{' == pLine[i] )
 				{
 					bool bAddFunction = false;
@@ -808,17 +808,17 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							nNestLevel_global < nNamespaceNestMax &&
 							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + nLenDefPos + 1) < nNamespaceLenMax &&
 							(nItemLine > 0) )
-					// ‚R”Ô–Ú‚Ì(&&‚ÌŒã‚Ì)ğŒ
-					// ƒoƒbƒtƒ@‚ª‘«‚è‚È‚¢ê‡‚Í€–Ú‚Ì’Ç‰Á‚ğs‚í‚È‚¢B
-					// +nLenDefPos‚Í’Ç‰Á‚·‚é•¶š—ñ‚ÌÅ‘å’·(’Ç‰Á‚·‚é•¶š—ñ‚Í"::’è‹`ˆÊ’u"‚ªÅ’·)
-					// +1‚ÍI’[NUL•¶š
+					// ï¼“ç•ªç›®ã®(&&ã®å¾Œã®)æ¡ä»¶
+					// ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãªã„å ´åˆã¯é …ç›®ã®è¿½åŠ ã‚’è¡Œã‚ãªã„ã€‚
+					// +nLenDefPosã¯è¿½åŠ ã™ã‚‹æ–‡å­—åˆ—ã®æœ€å¤§é•·(è¿½åŠ ã™ã‚‹æ–‡å­—åˆ—ã¯"::å®šç¾©ä½ç½®"ãŒæœ€é•·)
+					// +1ã¯çµ‚ç«¯NULæ–‡å­—
 					{
 						wcscpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
 						szItemName[0] = L'\0';
-						//	Jan. 30, 2005 genta M2_KR_FUNC ’Ç‰Á
-						//	ŠÖ”‚ÌŒã‚ë‚Éconst, throw ‚Ü‚½‚Í‰Šú‰»q‚ª‚ ‚é‚Æ
-						//	M2_KR_FUNC‚É‘JˆÚ‚µ‚ÄC';'‚ªŒ©‚Â‚©‚ç‚È‚¢‚Æ‚»‚Ìó‘Ô‚Ì‚Ü‚Ü
-						//	’†Š‡ŒÊ‚É‘˜‹ö‚·‚éD
+						//	Jan. 30, 2005 genta M2_KR_FUNC è¿½åŠ 
+						//	é–¢æ•°ã®å¾Œã‚ã«const, throw ã¾ãŸã¯åˆæœŸåŒ–å­ãŒã‚ã‚‹ã¨
+						//	M2_KR_FUNCã«é·ç§»ã—ã¦ï¼Œ';'ãŒè¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã®çŠ¶æ…‹ã®ã¾ã¾
+						//	ä¸­æ‹¬å¼§ã«é­é‡ã™ã‚‹ï¼
 						if( bAddFunction ){
 							++ nNestLevel_func;
 						}
@@ -837,10 +837,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							}
 						}
 						/*
-						  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-						  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-						  ¨
-						  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+						  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+						  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+						  â†’
+						  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 						*/
 						CLayoutPoint ptPosXY;
 						m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -853,7 +853,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1) , szNamespace, nItemFuncId);
 						bDefinedTypedef = false;
 						nItemLine = -1;
-						//	Jan. 30, 2005 genta M2_KR_FUNC ’Ç‰Á
+						//	Jan. 30, 2005 genta M2_KR_FUNC è¿½åŠ 
 						if( !bAddFunction )
 						{
 							szNamespace[nNamespaceLen[nNestLevel_global]] = L':';
@@ -862,7 +862,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					else
 					{
-						//	Jan. 30, 2005 genta M2_KR_FUNC ’Ç‰Á
+						//	Jan. 30, 2005 genta M2_KR_FUNC è¿½åŠ 
 						if( bAddFunction )
 							++ nNestLevel_func;
 						else
@@ -880,10 +880,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					// nNestLevel2 = 0;
 					continue;
 				}else
-				// 2002/10/27 frozen ‚±‚±‚Ü‚Å
+				// 2002/10/27 frozen ã“ã“ã¾ã§
 				
 				if( '}' == pLine[i] ){
-					//  2002/10/27 frozen ‚±‚±‚©‚ç
+					//  2002/10/27 frozen ã“ã“ã‹ã‚‰
 //					nNestLevel2 = 0;
 					if(nNestLevel_func == 0)
 					{
@@ -896,14 +896,14 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					else
 						--nNestLevel_func;
-					//  2002/10/27 frozen ‚±‚±‚Ü‚Å
+					//  2002/10/27 frozen ã“ã“ã¾ã§
 					nMode = 0;
 					nMode2 = M2_NORMAL;
 					nMode2Old = M2_NORMAL;
 					continue;
 				}else
 				if( '(' == pLine[i] ){
-					//  2002/10/27 frozen ‚±‚±‚©‚ç
+					//  2002/10/27 frozen ã“ã“ã‹ã‚‰
 //					if( nNestLevel == 0 && !bCppInitSkip ){
 //						wcscpy( szFuncName, szWordPrev );
 //						nFuncLine = nLineCount + 1;
@@ -918,7 +918,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						if( k < nLineLen && pLine[k] == L')' ){
 							for( k++; k < nLineLen && C_IsSpace(pLine[k], bExtEol); k++){}
 							if( k < nLineLen && (pLine[k] == L'<' || pLine[k] == L'(' ) ){
-								// ƒIƒyƒŒ[ƒ^‚¾‚Á‚½ operator()( / operator()<;
+								// ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã ã£ãŸ operator()( / operator()<;
 								if( nLen + 1 < _countof(szWordPrev) ){
 									szWordPrev[nLen] = pLine[i];
 									szWordPrev[nLen + 1] = L'\0';
@@ -926,13 +926,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								nMode2 = M2_OPERATOR_WORD;
 								bOperator = true;
 							}else{
-								// ƒIƒyƒŒ[ƒ^‚©operator‚Æ‚¢‚¤C‚ÌŠÖ”
+								// ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã‹operatorã¨ã„ã†Cã®é–¢æ•°
 							}
 						}
 					}
-					//	2007.05.26 genta C++/CLI nMode2 == M2_NAMESPACE_END‚Ìê‡‚ğ‘ÎÛŠO‚É
-					//	NAMESPACE_END(class ƒNƒ‰ƒX–¼ :‚ÌŒã‚ë)‚É‚¨‚¢‚Ä‚Í()‚ğŠÖ”‚Æ‚İ‚È‚³‚È‚¢D
-					//	TEMPLATE<sizeof(int)> ‚Ì‚æ‚¤‚ÈƒP[ƒX‚Åsizeof‚ğŠÖ”‚ÆŒë”F‚·‚éD
+					//	2007.05.26 genta C++/CLI nMode2 == M2_NAMESPACE_ENDã®å ´åˆã‚’å¯¾è±¡å¤–ã«
+					//	NAMESPACE_END(class ã‚¯ãƒ©ã‚¹å :ã®å¾Œã‚)ã«ãŠã„ã¦ã¯()ã‚’é–¢æ•°ã¨ã¿ãªã•ãªã„ï¼
+					//	TEMPLATE<sizeof(int)> ã®ã‚ˆã†ãªã‚±ãƒ¼ã‚¹ã§sizeofã‚’é–¢æ•°ã¨èª¤èªã™ã‚‹ï¼
 					if( !bOperator && nNestLevel_func == 0
 					  && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_OPERATOR_WORD || nMode2 == M2_KR_FUNC) ){
 						if(nNestLevel_fparam==0)
@@ -947,7 +947,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								bAdd = false;
 							}else{
 								if( !(nMode2 == M2_KR_FUNC && bInInitList) && !(nMode2 == M2_KR_FUNC
-									&& CPP_IsFunctionAfterKeyword(szWordPrev)) )	// 2010.07.08 ryoji ‰Šú‰»ƒŠƒXƒg‚É“ü‚éˆÈ‘O‚Ü‚Å‚ÍŒã”­‚Ì–¼‘O‚ğ—Dæ“I‚ÉŠÖ”–¼Œó•â‚Æ‚·‚é
+									&& CPP_IsFunctionAfterKeyword(szWordPrev)) )	// 2010.07.08 ryoji åˆæœŸåŒ–ãƒªã‚¹ãƒˆã«å…¥ã‚‹ä»¥å‰ã¾ã§ã¯å¾Œç™ºã®åå‰ã‚’å„ªå…ˆçš„ã«é–¢æ•°åå€™è£œã¨ã™ã‚‹
 								{
 									bNoFunction = false;
 								}else{
@@ -965,7 +965,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						}
 						++ nNestLevel_fparam;
 					}
-					//  2002/10/27 frozen ‚±‚±‚Ü‚Å
+					//  2002/10/27 frozen ã“ã“ã¾ã§
 					if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
 						int nItemNameLen = wcslen(szTemplateName);
 						if( nItemNameLen + 1 < nItemNameLenMax ){
@@ -976,7 +976,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					continue;
 				}else
 				if( ')' == pLine[i] ){
-					//  2002/10/27 frozen ‚±‚±‚©‚ç
+					//  2002/10/27 frozen ã“ã“ã‹ã‚‰
 //					if( 1 == nNestLevel2 ){
 //						nNestLevel2 = 2;
 //					}
@@ -984,7 +984,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nNestLevel_fparam > 0)
 					{
 						--nNestLevel_fparam;
-						//	2007.05.26 genta C++/CLI Attribute“à•”‚Å‚ÍnMode2‚Ì•ÏX‚Ís‚í‚È‚¢
+						//	2007.05.26 genta C++/CLI Attributeå†…éƒ¨ã§ã¯nMode2ã®å¤‰æ›´ã¯è¡Œã‚ãªã„
 						if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE && nMode2 != M2_TEMPLATE_WORD ){
 							if( nMode2 == M2_NORMAL )
 								bInInitList = false;
@@ -994,7 +994,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							}
 						}
 					}
-					//  2002/10/27 frozen ‚±‚±‚Ü‚Å
+					//  2002/10/27 frozen ã“ã“ã¾ã§
 					if( nMode2 == M2_OPERATOR_WORD ){
 						int nLen = wcslen(szWordPrev);
 						if( nLen + 1 < _countof(szWordPrev) ){
@@ -1010,11 +1010,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					continue;
 				}else
-				// From Here 2007.05.26 genta C++/CLI Attribute‚Ìæ‚èˆµ‚¢
+				// From Here 2007.05.26 genta C++/CLI Attributeã®å–ã‚Šæ‰±ã„
 				if( '[' == pLine[i] ){
 					int nLen = (int)wcslen(szWordPrev);
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
-						// ‰‰Zq‚ÌƒIƒyƒŒ[ƒ^‚¾‚Á‚½ operator []
+						// æ¼”ç®—å­ã®ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã ã£ãŸ operator []
 						if( nLen + 1 < _countof(szWordPrev) ){
 							szWordPrev[nLen] = pLine[i];
 							szWordPrev[nLen + 1] = L'\0';
@@ -1030,8 +1030,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					continue;
 				} else
 				if( ']' == pLine[i] ){
-					//	Attribute“à•”‚Å‚à[]‚ğ”z—ñ‚Æ‚µ‚Äg‚¤‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅC
-					//	Š‡ŒÊ‚ÌƒŒƒxƒ‹‚ÍŒ³‚É–ß‚Á‚Ä‚¢‚é•K—v—L‚è
+					//	Attributeå†…éƒ¨ã§ã‚‚[]ã‚’é…åˆ—ã¨ã—ã¦ä½¿ã†ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ï¼Œ
+					//	æ‹¬å¼§ã®ãƒ¬ãƒ™ãƒ«ã¯å…ƒã«æˆ»ã£ã¦ã„ã‚‹å¿…è¦æœ‰ã‚Š
 					if( nNestLevel_fparam == 0 && nMode2 == M2_ATTRIBUTE ) {
 						nMode2 = nMode2AttOld;
 						continue;
@@ -1044,37 +1044,37 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						}
 					}
 				} else
-				// To Here 2007.05.26 genta C++/CLI Attribute‚Ìæ‚èˆµ‚¢
+				// To Here 2007.05.26 genta C++/CLI Attributeã®å–ã‚Šæ‰±ã„
 				if( ';' == pLine[i] ){
-					//  2002/10/27 frozen ‚±‚±‚©‚ç
+					//  2002/10/27 frozen ã“ã“ã‹ã‚‰
 					if( nMode2 == M2_KR_FUNC )
 					{
-						// zenryaku K&RƒXƒ^ƒCƒ‹‚ÌŠÖ”éŒ¾‚ÌI—¹Œã M2_FUNC_NAME_END ‚É‚à‚Ç‚·
+						// zenryaku K&Rã‚¹ã‚¿ã‚¤ãƒ«ã®é–¢æ•°å®£è¨€ã®çµ‚äº†å¾Œ M2_FUNC_NAME_END ã«ã‚‚ã©ã™
 						nMode2 = M2_FUNC_NAME_END;
 						if( nOutlineType == OUTLINE_C ){
-							// C‚Ì‚Æ‚«‚ÍK&R’è‹`B
+							// Cã®ã¨ãã¯K&Rå®šç¾©ã€‚
 							continue;
 						}
-						// ‚»‚êˆÈŠO‚ÍC++‚ÌˆÈ‰º‚Ì‚æ‚¤‚Èê‡
+						// ãã‚Œä»¥å¤–ã¯C++ã®ä»¥ä¸‹ã®ã‚ˆã†ãªå ´åˆ
 						// int funcname() const;
 						// void funcname() throw(MyException);
 						// auto funcname() -> int;
-					} //	Jan. 30, 2005 genta K&Rˆ—‚Éˆø‚«‘±‚¢‚ÄéŒ¾ˆ—‚às‚¤D
+					} //	Jan. 30, 2005 genta K&Rå‡¦ç†ã«å¼•ãç¶šã„ã¦å®£è¨€å‡¦ç†ã‚‚è¡Œã†ï¼
 					if( nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
 						(nNamespaceLen[nNestLevel_global] + wcslen(szItemName)) < nNamespaceLenMax &&
 						nNestPoint_class == 0 && !bDefinedTypedef && 0 < nItemLine)
-					// ‚R”Ô–Ú‚Ì(&&‚ÌŒã‚Ì)ğŒ
-					// ƒoƒbƒtƒ@‚ª‘«‚è‚È‚¢ê‡‚Í€–Ú‚Ì’Ç‰Á‚ğs‚í‚È‚¢B
+					// ï¼“ç•ªç›®ã®(&&ã®å¾Œã®)æ¡ä»¶
+					// ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãªã„å ´åˆã¯é …ç›®ã®è¿½åŠ ã‚’è¡Œã‚ãªã„ã€‚
 					{
 						wcscpy( &szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName);
 
 						nItemFuncId = FL_OBJ_DECLARE;
 						/*
-						  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-						  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-						  ¨
-						  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+						  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+						  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+						  â†’
+						  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 						*/
 						CLayoutPoint ptPosXY;
 						m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -1088,32 +1088,32 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					nItemLine = -1;
 					szWordPrev[0] = L'\0';
-					szTemplateName[0] = L'\0'; // hoge < ... ; ‚Ítemplate‚Å‚Í‚È‚©‚Á‚½‚Ì‚ÅƒNƒŠƒA
+					szTemplateName[0] = L'\0'; // hoge < ... ; ã¯templateã§ã¯ãªã‹ã£ãŸã®ã§ã‚¯ãƒªã‚¢
 					nNestLevel_template = 0;
 					nMode2 = M2_NORMAL;
-					//  2002/10/27 frozen ‚±‚±‚Ü‚Å
+					//  2002/10/27 frozen ã“ã“ã¾ã§
 					bNoFunction = true;
 					bDefinedTypedef = false;
 					nMode2Old = M2_NORMAL;
 					nMode = 0;
 					continue;
 				}else if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE ){
-					// 2007.05.26 genta C++/CLI Attribute“à•”‚Å‚ÍŠÖ”–¼ˆ—‚ÍˆêØs‚í‚È‚¢
+					// 2007.05.26 genta C++/CLI Attributeå†…éƒ¨ã§ã¯é–¢æ•°åå‡¦ç†ã¯ä¸€åˆ‡è¡Œã‚ãªã„
 					if( C_IsWordChar( pLine[i] ) ){
 						//	//	Mar. 15, 2000 genta
 						//	From Here
-						//	’¼‘O‚Ìword‚ÌÅŒã‚ª::‚©C‚ ‚é‚¢‚Í’¼Œã‚Ìword‚Ìæ“ª‚ª::‚È‚ç
-						//	ƒNƒ‰ƒXŒÀ’èq‚Æl‚¦‚Ä—¼Ò‚ğÚ‘±‚·‚éD
+						//	ç›´å‰ã®wordã®æœ€å¾ŒãŒ::ã‹ï¼Œã‚ã‚‹ã„ã¯ç›´å¾Œã®wordã®å…ˆé ­ãŒ::ãªã‚‰
+						//	ã‚¯ãƒ©ã‚¹é™å®šå­ã¨è€ƒãˆã¦ä¸¡è€…ã‚’æ¥ç¶šã™ã‚‹ï¼
 						{
 							int pos = wcslen( szWordPrev ) - 2;
-							if( //	‘O‚Ì•¶š—ñ‚Ì––”öƒ`ƒFƒbƒN
+							if( //	å‰ã®æ–‡å­—åˆ—ã®æœ«å°¾ãƒã‚§ãƒƒã‚¯
 								( pos > 0 &&	szWordPrev[pos] == L':' &&
 								szWordPrev[pos + 1] == L':' ) ||
-								//	Ÿ‚Ì•¶š—ñ‚Ìæ“ªƒ`ƒFƒbƒN
+								//	æ¬¡ã®æ–‡å­—åˆ—ã®å…ˆé ­ãƒã‚§ãƒƒã‚¯
 								( i < nLineLen - 1 && pLine[i] == L':' &&
 									pLine[i+1] == L':' )
 							){
-								//	‘O‚Ì•¶š—ñ‚É‘±‚¯‚é
+								//	å‰ã®æ–‡å­—åˆ—ã«ç¶šã‘ã‚‹
 								if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
 									if( szTemplateName[0] ){
 										wcscpy( szWord, szTemplateName );
@@ -1125,10 +1125,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								nWordIdx = wcslen( szWord );
 							}
 							//	From Here Apr. 1, 2001 genta
-							//	operator new/delete ‰‰Zq‚Ì‘Î‰
+							//	operator new/delete æ¼”ç®—å­ã®å¯¾å¿œ
 							else if( nMode2 == M2_NORMAL && C_IsOperator( szWordPrev, pos + 2 ) ){
 								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
-									//	ƒXƒy[ƒX‚ğ“ü‚ê‚ÄA‘O‚Ì•¶š—ñ‚É‘±‚¯‚é
+									//	ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¥ã‚Œã¦ã€å‰ã®æ–‡å­—åˆ—ã«ç¶šã‘ã‚‹
 									szWordPrev[pos + 2] = L' ';
 									szWordPrev[pos + 3] = L'\0';
 								}
@@ -1136,9 +1136,9 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								nWordIdx = wcslen( szWord );
 								nMode2 = M2_OPERATOR_WORD;
 							}else if( nMode2 == M2_OPERATOR_WORD ){
-								// operator Œp‘±’†
+								// operator ç¶™ç¶šä¸­
 								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
-									//	ƒXƒy[ƒX‚ğ“ü‚ê‚ÄA‘O‚Ì•¶š—ñ‚É‘±‚¯‚é
+									//	ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¥ã‚Œã¦ã€å‰ã®æ–‡å­—åˆ—ã«ç¶šã‘ã‚‹
 									szWordPrev[pos + 2] = L' ';
 									szWordPrev[pos + 3] = L'\0';
 								}
@@ -1150,7 +1150,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								nWordIdx = 0;
 							}
 						}
-						//	wcscpy( szWordPrev, szWord );	•s—vH
+						//	wcscpy( szWordPrev, szWord );	ä¸è¦ï¼Ÿ
 						//	To Here
 						if( pLine[i] == L':' && pLine[i+1] != L':')
 						{
@@ -1173,7 +1173,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 
 						//	//	Mar. 15, 2000 genta
 						//	From Here
-						//	’·‚³ƒ`ƒFƒbƒN‚Í•K{
+						//	é•·ã•ãƒã‚§ãƒƒã‚¯ã¯å¿…é ˆ
 						if( nWordIdx < nMaxWordLeng ){
 							nMode = 1;
 							szWord[nWordIdx] = pLine[i];
@@ -1184,7 +1184,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						}
 						//	To Here
 					}else{
-						// 2011.12.02 template‘Î‰
+						// 2011.12.02 templateå¯¾å¿œ
 						if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
 							if( pLine[i] == L'<' ){
 								int nLen = (int)wcslen(szWordPrev);
@@ -1205,38 +1205,38 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							}
 						}
 						//	Aug. 13, 2004 genta
-						//	szWordPrev‚ª¸‚í‚ê‚È‚¢‚¤‚¿‚Éoperator‚Ì”»’è‚ğs‚¤
-						//	operator‚Ì”»’è‚Í‘O‚ÉƒNƒ‰ƒX–¼‚ª•t‚¢‚Ä‚¢‚é‰Â”\«‚ª‚ ‚é‚Ì‚Å
-						//	ê—p‚Ì”»’èŠÖ”‚ğg‚¤‚×‚µD
-						//	operator‚Å–³‚¯‚ê‚Î=‚Í‘ã“ü‚È‚Ì‚Å‚±‚±‚ÍéŒ¾•¶‚Å‚Í‚È‚¢D
+						//	szWordPrevãŒå¤±ã‚ã‚Œãªã„ã†ã¡ã«operatorã®åˆ¤å®šã‚’è¡Œã†
+						//	operatorã®åˆ¤å®šã¯å‰ã«ã‚¯ãƒ©ã‚¹åãŒä»˜ã„ã¦ã„ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§
+						//	å°‚ç”¨ã®åˆ¤å®šé–¢æ•°ã‚’ä½¿ã†ã¹ã—ï¼
+						//	operatorã§ç„¡ã‘ã‚Œã°=ã¯ä»£å…¥ãªã®ã§ã“ã“ã¯å®£è¨€æ–‡ã§ã¯ãªã„ï¼
 						int nLen = (int)wcslen(szWordPrev);
 						if( pLine[i] == L'=' && nNestLevel_func == 0
 							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,nLen) ){
 							nMode2 = M2_AFTER_EQUAL;
 						}else if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
-							// ‰‰Zq‚ÌƒIƒyƒŒ[ƒ^‚¾‚Á‚½ operator +
+							// æ¼”ç®—å­ã®ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã ã£ãŸ operator +
 							wcscpy(szWord, szWordPrev);
 							nWordIdx = (int)nLen -1;
 							nMode2 = M2_OPERATOR_WORD;
 						}else if( nMode2 == M2_OPERATOR_WORD ){
-							// operator Œp‘±’†
+							// operator ç¶™ç¶šä¸­
 							wcscpy(szWord, szWordPrev);
 							nWordIdx = (int)nLen -1;
 						}else{
 							wcscpy(szWordPrev, szWord);
 							nWordIdx = -1;
 						}
-						// 2002/10/27 frozen ‚±‚±‚©‚ç
+						// 2002/10/27 frozen ã“ã“ã‹ã‚‰
 						if( nMode2 == M2_NAMESPACE_SAVE )
 						{
 #if 0
 							if( pLine[i] == L'>' || pLine[i] == L',' || pLine[i] == L'=')
-								// '<' ‚Ì‘O‚É '>' , ',' , '=' ‚ª‚ ‚Á‚½‚Ì‚ÅA‚¨‚»‚ç‚­
-								// ‘O‚É‚ ‚Á‚½"class"‚Íƒeƒ“ƒvƒŒ[ƒgƒpƒ‰ƒ[ƒ^‚ÌŒ^‚ğ•\‚µ‚Ä‚¢‚½‚Æl‚¦‚ç‚ê‚éB
-								// ‚æ‚Á‚ÄAƒNƒ‰ƒX–¼‚Ì’²¸‚ÍI—¹B
-								// '>' ‚Íƒeƒ“ƒvƒŒ[ƒgƒpƒ‰ƒ[ƒ^‚ÌI—¹
-								// ',' ‚Íƒeƒ“ƒvƒŒ[ƒgƒpƒ‰ƒ[ƒ^‚Ì‹æØ‚è
-								// '=' ‚ÍƒfƒtƒHƒ‹ƒgƒeƒ“ƒvƒŒ[ƒgƒpƒ‰ƒ[ƒ^‚Ìw’è
+								// '<' ã®å‰ã« '>' , ',' , '=' ãŒã‚ã£ãŸã®ã§ã€ãŠãã‚‰ã
+								// å‰ã«ã‚ã£ãŸ"class"ã¯ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å‹ã‚’è¡¨ã—ã¦ã„ãŸã¨è€ƒãˆã‚‰ã‚Œã‚‹ã€‚
+								// ã‚ˆã£ã¦ã€ã‚¯ãƒ©ã‚¹åã®èª¿æŸ»ã¯çµ‚äº†ã€‚
+								// '>' ã¯ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®çµ‚äº†
+								// ',' ã¯ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®åŒºåˆ‡ã‚Š
+								// '=' ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æŒ‡å®š
 								nMode2 = M2_NORMAL; 
 							else
 #endif
@@ -1270,7 +1270,7 @@ static bool IsCommentBlock( std::vector<SCommentBlock>& arr, int pos )
 
 
 
-/* C/C++ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒgˆ— */
+/* C/C++ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå‡¦ç† */
 void CEditView::SmartIndent_CPP( wchar_t wcChar )
 {
 	const wchar_t*	pLine;
@@ -1281,7 +1281,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	int			nLevel;
 	CLogicInt j;
 
-	/* ’²®‚É‚æ‚Á‚Ä’uŠ·‚³‚ê‚é‰ÓŠ */
+	/* èª¿æ•´ã«ã‚ˆã£ã¦ç½®æ›ã•ã‚Œã‚‹ç®‡æ‰€ */
 	CLogicRange sRangeA;
 	sRangeA.Clear(-1);
 
@@ -1299,7 +1299,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	CLogicPoint	ptCP;
 
 	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=NULL){
-		//Ÿ‚Öi‚Ş
+		//æ¬¡ã¸é€²ã‚€
 	}else return;
 
 	switch( wcChar ){
@@ -1318,19 +1318,19 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			if( WCODE::CR != wcChar ){
 				return;
 			}
-			/* ’²®‚É‚æ‚Á‚Ä’uŠ·‚³‚ê‚é‰ÓŠ */
+			/* èª¿æ•´ã«ã‚ˆã£ã¦ç½®æ›ã•ã‚Œã‚‹ç®‡æ‰€ */
 			sRangeA.Set(CLogicPoint(0,GetCaret().GetCaretLogicPos().y));
 		}else{
 
 
-			//	nWork‚Éˆ—‚ÌŠî€Œ…ˆÊ’u‚ğİ’è‚·‚é
+			//	nWorkã«å‡¦ç†ã®åŸºæº–æ¡ä½ç½®ã‚’è¨­å®šã™ã‚‹
 			if( WCODE::CR != wcChar ){
 				nWork = nCaretPosX_PHY - 1;
 			}else{
 				/*
-				|| CR‚ª“ü—Í‚³‚ê‚½AƒJ[ƒ\ƒ‹’¼Œã‚Ì¯•Êq‚ğƒCƒ“ƒfƒ“ƒg‚·‚éB
-				|| ƒJ[ƒ\ƒ‹’¼Œã‚Ì¯•Êq‚ª'}'‚â')'‚È‚ç‚Î
-				|| '}'‚â')'‚ª“ü—Í‚³‚ê‚½‚Æ“¯‚¶ˆ—‚ğ‚·‚é
+				|| CRãŒå…¥åŠ›ã•ã‚ŒãŸæ™‚ã€ã‚«ãƒ¼ã‚½ãƒ«ç›´å¾Œã®è­˜åˆ¥å­ã‚’ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã™ã‚‹ã€‚
+				|| ã‚«ãƒ¼ã‚½ãƒ«ç›´å¾Œã®è­˜åˆ¥å­ãŒ'}'ã‚„')'ãªã‚‰ã°
+				|| '}'ã‚„')'ãŒå…¥åŠ›ã•ã‚ŒãŸæ™‚ã¨åŒã˜å‡¦ç†ã‚’ã™ã‚‹
 				*/
 
 				int i;
@@ -1359,7 +1359,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			}
 			if( i < nWork ){
 				if( ( L':' == wcChar && IsHeadCppKeyword(&pLine[i]) )
-					//	Sep. 18, 2002 ‚©‚ë‚Æ
+					//	Sep. 18, 2002 ã‹ã‚ã¨
 					|| ( L'{' == wcChar && L'#' != pLine[i] )
 					|| ( L'(' == wcChar && L'#' != pLine[i] )
 				){
@@ -1372,24 +1372,24 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					return;
 				}
 			}
-			/* ’²®‚É‚æ‚Á‚Ä’uŠ·‚³‚ê‚é‰ÓŠ */
+			/* èª¿æ•´ã«ã‚ˆã£ã¦ç½®æ›ã•ã‚Œã‚‹ç®‡æ‰€ */
 			sRangeA.SetFrom(CLogicPoint(0, GetCaret().GetCaretLogicPos().GetY2()));
 			sRangeA.SetTo(CLogicPoint(i, GetCaret().GetCaretLogicPos().GetY2()));
 		}
 
 
-		/* ‘Î‰‚·‚éŠ‡ŒÊ‚ğ‚³‚ª‚· */
-		nLevel = 0;	/* {}‚Ì“ü‚êqƒŒƒxƒ‹ */
+		/* å¯¾å¿œã™ã‚‹æ‹¬å¼§ã‚’ã•ãŒã™ */
+		nLevel = 0;	/* {}ã®å…¥ã‚Œå­ãƒ¬ãƒ™ãƒ« */
 
 
 		nDataLen = CLogicInt(0);
 		for( j = GetCaret().GetCaretLogicPos().GetY2(); j >= CLogicInt(0); --j ){
 			pLine2 = m_pcEditDoc->m_cDocLineMgr.GetLine(j)->GetDocLineStrWithEOL(&nLineLen2);
 			if( j == GetCaret().GetCaretLogicPos().y ){
-				// 2005.10.11 ryoji EOF ‚Ì‚İ‚Ìs‚àƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒg‚Ì‘ÎÛ‚É‚·‚é
+				// 2005.10.11 ryoji EOF ã®ã¿ã®è¡Œã‚‚ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®å¯¾è±¡ã«ã™ã‚‹
 				if( NULL == pLine2 ){
 					if( GetCaret().GetCaretLogicPos().y == m_pcEditDoc->m_cDocLineMgr.GetLineCount() )
-						continue;	// EOF ‚Ì‚İ‚Ìs
+						continue;	// EOF ã®ã¿ã®è¡Œ
 					break;
 				}
 				nCharChars = CLogicInt(&pLine2[nWork] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[nWork] ));
@@ -1401,7 +1401,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				k = nLineLen2 - nCharChars;
 			}
 
-			// ƒRƒƒ“ƒgE•¶š—ñŒŸõ
+			// ã‚³ãƒ¡ãƒ³ãƒˆãƒ»æ–‡å­—åˆ—æ¤œç´¢
 			bool bCommentStringCheck = m_pTypeData->m_bIndentCppStringIgnore || m_pTypeData->m_bIndentCppCommentIgnore;
 			std::vector<SCommentBlock> arrCommentBlock;
 			if( bCommentStringCheck ){
@@ -1489,7 +1489,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					}
 				}
 				if( 0 < nBegin ){
-					// I‚í‚è‚Ì‚È‚¢•¶š—ñorƒRƒƒ“ƒg
+					// çµ‚ã‚ã‚Šã®ãªã„æ–‡å­—åˆ—orã‚³ãƒ¡ãƒ³ãƒˆ
 					SCommentBlock block = { nBegin, nLineLen2 };
 					arrCommentBlock.push_back(block);
 				}
@@ -1497,7 +1497,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( wcCharOrg != WCODE::CR ){
 						int pos = GetCaret().GetCaretLogicPos().GetX();
 						if( IsCommentBlock(arrCommentBlock, pos) ){
-							// ‚à‚µÅŒã‚É“ü—Í‚µ‚½•¶š‚ªƒRƒƒ“ƒg“à‚¾‚Á‚½‚ç‰½‚à‚µ‚È‚¢
+							// ã‚‚ã—æœ€å¾Œã«å…¥åŠ›ã—ãŸæ–‡å­—ãŒã‚³ãƒ¡ãƒ³ãƒˆå†…ã ã£ãŸã‚‰ä½•ã‚‚ã—ãªã„
 							return;
 						}
 					}
@@ -1510,22 +1510,22 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE( _T("¥[%ls]\n"), pLine2 );
+//						MYTRACE( _T("â–¼[%ls]\n"), pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
-						//“¯‚¶s‚Ìê‡
+						//åŒã˜è¡Œã®å ´åˆ
 						if( j == GetCaret().GetCaretLogicPos().y ){
 							if( L'{' == wcChar && L'}' == pLine2[k] ){
 								wcChar = L'}';
-								nLevel--;	/* {}‚Ì“ü‚êqƒŒƒxƒ‹ */
+								nLevel--;	/* {}ã®å…¥ã‚Œå­ãƒ¬ãƒ™ãƒ« */
 							}
 							if( L'(' == wcChar && L')' == pLine2[k] ){
 								wcChar = L')';
-								nLevel--;	/* {}‚Ì“ü‚êqƒŒƒxƒ‹ */
+								nLevel--;	/* {}ã®å…¥ã‚Œå­ãƒ¬ãƒ™ãƒ« */
 							}
 						}
 
-						nLevel++;	/* {}‚Ì“ü‚êqƒŒƒxƒ‹ */
+						nLevel++;	/* {}ã®å…¥ã‚Œå­ãƒ¬ãƒ™ãƒ« */
 					}
 				}
 				if( 1 == nCharChars && ( L'{' == pLine2[k] || L'(' == pLine2[k] )
@@ -1533,10 +1533,10 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE( _T("¥[%ls]\n"), pLine2 );
+//						MYTRACE( _T("â–¼[%ls]\n"), pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
-						//“¯‚¶s‚Ìê‡
+						//åŒã˜è¡Œã®å ´åˆ
 						if( j == GetCaret().GetCaretLogicPos().y ){
 							if( L'{' == wcChar && L'{' == pLine2[k] ){
 								return;
@@ -1548,7 +1548,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						if( 0 == nLevel ){
 							break;
 						}else{
-							nLevel--;	/* {}‚Ì“ü‚êqƒŒƒxƒ‹ */
+							nLevel--;	/* {}ã®å…¥ã‚Œå­ãƒ¬ãƒ™ãƒ« */
 						}
 
 					}
@@ -1560,7 +1560,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				k -= nCharChars;
 			}
 			if( k < 0 ){
-				/* ‚±‚Ìs‚É‚Í‚È‚¢ */
+				/* ã“ã®è¡Œã«ã¯ãªã„ */
 				continue;
 			}
 
@@ -1578,9 +1578,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			pszData = new wchar_t[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
 			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
-				// 2005.10.11 ryoji TABƒL[‚ªSPACE‘}“ü‚Ìİ’è‚È‚ç’Ç‰ÁƒCƒ“ƒfƒ“ƒg‚àSPACE‚É‚·‚é
-				//	Šù‘¶•¶š—ñ‚Ì‰E’[‚Ì•\¦ˆÊ’u‚ğ‹‚ß‚½ã‚Å‘}“ü‚·‚éƒXƒy[ƒX‚Ì”‚ğŒˆ’è‚·‚é
-				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE‘}“üİ’è
+				// 2005.10.11 ryoji TABã‚­ãƒ¼ãŒSPACEæŒ¿å…¥ã®è¨­å®šãªã‚‰è¿½åŠ ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚‚SPACEã«ã™ã‚‹
+				//	æ—¢å­˜æ–‡å­—åˆ—ã®å³ç«¯ã®è¡¨ç¤ºä½ç½®ã‚’æ±‚ã‚ãŸä¸Šã§æŒ¿å…¥ã™ã‚‹ã‚¹ãƒšãƒ¼ã‚¹ã®æ•°ã‚’æ±ºå®šã™ã‚‹
+				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACEæŒ¿å…¥è¨­å®š
 					int i;
 					CKetaXInt m = CKetaXInt(0);
 					i = 0;
@@ -1610,7 +1610,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			break;
 		}
 		if( j < 0 ){
-			/* ‘Î‰‚·‚éŠ‡ŒÊ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ */
+			/* å¯¾å¿œã™ã‚‹æ‹¬å¼§ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ */
 			if( WCODE::CR == wcChar ){
 				return;
 			}else{
@@ -1620,13 +1620,13 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			}
 		}
 
-		/* ’²®Œã‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚ğŒvZ‚µ‚Ä‚¨‚­ */
+		/* èª¿æ•´å¾Œã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’è¨ˆç®—ã—ã¦ãŠã */
 		ptCP.x = nCaretPosX_PHY - sRangeA.GetTo().x + nDataLen;
 		ptCP.y = GetCaret().GetCaretLogicPos().y;
 
 		nSrcLen = sRangeA.GetTo().x - sRangeA.GetFrom().x;
 		if( nSrcLen >= _countof( pszSrc ) - 1 ){
-			//	Sep. 18, 2002 genta ƒƒ‚ƒŠƒŠ[ƒN‘Îô
+			//	Sep. 18, 2002 genta ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯å¯¾ç­–
 			delete [] pszData;
 			return;
 		}
@@ -1638,7 +1638,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		}
 
 
-		/* ’²®‚É‚æ‚Á‚Ä’uŠ·‚³‚ê‚é‰ÓŠ */
+		/* èª¿æ•´ã«ã‚ˆã£ã¦ç½®æ›ã•ã‚Œã‚‹ç®‡æ‰€ */
 		CLayoutRange sRangeLayout;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( sRangeA, &sRangeLayout );
 
@@ -1649,7 +1649,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		}else{
 			bChange = TRUE;
 			if( m_pTypeData->m_bIndentCppUndoSep ){
-				//ƒL[“ü—Í‚ÆƒCƒ“ƒfƒ“ƒg‚ğ•Ê‚ÌƒAƒ“ƒhƒDƒoƒbƒtƒ@‚É‚·‚é
+				//ã‚­ãƒ¼å…¥åŠ›ã¨ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚’åˆ¥ã®ã‚¢ãƒ³ãƒ‰ã‚¥ãƒãƒƒãƒ•ã‚¡ã«ã™ã‚‹
 				SetUndoBuffer();
 				if( m_cCommander.GetOpeBlk() == NULL ){
 					m_cCommander.SetOpeBlk(new COpeBlk);
@@ -1657,31 +1657,31 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				m_cCommander.GetOpeBlk()->AddRef();
 			}
 
-			/* ƒf[ƒ^’uŠ· íœ&‘}“ü‚É‚àg‚¦‚é */
+			/* ãƒ‡ãƒ¼ã‚¿ç½®æ› å‰Šé™¤&æŒ¿å…¥ã«ã‚‚ä½¿ãˆã‚‹ */
 			ReplaceData_CEditView(
 				sRangeLayout,
-				pszData,	/* ‘}“ü‚·‚éƒf[ƒ^ */
-				nDataLen,	/* ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³ */
+				pszData,	/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ */
+				nDataLen,	/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã• */
 				true,
 				m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 			);
 		}
 
 
-		/* ƒJ[ƒ\ƒ‹ˆÊ’u’²® */
+		/* ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®èª¿æ•´ */
 		CLayoutPoint ptCP_Layout;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCP, &ptCP_Layout );
 
-		/* ‘I‘ğƒGƒŠƒA‚Ìæ“ª‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+		/* é¸æŠã‚¨ãƒªã‚¢ã®å…ˆé ­ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 		GetCaret().MoveCursor( ptCP_Layout, true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
 
-		if( bChange && !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
-			/* ‘€ì‚Ì’Ç‰Á */
+		if( bChange && !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
+			/* æ“ä½œã®è¿½åŠ  */
 			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}

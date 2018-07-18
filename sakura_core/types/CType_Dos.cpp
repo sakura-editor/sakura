@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,17 +25,17 @@
 #include "StdAfx.h"
 #include "types/CType.h"
 
-/* MS-DOS�o�b�`�t�@�C�� */
+/* MS-DOSバッチファイル */
 void CType_Dos::InitTypeConfigImp(STypeConfig* pType)
 {
-	//���O�Ɗg���q
-	_tcscpy( pType->m_szTypeName, _T("MS-DOS�o�b�`�t�@�C��") );
+	//名前と拡張子
+	_tcscpy( pType->m_szTypeName, _T("MS-DOSバッチファイル") );
 	_tcscpy( pType->m_szTypeExts, _T("bat") );
 
-	//�ݒ�
-	pType->m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* �s�R�����g�f���~�^ */
-	pType->m_eDefaultOutline = OUTLINE_TEXT;		/* �A�E�g���C����͕��@ */
-	pType->m_nKeyWordSetIdx[0] = 7;					/* �L�[���[�h�Z�b�g */
+	//設定
+	pType->m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* 行コメントデリミタ */
+	pType->m_eDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
+	pType->m_nKeyWordSetIdx[0] = 7;					/* キーワードセット */
 }
 
 
@@ -79,16 +79,16 @@ const wchar_t* g_ppszKeywordsBAT[] = {
 	L"EXIT",
 	L"CTTY",
 	L"ECHO",
-	L"@ECHO",	//Oct. 31, 2000 JEPRO '@' �������\�ɂ����̂Œǉ�
+	L"@ECHO",	//Oct. 31, 2000 JEPRO '@' を強調可能にしたので追加
 	L"LOCK",
 	L"UNLOCK",
 	L"GOTO",
 	L"SHIFT",
 	L"IF",
 	L"FOR",
-	L"DO",	//Nov. 2, 2000 JEPRO �ǉ�
-	L"IN",	//Nov. 2, 2000 JEPRO �ǉ�
-	L"ELSE",	//Nov. 2, 2000 JEPRO �ǉ� Win2000�Ŏg����
+	L"DO",	//Nov. 2, 2000 JEPRO 追加
+	L"IN",	//Nov. 2, 2000 JEPRO 追加
+	L"ELSE",	//Nov. 2, 2000 JEPRO 追加 Win2000で使える
 	L"CLS",
 	L"TRUENAME",
 	L"LOADHIGH",

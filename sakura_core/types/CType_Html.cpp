@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,40 +31,40 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* HTML */
-//Oct. 31, 2000 JEPRO VC++�̐�������e�L�X�g�t�@�C�����ǂݍ��߂�悤�ɂ���
-//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++��ǉ�	//Mar. 15, 2001 JEPRO .hm��ǉ�
-//Feb. 2, 2005 genta �������̂ŃV���O���N�H�[�g�̐F������HTML�ł͍s��Ȃ�
-//2012.01.03 �V���O���N�H�[�g�̐F����������
+//Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
+//Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
+//Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
+//2012.01.03 シングルクォートの色分けをする
 void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 {
 	_tcscpy( pType->m_szTypeName, _T("HTML") );
 	_tcscpy( pType->m_szTypeExts, _T("html,htm,shtml,plg") );
 
-	//�ݒ�
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* �u���b�N�R�����g�f���~�^ */
-	pType->m_nStringType = STRING_LITERAL_HTML;							/* �������؂�L���G�X�P�[�v���@ */
-	pType->m_bStringLineOnly = true; // ������͍s���̂�
-	pType->m_nKeyWordSetIdx[0] = 1;										/* �L�[���[�h�Z�b�g */
-	pType->m_eDefaultOutline = OUTLINE_HTML;							/* �A�E�g���C����͕��@ */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = true;				//�V���O���N�H�[�g�̐F����OFF
+	//設定
+	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* ブロックコメントデリミタ */
+	pType->m_nStringType = STRING_LITERAL_HTML;							/* 文字列区切り記号エスケープ方法 */
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
+	pType->m_nKeyWordSetIdx[0] = 1;										/* キーワードセット */
+	pType->m_eDefaultOutline = OUTLINE_HTML;							/* アウトライン解析方法 */
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = true;				//シングルクォートの色分けOFF
 }
 
 
 
 
-/*! HTML �A�E�g���C�����
+/*! HTML アウトライン解析
 
 	@author zenryaku
-	@date 2003.05.20 zenryaku �V�K�쐬
-	@date 2004.04.19 zenryaku ��v�f�𔻒�
-	@date 2004.04.20 Moca �R�����g�����ƁA�s���ȏI���^�O�𖳎����鏈����ǉ�
-	@date 2008.08.15 aroka ���o���ƒi���̐[�������ǉ� 2008.09.07�C��
-	@date 2014.12.25 Moca XML���[�h�ǉ�.�^�O�}�b�`��啶�����������ꎋ����悤��.CDATA�����ǉ�
+	@date 2003.05.20 zenryaku 新規作成
+	@date 2004.04.19 zenryaku 空要素を判定
+	@date 2004.04.20 Moca コメント処理と、不明な終了タグを無視する処理を追加
+	@date 2008.08.15 aroka 見出しと段落の深さ制御を追加 2008.09.07修正
+	@date 2014.12.25 Moca XMLモード追加.タグマッチを大文字小文字同一視するように.CDATA処理追加
 */
 void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 {
-	const wchar_t*	pLineBuf;	//	pLineBuf �͍s�S�̂��w���A
-	const wchar_t*	pLine;		//	pLine �͏������̕����ȍ~�̕������w���܂��B
+	const wchar_t*	pLineBuf;	//	pLineBuf は行全体を指し、
+	const wchar_t*	pLine;		//	pLine は処理中の文字以降の部分を指します。
 	CLogicInt		nLineLen;
 	int				i;
 	int				j;
@@ -74,27 +74,27 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 	bool			bCDATA = false;
 	bool			bParaTag = false;	//	2008.08.15 aroka
 
-	/*	�l�X�g�̐[���́AnMaxStack���x���܂ŁA�ЂƂ̃w�b�_�́A�Œ�32�����܂ŋ��
-		�i32�����܂œ����������瓯�����̂Ƃ��Ĉ����܂��j
+	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
+		（32文字まで同じだったら同じものとして扱います）
 	*/
-	// 2014.12.25 �l�X�g32��64
-	const int		nMaxStack = 64;	//	�l�X�g�̍Ő[
-	int				nDepth = 0;				//	���܂̃A�C�e���̐[����\�����l�B
+	// 2014.12.25 ネスト32→64
+	const int		nMaxStack = 64;	//	ネストの最深
+	int				nDepth = 0;				//	いまのアイテムの深さを表す数値。
 	wchar_t			pszStack[nMaxStack][32];
-	wchar_t			szTitle[32];			//	�ꎞ�̈�
-	wchar_t			szTag[32];				//	�ꎞ�̈�  �������ŕێ����č��������Ă��܂��B
+	wchar_t			szTitle[32];			//	一時領域
+	wchar_t			szTag[32];				//	一時領域  小文字で保持して高速化しています。
 
-	enum ELabelType {						//	�񋓑́F���x���̎��
+	enum ELabelType {						//	列挙体：ラベルの種別
 		LT_DEFAULT,		LT_INLINE,		LT_IGNORE,		LT_EMPTY,
 		LT_BLOCK,		LT_PARAGRAPH,	LT_HEADING
 	};
-	enum ELabelType	nLabelType;				// ���x���̎��
+	enum ELabelType	nLabelType;				// ラベルの種別
 	CLogicInt		nLineCount;
-	/*	�������o���v�f�ihy�j�����ɏ�ʃ��x���̌��o��(hx)�������܂œ����[���ɂ��낦�܂��B
-		���̂��߁A���o���̐[�����L�����Ă����܂��B
-		���ʃ��x���̌��o���̐[���͌����܂ŕs��ŁA�O�̏͐߂ł̐[���͉e�����܂���B 2008.08.15 aroka
+	/*	同じ見出し要素（hy）を次に上位レベルの見出し(hx)が現れるまで同じ深さにそろえます。
+		このため、見出しの深さを記憶しておきます。
+		下位レベルの見出しの深さは現れるまで不定で、前の章節での深さは影響しません。 2008.08.15 aroka
 	*/
-	int				nHeadDepth[6+1];		// [0]�� �󂯂Ă���
+	int				nHeadDepth[6+1];		// [0]は 空けておく
 	for(k=0;k<=6;k++){
 		nHeadDepth[k] = -1;
 	}
@@ -108,7 +108,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 		for(i=0;i<nLineLen-1;i++)
 		{
 			pLine = &pLineBuf[i];
-			// 2004.04.20 Moca �R�����g����������
+			// 2004.04.20 Moca コメントを処理する
 			if( bCommentTag )
 			{
 				if( i < nLineLen - 3 && 0 == wmemcmp( L"-->", pLine, 3 ) )
@@ -143,8 +143,8 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			}
 			for(j=0;i+j<nLineLen && j<_countof(szTitle)-1; )
 			{
-				// �^�O����؂�o��
-				// �X�y�[�X�A�^�u�A�u_:-.�p���v�ȊO�̔��p�����A�P�����ڂ́u-.�����v�͔F�߂Ȃ��B
+				// タグ名を切り出す
+				// スペース、タブ、「_:-.英数」以外の半角文字、１文字目の「-.数字」は認めない。
 				if( (pLine[j]==L' ' || pLine[j]==L'\t') ||
 					(pLine[j]<0x80 && !wcschr(L"_:-.",pLine[j]) && !isalnum(pLine[j])) ||
 					(j==0 &&( (pLine[j]>=L'0' && pLine[j]<=L'9') || pLine[j]==L'-' || pLine[j]==L'.' )) )
@@ -157,7 +157,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			}
 			if(j==0)
 			{
-				// 2004.04.20 Moca From Here �R�����g����������
+				// 2004.04.20 Moca From Here コメントを処理する
 				if( i < nLineLen - 3 && 0 == wmemcmp( L"!--", pLine, 3 ) )
 				{
 					bCommentTag = true;
@@ -174,9 +174,9 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				continue;
 			}
 			szTitle[j] = '\0';
-			/*	�^�O�̎�ނ��Ƃɏ�����ς���K�v�����邪�A
-				�s�x��r����̂̓R�X�g�������̂ŁA�ŏ��ɕ��ނ��Ă����B 2008.08.15 aroka
-				��r�̉񐔂��������߁A�������ɕϊ����Ă�����strcmp���g���B
+			/*	タグの種類ごとに処理を変える必要があるが、
+				都度比較するのはコストが高いので、最初に分類しておく。 2008.08.15 aroka
+				比較の回数が多いため、小文字に変換しておいてstrcmpを使う。
 			*/
 			wcscpy( szTag, szTitle );
 			if( !bXml ){
@@ -185,7 +185,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			
 			nLabelType = LT_DEFAULT;
 			if( !bXml ){
-				// �����v�f�i�����ڂ�ς��邽�߂̃^�O�j�͍\����͂��Ȃ��B
+				// 物理要素（見た目を変えるためのタグ）は構造解析しない。
 				if( !wcscmp(szTag,L"b") || !wcscmp(szTag,L"big") || !wcscmp(szTag,L"blink")
 				 || !wcscmp(szTag,L"font") || !wcscmp(szTag,L"i") || !wcscmp(szTag,L"marquee")
 				 || !wcscmp(szTag,L"nobr") || !wcscmp(szTag,L"s") || !wcscmp(szTag,L"small")
@@ -194,7 +194,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 	 			{
 					nLabelType = LT_INLINE;
 				}
-				// �C�����C���e�L�X�g�v�f�i�e�L�X�g���C������^�O�j�͍\����͂��Ȃ�?
+				// インラインテキスト要素（テキストを修飾するタグ）は構造解析しない?
 //				if( !wcscmp(szTag,L"abbr") || !wcscmp(szTag,L"acronym") || !wcscmp(szTag,L"dfn")
 //				 || !wcscmp(szTag,L"em") || !wcscmp(szTag,L"strong") || !wcscmp(szTag,L"span")
 //				 || !wcscmp(szTag,L"code") || !wcscmp(szTag,L"samp") || !wcscmp(szTag,L"kbd")
@@ -202,26 +202,26 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 //				{
 //					nLabelType = LT_INLINE;
 //				}
-				// ���r�v�f�iXHTML1.1�j�͍\����͂��Ȃ��B
+				// ルビ要素（XHTML1.1）は構造解析しない。
 				if( !wcscmp(szTag,L"rbc") || !wcscmp(szTag,L"rtc") || !wcscmp(szTag,L"ruby")
 				 || !wcscmp(szTag,L"rb") || !wcscmp(szTag,L"rt") || !wcscmp(szTag,L"rp") )
 				{
 					nLabelType = LT_INLINE;
 				}
-				// ��v�f�i���e�������Ȃ��^�O�j�̂����\���Ɋ֌W�Ȃ����͍̂\����͂��Ȃ��B
+				// 空要素（内容を持たないタグ）のうち構造に関係ないものは構造解析しない。
 				if( !wcscmp(szTag,L"br") || !wcscmp(szTag,L"base") || !wcscmp(szTag,L"basefont")
 				 || !wcscmp(szTag,L"frame")
-				 // 2014.12.26 Moca �ȉ��̗v�f��ǉ�
+				 // 2014.12.26 Moca 以下の要素を追加
 				 || !wcscmp(szTag,L"wbr")
 				 )
 				{
 					nLabelType = LT_IGNORE;
 				}
-				// ��v�f�i���e�������Ȃ��^�O�j�̂����\���Ɋ֌W������́B
+				// 空要素（内容を持たないタグ）のうち構造に関係するもの。
 				if( !wcscmp(szTag,L"area") || !wcscmp(szTag,L"hr") || !wcscmp(szTag,L"img")
 				 || !wcscmp(szTag,L"input") || !wcscmp(szTag,L"link") || !wcscmp(szTag,L"meta")
 				 || !wcscmp(szTag,L"param")
-				 // 2014.12.26 Moca �ȉ��̗v�f��ǉ�
+				 // 2014.12.26 Moca 以下の要素を追加
 				 || !wcscmp(szTag,L"col") || !wcscmp(szTag,L"command") || !wcscmp(szTag,L"embed")
 				 || !wcscmp(szTag,L"keygen") || !wcscmp(szTag,L"source") || !wcscmp(szTag,L"track")
 				 )
@@ -247,20 +247,20 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				}
 			}
 
-			// 2009.08.13 syat �u/>�v�ŏI���^�O�̔���̂��߁A�I���^�O�������J�n�^�O�����̌�ɂ����B
-			//                  �i�J�n�^�O�����̒��ŁAbEndTag��true�ɂ��Ă��鏊������B�j
+			// 2009.08.13 syat 「/>」で終わるタグの判定のため、終了タグ処理を開始タグ処理の後にした。
+			//                  （開始タグ処理の中で、bEndTagをtrueにしている所がある。）
 
-			if( ! bEndTag ) // �J�n�^�O
+			if( ! bEndTag ) // 開始タグ
 			{
 				if( nLabelType!=LT_INLINE && nLabelType!=LT_IGNORE ){
-					// p�̒��Ńu���b�N�v�f��������A�����I��p�����B 2008.09.07 aroka
+					// pの中でブロック要素がきたら、自動的にpを閉じる。 2008.09.07 aroka
 					if( bParaTag ){
 						if( nLabelType==LT_HEADING || nLabelType==LT_PARAGRAPH || nLabelType==LT_BLOCK ){
 							nDepth--;
 						}
 					}
 					if( nLabelType==LT_HEADING ){
-						if( nHeadDepth[szTitle[1]-L'0'] != -1 ) // �����o��:���o
+						if( nHeadDepth[szTitle[1]-L'0'] != -1 ) // 小見出し:既出
 						{
 							nDepth = nHeadDepth[szTitle[1]-L'0'];
 							for(k=szTitle[1]-L'0';k<=6;k++){
@@ -285,11 +285,11 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 					);
 
 					if( nLabelType!=LT_EMPTY ){
-						// �I���^�O�Ȃ��������S�Ẵ^�O�炵�����̂𔻒�
+						// 終了タグなしを除く全てのタグらしきものを判定
 						wcscpy(pszStack[nDepth],szTitle);
 						k	=	j;
 						int x = j;
-						// 2014.12.25 32�����ȏ�̂Ƃ�,�ʂ̍s�̂Ƃ��ɂ��u/>�vbEndTag�ɑΉ�
+						// 2014.12.25 32文字以上のとき,別の行のときにも「/>」bEndTagに対応
 						{
 							bool bLoop = true;
 							while (bLoop && pLine) {
@@ -346,9 +346,9 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 					}
 				}
 			}
-			if( bEndTag ) // �I���^�O
+			if( bEndTag ) // 終了タグ
 			{
-				int nDepthOrg = nDepth; // 2004.04.20 Moca �ǉ�
+				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
 				while(nDepth>0)
 				{
 					nDepth--;
@@ -362,7 +362,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 						}
 					}
 				}
-				// 2004.04.20 Moca �c���[���ƈ�v���Ȃ��Ƃ��́A���̏I���^�O�͖���
+				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
 				if( nDepth == 0 )
 				{
 					if (bXml) {
@@ -375,7 +375,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 						}
 					}
 				}else{
-					if( nLabelType==LT_HEADING ){	//	���o���̏I���
+					if( nLabelType==LT_HEADING ){	//	見出しの終わり
 						nHeadDepth[szTitle[1]-L'0'] = nDepth;
 						nDepth++;
 					}

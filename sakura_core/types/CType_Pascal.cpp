@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,21 +27,21 @@
 #include "view/colors/EColorIndexType.h"
 
 /* Pascal */
-//Mar. 10, 2001 JEPRO	”¼Šp”’l‚ğF•ª‚¯•\¦
+//Mar. 10, 2001 JEPRO	åŠè§’æ•°å€¤ã‚’è‰²åˆ†ã‘è¡¨ç¤º
 void CType_Pascal::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("Pascal") );
 	_tcscpy( pType->m_szTypeExts, _T("dpr,pas") );
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */		//Nov. 5, 2000 JEPRO ’Ç‰Á
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"{", L"}" );	/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */	//Nov. 5, 2000 JEPRO ’Ç‰Á
-	pType->m_cBlockComments[1].SetBlockCommentRule( L"(*", L"*)" );	/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^2 */	//@@@ 2001.03.10 by MIK
-	pType->m_nStringType = 1;										/* •¶š—ñ‹æØ‚è‹L†ƒGƒXƒP[ƒv•û–@  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO ’Ç‰Á
-	pType->m_nKeyWordSetIdx[0] = 8;									/* ƒL[ƒ[ƒhƒZƒbƒg */
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */		//Nov. 5, 2000 JEPRO è¿½åŠ 
+	pType->m_cBlockComments[0].SetBlockCommentRule( L"{", L"}" );	/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */	//Nov. 5, 2000 JEPRO è¿½åŠ 
+	pType->m_cBlockComments[1].SetBlockCommentRule( L"(*", L"*)" );	/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿2 */	//@@@ 2001.03.10 by MIK
+	pType->m_nStringType = 1;										/* æ–‡å­—åˆ—åŒºåˆ‡ã‚Šè¨˜å·ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—æ–¹æ³•  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO è¿½åŠ 
+	pType->m_nKeyWordSetIdx[0] = 8;									/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			//@@@ 2001.11.11 upd MIK
-	pType->m_bStringLineOnly = true; // •¶š—ñ‚Ís“à‚Ì‚İ
+	pType->m_bStringLineOnly = true; // æ–‡å­—åˆ—ã¯è¡Œå†…ã®ã¿
 }
 
 

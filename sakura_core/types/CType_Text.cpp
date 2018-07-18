@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,48 +32,48 @@
 #include "outline/CFuncInfoArr.h"
 #include "view/colors/EColorIndexType.h"
 
-/* ƒeƒLƒXƒg */
-//Sep. 20, 2000 JEPRO ƒeƒLƒXƒg‚Ì‹K’è’l‚ğ80¨120‚É•ÏX(•s‹ï‡ˆê——.txt‚ª‚ ‚é’ö“x“Ç‚İ‚â‚·‚¢Œ…”)
-//Nov. 15, 2000 JEPRO PostScriptƒtƒ@ƒCƒ‹‚à“Ç‚ß‚é‚æ‚¤‚É‚·‚é
-//Jan. 12, 2001 JEPRO readme.1st ‚à“Ç‚ß‚é‚æ‚¤‚É‚·‚é
-//Feb. 12, 2001 JEPRO .err ƒGƒ‰[ƒƒbƒZ[ƒW
-//Nov.  6, 2002 genta doc‚ÍMS Word‚É÷‚Á‚Ä‚±‚±‚©‚ç‚ÍŠO‚·iŠÖ˜A‚Ã‚¯–h~‚Ì‚½‚ßj
-//Nov.  6, 2002 genta log ‚ğ’Ç‰Á
+/* ãƒ†ã‚­ã‚¹ãƒˆ */
+//Sep. 20, 2000 JEPRO ãƒ†ã‚­ã‚¹ãƒˆã®è¦å®šå€¤ã‚’80â†’120ã«å¤‰æ›´(ä¸å…·åˆä¸€è¦§.txtãŒã‚ã‚‹ç¨‹åº¦èª­ã¿ã‚„ã™ã„æ¡æ•°)
+//Nov. 15, 2000 JEPRO PostScriptãƒ•ã‚¡ã‚¤ãƒ«ã‚‚èª­ã‚ã‚‹ã‚ˆã†ã«ã™ã‚‹
+//Jan. 12, 2001 JEPRO readme.1st ã‚‚èª­ã‚ã‚‹ã‚ˆã†ã«ã™ã‚‹
+//Feb. 12, 2001 JEPRO .err ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+//Nov.  6, 2002 genta docã¯MS Wordã«è­²ã£ã¦ã“ã“ã‹ã‚‰ã¯å¤–ã™ï¼ˆé–¢é€£ã¥ã‘é˜²æ­¢ã®ãŸã‚ï¼‰
+//Nov.  6, 2002 genta log ã‚’è¿½åŠ 
 void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
-	_tcscpy( pType->m_szTypeName, _T("ƒeƒLƒXƒg") );
+	//åå‰ã¨æ‹¡å¼µå­
+	_tcscpy( pType->m_szTypeName, _T("ãƒ†ã‚­ã‚¹ãƒˆ") );
 	_tcscpy( pType->m_szTypeExts, _T("txt,log,1st,err,ps") );
 
-	//İ’è
-	pType->m_nMaxLineKetas = CKetaXInt(120);					/* Ü‚è•Ô‚µŒ…” */
-	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//Oct. 17, 2000 JEPRO	ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ğF•ª‚¯•\¦‚µ‚È‚¢
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//Sept. 4, 2000 JEPRO	ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ğF•ª‚¯•\¦‚µ‚È‚¢
-	pType->m_bKinsokuHead = false;								// s“ª‹Ö‘¥				//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuTail = false;								// s––‹Ö‘¥				//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuRet  = false;								// ‰üs•¶š‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.13 MIK
-	pType->m_bKinsokuKuto = false;								// ‹å“Ç“_‚ğ‚Ô‚ç‰º‚°‚é	//@@@ 2002.04.17 MIK
-	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}\xa2‹fhñŒABXrtvxzlJKTUERSI“jCDFGHnp¡£¤¥Şß‘" );		/* s“ª‹Ö‘¥ */	//@@@ 2002.04.13 MIK 
-	wcscpy( pType->m_szKinsokuTail, L"$([\\{\xa3\xa5egqsuwykimo¢’" );		/* s––‹Ö‘¥ */	//@@@ 2002.04.08 MIK 
-	// pType->m_szKinsokuKutoi‹å“Ç“_‚Ô‚ç‰º‚°•¶šj‚Í‚±‚±‚Å‚Í‚È‚­‘Sƒ^ƒCƒv‚ÉƒfƒtƒHƒ‹ƒgİ’è	// 2009.08.07 ryoji 
+	//è¨­å®š
+	pType->m_nMaxLineKetas = CKetaXInt(120);					/* æŠ˜ã‚Šè¿”ã—æ¡æ•° */
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//Oct. 17, 2000 JEPRO	ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//Sept. 4, 2000 JEPRO	ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_bKinsokuHead = false;								// è¡Œé ­ç¦å‰‡				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuTail = false;								// è¡Œæœ«ç¦å‰‡				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuRet  = false;								// æ”¹è¡Œæ–‡å­—ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.13 MIK
+	pType->m_bKinsokuKuto = false;								// å¥èª­ç‚¹ã‚’ã¶ã‚‰ä¸‹ã’ã‚‹	//@@@ 2002.04.17 MIK
+	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}\xa2Â°â€™â€â€°â€²â€³â„ƒã€ã€‚ã€…ã€‰ã€‹ã€ã€ã€‘ã€•ã‚›ã‚œã‚ã‚ãƒ»ãƒ½ãƒ¾ï¼ï¼…ï¼‰ï¼Œï¼ï¼šï¼›ï¼Ÿï¼½ï½ï½¡ï½£ï½¤ï½¥ï¾ï¾Ÿï¿ " );		/* è¡Œé ­ç¦å‰‡ */	//@@@ 2002.04.13 MIK 
+	wcscpy( pType->m_szKinsokuTail, L"$([\\{\xa3\xa5â€˜â€œã€ˆã€Šã€Œã€ã€ã€”ï¼„ï¼ˆï¼»ï½›ï½¢ï¿¡ï¿¥" );		/* è¡Œæœ«ç¦å‰‡ */	//@@@ 2002.04.08 MIK 
+	// pType->m_szKinsokuKutoï¼ˆå¥èª­ç‚¹ã¶ã‚‰ä¸‹ã’æ–‡å­—ï¼‰ã¯ã“ã“ã§ã¯ãªãå…¨ã‚¿ã‚¤ãƒ—ã«ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®š	// 2009.08.07 ryoji 
 
-	//¦¬‚³‚ÈeØ‚Æ‚µ‚ÄAC:\`` ‚â \\`` ‚È‚Ç‚Ìƒtƒ@ƒCƒ‹ƒpƒX‚ğƒNƒŠƒbƒJƒuƒ‹‚É‚·‚éİ’è‚ğuƒeƒLƒXƒgv‚ÉŠù’è‚Åd‚Ş
-	//¦""‚Å‹²‚Ü‚ê‚éİ’è‚Í‹²‚Ü‚ê‚È‚¢İ’è‚æ‚è‚àã‚É–³‚¯‚ê‚Î‚È‚ç‚È‚¢
-	//¦""‚Å‹²‚Ü‚ê‚éİ’è‚ğ•¡»‚µ‚Ä‚¿‚å‚Á‚ÆC³‚·‚ê‚ÎA<>‚â[]‚É‹²‚Ü‚ê‚½‚à‚Ì‚É‚à‘Î‰‚Å‚«‚éiƒ†[ƒU‚É”C‚¹‚éj
+	//â€»å°ã•ãªè¦ªåˆ‡ã¨ã—ã¦ã€C:\ï½ï½ ã‚„ \\ï½ï½ ãªã©ã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’ã‚¯ãƒªãƒƒã‚«ãƒ–ãƒ«ã«ã™ã‚‹è¨­å®šã‚’ã€Œãƒ†ã‚­ã‚¹ãƒˆã€ã«æ—¢å®šã§ä»•è¾¼ã‚€
+	//â€»""ã§æŒŸã¾ã‚Œã‚‹è¨­å®šã¯æŒŸã¾ã‚Œãªã„è¨­å®šã‚ˆã‚Šã‚‚ä¸Šã«ç„¡ã‘ã‚Œã°ãªã‚‰ãªã„
+	//â€»""ã§æŒŸã¾ã‚Œã‚‹è¨­å®šã‚’è¤‡è£½ã—ã¦ã¡ã‚‡ã£ã¨ä¿®æ­£ã™ã‚Œã°ã€<>ã‚„[]ã«æŒŸã¾ã‚ŒãŸã‚‚ã®ã«ã‚‚å¯¾å¿œã§ãã‚‹ï¼ˆãƒ¦ãƒ¼ã‚¶ã«ä»»ã›ã‚‹ï¼‰
 
-	//³‹K•\Œ»ƒL[ƒ[ƒh
+	//æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 	int keywordPos = 0;
 	wchar_t* pKeyword = pType->m_RegexKeywordList;
-	pType->m_bUseRegexKeyword = true;							// ³‹K•\Œ»ƒL[ƒ[ƒh‚ğg‚¤‚©
-	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// Fw’è”Ô†
-	wcscpyn( &pKeyword[keywordPos],			// ³‹K•\Œ»ƒL[ƒ[ƒh
-		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""‚Å‹²‚Ü‚ê‚½ C:\`, \\` ‚Éƒ}ƒbƒ`‚·‚éƒpƒ^[ƒ“
+	pType->m_bUseRegexKeyword = true;							// æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä½¿ã†ã‹
+	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// è‰²æŒ‡å®šç•ªå·
+	wcscpyn( &pKeyword[keywordPos],			// æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""ã§æŒŸã¾ã‚ŒãŸ C:\ï½, \\ï½ ã«ãƒãƒƒãƒã™ã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³
 		_countof(pType->m_RegexKeywordList) - 1 );
 	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
-	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// Fw’è”Ô†
-	wcscpyn( &pKeyword[keywordPos],			// ³‹K•\Œ»ƒL[ƒ[ƒh
-		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\`, \\` ‚Éƒ}ƒbƒ`‚·‚éƒpƒ^[ƒ“
+	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// è‰²æŒ‡å®šç•ªå·
+	wcscpyn( &pKeyword[keywordPos],			// æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\ï½, \\ï½ ã«ãƒãƒƒãƒã™ã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³
 		_countof(pType->m_RegexKeywordList) - keywordPos - 1 );
 	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
 	pKeyword[keywordPos] = L'\0';
@@ -82,39 +82,39 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 
 
 
-/*!	ƒeƒLƒXƒgEƒgƒsƒbƒNƒŠƒXƒgì¬
+/*!	ãƒ†ã‚­ã‚¹ãƒˆãƒ»ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆä½œæˆ
 	
-	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()‚ğg—p‚·‚é‚æ‚¤‚É‰ü’ùB
-	@date 2002.11.03 Moca	ŠK‘w‚ªÅ‘å’l‚ğ’´‚¦‚é‚Æƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“‚·‚é‚Ì‚ğC³
-							Å‘å’lˆÈã‚Í’Ç‰Á‚¹‚¸‚É–³‹‚·‚é
-	@date 2007.8    kobake ‹@ŠB“I‚ÉUNICODE‰»
-	@date 2007.11.29 kobake UNICODE‘Î‰‚Å‚«‚Ä‚È‚©‚Á‚½‚Ì‚ÅC³
+	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()ã‚’ä½¿ç”¨ã™ã‚‹ã‚ˆã†ã«æ”¹è¨‚ã€‚
+	@date 2002.11.03 Moca	éšå±¤ãŒæœ€å¤§å€¤ã‚’è¶…ãˆã‚‹ã¨ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³ã™ã‚‹ã®ã‚’ä¿®æ­£
+							æœ€å¤§å€¤ä»¥ä¸Šã¯è¿½åŠ ã›ãšã«ç„¡è¦–ã™ã‚‹
+	@date 2007.8é ƒ   kobake æ©Ÿæ¢°çš„ã«UNICODEåŒ–
+	@date 2007.11.29 kobake UNICODEå¯¾å¿œã§ãã¦ãªã‹ã£ãŸã®ã§ä¿®æ­£
 */
 void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 {
 	using namespace WCODE;
 
-	//Œ©o‚µ‹L†
+	//è¦‹å‡ºã—è¨˜å·
 	const wchar_t*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
 	int				nStartsLen = wcslen( pszStarts );
 
-	/*	ƒlƒXƒg‚Ì[‚³‚ÍAnMaxStackƒŒƒxƒ‹‚Ü‚ÅA‚Ğ‚Æ‚Â‚Ìƒwƒbƒ_‚ÍAÅ’·32•¶š‚Ü‚Å‹æ•Ê
-		i32•¶š‚Ü‚Å“¯‚¶‚¾‚Á‚½‚ç“¯‚¶‚à‚Ì‚Æ‚µ‚Äˆµ‚¢‚Ü‚·j
+	/*	ãƒã‚¹ãƒˆã®æ·±ã•ã¯ã€nMaxStackãƒ¬ãƒ™ãƒ«ã¾ã§ã€ã²ã¨ã¤ã®ãƒ˜ãƒƒãƒ€ã¯ã€æœ€é•·32æ–‡å­—ã¾ã§åŒºåˆ¥
+		ï¼ˆ32æ–‡å­—ã¾ã§åŒã˜ã ã£ãŸã‚‰åŒã˜ã‚‚ã®ã¨ã—ã¦æ‰±ã„ã¾ã™ï¼‰
 	*/
-	const int nMaxStack = 32;	//	ƒlƒXƒg‚ÌÅ[
-	int nDepth = 0;				//	‚¢‚Ü‚ÌƒAƒCƒeƒ€‚Ì[‚³‚ğ•\‚·”’lB
+	const int nMaxStack = 32;	//	ãƒã‚¹ãƒˆã®æœ€æ·±
+	int nDepth = 0;				//	ã„ã¾ã®ã‚¢ã‚¤ãƒ†ãƒ ã®æ·±ã•ã‚’è¡¨ã™æ•°å€¤ã€‚
 	wchar_t pszStack[nMaxStack][32];
-	wchar_t szTitle[32];			//	ˆê—Ìˆæ
+	wchar_t szTitle[32];			//	ä¸€æ™‚é ˜åŸŸ
 	CLogicInt				nLineCount;
 	bool b278a = false;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount )
 	{
-		//sæ“¾
+		//è¡Œå–å¾—
 		CLogicInt		nLineLen;
 		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine )break;
 
-		//s“ª‚Ì‹ó”’”ò‚Î‚µ
+		//è¡Œé ­ã®ç©ºç™½é£›ã°ã—
 		int i;
 		for( i = 0; i < nLineLen; ++i ){
 			if( WCODE::IsBlank(pLine[i]) ){
@@ -126,7 +126,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			continue;
 		}
 
-		//æ“ª•¶š‚ªŒ©o‚µ‹L†‚Ì‚¢‚¸‚ê‚©‚Å‚ ‚ê‚ÎAŸ‚Öi‚Ş
+		//å…ˆé ­æ–‡å­—ãŒè¦‹å‡ºã—è¨˜å·ã®ã„ãšã‚Œã‹ã§ã‚ã‚Œã°ã€æ¬¡ã¸é€²ã‚€
 		int j;
 		int nCharChars;
 		int nCharChars2;
@@ -144,45 +144,45 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			continue;
 		}
 
-		//Œ©o‚µí—Ş‚Ì”»•Ê -> szTitle
+		//è¦‹å‡ºã—ç¨®é¡ã®åˆ¤åˆ¥ -> szTitle
 		if( pLine[i] == L'(' ){
-			     if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy( szTitle, L"(0)" ); //”š
-			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy( szTitle, L"(A)" ); //‰p‘å•¶š
-			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy( szTitle, L"(a)" ); //‰p¬•¶š
-			else continue; //¦u(v‚ÌŸ‚ª‰p”š‚Å–³‚¢ê‡AŒ©o‚µ‚Æ‚İ‚È‚³‚È‚¢
+			     if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy( szTitle, L"(0)" ); //æ•°å­—
+			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy( szTitle, L"(A)" ); //è‹±å¤§æ–‡å­—
+			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy( szTitle, L"(a)" ); //è‹±å°æ–‡å­—
+			else continue; //â€»ã€Œ(ã€ã®æ¬¡ãŒè‹±æ•°å­—ã§ç„¡ã„å ´åˆã€è¦‹å‡ºã—ã¨ã¿ãªã•ãªã„
 		}
-		else if( IsInRange(pLine[i], L'‚O', L'‚X') ) wcscpy( szTitle, L"‚O" ); // ‘SŠp”š
-		else if( IsInRange(pLine[i], L'‡@', L'‡S') || pLine[i] == L'\u24ea'
-			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy( szTitle, L"‡@" ); // ‡@`‡S ›0@›21›35@›36›50
-		else if( IsInRange(pLine[i], L'‡T', L'\u216f') ) wcscpy( szTitle, L"‡T" ); // ‡T`‡]@XIXIILCDM
-		else if( IsInRange(pLine[i], L'ú@', L'\u217f') ) wcscpy( szTitle, L"‡T" ); // ‡T`‡]@xixiilcdm
+		else if( IsInRange(pLine[i], L'ï¼', L'ï¼™') ) wcscpy( szTitle, L"ï¼" ); // å…¨è§’æ•°å­—
+		else if( IsInRange(pLine[i], L'â‘ ', L'â‘³') || pLine[i] == L'\u24ea'
+			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy( szTitle, L"â‘ " ); // â‘ ï½â‘³ â—‹0ã€€â—‹21â—‹35ã€€â—‹36â—‹50
+		else if( IsInRange(pLine[i], L'â… ', L'\u216f') ) wcscpy( szTitle, L"â… " ); // â… ï½â…©ã€€XIXIILCDM
+		else if( IsInRange(pLine[i], L'â…°', L'\u217f') ) wcscpy( szTitle, L"â… " ); // â… ï½â…©ã€€xixiilcdm
 		else if( IsInRange(pLine[i], L'\u2474', L'\u2487') ) wcscpy( szTitle, L"\u2474" ); // (1)-(20)
 		else if( IsInRange(pLine[i], L'\u2488', L'\u249b') ) wcscpy( szTitle, L"\u2488" ); // 1.-20.
 		else if( IsInRange(pLine[i], L'\u249c', L'\u24b5') ) wcscpy( szTitle, L"\u249c" ); // (a)-(z)
-		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy( szTitle, L"\u24b6" ); // ›A-›Z
-		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy( szTitle, L"\u24d0" ); // ›a-›z
-		else if( IsInRange(pLine[i], L'\u24eb', L'\u24f4') ){ // œ11-œ20
+		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy( szTitle, L"\u24b6" ); // â—‹A-â—‹Z
+		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy( szTitle, L"\u24d0" ); // â—‹a-â—‹z
+		else if( IsInRange(pLine[i], L'\u24eb', L'\u24f4') ){ // â—11-â—20
 			if(b278a){ wcscpy( szTitle, L"\u278a" ); }
 			else{ wcscpy( szTitle, L"\u2776" ); } }
-		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy( szTitle, L"\u24f5" ); // 1-10
-		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy( szTitle, L"\u2776" ); // œ1-œ10
-		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy( szTitle, L"\u2780" ); // ›1-›10
-		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy( szTitle, L"\u278a" ); b278a = true; } // œ1-œ10(SANS-SERIF)
-		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy( szTitle, L"\ua3220" ); // (ˆê)-(\)
-		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy( szTitle, L"\u3220" ); // ›ˆê-›\
-		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy( szTitle, L"\u32d0" ); // ›ƒA-›ƒ’
-		else if( wcschr(L"Zˆê“ñOlŒÜ˜Zµ”ª‹ã\•S—ëˆë“óQŒŞ", pLine[i]) ) wcscpy( szTitle, L"ˆê" ); //Š¿”š
+		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy( szTitle, L"\u24f5" ); // â—1-â—10
+		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy( szTitle, L"\u2776" ); // â—1-â—10
+		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy( szTitle, L"\u2780" ); // â—‹1-â—‹10
+		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy( szTitle, L"\u278a" ); b278a = true; } // â—1-â—10(SANS-SERIF)
+		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy( szTitle, L"\ua3220" ); // (ä¸€)-(å)
+		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy( szTitle, L"\u3220" ); // â—‹ä¸€-â—‹å
+		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy( szTitle, L"\u32d0" ); // â—‹ã‚¢-â—‹ãƒ²
+		else if( wcschr(L"ã€‡ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹åç™¾é›¶å£±å¼å‚ä¼", pLine[i]) ) wcscpy( szTitle, L"ä¸€" ); //æ¼¢æ•°å­—
 		else{
-			wcsncpy( szTitle, &pLine[i], nCharChars );	//	æ“ª•¶š‚ğszTitle‚É•ÛB
+			wcsncpy( szTitle, &pLine[i], nCharChars );	//	å…ˆé ­æ–‡å­—ã‚’szTitleã«ä¿æŒã€‚
 			szTitle[nCharChars] = L'\0';
 		}
 
-		/*	uŒ©o‚µ‹L†v‚ÉŠÜ‚Ü‚ê‚é•¶š‚Ån‚Ü‚é‚©A
-			(0A(1A...(9A(AA(BA...(ZA(aA(bA...(z
-			‚Ån‚Ü‚és‚ÍAƒAƒEƒgƒ‰ƒCƒ“Œ‹‰Ê‚É•\¦‚·‚éB
+		/*	ã€Œè¦‹å‡ºã—è¨˜å·ã€ã«å«ã¾ã‚Œã‚‹æ–‡å­—ã§å§‹ã¾ã‚‹ã‹ã€
+			(0ã€(1ã€...(9ã€(Aã€(Bã€...(Zã€(aã€(bã€...(z
+			ã§å§‹ã¾ã‚‹è¡Œã¯ã€ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³çµæœã«è¡¨ç¤ºã™ã‚‹ã€‚
 		*/
 
-		//s•¶š—ñ‚©‚ç‰üs‚ğæ‚èœ‚­ pLine -> pszText
+		//è¡Œæ–‡å­—åˆ—ã‹ã‚‰æ”¹è¡Œã‚’å–ã‚Šé™¤ã pLine -> pszText
 		const wchar_t*	pszText = &pLine[i];
 		nLineLen -= i;
 		const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -195,10 +195,10 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		pszText = strText.c_str();
 
 		/*
-		  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-		  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-		  ¨
-		  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+		  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+		  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+		  â†’
+		  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 		*/
 		CLayoutPoint ptPos;
 		m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -206,7 +206,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			&ptPos
 		);
 
-		/* nDepth‚ğŒvZ */
+		/* nDepthã‚’è¨ˆç®— */
 		int k;
 		bool bAppend = true;
 		for ( k = 0; k < nDepth; k++ ){
@@ -216,17 +216,17 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			}
 		}
 		if ( k < nDepth ){
-			//	ƒ‹[ƒv“r’†‚Åbreak;‚µ‚Ä‚«‚½B¡‚Ü‚Å‚É“¯‚¶Œ©o‚µ‚ª‘¶İ‚µ‚Ä‚¢‚½B
-			//	‚Ì‚ÅA“¯‚¶ƒŒƒxƒ‹‚É‡‚í‚¹‚ÄAppendData.
+			//	ãƒ«ãƒ¼ãƒ—é€”ä¸­ã§break;ã—ã¦ããŸã€‚ï¼ä»Šã¾ã§ã«åŒã˜è¦‹å‡ºã—ãŒå­˜åœ¨ã—ã¦ã„ãŸã€‚
+			//	ã®ã§ã€åŒã˜ãƒ¬ãƒ™ãƒ«ã«åˆã‚ã›ã¦AppendData.
 			nDepth = k;
 		}
 		else if( nMaxStack > k ){
-			//	‚¢‚Ü‚Ü‚Å‚É“¯‚¶Œ©o‚µ‚ª‘¶İ‚µ‚È‚©‚Á‚½B
-			//	‚Ì‚ÅApszStack‚ÉƒRƒs[‚µ‚ÄAppendData.
+			//	ã„ã¾ã¾ã§ã«åŒã˜è¦‹å‡ºã—ãŒå­˜åœ¨ã—ãªã‹ã£ãŸã€‚
+			//	ã®ã§ã€pszStackã«ã‚³ãƒ”ãƒ¼ã—ã¦AppendData.
 			wcscpy(pszStack[nDepth], szTitle);
 		}
 		else{
-			// 2002.11.03 Moca Å‘å’l‚ğ’´‚¦‚é‚Æƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“
+			// 2002.11.03 Moca æœ€å¤§å€¤ã‚’è¶…ãˆã‚‹ã¨ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³
 			// nDepth = nMaxStack;
 			bAppend = false;
 		}
@@ -243,12 +243,12 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-/*! ŠK‘w•t‚«ƒeƒLƒXƒg ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ
+/*! éšå±¤ä»˜ããƒ†ã‚­ã‚¹ãƒˆ ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ
 
 	@author zenryaku
-	@date 2003.05.20 zenryaku V‹Kì¬
-	@date 2003.05.25 genta À‘••û–@ˆê•”C³
-	@date 2003.06.21 Moca ŠK‘w‚ª2’iˆÈã[‚­‚È‚éê‡‚ğl—¶
+	@date 2003.05.20 zenryaku æ–°è¦ä½œæˆ
+	@date 2003.05.25 genta å®Ÿè£…æ–¹æ³•ä¸€éƒ¨ä¿®æ­£
+	@date 2003.06.21 Moca éšå±¤ãŒ2æ®µä»¥ä¸Šæ·±ããªã‚‹å ´åˆã‚’è€ƒæ…®
 */
 void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 {
@@ -265,14 +265,14 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 		{
 			break;
 		}
-		//	May 25, 2003 genta ”»’è‡˜•ÏX
+		//	May 25, 2003 genta åˆ¤å®šé †åºå¤‰æ›´
 		if( *pLine == L'.' )
 		{
 			const wchar_t* pPos;	//	May 25, 2003 genta
 			int			nLength;
 			wchar_t		szTitle[1024];
 
-			//	ƒsƒŠƒIƒh‚Ì”ŠK‘w‚Ì[‚³‚ğ”‚¦‚é
+			//	ãƒ”ãƒªã‚ªãƒ‰ã®æ•°ï¼éšå±¤ã®æ·±ã•ã‚’æ•°ãˆã‚‹
 			for( pPos = pLine + 1 ; *pPos == L'.' ; ++pPos )
 				;
 
@@ -284,11 +284,11 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 			
 			int level = pPos - pLine;
 
-			// 2003.06.27 Moca ŠK‘w‚ª2’iˆÊã[‚­‚È‚é‚Æ‚«‚ÍA–³‘è‚Ì—v‘f‚ğ’Ç‰Á
+			// 2003.06.27 Moca éšå±¤ãŒ2æ®µä½ä¸Šæ·±ããªã‚‹ã¨ãã¯ã€ç„¡é¡Œã®è¦ç´ ã‚’è¿½åŠ 
 			if( levelPrev < level && level != levelPrev + 1  ){
 				int dummyLevel;
-				// (–³‘è)‚ğ‘}“ü
-				//	‚½‚¾‚µCTAGˆê——‚É‚Ío—Í‚³‚ê‚È‚¢‚æ‚¤‚É
+				// (ç„¡é¡Œ)ã‚’æŒ¿å…¥
+				//	ãŸã ã—ï¼ŒTAGä¸€è¦§ã«ã¯å‡ºåŠ›ã•ã‚Œãªã„ã‚ˆã†ã«
 				for( dummyLevel = levelPrev + 1; dummyLevel < level; dummyLevel++ ){
 					pcFuncInfoArr->AppendData(
 						nLineCount+CLogicInt(1),
@@ -303,7 +303,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 
 			nLength = auto_sprintf(szTitle,L"%d - ", level );
 			
-			wchar_t *pDest = szTitle + nLength; // ‘‚«‚İæ
+			wchar_t *pDest = szTitle + nLength; // æ›¸ãè¾¼ã¿å…ˆ
 			wchar_t *pDestEnd = szTitle + _countof(szTitle) - 2;
 			
 			while( pDest < pDestEnd )

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,31 +31,31 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* TeX */
-//Oct. 31, 2000 JEPRO TeX  ƒ†[ƒU‚É‘¡‚é
-//Oct. 31, 2000 JEPRO TeX ƒ†[ƒU‚É‘¡‚é	//Mar. 10, 2001 JEPRO ’Ç‰Á
+//Oct. 31, 2000 JEPRO TeX  ãƒ¦ãƒ¼ã‚¶ã«è´ˆã‚‹
+//Oct. 31, 2000 JEPRO TeX ãƒ¦ãƒ¼ã‚¶ã«è´ˆã‚‹	//Mar. 10, 2001 JEPRO è¿½åŠ 
 void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("TeX") );
 	_tcscpy( pType->m_szTypeExts, _T("tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo") );
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"%", -1 );				/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_eDefaultOutline = OUTLINE_TEX;						/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	pType->m_nKeyWordSetIdx[0] = 9;								/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_nKeyWordSetIdx[1] = 10;							/* ƒL[ƒ[ƒhƒZƒbƒg2 */	//Jan. 19, 2001 JEPRO
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ğF•ª‚¯•\¦‚µ‚È‚¢
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ğF•ª‚¯•\¦‚µ‚È‚¢
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"%", -1 );				/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_eDefaultOutline = OUTLINE_TEX;						/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	pType->m_nKeyWordSetIdx[0] = 9;								/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_nKeyWordSetIdx[1] = 10;							/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ2 */	//Jan. 19, 2001 JEPRO
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
 }
 
 
 
 
-/*! TeX ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ
+/*! TeX ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ
 
 	@author naoh
-	@date 2003.07.21 naoh V‹Kì¬
-	@date 2005.01.03 naoh uƒ}v‚È‚Ç‚Ì"}"‚ğŠÜ‚Ş•¶š‚É‘Î‚·‚éC³Aprosper‚Ìslide‚É‘Î‰
+	@date 2003.07.21 naoh æ–°è¦ä½œæˆ
+	@date 2005.01.03 naoh ã€Œãƒã€ãªã©ã®"}"ã‚’å«ã‚€æ–‡å­—ã«å¯¾ã™ã‚‹ä¿®æ­£ã€prosperã®slideã«å¯¾å¿œ
 */
 void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 {
@@ -65,28 +65,28 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 	int				j;
 	int				k;
 
-	const int nMaxStack = 8;	//	ƒlƒXƒg‚ÌÅ[
-	int nDepth = 0;				//	‚¢‚Ü‚ÌƒAƒCƒeƒ€‚Ì[‚³‚ğ•\‚·”’lB
-	wchar_t szTag[32], szTitle[256];			//	ˆê—Ìˆæ
-	int thisSection=0, lastSection = 0;	// Œ»İ‚ÌƒZƒNƒVƒ‡ƒ“í—Ş‚Æˆê‚Â‘O‚ÌƒZƒNƒVƒ‡ƒ“í—Ş
-	int stackSection[nMaxStack];		// Še[‚³‚Å‚ÌƒZƒNƒVƒ‡ƒ“‚Ì”Ô†
-	int nStartTitlePos = 0;				// \section{dddd} ‚Ì dddd ‚Ì•”•ª‚Ìn‚Ü‚é”Ô†
-	int bNoNumber = 0;					// * •t‚Ìê‡‚ÍƒZƒNƒVƒ‡ƒ“”Ô†‚ğ•t‚¯‚È‚¢
+	const int nMaxStack = 8;	//	ãƒã‚¹ãƒˆã®æœ€æ·±
+	int nDepth = 0;				//	ã„ã¾ã®ã‚¢ã‚¤ãƒ†ãƒ ã®æ·±ã•ã‚’è¡¨ã™æ•°å€¤ã€‚
+	wchar_t szTag[32], szTitle[256];			//	ä¸€æ™‚é ˜åŸŸ
+	int thisSection=0, lastSection = 0;	// ç¾åœ¨ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ç¨®é¡ã¨ä¸€ã¤å‰ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ç¨®é¡
+	int stackSection[nMaxStack];		// å„æ·±ã•ã§ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®ç•ªå·
+	int nStartTitlePos = 0;				// \section{dddd} ã® dddd ã®éƒ¨åˆ†ã®å§‹ã¾ã‚‹ç•ªå·
+	int bNoNumber = 0;					// * ä»˜ã®å ´åˆã¯ã‚»ã‚¯ã‚·ãƒ§ãƒ³ç•ªå·ã‚’ä»˜ã‘ãªã„
 
-	// ˆês‚¸‚Â
+	// ä¸€è¡Œãšã¤
 	CLogicInt	nLineCount;
 	for(nLineCount=CLogicInt(0);nLineCount<m_pcDocRef->m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
 		pLine	=	m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if(!pLine) break;
-		// ˆê•¶š‚¸‚Â
+		// ä¸€æ–‡å­—ãšã¤
 		for(i=0;i<nLineLen-1;i++)
 		{
-			if(pLine[i] == L'%') break;	// ƒRƒƒ“ƒg‚È‚çˆÈ~‚Í‚¢‚ç‚È‚¢
+			if(pLine[i] == L'%') break;	// ã‚³ãƒ¡ãƒ³ãƒˆãªã‚‰ä»¥é™ã¯ã„ã‚‰ãªã„
 			if(nDepth>=nMaxStack)continue;
-			if(pLine[i] != L'\\')continue;	// u\v‚ª‚È‚¢‚È‚çŸ‚Ì•¶š‚Ö
+			if(pLine[i] != L'\\')continue;	// ã€Œ\ã€ãŒãªã„ãªã‚‰æ¬¡ã®æ–‡å­—ã¸
 			++i;
-			// Œ©‚Â‚©‚Á‚½u\vˆÈ~‚Ì•¶š—ñƒ`ƒFƒbƒN
+			// è¦‹ã¤ã‹ã£ãŸã€Œ\ã€ä»¥é™ã®æ–‡å­—åˆ—ãƒã‚§ãƒƒã‚¯
 			for(j=0;i+j<nLineLen && j<_countof(szTag)-1;j++)
 			{
 				if(pLine[i+j] == L'{') { // }
@@ -108,8 +108,8 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 			else if(!wcscmp(szTag,L"subsection")) thisSection = 3;
 			else if(!wcscmp(szTag,L"section")) thisSection = 2;
 			else if(!wcscmp(szTag,L"chapter")) thisSection = 1;
-			else if(!wcscmp(szTag,L"begin")) {		// begin‚È‚ç prosper‚Ìslide‚Ì‰Â”\«‚àl—¶
-				// ‚³‚ç‚É{slide}{}‚Ü‚Å“Ç‚İ‚Æ‚Á‚Ä‚¨‚­
+			else if(!wcscmp(szTag,L"begin")) {		// beginãªã‚‰ prosperã®slideã®å¯èƒ½æ€§ã‚‚è€ƒæ…®
+				// ã•ã‚‰ã«{slide}{}ã¾ã§èª­ã¿ã¨ã£ã¦ãŠã
 				if(wcsstr(pLine, L"{slide}")){
 					k=0;
 					for(j=nStartTitlePos+1;i+j<nLineLen && j<_countof(szTag)-1;j++)
@@ -127,7 +127,7 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 
 			if( thisSection > 0)
 			{
-				// section‚Ì’†gæ“¾
+				// sectionã®ä¸­èº«å–å¾—
 				for(k=0;nStartTitlePos+k<nLineLen && k<_countof(szTitle)-1;k++)
 				{
 					// {
@@ -182,7 +182,7 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 
 
 const wchar_t* g_ppszKeywordsTEX[] = {
-//Nov. 20, 2000 JEPRO	‘å•’Ç‰Á & áŠ±C³Eíœ --‚Ù‚Æ‚ñ‚ÇƒRƒ}ƒ“ƒh‚Ì‚İ
+//Nov. 20, 2000 JEPRO	å¤§å¹…è¿½åŠ  & è‹¥å¹²ä¿®æ­£ãƒ»å‰Šé™¤ --ã»ã¨ã‚“ã©ã‚³ãƒãƒ³ãƒ‰ã®ã¿
 	L"error",
 	L"Warning",
 //			"center",
@@ -715,10 +715,10 @@ const wchar_t* g_ppszKeywordsTEX[] = {
 };
 int g_nKeywordsTEX = _countof(g_ppszKeywordsTEX);
 
-//Jan. 19, 2001 JEPRO	TeX ‚ÌƒL[ƒ[ƒh2‚Æ‚µ‚ÄV‹K’Ç‰Á & ˆê•”•œŠˆ --ŠÂ‹«ƒRƒ}ƒ“ƒh‚ÆƒIƒvƒVƒ‡ƒ“–¼‚ª’†S
+//Jan. 19, 2001 JEPRO	TeX ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰2ã¨ã—ã¦æ–°è¦è¿½åŠ  & ä¸€éƒ¨å¾©æ´» --ç’°å¢ƒã‚³ãƒãƒ³ãƒ‰ã¨ã‚ªãƒ—ã‚·ãƒ§ãƒ³åãŒä¸­å¿ƒ
 const wchar_t* g_ppszKeywordsTEX2[] = {
-	//	ŠÂ‹«ƒRƒ}ƒ“ƒh
-	//Jan. 19, 2001 JEPRO –{“–‚Í{}•t‚«‚ÅƒL[ƒ[ƒh‚É‚µ‚½‚©‚Á‚½‚ª’PŒê‚Æ‚µ‚Ä”F¯‚µ‚Ä‚­‚ê‚È‚¢‚Ì‚Å~‚ß‚½
+	//	ç’°å¢ƒã‚³ãƒãƒ³ãƒ‰
+	//Jan. 19, 2001 JEPRO æœ¬å½“ã¯{}ä»˜ãã§ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«ã—ãŸã‹ã£ãŸãŒå˜èªã¨ã—ã¦èªè­˜ã—ã¦ãã‚Œãªã„ã®ã§æ­¢ã‚ãŸ
 	L"abstract",
 	L"array",
 	L"center",
@@ -764,7 +764,7 @@ const wchar_t* g_ppszKeywordsTEX2[] = {
 	L"verbatim*",
 	L"verse",
 	L"wrapfigure",
-	//	ƒXƒ^ƒCƒ‹ƒIƒvƒVƒ‡ƒ“
+	//	ã‚¹ã‚¿ã‚¤ãƒ«ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	L"a4",
 	L"a4j",
 	L"a5",
