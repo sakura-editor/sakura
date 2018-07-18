@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 #include "doc/layout/CTsvModeInfo.h"
 
 /*
-	X’l‚Ì’PˆÊ•ÏŠ·ŠÖ”ŒQB
+	Xå€¤ã®å˜ä½å¤‰æ›é–¢æ•°ç¾¤ã€‚
 */
 
 class CLayout;
@@ -36,7 +36,7 @@ class CEditView;
 
 class CViewCalc{
 protected:
-	//ŠO•”ˆË‘¶
+	//å¤–éƒ¨ä¾å­˜
 	CLayoutInt GetTabSpace() const;
 	CPixelXInt GetCharSpacing() const;
 	CTsvModeInfo& GetTsvMode() const;
@@ -45,14 +45,14 @@ public:
 	CViewCalc(const CEditView* pOwner) : m_pOwner(pOwner) { }
 	virtual ~CViewCalc(){}
 
-	//’PˆÊ•ÏŠ·: ƒŒƒCƒAƒEƒg¨ƒƒWƒbƒN
-	CLogicInt  LineColumnToIndex ( const CLayout*  pcLayout,  CLayoutInt nColumn ) const;		/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver1 */		// @@@ 2002.09.28 YAZAKI
-	CLogicInt  LineColumnToIndex ( const CDocLine* pcDocLine, CLayoutInt nColumn ) const;		/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver1 */		// @@@ 2002.09.28 YAZAKI
-	CLogicInt  LineColumnToIndex2( const CLayout*  pcLayout,  CLayoutInt nColumn, CLayoutInt* pnLineAllColLen ) const;	/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver0 */		// @@@ 2002.09.28 YAZAKI
+	//å˜ä½å¤‰æ›: ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆâ†’ãƒ­ã‚¸ãƒƒã‚¯
+	CLogicInt  LineColumnToIndex ( const CLayout*  pcLayout,  CLayoutInt nColumn ) const;		/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver1 */		// @@@ 2002.09.28 YAZAKI
+	CLogicInt  LineColumnToIndex ( const CDocLine* pcDocLine, CLayoutInt nColumn ) const;		/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver1 */		// @@@ 2002.09.28 YAZAKI
+	CLogicInt  LineColumnToIndex2( const CLayout*  pcLayout,  CLayoutInt nColumn, CLayoutInt* pnLineAllColLen ) const;	/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver0 */		// @@@ 2002.09.28 YAZAKI
 
-	//’PˆÊ•ÏŠ·: ƒƒWƒbƒN¨ƒŒƒCƒAƒEƒg
-	CLayoutInt LineIndexToColumn ( const CLayout*  pcLayout,  CLogicInt nIndex ) const;		// w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é	// @@@ 2002.09.28 YAZAKI
-	CLayoutInt LineIndexToColumn ( const CDocLine* pcLayout,  CLogicInt nIndex ) const;		// w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é	// @@@ 2002.09.28 YAZAKI
+	//å˜ä½å¤‰æ›: ãƒ­ã‚¸ãƒƒã‚¯â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
+	CLayoutInt LineIndexToColumn ( const CLayout*  pcLayout,  CLogicInt nIndex ) const;		// æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹	// @@@ 2002.09.28 YAZAKI
+	CLayoutInt LineIndexToColumn ( const CDocLine* pcLayout,  CLogicInt nIndex ) const;		// æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹	// @@@ 2002.09.28 YAZAKI
 
 private:
 	const CEditView* m_pOwner;

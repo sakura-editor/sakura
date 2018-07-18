@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -40,31 +40,31 @@ public:
 	virtual ~CTextDrawer(){}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ŠO•”ˆË‘¶                            //
+	//                         å¤–éƒ¨ä¾å­˜                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//—Ìˆæ‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‹‚ß‚é
+	//é ˜åŸŸã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’æ±‚ã‚ã‚‹
 	const CTextArea* GetTextArea() const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+	//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//2007.08.25 kobake –ß‚è’l‚ğ void ‚É•ÏXBˆø” x, y ‚ğ DispPos ‚É•ÏX
-	//ÀÛ‚É‚Í pX ‚Æ nX ‚ªXV‚³‚ê‚éB
-	void DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // ƒeƒLƒXƒg•\¦
+	//2007.08.25 kobake æˆ»ã‚Šå€¤ã‚’ void ã«å¤‰æ›´ã€‚å¼•æ•° x, y ã‚’ DispPos ã«å¤‰æ›´
+	//å®Ÿéš›ã«ã¯ pX ã¨ nX ãŒæ›´æ–°ã•ã‚Œã‚‹ã€‚
+	void DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤º
 
-	//!	ƒm[ƒgü•`‰æ
+	//!	ãƒãƒ¼ãƒˆç·šæç”»
 	void DispNoteLine( CGraphics& gr, int nTop, int nBottom, int nLeft, int nRight ) const;
 
-	// -- -- w’èŒ…cü•`‰æ -- -- //
-	//!	w’èŒ…cü•`‰æŠÖ”	// 2005.11.08 Moca
+	// -- -- æŒ‡å®šæ¡ç¸¦ç·šæç”» -- -- //
+	//!	æŒ‡å®šæ¡ç¸¦ç·šæç”»é–¢æ•°	// 2005.11.08 Moca
 	void DispVerticalLines( CGraphics& gr, int nTop, int nBottom, CLayoutInt nLeftCol, CLayoutInt nRightCol ) const;
 
-	// -- -- Ü‚è•Ô‚µŒ…cü•`‰æ -- -- //
+	// -- -- æŠ˜ã‚Šè¿”ã—æ¡ç¸¦ç·šæç”» -- -- //
 	void DispWrapLine( CGraphics& gr, int nTop, int nBottom ) const;
 
-	// -- -- s”Ô† -- -- //
-	void DispLineNumber( CGraphics& gr, CLayoutInt nLineNum, int y ) const;		// s”Ô†•\¦
+	// -- -- è¡Œç•ªå· -- -- //
+	void DispLineNumber( CGraphics& gr, CLayoutInt nLineNum, int y ) const;		// è¡Œç•ªå·è¡¨ç¤º
 
 private:
 	const CEditView* m_pEditView;

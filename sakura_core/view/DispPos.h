@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -39,21 +39,21 @@ public:
 		m_ptDrawLayout.x=CLayoutInt(0);
 		m_ptDrawLayout.y=CLayoutInt(0);
 		m_nLineRef=CLayoutInt(0);
-		//ƒLƒƒƒbƒVƒ…
+		//ã‚­ãƒ£ãƒƒã‚·ãƒ¥
 		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.GetTopLayout();
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         •`‰æˆÊ’u                            //
+	//                         æç”»ä½ç½®                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//ŒÅ’è’l
+	//å›ºå®šå€¤
 	void InitDrawPos(const POINT& pt)
 	{
 		m_ptDrawOrigin=pt;
 		m_ptDrawLayout.x=m_ptDrawLayout.y=CLayoutInt(0);
 	}
 
-	//æ“¾
+	//å–å¾—
 	CMyPoint GetDrawPos() const
 	{
 		return CMyPoint(
@@ -70,49 +70,49 @@ public:
 		return m_nDy;
 	}
 
-	//i‚Ş
+	//é€²ã‚€
 	void ForwardDrawCol (CLayoutXInt nColOffset ){ m_ptDrawLayout.x += nColOffset; }
 	void ForwardDrawLine(int nOffsetLine){ m_ptDrawLayout.y += nOffsetLine; }
 
-	//ƒŠƒZƒbƒg
+	//ãƒªã‚»ãƒƒãƒˆ
 	void ResetDrawCol(){ m_ptDrawLayout.x = CLayoutInt(0); }
 
-	//æ“¾
+	//å–å¾—
 	CLayoutInt GetDrawCol() const{ return m_ptDrawLayout.x; }
 	CLayoutInt GetDrawLine() const{ return m_ptDrawLayout.y; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     ƒeƒLƒXƒgQÆˆÊ’u                        //
+	//                     ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§ä½ç½®                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//•ÏX
+	//å¤‰æ›´
 	void SetLayoutLineRef(CLayoutInt nOffsetLine)
 	{
 		m_nLineRef = nOffsetLine;
-		//ƒLƒƒƒbƒVƒ…XV
+		//ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ›´æ–°
 		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
 	}
 	void ForwardLayoutLineRef(int nOffsetLine);
 
 
-	//æ“¾
+	//å–å¾—
 	CLayoutInt		GetLayoutLineRef() const{ return m_nLineRef; }
 	const CLayout*	GetLayoutRef() const{ return m_pcLayoutRef; }
 
 
 private:
-	//ŒÅ’è—v‘f
-	int				m_nDx;			//”¼Šp•¶š‚Ì•¶šŠÔŠuBŒÅ’èB
-	int				m_nDy;			//”¼Šp•¶š‚ÌsŠÔŠuBŒÅ’èB
-	POINT			m_ptDrawOrigin;	//•`‰æˆÊ’uŠî€B’PˆÊ‚ÍƒsƒNƒZƒ‹BŒÅ’èB
+	//å›ºå®šè¦ç´ 
+	int				m_nDx;			//åŠè§’æ–‡å­—ã®æ–‡å­—é–“éš”ã€‚å›ºå®šã€‚
+	int				m_nDy;			//åŠè§’æ–‡å­—ã®è¡Œé–“éš”ã€‚å›ºå®šã€‚
+	POINT			m_ptDrawOrigin;	//æç”»ä½ç½®åŸºæº–ã€‚å˜ä½ã¯ãƒ”ã‚¯ã‚»ãƒ«ã€‚å›ºå®šã€‚
 
-	//•`‰æˆÊ’u
-	CLayoutPoint	m_ptDrawLayout; //•`‰æˆÊ’uB‘Š‘ÎƒŒƒCƒAƒEƒg’PˆÊB
+	//æç”»ä½ç½®
+	CLayoutPoint	m_ptDrawLayout; //æç”»ä½ç½®ã€‚ç›¸å¯¾ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ã€‚
 
-	//ƒeƒLƒXƒgQÆˆÊ’u
-	CLayoutInt		m_nLineRef; //â‘ÎƒŒƒCƒAƒEƒg’PˆÊB
+	//ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§ä½ç½®
+	CLayoutInt		m_nLineRef; //çµ¶å¯¾ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ã€‚
 
-	//ƒLƒƒƒbƒVƒ…############
+	//ã‚­ãƒ£ãƒƒã‚·ãƒ¥############
 	const CLayout*		m_pcLayoutRef;
 };
 

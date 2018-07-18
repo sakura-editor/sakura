@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CEditViewƒNƒ‰ƒX‚ÌgrepŠÖ˜AƒRƒ}ƒ“ƒhˆ—ŒnŠÖ”ŒQ
+ï»¿/*!	@file
+	@brief CEditViewã‚¯ãƒ©ã‚¹ã®grepé–¢é€£ã‚³ãƒãƒ³ãƒ‰å‡¦ç†ç³»é–¢æ•°ç¾¤
 
 	@author genta
-	@date	2005/01/10 ì¬
+	@date	2005/01/10 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -24,7 +24,7 @@
 #include "sakura_rc.h"
 
 /*!
-	ƒRƒ}ƒ“ƒhƒR[ƒh‚Ì•ÏŠ·(grep mode)
+	ã‚³ãƒãƒ³ãƒ‰ã‚³ãƒ¼ãƒ‰ã®å¤‰æ›(grep modeæ™‚)
 */
 void CEditView::TranslateCommand_grep(
 	EFunctionCode&	nCommand,
@@ -39,7 +39,7 @@ void CEditView::TranslateCommand_grep(
 		return;
 
 	if( nCommand == F_WCHAR ){
-		//	Jan. 23, 2005 genta •¶š”»’è–Y‚ê
+		//	Jan. 23, 2005 genta æ–‡å­—åˆ¤å®šå¿˜ã‚Œ
 		if( WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
 				&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;

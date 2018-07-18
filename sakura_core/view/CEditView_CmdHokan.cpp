@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CEditViewƒNƒ‰ƒX‚Ì•âŠ®ŠÖ˜AƒRƒ}ƒ“ƒhˆ—ŒnŠÖ”ŒQ
+ï»¿/*!	@file
+	@brief CEditViewã‚¯ãƒ©ã‚¹ã®è£œå®Œé–¢é€£ã‚³ãƒãƒ³ãƒ‰å‡¦ç†ç³»é–¢æ•°ç¾¤
 
 	@author genta
-	@date	2005/01/10 ì¬
+	@date	2005/01/10 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -25,20 +25,20 @@
 #include "sakura_rc.h"
 
 /*!
-	@brief ƒRƒ}ƒ“ƒhóM‘O•âŠ®ˆ—
+	@brief ã‚³ãƒãƒ³ãƒ‰å—ä¿¡å‰è£œå®Œå‡¦ç†
 	
-	•âŠ®ƒEƒBƒ“ƒhƒE‚Ì”ñ•\¦
+	è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®éè¡¨ç¤º
 
-	@date 2005.01.10 genta ŠÖ”‰»
+	@date 2005.01.10 genta é–¢æ•°åŒ–
 */
 void CEditView::PreprocessCommand_hokan( int nCommand )
 {
-	/* •âŠ®ƒEƒBƒ“ƒhƒE‚ª•\¦‚³‚ê‚Ä‚¢‚é‚Æ‚«A“Á•Ê‚Èê‡‚ğœ‚¢‚ÄƒEƒBƒ“ƒhƒE‚ğ”ñ•\¦‚É‚·‚é */
+	/* è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ã¨ãã€ç‰¹åˆ¥ãªå ´åˆã‚’é™¤ã„ã¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’éè¡¨ç¤ºã«ã™ã‚‹ */
 	if( m_bHokan ){
-		if( nCommand != F_HOKAN		//	•âŠ®ŠJnEI—¹ƒRƒ}ƒ“ƒh
-		 && nCommand != F_WCHAR		//	•¶š“ü—Í
-		 && nCommand != F_IME_CHAR	//	Š¿š“ü—Í
-		 && nCommand != F_DELETE_BACK	//	ƒJ[ƒ\ƒ‹‘O‚ğíœ
+		if( nCommand != F_HOKAN		//	è£œå®Œé–‹å§‹ãƒ»çµ‚äº†ã‚³ãƒãƒ³ãƒ‰
+		 && nCommand != F_WCHAR		//	æ–‡å­—å…¥åŠ›
+		 && nCommand != F_IME_CHAR	//	æ¼¢å­—å…¥åŠ›
+		 && nCommand != F_DELETE_BACK	//	ã‚«ãƒ¼ã‚½ãƒ«å‰ã‚’å‰Šé™¤
 		 ){
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
@@ -47,17 +47,17 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 }
 
 /*!
-	ƒRƒ}ƒ“ƒhÀsŒã•âŠ®ˆ—
+	ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œå¾Œè£œå®Œå‡¦ç†
 
 	@author Moca
-	@date 2005.01.10 genta ŠÖ”‰»
+	@date 2005.01.10 genta é–¢æ•°åŒ–
 */
 void CEditView::PostprocessCommand_hokan(void)
 {
-	if( m_bHokan && !m_bExecutingKeyMacro ){ /* ƒL[ƒ{[ƒhƒ}ƒNƒ‚ÌÀs’† */
+	if( m_bHokan && !m_bExecutingKeyMacro ){ /* ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®å®Ÿè¡Œä¸­ */
 		CNativeW	cmemData;
 
-		/* ƒJ[ƒ\ƒ‹’¼‘O‚Ì’PŒê‚ğæ“¾ */
+		/* ã‚«ãƒ¼ã‚½ãƒ«ç›´å‰ã®å˜èªã‚’å–å¾— */
 		if( 0 < GetParser().GetLeftWord( &cmemData, 100 ) ){
 			ShowHokanMgr( cmemData, FALSE );
 		}else{
@@ -69,21 +69,21 @@ void CEditView::PostprocessCommand_hokan(void)
 	}
 }
 
-/*!	•âŠ®ƒEƒBƒ“ƒhƒE‚ğ•\¦‚·‚é
-	ƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚½Œã‚ÍAHokanMgr‚É”C‚¹‚é‚Ì‚ÅAShowHokanMgr‚Ì’m‚é‚Æ‚±‚ë‚Å‚Í‚È‚¢B
+/*!	è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹
+	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ãŸå¾Œã¯ã€HokanMgrã«ä»»ã›ã‚‹ã®ã§ã€ShowHokanMgrã®çŸ¥ã‚‹ã¨ã“ã‚ã§ã¯ãªã„ã€‚
 	
-	@param cmemData [in] •âŠ®‚·‚éŒ³‚ÌƒeƒLƒXƒg uAbv‚È‚Ç‚ª‚­‚éB
-	@param bAutoDecided [in] Œó•â‚ª1‚Â‚¾‚Á‚½‚çŠm’è‚·‚é
+	@param cmemData [in] è£œå®Œã™ã‚‹å…ƒã®ãƒ†ã‚­ã‚¹ãƒˆ ã€ŒAbã€ãªã©ãŒãã‚‹ã€‚
+	@param bAutoDecided [in] å€™è£œãŒ1ã¤ã ã£ãŸã‚‰ç¢ºå®šã™ã‚‹
 
-	@date 2005.01.10 genta CEditView_Command‚©‚çˆÚ“®
+	@date 2005.01.10 genta CEditView_Commandã‹ã‚‰ç§»å‹•
 */
 void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 {
-	/* •âŠ®‘ÎÛƒ[ƒhƒŠƒXƒg‚ğ’²‚×‚é */
+	/* è£œå®Œå¯¾è±¡ãƒ¯ãƒ¼ãƒ‰ãƒªã‚¹ãƒˆã‚’èª¿ã¹ã‚‹ */
 	CNativeW	cmemHokanWord;
 	int			nKouhoNum;
 	POINT		poWin;
-	/* •âŠ®ƒEƒBƒ“ƒhƒE‚Ì•\¦ˆÊ’u‚ğZo */
+	/* è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤ºä½ç½®ã‚’ç®—å‡º */
 	CLayoutXInt nX = GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol();
 	if( nX < 0 ){
 		poWin.x = 0;
@@ -101,12 +101,12 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		poWin.y = GetTextArea().GetAreaTop() + (Int)(nY) * GetTextMetrics().GetHankakuDy();
 	}
 	this->ClientToScreen( &poWin );
-	// 2010.09.05 Moca ‘SŠp•‚Ìl—¶‚Ê‚¯‚ğC³
+	// 2010.09.05 Moca å…¨è§’å¹…ã®è€ƒæ…®ã¬ã‘ã‚’ä¿®æ­£
 	poWin.x -= GetTextMetrics().CalcTextWidth3(cmemData.GetStringPtr(), cmemData.GetStringLength());
 
-	/*	•âŠ®ƒEƒBƒ“ƒhƒE‚ğ•\¦
-		‚½‚¾‚µAbAutoDecided == TRUE‚Ìê‡‚ÍA•âŠ®Œó•â‚ª1‚Â‚Ì‚Æ‚«‚ÍAƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚È‚¢B
-		Ú‚µ‚­‚ÍASearch()‚Ìà–¾‚ğQÆ‚Ì‚±‚ÆB
+	/*	è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤º
+		ãŸã ã—ã€bAutoDecided == TRUEã®å ´åˆã¯ã€è£œå®Œå€™è£œãŒ1ã¤ã®ã¨ãã¯ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ãªã„ã€‚
+		è©³ã—ãã¯ã€Search()ã®èª¬æ˜ã‚’å‚ç…§ã®ã“ã¨ã€‚
 	*/
 	CNativeW* pcmemHokanWord;
 	if ( bAutoDecided ){
@@ -116,11 +116,11 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		pcmemHokanWord = NULL;
 	}
 
-	/* “ü—Í•âŠ®ƒEƒBƒ“ƒhƒEì¬ */
-	// ˆÈ‘O‚ÍƒGƒfƒBƒ^‹N“®‚Éì¬‚µ‚Ä‚¢‚½‚ª•K—v‚É‚È‚Á‚Ä‚©‚ç‚±‚±‚Åì¬‚·‚é‚æ‚¤‚É‚µ‚½B
-	// ƒGƒfƒBƒ^‹N“®‚¾‚ÆƒGƒfƒBƒ^‰Â‹‰»‚Ì“r’†‚É‚È‚º‚©•s‰Â‹‚Ì“ü—Í•âŠ®ƒEƒBƒ“ƒhƒE‚ªˆê“I‚ÉƒtƒHƒAƒOƒ‰ƒEƒ“ƒh‚É‚È‚Á‚ÄA
-	// ƒ^ƒuƒo[‚ÉV‹Kƒ^ƒu‚ª’Ç‰Á‚³‚ê‚é‚Æ‚«‚Ìƒ^ƒuØ‘Ö‚Åƒ^ƒCƒgƒ‹ƒo[‚ª‚¿‚ç‚Â‚­iˆêu”ñƒAƒNƒeƒBƒu•\¦‚É‚È‚é‚Ì‚ª‚Í‚Á‚«‚èŒ©‚¦‚éj‚±‚Æ‚ª‚ ‚Á‚½B
-	// ¦ Vista/7 ‚Ì“Á’è‚Ì PC ‚Å‚¾‚¯‚Ì‚¿‚ç‚Â‚«‚©H ŠY“– PC ˆÈŠO‚Ì Vista/7 PC ‚Å‚à‚½‚Ü‚É”÷–­‚É•\¦‚ª—‚ê‚½Š´‚¶‚É‚È‚é’ö“x‚ÌÇó‚ªŒ©‚ç‚ê‚½‚ªA‚»‚ê‚ç‚ª“¯ˆêŒ´ˆö‚©‚Ç‚¤‚©‚Í•s–¾B
+	/* å…¥åŠ›è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ */
+	// ä»¥å‰ã¯ã‚¨ãƒ‡ã‚£ã‚¿èµ·å‹•æ™‚ã«ä½œæˆã—ã¦ã„ãŸãŒå¿…è¦ã«ãªã£ã¦ã‹ã‚‰ã“ã“ã§ä½œæˆã™ã‚‹ã‚ˆã†ã«ã—ãŸã€‚
+	// ã‚¨ãƒ‡ã‚£ã‚¿èµ·å‹•æ™‚ã ã¨ã‚¨ãƒ‡ã‚£ã‚¿å¯è¦–åŒ–ã®é€”ä¸­ã«ãªãœã‹ä¸å¯è¦–ã®å…¥åŠ›è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒä¸€æ™‚çš„ã«ãƒ•ã‚©ã‚¢ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã«ãªã£ã¦ã€
+	// ã‚¿ãƒ–ãƒãƒ¼ã«æ–°è¦ã‚¿ãƒ–ãŒè¿½åŠ ã•ã‚Œã‚‹ã¨ãã®ã‚¿ãƒ–åˆ‡æ›¿ã§ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ãŒã¡ã‚‰ã¤ãï¼ˆä¸€ç¬éã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤ºã«ãªã‚‹ã®ãŒã¯ã£ãã‚Šè¦‹ãˆã‚‹ï¼‰ã“ã¨ãŒã‚ã£ãŸã€‚
+	// â€» Vista/7 ã®ç‰¹å®šã® PC ã§ã ã‘ã®ã¡ã‚‰ã¤ãã‹ï¼Ÿ è©²å½“ PC ä»¥å¤–ã® Vista/7 PC ã§ã‚‚ãŸã¾ã«å¾®å¦™ã«è¡¨ç¤ºãŒä¹±ã‚ŒãŸæ„Ÿã˜ã«ãªã‚‹ç¨‹åº¦ã®ç—‡çŠ¶ãŒè¦‹ã‚‰ã‚ŒãŸãŒã€ãã‚Œã‚‰ãŒåŒä¸€åŸå› ã‹ã©ã†ã‹ã¯ä¸æ˜ã€‚
 	if( !m_pcEditWnd->m_cHokanMgr.GetHwnd() ){
 		m_pcEditWnd->m_cHokanMgr.DoModeless(
 			G_AppInstance(),
@@ -140,21 +140,21 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		m_pTypeData->m_bUseHokanByKeyword,
 		pcmemHokanWord
 	);
-	/* •âŠ®Œó•â‚Ì”‚É‚æ‚Á‚Ä“®ì‚ğ•Ï‚¦‚é */
-	if (nKouhoNum <= 0) {				//	Œó•â–³‚µ
+	/* è£œå®Œå€™è£œã®æ•°ã«ã‚ˆã£ã¦å‹•ä½œã‚’å¤‰ãˆã‚‹ */
+	if (nKouhoNum <= 0) {				//	å€™è£œç„¡ã—
 		if( m_bHokan ){
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
-			// 2003.06.25 Moca ¸”s‚µ‚Ä‚½‚çAƒr[ƒv‰¹‚ğo‚µ‚Ä•âŠ®I—¹B
+			// 2003.06.25 Moca å¤±æ•—ã—ã¦ãŸã‚‰ã€ãƒ“ãƒ¼ãƒ—éŸ³ã‚’å‡ºã—ã¦è£œå®Œçµ‚äº†ã€‚
 			ErrorBeep();
 		}
 	}
-	else if( bAutoDecided && nKouhoNum == 1){ //	Œó•â1‚Â‚Ì‚İ¨Šm’èB
+	else if( bAutoDecided && nKouhoNum == 1){ //	å€™è£œ1ã¤ã®ã¿â†’ç¢ºå®šã€‚
 		if( m_bHokan ){
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 		}
-		// 2004.05.14 Moca CHokanMgr::Search‘¤‚Å‰üs‚ğíœ‚·‚é‚æ‚¤‚É‚µA’¼Ú‘‚«Š·‚¦‚é‚Ì‚ğ‚â‚ß‚½
+		// 2004.05.14 Moca CHokanMgr::Searchå´ã§æ”¹è¡Œã‚’å‰Šé™¤ã™ã‚‹ã‚ˆã†ã«ã—ã€ç›´æ¥æ›¸ãæ›ãˆã‚‹ã®ã‚’ã‚„ã‚ãŸ
 
 		GetCommander().Command_WordDeleteToStart();
 		GetCommander().Command_INSTEXT( true, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
@@ -167,25 +167,25 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 
 
 /*!
-	•ÒW’†ƒf[ƒ^‚©‚ç“ü—Í•âŠ®ƒL[ƒ[ƒh‚ÌŒŸõ
-	CHokanMgr‚©‚çŒÄ‚Î‚ê‚é
+	ç·¨é›†ä¸­ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰å…¥åŠ›è£œå®Œã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ¤œç´¢
+	CHokanMgrã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 
-	@return Œó•â”
+	@return å€™è£œæ•°
 
 	@author Moca
 	@date 2003.06.25
 
-	@date 2005/01/10 genta  CEditView_Command‚©‚çˆÚ“®
-	@date 2007/10/17 kobake “Ç‚İ‚â‚·‚¢‚æ‚¤‚ÉƒlƒXƒg‚ğó‚­‚µ‚Ü‚µ‚½B
-	@date 2008.07.25 nasukoji ‘å•¶š¬•¶š‚ğ“¯ˆê‹‚Ìê‡‚Å‚àŒó•â‚ÌU‚é‚¢—‚Æ‚µ‚ÍŠ®‘Sˆê’v‚ÅŒ©‚é
-	@date 2008.10.11 syat “ú–{Œê‚Ì•âŠ®
-	@date 2010.06.16 Moca ‚Ğ‚ç‚ª‚È‚Å‘±s‚·‚éê‡A’¼‘O‚ğŠ¿š‚É§ŒÀ
+	@date 2005/01/10 genta  CEditView_Commandã‹ã‚‰ç§»å‹•
+	@date 2007/10/17 kobake èª­ã¿ã‚„ã™ã„ã‚ˆã†ã«ãƒã‚¹ãƒˆã‚’æµ…ãã—ã¾ã—ãŸã€‚
+	@date 2008.07.25 nasukoji å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã®å ´åˆã§ã‚‚å€™è£œã®æŒ¯ã‚‹ã„è½ã¨ã—ã¯å®Œå…¨ä¸€è‡´ã§è¦‹ã‚‹
+	@date 2008.10.11 syat æ—¥æœ¬èªã®è£œå®Œ
+	@date 2010.06.16 Moca ã²ã‚‰ãŒãªã§ç¶šè¡Œã™ã‚‹å ´åˆã€ç›´å‰ã‚’æ¼¢å­—ã«åˆ¶é™
 */
 int CEditView::HokanSearchByFile(
 	const wchar_t*	pszKey,			//!< [in]
-	bool			bHokanLoHiCase,	//!< [in] ‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é
-	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] Œó•â
-	int				nMaxKouho		//!< [in] MaxŒó•â”(0==–³§ŒÀ)
+	bool			bHokanLoHiCase,	//!< [in] è‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹
+	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] å€™è£œ
+	int				nMaxKouho		//!< [in] Maxå€™è£œæ•°(0==ç„¡åˆ¶é™)
 ){
 	const int nKeyLen = wcslen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -194,11 +194,11 @@ int CEditView::HokanSearchByFile(
 	const wchar_t* pszLine;
 	const wchar_t* word;
 
-	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //•¨—ƒJ[ƒ\ƒ‹ˆÊ’u
-	bool bKeyStartWithMark;			//ƒL[‚ª‹L†‚Ån‚Ü‚é‚©
-	bool bWordStartWithMark;		//Œó•â‚ª‹L†‚Ån‚Ü‚é‚©
+	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //ç‰©ç†ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
+	bool bKeyStartWithMark;			//ã‚­ãƒ¼ãŒè¨˜å·ã§å§‹ã¾ã‚‹ã‹
+	bool bWordStartWithMark;		//å€™è£œãŒè¨˜å·ã§å§‹ã¾ã‚‹ã‹
 
-	// ƒL[‚Ìæ“ª‚ª‹L†(#$@\)‚©‚Ç‚¤‚©”»’è
+	// ã‚­ãƒ¼ã®å…ˆé ­ãŒè¨˜å·(#$@\)ã‹ã©ã†ã‹åˆ¤å®š
 	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != NULL ? true : false );
 
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
@@ -207,57 +207,57 @@ int CEditView::HokanSearchByFile(
 		for( j = 0; j < nLineLen; j += nCharSize ){
 			nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );
 
-			// ”¼Šp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢
+			// åŠè§’è¨˜å·ã¯å€™è£œã«å«ã‚ãªã„
 			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
 
-			// ƒL[‚Ìæ“ª‚ª‹L†ˆÈŠO‚Ìê‡A‹L†‚Ån‚Ü‚é’PŒê‚ÍŒó•â‚©‚ç‚Í‚¸‚·
+			// ã‚­ãƒ¼ã®å…ˆé ­ãŒè¨˜å·ä»¥å¤–ã®å ´åˆã€è¨˜å·ã§å§‹ã¾ã‚‹å˜èªã¯å€™è£œã‹ã‚‰ã¯ãšã™
 			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
 
-			// •¶ší—Şæ“¾
-			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// •¶ší—Şæ“¾
+			// æ–‡å­—ç¨®é¡å–å¾—
+			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// æ–‡å­—ç¨®é¡å–å¾—
 
-			// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢
+			// å…¨è§’è¨˜å·ã¯å€™è£œã«å«ã‚ãªã„
 			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
 			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL ? true : false );
 
 			nWordBegin = j;
-			// Œó•â’PŒê‚ÌI—¹ˆÊ’u‚ğ‹‚ß‚é
+			// å€™è£œå˜èªã®çµ‚äº†ä½ç½®ã‚’æ±‚ã‚ã‚‹
 			nWordLen = nCharSize;
-			nWordLenStop = -1; // ‘—‚è‰¼–¼–³‹—p’PŒê‚ÌI‚í‚èB-1‚Í–³Œø
+			nWordLenStop = -1; // é€ã‚Šä»®åç„¡è¦–ç”¨å˜èªã®çµ‚ã‚ã‚Šã€‚-1ã¯ç„¡åŠ¹
 			for( j += nCharSize; j < nLineLen; j += nCharSize ){
 				nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );
 
-				// ”¼Šp‹L†‚ÍŠÜ‚ß‚È‚¢
+				// åŠè§’è¨˜å·ã¯å«ã‚ãªã„
 				if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )break;
 
-				// •¶ší—Şæ“¾
+				// æ–‡å­—ç¨®é¡å–å¾—
 				ECharKind kindCur = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );
-				// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢
+				// å…¨è§’è¨˜å·ã¯å€™è£œã«å«ã‚ãªã„
 				if ( kindCur == CK_ZEN_SPACE || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
 					break;
 				}
 
-				// •¶ší—Ş‚ª•Ï‚í‚Á‚½‚ç’PŒê‚ÌØ‚ê–Ú‚Æ‚·‚é
+				// æ–‡å­—ç¨®é¡ãŒå¤‰ã‚ã£ãŸã‚‰å˜èªã®åˆ‡ã‚Œç›®ã¨ã™ã‚‹
 				ECharKind kindMerge = CWordParse::WhatKindOfTwoChars( kindPre, kindCur );
-				if ( kindMerge == CK_NULL ) {	// kindPre‚ÆkindCur‚ª•Êí
+				if ( kindMerge == CK_NULL ) {	// kindPreã¨kindCurãŒåˆ¥ç¨®
 					if( kindCur == CK_HIRA ) {
-						kindMerge = kindCur;		// ‚Ğ‚ç‚ª‚È‚È‚ç‘±s
-						// 2010.06.16 Moca Š¿š‚Ì‚İ‘—‚è‰¼–¼‚ğŒó•â‚ÉŠÜ‚ß‚é
+						kindMerge = kindCur;		// ã²ã‚‰ãŒãªãªã‚‰ç¶šè¡Œ
+						// 2010.06.16 Moca æ¼¢å­—ã®ã¿é€ã‚Šä»®åã‚’å€™è£œã«å«ã‚ã‚‹
 						if( kindPre != CK_ZEN_ETC ) {
 							nWordLenStop = nWordLen;
 						}
 					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_UDEF ){
-						kindMerge = kindCur;		// ‹L†‚Ån‚Ü‚é’PŒê‚Í§ŒÀ‚ğŠÉ‚ß‚é
+						kindMerge = kindCur;		// è¨˜å·ã§å§‹ã¾ã‚‹å˜èªã¯åˆ¶é™ã‚’ç·©ã‚ã‚‹
 					}else{
 						j -= nCharSize;
-						break;						// ‚»‚êˆÈŠO‚Í’PŒê‚ÌØ‚ê–Ú
+						break;						// ãã‚Œä»¥å¤–ã¯å˜èªã®åˆ‡ã‚Œç›®
 					}
 				}
 
 				kindPre = kindMerge;
-				nWordLen += nCharSize;				// Ÿ‚Ì•¶š‚Ö
+				nWordLen += nCharSize;				// æ¬¡ã®æ–‡å­—ã¸
 			}
 
 			if( 0 < nWordLenStop ){
@@ -265,16 +265,16 @@ int CEditView::HokanSearchByFile(
 			}
 
 
-			// CDicMgr“™‚Ì§ŒÀ‚É‚æ‚è’·‚·‚¬‚é’PŒê‚Í–³‹‚·‚é
+			// CDicMgrç­‰ã®åˆ¶é™ã«ã‚ˆã‚Šé•·ã™ãã‚‹å˜èªã¯ç„¡è¦–ã™ã‚‹
 			if( nWordLen > 1020 ){
 				continue;
 			}
 			if( nKeyLen > nWordLen ) continue;
 
-			// Œó•â’PŒê‚ÌŠJnˆÊ’u‚ğ‹‚ß‚é
+			// å€™è£œå˜èªã®é–‹å§‹ä½ç½®ã‚’æ±‚ã‚ã‚‹
 			word = pszLine + nWordBegin;
 
-			// ƒL[‚Æ”äŠr‚·‚é
+			// ã‚­ãƒ¼ã¨æ¯”è¼ƒã™ã‚‹
 			if( bHokanLoHiCase ){
 				nRet = auto_memicmp( pszKey, word, nKeyLen );
 			}else{
@@ -282,12 +282,12 @@ int CEditView::HokanSearchByFile(
 			}
 			if( nRet!=0 )continue;
 
-			// ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì’PŒê‚ÍŒó•â‚©‚ç‚Í‚¸‚·
-			if( ptCur.y == i && nWordBegin <= ptCur.x && ptCur.x <= nWordBegin + nWordLen ){	// 2010.02.20 syat C³// 2008.11.09 syat C³
+			// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®å˜èªã¯å€™è£œã‹ã‚‰ã¯ãšã™
+			if( ptCur.y == i && nWordBegin <= ptCur.x && ptCur.x <= nWordBegin + nWordLen ){	// 2010.02.20 syat ä¿®æ­£// 2008.11.09 syat ä¿®æ­£
 				continue;
 			}
 
-			// Œó•â‚ğ’Ç‰Á(d•¡‚Íœ‚­)
+			// å€™è£œã‚’è¿½åŠ (é‡è¤‡ã¯é™¤ã)
 			{
 				std::wstring strWord = std::wstring(word, nWordLen);
 				CHokanMgr::AddKouhoUnique(vKouho, strWord);

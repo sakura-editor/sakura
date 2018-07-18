@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,7 +29,7 @@
 class CColor_Select : public CColorStrategy{
 public:
 	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_SELECT; }
-	//F‘Ö‚¦
+	//è‰²æ›¿ãˆ
 	virtual void InitStrategyStatus(){ }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool Disp() const { return true; }
@@ -37,7 +37,7 @@ public:
 
 	virtual bool BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt, const CLayout*);
 
-	//ƒCƒxƒ“ƒg
+	//ã‚¤ãƒ™ãƒ³ãƒˆ
 	virtual void OnStartScanLogic();
 
 private:
@@ -51,20 +51,20 @@ public:
 	CColor_Found();
 	virtual EColorIndexType GetStrategyColor() const
 	{ return this->validColorNum != 0 ? this->highlightColors[ (m_nSearchResult - 1) % this->validColorNum ] : COLORIDX_DEFAULT; }
-	//F‘Ö‚¦
-	virtual void InitStrategyStatus(){ } //############—vŒŸØ
+	//è‰²æ›¿ãˆ
+	virtual void InitStrategyStatus(){ } //############è¦æ¤œè¨¼
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool Disp() const { return true; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
-	//ƒCƒxƒ“ƒg
+	//ã‚¤ãƒ™ãƒ³ãƒˆ
 	virtual void OnStartScanLogic();
 
 private:
 	int				m_nSearchResult;
 	CLogicInt		m_nSearchStart;
 	CLogicInt		m_nSearchEnd;
-	EColorIndexType highlightColors[ COLORIDX_SEARCHTAIL - COLORIDX_SEARCH + 1 ]; ///< ƒ`ƒFƒbƒN‚ª•t‚¢‚Ä‚¢‚éŒŸõ•¶š—ñF‚Ì”z—ñB
-	unsigned validColorNum; ///< highlightColors‚Ì‰½”Ô–Ú‚Ì—v‘f‚Ü‚Å‚ª—LŒø‚©B
+	EColorIndexType highlightColors[ COLORIDX_SEARCHTAIL - COLORIDX_SEARCH + 1 ]; ///< ãƒã‚§ãƒƒã‚¯ãŒä»˜ã„ã¦ã„ã‚‹æ¤œç´¢æ–‡å­—åˆ—è‰²ã®é…åˆ—ã€‚
+	unsigned validColorNum; ///< highlightColorsã®ä½•ç•ªç›®ã®è¦ç´ ã¾ã§ãŒæœ‰åŠ¹ã‹ã€‚
 };
 
 #endif /* SAKURA_CCOLOR_FOUND_60044D4E_3082_4A9D_98C5_2FE626D3DA1E_H_ */

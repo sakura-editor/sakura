@@ -1,5 +1,5 @@
-/*!	@file
-	@brief CEditViewƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒhˆ—ŒnŠÖ”ŒQ
+ï»¿/*!	@file
+	@brief CEditViewã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰å‡¦ç†ç³»é–¢æ•°ç¾¤
 
 	@author Norio Nakatani
 */
@@ -7,7 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta
 	Copyright (C) 2001, genta, asa-o, hor
-	Copyright (C) 2002, YAZAKI, hor, genta. aroka, MIK, minfu, KK, ‚©‚ë‚Æ
+	Copyright (C) 2002, YAZAKI, hor, genta. aroka, MIK, minfu, KK, ã‹ã‚ã¨
 	Copyright (C) 2003, MIK, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
@@ -25,14 +25,14 @@
 #include "charset/charcode.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ãƒ˜ãƒƒãƒ€æ•´ç†
 #include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"
 #include "cmd/CViewCommander_inline.h"
 #include "window/CEditWnd.h"
-#include "dlg/CDlgCtrlCode.h"	//ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚Ì“ü—Í(ƒ_ƒCƒAƒƒO)
-#include "dlg/CDlgFavorite.h"	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
+#include "dlg/CDlgCtrlCode.h"	//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰ã®å…¥åŠ›(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°)
+#include "dlg/CDlgFavorite.h"	//å±¥æ­´ã®ç®¡ç†	//@@@ 2003.04.08 MIK
 #include "debug/CRunningTimer.h"
 
 using namespace std; // 2002/2/3 aroka
@@ -67,15 +67,15 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 }
 
 
-/*!	Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü Ver0
+/*!	ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥ Ver0
 
-	@date 2002/03/24 YAZAKI bUndoíœ
+	@date 2002/03/24 YAZAKI bUndoå‰Šé™¤
 */
 void CEditView::InsertData_CEditView(
-	CLayoutPoint	ptInsertPos,	// [in] ‘}“üˆÊ’u
-	const wchar_t*	pData,			// [in] ‘}“üƒeƒLƒXƒg
-	int				nDataLen,		// [in] ‘}“üƒeƒLƒXƒg’·B•¶š’PˆÊB
-	CLayoutPoint*	pptNewPos,		// [out] ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u‚ÌƒŒƒCƒAƒEƒgˆÊ’u
+	CLayoutPoint	ptInsertPos,	// [in] æŒ¿å…¥ä½ç½®
+	const wchar_t*	pData,			// [in] æŒ¿å…¥ãƒ†ã‚­ã‚¹ãƒˆ
+	int				nDataLen,		// [in] æŒ¿å…¥ãƒ†ã‚­ã‚¹ãƒˆé•·ã€‚æ–‡å­—å˜ä½ã€‚
+	CLayoutPoint*	pptNewPos,		// [out] æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®
 	bool			bRedraw
 )
 {
@@ -83,10 +83,10 @@ void CEditView::InsertData_CEditView(
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
 #endif
 
-	//2007.10.18 kobake COpeˆ—‚ğ‚±‚±‚É‚Ü‚Æ‚ß‚é
+	//2007.10.18 kobake COpeå‡¦ç†ã‚’ã“ã“ã«ã¾ã¨ã‚ã‚‹
 	CInsertOpe* pcOpe = NULL;
 	int opeSeq;
-	if( !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	if( !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 		pcOpe = new CInsertOpe();
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			ptInsertPos,
@@ -98,24 +98,24 @@ void CEditView::InsertData_CEditView(
 	}
 
 
-	pptNewPos->y = 0;			// ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u‚ÌƒŒƒCƒAƒEƒgs
-	pptNewPos->x = 0;			// ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u‚ÌƒŒƒCƒAƒEƒgˆÊ’u
+	pptNewPos->y = 0;			// æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ
+	pptNewPos->x = 0;			// æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®
 
-	// ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚©
+	// ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹
 	if( GetSelectionInfo().IsTextSelected() ){
 		DeleteData( bRedraw );
 		ptInsertPos = GetCaret().GetCaretLayoutPos();
 	}
 
-	//ƒeƒLƒXƒgæ“¾ -> pLine, nLineLen, pcLayout
+	//ãƒ†ã‚­ã‚¹ãƒˆå–å¾— -> pLine, nLineLen, pcLayout
 	CLogicInt		nLineLen;
 	const CLayout*	pcLayout;
-	bool			bHintPrev = false;	// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é‚±‚Æ‚ğ¦´‚·‚é
-	bool			bHintNext = false;	// XV‚ªŸs‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é‚±‚Æ‚ğ¦´‚·‚é
-	bool			bKinsoku;			// ‹Ö‘¥‚Ì—L–³
+	bool			bHintPrev = false;	// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã“ã¨ã‚’ç¤ºå”†ã™ã‚‹
+	bool			bHintNext = false;	// æ›´æ–°ãŒæ¬¡è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã“ã¨ã‚’ç¤ºå”†ã™ã‚‹
+	bool			bKinsoku;			// ç¦å‰‡ã®æœ‰ç„¡
 	const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
 
-	//‹Ö‘¥‚ª‚ ‚éê‡‚Í1s‘O‚©‚çÄ•`‰æ‚ğs‚¤	@@@ 2002.04.19 MIK
+	//ç¦å‰‡ãŒã‚ã‚‹å ´åˆã¯1è¡Œå‰ã‹ã‚‰å†æç”»ã‚’è¡Œã†	@@@ 2002.04.19 MIK
 	bKinsoku = ( m_pTypeData->m_bWordWrap
 			 || m_pTypeData->m_bKinsokuHead	//@@@ 2002.04.19 MIK
 			 || m_pTypeData->m_bKinsokuTail	//@@@ 2002.04.19 MIK
@@ -128,23 +128,23 @@ void CEditView::InsertData_CEditView(
 	CNativeW	cMem(L"");
 	COpeLineData insData;
 	if( pLine ){
-		// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ğ’²‚×‚é	// 2009.02.17 ryoji
-		// ¦Ü‚è•Ô‚µs“ª‚Ö‚Ì‹å“Ç“_“ü—Í‚Å‘O‚Ìs‚¾‚¯‚ªXV‚³‚ê‚éê‡‚à‚ ‚é
-		// ¦‘}“üˆÊ’u‚Ís“r’†‚Å‚à‹å“Ç“_“ü—Í{ƒ[ƒhƒ‰ƒbƒv‚Å‘O‚Ì•¶š—ñ‚©‚ç‘±‚¯‚Ä‘Os‚É‰ñ‚è‚Şê‡‚à‚ ‚é
-		if( pcLayout->GetLogicOffset() && bKinsoku ){	// Ü‚è•Ô‚µƒŒƒCƒAƒEƒgs‚©H
-			bHintPrev = true;	// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é
+		// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ã‚’èª¿ã¹ã‚‹	// 2009.02.17 ryoji
+		// â€»æŠ˜ã‚Šè¿”ã—è¡Œé ­ã¸ã®å¥èª­ç‚¹å…¥åŠ›ã§å‰ã®è¡Œã ã‘ãŒæ›´æ–°ã•ã‚Œã‚‹å ´åˆã‚‚ã‚ã‚‹
+		// â€»æŒ¿å…¥ä½ç½®ã¯è¡Œé€”ä¸­ã§ã‚‚å¥èª­ç‚¹å…¥åŠ›ï¼‹ãƒ¯ãƒ¼ãƒ‰ãƒ©ãƒƒãƒ—ã§å‰ã®æ–‡å­—åˆ—ã‹ã‚‰ç¶šã‘ã¦å‰è¡Œã«å›ã‚Šè¾¼ã‚€å ´åˆã‚‚ã‚ã‚‹
+		if( pcLayout->GetLogicOffset() && bKinsoku ){	// æŠ˜ã‚Šè¿”ã—ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‹ï¼Ÿ
+			bHintPrev = true;	// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 		}
 
-		// XV‚ªŸs‚©‚ç‚É‚È‚é‰Â”\«‚ğ’²‚×‚é	// 2009.02.17 ryoji
-		// ¦Ü‚è•Ô‚µs––‚Ö‚Ì•¶š“ü—Í‚â•¶š—ñ“\‚è•t‚¯‚ÅŒ»İs‚ÍXV‚³‚ê‚¸ŸsˆÈŒã‚ªXV‚³‚ê‚éê‡‚à‚ ‚é
-		// w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é
+		// æ›´æ–°ãŒæ¬¡è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ã‚’èª¿ã¹ã‚‹	// 2009.02.17 ryoji
+		// â€»æŠ˜ã‚Šè¿”ã—è¡Œæœ«ã¸ã®æ–‡å­—å…¥åŠ›ã‚„æ–‡å­—åˆ—è²¼ã‚Šä»˜ã‘ã§ç¾åœ¨è¡Œã¯æ›´æ–°ã•ã‚Œãšæ¬¡è¡Œä»¥å¾ŒãŒæ›´æ–°ã•ã‚Œã‚‹å ´åˆã‚‚ã‚ã‚‹
+		// æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹
 		nIdxFrom = LineColumnToIndex2( pcLayout, ptInsertPos.GetX2(), &nLineAllColLen );
 
-		// sI’[‚æ‚è‰E‚É‘}“ü‚µ‚æ‚¤‚Æ‚µ‚½
+		// è¡Œçµ‚ç«¯ã‚ˆã‚Šå³ã«æŒ¿å…¥ã—ã‚ˆã†ã¨ã—ãŸ
 		if( nLineAllColLen > 0 ){
 			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
-			// I’[’¼‘O‚©‚ç‘}“üˆÊ’u‚Ü‚Å‹ó”’‚ğ–„‚ß‚éˆ×‚Ìˆ—
-			// sI’[‚ª‰½‚ç‚©‚Ì‰üsƒR[ƒh‚©?
+			// çµ‚ç«¯ç›´å‰ã‹ã‚‰æŒ¿å…¥ä½ç½®ã¾ã§ç©ºç™½ã‚’åŸ‹ã‚ã‚‹ç‚ºã®å‡¦ç†
+			// è¡Œçµ‚ç«¯ãŒä½•ã‚‰ã‹ã®æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‹?
 			if( EOL_NONE != pcLayout->GetLayoutEol() ){
 				nIdxFrom = nLineLen - CLogicInt(1);
 				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1)/ nSpWidth + nDataLen );
@@ -160,7 +160,7 @@ void CEditView::InsertData_CEditView(
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
-				// 1s‘½‚­XV‚·‚é•K—v‚ª‚ ‚é‰Â”\«‚ª‚ ‚é
+				// 1è¡Œå¤šãæ›´æ–°ã™ã‚‹å¿…è¦ãŒã‚ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 				bHintNext = true;
 			}
 			StringToOpeLineData( cMem.GetStringPtr(), cMem.GetStringLength(), insData, opeSeq );
@@ -172,10 +172,10 @@ void CEditView::InsertData_CEditView(
 		}
 	}
 	else{
-		// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ğ’²‚×‚é	// 2009.02.17 ryoji
+		// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ã‚’èª¿ã¹ã‚‹	// 2009.02.17 ryoji
 		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// Ü‚è•Ô‚µƒŒƒCƒAƒEƒgs‚©Hi‘Os‚ÌI’[‚Å’²¸j
-			bHintPrev = true;	// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// æŠ˜ã‚Šè¿”ã—ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‹ï¼Ÿï¼ˆå‰è¡Œã®çµ‚ç«¯ã§èª¿æŸ»ï¼‰
+			bHintPrev = true;	// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 		}
 		if( 0 < ptInsertPos.GetX2() ){
 			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
@@ -193,7 +193,7 @@ void CEditView::InsertData_CEditView(
 	}
 
 
-	if( !m_bDoing_UndoRedo && pcOpe ){	// ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚©
+	if( !m_bDoing_UndoRedo && pcOpe ){	// ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			CLayoutPoint(nColumnFrom, ptInsertPos.y),
 			&pcOpe->m_ptCaretPos_PHY_Before
@@ -201,9 +201,9 @@ void CEditView::InsertData_CEditView(
 	}
 
 
-	// •¶š—ñ‘}“ü
+	// æ–‡å­—åˆ—æŒ¿å…¥
 	CLayoutInt	nModifyLayoutLinesOld=CLayoutInt(0);
-	CLayoutInt	nInsLineNum;		/* ‘}“ü‚É‚æ‚Á‚Ä‘‚¦‚½ƒŒƒCƒAƒEƒgs‚Ì” */
+	CLayoutInt	nInsLineNum;		/* æŒ¿å…¥ã«ã‚ˆã£ã¦å¢—ãˆãŸãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®æ•° */
 	int	nInsSeq;
 	{
 		LayoutReplaceArg arg;
@@ -218,16 +218,16 @@ void CEditView::InsertData_CEditView(
 		nInsSeq = arg.nInsSeq;
 	}
 
-	// w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é
+	// æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹
 	const wchar_t*	pLine2;
 	CLogicInt		nLineLen2;
 	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( pptNewPos->GetY2(), &nLineLen2, &pcLayout );
 	if( pLine2 ){
-		// 2007.10.15 kobake Šù‚ÉƒŒƒCƒAƒEƒg’PˆÊ‚È‚Ì‚Å•ÏŠ·‚Í•s—v
+		// 2007.10.15 kobake æ—¢ã«ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ãªã®ã§å¤‰æ›ã¯ä¸è¦
 		pptNewPos->x = pptNewPos->GetX2(); //LineIndexToColumn( pcLayout, pptNewPos->GetX2() );
 	}
 
-	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ğLayoutMgr‚©‚çæ“¾‚·‚é‚æ‚¤‚É
+	//	Aug. 14, 2005 genta æŠ˜ã‚Šè¿”ã—å¹…ã‚’LayoutMgrã‹ã‚‰å–å¾—ã™ã‚‹ã‚ˆã†ã«
 	if( pptNewPos->x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineLayout() ){
 		if( m_pTypeData->m_bKinsokuRet
 		 || m_pTypeData->m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
@@ -246,15 +246,15 @@ void CEditView::InsertData_CEditView(
 		}
 	}
 
-	// ó‘Ô‘JˆÚ
-	if( !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	// çŠ¶æ…‹é·ç§»
+	if( !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 		m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
 
-	// Ä•`‰æ
-	// s”Ô†•\¦‚É•K—v‚È•‚ğİ’è
+	// å†æç”»
+	// è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’è¨­å®š
 	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
-		// ƒLƒƒƒŒƒbƒg‚Ì•\¦EXV
+		// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡¨ç¤ºãƒ»æ›´æ–°
 		GetCaret().ShowEditCaret();
 	}
 	else{
@@ -262,11 +262,11 @@ void CEditView::InsertData_CEditView(
 
 		if( bRedraw ){
 			CLayoutInt nStartLine(ptInsertPos.y);
-			// 2013.05.08 Ü‚è•Ô‚µs‚ÅEOF’¼‘O‚Å‰üs‚µ‚½‚Æ‚«EOF‚ªÄ•`‰æ‚³‚ê‚È‚¢ƒoƒO‚ÌC³
+			// 2013.05.08 æŠ˜ã‚Šè¿”ã—è¡Œã§EOFç›´å‰ã§æ”¹è¡Œã—ãŸã¨ãEOFãŒå†æç”»ã•ã‚Œãªã„ãƒã‚°ã®ä¿®æ­£
 			if( nModifyLayoutLinesOld < 1 ){
 				nModifyLayoutLinesOld = CLayoutInt(1);
 			}
-			// 2011.12.26 ³‹K•\Œ»ƒL[ƒ[ƒhEŒŸõ•¶š—ñ‚È‚Ç‚ÍAƒƒWƒbƒNs“ª‚Ü‚Å‚³‚©‚Ì‚Ú‚Á‚ÄXV‚·‚é•K—v‚ª‚ ‚é
+			// 2011.12.26 æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ»æ¤œç´¢æ–‡å­—åˆ—ãªã©ã¯ã€ãƒ­ã‚¸ãƒƒã‚¯è¡Œé ­ã¾ã§ã•ã‹ã®ã¼ã£ã¦æ›´æ–°ã™ã‚‹å¿…è¦ãŒã‚ã‚‹
 			{
 				const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptInsertPos.GetY2() );
 				while( pcLayoutLineFirst && 0 != pcLayoutLineFirst->GetLogicOffset() ){
@@ -281,11 +281,11 @@ void CEditView::InsertData_CEditView(
 			CLayoutYInt nLayoutTop;
 			CLayoutYInt nLayoutBottom;
 			if( 0 != nInsLineNum ){
-				// ƒXƒNƒ[ƒ‹ƒo[‚Ìó‘Ô‚ğXV‚·‚é
+				// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
 				AdjustScrollBars();
 
-				// •`‰æŠJnsˆÊ’u‚ğ’²®‚·‚é	// 2009.02.17 ryoji
-				if( bHintPrev ){	// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é
+				// æç”»é–‹å§‹è¡Œä½ç½®ã‚’èª¿æ•´ã™ã‚‹	// 2009.02.17 ryoji
+				if( bHintPrev ){	// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 					nStartLine--;
 				}
 
@@ -297,12 +297,12 @@ void CEditView::InsertData_CEditView(
 				nLayoutBottom = CLayoutYInt(-1);
 			}
 			else{
-				// •`‰æŠJnsˆÊ’u‚Æ•`‰æs”‚ğ’²®‚·‚é	// 2009.02.17 ryoji
-				if( bHintPrev ){	// XV‚ª‘Os‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é
+				// æç”»é–‹å§‹è¡Œä½ç½®ã¨æç”»è¡Œæ•°ã‚’èª¿æ•´ã™ã‚‹	// 2009.02.17 ryoji
+				if( bHintPrev ){	// æ›´æ–°ãŒå‰è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 					nStartLine--;
 					nModifyLayoutLinesOld++;
 				}
-				if( bHintNext ){	// XV‚ªŸs‚©‚ç‚É‚È‚é‰Â”\«‚ª‚ ‚é
+				if( bHintNext ){	// æ›´æ–°ãŒæ¬¡è¡Œã‹ã‚‰ã«ãªã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 					nModifyLayoutLinesOld++;
 				}
 
@@ -310,7 +310,7 @@ void CEditView::InsertData_CEditView(
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
 
-				// 2002.02.25 Mod By KK Ÿs (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1); => (ptInsertPos.y - GetTextArea().GetViewTopLine());
+				// 2002.02.25 Mod By KK æ¬¡è¡Œ (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1); => (ptInsertPos.y - GetTextArea().GetViewTopLine());
 				//ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1);
 				ps.rcPaint.top = GetTextArea().GenerateYPx(nStartLine);
 				ps.rcPaint.bottom = GetTextArea().GenerateYPx(nStartLine + nModifyLayoutLinesOld);
@@ -320,7 +320,7 @@ void CEditView::InsertData_CEditView(
 			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
 			this->ReleaseDC( hdc );
-			// 2014.07.16 ‘¼‚Ìƒrƒ…[(ƒ~ƒjƒ}ƒbƒv)‚ÌÄ•`‰æ‚ğ—}§‚·‚é
+			// 2014.07.16 ä»–ã®ãƒ“ãƒ¥ãƒ¼(ãƒŸãƒ‹ãƒãƒƒãƒ—)ã®å†æç”»ã‚’æŠ‘åˆ¶ã™ã‚‹
 			if( 0 == nInsLineNum ){
 				for(int i = 0; i < m_pcEditWnd->GetAllViewCount(); i++ ){
 					CEditView* pcView = &m_pcEditWnd->GetView(i);
@@ -337,7 +337,7 @@ void CEditView::InsertData_CEditView(
 		}
 	}
 
-	//2007.10.18 kobake ‚±‚±‚ÅCOpeˆ—‚ğ‚Ü‚Æ‚ß‚é
+	//2007.10.18 kobake ã“ã“ã§COpeå‡¦ç†ã‚’ã¾ã¨ã‚ã‚‹
 	if( !m_bDoing_UndoRedo ){
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			*pptNewPos,
@@ -345,22 +345,22 @@ void CEditView::InsertData_CEditView(
 		);
 		pcOpe->m_nOrgSeq = nInsSeq;
 
-		// ‘€ì‚Ì’Ç‰Á
+		// æ“ä½œã®è¿½åŠ 
 		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
 
 
-/*!	w’èˆÊ’u‚Ìw’è’·ƒf[ƒ^íœ
+/*!	æŒ‡å®šä½ç½®ã®æŒ‡å®šé•·ãƒ‡ãƒ¼ã‚¿å‰Šé™¤
 
-	@param _ptCaretPos [in]  íœƒf[ƒ^‚ÌˆÊ’u
-	@param nDelLen [out] íœƒf[ƒ^‚ÌƒTƒCƒY
-	@param pcMem [out]  íœ‚µ‚½ƒf[ƒ^(NULL‰Â”\)
+	@param _ptCaretPos [in]  å‰Šé™¤ãƒ‡ãƒ¼ã‚¿ã®ä½ç½®
+	@param nDelLen [out] å‰Šé™¤ãƒ‡ãƒ¼ã‚¿ã®ã‚µã‚¤ã‚º
+	@param pcMem [out]  å‰Šé™¤ã—ãŸãƒ‡ãƒ¼ã‚¿(NULLå¯èƒ½)
 
-	@date 2002/03/24 YAZAKI bUndoíœ
-	@date 2002/05/12 YAZAKI bRedraw, bRedraw2íœií‚ÉFALSE‚¾‚©‚çj
-	@date 2007/10/17 kobake (d—v)pcMem‚ÌŠ—LÒ‚ªğŒ‚É‚æ‚èCOpe‚ÉˆÚ‚Á‚½‚èˆÚ‚ç‚È‚©‚Á‚½‚è‚·‚éU‚é•‘‚¢‚Í
-	                        ”ñí‚É‚â‚â‚±‚µ‚­¬—‚ÌŒ³‚É‚È‚é‚½‚ßAí‚ÉApcMem‚ÌŠ—LÒ‚ÍˆÚ‚³‚È‚¢‚æ‚¤‚Éd—l•ÏXB
+	@date 2002/03/24 YAZAKI bUndoå‰Šé™¤
+	@date 2002/05/12 YAZAKI bRedraw, bRedraw2å‰Šé™¤ï¼ˆå¸¸ã«FALSEã ã‹ã‚‰ï¼‰
+	@date 2007/10/17 kobake (é‡è¦)pcMemã®æ‰€æœ‰è€…ãŒæ¡ä»¶ã«ã‚ˆã‚ŠCOpeã«ç§»ã£ãŸã‚Šç§»ã‚‰ãªã‹ã£ãŸã‚Šã™ã‚‹æŒ¯ã‚‹èˆã„ã¯
+	                        éå¸¸ã«ã‚„ã‚„ã“ã—ãæ··ä¹±ã®å…ƒã«ãªã‚‹ãŸã‚ã€å¸¸ã«ã€pcMemã®æ‰€æœ‰è€…ã¯ç§»ã•ãªã„ã‚ˆã†ã«ä»•æ§˜å¤‰æ›´ã€‚
 */
 void CEditView::DeleteData2(
 	const CLayoutPoint& _ptCaretPos,
@@ -382,7 +382,7 @@ void CEditView::DeleteData2(
 	}
 	nIdxFrom = LineColumnToIndex( pcLayout, _ptCaretPos.GetX2() );
 
-	//2007.10.18 kobake COpe‚Ì¶¬‚ğ‚±‚±‚É‚Ü‚Æ‚ß‚é
+	//2007.10.18 kobake COpeã®ç”Ÿæˆã‚’ã“ã“ã«ã¾ã¨ã‚ã‚‹
 	CDeleteOpe*	pcOpe = NULL;
 	CLayoutInt columnFrom = LineIndexToColumn( pcLayout, nIdxFrom );
 	CLayoutInt columnTo = LineIndexToColumn( pcLayout, nIdxFrom + nDelLen );
@@ -403,7 +403,7 @@ void CEditView::DeleteData2(
 		pmemDeleted = &memDeleted;
 	}
 
-	/* ƒf[ƒ^íœ */
+	/* ãƒ‡ãƒ¼ã‚¿å‰Šé™¤ */
 	{
 		LayoutReplaceArg arg;
 		arg.sDelRange.SetFrom(_ptCaretPos);
@@ -414,7 +414,7 @@ void CEditView::DeleteData2(
 		m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr( &arg );
 	}
 
-	/* ‘I‘ğƒGƒŠƒA‚Ìæ“ª‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+	/* é¸æŠã‚¨ãƒªã‚¢ã®å…ˆé ­ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 	GetCaret().MoveCursor( _ptCaretPos, false );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
@@ -430,14 +430,14 @@ void CEditView::DeleteData2(
 			pcMem->AppendNativeData(memDeleted[i].cmemLine);
 		}
 	}
-	//2007.10.18 kobake COpe‚Ì’Ç‰Á‚ğ‚±‚±‚É‚Ü‚Æ‚ß‚é
+	//2007.10.18 kobake COpeã®è¿½åŠ ã‚’ã“ã“ã«ã¾ã¨ã‚ã‚‹
 	if( pcOpe ){
 		pcOpe->m_cOpeLineData.swap(memDeleted);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			_ptCaretPos,
 			&pcOpe->m_ptCaretPos_PHY_After
 		);
-		// ‘€ì‚Ì’Ç‰Á
+		// æ“ä½œã®è¿½åŠ 
 		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
@@ -446,13 +446,13 @@ void CEditView::DeleteData2(
 
 
 
-/*!	ƒJ[ƒ\ƒ‹ˆÊ’u‚Ü‚½‚Í‘I‘ğƒGƒŠƒA‚ğíœ
+/*!	ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã¾ãŸã¯é¸æŠã‚¨ãƒªã‚¢ã‚’å‰Šé™¤
 
-	@date 2002/03/24 YAZAKI bUndoíœ
+	@date 2002/03/24 YAZAKI bUndoå‰Šé™¤
 */
 void CEditView::DeleteData(
 	bool	bRedraw
-//	BOOL	bUndo	/* Undo‘€ì‚©‚Ç‚¤‚© */
+//	BOOL	bUndo	/* Undoæ“ä½œã‹ã©ã†ã‹ */
 )
 {
 #ifdef _DEBUG
@@ -469,10 +469,10 @@ void CEditView::DeleteData(
 	CLayoutRect		rcSel;
 	const CLayout*	pcLayout;
 
-	// ƒeƒLƒXƒg‚Ì‘¶İ‚µ‚È‚¢ƒGƒŠƒA‚Ìíœ‚ÍA‘I‘ğ”ÍˆÍ‚ÌƒLƒƒƒ“ƒZƒ‹‚ÆƒJ[ƒ\ƒ‹ˆÚ“®‚Ì‚İ‚Æ‚·‚é	// 2008.08.05 ryoji
-	if( GetSelectionInfo().IsTextSelected() ){		// ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚©
+	// ãƒ†ã‚­ã‚¹ãƒˆã®å­˜åœ¨ã—ãªã„ã‚¨ãƒªã‚¢ã®å‰Šé™¤ã¯ã€é¸æŠç¯„å›²ã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã¨ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã®ã¿ã¨ã™ã‚‹	// 2008.08.05 ryoji
+	if( GetSelectionInfo().IsTextSelected() ){		// ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹
 		if( IsEmptyArea( GetSelectionInfo().m_sSelect.GetFrom(), GetSelectionInfo().m_sSelect.GetTo(), true, GetSelectionInfo().IsBoxSelecting() ) ){
-			// ƒJ[ƒ\ƒ‹‚ğ‘I‘ğ”ÍˆÍ‚Ì¶ã‚ÉˆÚ“®
+			// ã‚«ãƒ¼ã‚½ãƒ«ã‚’é¸æŠç¯„å›²ã®å·¦ä¸Šã«ç§»å‹•
 			GetCaret().MoveCursor(
 				CLayoutPoint(
 					GetSelectionInfo().m_sSelect.GetFrom().GetX2() < GetSelectionInfo().m_sSelect.GetTo().GetX2() ? GetSelectionInfo().m_sSelect.GetFrom().GetX2() : GetSelectionInfo().m_sSelect.GetTo().GetX2(),
@@ -491,32 +491,32 @@ void CEditView::DeleteData(
 
 	CLayoutPoint ptCaretPosOld = GetCaret().GetCaretLayoutPos();
 
-	/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 	if( GetSelectionInfo().IsTextSelected() ){
 		CWaitCursor cWaitCursor( this->GetHwnd() );  // 2002.02.05 hor
-		if( !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
-			/* ‘€ì‚Ì’Ç‰Á */
+		if( !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
+			/* æ“ä½œã®è¿½åŠ  */
 			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}
 
-		/* ‹éŒ`”ÍˆÍ‘I‘ğ’†‚© */
+		/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ã‹ */
 		if( GetSelectionInfo().IsBoxSelecting() ){
-			m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	2002/06/04 YAZAKI ‹éŒ`‘I‘ğ‚ğíœ‚µ‚½‚Æ‚«‚É•ÏXƒ}[ƒN‚ª‚Â‚©‚È‚¢B
+			m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	2002/06/04 YAZAKI çŸ©å½¢é¸æŠã‚’å‰Šé™¤ã—ãŸã¨ãã«å¤‰æ›´ãƒãƒ¼ã‚¯ãŒã¤ã‹ãªã„ã€‚
 
 			SetDrawSwitch(false);	// 2002.01.25 hor
-			/* ‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ */
-			/* ³í‚ÍTRUE,”ÍˆÍ–¢‘I‘ğ‚Ìê‡‚ÍFALSE‚ğ•Ô‚· */
-			/* ‚Q“_‚ğ‘ÎŠp‚Æ‚·‚é‹éŒ`‚ğ‹‚ß‚é */
+			/* é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
+			/* æ­£å¸¸æ™‚ã¯TRUE,ç¯„å›²æœªé¸æŠã®å ´åˆã¯FALSEã‚’è¿”ã™ */
+			/* ï¼’ç‚¹ã‚’å¯¾è§’ã¨ã™ã‚‹çŸ©å½¢ã‚’æ±‚ã‚ã‚‹ */
 			TwoPointToRect(
 				&rcSel,
-				GetSelectionInfo().m_sSelect.GetFrom(),	// ”ÍˆÍ‘I‘ğŠJn
-				GetSelectionInfo().m_sSelect.GetTo()		// ”ÍˆÍ‘I‘ğI—¹
+				GetSelectionInfo().m_sSelect.GetFrom(),	// ç¯„å›²é¸æŠé–‹å§‹
+				GetSelectionInfo().m_sSelect.GetTo()		// ç¯„å›²é¸æŠçµ‚äº†
 			);
-			/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
+			/* ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™ */
 			GetSelectionInfo().DisableSelectArea( bRedraw );
 
 			nIdxFrom = CLogicInt(0);
@@ -527,7 +527,7 @@ void CEditView::DeleteData(
 				if( pLine ){
 					using namespace WCODE;
 
-					/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é */
+					/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 					nIdxFrom = LineColumnToIndex( pcLayout, rcSel.left  );
 					nIdxTo	 = LineColumnToIndex( pcLayout, rcSel.right );
 
@@ -544,7 +544,7 @@ void CEditView::DeleteData(
 				}
 				nDelLen	= nDelLenNext;
 				if( nLineNum < rcSel.bottom && 0 < nDelLen ){
-					// w’èˆÊ’u‚Ìw’è’·ƒf[ƒ^íœ
+					// æŒ‡å®šä½ç½®ã®æŒ‡å®šé•·ãƒ‡ãƒ¼ã‚¿å‰Šé™¤
 					DeleteData2(
 						CLayoutPoint(rcSel.left, nLineNum + 1),
 						nDelLen,
@@ -554,86 +554,86 @@ void CEditView::DeleteData(
 			}
 			SetDrawSwitch(true);	// 2002.01.25 hor
 
-			/* s”Ô†•\¦‚É•K—v‚È•‚ğİ’è */
+			/* è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’è¨­å®š */
 			if ( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( true ) ){
-				/* ƒLƒƒƒŒƒbƒg‚Ì•\¦EXV */
+				/* ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡¨ç¤ºãƒ»æ›´æ–° */
 				GetCaret().ShowEditCaret();
 			}
 			if( bRedraw ){
-				/* ƒXƒNƒ[ƒ‹ƒo[‚Ìó‘Ô‚ğXV‚·‚é */
+				/* ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹ */
 				AdjustScrollBars();
 
-				/* Ä•`‰æ */
+				/* å†æç”» */
 				Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, false);
 			}
-			/* ‘I‘ğƒGƒŠƒA‚Ìæ“ª‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+			/* é¸æŠã‚¨ãƒªã‚¢ã®å…ˆé ­ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 			this->UpdateWindow();
 			
 			CLayoutPoint caretOld = CLayoutPoint(rcSel.left, rcSel.top);
 			m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
 			if( rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
-				// EOL‚æ‚è¶‚È‚ç•¶š‚Ì’PˆÊ‚É‚»‚ë‚¦‚é
+				// EOLã‚ˆã‚Šå·¦ãªã‚‰æ–‡å­—ã®å˜ä½ã«ãã‚ãˆã‚‹
 				CLogicInt nIdxCaret = LineColumnToIndex( pcLayout, rcSel.left );
 				caretOld.SetX( LineIndexToColumn( pcLayout, nIdxCaret ) );
 			}
 			GetCaret().MoveCursor( caretOld, bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
-			if( !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+			if( !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 				CMoveCaretOpe*		pcOpe = new CMoveCaretOpe();
 				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					ptCaretPosOld,
 					&pcOpe->m_ptCaretPos_PHY_Before
 				);
 
-				pcOpe->m_ptCaretPos_PHY_After = GetCaret().GetCaretLogicPos();	// ‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
-				/* ‘€ì‚Ì’Ç‰Á */
+				pcOpe->m_ptCaretPos_PHY_After = GetCaret().GetCaretLogicPos();	// æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
+				/* æ“ä½œã®è¿½åŠ  */
 				m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 			}
 		}else{
-			/* ƒf[ƒ^’uŠ· íœ&‘}“ü‚É‚àg‚¦‚é */
+			/* ãƒ‡ãƒ¼ã‚¿ç½®æ› å‰Šé™¤&æŒ¿å…¥ã«ã‚‚ä½¿ãˆã‚‹ */
 			ReplaceData_CEditView(
 				GetSelectionInfo().m_sSelect,
-				L"",					/* ‘}“ü‚·‚éƒf[ƒ^ */
-				CLogicInt(0),			/* ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³ */
+				L"",					/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ */
+				CLogicInt(0),			/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã• */
 				bRedraw,
 				m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 			);
 		}
 	}else{
-		/* Œ»İs‚Ìƒf[ƒ^‚ğæ“¾ */
+		/* ç¾åœ¨è¡Œã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 		if( NULL == pLine ){
 			goto end_of_func;
 //			return;
 		}
-		/* ÅŒã‚Ìs‚ÉƒJ[ƒ\ƒ‹‚ª‚ ‚é‚©‚Ç‚¤‚© */
+		/* æœ€å¾Œã®è¡Œã«ã‚«ãƒ¼ã‚½ãƒ«ãŒã‚ã‚‹ã‹ã©ã†ã‹ */
 		bool bLastLine = ( GetCaret().GetCaretLayoutPos().GetY() == m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 );
 
-		/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é */
+		/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 		nCurIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 //		MYTRACE( _T("nLineLen=%d nCurIdx=%d \n"), nLineLen, nCurIdx);
-		if( nCurIdx == nLineLen && bLastLine ){	/* ‘SƒeƒLƒXƒg‚ÌÅŒã */
+		if( nCurIdx == nLineLen && bLastLine ){	/* å…¨ãƒ†ã‚­ã‚¹ãƒˆã®æœ€å¾Œ */
 			goto end_of_func;
 //			return;
 		}
 
-		/* w’è‚³‚ê‚½Œ…‚Ì•¶š‚ÌƒoƒCƒg”‚ğ’²‚×‚é */
+		/* æŒ‡å®šã•ã‚ŒãŸæ¡ã®æ–‡å­—ã®ãƒã‚¤ãƒˆæ•°ã‚’èª¿ã¹ã‚‹ */
 		CLogicInt	nNxtIdx;
 		CLayoutInt	nNxtPos;
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		if( WCODE::IsLineDelimiter(pLine[nCurIdx], bExtEol) ){
-			/* ‰üs */
+			/* æ”¹è¡Œ */
 			nNxtIdx = pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
 			nNxtPos = GetCaret().GetCaretLayoutPos().GetX() + CLayoutInt(pcLayout->GetLayoutEol().GetLen()>0?1+m_pcEditDoc->m_cLayoutMgr.GetCharSpacing():0);
 		}
 		else{
 			nNxtIdx = CLogicInt(CNativeW::GetCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine);
-			// w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é
+			// æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹
 			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}
 
 
-		/* ƒf[ƒ^’uŠ· íœ&‘}“ü‚É‚àg‚¦‚é */
+		/* ãƒ‡ãƒ¼ã‚¿ç½®æ› å‰Šé™¤&æŒ¿å…¥ã«ã‚‚ä½¿ãˆã‚‹ */
 		CLayoutRange sDelRange;
 		sDelRange.SetFrom(GetCaret().GetCaretLayoutPos());
 		sDelRange.SetTo(CLayoutPoint(nNxtPos,GetCaret().GetCaretLayoutPos().GetY()));
@@ -642,8 +642,8 @@ void CEditView::DeleteData(
 		sDelRangeLogic.SetTo(CLogicPoint(nNxtIdx + pcLayout->GetLogicOffset(), GetCaret().GetCaretLogicPos().GetY()));
 		ReplaceData_CEditView(
 			sDelRange,
-			L"",				/* ‘}“ü‚·‚éƒf[ƒ^ */
-			CLogicInt(0),		/* ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³ */
+			L"",				/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ */
+			CLogicInt(0),		/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã• */
 			bRedraw,
 			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk(),
 			false,
@@ -655,17 +655,17 @@ void CEditView::DeleteData(
 
 	if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() > 0 ){
 		if( GetCaret().GetCaretLayoutPos().GetY() > m_pcEditDoc->m_cLayoutMgr.GetLineCount()	- 1	){
-			/* Œ»İs‚Ìƒf[ƒ^‚ğæ“¾ */
+			/* ç¾åœ¨è¡Œã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
 			const CLayout*	pcLayout;
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - CLayoutInt(1), &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				goto end_of_func;
 			}
-			/* ‰üs‚ÅI‚í‚Á‚Ä‚¢‚é‚© */
+			/* æ”¹è¡Œã§çµ‚ã‚ã£ã¦ã„ã‚‹ã‹ */
 			if( ( EOL_NONE != pcLayout->GetLayoutEol() ) ){
 				goto end_of_func;
 			}
-			/*ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“® */
+			/*ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã«ç§»å‹• */
 			GetCommander().Command_GOFILEEND( false );
 		}
 	}
@@ -676,9 +676,9 @@ end_of_func:;
 
 
 void CEditView::ReplaceData_CEditView(
-	const CLayoutRange&	sDelRange,			//!< [in]  íœ”ÍˆÍƒŒƒCƒAƒEƒg’PˆÊ
-	const wchar_t*		pInsData,			//!< [in]  ‘}“ü‚·‚éƒf[ƒ^
-	CLogicInt			nInsDataLen,		//!< [in]  ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³
+	const CLayoutRange&	sDelRange,			//!< [in]  å‰Šé™¤ç¯„å›²ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
+	const wchar_t*		pInsData,			//!< [in]  æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+	CLogicInt			nInsDataLen,		//!< [in]  æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã•
 	bool				bRedraw,
 	COpeBlk*			pcOpeBlk,
 	bool				bFastMode,
@@ -701,9 +701,9 @@ void CEditView::ReplaceData_CEditView(
 }
 
 void CEditView::ReplaceData_CEditView2(
-	const CLogicRange&	sDelRange,			// íœ”ÍˆÍBƒƒWƒbƒN’PˆÊB
-	const wchar_t*		pInsData,			// ‘}“ü‚·‚éƒf[ƒ^
-	CLogicInt			nInsDataLen,		// ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³
+	const CLogicRange&	sDelRange,			// å‰Šé™¤ç¯„å›²ã€‚ãƒ­ã‚¸ãƒƒã‚¯å˜ä½ã€‚
+	const wchar_t*		pInsData,			// æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+	CLogicInt			nInsDataLen,		// æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã•
 	bool				bRedraw,
 	COpeBlk*			pcOpeBlk,
 	bool				bFastMode
@@ -719,33 +719,33 @@ void CEditView::ReplaceData_CEditView2(
 
 
 
-/* ƒf[ƒ^’uŠ· íœ&‘}“ü‚É‚àg‚¦‚é */
-// Jun 23, 2000 genta •Ï”–¼‚ğ‘‚«Š·‚¦–Y‚ê‚Ä‚¢‚½‚Ì‚ğC³
-// Jun. 1, 2000 genta DeleteData‚©‚çˆÚ“®‚µ‚½
+/* ãƒ‡ãƒ¼ã‚¿ç½®æ› å‰Šé™¤&æŒ¿å…¥ã«ã‚‚ä½¿ãˆã‚‹ */
+// Jun 23, 2000 genta å¤‰æ•°åã‚’æ›¸ãæ›ãˆå¿˜ã‚Œã¦ã„ãŸã®ã‚’ä¿®æ­£
+// Jun. 1, 2000 genta DeleteDataã‹ã‚‰ç§»å‹•ã—ãŸ
 bool CEditView::ReplaceData_CEditView3(
-	CLayoutRange	sDelRange,			//!< [in]  íœ”ÍˆÍƒŒƒCƒAƒEƒg’PˆÊ
-	COpeLineData*	pcmemCopyOfDeleted,	//!< [out] íœ‚³‚ê‚½ƒf[ƒ^‚ÌƒRƒs[(NULL‰Â”\)
-	COpeLineData*	pInsData,			//!< [in]  ‘}“ü‚·‚éƒf[ƒ^
+	CLayoutRange	sDelRange,			//!< [in]  å‰Šé™¤ç¯„å›²ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½
+	COpeLineData*	pcmemCopyOfDeleted,	//!< [out] å‰Šé™¤ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã®ã‚³ãƒ”ãƒ¼(NULLå¯èƒ½)
+	COpeLineData*	pInsData,			//!< [in]  æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
 	bool			bRedraw,
 	COpeBlk*		pcOpeBlk,
 	int				nDelSeq,
 	int*			pnInsSeq,
-	bool			bFastMode,			//!< [in] CDocLineMgr‚ğXV‚µ‚È‚¢,s––ƒ`ƒFƒbƒN‚ğÈ—ª‚·‚éBbRedraw==false‚Ì•K—v‚ ‚è
+	bool			bFastMode,			//!< [in] CDocLineMgrã‚’æ›´æ–°ã—ãªã„,è¡Œæœ«ãƒã‚§ãƒƒã‚¯ã‚’çœç•¥ã™ã‚‹ã€‚bRedraw==falseã®å¿…è¦ã‚ã‚Š
 	const CLogicRange*	psDelRangeLogicFast
 )
 {
-	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastMode‚Ì‚Æ‚«‚Í bReadraw == false
+	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeã®ã¨ãã¯ bReadraw == false
 	bool bUpdateAll = true;
 
 	bool bDelRangeUpdate = false;
 	{
 		//	May. 29, 2000 genta
 		//	From Here
-		//	s‚ÌŒã‚ë‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚½‚Æ‚«‚Ì•s‹ï‡‚ğ‰ñ”ğ‚·‚é‚½‚ßC
-		//	‘I‘ğ—Ìˆæ‚©‚çs––ˆÈ~‚Ì•”•ª‚ğæ‚èœ‚­D
+		//	è¡Œã®å¾Œã‚ãŒé¸æŠã•ã‚Œã¦ã„ãŸã¨ãã®ä¸å…·åˆã‚’å›é¿ã™ã‚‹ãŸã‚ï¼Œ
+		//	é¸æŠé ˜åŸŸã‹ã‚‰è¡Œæœ«ä»¥é™ã®éƒ¨åˆ†ã‚’å–ã‚Šé™¤ãï¼
 
 		if( !bFastMode ){
-			//	æ“ª
+			//	å…ˆé ­
 			const CLayout*	pcLayout;
 			CLogicInt		len;
 			const wchar_t*	line = NULL;
@@ -753,14 +753,14 @@ bool CEditView::ReplaceData_CEditView3(
 			if( line ){
 				CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
 				//	Jun. 1, 2000 genta
-				//	“¯ˆês‚Ìs––ˆÈ~‚Ì‚İ‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚éê‡‚ğl—¶‚·‚é
+				//	åŒä¸€è¡Œã®è¡Œæœ«ä»¥é™ã®ã¿ãŒé¸æŠã•ã‚Œã¦ã„ã‚‹å ´åˆã‚’è€ƒæ…®ã™ã‚‹
 
 				//	Aug. 22, 2000 genta
-				//	ŠJnˆÊ’u‚ªEOF‚ÌŒã‚ë‚Ì‚Æ‚«‚ÍŸs‚É‘—‚éˆ—‚ğs‚í‚È‚¢
-				//	‚±‚ê‚ğ‚â‚Á‚Ä‚µ‚Ü‚¤‚Æ‘¶İ‚µ‚È‚¢s‚ğPoint‚µ‚Ä—‚¿‚éD
+				//	é–‹å§‹ä½ç½®ãŒEOFã®å¾Œã‚ã®ã¨ãã¯æ¬¡è¡Œã«é€ã‚‹å‡¦ç†ã‚’è¡Œã‚ãªã„
+				//	ã“ã‚Œã‚’ã‚„ã£ã¦ã—ã¾ã†ã¨å­˜åœ¨ã—ãªã„è¡Œã‚’Pointã—ã¦è½ã¡ã‚‹ï¼
 				if( sDelRange.GetFrom().y < m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 && pos >= len){
 					if( sDelRange.GetFrom().y == sDelRange.GetTo().y  ){
-						//	GetSelectionInfo().m_sSelect.GetFrom().y <= GetSelectionInfo().m_sSelect.GetTo().y ‚Íƒ`ƒFƒbƒN‚µ‚È‚¢
+						//	GetSelectionInfo().m_sSelect.GetFrom().y <= GetSelectionInfo().m_sSelect.GetTo().y ã¯ãƒã‚§ãƒƒã‚¯ã—ãªã„
 						CLayoutPoint tmp = sDelRange.GetFrom();
 						tmp.y++;
 						tmp.x = CLayoutInt(0);
@@ -774,7 +774,7 @@ bool CEditView::ReplaceData_CEditView3(
 				}
 			}
 
-			//	––”ö
+			//	æœ«å°¾
 			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetTo().GetY2(), &len, &pcLayout );
 			if( line ){
 				CLayoutInt p = LineIndexToColumn( pcLayout, len );
@@ -788,7 +788,7 @@ bool CEditView::ReplaceData_CEditView3(
 		//	To Here
 	}
 
-	//íœ”ÍˆÍƒƒWƒbƒN’PˆÊ sDelRange -> sDelRangeLogic
+	//å‰Šé™¤ç¯„å›²ãƒ­ã‚¸ãƒƒã‚¯å˜ä½ sDelRange -> sDelRangeLogic
 	CLogicRange sDelRangeLogic;
 	if( !bDelRangeUpdate && psDelRangeLogicFast ){
 		sDelRangeLogic = *psDelRangeLogicFast;
@@ -803,23 +803,23 @@ bool CEditView::ReplaceData_CEditView3(
 	CLogicPoint		ptCaretPos_PHY_Old;
 
 	ptCaretPos_PHY_Old = GetCaret().GetCaretLogicPos();
-	if( pcOpeBlk ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
-		/* ‘€ì‚Ì’Ç‰Á */
+	if( pcOpeBlk ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
+		/* æ“ä½œã®è¿½åŠ  */
 		if( sDelRangeLogic.GetFrom() != GetCaret().GetCaretLogicPos() ){
 			pcOpeBlk->AppendOpe(
 				new CMoveCaretOpe(
-					GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 		}
 	}
 
-	CReplaceOpe* pcReplaceOpe = NULL;	// •ÒW‘€ì—v‘f COpe
+	CReplaceOpe* pcReplaceOpe = NULL;	// ç·¨é›†æ“ä½œè¦ç´  COpe
 	if( pcOpeBlk ){
 		pcReplaceOpe = new CReplaceOpe();
 		pcReplaceOpe->m_ptCaretPos_PHY_Before = sDelRangeLogic.GetFrom();
 		pcReplaceOpe->m_ptCaretPos_PHY_To = sDelRangeLogic.GetTo();
-		pcReplaceOpe->m_ptCaretPos_PHY_After = pcReplaceOpe->m_ptCaretPos_PHY_Before;	// ‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+		pcReplaceOpe->m_ptCaretPos_PHY_After = pcReplaceOpe->m_ptCaretPos_PHY_Before;	// æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 	}
 
 	COpeLineData* pcMemDeleted = NULL;
@@ -829,11 +829,11 @@ bool CEditView::ReplaceData_CEditView3(
 	}
 
 
-	/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
-	// 2009.07.18 ryoji ’uŠ·Œã¨’uŠ·‘O‚ÉˆÊ’u‚ğ•ÏXi’uŠ·Œã‚¾‚Æ”½“]‚ª•s³‚É‚È‚Á‚Ä‰˜‚¢ Wiki BugReport/43j
+	/* ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™ */
+	// 2009.07.18 ryoji ç½®æ›å¾Œâ†’ç½®æ›å‰ã«ä½ç½®ã‚’å¤‰æ›´ï¼ˆç½®æ›å¾Œã ã¨åè»¢ãŒä¸æ­£ã«ãªã£ã¦æ±šã„ Wiki BugReport/43ï¼‰
 	GetSelectionInfo().DisableSelectArea( bRedraw );
 
-	/* •¶š—ñ’uŠ· */
+	/* æ–‡å­—åˆ—ç½®æ› */
 	LayoutReplaceArg LRArg;
 	DocLineReplaceArg DLRArg;
 	if( bFastMode ){
@@ -844,38 +844,38 @@ bool CEditView::ReplaceData_CEditView3(
 		// DLRArg.ptNewPos;
 		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData( &DLRArg );
 	}else{
-		LRArg.sDelRange    = sDelRange;		//!< íœ”ÍˆÍƒŒƒCƒAƒEƒg
-		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] íœ‚³‚ê‚½ƒf[ƒ^
-		LRArg.pInsData     = pInsData;		//!< ‘}“ü‚·‚éƒf[ƒ^
-		LRArg.nDelSeq      = nDelSeq;	//!< ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³
+		LRArg.sDelRange    = sDelRange;		//!< å‰Šé™¤ç¯„å›²ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
+		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] å‰Šé™¤ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿
+		LRArg.pInsData     = pInsData;		//!< æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+		LRArg.nDelSeq      = nDelSeq;	//!< æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã•
 		m_pcEditDoc->m_cLayoutMgr.ReplaceData_CLayoutMgr( &LRArg );
 	}
 
 	//	Jan. 30, 2001 genta
-	//	Ä•`‰æ‚Ì“_‚Åƒtƒ@ƒCƒ‹XVƒtƒ‰ƒO‚ª“KØ‚É‚È‚Á‚Ä‚¢‚È‚¢‚Æ‚¢‚¯‚È‚¢‚Ì‚Å
-	//	ŠÖ”‚Ì––”ö‚©‚ç‚±‚±‚ÖˆÚ“®
-	/* ó‘Ô‘JˆÚ */
-	if( pcOpeBlk ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	//	å†æç”»ã®æ™‚ç‚¹ã§ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ãƒ•ãƒ©ã‚°ãŒé©åˆ‡ã«ãªã£ã¦ã„ãªã„ã¨ã„ã‘ãªã„ã®ã§
+	//	é–¢æ•°ã®æœ«å°¾ã‹ã‚‰ã“ã“ã¸ç§»å‹•
+	/* çŠ¶æ…‹é·ç§» */
+	if( pcOpeBlk ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 		m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
 
-	/* s”Ô†•\¦‚É•K—v‚È•‚ğİ’è */
+	/* è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’è¨­å®š */
 	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
-		/* ƒLƒƒƒŒƒbƒg‚Ì•\¦EXV */
+		/* ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡¨ç¤ºãƒ»æ›´æ–° */
 		GetCaret().ShowEditCaret();
 	}
 	else{
-		/* Ä•`‰æ */
+		/* å†æç”» */
 		if( bRedraw ){
-			/* Ä•`‰æƒqƒ“ƒg ƒŒƒCƒAƒEƒgs‚Ì‘Œ¸ */
-			//	Jan. 30, 2001 genta	“\‚è•t‚¯‚Ås”‚ªŒ¸‚éê‡‚Ìl—¶‚ª”²‚¯‚Ä‚¢‚½
+			/* å†æç”»ãƒ’ãƒ³ãƒˆ ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®å¢—æ¸› */
+			//	Jan. 30, 2001 genta	è²¼ã‚Šä»˜ã‘ã§è¡Œæ•°ãŒæ¸›ã‚‹å ´åˆã®è€ƒæ…®ãŒæŠœã‘ã¦ã„ãŸ
 			if( 0 != LRArg.nAddLineNum ){
 				Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, false);
 			}
 			else{
-				// •¶‘––‚ª‰üs‚È‚µ¨‚ ‚è‚É•Ï‰»‚µ‚½‚ç				// 2009.11.11 ryoji
-				// EOF‚Ì‚İs‚ª’Ç‰Á‚É‚È‚é‚Ì‚ÅA1s—]•ª‚É•`‰æ‚·‚éB
-				// i•¶‘––‚ª‰üs‚ ‚è¨‚È‚µ‚É•Ï‰»‚·‚éê‡‚Ì––”öEOFÁ‹‚Í•`‰æŠÖ”‘¤‚Ås‚í‚ê‚éj
+				// æ–‡æ›¸æœ«ãŒæ”¹è¡Œãªã—â†’ã‚ã‚Šã«å¤‰åŒ–ã—ãŸã‚‰				// 2009.11.11 ryoji
+				// EOFã®ã¿è¡ŒãŒè¿½åŠ ã«ãªã‚‹ã®ã§ã€1è¡Œä½™åˆ†ã«æç”»ã™ã‚‹ã€‚
+				// ï¼ˆæ–‡æ›¸æœ«ãŒæ”¹è¡Œã‚ã‚Šâ†’ãªã—ã«å¤‰åŒ–ã™ã‚‹å ´åˆã®æœ«å°¾EOFæ¶ˆå»ã¯æç”»é–¢æ•°å´ã§è¡Œã‚ã‚Œã‚‹ï¼‰
 				int nAddLine = ( LRArg.ptLayoutNew.GetY2() > LRArg.sDelRange.GetTo().GetY2() )? 1: 0;
 
 				PAINTSTRUCT ps;
@@ -883,9 +883,9 @@ bool CEditView::ReplaceData_CEditView3(
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
 
-				/* Ä•`‰æƒqƒ“ƒg •ÏX‚³‚ê‚½ƒŒƒCƒAƒEƒgsFrom(ƒŒƒCƒAƒEƒgs‚Ì‘Œ¸‚ª0‚Ì‚Æ‚«g‚¤) */
+				/* å†æç”»ãƒ’ãƒ³ãƒˆ å¤‰æ›´ã•ã‚ŒãŸãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡ŒFrom(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®å¢—æ¸›ãŒ0ã®ã¨ãä½¿ã†) */
 				ps.rcPaint.top = GetTextArea().GenerateYPx(LRArg.nModLineFrom);
-				// 2011.12.26 ³‹K•\Œ»ƒL[ƒ[ƒhEŒŸõ•¶š—ñ‚È‚Ç‚ÍAƒƒWƒbƒNs“ª‚Ü‚Å‚³‚©‚Ì‚Ú‚Á‚ÄXV‚·‚é•K—v‚ª‚ ‚é
+				// 2011.12.26 æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ»æ¤œç´¢æ–‡å­—åˆ—ãªã©ã¯ã€ãƒ­ã‚¸ãƒƒã‚¯è¡Œé ­ã¾ã§ã•ã‹ã®ã¼ã£ã¦æ›´æ–°ã™ã‚‹å¿…è¦ãŒã‚ã‚‹
 				{
 					const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
 					while( pcLayoutLineFirst && 0 != pcLayoutLineFirst->GetLogicOffset() ){
@@ -926,7 +926,7 @@ bool CEditView::ReplaceData_CEditView3(
 		}
 	}
 
-	// íœ‚³‚ê‚½ƒf[ƒ^‚ÌƒRƒs[(NULL‰Â”\)
+	// å‰Šé™¤ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã®ã‚³ãƒ”ãƒ¼(NULLå¯èƒ½)
 	if( pcMemDeleted && 0 < pcMemDeleted->size() ){
 		if( pcmemCopyOfDeleted ){
 			if( pcOpeBlk ){
@@ -946,22 +946,22 @@ bool CEditView::ReplaceData_CEditView3(
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcReplaceOpe->m_ptCaretPos_PHY_After);
 			pcReplaceOpe->m_nOrgInsSeq = LRArg.nInsSeq;
 		}
-		/* ‘€ì‚Ì’Ç‰Á */
+		/* æ“ä½œã®è¿½åŠ  */
 		pcOpeBlk->AppendOpe( pcReplaceOpe );
 	}
 
-	// ‘}“ü’¼ŒãˆÊ’u‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“®
+	// æŒ¿å…¥ç›´å¾Œä½ç½®ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•
 	if( bFastMode ){
 		GetCaret().MoveCursorFastMode(DLRArg.ptNewPos);
 	}else{
 		GetCaret().MoveCursor(
-			LRArg.ptLayoutNew,	// ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u
+			LRArg.ptLayoutNew,	// æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®
 			bRedraw
 		);
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 	}
 
-// 2013.06.29 CMoveCaretOpe‚Í•s—vBReplaceOpe‚Ì‚İ‚É‚·‚é
+// 2013.06.29 CMoveCaretOpeã¯ä¸è¦ã€‚ReplaceOpeã®ã¿ã«ã™ã‚‹
 	if( pnInsSeq ){
 		if( bFastMode ){
 			*pnInsSeq = DLRArg.nInsSeq;
@@ -971,15 +971,15 @@ bool CEditView::ReplaceData_CEditView3(
 	}
 
 	//	Jan. 30, 2001 genta
-	//	ƒtƒ@ƒCƒ‹‘S‘Ì‚ÌXVƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¢‚ÆŠes‚ÌXVó‘Ô‚ª•\¦‚³‚ê‚È‚¢‚Ì‚Å
-	//	ƒtƒ‰ƒOXVˆ—‚ğÄ•`‰æ‚æ‚è‘O‚ÉˆÚ“®‚·‚é
+	//	ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“ã®æ›´æ–°ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ãªã„ã¨å„è¡Œã®æ›´æ–°çŠ¶æ…‹ãŒè¡¨ç¤ºã•ã‚Œãªã„ã®ã§
+	//	ãƒ•ãƒ©ã‚°æ›´æ–°å‡¦ç†ã‚’å†æç”»ã‚ˆã‚Šå‰ã«ç§»å‹•ã™ã‚‹
 	return  bUpdateAll;
 }
 
 
 
 
-// 2005.10.11 ryoji ‘O‚Ìs‚É‚ ‚é––”ö‚Ì‹ó”’‚ğíœ
+// 2005.10.11 ryoji å‰ã®è¡Œã«ã‚ã‚‹æœ«å°¾ã®ç©ºç™½ã‚’å‰Šé™¤
 void CEditView::RTrimPrevLine( void )
 {
 	int			nCharChars;
@@ -1006,8 +1006,8 @@ void CEditView::RTrimPrevLine( void )
 				if( !( sRangeA.GetFrom().x >= sRangeA.GetTo().x && sRangeA.GetFrom().y == sRangeA.GetTo().y) ){
 					ReplaceData_CEditView(
 						sRangeA,
-						NULL,		/* ‘}“ü‚·‚éƒf[ƒ^ */
-						CLogicInt(0),			/* ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³ */
+						NULL,		/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ */
+						CLogicInt(0),			/* æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã• */
 						true,
 						m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 					);
@@ -1015,11 +1015,11 @@ void CEditView::RTrimPrevLine( void )
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCaretPos_PHY, &ptCP );
 					GetCaret().MoveCursor( ptCP, true );
 
-					if( !m_bDoing_UndoRedo ){	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
-						/* ‘€ì‚Ì’Ç‰Á */
+					if( !m_bDoing_UndoRedo ){	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
+						/* æ“ä½œã®è¿½åŠ  */
 						m_cCommander.GetOpeBlk()->AppendOpe(
 							new CMoveCaretOpe(
-								GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+								GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 							)
 						);
 					}

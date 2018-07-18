@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,16 +25,16 @@
 #include "StdAfx.h"
 #include "CViewFont.h"
 
-/*! ƒtƒHƒ“ƒgì¬
+/*! ãƒ•ã‚©ãƒ³ãƒˆä½œæˆ
 */
 void CViewFont::CreateFont(const LOGFONT *plf)
 {
 	LOGFONT	lf;
 	int miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
 	int quality = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
-	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys“™‚ÅMiniMap‚ÌƒtƒHƒ“ƒg‚ª¬‚³‚­‚È‚ç‚È‚¢C³
+	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSysç­‰ã§MiniMapã®ãƒ•ã‚©ãƒ³ãƒˆãŒå°ã•ããªã‚‰ãªã„ä¿®æ­£
 
-	/* ƒtƒHƒ“ƒgì¬ */
+	/* ãƒ•ã‚©ãƒ³ãƒˆä½œæˆ */
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
@@ -44,7 +44,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	m_hFont_HAN = CreateFontIndirect( &lf );
 	m_LogFont = lf;
 
-	/* ‘¾šƒtƒHƒ“ƒgì¬ */
+	/* å¤ªå­—ãƒ•ã‚©ãƒ³ãƒˆä½œæˆ */
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
@@ -57,7 +57,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	}
 	m_hFont_HAN_BOLD = CreateFontIndirect( &lf );
 
-	/* ‰ºüƒtƒHƒ“ƒgì¬ */
+	/* ä¸‹ç·šãƒ•ã‚©ãƒ³ãƒˆä½œæˆ */
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
@@ -68,7 +68,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	lf.lfUnderline = TRUE;
 	m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
-	/* ‘¾š‰ºüƒtƒHƒ“ƒgì¬ */
+	/* å¤ªå­—ä¸‹ç·šãƒ•ã‚©ãƒ³ãƒˆä½œæˆ */
 	lf = *plf;
 	if( m_bMiniMap ){
 		lf.lfHeight = miniSize;
@@ -83,7 +83,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 	m_hFont_HAN_BOLD_UL = CreateFontIndirect( &lf );
 }
 
-/*! ƒtƒHƒ“ƒgíœ
+/*! ãƒ•ã‚©ãƒ³ãƒˆå‰Šé™¤
 */
 void CViewFont::DeleteFont()
 {
@@ -93,21 +93,21 @@ void CViewFont::DeleteFont()
 	DeleteObject( m_hFont_HAN_BOLD_UL );
 }
 
-/*! ƒtƒHƒ“ƒg‚ğ‘I‚Ô
-	@param m_bBoldFont true‚Å‘¾š
-	@param m_bUnderLine true‚Å‰ºü
+/*! ãƒ•ã‚©ãƒ³ãƒˆã‚’é¸ã¶
+	@param m_bBoldFont trueã§å¤ªå­—
+	@param m_bUnderLine trueã§ä¸‹ç·š
 */
 HFONT CViewFont::ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const
 {
 	assert( fontNo == 0 );
-	if( sFontAttr.m_bBoldFont ){	/* ‘¾š‚© */
-		if( sFontAttr.m_bUnderLine ){	/* ‰ºü‚© */
+	if( sFontAttr.m_bBoldFont ){	/* å¤ªå­—ã‹ */
+		if( sFontAttr.m_bUnderLine ){	/* ä¸‹ç·šã‹ */
 			return m_hFont_HAN_BOLD_UL;
 		}else{
 			return m_hFont_HAN_BOLD;
 		}
 	}else{
-		if( sFontAttr.m_bUnderLine ){	/* ‰ºü‚© */
+		if( sFontAttr.m_bUnderLine ){	/* ä¸‹ç·šã‹ */
 			return m_hFont_HAN_UL;
 		}else{
 			return m_hFont_HAN;

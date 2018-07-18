@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -39,15 +39,15 @@ public:
 	void CopySelectStatus(CViewSelect* pSelect) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ‘I‘ğ”ÍˆÍ‚Ì•ÏX                         //
+	//                      é¸æŠç¯„å›²ã®å¤‰æ›´                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine = true ); //!< Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚·
+	void DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine = true ); //!< ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™
 
-	void BeginSelectArea( const CLayoutPoint* po = NULL );								// Œ»İ‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚©‚ç‘I‘ğ‚ğŠJn‚·‚é
-	void ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos );			// Œ»İ‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚É‚æ‚Á‚Ä‘I‘ğ”ÍˆÍ‚ğ•ÏX
-	void ChangeSelectAreaByCurrentCursorTEST( const CLayoutPoint& ptCaretPos, CLayoutRange* pSelect );// Œ»İ‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚É‚æ‚Á‚Ä‘I‘ğ”ÍˆÍ‚ğ•ÏX
+	void BeginSelectArea( const CLayoutPoint* po = NULL );								// ç¾åœ¨ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‹ã‚‰é¸æŠã‚’é–‹å§‹ã™ã‚‹
+	void ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos );			// ç¾åœ¨ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ã‚ˆã£ã¦é¸æŠç¯„å›²ã‚’å¤‰æ›´
+	void ChangeSelectAreaByCurrentCursorTEST( const CLayoutPoint& ptCaretPos, CLayoutRange* pSelect );// ç¾åœ¨ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ã‚ˆã£ã¦é¸æŠç¯„å›²ã‚’å¤‰æ›´
 
-	//!‘I‘ğ”ÍˆÍ‚ğw’è‚·‚é(Œ´“_–¢‘I‘ğ)
+	//!é¸æŠç¯„å›²ã‚’æŒ‡å®šã™ã‚‹(åŸç‚¹æœªé¸æŠ)
 	// 2005.06.24 Moca
 	void SetSelectArea( const CLayoutRange& sRange )
 	{
@@ -55,55 +55,55 @@ public:
 		m_sSelect = sRange;
 	}
 
-	//!’PŒê‘I‘ğŠJn
+	//!å˜èªé¸æŠé–‹å§‹
 	void SelectBeginWord()
 	{
-		m_bBeginSelect     = true;				/* ”ÍˆÍ‘I‘ğ’† */
-		m_bBeginBoxSelect  = false;			/* ‹éŒ`”ÍˆÍ‘I‘ğ’†‚Å‚È‚¢ */
-		m_bBeginLineSelect = false;			/* s’PˆÊ‘I‘ğ’† */
-		m_bBeginWordSelect = true;			/* ’PŒê’PˆÊ‘I‘ğ’† */
+		m_bBeginSelect     = true;				/* ç¯„å›²é¸æŠä¸­ */
+		m_bBeginBoxSelect  = false;			/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ã§ãªã„ */
+		m_bBeginLineSelect = false;			/* è¡Œå˜ä½é¸æŠä¸­ */
+		m_bBeginWordSelect = true;			/* å˜èªå˜ä½é¸æŠä¸­ */
 	}
 
-	//!‹éŒ`‘I‘ğŠJn
+	//!çŸ©å½¢é¸æŠé–‹å§‹
 	void SelectBeginBox()
 	{
-		m_bBeginSelect     = true;			/* ”ÍˆÍ‘I‘ğ’† */
-		m_bBeginBoxSelect  = true;		/* ‹éŒ`”ÍˆÍ‘I‘ğ’† */
-		m_bBeginLineSelect = false;		/* s’PˆÊ‘I‘ğ’† */
-		m_bBeginWordSelect = false;		/* ’PŒê’PˆÊ‘I‘ğ’† */
+		m_bBeginSelect     = true;			/* ç¯„å›²é¸æŠä¸­ */
+		m_bBeginBoxSelect  = true;		/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ */
+		m_bBeginLineSelect = false;		/* è¡Œå˜ä½é¸æŠä¸­ */
+		m_bBeginWordSelect = false;		/* å˜èªå˜ä½é¸æŠä¸­ */
 	}
 
-	//!“ä‚Ì‘I‘ğŠJn
+	//!è¬ã®é¸æŠé–‹å§‹
 	void SelectBeginNazo()
 	{
-		m_bBeginSelect     = true;			/* ”ÍˆÍ‘I‘ğ’† */
-//		m_bBeginBoxSelect  = false;		/* ‹éŒ`”ÍˆÍ‘I‘ğ’†‚Å‚È‚¢ */
-		m_bBeginLineSelect = false;		/* s’PˆÊ‘I‘ğ’† */
-		m_bBeginWordSelect = false;		/* ’PŒê’PˆÊ‘I‘ğ’† */
+		m_bBeginSelect     = true;			/* ç¯„å›²é¸æŠä¸­ */
+//		m_bBeginBoxSelect  = false;		/* çŸ©å½¢ç¯„å›²é¸æŠä¸­ã§ãªã„ */
+		m_bBeginLineSelect = false;		/* è¡Œå˜ä½é¸æŠä¸­ */
+		m_bBeginWordSelect = false;		/* å˜èªå˜ä½é¸æŠä¸­ */
 	}
 
-	//!”ÍˆÍ‘I‘ğI—¹
+	//!ç¯„å›²é¸æŠçµ‚äº†
 	void SelectEnd()
 	{
 		m_bBeginSelect = false;
 	}
 
-	//!m_bBeginBoxSelect‚ğİ’èB
+	//!m_bBeginBoxSelectã‚’è¨­å®šã€‚
 	void SetBoxSelect(bool b)
 	{
 		m_bBeginBoxSelect = b;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           •`‰æ                              //
+	//                           æç”»                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DrawSelectArea(bool bDrawBracketCursorLine = true);		//!< w’ès‚Ì‘I‘ğ—Ìˆæ‚Ì•`‰æ
+	void DrawSelectArea(bool bDrawBracketCursorLine = true);		//!< æŒ‡å®šè¡Œã®é¸æŠé ˜åŸŸã®æç”»
 private:
-	void DrawSelectArea2(HDC) const;		//!< w’è”ÍˆÍ‚Ì‘I‘ğ—Ìˆæ‚Ì•`‰æ
-	void DrawSelectAreaLine(			//!< w’ès‚Ì‘I‘ğ—Ìˆæ‚Ì•`‰æ
-		HDC					hdc,		//!< [in] •`‰æ—Ìˆæ‚ÌDevice Context Handle
-		CLayoutInt			nLineNum,	//!< [in] •`‰æ‘ÎÛs(ƒŒƒCƒAƒEƒgs)
-		const CLayoutRange&	sRange		//!< [in] ‘I‘ğ”ÍˆÍ(ƒŒƒCƒAƒEƒg’PˆÊ)
+	void DrawSelectArea2(HDC) const;		//!< æŒ‡å®šç¯„å›²ã®é¸æŠé ˜åŸŸã®æç”»
+	void DrawSelectAreaLine(			//!< æŒ‡å®šè¡Œã®é¸æŠé ˜åŸŸã®æç”»
+		HDC					hdc,		//!< [in] æç”»é ˜åŸŸã®Device Context Handle
+		CLayoutInt			nLineNum,	//!< [in] æç”»å¯¾è±¡è¡Œ(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ)
+		const CLayoutRange&	sRange		//!< [in] é¸æŠç¯„å›²(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½)
 	) const;
 public:
 	void GetSelectAreaLineFromRange(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout, const CLayoutRange& sRange) const;
@@ -115,14 +115,14 @@ public:
 		GetSelectAreaLineFromRange(ret, nLineNum, pcLayout, m_sSelect);
 		return ret;
 	}
-	//! ‘I‘ğî•ñƒf[ƒ^‚Ìì¬	2005.07.09 genta
+	//! é¸æŠæƒ…å ±ãƒ‡ãƒ¼ã‚¿ã®ä½œæˆ	2005.07.09 genta
 	void PrintSelectionInfoMsg() const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ó‘Ôæ“¾                            //
+	//                         çŠ¶æ…‹å–å¾—                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//! ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚©
-	// 2002/03/29 Azumaiya ƒCƒ“ƒ‰ƒCƒ“ŠÖ”‰»
+	//! ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹
+	// 2002/03/29 Azumaiya ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³é–¢æ•°åŒ–
 	bool IsTextSelected() const
 	{
 		return m_sSelect.IsValid();
@@ -131,21 +131,21 @@ public:
 //			);
 	}
 
-	//! ƒeƒLƒXƒg‚Ì‘I‘ğ’†‚©
-	// 2002/03/29 Azumaiya ƒCƒ“ƒ‰ƒCƒ“ŠÖ”‰»
+	//! ãƒ†ã‚­ã‚¹ãƒˆã®é¸æŠä¸­ã‹
+	// 2002/03/29 Azumaiya ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³é–¢æ•°åŒ–
 	bool IsTextSelecting() const
 	{
-		// ƒWƒƒƒ“ƒv‰ñ”‚ğŒ¸‚ç‚µ‚ÄAˆê‹C‚É”»’èB
+		// ã‚¸ãƒ£ãƒ³ãƒ—å›æ•°ã‚’æ¸›ã‚‰ã—ã¦ã€ä¸€æ°—ã«åˆ¤å®šã€‚
 		return m_bSelectingLock || IsTextSelected();
 	}
 
-	//!ƒ}ƒEƒX‚Å‘I‘ğ’†‚©
+	//!ãƒã‚¦ã‚¹ã§é¸æŠä¸­ã‹
 	bool IsMouseSelecting() const
 	{
 		return m_bBeginSelect;
 	}
 
-	//!‹éŒ`‘I‘ğ’†‚©
+	//!çŸ©å½¢é¸æŠä¸­ã‹
 	bool IsBoxSelecting() const
 	{
 		return m_bBeginBoxSelect;
@@ -153,40 +153,40 @@ public:
 
 
 private:
-	//QÆ
+	//å‚ç…§
 	CEditView*	m_pcEditView;
 
 public:
 
 
-	bool	m_bDrawSelectArea;		// ‘I‘ğ”ÍˆÍ‚ğ•`‰æ‚µ‚½‚©	// 02/12/13 ai
+	bool	m_bDrawSelectArea;		// é¸æŠç¯„å›²ã‚’æç”»ã—ãŸã‹	// 02/12/13 ai
 
-	// ‘I‘ğó‘Ô
-	bool	m_bSelectingLock;		// ‘I‘ğó‘Ô‚ÌƒƒbƒN
+	// é¸æŠçŠ¶æ…‹
+	bool	m_bSelectingLock;		// é¸æŠçŠ¶æ…‹ã®ãƒ­ãƒƒã‚¯
 private:
-	bool	m_bBeginSelect;			// ”ÍˆÍ‘I‘ğ’†
-	bool	m_bBeginBoxSelect;		// ‹éŒ`”ÍˆÍ‘I‘ğ’†
-	bool	m_bSelectAreaChanging;	// ‘I‘ğ”ÍˆÍ•ÏX’†
-	int		m_nLastSelectedByteLen;	// ‘O‰ñ‘I‘ğ‚Ì‘I‘ğƒoƒCƒg”
+	bool	m_bBeginSelect;			// ç¯„å›²é¸æŠä¸­
+	bool	m_bBeginBoxSelect;		// çŸ©å½¢ç¯„å›²é¸æŠä¸­
+	bool	m_bSelectAreaChanging;	// é¸æŠç¯„å›²å¤‰æ›´ä¸­
+	int		m_nLastSelectedByteLen;	// å‰å›é¸æŠæ™‚ã®é¸æŠãƒã‚¤ãƒˆæ•°
 
 public:
-	bool	m_bBeginLineSelect;		// s’PˆÊ‘I‘ğ’†
-	bool	m_bBeginWordSelect;		// ’PŒê’PˆÊ‘I‘ğ’†
+	bool	m_bBeginLineSelect;		// è¡Œå˜ä½é¸æŠä¸­
+	bool	m_bBeginWordSelect;		// å˜èªå˜ä½é¸æŠä¸­
 
-	// ‘I‘ğ”ÍˆÍ‚ğ•Û‚·‚é‚½‚ß‚Ì•Ï”ŒQ
-	// ‚±‚ê‚ç‚Í‚·‚×‚ÄÜ‚è•Ô‚µs‚ÆAÜ‚è•Ô‚µŒ…‚ğ•Û‚µ‚Ä‚¢‚éB
-	CLayoutRange m_sSelectBgn; //”ÍˆÍ‘I‘ğ(Œ´“_)
-	CLayoutRange m_sSelect;    //”ÍˆÍ‘I‘ğ
-	CLayoutRange m_sSelectOld; //”ÍˆÍ‘I‘ğOld
+	// é¸æŠç¯„å›²ã‚’ä¿æŒã™ã‚‹ãŸã‚ã®å¤‰æ•°ç¾¤
+	// ã“ã‚Œã‚‰ã¯ã™ã¹ã¦æŠ˜ã‚Šè¿”ã—è¡Œã¨ã€æŠ˜ã‚Šè¿”ã—æ¡ã‚’ä¿æŒã—ã¦ã„ã‚‹ã€‚
+	CLayoutRange m_sSelectBgn; //ç¯„å›²é¸æŠ(åŸç‚¹)
+	CLayoutRange m_sSelect;    //ç¯„å›²é¸æŠ
+	CLayoutRange m_sSelectOld; //ç¯„å›²é¸æŠOld
 
-	CMyPoint	m_ptMouseRollPosOld;	// ƒ}ƒEƒX”ÍˆÍ‘I‘ğ‘O‰ñˆÊ’u(XYÀ•W)
+	CMyPoint	m_ptMouseRollPosOld;	// ãƒã‚¦ã‚¹ç¯„å›²é¸æŠå‰å›ä½ç½®(XYåº§æ¨™)
 };
 
 /*
-m_sSelectOld‚É‚Â‚¢‚Ä
-	DrawSelectArea()‚ÉŒ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ‹³‚¦‚Ä·•ª‚Ì‚İ•`‰æ‚·‚é‚½‚ß‚Ì‚à‚Ì
-	Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğOld‚ÖƒRƒs[‚µ‚½ã‚ÅV‚µ‚¢‘I‘ğ”ÍˆÍ‚ğSelect‚Éİ’è‚µ‚Ä
-	DrawSelectArea()‚ğŒÄ‚Ñ‚¾‚·‚±‚Æ‚ÅV‚µ‚¢”ÍˆÍ‚ª•`‚©‚ê‚éD
+m_sSelectOldã«ã¤ã„ã¦
+	DrawSelectArea()ã«ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’æ•™ãˆã¦å·®åˆ†ã®ã¿æç”»ã™ã‚‹ãŸã‚ã®ã‚‚ã®
+	ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’Oldã¸ã‚³ãƒ”ãƒ¼ã—ãŸä¸Šã§æ–°ã—ã„é¸æŠç¯„å›²ã‚’Selectã«è¨­å®šã—ã¦
+	DrawSelectArea()ã‚’å‘¼ã³ã ã™ã“ã¨ã§æ–°ã—ã„ç¯„å›²ãŒæã‹ã‚Œã‚‹ï¼
 */
 
 #endif /* SAKURA_CVIEWSELECT_F4CBAF6E_90C8_44D2_B6EC_7FE066968A8D9_H_ */

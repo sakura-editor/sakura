@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -34,17 +34,17 @@ class CFigureManager : public TSingleton<CFigureManager>{
 	virtual ~CFigureManager();
 
 public:
-	//! •`‰æ‚·‚éCFigure‚ğæ“¾
-	//	@param	pText	‘ÎÛ•¶š—ñ‚Ìæ“ª
-	//	@param	nTextLen	pText‚©‚çs––‚Ü‚Å‚Ì’·‚³(‚½‚¾‚µCRLF==2)
+	//! æç”»ã™ã‚‹CFigureã‚’å–å¾—
+	//	@param	pText	å¯¾è±¡æ–‡å­—åˆ—ã®å…ˆé ­
+	//	@param	nTextLen	pTextã‹ã‚‰è¡Œæœ«ã¾ã§ã®é•·ã•(ãŸã ã—CRLF==2)
 	CFigure& GetFigure(const wchar_t* pText, int nTextLen);
 
-	// İ’è•ÏX
+	// è¨­å®šå¤‰æ›´
 	void OnChangeSetting(void);
 
 private:
 	std::vector<CFigure*>	m_vFigures;
-	std::vector<CFigure*>	m_vFiguresDisp;	//!< F•ª‚¯•\¦‘ÎÛ
+	std::vector<CFigure*>	m_vFiguresDisp;	//!< è‰²åˆ†ã‘è¡¨ç¤ºå¯¾è±¡
 };
 
 #endif /* SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_ */

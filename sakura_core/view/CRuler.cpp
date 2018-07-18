@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CRuler.h"
 #include "CTextArea.h"
 #include "view/CEditView.h"
@@ -9,26 +9,26 @@ CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
 , m_pEditDoc(pEditDoc)
 {
-	m_nOldRulerDrawX = 0;	// ‘O‰ñ•`‰æ‚µ‚½ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒgˆÊ’u 2002.02.25 Add By KK
-	m_nOldRulerWidth = 0;	// ‘O‰ñ•`‰æ‚µ‚½ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒg•   2002.02.25 Add By KK
+	m_nOldRulerDrawX = 0;	// å‰å›æç”»ã—ãŸãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½® 2002.02.25 Add By KK
+	m_nOldRulerWidth = 0;	// å‰å›æç”»ã—ãŸãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆå¹…   2002.02.25 Add By KK
 }
 
 CRuler::~CRuler()
 {
 }
 
-//2007.08.26 kobake UNICODE—p‚ÉXˆÊ’u‚ğ•ÏX
+//2007.08.26 kobake UNICODEç”¨ã«Xä½ç½®ã‚’å¤‰æ›´
 void CRuler::_DrawRulerCaret( CGraphics& gr, int nCaretDrawPosX, int nCaretWidth )
 {
-	//•`‰æ—Ìˆæ -> hRgn
+	//æç”»é ˜åŸŸ -> hRgn
 	RECT rc;
-	rc.left = nCaretDrawPosX + 1;	// 2012.07.27 Moca 1px‰E‚ÉC³
+	rc.left = nCaretDrawPosX + 1;	// 2012.07.27 Moca 1pxå³ã«ä¿®æ­£
 	rc.right = rc.left + m_pEditView->GetTextMetrics().GetHankakuDx() - 1;
 	rc.top = 0;
 	rc.bottom = m_pEditView->GetTextArea().GetAreaTop() - m_pEditView->GetTextArea().GetTopYohaku() - 1;
 	HRGN hRgn = ::CreateRectRgnIndirect( &rc );
 
-	//ƒuƒ‰ƒVì¬ -> hBrush
+	//ãƒ–ãƒ©ã‚·ä½œæˆ -> hBrush
 	HBRUSH hBrush;
 	if( 0 == nCaretWidth ){
 		hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
@@ -36,7 +36,7 @@ void CRuler::_DrawRulerCaret( CGraphics& gr, int nCaretDrawPosX, int nCaretWidth
 		hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 	}
 
-	//—Ìˆæ‚ğ•`‰æ (F‚ğ”½“]‚³‚¹‚é)
+	//é ˜åŸŸã‚’æç”» (è‰²ã‚’åè»¢ã•ã›ã‚‹)
 	int    nROP_Old  = ::SetROP2( gr, R2_NOTXORPEN );
 	HBRUSH hBrushOld = (HBRUSH)::SelectObject( gr, hBrush );
 	::SelectObject( gr, hBrush );
@@ -44,15 +44,15 @@ void CRuler::_DrawRulerCaret( CGraphics& gr, int nCaretDrawPosX, int nCaretWidth
 	::SelectObject( gr, hBrushOld );
 	::SetROP2( gr, nROP_Old );
 
-	//•`‰æƒIƒuƒWƒFƒNƒg”jŠü
+	//æç”»ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç ´æ£„
 	::DeleteObject( hRgn );
 	::DeleteObject( hBrush );
 }
 
 /*! 
-	ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒg‚ğÄ•`‰æ	2002.02.25 Add By KK
-	@param hdc [in] ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒg
-	DispRuler‚Ì“à—e‚ğŒ³‚Éì¬
+	ãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’å†æç”»	2002.02.25 Add By KK
+	@param hdc [in] ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+	DispRulerã®å†…å®¹ã‚’å…ƒã«ä½œæˆ
 */
 void CRuler::DrawRulerCaret( CGraphics& gr )
 {
@@ -61,14 +61,14 @@ void CRuler::DrawRulerCaret( CGraphics& gr )
 	){
 		if (m_pEditView->GetRuler().m_nOldRulerDrawX == m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x
 			&& m_pEditView->GetCaret().GetCaretSize().cx == m_pEditView->GetRuler().m_nOldRulerWidth) {
-			//‘O•`‰æ‚µ‚½ˆÊ’u‰æ“¯‚¶ ‚©‚Â ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒg•‚ª“¯‚¶ 
+			//å‰æç”»ã—ãŸä½ç½®ç”»åŒã˜ ã‹ã¤ ãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆå¹…ãŒåŒã˜ 
 			return;
 		}
 
-		//Œ³ˆÊ’u‚ğƒNƒŠƒA m_nOldRulerWidth
+		//å…ƒä½ç½®ã‚’ã‚¯ãƒªã‚¢ m_nOldRulerWidth
 		this->_DrawRulerCaret( gr, m_nOldRulerDrawX, m_nOldRulerWidth );
 
-		//V‚µ‚¢ˆÊ’u‚Å•`‰æ   2007.08.26 kobake UNICODE—p‚ÉXˆÊ’u‚ğ•ÏX
+		//æ–°ã—ã„ä½ç½®ã§æç”»   2007.08.26 kobake UNICODEç”¨ã«Xä½ç½®ã‚’å¤‰æ›´
 		this->_DrawRulerCaret(
 			gr,
 			m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x,
@@ -77,16 +77,16 @@ void CRuler::DrawRulerCaret( CGraphics& gr )
 	}
 }
 
-//! ƒ‹[ƒ‰[‚Ì”wŒi‚Ì‚İ•`‰æ 2007.08.29 kobake ’Ç‰Á
+//! ãƒ«ãƒ¼ãƒ©ãƒ¼ã®èƒŒæ™¯ã®ã¿æç”» 2007.08.29 kobake è¿½åŠ 
 void CRuler::DrawRulerBg(CGraphics& gr)
 {
-	//•K—v‚ÈƒCƒ“ƒ^[ƒtƒF[ƒX
+	//å¿…è¦ãªã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	CommonSetting* pCommon=&GetDllShareData().m_Common;
 
-	//ƒTƒ|[ƒg
+	//ã‚µãƒãƒ¼ãƒˆ
 	CTypeSupport cRulerType(m_pEditView,COLORIDX_RULER);
 
-	// ƒtƒHƒ“ƒgİ’è (ƒ‹[ƒ‰[ã‚Ì”š—p)
+	// ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š (ãƒ«ãƒ¼ãƒ©ãƒ¼ä¸Šã®æ•°å­—ç”¨)
 	LOGFONT	lf;
 	HFONT		hFont;
 	HFONT		hFontOld;
@@ -109,7 +109,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	hFontOld = (HFONT)::SelectObject( gr, hFont );
 	::SetBkMode( gr, TRANSPARENT );
 
-	//”wŒi“h‚è‚Â‚Ô‚µ
+	//èƒŒæ™¯å¡—ã‚Šã¤ã¶ã—
 	RECT rc;
 	rc.left = 0;
 	rc.top = 0;
@@ -117,19 +117,19 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	rc.bottom = m_pEditView->GetTextArea().GetAreaTop() - m_pEditView->GetTextArea().GetTopYohaku();
 	cRulerType.FillBack(gr,rc);
 
-	//ƒ‹[ƒ‰[Fİ’è
+	//ãƒ«ãƒ¼ãƒ©ãƒ¼è‰²è¨­å®š
 	gr.PushPen(cRulerType.GetTextColor(),0);
 	gr.PushTextForeColor(cRulerType.GetTextColor());
 
 
-	//•`‰æŠJnˆÊ’u
+	//æç”»é–‹å§‹ä½ç½®
 	int nX = m_pEditView->GetTextArea().GetAreaLeft();
 	int nY = m_pEditView->GetTextArea().GetRulerHeight() - 2;
 
 
-	// ‰ºü (ƒ‹[ƒ‰[‚Æ–{•¶‚Ì‹«ŠE)
-	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ğLayoutMgr‚©‚çæ“¾‚·‚é‚æ‚¤‚É
-	//	2005.11.10 Moca 1dot‘«‚è‚È‚¢
+	// ä¸‹ç·š (ãƒ«ãƒ¼ãƒ©ãƒ¼ã¨æœ¬æ–‡ã®å¢ƒç•Œ)
+	//	Aug. 14, 2005 genta æŠ˜ã‚Šè¿”ã—å¹…ã‚’LayoutMgrã‹ã‚‰å–å¾—ã™ã‚‹ã‚ˆã†ã«
+	//	2005.11.10 Moca 1dotè¶³ã‚Šãªã„
 	CLayoutXInt	nMaxLineColum = m_pEditDoc->m_cLayoutMgr.GetMaxLineLayout();
 	CKetaXInt	nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 	int nToX = m_pEditView->GetTextArea().GetAreaLeft() + m_pEditView->GetTextMetrics().GetCharPxWidth(nMaxLineColum - m_pEditView->GetTextArea().GetViewLeftCol()) + 1;
@@ -140,12 +140,12 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	::LineTo( gr, nToX, nY + 1 );
 
 
-	//–Ú·‚ğ•`‰æ
+	//ç›®ç››ã‚’æç”»
 	const int oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
 	CLayoutXInt i  = m_pEditView->GetTextArea().GetViewLeftCol();
 	CKetaXInt keta = CKetaXInt(((Int)i) / oneColumn);
-	const int dx = m_pEditView->GetTextMetrics().GetHankakuDx(); // PP‚Å‚àDx
-	// æ“ª‚ª‚©‚¯‚Ä‚¢‚éê‡‚ÍŸ‚ÌŒ…‚Éi‚Ş
+	const int dx = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPã§ã‚‚Dx
+	// å…ˆé ­ãŒã‹ã‘ã¦ã„ã‚‹å ´åˆã¯æ¬¡ã®æ¡ã«é€²ã‚€
 	const int pxOffset = (Int)i % oneColumn;
 	if( pxOffset ){
 		nX += oneColumn - pxOffset;
@@ -154,12 +154,12 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	}
 	while(i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas)
 	{
-		//ƒ‹[ƒ‰[I’[‚Ì‹æØ‚è(‘å)
+		//ãƒ«ãƒ¼ãƒ©ãƒ¼çµ‚ç«¯ã®åŒºåˆ‡ã‚Š(å¤§)
 		if( keta == nMaxLineKetas ){
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, 0 );
 		}
-		//10–Ú·‚¨‚«‚Ì‹æØ‚è(‘å)‚Æ”š
+		//10ç›®ç››ãŠãã®åŒºåˆ‡ã‚Š(å¤§)ã¨æ•°å­—
 		else if( 0 == keta % 10 ){
 			wchar_t szColumn[32];
 			::MoveToEx( gr, nX, nY, NULL );
@@ -167,12 +167,12 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 			_itow( ((Int)keta) / 10, szColumn, 10 );
 			::TextOutW_AnyBuild( gr, nX + 2 + 0, -1 + 0, szColumn, wcslen( szColumn ) );
 		}
-		//5–Ú·‚¨‚«‚Ì‹æØ‚è(’†)
+		//5ç›®ç››ãŠãã®åŒºåˆ‡ã‚Š(ä¸­)
 		else if( 0 == keta % 5 ){
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, nY - 6 );
 		}
-		//–ˆ–Ú·‚Ì‹æØ‚è(¬)
+		//æ¯ç›®ç››ã®åŒºåˆ‡ã‚Š(å°)
 		else{
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, nY - 3 );
@@ -183,22 +183,22 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		keta++;
 	}
 
-	//F–ß‚·
+	//è‰²æˆ»ã™
 	gr.PopTextForeColor();
 	gr.PopPen();
 
-	//ƒtƒHƒ“ƒg–ß‚·
+	//ãƒ•ã‚©ãƒ³ãƒˆæˆ»ã™
 	::SelectObject( gr, hFontOld );
 	::DeleteObject( hFont );
 }
 
-/*! ƒ‹[ƒ‰[•`‰æ
+/*! ãƒ«ãƒ¼ãƒ©ãƒ¼æç”»
 
-	@date 2005.08.14 genta Ü‚è•Ô‚µ•‚ğLayoutMgr‚©‚çæ“¾‚·‚é‚æ‚¤‚É
+	@date 2005.08.14 genta æŠ˜ã‚Šè¿”ã—å¹…ã‚’LayoutMgrã‹ã‚‰å–å¾—ã™ã‚‹ã‚ˆã†ã«
 */
 void CRuler::DispRuler( HDC hdc )
 {
-	//ƒTƒ|[ƒg
+	//ã‚µãƒãƒ¼ãƒˆ
 	CTypeSupport cRulerType(m_pEditView,COLORIDX_RULER);
 
 	if( !m_pEditView->GetDrawSwitch() ){
@@ -208,28 +208,28 @@ void CRuler::DispRuler( HDC hdc )
 		return;
 	}
 
-	// •`‰æ‘ÎÛ
+	// æç”»å¯¾è±¡
 	CGraphics gr(hdc);
 
-	// 2002.02.25 Add By KK ƒ‹[ƒ‰[‘S‘Ì‚ğ•`‚«’¼‚·•K—v‚ª‚È‚¢ê‡‚ÍAƒ‹[ƒ‰ã‚ÌƒLƒƒƒŒƒbƒg‚Ì‚İ•`‚«‚È‚¨‚· 
+	// 2002.02.25 Add By KK ãƒ«ãƒ¼ãƒ©ãƒ¼å…¨ä½“ã‚’æãç›´ã™å¿…è¦ãŒãªã„å ´åˆã¯ã€ãƒ«ãƒ¼ãƒ©ä¸Šã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã¿æããªãŠã™ 
 	if ( !m_bRedrawRuler ) {
 		DrawRulerCaret( gr );
 	}
 	else {
-		// ”wŒi•`‰æ
+		// èƒŒæ™¯æç”»
 		DrawRulerBg(gr);
 
-		// ƒLƒƒƒŒƒbƒg•`‰æ
+		// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆæç”»
 		if( m_pEditView->GetTextArea().GetViewLeftCol() <= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()
 		 && m_pEditView->GetTextArea().GetRightCol() + 2 >= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()
 		){
 			_DrawRulerCaret(gr,m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x,m_pEditView->GetCaret().GetCaretSize().cx);
 		}
 
-		m_bRedrawRuler = false;	//m_bRedrawRuler = true ‚Åw’è‚³‚ê‚é‚Ü‚ÅAƒ‹[ƒ‰‚ÌƒLƒƒƒŒƒbƒg‚Ì‚İ‚ğÄ•`‰æ 2002.02.25 Add By KK
+		m_bRedrawRuler = false;	//m_bRedrawRuler = true ã§æŒ‡å®šã•ã‚Œã‚‹ã¾ã§ã€ãƒ«ãƒ¼ãƒ©ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã¿ã‚’å†æç”» 2002.02.25 Add By KK
 	}
 
-	//•`‰æ‚µ‚½ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒgˆÊ’uE•‚ğ•Û‘¶ 2002.02.25 Add By KK
+	//æç”»ã—ãŸãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ãƒ»å¹…ã‚’ä¿å­˜ 2002.02.25 Add By KK
 	m_nOldRulerDrawX = m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x;
 	m_nOldRulerWidth = m_pEditView->GetCaret().GetCaretSize().cx ;
 }

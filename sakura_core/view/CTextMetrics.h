@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,7 +24,7 @@
 #ifndef SAKURA_CTEXTMETRICS_815A7F9E_8E38_4FA5_9F68_7CA776A18F1F_H_
 #define SAKURA_CTEXTMETRICS_815A7F9E_8E38_4FA5_9F68_7CA776A18F1F_H_
 
-//2007.08.25 kobake í«â¡
+//2007.08.25 kobake ËøΩÂä†
 
 #include <vector>
 
@@ -32,31 +32,31 @@ class CTextMetrics;
 
 class CTextMetrics{
 public:
-	//ÉRÉìÉXÉgÉâÉNÉ^ÅEÉfÉXÉgÉâÉNÉ^
+	//„Ç≥„É≥„Çπ„Éà„É©„ÇØ„Çø„Éª„Éá„Çπ„Éà„É©„ÇØ„Çø
 	CTextMetrics();
 	virtual ~CTextMetrics();
 	void CopyTextMetricsStatus(CTextMetrics* pDst) const;
 	void Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace);
 
-	//ê›íË
+	//Ë®≠ÂÆö
 private:
-	void SetHankakuWidth(int nHankakuWidth);   //!< îºäpï∂éöÇÃïùÇê›íËÅBíPà ÇÕÉsÉNÉZÉãÅB
-	void SetHankakuHeight(int nHankakuHeight); //!< îºäpï∂éöÇÃècïùÇê›íËÅBíPà ÇÕÉsÉNÉZÉãÅB
-	void SetHankakuDx(int nHankakuDx);         //!< îºäpï∂éöÇÃï∂éöä‘äuÇê›íËÅBíPà ÇÕÉsÉNÉZÉãÅB
-	void SetHankakuDy(int nHankakuDy);         //!< îºäpï∂éöÇÃçsä‘äuÇê›íËÅBíPà ÇÕÉsÉNÉZÉãÅB
+	void SetHankakuWidth(int nHankakuWidth);   //!< ÂçäËßíÊñáÂ≠ó„ÅÆÂπÖ„ÇíË®≠ÂÆö„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	void SetHankakuHeight(int nHankakuHeight); //!< ÂçäËßíÊñáÂ≠ó„ÅÆÁ∏¶ÂπÖ„ÇíË®≠ÂÆö„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	void SetHankakuDx(int nHankakuDx);         //!< ÂçäËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî„ÇíË®≠ÂÆö„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	void SetHankakuDy(int nHankakuDy);         //!< ÂçäËßíÊñáÂ≠ó„ÅÆË°åÈñìÈöî„ÇíË®≠ÂÆö„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
 
-	//éÊìæ
+	//ÂèñÂæó
 public:
-	int GetHankakuWidth() const{ return m_nCharWidth; }		//!< îºäpï∂éöÇÃâ°ïùÇéÊìæÅBíPà ÇÕÉsÉNÉZÉãÅB
-	int GetHankakuHeight() const{ return m_nCharHeight; }	//!< îºäpï∂éöÇÃècïùÇéÊìæÅBíPà ÇÕÉsÉNÉZÉãÅB
-	int GetHankakuDx() const{ return m_nDxBasis; }			//!< îºäpï∂éöÇÃï∂éöä‘äuÇéÊìæÅBíPà ÇÕÉsÉNÉZÉãÅB
-	int GetZenkakuDx() const{ return m_nDxBasis*2; }		//!< ëSäpï∂éöÇÃï∂éöä‘äuÇéÊìæÅBíPà ÇÕÉsÉNÉZÉãÅB
-	int GetHankakuDy() const{ return m_nDyBasis; }			//!< Yï˚å¸ï∂éöä‘äuÅBï∂éöècïùÅ{çsä‘äuÅBíPà ÇÕÉsÉNÉZÉãÅB
+	int GetHankakuWidth() const{ return m_nCharWidth; }		//!< ÂçäËßíÊñáÂ≠ó„ÅÆÊ®™ÂπÖ„ÇíÂèñÂæó„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	int GetHankakuHeight() const{ return m_nCharHeight; }	//!< ÂçäËßíÊñáÂ≠ó„ÅÆÁ∏¶ÂπÖ„ÇíÂèñÂæó„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	int GetHankakuDx() const{ return m_nDxBasis; }			//!< ÂçäËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî„ÇíÂèñÂæó„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	int GetZenkakuDx() const{ return m_nDxBasis*2; }		//!< ÂÖ®ËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî„ÇíÂèñÂæó„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
+	int GetHankakuDy() const{ return m_nDyBasis; }			//!< YÊñπÂêëÊñáÂ≠óÈñìÈöî„ÄÇÊñáÂ≠óÁ∏¶ÂπÖÔºãË°åÈñìÈöî„ÄÇÂçò‰Ωç„ÅØ„Éî„ÇØ„Çª„É´„ÄÇ
 
 	CPixelXInt GetCharSpacing() const {
 		return GetHankakuDx() - GetHankakuWidth();
 	}
-	// ÉåÉCÉAÉEÉgïùï™ÇÃÉsÉNÉZÉãïùÇéÊìæÇ∑ÇÈ
+	// „É¨„Ç§„Ç¢„Ç¶„ÉàÂπÖÂàÜ„ÅÆ„Éî„ÇØ„Çª„É´ÂπÖ„ÇíÂèñÂæó„Åô„Çã
 	int GetCharPxWidth(CLayoutXInt col) const{
 		return (Int)col;
 	}
@@ -68,65 +68,65 @@ public:
 		return m_aFontHeightMargin[n];
 	}
 
-	// å≈íËï∂éöxåÖÇÃÉåÉCÉAÉEÉgïùÇéÊìæÇ∑ÇÈ
+	// Âõ∫ÂÆöÊñáÂ≠óxÊ°Å„ÅÆ„É¨„Ç§„Ç¢„Ç¶„ÉàÂπÖ„ÇíÂèñÂæó„Åô„Çã
 	CLayoutXInt GetLayoutXDefault(CKetaXInt chars) const{
 		return CLayoutXInt(GetHankakuDx() * (Int)chars);
 	}
-	// å≈íËï∂éö1åÖÇ†ÇΩÇËÇÃÉåÉCÉAÉEÉgïùÇéÊìæÇ∑ÇÈ
+	// Âõ∫ÂÆöÊñáÂ≠ó1Ê°Å„ÅÇ„Åü„Çä„ÅÆ„É¨„Ç§„Ç¢„Ç¶„ÉàÂπÖ„ÇíÂèñÂæó„Åô„Çã
 	CLayoutXInt GetLayoutXDefault() const{ return GetLayoutXDefault(CKetaXInt(1));}
 	
 
-	//ï∂éöä‘äuîzóÒÇéÊìæ
-	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<îºäpï∂éöóÒÇÃï∂éöä‘äuîzóÒÇéÊìæÅBóvëfêîÇÕ64ÅB
-	const int* GetDxArray_AllZenkaku() const{ return m_anZenkakuDx; } //!<îºäpï∂éöóÒÇÃï∂éöä‘äuîzóÒÇéÊìæÅBóvëfêîÇÕ64ÅB
+	//ÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÇíÂèñÂæó
+	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<ÂçäËßíÊñáÂ≠óÂàó„ÅÆÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÇíÂèñÂæó„ÄÇË¶ÅÁ¥†Êï∞„ÅØ64„ÄÇ
+	const int* GetDxArray_AllZenkaku() const{ return m_anZenkakuDx; } //!<ÂçäËßíÊñáÂ≠óÂàó„ÅÆÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÇíÂèñÂæó„ÄÇË¶ÅÁ¥†Êï∞„ÅØ64„ÄÇ
 
 	const int* GenerateDxArray2(
-		std::vector<int>* vResultArray, //!< [out] ï∂éöä‘äuîzóÒÇÃéÛÇØéÊÇËÉRÉìÉeÉi
-		const wchar_t* pText,           //!< [in]  ï∂éöóÒ
-		int nLength                     //!< [in]  ï∂éöóÒí∑
+		std::vector<int>* vResultArray, //!< [out] ÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÅÆÂèó„ÅëÂèñ„Çä„Ç≥„É≥„ÉÜ„Éä
+		const wchar_t* pText,           //!< [in]  ÊñáÂ≠óÂàó
+		int nLength                     //!< [in]  ÊñáÂ≠óÂàóÈï∑
 	) const {
 		return GenerateDxArray(vResultArray, pText, nLength, GetHankakuDx(), 8, 0, GetCharSpacing());
 	}
 
-	//! éwíËÇµÇΩï∂éöóÒÇ…ÇÊÇËï∂éöä‘äuîzóÒÇê∂ê¨Ç∑ÇÈÅB
+	//! ÊåáÂÆö„Åó„ÅüÊñáÂ≠óÂàó„Å´„Çà„ÇäÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÇíÁîüÊàê„Åô„Çã„ÄÇ
 	static const int* GenerateDxArray(
-		std::vector<int>* vResultArray, //!< [out] ï∂éöä‘äuîzóÒÇÃéÛÇØéÊÇËÉRÉìÉeÉi
-		const wchar_t* pText,           //!< [in]  ï∂éöóÒ
-		int nLength,                    //!< [in]  ï∂éöóÒí∑
-		int	nHankakuDx,					//!< [in]  îºäpï∂éöÇÃï∂éöä‘äu
-		int	nTabSpace = 8,				//   [in]  TABïù
-		int	nIndent = 0,				//   [in]  ÉCÉìÉfÉìÉg
-		int nCharSpacing = 0			//   [in]  ï∂éöÇÃä‘äu
+		std::vector<int>* vResultArray, //!< [out] ÊñáÂ≠óÈñìÈöîÈÖçÂàó„ÅÆÂèó„ÅëÂèñ„Çä„Ç≥„É≥„ÉÜ„Éä
+		const wchar_t* pText,           //!< [in]  ÊñáÂ≠óÂàó
+		int nLength,                    //!< [in]  ÊñáÂ≠óÂàóÈï∑
+		int	nHankakuDx,					//!< [in]  ÂçäËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî
+		int	nTabSpace = 8,				//   [in]  TABÂπÖ
+		int	nIndent = 0,				//   [in]  „Ç§„É≥„Éá„É≥„Éà
+		int nCharSpacing = 0			//   [in]  ÊñáÂ≠ó„ÅÆÈñìÈöî
 	);
 
-	//!ï∂éöóÒÇÃÉsÉNÉZÉãïùÇï‘Ç∑ÅB
+	//!ÊñáÂ≠óÂàó„ÅÆ„Éî„ÇØ„Çª„É´ÂπÖ„ÇíËøî„Åô„ÄÇ
 	static int CalcTextWidth(
-		const wchar_t* pText, //!< ï∂éöóÒ
-		int nLength,          //!< ï∂éöóÒí∑
-		const int* pnDx       //!< ï∂éöä‘äuÇÃì¸Ç¡ÇΩîzóÒ
+		const wchar_t* pText, //!< ÊñáÂ≠óÂàó
+		int nLength,          //!< ÊñáÂ≠óÂàóÈï∑
+		const int* pnDx       //!< ÊñáÂ≠óÈñìÈöî„ÅÆÂÖ•„Å£„ÅüÈÖçÂàó
 	);
 
-	//!ï∂éöóÒÇÃÉsÉNÉZÉãïùÇï‘Ç∑ÅB
+	//!ÊñáÂ≠óÂàó„ÅÆ„Éî„ÇØ„Çª„É´ÂπÖ„ÇíËøî„Åô„ÄÇ
 	static int CalcTextWidth2(
-		const wchar_t* pText, //!< ï∂éöóÒ
-		int nLength,          //!< ï∂éöóÒí∑
-		int nHankakuDx,       //!< îºäpï∂éöÇÃï∂éöä‘äu
+		const wchar_t* pText, //!< ÊñáÂ≠óÂàó
+		int nLength,          //!< ÊñáÂ≠óÂàóÈï∑
+		int nHankakuDx,       //!< ÂçäËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî
 		int nCharSpacing
 	);
 
 	int CalcTextWidth3(
-		const wchar_t* pText, //!< ï∂éöóÒ
-		int nLength           //!< ï∂éöóÒí∑
+		const wchar_t* pText, //!< ÊñáÂ≠óÂàó
+		int nLength           //!< ÊñáÂ≠óÂàóÈï∑
 	) const;
 
 private:
-//	HDC m_hdc; //!< åvéZÇ…ópÇ¢ÇÈÉfÉoÉCÉXÉRÉìÉeÉLÉXÉg
-	int	m_nCharWidth;      //!< îºäpï∂éöÇÃâ°ïù
-	int m_nCharHeight;     //!< îºäpï∂éöÇÃècïù
-	int m_nDxBasis;        //!< îºäpï∂éöÇÃï∂éöä‘äu (â°ïù+Éø)
-	int m_nDyBasis;        //!< îºäpï∂éöÇÃçsä‘äu (ècïù+Éø)
-	int m_anHankakuDx[64]; //!< îºäpópï∂éöä‘äuîzóÒ
-	int m_anZenkakuDx[64]; //!< ëSäpópï∂éöä‘äuîzóÒ
+//	HDC m_hdc; //!< Ë®àÁÆó„Å´Áî®„ÅÑ„Çã„Éá„Éê„Ç§„Çπ„Ç≥„É≥„ÉÜ„Ç≠„Çπ„Éà
+	int	m_nCharWidth;      //!< ÂçäËßíÊñáÂ≠ó„ÅÆÊ®™ÂπÖ
+	int m_nCharHeight;     //!< ÂçäËßíÊñáÂ≠ó„ÅÆÁ∏¶ÂπÖ
+	int m_nDxBasis;        //!< ÂçäËßíÊñáÂ≠ó„ÅÆÊñáÂ≠óÈñìÈöî (Ê®™ÂπÖ+Œ±)
+	int m_nDyBasis;        //!< ÂçäËßíÊñáÂ≠ó„ÅÆË°åÈñìÈöî (Á∏¶ÂπÖ+Œ±)
+	int m_anHankakuDx[64]; //!< ÂçäËßíÁî®ÊñáÂ≠óÈñìÈöîÈÖçÂàó
+	int m_anZenkakuDx[64]; //!< ÂÖ®ËßíÁî®ÊñáÂ≠óÈñìÈöîÈÖçÂàó
 	std::vector<int> m_aFontHeightMargin;
 };
 

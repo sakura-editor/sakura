@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -49,24 +49,24 @@
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayoutYInt nLineNum);
 
 /*
-	PAINT_LINENUMBER = (1<<0), //!< s”Ô†
-	PAINT_RULER      = (1<<1), //!< ƒ‹[ƒ‰[
-	PAINT_BODY       = (1<<2), //!< –{•¶
+	PAINT_LINENUMBER = (1<<0), //!< è¡Œç•ªå·
+	PAINT_RULER      = (1<<1), //!< ãƒ«ãƒ¼ãƒ©ãƒ¼
+	PAINT_BODY       = (1<<2), //!< æœ¬æ–‡
 */
 
 void CEditView_Paint::Call_OnPaint(
-	int nPaintFlag,   //!< •`‰æ‚·‚é—Ìˆæ‚ğ‘I‘ğ‚·‚é
-	bool bUseMemoryDC //!< ƒƒ‚ƒŠDC‚ğg—p‚·‚é
+	int nPaintFlag,   //!< æç”»ã™ã‚‹é ˜åŸŸã‚’é¸æŠã™ã‚‹
+	bool bUseMemoryDC //!< ãƒ¡ãƒ¢ãƒªDCã‚’ä½¿ç”¨ã™ã‚‹
 )
 {
 	CEditView* pView = GetEditView();
 
-	//Še—v‘f
+	//å„è¦ç´ 
 	CMyRect rcLineNumber(0,pView->GetTextArea().GetAreaTop(),pView->GetTextArea().GetAreaLeft(),pView->GetTextArea().GetAreaBottom());
 	CMyRect rcRuler(pView->GetTextArea().GetAreaLeft(),0,pView->GetTextArea().GetAreaRight(),pView->GetTextArea().GetAreaTop());
 	CMyRect rcBody(pView->GetTextArea().GetAreaLeft(),pView->GetTextArea().GetAreaTop(),pView->GetTextArea().GetAreaRight(),pView->GetTextArea().GetAreaBottom());
 
-	//—Ìˆæ‚ğì¬ -> rc
+	//é ˜åŸŸã‚’ä½œæˆ -> rc
 	std::vector<CMyRect> rcs;
 	if(nPaintFlag & PAINT_LINENUMBER)rcs.push_back(rcLineNumber);
 	if(nPaintFlag & PAINT_RULER)rcs.push_back(rcRuler);
@@ -77,7 +77,7 @@ void CEditView_Paint::Call_OnPaint(
 	for(int i=1;i<nSize;i++)
 		rc=MergeRect(rc,rcs[i]);
 
-	//•`‰æ
+	//æç”»
 	PAINTSTRUCT	ps;
 	ps.rcPaint = rc;
 	HDC hdc = pView->GetDC();
@@ -87,9 +87,9 @@ void CEditView_Paint::Call_OnPaint(
 
 
 
-/* ƒtƒH[ƒJƒXˆÚ“®‚ÌÄ•`‰æ
+/* ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç§»å‹•æ™‚ã®å†æç”»
 
-	@date 2001/06/21 asa-o uƒXƒNƒ[ƒ‹ƒo[‚Ìó‘Ô‚ğXV‚·‚évuƒJ[ƒ\ƒ‹ˆÚ“®víœ
+	@date 2001/06/21 asa-o ã€Œã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹ã€ã€Œã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã€å‰Šé™¤
 */
 void CEditView::RedrawAll()
 {
@@ -98,7 +98,7 @@ void CEditView::RedrawAll()
 	}
 	
 	if( GetDrawSwitch() ){
-		// ƒEƒBƒ“ƒhƒE‘S‘Ì‚ğÄ•`‰æ
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å…¨ä½“ã‚’å†æç”»
 		PAINTSTRUCT	ps;
 		HDC hdc = ::GetDC( GetHwnd() );
 		::GetClientRect( GetHwnd(), &ps.rcPaint );
@@ -106,23 +106,23 @@ void CEditView::RedrawAll()
 		::ReleaseDC( GetHwnd(), hdc );
 	}
 
-	// ƒLƒƒƒŒƒbƒg‚Ì•\¦
+	// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡¨ç¤º
 	GetCaret().ShowEditCaret();
 
-	// ƒLƒƒƒŒƒbƒg‚ÌsŒ…ˆÊ’u‚ğ•\¦‚·‚é
+	// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡Œæ¡ä½ç½®ã‚’è¡¨ç¤ºã™ã‚‹
 	GetCaret().ShowCaretPosInfo();
 
-	// eƒEƒBƒ“ƒhƒE‚Ìƒ^ƒCƒgƒ‹‚ğXV
+	// è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¿ã‚¤ãƒˆãƒ«ã‚’æ›´æ–°
 	m_pcEditWnd->UpdateCaption();
 
-	//	Jul. 9, 2005 genta	‘I‘ğ”ÍˆÍ‚Ìî•ñ‚ğƒXƒe[ƒ^ƒXƒo[‚Ö•\¦
+	//	Jul. 9, 2005 genta	é¸æŠç¯„å›²ã®æƒ…å ±ã‚’ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã¸è¡¨ç¤º
 	GetSelectionInfo().PrintSelectionInfoMsg();
 
-	// ƒXƒNƒ[ƒ‹ƒo[‚Ìó‘Ô‚ğXV‚·‚é
+	// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
 	AdjustScrollBars();
 }
 
-// 2001/06/21 Start by asa-o Ä•`‰æ
+// 2001/06/21 Start by asa-o å†æç”»
 void CEditView::Redraw()
 {
 	if( NULL == GetHwnd() ){
@@ -183,7 +183,7 @@ void MyFillRect(HDC hdc, RECT& re)
 void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 {
 #if 0
-//	ƒeƒXƒg”wŒiƒpƒ^[ƒ“
+//	ãƒ†ã‚¹ãƒˆèƒŒæ™¯ãƒ‘ã‚¿ãƒ¼ãƒ³
 	static int testColorIndex = 0;
 	testColorIndex = testColorIndex % 7;
 	COLORREF cols[7] = {RGB(255,255,255),
@@ -244,7 +244,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	}
 	rcImagePos.left += typeConfig.m_backImgPosOffset.x;
 	rcImagePos.top  += typeConfig.m_backImgPosOffset.y;
-	// ƒXƒNƒ[ƒ‹‚Ì‰æ–Ê‚Ì’[‚ğì‰æ‚·‚é‚Æ‚«‚ÌˆÊ’u‚ ‚½‚è‚ÖˆÚ“®
+	// ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚ã®ç”»é¢ã®ç«¯ã‚’ä½œç”»ã™ã‚‹ã¨ãã®ä½ç½®ã‚ãŸã‚Šã¸ç§»å‹•
 	if( typeConfig.m_backImgScrollX ){
 		int tile = typeConfig.m_backImgRepeatX ? doc.m_nBackImgWidth : INT_MAX;
 		Int posX = (area.GetViewLeftCol() % tile) * GetTextMetrics().GetCharPxWidth();
@@ -272,7 +272,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	
 	RECT rc = rcPaint;
 	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
-	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ƒ‹[ƒ‰[‚ğœŠO
+	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ãƒ«ãƒ¼ãƒ©ãƒ¼ã‚’é™¤å¤–
 	const int nXEnd = area.GetAreaRight();
 	const int nYEnd = area.GetAreaBottom();
 	CMyRect rcBltAll;
@@ -313,7 +313,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 		}
 	}
 	if( rcBltAll.left != INT_MAX ){
-		// ã‰º¶‰E‚È‚È‚ß‚ÌŒ„ŠÔ‚ğ–„‚ß‚é
+		// ä¸Šä¸‹å·¦å³ãªãªã‚ã®éš™é–“ã‚’åŸ‹ã‚ã‚‹
 		CMyRect rcFill;
 		LONG& x1 = rc.left;
 		LONG& x2 = rcBltAll.left;
@@ -344,19 +344,19 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          Fİ’è                             //
+//                          è‰²è¨­å®š                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*! w’èˆÊ’u‚ÌColorIndex‚Ìæ“¾
-	CEditView::DrawLogicLine‚ğŒ³‚É‚µ‚½‚½‚ßCEditView::DrawLogicLine‚É
-	C³‚ª‚ ‚Á‚½ê‡‚ÍA‚±‚±‚àC³‚ª•K—vB
+/*! æŒ‡å®šä½ç½®ã®ColorIndexã®å–å¾—
+	CEditView::DrawLogicLineã‚’å…ƒã«ã—ãŸãŸã‚CEditView::DrawLogicLineã«
+	ä¿®æ­£ãŒã‚ã£ãŸå ´åˆã¯ã€ã“ã“ã‚‚ä¿®æ­£ãŒå¿…è¦ã€‚
 */
 CColor3Setting CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
 	CLayoutYInt				nLineNum,
 	int						nIndex,
-	SColorStrategyInfo* 	pInfo,			// 2010.03.31 ryoji ’Ç‰Á
-	bool					bPrev			// w’èˆÊ’u‚ÌF•ÏX’¼‘O‚Ü‚Å	2010.06.19 ryoji ’Ç‰Á
+	SColorStrategyInfo* 	pInfo,			// 2010.03.31 ryoji è¿½åŠ 
+	bool					bPrev			// æŒ‡å®šä½ç½®ã®è‰²å¤‰æ›´ç›´å‰ã¾ã§	2010.06.19 ryoji è¿½åŠ 
 )
 {
 	EColorIndexType eRet = COLORIDX_TEXT;
@@ -365,7 +365,7 @@ CColor3Setting CEditView::GetColorIndex(
 		CColor3Setting cColor = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 		return cColor;
 	}
-	// 2014.12.30 Skipƒ‚[ƒh‚Ì‚àCOLORIDX_TEXT
+	// 2014.12.30 Skipãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã‚‚COLORIDX_TEXT
 	if (CColorStrategyPool::getInstance()->IsSkipBeforeLayout()) {
 		CColor3Setting cColor = { COLORIDX_TEXT, COLORIDX_TEXT, COLORIDX_TEXT };
 		return cColor;
@@ -375,34 +375,34 @@ CColor3Setting CEditView::GetColorIndex(
 	const CLayout* pcLayoutLineFirst = pcLayout;
 	CLayoutYInt nLineNumFirst = nLineNum;
 	{
-		// 2002/2/10 aroka CMemory•ÏX
+		// 2002/2/10 aroka CMemoryå¤‰æ›´
 		pInfo->m_pLineOfLogic = pcLayout->GetDocLineRef()->GetPtr();
 
-		// ˜_—s‚ÌÅ‰‚ÌƒŒƒCƒAƒEƒgî•ñ‚ğæ“¾ -> pcLayoutLineFirst
+		// è«–ç†è¡Œã®æœ€åˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã‚’å–å¾— -> pcLayoutLineFirst
 		while( 0 != pcLayoutLineFirst->GetLogicOffset() ){
 			pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
 			nLineNumFirst--;
 
-			// ˜_—s‚Ìæ“ª‚Ü‚Å–ß‚ç‚È‚¢‚ÆŠmÀ‚É‚Í³Šm‚ÈF‚Í“¾‚ç‚ê‚È‚¢
-			// i³‹K•\Œ»ƒL[ƒ[ƒh‚Éƒ}ƒbƒ`‚µ‚½’·‚¢‹­’²•\¦‚ª‚»‚ÌˆÊ’u‚ÌƒŒƒCƒAƒEƒgs“ª‚ğ‚Ü‚½‚¢‚Å‚¢‚éê‡‚È‚Çj
+			// è«–ç†è¡Œã®å…ˆé ­ã¾ã§æˆ»ã‚‰ãªã„ã¨ç¢ºå®Ÿã«ã¯æ­£ç¢ºãªè‰²ã¯å¾—ã‚‰ã‚Œãªã„
+			// ï¼ˆæ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«ãƒãƒƒãƒã—ãŸé•·ã„å¼·èª¿è¡¨ç¤ºãŒãã®ä½ç½®ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé ­ã‚’ã¾ãŸã„ã§ã„ã‚‹å ´åˆãªã©ï¼‰
 			//if( pcLayout->GetLogicOffset() - pcLayoutLineFirst->GetLogicOffset() > 260 )
 			//	break;
 		}
 
-		// 2005.11.20 Moca F‚ª³‚µ‚­‚È‚¢‚±‚Æ‚ª‚ ‚é–â‘è‚É‘Îˆ
-		eRet = pcLayoutLineFirst->GetColorTypePrev();	/* Œ»İ‚ÌF‚ğw’è */	// 02/12/18 ai
+		// 2005.11.20 Moca è‰²ãŒæ­£ã—ããªã„ã“ã¨ãŒã‚ã‚‹å•é¡Œã«å¯¾å‡¦
+		eRet = pcLayoutLineFirst->GetColorTypePrev();	/* ç¾åœ¨ã®è‰²ã‚’æŒ‡å®š */	// 02/12/18 ai
 		colorInfo = pcLayoutLineFirst->GetColorInfo();
 		pInfo->m_nPosInLogic = pcLayoutLineFirst->GetLogicOffset();
 
-		//CColorStrategyPool‰Šú‰»
+		//CColorStrategyPoolåˆæœŸåŒ–
 		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 		pool->SetCurrentView(this);
 		pool->NotifyOnStartScanLogic();
 
 
-		// 2009.02.07 ryoji ‚±‚ÌŠÖ”‚Å‚Í pInfo->CheckChangeColor() ‚ÅF‚ğ’²‚×‚é‚¾‚¯‚È‚Ì‚ÅˆÈ‰º‚Ìˆ—‚Í•s—v
+		// 2009.02.07 ryoji ã“ã®é–¢æ•°ã§ã¯ pInfo->CheckChangeColor() ã§è‰²ã‚’èª¿ã¹ã‚‹ã ã‘ãªã®ã§ä»¥ä¸‹ã®å‡¦ç†ã¯ä¸è¦
 		//
-		////############’´‰¼B–{“–‚ÍVisitor‚ğg‚¤‚×‚«
+		////############è¶…ä»®ã€‚æœ¬å½“ã¯Visitorã‚’ä½¿ã†ã¹ã
 		//class TmpVisitor{
 		//public:
 		//	static int CalcLayoutIndex(const CLayout* pcLayout)
@@ -416,11 +416,11 @@ CColor3Setting CEditView::GetColorIndex(
 		//	}
 		//};
 		//pInfo->pDispPos->SetLayoutLineRef(CLayoutInt(TmpVisitor::CalcLayoutIndex(pcLayout)));
-		// 2013.12.11 Moca ƒJƒŒƒ“ƒgs‚ÌF‘Ö‚¦‚Å•K—v‚É‚È‚è‚Ü‚µ‚½
+		// 2013.12.11 Moca ã‚«ãƒ¬ãƒ³ãƒˆè¡Œã®è‰²æ›¿ãˆã§å¿…è¦ã«ãªã‚Šã¾ã—ãŸ
 		pInfo->m_pDispPos->SetLayoutLineRef(nLineNumFirst);
 	}
 
-	//•¶š—ñQÆ
+	//æ–‡å­—åˆ—å‚ç…§
 	const CDocLine* pcDocLine = pcLayout->GetDocLineRef();
 	CStringRef cLineStr(pcDocLine->GetPtr(),pcDocLine->GetLengthWithEOL());
 
@@ -439,10 +439,10 @@ CColor3Setting CEditView::GetColorIndex(
 		if( bPrev && pInfo->m_nPosInLogic == nPosTo )
 			break;
 
-		//FØ‘Ö
+		//è‰²åˆ‡æ›¿
 		pInfo->CheckChangeColor(cLineStr);
 
-		//1•¶ši‚Ş
+		//1æ–‡å­—é€²ã‚€
 		pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
 									cLineStr.GetPtr(),
 									cLineStr.GetLength(),
@@ -461,27 +461,27 @@ CColor3Setting CEditView::GetColorIndex(
 	return cColor;
 }
 
-/*! Œ»İ‚ÌF‚ğw’è
-	@param eColorIndex   ‘I‘ğ‚ğŠÜ‚ŞŒ»İ‚ÌF
-	@param eColorIndex2  ‘I‘ğˆÈŠO‚ÌŒ»İ‚ÌF
-	@param eColorIndexBg ”wŒiF
+/*! ç¾åœ¨ã®è‰²ã‚’æŒ‡å®š
+	@param eColorIndex   é¸æŠã‚’å«ã‚€ç¾åœ¨ã®è‰²
+	@param eColorIndex2  é¸æŠä»¥å¤–ã®ç¾åœ¨ã®è‰²
+	@param eColorIndexBg èƒŒæ™¯è‰²
 
-	@date 2013.05.08 novice ”ÍˆÍŠOƒ`ƒFƒbƒNíœ
+	@date 2013.05.08 novice ç¯„å›²å¤–ãƒã‚§ãƒƒã‚¯å‰Šé™¤
 */
 void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
 {
-	//ƒCƒ“ƒfƒbƒNƒXŒˆ’è
+	//ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ±ºå®š
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 	int		nColorIdx2 = ToColorInfoArrIndex(eColorIndex2);
 	int		nColorIdxBg = ToColorInfoArrIndex(eColorIndexBg);
 
-	//ÀÛ‚ÉF‚ğİ’è
+	//å®Ÿéš›ã«è‰²ã‚’è¨­å®š
 	const ColorInfo& info  = m_pTypeData->m_ColorInfoArr[nColorIdx];
 	const ColorInfo& info2 = m_pTypeData->m_ColorInfoArr[nColorIdx2];
 	const ColorInfo& infoBg = m_pTypeData->m_ColorInfoArr[nColorIdxBg];
 	COLORREF fgcolor = GetTextColorByColorInfo2(info, info2);
 	gr.SetTextForeColor(fgcolor);
-	// 2012.11.21 ”wŒiF‚ªƒeƒLƒXƒg‚Æ‚¨‚È‚¶‚È‚ç”wŒiF‚ÍƒJ[ƒ\ƒ‹s”wŒi
+	// 2012.11.21 èƒŒæ™¯è‰²ãŒãƒ†ã‚­ã‚¹ãƒˆã¨ãŠãªã˜ãªã‚‰èƒŒæ™¯è‰²ã¯ã‚«ãƒ¼ã‚½ãƒ«è¡ŒèƒŒæ™¯
 	const ColorInfo& info3 = (info2.m_sColorAttr.m_cBACK == m_crBack ? infoBg : info2);
 	COLORREF bkcolor = (nColorIdx == nColorIdx2) ? info3.m_sColorAttr.m_cBACK : GetBackColorByColorInfo2(info, info3);
 	gr.SetTextBackColor(bkcolor);
@@ -530,7 +530,7 @@ COLORREF CEditView::GetTextColorByColorInfo2(const ColorInfo& info, const ColorI
 	if( info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK ){
 		return info.m_sColorAttr.m_cTEXT;
 	}
-	// ”½“]•\¦
+	// åè»¢è¡¨ç¤º
 	if( info.m_sColorAttr.m_cBACK == m_crBack ){
 		return  info2.m_sColorAttr.m_cTEXT ^ 0x00FFFFFF;
 	}
@@ -543,7 +543,7 @@ COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorI
 	if( info.m_sColorAttr.m_cTEXT != info.m_sColorAttr.m_cBACK ){
 		return info.m_sColorAttr.m_cBACK;
 	}
-	// ”½“]•\¦
+	// åè»¢è¡¨ç¤º
 	if( info.m_sColorAttr.m_cBACK == m_crBack ){
 		return  info2.m_sColorAttr.m_cBACK ^ 0x00FFFFFF;
 	}
@@ -553,7 +553,7 @@ COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorI
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           •`‰æ                              //
+//                           æç”»                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
@@ -571,21 +571,21 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	}
 }
 
-/*! ’Êí‚Ì•`‰æˆ— new 
-	@param pPs  pPs.rcPaint ‚Í³‚µ‚¢•K—v‚ª‚ ‚é
-	@param bDrawFromComptibleBmp  TRUE ‰æ–Êƒoƒbƒtƒ@‚©‚çhdc‚Éì‰æ‚·‚é(ƒRƒs[‚·‚é‚¾‚¯)B
-			TRUE‚Ìê‡ApPs.rcPaint—ÌˆæŠO‚Íì‰æ‚³‚ê‚È‚¢‚ªAFALSE‚Ìê‡‚Íì‰æ‚³‚ê‚é–‚ª‚ ‚éB
-			ŒİŠ·DC/BMP‚ª–³‚¢ê‡‚ÍA•’Ê‚Ìì‰æˆ—‚ğ‚·‚éB
+/*! é€šå¸¸ã®æç”»å‡¦ç† new 
+	@param pPs  pPs.rcPaint ã¯æ­£ã—ã„å¿…è¦ãŒã‚ã‚‹
+	@param bDrawFromComptibleBmp  TRUE ç”»é¢ãƒãƒƒãƒ•ã‚¡ã‹ã‚‰hdcã«ä½œç”»ã™ã‚‹(ã‚³ãƒ”ãƒ¼ã™ã‚‹ã ã‘)ã€‚
+			TRUEã®å ´åˆã€pPs.rcPainté ˜åŸŸå¤–ã¯ä½œç”»ã•ã‚Œãªã„ãŒã€FALSEã®å ´åˆã¯ä½œç”»ã•ã‚Œã‚‹äº‹ãŒã‚ã‚‹ã€‚
+			äº’æ›DC/BMPãŒç„¡ã„å ´åˆã¯ã€æ™®é€šã®ä½œç”»å‡¦ç†ã‚’ã™ã‚‹ã€‚
 
-	@date 2007.09.09 Moca Œ³X–³Œø‰»‚³‚ê‚Ä‚¢‚½‘æOƒpƒ‰ƒ[ƒ^‚ÌbUseMemoryDC‚ğbDrawFromComptibleBmp‚É•ÏXB
-	@date 2009.03.26 ryoji s”Ô†‚Ì‚İ•`‰æ‚ğ’Êí‚Ìs•`‰æ‚Æ•ª—£iŒø—¦‰»j
+	@date 2007.09.09 Moca å…ƒã€…ç„¡åŠ¹åŒ–ã•ã‚Œã¦ã„ãŸç¬¬ä¸‰ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®bUseMemoryDCã‚’bDrawFromComptibleBmpã«å¤‰æ›´ã€‚
+	@date 2009.03.26 ryoji è¡Œç•ªå·ã®ã¿æç”»ã‚’é€šå¸¸ã®è¡Œæç”»ã¨åˆ†é›¢ï¼ˆåŠ¹ç‡åŒ–ï¼‰
 */
 void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::OnPaint" );
 	CGraphics gr(_hdc);
 
-	// 2004.01.28 Moca ƒfƒXƒNƒgƒbƒv‚Éì‰æ‚µ‚È‚¢‚æ‚¤‚É
+	// 2004.01.28 Moca ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ä½œç”»ã—ãªã„ã‚ˆã†ã«
 	if( NULL == GetHwnd() || NULL == _hdc )return;
 
 	if( !GetDrawSwitch() )return;
@@ -600,8 +600,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		);
 #endif
 	
-	// From Here 2007.09.09 Moca ŒİŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@
-	// ŒİŠ·BMP‚©‚ç‚Ì“]‘—‚Ì‚İ‚É‚æ‚éì‰æ
+	// From Here 2007.09.09 Moca äº’æ›BMPã«ã‚ˆã‚‹ç”»é¢ãƒãƒƒãƒ•ã‚¡
+	// äº’æ›BMPã‹ã‚‰ã®è»¢é€ã®ã¿ã«ã‚ˆã‚‹ä½œç”»
 	if( bDrawFromComptibleBmp
 		&& m_hdcCompatDC && m_hbmpCompatBMP ){
 		::BitBlt(
@@ -616,7 +616,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			SRCCOPY
 		);
 		if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
-			/* ƒAƒNƒeƒBƒuƒyƒCƒ“‚ÍAƒAƒ“ƒ_[ƒ‰ƒCƒ“•`‰æ */
+			/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãƒšã‚¤ãƒ³ã¯ã€ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³æç”» */
 			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 		}
 		return;
@@ -630,7 +630,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	}
 	// To Here 2007.09.09 Moca
 
-	// ƒLƒƒƒŒƒbƒg‚ğ‰B‚·
+	// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’éš ã™
 	bool bCaretShowFlag_Old = GetCaret().GetCaretShowFlag();	// 2008.06.09 ryoji
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
@@ -639,22 +639,22 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	int				nLineHeight = GetTextMetrics().GetHankakuDy();
 	int				nCharDx = GetTextMetrics().GetCharPxWidth();
 
-	//ƒTƒ|[ƒg
+	//ã‚µãƒãƒ¼ãƒˆ
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
 
 //@@@ 2001.11.17 add start MIK
-	//•ÏX‚ª‚ ‚ê‚Îƒ^ƒCƒvİ’è‚ğs‚¤B
-	if( m_pTypeData->m_bUseRegexKeyword || m_cRegexKeyword->m_bUseRegexKeyword ) //OFF‚È‚Ì‚É‘O‰ñ‚Ìƒf[ƒ^‚ªc‚Á‚Ä‚é
+	//å¤‰æ›´ãŒã‚ã‚Œã°ã‚¿ã‚¤ãƒ—è¨­å®šã‚’è¡Œã†ã€‚
+	if( m_pTypeData->m_bUseRegexKeyword || m_cRegexKeyword->m_bUseRegexKeyword ) //OFFãªã®ã«å‰å›ã®ãƒ‡ãƒ¼ã‚¿ãŒæ®‹ã£ã¦ã‚‹
 	{
-		//ƒ^ƒCƒv•Êİ’è‚ğ‚·‚éBİ’èÏ‚İ‚©‚Ç‚¤‚©‚ÍŒÄ‚Ñæ‚Åƒ`ƒFƒbƒN‚·‚éB
+		//ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚’ã™ã‚‹ã€‚è¨­å®šæ¸ˆã¿ã‹ã©ã†ã‹ã¯å‘¼ã³å…ˆã§ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
 		m_cRegexKeyword->RegexKeySetTypes(m_pTypeData);
 	}
 //@@@ 2001.11.17 add end MIK
 
 	bool bTransText = IsBkBitmap();
-	// ƒƒ‚ƒŠ‚c‚b‚ğ—˜—p‚µ‚½Ä•`‰æ‚Ìê‡‚Í•`‰ææ‚Ì‚c‚b‚ğØ‚è‘Ö‚¦‚é
+	// ãƒ¡ãƒ¢ãƒªï¼¤ï¼£ã‚’åˆ©ç”¨ã—ãŸå†æç”»ã®å ´åˆã¯æç”»å…ˆã®ï¼¤ï¼£ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
 	HDC hdcOld = 0;
-	// 2007.09.09 Moca bUseMemoryDC‚ğ—LŒø‰»B
+	// 2007.09.09 Moca bUseMemoryDCã‚’æœ‰åŠ¹åŒ–ã€‚
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
 	assert_warning(gr != m_hdcCompatDC);
@@ -664,17 +664,17 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		gr = m_hdcCompatDC;
 	}else{
 		if( bTransText || pPs->rcPaint.bottom - pPs->rcPaint.top <= 2 || pPs->rcPaint.right - pPs->rcPaint.left <= 2 ){
-			// “§‰ßˆ—‚Ìê‡ƒtƒHƒ“ƒg‚Ì—ÖŠs‚ªd‚Ë“h‚è‚É‚È‚é‚½‚ß©•ª‚ÅƒNƒŠƒbƒsƒ“ƒO—Ìˆæ‚ğİ’è
-			// 2ˆÈ‰º‚Í‚½‚Ô‚ñƒAƒ“ƒ_[ƒ‰ƒCƒ“EƒJ[ƒ\ƒ‹scü‚Ìì‰æ
-			// MemoryDC‚Ìê‡‚Í“]‘—‚ª‹éŒ`ƒNƒŠƒbƒsƒ“ƒO‚Ì‘ã‚í‚è‚É‚È‚Á‚Ä‚¢‚é
+			// é€éå‡¦ç†ã®å ´åˆãƒ•ã‚©ãƒ³ãƒˆã®è¼ªéƒ­ãŒé‡ã­å¡—ã‚Šã«ãªã‚‹ãŸã‚è‡ªåˆ†ã§ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°é ˜åŸŸã‚’è¨­å®š
+			// 2ä»¥ä¸‹ã¯ãŸã¶ã‚“ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ãƒ»ã‚«ãƒ¼ã‚½ãƒ«è¡Œç¸¦ç·šã®ä½œç”»
+			// MemoryDCã®å ´åˆã¯è»¢é€ãŒçŸ©å½¢ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°ã®ä»£ã‚ã‚Šã«ãªã£ã¦ã„ã‚‹
 			gr.SetClipping(pPs->rcPaint);
 			bClipping = true;
 		}
 	}
 
-	/* 03/02/18 ‘ÎŠ‡ŒÊ‚Ì‹­’²•\¦(Á‹) ai */
+	/* 03/02/18 å¯¾æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤º(æ¶ˆå») ai */
 	if( !bUseMemoryDC ){
-		// MemoryDC‚¾‚ÆƒXƒNƒ[ƒ‹‚Éæ‚ÉŠ‡ŒÊ‚¾‚¯•\¦‚³‚ê‚Ä•s©‘R‚È‚Ì‚ÅŒã‚Å‚â‚éB
+		// MemoryDCã ã¨ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚ã«å…ˆã«æ‹¬å¼§ã ã‘è¡¨ç¤ºã•ã‚Œã¦ä¸è‡ªç„¶ãªã®ã§å¾Œã§ã‚„ã‚‹ã€‚
 		DrawBracketPair( false );
 	}
 
@@ -682,7 +682,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	m_nPageViewTop = cActiveView.GetTextArea().GetViewTopLine();
 	m_nPageViewBottom = cActiveView.GetTextArea().GetBottomLine();
 
-	// ”wŒi‚Ì•\¦
+	// èƒŒæ™¯ã®è¡¨ç¤º
 	if( bTransText ){
 		HDC hdcBgImg = CreateCompatibleDC(gr);
 		HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
@@ -691,8 +691,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		DeleteObject(hdcBgImg);
 	}
 
-	/* ƒ‹[ƒ‰[‚ÆƒeƒLƒXƒg‚ÌŠÔ‚Ì—]”’ */
-	//@@@ 2002.01.03 YAZAKI —]”’‚ª0‚Ì‚Æ‚«‚Í–³‘Ê‚Å‚µ‚½B
+	/* ãƒ«ãƒ¼ãƒ©ãƒ¼ã¨ãƒ†ã‚­ã‚¹ãƒˆã®é–“ã®ä½™ç™½ */
+	//@@@ 2002.01.03 YAZAKI ä½™ç™½ãŒ0ã®ã¨ãã¯ç„¡é§„ã§ã—ãŸã€‚
 	if ( GetTextArea().GetTopYohaku() ){
 		if( !bTransText ){
 			rc.left   = 0;
@@ -703,15 +703,15 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		}
 	}
 
-	/* s”Ô†‚Ì•\¦ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º */
 	//	From Here Sep. 7, 2001 genta
-	//	Sep. 23, 2002 genta s”Ô†”ñ•\¦‚Å‚às”Ô†F‚Ì‘Ñ‚ª‚ ‚é‚Ì‚ÅŒ„ŠÔ‚ğ–„‚ß‚é
+	//	Sep. 23, 2002 genta è¡Œç•ªå·éè¡¨ç¤ºã§ã‚‚è¡Œç•ªå·è‰²ã®å¸¯ãŒã‚ã‚‹ã®ã§éš™é–“ã‚’åŸ‹ã‚ã‚‹
 	if( GetTextArea().GetTopYohaku() ){
 		if( bTransText && m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_sColorAttr.m_cBACK == cTextType.GetBackColor() ){
 		}else{
 			rc.left   = 0;
 			rc.top    = GetTextArea().GetRulerHeight();
-			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta —]”’‚ÍƒeƒLƒXƒgF‚Ì‚Ü‚Üc‚·
+			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta ä½™ç™½ã¯ãƒ†ã‚­ã‚¹ãƒˆè‰²ã®ã¾ã¾æ®‹ã™
 			rc.bottom = GetTextArea().GetAreaTop();
 			gr.SetTextBackColor(m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_sColorAttr.m_cBACK);
 			gr.FillMyRectTextBackColor(rc);
@@ -727,26 +727,26 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	int nTop = pPs->rcPaint.top;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//           •`‰æŠJnƒŒƒCƒAƒEƒgâ‘Îs -> nLayoutLine             //
+	//           æç”»é–‹å§‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆçµ¶å¯¾è¡Œ -> nLayoutLine             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	CLayoutInt nLayoutLine;
 	if( 0 > nTop - GetTextArea().GetAreaTop() ){
-		nLayoutLine = GetTextArea().GetViewTopLine(); //ƒrƒ…[ã•”‚©‚ç•`‰æ
+		nLayoutLine = GetTextArea().GetViewTopLine(); //ãƒ“ãƒ¥ãƒ¼ä¸Šéƒ¨ã‹ã‚‰æç”»
 	}else{
-		nLayoutLine = GetTextArea().GetViewTopLine() + CLayoutInt( ( nTop - GetTextArea().GetAreaTop() ) / nLineHeight ); //ƒrƒ…[“r’†‚©‚ç•`‰æ
+		nLayoutLine = GetTextArea().GetViewTopLine() + CLayoutInt( ( nTop - GetTextArea().GetAreaTop() ) / nLineHeight ); //ãƒ“ãƒ¥ãƒ¼é€”ä¸­ã‹ã‚‰æç”»
 	}
 
-	// ¦ ‚±‚±‚É‚ ‚Á‚½•`‰æ”ÍˆÍ‚Ì 260 •¶šƒ[ƒ‹ƒoƒbƒNˆ—‚Í GetColorIndex() ‚É‹zû	// 2009.02.11 ryoji
+	// â€» ã“ã“ã«ã‚ã£ãŸæç”»ç¯„å›²ã® 260 æ–‡å­—ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯å‡¦ç†ã¯ GetColorIndex() ã«å¸å	// 2009.02.11 ryoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//          •`‰æI—¹ƒŒƒCƒAƒEƒgâ‘Îs -> nLayoutLineTo            //
+	//          æç”»çµ‚äº†ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆçµ¶å¯¾è¡Œ -> nLayoutLineTo            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	CLayoutInt nLayoutLineTo = GetTextArea().GetViewTopLine()
-		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2007.02.17 ryoji ŒvZ‚ğ¸–§‰»
+		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2007.02.17 ryoji è¨ˆç®—ã‚’ç²¾å¯†åŒ–
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         •`‰æÀ•W                            //
+	//                         æç”»åº§æ¨™                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	DispPos sPos(nCharDx, GetTextMetrics().GetHankakuDy());
 	sPos.InitDrawPos(CMyPoint(
@@ -757,33 +757,33 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ‘S•”‚Ìs‚ğ•`‰æ                         //
+	//                      å…¨éƒ¨ã®è¡Œã‚’æç”»                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//•K—v‚Ès‚ğ•`‰æ‚·‚é	// 2009.03.26 ryoji s”Ô†‚Ì‚İ•`‰æ‚ğ’Êí‚Ìs•`‰æ‚Æ•ª—£iŒø—¦‰»j
+	//å¿…è¦ãªè¡Œã‚’æç”»ã™ã‚‹	// 2009.03.26 ryoji è¡Œç•ªå·ã®ã¿æç”»ã‚’é€šå¸¸ã®è¡Œæç”»ã¨åˆ†é›¢ï¼ˆåŠ¹ç‡åŒ–ï¼‰
 	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
 			if(!sPos.GetLayoutRef())
 				break;
 
-			//1s•`‰æis”Ô†‚Ì‚İj
+			//1è¡Œæç”»ï¼ˆè¡Œç•ªå·ã®ã¿ï¼‰
 			GetTextDrawer().DispLineNumber(
 				gr,
 				sPos.GetLayoutLineRef(),
 				sPos.GetDrawPos().y
 			);
-			//s‚ği‚ß‚é
-			sPos.ForwardDrawLine(1);		//•`‰æYÀ•W{{
-			sPos.ForwardLayoutLineRef(1);	//ƒŒƒCƒAƒEƒgs{{
+			//è¡Œã‚’é€²ã‚ã‚‹
+			sPos.ForwardDrawLine(1);		//æç”»Yåº§æ¨™ï¼‹ï¼‹
+			sPos.ForwardLayoutLineRef(1);	//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œï¼‹ï¼‹
 		}
 	}else{
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
-			//•`‰æXˆÊ’uƒŠƒZƒbƒg
+			//æç”»Xä½ç½®ãƒªã‚»ãƒƒãƒˆ
 			sPos.ResetDrawCol();
 
-			//1s•`‰æ
+			//1è¡Œæç”»
 			bool bDispResult = DrawLogicLine(
 				gr,
 				&sPos,
@@ -791,7 +791,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			);
 
 			if(bDispResult){
-				// EOFÄ•`‰æ‘Î‰
+				// EOFå†æç”»å¯¾å¿œ
 				nLayoutLineTo++;
 				int nBackImageTop = pPs->rcPaint.bottom;
 				pPs->rcPaint.bottom += nLineHeight;
@@ -815,19 +815,19 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ƒ‹[ƒ‰[•`‰æ                          //
+	//                       ãƒ«ãƒ¼ãƒ©ãƒ¼æç”»                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	if ( pPs->rcPaint.top < GetTextArea().GetRulerHeight() ) { // ƒ‹[ƒ‰[‚ªÄ•`‰æ”ÍˆÍ‚É‚ ‚é‚Æ‚«‚Ì‚İÄ•`‰æ‚·‚é 2002.02.25 Add By KK
-		GetRuler().SetRedrawFlag(); //2002.02.25 Add By KK ƒ‹[ƒ‰[‘S‘Ì‚ğ•`‰æB
+	if ( pPs->rcPaint.top < GetTextArea().GetRulerHeight() ) { // ãƒ«ãƒ¼ãƒ©ãƒ¼ãŒå†æç”»ç¯„å›²ã«ã‚ã‚‹ã¨ãã®ã¿å†æç”»ã™ã‚‹ 2002.02.25 Add By KK
+		GetRuler().SetRedrawFlag(); //2002.02.25 Add By KK ãƒ«ãƒ¼ãƒ©ãƒ¼å…¨ä½“ã‚’æç”»ã€‚
 		GetRuler().DispRuler( gr );
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     ‚»‚Ì‘¼Œãn––‚È‚Ç                        //
+	//                     ãã®ä»–å¾Œå§‹æœ«ãªã©                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	/* ƒƒ‚ƒŠ‚c‚b‚ğ—˜—p‚µ‚½Ä•`‰æ‚Ìê‡‚Íƒƒ‚ƒŠ‚c‚b‚É•`‰æ‚µ‚½“à—e‚ğ‰æ–Ê‚ÖƒRƒs[‚·‚é */
+	/* ãƒ¡ãƒ¢ãƒªï¼¤ï¼£ã‚’åˆ©ç”¨ã—ãŸå†æç”»ã®å ´åˆã¯ãƒ¡ãƒ¢ãƒªï¼¤ï¼£ã«æç”»ã—ãŸå†…å®¹ã‚’ç”»é¢ã¸ã‚³ãƒ”ãƒ¼ã™ã‚‹ */
 	if( bUseMemoryDC ){
-		// 2010.10.11 æ‚É•`‚­‚Æ”wŒiŒÅ’è‚ÌƒXƒNƒ[ƒ‹‚È‚Ç‚Å‚Ì•\¦‚ª•s©‘R‚É‚È‚é
+		// 2010.10.11 å…ˆã«æãã¨èƒŒæ™¯å›ºå®šã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãªã©ã§ã®è¡¨ç¤ºãŒä¸è‡ªç„¶ã«ãªã‚‹
 		DrawBracketPair( false );
 
 		::BitBlt(
@@ -843,37 +843,37 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		);
 	}
 
-	// From Here 2007.09.09 Moca ŒİŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@
-	//     ƒAƒ“ƒ_[ƒ‰ƒCƒ“•`‰æ‚ğƒƒ‚ƒŠDC‚©‚ç‚ÌƒRƒs[‘Oˆ—‚©‚çŒã‚ÉˆÚ“®
+	// From Here 2007.09.09 Moca äº’æ›BMPã«ã‚ˆã‚‹ç”»é¢ãƒãƒƒãƒ•ã‚¡
+	//     ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³æç”»ã‚’ãƒ¡ãƒ¢ãƒªDCã‹ã‚‰ã®ã‚³ãƒ”ãƒ¼å‰å‡¦ç†ã‹ã‚‰å¾Œã«ç§»å‹•
 	if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
-		/* ƒAƒNƒeƒBƒuƒyƒCƒ“‚ÍAƒAƒ“ƒ_[ƒ‰ƒCƒ“•`‰æ */
+		/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãƒšã‚¤ãƒ³ã¯ã€ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³æç”» */
 		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 	}
 	// To Here 2007.09.09 Moca
 
-	/* 03/02/18 ‘ÎŠ‡ŒÊ‚Ì‹­’²•\¦(•`‰æ) ai */
+	/* 03/02/18 å¯¾æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤º(æç”») ai */
 	DrawBracketPair( true );
 
-	/* ƒLƒƒƒŒƒbƒg‚ğŒ»İˆÊ’u‚É•\¦‚µ‚Ü‚· */
+	/* ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’ç¾åœ¨ä½ç½®ã«è¡¨ç¤ºã—ã¾ã™ */
 	if( bCaretShowFlag_Old )	// 2008.06.09 ryoji
 		GetCaret().ShowCaret_( this->GetHwnd() ); // 2002/07/22 novice
 	return;
 }
 
 /*!
-	s‚ÌƒeƒLƒXƒg^‘I‘ğó‘Ô‚Ì•`‰æ
-	1‰ñ‚Å1ƒƒWƒbƒNs•ª‚ğì‰æ‚·‚éB
+	è¡Œã®ãƒ†ã‚­ã‚¹ãƒˆï¼é¸æŠçŠ¶æ…‹ã®æç”»
+	1å›ã§1ãƒ­ã‚¸ãƒƒã‚¯è¡Œåˆ†ã‚’ä½œç”»ã™ã‚‹ã€‚
 
-	@return EOF‚ğì‰æ‚µ‚½‚çtrue
+	@return EOFã‚’ä½œç”»ã—ãŸã‚‰true
 
 	@date 2001.02.17 MIK
-	@date 2001.12.21 YAZAKI ‰üs‹L†‚Ì•`‚«‚©‚½‚ğ•ÏX
-	@date 2007.08.31 kobake ˆø” bDispBkBitmap ‚ğíœ
+	@date 2001.12.21 YAZAKI æ”¹è¡Œè¨˜å·ã®æãã‹ãŸã‚’å¤‰æ›´
+	@date 2007.08.31 kobake å¼•æ•° bDispBkBitmap ã‚’å‰Šé™¤
 */
 bool CEditView::DrawLogicLine(
-	HDC				_hdc,			//!< [in]     ì‰æ‘ÎÛ
-	DispPos*		_pDispPos,		//!< [in,out] •`‰æ‚·‚é‰ÓŠA•`‰æŒ³ƒ\[ƒX
-	CLayoutInt		nLineTo			//!< [in]     ì‰æI—¹‚·‚éƒŒƒCƒAƒEƒgs”Ô†
+	HDC				_hdc,			//!< [in]     ä½œç”»å¯¾è±¡
+	DispPos*		_pDispPos,		//!< [in,out] æç”»ã™ã‚‹ç®‡æ‰€ã€æç”»å…ƒã‚½ãƒ¼ã‚¹
+	CLayoutInt		nLineTo			//!< [in]     ä½œç”»çµ‚äº†ã™ã‚‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œç•ªå·
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
@@ -884,29 +884,29 @@ bool CEditView::DrawLogicLine(
 	pInfo->m_pDispPos = _pDispPos;
 	pInfo->m_pcView = this;
 
-	//CColorStrategyPool‰Šú‰»
+	//CColorStrategyPoolåˆæœŸåŒ–
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this);
 	pool->NotifyOnStartScanLogic();
 	bool bSkipBeforeLayout = pool->IsSkipBeforeLayout();
 
-	//DispPos‚ğ•Û‘¶‚µ‚Ä‚¨‚­
+	//DispPosã‚’ä¿å­˜ã—ã¦ãŠã
 	pInfo->m_sDispPosBegin = *pInfo->m_pDispPos;
 
-	//ˆ—‚·‚é•¶šˆÊ’u
-	pInfo->m_nPosInLogic = CLogicInt(0); //™ŠJn
+	//å‡¦ç†ã™ã‚‹æ–‡å­—ä½ç½®
+	pInfo->m_nPosInLogic = CLogicInt(0); //â˜†é–‹å§‹
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//          ˜_—sƒf[ƒ^‚Ìæ“¾ -> pLine, pLineLen              //
+	//          è«–ç†è¡Œãƒ‡ãƒ¼ã‚¿ã®å–å¾— -> pLine, pLineLen              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// ‘Os‚ÌÅIİ’èF
+	// å‰è¡Œã®æœ€çµ‚è¨­å®šè‰²
 	{
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
 		if( bSkipBeforeLayout ){
 			EColorIndexType eRet = COLORIDX_TEXT;
 			const CLayoutColorInfo* colorInfo = NULL;
 			if( pcLayout ){
-				eRet = pcLayout->GetColorTypePrev(); // COLORIDX_TEXT‚Ì‚Í‚¸
+				eRet = pcLayout->GetColorTypePrev(); // COLORIDX_TEXTã®ã¯ãš
 				colorInfo = pcLayout->GetColorInfo();
 			}
 			pInfo->m_pStrategy = pool->GetStrategyByColor(eRet);
@@ -920,14 +920,14 @@ bool CEditView::DrawLogicLine(
 		}
 	}
 
-	//ŠJnƒƒWƒbƒNˆÊ’u‚ğZo
+	//é–‹å§‹ãƒ­ã‚¸ãƒƒã‚¯ä½ç½®ã‚’ç®—å‡º
 	{
 		const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef();
 		pInfo->m_nPosInLogic = pcLayout?pcLayout->GetLogicOffset():CLogicInt(0);
 	}
 
 	for (;;) {
-		//‘ÎÛs‚ª•`‰æ”ÍˆÍŠO‚¾‚Á‚½‚çI—¹
+		//å¯¾è±¡è¡ŒãŒæç”»ç¯„å›²å¤–ã ã£ãŸã‚‰çµ‚äº†
 		if( GetTextArea().GetBottomLine() < pInfo->m_pDispPos->GetLayoutLineRef() ){
 			pInfo->m_pDispPos->SetLayoutLineRef(nLineTo + CLayoutInt(1));
 			break;
@@ -936,20 +936,20 @@ bool CEditView::DrawLogicLine(
 			break;
 		}
 
-		//ƒŒƒCƒAƒEƒgs‚ğ1s•`‰æ
+		//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‚’1è¡Œæç”»
 		bDispEOF = DrawLayoutLine(pInfo);
 
-		//s‚ği‚ß‚é
+		//è¡Œã‚’é€²ã‚ã‚‹
 		CLogicInt nOldLogicLineNo = pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo();
-		pInfo->m_pDispPos->ForwardDrawLine(1);		//•`‰æYÀ•W{{
-		pInfo->m_pDispPos->ForwardLayoutLineRef(1);	//ƒŒƒCƒAƒEƒgs{{
+		pInfo->m_pDispPos->ForwardDrawLine(1);		//æç”»Yåº§æ¨™ï¼‹ï¼‹
+		pInfo->m_pDispPos->ForwardLayoutLineRef(1);	//ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œï¼‹ï¼‹
 
-		// ƒƒWƒbƒNs‚ğ•`‰æ‚µI‚í‚Á‚½‚ç”²‚¯‚é
+		// ãƒ­ã‚¸ãƒƒã‚¯è¡Œã‚’æç”»ã—çµ‚ã‚ã£ãŸã‚‰æŠœã‘ã‚‹
 		if(pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo()!=nOldLogicLineNo){
 			break;
 		}
 
-		// nLineTo‚ğ’´‚¦‚½‚ç”²‚¯‚é
+		// nLineToã‚’è¶…ãˆãŸã‚‰æŠœã‘ã‚‹
 		if(pInfo->m_pDispPos->GetLayoutLineRef() >= nLineTo + CLayoutInt(1)){
 			break;
 		}
@@ -959,9 +959,9 @@ bool CEditView::DrawLogicLine(
 }
 
 /*!
-	ƒŒƒCƒAƒEƒgs‚ğ1s•`‰æ
+	ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‚’1è¡Œæç”»
 */
-//‰üs‹L†‚ğ•`‰æ‚µ‚½ê‡‚Ítrue‚ğ•Ô‚·H
+//æ”¹è¡Œè¨˜å·ã‚’æç”»ã—ãŸå ´åˆã¯trueã‚’è¿”ã™ï¼Ÿ
 bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 {
 	bool bDispEOF = false;
@@ -969,7 +969,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	const CLayout* pcLayout = pInfo->m_pDispPos->GetLayoutRef(); //m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );
 
-	// ƒŒƒCƒAƒEƒgî•ñ
+	// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±
 	if( pcLayout ){
 		pInfo->m_pLineOfLogic = pcLayout->GetDocLineRef()->GetPtr();
 	}
@@ -977,21 +977,21 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		pInfo->m_pLineOfLogic = NULL;
 	}
 
-	//•¶š—ñQÆ
+	//æ–‡å­—åˆ—å‚ç…§
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
 	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
 
-	// •`‰æ”ÍˆÍŠO‚Ìê‡‚ÍFØ‘Ö‚¾‚¯‚Å”²‚¯‚é
+	// æç”»ç¯„å›²å¤–ã®å ´åˆã¯è‰²åˆ‡æ›¿ã ã‘ã§æŠœã‘ã‚‹
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
 			bool bChange = false;
 			int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 			CColor3Setting cColor;
 			while(pInfo->m_nPosInLogic < nPosTo){
-				//FØ‘Ö
+				//è‰²åˆ‡æ›¿
 				bChange |= pInfo->CheckChangeColor(cLineStr);
 
-				//1•¶ši‚Ş
+				//1æ–‡å­—é€²ã‚€
 				pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(
 											cLineStr.GetPtr(),
 											cLineStr.GetLength(),
@@ -1006,8 +1006,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		return false;
 	}
 
-	// ƒRƒ“ƒtƒBƒO
-	int nLineHeight = GetTextMetrics().GetHankakuDy();  //s‚Ìc•H
+	// ã‚³ãƒ³ãƒ•ã‚£ã‚°
+	int nLineHeight = GetTextMetrics().GetHankakuDy();  //è¡Œã®ç¸¦å¹…ï¼Ÿ
 	CTypeSupport	cCaretLineBg(this, COLORIDX_CARETLINEBG);
 	CTypeSupport	cEvenLineBg(this, COLORIDX_EVENLINEBG);
 	CTypeSupport	cPageViewBg(this, COLORIDX_PAGEVIEW);
@@ -1028,7 +1028,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        s”Ô†•`‰æ                           //
+	//                        è¡Œç•ªå·æç”»                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	GetTextDrawer().DispLineNumber(
 		pInfo->m_gr,
@@ -1038,13 +1038,13 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       –{•¶•`‰æŠJn                          //
+	//                       æœ¬æ–‡æç”»é–‹å§‹                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	pInfo->m_pDispPos->ResetDrawCol();
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                 s“ª(ƒCƒ“ƒfƒ“ƒg)”wŒi•`‰æ                    //
+	//                 è¡Œé ­(ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ)èƒŒæ™¯æç”»                    //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	if(pcLayout && pcLayout->GetIndent()!=0)
 	{
@@ -1052,43 +1052,43 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		if(!bTransText && GetTextArea().GenerateClipRect(&rcClip, *pInfo->m_pDispPos, pcLayout->GetIndent())){
 			cBackType.FillBack(pInfo->m_gr,rcClip);
 		}
-		//•`‰æˆÊ’ui‚ß‚é
+		//æç”»ä½ç½®é€²ã‚ã‚‹
 		pInfo->m_pDispPos->ForwardDrawCol(pcLayout->GetIndent());
 	}
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         –{•¶•`‰æ                            //
+	//                         æœ¬æ–‡æç”»                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	bool bSkipRight = false; // ‘±‚«‚ğ•`‰æ‚µ‚È‚­‚Ä‚¢‚¢ê‡‚ÍƒXƒLƒbƒv‚·‚é
+	bool bSkipRight = false; // ç¶šãã‚’æç”»ã—ãªãã¦ã„ã„å ´åˆã¯ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹
 	if(pcLayout){
 		const CLayout* pcLayoutNext = pcLayout->GetNextLayout();
 		if( NULL == pcLayoutNext ){
 			bSkipRight = true;
 		}else if( pcLayoutNext->GetLogicOffset() == 0 ){
-			bSkipRight = true; // Ÿ‚Ìs‚Í•Ê‚ÌƒƒWƒbƒNs‚È‚Ì‚ÅƒXƒLƒbƒv‰Â”\
+			bSkipRight = true; // æ¬¡ã®è¡Œã¯åˆ¥ã®ãƒ­ã‚¸ãƒƒã‚¯è¡Œãªã®ã§ã‚¹ã‚­ãƒƒãƒ—å¯èƒ½
 		}
 		if( !bSkipRight ){
 			bSkipRight = CColorStrategyPool::getInstance()->IsSkipBeforeLayout();
 		}
 	}
-	//sI’[‚Ü‚½‚ÍÜ‚è•Ô‚µ‚É’B‚·‚é‚Ü‚Åƒ‹[ƒv
+	//è¡Œçµ‚ç«¯ã¾ãŸã¯æŠ˜ã‚Šè¿”ã—ã«é”ã™ã‚‹ã¾ã§ãƒ«ãƒ¼ãƒ—
 	if(pcLayout){
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
 		while(pInfo->m_nPosInLogic < nPosTo){
-			//FØ‘Ö
+			//è‰²åˆ‡æ›¿
 			if( pInfo->CheckChangeColor(cLineStr) ){
 				CColor3Setting cColor;
 				pInfo->DoChangeColor(&cColor);
 				SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
-			//1•¶šî•ñæ“¾ $$‚‘¬‰»‰Â”\
+			//1æ–‡å­—æƒ…å ±å–å¾— $$é«˜é€ŸåŒ–å¯èƒ½
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()],
 				cLineStr.GetLength() - pInfo->GetPosInLogic());
 
-			//1•¶š•`‰æ
+			//1æ–‡å­—æç”»
 			cFigure.DrawImp(pInfo);
 			if( bSkipRight && GetTextArea().GetAreaRight() < pInfo->m_pDispPos->GetDrawPos().x ){
 				pInfo->m_nPosInLogic = nPosTo;
@@ -1097,15 +1097,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		}
 	}
 
-	// •K—v‚È‚çEOF•`‰æ
+	// å¿…è¦ãªã‚‰EOFæç”»
 	void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 	if(pcLayout && pcLayout->GetNextLayout()==NULL && pcLayout->GetLayoutEol().GetLen()==0){
-		// —L•¶šs‚ÌEOF
+		// æœ‰æ–‡å­—è¡Œã®EOF
 		_DispEOF(pInfo->m_gr,pInfo->m_pDispPos,this);
 		bDispEOF = true;
 	}
 	else if(!pcLayout && pInfo->m_pDispPos->GetLayoutLineRef()==m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
-		// ‹ós‚ÌEOF
+		// ç©ºè¡Œã®EOF
 		const CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
 		if(pBottom==NULL || (pBottom && pBottom->GetLayoutEol().GetLen())){
 			_DispEOF(pInfo->m_gr,pInfo->m_pDispPos,this);
@@ -1113,12 +1113,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		}
 	}
 
-	// •K—v‚È‚çÜ‚è•Ô‚µ‹L†•`‰æ
+	// å¿…è¦ãªã‚‰æŠ˜ã‚Šè¿”ã—è¨˜å·æç”»
 	if(pcLayout && pcLayout->GetLayoutEol().GetLen()==0 && pcLayout->GetNextLayout()!=NULL){
 		_DispWrap(pInfo->m_gr,pInfo->m_pDispPos,this,pInfo->m_pDispPos->GetLayoutLineRef());
 	}
 
-	// s––”wŒi•`‰æ
+	// è¡Œæœ«èƒŒæ™¯æç”»
 	RECT rcClip;
 	bool rcClipRet = GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->m_pDispPos);
 	if(rcClipRet){
@@ -1127,9 +1127,9 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		}
 		CTypeSupport cSelectType(this, COLORIDX_SELECT);
 		if( GetSelectionInfo().IsTextSelected() && cSelectType.IsDisp() ){
-			// ‘I‘ğ”ÍˆÍ‚Ìw’èFF•K—v‚È‚çƒeƒLƒXƒg‚Ì‚È‚¢•”•ª‚Ì‹éŒ`‘I‘ğ‚ğì‰æ
+			// é¸æŠç¯„å›²ã®æŒ‡å®šè‰²ï¼šå¿…è¦ãªã‚‰ãƒ†ã‚­ã‚¹ãƒˆã®ãªã„éƒ¨åˆ†ã®çŸ©å½¢é¸æŠã‚’ä½œç”»
 			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(pInfo->m_pDispPos->GetLayoutLineRef(), pcLayout);
-			// 2010.10.04 ƒXƒNƒ[ƒ‹•ª‚Ì‘«‚µ–Y‚ê
+			// 2010.10.04 ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«åˆ†ã®è¶³ã—å¿˜ã‚Œ
 			CPixelXInt nSelectFromPx =  GetTextMetrics().GetCharPxWidth(selectArea.GetFrom().x - GetTextArea().GetViewLeftCol());
 			CPixelXInt nSelectToPx   = GetTextMetrics().GetCharPxWidth(selectArea.GetTo().x - GetTextArea().GetViewLeftCol());
 			if( nSelectFromPx < nSelectToPx && selectArea.GetTo().x != INT_MAX ){
@@ -1149,7 +1149,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		}
 	}
 
-	// ƒm[ƒgü•`‰æ
+	// ãƒãƒ¼ãƒˆç·šæç”»
 	if( !m_bMiniMap ){
 		GetTextDrawer().DispNoteLine(
 			pInfo->m_gr,
@@ -1160,7 +1160,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		);
 	}
 
-	// w’èŒ…cü•`‰æ
+	// æŒ‡å®šæ¡ç¸¦ç·šæç”»
 	GetTextDrawer().DispVerticalLines(
 		pInfo->m_gr,
 		pInfo->m_pDispPos->GetDrawPos().y,
@@ -1169,7 +1169,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		CLayoutInt(-1)
 	);
 
-	// Ü‚è•Ô‚µŒ…cü•`‰æ
+	// æŠ˜ã‚Šè¿”ã—æ¡ç¸¦ç·šæç”»
 	if( !m_bMiniMap ){
 		GetTextDrawer().DispWrapLine(
 			pInfo->m_gr,
@@ -1178,7 +1178,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		);
 	}
 
-	// ”½“]•`‰æ
+	// åè»¢æç”»
 	if( pcLayout && GetSelectionInfo().IsTextSelected() ){
 		DispTextSelected(
 			pInfo->m_gr,
@@ -1187,8 +1187,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			pcLayout->CalcLayoutWidth(m_pcEditDoc->m_cLayoutMgr)
 				+ CLayoutInt(pcLayout->GetLayoutEol().GetLen()
 					? (CTypeSupport(this, COLORIDX_EOL).IsDisp()
-						? (GetTextMetrics().GetLayoutXDefault()+CLayoutXInt(4)) // HACK:EOL‚Ì•`‰æ••ª‚¾‚¯Šm•Û‚·‚éB4px‚ÍCRLF‚Ì‚Í‚İo‚µ‚Ä‚¢‚é•ª
-						: CLayoutXInt(2)) // ”ñ•\¦ = 2px
+						? (GetTextMetrics().GetLayoutXDefault()+CLayoutXInt(4)) // HACK:EOLã®æç”»å¹…åˆ†ã ã‘ç¢ºä¿ã™ã‚‹ã€‚4pxã¯CRLFã®ã¯ã¿å‡ºã—ã¦ã„ã‚‹åˆ†
+						: CLayoutXInt(2)) // éè¡¨ç¤º = 2px
 					: CLayoutInt(0))
 		);
 	}
@@ -1203,7 +1203,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 
 
-/* ƒeƒLƒXƒg”½“]
+/* ãƒ†ã‚­ã‚¹ãƒˆåè»¢
 
 	@param hdc      
 	@param nLineNum 
@@ -1212,15 +1212,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	@param nX       
 
 	@note
-	CCEditView::DrawLogicLine() ‚Å‚Ìì‰æ(WM_PAINT)‚ÉA1ƒŒƒCƒAƒEƒgs‚ğ‚Ü‚Æ‚ß‚Ä”½“]ˆ—‚·‚é‚½‚ß‚ÌŠÖ”B
-	”ÍˆÍ‘I‘ğ‚ÌXV‚ÍACEditView::DrawSelectArea() ‚ª‘I‘ğE”½“]‰ğœ‚ğs‚¤B
+	CCEditView::DrawLogicLine() ã§ã®ä½œç”»(WM_PAINT)æ™‚ã«ã€1ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‚’ã¾ã¨ã‚ã¦åè»¢å‡¦ç†ã™ã‚‹ãŸã‚ã®é–¢æ•°ã€‚
+	ç¯„å›²é¸æŠã®éšæ™‚æ›´æ–°ã¯ã€CEditView::DrawSelectArea() ãŒé¸æŠãƒ»åè»¢è§£é™¤ã‚’è¡Œã†ã€‚
 	
 */
 void CEditView::DispTextSelected(
-	HDC				hdc,		//!< ì‰æ‘ÎÛƒrƒbƒgƒ}ƒbƒv‚ğŠÜ‚ŞƒfƒoƒCƒX
-	CLayoutInt		nLineNum,	//!< ”½“]ˆ—‘ÎÛƒŒƒCƒAƒEƒgs”Ô†(0ŠJn)
-	const CMyPoint&	ptXY,		//!< (‘Š‘ÎƒŒƒCƒAƒEƒg0Œ…–Ú‚Ì¶’[À•W, ‘ÎÛs‚Ìã’[À•W)
-	CLayoutInt		nX_Layout	//!< ‘ÎÛs‚ÌI—¹Œ…ˆÊ’uB@[ABC\n]‚È‚ç‰üs‚ÌŒã‚ë‚Å4
+	HDC				hdc,		//!< ä½œç”»å¯¾è±¡ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’å«ã‚€ãƒ‡ãƒã‚¤ã‚¹
+	CLayoutInt		nLineNum,	//!< åè»¢å‡¦ç†å¯¾è±¡ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œç•ªå·(0é–‹å§‹)
+	const CMyPoint&	ptXY,		//!< (ç›¸å¯¾ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ0æ¡ç›®ã®å·¦ç«¯åº§æ¨™, å¯¾è±¡è¡Œã®ä¸Šç«¯åº§æ¨™)
+	CLayoutInt		nX_Layout	//!< å¯¾è±¡è¡Œã®çµ‚äº†æ¡ä½ç½®ã€‚ã€€[ABC\n]ãªã‚‰æ”¹è¡Œã®å¾Œã‚ã§4
 )
 {
 	CLayoutInt	nSelectFrom;
@@ -1232,7 +1232,7 @@ void CEditView::DispTextSelected(
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 	CLayoutRange& sSelect = GetSelectionInfo().m_sSelect;
 
-	/* ‘I‘ğ”ÍˆÍ“à‚Ìs‚©‚È */
+	/* é¸æŠç¯„å›²å†…ã®è¡Œã‹ãª */
 //	if( IsTextSelected() ){
 		if( nLineNum >= sSelect.GetFrom().y && nLineNum <= sSelect.GetTo().y ){
 			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
@@ -1245,11 +1245,11 @@ void CEditView::DispTextSelected(
 				nSelectTo = nX_Layout;
 			}
 
-			// 2006.03.28 Moca •\¦ˆæŠO‚È‚ç‰½‚à‚µ‚È‚¢
+			// 2006.03.28 Moca è¡¨ç¤ºåŸŸå¤–ãªã‚‰ä½•ã‚‚ã—ãªã„
 			if( GetTextArea().GetRightCol() < nSelectFrom ){
 				return;
 			}
-			if( nSelectTo < GetTextArea().GetViewLeftCol() ){	// nSelectTo == GetTextArea().GetViewLeftCol()‚ÌƒP[ƒX‚ÍŒã‚Å‚O•¶šƒ}ƒbƒ`‚Å‚È‚¢‚±‚Æ‚ğŠm”F‚µ‚Ä‚©‚ç”²‚¯‚é
+			if( nSelectTo < GetTextArea().GetViewLeftCol() ){	// nSelectTo == GetTextArea().GetViewLeftCol()ã®ã‚±ãƒ¼ã‚¹ã¯å¾Œã§ï¼æ–‡å­—ãƒãƒƒãƒã§ãªã„ã“ã¨ã‚’ç¢ºèªã—ã¦ã‹ã‚‰æŠœã‘ã‚‹
 				return;
 			}
 
@@ -1263,9 +1263,9 @@ void CEditView::DispTextSelected(
 
 			bool bOMatch = false;
 
-			// 2005/04/02 ‚©‚ë‚Æ ‚O•¶šƒ}ƒbƒ`‚¾‚Æ”½“]•‚ª‚O‚Æ‚È‚è”½“]‚³‚ê‚È‚¢‚Ì‚ÅA1/3•¶š•‚¾‚¯”½“]‚³‚¹‚é
-			// 2005/06/26 zenryaku ‘I‘ğ‰ğœ‚ÅƒLƒƒƒŒƒbƒg‚ÌcŠ[‚ªc‚é–â‘è‚ğC³
-			// 2005/09/29 ryoji ƒXƒNƒ[ƒ‹‚ÉƒLƒƒƒŒƒbƒg‚Ì‚æ‚¤‚ÈƒSƒ~‚ª•\¦‚³‚ê‚é–â‘è‚ğC³
+			// 2005/04/02 ã‹ã‚ã¨ ï¼æ–‡å­—ãƒãƒƒãƒã ã¨åè»¢å¹…ãŒï¼ã¨ãªã‚Šåè»¢ã•ã‚Œãªã„ã®ã§ã€1/3æ–‡å­—å¹…ã ã‘åè»¢ã•ã›ã‚‹
+			// 2005/06/26 zenryaku é¸æŠè§£é™¤ã§ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®æ®‹éª¸ãŒæ®‹ã‚‹å•é¡Œã‚’ä¿®æ­£
+			// 2005/09/29 ryoji ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ™‚ã«ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã‚ˆã†ãªã‚´ãƒŸãŒè¡¨ç¤ºã•ã‚Œã‚‹å•é¡Œã‚’ä¿®æ­£
 			if (GetSelectionInfo().IsTextSelected() && rcClip.right == rcClip.left &&
 				sSelect.IsLineOne() &&
 				sSelect.GetFrom().x >= GetTextArea().GetViewLeftCol())
@@ -1277,15 +1277,15 @@ void CEditView::DispTextSelected(
 				}
 			}
 			if( rcClip.right == rcClip.left ){
-				return;	//‚O•¶šƒ}ƒbƒ`‚É‚æ‚é”½“]•Šg’£‚È‚µ
+				return;	//ï¼æ–‡å­—ãƒãƒƒãƒã«ã‚ˆã‚‹åè»¢å¹…æ‹¡å¼µãªã—
 			}
 
-			// 2006.03.28 Moca ƒEƒBƒ“ƒhƒE•‚ª‘å‚«‚¢‚Æ³‚µ‚­”½“]‚µ‚È‚¢–â‘è‚ğC³
+			// 2006.03.28 Moca ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ãŒå¤§ãã„ã¨æ­£ã—ãåè»¢ã—ãªã„å•é¡Œã‚’ä¿®æ­£
 			if( rcClip.right > GetTextArea().GetAreaRight() ){
 				rcClip.right = GetTextArea().GetAreaRight();
 			}
 			
-			// ‘I‘ğF•\¦‚È‚ç”½“]‚µ‚È‚¢
+			// é¸æŠè‰²è¡¨ç¤ºãªã‚‰åè»¢ã—ãªã„
 			if( !bOMatch && CTypeSupport(this, COLORIDX_SELECT).IsDisp() ){
 				return;
 			}
@@ -1313,25 +1313,25 @@ void CEditView::DispTextSelected(
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ‰æ–Êƒoƒbƒtƒ@                          //
+//                       ç”»é¢ãƒãƒƒãƒ•ã‚¡                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 /*!
-	‰æ–Ê‚ÌŒİŠ·ƒrƒbƒgƒ}ƒbƒv‚ğì¬‚Ü‚½‚ÍXV‚·‚éB
-		•K—v‚Ì–³‚¢‚Æ‚«‚Í‰½‚à‚µ‚È‚¢B
+	ç”»é¢ã®äº’æ›ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä½œæˆã¾ãŸã¯æ›´æ–°ã™ã‚‹ã€‚
+		å¿…è¦ã®ç„¡ã„ã¨ãã¯ä½•ã‚‚ã—ãªã„ã€‚
 	
-	@param cx ƒEƒBƒ“ƒhƒE‚Ì‚‚³
-	@param cy ƒEƒBƒ“ƒhƒE‚Ì•
-	@return true: ƒrƒbƒgƒ}ƒbƒv‚ğ—˜—p‰Â”\ / false: ƒrƒbƒgƒ}ƒbƒv‚Ìì¬EXV‚É¸”s
+	@param cx ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é«˜ã•
+	@param cy ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å¹…
+	@return true: ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’åˆ©ç”¨å¯èƒ½ / false: ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã®ä½œæˆãƒ»æ›´æ–°ã«å¤±æ•—
 
-	@date 2007.09.09 Moca CEditView::OnSize‚©‚ç•ª—£B
-		’Pƒ‚É¶¬‚·‚é‚¾‚¯‚¾‚Á‚½‚à‚Ì‚ğAd—l•ÏX‚É]‚¢“à—eƒRƒs[‚ğ’Ç‰ÁB
-		ƒTƒCƒY‚ª“¯‚¶‚Æ‚«‚Í‰½‚à‚µ‚È‚¢‚æ‚¤‚É•ÏX
+	@date 2007.09.09 Moca CEditView::OnSizeã‹ã‚‰åˆ†é›¢ã€‚
+		å˜ç´”ã«ç”Ÿæˆã™ã‚‹ã ã‘ã ã£ãŸã‚‚ã®ã‚’ã€ä»•æ§˜å¤‰æ›´ã«å¾“ã„å†…å®¹ã‚³ãƒ”ãƒ¼ã‚’è¿½åŠ ã€‚
+		ã‚µã‚¤ã‚ºãŒåŒã˜ã¨ãã¯ä½•ã‚‚ã—ãªã„ã‚ˆã†ã«å¤‰æ›´
 
-	@par ŒİŠ·BMP‚É‚ÍƒLƒƒƒŒƒbƒgEƒJ[ƒ\ƒ‹ˆÊ’u‰¡cüE‘ÎŠ‡ŒÊˆÈŠO‚Ìî•ñ‚ğ‘S‚Ä‘‚«‚ŞB
-		‘I‘ğ”ÍˆÍ•ÏX‚Ì”½“]ˆ—‚ÍA‰æ–Ê‚ÆŒİŠ·BMP‚Ì—¼•û‚ğ•ÊX‚É•ÏX‚·‚éB
-		ƒJ[ƒ\ƒ‹ˆÊ’u‰¡cü•ÏX‚É‚ÍAŒİŠ·BMP‚©‚ç‰æ–Ê‚ÉŒ³‚Ìî•ñ‚ğ•œ‹A‚³‚¹‚Ä‚¢‚éB
+	@par äº’æ›BMPã«ã¯ã‚­ãƒ£ãƒ¬ãƒƒãƒˆãƒ»ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®æ¨ªç¸¦ç·šãƒ»å¯¾æ‹¬å¼§ä»¥å¤–ã®æƒ…å ±ã‚’å…¨ã¦æ›¸ãè¾¼ã‚€ã€‚
+		é¸æŠç¯„å›²å¤‰æ›´æ™‚ã®åè»¢å‡¦ç†ã¯ã€ç”»é¢ã¨äº’æ›BMPã®ä¸¡æ–¹ã‚’åˆ¥ã€…ã«å¤‰æ›´ã™ã‚‹ã€‚
+		ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®æ¨ªç¸¦ç·šå¤‰æ›´æ™‚ã«ã¯ã€äº’æ›BMPã‹ã‚‰ç”»é¢ã«å…ƒã®æƒ…å ±ã‚’å¾©å¸°ã•ã›ã¦ã„ã‚‹ã€‚
 
 */
 bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
@@ -1339,7 +1339,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	if( NULL == m_hdcCompatDC ){
 		return false;
 	}
-	// ƒTƒCƒY‚ğ64‚Ì”{”‚Å®—ñ
+	// ã‚µã‚¤ã‚ºã‚’64ã®å€æ•°ã§æ•´åˆ—
 	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
 	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
 	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
@@ -1349,12 +1349,12 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 		HDC	hdc = ::GetDC( GetHwnd() );
 		HBITMAP hBitmapNew = NULL;
 		if( m_hbmpCompatBMP ){
-			// BMP‚ÌXV
+			// BMPã®æ›´æ–°
 			HDC hdcTemp = ::CreateCompatibleDC( hdc );
 			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
 			if( hBitmapNew ){
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
-				// ‘O‚Ì‰æ–Ê“à—e‚ğƒRƒs[‚·‚é
+				// å‰ã®ç”»é¢å†…å®¹ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 				::BitBlt( hdcTemp, 0, 0,
 					t_min( nBmpWidthNew,m_nCompatBMPWidth ),
 					t_min( nBmpHeightNew, m_nCompatBMPHeight ),
@@ -1365,7 +1365,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 			}
 			::DeleteDC( hdcTemp );
 		}else{
-			// BMP‚ÌV‹Kì¬
+			// BMPã®æ–°è¦ä½œæˆ
 			hBitmapNew = ::CreateCompatibleBitmap( hdc, nBmpWidthNew, nBmpHeightNew );
 		}
 		if( hBitmapNew ){
@@ -1374,10 +1374,10 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 			m_nCompatBMPHeight = nBmpHeightNew;
 			m_hbmpCompatBMPOld = (HBITMAP)::SelectObject( m_hdcCompatDC, m_hbmpCompatBMP );
 		}else{
-			// ŒİŠ·BMP‚Ìì¬‚É¸”s
-			// ¡Œã‚à¸”s‚ğŒJ‚è•Ô‚·‰Â”\«‚ª‚‚¢‚Ì‚Å
-			// m_hdcCompatDC‚ğNULL‚É‚·‚é‚±‚Æ‚Å‰æ–Êƒoƒbƒtƒ@‹@”\‚ğ‚±‚ÌƒEƒBƒ“ƒhƒE‚Ì‚İ–³Œø‚É‚·‚éB
-			//	2007.09.29 genta ŠÖ”‰»DŠù‘¶‚ÌBMP‚à‰ğ•ú
+			// äº’æ›BMPã®ä½œæˆã«å¤±æ•—
+			// ä»Šå¾Œã‚‚å¤±æ•—ã‚’ç¹°ã‚Šè¿”ã™å¯èƒ½æ€§ãŒé«˜ã„ã®ã§
+			// m_hdcCompatDCã‚’NULLã«ã™ã‚‹ã“ã¨ã§ç”»é¢ãƒãƒƒãƒ•ã‚¡æ©Ÿèƒ½ã‚’ã“ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã¿ç„¡åŠ¹ã«ã™ã‚‹ã€‚
+			//	2007.09.29 genta é–¢æ•°åŒ–ï¼æ—¢å­˜ã®BMPã‚‚è§£æ”¾
 			UseCompatibleDC(FALSE);
 		}
 		::ReleaseDC( GetHwnd(), hdc );
@@ -1387,11 +1387,11 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 
 
 /*!
-	ŒİŠ·ƒƒ‚ƒŠBMP‚ğíœ
+	äº’æ›ãƒ¡ãƒ¢ãƒªBMPã‚’å‰Šé™¤
 
-	@note •ªŠ„ƒrƒ…[‚ª”ñ•\¦‚É‚È‚Á‚½ê‡‚Æ
-		eƒEƒBƒ“ƒhƒE‚ª”ñ•\¦EÅ¬‰»‚³‚ê‚½ê‡‚Éíœ‚³‚ê‚éB
-	@date 2007.09.09 Moca V‹Kì¬ 
+	@note åˆ†å‰²ãƒ“ãƒ¥ãƒ¼ãŒéè¡¨ç¤ºã«ãªã£ãŸå ´åˆã¨
+		è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒéè¡¨ç¤ºãƒ»æœ€å°åŒ–ã•ã‚ŒãŸå ´åˆã«å‰Šé™¤ã•ã‚Œã‚‹ã€‚
+	@date 2007.09.09 Moca æ–°è¦ä½œæˆ 
 */
 void CEditView::DeleteCompatibleBitmap()
 {
@@ -1407,15 +1407,15 @@ void CEditView::DeleteCompatibleBitmap()
 
 
 
-/** ‰æ–ÊƒLƒƒƒbƒVƒ…—pCompatibleDC‚ğ—pˆÓ‚·‚é
+/** ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥ç”¨CompatibleDCã‚’ç”¨æ„ã™ã‚‹
 
-	@param[in] TRUE: ‰æ–ÊƒLƒƒƒbƒVƒ…ON
+	@param[in] TRUE: ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥ON
 
-	@date 2007.09.30 genta ŠÖ”‰»
+	@date 2007.09.30 genta é–¢æ•°åŒ–
 */
 void CEditView::UseCompatibleDC(BOOL fCache)
 {
-	// From Here 2007.09.09 Moca ŒİŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@
+	// From Here 2007.09.09 Moca äº’æ›BMPã«ã‚ˆã‚‹ç”»é¢ãƒãƒƒãƒ•ã‚¡
 	if( fCache ){
 		if( m_hdcCompatDC == NULL ){
 			HDC			hdc;
@@ -1429,7 +1429,7 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 		}
 	}
 	else {
-		//	CompatibleBitmap‚ªc‚Á‚Ä‚¢‚é‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅÅ‰‚Éíœ
+		//	CompatibleBitmapãŒæ®‹ã£ã¦ã„ã‚‹ã‹ã‚‚ã—ã‚Œãªã„ã®ã§æœ€åˆã«å‰Šé™¤
 		DeleteCompatibleBitmap();
 		if( m_hdcCompatDC != NULL ){
 			::DeleteDC( m_hdcCompatDC );

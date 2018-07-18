@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,7 +26,7 @@
 
 #include "view/figures/CFigureStrategy.h"
 
-//! ƒ^ƒu•`‰æ
+//! ã‚¿ãƒ–æç”»
 class CFigure_Tab : public CFigureSpace{
 public:
 	//traits

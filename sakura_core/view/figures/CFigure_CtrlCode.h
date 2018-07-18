@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,7 +26,7 @@
 
 #include "view/figures/CFigureStrategy.h"
 
-//! ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh•`‰æ
+//! ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰æç”»
 class CFigure_CtrlCode : public CFigureSpace{
 public:
 	//traits
@@ -35,30 +35,30 @@ public:
 	//action
 	bool DrawImp(SColorStrategyInfo* pInfo);
 	virtual void DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans, int width) const;
-	virtual wchar_t GetAlternateChar() const{ return L'¥'; }
+	virtual wchar_t GetAlternateChar() const{ return L'ï½¥'; }
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const{assert(0);};
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
-//! ƒoƒCƒiƒŠ”¼Šp•`‰æ
+//! ãƒã‚¤ãƒŠãƒªåŠè§’æç”»
 class CFigure_HanBinary : public CFigure_CtrlCode{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const;
 
 	//action
-	virtual wchar_t GetAlternateChar() const{ return L'¬'; }
+	virtual wchar_t GetAlternateChar() const{ return L'ã€“'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
-//! ƒoƒCƒiƒŠ‘SŠp•`‰æ
+//! ãƒã‚¤ãƒŠãƒªå…¨è§’æç”»
 class CFigure_ZenBinary : public CFigure_CtrlCode{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const;
 
 	//action
-	virtual wchar_t GetAlternateChar() const{ return L'¬'; }
+	virtual wchar_t GetAlternateChar() const{ return L'ã€“'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 

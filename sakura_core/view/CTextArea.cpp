@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CTextArea.h"
 #include "CViewFont.h"
 #include "CRuler.h"
@@ -8,18 +8,18 @@
 #include "doc/CEditDoc.h"
 
 // 2014.07.26 katze
-//#define USE_LOG10			// ‚±‚Ìs‚ÌƒRƒƒ“ƒg‚ğŠO‚·‚Æs”Ô†‚ÌÅ¬Œ…”‚ÌŒvZ‚Élog10()‚ğ—p‚¢‚é
+//#define USE_LOG10			// ã“ã®è¡Œã®ã‚³ãƒ¡ãƒ³ãƒˆã‚’å¤–ã™ã¨è¡Œç•ªå·ã®æœ€å°æ¡æ•°ã®è¨ˆç®—ã«log10()ã‚’ç”¨ã„ã‚‹
 #ifdef USE_LOG10
 #include <math.h>
 #endif
 
-//! ƒeƒ“ƒvƒŒ[ƒg‚Å‚×‚«æ‚ğŒvZ(!=0)
+//! ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã§ã¹ãä¹—ã‚’è¨ˆç®—(!=0)
 template <int N, int M>
 struct power{
     static const int value = N * power<N, M - 1>::value;
 };
 
-//! ƒeƒ“ƒvƒŒ[ƒg‚Å‚×‚«æ‚ğŒvZ(==0)
+//! ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã§ã¹ãä¹—ã‚’è¨ˆç®—(==0)
 template<int N>
 struct power<N, 0>{
     static const int value = 1;
@@ -30,17 +30,17 @@ CTextArea::CTextArea(CEditView* pEditView)
 {
 	DLLSHAREDATA* pShareData = &GetDllShareData();
 
-	m_nViewAlignLeft = 0;		/* •\¦ˆæ‚Ì¶’[À•W */
-	m_nViewAlignLeftCols = 0;	/* s”Ô†ˆæ‚ÌŒ…” */
-	m_nViewCx = 0;				/* •\¦ˆæ‚Ì• */
-	m_nViewCy = 0;				/* •\¦ˆæ‚Ì‚‚³ */
-	m_nViewColNum = CLayoutInt(0);			/* •\¦ˆæ‚ÌŒ…” */
-	m_nViewRowNum = CLayoutInt(0);			/* •\¦ˆæ‚Ìs” */
-	m_nViewTopLine = CLayoutInt(0);			/* •\¦ˆæ‚Ìˆê”Ôã‚Ìs */
-	m_nViewLeftCol = CLayoutInt(0);			/* •\¦ˆæ‚Ìˆê”Ô¶‚ÌŒ… */
-	SetTopYohaku( pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ƒ‹[ƒ‰[‚ÆƒeƒLƒXƒg‚ÌŒ„ŠÔ */
+	m_nViewAlignLeft = 0;		/* è¡¨ç¤ºåŸŸã®å·¦ç«¯åº§æ¨™ */
+	m_nViewAlignLeftCols = 0;	/* è¡Œç•ªå·åŸŸã®æ¡æ•° */
+	m_nViewCx = 0;				/* è¡¨ç¤ºåŸŸã®å¹… */
+	m_nViewCy = 0;				/* è¡¨ç¤ºåŸŸã®é«˜ã• */
+	m_nViewColNum = CLayoutInt(0);			/* è¡¨ç¤ºåŸŸã®æ¡æ•° */
+	m_nViewRowNum = CLayoutInt(0);			/* è¡¨ç¤ºåŸŸã®è¡Œæ•° */
+	m_nViewTopLine = CLayoutInt(0);			/* è¡¨ç¤ºåŸŸã®ä¸€ç•ªä¸Šã®è¡Œ */
+	m_nViewLeftCol = CLayoutInt(0);			/* è¡¨ç¤ºåŸŸã®ä¸€ç•ªå·¦ã®æ¡ */
+	SetTopYohaku( pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ãƒ«ãƒ¼ãƒ©ãƒ¼ã¨ãƒ†ã‚­ã‚¹ãƒˆã®éš™é–“ */
 	SetLeftYohaku( pShareData->m_Common.m_sWindow.m_nLineNumRightSpace );
-	m_nViewAlignTop = GetTopYohaku();		/* •\¦ˆæ‚Ìã’[À•W */
+	m_nViewAlignTop = GetTopYohaku();		/* è¡¨ç¤ºåŸŸã®ä¸Šç«¯åº§æ¨™ */
 }
 
 CTextArea::~CTextArea()
@@ -49,32 +49,32 @@ CTextArea::~CTextArea()
 
 void CTextArea::CopyTextAreaStatus(CTextArea* pDst) const
 {
-	pDst->SetAreaLeft				( this->GetAreaLeft() );		// •\¦ˆæ‚Ì¶’[À•W
-	pDst->m_nViewAlignLeftCols		= this->m_nViewAlignLeftCols;	// s”Ô†ˆæ‚ÌŒ…”
-	pDst->SetAreaTop				(this->GetAreaTop());			// •\¦ˆæ‚Ìã’[À•W
-//	pDst->m_nViewCx					= m_nViewCx;					// •\¦ˆæ‚Ì•
-//	pDst->m_nViewCy					= m_nViewCy;					// •\¦ˆæ‚Ì‚‚³
-//	pDst->m_nViewColNum				= this->m_nViewColNum;			// •\¦ˆæ‚ÌŒ…”
-//	pDst->m_nViewRowNum				= this->m_nViewRowNum;			// •\¦ˆæ‚Ìs”
-	pDst->SetViewTopLine			( this->GetViewTopLine() );		// •\¦ˆæ‚Ìˆê”Ôã‚Ìs(0ŠJn)
-	pDst->SetViewLeftCol			( this->GetViewLeftCol() );		// •\¦ˆæ‚Ìˆê”Ô¶‚ÌŒ…(0ŠJn)
+	pDst->SetAreaLeft				( this->GetAreaLeft() );		// è¡¨ç¤ºåŸŸã®å·¦ç«¯åº§æ¨™
+	pDst->m_nViewAlignLeftCols		= this->m_nViewAlignLeftCols;	// è¡Œç•ªå·åŸŸã®æ¡æ•°
+	pDst->SetAreaTop				(this->GetAreaTop());			// è¡¨ç¤ºåŸŸã®ä¸Šç«¯åº§æ¨™
+//	pDst->m_nViewCx					= m_nViewCx;					// è¡¨ç¤ºåŸŸã®å¹…
+//	pDst->m_nViewCy					= m_nViewCy;					// è¡¨ç¤ºåŸŸã®é«˜ã•
+//	pDst->m_nViewColNum				= this->m_nViewColNum;			// è¡¨ç¤ºåŸŸã®æ¡æ•°
+//	pDst->m_nViewRowNum				= this->m_nViewRowNum;			// è¡¨ç¤ºåŸŸã®è¡Œæ•°
+	pDst->SetViewTopLine			( this->GetViewTopLine() );		// è¡¨ç¤ºåŸŸã®ä¸€ç•ªä¸Šã®è¡Œ(0é–‹å§‹)
+	pDst->SetViewLeftCol			( this->GetViewLeftCol() );		// è¡¨ç¤ºåŸŸã®ä¸€ç•ªå·¦ã®æ¡(0é–‹å§‹)
 }
 
-//!•\¦ˆæ‚ÌÄŒvZ
+//!è¡¨ç¤ºåŸŸã®å†è¨ˆç®—
 void CTextArea::UpdateViewColRowNums()
 {
 	CEditView* pView=m_pEditView;
-	// Note: ƒ}ƒCƒiƒX‚ÌŠ„‚èZ‚Íˆ—ŒnˆË‘¶‚Å‚·B
-	// 0‚¾‚ÆƒJ[ƒ\ƒ‹‚ğİ’è‚Å‚«‚È‚¢E‘I‘ğ‚Å‚«‚È‚¢‚È‚Ç“®ì•s—Ç‚É‚È‚é‚Ì‚Å1ˆÈã‚É‚·‚é
-	m_nViewColNum = CLayoutInt(t_max(1, t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetCharPxWidth()));	// •\¦ˆæ‚ÌŒ…”
-	m_nViewRowNum = CLayoutInt(t_max(1, t_max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// •\¦ˆæ‚Ìs”
+	// Note: ãƒã‚¤ãƒŠã‚¹ã®å‰²ã‚Šç®—ã¯å‡¦ç†ç³»ä¾å­˜ã§ã™ã€‚
+	// 0ã ã¨ã‚«ãƒ¼ã‚½ãƒ«ã‚’è¨­å®šã§ããªã„ãƒ»é¸æŠã§ããªã„ãªã©å‹•ä½œä¸è‰¯ã«ãªã‚‹ã®ã§1ä»¥ä¸Šã«ã™ã‚‹
+	m_nViewColNum = CLayoutInt(t_max(1, t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetCharPxWidth()));	// è¡¨ç¤ºåŸŸã®æ¡æ•°
+	m_nViewRowNum = CLayoutInt(t_max(1, t_max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// è¡¨ç¤ºåŸŸã®è¡Œæ•°
 }
 
-//!ƒtƒHƒ“ƒg•ÏX‚ÌÛAŠeíƒpƒ‰ƒ[ƒ^‚ğŒvZ‚µ’¼‚·
+//!ãƒ•ã‚©ãƒ³ãƒˆå¤‰æ›´ã®éš›ã€å„ç¨®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¨ˆç®—ã—ç›´ã™
 void CTextArea::UpdateAreaMetrics()
 {
-	//•\¦ˆæ‚ÌÄŒvZ
-	//2010.08.24 Dx/Dy‚ğg‚¤‚Ì‚ÅŒã‚Åİ’è
+	//è¡¨ç¤ºåŸŸã®å†è¨ˆç®—
+	//2010.08.24 Dx/Dyã‚’ä½¿ã†ã®ã§å¾Œã§è¨­å®š
 	UpdateViewColRowNums();
 }
 
@@ -90,16 +90,16 @@ void CTextArea::GenerateCharRect(RECT* rc,const DispPos& sPos,CLayoutXInt nColum
 
 bool CTextArea::TrimRectByArea(RECT* rc) const
 {
-	//¶‚Í‚İo‚µ’²®
+	//å·¦ã¯ã¿å‡ºã—èª¿æ•´
 	if( rc->left < GetAreaLeft() ){
 		rc->left = GetAreaLeft();
 	}
 
-	if(rc->left >= rc->right)return false; //¶‚Æ‰E‚ª‚ ‚×‚±‚×
-	if(rc->left >= GetAreaRight())return false; //‰æ–ÊŠO(‰E)
-	if(rc->right <= GetAreaLeft())return false; //‰æ–ÊŠO(¶)
+	if(rc->left >= rc->right)return false; //å·¦ã¨å³ãŒã‚ã¹ã“ã¹
+	if(rc->left >= GetAreaRight())return false; //ç”»é¢å¤–(å³)
+	if(rc->right <= GetAreaLeft())return false; //ç”»é¢å¤–(å·¦)
 
-	//$ Œ³“®ì“¥PF‰æ–Êã‰º‚Ì‚Í‚İo‚µ”»’è‚ÍÈ—ª
+	//$ å…ƒå‹•ä½œè¸è¥²ï¼šç”»é¢ä¸Šä¸‹ã®ã¯ã¿å‡ºã—åˆ¤å®šã¯çœç•¥
 
 	return true;
 }
@@ -110,7 +110,7 @@ bool CTextArea::GenerateClipRect(RECT* rc, const DispPos& sPos, CLayoutXInt nCol
 	return TrimRectByArea(rc);
 }
 
-//!‰E‚Ìc‚è‚ğ•\‚·‹éŒ`‚ğ¶¬‚·‚é
+//!å³ã®æ®‹ã‚Šã‚’è¡¨ã™çŸ©å½¢ã‚’ç”Ÿæˆã™ã‚‹
 bool CTextArea::GenerateClipRectRight(RECT* rc,const DispPos& sPos) const
 {
 	const CEditView* pView=m_pEditView;
@@ -120,16 +120,16 @@ bool CTextArea::GenerateClipRectRight(RECT* rc,const DispPos& sPos) const
 	rc->top    = sPos.GetDrawPos().y;
 	rc->bottom = sPos.GetDrawPos().y + pView->GetTextMetrics().GetHankakuDy();
 
-	//¶‚Í‚İo‚µ’²®
+	//å·¦ã¯ã¿å‡ºã—èª¿æ•´
 	if( rc->left < GetAreaLeft() ){
 		rc->left = GetAreaLeft();
 	}
 
-	if(rc->left >= rc->right)return false; //¶‚Æ‰E‚ª‚ ‚×‚±‚×
-	if(rc->left >= GetAreaRight())return false; //‰æ–ÊŠO(‰E)
-	if(rc->right <= GetAreaLeft())return false; //‰æ–ÊŠO(¶)
+	if(rc->left >= rc->right)return false; //å·¦ã¨å³ãŒã‚ã¹ã“ã¹
+	if(rc->left >= GetAreaRight())return false; //ç”»é¢å¤–(å³)
+	if(rc->right <= GetAreaLeft())return false; //ç”»é¢å¤–(å·¦)
 
-	//$ Œ³“®ì“¥PF‰æ–Êã‰º‚Ì‚Í‚İo‚µ”»’è‚ÍÈ—ª
+	//$ å…ƒå‹•ä½œè¸è¥²ï¼šç”»é¢ä¸Šä¸‹ã®ã¯ã¿å‡ºã—åˆ¤å®šã¯çœç•¥
 
 	return true;
 }
@@ -145,7 +145,7 @@ bool CTextArea::GenerateClipRectLine(RECT* rc,const DispPos& sPos) const
 
 
 /*
-s”Ô†•\¦‚É•K—v‚È•‚ğİ’èB•‚ª•ÏX‚³‚ê‚½ê‡‚ÍTRUE‚ğ•Ô‚·
+è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’è¨­å®šã€‚å¹…ãŒå¤‰æ›´ã•ã‚ŒãŸå ´åˆã¯TRUEã‚’è¿”ã™
 */
 bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 {
@@ -155,9 +155,9 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 	int				nViewAlignLeftNew;
 
 	if( pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp && !pView->m_bMiniMap ){
-		/* s”Ô†•\¦‚É•K—v‚ÈŒ…”‚ğŒvZ */
+		/* è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªæ¡æ•°ã‚’è¨ˆç®— */
 		int i = DetectWidthOfLineNumberArea_calculate(&pView->m_pcEditDoc->m_cLayoutMgr);
-		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* •\¦ˆæ‚Ì¶’[À•W */
+		nViewAlignLeftNew = pView->GetTextMetrics().GetHankakuDx() * (i + 1);	/* è¡¨ç¤ºåŸŸã®å·¦ç«¯åº§æ¨™ */
 		m_nViewAlignLeftCols = i + 1;
 	}else if( pView->m_bMiniMap ){
 		nViewAlignLeftNew = 4;
@@ -173,17 +173,17 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		CMyRect			rc;
 		SetAreaLeft(nViewAlignLeftNew);
 		pView->GetClientRect( &rc );
-		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì‰¡•
-		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // •\¦ˆæ‚Ì•
-		// 2008.05.27 nasukoji	•\¦ˆæ‚ÌŒ…”‚àZo‚·‚éi‰E’[ƒJ[ƒ\ƒ‹ˆÚ“®‚Ì•\¦êŠ‚¸‚ê‚Ö‚Ì‘Îˆj
-		// m_nViewColNum = CLayoutInt(t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// •\¦ˆæ‚ÌŒ…”
+		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®æ¨ªå¹…
+		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // è¡¨ç¤ºåŸŸã®å¹…
+		// 2008.05.27 nasukoji	è¡¨ç¤ºåŸŸã®æ¡æ•°ã‚‚ç®—å‡ºã™ã‚‹ï¼ˆå³ç«¯ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•æ™‚ã®è¡¨ç¤ºå ´æ‰€ãšã‚Œã¸ã®å¯¾å‡¦ï¼‰
+		// m_nViewColNum = CLayoutInt(t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// è¡¨ç¤ºåŸŸã®æ¡æ•°
 		UpdateViewColRowNums();
 
 		if( bRedraw && pView2->GetDrawSwitch() ){
-			/* Ä•`‰æ */
+			/* å†æç”» */
 			pView2->GetCaret().m_cUnderLine.Lock();
-			// From Here 2007.09.09 Moca ŒİŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@
-			pView2->Call_OnPaint(PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, false); /* ƒƒ‚ƒŠ‚c‚b‚ğg—p‚µ‚Ä‚¿‚ç‚Â‚«‚Ì‚È‚¢Ä•`‰æ */
+			// From Here 2007.09.09 Moca äº’æ›BMPã«ã‚ˆã‚‹ç”»é¢ãƒãƒƒãƒ•ã‚¡
+			pView2->Call_OnPaint(PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, false); /* ãƒ¡ãƒ¢ãƒªï¼¤ï¼£ã‚’ä½¿ç”¨ã—ã¦ã¡ã‚‰ã¤ãã®ãªã„å†æç”» */
 			// To Here 2007.09.09 Moca
 			pView2->GetCaret().m_cUnderLine.UnLock();
 			pView2->GetCaret().ShowEditCaret();
@@ -210,20 +210,20 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 
 
 /*!
-	s”Ô†•\¦‚É•K—v‚ÈŒ…”‚ğŒvZ
+	è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªæ¡æ•°ã‚’è¨ˆç®—
 
 	@param [in] pLayoutMgr
-	@param [in] bLayout true:ƒŒƒCƒAƒEƒgs’PˆÊ / false:•¨—s’PˆÊ
+	@param [in] bLayout true:ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œå˜ä½ / false:ç‰©ç†è¡Œå˜ä½
 
-	@return s”Ô†•\¦‚É•K—v‚ÈŒ…”
+	@return è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªæ¡æ•°
 */
 int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMgr, bool bLayout) const
 {
 	const CEditView* pView=m_pEditView;
 
-	int nAllLines; //$$ ’PˆÊ¬İ
+	int nAllLines; //$$ å˜ä½æ··åœ¨
 
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 	if( pView->m_pTypeData->m_bLineNumIsCRLF && !bLayout){
 		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	}
@@ -235,46 +235,46 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMg
 		int nWork;
 		int i;
 
-		// s”Ô†‚ÌŒ…”‚ğŒˆ‚ß‚é 2014.07.26 katze
-		/* m_nLineNumWidth‚Íƒˆ‚É”š‚ÌŒ…”‚ğ¦‚µAæ“ª‚Ì‹ó”’‚ğŠÜ‚Ü‚È‚¢id—l•ÏXj 2014.08.02 katze */
+		// è¡Œç•ªå·ã®æ¡æ•°ã‚’æ±ºã‚ã‚‹ 2014.07.26 katze
+		/* m_nLineNumWidthã¯ç´”ç²‹ã«æ•°å­—ã®æ¡æ•°ã‚’ç¤ºã—ã€å…ˆé ­ã®ç©ºç™½ã‚’å«ã¾ãªã„ï¼ˆä»•æ§˜å¤‰æ›´ï¼‰ 2014.08.02 katze */
 #ifdef USE_LOG10
-		/* •\¦‚µ‚Ä‚¢‚és”‚ÌŒ…”‚ğ‹‚ß‚é */
-		nWork = (int)(log10( (double)nAllLines) +1);	// 10‚ğ’ê‚Æ‚·‚é‘Î”(¬”“_ˆÈ‰ºØ‚èÌ‚Ä)+1‚ÅŒ…”
-		/* İ’è’l‚Æ”äŠr‚µA‘å‚«‚¢•û‚ğæ‚é */
+		/* è¡¨ç¤ºã—ã¦ã„ã‚‹è¡Œæ•°ã®æ¡æ•°ã‚’æ±‚ã‚ã‚‹ */
+		nWork = (int)(log10( (double)nAllLines) +1);	// 10ã‚’åº•ã¨ã™ã‚‹å¯¾æ•°(å°æ•°ç‚¹ä»¥ä¸‹åˆ‡ã‚Šæ¨ã¦)+1ã§æ¡æ•°
+		/* è¨­å®šå€¤ã¨æ¯”è¼ƒã—ã€å¤§ãã„æ–¹ã‚’å–ã‚‹ */
 		i = std::max( nWork, pView->m_pTypeData->m_nLineNumWidth );
-		// æ“ª‚Ì‹ó”’•ª‚ğ‰ÁZ‚·‚é
+		// å…ˆé ­ã®ç©ºç™½åˆ†ã‚’åŠ ç®—ã™ã‚‹
 		return (i +1);
 #else
-		/* İ’è‚©‚çs”‚ğ‹‚ß‚é */
+		/* è¨­å®šã‹ã‚‰è¡Œæ•°ã‚’æ±‚ã‚ã‚‹ */
 		nWork = power<10, LINENUMWIDTH_MIN>::value;
 		for( i = LINENUMWIDTH_MIN; i < pView->m_pTypeData->m_nLineNumWidth; ++i ){
 			nWork *= 10;
 		}
-		/* •\¦‚µ‚Ä‚¢‚és”‚Æ”äŠr‚µA‘å‚«‚¢•û‚Ì’l‚ğæ‚é */
+		/* è¡¨ç¤ºã—ã¦ã„ã‚‹è¡Œæ•°ã¨æ¯”è¼ƒã—ã€å¤§ãã„æ–¹ã®å€¤ã‚’å–ã‚‹ */
 		for( /*i = pView->m_pTypeData->m_nLineNumWidth*/; i < LINENUMWIDTH_MAX; ++i ){
-			if( nWork > nAllLines ){	// Oct. 18, 2003 genta ®‚ğ®—
+			if( nWork > nAllLines ){	// Oct. 18, 2003 genta å¼ã‚’æ•´ç†
 				break;
 			}
 			nWork *= 10;
 		}
-		// æ“ª‚Ì‹ó”’•ª‚ğ‰ÁZ‚·‚é
+		// å…ˆé ­ã®ç©ºç™½åˆ†ã‚’åŠ ç®—ã™ã‚‹
 		return (i +1);
 #endif
 	}else{
-		//	2003.09.11 wmlhq s”Ô†‚ª1Œ…‚Ì‚Æ‚«‚Æ•‚ğ‡‚í‚¹‚é
-		// Å¬Œ…”‚ğ‰Â•Ï‚É•ÏX 2014.07.26 katze	// æ“ª‚Ì‹ó”’•ª‚ğ‰ÁZ‚·‚é 2014.07.31 katze
+		//	2003.09.11 wmlhq è¡Œç•ªå·ãŒ1æ¡ã®ã¨ãã¨å¹…ã‚’åˆã‚ã›ã‚‹
+		// æœ€å°æ¡æ•°ã‚’å¯å¤‰ã«å¤‰æ›´ 2014.07.26 katze	// å…ˆé ­ã®ç©ºç™½åˆ†ã‚’åŠ ç®—ã™ã‚‹ 2014.07.31 katze
 		return pView->m_pTypeData->m_nLineNumWidth +1;
 	}
 }
 
 void CTextArea::TextArea_OnSize(
-	const CMySize& sizeClient, //!< ƒEƒBƒ“ƒhƒE‚ÌƒNƒ‰ƒCƒAƒ“ƒgƒTƒCƒY
-	int nCxVScroll,            //!< ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì‰¡•
-	int nCyHScroll             //!< …•½ƒXƒNƒ[ƒ‹ƒo[‚Ìc•
+	const CMySize& sizeClient, //!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚µã‚¤ã‚º
+	int nCxVScroll,            //!< å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®æ¨ªå¹…
+	int nCyHScroll             //!< æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®ç¸¦å¹…
 )
 {
-	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // •\¦ˆæ‚Ì•
-	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // •\¦ˆæ‚Ì‚‚³
+	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // è¡¨ç¤ºåŸŸã®å¹…
+	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // è¡¨ç¤ºåŸŸã®é«˜ã•
 	UpdateViewColRowNums();
 }
 
@@ -285,7 +285,7 @@ int CTextArea::GetDocumentLeftClientPointX() const
 	return GetAreaLeft() - m_pEditView->GetTextMetrics().GetCharPxWidth(GetViewLeftCol());
 }
 
-//! ƒNƒ‰ƒCƒAƒ“ƒgÀ•W‚©‚çƒŒƒCƒAƒEƒgˆÊ’u‚É•ÏŠ·‚·‚é
+//! ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåº§æ¨™ã‹ã‚‰ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã«å¤‰æ›ã™ã‚‹
 void CTextArea::ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const
 {
 	const CEditView* pView=m_pEditView;
@@ -296,7 +296,7 @@ void CTextArea::ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const
 }
 
 
-//! s”Ô†ƒGƒŠƒA‚àŠÜ‚Ş”ÍˆÍ
+//! è¡Œç•ªå·ã‚¨ãƒªã‚¢ã‚‚å«ã‚€ç¯„å›²
 void CTextArea::GenerateTopRect   (RECT* rc, CLayoutInt nLineCount) const
 {
 	rc->left   = 0; //m_nViewAlignLeft;
@@ -305,7 +305,7 @@ void CTextArea::GenerateTopRect   (RECT* rc, CLayoutInt nLineCount) const
 	rc->bottom = m_nViewAlignTop + (Int)nLineCount * m_pEditView->GetTextMetrics().GetHankakuDy();
 }
 
-//! s”Ô†ƒGƒŠƒA‚àŠÜ‚Ş”ÍˆÍ
+//! è¡Œç•ªå·ã‚¨ãƒªã‚¢ã‚‚å«ã‚€ç¯„å›²
 void CTextArea::GenerateBottomRect(RECT* rc, CLayoutInt nLineCount) const
 {
 	rc->left   = 0; //m_nViewAlignLeft;
@@ -324,7 +324,7 @@ void CTextArea::GenerateLeftRect  (RECT* rc, CLayoutInt nColCount ) const
 
 void CTextArea::GenerateRightRect (RECT* rc, CLayoutInt nColCount ) const
 {
-	rc->left   = m_nViewAlignLeft + m_nViewCx - m_pEditView->GetTextMetrics().GetCharPxWidth(nColCount); //2008.01.26 kobake •„†‚ª‹t‚É‚È‚Á‚Ä‚½‚Ì‚ğC³
+	rc->left   = m_nViewAlignLeft + m_nViewCx - m_pEditView->GetTextMetrics().GetCharPxWidth(nColCount); //2008.01.26 kobake ç¬¦å·ãŒé€†ã«ãªã£ã¦ãŸã®ã‚’ä¿®æ­£
 	rc->right  = m_nViewAlignLeft + m_nViewCx;
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop  + m_nViewCy;

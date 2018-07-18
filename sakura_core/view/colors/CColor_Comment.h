@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -28,7 +28,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        çsÉRÉÅÉìÉg                           //
+//                        Ë°å„Ç≥„É°„É≥„Éà                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 class CColor_LineComment : public CColorStrategy{
@@ -42,7 +42,7 @@ public:
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                    ÉuÉçÉbÉNÉRÉÅÉìÉgÇP                       //
+//                    „Éñ„É≠„ÉÉ„ÇØ„Ç≥„É°„É≥„ÉàÔºë                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 class CColor_BlockComment : public CColorStrategy{

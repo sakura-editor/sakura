@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -36,36 +36,36 @@ public:
 	virtual ~CRuler();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+	//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! ƒ‹[ƒ‰[•`‰æ (”wŒi‚ÆƒLƒƒƒŒƒbƒg)
+	//! ãƒ«ãƒ¼ãƒ©ãƒ¼æç”» (èƒŒæ™¯ã¨ã‚­ãƒ£ãƒ¬ãƒƒãƒˆ)
 	void DispRuler( HDC );
 
-	//! ƒ‹[ƒ‰[‚Ì”wŒi‚Ì‚İ•`‰æ 2007.08.29 kobake ’Ç‰Á
+	//! ãƒ«ãƒ¼ãƒ©ãƒ¼ã®èƒŒæ™¯ã®ã¿æç”» 2007.08.29 kobake è¿½åŠ 
 	void DrawRulerBg(CGraphics& gr);
 
 	void SetRedrawFlag(){ m_bRedrawRuler = true; }
 	bool GetRedrawFlag(){ return m_bRedrawRuler; }
 
 private:
-	//! ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒg‚Ì‚İ•`‰æ 2002.02.25 Add By KK
+	//! ãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã¿æç”» 2002.02.25 Add By KK
 	void DrawRulerCaret( CGraphics& gr );
 
 	void _DrawRulerCaret( CGraphics& gr, int nCaretDrawX, int nCaretWidth );
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ƒƒ“ƒo•Ï”ŒQ                          //
+	//                       ãƒ¡ãƒ³ãƒå¤‰æ•°ç¾¤                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//QÆ
+	//å‚ç…§
 	const CEditView*	m_pEditView;
 	const CEditDoc*		m_pEditDoc;
 
-	//ó‘Ô
-	bool	m_bRedrawRuler;		// ƒ‹[ƒ‰[‘S‘Ì‚ğ•`‚«’¼‚· = true      2002.02.25 Add By KK
-	int		m_nOldRulerDrawX;	// ‘O‰ñ•`‰æ‚µ‚½ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒgˆÊ’u 2002.02.25 Add By KK  2007.08.26 kobake –¼‘O•ÏX
-	int		m_nOldRulerWidth;	// ‘O‰ñ•`‰æ‚µ‚½ƒ‹[ƒ‰[‚ÌƒLƒƒƒŒƒbƒg•   2002.02.25 Add By KK  2007.08.26 kobake –¼‘O•ÏX
+	//çŠ¶æ…‹
+	bool	m_bRedrawRuler;		// ãƒ«ãƒ¼ãƒ©ãƒ¼å…¨ä½“ã‚’æãç›´ã™æ™‚ = true      2002.02.25 Add By KK
+	int		m_nOldRulerDrawX;	// å‰å›æç”»ã—ãŸãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½® 2002.02.25 Add By KK  2007.08.26 kobake åå‰å¤‰æ›´
+	int		m_nOldRulerWidth;	// å‰å›æç”»ã—ãŸãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆå¹…   2002.02.25 Add By KK  2007.08.26 kobake åå‰å¤‰æ›´
 };
 
 #endif /* SAKURA_CRULER_CF213704_1CF6_427E_AD78_D628D2D1F9029_H_ */

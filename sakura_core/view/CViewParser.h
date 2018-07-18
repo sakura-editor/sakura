@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,16 +26,16 @@
 
 class CEditView;
 
-//!•iŒ‰ğÍƒNƒ‰ƒX
+//!å“è©è§£æã‚¯ãƒ©ã‚¹
 class CViewParser{
 public:
 	CViewParser(const CEditView* pEditView) : m_pEditView(pEditView) { }
 	virtual ~CViewParser(){}
 
-	//! ƒJ[ƒ\ƒ‹’¼‘O‚Ì’PŒê‚ğæ“¾
+	//! ã‚«ãƒ¼ã‚½ãƒ«ç›´å‰ã®å˜èªã‚’å–å¾—
 	int GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const;
 
-	//! ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê‚ğæ“¾
+	//! ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªã‚’å–å¾—
 	// 2006.03.24 fon
 	bool GetCurrentWord( CNativeW* pcmemWord ) const;
 

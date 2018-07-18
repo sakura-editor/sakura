@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CViewParser.h"
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"
@@ -6,8 +6,8 @@
 #include "charset/charcode.h"
 
 /*
-	ƒJ[ƒ\ƒ‹’¼‘O‚Ì’PŒê‚ðŽæ“¾ ’PŒê‚Ì’·‚³‚ð•Ô‚µ‚Ü‚·
-	’PŒê‹æØ‚è
+	ã‚«ãƒ¼ã‚½ãƒ«ç›´å‰ã®å˜èªžã‚’å–å¾— å˜èªžã®é•·ã•ã‚’è¿”ã—ã¾ã™
+	å˜èªžåŒºåˆ‡ã‚Š
 */
 int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 {
@@ -27,7 +27,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 //		return 0;
 		nIdxTo = CLogicInt(0);
 	}else{
-		/* Žw’è‚³‚ê‚½Œ…‚É‘Î‰ž‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ð’²‚×‚é Ver1 */
+		/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver1 */
 		nIdxTo = m_pEditView->LineColumnToIndex( pcLayout, m_pEditView->GetCaret().GetCaretLayoutPos().GetX2() );
 	}
 	if( 0 == nIdxTo || NULL == pLine ){
@@ -65,7 +65,7 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 		}
 	}
 
-	/* Œ»ÝˆÊ’u‚Ì’PŒê‚Ì”ÍˆÍ‚ð’²‚×‚é */
+	/* ç¾åœ¨ä½ç½®ã®å˜èªžã®ç¯„å›²ã‚’èª¿ã¹ã‚‹ */
 	CLayoutRange sRange;
 	bool bResult = m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		nCurLine,
@@ -85,13 +85,13 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 
 
 /*!
-	ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê‚ðŽæ“¾
-	’PŒê‹æØ‚è
+	ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªžã‚’å–å¾—
+	å˜èªžåŒºåˆ‡ã‚Š
 
-	@param[out] pcmemWord ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê
-	@return true: ¬Œ÷Cfalse: Ž¸”s
+	@param[out] pcmemWord ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªž
+	@return true: æˆåŠŸï¼Œfalse: å¤±æ•—
 	
-	@date 2006.03.24 fon (CEditView::Command_SELECTWORD‚ð—¬—p)
+	@date 2006.03.24 fon (CEditView::Command_SELECTWORDã‚’æµç”¨)
 */
 bool CViewParser::GetCurrentWord(
 	CNativeW* pcmemWord
@@ -99,13 +99,13 @@ bool CViewParser::GetCurrentWord(
 {
 	const CLayout*	pcLayout = m_pEditView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_pEditView->GetCaret().GetCaretLayoutPos().GetY2() );
 	if( NULL == pcLayout ){
-		return false;	/* ’PŒê‘I‘ð‚ÉŽ¸”s */
+		return false;	/* å˜èªžé¸æŠžã«å¤±æ•— */
 	}
 
-	/* Žw’è‚³‚ê‚½Œ…‚É‘Î‰ž‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ð’²‚×‚é */
+	/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 	CLogicInt		nIdx = m_pEditView->LineColumnToIndex( pcLayout, m_pEditView->GetCaret().GetCaretLayoutPos().GetX2() );
 
-	/* Œ»ÝˆÊ’u‚Ì’PŒê‚Ì”ÍˆÍ‚ð’²‚×‚é */
+	/* ç¾åœ¨ä½ç½®ã®å˜èªžã®ç¯„å›²ã‚’èª¿ã¹ã‚‹ */
 	CLayoutRange sRange;
 	bool bResult = m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		m_pEditView->GetCaret().GetCaretLayoutPos().GetY2(),

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,18 +29,18 @@
 #include "types/CTypeSupport.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           Š‡ŒÊ                              //
+//                           æ‹¬å¼§                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	@date 2003/02/18 ai
-	@param flag [in] ƒ‚[ƒh(true:“o˜^, false:‰ğœ)
+	@param flag [in] ãƒ¢ãƒ¼ãƒ‰(true:ç™»éŒ², false:è§£é™¤)
 */
 void CEditView::SetBracketPairPos( bool flag )
 {
 	int	mode;
 
-	// 03/03/06 ai ‚·‚×‚Ä’uŠ·A‚·‚×‚Ä’uŠ·Œã‚ÌUndo&Redo‚ª‚©‚È‚è’x‚¢–â‘è‚É‘Î‰
+	// 03/03/06 ai ã™ã¹ã¦ç½®æ›ã€ã™ã¹ã¦ç½®æ›å¾Œã®Undo&RedoãŒã‹ãªã‚Šé…ã„å•é¡Œã«å¯¾å¿œ
 	if( m_bDoing_UndoRedo || !GetDrawSwitch() ){
 		return;
 	}
@@ -49,11 +49,11 @@ void CEditView::SetBracketPairPos( bool flag )
 		return;
 	}
 
-	// ‘ÎŠ‡ŒÊ‚ÌŒŸõ&“o˜^
+	// å¯¾æ‹¬å¼§ã®æ¤œç´¢&ç™»éŒ²
 	/*
-	bit0(in)  : •\¦—ÌˆæŠO‚ğ’²‚×‚é‚©H 0:’²‚×‚È‚¢  1:’²‚×‚é
-	bit1(in)  : ‘O•û•¶š‚ğ’²‚×‚é‚©H   0:’²‚×‚È‚¢  1:’²‚×‚é
-	bit2(out) : Œ©‚Â‚©‚Á‚½ˆÊ’u         0:Œã‚ë      1:‘O
+	bit0(in)  : è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ 0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹
+	bit1(in)  : å‰æ–¹æ–‡å­—ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ   0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹
+	bit2(out) : è¦‹ã¤ã‹ã£ãŸä½ç½®         0:å¾Œã‚      1:å‰
 	*/
 	mode = 2;
 
@@ -62,30 +62,30 @@ void CEditView::SetBracketPairPos( bool flag )
 	if( flag && !GetSelectionInfo().IsTextSelected() && !GetSelectionInfo().m_bDrawSelectArea
 		&& SearchBracket( GetCaret().GetCaretLayoutPos(), &ptColLine, &mode ) )
 	{
-		// “o˜^w’è(flag=true)			&&
-		// ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚È‚¢	&&
-		// ‘I‘ğ”ÍˆÍ‚ğ•`‰æ‚µ‚Ä‚¢‚È‚¢		&&
-		// ‘Î‰‚·‚éŠ‡ŒÊ‚ªŒ©‚Â‚©‚Á‚½		ê‡
+		// ç™»éŒ²æŒ‡å®š(flag=true)			&&
+		// ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ãªã„	&&
+		// é¸æŠç¯„å›²ã‚’æç”»ã—ã¦ã„ãªã„		&&
+		// å¯¾å¿œã™ã‚‹æ‹¬å¼§ãŒè¦‹ã¤ã‹ã£ãŸ		å ´åˆ
 		if ( ( ptColLine.x >= GetTextArea().GetViewLeftCol() ) && ( ptColLine.x <= GetTextArea().GetRightCol() )
 			&& ( ptColLine.y >= GetTextArea().GetViewTopLine() ) && ( ptColLine.y <= GetTextArea().GetBottomLine() ) )
 		{
-			// •\¦—Ìˆæ“à‚Ìê‡
+			// è¡¨ç¤ºé ˜åŸŸå†…ã®å ´åˆ
 
-			// ƒŒƒCƒAƒEƒgˆÊ’u‚©‚ç•¨—ˆÊ’u‚Ö•ÏŠ·(‹­’²•\¦ˆÊ’u‚ğ“o˜^)
+			// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã‹ã‚‰ç‰©ç†ä½ç½®ã¸å¤‰æ›(å¼·èª¿è¡¨ç¤ºä½ç½®ã‚’ç™»éŒ²)
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptColLine, &m_ptBracketPairPos_PHY );
 			m_ptBracketCaretPos_PHY.y = GetCaret().GetCaretLogicPos().y;
 			if( 0 == ( mode & 4 ) ){
-				// ƒJ[ƒ\ƒ‹‚ÌŒã•û•¶šˆÊ’u
+				// ã‚«ãƒ¼ã‚½ãƒ«ã®å¾Œæ–¹æ–‡å­—ä½ç½®
 				m_ptBracketCaretPos_PHY.x = GetCaret().GetCaretLogicPos().x;
 			}else{
-				// ƒJ[ƒ\ƒ‹‚Ì‘O•û•¶šˆÊ’u
+				// ã‚«ãƒ¼ã‚½ãƒ«ã®å‰æ–¹æ–‡å­—ä½ç½®
 				m_ptBracketCaretPos_PHY.x = GetCaret().GetCaretLogicPos().x - 1;
 			}
 			return;
 		}
 	}
 
-	// Š‡ŒÊ‚Ì‹­’²•\¦ˆÊ’uî•ñ‰Šú‰»
+	// æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤ºä½ç½®æƒ…å ±åˆæœŸåŒ–
 	m_ptBracketPairPos_PHY.Set(CLogicInt(-1), CLogicInt(-1));
 	m_ptBracketCaretPos_PHY.Set(CLogicInt(-1), CLogicInt(-1));
 
@@ -93,13 +93,13 @@ void CEditView::SetBracketPairPos( bool flag )
 }
 
 /*!
-	‘ÎŠ‡ŒÊ‚Ì‹­’²•\¦
+	å¯¾æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤º
 	@date 2002/09/18 ai
-	@date 2003/02/18 ai Ä•`‰æ‘Î‰‚Ìˆ×‘å‰ü‘¢
+	@date 2003/02/18 ai å†æç”»å¯¾å¿œã®ç‚ºå¤§æ”¹é€ 
 */
 void CEditView::DrawBracketPair( bool bDraw )
 {
-	// 03/03/06 ai ‚·‚×‚Ä’uŠ·A‚·‚×‚Ä’uŠ·Œã‚ÌUndo&Redo‚ª‚©‚È‚è’x‚¢–â‘è‚É‘Î‰
+	// 03/03/06 ai ã™ã¹ã¦ç½®æ›ã€ã™ã¹ã¦ç½®æ›å¾Œã®Undo&RedoãŒã‹ãªã‚Šé…ã„å•é¡Œã«å¯¾å¿œ
 	if( m_bDoing_UndoRedo || !GetDrawSwitch() ){
 		return;
 	}
@@ -108,16 +108,16 @@ void CEditView::DrawBracketPair( bool bDraw )
 		return;
 	}
 
-	// Š‡ŒÊ‚Ì‹­’²•\¦ˆÊ’u‚ª–¢“o˜^‚Ìê‡‚ÍI—¹
+	// æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤ºä½ç½®ãŒæœªç™»éŒ²ã®å ´åˆã¯çµ‚äº†
 	if( m_ptBracketPairPos_PHY.HasNegative() || m_ptBracketCaretPos_PHY.HasNegative() ){
 		return;
 	}
 
-	// •`‰æw’è(bDraw=true)				‚©‚Â
-	// ( ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é		–”‚Í
-	//   ‘I‘ğ”ÍˆÍ‚ğ•`‰æ‚µ‚Ä‚¢‚é			–”‚Í
-	//   ƒtƒH[ƒJƒX‚ğ‚Á‚Ä‚¢‚È‚¢		–”‚Í
-	//   ƒAƒNƒeƒBƒu‚ÈƒyƒCƒ“‚Å‚Í‚È‚¢ )	ê‡‚ÍI—¹
+	// æç”»æŒ‡å®š(bDraw=true)				ã‹ã¤
+	// ( ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹		åˆã¯
+	//   é¸æŠç¯„å›²ã‚’æç”»ã—ã¦ã„ã‚‹			åˆã¯
+	//   ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’æŒã£ã¦ã„ãªã„		åˆã¯
+	//   ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒšã‚¤ãƒ³ã§ã¯ãªã„ )	å ´åˆã¯çµ‚äº†
 	if( bDraw
 	 &&( GetSelectionInfo().IsTextSelected() || GetSelectionInfo().m_bDrawSelectArea || !m_bDrawBracketPairFlag
 	 || ( m_pcEditWnd->GetActivePane() != m_nMyIndex ) ) ){
@@ -131,10 +131,10 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 	for( int i = 0; i < 2; i++ )
 	{
-		// i=0:‘ÎŠ‡ŒÊ,i=1:ƒJ[ƒ\ƒ‹ˆÊ’u‚ÌŠ‡ŒÊ
-		// 2011.11.23 ryoji ‘ÎŠ‡ŒÊ -> ƒJ[ƒ\ƒ‹ˆÊ’u‚ÌŠ‡ŒÊ ‚Ì‡‚Éˆ—‡˜‚ğ•ÏX
-		//   ” { ‚Æ } ‚ªˆÙ‚È‚és‚É‚ ‚éê‡‚É { ‚ğ BS ‚ÅÁ‚·‚Æ } ‚Ì‹­’²•\¦‚ª‰ğœ‚³‚ê‚È‚¢–â‘èiWiki BugReport/89j‚Ì‘Îô
-		//   ” ‚±‚Ì‡˜•ÏX‚É‚æ‚èƒJ[ƒ\ƒ‹ˆÊ’u‚ªŠ‡ŒÊ‚Å‚È‚­‚È‚Á‚Ä‚¢‚Ä‚à‘ÎŠ‡ŒÊ‚ª‚ ‚ê‚Î‘ÎŠ‡ŒÊ‘¤‚Ì‹­’²•\¦‚Í‰ğœ‚³‚ê‚é
+		// i=0:å¯¾æ‹¬å¼§,i=1:ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ‹¬å¼§
+		// 2011.11.23 ryoji å¯¾æ‹¬å¼§ -> ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ‹¬å¼§ ã®é †ã«å‡¦ç†é †åºã‚’å¤‰æ›´
+		//   ï¼ƒ { ã¨ } ãŒç•°ãªã‚‹è¡Œã«ã‚ã‚‹å ´åˆã« { ã‚’ BS ã§æ¶ˆã™ã¨ } ã®å¼·èª¿è¡¨ç¤ºãŒè§£é™¤ã•ã‚Œãªã„å•é¡Œï¼ˆWiki BugReport/89ï¼‰ã®å¯¾ç­–
+		//   ï¼ƒ ã“ã®é †åºå¤‰æ›´ã«ã‚ˆã‚Šã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ãŒæ‹¬å¼§ã§ãªããªã£ã¦ã„ã¦ã‚‚å¯¾æ‹¬å¼§ãŒã‚ã‚Œã°å¯¾æ‹¬å¼§å´ã®å¼·èª¿è¡¨ç¤ºã¯è§£é™¤ã•ã‚Œã‚‹
 
 		CLayoutPoint	ptColLine;
 
@@ -146,9 +146,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 		if ( ( ptColLine.x >= GetTextArea().GetViewLeftCol() ) && ( ptColLine.x <= GetTextArea().GetRightCol() )
 			&& ( ptColLine.y >= GetTextArea().GetViewTopLine() ) && ( ptColLine.y <= GetTextArea().GetBottomLine() ) )
-		{	// •\¦—Ìˆæ“à‚Ìê‡
+		{	// è¡¨ç¤ºé ˜åŸŸå†…ã®å ´åˆ
 			if( !bDraw && GetSelectionInfo().m_bDrawSelectArea && ( 0 == IsCurrentPositionSelected( ptColLine ) ) )
-			{	// ‘I‘ğ”ÍˆÍ•`‰æÏ‚İ‚ÅÁ‹‘ÎÛ‚ÌŠ‡ŒÊ‚ª‘I‘ğ”ÍˆÍ“à‚Ìê‡
+			{	// é¸æŠç¯„å›²æç”»æ¸ˆã¿ã§æ¶ˆå»å¯¾è±¡ã®æ‹¬å¼§ãŒé¸æŠç¯„å›²å†…ã®å ´åˆ
 				continue;
 			}
 			const CLayout* pcLayout;
@@ -163,14 +163,14 @@ void CEditView::DrawBracketPair( bool bDraw )
 				}
 				else{
 					if( IsBracket( pLine, OutputX, CLogicInt(1) ) ){
-						DispPos _sPos(0,0); // ’ˆÓF‚±‚Ì’l‚Íƒ_ƒ~[BCheckChangeColor‚Å‚ÌQÆˆÊ’u‚Í•s³Šm
+						DispPos _sPos(0,0); // æ³¨æ„ï¼šã“ã®å€¤ã¯ãƒ€ãƒŸãƒ¼ã€‚CheckChangeColorã§ã®å‚ç…§ä½ç½®ã¯ä¸æ­£ç¢º
 						SColorStrategyInfo _sInfo;
 						SColorStrategyInfo* pInfo = &_sInfo;
 						pInfo->m_pDispPos = &_sPos;
 						pInfo->m_pcView = this;
 
-						// 03/10/24 ai Ü‚è•Ô‚µs‚ÌColorIndex‚ª³‚µ‚­æ“¾‚Å‚«‚È‚¢–â‘è‚É‘Î‰
-						// 2009.02.07 ryoji GetColorIndex ‚É“n‚·ƒCƒ“ƒfƒbƒNƒX‚Ìd—l•ÏXiŒ³‚Í‚±‚Á‚¿‚Ìd—l‚¾‚Á‚½–Í—lj
+						// 03/10/24 ai æŠ˜ã‚Šè¿”ã—è¡Œã®ColorIndexãŒæ­£ã—ãå–å¾—ã§ããªã„å•é¡Œã«å¯¾å¿œ
+						// 2009.02.07 ryoji GetColorIndex ã«æ¸¡ã™ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ä»•æ§˜å¤‰æ›´ï¼ˆå…ƒã¯ã“ã£ã¡ã®ä»•æ§˜ã ã£ãŸæ¨¡æ§˜ï¼‰
 						CColor3Setting cColor = GetColorIndex( pcLayout, ptColLine.GetY2(), OutputX, pInfo );
 						nColorIndex = cColor.eColorIndex2;
 					}
@@ -185,13 +185,13 @@ void CEditView::DrawBracketPair( bool bDraw )
 					: CTypeSupport(this,COLORIDX_EVENLINEBG).IsDisp() && ptColLine.GetY2() % 2 == 1
 						? COLORIDX_EVENLINEBG
 						: COLORIDX_TEXT);
-				// 03/03/03 ai ƒJ[ƒ\ƒ‹‚Ì¶‚ÉŠ‡ŒÊ‚ª‚ ‚èŠ‡ŒÊ‚ª‹­’²•\¦‚³‚ê‚Ä‚¢‚éó‘Ô‚ÅShift+©‚Å‘I‘ğŠJn‚·‚é‚Æ
-				//             ‘I‘ğ”ÍˆÍ“à‚É”½“]•\¦‚³‚ê‚È‚¢•”•ª‚ª‚ ‚é–â‘è‚ÌC³
+				// 03/03/03 ai ã‚«ãƒ¼ã‚½ãƒ«ã®å·¦ã«æ‹¬å¼§ãŒã‚ã‚Šæ‹¬å¼§ãŒå¼·èª¿è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹çŠ¶æ…‹ã§Shift+â†ã§é¸æŠé–‹å§‹ã™ã‚‹ã¨
+				//             é¸æŠç¯„å›²å†…ã«åè»¢è¡¨ç¤ºã•ã‚Œãªã„éƒ¨åˆ†ãŒã‚ã‚‹å•é¡Œã®ä¿®æ­£
 				CLayoutInt caretX = GetCaret().GetCaretLayoutPos().GetX2();
 				bool bCaretHide = (!bCaretChange && (ptColLine.x == caretX || ptColLine.x + 1 == caretX) && GetCaret().GetCaretShowFlag());
 				if( bCaretHide ){
 					bCaretChange = true;
-					GetCaret().HideCaret_( GetHwnd() );	// ƒLƒƒƒŒƒbƒg‚ªˆêuÁ‚¦‚é‚Ì‚ğ–h~
+					GetCaret().HideCaret_( GetHwnd() );	// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆãŒä¸€ç¬æ¶ˆãˆã‚‹ã®ã‚’é˜²æ­¢
 				}
 				{
 					int nWidth  = GetTextMetrics().GetHankakuDx();
@@ -200,10 +200,10 @@ void CEditView::DrawBracketPair( bool bDraw )
 					int nTop  = (Int)( ptColLine.GetY2() - GetTextArea().GetViewTopLine() ) * nHeight + GetTextArea().GetAreaTop();
 					CLayoutXInt charsWidth = m_pcEditDoc->m_cLayoutMgr.GetLayoutXOfChar(pLine, nLineLen, OutputX);
 
-					//Fİ’è
+					//è‰²è¨­å®š
 					CTypeSupport cTextType(this,COLORIDX_TEXT);
 					cTextType.SetGraphicsState_WhileThisObj(gr);
-					// 2013.05.24 ”wŒiF‚ªƒeƒLƒXƒg‚Ì”wŒiF‚Æ“¯‚¶‚È‚çƒJ[ƒ\ƒ‹s‚Ì”wŒiF‚ğ“K—p
+					// 2013.05.24 èƒŒæ™¯è‰²ãŒãƒ†ã‚­ã‚¹ãƒˆã®èƒŒæ™¯è‰²ã¨åŒã˜ãªã‚‰ã‚«ãƒ¼ã‚½ãƒ«è¡Œã®èƒŒæ™¯è‰²ã‚’é©ç”¨
 					CTypeSupport cColorIndexType(this,nColorIndex);
 					CTypeSupport cColorIndexBgType(this,nColorIndexBg);
 					CTypeSupport* pcColorBack = &cColorIndexType;
@@ -232,20 +232,20 @@ void CEditView::DrawBracketPair( bool bDraw )
 					sPos.InitDrawPos(CMyPoint(nLeft, nTop));
 					GetTextDrawer().DispText(gr, &sPos, 0, &pLine[OutputX], 1, bTrans);
 					GetTextDrawer().DispNoteLine(gr, nTop, nTop + nHeight, nLeft, nLeft + (Int)charsWidth * nWidth);
-					// 2006.04.30 Moca ‘ÎŠ‡ŒÊ‚Ìcü‘Î‰
-					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //¦Š‡ŒÊ‚ª‘SŠp•‚Å‚ ‚éê‡‚ğl—¶
+					// 2006.04.30 Moca å¯¾æ‹¬å¼§ã®ç¸¦ç·šå¯¾å¿œ
+					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //â€»æ‹¬å¼§ãŒå…¨è§’å¹…ã§ã‚ã‚‹å ´åˆã‚’è€ƒæ…®
 					cTextType.RewindGraphicsState(gr);
 				}
 
 				if( ( m_pcEditWnd->GetActivePane() == m_nMyIndex )
-					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai s‚ÌŠÔŠu‚ª"0"‚Ì‚ÉƒAƒ“ƒ_[ƒ‰ƒCƒ“‚ªŒ‡‚¯‚é–‚ª‚ ‚éˆ×C³
+					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai è¡Œã®é–“éš”ãŒ"0"ã®æ™‚ã«ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ãŒæ¬ ã‘ã‚‹äº‹ãŒã‚ã‚‹ç‚ºä¿®æ­£
 					GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 				}
 			}
 		}
 	}
 	if( bCaretChange ){
-		GetCaret().ShowCaret_( GetHwnd() );	// ƒLƒƒƒŒƒbƒg‚ªˆêuÁ‚¦‚é‚Ì‚ğ–h~
+		GetCaret().ShowCaret_( GetHwnd() );	// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆãŒä¸€ç¬æ¶ˆãˆã‚‹ã®ã‚’é˜²æ­¢
 	}
 
 	::ReleaseDC( GetHwnd(), gr );
@@ -253,34 +253,34 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 
 //======================================================================
-//!‘ÎŠ‡ŒÊ‚Ì‘Î‰•\
+//!å¯¾æ‹¬å¼§ã®å¯¾å¿œè¡¨
 //2007.10.16 kobake
 struct KAKKO_T{
 	const wchar_t *sStr;
 	const wchar_t *eStr;
 };
 static const KAKKO_T g_aKakkos[] = {
-	//”¼Šp
+	//åŠè§’
 	{ L"(", L")", },
 	{ L"[", L"]", },
 	{ L"{", L"}", },
 	{ L"<", L">", },
-	{ L"¢", L"£", },
-	//‘SŠp
-	{ L"y", L"z", },
-	{ L"w", L"x", },
-	{ L"u", L"v", },
-	{ L"ƒ", L"„", },
-	{ L"á", L"â", },
-	{ L"s", L"t", },
-	{ L"i", L"j", },
-	{ L"q", L"r", },
-	{ L"o", L"p", },
-	{ L"k", L"l", },
-	{ L"m", L"n", },
-	{ L"g", L"h", },
-	{ L"‡€", L"‡", },
-	//I’[
+	{ L"ï½¢", L"ï½£", },
+	//å…¨è§’
+	{ L"ã€", L"ã€‘", },
+	{ L"ã€", L"ã€", },
+	{ L"ã€Œ", L"ã€", },
+	{ L"ï¼œ", L"ï¼", },
+	{ L"â‰ª", L"â‰«", },
+	{ L"ã€Š", L"ã€‹", },
+	{ L"ï¼ˆ", L"ï¼‰", },
+	{ L"ã€ˆ", L"ã€‰", },
+	{ L"ï½›", L"ï½", },
+	{ L"ã€”", L"ã€•", },
+	{ L"ï¼»", L"ï¼½", },
+	{ L"â€œ", L"â€", },
+	{ L"ã€", L"ã€Ÿ", },
+	//çµ‚ç«¯
 	{ NULL, NULL, },
 };
 
@@ -288,29 +288,29 @@ static const KAKKO_T g_aKakkos[] = {
 
 //	Jun. 16, 2000 genta
 /*!
-	@brief ‘ÎŠ‡ŒÊ‚ÌŒŸõ
+	@brief å¯¾æ‹¬å¼§ã®æ¤œç´¢
 
-	ƒJ[ƒ\ƒ‹ˆÊ’u‚ÌŠ‡ŒÊ‚É‘Î‰‚·‚éŠ‡ŒÊ‚ğ’T‚·BƒJ[ƒ\ƒ‹ˆÊ’u‚ªŠ‡ŒÊ‚Å‚È‚¢ê‡‚Í
-	ƒJ[ƒ\ƒ‹‚ÌŒã‚ë‚Ì•¶š‚ªŠ‡ŒÊ‚©‚Ç‚¤‚©‚ğ’²‚×‚éB
+	ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ‹¬å¼§ã«å¯¾å¿œã™ã‚‹æ‹¬å¼§ã‚’æ¢ã™ã€‚ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ãŒæ‹¬å¼§ã§ãªã„å ´åˆã¯
+	ã‚«ãƒ¼ã‚½ãƒ«ã®å¾Œã‚ã®æ–‡å­—ãŒæ‹¬å¼§ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ã€‚
 
-	ƒJ[ƒ\ƒ‹‚Ì‘OŒã‚¢‚¸‚ê‚à‚ªŠ‡ŒÊ‚Å‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢B
+	ã‚«ãƒ¼ã‚½ãƒ«ã®å‰å¾Œã„ãšã‚Œã‚‚ãŒæ‹¬å¼§ã§ãªã„å ´åˆã¯ä½•ã‚‚ã—ãªã„ã€‚
 
-	Š‡ŒÊ‚ª”¼Šp‚©‘SŠp‚©A‹y‚Ñn‚Ü‚è‚©I‚í‚è‚©‚É‚æ‚Á‚Ä‚±‚ê‚É‘±‚­4‚Â‚ÌŠÖ”‚É
-	§Œä‚ğˆÚ‚·B
+	æ‹¬å¼§ãŒåŠè§’ã‹å…¨è§’ã‹ã€åŠã³å§‹ã¾ã‚Šã‹çµ‚ã‚ã‚Šã‹ã«ã‚ˆã£ã¦ã“ã‚Œã«ç¶šã4ã¤ã®é–¢æ•°ã«
+	åˆ¶å¾¡ã‚’ç§»ã™ã€‚
 
-	@param ptLayout [in] ŒŸõŠJn“_‚Ì•¨—À•W
-	@param pptLayoutNew [out] ˆÚ“®æ‚ÌƒŒƒCƒAƒEƒgÀ•W
-	@param mode [in,out] bit0(in)  : •\¦—ÌˆæŠO‚ğ’²‚×‚é‚©H 0:’²‚×‚È‚¢  1:’²‚×‚é
-						 bit1(in)  : ‘O•û•¶š‚ğ’²‚×‚é‚©H   0:’²‚×‚È‚¢  1:’²‚×‚é (‚±‚Ìbit‚ğQÆ)
-						 bit2(out) : Œ©‚Â‚©‚Á‚½ˆÊ’u         0:Œã‚ë      1:‘O     (‚±‚Ìbit‚ğXV)
+	@param ptLayout [in] æ¤œç´¢é–‹å§‹ç‚¹ã®ç‰©ç†åº§æ¨™
+	@param pptLayoutNew [out] ç§»å‹•å…ˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåº§æ¨™
+	@param mode [in,out] bit0(in)  : è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ 0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹
+						 bit1(in)  : å‰æ–¹æ–‡å­—ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ   0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹ (ã“ã®bitã‚’å‚ç…§)
+						 bit2(out) : è¦‹ã¤ã‹ã£ãŸä½ç½®         0:å¾Œã‚      1:å‰     (ã“ã®bitã‚’æ›´æ–°)
 
-	@retval true ¬Œ÷
-	@retval false ¸”s
+	@retval true æˆåŠŸ
+	@retval false å¤±æ•—
 
 	@author genta
 	@date Jun. 16, 2000 genta
-	@date Feb. 03, 2001 MIK ‘SŠpŠ‡ŒÊ‚É‘Î‰
-	@date Sep. 18, 2002 ai mode‚Ì’Ç‰Á
+	@date Feb. 03, 2001 MIK å…¨è§’æ‹¬å¼§ã«å¯¾å¿œ
+	@date Sep. 18, 2002 ai modeã®è¿½åŠ 
 */
 bool CEditView::SearchBracket(
 	const CLayoutPoint&	ptLayout,
@@ -318,7 +318,7 @@ bool CEditView::SearchBracket(
 	int*				mode
 )
 {
-	CLogicInt len;	//	s‚Ì’·‚³
+	CLogicInt len;	//	è¡Œã®é•·ã•
 
 	CLogicPoint ptPos;
 
@@ -326,10 +326,10 @@ bool CEditView::SearchBracket(
 	const wchar_t *cline = m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2())->GetDocLineStrWithEOL(&len);
 
 	//	Jun. 19, 2000 genta
-	if( cline == NULL )	//	ÅŒã‚Ìs‚É–{•¶‚ª‚È‚¢ê‡
+	if( cline == NULL )	//	æœ€å¾Œã®è¡Œã«æœ¬æ–‡ãŒãªã„å ´åˆ
 		return false;
 
-	// Š‡ŒÊˆ— 2007.10.16 kobake
+	// æ‹¬å¼§å‡¦ç† 2007.10.16 kobake
 	{
 		const KAKKO_T* p;
 		for( p = g_aKakkos; p->sStr != NULL;  p++ )
@@ -347,21 +347,21 @@ bool CEditView::SearchBracket(
 
 	// 02/09/18 ai Start
 	if( 0 == ( *mode & 2 ) ){
-		/* ƒJ[ƒ\ƒ‹‚Ì‘O•û‚ğ’²‚×‚È‚¢ê‡ */
+		/* ã‚«ãƒ¼ã‚½ãƒ«ã®å‰æ–¹ã‚’èª¿ã¹ãªã„å ´åˆ */
 		return false;
 	}
 	*mode |= 4;
 	// 02/09/18 ai End
 
-	//	Š‡ŒÊ‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚çCƒJ[ƒ\ƒ‹‚Ì’¼‘O‚Ì•¶š‚ğ’²‚×‚é
+	//	æ‹¬å¼§ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã‚‰ï¼Œã‚«ãƒ¼ã‚½ãƒ«ã®ç›´å‰ã®æ–‡å­—ã‚’èª¿ã¹ã‚‹
 
 	if( ptPos.x <= 0 ){
-		return false;	//	‘O‚Ì•¶š‚Í‚È‚¢
+		return false;	//	å‰ã®æ–‡å­—ã¯ãªã„
 	}
 
 	const wchar_t *bPos = CNativeW::GetCharPrev( cline, ptPos.x, cline + ptPos.x );
 	int nCharSize = cline + ptPos.x - bPos;
-	// Š‡ŒÊˆ— 2007.10.16 kobake
+	// æ‹¬å¼§å‡¦ç† 2007.10.16 kobake
 	if(nCharSize==1){
 		const KAKKO_T* p;
 		ptPos.x = bPos - cline;
@@ -381,20 +381,20 @@ bool CEditView::SearchBracket(
 }
 
 /*!
-	@brief ”¼Šp‘ÎŠ‡ŒÊ‚ÌŒŸõ:‡•ûŒü
+	@brief åŠè§’å¯¾æ‹¬å¼§ã®æ¤œç´¢:é †æ–¹å‘
 
 	@author genta
 
-	@param ptLayout [in] ŒŸõŠJn“_‚Ì•¨—À•W
-	@param pptLayoutNew [out] ˆÚ“®æ‚ÌƒŒƒCƒAƒEƒgÀ•W
-	@param upChar [in] Š‡ŒÊ‚Ìn‚Ü‚è‚Ì•¶š
-	@param dnChar [in] Š‡ŒÊ‚ğ•Â‚¶‚é•¶š—ñ
-	@param mode   [in] bit0(in)  : •\¦—ÌˆæŠO‚ğ’²‚×‚é‚©H 0:’²‚×‚È‚¢  1:’²‚×‚é (‚±‚Ìbit‚ğQÆ)
-					 bit1(in)  : ‘O•û•¶š‚ğ’²‚×‚é‚©H   0:’²‚×‚È‚¢  1:’²‚×‚é
-					 bit2(out) : Œ©‚Â‚©‚Á‚½ˆÊ’u         0:Œã‚ë      1:‘O
+	@param ptLayout [in] æ¤œç´¢é–‹å§‹ç‚¹ã®ç‰©ç†åº§æ¨™
+	@param pptLayoutNew [out] ç§»å‹•å…ˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåº§æ¨™
+	@param upChar [in] æ‹¬å¼§ã®å§‹ã¾ã‚Šã®æ–‡å­—
+	@param dnChar [in] æ‹¬å¼§ã‚’é–‰ã˜ã‚‹æ–‡å­—åˆ—
+	@param mode   [in] bit0(in)  : è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ 0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹ (ã“ã®bitã‚’å‚ç…§)
+					 bit1(in)  : å‰æ–¹æ–‡å­—ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ   0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹
+					 bit2(out) : è¦‹ã¤ã‹ã£ãŸä½ç½®         0:å¾Œã‚      1:å‰
 
-	@retval true ¬Œ÷
-	@retval false ¸”s
+	@retval true æˆåŠŸ
+	@retval false å¤±æ•—
 */
 // 03/01/08 ai
 bool CEditView::SearchBracketForward(
@@ -418,7 +418,7 @@ bool CEditView::SearchBracketForward(
 
 	CLayoutInt	nSearchNum;	// 02/09/19 ai
 
-	//	‰ŠúˆÊ’u‚Ìİ’è
+	//	åˆæœŸä½ç½®ã®è¨­å®š
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ( GetTextArea().GetBottomLine() ) - ptColLine.y;					// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
@@ -442,29 +442,29 @@ bool CEditView::SearchBracketForward(
 				--level;
 			}// 03/01/08 ai End
 
-			if( level == 0 ){	//	Œ©‚Â‚©‚Á‚½I
+			if( level == 0 ){	//	è¦‹ã¤ã‹ã£ãŸï¼
 				ptPos.x = cPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, pptLayoutNew );
 				return true;
 				//	Happy Ending
 			}
-			cPos = nPos;	//	Ÿ‚Ì•¶š‚Ö
+			cPos = nPos;	//	æ¬¡ã®æ–‡å­—ã¸
 		}
 
 		// 02/09/19 ai Start
 		nSearchNum--;
 		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
-		{	// •\¦—ÌˆæŠO‚ğ’²‚×‚È‚¢ƒ‚[ƒh‚Å•\¦—Ìˆæ‚ÌI’[‚Ìê‡
-			//SendStatusMessage( "‘ÎŠ‡ŒÊ‚ÌŒŸõ‚ğ’†’f‚µ‚Ü‚µ‚½" );
+		{	// è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ãªã„ãƒ¢ãƒ¼ãƒ‰ã§è¡¨ç¤ºé ˜åŸŸã®çµ‚ç«¯ã®å ´åˆ
+			//SendStatusMessage( "å¯¾æ‹¬å¼§ã®æ¤œç´¢ã‚’ä¸­æ–­ã—ã¾ã—ãŸ" );
 			break;
 		}
 		// 02/09/19 ai End
 
-		//	Ÿ‚Ìs‚Ö
+		//	æ¬¡ã®è¡Œã¸
 		ptPos.y++;
-		ci = ci->GetNextLine();	//	Ÿ‚ÌƒAƒCƒeƒ€
+		ci = ci->GetNextLine();	//	æ¬¡ã®ã‚¢ã‚¤ãƒ†ãƒ 
 		if( ci == NULL )
-			break;	//	I‚í‚è‚É’B‚µ‚½
+			break;	//	çµ‚ã‚ã‚Šã«é”ã—ãŸ
 
 		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline;
@@ -475,20 +475,20 @@ bool CEditView::SearchBracketForward(
 }
 
 /*!
-	@brief ”¼Šp‘ÎŠ‡ŒÊ‚ÌŒŸõ:‹t•ûŒü
+	@brief åŠè§’å¯¾æ‹¬å¼§ã®æ¤œç´¢:é€†æ–¹å‘
 
 	@author genta
 
-	@param ptLayout [in] ŒŸõŠJn“_‚Ì•¨—À•W
-	@param pptLayoutNew [out] ˆÚ“®æ‚ÌƒŒƒCƒAƒEƒgÀ•W
-	@param upChar [in] Š‡ŒÊ‚Ìn‚Ü‚è‚Ì•¶š
-	@param dnChar [in] Š‡ŒÊ‚ğ•Â‚¶‚é•¶š—ñ
-	@param mode [in] bit0(in)  : •\¦—ÌˆæŠO‚ğ’²‚×‚é‚©H 0:’²‚×‚È‚¢  1:’²‚×‚é (‚±‚Ìbit‚ğQÆ)
-					 bit1(in)  : ‘O•û•¶š‚ğ’²‚×‚é‚©H   0:’²‚×‚È‚¢  1:’²‚×‚é
-					 bit2(out) : Œ©‚Â‚©‚Á‚½ˆÊ’u         0:Œã‚ë      1:‘O
+	@param ptLayout [in] æ¤œç´¢é–‹å§‹ç‚¹ã®ç‰©ç†åº§æ¨™
+	@param pptLayoutNew [out] ç§»å‹•å…ˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåº§æ¨™
+	@param upChar [in] æ‹¬å¼§ã®å§‹ã¾ã‚Šã®æ–‡å­—
+	@param dnChar [in] æ‹¬å¼§ã‚’é–‰ã˜ã‚‹æ–‡å­—åˆ—
+	@param mode [in] bit0(in)  : è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ 0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹ (ã“ã®bitã‚’å‚ç…§)
+					 bit1(in)  : å‰æ–¹æ–‡å­—ã‚’èª¿ã¹ã‚‹ã‹ï¼Ÿ   0:èª¿ã¹ãªã„  1:èª¿ã¹ã‚‹
+					 bit2(out) : è¦‹ã¤ã‹ã£ãŸä½ç½®         0:å¾Œã‚      1:å‰
 
-	@retval true ¬Œ÷
-	@retval false ¸”s
+	@retval true æˆåŠŸ
+	@retval false å¤±æ•—
 */
 bool CEditView::SearchBracketBackward(
 	CLogicPoint		ptPos,
@@ -510,7 +510,7 @@ bool CEditView::SearchBracketBackward(
 
 	CLayoutInt		nSearchNum;	// 02/09/19 ai
 
-	//	‰ŠúˆÊ’u‚Ìİ’è
+	//	åˆæœŸä½ç½®ã®è¨­å®š
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, &ptColLine );	// 02/09/19 ai
 	nSearchNum = ptColLine.y - GetTextArea().GetViewTopLine();										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
@@ -533,29 +533,29 @@ bool CEditView::SearchBracketBackward(
 				--level;
 			}// 03/01/08 ai End
 
-			if( level == 0 ){	//	Œ©‚Â‚©‚Á‚½I
+			if( level == 0 ){	//	è¦‹ã¤ã‹ã£ãŸï¼
 				ptPos.x = pPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptPos, pptLayoutNew );
 				return true;
 				//	Happy Ending
 			}
-			cPos = pPos;	//	Ÿ‚Ì•¶š‚Ö
+			cPos = pPos;	//	æ¬¡ã®æ–‡å­—ã¸
 		}
 
 		// 02/09/19 ai Start
 		nSearchNum--;
 		if( ( 0 > nSearchNum ) && ( 0 == (*mode & 1 ) ) )
-		{	// •\¦—ÌˆæŠO‚ğ’²‚×‚È‚¢ƒ‚[ƒh‚Å•\¦—Ìˆæ‚Ìæ“ª‚Ìê‡
-			//SendStatusMessage( "‘ÎŠ‡ŒÊ‚ÌŒŸõ‚ğ’†’f‚µ‚Ü‚µ‚½" );
+		{	// è¡¨ç¤ºé ˜åŸŸå¤–ã‚’èª¿ã¹ãªã„ãƒ¢ãƒ¼ãƒ‰ã§è¡¨ç¤ºé ˜åŸŸã®å…ˆé ­ã®å ´åˆ
+			//SendStatusMessage( "å¯¾æ‹¬å¼§ã®æ¤œç´¢ã‚’ä¸­æ–­ã—ã¾ã—ãŸ" );
 			break;
 		}
 		// 02/09/19 ai End
 
-		//	Ÿ‚Ìs‚Ö
+		//	æ¬¡ã®è¡Œã¸
 		ptPos.y--;
-		ci = ci->GetPrevLine();	//	Ÿ‚ÌƒAƒCƒeƒ€
+		ci = ci->GetPrevLine();	//	æ¬¡ã®ã‚¢ã‚¤ãƒ†ãƒ 
 		if( ci == NULL )
-			break;	//	I‚í‚è‚É’B‚µ‚½
+			break;	//	çµ‚ã‚ã‚Šã«é”ã—ãŸ
 
 		cline = ci->GetDocLineStrWithEOL( &len );
 		cPos = cline + len;
@@ -566,7 +566,7 @@ bool CEditView::SearchBracketBackward(
 
 //@@@ 2003.01.09 Start by ai:
 /*!
-	@brief Š‡ŒÊ”»’è
+	@brief æ‹¬å¼§åˆ¤å®š
 
 	@author ai
 
@@ -574,12 +574,12 @@ bool CEditView::SearchBracketBackward(
 	@param x
 	@param size
 
-	@retval true Š‡ŒÊ
-	@retval false ”ñŠ‡ŒÊ
+	@retval true æ‹¬å¼§
+	@retval false éæ‹¬å¼§
 */
 bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
 {
-	// Š‡ŒÊˆ— 2007.10.16 kobake
+	// æ‹¬å¼§å‡¦ç† 2007.10.16 kobake
 	if( size == 1 ){
 		const KAKKO_T *p;
 		for( p = g_aKakkos; p->sStr != NULL; p++ )

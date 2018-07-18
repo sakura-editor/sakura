@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,14 +27,14 @@
 class CEditView;
 
 
-//! ƒNƒŠƒbƒsƒ“ƒO—Ìˆæ‚ğŒvZ‚·‚éÛ‚Ìƒtƒ‰ƒO
+//! ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°é ˜åŸŸã‚’è¨ˆç®—ã™ã‚‹éš›ã®ãƒ•ãƒ©ã‚°
 enum EPaintArea{
-	PAINT_LINENUMBER = (1<<0), //!< s”Ô†
-	PAINT_RULER      = (1<<1), //!< ƒ‹[ƒ‰[
-	PAINT_BODY       = (1<<2), //!< –{•¶
+	PAINT_LINENUMBER = (1<<0), //!< è¡Œç•ªå·
+	PAINT_RULER      = (1<<1), //!< ãƒ«ãƒ¼ãƒ©ãƒ¼
+	PAINT_BODY       = (1<<2), //!< æœ¬æ–‡
 
-	//“Áê
-	PAINT_ALL        = PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, //!< ‚º‚ñ‚Ô
+	//ç‰¹æ®Š
+	PAINT_ALL        = PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, //!< ãœã‚“ã¶
 };
 
 class CEditView_Paint{
@@ -44,8 +44,8 @@ public:
 public:
 	virtual ~CEditView_Paint(){}
 	void Call_OnPaint(
-		int nPaintFlag,   //!< •`‰æ‚·‚é—Ìˆæ‚ğ‘I‘ğ‚·‚é
-		bool bUseMemoryDC //!< ƒƒ‚ƒŠDC‚ğg—p‚·‚é
+		int nPaintFlag,   //!< æç”»ã™ã‚‹é ˜åŸŸã‚’é¸æŠã™ã‚‹
+		bool bUseMemoryDC //!< ãƒ¡ãƒ¢ãƒªDCã‚’ä½¿ç”¨ã™ã‚‹
 	);
 };
 

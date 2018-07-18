@@ -1,17 +1,17 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_KeywordSet.h"
 #include <limits>
 #include "mem/CNativeW.h"
 #include "charset/charcode.h"
 
-/** start‚æ‚èŒã‚ë‚ÌŒê‚Ì‹«ŠE‚ÌˆÊ’u‚ğ•Ô‚·B
-	start‚æ‚è‘O‚Ì•¶š‚Í“Ç‚Ü‚È‚¢Bˆê”Ô‘å‚«‚¢–ß‚è’l‚Í str.GetLength()‚Æ“™‚µ‚­‚È‚éB
+/** startã‚ˆã‚Šå¾Œã‚ã®èªã®å¢ƒç•Œã®ä½ç½®ã‚’è¿”ã™ã€‚
+	startã‚ˆã‚Šå‰ã®æ–‡å­—ã¯èª­ã¾ãªã„ã€‚ä¸€ç•ªå¤§ãã„æˆ»ã‚Šå€¤ã¯ str.GetLength()ã¨ç­‰ã—ããªã‚‹ã€‚
 */
 static int NextWordBreak( const CStringRef& str, const int start );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒL[ƒ[ƒhƒZƒbƒg                        //
+//                     ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CColor_KeywordSet::CColor_KeywordSet()
@@ -21,21 +21,21 @@ CColor_KeywordSet::CColor_KeywordSet()
 }
 
 
-// 2005.01.13 MIK ‹­’²ƒL[ƒ[ƒh”’Ç‰Á‚É”º‚¤”z—ñ‰»
+// 2005.01.13 MIK å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°è¿½åŠ ã«ä¼´ã†é…åˆ—åŒ–
 bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if( ! cStr.IsValid() ) {
-		return false; // ‚Ç‚¤‚É‚à‚Å‚«‚È‚¢B
+		return false; // ã©ã†ã«ã‚‚ã§ããªã„ã€‚
 	}
 
 	/*
 		Summary:
-			Œ»İˆÊ’u‚©‚çƒL[ƒ[ƒh‚ğ”²‚«o‚µA‚»‚ÌƒL[ƒ[ƒh‚ª“o˜^’PŒê‚È‚ç‚ÎAF‚ğ•Ï‚¦‚é
+			ç¾åœ¨ä½ç½®ã‹ã‚‰ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æŠœãå‡ºã—ã€ãã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãŒç™»éŒ²å˜èªãªã‚‰ã°ã€è‰²ã‚’å¤‰ãˆã‚‹
 	*/
 
 	const ECharKind charKind = CWordParse::WhatKindOfChar( cStr.GetPtr(), cStr.GetLength() , nPos );
 	if( charKind <= CK_SPACE ){
-		return false; // ‚±‚Ì•¶š‚ÍƒL[ƒ[ƒh‘ÎÛ•¶š‚Å‚Í‚È‚¢B
+		return false; // ã“ã®æ–‡å­—ã¯ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å¯¾è±¡æ–‡å­—ã§ã¯ãªã„ã€‚
 	}
 	if( 0 < nPos ){
 		const ECharKind charKindPrev = CWordParse::WhatKindOfChar( cStr.GetPtr(), cStr.GetLength() , nPos-1 );
@@ -48,38 +48,38 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 	const int posNextWordHead = NextWordBreak( cStr, nPos );
 	for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; ++i ) {
 		if( ! m_pTypeData->m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ].m_bDisp ) {
-			continue; // Fİ’è‚ª”ñ•\¦‚È‚Ì‚ÅƒXƒLƒbƒvB
+			continue; // è‰²è¨­å®šãŒéè¡¨ç¤ºãªã®ã§ã‚¹ã‚­ãƒƒãƒ—ã€‚
 		}
 		const int iKwdSet = m_pTypeData->m_nKeyWordSetIdx[i];
 		if( iKwdSet == -1 ) {
-			continue; // ƒL[ƒ[ƒhƒZƒbƒg‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚ÅƒXƒLƒbƒvB
+			continue; // ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆãŒè¨­å®šã•ã‚Œã¦ã„ãªã„ã®ã§ã‚¹ã‚­ãƒƒãƒ—ã€‚
 		}
-		int posWordEnd = nPos; ///< nPos...posWordEnd‚ªƒL[ƒ[ƒhB
-		int posWordEndCandidate = posNextWordHead; ///< nPos...posWordEndCandidate‚ÍƒL[ƒ[ƒhŒó•âB
+		int posWordEnd = nPos; ///< nPos...posWordEndãŒã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã€‚
+		int posWordEndCandidate = posNextWordHead; ///< nPos...posWordEndCandidateã¯ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å€™è£œã€‚
 		do {
 			const int ret = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2( iKwdSet, cStr.GetPtr() + nPos, posWordEndCandidate - nPos );
 			if( 0 <= ret ) {
-				// “o˜^‚³‚ê‚½ƒL[ƒ[ƒh‚¾‚Á‚½B
+				// ç™»éŒ²ã•ã‚ŒãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã ã£ãŸã€‚
 				posWordEnd = posWordEndCandidate;
 				if( ret == std::numeric_limits<int>::max() ) {
-					// ‚æ‚è’·‚¢ƒL[ƒ[ƒh‚à‘¶İ‚·‚é‚Ì‚Å‰„’·‚µ‚ÄƒŠƒgƒ‰ƒCB
+					// ã‚ˆã‚Šé•·ã„ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚‚å­˜åœ¨ã™ã‚‹ã®ã§å»¶é•·ã—ã¦ãƒªãƒˆãƒ©ã‚¤ã€‚
 					continue;
 				}
 				break;
 			} else if( ret == -1 ) {
-				// “o˜^‚³‚ê‚½ƒL[ƒ[ƒh‚Å‚Í‚È‚©‚Á‚½B
+				// ç™»éŒ²ã•ã‚ŒãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã¯ãªã‹ã£ãŸã€‚
 				break;
 			} else if( ret == -2 ) {
-				// ’·‚³‚ª‘«‚è‚È‚©‚Á‚½‚Ì‚Å‰„’·‚µ‚ÄƒŠƒgƒ‰ƒCB
+				// é•·ã•ãŒè¶³ã‚Šãªã‹ã£ãŸã®ã§å»¶é•·ã—ã¦ãƒªãƒˆãƒ©ã‚¤ã€‚
 				continue;
 			} else {
-				// “o˜^‚³‚ê‚½ƒL[ƒ[ƒh‚Å‚Í‚È‚©‚Á‚½H
-				// CKeyWordSetMgr::SearchKeyWord2()‚©‚ç‘z’èŠO‚Ì–ß‚è’lB
+				// ç™»éŒ²ã•ã‚ŒãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã¯ãªã‹ã£ãŸï¼Ÿ
+				// CKeyWordSetMgr::SearchKeyWord2()ã‹ã‚‰æƒ³å®šå¤–ã®æˆ»ã‚Šå€¤ã€‚
 				break;
 			}
 		} while( posWordEndCandidate < cStr.GetLength() && ((posWordEndCandidate = NextWordBreak( cStr, posWordEndCandidate )) != 0) );
 
-		// nPos...posWordEnd ‚ªƒL[ƒ[ƒhB
+		// nPos...posWordEnd ãŒã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã€‚
 		if( nPos < posWordEnd ) {
 			this->m_nCOMMENTEND = posWordEnd;
 			this->m_nKeywordIndex = i;

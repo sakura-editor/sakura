@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -37,10 +37,10 @@ public:
 	void CopyTextAreaStatus(CTextArea* pDst) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     ƒrƒ…[î•ñ‚ğæ“¾                        //
+	//                     ãƒ“ãƒ¥ãƒ¼æƒ…å ±ã‚’å–å¾—                        //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//!•\¦‚³‚ê‚éÅ‰‚Ìs
+	//!è¡¨ç¤ºã•ã‚Œã‚‹æœ€åˆã®è¡Œ
 	CLayoutInt GetViewTopLine() const
 	{
 		return m_nViewTopLine;
@@ -50,7 +50,7 @@ public:
 		m_nViewTopLine=nLine;
 	}
 
-	//!•\¦ˆæ‚Ìˆê”Ô¶‚ÌŒ…
+	//!è¡¨ç¤ºåŸŸã®ä¸€ç•ªå·¦ã®æ¡
 	CLayoutInt GetViewLeftCol() const
 	{
 		return m_nViewLeftCol;
@@ -60,20 +60,20 @@ public:
 		m_nViewLeftCol=nLeftCol;
 	}
 
-	//!‰E‚É‚Í‚İo‚µ‚½Å‰‚Ì—ñ‚ğ•Ô‚·
+	//!å³ã«ã¯ã¿å‡ºã—ãŸæœ€åˆã®åˆ—ã‚’è¿”ã™
 	CLayoutInt GetRightCol() const
 	{
 		return m_nViewLeftCol + m_nViewColNum;
 	}
 
-	//!‰º‚É‚Í‚İo‚µ‚½Å‰‚Ìs‚ğ•Ô‚·
+	//!ä¸‹ã«ã¯ã¿å‡ºã—ãŸæœ€åˆã®è¡Œã‚’è¿”ã™
 	CLayoutInt GetBottomLine() const
 	{
 		return m_nViewTopLine + m_nViewRowNum;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                   —Ìˆæ‚ğæ“¾(ƒsƒNƒZƒ‹)                      //
+	//                   é ˜åŸŸã‚’å–å¾—(ãƒ”ã‚¯ã‚»ãƒ«)                      //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	int GetAreaLeft() const
 	{
@@ -121,58 +121,58 @@ public:
 	{
 		m_nLeftYohaku=nPixel;
 	}
-	// s”Ô†‚Ì•(—]”’‚È‚µ)
+	// è¡Œç•ªå·ã®å¹…(ä½™ç™½ãªã—)
 	int GetLineNumberWidth() const
 	{
 		return m_nViewAlignLeft - m_nLeftYohaku;
 	}
 
-	//! ƒNƒ‰ƒCƒAƒ“ƒgƒTƒCƒYXV
+	//! ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚µã‚¤ã‚ºæ›´æ–°
 	void TextArea_OnSize(
-		const CMySize& sizeClient, //!< ƒEƒBƒ“ƒhƒE‚ÌƒNƒ‰ƒCƒAƒ“ƒgƒTƒCƒY
-		int nCxVScroll,            //!< ‚’¼ƒXƒNƒ[ƒ‹ƒo[‚Ì‰¡•
-		int nCyHScroll             //!< …•½ƒXƒNƒ[ƒ‹ƒo[‚Ìc•
+		const CMySize& sizeClient, //!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚µã‚¤ã‚º
+		int nCxVScroll,            //!< å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®æ¨ªå¹…
+		int nCyHScroll             //!< æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®ç¸¦å¹…
 	);
 
-	//! s”Ô†•\¦‚É•K—v‚È•‚ğİ’è
+	//! è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’è¨­å®š
 	bool DetectWidthOfLineNumberArea( bool bRedraw );
 
-	//! s”Ô†•\¦‚É•K—v‚ÈŒ…”‚ğŒvZ
+	//! è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªæ¡æ•°ã‚’è¨ˆç®—
 	int  DetectWidthOfLineNumberArea_calculate(const CLayoutMgr*, bool bLayout=false) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ”»’è                              //
+	//                           åˆ¤å®š                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	bool IsRectIntersected(const RECT& rc) const
 	{
-		//rc‚ª–³Œø‚Ü‚½‚Íƒ[ƒ—Ìˆæ‚Ìê‡‚Ífalse
+		//rcãŒç„¡åŠ¹ã¾ãŸã¯ã‚¼ãƒ­é ˜åŸŸã®å ´åˆã¯false
 		if( rc.left >= rc.right )return false;
 		if( rc.top  >= rc.bottom )return false;
 
-		if( rc.left >= this->GetAreaRight() )return false; //‰EŠO
-		if( rc.right <= this->GetAreaLeft() )return false; //¶ŠO
-		if( rc.top >= this->GetAreaBottom() )return false; //‰ºŠO
-		if( rc.bottom <= this->GetAreaTop() )return false; //ãŠO
+		if( rc.left >= this->GetAreaRight() )return false; //å³å¤–
+		if( rc.right <= this->GetAreaLeft() )return false; //å·¦å¤–
+		if( rc.top >= this->GetAreaBottom() )return false; //ä¸‹å¤–
+		if( rc.bottom <= this->GetAreaTop() )return false; //ä¸Šå¤–
 		
 		return true;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ‚»‚Ì‘¼æ“¾                           //
+	//                        ãã®ä»–å–å¾—                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	int GetRulerHeight() const
 	{
 		return m_nViewAlignTop - GetTopYohaku();
 	}
-	//! ƒhƒLƒ…ƒƒ“ƒg¶’[‚ÌƒNƒ‰ƒCƒAƒ“ƒgÀ•W‚ğæ“¾ (‚Â‚Ü‚èAƒXƒNƒ[ƒ‹‚³‚ê‚½ó‘Ô‚Å‚ ‚ê‚ÎAƒ}ƒCƒiƒX‚ğ•Ô‚·)
+	//! ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆå·¦ç«¯ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåº§æ¨™ã‚’å–å¾— (ã¤ã¾ã‚Šã€ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã•ã‚ŒãŸçŠ¶æ…‹ã§ã‚ã‚Œã°ã€ãƒã‚¤ãƒŠã‚¹ã‚’è¿”ã™)
 	int GetDocumentLeftClientPointX() const;
 
-	//ŒvZ
-	//! ƒNƒ‰ƒCƒAƒ“ƒgÀ•W‚©‚çƒŒƒCƒAƒEƒgˆÊ’u‚É•ÏŠ·‚·‚é
+	//è¨ˆç®—
+	//! ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåº§æ¨™ã‹ã‚‰ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã«å¤‰æ›ã™ã‚‹
 	void ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           İ’è                              //
+	//                           è¨­å®š                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void UpdateAreaMetrics();
 	void SetAreaLeft(int nAreaLeft)
@@ -194,15 +194,15 @@ public:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ƒTƒ|[ƒg                            //
+	//                         ã‚µãƒãƒ¼ãƒˆ                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//$ Generate‚È‚ñ‚Ä‚¢‚¤‘å‚°‚³‚È–¼‘O‚¶‚á‚È‚­‚ÄAGet`‚Å—Ç‚¢‹C‚ª‚µ‚Ä‚«‚½
-	//!ƒNƒŠƒbƒsƒ“ƒO‹éŒ`‚ğì¬B•\¦”ÍˆÍŠO‚¾‚Á‚½ê‡‚Ífalse‚ğ•Ô‚·B
+	//$ Generateãªã‚“ã¦ã„ã†å¤§ã’ã•ãªåå‰ã˜ã‚ƒãªãã¦ã€Getï½ã§è‰¯ã„æ°—ãŒã—ã¦ããŸ
+	//!ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°çŸ©å½¢ã‚’ä½œæˆã€‚è¡¨ç¤ºç¯„å›²å¤–ã ã£ãŸå ´åˆã¯falseã‚’è¿”ã™ã€‚
 	void GenerateCharRect(RECT* rc,const DispPos& sPos,CLayoutXInt nColumns) const;
 	bool TrimRectByArea(RECT* rc) const;
 	bool GenerateClipRect(RECT* rc,const DispPos& sPos,CLayoutXInt nColumns) const;
-	bool GenerateClipRectRight(RECT* rc,const DispPos& sPos) const; //!< ‰E’[‚Ü‚Å‘S•”
-	bool GenerateClipRectLine(RECT* rc,const DispPos& sPos) const;  //!< s‘S•”
+	bool GenerateClipRectRight(RECT* rc,const DispPos& sPos) const; //!< å³ç«¯ã¾ã§å…¨éƒ¨
+	bool GenerateClipRectLine(RECT* rc,const DispPos& sPos) const;  //!< è¡Œå…¨éƒ¨
 
 	void GenerateTopRect   (RECT* rc, CLayoutInt nLineCount) const;
 	void GenerateBottomRect(RECT* rc, CLayoutInt nLineCount) const;
@@ -216,35 +216,35 @@ public:
 	int GenerateYPx(CLayoutYInt nLineNum) const;
 
 private:
-	//QÆ
+	//å‚ç…§
 	CEditView*	m_pEditView;
 
 public:
-	/* ‰æ–Êî•ñ */
-	//ƒsƒNƒZƒ‹
+	/* ç”»é¢æƒ…å ± */
+	//ãƒ”ã‚¯ã‚»ãƒ«
 private:
-	int		m_nViewAlignLeft;		/* •\¦ˆæ‚Ì¶’[À•W */
-	int		m_nViewAlignTop;		/* •\¦ˆæ‚Ìã’[À•W */
+	int		m_nViewAlignLeft;		/* è¡¨ç¤ºåŸŸã®å·¦ç«¯åº§æ¨™ */
+	int		m_nViewAlignTop;		/* è¡¨ç¤ºåŸŸã®ä¸Šç«¯åº§æ¨™ */
 private:
 	int		m_nTopYohaku;
 	int		m_nLeftYohaku;
 private:
-	int		m_nViewCx;				/* •\¦ˆæ‚Ì• */
-	int		m_nViewCy;				/* •\¦ˆæ‚Ì‚‚³ */
+	int		m_nViewCx;				/* è¡¨ç¤ºåŸŸã®å¹… */
+	int		m_nViewCy;				/* è¡¨ç¤ºåŸŸã®é«˜ã• */
 
-	//ƒeƒLƒXƒg
+	//ãƒ†ã‚­ã‚¹ãƒˆ
 private:
-	CLayoutInt	m_nViewTopLine;			/* •\¦ˆæ‚Ìˆê”Ôã‚Ìs(0ŠJn) */
+	CLayoutInt	m_nViewTopLine;			/* è¡¨ç¤ºåŸŸã®ä¸€ç•ªä¸Šã®è¡Œ(0é–‹å§‹) */
 public:
-	CLayoutInt	m_nViewRowNum;			/* •\¦ˆæ‚Ìs” */
+	CLayoutInt	m_nViewRowNum;			/* è¡¨ç¤ºåŸŸã®è¡Œæ•° */
 
 private:
-	CLayoutInt	m_nViewLeftCol;			/* •\¦ˆæ‚Ìˆê”Ô¶‚ÌŒ…(0ŠJn) */
+	CLayoutInt	m_nViewLeftCol;			/* è¡¨ç¤ºåŸŸã®ä¸€ç•ªå·¦ã®æ¡(0é–‹å§‹) */
 public:
-	CLayoutInt	m_nViewColNum;			/* •\¦ˆæ‚ÌŒ…” */
+	CLayoutInt	m_nViewColNum;			/* è¡¨ç¤ºåŸŸã®æ¡æ•° */
 
-	//‚»‚Ì‘¼
-	int		m_nViewAlignLeftCols;	/* s”Ô†ˆæ‚ÌŒ…” */
+	//ãã®ä»–
+	int		m_nViewAlignLeftCols;	/* è¡Œç•ªå·åŸŸã®æ¡æ•° */
 };
 
 #endif /* SAKURA_CTEXTAREA_BE5C17FA_E8D8_4659_9AA4_552DF90288CC9_H_ */

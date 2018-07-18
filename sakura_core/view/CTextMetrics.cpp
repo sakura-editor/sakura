@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,12 +29,12 @@
 using namespace std;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CTextMetrics::CTextMetrics()
 {
-	//$ “K“–‚È‰¼’l‚Å‰Šú‰»BÀÛ‚É‚Íg‚¤‘¤‚ÅSet`‚ğŒÄ‚Ô‚Ì‚ÅA‚±‚ê‚ç‚Ì‰¼’l‚ªQÆ‚³‚ê‚é‚±‚Æ‚Í–³‚¢B
+	//$ é©å½“ãªä»®å€¤ã§åˆæœŸåŒ–ã€‚å®Ÿéš›ã«ã¯ä½¿ã†å´ã§Setï½ã‚’å‘¼ã¶ã®ã§ã€ã“ã‚Œã‚‰ã®ä»®å€¤ãŒå‚ç…§ã•ã‚Œã‚‹ã“ã¨ã¯ç„¡ã„ã€‚
 	SetHankakuWidth(10);
 	SetHankakuHeight(18);
 	SetHankakuDx(12);
@@ -47,20 +47,20 @@ CTextMetrics::~CTextMetrics()
 
 void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 {
-	pDst->SetHankakuWidth			(GetHankakuWidth());		/* ”¼Šp•¶š‚Ì• */
-	pDst->SetHankakuHeight			(GetHankakuHeight());		/* •¶š‚Ì‚‚³ */
+	pDst->SetHankakuWidth			(GetHankakuWidth());		/* åŠè§’æ–‡å­—ã®å¹… */
+	pDst->SetHankakuHeight			(GetHankakuHeight());		/* æ–‡å­—ã®é«˜ã• */
 	pDst->m_aFontHeightMargin = m_aFontHeightMargin;
 }
 
 /*
-	•¶š‚Ì‘å‚«‚³‚ğ’²‚×‚é
+	æ–‡å­—ã®å¤§ãã•ã‚’èª¿ã¹ã‚‹
 	
-	¦ƒrƒ‹ƒhí‚É‚æ‚èA”÷–­‚ÉƒTƒCƒY‚ª•Ï‚í‚é‚æ‚¤‚Å‚µ‚½B
-	@ƒTƒCƒY‚ğ‡‚í‚¹‚é‚½‚ßA“K“–‚È•¶š‚Å’²®B
+	â€»ãƒ“ãƒ«ãƒ‰ç¨®ã«ã‚ˆã‚Šã€å¾®å¦™ã«ã‚µã‚¤ã‚ºãŒå¤‰ã‚ã‚‹ã‚ˆã†ã§ã—ãŸã€‚
+	ã€€ã‚µã‚¤ã‚ºã‚’åˆã‚ã›ã‚‹ãŸã‚ã€é©å½“ãªæ–‡å­—ã§èª¿æ•´ã€‚
 */
 void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 {
-	int size = 1; //b’è
+	int size = 1; //æš«å®š
 	HFONT hFontArray[1] = { hFont };
 
 	this->SetHankakuHeight(1);
@@ -71,11 +71,11 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	for( int i = 0; i < size; i++ ){
 		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFontArray[i] );
  		SIZE  sz;
-		// LocalCache::m_han_size ‚Æˆê’v‚µ‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+		// LocalCache::m_han_size ã¨ä¸€è‡´ã—ã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„
 		{
 			// KB145994
-			// tmAveCharWidth ‚Í•s³Šm(”¼Šp‚©‘SŠp‚È‚Ì‚©‚à•s–¾‚È’l‚ğ•Ô‚·)
-			// ‚½‚¾‚µ‚±‚ÌƒR[ƒh‚ÍƒJ[ƒjƒ“ƒO‚Ì‰e‹¿‚ğó‚¯‚é
+			// tmAveCharWidth ã¯ä¸æ­£ç¢º(åŠè§’ã‹å…¨è§’ãªã®ã‹ã‚‚ä¸æ˜ãªå€¤ã‚’è¿”ã™)
+			// ãŸã ã—ã“ã®ã‚³ãƒ¼ãƒ‰ã¯ã‚«ãƒ¼ãƒ‹ãƒ³ã‚°ã®å½±éŸ¿ã‚’å—ã‘ã‚‹
 			GetTextExtentPoint32W_AnyBuild(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 			sz.cx = (sz.cx / 26 + 1) / 2;
 		}
@@ -103,21 +103,21 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	}
 	int nOrgHeight = GetHankakuHeight();
 	if( nLineSpace < 0 ){
-		// ƒ}ƒCƒiƒX‚Ìê‡‚Í•¶š‚Ì‚‚³‚àˆø‚­
+		// ãƒã‚¤ãƒŠã‚¹ã®å ´åˆã¯æ–‡å­—ã®é«˜ã•ã‚‚å¼•ã
 		SetHankakuHeight( std::max(1, GetHankakuHeight() + nLineSpace) );
 	}
 	for( int i = 0; i < size; i++ ){
 		m_aFontHeightMargin[i] = tmAscentMaxHeight - tmAscent[i] + minMargin;
 	}
 	
-	// Dx/Dy‚àİ’è
+	// Dx/Dyã‚‚è¨­å®š
 	SetHankakuDx( GetHankakuWidth() + nColmSpace );
 	SetHankakuDy( std::max(1, nOrgHeight + nLineSpace) );
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           İ’è                              //
+//                           è¨­å®š                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CTextMetrics::SetHankakuWidth(int nHankakuWidth)
@@ -125,14 +125,14 @@ void CTextMetrics::SetHankakuWidth(int nHankakuWidth)
 	m_nCharWidth=nHankakuWidth;
 }
 
-//! ”¼Šp•¶š‚Ìc•‚ğİ’èB’PˆÊ‚ÍƒsƒNƒZƒ‹B
+//! åŠè§’æ–‡å­—ã®ç¸¦å¹…ã‚’è¨­å®šã€‚å˜ä½ã¯ãƒ”ã‚¯ã‚»ãƒ«ã€‚
 void CTextMetrics::SetHankakuHeight(int nHankakuHeight)
 {
 	m_nCharHeight=nHankakuHeight;
 }
 
 
-//!•¶šŠÔŠuŠî€İ’èBnDxBasis‚Í”¼Šp•¶š‚ÌŠî€ƒsƒNƒZƒ‹•BSetHankakuDx
+//!æ–‡å­—é–“éš”åŸºæº–è¨­å®šã€‚nDxBasisã¯åŠè§’æ–‡å­—ã®åŸºæº–ãƒ”ã‚¯ã‚»ãƒ«å¹…ã€‚SetHankakuDx
 void CTextMetrics::SetHankakuDx(int nDxBasis)
 {
 	m_nDxBasis=nDxBasis;
@@ -145,18 +145,18 @@ void CTextMetrics::SetHankakuDy(int nDyBasis)
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           æ“¾                              //
+//                           å–å¾—                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! w’è‚µ‚½•¶š—ñ‚É‚æ‚è•¶šŠÔŠu”z—ñ‚ğ¶¬‚·‚éB
+//! æŒ‡å®šã—ãŸæ–‡å­—åˆ—ã«ã‚ˆã‚Šæ–‡å­—é–“éš”é…åˆ—ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 const int* CTextMetrics::GenerateDxArray(
-	std::vector<int>* vResultArray, //!< [out] •¶šŠÔŠu”z—ñ‚Ìó‚¯æ‚èƒRƒ“ƒeƒi
-	const wchar_t* pText,           //!< [in]  •¶š—ñ
-	int nLength,                    //!< [in]  •¶š—ñ’·
-	int	nHankakuDx,					//!< [in]  ”¼Šp•¶š‚Ì•¶šŠÔŠu
-	int	nTabSpace,					//   [in]  TAB•(CLayoutXInt)
-	int	nIndent,					//   [in]  ƒCƒ“ƒfƒ“ƒg(TAB‘Î‰—p)(CLayoutXInt)
-	int nCharSpacing				//!< [in]  •¶šŒ„ŠÔ
+	std::vector<int>* vResultArray, //!< [out] æ–‡å­—é–“éš”é…åˆ—ã®å—ã‘å–ã‚Šã‚³ãƒ³ãƒ†ãƒŠ
+	const wchar_t* pText,           //!< [in]  æ–‡å­—åˆ—
+	int nLength,                    //!< [in]  æ–‡å­—åˆ—é•·
+	int	nHankakuDx,					//!< [in]  åŠè§’æ–‡å­—ã®æ–‡å­—é–“éš”
+	int	nTabSpace,					//   [in]  TABå¹…(CLayoutXInt)
+	int	nIndent,					//   [in]  ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ(TABå¯¾å¿œç”¨)(CLayoutXInt)
+	int nCharSpacing				//!< [in]  æ–‡å­—éš™é–“
 )
 {
 
@@ -167,9 +167,9 @@ const int* CTextMetrics::GenerateDxArray(
 	int	 nLayoutCnt = nIndent;
 	const wchar_t* x=pText;
 	for (int i=0; i<nLength; i++, p++, x++) {
-		// ƒTƒƒQ[ƒgƒ`ƒFƒbƒN
+		// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒã‚§ãƒƒã‚¯
 		if (*x == WCODE::TAB) {
-			// TAB‘Î‰	2013/5/7 Uchi
+			// TABå¯¾å¿œ	2013/5/7 Uchi
 			if (i > 0 && *(x-1) == WCODE::TAB) {
 				*p = nTabSpace;
 				nLayoutCnt += *p;
@@ -214,17 +214,17 @@ const int* CTextMetrics::GenerateDxArray(
 		return NULL;
 }
 
-//!•¶š—ñ‚ÌƒsƒNƒZƒ‹•‚ğ•Ô‚·B
+//!æ–‡å­—åˆ—ã®ãƒ”ã‚¯ã‚»ãƒ«å¹…ã‚’è¿”ã™ã€‚
 int CTextMetrics::CalcTextWidth(
-	const wchar_t* pText, //!< •¶š—ñ
-	int nLength,          //!< •¶š—ñ’·
-	const int* pnDx       //!< •¶šŠÔŠu‚Ì“ü‚Á‚½”z—ñ
+	const wchar_t* pText, //!< æ–‡å­—åˆ—
+	int nLength,          //!< æ–‡å­—åˆ—é•·
+	const int* pnDx       //!< æ–‡å­—é–“éš”ã®å…¥ã£ãŸé…åˆ—
 )
 {
-	//ANSI‘ã‚Ì“®ì ¦pnDx‚É‚Í‚·‚×‚Ä“¯‚¶’l‚ª“ü‚Á‚Ä‚¢‚½
+	//ANSIæ™‚ä»£ã®å‹•ä½œ â€»pnDxã«ã¯ã™ã¹ã¦åŒã˜å€¤ãŒå…¥ã£ã¦ã„ãŸ
 	//return pnDx[0] * nLength;
 
-	//UNICODE‘ã‚Ì“®ì
+	//UNICODEæ™‚ä»£ã®å‹•ä½œ
 	int w=0;
 	for(int i=0;i<nLength;i++){
 		w+=pnDx[i];
@@ -232,15 +232,15 @@ int CTextMetrics::CalcTextWidth(
 	return w;
 }
 
-//!•¶š—ñ‚ÌƒsƒNƒZƒ‹•‚ğ•Ô‚·B
+//!æ–‡å­—åˆ—ã®ãƒ”ã‚¯ã‚»ãƒ«å¹…ã‚’è¿”ã™ã€‚
 int CTextMetrics::CalcTextWidth2(
-	const wchar_t* pText, //!< •¶š—ñ
-	int nLength,          //!< •¶š—ñ’·
-	int nHankakuDx,       //!< ”¼Šp•¶š‚Ì•¶šŠÔŠu
-	int nCharSpacing      //!< •¶š‚ÌŒ„ŠÔ
+	const wchar_t* pText, //!< æ–‡å­—åˆ—
+	int nLength,          //!< æ–‡å­—åˆ—é•·
+	int nHankakuDx,       //!< åŠè§’æ–‡å­—ã®æ–‡å­—é–“éš”
+	int nCharSpacing      //!< æ–‡å­—ã®éš™é–“
 )
 {
-	//•¶šŠÔŠu”z—ñ‚ğ¶¬
+	//æ–‡å­—é–“éš”é…åˆ—ã‚’ç”Ÿæˆ
 	vector<int> vDxArray;
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
 		&vDxArray,
@@ -252,13 +252,13 @@ int CTextMetrics::CalcTextWidth2(
 		nCharSpacing
 	);
 
-	//ƒsƒNƒZƒ‹•‚ğŒvZ
+	//ãƒ”ã‚¯ã‚»ãƒ«å¹…ã‚’è¨ˆç®—
 	return CalcTextWidth(pText, nLength, pDxArray);
 }
 
 int CTextMetrics::CalcTextWidth3(
-	const wchar_t* pText, //!< •¶š—ñ
-	int nLength          //!< •¶š—ñ’·
+	const wchar_t* pText, //!< æ–‡å­—åˆ—
+	int nLength          //!< æ–‡å­—åˆ—é•·
 ) const
 {
 	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing());
