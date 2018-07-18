@@ -580,7 +580,12 @@
     <None Include="..\sakura_core\Funccode_x.hsrc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
+    <ResourceCompile Include="..\sakura_core\sakura_rc.rc">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/c 65001</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/c 65001</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/c 65001</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/c 65001</AdditionalOptions>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
