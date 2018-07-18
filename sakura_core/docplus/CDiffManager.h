@@ -1,5 +1,5 @@
-//@@@ 2002.05.25 MIK
-//2008.02.23 kobake ‘å®—
+ï»¿//@@@ 2002.05.25 MIK
+//2008.02.23 kobake å¤§æ•´ç†
 /*
 	Copyright (C) 2008, kobake
 
@@ -33,29 +33,29 @@ class CDocLine;
 class CDocLineMgr;
 class CGraphics;
 
-//! DIFFî•ñ’è”
+//! DIFFæƒ…å ±å®šæ•°
 enum EDiffMark{
-	MARK_DIFF_NONE		= 0,	//!< –³•ÏX
-	MARK_DIFF_APPEND	= 1,	//!< ’Ç‰Á
-	MARK_DIFF_CHANGE	= 2,	//!< •ÏX
-	MARK_DIFF_DELETE	= 3,	//!< íœ
-	MARK_DIFF_DEL_EX	= 4,	//!< íœ(EOFˆÈ~)
+	MARK_DIFF_NONE		= 0,	//!< ç„¡å¤‰æ›´
+	MARK_DIFF_APPEND	= 1,	//!< è¿½åŠ 
+	MARK_DIFF_CHANGE	= 2,	//!< å¤‰æ›´
+	MARK_DIFF_DELETE	= 3,	//!< å‰Šé™¤
+	MARK_DIFF_DEL_EX	= 4,	//!< å‰Šé™¤(EOFä»¥é™)
 };
 
-//! DIFF‹““®‚ÌŠÇ—
+//! DIFFæŒ™å‹•ã®ç®¡ç†
 class CDiffManager : public TSingleton<CDiffManager>{
 	friend class TSingleton<CDiffManager>;
 	CDiffManager(){}
 
 public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }
-	bool IsDiffUse() const{ return m_bIsDiffUse; }		//!< DIFFg—p’†
+	bool IsDiffUse() const{ return m_bIsDiffUse; }		//!< DIFFä½¿ç”¨ä¸­
 
 private:
-	bool	m_bIsDiffUse;		//!< DIFF·•ª•\¦À{’† @@@ 2002.05.25 MIK
+	bool	m_bIsDiffUse;		//!< DIFFå·®åˆ†è¡¨ç¤ºå®Ÿæ–½ä¸­ @@@ 2002.05.25 MIK
 };
 
-//! s‚É•t‰Á‚·‚éDIFFî•ñ
+//! è¡Œã«ä»˜åŠ ã™ã‚‹DIFFæƒ…å ±
 class CLineDiffed{
 public:
 	CLineDiffed() : m_nDiffed(MARK_DIFF_NONE) { }
@@ -65,7 +65,7 @@ private:
 	EDiffMark m_nDiffed;
 };
 
-//! s‚ÌDIFFî•ñæ“¾
+//! è¡Œã®DIFFæƒ…å ±å–å¾—
 class CDiffLineGetter{
 public:
 	CDiffLineGetter(const CDocLine* pcDocLine) : m_pcDocLine(pcDocLine) { }
@@ -76,7 +76,7 @@ private:
 	const CDocLine* m_pcDocLine;
 };
 
-//! s‚ÌDIFFî•ñİ’è
+//! è¡Œã®DIFFæƒ…å ±è¨­å®š
 class CDiffLineSetter{
 public:
 	CDiffLineSetter(CDocLine* pcDocLine) : m_pcDocLine(pcDocLine) { }
@@ -85,13 +85,13 @@ private:
 	CDocLine* m_pcDocLine;
 };
 
-//! s‘S‘Ì‚ÌDIFFî•ñŠÇ—
+//! è¡Œå…¨ä½“ã®DIFFæƒ…å ±ç®¡ç†
 class CDiffLineMgr{
 public:
 	CDiffLineMgr(CDocLineMgr* pcDocLineMgr) : m_pcDocLineMgr(pcDocLineMgr) { }
-	void ResetAllDiffMark();															//!< ·•ª•\¦‚Ì‘S‰ğœ
-	bool SearchDiffMark( CLogicInt , ESearchDirection , CLogicInt* );					//!< ·•ªŒŸõ
-	void SetDiffMarkRange( EDiffMark nMode, CLogicInt nStartLine, CLogicInt nEndLine );	//!< ·•ª”ÍˆÍ‚Ì“o˜^
+	void ResetAllDiffMark();															//!< å·®åˆ†è¡¨ç¤ºã®å…¨è§£é™¤
+	bool SearchDiffMark( CLogicInt , ESearchDirection , CLogicInt* );					//!< å·®åˆ†æ¤œç´¢
+	void SetDiffMarkRange( EDiffMark nMode, CLogicInt nStartLine, CLogicInt nEndLine );	//!< å·®åˆ†ç¯„å›²ã®ç™»éŒ²
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };

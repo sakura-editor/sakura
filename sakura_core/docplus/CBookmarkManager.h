@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,7 +32,7 @@ class CBregexp;
 
 #include "CSearchAgent.h"
 
-//! s‚É•t‰Á‚·‚éƒuƒbƒNƒ}[ƒNî•ñ
+//! è¡Œã«ä»˜åŠ ã™ã‚‹ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æƒ…å ±
 class CLineBookmarked{
 public:
 	CLineBookmarked() : m_bBookmarked(false) { }
@@ -42,7 +42,7 @@ private:
 	bool m_bBookmarked;
 };
 
-//! s‚ÌƒuƒbƒNƒ}[ƒNî•ñ‚Ìæ“¾
+//! è¡Œã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æƒ…å ±ã®å–å¾—
 class CBookmarkGetter{
 public:
 	CBookmarkGetter(const CDocLine* pcDocLine) : m_pcDocLine(pcDocLine) { }
@@ -51,7 +51,7 @@ private:
 	const CDocLine* m_pcDocLine;
 };
 
-//! s‚ÌƒuƒbƒNƒ}[ƒNî•ñ‚Ìæ“¾Eİ’è
+//! è¡Œã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æƒ…å ±ã®å–å¾—ãƒ»è¨­å®š
 class CBookmarkSetter : public CBookmarkGetter{
 public:
 	CBookmarkSetter(CDocLine* pcDocLine) : CBookmarkGetter(pcDocLine), m_pcDocLine(pcDocLine) { }
@@ -60,16 +60,16 @@ private:
 	CDocLine* m_pcDocLine;
 };
 
-//! s‘S‘Ì‚ÌƒuƒbƒNƒ}[ƒNî•ñ‚ÌŠÇ—
+//! è¡Œå…¨ä½“ã®ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æƒ…å ±ã®ç®¡ç†
 class CBookmarkManager{
 public:
 	CBookmarkManager(CDocLineMgr* pcDocLineMgr) : m_pcDocLineMgr(pcDocLineMgr) { }
 
-	void ResetAllBookMark();															//!< ƒuƒbƒNƒ}[ƒN‚Ì‘S‰ğœ
-	bool SearchBookMark( CLogicInt nLineNum, ESearchDirection , CLogicInt* pnLineNum );	//!< ƒuƒbƒNƒ}[ƒNŒŸõ
-	void SetBookMarks( wchar_t* );														//!< •¨—s”Ô†‚ÌƒŠƒXƒg‚©‚ç‚Ü‚Æ‚ß‚Äsƒ}[ƒN
-	LPCWSTR GetBookMarks();																//!< sƒ}[ƒN‚³‚ê‚Ä‚é•¨—s”Ô†‚ÌƒŠƒXƒg‚ğì‚é
-	void MarkSearchWord( const CSearchStringPattern& );			//!< ŒŸõğŒ‚ÉŠY“–‚·‚és‚ÉƒuƒbƒNƒ}[ƒN‚ğƒZƒbƒg‚·‚é
+	void ResetAllBookMark();															//!< ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã®å…¨è§£é™¤
+	bool SearchBookMark( CLogicInt nLineNum, ESearchDirection , CLogicInt* pnLineNum );	//!< ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æ¤œç´¢
+	void SetBookMarks( wchar_t* );														//!< ç‰©ç†è¡Œç•ªå·ã®ãƒªã‚¹ãƒˆã‹ã‚‰ã¾ã¨ã‚ã¦è¡Œãƒãƒ¼ã‚¯
+	LPCWSTR GetBookMarks();																//!< è¡Œãƒãƒ¼ã‚¯ã•ã‚Œã¦ã‚‹ç‰©ç†è¡Œç•ªå·ã®ãƒªã‚¹ãƒˆã‚’ä½œã‚‹
+	void MarkSearchWord( const CSearchStringPattern& );			//!< æ¤œç´¢æ¡ä»¶ã«è©²å½“ã™ã‚‹è¡Œã«ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 
 private:
 	CDocLineMgr* m_pcDocLineMgr;
