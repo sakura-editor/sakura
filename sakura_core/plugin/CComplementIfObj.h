@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ComplementƒIƒuƒWƒFƒNƒg
+ï»¿/*!	@file
+	@brief Complementã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 */
 /*
@@ -34,16 +34,16 @@
 #include "util/ole_convert.h"
 
 class CComplementIfObj : public CWSHIfObj {
-	// Œ^’è‹`
+	// å‹å®šç¾©
 	enum FuncId {
-		F_OL_COMMAND_FIRST = 0,					//«ƒRƒ}ƒ“ƒh‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST,	//«ŠÖ”‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_CM_GETCURRENTWORD,					//•âŠ®‘ÎÛ‚Ì•¶š—ñ‚ğæ“¾
-		F_CM_GETOPTION,							//ƒIƒvƒVƒ‡ƒ“‚ğæ“¾
-		F_CM_ADDLIST,							//Œó•â‚É’Ç‰Á
+		F_OL_COMMAND_FIRST = 0,					//â†“ã‚³ãƒãƒ³ãƒ‰ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST,	//â†“é–¢æ•°ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_CM_GETCURRENTWORD,					//è£œå®Œå¯¾è±¡ã®æ–‡å­—åˆ—ã‚’å–å¾—
+		F_CM_GETOPTION,							//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’å–å¾—
+		F_CM_ADDLIST,							//å€™è£œã«è¿½åŠ 
 	};
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CComplementIfObj( std::wstring& curWord, CHokanMgr* pMgr, int option )
 		: CWSHIfObj( L"Complement", false )
@@ -53,34 +53,34 @@ public:
 	{
 	}
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CComplementIfObj(){}
 
-	// À‘•
+	// å®Ÿè£…
 public:
-	//ƒRƒ}ƒ“ƒhî•ñ‚ğæ“¾‚·‚é
+	//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
-	//ŠÖ”î•ñ‚ğæ“¾‚·‚é
+	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; };
-	//ŠÖ”‚ğˆ—‚·‚é
+	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
-		Variant varCopy;	// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
+		Variant varCopy;	// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
 
 		switch(LOWORD(ID)){
-		case F_CM_GETCURRENTWORD:	//•âŠ®‘ÎÛ‚Ì•¶š—ñ‚ğæ“¾
+		case F_CM_GETCURRENTWORD:	//è£œå®Œå¯¾è±¡ã®æ–‡å­—åˆ—ã‚’å–å¾—
 			{
 				SysString s( m_sCurrentWord.c_str(), m_sCurrentWord.length() );
 				Wrap( &Result )->Receive( s );
 			}
 			return true;
-		case F_CM_GETOPTION:	//ƒIƒvƒVƒ‡ƒ“‚ğæ“¾
+		case F_CM_GETOPTION:	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’å–å¾—
 			{
 				Wrap( &Result )->Receive( m_nOption );
 			}
 			return true;
-		case F_CM_ADDLIST:		//Œó•â‚É’Ç‰Á‚·‚é
+		case F_CM_ADDLIST:		//å€™è£œã«è¿½åŠ ã™ã‚‹
 			{
 				std::wstring keyword;
 				if( variant_to_wstr( Arguments[0], keyword ) != true) return false;
@@ -98,39 +98,39 @@ public:
 		}
 		return false;
 	}
-	//ƒRƒ}ƒ“ƒh‚ğˆ—‚·‚é
+	//ã‚³ãƒãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
 	{
 		return false;
 	}
 
-	// ƒƒ“ƒo•Ï”
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
 private:
 	std::wstring m_sCurrentWord;
 	CHokanMgr* m_pHokanMgr;
 	int m_nOption; // 0x01 == IgnoreCase
 
 private:
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ƒRƒ}ƒ“ƒhî•ñ(–ß‚è’l‚È‚µ)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// ŠÖ”î•ñ(–ß‚è’l‚ ‚è)
+	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ã‚³ãƒãƒ³ãƒ‰æƒ…å ±(æˆ»ã‚Šå€¤ãªã—)
+	static MacroFuncInfo m_MacroFuncInfoArr[];	// é–¢æ•°æƒ…å ±(æˆ»ã‚Šå€¤ã‚ã‚Š)
 };
 
-//ƒRƒ}ƒ“ƒhî•ñ
+//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±
 MacroFuncInfo CComplementIfObj::m_MacroFuncInfoCommandArr[] = 
 {
-	//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	//	I’[
+	//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®å‹	m_pszData
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-//ŠÖ”î•ñ
+//é–¢æ•°æƒ…å ±
 MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] = 
 {
-	//ID								ŠÖ”–¼				ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	{EFunctionCode(F_CM_GETCURRENTWORD),L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //•âŠ®‘ÎÛ‚Ì•¶š—ñ‚ğæ“¾
-	{EFunctionCode(F_CM_GETOPTION),		L"GetOption",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //•âŠ®‘ÎÛ‚Ì•¶š—ñ‚ğæ“¾
-	{EFunctionCode(F_CM_ADDLIST),		L"AddList",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //Œó•â‚É’Ç‰Á‚·‚é
-	//	I’[
+	//ID								é–¢æ•°å				å¼•æ•°										æˆ»ã‚Šå€¤ã®å‹	m_pszData
+	{EFunctionCode(F_CM_GETCURRENTWORD),L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //è£œå®Œå¯¾è±¡ã®æ–‡å­—åˆ—ã‚’å–å¾—
+	{EFunctionCode(F_CM_GETOPTION),		L"GetOption",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //è£œå®Œå¯¾è±¡ã®æ–‡å­—åˆ—ã‚’å–å¾—
+	{EFunctionCode(F_CM_ADDLIST),		L"AddList",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //å€™è£œã«è¿½åŠ ã™ã‚‹
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 

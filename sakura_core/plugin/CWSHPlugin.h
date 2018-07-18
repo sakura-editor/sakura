@@ -1,5 +1,5 @@
-/*!	@file
-	@brief WSHƒvƒ‰ƒOƒCƒ“ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -31,8 +31,8 @@
 #include "plugin/CPlugin.h"
 #include "macro/CWSHManager.h"
 
-#define PII_WSH						L"Wsh"			//WSHƒZƒNƒVƒ‡ƒ“
-#define PII_WSH_USECACHE			L"UseCache"		//“Ç‚İ‚ñ‚¾ƒXƒNƒŠƒvƒg‚ğÄ—˜—p‚·‚é
+#define PII_WSH						L"Wsh"			//WSHã‚»ã‚¯ã‚·ãƒ§ãƒ³
+#define PII_WSH_USECACHE			L"UseCache"		//èª­ã¿è¾¼ã‚“ã ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å†åˆ©ç”¨ã™ã‚‹
 
 
 class CWSHPlug :
@@ -56,24 +56,24 @@ public:
 class CWSHPlugin :
 	public CPlugin
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CWSHPlugin( const tstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
 
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CWSHPlugin(void);
 
-	//‘€ì
-	//CPlugƒCƒ“ƒXƒ^ƒ“ƒX‚Ìì¬BReadPluginDefPlug/Command ‚©‚çŒÄ‚Î‚ê‚éB
+	//æ“ä½œ
+	//CPlugã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½œæˆã€‚ReadPluginDefPlug/Command ã‹ã‚‰å‘¼ã°ã‚Œã‚‹ã€‚
 	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
 	{
 		return new CWSHPlug( plugin, id, sJack, sHandler, sLabel );
 	}
 
-	//À‘•
+	//å®Ÿè£…
 public:
 	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang );
 	bool ReadPluginOption( CDataProfile *cProfile );
@@ -82,7 +82,7 @@ public:
 	}
 	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params );
 
-	//ƒƒ“ƒo•Ï”
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
 private:
 	bool m_bUseCache;
 

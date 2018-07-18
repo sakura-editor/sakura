@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“Šî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³åŸºæœ¬ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -26,12 +26,12 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <vector>		// wstring_split—p 2010/4/4 Uchi
+#include <vector>		// wstring_splitç”¨ 2010/4/4 Uchi
 #include "CPlugin.h"
 #include "CJackManager.h"
 
 /////////////////////////////////////////////
-// CPlug ƒƒ“ƒoŠÖ”
+// CPlug ãƒ¡ãƒ³ãƒé–¢æ•°
 bool CPlug::Invoke( CEditView* view, CWSHIfObj::List& params ){
 	return m_cPlugin.InvokePlug( view, *this, params );
 }
@@ -41,16 +41,16 @@ EFunctionCode CPlug::GetFunctionCode() const{
 }
 
 /////////////////////////////////////////////
-// CPlugin ƒƒ“ƒoŠÖ”
+// CPlugin ãƒ¡ãƒ³ãƒé–¢æ•°
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CPlugin::CPlugin( const tstring& sBaseDir )
 	: m_sBaseDir( sBaseDir )
 {
 	m_nCommandCount = 0;
 }
 
-//ƒfƒXƒgƒ‰ƒNƒ^
+//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CPlugin::~CPlugin(void)
 {
 	for( CPluginOption::ArrayIter it = m_options.begin(); it != m_options.end(); it++ ){
@@ -58,7 +58,7 @@ CPlugin::~CPlugin(void)
 	}
 }
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌCommonƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Commonã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	cProfile->IOProfileData( PII_PLUGIN, PII_PLUGIN_ID, m_sId );
@@ -84,8 +84,8 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfil
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌPlugƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
-// @date 2011.08.20 syat PlugƒZƒNƒVƒ‡ƒ“‚à•¡”’è‹`‰Â”\‚Æ‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Plugã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+// @date 2011.08.20 syat Plugã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚‚è¤‡æ•°å®šç¾©å¯èƒ½ã¨ã™ã‚‹
 bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	unsigned int i;
@@ -102,7 +102,7 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 			}
 			wstring sHandler;
 			if( cProfile->IOProfileData( PII_PLUG, (sKey + szIndex).c_str(), sHandler ) ){
-				//ƒ‰ƒxƒ‹‚Ìæ“¾
+				//ãƒ©ãƒ™ãƒ«ã®å–å¾—
 				wstring sKeyLabel = sKey + szIndex + L".Label";
 				wstring sLabel;
 				cProfile->IOProfileData( PII_PLUG, sKeyLabel.c_str(), sLabel );
@@ -110,13 +110,13 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 					cProfileMlang->IOProfileData( PII_PLUG, sKeyLabel.c_str(), sLabel );
 				}
 				if (sLabel == L"") {
-					sLabel = sHandler;		// Label‚ª–³‚¯‚ê‚Îƒnƒ“ƒhƒ‰–¼‚Å‘ã—p
+					sLabel = sHandler;		// LabelãŒç„¡ã‘ã‚Œã°ãƒãƒ³ãƒ‰ãƒ©åã§ä»£ç”¨
 				}
 
 				CPlug *newPlug = CreatePlug( *this, nCount, jacks[i].szName, sHandler, sLabel );
 				m_plugs.push_back( newPlug );
 			}else{
-				break;		//’è‹`‚ª‚È‚¯‚ê‚Î“Ç‚İ‚İ‚ğI—¹
+				break;		//å®šç¾©ãŒãªã‘ã‚Œã°èª­ã¿è¾¼ã¿ã‚’çµ‚äº†
 			}
 		}
 	}
@@ -124,28 +124,28 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌCommandƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Commandã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	wstring sHandler;
 	WCHAR bufKey[64];
 
-	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//“Y‚¦š‚Í‚P‚©‚çn‚ß‚é
+	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//æ·»ãˆå­—ã¯ï¼‘ã‹ã‚‰å§‹ã‚ã‚‹
 		swprintf( bufKey, L"C[%d]", nCount );
 		if( cProfile->IOProfileData( PII_COMMAND, bufKey, sHandler ) ){
 			wstring sLabel;
 			wstring sIcon;
 
-			//ƒ‰ƒxƒ‹‚Ìæ“¾
+			//ãƒ©ãƒ™ãƒ«ã®å–å¾—
 			swprintf( bufKey, L"C[%d].Label", nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sLabel );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_COMMAND, bufKey, sLabel );
 			}
 			if (sLabel == L"") {
-				sLabel = sHandler;		// Label‚ª–³‚¯‚ê‚Îƒnƒ“ƒhƒ‰–¼‚Å‘ã—p
+				sLabel = sHandler;		// LabelãŒç„¡ã‘ã‚Œã°ãƒãƒ³ãƒ‰ãƒ©åã§ä»£ç”¨
 			}
-			//ƒAƒCƒRƒ“‚Ìæ“¾
+			//ã‚¢ã‚¤ã‚³ãƒ³ã®å–å¾—
 			swprintf( bufKey, L"C[%d].Icon", nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sIcon );
 			if( cProfileMlang ){
@@ -154,14 +154,14 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfi
 
 			AddCommand( sHandler.c_str(), sLabel.c_str(), sIcon.c_str(), false );
 		}else{
-			break;		//’è‹`‚ª‚È‚¯‚ê‚Î“Ç‚İ‚İ‚ğI—¹
+			break;		//å®šç¾©ãŒãªã‘ã‚Œã°èª­ã¿è¾¼ã¿ã‚’çµ‚äº†
 		}
 	}
 
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌOptionƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş	// 2010/3/24 Uchi
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Optionã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€	// 2010/3/24 Uchi
 bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	wstring sLabel;
@@ -174,42 +174,42 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 	WCHAR bufKey[64];
 
 	sSection = L"";
-	for( int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++ ){	//“Y‚¦š‚Í‚P‚©‚çn‚ß‚é
+	for( int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++ ){	//æ·»ãˆå­—ã¯ï¼‘ã‹ã‚‰å§‹ã‚ã‚‹
 		sKey = sLabel = sType = sDefaultVal= L"";
-		//Key‚Ìæ“¾
+		//Keyã®å–å¾—
 		swprintf( bufKey, L"O[%d].Key", nCount );
 		if( cProfile->IOProfileData( PII_OPTION, bufKey, sKey ) ){
-			//Section‚Ìæ“¾
+			//Sectionã®å–å¾—
 			swprintf( bufKey, L"O[%d].Section", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sSection_wk );
-			if (!sSection_wk.empty()) {		// w’è‚ª–³‚¯‚ê‚Î‘O‚ğˆø‚«Œp‚®
+			if (!sSection_wk.empty()) {		// æŒ‡å®šãŒç„¡ã‘ã‚Œã°å‰ã‚’å¼•ãç¶™ã
 				sSection = sSection_wk;
 			}
-			//ƒ‰ƒxƒ‹‚Ìæ“¾
+			//ãƒ©ãƒ™ãƒ«ã®å–å¾—
 			swprintf( bufKey, L"O[%d].Label", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sLabel );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_OPTION, bufKey, sLabel );
 			}
-			//Type‚Ìæ“¾
+			//Typeã®å–å¾—
 			swprintf( bufKey, L"O[%d].Type", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sType );
-			// €–Ú‘I‘ğŒó•â
+			// é …ç›®é¸æŠå€™è£œ
 			swprintf( bufKey, L"O[%d].Select", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sSelect );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_OPTION, bufKey, sSelect );
 			}
-			// ƒfƒtƒHƒ‹ƒg’l
+			// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 			swprintf( bufKey, L"O[%d].Default", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sDefaultVal );
 
 			if (sSection.empty() || sKey.empty()) {
-				// İ’è‚ª–³‚©‚Á‚½‚ç–³‹
+				// è¨­å®šãŒç„¡ã‹ã£ãŸã‚‰ç„¡è¦–
 				continue;
 			}
 			if (sLabel.empty()) {
-				// Labelw’è‚ª–³‚¯‚ê‚ÎAKey‚Å‘ã—p
+				// LabelæŒ‡å®šãŒç„¡ã‘ã‚Œã°ã€Keyã§ä»£ç”¨
 				sLabel = sKey;
 			}
 
@@ -220,7 +220,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_Šî€‚Ì‘Š‘ÎƒpƒX‚ğƒtƒ‹ƒpƒX‚É•ÏŠ·
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€åŸºæº–ã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’ãƒ•ãƒ«ãƒ‘ã‚¹ã«å¤‰æ›
 CPlugin::tstring CPlugin::GetFilePath( const tstring& sFileName ) const
 {
 	return m_sBaseDir + _T("\\") + to_tchar( sFileName.c_str() );
@@ -231,13 +231,13 @@ CPlugin::tstring CPlugin::GetFolderName() const
 	return tstring(GetFileTitlePointer(m_sBaseDir.c_str()));
 }
 
-//ƒRƒ}ƒ“ƒh‚ğ’Ç‰Á‚·‚é
+//ã‚³ãƒãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
 int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister )
 {
 	if( !handler ){ handler = L""; }
 	if( !label ){ label = L""; }
 
-	//ƒRƒ}ƒ“ƒhƒvƒ‰ƒOID‚Í1‚©‚çU‚é
+	//ã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ©ã‚°IDã¯1ã‹ã‚‰æŒ¯ã‚‹
 	m_nCommandCount++;
 	CPlug *newPlug = CreatePlug( *this, m_nCommandCount, PP_COMMAND_STR, wstring(handler), wstring(label) );
 	if( icon ){
@@ -252,8 +252,8 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 	return newPlug->GetFunctionCode();
 }
 
-// •¶š—ñ•ªŠ„	2010/4/4 Uchi
-//	“Æ—§‚³‚¹‚½‚Ù‚¤‚ª‚¢‚¢‚Ì‚¾‚ª
+// æ–‡å­—åˆ—åˆ†å‰²	2010/4/4 Uchi
+//	ç‹¬ç«‹ã•ã›ãŸã»ã†ãŒã„ã„ã®ã ãŒ
 std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
 {
     std::vector<std::wstring>	splitVec;
@@ -270,14 +270,14 @@ std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
     return splitVec;
 }
 
-/*!	ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌStringƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
+/*!	ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Stringã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 */
 bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.push_back( wstring(L"") ); // 0”Ô–Úƒ_ƒ~[
-	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//“Y‚¦š‚Í‚P‚©‚çn‚ß‚é
+	m_aStrings.push_back( wstring(L"") ); // 0ç•ªç›®ãƒ€ãƒŸãƒ¼
+	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//æ·»ãˆå­—ã¯ï¼‘ã‹ã‚‰å§‹ã‚ã‚‹
 		wstring sVal = L"";
 		swprintf( bufKey, L"S[%d]", nCount );
 		if( cProfile->IOProfileData( PII_STRING, bufKey, sVal ) ){

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“ŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -36,40 +36,40 @@ class CPluginManager : public TSingleton<CPluginManager>{
 	friend class TSingleton<CPluginManager>;
 	CPluginManager();
 
-	// Œ^’è‹`
+	// å‹å®šç¾©
 private:
 	typedef std::wstring wstring;
 	typedef std::string string;
 
-	// ‘€ì
+	// æ“ä½œ
 public:
-	bool LoadAllPlugin(CommonSetting* common = NULL);				//‘Sƒvƒ‰ƒOƒCƒ“‚ğ“Ç‚İ‚Ş
-	void UnloadAllPlugin();				//‘Sƒvƒ‰ƒOƒCƒ“‚ğ‰ğ•ú‚·‚é
-	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ“±“ü‚·‚é
-	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//ƒvƒ‰ƒOƒCƒ“‚Ì‰Šú“±“ü‚ğ‚·‚é
-	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, bool bInSearch=false );		//Zipƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é
-	CPlugin* GetPlugin( int id );		//ƒvƒ‰ƒOƒCƒ“‚ğæ“¾‚·‚é
-	void UninstallPlugin( CommonSetting& common, int id );		//ƒvƒ‰ƒOƒCƒ“‚ğíœ‚·‚é
+	bool LoadAllPlugin(CommonSetting* common = NULL);				//å…¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+	void UnloadAllPlugin();				//å…¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è§£æ”¾ã™ã‚‹
+	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å°å…¥ã™ã‚‹
+	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®åˆæœŸå°å…¥ã‚’ã™ã‚‹
+	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, bool bInSearch=false );		//Zipãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹
+	CPlugin* GetPlugin( int id );		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å–å¾—ã™ã‚‹
+	void UninstallPlugin( CommonSetting& common, int id );		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å‰Šé™¤ã™ã‚‹
 
 private:
-	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName );	//ƒvƒ‰ƒOƒCƒ“‚ğ“Ç‚İ‚Ş
-	bool RegisterPlugin( CPlugin* plugin );	//ƒvƒ‰ƒOƒCƒ“‚ğCJackManager‚É“o˜^‚·‚é
-	bool UnRegisterPlugin( CPlugin* plugin );	//ƒvƒ‰ƒOƒCƒ“‚ÌCJackManager‚Ì“o˜^‚ğ‰ğœ‚·‚é
+	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+	bool RegisterPlugin( CPlugin* plugin );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’CJackManagerã«ç™»éŒ²ã™ã‚‹
+	bool UnRegisterPlugin( CPlugin* plugin );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®CJackManagerã®ç™»éŒ²ã‚’è§£é™¤ã™ã‚‹
 
-	//‘®«
+	//å±æ€§
 public:
-	//pluginsƒtƒHƒ‹ƒ_‚ÌƒpƒX
+	//pluginsãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹
 	const tstring GetBaseDir() { return m_sBaseDir; }
 	const tstring GetExePluginDir() { return m_sExePluginDir; }
-	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é(‰º¿‚¯)
-	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é(‰º¿‚¯)Zip File
-	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, const tstring& sDispName, bool bInSearch, bool& bCancel );		//Zipƒvƒ‰ƒOƒCƒ“‚ğ“±“ü‚·‚é(‰º¿‚¯)
+	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹(ä¸‹è«‹ã‘)
+	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹(ä¸‹è«‹ã‘)Zip File
+	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, const tstring& sDispName, bool bInSearch, bool& bCancel );		//Zipãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å°å…¥ã™ã‚‹(ä¸‹è«‹ã‘)
 
-	// ƒƒ“ƒo•Ï”
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
 private:
 	CPlugin::List m_plugins;
-	tstring m_sBaseDir;					//pluginsƒtƒHƒ‹ƒ_‚ÌƒpƒX
-	tstring m_sExePluginDir;			//ExeƒtƒHƒ‹ƒ_”z‰ºpluginsƒtƒHƒ‹ƒ_‚ÌƒpƒX
+	tstring m_sBaseDir;					//pluginsãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹
+	tstring m_sExePluginDir;			//Exeãƒ•ã‚©ãƒ«ãƒ€é…ä¸‹pluginsãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹
 
 };
 

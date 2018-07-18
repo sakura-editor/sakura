@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“ŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -33,16 +33,16 @@
 #include "util/module.h"
 #include "io/CZipFile.h"
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CPluginManager::CPluginManager()
 {
 
-	//pluginsƒtƒHƒ‹ƒ_‚ÌêŠ‚ğæ“¾
+	//pluginsãƒ•ã‚©ãƒ«ãƒ€ã®å ´æ‰€ã‚’å–å¾—
 	TCHAR szPluginPath[_MAX_PATH];
-	GetInidir( szPluginPath, _T("plugins\\") );	//ini‚Æ“¯‚¶ŠK‘w‚ÌpluginsƒtƒHƒ‹ƒ_‚ğŒŸõ
+	GetInidir( szPluginPath, _T("plugins\\") );	//iniã¨åŒã˜éšå±¤ã®pluginsãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¤œç´¢
 	m_sBaseDir.append(szPluginPath);
 
-	//ExeƒtƒHƒ‹ƒ_”z‰ºpluginsƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ğæ“¾
+	//Exeãƒ•ã‚©ãƒ«ãƒ€é…ä¸‹pluginsãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ã‚’å–å¾—
 	TCHAR	szPath[_MAX_PATH];
 	TCHAR	szFolder[_MAX_PATH];
 	TCHAR	szFname[_MAX_PATH];
@@ -54,7 +54,7 @@ CPluginManager::CPluginManager()
 	m_sExePluginDir.append(szPluginPath);
 }
 
-//‘Sƒvƒ‰ƒOƒCƒ“‚ğ‰ğ•ú‚·‚é
+//å…¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è§£æ”¾ã™ã‚‹
 void CPluginManager::UnloadAllPlugin()
 {
 	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
@@ -65,11 +65,11 @@ void CPluginManager::UnloadAllPlugin()
 		delete *it;
 	}
 	
-	// 2010.08.04 Moca m_plugins.claer‚·‚é
+	// 2010.08.04 Moca m_plugins.claerã™ã‚‹
 	m_plugins.clear();
 }
 
-//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é
+//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹
 bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 {
 #ifdef _UNICODE
@@ -80,11 +80,11 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	CZipFile	cZipFile;
 
 
-	//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚Ì”z‰º‚ğŒŸõ
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ã®é…ä¸‹ã‚’æ¤œç´¢
 	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile( (m_sBaseDir + _T("*")).c_str(), &wf );
 	if (hFind == INVALID_HANDLE_VALUE) {
-		//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„
 		if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
 			InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_FOLDER));
 			return true;
@@ -93,7 +93,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	::FindClose(hFind);
 
 	bool	bCancel = false;
-	//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚Ì”z‰º‚ğŒŸõ
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ã®é…ä¸‹ã‚’æ¤œç´¢
 	bool bFindNewDir = SearchNewPluginDir(common, hWndOwner, m_sBaseDir, bCancel);
 	if (!bCancel && m_sBaseDir != m_sExePluginDir) {
 		bFindNewDir |= SearchNewPluginDir(common, hWndOwner, m_sExePluginDir, bCancel);
@@ -116,7 +116,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 }
 
 
-//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é(‰º¿‚¯)
+//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹(ä¸‹è«‹ã‘)
 bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
@@ -129,7 +129,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile( (sSearchDir + _T("*")).c_str(), &wf );
 	if (hFind == INVALID_HANDLE_VALUE) {
-		//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„
 		return false;
 	}
 	bool bFindNewDir = false;
@@ -139,8 +139,8 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			_tcscmp(wf.cFileName, _T("."))!=0 && _tcscmp(wf.cFileName, _T(".."))!=0 &&
 			auto_stricmp(wf.cFileName, _T("unuse")) !=0 )
 		{
-			//ƒCƒ“ƒXƒg[ƒ‹Ï‚İƒ`ƒFƒbƒNBƒtƒHƒ‹ƒ_–¼ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹‚Ì–¼‘O‚È‚çƒCƒ“ƒXƒg[ƒ‹‚µ‚È‚¢
-			// 2010.08.04 ‘å•¶š¬•¶š“¯ˆê‹‚É‚·‚é
+			//ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ¸ˆã¿ãƒã‚§ãƒƒã‚¯ã€‚ãƒ•ã‚©ãƒ«ãƒ€åï¼ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«ã®åå‰ãªã‚‰ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ãªã„
+			// 2010.08.04 å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–ã«ã™ã‚‹
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 				if( auto_stricmp( wf.cFileName, to_tchar( plugin_table[iNo].m_szName ) ) == 0 ){
@@ -150,7 +150,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			}
 			if( !isNotInstalled ){ continue; }
 
-			// 2011.08.20 syat plugin.def‚ª‘¶İ‚µ‚È‚¢ƒtƒHƒ‹ƒ_‚Í”ò‚Î‚·
+			// 2011.08.20 syat plugin.defãŒå­˜åœ¨ã—ãªã„ãƒ•ã‚©ãƒ«ãƒ€ã¯é£›ã°ã™
 			if( ! IsFileExists( (sSearchDir + wf.cFileName + _T("\\") + PII_FILENAME).c_str(), true ) ){
 				continue;
 			}
@@ -177,7 +177,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 }
 
 
-//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é(‰º¿‚¯)Zip File
+//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹(ä¸‹è«‹ã‘)Zip File
 bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
@@ -193,7 +193,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 
 	hFind = INVALID_HANDLE_VALUE;
 
-	// Zip File ŒŸõ‰ğ“€
+	// Zip File æ¤œç´¢è§£å‡
 	if (cZipFile.IsOk()) {
 		hFind = FindFirstFile( (sSearchDir + _T("*.zip")).c_str(), &wf );
 
@@ -213,7 +213,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 }
 
 
-//Zipƒvƒ‰ƒOƒCƒ“‚ğ“±“ü‚·‚é
+//Zipãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å°å…¥ã™ã‚‹
 bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, bool bInSearch )
 {
 #ifdef _UNICODE
@@ -223,18 +223,18 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 	CZipFile		cZipFile;
 	TCHAR			msg[512];
 
-	// ZIPƒtƒ@ƒCƒ‹‚ªˆµ‚¦‚é‚©
+	// ZIPãƒ•ã‚¡ã‚¤ãƒ«ãŒæ‰±ãˆã‚‹ã‹
 	if (!cZipFile.IsOk()) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP) );
 		InfoMessage( hWndOwner, _T("%ts"), msg);
 		return false;
 	}
 
-	//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚Ì‘¶İ‚ğŠm”F
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ã®å­˜åœ¨ã‚’ç¢ºèª
 	WIN32_FIND_DATA wf;
 	HANDLE		hFind;
 	if ((hFind = ::FindFirstFile( (m_sBaseDir + _T("*")).c_str(), &wf )) == INVALID_HANDLE_VALUE) {
-		//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„
 		if (m_sBaseDir == m_sExePluginDir) {
 			InfoMessage( hWndOwner, LS(STR_PLGMGR_ERR_FOLDER));
 			::FindClose(hFind);
@@ -254,7 +254,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 	return CPluginManager::InstZipPluginSub( common, hWndOwner, sZipFile, sZipFile, false, bCancel );
 }
 
-//Zipƒvƒ‰ƒOƒCƒ“‚ğ“±“ü‚·‚é(‰º¿‚¯)
+//Zipãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å°å…¥ã™ã‚‹(ä¸‹è«‹ã‘)
 bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, const tstring& sDispName, bool bInSearch, bool& bCancel )
 {
 	PluginRec*		plugin_table = common.m_sPlugin.m_PluginTable;
@@ -266,14 +266,14 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	bool			bSkip = false;
 	bool			bNewPlugin = false;
 
-	// Plugin ƒtƒHƒ‹ƒ_–¼‚Ìæ“¾,’è‹`ƒtƒ@ƒCƒ‹‚ÌŠm”F
+	// Plugin ãƒ•ã‚©ãƒ«ãƒ€åã®å–å¾—,å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ç¢ºèª
 	if (bOk && !cZipFile.SetZip(sZipFile)) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ACCESS), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
 
-	// Plgin ƒtƒHƒ‹ƒ_–¼‚Ìæ“¾,’è‹`ƒtƒ@ƒCƒ‹‚ÌŠm”F
+	// Plgin ãƒ•ã‚©ãƒ«ãƒ€åã®å–å¾—,å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ç¢ºèª
 	if (bOk && !cZipFile.ChkPluginDef(PII_FILENAME, sFolderName)) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_DEF), sDispName.c_str() );
 		bOk = false;
@@ -281,8 +281,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	}
 
 	if (!bInSearch) {
-		// ’P“ÆƒCƒ“ƒXƒg[ƒ‹
-		//ƒCƒ“ƒXƒg[ƒ‹Ï‚İƒ`ƒFƒbƒNB
+		// å˜ç‹¬ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+		//ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ¸ˆã¿ãƒã‚§ãƒƒã‚¯ã€‚
 		bool	isNotInstalled = true;
 		int		iNo;
 		if (bOk) {
@@ -298,15 +298,15 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 			else {
 				if( ConfirmMessage( hWndOwner, LS(STR_PLGMGR_INST_ZIP_ALREADY),
 						sDispName.c_str() ) != IDYES ){
-					// Yes‚Å–³‚¢‚È‚çI—¹
+					// Yesã§ç„¡ã„ãªã‚‰çµ‚äº†
 					return false;
 				}
 			}
 		}
 	}
 	else {
-		// pluginsƒtƒHƒ‹ƒ_ŒŸõ’†
-		// ƒtƒHƒ‹ƒ_ ƒ`ƒFƒbƒNB‚·‚Å‚É‰ğ“€‚³‚ê‚Ä‚¢‚½‚È‚çƒCƒ“ƒXƒg[ƒ‹‚µ‚È‚¢(‘O’i‚ÅƒCƒ“ƒXƒg[ƒ‹Ï‚İˆ½‚Í‰Â”Û‚ğŠm”FÏ‚İ)
+		// pluginsãƒ•ã‚©ãƒ«ãƒ€æ¤œç´¢ä¸­
+		// ãƒ•ã‚©ãƒ«ãƒ€ ãƒã‚§ãƒƒã‚¯ã€‚ã™ã§ã«è§£å‡ã•ã‚Œã¦ã„ãŸãªã‚‰ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ãªã„(å‰æ®µã§ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ¸ˆã¿æˆ–ã¯å¯å¦ã‚’ç¢ºèªæ¸ˆã¿)
 		if (bOk && (fexist(to_tchar((m_sBaseDir + to_tchar(sFolderName.c_str())).c_str()))
 			|| fexist(to_tchar((m_sExePluginDir + to_tchar(sFolderName.c_str())).c_str()))) ) {
 			bOk = false;
@@ -328,7 +328,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		}
 	}
 
-	// Zip‰ğ“€
+	// Zipè§£å‡
 	if (bOk && !cZipFile.Unzip(m_sBaseDir)) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_UNZIP), sDispName.c_str() );
 		bOk = false;
@@ -342,24 +342,24 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	}
 
 	if (!bOk && !bSkip) {
-		// ƒGƒ‰[ƒƒbƒZ[ƒWo—Í
+		// ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡ºåŠ›
 		WarningMessage( hWndOwner, _T("%s"), msg);
 	}
 
 	return bNewPlugin;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚Ì‰Šú“±“ü‚ğ‚·‚é
-//	common			‹¤—Lİ’è•Ï”
-//	pszPluginName	ƒvƒ‰ƒOƒCƒ“–¼
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®åˆæœŸå°å…¥ã‚’ã™ã‚‹
+//	common			å…±æœ‰è¨­å®šå¤‰æ•°
+//	pszPluginName	ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å
 //	hWndOwner		
-//	errorMsg		ƒGƒ‰[ƒƒbƒZ[ƒW‚ğ•Ô‚·
-//	bUodate			‚·‚Å‚É“o˜^‚µ‚Ä‚¢‚½ê‡AŠm”F‚¹‚¸ã‘‚«‚·‚é
+//	errorMsg		ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¿”ã™
+//	bUodate			ã™ã§ã«ç™»éŒ²ã—ã¦ã„ãŸå ´åˆã€ç¢ºèªã›ãšä¸Šæ›¸ãã™ã‚‹
 int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, std::wstring& errorMsg, bool bUpdate )
 {
-	CDataProfile cProfDef;				//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹
+	CDataProfile cProfDef;				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
 
-	//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( (m_sBaseDir + pszPluginName + _T("\\") + PII_FILENAME).c_str() )
 		&& !cProfDef.ReadProfile( (m_sExePluginDir + pszPluginName + _T("\\") + PII_FILENAME).c_str() ) ){
@@ -373,8 +373,8 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 		errorMsg = LSW(STR_PLGMGR_INST_ID);
 		return -1;
 	}
-	//2010.08.04 IDg—p•s‰Â‚Ì•¶š‚ğŠm”F
-	//  ŒãXƒtƒ@ƒCƒ‹–¼‚âini‚Åg‚¤‚±‚Æ‚ğl‚¦‚Ä‚¢‚­‚Â‚©‹‘”Û‚·‚é
+	//2010.08.04 IDä½¿ç”¨ä¸å¯ã®æ–‡å­—ã‚’ç¢ºèª
+	//  å¾Œã€…ãƒ•ã‚¡ã‚¤ãƒ«åã‚„iniã§ä½¿ã†ã“ã¨ã‚’è€ƒãˆã¦ã„ãã¤ã‹æ‹’å¦ã™ã‚‹
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( sId.npos != sId.find(szReservedChars[x]) ){
@@ -387,19 +387,19 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 		return -1;
 	}
 
-	//IDd•¡Eƒe[ƒuƒ‹‹ó‚«ƒ`ƒFƒbƒN
+	//IDé‡è¤‡ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«ç©ºããƒã‚§ãƒƒã‚¯
 	PluginRec* plugin_table = common.m_sPlugin.m_PluginTable;
 	int nEmpty = -1;
 	bool isDuplicate = false;
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( nEmpty == -1 && plugin_table[iNo].m_state == PLS_NONE ){
 			nEmpty = iNo;
-			// break ‚µ‚Ä‚Í‚¢‚¯‚È‚¢BŒã‚ë‚Å“¯ˆêID‚ª‚ ‚é‚©‚à
+			// break ã—ã¦ã¯ã„ã‘ãªã„ã€‚å¾Œã‚ã§åŒä¸€IDãŒã‚ã‚‹ã‹ã‚‚
 		}
-		if( wcscmp( sId.c_str(), plugin_table[iNo].m_szId ) == 0 ){	//IDˆê’v
+		if( wcscmp( sId.c_str(), plugin_table[iNo].m_szId ) == 0 ){	//IDä¸€è‡´
 			if (!bUpdate) {
 				const TCHAR* msg = LS(STR_PLGMGR_INST_NAME);
-				// 2010.08.04 íœ’†‚ÌID‚ÍŒ³‚ÌˆÊ’u‚Ö’Ç‰Á(•œŠˆ‚³‚¹‚é)
+				// 2010.08.04 å‰Šé™¤ä¸­ã®IDã¯å…ƒã®ä½ç½®ã¸è¿½åŠ (å¾©æ´»ã•ã›ã‚‹)
 				if( plugin_table[iNo].m_state != PLS_DELETED &&
 				  ConfirmMessage( hWndOwner, msg, static_cast<const TCHAR*>(pszPluginName), static_cast<const WCHAR*>(plugin_table[iNo].m_szName) ) != IDYES ){
 					errorMsg = LSW(STR_PLGMGR_INST_USERCANCEL);
@@ -423,7 +423,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 	plugin_table[nEmpty].m_szId[ MAX_PLUGIN_ID-1 ] = '\0';
 	plugin_table[nEmpty].m_state = isDuplicate ? PLS_UPDATED : PLS_INSTALLED;
 
-	// ƒRƒ}ƒ“ƒh”‚Ìİ’è	2010/7/11 Uchi
+	// ã‚³ãƒãƒ³ãƒ‰æ•°ã®è¨­å®š	2010/7/11 Uchi
 	int			i;
 	WCHAR		szPlugKey[10];
 	wstring		sPlugCmd;
@@ -442,7 +442,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 	return nEmpty;
 }
 
-//‘Sƒvƒ‰ƒOƒCƒ“‚ğ“Ç‚İ‚Ş
+//å…¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 {
 #ifdef _UNICODE
@@ -472,25 +472,25 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		DEBUG_TRACE( _T("lang = %ts\n"), szLangName.c_str() );
 	}
 
-	//ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹‚É“o˜^‚³‚ê‚½ƒvƒ‰ƒOƒCƒ“‚ğ“Ç‚İ‚Ş
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«ã«ç™»éŒ²ã•ã‚ŒãŸãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 	PluginRec* plugin_table = pluginSetting.m_PluginTable;
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( plugin_table[iNo].m_szName[0] == '\0' ) continue;
-		// 2010.08.04 íœó‘Ô‚ğŒ©‚é(¡‚Ì‚Æ‚±‚ë•ÛŒ¯)
+		// 2010.08.04 å‰Šé™¤çŠ¶æ…‹ã‚’è¦‹ã‚‹(ä»Šã®ã¨ã“ã‚ä¿é™º)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
-		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 “Ç‚İ‚İÏ‚İ
+		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 èª­ã¿è¾¼ã¿æ¸ˆã¿
 		std::tstring name = to_tchar(plugin_table[iNo].m_szName);
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
 			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );
 		}
 		if( plugin ){
-			// —vŒŸ“¢Fplugin.def‚Ìid‚Æsakuraw.ini‚Ìid‚Ì•sˆê’vˆ—
+			// è¦æ¤œè¨ï¼šplugin.defã®idã¨sakuraw.iniã®idã®ä¸ä¸€è‡´å‡¦ç†
 			assert_warning( 0 == auto_strcmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
-			plugin->m_id = iNo;		//ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹‚Ìs”Ô†‚ğID‚Æ‚·‚é
+			plugin->m_id = iNo;		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«ã®è¡Œç•ªå·ã‚’IDã¨ã™ã‚‹
 			m_plugins.push_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;
-			// ƒRƒ}ƒ“ƒh”İ’è
+			// ã‚³ãƒãƒ³ãƒ‰æ•°è¨­å®š
 			plugin_table[iNo].m_nCmdNum = plugin->GetCommandCount();
 
 			RegisterPlugin( plugin );
@@ -500,46 +500,46 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚ğ“Ç‚İ‚Ş
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName )
 {
 	TCHAR pszBasePath[_MAX_PATH];
 	TCHAR pszPath[_MAX_PATH];
 	std::tstring strMlang;
-	CDataProfile cProfDef;				//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹
-	CDataProfile cProfDefMLang;			//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹(L10N)
+	CDataProfile cProfDef;				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+	CDataProfile cProfDefMLang;			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«(L10N)
 	CDataProfile* pcProfDefMLang = &cProfDefMLang; 
-	CDataProfile cProfOption;			//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹
+	CDataProfile cProfOption;			//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«
 	CPlugin* plugin = NULL;
 
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Load Plugin %ts\n"),  pszPluginName );
 #endif
-	//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	Concat_FolderAndFile( pszPluginDir, pszPluginName, pszBasePath );
 	Concat_FolderAndFile( pszBasePath, PII_FILENAME, pszPath );
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( pszPath ) ){
-		//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„
 		return NULL;
 	}
 #ifdef _UNICODE
-	DEBUG_TRACE(_T("  ’è‹`ƒtƒ@ƒCƒ‹“Ç %ts\n"),  pszPath );
+	DEBUG_TRACE(_T("  å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼ %ts\n"),  pszPath );
 #endif
 
-	//L10N’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚Ş
-	//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş base\pluginname\local\plugin_en_us.def
+	//L10Nå®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã‚€
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ base\pluginname\local\plugin_en_us.def
 	strMlang = std::tstring(pszBasePath) + _T("\\") + PII_L10NDIR + _T("\\") + PII_L10NFILEBASE + pszLangName + PII_L10NFILEEXT;
 	cProfDefMLang.SetReadingMode();
 	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
-		//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢
+		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„
 		pcProfDefMLang = NULL;
 #ifdef _UNICODE
-		DEBUG_TRACE(_T("  L10N’è‹`ƒtƒ@ƒCƒ‹“Ç %ts Not Found\n"),  strMlang.c_str() );
+		DEBUG_TRACE(_T("  L10Nå®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼ %ts Not Found\n"),  strMlang.c_str() );
 #endif
 	}else{
 #ifdef _UNICODE
-		DEBUG_TRACE(_T("  L10N’è‹`ƒtƒ@ƒCƒ‹“Ç %ts\n"),  strMlang.c_str() );
+		DEBUG_TRACE(_T("  L10Nå®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼ %ts\n"),  strMlang.c_str() );
 #endif
 	}
 
@@ -557,23 +557,23 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	plugin->m_sLangName = pszLangName;
 	plugin->ReadPluginDef( &cProfDef, pcProfDefMLang );
 #ifdef _UNICODE
-	DEBUG_TRACE(_T("  ƒvƒ‰ƒOƒCƒ“ƒ^ƒCƒv %ls\n"), sPlugType.c_str() );
+	DEBUG_TRACE(_T("  ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¿ã‚¤ãƒ— %ls\n"), sPlugType.c_str() );
 #endif
 
-	//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	cProfOption.SetReadingMode();
 	if( cProfOption.ReadProfile( plugin->GetOptionPath().c_str() ) ){
-		//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡A“Ç‚İ‚Ş
+		//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€èª­ã¿è¾¼ã‚€
 		plugin->ReadPluginOption( &cProfOption );
 	}
 #ifdef _UNICODE
-	DEBUG_TRACE(_T("  ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹“Ç %ts\n"),  plugin->GetOptionPath().c_str() );
+	DEBUG_TRACE(_T("  ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼ %ts\n"),  plugin->GetOptionPath().c_str() );
 #endif
 
 	return plugin;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚ğCJackManager‚É“o˜^‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’CJackManagerã«ç™»éŒ²ã™ã‚‹
 bool CPluginManager::RegisterPlugin( CPlugin* plugin )
 {
 	CJackManager* pJackMgr = CJackManager::getInstance();
@@ -586,7 +586,7 @@ bool CPluginManager::RegisterPlugin( CPlugin* plugin )
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚ÌCJackManager‚Ì“o˜^‚ğ‰ğœ‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®CJackManagerã®ç™»éŒ²ã‚’è§£é™¤ã™ã‚‹
 bool CPluginManager::UnRegisterPlugin( CPlugin* plugin )
 {
 	CJackManager* pJackMgr = CJackManager::getInstance();
@@ -599,7 +599,7 @@ bool CPluginManager::UnRegisterPlugin( CPlugin* plugin )
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚ğæ“¾‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å–å¾—ã™ã‚‹
 CPlugin* CPluginManager::GetPlugin( int id )
 {
 	for( CPlugin::ListIter plugin = m_plugins.begin() ; plugin != m_plugins.end(); plugin++ ){
@@ -608,13 +608,13 @@ CPlugin* CPluginManager::GetPlugin( int id )
 	return NULL;
 }
 
-//ƒvƒ‰ƒOƒCƒ“‚ğíœ‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å‰Šé™¤ã™ã‚‹
 void CPluginManager::UninstallPlugin( CommonSetting& common, int id )
 {
 	PluginRec* plugin_table = common.m_sPlugin.m_PluginTable;
 
-	// 2010.08.04 ‚±‚±‚Å‚ÍID‚ğ•Û‚·‚éBŒã‚ÅÄ“x’Ç‰Á‚·‚é‚Æ‚«‚É“¯‚¶ˆÊ’u‚É’Ç‰Á
-	// PLS_DELETED‚Ìm_szId/m_szName‚Íini‚ğ•Û‘¶‚·‚é‚Æíœ‚³‚ê‚Ü‚·
+	// 2010.08.04 ã“ã“ã§ã¯IDã‚’ä¿æŒã™ã‚‹ã€‚å¾Œã§å†åº¦è¿½åŠ ã™ã‚‹ã¨ãã«åŒã˜ä½ç½®ã«è¿½åŠ 
+	// PLS_DELETEDã®m_szId/m_szNameã¯iniã‚’ä¿å­˜ã™ã‚‹ã¨å‰Šé™¤ã•ã‚Œã¾ã™
 //	plugin_table[id].m_szId[0] = '\0';
 	plugin_table[id].m_szName[0] = '\0';
 	plugin_table[id].m_state = PLS_DELETED;

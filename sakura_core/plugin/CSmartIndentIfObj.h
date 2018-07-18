@@ -1,5 +1,5 @@
-/*!	@file
-	@brief SmartIndentƒIƒuƒWƒFƒNƒg
+ï»¿/*!	@file
+	@brief SmartIndentã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 */
 /*
@@ -31,19 +31,19 @@
 
 #include "macro/CWSHIfObj.h"
 
-// ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒg—pWSHƒIƒuƒWƒFƒNƒg
+// ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆç”¨WSHã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 class CSmartIndentIfObj : public CWSHIfObj
 {
-	// Œ^’è‹`
+	// å‹å®šç¾©
 	enum FuncId {
-		F_SI_COMMAND_FIRST = 0,					//«ƒRƒ}ƒ“ƒh‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_SI_FUNCTION_FIRST = F_FUNCTION_FIRST,	//«ŠÖ”‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_SI_GETCHAR							//‰Ÿ‰º‚µ‚½ƒL[‚ğæ“¾‚·‚é
+		F_SI_COMMAND_FIRST = 0,					//â†“ã‚³ãƒãƒ³ãƒ‰ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_SI_FUNCTION_FIRST = F_FUNCTION_FIRST,	//â†“é–¢æ•°ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_SI_GETCHAR							//æŠ¼ä¸‹ã—ãŸã‚­ãƒ¼ã‚’å–å¾—ã™ã‚‹
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CSmartIndentIfObj( wchar_t ch )
 		: CWSHIfObj( L"Indent", false )
@@ -51,36 +51,36 @@ public:
 	{
 	}
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CSmartIndentIfObj(){}
 
-	// À‘•
+	// å®Ÿè£…
 public:
-	//ƒRƒ}ƒ“ƒhî•ñ‚ğæ“¾‚·‚é
+	//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroCommandInfo() const{
 		static MacroFuncInfo macroFuncInfoArr[] = {
-			//	I’[
+			//	çµ‚ç«¯
 			{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 		};
 		return macroFuncInfoArr;
 	}
-	//ŠÖ”î•ñ‚ğæ“¾‚·‚é
+	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroFuncInfo() const{
 		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
-			//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-			{EFunctionCode(F_SI_GETCHAR),			LTEXT("GetChar"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //‰Ÿ‰º‚µ‚½ƒL[‚ğæ“¾‚·‚é
-			//	I’[
+			//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®å‹	m_pszData
+			{EFunctionCode(F_SI_GETCHAR),			LTEXT("GetChar"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //æŠ¼ä¸‹ã—ãŸã‚­ãƒ¼ã‚’å–å¾—ã™ã‚‹
+			//	çµ‚ç«¯
 			{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 		};
 		return macroFuncInfoNotCommandArr;
 	}
-	//ŠÖ”‚ğˆ—‚·‚é
+	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
 		switch ( LOWORD(ID) ) 
 		{
-		case F_SI_GETCHAR:						//‰Ÿ‰º‚µ‚½ƒL[‚ğæ“¾‚·‚é
+		case F_SI_GETCHAR:						//æŠ¼ä¸‹ã—ãŸã‚­ãƒ¼ã‚’å–å¾—ã™ã‚‹
 			{
 				wstring sValue;
 				sValue += m_wcChar;
@@ -91,13 +91,13 @@ public:
 		}
 		return false;
 	}
-	//ƒRƒ}ƒ“ƒh‚ğˆ—‚·‚é
+	//ã‚³ãƒãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
 	{
 		return false;
 	}
 
-	// ƒƒ“ƒo•Ï”
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
 public:
 	wchar_t m_wcChar;
 };

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒWƒƒƒbƒNŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚¸ãƒ£ãƒƒã‚¯ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -30,13 +30,13 @@
 #include "CPropertyManager.h"
 #include "typeprop/CPropTypes.h"
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CJackManager::CJackManager()
 {
 	int i;
 
-	//ƒWƒƒƒbƒN’è‹`ˆê——
-	//“Y‚¦š‚ªEJack‚Ì’l‚Æ“¯‚¶‚Å‚ ‚é‚±‚ÆB
+	//ã‚¸ãƒ£ãƒƒã‚¯å®šç¾©ä¸€è¦§
+	//æ·»ãˆå­—ãŒEJackã®å€¤ã¨åŒã˜ã§ã‚ã‚‹ã“ã¨ã€‚
 	struct tagJackEntry {
 		EJack id;
 		const WCHAR* name;
@@ -73,13 +73,13 @@ CJackManager::CJackManager()
 	
 }
 
-//ƒWƒƒƒbƒN’è‹`ˆê——‚ğ•Ô‚·
+//ã‚¸ãƒ£ãƒƒã‚¯å®šç¾©ä¸€è¦§ã‚’è¿”ã™
 std::vector<JackDef> CJackManager::GetJackDef() const
 {
 	return m_Jacks;
 }
 
-//ƒvƒ‰ƒO‚ğƒWƒƒƒbƒN‚ÉŠÖ˜A•t‚¯‚é
+//ãƒ—ãƒ©ã‚°ã‚’ã‚¸ãƒ£ãƒƒã‚¯ã«é–¢é€£ä»˜ã‘ã‚‹
 ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
@@ -87,7 +87,7 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 		return PPMGR_INVALID_NAME;
 	}
 
-	//‹@”\ID‚Ì¸‡‚É‚È‚é‚æ‚¤‚Éƒvƒ‰ƒO‚ğ“o˜^‚·‚é
+	//æ©Ÿèƒ½IDã®æ˜‡é †ã«ãªã‚‹ã‚ˆã†ã«ãƒ—ãƒ©ã‚°ã‚’ç™»éŒ²ã™ã‚‹
 	CPlug::Array& plugs = m_Jacks[ ppId ].plugs;
 	int plugid = plug->GetFunctionCode();
 	if( plugs.empty()  ||  (*(plugs.end() - 1))->GetFunctionCode() < plugid ){
@@ -102,15 +102,15 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	}
 
 	switch( ppId ){
-	case PP_OUTLINE:					//ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@‚ğ’Ç‰Á
+	case PP_OUTLINE:					//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³•ã‚’è¿½åŠ 
 		{
-			int nMethod = CPlug::GetOutlineType( plug->GetFunctionCode() );	// 2011/8/20 syat ƒvƒ‰ƒO•¡”‰»‚Ì‚½‚ßGetOutlineTyped—l•ÏX// 2010/5/1 Uchi ŠÖ”‰»
+			int nMethod = CPlug::GetOutlineType( plug->GetFunctionCode() );	// 2011/8/20 syat ãƒ—ãƒ©ã‚°è¤‡æ•°åŒ–ã®ãŸã‚GetOutlineTypeä»•æ§˜å¤‰æ›´// 2010/5/1 Uchi é–¢æ•°åŒ–
 			CPropTypesScreen::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
-	case PP_SMARTINDENT:				//ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒg•û–@‚ğ’Ç‰Á
+	case PP_SMARTINDENT:				//ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ–¹æ³•ã‚’è¿½åŠ 
 		{
-			int nMethod = CPlug::GetSmartIndentType( plug->GetFunctionCode() );	// 2011/8/20 syat ƒvƒ‰ƒO•¡”‰»‚Ì‚½‚ßGetOutlineTyped—l•ÏX// 2010/5/1 Uchi ŠÖ”‰»
+			int nMethod = CPlug::GetSmartIndentType( plug->GetFunctionCode() );	// 2011/8/20 syat ãƒ—ãƒ©ã‚°è¤‡æ•°åŒ–ã®ãŸã‚GetOutlineTypeä»•æ§˜å¤‰æ›´// 2010/5/1 Uchi é–¢æ•°åŒ–
 			CPropTypesScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
@@ -124,19 +124,19 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	return PPMGR_REG_OK;
 }
 
-//ƒvƒ‰ƒO‚ÌŠÖ˜A•t‚¯‚ğ‰ğœ‚·‚é
+//ãƒ—ãƒ©ã‚°ã®é–¢é€£ä»˜ã‘ã‚’è§£é™¤ã™ã‚‹
 bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
 
 	switch( ppId ){
-	case PP_OUTLINE:					//ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@‚ğ’Ç‰Á
+	case PP_OUTLINE:					//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³•ã‚’è¿½åŠ 
 		{
 			int nMethod = CPlug::GetOutlineType( plug->GetFunctionCode() );
 			CPropTypesScreen::RemoveOutlineMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
-	case PP_SMARTINDENT:				//ƒXƒ}[ƒgƒCƒ“ƒfƒ“ƒg•û–@‚ğ’Ç‰Á
+	case PP_SMARTINDENT:				//ã‚¹ãƒãƒ¼ãƒˆã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ–¹æ³•ã‚’è¿½åŠ 
 		{
 			int nMethod = CPlug::GetSmartIndentType( plug->GetFunctionCode() );
 			CPropTypesScreen::RemoveSIndentMethod( nMethod, plug->m_sLabel.c_str() );
@@ -160,7 +160,7 @@ bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 	return true;
 }
 
-//ƒWƒƒƒbƒN–¼‚ğƒWƒƒƒbƒN”Ô†‚É•ÏŠ·‚·‚é
+//ã‚¸ãƒ£ãƒƒã‚¯åã‚’ã‚¸ãƒ£ãƒƒã‚¯ç•ªå·ã«å¤‰æ›ã™ã‚‹
 EJack CJackManager::GetJackFromName( wstring sName )
 {
 	unsigned int i;
@@ -172,15 +172,15 @@ EJack CJackManager::GetJackFromName( wstring sName )
 		}
 	}
 
-	//Œ©‚Â‚©‚ç‚È‚¢
+	//è¦‹ã¤ã‹ã‚‰ãªã„
 	return PP_NONE;
 }
 
-//—˜—p‰Â”\‚Èƒvƒ‰ƒO‚ğŒŸõ‚·‚é
+//åˆ©ç”¨å¯èƒ½ãªãƒ—ãƒ©ã‚°ã‚’æ¤œç´¢ã™ã‚‹
 bool CJackManager::GetUsablePlug(
-	EJack			jack,		//!< [in] ƒWƒƒƒbƒN”Ô†
-	PlugId			plugId,		//!< [in] ƒvƒ‰ƒOID
-	CPlug::Array*	plugs		//!< [out] —˜—p‰Â”\ƒvƒ‰ƒO‚ÌƒŠƒXƒg
+	EJack			jack,		//!< [in] ã‚¸ãƒ£ãƒƒã‚¯ç•ªå·
+	PlugId			plugId,		//!< [in] ãƒ—ãƒ©ã‚°ID
+	CPlug::Array*	plugs		//!< [out] åˆ©ç”¨å¯èƒ½ãƒ—ãƒ©ã‚°ã®ãƒªã‚¹ãƒˆ
 )
 {
 	for( auto it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
@@ -191,7 +191,7 @@ bool CJackManager::GetUsablePlug(
 	return true;
 }
 
-//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì‹@”\”Ô†‚ğ•Ô‚·
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®æ©Ÿèƒ½ç•ªå·ã‚’è¿”ã™
 EFunctionCode CJackManager::GetCommandCode( int index ) const
 {
 	CPlug::Array commands = m_Jacks[ PP_COMMAND ].plugs;
@@ -203,7 +203,7 @@ EFunctionCode CJackManager::GetCommandCode( int index ) const
 	}
 }
 
-//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì–¼‘O‚ğ•Ô‚·
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®åå‰ã‚’è¿”ã™
 int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 {
 	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.begin(); it != m_Jacks[ PP_COMMAND ].plugs.end(); it++ ){
@@ -216,13 +216,13 @@ int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 	return -1;
 }
 
-//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì”‚ğ•Ô‚·
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®æ•°ã‚’è¿”ã™
 int CJackManager::GetCommandCount() const
 {
 	return m_Jacks[ PP_COMMAND ].plugs.size();
 }
 
-//ID‚É‡’v‚·‚éƒRƒ}ƒ“ƒhƒvƒ‰ƒO‚ğ•Ô‚·
+//IDã«åˆè‡´ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ©ã‚°ã‚’è¿”ã™
 CPlug* CJackManager::GetCommandById( int id ) const
 {
 	const CPlug::Array& plugs = GetPlugs( PP_COMMAND );
@@ -231,11 +231,11 @@ CPlug* CJackManager::GetCommandById( int id ) const
 			return (*it);
 		}
 	}
-	assert_warning(false);	//ID‚É‡’v‚·‚éƒvƒ‰ƒO‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢
+	assert_warning(false);	//IDã«åˆè‡´ã™ã‚‹ãƒ—ãƒ©ã‚°ãŒç™»éŒ²ã•ã‚Œã¦ã„ãªã„
 	return NULL;
 }
 
-//ƒvƒ‰ƒO‚ğ•Ô‚·
+//ãƒ—ãƒ©ã‚°ã‚’è¿”ã™
 const CPlug::Array& CJackManager::GetPlugs( EJack jack ) const
 {
 	return m_Jacks[ jack ].plugs;	

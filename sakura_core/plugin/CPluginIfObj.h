@@ -1,5 +1,5 @@
-/*!	@file
-	@brief PluginƒIƒuƒWƒFƒNƒg
+ï»¿/*!	@file
+	@brief Pluginã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 */
 /*
@@ -32,27 +32,27 @@
 #include "_os/OleTypes.h"
 #include "util/ole_convert.h"
 
-// cpp‚ÖˆÚ“®—\’è
+// cppã¸ç§»å‹•äºˆå®š
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
 
 class CPluginIfObj : public CWSHIfObj {
-	// Œ^’è‹`
+	// åž‹å®šç¾©
 	enum FuncId {
-		F_PL_COMMAND_FIRST = 0,					//«ƒRƒ}ƒ“ƒh‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_PL_SETOPTION,							//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚É’l‚ð‘‚­
-		F_PL_ADDCOMMAND,						//ƒRƒ}ƒ“ƒh‚ð’Ç‰Á‚·‚é
-		F_PL_FUNCTION_FIRST = F_FUNCTION_FIRST,	//«ŠÖ”‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_PL_GETPLUGINDIR,						//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_ƒpƒX‚ðŽæ“¾‚·‚é
-		F_PL_GETDEF,							//Ý’èƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-		F_PL_GETOPTION,							//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-		F_PL_GETCOMMANDNO,						//ŽÀs’†ƒvƒ‰ƒO‚Ì”Ô†‚ðŽæ“¾‚·‚é
-		F_PL_GETSTRING,							//Ý’èƒtƒ@ƒCƒ‹‚©‚ç•¶Žš—ñ‚ð“Ç‚Ý‚¾‚·(‘½Œ¾Œê‘Î‰ž)
+		F_PL_COMMAND_FIRST = 0,					//â†“ã‚³ãƒžãƒ³ãƒ‰ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_PL_SETOPTION,							//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã«å€¤ã‚’æ›¸ã
+		F_PL_ADDCOMMAND,						//ã‚³ãƒžãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
+		F_PL_FUNCTION_FIRST = F_FUNCTION_FIRST,	//â†“é–¢æ•°ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_PL_GETPLUGINDIR,						//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹
+		F_PL_GETDEF,							//è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+		F_PL_GETOPTION,							//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+		F_PL_GETCOMMANDNO,						//å®Ÿè¡Œä¸­ãƒ—ãƒ©ã‚°ã®ç•ªå·ã‚’å–å¾—ã™ã‚‹
+		F_PL_GETSTRING,							//è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰æ–‡å­—åˆ—ã‚’èª­ã¿ã ã™(å¤šè¨€èªžå¯¾å¿œ)
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CPluginIfObj( CPlugin& cPlugin )
 		: CWSHIfObj( L"Plugin", false )
@@ -60,40 +60,40 @@ public:
 	{
 	}
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CPluginIfObj(){}
 
-	// ‘€ì
+	// æ“ä½œ
 public:
 	void SetPlugIndex(int nIndex) { m_nPlugIndex = nIndex; }
-	// ŽÀ‘•
+	// å®Ÿè£…
 public:
-	//ƒRƒ}ƒ“ƒhî•ñ‚ðŽæ“¾‚·‚é
+	//ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroCommandInfo() const
 	{
 		return m_MacroFuncInfoCommandArr;
 	}
-	//ŠÖ”î•ñ‚ðŽæ“¾‚·‚é
+	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroFuncInfo() const
 	{
 		return m_MacroFuncInfoArr;
 	}
-	//ŠÖ”‚ðˆ—‚·‚é
+	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
-		Variant varCopy;	// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
+		Variant varCopy;	// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
 
 		switch(LOWORD(ID))
 		{
-		case F_PL_GETPLUGINDIR:			//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_ƒpƒX‚ðŽæ“¾‚·‚é
+		case F_PL_GETPLUGINDIR:			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹
 			{
 				SysString S(m_cPlugin.m_sBaseDir.c_str(), m_cPlugin.m_sBaseDir.size());
 				Wrap(&Result)->Receive(S);
 			}
 			return true;
-		case F_PL_GETDEF:				//Ý’èƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-		case F_PL_GETOPTION:			//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
+		case F_PL_GETDEF:				//è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+		case F_PL_GETOPTION:			//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
 			{
 				CDataProfile cProfile;
 				wstring sSection;
@@ -110,7 +110,7 @@ public:
 				}
 				if (!cProfile.IOProfileData( sSection.c_str(), sKey.c_str(), sValue )
 					&& LOWORD(ID) == F_PL_GETOPTION ) {
-					// Ý’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎƒfƒtƒHƒ‹ƒg‚ðŽæ“¾ 
+					// è¨­å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚’å–å¾— 
 					CPluginOption::ArrayIter it;
 					for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++) {
 						wstring sSectionTmp;
@@ -127,7 +127,7 @@ public:
 				Wrap(&Result)->Receive(S);
 			}
 			return true;
-		case F_PL_GETCOMMANDNO:			//ŽÀs’†ƒvƒ‰ƒO‚Ì”Ô†‚ðŽæ“¾‚·‚é
+		case F_PL_GETCOMMANDNO:			//å®Ÿè¡Œä¸­ãƒ—ãƒ©ã‚°ã®ç•ªå·ã‚’å–å¾—ã™ã‚‹
 			{
 				Wrap(&Result)->Receive(m_nPlugIndex);
 			}
@@ -151,12 +151,12 @@ public:
 		}
 		return false;
 	}
-	//ƒRƒ}ƒ“ƒh‚ðˆ—‚·‚é
+	//ã‚³ãƒžãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
 	{
 		switch ( LOWORD(ID) ) 
 		{
-		case F_PL_SETOPTION:			//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚É’l‚ð‘‚­
+		case F_PL_SETOPTION:			//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã«å€¤ã‚’æ›¸ã
 			{
 				if( Arguments[0] == NULL )return false;
 				if( Arguments[1] == NULL )return false;
@@ -167,10 +167,10 @@ public:
 				cProfile.SetWritingMode();
 				wstring tmp(Arguments[2]);
 				cProfile.IOProfileData( Arguments[0], Arguments[1], tmp );
-				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + L" ƒvƒ‰ƒOƒCƒ“Ý’èƒtƒ@ƒCƒ‹").c_str() );
+				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + L" ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«").c_str() );
 			}
 			break;
-		case F_PL_ADDCOMMAND:			//ƒRƒ}ƒ“ƒh‚ð’Ç‰Á‚·‚é
+		case F_PL_ADDCOMMAND:			//ã‚³ãƒžãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
 			{
 				int id = m_cPlugin.AddCommand( Arguments[0], Arguments[1], Arguments[2], true );
 				View->m_pcEditWnd->RegisterPluginCommand( id );
@@ -180,35 +180,35 @@ public:
 		return true;
 	}
 
-	// ƒƒ“ƒo•Ï”
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
 public:
 private:
 	CPlugin& m_cPlugin;
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ƒRƒ}ƒ“ƒhî•ñ(–ß‚è’l‚È‚µ)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// ŠÖ”î•ñ(–ß‚è’l‚ ‚è)
-	int m_nPlugIndex;	//ŽÀs’†ƒvƒ‰ƒO‚Ì”Ô†
+	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±(æˆ»ã‚Šå€¤ãªã—)
+	static MacroFuncInfo m_MacroFuncInfoArr[];	// é–¢æ•°æƒ…å ±(æˆ»ã‚Šå€¤ã‚ã‚Š)
+	int m_nPlugIndex;	//å®Ÿè¡Œä¸­ãƒ—ãƒ©ã‚°ã®ç•ªå·
 };
 
-//ƒRƒ}ƒ“ƒhî•ñ
+//ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] = 
 {
-	//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	{EFunctionCode(F_PL_SETOPTION),			LTEXT("SetOption"),				{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	NULL }, //ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚É’l‚ð‘‚­
-	{EFunctionCode(F_PL_ADDCOMMAND),		LTEXT("AddCommand"),			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	NULL }, //ƒRƒ}ƒ“ƒh‚ð’Ç‰Á‚·‚é
-	//	I’[
+	//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®åž‹	m_pszData
+	{EFunctionCode(F_PL_SETOPTION),			LTEXT("SetOption"),				{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	NULL }, //ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã«å€¤ã‚’æ›¸ã
+	{EFunctionCode(F_PL_ADDCOMMAND),		LTEXT("AddCommand"),			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	NULL }, //ã‚³ãƒžãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-//ŠÖ”î•ñ
+//é–¢æ•°æƒ…å ±
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] = 
 {
-	//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_ƒpƒX‚ðŽæ“¾‚·‚é
-	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //Ý’èƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚©‚ç’l‚ð“Ç‚Þ
-	{EFunctionCode(F_PL_GETSTRING),			LTEXT("GetString"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Ý’èƒtƒ@ƒCƒ‹‚©‚ç•¶Žš—ñ‚ð“Ç‚Þ
-	//	I’[
+	//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®åž‹	m_pszData
+	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹
+	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€¤ã‚’èª­ã‚€
+	{EFunctionCode(F_PL_GETSTRING),			LTEXT("GetString"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰æ–‡å­—åˆ—ã‚’èª­ã‚€
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 

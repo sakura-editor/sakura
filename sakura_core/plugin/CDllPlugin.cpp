@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DLLƒvƒ‰ƒOƒCƒ“ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief DLLãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -29,7 +29,7 @@
 #include "plugin/CDllPlugin.h"
 #include "view/CEditView.h"
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CDllPlugin::~CDllPlugin(void)
 {
 	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
@@ -37,38 +37,38 @@ CDllPlugin::~CDllPlugin(void)
 	}
 }
 
-// ƒvƒ‰ƒO‚Ì¶¬
-// CPlug‚Ì‘ã‚í‚è‚ÉCDllPlug‚ğì¬‚·‚é
+// ãƒ—ãƒ©ã‚°ã®ç”Ÿæˆ
+// CPlugã®ä»£ã‚ã‚Šã«CDllPlugã‚’ä½œæˆã™ã‚‹
 CPlug* CDllPlugin::CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
 {
 	CDllPlug *newPlug =  new CDllPlug( plugin, id, sJack, sHandler, sLabel );
 	return newPlug;
 }
 
-// ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
+// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿
 bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	ReadPluginDefCommon( cProfile, cProfileMlang );
 
-	//DLL–¼‚Ì“Ç‚İ‚İ
+	//DLLåã®èª­ã¿è¾¼ã¿
 	cProfile->IOProfileData( PII_DLL, PII_DLL_NAME, m_sDllName );
 
-	//ƒvƒ‰ƒO‚Ì“Ç‚İ‚İ
+	//ãƒ—ãƒ©ã‚°ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefPlug( cProfile, cProfileMlang );
 
-	//ƒRƒ}ƒ“ƒh‚Ì“Ç‚İ‚İ
+	//ã‚³ãƒãƒ³ãƒ‰ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefCommand( cProfile, cProfileMlang );
 
-	//ƒIƒvƒVƒ‡ƒ“’è‹`‚Ì“Ç‚İ‚İ	// 2010/3/24 Uchi
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©ã®èª­ã¿è¾¼ã¿	// 2010/3/24 Uchi
 	ReadPluginDefOption( cProfile, cProfileMlang );
 
-	//•¶š—ñ’è‹`‚Ì“Ç‚İ‚İ
+	//æ–‡å­—åˆ—å®šç¾©ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefString( cProfile, cProfileMlang );
 
 	return true;
 }
 
-// ƒvƒ‰ƒOÀs
+// ãƒ—ãƒ©ã‚°å®Ÿè¡Œ
 bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& params )
 {
 	tstring dllPath = GetFilePath( to_tchar(m_sDllName.c_str()) );
@@ -80,7 +80,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 
 	CDllPlug& plug = *(static_cast<CDllPlug*>(&plug_raw));
 	if( ! plug.m_handler ){
-		//DLLŠÖ”‚Ìæ“¾
+		//DLLé–¢æ•°ã®å–å¾—
 		ImportTable imp[2] = {
 			{ &plug.m_handler, to_achar( plug.m_sHandler.c_str() ) },
 			{ NULL, 0 }
@@ -94,7 +94,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 	CMacroBeforeAfter ba;
 	int flags = FA_NONRECORD | FA_FROMMACRO;
 	ba.ExecKeyMacroBefore(view, flags);
-	//DLLŠÖ”‚ÌŒÄ‚Ño‚µ
+	//DLLé–¢æ•°ã®å‘¼ã³å‡ºã—
 	plug.m_handler();
 	ba.ExecKeyMacroAfter(view, flags, true);
 	

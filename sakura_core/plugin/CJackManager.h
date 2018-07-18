@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒWƒƒƒbƒNŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚¸ãƒ£ãƒƒã‚¯ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -33,14 +33,14 @@
 
 #define PP_COMMAND_STR	L"Command"
 
-// ƒWƒƒƒbƒNiƒvƒ‰ƒOƒCƒ“‰Â”\‰ÓŠj
+// ã‚¸ãƒ£ãƒƒã‚¯ï¼ˆï¼ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å¯èƒ½ç®‡æ‰€ï¼‰
 enum EJack {
 	PP_NONE			= -1,
 	PP_COMMAND		= 0,
 //	PP_INSTALL,
 //	PP_UNINSTALL,
-//	PP_APP_START,	// Œ»óƒGƒfƒBƒ^‚²‚Æ‚Éƒvƒ‰ƒOƒCƒ“ŠÇ—‚µ‚Ä‚¢‚é‚½‚ß
-//	PP_APP_END,		// ƒAƒvƒŠƒŒƒxƒ‹‚ÌƒCƒxƒ“ƒg‚Íˆµ‚¢‚É‚­‚¢
+//	PP_APP_START,	// ç¾çŠ¶ã‚¨ãƒ‡ã‚£ã‚¿ã”ã¨ã«ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç®¡ç†ã—ã¦ã„ã‚‹ãŸã‚
+//	PP_APP_END,		// ã‚¢ãƒ—ãƒªãƒ¬ãƒ™ãƒ«ã®ã‚¤ãƒ™ãƒ³ãƒˆã¯æ‰±ã„ã«ãã„
 	PP_EDITOR_START,
 	PP_EDITOR_END,
 	PP_DOCUMENT_OPEN,
@@ -52,54 +52,54 @@ enum EJack {
 	PP_COMPLEMENT,
 	PP_COMPLEMENTGLOBAL,
 
-	//ªƒWƒƒƒbƒN‚ğ’Ç‰Á‚·‚é‚Æ‚«‚Í‚±‚Ìs‚Ìã‚ÉB
-	PP_BUILTIN_JACK_COUNT	//‘g‚İ‚İƒWƒƒƒbƒN”
+	//â†‘ã‚¸ãƒ£ãƒƒã‚¯ã‚’è¿½åŠ ã™ã‚‹ã¨ãã¯ã“ã®è¡Œã®ä¸Šã«ã€‚
+	PP_BUILTIN_JACK_COUNT	//çµ„ã¿è¾¼ã¿ã‚¸ãƒ£ãƒƒã‚¯æ•°
 };
 
-// ƒWƒƒƒbƒN’è‹`\‘¢‘Ì
+// ã‚¸ãƒ£ãƒƒã‚¯å®šç¾©æ§‹é€ ä½“
 typedef struct tagJackDef {
 	EJack			ppId;
 	const WCHAR*	szName;
-	CPlug::Array		plugs;	//ƒWƒƒƒbƒN‚ÉŠÖ˜A•t‚¯‚ç‚ê‚½ƒvƒ‰ƒO
+	CPlug::Array		plugs;	//ã‚¸ãƒ£ãƒƒã‚¯ã«é–¢é€£ä»˜ã‘ã‚‰ã‚ŒãŸãƒ—ãƒ©ã‚°
 } JackDef;
 
-// ƒvƒ‰ƒO“o˜^Œ‹‰Ê
+// ãƒ—ãƒ©ã‚°ç™»éŒ²çµæœ
 enum ERegisterPlugResult {
-	PPMGR_REG_OK,				//ƒvƒ‰ƒOƒCƒ““o˜^¬Œ÷
-	PPMGR_INVALID_NAME,			//ƒWƒƒƒbƒN–¼‚ª•s³
-	PPMGR_CONFLICT				//w’è‚µ‚½ƒWƒƒƒbƒN‚Í•Ê‚Ìƒvƒ‰ƒOƒCƒ“‚ªÚ‘±‚µ‚Ä‚¢‚é
+	PPMGR_REG_OK,				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç™»éŒ²æˆåŠŸ
+	PPMGR_INVALID_NAME,			//ã‚¸ãƒ£ãƒƒã‚¯åãŒä¸æ­£
+	PPMGR_CONFLICT				//æŒ‡å®šã—ãŸã‚¸ãƒ£ãƒƒã‚¯ã¯åˆ¥ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãŒæ¥ç¶šã—ã¦ã„ã‚‹
 };
 
 
-//ƒWƒƒƒbƒNŠÇ—ƒNƒ‰ƒX
+//ã‚¸ãƒ£ãƒƒã‚¯ç®¡ç†ã‚¯ãƒ©ã‚¹
 class CJackManager : public TSingleton<CJackManager>{
 	friend class TSingleton<CJackManager>;
 	CJackManager();
 
 	typedef std::wstring wstring;
 
-	//‘€ì
+	//æ“ä½œ
 public:
-	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//ƒvƒ‰ƒO‚ğƒWƒƒƒbƒN‚ÉŠÖ˜A•t‚¯‚é
-	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//ƒvƒ‰ƒO‚ÌŠÖ˜A•t‚¯‚ğ‰ğœ‚·‚é
-	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//—˜—p‰Â”\‚Èƒvƒ‰ƒO‚ğŒŸõ‚·‚é
+	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//ãƒ—ãƒ©ã‚°ã‚’ã‚¸ãƒ£ãƒƒã‚¯ã«é–¢é€£ä»˜ã‘ã‚‹
+	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//ãƒ—ãƒ©ã‚°ã®é–¢é€£ä»˜ã‘ã‚’è§£é™¤ã™ã‚‹
+	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//åˆ©ç”¨å¯èƒ½ãªãƒ—ãƒ©ã‚°ã‚’æ¤œç´¢ã™ã‚‹
 private:
-	EJack GetJackFromName( wstring sName );	//ƒWƒƒƒbƒN–¼‚ğƒWƒƒƒbƒN”Ô†‚É•ÏŠ·‚·‚é
+	EJack GetJackFromName( wstring sName );	//ã‚¸ãƒ£ãƒƒã‚¯åã‚’ã‚¸ãƒ£ãƒƒã‚¯ç•ªå·ã«å¤‰æ›ã™ã‚‹
 
-	//‘®«
+	//å±æ€§
 public:
-	std::vector<JackDef> GetJackDef() const;	//ƒWƒƒƒbƒN’è‹`ˆê——‚ğ•Ô‚·
-	EFunctionCode GetCommandCode( int index ) const;		//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì‹@”\ƒR[ƒh‚ğ•Ô‚·
-	int GetCommandName( int funccode, WCHAR* buf, int size ) const;	//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì–¼‘O‚ğ•Ô‚·
-	int GetCommandCount() const;	//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚Ì”‚ğ•Ô‚·
-	CPlug* GetCommandById( int id ) const;	//ID‚É‡’v‚·‚éƒRƒ}ƒ“ƒhƒvƒ‰ƒO‚ğ•Ô‚·
-	const CPlug::Array& GetPlugs( EJack jack ) const;	//ƒvƒ‰ƒO‚ğ•Ô‚·
-	//TODO: ì‚è‚ªˆêŠÑ‚µ‚Ä‚È‚¢‚Ì‚Å®—‚·‚é syat
+	std::vector<JackDef> GetJackDef() const;	//ã‚¸ãƒ£ãƒƒã‚¯å®šç¾©ä¸€è¦§ã‚’è¿”ã™
+	EFunctionCode GetCommandCode( int index ) const;		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®æ©Ÿèƒ½ã‚³ãƒ¼ãƒ‰ã‚’è¿”ã™
+	int GetCommandName( int funccode, WCHAR* buf, int size ) const;	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®åå‰ã‚’è¿”ã™
+	int GetCommandCount() const;	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã®æ•°ã‚’è¿”ã™
+	CPlug* GetCommandById( int id ) const;	//IDã«åˆè‡´ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ©ã‚°ã‚’è¿”ã™
+	const CPlug::Array& GetPlugs( EJack jack ) const;	//ãƒ—ãƒ©ã‚°ã‚’è¿”ã™
+	//TODO: ä½œã‚ŠãŒä¸€è²«ã—ã¦ãªã„ã®ã§æ•´ç†ã™ã‚‹ syat
 
-	//ƒƒ“ƒo•Ï”
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
 private:
 	DLLSHAREDATA* m_pShareData;
-	std::vector<JackDef> m_Jacks;	//ƒWƒƒƒbƒN’è‹`‚Ìˆê——
+	std::vector<JackDef> m_Jacks;	//ã‚¸ãƒ£ãƒƒã‚¯å®šç¾©ã®ä¸€è¦§
 };
 
 #endif /* SAKURA_CJACKMANAGER_6CC7B212_130B_46AF_9C88_05F554CDA34BO_H_ */

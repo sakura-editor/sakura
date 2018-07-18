@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“Šî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³åŸºæœ¬ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -33,55 +33,55 @@
 #include "CDataProfile.h"
 #include "util/string_ex.h"
 
-//! ƒvƒ‰ƒOƒCƒ“‚ÌŠÇ—”Ô†index
+//! ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ç®¡ç†ç•ªå·index
 typedef int PluginId;
-//! ƒvƒ‰ƒO‚ÌŠÇ—”Ô† ƒvƒ‰ƒOƒCƒ“‚ÌƒRƒ}ƒ“ƒhƒvƒ‰ƒO‚²‚Æ‚ÉˆêˆÓB‚Ù‚©‚Í0
+//! ãƒ—ãƒ©ã‚°ã®ç®¡ç†ç•ªå· ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ©ã‚°ã”ã¨ã«ä¸€æ„ã€‚ã»ã‹ã¯0
 typedef int PlugId;
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹–¼
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«å
 #define PII_FILENAME				_T("plugin.def")
 #define PII_L10NDIR					_T("local")
 #define PII_L10NFILEBASE			_T("plugin_")
 #define PII_L10NFILEEXT				_T(".def")
-//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹Šg’£qiƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹ŒÂ•ÊƒtƒHƒ‹ƒ_–¼{Šg’£qj
+//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ï¼å€‹åˆ¥ãƒ•ã‚©ãƒ«ãƒ€åï¼‹æ‹¡å¼µå­ï¼‰
 #define PII_OPTFILEEXT				_T(".ini")
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹EƒL[•¶š—ñ
-#define	PII_PLUGIN					L"Plugin"		//‹¤’Êî•ñ
-#define	PII_PLUGIN_ID				L"Id"			//IDFƒvƒ‰ƒOƒCƒ“ID
-#define	PII_PLUGIN_NAME				L"Name"			//–¼‘OFƒvƒ‰ƒOƒCƒ“–¼
-#define	PII_PLUGIN_DESCRIPTION		L"Description"	//à–¾FŠÈŒ‰‚Èà–¾
-#define	PII_PLUGIN_PLUGTYPE			L"Type"			//í•ÊFwsh / dll
-#define	PII_PLUGIN_AUTHOR			L"Author"		//ìÒF’˜ìŒ Ò–¼
-#define	PII_PLUGIN_VERSION			L"Version"		//ƒo[ƒWƒ‡ƒ“Fƒvƒ‰ƒOƒCƒ“‚Ìƒo[ƒWƒ‡ƒ“
-#define	PII_PLUGIN_URL				L"Url"			//”z•zURLF”z•zŒ³URL
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ã‚­ãƒ¼æ–‡å­—åˆ—
+#define	PII_PLUGIN					L"Plugin"		//å…±é€šæƒ…å ±
+#define	PII_PLUGIN_ID				L"Id"			//IDï¼šãƒ—ãƒ©ã‚°ã‚¤ãƒ³ID
+#define	PII_PLUGIN_NAME				L"Name"			//åå‰ï¼šãƒ—ãƒ©ã‚°ã‚¤ãƒ³å
+#define	PII_PLUGIN_DESCRIPTION		L"Description"	//èª¬æ˜ï¼šç°¡æ½”ãªèª¬æ˜
+#define	PII_PLUGIN_PLUGTYPE			L"Type"			//ç¨®åˆ¥ï¼šwsh / dll
+#define	PII_PLUGIN_AUTHOR			L"Author"		//ä½œè€…ï¼šè‘—ä½œæ¨©è€…å
+#define	PII_PLUGIN_VERSION			L"Version"		//ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼šãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+#define	PII_PLUGIN_URL				L"Url"			//é…å¸ƒURLï¼šé…å¸ƒå…ƒURL
 
-#define PII_PLUG					L"Plug"			//ƒvƒ‰ƒOî•ñ
-#define PII_STRING					L"String"		//•¶š—ñî•ñ
+#define PII_PLUG					L"Plug"			//ãƒ—ãƒ©ã‚°æƒ…å ±
+#define PII_STRING					L"String"		//æ–‡å­—åˆ—æƒ…å ±
 
-#define PII_COMMAND					L"Command"		//ƒRƒ}ƒ“ƒhî•ñ
-#define PII_OPTION					L"Option"		//ƒIƒvƒVƒ‡ƒ“’è‹`î•ñ	// 2010/3/24 Uchi
+#define PII_COMMAND					L"Command"		//ã‚³ãƒãƒ³ãƒ‰æƒ…å ±
+#define PII_OPTION					L"Option"		//ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©æƒ…å ±	// 2010/3/24 Uchi
 
 
 class CPlugin;
 
-//ƒvƒ‰ƒOiƒvƒ‰ƒOƒCƒ““à‚Ìˆ—’PˆÊjƒNƒ‰ƒX
+//ãƒ—ãƒ©ã‚°ï¼ˆãƒ—ãƒ©ã‚°ã‚¤ãƒ³å†…ã®å‡¦ç†å˜ä½ï¼‰ã‚¯ãƒ©ã‚¹
 class CPlug
 {
-	//Œ^’è‹`
+	//å‹å®šç¾©
 protected:
 	typedef std::wstring wstring;
 public:
 	/*!
-	  CPlug::Array‚Ístd::vector‚È‚Ì‚ÅA—v‘f‚Ì’Ç‰Áíœiinsert/erasej‚ğ‚·‚é‚Æ
-	  ƒCƒeƒŒ[ƒ^‚ª–³Œø‚É‚È‚é‚±‚Æ‚ª‚ ‚éB‚»‚Ì‚½‚ß•Ï”‚ÉŠi”[‚µ‚½ƒCƒeƒŒ[ƒ^‚ğ
-	  insert/erase‚Ì‘æˆêˆø”‚Éw’è‚·‚é‚ÆAVC2005‚Åƒrƒ‹ƒhƒGƒ‰[‚ªo‚éB
-	  ‚©‚í‚è‚Ébegin/end‚©‚ç‚Ì‘Š‘ÎˆÊ’uw’è‚âAƒCƒ“ƒfƒbƒNƒXw’è‚ğg‚¤‚±‚ÆB
+	  CPlug::Arrayã¯std::vectorãªã®ã§ã€è¦ç´ ã®è¿½åŠ å‰Šé™¤ï¼ˆinsert/eraseï¼‰ã‚’ã™ã‚‹ã¨
+	  ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãŒç„¡åŠ¹ã«ãªã‚‹ã“ã¨ãŒã‚ã‚‹ã€‚ãã®ãŸã‚å¤‰æ•°ã«æ ¼ç´ã—ãŸã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’
+	  insert/eraseã®ç¬¬ä¸€å¼•æ•°ã«æŒ‡å®šã™ã‚‹ã¨ã€VC2005ã§ãƒ“ãƒ«ãƒ‰ã‚¨ãƒ©ãƒ¼ãŒå‡ºã‚‹ã€‚
+	  ã‹ã‚ã‚Šã«begin/endã‹ã‚‰ã®ç›¸å¯¾ä½ç½®æŒ‡å®šã‚„ã€ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æŒ‡å®šã‚’ä½¿ã†ã“ã¨ã€‚
 	*/
-	typedef std::vector<CPlug*> Array;			//ƒvƒ‰ƒO‚ÌƒŠƒXƒg
-	typedef Array::const_iterator ArrayIter;	//‚»‚ÌƒCƒeƒŒ[ƒ^
+	typedef std::vector<CPlug*> Array;			//ãƒ—ãƒ©ã‚°ã®ãƒªã‚¹ãƒˆ
+	typedef Array::const_iterator ArrayIter;	//ãã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
 		: m_id( id )
@@ -91,31 +91,31 @@ public:
 		, m_cPlugin( plugin )
 	{
 	}
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	virtual ~CPlug() {}
 
-	//‘€ì
+	//æ“ä½œ
 public:
-	bool Invoke( CEditView* view, CWSHIfObj::List& params );	//ƒvƒ‰ƒO‚ğÀs‚·‚é
+	bool Invoke( CEditView* view, CWSHIfObj::List& params );	//ãƒ—ãƒ©ã‚°ã‚’å®Ÿè¡Œã™ã‚‹
 
-	//‘®«
+	//å±æ€§
 public:
 	EFunctionCode GetFunctionCode() const;
 
-	//•â•ŠÖ”
+	//è£œåŠ©é–¢æ•°
 public:
-	// Plug Function”Ô†‚ÌŒvZ(ƒNƒ‰ƒXŠO‚Å‚àg‚¦‚éƒo[ƒWƒ‡ƒ“)
+	// Plug Functionç•ªå·ã®è¨ˆç®—(ã‚¯ãƒ©ã‚¹å¤–ã§ã‚‚ä½¿ãˆã‚‹ãƒãƒ¼ã‚¸ãƒ§ãƒ³)
 	// 2010/4/19 Uchi
-	// 2011/8/20 syat ŠÖ”ƒR[ƒh‚ÌŠ„‚è“–‚Ä’¼‚µ
+	// 2011/8/20 syat é–¢æ•°ã‚³ãƒ¼ãƒ‰ã®å‰²ã‚Šå½“ã¦ç›´ã—
 	static inline EFunctionCode GetPluginFunctionCode( PluginId nPluginId, PlugId nPlugId )
 	{
 		return static_cast<EFunctionCode>( (nPluginId%20 * 100) + (nPluginId/20 * 50) + nPlugId + F_PLUGCOMMAND_FIRST );
 	}
 
-	// PluginId”Ô†‚ÌŒvZ(ƒNƒ‰ƒXŠO‚Å‚àg‚¦‚éƒo[ƒWƒ‡ƒ“)
+	// PluginIdç•ªå·ã®è¨ˆç®—(ã‚¯ãƒ©ã‚¹å¤–ã§ã‚‚ä½¿ãˆã‚‹ãƒãƒ¼ã‚¸ãƒ§ãƒ³)
 	// 2010/4/19 Uchi
-	// 2011/8/20 syat ŠÖ”ƒR[ƒh‚ÌŠ„‚è“–‚Ä’¼‚µ
+	// 2011/8/20 syat é–¢æ•°ã‚³ãƒ¼ãƒ‰ã®å‰²ã‚Šå½“ã¦ç›´ã—
 	static inline PluginId GetPluginId( EFunctionCode nFunctionCode )
 	{
 		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
@@ -124,9 +124,9 @@ public:
 		return PluginId(-1);
 	}
 
-	// PluginNo”Ô†‚ÌŒvZ(ƒNƒ‰ƒXŠO‚Å‚àg‚¦‚éƒo[ƒWƒ‡ƒ“)
+	// PluginNoç•ªå·ã®è¨ˆç®—(ã‚¯ãƒ©ã‚¹å¤–ã§ã‚‚ä½¿ãˆã‚‹ãƒãƒ¼ã‚¸ãƒ§ãƒ³)
 	// 2010/6/24 Uchi
-	// 2011/8/20 syat ŠÖ”ƒR[ƒh‚ÌŠ„‚è“–‚Ä’¼‚µ
+	// 2011/8/20 syat é–¢æ•°ã‚³ãƒ¼ãƒ‰ã®å‰²ã‚Šå½“ã¦ç›´ã—
 	static inline PlugId GetPlugId( EFunctionCode nFunctionCode )
 	{
 		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
@@ -135,21 +135,21 @@ public:
 		return PlugId(-1);
 	}
 
-	/* PluginId, PlugId ‚Æ ŠÖ”ƒR[ƒh‚Ìƒ}ƒbƒsƒ“ƒO *****************************
-	 *   PluginId c ƒvƒ‰ƒOƒCƒ“‚Ì”Ô† 0`39
-	 *     PlugId c ƒvƒ‰ƒOƒCƒ““à‚Ìƒvƒ‰ƒO‚Ì”Ô† 0`49
+	/* PluginId, PlugId ã¨ é–¢æ•°ã‚³ãƒ¼ãƒ‰ã®ãƒãƒƒãƒ”ãƒ³ã‚° *****************************
+	 *   PluginId â€¦ ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ç•ªå· 0ï½39
+	 *     PlugId â€¦ ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å†…ã®ãƒ—ãƒ©ã‚°ã®ç•ªå· 0ï½49
 	 *
-	 *   ŠÖ”ƒR[ƒh 20000`21999   ()“à‚Í(PluginId, PlugId)‚ğ•\‚·
+	 *   é–¢æ•°ã‚³ãƒ¼ãƒ‰ 20000ï½21999   ()å†…ã¯(PluginId, PlugId)ã‚’è¡¨ã™
 	 *   +------------+------------+----+------------+
 	 *   |20000(0,0)  |20100(1,0)  |    |21900(19,0) |
-	 *   |  :         |  :         | c |  :         |
+	 *   |  :         |  :         | â€¦ |  :         |
 	 *   |20049(0,49) |20149(1,49) |    |21949(19,49)| 
 	 *   +------------+------------+----+------------+
 	 *   |20050(20,0) |20150(21,0) |    |21950(39,0) |
-	 *   |  :         |  :         | c |  :         |
+	 *   |  :         |  :         | â€¦ |  :         |
 	 *   |20099(20,49)|20199(21,49)|    |21999(39,49)| 
 	 *   +------------+------------+----+------------+
-	 *   ‚à‚µ‘«‚è‚È‚¯‚ê‚ÎA22000`23999‚ğ•¥‚¢o‚µ‚ÄH‚¢‚Â‚Ô‚·
+	 *   ã‚‚ã—è¶³ã‚Šãªã‘ã‚Œã°ã€22000ï½23999ã‚’æ‰•ã„å‡ºã—ã¦é£Ÿã„ã¤ã¶ã™
 	 *************************************************************************/
 	static EOutlineType GetOutlineType( EFunctionCode nFunctionCode ){
 		return static_cast<EOutlineType>(nFunctionCode);
@@ -159,29 +159,29 @@ public:
 		return static_cast<ESmartIndentType>(nFunctionCode);
 	}
 
-	//ƒƒ“ƒo•Ï”
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
 public:
-	const PlugId m_id;					//ƒvƒ‰ƒOID
-	const wstring m_sJack;				//ŠÖ˜A•t‚¯‚éƒWƒƒƒbƒN–¼
-	const wstring m_sHandler;			//ƒnƒ“ƒhƒ‰•¶š—ñiŠÖ”–¼j
-	const wstring m_sLabel;				//ƒ‰ƒxƒ‹•¶š—ñ
-	wstring m_sIcon;					//ƒAƒCƒRƒ“‚Ìƒtƒ@ƒCƒ‹ƒpƒX
-	CPlugin& m_cPlugin;					//eƒvƒ‰ƒOƒCƒ“
+	const PlugId m_id;					//ãƒ—ãƒ©ã‚°ID
+	const wstring m_sJack;				//é–¢é€£ä»˜ã‘ã‚‹ã‚¸ãƒ£ãƒƒã‚¯å
+	const wstring m_sHandler;			//ãƒãƒ³ãƒ‰ãƒ©æ–‡å­—åˆ—ï¼ˆé–¢æ•°åï¼‰
+	const wstring m_sLabel;				//ãƒ©ãƒ™ãƒ«æ–‡å­—åˆ—
+	wstring m_sIcon;					//ã‚¢ã‚¤ã‚³ãƒ³ã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	CPlugin& m_cPlugin;					//è¦ªãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 };
 
-// ƒIƒvƒVƒ‡ƒ“’è‹`	// 2010/3/24 Uchi
+// ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©	// 2010/3/24 Uchi
 std::vector<std::wstring> wstring_split( std::wstring, wchar_t );
 
 class CPluginOption
 {
-	//Œ^’è‹`
+	//å‹å®šç¾©
 protected:
 	typedef std::wstring wstring;
 public:
-	typedef std::vector<CPluginOption*> Array;	// ƒIƒvƒVƒ‡ƒ“‚ÌƒŠƒXƒg
-	typedef Array::const_iterator ArrayIter;	// ‚»‚ÌƒCƒeƒŒ[ƒ^
+	typedef std::vector<CPluginOption*> Array;	// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®ãƒªã‚¹ãƒˆ
+	typedef Array::const_iterator ArrayIter;	// ãã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, wstring sDefaultVal, int index) 
 	{
@@ -189,7 +189,7 @@ public:
 		m_sLabel	= sLabel;
 		m_sSection	= sSection;
 		m_sKey		= sKey;
-		// ¬•¶š•ÏŠ·
+		// å°æ–‡å­—å¤‰æ›
 		std::transform( sType.begin (), sType.end (), sType.begin (), my_towlower2 );
 		m_sType		= sType;
 		m_sSelects	= sSelects;
@@ -197,11 +197,11 @@ public:
 		m_index		= index;
 	}
 
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CPluginOption() {}
 
-	//‘€ì
+	//æ“ä½œ
 public:
 	wstring	GetLabel( void )	{ return m_sLabel; }
 	void	GetKey( wstring* sectin, wstring* key )	{ 
@@ -222,86 +222,86 @@ protected:
 	wstring		m_sSection;
 	wstring		m_sKey;
 	wstring		m_sType;
-	wstring		m_sSelects;		// ‘I‘ğŒó•â
+	wstring		m_sSelects;		// é¸æŠå€™è£œ
 	wstring		m_sDefaultVal;
 	int 		m_index; 
 };
 
 
-//ƒvƒ‰ƒOƒCƒ“ƒNƒ‰ƒX
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
 
 class CPlugin
 {
-	//Œ^’è‹`
+	//å‹å®šç¾©
 protected:
 	typedef std::wstring wstring;
 	typedef std::string string;
 
 public:
-	typedef std::list<CPlugin*> List;		//ƒvƒ‰ƒOƒCƒ“‚ÌƒŠƒXƒg
-	typedef List::const_iterator ListIter;	//‚»‚ÌƒCƒeƒŒ[ƒ^
+	typedef std::list<CPlugin*> List;		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒªã‚¹ãƒˆ
+	typedef List::const_iterator ListIter;	//ãã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CPlugin( const tstring& sBaseDir );
 
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	virtual ~CPlugin(void);
 
-	//‘€ì
+	//æ“ä½œ
 public:
-	virtual int AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister );//ƒRƒ}ƒ“ƒh‚ğ’Ç‰Á‚·‚é
-	int 	GetCommandCount()	{ return m_nCommandCount; }			// ƒRƒ}ƒ“ƒh”‚ğ•Ô‚·	2010/7/4 Uchi
+	virtual int AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister );//ã‚³ãƒãƒ³ãƒ‰ã‚’è¿½åŠ ã™ã‚‹
+	int 	GetCommandCount()	{ return m_nCommandCount; }			// ã‚³ãƒãƒ³ãƒ‰æ•°ã‚’è¿”ã™	2010/7/4 Uchi
 
 protected:
-	bool ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌCommonƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
-	bool ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌPlugƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
-	bool ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfileMlang );				//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌCommandƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
-	bool ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌOptionƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş	// 2010/3/24 Uchi
-	bool ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌStringƒZƒNƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
+	bool ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Commonã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+	bool ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Plugã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+	bool ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfileMlang );				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Commandã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
+	bool ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Optionã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€	// 2010/3/24 Uchi
+	bool ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®Stringã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 
-	//CPlugƒCƒ“ƒXƒ^ƒ“ƒX‚Ìì¬BReadPluginDefPlug/Command ‚©‚çŒÄ‚Î‚ê‚éB
+	//CPlugã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½œæˆã€‚ReadPluginDefPlug/Command ã‹ã‚‰å‘¼ã°ã‚Œã‚‹ã€‚
 	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
 	{
 		return new CPlug( plugin, id, sJack, sHandler, sLabel );
 	}
 
-//	void NormalizeExtList( const wstring& sExtList, wstring& sOut );	//ƒJƒ“ƒ}‹æØ‚èŠg’£qƒŠƒXƒg‚ğ³‹K‰»‚·‚é
+//	void NormalizeExtList( const wstring& sExtList, wstring& sOut );	//ã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šæ‹¡å¼µå­ãƒªã‚¹ãƒˆã‚’æ­£è¦åŒ–ã™ã‚‹
 
-	//‘®«
+	//å±æ€§
 public:
-	tstring GetFilePath( const tstring& sFileName ) const;				//ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_Šî€‚Ì‘Š‘ÎƒpƒX‚ğƒtƒ‹ƒpƒX‚É•ÏŠ·
-	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ÌƒpƒX
-	tstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ÌƒpƒX
-	tstring GetFolderName() const;	//ƒvƒ‰ƒOƒCƒ“‚ÌƒtƒHƒ‹ƒ_–¼‚ğæ“¾
-	virtual CPlug::Array GetPlugs() const = 0;								//ƒvƒ‰ƒO‚Ìˆê——
+	tstring GetFilePath( const tstring& sFileName ) const;				//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€åŸºæº–ã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’ãƒ•ãƒ«ãƒ‘ã‚¹ã«å¤‰æ›
+	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	tstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	tstring GetFolderName() const;	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒ•ã‚©ãƒ«ãƒ€åã‚’å–å¾—
+	virtual CPlug::Array GetPlugs() const = 0;								//ãƒ—ãƒ©ã‚°ã®ä¸€è¦§
 
-	//ƒƒ“ƒo•Ï”
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
 public:
-	PluginId m_id;				//!< ƒvƒ‰ƒOƒCƒ“”Ô†iƒGƒfƒBƒ^‚ª‚Ó‚é0`MAX_PLUGIN-1‚Ì”Ô†j
-	wstring m_sId;				//!< ƒvƒ‰ƒOƒCƒ“ID
-	wstring m_sName;			//!< ƒvƒ‰ƒOƒCƒ“˜a–¼
-	wstring m_sDescription;		//!< ƒvƒ‰ƒOƒCƒ“‚É‚Â‚¢‚Ä‚ÌŠÈ’P‚È‹Lq
-	wstring m_sAuthor;			//!< ìÒ
-	wstring m_sVersion;			//!< ƒo[ƒWƒ‡ƒ“
-	wstring m_sUrl;				//!< ”z•zURL
+	PluginId m_id;				//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç•ªå·ï¼ˆã‚¨ãƒ‡ã‚£ã‚¿ãŒãµã‚‹0ï½MAX_PLUGIN-1ã®ç•ªå·ï¼‰
+	wstring m_sId;				//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ID
+	wstring m_sName;			//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å’Œå
+	wstring m_sDescription;		//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã«ã¤ã„ã¦ã®ç°¡å˜ãªè¨˜è¿°
+	wstring m_sAuthor;			//!< ä½œè€…
+	wstring m_sVersion;			//!< ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	wstring m_sUrl;				//!< é…å¸ƒURL
 	tstring m_sBaseDir;
 	tstring m_sOptionDir;
-	tstring m_sLangName;		//!< Œ¾Œê–¼
-	CPluginOption::Array m_options;		// ƒIƒvƒVƒ‡ƒ“	// 2010/3/24 Uchi
-	std::vector<std::wstring> m_aStrings;	// •¶š—ñ
+	tstring m_sLangName;		//!< è¨€èªå
+	CPluginOption::Array m_options;		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³	// 2010/3/24 Uchi
+	std::vector<std::wstring> m_aStrings;	// æ–‡å­—åˆ—
 private:
 	bool m_bLoaded;
 protected:
 	CPlug::Array m_plugs;
 	int m_nCommandCount;
 
-	//”ñÀ‘•’ñ‹Ÿ
+	//éå®Ÿè£…æä¾›
 public:
-	virtual bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& param ) =0;	//ƒvƒ‰ƒO‚ğÀs‚·‚é
-	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	virtual bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& param ) =0;	//ãƒ—ãƒ©ã‚°ã‚’å®Ÿè¡Œã™ã‚‹
+	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 };
 
 #endif /* SAKURA_CPLUGIN_E837BF6E_3F18_4A7E_89FD_F4DAE8DF9CFFD_H_ */
