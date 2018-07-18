@@ -1,5 +1,5 @@
-/*!	@file
-	���ʐݒ�_�C�A���O�{�b�N�X�A�u�J�X�^�����j���[�v�y�[�W
+﻿/*!	@file
+	共通設定ダイアログボックス、「カスタムメニュー」ページ
 
 	@author Norio Nakatani
 */
@@ -28,25 +28,25 @@
 
 using namespace std;
 
-static	int 	nSpecialFuncsNum;		// ���ʋ@�\�̃R���{�{�b�N�X���ł̔ԍ�
+static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10100
-	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE,				//���j���[����@�\�폜
-	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR,	//�Z�p���[�^�}��
-	IDC_BUTTON_INSERT,				HIDC_BUTTON_INSERT,				//���j���[�֋@�\�}��
-	IDC_BUTTON_ADD,					HIDC_BUTTON_ADD,				//���j���[�֋@�\�ǉ�
-	IDC_BUTTON_UP,					HIDC_BUTTON_UP,					//���j���[�̋@�\����ֈړ�
-	IDC_BUTTON_DOWN,				HIDC_BUTTON_DOWN,				//���j���[�̋@�\�����ֈړ�
-	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT,				//�C���|�[�g
-	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT,				//�G�N�X�|�[�g
-	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND,			//�@�\�̎��
-	IDC_COMBO_MENU,					HIDC_COMBO_MENU,				//���j���[�̎��
-	IDC_EDIT_MENUNAME,				HIDC_EDIT_MENUNAME,				//���j���[��		// 2009.02.20 ryoji
-	IDC_BUTTON_MENUNAME,			HIDC_BUTTON_MENUNAME,			//���j���[���ݒ�	// 2009.02.20 ryoji
-	IDC_LIST_FUNC,					HIDC_LIST_FUNC,					//�@�\�ꗗ
-	IDC_LIST_RES,					HIDC_LIST_RES,					//���j���[�ꗗ
-	IDC_CHECK_SUBMENU,				HIDC_CHECK_SUBMENU,				//�T�u���j���[�Ƃ��ĕ\��
+	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE,				//メニューから機能削除
+	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR,	//セパレータ挿入
+	IDC_BUTTON_INSERT,				HIDC_BUTTON_INSERT,				//メニューへ機能挿入
+	IDC_BUTTON_ADD,					HIDC_BUTTON_ADD,				//メニューへ機能追加
+	IDC_BUTTON_UP,					HIDC_BUTTON_UP,					//メニューの機能を上へ移動
+	IDC_BUTTON_DOWN,				HIDC_BUTTON_DOWN,				//メニューの機能を下へ移動
+	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT,				//インポート
+	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT,				//エクスポート
+	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND,			//機能の種別
+	IDC_COMBO_MENU,					HIDC_COMBO_MENU,				//メニューの種別
+	IDC_EDIT_MENUNAME,				HIDC_EDIT_MENUNAME,				//メニュー名		// 2009.02.20 ryoji
+	IDC_BUTTON_MENUNAME,			HIDC_BUTTON_MENUNAME,			//メニュー名設定	// 2009.02.20 ryoji
+	IDC_LIST_FUNC,					HIDC_LIST_FUNC,					//機能一覧
+	IDC_LIST_RES,					HIDC_LIST_RES,					//メニュー一覧
+	IDC_CHECK_SUBMENU,				HIDC_CHECK_SUBMENU,				//サブメニューとして表示
 //	IDC_LABEL_MENUFUNCKIND,			-1,
 //	IDC_LABEL_MENUCHOICE,			-1,
 //	IDC_LABEL_MENUFUNC,				-1,
@@ -59,10 +59,10 @@ static const DWORD p_helpids[] = {	//10100
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg �_�C�A���O�{�b�N�X��Window Handle
-	@param uMsg ���b�Z�[�W
-	@param wParam �p�����[�^1
-	@param lParam �p�����[�^2
+	@param hwndDlg ダイアログボックスのWindow Handle
+	@param uMsg メッセージ
+	@param wParam パラメータ1
+	@param lParam パラメータ2
 */
 INT_PTR CALLBACK CPropCustmenu::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -127,7 +127,7 @@ static void SetDlgItemsEnableState(
 	}
 }
 
-/* Custom menu ���b�Z�[�W���� */
+/* Custom menu メッセージ処理 */
 INT_PTR CPropCustmenu::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
@@ -158,18 +158,18 @@ INT_PTR CPropCustmenu::DispatchEvent(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* �_�C�A���O�f�[�^�̐ݒ� Custom menu */
+		/* ダイアログデータの設定 Custom menu */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* �R���g���[���̃n���h�����擾 */
+		/* コントロールのハンドルを取得 */
 		hwndCOMBO_FUNCKIND = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 		hwndLIST_FUNC = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 		hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 		hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
-		/* �L�[�I�����̏��� */
+		/* キー選択時の処理 */
 		::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
 
 		::SetTimer( hwndDlg, 1, 300, NULL );
@@ -185,14 +185,14 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			return TRUE;
 		case PSN_KILLACTIVE:
 //			MYTRACE( _T("Custom menu PSN_KILLACTIVE\n") );
-			/* �_�C�A���O�f�[�^�̎擾 Custom menu */
+			/* ダイアログデータの取得 Custom menu */
 			GetData( hwndDlg );
 			return TRUE;
-//@@@ 2002.01.03 YAZAKI �Ō�ɕ\�����Ă����V�[�g�𐳂����o���Ă��Ȃ��o�O�C��
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPCOM_PAGENUM_CUSTMENU;
 
-			// �\�����X�V����i�}�N���ݒ��ʂł̃}�N�����ύX�𔽉f�j	// 2007.11.02 ryoji
+			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
 			nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 			nIdx2 = List_GetCurSel( hwndLIST_RES );
 			nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
@@ -214,36 +214,36 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		break;
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* �ʒm�R�[�h */
-		wID = LOWORD(wParam);			/* ����ID� �R���g���[��ID� �܂��̓A�N�Z�����[�^ID */
-		hwndCtl = (HWND) lParam;		/* �R���g���[���̃n���h�� */
+		wNotifyCode = HIWORD(wParam);	/* 通知コード */
+		wID = LOWORD(wParam);			/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl = (HWND) lParam;		/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
-		/* �{�^���^�`�F�b�N�{�b�N�X���N���b�N���ꂽ */
+		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_BUTTON_IMPORT:	/* �C���|�[�g */
-				/* �J�X�^�����j���[�ݒ���C���|�[�g���� */
+			case IDC_BUTTON_IMPORT:	/* インポート */
+				/* カスタムメニュー設定をインポートする */
 				Import( hwndDlg );
 				return TRUE;
-			case IDC_BUTTON_EXPORT:	/* �G�N�X�|�[�g */
-				/* �J�X�^�����j���[�ݒ���G�N�X�|�[�g���� */
+			case IDC_BUTTON_EXPORT:	/* エクスポート */
+				/* カスタムメニュー設定をエクスポートする */
 				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
 				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
-				//	���j���[������̐ݒ�
+				//	メニュー文字列の設定
 				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( CB_ERR == nIdx1 ){
 					break;
 				}
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_MENUNAME,
 					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1], MAX_CUSTOM_MENU_NAME_LEN );
-				//	Combo Box���ύX �폜���ēo�^
+				//	Combo Boxも変更 削除＆再登録
 				Combo_DeleteString( hwndCOMBO_MENU, nIdx1 );
 				Combo_InsertString( hwndCOMBO_MENU, nIdx1,
 					m_cLookup.Custmenu2Name( nIdx1, buf, _countof(buf) ) );
-				// �폜����ƑI�������������̂ŁC���ɖ߂�
+				// 削除すると選択が解除されるので，元に戻す
 				Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
 			}
@@ -301,7 +301,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					KEYCODE keycode[3]={0}; _tctomb(szKey, keycode);
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = keycode[0];
 				}
-//@@@ 2002.01.08 YAZAKI �J�X�^�����j���[�ŃA�N�Z�X�L�[�����������A���J�b�R ( �����j���[���ڂɈ��c��o�O�C��
+//@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
 					auto_sprintf( szLabel2, LTEXT("%ts(%hc)"),
 						szLabel,
@@ -331,7 +331,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					break;
 				}
 
-				/* �L�[ */
+				/* キー */
 				if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ||
 					' '  == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ){
 				}else{
@@ -345,7 +345,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 
 				if (nIdx3 == nSpecialFuncsNum) {
-					// �@�\�ꗗ�ɓ���@�\���Z�b�g
+					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndLIST_FUNC );
 					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++) {
 						List_AddString( hwndLIST_FUNC, LS( nsFuncCode::pnFuncList_Special[i] ) );
@@ -353,7 +353,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 				else {
 					// Oct. 3, 2001 genta
-					// ��p���[�`���ɒu������
+					// 専用ルーチンに置き換え
 					m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
 				}
 				return TRUE;
@@ -361,7 +361,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		}else{
 			EFunctionCode	eFuncCode = F_0;
 			switch( wNotifyCode ){
-			/* �{�^���^�`�F�b�N�{�b�N�X���N���b�N���ꂽ */
+			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:
 				switch( wID ){
 				case IDC_BUTTON_INSERTSEPARATOR:
@@ -378,7 +378,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					if( LB_ERR == nIdx2 ){
 						nIdx2 = 0;
 					}
-					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, LSW(STR_PROPCOMCUSTMENU_SEP) );	//Oct. 18, 2000 JEPRO �u�c�[���o�[�v�^�u�Ŏg���Ă���Z�p���[�^�Ɠ�������ɓ��ꂵ��
+					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, LSW(STR_PROPCOMCUSTMENU_SEP) );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					if( nIdx2 == LB_ERR || nIdx2 == LB_ERRSPACE ){
 						break;
 					}
@@ -461,7 +461,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					//	Oct. 3, 2001 genta
 					if (nIdx3 == nSpecialFuncsNum) {
-						// ����@�\
+						// 特殊機能
 						eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
 					}else{
 						eFuncCode = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
@@ -509,7 +509,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					List_GetText( hwndLIST_FUNC, nIdx4, szLabel );
 					eFuncCode = F_DISABLE;
 					if (nIdx3 == nSpecialFuncsNum) {
-						// ����@�\
+						// 特殊機能
 						if( 0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num ){
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
 						}
@@ -614,7 +614,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -624,7 +624,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -635,7 +635,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 
 
 
-/* �_�C�A���O�f�[�^�̐ݒ� Custom menu */
+/* ダイアログデータの設定 Custom menu */
 void CPropCustmenu::SetData( HWND hwndDlg )
 {
 	HWND		hwndCOMBO_MENU;
@@ -643,25 +643,25 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	int			i;
 	WCHAR		buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 
-	/* �@�\��ʈꗗ�ɕ�������Z�b�g�i�R���{�{�b�N�X�j */
+	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
-	// ���ʋ@�\�ǉ�
+	// 特別機能追加
 	nSpecialFuncsNum = Combo_AddString( hwndCombo, LS( STR_SPECIAL_FUNC ) );
 
-	/* ��ʂ̐擪�̍��ڂ�I���i�R���{�{�b�N�X�j*/
-	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO �u--����`--�v��\�������Ȃ��悤�ɑ匳 Funcode.cpp �ŕύX���Ă���
+	/* 種別の先頭の項目を選択（コンボボックス）*/
+	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 
-	/* ���j���[�ꗗ�ɕ�������Z�b�g�i�R���{�{�b�N�X�j*/
+	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		Combo_AddString( hwndCOMBO_MENU, m_cLookup.Custmenu2Name( i, buf, _countof( buf ) ) );
 	}
-	/* ���j���[�ꗗ�̐擪�̍��ڂ�I���i�R���{�{�b�N�X�j*/
+	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCOMBO_MENU, 0 );
 	SetDataMenuList( hwndDlg, 0 );
 
-//	/* �J�X�^�����j���[�̐擪�̍��ڂ�I���i���X�g�{�b�N�X�j*/	//Oct. 8, 2000 JEPRO �������R�����g�A�E�g����Ɛ擪���ڂ��I������Ȃ��Ȃ�
+//	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 	List_SetCurSel( hwndLIST_RES, 0 );
 }
@@ -672,20 +672,20 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	WCHAR		szLabel[300];
 	WCHAR		szLabel2[300+4];
 
-	/* ���j���[���ڈꗗ�ɕ�������Z�b�g�i���X�g�{�b�N�X�j*/
+	/* メニュー項目一覧に文字列をセット（リストボックス）*/
 	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 //	hwndEDIT_KEY = ::GetDlgItem( hwndDlg, IDC_EDIT_KEY );
 	List_ResetContent( hwndLIST_RES );
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
-			auto_strncpy( szLabel, LSW(STR_PROPCOMCUSTMENU_SEP), _countof(szLabel) - 1 );	//Oct. 18, 2000 JEPRO �u�c�[���o�[�v�^�u�Ŏg���Ă���Z�p���[�^�Ɠ�������ɓ��ꂵ��
+			auto_strncpy( szLabel, LSW(STR_PROPCOMCUSTMENU_SEP), _countof(szLabel) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
 			m_cLookup.Funccode2Name( code, szLabel, 256 );
 		}
-		/* �L�[ */
+		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			auto_strcpy( szLabel2, szLabel );
 		}else{
@@ -697,7 +697,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		::List_AddString( hwndLIST_RES, szLabel2 );
 	}
 	
-	//	Oct. 15, 2001 genta ���j���[����ݒ�
+	//	Oct. 15, 2001 genta メニュー名を設定
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx] );
 
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_SUBMENU, m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx] );
@@ -706,7 +706,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 
 
 
-/* �_�C�A���O�f�[�^�̎擾 Custom menu */
+/* ダイアログデータの取得 Custom menu */
 int CPropCustmenu::GetData( HWND hwndDlg )
 {
 	return TRUE;
@@ -716,30 +716,30 @@ int CPropCustmenu::GetData( HWND hwndDlg )
 
 
 
-/* �J�X�^�����j���[�ݒ���C���|�[�g���� */
+/* カスタムメニュー設定をインポートする */
 void CPropCustmenu::Import( HWND hwndDlg )
 {
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
-	// �C���|�[�g
+	// インポート
 	if (!cImpExpCustMenu.ImportUI( G_AppInstance(), hwndDlg )) {
-		// �C���|�[�g�����Ă��Ȃ�
+		// インポートをしていない
 		return;
 	}
 	
-	// ��ʍX�V
+	// 画面更新
 	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
 }
 
-/* �J�X�^�����j���[�ݒ���G�N�X�|�[�g���� */
+/* カスタムメニュー設定をエクスポートする */
 void CPropCustmenu::Export( HWND hwndDlg )
 {
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
-	// �G�N�X�|�[�g
+	// エクスポート
 	if (!cImpExpCustMenu.ExportUI( G_AppInstance(), hwndDlg )) {
-		// �G�N�X�|�[�g�����Ă��Ȃ�
+		// エクスポートをしていない
 		return;
 	}
 }

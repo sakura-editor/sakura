@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAuƒ^ƒuƒo[vƒy[ƒW
+ï»¿/*!	@file
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œã‚¿ãƒ–ãƒãƒ¼ã€ãƒšãƒ¼ã‚¸
 
 	@author Norio Nakatani
-	@date 2007.02.11 genta ‹¤’Êİ’è‚ÉV‹Kƒ^ƒu‚ğ’Ç‰Á
+	@date 2007.02.11 genta å…±é€šè¨­å®šã«æ–°è¦ã‚¿ãƒ–ã‚’è¿½åŠ 
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -46,20 +46,20 @@
 
 
 static const DWORD p_helpids[] = {
-	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//ƒ^ƒuƒEƒCƒ“ƒhƒE•\¦	//@@@ 2003.05.31 MIK
-	IDC_CHECK_DispTabWndMultiWin,	HIDC_CHECK_DispTabWndMultiWin,	//ƒEƒBƒ“ƒhƒE‚ğ‚Ü‚Æ‚ß‚ÄƒOƒ‹[ƒv‰»‚·‚é
-	IDC_CHECK_RetainEmptyWindow,	HIDC_CHECK_RetainEmptyWindow,	//ÅŒã‚Ìƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚½‚Æ‚«(–³‘è)•¶‘‚ğc‚·	// 2007.02.13 ryoji
-	IDC_CHECK_CloseOneWin,			HIDC_CHECK_CloseOneWin,			//ƒEƒBƒ“ƒhƒE‚Ì•Â‚¶‚éƒ{ƒ^ƒ“‚ÍŒ»İ‚Ìƒtƒ@ƒCƒ‹‚Ì‚İ•Â‚¶‚é	// 2007.02.13 ryoji
-	IDC_CHECK_OpenNewWin,			HIDC_CHECK_OpenNewWin,			//ŠO•”‚©‚ç‹N“®‚·‚é‚Æ‚«‚ÍV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­ 2009.06.19
-	IDC_CHECK_DispTabIcon,			HIDC_CHECK_DispTabIcon,			//ƒAƒCƒRƒ“•\¦	// 2006.08.06 ryoji
-	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//“™•	// 2006.08.06 ryoji
-	IDC_CHECK_DispTabClose,			HIDC_CHECK_DispTabClose,		//ƒ^ƒu‚ğ•Â‚¶‚éƒ{ƒ^ƒ“•\¦	// 2012.04.14 syat
-	IDC_BUTTON_TABFONT,				HIDC_BUTTON_TABFONT,			//ƒ^ƒuƒtƒHƒ“ƒg
-	IDC_CHECK_SortTabList,			HIDC_CHECK_SortTabList,			//ƒ^ƒuˆê——ƒ\[ƒg	// 2006.08.06 ryoji
-	IDC_CHECK_TAB_MULTILINE,		HIDC_CHECK_TAB_MULTILINE,		//ƒ^ƒu‘½’i
-	IDC_COMBO_TAB_POSITION,			HIDC_COMBO_TAB_POSITION,		//ƒ^ƒu•\¦ˆÊ’u
-	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//ƒ^ƒuƒEƒCƒ“ƒhƒEƒLƒƒƒvƒVƒ‡ƒ“	//@@@ 2003.06.15 MIK
-	IDC_CHECK_ChgWndByWheel,		HIDC_CHECK_ChgWndByWheel,		//ƒ}ƒEƒXƒzƒC[ƒ‹‚ÅƒEƒBƒ“ƒhƒEØ‚è‘Ö‚¦ 2007.04.03 ryoji
+	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦è¡¨ç¤º	//@@@ 2003.05.31 MIK
+	IDC_CHECK_DispTabWndMultiWin,	HIDC_CHECK_DispTabWndMultiWin,	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã¾ã¨ã‚ã¦ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã™ã‚‹
+	IDC_CHECK_RetainEmptyWindow,	HIDC_CHECK_RetainEmptyWindow,	//æœ€å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ãŸã¨ã(ç„¡é¡Œ)æ–‡æ›¸ã‚’æ®‹ã™	// 2007.02.13 ryoji
+	IDC_CHECK_CloseOneWin,			HIDC_CHECK_CloseOneWin,			//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã¯ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿é–‰ã˜ã‚‹	// 2007.02.13 ryoji
+	IDC_CHECK_OpenNewWin,			HIDC_CHECK_OpenNewWin,			//å¤–éƒ¨ã‹ã‚‰èµ·å‹•ã™ã‚‹ã¨ãã¯æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã 2009.06.19
+	IDC_CHECK_DispTabIcon,			HIDC_CHECK_DispTabIcon,			//ã‚¢ã‚¤ã‚³ãƒ³è¡¨ç¤º	// 2006.08.06 ryoji
+	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//ç­‰å¹…	// 2006.08.06 ryoji
+	IDC_CHECK_DispTabClose,			HIDC_CHECK_DispTabClose,		//ã‚¿ãƒ–ã‚’é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³è¡¨ç¤º	// 2012.04.14 syat
+	IDC_BUTTON_TABFONT,				HIDC_BUTTON_TABFONT,			//ã‚¿ãƒ–ãƒ•ã‚©ãƒ³ãƒˆ
+	IDC_CHECK_SortTabList,			HIDC_CHECK_SortTabList,			//ã‚¿ãƒ–ä¸€è¦§ã‚½ãƒ¼ãƒˆ	// 2006.08.06 ryoji
+	IDC_CHECK_TAB_MULTILINE,		HIDC_CHECK_TAB_MULTILINE,		//ã‚¿ãƒ–å¤šæ®µ
+	IDC_COMBO_TAB_POSITION,			HIDC_COMBO_TAB_POSITION,		//ã‚¿ãƒ–è¡¨ç¤ºä½ç½®
+	IDC_TABWND_CAPTION,				HIDC_TABWND_CAPTION,			//ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³	//@@@ 2003.06.15 MIK
+	IDC_CHECK_ChgWndByWheel,		HIDC_CHECK_ChgWndByWheel,		//ãƒã‚¦ã‚¹ãƒ›ã‚¤ãƒ¼ãƒ«ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ‡ã‚Šæ›¿ãˆ 2007.04.03 ryoji
 	0, 0
 };
 
@@ -80,10 +80,10 @@ TYPE_NAME_ID<ETabPosition> TabPosArr[] = {
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg[in] ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg[in] ƒƒbƒZ[ƒW
-	@param wParam[in] ƒpƒ‰ƒ[ƒ^1
-	@param lParam[in] ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg[in] ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg[in] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam[in] ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam[in] ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropTab::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -92,7 +92,7 @@ INT_PTR CALLBACK CPropTab::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-/* ƒƒbƒZ[ƒWˆ— */
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
@@ -101,12 +101,12 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Tab */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Tab */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+		/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -119,10 +119,10 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 				OnHelp( hwndDlg, IDD_PROP_TAB );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Tab */
+				/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Tab */
 				GetData( hwndDlg );
 				return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_TAB;
 				return TRUE;
@@ -133,8 +133,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
 	case WM_COMMAND:
 		{
-			WORD wNotifyCode = HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-			WORD wID = LOWORD(wParam);	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+			WORD wNotifyCode = HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+			WORD wID = LOWORD(wParam);	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 			if( wNotifyCode == BN_CLICKED ){
 				switch( wID ){
 				case IDC_CHECK_DispTabWnd:
@@ -148,7 +148,7 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 					if( MySelectFont( &lf, &nPointSize, hwndDlg, false) ){
 						m_Common.m_sTabBar.m_lf = lf;
 						m_Common.m_sTabBar.m_nPointSize = nPointSize;
-						// ƒ^ƒu ƒtƒHƒ“ƒg•\¦	// 2013/4/24 Uchi
+						// ã‚¿ãƒ– ãƒ•ã‚©ãƒ³ãƒˆè¡¨ç¤º	// 2013/4/24 Uchi
 						HFONT hFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
 						if (m_hTabFont != NULL){
 							::DeleteObject( m_hTabFont );
@@ -164,7 +164,7 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -174,12 +174,12 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
 	case WM_DESTROY:
-		// ƒ^ƒu ƒtƒHƒ“ƒg”jŠü	// 2013/4/24 Uchi
+		// ã‚¿ãƒ– ãƒ•ã‚©ãƒ³ãƒˆç ´æ£„	// 2013/4/24 Uchi
 		if (m_hTabFont != NULL) {
 			::DeleteObject( m_hTabFont );
 			m_hTabFont = NULL;
@@ -190,10 +190,10 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CPropTab::SetData( HWND hwndDlg )
 {
-	//	Feb. 11, 2007 gentauƒEƒBƒ“ƒhƒEvƒV[ƒg‚æ‚èˆÚ“®
+	//	Feb. 11, 2007 gentaã€Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã€ã‚·ãƒ¼ãƒˆã‚ˆã‚Šç§»å‹•
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_sTabBar.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_sTabBar.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_sTabBar.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
@@ -225,22 +225,22 @@ void CPropTab::SetData( HWND hwndDlg )
 	}
 	Combo_SetCurSel( hwndCombo, nSelPos );
 
-	//	Feb. 11, 2007 genta V‹Kì¬
+	//	Feb. 11, 2007 genta æ–°è¦ä½œæˆ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_sTabBar.m_bTab_RetainEmptyWin );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CloseOneWin, m_Common.m_sTabBar.m_bTab_CloseOneWin );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ChgWndByWheel, m_Common.m_sTabBar.m_bChgWndByWheel );	// 2007.04.03 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_OpenNewWin, m_Common.m_sTabBar.m_bNewWindow ); // 2009.06.17
 
-	// ƒ^ƒu ƒtƒHƒ“ƒg	// 2013/4/24 Uchi
+	// ã‚¿ãƒ– ãƒ•ã‚©ãƒ³ãƒˆ	// 2013/4/24 Uchi
 	m_hTabFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
 
 	EnableTabPropInput(hwndDlg);
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CPropTab::GetData( HWND hwndDlg )
 {
-	//	Feb. 11, 2007 gentauƒEƒBƒ“ƒhƒEvƒV[ƒg‚æ‚èˆÚ“®
+	//	Feb. 11, 2007 gentaã€Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã€ã‚·ãƒ¼ãƒˆã‚ˆã‚Šç§»å‹•
 	m_Common.m_sTabBar.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
 
 	m_Common.m_sTabBar.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
@@ -259,7 +259,7 @@ int CPropTab::GetData( HWND hwndDlg )
 	nSelPos = Combo_GetCurSel( hwndCombo );
 	m_Common.m_sTabBar.m_eTabPosition = TabPosArr[nSelPos].nMethod;
 
-	//	Feb. 11, 2007 genta V‹Kì¬
+	//	Feb. 11, 2007 genta æ–°è¦ä½œæˆ
 	m_Common.m_sTabBar.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
 	m_Common.m_sTabBar.m_bTab_CloseOneWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CloseOneWin );
 	m_Common.m_sTabBar.m_bChgWndByWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ChgWndByWheel );	// 2007.04.03 ryoji
@@ -268,9 +268,9 @@ int CPropTab::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
-/*! uƒ^ƒuƒo[vƒV[ƒgã‚ÌƒAƒCƒeƒ€‚Ì—LŒøE–³Œø‚ğ“KØ‚Éİ’è‚·‚é
+/*! ã€Œã‚¿ãƒ–ãƒãƒ¼ã€ã‚·ãƒ¼ãƒˆä¸Šã®ã‚¢ã‚¤ãƒ†ãƒ ã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã‚’é©åˆ‡ã«è¨­å®šã™ã‚‹
 
-	@date 2007.02.12 genta V‹Kì¬
+	@date 2007.02.12 genta æ–°è¦ä½œæˆ
 */
 void CPropTab::EnableTabPropInput(HWND hwndDlg)
 {

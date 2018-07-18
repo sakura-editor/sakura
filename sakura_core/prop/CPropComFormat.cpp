@@ -1,5 +1,5 @@
-/*!	@file
-	‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAu‘®vƒy[ƒW
+ï»¿/*!	@file
+	å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œæ›¸å¼ã€ãƒšãƒ¼ã‚¸
 
 	@author Norio Nakatani
 */
@@ -18,7 +18,7 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
-#include "env/DLLSHAREDATA.h" // CFormatManager.h‚æ‚è‘O‚É•K—v
+#include "env/DLLSHAREDATA.h" // CFormatManager.hã‚ˆã‚Šå‰ã«å¿…è¦
 #include "env/CFormatManager.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -26,16 +26,16 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10400
-	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//“ú•t‘®
-	IDC_EDIT_TFORM,						HIDC_EDIT_TFORM,		//‘®
-	IDC_EDIT_DFORM_EX,					HIDC_EDIT_DFORM_EX,		//“ú•t‘®i•\¦—áj
-	IDC_EDIT_TFORM_EX,					HIDC_EDIT_TFORM_EX,		//‘®i•\¦—áj
-	IDC_EDIT_MIDASHIKIGOU,				HIDC_EDIT_MIDASHIKIGOU,	//Œ©o‚µ‹L†
-	IDC_EDIT_INYOUKIGOU,				HIDC_EDIT_INYOUKIGOU,	//ˆø—p•„
-	IDC_RADIO_DFORM_0,					HIDC_RADIO_DFORM_0,		//“ú•t‘®i•W€j
-	IDC_RADIO_DFORM_1,					HIDC_RADIO_DFORM_1,		//“ú•t‘®iƒJƒXƒ^ƒ€j
-	IDC_RADIO_TFORM_0,					HIDC_RADIO_TFORM_0,		//‘®i•W€j
-	IDC_RADIO_TFORM_1,					HIDC_RADIO_TFORM_1,		//‘®iƒJƒXƒ^ƒ€j
+	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//æ—¥ä»˜æ›¸å¼
+	IDC_EDIT_TFORM,						HIDC_EDIT_TFORM,		//æ™‚åˆ»æ›¸å¼
+	IDC_EDIT_DFORM_EX,					HIDC_EDIT_DFORM_EX,		//æ—¥ä»˜æ›¸å¼ï¼ˆè¡¨ç¤ºä¾‹ï¼‰
+	IDC_EDIT_TFORM_EX,					HIDC_EDIT_TFORM_EX,		//æ™‚åˆ»æ›¸å¼ï¼ˆè¡¨ç¤ºä¾‹ï¼‰
+	IDC_EDIT_MIDASHIKIGOU,				HIDC_EDIT_MIDASHIKIGOU,	//è¦‹å‡ºã—è¨˜å·
+	IDC_EDIT_INYOUKIGOU,				HIDC_EDIT_INYOUKIGOU,	//å¼•ç”¨ç¬¦
+	IDC_RADIO_DFORM_0,					HIDC_RADIO_DFORM_0,		//æ—¥ä»˜æ›¸å¼ï¼ˆæ¨™æº–ï¼‰
+	IDC_RADIO_DFORM_1,					HIDC_RADIO_DFORM_1,		//æ—¥ä»˜æ›¸å¼ï¼ˆã‚«ã‚¹ã‚¿ãƒ ï¼‰
+	IDC_RADIO_TFORM_0,					HIDC_RADIO_TFORM_0,		//æ™‚åˆ»æ›¸å¼ï¼ˆæ¨™æº–ï¼‰
+	IDC_RADIO_TFORM_1,					HIDC_RADIO_TFORM_1,		//æ™‚åˆ»æ›¸å¼ï¼ˆã‚«ã‚¹ã‚¿ãƒ ï¼‰
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -43,11 +43,11 @@ static const DWORD p_helpids[] = {	//10400
 
 //@@@ 2002.01.12 add start
 static const char *p_date_form[] = {
-	"yyyy'”N'M'Œ'd'“ú'",
-	"yyyy'”N'M'Œ'd'“ú('dddd')'",
-	"yyyy'”N'MM'Œ'dd'“ú'",
-	"yyyy'”N'M'Œ'd'“ú' dddd",
-	"yyyy'”N'MM'Œ'dd'“ú' dddd",
+	"yyyy'å¹´'M'æœˆ'd'æ—¥'",
+	"yyyy'å¹´'M'æœˆ'd'æ—¥('dddd')'",
+	"yyyy'å¹´'MM'æœˆ'dd'æ—¥'",
+	"yyyy'å¹´'M'æœˆ'd'æ—¥' dddd",
+	"yyyy'å¹´'MM'æœˆ'dd'æ—¥' dddd",
 	"yyyy/MM/dd",
 	"yy/MM/dd",
 	"yy/M/d",
@@ -62,7 +62,7 @@ static const char *p_date_form[] = {
 
 static const char *p_time_form[] = {
 	"hh:mm:ss",
-	"tthh''mm'•ª'ss'•b'",
+	"tthh'æ™‚'mm'åˆ†'ss'ç§’'",
 	"H:mm:ss",
 	"HH:mm:ss",
 	"tt h:mm:ss",
@@ -73,10 +73,10 @@ static const char *p_time_form[] = {
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropFormat::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -87,10 +87,10 @@ INT_PTR CALLBACK CPropFormat::DlgProc_page(
 
 void CPropFormat::ChangeDateExample( HWND hwndDlg )
 {
-	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Format */
+	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Format */
 	GetData( hwndDlg );
 
-	/* “ú•t‚ğƒtƒH[ƒ}ƒbƒg */
+	/* æ—¥ä»˜ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
 	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
@@ -100,10 +100,10 @@ void CPropFormat::ChangeDateExample( HWND hwndDlg )
 }
 void CPropFormat::ChangeTimeExample( HWND hwndDlg )
 {
-	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Format */
+	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Format */
 	GetData( hwndDlg );
 
-	/* ‚ğƒtƒH[ƒ}ƒbƒg */
+	/* æ™‚åˆ»ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
 	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
@@ -113,7 +113,7 @@ void CPropFormat::ChangeTimeExample( HWND hwndDlg )
 }
 
 
-/* Format ƒƒbƒZ[ƒWˆ— */
+/* Format ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropFormat::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
@@ -130,7 +130,7 @@ INT_PTR CPropFormat::DispatchEvent(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Format */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Format */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -138,24 +138,24 @@ INT_PTR CPropFormat::DispatchEvent(
 		ChangeDateExample( hwndDlg );
 		ChangeTimeExample( hwndDlg );
 
-		/* Œ©o‚µ‹L† */
+		/* è¦‹å‡ºã—è¨˜å· */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), _countof(m_Common.m_sFormat.m_szMidashiKigou) - 1 );
 
-		/* ˆø—p•„ */
+		/* å¼•ç”¨ç¬¦ */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), _countof(m_Common.m_sFormat.m_szInyouKigou) - 1 );
 
-		/* “ú•t‘® */
+		/* æ—¥ä»˜æ›¸å¼ */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), _countof(m_Common.m_sFormat.m_szDateFormat) - 1 );
 
-		/* ‘® */
+		/* æ™‚åˆ»æ›¸å¼ */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), _countof(m_Common.m_sFormat.m_szTimeFormat) - 1 );
 
 
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID			= LOWORD(wParam);	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode	= HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID			= LOWORD(wParam);	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 		switch( wNotifyCode ){
 		case EN_CHANGE:
 			if( IDC_EDIT_DFORM == wID ){
@@ -168,15 +168,15 @@ INT_PTR CPropFormat::DispatchEvent(
 			}
 			break;
 
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_RADIO_DFORM_0:
 			case IDC_RADIO_DFORM_1:
 				ChangeDateExample( hwndDlg );
 			//	From Here Sept. 10, 2000 JEPRO
-			//	“ú•t‘® 0=•W€ 1=ƒJƒXƒ^ƒ€
-			//	“ú•t‘®‚ğƒJƒXƒ^ƒ€‚É‚·‚é‚Æ‚«‚¾‚¯‘®w’è•¶š“ü—Í‚ğEnable‚Éİ’è
+			//	æ—¥ä»˜æ›¸å¼ 0=æ¨™æº– 1=ã‚«ã‚¹ã‚¿ãƒ 
+			//	æ—¥ä»˜æ›¸å¼ã‚’ã‚«ã‚¹ã‚¿ãƒ ã«ã™ã‚‹ã¨ãã ã‘æ›¸å¼æŒ‡å®šæ–‡å­—å…¥åŠ›ã‚’Enableã«è¨­å®š
 				EnableFormatPropInput( hwndDlg );
 			//	To Here Sept. 10, 2000
 				return 0;
@@ -184,8 +184,8 @@ INT_PTR CPropFormat::DispatchEvent(
 			case IDC_RADIO_TFORM_1:
 				ChangeTimeExample( hwndDlg );
 			//	From Here Sept. 10, 2000 JEPRO
-			//	‘® 0=•W€ 1=ƒJƒXƒ^ƒ€
-			//	‘®‚ğƒJƒXƒ^ƒ€‚É‚·‚é‚Æ‚«‚¾‚¯‘®w’è•¶š“ü—Í‚ğEnable‚Éİ’è
+			//	æ™‚åˆ»æ›¸å¼ 0=æ¨™æº– 1=ã‚«ã‚¹ã‚¿ãƒ 
+			//	æ™‚åˆ»æ›¸å¼ã‚’ã‚«ã‚¹ã‚¿ãƒ ã«ã™ã‚‹ã¨ãã ã‘æ›¸å¼æŒ‡å®šæ–‡å­—å…¥åŠ›ã‚’Enableã«è¨­å®š
 				EnableFormatPropInput( hwndDlg );
 			//	To Here Sept. 10, 2000
 				return 0;
@@ -211,10 +211,10 @@ INT_PTR CPropFormat::DispatchEvent(
 				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE( _T("Format PSN_KILLACTIVE\n") );
-				/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Format */
+				/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Format */
 				GetData( hwndDlg );
 				return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_FORMAT;
 				return TRUE;
@@ -233,7 +233,7 @@ INT_PTR CPropFormat::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -243,7 +243,7 @@ INT_PTR CPropFormat::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -255,38 +255,38 @@ INT_PTR CPropFormat::DispatchEvent(
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Format */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Format */
 void CPropFormat::SetData( HWND hwndDlg )
 {
 
-	/* Œ©o‚µ‹L† */
+	/* è¦‹å‡ºã—è¨˜å· */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou );
 
-	/* ˆø—p•„ */
+	/* å¼•ç”¨ç¬¦ */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou );
 
 
-	//“ú•t‘®‚Ìƒ^ƒCƒv
+	//æ—¥ä»˜æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
 	if( 0 == m_Common.m_sFormat.m_nDateFormatType ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_DFORM_0, BST_CHECKED );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_DFORM_1, BST_CHECKED );
 	}
-	//“ú•t‘®
+	//æ—¥ä»˜æ›¸å¼
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_sFormat.m_szDateFormat );
 
-	//‘®‚Ìƒ^ƒCƒv
+	//æ™‚åˆ»æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
 	if( 0 == m_Common.m_sFormat.m_nTimeFormatType ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_TFORM_0, BST_CHECKED );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_RADIO_TFORM_1, BST_CHECKED );
 	}
-	//‘®
+	//æ™‚åˆ»æ›¸å¼
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat );
 
 	//	From Here Sept. 10, 2000 JEPRO
-	//	“ú•t/‘® 0=•W€ 1=ƒJƒXƒ^ƒ€
-	//	“ú•t/‘®‚ğƒJƒXƒ^ƒ€‚É‚·‚é‚Æ‚«‚¾‚¯‘®w’è•¶š“ü—Í‚ğEnable‚Éİ’è
+	//	æ—¥ä»˜/æ™‚åˆ»æ›¸å¼ 0=æ¨™æº– 1=ã‚«ã‚¹ã‚¿ãƒ 
+	//	æ—¥ä»˜/æ™‚åˆ»æ›¸å¼ã‚’ã‚«ã‚¹ã‚¿ãƒ ã«ã™ã‚‹ã¨ãã ã‘æ›¸å¼æŒ‡å®šæ–‡å­—å…¥åŠ›ã‚’Enableã«è¨­å®š
 	EnableFormatPropInput( hwndDlg );
 	//	To Here Sept. 10, 2000
 
@@ -296,39 +296,39 @@ void CPropFormat::SetData( HWND hwndDlg )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Format */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Format */
 int CPropFormat::GetData( HWND hwndDlg )
 {
-	/* Œ©o‚µ‹L† */
+	/* è¦‹å‡ºã—è¨˜å· */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou, _countof(m_Common.m_sFormat.m_szMidashiKigou) );
 
-//	/* ŠO•”ƒwƒ‹ƒv‚P */
+//	/* å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘ */
 //	::DlgItem_GetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sFormat.m_szExtHelp1, MAX_PATH - 1 );
 //
-//	/* ŠO•”HTMLƒwƒ‹ƒv */
+//	/* å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ— */
 //	::DlgItem_GetText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_sFormat.m_szExtHtmlHelp, MAX_PATH - 1 );
 
-	/* ˆø—p•„ */
+	/* å¼•ç”¨ç¬¦ */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou, _countof(m_Common.m_sFormat.m_szInyouKigou) );
 
 
-	//“ú•t‘®‚Ìƒ^ƒCƒv
+	//æ—¥ä»˜æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_0 ) ){
 		m_Common.m_sFormat.m_nDateFormatType = 0;
 	}else{
 		m_Common.m_sFormat.m_nDateFormatType = 1;
 	}
-	//“ú•t‘®
+	//æ—¥ä»˜æ›¸å¼
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_DFORM, m_Common.m_sFormat.m_szDateFormat, _countof( m_Common.m_sFormat.m_szDateFormat ));
 
-	//‘®‚Ìƒ^ƒCƒv
+	//æ™‚åˆ»æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_TFORM_0 ) ){
 		m_Common.m_sFormat.m_nTimeFormatType = 0;
 	}else{
 		m_Common.m_sFormat.m_nTimeFormatType = 1;
 	}
 
-	//‘®
+	//æ™‚åˆ»æ›¸å¼
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat, _countof( m_Common.m_sFormat.m_szTimeFormat ));
 
 	return TRUE;
@@ -339,11 +339,11 @@ int CPropFormat::GetData( HWND hwndDlg )
 
 
 //	From Here Sept. 10, 2000 JEPRO
-//	ƒ`ƒFƒbƒNó‘Ô‚É‰‚¶‚Äƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX—v‘f‚ÌEnable/Disable‚ğ
-//	“KØ‚Éİ’è‚·‚é
+//	ãƒã‚§ãƒƒã‚¯çŠ¶æ…‹ã«å¿œã˜ã¦ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹è¦ç´ ã®Enable/Disableã‚’
+//	é©åˆ‡ã«è¨­å®šã™ã‚‹
 void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 {
-	//	“ú•t‘®‚ğƒJƒXƒ^ƒ€‚É‚·‚é‚©‚Ç‚¤‚©
+	//	æ—¥ä»˜æ›¸å¼ã‚’ã‚«ã‚¹ã‚¿ãƒ ã«ã™ã‚‹ã‹ã©ã†ã‹
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_1 ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_DFORM ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), TRUE );
@@ -352,7 +352,7 @@ void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), FALSE );
 	}
 
-	//	‘®‚ğƒJƒXƒ^ƒ€‚É‚·‚é‚©‚Ç‚¤‚©
+	//	æ™‚åˆ»æ›¸å¼ã‚’ã‚«ã‚¹ã‚¿ãƒ ã«ã™ã‚‹ã‹ã©ã†ã‹
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_TFORM_1 ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_TFORM ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), TRUE );

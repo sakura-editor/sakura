@@ -1,5 +1,5 @@
-/*!	@file
-	‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAuƒvƒ‰ƒOƒCƒ“vƒy[ƒW
+ï»¿/*!	@file
+	å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã€ãƒšãƒ¼ã‚¸
 
 	@author syat
 */
@@ -44,26 +44,26 @@
 
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer);
 
-//! Popup Help—pID
+//! Popup Helpç”¨ID
 static const DWORD p_helpids[] = {	//11700
-	IDC_CHECK_PluginEnable,	HIDC_CHECK_PluginEnable,	//ƒvƒ‰ƒOƒCƒ“‚ğ—LŒø‚É‚·‚é
-	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//ƒvƒ‰ƒOƒCƒ“ƒŠƒXƒg
-	IDC_PLUGIN_INST_ZIP,	HIDC_PLUGIN_INST_ZIP,		//Zipƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á	// 2011/11/2 Uchi
-	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á
-	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//ƒtƒHƒ‹ƒ_‚ğŠJ‚­
-	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//ƒvƒ‰ƒOƒCƒ“‚ğíœ
-	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//ƒvƒ‰ƒOƒCƒ“İ’è	// 2010/3/22 Uchi
-	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMe•\¦		// 2011/11/2 Uchi
-	IDC_PLUGIN_URL,			HIDC_PLUGIN_URL,			//”z•zæ			// 2015/01/02 syat
+	IDC_CHECK_PluginEnable,	HIDC_CHECK_PluginEnable,	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’æœ‰åŠ¹ã«ã™ã‚‹
+	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒªã‚¹ãƒˆ
+	IDC_PLUGIN_INST_ZIP,	HIDC_PLUGIN_INST_ZIP,		//Zipãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ 	// 2011/11/2 Uchi
+	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ 
+	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//ãƒ•ã‚©ãƒ«ãƒ€ã‚’é–‹ã
+	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å‰Šé™¤
+	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®š	// 2010/3/22 Uchi
+	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMeè¡¨ç¤º		// 2011/11/2 Uchi
+	IDC_PLUGIN_URL,			HIDC_PLUGIN_URL,			//é…å¸ƒå…ˆ			// 2015/01/02 syat
 	//	IDC_STATIC,			-1,
 	0, 0
 };
 
 /*!
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropPlugin::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -71,11 +71,11 @@ INT_PTR CALLBACK CPropPlugin::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropPlugin::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
-/*! Pluginƒy[ƒW‚ÌƒƒbƒZ[ƒWˆ—
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handlw
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+/*! Pluginãƒšãƒ¼ã‚¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handlw
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -88,7 +88,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Plugin */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Plugin */
 		InitDialog( hwndDlg );
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
@@ -116,7 +116,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), _T("") );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), _T("") );
 						}
-						// 2010.08.21 –¾‚ç‚©‚Ég‚¦‚È‚¢‚Æ‚«‚ÍDisable‚É‚·‚é
+						// 2010.08.21 æ˜ã‚‰ã‹ã«ä½¿ãˆãªã„ã¨ãã¯Disableã«ã™ã‚‹
 						EPluginState state = m_Common.m_sPlugin.m_PluginTable[sel].m_state;
 						BOOL bEdit = (state != PLS_DELETED && state != PLS_NONE);
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), bEdit );
@@ -129,7 +129,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				}
 				break;
 			case NM_DBLCLK:
-				// ƒŠƒXƒgƒrƒ…[‚Ö‚Ìƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Åuƒvƒ‰ƒOƒCƒ“İ’èv‚ğŒÄ‚Ño‚·
+				// ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã¸ã®ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ã€Œãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šã€ã‚’å‘¼ã³å‡ºã™
 				if (::IsWindowEnabled(::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION )))
 				{
 					DispatchEvent( hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_PLUGIN_OPTION, BN_CLICKED), (LPARAM)::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ) );
@@ -143,7 +143,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				OnHelp( hwndDlg, IDD_PROP_PLUGIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Plugin */
+				/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Plugin */
 				GetData( hwndDlg );
 				return TRUE;
 			case PSN_SETACTIVE:
@@ -155,28 +155,28 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		break;
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID = LOWORD(wParam);			/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode = HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID = LOWORD(wParam);			/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 
 		switch( wNotifyCode ){
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_PLUGIN_SearchNew:		// V‹Kƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á
+			case IDC_PLUGIN_SearchNew:		// æ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ 
 				GetData( hwndDlg );
 				CPluginManager::getInstance()->SearchNewPlugin( m_Common, hwndDlg );
 				if( m_bTrayProc ){
 					LoadPluginTemp(m_Common, *m_pcMenuDrawer);
 				}
-				SetData_LIST( hwndDlg );	//ƒŠƒXƒg‚ÌÄ\’z
+				SetData_LIST( hwndDlg );	//ãƒªã‚¹ãƒˆã®å†æ§‹ç¯‰
 				break;
-			case IDC_PLUGIN_INST_ZIP:		// ZIPƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á
+			case IDC_PLUGIN_INST_ZIP:		// ZIPãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ 
 				{
 					static std::tstring	sTrgDir;
 					CDlgOpenFile	cDlgOpenFile;
 					TCHAR			szPath[_MAX_PATH + 1];
 					_tcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
-					// ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰»
+					// ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ–
 					cDlgOpenFile.Create(
 						G_AppInstance(),
 						hwndDlg,
@@ -189,19 +189,19 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						if( m_bTrayProc ){
 							LoadPluginTemp(m_Common, *m_pcMenuDrawer);
 						}
-						SetData_LIST( hwndDlg );	//ƒŠƒXƒg‚ÌÄ\’z
+						SetData_LIST( hwndDlg );	//ãƒªã‚¹ãƒˆã®å†æ§‹ç¯‰
 					}
-					// ƒtƒHƒ‹ƒ_‚ğ‹L‰¯
+					// ãƒ•ã‚©ãƒ«ãƒ€ã‚’è¨˜æ†¶
 					TCHAR	szFolder[_MAX_PATH + 1];
 					TCHAR	szFname[_MAX_PATH + 1];
 					SplitPath_FolderAndFile(szPath, szFolder, szFname);
 					sTrgDir = szFolder;
 				}
 				break;
-			case IDC_CHECK_PluginEnable:	// ƒvƒ‰ƒOƒCƒ“‚ğ—LŒø‚É‚·‚é
+			case IDC_CHECK_PluginEnable:	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 				EnablePluginPropInput( hwndDlg );
 				break;
-			case IDC_PLUGIN_Remove:			// ƒvƒ‰ƒOƒCƒ“‚ğíœ
+			case IDC_PLUGIN_Remove:			// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’å‰Šé™¤
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
@@ -214,12 +214,12 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
-			case IDC_PLUGIN_OPTION:		// ƒvƒ‰ƒOƒCƒ“İ’è	// 2010/3/22 Uchi
+			case IDC_PLUGIN_OPTION:		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®š	// 2010/3/22 Uchi
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
-						// 2010.08.21 ƒvƒ‰ƒOƒCƒ“–¼(ƒtƒHƒ‹ƒ_–¼)‚Ì“¯ˆê«‚ÌŠm”F
+						// 2010.08.21 ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å(ãƒ•ã‚©ãƒ«ãƒ€å)ã®åŒä¸€æ€§ã®ç¢ºèª
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						wstring sDirName = to_wchar(plugin->GetFolderName().c_str());
 						if( plugin && 0 == auto_stricmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
@@ -231,7 +231,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
-			case IDC_PLUGIN_OpenFolder:			// ƒtƒHƒ‹ƒ_‚ğŠJ‚­
+			case IDC_PLUGIN_OpenFolder:			// ãƒ•ã‚©ãƒ«ãƒ€ã‚’é–‹ã
 				{
 					std::tstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + _T(".");
 					if( ! IsDirectory(sBaseDir.c_str()) ){
@@ -242,11 +242,11 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					::ShellExecute( NULL, _T("open"), sBaseDir.c_str(), NULL, NULL, SW_SHOW );
 				}
 				break;
-			case IDC_PLUGIN_README:		// ReadMe•\¦	// 2011/11/2 Uchi
+			case IDC_PLUGIN_README:		// ReadMeè¡¨ç¤º	// 2011/11/2 Uchi
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::tstring sName = to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// ŒÂ•ÊƒtƒHƒ‹ƒ_–¼
+					std::tstring sName = to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// å€‹åˆ¥ãƒ•ã‚©ãƒ«ãƒ€å
 					std::tstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -290,7 +290,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -300,7 +300,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -310,16 +310,16 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚Éƒf[ƒ^‚ğİ’è‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 void CPropPlugin::SetData( HWND hwndDlg )
 {
-	//ƒvƒ‰ƒOƒCƒ“‚ğ—LŒø‚É‚·‚é
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	::CheckDlgButton( hwndDlg, IDC_CHECK_PluginEnable, m_Common.m_sPlugin.m_bEnablePlugin );
 
-	//ƒvƒ‰ƒOƒCƒ“ƒŠƒXƒg
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒªã‚¹ãƒˆ
 	SetData_LIST( hwndDlg );
 	
 	EnablePluginPropInput( hwndDlg );
@@ -327,9 +327,9 @@ void CPropPlugin::SetData( HWND hwndDlg )
 }
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚Éƒf[ƒ^‚ğİ’è‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 void CPropPlugin::SetData_LIST( HWND hwndDlg )
 {
@@ -342,16 +342,16 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), FALSE );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_URL ), FALSE );
 
-	//ƒvƒ‰ƒOƒCƒ“ƒŠƒXƒg
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒªã‚¹ãƒˆ
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 
 	ListView_DeleteAllItems( hListView );
 
 	for( index = 0; index < MAX_PLUGIN; ++index ){
-		std::basic_string<TCHAR> sDirName;	//CPlugin.GetDirName()‚ÌŒ‹‰Ê•Û•Ï”
+		std::basic_string<TCHAR> sDirName;	//CPlugin.GetDirName()ã®çµæœä¿æŒå¤‰æ•°
 		CPlugin* plugin = CPluginManager::getInstance()->GetPlugin( index );
 
-		//”Ô†
+		//ç•ªå·
 		TCHAR buf[4];
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.mask = LVIF_TEXT | LVIF_PARAM;
@@ -362,7 +362,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.lParam = index;
 		ListView_InsertItem( hListView, &sItem );
 
-		//–¼‘O
+		//åå‰
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -374,7 +374,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		}
 		ListView_SetItem( hListView, &sItem );
 
-		//ó‘Ô
+		//çŠ¶æ…‹
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -390,7 +390,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		}
 		ListView_SetItem( hListView, &sItem );
 		
-		//“Ç
+		//èª­è¾¼
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
@@ -401,7 +401,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		}
 		ListView_SetItem( hListView, &sItem );
 
-		//ƒtƒHƒ‹ƒ_
+		//ãƒ•ã‚©ãƒ«ãƒ€
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -424,9 +424,9 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		ListView_SetItem( hListView, &sItem );
 	}
 	
-	//	ƒŠƒXƒgƒrƒ…[‚Ìs‘I‘ğ‚ğ‰Â”\‚É‚·‚éD
-	//	IE 3.xˆÈ~‚ª“ü‚Á‚Ä‚¢‚éê‡‚Ì‚İ“®ì‚·‚éD
-	//	‚±‚ê‚ª–³‚­‚Ä‚àC”Ô†•”•ª‚µ‚©‘I‘ğ‚Å‚«‚È‚¢‚¾‚¯‚Å‘€ì©‘Ì‚Í‰Â”\D
+	//	ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®è¡Œé¸æŠã‚’å¯èƒ½ã«ã™ã‚‹ï¼
+	//	IE 3.xä»¥é™ãŒå…¥ã£ã¦ã„ã‚‹å ´åˆã®ã¿å‹•ä½œã™ã‚‹ï¼
+	//	ã“ã‚ŒãŒç„¡ãã¦ã‚‚ï¼Œç•ªå·éƒ¨åˆ†ã—ã‹é¸æŠã§ããªã„ã ã‘ã§æ“ä½œè‡ªä½“ã¯å¯èƒ½ï¼
 	DWORD dwStyle;
 	dwStyle = ListView_GetExtendedListViewStyle( hListView );
 	dwStyle |= LVS_EX_FULLROWSELECT;
@@ -436,17 +436,17 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 }
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚©‚çƒf[ƒ^‚ğæ“¾‚µ‚Äƒƒ‚ƒŠ‚ÉŠi”[‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã¦ãƒ¡ãƒ¢ãƒªã«æ ¼ç´ã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 int CPropPlugin::GetData( HWND hwndDlg )
 {
-	//ƒvƒ‰ƒOƒCƒ“‚ğ—LŒø‚É‚·‚é
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	m_Common.m_sPlugin.m_bEnablePlugin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PluginEnable );
 
-	//ƒvƒ‰ƒOƒCƒ“ƒŠƒXƒg‚Í¡‚Ì‚Æ‚±‚ë•ÏX‚Å‚«‚é•”•ª‚ª‚È‚¢
-	//uV‹Kƒvƒ‰ƒOƒCƒ“’Ç‰Áv‚Ím_Common‚É’¼Ú‘‚«‚Ş‚Ì‚ÅA‚±‚ÌŠÖ”‚Å‚·‚é‚±‚Æ‚Í‚È‚¢
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒªã‚¹ãƒˆã¯ä»Šã®ã¨ã“ã‚å¤‰æ›´ã§ãã‚‹éƒ¨åˆ†ãŒãªã„
+	//ã€Œæ–°è¦ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¿½åŠ ã€ã¯m_Commonã«ç›´æ¥æ›¸ãè¾¼ã‚€ã®ã§ã€ã“ã®é–¢æ•°ã§ã™ã‚‹ã“ã¨ã¯ãªã„
 
 	return TRUE;
 }
@@ -457,9 +457,9 @@ struct ColumnData_CPropPlugin_Init {
 };
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚ğ‰Šú‰»‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚’åˆæœŸåŒ–ã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 void CPropPlugin::InitDialog( HWND hwndDlg )
 {
@@ -471,7 +471,7 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		{ STR_PROPCOMPLG_LIST5, 150 },
 	};
 
-	//	ListView‚Ì‰Šú‰»
+	//	ListViewã®åˆæœŸåŒ–
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 
 	LVCOLUMN sColumn;
@@ -491,16 +491,16 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		
 		if( ListView_InsertColumn( hListView, pos, &sColumn ) < 0 ){
 			PleaseReportToAuthor( hwndDlg, _T("PropComMacro::InitDlg::ColumnRegistrationFail") );
-			return;	//	‚æ‚­‚í‚©‚ç‚ñ‚¯‚Ç¸”s‚µ‚½
+			return;	//	ã‚ˆãã‚ã‹ã‚‰ã‚“ã‘ã©å¤±æ•—ã—ãŸ
 		}
 	}
 
 }
 
-/*! uƒvƒ‰ƒOƒCƒ“vƒV[ƒgã‚ÌƒAƒCƒeƒ€‚Ì—LŒøE–³Œø‚ğ“KØ‚Éİ’è‚·‚é
+/*! ã€Œãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã€ã‚·ãƒ¼ãƒˆä¸Šã®ã‚¢ã‚¤ãƒ†ãƒ ã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã‚’é©åˆ‡ã«è¨­å®šã™ã‚‹
 
-	@date 2009.12.06 syat V‹Kì¬
-	@date 2010.08.21 Moca ƒvƒ‰ƒOƒCƒ“–³Œøó‘Ô‚Å‚àíœ‘€ì‚È‚Ç‚ğ‰Â”\‚É‚·‚é
+	@date 2009.12.06 syat æ–°è¦ä½œæˆ
+	@date 2010.08.21 Moca ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç„¡åŠ¹çŠ¶æ…‹ã§ã‚‚å‰Šé™¤æ“ä½œãªã©ã‚’å¯èƒ½ã«ã™ã‚‹
 */
 void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 {
@@ -517,7 +517,7 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 	}
 }
 
-//	Readme ƒtƒ@ƒCƒ‹‚Ìæ“¾	2011/11/2 Uchi
+//	Readme ãƒ•ã‚¡ã‚¤ãƒ«ã®å–å¾—	2011/11/2 Uchi
 std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 {
 	std::tstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
@@ -530,7 +530,7 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 		fl = new CFile(sReadMeName.c_str());
 	}
 	if (!fl->IsFileExist()) {
-		// exeƒtƒHƒ‹ƒ_”z‰º
+		// exeãƒ•ã‚©ãƒ«ãƒ€é…ä¸‹
 		sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
 			+ sName + _T("\\ReadMe.txt");
 		delete fl;
@@ -551,35 +551,35 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 }
 
 /*!
-	Readme ƒtƒ@ƒCƒ‹‚Ì•\¦
+	Readme ãƒ•ã‚¡ã‚¤ãƒ«ã®è¡¨ç¤º
 
 	@date 2011/11/2 Uchi
 
-	@return true: ¬Œ÷, false: ¸”s
+	@return true: æˆåŠŸ, false: å¤±æ•—
 */
 bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 {
-	// -- -- -- -- ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñ‚ğ¶¬ -- -- -- -- //
+	// -- -- -- -- ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ã‚’ç”Ÿæˆ -- -- -- -- //
 	CCommandLineString cCmdLineBuf;
 
-	//ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒpƒX
+	//ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‘ã‚¹
 	TCHAR szExePath[MAX_PATH + 1];
 	::GetModuleFileName( NULL, szExePath, _countof( szExePath ) );
 	cCmdLineBuf.AppendF( _T("\"%ts\""), szExePath );
 
-	// ƒtƒ@ƒCƒ‹–¼
+	// ãƒ•ã‚¡ã‚¤ãƒ«å
 	cCmdLineBuf.AppendF( _T(" \"%ts\""), sReadMeName.c_str() );
 
-	// ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“
+	// ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	cCmdLineBuf.AppendF(_T(" -R -CODE=99"));
 
-	// ƒOƒ‹[ƒvID
+	// ã‚°ãƒ«ãƒ¼ãƒ—ID
 	int nGroup = GetDllShareData().m_sNodes.m_nGroupSequences;
 	if( nGroup > 0 ){
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup+1 );
 	}
 
-	//CreateProcess‚É“n‚·STARTUPINFO‚ğì¬
+	//CreateProcessã«æ¸¡ã™STARTUPINFOã‚’ä½œæˆ
 	STARTUPINFO	sui;
 	::GetStartupInfo(&sui);
 
@@ -588,16 +588,16 @@ bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 
 	TCHAR	szCmdLine[1024];
 	auto_strcpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
-	//ƒŠƒ\[ƒXƒŠ[ƒN‘Îô
+	//ãƒªã‚½ãƒ¼ã‚¹ãƒªãƒ¼ã‚¯å¯¾ç­–
 	BOOL bRet = ::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
 		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi );
 
-	//ƒvƒƒZƒXì¬‚É¬Œ÷‚µ‚½ê‡
+	//ãƒ—ãƒ­ã‚»ã‚¹ä½œæˆã«æˆåŠŸã—ãŸå ´åˆ
 	if ( bRet )
 	{
-		//ƒXƒŒƒbƒhƒnƒ“ƒhƒ‹‚Íg‚í‚È‚¢‚Ì‚Å•Â‚¶‚Ä‚¨‚­
+		//ã‚¹ãƒ¬ãƒƒãƒ‰ãƒãƒ³ãƒ‰ãƒ«ã¯ä½¿ã‚ãªã„ã®ã§é–‰ã˜ã¦ãŠã
 		::CloseHandle( pi.hThread );
-		//ƒvƒƒZƒXƒnƒ“ƒhƒ‹‚Íg‚í‚È‚¢‚Ì‚Å•Â‚¶‚Ä‚¨‚­
+		//ãƒ—ãƒ­ã‚»ã‚¹ãƒãƒ³ãƒ‰ãƒ«ã¯ä½¿ã‚ãªã„ã®ã§é–‰ã˜ã¦ãŠã
 		::CloseHandle( pi.hProcess );
 	}
 
@@ -607,9 +607,9 @@ bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 {
 	{
-		// 2013.05.31 ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚È‚ç‘¦“Ç‚İ‚İ
+		// 2013.05.31 ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãªã‚‰å³æ™‚èª­ã¿è¾¼ã¿
 		CPluginManager::getInstance()->LoadAllPlugin( &common );
-		// ƒc[ƒ‹ƒo[ƒAƒCƒRƒ“‚ÌXV
+		// ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚¢ã‚¤ã‚³ãƒ³ã®æ›´æ–°
 		const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 		cMenuDrawer.m_pcIcons->ResetExtend();
 		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
