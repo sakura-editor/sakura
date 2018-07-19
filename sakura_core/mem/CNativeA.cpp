@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include <string>
 #include <mbstring.h>
 #include "mem/CNativeA.h"
@@ -26,35 +26,35 @@ CNativeA::CNativeA(const CNativeA& rhs)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒuİ’èƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–è¨­å®šã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeA::SetString( const char* pszData )
 {
 	SetString(pszData,strlen(pszData));
 }
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚éBnLen‚Í•¶š’PˆÊB
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹ã€‚nLenã¯æ–‡å­—å˜ä½ã€‚
 void CNativeA::SetString( const char* pData, int nDataLen )
 {
 	int nDataLenBytes = nDataLen * sizeof(char);
 	CNative::SetRawData(pData, nDataLenBytes);
 }
 
-// ƒoƒbƒtƒ@‚Ì“à—e‚ğ’u‚«Š·‚¦‚é
+// ãƒãƒƒãƒ•ã‚¡ã®å†…å®¹ã‚’ç½®ãæ›ãˆã‚‹
 void CNativeA::SetNativeData( const CNativeA& pcNative )
 {
 	CNative::SetRawData(pcNative);
 }
 
-// ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+// ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 void CNativeA::AppendString( const char* pszData )
 {
 	AppendString(pszData, strlen(pszData));
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚éBnLength‚Í•¶š’PˆÊB
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹ã€‚nLengthã¯æ–‡å­—å˜ä½ã€‚
 void CNativeA::AppendString( const char* pszData, int nLength )
 {
 	CNative::AppendRawData(pszData, nLength * sizeof(char));
@@ -69,13 +69,13 @@ const CNativeA& CNativeA::operator = ( char cChar )
 	return *this;
 }
 
-//! ƒoƒbƒtƒ@‚ÌÅŒã‚Éƒf[ƒ^‚ğ’Ç‰Á‚·‚é
+//! ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã«ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ ã™ã‚‹
 void CNativeA::AppendNativeData( const CNativeA& pcNative )
 {
 	AppendString(pcNative.GetStringPtr(), pcNative.GetStringLength());
 }
 
-//! (d—vFnDataLen‚Í•¶š’PˆÊ) ƒoƒbƒtƒ@ƒTƒCƒY‚Ì’²®B•K—v‚É‰‚¶‚ÄŠg‘å‚·‚éB
+//! (é‡è¦ï¼šnDataLenã¯æ–‡å­—å˜ä½) ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®èª¿æ•´ã€‚å¿…è¦ã«å¿œã˜ã¦æ‹¡å¤§ã™ã‚‹ã€‚
 void CNativeA::AllocStringBuffer( int nDataLen )
 {
 	CNative::AllocBuffer(nDataLen * sizeof(char));
@@ -89,12 +89,12 @@ const CNativeA& CNativeA::operator += ( char ch )
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ŒİŠ·                              //
+//                           äº’æ›                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CNativeA::SetStringNew(const wchar_t* wszData, int nDataLen)
 {
-	std::wstring buf(wszData,nDataLen); //Ø‚èo‚µ
+	std::wstring buf(wszData,nDataLen); //åˆ‡ã‚Šå‡ºã—
 	char* tmp=wcstombs_new(buf.c_str());
 	SetString(tmp);
 	delete[] tmp;
@@ -107,7 +107,7 @@ void CNativeA::SetStringNew(const wchar_t* wszData)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒuæ“¾ƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–å–å¾—ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 int CNativeA::GetStringLength() const
@@ -121,7 +121,7 @@ const char* CNativeA::GetStringPtr(int* pnLength) const
 	return GetStringPtr();
 }
 
-// ”CˆÓˆÊ’u‚Ì•¶šæ“¾BnIndex‚Í•¶š’PˆÊB
+// ä»»æ„ä½ç½®ã®æ–‡å­—å–å¾—ã€‚nIndexã¯æ–‡å­—å˜ä½ã€‚
 char CNativeA::operator[](int nIndex) const
 {
 	if( nIndex < GetStringLength() ){
@@ -132,10 +132,10 @@ char CNativeA::operator[](int nIndex) const
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ƒlƒCƒeƒBƒu•ÏŠ·ƒCƒ“ƒ^[ƒtƒF[ƒX                 //
+//              ãƒã‚¤ãƒ†ã‚£ãƒ–å¤‰æ›ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* •¶š—ñ’uŠ· */
+/* æ–‡å­—åˆ—ç½®æ› */
 void CNativeA::Replace( const char* pszFrom, const char* pszTo )
 {
 	CNativeA	cmemWork;
@@ -164,7 +164,7 @@ void CNativeA::Replace( const char* pszFrom, const char* pszTo )
 
 
 
-/* •¶š—ñ’uŠ·i“ú–{Œêl—¶”Åj */
+/* æ–‡å­—åˆ—ç½®æ›ï¼ˆæ—¥æœ¬èªè€ƒæ…®ç‰ˆï¼‰ */
 void CNativeA::Replace_j( const char* pszFrom, const char* pszTo )
 {
 	CNativeA	cmemWork;
@@ -196,10 +196,10 @@ void CNativeA::Replace_j( const char* pszFrom, const char* pszTo )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   ˆê”ÊƒCƒ“ƒ^[ƒtƒF[ƒX                      //
+//                   ä¸€èˆ¬ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* ¬•¶š */
+/* å°æ–‡å­— */
 void CNativeA::ToLower()
 {
 	unsigned char*	pBuf = (unsigned char*)GetStringPtr();
@@ -215,20 +215,20 @@ void CNativeA::ToLower()
 			pBuf[i] = uc;
 		}
 		else if( nCharChars == 2 ){
-			/* ‘SŠp‰p‘å•¶š¨‘SŠp‰p¬•¶š */
+			/* å…¨è§’è‹±å¤§æ–‡å­—â†’å…¨è§’è‹±å°æ–‡å­— */
 			if( pBuf[i] == 0x82 && pBuf[i + 1] >= 0x60 && pBuf[i + 1] <= 0x79 ){
 				pBuf[i] = pBuf[i];
 				pBuf[i + 1] = pBuf[i + 1] + 0x21;
-//@@@ 2001.02.03 Start by MIK: ƒMƒŠƒVƒƒ•¶š•ÏŠ·
-			//‘å•¶š:0x839f`0x83b6
-			//¬•¶š:0x83bf`0x83d6
+//@@@ 2001.02.03 Start by MIK: ã‚®ãƒªã‚·ãƒ£æ–‡å­—å¤‰æ›
+			//å¤§æ–‡å­—:0x839fï½0x83b6
+			//å°æ–‡å­—:0x83bfï½0x83d6
 			}else if( pBuf[i] == 0x83 && pBuf[i + 1] >= 0x9f && pBuf[i + 1] <= 0xb6 ){
 				pBuf[i] = pBuf[i];
 				pBuf[i + 1] = pBuf[i + 1] + 0x20;
 //@@@ 2001.02.03 End
-//@@@ 2001.02.03 Start by MIK: ƒƒVƒA•¶š•ÏŠ·
-			//‘å•¶š:0x8440`0x8460
-			//¬•¶š:0x8470`0x8491 0x847f‚ª‚È‚¢I
+//@@@ 2001.02.03 Start by MIK: ãƒ­ã‚·ã‚¢æ–‡å­—å¤‰æ›
+			//å¤§æ–‡å­—:0x8440ï½0x8460
+			//å°æ–‡å­—:0x8470ï½0x8491 0x847fãŒãªã„ï¼
 			}else if( pBuf[i] == 0x84 && pBuf[i + 1] >= 0x40 && pBuf[i + 1] <= 0x60 ){
 				pBuf[i] = pBuf[i];
 				if( pBuf[i + 1] >= 0x4f ){
@@ -250,7 +250,7 @@ void CNativeA::ToLower()
 
 
 
-/* ‘å•¶š */
+/* å¤§æ–‡å­— */
 void CNativeA::ToUpper()
 {
 	unsigned char*	pBuf = (unsigned char*)GetStringPtr();
@@ -266,20 +266,20 @@ void CNativeA::ToUpper()
 			pBuf[i] = uc;
 		}
 		else if( nCharChars == 2 ){
-			/* ‘SŠp‰p¬•¶š¨‘SŠp‰p‘å•¶š */
+			/* å…¨è§’è‹±å°æ–‡å­—â†’å…¨è§’è‹±å¤§æ–‡å­— */
 			if( pBuf[i] == 0x82 && pBuf[i + 1] >= 0x81 && pBuf[i + 1] <= 0x9a ){
 				pBuf[i] = pBuf[i];
 				pBuf[i + 1] = pBuf[i + 1] - 0x21;
-//@@@ 2001.02.03 Start by MIK: ƒMƒŠƒVƒƒ•¶š•ÏŠ·
-			//‘å•¶š:0x839f`0x83b6
-			//¬•¶š:0x83bf`0x83d6
+//@@@ 2001.02.03 Start by MIK: ã‚®ãƒªã‚·ãƒ£æ–‡å­—å¤‰æ›
+			//å¤§æ–‡å­—:0x839fï½0x83b6
+			//å°æ–‡å­—:0x83bfï½0x83d6
 			}else if( pBuf[i] == 0x83 && pBuf[i + 1] >= 0xbf && pBuf[i + 1] <= 0xd6 ){
 				pBuf[i] = pBuf[i];
 				pBuf[i + 1] = pBuf[i + 1] - 0x20;
 //@@@ 2001.02.03 End
-//@@@ 2001.02.03 Start by MIK: ƒƒVƒA•¶š•ÏŠ·
-			//‘å•¶š:0x8440`0x8460
-			//¬•¶š:0x8470`0x8491 0x847f‚ª‚È‚¢I
+//@@@ 2001.02.03 Start by MIK: ãƒ­ã‚·ã‚¢æ–‡å­—å¤‰æ›
+			//å¤§æ–‡å­—:0x8440ï½0x8460
+			//å°æ–‡å­—:0x8470ï½0x8491 0x847fãŒãªã„ï¼
 			}else if( pBuf[i] == 0x84 && pBuf[i + 1] >= 0x70 && pBuf[i + 1] <= 0x91 && pBuf[i + 1] != 0x7f ){
 				pBuf[i] = pBuf[i];
 				if( pBuf[i + 1] >= 0x7f ){
@@ -298,10 +298,10 @@ void CNativeA::ToUpper()
 }
 
 
-/* ”¼Šp¨‘SŠp */
+/* åŠè§’â†’å…¨è§’ */
 void CNativeA::ToZenkaku(
-		int bHiragana,		/* 1== ‚Ğ‚ç‚ª‚È 0==ƒJƒ^ƒJƒi //2==‰p”ê—p 2001/07/30 Misaka ’Ç‰Á */
-		int bHanKataOnly	/* 1== ”¼ŠpƒJƒ^ƒJƒi‚É‚Ì‚İì—p‚·‚é*/
+		int bHiragana,		/* 1== ã²ã‚‰ãŒãª 0==ã‚«ã‚¿ã‚«ãƒŠ //2==è‹±æ•°å°‚ç”¨ 2001/07/30 Misaka è¿½åŠ  */
+		int bHanKataOnly	/* 1== åŠè§’ã‚«ã‚¿ã‚«ãƒŠã«ã®ã¿ä½œç”¨ã™ã‚‹*/
 )
 {
 	unsigned char*			pBuf = (unsigned char*)GetStringPtr();
@@ -313,9 +313,9 @@ void CNativeA::ToZenkaku(
 	unsigned short			usDes;
 	unsigned char*			pBufDes;
 	int						nBufDesLen;
-	static unsigned char*	pszHanKataSet = (unsigned char*)"¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞß";
-	static unsigned char*	pszDakuSet = (unsigned char*)"¶·¸¹º»¼½¾¿ÀÁÂÃÄÊËÌÍÎ";
-	static unsigned char*	pszYouSet = (unsigned char*)"ÊËÌÍÎ";
+	static unsigned char*	pszHanKataSet = (unsigned char*)"ï½¡ï½¢ï½£ï½¤ï½¥ï½¦ï½§ï½¨ï½©ï½ªï½«ï½¬ï½­ï½®ï½¯ï½°ï½±ï½²ï½³ï½´ï½µï½¶ï½·ï½¸ï½¹ï½ºï½»ï½¼ï½½ï½¾ï½¿ï¾€ï¾ï¾‚ï¾ƒï¾„ï¾…ï¾†ï¾‡ï¾ˆï¾‰ï¾Šï¾‹ï¾Œï¾ï¾ï¾ï¾ï¾‘ï¾’ï¾“ï¾”ï¾•ï¾–ï¾—ï¾˜ï¾™ï¾šï¾›ï¾œï¾ï¾ï¾Ÿ";
+	static unsigned char*	pszDakuSet = (unsigned char*)"ï½¶ï½·ï½¸ï½¹ï½ºï½»ï½¼ï½½ï½¾ï½¿ï¾€ï¾ï¾‚ï¾ƒï¾„ï¾Šï¾‹ï¾Œï¾ï¾";
+	static unsigned char*	pszYouSet = (unsigned char*)"ï¾Šï¾‹ï¾Œï¾ï¾";
 	BOOL					bHenkanOK;
 
 	pBufDes = new unsigned char[nBufLen * 2 + 1];
@@ -328,12 +328,12 @@ void CNativeA::ToZenkaku(
 		nCharChars = CShiftJis::GetSizeOfChar( (const char *)pBuf, nBufLen, i );
 		if( nCharChars == 1){
 			bHenkanOK = FALSE;
-			if( bHanKataOnly ){	/* 1== ”¼ŠpƒJƒ^ƒJƒi‚É‚Ì‚İì—p‚·‚é */
+			if( bHanKataOnly ){	/* 1== åŠè§’ã‚«ã‚¿ã‚«ãƒŠã«ã®ã¿ä½œç”¨ã™ã‚‹ */
 				if( NULL != strchr( (const char *)pszHanKataSet, pBuf[i] ) ){
 					bHenkanOK = TRUE;
 				}
 			}else{
-				//! ‰p”•ÏŠ·—p‚ÉV‚½‚ÈğŒ‚ğ•t‰Á 2001/07/30 Misaka
+				//! è‹±æ•°å¤‰æ›ç”¨ã«æ–°ãŸãªæ¡ä»¶ã‚’ä»˜åŠ  2001/07/30 Misaka
 				if( ( (unsigned char)0x20 <= pBuf[i] && pBuf[i] <= (unsigned char)0x7E ) ||
 					( bHiragana != 2 && (unsigned char)0xA1 <= pBuf[i] && pBuf[i] <= (unsigned char)0xDF )
 				){
@@ -343,34 +343,34 @@ void CNativeA::ToZenkaku(
 			if( bHenkanOK ){
 				usSrc = pBuf[i];
 				if( !bHiragana &&
-					pBuf[i]		== (unsigned char)'³' &&
-					pBuf[i + 1] == (unsigned char)'Ş' &&
+					pBuf[i]		== (unsigned char)'ï½³' &&
+					pBuf[i + 1] == (unsigned char)'ï¾' &&
 					bHiragana != 2
 				){
-					usDes = (unsigned short)0x8394; /* ƒ” */
+					usDes = (unsigned short)0x8394; /* ãƒ´ */
 					nCharChars = 2;
 				}else {
 					usDes = (unsigned short)_mbbtombc( usSrc );
-					/* ‘÷‰¹ */
-					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'Ş' && NULL != strchr( (const char *)pszDakuSet, pBuf[i] ) ){
+					/* æ¿éŸ³ */
+					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'ï¾' && NULL != strchr( (const char *)pszDakuSet, pBuf[i] ) ){
 						usDes++;
 						nCharChars = 2;
 					}
-					/* X‰¹ */
-					//! ‰p”•ÏŠ·—p‚ÉV‚½‚ÈğŒ‚ğ•t‰Á 2001/07/30 Misaka
-					//! bHiragana != 2 //‰p”•ÏŠ·ƒtƒ‰ƒO‚ªƒIƒ“‚Å‚Í‚È‚¢ê‡
-					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'ß' && NULL != strchr( (const char *)pszYouSet, pBuf[i] ) ){
+					/* æ‹—éŸ³ */
+					//! è‹±æ•°å¤‰æ›ç”¨ã«æ–°ãŸãªæ¡ä»¶ã‚’ä»˜åŠ  2001/07/30 Misaka
+					//! bHiragana != 2 //è‹±æ•°å¤‰æ›ãƒ•ãƒ©ã‚°ãŒã‚ªãƒ³ã§ã¯ãªã„å ´åˆ
+					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'ï¾Ÿ' && NULL != strchr( (const char *)pszYouSet, pBuf[i] ) ){
 						usDes += 2;
 						nCharChars = 2;
 					}
 				}
 
 				if( bHiragana == 1 ){
-					/* ‚Ğ‚ç‚ª‚È‚É•ÏŠ·‰Â”\‚ÈƒJƒ^ƒJƒi‚È‚ç‚ÎA‚Ğ‚ç‚ª‚È‚É•ÏŠ·‚·‚é */
-					if( (unsigned short)0x8340 <= usDes && usDes <= (unsigned short)0x837e ){	/* ƒ@`ƒ~ */
+					/* ã²ã‚‰ãŒãªã«å¤‰æ›å¯èƒ½ãªã‚«ã‚¿ã‚«ãƒŠãªã‚‰ã°ã€ã²ã‚‰ãŒãªã«å¤‰æ›ã™ã‚‹ */
+					if( (unsigned short)0x8340 <= usDes && usDes <= (unsigned short)0x837e ){	/* ã‚¡ï½ãƒŸ */
 						usDes-= (unsigned short)0x00a1;
 					}else
-					if( (unsigned short)0x8380 <= usDes && usDes <= (unsigned short)0x8393 ){	/* ƒ€`ƒ“ */
+					if( (unsigned short)0x8380 <= usDes && usDes <= (unsigned short)0x8393 ){	/* ãƒ ï½ãƒ³ */
 						usDes-= (unsigned short)0x00a2;
 					}
 				}
@@ -386,20 +386,20 @@ void CNativeA::ToZenkaku(
 		if( nCharChars == 2 ){
 			usDes = usSrc = pBuf[i + 1] | ( pBuf[i] << 8 );
 			if( bHanKataOnly == 0 ){
-				if( bHiragana == 1 ){//‰p”•ÏŠ·‚ğ•t‰Á‚µ‚½‚½‚ß‚É”’l‚Åw’è‚µ‚½@2001/07/30 Misaka
-					/* ‘SŠp‚Ğ‚ç‚ª‚È‚É•ÏŠ·‰Â”\‚È‘SŠpƒJƒ^ƒJƒi‚È‚ç‚ÎA‚Ğ‚ç‚ª‚È‚É•ÏŠ·‚·‚é */
-					if( (unsigned short)0x8340 <= usSrc && usSrc <= (unsigned short)0x837e ){	/* ƒ@`ƒ~ */
+				if( bHiragana == 1 ){//è‹±æ•°å¤‰æ›ã‚’ä»˜åŠ ã—ãŸãŸã‚ã«æ•°å€¤ã§æŒ‡å®šã—ãŸã€€2001/07/30 Misaka
+					/* å…¨è§’ã²ã‚‰ãŒãªã«å¤‰æ›å¯èƒ½ãªå…¨è§’ã‚«ã‚¿ã‚«ãƒŠãªã‚‰ã°ã€ã²ã‚‰ãŒãªã«å¤‰æ›ã™ã‚‹ */
+					if( (unsigned short)0x8340 <= usSrc && usSrc <= (unsigned short)0x837e ){	/* ã‚¡ï½ãƒŸ */
 						usDes = usSrc - (unsigned short)0x00a1;
 					}else
-					if( (unsigned short)0x8380 <= usSrc && usSrc <= (unsigned short)0x8393 ){	/* ƒ€`ƒ“ */
+					if( (unsigned short)0x8380 <= usSrc && usSrc <= (unsigned short)0x8393 ){	/* ãƒ ï½ãƒ³ */
 						usDes = usSrc - (unsigned short)0x00a2;
 					}
-				}else if( bHiragana == 0 ){//‰p”•ÏŠ·‚ğ•t‰Á‚µ‚½‚½‚ß‚É”’l‚Åw’è‚µ‚½@2001/07/30 Misaka
-					/* ‘SŠpƒJƒ^ƒJƒi‚É•ÏŠ·‰Â”\‚È‘SŠp‚Ğ‚ç‚ª‚È‚È‚ç‚ÎAƒJƒ^ƒJƒi‚É•ÏŠ·‚·‚é */
-					if( (unsigned short)0x829f <= usSrc && usSrc <= (unsigned short)0x82dd ){	/* ‚Ÿ`‚İ */
+				}else if( bHiragana == 0 ){//è‹±æ•°å¤‰æ›ã‚’ä»˜åŠ ã—ãŸãŸã‚ã«æ•°å€¤ã§æŒ‡å®šã—ãŸã€€2001/07/30 Misaka
+					/* å…¨è§’ã‚«ã‚¿ã‚«ãƒŠã«å¤‰æ›å¯èƒ½ãªå…¨è§’ã²ã‚‰ãŒãªãªã‚‰ã°ã€ã‚«ã‚¿ã‚«ãƒŠã«å¤‰æ›ã™ã‚‹ */
+					if( (unsigned short)0x829f <= usSrc && usSrc <= (unsigned short)0x82dd ){	/* ãï½ã¿ */
 						usDes = usSrc + (unsigned short)0x00a1;
 					}else
-					if( (unsigned short)0x82de <= usSrc && usSrc <= (unsigned short)0x82f1 ){	/* ‚Ş`‚ñ */
+					if( (unsigned short)0x82de <= usSrc && usSrc <= (unsigned short)0x82f1 ){	/* ã‚€ï½ã‚“ */
 						usDes = usSrc + (unsigned short)0x00a2;
 					}
 				}
@@ -425,8 +425,8 @@ void CNativeA::ToZenkaku(
 }
 
 
-/* TAB¨‹ó”’ */
-void CNativeA::TABToSPACE( int nTabSpace	/* TAB‚Ì•¶š” */ )
+/* TABâ†’ç©ºç™½ */
+void CNativeA::TABToSPACE( int nTabSpace	/* TABã®æ–‡å­—æ•° */ )
 {
 	using namespace ACODE;
 
@@ -442,7 +442,7 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TAB‚Ì•¶š” */ )
 	CEol		cEol;
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLine( GetStringPtr(), GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
 			nPosX = 0;
@@ -465,7 +465,7 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TAB‚Ì•¶š” */ )
 	pDes = new char[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLine( GetStringPtr(), GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
 			nPosX = 0;
@@ -495,10 +495,10 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TAB‚Ì•¶š” */ )
 }
 
 
-//!‹ó”’¨TAB•ÏŠ·
+//!ç©ºç™½â†’TABå¤‰æ›
 /*!
-	@param nTabSpace TAB‚Ì•¶š”
-	’P“Æ‚ÌƒXƒy[ƒX‚Í•ÏŠ·‚µ‚È‚¢
+	@param nTabSpace TABã®æ–‡å­—æ•°
+	å˜ç‹¬ã®ã‚¹ãƒšãƒ¼ã‚¹ã¯å¤‰æ›ã—ãªã„
 
 	@author Stonee
 	@date 2001/5/27
@@ -516,13 +516,13 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 	int			nPosX;
 	CEol		cEol;
 
-	BOOL		bSpace = FALSE;	//ƒXƒy[ƒX‚Ìˆ—’†‚©‚Ç‚¤‚©
+	BOOL		bSpace = FALSE;	//ã‚¹ãƒšãƒ¼ã‚¹ã®å‡¦ç†ä¸­ã‹ã©ã†ã‹
 	int		j;
 	int		nStartPos;
 
 	nBgn = 0;
 	nPosDes = 0;
-	/* •ÏŠ·Œã‚É•K—v‚ÈƒoƒCƒg”‚ğ’²‚×‚é */
+	/* å¤‰æ›å¾Œã«å¿…è¦ãªãƒã‚¤ãƒˆæ•°ã‚’èª¿ã¹ã‚‹ */
 	while( NULL != ( pLine = GetNextLine( GetStringPtr(), GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
@@ -535,12 +535,12 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 	pDes = new char[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLine( GetStringPtr(), GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;	// ˆ—’†‚Ìi‚É‘Î‰‚·‚é•\¦Œ…ˆÊ’u
-			bSpace = FALSE;	//’¼‘O‚ªƒXƒy[ƒX‚©
-			nStartPos = 0;	// ƒXƒy[ƒX‚Ìæ“ª
+			nPosX = 0;	// å‡¦ç†ä¸­ã®iã«å¯¾å¿œã™ã‚‹è¡¨ç¤ºæ¡ä½ç½®
+			bSpace = FALSE;	//ç›´å‰ãŒã‚¹ãƒšãƒ¼ã‚¹ã‹
+			nStartPos = 0;	// ã‚¹ãƒšãƒ¼ã‚¹ã®å…ˆé ­
 			for( i = 0; i < nLineLen; ++i ){
 				if( SPACE == pLine[i] || TAB == pLine[i] ){
 					if( bSpace == FALSE ){
@@ -564,8 +564,8 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 								nStartPos += nTabSpace - ( nStartPos % nTabSpace );
 							}
 							//	2003.08.05 Moca
-							//	•ÏŠ·Œã‚ÉTAB‚ª1‚Â‚à“ü‚ç‚È‚¢ê‡‚ÉƒXƒy[ƒX‚ğ‹l‚ß‚·‚¬‚Ä
-							//	ƒoƒbƒtƒ@‚ğ‚Í‚İo‚·‚Ì‚ğC³
+							//	å¤‰æ›å¾Œã«TABãŒ1ã¤ã‚‚å…¥ã‚‰ãªã„å ´åˆã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã™ãã¦
+							//	ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ã¿å‡ºã™ã®ã‚’ä¿®æ­£
 							for( j = nStartPos; j < nPosX; j++ ){
 								pDes[nPosDes] = SPACE;
 								nPosDes++;
@@ -594,8 +594,8 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 						nStartPos += nTabSpace - ( nStartPos % nTabSpace );
 					}
 					//	2003.08.05 Moca
-					//	•ÏŠ·Œã‚ÉTAB‚ª1‚Â‚à“ü‚ç‚È‚¢ê‡‚ÉƒXƒy[ƒX‚ğ‹l‚ß‚·‚¬‚Ä
-					//	ƒoƒbƒtƒ@‚ğ‚Í‚İo‚·‚Ì‚ğC³
+					//	å¤‰æ›å¾Œã«TABãŒ1ã¤ã‚‚å…¥ã‚‰ãªã„å ´åˆã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã™ãã¦
+					//	ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ã¿å‡ºã™ã®ã‚’ä¿®æ­£
 					for( j = nStartPos; j < nPosX; j++ ){
 						pDes[nPosDes] = SPACE;
 						nPosDes++;
@@ -604,7 +604,7 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 			}
 		}
 
-		/* s––‚Ìˆ— */
+		/* è¡Œæœ«ã®å‡¦ç† */
 		CMemory cEolMem; CShiftJis::S_GetEol(&cEolMem,cEol.GetType());
 		auto_memcpy( &pDes[nPosDes], (const char*)cEolMem.GetRawPtr(), cEolMem.GetRawLength() );
 		nPosDes += cEolMem.GetRawLength();
@@ -620,17 +620,17 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  staticƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+//                  staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! w’è‚µ‚½ˆÊ’u‚Ì•¶š‚ª‰½ƒoƒCƒg•¶š‚©‚ğ•Ô‚·
+//! æŒ‡å®šã—ãŸä½ç½®ã®æ–‡å­—ãŒä½•ãƒã‚¤ãƒˆæ–‡å­—ã‹ã‚’è¿”ã™
 int CNativeA::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 {
 	return CShiftJis::GetSizeOfChar(pData,nDataLen,nIdx);
 }
 
-/* ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚ÌŸ‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚· */
-/* Ÿ‚É‚ ‚é•¶š‚ªƒoƒbƒtƒ@‚ÌÅŒã‚ÌˆÊ’u‚ğ‰z‚¦‚éê‡‚Í&pData[nDataLen]‚ğ•Ô‚µ‚Ü‚· */
+/* ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®æ¬¡ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™ */
+/* æ¬¡ã«ã‚ã‚‹æ–‡å­—ãŒãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã®ä½ç½®ã‚’è¶Šãˆã‚‹å ´åˆã¯&pData[nDataLen]ã‚’è¿”ã—ã¾ã™ */
 const char* CNativeA::GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent )
 {
 //#ifdef _DEBUG
@@ -644,10 +644,10 @@ const char* CNativeA::GetCharNext( const char* pData, int nDataLen, const char* 
 	{
 //		pNext = ::CharNext( pDataCurrent );
 		if(
-			/* SJIS‘SŠpƒR[ƒh‚Ì1ƒoƒCƒg–Ú‚© */	//Sept. 1, 2000 jepro 'ƒVƒtƒg'‚ğ'S'‚É•ÏX
+			/* SJISå…¨è§’ã‚³ãƒ¼ãƒ‰ã®1ãƒã‚¤ãƒˆç›®ã‹ */	//Sept. 1, 2000 jepro 'ã‚·ãƒ•ãƒˆ'ã‚’'S'ã«å¤‰æ›´
 			_IS_SJIS_1( (unsigned char)pDataCurrent[0] )
 			&&
-			/* SJIS‘SŠpƒR[ƒh‚Ì2ƒoƒCƒg–Ú‚© */	//Sept. 1, 2000 jepro 'ƒVƒtƒg'‚ğ'S'‚É•ÏX
+			/* SJISå…¨è§’ã‚³ãƒ¼ãƒ‰ã®2ãƒã‚¤ãƒˆç›®ã‹ */	//Sept. 1, 2000 jepro 'ã‚·ãƒ•ãƒˆ'ã‚’'S'ã«å¤‰æ›´
 			_IS_SJIS_2( (unsigned char)pDataCurrent[1] )
 		){
 			pNext = pDataCurrent + 2;
@@ -662,8 +662,8 @@ const char* CNativeA::GetCharNext( const char* pData, int nDataLen, const char* 
 	return pNext;
 }
 
-/* ƒ|ƒCƒ“ƒ^‚Å¦‚µ‚½•¶š‚Ì’¼‘O‚É‚ ‚é•¶š‚ÌˆÊ’u‚ğ•Ô‚µ‚Ü‚· */
-/* ’¼‘O‚É‚ ‚é•¶š‚ªƒoƒbƒtƒ@‚Ìæ“ª‚ÌˆÊ’u‚ğ‰z‚¦‚éê‡‚ÍpData‚ğ•Ô‚µ‚Ü‚· */
+/* ãƒã‚¤ãƒ³ã‚¿ã§ç¤ºã—ãŸæ–‡å­—ã®ç›´å‰ã«ã‚ã‚‹æ–‡å­—ã®ä½ç½®ã‚’è¿”ã—ã¾ã™ */
+/* ç›´å‰ã«ã‚ã‚‹æ–‡å­—ãŒãƒãƒƒãƒ•ã‚¡ã®å…ˆé ­ã®ä½ç½®ã‚’è¶Šãˆã‚‹å ´åˆã¯pDataã‚’è¿”ã—ã¾ã™ */
 const char* CNativeA::GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent )
 {
 //#ifdef _DEBUG
@@ -674,18 +674,18 @@ const char* CNativeA::GetCharPrev( const char* pData, int nDataLen, const char* 
 	const char*	pPrev;
 	pPrev = ::CharPrevA( pData, pDataCurrent );
 
-//===1999.08.12  ‚±‚Ì‚â‚è•û‚¾‚ÆAƒ_ƒ‚¾‚Á‚½B===============-
+//===1999.08.12  ã“ã®ã‚„ã‚Šæ–¹ã ã¨ã€ãƒ€ãƒ¡ã ã£ãŸã€‚===============-
 //
 //	if( (pDataCurrent - 1)[0] == '\0' ){
 //		pPrev = pDataCurrent - 1;
 //	}else{
 //		if( pDataCurrent - pData >= 2 &&
-//			/* SJIS‘SŠpƒR[ƒh‚Ì1ƒoƒCƒg–Ú‚© */	//Sept. 1, 2000 jepro 'ƒVƒtƒg'‚ğ'S'‚É•ÏX
+//			/* SJISå…¨è§’ã‚³ãƒ¼ãƒ‰ã®1ãƒã‚¤ãƒˆç›®ã‹ */	//Sept. 1, 2000 jepro 'ã‚·ãƒ•ãƒˆ'ã‚’'S'ã«å¤‰æ›´
 //			(
 //			( (unsigned char)0x81 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0x9F ) ||
 //			( (unsigned char)0xE0 <= (unsigned char)pDataCurrent[-2] && (unsigned char)pDataCurrent[-2] <= (unsigned char)0xFC )
 //			) &&
-//			/* SJIS‘SŠpƒR[ƒh‚Ì2ƒoƒCƒg–Ú‚© */	//Sept. 1, 2000 jepro 'ƒVƒtƒg'‚ğ'S'‚É•ÏX
+//			/* SJISå…¨è§’ã‚³ãƒ¼ãƒ‰ã®2ãƒã‚¤ãƒˆç›®ã‹ */	//Sept. 1, 2000 jepro 'ã‚·ãƒ•ãƒˆ'ã‚’'S'ã«å¤‰æ›´
 //			(
 //			( (unsigned char)0x40 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0x7E ) ||
 //			( (unsigned char)0x80 <= (unsigned char)pDataCurrent[-1] && (unsigned char)pDataCurrent[-1] <= (unsigned char)0xFC )
