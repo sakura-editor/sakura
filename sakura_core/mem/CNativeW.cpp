@@ -84,6 +84,24 @@ void CNativeW::AppendString( const wchar_t* pszData, int nLength )
 	CNative::AppendRawData(pszData, nLength * sizeof(wchar_t));
 }
 
+//! バッファの最後にデータを追加する (フォーマット機能付き)
+void CNativeW::AppendStringF(const wchar_t* pszData, ...)
+{
+	wchar_t buf[2048];
+
+	// 整形
+	va_list v;
+	va_start(v, pszData);
+	int len = _vsnwprintf(buf, _countof(buf), pszData, v);
+	if (len == -1) {
+		throw std::exception("AppendStringF encoding error");
+	}
+	va_end(v);
+
+	// 追加
+	this->AppendString(buf, len);
+}
+
 //! バッファの最後にデータを追加する
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
