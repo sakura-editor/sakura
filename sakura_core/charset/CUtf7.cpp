@@ -35,38 +35,26 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 */
 int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
-	int ndecoded_len = 0;
-	char* pbuf;
-	bool bError = false;
-
-	try{
-		pbuf = new char[nSrcLen];
-	}catch( ... ){
-		pbuf = NULL;
-		bError = true;
-	}
-
-	if( pbuf != NULL ){
-		ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
-		int nModLen = ndecoded_len % sizeof(wchar_t);
-		ndecoded_len = ndecoded_len - nModLen;
-		CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
-		memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
-		if( nModLen ){
-			ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
-				nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t);
-			bError = true;
+	char* pbuf = new (std::nothrow) char[nSrcLen];
+	if (pbuf == NULL) {
+		if( pbError ){
+			*pbError = true;
 		}
-	}else{
-		;
+		return 0;
 	}
-
+	int ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
+	int nModLen = ndecoded_len % sizeof(wchar_t);
+	ndecoded_len = ndecoded_len - nModLen;
+	CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
+	memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
+	if( nModLen ){
+		ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
+			nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t);
+		if( pbError ){
+			*pbError = true;
+		}
+	}
 	delete [] pbuf;
-
-	if( pbError ){
-		*pbError = bError;
-	}
-
 	return ndecoded_len / sizeof(wchar_t);
 }
 
@@ -136,13 +124,8 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	const char* pData = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nDataLen) );
 
 	// 必要なバッファサイズを調べて確保
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nDataLen + 1];
-		if( pDst == NULL ){
-			return RESULT_FAILURE;
-		}
-	}catch( ... ){
+	wchar_t* pDst = new (std::nothrow) wchar_t[nDataLen + 1];
+	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
 
@@ -182,18 +165,13 @@ int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* p
 
 int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 {
-	wchar_t* psrc;
 	char* pw;
 
 	if( nSrcLen < 1 ){
 		return 0;
 	}
 
-	try{
-		psrc = new wchar_t[nSrcLen];
-	}catch( ... ){
-		psrc = NULL;
-	}
+	wchar_t* psrc = new (std::nothrow) wchar_t[nSrcLen];
 	if( psrc == NULL ){
 		return 0;
 	}
@@ -271,13 +249,8 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 出力先バッファの確保
-	char *pDst;
-	try{
-		// 最大で、変換元のデータ長の５倍。
-		pDst = new char[ nSrcLen * 5 + 1 ];  // * → +ACo-
-	}catch( ... ){
-		pDst = NULL;
-	}
+	// 最大で、変換元のデータ長の５倍。
+	char *pDst = new (std::nothrow) char[ nSrcLen * 5 + 1 ];  // * → +ACo-
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
