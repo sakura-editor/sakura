@@ -176,7 +176,7 @@ void CDlgPluginOption::SetData( void )
 			selects = cOpt->GetSelects();
 
 			_tcscpy( buf, _T("") );
-			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
 					auto_snprintf_s( buf, _countof(buf), _T("%ls"), sView.c_str());
@@ -261,7 +261,7 @@ int CDlgPluginOption::GetData( void )
 			selects = cOpt->GetSelects();
 			wstring sWbuf = to_wchar(buf);
 
-			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sView == sWbuf) {
 					auto_sprintf( buf, _T("%ls"), sTrg.c_str());
@@ -611,7 +611,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			wstring	sWbuf = to_wchar(buf);
 			nSelIdx = -1;		// ‘I‘ð
 			i = 0;
-			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sValue);
 				nItemIdx = Combo_AddString( hwndCombo, sView.c_str() );
 				if (sView == sWbuf) {

@@ -183,7 +183,7 @@ bool CJackManager::GetUsablePlug(
 	CPlug::Array*	plugs		//!< [out] 利用可能プラグのリスト
 )
 {
-	for( CPlug::Array::iterator it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
+	for( auto it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
 		if( plugId == 0 || plugId == (*it)->GetFunctionCode() ){
 			plugs->push_back( *it );
 		}

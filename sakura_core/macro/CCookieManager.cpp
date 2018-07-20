@@ -37,7 +37,7 @@ SysString CCookieManager::GetCookie(LPCWSTR scope, LPCWSTR cookieName) const
 		return SysString(L"", 0);
 	}
 	wstring key = cookieName;
-	std::map<wstring, wstring>::const_iterator keyVal = cookies->find(key);
+	const auto& keyVal = cookies->find(key);
 	if( keyVal == cookies->end() ){
 		return SysString(L"", 0);
 	}
@@ -51,7 +51,7 @@ SysString CCookieManager::GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LP
 		return SysString(L"", 0);
 	}
 	wstring key = cookieName;
-	std::map<wstring, wstring>::iterator keyVal = cookies->find(key);
+	const auto& keyVal = cookies->find(key);
 	if( keyVal == cookies->end() ){
 		return SysString(defVal, len);
 	}
@@ -81,7 +81,7 @@ int CCookieManager::DeleteCookie(LPCWSTR scope, LPCWSTR cookieName)
 		return 2;
 	}
 	wstring key = cookieName;
-	std::map<wstring, wstring>::iterator keyVal = cookies->find(key);
+	const auto& keyVal = cookies->find(key);
 	if( keyVal == cookies->end() ){
 		return 5;
 	}
@@ -91,11 +91,11 @@ int CCookieManager::DeleteCookie(LPCWSTR scope, LPCWSTR cookieName)
 
 SysString CCookieManager::GetCookieNames(LPCWSTR scope) const
 {
-	std::map<wstring, wstring>* cookies = SelectCookieType(scope);
+	const std::map<wstring, wstring>* cookies = SelectCookieType(scope);
 	if( cookies == NULL ){
 		return SysString(L"", 0);
 	}
-	std::map<wstring, wstring>::iterator it = cookies->begin();
+	auto& it = cookies->begin();
 	wstring keyNames;
 	if( it != cookies->end() ){
 		keyNames += it->first;

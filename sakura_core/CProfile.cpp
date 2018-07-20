@@ -225,15 +225,10 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
-	MAP_STR_STR::iterator mapiter;
-	MAP_STR_STR::iterator mapiterEnd;
-	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
+	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
 		//セクション名を書き込む
 		vecLine.push_back( LTEXT("[") + iter->strSectionName + LTEXT("]") );
-		mapiterEnd = iter->mapEntries.end();
-		for( mapiter = iter->mapEntries.begin(); mapiter != mapiterEnd; mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
 			//エントリを書き込む
 			vecLine.push_back( mapiter->first + LTEXT("=") + mapiter->second );
 		}
@@ -329,12 +324,9 @@ bool CProfile::GetProfileDataImp(
 	wstring&		strEntryValue	//!< [out] エントリ値
 )
 {
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
-	MAP_STR_STR::iterator mapiter;
-	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
+	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
 		if( iter->strSectionName == strSectionName ) {
-			mapiter = iter->mapEntries.find( strEntryKey );
+			auto mapiter = iter->mapEntries.find( strEntryKey );
 			if( iter->mapEntries.end() != mapiter ) {
 				strEntryValue = mapiter->second;
 				return true;
@@ -357,14 +349,11 @@ bool CProfile::SetProfileDataImp(
 	const wstring&	strEntryValue	//!< [in] エントリ値
 )
 {
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
-	MAP_STR_STR::iterator mapiter;
-	MAP_STR_STR::iterator mapiterEnd;
-	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
+	auto iter = m_ProfileData.begin();
+	for(; iter != m_ProfileData.end(); iter++ ) {
 		if( iter->strSectionName == strSectionName ) {
 			//既存のセクションの場合
-			mapiter = iter->mapEntries.find( strEntryKey );
+			auto mapiter = iter->mapEntries.find( strEntryKey );
 			if( iter->mapEntries.end() != mapiter ) {
 				//既存のエントリの場合は値を上書き
 				mapiter->second = strEntryValue;
@@ -378,7 +367,7 @@ bool CProfile::SetProfileDataImp(
 		}
 	}
 	//既存のセクションではない場合，セクション及びエントリを追加
-	if( iterEnd == iter ) {
+	if( iter != m_ProfileData.end() ) {
 		Section Buffer;
 		Buffer.strSectionName = strSectionName;
 		Buffer.mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
@@ -392,16 +381,11 @@ bool CProfile::SetProfileDataImp(
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
-	MAP_STR_STR::iterator mapiter;
-	MAP_STR_STR::iterator mapiterEnd;
 	MYTRACE( _T("\n\nCProfile::DUMP()======================") );
-	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
+	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
 		MYTRACE( _T("\n■strSectionName=%ls"), iter->strSectionName.c_str() );
-		mapiterEnd = iter->mapEntries.end();
-		for( mapiter = iter->mapEntries.begin(); mapiter != mapiterEnd; mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
 			MYTRACE( _T("\"%ls\" = \"%ls\"\n"), mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}

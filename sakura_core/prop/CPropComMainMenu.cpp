@@ -1251,7 +1251,6 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 	TV_ITEM			tvi;							// 取得用
 	SMainMenuWork*	pFuncWk;						// 機能(work)
 	std::map< WCHAR, HTREEITEM >	mKey;			// 重複エラー検出用
-	std::map< WCHAR, HTREEITEM >::iterator itKey;	// 同上
 
 	if (nLevel == 0) {
 		bOptionOk = false;
@@ -1309,7 +1308,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 			}
 		}
 		else {
-			itKey = mKey.find( pFuncWk->m_sKey[0] );
+			auto itKey = mKey.find( pFuncWk->m_sKey[0] );
 			if (itKey == mKey.end()) {
 				mKey[pFuncWk->m_sKey[0]] = s;
 
