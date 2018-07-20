@@ -118,7 +118,7 @@ void CDlgCtrlCode::SetData( void )
 	LV_ITEM	lvi;
 
 	/* リスト */
-	hwndWork = ::GetDlgItem( GetHwnd(), IDC_LIST_CTRLCODE );
+	hwndWork = GetItemHwnd( IDC_LIST_CTRLCODE );
 	ListView_DeleteAllItems( hwndWork );  /* リストを空にする */
 
 	/* 行選択 */
@@ -185,7 +185,7 @@ int CDlgCtrlCode::GetData( void )
 	int		nIndex;
 	HWND	hwndList;
 
-	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_CTRLCODE );
+	hwndList = GetItemHwnd( IDC_LIST_CTRLCODE );
 	//選択中のキー番号を探す。
 	nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 	if( nIndex == -1 ) return FALSE;
@@ -279,7 +279,7 @@ BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 
 	pNMHDR = (NMHDR*)lParam;
 
-	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_CTRLCODE );
+	hwndList = GetItemHwnd( IDC_LIST_CTRLCODE );
 
 	if( hwndList == pNMHDR->hwndFrom )
 	{
@@ -304,7 +304,7 @@ BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 						{
 							if( p_ctrl_list[i].code == p_ctrl_list[j].code )
 							{
-								hwndList = GetDlgItem( GetHwnd(), IDC_LIST_CTRLCODE );
+								hwndList = GetItemHwnd( IDC_LIST_CTRLCODE );
 								ListView_SetItemState( hwndList, j, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 								ListView_EnsureVisible( hwndList, j, FALSE );
 						

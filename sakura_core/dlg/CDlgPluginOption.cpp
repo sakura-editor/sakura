@@ -118,7 +118,7 @@ void CDlgPluginOption::SetData( void )
 	::SetWindowText( GetHwnd(), buf );
 
 	// リスト
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 	ListView_DeleteAllItems( hwndList );	// リストを空にする
 	m_Line = -1;							// 行非選択
 
@@ -202,15 +202,15 @@ void CDlgPluginOption::SetData( void )
 
 	if (i ==0) {
 		// オプションが無い
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDOK                       ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
+		::EnableWindow( GetItemHwnd( IDOK                       ), FALSE );
 	
 		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, LS(STR_DLGPLUGINOPT_OPTION) );
 	}
 
 	// ReadMe Button
 	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_tchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_PLUGIN_README ), !m_sReadMeName.empty() );
+	::EnableWindow( GetItemHwnd( IDC_PLUGIN_README ), !m_sReadMeName.empty() );
 	return;
 }
 
@@ -224,7 +224,7 @@ int CDlgPluginOption::GetData( void )
 	LV_ITEM	lvi;
 
 	// リスト
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	std::auto_ptr<CDataProfile> cProfile( new CDataProfile );
 	cProfile->SetReadingMode();
@@ -492,7 +492,7 @@ LPVOID CDlgPluginOption::GetHelpIdTable( void )
 
 void CDlgPluginOption::ChangeListPosition( void )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	//	現在のFocus取得
 	int current = ListView_GetNextItem( hwndList, -1, LVNI_SELECTED);
@@ -528,7 +528,7 @@ void CDlgPluginOption::ChangeListPosition( void )
 void CDlgPluginOption::MoveFocusToEdit( void )
 {
 	//	現在のFocus取得
-	int		iLine = ListView_GetNextItem( ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
+	int		iLine = ListView_GetNextItem( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
 	wstring	sType;
 	HWND	hwndCtrl;
 
@@ -537,23 +537,23 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 		sType = m_cPlugin->m_options[iLine]->GetType();
 		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_CHECK_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_CHECK_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_INT) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION_NUM );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_SEL) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_COMBO_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_DIR) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION_DIR );
 			::SetFocus( hwndCtrl );
 		}
 		else {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 	}
@@ -563,7 +563,7 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 // 編集領域に書き込み
 void CDlgPluginOption::SetToEdit( int iLine )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	LVITEM	lvi;
@@ -600,7 +600,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			selects = m_cPlugin->m_options[iLine]->GetSelects();
 
 			HWND	hwndCombo;
-			hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLUGIN_OPTION );
+			hwndCombo = GetItemHwnd( IDC_COMBO_PLUGIN_OPTION );
 			Combo_ResetContent( hwndCombo );
 
 			int		nSelIdx;
@@ -654,7 +654,7 @@ void CDlgPluginOption::SelectEdit( int IDCenable )
 // 編集領域から戻し
 void CDlgPluginOption::SetFromEdit( int iLine )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	int		nVal;
@@ -732,7 +732,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	}
 
 	// 項目名の取得
-	HWND	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 	LVITEM	lvi;
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	memset_raw( &lvi, 0, sizeof( lvi ));

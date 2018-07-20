@@ -77,8 +77,8 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 
 		m_psi->bAddType = IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_TYPE_ADD );
 		m_psi->sColorFile = L"";
-		m_psi->nColorType = Combo_GetCurSel( GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ) ) - 1;
-		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
+		m_psi->nColorType = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
+		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
 			if (_stscanf( buff1, _T("File -- %ls"), buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
@@ -100,15 +100,15 @@ void CDlgTypeAscertain::SetData( void )
 {
 	// タイプ名設定
 	std::wstring typeNameTo = m_psi->sTypeNameTo + L"(&B)";
-	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_RADIO_TYPE_TO    ), to_tchar(typeNameTo.c_str()) );
-	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_FILE ), to_tchar(m_psi->sTypeNameFile.c_str()) );
+	::SetWindowText( GetItemHwnd( IDC_RADIO_TYPE_TO    ), to_tchar(typeNameTo.c_str()) );
+	::SetWindowText( GetItemHwnd( IDC_STATIC_TYPE_FILE ), to_tchar(m_psi->sTypeNameFile.c_str()) );
 
 	::CheckDlgButton( GetHwnd(), IDC_RADIO_TYPE_ADD, TRUE );
 
 	int		nIdx;
 	HWND	hwndCombo;
 	TCHAR	szText[_MAX_PATH + 10];
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS );
+	hwndCombo = GetItemHwnd( IDC_COMBO_COLORS );
 	/* コンボボックスを空にする */
 	Combo_ResetContent( hwndCombo );
 	/* 一行目はそのまま */

@@ -144,10 +144,10 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_SETTINGNAME ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_HAN ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FONT_ZEN ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_PAPER ), TRUE );
 
 	// タイマーでの更新をやめて、能動的に更新要求する 2013.5.5 aroka
 	// CDialog::OnInitDialogの奥でOnChangeSettingTypeが呼ばれるのでここでは更新要求しない
@@ -170,11 +170,11 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 	// フォントの破棄
 	HFONT	hFontOld;
-	hFontOld = (HFONT)::SendMessage(::GetDlgItem( GetHwnd(), IDC_STATIC_FONT_HEAD ), WM_GETFONT, 0, 0 );
+	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_HEAD ), WM_GETFONT, 0, 0 );
 	if (m_hFontDlg != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
-	hFontOld = (HFONT)::SendMessage(::GetDlgItem( GetHwnd(), IDC_STATIC_FONT_FOOT ), WM_GETFONT, 0, 0 );
+	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_FOOT ), WM_GETFONT, 0, 0 );
 	if (m_hFontDlg != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
@@ -216,7 +216,7 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 {
-//	if( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ) == hwndCtl ){
+//	if( GetItemHwnd( IDC_COMBO_SETTINGNAME ) == hwndCtl ){
 	switch( wID ){
 	case IDC_COMBO_SETTINGNAME:
 		/* 設定のタイプが変わった */
@@ -263,7 +263,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			_tcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = _T('\0');
 			/* 印刷設定名一覧 */
-			hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
+			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 			Combo_ResetContent( hwndComboSettingName );
 			int		nSelectIdx;
 			int		i;
@@ -450,9 +450,9 @@ void CDlgPrintSetting::SetData( void )
 
 	/* フォント一覧 */
 	hdc = ::GetDC( m_hwndParent );
-	hwndComboFont = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
+	hwndComboFont = GetItemHwnd( IDC_COMBO_FONT_HAN );
 	Combo_ResetContent( hwndComboFont );
-	hwndComboFont = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
+	hwndComboFont = GetItemHwnd( IDC_COMBO_FONT_ZEN );
 	Combo_ResetContent( hwndComboFont );
 	::EnumFontFamilies(
 		hdc,
@@ -463,7 +463,7 @@ void CDlgPrintSetting::SetData( void )
 	::ReleaseDC( m_hwndParent, hdc );
 
 	/* 用紙サイズ一覧 */
-	hwndComboPaper = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
+	hwndComboPaper = GetItemHwnd( IDC_COMBO_PAPER );
 	Combo_ResetContent( hwndComboPaper );
 	// 2006.08.14 Moca 用紙名一覧の重複削除
 	for( i = 0; i < CPrint::m_nPaperInfoArrNum; ++i ){
@@ -473,7 +473,7 @@ void CDlgPrintSetting::SetData( void )
 
 
 	/* 印刷設定名一覧 */
-	hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
+	hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 	Combo_ResetContent( hwndComboSettingName );
 	nSelectIdx = 0;
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
@@ -503,13 +503,13 @@ int CDlgPrintSetting::GetData( void )
 	int		nWork;
 
 	/* フォント一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_HAN );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan
 	);
 	/* フォント一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_ZEN );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
@@ -545,7 +545,7 @@ int CDlgPrintSetting::GetData( void )
 	}
 
 	/* 用紙サイズ一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_PAPER );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
 		(short)Combo_GetItemData( hwndCtrl, nIdx1 );
@@ -641,7 +641,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 		GetData();
 	}
 
-	hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
+	hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 	nIdx1 = Combo_GetCurSel( hwndComboSettingName );
 	if( CB_ERR == nIdx1 ){
 		return;
@@ -649,12 +649,12 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	m_nCurrentPrintSetting = Combo_GetItemData( hwndComboSettingName, nIdx1 );
 
 	/* フォント一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_HAN );
 	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
 	/* フォント一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_FONT_ZEN );
 	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
 	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
@@ -664,7 +664,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10, FALSE );
 
 	/* 用紙サイズ一覧 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_PAPER );
 	nItemNum = Combo_GetCount( hwndCtrl );
 	for( i = 0; i < nItemNum; ++i ){
 		nItemData = Combo_GetItemData( hwndCtrl, i );
@@ -851,10 +851,10 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
 	if( nEnableColumns == 0 || nEnableLines == 0 ){
-		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
+		::EnableWindow( GetItemHwnd( IDOK ), FALSE );
 		return FALSE;
 	}else{
-		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), TRUE );
+		::EnableWindow( GetItemHwnd( IDOK ), TRUE );
 		return TRUE;
 	}
 }
@@ -865,7 +865,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 void CDlgPrintSetting::UpdatePrintableLineAndColumn()
 {
 	m_bPrintableLinesAndColumnInvalid = true;
-	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLUMNS, STN_CLICKED ), (LPARAM)::GetDlgItem( GetHwnd(), IDC_STATIC_ENABLECOLUMNS ) );
+	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLUMNS, STN_CLICKED ), (LPARAM)GetItemHwnd( IDC_STATIC_ENABLECOLUMNS ) );
 }
 
 
@@ -884,19 +884,19 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 	bool	bUseFont = lf.lfFaceName[0] != _T('\0');
 
 	CheckDlgButtonBool( GetHwnd(), idUse, bUseFont);
-	::EnableWindow( ::GetDlgItem( GetHwnd(), idUse ), bUseFont );
+	::EnableWindow( GetItemHwnd( idUse ), bUseFont );
 	if (bUseFont) {
 		LOGFONT	lft;
 		lft = lf;
 		lft.lfHeight = m_nFontHeight;		// フォントサイズをダイアログに合せる
 
-		HFONT	hFontOld = (HFONT)::SendMessage(::GetDlgItem( GetHwnd(), idTxt ), WM_GETFONT, 0, 0 );
+		HFONT	hFontOld = (HFONT)::SendMessage(GetItemHwnd( idTxt ), WM_GETFONT, 0, 0 );
 
 		// 論理フォントを作成
 		HFONT	hFont = ::CreateFontIndirect( &lft );
 		if (hFont) {
 			// フォントの設定
-			::SendMessage( ::GetDlgItem( GetHwnd(), idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
+			::SendMessage( GetItemHwnd( idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
 		}
 		if (m_hFontDlg != hFontOld) {
 			// 古いフォントの破棄

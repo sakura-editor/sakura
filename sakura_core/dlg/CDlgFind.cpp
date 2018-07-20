@@ -127,9 +127,9 @@ void CDlgFind::SetData( void )
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	// 2011.12.18 長さ制限撤廃
-	// Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	// Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 
 
 	/*****************************
@@ -159,11 +159,11 @@ void CDlgFind::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );
 //正規表現がONでも、大文字小文字を区別する／しないを選択できるように。
 //		::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-//		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
+//		::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 	}
 	else {
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
@@ -187,7 +187,7 @@ void CDlgFind::SetCombosList( void )
 	HWND	hwndCombo;
 
 	/* 検索文字列 */
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
+	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT );
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
@@ -296,22 +296,22 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				//	Jan. 31, 2002 genta
 				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 				//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-				//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
+				//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 Norio Nakatani
 				/* 単語単位で検索 */
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+				::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
-			//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), TRUE );
+			//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
 			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 			//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
 			// 2001/06/23 Norio Nakatani
 			/* 単語単位で検索 */
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), TRUE );
 		}
 		break;
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
@@ -388,7 +388,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					CloseDialog( 0 );
 				}
 				else{
-					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)GetItemHwnd(IDC_COMBO_TEXT ),TRUE);
 				}
 			}
 		}
