@@ -48,33 +48,39 @@ CTextInputStream::~CTextInputStream()
 {
 }
 
-
-wstring CTextInputStream::ReadLineW()
+void CTextInputStream::ReadLine(CMemory& mem, CNativeW& line)
 {
-	//$$ 非効率だけど今のところは許して。。
-	CNativeW line;
-	line.AllocStringBuffer(60);
+	mem._SetRawLength(0);
+	line._GetMemory()->_SetRawLength(0);
 	for (;;) {
 		int c=getc(GetFp());
 		if(c==EOF)break; //EOFで終了
 		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" または "\r\n" で終了
 		if(c=='\n')break; //"\n" で終了
-		if( line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10 ){
-			line._GetMemory()->AllocBuffer( line._GetMemory()->GetRawLength() * 2 );
+		if( mem.capacity() < mem.GetRawLength() + 10 ){
+			mem.AllocBuffer( mem.GetRawLength() * 2 );
 		}
-		line._GetMemory()->AppendRawData(&c,sizeof(char));
+		mem.AppendRawData(&c,sizeof(char));
 	}
 
 	//UTF-8 → UNICODE
 	if(m_bIsUtf8){
-		CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line);
+		CUtf8::UTF8ToUnicode(mem, &line);
 	}
 	//Shift_JIS → UNICODE
 	else{
-		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
+		CShiftJis::SJISToUnicode(mem, &line);
 	}
+}
 
-	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL まで NULL 文字も含める
+wstring CTextInputStream::ReadLineW()
+{
+	CMemory mem;
+	CNativeW line;
+	mem.AllocBuffer(128);
+	line.AllocStringBuffer(128);
+	ReadLine(mem, line);
+	return wstring( line.GetStringPtr(), line.GetStringLength() );	// EOL まで NULL 文字も含める
 }
 
 

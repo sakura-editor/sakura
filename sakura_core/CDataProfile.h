@@ -221,13 +221,14 @@ public:
 		//“Ç‚İ‚İ
 		if(m_bRead){
 			//•¶š—ñ“Ç‚İ‚İ
-			wstring buf;
-			bool ret=GetProfileDataImp( pszSectionName, pszEntryKey, buf);
-			if(ret){
+			const wstring* buf = GetProfileDataImp( pszSectionName, pszEntryKey);
+			if(buf){
 				//T‚É•ÏŠ·
-				profile_to_value(buf, &tEntryValue);
+				profile_to_value(*buf, &tEntryValue);
+				return true;
+			}else{
+				return false;
 			}
-			return ret;
 		}
 		//‘‚«‚İ
 		else{

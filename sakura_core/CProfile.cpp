@@ -39,6 +39,7 @@
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "CEol.h"
 #include "util/file.h"
+#include "debug/CRunningTimer.h"
 
 using namespace std;
 
@@ -78,9 +79,9 @@ void CProfile::ReadOneline(
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
 			&& line.find( LTEXT("=") ) == line.npos
 			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
-		Section Buffer;
+		m_ProfileData.emplace_back();
+		auto& Buffer = m_ProfileData.back();
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
-		m_ProfileData.push_back( Buffer );
 	}
 	// エントリ取得
 	else if( !m_ProfileData.empty() ) {	//最初のセクション以前の行のエントリは無視
@@ -114,12 +115,17 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 	}
 
 	try{
+		wstring wstr;
+		CMemory mem;
+		CNativeW line;
+		mem.AllocBuffer(128);
+		line.AllocStringBuffer(128);
 		while( in ){
 			//1行読込
-			wstring line=in.ReadLineW();
-
+			in.ReadLine(mem, line);
+			wstr.assign(line.GetStringPtr(), line.GetStringLength());
 			//解析
-			ReadOneline(line);
+			ReadOneline(wstr);
 		}
 	}
 	catch( ... ){
@@ -225,8 +231,8 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
+	std::list< Section >::iterator iter;
+	std::list< Section >::iterator iterEnd = m_ProfileData.end();
 	MAP_STR_STR::iterator mapiter;
 	MAP_STR_STR::iterator mapiterEnd;
 	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
@@ -318,30 +324,27 @@ bool CProfile::_WriteFile(
 
 /*! エントリ値をProfileから読み込む
 	
-	@retval true 成功
-	@retval false 失敗
+	@retval エントリ値のポインタ
 
 	@date 2003-10-22 D.S.Koba 作成
 */
-bool CProfile::GetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] セクション名
-	const wstring&	strEntryKey,	//!< [in] エントリ名
-	wstring&		strEntryValue	//!< [out] エントリ値
+const wstring* CProfile::GetProfileDataImp(
+	const WCHAR*	strSectionName,	//!< [in] セクション名
+	const WCHAR*	strEntryKey		//!< [in] エントリ名
 )
 {
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
+	std::list< Section >::iterator iter;
+	std::list< Section >::iterator iterEnd = m_ProfileData.end();
 	MAP_STR_STR::iterator mapiter;
 	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
-		if( iter->strSectionName == strSectionName ) {
+		if( wcscmp(iter->strSectionName.c_str(), strSectionName) == 0 ) {
 			mapiter = iter->mapEntries.find( strEntryKey );
 			if( iter->mapEntries.end() != mapiter ) {
-				strEntryValue = mapiter->second;
-				return true;
+				return &mapiter->second;
 			}
 		}
 	}
-	return false;
+	return nullptr;
 }
 
 /*! エントリをProfileへ書き込む
@@ -357,8 +360,8 @@ bool CProfile::SetProfileDataImp(
 	const wstring&	strEntryValue	//!< [in] エントリ値
 )
 {
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
+	std::list< Section >::iterator iter;
+	std::list< Section >::iterator iterEnd = m_ProfileData.end();
 	MAP_STR_STR::iterator mapiter;
 	MAP_STR_STR::iterator mapiterEnd;
 	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
@@ -392,8 +395,8 @@ bool CProfile::SetProfileDataImp(
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
-	std::vector< Section >::iterator iter;
-	std::vector< Section >::iterator iterEnd = m_ProfileData.end();
+	std::list< Section >::iterator iter;
+	std::list< Section >::iterator iterEnd = m_ProfileData.end();
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MAP_STR_STR::iterator mapiter;
 	MAP_STR_STR::iterator mapiterEnd;

@@ -46,6 +46,7 @@ public:
 
 	//‘€ì
 	std::wstring ReadLineW(); //!< 1s“ÇB‰üs‚Íí‚é
+	void ReadLine(CMemory& mem, CNativeW& line);
 
 private:
 	bool m_bIsUtf8; //!< UTF-8‚È‚çtrue
