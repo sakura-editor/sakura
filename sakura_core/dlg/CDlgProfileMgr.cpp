@@ -512,7 +512,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 
 bool CDlgProfileMgr::ReadProfSettings( SProfileSettings& settings )
 {
-	auto_strcpy(settings.m_szDllLanguage, _T(""));
+	settings.m_szDllLanguage[0] = _T('\0');
 	settings.m_nDefaultIndex = 0;
 	settings.m_vProfList.clear();
 	settings.m_bDefaultSelect = false;

@@ -52,8 +52,8 @@ const DWORD p_helpids[] = {	//13700
 
 CDlgTagsMake::CDlgTagsMake()
 {
-	_tcscpy( m_szPath, _T("") );
-	_tcscpy( m_szTagsCmdLine, _T("") );
+	m_szPath[0] = _T('\0');
+	m_szTagsCmdLine[0] = _T('\0');
 	m_nTagsOpt = 0;
 	return;
 }

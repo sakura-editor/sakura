@@ -176,13 +176,13 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 */
 BOOL CSortedTagJumpList::GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth, TCHAR* baseDir )
 {
-	if( keyword  ) _tcscpy( keyword, _T("") );
-	if( filename ) _tcscpy( filename, _T("") );
+	if( keyword  ) keyword[0] = _T('\0');
+	if( filename ) filename[0] = _T('\0');
 	if( no       ) *no    = 0;
 	if( type     ) *type  = 0;
-	if( note     ) _tcscpy( note, _T("") );
+	if( note     ) note[0] = _T('\0');
 	if( depth    ) *depth = 0;
-	if( baseDir  ) _tcscpy( baseDir, _T("") );
+	if( baseDir  ) baseDir[0] = _T('\0');
 
 	CSortedTagJumpList::TagJumpInfo* p;
 	p = GetPtr( index );

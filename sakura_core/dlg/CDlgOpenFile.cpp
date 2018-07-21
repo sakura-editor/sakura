@@ -1243,7 +1243,7 @@ bool CDlgOpenFile::_GetOpenFileNameRecover( OPENFILENAMEZ* ofn )
 	BOOL bRet = ::GetOpenFileName( ofn );
 	if( !bRet  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			_tcscpy( ofn->lpstrFile, _T("") );
+			ofn->lpstrFile[0] = _T('\0');
 			ofn->lpstrInitialDir = _T("");
 			bRet = ::GetOpenFileName( ofn );
 		}
@@ -1260,7 +1260,7 @@ bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ* ofn )
 	BOOL bRet = ::GetSaveFileName( ofn );
 	if( !bRet  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			_tcscpy( ofn->lpstrFile, _T("") );
+			ofn->lpstrFile[0] = _T('\0');
 			ofn->lpstrInitialDir = _T("");
 			bRet = ::GetSaveFileName( ofn );
 		}

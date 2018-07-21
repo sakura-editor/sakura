@@ -220,7 +220,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		fiInit.m_nViewLeftCol = CLayoutInt(0);
 		fiInit.m_nViewTopLine = CLayoutInt(0);
 		fiInit.m_ptCursor.Set(CLogicInt(0), CLogicInt(0));
-		_tcscpy( fiInit.m_szPath, _T("") );
+		fiInit.m_szPath[0] = _T('\0');
 		fiInit.m_szMarkLines[0] = L'\0';	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
 			pShare->m_sHistory.m_fiMRUArr[i] = fiInit;

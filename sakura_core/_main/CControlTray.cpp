@@ -715,7 +715,7 @@ LRESULT CControlTray::DispatchEvent(
 							k = 0;
 						}
 					}
-					auto_strcpy( type->m_szTypeExts, _T("") );
+					type->m_szTypeExts[0] = _T('\0');
 					type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 					types.resize( m_pShareData->m_nTypesCount + 1 );
 					int nTypeSizeOld = m_pShareData->m_nTypesCount;
@@ -749,8 +749,8 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					types.resize( m_pShareData->m_nTypesCount - 1 );
 					m_pShareData->m_nTypesCount--;
-					auto_strcpy(m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName, _T(""));
-					auto_strcpy(m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts, _T(""));
+					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName[0] = _T('\0');
+					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts[0] = _T('\0');
 					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_id = 0;
 				}else{
 					return FALSE;

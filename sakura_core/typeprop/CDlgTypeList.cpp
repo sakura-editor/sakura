@@ -536,7 +536,7 @@ bool CDlgTypeList::InitializeType( void )
 				bUpdate = true;
 			}
 		}
-		_tcscpy( type->m_szTypeExts, _T("") );
+		type->m_szTypeExts[0] = _T('\0');
 		type->m_nIdx = iDocType;
 		type->m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
 		type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();

@@ -231,7 +231,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCH
 	if( NULL == pszDstExt ) return false;
 
 	p = _tcsdup( pszSrcExt );
-	_tcscpy( pszDstExt, _T("") );
+	pszDstExt[0] = _T('\0');
 
 	if (szExt != NULL && szExt[0] != _T('\0')) {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
