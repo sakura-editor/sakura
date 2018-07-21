@@ -367,7 +367,7 @@ bool CProfile::SetProfileDataImp(
 		}
 	}
 	//既存のセクションではない場合，セクション及びエントリを追加
-	if( iter != m_ProfileData.end() ) {
+	if( iter == m_ProfileData.end() ) {
 		Section Buffer;
 		Buffer.strSectionName = strSectionName;
 		Buffer.mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
