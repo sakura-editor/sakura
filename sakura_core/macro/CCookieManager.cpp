@@ -37,7 +37,7 @@ SysString CCookieManager::GetCookie(LPCWSTR scope, LPCWSTR cookieName) const
 		return SysString(L"", 0);
 	}
 	wstring key = cookieName;
-	const auto& keyVal = cookies->find(key);
+	auto keyVal = cookies->find(key);
 	if( keyVal == cookies->end() ){
 		return SysString(L"", 0);
 	}
@@ -95,7 +95,7 @@ SysString CCookieManager::GetCookieNames(LPCWSTR scope) const
 	if( cookies == NULL ){
 		return SysString(L"", 0);
 	}
-	auto& it = cookies->begin();
+	auto it = cookies->begin();
 	wstring keyNames;
 	if( it != cookies->end() ){
 		keyNames += it->first;
