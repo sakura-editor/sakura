@@ -31,7 +31,7 @@ CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang( void )
 {
-	for (PSSelLangInfoList::iterator it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
+	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
 		if( (*it)->hInstance ){
 			FreeLibrary( (*it)->hInstance );
 			(*it)->hInstance = NULL;

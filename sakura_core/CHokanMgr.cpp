@@ -178,7 +178,7 @@ int CHokanMgr::Search(
 			}
 		}
 
-		for( CPlug::Array::iterator it = plugs.begin(); it != plugs.end(); ++it ){
+		for( auto it = plugs.begin(); it != plugs.end(); ++it ){
 			//インタフェースオブジェクト準備
 			CWSHIfObj::List params;
 			std::wstring curWord = pszCurWord;

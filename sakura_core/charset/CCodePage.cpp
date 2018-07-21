@@ -438,7 +438,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 #endif
 	pfn_GetCPInfoExT_t pfn_GetCPInfoExT = (pfn_GetCPInfoExT_t)::GetProcAddress(hDLLkernel, strFunc_GetCPInfoEx);
 	CPINFOEX cpInfo;
-	for( CodePageList::iterator it = result.begin(); it != result.end(); ++it ){
+	for( auto it = result.begin(); it != result.end(); ++it ){
 		cpInfo.CodePageName[0] = _T('\0');
 		if( pfn_GetCPInfoExT && pfn_GetCPInfoExT(it->first, 0, &cpInfo) ){
 			it->second = to_wchar(cpInfo.CodePageName);
@@ -482,7 +482,7 @@ int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 	}
 	Combo_SetItemData( combo, nIdx, CODE_CPOEM );
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
-	for( CCodePage::CodePageList::iterator it = cpList.begin(); it != cpList.end(); ++it ){
+	for( auto it = cpList.begin(); it != cpList.end(); ++it ){
 		nIdx = Combo_AddString(combo, it->second.c_str());
 		Combo_SetItemData(combo, nIdx, it->first);
 		if( nSelCode == it->first ){
