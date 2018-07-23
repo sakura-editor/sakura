@@ -8,4 +8,8 @@ if "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
 	exit /b 1
 )
 @echo installing
-msiexec /i %~dp0%CPPCHECK_MSI% /quiet /qn /norestart /log cppcheck-install.log
+if not "%APPVEYOR_BUILD_NUMBER%" == "" (
+	msiexec /i %~dp0%CPPCHECK_MSI% /quiet /qn /norestart /log cppcheck-install.log
+) else (
+	@echo skip installing %CPPCHECK_MSI%
+)
