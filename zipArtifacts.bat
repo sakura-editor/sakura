@@ -118,8 +118,10 @@ set WORKDIR=%BASENAME%
 set WORKDIR_LOG=%WORKDIR%\Log
 set WORKDIR_EXE=%WORKDIR%\EXE
 set WORKDIR_INST=%WORKDIR%\Installer
+set WORKDIR_ASM=%BASENAME%-Asm
 set OUTFILE=%BASENAME%.zip
 set OUTFILE_LOG=%BASENAME%-Log.zip
+set OUTFILE_ASM=%BASENAME%-Asm.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -128,8 +130,14 @@ if exist "%OUTFILE%" (
 if exist "%OUTFILE_LOG%" (
 	del %OUTFILE_LOG%
 )
+if exist "%OUTFILE_ASM%" (
+	del %OUTFILE_ASM%
+)
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
+)
+if exist "%WORKDIR_ASM%" (
+	rmdir /s /q %WORKDIR_ASM%
 )
 
 mkdir %WORKDIR%
@@ -170,6 +178,16 @@ if exist "%HASHFILE%" (
 7z a %OUTFILE_LOG%  -r %WORKDIR_LOG%
 7z l %OUTFILE_LOG%
 
+@echo start zip asm
+mkdir %WORKDIR_ASM%
+copy sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\
+7z a %OUTFILE_ASM%  -r %WORKDIR_ASM%
+7z l %OUTFILE_ASM%
+@echo end   zip asm
+
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
+)
+if exist "%WORKDIR_ASM%" (
+	rmdir /s /q %WORKDIR_ASM%
 )
