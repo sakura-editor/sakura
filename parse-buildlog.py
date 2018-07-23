@@ -27,6 +27,7 @@ csvKeys = [
 	'path',
 	'lineNumber',
 	'message',
+	'blobURL',
 ]
 
 excelKeys = [
