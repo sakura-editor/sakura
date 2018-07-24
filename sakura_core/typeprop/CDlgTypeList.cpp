@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹ƒ^ƒCƒvˆê——ƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Norio Nakatani
 */
@@ -15,7 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "types/CType.h" // use CDlgTypeList’è‹`
+#include "types/CType.h" // use CDlgTypeListå®šç¾©
 #include "window/CEditWnd.h"
 #include "typeprop/CDlgTypeList.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
@@ -36,38 +36,38 @@ typedef std::basic_string<TCHAR> tstring;
 #define PROGID_BACKUP_NAME	(_T("SakuraEditorBackup"))
 #define ACTION_BACKUP_PATH	(_T("\\ShellBackup"))
 
-//ŠÖ”ƒvƒƒgƒ^ƒCƒv
+//é–¢æ•°ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—
 int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath);
 int DeleteRegistry(HKEY root, const tstring& path);
 int RegistExt(LPCTSTR sExt, bool bDefProg);
 int UnregistExt(LPCTSTR sExt);
 int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick);
 
-//“à•”g—p’è”
+//å†…éƒ¨ä½¿ç”¨å®šæ•°
 static const int PROP_TEMPCHANGE_FLAG = 0x10000;
 
-// ƒ^ƒCƒv•Êİ’èˆê—— CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
+// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§ CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12700
-	IDC_BUTTON_TEMPCHANGE,	HIDC_TL_BUTTON_TEMPCHANGE,	//ˆê“K—p
-	IDOK,					HIDOK_TL,					//İ’è
-	IDCANCEL,				HIDCANCEL_TL,				//ƒLƒƒƒ“ƒZƒ‹
-	IDC_BUTTON_HELP,		HIDC_TL_BUTTON_HELP,		//ƒwƒ‹ƒv
-	IDC_LIST_TYPES,			HIDC_TL_LIST_TYPES,			//ƒŠƒXƒg
-	IDC_BUTTON_IMPORT,		HIDC_TL_BUTTON_IMPORT,		//ƒCƒ“ƒ|[ƒg
-	IDC_BUTTON_EXPORT,		HIDC_TL_BUTTON_EXPORT,		//ƒGƒNƒXƒ|[ƒg
-	IDC_BUTTON_INITIALIZE,	HIDC_TL_BUTTON_INIT,		//‰Šú‰»
-	IDC_BUTTON_COPY_TYPE,	HIDC_BUTTON_COPY_TYPE,		//•¡»
-	IDC_BUTTON_UP_TYPE,		HIDC_BUTTON_UP_TYPE,		//ª
-	IDC_BUTTON_DOWN_TYPE,	HIDC_BUTTON_DOWN_TYPE,		//«
-	IDC_BUTTON_ADD_TYPE,	HIDC_BUTTON_ADD_TYPE,		//’Ç‰Á
-	IDC_BUTTON_DEL_TYPE,	HIDC_BUTTON_DEL_TYPE,		//íœ
-	IDC_CHECK_EXT_RMENU,	HIDC_TL_CHECK_RMENU,		//‰EƒNƒŠƒbƒNƒƒjƒ…[‚É’Ç‰Á
-	IDC_CHECK_EXT_DBLCLICK,	HIDC_TL_CHECK_DBLCLICK,		//ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚ÅŠJ‚­
+	IDC_BUTTON_TEMPCHANGE,	HIDC_TL_BUTTON_TEMPCHANGE,	//ä¸€æ™‚é©ç”¨
+	IDOK,					HIDOK_TL,					//è¨­å®š
+	IDCANCEL,				HIDCANCEL_TL,				//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+	IDC_BUTTON_HELP,		HIDC_TL_BUTTON_HELP,		//ãƒ˜ãƒ«ãƒ—
+	IDC_LIST_TYPES,			HIDC_TL_LIST_TYPES,			//ãƒªã‚¹ãƒˆ
+	IDC_BUTTON_IMPORT,		HIDC_TL_BUTTON_IMPORT,		//ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+	IDC_BUTTON_EXPORT,		HIDC_TL_BUTTON_EXPORT,		//ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
+	IDC_BUTTON_INITIALIZE,	HIDC_TL_BUTTON_INIT,		//åˆæœŸåŒ–
+	IDC_BUTTON_COPY_TYPE,	HIDC_BUTTON_COPY_TYPE,		//è¤‡è£½
+	IDC_BUTTON_UP_TYPE,		HIDC_BUTTON_UP_TYPE,		//â†‘
+	IDC_BUTTON_DOWN_TYPE,	HIDC_BUTTON_DOWN_TYPE,		//â†“
+	IDC_BUTTON_ADD_TYPE,	HIDC_BUTTON_ADD_TYPE,		//è¿½åŠ 
+	IDC_BUTTON_DEL_TYPE,	HIDC_BUTTON_DEL_TYPE,		//å‰Šé™¤
+	IDC_CHECK_EXT_RMENU,	HIDC_TL_CHECK_RMENU,		//å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¿½åŠ 
+	IDC_CHECK_EXT_DBLCLICK,	HIDC_TL_CHECK_DBLCLICK,		//ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§é–‹ã
 //	IDC_STATIC,				-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult )
 {
 	int	nRet;
@@ -79,7 +79,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 		return FALSE;
 	}
 	else{
-		//Œ‹‰Ê
+		//çµæœ
 		psResult->cDocumentType = CTypeConfig(nRet & ~PROP_TEMPCHANGE_FLAG);
 		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
 		return TRUE;
@@ -92,7 +92,7 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 	switch( wID ){
 	case IDC_LIST_TYPES:
 		//	Nov. 29, 2000	genta
-		//	“®ì•ÏX: w’èƒ^ƒCƒv‚Ìİ’èƒ_ƒCƒAƒƒO¨ˆê“I‚É•Ê‚Ìİ’è‚ğ“K—p
+		//	å‹•ä½œå¤‰æ›´: æŒ‡å®šã‚¿ã‚¤ãƒ—ã®è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°â†’ä¸€æ™‚çš„ã«åˆ¥ã®è¨­å®šã‚’é©ç”¨
 		::EndDialog(
 			GetHwnd(),
 			List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ) )
@@ -107,12 +107,12 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:
-		/* uƒ^ƒCƒv•Êİ’èˆê——v‚Ìƒwƒ‹ƒv */
-		//Stonee, 2001/03/12 ‘ælˆø”‚ğA‹@”\”Ô†‚©‚çƒwƒ‹ƒvƒgƒsƒbƒN”Ô†‚ğ’²‚×‚é‚æ‚¤‚É‚µ‚½
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		/* ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§ã€ã®ãƒ˜ãƒ«ãƒ— */
+		//Stonee, 2001/03/12 ç¬¬å››å¼•æ•°ã‚’ã€æ©Ÿèƒ½ç•ªå·ã‹ã‚‰ãƒ˜ãƒ«ãƒ—ãƒˆãƒ”ãƒƒã‚¯ç•ªå·ã‚’èª¿ã¹ã‚‹ã‚ˆã†ã«ã—ãŸ
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 	//	Nov. 29, 2000	From Here	genta
-	//	“K—p‚·‚éŒ^‚Ìˆê“I•ÏX
+	//	é©ç”¨ã™ã‚‹å‹ã®ä¸€æ™‚çš„å¤‰æ›´
 	case IDC_BUTTON_TEMPCHANGE:
 		::EndDialog(
 			GetHwnd(),
@@ -152,7 +152,7 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 		DelType();
 		return TRUE;
 	}
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 
 }
@@ -173,7 +173,7 @@ BOOL CDlgTypeList::OnActivate( WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnActivate( wParam, lParam );
 }
 
@@ -236,7 +236,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED )
 		{
 			bool checked = ( BtnCtl_GetCheck( hwndRMenu ) != FALSE ? true : false );
-			if( ! AlertFileAssociation() ){		//ƒŒƒWƒXƒgƒŠ•ÏXŠm”F
+			if( ! AlertFileAssociation() ){		//ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå¤‰æ›´ç¢ºèª
 				BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
 			}
@@ -246,7 +246,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			int nRet;
 			while( NULL != ext ){
 				if (_tcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
-					if( checked ){	//u‰EƒNƒŠƒbƒNvƒ`ƒFƒbƒNON
+					if( checked ){	//ã€Œå³ã‚¯ãƒªãƒƒã‚¯ã€ãƒã‚§ãƒƒã‚¯ON
 						if( (nRet = RegistExt( ext, true )) != 0 )
 						{
 							TCHAR buf[BUFFER_SIZE] = {0};
@@ -254,7 +254,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 							::MessageBox( GetHwnd(), (tstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 							break;
 						}
-					}else{			//u‰EƒNƒŠƒbƒNvƒ`ƒFƒbƒNOFF
+					}else{			//ã€Œå³ã‚¯ãƒªãƒƒã‚¯ã€ãƒã‚§ãƒƒã‚¯OFF
 						if( (nRet = UnregistExt( ext )) != 0 )
 						{
 							TCHAR buf[BUFFER_SIZE] = {0};
@@ -275,7 +275,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED )
 		{
 			bool checked = ( BtnCtl_GetCheck( hwndDblClick ) != FALSE ? true : false );
-			if( ! AlertFileAssociation() ){		//ƒŒƒWƒXƒgƒŠ•ÏXŠm”F
+			if( ! AlertFileAssociation() ){		//ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå¤‰æ›´ç¢ºèª
 				BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
 			}
@@ -304,7 +304,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgTypeList::SetData( void )
 {
 	SetData(m_nSettingType.GetIndex());
@@ -329,18 +329,18 @@ void CDlgTypeList::SetData( int selIdx )
 	if( GetDllShareData().m_nTypesCount <= selIdx ){
 		selIdx = GetDllShareData().m_nTypesCount - 1;
 	}
-	List_ResetContent( hwndList );	/* ƒŠƒXƒg‚ğ‹ó‚É‚·‚é */
+	List_ResetContent( hwndList );	/* ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹ */
 	for( nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx ){
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
-		if( type->m_szTypeExts[0] != _T('\0') ){		/* ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg */
+		if( type->m_szTypeExts[0] != _T('\0') ){		/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
-				type->m_szTypeName,	/* ƒ^ƒCƒv‘®«F–¼Ì */
-				type->m_szTypeExts	/* ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg */
+				type->m_szTypeName,	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šåç§° */
+				type->m_szTypeExts	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ */
 			);
 		}else{
 			auto_sprintf( szText, _T("%ts"),
-				type->m_szTypeName	/* ƒ^ƒCƒv‘®«FŠgÌ */
+				type->m_szTypeName	/* ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡ç§° */
 			);
 		}
 		::List_AddString( hwndList, szText );
@@ -410,14 +410,14 @@ static void SendChangeSettingType2(int nType)
 	);
 }
 
-// ƒ^ƒCƒv•Êİ’èƒCƒ“ƒ|[ƒg
+// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 //		2010/4/12 Uchi
 bool CDlgTypeList::Import()
 {
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int nIdx = List_GetCurSel( hwndList );
 	STypeConfig type;
-	// ƒx[ƒX‚Ìƒf[ƒ^‚ÍŠî–{
+	// ãƒ™ãƒ¼ã‚¹ã®ãƒ‡ãƒ¼ã‚¿ã¯åŸºæœ¬
 	CDocTypeManager().GetTypeConfig(CTypeConfig(0), type);
 
 	CImpExpType	cImpExpType( nIdx, type, hwndList );
@@ -425,10 +425,10 @@ bool CDlgTypeList::Import()
 	CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &typeMini);
 	int id = typeMini->m_id;
 
-	// ƒCƒ“ƒ|[ƒg
+	// ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 	cImpExpType.SetBaseName( to_wchar( type.m_szTypeName ) );
 	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
-		// ƒCƒ“ƒ|[ƒg‚ğ‚µ‚Ä‚¢‚È‚¢
+		// ã‚¤ãƒ³ãƒãƒ¼ãƒˆã‚’ã—ã¦ã„ãªã„
 		return false;
 	}
 	bool bAdd = cImpExpType.IsAddType();
@@ -437,7 +437,7 @@ bool CDlgTypeList::Import()
 		nIdx = GetDllShareData().m_nTypesCount - 1;
 		type.m_nIdx = nIdx;
 	}else{
-		// UI‚ğ•\¦‚µ‚Ä‚¢‚éŠÔ‚É‚¸‚ê‚Ä‚¢‚é‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅindexÄæ“¾
+		// UIã‚’è¡¨ç¤ºã—ã¦ã„ã‚‹é–“ã«ãšã‚Œã¦ã„ã‚‹ã‹ã‚‚ã—ã‚Œãªã„ã®ã§indexå†å–å¾—
 		nIdx = CDocTypeManager().GetDocumentTypeOfId(id).GetIndex();
 		if( -1 == nIdx ){
 			return false;
@@ -445,19 +445,19 @@ bool CDlgTypeList::Import()
 		type.m_nIdx = nIdx;
 	}
 	type.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
-	// “K—p
+	// é©ç”¨
 	CDocTypeManager().SetTypeConfig(CTypeConfig(nIdx), type);
 	if( !bAdd ){
 		SendChangeSettingType(nIdx);
 	}
 
-	// ƒŠƒXƒgÄ‰Šú‰»
+	// ãƒªã‚¹ãƒˆå†åˆæœŸåŒ–
 	SetData(nIdx);
 
 	return true;
 }
 
-// ƒ^ƒCƒv•Êİ’èƒGƒNƒXƒ|[ƒg
+// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 //		2010/4/12 Uchi
 bool CDlgTypeList::Export()
 {
@@ -468,22 +468,22 @@ bool CDlgTypeList::Export()
 
 	CImpExpType	cImpExpType( nIdx, types, hwndList );
 
-	// ƒGƒNƒXƒ|[ƒg
+	// ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 	cImpExpType.SetBaseName( to_wchar( types.m_szTypeName) );
 	if (!cImpExpType.ExportUI( G_AppInstance(), GetHwnd() )) {
-		// ƒGƒNƒXƒ|[ƒg‚ğ‚µ‚Ä‚¢‚È‚¢
+		// ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã‚’ã—ã¦ã„ãªã„
 		return false;
 	}
 
 	return true;
 }
 
-/*! ƒ^ƒCƒv•Êİ’è‰Šú‰»
+/*! ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šåˆæœŸåŒ–
 	@date 2010/4/12 Uchi
-	@date 2016.03.09 Moca Šî–{‚Ì‰Šú‰»‚ğƒTƒ|[ƒgBŠî–{‚Ì‚Í“à‘ İ’è‚É–ß‚·“®ì‚É‚·‚é
+	@date 2016.03.09 Moca åŸºæœ¬ã®åˆæœŸåŒ–ã‚’ã‚µãƒãƒ¼ãƒˆã€‚åŸºæœ¬ã®æ™‚ã¯å†…è”µè¨­å®šã«æˆ»ã™å‹•ä½œã«ã™ã‚‹
 
-	@retval true  ³í
-	@retval false ˆÙí
+	@retval true  æ­£å¸¸
+	@retval false ç•°å¸¸
 */
 bool CDlgTypeList::InitializeType( void )
 {
@@ -492,7 +492,7 @@ bool CDlgTypeList::InitializeType( void )
 	int iDocType = List_GetCurSel( hwndList );
 	const STypeConfigMini* typeMini;
 	if( !CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini) ){
-		// ‚È‚ñ‚©ƒGƒ‰[‚¾‚Á‚½
+		// ãªã‚“ã‹ã‚¨ãƒ©ãƒ¼ã ã£ãŸ
 		return false;
 	}
 	int			nRet;
@@ -512,12 +512,12 @@ bool CDlgTypeList::InitializeType( void )
 	if( -1 == iDocType ){
 		return false;
 	}
-//	_DefaultConfig(&types);		//‹K’è’l‚ğƒRƒs[
+//	_DefaultConfig(&types);		//è¦å®šå€¤ã‚’ã‚³ãƒ”ãƒ¼
 	std::auto_ptr<STypeConfig> type(new STypeConfig());
 	if( 0 != iDocType ){
-		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); 	// Šî–{‚ğƒRƒs[
+		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); 	// åŸºæœ¬ã‚’ã‚³ãƒ”ãƒ¼
 
-		// “¯‚¶–¼‘O‚É‚È‚ç‚È‚¢‚æ‚¤‚É”š‚ğ‚Â‚¯‚é
+		// åŒã˜åå‰ã«ãªã‚‰ãªã„ã‚ˆã†ã«æ•°å­—ã‚’ã¤ã‘ã‚‹
 		int nNameNum = iDocType + 1;
 		bool bUpdate = true;
 		for(int i = 1; i < GetDllShareData().m_nTypesCount; i++){
@@ -541,7 +541,7 @@ bool CDlgTypeList::InitializeType( void )
 		type->m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
 		type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 	}else{
-		// 2016.03.09 Šî–{‚Ì‰Šú‰»
+		// 2016.03.09 åŸºæœ¬ã®åˆæœŸåŒ–
 		CType_Basis basis;
 		basis.InitTypeConfig(0, *type);
 	}
@@ -550,7 +550,7 @@ bool CDlgTypeList::InitializeType( void )
 
 	SendChangeSettingType(iDocType);
 
-	// ƒŠƒXƒgÄ‰Šú‰»
+	// ãƒªã‚¹ãƒˆå†åˆæœŸåŒ–
 	SetData(iDocType);
 
 	InfoMessage( hwndDlg, LS(STR_DLGTYPELIST_INIT2), type->m_szTypeName );
@@ -566,7 +566,7 @@ bool CDlgTypeList::CopyType()
 	int iDocType = List_GetCurSel( hwndList );
 	STypeConfig type;
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), type);
-	// –¼‘O‚É2“™‚ğ•t‚¯‚é
+	// åå‰ã«2ç­‰ã‚’ä»˜ã‘ã‚‹
 	int n = 1;
 	bool bUpdate = true;
 	for(int i = 0; i < nNewTypeIndex; i++){
@@ -592,7 +592,7 @@ bool CDlgTypeList::CopyType()
 			auto_strcpy( szTemp, type.m_szTypeName );
 			int nTempLen = auto_strlen( szTemp );
 			CNativeT cmem;
-			// ƒoƒbƒtƒ@‚ğ‚Í‚İo‚³‚È‚¢‚æ‚¤‚É
+			// ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ã¿å‡ºã•ãªã„ã‚ˆã†ã«
 			LimitStringLengthT( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
 			auto_strcpy( type.m_szTypeName, cmem.GetStringPtr() );
 			auto_strcat( type.m_szTypeName, szNum );
@@ -621,7 +621,7 @@ bool CDlgTypeList::UpType()
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0 ) {
-		// Šî–{‚Ìê‡‚É‚Í‰½‚à‚µ‚È‚¢
+		// åŸºæœ¬ã®å ´åˆã«ã¯ä½•ã‚‚ã—ãªã„
 		return true;
 	}
 	std::auto_ptr<STypeConfig> type1(new STypeConfig());
@@ -643,7 +643,7 @@ bool CDlgTypeList::DownType()
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0 || GetDllShareData().m_nTypesCount <= iDocType + 1 ) {
-		// Šî–{AÅŒã‚Ìê‡‚É‚Í‰½‚à‚µ‚È‚¢
+		// åŸºæœ¬ã€æœ€å¾Œã®å ´åˆã«ã¯ä½•ã‚‚ã—ãªã„
 		return true;
 	}
 	std::auto_ptr<STypeConfig> type1(new STypeConfig());
@@ -676,21 +676,21 @@ bool CDlgTypeList::DelType()
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0) {
-		// Šî–{‚Ìê‡‚É‚Í‰½‚à‚µ‚È‚¢
+		// åŸºæœ¬ã®å ´åˆã«ã¯ä½•ã‚‚ã—ãªã„
 		return true;
 	}
 	const STypeConfigMini* typeMini;
 	if( !CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini) ){
-		// “ä‚ÌƒGƒ‰[
+		// è¬ã®ã‚¨ãƒ©ãƒ¼
 		return false;
 	}
-	const STypeConfigMini type = *typeMini; // ƒ_ƒCƒAƒƒO‚ğo‚µ‚Ä‚¢‚éŠÔ‚É•ÏX‚³‚ê‚é‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅƒRƒs[‚·‚é
+	const STypeConfigMini type = *typeMini; // ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’å‡ºã—ã¦ã„ã‚‹é–“ã«å¤‰æ›´ã•ã‚Œã‚‹ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	int nRet = ConfirmMessage( hwndDlg,
 		LS(STR_DLGTYPELIST_DEL), type.m_szTypeName );
 	if (nRet != IDYES) {
 		return false;
 	}
-	// ƒ_ƒCƒAƒƒO‚ğo‚µ‚Ä‚¢‚éŠÔ‚Éƒ^ƒCƒv•ÊƒŠƒXƒg‚ªXV‚³‚ê‚½‚©‚à‚µ‚ê‚È‚¢‚Ì‚Åid‚©‚çÄŒŸõ
+	// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’å‡ºã—ã¦ã„ã‚‹é–“ã«ã‚¿ã‚¤ãƒ—åˆ¥ãƒªã‚¹ãƒˆãŒæ›´æ–°ã•ã‚ŒãŸã‹ã‚‚ã—ã‚Œãªã„ã®ã§idã‹ã‚‰å†æ¤œç´¢
 	CTypeConfig config = CDocTypeManager().GetDocumentTypeOfId(type.m_id);
 	if( !config.IsValidType() ){
 		return false;
@@ -706,7 +706,7 @@ bool CDlgTypeList::DelType()
 }
 
 
-/*! Ä‹A“IƒŒƒWƒXƒgƒŠƒRƒs[ */
+/*! å†å¸°çš„ãƒ¬ã‚¸ã‚¹ãƒˆãƒªã‚³ãƒ”ãƒ¼ */
 int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath)
 {
 	int errorCode;
@@ -734,7 +734,7 @@ int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstr
 		}else if( errorCode ){
 			return errorCode;
 		}else{
-			// è”²‚«Fƒf[ƒ^‚ÌƒTƒCƒY‚ªBUFFER_SIZE(=1024)‚ğ’´‚¦‚éê‡‚ğl—¶‚µ‚Ä‚¢‚È‚¢
+			// æ‰‹æŠœãï¼šãƒ‡ãƒ¼ã‚¿ã®ã‚µã‚¤ã‚ºãŒBUFFER_SIZE(=1024)ã‚’è¶…ãˆã‚‹å ´åˆã‚’è€ƒæ…®ã—ã¦ã„ãªã„
 			if( (errorCode = keyDest.SetValue(szValue, data, dwDataLen, dwType)) != 0 ){ return errorCode; }
 			index++;
 		}
@@ -759,7 +759,7 @@ int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstr
 	return errorCode;
 }
 
-/*! Ä‹A“IƒŒƒWƒXƒgƒŠíœ */
+/*! å†å¸°çš„ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå‰Šé™¤ */
 int DeleteRegistry(HKEY root, const tstring& path)
 {
 	int errorCode;
@@ -788,41 +788,41 @@ int DeleteRegistry(HKEY root, const tstring& path)
 }
 
 /*!
-	@brief Šg’£q‚²‚Æ‚ÌŠÖ˜A•t‚¯ƒŒƒWƒXƒgƒŠİ’è‚ğs‚¤
-	@param sExt	Šg’£q
-	@param bDefProg [in]Šù’èƒtƒ‰ƒOiƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Å‹N“®‚³‚¹‚é‚©j
-	ƒŒƒWƒXƒgƒŠƒAƒNƒZƒX•ûj
-	EŠÇ—ÒŒ ŒÀ‚È‚µ‚ÅÀ{‚µ‚½‚¢‚½‚ßAHKLM‚Í“Ç‚İ‚İ‚Ì‚İ‚Æ‚µA‘‚«‚İ‚ÍHKCU‚És‚¤B
-	ˆ—‚Ì—¬‚ê
-	E[HKCU\Software\Classes\.(Šg’£q)]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚Î
-		E[HKCU\Software\Classes\.(Šg’£q)]‚ğì¬B’l‚ÍuSakuraEditor_(Šg’£q)v
-	E[HKCU\Software\Classes\.(Šg’£q)]‚Ì’l‚ªuSakuraEditor_(Šg’£q)vˆÈŠO‚Ìê‡A
-		[HKCU\Software\Classes\.(Šg’£q)\SakuraEditorBackup]‚É’l‚ğƒRƒs[‚·‚é
-		’l‚ÉuSakuraEditor_(Šg’£q)v‚ğİ’è‚·‚é
-	EProgID <- [HKCR\Software\Classes\.(Šg’£q)]‚Ì’l
-	E[HKCU\Software\Classes\(ProgID)]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚Î
-		E[HKLM\Software\Classes\(HKLM‚ÌProgID)]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚·‚ê‚Î
-			E[HKLM\Software\Classes\(ProgID)]‚Ì\‘¢‚ğ[HKCU\Software\Classes\(ProgID)]‚ÉƒRƒs[‚·‚é
-	E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\command]‚ğì¬B’l‚Íu"(ƒTƒNƒ‰EXEƒpƒX)" "%1"v
-	E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]‚Ì’l‚ğuSakura &Editorv‚Æ‚·‚é
-	EŠù’èƒtƒ‰ƒO”»’è
-		true‚È‚ç
-			E[HKCU\Software\Classes\(ProgID)\shell]‚Ì’l‚ª‹ó‚Å‚È‚¯‚ê‚Î[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]‚É‘Ş”ğ‚·‚é
-			E[HKCU\Software\Classes\(ProgID)\shell]‚Ì’l‚ğuSakuraEditorv‚Æ‚·‚é
-		false‚È‚ç
-			E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]‚Ì‘¶İƒ`ƒFƒbƒN
-				‘¶İ‚·‚ê‚ÎA‘Ş”ğ‚µ‚½’l‚ğ[HKCU\Software\Classes\(ProgID)\shell]‚Éİ’è
-				‘¶İ‚µ‚È‚¯‚ê‚ÎA[HKCU\Software\Classes\(ProgID)\shell]‚Ì’l‚ğíœ
+	@brief æ‹¡å¼µå­ã”ã¨ã®é–¢é€£ä»˜ã‘ãƒ¬ã‚¸ã‚¹ãƒˆãƒªè¨­å®šã‚’è¡Œã†
+	@param sExt	æ‹¡å¼µå­
+	@param bDefProg [in]æ—¢å®šãƒ•ãƒ©ã‚°ï¼ˆãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§èµ·å‹•ã•ã›ã‚‹ã‹ï¼‰
+	ãƒ¬ã‚¸ã‚¹ãƒˆãƒªã‚¢ã‚¯ã‚»ã‚¹æ–¹é‡
+	ãƒ»ç®¡ç†è€…æ¨©é™ãªã—ã§å®Ÿæ–½ã—ãŸã„ãŸã‚ã€HKLMã¯èª­ã¿è¾¼ã¿ã®ã¿ã¨ã—ã€æ›¸ãè¾¼ã¿ã¯HKCUã«è¡Œã†ã€‚
+	å‡¦ç†ã®æµã‚Œ
+	ãƒ»[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°
+		ãƒ»[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã‚’ä½œæˆã€‚å€¤ã¯ã€ŒSakuraEditor_(æ‹¡å¼µå­)ã€
+	ãƒ»[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å€¤ãŒã€ŒSakuraEditor_(æ‹¡å¼µå­)ã€ä»¥å¤–ã®å ´åˆã€
+		[HKCU\Software\Classes\.(æ‹¡å¼µå­)\SakuraEditorBackup]ã«å€¤ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
+		å€¤ã«ã€ŒSakuraEditor_(æ‹¡å¼µå­)ã€ã‚’è¨­å®šã™ã‚‹
+	ãƒ»ProgID <- [HKCR\Software\Classes\.(æ‹¡å¼µå­)]ã®å€¤
+	ãƒ»[HKCU\Software\Classes\(ProgID)]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°
+		ãƒ»[HKLM\Software\Classes\(HKLMã®ProgID)]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã™ã‚Œã°
+			ãƒ»[HKLM\Software\Classes\(ProgID)]ã®æ§‹é€ ã‚’[HKCU\Software\Classes\(ProgID)]ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\command]ã‚’ä½œæˆã€‚å€¤ã¯ã€Œ"(ã‚µã‚¯ãƒ©EXEãƒ‘ã‚¹)" "%1"ã€
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]ã®å€¤ã‚’ã€ŒSakura &Editorã€ã¨ã™ã‚‹
+	ãƒ»æ—¢å®šãƒ•ãƒ©ã‚°åˆ¤å®š
+		trueãªã‚‰
+			ãƒ»[HKCU\Software\Classes\(ProgID)\shell]ã®å€¤ãŒç©ºã§ãªã‘ã‚Œã°[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]ã«é€€é¿ã™ã‚‹
+			ãƒ»[HKCU\Software\Classes\(ProgID)\shell]ã®å€¤ã‚’ã€ŒSakuraEditorã€ã¨ã™ã‚‹
+		falseãªã‚‰
+			ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+				å­˜åœ¨ã™ã‚Œã°ã€é€€é¿ã—ãŸå€¤ã‚’[HKCU\Software\Classes\(ProgID)\shell]ã«è¨­å®š
+				å­˜åœ¨ã—ãªã‘ã‚Œã°ã€[HKCU\Software\Classes\(ProgID)\shell]ã®å€¤ã‚’å‰Šé™¤
 */
 int RegistExt(LPCTSTR sExt, bool bDefProg)
 {
 	int errorCode = ERROR_SUCCESS;
 	tstring sBasePath = tstring( _T("Software\\Classes\\") );
 
-	//¬•¶š‰»
+	//å°æ–‡å­—åŒ–
 	TCHAR szLowerExt[MAX_PATH] = {0};
 	_tcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, _tcslen(sExt));
 	CharLower(szLowerExt);
@@ -922,27 +922,27 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 }
 
 /*!
-	@brief Šg’£q‚²‚Æ‚ÌŠÖ˜A•t‚¯ƒŒƒWƒXƒgƒŠİ’è‚ğíœ‚·‚é
-	@param sExt	[in]Šg’£q
-	ˆ—‚Ì—¬‚ê
-	E[HKCU\Software\Classes\.(Šg’£q)]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚ÎI—¹
-	EProgID <- [HKCU\Software\Classes\.(Šg’£q)]‚Ì’l
-	E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚ÎI—¹
-	E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚·‚ê‚ÎA‘Ş”ğ‚µ‚½’l‚ğ[HKCU\Software\Classes\(ProgID)\shell]‚Éİ’è
-		‘¶İ‚µ‚È‚¯‚ê‚ÎA[HKCU\Software\Classes\(ProgID)\shell]‚Ì’l‚ğíœ
-	EProgID‚Ìæ“ª‚ª"SakuraEditor_"‚©H
-		‚»‚¤‚È‚ç[HKCU\Software\Classes\(ProgID)]‚Æ[HKCU\Software\Classes\.(Šg’£q)]‚ğíœ
-	@@‚»‚¤‚Å‚È‚¯‚ê‚Î[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]‚ğíœ
+	@brief æ‹¡å¼µå­ã”ã¨ã®é–¢é€£ä»˜ã‘ãƒ¬ã‚¸ã‚¹ãƒˆãƒªè¨­å®šã‚’å‰Šé™¤ã™ã‚‹
+	@param sExt	[in]æ‹¡å¼µå­
+	å‡¦ç†ã®æµã‚Œ
+	ãƒ»[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°çµ‚äº†
+	ãƒ»ProgID <- [HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å€¤
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°çµ‚äº†
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor\ShellBackup]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã™ã‚Œã°ã€é€€é¿ã—ãŸå€¤ã‚’[HKCU\Software\Classes\(ProgID)\shell]ã«è¨­å®š
+		å­˜åœ¨ã—ãªã‘ã‚Œã°ã€[HKCU\Software\Classes\(ProgID)\shell]ã®å€¤ã‚’å‰Šé™¤
+	ãƒ»ProgIDã®å…ˆé ­ãŒ"SakuraEditor_"ã‹ï¼Ÿ
+		ãã†ãªã‚‰[HKCU\Software\Classes\(ProgID)]ã¨[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã‚’å‰Šé™¤
+	ã€€ã€€ãã†ã§ãªã‘ã‚Œã°[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]ã‚’å‰Šé™¤
 */
 int UnregistExt(LPCTSTR sExt)
 {
 	int errorCode = ERROR_SUCCESS;
 	tstring sBasePath = tstring( _T("Software\\Classes\\") );
 
-	//¬•¶š‰»
+	//å°æ–‡å­—åŒ–
 	TCHAR szLowerExt[MAX_PATH] = {0};
 	_tcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, _tcslen(sExt));
 	CharLower(szLowerExt);
@@ -1011,20 +1011,20 @@ int UnregistExt(LPCTSTR sExt)
 }
 
 /*!
-	@brief Šg’£q‚²‚Æ‚ÌŠÖ˜A•t‚¯ƒŒƒWƒXƒgƒŠİ’è‚ğŠm”F‚·‚é
-	@param sExt			[in]Šg’£q
-	@param pbRMenu		[out]ŠÖ˜A•t‚¯İ’è
-	@param pbDblClick	[out]Šù’èİ’è
-	ˆ—‚Ì—¬‚ê
-	EpbRMenu <- false, pbDblClick <- false
-	E[HKCU\Software\Classes\.(Šg’£q)]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚ÎI—¹
-	EProgID <- [HKCU\Software\Classes\.(Šg’£q)]‚Ì’l
-	E[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]‚Ì‘¶İƒ`ƒFƒbƒN
-		‘¶İ‚µ‚È‚¯‚ê‚ÎI—¹
-	EpbRMenu <- true
-	E[HKCU\Software\Classes\(ProgID)\shell]‚Ì’l‚ğƒ`ƒFƒbƒN
-		uSakuraEditorv‚È‚çApbDblClick <- true
+	@brief æ‹¡å¼µå­ã”ã¨ã®é–¢é€£ä»˜ã‘ãƒ¬ã‚¸ã‚¹ãƒˆãƒªè¨­å®šã‚’ç¢ºèªã™ã‚‹
+	@param sExt			[in]æ‹¡å¼µå­
+	@param pbRMenu		[out]é–¢é€£ä»˜ã‘è¨­å®š
+	@param pbDblClick	[out]æ—¢å®šè¨­å®š
+	å‡¦ç†ã®æµã‚Œ
+	ãƒ»pbRMenu <- false, pbDblClick <- false
+	ãƒ»[HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°çµ‚äº†
+	ãƒ»ProgID <- [HKCU\Software\Classes\.(æ‹¡å¼µå­)]ã®å€¤
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell\SakuraEditor]ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
+		å­˜åœ¨ã—ãªã‘ã‚Œã°çµ‚äº†
+	ãƒ»pbRMenu <- true
+	ãƒ»[HKCU\Software\Classes\(ProgID)\shell]ã®å€¤ã‚’ãƒã‚§ãƒƒã‚¯
+		ã€ŒSakuraEditorã€ãªã‚‰ã€pbDblClick <- true
 */
 int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 {
@@ -1034,7 +1034,7 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	*pbRMenu = false;
 	*pbDblClick = false;
 
-	//¬•¶š‰»
+	//å°æ–‡å­—åŒ–
 	TCHAR szLowerExt[MAX_PATH] = {0};
 	_tcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, _tcslen(sExt));
 	CharLower(szLowerExt);
@@ -1077,7 +1077,7 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 }
 
 /*!
-	@brief ƒŒƒWƒXƒgƒŠ•ÏX‚ÌŒxƒƒbƒZ[ƒW‚ğ•\¦‚·‚é
+	@brief ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå¤‰æ›´ã®è­¦å‘Šãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹
 */
 bool CDlgTypeList::AlertFileAssociation()
 {
@@ -1088,7 +1088,7 @@ bool CDlgTypeList::AlertFileAssociation()
 						LS(STR_DLGTYPELIST_ACC))
 					)
 		{
-			m_bAlertFileAssociation = false;	//u‚Í‚¢v‚È‚çÅ‰‚Ìˆê“x‚¾‚¯Šm”F‚·‚é
+			m_bAlertFileAssociation = false;	//ã€Œã¯ã„ã€ãªã‚‰æœ€åˆã®ä¸€åº¦ã ã‘ç¢ºèªã™ã‚‹
 			return true;
 		}else{
 			return false;

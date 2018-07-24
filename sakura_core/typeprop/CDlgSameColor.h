@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •¶ŽšF^”wŒiF“ˆêƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief æ–‡å­—è‰²ï¼èƒŒæ™¯è‰²çµ±ä¸€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author ryoji
-	@date 2006/04/26 ì¬
+	@date 2006/04/26 ä½œæˆ
 */
 /*
 	Copyright (C) 2006, ryoji
@@ -35,36 +35,36 @@
 
 struct STypeConfig;
 
-/*!	@brief •¶ŽšF^”wŒiF“ˆêƒ_ƒCƒAƒƒO
+/*!	@brief æ–‡å­—è‰²ï¼èƒŒæ™¯è‰²çµ±ä¸€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
-	ƒ^ƒCƒv•ÊÝ’è‚ÌƒJƒ‰[Ý’è‚ÅC•¶ŽšF^”wŒiF“ˆê‚Ì‘ÎÛF‚ðŽw’è‚·‚é‚½‚ß‚É•â•“I‚É
-	Žg—p‚³‚ê‚éƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®ã‚«ãƒ©ãƒ¼è¨­å®šã§ï¼Œæ–‡å­—è‰²ï¼èƒŒæ™¯è‰²çµ±ä¸€ã®å¯¾è±¡è‰²ã‚’æŒ‡å®šã™ã‚‹ãŸã‚ã«è£œåŠ©çš„ã«
+	ä½¿ç”¨ã•ã‚Œã‚‹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 */
 class CDlgSameColor : public CDialog
 {
 public:
 	CDlgSameColor();
 	~CDlgSameColor();
-	int DoModal( HINSTANCE, HWND, WORD, STypeConfig*, COLORREF );		//!< ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\Ž¦
+	int DoModal( HINSTANCE, HWND, WORD, STypeConfig*, COLORREF );		//!< ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 
 protected:
 
 	virtual LPVOID GetHelpIdTable( void );
-	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	//! ƒ_ƒCƒAƒƒO‚ÌƒƒbƒZ[ƒWˆ—
-	virtual BOOL OnInitDialog( HWND, WPARAM, LPARAM );			//!< WM_INITDIALOG ˆ—
-	virtual BOOL OnBnClicked( int );							//!< BN_CLICKED ˆ—
-	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam );	//!< WM_DRAWITEM ˆ—
-	BOOL OnSelChangeListColors( HWND hwndCtl );					//!< F‘I‘ðƒŠƒXƒg‚Ì LBN_SELCHANGE ˆ—
+	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	//! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†
+	virtual BOOL OnInitDialog( HWND, WPARAM, LPARAM );			//!< WM_INITDIALOG å‡¦ç†
+	virtual BOOL OnBnClicked( int );							//!< BN_CLICKED å‡¦ç†
+	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam );	//!< WM_DRAWITEM å‡¦ç†
+	BOOL OnSelChangeListColors( HWND hwndCtl );					//!< è‰²é¸æŠžãƒªã‚¹ãƒˆã® LBN_SELCHANGE å‡¦ç†
 
-	static LRESULT CALLBACK ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< ƒTƒuƒNƒ‰ƒX‰»‚³‚ê‚½Žw’èFƒXƒ^ƒeƒBƒbƒN‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
-	static LRESULT CALLBACK ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< ƒTƒuƒNƒ‰ƒX‰»‚³‚ê‚½F‘I‘ðƒŠƒXƒg‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+	static LRESULT CALLBACK ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã•ã‚ŒãŸæŒ‡å®šè‰²ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+	static LRESULT CALLBACK ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã•ã‚ŒãŸè‰²é¸æŠžãƒªã‚¹ãƒˆã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 
-	WNDPROC m_wpColorStaticProc;	//!< ƒTƒuƒNƒ‰ƒX‰»ˆÈ‘O‚ÌŽw’èFƒXƒ^ƒeƒBƒbƒN‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
-	WNDPROC m_wpColorListProc;		//!< ƒTƒuƒNƒ‰ƒX‰»ˆÈ‘O‚ÌF‘I‘ðƒŠƒXƒg‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+	WNDPROC m_wpColorStaticProc;	//!< ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ä»¥å‰ã®æŒ‡å®šè‰²ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
+	WNDPROC m_wpColorListProc;		//!< ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ä»¥å‰ã®è‰²é¸æŠžãƒªã‚¹ãƒˆã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 
-	WORD m_wID;			//!< ƒ^ƒCƒv•ÊÝ’èƒ_ƒCƒAƒƒOieƒ_ƒCƒAƒƒOj‚Å‰Ÿ‚³‚ê‚½ƒ{ƒ^ƒ“ID
-	STypeConfig* m_pTypes;	//!< ƒ^ƒCƒv•ÊÝ’èƒf[ƒ^
-	COLORREF m_cr;		//!< Žw’èF
+	WORD m_wID;			//!< ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ï¼ˆè¦ªãƒ€ã‚¤ã‚¢ãƒ­ã‚°ï¼‰ã§æŠ¼ã•ã‚ŒãŸãƒœã‚¿ãƒ³ID
+	STypeConfig* m_pTypes;	//!< ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šãƒ‡ãƒ¼ã‚¿
+	COLORREF m_cr;		//!< æŒ‡å®šè‰²
 };
 
 #endif

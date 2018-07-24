@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒ^ƒCƒv•Êİ’èƒCƒ“ƒ|[ƒgŠm”Fƒ_ƒCƒAƒƒO
+ï»¿/*!	@file
+	@brief ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã‚¤ãƒ³ãƒãƒ¼ãƒˆç¢ºèªãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 	@author Uchi
-	@date 2010/4/17 V‹Kì¬
+	@date 2010/4/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2010, Uchi
@@ -37,38 +37,38 @@ using std::tstring;
 
 #include "dlg/CDialog.h"
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒtƒ@ƒCƒ‹ƒ^ƒCƒvˆê——ƒ_ƒCƒAƒƒO
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒ—ä¸€è¦§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 */
 class CDlgTypeAscertain : public CDialog
 {
 public:
-	// Œ^
+	// å‹
 	struct SAscertainInfo {
-		tstring	sImportFile;	//!< in ƒCƒ“ƒ|[ƒgƒtƒ@ƒCƒ‹–¼
-		wstring	sTypeNameTo;	//!< in ƒ^ƒCƒv–¼iƒCƒ“ƒ|[ƒgæj
-		wstring	sTypeNameFile;	//!< in ƒ^ƒCƒv–¼iƒtƒ@ƒCƒ‹‚©‚çj
-		int 	nColorType;		//!< out •¶‘í—Ş(ƒJƒ‰[ƒRƒs[—p)
-		wstring	sColorFile;		//!< out Fİ’èƒtƒ@ƒCƒ‹–¼
-		bool	bAddType;		//!< out ƒ^ƒCƒv‚ğ’Ç‰Á‚·‚é
+		tstring	sImportFile;	//!< in ã‚¤ãƒ³ãƒãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«å
+		wstring	sTypeNameTo;	//!< in ã‚¿ã‚¤ãƒ—åï¼ˆã‚¤ãƒ³ãƒãƒ¼ãƒˆå…ˆï¼‰
+		wstring	sTypeNameFile;	//!< in ã‚¿ã‚¤ãƒ—åï¼ˆãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ï¼‰
+		int 	nColorType;		//!< out æ–‡æ›¸ç¨®é¡(ã‚«ãƒ©ãƒ¼ã‚³ãƒ”ãƒ¼ç”¨)
+		wstring	sColorFile;		//!< out è‰²è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«å
+		bool	bAddType;		//!< out ã‚¿ã‚¤ãƒ—ã‚’è¿½åŠ ã™ã‚‹
 	};
 
 public:
 	//  Constructors
 	CDlgTypeAscertain();
-	// ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦
-	int DoModal( HINSTANCE, HWND, SAscertainInfo* );	/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	// ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
+	int DoModal( HINSTANCE, HWND, SAscertainInfo* );	/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 
 protected:
-	// À‘•ƒwƒ‹ƒpŠÖ”
+	// å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	BOOL OnBnClicked( int );
-	void SetData();	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+	void SetData();	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	LPVOID GetHelpIdTable(void);
 
 private:
-	SAscertainInfo* m_psi;			// ƒCƒ“ƒ^[ƒtƒFƒCƒX
+	SAscertainInfo* m_psi;			// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹
 };
 
 

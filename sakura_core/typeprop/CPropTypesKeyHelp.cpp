@@ -1,8 +1,8 @@
-/*!	@file
-	ƒ^ƒCƒv•Êİ’è - ƒL[ƒ[ƒhƒwƒ‹ƒv ƒy[ƒW
+ï»¿/*!	@file
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š - ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ— ãƒšãƒ¼ã‚¸
 
 	@author fon
-	@date 2006/04/10 V‹Kì¬
+	@date 2006/04/10 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2006, fon, ryoji
@@ -44,23 +44,23 @@
 using namespace std;
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
-	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//ƒL[ƒ[ƒhƒwƒ‹ƒv‹@”\‚ğg‚¤
+	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—æ©Ÿèƒ½ã‚’ä½¿ã†
 	IDC_LIST_KEYHELP,				HIDC_LIST_KEYHELP,				//SysListView32
-	IDC_BUTTON_KEYHELP_UPD,			HIDC_BUTTON_KEYHELP_UPD,		//XV(&E)
+	IDC_BUTTON_KEYHELP_UPD,			HIDC_BUTTON_KEYHELP_UPD,		//æ›´æ–°(&E)
 	IDC_EDIT_KEYHELP,				HIDC_EDIT_KEYHELP,				//EDITTEXT
-	IDC_BUTTON_KEYHELP_REF,			HIDC_BUTTON_KEYHELP_REF,		//QÆ(&O)...
-	IDC_BUTTON_KEYHELP_TOP,			HIDC_BUTTON_KEYHELP_TOP,		//æ“ª(&T)
-	IDC_BUTTON_KEYHELP_UP,			HIDC_BUTTON_KEYHELP_UP,			//ã‚Ö(&U)
-	IDC_BUTTON_KEYHELP_DOWN,		HIDC_BUTTON_KEYHELP_DOWN,		//‰º‚Ö(&G)
-	IDC_BUTTON_KEYHELP_LAST,		HIDC_BUTTON_KEYHELP_LAST,		//ÅI(&B)
-	IDC_BUTTON_KEYHELP_INS,			HIDC_BUTTON_KEYHELP_INS,		//‘}“ü(&S)
-	IDC_BUTTON_KEYHELP_DEL,			HIDC_BUTTON_KEYHELP_DEL,		//íœ(&D)
-	IDC_CHECK_KEYHELP_ALLSEARCH,	HIDC_CHECK_KEYHELP_ALLSEARCH,	//‘S«‘ŒŸõ‚·‚é(&A)
-	IDC_CHECK_KEYHELP_KEYDISP,		HIDC_CHECK_KEYHELP_KEYDISP,		//ƒL[ƒ[ƒh‚à•\¦‚·‚é(&W)
-	IDC_CHECK_KEYHELP_PREFIX,		HIDC_CHECK_KEYHELP_PREFIX,		//‘O•ûˆê’vŒŸõ(&P)
-	IDC_COMBO_MENU,					HIDC_COMBO_KEYHELP_RMENU,		//‰EƒNƒŠƒbƒNƒƒjƒ…[
-	IDC_BUTTON_KEYHELP_IMPORT,		HIDC_BUTTON_KEYHELP_IMPORT,		//ƒCƒ“ƒ|[ƒg
-	IDC_BUTTON_KEYHELP_EXPORT,		HIDC_BUTTON_KEYHELP_EXPORT,		//ƒGƒNƒXƒ|[ƒg
+	IDC_BUTTON_KEYHELP_REF,			HIDC_BUTTON_KEYHELP_REF,		//å‚ç…§(&O)...
+	IDC_BUTTON_KEYHELP_TOP,			HIDC_BUTTON_KEYHELP_TOP,		//å…ˆé ­(&T)
+	IDC_BUTTON_KEYHELP_UP,			HIDC_BUTTON_KEYHELP_UP,			//ä¸Šã¸(&U)
+	IDC_BUTTON_KEYHELP_DOWN,		HIDC_BUTTON_KEYHELP_DOWN,		//ä¸‹ã¸(&G)
+	IDC_BUTTON_KEYHELP_LAST,		HIDC_BUTTON_KEYHELP_LAST,		//æœ€çµ‚(&B)
+	IDC_BUTTON_KEYHELP_INS,			HIDC_BUTTON_KEYHELP_INS,		//æŒ¿å…¥(&S)
+	IDC_BUTTON_KEYHELP_DEL,			HIDC_BUTTON_KEYHELP_DEL,		//å‰Šé™¤(&D)
+	IDC_CHECK_KEYHELP_ALLSEARCH,	HIDC_CHECK_KEYHELP_ALLSEARCH,	//å…¨è¾æ›¸æ¤œç´¢ã™ã‚‹(&A)
+	IDC_CHECK_KEYHELP_KEYDISP,		HIDC_CHECK_KEYHELP_KEYDISP,		//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚‚è¡¨ç¤ºã™ã‚‹(&W)
+	IDC_CHECK_KEYHELP_PREFIX,		HIDC_CHECK_KEYHELP_PREFIX,		//å‰æ–¹ä¸€è‡´æ¤œç´¢(&P)
+	IDC_COMBO_MENU,					HIDC_COMBO_KEYHELP_RMENU,		//å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	IDC_BUTTON_KEYHELP_IMPORT,		HIDC_BUTTON_KEYHELP_IMPORT,		//ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+	IDC_BUTTON_KEYHELP_EXPORT,		HIDC_BUTTON_KEYHELP_EXPORT,		//ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 	0, 0
 };
 
@@ -73,9 +73,9 @@ static int nKeyHelpRMenuType[] = {
 	STR_KEYHELP_RMENU_BOTTOM,
 };
 
-/*! ƒL[ƒ[ƒh«‘ƒtƒ@ƒCƒ‹İ’è ƒƒbƒZ[ƒWˆ—
+/*! ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«è¨­å®š ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
@@ -93,9 +93,9 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	LV_COLUMN	col;
 	RECT		rc;
 
-	BOOL	bUse;						/* «‘‚ğ g—p‚·‚é/‚µ‚È‚¢ */
-	TCHAR	szAbout[DICT_ABOUT_LEN];	/* «‘‚Ìà–¾(«‘ƒtƒ@ƒCƒ‹‚Ì1s–Ú‚©‚ç¶¬) */
-	TCHAR	szPath[_MAX_PATH];			/* ƒtƒ@ƒCƒ‹ƒpƒX */
+	BOOL	bUse;						/* è¾æ›¸ã‚’ ä½¿ç”¨ã™ã‚‹/ã—ãªã„ */
+	TCHAR	szAbout[DICT_ABOUT_LEN];	/* è¾æ›¸ã®èª¬æ˜(è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®1è¡Œç›®ã‹ã‚‰ç”Ÿæˆ) */
+	TCHAR	szPath[_MAX_PATH];			/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 	DWORD	dwStyle;
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
@@ -103,9 +103,9 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
-		/* ƒJƒ‰ƒ€’Ç‰Á */
+		/* ã‚«ãƒ©ãƒ è¿½åŠ  */
 		::GetWindowRect( hwndList, &rc );
-		/* ƒŠƒXƒg‚Éƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ğ’Ç‰Á */
+		/* ãƒªã‚¹ãƒˆã«ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã‚’è¿½åŠ  */
 		dwStyle = ListView_GetExtendedListViewStyle(hwndList);
 		dwStyle |= LVS_EX_CHECKBOXES /*| LVS_EX_FULLROWSELECT*/ | LVS_EX_GRIDLINES;
 		ListView_SetExtendedListViewStyle(hwndList, dwStyle);
@@ -113,104 +113,104 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 25 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_DIC));	/* w’è«‘ƒtƒ@ƒCƒ‹‚Ìg—p‰Â”Û */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_DIC));	/* æŒ‡å®šè¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½¿ç”¨å¯å¦ */
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 55 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_INFO));		/* w’è«‘‚Ì‚Ps–Ú‚ğæ“¾ */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_INFO));		/* æŒ‡å®šè¾æ›¸ã®ï¼‘è¡Œç›®ã‚’å–å¾— */
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 18 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_PATH));				/* w’è«‘ƒtƒ@ƒCƒ‹ƒpƒX */
+		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_PATH));				/* æŒ‡å®šè¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
-		SetData( hwndDlg );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è «‘ƒtƒ@ƒCƒ‹ˆê—— */
+		SetData( hwndDlg );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§ */
 
-		/* ƒŠƒXƒg‚ª‚ ‚ê‚Îæ“ª‚ğƒtƒH[ƒJƒX‚·‚é */
+		/* ãƒªã‚¹ãƒˆãŒã‚ã‚Œã°å…ˆé ­ã‚’ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã™ã‚‹ */
 		if(ListView_GetItemCount(hwndList) > 0){
 			ListView_SetItemState( hwndList, 0, LVIS_SELECTED /*| LVIS_FOCUSED*/, LVIS_SELECTED /*| LVIS_FOCUSED*/ );
 		}
-		/* ƒŠƒXƒg‚ª‚È‚¯‚ê‚Î‰Šú’l‚Æ‚µ‚Ä—p“r‚ğ•\¦ */
+		/* ãƒªã‚¹ãƒˆãŒãªã‘ã‚Œã°åˆæœŸå€¤ã¨ã—ã¦ç”¨é€”ã‚’è¡¨ç¤º */
 		else{
 			::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
 			::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
 		}
 
-		/* ‰Šúó‘Ô‚ğİ’è */
+		/* åˆæœŸçŠ¶æ…‹ã‚’è¨­å®š */
 		SendMessageCmd(hwndDlg, WM_COMMAND, (WPARAM)MAKELONG(IDC_CHECK_KEYHELP,BN_CLICKED), 0 );
 
 		return TRUE;
 
 	case WM_COMMAND:
-		wNotifyCode = HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID	= LOWORD(wParam);			/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode = HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID	= LOWORD(wParam);			/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 
 		switch( wNotifyCode ){
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 
 			switch( wID ){
-			case IDC_CHECK_KEYHELP:	/* ƒL[ƒ[ƒhƒwƒ‹ƒv‹@”\‚ğg‚¤ */
+			case IDC_CHECK_KEYHELP:	/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—æ©Ÿèƒ½ã‚’ä½¿ã† */
 				{
 					BOOL bEnable = TRUE;
 					if( !IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
 						bEnable = FALSE;
 					}
-					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), FALSE );			//ƒL[ƒ[ƒhƒwƒ‹ƒv‹@”\‚ğg‚¤(&K)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), bEnable );		  	//«‘ƒtƒ@ƒCƒ‹ˆê——(&L)
+					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), FALSE );			//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—æ©Ÿèƒ½ã‚’ä½¿ã†(&K)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), bEnable );		  	//è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§(&L)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), bEnable );         	//SysListView32
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_TITLE ), bEnable );  	//<«‘‚Ìà–¾>
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_ABOUT ), bEnable );  	//«‘ƒtƒ@ƒCƒ‹‚ÌŠT—v
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UPD ), bEnable );   	//XV(&E)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_KEYWORD ), bEnable );	//«‘ƒtƒ@ƒCƒ‹
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_TITLE ), bEnable );  	//<è¾æ›¸ã®èª¬æ˜>
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_ABOUT ), bEnable );  	//è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®æ¦‚è¦
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UPD ), bEnable );   	//æ›´æ–°(&E)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_KEYWORD ), bEnable );	//è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«
 					EnableWindow( GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), bEnable );         	//EDITTEXT
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_REF ), bEnable );   	//QÆ(&O)...
-					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_PRIOR ), bEnable );  	//ª—Dæ“x(‚)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_TOP ), bEnable );   	//æ“ª(&T)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UP ), bEnable );    	//ã‚Ö(&U)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DOWN ), bEnable );  	//‰º‚Ö(&G)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_LAST ), bEnable );  	//ÅI(&B)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_INS ), bEnable );   	//‘}“ü(&S)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DEL ), bEnable );   	//íœ(&D)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ), bEnable );	//‘S«‘ŒŸõ‚·‚é(&A)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ), bEnable );	//ƒL[ƒ[ƒh‚à•\¦‚·‚é(&W)
-					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ), bEnable );		//‘O•ûˆê’vŒŸõ(&P)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_REF ), bEnable );   	//å‚ç…§(&O)...
+					EnableWindow( GetDlgItem( hwndDlg, IDC_LABEL_KEYHELP_PRIOR ), bEnable );  	//â†‘å„ªå…ˆåº¦(é«˜)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_TOP ), bEnable );   	//å…ˆé ­(&T)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_UP ), bEnable );    	//ä¸Šã¸(&U)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DOWN ), bEnable );  	//ä¸‹ã¸(&G)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_LAST ), bEnable );  	//æœ€çµ‚(&B)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_INS ), bEnable );   	//æŒ¿å…¥(&S)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_BUTTON_KEYHELP_DEL ), bEnable );   	//å‰Šé™¤(&D)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ), bEnable );	//å…¨è¾æ›¸æ¤œç´¢ã™ã‚‹(&A)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ), bEnable );	//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚‚è¡¨ç¤ºã™ã‚‹(&W)
+					EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ), bEnable );		//å‰æ–¹ä¸€è‡´æ¤œç´¢(&P)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_STATIC_MENU ), bEnable );
 					EnableWindow( GetDlgItem( hwndDlg, IDC_COMBO_MENU ), bEnable );
 				}
 				m_Types.m_nKeyHelpNum = ListView_GetItemCount( hwndList );
 				return TRUE;
 
-			/* ‘}“üEXVƒCƒxƒ“ƒg‚ğ“Z‚ß‚Äˆ— */
-			case IDC_BUTTON_KEYHELP_INS:	/* ‘}“ü */
-			case IDC_BUTTON_KEYHELP_UPD:	/* XV */
+			/* æŒ¿å…¥ãƒ»æ›´æ–°ã‚¤ãƒ™ãƒ³ãƒˆã‚’çºã‚ã¦å‡¦ç† */
+			case IDC_BUTTON_KEYHELP_INS:	/* æŒ¿å…¥ */
+			case IDC_BUTTON_KEYHELP_UPD:	/* æ›´æ–° */
 				nIndex2 = ListView_GetItemCount(hwndList);
-				/* ‘I‘ğ’†‚ÌƒL[‚ğ’T‚·B */
+				/* é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™ã€‚ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 
-				if(wID == IDC_BUTTON_KEYHELP_INS){	/* ‘}“ü */
+				if(wID == IDC_BUTTON_KEYHELP_INS){	/* æŒ¿å…¥ */
 					if( nIndex2 >= MAX_KEYHELP_FILE ){
 						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG1));
 						return FALSE;
 					}if( -1 == nIndex ){
-						/* ‘I‘ğ’†‚Å‚È‚¯‚ê‚ÎÅŒã‚É‚·‚éB */
+						/* é¸æŠä¸­ã§ãªã‘ã‚Œã°æœ€å¾Œã«ã™ã‚‹ã€‚ */
 						nIndex = nIndex2;
 					}
-				}else{								/* XV */
+				}else{								/* æ›´æ–° */
 					if( -1 == nIndex ){
 						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_SELECT));
 						return FALSE;
 					}
 				}
-				/* XV‚·‚éƒL[î•ñ‚ğæ“¾‚·‚éB */
+				/* æ›´æ–°ã™ã‚‹ã‚­ãƒ¼æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚ */
 				auto_memset(szPath, 0, _countof(szPath));
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
 				if( szPath[0] == _T('\0') ) return FALSE;
-				/* d•¡ŒŸ¸ */
+				/* é‡è¤‡æ¤œæŸ» */
 				nIndex2 = ListView_GetItemCount(hwndList);
 				TCHAR szPath2[_MAX_PATH];
 				int i;
@@ -218,7 +218,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					auto_memset(szPath2, 0, _countof(szPath2));
 					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
 					if( _tcscmp(szPath, szPath2) == 0 ){
-						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* XVA•Ï‚í‚Á‚Ä‚¢‚È‚©‚Á‚½‚ç‰½‚à‚µ‚È‚¢ */
+						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* æ›´æ–°æ™‚ã€å¤‰ã‚ã£ã¦ã„ãªã‹ã£ãŸã‚‰ä½•ã‚‚ã—ãªã„ */
 						}else{
 							ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG2));
 							return FALSE;
@@ -226,229 +226,229 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 				}
 
-				/* w’è‚µ‚½ƒpƒX‚É«‘‚ª‚ ‚é‚©ƒ`ƒFƒbƒN‚·‚é */
+				/* æŒ‡å®šã—ãŸãƒ‘ã‚¹ã«è¾æ›¸ãŒã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹ */
 				{
 					CTextInputStream_AbsIni in(szPath);
 					if(!in){
 						ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_OPEN), szPath );
 						return FALSE;
 					}
-					// ŠJ‚¯‚½‚È‚ç1s–Ú‚ğæ“¾‚µ‚Ä‚©‚ç•Â‚¶‚é -> szAbout
+					// é–‹ã‘ãŸãªã‚‰1è¡Œç›®ã‚’å–å¾—ã—ã¦ã‹ã‚‰é–‰ã˜ã‚‹ -> szAbout
 					std::wstring line=in.ReadLineW();
 					_wcstotcs(szAbout,line.c_str(),_countof(szAbout));
 					in.Close();
 				}
 				strcnv(szAbout);
 
-				/* ‚Â‚¢‚Å‚É«‘‚Ìà–¾‚ğXV */
-				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* «‘ƒtƒ@ƒCƒ‹‚ÌŠT—v */
+				/* ã¤ã„ã§ã«è¾æ›¸ã®èª¬æ˜ã‚’æ›´æ–° */
+				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®æ¦‚è¦ */
 				
-				/* XV‚Ì‚Æ‚«‚Ísíœ‚·‚éB */
-				if(wID == IDC_BUTTON_KEYHELP_UPD){	/* XV */
+				/* æ›´æ–°ã®ã¨ãã¯è¡Œå‰Šé™¤ã™ã‚‹ã€‚ */
+				if(wID == IDC_BUTTON_KEYHELP_UPD){	/* æ›´æ–° */
 					ListView_DeleteItem( hwndList, nIndex );
 				}
 				
-				/* ON/OFF ƒtƒ@ƒCƒ‹–¼ */
+				/* ON/OFF ãƒ•ã‚¡ã‚¤ãƒ«å */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
-				lvi.pszText = GetFileName(szPath);	/* ƒtƒ@ƒCƒ‹–¼‚ğ•\¦ */
+				lvi.pszText = GetFileName(szPath);	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤º */
 				ListView_InsertItem( hwndList, &lvi );
-				/* «‘‚Ìà–¾ */
+				/* è¾æ›¸ã®èª¬æ˜ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szAbout;
 				ListView_SetItem( hwndList, &lvi );
-				/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+				/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 2;
 				lvi.pszText  = szPath;
 				ListView_SetItem( hwndList, &lvi );
 				
-				/* ƒfƒtƒHƒ‹ƒg‚Åƒ`ƒFƒbƒNON */
+				/* ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ãƒã‚§ãƒƒã‚¯ON */
 				ListView_SetCheckState(hwndList, nIndex, TRUE);
 
-				/* XV‚µ‚½ƒL[‚ğ‘I‘ğ‚·‚éB */
+				/* æ›´æ–°ã—ãŸã‚­ãƒ¼ã‚’é¸æŠã™ã‚‹ã€‚ */
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_DEL:	/* íœ */
-				/* ‘I‘ğ’†‚ÌƒL[”Ô†‚ğ’T‚·B */
+			case IDC_BUTTON_KEYHELP_DEL:	/* å‰Šé™¤ */
+				/* é¸æŠä¸­ã®ã‚­ãƒ¼ç•ªå·ã‚’æ¢ã™ã€‚ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				/* íœ‚·‚éB */
+				/* å‰Šé™¤ã™ã‚‹ã€‚ */
 				ListView_DeleteItem( hwndList, nIndex );
-				/* ƒŠƒXƒg‚ª‚È‚­‚È‚Á‚½‚ç‰Šú’l‚Æ‚µ‚Ä—p“r‚ğ•\¦ */
+				/* ãƒªã‚¹ãƒˆãŒãªããªã£ãŸã‚‰åˆæœŸå€¤ã¨ã—ã¦ç”¨é€”ã‚’è¡¨ç¤º */
 				if(ListView_GetItemCount(hwndList) == 0){
 					::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, LS(STR_PROPTYPKEYHELP_LINE1) );
 					::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, LS(STR_PROPTYPKEYHELP_DICPATH) );
-				}/* ƒŠƒXƒg‚ÌÅŒã‚ğíœ‚µ‚½ê‡‚ÍAíœŒã‚ÌƒŠƒXƒg‚ÌÅŒã‚ğ‘I‘ğ‚·‚éB */
+				}/* ãƒªã‚¹ãƒˆã®æœ€å¾Œã‚’å‰Šé™¤ã—ãŸå ´åˆã¯ã€å‰Šé™¤å¾Œã®ãƒªã‚¹ãƒˆã®æœ€å¾Œã‚’é¸æŠã™ã‚‹ã€‚ */
 				else if(nIndex > ListView_GetItemCount(hwndList)-1){
 					ListView_SetItemState( hwndList, ListView_GetItemCount(hwndList)-1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				}/* “¯‚¶ˆÊ’u‚ÌƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB */
+				}/* åŒã˜ä½ç½®ã®ã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚ */
 				else{
 					ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				}
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_TOP:	/* æ“ª */
-				/* ‘I‘ğ’†‚ÌƒL[‚ğ’T‚·B */
+			case IDC_BUTTON_KEYHELP_TOP:	/* å…ˆé ­ */
+				/* é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™ã€‚ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				if( 0 == nIndex ) return TRUE;	/* ‚·‚Å‚Éæ“ª‚É‚ ‚éB */
+				if( 0 == nIndex ) return TRUE;	/* ã™ã§ã«å…ˆé ­ã«ã‚ã‚‹ã€‚ */
 				nIndex2 = 0;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				ListView_DeleteItem(hwndList, nIndex);	/* ŒÃ‚¢ƒL[‚ğíœ */
+				ListView_DeleteItem(hwndList, nIndex);	/* å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤ */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText = GetFileName(szPath);	/* ƒtƒ@ƒCƒ‹–¼‚ğ•\¦ */
+				lvi.pszText = GetFileName(szPath);	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤º */
 				ListView_InsertItem( hwndList, &lvi );
-				/* «‘‚Ìà–¾ */
+				/* è¾æ›¸ã®èª¬æ˜ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szAbout;
 				ListView_SetItem( hwndList, &lvi );
-				/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+				/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 2;
 				lvi.pszText  = szPath;
 				ListView_SetItem( hwndList, &lvi );
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
-				/* ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB */
+				/* ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚ */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_LAST:	/* ÅI */
+			case IDC_BUTTON_KEYHELP_LAST:	/* æœ€çµ‚ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if( nIndex2 - 1 == nIndex ) return TRUE;	/* ‚·‚Å‚ÉÅI‚É‚ ‚éB */
+				if( nIndex2 - 1 == nIndex ) return TRUE;	/* ã™ã§ã«æœ€çµ‚ã«ã‚ã‚‹ã€‚ */
 				bUse = ListView_GetCheckState(hwndList, nIndex);
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				/* ƒL[‚ğ’Ç‰Á‚·‚éB */
+				/* ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚ */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText = GetFileName(szPath);	/* ƒtƒ@ƒCƒ‹–¼‚ğ•\¦ */
+				lvi.pszText = GetFileName(szPath);	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤º */
 				ListView_InsertItem( hwndList, &lvi );
-				/* «‘‚Ìà–¾ */
+				/* è¾æ›¸ã®èª¬æ˜ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szAbout;
 				ListView_SetItem( hwndList, &lvi );
-				/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+				/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 2;
 				lvi.pszText  = szPath;
 				ListView_SetItem( hwndList, &lvi );
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
-				/* ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB */
+				/* ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚ */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				ListView_DeleteItem(hwndList, nIndex);	/* ŒÃ‚¢ƒL[‚ğíœ */
+				ListView_DeleteItem(hwndList, nIndex);	/* å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤ */
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_UP:	/* ã‚Ö */
+			case IDC_BUTTON_KEYHELP_UP:	/* ä¸Šã¸ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
-				if( 0 == nIndex ) return TRUE;	/* ‚·‚Å‚Éæ“ª‚É‚ ‚éB */
+				if( 0 == nIndex ) return TRUE;	/* ã™ã§ã«å…ˆé ­ã«ã‚ã‚‹ã€‚ */
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				ListView_DeleteItem(hwndList, nIndex);	/* ŒÃ‚¢ƒL[‚ğíœ */
-				/* ƒL[‚ğ’Ç‰Á‚·‚éB */
+				ListView_DeleteItem(hwndList, nIndex);	/* å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤ */
+				/* ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚ */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText = GetFileName(szPath);	/* ƒtƒ@ƒCƒ‹–¼‚ğ•\¦ */
+				lvi.pszText = GetFileName(szPath);	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤º */
 				ListView_InsertItem( hwndList, &lvi );
-				/* «‘‚Ìà–¾ */
+				/* è¾æ›¸ã®èª¬æ˜ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szAbout;
 				ListView_SetItem( hwndList, &lvi );
-				/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+				/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 2;
 				lvi.pszText  = szPath;
 				ListView_SetItem( hwndList, &lvi );
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
-				/* ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB */
+				/* ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚ */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_DOWN:	/* ‰º‚Ö */
+			case IDC_BUTTON_KEYHELP_DOWN:	/* ä¸‹ã¸ */
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if( nIndex2 - 1 == nIndex ) return TRUE;	/* ‚·‚Å‚ÉÅI‚É‚ ‚éB */
+				if( nIndex2 - 1 == nIndex ) return TRUE;	/* ã™ã§ã«æœ€çµ‚ã«ã‚ã‚‹ã€‚ */
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				/* ƒL[‚ğ’Ç‰Á‚·‚éB */
+				/* ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ã€‚ */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText = GetFileName(szPath);	/* ƒtƒ@ƒCƒ‹–¼‚ğ•\¦ */
+				lvi.pszText = GetFileName(szPath);	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤º */
 				ListView_InsertItem( hwndList, &lvi );
-				/* «‘‚Ìà–¾ */
+				/* è¾æ›¸ã®èª¬æ˜ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 1;
 				lvi.pszText  = szAbout;
 				ListView_SetItem( hwndList, &lvi );
-				/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+				/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 				lvi.mask     = LVIF_TEXT;
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 2;
 				lvi.pszText  = szPath;
 				ListView_SetItem( hwndList, &lvi );
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
-				/* ˆÚ“®‚µ‚½ƒL[‚ğ‘I‘ğó‘Ô‚É‚·‚éB */
+				/* ç§»å‹•ã—ãŸã‚­ãƒ¼ã‚’é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ã€‚ */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				ListView_DeleteItem(hwndList, nIndex);	/* ŒÃ‚¢ƒL[‚ğíœ */
+				ListView_DeleteItem(hwndList, nIndex);	/* å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤ */
 				GetData( hwndDlg );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_REF:	/* ƒL[ƒ[ƒhƒwƒ‹ƒv «‘ƒtƒ@ƒCƒ‹‚ÌuQÆ...vƒ{ƒ^ƒ“ */
+			case IDC_BUTTON_KEYHELP_REF:	/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ— è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®ã€Œå‚ç…§...ã€ãƒœã‚¿ãƒ³ */
 				{
-					/* ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO‚Ì‰Šú‰» */
-					// 2007.05.19 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+					/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸåŒ– */
+					// 2007.05.19 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _T("*.khp"), true, EFITER_TEXT);
 				}
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_IMPORT:	/* ƒCƒ“ƒ|[ƒg */
+			case IDC_BUTTON_KEYHELP_IMPORT:	/* ã‚¤ãƒ³ãƒãƒ¼ãƒˆ */
 				Import(hwndDlg);
 				m_Types.m_nKeyHelpNum = ListView_GetItemCount( hwndList );
 				return TRUE;
 
-			case IDC_BUTTON_KEYHELP_EXPORT:	/* ƒGƒNƒXƒ|[ƒg */
+			case IDC_BUTTON_KEYHELP_EXPORT:	/* ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ */
 				Export(hwndDlg);
 				return TRUE;
 			}
@@ -465,26 +465,26 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 			return TRUE;
 
 		case PSN_KILLACTIVE:
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ «‘ƒtƒ@ƒCƒ‹ƒŠƒXƒg */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆ */
 			GetData( hwndDlg );
 			return TRUE;
 
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_KEYHELP;
 			return TRUE;
 
-		case LVN_ITEMCHANGED:	/*ƒŠƒXƒg‚Ì€–Ú‚ª•ÏX‚³‚ê‚½Û‚Ìˆ—*/
+		case LVN_ITEMCHANGED:	/*ãƒªã‚¹ãƒˆã®é …ç›®ãŒå¤‰æ›´ã•ã‚ŒãŸéš›ã®å‡¦ç†*/
 			if( pNMHDR->hwndFrom == hwndList ){
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
-				if( -1 == nIndex ){	//íœA”ÍˆÍŠO‚ÅƒNƒŠƒbƒN”½‰f‚³‚ê‚È‚¢ƒoƒOC³	//@@@ 2003.06.17 MIK
+				if( -1 == nIndex ){	//å‰Šé™¤ã€ç¯„å›²å¤–ã§ã‚¯ãƒªãƒƒã‚¯æ™‚åæ˜ ã•ã‚Œãªã„ãƒã‚°ä¿®æ­£	//@@@ 2003.06.17 MIK
 					nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_FOCUSED );
 					return FALSE;
 				}
 				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
-				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* «‘‚Ìà–¾ */
-				::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ƒtƒ@ƒCƒ‹ƒpƒX */
+				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* è¾æ›¸ã®èª¬æ˜ */
+				::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 			}
 			break;
 		}
@@ -492,11 +492,11 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 
 	case WM_HELP:
 		{	HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}return TRUE;
 
 	case WM_CONTEXTMENU:	/* Context Menu */
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 	}
 	return FALSE;
@@ -506,9 +506,9 @@ void CheckDlgButtonBOOL(HWND hwnd, int id, BOOL bState ){
 	CheckDlgButton( hwnd, id, (bState ? BST_CHECKED : BST_UNCHECKED) );
 }
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è ƒL[ƒ[ƒh«‘ƒtƒ@ƒCƒ‹İ’è
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«è¨­å®š
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 {
@@ -517,10 +517,10 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	LV_ITEM	lvi;
 	DWORD	dwStyle;
 
-	/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+	/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), _countof2( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 );
 
-	// g—p‚·‚éEg—p‚µ‚È‚¢
+	// ä½¿ç”¨ã™ã‚‹ãƒ»ä½¿ç”¨ã—ãªã„
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP, m_Types.m_bUseKeyWordHelp );
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, m_Types.m_bUseKeyHelpAllSearch );
 	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, m_Types.m_bUseKeyHelpKeyDisp );
@@ -533,14 +533,14 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	}
 	Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);
 
-	/* ƒŠƒXƒg */
+	/* ãƒªã‚¹ãƒˆ */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
-	ListView_DeleteAllItems(hwndWork);  /* ƒŠƒXƒg‚ğ‹ó‚É‚·‚é */
-	/* s‘I‘ğ */
+	ListView_DeleteAllItems(hwndWork);  /* ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹ */
+	/* è¡Œé¸æŠ */
 	dwStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	dwStyle |= LVS_EX_FULLROWSELECT;
 	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
-	/* ƒf[ƒ^•\¦ */
+	/* ãƒ‡ãƒ¼ã‚¿è¡¨ç¤º */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == _T('\0') ) break;
 		/* ON-OFF */
@@ -549,19 +549,19 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 		lvi.iSubItem = 0;
 		lvi.pszText = GetFileName(m_Types.m_KeyHelpArr[i].m_szPath);
 		ListView_InsertItem( hwndWork, &lvi );
-		/* «‘‚Ìà–¾ */
+		/* è¾æ›¸ã®èª¬æ˜ */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 1;
 		lvi.pszText  = m_Types.m_KeyHelpArr[i].m_szAbout;
 		ListView_SetItem( hwndWork, &lvi );
-		/* «‘ƒtƒ@ƒCƒ‹ƒpƒX */
+		/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 2;
 		lvi.pszText  = m_Types.m_KeyHelpArr[i].m_szPath;
 		ListView_SetItem( hwndWork, &lvi );
-		/* ON/OFF‚ğæ“¾‚µ‚Äƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ÉƒZƒbƒgi‚Æ‚è‚ ‚¦‚¸‰‹}ˆ’uj */
+		/* ON/OFFã‚’å–å¾—ã—ã¦ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã«ã‚»ãƒƒãƒˆï¼ˆã¨ã‚Šã‚ãˆãšå¿œæ€¥å‡¦ç½®ï¼‰ */
 		if(m_Types.m_KeyHelpArr[i].m_bUse){	// ON
 			ListView_SetCheckState(hwndWork, i, TRUE);
 		}
@@ -573,33 +573,33 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	return;
 }
 
-/*! ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ ƒL[ƒ[ƒh«‘ƒtƒ@ƒCƒ‹İ’è
+/*! ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«è¨­å®š
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
-	TCHAR	szAbout[DICT_ABOUT_LEN];	/* «‘‚Ìà–¾(«‘ƒtƒ@ƒCƒ‹‚Ì1s–Ú‚©‚ç¶¬) */
-	TCHAR	szPath[_MAX_PATH];			/* ƒtƒ@ƒCƒ‹ƒpƒX */
+	TCHAR	szAbout[DICT_ABOUT_LEN];	/* è¾æ›¸ã®èª¬æ˜(è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®1è¡Œç›®ã‹ã‚‰ç”Ÿæˆ) */
+	TCHAR	szPath[_MAX_PATH];			/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ */
 
-	/* g—p‚·‚éEg—p‚µ‚È‚¢ */
+	/* ä½¿ç”¨ã™ã‚‹ãƒ»ä½¿ç”¨ã—ãªã„ */
 	m_Types.m_bUseKeyWordHelp      = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) );
 	m_Types.m_bUseKeyHelpAllSearch = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) );
 	m_Types.m_bUseKeyHelpKeyDisp   = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) );
 	m_Types.m_bUseKeyHelpPrefix    = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) );
 	m_Types.m_eKeyHelpRMenuShowType = (EKeyHelpRMenuType)Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_MENU));
 
-	/* ƒŠƒXƒg‚É“o˜^‚³‚ê‚Ä‚¢‚éî•ñ‚ğ”z—ñ‚Éæ‚è‚Ş */
+	/* ãƒªã‚¹ãƒˆã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹æƒ…å ±ã‚’é…åˆ—ã«å–ã‚Šè¾¼ã‚€ */
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	nIndex = ListView_GetItemCount( hwndList );
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
-			bool		bUse = false;						/* «‘ON(1)/OFF(0) */
+			bool		bUse = false;						/* è¾æ›¸ON(1)/OFF(0) */
 			szAbout[0]	= _T('\0');
 			szPath[0]	= _T('\0');
-			/* ƒ`ƒFƒbƒNƒ{ƒbƒNƒXó‘Ô‚ğæ“¾‚µ‚ÄbUse‚ÉƒZƒbƒg */
+			/* ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹çŠ¶æ…‹ã‚’å–å¾—ã—ã¦bUseã«ã‚»ãƒƒãƒˆ */
 			if(ListView_GetCheckState(hwndList, i))
 				bUse = true;
 			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
@@ -607,27 +607,27 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
 			_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
 			_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
-		}else{	/* –¢“o˜^•”•ª‚ÍƒNƒŠƒA‚·‚é */
+		}else{	/* æœªç™»éŒ²éƒ¨åˆ†ã¯ã‚¯ãƒªã‚¢ã™ã‚‹ */
 			m_Types.m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 		}
 	}
-	/* «‘‚Ìû”‚ğæ“¾ */
+	/* è¾æ›¸ã®å†Šæ•°ã‚’å–å¾— */
 	m_Types.m_nKeyHelpNum = nIndex;
 	return TRUE;
 }
 
-/*! ƒL[ƒ[ƒhƒwƒ‹ƒvƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ÌƒCƒ“ƒ|[ƒg
+/*! ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 {
-	// ƒCƒ“ƒ|[ƒg
+	// ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 	GetData( hwndDlg );
 
 	CImpExpKeyHelp  cImpExpKeyHelp( m_Types );
 	if (!cImpExpKeyHelp.ImportUI(m_hInstance, hwndDlg)) {
-		// ƒCƒ“ƒ|[ƒg‚ğ‚µ‚Ä‚¢‚È‚¢
+		// ã‚¤ãƒ³ãƒãƒ¼ãƒˆã‚’ã—ã¦ã„ãªã„
 		return false;
 	}
 	SetData( hwndDlg );
@@ -636,34 +636,34 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 }
 
 
-/*! ƒL[ƒ[ƒhƒwƒ‹ƒvƒtƒ@ƒCƒ‹ƒŠƒXƒg‚ÌƒCƒ“ƒ|[ƒgƒGƒNƒXƒ|[ƒg
+/*! ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 {
 	GetData(hwndDlg);
 	CImpExpKeyHelp	cImpExpKeyHelp( m_Types );
 
-	// ƒGƒNƒXƒ|[ƒg
+	// ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ
 	return cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg);
 }
 
 
-/*! «‘‚Ìà–¾‚ÌƒtƒH[ƒ}ƒbƒg‘µ‚¦
+/*! è¾æ›¸ã®èª¬æ˜ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆæƒãˆ
 
-	@date 2006.04.10 fon V‹Kì¬
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
 */
 static TCHAR* strcnv(TCHAR *str)
 {
 	TCHAR* p=str;
-	/* ‰üsƒR[ƒh‚Ìíœ */
+	/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®å‰Šé™¤ */
 	if( NULL != (p=_tcschr(p,_T('\n'))) )
 		*p=_T('\0');
 	p=str;
 	if( NULL != (p=_tcschr(p,_T('\r'))) )
 		*p=_T('\0');
-	/* ƒJƒ“ƒ}‚Ì’uŠ· */
+	/* ã‚«ãƒ³ãƒã®ç½®æ› */
 	p=str;
 	for(; (p=_tcschr(p,_T(','))) != NULL; ){
 		*p=_T('.');
@@ -671,10 +671,10 @@ static TCHAR* strcnv(TCHAR *str)
 	return str;
 }
 
-/*! ƒtƒ‹ƒpƒX‚©‚çƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚·
+/*! ãƒ•ãƒ«ãƒ‘ã‚¹ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã™
 
-	@date 2006.04.10 fon V‹Kì¬
-	@date 2006.09.14 genta ƒfƒBƒŒƒNƒgƒŠ‚ª‚È‚¢ê‡‚ÉÅ‰‚Ì1•¶š‚ªØ‚ê‚È‚¢‚æ‚¤‚É
+	@date 2006.04.10 fon æ–°è¦ä½œæˆ
+	@date 2006.09.14 genta ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒãªã„å ´åˆã«æœ€åˆã®1æ–‡å­—ãŒåˆ‡ã‚Œãªã„ã‚ˆã†ã«
 */
 static TCHAR* GetFileName(const TCHAR* fullpath)
 {

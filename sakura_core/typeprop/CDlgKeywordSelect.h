@@ -1,8 +1,8 @@
-/*!	@file
-	@brief �����L�[���[�h�I���_�C�A���O
+﻿/*!	@file
+	@brief 強調キーワード選択ダイアログ
 
 	@author MIK
-	@date 2005/01/13 �쐬
+	@date 2005/01/13 作成
 */
 /*
 	Copyright (C) 2005, MIK, genta
@@ -37,12 +37,12 @@
 class CKeyWordSetMgr;
 
 /*
-	�����L�[���[�h�I���\��
-	1�`10�͈̔͂Ŏw��ł���B
-	�������A�\�[�X�̏C���͕K�v�ł��B
+	強調キーワード選択可能数
+	1～10個の範囲で指定できる。
+	ただし、ソースの修正は必要です。
 */
 
-//	2005.01.13 genta ShareData�̒�`�ƘA��������
+//	2005.01.13 genta ShareDataの定義と連動させる
 const int KEYWORD_SELECT_NUM = MAX_KEYWORDSET_PER_TYPE;
 
 class CDlgKeywordSelect : public CDialog

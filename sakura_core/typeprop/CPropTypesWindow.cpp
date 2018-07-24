@@ -1,7 +1,7 @@
-/*
-	ƒ^ƒCƒv•Êİ’è - ƒEƒBƒ“ƒhƒE
+ï»¿/*
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š - ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
-	2008.04.12 kobake CPropTypes.cpp‚©‚ç•ª—£
+	2008.04.12 kobake CPropTypes.cppã‹ã‚‰åˆ†é›¢
 	2009.02.22 ryoji
 */
 #include "StdAfx.h"
@@ -21,33 +21,33 @@
 using namespace std;
 
 static const DWORD p_helpids2[] = {	//11400
-	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,				//•¶‘ƒAƒCƒRƒ“‚ğg‚¤	// 2006.08.06 ryoji
+	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,				//æ–‡æ›¸ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½¿ã†	// 2006.08.06 ryoji
 
-	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IME‚ÌON/OFFó‘Ô
-	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IME‚Ì“ü—Íƒ‚[ƒh
+	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEã®ON/OFFçŠ¶æ…‹
+	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEã®å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰
 
-	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//ƒfƒtƒHƒ‹ƒg•¶šƒR[ƒh
-	IDC_CHECK_CP,					HIDC_CHECK_TYPE_SUPPORT_CP,			//ƒR[ƒhƒy[ƒW
-	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//ƒfƒtƒHƒ‹ƒg‰üsƒR[ƒh	// 2011.01.24 ryoji
-	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//ƒfƒtƒHƒ‹ƒgBOM	// 2011.01.24 ryoji
-	IDC_CHECK_PRIOR_CESU8,			HIDC_CHECK_PRIOR_CESU8,				//©“®”»•Ê‚ÉCESU-8‚ğ—Dæ‚·‚é
+	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ–‡å­—ã‚³ãƒ¼ãƒ‰
+	IDC_CHECK_CP,					HIDC_CHECK_TYPE_SUPPORT_CP,			//ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
+	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰	// 2011.01.24 ryoji
+	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆBOM	// 2011.01.24 ryoji
+	IDC_CHECK_PRIOR_CESU8,			HIDC_CHECK_PRIOR_CESU8,				//è‡ªå‹•åˆ¤åˆ¥æ™‚ã«CESU-8ã‚’å„ªå…ˆã™ã‚‹
 
-	IDC_EDIT_BACKIMG_PATH,			HIDC_EDIT_BACKIMG_PATH,			//”wŒi‰æ‘œ
-	IDC_BUTTON_BACKIMG_PATH_SEL,	HIDC_BUTTON_BACKIMG_PATH_SEL,	//”wŒi‰æ‘œƒ{ƒ^ƒ“
-	IDC_COMBO_BACKIMG_POS,			HIDC_COMBO_BACKIMG_POS,			//”wŒi‰æ‘œˆÊ’u
-	IDC_CHECK_BACKIMG_SCR_X,		HIDC_CHECK_BACKIMG_SCR_X,		//”wŒi‰æ‘œScrollX
-	IDC_CHECK_BACKIMG_SCR_Y,		HIDC_CHECK_BACKIMG_SCR_Y,		//”wŒi‰æ‘œScrollY
-	IDC_CHECK_BACKIMG_REP_X,		HIDC_CHECK_BACKIMG_REP_X,		//”wŒi‰æ‘œRepeatX
-	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//”wŒi‰æ‘œRepeatY
-	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//”wŒi‰æ‘œOffsetX
-	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//”wŒi‰æ‘œOffsetY
-	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//s”Ô†‚Ì•\¦iÜ‚è•Ô‚µ’PˆÊj
-	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//s”Ô†‚Ì•\¦i‰üs’PˆÊj
-	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//s”Ô†‹æØ‚èi‚È‚µj
-	IDC_RADIO_LINETERMTYPE1,		HIDC_RADIO_LINETERMTYPE1,		//s”Ô†‹æØ‚èicüj
-	IDC_RADIO_LINETERMTYPE2,		HIDC_RADIO_LINETERMTYPE2,		//s”Ô†‹æØ‚èi”CˆÓj
-	IDC_EDIT_LINETERMCHAR,			HIDC_EDIT_LINETERMCHAR,			//s”Ô†‹æØ‚è
-	IDC_EDIT_LINENUMWIDTH,			HIDC_EDIT_LINENUMWIDTH,			//s”Ô†‚ÌÅ¬Œ…” 2014.08.02 katze
+	IDC_EDIT_BACKIMG_PATH,			HIDC_EDIT_BACKIMG_PATH,			//èƒŒæ™¯ç”»åƒ
+	IDC_BUTTON_BACKIMG_PATH_SEL,	HIDC_BUTTON_BACKIMG_PATH_SEL,	//èƒŒæ™¯ç”»åƒãƒœã‚¿ãƒ³
+	IDC_COMBO_BACKIMG_POS,			HIDC_COMBO_BACKIMG_POS,			//èƒŒæ™¯ç”»åƒä½ç½®
+	IDC_CHECK_BACKIMG_SCR_X,		HIDC_CHECK_BACKIMG_SCR_X,		//èƒŒæ™¯ç”»åƒScrollX
+	IDC_CHECK_BACKIMG_SCR_Y,		HIDC_CHECK_BACKIMG_SCR_Y,		//èƒŒæ™¯ç”»åƒScrollY
+	IDC_CHECK_BACKIMG_REP_X,		HIDC_CHECK_BACKIMG_REP_X,		//èƒŒæ™¯ç”»åƒRepeatX
+	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//èƒŒæ™¯ç”»åƒRepeatY
+	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//èƒŒæ™¯ç”»åƒOffsetX
+	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//èƒŒæ™¯ç”»åƒOffsetY
+	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//è¡Œç•ªå·ã®è¡¨ç¤ºï¼ˆæŠ˜ã‚Šè¿”ã—å˜ä½ï¼‰
+	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//è¡Œç•ªå·ã®è¡¨ç¤ºï¼ˆæ”¹è¡Œå˜ä½ï¼‰
+	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//è¡Œç•ªå·åŒºåˆ‡ã‚Šï¼ˆãªã—ï¼‰
+	IDC_RADIO_LINETERMTYPE1,		HIDC_RADIO_LINETERMTYPE1,		//è¡Œç•ªå·åŒºåˆ‡ã‚Šï¼ˆç¸¦ç·šï¼‰
+	IDC_RADIO_LINETERMTYPE2,		HIDC_RADIO_LINETERMTYPE2,		//è¡Œç•ªå·åŒºåˆ‡ã‚Šï¼ˆä»»æ„ï¼‰
+	IDC_EDIT_LINETERMCHAR,			HIDC_EDIT_LINETERMCHAR,			//è¡Œç•ªå·åŒºåˆ‡ã‚Š
+	IDC_EDIT_LINENUMWIDTH,			HIDC_EDIT_LINENUMWIDTH,			//è¡Œç•ªå·ã®æœ€å°æ¡æ•° 2014.08.02 katze
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -86,7 +86,7 @@ static const EEolType aeEolType[] = {
 	EOL_PS,
 };
 
-/*! window ƒƒbƒZ[ƒWˆ— */
+/*! window ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropTypesWindow::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
@@ -97,24 +97,24 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	WORD				wNotifyCode;
 	WORD				wID;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;		// ’Ç‰Á 2014.08.02 katze
+	NM_UPDOWN*			pMNUD;		// è¿½åŠ  2014.08.02 katze
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è color */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š color */
 		SetData( hwndDlg );
 
-		/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+		/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), 1 );
 
 		return TRUE;
 
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD( wParam );	/* ’Ê’mƒR[ƒh */
-		wID			= LOWORD( wParam );	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode	= HIWORD( wParam );	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID			= LOWORD( wParam );	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 
 		switch( wNotifyCode ){
 		case CBN_SELCHANGE:
@@ -122,7 +122,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				int i;
 				switch( wID ){
 				case IDC_COMBO_DEFAULT_CODETYPE:
-					// •¶šƒR[ƒh‚Ì•ÏX‚ğBOMƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚É”½‰f
+					// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®å¤‰æ›´ã‚’BOMãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã«åæ˜ 
 					i = Combo_GetCurSel( (HWND) lParam );
 					if( CB_ERR != i ){
 						CCodeTypeName	cCodeTypeName( Combo_GetItemData( (HWND)lParam, i ) );
@@ -134,7 +134,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			}
 			break;
 
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_BACKIMG_PATH_SEL:
@@ -144,8 +144,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				}
 				return TRUE;
 			//	From Here Sept. 10, 2000 JEPRO
-			//	s”Ô†‹æØ‚è‚ğ”CˆÓ‚Ì”¼Šp•¶š‚É‚·‚é‚Æ‚«‚¾‚¯w’è•¶š“ü—Í‚ğEnable‚Éİ’è
-			case IDC_RADIO_LINETERMTYPE0: /* s”Ô†‹æØ‚è 0=‚È‚µ 1=cü 2=”CˆÓ */
+			//	è¡Œç•ªå·åŒºåˆ‡ã‚Šã‚’ä»»æ„ã®åŠè§’æ–‡å­—ã«ã™ã‚‹ã¨ãã ã‘æŒ‡å®šæ–‡å­—å…¥åŠ›ã‚’Enableã«è¨­å®š
+			case IDC_RADIO_LINETERMTYPE0: /* è¡Œç•ªå·åŒºåˆ‡ã‚Š 0=ãªã— 1=ç¸¦ç·š 2=ä»»æ„ */
 			case IDC_RADIO_LINETERMTYPE1:
 			case IDC_RADIO_LINETERMTYPE2:
 				EnableTypesPropInput( hwndDlg );
@@ -167,26 +167,26 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		pNMHDR = (NMHDR*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
-//	Sept. 10, 2000 JEPRO ID–¼‚ğÀÛ‚Ì–¼‘O‚É•ÏX‚·‚é‚½‚ßˆÈ‰º‚Ìs‚ÍƒRƒƒ“ƒgƒAƒEƒg
+//	Sept. 10, 2000 JEPRO IDåã‚’å®Ÿéš›ã®åå‰ã«å¤‰æ›´ã™ã‚‹ãŸã‚ä»¥ä¸‹ã®è¡Œã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
 //				OnHelp( hwndDlg, IDD_PROP1P3 );
 			OnHelp( hwndDlg, IDD_PROP_WINDOW );
 			return TRUE;
 		case PSN_KILLACTIVE:
 //			MYTRACE( _T("color PSN_KILLACTIVE\n") );
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ window */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— window */
 			GetData( hwndDlg );
 			return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 		case PSN_SETACTIVE:
 			m_nPageNum = ID_PROPTYPE_PAGENUM_WINDOW;
 			return TRUE;
 		}
 
-		// switch•¶’Ç‰Á 2014.08.02 katze
+		// switchæ–‡è¿½åŠ  2014.08.02 katze
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( (int)wParam ) {
 		case IDC_SPIN_LINENUMWIDTH:
-			/* s”Ô†‚ÌÅ¬Œ…” */
+			/* è¡Œç•ªå·ã®æœ€å°æ¡æ•° */
 //			MYTRACE( _T("IDC_SPIN_LINENUMWIDTH\n") );
 			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
@@ -211,7 +211,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -221,7 +221,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 //@@@ 2001.11.17 add start MIK
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
@@ -241,53 +241,53 @@ void CPropTypesWindow::SetCombobox(HWND hwndWork, const int* nIds, int nCount, i
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è window */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š window */
 void CPropTypesWindow::SetData( HWND hwndDlg )
 {
 	{
-		// •¶‘ƒAƒCƒRƒ“‚ğg‚¤	//Sep. 10, 2002 genta
+		// æ–‡æ›¸ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½¿ã†	//Sep. 10, 2002 genta
 		::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DOCICON, m_Types.m_bUseDocumentIcon );
 	}
 
-	//‹N“®‚ÌIME(“ú–{Œê“ü—Í•ÏŠ·)	//Nov. 20, 2000 genta
+	//èµ·å‹•æ™‚ã®IME(æ—¥æœ¬èªå…¥åŠ›å¤‰æ›)	//Nov. 20, 2000 genta
 	{
 		int ime;
-		// ON/OFFó‘Ô
+		// ON/OFFçŠ¶æ…‹
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
 		Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState & 3;
 		int		nSelPos = 0;
 		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
 			Combo_InsertString( hwndCombo, i, LS(ImeSwitchArr[i].nNameId) );
-			if( ImeSwitchArr[i].nMethod == ime ){	/* IMEó‘Ô */
+			if( ImeSwitchArr[i].nMethod == ime ){	/* IMEçŠ¶æ…‹ */
 				nSelPos = i;
 			}
 		}
 		Combo_SetCurSel( hwndCombo, nSelPos );
 
-		// “ü—Íƒ‚[ƒh
+		// å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
 		Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState >> 2;
 		nSelPos = 0;
 		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
 			Combo_InsertString( hwndCombo, i, LS(ImeStateArr[i].nNameId) );
-			if( ImeStateArr[i].nMethod == ime ){	/* IMEó‘Ô */
+			if( ImeStateArr[i].nMethod == ime ){	/* IMEçŠ¶æ…‹ */
 				nSelPos = i;
 			}
 		}
 		Combo_SetCurSel( hwndCombo, nSelPos );
 	}
 
-	/* u•¶šƒR[ƒhvƒOƒ‹[ƒv‚Ìİ’è */
+	/* ã€Œæ–‡å­—ã‚³ãƒ¼ãƒ‰ã€ã‚°ãƒ«ãƒ¼ãƒ—ã®è¨­å®š */
 	{
 		int i;
 		HWND hCombo;
 
-		// u©“®”F¯‚ÉCESU-8‚ğ—Dævm_Types.m_encoding.m_bPriorCesu8 ‚ğƒ`ƒFƒbƒN
+		// ã€Œè‡ªå‹•èªè­˜æ™‚ã«CESU-8ã‚’å„ªå…ˆã€m_Types.m_encoding.m_bPriorCesu8 ã‚’ãƒã‚§ãƒƒã‚¯
 		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_encoding.m_bPriorCesu8 );
 
-		// ƒfƒtƒHƒ‹ƒgƒR[ƒhƒ^ƒCƒv‚ÌƒRƒ“ƒ{ƒ{ƒbƒNƒXİ’è
+		// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ¼ãƒ‰ã‚¿ã‚¤ãƒ—ã®ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹è¨­å®š
 		int		nSel= -1;
 		int		j = 0;
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
@@ -314,14 +314,14 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		}
 		Combo_SetCurSel( hCombo, nSel );
 
-		// BOM ƒ`ƒFƒbƒNƒ{ƒbƒNƒXİ’è
+		// BOM ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹è¨­å®š
 		CCodeTypeName	cCodeTypeName(m_Types.m_encoding.m_eDefaultCodetype);
 		if( !cCodeTypeName.UseBom() )
 			m_Types.m_encoding.m_bDefaultBom = false;
 		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), (int)cCodeTypeName.UseBom() );
 
-		// ƒfƒtƒHƒ‹ƒg‰üsƒ^ƒCƒv‚ÌƒRƒ“ƒ{ƒ{ƒbƒNƒXİ’è
+		// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ”¹è¡Œã‚¿ã‚¤ãƒ—ã®ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹è¨­å®š
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
 		for( i = 0; i < _countof(aszEolStr); ++i ){
 			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
@@ -337,7 +337,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		Combo_SetCurSel( hCombo, i );
 	}
 
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 	if( !m_Types.m_bLineNumIsCRLF ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_LAYOUT, TRUE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, FALSE );
@@ -347,11 +347,11 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	}
 
 	{
-		// s”Ô†‚ÌÅ¬Œ…”	// ’Ç‰Á 2014.08.02 katze
+		// è¡Œç•ªå·ã®æœ€å°æ¡æ•°	// è¿½åŠ  2014.08.02 katze
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, (Int)m_Types.m_nLineNumWidth, FALSE );
 	}
 
-	// ”wŒi‰æ‘œ
+	// èƒŒæ™¯ç”»åƒ
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
@@ -380,7 +380,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, m_Types.m_backImgPosOffset.x, TRUE);
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
 
-	/* s”Ô†‹æØ‚è  0=‚È‚µ 1=cü 2=”CˆÓ */
+	/* è¡Œç•ªå·åŒºåˆ‡ã‚Š  0=ãªã— 1=ç¸¦ç·š 2=ä»»æ„ */
 	if( 0 == m_Types.m_nLineTermType ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE0, TRUE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE1, FALSE );
@@ -397,13 +397,13 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE2, TRUE );
 	}
 
-	/* s”Ô†‹æØ‚è•¶š */
+	/* è¡Œç•ªå·åŒºåˆ‡ã‚Šæ–‡å­— */
 	wchar_t	szLineTermChar[2];
 	auto_sprintf( szLineTermChar, L"%lc", m_Types.m_cLineTermChar );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar );
 
 	//	From Here Sept. 10, 2000 JEPRO
-	//	s”Ô†‹æØ‚è‚ğ”CˆÓ‚Ì”¼Šp•¶š‚É‚·‚é‚Æ‚«‚¾‚¯w’è•¶š“ü—Í‚ğEnable‚Éİ’è
+	//	è¡Œç•ªå·åŒºåˆ‡ã‚Šã‚’ä»»æ„ã®åŠè§’æ–‡å­—ã«ã™ã‚‹ã¨ãã ã‘æŒ‡å®šæ–‡å­—å…¥åŠ›ã‚’Enableã«è¨­å®š
 	EnableTypesPropInput( hwndDlg );
 	//	To Here Sept. 10, 2000
 
@@ -415,51 +415,51 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ color */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— color */
 int CPropTypesWindow::GetData( HWND hwndDlg )
 {
 	{
-		// •¶‘ƒAƒCƒRƒ“‚ğg‚¤	//Sep. 10, 2002 genta
+		// æ–‡æ›¸ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½¿ã†	//Sep. 10, 2002 genta
 		m_Types.m_bUseDocumentIcon = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_DOCICON );
 	}
 
-	//‹N“®‚ÌIME(“ú–{Œê“ü—Í•ÏŠ·)	Nov. 20, 2000 genta
+	//èµ·å‹•æ™‚ã®IME(æ—¥æœ¬èªå…¥åŠ›å¤‰æ›)	Nov. 20, 2000 genta
 	{
-		//“ü—Íƒ‚[ƒh
+		//å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
 		int		nSelPos = Combo_GetCurSel( hwndCombo );
-		m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME“ü—Íƒ‚[ƒh
+		m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IMEå…¥åŠ›ãƒ¢ãƒ¼ãƒ‰
 
-		//ON/OFFó‘Ô
+		//ON/OFFçŠ¶æ…‹
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
 		nSelPos = Combo_GetCurSel( hwndCombo );
 		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
 	}
 
-	/* u•¶šƒR[ƒhvƒOƒ‹[ƒv‚Ìİ’è */
+	/* ã€Œæ–‡å­—ã‚³ãƒ¼ãƒ‰ã€ã‚°ãƒ«ãƒ¼ãƒ—ã®è¨­å®š */
 	{
 		int i;
 		HWND hCombo;
 
-		// m_Types.m_bPriorCesu8 ‚ğİ’è
+		// m_Types.m_bPriorCesu8 ã‚’è¨­å®š
 		m_Types.m_encoding.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 ) != 0;
 
-		// m_Types.eDefaultCodetype ‚ğİ’è
+		// m_Types.eDefaultCodetype ã‚’è¨­å®š
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
 			m_Types.m_encoding.m_eDefaultCodetype = ECodeType( Combo_GetItemData( hCombo, i ) );
 		}
 
-		// m_Types.m_bDefaultBom ‚ğİ’è
+		// m_Types.m_bDefaultBom ã‚’è¨­å®š
 		m_Types.m_encoding.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM ) != 0;
 
-		// m_Types.eDefaultEoltype ‚ğİ’è
+		// m_Types.eDefaultEoltype ã‚’è¨­å®š
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
@@ -467,7 +467,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 		}
 	}
 
-	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
+	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINENUM_LAYOUT ) ){
 		m_Types.m_bLineNumIsCRLF = false;
 	}else{
@@ -483,7 +483,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
 	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
 
-	/* s”Ô†‹æØ‚è  0=‚È‚µ 1=cü 2=”CˆÓ */
+	/* è¡Œç•ªå·åŒºåˆ‡ã‚Š  0=ãªã— 1=ç¸¦ç·š 2=ä»»æ„ */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){
 		m_Types.m_nLineTermType = 0;
 	}else
@@ -494,12 +494,12 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 		m_Types.m_nLineTermType = 2;
 	}
 	
-	/* s”Ô†‹æØ‚è•¶š */
+	/* è¡Œç•ªå·åŒºåˆ‡ã‚Šæ–‡å­— */
 	wchar_t	szLineTermChar[2];
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar, 2 );
 	m_Types.m_cLineTermChar = szLineTermChar[0];
 
-	/* s”Ô†‚ÌÅ¬Œ…” */	// ’Ç‰Á 2014.08.02 katze
+	/* è¡Œç•ªå·ã®æœ€å°æ¡æ•° */	// è¿½åŠ  2014.08.02 katze
 	m_Types.m_nLineNumWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
 	if( m_Types.m_nLineNumWidth < LINENUMWIDTH_MIN ){
 		m_Types.m_nLineNumWidth = LINENUMWIDTH_MIN;
@@ -515,11 +515,11 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 
 
 //	From Here Sept. 10, 2000 JEPRO
-//	ƒ`ƒFƒbƒNó‘Ô‚É‰‚¶‚Äƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX—v‘f‚ÌEnable/Disable‚ğ
-//	“KØ‚Éİ’è‚·‚é
+//	ãƒã‚§ãƒƒã‚¯çŠ¶æ…‹ã«å¿œã˜ã¦ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹è¦ç´ ã®Enable/Disableã‚’
+//	é©åˆ‡ã«è¨­å®šã™ã‚‹
 void CPropTypesWindow::EnableTypesPropInput( HWND hwndDlg )
 {
-	//	s”Ô†‹æØ‚è‚ğ”CˆÓ‚Ì”¼Šp•¶š‚É‚·‚é‚©‚Ç‚¤‚©
+	//	è¡Œç•ªå·åŒºåˆ‡ã‚Šã‚’ä»»æ„ã®åŠè§’æ–‡å­—ã«ã™ã‚‹ã‹ã©ã†ã‹
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE2 ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LINETERMCHAR ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), TRUE );
