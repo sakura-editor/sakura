@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,40 +31,40 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* Perl */
-//Jul. 08, 2001 JEPRO Perl ƒ†[ƒU‚É‘¡‚é
-//Jul. 08, 2001 JEPRO ’Ç‰Á
+//Jul. 08, 2001 JEPRO Perl ãƒ¦ãƒ¼ã‚¶ã«è´ˆã‚‹
+//Jul. 08, 2001 JEPRO è¿½åŠ 
 void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£Žq
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("Perl") );
 	_tcscpy( pType->m_szTypeExts, _T("cgi,pl,pm") );
 
-	//Ý’è
-	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_eDefaultOutline = OUTLINE_PERL;						/* ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@ */
-	pType->m_nKeyWordSetIdx[0]  = 11;								/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_nKeyWordSetIdx[1] = 12;								/* ƒL[ƒ[ƒhƒZƒbƒg2 */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			/* ”¼Šp”’l‚ðF•ª‚¯•\Ž¦ */
-	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;	//‘ÎŠ‡ŒÊ‚Ì‹­’²‚ðƒfƒtƒHƒ‹ƒgON	//Sep. 21, 2002 genta
-	pType->m_bStringLineOnly = true; // •¶Žš—ñ‚Ís“à‚Ì‚Ý
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_eDefaultOutline = OUTLINE_PERL;						/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³• */
+	pType->m_nKeyWordSetIdx[0]  = 11;								/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_nKeyWordSetIdx[1] = 12;								/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ2 */
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			/* åŠè§’æ•°å€¤ã‚’è‰²åˆ†ã‘è¡¨ç¤º */
+	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;	//å¯¾æ‹¬å¼§ã®å¼·èª¿ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆON	//Sep. 21, 2002 genta
+	pType->m_bStringLineOnly = true; // æ–‡å­—åˆ—ã¯è¡Œå†…ã®ã¿
 }
 
 
 
 //	From Here Sep 8, 2000 genta
 //
-//!	Perl—pƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‹@”\iŠÈˆÕ”Åj
+//!	Perlç”¨ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ©Ÿèƒ½ï¼ˆç°¡æ˜“ç‰ˆï¼‰
 /*!
-	’Pƒ‚É /^\\s*sub\\s+(\\w+)/ ‚Éˆê’v‚µ‚½‚ç $1‚ðŽæ‚èo‚·“®ì‚ðs‚¤B
-	ƒlƒXƒg‚Æ‚©‚Í–Ê“|‚­‚³‚¢‚Ì‚Ål‚¦‚È‚¢B
-	package{ }‚ðŽg‚í‚È‚¯‚ê‚Î‚±‚ê‚Å\•ªD–³‚¢‚æ‚è‚Í‚Ü‚µB
+	å˜ç´”ã« /^\\s*sub\\s+(\\w+)/ ã«ä¸€è‡´ã—ãŸã‚‰ $1ã‚’å–ã‚Šå‡ºã™å‹•ä½œã‚’è¡Œã†ã€‚
+	ãƒã‚¹ãƒˆã¨ã‹ã¯é¢å€’ãã•ã„ã®ã§è€ƒãˆãªã„ã€‚
+	package{ }ã‚’ä½¿ã‚ãªã‘ã‚Œã°ã“ã‚Œã§ååˆ†ï¼Žç„¡ã„ã‚ˆã‚Šã¯ã¾ã—ã€‚
 
-	@par nMode‚ÌˆÓ–¡
-	@li 0: ‚Í‚¶‚ß
-	@li 2: sub‚ðŒ©‚Â‚¯‚½Œã
-	@li 1: ’PŒê“Ç‚Ýo‚µ’†
+	@par nModeã®æ„å‘³
+	@li 0: ã¯ã˜ã‚
+	@li 2: subã‚’è¦‹ã¤ã‘ãŸå¾Œ
+	@li 1: å˜èªžèª­ã¿å‡ºã—ä¸­
 
-	@date 2005.06.18 genta ƒpƒbƒP[ƒW‹æØ‚è‚ð•\‚· ::‚Æ'‚ðl—¶‚·‚é‚æ‚¤‚É
+	@date 2005.06.18 genta ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸åŒºåˆ‡ã‚Šã‚’è¡¨ã™ ::ã¨'ã‚’è€ƒæ…®ã™ã‚‹ã‚ˆã†ã«
 */
 void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -83,16 +83,16 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		nMode = 0;
 		for( i = 0; i < nLineLen; ++i ){
-			/* 1ƒoƒCƒg•¶Žš‚¾‚¯‚ðˆ—‚·‚é */
+			/* 1ãƒã‚¤ãƒˆæ–‡å­—ã ã‘ã‚’å‡¦ç†ã™ã‚‹ */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
 			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
 			if(	1 < nCharChars ){
 				break;
 			}
 
-			/* ’PŒê“Ç‚Ýž‚Ý’† */
+			/* å˜èªžèª­ã¿è¾¼ã¿ä¸­ */
 			if( 0 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ð”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
@@ -101,14 +101,14 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				}
 				if( 's' != pLine[i] )
 					break;
-				//	sub ‚Ìˆê•¶Žš–Ú‚©‚à‚µ‚ê‚È‚¢
+				//	sub ã®ä¸€æ–‡å­—ç›®ã‹ã‚‚ã—ã‚Œãªã„
 				if( nLineLen - i < 4 )
 					break;
 				if( wcsncmp_literal( pLine + i, L"sub" ) )
 					break;
 				int c = pLine[ i + 3 ];
 				if( c == L' ' || c == L'\t' ){
-					nMode = 2;	//	”­Œ©
+					nMode = 2;	//	ç™ºè¦‹
 					i += 3;
 				}
 				else
@@ -126,7 +126,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )
 				){
-					//	ŠÖ”–¼‚ÌŽn‚Ü‚è
+					//	é–¢æ•°åã®å§‹ã¾ã‚Š
 					nWordIdx = 0;
 					szWord[nWordIdx] = pLine[i];
 					szWord[nWordIdx + 1] = L'\0';
@@ -142,8 +142,8 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					//	Jun. 18, 2005 genta ƒpƒbƒP[ƒWCüŽq‚ðl—¶
-					//	ƒRƒƒ“‚Í2‚Â˜A‘±‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢‚Ì‚¾‚ªC‚»‚±‚ÍŽè”²‚«
+					//	Jun. 18, 2005 genta ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ä¿®é£¾å­ã‚’è€ƒæ…®
+					//	ã‚³ãƒ­ãƒ³ã¯2ã¤é€£ç¶šã—ãªã„ã¨ã„ã‘ãªã„ã®ã ãŒï¼Œãã“ã¯æ‰‹æŠœã
 					L':' == pLine[i] || L'\'' == pLine[i]
 				){
 					++nWordIdx;
@@ -154,12 +154,12 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 						szWord[nWordIdx + 1] = L'\0';
 					}
 				}else{
-					//	ŠÖ”–¼Žæ“¾
+					//	é–¢æ•°åå–å¾—
 					/*
-					  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-					  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-					  ¨
-					  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\Ž¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+					  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+					  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+					  â†’
+					  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 					*/
 					CLayoutPoint ptPosXY;
 					m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -185,7 +185,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 
 
 const wchar_t* g_ppszKeywordsPERL[] = {
-	//Jul. 10, 2001 JEPRO	•Ï”‚ð‘æ‚Q‹­’²ƒL[ƒ[ƒh‚Æ‚µ‚Ä•ª—£‚µ‚½
+	//Jul. 10, 2001 JEPRO	å¤‰æ•°ã‚’ç¬¬ï¼’å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¨ã—ã¦åˆ†é›¢ã—ãŸ
 	L"break",
 	L"continue",
 	L"do",
@@ -420,8 +420,8 @@ int g_nKeywordsPERL = _countof(g_ppszKeywordsPERL);
 
 
 
-//Jul. 10, 2001 JEPRO	•Ï”‚ð‘æ‚Q‹­’²ƒL[ƒ[ƒh‚Æ‚µ‚Ä•ª—£‚µ‚½
-// 2008/05/05 novice d•¡•¶Žš—ñíœ
+//Jul. 10, 2001 JEPRO	å¤‰æ•°ã‚’ç¬¬ï¼’å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¨ã—ã¦åˆ†é›¢ã—ãŸ
+// 2008/05/05 novice é‡è¤‡æ–‡å­—åˆ—å‰Šé™¤
 const wchar_t* g_ppszKeywordsPERL2[] = {
 	L"$ARGV",
 	L"$_",

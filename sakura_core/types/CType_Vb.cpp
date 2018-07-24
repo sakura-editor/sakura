@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,63 +31,63 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* Visual Basic */
-//JUl. 10, 2001 JEPRO VB   ƒ†[ƒU‚É‘¡‚é
-//Jul. 09, 2001 JEPRO ’Ç‰Á //Dec. 16, 2002 MIK’Ç‰Á // Feb. 19, 2006 genta .vb’Ç‰Á
+//JUl. 10, 2001 JEPRO VB   ãƒ¦ãƒ¼ã‚¶ã«è´ˆã‚‹
+//Jul. 09, 2001 JEPRO è¿½åŠ  //Dec. 16, 2002 MIKè¿½åŠ  // Feb. 19, 2006 genta .vbè¿½åŠ 
 void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("Visual Basic") );
 	_tcscpy( pType->m_szTypeExts, _T("bas,frm,cls,ctl,pag,dob,dsr,vb") );
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"'", -1 );				/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_eDefaultOutline = OUTLINE_VB;						/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
-	pType->m_nKeyWordSetIdx[0]  = 13;							/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_nKeyWordSetIdx[1] = 14;							/* ƒL[ƒ[ƒhƒZƒbƒg2 */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* ”¼Šp”’l‚ğF•ª‚¯•\¦ */
-	pType->m_nStringType = STRING_LITERAL_PLSQL;				/* •¶š—ñ‹æØ‚è‹L†ƒGƒXƒP[ƒv•û–@  0=[\"][\'] 1=[""][''] */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ğF•ª‚¯•\¦‚µ‚È‚¢
-	pType->m_bStringLineOnly = true; // •¶š—ñ‚Ís“à‚Ì‚İ
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"'", -1 );				/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_eDefaultOutline = OUTLINE_VB;						/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
+	pType->m_nKeyWordSetIdx[0]  = 13;							/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_nKeyWordSetIdx[1] = 14;							/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ2 */
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* åŠè§’æ•°å€¤ã‚’è‰²åˆ†ã‘è¡¨ç¤º */
+	pType->m_nStringType = STRING_LITERAL_PLSQL;				/* æ–‡å­—åˆ—åŒºåˆ‡ã‚Šè¨˜å·ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—æ–¹æ³•  0=[\"][\'] 1=[""][''] */
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_bStringLineOnly = true; // æ–‡å­—åˆ—ã¯è¡Œå†…ã®ã¿
 }
 
 
 
 
 //	From Here June 23, 2001 N.Nakatani
-//!	Visual BasicŠÖ”ƒŠƒXƒgì¬iŠÈˆÕ”Åj
+//!	Visual Basicé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆï¼ˆç°¡æ˜“ç‰ˆï¼‰
 /*!
-	Visual Basic‚ÌƒR[ƒh‚©‚ç’Pƒ‚Éƒ†[ƒU[’è‹`‚ÌŠÖ”‚âƒXƒe[ƒgƒƒ“ƒg‚ğæ‚èo‚·“®ì‚ğs‚¤B
+	Visual Basicã®ã‚³ãƒ¼ãƒ‰ã‹ã‚‰å˜ç´”ã«ãƒ¦ãƒ¼ã‚¶ãƒ¼å®šç¾©ã®é–¢æ•°ã‚„ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’å–ã‚Šå‡ºã™å‹•ä½œã‚’è¡Œã†ã€‚
 
-    Jul 10, 2003 little YOSHI  ×‚©‚­‰ğÍ‚·‚é‚æ‚¤‚É•ÏX
-                               ‚·‚×‚Ä‚ÌƒL[ƒ[ƒh‚Í©“®“I‚É¬Œ`‚³‚ê‚é‚Ì‚ÅA‘å•¶š¬•¶š‚ÍŠ®‘S‚Éˆê’v‚·‚éB
-                               ƒtƒH[ƒ€‚âƒ‚ƒWƒ…[ƒ‹‚¾‚¯‚Å‚Í‚È‚­AƒNƒ‰ƒX‚É‚à‘Î‰B
-							   ‚½‚¾‚µAConst‚Ìu,v‚Å˜A‘±éŒ¾‚É‚Í–¢‘Î‰
-	Jul. 21, 2003 genta ƒL[ƒ[ƒh‚Ì‘å•¶šE¬•¶š‚ğ“¯ˆê‹‚·‚é‚æ‚¤‚É‚µ‚½
-	Aug  7, 2003 little YOSHI  ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ÅˆÍ‚Ü‚ê‚½ƒeƒLƒXƒg‚ğ–³‹‚·‚é‚æ‚¤‚É‚µ‚½
-	                           ŠÖ”–¼‚È‚Ç‚ğVB‚Ì–¼‘O•t‚¯‹K‘¥‚æ‚è255•¶š‚ÉŠg’£
+    Jul 10, 2003 little YOSHI  ç´°ã‹ãè§£æã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
+                               ã™ã¹ã¦ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯è‡ªå‹•çš„ã«æˆå½¢ã•ã‚Œã‚‹ã®ã§ã€å¤§æ–‡å­—å°æ–‡å­—ã¯å®Œå…¨ã«ä¸€è‡´ã™ã‚‹ã€‚
+                               ãƒ•ã‚©ãƒ¼ãƒ ã‚„ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã ã‘ã§ã¯ãªãã€ã‚¯ãƒ©ã‚¹ã«ã‚‚å¯¾å¿œã€‚
+							   ãŸã ã—ã€Constã®ã€Œ,ã€ã§é€£ç¶šå®£è¨€ã«ã¯æœªå¯¾å¿œ
+	Jul. 21, 2003 genta ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å¤§æ–‡å­—ãƒ»å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹ã‚ˆã†ã«ã—ãŸ
+	Aug  7, 2003 little YOSHI  ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã§å›²ã¾ã‚ŒãŸãƒ†ã‚­ã‚¹ãƒˆã‚’ç„¡è¦–ã™ã‚‹ã‚ˆã†ã«ã—ãŸ
+	                           é–¢æ•°åãªã©ã‚’VBã®åå‰ä»˜ã‘è¦å‰‡ã‚ˆã‚Š255æ–‡å­—ã«æ‹¡å¼µ
 */
 void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {
-	const int	nMaxWordLeng = 255;	// Aug 7, 2003 little YOSHI  VB‚Ì–¼‘O•t‚¯‹K‘¥‚æ‚è255•¶š‚ÉŠg’£
+	const int	nMaxWordLeng = 255;	// Aug 7, 2003 little YOSHI  VBã®åå‰ä»˜ã‘è¦å‰‡ã‚ˆã‚Š255æ–‡å­—ã«æ‹¡å¼µ
 	const wchar_t*	pLine;
-	CLogicInt		nLineLen = CLogicInt(0);//: 2002/2/3 aroka Œx‘ÎôF‰Šú‰»
+	CLogicInt		nLineLen = CLogicInt(0);//: 2002/2/3 aroka è­¦å‘Šå¯¾ç­–ï¼šåˆæœŸåŒ–
 	int			i;
 	int			nCharChars;
-	wchar_t		szWordPrev[256];	// Aug 7, 2003 little YOSHI  VB‚Ì–¼‘O•t‚¯‹K‘¥‚æ‚è255•¶š‚ÉŠg’£
-	wchar_t		szWord[256];		// Aug 7, 2003 little YOSHI  VB‚Ì–¼‘O•t‚¯‹K‘¥‚æ‚è255•¶š‚ÉŠg’£
+	wchar_t		szWordPrev[256];	// Aug 7, 2003 little YOSHI  VBã®åå‰ä»˜ã‘è¦å‰‡ã‚ˆã‚Š255æ–‡å­—ã«æ‹¡å¼µ
+	wchar_t		szWord[256];		// Aug 7, 2003 little YOSHI  VBã®åå‰ä»˜ã‘è¦å‰‡ã‚ˆã‚Š255æ–‡å­—ã«æ‹¡å¼µ
 	int			nWordIdx = 0;
 	int			nMode;
-	wchar_t		szFuncName[256];	// Aug 7, 2003 little YOSHI  VB‚Ì–¼‘O•t‚¯‹K‘¥‚æ‚è255•¶š‚ÉŠg’£
+	wchar_t		szFuncName[256];	// Aug 7, 2003 little YOSHI  VBã®åå‰ä»˜ã‘è¦å‰‡ã‚ˆã‚Š255æ–‡å­—ã«æ‹¡å¼µ
 	CLogicInt	nFuncLine(0);
 	int			nFuncId;
 	int			nParseCnt = 0;
-	bool		bClass;			// ƒNƒ‰ƒXƒ‚ƒWƒ…[ƒ‹ƒtƒ‰ƒO
-	bool		bProcedure;		// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒOiƒvƒƒV[ƒWƒƒ“à‚Å‚ÍTruej
-	bool		bDQuote;		// ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“ƒtƒ‰ƒOiƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ª‚«‚½‚çTruej
+	bool		bClass;			// ã‚¯ãƒ©ã‚¹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒ•ãƒ©ã‚°
+	bool		bProcedure;		// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ï¼ˆãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£å†…ã§ã¯Trueï¼‰
+	bool		bDQuote;		// ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ï¼ˆãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ãŒããŸã‚‰Trueï¼‰
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 
-	// ’²‚×‚éƒtƒ@ƒCƒ‹‚ªƒNƒ‰ƒXƒ‚ƒWƒ…[ƒ‹‚Ì‚Æ‚«‚ÍTypeAConst‚Ì‹““®‚ªˆÙ‚È‚é‚Ì‚Åƒtƒ‰ƒO‚ğ—§‚Ä‚é
+	// èª¿ã¹ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚¯ãƒ©ã‚¹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã¨ãã¯Typeã€Constã®æŒ™å‹•ãŒç•°ãªã‚‹ã®ã§ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 	bClass	= false;
 	int filelen = _tcslen(m_pcDocRef->m_cDocFile.GetFilePath());
 	if ( 4 < filelen ) {
@@ -117,7 +117,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			if(	0 == nCharChars ){
 				nCharChars = 1;
 			}
-			/* ’PŒê“Ç‚İ‚İ’† */
+			/* å˜èªèª­ã¿è¾¼ã¿ä¸­ */
 			if( 1 == nMode ){
 				if( (1 == nCharChars && (
 					L'_' == pLine[i] ||
@@ -125,7 +125,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 					) )
 				 || 2 == nCharChars
 				){
@@ -139,54 +139,54 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nWordIdx += (nCharChars);
 					}
 				} else if (1 == nCharChars && '"' == pLine[i]) {
-					// Aug 7, 2003 little YOSHI  ’Ç‰Á
-					// ƒeƒLƒXƒg‚Ì’†‚Í–³‹‚µ‚Ü‚·B
+					// Aug 7, 2003 little YOSHI  è¿½åŠ 
+					// ãƒ†ã‚­ã‚¹ãƒˆã®ä¸­ã¯ç„¡è¦–ã—ã¾ã™ã€‚
 					nMode	= 3;
 				}else{
 					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Public") ) {
-						// ƒpƒuƒŠƒbƒNéŒ¾‚ğŒ©‚Â‚¯‚½I
+						// ãƒ‘ãƒ–ãƒªãƒƒã‚¯å®£è¨€ã‚’è¦‹ã¤ã‘ãŸï¼
 						nFuncId |= 0x10;
 					}else
 					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Private") ) {
-						// ƒvƒ‰ƒCƒx[ƒgéŒ¾‚ğŒ©‚Â‚¯‚½I
+						// ãƒ—ãƒ©ã‚¤ãƒ™ãƒ¼ãƒˆå®£è¨€ã‚’è¦‹ã¤ã‘ãŸï¼
 						nFuncId |= 0x20;
 					}else
 					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Friend") ) {
-						// ƒtƒŒƒ“ƒhéŒ¾‚ğŒ©‚Â‚¯‚½I
+						// ãƒ•ãƒ¬ãƒ³ãƒ‰å®£è¨€ã‚’è¦‹ã¤ã‘ãŸï¼
 						nFuncId |= 0x30;
 					}else
 					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Static") ) {
-						// ƒXƒ^ƒeƒBƒbƒNéŒ¾‚ğŒ©‚Â‚¯‚½I
+						// ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯å®£è¨€ã‚’è¦‹ã¤ã‘ãŸï¼
 						nFuncId |= 0x100;
 					}else
 					if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Function" ) ){
 						if ( 0 == wcsicmp( szWordPrev, L"End" ) ){
-							// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒNƒŠƒA
+							// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚¯ãƒªã‚¢
 							bProcedure	= false;
 						}else
 						if( 0 != wcsicmp( szWordPrev, L"Exit" ) ){
 							if( 0 == wcsicmp( szWordPrev, L"Declare" ) ){
-								nFuncId |= 0x200;	// DLLQÆéŒ¾
+								nFuncId |= 0x200;	// DLLå‚ç…§å®£è¨€
 							}else{
-								bProcedure	= true;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒZƒbƒg
+								bProcedure	= true;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚»ãƒƒãƒˆ
 							}
-							nFuncId |= 0x01;		// ŠÖ”
+							nFuncId |= 0x01;		// é–¢æ•°
 							nParseCnt = 1;
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Sub" ) ){
 						if ( 0 == wcsicmp( szWordPrev, L"End" ) ){
-							// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒNƒŠƒA
+							// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚¯ãƒªã‚¢
 							bProcedure	= false;
 						}else
 						if( 0 != wcsicmp( szWordPrev, L"Exit" ) ){
 							if( 0 == wcsicmp( szWordPrev, L"Declare" ) ){
-								nFuncId |= 0x200;	// DLLQÆéŒ¾
+								nFuncId |= 0x200;	// DLLå‚ç…§å®£è¨€
 							}else{
-								bProcedure	= true;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒZƒbƒg
+								bProcedure	= true;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚»ãƒƒãƒˆ
 							}
-							nFuncId |= 0x02;		// ŠÖ”
+							nFuncId |= 0x02;		// é–¢æ•°
 							nParseCnt = 1;
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
@@ -194,24 +194,24 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Get" )
 					 && 0 == wcsicmp( szWordPrev, L"Property" )
 					){
-						bProcedure	= true;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒZƒbƒg
-						nFuncId	|= 0x03;		// ƒvƒƒpƒeƒBæ“¾
+						bProcedure	= true;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚»ãƒƒãƒˆ
+						nFuncId	|= 0x03;		// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å–å¾—
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Let" )
 					 && 0 == wcsicmp( szWordPrev, L"Property" )
 					){
-						bProcedure	= true;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒZƒbƒg
-						nFuncId |= 0x04;		// ƒvƒƒpƒeƒBİ’è
+						bProcedure	= true;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚»ãƒƒãƒˆ
+						nFuncId |= 0x04;		// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£è¨­å®š
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Set" )
 					 && 0 == wcsicmp( szWordPrev, L"Property" )
 					){
-						bProcedure	= true;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒZƒbƒg
-						nFuncId |= 0x05;		// ƒvƒƒpƒeƒBQÆ
+						bProcedure	= true;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚»ãƒƒãƒˆ
+						nFuncId |= 0x05;		// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å‚ç…§
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
@@ -219,56 +219,56 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					 && 0 != wcsicmp( szWordPrev, L"#" )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
-							// ƒNƒ‰ƒXƒ‚ƒWƒ…[ƒ‹‚Å‚Í‹­§“I‚ÉPrivate
-							// ƒvƒƒV[ƒWƒƒ“à‚Å‚Í‹­§“I‚ÉPrivate
-							// Public‚Ìw’è‚ª‚È‚¢‚Æ‚«AƒfƒtƒHƒ‹ƒg‚ÅPrivate‚É‚È‚é
+							// ã‚¯ãƒ©ã‚¹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã§ã¯å¼·åˆ¶çš„ã«Private
+							// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£å†…ã§ã¯å¼·åˆ¶çš„ã«Private
+							// Publicã®æŒ‡å®šãŒãªã„ã¨ãã€ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§Privateã«ãªã‚‹
 							nFuncId &= 0x0f2f;
 							nFuncId	|= 0x20;
 						}
-						nFuncId	|= 0x06;		// ’è”
+						nFuncId	|= 0x06;		// å®šæ•°
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Enum" )
 					){
-						nFuncId	|= 0x207;		// —ñ‹“Œ^éŒ¾
+						nFuncId	|= 0x207;		// åˆ—æŒ™å‹å®£è¨€
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Type" )
 					){
 						if ( bClass ) {
-							// ƒNƒ‰ƒXƒ‚ƒWƒ…[ƒ‹‚Å‚Í‹­§“I‚ÉPrivate
+							// ã‚¯ãƒ©ã‚¹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã§ã¯å¼·åˆ¶çš„ã«Private
 							nFuncId &= 0x0f2f;
 							nFuncId	|= 0x20;
 						}
-						nFuncId	|= 0x208;		// ƒ†[ƒU’è‹`Œ^éŒ¾
+						nFuncId	|= 0x208;		// ãƒ¦ãƒ¼ã‚¶å®šç¾©å‹å®£è¨€
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Event" )
 					){
-						nFuncId	|= 0x209;		// ƒCƒxƒ“ƒgéŒ¾
+						nFuncId	|= 0x209;		// ã‚¤ãƒ™ãƒ³ãƒˆå®£è¨€
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
 					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Property" )
 					 && 0 == wcsicmp( szWordPrev, L"End")
 					){
-						bProcedure	= false;	// ƒvƒƒV[ƒWƒƒƒtƒ‰ƒO‚ğƒNƒŠƒA
+						bProcedure	= false;	// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ãƒ•ãƒ©ã‚°ã‚’ã‚¯ãƒªã‚¢
 					}
 					else if( 1 == nParseCnt ){
 						wcscpy( szFuncName, szWord );
 						/*
-						  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-						  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-						  ¨ ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+						  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+						  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+						  â†’ ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 						*/
 						CLayoutPoint ptPosXY;
 						m_pcDocRef->m_cLayoutMgr.LogicToLayout(	CLogicPoint(CLogicInt(0), nFuncLine - CLogicInt(1)), &ptPosXY );
 						pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1) , szFuncName, nFuncId );
 						nParseCnt = 0;
-						nFuncId	= 0;	// Jul 10, 2003  little YOSHI  ˜_—˜a‚ğg—p‚·‚é‚½‚ßA•K‚¸‰Šú‰»
+						nFuncId	= 0;	// Jul 10, 2003  little YOSHI  è«–ç†å’Œã‚’ä½¿ç”¨ã™ã‚‹ãŸã‚ã€å¿…ãšåˆæœŸåŒ–
 					}
 
 					wcscpy( szWordPrev, szWord );
@@ -279,16 +279,16 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					continue;
 				}
 			}
-			/* ‹L†—ñ“Ç‚İ‚İ’† */
+			/* è¨˜å·åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			else if( 2 == nMode ){
 				// Jul 10, 2003  little YOSHI
-				// u#Constv‚ÆuConstv‚ğ‹æ•Ê‚·‚é‚½‚ß‚ÉAu#v‚à¯•Ê‚·‚é‚æ‚¤‚É•ÏX
+				// ã€Œ#Constã€ã¨ã€ŒConstã€ã‚’åŒºåˆ¥ã™ã‚‹ãŸã‚ã«ã€ã€Œ#ã€ã‚‚è­˜åˆ¥ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
 				if( L'_' == pLine[i] ||
 					L'~' == pLine[i] ||
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 “ú–{Œê‘Î‰
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 					L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol) ||
@@ -310,8 +310,8 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					i--;
 					continue;
 				} else if (1 == nCharChars && L'"' == pLine[i]) {
-					// Aug 7, 2003 little YOSHI  ’Ç‰Á
-					// ƒeƒLƒXƒg‚Ì’†‚Í–³‹‚µ‚Ü‚·B
+					// Aug 7, 2003 little YOSHI  è¿½åŠ 
+					// ãƒ†ã‚­ã‚¹ãƒˆã®ä¸­ã¯ç„¡è¦–ã—ã¾ã™ã€‚
 					nMode	= 3;
 				}else{
 					if( nWordIdx >= nMaxWordLeng ){
@@ -324,9 +324,9 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					}
 				}
 			}else
-			/* ’·‰ß‚¬‚é’PŒê–³‹’† */
+			/* é•·éãã‚‹å˜èªç„¡è¦–ä¸­ */
 			if( 999 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
@@ -335,9 +335,9 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					continue;
 				}
 			}else
-			/* ƒm[ƒ}ƒ‹ƒ‚[ƒh */
+			/* ãƒãƒ¼ãƒãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 			if( 0 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
@@ -347,8 +347,8 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 				if( i < nLineLen && L'\'' == pLine[i] ){
 					break;
 				} else if (1 == nCharChars && L'"' == pLine[i]) {
-					// Aug 7, 2003 little YOSHI  ’Ç‰Á
-					// ƒeƒLƒXƒg‚Ì’†‚Í–³‹‚µ‚Ü‚·B
+					// Aug 7, 2003 little YOSHI  è¿½åŠ 
+					// ãƒ†ã‚­ã‚¹ãƒˆã®ä¸­ã¯ç„¡è¦–ã—ã¾ã™ã€‚
 					nMode	= 3;
 				}else{
 					if( (1 == nCharChars && (
@@ -357,7 +357,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰
+						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 						) )
 					 || 2 == nCharChars
 					){
@@ -378,15 +378,15 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					}
 				}
 			} else
-			/* ƒeƒLƒXƒg‚ª•Â‚¶‚é‚Ü‚Å“Ç‚İ”ò‚Î‚· */	// Aug 7, 2003 little YOSHI  ’Ç‰Á
+			/* ãƒ†ã‚­ã‚¹ãƒˆãŒé–‰ã˜ã‚‹ã¾ã§èª­ã¿é£›ã°ã™ */	// Aug 7, 2003 little YOSHI  è¿½åŠ 
 			if (nMode == 3) {
-				// ˜A‘±‚·‚éƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚Í–³‹‚·‚é
+				// é€£ç¶šã™ã‚‹ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã¯ç„¡è¦–ã™ã‚‹
 				if (1 == nCharChars && L'"' == pLine[i]) {
-					// ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ªŒ»‚ê‚½‚çƒtƒ‰ƒO‚ğ”½“]‚·‚é
+					// ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ãŒç¾ã‚ŒãŸã‚‰ãƒ•ãƒ©ã‚°ã‚’åè»¢ã™ã‚‹
 					bDQuote	= !bDQuote;
 				} else if (bDQuote) {
-					// ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ÌŸ‚É
-					// ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“ˆÈŠO‚Ì•¶š‚ªŒ»‚ê‚½‚çƒm[ƒ}ƒ‹ƒ‚[ƒh‚ÉˆÚs
+					// ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã®æ¬¡ã«
+					// ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ä»¥å¤–ã®æ–‡å­—ãŒç¾ã‚ŒãŸã‚‰ãƒãƒ¼ãƒãƒ«ãƒ¢ãƒ¼ãƒ‰ã«ç§»è¡Œ
 					--i;
 					nMode	= 0;
 					bDQuote	= false;
@@ -402,7 +402,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 
 
-//Jul. 10, 2001 JEPRO ’Ç‰Á
+//Jul. 10, 2001 JEPRO è¿½åŠ 
 const wchar_t* g_ppszKeywordsVB[] = {
 	L"And",
 	L"As",
@@ -496,7 +496,7 @@ const wchar_t* g_ppszKeywordsVB[] = {
 	L"Terminate",
 	L"Until",
 	//=========================================================
-	// ˆÈ‰º‚ÍVB.NET(VB7)‚Å‚Ì”p~‚ªŒˆ’è‚µ‚Ä‚¢‚éƒL[ƒ[ƒh‚Å‚·
+	// ä»¥ä¸‹ã¯VB.NET(VB7)ã§ã®å»ƒæ­¢ãŒæ±ºå®šã—ã¦ã„ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã™
 	//=========================================================
 	L"DefBool",
 	L"DefByte",
@@ -516,7 +516,7 @@ const wchar_t* g_ppszKeywordsVB[] = {
 	//			"Option Base
 	//			"As Any
 	//=========================================================
-	// ˆÈ‰º‚ÍVB.NET—pƒL[ƒ[ƒh‚Å‚·
+	// ä»¥ä¸‹ã¯VB.NETç”¨ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã™
 	//=========================================================
 	//BitAnd
 	//BitOr
@@ -528,7 +528,7 @@ const wchar_t* g_ppszKeywordsVB[] = {
 };
 int g_nKeywordsVB = _countof(g_ppszKeywordsVB);
 
-//Jul. 10, 2001 JEPRO ’Ç‰Á
+//Jul. 10, 2001 JEPRO è¿½åŠ 
 const wchar_t* g_ppszKeywordsVB2[] = {
 	L"AppActivate",
 	L"Beep",
@@ -703,9 +703,9 @@ const wchar_t* g_ppszKeywordsVB2[] = {
 	L"Refresh",
 	L"Show",
 	//=========================================================
-	// ˆÈ‰º‚ÍVB.NET(VB7)‚Å‚Ì”p~‚ªŒˆ’è‚µ‚Ä‚¢‚éƒL[ƒ[ƒh‚Å‚·
+	// ä»¥ä¸‹ã¯VB.NET(VB7)ã§ã®å»ƒæ­¢ãŒæ±ºå®šã—ã¦ã„ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã™
 	//=========================================================
-	//$•t‚«ŠÖ”Šeí
+	//$ä»˜ãé–¢æ•°å„ç¨®
 	L"Dir$",
 	L"LCase$",
 	L"Left$",
@@ -719,7 +719,7 @@ const wchar_t* g_ppszKeywordsVB2[] = {
 	L"String$",
 	L"Trim$",
 	L"UCase$",
-	//VB5,6‚Ì‰B‚µŠÖ”
+	//VB5,6ã®éš ã—é–¢æ•°
 	L"VarPtr",
 	L"StrPtr",
 	L"ObjPtr",

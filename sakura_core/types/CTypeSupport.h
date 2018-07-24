@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,13 +30,13 @@
 #include "view/CViewFont.h"
 #include "view/colors/CColorStrategy.h"
 
-//2007.08.28 kobake í«â¡
-/*!É^ÉCÉvÉTÉ|Å[ÉgÉNÉâÉX
-	ç°ÇÃÇ∆Ç±ÇÎÉ^ÉCÉvï ê›íËÇÃêFèÓïÒéÊìæÇÃï‚èï
+//2007.08.28 kobake ËøΩÂä†
+/*!„Çø„Ç§„Éó„Çµ„Éù„Éº„Éà„ÇØ„É©„Çπ
+	‰ªä„ÅÆ„Å®„Åì„Çç„Çø„Ç§„ÉóÂà•Ë®≠ÂÆö„ÅÆËâ≤ÊÉÖÂ†±ÂèñÂæó„ÅÆË£úÂä©
 */
 class CTypeSupport{
 private:
-	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //ñ≥å¯Ç»êFíËêî
+	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //ÁÑ°Âäπ„Å™Ëâ≤ÂÆöÊï∞
 
 public:
 	CTypeSupport(const CEditView* pEditView, EColorIndexType eColorIdx)
@@ -58,33 +58,33 @@ public:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           éÊìæ                              //
+	//                           ÂèñÂæó                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//!ëOåiêF(ï∂éöêF)
+	//!ÂâçÊôØËâ≤(ÊñáÂ≠óËâ≤)
 	COLORREF GetTextColor() const
 	{
 		return m_pColorInfoArr->m_sColorAttr.m_cTEXT;
 	}
 
-	//!îwåiêF
+	//!ËÉåÊôØËâ≤
 	COLORREF GetBackColor() const
 	{
 		return m_pColorInfoArr->m_sColorAttr.m_cBACK;
 	}
 
-	//!ï\é¶Ç∑ÇÈÇ©Ç«Ç§Ç©
+	//!Ë°®Á§∫„Åô„Çã„Åã„Å©„ÅÜ„Åã
 	bool IsDisp() const
 	{
 		return m_pColorInfoArr->m_bDisp;
 	}
 
-	//!ëæéöÇ©Ç«Ç§Ç©
+	//!Â§™Â≠ó„Åã„Å©„ÅÜ„Åã
 	bool IsBoldFont() const
 	{
 		return m_pColorInfoArr->m_sFontAttr.m_bBoldFont;
 	}
 
-	//!â∫ê¸ÇéùÇ¬Ç©Ç«Ç§Ç©
+	//!‰∏ãÁ∑ö„ÇíÊåÅ„Å§„Åã„Å©„ÅÜ„Åã
 	bool HasUnderLine() const
 	{
 		return m_pColorInfoArr->m_sFontAttr.m_bUnderLine;
@@ -97,7 +97,7 @@ public:
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ï`âÊ                              //
+	//                           ÊèèÁîª                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void FillBack(CGraphics& gr,const RECT& rc)
 	{
@@ -105,7 +105,7 @@ public:
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ê›íË                              //
+	//                           Ë®≠ÂÆö                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	SFONT GetTypeFont()
 	{
@@ -122,11 +122,11 @@ public:
 
 		m_gr = &gr;
 
-		//ÉeÉLÉXÉgêF
+		//„ÉÜ„Ç≠„Çπ„ÉàËâ≤
 		gr.PushTextBackColor(GetBackColor());
 		gr.PushTextForeColor(GetTextColor());
 
-		//ÉtÉHÉìÉg
+		//„Éï„Ç©„É≥„Éà
 		gr.PushMyFont(GetTypeFont());
 	}
 	void RewindGraphicsState(CGraphics& gr)
@@ -145,7 +145,7 @@ private:
 	int						m_nColorIdx;
 	const ColorInfo*		m_pColorInfoArr;
 
-	CGraphics* m_gr;        //ê›íËÇïœçXÇµÇΩHDC
+	CGraphics* m_gr;        //Ë®≠ÂÆö„ÇíÂ§âÊõ¥„Åó„ÅüHDC
 };
 
 #endif /* SAKURA_CTYPESUPPORT_21FC7075_96B4_4572_BA60_A6550E11AC0B9_H_ */

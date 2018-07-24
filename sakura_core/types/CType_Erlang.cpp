@@ -1,5 +1,5 @@
-/*!	@file
-	@brief Erlang ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ
+ï»¿/*!	@file
+	@brief Erlang ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ
 	
 	@author genta
 	@date 2009.08.10 created
@@ -36,23 +36,23 @@
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 
-/** Erlang ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ ŠÇ—•‰ğÍ
+/** Erlang ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ ç®¡ç†ï¼†è§£æ
 */
 struct COutlineErlang {
 	enum {
-		STATE_NORMAL,	//!< ‰ğÍ’†‚Å‚È‚¢
-		STATE_FUNC_CANDIDATE_FIN,	//!< ŠÖ”‚ç‚µ‚«‚à‚Ì(s“ª‚Ìatom)‚ğ‰ğÍÏ‚İ
-		STATE_FUNC_ARGS1,	//!< Å‰‚Ìˆø”Šm”F’†
-		STATE_FUNC_ARGS,	//!< 2‚Â‚ßˆÈ~‚Ìˆø”Šm”F’†
-		STATE_FUNC_ARGS_FIN,//!< ŠÖ”‚Ì‰ğÍ‚ğŠ®—¹
-		STATE_FUNC_FOUND,	//!< ŠÖ”‚ğ”­Œ©Dƒf[ƒ^‚Ìæ“¾‚ª‰Â”\
+		STATE_NORMAL,	//!< è§£æä¸­ã§ãªã„
+		STATE_FUNC_CANDIDATE_FIN,	//!< é–¢æ•°ã‚‰ã—ãã‚‚ã®(è¡Œé ­ã®atom)ã‚’è§£ææ¸ˆã¿
+		STATE_FUNC_ARGS1,	//!< æœ€åˆã®å¼•æ•°ç¢ºèªä¸­
+		STATE_FUNC_ARGS,	//!< 2ã¤ã‚ä»¥é™ã®å¼•æ•°ç¢ºèªä¸­
+		STATE_FUNC_ARGS_FIN,//!< é–¢æ•°ã®è§£æã‚’å®Œäº†
+		STATE_FUNC_FOUND,	//!< é–¢æ•°ã‚’ç™ºè¦‹ï¼ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ãŒå¯èƒ½
 	} m_state;
 
-	wchar_t m_func[64];	//!< ŠÖ”–¼(ArityŠÜ‚Ş) = •\¦–¼
-	CLogicInt m_lnum;	//!< ŠÖ”‚Ìs”Ô†
-	int m_argcount;		//!< ”­Œ©‚µ‚½ˆø”‚Ì”
-	wchar_t m_parenthesis[32];	//!< Š‡ŒÊ‚ÌƒlƒXƒg‚ğŠÇ—‚·‚é‚à‚Ì
-	int m_parenthesis_ptr;	//!< Š‡ŒÊ‚ÌƒlƒXƒgƒŒƒxƒ‹
+	wchar_t m_func[64];	//!< é–¢æ•°å(Arityå«ã‚€) = è¡¨ç¤ºå
+	CLogicInt m_lnum;	//!< é–¢æ•°ã®è¡Œç•ªå·
+	int m_argcount;		//!< ç™ºè¦‹ã—ãŸå¼•æ•°ã®æ•°
+	wchar_t m_parenthesis[32];	//!< æ‹¬å¼§ã®ãƒã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹ã‚‚ã®
+	int m_parenthesis_ptr;	//!< æ‹¬å¼§ã®ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«
 	
 	COutlineErlang();
 	bool parse( const wchar_t* buf, int linelen, CLogicInt linenum );
@@ -96,14 +96,14 @@ COutlineErlang::COutlineErlang() :
 {
 }
 
-/** ŠÖ”–¼‚Ìæ“¾
+/** é–¢æ•°åã®å–å¾—
 
-	@param[in] buf s(æ“ª‚©‚ç)
-	@param[in] end buf––”ö
-	@param[in] p ‰ğÍ‚ÌŒ»İˆÊ’u
+	@param[in] buf è¡Œ(å…ˆé ­ã‹ã‚‰)
+	@param[in] end bufæœ«å°¾
+	@param[in] p è§£æã®ç¾åœ¨ä½ç½®
 	
-	ŠÖ”–¼‚ÍatomDatom‚Í ¬•¶šƒAƒ‹ƒtƒ@ƒxƒbƒgC_, @ ‚Ì‚¢‚¸‚ê‚©‚©‚çn‚Ü‚é
-	‰p”•¶š—ñ‚©C‚ ‚é‚¢‚ÍƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ÅˆÍ‚Ü‚ê‚½•¶š—ñD
+	é–¢æ•°åã¯atomï¼atomã¯ å°æ–‡å­—ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆï¼Œ_, @ ã®ã„ãšã‚Œã‹ã‹ã‚‰å§‹ã¾ã‚‹
+	è‹±æ•°æ–‡å­—åˆ—ã‹ï¼Œã‚ã‚‹ã„ã¯ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã§å›²ã¾ã‚ŒãŸæ–‡å­—åˆ—ï¼
 */
 const wchar_t* COutlineErlang::ScanFuncName( const wchar_t* buf, const wchar_t* end, const wchar_t* p )
 {
@@ -143,12 +143,12 @@ const wchar_t* COutlineErlang::ScanFuncName( const wchar_t* buf, const wchar_t* 
 	return p;
 }
 
-/** ƒpƒ‰ƒ[ƒ^‚Ì”­Œ©
+/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®ç™ºè¦‹
 
-	@param[in] end buf––”ö
-	@param[in] p ‰ğÍ‚ÌŒ»İˆÊ’u
+	@param[in] end bufæœ«å°¾
+	@param[in] p è§£æã®ç¾åœ¨ä½ç½®
 	
-	ŠÖ”–¼‚Ìæ“¾‚ªŠ®—¹‚µCƒpƒ‰ƒ[ƒ^æ“ª‚ÌŠ‡ŒÊ‚ğ’T‚·D
+	é–¢æ•°åã®å–å¾—ãŒå®Œäº†ã—ï¼Œãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å…ˆé ­ã®æ‹¬å¼§ã‚’æ¢ã™ï¼
 */
 const wchar_t* COutlineErlang::EnterArgs( const wchar_t* end, const wchar_t* p )
 {
@@ -178,12 +178,12 @@ const wchar_t* COutlineErlang::EnterArgs( const wchar_t* end, const wchar_t* p )
 	return end;
 }
 
-/** æ“ªƒpƒ‰ƒ[ƒ^‚Ì”­Œ©
+/** å…ˆé ­ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®ç™ºè¦‹
 
-	@param[in] end buf––”ö
-	@param[in] p ‰ğÍ‚ÌŒ»İˆÊ’u
+	@param[in] end bufæœ«å°¾
+	@param[in] p è§£æã®ç¾åœ¨ä½ç½®
 	
-	ƒpƒ‰ƒ[ƒ^‚ª0ŒÂ‚Æ1ŒÂˆÈã‚Ì”»•Ê‚Ì‚½‚ß‚Éó‘Ô‚ğİ‚¯‚Ä‚¢‚éD
+	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãŒ0å€‹ã¨1å€‹ä»¥ä¸Šã®åˆ¤åˆ¥ã®ãŸã‚ã«çŠ¶æ…‹ã‚’è¨­ã‘ã¦ã„ã‚‹ï¼
 */
 const wchar_t* COutlineErlang::ScanArgs1( const wchar_t* end, const wchar_t* p )
 {
@@ -211,21 +211,21 @@ const wchar_t* COutlineErlang::ScanArgs1( const wchar_t* end, const wchar_t* p )
 	return p;
 }
 
-/** ƒpƒ‰ƒ[ƒ^‚Ì‰ğÍ‚ÆƒJƒEƒ“ƒg
+/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è§£æã¨ã‚«ã‚¦ãƒ³ãƒˆ
 
-	@param[in] end buf––”ö
-	@param[in] p ‰ğÍ‚ÌŒ»İˆÊ’u
+	@param[in] end bufæœ«å°¾
+	@param[in] p è§£æã®ç¾åœ¨ä½ç½®
 	
-	ƒpƒ‰ƒ[ƒ^‚ğ‰ğÍ‚·‚éDƒpƒ‰ƒ[ƒ^‚Ì”‚Æ––”ö‚Ì•Â‚¶Š‡ŒÊ‚ğ³‚µ‚­”»•Ê‚·‚é‚½‚ß‚ÉC
-	ˆø—p•„CŠ‡ŒÊCƒpƒ‰ƒ[ƒ^‚Ì‹æØ‚è‚ÌƒJƒ“ƒ}‚É’…–Ú‚·‚éD
-	ˆø—p•„‚Í‰üs‚ğŠÜ‚Ş‚±‚Æ‚ª‚Å‚«‚È‚¢D
+	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è§£æã™ã‚‹ï¼ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æ•°ã¨æœ«å°¾ã®é–‰ã˜æ‹¬å¼§ã‚’æ­£ã—ãåˆ¤åˆ¥ã™ã‚‹ãŸã‚ã«ï¼Œ
+	å¼•ç”¨ç¬¦ï¼Œæ‹¬å¼§ï¼Œãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®åŒºåˆ‡ã‚Šã®ã‚«ãƒ³ãƒã«ç€ç›®ã™ã‚‹ï¼
+	å¼•ç”¨ç¬¦ã¯æ”¹è¡Œã‚’å«ã‚€ã“ã¨ãŒã§ããªã„ï¼
 */
 const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 {
 	assert( m_state == STATE_FUNC_ARGS );
 
 	const int parptr_max = sizeof( m_parenthesis ) / sizeof( m_parenthesis[0] );
-	wchar_t quote = L'\0'; // æ“ªˆÊ’u‚ğ•Û‘¶
+	wchar_t quote = L'\0'; // å…ˆé ­ä½ç½®ã‚’ä¿å­˜
 	for(const wchar_t* head = p ; p < end ; p++ ){
 		if( quote ){
 			if( *p == quote )
@@ -273,20 +273,20 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 				++m_argcount;
 			}
 			else if( *p == L';' ){
-				//	ƒZƒ~ƒRƒƒ“‚Í•¡”‚Ì•¶‚Ì‹æØ‚èD
-				//	ƒpƒ‰ƒ[ƒ^’†‚É‚ÍŒ»‚ê‚È‚¢‚Ì‚ÅC‰ğÍ‚ª¸”s‚µ‚Ä‚¢‚é
-				//	Š‡ŒÊ‚Ì•Â‚¶–Y‚ê‚ªl‚¦‚ç‚ê‚é‚Ì‚ÅCdØ‚è’¼‚µ
+				//	ã‚»ãƒŸã‚³ãƒ­ãƒ³ã¯è¤‡æ•°ã®æ–‡ã®åŒºåˆ‡ã‚Šï¼
+				//	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä¸­ã«ã¯ç¾ã‚Œãªã„ã®ã§ï¼Œè§£æãŒå¤±æ•—ã—ã¦ã„ã‚‹
+				//	æ‹¬å¼§ã®é–‰ã˜å¿˜ã‚ŒãŒè€ƒãˆã‚‰ã‚Œã‚‹ã®ã§ï¼Œä»•åˆ‡ã‚Šç›´ã—
 				m_state = STATE_NORMAL;
 				return end;
 			}
 			else if( *p == L'.' ){
-				//	ƒsƒŠƒIƒh‚Í®‚Ì––”ö‚©C¬”“_‚Æ‚µ‚Äg‚í‚ê‚éD
+				//	ãƒ”ãƒªã‚ªãƒ‰ã¯å¼ã®æœ«å°¾ã‹ï¼Œå°æ•°ç‚¹ã¨ã—ã¦ä½¿ã‚ã‚Œã‚‹ï¼
 				if( p > head && ( L'0' <= p[-1] && p[-1] <= L'9' )){
-					//	¬”“_‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅC‚»‚Ì‚Ü‚Ü‚É‚·‚é
+					//	å°æ•°ç‚¹ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ï¼Œãã®ã¾ã¾ã«ã™ã‚‹
 				}
 				else {
-					//	ˆø”‚Ì“r’†‚Å•¶––‚ªŒ»‚ê‚½‚Ì‚Í‰ğÍ‚ª¸”s‚µ‚Ä‚¢‚é
-					//	Š‡ŒÊ‚Ì•Â‚¶–Y‚ê‚ªl‚¦‚ç‚ê‚é‚Ì‚ÅCdØ‚è’¼‚µ
+					//	å¼•æ•°ã®é€”ä¸­ã§æ–‡æœ«ãŒç¾ã‚ŒãŸã®ã¯è§£æãŒå¤±æ•—ã—ã¦ã„ã‚‹
+					//	æ‹¬å¼§ã®é–‰ã˜å¿˜ã‚ŒãŒè€ƒãˆã‚‰ã‚Œã‚‹ã®ã§ï¼Œä»•åˆ‡ã‚Šç›´ã—
 					m_state = STATE_NORMAL;
 					return end;
 				}
@@ -305,14 +305,14 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 	return p;
 }
 
-/** ŠÖ”–{‘Ì‚Ì‹æØ‚èC‚Ü‚½‚ÍğŒ•¶‚ÌŒŸo
+/** é–¢æ•°æœ¬ä½“ã®åŒºåˆ‡ã‚Šï¼Œã¾ãŸã¯æ¡ä»¶æ–‡ã®æ¤œå‡º
 
-	@param[in] end buf––”ö
-	@param[in] p ‰ğÍ‚ÌŒ»İˆÊ’u
+	@param[in] end bufæœ«å°¾
+	@param[in] p è§£æã®ç¾åœ¨ä½ç½®
 	
-	ƒpƒ‰ƒ[ƒ^–{‘Ì‚ğ•\‚·‹L†(->)‚©ğŒ•¶‚ÌŠJnƒL[ƒ[ƒh(when)‚ğ
-	Œ©‚Â‚¯‚½‚çCŠÖ””­Œ©‚Æ‚·‚éD
-	‚»‚êˆÈŠO‚Ìê‡‚ÍŠÖ”‚Å‚Í‚È‚©‚Á‚½‚Æl‚¦‚éD
+	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æœ¬ä½“ã‚’è¡¨ã™è¨˜å·(->)ã‹æ¡ä»¶æ–‡ã®é–‹å§‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰(when)ã‚’
+	è¦‹ã¤ã‘ãŸã‚‰ï¼Œé–¢æ•°ç™ºè¦‹ã¨ã™ã‚‹ï¼
+	ãã‚Œä»¥å¤–ã®å ´åˆã¯é–¢æ•°ã§ã¯ãªã‹ã£ãŸã¨è€ƒãˆã‚‹ï¼
 */
 const wchar_t* COutlineErlang::EnterCond( const wchar_t* end, const wchar_t* p )
 {
@@ -339,11 +339,11 @@ const wchar_t* COutlineErlang::EnterCond( const wchar_t* end, const wchar_t* p )
 	return end;
 }
 
-/** s‚Ì‰ğÍ
+/** è¡Œã®è§£æ
 
-	@param[in] buf s(æ“ª‚©‚ç)
-	@param[in] linelen s‚Ì’·‚³
-	@param[in] linenum s”Ô†
+	@param[in] buf è¡Œ(å…ˆé ­ã‹ã‚‰)
+	@param[in] linelen è¡Œã®é•·ã•
+	@param[in] linenum è¡Œç•ªå·
 */
 bool COutlineErlang::parse( const wchar_t* buf, int linelen, CLogicInt linenum )
 {
@@ -380,13 +380,13 @@ bool COutlineErlang::parse( const wchar_t* buf, int linelen, CLogicInt linenum )
 	return m_state == STATE_FUNC_FOUND;
 }
 
-/** ŠÖ”–¼‚ÌŒã‚ë‚É Arity (ˆø”‚Ì”)‚ğ•t‰Á‚·‚é
+/** é–¢æ•°åã®å¾Œã‚ã« Arity (å¼•æ•°ã®æ•°)ã‚’ä»˜åŠ ã™ã‚‹
 
-	@param[in] arity ˆø”‚Ì”
+	@param[in] arity å¼•æ•°ã®æ•°
 	
-	ŠÖ”–¼‚ÌŒã‚ë‚É /ƒpƒ‰ƒ[ƒ^” ‚ÌŒ`‚Å•¶š—ñ‚ğ’Ç‰Á‚·‚éD
-	ƒoƒbƒtƒ@‚ª•s‘«‚·‚éê‡‚Í‚Å‚«‚é‚Æ‚±‚ë‚Ü‚Å‘‚«‚ŞD
-	‚»‚Ì‚½‚ßC10ŒÂˆÈã‚Ìˆø”‚ª‚ ‚éê‡‚ÉCˆø”‚Ì”‚Ì‰ºˆÊŒ…‚ªŒ‡‚¯‚é‚±‚Æ‚ª‚ ‚éD
+	é–¢æ•°åã®å¾Œã‚ã« /ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æ•° ã®å½¢ã§æ–‡å­—åˆ—ã‚’è¿½åŠ ã™ã‚‹ï¼
+	ãƒãƒƒãƒ•ã‚¡ãŒä¸è¶³ã™ã‚‹å ´åˆã¯ã§ãã‚‹ã¨ã“ã‚ã¾ã§æ›¸ãè¾¼ã‚€ï¼
+	ãã®ãŸã‚ï¼Œ10å€‹ä»¥ä¸Šã®å¼•æ•°ãŒã‚ã‚‹å ´åˆã«ï¼Œå¼•æ•°ã®æ•°ã®ä¸‹ä½æ¡ãŒæ¬ ã‘ã‚‹ã“ã¨ãŒã‚ã‚‹ï¼
 */ 
 void COutlineErlang::build_arity( int arity )
 {
@@ -404,18 +404,18 @@ void COutlineErlang::build_arity( int arity )
 	m_func[ buf_size - 1 ] = L'\0';
 }
 
-/** Erlang ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ
+/** Erlang ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ
 
-	@par å‚È‰¼’è‚Æ•ûj
-	ŠÖ”éŒ¾‚Í1ƒJƒ‰ƒ€–Ú‚©‚ç‹LÚ‚³‚ê‚Ä‚¢‚éD
+	@par ä¸»ãªä»®å®šã¨æ–¹é‡
+	é–¢æ•°å®£è¨€ã¯1ã‚«ãƒ©ãƒ ç›®ã‹ã‚‰è¨˜è¼‰ã•ã‚Œã¦ã„ã‚‹ï¼
 	
 	
-	@par ‰ğÍƒAƒ‹ƒSƒŠƒYƒ€
-	1ƒJƒ‰ƒ€–Ú‚ªƒAƒ‹ƒtƒ@ƒxƒbƒg‚Ìê‡: ŠÖ”‚ç‚µ‚¢‚Æ‚µ‚Ä‰ğÍŠJn / ŠÖ”–¼‚ğ•Û‘¶
-	ƒXƒy[ƒX‚Í“Ç‚İ”ò‚Î‚·
-	( ‚ğ”­Œ©‚µ‚½‚ç ) ‚Ü‚Åˆø”‚ğ”‚¦‚éD‚»‚Ìê‡“ü‚êq‚ÌŠ‡ŒÊ‚Æ•¶š—ñ‚ğl—¶
-	-> ‚Ü‚½‚Í when ‚ª‚ ‚ê‚ÎŠÖ”’è‹`‚ÆŒ©‚È‚·(Ÿ‚Ìs‚É‚Ü‚½‚ª‚Á‚Ä‚à—Ç‚¢)
-	“r’† % (ƒRƒƒ“ƒg) ‚ªŒ»‚ê‚½‚çs––‚Ü‚Å“Ç‚İ”ò‚Î‚·
+	@par è§£æã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ 
+	1ã‚«ãƒ©ãƒ ç›®ãŒã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆã®å ´åˆ: é–¢æ•°ã‚‰ã—ã„ã¨ã—ã¦è§£æé–‹å§‹ / é–¢æ•°åã‚’ä¿å­˜
+	ã‚¹ãƒšãƒ¼ã‚¹ã¯èª­ã¿é£›ã°ã™
+	( ã‚’ç™ºè¦‹ã—ãŸã‚‰ ) ã¾ã§å¼•æ•°ã‚’æ•°ãˆã‚‹ï¼ãã®å ´åˆå…¥ã‚Œå­ã®æ‹¬å¼§ã¨æ–‡å­—åˆ—ã‚’è€ƒæ…®
+	-> ã¾ãŸã¯ when ãŒã‚ã‚Œã°é–¢æ•°å®šç¾©ã¨è¦‹ãªã™(æ¬¡ã®è¡Œã«ã¾ãŸãŒã£ã¦ã‚‚è‰¯ã„)
+	é€”ä¸­ % (ã‚³ãƒ¡ãƒ³ãƒˆ) ãŒç¾ã‚ŒãŸã‚‰è¡Œæœ«ã¾ã§èª­ã¿é£›ã°ã™
 */
 void CDocOutline::MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -429,10 +429,10 @@ void CDocOutline::MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr )
 		const wchar_t* pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if( erl_state_machine.parse( pLine, nLineLen, nLineCount )){
 			/*
-			  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-			  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-			  ¨
-			  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+			  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+			  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+			  â†’
+			  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 			*/
 			CLayoutPoint ptPosXY;
 			m_pcDocRef->m_cLayoutMgr.LogicToLayout(

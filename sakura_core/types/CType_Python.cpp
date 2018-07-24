@@ -1,8 +1,8 @@
-/*! @file
-	@brief Python�A�E�g���C�����
+﻿/*! @file
+	@brief Pythonアウトライン解析
 
 	@author genta
-	@date 2007.02.24 �V�K�쐬
+	@date 2007.02.24 新規作成
 */
 /*
 	Copyright (C) 2007, genta
@@ -36,13 +36,13 @@
 
 
 /*!
-	�֐��ɗp���邱�Ƃ��ł��镶�����ǂ����̔���
+	関数に用いることができる文字かどうかの判定
 	
 	@date 2007.02.08 genta
 
-	@note �����ɂ�1�����ڂɐ������g�����Ƃ͏o���Ȃ����C
-		����͎��s���Ă݂�Ζ��炩�ɂ킩�邱�ƂȂ̂�
-		�����܂Ō����Ƀ`�F�b�N���Ȃ�
+	@note 厳密には1文字目に数字を使うことは出来ないが，
+		それは実行してみれば明らかにわかることなので
+		そこまで厳密にチェックしない
 */
 inline bool Python_IsWordChar( wchar_t c ){
 	return ( L'_' == c ||
@@ -54,49 +54,49 @@ inline bool Python_IsWordChar( wchar_t c ){
 
 
 
-/*! python�̃p�[�X��Ԃ��Ǘ�����\����
+/*! pythonのパース状態を管理する構造体
 
-	��͒��ɉ�͊֐��̊Ԃ������n�����D
-	���̃N���X�͌��݂̏�ԂƁC������̐�����ێ�����D
-	��͈ʒu�͉�͊֐��ԂŃp�����[�^�Ƃ��ēn�����̂�
-	���̒��ł͕ێ����Ȃ��D
+	解析中に解析関数の間を引き渡される．
+	このクラスは現在の状態と，文字列の性質を保持する．
+	解析位置は解析関数間でパラメータとして渡されるので
+	この中では保持しない．
 
-	[��ԑJ��]
-	�J�n : STATE_NORMAL
+	[状態遷移]
+	開始 : STATE_NORMAL
 
-	STATE_NORMAL/STATE_CONTINUE��STATE_CONTINUE�̑J��
-	- �p���s�}�[�N�L��
+	STATE_NORMAL/STATE_CONTINUE→STATE_CONTINUEの遷移
+	- 継続行マーク有り
 
-	STATE_NORMAL/STATE_CONTINUE��STATE_NORMAL�̑J��
-	- �p���s�}�[�N���Ȃ��s���ɒB����
-	- �R�����g�ɒB����
+	STATE_NORMAL/STATE_CONTINUE→STATE_NORMALの遷移
+	- 継続行マークがなく行末に達した
+	- コメントに達した
 
-	STATE_NORMAL��STATE_STRING�̑J��
-	- ���p������
+	STATE_NORMAL→STATE_STRINGの遷移
+	- 引用符あり
 
-	STATE_STRING��STATE_NORMAL�̑J��
-	- �K��̕�����I���L��
-	- short string�ŕ�����̏I�����������p�����p���s�}�[�N���Ȃ��s���ɒB����
+	STATE_STRING→STATE_NORMALの遷移
+	- 規定の文字列終了記号
+	- short stringで文字列の終了を示す引用符も継続行マークもなく行末に達した
 
 	@date 2007.02.12 genta
 */
 struct COutlinePython {
 	enum {
-		STATE_NORMAL,	//!< �ʏ�s : �s�����܂�
-		STATE_STRING,	//!< ������
-		STATE_CONTINUE,	//!< �p���s : �O�̍s����̑����Ȃ̂ōs���Ƃ݂͂Ȃ���Ȃ�
+		STATE_NORMAL,	//!< 通常行 : 行頭を含む
+		STATE_STRING,	//!< 文字列中
+		STATE_CONTINUE,	//!< 継続行 : 前の行からの続きなので行頭とはみなされない
 	} m_state;
 	
-	int m_quote_char;	//!<	���p���L��
-	bool m_raw_string;	//!<	�G�X�P�[�v�L�������Ȃ�true
-	bool m_long_string;	//!<	���������񒆂Ȃ�true
+	int m_quote_char;	//!<	引用符記号
+	bool m_raw_string;	//!<	エスケープ記号無視ならtrue
+	bool m_long_string;	//!<	長い文字列中ならtrue
 
 	COutlinePython();
 
-	/*	�e��Ԃɂ����镶����X�L�������s��
-		Scan*���Ăт������Ƃ��͊��ɂ��̏�ԂɂȂ��Ă��邱�Ƃ��O��D
-		�����Ԃ���ʂ̏�ԂɈڂ�Ƃ���܂ł������D
-		�ʂ̏�ԂɈڂ锻�肪��₱�����΂����́CEnter*�Ƃ��Ċ֐��ɂ���D
+	/*	各状態における文字列スキャンを行う
+		Scan*が呼びだされるときは既にその状態になっていることが前提．
+		ある状態から別の状態に移るところまでを扱う．
+		別の状態に移る判定がややこしいばあいは，Enter*として関数にする．
 	*/	
 	int ScanNormal( const wchar_t* data, int linelen, int start_offset );
 	int ScanString( const wchar_t* data, int linelen, int start_offset );
@@ -106,9 +106,9 @@ struct COutlinePython {
 	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
 };
 
-/*!�R���X�g���N�^: ������
+/*!コンストラクタ: 初期化
 
-	������Ԃ�STATE_NORMAL�ɐݒ肷��D
+	初期状態をSTATE_NORMALに設定する．
 */
 COutlinePython::COutlinePython()
 	: m_state( STATE_NORMAL ),
@@ -117,42 +117,42 @@ COutlinePython::COutlinePython()
 {
 }
 
-/*! @brief Python������̓�����ŕ������ʂ����肷��
+/*! @brief Python文字列の入り口で文字列種別を決定する
 
-	������̎�ނ�K�؂ɔ��ʂ��C������Ԃ�ݒ肷��D
-	start_offset�͊J�n���p�����w���Ă��邱�ƁD
+	文字列の種類を適切に判別し，内部状態を設定する．
+	start_offsetは開始引用符を指していること．
 
-	- ���p��1��: short string
-	- ���p��3��: long string
-	- ���p���̑O��r��R���� : raw string
+	- 引用符1つ: short string
+	- 引用符3つ: long string
+	- 引用符の前にrかRあり : raw string
 
-	@param[in] data �Ώە�����
-	@param[in] linelen �f�[�^�̒���
-	@param[in] start_offset �����J�n�ʒu
+	@param[in] data 対象文字列
+	@param[in] linelen データの長さ
+	@param[in] start_offset 調査開始位置
 	
-	@return ������̈ʒu
+	@return 調査後の位置
 
 	@invariant
 		m_state != STATE_STRING
 
-	@note ���p���̈ʒu�ŌĂт����΁C��������͕K��STATE_STRING�ɂȂ��Ă���͂��D
-		���p���ȊO�̈ʒu�ŌĂт������ꍇ�͉������Ȃ��Ŕ�����D
+	@note 引用符の位置で呼びだせば，抜けた後は必ずSTATE_STRINGになっているはず．
+		引用符以外の位置で呼びだした場合は何もしないで抜ける．
 */
 int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_offset )
 {
 	assert( m_state != STATE_STRING );
 
 	int col = start_offset;
-	//	������J�n�`�F�b�N
+	//	文字列開始チェック
 	if( data[ col ] == '\"' || data[ col ] == '\'' ){
 		int quote_char = data[ col ];
 		m_state = STATE_STRING;
 		m_quote_char = quote_char;
-		//	������̊J�n
+		//	文字列の開始
 		if( col >= 1 &&
 			( data[ col - 1 ] == 'r' || data[ col - 1 ] == 'R' )){
-			//	�����ɂ͒��O��SHIFT_JIS��2�o�C�g�ڂ��ƌ딻�肷��\�������邪
-			//	�������������Ȃ��R�[�h�͑���ɂ��Ȃ�
+			//	厳密には直前がSHIFT_JISの2バイト目だと誤判定する可能性があるが
+			//	そういう動かないコードは相手にしない
 			m_raw_string = true;
 		}
 		else {
@@ -172,25 +172,25 @@ int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_off
 	return col;
 }
 
-/*! @brief Python�v���O�����̏���
+/*! @brief Pythonプログラムの処理
 
-	�v���O�����{�̕����̏����D������̊J�n�C�p���s�C�R�����g�C�ʏ�s�����`�F�b�N����D
-	�s�����肪�I�������ň����n�����̂ŁC�֐��E�N���X��`�͍l�����Ȃ��ėǂ��D
+	プログラム本体部分の処理．文字列の開始，継続行，コメント，通常行末をチェックする．
+	行頭判定が終わった後で引き渡されるので，関数・クラス定義は考慮しなくて良い．
 	
-	�ȉ��̏ꍇ�ɏ������I������
-	- �s��: STATE_NORMAL�Ƃ��ď����I��
-	- �R�����g: STATE_NORMAL�Ƃ��ď����I��
-	- ������̊J�n: EnterString() �ɂĕ������ʂ̔�����s������STATE_STRING�Ƃ��ď����I��
-	- �p���s: STATE_CONTINUE�Ƃ��ď����I��
+	以下の場合に処理を終了する
+	- 行末: STATE_NORMALとして処理終了
+	- コメント: STATE_NORMALとして処理終了
+	- 文字列の開始: EnterString() にて文字列種別の判定を行った後STATE_STRINGとして処理終了
+	- 継続行: STATE_CONTINUEとして処理終了
 
-	@param[in] data �Ώە�����
-	@param[in] linelen �f�[�^�̒���
-	@param[in] start_offset �����J�n�ʒu
+	@param[in] data 対象文字列
+	@param[in] linelen データの長さ
+	@param[in] start_offset 調査開始位置
 	
 	@invaliant
 		m_state == STATE_NORMAL || m_state == STATE_CONTINUE
 	
-	@return ������̈ʒu
+	@return 調査後の位置
 */
 int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offset )
 {
@@ -203,21 +203,21 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 			col += (nCharChars - 1);
 			continue;
 		}
-		//	�R�����g
+		//	コメント
 		if( data[col] == '#' ){
-			//	�R�����g�͍s���Ɠ��������Ȃ̂�
-			//	�킴�킴�Ɨ����Ĉ����K�v��������
-			//	�����ŕЂ�t���Ă��܂���
+			//	コメントは行末と同じ扱いなので
+			//	わざわざ独立して扱う必要性が薄い
+			//	ここで片を付けてしまおう
 			m_state = STATE_NORMAL;
 			break;
 		}
-		//	������
+		//	文字列
 		else if( data[col] == '\"' || data[col] == '\'' ){
 			return EnterString( data, linelen, col );
 		}
-		else if( data[col] == '\\' ){	//	�p���s��������Ȃ�
-			//	CR��CRLF��LF�ōs��
-			//	�ŏI�s�ɂ͉��s�R�[�h���Ȃ����Ƃ����邪�C����ȍ~�ɂ͉����Ȃ��̂ŉe�����Ȃ�
+		else if( data[col] == '\\' ){	//	継続行かもしれない
+			//	CRかCRLFかLFで行末
+			//	最終行には改行コードがないことがあるが，それ以降には何もないので影響しない
 			if(
 				( linelen - 2 == col && 
 				( data[ col + 1 ] == WCODE::CR && data[ col + 2 ] == WCODE::LF )) ||
@@ -233,29 +233,29 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 }
 
 
-/*! @brief python������(1�s)�𒲍�����
+/*! @brief python文字列(1行)を調査する
 
-	�^����ꂽ��Ԃ���Python������̏�ԕω���ǂ��C
-	�ŏI�I�ȏ�Ԃ����肷��D
+	与えられた状態からPython文字列の状態変化を追い，
+	最終的な状態を決定する．
 	
-	������̊J�n�����EnterString()�֐��ŏ����ς݂ł���C���̌��ʂ�
-	m_state, m_raw_string, m_long_string, m_quote_char�ɗ^�����Ă���D
+	文字列の開始判定はEnterString()関数で処理済みであり，その結果が
+	m_state, m_raw_string, m_long_string, m_quote_charに与えられている．
 	
-	m_raw_string��true�Ȃ�backslash�ɂ��G�X�P�[�v�������s��Ȃ�
-	m_long_string�Ȃ�m_quote_char��3�����܂ŕ�����ƂȂ�D
+	m_raw_stringがtrueならbackslashによるエスケープ処理を行わない
+	m_long_stringならm_quote_charが3つ続くまで文字列となる．
 
-	@param[in] data �Ώە�����
-	@param[in] linelen �f�[�^�̒���
-	@param[in] start_offset �����J�n�ʒu
+	@param[in] data 対象文字列
+	@param[in] linelen データの長さ
+	@param[in] start_offset 調査開始位置
 	
-	@return ������̈ʒu
+	@return 調査後の位置
 	
 	@invariant
 		m_state==STATE_STRING
 
 	@author genta
-	@date 2007.02.12 �V�K�쐬
-	@date 2007.03.23 genta ������̌p���s�̏�����ǉ�
+	@date 2007.02.12 新規作成
+	@date 2007.03.23 genta 文字列の継続行の処理を追加
 
 */
 int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offset )
@@ -270,8 +270,8 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 			col += (nCharChars - 1);
 			continue;
 		}
-		//	raw���[�h�ȊO�ł̓G�X�P�[�v���`�F�b�N
-		//	raw���[�h�ł��p���s�̓`�F�b�N
+		//	rawモード以外ではエスケープをチェック
+		//	rawモードでも継続行はチェック
 		if( data[ col ] == '\\' && col + 1 < linelen ){
 			wchar_t key = data[ col + 1 ];
 			if( ! m_raw_string ){
@@ -284,10 +284,10 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 				}
 			}
 			if( WCODE::IsLineDelimiter(key, bExtEol) ){
-				// \r\n���܂Ƃ߂�\n�Ƃ��Ĉ����K�v������
+				// \r\nをまとめて\nとして扱う必要がある
 				if( col + 1 >= linelen ||
 					data[ col + 2 ] == key ){
-					// �{���ɍs��
+					// 本当に行末
 					++col;
 					continue;
 				}
@@ -296,23 +296,23 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 				}
 			}
 		}
-		//	short string + ���s�̏ꍇ�̓G���[���狭�����A
+		//	short string + 改行の場合はエラーから強制復帰
 		else if( WCODE::IsLineDelimiter(data[ col ], bExtEol) ){
-			//���Ƃ�
+			//あとで
 			if( ! m_long_string ){
-				//	������̖����𔭌�����
+				//	文字列の末尾を発見した
 				m_state = STATE_NORMAL;
 				return col + 1;
 			}
 		}
-		//	���p��������������I���`�F�b�N
+		//	引用符が見つかったら終了チェック
 		else if( data[ col ] == quote_char ){
 			if( ! m_long_string ){
-				//	������̖����𔭌�����
+				//	文字列の末尾を発見した
 				m_state = STATE_NORMAL;
 				return col + 1;
 			}
-			//	long string�̏ꍇ
+			//	long stringの場合
 			if( col + 2 < linelen &&
 				data[ col + 1 ] == quote_char &&
 				data[ col + 2 ] == quote_char ){
@@ -324,20 +324,20 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 	return linelen;
 }
 
-/*!	Python��������s���܂ŃX�L�������Ď��̍s�̏�Ԃ����肷��
+/*!	Python文字列を行末までスキャンして次の行の状態を決定する
 
-	m_state�ɐݒ肳�ꂽ���݂̏�Ԃ���J�n����data��start_offset����linelen�ɒB����܂�
-	�������C�s���ɂ������Ԃ�m_state�Ɋi�[����D
+	m_stateに設定された現在の状態から開始してdataをstart_offsetからlinelenに達するまで
+	走査し，行末における状態をm_stateに格納する．
 
-	���݂̏�Ԃɉ����ăT�u���[�`���ɉ�͏������˗�����D
-	�T�u���[�`��Scan**�ł͕�����data��start_offset�����ԑJ�ڂ���������܂ŏ�����
-	�����C�ʂ̏�ԂɑJ�ڂ�������ɏ����ς݂̌��ʒu��Ԃ��ďI������D
+	現在の状態に応じてサブルーチンに解析処理を依頼する．
+	サブルーチンScan**では文字列dataのstart_offsetから状態遷移が発生するまで処理を
+	続け，別の状態に遷移した直後に処理済みの桁位置を返して終了する．
 
-	���̊֐��ɖ߂�����͍ēx���݂̏�Ԃɉ����ď����˗����s���D������s���ɒB����܂ŌJ��Ԃ��D
+	この関数に戻った後は再度現在の状態に応じて処理依頼を行う．これを行末に達するまで繰り返す．
 
-	@param[in] data �Ώە�����
-	@param[in] linelen �f�[�^�̒���
-	@param[in] start_offset �����J�n�ʒu
+	@param[in] data 対象文字列
+	@param[in] linelen データの長さ
+	@param[in] start_offset 調査開始位置
 
 */
 void COutlinePython::DoScanLine( const wchar_t* data, int linelen, int start_offset )
@@ -351,39 +351,39 @@ void COutlinePython::DoScanLine( const wchar_t* data, int linelen, int start_off
 			col = ScanString( data, linelen, col );
 		}
 		else {
-			//	���肦�Ȃ��G���[
+			//	ありえないエラー
 			return;
 		}
 	}
 }
 
 
-/*!	@brief python�֐����X�g�쐬
+/*!	@brief python関数リスト作成
 
-	class, def �Ŏn�܂�s���疼�O�𔲂��o���D
+	class, def で始まる行から名前を抜き出す．
 	
 	class CLASS_NAME( superclass ):
 	def FUNCTION_NAME( parameters ):
 
-	������ƃR�����g�����O����K�v������D
+	文字列とコメントを除外する必要がある．
 
-	�ʏ�̍s���̏ꍇ�Ɋ֐��E�N���X����Ɠo�^�������s���D
-	Python���L�̋󔒂̐��𐔂��ăl�X�g���x���𔻒肷��D
-	indent_level��z��Ƃ��ėp���Ă���C�C���f���g���x�����Ƃ̃X�y�[�X�����i�[����D
-	�Ȃ��CTAB��8����؂�ւ̈ړ��Ɖ��߂��邱�ƂɂȂ��Ă���D
+	通常の行頭の場合に関数・クラス判定と登録処理を行う．
+	Python特有の空白の数を数えてネストレベルを判定する．
+	indent_levelを配列として用いており，インデントレベルごとのスペース数を格納する．
+	なお，TABは8桁区切りへの移動と解釈することになっている．
 	
-	�ʏ�̍s���łȂ�(�����񒆂���ьp���s)�C���邢�͍s���̏����������
-	��ԋ@�B python_analyze_state �ɔ��菈�����˗�����D
+	通常の行頭でない(文字列中および継続行)，あるいは行頭の処理完了後は
+	状態機械 python_analyze_state に判定処理を依頼する．
 
-	@par ������
-	'' "" ����OK
-	���p��3�A���Ń����O������
-	���O��r��R����������G�X�P�[�v�L���𖳎�(���������s�̃G�X�P�[�v�͗L��)
+	@par 文字列
+	'' "" 両方OK
+	引用符3連続でロング文字列
+	直前にrかRがあったらエスケープ記号を無視(ただし改行のエスケープは有効)
 	
-	@par �R�����g
-	#�Ŏn�܂�C�s�̌p���͂Ȃ��D
+	@par コメント
+	#で始まり，行の継続はない．
 
-	@date 2007.02.08 genta �V�K�쐬
+	@date 2007.02.08 genta 新規作成
 */
 void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -395,7 +395,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 	const int MAX_DEPTH = 10;
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	int indent_level[ MAX_DEPTH ]; // �e���x���̃C���f���g���ʒu()
+	int indent_level[ MAX_DEPTH ]; // 各レベルのインデント桁位置()
 	indent_level[0] = 0;	// do as python does.
 	int depth_index = 0;
 
@@ -408,8 +408,8 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 		
 		if( python_analyze_state.IsLogicalLineTop() ){
 			//	indent check
-			//	May 15, 2007 genta ���ʒucol�̓f�[�^�I�t�Z�b�gd�ƓƗ��ɂ��Ȃ���
-			//	�������r�����������Ȃ�
+			//	May 15, 2007 genta 桁位置colはデータオフセットdと独立にしないと
+			//	文字列比較がおかしくなる
 			for( depth = 0, col = CLogicInt(0); col < nLineLen; ++col ){
 				//	calculate indent level
 				if( pLine[col] == L' ' ){
@@ -445,11 +445,11 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				continue;
 			}
 
-			//	2006.02.28 genta ��؂�`�F�b�N
-			//	define, classic�����ΏۂɂȂ�Ȃ��悤�ɁC���ɃX�y�[�X���^�u��
-			//	�������Ƃ��m�F�D
-			//	�{���͌p���s�Ƃ��Ď��̍s�Ɋ֐������������Ƃ����@��͉\����
-			//	���G�ɂȂ�̂őΉ����Ȃ��D
+			//	2006.02.28 genta 区切りチェック
+			//	define, classic等が対象にならないように，後ろにスペースかタブが
+			//	続くことを確認．
+			//	本当は継続行として次の行に関数名を書くことも文法上は可能だが
+			//	複雑になるので対応しない．
 			int c = pLine[col];
 			if(  c != L' ' && c != L'\t' ){
 				python_analyze_state.DoScanLine( pLine, nLineLen, col );
@@ -457,9 +457,9 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			}
 
 			//	adjust current depth level
-			//	�֐������̎��s���̂���ɚ��Ɋ֐�������P�[�X���l��
-			//	def/class�ȊO�̃C���f���g�͋L�^���Ȃ����������̂�
-			//	���o���s�Ɗm�肵�Ă���C���f���g���x���̔�����s��
+			//	関数内部の実行文のさらに奧に関数があるケースを考慮
+			//	def/class以外のインデントは記録しない方がいいので
+			//	見出し行と確定してからインデントレベルの判定を行う
 			int i;
 			for( i = depth_index; i >= 0; --i ){
 				if( depth == indent_level[ i ] ){
@@ -473,9 +473,9 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 
-			//	2007.02.08 genta �蔲���R�����g
-			//	�����ɂ́C�����Ōp���s�����邱�Ƃ��\�����C
-			//	����ȃ��A�ȃP�[�X�͍l�����Ȃ�
+			//	2007.02.08 genta 手抜きコメント
+			//	厳密には，ここで継続行を入れることが可能だが，
+			//	そんなレアなケースは考慮しない
 			
 			//	skip whitespace
 			while( col < nLineLen && C_IsSpace( pLine[col], bExtEol ))
@@ -486,16 +486,16 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					&& Python_IsWordChar( pLine[w_end] ); ++w_end )
 				;
 			
-			//	2007.02.08 genta �蔲���R�����g
-			//	�����ɂ́C���̌�Ɋ��ʂɈ͂܂ꂽ�������邢�͌p�����N���X��
-			//	���ʂɈ͂܂�ē���C�����:�Ƒ�����
-			//	�p���s�̉\��������̂ŁC�����܂Ń`�F�b�N���Ȃ�
+			//	2007.02.08 genta 手抜きコメント
+			//	厳密には，この後に括弧に囲まれた引数あるいは継承元クラスが
+			//	括弧に囲まれて入り，さらに:と続くが
+			//	継続行の可能性があるので，そこまでチェックしない
 			
-			//	�����܂łœo�^�v��OK�Ƃ݂Ȃ�
+			//	ここまでで登録要件OKとみなす
 			
-			//	���̂�����͎b��
+			//	このあたりは暫定
 
-			wchar_t szWord[512];	// �K���ɑ傫�Ȑ�(python�ł͖��O�̒����̏��������̂��H)
+			wchar_t szWord[512];	// 適当に大きな数(pythonでは名前の長さの上限があるのか？)
 			int len = w_end - col;
 			
 			if( len > 0 ){
@@ -511,7 +511,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			}
 			if( nItemFuncId == 4  ){
 				if( _countof( szWord ) - 8  < len ){
-					//	��������ē����
+					//	後ろを削って入れる
 					len = _countof( szWord ) - 8;
 				}
 				// class
@@ -519,10 +519,10 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			}
 			
 			/*
-			  �J�[�\���ʒu�ϊ�
-			  �����ʒu(�s������̃o�C�g���A�܂�Ԃ������s�ʒu)
-			  ��
-			  ���C�A�E�g�ʒu(�s������̕\�����ʒu�A�܂�Ԃ�����s�ʒu)
+			  カーソル位置変換
+			  物理位置(行頭からのバイト数、折り返し無し行位置)
+			  →
+			  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
 			CLayoutPoint ptPosXY;
 			m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -536,7 +536,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				nItemFuncId,
 				depth_index
 			);
-			col = CLogicInt(w_end); // �N���X�E�֐���`�̑����͂�������
+			col = CLogicInt(w_end); // クラス・関数定義の続きはここから
 		}
 		python_analyze_state.DoScanLine( pLine, nLineLen, col );
 	}

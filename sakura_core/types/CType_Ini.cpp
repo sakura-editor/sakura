@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,18 +26,18 @@
 #include "types/CType.h"
 #include "view/colors/EColorIndexType.h"
 
-/* Ý’èƒtƒ@ƒCƒ‹ */
-//Nov. 9, 2000 JEPRO Windows•W€‚Ìini, inf, cnfƒtƒ@ƒCƒ‹‚ÆsakuraƒL[ƒ[ƒhÝ’èƒtƒ@ƒCƒ‹.kwd, FÝ’èƒtƒ@ƒCƒ‹.col ‚à“Ç‚ß‚é‚æ‚¤‚É‚·‚é
+/* è¨­å®šãƒ•ã‚¡ã‚¤ãƒ« */
+//Nov. 9, 2000 JEPRO Windowsæ¨™æº–ã®ini, inf, cnfãƒ•ã‚¡ã‚¤ãƒ«ã¨sakuraã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«.kwd, è‰²è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«.col ã‚‚èª­ã‚ã‚‹ã‚ˆã†ã«ã™ã‚‹
 void CType_Ini::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£Žq
-	_tcscpy( pType->m_szTypeName, _T("Ý’èƒtƒ@ƒCƒ‹") );
+	//åå‰ã¨æ‹¡å¼µå­
+	_tcscpy( pType->m_szTypeName, _T("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«") );
 	_tcscpy( pType->m_szTypeExts, _T("ini,inf,cnf,kwd,col") );
 	
-	//Ý’è
-	pType->m_cLineComment.CopyTo( 0, L"//", -1 );				/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_cLineComment.CopyTo( 1, L";", -1 );				/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^2 */
-	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@ */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"//", -1 );				/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_cLineComment.CopyTo( 1, L";", -1 );				/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿2 */
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³• */
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
 }

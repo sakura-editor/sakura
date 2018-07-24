@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,27 +26,27 @@
 #include "types/CType.h"
 #include "view/colors/EColorIndexType.h"
 
-/* ƒŠƒbƒ`ƒeƒLƒXƒg */
-//JUl. 10, 2001 JEPRO WinHelpì‚é‚Ì‚É‚¢‚éƒPƒ“‚Ë
-//Jul. 10, 2001 JEPRO ’Ç‰Á
+/* ãƒªãƒƒãƒãƒ†ã‚­ã‚¹ãƒˆ */
+//JUl. 10, 2001 JEPRO WinHelpä½œã‚‹ã®ã«ã„ã‚‹ã‚±ãƒ³ã­
+//Jul. 10, 2001 JEPRO è¿½åŠ 
 void CType_Rich::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£Žq
-	_tcscpy( pType->m_szTypeName, _T("ƒŠƒbƒ`ƒeƒLƒXƒg") );
+	//åå‰ã¨æ‹¡å¼µå­
+	_tcscpy( pType->m_szTypeName, _T("ãƒªãƒƒãƒãƒ†ã‚­ã‚¹ãƒˆ") );
 	_tcscpy( pType->m_szTypeExts, _T("rtf") );
 
-	//Ý’è
-	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@ */
-	pType->m_nKeyWordSetIdx[0]  = 15;							/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* ”¼Šp”’l‚ðF•ª‚¯•\Ž¦ */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢
-	pType->m_ColorInfoArr[COLORIDX_URL].m_bDisp = false;		//URL‚ÉƒAƒ“ƒ_[ƒ‰ƒCƒ“‚ðˆø‚©‚È‚¢
+	//è¨­å®š
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³• */
+	pType->m_nKeyWordSetIdx[0]  = 15;							/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* åŠè§’æ•°å€¤ã‚’è‰²åˆ†ã‘è¡¨ç¤º */
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„
+	pType->m_ColorInfoArr[COLORIDX_URL].m_bDisp = false;		//URLã«ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ã‚’å¼•ã‹ãªã„
 }
 
 
 
-//Jul. 10, 2001 JEPRO ’Ç‰Á
+//Jul. 10, 2001 JEPRO è¿½åŠ 
 const wchar_t* g_ppszKeywordsRTF[] = {
 	L"\\ansi",
 	L"\\b",

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,23 +32,23 @@
 /* PL/SQL */
 void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£q
+	//åå‰ã¨æ‹¡å¼µå­
 	_tcscpy( pType->m_szTypeName, _T("PL/SQL") );
 	_tcscpy( pType->m_szTypeExts, _T("sql,plsql") );
 
-	//İ’è
-	pType->m_cLineComment.CopyTo( 0, L"--", -1 );					/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-	pType->m_nStringType = STRING_LITERAL_PLSQL;					/* •¶š—ñ‹æØ‚è‹L†ƒGƒXƒP[ƒv•û–@  0=[\"][\'] 1=[""][''] */
-	wcscpy( pType->m_szIndentChars, L"|š" );						/* ‚»‚Ì‘¼‚ÌƒCƒ“ƒfƒ“ƒg‘ÎÛ•¶š */
-	pType->m_nKeyWordSetIdx[0] = 2;									/* ƒL[ƒ[ƒhƒZƒbƒg */
-	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•û–@ */
+	//è¨­å®š
+	pType->m_cLineComment.CopyTo( 0, L"--", -1 );					/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+	pType->m_nStringType = STRING_LITERAL_PLSQL;					/* æ–‡å­—åˆ—åŒºåˆ‡ã‚Šè¨˜å·ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—æ–¹æ³•  0=[\"][\'] 1=[""][''] */
+	wcscpy( pType->m_szIndentChars, L"|â˜…" );						/* ãã®ä»–ã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¯¾è±¡æ–‡å­— */
+	pType->m_nKeyWordSetIdx[0] = 2;									/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ */
+	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£ææ–¹æ³• */
 }
 
 
 
 
-/*! PL/SQLŠÖ”ƒŠƒXƒgì¬ */
+/*! PL/SQLé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ */
 void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 {
 	const wchar_t*	pLine;
@@ -76,7 +76,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL( &nLineLen );
 		for( i = 0; i < nLineLen; ++i ){
-			/* 1ƒoƒCƒg•¶š‚¾‚¯‚ğˆ—‚·‚é */
+			/* 1ãƒã‚¤ãƒˆæ–‡å­—ã ã‘ã‚’å‡¦ç†ã™ã‚‹ */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
 			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
 			if( 0 == nCharChars ){
@@ -86,7 +86,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //				i += (nCharChars - 1);
 //				continue;
 //			}
-			/* ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ“Ç‚İ‚İ’† */
+			/* ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			if( 20 == nMode ){
 				if( L'\'' == pLine[i] ){
 					if( i + 1 < nLineLen && L'\'' == pLine[i + 1] ){
@@ -98,7 +98,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 				}else{
 				}
 			}else
-			/* ƒRƒƒ“ƒg“Ç‚İ‚İ’† */
+			/* ã‚³ãƒ¡ãƒ³ãƒˆèª­ã¿è¾¼ã¿ä¸­ */
 			if( 8 == nMode ){
 				if( i + 1 < nLineLen && L'*' == pLine[i] &&  L'/' == pLine[i + 1] ){
 					++i;
@@ -107,7 +107,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 				}else{
 				}
 			}else
-			/* ’PŒê“Ç‚İ‚İ’† */
+			/* å˜èªèª­ã¿è¾¼ã¿ä¸­ */
 			if( 1 == nMode ){
 				if( (1 == nCharChars && (
 					L'_' == pLine[i] ||
@@ -115,7 +115,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 					) )
 				 || 2 == nCharChars
 				){
@@ -167,23 +167,23 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					if( 2 == nParseCnt ){
 						if( 0 == wcsicmp( szWord, L"IS" ) ){
 							if( 1 == nFuncOrProc ){
-								nFuncId = 11;	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“–{‘Ì */
+								nFuncId = 11;	/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³æœ¬ä½“ */
 							}else
 							if( 2 == nFuncOrProc ){
-								nFuncId = 21;	/* ƒvƒƒV[ƒWƒƒ–{‘Ì */
+								nFuncId = 21;	/* ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£æœ¬ä½“ */
 							}else
 							if( 3 == nFuncOrProc ){
-								nFuncId = 31;	/* ƒpƒbƒP[ƒWd—l•” */
+								nFuncId = 31;	/* ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ä»•æ§˜éƒ¨ */
 							}else
 							if( 4 == nFuncOrProc ){
-								nFuncId = 41;	/* ƒpƒbƒP[ƒW–{‘Ì */
+								nFuncId = 41;	/* ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸æœ¬ä½“ */
 							}
 							++nFuncNum;
 							/*
-							  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-							  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-							  ¨
-							  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+							  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+							  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+							  â†’
+							  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 							*/
 							CLayoutPoint ptPos;
 							m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -195,13 +195,13 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						}
 						if( 0 == wcsicmp( szWord, L"AS" ) ){
 							if( 3 == nFuncOrProc ){
-								nFuncId = 31;	/* ƒpƒbƒP[ƒWd—l•” */
+								nFuncId = 31;	/* ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ä»•æ§˜éƒ¨ */
 								++nFuncNum;
 								/*
-								  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-								  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-								  ¨
-								  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+								  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+								  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+								  â†’
+								  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 								*/
 								CLayoutPoint ptPos;
 								m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -212,13 +212,13 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 								nParseCnt = 0;
 							}
 							else if( 4 == nFuncOrProc ){
-								nFuncId = 41;	/* ƒpƒbƒP[ƒW–{‘Ì */
+								nFuncId = 41;	/* ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸æœ¬ä½“ */
 								++nFuncNum;
 								/*
-								  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-								  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-								  ¨
-								  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+								  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+								  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+								  â†’
+								  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 								*/
 								CLayoutPoint ptPos;
 								m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -238,14 +238,14 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					continue;
 				}
 			}else
-			/* ‹L†—ñ“Ç‚İ‚İ’† */
+			/* è¨˜å·åˆ—èª­ã¿è¾¼ã¿ä¸­ */
 			if( 2 == nMode ){
 				if( L'_' == pLine[i] ||
 					L'~' == pLine[i] ||
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 “ú–{Œê‘Î‰
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 					L'\t' == pLine[i] ||
 					 L' ' == pLine[i] ||
 					 WCODE::IsLineDelimiter(pLine[i], bExtEol) ||
@@ -279,9 +279,9 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					}
 				}
 			}else
-			/* ’·‰ß‚¬‚é’PŒê–³‹’† */
+			/* é•·éãã‚‹å˜èªç„¡è¦–ä¸­ */
 			if( 999 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
@@ -290,9 +290,9 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					continue;
 				}
 			}else
-			/* ƒm[ƒ}ƒ‹ƒ‚[ƒh */
+			/* ãƒãƒ¼ãƒãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 			if( 0 == nMode ){
-				/* ‹ó”’‚âƒ^ƒu‹L†“™‚ğ”ò‚Î‚· */
+				/* ç©ºç™½ã‚„ã‚¿ãƒ–è¨˜å·ç­‰ã‚’é£›ã°ã™ */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
@@ -314,16 +314,16 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 				if( L';' == pLine[i] ){
 					if( 2 == nParseCnt ){
 						if( 1 == nFuncOrProc ){
-							nFuncId = 10;	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“éŒ¾ */
+							nFuncId = 10;	/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³å®£è¨€ */
 						}else{
-							nFuncId = 20;	/* ƒvƒƒV[ƒWƒƒéŒ¾ */
+							nFuncId = 20;	/* ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£å®£è¨€ */
 						}
 						++nFuncNum;
 						/*
-						  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-						  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
-						  ¨
-						  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
+						  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+						  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
+						  â†’
+						  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
 						*/
 						CLayoutPoint ptPos;
 						m_pcDocRef->m_cLayoutMgr.LogicToLayout(
@@ -342,7 +342,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰
+						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 æ—¥æœ¬èªå¯¾å¿œ
 						) )
 					 || 2 == nCharChars
 					){

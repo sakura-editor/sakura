@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,13 +29,13 @@
 
 void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 {
-	//–¼‘O‚ÆŠg’£Žq
-	_tcscpy( pType->m_szTypeName, _T("Šî–{") );
+	//åå‰ã¨æ‹¡å¼µå­
+	_tcscpy( pType->m_szTypeName, _T("åŸºæœ¬") );
 	_tcscpy( pType->m_szTypeExts, _T("") );
 
-	//Ý’è
-	pType->m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);			// Ü‚è•Ô‚µŒ…”
-	pType->m_eDefaultOutline = OUTLINE_TEXT;					// ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	// ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢	//Oct. 17, 2000 JEPRO
-	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	// ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ‚ðF•ª‚¯•\Ž¦‚µ‚È‚¢	//Sept. 4, 2000 JEPRO
+	//è¨­å®š
+	pType->m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);			// æŠ˜ã‚Šè¿”ã—æ¡æ•°
+	pType->m_eDefaultOutline = OUTLINE_TEXT;					// ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³•
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	// ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„	//Oct. 17, 2000 JEPRO
+	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	// ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è‰²åˆ†ã‘è¡¨ç¤ºã—ãªã„	//Sept. 4, 2000 JEPRO
 }
