@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ  ƒf[ƒ^—v‘f
+ï»¿/*!	@file
+	@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ  ãƒ‡ãƒ¼ã‚¿è¦ç´ 
 
 	@author Norio Nakatani
-	@date	1998/06/23 ì¬
+	@date	1998/06/23 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -14,22 +14,22 @@
 #include "StdAfx.h"
 #include "CFuncInfo.h"
 
-/*! CFuncInfoƒNƒ‰ƒX\’z */
+/*! CFuncInfoã‚¯ãƒ©ã‚¹æ§‹ç¯‰ */
 CFuncInfo::CFuncInfo(
-	CLogicInt		nFuncLineCRLF,		//!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ)
-	CLogicInt		nFuncColCRLF,		//!< ŠÖ”‚Ì‚ ‚éŒ…(CRLF’PˆÊ)
-	CLayoutInt		nFuncLineLAYOUT,	//!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ)
-	CLayoutInt		nFuncColLAYOUT,		//!< ŠÖ”‚Ì‚ ‚éŒ…(Ü‚è•Ô‚µ’PˆÊ)
-	const TCHAR*	pszFuncName,		//!< ŠÖ”–¼
+	CLogicInt		nFuncLineCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½)
+	CLogicInt		nFuncColCRLF,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(CRLFå˜ä½)
+	CLayoutInt		nFuncLineLAYOUT,	//!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	CLayoutInt		nFuncColLAYOUT,		//!< é–¢æ•°ã®ã‚ã‚‹æ¡(æŠ˜ã‚Šè¿”ã—å˜ä½)
+	const TCHAR*	pszFuncName,		//!< é–¢æ•°å
 	const TCHAR*	pszFileName,
-	int				nInfo				//!< •t‰Áî•ñ
+	int				nInfo				//!< ä»˜åŠ æƒ…å ±
 )
-: m_nDepth(0) // [‚³
+: m_nDepth(0) // æ·±ã•
 {
-	m_nFuncLineCRLF = nFuncLineCRLF;		/* ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ) */
-	m_nFuncColCRLF = nFuncColCRLF;			/* ŠÖ”‚Ì‚ ‚éŒ…(CRLF’PˆÊ) */
-	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ) */
-	m_nFuncColLAYOUT = nFuncColLAYOUT;		/* ŠÖ”‚Ì‚ ‚éŒ…(Ü‚è•Ô‚µ’PˆÊ) */
+	m_nFuncLineCRLF = nFuncLineCRLF;		/* é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½) */
+	m_nFuncColCRLF = nFuncColCRLF;			/* é–¢æ•°ã®ã‚ã‚‹æ¡(CRLFå˜ä½) */
+	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+	m_nFuncColLAYOUT = nFuncColLAYOUT;		/* é–¢æ•°ã®ã‚ã‚‹æ¡(æŠ˜ã‚Šè¿”ã—å˜ä½) */
 	m_cmemFuncName.SetString( pszFuncName );
 	if( pszFileName ){
 		m_cmemFileName.SetString( pszFileName );
@@ -42,7 +42,7 @@ CFuncInfo::CFuncInfo(
 
 
 
-/* CFuncInfoƒNƒ‰ƒXÁ–Å */
+/* CFuncInfoã‚¯ãƒ©ã‚¹æ¶ˆæ»… */
 CFuncInfo::~CFuncInfo()
 {
 

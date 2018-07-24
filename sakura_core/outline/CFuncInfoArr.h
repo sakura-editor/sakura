@@ -1,8 +1,8 @@
-/*!	@file
-	@brief �A�E�g���C����� �f�[�^�z��
+﻿/*!	@file
+	@brief アウトライン解析 データ配列
 
 	@author Norio Nakatani
-	@date	1998/06/23 �쐬
+	@date	1998/06/23 作成
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,31 +20,31 @@ class CFuncInfo;
 #include <map>
 #include "util/design_template.h"
 
-// �W���I�ȕt�����萔
-#define FL_OBJ_DEFINITION	0	// �e�N���X�̒�`�ʒu
-#define FL_OBJ_DECLARE		1	// �֐��v���g�^�C�v�錾
-#define FL_OBJ_FUNCTION		2	// �֐�
-#define FL_OBJ_CLASS		3	// �N���X
-#define FL_OBJ_STRUCT		4	// �\����
-#define FL_OBJ_ENUM			5	// �񋓑�
-#define FL_OBJ_UNION		6	// ���p��
-#define FL_OBJ_NAMESPACE	7	// ���O���
-#define FL_OBJ_INTERFACE	8	// �C���^�t�F�[�X
-#define FL_OBJ_GLOBAL		9	// �O���[�o���i�g�ݍ��݉�͂ł͎g�p���Ȃ��j
-#define FL_OBJ_ELEMENT_MAX	30	// �v���O�C���Œǉ��\�Ȓ萔�̏��
+// 標準的な付加情報定数
+#define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
+#define FL_OBJ_DECLARE		1	// 関数プロトタイプ宣言
+#define FL_OBJ_FUNCTION		2	// 関数
+#define FL_OBJ_CLASS		3	// クラス
+#define FL_OBJ_STRUCT		4	// 構造体
+#define FL_OBJ_ENUM			5	// 列挙体
+#define FL_OBJ_UNION		6	// 共用体
+#define FL_OBJ_NAMESPACE	7	// 名前空間
+#define FL_OBJ_INTERFACE	8	// インタフェース
+#define FL_OBJ_GLOBAL		9	// グローバル（組み込み解析では使用しない）
+#define FL_OBJ_ELEMENT_MAX	30	// プラグインで追加可能な定数の上限
 
-//! �A�E�g���C����� �f�[�^�z��
+//! アウトライン解析 データ配列
 class CFuncInfoArr {
 public:
-	CFuncInfoArr();	/* CFuncInfoArr�N���X�\�z */
-	~CFuncInfoArr();	/* CFuncInfoArr�N���X���� */
-	CFuncInfo* GetAt( int );	/* 0<=�̎w��ԍ��̃f�[�^��Ԃ� */
-	void AppendData( CFuncInfo* );	/* �z��̍Ō�Ƀf�[�^��ǉ����� */
-	void AppendData( CLogicInt, CLayoutInt, const TCHAR*, int, int nDepth = 0 );	/* �z��̍Ō�Ƀf�[�^��ǉ����� 2002.04.01 YAZAKI �[������*/
-	void AppendData( CLogicInt, CLayoutInt, const NOT_TCHAR*, int, int nDepth = 0 );	/* �z��̍Ō�Ƀf�[�^��ǉ����� 2002.04.01 YAZAKI �[������*/
-	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const TCHAR*, const TCHAR*, int, int nDepth = 0 );	/* �z��̍Ō�Ƀf�[�^��ǉ����� 2010.03.01 syat ������*/
-	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const NOT_TCHAR*, const NOT_TCHAR*, int, int nDepth = 0 );	/* �z��̍Ō�Ƀf�[�^��ǉ����� 2010.03.01 syat ������*/
-	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* �z��v�f����Ԃ� */
+	CFuncInfoArr();	/* CFuncInfoArrクラス構築 */
+	~CFuncInfoArr();	/* CFuncInfoArrクラス消滅 */
+	CFuncInfo* GetAt( int );	/* 0<=の指定番号のデータを返す */
+	void AppendData( CFuncInfo* );	/* 配列の最後にデータを追加する */
+	void AppendData( CLogicInt, CLayoutInt, const TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
+	void AppendData( CLogicInt, CLayoutInt, const NOT_TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
+	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const TCHAR*, const TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
+	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const NOT_TCHAR*, const NOT_TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
+	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );
 	void SetAppendText( int info, std::wstring s, bool overwrite );
@@ -54,11 +54,11 @@ public:
 
 
 public:
-	SFilePath	m_szFilePath;	/*!< ��͑Ώۃt�@�C���� */
+	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 private:
-	int			m_nFuncInfoArrNum;	/*!< �z��v�f�� */
-	CFuncInfo**	m_ppcFuncInfoArr;	/*!< �z�� */
-	std::map<int, std::wstring>	m_AppendTextArr;	// �ǉ�������̃��X�g
+	int			m_nFuncInfoArrNum;	/*!< 配列要素数 */
+	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
+	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
 	int			m_nAppendTextLenMax;
 
 private:

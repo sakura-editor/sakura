@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ  ƒf[ƒ^—v‘f
+ï»¿/*!	@file
+	@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ  ãƒ‡ãƒ¼ã‚¿è¦ç´ 
 
 	@author Norio Nakatani
-	@date	1998/06/23 ì¬
+	@date	1998/06/23 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -20,34 +20,34 @@ class CFuncInfo;
 
 #include "mem/CMemory.h"
 
-// CDlgFuncList::SetTree()—p m_Info
+// CDlgFuncList::SetTree()ç”¨ m_Info
 #define FUNCINFO_INFOMASK	0xFFFF
 //	2003.06.27 Moca
 #define FUNCINFO_NOCLIPTEXT 0x10000
 
 
-//! ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ  ƒf[ƒ^—v‘f
-//@date 2002.04.01 YAZAKI [‚³“±“ü
+//! ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ  ãƒ‡ãƒ¼ã‚¿è¦ç´ 
+//@date 2002.04.01 YAZAKI æ·±ã•å°å…¥
 class CFuncInfo {
 	public:
-		CFuncInfo( CLogicInt, CLogicInt, CLayoutInt, CLayoutInt, const TCHAR*, const TCHAR*, int );	/* CFuncInfoƒNƒ‰ƒX\’z */
-		~CFuncInfo();	/* CFuncInfoƒNƒ‰ƒXÁ–Å */
+		CFuncInfo( CLogicInt, CLogicInt, CLayoutInt, CLayoutInt, const TCHAR*, const TCHAR*, int );	/* CFuncInfoã‚¯ãƒ©ã‚¹æ§‹ç¯‰ */
+		~CFuncInfo();	/* CFuncInfoã‚¯ãƒ©ã‚¹æ¶ˆæ»… */
 
-		//! ƒNƒŠƒbƒvƒ{[ƒh‚É’Ç‰Á‚·‚é—v‘f‚©H
+		//! ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«è¿½åŠ ã™ã‚‹è¦ç´ ã‹ï¼Ÿ
 		//	2003.06.27 Moca
 		inline bool IsAddClipText( void ) const{
 			return ( FUNCINFO_NOCLIPTEXT != ( m_nInfo & FUNCINFO_NOCLIPTEXT ) );
 		}
 
 //	private:
-		CLogicInt	m_nFuncLineCRLF;	/*!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ) */
-		CLayoutInt	m_nFuncLineLAYOUT;	/*!< ŠÖ”‚Ì‚ ‚és(Ü‚è•Ô‚µ’PˆÊ) */
-		CLogicInt	m_nFuncColCRLF;		/*!< ŠÖ”‚Ì‚ ‚éŒ…(CRLF’PˆÊ) */
-		CLayoutInt	m_nFuncColLAYOUT;	/*!< ŠÖ”‚Ì‚ ‚éŒ…(Ü‚è•Ô‚µ’PˆÊ) */
-		CNativeT	m_cmemFuncName;	/*!< ŠÖ”–¼ */
-		CNativeT	m_cmemFileName;	/*!< ƒtƒ@ƒCƒ‹–¼ */
-		int			m_nInfo;		/*!< •t‰Áî•ñ */
-		int			m_nDepth;		/*!< [‚³ */
+		CLogicInt	m_nFuncLineCRLF;	/*!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(CRLFå˜ä½) */
+		CLayoutInt	m_nFuncLineLAYOUT;	/*!< é–¢æ•°ã®ã‚ã‚‹è¡Œ(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+		CLogicInt	m_nFuncColCRLF;		/*!< é–¢æ•°ã®ã‚ã‚‹æ¡(CRLFå˜ä½) */
+		CLayoutInt	m_nFuncColLAYOUT;	/*!< é–¢æ•°ã®ã‚ã‚‹æ¡(æŠ˜ã‚Šè¿”ã—å˜ä½) */
+		CNativeT	m_cmemFuncName;	/*!< é–¢æ•°å */
+		CNativeT	m_cmemFileName;	/*!< ãƒ•ã‚¡ã‚¤ãƒ«å */
+		int			m_nInfo;		/*!< ä»˜åŠ æƒ…å ± */
+		int			m_nDepth;		/*!< æ·±ã• */
 };
 
 

@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/06/23 V‹Kì¬
-	@date 1998/12/04 Äì¬
+	@date 1998/06/23 æ–°è¦ä½œæˆ
+	@date 1998/12/04 å†ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -29,18 +29,18 @@ class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 class CDataProfile;
 
-//! ƒAƒEƒgƒ‰ƒCƒ““®ìw’è
-#define OUTLINE_LAYOUT_FOREGROUND (0)   //!< ‘O–Ê—p‚Ì“®ì
-#define OUTLINE_LAYOUT_BACKGROUND (1)   //!< ”wŒã—p‚Ì“®ì
-#define OUTLINE_LAYOUT_FILECHANGED (2)  //!< ƒtƒ@ƒCƒ‹Ø‘Ö—p‚Ì“®ìi‘O–Ê‚¾‚ª“Áêj
+//! ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³å‹•ä½œæŒ‡å®š
+#define OUTLINE_LAYOUT_FOREGROUND (0)   //!< å‰é¢ç”¨ã®å‹•ä½œ
+#define OUTLINE_LAYOUT_BACKGROUND (1)   //!< èƒŒå¾Œç”¨ã®å‹•ä½œ
+#define OUTLINE_LAYOUT_FILECHANGED (2)  //!< ãƒ•ã‚¡ã‚¤ãƒ«åˆ‡æ›¿ç”¨ã®å‹•ä½œï¼ˆå‰é¢ã ãŒç‰¹æ®Šï¼‰
 
-//! ƒcƒŠ[ƒrƒ…[‚ğƒ\[ƒg‚·‚éŠî€
-#define SORTTYPE_DEFAULT       0 //!< ƒfƒtƒHƒ‹ƒg(ƒm[ƒh‚ÉŠÖ˜A‚Ã‚¯‚ê‚ç‚ê‚½’l‡,¸‡)
-#define SORTTYPE_DEFAULT_DESC  1 //!< ƒfƒtƒHƒ‹ƒg(ƒm[ƒh‚ÉŠÖ˜A‚Ã‚¯‚ê‚ç‚ê‚½’l‡,~‡)
-#define SORTTYPE_ATOZ          2 //!< ƒAƒ‹ƒtƒ@ƒxƒbƒg‡(¸‡)
-#define SORTTYPE_ZTOA          3 //!< ƒAƒ‹ƒtƒ@ƒxƒbƒg‡(~‡)
+//! ãƒ„ãƒªãƒ¼ãƒ“ãƒ¥ãƒ¼ã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹åŸºæº–
+#define SORTTYPE_DEFAULT       0 //!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ(ãƒãƒ¼ãƒ‰ã«é–¢é€£ã¥ã‘ã‚Œã‚‰ã‚ŒãŸå€¤é †,æ˜‡é †)
+#define SORTTYPE_DEFAULT_DESC  1 //!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ(ãƒãƒ¼ãƒ‰ã«é–¢é€£ã¥ã‘ã‚Œã‚‰ã‚ŒãŸå€¤é †,é™é †)
+#define SORTTYPE_ATOZ          2 //!< ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆé †(æ˜‡é †)
+#define SORTTYPE_ZTOA          3 //!< ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆé †(é™é †)
 
-// ƒtƒ@ƒCƒ‹ƒcƒŠ[ŠÖ˜AƒNƒ‰ƒX
+// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼é–¢é€£ã‚¯ãƒ©ã‚¹
 enum EFileTreeSettingFrom{
 	EFileTreeSettingFrom_Common,
 	EFileTreeSettingFrom_Type,
@@ -49,16 +49,16 @@ enum EFileTreeSettingFrom{
 
 class CFileTreeSetting{
 public:
-	std::vector<SFileTreeItem>	m_aItems;		//!< ƒcƒŠ[ƒAƒCƒeƒ€
-	bool		m_bProject;				//!< ƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹ƒ‚[ƒh
-	SFilePath	m_szDefaultProjectIni;	//!< ƒfƒtƒHƒ‹ƒginiƒtƒ@ƒCƒ‹–¼
-	SFilePath	m_szLoadProjectIni;		//!< Œ»İ“Ç‚İ‚ñ‚Å‚¢‚éiniƒtƒ@ƒCƒ‹–¼
+	std::vector<SFileTreeItem>	m_aItems;		//!< ãƒ„ãƒªãƒ¼ã‚¢ã‚¤ãƒ†ãƒ 
+	bool		m_bProject;				//!< ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãƒ¢ãƒ¼ãƒ‰
+	SFilePath	m_szDefaultProjectIni;	//!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆiniãƒ•ã‚¡ã‚¤ãƒ«å
+	SFilePath	m_szLoadProjectIni;		//!< ç¾åœ¨èª­ã¿è¾¼ã‚“ã§ã„ã‚‹iniãƒ•ã‚¡ã‚¤ãƒ«å
 	EFileTreeSettingFrom	m_eFileTreeSettingOrgType;
 	EFileTreeSettingFrom	m_eFileTreeSettingLoadType;
 };
 
 
-//!	ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+//!	ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 class CDlgFuncList : public CDialog
 {
 public:
@@ -69,13 +69,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
-	void ChangeView( LPARAM );	/* ƒ‚[ƒhƒŒƒXFŒŸõ‘ÎÛ‚Æ‚È‚éƒrƒ…[‚Ì•ÏX */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
+	void ChangeView( LPARAM );	/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹æ™‚ï¼šæ¤œç´¢å¯¾è±¡ã¨ãªã‚‹ãƒ“ãƒ¥ãƒ¼ã®å¤‰æ›´ */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }
 
 protected:
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji •W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 
 	CommonSetting_OutLine& CommonSet(void){ return m_pShareData->m_Common.m_sOutline; }
 	STypeConfig& TypeSet(void){ return m_type; }
@@ -90,7 +90,7 @@ protected:
 	void SetTypeConfig( CTypeConfig, const STypeConfig& );
 
 public:
-	/*! Œ»İ‚Ìí•Ê‚Æ“¯‚¶‚È‚ç
+	/*! ç¾åœ¨ã®ç¨®åˆ¥ã¨åŒã˜ãªã‚‰
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nOutlineType; }
 	void Redraw( int nOutLineType, int nListType, CFuncInfoArr*, CLayoutInt nCurLine, CLayoutInt nCurCol );
@@ -98,7 +98,7 @@ public:
 	bool ChangeLayout( int nId );
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
 	void SyncColor( void );
-	void SetWindowText( const TCHAR* szTitle );		//ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚Ìİ’è
+	void SetWindowText( const TCHAR* szTitle );		//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã®è¨­å®š
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
 	void LoadFileTreeSetting( CFileTreeSetting&, SFilePath& );
 	static void ReadFileTreeIni( CDataProfile&, CFileTreeSetting& );
@@ -106,19 +106,19 @@ public:
 protected:
 	bool m_bInChangeLayout;
 
-	CFuncInfoArr*	m_pcFuncInfoArr;	/* ŠÖ”î•ñ”z—ñ */
-	CLayoutInt		m_nCurLine;			/* Œ»İs */
-	CLayoutInt		m_nCurCol;			/* Œ»İŒ… */
-	int				m_nSortCol;			/* ƒ\[ƒg‚·‚é—ñ”Ô† */
-	int				m_nSortColOld;		//!< ƒ\[ƒg‚·‚é—ñ”Ô†(OLD)
-	bool			m_bSortDesc;		//!< ~‡
-	CNativeW		m_cmemClipText;		/* ƒNƒŠƒbƒvƒ{[ƒhƒRƒs[—pƒeƒLƒXƒg */
-	bool			m_bLineNumIsCRLF;	/* s”Ô†‚Ì•\¦ false=Ü‚è•Ô‚µ’PˆÊ^true=‰üs’PˆÊ */
-	int				m_nListType;		/* ˆê——‚Ìí—Ş */
+	CFuncInfoArr*	m_pcFuncInfoArr;	/* é–¢æ•°æƒ…å ±é…åˆ— */
+	CLayoutInt		m_nCurLine;			/* ç¾åœ¨è¡Œ */
+	CLayoutInt		m_nCurCol;			/* ç¾åœ¨æ¡ */
+	int				m_nSortCol;			/* ã‚½ãƒ¼ãƒˆã™ã‚‹åˆ—ç•ªå· */
+	int				m_nSortColOld;		//!< ã‚½ãƒ¼ãƒˆã™ã‚‹åˆ—ç•ªå·(OLD)
+	bool			m_bSortDesc;		//!< é™é †
+	CNativeW		m_cmemClipText;		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‚³ãƒ”ãƒ¼ç”¨ãƒ†ã‚­ã‚¹ãƒˆ */
+	bool			m_bLineNumIsCRLF;	/* è¡Œç•ªå·ã®è¡¨ç¤º false=æŠ˜ã‚Šè¿”ã—å˜ä½ï¼true=æ”¹è¡Œå˜ä½ */
+	int				m_nListType;		/* ä¸€è¦§ã®ç¨®é¡ */
 public:
-	int				m_nDocType;			//! ƒhƒLƒ…ƒƒ“ƒg‚Ìí—Ş */
-	int				m_nOutlineType;		/* ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ‚Ìí•Ê */
-	bool			m_bEditWndReady;	/* ƒGƒfƒBƒ^‰æ–Ê‚Ì€”õŠ®—¹ */
+	int				m_nDocType;			//! ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®ç¨®é¡ */
+	int				m_nOutlineType;		/* ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã®ç¨®åˆ¥ */
+	bool			m_bEditWndReady;	/* ã‚¨ãƒ‡ã‚£ã‚¿ç”»é¢ã®æº–å‚™å®Œäº† */
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
@@ -128,38 +128,38 @@ protected:
 	BOOL OnDestroy(void); // 20060201 aroka
 	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 	BOOL OnContextMenu( WPARAM, LPARAM );
-	void SetData();	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
-	int GetData( void );	/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+	void SetData();	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	int GetData( void );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoCloseFu‚±‚Ìƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚év‚ğƒ`ƒFƒbƒN‚·‚é‚©‚Ç‚¤‚©
-	void SetTreeJava( HWND, BOOL );	/* ƒcƒŠ[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»FJavaƒƒ\ƒbƒhƒcƒŠ[ */
-	void SetTree(bool tagjump = false, bool nolabel = false);		/* ƒcƒŠ[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»F”Ä—p•i */
-	void SetTreeFile();				// ƒcƒŠ[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»Fƒtƒ@ƒCƒ‹ƒcƒŠ[
-	void SetListVB( void );			/* ƒŠƒXƒgƒrƒ…[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»FVisualBasic */		// Jul 10, 2003  little YOSHI
+	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoCloseï¼šã€Œã“ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹ã€ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã‹ã©ã†ã‹
+	void SetTreeJava( HWND, BOOL );	/* ãƒ„ãƒªãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šJavaãƒ¡ã‚½ãƒƒãƒ‰ãƒ„ãƒªãƒ¼ */
+	void SetTree(bool tagjump = false, bool nolabel = false);		/* ãƒ„ãƒªãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šæ±ç”¨å“ */
+	void SetTreeFile();				// ãƒ„ãƒªãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼
+	void SetListVB( void );			/* ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šVisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
 
 	void SetTreeFileSub( HTREEITEM, const TCHAR* );
 	// 2002/11/1 frozen 
-	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ƒcƒŠ[ƒrƒ…[‚Ì€–Ú‚ğƒ\[ƒg‚·‚éiƒ\[ƒgŠî€‚Ím_nSortType‚ğg—pj
+	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ãƒ„ãƒªãƒ¼ãƒ“ãƒ¥ãƒ¼ã®é …ç›®ã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹ï¼ˆã‚½ãƒ¼ãƒˆåŸºæº–ã¯m_nSortTypeã‚’ä½¿ç”¨ï¼‰
 #if 0
-2002.04.01 YAZAKI SetTreeTxt()ASetTreeTxtNest()‚Í”p~BGetTreeTextNext‚Í‚à‚Æ‚à‚Æg—p‚³‚ê‚Ä‚¢‚È‚©‚Á‚½B
-	void SetTreeTxt( HWND );	/* ƒcƒŠ[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»FƒeƒLƒXƒgƒgƒsƒbƒNƒcƒŠ[ */
+2002.04.01 YAZAKI SetTreeTxt()ã€SetTreeTxtNest()ã¯å»ƒæ­¢ã€‚GetTreeTextNextã¯ã‚‚ã¨ã‚‚ã¨ä½¿ç”¨ã•ã‚Œã¦ã„ãªã‹ã£ãŸã€‚
+	void SetTreeTxt( HWND );	/* ãƒ„ãƒªãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šãƒ†ã‚­ã‚¹ãƒˆãƒˆãƒ”ãƒƒã‚¯ãƒ„ãƒªãƒ¼ */
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
 #endif
 
-	//	Apr. 23, 2005 genta ƒŠƒXƒgƒrƒ…[‚Ìƒ\[ƒg‚ğŠÖ”‚Æ‚µ‚Ä“Æ—§‚³‚¹‚½
+	//	Apr. 23, 2005 genta ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®ã‚½ãƒ¼ãƒˆã‚’é–¢æ•°ã¨ã—ã¦ç‹¬ç«‹ã•ã›ãŸ
 	void SortListView(HWND hwndList, int sortcol);
 	static int CALLBACK CompareFunc_Asc( LPARAM, LPARAM, LPARAM );
 	static int CALLBACK CompareFunc_Desc( LPARAM, LPARAM, LPARAM );
 
 	// 2001.12.03 hor
-//	void SetTreeBookMark( HWND );		/* ƒcƒŠ[ƒRƒ“ƒgƒ[ƒ‹‚Ì‰Šú‰»FƒuƒbƒNƒ}[ƒN */
+//	void SetTreeBookMark( HWND );		/* ãƒ„ãƒªãƒ¼ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®åˆæœŸåŒ–ï¼šãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-	void Key2Command( WORD );		//	ƒL[‘€ì¨ƒRƒ}ƒ“ƒh•ÏŠ·
+	void Key2Command( WORD );		//	ã‚­ãƒ¼æ“ä½œâ†’ã‚³ãƒãƒ³ãƒ‰å¤‰æ›
 	bool HitTestSplitter( int xPos, int yPos );
 	int HitTestCaptionButton( int xPos, int yPos );
 	INT_PTR OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
@@ -183,22 +183,22 @@ protected:
 private:
 	//	May 18, 2001 genta
 	/*!
-		@brief ƒAƒEƒgƒ‰ƒCƒ“‰ğÍí•Ê
+		@brief ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æç¨®åˆ¥
 
 		0: List, 1: Tree
 	*/
 	int	m_nViewType;
 
-	// 2002.02.16 hor Tree‚Ìƒ_ƒuƒ‹ƒNƒŠƒbƒN‚ÅƒtƒH[ƒJƒXˆÚ“®‚Å‚«‚é‚æ‚¤‚É 1/4
-	// (–³—–î—‚È‚Ì‚Å‚Ç‚È‚½‚©C³‚¨Šè‚¢‚µ‚Ü‚·)
+	// 2002.02.16 hor Treeã®ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç§»å‹•ã§ãã‚‹ã‚ˆã†ã« 1/4
+	// (ç„¡ç†çŸ¢ç†ãªã®ã§ã©ãªãŸã‹ä¿®æ­£ãŠé¡˜ã„ã—ã¾ã™)
 	bool m_bWaitTreeProcess;
 
-	int m_nSortType;						//!< ƒcƒŠ[ƒrƒ…[‚ğƒ\[ƒg‚·‚éŠî€
+	int m_nSortType;						//!< ãƒ„ãƒªãƒ¼ãƒ“ãƒ¥ãƒ¼ã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹åŸºæº–
 	int m_nTreeItemCount;
-	bool m_bDummyLParamMode;				//!< m_vecDummylParams—LŒø/–³Œø
-	std::vector<int> m_vecDummylParams;		//!< ƒ_ƒ~[—v‘f‚Ì¯•Ê’l
+	bool m_bDummyLParamMode;				//!< m_vecDummylParamsæœ‰åŠ¹/ç„¡åŠ¹
+	std::vector<int> m_vecDummylParams;		//!< ãƒ€ãƒŸãƒ¼è¦ç´ ã®è­˜åˆ¥å€¤
 
-	// ‘I‘ğ’†‚ÌŠÖ”î•ñ
+	// é¸æŠä¸­ã®é–¢æ•°æƒ…å ±
 	CFuncInfo* m_cFuncInfo;
 	std::tstring m_sJumpFile;
 
@@ -206,8 +206,8 @@ private:
 	CMyPoint	m_pointTimerJump;
 	bool		m_bTimerJumpAutoClose;
 
-	EDockSide	m_eDockSide;	// Œ»İ‚Ì‰æ–Ê‚Ì•\¦ˆÊ’u
-	HWND		m_hwndToolTip;	/*!< ƒc[ƒ‹ƒ`ƒbƒviƒ{ƒ^ƒ“—pj */
+	EDockSide	m_eDockSide;	// ç¾åœ¨ã®ç”»é¢ã®è¡¨ç¤ºä½ç½®
+	HWND		m_hwndToolTip;	/*!< ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—ï¼ˆãƒœã‚¿ãƒ³ç”¨ï¼‰ */
 	bool		m_bStretching;
 	bool		m_bHovering;
 	int			m_nHilightedBtn;
@@ -218,7 +218,7 @@ private:
 
 	static LPDLGTEMPLATE m_pDlgTemplate;
 	static DWORD m_dwDlgTmpSize;
-	static HINSTANCE m_lastRcInstance;		// ƒŠƒ\[ƒX¶‘¶ƒ`ƒFƒbƒN—p
+	static HINSTANCE m_lastRcInstance;		// ãƒªã‚½ãƒ¼ã‚¹ç”Ÿå­˜ãƒã‚§ãƒƒã‚¯ç”¨
 
 	POINT				m_ptDefaultSize;
 	POINT				m_ptDefaultSizeClient;
