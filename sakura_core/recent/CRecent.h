@@ -1,13 +1,13 @@
-/*!	@file
-	@brief Å‹ßg‚Á‚½ƒŠƒXƒg
+ï»¿/*!	@file
+	@brief æœ€è¿‘ä½¿ã£ãŸãƒªã‚¹ãƒˆ
 
-	‚¨‹C‚É“ü‚è‚ğŠÜ‚ŞÅ‹ßg‚Á‚½ƒŠƒXƒg‚ğŠÇ—‚·‚éB
+	ãŠæ°—ã«å…¥ã‚Šã‚’å«ã‚€æœ€è¿‘ä½¿ã£ãŸãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹ã€‚
 
 	@author MIK
 	@date Apr. 05, 2003
 	@date Apr. 03, 2005
 
-	@date Oct. 19, 2007 kobake Œ^ƒ`ƒFƒbƒN‚ª“­‚­‚æ‚¤‚ÉAÄİŒv
+	@date Oct. 19, 2007 kobake å‹ãƒã‚§ãƒƒã‚¯ãŒåƒãã‚ˆã†ã«ã€å†è¨­è¨ˆ
 */
 /*
 	Copyright (C) 2003, MIK
@@ -43,16 +43,16 @@ class CRecent{
 public:
 	virtual ~CRecent(){}
 
-	//ƒCƒ“ƒXƒ^ƒ“ƒXŠÇ—
+	//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç®¡ç†
 	virtual void	Terminate() = 0;
 
-	//ƒAƒCƒeƒ€
+	//ã‚¢ã‚¤ãƒ†ãƒ 
 	virtual const TCHAR*	GetItemText( int nIndex ) const = 0;
 	virtual int				GetArrayCount() const = 0;
 	virtual int				GetItemCount() const = 0;
 	virtual void			DeleteAllItem() = 0;
 	virtual bool			DeleteItemsNoFavorite() = 0;
-	virtual bool			DeleteItem( int nIndex ) = 0;	//!< ƒAƒCƒeƒ€‚ğƒNƒŠƒA
+	virtual bool			DeleteItem( int nIndex ) = 0;	//!< ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚¯ãƒªã‚¢
 	virtual bool			AppendItemText(const TCHAR* pszText) = 0;
 	virtual bool			EditItemText( int nIndex, const TCHAR* pszText) = 0;
 	virtual size_t			GetTextMaxLength() const = 0;
@@ -66,15 +66,15 @@ public:
 		return -1;
 	}
 
-	//‚¨‹C‚É“ü‚è
-	virtual bool	SetFavorite( int nIndex, bool bFavorite = true ) = 0;	//!< ‚¨‹C‚É“ü‚è‚Éİ’è
-	virtual bool	IsFavorite(int nIndex) const = 0;						//!< ‚¨‹C‚É“ü‚è‚©’²‚×‚é
+	//ãŠæ°—ã«å…¥ã‚Š
+	virtual bool	SetFavorite( int nIndex, bool bFavorite = true ) = 0;	//!< ãŠæ°—ã«å…¥ã‚Šã«è¨­å®š
+	virtual bool	IsFavorite(int nIndex) const = 0;						//!< ãŠæ°—ã«å…¥ã‚Šã‹èª¿ã¹ã‚‹
 
-	//‚»‚Ì‘¼
+	//ãã®ä»–
 	virtual int		GetViewCount() const = 0;
 	virtual bool	UpdateView() = 0;
 
-	// ‹¤—Lƒƒ‚ƒŠƒAƒNƒZƒX
+	// å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚¢ã‚¯ã‚»ã‚¹
 	DLLSHAREDATA*	GetShareData()
 	{
 		return &GetDllShareData();

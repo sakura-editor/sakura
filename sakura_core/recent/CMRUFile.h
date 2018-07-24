@@ -1,8 +1,8 @@
-/*!	@file
-	@brief MRUƒŠƒXƒg‚ÆŒÄ‚Î‚ê‚éƒŠƒXƒg‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief MRUãƒªã‚¹ãƒˆã¨å‘¼ã°ã‚Œã‚‹ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹
 
 	@author YAZAKI
-	@date 2001/12/23  V‹Kì¬
+	@date 2001/12/23  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, YAZAKI
@@ -39,38 +39,38 @@
 #include <vector>
 #include "recent/CRecentFile.h"
 
-struct EditInfo; // 2004.04.11 genta ƒpƒ‰ƒ[ƒ^“à‚Ìstruct‚ğíœ‚·‚é‚½‚ßDdoxygen‘Îô
+struct EditInfo; // 2004.04.11 genta ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å†…ã®structã‚’å‰Šé™¤ã™ã‚‹ãŸã‚ï¼doxygenå¯¾ç­–
 class CMenuDrawer;
 
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 class CMRUFile {
 public:
-	//	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMRUFile();
 	~CMRUFile();
 
-	//	ƒƒjƒ…[‚ğæ“¾‚·‚é
-	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	‚¤[‚ñBpCMenuDrawer‚ª•K—v‚È‚­‚È‚é‚Æ‚¢‚¢‚È‚ŸB
+	//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’å–å¾—ã™ã‚‹
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	ã†ãƒ¼ã‚“ã€‚pCMenuDrawerãŒå¿…è¦ãªããªã‚‹ã¨ã„ã„ãªãã€‚
 	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
-	//	ƒtƒ@ƒCƒ‹–¼‚Ìˆê——‚ğ‹³‚¦‚Ä
+	//	ãƒ•ã‚¡ã‚¤ãƒ«åã®ä¸€è¦§ã‚’æ•™ãˆã¦
 	std::vector<LPCTSTR> GetPathList() const;
 
-	//	ƒAƒNƒZƒXŠÖ”
-	int Length(void) const;	//	ƒAƒCƒeƒ€‚Ì”B
-	int MenuLength(void) const { return t_min(Length(), m_cRecentFile.GetViewCount()); }	//	ƒƒjƒ…[‚É•\¦‚³‚ê‚éƒAƒCƒeƒ€‚Ì”
-	void ClearAll(void);//	ƒAƒCƒeƒ€‚ğíœ`B
-	bool GetEditInfo( int num, EditInfo* pfi ) const;				//	”Ô†‚Åw’è‚µ‚½EditInfoiî•ñ‚ğ‚Ü‚é‚²‚Æj
-	bool GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const;	//	ƒtƒ@ƒCƒ‹–¼‚Åw’è‚µ‚½EditInfoiî•ñ‚ğ‚Ü‚é‚²‚Æj
-	void Add( EditInfo* pEditInfo );		//	*pEditInfo‚ğ’Ç‰Á‚·‚éB
+	//	ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°
+	int Length(void) const;	//	ã‚¢ã‚¤ãƒ†ãƒ ã®æ•°ã€‚
+	int MenuLength(void) const { return t_min(Length(), m_cRecentFile.GetViewCount()); }	//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¡¨ç¤ºã•ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®æ•°
+	void ClearAll(void);//	ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ï½ã€‚
+	bool GetEditInfo( int num, EditInfo* pfi ) const;				//	ç•ªå·ã§æŒ‡å®šã—ãŸEditInfoï¼ˆæƒ…å ±ã‚’ã¾ã‚‹ã”ã¨ï¼‰
+	bool GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const;	//	ãƒ•ã‚¡ã‚¤ãƒ«åã§æŒ‡å®šã—ãŸEditInfoï¼ˆæƒ…å ±ã‚’ã¾ã‚‹ã”ã¨ï¼‰
+	void Add( EditInfo* pEditInfo );		//	*pEditInfoã‚’è¿½åŠ ã™ã‚‹ã€‚
 
 protected:
-	//	‹¤—Lƒƒ‚ƒŠƒAƒNƒZƒX—pB
-	struct DLLSHAREDATA*	m_pShareData;		//	‹¤—Lƒƒ‚ƒŠ‚ğQÆ‚·‚é‚æB
+	//	å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚¢ã‚¯ã‚»ã‚¹ç”¨ã€‚
+	struct DLLSHAREDATA*	m_pShareData;		//	å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚’å‚ç…§ã™ã‚‹ã‚ˆã€‚
 
 private:
-	CRecentFile	m_cRecentFile;	//—š—ğ	//@@@ 2003.04.08 MIK
+	CRecentFile	m_cRecentFile;	//å±¥æ­´	//@@@ 2003.04.08 MIK
 };
 
 #endif	// _CMRUFILE_H_

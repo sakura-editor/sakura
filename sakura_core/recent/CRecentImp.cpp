@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,38 +29,38 @@
 #include "EditInfo.h" // EditInfo
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ¶¬                              //
+//                           ç”Ÿæˆ                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	‰Šú¶¬ˆ—
+	åˆæœŸç”Ÿæˆå‡¦ç†
 
 	@note
-	nCmpType = strcmp, stricmp ‚Ì‚Æ‚«‚É nCmpSize = 0 ‚ğw’è‚·‚é‚ÆAAppendItem 
-	‚Å‚Ìƒf[ƒ^‚ª•¶š—ñ‚Å‚ ‚é‚Æ”F¯‚µ‚Ä strcpy ‚ğ‚·‚éB
-	‘¼‚Ìê‡‚Í memcpy ‚Å nItemSize •ª‚ğƒRƒs[‚·‚éB
+	nCmpType = strcmp, stricmp ã®ã¨ãã« nCmpSize = 0 ã‚’æŒ‡å®šã™ã‚‹ã¨ã€AppendItem 
+	ã§ã®ãƒ‡ãƒ¼ã‚¿ãŒæ–‡å­—åˆ—ã§ã‚ã‚‹ã¨èªè­˜ã—ã¦ strcpy ã‚’ã™ã‚‹ã€‚
+	ä»–ã®å ´åˆã¯ memcpy ã§ nItemSize åˆ†ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚
 	
-	pnViewCount = NULL ‚É‚·‚é‚ÆA‹[—“I‚É nViewCount == nArrayCount ‚É‚È‚éB
+	pnViewCount = NULL ã«ã™ã‚‹ã¨ã€æ“¬ä¼¼çš„ã« nViewCount == nArrayCount ã«ãªã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::Create( 
-	DataType*		pszItemArray,	//!< ƒAƒCƒeƒ€”z—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	size_t			nTextMaxLength,	//!< Å‘åƒeƒLƒXƒg’·(I’[ŠÜ‚Ş)
-	int*			pnItemCount,	//!< ƒAƒCƒeƒ€ŒÂ”‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	bool*			pbItemFavorite,	//!< ‚¨‹C‚É“ü‚è‚Ö‚Ìƒ|ƒCƒ“ƒ^(NULL‹–‰Â)
-	int				nArrayCount,	//!< Å‘åŠÇ—‰Â”\‚ÈƒAƒCƒeƒ€”
-	int*			pnViewCount		//!< •\¦ŒÂ”(NULL‹–‰Â)
+	DataType*		pszItemArray,	//!< ã‚¢ã‚¤ãƒ†ãƒ é…åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	size_t			nTextMaxLength,	//!< æœ€å¤§ãƒ†ã‚­ã‚¹ãƒˆé•·(çµ‚ç«¯å«ã‚€)
+	int*			pnItemCount,	//!< ã‚¢ã‚¤ãƒ†ãƒ å€‹æ•°ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	bool*			pbItemFavorite,	//!< ãŠæ°—ã«å…¥ã‚Šã¸ã®ãƒã‚¤ãƒ³ã‚¿(NULLè¨±å¯)
+	int				nArrayCount,	//!< æœ€å¤§ç®¡ç†å¯èƒ½ãªã‚¢ã‚¤ãƒ†ãƒ æ•°
+	int*			pnViewCount		//!< è¡¨ç¤ºå€‹æ•°(NULLè¨±å¯)
 )
 {
 	Terminate();
 
-	//ƒpƒ‰ƒ[ƒ^ƒ`ƒFƒbƒN
+	//ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒã‚§ãƒƒã‚¯
 	if( NULL == pszItemArray ) return false;
 	if( NULL == pnItemCount ) return false;
 	if( nArrayCount <= 0 ) return false;
 	if( pnViewCount && (*pnViewCount < 0 || nArrayCount < *pnViewCount) ) return false;
 
-	//Šeƒpƒ‰ƒ[ƒ^Ši”[
+	//å„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æ ¼ç´
 	m_puUserItemData		= pszItemArray;
 	m_nTextMaxLength		= nTextMaxLength;
 	m_pnUserItemCount		= pnItemCount;
@@ -69,14 +69,14 @@ bool CRecentImp<T, S>::Create(
 	m_pnUserViewCount		= pnViewCount;
 	m_bCreate = true;
 
-	//ŒÂ•Ê‚É‘€ì‚³‚ê‚Ä‚¢‚½‚Æ‚«‚Ì‚½‚ß‚Ì‘Î‰
+	//å€‹åˆ¥ã«æ“ä½œã•ã‚Œã¦ã„ãŸã¨ãã®ãŸã‚ã®å¯¾å¿œ
 	UpdateView();
 
 	return true;
 }
 
 /*
-	I—¹ˆ—
+	çµ‚äº†å‡¦ç†
 */
 template <class T, class S>
 void CRecentImp<T, S>::Terminate()
@@ -93,20 +93,20 @@ void CRecentImp<T, S>::Terminate()
 
 
 /*
-	‰Šú‰»Ï‚İ‚©’²‚×‚éB
+	åˆæœŸåŒ–æ¸ˆã¿ã‹èª¿ã¹ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::IsAvailable() const
 {
 	if(!m_bCreate)return false;
 
-	//ƒf[ƒ^”j‰ó‚ÌƒŠƒJƒoƒŠ‚ğ‚â‚Á‚Ä‚İ‚½‚è‚·‚é
+	//ãƒ‡ãƒ¼ã‚¿ç ´å£Šæ™‚ã®ãƒªã‚«ãƒãƒªã‚’ã‚„ã£ã¦ã¿ãŸã‚Šã™ã‚‹
 	const_cast<CRecentImp*>(this)->_Recovery(); 
 
 	return true;
 }
 
-//! ƒŠƒJƒoƒŠ
+//! ãƒªã‚«ãƒãƒª
 template <class T, class S>
 void CRecentImp<T, S>::_Recovery()
 {
@@ -124,14 +124,14 @@ void CRecentImp<T, S>::_Recovery()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ‚¨‹C‚É“ü‚è                           //
+//                        ãŠæ°—ã«å…¥ã‚Š                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	‚¨‹C‚É“ü‚èó‘Ô‚ğİ’è‚·‚éB
+	ãŠæ°—ã«å…¥ã‚ŠçŠ¶æ…‹ã‚’è¨­å®šã™ã‚‹ã€‚
 
-	true	İ’è
-	false	‰ğœ
+	true	è¨­å®š
+	false	è§£é™¤
 */
 template <class T, class S>
 bool CRecentImp<T, S>::SetFavorite( int nIndex, bool bFavorite )
@@ -146,7 +146,7 @@ bool CRecentImp<T, S>::SetFavorite( int nIndex, bool bFavorite )
 }
 
 /*
-	‚·‚×‚Ä‚Ì‚¨‹C‚É“ü‚èó‘Ô‚ğ‰ğœ‚·‚éB
+	ã™ã¹ã¦ã®ãŠæ°—ã«å…¥ã‚ŠçŠ¶æ…‹ã‚’è§£é™¤ã™ã‚‹ã€‚
 */
 template <class T, class S>
 void CRecentImp<T, S>::ResetAllFavorite()
@@ -160,10 +160,10 @@ void CRecentImp<T, S>::ResetAllFavorite()
 }
 
 /*
-	‚¨‹C‚É“ü‚èó‘Ô‚©‚Ç‚¤‚©’²‚×‚éB
+	ãŠæ°—ã«å…¥ã‚ŠçŠ¶æ…‹ã‹ã©ã†ã‹èª¿ã¹ã‚‹ã€‚
 
-	true	‚¨‹C‚É“ü‚è
-	false	’Êí
+	true	ãŠæ°—ã«å…¥ã‚Š
+	false	é€šå¸¸
 */
 template <class T, class S>
 bool CRecentImp<T, S>::IsFavorite( int nIndex ) const
@@ -178,15 +178,15 @@ bool CRecentImp<T, S>::IsFavorite( int nIndex ) const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒAƒCƒeƒ€§Œä                          //
+//                       ã‚¢ã‚¤ãƒ†ãƒ åˆ¶å¾¡                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	ƒAƒCƒeƒ€‚ğæ“ª‚É’Ç‰Á‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’å…ˆé ­ã«è¿½åŠ ã™ã‚‹ã€‚
 
-	@note	‚·‚Å‚É“o˜^Ï‚İ‚Ìê‡‚Íæ“ª‚ÉˆÚ“®‚·‚éB
-	@note	‚¢‚Á‚Ï‚¢‚Ì‚Æ‚«‚ÍÅŒÃ‚ÌƒAƒCƒeƒ€‚ğíœ‚·‚éB
-	@note	‚¨‹C‚É“ü‚è‚Ííœ‚³‚ê‚È‚¢B
+	@note	ã™ã§ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆã¯å…ˆé ­ã«ç§»å‹•ã™ã‚‹ã€‚
+	@note	ã„ã£ã±ã„ã®ã¨ãã¯æœ€å¤ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+	@note	ãŠæ°—ã«å…¥ã‚Šã¯å‰Šé™¤ã•ã‚Œãªã„ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::AppendItem( ReceiveType pItemData )
@@ -197,18 +197,18 @@ bool CRecentImp<T, S>::AppendItem( ReceiveType pItemData )
 	if( !pItemData ) return false;
 	if( false == ValidateReceiveType(pItemData) ) return false;
 
-	//“o˜^Ï‚İ‚©’²‚×‚éB
+	//ç™»éŒ²æ¸ˆã¿ã‹èª¿ã¹ã‚‹ã€‚
 	int	nIndex = FindItem( pItemData );
 	if( nIndex >= 0 )
 	{
 		CopyItem( GetItemPointer(nIndex), pItemData );
 
-		//æ“ª‚É‚Á‚Ä‚­‚éB
+		//å…ˆé ­ã«æŒã£ã¦ãã‚‹ã€‚
 		MoveItem( nIndex, 0 );
 		goto reconfigure;
 	}
 
-	//‚¢‚Á‚Ï‚¢‚Ì‚Æ‚«‚ÍÅŒÃ‚Ì’ÊíƒAƒCƒeƒ€‚ğíœ‚·‚éB
+	//ã„ã£ã±ã„ã®ã¨ãã¯æœ€å¤ã®é€šå¸¸ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	if( m_nArrayCount <= *m_pnUserItemCount )
 	{
 		nIndex = GetOldestItem( *m_pnUserItemCount - 1, false );
@@ -228,14 +228,14 @@ bool CRecentImp<T, S>::AppendItem( ReceiveType pItemData )
 	CopyItem( GetItemPointer(0), pItemData );
 
 	//(void)SetFavorite( 0, true );
-	//“à•”ˆ—‚µ‚È‚¢‚Æ‚¾‚ßB
+	//å†…éƒ¨å‡¦ç†ã—ãªã„ã¨ã ã‚ã€‚
 	if( m_pbUserItemFavorite ) m_pbUserItemFavorite[0] = false;
 
 	*m_pnUserItemCount += 1;
 
 
 reconfigure:
-	//‚¨‹C‚É“ü‚è‚ğ•\¦“à‚ÉˆÚ“®‚·‚éB
+	//ãŠæ°—ã«å…¥ã‚Šã‚’è¡¨ç¤ºå†…ã«ç§»å‹•ã™ã‚‹ã€‚
 	if( m_pnUserViewCount )
 	{
 		ChangeViewCount( *m_pnUserViewCount );
@@ -276,7 +276,7 @@ bool CRecentImp<T, S>::EditItemText( int nIndex, LPCTSTR pText )
 	}
 	int findIndex = FindItem( receiveData );
 	if( -1 != findIndex && nIndex != findIndex ){
-		// d•¡•s‰ÂB‚½‚¾‚µ“¯‚¶ê‡‚Í‘å•¶š¬•¶š‚Ì•ÏX‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅOK
+		// é‡è¤‡ä¸å¯ã€‚ãŸã ã—åŒã˜å ´åˆã¯å¤§æ–‡å­—å°æ–‡å­—ã®å¤‰æ›´ã‹ã‚‚ã—ã‚Œãªã„ã®ã§OK
 		return false;
 	}
 	CopyItem( GetItemPointer(nIndex), receiveData );
@@ -285,7 +285,7 @@ bool CRecentImp<T, S>::EditItemText( int nIndex, LPCTSTR pText )
 
 
 /*
-	ƒAƒCƒeƒ€‚ğƒ[ƒƒNƒŠƒA‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚¼ãƒ­ã‚¯ãƒªã‚¢ã™ã‚‹ã€‚
 */
 template <class T, class S>
 void CRecentImp<T, S>::ZeroItem( int nIndex )
@@ -301,7 +301,7 @@ void CRecentImp<T, S>::ZeroItem( int nIndex )
 }
 
 /*
-	ƒAƒCƒeƒ€‚ğíœ‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::DeleteItem( int nIndex )
@@ -311,7 +311,7 @@ bool CRecentImp<T, S>::DeleteItem( int nIndex )
 
 	ZeroItem( nIndex );
 
-	//ˆÈ~‚ÌƒAƒCƒeƒ€‚ğ‘O‚É‹l‚ß‚éB
+	//ä»¥é™ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰ã«è©°ã‚ã‚‹ã€‚
 	int i;
 	for( i = nIndex; i < *m_pnUserItemCount - 1; i++ )
 	{
@@ -325,7 +325,7 @@ bool CRecentImp<T, S>::DeleteItem( int nIndex )
 }
 
 /*
-	‚¨‹C‚É“ü‚èˆÈŠO‚ÌƒAƒCƒeƒ€‚ğíœ‚·‚éB
+	ãŠæ°—ã«å…¥ã‚Šä»¥å¤–ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::DeleteItemsNoFavorite()
@@ -349,9 +349,9 @@ bool CRecentImp<T, S>::DeleteItemsNoFavorite()
 }
 
 /*
-	‚·‚×‚Ä‚ÌƒAƒCƒeƒ€‚ğíœ‚·‚éB
+	ã™ã¹ã¦ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 
-	@note	ƒ[ƒƒNƒŠƒA‚ğ‰Â”\‚Æ‚·‚é‚½‚ßA‚·‚×‚Ä‚ª‘ÎÛ‚É‚È‚éB
+	@note	ã‚¼ãƒ­ã‚¯ãƒªã‚¢ã‚’å¯èƒ½ã¨ã™ã‚‹ãŸã‚ã€ã™ã¹ã¦ãŒå¯¾è±¡ã«ãªã‚‹ã€‚
 */
 template <class T, class S>
 void CRecentImp<T, S>::DeleteAllItem()
@@ -371,7 +371,7 @@ void CRecentImp<T, S>::DeleteAllItem()
 }
 
 /*
-	ƒAƒCƒeƒ€‚ğˆÚ“®‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’ç§»å‹•ã™ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::MoveItem( int nSrcIndex, int nDstIndex )
@@ -387,7 +387,7 @@ bool CRecentImp<T, S>::MoveItem( int nSrcIndex, int nDstIndex )
 
 	DataType pri;
 
-	//ˆÚ“®‚·‚éî•ñ‚ğ‘Ş”ğ
+	//ç§»å‹•ã™ã‚‹æƒ…å ±ã‚’é€€é¿
 	memcpy_raw( &pri, GetItemPointer( nSrcIndex ), sizeof(pri) );
 	bFavorite = IsFavorite( nSrcIndex );
 
@@ -406,7 +406,7 @@ bool CRecentImp<T, S>::MoveItem( int nSrcIndex, int nDstIndex )
 		}
 	}
 
-	//V‚µ‚¢ˆÊ’u‚ÉŠi”[
+	//æ–°ã—ã„ä½ç½®ã«æ ¼ç´
 	memcpy_raw( GetItemPointer( nDstIndex ), &pri, sizeof(pri) );
 	SetFavorite( nDstIndex, bFavorite );
 
@@ -426,7 +426,7 @@ bool CRecentImp<T, S>::CopyItem( int nSrcIndex, int nDstIndex )
 	memcpy_raw( GetItemPointer( nDstIndex ), GetItemPointer( nSrcIndex ), sizeof(DataType) );
 
 	//(void)SetFavorite( nDstIndex, IsFavorite( nSrcIndex ) );
-	//“à•”ˆ—‚µ‚È‚¢‚Æ‚¾‚ßB
+	//å†…éƒ¨å‡¦ç†ã—ãªã„ã¨ã ã‚ã€‚
 	if( m_pbUserItemFavorite ) m_pbUserItemFavorite[nDstIndex] = m_pbUserItemFavorite[nSrcIndex];
 
 	return true;
@@ -435,7 +435,7 @@ bool CRecentImp<T, S>::CopyItem( int nSrcIndex, int nDstIndex )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒAƒCƒeƒ€æ“¾                          //
+//                       ã‚¢ã‚¤ãƒ†ãƒ å–å¾—                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 template <class T, class S>
@@ -453,7 +453,7 @@ const T* CRecentImp<T, S>::GetItemPointer(int nIndex) const
 }
 
 /*
-	ƒAƒCƒeƒ€‚ğŒŸõ‚·‚éB
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¤œç´¢ã™ã‚‹ã€‚
 */
 template <class T, class S>
 int CRecentImp<T, S>::FindItem( ReceiveType pItemData ) const
@@ -470,10 +470,10 @@ int CRecentImp<T, S>::FindItem( ReceiveType pItemData ) const
 }
 
 /*
-	ƒAƒCƒeƒ€ƒŠƒXƒg‚©‚ç‚à‚Á‚Æ‚àŒÃ‚¢o‚¨‹C‚É“ü‚èE’Êíp‚ÌƒAƒCƒeƒ€‚ğ’T‚·B
+	ã‚¢ã‚¤ãƒ†ãƒ ãƒªã‚¹ãƒˆã‹ã‚‰ã‚‚ã£ã¨ã‚‚å¤ã„ï½›ãŠæ°—ã«å…¥ã‚Šãƒ»é€šå¸¸ï½ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¢ã™ã€‚
 
-	bFavorite=true	‚¨‹C‚É“ü‚è‚Ì’†‚©‚ç’T‚·
-	bFavorite=false	’Êí‚Ì’†‚©‚ç’T‚·
+	bFavorite=true	ãŠæ°—ã«å…¥ã‚Šã®ä¸­ã‹ã‚‰æ¢ã™
+	bFavorite=false	é€šå¸¸ã®ä¸­ã‹ã‚‰æ¢ã™
 */
 template <class T, class S>
 int CRecentImp<T, S>::GetOldestItem( int nIndex, bool bFavorite )
@@ -493,13 +493,13 @@ int CRecentImp<T, S>::GetOldestItem( int nIndex, bool bFavorite )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ‚»‚Ì‘¼                             //
+//                          ãã®ä»–                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*
-	ŠÇ—‚³‚ê‚Ä‚¢‚éƒAƒCƒeƒ€‚Ì‚¤‚¿‚Ì•\¦ŒÂ”‚ğ•ÏX‚·‚éB
+	ç®¡ç†ã•ã‚Œã¦ã„ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®ã†ã¡ã®è¡¨ç¤ºå€‹æ•°ã‚’å¤‰æ›´ã™ã‚‹ã€‚
 
-	@note	‚¨‹C‚É“ü‚è‚Í‰Â”\‚ÈŒÀ‚è•\¦“à‚ÉˆÚ“®‚³‚¹‚éB
+	@note	ãŠæ°—ã«å…¥ã‚Šã¯å¯èƒ½ãªé™ã‚Šè¡¨ç¤ºå†…ã«ç§»å‹•ã•ã›ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::ChangeViewCount( int nViewCount )
@@ -507,33 +507,33 @@ bool CRecentImp<T, S>::ChangeViewCount( int nViewCount )
 	int	i;
 	int	nIndex;
 
-	//”ÍˆÍŠO‚È‚çƒGƒ‰[
+	//ç¯„å›²å¤–ãªã‚‰ã‚¨ãƒ©ãƒ¼
 	if( ! IsAvailable() ) return false;
 	if( nViewCount < 0 || nViewCount > m_nArrayCount ) return false;
 
-	//•\¦ŒÂ”‚ğXV‚·‚éB
+	//è¡¨ç¤ºå€‹æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚
 	if( m_pnUserViewCount )
 	{
 		*m_pnUserViewCount = nViewCount;
 	}
 
-	//”ÍˆÍ“à‚É‚·‚×‚Äû‚Ü‚Á‚Ä‚¢‚é‚Ì‚Å‰½‚à‚µ‚È‚­‚Ä‚æ‚¢B
+	//ç¯„å›²å†…ã«ã™ã¹ã¦åã¾ã£ã¦ã„ã‚‹ã®ã§ä½•ã‚‚ã—ãªãã¦ã‚ˆã„ã€‚
 	if( nViewCount >= *m_pnUserItemCount ) return true;
 
-	//Å‚àŒÃ‚¢‚¨‹C‚É“ü‚è‚ğ’T‚·B
+	//æœ€ã‚‚å¤ã„ãŠæ°—ã«å…¥ã‚Šã‚’æ¢ã™ã€‚
 	i = GetOldestItem( *m_pnUserItemCount - 1, true );
-	if( -1 == i ) return true;	//‚È‚¢‚Ì‚Å‰½‚à‚µ‚È‚¢‚ÅI—¹
+	if( -1 == i ) return true;	//ãªã„ã®ã§ä½•ã‚‚ã—ãªã„ã§çµ‚äº†
 
-	//•\¦ŠOƒAƒCƒeƒ€‚ğ•\¦“à‚ÉˆÚ“®‚·‚éB
+	//è¡¨ç¤ºå¤–ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¡¨ç¤ºå†…ã«ç§»å‹•ã™ã‚‹ã€‚
 	for( ; i >= nViewCount; i-- )
 	{
 		if( IsFavorite( i ) )
 		{
-			//ƒJƒŒƒ“ƒgˆÊ’u‚©‚çã‚É’ÊíƒAƒCƒeƒ€‚ğ’T‚·
+			//ã‚«ãƒ¬ãƒ³ãƒˆä½ç½®ã‹ã‚‰ä¸Šã«é€šå¸¸ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¢ã™
 			nIndex = GetOldestItem( i - 1, false );
-			if( -1 == nIndex ) break;	//‚à‚¤1ŒÂ‚à‚È‚¢
+			if( -1 == nIndex ) break;	//ã‚‚ã†1å€‹ã‚‚ãªã„
 
-			//Œ©‚Â‚©‚Á‚½ƒAƒCƒeƒ€‚ğƒJƒŒƒ“ƒgˆÊ’u‚ÉˆÚ“®‚·‚é
+			//è¦‹ã¤ã‹ã£ãŸã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚«ãƒ¬ãƒ³ãƒˆä½ç½®ã«ç§»å‹•ã™ã‚‹
 			MoveItem( nIndex, i );
 		}
 	}
@@ -542,14 +542,14 @@ bool CRecentImp<T, S>::ChangeViewCount( int nViewCount )
 }
 
 /*
-	ƒŠƒXƒg‚ğXV‚·‚éB
+	ãƒªã‚¹ãƒˆã‚’æ›´æ–°ã™ã‚‹ã€‚
 */
 template <class T, class S>
 bool CRecentImp<T, S>::UpdateView()
 {
 	int	nViewCount;
 
-	//”ÍˆÍŠO‚È‚çƒGƒ‰[
+	//ç¯„å›²å¤–ãªã‚‰ã‚¨ãƒ©ãƒ¼
 	if( ! IsAvailable() ) return false;
 
 	if( m_pnUserViewCount ) nViewCount = *m_pnUserViewCount;
@@ -562,7 +562,7 @@ bool CRecentImp<T, S>::UpdateView()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒCƒ“ƒXƒ^ƒ“ƒX‰»                         //
+//                      ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;

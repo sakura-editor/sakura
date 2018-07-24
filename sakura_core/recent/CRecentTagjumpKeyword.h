@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,13 +29,13 @@
 
 typedef StaticString<WCHAR, _MAX_PATH> CTagjumpKeywordString;
 
-//! ƒ^ƒOƒWƒƒƒ“ƒvƒL[ƒ[ƒh‚Ì—š—ğ‚ğŠÇ— (RECENT_FOR_TAGJUMP_KEYWORD)
+//! ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å±¥æ­´ã‚’ç®¡ç† (RECENT_FOR_TAGJUMP_KEYWORD)
 class CRecentTagjumpKeyword : public CRecentImp<CTagjumpKeywordString, LPCWSTR>{
 public:
-	//¶¬
+	//ç”Ÿæˆ
 	CRecentTagjumpKeyword();
 
-	//ƒI[ƒo[ƒ‰ƒCƒh
+	//ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	int				CompareItem( const CTagjumpKeywordString* p1, LPCWSTR p2 ) const;
 	void			CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;

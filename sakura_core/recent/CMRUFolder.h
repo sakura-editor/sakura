@@ -1,8 +1,8 @@
-/*!	@file
-	@brief MRUƒŠƒXƒg‚ÆŒÄ‚Î‚ê‚éƒŠƒXƒg‚ğŠÇ—‚·‚éBƒtƒHƒ‹ƒ_”ÅB
+ï»¿/*!	@file
+	@brief MRUãƒªã‚¹ãƒˆã¨å‘¼ã°ã‚Œã‚‹ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹ã€‚ãƒ•ã‚©ãƒ«ãƒ€ç‰ˆã€‚
 
 	@author YAZAKI
-	@date 2001/12/23  V‹Kì¬
+	@date 2001/12/23  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, YAZAKI
@@ -39,34 +39,34 @@
 
 class CMenuDrawer;
 
-//	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+//	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 class CMRUFolder {
 public:
-	//	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CMRUFolder();
 	~CMRUFolder();
 
-	//	ƒƒjƒ…[‚ğæ“¾‚·‚é
-	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	‚¤[‚ñBpCMenuDrawer‚ª•K—v‚È‚­‚È‚é‚Æ‚¢‚¢‚È‚ŸB
+	//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’å–å¾—ã™ã‚‹
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	ã†ãƒ¼ã‚“ã€‚pCMenuDrawerãŒå¿…è¦ãªããªã‚‹ã¨ã„ã„ãªãã€‚
 	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
-	//	ƒtƒHƒ‹ƒ_–¼‚Ìˆê——‚ğ‹³‚¦‚Ä
+	//	ãƒ•ã‚©ãƒ«ãƒ€åã®ä¸€è¦§ã‚’æ•™ãˆã¦
 	std::vector<LPCTSTR> GetPathList() const;
 
-	//	ƒAƒNƒZƒXŠÖ”
-	int Length() const;	//	ƒAƒCƒeƒ€‚Ì”B
-	int MenuLength(void) const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); }	//	ƒƒjƒ…[‚É•\¦‚³‚ê‚éƒAƒCƒeƒ€‚Ì”
-	void ClearAll();					//	ƒAƒCƒeƒ€‚ğíœ`B
-	void Add( const TCHAR* pszFolder );	//	pszFolder‚ğ’Ç‰Á‚·‚éB
+	//	ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°
+	int Length() const;	//	ã‚¢ã‚¤ãƒ†ãƒ ã®æ•°ã€‚
+	int MenuLength(void) const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); }	//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¡¨ç¤ºã•ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®æ•°
+	void ClearAll();					//	ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ï½ã€‚
+	void Add( const TCHAR* pszFolder );	//	pszFolderã‚’è¿½åŠ ã™ã‚‹ã€‚
 	const TCHAR* GetPath(int num) const;
 
 protected:
-	//	‹¤—Lƒƒ‚ƒŠƒAƒNƒZƒX—pB
-	struct DLLSHAREDATA*	m_pShareData;			//	‹¤—Lƒƒ‚ƒŠ‚ğQÆ‚·‚é‚æB
+	//	å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚¢ã‚¯ã‚»ã‚¹ç”¨ã€‚
+	struct DLLSHAREDATA*	m_pShareData;			//	å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚’å‚ç…§ã™ã‚‹ã‚ˆã€‚
 
 private:
-	CRecentFolder	m_cRecentFolder;	//—š—ğ	//@@@ 2003.04.08 MIK
+	CRecentFolder	m_cRecentFolder;	//å±¥æ­´	//@@@ 2003.04.08 MIK
 };
 
 #endif
