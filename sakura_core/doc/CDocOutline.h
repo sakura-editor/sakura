@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,22 +32,22 @@ class CDocOutline{
 public:
 	CDocOutline(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
 	void	MakeFuncList_C( CFuncInfoArr*, EOutlineType& nOutlineType, const TCHAR* pszFileName,
-		bool bVisibleMemberFunc = true );					//!< C/C++ŠÖ”ƒŠƒXƒgì¬
-	void	MakeFuncList_PLSQL( CFuncInfoArr* );											//!< PL/SQLŠÖ”ƒŠƒXƒgì¬
-	void	MakeTopicList_txt( CFuncInfoArr* );												//!< ƒeƒLƒXƒgEƒgƒsƒbƒNƒŠƒXƒgì¬
-	void	MakeFuncList_Java( CFuncInfoArr* );												//!< JavaŠÖ”ƒŠƒXƒgì¬
-	void	MakeTopicList_cobol( CFuncInfoArr* );											//!< COBOL ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
-	void	MakeTopicList_asm( CFuncInfoArr* );												//!< ƒAƒZƒ“ƒuƒ‰ ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ
-	void	MakeFuncList_Perl( CFuncInfoArr* );												//!< PerlŠÖ”ƒŠƒXƒgì¬	//	Sep. 8, 2000 genta
-	void	MakeFuncList_VisualBasic( CFuncInfoArr* );										//!< Visual BasicŠÖ”ƒŠƒXƒgì¬ //June 23, 2001 N.Nakatani
-	void	MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr );								//!< Python ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ // 2007.02.08 genta
-	void	MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr );								//!< Erlang ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ // 2009.08.10 genta
-	void	MakeTopicList_wztxt(CFuncInfoArr*);												//!< ŠK‘w•t‚«ƒeƒLƒXƒg ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ // 2003.05.20 zenryaku
-	void	MakeTopicList_html(CFuncInfoArr*, bool bXml);									//!< HTML ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ // 2003.05.20 zenryaku
-	void	MakeTopicList_tex(CFuncInfoArr*);												//!< TeX ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ // 2003.07.20 naoh
-	void	MakeFuncList_RuleFile( CFuncInfoArr*, std::tstring& );											//!< ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ðŽg‚Á‚ÄƒŠƒXƒgì¬ 2002.04.01 YAZAKI
-	int		ReadRuleFile( const TCHAR*, SOneRule*, int, bool&, std::wstring& );	//!< ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹“Çž 2002.04.01 YAZAKI
-	void	MakeFuncList_BookMark( CFuncInfoArr* );											//!< ƒuƒbƒNƒ}[ƒNƒŠƒXƒgì¬ //2001.12.03 hor
+		bool bVisibleMemberFunc = true );					//!< C/C++é–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ
+	void	MakeFuncList_PLSQL( CFuncInfoArr* );											//!< PL/SQLé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ
+	void	MakeTopicList_txt( CFuncInfoArr* );												//!< ãƒ†ã‚­ã‚¹ãƒˆãƒ»ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆä½œæˆ
+	void	MakeFuncList_Java( CFuncInfoArr* );												//!< Javaé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ
+	void	MakeTopicList_cobol( CFuncInfoArr* );											//!< COBOL ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
+	void	MakeTopicList_asm( CFuncInfoArr* );												//!< ã‚¢ã‚»ãƒ³ãƒ–ãƒ© ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž
+	void	MakeFuncList_Perl( CFuncInfoArr* );												//!< Perlé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ	//	Sep. 8, 2000 genta
+	void	MakeFuncList_VisualBasic( CFuncInfoArr* );										//!< Visual Basicé–¢æ•°ãƒªã‚¹ãƒˆä½œæˆ //June 23, 2001 N.Nakatani
+	void	MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr );								//!< Python ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž // 2007.02.08 genta
+	void	MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr );								//!< Erlang ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž // 2009.08.10 genta
+	void	MakeTopicList_wztxt(CFuncInfoArr*);												//!< éšŽå±¤ä»˜ããƒ†ã‚­ã‚¹ãƒˆ ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž // 2003.05.20 zenryaku
+	void	MakeTopicList_html(CFuncInfoArr*, bool bXml);									//!< HTML ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž // 2003.05.20 zenryaku
+	void	MakeTopicList_tex(CFuncInfoArr*);												//!< TeX ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž // 2003.07.20 naoh
+	void	MakeFuncList_RuleFile( CFuncInfoArr*, std::tstring& );											//!< ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½¿ã£ã¦ãƒªã‚¹ãƒˆä½œæˆ 2002.04.01 YAZAKI
+	int		ReadRuleFile( const TCHAR*, SOneRule*, int, bool&, std::wstring& );	//!< ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼ 2002.04.01 YAZAKI
+	void	MakeFuncList_BookMark( CFuncInfoArr* );											//!< ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯ãƒªã‚¹ãƒˆä½œæˆ //2001.12.03 hor
 private:
 	CEditDoc* m_pcDocRef;
 };

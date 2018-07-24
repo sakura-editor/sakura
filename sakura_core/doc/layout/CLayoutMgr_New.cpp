@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒeƒLƒXƒg‚ÌƒŒƒCƒAƒEƒgî•ñŠÇ—
+ï»¿/*!	@file
+	@brief ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ç®¡ç†
 
 	@author Norio Nakatani
 */
@@ -28,12 +28,12 @@
 
 
 /*!
-	s“ª‹Ö‘¥•¶š‚ÉŠY“–‚·‚é‚©‚ğ’²‚×‚éD
+	è¡Œé ­ç¦å‰‡æ–‡å­—ã«è©²å½“ã™ã‚‹ã‹ã‚’èª¿ã¹ã‚‹ï¼
 
-	@param[in] pLine ’²‚×‚é•¶š‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param[in] length “–ŠY‰ÓŠ‚Ì•¶šƒTƒCƒY
-	@retval true ‹Ö‘¥•¶š‚ÉŠY“–
-	@retval false ‹Ö‘¥•¶š‚ÉŠY“–‚µ‚È‚¢
+	@param[in] pLine èª¿ã¹ã‚‹æ–‡å­—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param[in] length å½“è©²ç®‡æ‰€ã®æ–‡å­—ã‚µã‚¤ã‚º
+	@retval true ç¦å‰‡æ–‡å­—ã«è©²å½“
+	@retval false ç¦å‰‡æ–‡å­—ã«è©²å½“ã—ãªã„
 */
 bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 {
@@ -41,12 +41,12 @@ bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 }
 
 /*!
-	s––‹Ö‘¥•¶š‚ÉŠY“–‚·‚é‚©‚ğ’²‚×‚éD
+	è¡Œæœ«ç¦å‰‡æ–‡å­—ã«è©²å½“ã™ã‚‹ã‹ã‚’èª¿ã¹ã‚‹ï¼
 
-	@param[in] pLine ’²‚×‚é•¶š‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param[in] length “–ŠY‰ÓŠ‚Ì•¶šƒTƒCƒY
-	@retval true ‹Ö‘¥•¶š‚ÉŠY“–
-	@retval false ‹Ö‘¥•¶š‚ÉŠY“–‚µ‚È‚¢
+	@param[in] pLine èª¿ã¹ã‚‹æ–‡å­—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param[in] length å½“è©²ç®‡æ‰€ã®æ–‡å­—ã‚µã‚¤ã‚º
+	@retval true ç¦å‰‡æ–‡å­—ã«è©²å½“
+	@retval false ç¦å‰‡æ–‡å­—ã«è©²å½“ã—ãªã„
 */
 bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 {
@@ -55,12 +55,12 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 
 
 /*!
-	‹Ö‘¥‘ÎÛ‹å“Ç“_‚ÉŠY“–‚·‚é‚©‚ğ’²‚×‚éD
+	ç¦å‰‡å¯¾è±¡å¥èª­ç‚¹ã«è©²å½“ã™ã‚‹ã‹ã‚’èª¿ã¹ã‚‹ï¼
 
-	@param [in] pLine  ’²‚×‚é•¶š‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param [in] length “–ŠY‰ÓŠ‚Ì•¶šƒTƒCƒY
-	@retval true ‹Ö‘¥•¶š‚ÉŠY“–
-	@retval false ‹Ö‘¥•¶š‚ÉŠY“–‚µ‚È‚¢
+	@param [in] pLine  èª¿ã¹ã‚‹æ–‡å­—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param [in] length å½“è©²ç®‡æ‰€ã®æ–‡å­—ã‚µã‚¤ã‚º
+	@retval true ç¦å‰‡æ–‡å­—ã«è©²å½“
+	@retval false ç¦å‰‡æ–‡å­—ã«è©²å½“ã—ãªã„
 */
 bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
 {
@@ -68,31 +68,31 @@ bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
 }
 
 /*!
-	@date 2005-08-20 D.S.Koba _DoLayout()‚ÆDoLayout_Range()‚©‚ç•ª—£
+	@date 2005-08-20 D.S.Koba _DoLayout()ã¨DoLayout_Range()ã‹ã‚‰åˆ†é›¢
 */
 bool CLayoutMgr::IsKinsokuPosHead(
-	CLayoutInt nRest,		//!< [in] s‚Ìc‚è•¶š”
-	CLayoutInt nCharKetas,	//!< [in] Œ»İˆÊ’u‚Ì•¶šƒTƒCƒY
-	CLayoutInt nCharKetas2	//!< [in] Œ»İˆÊ’u‚ÌŸ‚Ì•¶šƒTƒCƒY
+	CLayoutInt nRest,		//!< [in] è¡Œã®æ®‹ã‚Šæ–‡å­—æ•°
+	CLayoutInt nCharKetas,	//!< [in] ç¾åœ¨ä½ç½®ã®æ–‡å­—ã‚µã‚¤ã‚º
+	CLayoutInt nCharKetas2	//!< [in] ç¾åœ¨ä½ç½®ã®æ¬¡ã®æ–‡å­—ã‚µã‚¤ã‚º
 )
 {
 	switch( (Int)nRest )
 	{
-	//    321012  «ƒ}ƒWƒbƒNƒiƒ“ƒo[
-	// 3 "‚éj" : 22 "j"‚Ì2ƒoƒCƒg–Ú‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	// 2  "Zj" : 12 "j"‚Ì2ƒoƒCƒg–Ú‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	// 2  "‚éj": 22 "j"‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	// 2  "‚é)" : 21 ")"‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	// 1   "Zj": 12 "j"‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	// 1   "Z)" : 11 ")"‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
-	//ª‰½•¶š‘O‚©H
-	// ¦‚½‚¾‚µA"‚éZ"•”•ª‚ª‹Ö‘¥‚È‚çˆ—‚µ‚È‚¢B
-	case 3:	// 3•¶š‘O
+	//    321012  â†“ãƒã‚¸ãƒƒã‚¯ãƒŠãƒ³ãƒãƒ¼
+	// 3 "ã‚‹ï¼‰" : 22 "ï¼‰"ã®2ãƒã‚¤ãƒˆç›®ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	// 2  "Zï¼‰" : 12 "ï¼‰"ã®2ãƒã‚¤ãƒˆç›®ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	// 2  "ã‚‹ï¼‰": 22 "ï¼‰"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	// 2  "ã‚‹)" : 21 ")"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	// 1   "Zï¼‰": 12 "ï¼‰"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	// 1   "Z)" : 11 ")"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
+	//â†‘ä½•æ–‡å­—å‰ã‹ï¼Ÿ
+	// â€»ãŸã ã—ã€"ã‚‹Z"éƒ¨åˆ†ãŒç¦å‰‡ãªã‚‰å‡¦ç†ã—ãªã„ã€‚
+	case 3:	// 3æ–‡å­—å‰
 		if( nCharKetas == 2 && nCharKetas2 == 2 ){
 			return true;
 		}
 		break;
-	case 2:	// 2•¶š‘O
+	case 2:	// 2æ–‡å­—å‰
 		if( nCharKetas == 2 ){
 			return true;
 		}
@@ -100,7 +100,7 @@ bool CLayoutMgr::IsKinsokuPosHead(
 			return true;
 		}
 		break;
-	case 1:	// 1•¶š‘O
+	case 1:	// 1æ–‡å­—å‰
 		if( nCharKetas == 1 ){
 			return true;
 		}
@@ -110,35 +110,35 @@ bool CLayoutMgr::IsKinsokuPosHead(
 }
 
 /*!
-	@date 2005-08-20 D.S.Koba _DoLayout()‚ÆDoLayout_Range()‚©‚ç•ª—£
+	@date 2005-08-20 D.S.Koba _DoLayout()ã¨DoLayout_Range()ã‹ã‚‰åˆ†é›¢
 */
 bool CLayoutMgr::IsKinsokuPosTail(
-	CLayoutInt nRest,		//!< [in] s‚Ìc‚è•¶š”
-	CLayoutInt nCharKetas,	//!< [in] Œ»İˆÊ’u‚Ì•¶šƒTƒCƒY
-	CLayoutInt nCharKetas2	//!< [in] Œ»İˆÊ’u‚ÌŸ‚Ì•¶šƒTƒCƒY
+	CLayoutInt nRest,		//!< [in] è¡Œã®æ®‹ã‚Šæ–‡å­—æ•°
+	CLayoutInt nCharKetas,	//!< [in] ç¾åœ¨ä½ç½®ã®æ–‡å­—ã‚µã‚¤ã‚º
+	CLayoutInt nCharKetas2	//!< [in] ç¾åœ¨ä½ç½®ã®æ¬¡ã®æ–‡å­—ã‚µã‚¤ã‚º
 )
 {
 	switch( (Int)nRest )
 	{
-	case 3:	// 3•¶š‘O
+	case 3:	// 3æ–‡å­—å‰
 		if( nCharKetas == 2 && nCharKetas2 == 2){
-			// "i‚ ": "‚ "‚Ì2ƒoƒCƒg–Ú‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
+			// "ï¼ˆã‚": "ã‚"ã®2ãƒã‚¤ãƒˆç›®ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
 			return true;
 		}
 		break;
-	case 2:	// 2•¶š‘O
+	case 2:	// 2æ–‡å­—å‰
 		if( nCharKetas == 2 ){
-			// "i‚ ": "‚ "‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
+			// "ï¼ˆã‚": "ã‚"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
 			return true;
 		}
 		else if( nCharKetas == 1 && nCharKetas2 == 2){
-			// "(‚ ": "‚ "‚Ì2ƒoƒCƒg–Ú‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
+			// "(ã‚": "ã‚"ã®2ãƒã‚¤ãƒˆç›®ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
 			return true;
 		}
 		break;
-	case 1:	// 1•¶š‘O
+	case 1:	// 1æ–‡å­—å‰
 		if( nCharKetas == 1 ){
-			// "(‚ ": "‚ "‚ÅÜ‚è•Ô‚µ‚Ì‚Æ‚«
+			// "(ã‚": "ã‚"ã§æŠ˜ã‚Šè¿”ã—ã®ã¨ã
 			return true;
 		}
 		break;
@@ -148,12 +148,12 @@ bool CLayoutMgr::IsKinsokuPosTail(
 
 
 /*!
-	@brief s‚Ì’·‚³‚ğŒvZ‚·‚é (2s–ÚˆÈ~‚Ìš‰º‚°–³‚µ)
+	@brief è¡Œã®é•·ã•ã‚’è¨ˆç®—ã™ã‚‹ (2è¡Œç›®ä»¥é™ã®å­—ä¸‹ã’ç„¡ã—)
 	
-	š‰º‚°‚ğs‚í‚È‚¢‚Ì‚ÅCí‚É0‚ğ•Ô‚·D
-	ˆø”‚Íg‚í‚È‚¢D
+	å­—ä¸‹ã’ã‚’è¡Œã‚ãªã„ã®ã§ï¼Œå¸¸ã«0ã‚’è¿”ã™ï¼
+	å¼•æ•°ã¯ä½¿ã‚ãªã„ï¼
 	
-	@return 1s‚Ì•\¦•¶š” (í‚É0)
+	@return 1è¡Œã®è¡¨ç¤ºæ–‡å­—æ•° (å¸¸ã«0)
 	
 	@author genta
 	@date 2002.10.01
@@ -164,25 +164,25 @@ CLayoutInt CLayoutMgr::getIndentOffset_Normal( CLayout* )
 }
 
 /*!
-	@brief ƒCƒ“ƒfƒ“ƒg•‚ğŒvZ‚·‚é (Tx2x)
+	@brief ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¹…ã‚’è¨ˆç®—ã™ã‚‹ (Tx2x)
 	
-	‘O‚Ìs‚ÌÅŒã‚ÌTAB‚ÌˆÊ’u‚ğƒCƒ“ƒfƒ“ƒgˆÊ’u‚Æ‚µ‚Ä•Ô‚·D
-	‚½‚¾‚µCc‚è•‚ª6•¶š–¢–‚Ìê‡‚ÍƒCƒ“ƒfƒ“ƒg‚ğs‚í‚È‚¢D
+	å‰ã®è¡Œã®æœ€å¾Œã®TABã®ä½ç½®ã‚’ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆä½ç½®ã¨ã—ã¦è¿”ã™ï¼
+	ãŸã ã—ï¼Œæ®‹ã‚Šå¹…ãŒ6æ–‡å­—æœªæº€ã®å ´åˆã¯ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚’è¡Œã‚ãªã„ï¼
 	
 	@author Yazaki
-	@return ƒCƒ“ƒfƒ“ƒg‚·‚×‚«•¶š”
+	@return ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã™ã¹ãæ–‡å­—æ•°
 	
 	@date 2002.10.01 
-	@date 2002.10.07 YAZAKI –¼Ì•ÏX, ˆ—Œ©’¼‚µ
+	@date 2002.10.07 YAZAKI åç§°å¤‰æ›´, å‡¦ç†è¦‹ç›´ã—
 */
 CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 {
-	//	‘O‚Ìs‚ª–³‚¢‚Æ‚«‚ÍAƒCƒ“ƒfƒ“ƒg•s—vB
+	//	å‰ã®è¡ŒãŒç„¡ã„ã¨ãã¯ã€ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆä¸è¦ã€‚
 	if ( pLayoutPrev == NULL ) return CLayoutInt(0);
 
 	CLayoutInt nIpos = pLayoutPrev->GetIndent();
 
-	//	‘O‚Ìs‚ªÜ‚è•Ô‚µs‚È‚ç‚Î‚»‚ê‚É‡‚í‚¹‚é
+	//	å‰ã®è¡ŒãŒæŠ˜ã‚Šè¿”ã—è¡Œãªã‚‰ã°ãã‚Œã«åˆã‚ã›ã‚‹
 	if( pLayoutPrev->GetLogicOffset() > 0 )
 		return nIpos;
 	
@@ -194,123 +194,123 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	// 2010.07.06 Moca TAB=8‚È‚Ç‚Ìê‡‚ÉÜ‚è•Ô‚·‚Æ–³ŒÀƒ‹[ƒv‚·‚é•s‹ï‡‚ÌC³. 6ŒÅ’è‚ğ m_nTabSpace + 2‚É•ÏX
+	// 2010.07.06 Moca TAB=8ãªã©ã®å ´åˆã«æŠ˜ã‚Šè¿”ã™ã¨ç„¡é™ãƒ«ãƒ¼ãƒ—ã™ã‚‹ä¸å…·åˆã®ä¿®æ­£. 6å›ºå®šã‚’ m_nTabSpace + 2ã«å¤‰æ›´
 	if ( GetMaxLineLayout() - nIpos < GetTabSpace() + (2 * m_nCharLayoutXPerKeta) ){
-		nIpos = t_max(CLayoutInt(0), GetMaxLineLayout() - (GetTabSpace() + (2 * m_nCharLayoutXPerKeta))); // 2013.05.12 Chg:0‚¾‚Á‚½‚Ì‚ğÅ‘å•‚É•ÏX
+		nIpos = t_max(CLayoutInt(0), GetMaxLineLayout() - (GetTabSpace() + (2 * m_nCharLayoutXPerKeta))); // 2013.05.12 Chg:0ã ã£ãŸã®ã‚’æœ€å¤§å¹…ã«å¤‰æ›´
 	}
-	return nIpos;	//	ƒCƒ“ƒfƒ“ƒg
+	return nIpos;	//	ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ
 }
 
 /*!
-	@brief ƒCƒ“ƒfƒ“ƒg•‚ğŒvZ‚·‚é (ƒXƒy[ƒXš‰º‚°”Å)
+	@brief ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¹…ã‚’è¨ˆç®—ã™ã‚‹ (ã‚¹ãƒšãƒ¼ã‚¹å­—ä¸‹ã’ç‰ˆ)
 	
-	˜_—ss“ª‚ÌƒzƒƒCƒgƒXƒy[ƒX‚ÌI‚í‚èƒCƒ“ƒfƒ“ƒgˆÊ’u‚Æ‚µ‚Ä•Ô‚·D
-	‚½‚¾‚µCc‚è•‚ª6•¶š–¢–‚Ìê‡‚ÍƒCƒ“ƒfƒ“ƒg‚ğs‚í‚È‚¢D
+	è«–ç†è¡Œè¡Œé ­ã®ãƒ›ãƒ¯ã‚¤ãƒˆã‚¹ãƒšãƒ¼ã‚¹ã®çµ‚ã‚ã‚Šã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆä½ç½®ã¨ã—ã¦è¿”ã™ï¼
+	ãŸã ã—ï¼Œæ®‹ã‚Šå¹…ãŒ6æ–‡å­—æœªæº€ã®å ´åˆã¯ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚’è¡Œã‚ãªã„ï¼
 	
 	@author genta
-	@return ƒCƒ“ƒfƒ“ƒg‚·‚×‚«•¶š”
+	@return ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã™ã¹ãæ–‡å­—æ•°
 	
 	@date 2002.10.01 
 */
 CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 {
-	//	‘O‚Ìs‚ª–³‚¢‚Æ‚«‚ÍAƒCƒ“ƒfƒ“ƒg•s—vB
+	//	å‰ã®è¡ŒãŒç„¡ã„ã¨ãã¯ã€ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆä¸è¦ã€‚
 	if ( pLayoutPrev == NULL ) return CLayoutInt(0);
 
-	//	ƒCƒ“ƒfƒ“ƒg‚ÌŒvZ
+	//	ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®è¨ˆç®—
 	CLayoutInt nIpos = pLayoutPrev->GetIndent();
 	
 	//	Oct. 5, 2002 genta
-	//	Ü‚è•Ô‚µ‚Ì3s–ÚˆÈ~‚Í1‚Â‘O‚Ìs‚ÌƒCƒ“ƒfƒ“ƒg‚É‡‚í‚¹‚éD
+	//	æŠ˜ã‚Šè¿”ã—ã®3è¡Œç›®ä»¥é™ã¯1ã¤å‰ã®è¡Œã®ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã«åˆã‚ã›ã‚‹ï¼
 	if( pLayoutPrev->GetLogicOffset() > 0 )
 		return nIpos;
 	
-	//	2002.10.07 YAZAKI ƒCƒ“ƒfƒ“ƒg‚ÌŒvZ
+	//	2002.10.07 YAZAKI ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®è¨ˆç®—
 	CMemoryIterator it = CreateCMemoryIterator(pLayoutPrev);
 
-	//	Jul. 20, 2003 genta ©“®ƒCƒ“ƒfƒ“ƒg‚É€‚¶‚½“®ì‚É‚·‚é
+	//	Jul. 20, 2003 genta è‡ªå‹•ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã«æº–ã˜ãŸå‹•ä½œã«ã™ã‚‹
 	bool bZenSpace = m_pTypeConfig->m_bAutoIndent_ZENSPACE;
 	const wchar_t* szSpecialIndentChar = m_pTypeConfig->m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && WCODE::IsIndentChar(it.getCurrentChar(),bZenSpace) )
 		{
-			//	ƒCƒ“ƒfƒ“ƒg‚ÌƒJƒEƒ“ƒg‚ğŒp‘±‚·‚é
+			//	ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®ã‚«ã‚¦ãƒ³ãƒˆã‚’ç¶™ç¶šã™ã‚‹
 		}
-		//	Jul. 20, 2003 genta ƒCƒ“ƒfƒ“ƒg‘ÎÛ•¶š
+		//	Jul. 20, 2003 genta ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆå¯¾è±¡æ–‡å­—
 		else if( szSpecialIndentChar[0] != L'\0' ){
-			wchar_t buf[3]; // •¶š‚Ì’·‚³‚Í1 or 2
+			wchar_t buf[3]; // æ–‡å­—ã®é•·ã•ã¯1 or 2
 			wmemcpy( buf, it.getCurrentPos(), it.getIndexDelta() );
 			buf[ it.getIndexDelta() ] = L'\0';
 			if( NULL != wcsstr( szSpecialIndentChar, buf )){
-				//	ƒCƒ“ƒfƒ“ƒg‚ÌƒJƒEƒ“ƒg‚ğŒp‘±‚·‚é
+				//	ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã®ã‚«ã‚¦ãƒ³ãƒˆã‚’ç¶™ç¶šã™ã‚‹
 			}
 			else {
-				nIpos = it.getColumn();	//	I—¹
+				nIpos = it.getColumn();	//	çµ‚äº†
 				break;
 			}
 		}
 		else {
-			nIpos = it.getColumn();	//	I—¹
+			nIpos = it.getColumn();	//	çµ‚äº†
 			break;
 		}
 		it.addDelta();
 	}
 	if( it.end() ){
-		nIpos = it.getColumn();	//	I—¹
+		nIpos = it.getColumn();	//	çµ‚äº†
 	}
-	// 2010.07.06 Moca TAB=8‚È‚Ç‚Ìê‡‚ÉÜ‚è•Ô‚·‚Æ–³ŒÀƒ‹[ƒv‚·‚é•s‹ï‡‚ÌC³. 6ŒÅ’è‚ğ m_nTabSpace + 2‚É•ÏX
+	// 2010.07.06 Moca TAB=8ãªã©ã®å ´åˆã«æŠ˜ã‚Šè¿”ã™ã¨ç„¡é™ãƒ«ãƒ¼ãƒ—ã™ã‚‹ä¸å…·åˆã®ä¿®æ­£. 6å›ºå®šã‚’ m_nTabSpace + 2ã«å¤‰æ›´
 	if ( GetMaxLineLayout() - nIpos < GetTabSpace() + (2 * m_nCharLayoutXPerKeta) ){
-		nIpos = t_max(CLayoutInt(0), GetMaxLineLayout() - (GetTabSpace() + (2 * m_nCharLayoutXPerKeta))); // 2013.05.12 Chg:0‚¾‚Á‚½‚Ì‚ğÅ‘å•‚É•ÏX
+		nIpos = t_max(CLayoutInt(0), GetMaxLineLayout() - (GetTabSpace() + (2 * m_nCharLayoutXPerKeta))); // 2013.05.12 Chg:0ã ã£ãŸã®ã‚’æœ€å¤§å¹…ã«å¤‰æ›´
 	}
-	return nIpos;	//	ƒCƒ“ƒfƒ“ƒg
+	return nIpos;	//	ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ
 }
 
 /*!
-	@brief  ƒeƒLƒXƒgÅ‘å•‚ğZo‚·‚é
+	@brief  ãƒ†ã‚­ã‚¹ãƒˆæœ€å¤§å¹…ã‚’ç®—å‡ºã™ã‚‹
 
-	w’è‚³‚ê‚½ƒ‰ƒCƒ“‚ğ‘–¸‚µ‚ÄƒeƒLƒXƒg‚ÌÅ‘å•‚ğì¬‚·‚éB
-	‘S‚Äíœ‚³‚ê‚½‚Í–¢Zoó‘Ô‚É–ß‚·B
+	æŒ‡å®šã•ã‚ŒãŸãƒ©ã‚¤ãƒ³ã‚’èµ°æŸ»ã—ã¦ãƒ†ã‚­ã‚¹ãƒˆã®æœ€å¤§å¹…ã‚’ä½œæˆã™ã‚‹ã€‚
+	å…¨ã¦å‰Šé™¤ã•ã‚ŒãŸæ™‚ã¯æœªç®—å‡ºçŠ¶æ…‹ã«æˆ»ã™ã€‚
 
-	@param bCalLineLen	[in] ŠeƒŒƒCƒAƒEƒgs‚Ì’·‚³‚ÌZo‚às‚¤
-	@param nStart		[in] ZoŠJnƒŒƒCƒAƒEƒgs
-	@param nEnd			[in] ZoI—¹ƒŒƒCƒAƒEƒgs
+	@param bCalLineLen	[in] å„ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®é•·ã•ã®ç®—å‡ºã‚‚è¡Œã†
+	@param nStart		[in] ç®—å‡ºé–‹å§‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ
+	@param nEnd			[in] ç®—å‡ºçµ‚äº†ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ
 
-	@retval TRUE Å‘å•‚ª•Ï‰»‚µ‚½
-	@retval FALSE Å‘å•‚ª•Ï‰»‚µ‚È‚©‚Á‚½
+	@retval TRUE æœ€å¤§å¹…ãŒå¤‰åŒ–ã—ãŸ
+	@retval FALSE æœ€å¤§å¹…ãŒå¤‰åŒ–ã—ãªã‹ã£ãŸ
 
-	@note nStart, nEnd‚ª—¼•û‚Æ‚à-1‚ÌA‘Sƒ‰ƒCƒ“‚ğ‘–¸‚·‚é
-		  ”ÍˆÍ‚ªw’è‚³‚ê‚Ä‚¢‚éê‡‚ÍÅ‘å•‚ÌŠg‘å‚Ì‚İƒ`ƒFƒbƒN‚·‚é
+	@note nStart, nEndãŒä¸¡æ–¹ã¨ã‚‚-1ã®æ™‚ã€å…¨ãƒ©ã‚¤ãƒ³ã‚’èµ°æŸ»ã™ã‚‹
+		  ç¯„å›²ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆã¯æœ€å¤§å¹…ã®æ‹¡å¤§ã®ã¿ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-	@date 2009.08.28 nasukoji	V‹Kì¬
+	@date 2009.08.28 nasukoji	æ–°è¦ä½œæˆ
 */
 BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayoutInt nEnd )
 {
 	BOOL bRet = FALSE;
-	BOOL bOnlyExpansion = TRUE;		// Å‘å•‚ÌŠg‘å‚Ì‚İ‚ğƒ`ƒFƒbƒN‚·‚é
+	BOOL bOnlyExpansion = TRUE;		// æœ€å¤§å¹…ã®æ‹¡å¤§ã®ã¿ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 	CLayoutInt nMaxLen = CLayoutInt(0);
 	CLayoutInt nMaxLineNum = CLayoutInt(0);
 
-	CLayoutInt nLines = GetLineCount();		// ƒeƒLƒXƒg‚ÌƒŒƒCƒAƒEƒgs”
+	CLayoutInt nLines = GetLineCount();		// ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œæ•°
 
-	// ŠJnEI—¹ˆÊ’u‚ª‚Ç‚¿‚ç‚àw’è‚³‚ê‚Ä‚¢‚È‚¢
+	// é–‹å§‹ãƒ»çµ‚äº†ä½ç½®ãŒã©ã¡ã‚‰ã‚‚æŒ‡å®šã•ã‚Œã¦ã„ãªã„
 	if( nStart < 0 && nEnd < 0 )
-		bOnlyExpansion = FALSE;		// Å‘å•‚ÌŠg‘åEk¬‚ğƒ`ƒFƒbƒN‚·‚é
+		bOnlyExpansion = FALSE;		// æœ€å¤§å¹…ã®æ‹¡å¤§ãƒ»ç¸®å°ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-	if( nStart < 0 )			// ZoŠJns‚Ìw’è‚È‚µ
+	if( nStart < 0 )			// ç®—å‡ºé–‹å§‹è¡Œã®æŒ‡å®šãªã—
 		nStart = 0;
-	else if( nStart > nLines )	// ”ÍˆÍƒI[ƒo[
+	else if( nStart > nLines )	// ç¯„å›²ã‚ªãƒ¼ãƒãƒ¼
 		nStart = nLines;
 	
-	if( nEnd < 0 || nEnd >= nLines )	// ZoI—¹s‚Ìw’è‚È‚µ ‚Ü‚½‚Í •¶‘s”ˆÈã
+	if( nEnd < 0 || nEnd >= nLines )	// ç®—å‡ºçµ‚äº†è¡Œã®æŒ‡å®šãªã— ã¾ãŸã¯ æ–‡æ›¸è¡Œæ•°ä»¥ä¸Š
 		nEnd = nLines;
 	else
-		nEnd++;					// ZoI—¹s‚ÌŸs
+		nEnd++;					// ç®—å‡ºçµ‚äº†è¡Œã®æ¬¡è¡Œ
 
 	CLayout* pLayout;
 
-	// ZoŠJnƒŒƒCƒAƒEƒgs‚ğ’T‚·
-	// 2013.05.13 SearchLineByLayoutY‚ğg‚¤
+	// ç®—å‡ºé–‹å§‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã‚’æ¢ã™
+	// 2013.05.13 SearchLineByLayoutYã‚’ä½¿ã†
 	if( nStart == 0 ){
 		pLayout = m_pLayoutTop;
 	}else{
@@ -318,7 +318,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 	}
 #if 0
 	if( nStart * 2 < nLines ){
-		// ‘O•û‚©‚çƒT[ƒ`
+		// å‰æ–¹ã‹ã‚‰ã‚µãƒ¼ãƒ
 		CLayoutInt nCount = CLayoutInt(0);
 		pLayout = m_pLayoutTop;
 		while( NULL != pLayout ){
@@ -329,7 +329,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 			nCount++;
 		}
 	}else{
-		// Œã•û‚©‚çƒT[ƒ`
+		// å¾Œæ–¹ã‹ã‚‰ã‚µãƒ¼ãƒ
 		CLayoutInt nCount = CLayoutInt( m_nLines - 1 );
 		pLayout = m_pLayoutBot;
 		while( NULL != pLayout ){
@@ -342,43 +342,43 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 	}
 #endif
 
-	// ƒŒƒCƒAƒEƒgs‚ÌÅ‘å•‚ğæ‚èo‚·
+	// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®æœ€å¤§å¹…ã‚’å–ã‚Šå‡ºã™
 	for( CLayoutInt i = nStart; i < nEnd; i++ ){
 		if( !pLayout )
 			break;
 
-		// ƒŒƒCƒAƒEƒgs‚Ì’·‚³‚ğZo‚·‚é
+		// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®é•·ã•ã‚’ç®—å‡ºã™ã‚‹
 		if( bCalLineLen ){
 			CLayoutInt nWidth = pLayout->CalcLayoutWidth(*this) + CLayoutInt(pLayout->GetLayoutEol().GetLen()>0?1+m_nSpacing:0);
 			pLayout->SetLayoutWidth( nWidth );
 		}
 
-		// Å‘å•‚ğXV
+		// æœ€å¤§å¹…ã‚’æ›´æ–°
 		if( nMaxLen < pLayout->GetLayoutWidth() ){
 			nMaxLen = pLayout->GetLayoutWidth();
-			nMaxLineNum = i;		// Å‘å•‚ÌƒŒƒCƒAƒEƒgs
+			nMaxLineNum = i;		// æœ€å¤§å¹…ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ
 
-			// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌÅ‘å•‚Æ‚È‚Á‚½‚çZo‚Í’â~
+			// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®æœ€å¤§å¹…ã¨ãªã£ãŸã‚‰ç®—å‡ºã¯åœæ­¢
 			if( nMaxLen >= MAXLINEKETAS * GetWidthPerKeta() && !bCalLineLen )
 				break;
 		}
 
-		// Ÿ‚ÌƒŒƒCƒAƒEƒgs‚Ìƒf[ƒ^
+		// æ¬¡ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®ãƒ‡ãƒ¼ã‚¿
 		pLayout = pLayout->GetNextLayout();
 	}
 
-	// ƒeƒLƒXƒg‚Ì•‚Ì•Ï‰»‚ğƒ`ƒFƒbƒN
+	// ãƒ†ã‚­ã‚¹ãƒˆã®å¹…ã®å¤‰åŒ–ã‚’ãƒã‚§ãƒƒã‚¯
 	if( Int(nMaxLen) ){
-		// Å‘å•‚ªŠg‘å‚µ‚½ ‚Ü‚½‚Í Å‘å•‚ÌŠg‘å‚Ì‚İƒ`ƒFƒbƒN‚Å‚È‚¢
+		// æœ€å¤§å¹…ãŒæ‹¡å¤§ã—ãŸ ã¾ãŸã¯ æœ€å¤§å¹…ã®æ‹¡å¤§ã®ã¿ãƒã‚§ãƒƒã‚¯ã§ãªã„
 		if( m_nTextWidth < nMaxLen || !bOnlyExpansion ){
 			m_nTextWidthMaxLine = nMaxLineNum;
-			if( m_nTextWidth != nMaxLen ){	// Å‘å••Ï‰»‚ ‚è
+			if( m_nTextWidth != nMaxLen ){	// æœ€å¤§å¹…å¤‰åŒ–ã‚ã‚Š
 				m_nTextWidth = nMaxLen;
 				bRet = TRUE;
 			}
 		}
 	}else if( Int(m_nTextWidth) && !Int(nLines) ){
-		// ‘Síœ‚³‚ê‚½‚ç•‚Ì‹L‰¯‚ğƒNƒŠƒA
+		// å…¨å‰Šé™¤ã•ã‚ŒãŸã‚‰å¹…ã®è¨˜æ†¶ã‚’ã‚¯ãƒªã‚¢
 		m_nTextWidthMaxLine = 0;
 		m_nTextWidth = 0;
 		bRet = TRUE;
@@ -388,24 +388,24 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 }
 
 /*!
-	@brief  Šes‚ÌƒŒƒCƒAƒEƒgs’·‚Ì‹L‰¯‚ğƒNƒŠƒA‚·‚é
+	@brief  å„è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé•·ã®è¨˜æ†¶ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 	
-	@note Ü‚è•Ô‚µ•û–@‚ªuÜ‚è•Ô‚³‚È‚¢vˆÈŠO‚Ì‚ÍAƒpƒtƒH[ƒ}ƒ“ƒX‚Ì’á‰º‚ğ
-		  –h~‚·‚é–Ú“I‚ÅŠes‚ÌƒŒƒCƒAƒEƒgs’·(m_nLayoutWidth)‚ğŒvZ‚µ‚Ä‚¢‚È‚¢B
-		  Œã‚ÅİŒv‚·‚él‚ªŒë‚Á‚Äg—p‚µ‚Ä‚µ‚Ü‚¤‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅuÜ‚è•Ô‚³‚È‚¢v
-		  ˆÈŠO‚Ì‚ÍƒNƒŠƒA‚µ‚Ä‚¨‚­B
-		  ƒpƒtƒH[ƒ}ƒ“ƒX‚Ì’á‰º‚ª‹C‚É‚È‚ç‚È‚¢’ö‚È‚çA‘S‚Ä‚ÌÜ‚è•Ô‚µ•û–@‚ÅŒvZ
-		  ‚·‚é‚æ‚¤‚É‚µ‚Ä‚à—Ç‚¢‚Æv‚¤B
+	@note æŠ˜ã‚Šè¿”ã—æ–¹æ³•ãŒã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€ä»¥å¤–ã®æ™‚ã¯ã€ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã®ä½ä¸‹ã‚’
+		  é˜²æ­¢ã™ã‚‹ç›®çš„ã§å„è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé•·(m_nLayoutWidth)ã‚’è¨ˆç®—ã—ã¦ã„ãªã„ã€‚
+		  å¾Œã§è¨­è¨ˆã™ã‚‹äººãŒèª¤ã£ã¦ä½¿ç”¨ã—ã¦ã—ã¾ã†ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€
+		  ä»¥å¤–ã®æ™‚ã¯ã‚¯ãƒªã‚¢ã—ã¦ãŠãã€‚
+		  ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã®ä½ä¸‹ãŒæ°—ã«ãªã‚‰ãªã„ç¨‹ãªã‚‰ã€å…¨ã¦ã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã§è¨ˆç®—
+		  ã™ã‚‹ã‚ˆã†ã«ã—ã¦ã‚‚è‰¯ã„ã¨æ€ã†ã€‚
 
-	@date 2009.08.28 nasukoji	V‹Kì¬
+	@date 2009.08.28 nasukoji	æ–°è¦ä½œæˆ
 */
 void CLayoutMgr::ClearLayoutLineWidth( void )
 {
 	CLayout* pLayout = m_pLayoutTop;
 
 	while( pLayout ){
-		pLayout->m_nLayoutWidth = 0;			// ƒŒƒCƒAƒEƒgs’·‚ğƒNƒŠƒA
-		pLayout = pLayout->GetNextLayout();		// Ÿ‚ÌƒŒƒCƒAƒEƒgs‚Ìƒf[ƒ^
+		pLayout->m_nLayoutWidth = 0;			// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé•·ã‚’ã‚¯ãƒªã‚¢
+		pLayout = pLayout->GetNextLayout();		// æ¬¡ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œã®ãƒ‡ãƒ¼ã‚¿
 		
 	}
 }

@@ -1,11 +1,11 @@
-/*
-	Observerƒpƒ^[ƒ“‚ÌCEditDoc“Á‰»”ÅB
-	CDocSubject‚ÍŠÏ@‚³‚êACDocListner‚ÍŠÏ@‚ğs‚¤B
-	ŠÏ@‚ÌŠJn‚Í CDocListener::Listen ‚Ås‚¤B
+ï»¿/*
+	Observerãƒ‘ã‚¿ãƒ¼ãƒ³ã®CEditDocç‰¹åŒ–ç‰ˆã€‚
+	CDocSubjectã¯è¦³å¯Ÿã•ã‚Œã€CDocListnerã¯è¦³å¯Ÿã‚’è¡Œã†ã€‚
+	è¦³å¯Ÿã®é–‹å§‹ã¯ CDocListener::Listen ã§è¡Œã†ã€‚
 
 	$Note:
-		Listener (Observer) ‚Æ Subject ‚ÌƒŠƒŒ[ƒVƒ‡ƒ“ŠÇ—‚Í
-		ƒWƒFƒlƒŠƒbƒN‚È”Ä—pƒ‚ƒWƒ…[ƒ‹‚É•ª—£‚Å‚«‚éB
+		Listener (Observer) ã¨ Subject ã®ãƒªãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ç®¡ç†ã¯
+		ã‚¸ã‚§ãƒãƒªãƒƒã‚¯ãªæ±ç”¨ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«åˆ†é›¢ã§ãã‚‹ã€‚
 */
 /*
 	Copyright (C) 2008, kobake
@@ -45,41 +45,41 @@ class CDocListener;
 enum ESaveResult{
 	SAVED_OK,
 	SAVED_FAILURE,
-	SAVED_INTERRUPT,//!< ’†’f‚³‚ê‚½
-	SAVED_LOSESOME,	//!< •¶š‚Ìˆê•”‚ª¸‚í‚ê‚½
+	SAVED_INTERRUPT,//!< ä¸­æ–­ã•ã‚ŒãŸ
+	SAVED_LOSESOME,	//!< æ–‡å­—ã®ä¸€éƒ¨ãŒå¤±ã‚ã‚ŒãŸ
 };
 
 //###
 enum ELoadResult{
 	LOADED_OK,
 	LOADED_FAILURE,
-	LOADED_INTERRUPT,	//!< ’†’f‚³‚ê‚½
-	LOADED_LOSESOME,	//!< •¶š‚Ìˆê•”‚ª¸‚í‚ê‚½
+	LOADED_INTERRUPT,	//!< ä¸­æ–­ã•ã‚ŒãŸ
+	LOADED_LOSESOME,	//!< æ–‡å­—ã®ä¸€éƒ¨ãŒå¤±ã‚ã‚ŒãŸ
 
-	//“Áê
-	LOADED_NOIMPLEMENT,	//!< À‘•–³‚µ
+	//ç‰¹æ®Š
+	LOADED_NOIMPLEMENT,	//!< å®Ÿè£…ç„¡ã—
 };
 
 //###
 enum ECallbackResult{
-	CALLBACK_CONTINUE,			//!< ‘±‚¯‚é
-	CALLBACK_INTERRUPT,			//!< ’†’f
+	CALLBACK_CONTINUE,			//!< ç¶šã‘ã‚‹
+	CALLBACK_INTERRUPT,			//!< ä¸­æ–­
 };
 
 //###
 struct SLoadInfo
 {
-	//“ü—Í
+	//å…¥åŠ›
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
-	bool		bWritableNoMsg; //!< ‘‚«‚İ‹Ö~ƒƒbƒZ[ƒW‚ğ•\¦‚µ‚È‚¢
+	bool		bWritableNoMsg; //!< æ›¸ãè¾¼ã¿ç¦æ­¢ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ãªã„
 	CTypeConfig	nType;
 
-	//ƒ‚[ƒh
-	bool		bRequestReload;	//ƒŠƒ[ƒh—v‹
+	//ãƒ¢ãƒ¼ãƒ‰
+	bool		bRequestReload;	//ãƒªãƒ­ãƒ¼ãƒ‰è¦æ±‚
 
-	//o—Í
+	//å‡ºåŠ›
 	bool		bOpened;
 
 	SLoadInfo()
@@ -103,51 +103,51 @@ struct SLoadInfo
 	{
 	}
 
-	//! ƒtƒ@ƒCƒ‹ƒpƒX‚Ì”äŠr
+	//! ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®æ¯”è¼ƒ
 	bool IsSamePath(LPCTSTR pszPath) const;
 };
 
 struct SSaveInfo{
-	CFilePath	cFilePath;	//!< •Û‘¶ƒtƒ@ƒCƒ‹–¼
-	ECodeType	eCharCode;	//!< •Û‘¶•¶šƒR[ƒhƒZƒbƒg
-	bool		bBomExist;	//!< •Û‘¶BOM•t‰Á
-	bool		bChgCodeSet;//!< •¶šƒR[ƒhƒZƒbƒg•ÏX	2013/5/19 Uchi
-	CEol		cEol;		//!< •Û‘¶‰üsƒR[ƒh
+	CFilePath	cFilePath;	//!< ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«å
+	ECodeType	eCharCode;	//!< ä¿å­˜æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	bool		bBomExist;	//!< ä¿å­˜æ™‚BOMä»˜åŠ 
+	bool		bChgCodeSet;//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆå¤‰æ›´	2013/5/19 Uchi
+	CEol		cEol;		//!< ä¿å­˜æ”¹è¡Œã‚³ãƒ¼ãƒ‰
 
-	//ƒ‚[ƒh
-	bool		bOverwriteMode;	//!< ã‘‚«—v‹
+	//ãƒ¢ãƒ¼ãƒ‰
+	bool		bOverwriteMode;	//!< ä¸Šæ›¸ãè¦æ±‚
 
 	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), bBomExist(false), bChgCodeSet(false), cEol(EOL_NONE), bOverwriteMode(false) { }
 	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
 		: cFilePath(_cFilePath), eCharCode(_eCodeType), bBomExist(_bBomExist), bChgCodeSet(false), cEol(_cEol), bOverwriteMode(false) { }
 
-	//! ƒtƒ@ƒCƒ‹ƒpƒX‚Ì”äŠr
+	//! ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®æ¯”è¼ƒ
 	bool IsSamePath(LPCTSTR pszPath) const;
 };
 
 
 class CProgressListener;
 
-//! •¡”‚ÌCProgressSubject‚©‚çƒEƒHƒbƒ`‚³‚ê‚é
+//! è¤‡æ•°ã®CProgressSubjectã‹ã‚‰ã‚¦ã‚©ãƒƒãƒã•ã‚Œã‚‹
 class CProgressSubject : public CSubjectT<CProgressListener>{
 public:
 	virtual ~CProgressSubject(){}
 	void NotifyProgress(int nPer);
 };
 
-//! 1‚Â‚ÌCProgressSubject‚ğƒEƒHƒbƒ`‚·‚é
+//! 1ã¤ã®CProgressSubjectã‚’ã‚¦ã‚©ãƒƒãƒã™ã‚‹
 class CProgressListener : public CListenerT<CProgressSubject>{
 public:
 	virtual ~CProgressListener(){}
 	virtual void OnProgress(int nPer)=0;
 };
 
-//Subject‚Í•¡”‚ÌListener‚©‚çŠÏ@‚³‚ê‚é
+//Subjectã¯è¤‡æ•°ã®Listenerã‹ã‚‰è¦³å¯Ÿã•ã‚Œã‚‹
 class CDocSubject : public CSubjectT<CDocListener>{
 public:
 	virtual ~CDocSubject();
 
-	//ƒ[ƒh‘OŒã
+	//ãƒ­ãƒ¼ãƒ‰å‰å¾Œ
 	ECallbackResult NotifyCheckLoad	(SLoadInfo* pLoadInfo);
 	void NotifyBeforeLoad			(SLoadInfo* sLoadInfo);
 	ELoadResult NotifyLoad			(const SLoadInfo& sLoadInfo);
@@ -155,7 +155,7 @@ public:
 	void NotifyAfterLoad			(const SLoadInfo& sLoadInfo);
 	void NotifyFinalLoad			(ELoadResult eLoadResult);
 
-	//ƒZ[ƒu‘OŒã
+	//ã‚»ãƒ¼ãƒ–å‰å¾Œ
 	ECallbackResult NotifyCheckSave	(SSaveInfo* pSaveInfo);
 	ECallbackResult NotifyPreBeforeSave(SSaveInfo* pSaveInfo);
 	void NotifyBeforeSave			(const SSaveInfo& sSaveInfo);
@@ -164,42 +164,42 @@ public:
 	void NotifyAfterSave			(const SSaveInfo& sSaveInfo);
 	void NotifyFinalSave			(ESaveResult eSaveResult);
 
-	//ƒNƒ[ƒY‘OŒã
+	//ã‚¯ãƒ­ãƒ¼ã‚ºå‰å¾Œ
 	ECallbackResult NotifyBeforeClose();
 };
 
-//Listener‚Í1‚Â‚ÌSubject‚ğŠÏ@‚·‚é
+//Listenerã¯1ã¤ã®Subjectã‚’è¦³å¯Ÿã™ã‚‹
 class CDocListener : public CListenerT<CDocSubject>{
 public:
 	CDocListener(CDocSubject* pcDoc = NULL);
 	virtual ~CDocListener();
 
-	// -- -- ‘®« -- -- //
+	// -- -- å±æ€§ -- -- //
 	CDocSubject* GetListeningDoc() const{ return GetListeningSubject(); }
 
-	// -- -- ŠeíƒCƒxƒ“ƒg -- -- //
-	//ƒ[ƒh‘OŒã
-	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		{ return CALLBACK_CONTINUE; }	//!< –{“–‚Éƒ[ƒh‚ğs‚¤‚©‚Ì”»’è‚ğs‚¤
-	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo){ return ; }	//!< ƒ[ƒh–‘Oˆ—
-	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo){ return LOADED_NOIMPLEMENT; }	//!< ƒ[ƒhˆ—
-	virtual void			OnLoading	(int nPer)					{ return ; }	//!< ƒ[ƒhˆ—‚ÌŒo‰ßî•ñ‚ğóM
-	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo){ return ; }	//!< ƒ[ƒh–Œãˆ—
-	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	{ return ; }	//!< ƒ[ƒhƒtƒ[‚ÌÅŒã‚É•K‚¸ŒÄ‚Î‚ê‚é
+	// -- -- å„ç¨®ã‚¤ãƒ™ãƒ³ãƒˆ -- -- //
+	//ãƒ­ãƒ¼ãƒ‰å‰å¾Œ
+	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		{ return CALLBACK_CONTINUE; }	//!< æœ¬å½“ã«ãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã‹ã®åˆ¤å®šã‚’è¡Œã†
+	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo){ return ; }	//!< ãƒ­ãƒ¼ãƒ‰äº‹å‰å‡¦ç†
+	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo){ return LOADED_NOIMPLEMENT; }	//!< ãƒ­ãƒ¼ãƒ‰å‡¦ç†
+	virtual void			OnLoading	(int nPer)					{ return ; }	//!< ãƒ­ãƒ¼ãƒ‰å‡¦ç†ã®çµŒéæƒ…å ±ã‚’å—ä¿¡
+	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo){ return ; }	//!< ãƒ­ãƒ¼ãƒ‰äº‹å¾Œå‡¦ç†
+	virtual void			OnFinalLoad	(ELoadResult eLoadResult)	{ return ; }	//!< ãƒ­ãƒ¼ãƒ‰ãƒ•ãƒ­ãƒ¼ã®æœ€å¾Œã«å¿…ãšå‘¼ã°ã‚Œã‚‹
 
-	//ƒZ[ƒu‘OŒã
-	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		{ return CALLBACK_CONTINUE; }	//!< –{“–‚ÉƒZ[ƒu‚ğs‚¤‚©‚Ì”»’è‚ğs‚¤
-	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	{ return CALLBACK_CONTINUE; }	//!< ƒZ[ƒu–‘O‚¨‚Ü‚¯ˆ— ($$ ‰¼)
-	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo){ return ; }	//!< ƒZ[ƒu–‘Oˆ—
-	virtual void			OnSave		(const SSaveInfo& sSaveInfo){ return ; }	//!< ƒZ[ƒuˆ—
-	virtual void			OnSaving	(int nPer)					{ return ; }	//!< ƒZ[ƒuˆ—‚ÌŒo‰ßî•ñ‚ğóM
-	virtual void			OnAfterSave	(const SSaveInfo& sSaveInfo){ return ; }	//!< ƒZ[ƒu–Œãˆ—
-	virtual void			OnFinalSave	(ESaveResult eSaveResult)	{ return ; }	//!< ƒZ[ƒuƒtƒ[‚ÌÅŒã‚É•K‚¸ŒÄ‚Î‚ê‚é
+	//ã‚»ãƒ¼ãƒ–å‰å¾Œ
+	virtual ECallbackResult OnCheckSave	(SSaveInfo* pSaveInfo)		{ return CALLBACK_CONTINUE; }	//!< æœ¬å½“ã«ã‚»ãƒ¼ãƒ–ã‚’è¡Œã†ã‹ã®åˆ¤å®šã‚’è¡Œã†
+	virtual ECallbackResult OnPreBeforeSave	(SSaveInfo* pSaveInfo)	{ return CALLBACK_CONTINUE; }	//!< ã‚»ãƒ¼ãƒ–äº‹å‰ãŠã¾ã‘å‡¦ç† ($$ ä»®)
+	virtual void			OnBeforeSave(const SSaveInfo& sSaveInfo){ return ; }	//!< ã‚»ãƒ¼ãƒ–äº‹å‰å‡¦ç†
+	virtual void			OnSave		(const SSaveInfo& sSaveInfo){ return ; }	//!< ã‚»ãƒ¼ãƒ–å‡¦ç†
+	virtual void			OnSaving	(int nPer)					{ return ; }	//!< ã‚»ãƒ¼ãƒ–å‡¦ç†ã®çµŒéæƒ…å ±ã‚’å—ä¿¡
+	virtual void			OnAfterSave	(const SSaveInfo& sSaveInfo){ return ; }	//!< ã‚»ãƒ¼ãƒ–äº‹å¾Œå‡¦ç†
+	virtual void			OnFinalSave	(ESaveResult eSaveResult)	{ return ; }	//!< ã‚»ãƒ¼ãƒ–ãƒ•ãƒ­ãƒ¼ã®æœ€å¾Œã«å¿…ãšå‘¼ã°ã‚Œã‚‹
 
-	//ƒNƒ[ƒY‘OŒã
+	//ã‚¯ãƒ­ãƒ¼ã‚ºå‰å¾Œ
 	virtual ECallbackResult OnBeforeClose()							{ return CALLBACK_CONTINUE; }
 };
 
-//GetListeningDoc‚Ì—˜•Ö«‚ğƒAƒbƒv
+//GetListeningDocã®åˆ©ä¾¿æ€§ã‚’ã‚¢ãƒƒãƒ—
 class CEditDoc;
 class CDocListenerEx : public CDocListener{
 public:

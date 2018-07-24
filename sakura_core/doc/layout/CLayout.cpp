@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒeƒLƒXƒg‚ÌƒŒƒCƒAƒEƒgî•ñ
+ï»¿/*!	@file
+	@brief ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±
 
 	@author Norio Nakatani
-	@date 1998/3/11 V‹Kì¬
+	@date 1998/3/11 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -15,7 +15,7 @@
 #include "CLayout.h"
 #include "CLayoutMgr.h"
 #include "charset/charcode.h"
-#include "extmodule/CBregexp.h" // CLayoutMgr‚Ì’è‹`‚Å•K—v
+#include "extmodule/CBregexp.h" // CLayoutMgrã®å®šç¾©ã§å¿…è¦
 
 
 
@@ -26,26 +26,26 @@ CLayout::~CLayout()
 
 void CLayout::DUMP( void )
 {
-	DEBUG_TRACE( _T("\n\n¡CLayout::DUMP()======================\n") );
-	DEBUG_TRACE( _T("m_ptLogicPos.y=%d\t\t‘Î‰ž‚·‚é˜_—s”Ô†\n"), m_ptLogicPos.y );
-	DEBUG_TRACE( _T("m_ptLogicPos.x=%d\t\t‘Î‰ž‚·‚é˜_—s‚Ìæ“ª‚©‚ç‚ÌƒIƒtƒZƒbƒg\n"), m_ptLogicPos.x );
-	DEBUG_TRACE( _T("m_nLength=%d\t\t‘Î‰ž‚·‚é˜_—s‚ÌƒnƒCƒg”\n"), (int)m_nLength );
-	DEBUG_TRACE( _T("m_nTypePrev=%d\t\tƒ^ƒCƒv 0=’Êí 1=sƒRƒƒ“ƒg 2=ƒuƒƒbƒNƒRƒƒ“ƒg 3=ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ 4=ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ \n"), m_nTypePrev );
+	DEBUG_TRACE( _T("\n\nâ– CLayout::DUMP()======================\n") );
+	DEBUG_TRACE( _T("m_ptLogicPos.y=%d\t\tå¯¾å¿œã™ã‚‹è«–ç†è¡Œç•ªå·\n"), m_ptLogicPos.y );
+	DEBUG_TRACE( _T("m_ptLogicPos.x=%d\t\tå¯¾å¿œã™ã‚‹è«–ç†è¡Œã®å…ˆé ­ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ\n"), m_ptLogicPos.x );
+	DEBUG_TRACE( _T("m_nLength=%d\t\tå¯¾å¿œã™ã‚‹è«–ç†è¡Œã®ãƒã‚¤ãƒˆæ•°\n"), (int)m_nLength );
+	DEBUG_TRACE( _T("m_nTypePrev=%d\t\tã‚¿ã‚¤ãƒ— 0=é€šå¸¸ 1=è¡Œã‚³ãƒ¡ãƒ³ãƒˆ 2=ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ 3=ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ— 4=ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ— \n"), m_nTypePrev );
 	DEBUG_TRACE( _T("======================\n") );
 	return;
 }
 
-//!ƒŒƒCƒAƒEƒg•‚ðŒvŽZB‰üs‚ÍŠÜ‚Ü‚È‚¢B
-//2007.10.11 kobake ì¬
-//2007.11.29 kobake ƒ^ƒu•‚ªŒvŽZ‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚Ì‚ðC³
-//2011.12.26 Moca ƒCƒ“ƒfƒ“ƒg‚ÍŠÜ‚Þ‚æ‚¤‚É•ÏX(À•W•ÏŠ·ƒoƒOC³)
+//!ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå¹…ã‚’è¨ˆç®—ã€‚æ”¹è¡Œã¯å«ã¾ãªã„ã€‚
+//2007.10.11 kobake ä½œæˆ
+//2007.11.29 kobake ã‚¿ãƒ–å¹…ãŒè¨ˆç®—ã•ã‚Œã¦ã„ãªã‹ã£ãŸã®ã‚’ä¿®æ­£
+//2011.12.26 Moca ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã¯å«ã‚€ã‚ˆã†ã«å¤‰æ›´(åº§æ¨™å¤‰æ›ãƒã‚°ä¿®æ­£)
 CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 {
-	//ƒ\[ƒX
+	//ã‚½ãƒ¼ã‚¹
 	const wchar_t* pText    = m_pCDocLine->GetPtr();
 	CLogicInt      nTextLen = m_pCDocLine->GetLengthWithoutEOL();
 
-	//ŒvŽZ
+	//è¨ˆç®—
 	CLayoutInt nWidth = GetIndent();
 	CLogicInt nLen = GetLogicPos().x + m_nLength; //EOL=0,1
 	for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
@@ -60,7 +60,7 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 	return nWidth;
 }
 
-//! ƒIƒtƒZƒbƒg’l‚ðƒŒƒCƒAƒEƒg’PˆÊ‚É•ÏŠ·‚µ‚ÄŽæ“¾B2007.10.17 kobake
+//! ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ã‚’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ã«å¤‰æ›ã—ã¦å–å¾—ã€‚2007.10.17 kobake
 CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nStartPos, CLayoutInt nStartOffset) const
 {
 	CLayoutInt nRet = nStartOffset;

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,11 +31,11 @@ class CDocReader{
 public:
 	CDocReader(const CDocLineMgr& pcDocLineMgr) : m_pcDocLineMgr(&pcDocLineMgr) { }
 
-	wchar_t* GetAllData(int* pnDataLen);	/* ‘Ssƒf[ƒ^‚ğ•Ô‚· */
+	wchar_t* GetAllData(int* pnDataLen);	/* å…¨è¡Œãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™ */
 	const wchar_t* GetLineStr( CLogicInt , CLogicInt* );
 	const wchar_t* GetLineStrWithoutEOL( CLogicInt , int* ); // 2003.06.22 Moca
-	const wchar_t* GetFirstLinrStr( int* );	/* ‡ƒAƒNƒZƒXƒ‚[ƒhFæ“ªs‚ğ“¾‚é */
-	const wchar_t* GetNextLinrStr( int* );	/* ‡ƒAƒNƒZƒXƒ‚[ƒhFŸ‚Ìs‚ğ“¾‚é */
+	const wchar_t* GetFirstLinrStr( int* );	/* é †ã‚¢ã‚¯ã‚»ã‚¹ãƒ¢ãƒ¼ãƒ‰ï¼šå…ˆé ­è¡Œã‚’å¾—ã‚‹ */
+	const wchar_t* GetNextLinrStr( int* );	/* é †ã‚¢ã‚¯ã‚»ã‚¹ãƒ¢ãƒ¼ãƒ‰ï¼šæ¬¡ã®è¡Œã‚’å¾—ã‚‹ */
 
 private:
 	const CDocLineMgr* m_pcDocLineMgr;

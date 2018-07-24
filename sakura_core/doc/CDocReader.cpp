@@ -1,12 +1,12 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CDocReader.h"
 #include "logic/CDocLine.h"
 #include "logic/CDocLineMgr.h"
 
-/* ‘Ssƒf[ƒ^‚ğ•Ô‚·
-	‰üsƒR[ƒh‚ÍACFLF“ˆê‚³‚ê‚éB
-	@retval ‘Ssƒf[ƒ^Bfree‚ÅŠJ•ú‚µ‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
-	@note   Debug”Å‚ÌƒeƒXƒg‚É‚Ì‚İg—p‚µ‚Ä‚¢‚éB
+/* å…¨è¡Œãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™
+	æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã¯ã€CFLFçµ±ä¸€ã•ã‚Œã‚‹ã€‚
+	@retval å…¨è¡Œãƒ‡ãƒ¼ã‚¿ã€‚freeã§é–‹æ”¾ã—ãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
+	@note   Debugç‰ˆã®ãƒ†ã‚¹ãƒˆã«ã®ã¿ä½¿ç”¨ã—ã¦ã„ã‚‹ã€‚
 */
 wchar_t* CDocReader::GetAllData(int* pnDataLen)
 {
@@ -18,7 +18,7 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 	nDataLen = 0;
 	while( NULL != pDocLine ){
 		//	Oct. 7, 2002 YAZAKI
-		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\n‚ğ’Ç‰Á‚µ‚Ä•Ô‚·‚½‚ß+2‚·‚éB
+		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\nã‚’è¿½åŠ ã—ã¦è¿”ã™ãŸã‚+2ã™ã‚‹ã€‚
 		pDocLine = pDocLine->GetNextLine();
 	}
 
@@ -56,13 +56,13 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 		*pnLineLen = CLogicInt(0);
 		return NULL;
 	}
-	// 2002/2/10 aroka CMemory ‚Ìƒƒ“ƒo•Ï”‚É’¼ÚƒAƒNƒZƒX‚µ‚È‚¢(inline‰»‚³‚ê‚Ä‚¢‚é‚Ì‚Å‘¬“x“I‚È–â‘è‚Í‚È‚¢)
+	// 2002/2/10 aroka CMemory ã®ãƒ¡ãƒ³ãƒå¤‰æ•°ã«ç›´æ¥ã‚¢ã‚¯ã‚»ã‚¹ã—ãªã„(inlineåŒ–ã•ã‚Œã¦ã„ã‚‹ã®ã§é€Ÿåº¦çš„ãªå•é¡Œã¯ãªã„)
 	return pDocLine->GetDocLineStrWithEOL( pnLineLen );
 }
 
 
 /*!
-	w’è‚³‚ê‚½s”Ô†‚Ì•¶š—ñ‚Æ‰üsƒR[ƒh‚ğœ‚­’·‚³‚ğæ“¾
+	æŒ‡å®šã•ã‚ŒãŸè¡Œç•ªå·ã®æ–‡å­—åˆ—ã¨æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’é™¤ãé•·ã•ã‚’å–å¾—
 	
 	@author Moca
 	@date 2003.06.22
@@ -81,11 +81,11 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 
 
 
-/*! ‡ƒAƒNƒZƒXƒ‚[ƒhFæ“ªs‚ğ“¾‚é
+/*! é †ã‚¢ã‚¯ã‚»ã‚¹ãƒ¢ãƒ¼ãƒ‰ï¼šå…ˆé ­è¡Œã‚’å¾—ã‚‹
 
-	@param pnLineLen [out] s‚Ì’·‚³‚ª•Ô‚éB
-	@return 1s–Ú‚Ìæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^B
-	ƒf[ƒ^‚ª1s‚à‚È‚¢‚Æ‚«‚ÍA’·‚³0Aƒ|ƒCƒ“ƒ^NULL‚ª•Ô‚éB
+	@param pnLineLen [out] è¡Œã®é•·ã•ãŒè¿”ã‚‹ã€‚
+	@return 1è¡Œç›®ã®å…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã€‚
+	ãƒ‡ãƒ¼ã‚¿ãŒ1è¡Œã‚‚ãªã„ã¨ãã¯ã€é•·ã•0ã€ãƒã‚¤ãƒ³ã‚¿NULLãŒè¿”ã‚‹ã€‚
 
 */
 const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
@@ -107,11 +107,11 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 
 
 /*!
-	‡ƒAƒNƒZƒXƒ‚[ƒhFŸ‚Ìs‚ğ“¾‚é
+	é †ã‚¢ã‚¯ã‚»ã‚¹ãƒ¢ãƒ¼ãƒ‰ï¼šæ¬¡ã®è¡Œã‚’å¾—ã‚‹
 
-	@param pnLineLen [out] s‚Ì’·‚³‚ª•Ô‚éB
-	@return Ÿs‚Ìæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^B
-	GetFirstLinrStr()‚ªŒÄ‚Ño‚³‚ê‚Ä‚¢‚È‚¢‚ÆNULL‚ª•Ô‚é
+	@param pnLineLen [out] è¡Œã®é•·ã•ãŒè¿”ã‚‹ã€‚
+	@return æ¬¡è¡Œã®å…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã€‚
+	GetFirstLinrStr()ãŒå‘¼ã³å‡ºã•ã‚Œã¦ã„ãªã„ã¨NULLãŒè¿”ã‚‹
 
 */
 const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )

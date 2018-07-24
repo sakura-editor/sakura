@@ -1,11 +1,11 @@
-/*
-	Observerƒpƒ^[ƒ“‚ÌCEditDoc“Á‰»”ÅB
-	CDocSubject‚ÍŠÏ@‚³‚êACDocListner‚ÍŠÏ@‚ğs‚¤B
-	ŠÏ@‚ÌŠJn‚Í CDocListener::Listen ‚Ås‚¤B
+ï»¿/*
+	Observerãƒ‘ã‚¿ãƒ¼ãƒ³ã®CEditDocç‰¹åŒ–ç‰ˆã€‚
+	CDocSubjectã¯è¦³å¯Ÿã•ã‚Œã€CDocListnerã¯è¦³å¯Ÿã‚’è¡Œã†ã€‚
+	è¦³å¯Ÿã®é–‹å§‹ã¯ CDocListener::Listen ã§è¡Œã†ã€‚
 
 	$Note:
-		Listener (Observer) ‚Æ Subject ‚ÌƒŠƒŒ[ƒVƒ‡ƒ“ŠÇ—‚Í
-		ƒWƒFƒlƒŠƒbƒN‚È”Ä—pƒ‚ƒWƒ…[ƒ‹‚É•ª—£‚Å‚«‚éB
+		Listener (Observer) ã¨ Subject ã®ãƒªãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ç®¡ç†ã¯
+		ã‚¸ã‚§ãƒãƒªãƒƒã‚¯ãªæ±ç”¨ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«åˆ†é›¢ã§ãã‚‹ã€‚
 */
 /*
 	Copyright (C) 2008, kobake
@@ -90,7 +90,7 @@ CDocSubject::~CDocSubject()
 	} \
 }
 
-//######‰¼
+//######ä»®
 #define CORE_NOTIFY2(NAME,ARGTYPE) ELoadResult CDocSubject::Notify##NAME(ARGTYPE a) \
 { \
 	int n = GetListenerCount(); \
@@ -125,11 +125,11 @@ DEF_NOTIFY(BeforeClose)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       CDocListener                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//(‘½)
+//(å¤š)
 
 CDocListener::CDocListener(CDocSubject* pcDoc)
 {
-	if(pcDoc==NULL)pcDoc = CEditDoc::GetInstance(0); //$$ ƒCƒ“ƒ`ƒL
+	if(pcDoc==NULL)pcDoc = CEditDoc::GetInstance(0); //$$ ã‚¤ãƒ³ãƒã‚­
 	assert( pcDoc );
 	Listen(pcDoc);
 }

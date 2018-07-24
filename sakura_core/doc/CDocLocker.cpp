@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "CDocLocker.h"
 #include "CDocFile.h"
 #include "window/CEditWnd.h"
@@ -6,7 +6,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               �R���X�g���N�^�E�f�X�g���N�^                  //
+//               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDocLocker::CDocLocker()
@@ -15,32 +15,32 @@ CDocLocker::CDocLocker()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ���[�h�O��                           //
+//                        ロード前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//�������߂邩����
+	//書き込めるか検査
 	CheckWritable(!sLoadInfo.bViewMode && !sLoadInfo.bWritableNoMsg);
 	if( !m_bIsDocWritable ){
 		return;
 	}
 
-	// �t�@�C���̔r�����b�N
+	// ファイルの排他ロック
 	pcDoc->m_cDocFileOperation.DoFileLock();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        �Z�[�u�O��                           //
+//                        セーブ前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CDocLocker::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	// �t�@�C���̔r�����b�N����
+	// ファイルの排他ロック解除
 	pcDoc->m_cDocFileOperation.DoFileUnlock();
 }
 
@@ -48,45 +48,45 @@ void CDocLocker::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	// �������߂邩����
+	// 書き込めるか検査
 	m_bIsDocWritable = true;
 
-	// �t�@�C���̔r�����b�N
+	// ファイルの排他ロック
 	pcDoc->m_cDocFileOperation.DoFileLock();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         �`�F�b�N                            //
+//                         チェック                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! �������߂邩����
+//! 書き込めるか検査
 void CDocLocker::CheckWritable(bool bMsg)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	// �t�@�C�������݂��Ȃ��ꍇ (�u�J���v�ŐV�����t�@�C�����쐬��������) �́A�ȉ��̏����͍s��Ȃ�
+	// ファイルが存在しない場合 (「開く」で新しくファイルを作成した扱い) は、以下の処理は行わない
 	if( !fexist(pcDoc->m_cDocFile.GetFilePath()) ){
 		m_bIsDocWritable = true;
 		return;
 	}
 
-	// �ǂݎ���p�t�@�C���̏ꍇ�́A�ȉ��̏����͍s��Ȃ�
+	// 読み取り専用ファイルの場合は、以下の処理は行わない
 	if( !pcDoc->m_cDocFile.HasWritablePermission() ){
 		m_bIsDocWritable = false;
 		return;
 	}
 
-	// �������߂邩����
+	// 書き込めるか検査
 	CDocFile& cDocFile = pcDoc->m_cDocFile;
 	m_bIsDocWritable = cDocFile.IsFileWritable();
 	if(!m_bIsDocWritable && bMsg){
-		// �r������Ă���ꍇ�������b�Z�[�W���o��
-		// ���̑��̌����i�t�@�C���V�X�e���̃Z�L�����e�B�ݒ�Ȃǁj�ł͓ǂݎ���p�Ɠ��l�Ƀ��b�Z�[�W���o���Ȃ�
+		// 排他されている場合だけメッセージを出す
+		// その他の原因（ファイルシステムのセキュリティ設定など）では読み取り専用と同様にメッセージを出さない
 		if( ::GetLastError() == ERROR_SHARING_VIOLATION ){
 			TopWarningMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				LS( STR_ERR_DLGEDITDOC21 ),	//"%ts\n�͌��ݑ��̃v���Z�X�ɂ���ď����݂��֎~����Ă��܂��B"
-				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : LS(STR_NO_TITLE1)	//"(����)"
+				LS( STR_ERR_DLGEDITDOC21 ),	//"%ts\nは現在他のプロセスによって書込みが禁止されています。"
+				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : LS(STR_NO_TITLE1)	//"(無題)"
 			);
 		}
 	}

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief TSVƒ‚[ƒhŠÇ—
+ï»¿/*!	@file
+	@brief TSVãƒ¢ãƒ¼ãƒ‰ç®¡ç†
 */
 /*
 	Copyright (C) 2015, syat
@@ -30,20 +30,20 @@
 #include <vector>
 #include "basis/SakuraBasis.h"
 
-// TSVƒ‚[ƒh
-#define TSV_MODE_NONE	0	// TSVƒ‚[ƒh‚È‚µ
-#define TSV_MODE_TSV	1	// TSVƒ‚[ƒh
-#define TSV_MODE_CSV	2	// CSVƒ‚[ƒh
+// TSVãƒ¢ãƒ¼ãƒ‰
+#define TSV_MODE_NONE	0	// TSVãƒ¢ãƒ¼ãƒ‰ãªã—
+#define TSV_MODE_TSV	1	// TSVãƒ¢ãƒ¼ãƒ‰
+#define TSV_MODE_CSV	2	// CSVãƒ¢ãƒ¼ãƒ‰
 
 class CDocLineMgr;
 
-// TSVƒ‚[ƒhî•ñ
+// TSVãƒ¢ãƒ¼ãƒ‰æƒ…å ±
 class CTsvModeInfo {
 	
 public:
-	void CalcTabLength(CDocLineMgr* cDocLineMgr);	// ƒ^ƒuˆÊ’u‚ğÄŒvZ‚·‚é
-	void CalcTabLength(LPCWSTR pLine);	// ƒ^ƒuˆÊ’u‚ğÄŒvZ‚·‚éiˆêsj
-	CLayoutInt GetActualTabLength(CLayoutInt pos, CLayoutInt px) const;	// w’è‚µ‚½ƒŒƒCƒAƒEƒgˆÊ’u‚Ìƒ^ƒu•‚ğæ“¾iÜ‚è•Ô‚µ‚Íl—¶‚µ‚È‚¢j
+	void CalcTabLength(CDocLineMgr* cDocLineMgr);	// ã‚¿ãƒ–ä½ç½®ã‚’å†è¨ˆç®—ã™ã‚‹
+	void CalcTabLength(LPCWSTR pLine);	// ã‚¿ãƒ–ä½ç½®ã‚’å†è¨ˆç®—ã™ã‚‹ï¼ˆä¸€è¡Œï¼‰
+	CLayoutInt GetActualTabLength(CLayoutInt pos, CLayoutInt px) const;	// æŒ‡å®šã—ãŸãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®ã®ã‚¿ãƒ–å¹…ã‚’å–å¾—ï¼ˆæŠ˜ã‚Šè¿”ã—ã¯è€ƒæ…®ã—ãªã„ï¼‰
 
 	int m_nTsvMode;
 	CLayoutInt m_nMaxCharLayoutX;

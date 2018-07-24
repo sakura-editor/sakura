@@ -1,8 +1,8 @@
-/*!	@file
-	@brief sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
 	@author Yazaki
-	@date 2002/09/17 V‹Kì¬
+	@date 2002/09/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -24,10 +24,10 @@ CLineComment::CLineComment()
 }
 
 /*!
-	sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğƒRƒs[‚·‚é
-	@param n [in]           ƒRƒs[‘ÎÛ‚ÌƒRƒƒ“ƒg”Ô†
-	@param buffer [in]      ƒRƒƒ“ƒg•¶š—ñ
-	@param nCommentPos [in] ƒRƒƒ“ƒgˆÊ’uD-1‚Ì‚Æ‚«‚Íw’è–³‚µD
+	è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
+	@param n [in]           ã‚³ãƒ”ãƒ¼å¯¾è±¡ã®ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·
+	@param buffer [in]      ã‚³ãƒ¡ãƒ³ãƒˆæ–‡å­—åˆ—
+	@param nCommentPos [in] ã‚³ãƒ¡ãƒ³ãƒˆä½ç½®ï¼-1ã®ã¨ãã¯æŒ‡å®šç„¡ã—ï¼
 */
 void CLineComment::CopyTo( const int n, const wchar_t* buffer, int nCommentPos )
 {
@@ -49,11 +49,11 @@ bool CLineComment::Match( int nPos, const CStringRef& cStr ) const
 	int i;
 	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
 		if (
-			L'\0' != m_pszLineComment[i][0] &&	/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-			( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	ˆÊ’uw’èON.
-			nPos <= cStr.GetLength() - m_nLineCommentLen[i] &&	/* sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^ */
-			//0 == auto_memicmp( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//”ñASCII‚à‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢	//###locale ˆË‘¶
-			0 == wmemicmp_ascii( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//ASCII‚Ì‚İ‘å•¶š¬•¶š‚ğ‹æ•Ê‚µ‚È‚¢i‚‘¬j
+			L'\0' != m_pszLineComment[i][0] &&	/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+			( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	ä½ç½®æŒ‡å®šON.
+			nPos <= cStr.GetLength() - m_nLineCommentLen[i] &&	/* è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ */
+			//0 == auto_memicmp( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//éASCIIã‚‚å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„	//###locale ä¾å­˜
+			0 == wmemicmp_ascii( &cStr.GetPtr()[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )	//ASCIIã®ã¿å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã—ãªã„ï¼ˆé«˜é€Ÿï¼‰
 		){
 			return true;
 		}

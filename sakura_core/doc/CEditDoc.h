@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
+ï»¿/*!	@file
+	@brief æ–‡æ›¸é–¢é€£æƒ…å ±ã®ç®¡ç†
 
 	@author Norio Nakatani
-	@date	1998/03/13 ì¬
+	@date	1998/03/13 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -66,67 +66,67 @@ class CFuncInfoArr;
 class CEditApp;
 
 /*!
-	•¶‘ŠÖ˜Aî•ñ‚ÌŠÇ—
+	æ–‡æ›¸é–¢é€£æƒ…å ±ã®ç®¡ç†
 
-	@date 2002.02.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-	@date 2007.12.13 kobake GetDocumentEncodingì¬
-	@date 2007.12.13 kobake SetDocumentEncodingì¬
-	@date 2007.12.13 kobake IsViewModeì¬
+	@date 2002.02.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+	@date 2007.12.13 kobake GetDocumentEncodingä½œæˆ
+	@date 2007.12.13 kobake SetDocumentEncodingä½œæˆ
+	@date 2007.12.13 kobake IsViewModeä½œæˆ
 */
 class CEditDoc
 : public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CEditDoc(CEditApp* pcApp);
 	~CEditDoc();
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 	BOOL Create( CEditWnd* pcEditWnd );
-	void InitDoc();	/* Šù‘¶ƒf[ƒ^‚ÌƒNƒŠƒA */
-	void InitAllView();	/* ‘Sƒrƒ…[‚Ì‰Šú‰»Fƒtƒ@ƒCƒ‹ƒI[ƒvƒ“/ƒNƒ[ƒY“™‚ÉAƒrƒ…[‚ğ‰Šú‰»‚·‚é */
+	void InitDoc();	/* æ—¢å­˜ãƒ‡ãƒ¼ã‚¿ã®ã‚¯ãƒªã‚¢ */
+	void InitAllView();	/* å…¨ãƒ“ãƒ¥ãƒ¼ã®åˆæœŸåŒ–ï¼šãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³/ã‚¯ãƒ­ãƒ¼ã‚ºæ™‚ç­‰ã«ã€ãƒ“ãƒ¥ãƒ¼ã‚’åˆæœŸåŒ–ã™ã‚‹ */
 	void Clear();
 
-	//İ’è
+	//è¨­å®š
 	void SetFilePathAndIcon(const TCHAR* szFile);	// Sep. 9, 2002 genta
 
-	//‘®«
-	ECodeType	GetDocumentEncoding() const;				//!< ƒhƒLƒ…ƒƒ“ƒg‚Ì•¶šƒR[ƒh‚ğæ“¾
-	bool		GetDocumentBomExist() const;				//!< ƒhƒLƒ…ƒƒ“ƒg‚ÌBOM•t‰Á‚ğæ“¾
-	void		SetDocumentEncoding(ECodeType eCharCode, bool bBom);	//!< ƒhƒLƒ…ƒƒ“ƒg‚Ì•¶šƒR[ƒh‚ğİ’è
-	bool IsModificationForbidden( EFunctionCode nCommand ) const;	//!< w’èƒRƒ}ƒ“ƒh‚É‚æ‚é‘‚«Š·‚¦‚ª‹Ö~‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©	//Aug. 14, 2000 genta
-	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< •ÒW‰Â”\‚©‚Ç‚¤‚©
-	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< ƒZ[ƒuî•ñ‚ğæ“¾
+	//å±æ€§
+	ECodeType	GetDocumentEncoding() const;				//!< ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
+	bool		GetDocumentBomExist() const;				//!< ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®BOMä»˜åŠ ã‚’å–å¾—
+	void		SetDocumentEncoding(ECodeType eCharCode, bool bBom);	//!< ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’è¨­å®š
+	bool IsModificationForbidden( EFunctionCode nCommand ) const;	//!< æŒ‡å®šã‚³ãƒãƒ³ãƒ‰ã«ã‚ˆã‚‹æ›¸ãæ›ãˆãŒç¦æ­¢ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹	//Aug. 14, 2000 genta
+	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< ç·¨é›†å¯èƒ½ã‹ã©ã†ã‹
+	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< ã‚»ãƒ¼ãƒ–æƒ…å ±ã‚’å–å¾—
 
-	//ó‘Ô
-	void GetEditInfo( EditInfo* ) const;	//!< •ÒWƒtƒ@ƒCƒ‹î•ñ‚ğæ“¾ //2007.10.24 kobake ŠÖ”–¼•ÏX: SetFileInfo¨GetEditInfo
-	bool IsAcceptLoad() const;				//!< ‚±‚ÌƒEƒBƒ“ƒhƒE‚Å(V‚µ‚¢ƒEƒBƒ“ƒhƒE‚ğŠJ‚©‚¸‚É)V‚µ‚¢ƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚é‚©
+	//çŠ¶æ…‹
+	void GetEditInfo( EditInfo* ) const;	//!< ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã‚’å–å¾— //2007.10.24 kobake é–¢æ•°åå¤‰æ›´: SetFileInfoâ†’GetEditInfo
+	bool IsAcceptLoad() const;				//!< ã“ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§(æ–°ã—ã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã‹ãšã«)æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ã‚‹ã‹
 
-	//ƒCƒxƒ“ƒg
+	//ã‚¤ãƒ™ãƒ³ãƒˆ
 	BOOL HandleCommand( EFunctionCode );
 	void OnChangeType();
-	void OnChangeSetting(bool bDoLayout = true, bool bBlockingHook = true);		// ƒrƒ…[‚Éİ’è•ÏX‚ğ”½‰f‚³‚¹‚é
-	BOOL OnFileClose(bool);			/* ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é‚Æ‚«‚ÌMRU“o˜^ & •Û‘¶Šm”F • •Û‘¶Às */
+	void OnChangeSetting(bool bDoLayout = true, bool bBlockingHook = true);		// ãƒ“ãƒ¥ãƒ¼ã«è¨­å®šå¤‰æ›´ã‚’åæ˜ ã•ã›ã‚‹
+	BOOL OnFileClose(bool);			/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹ã¨ãã®MRUç™»éŒ² & ä¿å­˜ç¢ºèª ï¼† ä¿å­˜å®Ÿè¡Œ */
 
-	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji ƒ}ƒNƒ©“®Às
+	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji ãƒã‚¯ãƒ­è‡ªå‹•å®Ÿè¡Œ
 
 	void SetBackgroundImage();
 
 	void SetCurDirNotitle();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ƒƒ“ƒo•Ï”ŒQ                          //
+	//                       ãƒ¡ãƒ³ãƒå¤‰æ•°ç¾¤                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	//QÆ
+	//å‚ç…§
 	CEditWnd*		m_pcEditWnd;	//	Sep. 10, 2002
 
-	//ƒf[ƒ^\‘¢
+	//ãƒ‡ãƒ¼ã‚¿æ§‹é€ 
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
 
-	//Šeí‹@”\
+	//å„ç¨®æ©Ÿèƒ½
 public:
 	CDocFile			m_cDocFile;
 	CDocFileOperation	m_cDocFileOperation;
@@ -134,31 +134,31 @@ public:
 	CDocType			m_cDocType;
 	CCookieManager		m_cCookie;
 
-	//ƒwƒ‹ƒp
+	//ãƒ˜ãƒ«ãƒ‘
 public:
 	CBackupAgent		m_cBackupAgent;
-	CAutoSaveAgent		m_cAutoSaveAgent;		//!< ©“®•Û‘¶ŠÇ—
+	CAutoSaveAgent		m_cAutoSaveAgent;		//!< è‡ªå‹•ä¿å­˜ç®¡ç†
 	CAutoReloadAgent	m_cAutoReloadAgent;
 	CDocOutline			m_cDocOutline;
 	CDocLocker			m_cDocLocker;
 
-	//“®“Ió‘Ô
+	//å‹•çš„çŠ¶æ…‹
 public:
-	int				m_nCommandExecNum;			//!< ƒRƒ}ƒ“ƒhÀs‰ñ”
+	int				m_nCommandExecNum;			//!< ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œå›æ•°
 
-	//ŠÂ‹«î•ñ
+	//ç’°å¢ƒæƒ…å ±
 public:
-	CFuncLookup		m_cFuncLookup;				//!< ‹@”\–¼C‹@”\”Ô†‚È‚Ç‚Ìresolve
+	CFuncLookup		m_cFuncLookup;				//!< æ©Ÿèƒ½åï¼Œæ©Ÿèƒ½ç•ªå·ãªã©ã®resolve
 
-	//–¢®—•Ï”
+	//æœªæ•´ç†å¤‰æ•°
 public:
-	int				m_nTextWrapMethodCur;		// Ü‚è•Ô‚µ•û–@					// 2008.05.30 nasukoji
-	bool			m_bTextWrapMethodCurTemp;	// Ü‚è•Ô‚µ•û–@ˆêİ’è“K—p’†	// 2008.05.30 nasukoji
-	LOGFONT			m_lfCur;					// ˆêİ’èƒtƒHƒ“ƒg
-	int				m_nPointSizeCur;			// ˆêİ’èƒtƒHƒ“ƒgƒTƒCƒY
-	bool			m_blfCurTemp;				// ƒtƒHƒ“ƒgİ’è“K—p’†
-	int				m_nPointSizeOrg;			// Œ³‚ÌƒtƒHƒ“ƒgƒTƒCƒY
-	bool			m_bTabSpaceCurTemp;			// ƒ^ƒu•ˆêİ’è“K—p’†			// 2013.05.30 Moca
+	int				m_nTextWrapMethodCur;		// æŠ˜ã‚Šè¿”ã—æ–¹æ³•					// 2008.05.30 nasukoji
+	bool			m_bTextWrapMethodCurTemp;	// æŠ˜ã‚Šè¿”ã—æ–¹æ³•ä¸€æ™‚è¨­å®šé©ç”¨ä¸­	// 2008.05.30 nasukoji
+	LOGFONT			m_lfCur;					// ä¸€æ™‚è¨­å®šãƒ•ã‚©ãƒ³ãƒˆ
+	int				m_nPointSizeCur;			// ä¸€æ™‚è¨­å®šãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
+	bool			m_blfCurTemp;				// ãƒ•ã‚©ãƒ³ãƒˆè¨­å®šé©ç”¨ä¸­
+	int				m_nPointSizeOrg;			// å…ƒã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
+	bool			m_bTabSpaceCurTemp;			// ã‚¿ãƒ–å¹…ä¸€æ™‚è¨­å®šé©ç”¨ä¸­			// 2013.05.30 Moca
 
 	HBITMAP			m_hBackImg;
 	int				m_nBackImgWidth;

@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+ï»¿/*!	@file
+	@brief ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
 	@author Yazaki
-	@date 2002/09/17 V‹Kì¬
+	@date 2002/09/17 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2002, Yazaki
@@ -24,37 +24,37 @@ enum ECommentType{
 };
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
-/*! ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğŠÇ—‚·‚é
+/*! ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ç®¡ç†ã™ã‚‹
 
-	@note CBlockCommentGroup‚ÍA‹¤—Lƒƒ‚ƒŠSTypeConfig‚ÉŠÜ‚Ü‚ê‚é‚Ì‚ÅAƒƒ“ƒo•Ï”‚Íí‚ÉÀ‘Ì‚ğ‚Á‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
+	@note CBlockCommentGroupã¯ã€å…±æœ‰ãƒ¡ãƒ¢ãƒªSTypeConfigã«å«ã¾ã‚Œã‚‹ã®ã§ã€ãƒ¡ãƒ³ãƒå¤‰æ•°ã¯å¸¸ã«å®Ÿä½“ã‚’æŒã£ã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
 */
 #define BLOCKCOMMENT_NUM	2
 #define BLOCKCOMMENT_BUFFERSIZE	16
 
-//	2005.11.10 Moca ƒAƒNƒZƒXŠÖ”’Ç‰Á
+//	2005.11.10 Moca ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°è¿½åŠ 
 class CBlockComment{
 public:
-	//¶¬‚Æ”jŠü
+	//ç”Ÿæˆã¨ç ´æ£„
 	CBlockComment();
 
-	//İ’è
-	void SetBlockCommentRule( const wchar_t* pszFrom, const wchar_t* pszTo );	//	sƒRƒƒ“ƒgƒfƒŠƒ~ƒ^‚ğƒRƒs[‚·‚é
+	//è¨­å®š
+	void SetBlockCommentRule( const wchar_t* pszFrom, const wchar_t* pszTo );	//	è¡Œã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 
-	//”»’è
-	bool Match_CommentFrom( int nPos, const CStringRef& cStr ) const;	//	sƒRƒƒ“ƒg‚É’l‚·‚é‚©Šm”F‚·‚é
-	int Match_CommentTo( int nPos, const CStringRef& cStr ) const;	//	sƒRƒƒ“ƒg‚É’l‚·‚é‚©Šm”F‚·‚é
+	//åˆ¤å®š
+	bool Match_CommentFrom( int nPos, const CStringRef& cStr ) const;	//	è¡Œã‚³ãƒ¡ãƒ³ãƒˆã«å€¤ã™ã‚‹ã‹ç¢ºèªã™ã‚‹
+	int Match_CommentTo( int nPos, const CStringRef& cStr ) const;	//	è¡Œã‚³ãƒ¡ãƒ³ãƒˆã«å€¤ã™ã‚‹ã‹ç¢ºèªã™ã‚‹
 
-	//æ“¾
+	//å–å¾—
 	const wchar_t* getBlockCommentFrom() const{ return m_szBlockCommentFrom; }
 	const wchar_t* getBlockCommentTo() const{ return m_szBlockCommentTo; }
 	int getBlockFromLen() const { return m_nBlockFromLen; }
 	int getBlockToLen() const { return m_nBlockToLen; }
 
 private:
-	wchar_t	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]; //!< ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^(From)
-	wchar_t	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];   //!< ƒuƒƒbƒNƒRƒƒ“ƒgƒfƒŠƒ~ƒ^(To)
+	wchar_t	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]; //!< ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿(From)
+	wchar_t	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];   //!< ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒªãƒŸã‚¿(To)
 	int		m_nBlockFromLen;
 	int		m_nBlockToLen;
 };

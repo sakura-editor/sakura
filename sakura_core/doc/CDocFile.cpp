@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Uchi
 
@@ -26,9 +26,9 @@
 #include "CDocFile.h"
 
 /*
-	�ۑ����̃t�@�C���̃p�X�i�}�N���p�j�̎擾
+	保存時のファイルのパス（マクロ用）の取得
 
-	2017/5/17 CFile.h����ړ�
+	2017/5/17 CFile.hから移動
 */
 const TCHAR* CDocFile::GetSaveFilePath(void) const
 {

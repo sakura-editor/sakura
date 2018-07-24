@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,36 +25,36 @@
 #define SAKURA_CDOCTYPESETTING_28058D99_2101_4488_A634_832BD50A2F3C9_H_
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          Fİ’è                             //
+//                          è‰²è¨­å®š                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ƒtƒHƒ“ƒg‘®«
+//! ãƒ•ã‚©ãƒ³ãƒˆå±æ€§
 struct SFontAttr{
-	bool		m_bBoldFont;		//!< ‘¾š
-	bool		m_bUnderLine;		//!< ‰ºü
+	bool		m_bBoldFont;		//!< å¤ªå­—
+	bool		m_bUnderLine;		//!< ä¸‹ç·š
 };
 
-//! F‘®«
+//! è‰²å±æ€§
 struct SColorAttr{
-	COLORREF	m_cTEXT;			//!< •¶šF
-	COLORREF	m_cBACK;			//!< ”wŒiF
+	COLORREF	m_cTEXT;			//!< æ–‡å­—è‰²
+	COLORREF	m_cBACK;			//!< èƒŒæ™¯è‰²
 };
 
-//! Fİ’è
+//! è‰²è¨­å®š
 struct ColorInfoBase{
-	bool		m_bDisp;			//!< •\¦
-	SFontAttr	m_sFontAttr;		//!< ƒtƒHƒ“ƒg‘®«
-	SColorAttr	m_sColorAttr;		//!< F‘®«
+	bool		m_bDisp;			//!< è¡¨ç¤º
+	SFontAttr	m_sFontAttr;		//!< ãƒ•ã‚©ãƒ³ãƒˆå±æ€§
+	SColorAttr	m_sColorAttr;		//!< è‰²å±æ€§
 };
 
-//! –¼‘O‚ÆƒCƒ“ƒfƒbƒNƒX•t‚«Fİ’è
+//! åå‰ã¨ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ä»˜ãè‰²è¨­å®š
 struct ColorInfo : public ColorInfoBase{
-	int			m_nColorIdx;		//!< ƒCƒ“ƒfƒbƒNƒX
-	TCHAR		m_szName[64];		//!< –¼‘O
+	int			m_nColorIdx;		//!< ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	TCHAR		m_szName[64];		//!< åå‰
 };
 
 
-//ƒfƒtƒHƒ‹ƒgFİ’è
+//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè‰²è¨­å®š
 void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex );
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex );
 int GetDefaultColorInfoCount();
@@ -62,14 +62,14 @@ int GetDefaultColorInfoCount();
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           «‘                              //
+//                           è¾æ›¸                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //@@@ 2006.04.10 fon ADD-start
-const int DICT_ABOUT_LEN = 50; /*!< «‘‚Ìà–¾‚ÌÅ‘å’· -1 */
+const int DICT_ABOUT_LEN = 50; /*!< è¾æ›¸ã®èª¬æ˜ã®æœ€å¤§é•· -1 */
 struct KeyHelpInfo {
-	bool		m_bUse;						//!< «‘‚ğ g—p‚·‚é/‚µ‚È‚¢
-	TCHAR		m_szAbout[DICT_ABOUT_LEN];	//!< «‘‚Ìà–¾(«‘ƒtƒ@ƒCƒ‹‚Ì1s–Ú‚©‚ç¶¬)
-	SFilePath	m_szPath;					//!< ƒtƒ@ƒCƒ‹ƒpƒX
+	bool		m_bUse;						//!< è¾æ›¸ã‚’ ä½¿ç”¨ã™ã‚‹/ã—ãªã„
+	TCHAR		m_szAbout[DICT_ABOUT_LEN];	//!< è¾æ›¸ã®èª¬æ˜(è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ«ã®1è¡Œç›®ã‹ã‚‰ç”Ÿæˆ)
+	SFilePath	m_szPath;					//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
 };
 //@@@ 2006.04.10 fon ADD-end
 

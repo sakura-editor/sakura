@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,20 +30,20 @@ class CDocLocker : public CDocListenerEx{
 public:
 	CDocLocker();
 
-	//ƒNƒŠƒA
+	//ã‚¯ãƒªã‚¢
 	void Clear(void) { m_bIsDocWritable = true; }
 
-	//ƒ[ƒh‘OŒã
+	//ãƒ­ãƒ¼ãƒ‰å‰å¾Œ
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 	
-	//ƒZ[ƒu‘OŒã
+	//ã‚»ãƒ¼ãƒ–å‰å¾Œ
 	void OnBeforeSave(const SSaveInfo& sSaveInfo);
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-	//ó‘Ô
+	//çŠ¶æ…‹
 	bool IsDocWritable() const{ return m_bIsDocWritable; }
 
-	//ƒ`ƒFƒbƒN
+	//ãƒã‚§ãƒƒã‚¯
 	void CheckWritable(bool bMsg);
 
 private:
