@@ -1,10 +1,10 @@
-/*!	@file
-	@brief ˆ—Š—vŠÔ‚ÌŒv‘ªƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief å‡¦ç†æ‰€è¦æ™‚é–“ã®è¨ˆæ¸¬ã‚¯ãƒ©ã‚¹
 
-	ƒfƒoƒbƒO–Ú“I‚Å—p‚¢‚é
+	ãƒ‡ãƒãƒƒã‚°ç›®çš„ã§ç”¨ã„ã‚‹
 
 	@author Norio Nakatani
-	@date 1998/03/06  V‹Kì¬
+	@date 1998/03/06  æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -62,7 +62,7 @@ DWORD CRunningTimer::Read()
 */
 void CRunningTimer::WriteTrace(const char* msg) const
 {
-	MYTRACE( _T("%3d:\"%hs\", %d‡_•b : %hs\n"), m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
+	MYTRACE( _T("%3d:\"%hs\", %dã‰ç§’ : %hs\n"), m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
 }
 #endif
 

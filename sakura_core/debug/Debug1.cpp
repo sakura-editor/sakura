@@ -1,11 +1,11 @@
-/*!	@file
-	@brief ƒfƒoƒbƒO—pŠÖ”
+ï»¿/*!	@file
+	@brief ãƒ‡ãƒãƒƒã‚°ç”¨é–¢æ•°
 
 	@author Norio Nakatani
 
-	@date 2001/06/23 N.Nakatani DebugOut()‚É”÷–­`‚ÈC³
-	@date 2002/01/17 aroka Œ^‚ÌC³
-	@date 2013/03/03 Uchi MessageBox—pŠÖ”‚ğ•ª—£
+	@date 2001/06/23 N.Nakatani DebugOut()ã«å¾®å¦™ï½ãªä¿®æ­£
+	@date 2002/01/17 aroka å‹ã®ä¿®æ­£
+	@date 2013/03/03 Uchi MessageBoxç”¨é–¢æ•°ã‚’åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,7 +22,7 @@
 #include "debug/Debug3.h"
 
 #if 0
-//ƒfƒoƒbƒOƒEƒHƒbƒ`—p‚ÌŒ^
+//ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚©ãƒƒãƒç”¨ã®å‹
 struct TestArrayA{ char    a[100]; };
 struct TestArrayW{ wchar_t a[100]; };
 struct TestArrayI{ int     a[100]; };
@@ -37,35 +37,35 @@ void Test()
 #if defined(_DEBUG) || defined(USE_RELPRINT)
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   ƒƒbƒZ[ƒWo—ÍFÀ‘•                      //
+//                   ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡ºåŠ›ï¼šå®Ÿè£…                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*! @brief ‘®•t‚«ƒfƒoƒbƒKo—Í
+/*! @brief æ›¸å¼ä»˜ããƒ‡ãƒãƒƒã‚¬å‡ºåŠ›
 
-	@param[in] lpFmt printf‚Ì‘®•t‚«•¶š—ñ
+	@param[in] lpFmt printfã®æ›¸å¼ä»˜ãæ–‡å­—åˆ—
 
-	ˆø”‚Å—^‚¦‚ç‚ê‚½î•ñ‚ğDebugString‚Æ‚µ‚Äo—Í‚·‚éD
+	å¼•æ•°ã§ä¸ãˆã‚‰ã‚ŒãŸæƒ…å ±ã‚’DebugStringã¨ã—ã¦å‡ºåŠ›ã™ã‚‹ï¼
 */
 #ifdef _UNICODE
 void DebugOutW( LPCWSTR lpFmt, ...)
 {
-	//®Œ`
+	//æ•´å½¢
 	static WCHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
 	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
 
-	//o—Í
+	//å‡ºåŠ›
 	::OutputDebugStringW( szText );
 	if( -1 == ret ){
-		::OutputDebugStringW( L"(Ø‚èÌ‚Ä‚Ü‚µ‚½...)\n" );
+		::OutputDebugStringW( L"(åˆ‡ã‚Šæ¨ã¦ã¾ã—ãŸ...)\n" );
 	}
 #ifdef USE_DEBUGMON
 	DebugMonitor_Output(NULL, to_wchar(szText));
 #endif
 
-	//ƒEƒFƒCƒg
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 ‘å—Ê‚ÉƒgƒŒ[ƒX‚·‚é‚Æ‚«‚Ì‚½‚ß‚É
+	//ã‚¦ã‚§ã‚¤ãƒˆ
+	::Sleep(1);	// Norio Nakatani, 2001/06/23 å¤§é‡ã«ãƒˆãƒ¬ãƒ¼ã‚¹ã™ã‚‹ã¨ãã®ãŸã‚ã«
 
 	va_end(argList);
 	return;
@@ -74,23 +74,23 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 
 void DebugOutA( LPCSTR lpFmt, ...)
 {
-	//®Œ`
+	//æ•´å½¢
 	static CHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
 	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
 
-	//o—Í
+	//å‡ºåŠ›
 	::OutputDebugStringA( szText );
 	if( -1 == ret ){
-		::OutputDebugStringA( "(Ø‚èÌ‚Ä‚Ü‚µ‚½...)\n" );
+		::OutputDebugStringA( "(åˆ‡ã‚Šæ¨ã¦ã¾ã—ãŸ...)\n" );
 	}
 #ifdef USE_DEBUGMON
 	DebugMonitor_Output(NULL, to_wchar(szText));
 #endif
 
-	//ƒEƒFƒCƒg
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 ‘å—Ê‚ÉƒgƒŒ[ƒX‚·‚é‚Æ‚«‚Ì‚½‚ß‚É
+	//ã‚¦ã‚§ã‚¤ãƒˆ
+	::Sleep(1);	// Norio Nakatani, 2001/06/23 å¤§é‡ã«ãƒˆãƒ¬ãƒ¼ã‚¹ã™ã‚‹ã¨ãã®ãŸã‚ã«
 
 	va_end(argList);
 	return;

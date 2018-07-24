@@ -1,27 +1,27 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "debug/Debug2.h"
 
-//2007.08.30 kobake ’Ç‰Á
+//2007.08.30 kobake è¿½åŠ 
 
 #ifdef _DEBUG
-//!ƒfƒoƒbƒOƒƒbƒZ[ƒWo—Í
+//!ãƒ‡ãƒãƒƒã‚°ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡ºåŠ›
 void debug_output(const char* str, ...)
 {
 	static char buf[_MAX_PATH+150];
 	va_list mark;
 	va_start(mark,str);
-	// FILE–¼, LINE ® •ª•K—v
+	// FILEå, LINE å¼ åˆ†å¿…è¦
 	tchar_vsnprintf_s(buf,_countof(buf),str,mark);
 	va_end(mark);
 
-	//ƒfƒoƒbƒK‚Éo—Í
+	//ãƒ‡ãƒãƒƒã‚¬ã«å‡ºåŠ›
 	OutputDebugStringA(buf);
 }
 
-//!‹­§I—¹
+//!å¼·åˆ¶çµ‚äº†
 void debug_exit()
 {
-	MessageBox(NULL,_T("assert‚Æ‚©‚Éˆø‚ÁŠ|‚©‚Á‚½‚Û‚¢‚Å‚·"),GSTR_APPNAME,MB_OK);
+	MessageBox(NULL,_T("assertã¨ã‹ã«å¼•ã£æ›ã‹ã£ãŸã½ã„ã§ã™"),GSTR_APPNAME,MB_OK);
 	exit(1);
 }
 
@@ -38,6 +38,6 @@ void debug_exit2(const char* file, int line, const char* exp)
 void warning_point()
 {
 	int n;
-	n=0; //¦©‚±‚±‚ÉƒuƒŒ[ƒNƒ|ƒCƒ“ƒg‚ğİ‚¯‚Ä‚¨‚­‚ÆA”CˆÓƒ[ƒjƒ“ƒO‚ÅƒuƒŒ[ƒN‚Å‚«‚é
+	n=0; //â€»â†ã“ã“ã«ãƒ–ãƒ¬ãƒ¼ã‚¯ãƒã‚¤ãƒ³ãƒˆã‚’è¨­ã‘ã¦ãŠãã¨ã€ä»»æ„ãƒ¯ãƒ¼ãƒ‹ãƒ³ã‚°ã§ãƒ–ãƒ¬ãƒ¼ã‚¯ã§ãã‚‹
 }
 #endif	// _DEBUG
