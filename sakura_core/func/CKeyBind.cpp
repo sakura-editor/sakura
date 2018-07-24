@@ -1,9 +1,9 @@
-/*!	@file
-	@brief ƒL[Š„‚è“–‚Ä‚ÉŠÖ‚·‚éƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/03/25 V‹Kì¬
-	@date 1998/05/16 ƒNƒ‰ƒX“à‚Éƒf[ƒ^‚ğ‚½‚È‚¢‚æ‚¤‚É•ÏX
+	@date 1998/03/25 æ–°è¦ä½œæˆ
+	@date 1998/05/16 ã‚¯ãƒ©ã‚¹å†…ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒãŸãªã„ã‚ˆã†ã«å¤‰æ›´
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -21,7 +21,7 @@
 #include "env/CShareData.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 
-//! KEYDATA‚Æ‚Ù‚Ú“¯‚¶
+//! KEYDATAã¨ã»ã¼åŒã˜
 struct KEYDATAINIT {
 	short			m_nKeyCode;			//!< Key Code (0 for non-keybord button)
 	union {
@@ -39,8 +39,8 @@ struct KEYDATAINIT {
 //					m_nFuncCodeArr[7]	// Shift + Ctrl + Alt + Key
 };
 
-//À‘••â•
-/* KEYDATA”z—ñ‚Éƒf[ƒ^‚ğƒZƒbƒg */
+//å®Ÿè£…è£œåŠ©
+/* KEYDATAé…åˆ—ã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ */
 static void SetKeyNameArrVal(
 	DLLSHAREDATA*		pShareData,
 	int					nIdx,
@@ -60,8 +60,8 @@ CKeyBind::~CKeyBind()
 
 
 
-/*! Windows ƒAƒNƒZƒ‰ƒŒ[ƒ^‚Ìì¬
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
+/*! Windows ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ã®ä½œæˆ
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
 */
 HACCEL CKeyBind::CreateAccerelator(
 		int			nKeyNameArrNum,
@@ -72,7 +72,7 @@ HACCEL CKeyBind::CreateAccerelator(
 	HACCEL	hAccel;
 	int		j, k;
 
-	// ‹@”\‚ªŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒL[‚Ì”‚ğƒJƒEƒ“ƒg -> nAccelArrNum
+	// æ©Ÿèƒ½ãŒå‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ã®æ•°ã‚’ã‚«ã‚¦ãƒ³ãƒˆ -> nAccelArrNum
 	int nAccelArrNum = 0;
 	for( int i = 0; i < nKeyNameArrNum; ++i ){
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
@@ -86,7 +86,7 @@ HACCEL CKeyBind::CreateAccerelator(
 
 
 	if( nAccelArrNum <= 0 ){
-		/* ‹@”\Š„‚è“–‚Ä‚ªƒ[ƒ */
+		/* æ©Ÿèƒ½å‰²ã‚Šå½“ã¦ãŒã‚¼ãƒ­ */
 		return NULL;
 	}
 	pAccelArr = new ACCEL[nAccelArrNum];
@@ -118,10 +118,10 @@ HACCEL CKeyBind::CreateAccerelator(
 
 
 
-/*! ƒAƒNƒ‰ƒZƒŒ[ƒ^¯•Êq‚É‘Î‰‚·‚éƒRƒ}ƒ“ƒh¯•Êq‚ğ•Ô‚·D
-	‘Î‰‚·‚éƒAƒNƒ‰ƒZƒŒ[ƒ^¯•Êq‚ª‚È‚¢ê‡‚Ü‚½‚Í‹@”\–¢Š„‚è“–‚Ä‚Ìê‡‚Í0‚ğ•Ô‚·D
+/*! ã‚¢ã‚¯ãƒ©ã‚»ãƒ¬ãƒ¼ã‚¿è­˜åˆ¥å­ã«å¯¾å¿œã™ã‚‹ã‚³ãƒãƒ³ãƒ‰è­˜åˆ¥å­ã‚’è¿”ã™ï¼
+	å¯¾å¿œã™ã‚‹ã‚¢ã‚¯ãƒ©ã‚»ãƒ¬ãƒ¼ã‚¿è­˜åˆ¥å­ãŒãªã„å ´åˆã¾ãŸã¯æ©Ÿèƒ½æœªå‰²ã‚Šå½“ã¦ã®å ´åˆã¯0ã‚’è¿”ã™ï¼
 
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
 */
 EFunctionCode CKeyBind::GetFuncCode(
 		WORD		nAccelCmd,
@@ -139,7 +139,7 @@ EFunctionCode CKeyBind::GetFuncCode(
 			}
 		}
 	}else{
-		// 2012.12.10 aroka ƒL[ƒR[ƒhŒŸõ‚Ìƒ‹[ƒv‚ğœ‹
+		// 2012.12.10 aroka ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰æ¤œç´¢æ™‚ã®ãƒ«ãƒ¼ãƒ—ã‚’é™¤å»
 		DLLSHAREDATA* pShareData = &GetDllShareData();
 		return GetFuncCodeAt( pKeyNameArr[pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[nCmd]], nSts, bGetDefFuncCode );
 	}
@@ -152,18 +152,18 @@ EFunctionCode CKeyBind::GetFuncCode(
 
 
 /*!
-	@return ‹@”\‚ªŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚éƒL[ƒXƒgƒ[ƒN‚Ì”
+	@return æ©Ÿèƒ½ãŒå‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã®æ•°
 	
-	@date Oct. 31, 2001 genta “®“I‚È‹@”\–¼‚É‘Î‰‚·‚é‚½‚ßˆø”’Ç‰Á
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
+	@date Oct. 31, 2001 genta å‹•çš„ãªæ©Ÿèƒ½åã«å¯¾å¿œã™ã‚‹ãŸã‚å¼•æ•°è¿½åŠ 
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
 */
 int CKeyBind::CreateKeyBindList(
-	HINSTANCE		hInstance,		//!< [in] ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
+	HINSTANCE		hInstance,		//!< [in] ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
 	int				nKeyNameArrNum,	//!< [in]
 	KEYDATA*		pKeyNameArr,	//!< [out]
 	CNativeW&		cMemList,		//!<
-	CFuncLookup*	pcFuncLookup,	//!< [in] ‹@”\”Ô†¨–¼‘O‚Ì‘Î‰‚ğæ‚é
-	BOOL			bGetDefFuncCode //!< [in] ON:ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ğg‚¤/OFF:g‚í‚È‚¢ ƒfƒtƒHƒ‹ƒg:TRUE
+	CFuncLookup*	pcFuncLookup,	//!< [in] æ©Ÿèƒ½ç•ªå·â†’åå‰ã®å¯¾å¿œã‚’å–ã‚‹
+	BOOL			bGetDefFuncCode //!< [in] ON:ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã‚’ä½¿ã†/OFF:ä½¿ã‚ãªã„ ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ:TRUE
 )
 {
 	int		i;
@@ -179,7 +179,7 @@ int CKeyBind::CreateKeyBindList(
 	const WCHAR*	pszCTRL  = LTEXT("Ctrl+");
 	const WCHAR*	pszALT   = LTEXT("Alt+");
 	const WCHAR*	pszTAB   = LTEXT("\t");
-	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CR‚ğ’Ç‰Á
+	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRã‚’è¿½åŠ 
 
 
 	cMemList.AppendString( LSW(STR_ERR_DLGKEYBIND1) );
@@ -211,7 +211,7 @@ int CKeyBind::CreateKeyBindList(
 				}
 				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
 
-//				/* ‹@”\–¼“ú–{Œê */
+//				/* æ©Ÿèƒ½åæ—¥æœ¬èª */
 //				::LoadString(
 //					hInstance,
 //					pKeyNameArr[i].m_nFuncCodeArr[j],
@@ -220,8 +220,8 @@ int CKeyBind::CreateKeyBindList(
 				cMemList.AppendString( pszTAB );
 				cMemList.AppendString( szFuncNameJapanese );
 
-				/* ‹@”\ID¨ŠÖ”–¼C‹@”\–¼“ú–{Œê */
-				//@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ğCSMacroMgr‚É“ˆê
+				/* æ©Ÿèƒ½IDâ†’é–¢æ•°åï¼Œæ©Ÿèƒ½åæ—¥æœ¬èª */
+				//@@@ 2002.2.2 YAZAKI ãƒã‚¯ãƒ­ã‚’CSMacroMgrã«çµ±ä¸€
 				CSMacroMgr::GetFuncInfoByID(
 					hInstance,
 					iFunc,
@@ -229,22 +229,22 @@ int CKeyBind::CreateKeyBindList(
 					szFuncNameJapanese
 				);
 
-				/* ŠÖ”–¼ */
+				/* é–¢æ•°å */
 				cMemList.AppendString( pszTAB );
 				cMemList.AppendString( szFuncName );
 
-				/* ‹@”\”Ô† */
+				/* æ©Ÿèƒ½ç•ªå· */
 				cMemList.AppendString( pszTAB );
 				auto_sprintf( pszStr, LTEXT("%d"), iFunc );
 				cMemList.AppendString( pszStr );
 
-				/* ƒL[ƒ}ƒNƒ‚É‹L˜^‰Â”\‚È‹@”\‚©‚Ç‚¤‚©‚ğ’²‚×‚é */
+				/* ã‚­ãƒ¼ãƒã‚¯ãƒ­ã«è¨˜éŒ²å¯èƒ½ãªæ©Ÿèƒ½ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ */
 				cMemList.AppendString( pszTAB );
-				//@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ğCSMacroMgr‚É“ˆê
+				//@@@ 2002.2.2 YAZAKI ãƒã‚¯ãƒ­ã‚’CSMacroMgrã«çµ±ä¸€
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
-					cMemList.AppendString( LTEXT("›") );
+					cMemList.AppendString( LTEXT("â—‹") );
 				}else{
-					cMemList.AppendString( LTEXT("~") );
+					cMemList.AppendString( LTEXT("Ã—") );
 				}
 
 
@@ -256,22 +256,22 @@ int CKeyBind::CreateKeyBindList(
 	return nValidKeys;
 }
 
-/** ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚ÌƒT[ƒ`(•â•ŠÖ”)
+/** æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®ã‚µãƒ¼ãƒ(è£œåŠ©é–¢æ•°)
 
-	—^‚¦‚ç‚ê‚½ƒVƒtƒgó‘Ô‚É‘Î‚µ‚ÄCw’è‚³‚ê‚½”ÍˆÍ‚ÌƒL[ƒGƒŠƒA‚©‚ç
-	“–ŠY‹@”\‚É‘Î‰‚·‚éƒL[‚ª‚ ‚é‚©‚ğ’²‚×CŒ©‚Â‚©‚Á‚½‚ç
-	‘Î‰‚·‚éƒL[•¶š—ñ‚ğƒZƒbƒg‚·‚éD
+	ä¸ãˆã‚‰ã‚ŒãŸã‚·ãƒ•ãƒˆçŠ¶æ…‹ã«å¯¾ã—ã¦ï¼ŒæŒ‡å®šã•ã‚ŒãŸç¯„å›²ã®ã‚­ãƒ¼ã‚¨ãƒªã‚¢ã‹ã‚‰
+	å½“è©²æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼ãŒã‚ã‚‹ã‹ã‚’èª¿ã¹ï¼Œè¦‹ã¤ã‹ã£ãŸã‚‰
+	å¯¾å¿œã™ã‚‹ã‚­ãƒ¼æ–‡å­—åˆ—ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ï¼
 	
-	ŠÖ”‚©‚ço‚é‚Æ‚«‚É‚ÍŒŸõŠJnˆÊ’u(nKeyNameArrBegin)‚É
-	Ÿ‚Éˆ—‚·‚éindex‚ğİ’è‚·‚éD
+	é–¢æ•°ã‹ã‚‰å‡ºã‚‹ã¨ãã«ã¯æ¤œç´¢é–‹å§‹ä½ç½®(nKeyNameArrBegin)ã«
+	æ¬¡ã«å‡¦ç†ã™ã‚‹indexã‚’è¨­å®šã™ã‚‹ï¼
 
-	@param[in,out] nKeyNameArrBegin ’²¸ŠJnINDEX (I—¹‚É‚ÍŸ‰ñ‚ÌŠJnINDEX‚É‘‚«Š·‚¦‚ç‚ê‚é)
-	@param[in] nKeyNameArrBegin ’²¸I—¹INDEX + 1
-	@param[in] pKeyNameArr ƒL[”z—ñ
-	@param[in] nShiftState ƒVƒtƒgó‘Ô
-	@param[out] cMemList ƒL[•¶š—ñİ’èæ
-	@param[in]	nFuncId ŒŸõ‘ÎÛ‹@”\ID
-	@param[in]	bGetDefFuncCode •W€‹@”\‚ğæ“¾‚·‚é‚©‚Ç‚¤‚©
+	@param[in,out] nKeyNameArrBegin èª¿æŸ»é–‹å§‹INDEX (çµ‚äº†æ™‚ã«ã¯æ¬¡å›ã®é–‹å§‹INDEXã«æ›¸ãæ›ãˆã‚‰ã‚Œã‚‹)
+	@param[in] nKeyNameArrBegin èª¿æŸ»çµ‚äº†INDEX + 1
+	@param[in] pKeyNameArr ã‚­ãƒ¼é…åˆ—
+	@param[in] nShiftState ã‚·ãƒ•ãƒˆçŠ¶æ…‹
+	@param[out] cMemList ã‚­ãƒ¼æ–‡å­—åˆ—è¨­å®šå…ˆ
+	@param[in]	nFuncId æ¤œç´¢å¯¾è±¡æ©Ÿèƒ½ID
+	@param[in]	bGetDefFuncCode æ¨™æº–æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã‹ã©ã†ã‹
 */
 bool CKeyBind::GetKeyStrSub(
 		int&		nKeyNameArrBegin,
@@ -309,10 +309,10 @@ bool CKeyBind::GetKeyStrSub(
 }
 
 
-/** ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚Ìæ“¾
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
-	@date 2007.11.04 genta ƒ}ƒEƒXƒNƒŠƒbƒN‚æ‚èƒL[Š„‚è“–‚Ä‚Ì—Dæ“x‚ğã‚°‚é
-	@date 2007.11.04 genta ‹¤’Ê‹@”\‚ÌƒTƒuƒ‹[ƒ`ƒ“‰»
+/** æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®å–å¾—
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
+	@date 2007.11.04 genta ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã‚ˆã‚Šã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã®å„ªå…ˆåº¦ã‚’ä¸Šã’ã‚‹
+	@date 2007.11.04 genta å…±é€šæ©Ÿèƒ½ã®ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³åŒ–
 */
 int CKeyBind::GetKeyStr(
 		HINSTANCE	hInstance,
@@ -327,18 +327,18 @@ int CKeyBind::GetKeyStr(
 	int		j;
 	cMemList.SetString(_T(""));
 
-	//	æ‚ÉƒL[•”•ª‚ğ’²¸‚·‚é
+	//	å…ˆã«ã‚­ãƒ¼éƒ¨åˆ†ã‚’èª¿æŸ»ã™ã‚‹
 	for( j = 0; j < 8; ++j ){
-		for( i = MOUSEFUNCTION_KEYBEGIN; i < nKeyNameArrNum; /* 1‚ğ‰Á‚¦‚Ä‚Í‚¢‚¯‚È‚¢ */ ){
+		for( i = MOUSEFUNCTION_KEYBEGIN; i < nKeyNameArrNum; /* 1ã‚’åŠ ãˆã¦ã¯ã„ã‘ãªã„ */ ){
 			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j, cMemList, nFuncId, bGetDefFuncCode )){
 				return 1;
 			}
 		}
 	}
 
-	//	Œã‚Éƒ}ƒEƒX•”•ª‚ğ’²¸‚·‚é
+	//	å¾Œã«ãƒã‚¦ã‚¹éƒ¨åˆ†ã‚’èª¿æŸ»ã™ã‚‹
 	for( j = 0; j < 8; ++j ){
-		for( i = 0; i < MOUSEFUNCTION_KEYBEGIN; /* 1‚ğ‰Á‚¦‚Ä‚Í‚¢‚¯‚È‚¢ */ ){
+		for( i = 0; i < MOUSEFUNCTION_KEYBEGIN; /* 1ã‚’åŠ ãˆã¦ã¯ã„ã‘ãªã„ */ ){
 			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j, cMemList, nFuncId, bGetDefFuncCode )){
 				return 1;
 			}
@@ -348,9 +348,9 @@ int CKeyBind::GetKeyStr(
 }
 
 
-/** ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚Ìæ“¾(•¡”)
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
-	@date 2007.11.04 genta ‹¤’Ê‹@”\‚ÌƒTƒuƒ‹[ƒ`ƒ“‰»
+/** æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®å–å¾—(è¤‡æ•°)
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
+	@date 2007.11.04 genta å…±é€šæ©Ÿèƒ½ã®ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³åŒ–
 */
 int CKeyBind::GetKeyStrList(
 	HINSTANCE	hInstance,
@@ -388,8 +388,8 @@ int CKeyBind::GetKeyStrList(
 
 	nAssignedKeysNum = 0;
 	for( j = 0; j < 8; ++j ){
-		for( i = 0; i < nKeyNameArrNum; /* 1‚ğ‰Á‚¦‚Ä‚Í‚¢‚¯‚È‚¢ */ ){
-			//	2007.11.04 genta ‹¤’Ê‹@”\‚ÌƒTƒuƒ‹[ƒ`ƒ“‰»
+		for( i = 0; i < nKeyNameArrNum; /* 1ã‚’åŠ ãˆã¦ã¯ã„ã‘ãªã„ */ ){
+			//	2007.11.04 genta å…±é€šæ©Ÿèƒ½ã®ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³åŒ–
 			if( GetKeyStrSub( i, nKeyNameArrNum, pKeyNameArr, j,
 					*((*pppcMemList)[nAssignedKeysNum]), nFuncId, bGetDefFuncCode )){
 				nAssignedKeysNum++;
@@ -402,12 +402,12 @@ int CKeyBind::GetKeyStrList(
 
 
 
-/*! ƒAƒNƒZƒXƒL[•t‚«‚Ì•¶š—ñ‚Ìì¬
-	@param sName ƒ‰ƒxƒ‹
-	@param sKey ƒAƒNƒZƒXƒL[
-	@return ƒAƒNƒZƒXƒL[•t‚«‚Ì•¶š—ñ
-	@data 2013.12.09 novice ƒAƒNƒZƒXƒL[‚Æ•¶š—ñ‚Ì”äŠr‚Å¬•¶š‚à—LŒø‚É‚·‚é
-	@date 2014.05.04 sLabel‚Ìƒoƒbƒtƒ@’·‚ğ300 => _MAX_PATH*2 + 30
+/*! ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ä»˜ãã®æ–‡å­—åˆ—ã®ä½œæˆ
+	@param sName ãƒ©ãƒ™ãƒ«
+	@param sKey ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼
+	@return ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ä»˜ãã®æ–‡å­—åˆ—
+	@data 2013.12.09 novice ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã¨æ–‡å­—åˆ—ã®æ¯”è¼ƒã§å°æ–‡å­—ã‚‚æœ‰åŠ¹ã«ã™ã‚‹
+	@date 2014.05.04 sLabelã®ãƒãƒƒãƒ•ã‚¡é•·ã‚’300 => _MAX_PATH*2 + 30
 */
 TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 {
@@ -421,22 +421,22 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (((p = auto_strchr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
-			// ‰¢•¶•—Ag—p‚µ‚Ä‚¢‚é•¶š‚ğƒAƒNƒZƒXƒL[‚É
+			// æ¬§æ–‡é¢¨ã€ä½¿ç”¨ã—ã¦ã„ã‚‹æ–‡å­—ã‚’ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã«
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = _T('&');
 			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
 		else if( (p = auto_strchr( sName, _T('(') )) != NULL
 			  && (p = auto_strchr( p, sKey[0] )) != NULL) {
-			// (•t‚»‚ÌŒã‚ÉƒAƒNƒZƒXƒL[
+			// (ä»˜ãã®å¾Œã«ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = _T('&');
 			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
 		else if (_tcscmp( sName + _tcslen(sName) - 3, _T("...") ) == 0) {
-			// ––”ö...
+			// æœ«å°¾...
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
-			sLabel[_tcslen(sName) - 3] = '\0';						// ––”ö‚Ì...‚ğæ‚é
+			sLabel[_tcslen(sName) - 3] = '\0';						// æœ«å°¾ã®...ã‚’å–ã‚‹
 			auto_strcat_s( sLabel, _countof(sLabel), _T("(&") );
 			auto_strcat_s( sLabel, _countof(sLabel), sKey );
 			auto_strcat_s( sLabel, _countof(sLabel), _T(")...") );
@@ -449,9 +449,9 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 	}
 }
 
-/*! ƒƒjƒ…[ƒ‰ƒxƒ‹‚Ìì¬
-	@date 2007.02.22 ryoji ƒfƒtƒHƒ‹ƒg‹@”\Š„‚è“–‚Ä‚ÉŠÖ‚·‚éˆ—‚ğ’Ç‰Á
-	2010/5/17	ƒAƒNƒZƒXƒL[‚Ì’Ç‰Á
+/*! ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ©ãƒ™ãƒ«ã®ä½œæˆ
+	@date 2007.02.22 ryoji ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½å‰²ã‚Šå½“ã¦ã«é–¢ã™ã‚‹å‡¦ç†ã‚’è¿½åŠ 
+	2010/5/17	ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã®è¿½åŠ 
 	@date 2014.05.04 Moca LABEL_MAX=256 => nLabelSize
 */
 TCHAR* CKeyBind::GetMenuLabel(
@@ -459,7 +459,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
-		TCHAR*      pszLabel,   //!< [in,out] ƒoƒbƒtƒ@‚Í256ˆÈã‚Æ‰¼’è
+		TCHAR*      pszLabel,   //!< [in,out] ãƒãƒƒãƒ•ã‚¡ã¯256ä»¥ä¸Šã¨ä»®å®š
 		const TCHAR*	pszKey,
 		BOOL		bKeyStr,
 		int			nLabelSize,
@@ -476,17 +476,17 @@ TCHAR* CKeyBind::GetMenuLabel(
 	if( _T('\0') == pszLabel[0] ){
 		_tcscpy( pszLabel, _T("-- undefined name --") );
 	}
-	// ƒAƒNƒZƒXƒL[‚Ì’Ç‰Á	2010/5/17 Uchi
+	// ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã®è¿½åŠ 	2010/5/17 Uchi
 	_tcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
 
-	/* ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚ğ’Ç‰Á‚·‚é‚© */
+	/* æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã‚’è¿½åŠ ã™ã‚‹ã‹ */
 	if( bKeyStr ){
 		CNativeT    cMemAccessKey;
-		// 2010.07.11 Moca ƒƒjƒ…[ƒ‰ƒxƒ‹‚Ìu\tv‚Ì•t‰ÁğŒ•ÏX
-		// [ƒtƒ@ƒCƒ‹/ƒtƒHƒ‹ƒ_/ƒEƒBƒ“ƒhƒEˆê——ˆÈŠO]‚©‚ç[ƒAƒNƒZƒXƒL[‚ª‚ ‚é‚Æ‚«‚Ì‚İ]‚É•t‰Á‚·‚é‚æ‚¤‚É•ÏX
-		/* ‹@”\‚É‘Î‰‚·‚éƒL[–¼‚Ìæ“¾ */
+		// 2010.07.11 Moca ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ©ãƒ™ãƒ«ã®ã€Œ\tã€ã®ä»˜åŠ æ¡ä»¶å¤‰æ›´
+		// [ãƒ•ã‚¡ã‚¤ãƒ«/ãƒ•ã‚©ãƒ«ãƒ€/ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ä»¥å¤–]ã‹ã‚‰[ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ãŒã‚ã‚‹ã¨ãã®ã¿]ã«ä»˜åŠ ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´
+		/* æ©Ÿèƒ½ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼åã®å–å¾— */
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
-			// ƒoƒbƒtƒ@‚ª‘«‚è‚È‚¢‚Æ‚«‚Í“ü‚ê‚È‚¢
+			// ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãªã„ã¨ãã¯å…¥ã‚Œãªã„
 			if( _tcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
 				_tcscat( pszLabel, _T("\t") );
 				_tcscat( pszLabel, cMemAccessKey.GetStringPtr() );
@@ -497,14 +497,14 @@ TCHAR* CKeyBind::GetMenuLabel(
 }
 
 
-/*! ƒL[‚ÌƒfƒtƒHƒ‹ƒg‹@”\‚ğæ“¾‚·‚é
+/*! ã‚­ãƒ¼ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹
 
-	@param nKeyCode [in] ƒL[ƒR[ƒh
-	@param nState [in] Shift,Ctrl,AltƒL[ó‘Ô
+	@param nKeyCode [in] ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
+	@param nState [in] Shift,Ctrl,Altã‚­ãƒ¼çŠ¶æ…‹
 
-	@return ‹@”\”Ô†
+	@return æ©Ÿèƒ½ç•ªå·
 
-	@date 2007.02.22 ryoji V‹Kì¬
+	@date 2007.02.22 ryoji æ–°è¦ä½œæˆ
 */
 EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 {
@@ -515,16 +515,16 @@ EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 	EFunctionCode nDefFuncCode = F_DEFAULT;
 	if( nKeyCode == VK_F4 ){
 		if( nState == _CTRL ){
-			nDefFuncCode = F_FILECLOSE;	// •Â‚¶‚Ä(–³‘è)
+			nDefFuncCode = F_FILECLOSE;	// é–‰ã˜ã¦(ç„¡é¡Œ)
 			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-				nDefFuncCode = F_WINCLOSE;	// •Â‚¶‚é
+				nDefFuncCode = F_WINCLOSE;	// é–‰ã˜ã‚‹
 			}
 		}
 		else if( nState == _ALT ){
-			nDefFuncCode = F_WINCLOSE;	// •Â‚¶‚é
+			nDefFuncCode = F_WINCLOSE;	// é–‰ã˜ã‚‹
 			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 				if( !pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin ){
-					nDefFuncCode = F_GROUPCLOSE;	// ƒOƒ‹[ƒv‚ğ•Â‚¶‚é	// 2007.06.20 ryoji
+					nDefFuncCode = F_GROUPCLOSE;	// ã‚°ãƒ«ãƒ¼ãƒ—ã‚’é–‰ã˜ã‚‹	// 2007.06.20 ryoji
 				}
 			}
 		}
@@ -533,15 +533,15 @@ EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 }
 
 
-/*! “Á’è‚ÌƒL[î•ñ‚©‚ç‹@”\ƒR[ƒh‚ğæ“¾‚·‚é
+/*! ç‰¹å®šã®ã‚­ãƒ¼æƒ…å ±ã‹ã‚‰æ©Ÿèƒ½ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹
 
-	@param KeyData [in] ƒL[î•ñ
-	@param nState [in] Shift,Ctrl,AltƒL[ó‘Ô
-	@param bGetDefFuncCode [in] ƒfƒtƒHƒ‹ƒg‹@”\‚ğæ“¾‚·‚é‚©‚Ç‚¤‚©
+	@param KeyData [in] ã‚­ãƒ¼æƒ…å ±
+	@param nState [in] Shift,Ctrl,Altã‚­ãƒ¼çŠ¶æ…‹
+	@param bGetDefFuncCode [in] ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã‹ã©ã†ã‹
 
-	@return ‹@”\”Ô†
+	@return æ©Ÿèƒ½ç•ªå·
 
-	@date 2007.03.07 ryoji ƒCƒ“ƒ‰ƒCƒ“ŠÖ”‚©‚ç’Êí‚ÌŠÖ”‚É•ÏXiBCC‚ÌÅ“K‰»ƒoƒO‘Îôj
+	@date 2007.03.07 ryoji ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³é–¢æ•°ã‹ã‚‰é€šå¸¸ã®é–¢æ•°ã«å¤‰æ›´ï¼ˆBCCã®æœ€é©åŒ–ãƒã‚°å¯¾ç­–ï¼‰
 */
 EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode )
 {
@@ -567,134 +567,134 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 
 
 //	Sep. 14, 2000 JEPRO
-//	Shift+F1 ‚ÉuƒRƒ}ƒ“ƒhˆê——v, Alt+F1 ‚Éuƒwƒ‹ƒv–ÚŸv, Shift+Alt+F1 ‚ÉuƒL[ƒ[ƒhŒŸõv‚ğ’Ç‰Á	//Nov. 25, 2000 JEPRO E‚µ‚Ä‚¢‚½‚Ì‚ğC³E•œŠˆ
-//Dec. 25, 2000 JEPRO Shift+Ctrl+F1 ‚Éuƒo[ƒWƒ‡ƒ“î•ñv‚ğ’Ç‰Á
-// 2001.12.03 hor F2‚ÉƒuƒbƒNƒ}[ƒNŠÖ˜A‚ğŠ„“–
-//Sept. 21, 2000 JEPRO	Ctrl+F3 ‚ÉuŒŸõƒ}[ƒN‚ÌƒNƒŠƒAv‚ğ’Ç‰Á
-//Aug. 12, 2002 ai	Ctrl+Shift+F3 ‚ÉuŒŸõŠJnˆÊ’u‚Ö–ß‚év‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Alt+F4 ‚ÉuƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚év, Shift+Alt+F4 ‚Éu‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚év‚ğ’Ç‰Á
-//	Ctrl+F4‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚½uc‰¡‚É•ªŠ„v‚ğu•Â‚¶‚Ä(–³‘è)v‚É•ÏX‚µ Shift+Ctrl+F4 ‚Éu•Â‚¶‚ÄŠJ‚­v‚ğ’Ç‰Á
-//Jan. 14, 2001 Ctrl+Alt+F4 ‚ÉuƒeƒLƒXƒgƒGƒfƒBƒ^‚Ì‘SI—¹v‚ğ’Ç‰Á
-//Jun. 2001uƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹v‚É‰üÌ
-//2006.10.21 ryoji Alt+F4 ‚É‚Í‰½‚àŠ„‚è“–‚Ä‚È‚¢iƒfƒtƒHƒ‹ƒg‚ÌƒVƒXƒeƒ€ƒRƒ}ƒ“ƒhu•Â‚¶‚év‚ªÀs‚³‚ê‚é‚æ‚¤‚Éj
-//2007.02.13 ryoji Shift+Ctrl+F4‚ğF_WIN_CLOSEALL‚©‚çF_EXITALLEDITORS‚É•ÏX
-//2007.02.22 ryoji Ctrl+F4 ‚Ö‚ÌŠ„‚è“–‚Ä‚ğíœiƒfƒtƒHƒ‹ƒg‚ÌƒRƒ}ƒ“ƒh‚ğÀsj
-//	Sep. 20, 2000 JEPRO Ctrl+F5 ‚ÉuŠO•”ƒRƒ}ƒ“ƒhÀsv‚ğ’Ç‰Á  ‚È‚¨ƒ}ƒNƒ–¼‚ÍCMMAND ‚©‚çCOMMAND ‚É•ÏXÏ‚İ
-//Oct. 28, 2000 F5 ‚ÍuÄ•`‰æv‚É•ÏX	//Jan. 14, 2001 Alt+F5 ‚Éuuudecode‚µ‚Ä•Û‘¶v, Ctrl+ Alt+F5 ‚ÉuTAB¨‹ó”’v‚ğ’Ç‰Á
-//	May 28, 2001 genta	S-C-A-F5‚ÉSPACE-to-TAB‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Ctrl+F6 ‚Éu¬•¶šv, Alt+F6 ‚ÉuBase64ƒfƒR[ƒh‚µ‚Ä•Û‘¶v‚ğ’Ç‰Á
-// 2007.11.15 nasukoji	ƒgƒŠƒvƒ‹ƒNƒŠƒbƒNEƒNƒAƒhƒ‰ƒvƒ‹ƒNƒŠƒbƒN‘Î‰
-//Jan. 14, 2001 JEPRO	Ctrl+F7 ‚Éu‘å•¶šv, Alt+F7 ‚ÉuUTF-7¨SJISƒR[ƒh•ÏŠ·v, Shift+Alt+F7 ‚ÉuSJIS¨UTF-7ƒR[ƒh•ÏŠ·v, Ctrl+Alt+F7 ‚ÉuUTF-7‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Nov. 9, 2000 JEPRO	Shift+F8 ‚ÉuCRLF‰üs‚ÅƒRƒs[v‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Ctrl+F8 ‚Éu‘SŠp¨”¼Špv, Alt+F8 ‚ÉuUTF-8¨SJISƒR[ƒh•ÏŠ·v, Shift+Alt+F8 ‚ÉuSJIS¨UTF-8ƒR[ƒh•ÏŠ·v, Ctrl+Alt+F8 ‚ÉuUTF-8‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Ctrl+F9 ‚Éu”¼Šp{‘S‚Ğ‚ç¨‘SŠpEƒJƒ^ƒJƒiv, Alt+F9 ‚ÉuUnicode¨SJISƒR[ƒh•ÏŠ·v, Ctrl+Alt+F9 ‚ÉuUnicode‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Oct. 28, 2000 JEPRO F10 ‚ÉuSQL*Plus‚ÅÀsv‚ğ’Ç‰Á(F5‚©‚ç‚ÌˆÚ“®)
-//Jan. 14, 2001 JEPRO	Ctrl+F10 ‚Éu”¼Šp{‘SƒJƒ^¨‘SŠpE‚Ğ‚ç‚ª‚Èv, Alt+F10 ‚ÉuEUC¨SJISƒR[ƒh•ÏŠ·v, Shift+Alt+F10 ‚ÉuSJIS¨EUCƒR[ƒh•ÏŠ·v, Ctrl+Alt+F10 ‚ÉuEUC‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Shift+F11 ‚ÉuSQL*Plus‚ğƒAƒNƒeƒBƒu•\¦v, Ctrl+F11 ‚Éu”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒiv, Alt+F11 ‚ÉuE-Mail(JIS¨SJIS)ƒR[ƒh•ÏŠ·v, Shift+Alt+F11 ‚ÉuSJIS¨JISƒR[ƒh•ÏŠ·v, Ctrl+Alt+F11 ‚ÉuJIS‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Ctrl+F12 ‚Éu”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ğ‚ç‚ª‚Èv, Alt+F12 ‚Éu©“®”»•Ê¨SJISƒR[ƒh•ÏŠ·v, Ctrl+Alt+F11 ‚ÉuSJIS‚ÅŠJ‚«’¼‚·v‚ğ’Ç‰Á
-//Sept. 1, 2000 JEPRO	Alt+Enter ‚Éuƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒBv‚ğ’Ç‰Á	//Oct. 15, 2000 JEPRO Ctrl+Enter ‚Éuƒtƒ@ƒCƒ‹“à—e”äŠrv‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO ’·‚¢‚Ì‚Å–¼Ì‚ğŠÈ—ªŒ`‚É•ÏX(BackSpace¨BkSp)
-//Oct. 7, 2000 JEPRO –¼Ì‚ğVC++‚É‡‚í‚¹ŠÈ—ªŒ`‚É•ÏX(Insert¨Ins)
-//Oct. 7, 2000 JEPRO –¼Ì‚ğVC++‚É‡‚í‚¹ŠÈ—ªŒ`‚É•ÏX(Delete¨Del)
-//Jun. 26, 2001 JEPRO	Shift+Del ‚ÉuØ‚èæ‚èv‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+ª‚Éuc•ûŒü‚ÉÅ‘å‰»v‚ğ’Ç‰Á
+//	Shift+F1 ã«ã€Œã‚³ãƒãƒ³ãƒ‰ä¸€è¦§ã€, Alt+F1 ã«ã€Œãƒ˜ãƒ«ãƒ—ç›®æ¬¡ã€, Shift+Alt+F1 ã«ã€Œã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢ã€ã‚’è¿½åŠ 	//Nov. 25, 2000 JEPRO æ®ºã—ã¦ã„ãŸã®ã‚’ä¿®æ­£ãƒ»å¾©æ´»
+//Dec. 25, 2000 JEPRO Shift+Ctrl+F1 ã«ã€Œãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã€ã‚’è¿½åŠ 
+// 2001.12.03 hor F2ã«ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯é–¢é€£ã‚’å‰²å½“
+//Sept. 21, 2000 JEPRO	Ctrl+F3 ã«ã€Œæ¤œç´¢ãƒãƒ¼ã‚¯ã®ã‚¯ãƒªã‚¢ã€ã‚’è¿½åŠ 
+//Aug. 12, 2002 ai	Ctrl+Shift+F3 ã«ã€Œæ¤œç´¢é–‹å§‹ä½ç½®ã¸æˆ»ã‚‹ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Alt+F4 ã«ã€Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã€, Shift+Alt+F4 ã«ã€Œã™ã¹ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã€ã‚’è¿½åŠ 
+//	Ctrl+F4ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ãŸã€Œç¸¦æ¨ªã«åˆ†å‰²ã€ã‚’ã€Œé–‰ã˜ã¦(ç„¡é¡Œ)ã€ã«å¤‰æ›´ã— Shift+Ctrl+F4 ã«ã€Œé–‰ã˜ã¦é–‹ãã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 Ctrl+Alt+F4 ã«ã€Œãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº†ã€ã‚’è¿½åŠ 
+//Jun. 2001ã€Œã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº†ã€ã«æ”¹ç§°
+//2006.10.21 ryoji Alt+F4 ã«ã¯ä½•ã‚‚å‰²ã‚Šå½“ã¦ãªã„ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ã‚·ã‚¹ãƒ†ãƒ ã‚³ãƒãƒ³ãƒ‰ã€Œé–‰ã˜ã‚‹ã€ãŒå®Ÿè¡Œã•ã‚Œã‚‹ã‚ˆã†ã«ï¼‰
+//2007.02.13 ryoji Shift+Ctrl+F4ã‚’F_WIN_CLOSEALLã‹ã‚‰F_EXITALLEDITORSã«å¤‰æ›´
+//2007.02.22 ryoji Ctrl+F4 ã¸ã®å‰²ã‚Šå½“ã¦ã‚’å‰Šé™¤ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œï¼‰
+//	Sep. 20, 2000 JEPRO Ctrl+F5 ã«ã€Œå¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œã€ã‚’è¿½åŠ   ãªãŠãƒã‚¯ãƒ­åã¯CMMAND ã‹ã‚‰COMMAND ã«å¤‰æ›´æ¸ˆã¿
+//Oct. 28, 2000 F5 ã¯ã€Œå†æç”»ã€ã«å¤‰æ›´	//Jan. 14, 2001 Alt+F5 ã«ã€Œuudecodeã—ã¦ä¿å­˜ã€, Ctrl+ Alt+F5 ã«ã€ŒTABâ†’ç©ºç™½ã€ã‚’è¿½åŠ 
+//	May 28, 2001 genta	S-C-A-F5ã«SPACE-to-TABã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Ctrl+F6 ã«ã€Œå°æ–‡å­—ã€, Alt+F6 ã«ã€ŒBase64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦ä¿å­˜ã€ã‚’è¿½åŠ 
+// 2007.11.15 nasukoji	ãƒˆãƒªãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯ãƒ»ã‚¯ã‚¢ãƒ‰ãƒ©ãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯å¯¾å¿œ
+//Jan. 14, 2001 JEPRO	Ctrl+F7 ã«ã€Œå¤§æ–‡å­—ã€, Alt+F7 ã«ã€ŒUTF-7â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Shift+Alt+F7 ã«ã€ŒSJISâ†’UTF-7ã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F7 ã«ã€ŒUTF-7ã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Nov. 9, 2000 JEPRO	Shift+F8 ã«ã€ŒCRLFæ”¹è¡Œã§ã‚³ãƒ”ãƒ¼ã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Ctrl+F8 ã«ã€Œå…¨è§’â†’åŠè§’ã€, Alt+F8 ã«ã€ŒUTF-8â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Shift+Alt+F8 ã«ã€ŒSJISâ†’UTF-8ã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F8 ã«ã€ŒUTF-8ã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Ctrl+F9 ã«ã€ŒåŠè§’ï¼‹å…¨ã²ã‚‰â†’å…¨è§’ãƒ»ã‚«ã‚¿ã‚«ãƒŠã€, Alt+F9 ã«ã€ŒUnicodeâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F9 ã«ã€ŒUnicodeã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Oct. 28, 2000 JEPRO F10 ã«ã€ŒSQL*Plusã§å®Ÿè¡Œã€ã‚’è¿½åŠ (F5ã‹ã‚‰ã®ç§»å‹•)
+//Jan. 14, 2001 JEPRO	Ctrl+F10 ã«ã€ŒåŠè§’ï¼‹å…¨ã‚«ã‚¿â†’å…¨è§’ãƒ»ã²ã‚‰ãŒãªã€, Alt+F10 ã«ã€ŒEUCâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Shift+Alt+F10 ã«ã€ŒSJISâ†’EUCã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F10 ã«ã€ŒEUCã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Shift+F11 ã«ã€ŒSQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤ºã€, Ctrl+F11 ã«ã€ŒåŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠã€, Alt+F11 ã«ã€ŒE-Mail(JISâ†’SJIS)ã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Shift+Alt+F11 ã«ã€ŒSJISâ†’JISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F11 ã«ã€ŒJISã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Ctrl+F12 ã«ã€ŒåŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãªã€, Alt+F12 ã«ã€Œè‡ªå‹•åˆ¤åˆ¥â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›ã€, Ctrl+Alt+F11 ã«ã€ŒSJISã§é–‹ãç›´ã™ã€ã‚’è¿½åŠ 
+//Sept. 1, 2000 JEPRO	Alt+Enter ã«ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã€ã‚’è¿½åŠ 	//Oct. 15, 2000 JEPRO Ctrl+Enter ã«ã€Œãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO é•·ã„ã®ã§åç§°ã‚’ç°¡ç•¥å½¢ã«å¤‰æ›´(BackSpaceâ†’BkSp)
+//Oct. 7, 2000 JEPRO åç§°ã‚’VC++ã«åˆã‚ã›ç°¡ç•¥å½¢ã«å¤‰æ›´(Insertâ†’Ins)
+//Oct. 7, 2000 JEPRO åç§°ã‚’VC++ã«åˆã‚ã›ç°¡ç•¥å½¢ã«å¤‰æ›´(Deleteâ†’Del)
+//Jun. 26, 2001 JEPRO	Shift+Del ã«ã€Œåˆ‡ã‚Šå–ã‚Šã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+â†‘ã«ã€Œç¸¦æ–¹å‘ã«æœ€å¤§åŒ–ã€ã‚’è¿½åŠ 
 //Jun. 27, 2001 JEPRO
-//	Ctrl+ª‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚½uƒJ[ƒ\ƒ‹ãˆÚ“®(‚Qs‚²‚Æ)v‚ğuƒeƒLƒXƒg‚ğ‚Ps‰º‚ÖƒXƒNƒ[ƒ‹v‚É•ÏX
-//2001.02.10 by MIK Shift+Ctrl+Alt+¨‚Éu‰¡•ûŒü‚ÉÅ‘å‰»v‚ğ’Ç‰Á
+//	Ctrl+â†‘ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ãŸã€Œã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•(ï¼’è¡Œã”ã¨)ã€ã‚’ã€Œãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸‹ã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã€ã«å¤‰æ›´
+//2001.02.10 by MIK Shift+Ctrl+Alt+â†’ã«ã€Œæ¨ªæ–¹å‘ã«æœ€å¤§åŒ–ã€ã‚’è¿½åŠ 
 //Sept. 14, 2000 JEPRO
-//	Ctrl+«‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚½u‰EƒNƒŠƒbƒNƒƒjƒ…[v‚ğuƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)v‚É•ÏX
-//	‚»‚ê‚É•t‚µ‚Ä‚³‚ç‚Éu‰EƒNƒŠƒbƒNƒƒjƒ…[v‚ğCtrl{Alt{«‚É•ÏX
+//	Ctrl+â†“ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ãŸã€Œå³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã€ã‚’ã€Œã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•(ï¼’è¡Œã”ã¨)ã€ã«å¤‰æ›´
+//	ãã‚Œã«ä»˜éšã—ã¦ã•ã‚‰ã«ã€Œå³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã€ã‚’Ctrlï¼‹Altï¼‹â†“ã«å¤‰æ›´
 //Jun. 27, 2001 JEPRO
-//	Ctrl+«‚ÉŠ„‚è“–‚Ä‚ç‚ê‚Ä‚¢‚½uƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)v‚ğuƒeƒLƒXƒg‚ğ‚Psã‚ÖƒXƒNƒ[ƒ‹v‚É•ÏX
-//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn ‚É‚»‚ê‚¼‚êu‚Pƒy[ƒWƒ_ƒEƒ“v, u(‘I‘ğ)‚Pƒy[ƒWƒ_ƒEƒ“v‚ğ’Ç‰Á
-//Oct. 6, 2000 JEPRO –¼Ì‚ğPC-ATŒİŠ·‹@Œn‚ÉŒğŠ·(RollUp¨PgDn) //Oct. 10, 2000 JEPRO –¼Ì•ÏX
-//2001.12.03 hor 1Page/HalfPage “ü‘Ö‚¦
-//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn ‚É‚»‚ê‚¼‚êu‚Pƒy[ƒWƒAƒbƒvv, u(‘I‘ğ)‚Pƒy[ƒWƒAƒbƒvv‚ğ’Ç‰Á
-//Oct. 6, 2000 JEPRO –¼Ì‚ğPC-ATŒİŠ·‹@Œn‚ÉŒğŠ·(RollDown¨PgUp) //Oct. 10, 2000 JEPRO –¼Ì•ÏX
-//2001.12.03 hor 1Page/HalfPage “ü‘Ö‚¦
-//Oct. 7, 2000 JEPRO –¼Ì‚ğVC++‚É‡‚í‚¹ŠÈ—ªŒ`‚É•ÏX(SpaceBar¨Space)
-//Oct. 7, 2000 JEPRO	Ctrl+0 ‚ğuƒ^ƒCƒv•Êİ’èˆê——v¨u–¢’è‹`v‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+0 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[10v, Shift+Alt+0 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[20v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+1 ‚ğuƒ^ƒCƒv•Êİ’èv¨uƒc[ƒ‹ƒo[‚Ì•\¦v‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+1 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[1v, Shift+Alt+1 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[11v‚ğ’Ç‰Á
-//Jan. 19, 2001 JEPRO	Shift+Ctrl+1 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[21v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+2 ‚ğu‹¤’Êİ’èv¨uƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\¦v‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+2 ‚ğuƒAƒEƒgƒvƒbƒgv¨uƒJƒXƒ^ƒ€ƒƒjƒ…[2v‚É•ÏX‚µuƒAƒEƒgƒvƒbƒgv‚Í Alt+O ‚ÉˆÚ“®, Shift+Alt+2 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[12v‚ğ’Ç‰Á
-//Jan. 19, 2001 JEPRO	Shift+Ctrl+2 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[22v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+3 ‚ğuƒtƒHƒ“ƒgİ’èv¨uƒXƒe[ƒ^ƒXƒo[‚Ì•\¦v‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+3 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[3v, Shift+Alt+3 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[13v‚ğ’Ç‰Á
-//Jan. 19, 2001 JEPRO	Shift+Ctrl+3 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[23v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+4 ‚ğuƒc[ƒ‹ƒo[‚Ì•\¦v¨uƒ^ƒCƒv•Êİ’èˆê——v‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+4 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[4v, Shift+Alt+4 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[14v‚ğ’Ç‰Á
-//Jan. 19, 2001 JEPRO	Shift+Ctrl+4 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[24v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+5 ‚ğuƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì•\¦v¨uƒ^ƒCƒv•Êİ’èv‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+5 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[5v, Shift+Alt+5 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[15v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+6 ‚ğuƒXƒe[ƒ^ƒXƒo[‚Ì•\¦v¨u‹¤’Êİ’èv‚É•ÏX
-//Jan. 13, 2001 JEPRO	Alt+6 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[6v, Shift+Alt+6 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[16v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+7 ‚ÉuƒtƒHƒ“ƒgİ’èv‚ğ’Ç‰Á
-//Jan. 13, 2001 JEPRO	Alt+7 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[7v, Shift+Alt+7 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[17v‚ğ’Ç‰Á
-//Jan. 13, 2001 JEPRO	Alt+8 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[8v, Shift+Alt+8 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[18v‚ğ’Ç‰Á
-//Jan. 13, 2001 JEPRO	Alt+9 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[9v, Shift+Alt+9 ‚ÉuƒJƒXƒ^ƒ€ƒƒjƒ…[19v‚ğ’Ç‰Á
-//2001.12.06 hor Alt+A ‚ğuSORT_ASCv‚ÉŠ„“–
-//Jan. 13, 2001 JEPRO	Ctrl+B ‚Éuƒuƒ‰ƒEƒYv‚ğ’Ç‰Á
-//Jan. 16, 2001 JEPRO	SHift+Ctrl+C ‚Éu.h‚Æ“¯–¼‚Ì.c(‚È‚¯‚ê‚Î.cpp)‚ğŠJ‚­v‚ğ’Ç‰Á
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+C ‚ğu.h‚Æ“¯–¼‚Ì.c(‚È‚¯‚ê‚Î.cpp)‚ğŠJ‚­v¨u“¯–¼‚ÌC/C++ƒwƒbƒ_(ƒ\[ƒX)‚ğŠJ‚­v‚É•ÏX
-//Jan. 16, 2001 JEPRO	Ctrl+D ‚Éu’PŒêØ‚èæ‚èv, Shift+Ctrl+D ‚Éu’PŒêíœv‚ğ’Ç‰Á
-//2001.12.06 hor Alt+D ‚ğuSORT_DESCv‚ÉŠ„“–
-//Oct. 7, 2000 JEPRO	Ctrl+Alt+E ‚Éud‚Ë‚Ä•\¦v‚ğ’Ç‰Á
-//Jan. 16, 2001	JEPRO	Ctrl+E ‚ÉusØ‚èæ‚è(Ü‚è•Ô‚µ’PˆÊ)v, Shift+Ctrl+E ‚Éusíœ(Ü‚è•Ô‚µ’PˆÊ)v‚ğ’Ç‰Á
-//Oct. 07, 2000 JEPRO	Ctrl+Alt+H ‚Éuã‰º‚É•À‚×‚Ä•\¦v‚ğ’Ç‰Á
-//Jan. 16, 2001 JEPRO	Ctrl+H ‚ğuƒJ[ƒ\ƒ‹‘O‚ğíœv¨uƒJ[ƒ\ƒ‹s‚ğƒEƒBƒ“ƒhƒE’†‰›‚Öv‚É•ÏX‚µ	Shift+Ctrl+H ‚Éu.c‚Ü‚½‚Í.cpp‚Æ“¯–¼‚Ì.h‚ğŠJ‚­v‚ğ’Ç‰Á
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+H ‚ğu.c‚Ü‚½‚Í.cpp‚Æ“¯–¼‚Ì.h‚ğŠJ‚­v¨u“¯–¼‚ÌC/C++ƒwƒbƒ_(ƒ\[ƒX)‚ğŠJ‚­v‚É•ÏX
-//Jan. 21, 2001	JEPRO	Ctrl+I ‚Éus‚Ì“ñd‰»v‚ğ’Ç‰Á
-//Jan. 16, 2001	JEPRO	Ctrl+K ‚Éus––‚Ü‚ÅØ‚èæ‚è(‰üs’PˆÊ)v, Shift+Ctrl+E ‚Éus––‚Ü‚Åíœ(‰üs’PˆÊ)v‚ğ’Ç‰Á
-//Jan. 14, 2001 JEPRO	Ctrl+Alt+L ‚Éu¬•¶šv, Shift+Ctrl+Alt+L ‚Éu‘å•¶šv‚ğ’Ç‰Á
-//Jan. 16, 2001 Ctrl+L ‚ğuƒJ[ƒ\ƒ‹s‚ğƒEƒBƒ“ƒhƒE’†‰›‚Öv¨uƒL[ƒ}ƒNƒ‚Ì“Ç‚İ‚İv‚É•ÏX‚µuƒJ[ƒ\ƒ‹s‚ğƒEƒBƒ“ƒhƒE’†‰›‚Öv‚Í Ctrl+H ‚ÉˆÚ“®
-//2001.12.03 hor Alt+L ‚ğuLTRIMv‚ÉŠ„“–
-//Jan. 16, 2001 JEPRO	Ctrl+M ‚ÉuƒL[ƒ}ƒNƒ‚Ì•Û‘¶v‚ğ’Ç‰Á
-//2001.12.06 hor Alt+M ‚ğuMERGEv‚ÉŠ„“–
-//Oct. 20, 2000 JEPRO	Alt+N ‚ÉuˆÚ“®—š—ğ: Ÿ‚Öv‚ğ’Ç‰Á
-//Jan. 13, 2001 JEPRO	Alt+O ‚ÉuƒAƒEƒgƒvƒbƒgv‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+P ‚Éuˆóüv, Shift+Ctrl+P ‚ÉuˆóüƒvƒŒƒrƒ…[v, Ctrl+Alt+P ‚Éuƒy[ƒWİ’èv‚ğ’Ç‰Á
-//Oct. 20, 2000 JEPRO	Alt+P ‚ÉuˆÚ“®—š—ğ: ‘O‚Öv‚ğ’Ç‰Á
-//Jan. 24, 2001	JEPRO	Ctrl+Q ‚ÉuƒL[Š„‚è“–‚Äˆê——‚ğƒRƒs[v‚ğ’Ç‰Á
-//2001.12.03 hor Alt+R ‚ğuRTRIMv‚ÉŠ„“–
-//Oct. 7, 2000 JEPRO	Shift+Ctrl+S ‚Éu–¼‘O‚ğ•t‚¯‚Ä•Û‘¶v‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+Alt+T ‚Éu¶‰E‚É•À‚×‚Ä•\¦v‚ğ’Ç‰Á
-//Jan. 21, 2001	JEPRO	Ctrl+T ‚Éuƒ^ƒOƒWƒƒƒ“ƒvv, Shift+Ctrl+T ‚Éuƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒNv‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Ctrl+Alt+U ‚ÉuŒ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µv‚ğ’Ç‰Á
-//Jan. 16, 2001	JEPRO	Ctrl+U ‚Éus“ª‚Ü‚ÅØ‚èæ‚è(‰üs’PˆÊ)v, Shift+Ctrl+U ‚Éus“ª‚Ü‚Åíœ(‰üs’PˆÊ)v‚ğ’Ç‰Á
-//Jan. 13, 2001 JEPRO	Alt+X ‚ğuƒJƒXƒ^ƒ€ƒƒjƒ…[1v¨u–¢’è‹`v‚É•ÏX‚µuƒJƒXƒ^ƒ€ƒƒjƒ…[1v‚Í Alt+1 ‚ÉˆÚ“®
-//Oct. 7, 2000 JEPRO	Shift+Ctrl+- ‚Éuã‰º‚É•ªŠ„v‚ğ’Ç‰Á
-// 2002.02.08 hor Ctrl+-‚Éƒtƒ@ƒCƒ‹–¼‚ğƒRƒs[‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ ‚Éu¶‰E‚É•ªŠ„v‚ğ’Ç‰Á
-//Sept. 20, 2000 JEPRO	Ctrl+@ ‚Éuƒtƒ@ƒCƒ‹“à—e”äŠrv‚ğ’Ç‰Á  //Oct. 15, 2000 JEPROu‘I‘ğ”ÍˆÍ“à‘SsƒRƒs[v‚É•ÏX
+//	Ctrl+â†“ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã¦ã„ãŸã€Œã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•(ï¼’è¡Œã”ã¨)ã€ã‚’ã€Œãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸Šã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã€ã«å¤‰æ›´
+//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn ã«ãã‚Œãã‚Œã€Œï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³ã€, ã€Œ(é¸æŠ)ï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³ã€ã‚’è¿½åŠ 
+//Oct. 6, 2000 JEPRO åç§°ã‚’PC-ATäº’æ›æ©Ÿç³»ã«äº¤æ›(RollUpâ†’PgDn) //Oct. 10, 2000 JEPRO åç§°å¤‰æ›´
+//2001.12.03 hor 1Page/HalfPage å…¥æ›¿ãˆ
+//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn ã«ãã‚Œãã‚Œã€Œï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—ã€, ã€Œ(é¸æŠ)ï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—ã€ã‚’è¿½åŠ 
+//Oct. 6, 2000 JEPRO åç§°ã‚’PC-ATäº’æ›æ©Ÿç³»ã«äº¤æ›(RollDownâ†’PgUp) //Oct. 10, 2000 JEPRO åç§°å¤‰æ›´
+//2001.12.03 hor 1Page/HalfPage å…¥æ›¿ãˆ
+//Oct. 7, 2000 JEPRO åç§°ã‚’VC++ã«åˆã‚ã›ç°¡ç•¥å½¢ã«å¤‰æ›´(SpaceBarâ†’Space)
+//Oct. 7, 2000 JEPRO	Ctrl+0 ã‚’ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§ã€â†’ã€Œæœªå®šç¾©ã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+0 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼10ã€, Shift+Alt+0 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼20ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+1 ã‚’ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã€â†’ã€Œãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤ºã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+1 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼1ã€, Shift+Alt+1 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼11ã€ã‚’è¿½åŠ 
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+1 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼21ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+2 ã‚’ã€Œå…±é€šè¨­å®šã€â†’ã€Œãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®è¡¨ç¤ºã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+2 ã‚’ã€Œã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã€â†’ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼2ã€ã«å¤‰æ›´ã—ã€Œã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã€ã¯ Alt+O ã«ç§»å‹•, Shift+Alt+2 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼12ã€ã‚’è¿½åŠ 
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+2 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼22ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+3 ã‚’ã€Œãƒ•ã‚©ãƒ³ãƒˆè¨­å®šã€â†’ã€Œã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®è¡¨ç¤ºã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+3 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼3ã€, Shift+Alt+3 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼13ã€ã‚’è¿½åŠ 
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+3 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼23ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+4 ã‚’ã€Œãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®è¡¨ç¤ºã€â†’ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§ã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+4 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼4ã€, Shift+Alt+4 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼14ã€ã‚’è¿½åŠ 
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+4 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼24ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+5 ã‚’ã€Œãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®è¡¨ç¤ºã€â†’ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+5 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼5ã€, Shift+Alt+5 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼15ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+6 ã‚’ã€Œã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®è¡¨ç¤ºã€â†’ã€Œå…±é€šè¨­å®šã€ã«å¤‰æ›´
+//Jan. 13, 2001 JEPRO	Alt+6 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼6ã€, Shift+Alt+6 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼16ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+7 ã«ã€Œãƒ•ã‚©ãƒ³ãƒˆè¨­å®šã€ã‚’è¿½åŠ 
+//Jan. 13, 2001 JEPRO	Alt+7 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼7ã€, Shift+Alt+7 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼17ã€ã‚’è¿½åŠ 
+//Jan. 13, 2001 JEPRO	Alt+8 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼8ã€, Shift+Alt+8 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼18ã€ã‚’è¿½åŠ 
+//Jan. 13, 2001 JEPRO	Alt+9 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼9ã€, Shift+Alt+9 ã«ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼19ã€ã‚’è¿½åŠ 
+//2001.12.06 hor Alt+A ã‚’ã€ŒSORT_ASCã€ã«å‰²å½“
+//Jan. 13, 2001 JEPRO	Ctrl+B ã«ã€Œãƒ–ãƒ©ã‚¦ã‚ºã€ã‚’è¿½åŠ 
+//Jan. 16, 2001 JEPRO	SHift+Ctrl+C ã«ã€Œ.hã¨åŒåã®.c(ãªã‘ã‚Œã°.cpp)ã‚’é–‹ãã€ã‚’è¿½åŠ 
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+C ã‚’ã€Œ.hã¨åŒåã®.c(ãªã‘ã‚Œã°.cpp)ã‚’é–‹ãã€â†’ã€ŒåŒåã®C/C++ãƒ˜ãƒƒãƒ€(ã‚½ãƒ¼ã‚¹)ã‚’é–‹ãã€ã«å¤‰æ›´
+//Jan. 16, 2001 JEPRO	Ctrl+D ã«ã€Œå˜èªåˆ‡ã‚Šå–ã‚Šã€, Shift+Ctrl+D ã«ã€Œå˜èªå‰Šé™¤ã€ã‚’è¿½åŠ 
+//2001.12.06 hor Alt+D ã‚’ã€ŒSORT_DESCã€ã«å‰²å½“
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+E ã«ã€Œé‡ã­ã¦è¡¨ç¤ºã€ã‚’è¿½åŠ 
+//Jan. 16, 2001	JEPRO	Ctrl+E ã«ã€Œè¡Œåˆ‡ã‚Šå–ã‚Š(æŠ˜ã‚Šè¿”ã—å˜ä½)ã€, Shift+Ctrl+E ã«ã€Œè¡Œå‰Šé™¤(æŠ˜ã‚Šè¿”ã—å˜ä½)ã€ã‚’è¿½åŠ 
+//Oct. 07, 2000 JEPRO	Ctrl+Alt+H ã«ã€Œä¸Šä¸‹ã«ä¸¦ã¹ã¦è¡¨ç¤ºã€ã‚’è¿½åŠ 
+//Jan. 16, 2001 JEPRO	Ctrl+H ã‚’ã€Œã‚«ãƒ¼ã‚½ãƒ«å‰ã‚’å‰Šé™¤ã€â†’ã€Œã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸­å¤®ã¸ã€ã«å¤‰æ›´ã—	Shift+Ctrl+H ã«ã€Œ.cã¾ãŸã¯.cppã¨åŒåã®.hã‚’é–‹ãã€ã‚’è¿½åŠ 
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+H ã‚’ã€Œ.cã¾ãŸã¯.cppã¨åŒåã®.hã‚’é–‹ãã€â†’ã€ŒåŒåã®C/C++ãƒ˜ãƒƒãƒ€(ã‚½ãƒ¼ã‚¹)ã‚’é–‹ãã€ã«å¤‰æ›´
+//Jan. 21, 2001	JEPRO	Ctrl+I ã«ã€Œè¡Œã®äºŒé‡åŒ–ã€ã‚’è¿½åŠ 
+//Jan. 16, 2001	JEPRO	Ctrl+K ã«ã€Œè¡Œæœ«ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)ã€, Shift+Ctrl+E ã«ã€Œè¡Œæœ«ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½)ã€ã‚’è¿½åŠ 
+//Jan. 14, 2001 JEPRO	Ctrl+Alt+L ã«ã€Œå°æ–‡å­—ã€, Shift+Ctrl+Alt+L ã«ã€Œå¤§æ–‡å­—ã€ã‚’è¿½åŠ 
+//Jan. 16, 2001 Ctrl+L ã‚’ã€Œã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸­å¤®ã¸ã€â†’ã€Œã‚­ãƒ¼ãƒã‚¯ãƒ­ã®èª­ã¿è¾¼ã¿ã€ã«å¤‰æ›´ã—ã€Œã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸­å¤®ã¸ã€ã¯ Ctrl+H ã«ç§»å‹•
+//2001.12.03 hor Alt+L ã‚’ã€ŒLTRIMã€ã«å‰²å½“
+//Jan. 16, 2001 JEPRO	Ctrl+M ã«ã€Œã‚­ãƒ¼ãƒã‚¯ãƒ­ã®ä¿å­˜ã€ã‚’è¿½åŠ 
+//2001.12.06 hor Alt+M ã‚’ã€ŒMERGEã€ã«å‰²å½“
+//Oct. 20, 2000 JEPRO	Alt+N ã«ã€Œç§»å‹•å±¥æ­´: æ¬¡ã¸ã€ã‚’è¿½åŠ 
+//Jan. 13, 2001 JEPRO	Alt+O ã«ã€Œã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+P ã«ã€Œå°åˆ·ã€, Shift+Ctrl+P ã«ã€Œå°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ã€, Ctrl+Alt+P ã«ã€Œãƒšãƒ¼ã‚¸è¨­å®šã€ã‚’è¿½åŠ 
+//Oct. 20, 2000 JEPRO	Alt+P ã«ã€Œç§»å‹•å±¥æ­´: å‰ã¸ã€ã‚’è¿½åŠ 
+//Jan. 24, 2001	JEPRO	Ctrl+Q ã«ã€Œã‚­ãƒ¼å‰²ã‚Šå½“ã¦ä¸€è¦§ã‚’ã‚³ãƒ”ãƒ¼ã€ã‚’è¿½åŠ 
+//2001.12.03 hor Alt+R ã‚’ã€ŒRTRIMã€ã«å‰²å½“
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+S ã«ã€Œåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+T ã«ã€Œå·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤ºã€ã‚’è¿½åŠ 
+//Jan. 21, 2001	JEPRO	Ctrl+T ã«ã€Œã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã€, Shift+Ctrl+T ã«ã€Œã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒã‚¯ã€ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+U ã«ã€Œç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã§æŠ˜ã‚Šè¿”ã—ã€ã‚’è¿½åŠ 
+//Jan. 16, 2001	JEPRO	Ctrl+U ã«ã€Œè¡Œé ­ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)ã€, Shift+Ctrl+U ã«ã€Œè¡Œé ­ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½)ã€ã‚’è¿½åŠ 
+//Jan. 13, 2001 JEPRO	Alt+X ã‚’ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼1ã€â†’ã€Œæœªå®šç¾©ã€ã«å¤‰æ›´ã—ã€Œã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼1ã€ã¯ Alt+1 ã«ç§»å‹•
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+- ã«ã€Œä¸Šä¸‹ã«åˆ†å‰²ã€ã‚’è¿½åŠ 
+// 2002.02.08 hor Ctrl+-ã«ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ ã«ã€Œå·¦å³ã«åˆ†å‰²ã€ã‚’è¿½åŠ 
+//Sept. 20, 2000 JEPRO	Ctrl+@ ã«ã€Œãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒã€ã‚’è¿½åŠ   //Oct. 15, 2000 JEPROã€Œé¸æŠç¯„å›²å†…å…¨è¡Œã‚³ãƒ”ãƒ¼ã€ã«å¤‰æ›´
 //	Aug. 16, 2000 genta
-//	”½‘ÎŒü‚«‚ÌŠ‡ŒÊ‚É‚àŠ‡ŒÊŒŸõ‚ğ’Ç‰Á
-//Oct. 7, 2000 JEPRO	Shift+Ctrl+; ‚Éuc‰¡‚É•ªŠ„v‚ğ’Ç‰Á	//Jan. 16, 2001	Alt+; ‚Éu“ú•t‘}“üv‚ğ’Ç‰Á
-//Sept. 14, 2000 JEPRO	Ctrl+: ‚Éu‘I‘ğ”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[v‚ğ’Ç‰Á	//Jan. 16, 2001	Alt+: ‚Éu‘}“üv‚ğ’Ç‰Á
-//Sept. 14, 2000 JEPRO	Ctrl+. ‚Éu‘I‘ğ”ÍˆÍ“à‘Ssˆø—p•„•t‚«ƒRƒs[v‚ğ’Ç‰Á
-//	Nov. 15, 2000 genta PC/ATƒL[ƒ{[ƒh‚É‡‚í‚¹‚ÄƒL[ƒR[ƒh‚ğ•ÏX
-//	PC98‹~Ï‚Ì‚½‚ßC]—ˆ‚ÌƒL[ƒR[ƒh‚É‘Î‰‚·‚é€–Ú‚ğ’Ç‰ÁD
-//Oct. 7, 2000 JEPRO	’·‚­‚Ä•\¦‚µ‚«‚ê‚È‚¢Š‚ª‚Å‚Ä‚«‚Ä‚µ‚Ü‚¤‚Ì‚ÅƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒL[¨ƒAƒvƒŠƒL[‚É’Zk
-//2008.05.03 kobake ‰Â“Ç«‚ª’˜‚µ‚­’á‰º‚µ‚Ä‚¢‚½‚Ì‚ÅA‘®‚ğ®—B
-// 2008.05.30 nasukoji	Ctrl+Alt+S ‚Éuw’èŒ…‚ÅÜ‚è•Ô‚·v‚ğ’Ç‰Á
-// 2008.05.30 nasukoji	Ctrl+Alt+W ‚Éu‰E’[‚ÅÜ‚è•Ô‚·v‚ğ’Ç‰Á
-// 2008.05.30 nasukoji	Ctrl+Alt+X ‚ÉuÜ‚è•Ô‚³‚È‚¢v‚ğ’Ç‰Á
+//	åå¯¾å‘ãã®æ‹¬å¼§ã«ã‚‚æ‹¬å¼§æ¤œç´¢ã‚’è¿½åŠ 
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+; ã«ã€Œç¸¦æ¨ªã«åˆ†å‰²ã€ã‚’è¿½åŠ 	//Jan. 16, 2001	Alt+; ã«ã€Œæ—¥ä»˜æŒ¿å…¥ã€ã‚’è¿½åŠ 
+//Sept. 14, 2000 JEPRO	Ctrl+: ã«ã€Œé¸æŠç¯„å›²å†…å…¨è¡Œè¡Œç•ªå·ä»˜ãã‚³ãƒ”ãƒ¼ã€ã‚’è¿½åŠ 	//Jan. 16, 2001	Alt+: ã«ã€Œæ™‚åˆ»æŒ¿å…¥ã€ã‚’è¿½åŠ 
+//Sept. 14, 2000 JEPRO	Ctrl+. ã«ã€Œé¸æŠç¯„å›²å†…å…¨è¡Œå¼•ç”¨ç¬¦ä»˜ãã‚³ãƒ”ãƒ¼ã€ã‚’è¿½åŠ 
+//	Nov. 15, 2000 genta PC/ATã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã«åˆã‚ã›ã¦ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›´
+//	PC98æ•‘æ¸ˆã®ãŸã‚ï¼Œå¾“æ¥ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã«å¯¾å¿œã™ã‚‹é …ç›®ã‚’è¿½åŠ ï¼
+//Oct. 7, 2000 JEPRO	é•·ãã¦è¡¨ç¤ºã—ãã‚Œãªã„æ‰€ãŒã§ã¦ãã¦ã—ã¾ã†ã®ã§ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚­ãƒ¼â†’ã‚¢ãƒ—ãƒªã‚­ãƒ¼ã«çŸ­ç¸®
+//2008.05.03 kobake å¯èª­æ€§ãŒè‘—ã—ãä½ä¸‹ã—ã¦ã„ãŸã®ã§ã€æ›¸å¼ã‚’æ•´ç†ã€‚
+// 2008.05.30 nasukoji	Ctrl+Alt+S ã«ã€ŒæŒ‡å®šæ¡ã§æŠ˜ã‚Šè¿”ã™ã€ã‚’è¿½åŠ 
+// 2008.05.30 nasukoji	Ctrl+Alt+W ã«ã€Œå³ç«¯ã§æŠ˜ã‚Šè¿”ã™ã€ã‚’è¿½åŠ 
+// 2008.05.30 nasukoji	Ctrl+Alt+X ã«ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€ã‚’è¿½åŠ 
 
 #define _SQL_RUN	F_PLSQL_COMPILE_ON_SQLPLUS
 #define _COPYWITHLINENUM	F_COPYLINESWITHLINENUMBER
 static const KEYDATAINIT	KeyDataInit[] = {
 //Sept. 1, 2000 Jepro note: key binding
-//Feb. 17, 2001 jepro note 2: ‡”Ô‚Í2i‚Å‰ºˆÊ3ƒrƒbƒg[Alt][Ctrl][Shift]‚Ì‘g‡‚¹‚Ì‡(‚»‚ê‚É2‚ğ‰Á‚¦‚½’l)
+//Feb. 17, 2001 jepro note 2: é †ç•ªã¯2é€²ã§ä¸‹ä½3ãƒ“ãƒƒãƒˆ[Alt][Ctrl][Shift]ã®çµ„åˆã›ã®é †(ãã‚Œã«2ã‚’åŠ ãˆãŸå€¤)
 //		0,		1,		 2(000), 3(001),4(010),	5(011),		6(100),	7(101),		8(110),		9(111)
 
-	/* ƒ}ƒEƒXƒ{ƒ^ƒ“ */
-	//keycode,			keyname,							‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ VKEX_DBL_CLICK,	(LPCTSTR)STR_KEY_BIND_DBL_CLICK,	{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Alt‚Æ‰EƒNƒŠƒbƒN‚Ì‘g‡‚¹‚ÍŒø‚©‚È‚¢‚Ì‚Å‰EƒNƒŠƒbƒNƒƒjƒ…[‚ÌƒL[Š„‚è“–‚Ä‚ğ‚Í‚¸‚µ‚½
+	/* ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ */
+	//keycode,			keyname,							ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	{ VKEX_DBL_CLICK,	(LPCTSTR)STR_KEY_BIND_DBL_CLICK,	{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Altã¨å³ã‚¯ãƒªãƒƒã‚¯ã®çµ„åˆã›ã¯åŠ¹ã‹ãªã„ã®ã§å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ã‚’ã¯ãšã—ãŸ
 	{ VKEX_R_CLICK,		(LPCTSTR)STR_KEY_BIND_R_CLICK,		{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 }, },
-	{ VKEX_MDL_CLICK,	(LPCTSTR)STR_KEY_BIND_MID_CLICK,	{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 ƒ}ƒEƒX’†ƒ{ƒ^ƒ“‘Î‰
-	{ VKEX_LSD_CLICK,	(LPCTSTR)STR_KEY_BIND_LSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“‘Î‰
+	{ VKEX_MDL_CLICK,	(LPCTSTR)STR_KEY_BIND_MID_CLICK,	{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 ãƒã‚¦ã‚¹ä¸­ãƒœã‚¿ãƒ³å¯¾å¿œ
+	{ VKEX_LSD_CLICK,	(LPCTSTR)STR_KEY_BIND_LSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 ãƒã‚¦ã‚¹ã‚µã‚¤ãƒ‰ãƒœã‚¿ãƒ³å¯¾å¿œ
 	{ VKEX_RSD_CLICK,	(LPCTSTR)STR_KEY_BIND_RSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ VKEX_TRI_CLICK,	(LPCTSTR)STR_KEY_BIND_TRI_CLICK,	{ F_SELECTLINE,		F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE }, },
 	{ VKEX_QUA_CLICK,	(LPCTSTR)STR_KEY_BIND_QUA_CLICK,	{ F_SELECTALL,		F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL }, },
@@ -703,8 +703,8 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ VKEX_WHEEL_LEFT,	(LPCTSTR)STR_KEY_BIND_WHEEL_LEFT,	{ F_WHEELLEFT,		F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT }, },
 	{ VKEX_WHEEL_RIGHT,	(LPCTSTR)STR_KEY_BIND_WHEEL_RIGHT,	{ F_WHEELRIGHT,		F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT }, },
 
-	/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[ */
-	//keycode,	keyname,			‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ */
+	//keycode,	keyname,			ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 	{ VK_F1,	_T("F1" ),			{ F_EXTHTMLHELP,	F_MENU_ALLFUNC,		F_EXTHELP1,				F_ABOUT,			F_HELP_CONTENTS,		F_HELP_SEARCH,		F_0,					F_0 }, },
 	{ VK_F2,	_T("F2" ),			{ F_BOOKMARK_NEXT,	F_BOOKMARK_PREV,	F_BOOKMARK_SET,			F_BOOKMARK_RESET,	F_BOOKMARK_VIEW,		F_0,				F_0,					F_0 }, },
 	{ VK_F3,	_T("F3" ),			{ F_SEARCH_NEXT,	F_SEARCH_PREV,		F_SEARCH_CLEARMARK,		F_JUMP_SRCHSTARTPOS,F_0,					F_0,				F_0,					F_0 }, },
@@ -730,8 +730,8 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ VK_F23,	_T("F23"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ VK_F24,	_T("F24"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
-	/* “ÁêƒL[ */
-	//keycode,	keyname,			‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	/* ç‰¹æ®Šã‚­ãƒ¼ */
+	//keycode,	keyname,			ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 	{ VK_TAB,	_T("Tab"),			{ F_INDENT_TAB,		F_UNINDENT_TAB,		F_NEXTWINDOW,			F_PREVWINDOW,		F_0,					F_0,				F_0,					F_0 }, },
 	{ VK_RETURN,_T("Enter"),		{ F_0,				F_0,				F_COMPARE,				F_0,				F_PROPERTY_FILE,		F_0,				F_0,					F_0 }, },
 	{ VK_ESCAPE,_T("Esc"),			{ F_CANCEL_MODE,	F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
@@ -740,16 +740,16 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ VK_DELETE,_T("Del"),			{ F_DELETE,			F_CUT,				F_WordDeleteToEnd,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ VK_HOME,	_T("Home"),			{ F_GOLINETOP,		F_GOLINETOP_SEL,	F_GOFILETOP,			F_GOFILETOP_SEL,	F_GOLINETOP_BOX,		F_0,				F_GOFILETOP_BOX,		F_0 }, },
 	{ VK_END,	_T("End(Help)"),	{ F_GOLINEEND,		F_GOLINEEND_SEL,	F_GOFILEEND,			F_GOFILEEND_SEL,	F_GOLINEEND_BOX,		F_0,				F_GOFILEEND_BOX,		F_0 }, },
-	{ VK_LEFT,	_T("©"),			{ F_LEFT,			F_LEFT_SEL,			F_WORDLEFT,				F_WORDLEFT_SEL,		F_LEFT_BOX,				F_0,				F_WORDLEFT_BOX,			F_0 }, },
-	{ VK_UP,	_T("ª"),			{ F_UP,				F_UP_SEL,			F_WndScrollDown,		F_UP2_SEL,			F_UP_BOX,				F_0,				F_UP2_BOX,				F_MAXIMIZE_V },}, 
-	{ VK_RIGHT,	_T("¨"),			{ F_RIGHT,			F_RIGHT_SEL,		F_WORDRIGHT,			F_WORDRIGHT_SEL,	F_RIGHT_BOX,			F_0,				F_WORDRIGHT_BOX,		F_MAXIMIZE_H },}, 
-	{ VK_DOWN,	_T("«"),			{ F_DOWN,			F_DOWN_SEL,			F_WndScrollUp,			F_DOWN2_SEL,		F_DOWN_BOX,				F_0,				F_DOWN2_BOX,			F_MINIMIZE_ALL },}, 
+	{ VK_LEFT,	_T("â†"),			{ F_LEFT,			F_LEFT_SEL,			F_WORDLEFT,				F_WORDLEFT_SEL,		F_LEFT_BOX,				F_0,				F_WORDLEFT_BOX,			F_0 }, },
+	{ VK_UP,	_T("â†‘"),			{ F_UP,				F_UP_SEL,			F_WndScrollDown,		F_UP2_SEL,			F_UP_BOX,				F_0,				F_UP2_BOX,				F_MAXIMIZE_V },}, 
+	{ VK_RIGHT,	_T("â†’"),			{ F_RIGHT,			F_RIGHT_SEL,		F_WORDRIGHT,			F_WORDRIGHT_SEL,	F_RIGHT_BOX,			F_0,				F_WORDRIGHT_BOX,		F_MAXIMIZE_H },}, 
+	{ VK_DOWN,	_T("â†“"),			{ F_DOWN,			F_DOWN_SEL,			F_WndScrollUp,			F_DOWN2_SEL,		F_DOWN_BOX,				F_0,				F_DOWN2_BOX,			F_MINIMIZE_ALL },}, 
 	{ VK_NEXT,	_T("PgDn(RollUp)"),	{ F_1PageDown,		F_1PageDown_Sel,	F_HalfPageDown,			F_HalfPageDown_Sel,	F_1PageDown_BOX,		F_0,				F_HalfPageDown_BOX,		F_0 }, },
 	{ VK_PRIOR,	_T("PgUp(RollDn)"),	{ F_1PageUp,		F_1PageUp_Sel,		F_HalfPageUp,			F_HalfPageUp_Sel,	F_1PageUp_BOX,			F_0,				F_HalfPageUp_BOX,		F_0 }, },
 	{ VK_SPACE,	_T("Space"),		{ F_INDENT_SPACE,	F_UNINDENT_SPACE,	F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
-	/* ”š */
-	//keycode,	keyname,			‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	/* æ•°å­— */
+	//keycode,	keyname,			ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 	{ '0',		_T("0"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_10,			F_CUSTMENU_20,		F_0,					F_0 }, },
 	{ '1',		_T("1"),			{ F_0,				F_0,				F_SHOWTOOLBAR,			F_CUSTMENU_21,		F_CUSTMENU_1,			F_CUSTMENU_11,		F_0,					F_0 }, },
 	{ '2',		_T("2"),			{ F_0,				F_0,				F_SHOWFUNCKEY,			F_CUSTMENU_22,		F_CUSTMENU_2,			F_CUSTMENU_12,		F_0,					F_0 }, },
@@ -761,8 +761,8 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ '8',		_T("8"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_8,			F_CUSTMENU_18,		F_0,					F_0 }, },
 	{ '9',		_T("9"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_9,			F_CUSTMENU_19,		F_0,					F_0 }, },
 
-	/* ƒAƒ‹ƒtƒ@ƒxƒbƒg */
-	//keycode,	keyname,			‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	/* ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆ */
+	//keycode,	keyname,			ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 	{ 'A',		_T("A"),			{ F_0,				F_0,				F_SELECTALL,			F_0,				F_SORT_ASC,				F_0,				F_0,					F_0 }, },
 	{ 'B',		_T("B"),			{ F_0,				F_0,				F_BROWSE,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ 'C',		_T("C"),			{ F_0,				F_0,				F_COPY,					F_OPEN_HfromtoC,	F_0,					F_0,				F_0,					F_0 }, },
@@ -790,8 +790,8 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ 'Y',		_T("Y"),			{ F_0,				F_0,				F_REDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ 'Z',		_T("Z"),			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
-	/* ‹L† */
-	//keycode,	keyname,			‚È‚µ,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	/* è¨˜å· */
+	//keycode,	keyname,			ãªã—,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 	{ 0x00bd,	_T("-"),			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
 	{ 0x00de,	(LPCTSTR)STR_KEY_BIND_HAT_ENG_QT,		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 	{ 0x00dc,	_T("\\"),			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
@@ -809,50 +809,50 @@ static const KEYDATAINIT	KeyDataInit[] = {
 };
 
 const TCHAR* jpVKEXNames[] = {
-	_T("ƒ_ƒuƒ‹ƒNƒŠƒbƒN"),
-	_T("‰EƒNƒŠƒbƒN"),
-	_T("’†ƒNƒŠƒbƒN"),
-	_T("¶ƒTƒCƒhƒNƒŠƒbƒN"),
-	_T("‰EƒTƒCƒhƒNƒŠƒbƒN"),
-	_T("ƒgƒŠƒvƒ‹ƒNƒŠƒbƒN"),
-	_T("ƒNƒAƒhƒ‰ƒvƒ‹ƒNƒŠƒbƒN"),
-	_T("ƒzƒC[ƒ‹ƒAƒbƒv"),
-	_T("ƒzƒC[ƒ‹ƒ_ƒEƒ“"),
-	_T("ƒzƒC[ƒ‹¶"),
-	_T("ƒzƒC[ƒ‹‰E")
+	_T("ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯"),
+	_T("å³ã‚¯ãƒªãƒƒã‚¯"),
+	_T("ä¸­ã‚¯ãƒªãƒƒã‚¯"),
+	_T("å·¦ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯"),
+	_T("å³ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯"),
+	_T("ãƒˆãƒªãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯"),
+	_T("ã‚¯ã‚¢ãƒ‰ãƒ©ãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯"),
+	_T("ãƒ›ã‚¤ãƒ¼ãƒ«ã‚¢ãƒƒãƒ—"),
+	_T("ãƒ›ã‚¤ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³"),
+	_T("ãƒ›ã‚¤ãƒ¼ãƒ«å·¦"),
+	_T("ãƒ›ã‚¤ãƒ¼ãƒ«å³")
 };
 const int jpVKEXNamesLen = _countof( jpVKEXNames );
 
-/*!	@brief ‹¤—Lƒƒ‚ƒŠ‰Šú‰»/ƒL[Š„‚è“–‚Ä
+/*!	@brief å…±æœ‰ãƒ¡ãƒ¢ãƒªåˆæœŸåŒ–/ã‚­ãƒ¼å‰²ã‚Šå½“ã¦
 
-	ƒfƒtƒHƒ‹ƒgƒL[Š„‚è“–‚ÄŠÖ˜A‚Ì‰Šú‰»ˆ—
+	ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚­ãƒ¼å‰²ã‚Šå½“ã¦é–¢é€£ã®åˆæœŸåŒ–å‡¦ç†
 
-	@date 2005.01.30 genta CShareData::Init()‚©‚ç•ª—£
-	@date 2007.11.04 genta ƒL[İ’è”‚ªDLLSHARE‚Ì—Ìˆæ‚ğ’´‚¦‚½‚ç‹N“®‚Å‚«‚È‚¢‚æ‚¤‚É
+	@date 2005.01.30 genta CShareData::Init()ã‹ã‚‰åˆ†é›¢
+	@date 2007.11.04 genta ã‚­ãƒ¼è¨­å®šæ•°ãŒDLLSHAREã®é ˜åŸŸã‚’è¶…ãˆãŸã‚‰èµ·å‹•ã§ããªã„ã‚ˆã†ã«
 */
 bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 {
 	/********************/
-	/* ‹¤’Êİ’è‚Ì‹K’è’l */
+	/* å…±é€šè¨­å®šã®è¦å®šå€¤ */
 	/********************/
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
-	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// ÅŒã‚Ì‚P—v‘f‚Íƒ_ƒ~[—p‚É—\–ñ 2012.11.25 aroka
-	//	From Here 2007.11.04 genta ƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“–h~
+	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// æœ€å¾Œã®ï¼‘è¦ç´ ã¯ãƒ€ãƒŸãƒ¼ç”¨ã«äºˆç´„ 2012.11.25 aroka
+	//	From Here 2007.11.04 genta ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³é˜²æ­¢
 	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {
-//		PleaseReportToAuthor( NULL, _T("ƒL[İ’è”‚É‘Î‚µ‚ÄDLLSHARE::m_nKeyNameArr[]‚ÌƒTƒCƒY‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·") );
+//		PleaseReportToAuthor( NULL, _T("ã‚­ãƒ¼è¨­å®šæ•°ã«å¯¾ã—ã¦DLLSHARE::m_nKeyNameArr[]ã®ã‚µã‚¤ã‚ºãŒä¸è¶³ã—ã¦ã„ã¾ã™") );
 //		return false;
 //	}
-	//	To Here 2007.11.04 genta ƒoƒbƒtƒ@ƒI[ƒo[ƒ‰ƒ“–h~
+	//	To Here 2007.11.04 genta ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ©ãƒ³é˜²æ­¢
 
-	// ƒ}ƒEƒXƒR[ƒh‚ÌŒÅ’è‚Æd•¡”rœ 2012.11.25 aroka
+	// ãƒã‚¦ã‚¹ã‚³ãƒ¼ãƒ‰ã®å›ºå®šã¨é‡è¤‡æ’é™¤ 2012.11.25 aroka
 	static const KEYDATAINIT	dummy[] = {
 		{ 0,		_T(""),				{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 } }
 	};
 
-	// ƒCƒ“ƒfƒbƒNƒX—pƒ_ƒ~[ì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç”¨ãƒ€ãƒŸãƒ¼ä½œæˆ
 	SetKeyNameArrVal( pShareData, KEYNAME_SIZE, &dummy[0] );
-	// ƒCƒ“ƒfƒbƒNƒXì¬ d•¡‚µ‚½ê‡‚Íæ“ª‚É‚ ‚é‚à‚Ì‚ğ—Dæ
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ä½œæˆ é‡è¤‡ã—ãŸå ´åˆã¯å…ˆé ­ã«ã‚ã‚‹ã‚‚ã®ã‚’å„ªå…ˆ
 	for( int ii = 0; ii< _countof(pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr); ii++ ){
 		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
 	}
@@ -867,7 +867,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	return true;
 }
 
-/*!	@brief Œ¾Œê‘I‘ğŒã‚Ì•¶š—ñXVˆ— */
+/*!	@brief è¨€èªé¸æŠå¾Œã®æ–‡å­—åˆ—æ›´æ–°å‡¦ç† */
 void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 {
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
@@ -885,10 +885,10 @@ void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*! KEYDATA”z—ñ‚Éƒf[ƒ^‚ğƒZƒbƒg */
+/*! KEYDATAé…åˆ—ã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ */
 static void SetKeyNameArrVal(
 	DLLSHAREDATA*		pShareData,
 	int					nIdx,
