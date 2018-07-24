@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,9 +25,9 @@
 #define SAKURA_CMYWND_2BBCE2D2_F4DC_4809_BFFE_476824F2E0ABR_H_
 
 /*
-	MFC‚ÌCWnd“I‚ÈƒNƒ‰ƒXB
+	MFCã®CWndçš„ãªã‚¯ãƒ©ã‚¹ã€‚
 
-	2008.01.26 kobake ì¬
+	2008.01.26 kobake ä½œæˆ
 */
 
 class CMyWnd{
