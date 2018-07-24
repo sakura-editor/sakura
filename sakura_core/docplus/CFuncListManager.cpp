@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2014, Moca
 
@@ -41,38 +41,38 @@ void CFuncListManager::SetLineFuncList(CDocLine* pcDocLine, bool bFlag)
 	pcDocLine->m_sMark.m_cFuncList = bFlag;
 }
 
-/*! ·•ªŒŸõ
+/*! å·®åˆ†æ¤œç´¢
 	@author	MIK
 	@date	2002.05.25
 */
 bool CFuncListManager::SearchFuncListMark(
 	const CDocLineMgr*	pcDocLineMgr,
-	CLogicInt			nLineNum,		//!< ŒŸõŠJns
-	ESearchDirection	bPrevOrNext,	//!< ŒŸõ•ûŒü
-	CLogicInt*			pnLineNum 		//!< ƒ}ƒbƒ`s
+	CLogicInt			nLineNum,		//!< æ¤œç´¢é–‹å§‹è¡Œ
+	ESearchDirection	bPrevOrNext,	//!< æ¤œç´¢æ–¹å‘
+	CLogicInt*			pnLineNum 		//!< ãƒãƒƒãƒè¡Œ
 ) const
 {
 	CLogicInt	nLinePos = nLineNum;
 
 	if( bPrevOrNext == SEARCH_BACKWARD ){
-		//Œã•ûŒŸõ(ª)
+		//å¾Œæ–¹æ¤œç´¢(â†‘)
 		nLinePos--;
 		const CDocLine*	pDocLine = pcDocLineMgr->GetLine( nLinePos );
 		while( pDocLine ){
 			if( GetLineFuncList(pDocLine) ){
-				*pnLineNum = nLinePos;				/* ƒ}ƒbƒ`s */
+				*pnLineNum = nLinePos;				/* ãƒãƒƒãƒè¡Œ */
 				return true;
 			}
 			nLinePos--;
 			pDocLine = pDocLine->GetPrevLine();
 		}
 	}else{
-		//‘O•ûŒŸõ(«)
+		//å‰æ–¹æ¤œç´¢(â†“)
 		nLinePos++;
 		const CDocLine*	pDocLine = pcDocLineMgr->GetLine( nLinePos );
 		while( pDocLine ){
 			if( GetLineFuncList(pDocLine) ){
-				*pnLineNum = nLinePos;				/* ƒ}ƒbƒ`s */
+				*pnLineNum = nLinePos;				/* ãƒãƒƒãƒè¡Œ */
 				return true;
 			}
 			nLinePos++;
@@ -82,7 +82,7 @@ bool CFuncListManager::SearchFuncListMark(
 	return false;
 }
 
-/* ŠÖ”ƒŠƒXƒgƒ}[ƒN‚ğ‚·‚×‚ÄƒŠƒZƒbƒg */
+/* é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯ã‚’ã™ã¹ã¦ãƒªã‚»ãƒƒãƒˆ */
 void CFuncListManager::ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag)
 {
 	CDocLine* pDocLine = pcDocLineMgr->GetDocLineTop();

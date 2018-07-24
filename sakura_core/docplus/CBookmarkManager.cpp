@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "docplus/CBookmarkManager.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
@@ -9,7 +9,7 @@
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }
 void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_cBookmarked = bFlag; }
 
-//!ƒuƒbƒNƒ}[ƒN‚Ì‘S‰ğœ
+//!ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã®å…¨è§£é™¤
 /*
 	@date 2001.12.03 hor
 */
@@ -23,39 +23,39 @@ void CBookmarkManager::ResetAllBookMark( void )
 }
 
 
-//! ƒuƒbƒNƒ}[ƒNŒŸõ
+//! ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æ¤œç´¢
 /*
 	@date 2001.12.03 hor
 */
 bool CBookmarkManager::SearchBookMark(
-	CLogicInt			nLineNum,		//!< ŒŸõŠJns
-	ESearchDirection	bPrevOrNext,	//!< ŒŸõ•ûŒü
-	CLogicInt*			pnLineNum 		//!< ƒ}ƒbƒ`s
+	CLogicInt			nLineNum,		//!< æ¤œç´¢é–‹å§‹è¡Œ
+	ESearchDirection	bPrevOrNext,	//!< æ¤œç´¢æ–¹å‘
+	CLogicInt*			pnLineNum 		//!< ãƒãƒƒãƒè¡Œ
 )
 {
 	CDocLine*	pDocLine;
 	CLogicInt	nLinePos=nLineNum;
 
-	// Œã•ûŒŸõ
+	// å¾Œæ–¹æ¤œç´¢
 	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
 		while( pDocLine ){
 			if(CBookmarkGetter(pDocLine).IsBookmarked()){
-				*pnLineNum = nLinePos;				/* ƒ}ƒbƒ`s */
+				*pnLineNum = nLinePos;				/* ãƒãƒƒãƒè¡Œ */
 				return true;
 			}
 			nLinePos--;
 			pDocLine = pDocLine->GetPrevLine();
 		}
 	}
-	// ‘O•ûŒŸõ
+	// å‰æ–¹æ¤œç´¢
 	else{
 		nLinePos++;
 		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
 		while( NULL != pDocLine ){
 			if(CBookmarkGetter(pDocLine).IsBookmarked()){
-				*pnLineNum = nLinePos;				/* ƒ}ƒbƒ`s */
+				*pnLineNum = nLinePos;				/* ãƒãƒƒãƒè¡Œ */
 				return true;
 			}
 			nLinePos++;
@@ -65,10 +65,10 @@ bool CBookmarkManager::SearchBookMark(
 	return false;
 }
 
-//! •¨—s”Ô†‚ÌƒŠƒXƒg‚©‚ç‚Ü‚Æ‚ß‚Äsƒ}[ƒN
+//! ç‰©ç†è¡Œç•ªå·ã®ãƒªã‚¹ãƒˆã‹ã‚‰ã¾ã¨ã‚ã¦è¡Œãƒãƒ¼ã‚¯
 /*
 	@date 2002.01.16 hor
-	@date 2014.04.24 Moca ver2 ·•ª32i”•û®‚É•ÏX
+	@date 2014.04.24 Moca ver2 å·®åˆ†32é€²æ•°æ–¹å¼ã«å¤‰æ›´
 */
 void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 {
@@ -78,9 +78,9 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 	p = pMarkLines;
 	if( p[0] == L':' ){
 		if( p[1] == L'0' ){
-			// ver2 Œ`® [0-9a-v] 0-31(I’[ƒo[ƒWƒ‡ƒ“) [w-zA-Z\+\-] 0-31
-			// 2”Ô–ÚˆÈ~‚ÍA”’l+1+‚Ğ‚Æ‚Â‘O‚Ì’l
-			// :00123x0 => 0,1,2,3,x0 => 0,(1+1),(2+2+1),(3+5+1),(32+9+1) => 0,2,5,9,42 => 1,3,6,10,43s–Ú
+			// ver2 å½¢å¼ [0-9a-v] 0-31(çµ‚ç«¯ãƒãƒ¼ã‚¸ãƒ§ãƒ³) [w-zA-Z\+\-] 0-31
+			// 2ç•ªç›®ä»¥é™ã¯ã€æ•°å€¤+1+ã²ã¨ã¤å‰ã®å€¤
+			// :00123x0 => 0,1,2,3,x0 => 0,(1+1),(2+2+1),(3+5+1),(32+9+1) => 0,2,5,9,42 => 1,3,6,10,43è¡Œç›®
 			// :0a => a, => 10, 11
 			p += 2;
 			int nLineNum = 0;
@@ -118,10 +118,10 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 				p++;
 			}
 		}else{
-			// •s–¾‚Èƒo[ƒWƒ‡ƒ“
+			// ä¸æ˜ãªãƒãƒ¼ã‚¸ãƒ§ãƒ³
 		}
 	}else{
-		// ‹ŒŒ`® s”Ô†,‹æØ‚è
+		// æ—§å½¢å¼ è¡Œç•ªå·,åŒºåˆ‡ã‚Š
 		while(wcstok(p, delim) != NULL) {
 			while(wcschr(delim, *p) != NULL)p++;
 			pCDocLine=m_pcDocLineMgr->GetLine( CLogicInt(_wtol(p)) );
@@ -132,15 +132,15 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 }
 
 
-//! sƒ}[ƒN‚³‚ê‚Ä‚é•¨—s”Ô†‚ÌƒŠƒXƒg‚ğì‚é
+//! è¡Œãƒãƒ¼ã‚¯ã•ã‚Œã¦ã‚‹ç‰©ç†è¡Œç•ªå·ã®ãƒªã‚¹ãƒˆã‚’ä½œã‚‹
 /*
 	@date 2002.01.16 hor
-	@date 2014.04.24 Moca ver2 ·•ª32i”•û®‚É•ÏX
+	@date 2014.04.24 Moca ver2 å·®åˆ†32é€²æ•°æ–¹å¼ã«å¤‰æ›´
 */
 LPCWSTR CBookmarkManager::GetBookMarks()
 {
 	const CDocLine*	pCDocLine;
-	static wchar_t szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta static‚É
+	static wchar_t szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticã«
 	wchar_t szBuff[10];
 	wchar_t szBuff2[10];
 	CLogicInt	nLinePos=CLogicInt(0);
@@ -201,7 +201,7 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 
 
 
-//! ŒŸõğŒ‚ÉŠY“–‚·‚és‚ÉƒuƒbƒNƒ}[ƒN‚ğƒZƒbƒg‚·‚é
+//! æ¤œç´¢æ¡ä»¶ã«è©²å½“ã™ã‚‹è¡Œã«ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 /*
 	@date 2002.01.16 hor
 */
@@ -214,14 +214,14 @@ void CBookmarkManager::MarkSearchWord(
 	const wchar_t*	pLine;
 	int			nLineLen;
 
-	/* 1==³‹K•\Œ» */
+	/* 1==æ­£è¦è¡¨ç¾ */
 	if( sSearchOption.bRegularExp ){
 		CBregexp*	pRegexp = pattern.GetRegexp();
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
 		while( pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
 				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				// 2005.03.19 ‚©‚ë‚Æ ‘O•ûˆê’vƒTƒ|[ƒg‚Ì‚½‚ß‚Ìƒƒ\ƒbƒh•ÏX
+				// 2005.03.19 ã‹ã‚ã¨ å‰æ–¹ä¸€è‡´ã‚µãƒãƒ¼ãƒˆã®ãŸã‚ã®ãƒ¡ã‚½ãƒƒãƒ‰å¤‰æ›´
 				if( pRegexp->Match( pLine, nLineLen, 0 ) ){
 					CBookmarkSetter(pDocLine).SetBookmark(true);
 				}
@@ -229,12 +229,12 @@ void CBookmarkManager::MarkSearchWord(
 			pDocLine = pDocLine->GetNextLine();
 		}
 	}
-	/* 1==’PŒê‚Ì‚İŒŸõ */
+	/* 1==å˜èªã®ã¿æ¤œç´¢ */
 	else if( sSearchOption.bWordOnly ){
 		const wchar_t*	pszPattern = pattern.GetKey();
 		const int	nPatternLen = pattern.GetLen();
-		// ŒŸõŒê‚ğ’PŒê‚É•ªŠ„‚µ‚Ä searchWords‚ÉŠi”[‚·‚éB
-		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // ’PŒê‚ÌŠJnˆÊ’u‚Æ’·‚³‚Ì”z—ñB
+		// æ¤œç´¢èªã‚’å˜èªã«åˆ†å‰²ã—ã¦ searchWordsã«æ ¼ç´ã™ã‚‹ã€‚
+		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // å˜èªã®é–‹å§‹ä½ç½®ã¨é•·ã•ã®é…åˆ—ã€‚
 		CSearchAgent::CreateWordList(searchWords, pszPattern, nPatternLen);
 
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
@@ -246,12 +246,12 @@ void CBookmarkManager::MarkSearchWord(
 					CBookmarkSetter(pDocLine).SetBookmark(true);
 				}
 			}
-			/* Ÿ‚Ìs‚ğŒ©‚És‚­ */
+			/* æ¬¡ã®è¡Œã‚’è¦‹ã«è¡Œã */
 			pDocLine = pDocLine->GetNextLine();
 		}
 	}
 	else{
-		/* ŒŸõğŒ‚Ìî•ñ */
+		/* æ¤œç´¢æ¡ä»¶ã®æƒ…å ± */
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
 		while( NULL != pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){

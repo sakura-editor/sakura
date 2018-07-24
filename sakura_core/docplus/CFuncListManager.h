@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2014, Moca
 
@@ -28,7 +28,7 @@
 class CDocLine;
 class CDocLineMgr;
 
-//! s‚É•t‰Á‚·‚éModifiedî•ñ
+//! è¡Œã«ä»˜åŠ ã™ã‚‹Modifiedæƒ…å ±
 class CLineFuncList{
 public:
 	CLineFuncList() : m_bFuncList(false) { }
@@ -42,17 +42,17 @@ private:
 	bool m_bFuncList;
 };
 
-//! s‘S‘Ì‚ÌFuncListî•ñƒAƒNƒZƒT
+//! è¡Œå…¨ä½“ã®FuncListæƒ…å ±ã‚¢ã‚¯ã‚»ã‚µ
 class CFuncListManager{
 public:
-	//ó‘Ô
+	//çŠ¶æ…‹
 	bool IsLineFuncList(const CDocLine* pcDocLine, bool bFlag) const;
 	bool GetLineFuncList(const CDocLine* pcDocLine) const;
 	void SetLineFuncList(CDocLine* pcDocLine, bool bFlag);
-	bool SearchFuncListMark(const CDocLineMgr*, CLogicInt, ESearchDirection, CLogicInt* ) const;					//!< ŠÖ”ƒŠƒXƒgƒ}[ƒNŒŸõ
+	bool SearchFuncListMark(const CDocLineMgr*, CLogicInt, ESearchDirection, CLogicInt* ) const;					//!< é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯æ¤œç´¢
 
-	//ˆêŠ‡‘€ì
-	void ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag);	// ŠÖ”ƒŠƒXƒgƒ}[ƒN‚ğ‚·‚×‚ÄƒŠƒZƒbƒg
+	//ä¸€æ‹¬æ“ä½œ
+	void ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag);	// é–¢æ•°ãƒªã‚¹ãƒˆãƒãƒ¼ã‚¯ã‚’ã™ã¹ã¦ãƒªã‚»ãƒƒãƒˆ
 };
 
 #endif /* SAKURA_CFUNCLISTMANAGER_H_ */

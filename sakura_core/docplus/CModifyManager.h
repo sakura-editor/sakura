@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,7 +30,7 @@
 class CDocLine;
 class CDocLineMgr;
 
-//! ModifiedŠÇ—
+//! Modifiedç®¡ç†
 class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
 	friend class TSingleton<CModifyManager>;
 	CModifyManager(){}
@@ -40,7 +40,7 @@ public:
 
 };
 
-//! s‚É•t‰Á‚·‚éModifiedî•ñ
+//! è¡Œã«ä»˜åŠ ã™ã‚‹Modifiedæƒ…å ±
 class CLineModified{
 public:
 	CLineModified() : m_nModifiedSeq(0) { }
@@ -54,16 +54,16 @@ private:
 	int m_nModifiedSeq;
 };
 
-//! s‘S‘Ì‚ÌModifiedî•ñƒAƒNƒZƒT
+//! è¡Œå…¨ä½“ã®Modifiedæƒ…å ±ã‚¢ã‚¯ã‚»ã‚µ
 class CModifyVisitor{
 public:
-	//ó‘Ô
+	//çŠ¶æ…‹
 	bool IsLineModified(const CDocLine* pcDocLine, int nSaveSeq) const;
 	int GetLineModifiedSeq(const CDocLine* pcDocLine) const;
 	void SetLineModified(CDocLine* pcDocLine, int nModifiedSeq);
 
-	//ˆêŠ‡‘€ì
-	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// s•ÏXó‘Ô‚ğ‚·‚×‚ÄƒŠƒZƒbƒg
+	//ä¸€æ‹¬æ“ä½œ
+	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// è¡Œå¤‰æ›´çŠ¶æ…‹ã‚’ã™ã¹ã¦ãƒªã‚»ãƒƒãƒˆ
 };
 
 #endif /* SAKURA_CMODIFYMANAGER_5129DDF8_A336_4B65_914B_22E626B7B520_H_ */
