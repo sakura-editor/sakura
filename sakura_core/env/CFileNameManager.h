@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -27,7 +27,7 @@
 #ifndef SAKURA_CFILENAMEMANAGER_862D56B4_E24F_49AB_AABD_0924391CB6F4_H_
 #define SAKURA_CFILENAMEMANAGER_862D56B4_E24F_49AB_AABD_0924391CB6F4_H_
 
-// —væs’è‹`
+// è¦å…ˆè¡Œå®šç¾©
 // #include "DLLSHAREDATA.h"
 
 #include "util/design_template.h"
@@ -35,23 +35,23 @@
 
 struct EditInfo;
 
-//! iniƒtƒHƒ‹ƒ_İ’è	// 2007.05.31 ryoji
+//! iniãƒ•ã‚©ãƒ«ãƒ€è¨­å®š	// 2007.05.31 ryoji
 struct IniFolder {
-	bool m_bInit;							// ‰Šú‰»Ïƒtƒ‰ƒO
-	bool m_bReadPrivate;					// ƒ}ƒ‹ƒ`ƒ†[ƒU—pini‚©‚ç‚Ì“Ç‚İo‚µƒtƒ‰ƒO
-	bool m_bWritePrivate;					// ƒ}ƒ‹ƒ`ƒ†[ƒU—pini‚Ö‚Ì‘‚«‚İƒtƒ‰ƒO
-	TCHAR m_szIniFile[_MAX_PATH];			// EXEŠî€‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX
-	TCHAR m_szPrivateIniFile[_MAX_PATH];	// ƒ}ƒ‹ƒ`ƒ†[ƒU—p‚Ìiniƒtƒ@ƒCƒ‹ƒpƒX
-};	/* iniƒtƒHƒ‹ƒ_İ’è */
+	bool m_bInit;							// åˆæœŸåŒ–æ¸ˆãƒ•ãƒ©ã‚°
+	bool m_bReadPrivate;					// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨iniã‹ã‚‰ã®èª­ã¿å‡ºã—ãƒ•ãƒ©ã‚°
+	bool m_bWritePrivate;					// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨iniã¸ã®æ›¸ãè¾¼ã¿ãƒ•ãƒ©ã‚°
+	TCHAR m_szIniFile[_MAX_PATH];			// EXEåŸºæº–ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	TCHAR m_szPrivateIniFile[_MAX_PATH];	// ãƒãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+};	/* iniãƒ•ã‚©ãƒ«ãƒ€è¨­å®š */
 
 
-//‹¤—Lƒƒ‚ƒŠ“à\‘¢‘Ì
+//å…±æœ‰ãƒ¡ãƒ¢ãƒªå†…æ§‹é€ ä½“
 struct SShare_FileNameManagement{
-	IniFolder			m_IniFolder;	/**** iniƒtƒHƒ‹ƒ_İ’è ****/
+	IniFolder			m_IniFolder;	/**** iniãƒ•ã‚©ãƒ«ãƒ€è¨­å®š ****/
 };
 
 
-//!ƒtƒ@ƒCƒ‹–¼ŠÇ—
+//!ãƒ•ã‚¡ã‚¤ãƒ«åç®¡ç†
 class CFileNameManager : public TSingleton<CFileNameManager>{
 	friend class TSingleton<CFileNameManager>;
 	CFileNameManager()
@@ -61,13 +61,13 @@ class CFileNameManager : public TSingleton<CFileNameManager>{
 	}
 
 public:
-	//ƒtƒ@ƒCƒ‹–¼ŠÖ˜A
+	//ãƒ•ã‚¡ã‚¤ãƒ«åé–¢é€£
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int nDestLen, HDC hDC, bool bFitMode = true, int cchMaxWidth = 0 );	// 2002.11.24 Moca Add
 	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
 	static bool ExpandMetaToFolder( LPCTSTR, LPTSTR, int );
 
-	//ƒƒjƒ…[—Ş‚Ìƒtƒ@ƒCƒ‹–¼ì¬
+	//ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¡ã®ãƒ•ã‚¡ã‚¤ãƒ«åä½œæˆ
 	bool GetMenuFullLabel_WinList(TCHAR* pszOutput, int nBuffSize, const EditInfo* editInfo, int id, int index, HDC hDC){
 		return GetMenuFullLabel(pszOutput, nBuffSize, true, editInfo, id, false, index, false, hDC);
 	}
@@ -89,14 +89,14 @@ public:
 	
 	static TCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
-	static void GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile, LPCTSTR pszProfName );	/* \¬İ’èƒtƒ@ƒCƒ‹‚©‚çiniƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */	// 2007.09.04 ryoji
-	void GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfName, BOOL bRead = FALSE );	/* iniƒtƒ@ƒCƒ‹–¼‚Ìæ“¾ */	// 2007.05.19 ryoji
+	static void GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile, LPCTSTR pszProfName );	/* æ§‹æˆè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰iniãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹ */	// 2007.09.04 ryoji
+	void GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfName, BOOL bRead = FALSE );	/* iniãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾— */	// 2007.05.19 ryoji
 
 private:
 	DLLSHAREDATA* m_pShareData;
 
-	// ƒtƒ@ƒCƒ‹–¼ŠÈˆÕ•\¦—pƒLƒƒƒbƒVƒ…
-	int		m_nTransformFileNameCount; // —LŒø”
+	// ãƒ•ã‚¡ã‚¤ãƒ«åç°¡æ˜“è¡¨ç¤ºç”¨ã‚­ãƒ£ãƒƒã‚·ãƒ¥
+	int		m_nTransformFileNameCount; // æœ‰åŠ¹æ•°
 	TCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	int		m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };

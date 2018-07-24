@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -27,35 +27,35 @@
 #ifndef SAKURA_CTAGJUMPMANAGER_A826CC13_50FF_44A9_813D_CC5B918410A7_H_
 #define SAKURA_CTAGJUMPMANAGER_A826CC13_50FF_44A9_813D_CC5B918410A7_H_
 
-// —væs’è‹`
+// è¦å…ˆè¡Œå®šç¾©
 // #define DLLSHAREDATA.h
 
 
-// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-//! ƒ^ƒOƒWƒƒƒ“ƒvî•ñ
+// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+//! ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
 struct TagJump {
-	HWND		hwndReferer;				//!< QÆŒ³ƒEƒBƒ“ƒhƒE
-	CLogicPoint	point;						//!< ƒ‰ƒCƒ“, ƒJƒ‰ƒ€
+	HWND		hwndReferer;				//!< å‚ç…§å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	CLogicPoint	point;						//!< ãƒ©ã‚¤ãƒ³, ã‚«ãƒ©ãƒ 
 };
 
 
-//‹¤—Lƒƒ‚ƒŠ“à\‘¢‘Ì
-//2004/06/21 ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-//2005.04.03 MIK ƒL[ƒ[ƒhw’èƒ^ƒOƒWƒƒƒ“ƒv
+//å…±æœ‰ãƒ¡ãƒ¢ãƒªå†…æ§‹é€ ä½“
+//2004/06/21 ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+//2005.04.03 MIK ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æŒ‡å®šã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
 struct SShare_TagJump{
-	//Œ^
+	//å‹
 	typedef StaticVector<
 		StaticString<WCHAR, _MAX_PATH>,
 		MAX_TAGJUMP_KEYWORD
 	>					ATagJumpKeywords;
 
-	//ƒf[ƒ^
-	int					m_TagJumpNum;					//!< ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚Ì—LŒøƒf[ƒ^”
-	int					m_TagJumpTop;					//!< ƒXƒ^ƒbƒN‚Ìˆê”Ôã‚ÌˆÊ’u
-	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< ƒ^ƒOƒWƒƒƒ“ƒvî•ñ
+	//ãƒ‡ãƒ¼ã‚¿
+	int					m_TagJumpNum;					//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®æœ‰åŠ¹ãƒ‡ãƒ¼ã‚¿æ•°
+	int					m_TagJumpTop;					//!< ã‚¹ã‚¿ãƒƒã‚¯ã®ä¸€ç•ªä¸Šã®ä½ç½®
+	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
 	ATagJumpKeywords	m_aTagJumpKeywords;
-	BOOL				m_bTagJumpICase;				//!< ‘å•¶š¬•¶š‚ğ“¯ˆê‹
-	BOOL				m_bTagJumpAnyWhere;				//!< •¶š—ñ‚Ì“r’†‚Éƒ}ƒbƒ`
+	BOOL				m_bTagJumpICase;				//!< å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–
+	BOOL				m_bTagJumpAnyWhere;				//!< æ–‡å­—åˆ—ã®é€”ä¸­ã«ãƒãƒƒãƒ
 };
 
 
@@ -65,9 +65,9 @@ public:
 	{
 		m_pShareData = &GetDllShareData();
 	}
-	//ƒ^ƒOƒWƒƒƒ“ƒvŠÖ˜A	// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-	void PushTagJump(const TagJump *);		//!< ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚Ì•Û‘¶
-	bool PopTagJump(TagJump *);				//!< ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚ÌQÆ
+	//ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—é–¢é€£	// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+	void PushTagJump(const TagJump *);		//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®ä¿å­˜
+	bool PopTagJump(TagJump *);				//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®å‚ç…§
 private:
 	DLLSHAREDATA* m_pShareData;
 };

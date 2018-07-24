@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -32,22 +32,22 @@
 #include "env/CDocTypeManager.h"
 
 
-/*!	ŠO•”Winƒwƒ‹ƒv‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©Šm”FB
+/*!	å¤–éƒ¨Winãƒ˜ãƒ«ãƒ—ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèªã€‚
 */
 bool CHelpManager::ExtWinHelpIsSet( const STypeConfig* type )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0'){
-		return true;	//	‹¤’Êİ’è‚Éİ’è‚³‚ê‚Ä‚¢‚é
+		return true;	//	å…±é€šè¨­å®šã«è¨­å®šã•ã‚Œã¦ã„ã‚‹
 	}
 	if (type && type->m_szExtHelp[0] != L'\0'){
-		return true;	//	ƒ^ƒCƒv•Êİ’è‚Éİ’è‚³‚ê‚Ä‚¢‚éB
+		return true;	//	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ã€‚
 	}
 	return false;
 }
 
-/*!	İ’è‚³‚ê‚Ä‚¢‚éŠO•”Winƒwƒ‹ƒv‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚·B
-	ƒ^ƒCƒv•Êİ’è‚Éƒtƒ@ƒCƒ‹–¼‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚ÎA‚»‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚µ‚Ü‚·B
-	‚»‚¤‚Å‚È‚¯‚ê‚ÎA‹¤’Êİ’è‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚µ‚Ü‚·B
+/*!	è¨­å®šã•ã‚Œã¦ã„ã‚‹å¤–éƒ¨Winãƒ˜ãƒ«ãƒ—ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã™ã€‚
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«ãƒ•ã‚¡ã‚¤ãƒ«åãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°ã€ãã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã—ã¾ã™ã€‚
+	ãã†ã§ãªã‘ã‚Œã°ã€å…±é€šè¨­å®šã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã—ã¾ã™ã€‚
 */
 const TCHAR* CHelpManager::GetExtWinHelp( const STypeConfig* type )
 {
@@ -58,22 +58,22 @@ const TCHAR* CHelpManager::GetExtWinHelp( const STypeConfig* type )
 	return m_pShareData->m_Common.m_sHelper.m_szExtHelp;
 }
 
-/*!	ŠO•”HTMLƒwƒ‹ƒv‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©Šm”FB
+/*!	å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèªã€‚
 */
 bool CHelpManager::ExtHTMLHelpIsSet( const STypeConfig* type )
 {
 	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0'){
-		return true;	//	‹¤’Êİ’è‚Éİ’è‚³‚ê‚Ä‚¢‚é
+		return true;	//	å…±é€šè¨­å®šã«è¨­å®šã•ã‚Œã¦ã„ã‚‹
 	}
 	if (type && type->m_szExtHtmlHelp[0] != L'\0'){
-		return true;	//	ƒ^ƒCƒv•Êİ’è‚Éİ’è‚³‚ê‚Ä‚¢‚éB
+		return true;	//	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«è¨­å®šã•ã‚Œã¦ã„ã‚‹ã€‚
 	}
 	return false;
 }
 
-/*!	İ’è‚³‚ê‚Ä‚¢‚éŠO•”Winƒwƒ‹ƒv‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚·B
-	ƒ^ƒCƒv•Êİ’è‚Éƒtƒ@ƒCƒ‹–¼‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚ÎA‚»‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚µ‚Ü‚·B
-	‚»‚¤‚Å‚È‚¯‚ê‚ÎA‹¤’Êİ’è‚Ìƒtƒ@ƒCƒ‹–¼‚ğ•Ô‚µ‚Ü‚·B
+/*!	è¨­å®šã•ã‚Œã¦ã„ã‚‹å¤–éƒ¨Winãƒ˜ãƒ«ãƒ—ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã™ã€‚
+	ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«ãƒ•ã‚¡ã‚¤ãƒ«åãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°ã€ãã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã—ã¾ã™ã€‚
+	ãã†ã§ãªã‘ã‚Œã°ã€å…±é€šè¨­å®šã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã—ã¾ã™ã€‚
 */
 const TCHAR* CHelpManager::GetExtHTMLHelp( const STypeConfig* type )
 {
@@ -84,7 +84,7 @@ const TCHAR* CHelpManager::GetExtHTMLHelp( const STypeConfig* type )
 	return m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp;
 }
 
-/*!	ƒrƒ…[ƒA‚ğ•¡”‹N“®‚µ‚È‚¢‚ªON‚©‚ğ•Ô‚·B
+/*!	ãƒ“ãƒ¥ãƒ¼ã‚¢ã‚’è¤‡æ•°èµ·å‹•ã—ãªã„ãŒONã‹ã‚’è¿”ã™ã€‚
 */
 bool CHelpManager::HTMLHelpIsSingle( const STypeConfig* type )
 {

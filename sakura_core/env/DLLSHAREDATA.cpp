@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,7 +31,7 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 
-//GetDllShareData—pƒOƒ[ƒoƒ‹•Ï”
+//GetDllShareDataç”¨ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 DLLSHAREDATA* g_theDLLSHAREDATA = NULL;
 
 static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
@@ -74,9 +74,9 @@ public:
 		::ShowWindow(hwndCancelButton, SW_HIDE);
 		::ShowWindow(hwndKensuu, SW_HIDE);
 		if( GetComctl32Version() >= PACKVERSION(6, 0) ){
-			// ƒ}[ƒL[‚É‚·‚é(CommCtrl 6.0ˆÈã)
+			// ãƒãƒ¼ã‚­ãƒ¼ã«ã™ã‚‹(CommCtrl 6.0ä»¥ä¸Š)
 			HWND hwndProgress = GetItemHwnd(IDC_PROGRESS);
-			// ƒXƒ^ƒCƒ‹•ÏX+ƒƒbƒZ[ƒW‚Å‚È‚¢‚Æ‹@”\‚µ‚È‚¢
+			// ã‚¹ã‚¿ã‚¤ãƒ«å¤‰æ›´+ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã§ãªã„ã¨æ©Ÿèƒ½ã—ãªã„
 			LONG_PTR style = ::GetWindowLongPtr(hwndProgress, GWL_STYLE);
 			::SetWindowLongPtr(hwndProgress, GWL_STYLE, style | PBS_MARQUEE);
 			Progress_SetMarquee(hwndProgress, TRUE, 100);
@@ -88,7 +88,7 @@ public:
 	}
 };
 
-// count‚ª0‚¾‚Á‚½‚çLock‚µ‚Ä•Ô‚·
+// countãŒ0ã ã£ãŸã‚‰Lockã—ã¦è¿”ã™
 static int GetCountIf0Lock( CShareDataLockCounter** ppLock )
 {
 	LockGuard<CMutex> guard(g_cKeywordMutex);

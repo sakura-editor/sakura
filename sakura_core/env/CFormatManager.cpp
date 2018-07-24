@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -30,14 +30,14 @@
 
 #include "CFormatManager.h"
 
-/*! “ú•t‚ğƒtƒH[ƒ}ƒbƒg
-	systimeFƒf[ƒ^
+/*! æ—¥ä»˜ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+	systimeï¼šæ™‚åˆ»ãƒ‡ãƒ¼ã‚¿
 	
-	pszDestFƒtƒH[ƒ}ƒbƒgÏ‚İƒeƒLƒXƒgŠi”[—pƒoƒbƒtƒ@
-	nDestLenFpszDest‚Ì’·‚³
+	pszDestï¼šãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆæ¸ˆã¿ãƒ†ã‚­ã‚¹ãƒˆæ ¼ç´ç”¨ãƒãƒƒãƒ•ã‚¡
+	nDestLenï¼špszDestã®é•·ã•
 	
-	pszDateFormatF
-		ƒJƒXƒ^ƒ€‚Ì‚Æ‚«‚ÌƒtƒH[ƒ}ƒbƒg
+	pszDateFormatï¼š
+		ã‚«ã‚¹ã‚¿ãƒ ã®ã¨ãã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 */
 const TCHAR* CFormatManager::MyGetDateFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
@@ -73,7 +73,7 @@ const TCHAR* CFormatManager::MyGetDateFormat(
 
 
 
-/* ‚ğƒtƒH[ƒ}ƒbƒg */
+/* æ™‚åˆ»ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
 const TCHAR* CFormatManager::MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* pszDest, int nDestLen )
 {
 	return MyGetTimeFormat(
@@ -85,7 +85,7 @@ const TCHAR* CFormatManager::MyGetTimeFormat( const SYSTEMTIME& systime, TCHAR* 
 	);
 }
 
-/* ‚ğƒtƒH[ƒ}ƒbƒg */
+/* æ™‚åˆ»ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ */
 const TCHAR* CFormatManager::MyGetTimeFormat(
 	const SYSTEMTIME&	systime,
 	TCHAR*			pszDest,

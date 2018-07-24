@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -31,25 +31,25 @@
 #include "CFileExt.h"
 #include <Shlwapi.h>	// PathMatchSpec
 
-const TCHAR* CDocTypeManager::m_typeExtSeps = _T(" ;,");	// ƒ^ƒCƒv•ÊŠg’£q ‹æØ‚è•¶š
-const TCHAR* CDocTypeManager::m_typeExtWildcards = _T("*?");	// ƒ^ƒCƒv•ÊŠg’£q ƒƒCƒ‹ƒhƒJ[ƒh
+const TCHAR* CDocTypeManager::m_typeExtSeps = _T(" ;,");	// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ åŒºåˆ‡ã‚Šæ–‡å­—
+const TCHAR* CDocTypeManager::m_typeExtWildcards = _T("*?");	// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
 
 /*!
-	ƒtƒ@ƒCƒ‹–¼‚©‚çAƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒvi”’lj‚ğæ“¾‚·‚é
+	ãƒ•ã‚¡ã‚¤ãƒ«åã‹ã‚‰ã€ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ï¼ˆæ•°å€¤ï¼‰ã‚’å–å¾—ã™ã‚‹
 	
-	@param pszFilePath [in] ƒtƒ@ƒCƒ‹–¼
+	@param pszFilePath [in] ãƒ•ã‚¡ã‚¤ãƒ«å
 	
-	Šg’£q‚ğØ‚èo‚µ‚Ä GetDocumentTypeOfExt ‚É“n‚·‚¾‚¯D
-	@date 2014.12.06 syat ƒƒCƒ‹ƒhƒJ[ƒh‘Î‰B‚QdŠg’£q‘Î‰‚ğ‚â‚ß‚é
+	æ‹¡å¼µå­ã‚’åˆ‡ã‚Šå‡ºã—ã¦ GetDocumentTypeOfExt ã«æ¸¡ã™ã ã‘ï¼
+	@date 2014.12.06 syat ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰å¯¾å¿œã€‚ï¼’é‡æ‹¡å¼µå­å¯¾å¿œã‚’ã‚„ã‚ã‚‹
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 {
 	int		i;
 
-	// ƒtƒ@ƒCƒ‹–¼‚ğ’Šo
+	// ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŠ½å‡º
 	const TCHAR* pszFileName = pszFilePath;
 	const TCHAR* pszSep = _tcsrchr(pszFilePath, _T('\\'));
 	if (pszSep) {
@@ -60,7 +60,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 		const STypeConfigMini* mini;
 		GetTypeConfigMini(CTypeConfig(i), &mini);
 		if (IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
-			return CTypeConfig(i);	//	”Ô†
+			return CTypeConfig(i);	//	ç•ªå·
 		}
 	}
 	return CTypeConfig(0);
@@ -68,15 +68,15 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 
 
 /*!
-	Šg’£q‚©‚çAƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒvi”’lj‚ğæ“¾‚·‚é
+	æ‹¡å¼µå­ã‹ã‚‰ã€ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ï¼ˆæ•°å€¤ï¼‰ã‚’å–å¾—ã™ã‚‹
 	
-	@param pszExt [in] Šg’£q (æ“ª‚Ì.‚ÍŠÜ‚Ü‚È‚¢)
+	@param pszExt [in] æ‹¡å¼µå­ (å…ˆé ­ã®.ã¯å«ã¾ãªã„)
 	
-	w’è‚³‚ê‚½Šg’£q‚Ì‘®‚·‚é•¶‘ƒ^ƒCƒv”Ô†‚ğ•Ô‚·D
-	‚Æ‚è‚ ‚¦‚¸¡‚Ì‚Æ‚±‚ë‚Íƒ^ƒCƒv‚ÍŠg’£q‚Ì‚İ‚ÉˆË‘¶‚·‚é‚Æ‰¼’è‚µ‚Ä‚¢‚éD
-	ƒtƒ@ƒCƒ‹‘S‘Ì‚ÌŒ`®‚É‘Î‰‚³‚¹‚é‚Æ‚«‚ÍC‚Ü‚½l‚¦’¼‚·D
-	@date 2012.10.22 Moca ‚QdŠg’£q, Šg’£q‚È‚µ‚É‘Î‰
-	@date 2014.12.06 syat GetDocumentTypeOfPath‚É“‡
+	æŒ‡å®šã•ã‚ŒãŸæ‹¡å¼µå­ã®å±ã™ã‚‹æ–‡æ›¸ã‚¿ã‚¤ãƒ—ç•ªå·ã‚’è¿”ã™ï¼
+	ã¨ã‚Šã‚ãˆãšä»Šã®ã¨ã“ã‚ã¯ã‚¿ã‚¤ãƒ—ã¯æ‹¡å¼µå­ã®ã¿ã«ä¾å­˜ã™ã‚‹ã¨ä»®å®šã—ã¦ã„ã‚‹ï¼
+	ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“ã®å½¢å¼ã«å¯¾å¿œã•ã›ã‚‹ã¨ãã¯ï¼Œã¾ãŸè€ƒãˆç›´ã™ï¼
+	@date 2012.10.22 Moca ï¼’é‡æ‹¡å¼µå­, æ‹¡å¼µå­ãªã—ã«å¯¾å¿œ
+	@date 2014.12.06 syat GetDocumentTypeOfPathã«çµ±åˆ
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 {
@@ -94,7 +94,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
 			return CTypeConfig(i);
 		}
 	}
-	return CTypeConfig(-1);	//	ƒnƒYƒŒ
+	return CTypeConfig(-1);	//	ãƒã‚ºãƒ¬
 }
 
 bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type)
@@ -128,12 +128,12 @@ bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig
 	return false;
 }
 
-/*! ƒ^ƒCƒv•Êİ’è(mini)æ“¾
-	@param cDocumentType [in] ƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒv
-	@param type [out] ƒ^ƒCƒv•Êİ’è(mini)
+/*! ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š(mini)å–å¾—
+	@param cDocumentType [in] ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—
+	@param type [out] ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š(mini)
 
-	@retval true  ³í
-	@retval false ˆÙí
+	@retval true  æ­£å¸¸
+	@retval false ç•°å¸¸
 */
 bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type)
 {
@@ -158,10 +158,10 @@ bool CDocTypeManager::DelTypeConfig(CTypeConfig cDocumentType)
 }
 
 /*!
-	ƒ^ƒCƒv•ÊŠg’£q‚Éƒtƒ@ƒCƒ‹–¼‚ªƒ}ƒbƒ`‚·‚é‚©
+	ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã«ãƒ•ã‚¡ã‚¤ãƒ«åãŒãƒãƒƒãƒã™ã‚‹ã‹
 	
-	@param pszTypeExts [in] ƒ^ƒCƒv•ÊŠg’£qiƒƒCƒ‹ƒhƒJ[ƒh‚ğŠÜ‚Şj
-	@param pszFileName [in] ƒtƒ@ƒCƒ‹–¼
+	@param pszTypeExts [in] ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ï¼ˆãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰ã‚’å«ã‚€ï¼‰
+	@param pszFileName [in] ãƒ•ã‚¡ã‚¤ãƒ«å
 */
 bool CDocTypeManager::IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName)
 {
@@ -190,11 +190,11 @@ bool CDocTypeManager::IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* psz
 }
 
 /*!
-	ƒ^ƒCƒv•ÊŠg’£q‚Ìæ“ªŠg’£q‚ğæ“¾‚·‚é
+	ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã®å…ˆé ­æ‹¡å¼µå­ã‚’å–å¾—ã™ã‚‹
 	
-	@param pszTypeExts [in] ƒ^ƒCƒv•ÊŠg’£qiƒƒCƒ‹ƒhƒJ[ƒh‚ğŠÜ‚Şj
-	@param szFirstExt  [out] æ“ªŠg’£q
-	@param nBuffSize   [in] æ“ªŠg’£q‚Ìƒoƒbƒtƒ@ƒTƒCƒY
+	@param pszTypeExts [in] ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ï¼ˆãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰ã‚’å«ã‚€ï¼‰
+	@param szFirstExt  [out] å…ˆé ­æ‹¡å¼µå­
+	@param nBuffSize   [in] å…ˆé ­æ‹¡å¼µå­ã®ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚º
 */
 void CDocTypeManager::GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize)
 {
@@ -214,19 +214,19 @@ void CDocTypeManager::GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], 
 	return;
 }
 
-/*! ƒ^ƒCƒv•Êİ’è‚ÌŠg’£qƒŠƒXƒg‚ğƒ_ƒCƒAƒƒO—pƒŠƒXƒg‚É•ÏŠ·‚·‚é
-	@param pszSrcExt [in]  Šg’£qƒŠƒXƒg —áu.c .cpp;.hv
-	@param pszDstExt [out] Šg’£qƒŠƒXƒg —áu*.c;*.cpp;*.hv
-	@param szExt [in] ƒŠƒXƒg‚Ìæ“ª‚É‚·‚éŠg’£q —áu.hv
+/*! ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®æ‹¡å¼µå­ãƒªã‚¹ãƒˆã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ç”¨ãƒªã‚¹ãƒˆã«å¤‰æ›ã™ã‚‹
+	@param pszSrcExt [in]  æ‹¡å¼µå­ãƒªã‚¹ãƒˆ ä¾‹ã€Œ.c .cpp;.hã€
+	@param pszDstExt [out] æ‹¡å¼µå­ãƒªã‚¹ãƒˆ ä¾‹ã€Œ*.c;*.cpp;*.hã€
+	@param szExt [in] ãƒªã‚¹ãƒˆã®å…ˆé ­ã«ã™ã‚‹æ‹¡å¼µå­ ä¾‹ã€Œ.hã€
 
-	@date 2014.12.06 syat CFileExt‚©‚çˆÚ“®
+	@date 2014.12.06 syat CFileExtã‹ã‚‰ç§»å‹•
 */
 bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt )
 {
 	TCHAR	*token;
 	TCHAR	*p;
 
-	//	2003.08.14 MIK NULL‚¶‚á‚È‚­‚Äfalse
+	//	2003.08.14 MIK NULLã˜ã‚ƒãªãã¦false
 	if( NULL == pszSrcExt ) return false;
 	if( NULL == pszDstExt ) return false;
 
@@ -234,7 +234,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCH
 	_tcscpy( pszDstExt, _T("") );
 
 	if (szExt != NULL && szExt[0] != _T('\0')) {
-		// ƒtƒ@ƒCƒ‹ƒpƒX‚ª‚ ‚èAŠg’£q‚ ‚è‚Ìê‡Aƒgƒbƒv‚Éw’è
+		// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ãŒã‚ã‚Šã€æ‹¡å¼µå­ã‚ã‚Šã®å ´åˆã€ãƒˆãƒƒãƒ—ã«æŒ‡å®š
 		_tcscpy(pszDstExt, _T("*"));
 		_tcscat(pszDstExt, szExt);
 	}
@@ -244,7 +244,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCH
 	{
 		if (szExt == NULL || szExt[0] == _T('\0') || auto_stricmp(token, szExt + 1) != 0) {
 			if( pszDstExt[0] != '\0' ) _tcscat( pszDstExt, _T(";") );
-			// Šg’£qw’è‚È‚µA‚Ü‚½‚Íƒ}ƒbƒ`‚µ‚½Šg’£q‚Å‚È‚¢
+			// æ‹¡å¼µå­æŒ‡å®šãªã—ã€ã¾ãŸã¯ãƒãƒƒãƒã—ãŸæ‹¡å¼µå­ã§ãªã„
 			if (_tcspbrk(token, m_typeExtWildcards) == NULL) {
 				if (_T('.') == *token) _tcscat(pszDstExt, _T("*"));
 				else                 _tcscat(pszDstExt, _T("*."));
@@ -254,6 +254,6 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCH
 
 		token = _tcstok( NULL, m_typeExtSeps );
 	}
-	free( p );	// 2003.05.20 MIK ƒƒ‚ƒŠ‰ğ•ú˜R‚ê
+	free( p );	// 2003.05.20 MIK ãƒ¡ãƒ¢ãƒªè§£æ”¾æ¼ã‚Œ
 	return true;
 }

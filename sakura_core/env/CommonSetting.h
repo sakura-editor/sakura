@@ -1,4 +1,4 @@
-//2007.09.28 kobake Common®—
+ï»¿//2007.09.28 kobake Commonæ•´ç†
 /*
 	Copyright (C) 2008, kobake
 
@@ -30,138 +30,138 @@
 #include "func/CFuncLookup.h" //MacroRec
 #include "io/CFile.h" //EShareMode
 
-// Apr. 05, 2003 genta WindowCaption—p—Ìˆæi•ÏŠ·‘Oj‚Ì’·‚³
+// Apr. 05, 2003 genta WindowCaptionç”¨é ˜åŸŸï¼ˆå¤‰æ›å‰ï¼‰ã®é•·ã•
 static const int MAX_CAPTION_CONF_LEN = 256;
 
 static const int MAX_DATETIMEFOREMAT_LEN	= 100;
 static const int MAX_CUSTOM_MENU			=  25;
 static const int MAX_CUSTOM_MENU_NAME_LEN	=  32;
 static const int MAX_CUSTOM_MENU_ITEMS		=  48;
-static const int MAX_TOOLBAR_BUTTON_ITEMS	= 512;	//ƒc[ƒ‹ƒo[‚É“o˜^‰Â”\‚Èƒ{ƒ^ƒ“Å‘å”	
-static const int MAX_TOOLBAR_ICON_X			=  32;	//ƒAƒCƒRƒ“BMP‚ÌŒ…”
-static const int MAX_TOOLBAR_ICON_Y			=  15;	//ƒAƒCƒRƒ“BMP‚Ì’i”
+static const int MAX_TOOLBAR_BUTTON_ITEMS	= 512;	//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ç™»éŒ²å¯èƒ½ãªãƒœã‚¿ãƒ³æœ€å¤§æ•°	
+static const int MAX_TOOLBAR_ICON_X			=  32;	//ã‚¢ã‚¤ã‚³ãƒ³BMPã®æ¡æ•°
+static const int MAX_TOOLBAR_ICON_Y			=  15;	//ã‚¢ã‚¤ã‚³ãƒ³BMPã®æ®µæ•°
 static const int MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON_Y; // =480
-//Oct. 22, 2000 JEPRO ƒAƒCƒRƒ“‚ÌÅ‘å“o˜^”‚ğ128ŒÂ‘‚â‚µ‚½(256¨384)	
-//2010/3/14 Uchi ƒAƒCƒRƒ“‚ÌÅ‘å“o˜^”‚ğ32ŒÂ‘‚â‚µ‚½(384¨416)
-//2010/6/26 syat ƒAƒCƒRƒ“‚ÌÅ‘å“o˜^”‚ğ15’i‚É‘‚â‚µ‚½(416¨480)
+//Oct. 22, 2000 JEPRO ã‚¢ã‚¤ã‚³ãƒ³ã®æœ€å¤§ç™»éŒ²æ•°ã‚’128å€‹å¢—ã‚„ã—ãŸ(256â†’384)	
+//2010/3/14 Uchi ã‚¢ã‚¤ã‚³ãƒ³ã®æœ€å¤§ç™»éŒ²æ•°ã‚’32å€‹å¢—ã‚„ã—ãŸ(384â†’416)
+//2010/6/26 syat ã‚¢ã‚¤ã‚³ãƒ³ã®æœ€å¤§ç™»éŒ²æ•°ã‚’15æ®µã«å¢—ã‚„ã—ãŸ(416â†’480)
 
 
-// ‹Œ”Å‚Æˆá‚¢AboolŒ^g‚¦‚é‚æ‚¤‚É‚µ‚Ä‚ ‚è‚Ü‚· by kobake
+// æ—§ç‰ˆã¨é•ã„ã€boolå‹ä½¿ãˆã‚‹ã‚ˆã†ã«ã—ã¦ã‚ã‚Šã¾ã™ by kobake
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ‘S”Ê                              //
+//                           å…¨èˆ¬                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_General
 {
 	//	Jul. 3, 2000 genta
-	//	ƒAƒNƒZƒXŠÖ”(ŠÈˆÕ)
-	//	int‚ğƒrƒbƒg’PˆÊ‚É•ªŠ„‚µ‚Äg‚¤
-	//	‰º4bit‚ğCaretType‚É“–‚Ä‚Ä‚¨‚­(«—ˆ‚Ì—\–ñ‚Å‘½‚ß‚Éæ‚Á‚Ä‚¨‚­)
+	//	ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°(ç°¡æ˜“)
+	//	intã‚’ãƒ“ãƒƒãƒˆå˜ä½ã«åˆ†å‰²ã—ã¦ä½¿ã†
+	//	ä¸‹4bitã‚’CaretTypeã«å½“ã¦ã¦ãŠã(å°†æ¥ã®äºˆç´„ã§å¤šã‚ã«å–ã£ã¦ãŠã)
 	int		GetCaretType(void) const { return m_nCaretType & 0xf; }
 	void	SetCaretType(const int f){ m_nCaretType &= ~0xf; m_nCaretType |= f & 0xf; }
 
-	//ƒJ[ƒ\ƒ‹
-	int		m_nCaretType;							//!< ƒJ[ƒ\ƒ‹‚Ìƒ^ƒCƒv 0=win 1=dos 
-	bool	m_bIsINSMode;							//!< ‘}“ü^ã‘‚«ƒ‚[ƒh
-	bool	m_bIsFreeCursorMode;					//!< ƒtƒŠ[ƒJ[ƒ\ƒ‹ƒ‚[ƒh‚©
-	BOOL	m_bStopsBothEndsWhenSearchWord;			//!< ’PŒê’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’PŒê‚Ì—¼’[‚Å~‚Ü‚é‚©
-	BOOL	m_bStopsBothEndsWhenSearchParagraph;	//!< ’i—’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’i—‚Ì—¼’[‚Å~‚Ü‚é‚©
-	BOOL	m_bNoCaretMoveByActivation;				//!< ƒ}ƒEƒXƒNƒŠƒbƒN‚É‚ÄƒAƒNƒeƒBƒx[ƒg‚³‚ê‚½‚ÍƒJ[ƒ\ƒ‹ˆÊ’u‚ğˆÚ“®‚µ‚È‚¢  2007.10.02 nasukoji (add by genta)
+	//ã‚«ãƒ¼ã‚½ãƒ«
+	int		m_nCaretType;							//!< ã‚«ãƒ¼ã‚½ãƒ«ã®ã‚¿ã‚¤ãƒ— 0=win 1=dos 
+	bool	m_bIsINSMode;							//!< æŒ¿å…¥ï¼ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰
+	bool	m_bIsFreeCursorMode;					//!< ãƒ•ãƒªãƒ¼ã‚«ãƒ¼ã‚½ãƒ«ãƒ¢ãƒ¼ãƒ‰ã‹
+	BOOL	m_bStopsBothEndsWhenSearchWord;			//!< å˜èªå˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€å˜èªã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹
+	BOOL	m_bStopsBothEndsWhenSearchParagraph;	//!< æ®µè½å˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€æ®µè½ã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹
+	BOOL	m_bNoCaretMoveByActivation;				//!< ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã«ã¦ã‚¢ã‚¯ãƒ†ã‚£ãƒ™ãƒ¼ãƒˆã•ã‚ŒãŸæ™‚ã¯ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ç§»å‹•ã—ãªã„  2007.10.02 nasukoji (add by genta)
 
-	//ƒXƒNƒ[ƒ‹
-	CLayoutInt		m_nRepeatedScrollLineNum;		//!< ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹s”
-	int		m_nRepeatedMoveCaretNum;				//!< ƒL[ƒŠƒs[ƒg‚Ì¶‰EˆÚ“®”
-	BOOL	m_nRepeatedScroll_Smooth;				//!< ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹‚ğŠŠ‚ç‚©‚É‚·‚é‚©
-	int		m_nPageScrollByWheel;					//!< ƒL[/ƒ}ƒEƒXƒ{ƒ^ƒ“ + ƒzƒC[ƒ‹ƒXƒNƒ[ƒ‹‚Åƒy[ƒWUP/DOWN‚·‚é	// 2009.01.17 nasukoji
-	int		m_nHorizontalScrollByWheel;				//!< ƒL[/ƒ}ƒEƒXƒ{ƒ^ƒ“ + ƒzƒC[ƒ‹ƒXƒNƒ[ƒ‹‚Å‰¡ƒXƒNƒ[ƒ‹‚·‚é	// 2009.01.17 nasukoji
+	//ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
+	CLayoutInt		m_nRepeatedScrollLineNum;		//!< ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¡Œæ•°
+	int		m_nRepeatedMoveCaretNum;				//!< ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®å·¦å³ç§»å‹•æ•°
+	BOOL	m_nRepeatedScroll_Smooth;				//!< ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’æ»‘ã‚‰ã‹ã«ã™ã‚‹ã‹
+	int		m_nPageScrollByWheel;					//!< ã‚­ãƒ¼/ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ + ãƒ›ã‚¤ãƒ¼ãƒ«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã§ãƒšãƒ¼ã‚¸UP/DOWNã™ã‚‹	// 2009.01.17 nasukoji
+	int		m_nHorizontalScrollByWheel;				//!< ã‚­ãƒ¼/ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ + ãƒ›ã‚¤ãƒ¼ãƒ«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã§æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹	// 2009.01.17 nasukoji
 
-	//ƒ^ƒXƒNƒgƒŒƒC
-	BOOL	m_bUseTaskTray;					//!< ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ğg‚¤
-	BOOL	m_bStayTaskTray;				//!< ƒ^ƒXƒNƒgƒŒƒC‚ÌƒAƒCƒRƒ“‚ğí’“
-	WORD	m_wTrayMenuHotKeyCode;			//!< ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[ ƒL[
-	WORD	m_wTrayMenuHotKeyMods;			//!< ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[ ƒL[
+	//ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤
+	BOOL	m_bUseTaskTray;					//!< ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’ä½¿ã†
+	BOOL	m_bStayTaskTray;				//!< ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã®ã‚¢ã‚¤ã‚³ãƒ³ã‚’å¸¸é§
+	WORD	m_wTrayMenuHotKeyCode;			//!< ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ã‚­ãƒ¼
+	WORD	m_wTrayMenuHotKeyMods;			//!< ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ã‚­ãƒ¼
 
-	//—š—ğ
-	int		m_nMRUArrNum_MAX;				//!< ƒtƒ@ƒCƒ‹‚Ì—š—ğMAX
-	int		m_nOPENFOLDERArrNum_MAX;		//!< ƒtƒHƒ‹ƒ_‚Ì—š—ğMAX
+	//å±¥æ­´
+	int		m_nMRUArrNum_MAX;				//!< ãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAX
+	int		m_nOPENFOLDERArrNum_MAX;		//!< ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´MAX
 
-	//ƒm[ƒJƒeƒSƒŠ
-	BOOL	m_bCloseAllConfirm;				//!< [‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é	// 2006.12.25 ryoji
-	BOOL	m_bExitConfirm;					//!< I—¹‚ÌŠm”F‚ğ‚·‚é
+	//ãƒãƒ¼ã‚«ãƒ†ã‚´ãƒª
+	BOOL	m_bCloseAllConfirm;				//!< [ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹	// 2006.12.25 ryoji
+	BOOL	m_bExitConfirm;					//!< çµ‚äº†æ™‚ã®ç¢ºèªã‚’ã™ã‚‹
 
-	//INI“àİ’è‚Ì‚İ
-	BOOL	m_bDispExitingDialog;			//!< I—¹ƒ_ƒCƒAƒƒO‚ğ•\¦‚·‚é
+	//INIå†…è¨­å®šã®ã¿
+	BOOL	m_bDispExitingDialog;			//!< çµ‚äº†ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã™ã‚‹
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒEƒBƒ“ƒhƒE                           //
+//                        ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2004.05.13 Moca
-//! ƒEƒBƒ“ƒhƒEƒTƒCƒYEˆÊ’u‚Ì§Œä•û–@
+//! ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºãƒ»ä½ç½®ã®åˆ¶å¾¡æ–¹æ³•
 enum EWinSizeMode{
-	WINSIZEMODE_DEF		= 0, //!< w’è‚È‚µ
-	WINSIZEMODE_SAVE	= 1, //!< Œp³(•Û‘¶)
-	WINSIZEMODE_SET		= 2  //!< ’¼Úw’è(ŒÅ’è)
+	WINSIZEMODE_DEF		= 0, //!< æŒ‡å®šãªã—
+	WINSIZEMODE_SAVE	= 1, //!< ç¶™æ‰¿(ä¿å­˜)
+	WINSIZEMODE_SET		= 2  //!< ç›´æ¥æŒ‡å®š(å›ºå®š)
 };
 
 struct CommonSetting_Window
 {
-	//Šî–{İ’è
-	BOOL			m_bDispTOOLBAR;				//!< Ÿ‰ñƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚½‚Æ‚«ƒc[ƒ‹ƒo[‚ğ•\¦‚·‚é
-	BOOL			m_bDispSTATUSBAR;			//!< Ÿ‰ñƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚½‚Æ‚«ƒXƒe[ƒ^ƒXƒo[‚ğ•\¦‚·‚é
-	BOOL			m_bDispFUNCKEYWND;			//!< Ÿ‰ñƒEƒBƒ“ƒhƒE‚ğŠJ‚¢‚½‚Æ‚«ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ğ•\¦‚·‚é
-	bool			m_bDispMiniMap;				//!< ƒ~ƒjƒ}ƒbƒv‚ğ•\¦‚·‚é
-	BOOL			m_bMenuIcon;				//!< ƒƒjƒ…[‚ÉƒAƒCƒRƒ“‚ğ•\¦‚·‚é (ƒAƒCƒRƒ“•t‚«ƒƒjƒ…[)
-	BOOL			m_bScrollBarHorz;			//!< …•½ƒXƒNƒ[ƒ‹ƒo[‚ğg‚¤
-	BOOL			m_bUseCompatibleBMP;		//!< Äì‰æ—pŒİŠ·ƒrƒbƒgƒ}ƒbƒv‚ğg‚¤ 2007.09.09 Moca
+	//åŸºæœ¬è¨­å®š
+	BOOL			m_bDispTOOLBAR;				//!< æ¬¡å›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã„ãŸã¨ããƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹
+	BOOL			m_bDispSTATUSBAR;			//!< æ¬¡å›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã„ãŸã¨ãã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹
+	BOOL			m_bDispFUNCKEYWND;			//!< æ¬¡å›ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã„ãŸã¨ããƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹
+	bool			m_bDispMiniMap;				//!< ãƒŸãƒ‹ãƒãƒƒãƒ—ã‚’è¡¨ç¤ºã™ã‚‹
+	BOOL			m_bMenuIcon;				//!< ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹ (ã‚¢ã‚¤ã‚³ãƒ³ä»˜ããƒ¡ãƒ‹ãƒ¥ãƒ¼)
+	BOOL			m_bScrollBarHorz;			//!< æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’ä½¿ã†
+	BOOL			m_bUseCompatibleBMP;		//!< å†ä½œç”»ç”¨äº’æ›ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä½¿ã† 2007.09.09 Moca
 
-	//ˆÊ’u‚Æ‘å‚«‚³‚Ìİ’è
-	EWinSizeMode	m_eSaveWindowSize;			//!< ƒEƒBƒ“ƒhƒEƒTƒCƒYŒp³EŒÅ’è EWinSizeMode‚É‡‚¸‚é 2004.05.13 Moca
-	int				m_nWinSizeType;				//!< ‘å‚«‚³‚Ìw’è
-	int				m_nWinSizeCX;				//!< ’¼Úw’è •
-	int				m_nWinSizeCY;				//!< ’¼Úw’è ‚‚³
-	EWinSizeMode	m_eSaveWindowPos;			//!< ƒEƒBƒ“ƒhƒEˆÊ’uŒp³EŒÅ’è EWinSizeMode‚É‡‚¸‚é 2004.05.13 Moca
-	int				m_nWinPosX;					//!< ’¼Úw’è XÀ•W
-	int				m_nWinPosY;					//!< ’¼Úw’è YÀ•W
+	//ä½ç½®ã¨å¤§ãã•ã®è¨­å®š
+	EWinSizeMode	m_eSaveWindowSize;			//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºç¶™æ‰¿ãƒ»å›ºå®š EWinSizeModeã«é †ãšã‚‹ 2004.05.13 Moca
+	int				m_nWinSizeType;				//!< å¤§ãã•ã®æŒ‡å®š
+	int				m_nWinSizeCX;				//!< ç›´æ¥æŒ‡å®š å¹…
+	int				m_nWinSizeCY;				//!< ç›´æ¥æŒ‡å®š é«˜ã•
+	EWinSizeMode	m_eSaveWindowPos;			//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½ç½®ç¶™æ‰¿ãƒ»å›ºå®š EWinSizeModeã«é †ãšã‚‹ 2004.05.13 Moca
+	int				m_nWinPosX;					//!< ç›´æ¥æŒ‡å®š Xåº§æ¨™
+	int				m_nWinPosY;					//!< ç›´æ¥æŒ‡å®š Yåº§æ¨™
 
-	//ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[
-	int				m_nFUNCKEYWND_Place;		//!< ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[•\¦ˆÊ’u^0:ã 1:‰º
-	int				m_nFUNCKEYWND_GroupNum;		//!< 2002/11/04 Moca ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ÌƒOƒ‹[ƒvƒ{ƒ^ƒ“”
+	//ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼
+	int				m_nFUNCKEYWND_Place;		//!< ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼è¡¨ç¤ºä½ç½®ï¼0:ä¸Š 1:ä¸‹
+	int				m_nFUNCKEYWND_GroupNum;		//!< 2002/11/04 Moca ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®ã‚°ãƒ«ãƒ¼ãƒ—ãƒœã‚¿ãƒ³æ•°
 
-	//ƒ‹[ƒ‰[Es”Ô†
-	int				m_nRulerHeight;				//!< ƒ‹[ƒ‰[‚‚³
-	int				m_nRulerBottomSpace;		//!< ƒ‹[ƒ‰[‚ÆƒeƒLƒXƒg‚ÌŒ„ŠÔ
-	int				m_nRulerType;				//!< ƒ‹[ƒ‰[‚Ìƒ^ƒCƒv $$$–¢g—p‚Á‚Û‚¢
-	int				m_nLineNumRightSpace;		//!< s”Ô†‚Ì‰E‚ÌƒXƒy[ƒX Sep. 18, 2002 genta
+	//ãƒ«ãƒ¼ãƒ©ãƒ¼ãƒ»è¡Œç•ªå·
+	int				m_nRulerHeight;				//!< ãƒ«ãƒ¼ãƒ©ãƒ¼é«˜ã•
+	int				m_nRulerBottomSpace;		//!< ãƒ«ãƒ¼ãƒ©ãƒ¼ã¨ãƒ†ã‚­ã‚¹ãƒˆã®éš™é–“
+	int				m_nRulerType;				//!< ãƒ«ãƒ¼ãƒ©ãƒ¼ã®ã‚¿ã‚¤ãƒ— $$$æœªä½¿ç”¨ã£ã½ã„
+	int				m_nLineNumRightSpace;		//!< è¡Œç•ªå·ã®å³ã®ã‚¹ãƒšãƒ¼ã‚¹ Sep. 18, 2002 genta
 
-	//•ªŠ„ƒEƒBƒ“ƒhƒE
-	BOOL			m_bSplitterWndHScroll;		//!< •ªŠ„ƒEƒBƒ“ƒhƒE‚Ì…•½ƒXƒNƒ[ƒ‹‚Ì“¯Šú‚ğ‚Æ‚é 2001/06/20 asa-o
-	BOOL			m_bSplitterWndVScroll;		//!< •ªŠ„ƒEƒBƒ“ƒhƒE‚Ì‚’¼ƒXƒNƒ[ƒ‹‚Ì“¯Šú‚ğ‚Æ‚é 2001/06/20 asa-o
+	//åˆ†å‰²ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	BOOL			m_bSplitterWndHScroll;		//!< åˆ†å‰²ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ°´å¹³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã®åŒæœŸã‚’ã¨ã‚‹ 2001/06/20 asa-o
+	BOOL			m_bSplitterWndVScroll;		//!< åˆ†å‰²ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å‚ç›´ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã®åŒæœŸã‚’ã¨ã‚‹ 2001/06/20 asa-o
 
-	//ƒ^ƒCƒgƒ‹ƒo[
-	TCHAR			m_szWindowCaptionActive  [MAX_CAPTION_CONF_LEN];	//!< ƒ^ƒCƒgƒ‹ƒo[(ƒAƒNƒeƒBƒu)
-	TCHAR			m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< ƒ^ƒCƒgƒ‹ƒo[(”ñƒAƒNƒeƒBƒu)
+	//ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼
+	TCHAR			m_szWindowCaptionActive  [MAX_CAPTION_CONF_LEN];	//!< ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼(ã‚¢ã‚¯ãƒ†ã‚£ãƒ–æ™‚)
+	TCHAR			m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];	//!< ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼(éã‚¢ã‚¯ãƒ†ã‚£ãƒ–æ™‚)
 
-	//INI“àİ’è‚Ì‚İ
-	int				m_nVertLineOffset;			//!< cü‚Ì•`‰æÀ•WƒIƒtƒZƒbƒg 2005.11.10 Moca
+	//INIå†…è¨­å®šã®ã¿
+	int				m_nVertLineOffset;			//!< ç¸¦ç·šã®æç”»åº§æ¨™ã‚ªãƒ•ã‚»ãƒƒãƒˆ 2005.11.10 Moca
 
-	//Œ¾Œê‘I‘ğ
-	TCHAR			m_szLanguageDll[MAX_PATH];	//!< Œ¾ŒêDLLƒtƒ@ƒCƒ‹–¼
+	//è¨€èªé¸æŠ
+	TCHAR			m_szLanguageDll[MAX_PATH];	//!< è¨€èªDLLãƒ•ã‚¡ã‚¤ãƒ«å
 
-	//ƒ~ƒjƒ}ƒbƒv
+	//ãƒŸãƒ‹ãƒãƒƒãƒ—
 	int				m_nMiniMapFontSize;
 	int				m_nMiniMapQuality;
 	int				m_nMiniMapWidth;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒ^ƒuƒo[                            //
+//                         ã‚¿ãƒ–ãƒãƒ¼                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//! •Â‚¶‚éƒ{ƒ^ƒ“
+//! é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³
 enum EDispTabClose{
-	DISPTABCLOSE_NO			= 0, //!< ‚È‚µ
-	DISPTABCLOSE_ALLWAYS	= 1, //!< í‚É•\¦
-	DISPTABCLOSE_AUTO		= 2  //!< ©“®•\¦
+	DISPTABCLOSE_NO			= 0, //!< ãªã—
+	DISPTABCLOSE_ALLWAYS	= 1, //!< å¸¸ã«è¡¨ç¤º
+	DISPTABCLOSE_AUTO		= 2  //!< è‡ªå‹•è¡¨ç¤º
 };
 
 enum ETabPosition{
@@ -174,127 +174,127 @@ enum ETabPosition{
 
 struct CommonSetting_TabBar
 {
-	BOOL		m_bDispTabWnd;					//!< ƒ^ƒuƒEƒCƒ“ƒhƒE•\¦‚·‚é	//@@@ 2003.05.31 MIK
-	BOOL		m_bDispTabWndMultiWin;			//!< ƒ^ƒu‚ğ‚Ü‚Æ‚ß‚È‚¢	//@@@ 2003.05.31 MIK
-	BOOL		m_bTab_RetainEmptyWin;			//!< ÅŒã‚Ì•¶‘‚ª•Â‚¶‚ç‚ê‚½‚Æ‚«(–³‘è)‚ğc‚·
-	BOOL		m_bTab_CloseOneWin;				//!< ƒ^ƒuƒ‚[ƒh‚Å‚àƒEƒBƒ“ƒhƒE‚Ì•Â‚¶‚éƒ{ƒ^ƒ“‚ÅŒ»İ‚Ìƒtƒ@ƒCƒ‹‚Ì‚İ•Â‚¶‚é
-	BOOL		m_bNewWindow;					//!< ŠO•”‚©‚ç‹N“®‚·‚é‚Æ‚«‚ÍV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­
-	bool		m_bTabMultiLine;				//!< ƒ^ƒu‘½’i
-	ETabPosition	m_eTabPosition;				//!<ƒ^ƒuˆÊ’u
+	BOOL		m_bDispTabWnd;					//!< ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã™ã‚‹	//@@@ 2003.05.31 MIK
+	BOOL		m_bDispTabWndMultiWin;			//!< ã‚¿ãƒ–ã‚’ã¾ã¨ã‚ãªã„	//@@@ 2003.05.31 MIK
+	BOOL		m_bTab_RetainEmptyWin;			//!< æœ€å¾Œã®æ–‡æ›¸ãŒé–‰ã˜ã‚‰ã‚ŒãŸã¨ã(ç„¡é¡Œ)ã‚’æ®‹ã™
+	BOOL		m_bTab_CloseOneWin;				//!< ã‚¿ãƒ–ãƒ¢ãƒ¼ãƒ‰ã§ã‚‚ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã§ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿é–‰ã˜ã‚‹
+	BOOL		m_bNewWindow;					//!< å¤–éƒ¨ã‹ã‚‰èµ·å‹•ã™ã‚‹ã¨ãã¯æ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ã
+	bool		m_bTabMultiLine;				//!< ã‚¿ãƒ–å¤šæ®µ
+	ETabPosition	m_eTabPosition;				//!<ã‚¿ãƒ–ä½ç½®
 
-	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< ƒ^ƒuƒEƒCƒ“ƒhƒEƒLƒƒƒvƒVƒ‡ƒ“	//@@@ 2003.06.13 MIK
-	BOOL		m_bSameTabWidth;				//!< ƒ^ƒu‚ğ“™•‚É‚·‚é			//@@@ 2006.01.28 ryoji
-	BOOL		m_bDispTabIcon;					//!< ƒ^ƒu‚ÉƒAƒCƒRƒ“‚ğ•\¦‚·‚é	//@@@ 2006.01.28 ryoji
-	EDispTabClose	m_bDispTabClose;			//!< ƒ^ƒu‚É•Â‚¶‚éƒ{ƒ^ƒ“‚ğ•\¦‚·‚é	//@@@ 2012.04.14 syat
-	BOOL		m_bSortTabList;					//!< ƒ^ƒuˆê——‚ğƒ\[ƒg‚·‚é	//@@@ 2006.03.23 fon
-	BOOL		m_bTab_ListFull;				//!< ƒ^ƒuˆê——‚ğƒtƒ‹ƒpƒX•\¦‚·‚é	//@@@ 2007.02.28 ryoji
+	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//!< ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³	//@@@ 2003.06.13 MIK
+	BOOL		m_bSameTabWidth;				//!< ã‚¿ãƒ–ã‚’ç­‰å¹…ã«ã™ã‚‹			//@@@ 2006.01.28 ryoji
+	BOOL		m_bDispTabIcon;					//!< ã‚¿ãƒ–ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹	//@@@ 2006.01.28 ryoji
+	EDispTabClose	m_bDispTabClose;			//!< ã‚¿ãƒ–ã«é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹	//@@@ 2012.04.14 syat
+	BOOL		m_bSortTabList;					//!< ã‚¿ãƒ–ä¸€è¦§ã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹	//@@@ 2006.03.23 fon
+	BOOL		m_bTab_ListFull;				//!< ã‚¿ãƒ–ä¸€è¦§ã‚’ãƒ•ãƒ«ãƒ‘ã‚¹è¡¨ç¤ºã™ã‚‹	//@@@ 2007.02.28 ryoji
 
-	BOOL		m_bChgWndByWheel;				//!< ƒ}ƒEƒXƒzƒC[ƒ‹‚ÅƒEƒBƒ“ƒhƒEØ‚è‘Ö‚¦	//@@@ 2006.03.26 ryoji
+	BOOL		m_bChgWndByWheel;				//!< ãƒã‚¦ã‚¹ãƒ›ã‚¤ãƒ¼ãƒ«ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ‡ã‚Šæ›¿ãˆ	//@@@ 2006.03.26 ryoji
 
-	LOGFONT		m_lf;							//!< ƒ^ƒuƒtƒHƒ“ƒg // 2011.12.01 Moca
-	INT			m_nPointSize;					//!< ƒtƒHƒ“ƒgƒTƒCƒYi1/10ƒ|ƒCƒ“ƒg’PˆÊj
-	int			m_nTabMaxWidth;					//!< ƒ^ƒu•‚ÌÅ‘å’l
-	int			m_nTabMinWidth;					//!< ƒ^ƒu•‚ÌÅ¬’l
-	int			m_nTabMinWidthOnMulti;			//!< ƒ^ƒu•‚ÌÅ¬’l(ƒ^ƒu‘½’i)
+	LOGFONT		m_lf;							//!< ã‚¿ãƒ–ãƒ•ã‚©ãƒ³ãƒˆ // 2011.12.01 Moca
+	INT			m_nPointSize;					//!< ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºï¼ˆ1/10ãƒã‚¤ãƒ³ãƒˆå˜ä½ï¼‰
+	int			m_nTabMaxWidth;					//!< ã‚¿ãƒ–å¹…ã®æœ€å¤§å€¤
+	int			m_nTabMinWidth;					//!< ã‚¿ãƒ–å¹…ã®æœ€å°å€¤
+	int			m_nTabMinWidthOnMulti;			//!< ã‚¿ãƒ–å¹…ã®æœ€å°å€¤(ã‚¿ãƒ–å¤šæ®µæ™‚)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           •ÒW                              //
+//                           ç·¨é›†                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//! ƒtƒ@ƒCƒ‹ƒ_ƒCƒAƒƒO‚Ì‰ŠúˆÊ’u
+//! ãƒ•ã‚¡ã‚¤ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸä½ç½®
 enum EOpenDialogDir{
-	OPENDIALOGDIR_CUR, //!< ƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_
-	OPENDIALOGDIR_MRU, //!< Å‹ßg‚Á‚½ƒtƒHƒ‹ƒ_
-	OPENDIALOGDIR_SEL, //!< w’èƒtƒHƒ‹ƒ_
+	OPENDIALOGDIR_CUR, //!< ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€
+	OPENDIALOGDIR_MRU, //!< æœ€è¿‘ä½¿ã£ãŸãƒ•ã‚©ãƒ«ãƒ€
+	OPENDIALOGDIR_SEL, //!< æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€
 };
 
 struct CommonSetting_Edit
 {
-	//ƒRƒs[
-	bool	m_bAddCRLFWhenCopy;			//!< Ü‚è•Ô‚µs‚É‰üs‚ğ•t‚¯‚ÄƒRƒs[
-	BOOL	m_bEnableNoSelectCopy;		//!< ‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚é 2007.11.18 ryoji
-	BOOL	m_bCopyAndDisablSelection;	//!< ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ
-	bool	m_bEnableLineModePaste;		//!< ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é  2007.10.08 ryoji
-	bool	m_bConvertEOLPaste;			//!< ‰üsƒR[ƒh‚ğ•ÏŠ·‚µ‚Ä“\‚è•t‚¯‚é  2009.2.28 salarm
+	//ã‚³ãƒ”ãƒ¼
+	bool	m_bAddCRLFWhenCopy;			//!< æŠ˜ã‚Šè¿”ã—è¡Œã«æ”¹è¡Œã‚’ä»˜ã‘ã¦ã‚³ãƒ”ãƒ¼
+	BOOL	m_bEnableNoSelectCopy;		//!< é¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ 2007.11.18 ryoji
+	BOOL	m_bCopyAndDisablSelection;	//!< ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤
+	bool	m_bEnableLineModePaste;		//!< ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹  2007.10.08 ryoji
+	bool	m_bConvertEOLPaste;			//!< æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ã—ã¦è²¼ã‚Šä»˜ã‘ã‚‹  2009.2.28 salarm
 
-	//ƒhƒ‰ƒbƒO•ƒhƒƒbƒv
-	BOOL	m_bUseOLE_DragDrop;			//!< OLE‚É‚æ‚éƒhƒ‰ƒbƒO & ƒhƒƒbƒv‚ğg‚¤
-	BOOL	m_bUseOLE_DropSource;		//!< OLE‚É‚æ‚éƒhƒ‰ƒbƒOŒ³‚É‚·‚é‚©
+	//ãƒ‰ãƒ©ãƒƒã‚°ï¼†ãƒ‰ãƒ­ãƒƒãƒ—
+	BOOL	m_bUseOLE_DragDrop;			//!< OLEã«ã‚ˆã‚‹ãƒ‰ãƒ©ãƒƒã‚° & ãƒ‰ãƒ­ãƒƒãƒ—ã‚’ä½¿ã†
+	BOOL	m_bUseOLE_DropSource;		//!< OLEã«ã‚ˆã‚‹ãƒ‰ãƒ©ãƒƒã‚°å…ƒã«ã™ã‚‹ã‹
 
-	//ã‘‚«ƒ‚[ƒh
-	BOOL	m_bNotOverWriteCRLF;		//!< ‰üs‚Íã‘‚«‚µ‚È‚¢
-	bool	m_bOverWriteFixMode;		//!< •¶š•‚É‡‚í‚¹‚ÄƒXƒy[ƒX‚ğ‹l‚ß‚é
-	bool	m_bOverWriteBoxDelete;		//!< ã‘‚«ƒ‚[ƒh‚Å‚Ì‹éŒ`“ü—Í‚Å‘I‘ğ”ÍˆÍ‚ğíœ‚·‚é
+	//ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰
+	BOOL	m_bNotOverWriteCRLF;		//!< æ”¹è¡Œã¯ä¸Šæ›¸ãã—ãªã„
+	bool	m_bOverWriteFixMode;		//!< æ–‡å­—å¹…ã«åˆã‚ã›ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã‚‹
+	bool	m_bOverWriteBoxDelete;		//!< ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰ã§ã®çŸ©å½¢å…¥åŠ›ã§é¸æŠç¯„å›²ã‚’å‰Šé™¤ã™ã‚‹
 
-	//ƒNƒŠƒbƒJƒuƒ‹URL
-	BOOL	m_bJumpSingleClickURL;		//!< URL‚ÌƒVƒ“ƒOƒ‹ƒNƒŠƒbƒN‚ÅJump $$$–¢g—p
-	BOOL	m_bSelectClickedURL;		//!< URL‚ªƒNƒŠƒbƒN‚³‚ê‚½‚ç‘I‘ğ‚·‚é‚©
+	//ã‚¯ãƒªãƒƒã‚«ãƒ–ãƒ«URL
+	BOOL	m_bJumpSingleClickURL;		//!< URLã®ã‚·ãƒ³ã‚°ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§Jump $$$æœªä½¿ç”¨
+	BOOL	m_bSelectClickedURL;		//!< URLãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰é¸æŠã™ã‚‹ã‹
 
-	EOpenDialogDir	m_eOpenDialogDir;	//!< ƒtƒ@ƒCƒ‹ƒ_ƒCƒAƒƒO‚Ì‰ŠúˆÊ’u
-	SFilePath	m_OpenDialogSelDir;		//!< w’èƒtƒHƒ‹ƒ_
+	EOpenDialogDir	m_eOpenDialogDir;	//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸä½ç½®
+	SFilePath	m_OpenDialogSelDir;		//!< æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€
 
-	bool	m_bEnableExtEol;			//!< NEL,PS,LS‚ğ‰üsƒR[ƒh‚Æ‚µ‚Ä—˜—p‚·‚é
-	bool	m_bBoxSelectLock;			//!< (‹éŒ`‘I‘ğ)ˆÚ“®‚ÅƒƒbƒN‚·‚é
+	bool	m_bEnableExtEol;			//!< NEL,PS,LSã‚’æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã¨ã—ã¦åˆ©ç”¨ã™ã‚‹
+	bool	m_bBoxSelectLock;			//!< (çŸ©å½¢é¸æŠ)ç§»å‹•ã§ãƒ­ãƒƒã‚¯ã™ã‚‹
 
-	// (ƒ_ƒCƒAƒƒO€–Ú–³‚µ)
-	BOOL	m_bAutoColumnPaste;			//!< ‹éŒ`ƒRƒs[‚ÌƒeƒLƒXƒg‚Íí‚É‹éŒ`“\‚è•t‚¯
+	// (ãƒ€ã‚¤ã‚¢ãƒ­ã‚°é …ç›®ç„¡ã—)
+	BOOL	m_bAutoColumnPaste;			//!< çŸ©å½¢ã‚³ãƒ”ãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã¯å¸¸ã«çŸ©å½¢è²¼ã‚Šä»˜ã‘
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒtƒ@ƒCƒ‹                            //
+//                         ãƒ•ã‚¡ã‚¤ãƒ«                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_File
 {
 public:
-	// ƒJ[ƒ\ƒ‹ˆÊ’u‚ğ•œŒ³‚·‚é‚©‚Ç‚¤‚©  Oct. 27, 2000 genta
+	// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’å¾©å…ƒã™ã‚‹ã‹ã©ã†ã‹  Oct. 27, 2000 genta
 	bool	GetRestoreCurPosition() const		{ return m_bRestoreCurPosition; }
 	void	SetRestoreCurPosition(bool i)		{ m_bRestoreCurPosition = i; }
 
-	// ƒuƒbƒNƒ}[ƒN‚ğ•œŒ³‚·‚é‚©‚Ç‚¤‚©  2002.01.16 hor
+	// ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’å¾©å…ƒã™ã‚‹ã‹ã©ã†ã‹  2002.01.16 hor
 	bool	GetRestoreBookmarks() const			{ return m_bRestoreBookmarks; }
 	void	SetRestoreBookmarks(bool i)			{ m_bRestoreBookmarks = i; }
 
-	// ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚ÉMIME‚Ìdecode‚ğs‚¤‚©  Nov. 12, 2000 genta
+	// ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿æ™‚ã«MIMEã®decodeã‚’è¡Œã†ã‹  Nov. 12, 2000 genta
 	bool	GetAutoMIMEdecode() const			{ return m_bAutoMIMEdecode; }
 	void	SetAutoMIMEdecode(bool i)			{ m_bAutoMIMEdecode = i; }
 
-	// ‘O‰ñ‚Æ•¶šƒR[ƒh‚ªˆÙ‚È‚é‚Æ‚«‚É–â‚¢‡‚í‚¹‚ğs‚¤  Oct. 03, 2004 genta
+	// å‰å›ã¨æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒç•°ãªã‚‹ã¨ãã«å•ã„åˆã‚ã›ã‚’è¡Œã†  Oct. 03, 2004 genta
 	bool	GetQueryIfCodeChange() const		{ return m_bQueryIfCodeChange; }
 	void	SetQueryIfCodeChange(bool i)		{ m_bQueryIfCodeChange = i; }
 	
-	// ŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢‚Æ‚«Œx‚·‚é  Oct. 09, 2004 genta
+	// é–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„ã¨ãè­¦å‘Šã™ã‚‹  Oct. 09, 2004 genta
 	bool	GetAlertIfFileNotExist() const		{ return m_bAlertIfFileNotExist; }
 	void	SetAlertIfFileNotExist(bool i)		{ m_bAlertIfFileNotExist = i; }
 
 public:
-	//ƒtƒ@ƒCƒ‹‚Ì”r‘¼§Œä
-	EShareMode		m_nFileShareMode;		//!< ƒtƒ@ƒCƒ‹‚Ì”r‘¼§Œäƒ‚[ƒh
-	bool			m_bCheckFileTimeStamp;	//!< XV‚ÌŠÄ‹
-	int 			m_nAutoloadDelay;		//!< ©“®“Ç’x‰„
-	bool			m_bUneditableIfUnwritable;	//!< ã‘‚«‹Ö~ŒŸo‚Í•ÒW‹Ö~‚É‚·‚é
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–åˆ¶å¾¡
+	EShareMode		m_nFileShareMode;		//!< ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–åˆ¶å¾¡ãƒ¢ãƒ¼ãƒ‰
+	bool			m_bCheckFileTimeStamp;	//!< æ›´æ–°ã®ç›£è¦–
+	int 			m_nAutoloadDelay;		//!< è‡ªå‹•èª­è¾¼æ™‚é…å»¶
+	bool			m_bUneditableIfUnwritable;	//!< ä¸Šæ›¸ãç¦æ­¢æ¤œå‡ºæ™‚ã¯ç·¨é›†ç¦æ­¢ã«ã™ã‚‹
 
-	//ƒtƒ@ƒCƒ‹‚Ì•Û‘¶
-	bool	m_bEnableUnmodifiedOverwrite;	//!< –³•ÏX‚Å‚àã‘‚«‚·‚é‚©
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜
+	bool	m_bEnableUnmodifiedOverwrite;	//!< ç„¡å¤‰æ›´ã§ã‚‚ä¸Šæ›¸ãã™ã‚‹ã‹
 
-	//u–¼‘O‚ğ•t‚¯‚Ä•Û‘¶v‚Åƒtƒ@ƒCƒ‹‚Ìí—Ş‚ª[ƒ†[ƒU[w’è]‚Ì‚Æ‚«‚Ìƒtƒ@ƒCƒ‹ˆê——•\¦
-	//ƒtƒ@ƒCƒ‹•Û‘¶ƒ_ƒCƒAƒƒO‚ÌƒtƒBƒ‹ƒ^İ’è	// 2006.11.16 ryoji
-	bool	m_bNoFilterSaveNew;				//!< V‹K‚©‚ç•Û‘¶‚Í‘Sƒtƒ@ƒCƒ‹•\¦
-	bool	m_bNoFilterSaveFile;			//!< V‹KˆÈŠO‚©‚ç•Û‘¶‚Í‘Sƒtƒ@ƒCƒ‹•\¦
+	//ã€Œåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã€ã§ãƒ•ã‚¡ã‚¤ãƒ«ã®ç¨®é¡ãŒ[ãƒ¦ãƒ¼ã‚¶ãƒ¼æŒ‡å®š]ã®ã¨ãã®ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§è¡¨ç¤º
+	//ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚£ãƒ«ã‚¿è¨­å®š	// 2006.11.16 ryoji
+	bool	m_bNoFilterSaveNew;				//!< æ–°è¦ã‹ã‚‰ä¿å­˜æ™‚ã¯å…¨ãƒ•ã‚¡ã‚¤ãƒ«è¡¨ç¤º
+	bool	m_bNoFilterSaveFile;			//!< æ–°è¦ä»¥å¤–ã‹ã‚‰ä¿å­˜æ™‚ã¯å…¨ãƒ•ã‚¡ã‚¤ãƒ«è¡¨ç¤º
 
-	//ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
-	bool	m_bDropFileAndClose;			//!< ƒtƒ@ƒCƒ‹‚ğƒhƒƒbƒv‚µ‚½‚Æ‚«‚Í•Â‚¶‚ÄŠJ‚­
-	int		m_nDropFileNumMax;				//!< ˆê“x‚Éƒhƒƒbƒv‰Â”\‚Èƒtƒ@ƒCƒ‹”
-	bool	m_bRestoreCurPosition;			//!< ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚½‚Æ‚«ƒJ[ƒ\ƒ‹ˆÊ’u‚ğ•œŒ³‚·‚é‚©
-	bool	m_bRestoreBookmarks;			//!< ƒuƒbƒNƒ}[ƒN‚ğ•œŒ³‚·‚é‚©‚Ç‚¤‚© 2002.01.16 hor
-	bool	m_bAutoMIMEdecode;				//!< ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚ÉMIME‚Ìdecode‚ğs‚¤‚©
-	bool	m_bQueryIfCodeChange;			//!< ‘O‰ñ‚Æ•¶šƒR[ƒh‚ªˆÙ‚È‚é‚Æ‚«‚É–â‚¢‡‚í‚¹‚ğs‚¤ Oct. 03, 2004 genta
-	bool	m_bAlertIfFileNotExist;			//!< ŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢‚Æ‚«Œx‚·‚é Oct. 09, 2004 genta
-	bool	m_bAlertIfLargeFile;			//!< ŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹ƒTƒCƒY‚ª‘å‚«‚¢ê‡‚ÉŒx‚·‚é
-	int		m_nAlertFileSize;				//!< Œx‚ğn‚ß‚éƒtƒ@ƒCƒ‹ƒTƒCƒY(MB)
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
+	bool	m_bDropFileAndClose;			//!< ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ‰ãƒ­ãƒƒãƒ—ã—ãŸã¨ãã¯é–‰ã˜ã¦é–‹ã
+	int		m_nDropFileNumMax;				//!< ä¸€åº¦ã«ãƒ‰ãƒ­ãƒƒãƒ—å¯èƒ½ãªãƒ•ã‚¡ã‚¤ãƒ«æ•°
+	bool	m_bRestoreCurPosition;			//!< ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ãŸã¨ãã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’å¾©å…ƒã™ã‚‹ã‹
+	bool	m_bRestoreBookmarks;			//!< ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã‚’å¾©å…ƒã™ã‚‹ã‹ã©ã†ã‹ 2002.01.16 hor
+	bool	m_bAutoMIMEdecode;				//!< ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿æ™‚ã«MIMEã®decodeã‚’è¡Œã†ã‹
+	bool	m_bQueryIfCodeChange;			//!< å‰å›ã¨æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒç•°ãªã‚‹ã¨ãã«å•ã„åˆã‚ã›ã‚’è¡Œã† Oct. 03, 2004 genta
+	bool	m_bAlertIfFileNotExist;			//!< é–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„ã¨ãè­¦å‘Šã™ã‚‹ Oct. 09, 2004 genta
+	bool	m_bAlertIfLargeFile;			//!< é–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãŒå¤§ãã„å ´åˆã«è­¦å‘Šã™ã‚‹
+	int		m_nAlertFileSize;				//!< è­¦å‘Šã‚’å§‹ã‚ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚º(MB)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒoƒbƒNƒAƒbƒv                          //
+//                       ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //	Aug. 15, 2000 genta
@@ -315,127 +315,127 @@ struct CommonSetting_Backup
 {
 public:
 	//	Aug. 15, 2000 genta
-	//	Backupİ’è‚ÌƒAƒNƒZƒXŠÖ”
+	//	Backupè¨­å®šã®ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°
 	int		GetBackupType(void) const			{ return m_nBackUpType; }
 	void	SetBackupType(int n)				{ m_nBackUpType = n; }
 
 	bool	GetBackupOpt(EBackupOptionFlag flag) const			{ return ( flag & m_nBackUpType_Opt1 ) == flag; }
 	void	SetBackupOpt(EBackupOptionFlag flag, bool value)	{ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
 
-	//	ƒoƒbƒNƒAƒbƒv”
+	//	ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—æ•°
 	int		GetBackupCount(void) const			{ return m_nBackUpType_Opt2 & 0xffff; }
 	void	SetBackupCount(int value)			{ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff ); }
 
-	//	ƒoƒbƒNƒAƒbƒv‚ÌŠg’£qæ“ª•¶š(1•¶š)
+	//	ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®æ‹¡å¼µå­å…ˆé ­æ–‡å­—(1æ–‡å­—)
 	TCHAR	GetBackupExtChar(void) const		{ return (TCHAR)(( m_nBackUpType_Opt2 >> 16 ) & 0xff) ; }
 	void	SetBackupExtChar(int value)			{ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
 
 	//	Aug. 21, 2000 genta
-	//	©“®Backup
+	//	è‡ªå‹•Backup
 	bool	IsAutoBackupEnabled(void) const		{ return GetBackupOpt( BKUP_AUTO ); }
 	void	EnableAutoBackup(bool flag)			{ SetBackupOpt( BKUP_AUTO, flag ); }
 
 	int		GetAutoBackupInterval(void) const	{ return m_nBackUpType_Opt3; }
 	void	SetAutoBackupInterval(int i)		{ m_nBackUpType_Opt3 = i; }
 
-	//	BackupÚ×İ’è‚ÌƒAƒNƒZƒXŠÖ”
+	//	Backupè©³ç´°è¨­å®šã®ã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°
 	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
 	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
 
 public:
-	bool		m_bBackUp;					//!< •Û‘¶‚ÉƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚é
-	bool		m_bBackUpDialog;			//!< ƒoƒbƒNƒAƒbƒv‚Ìì¬‘O‚ÉŠm”F
-	bool		m_bBackUpFolder;			//!< w’èƒtƒHƒ‹ƒ_‚ÉƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚é
-	bool		m_bBackUpFolderRM;			//!< w’èƒtƒHƒ‹ƒ_‚ÉƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚é(ƒŠƒ€[ƒoƒuƒ‹ƒƒfƒBƒA‚Ì‚İ)
-	SFilePath	m_szBackUpFolder;			//!< ƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚éƒtƒHƒ‹ƒ_
-	int 		m_nBackUpType;				//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼‚Ìƒ^ƒCƒv 1=(.bak) 2=*_“ú•t.*
-	int 		m_nBackUpType_Opt1;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“1
-	int 		m_nBackUpType_Opt2;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“2
-	int 		m_nBackUpType_Opt3;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“3
-	int 		m_nBackUpType_Opt4;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“4
-	int 		m_nBackUpType_Opt5;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“5
-	int 		m_nBackUpType_Opt6;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼FƒIƒvƒVƒ‡ƒ“6
-	bool		m_bBackUpDustBox;			//!< ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ğ‚²‚İ” ‚É•ú‚è‚Ş	//@@@ 2001.12.11 add MIK
-	bool		m_bBackUpPathAdvanced;		//!< ƒoƒbƒNƒAƒbƒvæƒtƒHƒ‹ƒ_‚ğÚ×İ’è‚·‚é 20051107 aroka
-	SFilePath	m_szBackUpPathAdvanced;		//!< ƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚éƒtƒHƒ‹ƒ_‚ÌÚ×İ’è 20051107 aroka
+	bool		m_bBackUp;					//!< ä¿å­˜æ™‚ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹
+	bool		m_bBackUpDialog;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®ä½œæˆå‰ã«ç¢ºèª
+	bool		m_bBackUpFolder;			//!< æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹
+	bool		m_bBackUpFolderRM;			//!< æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹(ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ¡ãƒ‡ã‚£ã‚¢ã®ã¿)
+	SFilePath	m_szBackUpFolder;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€
+	int 		m_nBackUpType;				//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åã®ã‚¿ã‚¤ãƒ— 1=(.bak) 2=*_æ—¥ä»˜.*
+	int 		m_nBackUpType_Opt1;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³1
+	int 		m_nBackUpType_Opt2;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³2
+	int 		m_nBackUpType_Opt3;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³3
+	int 		m_nBackUpType_Opt4;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³4
+	int 		m_nBackUpType_Opt5;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³5
+	int 		m_nBackUpType_Opt6;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³6
+	bool		m_bBackUpDustBox;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã”ã¿ç®±ã«æ”¾ã‚Šè¾¼ã‚€	//@@@ 2001.12.11 add MIK
+	bool		m_bBackUpPathAdvanced;		//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å…ˆãƒ•ã‚©ãƒ«ãƒ€ã‚’è©³ç´°è¨­å®šã™ã‚‹ 20051107 aroka
+	SFilePath	m_szBackUpPathAdvanced;		//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã®è©³ç´°è¨­å®š 20051107 aroka
 };
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ‘®                              //
+//                           æ›¸å¼                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Format
 {
-	//“ú•t‘®
-	int			m_nDateFormatType;							//!< “ú•t‘®‚Ìƒ^ƒCƒv
-	TCHAR		m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< “ú•t‘®
+	//æ—¥ä»˜æ›¸å¼
+	int			m_nDateFormatType;							//!< æ—¥ä»˜æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
+	TCHAR		m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];	//!< æ—¥ä»˜æ›¸å¼
 
-	//‘®
-	int			m_nTimeFormatType;							//!< ‘®‚Ìƒ^ƒCƒv
-	TCHAR		m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< ‘®
+	//æ™‚åˆ»æ›¸å¼
+	int			m_nTimeFormatType;							//!< æ™‚åˆ»æ›¸å¼ã®ã‚¿ã‚¤ãƒ—
+	TCHAR		m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];	//!< æ™‚åˆ»æ›¸å¼
 
-	//Œ©o‚µ‹L†
-	wchar_t		m_szMidashiKigou[256];						//!< Œ©o‚µ‹L†
+	//è¦‹å‡ºã—è¨˜å·
+	wchar_t		m_szMidashiKigou[256];						//!< è¦‹å‡ºã—è¨˜å·
 
-	//ˆø—p•„
-	wchar_t		m_szInyouKigou[32];							//!< ˆø—p•„
+	//å¼•ç”¨ç¬¦
+	wchar_t		m_szInyouKigou[32];							//!< å¼•ç”¨ç¬¦
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ŒŸõ                              //
+//                           æ¤œç´¢                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Search
 {
-	int				m_nSearchKeySequence;		//!< ŒŸõƒV[ƒPƒ“ƒX(–¢•Û‘¶)
-	SSearchOption	m_sSearchOption;			//!< ŒŸõ^’uŠ·  ğŒ
+	int				m_nSearchKeySequence;		//!< æ¤œç´¢ã‚·ãƒ¼ã‚±ãƒ³ã‚¹(æœªä¿å­˜)
+	SSearchOption	m_sSearchOption;			//!< æ¤œç´¢ï¼ç½®æ›  æ¡ä»¶
 
-	int				m_nReplaceKeySequence;		//!< ’uŠ·ŒãƒV[ƒPƒ“ƒX(–¢•Û‘¶)
-	int				m_bConsecutiveAll;			//!< u‚·‚×‚Ä’uŠ·v‚Í’uŠ·‚ÌŒJ•Ô‚µ	// 2007.01.16 ryoji
-	int				m_bNOTIFYNOTFOUND;			//!< ŒŸõ^’uŠ·  Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«ƒƒbƒZ[ƒW‚ğ•\¦
-	int				m_bSelectedArea;			//!< ’uŠ·  ‘I‘ğ”ÍˆÍ“à’uŠ·
+	int				m_nReplaceKeySequence;		//!< ç½®æ›å¾Œã‚·ãƒ¼ã‚±ãƒ³ã‚¹(æœªä¿å­˜)
+	int				m_bConsecutiveAll;			//!< ã€Œã™ã¹ã¦ç½®æ›ã€ã¯ç½®æ›ã®ç¹°è¿”ã—	// 2007.01.16 ryoji
+	int				m_bNOTIFYNOTFOUND;			//!< æ¤œç´¢ï¼ç½®æ›  è¦‹ã¤ã‹ã‚‰ãªã„ã¨ããƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+	int				m_bSelectedArea;			//!< ç½®æ›  é¸æŠç¯„å›²å†…ç½®æ›
 
-	int				m_bGrepSubFolder;			//!< Grep: ƒTƒuƒtƒHƒ‹ƒ_‚àŒŸõ
-	int				m_nGrepOutputLineType;		//!< Grep: s‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s ‚ğo—Í
-	int				m_nGrepOutputStyle;			//!< Grep: o—ÍŒ`®
-	int				m_bGrepDefaultFolder;		//!< Grep: ƒtƒHƒ‹ƒ_‚Ì‰Šú’l‚ğƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚É‚·‚é
-	ECodeType		m_nGrepCharSet;				//!< Grep: •¶šƒR[ƒhƒZƒbƒg // 2002/09/20 Moca Add
-	bool			m_bGrepOutputFileOnly;		//!< Grep: ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ
-	bool			m_bGrepOutputBaseFolder;	//!< Grep: ƒx[ƒXƒtƒHƒ‹ƒ_•\¦
-	bool			m_bGrepSeparateFolder;		//!< Grep: ƒtƒHƒ‹ƒ_–ˆ‚É•\¦
-	bool			m_bGrepBackup;				//!< Grep: ƒoƒbƒNƒAƒbƒvì¬
+	int				m_bGrepSubFolder;			//!< Grep: ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚‚æ¤œç´¢
+	int				m_nGrepOutputLineType;		//!< Grep: è¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ ã‚’å‡ºåŠ›
+	int				m_nGrepOutputStyle;			//!< Grep: å‡ºåŠ›å½¢å¼
+	int				m_bGrepDefaultFolder;		//!< Grep: ãƒ•ã‚©ãƒ«ãƒ€ã®åˆæœŸå€¤ã‚’ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ã™ã‚‹
+	ECodeType		m_nGrepCharSet;				//!< Grep: æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ // 2002/09/20 Moca Add
+	bool			m_bGrepOutputFileOnly;		//!< Grep: ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢
+	bool			m_bGrepOutputBaseFolder;	//!< Grep: ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+	bool			m_bGrepSeparateFolder;		//!< Grep: ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º
+	bool			m_bGrepBackup;				//!< Grep: ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆ
 
-	BOOL			m_bCaretTextForSearch;		//!< ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶š—ñ‚ğƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶š—ñ‚É‚·‚é 2006.08.23 ryoji
-	bool			m_bInheritKeyOtherView;		//!< ŸE‘OŒŸõ‚Å‘¼‚Ìƒrƒ…[‚ÌŒŸõğŒ‚ğˆø‚«Œp‚®
-	TCHAR			m_szRegexpLib[_MAX_PATH];	//!< g—p‚·‚é³‹K•\Œ»DLL  2007.08.22 genta
+	BOOL			m_bCaretTextForSearch;		//!< ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ–‡å­—åˆ—ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ¤œç´¢æ–‡å­—åˆ—ã«ã™ã‚‹ 2006.08.23 ryoji
+	bool			m_bInheritKeyOtherView;		//!< æ¬¡ãƒ»å‰æ¤œç´¢ã§ä»–ã®ãƒ“ãƒ¥ãƒ¼ã®æ¤œç´¢æ¡ä»¶ã‚’å¼•ãç¶™ã
+	TCHAR			m_szRegexpLib[_MAX_PATH];	//!< ä½¿ç”¨ã™ã‚‹æ­£è¦è¡¨ç¾DLL  2007.08.22 genta
 
 	//Grep
-	BOOL			m_bGrepExitConfirm;			//!< Grepƒ‚[ƒh‚Å•Û‘¶Šm”F‚·‚é‚©
-	BOOL			m_bGrepRealTimeView;		//!< GrepŒ‹‰Ê‚ÌƒŠƒAƒ‹ƒ^ƒCƒ€•\¦ 2003.06.16 Moca
+	BOOL			m_bGrepExitConfirm;			//!< Grepãƒ¢ãƒ¼ãƒ‰ã§ä¿å­˜ç¢ºèªã™ã‚‹ã‹
+	BOOL			m_bGrepRealTimeView;		//!< Grepçµæœã®ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ è¡¨ç¤º 2003.06.16 Moca
 
-	BOOL			m_bGTJW_RETURN;				//!< ƒGƒ“ƒ^[ƒL[‚Åƒ^ƒOƒWƒƒƒ“ƒv
-	BOOL			m_bGTJW_LDBLCLK;			//!< ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Åƒ^ƒOƒWƒƒƒ“ƒv
+	BOOL			m_bGTJW_RETURN;				//!< ã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
+	BOOL			m_bGTJW_LDBLCLK;			//!< ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—
 
-	//ŒŸõE’uŠ·ƒ_ƒCƒAƒƒO
-	BOOL			m_bAutoCloseDlgFind;		//!< ŒŸõƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é
-	BOOL			m_bAutoCloseDlgReplace;		//!< ’uŠ· ƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é
-	BOOL			m_bSearchAll;				//!< æ“ªi––”öj‚©‚çÄŒŸõ 2002.01.26 hor
+	//æ¤œç´¢ãƒ»ç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	BOOL			m_bAutoCloseDlgFind;		//!< æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+	BOOL			m_bAutoCloseDlgReplace;		//!< ç½®æ› ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+	BOOL			m_bSearchAll;				//!< å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ 2002.01.26 hor
 
-	int				m_nTagJumpMode;				//!< ƒ^ƒOƒWƒƒƒ“ƒvƒ‚[ƒh(0-3)
-	int				m_nTagJumpModeKeyword;		//!< ƒ^ƒOƒWƒƒƒ“ƒvƒ‚[ƒh(0-3)
+	int				m_nTagJumpMode;				//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒ¢ãƒ¼ãƒ‰(0-3)
+	int				m_nTagJumpModeKeyword;		//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒ¢ãƒ¼ãƒ‰(0-3)
 
-	//INI“àİ’è‚Ì‚İ
-	BOOL			m_bUseCaretKeyWord;			//!< ƒLƒƒƒŒƒbƒgˆÊ’u‚Ì’PŒê‚ğ«‘ŒŸõ		// 2006.03.24 fon
+	//INIå†…è¨­å®šã®ã¿
+	BOOL			m_bUseCaretKeyWord;			//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã®å˜èªã‚’è¾æ›¸æ¤œç´¢		// 2006.03.24 fon
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒL[Š„‚è“–‚Ä                          //
+//                       ã‚­ãƒ¼å‰²ã‚Šå½“ã¦                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_KeyBind
 {
-	// ƒL[Š„‚è“–‚Ä
-	int					m_nKeyNameArrNum;			//!< ƒL[Š„‚è“–‚Ä•\‚Ì—LŒøƒf[ƒ^”
-	KEYDATA				m_pKeyNameArr[100+1];		//!< ƒL[Š„‚è“–‚Ä•\ –¢Š„‚è“–‚ÄƒL[ƒR[ƒh—p‚Éƒ_ƒ~[‚ğ’Ç‰Á
-	BYTE				m_VKeyToKeyNameArr[256+10];	//!< ƒL[ƒR[ƒh¨Š„‚è“–‚Ä•\ƒCƒ“ƒfƒbƒNƒX // 2012.11.25 aroka
+	// ã‚­ãƒ¼å‰²ã‚Šå½“ã¦
+	int					m_nKeyNameArrNum;			//!< ã‚­ãƒ¼å‰²ã‚Šå½“ã¦è¡¨ã®æœ‰åŠ¹ãƒ‡ãƒ¼ã‚¿æ•°
+	KEYDATA				m_pKeyNameArr[100+1];		//!< ã‚­ãƒ¼å‰²ã‚Šå½“ã¦è¡¨ æœªå‰²ã‚Šå½“ã¦ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ç”¨ã«ãƒ€ãƒŸãƒ¼ã‚’è¿½åŠ 
+	BYTE				m_VKeyToKeyNameArr[256+10];	//!< ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰â†’å‰²ã‚Šå½“ã¦è¡¨ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ // 2012.11.25 aroka
 };
 
 
@@ -443,7 +443,7 @@ struct CommonSetting_KeyBind
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒJƒXƒ^ƒ€ƒƒjƒ…[                        //
+//                     ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_CustomMenu
 {
@@ -456,90 +456,90 @@ struct CommonSetting_CustomMenu
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒc[ƒ‹ƒo[                           //
+//                        ãƒ„ãƒ¼ãƒ«ãƒãƒ¼                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_ToolBar
 {
-	int			m_nToolBarButtonNum;								//!< ƒc[ƒ‹ƒo[ƒ{ƒ^ƒ“‚Ì”
-	int			m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	//!< ƒc[ƒ‹ƒo[ƒ{ƒ^ƒ“\‘¢‘Ì
-	int			m_bToolBarIsFlat;									//!< ƒtƒ‰ƒbƒgƒc[ƒ‹ƒo[‚É‚·‚é^‚µ‚È‚¢
+	int			m_nToolBarButtonNum;								//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒœã‚¿ãƒ³ã®æ•°
+	int			m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒœã‚¿ãƒ³æ§‹é€ ä½“
+	int			m_bToolBarIsFlat;									//!< ãƒ•ãƒ©ãƒƒãƒˆãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã«ã™ã‚‹ï¼ã—ãªã„
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ‹­’²ƒL[ƒ[ƒh                         //
+//                      å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_SpecialKeyword
 {
-	// ‹­’²ƒL[ƒ[ƒhİ’è
-	CKeyWordSetMgr		m_CKeyWordSetMgr;					//!< ‹­’²ƒL[ƒ[ƒh
-	char				m_szKeyWordSetDir[MAX_PATH];		//!< ‹­’²ƒL[ƒ[ƒhƒtƒ@ƒCƒ‹‚ÌƒfƒBƒŒƒNƒgƒŠ
+	// å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¨­å®š
+	CKeyWordSetMgr		m_CKeyWordSetMgr;					//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	char				m_szKeyWordSetDir[MAX_PATH];		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           x‰‡                              //
+//                           æ”¯æ´                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Helper
 {
-	//“ü—Í•âŠ®‹@”\
-	BOOL		m_bHokanKey_RETURN;				//!< VK_RETURN	•âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø
-	BOOL		m_bHokanKey_TAB;				//!< VK_TAB		•âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø
-	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	•âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø
-	BOOL		m_bHokanKey_SPACE;				//!< VK_SPACE	•âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø $$$‚Ù‚Ú–¢g—p
+	//å…¥åŠ›è£œå®Œæ©Ÿèƒ½
+	BOOL		m_bHokanKey_RETURN;				//!< VK_RETURN	è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹
+	BOOL		m_bHokanKey_TAB;				//!< VK_TAB		è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹
+	BOOL		m_bHokanKey_RIGHT;				//!< VK_RIGHT	è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹
+	BOOL		m_bHokanKey_SPACE;				//!< VK_SPACE	è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ $$$ã»ã¼æœªä½¿ç”¨
 
-	//ŠO•”ƒwƒ‹ƒv‚Ìİ’è
-	TCHAR		m_szExtHelp[_MAX_PATH];			//!< ŠO•”ƒwƒ‹ƒv‚P
+	//å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ã®è¨­å®š
+	TCHAR		m_szExtHelp[_MAX_PATH];			//!< å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘
 
-	//ŠO•”HTMLƒwƒ‹ƒv‚Ìİ’è
-	TCHAR		m_szExtHtmlHelp[_MAX_PATH];		//!< ŠO•”HTMLƒwƒ‹ƒv
-	bool		m_bHtmlHelpIsSingle;			//!< HtmlHelpƒrƒ…[ƒA‚Í‚Ğ‚Æ‚Â (ƒrƒ…[ƒA‚ğ•¡”‹N“®‚µ‚È‚¢)
+	//å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—ã®è¨­å®š
+	TCHAR		m_szExtHtmlHelp[_MAX_PATH];		//!< å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—
+	bool		m_bHtmlHelpIsSingle;			//!< HtmlHelpãƒ“ãƒ¥ãƒ¼ã‚¢ã¯ã²ã¨ã¤ (ãƒ“ãƒ¥ãƒ¼ã‚¢ã‚’è¤‡æ•°èµ·å‹•ã—ãªã„)
 
-	//migemoİ’è
+	//migemoè¨­å®š
 	TCHAR		m_szMigemoDll[_MAX_PATH];		//!< migemo dll
 	TCHAR		m_szMigemoDict[_MAX_PATH];		//!< migemo dict
 
-	//ƒL[ƒ[ƒhƒwƒ‹ƒv
-	LOGFONT		m_lf;							//!< ƒL[ƒ[ƒhƒwƒ‹ƒv‚ÌƒtƒHƒ“ƒgî•ñ		// ai 02/05/21 Add
-	INT			m_nPointSize;					//!< ƒL[ƒ[ƒhƒwƒ‹ƒv‚ÌƒtƒHƒ“ƒgƒTƒCƒYi1/10ƒ|ƒCƒ“ƒg’PˆÊj	// 2009.10.01 ryoji
+	//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—
+	LOGFONT		m_lf;							//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã®ãƒ•ã‚©ãƒ³ãƒˆæƒ…å ±		// ai 02/05/21 Add
+	INT			m_nPointSize;					//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºï¼ˆ1/10ãƒã‚¤ãƒ³ãƒˆå˜ä½ï¼‰	// 2009.10.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒ}ƒNƒ                             //
+//                          ãƒã‚¯ãƒ­                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Macro
 {
-	TCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< ƒL[ƒ{[ƒhƒ}ƒNƒ‚Ìƒtƒ@ƒCƒ‹–¼
-	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< ƒL[Š„‚è“–‚Ä—pƒ}ƒNƒƒe[ƒuƒ‹		Sep. 14, 2001 genta
-	SFilePath		m_szMACROFOLDER;				//!< ƒ}ƒNƒ—pƒtƒHƒ‹ƒ_
-	int				m_nMacroOnOpened;				//!< ƒI[ƒvƒ“Œã©“®Àsƒ}ƒNƒ”Ô†	@@@ 2006.09.01 ryoji
-	int				m_nMacroOnTypeChanged;			//!< ƒ^ƒCƒv•ÏXŒã©“®Àsƒ}ƒNƒ”Ô†	@@@ 2006.09.01 ryoji
-	int				m_nMacroOnSave;					//!< •Û‘¶‘O©“®Àsƒ}ƒNƒ”Ô†	@@@ 2006.09.01 ryoji
-	int				m_nMacroCancelTimer;			//!< ƒ}ƒNƒ’â~ƒ_ƒCƒAƒƒO•\¦‘Ò‚¿ŠÔ	@@@ 2011.08.04 syat
+	TCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­ã®ãƒ•ã‚¡ã‚¤ãƒ«å
+	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ç”¨ãƒã‚¯ãƒ­ãƒ†ãƒ¼ãƒ–ãƒ«		Sep. 14, 2001 genta
+	SFilePath		m_szMACROFOLDER;				//!< ãƒã‚¯ãƒ­ç”¨ãƒ•ã‚©ãƒ«ãƒ€
+	int				m_nMacroOnOpened;				//!< ã‚ªãƒ¼ãƒ—ãƒ³å¾Œè‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå·	@@@ 2006.09.01 ryoji
+	int				m_nMacroOnTypeChanged;			//!< ã‚¿ã‚¤ãƒ—å¤‰æ›´å¾Œè‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå·	@@@ 2006.09.01 ryoji
+	int				m_nMacroOnSave;					//!< ä¿å­˜å‰è‡ªå‹•å®Ÿè¡Œãƒã‚¯ãƒ­ç•ªå·	@@@ 2006.09.01 ryoji
+	int				m_nMacroCancelTimer;			//!< ãƒã‚¯ãƒ­åœæ­¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤ºå¾…ã¡æ™‚é–“	@@@ 2011.08.04 syat
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒtƒ@ƒCƒ‹–¼•\¦                         //
+//                      ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤º                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_FileName
 {
-	bool		m_bTransformShortPath;											//!< ƒtƒ@ƒCƒ‹–¼‚ÌÈ—ª•\‹L
-	int			m_nTransformShortMaxWidth;										//!< ƒtƒ@ƒCƒ‹–¼‚ÌÈ—ª•\‹L‚ÌÅ‘å’·
-	int			m_nTransformFileNameArrNum;										//!< ƒtƒ@ƒCƒ‹–¼‚ÌŠÈˆÕ•\¦“o˜^”
-	TCHAR		m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ƒtƒ@ƒCƒ‹–¼‚ÌŠÈˆÕ•\¦•ÏŠ·‘O•¶š—ñ
-	TCHAR		m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ƒtƒ@ƒCƒ‹–¼‚ÌŠÈˆÕ•\¦•ÏŠ·Œã•¶š—ñ	//@@@ 2003.04.08 MIK
+	bool		m_bTransformShortPath;											//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®çœç•¥è¡¨è¨˜
+	int			m_nTransformShortMaxWidth;										//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®çœç•¥è¡¨è¨˜ã®æœ€å¤§é•·
+	int			m_nTransformFileNameArrNum;										//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®ç°¡æ˜“è¡¨ç¤ºç™»éŒ²æ•°
+	TCHAR		m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®ç°¡æ˜“è¡¨ç¤ºå¤‰æ›å‰æ–‡å­—åˆ—
+	TCHAR		m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];		//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®ç°¡æ˜“è¡¨ç¤ºå¤‰æ›å¾Œæ–‡å­—åˆ—	//@@@ 2003.04.08 MIK
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒAƒEƒgƒ‰ƒCƒ“                          //
+//                       ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ƒhƒbƒLƒ“ƒO”z’u
+//! ãƒ‰ãƒƒã‚­ãƒ³ã‚°é…ç½®
 enum EDockSide{
-	DOCKSIDE_FLOAT,				//!< ƒtƒ[ƒeƒBƒ“ƒO
-	DOCKSIDE_LEFT,				//!< ¶ƒhƒbƒLƒ“ƒO
-	DOCKSIDE_TOP,				//!< ãƒhƒbƒLƒ“ƒO
-	DOCKSIDE_RIGHT,				//!< ‰EƒhƒbƒLƒ“ƒO
-	DOCKSIDE_BOTTOM,			//!< ‰ºƒhƒbƒLƒ“ƒO
-	DOCKSIDE_UNDOCKABLE = -1,	//!< ƒhƒbƒLƒ“ƒO‹Ö~
+	DOCKSIDE_FLOAT,				//!< ãƒ•ãƒ­ãƒ¼ãƒ†ã‚£ãƒ³ã‚°
+	DOCKSIDE_LEFT,				//!< å·¦ãƒ‰ãƒƒã‚­ãƒ³ã‚°
+	DOCKSIDE_TOP,				//!< ä¸Šãƒ‰ãƒƒã‚­ãƒ³ã‚°
+	DOCKSIDE_RIGHT,				//!< å³ãƒ‰ãƒƒã‚­ãƒ³ã‚°
+	DOCKSIDE_BOTTOM,			//!< ä¸‹ãƒ‰ãƒƒã‚­ãƒ³ã‚°
+	DOCKSIDE_UNDOCKABLE = -1,	//!< ãƒ‰ãƒƒã‚­ãƒ³ã‚°ç¦æ­¢
 };
 
 enum EFileTreeItemType{
@@ -551,15 +551,15 @@ enum EFileTreeItemType{
 struct SFileTreeItem{
 public:
 	EFileTreeItemType m_eFileTreeItemType;
-	SFilePath	m_szTargetPath;	//!< ƒtƒHƒ‹ƒ_orƒtƒ@ƒCƒ‹ƒpƒX
-	StaticString<TCHAR,_MAX_PATH> m_szLabelName; //!< ƒ‰ƒxƒ‹–¼(""‚Ì‚Æ‚«‚Íƒtƒ@ƒCƒ‹–¼‚ğg‚¤)
-	int  m_nDepth;	//!< ŠK‘w
+	SFilePath	m_szTargetPath;	//!< ãƒ•ã‚©ãƒ«ãƒ€orãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	StaticString<TCHAR,_MAX_PATH> m_szLabelName; //!< ãƒ©ãƒ™ãƒ«å(""ã®ã¨ãã¯ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½¿ã†)
+	int  m_nDepth;	//!< éšå±¤
 
-	// Grepƒ^ƒCƒvTreeItem
-	StaticString<TCHAR,_MAX_PATH>	m_szTargetFile;	//!< ƒtƒ@ƒCƒ‹ˆê——
-	bool		m_bIgnoreHidden;		//!< ‰B‚µƒtƒ@ƒCƒ‹‚ğœ‚­
-	bool		m_bIgnoreReadOnly;		//!< “Ç‚İæ‚èê—pƒtƒ@ƒCƒ‹‚ğœ‚­
-	bool		m_bIgnoreSystem;		//!< ƒVƒXƒeƒ€ƒtƒ@ƒCƒ‹‚ğœ‚­
+	// Grepã‚¿ã‚¤ãƒ—TreeItem
+	StaticString<TCHAR,_MAX_PATH>	m_szTargetFile;	//!< ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§
+	bool		m_bIgnoreHidden;		//!< éš ã—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é™¤ã
+	bool		m_bIgnoreReadOnly;		//!< èª­ã¿å–ã‚Šå°‚ç”¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é™¤ã
+	bool		m_bIgnoreSystem;		//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é™¤ã
 
 	SFileTreeItem()
 		: m_eFileTreeItemType(EFileTreeItemType_Grep)
@@ -571,184 +571,184 @@ public:
 };
 
 struct SFileTree{
-	bool		m_bProject;			//!< ƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹ƒ‚[ƒh
-	SFilePath	m_szProjectIni;		//!< ƒfƒtƒHƒ‹ƒginiƒpƒX
-	int			m_nItemCount;		//!< ƒtƒ@ƒCƒ‹ƒpƒX”
-	SFileTreeItem	m_aItems[20];	//!< ƒcƒŠ[ƒAƒCƒeƒ€
+	bool		m_bProject;			//!< ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãƒ¢ãƒ¼ãƒ‰
+	SFilePath	m_szProjectIni;		//!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆiniãƒ‘ã‚¹
+	int			m_nItemCount;		//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹æ•°
+	SFileTreeItem	m_aItems[20];	//!< ãƒ„ãƒªãƒ¼ã‚¢ã‚¤ãƒ†ãƒ 
 };
 
 struct CommonSetting_OutLine
 {
-	// 20060201 aroka ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌˆÊ’u‚ÆƒTƒCƒY‚ğ‹L‰¯
-	int			m_bRememberOutlineWindowPos;//!< ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌˆÊ’u‚ÆƒTƒCƒY‚ğ‹L‰¯‚·‚é
-	int			m_widthOutlineWindow;		//!< ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌƒTƒCƒY(•)
-	int			m_heightOutlineWindow;		//!< ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌƒTƒCƒY(‚‚³)
-	int			m_xOutlineWindowPos;        //!< ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌˆÊ’u(XÀ•W)
-	int			m_yOutlineWindowPos;		//!< ƒAƒEƒgƒ‰ƒCƒ“/ƒgƒsƒbƒNƒŠƒXƒg ‚ÌˆÊ’u(YÀ•W)
+	// 20060201 aroka ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ä½ç½®ã¨ã‚µã‚¤ã‚ºã‚’è¨˜æ†¶
+	int			m_bRememberOutlineWindowPos;//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ä½ç½®ã¨ã‚µã‚¤ã‚ºã‚’è¨˜æ†¶ã™ã‚‹
+	int			m_widthOutlineWindow;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ã‚µã‚¤ã‚º(å¹…)
+	int			m_heightOutlineWindow;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ã‚µã‚¤ã‚º(é«˜ã•)
+	int			m_xOutlineWindowPos;        //!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ä½ç½®(Xåº§æ¨™)
+	int			m_yOutlineWindowPos;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³/ãƒˆãƒ”ãƒƒã‚¯ãƒªã‚¹ãƒˆ ã®ä½ç½®(Yåº§æ¨™)
 
-	int			m_nOutlineDockSet;			//!< ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ‚ÌƒhƒbƒLƒ“ƒOˆÊ’uŒp³•û–@(0:‹¤’Êİ’è, 1:ƒ^ƒCƒv•Êİ’è)
-	BOOL		m_bOutlineDockSync;			//!< ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ‚ÌƒhƒbƒLƒ“ƒOˆÊ’u‚ğ“¯Šú‚·‚é
-	BOOL		m_bOutlineDockDisp;			//!< ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ•\¦‚Ì—L–³
-	EDockSide	m_eOutlineDockSide;			//!< ƒAƒEƒgƒ‰ƒCƒ“‰ğÍƒhƒbƒLƒ“ƒO”z’u
-	int			m_cxOutlineDockLeft;		//!< ƒAƒEƒgƒ‰ƒCƒ“‚Ì¶ƒhƒbƒLƒ“ƒO•
-	int			m_cyOutlineDockTop;			//!< ƒAƒEƒgƒ‰ƒCƒ“‚ÌãƒhƒbƒLƒ“ƒO‚
-	int			m_cxOutlineDockRight;		//!< ƒAƒEƒgƒ‰ƒCƒ“‚Ì‰EƒhƒbƒLƒ“ƒO•
-	int			m_cyOutlineDockBottom;		//!< ƒAƒEƒgƒ‰ƒCƒ“‚Ì‰ºƒhƒbƒLƒ“ƒO‚
-	int			m_nDockOutline;				//!< ƒAƒEƒgƒ‰ƒCƒ“ƒ^ƒCƒv
+	int			m_nOutlineDockSet;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã®ãƒ‰ãƒƒã‚­ãƒ³ã‚°ä½ç½®ç¶™æ‰¿æ–¹æ³•(0:å…±é€šè¨­å®š, 1:ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š)
+	BOOL		m_bOutlineDockSync;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã®ãƒ‰ãƒƒã‚­ãƒ³ã‚°ä½ç½®ã‚’åŒæœŸã™ã‚‹
+	BOOL		m_bOutlineDockDisp;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æè¡¨ç¤ºã®æœ‰ç„¡
+	EDockSide	m_eOutlineDockSide;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æãƒ‰ãƒƒã‚­ãƒ³ã‚°é…ç½®
+	int			m_cxOutlineDockLeft;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®å·¦ãƒ‰ãƒƒã‚­ãƒ³ã‚°å¹…
+	int			m_cyOutlineDockTop;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®ä¸Šãƒ‰ãƒƒã‚­ãƒ³ã‚°é«˜
+	int			m_cxOutlineDockRight;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®å³ãƒ‰ãƒƒã‚­ãƒ³ã‚°å¹…
+	int			m_cyOutlineDockBottom;		//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®ä¸‹ãƒ‰ãƒƒã‚­ãƒ³ã‚°é«˜
+	int			m_nDockOutline;				//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã‚¿ã‚¤ãƒ—
 
-	//IDD_FUNCLIST (ƒc[ƒ‹ - ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ)
-	BOOL		m_bAutoCloseDlgFuncList;	//!< ƒAƒEƒgƒ‰ƒCƒ“ƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é
-	BOOL		m_bFunclistSetFocusOnJump;	//!< ƒtƒH[ƒJƒX‚ğˆÚ‚· 2002.02.08 hor
-	BOOL		m_bMarkUpBlankLineEnable;	//!< ‹ós‚ğ–³‹‚·‚é 2002.02.08 aroka,hor
+	//IDD_FUNCLIST (ãƒ„ãƒ¼ãƒ« - ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æ)
+	BOOL		m_bAutoCloseDlgFuncList;	//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+	BOOL		m_bFunclistSetFocusOnJump;	//!< ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’ç§»ã™ 2002.02.08 hor
+	BOOL		m_bMarkUpBlankLineEnable;	//!< ç©ºè¡Œã‚’ç„¡è¦–ã™ã‚‹ 2002.02.08 aroka,hor
 
-	SFileTree	m_sFileTree;				//!< ƒtƒ@ƒCƒ‹ƒcƒŠ[İ’è
-	SFilePath	m_sFileTreeDefIniName;		//!< ƒtƒ@ƒCƒ‹ƒcƒŠ[İ’è‚ÌƒfƒtƒHƒ‹ƒgƒtƒ@ƒCƒ‹–¼(GUI‚È‚µ)
+	SFileTree	m_sFileTree;				//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¨­å®š
+	SFilePath	m_sFileTreeDefIniName;		//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ„ãƒªãƒ¼è¨­å®šã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ•ã‚¡ã‚¤ãƒ«å(GUIãªã—)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒtƒ@ƒCƒ‹“à—e”äŠr                        //
+//                     ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Compare
 {
-	//ƒtƒ@ƒCƒ‹“à—e”äŠrƒ_ƒCƒAƒƒO
-	BOOL		m_bCompareAndTileHorz;		//!< •¶‘”äŠrŒãA¶‰E‚É•À‚×‚Ä•\¦
+	//ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	BOOL		m_bCompareAndTileHorz;		//!< æ–‡æ›¸æ¯”è¼ƒå¾Œã€å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒrƒ…[                             //
+//                          ãƒ“ãƒ¥ãƒ¼                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_View
 {
-	//INI“àİ’è‚Ì‚İ
-	LOGFONT		m_lf;						//!< Œ»İ‚ÌƒtƒHƒ“ƒgî•ñ
-	BOOL		m_bFontIs_FIXED_PITCH;		//!< Œ»İ‚ÌƒtƒHƒ“ƒg‚ÍŒÅ’è•ƒtƒHƒ“ƒg‚Å‚ ‚é
-	INT			m_nPointSize;				//!< ƒtƒHƒ“ƒgƒTƒCƒYi1/10ƒ|ƒCƒ“ƒg’PˆÊj	// 2009.10.01 ryoji
+	//INIå†…è¨­å®šã®ã¿
+	LOGFONT		m_lf;						//!< ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆæƒ…å ±
+	BOOL		m_bFontIs_FIXED_PITCH;		//!< ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã¯å›ºå®šå¹…ãƒ•ã‚©ãƒ³ãƒˆã§ã‚ã‚‹
+	INT			m_nPointSize;				//!< ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºï¼ˆ1/10ãƒã‚¤ãƒ³ãƒˆå˜ä½ï¼‰	// 2009.10.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ‚»‚Ì‘¼                             //
+//                          ãã®ä»–                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Others
 {
-	//INI“àİ’è‚Ì‚İ
-	RECT		m_rcOpenDialog;				//!< uŠJ‚­vƒ_ƒCƒAƒƒO‚ÌƒTƒCƒY‚ÆˆÊ’u
-	RECT		m_rcCompareDialog;			//!< uƒtƒ@ƒCƒ‹”äŠrvƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒTƒCƒY‚ÆˆÊ’u
-	RECT		m_rcDiffDialog;				//!< uDIFF·•ª•\¦vƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒTƒCƒY‚ÆˆÊ’u
-	RECT		m_rcFavoriteDialog;			//!< u—š—ğ‚Æ‚¨‹C‚É“ü‚è‚ÌŠÇ—vƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒTƒCƒY‚ÆˆÊ’u
-	RECT		m_rcTagJumpDialog;			//!< uƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒvŒó•âˆê——vƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒTƒCƒY‚ÆˆÊ’u
-	RECT		m_rcWindowListDialog;		//!< uƒEƒBƒ“ƒhƒEˆê——vƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒTƒCƒY‚ÆˆÊ’u
+	//INIå†…è¨­å®šã®ã¿
+	RECT		m_rcOpenDialog;				//!< ã€Œé–‹ãã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
+	RECT		m_rcCompareDialog;			//!< ã€Œãƒ•ã‚¡ã‚¤ãƒ«æ¯”è¼ƒã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
+	RECT		m_rcDiffDialog;				//!< ã€ŒDIFFå·®åˆ†è¡¨ç¤ºã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
+	RECT		m_rcFavoriteDialog;			//!< ã€Œå±¥æ­´ã¨ãŠæ°—ã«å…¥ã‚Šã®ç®¡ç†ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
+	RECT		m_rcTagJumpDialog;			//!< ã€Œãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—å€™è£œä¸€è¦§ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
+	RECT		m_rcWindowListDialog;		//!< ã€Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚µã‚¤ã‚ºã¨ä½ç½®
 
-	bool		m_bIniReadOnly;				//!< sakura.ini‚Ì“Ç‚İæ‚èê—p
+	bool		m_bIniReadOnly;				//!< sakura.iniã®èª­ã¿å–ã‚Šå°‚ç”¨
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒXƒe[ƒ^ƒXƒo[                     //
+//                          ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2008/6/21	Uchi
 struct CommonSetting_Statusbar
 {
-	// ¦•¶šƒR[ƒh‚Ìw’è
-	BOOL		m_bDispUniInSjis;				//!< SJIS‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	BOOL		m_bDispUniInJis;				//!< JIS‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	BOOL		m_bDispUniInEuc;				//!< EUC‚Å•¶šƒR[ƒh’l‚ğUnicode‚Å•\¦‚·‚é
-	BOOL		m_bDispUtf8Codepoint;			//!< UTF-8‚ğƒR[ƒhƒ|ƒCƒ“ƒg‚Å•\¦‚·‚é
-	BOOL		m_bDispSPCodepoint;				//!< ƒTƒƒQ[ƒgƒyƒA‚ğƒR[ƒhƒ|ƒCƒ“ƒg‚Å•\¦‚·‚é
-	BOOL		m_bDispSelCountByByte;			//!< ‘I‘ğ•¶š”‚ğ•¶š’PˆÊ‚Å‚Í‚È‚­ƒoƒCƒg’PˆÊ‚Å•\¦‚·‚é
-	BOOL		m_bDispColByChar;				//!< Œ»İŒ…‚ğƒ‹[ƒ‰[’PˆÊ‚Å‚Í‚È‚­•¶š’PˆÊ‚Å•\¦‚·‚é
+	// ç¤ºæ–‡å­—ã‚³ãƒ¼ãƒ‰ã®æŒ‡å®š
+	BOOL		m_bDispUniInSjis;				//!< SJISã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispUniInJis;				//!< JISã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispUniInEuc;				//!< EUCã§æ–‡å­—ã‚³ãƒ¼ãƒ‰å€¤ã‚’Unicodeã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispUtf8Codepoint;			//!< UTF-8ã‚’ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispSPCodepoint;				//!< ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ã‚’ã‚³ãƒ¼ãƒ‰ãƒã‚¤ãƒ³ãƒˆã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispSelCountByByte;			//!< é¸æŠæ–‡å­—æ•°ã‚’æ–‡å­—å˜ä½ã§ã¯ãªããƒã‚¤ãƒˆå˜ä½ã§è¡¨ç¤ºã™ã‚‹
+	BOOL		m_bDispColByChar;				//!< ç¾åœ¨æ¡ã‚’ãƒ«ãƒ¼ãƒ©ãƒ¼å˜ä½ã§ã¯ãªãæ–‡å­—å˜ä½ã§è¡¨ç¤ºã™ã‚‹
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒvƒ‰ƒOƒCƒ“                           //
+//                        ãƒ—ãƒ©ã‚°ã‚¤ãƒ³                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ƒvƒ‰ƒOƒCƒ“ó‘Ô
+//! ãƒ—ãƒ©ã‚°ã‚¤ãƒ³çŠ¶æ…‹
 enum EPluginState {
-	PLS_NONE,			//!< ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹‚É“o˜^‚ª‚È‚¢
-	PLS_INSTALLED,		//!< ’Ç‰Á‚³‚ê‚½
-	PLS_UPDATED,		//!< XV‚³‚ê‚½
-	PLS_STOPPED,		//!< ’â~‚µ‚Ä‚¢‚é
-	PLS_LOADED,			//!< “Ç‚İ‚Ü‚ê‚½
-	PLS_DELETED			//!< íœ‚³‚ê‚½
+	PLS_NONE,			//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«ã«ç™»éŒ²ãŒãªã„
+	PLS_INSTALLED,		//!< è¿½åŠ ã•ã‚ŒãŸ
+	PLS_UPDATED,		//!< æ›´æ–°ã•ã‚ŒãŸ
+	PLS_STOPPED,		//!< åœæ­¢ã—ã¦ã„ã‚‹
+	PLS_LOADED,			//!< èª­ã¿è¾¼ã¾ã‚ŒãŸ
+	PLS_DELETED			//!< å‰Šé™¤ã•ã‚ŒãŸ
 };
 
 struct PluginRec
 {
-	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< ƒvƒ‰ƒOƒCƒ“ID
-	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< ƒvƒ‰ƒOƒCƒ“ƒtƒHƒ‹ƒ_/İ’èƒtƒ@ƒCƒ‹–¼
-	EPluginState	m_state;					//!< ƒvƒ‰ƒOƒCƒ“ó‘ÔBİ’èƒtƒ@ƒCƒ‹‚É•Û‘¶‚¹‚¸ƒƒ‚ƒŠã‚Ì‚İB
-	int 			m_nCmdNum;					//!< ƒvƒ‰ƒOƒCƒ“ ƒRƒ}ƒ“ƒh‚Ì”	// 2010/7/3 Uchi
+	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ID
+	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚©ãƒ«ãƒ€/è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«å
+	EPluginState	m_state;					//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³çŠ¶æ…‹ã€‚è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜ã›ãšãƒ¡ãƒ¢ãƒªä¸Šã®ã¿ã€‚
+	int 			m_nCmdNum;					//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ ã‚³ãƒãƒ³ãƒ‰ã®æ•°	// 2010/7/3 Uchi
 };
 
 struct CommonSetting_Plugin
 {
-	BOOL			m_bEnablePlugin;			//!< ƒvƒ‰ƒOƒCƒ“‚ğg—p‚·‚é‚©‚Ç‚¤‚©
-	PluginRec		m_PluginTable[MAX_PLUGIN];	//!< ƒvƒ‰ƒOƒCƒ“ƒe[ƒuƒ‹
+	BOOL			m_bEnablePlugin;			//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’ä½¿ç”¨ã™ã‚‹ã‹ã©ã†ã‹
+	PluginRec		m_PluginTable[MAX_PLUGIN];	//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ†ãƒ¼ãƒ–ãƒ«
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒƒCƒ“ƒƒjƒ…[                       //
+//                        ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//! ƒƒCƒ“ƒƒjƒ…[í—Ş
+//! ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç¨®é¡
 enum EMainMenuType {
 	T_NODE,			//!< Node
-	T_LEAF,			//!< ‹@”\ƒRƒ}ƒ“ƒh
-	T_SEPARATOR,	//!< ‹æØü
-	T_SPECIAL,		//!< “Áê‹@”\ƒRƒ}ƒ“ƒh
+	T_LEAF,			//!< æ©Ÿèƒ½ã‚³ãƒãƒ³ãƒ‰
+	T_SEPARATOR,	//!< åŒºåˆ‡ç·š
+	T_SPECIAL,		//!< ç‰¹æ®Šæ©Ÿèƒ½ã‚³ãƒãƒ³ãƒ‰
 }; 
 
 class CMainMenu {
 public:
-	EMainMenuType	m_nType;		//!< í—Ş
+	EMainMenuType	m_nType;		//!< ç¨®é¡
 	EFunctionCode	m_nFunc;		//!< Function
-	WCHAR			m_sKey[2];		//!< ƒAƒNƒZƒXƒL[
-	WCHAR			m_sName[MAX_MAIN_MENU_NAME_LEN+1];	//!< –¼‘O
-	int 			m_nLevel;		//!< ƒŒƒxƒ‹
+	WCHAR			m_sKey[2];		//!< ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼
+	WCHAR			m_sName[MAX_MAIN_MENU_NAME_LEN+1];	//!< åå‰
+	int 			m_nLevel;		//!< ãƒ¬ãƒ™ãƒ«
 };
 
 struct CommonSetting_MainMenu
 {
-	int				m_nVersion;							//!< ƒƒCƒ“ƒƒjƒ…[ƒo[ƒWƒ‡ƒ“
-	int				m_nMenuTopIdx[MAX_MAINMENU_TOP];	//!< ƒƒCƒ“ƒƒjƒ…[ƒgƒbƒvƒŒƒxƒ‹
-	int 			m_nMainMenuNum;						//!< ƒƒCƒ“ƒƒjƒ…[ƒf[ƒ^‚Ì”
-	CMainMenu		m_cMainMenuTbl[MAX_MAINMENU];		//!< ƒƒCƒ“ƒƒjƒ…[ƒf[ƒ^
-	bool 			m_bMainMenuKeyParentheses;			//!< ƒAƒNƒZƒXƒL[‚ğ( )•t‚Å•\¦
+	int				m_nVersion;							//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	int				m_nMenuTopIdx[MAX_MAINMENU_TOP];	//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«
+	int 			m_nMainMenuNum;						//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ‡ãƒ¼ã‚¿ã®æ•°
+	CMainMenu		m_cMainMenuTbl[MAX_MAINMENU];		//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒ‡ãƒ¼ã‚¿
+	bool 			m_bMainMenuKeyParentheses;			//!< ã‚¢ã‚¯ã‚»ã‚¹ã‚­ãƒ¼ã‚’( )ä»˜ã§è¡¨ç¤º
 };
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                                                             //
-//                          ‚Ü‚Æ‚ß                             //
+//                          ã¾ã¨ã‚                             //
 //                                                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ‹¤’Êİ’è
+//! å…±é€šè¨­å®š
 struct CommonSetting
 {
-	CommonSetting_General			m_sGeneral;			//!< ‘S”Ê
-	CommonSetting_Window			m_sWindow;			//!< ƒEƒBƒ“ƒhƒE
-	CommonSetting_TabBar			m_sTabBar;			//!< ƒ^ƒuƒo[
-	CommonSetting_Edit				m_sEdit;			//!< •ÒW
-	CommonSetting_File				m_sFile;			//!< ƒtƒ@ƒCƒ‹
-	CommonSetting_Backup			m_sBackup;			//!< ƒoƒbƒNƒAƒbƒv
-	CommonSetting_Format			m_sFormat;			//!< ‘®
-	CommonSetting_Search			m_sSearch;			//!< ŒŸõ
-	CommonSetting_KeyBind			m_sKeyBind;			//!< ƒL[Š„‚è“–‚Ä
+	CommonSetting_General			m_sGeneral;			//!< å…¨èˆ¬
+	CommonSetting_Window			m_sWindow;			//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	CommonSetting_TabBar			m_sTabBar;			//!< ã‚¿ãƒ–ãƒãƒ¼
+	CommonSetting_Edit				m_sEdit;			//!< ç·¨é›†
+	CommonSetting_File				m_sFile;			//!< ãƒ•ã‚¡ã‚¤ãƒ«
+	CommonSetting_Backup			m_sBackup;			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
+	CommonSetting_Format			m_sFormat;			//!< æ›¸å¼
+	CommonSetting_Search			m_sSearch;			//!< æ¤œç´¢
+	CommonSetting_KeyBind			m_sKeyBind;			//!< ã‚­ãƒ¼å‰²ã‚Šå½“ã¦
 	//
-	CommonSetting_CustomMenu		m_sCustomMenu;		//!< ƒJƒXƒ^ƒ€ƒƒjƒ…[
-	CommonSetting_ToolBar			m_sToolBar;			//!< ƒc[ƒ‹ƒo[
-	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	//!< ‹­’²ƒL[ƒ[ƒh
-	CommonSetting_Helper			m_sHelper;			//!< x‰‡
-	CommonSetting_Macro				m_sMacro;			//!< ƒ}ƒNƒ
-	CommonSetting_FileName			m_sFileName;		//!< ƒtƒ@ƒCƒ‹–¼•\¦
+	CommonSetting_CustomMenu		m_sCustomMenu;		//!< ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	CommonSetting_ToolBar			m_sToolBar;			//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼
+	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	CommonSetting_Helper			m_sHelper;			//!< æ”¯æ´
+	CommonSetting_Macro				m_sMacro;			//!< ãƒã‚¯ãƒ­
+	CommonSetting_FileName			m_sFileName;		//!< ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤º
 	//
-	CommonSetting_OutLine			m_sOutline;			//!< ƒAƒEƒgƒ‰ƒCƒ“
-	CommonSetting_Compare			m_sCompare;			//!< ƒtƒ@ƒCƒ‹“à—e”äŠr
-	CommonSetting_View				m_sView;			//!< ƒrƒ…[
-	CommonSetting_Others			m_sOthers;			//!< ‚»‚Ì‘¼
+	CommonSetting_OutLine			m_sOutline;			//!< ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³
+	CommonSetting_Compare			m_sCompare;			//!< ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ
+	CommonSetting_View				m_sView;			//!< ãƒ“ãƒ¥ãƒ¼
+	CommonSetting_Others			m_sOthers;			//!< ãã®ä»–
 	//
-	CommonSetting_Statusbar			m_sStatusbar;		//!< ƒXƒe[ƒ^ƒXƒo[		// 2008/6/21 Uchi
-	CommonSetting_Plugin			m_sPlugin;			//!< ƒvƒ‰ƒOƒCƒ“ 2009/11/30 syat
-	CommonSetting_MainMenu			m_sMainMenu;		//!< ƒƒCƒ“ƒƒjƒ…[		// 2010/5/15 Uchi
+	CommonSetting_Statusbar			m_sStatusbar;		//!< ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼		// 2008/6/21 Uchi
+	CommonSetting_Plugin			m_sPlugin;			//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ 2009/11/30 syat
+	CommonSetting_MainMenu			m_sMainMenu;		//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼		// 2010/5/15 Uchi
 };
 
 #endif /* SAKURA_COMMONSETTING_7C01A3F3_AD50_4AEA_84D6_0798DB67F40C_H_ */

@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -32,7 +32,7 @@
 #include "recent/CRecent.h"
 
 
-/*!	m_aSearchKeys‚ÉpszSearchKey‚ğ’Ç‰Á‚·‚éB
+/*!	m_aSearchKeysã«pszSearchKeyã‚’è¿½åŠ ã™ã‚‹ã€‚
 	YAZAKI
 */
 void CSearchKeywordManager::AddToSearchKeyArr( const wchar_t* pszSearchKey )
@@ -43,7 +43,7 @@ void CSearchKeywordManager::AddToSearchKeyArr( const wchar_t* pszSearchKey )
 	GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence++;
 }
 
-/*!	m_aReplaceKeys‚ÉpszReplaceKey‚ğ’Ç‰Á‚·‚é
+/*!	m_aReplaceKeysã«pszReplaceKeyã‚’è¿½åŠ ã™ã‚‹
 	YAZAKI
 */
 void CSearchKeywordManager::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
@@ -56,7 +56,7 @@ void CSearchKeywordManager::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
 	return;
 }
 
-/*!	m_aGrepFiles‚ÉpszGrepFile‚ğ’Ç‰Á‚·‚é
+/*!	m_aGrepFilesã«pszGrepFileã‚’è¿½åŠ ã™ã‚‹
 	YAZAKI
 */
 void CSearchKeywordManager::AddToGrepFileArr( const TCHAR* pszGrepFile )
@@ -66,7 +66,7 @@ void CSearchKeywordManager::AddToGrepFileArr( const TCHAR* pszGrepFile )
 	cRecentGrepFile.Terminate();
 }
 
-/*!	m_aGrepFolders.size()‚ÉpszGrepFolder‚ğ’Ç‰Á‚·‚é
+/*!	m_aGrepFolders.size()ã«pszGrepFolderã‚’è¿½åŠ ã™ã‚‹
 	YAZAKI
 */
 void CSearchKeywordManager::AddToGrepFolderArr( const TCHAR* pszGrepFolder )

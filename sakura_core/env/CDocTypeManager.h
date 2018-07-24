@@ -1,5 +1,5 @@
-/*
-	2008.05.18 kobake CShareData ‚©‚ç•ª—£
+ï»¿/*
+	2008.05.18 kobake CShareData ã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 2008, kobake
@@ -29,15 +29,15 @@
 
 #include "DLLSHAREDATA.h"
 
-//! ƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒvŠÇ—
+//! ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ç®¡ç†
 class CDocTypeManager{
 public:
 	CDocTypeManager()
 	{
 		m_pShareData = &GetDllShareData();
 	}
-	CTypeConfig GetDocumentTypeOfPath( const TCHAR* pszFilePath );	/* ƒtƒ@ƒCƒ‹ƒpƒX‚ğ“n‚µ‚ÄAƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒvi”’lj‚ğæ“¾‚·‚é */
-	CTypeConfig GetDocumentTypeOfExt( const TCHAR* pszExt );		/* Šg’£q‚ğ“n‚µ‚ÄAƒhƒLƒ…ƒƒ“ƒgƒ^ƒCƒvi”’lj‚ğæ“¾‚·‚é */
+	CTypeConfig GetDocumentTypeOfPath( const TCHAR* pszFilePath );	/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’æ¸¡ã—ã¦ã€ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ï¼ˆæ•°å€¤ï¼‰ã‚’å–å¾—ã™ã‚‹ */
+	CTypeConfig GetDocumentTypeOfExt( const TCHAR* pszExt );		/* æ‹¡å¼µå­ã‚’æ¸¡ã—ã¦ã€ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ï¼ˆæ•°å€¤ï¼‰ã‚’å–å¾—ã™ã‚‹ */
 	CTypeConfig GetDocumentTypeOfId( int id );
 
 	bool GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type);
@@ -46,12 +46,12 @@ public:
 	bool AddTypeConfig(CTypeConfig cDocumentType);
 	bool DelTypeConfig(CTypeConfig cDocumentType);
 
-	static bool IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName);	// ƒ^ƒCƒv•ÊŠg’£q‚Éƒtƒ@ƒCƒ‹–¼‚ªƒ}ƒbƒ`‚·‚é‚©
-	static void GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize);	// ƒ^ƒCƒv•ÊŠg’£q‚Ìæ“ªŠg’£q‚ğæ“¾‚·‚é
-	static bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt );	// ƒ^ƒCƒv•Êİ’è‚ÌŠg’£qƒŠƒXƒg‚ğƒ_ƒCƒAƒƒO—pƒŠƒXƒg‚É•ÏŠ·‚·‚é
+	static bool IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName);	// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã«ãƒ•ã‚¡ã‚¤ãƒ«åãŒãƒãƒƒãƒã™ã‚‹ã‹
+	static void GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize);	// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã®å…ˆé ­æ‹¡å¼µå­ã‚’å–å¾—ã™ã‚‹
+	static bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt );	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®æ‹¡å¼µå­ãƒªã‚¹ãƒˆã‚’ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ç”¨ãƒªã‚¹ãƒˆã«å¤‰æ›ã™ã‚‹
 
-	static const TCHAR* m_typeExtSeps;			// ƒ^ƒCƒv•ÊŠg’£q‚Ì‹æØ‚è•¶š
-	static const TCHAR* m_typeExtWildcards;		// ƒ^ƒCƒv•ÊŠg’£q‚ÌƒƒCƒ‹ƒhƒJ[ƒh
+	static const TCHAR* m_typeExtSeps;			// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã®åŒºåˆ‡ã‚Šæ–‡å­—
+	static const TCHAR* m_typeExtWildcards;		// ã‚¿ã‚¤ãƒ—åˆ¥æ‹¡å¼µå­ã®ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰
 
 private:
 	DLLSHAREDATA* m_pShareData;

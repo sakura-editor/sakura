@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,17 +32,17 @@ struct CommonSetting_KeyBind;	// defined CommonSetting.h
 struct ColorInfo; // defined doc/CDocTypeSetting.h
 struct SFileTree;
 
-// 2008.XX.XX kobake CShareData‚©‚ç•ª—£
-// 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move ExportAImport‚Ég—p
-// 2010.08.21 Moca ƒAƒNƒZƒXŒ AŠÖ”–¼‚Ì®—
+// 2008.XX.XX kobake CShareDataã‹ã‚‰åˆ†é›¢
+// 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move Exportã€Importã«ä½¿ç”¨
+// 2010.08.21 Moca ã‚¢ã‚¯ã‚»ã‚¹æ¨©ã€é–¢æ•°åã®æ•´ç†
 class CShareData_IO{
 public:
-	//ƒZ[ƒuEƒ[ƒh
-	static bool LoadShareData();	/* ‹¤—Lƒf[ƒ^‚Ìƒ[ƒh */
-	static void SaveShareData();	/* ‹¤—Lƒf[ƒ^‚Ì•Û‘¶ */
+	//ã‚»ãƒ¼ãƒ–ãƒ»ãƒ­ãƒ¼ãƒ‰
+	static bool LoadShareData();	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ãƒ­ãƒ¼ãƒ‰ */
+	static void SaveShareData();	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜ */
 
 protected:
-	static bool ShareData_IO_2( bool );	/* ‹¤—Lƒf[ƒ^‚Ì•Û‘¶ */
+	static bool ShareData_IO_2( bool );	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜ */
 
 	// Feb. 12, 2006 D.S.Koba
 	static void ShareData_IO_Mru( CDataProfile& );
@@ -68,7 +68,7 @@ protected:
 public:
 	static void ShareData_IO_FileTree( CDataProfile&, SFileTree&, const WCHAR* );
 	static void ShareData_IO_FileTreeItem( CDataProfile&, SFileTreeItem&, const WCHAR*, int i );
-	static void ShareData_IO_Type_One( CDataProfile&, STypeConfig& , const WCHAR* );	// 2010/04/12 Uchi •ª—£
+	static void ShareData_IO_Type_One( CDataProfile&, STypeConfig& , const WCHAR* );	// 2010/04/12 Uchi åˆ†é›¢
 
 public:
 	static void IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );
@@ -78,7 +78,7 @@ public:
 	}
 	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
-	static void IO_ColorSet( CDataProfile* , const WCHAR* , ColorInfo* );	/* Fİ’è I/O */ // Feb. 12, 2006 D.S.Koba
+	static void IO_ColorSet( CDataProfile* , const WCHAR* , ColorInfo* );	/* è‰²è¨­å®š I/O */ // Feb. 12, 2006 D.S.Koba
 };
 
 #endif /* SAKURA_CSHAREDATA_IO_AA81C249_631D_40B0_AAFF_2F163748954B9_H_ */
