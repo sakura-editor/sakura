@@ -1,7 +1,7 @@
-/*!	@file
-	@brief UxTheme “®“Iƒ[ƒh
+ï»¿/*!	@file
+	@brief UxTheme å‹•çš„ãƒ­ãƒ¼ãƒ‰
 
-	UxTheme (Windows thmeme manager) ‚Ö‚Ì“®“IƒAƒNƒZƒXƒNƒ‰ƒX
+	UxTheme (Windows thmeme manager) ã¸ã®å‹•çš„ã‚¢ã‚¯ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 
 	@author ryoji
 	@date Apr. 1, 2007
@@ -62,9 +62,9 @@ enum TABITEMSTATES {
 #include "util/design_template.h"
 
 /*!
-	@brief UxTheme “®“Iƒ[ƒh
+	@brief UxTheme å‹•çš„ãƒ­ãƒ¼ãƒ‰
 
-	UxTheme ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì“®“Iƒ[ƒh‚ğƒTƒ|[ƒg‚·‚éƒNƒ‰ƒX
+	UxTheme ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹•çš„ãƒ­ãƒ¼ãƒ‰ã‚’ã‚µãƒãƒ¼ãƒˆã™ã‚‹ã‚¯ãƒ©ã‚¹
 */
 class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
 	friend class TSingleton<CUxTheme>;

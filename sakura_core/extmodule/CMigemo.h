@@ -1,10 +1,10 @@
-/*!	@file
-	@brief MigemoŠÖ˜A
+ï»¿/*!	@file
+	@brief Migemoé–¢é€£
 
-	C/MigemoƒAƒNƒZƒXŠÖ”
+	C/Migemoã‚¢ã‚¯ã‚»ã‚¹é–¢æ•°
 
 	@author isearch
-	@date 2004.09.14 V‹Kì¬
+	@date 2004.09.14 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2004, isearch
@@ -15,7 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 /*
-Migemo ‚Íƒ[ƒ}š‚Ì‚Ü‚Ü“ú–{Œê‚ğƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ŒŸõ‚·‚é‚½‚ß‚Ìƒc[ƒ‹‚Å‚·B
+Migemo ã¯ãƒ­ãƒ¼ãƒå­—ã®ã¾ã¾æ—¥æœ¬èªã‚’ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ã‚¿ãƒ«æ¤œç´¢ã™ã‚‹ãŸã‚ã®ãƒ„ãƒ¼ãƒ«ã§ã™ã€‚
 */
 
 #ifndef _SAKURA_MIGEMO_H_
@@ -44,7 +44,7 @@ typedef int (__cdecl *MIGEMO_PROC_CHAR2INT)(const unsigned char*, unsigned int*)
 typedef int (__cdecl *MIGEMO_PROC_INT2CHAR)(unsigned int, unsigned char*);
 
 /**
- * MigemoƒIƒuƒWƒFƒNƒgBmigemo_open()‚Åì¬‚³‚êAmigemo_close‚Å”jŠü‚³‚ê‚éB
+ * Migemoã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚migemo_open()ã§ä½œæˆã•ã‚Œã€migemo_closeã§ç ´æ£„ã•ã‚Œã‚‹ã€‚
  */
 typedef struct _migemo migemo;
 
@@ -61,8 +61,8 @@ public:
 
 	//	Entry Point
 protected:
-	//	Aug. 20, 2005 Aroka : Å“K‰»ƒIƒvƒVƒ‡ƒ“‚ÅƒfƒtƒHƒ‹ƒg‚ğ__fastcall‚É•ÏX‚µ‚Ä‚à
-	//	‰e‹¿‚ğó‚¯‚È‚¢‚æ‚¤‚É‚·‚éD
+	//	Aug. 20, 2005 Aroka : æœ€é©åŒ–ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã§ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚’__fastcallã«å¤‰æ›´ã—ã¦ã‚‚
+	//	å½±éŸ¿ã‚’å—ã‘ãªã„ã‚ˆã†ã«ã™ã‚‹ï¼
 	typedef migemo*        (__cdecl *Proc_migemo_open)            (char* dict);
 	typedef void           (__cdecl *Proc_migemo_close)           (migemo* object);
 	typedef unsigned char* (__cdecl *Proc_migemo_query)           (migemo* object, unsigned char* query);
@@ -108,7 +108,7 @@ protected:
 	Proc_migemo_is_enable_s           m_migemo_is_enable_s;
 
 	migemo* m_migemo;
-	// IA64/x64‚Í‘Î‰•s—v
+	// IA64/x64ã¯å¯¾å¿œä¸è¦
 #ifdef _WIN64
 	static const bool	m_bStdcall = true;
 #else

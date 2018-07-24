@@ -1,7 +1,7 @@
-/*!	@file
-	@brief HtmpHelp“®“Iƒ[ƒh
+ï»¿/*!	@file
+	@brief HtmpHelpå‹•çš„ãƒ­ãƒ¼ãƒ‰
 
-	HTML Help ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ì“®“IƒAƒNƒZƒXƒNƒ‰ƒX
+	HTML Help ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®å‹•çš„ã‚¢ã‚¯ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 
 	@author genta
 	@date Jul. 5, 2001
@@ -37,16 +37,16 @@
 
 
 /*!
-	@brief HtmpHelp“®“Iƒ[ƒh
+	@brief HtmpHelpå‹•çš„ãƒ­ãƒ¼ãƒ‰
 
-	HTMLƒwƒ‹ƒvƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì“®“Iƒ[ƒh‚ğƒTƒ|[ƒg‚·‚éƒNƒ‰ƒX
+	HTMLãƒ˜ãƒ«ãƒ—ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å‹•çš„ãƒ­ãƒ¼ãƒ‰ã‚’ã‚µãƒãƒ¼ãƒˆã™ã‚‹ã‚¯ãƒ©ã‚¹
 */
 class CHtmlHelp : public CDllImp {
 public:
 	CHtmlHelp(){}
 	virtual ~CHtmlHelp();
 
-	//	HtmlHelp ‚ÌEntry Point
+	//	HtmlHelp ã®Entry Point
 	typedef HWND (WINAPI* Proc_HtmlHelp)(HWND, LPCTSTR, UINT, DWORD_PTR);
 	Proc_HtmlHelp HtmlHelp;
 

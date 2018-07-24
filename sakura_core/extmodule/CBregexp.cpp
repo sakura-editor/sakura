@@ -1,21 +1,21 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief BREGEXP Library Handler
 
-	Perl5ŒİŠ·³‹K•\Œ»‚ğˆµ‚¤DLL‚Å‚ ‚éBREGEXP.DLL‚ğ—˜—p‚·‚é‚½‚ß‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+	Perl5äº’æ›æ­£è¦è¡¨ç¾ã‚’æ‰±ã†DLLã§ã‚ã‚‹BREGEXP.DLLã‚’åˆ©ç”¨ã™ã‚‹ãŸã‚ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
 	@author genta
 	@date Jun. 10, 2001
-	@date 2002/2/1 hor		ReleaseCompileBuffer‚ğ“K‹X’Ç‰Á
-	@date Jul. 25, 2002 genta s“ªğŒ‚ğl—¶‚µ‚½ŒŸõ‚ğs‚¤‚æ‚¤‚ÉD(’uŠ·‚Í‚Ü‚¾)
-	@date 2003.05.22 ‚©‚ë‚Æ ³‹K‚È³‹K•\Œ»‚É‹ß‚Ã‚¯‚é
-	@date 2005.03.19 ‚©‚ë‚Æ ƒŠƒtƒ@ƒNƒ^ƒŠƒ“ƒOBƒNƒ‰ƒX“à•”‚ğ‰B•ÁB
+	@date 2002/2/1 hor		ReleaseCompileBufferã‚’é©å®œè¿½åŠ 
+	@date Jul. 25, 2002 genta è¡Œé ­æ¡ä»¶ã‚’è€ƒæ…®ã—ãŸæ¤œç´¢ã‚’è¡Œã†ã‚ˆã†ã«ï¼(ç½®æ›ã¯ã¾ã )
+	@date 2003.05.22 ã‹ã‚ã¨ æ­£è¦ãªæ­£è¦è¡¨ç¾ã«è¿‘ã¥ã‘ã‚‹
+	@date 2005.03.19 ã‹ã‚ã¨ ãƒªãƒ•ã‚¡ã‚¯ã‚¿ãƒªãƒ³ã‚°ã€‚ã‚¯ãƒ©ã‚¹å†…éƒ¨ã‚’éš è”½ã€‚
 */
 /*
 	Copyright (C) 2001-2002, genta
 	Copyright (C) 2002, novice, hor, Azumaiya
-	Copyright (C) 2003, ‚©‚ë‚Æ
-	Copyright (C) 2005, ‚©‚ë‚Æ
-	Copyright (C) 2006, ‚©‚ë‚Æ
+	Copyright (C) 2003, ã‹ã‚ã¨
+	Copyright (C) 2005, ã‹ã‚ã¨
+	Copyright (C) 2006, ã‹ã‚ã¨
 	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
@@ -49,7 +49,7 @@
 #include "env/DLLSHAREDATA.h"
 
 
-// CompileAs“ª’uŠ·(len=0)‚Ì‚Éƒ_ƒ~[•¶š—ñ(‚P‚Â‚É“ˆê) by ‚©‚ë‚Æ
+// Compileæ™‚ã€è¡Œé ­ç½®æ›(len=0)ã®æ™‚ã«ãƒ€ãƒŸãƒ¼æ–‡å­—åˆ—(ï¼‘ã¤ã«çµ±ä¸€) by ã‹ã‚ã¨
 const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
 
 
@@ -65,58 +65,58 @@ CBregexp::CBregexp()
 
 CBregexp::~CBregexp()
 {
-	//ƒRƒ“ƒpƒCƒ‹ƒoƒbƒtƒ@‚ğ‰ğ•ú
+	//ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒãƒƒãƒ•ã‚¡ã‚’è§£æ”¾
 	ReleaseCompileBuffer();
 }
 
 
-/*! @brief ŒŸõƒpƒ^[ƒ“‚ª“Á’è‚ÌŒŸõƒpƒ^[ƒ“‚©ƒ`ƒFƒbƒN‚·‚é
+/*! @brief æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ãŒç‰¹å®šã®æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 **
-** @param[in] szPattern ŒŸõƒpƒ^[ƒ“
+** @param[in] szPattern æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
 **
-** @retval ŒŸõƒpƒ^[ƒ“•¶š—ñ’·
+** @retval æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³æ–‡å­—åˆ—é•·
 ** 
-** @date 2005.03.20 ‚©‚ë‚Æ ŠÖ”‚ÉØ‚èo‚µ
+** @date 2005.03.20 ã‹ã‚ã¨ é–¢æ•°ã«åˆ‡ã‚Šå‡ºã—
 */
 int CBregexp::CheckPattern(const wchar_t* szPattern)
 {
-	static const wchar_t TOP_MATCH[] = L"/^\\(*\\^/k";							//!< s“ªƒpƒ^[ƒ“‚Ìƒ`ƒFƒbƒN—pƒpƒ^[ƒ“
-	static const wchar_t DOL_MATCH[] = L"/\\\\\\$$/k";							//!< \$(s––ƒpƒ^[ƒ“‚Å‚È‚¢)ƒ`ƒFƒbƒN—pƒpƒ^[ƒ“
-	static const wchar_t BOT_MATCH[] = L"/\\$\\)*$/k";							//!< s––ƒpƒ^[ƒ“‚Ìƒ`ƒFƒbƒN—pƒpƒ^[ƒ“
-	static const wchar_t TAB_MATCH[] = L"/^\\(*\\^\\$\\)*$/k";					//!< "^$"ƒpƒ^[ƒ“‚©‚ğƒ`ƒFƒbƒN—pƒpƒ^[ƒ“
-	static const wchar_t LOOKAHEAD[] = L"/\\(\\?[=]/k";							//!< "(?=" æ“Ç‚İ ‚Ì‘¶İƒ`ƒFƒbƒNƒpƒ^[ƒ“
-	BREGEXP_W*	sReg = NULL;					//!< ƒRƒ“ƒpƒCƒ‹\‘¢‘Ì
-	wchar_t szMsg[80] = L"";					//!< ƒGƒ‰[ƒƒbƒZ[ƒW
-	int nLen;									//!< ŒŸõƒpƒ^[ƒ“‚Ì’·‚³
-	const wchar_t *szPatternEnd;				//!< ŒŸõƒpƒ^[ƒ“‚ÌI’[
+	static const wchar_t TOP_MATCH[] = L"/^\\(*\\^/k";							//!< è¡Œé ­ãƒ‘ã‚¿ãƒ¼ãƒ³ã®ãƒã‚§ãƒƒã‚¯ç”¨ãƒ‘ã‚¿ãƒ¼ãƒ³
+	static const wchar_t DOL_MATCH[] = L"/\\\\\\$$/k";							//!< \$(è¡Œæœ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã§ãªã„)ãƒã‚§ãƒƒã‚¯ç”¨ãƒ‘ã‚¿ãƒ¼ãƒ³
+	static const wchar_t BOT_MATCH[] = L"/\\$\\)*$/k";							//!< è¡Œæœ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã®ãƒã‚§ãƒƒã‚¯ç”¨ãƒ‘ã‚¿ãƒ¼ãƒ³
+	static const wchar_t TAB_MATCH[] = L"/^\\(*\\^\\$\\)*$/k";					//!< "^$"ãƒ‘ã‚¿ãƒ¼ãƒ³ã‹ã‚’ãƒã‚§ãƒƒã‚¯ç”¨ãƒ‘ã‚¿ãƒ¼ãƒ³
+	static const wchar_t LOOKAHEAD[] = L"/\\(\\?[=]/k";							//!< "(?=" å…ˆèª­ã¿ ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯ãƒ‘ã‚¿ãƒ¼ãƒ³
+	BREGEXP_W*	sReg = NULL;					//!< ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ§‹é€ ä½“
+	wchar_t szMsg[80] = L"";					//!< ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	int nLen;									//!< æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã®é•·ã•
+	const wchar_t *szPatternEnd;				//!< æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã®çµ‚ç«¯
 
-	m_ePatType = PAT_NORMAL;	//!<@ƒm[ƒ}ƒ‹‚ÍŠm’è
+	m_ePatType = PAT_NORMAL;	//!<ã€€ãƒãƒ¼ãƒãƒ«ã¯ç¢ºå®š
 	nLen = wcslen( szPattern );
 	szPatternEnd = szPattern + nLen;
-	// ƒpƒ^[ƒ“í•Ê‚Ìİ’è
+	// ãƒ‘ã‚¿ãƒ¼ãƒ³ç¨®åˆ¥ã®è¨­å®š
 	if( BMatch( TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// s“ªƒpƒ^[ƒ“‚Éƒ}ƒbƒ`‚µ‚½
+		// è¡Œé ­ãƒ‘ã‚¿ãƒ¼ãƒ³ã«ãƒãƒƒãƒã—ãŸ
 		m_ePatType |= PAT_TOP;
 	}
 	BRegfree(sReg);
 	sReg = NULL;
 	if( BMatch( TAB_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// s“ªs––ƒpƒ^[ƒ“‚Éƒ}ƒbƒ`‚µ‚½
+		// è¡Œé ­è¡Œæœ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã«ãƒãƒƒãƒã—ãŸ
 		m_ePatType |= PAT_TAB;
 	}
 	BRegfree(sReg);
 	sReg = NULL;
 	if( BMatch( DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-		// s––‚Ì\$ ‚Éƒ}ƒbƒ`‚µ‚½
+		// è¡Œæœ«ã®\$ ã«ãƒãƒƒãƒã—ãŸ
 		// PAT_NORMAL
 	} else {
 		BRegfree(sReg);
 		sReg = NULL;
 		if( BMatch( BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg ) > 0 ) {
-			// s––ƒpƒ^[ƒ“‚Éƒ}ƒbƒ`‚µ‚½
+			// è¡Œæœ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã«ãƒãƒƒãƒã—ãŸ
 			m_ePatType |= PAT_BOTTOM;
 		} else {
-			// ‚»‚Ì‘¼
+			// ãã®ä»–
 			// PAT_NORMAL
 		}
 	}
@@ -124,7 +124,7 @@ int CBregexp::CheckPattern(const wchar_t* szPattern)
 	sReg = NULL;
 	
 	if( BMatch( LOOKAHEAD, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
-		// æ“Ç‚İƒpƒ^[ƒ“‚Éƒ}ƒbƒ`‚µ‚½
+		// å…ˆèª­ã¿ãƒ‘ã‚¿ãƒ¼ãƒ³ã«ãƒãƒƒãƒã—ãŸ
 		m_ePatType |= PAT_LOOKAHEAD;
 	}
 	BRegfree(sReg);
@@ -132,39 +132,39 @@ int CBregexp::CheckPattern(const wchar_t* szPattern)
 	return (nLen);
 }
 
-/*! @brief ƒ‰ƒCƒuƒ‰ƒŠ‚É“n‚·‚½‚ß‚ÌŒŸõE’uŠ·ƒpƒ^[ƒ“‚ğì¬‚·‚é
+/*! @brief ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«æ¸¡ã™ãŸã‚ã®æ¤œç´¢ãƒ»ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ä½œæˆã™ã‚‹
 **
-** @note szPattern2: == NULL:ŒŸõ != NULL:’uŠ·
+** @note szPattern2: == NULL:æ¤œç´¢ != NULL:ç½®æ›
 **
-** @retval ƒ‰ƒCƒuƒ‰ƒŠ‚É“n‚·ŒŸõƒpƒ^[ƒ“‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
-** @note •Ô‚·ƒ|ƒCƒ“ƒ^‚ÍAŒÄ‚Ño‚µ‘¤‚Å delete ‚·‚é‚±‚Æ
+** @retval ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«æ¸¡ã™æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
+** @note è¿”ã™ãƒã‚¤ãƒ³ã‚¿ã¯ã€å‘¼ã³å‡ºã—å´ã§ delete ã™ã‚‹ã“ã¨
 ** 
-** @date 2003.05.03 ‚©‚ë‚Æ ŠÖ”‚ÉØ‚èo‚µ
+** @date 2003.05.03 ã‹ã‚ã¨ é–¢æ•°ã«åˆ‡ã‚Šå‡ºã—
 */
 wchar_t* CBregexp::MakePatternSub(
-	const wchar_t*	szPattern,	//!< ŒŸõƒpƒ^[ƒ“
-	const wchar_t*	szPattern2,	//!< ’uŠ·ƒpƒ^[ƒ“(NULL‚È‚çŒŸõ)
-	const wchar_t*	szAdd2,		//!< ’uŠ·ƒpƒ^[ƒ“‚ÌŒã‚ë‚É•t‚¯‰Á‚¦‚éƒpƒ^[ƒ“($1‚È‚Ç) 
-	int				nOption		//!< ŒŸõƒIƒvƒVƒ‡ƒ“
+	const wchar_t*	szPattern,	//!< æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
+	const wchar_t*	szPattern2,	//!< ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³(NULLãªã‚‰æ¤œç´¢)
+	const wchar_t*	szAdd2,		//!< ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã®å¾Œã‚ã«ä»˜ã‘åŠ ãˆã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³($1ãªã©) 
+	int				nOption		//!< æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 ) 
 {
-	static const wchar_t DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< ƒfƒŠƒ~ƒ^
-	int nLen;									//!< szPattern‚Ì’·‚³
-	int nLen2;									//!< szPattern2 + szAdd2 ‚Ì’·‚³
+	static const wchar_t DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< ãƒ‡ãƒªãƒŸã‚¿
+	int nLen;									//!< szPatternã®é•·ã•
+	int nLen2;									//!< szPattern2 + szAdd2 ã®é•·ã•
 
-	// ŒŸõƒpƒ^[ƒ“ì¬
-	wchar_t *szNPattern;		//!< ƒ‰ƒCƒuƒ‰ƒŠ“n‚µ—p‚ÌŒŸõƒpƒ^[ƒ“•¶š—ñ
-	wchar_t *pPat;				//!< ƒpƒ^[ƒ“•¶š—ñ‘€ì—p‚Ìƒ|ƒCƒ“ƒ^
+	// æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ä½œæˆ
+	wchar_t *szNPattern;		//!< ãƒ©ã‚¤ãƒ–ãƒ©ãƒªæ¸¡ã—ç”¨ã®æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³æ–‡å­—åˆ—
+	wchar_t *pPat;				//!< ãƒ‘ã‚¿ãƒ¼ãƒ³æ–‡å­—åˆ—æ“ä½œç”¨ã®ãƒã‚¤ãƒ³ã‚¿
 
 	nLen = wcslen(szPattern);
 	if (szPattern2 == NULL) {
-		// ŒŸõ(BMatch)
-		szNPattern = new wchar_t[ nLen + 15 ];	//	15Fus///optionv‚ª—]—T‚Å‚Í‚¢‚é‚æ‚¤‚ÉB
+		// æ¤œç´¢(BMatch)æ™‚
+		szNPattern = new wchar_t[ nLen + 15 ];	//	15ï¼šã€Œs///optionã€ãŒä½™è£•ã§ã¯ã„ã‚‹ã‚ˆã†ã«ã€‚
 		pPat = szNPattern;
 		*pPat++ = L'm';
 	}
 	else {
-		// ’uŠ·(BSubst)
+		// ç½®æ›(BSubst)æ™‚
 		nLen2 = wcslen(szPattern2) + wcslen(szAdd2);
 		szNPattern = new wchar_t[ nLen + nLen2 + 15 ];
 		pPat = szNPattern;
@@ -178,15 +178,15 @@ wchar_t* CBregexp::MakePatternSub(
 		while (*szAdd2 != L'\0') { *pPat++ = *szAdd2++; }
 		*pPat++ = DELIMITER;
 	}
-	*pPat++ = L'k';			// Š¿š‘Î‰
-	*pPat++ = L'm';			// •¡”s‘Î‰(’A‚µAŒÄ‚Ño‚µ‘¤‚ª•¡”s‘Î‰‚Å‚È‚¢)
-	// 2006.01.22 ‚©‚ë‚Æ ˜_—‹t‚È‚Ì‚Å bIgnoreCase -> optCaseSensitive‚É•ÏX
-	if( !(nOption & optCaseSensitive) ) {		// 2002/2/1 hor IgnoreCase ƒIƒvƒVƒ‡ƒ“’Ç‰Á ƒ}[ƒWFaroka
-		*pPat++ = L'i';		// ‘å•¶š¬•¶š‚ğ“¯ˆê‹(–³‹)‚·‚é
+	*pPat++ = L'k';			// æ¼¢å­—å¯¾å¿œ
+	*pPat++ = L'm';			// è¤‡æ•°è¡Œå¯¾å¿œ(ä½†ã—ã€å‘¼ã³å‡ºã—å´ãŒè¤‡æ•°è¡Œå¯¾å¿œã§ãªã„)
+	// 2006.01.22 ã‹ã‚ã¨ è«–ç†é€†ãªã®ã§ bIgnoreCase -> optCaseSensitiveã«å¤‰æ›´
+	if( !(nOption & optCaseSensitive) ) {		// 2002/2/1 hor IgnoreCase ã‚ªãƒ—ã‚·ãƒ§ãƒ³è¿½åŠ  ãƒãƒ¼ã‚¸ï¼šaroka
+		*pPat++ = L'i';		// å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–(ç„¡è¦–)ã™ã‚‹
 	}
-	// 2006.01.22 ‚©‚ë‚Æ s’PˆÊ’uŠ·‚Ì‚½‚ß‚ÉA‘SˆæƒIƒvƒVƒ‡ƒ“’Ç‰Á
+	// 2006.01.22 ã‹ã‚ã¨ è¡Œå˜ä½ç½®æ›ã®ãŸã‚ã«ã€å…¨åŸŸã‚ªãƒ—ã‚·ãƒ§ãƒ³è¿½åŠ 
 	if( (nOption & optGlobal) ) {
-		*pPat++ = L'g';			// ‘Sˆæ(global)ƒIƒvƒVƒ‡ƒ“As’PˆÊ‚Ì’uŠ·‚ğ‚·‚é‚Ég—p‚·‚é
+		*pPat++ = L'g';			// å…¨åŸŸ(global)ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã€è¡Œå˜ä½ã®ç½®æ›ã‚’ã™ã‚‹æ™‚ã«ä½¿ç”¨ã™ã‚‹
 	}
 	if( (nOption & optExtend) ) {
 		*pPat++ = L'x';
@@ -213,52 +213,52 @@ wchar_t* CBregexp::MakePatternSub(
 
 
 /*! 
-** s––•¶š‚ÌˆÓ–¡‚ªƒ‰ƒCƒuƒ‰ƒŠ‚Å‚Í \nŒÅ’è‚È‚Ì‚ÅA
-** ‚±‚ê‚ğ‚²‚Ü‚©‚·‚½‚ß‚ÉAƒ‰ƒCƒuƒ‰ƒŠ‚É“n‚·‚½‚ß‚ÌŒŸõE’uŠ·ƒpƒ^[ƒ“‚ğH•v‚·‚é
+** è¡Œæœ«æ–‡å­—ã®æ„å‘³ãŒãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§ã¯ \nå›ºå®šãªã®ã§ã€
+** ã“ã‚Œã‚’ã”ã¾ã‹ã™ãŸã‚ã«ã€ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«æ¸¡ã™ãŸã‚ã®æ¤œç´¢ãƒ»ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’å·¥å¤«ã™ã‚‹
 **
-** s––•¶š($)‚ªŒŸõƒpƒ^[ƒ“‚ÌÅŒã‚É‚ ‚èA‚»‚Ì’¼‘O‚ª [\r\n] ‚Å‚È‚¢ê‡‚ÉA
-** s––•¶š($)‚Ìè‘O‚É ([\r\n]+)‚ğ•â‚Á‚ÄA’uŠ·ƒpƒ^[ƒ“‚É $(nParen+1)‚ğ•â‚¤
-** ‚Æ‚¢‚¤ƒAƒ‹ƒSƒŠƒYƒ€‚ğ—p‚¢‚ÄA‚²‚Ü‚©‚·B
+** è¡Œæœ«æ–‡å­—($)ãŒæ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã®æœ€å¾Œã«ã‚ã‚Šã€ãã®ç›´å‰ãŒ [\r\n] ã§ãªã„å ´åˆã«ã€
+** è¡Œæœ«æ–‡å­—($)ã®æ‰‹å‰ã« ([\r\n]+)ã‚’è£œã£ã¦ã€ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã« $(nParen+1)ã‚’è£œã†
+** ã¨ã„ã†ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã‚’ç”¨ã„ã¦ã€ã”ã¾ã‹ã™ã€‚
 **
-** @note szPattern2: == NULL:ŒŸõ != NULL:’uŠ·
+** @note szPattern2: == NULL:æ¤œç´¢ != NULL:ç½®æ›
 ** 
-** @param[in] szPattern ŒŸõƒpƒ^[ƒ“
-** @param[in] szPattern2 ’uŠ·ƒpƒ^[ƒ“(NULL‚È‚çŒŸõ)
-** @param[in] nOption ŒŸõƒIƒvƒVƒ‡ƒ“
+** @param[in] szPattern æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
+** @param[in] szPattern2 ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³(NULLãªã‚‰æ¤œç´¢)
+** @param[in] nOption æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 **
-** @retval ƒ‰ƒCƒuƒ‰ƒŠ‚É“n‚·ŒŸõƒpƒ^[ƒ“‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
-** @note •Ô‚·ƒ|ƒCƒ“ƒ^‚ÍAŒÄ‚Ño‚µ‘¤‚Å delete ‚·‚é‚±‚Æ
+** @retval ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«æ¸¡ã™æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
+** @note è¿”ã™ãƒã‚¤ãƒ³ã‚¿ã¯ã€å‘¼ã³å‡ºã—å´ã§ delete ã™ã‚‹ã“ã¨
 **
-** @date 2003.05.03 ‚©‚ë‚Æ ŠÖ”‚ÉØ‚èo‚µ
+** @date 2003.05.03 ã‹ã‚ã¨ é–¢æ•°ã«åˆ‡ã‚Šå‡ºã—
 */
 wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPattern2, int nOption ) 
 {
 	using namespace WCODE;
-	static const wchar_t* szCRLF = CRLF;		//!< •œ‹AE‰üs
-	static const wchar_t szCR[] = {CR,0};				//!< •œ‹A
-	static const wchar_t szLF[] = {LF,0};				//!< ‰üs
-	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< s––ƒpƒ^[ƒ“‚Ì’uŠ·—pƒpƒ^[ƒ“
-	int nLen;									//!< szPattern‚Ì’·‚³
-	BREGEXP_W*	sReg = NULL;					//!< ƒRƒ“ƒpƒCƒ‹\‘¢‘Ì
-	wchar_t szMsg[80] = L"";						//!< ƒGƒ‰[ƒƒbƒZ[ƒW
-	wchar_t szAdd2[5] = L"";						//!< s––‚ ‚è’uŠ·‚Ì $”š Ši”[—p
-	int nParens = 0;							//!< ŒŸõƒpƒ^[ƒ“(szPattern)’†‚ÌŠ‡ŒÊ‚Ì”(s––‚Ég—p)
-	wchar_t *szNPattern;							//!< ŒŸõƒpƒ^[ƒ“
+	static const wchar_t* szCRLF = CRLF;		//!< å¾©å¸°ãƒ»æ”¹è¡Œ
+	static const wchar_t szCR[] = {CR,0};				//!< å¾©å¸°
+	static const wchar_t szLF[] = {LF,0};				//!< æ”¹è¡Œ
+	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< è¡Œæœ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã®ç½®æ›ç”¨ãƒ‘ã‚¿ãƒ¼ãƒ³
+	int nLen;									//!< szPatternã®é•·ã•
+	BREGEXP_W*	sReg = NULL;					//!< ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ§‹é€ ä½“
+	wchar_t szMsg[80] = L"";						//!< ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	wchar_t szAdd2[5] = L"";						//!< è¡Œæœ«ã‚ã‚Šç½®æ›ã® $æ•°å­— æ ¼ç´ç”¨
+	int nParens = 0;							//!< æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³(szPattern)ä¸­ã®æ‹¬å¼§ã®æ•°(è¡Œæœ«æ™‚ã«ä½¿ç”¨)
+	wchar_t *szNPattern;							//!< æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
 
 	nLen = CheckPattern( szPattern );
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
-		bool bJustDollar = false;			// s––w’è‚Ì$‚Ì‚İ‚Å‚ ‚éƒtƒ‰ƒO($‚Ì‘O‚É \r\n‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢)
+		bool bJustDollar = false;			// è¡Œæœ«æŒ‡å®šã®$ã®ã¿ã§ã‚ã‚‹ãƒ•ãƒ©ã‚°($ã®å‰ã« \r\nãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„)
 		szNPattern = MakePatternSub(szPattern, NULL, NULL, nOption);
 		int matched = BMatch( szNPattern, szCRLF, szCRLF+wcslen(szCRLF), &sReg, szMsg );
 		if( matched >= 0 ) {
-			// szNPattern‚ª•s³‚Èƒpƒ^[ƒ““™‚ÌƒGƒ‰[‚Å‚È‚©‚Á‚½
-			// ƒGƒ‰[‚É‚Í sReg‚ªNULL‚Ì‚Ü‚Ü‚È‚Ì‚ÅAsReg->nparens‚Ö‚ÌƒAƒNƒZƒX‚Í•s³
-			nParens = sReg->nparens;			// ƒIƒŠƒWƒiƒ‹‚ÌŒŸõ•¶š—ñ’†‚Ì()‚Ì”‚ğ‹L‰¯
+			// szNPatternãŒä¸æ­£ãªãƒ‘ã‚¿ãƒ¼ãƒ³ç­‰ã®ã‚¨ãƒ©ãƒ¼ã§ãªã‹ã£ãŸ
+			// ã‚¨ãƒ©ãƒ¼æ™‚ã«ã¯ sRegãŒNULLã®ã¾ã¾ãªã®ã§ã€sReg->nparensã¸ã®ã‚¢ã‚¯ã‚»ã‚¹ã¯ä¸æ­£
+			nParens = sReg->nparens;			// ã‚ªãƒªã‚¸ãƒŠãƒ«ã®æ¤œç´¢æ–‡å­—åˆ—ä¸­ã®()ã®æ•°ã‚’è¨˜æ†¶
 			if( matched > 0 ) {
 				if( sReg->startp[0] == &szCRLF[1] && sReg->endp[0] == &szCRLF[1] ) {
 					if( BMatch( NULL, szCR, szCR+wcslen(szCR), &sReg, szMsg ) > 0 && sReg->startp[0] == &szCR[1] && sReg->endp[0] == &szCR[1] ) {
 						if( BMatch( NULL, szLF, szLF+wcslen(szLF), &sReg, szMsg ) > 0 && sReg->startp[0] == &szLF[0] && sReg->endp[0] == &szLF[0] ) {
-							// ŒŸõ•¶š—ñ‚Í s––($)‚Ì‚İ‚¾‚Á‚½
+							// æ¤œç´¢æ–‡å­—åˆ—ã¯ è¡Œæœ«($)ã®ã¿ã ã£ãŸ
 							bJustDollar = true;
 						}
 					}
@@ -266,7 +266,7 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 			} else {
 				if( BMatch( NULL, szCR, szCR+wcslen(szCR), &sReg, szMsg ) <= 0 ) {
 					if( BMatch( NULL, szLF, szLF+wcslen(szLF), &sReg, szMsg ) <= 0 ) {
-						// ŒŸõ•¶š—ñ‚ÍA•¶š{s––($)‚¾‚Á‚½
+						// æ¤œç´¢æ–‡å­—åˆ—ã¯ã€æ–‡å­—ï¼‹è¡Œæœ«($)ã ã£ãŸ
 						bJustDollar = true;
 					}
 				}
@@ -277,15 +277,15 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 		delete [] szNPattern;
 
 		if( bJustDollar == true || (m_ePatType & PAT_TAB) != 0 ) {
-			// s––w’è‚Ì$ or s“ªs––w’è ‚È‚Ì‚ÅAŒŸõ•¶š—ñ‚ğ’uŠ·
+			// è¡Œæœ«æŒ‡å®šã®$ or è¡Œé ­è¡Œæœ«æŒ‡å®š ãªã®ã§ã€æ¤œç´¢æ–‡å­—åˆ—ã‚’ç½®æ›
 			if( BSubst( BOT_SUBST, szPattern, szPattern + nLen, &sReg, szMsg ) > 0 ) {
 				szPattern = sReg->outp;
 				if( szPattern2 != NULL ) {
-					// ’uŠ·ƒpƒ^[ƒ“‚à‚ ‚é‚Ì‚ÅA’uŠ·ƒpƒ^[ƒ“‚ÌÅŒã‚É $(nParens+1)‚ğ’Ç‰Á
+					// ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚‚ã‚ã‚‹ã®ã§ã€ç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³ã®æœ€å¾Œã« $(nParens+1)ã‚’è¿½åŠ 
 					auto_sprintf( szAdd2, L"$%d", nParens + 1 );
 				}
 			}
-			// sReg->outp ‚Ìƒ|ƒCƒ“ƒ^‚ğQÆ‚µ‚Ä‚¢‚é‚Ì‚ÅAsReg‚ğ‰ğ•ú‚·‚é‚Ì‚ÍÅŒã‚É
+			// sReg->outp ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å‚ç…§ã—ã¦ã„ã‚‹ã®ã§ã€sRegã‚’è§£æ”¾ã™ã‚‹ã®ã¯æœ€å¾Œã«
 		}
 	}
 
@@ -298,13 +298,13 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 
 
 /*!
-	CBregexp::MakePattern()‚Ì‘ã‘ÖB
-	* ƒGƒXƒP[ƒv‚³‚ê‚Ä‚¨‚ç‚¸A•¶šW‡‚Æ \Q...\E‚Ì’†‚É‚È‚¢ . ‚ğ [^\r\n] ‚É’uŠ·‚·‚éB
-	* ƒGƒXƒP[ƒv‚³‚ê‚Ä‚¨‚ç‚¸A•¶šW‡‚Æ \Q...\E‚Ì’†‚É‚È‚¢ $ ‚ğ (?<![\r\n])(?=\r|$) ‚É’uŠ·‚·‚éB
-	‚±‚ê‚Íu‰üsv‚ÌˆÓ–¡‚ğ LF ‚Ì‚İ(BREGEXP.DLL‚Ìd—l)‚©‚çACR, LF, CRLF ‚ÉŠg’£‚·‚é‚½‚ß‚Ì•ÏX‚Å‚ ‚éB
-	‚Ü‚½A$ ‚Í‰üs‚ÌŒã‚ëAs•¶š—ñ––”ö‚Éƒ}ƒbƒ`‚µ‚È‚­‚È‚éBÅŒã‚Ìˆês‚Ìê‡‚ğ‚Ì‚¼‚¢‚ÄA
-	³‹K•\Œ»DLL‚É—^‚¦‚ç‚ê‚é•¶š—ñ‚Ì––”ö‚Í•¶‘––‚Æ‚Í‚¢‚¦‚¸A$ ‚ªƒ}ƒbƒ`‚·‚é•K—v‚Í‚È‚¢‚¾‚ë‚¤B
-	$ ‚ªs•¶š—ñ––”ö‚Éƒ}ƒbƒ`‚µ‚È‚¢‚±‚Æ‚ÍAˆêŠ‡’uŠ·‚Å‚ÌŠú‘Ò‚µ‚È‚¢’uŠ·‚ğ–h‚®‚½‚ß‚É•K—v‚Å‚ ‚éB
+	CBregexp::MakePattern()ã®ä»£æ›¿ã€‚
+	* ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã•ã‚Œã¦ãŠã‚‰ãšã€æ–‡å­—é›†åˆã¨ \Q...\Eã®ä¸­ã«ãªã„ . ã‚’ [^\r\n] ã«ç½®æ›ã™ã‚‹ã€‚
+	* ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã•ã‚Œã¦ãŠã‚‰ãšã€æ–‡å­—é›†åˆã¨ \Q...\Eã®ä¸­ã«ãªã„ $ ã‚’ (?<![\r\n])(?=\r|$) ã«ç½®æ›ã™ã‚‹ã€‚
+	ã“ã‚Œã¯ã€Œæ”¹è¡Œã€ã®æ„å‘³ã‚’ LF ã®ã¿(BREGEXP.DLLã®ä»•æ§˜)ã‹ã‚‰ã€CR, LF, CRLF ã«æ‹¡å¼µã™ã‚‹ãŸã‚ã®å¤‰æ›´ã§ã‚ã‚‹ã€‚
+	ã¾ãŸã€$ ã¯æ”¹è¡Œã®å¾Œã‚ã€è¡Œæ–‡å­—åˆ—æœ«å°¾ã«ãƒãƒƒãƒã—ãªããªã‚‹ã€‚æœ€å¾Œã®ä¸€è¡Œã®å ´åˆã‚’ã®ãã„ã¦ã€
+	æ­£è¦è¡¨ç¾DLLã«ä¸ãˆã‚‰ã‚Œã‚‹æ–‡å­—åˆ—ã®æœ«å°¾ã¯æ–‡æ›¸æœ«ã¨ã¯ã„ãˆãšã€$ ãŒãƒãƒƒãƒã™ã‚‹å¿…è¦ã¯ãªã„ã ã‚ã†ã€‚
+	$ ãŒè¡Œæ–‡å­—åˆ—æœ«å°¾ã«ãƒãƒƒãƒã—ãªã„ã“ã¨ã¯ã€ä¸€æ‹¬ç½®æ›ã§ã®æœŸå¾…ã—ãªã„ç½®æ›ã‚’é˜²ããŸã‚ã«å¿…è¦ã§ã‚ã‚‹ã€‚
 */
 wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption )
 {
@@ -313,7 +313,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
 	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
-	// ‚·‚×‚Ä‚Ì . ‚ğ [^\r\n] ‚ÖA‚·‚×‚Ä‚Ì $ ‚ğ (?<![\r\n])(?=\r|$) ‚Ö’uŠ·‚·‚é‚Æ‰¼’è‚µ‚ÄAstrModifiedSearch‚ÌÅ‘å’·‚ğŒˆ’è‚·‚éB
+	// ã™ã¹ã¦ã® . ã‚’ [^\r\n] ã¸ã€ã™ã¹ã¦ã® $ ã‚’ (?<![\r\n])(?=\r|$) ã¸ç½®æ›ã™ã‚‹ã¨ä»®å®šã—ã¦ã€strModifiedSearchã®æœ€å¤§é•·ã‚’æ±ºå®šã™ã‚‹ã€‚
 	std::wstring::size_type modifiedSearchSize = 0;
 	for( const wchar_t* p = szSearch; *p; ++p ) {
 		if( *p == L'.') {
@@ -329,21 +329,21 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	std::wstring strModifiedSearch;
 	strModifiedSearch.reserve( modifiedSearchSize );
 
-	// szSearch‚ğ strModifiedSearch‚ÖA‚Æ‚±‚ë‚Ç‚±‚ë’uŠ·‚µ‚È‚ª‚ç‡ŸƒRƒs[‚µ‚Ä‚¢‚­B
+	// szSearchã‚’ strModifiedSearchã¸ã€ã¨ã“ã‚ã©ã“ã‚ç½®æ›ã—ãªãŒã‚‰é †æ¬¡ã‚³ãƒ”ãƒ¼ã—ã¦ã„ãã€‚
 	enum State {
-		DEF = 0, /* DEFULT ˆê”ÔŠO‘¤ */
-		D_E,     /* DEFAULT_ESCAPED ˆê”ÔŠO‘¤‚Å \‚ÌŸ */
-		D_C,     /* DEFAULT_SMALL_C ˆê”ÔŠO‘¤‚Å \c‚ÌŸ */
-		CHA,     /* CHARSET •¶šƒNƒ‰ƒX‚Ì’† */
-		C_E,     /* CHARSET_ESCAPED •¶šƒNƒ‰ƒX‚Ì’†‚Å \‚ÌŸ */
-		C_C,     /* CHARSET_SMALL_C •¶šƒNƒ‰ƒX‚Ì’†‚Å \c‚ÌŸ */
-		QEE,     /* QEESCAPE \Q...\E‚Ì’† */
-		Q_E,     /* QEESCAPE_ESCAPED \Q...\E‚Ì’†‚Å \‚ÌŸ */
+		DEF = 0, /* DEFULT ä¸€ç•ªå¤–å´ */
+		D_E,     /* DEFAULT_ESCAPED ä¸€ç•ªå¤–å´ã§ \ã®æ¬¡ */
+		D_C,     /* DEFAULT_SMALL_C ä¸€ç•ªå¤–å´ã§ \cã®æ¬¡ */
+		CHA,     /* CHARSET æ–‡å­—ã‚¯ãƒ©ã‚¹ã®ä¸­ */
+		C_E,     /* CHARSET_ESCAPED æ–‡å­—ã‚¯ãƒ©ã‚¹ã®ä¸­ã§ \ã®æ¬¡ */
+		C_C,     /* CHARSET_SMALL_C æ–‡å­—ã‚¯ãƒ©ã‚¹ã®ä¸­ã§ \cã®æ¬¡ */
+		QEE,     /* QEESCAPE \Q...\Eã®ä¸­ */
+		Q_E,     /* QEESCAPE_ESCAPED \Q...\Eã®ä¸­ã§ \ã®æ¬¡ */
 		NUMBER_OF_STATE,
-		_EC = -1, /* ENTER CHARCLASS charsetLevel‚ğƒCƒ“ƒNƒŠƒƒ“ƒg‚µ‚Ä CHA‚Ö */
-		_XC = -2, /* EXIT CHARCLASS charsetLevel‚ğƒfƒNƒŠƒƒ“ƒg‚µ‚Ä CHA‚© DEF‚Ö */
-		_DT = -3, /* DOT (“Áê•¶š‚Æ‚µ‚Ä‚Ì)ƒhƒbƒg‚ğ’u‚«Š·‚¦‚é */
-		_DL = -4, /* DOLLAR (“Áê•¶š‚Æ‚µ‚Ä‚Ì)ƒhƒ‹‚ğ’u‚«Š·‚¦‚é */
+		_EC = -1, /* ENTER CHARCLASS charsetLevelã‚’ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã—ã¦ CHAã¸ */
+		_XC = -2, /* EXIT CHARCLASS charsetLevelã‚’ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã—ã¦ CHAã‹ DEFã¸ */
+		_DT = -3, /* DOT (ç‰¹æ®Šæ–‡å­—ã¨ã—ã¦ã®)ãƒ‰ãƒƒãƒˆã‚’ç½®ãæ›ãˆã‚‹ */
+		_DL = -4, /* DOLLAR (ç‰¹æ®Šæ–‡å­—ã¨ã—ã¦ã®)ãƒ‰ãƒ«ã‚’ç½®ãæ›ãˆã‚‹ */
 	};
 	enum CharClass {
 		OTHER = 0,
@@ -369,9 +369,9 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	/* Q_E */ {QEE,  QEE,   QEE,    QEE,   QEE,   DEF,   QEE,   QEE,   Q_E}
 	};
 	State state = DEF;
-	int charsetLevel = 0; // ƒuƒ‰ƒPƒbƒg‚Ì[‚³BPOSIXƒuƒ‰ƒPƒbƒg•\Œ»‚È‚ÇAƒGƒXƒP[ƒv‚³‚ê‚Ä‚¢‚È‚¢ [] ‚ª“ü‚êq‚É‚È‚é‚±‚Æ‚ª‚ ‚éB
+	int charsetLevel = 0; // ãƒ–ãƒ©ã‚±ãƒƒãƒˆã®æ·±ã•ã€‚POSIXãƒ–ãƒ©ã‚±ãƒƒãƒˆè¡¨ç¾ãªã©ã€ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã•ã‚Œã¦ã„ãªã„ [] ãŒå…¥ã‚Œå­ã«ãªã‚‹ã“ã¨ãŒã‚ã‚‹ã€‚
 	const wchar_t *left = szSearch, *right = szSearch;
-	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()‚Íg‚í‚È‚­‚Ä‚à‚¢‚¢‚©‚ÈH
+	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()ã¯ä½¿ã‚ãªãã¦ã‚‚ã„ã„ã‹ãªï¼Ÿ
 		const wchar_t ch = *right;
 		const CharClass charClass =
 			ch == L'.'  ? DOT:
@@ -405,39 +405,39 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 				left = right + 1;
 				strModifiedSearch.append( szDollarAlternative );
 			break;
-			default: // ƒoƒOBenum State‚ÉŒ©“¦‚µ‚ª‚ ‚éB
+			default: // ãƒã‚°ã€‚enum Stateã«è¦‹é€ƒã—ãŒã‚ã‚‹ã€‚
 			break;
 		}
 	}
-	strModifiedSearch.append( left, right + 1 ); // right + 1 ‚Í '\0' ‚ÌŸ‚ğw‚·(–¾¦“I‚É '\0' ‚ğƒRƒs[)B
+	strModifiedSearch.append( left, right + 1 ); // right + 1 ã¯ '\0' ã®æ¬¡ã‚’æŒ‡ã™(æ˜ç¤ºçš„ã« '\0' ã‚’ã‚³ãƒ”ãƒ¼)ã€‚
 
 	return this->MakePatternSub( strModifiedSearch.data(), szReplace, L"", nOption );
 }
 
 
 /*!
-	JRE32‚ÌƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“ŠÖ”D‹ó‚Ì•¶š—ñ‚É‘Î‚µ‚ÄŒŸõE’uŠ·‚ğs‚¤‚±‚Æ‚É‚æ‚è
-	BREGEXP_W\‘¢‘Ì‚Ì¶¬‚Ì‚İ‚ğs‚¤D
+	JRE32ã®ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³é–¢æ•°ï¼ç©ºã®æ–‡å­—åˆ—ã«å¯¾ã—ã¦æ¤œç´¢ãƒ»ç½®æ›ã‚’è¡Œã†ã“ã¨ã«ã‚ˆã‚Š
+	BREGEXP_Wæ§‹é€ ä½“ã®ç”Ÿæˆã®ã¿ã‚’è¡Œã†ï¼
 
-	@param[in] szPattern0	ŒŸõor’uŠ·ƒpƒ^[ƒ“
-	@param[in] szPattern1	’uŠ·Œã•¶š—ñƒpƒ^[ƒ“(ŒŸõ‚ÍNULL)
-	@param[in] nOption		ŒŸõE’uŠ·ƒIƒvƒVƒ‡ƒ“
+	@param[in] szPattern0	æ¤œç´¢orç½®æ›ãƒ‘ã‚¿ãƒ¼ãƒ³
+	@param[in] szPattern1	ç½®æ›å¾Œæ–‡å­—åˆ—ãƒ‘ã‚¿ãƒ¼ãƒ³(æ¤œç´¢æ™‚ã¯NULL)
+	@param[in] nOption		æ¤œç´¢ãƒ»ç½®æ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 
-	@retval true ¬Œ÷
-	@retval false ¸”s
+	@retval true æˆåŠŸ
+	@retval false å¤±æ•—
 */
 bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption, bool bKakomi )
 {
 
-	//	DLL‚ª—˜—p‰Â”\‚Å‚È‚¢‚Æ‚«‚ÍƒGƒ‰[I—¹
+	//	DLLãŒåˆ©ç”¨å¯èƒ½ã§ãªã„ã¨ãã¯ã‚¨ãƒ©ãƒ¼çµ‚äº†
 	if( !IsAvailable() )
 		return false;
 
-	//	BREGEXP_W\‘¢‘Ì‚Ì‰ğ•ú
+	//	BREGEXP_Wæ§‹é€ ä½“ã®è§£æ”¾
 	ReleaseCompileBuffer();
 
-	// ƒ‰ƒCƒuƒ‰ƒŠ‚É“n‚·ŒŸõƒpƒ^[ƒ“‚ğì¬
-	// •ÊŠÖ”‚Å‹¤’Êˆ—‚É•ÏX 2003.05.03 by ‚©‚ë‚Æ
+	// ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«æ¸¡ã™æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ä½œæˆ
+	// åˆ¥é–¢æ•°ã§å…±é€šå‡¦ç†ã«å¤‰æ›´ 2003.05.03 by ã‹ã‚ã¨
 	wchar_t *szNPattern = NULL;
 	const wchar_t *pszNPattern = NULL;
 	if( bKakomi ){
@@ -446,74 +446,74 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 		szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
 		pszNPattern = szNPattern;
 	}
-	m_szMsg[0] = L'\0';		//!< ƒGƒ‰[‰ğœ
+	m_szMsg[0] = L'\0';		//!< ã‚¨ãƒ©ãƒ¼è§£é™¤
 	if (szPattern1 == NULL) {
-		// ŒŸõÀs
+		// æ¤œç´¢å®Ÿè¡Œ
 		BMatch( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
 	} else {
-		// ’uŠ·Às
+		// ç½®æ›å®Ÿè¡Œ
 		BSubst( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
 	}
 	delete [] szNPattern;
 
-	//	ƒƒbƒZ[ƒW‚ª‹ó•¶š—ñ‚Å‚È‚¯‚ê‚Î‰½‚ç‚©‚ÌƒGƒ‰[”­¶B
-	//	ƒTƒ“ƒvƒ‹ƒ\[ƒXQÆ
+	//	ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒç©ºæ–‡å­—åˆ—ã§ãªã‘ã‚Œã°ä½•ã‚‰ã‹ã®ã‚¨ãƒ©ãƒ¼ç™ºç”Ÿã€‚
+	//	ã‚µãƒ³ãƒ—ãƒ«ã‚½ãƒ¼ã‚¹å‚ç…§
 	if( m_szMsg[0] ){
 		ReleaseCompileBuffer();
 		return false;
 	}
 	
-	// s“ªğŒƒ`ƒFƒbƒN‚ÍAMakePattern‚Éæ‚è‚İ 2003.05.03 by ‚©‚ë‚Æ
+	// è¡Œé ­æ¡ä»¶ãƒã‚§ãƒƒã‚¯ã¯ã€MakePatternã«å–ã‚Šè¾¼ã¿ 2003.05.03 by ã‹ã‚ã¨
 
 	return true;
 }
 
 /*!
-	JRE32‚ÌƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“ŠÖ”DŠù‚É‚ ‚éƒRƒ“ƒpƒCƒ‹\‘¢‘Ì‚ğ—˜—p‚µ‚ÄŒŸõi1sj‚ğ
-	s‚¤D
+	JRE32ã®ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³é–¢æ•°ï¼æ—¢ã«ã‚ã‚‹ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ§‹é€ ä½“ã‚’åˆ©ç”¨ã—ã¦æ¤œç´¢ï¼ˆ1è¡Œï¼‰ã‚’
+	è¡Œã†ï¼
 
-	@param[in] target ŒŸõ‘ÎÛ—Ìˆææ“ªƒAƒhƒŒƒX
-	@param[in] len ŒŸõ‘ÎÛ—ÌˆæƒTƒCƒY
-	@param[in] nStart ŒŸõŠJnˆÊ’uD(æ“ª‚Í0)
+	@param[in] target æ¤œç´¢å¯¾è±¡é ˜åŸŸå…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
+	@param[in] len æ¤œç´¢å¯¾è±¡é ˜åŸŸã‚µã‚¤ã‚º
+	@param[in] nStart æ¤œç´¢é–‹å§‹ä½ç½®ï¼(å…ˆé ­ã¯0)
 
 	@retval true Match
-	@retval false No Match ‚Ü‚½‚Í ƒGƒ‰[BƒGƒ‰[‚Í GetLastMessage()‚É‚æ‚è”»’è‰Â”\B
+	@retval false No Match ã¾ãŸã¯ ã‚¨ãƒ©ãƒ¼ã€‚ã‚¨ãƒ©ãƒ¼ã¯ GetLastMessage()ã«ã‚ˆã‚Šåˆ¤å®šå¯èƒ½ã€‚
 
 */
 bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 {
-	int matched;		//!< ŒŸõˆê’v‚µ‚½‚©? >0:Match, 0:NoMatch, <0:Error
+	int matched;		//!< æ¤œç´¢ä¸€è‡´ã—ãŸã‹? >0:Match, 0:NoMatch, <0:Error
 
-	//	DLL‚ª—˜—p‰Â”\‚Å‚È‚¢‚Æ‚«A‚Ü‚½‚Í\‘¢‘Ì‚ª–¢İ’è‚Ì‚ÍƒGƒ‰[I—¹
+	//	DLLãŒåˆ©ç”¨å¯èƒ½ã§ãªã„ã¨ãã€ã¾ãŸã¯æ§‹é€ ä½“ãŒæœªè¨­å®šã®æ™‚ã¯ã‚¨ãƒ©ãƒ¼çµ‚äº†
 	if( (!IsAvailable()) || m_pRegExp == NULL ){
 		return false;
 	}
 
-	m_szMsg[0] = '\0';		//!< ƒGƒ‰[‰ğœ
-	// Šg’£ŠÖ”‚ª‚È‚¢ê‡‚ÍAs‚Ìæ“ª("^")‚ÌŒŸõ‚Ì“Á•Êˆ— by ‚©‚ë‚Æ
+	m_szMsg[0] = '\0';		//!< ã‚¨ãƒ©ãƒ¼è§£é™¤
+	// æ‹¡å¼µé–¢æ•°ãŒãªã„å ´åˆã¯ã€è¡Œã®å…ˆé ­("^")ã®æ¤œç´¢æ™‚ã®ç‰¹åˆ¥å‡¦ç† by ã‹ã‚ã¨
 	if (!ExistBMatchEx()) {
 		/*
-		** s“ª(^)‚Æƒ}ƒbƒ`‚·‚é‚Ì‚ÍAnStart=0‚Ì‚¾‚¯‚È‚Ì‚ÅA‚»‚êˆÈŠO‚Í false
+		** è¡Œé ­(^)ã¨ãƒãƒƒãƒã™ã‚‹ã®ã¯ã€nStart=0ã®æ™‚ã ã‘ãªã®ã§ã€ãã‚Œä»¥å¤–ã¯ false
 		*/
 		if( (m_ePatType & PAT_TOP) != 0 && nStart != 0 ) {
-			// nStart!=0‚Å‚àABMatch()‚É‚Æ‚Á‚Ä‚Ís“ª‚É‚È‚é‚Ì‚ÅA‚±‚±‚Åfalse‚É‚·‚é•K—v‚ª‚ ‚é
+			// nStart!=0ã§ã‚‚ã€BMatch()ã«ã¨ã£ã¦ã¯è¡Œé ­ã«ãªã‚‹ã®ã§ã€ã“ã“ã§falseã«ã™ã‚‹å¿…è¦ãŒã‚ã‚‹
 			return false;
 		}
-		//	ŒŸõ•¶š—ñNULL‚ğw’è‚·‚é‚Æ‘O‰ñ‚Æ“¯ˆê‚Ì•¶š—ñ‚ÆŒ©‚È‚³‚ê‚é
+		//	æ¤œç´¢æ–‡å­—åˆ—ï¼NULLã‚’æŒ‡å®šã™ã‚‹ã¨å‰å›ã¨åŒä¸€ã®æ–‡å­—åˆ—ã¨è¦‹ãªã•ã‚Œã‚‹
 		matched = BMatch( NULL, target + nStart, target + len, &m_pRegExp, m_szMsg );
 	} else {
-		//	ŒŸõ•¶š—ñNULL‚ğw’è‚·‚é‚Æ‘O‰ñ‚Æ“¯ˆê‚Ì•¶š—ñ‚ÆŒ©‚È‚³‚ê‚é
+		//	æ¤œç´¢æ–‡å­—åˆ—ï¼NULLã‚’æŒ‡å®šã™ã‚‹ã¨å‰å›ã¨åŒä¸€ã®æ–‡å­—åˆ—ã¨è¦‹ãªã•ã‚Œã‚‹
 		matched = BMatchEx( NULL, target, target + nStart, target + len, &m_pRegExp, m_szMsg );
 	}
 	m_szTarget = target;
 			
 	if ( matched < 0 || m_szMsg[0] ) {
-		// BMatchƒGƒ‰[
-		// ƒGƒ‰[ˆ—‚ğ‚µ‚Ä‚¢‚È‚©‚Á‚½‚Ì‚ÅAnStart>=len‚Ì‚æ‚¤‚Èê‡‚ÉAƒ}ƒbƒ`ˆµ‚¢‚É‚È‚è
-		// –³ŒÀ’uŠ·“™‚Ì•s‹ï‡‚É‚È‚Á‚Ä‚¢‚½ 2003.05.03 by ‚©‚ë‚Æ
+		// BMatchã‚¨ãƒ©ãƒ¼
+		// ã‚¨ãƒ©ãƒ¼å‡¦ç†ã‚’ã—ã¦ã„ãªã‹ã£ãŸã®ã§ã€nStart>=lenã®ã‚ˆã†ãªå ´åˆã«ã€ãƒãƒƒãƒæ‰±ã„ã«ãªã‚Š
+		// ç„¡é™ç½®æ›ç­‰ã®ä¸å…·åˆã«ãªã£ã¦ã„ãŸ 2003.05.03 by ã‹ã‚ã¨
 		return false;
 	} else if ( matched == 0 ) {
-		// ˆê’v‚µ‚È‚©‚Á‚½
+		// ä¸€è‡´ã—ãªã‹ã£ãŸ
 		return false;
 	}
 
@@ -523,41 +523,41 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 
 //<< 2002/03/27 Azumaiya
 /*!
-	³‹K•\Œ»‚É‚æ‚é•¶š—ñ’uŠ·
-	Šù‚É‚ ‚éƒRƒ“ƒpƒCƒ‹\‘¢‘Ì‚ğ—˜—p‚µ‚Ä’uŠ·i1sj‚ğ
-	s‚¤D
+	æ­£è¦è¡¨ç¾ã«ã‚ˆã‚‹æ–‡å­—åˆ—ç½®æ›
+	æ—¢ã«ã‚ã‚‹ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ§‹é€ ä½“ã‚’åˆ©ç”¨ã—ã¦ç½®æ›ï¼ˆ1è¡Œï¼‰ã‚’
+	è¡Œã†ï¼
 
-	@param[in] szTarget ’uŠ·‘ÎÛƒf[ƒ^
-	@param[in] nLen ’uŠ·‘ÎÛƒf[ƒ^’·
-	@param[in] nStart ’uŠ·ŠJnˆÊ’u(0‚©‚çnLen–¢–)
+	@param[in] szTarget ç½®æ›å¯¾è±¡ãƒ‡ãƒ¼ã‚¿
+	@param[in] nLen ç½®æ›å¯¾è±¡ãƒ‡ãƒ¼ã‚¿é•·
+	@param[in] nStart ç½®æ›é–‹å§‹ä½ç½®(0ã‹ã‚‰nLenæœªæº€)
 
-	@retval ’uŠ·ŒÂ”
+	@retval ç½®æ›å€‹æ•°
 
-	@date	2007.01.16 ryoji –ß‚è’l‚ğ’uŠ·ŒÂ”‚É•ÏX
+	@date	2007.01.16 ryoji æˆ»ã‚Šå€¤ã‚’ç½®æ›å€‹æ•°ã«å¤‰æ›´
 */
 int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 {
 	int result;
-	//	DLL‚ª—˜—p‰Â”\‚Å‚È‚¢‚Æ‚«A‚Ü‚½‚Í\‘¢‘Ì‚ª–¢İ’è‚Ì‚ÍƒGƒ‰[I—¹
+	//	DLLãŒåˆ©ç”¨å¯èƒ½ã§ãªã„ã¨ãã€ã¾ãŸã¯æ§‹é€ ä½“ãŒæœªè¨­å®šã®æ™‚ã¯ã‚¨ãƒ©ãƒ¼çµ‚äº†
 	if( !IsAvailable() || m_pRegExp == NULL )
 	{
 		return false;
 	}
 
-	//	From Here 2003.05.03 ‚©‚ë‚Æ
-	// nLen‚ª‚O‚¾‚ÆABSubst()‚ª’uŠ·‚É¸”s‚µ‚Ä‚µ‚Ü‚¤‚Ì‚ÅA‘ã—pƒf[ƒ^(m_tmpBuf)‚ğg‚¤
+	//	From Here 2003.05.03 ã‹ã‚ã¨
+	// nLenãŒï¼ã ã¨ã€BSubst()ãŒç½®æ›ã«å¤±æ•—ã—ã¦ã—ã¾ã†ã®ã§ã€ä»£ç”¨ãƒ‡ãƒ¼ã‚¿(m_tmpBuf)ã‚’ä½¿ã†
 	//
-	// 2007.01.19 ryoji ‘ã—pƒf[ƒ^g—p‚ğƒRƒƒ“ƒgƒAƒEƒg
-	// g—p‚·‚é‚ÆŒ»ó‚Å‚ÍŒ‹‰Ê‚É‚PƒoƒCƒg—]•ª‚ÈƒSƒ~‚ª•t‰Á‚³‚ê‚é
-	// ’uŠ·‚É¸”s‚·‚é‚Ì‚ÍnLen‚ª‚O‚ÉŒÀ‚ç‚¸ nLen = nStart ‚Ì‚Æ‚«is“ªƒ}ƒbƒ`‚¾‚¯‘Îô‚µ‚Ä‚àDDDj
+	// 2007.01.19 ryoji ä»£ç”¨ãƒ‡ãƒ¼ã‚¿ä½¿ç”¨ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
+	// ä½¿ç”¨ã™ã‚‹ã¨ç¾çŠ¶ã§ã¯çµæœã«ï¼‘ãƒã‚¤ãƒˆä½™åˆ†ãªã‚´ãƒŸãŒä»˜åŠ ã•ã‚Œã‚‹
+	// ç½®æ›ã«å¤±æ•—ã™ã‚‹ã®ã¯nLenãŒï¼ã«é™ã‚‰ãš nLen = nStart ã®ã¨ãï¼ˆè¡Œé ­ãƒãƒƒãƒã ã‘å¯¾ç­–ã—ã¦ã‚‚ï¼ï¼ï¼ï¼‰
 	//
 	//if( nLen == 0 ) {
 	//	szTarget = m_tmpBuf;
 	//	nLen = 1;
 	//}
-	//	To Here 2003.05.03 ‚©‚ë‚Æ
+	//	To Here 2003.05.03 ã‹ã‚ã¨
 
-	m_szMsg[0] = '\0';		//!< ƒGƒ‰[‰ğœ
+	m_szMsg[0] = '\0';		//!< ã‚¨ãƒ©ãƒ¼è§£é™¤
 	if (!ExistBSubstEx()) {
 		result = BSubst( NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
 	} else {
@@ -565,14 +565,14 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 	}
 	m_szTarget = szTarget;
 
-	//	ƒƒbƒZ[ƒW‚ª‹ó•¶š—ñ‚Å‚È‚¯‚ê‚Î‰½‚ç‚©‚ÌƒGƒ‰[”­¶B
-	//	ƒTƒ“ƒvƒ‹ƒ\[ƒXQÆ
+	//	ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒç©ºæ–‡å­—åˆ—ã§ãªã‘ã‚Œã°ä½•ã‚‰ã‹ã®ã‚¨ãƒ©ãƒ¼ç™ºç”Ÿã€‚
+	//	ã‚µãƒ³ãƒ—ãƒ«ã‚½ãƒ¼ã‚¹å‚ç…§
 	if( m_szMsg[0] ) {
 		return 0;
 	}
 
 	if( result < 0 ) {
-		// ’uŠ·‚·‚é‚à‚Ì‚ª‚È‚©‚Á‚½
+		// ç½®æ›ã™ã‚‹ã‚‚ã®ãŒãªã‹ã£ãŸ
 		return 0;
 	}
 	return result;
@@ -598,18 +598,18 @@ const TCHAR* CBregexp::GetLastMessage() const
 
 //	From Here Jun. 26, 2001 genta
 /*!
-	—^‚¦‚ç‚ê‚½³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»‚ğs‚¤D
-	ƒƒbƒZ[ƒWƒtƒ‰ƒO‚ªON‚Å‰Šú‰»‚É¸”s‚µ‚½‚Æ‚«‚ÍƒƒbƒZ[ƒW‚ğ•\¦‚·‚éD
+	ä¸ãˆã‚‰ã‚ŒãŸæ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–ã‚’è¡Œã†ï¼
+	ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ•ãƒ©ã‚°ãŒONã§åˆæœŸåŒ–ã«å¤±æ•—ã—ãŸã¨ãã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹ï¼
 
-	@retval true ‰Šú‰»¬Œ÷
-	@retval false ‰Šú‰»‚É¸”s
+	@retval true åˆæœŸåŒ–æˆåŠŸ
+	@retval false åˆæœŸåŒ–ã«å¤±æ•—
 
-	@date 2007.08.12 genta ‹¤’Êİ’è‚©‚çDLL–¼‚ğæ“¾‚·‚é
+	@date 2007.08.12 genta å…±é€šè¨­å®šã‹ã‚‰DLLåã‚’å–å¾—ã™ã‚‹
 */
 bool InitRegexp(
-	HWND		hWnd,			//!< [in] ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹Bƒo[ƒWƒ‡ƒ“”Ô†‚Ìİ’è‚ª•s—v‚Å‚ ‚ê‚ÎNULLB
-	CBregexp&	rRegexp,		//!< [in] ƒ`ƒFƒbƒN‚É—˜—p‚·‚éCBregexpƒNƒ‰ƒX‚Ö‚ÌQÆ
-	bool		bShowMessage	//!< [in] ‰Šú‰»¸”s‚ÉƒGƒ‰[ƒƒbƒZ[ƒW‚ğo‚·ƒtƒ‰ƒO
+	HWND		hWnd,			//!< [in] ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã€‚ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®è¨­å®šãŒä¸è¦ã§ã‚ã‚Œã°NULLã€‚
+	CBregexp&	rRegexp,		//!< [in] ãƒã‚§ãƒƒã‚¯ã«åˆ©ç”¨ã™ã‚‹CBregexpã‚¯ãƒ©ã‚¹ã¸ã®å‚ç…§
+	bool		bShowMessage	//!< [in] åˆæœŸåŒ–å¤±æ•—æ™‚ã«ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºã™ãƒ•ãƒ©ã‚°
 )
 {
 	//	From Here 2007.08.12 genta
@@ -640,16 +640,16 @@ bool InitRegexp(
 }
 
 /*!
-	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì‘¶İ‚ğŠm”F‚µA‚ ‚ê‚Îƒo[ƒWƒ‡ƒ“î•ñ‚ğw’èƒRƒ“ƒ|[ƒlƒ“ƒg‚ÉƒZƒbƒg‚·‚éB
-	¸”s‚µ‚½ê‡‚É‚Í‹ó•¶š—ñ‚ğƒZƒbƒg‚·‚éB
+	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å­˜åœ¨ã‚’ç¢ºèªã—ã€ã‚ã‚Œã°ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã‚’æŒ‡å®šã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã«ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
+	å¤±æ•—ã—ãŸå ´åˆã«ã¯ç©ºæ–‡å­—åˆ—ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ã€‚
 
-	@retval true ƒo[ƒWƒ‡ƒ“”Ô†‚Ìİ’è‚É¬Œ÷
-	@retval false ³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»‚É¸”s
+	@retval true ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®è¨­å®šã«æˆåŠŸ
+	@retval false æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–ã«å¤±æ•—
 */
 bool CheckRegexpVersion(
-	HWND	hWnd,			//!< [in] ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹Bƒo[ƒWƒ‡ƒ“”Ô†‚Ìİ’è‚ª•s—v‚Å‚ ‚ê‚ÎNULLB
-	int		nCmpId,			//!< [in] ƒo[ƒWƒ‡ƒ“•¶š—ñ‚ğİ’è‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒgID
-	bool	bShowMessage	//!< [in] ‰Šú‰»¸”s‚ÉƒGƒ‰[ƒƒbƒZ[ƒW‚ğo‚·ƒtƒ‰ƒO
+	HWND	hWnd,			//!< [in] ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã€‚ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®è¨­å®šãŒä¸è¦ã§ã‚ã‚Œã°NULLã€‚
+	int		nCmpId,			//!< [in] ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã‚’è¨­å®šã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆID
+	bool	bShowMessage	//!< [in] åˆæœŸåŒ–å¤±æ•—æ™‚ã«ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºã™ãƒ•ãƒ©ã‚°
 )
 {
 	CBregexp cRegexp;
@@ -667,15 +667,15 @@ bool CheckRegexpVersion(
 }
 
 /*!
-	³‹K•\Œ»‚ª‹K‘¥‚É]‚Á‚Ä‚¢‚é‚©‚ğƒ`ƒFƒbƒN‚·‚éB
+	æ­£è¦è¡¨ç¾ãŒè¦å‰‡ã«å¾“ã£ã¦ã„ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
 
-	@param szPattern [in] ƒ`ƒFƒbƒN‚·‚é³‹K•\Œ»
-	@param hWnd [in] ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ÌeƒEƒBƒ“ƒhƒE
-	@param bShowMessage [in] ‰Šú‰»¸”s‚ÉƒGƒ‰[ƒƒbƒZ[ƒW‚ğo‚·ƒtƒ‰ƒO
-	@param nOption [in] ‘å•¶š‚Æ¬•¶š‚ğ–³‹‚µ‚Ä”äŠr‚·‚éƒtƒ‰ƒO // 2002/2/1 hor’Ç‰Á
+	@param szPattern [in] ãƒã‚§ãƒƒã‚¯ã™ã‚‹æ­£è¦è¡¨ç¾
+	@param hWnd [in] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	@param bShowMessage [in] åˆæœŸåŒ–å¤±æ•—æ™‚ã«ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºã™ãƒ•ãƒ©ã‚°
+	@param nOption [in] å¤§æ–‡å­—ã¨å°æ–‡å­—ã‚’ç„¡è¦–ã—ã¦æ¯”è¼ƒã™ã‚‹ãƒ•ãƒ©ã‚° // 2002/2/1 horè¿½åŠ 
 
-	@retval true ³‹K•\Œ»‚Í‹K‘¥’Ê‚è
-	@retval false •¶–@‚ÉŒë‚è‚ª‚ ‚éB‚Ü‚½‚ÍAƒ‰ƒCƒuƒ‰ƒŠ‚ªg—p‚Å‚«‚È‚¢B
+	@retval true æ­£è¦è¡¨ç¾ã¯è¦å‰‡é€šã‚Š
+	@retval false æ–‡æ³•ã«èª¤ã‚ŠãŒã‚ã‚‹ã€‚ã¾ãŸã¯ã€ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒä½¿ç”¨ã§ããªã„ã€‚
 */
 bool CheckRegexpSyntax(
 	const wchar_t*	szPattern,
@@ -693,7 +693,7 @@ bool CheckRegexpSyntax(
 	if( nOption == -1 ){
 		nOption = CBregexp::optCaseSensitive;
 	}
-	if( !cRegexp.Compile( szPattern, NULL, nOption, bKakomi ) ){	// 2002/2/1 hor’Ç‰Á
+	if( !cRegexp.Compile( szPattern, NULL, nOption, bKakomi ) ){	// 2002/2/1 horè¿½åŠ 
 		if( bShowMessage ){
 			::MessageBox( hWnd, cRegexp.GetLastMessage(),
 				LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION );

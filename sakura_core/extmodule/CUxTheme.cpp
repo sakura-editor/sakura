@@ -1,7 +1,7 @@
-/*!	@file
-	@brief UxTheme “®“Iƒ[ƒh
+ï»¿/*!	@file
+	@brief UxTheme å‹•çš„ãƒ­ãƒ¼ãƒ‰
 
-	UxTheme (Windows thmeme manager) ‚Ö‚Ì“®“IƒAƒNƒZƒXƒNƒ‰ƒX
+	UxTheme (Windows thmeme manager) ã¸ã®å‹•çš„ã‚¢ã‚¯ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 
 	@author ryoji
 	@date Apr. 1, 2007
@@ -43,13 +43,13 @@ CUxTheme::~CUxTheme()
 }
 
 
-/*! DLL ‚Ìƒ[ƒh
+/*! DLL ã®ãƒ­ãƒ¼ãƒ‰
 
-	ˆê“x‚µ‚© LoadLibrary() Às‚µ‚È‚¢‚±‚ÆˆÈŠO‚Í CDllImp::Init() ‚Æ“¯‚¶
-	iUxTheme –¢‘Î‰ OS ‚Å‚Ì LoadLibrary() ¸”s‚ÌŒJ•Ô‚µ‚ğ–h‚®j
+	ä¸€åº¦ã—ã‹ LoadLibrary() å®Ÿè¡Œã—ãªã„ã“ã¨ä»¥å¤–ã¯ CDllImp::Init() ã¨åŒã˜
+	ï¼ˆUxTheme æœªå¯¾å¿œ OS ã§ã® LoadLibrary() å¤±æ•—ã®ç¹°è¿”ã—ã‚’é˜²ãï¼‰
 
 	@author ryoji
-	@date 2007.04.01 ryoji V‹K
+	@date 2007.04.01 ryoji æ–°è¦
 */
 bool CUxTheme::InitThemeDll( TCHAR* str )
 {
@@ -61,7 +61,7 @@ bool CUxTheme::InitThemeDll( TCHAR* str )
 }
 
 /*!
-	UxTheme ‚Ìƒtƒ@ƒCƒ‹–¼‚ğ“n‚·
+	UxTheme ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ¸¡ã™
 */
 LPCTSTR CUxTheme::GetDllNameImp(int nIndex)
 {

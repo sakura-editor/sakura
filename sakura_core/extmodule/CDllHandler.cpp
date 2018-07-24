@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DLL�̃��[�h�A�A�����[�h
+﻿/*!	@file
+	@brief DLLのロード、アンロード
 
 	@author genta
 	@date Jun. 10, 2001
@@ -33,7 +33,7 @@
 #include "util/module.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        �����Ɣj��                           //
+//                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDllImp::CDllImp()
@@ -42,7 +42,7 @@ CDllImp::CDllImp()
 }
 
 /*!
-	�I�u�W�F�N�g���őO��DLL���ǂݍ��܂ꂽ��Ԃł����DLL�̉�����s���D
+	オブジェクト消滅前にDLLが読み込まれた状態であればDLLの解放を行う．
 */
 CDllImp::~CDllImp()
 {
@@ -52,50 +52,50 @@ CDllImp::~CDllImp()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         DLL���[�h                           //
+//                         DLLロード                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
 {
 	if( IsAvailable() ){
-		//	���ɗ��p�\�ŗL��Ή������Ȃ��D
+		//	既に利用可能で有れば何もしない．
 		return DLL_SUCCESS;
 	}
 
-	//���O�����������؂��A�L���Ȃ��̂��̗p����
+	//名前候補を順次検証し、有効なものを採用する
 	LPCTSTR pszLastName  = NULL;
 	bool bInitImpFailure = false;
 	for(int i = -1; ;i++)
 	{
-		//���O���
+		//名前候補
 		LPCTSTR pszName = NULL;
-		if(i==-1){ //�܂��͈����Ŏw�肳�ꂽ���O����B
+		if(i==-1){ //まずは引数で指定された名前から。
 			pszName = pszSpecifiedDllName;
 		}
-		else{ //�N���X��`��DLL��
+		else{ //クラス定義のDLL名
 			pszName = GetDllNameImp(i);
-			//GetDllNameImp����擾�������O�������Ȃ烋�[�v�𔲂���
+			//GetDllNameImpから取得した名前が無効ならループを抜ける
 			if(!pszName || !pszName[0]){
 				break;
 			}
-			//GetDllNameImp����擾�������O���O����Ɠ����Ȃ烋�[�v�𔲂���
+			//GetDllNameImpから取得した名前が前回候補と同じならループを抜ける
 			if(pszLastName && _tcsicmp(pszLastName,pszName)==0){
 				break;
 			}
 		}
 		pszLastName = pszName;
 
-		//���O�������̏ꍇ�́A���̖��O���������B
+		//名前が無効の場合は、次の名前候補を試す。
 		if(!pszName || !pszName[0])continue;
 
-		//DLL���[�h�B���[�h�ł��Ȃ������玟�̖��O���������B
+		//DLLロード。ロードできなかったら次の名前候補を試す。
 		m_hInstance = LoadLibraryExedir(pszName);
 		if(!m_hInstance)continue;
 
-		//��������
+		//初期処理
 		bool ret = InitDllImp();
 
-		//���������Ɏ��s�����ꍇ��DLL��������A���̖��O���������B
+		//初期処理に失敗した場合はDLLを解放し、次の名前候補を試す。
 		if(!ret){
 			bInitImpFailure = true;
 			::FreeLibrary( m_hInstance );
@@ -103,43 +103,43 @@ EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
 			continue;
 		}
 
-		//���������ɐ��������ꍇ�́ADLL����ۑ����A���[�v�𔲂���
+		//初期処理に成功した場合は、DLL名を保存し、ループを抜ける
 		if(ret){
 			m_strLoadedDllName = pszName;
 			break;
 		}
 	}
 
-	//���[�h�Ə��������ɐ����Ȃ�
+	//ロードと初期処理に成功なら
 	if(IsAvailable()){
 		return DLL_SUCCESS;
 	}
-	//���������Ɏ��s�������Ƃ���������
+	//初期処理に失敗したことがあったら
 	else if(bInitImpFailure){
-		return DLL_INITFAILURE; //DLL���[�h�͂ł������ǁA���̏��������Ɏ��s
+		return DLL_INITFAILURE; //DLLロードはできたけど、その初期処理に失敗
 	}
-	//����ȊO
+	//それ以外
 	else{
-		return DLL_LOADFAILURE; //DLL���[�h���̂Ɏ��s
+		return DLL_LOADFAILURE; //DLLロード自体に失敗
 	}
 }
 
 bool CDllImp::DeinitDll(bool force)
 {
 	if( m_hInstance == NULL || (!IsAvailable()) ){
-		//	DLL���ǂݍ��܂�Ă��Ȃ���Ή������Ȃ�
+		//	DLLが読み込まれていなければ何もしない
 		return true;
 	}
 
-	//�I������
+	//終了処理
 	bool ret = DeinitDllImp();
 	
-	//DLL���
+	//DLL解放
 	if( ret || force ){
-		//DLL�������
+		//DLL名を解放
 		m_strLoadedDllName = _T("");
 
-		//DLL���
+		//DLL解放
 		::FreeLibrary( m_hInstance );
 		m_hInstance = NULL;
 
@@ -152,7 +152,7 @@ bool CDllImp::DeinitDll(bool force)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ����                              //
+//                           属性                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 LPCTSTR CDllImp::GetLoadedDllName() const
@@ -162,11 +162,11 @@ LPCTSTR CDllImp::GetLoadedDllName() const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  �I�[�o�[���[�h�\����                     //
+//                  オーバーロード可能実装                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
-	�������ȗ��ł���悤�ɂ��邽�߁A��̊֐���p�ӂ��Ă���
+	実装を省略できるようにするため、空の関数を用意しておく
 */
 bool CDllImp::DeinitDllImp()
 {
@@ -175,16 +175,16 @@ bool CDllImp::DeinitDllImp()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         �����⏕                            //
+//                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
-	�e�[�u���ŗ^����ꂽ�G���g���|�C���^�A�h���X������ꏊ��
-	�Ή����镶���񂩂璲�ׂ��G���g���|�C���^��ݒ肷��B
+	テーブルで与えられたエントリポインタアドレスを入れる場所に
+	対応する文字列から調べたエントリポインタを設定する。
 	
-	@param table [in] ���O�ƃA�h���X�̑Ή��\�B�Ō��{NULL,0}�ŏI��邱�ƁB
-	@retval true �S�ẴA�h���X���ݒ肳�ꂽ�B
-	@retval false �A�h���X�̎擾�Ɏ��s�����֐����������B
+	@param table [in] 名前とアドレスの対応表。最後は{NULL,0}で終わること。
+	@retval true 全てのアドレスが設定された。
+	@retval false アドレスの取得に失敗した関数があった。
 */
 bool CDllImp::RegisterEntries(const ImportTable table[])
 {

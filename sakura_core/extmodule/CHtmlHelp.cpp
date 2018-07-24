@@ -1,7 +1,7 @@
-/*!	@file
-	@brief HtmpHelp“®“Iƒ[ƒh
+ï»¿/*!	@file
+	@brief HtmpHelpå‹•çš„ãƒ­ãƒ¼ãƒ‰
 	
-	HTML Help ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ì“®“IƒAƒNƒZƒXƒNƒ‰ƒX
+	HTML Help ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®å‹•çš„ã‚¢ã‚¯ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 
 	@author genta
 	@date Jul. 5, 2001
@@ -37,7 +37,7 @@ CHtmlHelp::~CHtmlHelp(void)
 {}
 
 /*!
-	HTML Help ‚Ìƒtƒ@ƒCƒ‹–¼‚ð“n‚·
+	HTML Help ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ¸¡ã™
 */
 LPCTSTR CHtmlHelp::GetDllNameImp(int nIndex)
 {

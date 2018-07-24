@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DLL�̃��[�h�A�A�����[�h
+﻿/*!	@file
+	@brief DLLのロード、アンロード
 
 	@author genta
 	@date Jun. 10, 2001
@@ -36,14 +36,14 @@
 #include <string>
 #include "_main/global.h"
 
-/*! CDllImp �����b�v
-	CDllImp::DeinitDll ���ĂіY��Ȃ����߂̃w���p�I�N���X�B
-	���̂Ƃ���DeinitDll���g���Ă���ӏ��������̂ŁA���̃N���X�̏o�Ԃ͂���܂��񂪁B
-	2008.05.10 kobake �쐬
+/*! CDllImp をラップ
+	CDllImp::DeinitDll を呼び忘れないためのヘルパ的クラス。
+	今のところDeinitDllが使われている箇所が無いので、このクラスの出番はありませんが。
+	2008.05.10 kobake 作成
 */
 template <class DLLIMP> class CDllHandler{
 public:
-	//�R���X�g���N�^�E�f�X�g���N�^
+	//コンストラクタ・デストラクタ
 	CDllHandler()
 	{
 		m_pcDllImp = new DLLIMP();
@@ -51,14 +51,14 @@ public:
 	}
 	~CDllHandler()
 	{
-		m_pcDllImp->DeinitDll(true); //���I�������Ɏ��s���Ă������I��DLL���
+		m_pcDllImp->DeinitDll(true); //※終了処理に失敗しても強制的にDLL解放
 		delete m_pcDllImp;
 	}
 
-	//�A�N�Z�T
+	//アクセサ
 	DLLIMP* operator->(){ return m_pcDllImp; }
 
-	//! ���p��Ԃ̃`�F�b�N�ioperator�Łj
+	//! 利用状態のチェック（operator版）
 	bool operator!() const { return m_pcDllImp->IsAvailable(); }
 
 private:
@@ -66,32 +66,32 @@ private:
 };
 
 
-//!���ʒ萔
+//!結果定数
 enum EDllResult{
-	DLL_SUCCESS,		//����
-	DLL_LOADFAILURE,	//DLL���[�h���s
-	DLL_INITFAILURE,	//���������Ɏ��s
+	DLL_SUCCESS,		//成功
+	DLL_LOADFAILURE,	//DLLロード失敗
+	DLL_INITFAILURE,	//初期処理に失敗
 };
 
-//! DLL�̓��I��Load/Unload���s�����߂̃N���X
+//! DLLの動的なLoad/Unloadを行うためのクラス
 /*!
 	@author genta
 	@date Jun. 10, 2001 genta
-	@date 2001.07.05 genta InitDll: �����ǉ��B�p�X�̎w��ȂǂɎg����
-	@date Apr. 15, 2002 genta RegisterEntries�̒ǉ��B
-	@date 2007.06.25 genta InitDll: GetDllNameImp���g���悤�Ɏ�����ύX�D
-	@date 2001.07.05 genta GetDllName: �����ǉ��B�p�X�̎w��ȂǂɎg����
-	@date 2007.06.25 genta GetDllName: GetDllNameImp���g�p����ꍇ�͕K�{�ł͂Ȃ��̂ŁC
-										�������z�֐��͂�߂ăv���[�X�z���_�[��p�ӂ���D
-	@date 2008.05.10 kobake �����B�h���N���X�́A�`Imp���I�[�o�[���[�h����Ηǂ��Ƃ��������ł��B
+	@date 2001.07.05 genta InitDll: 引数追加。パスの指定などに使える
+	@date Apr. 15, 2002 genta RegisterEntriesの追加。
+	@date 2007.06.25 genta InitDll: GetDllNameImpを使うように実装を変更．
+	@date 2001.07.05 genta GetDllName: 引数追加。パスの指定などに使える
+	@date 2007.06.25 genta GetDllName: GetDllNameImpを使用する場合は必須ではないので，
+										純粋仮想関数はやめてプレースホルダーを用意する．
+	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
 class CDllImp{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                            �^                               //
+	//                            型                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	/*!
-		�A�h���X�ƃG���g�����̑Ή��\�BRegisterEntries�Ŏg����B
+		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
 		@author YAZAKI
 		@date 2002.01.26
 	*/
@@ -101,106 +101,106 @@ public:
 	};
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        �����Ɣj��                           //
+	//                        生成と破棄                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	//�R���X�g���N�^�E�f�X�g���N�^
+	//コンストラクタ・デストラクタ
 	CDllImp();
 	virtual ~CDllImp();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         DLL���[�h                           //
+	//                         DLLロード                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	//! DLL�̊֐����Ăяo���邩��Ԃǂ���
+	//! DLLの関数を呼び出せるか状態どうか
 	virtual bool IsAvailable() const { return m_hInstance != NULL; }
 
-	//! DLL���[�h�Ə�������
+	//! DLLロードと初期処理
 	EDllResult InitDll(
-		LPCTSTR pszSpecifiedDllName = NULL	//!< [in] �N���X����`���Ă���DLL���ȊO��DLL��ǂݍ��݂����Ƃ��ɁA����DLL�����w��B
+		LPCTSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
 	);
 
-	//! �I��������DLL�A�����[�h
+	//! 終了処理とDLLアンロード
 	bool DeinitDll(
-		bool force = false	//!< [in] �I�������Ɏ��s���Ă�DLL��������邩�ǂ���
+		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
 	);
 
-	//! �C���X�^���X�n���h���̎擾
+	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ����                              //
+	//                           属性                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	//! ���[�h�ς�DLL�t�@�C�����̎擾�B���[�h����Ă��Ȃ� (�܂��̓��[�h�Ɏ��s����) �ꍇ�� NULL ��Ԃ��B
+	//! ロード済みDLLファイル名の取得。ロードされていない (またはロードに失敗した) 場合は NULL を返す。
 	LPCTSTR GetLoadedDllName() const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  �I�[�o�[���[�h�\����                     //
+	//                  オーバーロード可能実装                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
-	//!	DLL�̏�����
+	//!	DLLの初期化
 	/*!
-		DLL�̃��[�h�ɐ�����������ɌĂяo�����D�G���g���|�C���g��
-		�m�F�Ȃǂ��s���D
+		DLLのロードに成功した直後に呼び出される．エントリポイントの
+		確認などを行う．
 
-		@retval true ����I��
-		@retval false �ُ�I��
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note false��Ԃ����ꍇ�́A�ǂݍ���DLL���������D
+		@note falseを返した場合は、読み込んだDLLを解放する．
 	*/
 	virtual bool InitDllImp() = 0;
 
-	//!	�֐��̏�����
+	//!	関数の初期化
 	/*!
-		DLL�̃A�����[�h���s�����O�ɌĂяo�����D�������̉���Ȃǂ�
-		�s���D
+		DLLのアンロードを行う直前に呼び出される．メモリの解放などを
+		行う．
 
-		@retval true ����I��
-		@retval false �ُ�I��
+		@retval true 正常終了
+		@retval false 異常終了
 
-		@note false��Ԃ����Ƃ���DLL��Unload�͍s���Ȃ��D
-		@par ����
-		�f�X�g���N�^����DeinitDll�y��DeinitDllImp���Ăяo���ꂽ�Ƃ���
-		�|�����[�t�B�Y�����s���Ȃ����߂ɃT�u�N���X��DeinitDllImp���Ăяo����Ȃ��B
-		���̂��߁A�T�u�N���X�̃f�X�g���N�^�ł�DeinitDllImp�𖾎��I�ɌĂяo���K�v������B
+		@note falseを返したときはDLLのUnloadは行われない．
+		@par 注意
+		デストラクタからDeinitDll及びDeinitDllImpが呼び出されたときは
+		ポリモーフィズムが行われないためにサブクラスのDeinitDllImpが呼び出されない。
+		そのため、サブクラスのデストラクタではDeinitDllImpを明示的に呼び出す必要がある。
 		
-		DeinitDll���f�X�g���N�^�ȊO����Ăяo�����ꍇ��DeinitDllImp�͉��z�֐��Ƃ���
-		�T�u�N���X�̂��̂��Ăяo����A�f�X�g���N�^�͓��R�Ăяo����Ȃ��̂�
-		DeinitDllImp���̂��͕̂K�v�ł���B
+		DeinitDllがデストラクタ以外から呼び出される場合はDeinitDllImpは仮想関数として
+		サブクラスのものが呼び出され、デストラクタは当然呼び出されないので
+		DeinitDllImpそのものは必要である。
 		
-		�f�X�g���N�^����DeinitDllImp���ĂԂƂ��́A����������Ă���Ƃ����ۏ؂��Ȃ��̂�
-		�Ăяo���O��IsAvailable�ɂ��m�F��K���s�����ƁB
+		デストラクタからDeinitDllImpを呼ぶときは、初期化されているという保証がないので
+		呼び出し前にIsAvailableによる確認を必ず行うこと。
 		
-		@date 2002.04.15 genta ���ӏ����ǉ�
+		@date 2002.04.15 genta 注意書き追加
 	*/
 	virtual bool DeinitDllImp();
 
-	//! DLL�t�@�C�����̎擾(����������)
+	//! DLLファイル名の取得(複数を順次)
 	/*!
-		DLL�t�@�C�����Ƃ��ĕ����̉\��������C���̂����̈�ł�
-		�����������̂��g�p����ꍇ�ɑΉ�����D
+		DLLファイル名として複数の可能性があり，そのうちの一つでも
+		見つかったものを使用する場合に対応する．
 		
-		�ԍ��ɉ����Ă��ꂼ��قȂ�t�@�C������Ԃ����Ƃ��ł���D
-		LoadLibrary()�����counter��0����1�����������ď��ɌĂт������D
-		�����DLL�̃��[�h�ɐ�������(����)���C�߂�l�Ƃ���NULL��Ԃ�(���s)
-		�܂ő�������D
+		番号に応じてそれぞれ異なるファイル名を返すことができる．
+		LoadLibrary()からはcounterを0から1ずつ増加させて順に呼びだされる．
+		それはDLLのロードに成功する(成功)か，戻り値としてNULLを返す(失敗)
+		まで続けられる．
 
-		@param[in] nIndex �C���f�b�N�X�D(0�`)
+		@param[in] nIndex インデックス．(0～)
 		
-		@return �����ɉ�����DLL��(LoadLibrary�ɓn��������)�C�܂���NULL�D
+		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
 	virtual LPCTSTR GetDllNameImp(int nIndex) = 0;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         �����⏕                            //
+	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
 	bool RegisterEntries(const ImportTable table[]);
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        �����o�ϐ�                           //
+	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
 	HINSTANCE		m_hInstance;
