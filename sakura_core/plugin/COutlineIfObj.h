@@ -1,5 +1,5 @@
-/*!	@file
-	@brief OutlineƒIƒuƒWƒFƒNƒg
+ï»¿/*!	@file
+	@brief Outlineã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 */
 /*
@@ -32,22 +32,22 @@
 #include "outline/CFuncInfo.h"	// FUNCINFO_INFOMASK
 
 class COutlineIfObj : public CWSHIfObj {
-	// Œ^’è‹`
+	// åž‹å®šç¾©
 	enum FuncId {
-		F_OL_COMMAND_FIRST = 0,					//«ƒRƒ}ƒ“ƒh‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
-		F_OL_ADDFUNCINFO,						//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚é
-		F_OL_ADDFUNCINFO2,						//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éi[‚³Žw’èj
-		F_OL_SETTITLE,							//ƒAƒEƒgƒ‰ƒCƒ“ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚ðŽw’è
-		F_OL_SETLISTTYPE,						//ƒAƒEƒgƒ‰ƒCƒ“ƒŠƒXƒgŽí•Ê‚ðŽw’è
-		F_OL_SETLABEL,							//ƒ‰ƒxƒ‹•¶Žš—ñ‚ðŽw’è
-		F_OL_ADDFUNCINFO3,						//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éiƒtƒ@ƒCƒ‹–¼j
-		F_OL_ADDFUNCINFO4,						//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éi[‚³Žw’èAƒtƒ@ƒCƒ‹–¼j
-		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST	//«ŠÖ”‚ÍˆÈ‰º‚É’Ç‰Á‚·‚é
+		F_OL_COMMAND_FIRST = 0,					//â†“ã‚³ãƒžãƒ³ãƒ‰ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
+		F_OL_ADDFUNCINFO,						//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹
+		F_OL_ADDFUNCINFO2,						//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆæ·±ã•æŒ‡å®šï¼‰
+		F_OL_SETTITLE,							//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã‚’æŒ‡å®š
+		F_OL_SETLISTTYPE,						//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒªã‚¹ãƒˆç¨®åˆ¥ã‚’æŒ‡å®š
+		F_OL_SETLABEL,							//ãƒ©ãƒ™ãƒ«æ–‡å­—åˆ—ã‚’æŒ‡å®š
+		F_OL_ADDFUNCINFO3,						//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«åï¼‰
+		F_OL_ADDFUNCINFO4,						//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆæ·±ã•æŒ‡å®šã€ãƒ•ã‚¡ã‚¤ãƒ«åï¼‰
+		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST	//â†“é–¢æ•°ã¯ä»¥ä¸‹ã«è¿½åŠ ã™ã‚‹
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	COutlineIfObj( CFuncInfoArr& cFuncInfoArr )
 		: CWSHIfObj( L"Outline", false )
@@ -56,30 +56,30 @@ public:
 	{
 	}
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~COutlineIfObj(){}
 
-	// ŽÀ‘•
+	// å®Ÿè£…
 public:
-	//ƒRƒ}ƒ“ƒhî•ñ‚ðŽæ“¾‚·‚é
+	//ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
-	//ŠÖ”î•ñ‚ðŽæ“¾‚·‚é
+	//é–¢æ•°æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; }
-	//ŠÖ”‚ðˆ—‚·‚é
+	//é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
 		return false;
 	}
-	//ƒRƒ}ƒ“ƒh‚ðˆ—‚·‚é
+	//ã‚³ãƒžãƒ³ãƒ‰ã‚’å‡¦ç†ã™ã‚‹
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
 	{
 		switch ( LOWORD(ID) ) 
 		{
-		case F_OL_ADDFUNCINFO:			//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚é
-		case F_OL_ADDFUNCINFO2:			//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éi[‚³Žw’èj
-		case F_OL_ADDFUNCINFO3:			//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éiƒtƒ@ƒCƒ‹–¼j
-		case F_OL_ADDFUNCINFO4:			//ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éiƒtƒ@ƒCƒ‹–¼/[‚³Žw’èj
+		case F_OL_ADDFUNCINFO:			//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹
+		case F_OL_ADDFUNCINFO2:			//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆæ·±ã•æŒ‡å®šï¼‰
+		case F_OL_ADDFUNCINFO3:			//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«åï¼‰
+		case F_OL_ADDFUNCINFO4:			//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«å/æ·±ã•æŒ‡å®šï¼‰
 			{
 				if( Arguments[0] == NULL )return false;
 				if( Arguments[1] == NULL )return false;
@@ -111,15 +111,15 @@ public:
 				}
 			}
 			break;
-		case F_OL_SETTITLE:				//ƒAƒEƒgƒ‰ƒCƒ“ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚ðŽw’è
+		case F_OL_SETTITLE:				//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã‚’æŒ‡å®š
 			if( Arguments[0] == NULL )return false;
 			m_sOutlineTitle = to_tchar( Arguments[0] );
 			break;
-		case F_OL_SETLISTTYPE:			//ƒAƒEƒgƒ‰ƒCƒ“ƒŠƒXƒgŽí•Ê‚ðŽw’è
+		case F_OL_SETLISTTYPE:			//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒªã‚¹ãƒˆç¨®åˆ¥ã‚’æŒ‡å®š
 			if( Arguments[0] == NULL )return false;
 			m_nListType = (EOutlineType)_wtol(Arguments[0]);
 			break;
-		case F_OL_SETLABEL:				//ƒ‰ƒxƒ‹•¶Žš—ñ‚ðŽw’è
+		case F_OL_SETLABEL:				//ãƒ©ãƒ™ãƒ«æ–‡å­—åˆ—ã‚’æŒ‡å®š
 			if( Arguments[0] == NULL || Arguments[1] == NULL ) return false;
 			{
 				std::wstring sLabel = Arguments[1];
@@ -132,40 +132,40 @@ public:
 		return true;
 	}
 
-	// ƒƒ“ƒo•Ï”
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°
 public:
 	tstring m_sOutlineTitle;
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ƒRƒ}ƒ“ƒhî•ñ(–ß‚è’l‚È‚µ)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// ŠÖ”î•ñ(–ß‚è’l‚ ‚è)
+	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±(æˆ»ã‚Šå€¤ãªã—)
+	static MacroFuncInfo m_MacroFuncInfoArr[];	// é–¢æ•°æƒ…å ±(æˆ»ã‚Šå€¤ã‚ã‚Š)
 };
 
 VARTYPE g_OutlineIfObj_MacroArgEx_s[] = {VT_BSTR};
 MacroFuncInfoEx g_OutlineIfObj_FuncInfoEx_s = {5, 5, g_OutlineIfObj_MacroArgEx_s};
 
-//ƒRƒ}ƒ“ƒhî•ñ
+//ã‚³ãƒžãƒ³ãƒ‰æƒ…å ±
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = 
 {
-	//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	{EFunctionCode(F_OL_ADDFUNCINFO),		LTEXT("AddFuncInfo"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	NULL }, //ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚é
-	{EFunctionCode(F_OL_ADDFUNCINFO2),		LTEXT("AddFuncInfo2"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	NULL }, //ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éi[‚³Žw’èj
-	{EFunctionCode(F_OL_SETTITLE),			LTEXT("SetTitle"),				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL },	//ƒAƒEƒgƒ‰ƒCƒ“ƒ_ƒCƒAƒƒOƒ^ƒCƒgƒ‹‚ðŽw’è
-	{EFunctionCode(F_OL_SETLISTTYPE),		LTEXT("SetListType"),			{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	NULL }, //ƒAƒEƒgƒ‰ƒCƒ“ƒŠƒXƒgŽí•Ê‚ðŽw’è
-	{EFunctionCode(F_OL_SETLABEL),			LTEXT("SetLabel"),				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	NULL }, //ƒ‰ƒxƒ‹•¶Žš—ñ‚ðŽw’è
-	{EFunctionCode(F_OL_ADDFUNCINFO3),		LTEXT("AddFuncInfo3"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éiƒtƒ@ƒCƒ‹–¼j
-	{EFunctionCode(F_OL_ADDFUNCINFO4),		LTEXT("AddFuncInfo4"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ‚É’Ç‰Á‚·‚éiƒtƒ@ƒCƒ‹–¼A[‚³Žw’èj
+	//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®åž‹	m_pszData
+	{EFunctionCode(F_OL_ADDFUNCINFO),		LTEXT("AddFuncInfo"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	NULL }, //ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹
+	{EFunctionCode(F_OL_ADDFUNCINFO2),		LTEXT("AddFuncInfo2"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	NULL }, //ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆæ·±ã•æŒ‡å®šï¼‰
+	{EFunctionCode(F_OL_SETTITLE),			LTEXT("SetTitle"),				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL },	//ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚¿ã‚¤ãƒˆãƒ«ã‚’æŒ‡å®š
+	{EFunctionCode(F_OL_SETLISTTYPE),		LTEXT("SetListType"),			{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	NULL }, //ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ãƒªã‚¹ãƒˆç¨®åˆ¥ã‚’æŒ‡å®š
+	{EFunctionCode(F_OL_SETLABEL),			LTEXT("SetLabel"),				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	NULL }, //ãƒ©ãƒ™ãƒ«æ–‡å­—åˆ—ã‚’æŒ‡å®š
+	{EFunctionCode(F_OL_ADDFUNCINFO3),		LTEXT("AddFuncInfo3"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«åï¼‰
+	{EFunctionCode(F_OL_ADDFUNCINFO4),		LTEXT("AddFuncInfo4"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžã«è¿½åŠ ã™ã‚‹ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«åã€æ·±ã•æŒ‡å®šï¼‰
 
-	//	I’[
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-//ŠÖ”î•ñ
+//é–¢æ•°æƒ…å ±
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] = 
 {
-	//ID									ŠÖ”–¼							ˆø”										–ß‚è’l‚ÌŒ^	m_pszData
-	//	I’[
+	//ID									é–¢æ•°å							å¼•æ•°										æˆ»ã‚Šå€¤ã®åž‹	m_pszData
+	//	çµ‚ç«¯
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 

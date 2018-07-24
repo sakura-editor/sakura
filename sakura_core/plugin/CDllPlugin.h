@@ -1,5 +1,5 @@
-/*!	@file
-	@brief DLLƒvƒ‰ƒOƒCƒ“ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief DLLãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -30,8 +30,8 @@
 
 #include "CPlugin.h"
 
-#define	PII_DLL							L"Dll"			//DLLî•ñ
-#define	PII_DLL_NAME					L"Name"			//–¼‘O
+#define	PII_DLL							L"Dll"			//DLLæƒ…å ±
+#define	PII_DLL_NAME					L"Name"			//åå‰
 
 typedef void (*DllPlugHandler)();
 
@@ -51,16 +51,16 @@ public:
 class CDllPlugin
 	: public CPlugin, public CDllImp
 {
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	CDllPlugin( const tstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
 	}
 
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 public:
 	~CDllPlugin(void);
 
-	//À‘•
+	//å®Ÿè£…
 public:
 	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang );
 	bool ReadPluginOption( CDataProfile *cProfile ) {
@@ -79,7 +79,7 @@ public:
 		return _T("");
 	}
 
-	//ƒƒ“ƒo•Ï”
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
 private:
 	wstring m_sDllName;
 

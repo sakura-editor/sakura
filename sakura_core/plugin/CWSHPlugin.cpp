@@ -1,5 +1,5 @@
-/*!	@file
-	@brief WSHƒvƒ‰ƒOƒCƒ“ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief WSHãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹
 
 */
 /*
@@ -30,7 +30,7 @@
 #include "plugin/CPluginIfObj.h"
 #include "macro/CWSHManager.h"
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CWSHPlugin::~CWSHPlugin(void)
 {
 	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
@@ -38,36 +38,36 @@ CWSHPlugin::~CWSHPlugin(void)
 	}
 }
 
-//ƒvƒ‰ƒOƒCƒ“’è‹`ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 bool CWSHPlugin::ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
 	ReadPluginDefCommon( cProfile, cProfileMlang );
 
-	//WSHƒZƒNƒVƒ‡ƒ“‚Ì“Ç‚İ‚İ
+	//WSHã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®èª­ã¿è¾¼ã¿
 	cProfile->IOProfileData<bool>( PII_WSH, PII_WSH_USECACHE, m_bUseCache );
 
-	//ƒvƒ‰ƒO‚Ì“Ç‚İ‚İ
+	//ãƒ—ãƒ©ã‚°ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefPlug( cProfile, cProfileMlang );
 
-	//ƒRƒ}ƒ“ƒh‚Ì“Ç‚İ‚İ
+	//ã‚³ãƒãƒ³ãƒ‰ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefCommand( cProfile, cProfileMlang );
 
-	//ƒIƒvƒVƒ‡ƒ“’è‹`‚Ì“Ç‚İ‚İ	// 2010/3/24 Uchi
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®šç¾©ã®èª­ã¿è¾¼ã¿	// 2010/3/24 Uchi
 	ReadPluginDefOption( cProfile, cProfileMlang );
 
-	//•¶š—ñ’è‹`‚Ì“Ç‚İ‚İ
+	//æ–‡å­—åˆ—å®šç¾©ã®èª­ã¿è¾¼ã¿
 	ReadPluginDefString( cProfile, cProfileMlang );
 
 	return true;
 }
 
-//ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 bool CWSHPlugin::ReadPluginOption( CDataProfile *cProfile )
 {
 	return true;
 }
 
-//ƒvƒ‰ƒO‚ğÀs‚·‚é
+//ãƒ—ãƒ©ã‚°ã‚’å®Ÿè¡Œã™ã‚‹
 bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params )
 {
 	CWSHPlug& wshPlug = static_cast<CWSHPlug&>( plug );
@@ -90,12 +90,12 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 		pWsh = wshPlug.m_Wsh;
 	}
 
-	CPluginIfObj cPluginIfo(*this);		//PluginƒIƒuƒWƒFƒNƒg‚ğ’Ç‰Á
+	CPluginIfObj cPluginIfo(*this);		//Pluginã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿½åŠ 
 	cPluginIfo.AddRef();
-	cPluginIfo.SetPlugIndex( plug.m_id );	//Às’†ƒvƒ‰ƒO”Ô†‚ğ’ñ‹Ÿ
+	cPluginIfo.SetPlugIndex( plug.m_id );	//å®Ÿè¡Œä¸­ãƒ—ãƒ©ã‚°ç•ªå·ã‚’æä¾›
 	pWsh->AddParam( &cPluginIfo );
 
-	pWsh->AddParam( params );			//ƒpƒ‰ƒ[ƒ^‚ğ’Ç‰Á
+	pWsh->AddParam( params );			//ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¿½åŠ 
 
 	pWsh->ExecKeyMacro2( view, FA_NONRECORD | FA_FROMMACRO );
 
@@ -104,7 +104,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 	if( m_bUseCache ){
 		wshPlug.m_Wsh = pWsh;
 	}else{
-		// I‚í‚Á‚½‚çŠJ•ú
+		// çµ‚ã‚ã£ãŸã‚‰é–‹æ”¾
 		delete pWsh;
 	}
 
