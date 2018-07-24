@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAuŒŸõvƒy[ƒW
+ï»¿/*!	@file
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œæ¤œç´¢ã€ãƒšãƒ¼ã‚¸
 
 	@author Norio Nakatani
 */
@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "extmodule/CBregexp.h"	// 2007.08/12 genta ƒo[ƒWƒ‡ƒ“æ“¾
+#include "extmodule/CBregexp.h"	// 2007.08/12 genta ãƒãƒ¼ã‚¸ãƒ§ãƒ³å–å¾—
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -24,17 +24,17 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10500
-	IDC_EDIT_REGEXPLIB,				HIDC_EDIT_REGEXPLIB,	//³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‘I‘ğ	// 2007.09.02 genta
+	IDC_EDIT_REGEXPLIB,				HIDC_EDIT_REGEXPLIB,	//æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªé¸æŠ	// 2007.09.02 genta
 	IDC_LABEL_REGEXP,				HIDC_EDIT_REGEXPLIB,
-	IDC_LABEL_REGEXP_VER,			HIDC_LABEL_REGEXPVER,	//³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠƒo[ƒWƒ‡ƒ“	// 2007.09.02 genta
-	IDC_CHECK_bCaretTextForSearch,	HIDC_CHECK_bCaretTextForSearch,	//ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶š—ñ‚ğƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶š—ñ‚É‚·‚é	// 2006.08.23 ryoji
-	IDC_CHECK_INHERIT_KEY_OTHER_VIEW, HIDC_CHECK_INHERIT_KEY_OTHER_VIEW,	// ŸE‘OŒŸõ‚Å‘¼‚Ìƒrƒ…[‚ÌŒŸõğŒ‚ğˆø‚«Œp‚®	// 2011.12.18 Moca
-	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREP‚Ì•Û‘¶Šm”F
-	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//ƒ^ƒOƒWƒƒƒ“ƒviƒGƒ“ƒ^[ƒL[j
-	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//ƒ^ƒOƒWƒƒƒ“ƒviƒ_ƒuƒ‹ƒNƒŠƒbƒNj
-	IDC_CHECK_GREPREALTIME,			HIDC_CHECK_GREPREALTIME,		//ƒŠƒAƒ‹ƒ^ƒCƒ€‚Å•\¦‚·‚é	// 2006.08.08 ryoji
-	IDC_COMBO_TAGJUMP,				HIDC_COMBO_TAGJUMP,				//ƒ^ƒOƒtƒ@ƒCƒ‹‚ÌŒŸõ
-	IDC_COMBO_KEYWORD_TAGJUMP,		HIDC_COMBO_KEYWORD_TAGJUMP,		//ƒ^ƒOƒtƒ@ƒCƒ‹‚ÌŒŸõ
+	IDC_LABEL_REGEXP_VER,			HIDC_LABEL_REGEXPVER,	//æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒãƒ¼ã‚¸ãƒ§ãƒ³	// 2007.09.02 genta
+	IDC_CHECK_bCaretTextForSearch,	HIDC_CHECK_bCaretTextForSearch,	//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ–‡å­—åˆ—ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ¤œç´¢æ–‡å­—åˆ—ã«ã™ã‚‹	// 2006.08.23 ryoji
+	IDC_CHECK_INHERIT_KEY_OTHER_VIEW, HIDC_CHECK_INHERIT_KEY_OTHER_VIEW,	// æ¬¡ãƒ»å‰æ¤œç´¢ã§ä»–ã®ãƒ“ãƒ¥ãƒ¼ã®æ¤œç´¢æ¡ä»¶ã‚’å¼•ãç¶™ã	// 2011.12.18 Moca
+	IDC_CHECK_bGrepExitConfirm,		HIDC_CHECK_bGrepExitConfirm,	//GREPã®ä¿å­˜ç¢ºèª
+	IDC_CHECK_GTJW_RETURN,			HIDC_CHECK_GTJW_RETURN,			//ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ï¼ˆã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ï¼‰
+	IDC_CHECK_GTJW_LDBLCLK,			HIDC_CHECK_GTJW_LDBLCLK,		//ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ï¼ˆãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ï¼‰
+	IDC_CHECK_GREPREALTIME,			HIDC_CHECK_GREPREALTIME,		//ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ã§è¡¨ç¤ºã™ã‚‹	// 2006.08.08 ryoji
+	IDC_COMBO_TAGJUMP,				HIDC_COMBO_TAGJUMP,				//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã®æ¤œç´¢
+	IDC_COMBO_KEYWORD_TAGJUMP,		HIDC_COMBO_KEYWORD_TAGJUMP,		//ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã®æ¤œç´¢
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -42,10 +42,10 @@ static const DWORD p_helpids[] = {	//10500
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropGrep::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -54,7 +54,7 @@ INT_PTR CALLBACK CPropGrep::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-/* ƒƒbƒZ[ƒWˆ— */
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //	WORD		wNotifyCode;
@@ -67,12 +67,12 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Grep */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Grep */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+		/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -84,10 +84,10 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 				OnHelp( hwndDlg, IDD_PROP_GREP );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Grep */
+				/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Grep */
 				GetData( hwndDlg );
 				return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_GREP;
 				return TRUE;
@@ -96,7 +96,7 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 //		}
 		break;	/* WM_NOTIFY */
 	case WM_COMMAND:
-		//	2007.08.12 genta ³‹K•\Œ»DLL‚Ì•ÏX‚É‰‚¶‚ÄVersion‚ğÄæ“¾‚·‚é
+		//	2007.08.12 genta æ­£è¦è¡¨ç¾DLLã®å¤‰æ›´ã«å¿œã˜ã¦Versionã‚’å†å–å¾—ã™ã‚‹
 		if( wParam == MAKEWPARAM( IDC_EDIT_REGEXPLIB, EN_KILLFOCUS )){
 			SetRegexpVersion( hwndDlg );
 		}
@@ -106,7 +106,7 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -116,7 +116,7 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -129,28 +129,28 @@ struct tagTagJumpMode{
 	DWORD	m_nNameID;
 };
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CPropGrep::SetData( HWND hwndDlg )
 {
-	/* 2006.08.23 ryoji ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶š—ñ‚ğƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶š—ñ‚É‚·‚é */
+	/* 2006.08.23 ryoji ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ–‡å­—åˆ—ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ¤œç´¢æ–‡å­—åˆ—ã«ã™ã‚‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_sSearch.m_bCaretTextForSearch );
 
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_INHERIT_KEY_OTHER_VIEW, m_Common.m_sSearch.m_bInheritKeyOtherView );
 
-	/* Grepƒ‚[ƒh‚Å•Û‘¶Šm”F‚·‚é‚© */
+	/* Grepãƒ¢ãƒ¼ãƒ‰ã§ä¿å­˜ç¢ºèªã™ã‚‹ã‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_sSearch.m_bGrepExitConfirm );
 
-	/* GrepŒ‹‰Ê‚ÌƒŠƒAƒ‹ƒ^ƒCƒ€•\¦ */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_sSearch.m_bGrepRealTimeView );	// 2006.08.08 ryoji IDC³
+	/* Grepçµæœã®ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ è¡¨ç¤º */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_sSearch.m_bGrepRealTimeView );	// 2006.08.08 ryoji IDä¿®æ­£
 
 
-	/* Grepƒ‚[ƒh: ƒGƒ“ƒ^[ƒL[‚Åƒ^ƒOƒWƒƒƒ“ƒv */
+	/* Grepãƒ¢ãƒ¼ãƒ‰: ã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ— */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_sSearch.m_bGTJW_RETURN );
 
-	/* Grepƒ‚[ƒh: ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Åƒ^ƒOƒWƒƒƒ“ƒv */
+	/* Grepãƒ¢ãƒ¼ãƒ‰: ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ— */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
-	//	2007.08.12 genta ³‹K•\Œ»DLL
+	//	2007.08.12 genta æ­£è¦è¡¨ç¾DLL
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ), _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
@@ -197,27 +197,27 @@ void CPropGrep::SetData( HWND hwndDlg )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CPropGrep::GetData( HWND hwndDlg )
 {
-	/* 2006.08.23 ryoji ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶š—ñ‚ğƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶š—ñ‚É‚·‚é */
+	/* 2006.08.23 ryoji ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ–‡å­—åˆ—ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ¤œç´¢æ–‡å­—åˆ—ã«ã™ã‚‹ */
 	m_Common.m_sSearch.m_bCaretTextForSearch = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCaretTextForSearch );
 
 	m_Common.m_sSearch.m_bInheritKeyOtherView = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INHERIT_KEY_OTHER_VIEW );
 
-	/* Grepƒ‚[ƒh‚Å•Û‘¶Šm”F‚·‚é‚© */
+	/* Grepãƒ¢ãƒ¼ãƒ‰ã§ä¿å­˜ç¢ºèªã™ã‚‹ã‹ */
 	m_Common.m_sSearch.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
 
-	/* GrepŒ‹‰Ê‚ÌƒŠƒAƒ‹ƒ^ƒCƒ€•\¦ */
-	m_Common.m_sSearch.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GREPREALTIME );	// 2006.08.08 ryoji IDC³
+	/* Grepçµæœã®ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ è¡¨ç¤º */
+	m_Common.m_sSearch.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GREPREALTIME );	// 2006.08.08 ryoji IDä¿®æ­£
 
-	/* Grepƒ‚[ƒh: ƒGƒ“ƒ^[ƒL[‚Åƒ^ƒOƒWƒƒƒ“ƒv */
+	/* Grepãƒ¢ãƒ¼ãƒ‰: ã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ— */
 	m_Common.m_sSearch.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
 
-	/* Grepƒ‚[ƒh: ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Åƒ^ƒOƒWƒƒƒ“ƒv */
+	/* Grepãƒ¢ãƒ¼ãƒ‰: ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ— */
 	m_Common.m_sSearch.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
-	//	2007.08.12 genta ³‹K•\Œ»DLL
+	//	2007.08.12 genta æ­£è¦è¡¨ç¾DLL
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, _countof( m_Common.m_sSearch.m_szRegexpLib ));
 
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);

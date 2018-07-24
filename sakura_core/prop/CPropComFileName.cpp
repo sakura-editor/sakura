@@ -1,8 +1,8 @@
-/*!	@file
-	‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAuƒtƒ@ƒCƒ‹–¼•\¦vƒy[ƒW
+ï»¿/*!	@file
+	å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤ºã€ãƒšãƒ¼ã‚¸
 
 	@author Moca
-	@date 2002.12.09 Moca CPropTypesRegex.cpp‚ğQl‚É‚µ‚Äì¬
+	@date 2002.12.09 Moca CPropTypesRegex.cppã‚’å‚è€ƒã«ã—ã¦ä½œæˆ
 */
 /*
 	Copyright (C) 2001, MIK
@@ -42,18 +42,18 @@
 static const DWORD p_helpids[] = {	//13400
 	IDC_CHECK_SHORTPATH,	HIDC_CHECK_FNAME_SHORTPATH,
 	IDC_EDIT_SHORTMAXWIDTH,	HIDC_EDIT_FNAME_SHORTMAXWIDTH,
-	IDC_LIST_FNAME,			HIDC_LIST_FNAME, 		// ƒtƒ@ƒCƒ‹–¼’uŠ·ƒŠƒXƒg
-	IDC_EDIT_FNAME_FROM,	HIDC_EDIT_FNAME_FROM,	// ’uŠ·‘O
-	IDC_EDIT_FNAME_TO,		HIDC_EDIT_FNAME_TO,		// ’uŠ·Œã
-	IDC_BUTTON_FNAME_INS,	HIDC_BUTTON_FNAME_INS,	// ‘}“ü
-	IDC_BUTTON_FNAME_ADD,	HIDC_BUTTON_FNAME_ADD,	// ’Ç‰Á
-	IDC_BUTTON_FNAME_UPD,	HIDC_BUTTON_FNAME_UPD,	// XV
-	IDC_BUTTON_FNAME_DEL,	HIDC_BUTTON_FNAME_DEL,	// íœ
-	IDC_BUTTON_FNAME_TOP,	HIDC_BUTTON_FNAME_TOP,	// æ“ª
-	IDC_BUTTON_FNAME_UP,	HIDC_BUTTON_FNAME_UP,	// ã‚Ö
-	IDC_BUTTON_FNAME_DOWN,	HIDC_BUTTON_FNAME_DOWN,	// ‰º‚Ö
-	IDC_BUTTON_FNAME_LAST,	HIDC_BUTTON_FNAME_LAST,	// ÅI
-//	IDC_CHECK_FNAME,		HIDC_CHECK_FNAME,	// ƒtƒ@ƒCƒ‹–¼‚ğŠÈˆÕ•\¦‚·‚é
+	IDC_LIST_FNAME,			HIDC_LIST_FNAME, 		// ãƒ•ã‚¡ã‚¤ãƒ«åç½®æ›ãƒªã‚¹ãƒˆ
+	IDC_EDIT_FNAME_FROM,	HIDC_EDIT_FNAME_FROM,	// ç½®æ›å‰
+	IDC_EDIT_FNAME_TO,		HIDC_EDIT_FNAME_TO,		// ç½®æ›å¾Œ
+	IDC_BUTTON_FNAME_INS,	HIDC_BUTTON_FNAME_INS,	// æŒ¿å…¥
+	IDC_BUTTON_FNAME_ADD,	HIDC_BUTTON_FNAME_ADD,	// è¿½åŠ 
+	IDC_BUTTON_FNAME_UPD,	HIDC_BUTTON_FNAME_UPD,	// æ›´æ–°
+	IDC_BUTTON_FNAME_DEL,	HIDC_BUTTON_FNAME_DEL,	// å‰Šé™¤
+	IDC_BUTTON_FNAME_TOP,	HIDC_BUTTON_FNAME_TOP,	// å…ˆé ­
+	IDC_BUTTON_FNAME_UP,	HIDC_BUTTON_FNAME_UP,	// ä¸Šã¸
+	IDC_BUTTON_FNAME_DOWN,	HIDC_BUTTON_FNAME_DOWN,	// ä¸‹ã¸
+	IDC_BUTTON_FNAME_LAST,	HIDC_BUTTON_FNAME_LAST,	// æœ€çµ‚
+//	IDC_CHECK_FNAME,		HIDC_CHECK_FNAME,	// ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ç°¡æ˜“è¡¨ç¤ºã™ã‚‹
 	0, 0 // 
 };
 
@@ -97,14 +97,14 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			col.iSubItem = 1;
 			ListView_InsertColumn( hListView, 1, &col );
 
-			// Apr. 28, 2003 Moca ‰Šú‰»˜R‚êC³
-			// ƒ_ƒCƒAƒƒO‚ğŠJ‚¢‚½‚Æ‚«‚ÉƒŠƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚Ä‚àƒtƒB[ƒ‹ƒh‚ª‹ó‚Ìê‡‚ª‚ ‚Á‚½
+			// Apr. 28, 2003 Moca åˆæœŸåŒ–æ¼ã‚Œä¿®æ­£
+			// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‹ã„ãŸã¨ãã«ãƒªã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã¦ã‚‚ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ãŒç©ºã®å ´åˆãŒã‚ã£ãŸ
 			m_nLastPos_FILENAME = -1;
 
-			// ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
+			// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 			SetData( hwndDlg );
 
-			// ƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é
+			// ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_SHORTMAXWIDTH ), 4 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ), _MAX_PATH - 1 );
 			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),   _MAX_PATH - 1 );
@@ -122,7 +122,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 				case LVN_ITEMCHANGED:
 					hListView = GetDlgItem( hwndDlg, IDC_LIST_FNAME );
 					nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					// –¢‘I‘ğ
+					// æœªé¸æŠ
 					if( -1 == nIndex ){
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, _T("") );
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, _T("") );
@@ -133,8 +133,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
 					}
 					else{
-						// nIndex == m_nLastPos_FILENAME‚Ì‚Æ‚«
-						// ƒŠƒXƒg¨ƒGƒfƒBƒbƒgƒ{ƒbƒNƒX‚Éƒf[ƒ^‚ğƒRƒs[‚·‚é‚Æ[XV]‚ª‚¤‚Ü‚­‚¤‚Ü‚­“®ì‚µ‚È‚¢
+						// nIndex == m_nLastPos_FILENAMEã®ã¨ã
+						// ãƒªã‚¹ãƒˆâ†’ã‚¨ãƒ‡ã‚£ãƒƒãƒˆãƒœãƒƒã‚¯ã‚¹ã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã¨[æ›´æ–°]ãŒã†ã¾ãã†ã¾ãå‹•ä½œã—ãªã„
 					}
 					m_nLastPos_FILENAME = nIndex;
 					break;
@@ -146,10 +146,10 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					OnHelp( hwndDlg, IDD_PROP_FNAME );
 					return TRUE;
 				case PSN_KILLACTIVE:
-					// ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+					// ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 					GetData( hwndDlg );
 					return TRUE;
-	//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+	//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 				case PSN_SETACTIVE:
 					m_nPageNum = ID_PROPCOM_PAGENUM_FILENAME;
 					return TRUE;
@@ -161,21 +161,21 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 
 	case WM_COMMAND:
 		{
-			WORD	wNotifyCode = HIWORD(wParam);	// ’Ê’mƒR[ƒh
-			WORD	wID = LOWORD(wParam);			// €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID
+			WORD	wNotifyCode = HIWORD(wParam);	// é€šçŸ¥ã‚³ãƒ¼ãƒ‰
+			WORD	wID = LOWORD(wParam);			// é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID
 			int		nCount;
 
 			switch( wNotifyCode ){
-			// ƒ{ƒ^ƒ“‚ªƒNƒŠƒbƒN‚³‚ê‚½
+			// ãƒœã‚¿ãƒ³ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ
 			case BN_CLICKED:
 				hListView = GetDlgItem( hwndDlg, IDC_LIST_FNAME );
 				nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 				switch( wID ){
-				case IDC_BUTTON_FNAME_INS:	// ‘}“ü
-					// ‘I‘ğ’†‚ÌƒL[‚ğ’T‚·
+				case IDC_BUTTON_FNAME_INS:	// æŒ¿å…¥
+					// é¸æŠä¸­ã®ã‚­ãƒ¼ã‚’æ¢ã™
 					nCount = ListView_GetItemCount( hListView );
 					if( -1 == nIndex ){
-						// ‘I‘ğ’†‚Å‚È‚¯‚ê‚ÎÅŒã‚É’Ç‰Á
+						// é¸æŠä¸­ã§ãªã‘ã‚Œã°æœ€å¾Œã«è¿½åŠ 
 						nIndex = nCount;
 					}
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
@@ -185,7 +185,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 						return TRUE;
 					}
 					break;
-				case IDC_BUTTON_FNAME_ADD:	// ’Ç‰Á
+				case IDC_BUTTON_FNAME_ADD:	// è¿½åŠ 
 					nCount = ListView_GetItemCount( hListView );
 
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
@@ -196,7 +196,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					}
 					break;
 
-				case IDC_BUTTON_FNAME_UPD:	// XV
+				case IDC_BUTTON_FNAME_UPD:	// æ›´æ–°
 					if( -1 != nIndex ){
 						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
 						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
@@ -204,7 +204,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 							return TRUE;
 						}
 					}else{
-						// –¢‘I‘ğ‚ÅƒŠƒXƒg‚É‚Ğ‚Æ‚Â‚à€–Ú‚ª‚È‚¢ê‡‚Í’Ç‰Á‚µ‚Ä‚¨‚­
+						// æœªé¸æŠã§ãƒªã‚¹ãƒˆã«ã²ã¨ã¤ã‚‚é …ç›®ãŒãªã„å ´åˆã¯è¿½åŠ ã—ã¦ãŠã
 						if( 0 == ListView_GetItemCount( hListView ) ){
 							if( -1 != SetListViewItem_FILENAME( hListView, 0, szFrom, szTo, true ) ){
 								return TRUE;
@@ -212,29 +212,29 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 						}
 					}
 					break;
-				case IDC_BUTTON_FNAME_DEL:	// íœ
+				case IDC_BUTTON_FNAME_DEL:	// å‰Šé™¤
 					if( -1 != nIndex ){
-						ListView_DeleteItem( hListView, nIndex );	//ŒÃ‚¢ƒL[‚ğíœ
+						ListView_DeleteItem( hListView, nIndex );	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
 						ListView_SetItemState( hListView, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						return TRUE;
 					}
 					break;
-				case IDC_BUTTON_FNAME_TOP:	// æ“ª
+				case IDC_BUTTON_FNAME_TOP:	// å…ˆé ­
 					if( -1 != MoveListViewItem_FILENAME( hListView, nIndex, 0 ) ){
 						return TRUE;
 					}
 					break;
-				case IDC_BUTTON_FNAME_UP: 	// ã‚Ö
+				case IDC_BUTTON_FNAME_UP: 	// ä¸Šã¸
 					if( -1 != MoveListViewItem_FILENAME( hListView, nIndex, nIndex - 1 ) ){
 						return TRUE;
 					}
 					break;
-				case IDC_BUTTON_FNAME_DOWN:	// ‰º‚Ö
+				case IDC_BUTTON_FNAME_DOWN:	// ä¸‹ã¸
 					if( -1 != MoveListViewItem_FILENAME( hListView, nIndex, nIndex + 1 ) ){
 						return TRUE;
 					}
 					break;
-				case IDC_BUTTON_FNAME_LAST:	// ÅI
+				case IDC_BUTTON_FNAME_LAST:	// æœ€çµ‚
 					nCount = ListView_GetItemCount( hListView );
 					if( -1 != MoveListViewItem_FILENAME( hListView, nIndex, nCount - 1 ) ){
 						return TRUE;
@@ -252,7 +252,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 //@@@ 2001.02.04 End
@@ -260,7 +260,7 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -271,9 +271,9 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚Éƒf[ƒ^‚ğİ’è‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 void CPropFileName::SetData( HWND hwndDlg )
 {
@@ -284,11 +284,11 @@ void CPropFileName::SetData( HWND hwndDlg )
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_SHORTPATH, m_Common.m_sFileName.m_bTransformShortPath );
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, m_Common.m_sFileName.m_nTransformShortMaxWidth, FALSE );
 
-	// ƒtƒ@ƒCƒ‹–¼’uŠ·ƒŠƒXƒg
+	// ãƒ•ã‚¡ã‚¤ãƒ«åç½®æ›ãƒªã‚¹ãƒˆ
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
-	ListView_DeleteAllItems( hListView ); // ƒŠƒXƒg‚ğ‹ó‚É‚·‚é
+	ListView_DeleteAllItems( hListView ); // ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹
 
-	// ƒŠƒXƒg‚Éƒf[ƒ^‚ğƒZƒbƒg
+	// ãƒªã‚¹ãƒˆã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ
 	for( i = 0, nIndex = 0; i < m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
 		if( '\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ) continue;
 
@@ -309,11 +309,11 @@ void CPropFileName::SetData( HWND hwndDlg )
 		nIndex++;
 	}
 
-	// ˆê”Ôã‚ğ‘I‘ğ‚µ‚Ä‚¨‚­
+	// ä¸€ç•ªä¸Šã‚’é¸æŠã—ã¦ãŠã
 	if( 0 != nIndex ){
 		ListView_SetItemState( hListView, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 	}
-	//	ƒŠƒXƒgƒrƒ…[‚Ìs‘I‘ğ‚ğ‰Â”\‚É‚·‚éD
+	//	ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®è¡Œé¸æŠã‚’å¯èƒ½ã«ã™ã‚‹ï¼
 	DWORD dwStyle;
 	dwStyle = ListView_GetExtendedListViewStyle( hListView );
 	dwStyle |= LVS_EX_FULLROWSELECT;
@@ -323,9 +323,9 @@ void CPropFileName::SetData( HWND hwndDlg )
 }
 
 /*!
-	ƒ_ƒCƒAƒƒOã‚ÌƒRƒ“ƒgƒ[ƒ‹‚©‚çƒf[ƒ^‚ğæ“¾‚µ‚Äƒƒ‚ƒŠ‚ÉŠi”[‚·‚é
+	ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ä¸Šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã—ã¦ãƒ¡ãƒ¢ãƒªã«æ ¼ç´ã™ã‚‹
 
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 */
 
 int CPropFileName::GetData( HWND hwndDlg )
@@ -337,7 +337,7 @@ int CPropFileName::GetData( HWND hwndDlg )
 	m_Common.m_sFileName.m_bTransformShortPath = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_SHORTPATH );
 	m_Common.m_sFileName.m_nTransformShortMaxWidth = ::GetDlgItemInt( hwndDlg, IDC_EDIT_SHORTMAXWIDTH, NULL, FALSE );
 
-	// ƒtƒ@ƒCƒ‹–¼’uŠ·ƒŠƒXƒg
+	// ãƒ•ã‚¡ã‚¤ãƒ«åç½®æ›ãƒªã‚¹ãƒˆ
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
 	m_Common.m_sFileName.m_nTransformFileNameArrNum = ListView_GetItemCount( hListView );
 
@@ -345,7 +345,7 @@ int CPropFileName::GetData( HWND hwndDlg )
 		if( nIndex < m_Common.m_sFileName.m_nTransformFileNameArrNum ){
 			ListView_GetItemText( hListView, nIndex, 0, m_Common.m_sFileName.m_szTransformFileNameFrom[nCount], _MAX_PATH );
 
-			// ’uŠ·‘O•¶š—ñ‚ªNULL‚¾‚Á‚½‚çÌ‚Ä‚é
+			// ç½®æ›å‰æ–‡å­—åˆ—ãŒNULLã ã£ãŸã‚‰æ¨ã¦ã‚‹
 			if( L'\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
 				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
 			}else{
@@ -371,7 +371,7 @@ int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR 
 
 	nCount = ListView_GetItemCount( hListView );
 
-	// ‚±‚êˆÈã’Ç‰Á‚Å‚«‚È‚¢
+	// ã“ã‚Œä»¥ä¸Šè¿½åŠ ã§ããªã„
 	if( bInsMode && MAX_TRANSFORM_FILENAME <= nCount ){
 		ErrorMessage( GetParent( hListView ), LS(STR_PROPCOMFNM_ERR_REG) );
 		return -1;
@@ -432,7 +432,7 @@ int CPropFileName::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nI
 	}
 
 	GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
-	ListView_DeleteItem( hListView, nIndex );	//ŒÃ‚¢ƒL[‚ğíœ
+	ListView_DeleteItem( hListView, nIndex );	//å¤ã„ã‚­ãƒ¼ã‚’å‰Šé™¤
 	SetListViewItem_FILENAME( hListView, nIndex2, szFrom, szTo, true );
 	return nIndex2;
 }

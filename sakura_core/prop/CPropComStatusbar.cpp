@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ���ʐݒ�_�C�A���O�{�b�N�X�A�u�X�e�[�^�X�o�[�v�y�[�W
+﻿/*!	@file
+	@brief 共通設定ダイアログボックス、「ステータスバー」ページ
 
 	@author Uchi
 */
@@ -25,21 +25,21 @@
 
 
 static const DWORD p_helpids[] = {
-	IDC_CHECK_DISP_UNICODE_IN_SJIS,		HIDC_CHECK_DISP_UNICODE_IN_SJIS,		// SJIS�ŕ����R�[�h�l��Unicode�ŕ\������
-	IDC_CHECK_DISP_UNICODE_IN_JIS,		HIDC_CHECK_DISP_UNICODE_IN_JIS,			// JIS�ŕ����R�[�h�l��Unicode�ŕ\������
-	IDC_CHECK_DISP_UNICODE_IN_EUC,		HIDC_CHECK_DISP_UNICODE_IN_EUC,			// EUC�ŕ����R�[�h�l��Unicode�ŕ\������
-	IDC_CHECK_DISP_UTF8_CODEPOINT,		HIDC_CHECK_DISP_UTF8_CODEPOINT,			// UTF-8���R�[�h�|�C���g�ŕ\������
-	IDC_CHECK_DISP_SP_CODEPOINT,		HIDC_CHECK_DISP_SP_CODEPOINT,			// �T���Q�[�g�y�A���R�[�h�|�C���g�ŕ\������
-	IDC_CHECK_DISP_SELCOUNT_BY_BYTE,	HIDC_CHECK_DISP_SELCOUNT_BY_BYTE,		// �I�𕶎����𕶎��P�ʂł͂Ȃ��o�C�g�P�ʂŕ\������
-	IDC_CHECK_DISP_COL_BY_CHAR,			HIDC_CHECK_DISP_COL_BY_CHAR,			// ���݌������[���[�P�ʂł͂Ȃ������P�ʂŕ\������
+	IDC_CHECK_DISP_UNICODE_IN_SJIS,		HIDC_CHECK_DISP_UNICODE_IN_SJIS,		// SJISで文字コード値をUnicodeで表示する
+	IDC_CHECK_DISP_UNICODE_IN_JIS,		HIDC_CHECK_DISP_UNICODE_IN_JIS,			// JISで文字コード値をUnicodeで表示する
+	IDC_CHECK_DISP_UNICODE_IN_EUC,		HIDC_CHECK_DISP_UNICODE_IN_EUC,			// EUCで文字コード値をUnicodeで表示する
+	IDC_CHECK_DISP_UTF8_CODEPOINT,		HIDC_CHECK_DISP_UTF8_CODEPOINT,			// UTF-8をコードポイントで表示する
+	IDC_CHECK_DISP_SP_CODEPOINT,		HIDC_CHECK_DISP_SP_CODEPOINT,			// サロゲートペアをコードポイントで表示する
+	IDC_CHECK_DISP_SELCOUNT_BY_BYTE,	HIDC_CHECK_DISP_SELCOUNT_BY_BYTE,		// 選択文字数を文字単位ではなくバイト単位で表示する
+	IDC_CHECK_DISP_COL_BY_CHAR,			HIDC_CHECK_DISP_COL_BY_CHAR,			// 現在桁をルーラー単位ではなく文字単位で表示する
 	0, 0
 };
 
 /*!
-	@param hwndDlg �_�C�A���O�{�b�N�X��Window Handle
-	@param uMsg ���b�Z�[�W
-	@param wParam �p�����[�^1
-	@param lParam �p�����[�^2
+	@param hwndDlg ダイアログボックスのWindow Handle
+	@param uMsg メッセージ
+	@param wParam パラメータ1
+	@param lParam パラメータ2
 */
 INT_PTR CALLBACK CPropStatusbar::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -47,7 +47,7 @@ INT_PTR CALLBACK CPropStatusbar::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropStatusbar::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
-/* ���b�Z�[�W���� */
+/* メッセージ処理 */
 INT_PTR CPropStatusbar::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
@@ -60,7 +60,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* �_�C�A���O�f�[�^�̐ݒ� */
+		/* ダイアログデータの設定 */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -78,11 +78,11 @@ INT_PTR CPropStatusbar::DispatchEvent(
 		case PSN_KILLACTIVE:
 			DEBUG_TRACE( _T("statusbar PSN_KILLACTIVE\n") );
 
-			/* �_�C�A���O�f�[�^�̎擾 */
+			/* ダイアログデータの取得 */
 			GetData( hwndDlg );
 			return TRUE;
 
-		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI �Ō�ɕ\�����Ă����V�[�g�𐳂����o���Ă��Ȃ��o�O�C��
+		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			m_nPageNum = ID_PROPCOM_PAGENUM_STATUSBAR;
 			return TRUE;
 		}
@@ -92,7 +92,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -102,7 +102,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -111,45 +111,45 @@ INT_PTR CPropStatusbar::DispatchEvent(
 }
 
 
-/* �_�C�A���O�f�[�^�̐ݒ� */
+/* ダイアログデータの設定 */
 void CPropStatusbar::SetData( HWND hwndDlg )
 {
-	// �������R�[�h�̎w��
-	// SJIS�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// 示文字コードの指定
+	// SJISで文字コード値をUnicodeで出力する
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_SJIS, m_Common.m_sStatusbar.m_bDispUniInSjis );
-	// JIS�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// JISで文字コード値をUnicodeで出力する
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_JIS,  m_Common.m_sStatusbar.m_bDispUniInJis );
-	// EUC�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// EUCで文字コード値をUnicodeで出力する
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_EUC,  m_Common.m_sStatusbar.m_bDispUniInEuc );
-	// UTF-8�ŕ\�����o�C�g�R�[�h�ōs��
+	// UTF-8で表示をバイトコードで行う
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_UTF8_CODEPOINT,  m_Common.m_sStatusbar.m_bDispUtf8Codepoint );
-	// �T���Q�[�g�y�A���R�[�h�|�C���g�ŕ\��
+	// サロゲートペアをコードポイントで表示
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_SP_CODEPOINT,    m_Common.m_sStatusbar.m_bDispSPCodepoint );
-	// �I�𕶎����𕶎��P�ʂł͂Ȃ��o�C�g�P�ʂŕ\������
+	// 選択文字数を文字単位ではなくバイト単位で表示する
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_SELCOUNT_BY_BYTE,m_Common.m_sStatusbar.m_bDispSelCountByByte );
-	// ���݌������[���[�P�ʂł͂Ȃ������P�ʂŕ\������
+	// 現在桁をルーラー単位ではなく文字単位で表示する
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_COL_BY_CHAR,     m_Common.m_sStatusbar.m_bDispColByChar );
 	return;
 }
 
 
-/* �_�C�A���O�f�[�^�̎擾 */
+/* ダイアログデータの取得 */
 int CPropStatusbar::GetData( HWND hwndDlg )
 {
-	// �������R�[�h�̎w��
-	// SJIS�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// 示文字コードの指定
+	// SJISで文字コード値をUnicodeで出力する
 	m_Common.m_sStatusbar.m_bDispUniInSjis		= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_SJIS );
-	// JIS�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// JISで文字コード値をUnicodeで出力する
 	m_Common.m_sStatusbar.m_bDispUniInJis		= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_JIS );
-	// EUC�ŕ����R�[�h�l��Unicode�ŏo�͂���
+	// EUCで文字コード値をUnicodeで出力する
 	m_Common.m_sStatusbar.m_bDispUniInEuc		= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_UNICODE_IN_EUC );
-	// UTF-8�ŕ\�����o�C�g�R�[�h�ōs��
+	// UTF-8で表示をバイトコードで行う
 	m_Common.m_sStatusbar.m_bDispUtf8Codepoint	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_UTF8_CODEPOINT );
-	// �T���Q�[�g�y�A���R�[�h�|�C���g�ŕ\��
+	// サロゲートペアをコードポイントで表示
 	m_Common.m_sStatusbar.m_bDispSPCodepoint	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_SP_CODEPOINT );
-	// �I�𕶎����𕶎��P�ʂł͂Ȃ��o�C�g�P�ʂŕ\������
+	// 選択文字数を文字単位ではなくバイト単位で表示する
 	m_Common.m_sStatusbar.m_bDispSelCountByByte	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_SELCOUNT_BY_BYTE );
-	// ���݌������[���[�P�ʂł͂Ȃ������P�ʂŕ\������
+	// 現在桁をルーラー単位ではなく文字単位で表示する
 	m_Common.m_sStatusbar.m_bDispColByChar		= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_COL_BY_CHAR );
 
 	return TRUE;

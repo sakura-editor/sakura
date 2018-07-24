@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAu•ÒWvƒy[ƒW
+ï»¿/*!	@file
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œç·¨é›†ã€ãƒšãƒ¼ã‚¸
 
 	@author Norio Nakatani
 */
@@ -27,25 +27,25 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10210
-	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//Ü‚è•Ô‚µs‚É‰üs‚ğ•t‚¯‚ÄƒRƒs[
-	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ
-	IDC_CHECK_bEnableNoSelectCopy,		HIDC_CHECK_bEnableNoSelectCopy,			//‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚é	// 2007.11.18 ryoji
-	IDC_CHECK_bEnableLineModePaste,		HIDC_CHECK_bEnableLineModePaste,		//ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é	// 2007.10.08 ryoji
-	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Drop•ÒW‚·‚é
-	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ƒhƒƒbƒvŒ³‚É‚·‚é
-	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//ã‘‚«ƒ‚[ƒh
-	IDC_CHECK_bOverWriteFixMode,		HIDC_CHECK_bOverWriteFixMode,			//•¶š•‚É‡‚í‚¹‚ÄƒXƒy[ƒX‚ğ‹l‚ß‚é
-	IDC_CHECK_bOverWriteBoxDelete,		HIDC_CHECK_bOverWriteBoxDelete,			//‹éŒ`“ü—Í‚Å‘I‘ğ”ÍˆÍ‚ğíœ‚·‚é
-	//	2007.02.11 genta ƒNƒŠƒbƒJƒuƒ‹URL‚ğ‚±‚Ìƒy[ƒW‚ÉˆÚ“®
-	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//ƒNƒŠƒbƒJƒuƒ‹URL
-	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//‰üsƒR[ƒh‚ğ•ÏŠ·‚µ‚Ä“\‚è•t‚¯‚é
-	IDC_RADIO_CURDIR,					HIDC_RADIO_CURDIR,						//ƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_
-	IDC_RADIO_MRUDIR,					HIDC_RADIO_MRUDIR,						//Å‹ßg‚Á‚½ƒtƒHƒ‹ƒ_
-	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//w’èƒtƒHƒ‹ƒ_
-	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//w’èƒtƒHƒ‹ƒ_ƒpƒX
-	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//w’èƒtƒHƒ‹ƒ_ƒpƒX
-	IDC_CHECK_ENABLEEXTEOL,				HIDC_CHECK_ENABLEEXTEOL,				//‰üsƒR[ƒhNEL,PS,LS‚ğ—LŒø‚É‚·‚é
-	IDC_CHECK_BOXSELECTLOCK,			HIDC_CHECK_BOXSELECTLOCK,				//‹éŒ`‘I‘ğˆÚ“®‚Å‘I‘ğ‚ğƒƒbƒN‚·‚é
+	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//æŠ˜ã‚Šè¿”ã—è¡Œã«æ”¹è¡Œã‚’ä»˜ã‘ã¦ã‚³ãƒ”ãƒ¼
+	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤
+	IDC_CHECK_bEnableNoSelectCopy,		HIDC_CHECK_bEnableNoSelectCopy,			//é¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹	// 2007.11.18 ryoji
+	IDC_CHECK_bEnableLineModePaste,		HIDC_CHECK_bEnableLineModePaste,		//ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹	// 2007.10.08 ryoji
+	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Dropç·¨é›†ã™ã‚‹
+	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ãƒ‰ãƒ­ãƒƒãƒ—å…ƒã«ã™ã‚‹
+	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰
+	IDC_CHECK_bOverWriteFixMode,		HIDC_CHECK_bOverWriteFixMode,			//æ–‡å­—å¹…ã«åˆã‚ã›ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã‚‹
+	IDC_CHECK_bOverWriteBoxDelete,		HIDC_CHECK_bOverWriteBoxDelete,			//çŸ©å½¢å…¥åŠ›ã§é¸æŠç¯„å›²ã‚’å‰Šé™¤ã™ã‚‹
+	//	2007.02.11 genta ã‚¯ãƒªãƒƒã‚«ãƒ–ãƒ«URLã‚’ã“ã®ãƒšãƒ¼ã‚¸ã«ç§»å‹•
+	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//ã‚¯ãƒªãƒƒã‚«ãƒ–ãƒ«URL
+	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ã—ã¦è²¼ã‚Šä»˜ã‘ã‚‹
+	IDC_RADIO_CURDIR,					HIDC_RADIO_CURDIR,						//ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€
+	IDC_RADIO_MRUDIR,					HIDC_RADIO_MRUDIR,						//æœ€è¿‘ä½¿ã£ãŸãƒ•ã‚©ãƒ«ãƒ€
+	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€
+	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹
+	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹
+	IDC_CHECK_ENABLEEXTEOL,				HIDC_CHECK_ENABLEEXTEOL,				//æ”¹è¡Œã‚³ãƒ¼ãƒ‰NEL,PS,LSã‚’æœ‰åŠ¹ã«ã™ã‚‹
+	IDC_CHECK_BOXSELECTLOCK,			HIDC_CHECK_BOXSELECTLOCK,				//çŸ©å½¢é¸æŠç§»å‹•ã§é¸æŠã‚’ãƒ­ãƒƒã‚¯ã™ã‚‹
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -53,10 +53,10 @@ static const DWORD p_helpids[] = {	//10210
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropEdit::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -65,7 +65,7 @@ INT_PTR CALLBACK CPropEdit::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-/* ƒƒbƒZ[ƒWˆ— */
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropEdit::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
@@ -83,22 +83,22 @@ INT_PTR CPropEdit::DispatchEvent(
 
 	case WM_INITDIALOG:
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), _MAX_PATH - 1 );
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è Edit */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š Edit */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+		/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID			= LOWORD(wParam);	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
+		wNotifyCode	= HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID			= LOWORD(wParam);	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
 		switch( wNotifyCode ){
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_DRAGDROP:	/* ƒ^ƒXƒNƒgƒŒƒC‚ğg‚¤ */
+			case IDC_CHECK_DRAGDROP:	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚’ä½¿ã† */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
 				}
@@ -138,11 +138,11 @@ INT_PTR CPropEdit::DispatchEvent(
 		case PSN_KILLACTIVE:
 			DEBUG_TRACE( _T("Edit PSN_KILLACTIVE\n") );
 
-			/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ Edit */
+			/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— Edit */
 			GetData( hwndDlg );
 			return TRUE;
 
-		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 			m_nPageNum = ID_PROPCOM_PAGENUM_EDIT;
 			return TRUE;
 		}
@@ -152,7 +152,7 @@ INT_PTR CPropEdit::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -162,7 +162,7 @@ INT_PTR CPropEdit::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -171,10 +171,10 @@ INT_PTR CPropEdit::DispatchEvent(
 }
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CPropEdit::SetData( HWND hwndDlg )
 {
-	/* ƒhƒ‰ƒbƒO & ƒhƒƒbƒv•ÒW */
+	/* ãƒ‰ãƒ©ãƒƒã‚° & ãƒ‰ãƒ­ãƒƒãƒ—ç·¨é›† */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop );
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
@@ -186,34 +186,34 @@ void CPropEdit::SetData( HWND hwndDlg )
 	/* DropSource */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, m_Common.m_sEdit.m_bUseOLE_DropSource );
 
-	/* Ü‚è•Ô‚µs‚É‰üs‚ğ•t‚¯‚ÄƒRƒs[ */
+	/* æŠ˜ã‚Šè¿”ã—è¡Œã«æ”¹è¡Œã‚’ä»˜ã‘ã¦ã‚³ãƒ”ãƒ¼ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY, m_Common.m_sEdit.m_bAddCRLFWhenCopy ? BST_CHECKED : BST_UNCHECKED );
 
-	/* ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ */
+	/* ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA, m_Common.m_sEdit.m_bCopyAndDisablSelection );
 
-	/* ‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚é */	// 2007.11.18 ryoji
+	/* é¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.11.18 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bEnableNoSelectCopy, m_Common.m_sEdit.m_bEnableNoSelectCopy );
 
-	/* ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é */	// 2007.10.08 ryoji
+	/* ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.10.08 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bEnableLineModePaste, m_Common.m_sEdit.m_bEnableLineModePaste ? BST_CHECKED : BST_UNCHECKED );
 
-	/* ‰üs‚Íã‘‚«‚µ‚È‚¢ */
+	/* æ”¹è¡Œã¯ä¸Šæ›¸ãã—ãªã„ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_sEdit.m_bNotOverWriteCRLF );
 
-	// •¶š•‚É‡‚í‚¹‚ÄƒXƒy[ƒX‚ğ‹l‚ß‚é
+	// æ–‡å­—å¹…ã«åˆã‚ã›ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã‚‹
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteFixMode, m_Common.m_sEdit.m_bOverWriteFixMode );
 
-	// ‹éŒ`“ü—Í‚Å‘I‘ğ”ÍˆÍ‚ğíœ‚·‚é
+	// çŸ©å½¢å…¥åŠ›ã§é¸æŠç¯„å›²ã‚’å‰Šé™¤ã™ã‚‹
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteBoxDelete, m_Common.m_sEdit.m_bOverWriteBoxDelete );
 
-	//	URL‚ªƒNƒŠƒbƒN‚³‚ê‚½‚ç‘I‘ğ‚·‚é‚© */	// 2007.02.11 genta ‚±‚Ìƒy[ƒW‚ÖˆÚ“®
+	//	URLãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰é¸æŠã™ã‚‹ã‹ */	// 2007.02.11 genta ã“ã®ãƒšãƒ¼ã‚¸ã¸ç§»å‹•
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_sEdit.m_bSelectClickedURL );
 
-	/*	‰üsƒR[ƒh‚ğ•ÏŠ·‚µ‚Ä“\‚è•t‚¯‚é */	// 2009.02.28 salarm
+	/*	æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ã—ã¦è²¼ã‚Šä»˜ã‘ã‚‹ */	// 2009.02.28 salarm
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_sEdit.m_bConvertEOLPaste ? BST_CHECKED : BST_UNCHECKED );
 
-	// ƒtƒ@ƒCƒ‹ƒ_ƒCƒAƒƒO‚Ì‰ŠúˆÊ’u
+	// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®åˆæœŸä½ç½®
 	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CURDIR, TRUE );
 	}
@@ -225,9 +225,9 @@ void CPropEdit::SetData( HWND hwndDlg )
 	}
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
 
-	// ‰üsƒR[ƒhNEL,PS,LS‚ğ—LŒø‚É‚·‚é
+	// æ”¹è¡Œã‚³ãƒ¼ãƒ‰NEL,PS,LSã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL, m_Common.m_sEdit.m_bEnableExtEol );
-	// ‹éŒ`‘I‘ğˆÚ“®‚Å‘I‘ğ‚ğƒƒbƒN‚·‚é
+	// çŸ©å½¢é¸æŠç§»å‹•ã§é¸æŠã‚’ãƒ­ãƒƒã‚¯ã™ã‚‹
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_BOXSELECTLOCK, m_Common.m_sEdit.m_bBoxSelectLock );
 
 	EnableEditPropInput( hwndDlg );
@@ -235,39 +235,39 @@ void CPropEdit::SetData( HWND hwndDlg )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 int CPropEdit::GetData( HWND hwndDlg )
 {
-	/* ƒhƒ‰ƒbƒO & ƒhƒƒbƒv•ÒW */
+	/* ãƒ‰ãƒ©ãƒƒã‚° & ãƒ‰ãƒ­ãƒƒãƒ—ç·¨é›† */
 	m_Common.m_sEdit.m_bUseOLE_DragDrop = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP );
 	/* DropSource */
 	m_Common.m_sEdit.m_bUseOLE_DropSource = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DROPSOURCE );
 
-	/* Ü‚è•Ô‚µs‚É‰üs‚ğ•t‚¯‚ÄƒRƒs[ */
+	/* æŠ˜ã‚Šè¿”ã—è¡Œã«æ”¹è¡Œã‚’ä»˜ã‘ã¦ã‚³ãƒ”ãƒ¼ */
 	m_Common.m_sEdit.m_bAddCRLFWhenCopy = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ADDCRLFWHENCOPY ));
 
-	/* ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ */
+	/* ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤ */
 	m_Common.m_sEdit.m_bCopyAndDisablSelection = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_COPYnDISABLESELECTEDAREA );
 
-	/* ‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚é */	// 2007.11.18 ryoji
+	/* é¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.11.18 ryoji
 	m_Common.m_sEdit.m_bEnableNoSelectCopy = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bEnableNoSelectCopy );
 
-	/* ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é */	// 2007.10.08 ryoji
+	/* ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹ */	// 2007.10.08 ryoji
 	m_Common.m_sEdit.m_bEnableLineModePaste = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bEnableLineModePaste ));
 
-	/* ‰üs‚Íã‘‚«‚µ‚È‚¢ */
+	/* æ”¹è¡Œã¯ä¸Šæ›¸ãã—ãªã„ */
 	m_Common.m_sEdit.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
 
-	// •¶š•‚É‡‚í‚¹‚ÄƒXƒy[ƒX‚ğ‹l‚ß‚é
+	// æ–‡å­—å¹…ã«åˆã‚ã›ã¦ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã‚‹
 	m_Common.m_sEdit.m_bOverWriteFixMode = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bOverWriteFixMode );
 
-	// ‹éŒ`“ü—Í‚Å‘I‘ğ”ÍˆÍ‚ğíœ‚·‚é
+	// çŸ©å½¢å…¥åŠ›ã§é¸æŠç¯„å›²ã‚’å‰Šé™¤ã™ã‚‹
 	m_Common.m_sEdit.m_bOverWriteBoxDelete = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bOverWriteBoxDelete );
 
-	/* URL‚ªƒNƒŠƒbƒN‚³‚ê‚½‚ç‘I‘ğ‚·‚é‚© */	// 2007.02.11 genta ‚±‚Ìƒy[ƒW‚ÖˆÚ“®
+	/* URLãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰é¸æŠã™ã‚‹ã‹ */	// 2007.02.11 genta ã“ã®ãƒšãƒ¼ã‚¸ã¸ç§»å‹•
 	m_Common.m_sEdit.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
 
-	//	‰üsƒR[ƒh‚ğ•ÏŠ·‚µ‚Ä“\‚è•t‚¯‚é */	// 2009.02.28 salarm
+	//	æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›ã—ã¦è²¼ã‚Šä»˜ã‘ã‚‹ */	// 2009.02.28 salarm
 	m_Common.m_sEdit.m_bConvertEOLPaste = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CONVERTEOLPASTE ));
 
 	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_CURDIR) ){
@@ -281,24 +281,24 @@ int CPropEdit::GetData( HWND hwndDlg )
 	}
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof2(m_Common.m_sEdit.m_OpenDialogSelDir) );
 
-	// ‰üsƒR[ƒhNEL,PS,LS‚ğ—LŒø‚É‚·‚é
+	// æ”¹è¡Œã‚³ãƒ¼ãƒ‰NEL,PS,LSã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	m_Common.m_sEdit.m_bEnableExtEol = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEEXTEOL );
-	// ‹éŒ`‘I‘ğˆÚ“®‚Å‘I‘ğ‚ğƒƒbƒN‚·‚é
+	// çŸ©å½¢é¸æŠç§»å‹•ã§é¸æŠã‚’ãƒ­ãƒƒã‚¯ã™ã‚‹
 	m_Common.m_sEdit.m_bBoxSelectLock = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BOXSELECTLOCK );
 
 	return TRUE;
 }
 
-/*!	ƒ`ƒFƒbƒNó‘Ô‚É‰‚¶‚Äƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX—v‘f‚ÌEnable/Disable‚ğ
-	“KØ‚Éİ’è‚·‚é
+/*!	ãƒã‚§ãƒƒã‚¯çŠ¶æ…‹ã«å¿œã˜ã¦ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹è¦ç´ ã®Enable/Disableã‚’
+	é©åˆ‡ã«è¨­å®šã™ã‚‹
 
-	@param hwndDlg ƒvƒƒpƒeƒBƒV[ƒg‚ÌWindow Handle
+	@param hwndDlg ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã®Window Handle
 
-	@date 2013.03.31 novice V‹Kì¬
+	@date 2013.03.31 novice æ–°è¦ä½œæˆ
 */
 void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 {
-	// w’èƒtƒHƒ‹ƒ_
+	// æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_SELDIR ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), TRUE );

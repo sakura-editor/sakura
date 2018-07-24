@@ -1,5 +1,5 @@
-/*! @file
-	@brief ���ʐݒ�_�C�A���O�{�b�N�X�A�u�����v�y�[�W
+﻿/*! @file
+	@brief 共通設定ダイアログボックス、「書式」ページ
 
 	@author Norio Nakatani
 */
@@ -24,42 +24,42 @@
 
 
 static const DWORD p_helpids[] = {	//01310
-	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//�r������
-	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//�X�V�̊Ď�
-	IDC_EDIT_AUTOLOAD_DELAY,				HIDC_EDIT_AUTOLOAD_DELAY,				//�����Ǎ����x��
+	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//排他制御
+	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
+	IDC_EDIT_AUTOLOAD_DELAY,				HIDC_EDIT_AUTOLOAD_DELAY,				//自動読込時遅延
 	IDC_SPIN_AUTOLOAD_DELAY,				HIDC_EDIT_AUTOLOAD_DELAY,
-	IDC_CHECK_bUneditableIfUnwritable,		HIDC_CHECK_bUneditableIfUnwritable,		//�㏑���֎~���o���͕ҏW�֎~�ɂ���
-	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//���ύX�ł��㏑��
-	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//�����I�ɕۑ�
-	IDC_CHECK_bDropFileAndClose,			HIDC_CHECK_bDropFileAndClose,			//���ĊJ��
-	IDC_CHECK_RestoreCurPosition,			HIDC_CHECK_RestoreCurPosition,			//�J�[�\���ʒu�̕���
-	IDC_CHECK_AutoMIMEDecode,				HIDC_CHECK_AutoMIMEDecode,				//MIME�f�R�[�h
-	IDC_EDIT_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,			//�����ۑ��Ԋu
-	IDC_EDIT_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,				//�t�@�C���h���b�v�ő吔
+	IDC_CHECK_bUneditableIfUnwritable,		HIDC_CHECK_bUneditableIfUnwritable,		//上書き禁止検出時は編集禁止にする
+	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//無変更でも上書き
+	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//自動的に保存
+	IDC_CHECK_bDropFileAndClose,			HIDC_CHECK_bDropFileAndClose,			//閉じて開く
+	IDC_CHECK_RestoreCurPosition,			HIDC_CHECK_RestoreCurPosition,			//カーソル位置の復元
+	IDC_CHECK_AutoMIMEDecode,				HIDC_CHECK_AutoMIMEDecode,				//MIMEデコード
+	IDC_EDIT_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,			//自動保存間隔
+	IDC_EDIT_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,				//ファイルドロップ最大数
 	IDC_SPIN_AUTOBACKUP_INTERVAL,			HIDC_EDIT_AUTOBACKUP_INTERVAL,
 	IDC_SPIN_nDropFileNumMax,				HIDC_EDIT_nDropFileNumMax,
-	IDC_CHECK_RestoreBookmarks,				HIDC_CHECK_RestoreBookmarks,			// 2002.01.16 hor �u�b�N�}�[�N�̕���
-	IDC_CHECK_QueryIfCodeChange,			HIDC_CHECK_QueryIfCodeChange,			//�O��ƈقȂ镶���R�[�h�̂Ƃ��₢���킹���s��	// 2006.08.06 ryoji
-	IDC_CHECK_AlertIfFileNotExist,			HIDC_CHECK_AlertIfFileNotExist,			//�J�����Ƃ����t�@�C�������݂��Ȃ��Ƃ��x������	// 2006.08.06 ryoji
-	IDC_CHECK_ALERT_IF_LARGEFILE,			HIDC_CHECK_ALERT_IF_LARGEFILE,			//�J�����Ƃ����t�@�C�����傫���ꍇ�Ɍx������
-	IDC_CHECK_NoFilterSaveNew,				HIDC_CHECK_NoFilterSaveNew,				// �V�K����ۑ����͑S�t�@�C���\��	// 2006.11.16 ryoji
-	IDC_CHECK_NoFilterSaveFile,				HIDC_CHECK_NoFilterSaveFile,			// �V�K�ȊO����ۑ����͑S�t�@�C���\��	// 2006.11.16 ryoji
+	IDC_CHECK_RestoreBookmarks,				HIDC_CHECK_RestoreBookmarks,			// 2002.01.16 hor ブックマークの復元
+	IDC_CHECK_QueryIfCodeChange,			HIDC_CHECK_QueryIfCodeChange,			//前回と異なる文字コードのとき問い合わせを行う	// 2006.08.06 ryoji
+	IDC_CHECK_AlertIfFileNotExist,			HIDC_CHECK_AlertIfFileNotExist,			//開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
+	IDC_CHECK_ALERT_IF_LARGEFILE,			HIDC_CHECK_ALERT_IF_LARGEFILE,			//開こうとしたファイルが大きい場合に警告する
+	IDC_CHECK_NoFilterSaveNew,				HIDC_CHECK_NoFilterSaveNew,				// 新規から保存時は全ファイル表示	// 2006.11.16 ryoji
+	IDC_CHECK_NoFilterSaveFile,				HIDC_CHECK_NoFilterSaveFile,			// 新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 //	IDC_STATIC,								-1,
 	0, 0
 };
 
 TYPE_NAME_ID<EShareMode> ShareModeArr[] = {
-	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//_T("���Ȃ�") },
-	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_WRITE },		//_T("�㏑�����֎~����") },
-	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_READWRITE },	//_T("�ǂݏ������֎~����") },
+	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//_T("しない") },
+	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_WRITE },		//_T("上書きを禁止する") },
+	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_READWRITE },	//_T("読み書きを禁止する") },
 };
 
 //	From Here Jun. 2, 2001 genta
 /*!
-	@param hwndDlg �_�C�A���O�{�b�N�X��Window Handle
-	@param uMsg ���b�Z�[�W
-	@param wParam �p�����[�^1
-	@param lParam �p�����[�^2
+	@param hwndDlg ダイアログボックスのWindow Handle
+	@param uMsg メッセージ
+	@param wParam パラメータ1
+	@param lParam パラメータ2
 */
 INT_PTR CALLBACK CPropFile::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -68,7 +68,7 @@ INT_PTR CALLBACK CPropFile::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-/*! �t�@�C���y�[�W ���b�Z�[�W���� */
+/*! ファイルページ メッセージ処理 */
 INT_PTR CPropFile::DispatchEvent(
 	HWND	hwndDlg,	//!< handle to dialog box
 	UINT	uMsg,	//!< message
@@ -82,17 +82,17 @@ INT_PTR CPropFile::DispatchEvent(
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 //	int			nVal;
-	int			nVal;	//Sept.21, 2000 JEPRO �X�s���v�f���������̂ŕ���������
+	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 //	char		szFolder[_MAX_PATH];
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* �_�C�A���O�f�[�^�̐ݒ� File */
+		/* ダイアログデータの設定 File */
 		SetData( hwndDlg );
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		return TRUE;
-//****	From Here Sept. 21, 2000 JEPRO �_�C�A���O�v�f�ɃX�s��������̂ňȉ���WM_NOTIFY���R�����g�A�E�g�ɂ����ɏC����u����
+//****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
 //	case WM_NOTIFY:
 //		idCtrl = (int)wParam;
 //		pNMHDR = (NMHDR*)lParam;
@@ -105,7 +105,7 @@ INT_PTR CPropFile::DispatchEvent(
 //				return TRUE;
 //			case PSN_KILLACTIVE:
 ////				MYTRACE( _T("p2 PSN_KILLACTIVE\n") );
-//				/* �_�C�A���O�f�[�^�̎擾 p2 */
+//				/* ダイアログデータの取得 p2 */
 //				GetData_p2( hwndDlg );
 //				return TRUE;
 //			}
@@ -124,17 +124,17 @@ INT_PTR CPropFile::DispatchEvent(
 				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE( _T("File PSN_KILLACTIVE\n") );
-				/* �_�C�A���O�f�[�^�̎擾 File */
+				/* ダイアログデータの取得 File */
 				GetData( hwndDlg );
 				return TRUE;
-//@@@ 2002.01.03 YAZAKI �Ō�ɕ\�����Ă����V�[�g�𐳂����o���Ă��Ȃ��o�O�C��
+//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PROPCOM_PAGENUM_FILE;
 				return TRUE;
 			}
 			break;
 		case IDC_SPIN_AUTOLOAD_DELAY:
-			// �����Ǎ����x��
+			// 自動読込時遅延
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -148,7 +148,7 @@ INT_PTR CPropFile::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_nDropFileNumMax:
-			/* ��x�Ƀh���b�v�\�ȃt�@�C���� */
+			/* 一度にドロップ可能なファイル数 */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -168,7 +168,7 @@ INT_PTR CPropFile::DispatchEvent(
 			/*NOTREACHED*/
 //			break;
 		case IDC_SPIN_AUTOBACKUP_INTERVAL:
-			/* �o�b�N�A�b�v�Ԋu */
+			/* バックアップ間隔 */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -185,7 +185,7 @@ INT_PTR CPropFile::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_ALERT_FILESIZE:
-			/* �t�@�C���̌x���T�C�Y */
+			/* ファイルの警告サイズ */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -197,7 +197,7 @@ INT_PTR CPropFile::DispatchEvent(
 				nVal = 1;
 			}
 			if( nVal > 2048 ){
-				nVal = 2048;  // �ő� 2GB �܂�
+				nVal = 2048;  // 最大 2GB まで
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nVal, FALSE );
 			return TRUE;
@@ -205,24 +205,24 @@ INT_PTR CPropFile::DispatchEvent(
 //			break;
 //@@@ 2001.03.21 End by MIK
 		}
-//****	To Here Sept. 21, 2000 JEPRO �_�C�A���O�v�f�ɃX�s��������̂�WM_NOTIFY���R�����g�A�E�g�ɂ����̉��ɏC����u����
+//****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
 		break;
 
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD(wParam);	/* �ʒm�R�[�h */
-		wID			= LOWORD(wParam);	/* ����ID� �R���g���[��ID� �܂��̓A�N�Z�����[�^ID */
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 
-		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// �R���{�{�b�N�X�̑I��ύX
+		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// コンボボックスの選択変更
 			EnableFilePropInput(hwndDlg);
 			break;
 		}
 
 		switch( wNotifyCode ){
-		/* �{�^���^�`�F�b�N�{�b�N�X���N���b�N���ꂽ */
+		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_bCheckFileTimeStamp:	// �X�V�̊Ď�
-			case IDC_CHECK_bDropFileAndClose:/* �t�@�C�����h���b�v�����Ƃ��͕��ĊJ�� */
+			case IDC_CHECK_bCheckFileTimeStamp:	// 更新の監視
+			case IDC_CHECK_bDropFileAndClose:/* ファイルをドロップしたときは閉じて開く */
 			case IDC_CHECK_AUTOSAVE:
 			case IDC_CHECK_ALERT_IF_LARGEFILE:
 				EnableFilePropInput(hwndDlg);
@@ -236,7 +236,7 @@ INT_PTR CPropFile::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -246,7 +246,7 @@ INT_PTR CPropFile::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp�ɕύX�ɕύX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -258,18 +258,18 @@ INT_PTR CPropFile::DispatchEvent(
 
 
 
-/*! �t�@�C���y�[�W: �_�C�A���O�f�[�^�̐ݒ�
-	���L����������f�[�^��ǂݏo���Ċe�R���g���[���ɒl��ݒ肷��B
+/*! ファイルページ: ダイアログデータの設定
+	共有メモリからデータを読み出して各コントロールに値を設定する。
 
-	@par �o�b�N�A�b�v���㐔���Ó��Ȓl���ǂ����̃`�F�b�N���s���B�s�K�؂Ȓl�̎���
-	�ł��߂��K�؂Ȓl��ݒ肷��B
+	@par バックアップ世代数が妥当な値かどうかのチェックも行う。不適切な値の時は
+	最も近い適切な値を設定する。
 
-	@param hwndDlg �v���p�e�B�y�[�W��Window Handle
+	@param hwndDlg プロパティページのWindow Handle
 */
 void CPropFile::SetData( HWND hwndDlg )
 {
 	/*--- File ---*/
-	/* �t�@�C���̔r�����䃂�[�h */
+	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
 	Combo_ResetContent( hwndCombo );
 	int		nSelPos = 0;
@@ -281,25 +281,25 @@ void CPropFile::SetData( HWND hwndDlg )
 	}
 	Combo_SetCurSel( hwndCombo, nSelPos );
 
-	/* �X�V�̊Ď� */
+	/* 更新の監視 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
 
-	// �����Ǎ����x��
+	// 自動読込時遅延
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, m_Common.m_sFile.m_nAutoloadDelay, FALSE );
 
-	/* �㏑���֎~���o���͕ҏW�֎~�ɂ��� */
+	/* 上書き禁止検出時は編集禁止にする */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable, m_Common.m_sFile.m_bUneditableIfUnwritable );
 
-	/* ���ύX�ł��㏑�����邩 */
+	/* 無変更でも上書きするか */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
 
-	/* �t�@�C�����h���b�v�����Ƃ��͕��ĊJ�� */
+	/* ファイルをドロップしたときは閉じて開く */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_sFile.m_bDropFileAndClose );
-	/* ��x�Ƀh���b�v�\�ȃt�@�C���� */
+	/* 一度にドロップ可能なファイル数 */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_sFile.m_nDropFileNumMax, FALSE );
 
 	//	From Here Aug. 21, 2000 genta
-	//	�����ۑ��̗L���E����
+	//	自動保存の有効・無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.m_sBackup.IsAutoBackupEnabled() );
 
 	TCHAR buf[6];
@@ -313,72 +313,72 @@ void CPropFile::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
-	//	Oct. 27, 2000 genta	�J�[�\���ʒu�����t���O
+	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.m_sFile.GetRestoreCurPosition() );
-	// 2002.01.16 hor �u�b�N�}�[�N�����t���O
+	// 2002.01.16 hor ブックマーク復元フラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.m_sFile.GetRestoreBookmarks() );
-	//	Nov. 12, 2000 genta	MIME Decode�t���O
+	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.m_sFile.GetAutoMIMEdecode() );
-	//	Oct. 03, 2004 genta �O��ƈقȂ镶���R�[�h�̂Ƃ��ɖ₢���킹���s�����ǂ����̃t���O
+	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.m_sFile.GetQueryIfCodeChange() );
-	//	Oct. 09, 2004 genta �J�����Ƃ����t�@�C�������݂��Ȃ��Ƃ��x�����邩�ǂ����̃t���O
+	//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告するかどうかのフラグ
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.m_sFile.GetAlertIfFileNotExist() );
-	//	�t�@�C���T�C�Y���傫���ꍇ�Ɍx�����o��
+	//	ファイルサイズが大きい場合に警告を出す
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE, m_Common.m_sFile.m_bAlertIfLargeFile );
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, m_Common.m_sFile.m_nAlertFileSize, FALSE );
 
-	// �t�@�C���ۑ��_�C�A���O�̃t�B���^�ݒ�	// 2006.11.16 ryoji
-	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew );	// �V�K����ۑ����͑S�t�@�C���\��
-	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile );	// �V�K�ȊO����ۑ����͑S�t�@�C���\��
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	EnableFilePropInput(hwndDlg);
 	return;
 }
 
-/*! �t�@�C���y�[�W �_�C�A���O�f�[�^�̎擾
-	�_�C�A���O�{�b�N�X�ɐݒ肳�ꂽ�f�[�^�����L�������ɔ��f������
+/*! ファイルページ ダイアログデータの取得
+	ダイアログボックスに設定されたデータを共有メモリに反映させる
 
-	@par �o�b�N�A�b�v���㐔���Ó��Ȓl���ǂ����̃`�F�b�N���s���B�s�K�؂Ȓl�̎���
-	�ł��߂��K�؂Ȓl��ݒ肷��B
+	@par バックアップ世代数が妥当な値かどうかのチェックも行う。不適切な値の時は
+	最も近い適切な値を設定する。
 
-	@param hwndDlg �v���p�e�B�y�[�W��Window Handle
-	@return ���TRUE
+	@param hwndDlg プロパティページのWindow Handle
+	@return 常にTRUE
 */
 int CPropFile::GetData( HWND hwndDlg )
 {
-	/* �t�@�C���̔r�����䃂�[�h */
+	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
 	int		nSelPos = Combo_GetCurSel( hwndCombo );
 	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
 
-	/* �X�V�̊Ď� */
+	/* 更新の監視 */
 	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
-	// �����Ǎ����x��
+	// 自動読込時遅延
 	m_Common.m_sFile.m_nAutoloadDelay = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
 
-	/* �㏑���֎~���o���͕ҏW�֎~�ɂ��� */
+	/* 上書き禁止検出時は編集禁止にする */
 	m_Common.m_sFile.m_bUneditableIfUnwritable = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable );
 
-	/* ���ύX�ł��㏑�����邩 */
+	/* 無変更でも上書きするか */
 	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
 
-	/* �t�@�C�����h���b�v�����Ƃ��͕��ĊJ�� */
+	/* ファイルをドロップしたときは閉じて開く */
 	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bDropFileAndClose );
-	/* ��x�Ƀh���b�v�\�ȃt�@�C���� */
+	/* 一度にドロップ可能なファイル数 */
 	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
 	if( 1 > m_Common.m_sFile.m_nDropFileNumMax ){
 		m_Common.m_sFile.m_nDropFileNumMax = 1;
 	}
-	if( 99 < m_Common.m_sFile.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16���傫���Ƃ���99�Ɛ�������Ă����̂��C��(16��99�ƕύX)
+	if( 99 < m_Common.m_sFile.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16より大きいときに99と制限されていたのを修正(16→99と変更)
 		m_Common.m_sFile.m_nDropFileNumMax = 99;
 	}
 
 	//	From Here Aug. 16, 2000 genta
-	//	�����ۑ����s�����ǂ���
+	//	自動保存を行うかどうか
 	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) != FALSE );
 
-	//	�����ۑ��Ԋu�̎擾
+	//	自動保存間隔の取得
 	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
 	int	 nN;
 	TCHAR *pDigit;
@@ -398,17 +398,17 @@ int CPropFile::GetData( HWND hwndDlg )
 
 	//	To Here Aug. 16, 2000 genta
 
-	//	Oct. 27, 2000 genta	�J�[�\���ʒu�����t���O
+	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
 	m_Common.m_sFile.SetRestoreCurPosition( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_RestoreCurPosition ) );
-	// 2002.01.16 hor �u�b�N�}�[�N�����t���O
+	// 2002.01.16 hor ブックマーク復元フラグ
 	m_Common.m_sFile.SetRestoreBookmarks( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_RestoreBookmarks ) );
-	//	Nov. 12, 2000 genta	MIME Decode�t���O
+	//	Nov. 12, 2000 genta	MIME Decodeフラグ
 	m_Common.m_sFile.SetAutoMIMEdecode( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_AutoMIMEDecode ) );
-	//	Oct. 03, 2004 genta �O��ƈقȂ镶���R�[�h�̂Ƃ��ɖ₢���킹���s�����ǂ����̃t���O
+	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
 	m_Common.m_sFile.SetQueryIfCodeChange( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_QueryIfCodeChange ) );
-	//	Oct. 03, 2004 genta �O��ƈقȂ镶���R�[�h�̂Ƃ��ɖ₢���킹���s�����ǂ����̃t���O
+	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
 	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) );
-	// �J�����Ƃ����t�@�C�����傫���ꍇ�Ɍx������
+	// 開こうとしたファイルが大きい場合に警告する
 	m_Common.m_sFile.m_bAlertIfLargeFile = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE );
 	m_Common.m_sFile.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
 	if( m_Common.m_sFile.m_nAlertFileSize < 1 ){
@@ -418,36 +418,36 @@ int CPropFile::GetData( HWND hwndDlg )
 		m_Common.m_sFile.m_nAlertFileSize = 2048;
 	}
 
-	// �t�@�C���ۑ��_�C�A���O�̃t�B���^�ݒ�	// 2006.11.16 ryoji
-	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// �V�K����ۑ����͑S�t�@�C���\��
-	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// �V�K�ȊO����ۑ����͑S�t�@�C���\��
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	return TRUE;
 }
 
 //	From Here Aug. 21, 2000 genta
-/*!	�`�F�b�N��Ԃɉ����ă_�C�A���O�{�b�N�X�v�f��Enable/Disable��
-	�K�؂ɐݒ肷��
+/*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
+	適切に設定する
 
-	@param hwndDlg �v���p�e�B�V�[�g��Window Handle
+	@param hwndDlg プロパティシートのWindow Handle
 */
 void CPropFile::EnableFilePropInput(HWND hwndDlg)
 {
 
-	//	Drop���̓���
+	//	Drop時の動作
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose ) ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE3 ), FALSE );	// added Sept. 6, JEPRO �����ۑ��ɂ����Ƃ�����Enable�ɂȂ�悤�ɕύX
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE4 ), FALSE );	// added Sept. 6, JEPRO	����
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE3 ), FALSE );	// added Sept. 6, JEPRO 自動保存にしたときだけEnableになるように変更
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE4 ), FALSE );	// added Sept. 6, JEPRO	同上
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_nDropFileNumMax ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_nDropFileNumMax ), FALSE );// added Oct. 6, JEPRO �t�@�C���I�[�v�����u���ĊJ���v�ɂ����Ƃ���Disable�ɂȂ�悤�ɕύX
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_nDropFileNumMax ), FALSE );// added Oct. 6, JEPRO ファイルオープンを「閉じて開く」にしたときはDisableになるように変更
 	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE3 ), TRUE );	// added Sept. 6, JEPRO	����
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE4 ), TRUE );	// added Sept. 6, JEPRO	����
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE3 ), TRUE );	// added Sept. 6, JEPRO	同上
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE4 ), TRUE );	// added Sept. 6, JEPRO	同上
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_nDropFileNumMax ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_nDropFileNumMax ), TRUE );// added Oct. 6, JEPRO �t�@�C���I�[�v�����u�����t�@�C���h���b�v�v�ɂ����Ƃ�����Enable�ɂȂ�悤�ɕύX
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_nDropFileNumMax ), TRUE );// added Oct. 6, JEPRO ファイルオープンを「複数ファイルドロップ」にしたときだけEnableになるように変更
 	}
 
-	//	�r�����邩�ǂ���
+	//	排他するかどうか
 	int nSelPos = Combo_GetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE ) );
 	if( ShareModeArr[nSelPos].nMethod == SHAREMODE_NOT_EXCLUSIVE ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
@@ -468,20 +468,20 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOLOAD_DELAY ),  FALSE );
 	}
 
-	//	�����ۑ�
+	//	自動保存
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE2 ), TRUE );	//Sept. 6, 2000 JEPRO �����ۑ��ɂ����Ƃ�����Enable�ɂȂ�悤�ɕύX
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE2 ), TRUE );	//Sept. 6, 2000 JEPRO 自動保存にしたときだけEnableになるように変更
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOBACKUP_INTERVAL ), TRUE );	//@@@ 2001.03.21 by MIK
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE2 ), FALSE );	//Sept. 6, 2000 JEPRO ����
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE2 ), FALSE );	//Sept. 6, 2000 JEPRO 同上
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOBACKUP_INTERVAL ), FALSE );	//@@@ 2001.03.21 by MIK
 	}
 
-	// �u�J�����Ƃ����t�@�C�����傫���ꍇ�Ɍx�����o���v
+	// 「開こうとしたファイルが大きい場合に警告を出す」
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_ALERT_FILESIZE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_ALERT_FILESIZE ), TRUE );

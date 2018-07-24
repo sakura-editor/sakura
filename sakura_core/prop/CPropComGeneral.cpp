@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXAu‘S”Êvƒy[ƒW
+ï»¿/*!	@file
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã€ã€Œå…¨èˆ¬ã€ãƒšãƒ¼ã‚¸
 
 	@author Uchi
-	@date 2010/5/9 CPropCommon.c‚æ‚è•ª—£
+	@date 2010/5/9 CPropCommon.cã‚ˆã‚Šåˆ†é›¢
 */
 /*
 	Copyright (C) 2010, Uchi
@@ -22,50 +22,50 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
-	{ 0,						STR_SCROLL_WITH_NO_KEY },		//_T("‘g‚İ‡‚í‚¹‚È‚µ") },
-	{ MOUSEFUNCTION_CENTER,		STR_SCROLL_WITH_MID_BTN },		//_T("ƒ}ƒEƒX’†ƒ{ƒ^ƒ“") },
-	{ MOUSEFUNCTION_LEFTSIDE,	STR_SCROLL_WITH_SIDE_1_BTN },	//_T("ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“1") },
-	{ MOUSEFUNCTION_RIGHTSIDE,	STR_SCROLL_WITH_SIDE_2_BTN },	//_T("ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“2") },
-	{ VK_CONTROL,				STR_SCROLL_WITH_CTRL_KEY },	//_T("CONTROLƒL[") },
-	{ VK_SHIFT,					STR_SCROLL_WITH_SHIFT_KEY },	//_T("SHIFTƒL[") },
+	{ 0,						STR_SCROLL_WITH_NO_KEY },		//_T("çµ„ã¿åˆã‚ã›ãªã—") },
+	{ MOUSEFUNCTION_CENTER,		STR_SCROLL_WITH_MID_BTN },		//_T("ãƒã‚¦ã‚¹ä¸­ãƒœã‚¿ãƒ³") },
+	{ MOUSEFUNCTION_LEFTSIDE,	STR_SCROLL_WITH_SIDE_1_BTN },	//_T("ãƒã‚¦ã‚¹ã‚µã‚¤ãƒ‰ãƒœã‚¿ãƒ³1") },
+	{ MOUSEFUNCTION_RIGHTSIDE,	STR_SCROLL_WITH_SIDE_2_BTN },	//_T("ãƒã‚¦ã‚¹ã‚µã‚¤ãƒ‰ãƒœã‚¿ãƒ³2") },
+	{ VK_CONTROL,				STR_SCROLL_WITH_CTRL_KEY },	//_T("CONTROLã‚­ãƒ¼") },
+	{ VK_SHIFT,					STR_SCROLL_WITH_SHIFT_KEY },	//_T("SHIFTã‚­ãƒ¼") },
 };
 
 static const DWORD p_helpids[] = {	//10900
-	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//—š—ğ‚ğƒNƒŠƒAiƒtƒ@ƒCƒ‹j
-	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//—š—ğ‚ğƒNƒŠƒAiƒtƒHƒ‹ƒ_j
-	IDC_CHECK_FREECARET,			HIDC_CHECK_FREECARET,				//ƒtƒŠ[ƒJ[ƒ\ƒ‹
-//DEL	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//©“®ƒCƒ“ƒfƒ“ƒg Fƒ^ƒCƒv•Ê‚ÖˆÚ“®
-//DEL	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//‘SŠp‹ó”’‚àƒCƒ“ƒfƒ“ƒg Fƒ^ƒCƒv•Ê‚ÖˆÚ“®
-	IDC_CHECK_USETRAYICON,			HIDC_CHECK_USETRAYICON,				//ƒ^ƒXƒNƒgƒŒƒC‚ğg‚¤
-	IDC_CHECK_STAYTASKTRAY,			HIDC_CHECK_STAYTASKTRAY,			//ƒ^ƒXƒNƒgƒŒƒC‚Éí’“
-	IDC_CHECK_REPEATEDSCROLLSMOOTH,	HIDC_CHECK_REPEATEDSCROLLSMOOTH,	//­‚µŠŠ‚ç‚©‚É‚·‚é
-	IDC_CHECK_CLOSEALLCONFIRM,		HIDC_CHECK_CLOSEALLCONFIRM,			//[‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é	// 2006.12.25 ryoji
-	IDC_CHECK_EXITCONFIRM,			HIDC_CHECK_EXITCONFIRM,				//I—¹‚ÌŠm”F
-	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, HIDC_CHECK_STOPS_WORD, //’PŒê’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚É’PŒê‚Ì—¼’[‚É~‚Ü‚é
-	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, HIDC_CHECK_STOPS_PARAGRAPH, // ’i—’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚É’i—‚Ì—¼’[‚É~‚Ü‚é
-	IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE, HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE,	// ƒ}ƒEƒXƒNƒŠƒbƒN‚ÅƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚Æ‚«‚ÍƒJ[ƒ\ƒ‹‚ğƒNƒŠƒbƒNˆÊ’u‚ÉˆÚ“®‚µ‚È‚¢ 2007.10.08 genta
-	IDC_HOTKEY_TRAYMENU,			HIDC_HOTKEY_TRAYMENU,				//¶ƒNƒŠƒbƒNƒƒjƒ…[‚ÌƒVƒ‡[ƒgƒJƒbƒgƒL[
-	IDC_EDIT_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,	//ƒXƒNƒ[ƒ‹s”
-	IDC_EDIT_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,				//ƒtƒ@ƒCƒ‹—š—ğ‚ÌÅ‘å”
-	IDC_EDIT_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,			//ƒtƒHƒ‹ƒ_—š—ğ‚ÌÅ‘å”
-	IDC_RADIO_CARETTYPE0,			HIDC_RADIO_CARETTYPE0,				//ƒJ[ƒ\ƒ‹Œ`óiWindows•—j
-	IDC_RADIO_CARETTYPE1,			HIDC_RADIO_CARETTYPE1,				//ƒJ[ƒ\ƒ‹Œ`óiMS-DOS•—j
+	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//å±¥æ­´ã‚’ã‚¯ãƒªã‚¢ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«ï¼‰
+	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//å±¥æ­´ã‚’ã‚¯ãƒªã‚¢ï¼ˆãƒ•ã‚©ãƒ«ãƒ€ï¼‰
+	IDC_CHECK_FREECARET,			HIDC_CHECK_FREECARET,				//ãƒ•ãƒªãƒ¼ã‚«ãƒ¼ã‚½ãƒ«
+//DEL	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//è‡ªå‹•ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ï¼šã‚¿ã‚¤ãƒ—åˆ¥ã¸ç§»å‹•
+//DEL	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//å…¨è§’ç©ºç™½ã‚‚ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ ï¼šã‚¿ã‚¤ãƒ—åˆ¥ã¸ç§»å‹•
+	IDC_CHECK_USETRAYICON,			HIDC_CHECK_USETRAYICON,				//ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚’ä½¿ã†
+	IDC_CHECK_STAYTASKTRAY,			HIDC_CHECK_STAYTASKTRAY,			//ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«å¸¸é§
+	IDC_CHECK_REPEATEDSCROLLSMOOTH,	HIDC_CHECK_REPEATEDSCROLLSMOOTH,	//å°‘ã—æ»‘ã‚‰ã‹ã«ã™ã‚‹
+	IDC_CHECK_CLOSEALLCONFIRM,		HIDC_CHECK_CLOSEALLCONFIRM,			//[ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹	// 2006.12.25 ryoji
+	IDC_CHECK_EXITCONFIRM,			HIDC_CHECK_EXITCONFIRM,				//çµ‚äº†ã®ç¢ºèª
+	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, HIDC_CHECK_STOPS_WORD, //å˜èªå˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«å˜èªã®ä¸¡ç«¯ã«æ­¢ã¾ã‚‹
+	IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, HIDC_CHECK_STOPS_PARAGRAPH, // æ®µè½å˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«æ®µè½ã®ä¸¡ç«¯ã«æ­¢ã¾ã‚‹
+	IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE, HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE,	// ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã§ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã¨ãã¯ã‚«ãƒ¼ã‚½ãƒ«ã‚’ã‚¯ãƒªãƒƒã‚¯ä½ç½®ã«ç§»å‹•ã—ãªã„ 2007.10.08 genta
+	IDC_HOTKEY_TRAYMENU,			HIDC_HOTKEY_TRAYMENU,				//å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã‚­ãƒ¼
+	IDC_EDIT_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,	//ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¡Œæ•°
+	IDC_EDIT_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,				//ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ã®æœ€å¤§æ•°
+	IDC_EDIT_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,			//ãƒ•ã‚©ãƒ«ãƒ€å±¥æ­´ã®æœ€å¤§æ•°
+	IDC_RADIO_CARETTYPE0,			HIDC_RADIO_CARETTYPE0,				//ã‚«ãƒ¼ã‚½ãƒ«å½¢çŠ¶ï¼ˆWindowsé¢¨ï¼‰
+	IDC_RADIO_CARETTYPE1,			HIDC_RADIO_CARETTYPE1,				//ã‚«ãƒ¼ã‚½ãƒ«å½¢çŠ¶ï¼ˆMS-DOSé¢¨ï¼‰
 	IDC_SPIN_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,
 	IDC_SPIN_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,
 	IDC_SPIN_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,
-	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,					//‰æ–ÊƒLƒƒƒbƒVƒ…‚ğg‚¤
-	IDC_COMBO_WHEEL_PAGESCROLL,		HIDC_COMBO_WHEEL_PAGESCROLL,		// ‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½ƒy[ƒWƒXƒNƒ[ƒ‹‚·‚é		// 2009.01.17 nasukoji
-	IDC_COMBO_WHEEL_HSCROLL,		HIDC_COMBO_WHEEL_HSCROLL,			// ‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½‰¡ƒXƒNƒ[ƒ‹‚·‚é			// 2009.01.17 nasukoji
+	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,					//ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’ä½¿ã†
+	IDC_COMBO_WHEEL_PAGESCROLL,		HIDC_COMBO_WHEEL_PAGESCROLL,		// çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹		// 2009.01.17 nasukoji
+	IDC_COMBO_WHEEL_HSCROLL,		HIDC_COMBO_WHEEL_HSCROLL,			// çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹			// 2009.01.17 nasukoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
 //@@@ 2001.02.04 End
 
 /*!
-	@param hwndDlg ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚ÌWindow Handle
-	@param uMsg ƒƒbƒZ[ƒW
-	@param wParam ƒpƒ‰ƒ[ƒ^1
-	@param lParam ƒpƒ‰ƒ[ƒ^2
+	@param hwndDlg ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®Window Handle
+	@param uMsg ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
+	@param wParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1
+	@param lParam ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2
 */
 INT_PTR CALLBACK CPropGeneral::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -74,7 +74,7 @@ INT_PTR CALLBACK CPropGeneral::DlgProc_page(
 }
 
 
-/* General ƒƒbƒZ[ƒWˆ— */
+/* General ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 INT_PTR CPropGeneral::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
@@ -94,27 +94,27 @@ INT_PTR CPropGeneral::DispatchEvent(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è General */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š General */
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
-		/* ƒ†[ƒU[‚ªƒGƒfƒBƒbƒg ƒRƒ“ƒgƒ[ƒ‹‚É“ü—Í‚Å‚«‚éƒeƒLƒXƒg‚Ì’·‚³‚ğ§ŒÀ‚·‚é */
+		/* ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒã‚¨ãƒ‡ã‚£ãƒƒãƒˆ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ã§ãã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã‚’åˆ¶é™ã™ã‚‹ */
 
 		return TRUE;
 	case WM_COMMAND:
-		wNotifyCode	= HIWORD(wParam);	/* ’Ê’mƒR[ƒh */
-		wID			= LOWORD(wParam);	/* €–ÚID¤ ƒRƒ“ƒgƒ[ƒ‹ID¤ ‚Ü‚½‚ÍƒAƒNƒZƒ‰ƒŒ[ƒ^ID */
-//		hwndCtl		= (HWND) lParam;	/* ƒRƒ“ƒgƒ[ƒ‹‚Ìƒnƒ“ƒhƒ‹ */
+		wNotifyCode	= HIWORD(wParam);	/* é€šçŸ¥ã‚³ãƒ¼ãƒ‰ */
+		wID			= LOWORD(wParam);	/* é …ç›®IDï½¤ ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«IDï½¤ ã¾ãŸã¯ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ID */
+//		hwndCtl		= (HWND) lParam;	/* ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ« */
 		switch( wNotifyCode ){
-		/* ƒ{ƒ^ƒ“^ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ªƒNƒŠƒbƒN‚³‚ê‚½ */
+		/* ãƒœã‚¿ãƒ³ï¼ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸ */
 		case BN_CLICKED:
 			switch( wID ){
 
-			case IDC_CHECK_USETRAYICON:	/* ƒ^ƒXƒNƒgƒŒƒC‚ğg‚¤ */
+			case IDC_CHECK_USETRAYICON:	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚’ä½¿ã† */
 			// From Here 2001.12.03 hor
-			//		‘€ì‚µ‚É‚­‚¢‚Á‚Ä•]”»‚¾‚Á‚½‚Ì‚Åƒ^ƒXƒNƒgƒŒƒCŠÖŒW‚ÌEnable§Œä‚ğ‚â‚ß‚Ü‚µ‚½
-			//@@@ YAZAKI 2001.12.31 IDC_CHECKSTAYTASKTRAY‚ÌƒAƒNƒeƒBƒuA”ñƒAƒNƒeƒBƒu‚Ì‚İ§ŒäB
+			//		æ“ä½œã—ã«ãã„ã£ã¦è©•åˆ¤ã ã£ãŸã®ã§ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤é–¢ä¿‚ã®Enableåˆ¶å¾¡ã‚’ã‚„ã‚ã¾ã—ãŸ
+			//@@@ YAZAKI 2001.12.31 IDC_CHECKSTAYTASKTRAYã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã€éã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã®ã¿åˆ¶å¾¡ã€‚
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
 				}else{
@@ -123,16 +123,16 @@ INT_PTR CPropGeneral::DispatchEvent(
 			// To Here 2001.12.03 hor
 				return TRUE;
 
-			case IDC_CHECK_STAYTASKTRAY:	/* ƒ^ƒXƒNƒgƒŒƒC‚Éí’“ */
+			case IDC_CHECK_STAYTASKTRAY:	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«å¸¸é§ */
 				return TRUE;
 
 			case IDC_BUTTON_CLEAR_MRU_FILE:
-				/* ƒtƒ@ƒCƒ‹‚Ì—š—ğ‚ğƒNƒŠƒA */
+				/* ãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´ã‚’ã‚¯ãƒªã‚¢ */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
 					LS(STR_PROPCOMGEN_FILE1) ) ){
 					return TRUE;
 				}
-//@@@ 2001.12.26 YAZAKI MRUƒŠƒXƒg‚ÍACMRU‚ÉˆË—Š‚·‚é
+//@@@ 2001.12.26 YAZAKI MRUãƒªã‚¹ãƒˆã¯ã€CMRUã«ä¾é ¼ã™ã‚‹
 //				m_pShareData->m_sHistory.m_nMRUArrNum = 0;
 				{
 					CMRUFile cMRU;
@@ -141,15 +141,15 @@ INT_PTR CPropGeneral::DispatchEvent(
 				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_FILE2) );
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
-				/* ƒtƒHƒ‹ƒ_‚Ì—š—ğ‚ğƒNƒŠƒA */
+				/* ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´ã‚’ã‚¯ãƒªã‚¢ */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
 					LS(STR_PROPCOMGEN_DIR1) ) ){
 					return TRUE;
 				}
-//@@@ 2001.12.26 YAZAKI OPENFOLDERƒŠƒXƒg‚ÍACMRUFolder‚É‚·‚×‚ÄˆË—Š‚·‚é
+//@@@ 2001.12.26 YAZAKI OPENFOLDERãƒªã‚¹ãƒˆã¯ã€CMRUFolderã«ã™ã¹ã¦ä¾é ¼ã™ã‚‹
 //				m_pShareData->m_sHistory.m_nOPENFOLDERArrNum = 0;
 				{
-					CMRUFolder cMRUFolder;	//	MRUƒŠƒXƒg‚Ì‰Šú‰»Bƒ‰ƒxƒ‹“à‚¾‚Æ–â‘è‚ ‚èH
+					CMRUFolder cMRUFolder;	//	MRUãƒªã‚¹ãƒˆã®åˆæœŸåŒ–ã€‚ãƒ©ãƒ™ãƒ«å†…ã ã¨å•é¡Œã‚ã‚Šï¼Ÿ
 					cMRUFolder.ClearAll();
 				}
 				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_DIR2) );
@@ -157,13 +157,13 @@ INT_PTR CPropGeneral::DispatchEvent(
 
 			}
 			break;	/* BN_CLICKED */
-		// 2009.01.12 nasukoji	ƒRƒ“ƒ{ƒ{ƒbƒNƒX‚ÌƒŠƒXƒg‚Ì€–Ú‚ª‘I‘ğ‚³‚ê‚½
+		// 2009.01.12 nasukoji	ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã®ãƒªã‚¹ãƒˆã®é …ç›®ãŒé¸æŠã•ã‚ŒãŸ
 		case CBN_SELENDOK:
 			HWND	hwndCombo;
 			int		nSelPos;
 
 			switch( wID ){
-			// ‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½ƒy[ƒWƒXƒNƒ[ƒ‹‚·‚é
+			// çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 			case IDC_COMBO_WHEEL_PAGESCROLL:
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
 				nSelPos = Combo_GetCurSel( hwndCombo );
@@ -172,7 +172,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 					Combo_SetCurSel( hwndCombo, 0 );
 				}
 				return TRUE;
-			// ‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½‰¡ƒXƒNƒ[ƒ‹‚·‚é
+			// çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 			case IDC_COMBO_WHEEL_HSCROLL:
 				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
 				nSelPos = Combo_GetCurSel( hwndCombo );
@@ -191,7 +191,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
-			/* ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹s” */
+			/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¡Œæ•° */
 //			MYTRACE( _T("IDC_SPIN_REPEATEDSCROLLLINENUM\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
@@ -209,7 +209,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FILE:
-			/* ƒtƒ@ƒCƒ‹‚Ì—š—ğMAX */
+			/* ãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAX */
 //			MYTRACE( _T("IDC_SPIN_MAX_MRU_FILE\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
@@ -227,7 +227,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FOLDER:
-			/* ƒtƒHƒ‹ƒ_‚Ì—š—ğMAX */
+			/* ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´MAX */
 //			MYTRACE( _T("IDC_SPIN_MAX_MRU_FOLDER\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
@@ -251,12 +251,12 @@ INT_PTR CPropGeneral::DispatchEvent(
 				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE( _T("General PSN_KILLACTIVE\n") );
-				/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ General */
+				/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— General */
 				GetData( hwndDlg );
 				return TRUE;
-//@@@ 2002.01.03 YAZAKI ÅŒã‚É•\¦‚µ‚Ä‚¢‚½ƒV[ƒg‚ğ³‚µ‚­Šo‚¦‚Ä‚¢‚È‚¢ƒoƒOC³
+//@@@ 2002.01.03 YAZAKI æœ€å¾Œã«è¡¨ç¤ºã—ã¦ã„ãŸã‚·ãƒ¼ãƒˆã‚’æ­£ã—ãè¦šãˆã¦ã„ãªã„ãƒã‚°ä¿®æ­£
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;	//Oct. 25, 2000 JEPRO ZENPAN1¨ZENPAN ‚É•ÏX(QÆ‚µ‚Ä‚¢‚é‚Ì‚ÍCPropCommon.cpp‚Ì‚İ‚Ì1‰ÓŠ)
+				m_nPageNum = ID_PROPCOM_PAGENUM_GENERAL;	//Oct. 25, 2000 JEPRO ZENPAN1â†’ZENPAN ã«å¤‰æ›´(å‚ç…§ã—ã¦ã„ã‚‹ã®ã¯CPropCommon.cppã®ã¿ã®1ç®‡æ‰€)
 				return TRUE;
 			}
 			break;
@@ -273,7 +273,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+			MyWinHelp( (HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -283,7 +283,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelp‚É•ÏX‚É•ÏX
+		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpã«å¤‰æ›´ã«å¤‰æ›´
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -295,11 +295,11 @@ INT_PTR CPropGeneral::DispatchEvent(
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è General */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š General */
 void CPropGeneral::SetData( HWND hwndDlg )
 {
 
-	/* ƒJ[ƒ\ƒ‹‚Ìƒ^ƒCƒv 0=win 1=dos  */
+	/* ã‚«ãƒ¼ã‚½ãƒ«ã®ã‚¿ã‚¤ãƒ— 0=win 1=dos  */
 	if( 0 == m_Common.m_sGeneral.GetCaretType() ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE0, TRUE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE1, FALSE );
@@ -309,31 +309,31 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	}
 
 
-	/* ƒtƒŠ[ƒJ[ƒ\ƒ‹ƒ‚[ƒh */
+	/* ãƒ•ãƒªãƒ¼ã‚«ãƒ¼ã‚½ãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_sGeneral.m_bIsFreeCursorMode ? 1 : 0 );
 
-	/* ’PŒê’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’PŒê‚Ì—¼’[‚Å~‚Ü‚é‚© */
+	/* å˜èªå˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€å˜èªã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD, m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord );
 
-	/* ’i—’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’i—‚Ì—¼’[‚Å~‚Ü‚é‚© */
+	/* æ®µè½å˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€æ®µè½ã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH, m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph );
 
-	//	2007.10.08 genta ƒ}ƒEƒXƒNƒŠƒbƒN‚ÅƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚Æ‚«‚ÍƒJ[ƒ\ƒ‹‚ğƒNƒŠƒbƒNˆÊ’u‚ÉˆÚ“®‚µ‚È‚¢ (2007.10.02 by nasukoji)
+	//	2007.10.08 genta ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã§ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã¨ãã¯ã‚«ãƒ¼ã‚½ãƒ«ã‚’ã‚¯ãƒªãƒƒã‚¯ä½ç½®ã«ç§»å‹•ã—ãªã„ (2007.10.02 by nasukoji)
 	::CheckDlgButton( hwndDlg, IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE, m_Common.m_sGeneral.m_bNoCaretMoveByActivation );
 
-	/* [‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é */	// 2006.12.25 ryoji
+	/* [ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹ */	// 2006.12.25 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CLOSEALLCONFIRM, m_Common.m_sGeneral.m_bCloseAllConfirm );
 
-	/* I—¹‚ÌŠm”F‚ğ‚·‚é */
+	/* çµ‚äº†æ™‚ã®ç¢ºèªã‚’ã™ã‚‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_EXITCONFIRM, m_Common.m_sGeneral.m_bExitConfirm );
 
-	/* ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹s” */
+	/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¡Œæ•° */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, (Int)m_Common.m_sGeneral.m_nRepeatedScrollLineNum, FALSE );
 
-	/* ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹‚ğŠŠ‚ç‚©‚É‚·‚é‚© */
+	/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’æ»‘ã‚‰ã‹ã«ã™ã‚‹ã‹ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_sGeneral.m_nRepeatedScroll_Smooth );
 
-	// 2009.01.17 nasukoji	‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½ƒy[ƒWƒXƒNƒ[ƒ‹‚·‚é
+	// 2009.01.17 nasukoji	çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 	HWND	hwndCombo;
 	int		nSelPos;
 	int		i;
@@ -343,48 +343,48 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
 		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
-		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nPageScrollByWheel ){	// ƒy[ƒWƒXƒNƒ[ƒ‹‚Æ‚·‚é‘g‚İ‡‚í‚¹‘€ì
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nPageScrollByWheel ){	// ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã¨ã™ã‚‹çµ„ã¿åˆã‚ã›æ“ä½œ
 			nSelPos = i;
 		}
 	}
 	Combo_SetCurSel( hwndCombo, nSelPos );
 
-	// 2009.01.12 nasukoji	‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½‰¡ƒXƒNƒ[ƒ‹‚·‚é
+	// 2009.01.12 nasukoji	çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
 	Combo_ResetContent( hwndCombo );
 	nSelPos = 0;
 	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
 		Combo_InsertString( hwndCombo, i, LS( SpecialScrollModeArr[i].nNameId ) );
-		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nHorizontalScrollByWheel ){	// ‰¡ƒXƒNƒ[ƒ‹‚Æ‚·‚é‘g‚İ‡‚í‚¹‘€ì
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nHorizontalScrollByWheel ){	// æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã¨ã™ã‚‹çµ„ã¿åˆã‚ã›æ“ä½œ
 			nSelPos = i;
 		}
 	}
 	Combo_SetCurSel( hwndCombo, nSelPos );
 
-	// 2007.09.09 Moca ‰æ–ÊƒLƒƒƒbƒVƒ…İ’è’Ç‰Á
-	// ‰æ–ÊƒLƒƒƒbƒVƒ…‚ğg‚¤
+	// 2007.09.09 Moca ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥è¨­å®šè¿½åŠ 
+	// ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’ä½¿ã†
 	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_sWindow.m_bUseCompatibleBMP );
 
-	/* ƒtƒ@ƒCƒ‹‚Ì—š—ğMAX */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAX */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_sGeneral.m_nMRUArrNum_MAX, FALSE );
 
-	/* ƒtƒHƒ‹ƒ_‚Ì—š—ğMAX */
+	/* ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´MAX */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, FALSE );
 
-	/* ƒ^ƒXƒNƒgƒŒƒC‚ğg‚¤ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚’ä½¿ã† */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, m_Common.m_sGeneral.m_bUseTaskTray );
 // From Here 2001.12.03 hor
-//@@@ YAZAKI 2001.12.31 ‚±‚±‚Í§Œä‚·‚éB
+//@@@ YAZAKI 2001.12.31 ã“ã“ã¯åˆ¶å¾¡ã™ã‚‹ã€‚
 	if( m_Common.m_sGeneral.m_bUseTaskTray ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
 	}
 // To Here 2001.12.03 hor
-	/* ƒ^ƒXƒNƒgƒŒƒC‚Éí’“ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«å¸¸é§ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, m_Common.m_sGeneral.m_bStayTaskTray );
 
-	/* ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[‚ÌƒVƒ‡[ƒgƒJƒbƒg */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆ */
 	HotKey_SetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ), m_Common.m_sGeneral.m_wTrayMenuHotKeyCode, m_Common.m_sGeneral.m_wTrayMenuHotKeyMods );
 
 	return;
@@ -394,10 +394,10 @@ void CPropGeneral::SetData( HWND hwndDlg )
 
 
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ General */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— General */
 int CPropGeneral::GetData( HWND hwndDlg )
 {
-	/* ƒJ[ƒ\ƒ‹‚Ìƒ^ƒCƒv 0=win 1=dos  */
+	/* ã‚«ãƒ¼ã‚½ãƒ«ã®ã‚¿ã‚¤ãƒ— 0=win 1=dos  */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_CARETTYPE0 ) ){
 		m_Common.m_sGeneral.SetCaretType(0);
 	}
@@ -405,24 +405,24 @@ int CPropGeneral::GetData( HWND hwndDlg )
 		m_Common.m_sGeneral.SetCaretType(1);
 	}
 
-	/* ƒtƒŠ[ƒJ[ƒ\ƒ‹ƒ‚[ƒh */
+	/* ãƒ•ãƒªãƒ¼ã‚«ãƒ¼ã‚½ãƒ«ãƒ¢ãƒ¼ãƒ‰ */
 	m_Common.m_sGeneral.m_bIsFreeCursorMode = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FREECARET ) != 0;
 
-	/* ’PŒê’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’PŒê‚Ì—¼’[‚Å~‚Ü‚é‚© */
+	/* å˜èªå˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€å˜èªã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹ */
 	m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_WORD );
-	//	2007.10.08 genta ƒ}ƒEƒXƒNƒŠƒbƒN‚ÅƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚Æ‚«‚ÍƒJ[ƒ\ƒ‹‚ğƒNƒŠƒbƒNˆÊ’u‚ÉˆÚ“®‚µ‚È‚¢ (2007.10.02 by nasukoji)
+	//	2007.10.08 genta ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã§ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã¨ãã¯ã‚«ãƒ¼ã‚½ãƒ«ã‚’ã‚¯ãƒªãƒƒã‚¯ä½ç½®ã«ç§»å‹•ã—ãªã„ (2007.10.02 by nasukoji)
 	m_Common.m_sGeneral.m_bNoCaretMoveByActivation = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE );
 
-	/* ’i—’PˆÊ‚ÅˆÚ“®‚·‚é‚Æ‚«‚ÉA’i—‚Ì—¼’[‚Å~‚Ü‚é‚© */
+	/* æ®µè½å˜ä½ã§ç§»å‹•ã™ã‚‹ã¨ãã«ã€æ®µè½ã®ä¸¡ç«¯ã§æ­¢ã¾ã‚‹ã‹ */
 	m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STOPS_BOTH_ENDS_WHEN_SEARCH_PARAGRAPH );
 
-	/* [‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é */	// 2006.12.25 ryoji
+	/* [ã™ã¹ã¦é–‰ã˜ã‚‹]ã§ä»–ã«ç·¨é›†ç”¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒã‚ã‚Œã°ç¢ºèªã™ã‚‹ */	// 2006.12.25 ryoji
 	m_Common.m_sGeneral.m_bCloseAllConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CLOSEALLCONFIRM );
 
-	/* I—¹‚ÌŠm”F‚ğ‚·‚é */
+	/* çµ‚äº†æ™‚ã®ç¢ºèªã‚’ã™ã‚‹ */
 	m_Common.m_sGeneral.m_bExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXITCONFIRM );
 
-	/* ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹s” */
+	/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¡Œæ•° */
 	m_Common.m_sGeneral.m_nRepeatedScrollLineNum = (CLayoutInt)::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
 	if( m_Common.m_sGeneral.m_nRepeatedScrollLineNum < CLayoutInt(1) ){
 		m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(1);
@@ -431,27 +431,27 @@ int CPropGeneral::GetData( HWND hwndDlg )
 		m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(10);
 	}
 
-	/* ƒL[ƒŠƒs[ƒg‚ÌƒXƒNƒ[ƒ‹‚ğŠŠ‚ç‚©‚É‚·‚é‚© */
+	/* ã‚­ãƒ¼ãƒªãƒ”ãƒ¼ãƒˆæ™‚ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’æ»‘ã‚‰ã‹ã«ã™ã‚‹ã‹ */
 	m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
 
-	// 2009.01.17 nasukoji	‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½ƒy[ƒWƒXƒNƒ[ƒ‹‚·‚é
+	// 2009.01.17 nasukoji	çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 	HWND	hwndCombo;
 	int		nSelPos;
 
-	// 2007.09.09 Moca ‰æ–ÊƒLƒƒƒbƒVƒ…İ’è’Ç‰Á
-	// ‰æ–ÊƒLƒƒƒbƒVƒ…‚ğg‚¤
+	// 2007.09.09 Moca ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥è¨­å®šè¿½åŠ 
+	// ç”»é¢ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’ä½¿ã†
 	m_Common.m_sWindow.m_bUseCompatibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
 	nSelPos = Combo_GetCurSel( hwndCombo );
-	m_Common.m_sGeneral.m_nPageScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;		// ƒy[ƒWƒXƒNƒ[ƒ‹‚Æ‚·‚é‘g‚İ‡‚í‚¹‘€ì
+	m_Common.m_sGeneral.m_nPageScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;		// ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã¨ã™ã‚‹çµ„ã¿åˆã‚ã›æ“ä½œ
 
-	// 2009.01.17 nasukoji	‘g‚İ‡‚í‚¹‚ÄƒzƒC[ƒ‹‘€ì‚µ‚½‰¡ƒXƒNƒ[ƒ‹‚·‚é
+	// 2009.01.17 nasukoji	çµ„ã¿åˆã‚ã›ã¦ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã—ãŸæ™‚æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã™ã‚‹
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
 	nSelPos = Combo_GetCurSel( hwndCombo );
-	m_Common.m_sGeneral.m_nHorizontalScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;	// ‰¡ƒXƒNƒ[ƒ‹‚Æ‚·‚é‘g‚İ‡‚í‚¹‘€ì
+	m_Common.m_sGeneral.m_nHorizontalScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;	// æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã¨ã™ã‚‹çµ„ã¿åˆã‚ã›æ“ä½œ
 
-	/* ƒtƒ@ƒCƒ‹‚Ì—š—ğMAX */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã®å±¥æ­´MAX */
 	m_Common.m_sGeneral.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
 	if( m_Common.m_sGeneral.m_nMRUArrNum_MAX < 0 ){
 		m_Common.m_sGeneral.m_nMRUArrNum_MAX = 0;
@@ -460,13 +460,13 @@ int CPropGeneral::GetData( HWND hwndDlg )
 		m_Common.m_sGeneral.m_nMRUArrNum_MAX = MAX_MRU;
 	}
 
-	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
+	{	//å±¥æ­´ã®ç®¡ç†	//@@@ 2003.04.09 MIK
 		CRecentFile	cRecentFile;
 		cRecentFile.UpdateView();
 		cRecentFile.Terminate();
 	}
 
-	/* ƒtƒHƒ‹ƒ_‚Ì—š—ğMAX */
+	/* ãƒ•ã‚©ãƒ«ãƒ€ã®å±¥æ­´MAX */
 	m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 	if( m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX < 0 ){
 		m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 0;
@@ -475,24 +475,24 @@ int CPropGeneral::GetData( HWND hwndDlg )
 		m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
 	}
 
-	{	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.09 MIK
+	{	//å±¥æ­´ã®ç®¡ç†	//@@@ 2003.04.09 MIK
 		CRecentFolder	cRecentFolder;
 		cRecentFolder.UpdateView();
 		cRecentFolder.Terminate();
 	}
 
-	/* ƒ^ƒXƒNƒgƒŒƒC‚ğg‚¤ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã‚’ä½¿ã† */
 	m_Common.m_sGeneral.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
-//@@@ YAZAKI 2001.12.31 m_bUseTaskTray‚Éˆø‚«‚Ã‚ç‚ê‚é‚æ‚¤‚ÉB
+//@@@ YAZAKI 2001.12.31 m_bUseTaskTrayã«å¼•ãã¥ã‚‰ã‚Œã‚‹ã‚ˆã†ã«ã€‚
 	if( m_Common.m_sGeneral.m_bUseTaskTray ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
 	}
-	/* ƒ^ƒXƒNƒgƒŒƒC‚Éí’“ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«å¸¸é§ */
 	m_Common.m_sGeneral.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
 
-	/* ƒ^ƒXƒNƒgƒŒƒC¶ƒNƒŠƒbƒNƒƒjƒ…[‚ÌƒVƒ‡[ƒgƒJƒbƒg */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆ */
 	LRESULT	lResult;
 	lResult = HotKey_GetHotKey( ::GetDlgItem( hwndDlg, IDC_HOTKEY_TRAYMENU ) );
 	m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = LOBYTE( lResult );

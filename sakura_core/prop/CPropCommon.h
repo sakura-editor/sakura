@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚Ìˆ—
+ï»¿/*!	@file
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã®å‡¦ç†
 
 	@author	Norio Nakatani
-	@date 1998/12/24 V‹Kì¬
+	@date 1998/12/24 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -47,41 +47,41 @@ class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
 
-/*! ƒvƒƒpƒeƒBƒV[ƒg”Ô†
-	@date 2008.6.22 Uchi #define -> enum ‚É•ÏX	
-	@date 2008.6.22 Uchi‡˜•ÏX Win,Toolbar,Tab,Statusbar‚Ì‡‚ÉAFile,FileName ‡‚É
+/*! ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆç•ªå·
+	@date 2008.6.22 Uchi #define -> enum ã«å¤‰æ›´	
+	@date 2008.6.22 Uchié †åºå¤‰æ›´ Win,Toolbar,Tab,Statusbarã®é †ã«ã€File,FileName é †ã«
 */
 enum PropComSheetOrder {
-	ID_PROPCOM_PAGENUM_GENERAL = 0,		//!< ‘S”Ê
-	ID_PROPCOM_PAGENUM_WIN,				//!< ƒEƒBƒ“ƒhƒE
-	ID_PROPCOM_PAGENUM_MAINMENU,		//!< ƒƒCƒ“ƒƒjƒ…[
-	ID_PROPCOM_PAGENUM_TOOLBAR,			//!< ƒc[ƒ‹ƒo[
-	ID_PROPCOM_PAGENUM_TAB,				//!< ƒ^ƒuƒo[
-	ID_PROPCOM_PAGENUM_STATUSBAR,		//!< ƒXƒe[ƒ^ƒXƒo[
-	ID_PROPCOM_PAGENUM_EDIT,			//!< •ÒW
-	ID_PROPCOM_PAGENUM_FILE,			//!< ƒtƒ@ƒCƒ‹
-	ID_PROPCOM_PAGENUM_FILENAME,		//!< ƒtƒ@ƒCƒ‹–¼•\¦
-	ID_PROPCOM_PAGENUM_BACKUP,			//!< ƒoƒbƒNƒAƒbƒv
-	ID_PROPCOM_PAGENUM_FORMAT,			//!< ‘®
-	ID_PROPCOM_PAGENUM_GREP,			//!< ŒŸõ
-	ID_PROPCOM_PAGENUM_KEYBOARD,		//!< ƒL[Š„‚è“–‚Ä
-	ID_PROPCOM_PAGENUM_CUSTMENU,		//!< ƒJƒXƒ^ƒ€ƒƒjƒ…[
-	ID_PROPCOM_PAGENUM_KEYWORD,			//!< ‹­’²ƒL[ƒ[ƒh
-	ID_PROPCOM_PAGENUM_HELPER,			//!< x‰‡
-	ID_PROPCOM_PAGENUM_MACRO,			//!< ƒ}ƒNƒ
-	ID_PROPCOM_PAGENUM_PLUGIN,			//!< ƒvƒ‰ƒOƒCƒ“
+	ID_PROPCOM_PAGENUM_GENERAL = 0,		//!< å…¨èˆ¬
+	ID_PROPCOM_PAGENUM_WIN,				//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	ID_PROPCOM_PAGENUM_MAINMENU,		//!< ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	ID_PROPCOM_PAGENUM_TOOLBAR,			//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼
+	ID_PROPCOM_PAGENUM_TAB,				//!< ã‚¿ãƒ–ãƒãƒ¼
+	ID_PROPCOM_PAGENUM_STATUSBAR,		//!< ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼
+	ID_PROPCOM_PAGENUM_EDIT,			//!< ç·¨é›†
+	ID_PROPCOM_PAGENUM_FILE,			//!< ãƒ•ã‚¡ã‚¤ãƒ«
+	ID_PROPCOM_PAGENUM_FILENAME,		//!< ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤º
+	ID_PROPCOM_PAGENUM_BACKUP,			//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
+	ID_PROPCOM_PAGENUM_FORMAT,			//!< æ›¸å¼
+	ID_PROPCOM_PAGENUM_GREP,			//!< æ¤œç´¢
+	ID_PROPCOM_PAGENUM_KEYBOARD,		//!< ã‚­ãƒ¼å‰²ã‚Šå½“ã¦
+	ID_PROPCOM_PAGENUM_CUSTMENU,		//!< ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	ID_PROPCOM_PAGENUM_KEYWORD,			//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	ID_PROPCOM_PAGENUM_HELPER,			//!< æ”¯æ´
+	ID_PROPCOM_PAGENUM_MACRO,			//!< ãƒã‚¯ãƒ­
+	ID_PROPCOM_PAGENUM_PLUGIN,			//!< ãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 	ID_PROPCOM_PAGENUM_MAX,
 };
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ‹¤’Êİ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒXƒNƒ‰ƒX
+	@brief å…±é€šè¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã‚¯ãƒ©ã‚¹
 
-	1‚Â‚Ìƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚É•¡”‚ÌƒvƒƒpƒeƒBƒy[ƒW‚ª“ü‚Á‚½\‘¢‚É
-	‚È‚Á‚Ä‚¨‚èADialog procedure‚ÆEvent Dispatcher‚ªƒy[ƒW‚²‚Æ‚É‚ ‚éD
+	1ã¤ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã«è¤‡æ•°ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒšãƒ¼ã‚¸ãŒå…¥ã£ãŸæ§‹é€ ã«
+	ãªã£ã¦ãŠã‚Šã€Dialog procedureã¨Event DispatcherãŒãƒšãƒ¼ã‚¸ã”ã¨ã«ã‚ã‚‹ï¼
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 class CPropCommon
 {
@@ -91,18 +91,18 @@ public:
 	*/
 	CPropCommon();
 	~CPropCommon();
-	//	Sep. 29, 2001 genta ƒ}ƒNƒƒNƒ‰ƒX‚ğ“n‚·‚æ‚¤‚É;
-//@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
-	void Create( HWND, CImageListMgr*, CMenuDrawer* );	/* ‰Šú‰» */
+	//	Sep. 29, 2001 genta ãƒã‚¯ãƒ­ã‚¯ãƒ©ã‚¹ã‚’æ¸¡ã™ã‚ˆã†ã«;
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonãªã©ã‚’CShareDataã‹ã‚‰CMenuDrawerã¸ç§»å‹•ã—ãŸã“ã¨ã«ã‚ˆã‚‹ä¿®æ­£ã€‚
+	void Create( HWND, CImageListMgr*, CMenuDrawer* );	/* åˆæœŸåŒ– */
 
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DoPropertySheet( int, bool );	/* ƒvƒƒpƒeƒBƒV[ƒg‚Ìì¬ */
+	INT_PTR DoPropertySheet( int, bool );	/* ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã®ä½œæˆ */
 
-	// 2002.12.11 Moca ’Ç‰Á
-	void InitData( const int* = NULL, const TCHAR* = NULL, const TCHAR* = NULL );	//!< DLLSHAREDATA‚©‚çˆêƒf[ƒ^—Ìˆæ‚Éİ’è‚ğ•¡»‚·‚é
-	void ApplyData( int* = NULL );	//!< ˆêƒf[ƒ^—Ìˆæ‚©‚ç‚ÉDLLSHAREDATAİ’è‚ğƒRƒs[‚·‚é
+	// 2002.12.11 Moca è¿½åŠ 
+	void InitData( const int* = NULL, const TCHAR* = NULL, const TCHAR* = NULL );	//!< DLLSHAREDATAã‹ã‚‰ä¸€æ™‚ãƒ‡ãƒ¼ã‚¿é ˜åŸŸã«è¨­å®šã‚’è¤‡è£½ã™ã‚‹
+	void ApplyData( int* = NULL );	//!< ä¸€æ™‚ãƒ‡ãƒ¼ã‚¿é ˜åŸŸã‹ã‚‰ã«DLLSHAREDATAè¨­å®šã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	int GetPageNum(){ return m_nPageNum; }
 
 	//
@@ -110,88 +110,88 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 	//	Jun. 2, 2001 genta
-	//	‚±‚±‚É‚ ‚Á‚½Event Handler‚ÍprotectedƒGƒŠƒA‚ÉˆÚ“®‚µ‚½D
+	//	ã“ã“ã«ã‚ã£ãŸEvent Handlerã¯protectedã‚¨ãƒªã‚¢ã«ç§»å‹•ã—ãŸï¼
 
-	HWND				m_hwndParent;	/* ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹ */
-	HWND				m_hwndThis;		/* ‚±‚Ìƒ_ƒCƒAƒƒO‚Ìƒnƒ“ƒhƒ‹ */
+	HWND				m_hwndParent;	/* ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ« */
+	HWND				m_hwndThis;		/* ã“ã®ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒãƒ³ãƒ‰ãƒ« */
 	PropComSheetOrder	m_nPageNum;
 	DLLSHAREDATA*		m_pShareData;
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
 	
-	//	Oct. 2, 2001 genta ŠO•”ƒ}ƒNƒ’Ç‰Á‚É”º‚¤C‘Î‰•”•ª‚Ì•ÊƒNƒ‰ƒX‰»
-	//	Oct. 15, 2001 genta Lookup‚Íƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX“à‚Å•ÊƒCƒ“ƒXƒ^ƒ“ƒX‚ğì‚é‚æ‚¤‚É
-	//	(ŒŸõ‘ÎÛ‚Æ‚µ‚ÄCİ’è—pcommon—Ìˆæ‚ğw‚·‚æ‚¤‚É‚·‚é‚½‚ßD)
+	//	Oct. 2, 2001 genta å¤–éƒ¨ãƒã‚¯ãƒ­è¿½åŠ ã«ä¼´ã†ï¼Œå¯¾å¿œéƒ¨åˆ†ã®åˆ¥ã‚¯ãƒ©ã‚¹åŒ–
+	//	Oct. 15, 2001 genta Lookupã¯ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹å†…ã§åˆ¥ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä½œã‚‹ã‚ˆã†ã«
+	//	(æ¤œç´¢å¯¾è±¡ã¨ã—ã¦ï¼Œè¨­å®šç”¨commoné ˜åŸŸã‚’æŒ‡ã™ã‚ˆã†ã«ã™ã‚‹ãŸã‚ï¼)
 	CFuncLookup			m_cLookup;
 
 	CMenuDrawer*		m_pcMenuDrawer;
 	/*
-	|| ƒ_ƒCƒAƒƒOƒf[ƒ^
+	|| ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿
 	*/
 	CommonSetting	m_Common;
 
-	// 2005.01.13 MIK ƒZƒbƒg”‘‰Á
+	// 2005.01.13 MIK ã‚»ãƒƒãƒˆæ•°å¢—åŠ 
 	struct SKeywordSetIndex{
 		int typeId;
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
 	std::vector<SKeywordSetIndex>	m_Types_nKeyWordSetIdx;
-	TCHAR			m_tempTypeName[MAX_TYPES_NAME];	//!< ƒ^ƒCƒv‘®«F–¼Ì
-	TCHAR			m_tempTypeExts[MAX_TYPES_EXTS];	//!< ƒ^ƒCƒv‘®«FŠg’£qƒŠƒXƒg
+	TCHAR			m_tempTypeName[MAX_TYPES_NAME];	//!< ã‚¿ã‚¤ãƒ—å±æ€§ï¼šåç§°
+	TCHAR			m_tempTypeExts[MAX_TYPES_EXTS];	//!< ã‚¿ã‚¤ãƒ—å±æ€§ï¼šæ‹¡å¼µå­ãƒªã‚¹ãƒˆ
 	bool			m_bTrayProc;
-	HFONT			m_hKeywordHelpFont;		//!< ƒL[ƒ[ƒhƒwƒ‹ƒv ƒtƒHƒ“ƒg ƒnƒ“ƒhƒ‹
-	HFONT			m_hTabFont;				//!< ƒ^ƒu ƒtƒHƒ“ƒg ƒnƒ“ƒhƒ‹
+	HFONT			m_hKeywordHelpFont;		//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ— ãƒ•ã‚©ãƒ³ãƒˆ ãƒãƒ³ãƒ‰ãƒ«
+	HFONT			m_hTabFont;				//!< ã‚¿ãƒ– ãƒ•ã‚©ãƒ³ãƒˆ ãƒãƒ³ãƒ‰ãƒ«
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	void OnHelp( HWND, int );	/* ƒwƒ‹ƒv */
+	void OnHelp( HWND, int );	/* ãƒ˜ãƒ«ãƒ— */
 	int	SearchIntArr( int , int* , int );
-//	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ƒc[ƒ‹ƒo[ƒ{ƒ^ƒ“ƒŠƒXƒg‚ÌƒAƒCƒeƒ€•`‰æ */
-//	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* Fƒ{ƒ^ƒ“‚Ì•`‰æ */ // 2002.11.09 Moca –¢g—p
-//	BOOL SelectColor( HWND , COLORREF* );	/* F‘I‘ğƒ_ƒCƒAƒƒO */
+//	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒœã‚¿ãƒ³ãƒªã‚¹ãƒˆã®ã‚¢ã‚¤ãƒ†ãƒ æç”» */
+//	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* è‰²ãƒœã‚¿ãƒ³ã®æç”» */ // 2002.11.09 Moca æœªä½¿ç”¨
+//	BOOL SelectColor( HWND , COLORREF* );	/* è‰²é¸æŠãƒ€ã‚¤ã‚¢ãƒ­ã‚° */
 
 	//	Jun. 2, 2001 genta
-	//	Event Handler, Dialog Procedure‚ÌŒ©’¼‚µ
-	//	GlobalŠÖ”‚¾‚Á‚½Dialog procedure‚ğclass‚Ìstatic method‚Æ‚µ‚Ä
-	//	‘g‚İ‚ñ‚¾D
-	//	‚±‚±‚©‚çˆÈ‰º Macro‚Ü‚Å”z’u‚ÌŒ©’¼‚µ‚Æstatic method‚Ì’Ç‰Á
+	//	Event Handler, Dialog Procedureã®è¦‹ç›´ã—
+	//	Globalé–¢æ•°ã ã£ãŸDialog procedureã‚’classã®static methodã¨ã—ã¦
+	//	çµ„ã¿è¾¼ã‚“ã ï¼
+	//	ã“ã“ã‹ã‚‰ä»¥ä¸‹ Macroã¾ã§é…ç½®ã®è¦‹ç›´ã—ã¨static methodã®è¿½åŠ 
 
-	//! ”Ä—pƒ_ƒCƒAƒƒOƒvƒƒV[ƒWƒƒ
+	//! æ±ç”¨ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 	static INT_PTR DlgProc(
 		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	static INT_PTR DlgProc2( //“Æ—§ƒEƒBƒ“ƒhƒE—p
+	static INT_PTR DlgProc2( //ç‹¬ç«‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”¨
 		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	typedef	INT_PTR (CPropCommon::*pDispatchPage)( HWND, UINT, WPARAM, LPARAM );
 
-	int nLastPos_Macro; //!< ‘O‰ñƒtƒH[ƒJƒX‚Ì‚ ‚Á‚½êŠ
-	int m_nLastPos_FILENAME; //!< ‘O‰ñƒtƒH[ƒJƒX‚Ì‚ ‚Á‚½êŠ ƒtƒ@ƒCƒ‹–¼ƒ^ƒu—p
+	int nLastPos_Macro; //!< å‰å›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã®ã‚ã£ãŸå ´æ‰€
+	int m_nLastPos_FILENAME; //!< å‰å›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã®ã‚ã£ãŸå ´æ‰€ ãƒ•ã‚¡ã‚¤ãƒ«åã‚¿ãƒ–ç”¨
 
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
-	void Import( HWND );	//!< ƒCƒ“ƒ|[ƒg‚·‚é
-	void Export( HWND );	//!< ƒGƒNƒXƒ|[ƒg‚·‚é
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
+	void Import( HWND );	//!< ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
+	void Export( HWND );	//!< ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã™ã‚‹
 
-	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );			//!< ƒRƒ“ƒgƒ[ƒ‹‚ÉƒtƒHƒ“ƒgİ’è‚·‚é		// 2013/4/24 Uchi
-	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< ƒtƒHƒ“ƒgƒ‰ƒxƒ‹‚ÉƒtƒHƒ“ƒg‚ÆƒtƒHƒ“ƒg–¼İ’è‚·‚é	// 2013/4/24 Uchi
+	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );			//!< ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«ãƒ•ã‚©ãƒ³ãƒˆè¨­å®šã™ã‚‹		// 2013/4/24 Uchi
+	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< ãƒ•ã‚©ãƒ³ãƒˆãƒ©ãƒ™ãƒ«ã«ãƒ•ã‚©ãƒ³ãƒˆã¨ãƒ•ã‚©ãƒ³ãƒˆåè¨­å®šã™ã‚‹	// 2013/4/24 Uchi
 };
 
 
 /*!
-	@brief ‹¤’Êİ’èƒvƒƒpƒeƒBƒy[ƒWƒNƒ‰ƒX
+	@brief å…±é€šè¨­å®šãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒšãƒ¼ã‚¸ã‚¯ãƒ©ã‚¹
 
-	1‚Â‚ÌƒvƒƒpƒeƒBƒy[ƒW–ˆ‚É’è‹`
-	Dialog procedure‚ÆEvent Dispatcher‚ªƒy[ƒW‚²‚Æ‚É‚ ‚éD
-	•Ï”‚Ì’è‹`‚ÍCPropCommon‚Ås‚¤
+	1ã¤ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒšãƒ¼ã‚¸æ¯ã«å®šç¾©
+	Dialog procedureã¨Event DispatcherãŒãƒšãƒ¼ã‚¸ã”ã¨ã«ã‚ã‚‹ï¼
+	å¤‰æ•°ã®å®šç¾©ã¯CPropCommonã§è¡Œã†
 */
 //==============================================================
-//!	‘S”Êƒy[ƒW
+//!	å…¨èˆ¬ãƒšãƒ¼ã‚¸
 class CPropGeneral : CPropCommon
 {
 public:
@@ -201,12 +201,12 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 };
 
 //==============================================================
-//!	ƒtƒ@ƒCƒ‹ƒy[ƒW
+//!	ãƒ•ã‚¡ã‚¤ãƒ«ãƒšãƒ¼ã‚¸
 class CPropFile : CPropCommon
 {
 public:
@@ -216,16 +216,16 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	//	Aug. 21, 2000 genta
-	void EnableFilePropInput(HWND hwndDlg);	//	ƒtƒ@ƒCƒ‹İ’è‚ÌON/OFF
+	void EnableFilePropInput(HWND hwndDlg);	//	ãƒ•ã‚¡ã‚¤ãƒ«è¨­å®šã®ON/OFF
 };
 
 //==============================================================
-//!	ƒL[Š„‚è“–‚Äƒy[ƒW
+//!	ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ãƒšãƒ¼ã‚¸
 class CPropKeybind : CPropCommon
 {
 public:
@@ -235,18 +235,18 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
-	void Import( HWND );	//!< ƒCƒ“ƒ|[ƒg‚·‚é
-	void Export( HWND );	//!< ƒGƒNƒXƒ|[ƒg‚·‚é
+	void Import( HWND );	//!< ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
+	void Export( HWND );	//!< ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã™ã‚‹
 
 private:
-	void ChangeKeyList( HWND ); /* ƒL[ƒŠƒXƒg‚ğƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚Ìó‘Ô‚É‡‚í‚¹‚ÄXV‚·‚é*/
+	void ChangeKeyList( HWND ); /* ã‚­ãƒ¼ãƒªã‚¹ãƒˆã‚’ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã®çŠ¶æ…‹ã«åˆã‚ã›ã¦æ›´æ–°ã™ã‚‹*/
 };
 
 //==============================================================
-//!	ƒc[ƒ‹ƒo[ƒy[ƒW
+//!	ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒšãƒ¼ã‚¸
 class CPropToolbar : CPropCommon
 {
 public:
@@ -256,15 +256,15 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ƒc[ƒ‹ƒo[ƒ{ƒ^ƒ“ƒŠƒXƒg‚ÌƒAƒCƒeƒ€•`‰æ */
+	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ãƒœã‚¿ãƒ³ãƒªã‚¹ãƒˆã®ã‚¢ã‚¤ãƒ†ãƒ æç”» */
 };
 
 //==============================================================
-//!	ƒL[ƒ[ƒhƒy[ƒW
+//!	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸
 class CPropKeyword : CPropCommon
 {
 public:
@@ -276,23 +276,23 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	void SetKeyWordSet( HWND , int );	/* w’èƒL[ƒ[ƒhƒZƒbƒg‚Ìİ’è */
-	void GetKeyWordSet( HWND , int );	/* w’èƒL[ƒ[ƒhƒZƒbƒg‚Ìæ“¾ */
+	void SetKeyWordSet( HWND , int );	/* æŒ‡å®šã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®è¨­å®š */
+	void GetKeyWordSet( HWND , int );	/* æŒ‡å®šã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®å–å¾— */
 	void DispKeywordCount( HWND hwndDlg );
 
-	void Edit_List_KeyWord( HWND, HWND );		//!< ƒŠƒXƒg’†‚Å‘I‘ğ‚³‚ê‚Ä‚¢‚éƒL[ƒ[ƒh‚ğ•ÒW‚·‚é
-	void Delete_List_KeyWord( HWND , HWND );	//!< ƒŠƒXƒg’†‚Å‘I‘ğ‚³‚ê‚Ä‚¢‚éƒL[ƒ[ƒh‚ğíœ‚·‚é
-	void Import_List_KeyWord( HWND , HWND );	//!< ƒŠƒXƒg’†‚ÌƒL[ƒ[ƒh‚ğƒCƒ“ƒ|[ƒg‚·‚é
-	void Export_List_KeyWord( HWND , HWND );	//!< ƒŠƒXƒg’†‚ÌƒL[ƒ[ƒh‚ğƒGƒNƒXƒ|[ƒg‚·‚é
-	void Clean_List_KeyWord( HWND , HWND );		//!< ƒŠƒXƒg’†‚ÌƒL[ƒ[ƒh‚ğ®—‚·‚é 2005.01.26 Moca
+	void Edit_List_KeyWord( HWND, HWND );		//!< ãƒªã‚¹ãƒˆä¸­ã§é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ç·¨é›†ã™ã‚‹
+	void Delete_List_KeyWord( HWND , HWND );	//!< ãƒªã‚¹ãƒˆä¸­ã§é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹
+	void Import_List_KeyWord( HWND , HWND );	//!< ãƒªã‚¹ãƒˆä¸­ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
+	void Export_List_KeyWord( HWND , HWND );	//!< ãƒªã‚¹ãƒˆä¸­ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã™ã‚‹
+	void Clean_List_KeyWord( HWND , HWND );		//!< ãƒªã‚¹ãƒˆä¸­ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ•´ç†ã™ã‚‹ 2005.01.26 Moca
 };
 
 //==============================================================
-//!	ƒJƒXƒ^ƒ€ƒƒjƒ…[ƒy[ƒW
+//!	ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒšãƒ¼ã‚¸
 class CPropCustmenu : CPropCommon
 {
 public:
@@ -302,15 +302,15 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	void SetDataMenuList( HWND, int );
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
-	void Import( HWND );	//!< ƒJƒXƒ^ƒ€ƒƒjƒ…[İ’è‚ğƒCƒ“ƒ|[ƒg‚·‚é
-	void Export( HWND );	//!< ƒJƒXƒ^ƒ€ƒƒjƒ…[İ’è‚ğƒGƒNƒXƒ|[ƒg‚·‚é
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
+	void Import( HWND );	//!< ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¨­å®šã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
+	void Export( HWND );	//!< ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¨­å®šã‚’ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã™ã‚‹
 };
 
 //==============================================================
-//!	‘®ƒy[ƒW
+//!	æ›¸å¼ãƒšãƒ¼ã‚¸
 class CPropFormat : CPropCommon
 {
 public:
@@ -320,19 +320,19 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	void ChangeDateExample( HWND hwndDlg );
 	void ChangeTimeExample( HWND hwndDlg );
 
-	//	Sept. 10, 2000 JEPRO	Ÿs‚ğ’Ç‰Á
-	void EnableFormatPropInput( HWND hwndDlg );	//	‘®İ’è‚ÌON/OFF
+	//	Sept. 10, 2000 JEPRO	æ¬¡è¡Œã‚’è¿½åŠ 
+	void EnableFormatPropInput( HWND hwndDlg );	//	æ›¸å¼è¨­å®šã®ON/OFF
 };
 
 //==============================================================
-//!	x‰‡ƒy[ƒW
+//!	æ”¯æ´ãƒšãƒ¼ã‚¸
 class CPropHelper : CPropCommon
 {
 public:
@@ -342,12 +342,12 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 };
 
 //==============================================================
-//!	ƒoƒbƒNƒAƒbƒvƒy[ƒW
+//!	ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒšãƒ¼ã‚¸
 class CPropBackup : CPropCommon
 {
 public:
@@ -357,18 +357,18 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	//	Aug. 16, 2000 genta
-	void EnableBackupInput(HWND hwndDlg);	//	ƒoƒbƒNƒAƒbƒvİ’è‚ÌON/OFF
+	void EnableBackupInput(HWND hwndDlg);	//	ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—è¨­å®šã®ON/OFF
 	//	20051107 aroka
-	void UpdateBackupFile(HWND hwndDlg);	//	ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ÌÚ×İ’è
+	void UpdateBackupFile(HWND hwndDlg);	//	ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã®è©³ç´°è¨­å®š
 };
 
 //==============================================================
-//!	ƒEƒBƒ“ƒhƒEƒy[ƒW
+//!	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒšãƒ¼ã‚¸
 class CPropWin : CPropCommon
 {
 public:
@@ -378,16 +378,16 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	//	Sept. 9, 2000 JEPRO		Ÿs‚ğ’Ç‰Á
-	void EnableWinPropInput( HWND hwndDlg) ;	//	ƒEƒBƒ“ƒhƒEİ’è‚ÌON/OFF
+	//	Sept. 9, 2000 JEPRO		æ¬¡è¡Œã‚’è¿½åŠ 
+	void EnableWinPropInput( HWND hwndDlg) ;	//	ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¨­å®šã®ON/OFF
 };
 
 //==============================================================
-//!	ƒ^ƒu“®ìƒy[ƒW
+//!	ã‚¿ãƒ–å‹•ä½œãƒšãƒ¼ã‚¸
 class CPropTab : CPropCommon
 {
 public:
@@ -397,15 +397,15 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	void EnableTabPropInput(HWND hwndDlg);
 };
 
 //==============================================================
-//!	•ÒWƒy[ƒW
+//!	ç·¨é›†ãƒšãƒ¼ã‚¸
 class CPropEdit : CPropCommon
 {
 public:
@@ -415,15 +415,15 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	void EnableEditPropInput( HWND hwndDlg );
 };
 
 //==============================================================
-//!	ŒŸõƒy[ƒW
+//!	æ¤œç´¢ãƒšãƒ¼ã‚¸
 class CPropGrep : CPropCommon
 {
 public:
@@ -433,15 +433,15 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	void SetRegexpVersion( HWND ); // 2007.08.12 genta ƒo[ƒWƒ‡ƒ“•\¦
+	void SetRegexpVersion( HWND ); // 2007.08.12 genta ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤º
 };
 
 //==============================================================
-//!	ƒ}ƒNƒƒy[ƒW
+//!	ãƒã‚¯ãƒ­ãƒšãƒ¼ã‚¸
 class CPropMacro : CPropCommon
 {
 public:
@@ -451,21 +451,21 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	void InitDialog( HWND hwndDlg );//!< Macroƒy[ƒW‚Ì‰Šú‰»
+	void InitDialog( HWND hwndDlg );//!< Macroãƒšãƒ¼ã‚¸ã®åˆæœŸåŒ–
 	//	To Here Jun. 2, 2001 genta
-	void SetMacro2List_Macro( HWND hwndDlg );//!< Macroƒf[ƒ^‚Ìİ’è
-	void SelectBaseDir_Macro( HWND hwndDlg );//!< MacroƒfƒBƒŒƒNƒgƒŠ‚Ì‘I‘ğ
-	void OnFileDropdown_Macro( HWND hwndDlg );//!< ƒtƒ@ƒCƒ‹ƒhƒƒbƒvƒ_ƒEƒ“‚ªŠJ‚©‚ê‚é‚Æ‚«
-	void CheckListPosition_Macro( HWND hwndDlg );//!< ƒŠƒXƒgƒrƒ…[‚ÌFocusˆÊ’uŠm”F
+	void SetMacro2List_Macro( HWND hwndDlg );//!< Macroãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	void SelectBaseDir_Macro( HWND hwndDlg );//!< Macroãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®é¸æŠ
+	void OnFileDropdown_Macro( HWND hwndDlg );//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³ãŒé–‹ã‹ã‚Œã‚‹ã¨ã
+	void CheckListPosition_Macro( HWND hwndDlg );//!< ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã®Focusä½ç½®ç¢ºèª
 	static int CALLBACK DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData );
 };
 
 //==============================================================
-//!	ƒtƒ@ƒCƒ‹–¼•\¦ƒy[ƒW
+//!	ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤ºãƒšãƒ¼ã‚¸
 class CPropFileName : CPropCommon
 {
 public:
@@ -475,17 +475,17 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
-	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListView‚ÌƒAƒCƒeƒ€‚ğİ’è
-	static void GetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR );//!<ListView‚ÌƒAƒCƒeƒ€‚ğæ“¾
-	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListView‚ÌƒAƒCƒeƒ€‚ğˆÚ“®‚·‚é
+	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¨­å®š
+	static void GetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR );//!<ListViewã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–å¾—
+	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListViewã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’ç§»å‹•ã™ã‚‹
 };
 
 //==============================================================
-//!	ƒXƒe[ƒ^ƒXƒo[ƒy[ƒW
+//!	ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ãƒšãƒ¼ã‚¸
 class CPropStatusbar : CPropCommon
 {
 public:
@@ -495,34 +495,34 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 };
 
 //==============================================================
-//!	ƒvƒ‰ƒOƒCƒ“ƒy[ƒW
+//!	ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒšãƒ¼ã‚¸
 class CPropPlugin : CPropCommon
 {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	std::tstring GetReadMeFile(const std::tstring& sName);	//	Readme ƒtƒ@ƒCƒ‹‚Ìæ“¾
-	bool BrowseReadMe(const std::tstring& sReadMeName);		//	Readme ƒtƒ@ƒCƒ‹‚Ì•\¦
+	std::tstring GetReadMeFile(const std::tstring& sName);	//	Readme ãƒ•ã‚¡ã‚¤ãƒ«ã®å–å¾—
+	bool BrowseReadMe(const std::tstring& sReadMeName);		//	Readme ãƒ•ã‚¡ã‚¤ãƒ«ã®è¡¨ç¤º
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 
 private:
 	void SetData_LIST( HWND );
-	void InitDialog( HWND hwndDlg );	//!< Pluginƒy[ƒW‚Ì‰Šú‰»
+	void InitDialog( HWND hwndDlg );	//!< Pluginãƒšãƒ¼ã‚¸ã®åˆæœŸåŒ–
 	void EnablePluginPropInput(HWND hwndDlg);
 };
 
 //==============================================================
-//!	ƒƒCƒ“ƒƒjƒ…[ƒy[ƒW
+//!	ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒšãƒ¼ã‚¸
 class CPropMainMenu : CPropCommon
 {
 public:
@@ -532,16 +532,16 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è
-	int  GetData( HWND );	//!< ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾
-	void Import( HWND );	//!< ƒƒjƒ…[İ’è‚ğƒCƒ“ƒ|[ƒg‚·‚é
-	void Export( HWND );	//!< ƒƒjƒ…[İ’è‚ğƒGƒNƒXƒ|[ƒg‚·‚é
+	void SetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
+	int  GetData( HWND );	//!< ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
+	void Import( HWND );	//!< ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¨­å®šã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
+	void Export( HWND );	//!< ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¨­å®šã‚’ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆã™ã‚‹
 
 private:
 	bool GetDataTree( HWND, HTREEITEM, int );
 
-	bool Check_MainMenu( HWND, std::wstring& );						// ƒƒjƒ…[‚ÌŒŸ¸
-	bool Check_MainMenu_Sub( HWND, HTREEITEM, int, std::wstring& );	// ƒƒjƒ…[‚ÌŒŸ¸
+	bool Check_MainMenu( HWND, std::wstring& );						// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æ¤œæŸ»
+	bool Check_MainMenu_Sub( HWND, HTREEITEM, int, std::wstring& );	// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æ¤œæŸ»
 };
 
 
