@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_SpaceToTab.h"
 #include "charset/charcode.h"
 #include "CEol.h"
 #include "util/string_ex2.h"
 
-//! ‹ó”’¨TAB•ÏŠ·B’P“Æ‚ÌƒXƒy[ƒX‚Í•ÏŠ·‚µ‚È‚¢
+//! ç©ºç™½â†’TABå¤‰æ›ã€‚å˜ç‹¬ã®ã‚¹ãƒšãƒ¼ã‚¹ã¯å¤‰æ›ã—ãªã„
 bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 {
 	using namespace WCODE;
@@ -18,13 +18,13 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	int			nPosX;
 	CEol		cEol;
 
-	BOOL		bSpace = FALSE;	//ƒXƒy[ƒX‚Ìˆ—’†‚©‚Ç‚¤‚©
+	BOOL		bSpace = FALSE;	//ã‚¹ãƒšãƒ¼ã‚¹ã®å‡¦ç†ä¸­ã‹ã©ã†ã‹
 	int		j;
 	int		nStartPos;
 
 	nBgn = 0;
 	nPosDes = 0;
-	/* •ÏŠ·Œã‚É•K—v‚ÈƒoƒCƒg”‚ğ’²‚×‚é */
+	/* å¤‰æ›å¾Œã«å¿…è¦ãªãƒã‚¤ãƒˆæ•°ã‚’èª¿ã¹ã‚‹ */
 	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
@@ -37,13 +37,13 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	pDes = new wchar_t[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
-	/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
+	/* CRLFã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚CRLFã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){
 		if( 0 < nLineLen ){
-			// æ“ªs‚É‚Â‚¢‚Ä‚ÍŠJnŒ…ˆÊ’u‚ğl—¶‚·‚éi‚³‚ç‚ÉÜ‚è•Ô‚µŠÖ˜A‚Ì‘Îô‚ª•K—vHj
-			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;	// ˆ—’†‚Ìi‚É‘Î‰‚·‚é•\¦Œ…ˆÊ’u
-			bSpace = FALSE;	//’¼‘O‚ªƒXƒy[ƒX‚©
-			nStartPos = 0;	// ƒXƒy[ƒX‚Ìæ“ª
+			// å…ˆé ­è¡Œã«ã¤ã„ã¦ã¯é–‹å§‹æ¡ä½ç½®ã‚’è€ƒæ…®ã™ã‚‹ï¼ˆã•ã‚‰ã«æŠ˜ã‚Šè¿”ã—é–¢é€£ã®å¯¾ç­–ãŒå¿…è¦ï¼Ÿï¼‰
+			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;	// å‡¦ç†ä¸­ã®iã«å¯¾å¿œã™ã‚‹è¡¨ç¤ºæ¡ä½ç½®
+			bSpace = FALSE;	//ç›´å‰ãŒã‚¹ãƒšãƒ¼ã‚¹ã‹
+			nStartPos = 0;	// ã‚¹ãƒšãƒ¼ã‚¹ã®å…ˆé ­
 			for( i = 0; i < nLineLen; ++i ){
 				if( SPACE == pLine[i] || TAB == pLine[i] ){
 					if( bSpace == FALSE ){
@@ -67,8 +67,8 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 								nStartPos += m_nTabWidth - ( nStartPos % m_nTabWidth );
 							}
 							//	2003.08.05 Moca
-							//	•ÏŠ·Œã‚ÉTAB‚ª1‚Â‚à“ü‚ç‚È‚¢ê‡‚ÉƒXƒy[ƒX‚ğ‹l‚ß‚·‚¬‚Ä
-							//	ƒoƒbƒtƒ@‚ğ‚Í‚İo‚·‚Ì‚ğC³
+							//	å¤‰æ›å¾Œã«TABãŒ1ã¤ã‚‚å…¥ã‚‰ãªã„å ´åˆã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã™ãã¦
+							//	ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ã¿å‡ºã™ã®ã‚’ä¿®æ­£
 							for( j = nStartPos; j < nPosX; j++ ){
 								pDes[nPosDes] = SPACE;
 								nPosDes++;
@@ -76,7 +76,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 						}
 					}
 					nPosX++;
-					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//‘SŠp•¶š‚¸‚ê‘Î‰ 2008.10.17 matsumo
+					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//å…¨è§’æ–‡å­—ãšã‚Œå¯¾å¿œ 2008.10.17 matsumo
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
 					bSpace = FALSE;
@@ -98,8 +98,8 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 						nStartPos += m_nTabWidth - ( nStartPos % m_nTabWidth );
 					}
 					//	2003.08.05 Moca
-					//	•ÏŠ·Œã‚ÉTAB‚ª1‚Â‚à“ü‚ç‚È‚¢ê‡‚ÉƒXƒy[ƒX‚ğ‹l‚ß‚·‚¬‚Ä
-					//	ƒoƒbƒtƒ@‚ğ‚Í‚İo‚·‚Ì‚ğC³
+					//	å¤‰æ›å¾Œã«TABãŒ1ã¤ã‚‚å…¥ã‚‰ãªã„å ´åˆã«ã‚¹ãƒšãƒ¼ã‚¹ã‚’è©°ã‚ã™ãã¦
+					//	ãƒãƒƒãƒ•ã‚¡ã‚’ã¯ã¿å‡ºã™ã®ã‚’ä¿®æ­£
 					for( j = nStartPos; j < nPosX; j++ ){
 						pDes[nPosDes] = SPACE;
 						nPosDes++;
@@ -108,7 +108,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 			}
 		}
 
-		/* s––‚Ìˆ— */
+		/* è¡Œæœ«ã®å‡¦ç† */
 		auto_memcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}

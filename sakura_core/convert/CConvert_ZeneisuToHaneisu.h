@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 #include "CConvert.h"
 
 
-//!‘SŠp‰p”¨”¼Šp‰p”
+//!å…¨è§’è‹±æ•°â†’åŠè§’è‹±æ•°
 class CConvert_ZeneisuToHaneisu : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData);

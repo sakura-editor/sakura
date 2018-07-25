@@ -1,5 +1,5 @@
-/*!	@file
-	@brief •ÏŠ·ƒ†[ƒeƒBƒŠƒeƒB2 - BASE64 Ecode/Decode, UUDecode, Q-printable decode
+ï»¿/*!	@file
+	@brief å¤‰æ›ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£2 - BASE64 Ecode/Decode, UUDecode, Q-printable decode
 
 	@author 
 */
@@ -36,7 +36,7 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-//    Quoted-Printable ƒfƒR[ƒh
+//    Quoted-Printable ãƒ‡ã‚³ãƒ¼ãƒ‰
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
@@ -65,7 +65,7 @@ inline WCHAR _GetHexChar( WCHAR c )
 
 
 /*
-	c ‚Ì“ü—Í’lF 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
+	c ã®å…¥åŠ›å€¤ï¼š 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
 */
 inline int _HexToInt( ACHAR c )
 {
@@ -96,7 +96,7 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 	pw = pDst;
 
 	while( pr < pS + nLen ){
-		/* =XX ‚ÌŒ`®‚Å‚È‚¢•”•ª‚ğƒfƒR[ƒh */
+		/* =XX ã®å½¢å¼ã§ãªã„éƒ¨åˆ†ã‚’ãƒ‡ã‚³ãƒ¼ãƒ‰ */
 		if( sizeof(CHAR_TYPE) == 2 ){
 			if( *pr != L'=' ){
 				*pw = static_cast<char>( *pr );
@@ -113,10 +113,10 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 			}
 		}
 
-		/* =XX ‚Ì•”•ª‚ğƒfƒR[ƒh */
-		ninc_len = 1;   // '=' ‚Ì•”•ª‚ÌƒCƒ“ƒNƒŠƒƒ“ƒgB
+		/* =XX ã®éƒ¨åˆ†ã‚’ãƒ‡ã‚³ãƒ¼ãƒ‰ */
+		ninc_len = 1;   // '=' ã®éƒ¨åˆ†ã®ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã€‚
 		if( pr + 2 < pS + nLen ){
-			// ƒfƒR[ƒhÀs•”•ª
+			// ãƒ‡ã‚³ãƒ¼ãƒ‰å®Ÿè¡Œéƒ¨åˆ†
 			CHAR_TYPE c1, c2;
 			c1 = _GetHexChar(pr[1]);
 			c2 = _GetHexChar(pr[2]);
@@ -130,7 +130,7 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 				pw += 3;
 			}
 			ninc_len += 2;
-			// ‚±‚±‚Ü‚ÅB
+			// ã“ã“ã¾ã§ã€‚
 		}
 		pr += ninc_len;
 	}
@@ -146,7 +146,7 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-// BAASE64 ‚ÌƒGƒ“ƒR[ƒh/ƒfƒR[ƒh
+// BAASE64 ã®ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰/ãƒ‡ã‚³ãƒ¼ãƒ‰
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
@@ -155,7 +155,7 @@ extern const uchar_t TABLE_BASE64CharToValue[];
 extern const char TABLE_ValueToBASE64Char[];
 
 
-// BASE64•¶š <-> ”’l
+// BASE64æ–‡å­— <-> æ•°å€¤
 template< class CHAR_TYPE >
 inline uchar_t Base64ToVal( const CHAR_TYPE c ){
 	int c_ = c;
@@ -170,9 +170,9 @@ inline CHAR_TYPE ValToBase64( const char v ){
 
 #if 0
 /*
-	Bas64•¶š—ñ‚Ì––”ö‚ª“KØ‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN
+	Bas64æ–‡å­—åˆ—ã®æœ«å°¾ãŒé©åˆ‡ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	
-	“ü—ÍFBASE64 •¶š—ñB
+	å…¥åŠ›ï¼šBASE64 æ–‡å­—åˆ—ã€‚
 */
 template< class CHAR_TYPE >
 bool CheckBase64Padbit( const CHAR_TYPE *pSrc, const int nSrcLen )
@@ -183,7 +183,7 @@ bool CheckBase64Padbit( const CHAR_TYPE *pSrc, const int nSrcLen )
 		return false;
 	}
 
-	/* BASE64•¶š‚Ì––”ö‚É‚Â‚¢‚ÄF
+	/* BASE64æ–‡å­—ã®æœ«å°¾ã«ã¤ã„ã¦ï¼š
 		ooxx xxxx   ooxx oooo                   -> 1 byte(s)
 		ooxx xxxx   ooxx xxxx   ooxx xxoo          -> 2 byte(s)
 		ooxx xxxx   ooxx xxxx   ooxx xxxx   ooxx xxxx -> 3 byte(s)
@@ -211,10 +211,10 @@ bool CheckBase64Padbit( const CHAR_TYPE *pSrc, const int nSrcLen )
 #endif
 
 /*!
-	BASE64 ƒfƒR[ƒhÀsŠÖ”
+	BASE64 ãƒ‡ã‚³ãƒ¼ãƒ‰å®Ÿè¡Œé–¢æ•°
 
-	‘O‚ÌÀ‘•‚ğQl‚ÉB
-	³‚µ‚¢ BASE64 “ü—Í•¶š—ñ‚ğ‰¼’è‚µ‚Ä‚¢‚éB
+	å‰ã®å®Ÿè£…ã‚’å‚è€ƒã«ã€‚
+	æ­£ã—ã„ BASE64 å…¥åŠ›æ–‡å­—åˆ—ã‚’ä»®å®šã—ã¦ã„ã‚‹ã€‚
 */
 template< class CHAR_TYPE >
 int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
@@ -224,7 +224,7 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	int sMax;
 	int nsrclen = nSrcLen;
 
-	// •¶š—ñ‚ÌÅŒã‚Ìƒpƒbƒh•¶š '=' ‚ğ•¶š—ñ’·‚ÉŠÜ‚ß‚È‚¢‚æ‚¤‚É‚·‚éˆ—
+	// æ–‡å­—åˆ—ã®æœ€å¾Œã®ãƒ‘ãƒƒãƒ‰æ–‡å­— '=' ã‚’æ–‡å­—åˆ—é•·ã«å«ã‚ãªã„ã‚ˆã†ã«ã™ã‚‹å‡¦ç†
 	{
 		int i = 0;
 		bool bret;
@@ -264,10 +264,10 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 
 
 /*!
-	BASE64 ƒGƒ“ƒR[ƒhÀsŠÖ”
+	BASE64 ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å®Ÿè¡Œé–¢æ•°
 
-	‘O‚ÌÀ‘•‚ğQl‚ÉB
-	ƒpƒbƒh•¶š‚È‚Ç‚Í•t‰Á‚µ‚È‚¢BƒGƒ‰[ƒ`ƒFƒbƒN‚È‚µB
+	å‰ã®å®Ÿè£…ã‚’å‚è€ƒã«ã€‚
+	ãƒ‘ãƒƒãƒ‰æ–‡å­—ãªã©ã¯ä»˜åŠ ã—ãªã„ã€‚ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯ãªã—ã€‚
 */
 template< class CHAR_TYPE >
 int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
@@ -284,20 +284,20 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 		lDataSrc = 0;
 		if( nSrcLen - i < 3 ){
 			n = nSrcLen % 3;
-			j = (n * 4 + 2) / 3;  // ’[”Ø‚èã‚°
+			j = (n * 4 + 2) / 3;  // ç«¯æ•°åˆ‡ã‚Šä¸Šã’
 		}else{
 			n = 3;
 			j = 4;
 		}
-		// n ¡‰ñƒGƒ“ƒR[ƒh‚·‚é’·‚³
-		// j ƒGƒ“ƒR[ƒhŒã‚ÌBASE64•¶š”
+		// n ä»Šå›ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã™ã‚‹é•·ã•
+		// j ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å¾Œã®BASE64æ–‡å­—æ•°
 		for( k = 0; k < n; k++ ){
 			lDataSrc |=
 				static_cast<unsigned long>(psrc[i + k]) << ((n - k - 1) * 8);
 		}
-		// ƒpƒbƒhƒrƒbƒg•t‰ÁBlDataSrc ‚Ì’·‚³‚ª 6*j ‚É‚È‚é‚æ‚¤‚É’²ß‚·‚éB
+		// ãƒ‘ãƒƒãƒ‰ãƒ“ãƒƒãƒˆä»˜åŠ ã€‚lDataSrc ã®é•·ã•ãŒ 6*j ã«ãªã‚‹ã‚ˆã†ã«èª¿ç¯€ã™ã‚‹ã€‚
 		lDataSrc <<= j * 6 - n * 8;
-		// ƒGƒ“ƒR[ƒh‚µ‚Ä‘‚«‚ŞB
+		// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã—ã¦æ›¸ãè¾¼ã‚€ã€‚
 		for( k = 0; k < j; k++ ){
 			v = static_cast<char>((lDataSrc >> (6 * (j - k - 1))) & 0x0000003f);
 			pDest[nDesLen] = static_cast<CHAR_TYPE>(ValToBase64<CHAR_TYPE>( v ));
@@ -314,7 +314,7 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-// UU ƒfƒR[ƒh
+// UU ãƒ‡ã‚³ãƒ¼ãƒ‰
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
@@ -323,7 +323,7 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 
 
 /*
-	Unix-to-Unix ‚Ì‚±‚Æ
+	Unix-to-Unix ã®ã“ã¨
 
 egin <permission> <file name>
 begin
@@ -331,24 +331,24 @@ begin
 
 end
 
-<permission>F
-	ƒtƒ@ƒCƒ‹¶¬‚Ég‚¤ƒp[ƒ~ƒbƒVƒ‡ƒ“‚Ì’l
-	iWindows‚Å‚Íƒp[ƒ~ƒbƒVƒ‡ƒ“‚ª‘¶İ‚µ‚È‚¢H‚Ì‚ÅA600 ‚Ü‚½‚Í 666 ‚ğ—p‚¢‚éj
+<permission>ï¼š
+	ãƒ•ã‚¡ã‚¤ãƒ«ç”Ÿæˆæ™‚ã«ä½¿ã†ãƒ‘ãƒ¼ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®å€¤
+	ï¼ˆWindowsã§ã¯ãƒ‘ãƒ¼ãƒŸãƒƒã‚·ãƒ§ãƒ³ãŒå­˜åœ¨ã—ãªã„ï¼Ÿã®ã§ã€600 ã¾ãŸã¯ 666 ã‚’ç”¨ã„ã‚‹ï¼‰
 
-<file name>F
-	ƒtƒ@ƒCƒ‹¶¬‚Ég‚¢ƒtƒ@ƒCƒ‹–¼
+<file name>ï¼š
+	ãƒ•ã‚¡ã‚¤ãƒ«ç”Ÿæˆæ™‚ã«ä½¿ã„ãƒ•ã‚¡ã‚¤ãƒ«å
 
-<encoded data>F
-	EƒoƒCƒiƒŠƒf[ƒ^‚ğ3ƒoƒCƒg‚¸‚Âæ‚èo‚µA‚»‚ê‚ç3ƒoƒCƒg‚ğMSB‚©‚çLSB‚Ö‚Æ•À‚×‚½
-	@24ƒrƒbƒg•‚Ìƒf[ƒ^‚ğ‚³‚ç‚É4•ªŠ„‚µAMSB‚©‚ç‡‚É6ƒrƒbƒg‚¸‚Âæ‚èo‚·B
-	@æ‚èo‚µ‚½‚»‚ê‚¼‚ê‚Ì’l‚É 0x20(‹ó”’•¶š)‚ğ‰ÁZ‚µ7ƒrƒbƒgASCII•¶š‚É•ÏŠ·‚µA
-	@æ‚èo‚µ‚½‡‚É‘‚«‚ñ‚Å‚¢‚­B
-	Eƒf[ƒ^’·‚ª3‚Ì”{”‚É‚È‚Á‚Ä‚¢‚È‚¢ê‡‚ÍA0‚ÅƒpƒfƒBƒ“ƒO‚µ‚Ä3‚Ì”{”‚Æ‚È‚é‚æ‚¤’²ß‚·‚éB
-	Es‚ÌÅ‰‚É‚ÍA‚»‚Ìs‚É‰½ƒoƒCƒg•ª‚Ìƒf[ƒ^‚ª‚ ‚é‚©‚Ìî•ñ‚ğ‘‚«‚ŞB
-	E1s‚É‚Í45ƒoƒCƒg•ª‚Ìƒf[ƒ^i60•¶šj‚ğ‘‚«‚Ş‚Ì‚ªŠµ—á‚ÅiŒˆ‚Ü‚èHjAÅŒã‚ÌsˆÈŠO‚ÍA
-	@"M"i45+0x20j‚ªs‚Ìæ“ª‚Æ‚È‚éB
-	E•„†‰»‚³‚ê‚½ƒf[ƒ^‚ÍA0ƒoƒCƒg‚Ìs‚ÅI—¹‚·‚éB
-	Es––‚Ì‹ó”’‚ğíœ‚·‚éƒQ[ƒgƒEƒFƒC‚É‘Îˆ‚·‚é‚½‚ßA‹ó”’‚ÍA"~"(0x7E)‚Ü‚½‚Í"`"(0x60)‚ğŠ·‚í‚è‚Ég‚¤B
+<encoded data>ï¼š
+	ãƒ»ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’3ãƒã‚¤ãƒˆãšã¤å–ã‚Šå‡ºã—ã€ãã‚Œã‚‰3ãƒã‚¤ãƒˆã‚’MSBã‹ã‚‰LSBã¸ã¨ä¸¦ã¹ãŸ
+	ã€€24ãƒ“ãƒƒãƒˆå¹…ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã•ã‚‰ã«4åˆ†å‰²ã—ã€MSBã‹ã‚‰é †ã«6ãƒ“ãƒƒãƒˆãšã¤å–ã‚Šå‡ºã™ã€‚
+	ã€€å–ã‚Šå‡ºã—ãŸãã‚Œãã‚Œã®å€¤ã« 0x20(ç©ºç™½æ–‡å­—)ã‚’åŠ ç®—ã—7ãƒ“ãƒƒãƒˆASCIIæ–‡å­—ã«å¤‰æ›ã—ã€
+	ã€€å–ã‚Šå‡ºã—ãŸé †ã«æ›¸ãè¾¼ã‚“ã§ã„ãã€‚
+	ãƒ»ãƒ‡ãƒ¼ã‚¿é•·ãŒ3ã®å€æ•°ã«ãªã£ã¦ã„ãªã„å ´åˆã¯ã€0ã§ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã—ã¦3ã®å€æ•°ã¨ãªã‚‹ã‚ˆã†èª¿ç¯€ã™ã‚‹ã€‚
+	ãƒ»è¡Œã®æœ€åˆã«ã¯ã€ãã®è¡Œã«ä½•ãƒã‚¤ãƒˆåˆ†ã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚‹ã‹ã®æƒ…å ±ã‚’æ›¸ãè¾¼ã‚€ã€‚
+	ãƒ»1è¡Œã«ã¯45ãƒã‚¤ãƒˆåˆ†ã®ãƒ‡ãƒ¼ã‚¿ï¼ˆ60æ–‡å­—ï¼‰ã‚’æ›¸ãè¾¼ã‚€ã®ãŒæ…£ä¾‹ã§ï¼ˆæ±ºã¾ã‚Šï¼Ÿï¼‰ã€æœ€å¾Œã®è¡Œä»¥å¤–ã¯ã€
+	ã€€"M"ï¼ˆ45+0x20ï¼‰ãŒè¡Œã®å…ˆé ­ã¨ãªã‚‹ã€‚
+	ãƒ»ç¬¦å·åŒ–ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã¯ã€0ãƒã‚¤ãƒˆã®è¡Œã§çµ‚äº†ã™ã‚‹ã€‚
+	ãƒ»è¡Œæœ«ã®ç©ºç™½ã‚’å‰Šé™¤ã™ã‚‹ã‚²ãƒ¼ãƒˆã‚¦ã‚§ã‚¤ã«å¯¾å‡¦ã™ã‚‹ãŸã‚ã€ç©ºç™½ã¯ã€"~"(0x7E)ã¾ãŸã¯"`"(0x60)ã‚’æ›ã‚ã‚Šã«ä½¿ã†ã€‚
 */
 
 
@@ -373,13 +373,13 @@ inline BYTE _UUDECODE_CHAR( ACHAR c )
 
 
 /*
-	UU ƒfƒR[ƒ_[iˆês‚¾‚¯Às‚·‚éƒo[ƒWƒ‡ƒ“j
+	UU ãƒ‡ã‚³ãƒ¼ãƒ€ãƒ¼ï¼ˆä¸€è¡Œã ã‘å®Ÿè¡Œã™ã‚‹ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼‰
 
-	@param[in] nSrcLen	•K‚¸A4‚Ì”{”‚Å‚ ‚é‚±‚ÆB
-	@param[in] pDest	•K‚¸A(nSrcLen / 4) * 3 ˆÈã‚Ìƒoƒbƒtƒ@‚ªŠm•Û‚³‚ê‚Ä‚¢‚é‚±‚ÆB
+	@param[in] nSrcLen	å¿…ãšã€4ã®å€æ•°ã§ã‚ã‚‹ã“ã¨ã€‚
+	@param[in] pDest	å¿…ãšã€(nSrcLen / 4) * 3 ä»¥ä¸Šã®ãƒãƒƒãƒ•ã‚¡ãŒç¢ºä¿ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã€‚
 
-	@return ˆês•ª‚ğƒfƒR[ƒh‚µ‚½Œ‹‰Ê“¾‚ç‚ê‚½¶ƒf[ƒ^‚ÌƒoƒCƒg’·
-	        ‘‚«‚ñ‚¾ƒf[ƒ^‚ª–ß‚è’l‚æ‚è‚à‘å‚«‚¢‚Æ‚«‚ª‚ ‚é‚Ì‚Å’ˆÓB
+	@return ä¸€è¡Œåˆ†ã‚’ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ãŸçµæœå¾—ã‚‰ã‚ŒãŸç”Ÿãƒ‡ãƒ¼ã‚¿ã®ãƒã‚¤ãƒˆé•·
+	        æ›¸ãè¾¼ã‚“ã ãƒ‡ãƒ¼ã‚¿ãŒæˆ»ã‚Šå€¤ã‚ˆã‚Šã‚‚å¤§ãã„ã¨ããŒã‚ã‚‹ã®ã§æ³¨æ„ã€‚
 */
 template< class CHAR_TYPE >
 int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
@@ -391,7 +391,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 		return 0;
 	}
 
-	pr = pSrc+1;  // æ“ª‚Ì•¶šiM(0x20+45)‚È‚Çj‚ğ”ò‚Î‚·
+	pr = pSrc+1;  // å…ˆé ­ã®æ–‡å­—ï¼ˆM(0x20+45)ãªã©ï¼‰ã‚’é£›ã°ã™
 	int i = 0;
 	int j = 0;
 	int k = 0;
@@ -406,11 +406,11 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 		k += 3;
 	}
 
-	return _UUDECODE_CHAR(pSrc[0]); // 1s•ª‚ğƒfƒR[ƒh‚µ‚½‚Æ‚«‚É“¾‚ç‚ê‚é¶ƒf[ƒ^‚ÌƒoƒCƒg’·‚ğæ“¾
+	return _UUDECODE_CHAR(pSrc[0]); // 1è¡Œåˆ†ã‚’ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ãŸã¨ãã«å¾—ã‚‰ã‚Œã‚‹ç”Ÿãƒ‡ãƒ¼ã‚¿ã®ãƒã‚¤ãƒˆé•·ã‚’å–å¾—
 }
 
 /*!
-	UUƒGƒ“ƒR[ƒh‚Ìƒwƒbƒ_[•”•ª‚ğ‰ğÍ
+	UUã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã®ãƒ˜ãƒƒãƒ€ãƒ¼éƒ¨åˆ†ã‚’è§£æ
 */
 template< class CHAR_TYPE >
 bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
@@ -423,12 +423,12 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	CHAR_TYPE pszSplitChars[16];
 
 	if( sizeof(CHAR_TYPE) == 2 ){
-		// ƒXƒy[ƒX‚Ü‚½‚Íƒ^ƒu‚ª‹æØ‚è•¶š
+		// ã‚¹ãƒšãƒ¼ã‚¹ã¾ãŸã¯ã‚¿ãƒ–ãŒåŒºåˆ‡ã‚Šæ–‡å­—
 		pszSplitChars[0] = L' ';
 		pszSplitChars[1] = L'\t';
 		pszSplitChars[2] = L'\0';
 	}else{
-		// ƒXƒy[ƒX‚Ü‚½‚Íƒ^ƒu‚ª‹æØ‚è•¶š
+		// ã‚¹ãƒšãƒ¼ã‚¹ã¾ãŸã¯ã‚¿ãƒ–ãŒåŒºåˆ‡ã‚Šæ–‡å­—
 		pszSplitChars[0] = ' ';
 		pszSplitChars[1] = '\t';
 		pszSplitChars[2] = '\0';
@@ -442,7 +442,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 		return false;
 	}
 
-	// æ“ª‚Ì‹ó”’E‰üs•¶š‚ğƒXƒLƒbƒv
+	// å…ˆé ­ã®ç©ºç™½ãƒ»æ”¹è¡Œæ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( nstartidx = 0; nstartidx < nLen; ++nstartidx ){
 		CHAR_TYPE c = pSrc[nstartidx];
 		if( sizeof(CHAR_TYPE) == 2 ){
@@ -459,10 +459,10 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	pr = pSrc + nstartidx;
 	pr_end = pSrc + nLen;
 
-	// ƒwƒbƒ_[‚Ì\¬
+	// ãƒ˜ãƒƒãƒ€ãƒ¼ã®æ§‹æˆ
 	// begin  755  <filename>
 
-	/* begin ‚ğæ“¾ */
+	/* begin ã‚’å–å¾— */
 
 	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
 	if( nwlen != 5 ){
@@ -481,7 +481,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 		}
 	}
 
-	/* 3Œ…‚Ì8i”iUnix ƒVƒXƒeƒ€‚Ìƒp[ƒ~ƒbƒVƒ‡ƒ“j‚ğæ“¾ */
+	/* 3æ¡ã®8é€²æ•°ï¼ˆUnix ã‚·ã‚¹ãƒ†ãƒ ã®ãƒ‘ãƒ¼ãƒŸãƒƒã‚·ãƒ§ãƒ³ï¼‰ã‚’å–å¾— */
 
 	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
 	if( nwlen != 3 ){
@@ -490,13 +490,13 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	}
 	for( int i = 0; i < nwlen; i++ ){
 		if( sizeof(CHAR_TYPE) == 2 ){
-			// WCHAR ‚Ìê‡‚Ìˆ—
+			// WCHAR ã®å ´åˆã®å‡¦ç†
 			if( !iswdigit(pwstart[i]) || (pwstart[i] == L'8' || pwstart[i] == L'9') ){
 				// error.
 				return false;
 			}
 		}else{
-			// ACHAR ‚Ìê‡‚Ìˆ—
+			// ACHAR ã®å ´åˆã®å‡¦ç†
 			if( !isdigit(pwstart[i]) || (pwstart[i] == '8' || pwstart[i] == '9') ){
 				// error.
 				return false;
@@ -504,10 +504,10 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 		}
 	}
 
-	/* ‘‚«o‚µ—p‚Ìƒtƒ@ƒCƒ‹–¼‚ğæ“¾ */
+	/* æ›¸ãå‡ºã—ç”¨ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾— */
 
 	pr += CWordParse::GetWord( pr, pr_end-pr, pszSplitChars, &pwstart, &nwlen );
-	// ––”ö‚Ì‹ó”’E‰üs•¶š‚ğƒXƒLƒbƒv
+	// æœ«å°¾ã®ç©ºç™½ãƒ»æ”¹è¡Œæ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( ; nwlen > 0; --nwlen ){
 		CHAR_TYPE c = pwstart[nwlen-1];
 		if( sizeof(CHAR_TYPE) == 2 ){
@@ -524,7 +524,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 		// error.
 		return false;
 	}
-	// ƒtƒ@ƒCƒ‹–¼‚ğŠi”[
+	// ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ ¼ç´
 	if( pszFilename ){
 		strtotcs( pszFilename, pwstart, (size_t)nwlen );
 		pszFilename[nwlen] = _WINT('\0');
@@ -535,7 +535,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 
 
 /*!
-	UU ƒtƒbƒ^[‚ğŠm”F
+	UU ãƒ•ãƒƒã‚¿ãƒ¼ã‚’ç¢ºèª
 */
 template< class CHAR_TYPE >
 bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
@@ -545,20 +545,20 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 	int nsrclen;
 	int i;
 
-	// ƒtƒbƒ^[‚Ì\¬
+	// ãƒ•ãƒƒã‚¿ãƒ¼ã®æ§‹æˆ
 	// end
-	// ¦ ‹ós‚Íƒtƒbƒ^[‚ÉŠÜ‚ß‚È‚¢B
+	// â€» ç©ºè¡Œã¯ãƒ•ãƒƒã‚¿ãƒ¼ã«å«ã‚ãªã„ã€‚
 
-	// æ“ª‚Ì‰üsE‹ó”’•¶š‚ğƒXƒLƒbƒv
+	// å…ˆé ­ã®æ”¹è¡Œãƒ»ç©ºç™½æ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	for( nstartidx = 0; nstartidx < nLen; ++nstartidx ){
 		CHAR_TYPE c = pS[nstartidx];
 		if( sizeof(CHAR_TYPE) == 2 ){
-			// WCHAR ‚Ìê‡‚Ìˆ—
+			// WCHAR ã®å ´åˆã®å‡¦ç†
 			if( c != L'\r' && c != L'\n' && c != L' ' && c != L'\t' ){
 				break;
 			}
 		}else{
-			// ACHAR ‚Ìê‡‚Ìˆ—
+			// ACHAR ã®å ´åˆã®å‡¦ç†
 			if( c != '\r' && c != '\n' && c != ' ' && c != '\t' ){
 				break;
 			}
@@ -585,16 +585,16 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 	}
 	i += 3;
 
-	// end ‚ÌŒã‚ª‹ó”’•¶š‚Î‚©‚è‚Å‚ ‚é‚±‚Æ‚ğŠm”F
+	// end ã®å¾ŒãŒç©ºç™½æ–‡å­—ã°ã‹ã‚Šã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèª
 	for( ; i < nsrclen; ++i ){
 		CHAR_TYPE c = psrc[i];
 		if( sizeof(CHAR_TYPE) == 2 ){
-			// WCHAR ‚Ìê‡‚Ìˆ—
+			// WCHAR ã®å ´åˆã®å‡¦ç†
 			if( !WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t' ){
 				return false;
 			}
 		}else{
-			// ACHAR ‚Ìê‡‚Ìˆ—
+			// ACHAR ã®å ´åˆã®å‡¦ç†
 			if( c != '\r' && c != '\n' && c != ' ' && c != '\t' ){
 				return false;
 			}
@@ -610,7 +610,7 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-//    MIME ƒwƒbƒ_[ƒfƒR[ƒh
+//    MIME ãƒ˜ãƒƒãƒ€ãƒ¼ãƒ‡ã‚³ãƒ¼ãƒ‰
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
@@ -623,9 +623,9 @@ enum EEncodingMethod {
 };
 
 /*!
-	MIMEƒwƒbƒ_[ƒfƒR[ƒh•â•ŠÖ”
+	MIMEãƒ˜ãƒƒãƒ€ãƒ¼ãƒ‡ã‚³ãƒ¼ãƒ‰è£œåŠ©é–¢æ•°
 
-	@return  CMemory ‚Æ’u‚«Š·‚¦‚ç‚ê‚é“ü—Í•¶š—ñ’· (nSkipLen)
+	@return  CMemory ã¨ç½®ãæ›ãˆã‚‰ã‚Œã‚‹å…¥åŠ›æ–‡å­—åˆ—é•· (nSkipLen)
 */
 template< class CHAR_TYPE >
 int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
@@ -640,17 +640,17 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	int ndecoded_len;
 
 
-	// MIME ‚ÌŠY“–•”•ª‚ğŒŸoB----------------------------------------
+	// MIME ã®è©²å½“éƒ¨åˆ†ã‚’æ¤œå‡ºã€‚----------------------------------------
 	//
 
 
-	//   part1 •”•ª
+	//   part1 éƒ¨åˆ†
 	//
-	//   "=?ISO-2022-JP?", "=?UTF-8?" ‚È‚Ç‚Ì•”•ª‚ğŒŸo
+	//   "=?ISO-2022-JP?", "=?UTF-8?" ãªã©ã®éƒ¨åˆ†ã‚’æ¤œå‡º
 	//
 
 	if( pSrc+14 < pSrc+nSrcLen ){
-		// JIS ‚Ìê‡
+		// JIS ã®å ´åˆ
 		if( sizeof(CHAR_TYPE) == 2 ){
 			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?", 14 );
 		}else{
@@ -663,7 +663,7 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 		}
 	}
 	if( pSrc+8 < pSrc+nSrcLen ){
-		// UTF-8 ‚Ìê‡
+		// UTF-8 ã®å ´åˆ
 		if( sizeof(CHAR_TYPE) == 2 ){
 			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?", 8 );
 		}else{
@@ -675,7 +675,7 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 			goto finish_first_detect;
 		}
 	}
-	// ƒ}ƒbƒ`‚µ‚È‚©‚Á‚½ê‡
+	// ãƒãƒƒãƒã—ãªã‹ã£ãŸå ´åˆ
 	pcMem_alt->SetRawData( "", 0 );
 	if( peCodetype ){
 		*peCodetype = CODE_NONE;
@@ -689,9 +689,9 @@ finish_first_detect:;
 	}
 
 	//
-	//    part2 •”•ª
+	//    part2 éƒ¨åˆ†
 	//
-	//   "B?" ‚Ü‚½‚Í "Q?" ‚Ì•”•ª‚ğŒŸo
+	//   "B?" ã¾ãŸã¯ "Q?" ã®éƒ¨åˆ†ã‚’æ¤œå‡º
 	//
 
 	if( pSrc+nLen_part1+2 >= pSrc+nSrcLen ){
@@ -716,7 +716,7 @@ finish_first_detect:;
 	nLen_part2 = 2;
 
 	//
-	//   ƒGƒ“ƒR[ƒh•¶š—ñ‚Ì•”•ª‚ğŒŸo
+	//   ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰æ–‡å­—åˆ—ã®éƒ¨åˆ†ã‚’æ¤œå‡º
 	//
 
 	pr_base = pSrc + nLen_part1 + nLen_part2;
@@ -736,9 +736,9 @@ finish_first_detect:;
 		return 0;
 	}
 
-	nskipped_len = pr - pSrc + 2;  // =? ‚©‚ç ?= ‚Ü‚Å‚ÌA‘S‘Ì‚Ì’·‚³‚ğ‹L˜^
+	nskipped_len = pr - pSrc + 2;  // =? ã‹ã‚‰ ?= ã¾ã§ã®ã€å…¨ä½“ã®é•·ã•ã‚’è¨˜éŒ²
 
-	//   ƒfƒR[ƒh ----------------------------------------------------
+	//   ãƒ‡ã‚³ãƒ¼ãƒ‰ ----------------------------------------------------
 	//
 
 	pcMem_alt->AllocBuffer( pr - pr_base );

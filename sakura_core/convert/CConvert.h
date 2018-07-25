@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,13 +24,13 @@
 #ifndef SAKURA_CCONVERT_BF272748_9EF0_4F5A_952C_8BED216658F9_H_
 #define SAKURA_CCONVERT_BF272748_9EF0_4F5A_952C_8BED216658F9_H_
 
-//2007.10.02 kobake CEditView‚©‚ç•ª—£
+//2007.10.02 kobake CEditViewã‹ã‚‰åˆ†é›¢
 
 #include "Funccode_enum.h"	// EFunctionCode
 
 class CConvertMediator{
 public:
-	//! ‹@”\í•Ê‚É‚æ‚éƒoƒbƒtƒ@‚Ì•ÏŠ·
+	//! æ©Ÿèƒ½ç¨®åˆ¥ã«ã‚ˆã‚‹ãƒãƒƒãƒ•ã‚¡ã®å¤‰æ›
 	static void ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn );
 
 protected:
@@ -41,7 +41,7 @@ class CConvert{
 public:
 	virtual ~CConvert(){}
 
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	void CallConvert( CNativeW* pcData )
 	{
 		bool bRet=DoConvert(pcData);
@@ -50,7 +50,7 @@ public:
 		}
 	}
 
-	//À‘•
+	//å®Ÿè£…
 	virtual bool DoConvert( CNativeW* pcData )=0;
 };
 

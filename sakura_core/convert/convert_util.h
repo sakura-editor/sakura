@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,44 +26,44 @@
 
 //2007.10.18 kobake
 
-//! ‘SŠp‚Ð‚ç‚ª‚È¨‘SŠpƒJƒ^ƒJƒi (•¶Žš”‚Í•s•Ï)
+//! å…¨è§’ã²ã‚‰ãŒãªâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ (æ–‡å­—æ•°ã¯ä¸å¤‰)
 void Convert_ZenhiraToZenkata(wchar_t* pData, int nLength);
 
-//! ‘SŠpƒJƒ^ƒJƒi¨‘SŠp‚Ð‚ç‚ª‚È (•¶Žš”‚Í•s•Ï)
+//! å…¨è§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª (æ–‡å­—æ•°ã¯ä¸å¤‰)
 void Convert_ZenkataToZenhira(wchar_t* pData, int nLength);
 
-//! ‘SŠp‰p”¨”¼Šp‰p” (•¶Žš”‚Í•s•Ï)
+//! å…¨è§’è‹±æ•°â†’åŠè§’è‹±æ•° (æ–‡å­—æ•°ã¯ä¸å¤‰)
 void Convert_ZeneisuToHaneisu(wchar_t* pData, int nLength);
 
 /*!
-	‘SŠpƒJƒ^ƒJƒi¨”¼ŠpƒJƒ^ƒJƒi
-	‘÷“_‚Ì•ª‚¾‚¯A•¶Žš”‚Í‘‚¦‚é‰Â”\«‚ª‚ ‚éBÅ‘å‚Å2”{‚É‚È‚éB
-	pDst‚É‚Í‚ ‚ç‚©‚¶‚ß\•ª‚Èƒƒ‚ƒŠ‚ðŠm•Û‚µ‚Ä‚¨‚­‚±‚ÆB
+	å…¨è§’ã‚«ã‚¿ã‚«ãƒŠâ†’åŠè§’ã‚«ã‚¿ã‚«ãƒŠ
+	æ¿ç‚¹ã®åˆ†ã ã‘ã€æ–‡å­—æ•°ã¯å¢—ãˆã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã€‚æœ€å¤§ã§2å€ã«ãªã‚‹ã€‚
+	pDstã«ã¯ã‚ã‚‰ã‹ã˜ã‚ååˆ†ãªãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã—ã¦ãŠãã“ã¨ã€‚
 */
 void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
 
 /*!
-	‘SŠp¨”¼Šp
-	‘÷“_‚Ì•ª‚¾‚¯A•¶Žš”‚Í‘‚¦‚é‰Â”\«‚ª‚ ‚éBÅ‘å‚Å2”{‚É‚È‚éB
-	pDst‚É‚Í‚ ‚ç‚©‚¶‚ß\•ª‚Èƒƒ‚ƒŠ‚ðŠm•Û‚µ‚Ä‚¨‚­‚±‚ÆB
+	å…¨è§’â†’åŠè§’
+	æ¿ç‚¹ã®åˆ†ã ã‘ã€æ–‡å­—æ•°ã¯å¢—ãˆã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã€‚æœ€å¤§ã§2å€ã«ãªã‚‹ã€‚
+	pDstã«ã¯ã‚ã‚‰ã‹ã˜ã‚ååˆ†ãªãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã—ã¦ãŠãã“ã¨ã€‚
 */
 void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
 
 
-//! ”¼Šp‰p”¨‘SŠp‰p” (•¶Žš”‚Í•s•Ï)
+//! åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•° (æ–‡å­—æ•°ã¯ä¸å¤‰)
 void Convert_HaneisuToZeneisu(wchar_t* pData, int nLength);
 
 /*!
-	”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒi
-	‘÷“_‚Ì•ª‚¾‚¯A•¶Žš”‚ÍŒ¸‚é‰Â”\«‚ª‚ ‚éBÅ¬‚Å2•ª‚Ì1‚É‚È‚éB
-	pDst‚É‚Í‚ ‚ç‚©‚¶‚ß\•ª‚Èƒƒ‚ƒŠ‚ðŠm•Û‚µ‚Ä‚¨‚­‚±‚ÆB
+	åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ
+	æ¿ç‚¹ã®åˆ†ã ã‘ã€æ–‡å­—æ•°ã¯æ¸›ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã€‚æœ€å°ã§2åˆ†ã®1ã«ãªã‚‹ã€‚
+	pDstã«ã¯ã‚ã‚‰ã‹ã˜ã‚ååˆ†ãªãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã—ã¦ãŠãã“ã¨ã€‚
 */
 void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
 
 /*!
-	”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ð‚ç‚ª‚È
-	‘÷“_‚Ì•ª‚¾‚¯A•¶Žš”‚ÍŒ¸‚é‰Â”\«‚ª‚ ‚éBÅ¬‚Å2•ª‚Ì1‚É‚È‚éB
-	pDst‚É‚Í‚ ‚ç‚©‚¶‚ß\•ª‚Èƒƒ‚ƒŠ‚ðŠm•Û‚µ‚Ä‚¨‚­‚±‚ÆB
+	åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª
+	æ¿ç‚¹ã®åˆ†ã ã‘ã€æ–‡å­—æ•°ã¯æ¸›ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã€‚æœ€å°ã§2åˆ†ã®1ã«ãªã‚‹ã€‚
+	pDstã«ã¯ã‚ã‚‰ã‹ã˜ã‚ååˆ†ãªãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã—ã¦ãŠãã“ã¨ã€‚
 */
 void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
 

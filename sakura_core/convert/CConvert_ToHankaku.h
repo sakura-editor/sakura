@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 #include "CConvert.h"
 
 
-//!”¼Šp‚É‚Å‚«‚é‚à‚Ì‚Í‘S•””¼Šp‚É•ÏŠ·
+//!åŠè§’ã«ã§ãã‚‹ã‚‚ã®ã¯å…¨éƒ¨åŠè§’ã«å¤‰æ›
 class CConvert_ToHankaku : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData);
@@ -35,9 +35,9 @@ public:
 
 
 enum EToHankakuMode{
-	TO_KATAKANA	= 0x01, //!< ƒJƒ^ƒJƒi‚É‰e‹¿ƒAƒŠ
-	TO_HIRAGANA	= 0x02, //!< ‚Ğ‚ç‚ª‚È‚É‰e‹¿ƒAƒŠ
-	TO_EISU		= 0x04, //!< ‰p”š‚É‰e‹¿ƒAƒŠ
+	TO_KATAKANA	= 0x01, //!< ã‚«ã‚¿ã‚«ãƒŠã«å½±éŸ¿ã‚¢ãƒª
+	TO_HIRAGANA	= 0x02, //!< ã²ã‚‰ãŒãªã«å½±éŸ¿ã‚¢ãƒª
+	TO_EISU		= 0x04, //!< è‹±æ•°å­—ã«å½±éŸ¿ã‚¢ãƒª
 };
 
 #endif /* SAKURA_CCONVERT_TOHANKAKU_AA990D46_6904_44DF_8162_B2D96E20AE3A_H_ */

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 #include "CConvert.h"
 
 
-//!”¼ŠpƒJƒi¨‘SŠpƒJƒi
+//!åŠè§’ã‚«ãƒŠâ†’å…¨è§’ã‚«ãƒŠ
 class CConvert_HankataToZenkata : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData);

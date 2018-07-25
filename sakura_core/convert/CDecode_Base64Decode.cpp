@@ -1,4 +1,4 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief BASE64 Decode
 
 	@author 
@@ -35,12 +35,12 @@
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
 
-/* Base64ƒfƒR[ƒh */
+/* Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ */
 bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 {
 	using namespace WCODE;
 
-	const int BUFFER_SIZE = 1024;  // ƒoƒbƒtƒ@ƒTƒCƒYB‚PˆÈã‚Ì®”‚©‚Â‚S‚Ì”{”‚ÅB
+	const int BUFFER_SIZE = 1024;  // ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã€‚ï¼‘ä»¥ä¸Šã®æ•´æ•°ã‹ã¤ï¼”ã®å€æ•°ã§ã€‚
 	const int _BUFSIZE = ((BUFFER_SIZE+3)/4)*4;
 
 	const wchar_t *pSrc;
@@ -52,14 +52,14 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 
 	pSrc = pcSrc.GetStringPtr();
 	nSrcLen = pcSrc.GetStringLength();
-	pcDst->AllocBuffer( nSrcLen );  // ‘‚«‚İƒoƒbƒtƒ@‚ğŠm•Û
+	pcDst->AllocBuffer( nSrcLen );  // æ›¸ãè¾¼ã¿ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿
 	pw_base = pw = reinterpret_cast<char *>(pcDst->GetRawPtr());
 
-	i = 0;  // pcSrc ‚Ì“Y‚¦š
+	i = 0;  // pcSrc ã®æ·»ãˆå­—
 	do{
 		j = 0;
 		for( ; i < nSrcLen; ++i ){
-		// ƒoƒbƒtƒ@‚É•¶š‚ğ‚½‚ß‚éƒ‹[ƒv
+		// ãƒãƒƒãƒ•ã‚¡ã«æ–‡å­—ã‚’ãŸã‚ã‚‹ãƒ«ãƒ¼ãƒ—
 			c = pSrc[i];
 			if( IsLineDelimiterBasic(c) || c == TAB || c == SPACE ){
 				continue;

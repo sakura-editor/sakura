@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CConvert_Trim.h"
 #include "convert_util.h"
 #include "CEol.h"
@@ -6,16 +6,16 @@
 #include "util/string_ex2.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*! TRIM Step2
-	ConvMemory ‚©‚ç –ß‚Á‚Ä‚«‚½Œã‚Ìˆ—D
-	CMemory.cpp‚Ì‚È‚©‚É’u‚©‚È‚¢‚Ù‚¤‚ª—Ç‚¢‚©‚È‚ÆŽv‚Á‚Ä‚±‚¿‚ç‚É’u‚«‚Ü‚µ‚½D
+	ConvMemory ã‹ã‚‰ æˆ»ã£ã¦ããŸå¾Œã®å‡¦ç†ï¼Ž
+	CMemory.cppã®ãªã‹ã«ç½®ã‹ãªã„ã»ã†ãŒè‰¯ã„ã‹ãªã¨æ€ã£ã¦ã“ã¡ã‚‰ã«ç½®ãã¾ã—ãŸï¼Ž
 	
 	@author hor
-	@date 2001.12.03 hor    V‹Kì¬
-	@date 2007.10.18 kobake CConvert_Trim‚ÉˆÚ“®
+	@date 2001.12.03 hor    æ–°è¦ä½œæˆ
+	@date 2007.10.18 kobake CConvert_Trimã«ç§»å‹•
 */
 bool CConvert_Trim::DoConvert(CNativeW* pcData)
 {
@@ -30,8 +30,8 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 
 	nBgn = 0;
 	nPosDes = 0;
-	/* •ÏŠ·Œã‚É•K—v‚ÈƒoƒCƒg”‚ð’²‚×‚é */
-	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory•ÏX
+	/* å¤‰æ›å¾Œã«å¿…è¦ãªãƒã‚¤ãƒˆæ•°ã‚’èª¿ã¹ã‚‹ */
+	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemoryå¤‰æ›´
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
 		}
@@ -45,7 +45,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	nPosDes = 0;
 	// LTRIM
 	if( m_bLeft ){
-		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory•ÏX
+		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemoryå¤‰æ›´
 			if( 0 < nLineLen ){
 				for( i = 0; i <= nLineLen; ++i ){
 					if( WCODE::IsBlank(pLine[i]) ){
@@ -65,9 +65,9 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	}
 	// RTRIM
 	else{
-		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemory•ÏX
+		while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol ) ) ){ // 2002/2/10 aroka CMemoryå¤‰æ›´
 			if( 0 < nLineLen ){
-				// 2005.10.11 ryoji ‰E‚©‚ç‘k‚é‚Ì‚Å‚Í‚È‚­¶‚©‚ç’T‚·‚æ‚¤‚ÉC³i"‚@" ‚Ì‰E‚QƒoƒCƒg‚ª‘SŠp‹ó”’‚Æ”»’è‚³‚ê‚é–â‘è‚Ì‘Îˆj
+				// 2005.10.11 ryoji å³ã‹ã‚‰é¡ã‚‹ã®ã§ã¯ãªãå·¦ã‹ã‚‰æŽ¢ã™ã‚ˆã†ã«ä¿®æ­£ï¼ˆ"ï½@" ã®å³ï¼’ãƒã‚¤ãƒˆãŒå…¨è§’ç©ºç™½ã¨åˆ¤å®šã•ã‚Œã‚‹å•é¡Œã®å¯¾å‡¦ï¼‰
 				i = j = 0;
 				while( i < nLineLen ){
 					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );

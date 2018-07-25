@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒfƒR[ƒ_[‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+ï»¿/*!	@file
+	@brief ãƒ‡ã‚³ãƒ¼ãƒ€ãƒ¼ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 
 	@author
 */
@@ -33,7 +33,7 @@ class CDecode {
 public:
 	virtual ~CDecode() { }
 
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 	bool CallDecode( const CNativeW& pcData, CMemory* pDest )
 	{
 		bool bRet=DoDecode(pcData, pDest);
@@ -45,7 +45,7 @@ public:
 		return true;
 	}
 
-	//À‘•
+	//å®Ÿè£…
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 
 };

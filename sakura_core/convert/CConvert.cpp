@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "CConvert.h"
 #include "func/Funccode.h"
 #include "CEol.h"
@@ -27,19 +27,19 @@
 
 #include "window/CEditWnd.h"
 
-/* �@�\��ʂɂ��o�b�t�@�̕ϊ� */
+/* 機能種別によるバッファの変換 */
 void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn )
 {
-	// �R�[�h�ϊ��͂ł��邾��ANSI�ł�sakura�ƌ݊��̌��ʂ�������悤�Ɏ�������	// 2009.03.26 ryoji
+	// コード変換はできるだけANSI版のsakuraと互換の結果が得られるように実装する	// 2009.03.26 ryoji
 	// xxx2SJIS:
-	//   1. �o�b�t�@�̓��e��ANSI�ő����ɂȂ�悤 Unicode��SJIS �ϊ�����
-	//   2. xxx��SJIS �ϊ���Ƀo�b�t�@���e��UNICODE�ő����ɖ߂��iSJIS��Unicode�j�̂Ɠ����Ȍ��ʂ𓾂邽�߂� xxx��Unicode �ϊ�����
+	//   1. バッファの内容がANSI版相当になるよう Unicode→SJIS 変換する
+	//   2. xxx→SJIS 変換後にバッファ内容をUNICODE版相当に戻す（SJIS→Unicode）のと等価な結果を得るために xxx→Unicode 変換する
 	// SJIS2xxx:
-	//   1. �o�b�t�@���e��ANSI�ő����ɕϊ��iUnicode��SJIS�j��� SJIS��xxx �ϊ�����̂Ɠ����Ȍ��ʂ𓾂邽�߂� Unicode��xxx �ϊ�����
-	//   2. �o�b�t�@���e��UNICODE�ő����ɖ߂����߂� SJIS��Unicode �ϊ�����
+	//   1. バッファ内容をANSI版相当に変換（Unicode→SJIS）後に SJIS→xxx 変換するのと等価な結果を得るために Unicode→xxx 変換する
+	//   2. バッファ内容をUNICODE版相当に戻すために SJIS→Unicode 変換する
 
 	switch( nFuncCode ){
-	//�R�[�h�ϊ�(xxx2SJIS)
+	//コード変換(xxx2SJIS)
 	case F_CODECNV_AUTO2SJIS:
 	case F_CODECNV_EMAIL:
 	case F_CODECNV_EUC2SJIS:
@@ -49,7 +49,7 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_CODECNV_UTF72SJIS:
 		CShiftJis::UnicodeToSJIS(*pCMemory, pCMemory->_GetMemory());
 		break;
-	//�R�[�h�ϊ�(SJIS2xxx)
+	//コード変換(SJIS2xxx)
 	case F_CODECNV_SJIS2JIS:		CJis::UnicodeToJIS(*pCMemory, pCMemory->_GetMemory());			break;
 	case F_CODECNV_SJIS2EUC:		CEuc::UnicodeToEUC(*pCMemory, pCMemory->_GetMemory());			break;
 	case F_CODECNV_SJIS2UTF8:		CUtf8::UnicodeToUTF8(*pCMemory, pCMemory->_GetMemory());		break;
@@ -74,24 +74,24 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	switch( nFuncCode ){
-	//������ϊ��A���`
-	case F_TOLOWER:					CConvert_ToLower().CallConvert(pCMemory);			break;	// ������
-	case F_TOUPPER:					CConvert_ToUpper().CallConvert(pCMemory);			break;	// �啶��
-	case F_TOHANKAKU:				CConvert_ToHankaku().CallConvert(pCMemory);			break;	// �S�p�����p
-	case F_TOHANKATA:				CConvert_ZenkataToHankata().CallConvert(pCMemory);	break;	// �S�p�J�^�J�i�����p�J�^�J�i
-	case F_TOZENEI:					CConvert_HaneisuToZeneisu().CallConvert(pCMemory);	break;	// ���p�p�����S�p�p��
-	case F_TOHANEI:					CConvert_ZeneisuToHaneisu().CallConvert(pCMemory);	break;	// �S�p�p�������p�p��
-	case F_TOZENKAKUKATA:			CConvert_ToZenkata().CallConvert(pCMemory);			break;	// ���p�{�S�Ђ灨�S�p�E�J�^�J�i
-	case F_TOZENKAKUHIRA:			CConvert_ToZenhira().CallConvert(pCMemory);			break;	// ���p�{�S�J�^���S�p�E�Ђ炪��
-	case F_HANKATATOZENKATA:		CConvert_HankataToZenkata().CallConvert(pCMemory);	break;	// ���p�J�^�J�i���S�p�J�^�J�i
-	case F_HANKATATOZENHIRA:		CConvert_HankataToZenhira().CallConvert(pCMemory);	break;	// ���p�J�^�J�i���S�p�Ђ炪��
-	//������ϊ��A���`
-	case F_TABTOSPACE:				CConvert_TabToSpace((Int)nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// TAB����
-	case F_SPACETOTAB:				CConvert_SpaceToTab((Int)nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// �󔒁�TAB
+	//文字種変換、整形
+	case F_TOLOWER:					CConvert_ToLower().CallConvert(pCMemory);			break;	// 小文字
+	case F_TOUPPER:					CConvert_ToUpper().CallConvert(pCMemory);			break;	// 大文字
+	case F_TOHANKAKU:				CConvert_ToHankaku().CallConvert(pCMemory);			break;	// 全角→半角
+	case F_TOHANKATA:				CConvert_ZenkataToHankata().CallConvert(pCMemory);	break;	// 全角カタカナ→半角カタカナ
+	case F_TOZENEI:					CConvert_HaneisuToZeneisu().CallConvert(pCMemory);	break;	// 半角英数→全角英数
+	case F_TOHANEI:					CConvert_ZeneisuToHaneisu().CallConvert(pCMemory);	break;	// 全角英数→半角英数
+	case F_TOZENKAKUKATA:			CConvert_ToZenkata().CallConvert(pCMemory);			break;	// 半角＋全ひら→全角・カタカナ
+	case F_TOZENKAKUHIRA:			CConvert_ToZenhira().CallConvert(pCMemory);			break;	// 半角＋全カタ→全角・ひらがな
+	case F_HANKATATOZENKATA:		CConvert_HankataToZenkata().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
+	case F_HANKATATOZENHIRA:		CConvert_HankataToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
+	//文字種変換、整形
+	case F_TABTOSPACE:				CConvert_TabToSpace((Int)nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// TAB→空白
+	case F_SPACETOTAB:				CConvert_SpaceToTab((Int)nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// 空白→TAB
 	case F_LTRIM:					CConvert_Trim(true, bExtEol).CallConvert(pCMemory);		break;	// 2001.12.03 hor
 	case F_RTRIM:					CConvert_Trim(false, bExtEol).CallConvert(pCMemory);	break;	// 2001.12.03 hor
-	//�R�[�h�ϊ�(xxx2SJIS)
-	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS�ǉ��B�������ʂ�SJIS, Latin1, CESU8�ɂȂ����ꍇ���T�|�[�g
+	//コード変換(xxx2SJIS)
+	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS追加。自動判別でSJIS, Latin1, CESU8になった場合をサポート
 	case F_CODECNV_AUTO2SJIS:
 		{
 			int nFlag = true;
@@ -101,11 +101,11 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 		break;
 	case F_CODECNV_EMAIL:			CJis::JISToUnicode(*(pCMemory->_GetMemory()), pCMemory, true);	break;
 	case F_CODECNV_EUC2SJIS:		CEuc::EUCToUnicode(*(pCMemory->_GetMemory()), pCMemory);			break;
-	case F_CODECNV_UNICODE2SJIS:	/* ���ϊ� */										break;
+	case F_CODECNV_UNICODE2SJIS:	/* 無変換 */										break;
 	case F_CODECNV_UNICODEBE2SJIS:	CUnicodeBe::UnicodeBEToUnicode(*(pCMemory->_GetMemory()), pCMemory);	break;
 	case F_CODECNV_UTF82SJIS:		CUtf8::UTF8ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
 	case F_CODECNV_UTF72SJIS:		CUtf7::UTF7ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
-	//�R�[�h�ϊ�(SJIS2xxx)
+	//コード変換(SJIS2xxx)
 	case F_CODECNV_SJIS2JIS:
 	case F_CODECNV_SJIS2EUC:
 	case F_CODECNV_SJIS2UTF8:

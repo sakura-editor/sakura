@@ -1,6 +1,6 @@
-
+ï»¿
 /*!	@file
-	@brief •ÏŠ·ƒ†[ƒeƒBƒŠƒeƒB2 - BASE64 Ecode/Decode, UUDecode, Q-printable decode
+	@brief å¤‰æ›ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£2 - BASE64 Ecode/Decode, UUDecode, Q-printable decode
 
 	@author 
 */
@@ -35,7 +35,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒfƒR[ƒ_[‚ÌŽÀ‘•                        //
+//                     ãƒ‡ã‚³ãƒ¼ãƒ€ãƒ¼ã®å®Ÿè£…                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
@@ -43,8 +43,8 @@
 
 
 /*
-	•ÏŠ·ƒe[ƒuƒ‹   BASE64 •¶Žš ¨ ”’l
-	“Y‚¦Žš‚Ì’è‹`ˆæF0x00 ` 0x7F
+	å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ«   BASE64 æ–‡å­— â†’ æ•°å€¤
+	æ·»ãˆå­—ã®å®šç¾©åŸŸï¼š0x00 ï½ž 0x7F
 	@author D. S. Koba
 */
 const uchar_t cNA = 0xff;
@@ -70,8 +70,8 @@ const uchar_t TABLE_BASE64CharToValue[] = {
 
 
 /*!
-	•ÏŠ·ƒe[ƒuƒ‹ ”’l ¨ Modified BASE64 •¶Žš
-	“Y‚¦Žš‚Ì’è‹`ˆæF0 ` 63
+	å¤‰æ›ãƒ†ãƒ¼ãƒ–ãƒ« æ•°å€¤ â†’ Modified BASE64 æ–‡å­—
+	æ·»ãˆå­—ã®å®šç¾©åŸŸï¼š0 ï½ž 63
 	@author D. S. Koba
 */
 const char TABLE_ValueToBASE64Char[] = {
