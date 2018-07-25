@@ -1,5 +1,5 @@
-/*!	@file
-	ƒL[ƒ{[ƒhƒ}ƒNƒ
+ï»¿/*!	@file
+	ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒã‚¯ãƒ­
 
 	@author Norio Nakatani
 */
@@ -8,10 +8,10 @@
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, YAZAKI, aroka, genta, Moca, hor
-	Copyright (C) 2003, ‹S, ryoji, Moca
+	Copyright (C) 2003, é¬¼, ryoji, Moca
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
-	Copyright (C) 2006, ‚©‚ë‚Æ, ryoji
+	Copyright (C) 2006, ã‹ã‚ã¨, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, ryoji, nasukoji
@@ -45,8 +45,8 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
-#include "_os/OleTypes.h" //2003-02-21 ‹S
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ãƒ˜ãƒƒãƒ€æ•´ç†
+#include "_os/OleTypes.h" //2003-02-21 é¬¼
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"
@@ -84,12 +84,12 @@ void CMacro::ClearMacroParam()
 	return;
 }
 
-/*	ˆø”‚ÌŒ^U‚è•ª‚¯
-	‹@”\ID‚É‚æ‚Á‚ÄAŠú‘Ò‚·‚éŒ^‚ÍˆÙ‚È‚è‚Ü‚·B
-	‚»‚±‚ÅAˆø”‚ÌŒ^‚ğ‹@”\ID‚É‚æ‚Á‚ÄU‚è•ª‚¯‚ÄAAddParam‚µ‚Ü‚µ‚å‚¤B
-	‚½‚Æ‚¦‚ÎAF_INSTEXT_W‚Ì1‚Â‚ßA2‚Â‚ß‚Ìˆø”‚Í•¶š—ñA3‚Â‚ß‚Ìˆø”‚Íint‚¾‚Á‚½‚è‚·‚é‚Ì‚àA‚±‚±‚Å‚¤‚Ü‚­U‚è•ª‚¯‚ç‚ê‚é‚±‚Æ‚ğŠú‘Ò‚µ‚Ä‚¢‚Ü‚·B
+/*	å¼•æ•°ã®å‹æŒ¯ã‚Šåˆ†ã‘
+	æ©Ÿèƒ½IDã«ã‚ˆã£ã¦ã€æœŸå¾…ã™ã‚‹å‹ã¯ç•°ãªã‚Šã¾ã™ã€‚
+	ãã“ã§ã€å¼•æ•°ã®å‹ã‚’æ©Ÿèƒ½IDã«ã‚ˆã£ã¦æŒ¯ã‚Šåˆ†ã‘ã¦ã€AddParamã—ã¾ã—ã‚‡ã†ã€‚
+	ãŸã¨ãˆã°ã€F_INSTEXT_Wã®1ã¤ã‚ã€2ã¤ã‚ã®å¼•æ•°ã¯æ–‡å­—åˆ—ã€3ã¤ã‚ã®å¼•æ•°ã¯intã ã£ãŸã‚Šã™ã‚‹ã®ã‚‚ã€ã“ã“ã§ã†ã¾ãæŒ¯ã‚Šåˆ†ã‘ã‚‰ã‚Œã‚‹ã“ã¨ã‚’æœŸå¾…ã—ã¦ã„ã¾ã™ã€‚
 
-	lParam‚ÍAHandleCommand‚Ìparam‚É’l‚ğ“n‚µ‚Ä‚¢‚éƒRƒ}ƒ“ƒh‚Ìê‡‚É‚Ì‚İg‚¢‚Ü‚·B
+	lParamã¯ã€HandleCommandã®paramã«å€¤ã‚’æ¸¡ã—ã¦ã„ã‚‹ã‚³ãƒãƒ³ãƒ‰ã®å ´åˆã«ã®ã¿ä½¿ã„ã¾ã™ã€‚
 */
 void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 {
@@ -158,13 +158,13 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_FILEOPEN:
 	case F_EXECEXTMACRO:
 		{
-			AddStringParam( (const wchar_t*)lParam );	//	lParam‚ğ’Ç‰ÁB
+			AddStringParam( (const wchar_t*)lParam );	//	lParamã‚’è¿½åŠ ã€‚
 		}
 		break;
 
 	case F_EXECMD:
 		{
-			AddStringParam( (const wchar_t*)lParam );	//	lParam‚ğ’Ç‰ÁB
+			AddStringParam( (const wchar_t*)lParam );	//	lParamã‚’è¿½åŠ ã€‚
 			AddIntParam( (int)lParams[1] );
 			if( lParams[2] != 0 ){
 				AddStringParam( (const wchar_t*)lParams[2] );
@@ -172,7 +172,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		}
 		break;
 
-	case F_JUMP:	//	w’ès‚ÖƒWƒƒƒ“ƒvi‚½‚¾‚µPL/SQLƒRƒ“ƒpƒCƒ‹ƒGƒ‰[s‚Ö‚ÌƒWƒƒƒ“ƒv‚Í–¢‘Î‰j
+	case F_JUMP:	//	æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ï¼ˆãŸã ã—PL/SQLã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼è¡Œã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—ã¯æœªå¯¾å¿œï¼‰
 		{
 			AddIntParam( pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
@@ -186,7 +186,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		{
-			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParam‚ğ’Ç‰ÁB
+			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamã‚’è¿½åŠ ã€‚
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -201,8 +201,8 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_REPLACE:
 	case F_REPLACE_ALL:
 		{
-			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParam‚ğ’Ç‰ÁB
-			AddStringParam( pcEditView->m_pcEditWnd->m_cDlgReplace.m_strText2.c_str() );	//	lParam‚ğ’Ç‰ÁB
+			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamã‚’è¿½åŠ ã€‚
+			AddStringParam( pcEditView->m_pcEditWnd->m_cDlgReplace.m_strText2.c_str() );	//	lParamã‚’è¿½åŠ ã€‚
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -211,9 +211,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareData‚É“ü‚ê‚È‚­‚Ä‚¢‚¢‚ÌH
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	’uŠ·‚·‚é‚Í‘I‚×‚È‚¢
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitƒVƒtƒgi0x100‚ÅŠ|‚¯Zj
+			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataã«å…¥ã‚Œãªãã¦ã„ã„ã®ï¼Ÿ
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	ç½®æ›ã™ã‚‹æ™‚ã¯é¸ã¹ãªã„
+			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitã‚·ãƒ•ãƒˆï¼ˆ0x100ã§æ›ã‘ç®—ï¼‰
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll				? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
@@ -232,18 +232,18 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
 				AddStringParam( pcEditView->m_pcEditWnd->m_cDlgGrepReplace.m_strText2.c_str() );
 			}
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParam‚ğ’Ç‰ÁB
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParam‚ğ’Ç‰ÁB
+			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParamã‚’è¿½åŠ ã€‚
+			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParamã‚’è¿½åŠ ã€‚
 
 			LPARAM lFlag = 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
-			//			‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚é(0x02.–¢À‘•)
+			//			ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹(0x02.æœªå®Ÿè£…)
 			lFlag |= pcDlgGrep->m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
 			lFlag |= pcDlgGrep->m_sSearchOption.bRegularExp	? 0x08 : 0x00;
-			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca ‰ºˆÊŒİŠ·«‚Ì‚½‚ß‚Ìˆ—
+			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca ä¸‹ä½äº’æ›æ€§ã®ãŸã‚ã®å‡¦ç†
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType == 1	? 0x20 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType == 2	? 0x400000 : 0x00;	// 2014.09.23 ”Ûƒqƒbƒgs
-			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareData‚É“ü‚ê‚È‚­‚Ä‚¢‚¢‚ÌH
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType == 2	? 0x400000 : 0x00;	// 2014.09.23 å¦ãƒ’ãƒƒãƒˆè¡Œ
+			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataã«å…¥ã‚Œãªãã¦ã„ã„ã®ï¼Ÿ
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 3)		? 0x80 : 0x00;
 			ECodeType code = GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet;
 			if( IsValidCodeType(code) || CODE_AUTODETECT == code ){
@@ -261,14 +261,14 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			AddIntParam( code );
 		}
 		break;
-	/*	”’lƒpƒ‰ƒ[ƒ^‚ğ’Ç‰Á */
+	/*	æ•°å€¤ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¿½åŠ  */
 	case F_WCHAR:
 	case F_CTRL_CODE:
-		AddIntParam( lParam ); //¦•¶šƒR[ƒh‚ª“n‚³‚ê‚é
+		AddIntParam( lParam ); //â€»æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒæ¸¡ã•ã‚Œã‚‹
 		break;
 	case F_CHGMOD_EOL:
 		{
-			// EOLƒ^ƒCƒv’l‚ğƒ}ƒNƒˆø”’l‚É•ÏŠ·‚·‚é	// 2009.08.18 ryoji
+			// EOLã‚¿ã‚¤ãƒ—å€¤ã‚’ãƒã‚¯ãƒ­å¼•æ•°å€¤ã«å¤‰æ›ã™ã‚‹	// 2009.08.18 ryoji
 			int nFlag;
 			switch( (int)lParam ){
 			case EOL_CRLF:	nFlag = 1; break;
@@ -290,7 +290,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			AddIntParam( lParams[2] );
 		}
 		break;
-	// 2014.01.15 PageUp/DownŒn’Ç‰Á
+	// 2014.01.15 PageUp/Downç³»è¿½åŠ 
 	case F_HalfPageUp:
 	case F_HalfPageUp_Sel:
 	case F_HalfPageDown:
@@ -312,7 +312,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		}
 		break;
 
-	/*	•W€‚àƒpƒ‰ƒ[ƒ^‚ğ’Ç‰Á */
+	/*	æ¨™æº–ã‚‚ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¿½åŠ  */
 	default:
 		AddIntParam( lParam );
 		break;
@@ -338,13 +338,13 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 void CMacroParam::SetIntParam( const int nParam )
 {
 	Clear();
-	m_pData = new WCHAR[16];	//	”’lŠi”[iÅ‘å16Œ…j—p
+	m_pData = new WCHAR[16];	//	æ•°å€¤æ ¼ç´ï¼ˆæœ€å¤§16æ¡ï¼‰ç”¨
 	_itow(nParam, m_pData, 10);
 	m_nDataLen = auto_strlen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }
 
-/*	ˆø”‚É•¶š—ñ‚ğ’Ç‰ÁB
+/*	å¼•æ•°ã«æ–‡å­—åˆ—ã‚’è¿½åŠ ã€‚
 */
 void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 {
@@ -352,7 +352,7 @@ void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 
 	param->SetStringParam( szParam, nLength );
 
-	//	ƒŠƒXƒg‚Ì®‡«‚ğ•Û‚Â
+	//	ãƒªã‚¹ãƒˆã®æ•´åˆæ€§ã‚’ä¿ã¤
 	if (m_pParamTop){
 		m_pParamBot->m_pNext = param; 
 		m_pParamBot = param;
@@ -363,7 +363,7 @@ void CMacro::AddStringParam( const WCHAR* szParam, int nLength )
 	}
 }
 
-/*	ˆø”‚É”’l‚ğ’Ç‰ÁB
+/*	å¼•æ•°ã«æ•°å€¤ã‚’è¿½åŠ ã€‚
 */
 void CMacro::AddIntParam( const int nParam )
 {
@@ -371,7 +371,7 @@ void CMacro::AddIntParam( const int nParam )
 
 	param->SetIntParam( nParam );
 
-	//	ƒŠƒXƒg‚Ì®‡«‚ğ•Û‚Â
+	//	ãƒªã‚¹ãƒˆã®æ•´åˆæ€§ã‚’ä¿ã¤
 	if (m_pParamTop){
 		m_pParamBot->m_pNext = param; 
 		m_pParamBot = param;
@@ -382,19 +382,19 @@ void CMacro::AddIntParam( const int nParam )
 	}
 }
 
-/**	ƒRƒ}ƒ“ƒh‚ğÀs‚·‚éipcEditView->GetCommander().HandleCommand‚ğ”­s‚·‚éj
-	m_nFuncID‚É‚æ‚Á‚ÄAˆø”‚ÌŒ^‚ğ³Šm‚É“n‚µ‚Ä‚ ‚°‚Ü‚µ‚å‚¤B
+/**	ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ï¼ˆpcEditView->GetCommander().HandleCommandã‚’ç™ºè¡Œã™ã‚‹ï¼‰
+	m_nFuncIDã«ã‚ˆã£ã¦ã€å¼•æ•°ã®å‹ã‚’æ­£ç¢ºã«æ¸¡ã—ã¦ã‚ã’ã¾ã—ã‚‡ã†ã€‚
 	
 	@note
-	paramArr‚Í‰½‚©‚Ìƒ|ƒCƒ“ƒ^iƒAƒhƒŒƒXj‚ğLONG‚Å‚ ‚ç‚í‚µ‚½’l‚É‚È‚è‚Ü‚·B
-	ˆø”‚ªchar*‚Ì‚Æ‚«‚ÍAparamArr[i]‚ğ‚»‚Ì‚Ü‚ÜHandleCommand‚É“n‚µ‚Ä‚©‚Ü‚¢‚Ü‚¹‚ñB
-	ˆø”‚ªint‚Ì‚Æ‚«‚ÍA*((int*)paramArr[i])‚Æ‚µ‚Ä“n‚µ‚Ü‚µ‚å‚¤B
+	paramArrã¯ä½•ã‹ã®ãƒã‚¤ãƒ³ã‚¿ï¼ˆã‚¢ãƒ‰ãƒ¬ã‚¹ï¼‰ã‚’LONGã§ã‚ã‚‰ã‚ã—ãŸå€¤ã«ãªã‚Šã¾ã™ã€‚
+	å¼•æ•°ãŒchar*ã®ã¨ãã¯ã€paramArr[i]ã‚’ãã®ã¾ã¾HandleCommandã«æ¸¡ã—ã¦ã‹ã¾ã„ã¾ã›ã‚“ã€‚
+	å¼•æ•°ãŒintã®ã¨ãã¯ã€*((int*)paramArr[i])ã¨ã—ã¦æ¸¡ã—ã¾ã—ã‚‡ã†ã€‚
 	
-	‚½‚Æ‚¦‚ÎAF_INSTEXT_W‚Ì1‚Â‚ßA2‚Â‚ß‚Ìˆø”‚Í•¶š—ñA3‚Â‚ß‚Ìˆø”‚ÍintA4‚Â‚ß‚Ìˆø”‚ª–³‚µB‚¾‚Á‚½‚è‚·‚éê‡‚ÍAŸ‚Ì‚æ‚¤‚É‚µ‚Ü‚µ‚å‚¤B
+	ãŸã¨ãˆã°ã€F_INSTEXT_Wã®1ã¤ã‚ã€2ã¤ã‚ã®å¼•æ•°ã¯æ–‡å­—åˆ—ã€3ã¤ã‚ã®å¼•æ•°ã¯intã€4ã¤ã‚ã®å¼•æ•°ãŒç„¡ã—ã€‚ã ã£ãŸã‚Šã™ã‚‹å ´åˆã¯ã€æ¬¡ã®ã‚ˆã†ã«ã—ã¾ã—ã‚‡ã†ã€‚
 	pcEditView->GetCommander().HandleCommand( m_nFuncID, true, paramArr[0], paramArr[1], *((int*)paramArr[2]), 0);
 	
-	@date 2007.07.20 genta : flags’Ç‰ÁDFA_FROMMACRO‚Íflags‚ÉŠÜ‚ß‚Ä“n‚·‚à‚Ì‚Æ‚·‚éD
-		(1ƒRƒ}ƒ“ƒh”­s–ˆ‚É–ˆ‰ñ‰‰Z‚·‚é•K—v‚Í‚È‚¢‚Ì‚Å)
+	@date 2007.07.20 genta : flagsè¿½åŠ ï¼FA_FROMMACROã¯flagsã«å«ã‚ã¦æ¸¡ã™ã‚‚ã®ã¨ã™ã‚‹ï¼
+		(1ã‚³ãƒãƒ³ãƒ‰ç™ºè¡Œæ¯ã«æ¯å›æ¼”ç®—ã™ã‚‹å¿…è¦ã¯ãªã„ã®ã§)
 */
 bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 {
@@ -405,7 +405,7 @@ bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 	CMacroParam* p = m_pParamTop;
 	int i = 0;
 	for (i = 0; i < maxArg; i++) {
-		if (!p) break;	//	p‚ª–³‚¯‚ê‚Îbreak;
+		if (!p) break;	//	pãŒç„¡ã‘ã‚Œã°break;
 		paramArr[i] = p->m_pData;
 		paramLenArr[i] = wcslen(paramArr[i]);
 		p = p->m_pNext;
@@ -451,11 +451,11 @@ static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
 	return (arg == NULL ? def_val: arg);
 }
 
-/*	CMacro‚ğÄŒ»‚·‚é‚½‚ß‚Ìî•ñ‚ğhFile‚É‘‚«o‚µ‚Ü‚·B
+/*	CMacroã‚’å†ç¾ã™ã‚‹ãŸã‚ã®æƒ…å ±ã‚’hFileã«æ›¸ãå‡ºã—ã¾ã™ã€‚
 
-	InsText("‚È‚ñ‚Æ‚©");
-	‚Ì‚æ‚¤‚ÉB
-	AddLParamˆÈŠO‚ÉCKeyMacroMgr::LoadKeyMacro‚É‚æ‚Á‚Ä‚àCMacro‚ªì¬‚³‚ê‚é“_‚É’ˆÓ
+	InsText("ãªã‚“ã¨ã‹");
+	ã®ã‚ˆã†ã«ã€‚
+	AddLParamä»¥å¤–ã«CKeyMacroMgr::LoadKeyMacroã«ã‚ˆã£ã¦ã‚‚CMacroãŒä½œæˆã•ã‚Œã‚‹ç‚¹ã«æ³¨æ„
 */
 void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 {
@@ -466,10 +466,10 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	CNativeW		cmemWork;
 	int nFuncID = m_nFuncID;
 
-	/* 2002.2.2 YAZAKI CSMacroMgr‚É—Š‚Ş */
+	/* 2002.2.2 YAZAKI CSMacroMgrã«é ¼ã‚€ */
 	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
-		// 2014.01.24 Moca ƒ}ƒNƒ‘‚«o‚µ‚ğm_eType‚ğ’Ç‰Á‚µ‚Ä“‡
-		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"‚ğíœ
+		// 2014.01.24 Moca ãƒã‚¯ãƒ­æ›¸ãå‡ºã—ã‚’m_eTypeã‚’è¿½åŠ ã—ã¦çµ±åˆ
+		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"ã‚’å‰Šé™¤
 		CMacroParam* pParam = m_pParamTop;
 		while( pParam ){
 			if( pParam != m_pParamTop ){
@@ -523,17 +523,17 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	out.WriteF( LSW(STR_ERR_DLGMACRO01) );
 }
 
-/**	ƒ}ƒNƒˆø”•ÏŠ·
+/**	ãƒã‚¯ãƒ­å¼•æ•°å¤‰æ›
 
-	MacroƒRƒ}ƒ“ƒh‚ğpcEditView->GetCommander().HandleCommand‚Éˆø‚«“n‚·D
-	ˆø”‚ª‚È‚¢ƒ}ƒNƒ‚ğœ‚«Cƒ}ƒNƒ‚ÆHandleCommand‚Å‚Ì‘Î‰‚ğ‚±‚±‚Å’è‹`‚·‚é•K—v‚ª‚ ‚éD
+	Macroã‚³ãƒãƒ³ãƒ‰ã‚’pcEditView->GetCommander().HandleCommandã«å¼•ãæ¸¡ã™ï¼
+	å¼•æ•°ãŒãªã„ãƒã‚¯ãƒ­ã‚’é™¤ãï¼Œãƒã‚¯ãƒ­ã¨HandleCommandã§ã®å¯¾å¿œã‚’ã“ã“ã§å®šç¾©ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ï¼
 
-	@param pcEditView	[in]	‘€ì‘ÎÛEditView
-	@param Index	[in] ‰ºˆÊ16bit: ‹@”\ID, ãˆÊƒ[ƒh‚Í‚»‚Ì‚Ü‚ÜCMacro::HandleCommand()‚É“n‚·D
-	@param Argument [in] ˆø”
-	@param ArgSize	[in] ˆø”‚Ì”
+	@param pcEditView	[in]	æ“ä½œå¯¾è±¡EditView
+	@param Index	[in] ä¸‹ä½16bit: æ©Ÿèƒ½ID, ä¸Šä½ãƒ¯ãƒ¼ãƒ‰ã¯ãã®ã¾ã¾CMacro::HandleCommand()ã«æ¸¡ã™ï¼
+	@param Argument [in] å¼•æ•°
+	@param ArgSize	[in] å¼•æ•°ã®æ•°
 	
-	@date 2007.07.08 genta Index‚ÌƒRƒ}ƒ“ƒh”Ô†‚ğ‰ºˆÊƒ[ƒh‚É§ŒÀ
+	@date 2007.07.08 genta Indexã®ã‚³ãƒãƒ³ãƒ‰ç•ªå·ã‚’ä¸‹ä½ãƒ¯ãƒ¼ãƒ‰ã«åˆ¶é™
 */
 bool CMacro::HandleCommand(
 	CEditView*			pcEditView,
@@ -549,8 +549,8 @@ bool CMacro::HandleCommand(
 
 	switch ( LOWORD(Index) ) 
 	{
-	case F_WCHAR:		//	•¶š“ü—ÍB”’l‚Í•¶šƒR[ƒh
-	case F_IME_CHAR:	//	“ú–{Œê“ü—Í
+	case F_WCHAR:		//	æ–‡å­—å…¥åŠ›ã€‚æ•°å€¤ã¯æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	case F_IME_CHAR:	//	æ—¥æœ¬èªå…¥åŠ›
 	case F_CTRL_CODE:
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
@@ -564,16 +564,16 @@ bool CMacro::HandleCommand(
 		}
 	case F_PASTE:	// 2011.06.26 Moca
 	case F_PASTEBOX:	// 2011.06.26 Moca
-	case F_TEXTWRAPMETHOD:	//	ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@‚Ìw’èB”’l‚ÍA0x0iÜ‚è•Ô‚³‚È‚¢jA0x1iw’èŒ…‚ÅÜ‚è•Ô‚·jA0x2i‰E’[‚ÅÜ‚è•Ô‚·j	// 2008.05.30 nasukoji
-	case F_GOLINETOP:	//	s“ª‚ÉˆÚ“®B”’l‚ÍA0x0iƒfƒtƒHƒ‹ƒgjA0x1i‹ó”’‚ğ–³‹‚µ‚Äæ“ª‚ÉˆÚ“®jA0x2i–¢’è‹`jA0x4i‘I‘ğ‚µ‚ÄˆÚ“®jA0x8i‰üs’PˆÊ‚Åæ“ª‚ÉˆÚ“®j
+	case F_TEXTWRAPMETHOD:	//	ãƒ†ã‚­ã‚¹ãƒˆã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã®æŒ‡å®šã€‚æ•°å€¤ã¯ã€0x0ï¼ˆæŠ˜ã‚Šè¿”ã•ãªã„ï¼‰ã€0x1ï¼ˆæŒ‡å®šæ¡ã§æŠ˜ã‚Šè¿”ã™ï¼‰ã€0x2ï¼ˆå³ç«¯ã§æŠ˜ã‚Šè¿”ã™ï¼‰	// 2008.05.30 nasukoji
+	case F_GOLINETOP:	//	è¡Œé ­ã«ç§»å‹•ã€‚æ•°å€¤ã¯ã€0x0ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆï¼‰ã€0x1ï¼ˆç©ºç™½ã‚’ç„¡è¦–ã—ã¦å…ˆé ­ã«ç§»å‹•ï¼‰ã€0x2ï¼ˆæœªå®šç¾©ï¼‰ã€0x4ï¼ˆé¸æŠã—ã¦ç§»å‹•ï¼‰ã€0x8ï¼ˆæ”¹è¡Œå˜ä½ã§å…ˆé ­ã«ç§»å‹•ï¼‰
 	case F_GOLINETOP_SEL:
-	case F_GOLINEEND:	//	s––‚ÉˆÚ“®
+	case F_GOLINEEND:	//	è¡Œæœ«ã«ç§»å‹•
 	case F_GOLINEEND_SEL:
-	case F_SELECT_COUNT_MODE:	//	•¶šƒJƒEƒ“ƒg‚Ì•û–@‚ğw’èB”’l‚ÍA0x0i•ÏX‚¹‚¸æ“¾‚Ì‚İjA0x1i•¶š”jA0x2iƒoƒCƒg”jA0x3i•¶š”ÌƒoƒCƒg”ƒgƒOƒ‹j	// 2009.07.06 syat
-	case F_OUTLINE:	//	ƒAƒEƒgƒ‰ƒCƒ“‰ğÍ‚ÌƒAƒNƒVƒ‡ƒ“‚ğw’èB”’l‚ÍA0x0i‰æ–Ê•\¦jA0x1i‰æ–Ê•\¦•Ä‰ğÍjA0x2i‰æ–Ê•\¦ƒgƒOƒ‹j
+	case F_SELECT_COUNT_MODE:	//	æ–‡å­—ã‚«ã‚¦ãƒ³ãƒˆã®æ–¹æ³•ã‚’æŒ‡å®šã€‚æ•°å€¤ã¯ã€0x0ï¼ˆå¤‰æ›´ã›ãšå–å¾—ã®ã¿ï¼‰ã€0x1ï¼ˆæ–‡å­—æ•°ï¼‰ã€0x2ï¼ˆãƒã‚¤ãƒˆæ•°ï¼‰ã€0x3ï¼ˆæ–‡å­—æ•°â‡”ãƒã‚¤ãƒˆæ•°ãƒˆã‚°ãƒ«ï¼‰	// 2009.07.06 syat
+	case F_OUTLINE:	//	ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚’æŒ‡å®šã€‚æ•°å€¤ã¯ã€0x0ï¼ˆç”»é¢è¡¨ç¤ºï¼‰ã€0x1ï¼ˆç”»é¢è¡¨ç¤ºï¼†å†è§£æï¼‰ã€0x2ï¼ˆç”»é¢è¡¨ç¤ºãƒˆã‚°ãƒ«ï¼‰
 	case F_CHANGETYPE:
 	case F_TOGGLE_KEY_SEARCH:
-		//	ˆê‚Â–Ú‚Ìˆø”‚ª”’lB
+		//	ä¸€ã¤ç›®ã®å¼•æ•°ãŒæ•°å€¤ã€‚
 	case F_WHEELUP:
 	case F_WHEELDOWN:
 	case F_WHEELLEFT:
@@ -611,10 +611,10 @@ bool CMacro::HandleCommand(
 	case F_1PageUp_BOX:
 	case F_1PageDown_BOX:
 		{
-			// 0: ‹¤’Êİ’è
-			// 1: true(ƒ}ƒNƒ‚ÌƒfƒtƒHƒ‹ƒg’l)
+			// 0: å…±é€šè¨­å®š
+			// 1: true(ãƒã‚¯ãƒ­ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤)
 			// 2: false
-			// ƒ}ƒNƒ‚ÌƒfƒtƒHƒ‹ƒg’l‚Ítrue(1)‚¾‚ªACEditView‘¤‚ÌƒfƒtƒHƒ‹ƒg‚Í‹¤’Êİ’è(0)
+			// ãƒã‚¯ãƒ­ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã¯true(1)ã ãŒã€CEditViewå´ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯å…±é€šè¨­å®š(0)
 			int nBoxLock = wtoi_def(Argument[nOptions == 1 ? 0 : 1], 1);
 			if( nOptions == 1 ){
 				pcEditView->GetCommander().HandleCommand( Index, true, nBoxLock, 0, 0, 0 );
@@ -623,7 +623,7 @@ bool CMacro::HandleCommand(
 			}
 		}
 		break;
-	case F_CHGMOD_EOL:	//	“ü—Í‰üsƒR[ƒhw’èBEEolType‚Ì”’l‚ğw’èB2003.06.23 Moca
+	case F_CHGMOD_EOL:	//	å…¥åŠ›æ”¹è¡Œã‚³ãƒ¼ãƒ‰æŒ‡å®šã€‚EEolTypeã®æ•°å€¤ã‚’æŒ‡å®šã€‚2003.06.23 Moca
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
@@ -635,7 +635,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			// ƒ}ƒNƒˆø”’l‚ğEOLƒ^ƒCƒv’l‚É•ÏŠ·‚·‚é	// 2009.08.18 ryoji
+			// ãƒã‚¯ãƒ­å¼•æ•°å€¤ã‚’EOLã‚¿ã‚¤ãƒ—å€¤ã«å¤‰æ›ã™ã‚‹	// 2009.08.18 ryoji
 			int nEol;
 			switch( Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ){
 			case 1:		nEol = EOL_CRLF; break;
@@ -652,7 +652,7 @@ bool CMacro::HandleCommand(
 			}
 		}
 		break;
-	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta ’Ç‰Á ƒeƒLƒXƒgˆø”1‚Â‚ğæ‚éƒ}ƒNƒ‚Í‚±‚±‚É“‡‚µ‚Ä‚¢‚±‚¤D
+	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta è¿½åŠ  ãƒ†ã‚­ã‚¹ãƒˆå¼•æ•°1ã¤ã‚’å–ã‚‹ãƒã‚¯ãƒ­ã¯ã“ã“ã«çµ±åˆã—ã¦ã„ã“ã†ï¼
 		{
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
@@ -664,14 +664,14 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0 );	//	•W€
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0 );	//	æ¨™æº–
 		}
 		}
 		break;
-	case F_INSTEXT_W:		//	ƒeƒLƒXƒg‘}“ü
-	case F_ADDTAIL_W:		//	‚±‚Ì‘€ì‚ÍƒL[ƒ{[ƒh‘€ì‚Å‚Í‘¶İ‚µ‚È‚¢‚Ì‚Å•Û‘¶‚·‚é‚±‚Æ‚ª‚Å‚«‚È‚¢H
+	case F_INSTEXT_W:		//	ãƒ†ã‚­ã‚¹ãƒˆæŒ¿å…¥
+	case F_ADDTAIL_W:		//	ã“ã®æ“ä½œã¯ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æ“ä½œã§ã¯å­˜åœ¨ã—ãªã„ã®ã§ä¿å­˜ã™ã‚‹ã“ã¨ãŒã§ããªã„ï¼Ÿ
 	case F_INSBOXTEXT:
-		//	ˆê‚Â–Ú‚Ìˆø”‚ª•¶š—ñB
+		//	ä¸€ã¤ç›®ã®å¼•æ•°ãŒæ–‡å­—åˆ—ã€‚
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
 				NULL,
@@ -683,10 +683,10 @@ bool CMacro::HandleCommand(
 		}
 		{
 			int len = ArgLengths[0];
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], len, 0, 0 );	//	•W€
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], len, 0, 0 );	//	æ¨™æº–
 		}
 		break;
-	/* ˆê‚Â–ÚA“ñ‚Â–Ú‚Æ‚àˆø”‚Í”’l */
+	/* ä¸€ã¤ç›®ã€äºŒã¤ç›®ã¨ã‚‚å¼•æ•°ã¯æ•°å€¤ */
 	case F_CHG_CHARSET:
 		{
 			int		nCharSet = ( Argument[0] == NULL || Argument[0][0] == '\0' ) ? CODE_NONE : _wtoi(Argument[0]);
@@ -694,15 +694,15 @@ bool CMacro::HandleCommand(
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)nCharSet, (LPARAM)bBOM, 0, 0 );
 		}
 		break;
-	case F_JUMP:		//	w’ès‚ÖƒWƒƒƒ“ƒvi‚½‚¾‚µPL/SQLƒRƒ“ƒpƒCƒ‹ƒGƒ‰[s‚Ö‚ÌƒWƒƒƒ“ƒv‚Í–¢‘Î‰j
-		//	Argument[0]‚ÖƒWƒƒƒ“ƒvBƒIƒvƒVƒ‡ƒ“‚ÍArgument[1]‚ÉB
-		//		******** ˆÈ‰ºus”Ô†‚Ì’PˆÊv ********
-		//		0x00	Ü‚è•Ô‚µ’PˆÊ‚Ìs”Ô†
-		//		0x01	‰üs’PˆÊ‚Ìs”Ô†
+	case F_JUMP:		//	æŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ï¼ˆãŸã ã—PL/SQLã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼è¡Œã¸ã®ã‚¸ãƒ£ãƒ³ãƒ—ã¯æœªå¯¾å¿œï¼‰
+		//	Argument[0]ã¸ã‚¸ãƒ£ãƒ³ãƒ—ã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[1]ã«ã€‚
+		//		******** ä»¥ä¸‹ã€Œè¡Œç•ªå·ã®å˜ä½ã€ ********
+		//		0x00	æŠ˜ã‚Šè¿”ã—å˜ä½ã®è¡Œç•ªå·
+		//		0x01	æ”¹è¡Œå˜ä½ã®è¡Œç•ªå·
 		//		**************************************
-		//		0x02	PL/SQLƒRƒ“ƒpƒCƒ‹ƒGƒ‰[s‚ğˆ—‚·‚é
-		//		–¢’è‹`	ƒeƒLƒXƒg‚Ì s–Ú‚ğƒuƒƒbƒN‚Ì1s–Ú‚Æ‚·‚é
-		//		–¢’è‹`	ŒŸo‚³‚ê‚½PL/SQLƒpƒbƒP[ƒW‚ÌƒuƒƒbƒN‚©‚ç‘I‘ğ
+		//		0x02	PL/SQLã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼è¡Œã‚’å‡¦ç†ã™ã‚‹
+		//		æœªå®šç¾©	ãƒ†ã‚­ã‚¹ãƒˆã®â–¡è¡Œç›®ã‚’ãƒ–ãƒ­ãƒƒã‚¯ã®1è¡Œç›®ã¨ã™ã‚‹
+		//		æœªå®šç¾©	æ¤œå‡ºã•ã‚ŒãŸPL/SQLãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®ãƒ–ãƒ­ãƒƒã‚¯ã‹ã‚‰é¸æŠ
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
 				NULL,
@@ -713,14 +713,14 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ƒWƒƒƒ“ƒvæ
-			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // ƒfƒtƒHƒ‹ƒg1
+			pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ã‚¸ãƒ£ãƒ³ãƒ—å…ˆ
+			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ1
 			GetDllShareData().m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
 			pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
-			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	•W€
+			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	æ¨™æº–
 		}
 		break;
-	/*	ˆê‚Â–Ú‚Ìˆø”‚Í•¶š—ñA“ñ‚Â–Ú‚Ìˆø”‚Í”’l	*/
+	/*	ä¸€ã¤ç›®ã®å¼•æ•°ã¯æ–‡å­—åˆ—ã€äºŒã¤ç›®ã®å¼•æ•°ã¯æ•°å€¤	*/
 	case F_BOOKMARK_PATTERN:	//2002.02.08 hor
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
@@ -734,16 +734,16 @@ bool CMacro::HandleCommand(
 		/* NO BREAK */
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
-		//	Argument[0] ‚ğŒŸõB(È—ªAŒ³‚ÌŒŸõ•¶š—ñEƒIƒvƒVƒ‡ƒ“‚ğg‚¤)
-		//	Argument[1]:ƒIƒvƒVƒ‡ƒ“ (È—ªA0‚Ì‚İ‚È‚·)
-		//		0x01	’PŒê’PˆÊ‚Å’T‚·
-		//		0x02	‰p‘å•¶š‚Æ¬•¶š‚ğ‹æ•Ê‚·‚é
-		//		0x04	³‹K•\Œ»
-		//		0x08	Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦
-		//		0x10	ŒŸõƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é
-		//		0x20	æ“ªi––”öj‚©‚çÄŒŸõ‚·‚é
-		//		0x800	(ƒ}ƒNƒê—p)ŒŸõƒL[‚ğ—š—ğ‚É“o˜^‚µ‚È‚¢
-		//		0x1000	(ƒ}ƒNƒê—p)ŒŸõƒIƒvƒVƒ‡ƒ“‚ğŒ³‚É–ß‚·
+		//	Argument[0] ã‚’æ¤œç´¢ã€‚(çœç•¥æ™‚ã€å…ƒã®æ¤œç´¢æ–‡å­—åˆ—ãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä½¿ã†)
+		//	Argument[1]:ã‚ªãƒ—ã‚·ãƒ§ãƒ³ (çœç•¥æ™‚ã€0ã®ã¿ãªã™)
+		//		0x01	å˜èªå˜ä½ã§æ¢ã™
+		//		0x02	è‹±å¤§æ–‡å­—ã¨å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹
+		//		0x04	æ­£è¦è¡¨ç¾
+		//		0x08	è¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+		//		0x10	æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+		//		0x20	å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ã™ã‚‹
+		//		0x800	(ãƒã‚¯ãƒ­å°‚ç”¨)æ¤œç´¢ã‚­ãƒ¼ã‚’å±¥æ­´ã«ç™»éŒ²ã—ãªã„
+		//		0x1000	(ãƒã‚¯ãƒ­å°‚ç”¨)æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’å…ƒã«æˆ»ã™
 		{
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			SSearchOption sSearchOption;
@@ -768,7 +768,7 @@ bool CMacro::HandleCommand(
 			const WCHAR* pszSearchKey = wtow_def(Argument[0], L"");
 			int nLen = wcslen( pszSearchKey );
 			if( 0 < nLen ){
-				/* ³‹K•\Œ» */
+				/* æ­£è¦è¡¨ç¾ */
 				if( lFlag & 0x04
 					&& !CheckRegexpSyntax( Argument[0], NULL, true )
 				)
@@ -776,7 +776,7 @@ bool CMacro::HandleCommand(
 					break;
 				}
 
-				/* ŒŸõ•¶š—ñ */
+				/* æ¤œç´¢æ–‡å­—åˆ— */
 				if( nLen < _MAX_PATH && bAddHistory ){
 					CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
 					GetDllShareData().m_Common.m_sSearch.m_sSearchOption = sSearchOption;
@@ -786,13 +786,13 @@ bool CMacro::HandleCommand(
 				pcEditView->m_bCurSearchUpdate = true;
 				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 			}
-			//	İ’è’lƒoƒbƒNƒAƒbƒv
-			//	ƒ}ƒNƒƒpƒ‰ƒ[ƒ^¨İ’è’l•ÏŠ·
+			//	è¨­å®šå€¤ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
+			//	ãƒã‚¯ãƒ­ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿â†’è¨­å®šå€¤å¤‰æ›
 			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
-			//	ƒRƒ}ƒ“ƒh”­s
+			//	ã‚³ãƒãƒ³ãƒ‰ç™ºè¡Œ
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0);
 			if( bBackupFlag ){
 				GetDllShareData().m_Common.m_sSearch = backupFlags;
@@ -810,26 +810,26 @@ bool CMacro::HandleCommand(
 		}
 		break;
 	case F_DIFF:
-		//	Argument[0]‚ÆDiff·•ª•\¦BƒIƒvƒVƒ‡ƒ“‚ÍArgument[1]‚ÉB
+		//	Argument[0]ã¨Diffå·®åˆ†è¡¨ç¤ºã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[1]ã«ã€‚
 		//	Argument[1]:
-		//		Ÿ‚Ì”’l‚Ì˜aB
-		//		0x0001 -i ignore-case         ‘å•¶š¬•¶š“¯ˆê‹
-		//		0x0002 -w ignore-all-space    ‹ó”’–³‹
-		//		0x0004 -b ignore-space-change ‹ó”’•ÏX–³‹
-		//		0x0008 -B ignore-blank-lines  ‹ós–³‹
-		//		0x0010 -t expand-tabs         TAB-SPACE•ÏŠ·
-		//		0x0020    (•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ª‹Œƒtƒ@ƒCƒ‹)
-		//		0x0040    (DIFF·•ª‚ª‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW•\¦)
+		//		æ¬¡ã®æ•°å€¤ã®å’Œã€‚
+		//		0x0001 -i ignore-case         å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–
+		//		0x0002 -w ignore-all-space    ç©ºç™½ç„¡è¦–
+		//		0x0004 -b ignore-space-change ç©ºç™½å¤‰æ›´ç„¡è¦–
+		//		0x0008 -B ignore-blank-lines  ç©ºè¡Œç„¡è¦–
+		//		0x0010 -t expand-tabs         TAB-SPACEå¤‰æ›
+		//		0x0020    (ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ—§ãƒ•ã‚¡ã‚¤ãƒ«)
+		//		0x0040    (DIFFå·®åˆ†ãŒãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º)
 		/* NO BREAK */
 
 	case F_EXECMD:
-		//	Argument[0]‚ğÀsBƒIƒvƒVƒ‡ƒ“‚ÍArgument[1]‚ÉB
+		//	Argument[0]ã‚’å®Ÿè¡Œã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[1]ã«ã€‚
 		//	Argument[1]:
-		//		Ÿ‚Ì”’l‚Ì˜aB
-		//		0x01	•W€o—Í‚ğ“¾‚é
-		//		0x02	•W€o—Í‚ğƒLƒƒƒŒƒbƒgˆÊ’u‚É	//	2007.01.02 maru ˆø”‚ÌŠg’£
-		//		0x04	•ÒW’†ƒtƒ@ƒCƒ‹‚ğ•W€“ü—Í‚Ö	//	2007.01.02 maru ˆø”‚ÌŠg’£
-		//	Argument[2]:ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ
+		//		æ¬¡ã®æ•°å€¤ã®å’Œã€‚
+		//		0x01	æ¨™æº–å‡ºåŠ›ã‚’å¾—ã‚‹
+		//		0x02	æ¨™æº–å‡ºåŠ›ã‚’ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã«	//	2007.01.02 maru å¼•æ•°ã®æ‹¡å¼µ
+		//		0x04	ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¨™æº–å…¥åŠ›ã¸	//	2007.01.02 maru å¼•æ•°ã®æ‹¡å¼µ
+		//	Argument[2]:ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
 				NULL,
@@ -846,12 +846,12 @@ bool CMacro::HandleCommand(
 		}
 		break;
 
-	case F_TRACEOUT:		// 2006.05.01 ƒ}ƒNƒ—pƒAƒEƒgƒvƒbƒgƒEƒCƒ“ƒhƒE‚Éo—Í
-		//	Argument[0]‚ğo—ÍBƒIƒvƒVƒ‡ƒ“‚ÍArgument[1]‚ÉB
+	case F_TRACEOUT:		// 2006.05.01 ãƒã‚¯ãƒ­ç”¨ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã«å‡ºåŠ›
+		//	Argument[0]ã‚’å‡ºåŠ›ã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[1]ã«ã€‚
 		//	Argument[1]:
-		//		Ÿ‚Ì”’l‚Ì˜aB
-		//		0x01	ExpandParameter‚É‚æ‚é•¶š—ñ“WŠJ‚ğs‚¤
-		//		0x02	ƒeƒLƒXƒg––”ö‚É‰üsƒR[ƒh‚ğ•t‰Á‚µ‚È‚¢
+		//		æ¬¡ã®æ•°å€¤ã®å’Œã€‚
+		//		0x01	ExpandParameterã«ã‚ˆã‚‹æ–‡å­—åˆ—å±•é–‹ã‚’è¡Œã†
+		//		0x02	ãƒ†ã‚­ã‚¹ãƒˆæœ«å°¾ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’ä»˜åŠ ã—ãªã„
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
 				NULL,
@@ -866,18 +866,18 @@ bool CMacro::HandleCommand(
 		}
 		break;
 
-	/* ‚Í‚¶‚ß‚Ìˆø”‚Í•¶š—ñB‚Q‚Â–Ú‚Æ‚R‚Â–Ú‚Í”’l */
-	case F_PUTFILE:		// 2006.12.10 ì‹Æ’†ƒtƒ@ƒCƒ‹‚Ìˆêo—Í
-		//	Argument[0]‚Éo—ÍBArgument[1]‚É•¶šƒR[ƒhBƒIƒvƒVƒ‡ƒ“‚ÍArgument[2]‚ÉB
+	/* ã¯ã˜ã‚ã®å¼•æ•°ã¯æ–‡å­—åˆ—ã€‚ï¼’ã¤ç›®ã¨ï¼“ã¤ç›®ã¯æ•°å€¤ */
+	case F_PUTFILE:		// 2006.12.10 ä½œæ¥­ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¸€æ™‚å‡ºåŠ›
+		//	Argument[0]ã«å‡ºåŠ›ã€‚Argument[1]ã«æ–‡å­—ã‚³ãƒ¼ãƒ‰ã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[2]ã«ã€‚
 		//	Argument[2]:
-		//		Ÿ‚Ì’l‚Ì˜a
-		//		0x01	‘I‘ğ”ÍˆÍ‚ğo—Íi”ñ‘I‘ğó‘Ô‚È‚ç‹óƒtƒ@ƒCƒ‹‚ğ¶¬j
+		//		æ¬¡ã®å€¤ã®å’Œ
+		//		0x01	é¸æŠç¯„å›²ã‚’å‡ºåŠ›ï¼ˆéé¸æŠçŠ¶æ…‹ãªã‚‰ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç”Ÿæˆï¼‰
 		// no break
 
-	case F_INSFILE:		// 2006.12.10 ƒLƒƒƒŒƒbƒgˆÊ’u‚Éƒtƒ@ƒCƒ‹‘}“ü
-		//	Argument[0]‚Éo—ÍBArgument[1]‚É•¶šƒR[ƒhBƒIƒvƒVƒ‡ƒ“‚ÍArgument[2]‚ÉB
+	case F_INSFILE:		// 2006.12.10 ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ã«ãƒ•ã‚¡ã‚¤ãƒ«æŒ¿å…¥
+		//	Argument[0]ã«å‡ºåŠ›ã€‚Argument[1]ã«æ–‡å­—ã‚³ãƒ¼ãƒ‰ã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[2]ã«ã€‚
 		//	Argument[2]:
-		//		Œ»İ‚Í“Á‚É‚È‚µ
+		//		ç¾åœ¨ã¯ç‰¹ã«ãªã—
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO08));
@@ -895,31 +895,31 @@ bool CMacro::HandleCommand(
 		}
 		break;
 
-	/* ‚Í‚¶‚ß‚Ì2‚Â‚Ìˆø”‚Í•¶š—ñB3‚Â–Ú‚Í”’l */
+	/* ã¯ã˜ã‚ã®2ã¤ã®å¼•æ•°ã¯æ–‡å­—åˆ—ã€‚3ã¤ç›®ã¯æ•°å€¤ */
 	case F_REPLACE:
 	case F_REPLACE_ALL:
-		//	Argument[0]‚ğAArgument[1]‚É’uŠ·BƒIƒvƒVƒ‡ƒ“‚ÍArgument[2]‚Éi“ü‚ê‚é—\’èj
+		//	Argument[0]ã‚’ã€Argument[1]ã«ç½®æ›ã€‚ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯Argument[2]ã«ï¼ˆå…¥ã‚Œã‚‹äºˆå®šï¼‰
 		//	Argument[2]:
-		//		Ÿ‚Ì”’l‚Ì˜aB
-		//		0x001	’PŒê’PˆÊ‚Å’T‚·
-		//		0x002	‰p‘å•¶š‚Æ¬•¶š‚ğ‹æ•Ê‚·‚é
-		//		0x004	³‹K•\Œ»
-		//		0x008	Œ©‚Â‚©‚ç‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW‚ğ•\¦
-		//		0x010	ŒŸõƒ_ƒCƒAƒƒO‚ğ©“®“I‚É•Â‚¶‚é
-		//		0x020	æ“ªi––”öj‚©‚çÄŒŸõ‚·‚é
-		//		0x040	ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯‚é
-		//		******** ˆÈ‰ºu’uŠ·”ÍˆÍv ********
-		//		0x000	ƒtƒ@ƒCƒ‹‘S‘Ì
-		//		0x080	‘I‘ğ”ÍˆÍ
+		//		æ¬¡ã®æ•°å€¤ã®å’Œã€‚
+		//		0x001	å˜èªå˜ä½ã§æ¢ã™
+		//		0x002	è‹±å¤§æ–‡å­—ã¨å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹
+		//		0x004	æ­£è¦è¡¨ç¾
+		//		0x008	è¦‹ã¤ã‹ã‚‰ãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+		//		0x010	æ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è‡ªå‹•çš„ã«é–‰ã˜ã‚‹
+		//		0x020	å…ˆé ­ï¼ˆæœ«å°¾ï¼‰ã‹ã‚‰å†æ¤œç´¢ã™ã‚‹
+		//		0x040	ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘ã‚‹
+		//		******** ä»¥ä¸‹ã€Œç½®æ›ç¯„å›²ã€ ********
+		//		0x000	ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“
+		//		0x080	é¸æŠç¯„å›²
 		//		**********************************
-		//		******** ˆÈ‰ºu’uŠ·‘ÎÛv ********
-		//		0x000	Œ©‚Â‚©‚Á‚½•¶š—ñ‚Æ’uŠ·
-		//		0x100	Œ©‚Â‚©‚Á‚½•¶š—ñ‚Ì‘O‚É‘}“ü
-		//		0x200	Œ©‚Â‚©‚Á‚½•¶š—ñ‚ÌŒã‚É’Ç‰Á
+		//		******** ä»¥ä¸‹ã€Œç½®æ›å¯¾è±¡ã€ ********
+		//		0x000	è¦‹ã¤ã‹ã£ãŸæ–‡å­—åˆ—ã¨ç½®æ›
+		//		0x100	è¦‹ã¤ã‹ã£ãŸæ–‡å­—åˆ—ã®å‰ã«æŒ¿å…¥
+		//		0x200	è¦‹ã¤ã‹ã£ãŸæ–‡å­—åˆ—ã®å¾Œã«è¿½åŠ 
 		//		**********************************
-		//		0x400	u‚·‚×‚Ä’uŠ·v‚Í’uŠ·‚ÌŒJ•Ô‚µiON:˜A‘±’uŠ·, OFF:ˆêŠ‡’uŠ·j
-		//		0x800	(ƒ}ƒNƒê—p)ŒŸõƒL[‚ğ—š—ğ‚É“o˜^‚µ‚È‚¢
-		//		0x1000	(ƒ}ƒNƒê—p)ŒŸõƒIƒvƒVƒ‡ƒ“‚ğŒ³‚É–ß‚·
+		//		0x400	ã€Œã™ã¹ã¦ç½®æ›ã€ã¯ç½®æ›ã®ç¹°è¿”ã—ï¼ˆON:é€£ç¶šç½®æ›, OFF:ä¸€æ‹¬ç½®æ›ï¼‰
+		//		0x800	(ãƒã‚¯ãƒ­å°‚ç”¨)æ¤œç´¢ã‚­ãƒ¼ã‚’å±¥æ­´ã«ç™»éŒ²ã—ãªã„
+		//		0x1000	(ãƒã‚¯ãƒ­å°‚ç”¨)æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’å…ƒã«æˆ»ã™
 		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO09));
@@ -954,7 +954,7 @@ bool CMacro::HandleCommand(
 				nBackupSearchKeySequence = pcEditView->m_nCurSearchKeySequence;
 				bAddHistory = false;
 			}
-			/* ³‹K•\Œ» */
+			/* æ­£è¦è¡¨ç¾ */
 			if( lFlag & 0x04
 				&& !CheckRegexpSyntax( Argument[0], NULL, true )
 			)
@@ -962,7 +962,7 @@ bool CMacro::HandleCommand(
 				break;
 			}
 
-			/* ŒŸõ•¶š—ñ */
+			/* æ¤œç´¢æ–‡å­—åˆ— */
 			if( wcslen(Argument[0]) < _MAX_PATH && bAddHistory ){
 				CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
 				GetDllShareData().m_Common.m_sSearch.m_sSearchOption = sSearchOption;
@@ -972,7 +972,7 @@ bool CMacro::HandleCommand(
 			pcEditView->m_bCurSearchUpdate = true;
 			pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 
-			/* ’uŠ·Œã•¶š—ñ */
+			/* ç½®æ›å¾Œæ–‡å­—åˆ— */
 			if( wcslen(Argument[1]) < _MAX_PATH && bAddHistory ){
 				CSearchKeywordManager().AddToReplaceKeyArr( Argument[1] );
 			}
@@ -981,22 +981,22 @@ bool CMacro::HandleCommand(
 			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
-			cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareData‚É“ü‚ê‚È‚­‚Ä‚¢‚¢‚ÌH
+			cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataã«å…¥ã‚Œãªãã¦ã„ã„ã®ï¼Ÿ
 			cDlgReplace.m_bConsecutiveAll = lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
-			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta ƒRƒ}ƒ“ƒh‚Í‰ºˆÊƒ[ƒh
-				//	’uŠ·‚·‚é‚Í‘I‚×‚È‚¢
+			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta ã‚³ãƒãƒ³ãƒ‰ã¯ä¸‹ä½ãƒ¯ãƒ¼ãƒ‰
+				//	ç½®æ›ã™ã‚‹æ™‚ã¯é¸ã¹ãªã„
 				cDlgReplace.m_bSelectedArea = 0;
 			}
-			else if (LOWORD(Index) == F_REPLACE_ALL) {	// 2007.07.08 genta ƒRƒ}ƒ“ƒh‚Í‰ºˆÊƒ[ƒh
-				//	‘S’uŠ·‚Ì‚Í‘I‚×‚éH
+			else if (LOWORD(Index) == F_REPLACE_ALL) {	// 2007.07.08 genta ã‚³ãƒãƒ³ãƒ‰ã¯ä¸‹ä½ãƒ¯ãƒ¼ãƒ‰
+				//	å…¨ç½®æ›ã®æ™‚ã¯é¸ã¹ã‚‹ï¼Ÿ
 				cDlgReplace.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
-			cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitƒVƒtƒgi0x100‚ÅŠ„‚èZj	// 2007.01.16 ryoji ‰ºˆÊ 2bit‚¾‚¯æ‚èo‚·
+			cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitã‚·ãƒ•ãƒˆï¼ˆ0x100ã§å‰²ã‚Šç®—ï¼‰	// 2007.01.16 ryoji ä¸‹ä½ 2bitã ã‘å–ã‚Šå‡ºã™
 			if( bAddHistory ){
 				GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll = cDlgReplace.m_bConsecutiveAll;
 				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea = cDlgReplace.m_bSelectedArea;
 			}
-			//	ƒRƒ}ƒ“ƒh”­s
+			//	ã‚³ãƒãƒ³ãƒ‰ç™ºè¡Œ
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0);
 			if( bBackupFlag ){
 				GetDllShareData().m_Common.m_sSearch = backupFlags;
@@ -1016,33 +1016,33 @@ bool CMacro::HandleCommand(
 		break;
 	case F_GREP_REPLACE:
 	case F_GREP:
-		//	Argument[0]	ŒŸõ•¶š—ñ
-		//	Argument[1]	ŒŸõ‘ÎÛ‚É‚·‚éƒtƒ@ƒCƒ‹–¼
-		//	Argument[2]	ŒŸõ‘ÎÛ‚É‚·‚éƒtƒHƒ‹ƒ_–¼
+		//	Argument[0]	æ¤œç´¢æ–‡å­—åˆ—
+		//	Argument[1]	æ¤œç´¢å¯¾è±¡ã«ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
+		//	Argument[2]	æ¤œç´¢å¯¾è±¡ã«ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€å
 		//	Argument[3]:
-		//		Ÿ‚Ì”’l‚Ì˜aB
-		//		0x01	ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é
-		//		0x02	‚±‚Ì•ÒW’†‚ÌƒeƒLƒXƒg‚©‚çŒŸõ‚·‚éi–¢À‘•j
-		//		0x04	‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é
-		//		0x08	³‹K•\Œ»
-		//		0x10	•¶šƒR[ƒh©“®”»•Ê
-		//		******** ˆÈ‰ºuŒ‹‰Êo—Ív ********
-		//		0x00	ŠY“–s
-		//		0x20	ŠY“–•”•ª
-		//		0x400000	”Ûƒqƒbƒgs	// 2014.09.23
-		//		0x400020	(–¢g—p)	// 2014.09.23
+		//		æ¬¡ã®æ•°å€¤ã®å’Œã€‚
+		//		0x01	ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹
+		//		0x02	ã“ã®ç·¨é›†ä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‹ã‚‰æ¤œç´¢ã™ã‚‹ï¼ˆæœªå®Ÿè£…ï¼‰
+		//		0x04	è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹
+		//		0x08	æ­£è¦è¡¨ç¾
+		//		0x10	æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥
+		//		******** ä»¥ä¸‹ã€Œçµæœå‡ºåŠ›ã€ ********
+		//		0x00	è©²å½“è¡Œ
+		//		0x20	è©²å½“éƒ¨åˆ†
+		//		0x400000	å¦ãƒ’ãƒƒãƒˆè¡Œ	// 2014.09.23
+		//		0x400020	(æœªä½¿ç”¨)	// 2014.09.23
 		//		**********************************
-		//		******** ˆÈ‰ºuo—ÍŒ`®v ********
-		//		0x00	ƒm[ƒ}ƒ‹
-		//		0x40	ƒtƒ@ƒCƒ‹–ˆ
-		//		0x80	Œ‹‰Ê‚Ì‚İ // 2011.11.24
-		//		0xC0	(–¢g—p) // 2011.11.24
+		//		******** ä»¥ä¸‹ã€Œå‡ºåŠ›å½¢å¼ã€ ********
+		//		0x00	ãƒãƒ¼ãƒãƒ«
+		//		0x40	ãƒ•ã‚¡ã‚¤ãƒ«æ¯
+		//		0x80	çµæœã®ã¿ // 2011.11.24
+		//		0xC0	(æœªä½¿ç”¨) // 2011.11.24
 		//		**********************************
-		//		0x0100 ` 0xff00	•¶šƒR[ƒhƒZƒbƒg”Ô† * 0x100
-		//		0x010000	’PŒê’PˆÊ‚Å’T‚·
-		//		0x020000	ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ
-		//		0x040000	ƒx[ƒXƒtƒHƒ‹ƒ_•\¦
-		//		0x080000	ƒtƒHƒ‹ƒ_–ˆ‚É•\¦
+		//		0x0100 ï½ 0xff00	æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå· * 0x100
+		//		0x010000	å˜èªå˜ä½ã§æ¢ã™
+		//		0x020000	ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢
+		//		0x040000	ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+		//		0x080000	ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º
 		{
 			if( Argument[0] == NULL ){
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
@@ -1074,31 +1074,31 @@ bool CMacro::HandleCommand(
 					LS(STR_ERR_DLGMACRO13));
 				return false;
 			}
-			//	í‚ÉŠO•”ƒEƒBƒ“ƒhƒE‚ÉB
-			/*======= Grep‚ÌÀs =============*/
-			/* GrepŒ‹‰ÊƒEƒBƒ“ƒhƒE‚Ì•\¦ */
-			CNativeW cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace( L"\"", L"\"\"" );	//	ŒŸõ•¶š—ñ
+			//	å¸¸ã«å¤–éƒ¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã€‚
+			/*======= Grepã®å®Ÿè¡Œ =============*/
+			/* Grepçµæœã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º */
+			CNativeW cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace( L"\"", L"\"\"" );	//	æ¤œç´¢æ–‡å­—åˆ—
 			CNativeW cmWork4;
 			if( bGrepReplace ){
-				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	’uŠ·Œã
+				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	ç½®æ›å¾Œ
 			}
-			CNativeT cmWork2;	cmWork2.SetStringW( Argument[ArgIndex+1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ƒtƒ@ƒCƒ‹–¼
-			CNativeT cmWork3;	cmWork3.SetStringW( Argument[ArgIndex+2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	ƒtƒHƒ‹ƒ_–¼
+			CNativeT cmWork2;	cmWork2.SetStringW( Argument[ArgIndex+1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ãƒ•ã‚¡ã‚¤ãƒ«å
+			CNativeT cmWork3;	cmWork3.SetStringW( Argument[ArgIndex+2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	ãƒ•ã‚©ãƒ«ãƒ€å
 
 			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
-			// 2002/09/21 Moca •¶šƒR[ƒhƒZƒbƒg
+			// 2002/09/21 Moca æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
 			ECodeType	nCharSet;
 			{
 				nCharSet = CODE_SJIS;
-				if( lFlag & 0x10 ){	// •¶šƒR[ƒh©“®”»•Ê(‰ºˆÊŒİŠ·—p)
+				if( lFlag & 0x10 ){	// æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥(ä¸‹ä½äº’æ›ç”¨)
 					nCharSet = CODE_AUTODETECT;
 				}
-				int nCode = (lFlag >> 8) & 0xff; // ‰º‚©‚ç 7-15 ƒrƒbƒg–Ú(0ŠJn)‚ğg‚¤
+				int nCode = (lFlag >> 8) & 0xff; // ä¸‹ã‹ã‚‰ 7-15 ãƒ“ãƒƒãƒˆç›®(0é–‹å§‹)ã‚’ä½¿ã†
 				if( IsValidCodeTypeExceptSJIS(nCode) || CODE_AUTODETECT == nCode ){
 					nCharSet = (ECodeType)nCode;
 				}
-				// 2013.06.11 5”Ô–Ú‚Ìˆø‚«”‚ğ•¶šƒR[ƒh‚É‚·‚é
+				// 2013.06.11 5ç•ªç›®ã®å¼•ãæ•°ã‚’æ–‡å­—ã‚³ãƒ¼ãƒ‰ã«ã™ã‚‹
 				if( ArgIndex + 5 <= ArgSize ){
 					nCharSet = (ECodeType)_wtoi(Argument[ArgIndex + 4]);
 				}
@@ -1122,14 +1122,14 @@ bool CMacro::HandleCommand(
 			auto_sprintf( szTemp, _T("%d"), nCharSet );
 			cCmdLine.AppendString(szTemp);
 
-			//GOPTƒIƒvƒVƒ‡ƒ“
+			//GOPTã‚ªãƒ—ã‚·ãƒ§ãƒ³
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )_tcscat( pOpt, _T("S") );	/* ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é */
-			if( lFlag & 0x04 )_tcscat( pOpt, _T("L") );	/* ‰p‘å•¶š‚Æ‰p¬•¶š‚ğ‹æ•Ê‚·‚é */
-			if( lFlag & 0x08 )_tcscat( pOpt, _T("R") );	/* ³‹K•\Œ» */
-			if(          0x20 == (lFlag & 0x400020) )_tcscat( pOpt, _T("P") );	// s‚ğo—Í‚·‚é
-			else if( 0x400000 == (lFlag & 0x400020) )_tcscat( pOpt, _T("N") );	// ”Ûƒqƒbƒgs‚ğo—Í‚·‚é
-			if(      0x40 == (lFlag & 0xC0) )_tcscat( pOpt, _T("2") );	/* Grep: o—ÍŒ`® */
+			if( lFlag & 0x01 )_tcscat( pOpt, _T("S") );	/* ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹ */
+			if( lFlag & 0x04 )_tcscat( pOpt, _T("L") );	/* è‹±å¤§æ–‡å­—ã¨è‹±å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹ */
+			if( lFlag & 0x08 )_tcscat( pOpt, _T("R") );	/* æ­£è¦è¡¨ç¾ */
+			if(          0x20 == (lFlag & 0x400020) )_tcscat( pOpt, _T("P") );	// è¡Œã‚’å‡ºåŠ›ã™ã‚‹
+			else if( 0x400000 == (lFlag & 0x400020) )_tcscat( pOpt, _T("N") );	// å¦ãƒ’ãƒƒãƒˆè¡Œã‚’å‡ºåŠ›ã™ã‚‹
+			if(      0x40 == (lFlag & 0xC0) )_tcscat( pOpt, _T("2") );	/* Grep: å‡ºåŠ›å½¢å¼ */
 			else if( 0x80 == (lFlag & 0xC0) )_tcscat( pOpt, _T("3") );
 			else _tcscat( pOpt, _T("1") );
 			if( lFlag & 0x10000 )_tcscat( pOpt, _T("W") );
@@ -1145,7 +1145,7 @@ bool CMacro::HandleCommand(
 				cCmdLine.AppendString(szTemp);
 			}
 
-			/* V‹K•ÒWƒEƒBƒ“ƒhƒE‚Ì’Ç‰Á ver 0 */
+			/* æ–°è¦ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¿½åŠ  ver 0 */
 			SLoadInfo sLoadInfo;
 			sLoadInfo.cFilePath = _T("");
 			sLoadInfo.eCharCode = CODE_NONE;
@@ -1156,12 +1156,12 @@ bool CMacro::HandleCommand(
 				sLoadInfo,
 				cCmdLine.GetStringPtr()
 			);
-			/*======= Grep‚ÌÀs =============*/
-			/* GrepŒ‹‰ÊƒEƒBƒ“ƒhƒE‚Ì•\¦ */
+			/*======= Grepã®å®Ÿè¡Œ =============*/
+			/* Grepçµæœã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º */
 		}
 		break;
 	case F_FILEOPEN2:
-		//	Argument[0]‚ğŠJ‚­B
+		//	Argument[0]ã‚’é–‹ãã€‚
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO14));
@@ -1176,28 +1176,28 @@ bool CMacro::HandleCommand(
 		break;
 	case F_FILESAVEAS_DIALOG:
 	case F_FILESAVEAS:
-		//	Argument[0]‚ğ•Ê–¼‚Å•Û‘¶B
+		//	Argument[0]ã‚’åˆ¥åã§ä¿å­˜ã€‚
 		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == NULL ||  L'\0' == Argument[0][0]) ){
-			// F_FILESAVEAS_DIALOG‚Ìê‡‚Í‹ó•¶š—ñ‚ğ‹–—e
+			// F_FILESAVEAS_DIALOGã®å ´åˆã¯ç©ºæ–‡å­—åˆ—ã‚’è¨±å®¹
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO15));
 			return false;
 		}
 		{
-			// •¶šƒR[ƒhƒZƒbƒg
-			//	Sep. 11, 2004 genta •¶šƒR[ƒhİ’è‚Ì”ÍˆÍƒ`ƒFƒbƒN
-			ECodeType nCharCode = CODE_NONE;	//ƒfƒtƒHƒ‹ƒg’l
+			// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+			//	Sep. 11, 2004 genta æ–‡å­—ã‚³ãƒ¼ãƒ‰è¨­å®šã®ç¯„å›²ãƒã‚§ãƒƒã‚¯
+			ECodeType nCharCode = CODE_NONE;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 			if (Argument[1] != NULL){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
 			if (LOWORD(Index) == F_FILESAVEAS && IsValidCodeOrCPType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
-				//	From Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
+				//	From Here Jul. 26, 2003 ryoji BOMçŠ¶æ…‹ã‚’åˆæœŸåŒ–
 				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode, CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
-				//	To Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
+				//	To Here Jul. 26, 2003 ryoji BOMçŠ¶æ…‹ã‚’åˆæœŸåŒ–
 			}
 
-			// ‰üsƒR[ƒh
-			int nSaveLineCode = 0;	//ƒfƒtƒHƒ‹ƒg’l	//Sep. 11, 2004 genta ‰Šú’l‚ğu•ÏX‚µ‚È‚¢v‚É
+			// æ”¹è¡Œã‚³ãƒ¼ãƒ‰
+			int nSaveLineCode = 0;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤	//Sep. 11, 2004 genta åˆæœŸå€¤ã‚’ã€Œå¤‰æ›´ã—ãªã„ã€ã«
 			if (Argument[2] != NULL){
 				nSaveLineCode = _wtoi( Argument[2] );
 			}
@@ -1213,21 +1213,21 @@ bool CMacro::HandleCommand(
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)eEol, 0);
 		}
 		break;
-	/* 2‚Â‚Ìˆø”‚ª•¶š—ñ */
+	/* 2ã¤ã®å¼•æ•°ãŒæ–‡å­—åˆ— */
 	// Jul. 5, 2002 genta
 	case F_EXTHTMLHELP:
 	case F_EXECEXTMACRO:				// 2009.06.14 syat
 		pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
 		break;
 	//	From Here Dec. 4, 2002 genta
-	case F_FILE_REOPEN				://ŠJ‚«’¼‚·
-	case F_FILE_REOPEN_SJIS			://SJIS‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_JIS			://JIS‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_EUC			://EUC‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_UNICODE		://Unicode‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_UNICODEBE	://UnicodeBE‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_UTF8			://UTF-8‚ÅŠJ‚«’¼‚·
-	case F_FILE_REOPEN_UTF7			://UTF-7‚ÅŠJ‚«’¼‚·
+	case F_FILE_REOPEN				://é–‹ãç›´ã™
+	case F_FILE_REOPEN_SJIS			://SJISã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_JIS			://JISã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_EUC			://EUCã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_UNICODE		://Unicodeã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_UNICODEBE	://UnicodeBEã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_UTF8			://UTF-8ã§é–‹ãç›´ã™
+	case F_FILE_REOPEN_UTF7			://UTF-7ã§é–‹ãç›´ã™
 		{
 			int noconfirm = 0;
 			if (Argument[0] != NULL){
@@ -1245,33 +1245,33 @@ bool CMacro::HandleCommand(
 				pcEditView->GetCommander().HandleCommand( Index, true, lparam1, 0, 0, 0 );
 			}
 		}
-		break;	//	Jan. 29, 2005 genta ”²‚¯‚Ä‚¢‚½
+		break;	//	Jan. 29, 2005 genta æŠœã‘ã¦ã„ãŸ
 	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
 		{
-			//ˆø”‚ÍNULL‚Å‚àOK
+			//å¼•æ•°ã¯NULLã§ã‚‚OK
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	case F_NEXTWINDOW:
 	case F_PREVWINDOW:
-		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOW‚ª“®ì‚µ‚È‚©‚Á‚½‚Ì‚ğC³
+		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWãŒå‹•ä½œã—ãªã‹ã£ãŸã®ã‚’ä¿®æ­£
 		break;
-	case F_MESSAGEBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚Ì•\¦
-	case F_ERRORMSG:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiƒGƒ‰[j‚Ì•\¦
-	case F_WARNMSG:		// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŒxj‚Ì•\¦
-	case F_INFOMSG:		// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiî•ñj‚Ì•\¦
-	case F_OKCANCELBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŠm”FFOK^ƒLƒƒƒ“ƒZƒ‹j‚Ì•\¦
-	case F_YESNOBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŠm”FF‚Í‚¢^‚¢‚¢‚¦j‚Ì•\¦
+	case F_MESSAGEBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤º
+	case F_ERRORMSG:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆã‚¨ãƒ©ãƒ¼ï¼‰ã®è¡¨ç¤º
+	case F_WARNMSG:		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆè­¦å‘Šï¼‰ã®è¡¨ç¤º
+	case F_INFOMSG:		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆæƒ…å ±ï¼‰ã®è¡¨ç¤º
+	case F_OKCANCELBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆç¢ºèªï¼šOKï¼ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼‰ã®è¡¨ç¤º
+	case F_YESNOBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆç¢ºèªï¼šã¯ã„ï¼ã„ã„ãˆï¼‰ã®è¡¨ç¤º
 		{
-			VARIANT vArg[2];			// HandleFunction‚É“n‚·ˆø”
-			VARIANT vResult;			// HandleFunction‚©‚ç•Ô‚é’l
+			VARIANT vArg[2];			// HandleFunctionã«æ¸¡ã™å¼•æ•°
+			VARIANT vResult;			// HandleFunctionã‹ã‚‰è¿”ã‚‹å€¤
 			if( Argument[0] == NULL ){
 				break;
 			}
 			SysString S( Argument[0], wcslen(Argument[0]) );
 			Wrap( &vArg[0] )->Receive( S );
 			int nArgSize = 1;
-			//	2‚Â–Ú‚Ìˆø”‚ª”’lB
+			//	2ã¤ç›®ã®å¼•æ•°ãŒæ•°å€¤ã€‚
 			if( F_MESSAGEBOX == LOWORD(Index) ){
 				vArg[1].vt = VT_I4;
 				vArg[1].intVal = (Argument[1] != NULL ? _wtoi(Argument[1]) : 0 );
@@ -1294,14 +1294,14 @@ bool CMacro::HandleCommand(
 			}
 		}
 		break;
-	case F_CHGTABWIDTH:		//  ƒ^ƒuƒTƒCƒY‚ğæ“¾Aİ’è‚·‚éiƒL[ƒ}ƒNƒ‚Å‚Íæ“¾‚Í–³ˆÓ–¡j
-	case F_CHGWRAPCOLUMN:		//  Ü‚è•Ô‚µŒ…‚ğæ“¾Aİ’è‚·‚éiƒL[ƒ}ƒNƒ‚Å‚Íæ“¾‚Í–³ˆÓ–¡j
+	case F_CHGTABWIDTH:		//  ã‚¿ãƒ–ã‚µã‚¤ã‚ºã‚’å–å¾—ã€è¨­å®šã™ã‚‹ï¼ˆã‚­ãƒ¼ãƒã‚¯ãƒ­ã§ã¯å–å¾—ã¯ç„¡æ„å‘³ï¼‰
+	case F_CHGWRAPCOLUMN:		//  æŠ˜ã‚Šè¿”ã—æ¡ã‚’å–å¾—ã€è¨­å®šã™ã‚‹ï¼ˆã‚­ãƒ¼ãƒã‚¯ãƒ­ã§ã¯å–å¾—ã¯ç„¡æ„å‘³ï¼‰
 	case F_MACROSLEEP:
-	case F_SETDRAWSWITCH:	//  Ä•`‰æƒXƒCƒbƒ`‚ğæ“¾Aİ’è‚·‚é
+	case F_SETDRAWSWITCH:	//  å†æç”»ã‚¹ã‚¤ãƒƒãƒã‚’å–å¾—ã€è¨­å®šã™ã‚‹
 		{
-			VARIANT vArg[1];			// HandleFunction‚É“n‚·ˆø”
-			VARIANT vResult;			// HandleFunction‚©‚ç•Ô‚é’l
-			//	ˆê‚Â–Ú‚Ìˆø”‚ª”’lB
+			VARIANT vArg[1];			// HandleFunctionã«æ¸¡ã™å¼•æ•°
+			VARIANT vResult;			// HandleFunctionã‹ã‚‰è¿”ã‚‹å€¤
+			//	ä¸€ã¤ç›®ã®å¼•æ•°ãŒæ•°å€¤ã€‚
 			vArg[0].vt = VT_I4;
 			vArg[0].intVal = (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 );
 			return HandleFunction( pcEditView, Index, vArg, 1, vResult );
@@ -1356,7 +1356,7 @@ bool CMacro::HandleCommand(
 			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 			if( opeBlk ){
 				int nCount = opeBlk->GetRefCount();
-				opeBlk->SetRefCount(1); // ‹­§“I‚ÉƒŠƒZƒbƒg‚·‚é‚½‚ß1‚ğw’è
+				opeBlk->SetRefCount(1); // å¼·åˆ¶çš„ã«ãƒªã‚»ãƒƒãƒˆã™ã‚‹ãŸã‚1ã‚’æŒ‡å®š
 				pcEditView->SetUndoBuffer();
 				if( pcEditView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
 					pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
@@ -1389,7 +1389,7 @@ bool CMacro::HandleCommand(
 			opeBlk->AddRef();
 			opeBlk->AppendOpe(
 				new CMoveCaretOpe(
-					pcEditView->GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+					pcEditView->GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 				)
 			);
 			pcEditView->SetUndoBuffer();
@@ -1438,8 +1438,8 @@ bool CMacro::HandleCommand(
 		}
 		break;
 	default:
-		//	ˆø”‚È‚µB
-		pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	•W€
+		//	å¼•æ•°ãªã—ã€‚
+		pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	æ¨™æº–
 		break;
 	}
 	return true;
@@ -1456,27 +1456,27 @@ inline bool VariantToI4(Variant& varCopy, const VARIANT& arg)
 	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_I4) == S_OK;
 }
 
-/**	’l‚ğ•Ô‚·ŠÖ”‚ğˆ—‚·‚é
+/**	å€¤ã‚’è¿”ã™é–¢æ•°ã‚’å‡¦ç†ã™ã‚‹
 
-	@param View      [in] ‘ÎÛ‚Æ‚È‚éView
-	@param ID        [in] ‰ºˆÊ16bit: ŠÖ””Ô†
-	@param Arguments [in] ˆø”‚Ì”z—ñ
-	@param ArgSize   [in] ˆø”‚Ì”(Argument)
-	@param Result  [out] Œ‹‰Ê‚Ì’l‚ğ•Ô‚·êŠB–ß‚è’l‚ªfalse‚Ì‚Æ‚«‚Í•s’èB
+	@param View      [in] å¯¾è±¡ã¨ãªã‚‹View
+	@param ID        [in] ä¸‹ä½16bit: é–¢æ•°ç•ªå·
+	@param Arguments [in] å¼•æ•°ã®é…åˆ—
+	@param ArgSize   [in] å¼•æ•°ã®æ•°(Argument)
+	@param Result  [out] çµæœã®å€¤ã‚’è¿”ã™å ´æ‰€ã€‚æˆ»ã‚Šå€¤ãŒfalseã®ã¨ãã¯ä¸å®šã€‚
 	
-	@return true: ¬Œ÷, false: ¸”s
+	@return true: æˆåŠŸ, false: å¤±æ•—
 
-	@author ‹S
-	@date 2003.02.21 ‹S
-	@date 2003.06.01 Moca ŠÖ”’Ç‰Á
-	@date 2005.08.05 maru,zenryaku ŠÖ”’Ç‰Á
-	@date 2005.11.29 FILE VariantChangeType‘Î‰
+	@author é¬¼
+	@date 2003.02.21 é¬¼
+	@date 2003.06.01 Moca é–¢æ•°è¿½åŠ 
+	@date 2005.08.05 maru,zenryaku é–¢æ•°è¿½åŠ 
+	@date 2005.11.29 FILE VariantChangeTypeå¯¾å¿œ
 */
 bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Arguments, int ArgSize, VARIANT &Result)
 {
-	Variant varCopy;	// VT_BYREF‚¾‚Æ¢‚é‚Ì‚ÅƒRƒs[—p
+	Variant varCopy;	// VT_BYREFã ã¨å›°ã‚‹ã®ã§ã‚³ãƒ”ãƒ¼ç”¨
 
-	//2003-02-21 ‹S
+	//2003-02-21 é¬¼
 	switch(LOWORD(ID))
 	{
 	case F_GETFILENAME:
@@ -1487,7 +1487,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_GETSAVEFILENAME:
-		//	2006.09.04 ryoji •Û‘¶‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX
+		//	2006.09.04 ryoji ä¿å­˜æ™‚ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
 		{
 			const TCHAR* FileName = View->m_pcEditDoc->m_cDocFile.GetSaveFilePath();
 			SysString S(FileName, lstrlen(FileName));
@@ -1514,9 +1514,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		// 2003.02.24 Moca
 		{
 			if(ArgSize != 1) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
-			//pszSource‚ğ“WŠJ‚µ‚ÄApszBuffer‚ÉƒRƒs[
+			//pszSourceã‚’å±•é–‹ã—ã¦ã€pszBufferã«ã‚³ãƒ”ãƒ¼
 			wchar_t *Source;
 			int SourceLength;
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
@@ -1528,10 +1528,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_GETLINESTR:
-		//	2003.06.01 Moca ƒ}ƒNƒ’Ç‰Á
+		//	2003.06.01 Moca ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 			if( -1 < varCopy.Data.lVal ){
 				const wchar_t *Buffer;
 				CLogicInt nLength;
@@ -1555,10 +1555,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_GETLINECOUNT:
-		//	2003.06.01 Moca ƒ}ƒNƒ’Ç‰Á
+		//	2003.06.01 Moca ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 			if( 0 == varCopy.Data.lVal ){
 				int nLineCount;
 				nLineCount = View->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -1569,13 +1569,13 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_CHGTABWIDTH:
-		//	2004.03.16 zenryaku ƒ}ƒNƒ’Ç‰Á
+		//	2004.03.16 zenryaku ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 			int nTab = (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas();
 			Wrap( &Result )->Receive( nTab );
-			// 2013.04.30 Moca ğŒ’Ç‰ÁB•s—v‚Èê‡‚ÍChangeLayoutParam‚ğŒÄ‚Î‚È‚¢
+			// 2013.04.30 Moca æ¡ä»¶è¿½åŠ ã€‚ä¸è¦ãªå ´åˆã¯ChangeLayoutParamã‚’å‘¼ã°ãªã„
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
 				View->GetDocument()->m_bTabSpaceCurTemp = true;
 				View->m_pcEditWnd->ChangeLayoutParam(
@@ -1585,67 +1585,67 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
 				);
 
-				// 2009.08.28 nasukoji	uÜ‚è•Ô‚³‚È‚¢v‘I‘ğ‚ÉTAB•‚ª•ÏX‚³‚ê‚½‚çƒeƒLƒXƒgÅ‘å•‚ÌÄZo‚ª•K—v
+				// 2009.08.28 nasukoji	ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€é¸æŠæ™‚ã«TABå¹…ãŒå¤‰æ›´ã•ã‚ŒãŸã‚‰ãƒ†ã‚­ã‚¹ãƒˆæœ€å¤§å¹…ã®å†ç®—å‡ºãŒå¿…è¦
 				if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-					// Å‘å•‚ÌÄZo‚ÉŠes‚ÌƒŒƒCƒAƒEƒg’·‚ÌŒvZ‚às‚¤
+					// æœ€å¤§å¹…ã®å†ç®—å‡ºæ™‚ã«å„è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆé•·ã®è¨ˆç®—ã‚‚è¡Œã†
 					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
 				}
-				View->m_pcEditWnd->RedrawAllViews( NULL );		// TAB•‚ª•Ï‚í‚Á‚½‚Ì‚ÅÄ•`‰æ‚ª•K—v
+				View->m_pcEditWnd->RedrawAllViews( NULL );		// TABå¹…ãŒå¤‰ã‚ã£ãŸã®ã§å†æç”»ãŒå¿…è¦
 			}
 		}
 		return true;
 	case F_ISTEXTSELECTED:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			if(View->GetSelectionInfo().IsTextSelected()) {
 				if(View->GetSelectionInfo().IsBoxSelecting()) {
-					Wrap( &Result )->Receive( 2 );	//‹éŒ`‘I‘ğ’†
+					Wrap( &Result )->Receive( 2 );	//çŸ©å½¢é¸æŠä¸­
 				} else {
-					Wrap( &Result )->Receive( 1 );	//‘I‘ğ’†
+					Wrap( &Result )->Receive( 1 );	//é¸æŠä¸­
 				}
 			} else {
-				Wrap( &Result )->Receive( 0 );		//”ñ‘I‘ğ’†
+				Wrap( &Result )->Receive( 0 );		//éé¸æŠä¸­
 			}
 		}
 		return true;
 	case F_GETSELLINEFROM:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( (Int)View->GetSelectionInfo().m_sSelect.GetFrom().y + 1 );
 		}
 		return true;
 	case F_GETSELCOLUMNFROM:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( (Int)View->GetSelectionInfo().m_sSelect.GetFrom().x + 1 );
 		}
 		return true;
 	case F_GETSELLINETO:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( (Int)View->GetSelectionInfo().m_sSelect.GetTo().y + 1 );
 		}
 		return true;
 	case F_GETSELCOLUMNTO:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( (Int)View->GetSelectionInfo().m_sSelect.GetTo().x + 1);
 		}
 		return true;
 	case F_ISINSMODE:
-		//	2005.07.30 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.30 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive(View->IsInsMode() /* Oct. 2, 2005 genta */);
 		}
 		return true;
 	case F_GETCHARCODE:
-		//	2005.07.31 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.07.31 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive(View->m_pcEditDoc->GetDocumentEncoding());
 		}
 		return true;
 	case F_GETLINECODE:
-		//	2005.08.04 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.08.04 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			int n = 0;
 			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode() ){
@@ -1672,22 +1672,22 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_ISPOSSIBLEUNDO:
-		//	2005.08.04 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.08.04 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cDocEditor.IsEnableUndo() );
 		}
 		return true;
 	case F_ISPOSSIBLEREDO:
-		//	2005.08.04 maru ƒ}ƒNƒ’Ç‰Á
+		//	2005.08.04 maru ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cDocEditor.IsEnableRedo() );
 		}
 		return true;
 	case F_CHGWRAPCOLUMN:
-		//	2008.06.19 ryoji ƒ}ƒNƒ’Ç‰Á
+		//	2008.06.19 ryoji ãƒã‚¯ãƒ­è¿½åŠ 
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 			Wrap( &Result )->Receive( (Int)View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
@@ -1702,68 +1702,68 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_ISCURTYPEEXT:
-		//	2006.09.04 ryoji w’è‚µ‚½Šg’£q‚ªŒ»İ‚Ìƒ^ƒCƒv•Êİ’è‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+		//	2006.09.04 ryoji æŒ‡å®šã—ãŸæ‹¡å¼µå­ãŒç¾åœ¨ã®ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«å«ã¾ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 		{
 			if( ArgSize != 1 ) return false;
 
 			TCHAR *Source;
 			int SourceLength;
 
-			int nType1 = View->m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();	// Œ»İ‚Ìƒ^ƒCƒv
+			int nType1 = View->m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();	// ç¾åœ¨ã®ã‚¿ã‚¤ãƒ—
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// w’èŠg’£q‚Ìƒ^ƒCƒv
+			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// æŒ‡å®šæ‹¡å¼µå­ã®ã‚¿ã‚¤ãƒ—
 			delete[] Source;
 
-			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// ƒ^ƒCƒv•Êİ’è‚Ìˆê’v^•sˆê’v
+			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®ä¸€è‡´ï¼ä¸ä¸€è‡´
 		}
 		return true;
 	case F_ISSAMETYPEEXT:
-		//	2006.09.04 ryoji ‚Q‚Â‚ÌŠg’£q‚ª“¯‚¶ƒ^ƒCƒv•Êİ’è‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+		//	2006.09.04 ryoji ï¼’ã¤ã®æ‹¡å¼µå­ãŒåŒã˜ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã«å«ã¾ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 		{
 			if( ArgSize != 2 ) return false;
 
 			TCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			int nType1 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// Šg’£q‚P‚Ìƒ^ƒCƒv
+			int nType1 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// æ‹¡å¼µå­ï¼‘ã®ã‚¿ã‚¤ãƒ—
 			delete[] Source;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// Šg’£q‚Q‚Ìƒ^ƒCƒv
+			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// æ‹¡å¼µå­ï¼’ã®ã‚¿ã‚¤ãƒ—
 			delete[] Source;
 
-			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// ƒ^ƒCƒv•Êİ’è‚Ìˆê’v^•sˆê’v
+			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®ä¸€è‡´ï¼ä¸ä¸€è‡´
 		}
 		return true;
 	case F_INPUTBOX:
-		//	2011.03.18 syat ƒeƒLƒXƒg“ü—Íƒ_ƒCƒAƒƒO‚Ì•\¦
+		//	2011.03.18 syat ãƒ†ã‚­ã‚¹ãƒˆå…¥åŠ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 		{
 			if( ArgSize < 1 ) return false;
 			TCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			std::tstring sMessage = Source;	// •\¦ƒƒbƒZ[ƒW
+			std::tstring sMessage = Source;	// è¡¨ç¤ºãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 			delete[] Source;
 
 			std::tstring sDefaultValue = _T("");
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sDefaultValue = Source;	// ƒfƒtƒHƒ‹ƒg’l
+				sDefaultValue = Source;	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 				delete[] Source;
 			}
 
 			int nMaxLen = _MAX_PATH;
 			if( ArgSize >= 3 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
-				nMaxLen = varCopy.Data.intVal;	// Å‘å“ü—Í’·
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
+				nMaxLen = varCopy.Data.intVal;	// æœ€å¤§å…¥åŠ›é•·
 				if( nMaxLen <= 0 ){
 					nMaxLen = _MAX_PATH;
 				}
@@ -1784,28 +1784,28 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			delete[] Buffer;
 		}
 		return true;
-	case F_MESSAGEBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚Ì•\¦
-	case F_ERRORMSG:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiƒGƒ‰[j‚Ì•\¦
-	case F_WARNMSG:		// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŒxj‚Ì•\¦
-	case F_INFOMSG:		// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiî•ñj‚Ì•\¦
-	case F_OKCANCELBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŠm”FFOK^ƒLƒƒƒ“ƒZƒ‹j‚Ì•\¦
-	case F_YESNOBOX:	// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXiŠm”FF‚Í‚¢^‚¢‚¢‚¦j‚Ì•\¦
-		//	2011.03.18 syat ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚Ì•\¦
+	case F_MESSAGEBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤º
+	case F_ERRORMSG:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆã‚¨ãƒ©ãƒ¼ï¼‰ã®è¡¨ç¤º
+	case F_WARNMSG:		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆè­¦å‘Šï¼‰ã®è¡¨ç¤º
+	case F_INFOMSG:		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆæƒ…å ±ï¼‰ã®è¡¨ç¤º
+	case F_OKCANCELBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆç¢ºèªï¼šOKï¼ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼‰ã®è¡¨ç¤º
+	case F_YESNOBOX:	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼ˆç¢ºèªï¼šã¯ã„ï¼ã„ã„ãˆï¼‰ã®è¡¨ç¤º
+		//	2011.03.18 syat ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®è¡¨ç¤º
 		{
 			if( ArgSize < 1 ) return false;
 			TCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			std::tstring sMessage = Source;	// •\¦•¶š—ñ
+			std::tstring sMessage = Source;	// è¡¨ç¤ºæ–‡å­—åˆ—
 			delete[] Source;
 
-			UINT uType = 0;		// ƒƒbƒZ[ƒWƒ{ƒbƒNƒXí•Ê
+			UINT uType = 0;		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ç¨®åˆ¥
 			switch( LOWORD(ID) ) {
 			case F_MESSAGEBOX:
 				if( ArgSize >= 2 ){
-					if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
+					if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
 					uType = varCopy.Data.uintVal;
 				}else{
 					uType = MB_OK;
@@ -1832,39 +1832,39 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_COMPAREVERSION:
-		//	2011.03.18 syat ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
+		//	2011.03.18 syat ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã®æ¯”è¼ƒ
 		{
 			if( ArgSize != 2 ) return false;
 			TCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			std::tstring sVerA = Source;	// ƒo[ƒWƒ‡ƒ“A
+			std::tstring sVerA = Source;	// ãƒãƒ¼ã‚¸ãƒ§ãƒ³A
 			delete[] Source;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-			std::tstring sVerB = Source;	// ƒo[ƒWƒ‡ƒ“B
+			std::tstring sVerB = Source;	// ãƒãƒ¼ã‚¸ãƒ§ãƒ³B
 			delete[] Source;
 
 			Wrap( &Result )->Receive( CompareVersion( sVerA.c_str(), sVerB.c_str() ) );
 		}
 		return true;
 	case F_MACROSLEEP:
-		//	2011.03.18 syat w’è‚µ‚½ŠÔiƒ~ƒŠ•bj’â~‚·‚é
+		//	2011.03.18 syat æŒ‡å®šã—ãŸæ™‚é–“ï¼ˆãƒŸãƒªç§’ï¼‰åœæ­¢ã™ã‚‹
 		{
 			if( ArgSize != 1 ) return false;
 
-			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_UI4) != S_OK) return false;	// VT_UI4‚Æ‚µ‚Ä‰ğß
-			CWaitCursor cWaitCursor( View->GetHwnd() );	// ƒJ[ƒ\ƒ‹‚ğ»Œv‚É‚·‚é
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_UI4) != S_OK) return false;	// VT_UI4ã¨ã—ã¦è§£é‡ˆ
+			CWaitCursor cWaitCursor( View->GetHwnd() );	// ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç ‚æ™‚è¨ˆã«ã™ã‚‹
 			::Sleep( varCopy.Data.uintVal );
-			Wrap( &Result )->Receive( 0 );	//–ß‚è’l‚Í¡‚Ì‚Æ‚±‚ë0ŒÅ’è
+			Wrap( &Result )->Receive( 0 );	//æˆ»ã‚Šå€¤ã¯ä»Šã®ã¨ã“ã‚0å›ºå®š
 		}
 		return true;
 	case F_FILEOPENDIALOG:
 	case F_FILESAVEDIALOG:
-		//	2011.03.18 syat ƒtƒ@ƒCƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦
+		//	2011.03.18 syat ãƒ•ã‚¡ã‚¤ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 		{
 			TCHAR *Source;
 			int SourceLength;
@@ -1872,16 +1872,16 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			std::tstring sFilter;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sDefault = Source;	// Šù’è‚Ìƒtƒ@ƒCƒ‹–¼
+				sDefault = Source;	// æ—¢å®šã®ãƒ•ã‚¡ã‚¤ãƒ«å
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sFilter = Source;	// ƒtƒBƒ‹ƒ^•¶š—ñ
+				sFilter = Source;	// ãƒ•ã‚£ãƒ«ã‚¿æ–‡å­—åˆ—
 				delete[] Source;
 			}
 
@@ -1909,7 +1909,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_FOLDERDIALOG:
-		//	2011.03.18 syat ƒtƒHƒ‹ƒ_ƒ_ƒCƒAƒƒO‚Ì•\¦
+		//	2011.03.18 syat ãƒ•ã‚©ãƒ«ãƒ€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º
 		{
 			TCHAR *Source;
 			int SourceLength;
@@ -1917,16 +1917,16 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			std::tstring sDefault;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sMessage = Source;	// •\¦ƒƒbƒZ[ƒW
+				sMessage = Source;	// è¡¨ç¤ºãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sDefault = Source;	// Šù’è‚Ìƒtƒ@ƒCƒ‹–¼
+				sDefault = Source;	// æ—¢å®šã®ãƒ•ã‚¡ã‚¤ãƒ«å
 				delete[] Source;
 			}
 
@@ -1942,13 +1942,13 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_GETCLIPBOARD:
-		//	2011.03.18 syat ƒNƒŠƒbƒvƒ{[ƒh‚Ì•¶š—ñ‚ğæ“¾
+		//	2011.03.18 syat ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã®æ–‡å­—åˆ—ã‚’å–å¾—
 		{
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
-				nOpt = varCopy.Data.intVal;	// ƒIƒvƒVƒ‡ƒ“
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
+				nOpt = varCopy.Data.intVal;	// ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 			}
 
 			CNativeW memBuff;
@@ -1965,22 +1965,22 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_SETCLIPBOARD:
-		//	2011.03.18 syat ƒNƒŠƒbƒvƒ{[ƒh‚É•¶š—ñ‚ğİ’è
+		//	2011.03.18 syat ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«æ–‡å­—åˆ—ã‚’è¨­å®š
 		{
 			std::tstring sValue;
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ğß
-				nOpt = varCopy.Data.intVal;	// ƒIƒvƒVƒ‡ƒ“
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4ã¨ã—ã¦è§£é‡ˆ
+				nOpt = varCopy.Data.intVal;	// ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 			}
 
 			if( ArgSize >= 2 ){
-				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTR‚Æ‚µ‚Ä‰ğß
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRã¨ã—ã¦è§£é‡ˆ
 				Wrap(&varCopy.Data.bstrVal)->GetT(&sValue);
 			}
 
-			// 2013.06.12 ƒIƒvƒVƒ‡ƒ“İ’è
+			// 2013.06.12 ã‚ªãƒ—ã‚·ãƒ§ãƒ³è¨­å®š
 			bool bColumnSelect = ((nOpt & 0x01) == 0x01);
 			bool bLineSelect = ((nOpt & 0x02) == 0x02);
 			bool bRet = View->MySetClipboardData( sValue.c_str(), sValue.size(), bColumnSelect, bLineSelect );
@@ -1989,7 +1989,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		return true;
 
 	case F_LAYOUTTOLOGICLINENUM:
-		// ƒŒƒCƒAƒEƒg¨ƒƒWƒbƒNs
+		// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆâ†’ãƒ­ã‚¸ãƒƒã‚¯è¡Œ
 		{
 			if( ArgSize < 1 ){
 				return false;
@@ -2014,7 +2014,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		return true;
 
 	case F_LINECOLUMNTOINDEX:
-		// ƒŒƒCƒAƒEƒg¨ƒƒWƒbƒNŒ…
+		// ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆâ†’ãƒ­ã‚¸ãƒƒã‚¯æ¡
 		{
 			if( ArgSize < 2 ){
 				return false;
@@ -2041,7 +2041,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 	case F_LOGICTOLAYOUTLINENUM:
 	case F_LINEINDEXTOCOLUMN:
-		// ƒƒWƒbƒN¨ƒŒƒCƒAƒEƒgs/Œ…
+		// ãƒ­ã‚¸ãƒƒã‚¯â†’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œ/æ¡
 		{
 			if( ArgSize < 2 ){
 				return false;
@@ -2284,7 +2284,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			}else if( nLineNum < 0 ){
 				return false;
 			}else{
-				nLine = CLogicInt(nLineNum - 1); // nLineNum‚Í1ŠJn
+				nLine = CLogicInt(nLineNum - 1); // nLineNumã¯1é–‹å§‹
 			}
 			const CDocLine* pcDocLine = View->GetDocument()->m_cDocLineMgr.GetLine(nLine);
 			if( pcDocLine == NULL ){
@@ -2317,12 +2317,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( View->GetSelectionInfo().m_bSelectingLock ) {
 				if( View->GetSelectionInfo().IsBoxSelecting() ) {
-					Wrap( &Result )->Receive( 2 );	//‘I‘ğƒƒbƒN+‹éŒ`‘I‘ğ’†
+					Wrap( &Result )->Receive( 2 );	//é¸æŠãƒ­ãƒƒã‚¯+çŸ©å½¢é¸æŠä¸­
 				}else{
-					Wrap( &Result )->Receive( 1 );	//‘I‘ğƒƒbƒN’†
+					Wrap( &Result )->Receive( 1 );	//é¸æŠãƒ­ãƒƒã‚¯ä¸­
 				}
 			}else{
-				Wrap( &Result )->Receive( 0 );		//”ñƒƒbƒN’†
+				Wrap( &Result )->Receive( 0 );		//éãƒ­ãƒƒã‚¯ä¸­
 			}
 		}
 		return true;
@@ -2429,7 +2429,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				POINT pt;
 				int nViewPointType = varCopy.Data.lVal;
 				if( nViewPointType == 1 ){
-					// ƒLƒƒƒŒƒbƒgˆÊ’u
+					// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 					pt = View->GetCaret().CalcCaretDrawPos( View->GetCaret().GetCaretLayoutPos() );
 					if ( View->GetTextArea().GetAreaLeft() <= pt.x && View->GetTextArea().GetAreaTop() <= pt.y
 						&& pt.x < View->GetTextArea().GetAreaRight() && pt.y < View->GetTextArea().GetAreaBottom() ){
@@ -2438,7 +2438,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 						::GetCursorPos( &pt );
 					}
 				}else{
-					// ƒ}ƒEƒXˆÊ’u
+					// ãƒã‚¦ã‚¹ä½ç½®
 					::GetCursorPos( &pt );
 				}
 				RECT rcWork;

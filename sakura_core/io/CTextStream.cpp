@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CTextStream.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi
@@ -19,14 +19,14 @@ CTextInputStream::CTextInputStream(const TCHAR* tszPath)
 	m_bIsUtf8=false;
 
 	if(Good()){
-		//BOMŠm”F -> m_bIsUtf8
+		//BOMç¢ºèª -> m_bIsUtf8
 		static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
 		BYTE buf[3];
 		if( sizeof(UTF8_BOM) == fread(&buf,1,sizeof(UTF8_BOM),GetFp()) ){
 			m_bIsUtf8 = (memcmp(buf,UTF8_BOM,sizeof(UTF8_BOM))==0);
 		}
 
-		//UTF-8‚¶‚á‚È‚¯‚ê‚ÎAƒtƒ@ƒCƒ‹ƒ|ƒCƒ“ƒ^‚ğŒ³‚É–ß‚·
+		//UTF-8ã˜ã‚ƒãªã‘ã‚Œã°ã€ãƒ•ã‚¡ã‚¤ãƒ«ãƒã‚¤ãƒ³ã‚¿ã‚’å…ƒã«æˆ»ã™
 		if(!m_bIsUtf8){
 			fseek(GetFp(),0,SEEK_SET);
 		}
@@ -51,30 +51,30 @@ CTextInputStream::~CTextInputStream()
 
 wstring CTextInputStream::ReadLineW()
 {
-	//$$ ”ñŒø—¦‚¾‚¯‚Ç¡‚Ì‚Æ‚±‚ë‚Í‹–‚µ‚ÄBB
+	//$$ éåŠ¹ç‡ã ã‘ã©ä»Šã®ã¨ã“ã‚ã¯è¨±ã—ã¦ã€‚ã€‚
 	CNativeW line;
 	line.AllocStringBuffer(60);
 	for (;;) {
 		int c=getc(GetFp());
-		if(c==EOF)break; //EOF‚ÅI—¹
-		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" ‚Ü‚½‚Í "\r\n" ‚ÅI—¹
-		if(c=='\n')break; //"\n" ‚ÅI—¹
+		if(c==EOF)break; //EOFã§çµ‚äº†
+		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" ã¾ãŸã¯ "\r\n" ã§çµ‚äº†
+		if(c=='\n')break; //"\n" ã§çµ‚äº†
 		if( line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10 ){
 			line._GetMemory()->AllocBuffer( line._GetMemory()->GetRawLength() * 2 );
 		}
 		line._GetMemory()->AppendRawData(&c,sizeof(char));
 	}
 
-	//UTF-8 ¨ UNICODE
+	//UTF-8 â†’ UNICODE
 	if(m_bIsUtf8){
 		CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line);
 	}
-	//Shift_JIS ¨ UNICODE
+	//Shift_JIS â†’ UNICODE
 	else{
 		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
 	}
 
-	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL ‚Ü‚Å NULL •¶š‚àŠÜ‚ß‚é
+	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL ã¾ã§ NULL æ–‡å­—ã‚‚å«ã‚ã‚‹
 }
 
 
@@ -90,7 +90,7 @@ CTextOutputStream::CTextOutputStream(const TCHAR* tszPath, ECodeType eCodeType, 
 {
 	m_pcCodeBase = CCodeFactory::CreateCodeBase(eCodeType,0);
 	if(Good() && bBom){
-		//BOM•t‰Á
+		//BOMä»˜åŠ 
 		CMemory cmemBom;
 		m_pcCodeBase->GetBom(&cmemBom);
 		if(cmemBom.GetRawLength()>0){
@@ -105,21 +105,21 @@ CTextOutputStream::~CTextOutputStream()
 }
 
 void CTextOutputStream::WriteString(
-	const wchar_t*	szData,	//!< ‘‚«‚Ş•¶š—ñ
-	int				nLen	//!< ‘‚«‚Ş•¶š—ñ’·B-1‚ğ“n‚·‚Æ©“®ŒvZB
+	const wchar_t*	szData,	//!< æ›¸ãè¾¼ã‚€æ–‡å­—åˆ—
+	int				nLen	//!< æ›¸ãè¾¼ã‚€æ–‡å­—åˆ—é•·ã€‚-1ã‚’æ¸¡ã™ã¨è‡ªå‹•è¨ˆç®—ã€‚
 )
 {
-	//$$ƒƒ‚: •¶š•ÏŠ·‚É‚¢‚¿‚¢‚¿ƒRƒs[‚ğì‚Á‚Ä‚é‚Ì‚ÅŒø—¦‚ªˆ«‚¢BŒãXŒø—¦‰ü‘P—\’èB
+	//$$ãƒ¡ãƒ¢: æ–‡å­—å¤‰æ›æ™‚ã«ã„ã¡ã„ã¡ã‚³ãƒ”ãƒ¼ã‚’ä½œã£ã¦ã‚‹ã®ã§åŠ¹ç‡ãŒæ‚ªã„ã€‚å¾Œã€…åŠ¹ç‡æ”¹å–„äºˆå®šã€‚
 
 	int nDataLen = nLen;
 	if(nDataLen<0)nDataLen = wcslen(szData);
 	const wchar_t* pData = szData;
 	const wchar_t* pEnd = szData + nDataLen;
 
-	//1s–ˆ‚ÉƒJƒLƒRB"\n"‚Í"\r\n"‚É•ÏŠ·‚µ‚È‚ª‚ço—ÍB‚½‚¾‚µA"\r\n"‚Í"\r\r\n"‚É•ÏŠ·‚µ‚È‚¢B
+	//1è¡Œæ¯ã«ã‚«ã‚­ã‚³ã€‚"\n"ã¯"\r\n"ã«å¤‰æ›ã—ãªãŒã‚‰å‡ºåŠ›ã€‚ãŸã ã—ã€"\r\n"ã¯"\r\r\n"ã«å¤‰æ›ã—ãªã„ã€‚
 	const wchar_t* p = pData;
 	for (;;) {
-		//\n‚ğŒŸoB‚½‚¾‚µ\r\n‚ÍœŠOB
+		//\nã‚’æ¤œå‡ºã€‚ãŸã ã—\r\nã¯é™¤å¤–ã€‚
 		const wchar_t* q = p;
 		while(q<pEnd){
 			if(*q==L'\n' && !((q-1)>=p && *(q-1)==L'\r') )break;
@@ -130,25 +130,25 @@ void CTextOutputStream::WriteString(
 		else lf = NULL;
 
 		if(lf){
-			//\n‚Ì‘O‚Ü‚Å(p`lf)o—Í
+			//\nã®å‰ã¾ã§(pï½lf)å‡ºåŠ›
 			CNativeW cSrc(p,lf-p);
 			CMemory cDst;
-			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //ƒR[ƒh•ÏŠ·
+			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //ã‚³ãƒ¼ãƒ‰å¤‰æ›
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
 
-			//\r\n‚ğo—Í
+			//\r\nã‚’å‡ºåŠ›
 			cSrc.SetString(L"\r\n");
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst);
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
 
-			//Ÿ‚Ö
+			//æ¬¡ã¸
 			p=lf+1;
 		}
 		else{
-			//c‚è‚º‚ñ‚Ôo—Í
+			//æ®‹ã‚Šãœã‚“ã¶å‡ºåŠ›
 			CNativeW cSrc(p,pEnd-p);
 			CMemory cDst;
-			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //ƒR[ƒh•ÏŠ·
+			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //ã‚³ãƒ¼ãƒ‰å¤‰æ›
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
 			break;
 		}
@@ -157,14 +157,14 @@ void CTextOutputStream::WriteString(
 
 void CTextOutputStream::WriteF(const wchar_t* format, ...)
 {
-	//ƒeƒLƒXƒg®Œ` -> buf
-	static wchar_t buf[16*1024]; //$$ Šm•Û‚µ‚·‚¬‚©‚àH
+	//ãƒ†ã‚­ã‚¹ãƒˆæ•´å½¢ -> buf
+	static wchar_t buf[16*1024]; //$$ ç¢ºä¿ã—ã™ãã‹ã‚‚ï¼Ÿ
 	va_list v;
 	va_start(v,format);
 	auto_vsprintf_s(buf,_countof(buf),format,v);
 	va_end(v);
 
-	//o—Í
+	//å‡ºåŠ›
 	WriteString(buf);
 }
 

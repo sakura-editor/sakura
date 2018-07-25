@@ -1,6 +1,6 @@
-//	‚±‚Ìs‚Í•¶Žš‰»‚¯‘Îô—p‚Å‚·DÁ‚³‚È‚¢‚Å‚­‚¾‚³‚¢
+ï»¿//	ã“ã®è¡Œã¯æ–‡å­—åŒ–ã‘å¯¾ç­–ç”¨ã§ã™ï¼Žæ¶ˆã•ãªã„ã§ãã ã•ã„
 /*!	@file
-	@brief ƒvƒƒZƒX¶¬ƒNƒ‰ƒX
+	@brief ãƒ—ãƒ­ã‚»ã‚¹ç”Ÿæˆã‚¯ãƒ©ã‚¹
 
 	@author aroka
 	@date 2002/01/03 Create
@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, masami shoji
-	Copyright (C) 2002, aroka WinMain‚æ‚è•ª—£
+	Copyright (C) 2002, aroka WinMainã‚ˆã‚Šåˆ†é›¢
 	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
@@ -33,13 +33,13 @@ class CProcess;
 
 
 /*!
-	@brief ƒvƒƒZƒXƒNƒ‰ƒX‚ð¶¬‚·‚é
+	@brief ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆã™ã‚‹
 	
-	ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“AƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì—L–³‚ð”»’è‚µA
-	“K“–‚ÈƒvƒƒZƒXƒNƒ‰ƒX‚ð¶¬‚·‚éB
+	ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã€ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®æœ‰ç„¡ã‚’åˆ¤å®šã—ã€
+	é©å½“ãªãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	
-	@param[in] hInstance ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-	@param[in] lpCmdLine ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶Žš—ñ
+	@param[in] hInstance ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+	@param[in] lpCmdLine ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—
 	
 	@author aroka
 	@date 2002/01/08
@@ -56,17 +56,17 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		return 0;
 	}
 
-	// ƒvƒƒZƒXƒNƒ‰ƒX‚ð¶¬‚·‚é
+	// ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆã™ã‚‹
 	//
-	// Note: ˆÈ‰º‚Ìˆ—‚É‚¨‚¢‚ÄŽg—p‚³‚ê‚é IsExistControlProcess() ‚ÍAƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª
-	// ‘¶Ý‚µ‚È‚¢ê‡‚¾‚¯‚Å‚È‚­AƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª‹N“®‚µ‚Ä ::CreateMutex() ‚ðŽÀs‚·‚é‚Ü‚Å
-	// ‚ÌŠÔ‚à falseiƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX–³‚µj‚ð•Ô‚·B
-	// ]‚Á‚ÄA•¡”‚Ìƒm[ƒ}ƒ‹ƒvƒƒZƒX‚ª“¯Žž‚É‹N“®‚µ‚½ê‡‚È‚Ç‚Í•¡”‚ÌƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª
-	// ‹N“®‚³‚ê‚é‚±‚Æ‚à‚ ‚éB
-	// ‚µ‚©‚µA‚»‚Ì‚æ‚¤‚Èê‡‚Å‚àƒ~ƒ…[ƒeƒbƒNƒX‚ðÅ‰‚ÉŠm•Û‚µ‚½ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª—Bˆê¶‚«Žc‚éB
+	// Note: ä»¥ä¸‹ã®å‡¦ç†ã«ãŠã„ã¦ä½¿ç”¨ã•ã‚Œã‚‹ IsExistControlProcess() ã¯ã€ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒ
+	// å­˜åœ¨ã—ãªã„å ´åˆã ã‘ã§ãªãã€ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒèµ·å‹•ã—ã¦ ::CreateMutex() ã‚’å®Ÿè¡Œã™ã‚‹ã¾ã§
+	// ã®é–“ã‚‚ falseï¼ˆã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ç„¡ã—ï¼‰ã‚’è¿”ã™ã€‚
+	// å¾“ã£ã¦ã€è¤‡æ•°ã®ãƒŽãƒ¼ãƒžãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒåŒæ™‚ã«èµ·å‹•ã—ãŸå ´åˆãªã©ã¯è¤‡æ•°ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒ
+	// èµ·å‹•ã•ã‚Œã‚‹ã“ã¨ã‚‚ã‚ã‚‹ã€‚
+	// ã—ã‹ã—ã€ãã®ã‚ˆã†ãªå ´åˆã§ã‚‚ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚’æœ€åˆã«ç¢ºä¿ã—ãŸã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒå”¯ä¸€ç”Ÿãæ®‹ã‚‹ã€‚
 	//
 	if( IsStartingControlProcess() ){
-		if( TestWriteQuit() ){	// 2007.09.04 ryojiuÝ’è‚ð•Û‘¶‚µ‚ÄI—¹‚·‚évƒIƒvƒVƒ‡ƒ“ˆ—isakuext˜AŒg—pj
+		if( TestWriteQuit() ){	// 2007.09.04 ryojiã€Œè¨­å®šã‚’ä¿å­˜ã—ã¦çµ‚äº†ã™ã‚‹ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³å‡¦ç†ï¼ˆsakuexté€£æºç”¨ï¼‰
 			return 0;
 		}
 		if( !IsExistControlProcess() ){
@@ -77,7 +77,7 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		if( !IsExistControlProcess() ){
 			StartControlProcess();
 		}
-		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‰Šú‰»Š®—¹‘Ò‚¿
+		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®åˆæœŸåŒ–å®Œäº†å¾…ã¡
 			process = new CNormalProcess( hInstance, lpCmdLine );
 		}
 	}
@@ -117,63 +117,63 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
 			CCommandLine::getInstance()->SetProfileName( to_wchar(dlgProf.m_strProfileName.c_str()) );
 		}else{
-			return false; // ƒvƒƒtƒ@ƒCƒ‹ƒ}ƒl[ƒWƒƒ‚Åu•Â‚¶‚év‚ð‘I‚ñ‚¾BƒvƒƒZƒXI—¹
+			return false; // ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ãƒžãƒãƒ¼ã‚¸ãƒ£ã§ã€Œé–‰ã˜ã‚‹ã€ã‚’é¸ã‚“ã ã€‚ãƒ—ãƒ­ã‚»ã‚¹çµ‚äº†
 		}
 	}
 	return true;
 }
 
 /*!
-	@brief Windowsƒo[ƒWƒ‡ƒ“‚Ìƒ`ƒFƒbƒN
+	@brief Windowsãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ãƒã‚§ãƒƒã‚¯
 	
-	Windows 95ˆÈãCWindows NT4.0ˆÈã‚Å‚ ‚é‚±‚Æ‚ðŠm”F‚·‚éD
-	Windows 95Œn‚Å‚ÍŽc‚èƒŠƒ\[ƒX‚Ìƒ`ƒFƒbƒN‚às‚¤D
+	Windows 95ä»¥ä¸Šï¼ŒWindows NT4.0ä»¥ä¸Šã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹ï¼Ž
+	Windows 95ç³»ã§ã¯æ®‹ã‚Šãƒªã‚½ãƒ¼ã‚¹ã®ãƒã‚§ãƒƒã‚¯ã‚‚è¡Œã†ï¼Ž
 	
 	@author aroka
 	@date 2002/01/03
 */
 bool CProcessFactory::IsValidVersion()
 {
-	/* Windowsƒo[ƒWƒ‡ƒ“‚Ìƒ`ƒFƒbƒN */
-	COsVersionInfo	cOsVer(true);	// ‰Šú‰»‚ðs‚¤
+	/* Windowsãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ãƒã‚§ãƒƒã‚¯ */
+	COsVersionInfo	cOsVer(true);	// åˆæœŸåŒ–ã‚’è¡Œã†
 	if( cOsVer.GetVersion() ){
 		if( !cOsVer.OsIsEnableVersion() ){
 			InfoMessage( NULL,
-				_T("‚±‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðŽÀs‚·‚é‚É‚ÍA\n")
+				_T("ã“ã®ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å®Ÿè¡Œã™ã‚‹ã«ã¯ã€\n")
 #if (WINVER >= _WIN32_WINNT_WIN7)
-				_T("Windows7ˆÈ~‚ÌOS‚ª•K—v‚Å‚·B\n")
+				_T("Windows7ä»¥é™ã®OSãŒå¿…è¦ã§ã™ã€‚\n")
 #elif (WINVER >= _WIN32_WINNT_VISTA)
-				_T("WindowsVistaˆÈ~ ‚Ü‚½‚Í WindowsServer2008ˆÈ~‚ÌOS‚ª•K—v‚Å‚·B\n")
+				_T("WindowsVistaä»¥é™ ã¾ãŸã¯ WindowsServer2008ä»¥é™ã®OSãŒå¿…è¦ã§ã™ã€‚\n")
 #elif (WINVER >= _WIN32_WINNT_WIN2K)
-				_T("Windows2000ˆÈ~‚ÌOS‚ª•K—v‚Å‚·B\n")
+				_T("Windows2000ä»¥é™ã®OSãŒå¿…è¦ã§ã™ã€‚\n")
 #else
-				_T("Windows95ˆÈã ‚Ü‚½‚Í WindowsNT4.0ˆÈã‚ÌOS‚ª•K—v‚Å‚·B\n")
+				_T("Windows95ä»¥ä¸Š ã¾ãŸã¯ WindowsNT4.0ä»¥ä¸Šã®OSãŒå¿…è¦ã§ã™ã€‚\n")
 #endif
-				_T("ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðI—¹‚µ‚Ü‚·B")
+				_T("ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’çµ‚äº†ã—ã¾ã™ã€‚")
 			);
 			return false;
 		}
 	}else{
-		InfoMessage( NULL, _T("OS‚Ìƒo[ƒWƒ‡ƒ“‚ªŽæ“¾‚Å‚«‚Ü‚¹‚ñB\nƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðI—¹‚µ‚Ü‚·B") );
+		InfoMessage( NULL, _T("OSã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãŒå–å¾—ã§ãã¾ã›ã‚“ã€‚\nã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’çµ‚äº†ã—ã¾ã™ã€‚") );
 		return false;
 	}
 
-	/* Šg’£–½—ßƒZƒbƒg‚Ìƒ`ƒFƒbƒN */
+	/* æ‹¡å¼µå‘½ä»¤ã‚»ãƒƒãƒˆã®ãƒã‚§ãƒƒã‚¯ */
 #ifdef USE_SSE2
 	if ( cOsVer._SupportSSE2() ) {
 	} else {
 		InfoMessage( NULL,
-			_T("‚±‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðŽÀs‚·‚é‚É‚ÍA\n")
-			_T("SSE2–½—ßƒZƒbƒg‚ðƒTƒ|[ƒg‚µ‚½CPU‚ª•K—v‚Å‚·B\n")
-			_T("ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðI—¹‚µ‚Ü‚·B")
+			_T("ã“ã®ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å®Ÿè¡Œã™ã‚‹ã«ã¯ã€\n")
+			_T("SSE2å‘½ä»¤ã‚»ãƒƒãƒˆã‚’ã‚µãƒãƒ¼ãƒˆã—ãŸCPUãŒå¿…è¦ã§ã™ã€‚\n")
+			_T("ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’çµ‚äº†ã—ã¾ã™ã€‚")
 		);
 		return false;
 	}
 #endif
 
 #if (WINVER < _WIN32_WINNT_WIN2K)
-	/* ƒVƒXƒeƒ€ƒŠƒ\[ƒX‚Ìƒ`ƒFƒbƒN */
-	// Jul. 5, 2001 shoji masami NT‚Å‚ÍƒŠƒ\[ƒXƒ`ƒFƒbƒN‚ðs‚í‚È‚¢
+	/* ã‚·ã‚¹ãƒ†ãƒ ãƒªã‚½ãƒ¼ã‚¹ã®ãƒã‚§ãƒƒã‚¯ */
+	// Jul. 5, 2001 shoji masami NTã§ã¯ãƒªã‚½ãƒ¼ã‚¹ãƒã‚§ãƒƒã‚¯ã‚’è¡Œã‚ãªã„
 	if( !IsWin32NT() ){
 		if( !CheckSystemResources( GSTR_APPNAME ) ){
 			return false;
@@ -185,10 +185,10 @@ bool CProcessFactory::IsValidVersion()
 
 
 /*!
-	@brief ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚É -NOWIN ‚ª‚ ‚é‚©‚ð”»’è‚·‚éB
+	@brief ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã« -NOWIN ãŒã‚ã‚‹ã‹ã‚’åˆ¤å®šã™ã‚‹ã€‚
 	
 	@author aroka
-	@date 2002/01/03 ì¬ 2002/01/18 •ÏX
+	@date 2002/01/03 ä½œæˆ 2002/01/18 å¤‰æ›´
 */
 bool CProcessFactory::IsStartingControlProcess()
 {
@@ -196,7 +196,7 @@ bool CProcessFactory::IsStartingControlProcess()
 }
 
 /*!
-	ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì—L–³‚ð’²‚×‚éB
+	ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®æœ‰ç„¡ã‚’èª¿ã¹ã‚‹ã€‚
 	
 	@author aroka
 	@date 2002/01/03
@@ -208,73 +208,73 @@ bool CProcessFactory::IsExistControlProcess()
 	std::tstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += strProfileName;
  	HANDLE hMutexCP;
-	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() ‚ð ::OpenMutex()‚É•ÏX
+	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() ã‚’ ::OpenMutex()ã«å¤‰æ›´
 	if( NULL != hMutexCP ){
 		::CloseHandle( hMutexCP );
-		return true;	// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ªŒ©‚Â‚©‚Á‚½
+		return true;	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒè¦‹ã¤ã‹ã£ãŸ
 	}
 
-	return false;	// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Í‘¶Ý‚µ‚Ä‚¢‚È‚¢‚©A‚Ü‚¾ CreateMutex() ‚µ‚Ä‚È‚¢
+	return false;	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã¯å­˜åœ¨ã—ã¦ã„ãªã„ã‹ã€ã¾ã  CreateMutex() ã—ã¦ãªã„
 }
 
 //	From Here Aug. 28, 2001 genta
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ð‹N“®‚·‚é
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚’èµ·å‹•ã™ã‚‹
 	
-	Ž©•ªŽ©g‚É -NOWIN ƒIƒvƒVƒ‡ƒ“‚ð•t‚¯‚Ä‹N“®‚·‚éD
-	‹¤—Lƒƒ‚ƒŠ‚ðƒ`ƒFƒbƒN‚µ‚Ä‚Í‚¢‚¯‚È‚¢‚Ì‚ÅCŽc”O‚È‚ª‚çCControlTray::OpenNewEditor‚ÍŽg‚¦‚È‚¢D
+	è‡ªåˆ†è‡ªèº«ã« -NOWIN ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä»˜ã‘ã¦èµ·å‹•ã™ã‚‹ï¼Ž
+	å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚’ãƒã‚§ãƒƒã‚¯ã—ã¦ã¯ã„ã‘ãªã„ã®ã§ï¼Œæ®‹å¿µãªãŒã‚‰CControlTray::OpenNewEditorã¯ä½¿ãˆãªã„ï¼Ž
 	
 	@author genta
 	@date Aug. 28, 2001
-	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
+	@date 2008.05.05 novice GetModuleHandle(NULL)â†’NULLã«å¤‰æ›´
 */
 bool CProcessFactory::StartControlProcess()
 {
 	MY_RUNNINGTIMER(cRunningTimer,"StartControlProcess" );
 
-	//	ƒvƒƒZƒX‚Ì‹N“®
+	//	ãƒ—ãƒ­ã‚»ã‚¹ã®èµ·å‹•
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;
 
 	s.cb          = sizeof( s );
 	s.lpReserved  = NULL;
 	s.lpDesktop   = NULL;
-	s.lpTitle     = const_cast<TCHAR*>(_T("sakura control process")); //2007.09.21 kobake ƒfƒoƒbƒO‚µ‚â‚·‚¢‚æ‚¤‚ÉA–¼‘O‚ð•t‚¯‚é
+	s.lpTitle     = const_cast<TCHAR*>(_T("sakura control process")); //2007.09.21 kobake ãƒ‡ãƒãƒƒã‚°ã—ã‚„ã™ã„ã‚ˆã†ã«ã€åå‰ã‚’ä»˜ã‘ã‚‹
 	s.dwFlags     = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;
 	s.lpReserved2 = NULL;
 
-	TCHAR szCmdLineBuf[1024];	//	ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“
-	TCHAR szEXE[MAX_PATH + 1];	//	ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒpƒX–¼
+	TCHAR szCmdLineBuf[1024];	//	ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³
+	TCHAR szEXE[MAX_PATH + 1];	//	ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‘ã‚¹å
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
 		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN -PROF=\"%ls\""),
 			szEXE, CCommandLine::getInstance()->GetProfileName() );
 	}else{
-		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""•t‰Á
+		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""ä»˜åŠ 
 	}
 
-	//í’“ƒvƒƒZƒX‹N“®
+	//å¸¸é§ãƒ—ãƒ­ã‚»ã‚¹èµ·å‹•
 	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
 #ifdef _DEBUG
-//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake ƒfƒoƒbƒO—pƒtƒ‰ƒO
+//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake ãƒ‡ãƒãƒƒã‚°ç”¨ãƒ•ãƒ©ã‚°
 #endif
 	BOOL bCreateResult = ::CreateProcess(
-		szEXE,				// ŽÀs‰Â”\ƒ‚ƒWƒ…[ƒ‹‚Ì–¼‘O
-		szCmdLineBuf,		// ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚Ì•¶Žš—ñ
-		NULL,				// ƒZƒLƒ…ƒŠƒeƒB‹LqŽq
-		NULL,				// ƒZƒLƒ…ƒŠƒeƒB‹LqŽq
-		FALSE,				// ƒnƒ“ƒhƒ‹‚ÌŒp³ƒIƒvƒVƒ‡ƒ“
-		dwCreationFlag,		// ì¬‚Ìƒtƒ‰ƒO
-		NULL,				// V‚µ‚¢ŠÂ‹«ƒuƒƒbƒN
-		NULL,				// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚Ì–¼‘O
-		&s,					// ƒXƒ^[ƒgƒAƒbƒvî•ñ
-		&p					// ƒvƒƒZƒXî•ñ
+		szEXE,				// å®Ÿè¡Œå¯èƒ½ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®åå‰
+		szCmdLineBuf,		// ã‚³ãƒžãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®æ–‡å­—åˆ—
+		NULL,				// ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		NULL,				// ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		FALSE,				// ãƒãƒ³ãƒ‰ãƒ«ã®ç¶™æ‰¿ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+		dwCreationFlag,		// ä½œæˆã®ãƒ•ãƒ©ã‚°
+		NULL,				// æ–°ã—ã„ç’°å¢ƒãƒ–ãƒ­ãƒƒã‚¯
+		NULL,				// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®åå‰
+		&s,					// ã‚¹ã‚¿ãƒ¼ãƒˆã‚¢ãƒƒãƒ—æƒ…å ±
+		&p					// ãƒ—ãƒ­ã‚»ã‚¹æƒ…å ±
 	);
 	if( !bCreateResult ){
-		//	Ž¸”s
+		//	å¤±æ•—
 		TCHAR* pMsg;
 		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
@@ -286,20 +286,20 @@ bool CProcessFactory::StartControlProcess()
 						0,
 						NULL
 		);
-		ErrorMessage( NULL, _T("\'%ts\'\nƒvƒƒZƒX‚Ì‹N“®‚ÉŽ¸”s‚µ‚Ü‚µ‚½B\n%ts"), szEXE, pMsg );
-		::LocalFree( (HLOCAL)pMsg );	//	ƒGƒ‰[ƒƒbƒZ[ƒWƒoƒbƒtƒ@‚ð‰ð•ú
+		ErrorMessage( NULL, _T("\'%ts\'\nãƒ—ãƒ­ã‚»ã‚¹ã®èµ·å‹•ã«å¤±æ•—ã—ã¾ã—ãŸã€‚\n%ts"), szEXE, pMsg );
+		::LocalFree( (HLOCAL)pMsg );	//	ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒãƒƒãƒ•ã‚¡ã‚’è§£æ”¾
 		return false;
 	}
 
-	// ‹N“®‚µ‚½ƒvƒƒZƒX‚ªŠ®‘S‚É—§‚¿ã‚ª‚é‚Ü‚Å‚¿‚å‚Á‚Æ‘Ò‚ÂD
+	// èµ·å‹•ã—ãŸãƒ—ãƒ­ã‚»ã‚¹ãŒå®Œå…¨ã«ç«‹ã¡ä¸ŠãŒã‚‹ã¾ã§ã¡ã‚‡ã£ã¨å¾…ã¤ï¼Ž
 	//
-	// Note: ‚±‚Ì‘Ò‚¿‚É‚æ‚èA‚±‚±‚Å‹N“®‚µ‚½ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª‹£‘ˆ‚É¶‚«Žc‚ê‚È‚©‚Á‚½ê‡‚Å‚àA
-	// —Bˆê¶‚«Žc‚Á‚½ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª‘½d‹N“®–hŽ~—pƒ~ƒ…[ƒeƒbƒNƒX‚ðì¬‚µ‚Ä‚¢‚é‚Í‚¸B
+	// Note: ã“ã®å¾…ã¡ã«ã‚ˆã‚Šã€ã“ã“ã§èµ·å‹•ã—ãŸã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒç«¶äº‰ã«ç”Ÿãæ®‹ã‚Œãªã‹ã£ãŸå ´åˆã§ã‚‚ã€
+	// å”¯ä¸€ç”Ÿãæ®‹ã£ãŸã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒå¤šé‡èµ·å‹•é˜²æ­¢ç”¨ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚’ä½œæˆã—ã¦ã„ã‚‹ã¯ãšã€‚
 	//
 	int nResult;
-	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	Å‘å10•bŠÔ‘Ò‚Â
+	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	æœ€å¤§10ç§’é–“å¾…ã¤
 	if( 0 != nResult ){
-		ErrorMessage( NULL, _T("\'%ls\'\nƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‹N“®‚ÉŽ¸”s‚µ‚Ü‚µ‚½B"), szEXE );
+		ErrorMessage( NULL, _T("\'%ls\'\nã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®èµ·å‹•ã«å¤±æ•—ã—ã¾ã—ãŸã€‚"), szEXE );
 		::CloseHandle( p.hThread );
 		::CloseHandle( p.hProcess );
 		return false;
@@ -313,20 +313,20 @@ bool CProcessFactory::StartControlProcess()
 //	To Here Aug. 28, 2001 genta
 
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ð‘Ò‚ÂB
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’å¾…ã¤ã€‚
 
 	@author ryoji by assitance with karoto
 	@date 2006/04/10
 */
 bool CProcessFactory::WaitForInitializedControlProcess()
 {
-	// ‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ð‘Ò‚Â
+	// åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’å¾…ã¤
 	//
-	// Note: ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‘¤‚Í‘½d‹N“®–hŽ~—pƒ~ƒ…[ƒeƒbƒNƒX‚ð ::CreateMutex() ‚Å
-	// ì¬‚·‚é‚æ‚è‚àæ‚É‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ð ::CreateEvent() ‚Åì¬‚·‚éB
+	// Note: ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹å´ã¯å¤šé‡èµ·å‹•é˜²æ­¢ç”¨ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚’ ::CreateMutex() ã§
+	// ä½œæˆã™ã‚‹ã‚ˆã‚Šã‚‚å…ˆã«åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’ ::CreateEvent() ã§ä½œæˆã™ã‚‹ã€‚
 	//
 	if( !IsExistControlProcess() ){
-		// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ª‘½d‹N“®–hŽ~—p‚Ìƒ~ƒ…[ƒeƒbƒNƒXì¬‘O‚ÉˆÙíI—¹‚µ‚½ê‡‚È‚Ç
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒå¤šé‡èµ·å‹•é˜²æ­¢ç”¨ã®ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ä½œæˆå‰ã«ç•°å¸¸çµ‚äº†ã—ãŸå ´åˆãªã©
 		return false;
 	}
 
@@ -336,22 +336,22 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	HANDLE hEvent;
 	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
 	if( NULL == hEvent ){
-		// “®ì’†‚ÌƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ð‹Œƒo[ƒWƒ‡ƒ“‚Æ‚Ý‚È‚µAƒCƒxƒ“ƒg‚ð‘Ò‚½‚¸‚Éˆ—‚ði‚ß‚é
+		// å‹•ä½œä¸­ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚’æ—§ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¨ã¿ãªã—ã€ã‚¤ãƒ™ãƒ³ãƒˆã‚’å¾…ãŸãšã«å‡¦ç†ã‚’é€²ã‚ã‚‹
 		//
-		// Note: Ver1.5.9.91ˆÈ‘O‚Ìƒo[ƒWƒ‡ƒ“‚Í‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ðì‚ç‚È‚¢B
-		// ‚±‚Ì‚½‚ßAƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ªí’“‚µ‚Ä‚¢‚È‚¢‚Æ‚«‚É•¡”ƒEƒBƒ“ƒhƒE‚ð‚Ù‚Ú
-		// “¯Žž‚É‹N“®‚·‚é‚ÆA‹£‘ˆ‚É¶‚«Žc‚ê‚È‚©‚Á‚½ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÌeƒvƒƒZƒX‚âA
-		// ‹Í‚©‚Éo’x‚ê‚ÄƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ðì¬‚µ‚È‚©‚Á‚½ƒvƒƒZƒX‚Å‚àA
-		// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‰Šú‰»ˆ—‚ð’Ç‚¢‰z‚µ‚Ä‚µ‚Ü‚¢AˆÙíI—¹‚µ‚½‚èA
-		// uƒ^ƒuƒo[‚ª•\Ž¦‚³‚ê‚È‚¢v‚Ì‚æ‚¤‚È–â‘è‚ª”­¶‚µ‚Ä‚¢‚½B
+		// Note: Ver1.5.9.91ä»¥å‰ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’ä½œã‚‰ãªã„ã€‚
+		// ã“ã®ãŸã‚ã€ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãŒå¸¸é§ã—ã¦ã„ãªã„ã¨ãã«è¤‡æ•°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã»ã¼
+		// åŒæ™‚ã«èµ·å‹•ã™ã‚‹ã¨ã€ç«¶äº‰ã«ç”Ÿãæ®‹ã‚Œãªã‹ã£ãŸã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®è¦ªãƒ—ãƒ­ã‚»ã‚¹ã‚„ã€
+		// åƒ…ã‹ã«å‡ºé…ã‚Œã¦ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚’ä½œæˆã—ãªã‹ã£ãŸãƒ—ãƒ­ã‚»ã‚¹ã§ã‚‚ã€
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®åˆæœŸåŒ–å‡¦ç†ã‚’è¿½ã„è¶Šã—ã¦ã—ã¾ã„ã€ç•°å¸¸çµ‚äº†ã—ãŸã‚Šã€
+		// ã€Œã‚¿ãƒ–ãƒãƒ¼ãŒè¡¨ç¤ºã•ã‚Œãªã„ã€ã®ã‚ˆã†ãªå•é¡ŒãŒç™ºç”Ÿã—ã¦ã„ãŸã€‚
 		//
 		return true;
 	}
 	DWORD dwRet;
-	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// Å‘å10•bŠÔ‘Ò‚Â
-	if( WAIT_TIMEOUT == dwRet ){	// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì‰Šú‰»‚ªI—¹‚µ‚È‚¢
+	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// æœ€å¤§10ç§’é–“å¾…ã¤
+	if( WAIT_TIMEOUT == dwRet ){	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®åˆæœŸåŒ–ãŒçµ‚äº†ã—ãªã„
 		::CloseHandle( hEvent );
-		TopErrorMessage( NULL, _T("ƒGƒfƒBƒ^‚Ü‚½‚ÍƒVƒXƒeƒ€‚ªƒrƒW[ó‘Ô‚Å‚·B\n‚µ‚Î‚ç‚­‘Ò‚Á‚ÄŠJ‚«‚È‚¨‚µ‚Ä‚­‚¾‚³‚¢B") );
+		TopErrorMessage( NULL, _T("ã‚¨ãƒ‡ã‚£ã‚¿ã¾ãŸã¯ã‚·ã‚¹ãƒ†ãƒ ãŒãƒ“ã‚¸ãƒ¼çŠ¶æ…‹ã§ã™ã€‚\nã—ã°ã‚‰ãå¾…ã£ã¦é–‹ããªãŠã—ã¦ãã ã•ã„ã€‚") );
 		return false;
 	}
 	::CloseHandle( hEvent );
@@ -359,7 +359,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 }
 
 /*!
-	@brief uÝ’è‚ð•Û‘¶‚µ‚ÄI—¹‚·‚évƒIƒvƒVƒ‡ƒ“ˆ—isakuext˜AŒg—pj
+	@brief ã€Œè¨­å®šã‚’ä¿å­˜ã—ã¦çµ‚äº†ã™ã‚‹ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³å‡¦ç†ï¼ˆsakuexté€£æºç”¨ï¼‰
 
 	@author ryoji
 	@date 2007.09.04
@@ -370,15 +370,15 @@ bool CProcessFactory::TestWriteQuit()
 		TCHAR szIniFileIn[_MAX_PATH];
 		TCHAR szIniFileOut[_MAX_PATH];
 		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut, _T("") );
-		if( szIniFileIn[0] != _T('\0') ){	// ƒ}ƒ‹ƒ`ƒ†[ƒU—pÝ’è‚©
-			// Šù‚Éƒ}ƒ‹ƒ`ƒ†[ƒU—p‚Ìiniƒtƒ@ƒCƒ‹‚ª‚ ‚ê‚ÎEXEŠî€‚Ìiniƒtƒ@ƒCƒ‹‚Éã‘‚«XV‚µ‚ÄI—¹
+		if( szIniFileIn[0] != _T('\0') ){	// ãƒžãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨è¨­å®šã‹
+			// æ—¢ã«ãƒžãƒ«ãƒãƒ¦ãƒ¼ã‚¶ç”¨ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Œã°EXEåŸºæº–ã®iniãƒ•ã‚¡ã‚¤ãƒ«ã«ä¸Šæ›¸ãæ›´æ–°ã—ã¦çµ‚äº†
 			if( fexist(szIniFileIn) ){
 				if( ::CopyFile( szIniFileIn, szIniFileOut, FALSE ) ){
 					return true;
 				}
 			}
 		}else{
-			// Šù‚ÉEXEŠî€‚Ìiniƒtƒ@ƒCƒ‹‚ª‚ ‚ê‚Î‰½‚à‚¹‚¸I—¹
+			// æ—¢ã«EXEåŸºæº–ã®iniãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Œã°ä½•ã‚‚ã›ãšçµ‚äº†
 			if( fexist(szIniFileOut) ){
 				return true;
 			}

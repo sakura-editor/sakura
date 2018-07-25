@@ -1,11 +1,11 @@
-/*!	@file
-	@brief ƒvƒƒZƒXŠî’êƒNƒ‰ƒXƒwƒbƒ_ƒtƒ@ƒCƒ‹
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ­ã‚»ã‚¹åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 
 	@author aroka
-	@date	2002/01/08 ì¬
+	@date	2002/01/08 ä½œæˆ
 */
 /*
-	Copyright (C) 2002, aroka V‹Kì¬
+	Copyright (C) 2002, aroka æ–°è¦ä½œæˆ
 	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
@@ -24,10 +24,10 @@
 #endif
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒvƒƒZƒXŠî’êƒNƒ‰ƒX
+	@brief ãƒ—ãƒ­ã‚»ã‚¹åŸºåº•ã‚¯ãƒ©ã‚¹
 */
 class CProcess : public TSingleInstance<CProcess> {
 public:

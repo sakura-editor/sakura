@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,70 +25,70 @@
 #define SAKURA_CHARSET_51A8CEE7_80CB_463F_975E_B30715B1C385_H_
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ’è”                              //
+//                           å®šæ•°                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// •¶šƒR[ƒhƒZƒbƒgí•Ê
-//2007.08.14 kobake CODE_ERROR, CODE_DEFAULT ’Ç‰Á
+// æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç¨®åˆ¥
+//2007.08.14 kobake CODE_ERROR, CODE_DEFAULT è¿½åŠ 
 enum ECodeType {
-	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), ƒVƒtƒgJIS(Shift_JIS))
-	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)‚Å‚Í‚È‚¢)
-	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)‚Å‚Í‚È‚¢)
+	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), ã‚·ãƒ•ãƒˆJIS(Shift_JIS))
+	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ã§ã¯ãªã„)
+	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ã§ã¯ãªã„)
 	CODE_UNICODE,					//!< Unicode			(UTF-16 LittleEndian(UCS-2))
 	CODE_UTF8,						//!< UTF-8(UCS-2)
 	CODE_UTF7,						//!< UTF-7(UCS-2)
 	CODE_UNICODEBE,					//!< Unicode BigEndian	(UTF-16 BigEndian(UCS-2))
 	CODE_CESU8,						//!< CESU-8
-	CODE_LATIN1,					//!< Latin1				(Latin1, ‰¢•¶, Windows-1252, Windows Codepage 1252 West European)
+	CODE_LATIN1,					//!< Latin1				(Latin1, æ¬§æ–‡, Windows-1252, Windows Codepage 1252 West European)
 	CODE_CODEMAX,
 	CODE_CPACP      = 90,
 	CODE_CPOEM      = 91,
-	CODE_AUTODETECT	= 99,			//!< •¶šƒR[ƒh©“®”»•Ê
-	CODE_ERROR      = -1,			//!< ƒGƒ‰[
-	CODE_NONE       = -1,			//!< –¢ŒŸo
-	CODE_DEFAULT    = CODE_SJIS,	//!< ƒfƒtƒHƒ‹ƒg‚Ì•¶šƒR[ƒh
+	CODE_AUTODETECT	= 99,			//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰è‡ªå‹•åˆ¤åˆ¥
+	CODE_ERROR      = -1,			//!< ã‚¨ãƒ©ãƒ¼
+	CODE_NONE       = -1,			//!< æœªæ¤œå‡º
+	CODE_DEFAULT    = CODE_SJIS,	//!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
 	/*
 		- MS-CP50220 
-			Unicode ‚©‚ç cp50220 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚Í JIS X 0208 ‚Ì•Ğ‰¼–¼‚É’uŠ·‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50220 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ JIS X 0208 ã®ç‰‡ä»®åã«ç½®æ›ã•ã‚Œã‚‹
 		- MS-CP50221
-			Unicode ‚©‚ç cp50221 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚ÍAG0 W‡‚Ö‚Ìw¦‚ÌƒGƒXƒP[ƒvƒV[ƒPƒ“ƒX ESC ( I ‚ğ—p‚¢‚ÄƒGƒ“ƒR[ƒh‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50221 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ã€G0 é›†åˆã¸ã®æŒ‡ç¤ºã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚·ãƒ¼ã‚±ãƒ³ã‚¹ ESC ( I ã‚’ç”¨ã„ã¦ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã‚‹
 		- MS-CP50222
-			Unicode ‚©‚ç cp50222 ‚Ö‚Ì•ÏŠ·‚ÉA
-			JIS X 0201 •Ğ‰¼–¼‚ÍASO/SI ‚ğ—p‚¢‚ÄƒGƒ“ƒR[ƒh‚³‚ê‚é
+			Unicode ã‹ã‚‰ cp50222 ã¸ã®å¤‰æ›æ™‚ã«ã€
+			JIS X 0201 ç‰‡ä»®åã¯ã€SO/SI ã‚’ç”¨ã„ã¦ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã•ã‚Œã‚‹
 		
-		Ql
+		å‚è€ƒ
 		http://legacy-encoding.sourceforge.jp/wiki/
 	*/
 };
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ”»’è                              //
+//                           åˆ¤å®š                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//2007.08.14 kobake ’Ç‰Á
-//!—LŒø‚È•¶šƒR[ƒhƒZƒbƒg‚È‚çtrue
-//	2010/6/21	inline‚ğ‚Í‚¸‚·
+//2007.08.14 kobake è¿½åŠ 
+//!æœ‰åŠ¹ãªæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆãªã‚‰true
+//	2010/6/21	inlineã‚’ã¯ãšã™
 bool IsValidCodeType(int code);
 
-//2007.08.14 kobake ’Ç‰Á
-//!—LŒø‚È•¶šƒR[ƒhƒZƒbƒg‚È‚çtrueB‚½‚¾‚µASJIS‚Íœ‚­(ƒtƒ@ƒCƒ‹ˆê——‚É•¶šƒR[ƒh‚ğ[]•t‚«‚Å•\¦‚Ì‚½‚ß)
+//2007.08.14 kobake è¿½åŠ 
+//!æœ‰åŠ¹ãªæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆãªã‚‰trueã€‚ãŸã ã—ã€SJISã¯é™¤ã(ãƒ•ã‚¡ã‚¤ãƒ«ä¸€è¦§ã«æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’[]ä»˜ãã§è¡¨ç¤ºã®ãŸã‚)
 inline bool IsValidCodeTypeExceptSJIS(int code)
 {
 	return IsValidCodeType(code) && code!=CODE_SJIS;
 }
 
-// 2010/6/21 Uchi íœ
-//2007.08.14 kobake ’Ç‰Á
-//!ECodeTypeŒ^‚Å•\‚¹‚é’l‚È‚çtrue
+// 2010/6/21 Uchi å‰Šé™¤
+//2007.08.14 kobake è¿½åŠ 
+//!ECodeTypeå‹ã§è¡¨ã›ã‚‹å€¤ãªã‚‰true
 //inline bool IsInECodeType(int code)
 //{
 //	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
 //}
 
-// 2010/6/21 Uchi íœ
+// 2010/6/21 Uchi å‰Šé™¤
 //inline bool IsConcreteCodeType(ECodeType eCodeType)
 //{
 //	return IsValidCodeType(eCodeType) && eCodeType != CODE_AUTODETECT;
@@ -112,7 +112,7 @@ inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           –¼‘O                              //
+//                           åå‰                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 class CCodeTypeName{
@@ -132,7 +132,7 @@ private:
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒRƒ“ƒ{ƒ{ƒbƒNƒX                         //
+//                      ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 class CCodeTypesForCombobox{

@@ -1,13 +1,13 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(ƒNƒŠƒbƒvƒ{[ƒhŒn)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ç³»)é–¢æ•°ç¾¤
 
-	2012/12/20	CViewCommander.cpp‚©‚ç•ª—£
+	2012/12/20	CViewCommander.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro, genta
 	Copyright (C) 2001, novice
-	Copyright (C) 2002, hor, genta, Azumaiya, ‚·‚È‚Ó‚«
+	Copyright (C) 2002, hor, genta, Azumaiya, ã™ãªãµã
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
 	Copyright (C) 2007, ryoji
@@ -26,26 +26,26 @@
 #include "util/os.h"
 
 
-/** Ø‚èæ‚è(‘I‘ğ”ÍˆÍ‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚µ‚Äíœ)
+/** åˆ‡ã‚Šå–ã‚Š(é¸æŠç¯„å›²ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã—ã¦å‰Šé™¤)
 
-	@date 2007.11.18 ryoji u‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚évƒIƒvƒVƒ‡ƒ“ˆ—’Ç‰Á
+	@date 2007.11.18 ryoji ã€Œé¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³å‡¦ç†è¿½åŠ 
 */
 void CViewCommander::Command_CUT( void )
 {
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’† */
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­ */
 		ErrorBeep();
 		return;
 	}
 
 	CNativeW	cmemBuf;
 	bool	bBeginBoxSelect;
-	/* ”ÍˆÍ‘I‘ğ‚ª‚³‚ê‚Ä‚¢‚È‚¢ */
+	/* ç¯„å›²é¸æŠãŒã•ã‚Œã¦ã„ãªã„ */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-		/* ”ñ‘I‘ğ‚ÍAƒJ[ƒ\ƒ‹s‚ğØ‚èæ‚è */
+		/* éé¸æŠæ™‚ã¯ã€ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’åˆ‡ã‚Šå–ã‚Š */
 		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
-			return;	// ‰½‚à‚µ‚È‚¢i‰¹‚à–Â‚ç‚³‚È‚¢j
+			return;	// ä½•ã‚‚ã—ãªã„ï¼ˆéŸ³ã‚‚é³´ã‚‰ã•ãªã„ï¼‰
 		}
-		//sØ‚èæ‚è(Ü‚è•Ô‚µ’PˆÊ)
+		//è¡Œåˆ‡ã‚Šå–ã‚Š(æŠ˜ã‚Šè¿”ã—å˜ä½)
 		Command_CUT_LINE();
 		return;
 	}
@@ -55,44 +55,44 @@ void CViewCommander::Command_CUT( void )
 		bBeginBoxSelect = false;
 	}
 
-	/* ‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ */
-	/* ³í‚ÍTRUE,”ÍˆÍ–¢‘I‘ğ‚Ìê‡‚ÍFALSE‚ğ•Ô‚· */
+	/* é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
+	/* æ­£å¸¸æ™‚ã¯TRUE,ç¯„å›²æœªé¸æŠã®å ´åˆã¯FALSEã‚’è¿”ã™ */
 	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
-	/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^‚ğİ’è */
+	/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š */
 	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect ) ){
 		ErrorBeep();
 		return;
 	}
 	cmemBuf.Clear();
 
-	/* ƒJ[ƒ\ƒ‹ˆÊ’u‚Ü‚½‚Í‘I‘ğƒGƒŠƒA‚ğíœ */
+	/* ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã¾ãŸã¯é¸æŠã‚¨ãƒªã‚¢ã‚’å‰Šé™¤ */
 	m_pCommanderView->DeleteData( true );
 	return;
 }
 
 
 
-/**	‘I‘ğ”ÍˆÍ‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[
+/**	é¸æŠç¯„å›²ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼
 
-	@date 2007.11.18 ryoji u‘I‘ğ‚È‚µ‚ÅƒRƒs[‚ğ‰Â”\‚É‚·‚évƒIƒvƒVƒ‡ƒ“ˆ—’Ç‰Á
+	@date 2007.11.18 ryoji ã€Œé¸æŠãªã—ã§ã‚³ãƒ”ãƒ¼ã‚’å¯èƒ½ã«ã™ã‚‹ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³å‡¦ç†è¿½åŠ 
 */
 void CViewCommander::Command_COPY(
-	bool		bIgnoreLockAndDisable,	//!< [in] ‘I‘ğ”ÍˆÍ‚ğ‰ğœ‚·‚é‚©H
-	bool		bAddCRLFWhenCopy,		//!< [in] Ü‚è•Ô‚µˆÊ’u‚É‰üsƒR[ƒh‚ğ‘}“ü‚·‚é‚©H
-	EEolType	neweol					//!< [in] ƒRƒs[‚·‚é‚Æ‚«‚ÌEOLB
+	bool		bIgnoreLockAndDisable,	//!< [in] é¸æŠç¯„å›²ã‚’è§£é™¤ã™ã‚‹ã‹ï¼Ÿ
+	bool		bAddCRLFWhenCopy,		//!< [in] æŠ˜ã‚Šè¿”ã—ä½ç½®ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æŒ¿å…¥ã™ã‚‹ã‹ï¼Ÿ
+	EEolType	neweol					//!< [in] ã‚³ãƒ”ãƒ¼ã™ã‚‹ã¨ãã®EOLã€‚
 )
 {
 	CNativeW	cmemBuf;
 	bool		bBeginBoxSelect = false;
 
-	/* ƒNƒŠƒbƒvƒ{[ƒh‚É“ü‚ê‚é‚×‚«ƒeƒLƒXƒgƒf[ƒ^‚ğAcmemBuf‚ÉŠi”[‚·‚é */
+	/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«å…¥ã‚Œã‚‹ã¹ããƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’ã€cmemBufã«æ ¼ç´ã™ã‚‹ */
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-		/* ”ñ‘I‘ğ‚ÍAƒJ[ƒ\ƒ‹s‚ğƒRƒs[‚·‚é */
+		/* éé¸æŠæ™‚ã¯ã€ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ */
 		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
-			return;	// ‰½‚à‚µ‚È‚¢i‰¹‚à–Â‚ç‚³‚È‚¢j
+			return;	// ä½•ã‚‚ã—ãªã„ï¼ˆéŸ³ã‚‚é³´ã‚‰ã•ãªã„ï¼‰
 		}
 		m_pCommanderView->CopyCurLine(
 			bAddCRLFWhenCopy,
@@ -101,19 +101,19 @@ void CViewCommander::Command_COPY(
 		);
 	}
 	else{
-		/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚Æ‚«‚ÍA‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ */
+		/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã¨ãã¯ã€é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
 
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			bBeginBoxSelect = TRUE;
 		}
-		/* ‘I‘ğ”ÍˆÍ‚Ìƒf[ƒ^‚ğæ“¾ */
-		/* ³í‚ÍTRUE,”ÍˆÍ–¢‘I‘ğ‚Ìê‡‚ÍFALSE‚ğ•Ô‚· */
+		/* é¸æŠç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— */
+		/* æ­£å¸¸æ™‚ã¯TRUE,ç¯„å›²æœªé¸æŠã®å ´åˆã¯FALSEã‚’è¿”ã™ */
 		if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
 			ErrorBeep();
 			return;
 		}
 
-		/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^cmemBuf‚Ì“à—e‚ğİ’è */
+		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿cmemBufã®å†…å®¹ã‚’è¨­å®š */
 		if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect, FALSE ) ){
 			ErrorBeep();
 			return;
@@ -121,9 +121,9 @@ void CViewCommander::Command_COPY(
 	}
 	cmemBuf.Clear();
 
-	/* ‘I‘ğ”ÍˆÍ‚ÌŒã•Ğ•t‚¯ */
+	/* é¸æŠç¯„å›²ã®å¾Œç‰‡ä»˜ã‘ */
 	if( !bIgnoreLockAndDisable ){
-		/* ‘I‘ğó‘Ô‚ÌƒƒbƒN */
+		/* é¸æŠçŠ¶æ…‹ã®ãƒ­ãƒƒã‚¯ */
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false;
 			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
@@ -132,10 +132,10 @@ void CViewCommander::Command_COPY(
 			}
 		}
 	}
-	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* ƒRƒs[‚µ‚½‚ç‘I‘ğ‰ğœ */
-		/* ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚© */
+	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* ã‚³ãƒ”ãƒ¼ã—ãŸã‚‰é¸æŠè§£é™¤ */
+		/* ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-			/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
+			/* ç¾åœ¨ã®é¸æŠç¯„å›²ã‚’éé¸æŠçŠ¶æ…‹ã«æˆ»ã™ */
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 		}
 	}
@@ -144,25 +144,25 @@ void CViewCommander::Command_COPY(
 
 
 
-/** “\‚è•t‚¯(ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯)
-	@param [in] option “\‚è•t‚¯‚ÌƒIƒvƒVƒ‡ƒ“
-	@li 0x01 ‰üsƒR[ƒh•ÏŠ·—LŒø
-	@li 0x02 ‰üsƒR[ƒh•ÏŠ·–³Œø
-	@li 0x04 ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯—LŒø
-	@li 0x08 ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯–³Œø
-	@li 0x10 ‹éŒ`ƒRƒs[‚Íí‚É‹éŒ`“\‚è•t‚¯
-	@li 0x20 ‹éŒ`ƒRƒs[‚Íí‚É’Êí“\‚è•t‚¯
+/** è²¼ã‚Šä»˜ã‘(ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘)
+	@param [in] option è²¼ã‚Šä»˜ã‘æ™‚ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	@li 0x01 æ”¹è¡Œã‚³ãƒ¼ãƒ‰å¤‰æ›æœ‰åŠ¹
+	@li 0x02 æ”¹è¡Œã‚³ãƒ¼ãƒ‰å¤‰æ›ç„¡åŠ¹
+	@li 0x04 ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘æœ‰åŠ¹
+	@li 0x08 ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ç„¡åŠ¹
+	@li 0x10 çŸ©å½¢ã‚³ãƒ”ãƒ¼ã¯å¸¸ã«çŸ©å½¢è²¼ã‚Šä»˜ã‘
+	@li 0x20 çŸ©å½¢ã‚³ãƒ”ãƒ¼ã¯å¸¸ã«é€šå¸¸è²¼ã‚Šä»˜ã‘
 
-	@date 2007.10.04 ryoji MSDEVLineSelectŒ`®‚ÌsƒRƒs[‘Î‰ˆ—‚ğ’Ç‰ÁiVS2003/2005‚ÌƒGƒfƒBƒ^‚Æ—Ş—‚Ì‹““®‚Éj
+	@date 2007.10.04 ryoji MSDEVLineSelectå½¢å¼ã®è¡Œã‚³ãƒ”ãƒ¼å¯¾å¿œå‡¦ç†ã‚’è¿½åŠ ï¼ˆVS2003/2005ã®ã‚¨ãƒ‡ã‚£ã‚¿ã¨é¡ä¼¼ã®æŒ™å‹•ã«ï¼‰
 */
 void CViewCommander::Command_PASTE( int option )
 {
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’† */
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­ */
 		ErrorBeep();
 		return;
 	}
 
-	// ƒNƒŠƒbƒvƒ{[ƒh‚©‚çƒf[ƒ^‚ğæ“¾ -> cmemClip, bColumnSelect
+	// ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾— -> cmemClip, bColumnSelect
 	CNativeW	cmemClip;
 	bool		bColumnSelect;
 	bool		bLineSelect = false;
@@ -176,7 +176,7 @@ void CViewCommander::Command_PASTE( int option )
 		return;
 	}
 
-	// ƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^æ“¾ -> pszText, nTextLen
+	// ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿å–å¾— -> pszText, nTextLen
 	CLogicInt		nTextLen;
 	const wchar_t*	pszText = cmemClip.GetStringPtr(&nTextLen);
 
@@ -190,9 +190,9 @@ void CViewCommander::Command_PASTE( int option )
 		((option & 0x20) == 0x20) ? false :
 		GetDllShareData().m_Common.m_sEdit.m_bAutoColumnPaste != FALSE;
 
-	// ‹éŒ`ƒRƒs[‚ÌƒeƒLƒXƒg‚Íí‚É‹éŒ`“\‚è•t‚¯
+	// çŸ©å½¢ã‚³ãƒ”ãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã¯å¸¸ã«çŸ©å½¢è²¼ã‚Šä»˜ã‘
 	if( bAutoColumnPaste ){
-		// ‹éŒ`ƒRƒs[‚Ìƒf[ƒ^‚È‚ç‹éŒ`“\‚è•t‚¯
+		// çŸ©å½¢ã‚³ãƒ”ãƒ¼ã®ãƒ‡ãƒ¼ã‚¿ãªã‚‰çŸ©å½¢è²¼ã‚Šä»˜ã‘
 		if( bColumnSelect ){
 			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){
 				ErrorBeep();
@@ -209,8 +209,8 @@ void CViewCommander::Command_PASTE( int option )
 	}
 
 	// 2007.10.04 ryoji
-	// sƒRƒs[iMSDEVLineSelectŒ`®j‚ÌƒeƒLƒXƒg‚Å––”ö‚ª‰üs‚É‚È‚Á‚Ä‚¢‚È‚¯‚ê‚Î‰üs‚ğ’Ç‰Á‚·‚é
-	// ¦ƒŒƒCƒAƒEƒgÜ‚è•Ô‚µ‚ÌsƒRƒs[‚¾‚Á‚½ê‡‚Í––”ö‚ª‰üs‚É‚È‚Á‚Ä‚¢‚È‚¢
+	// è¡Œã‚³ãƒ”ãƒ¼ï¼ˆMSDEVLineSelectå½¢å¼ï¼‰ã®ãƒ†ã‚­ã‚¹ãƒˆã§æœ«å°¾ãŒæ”¹è¡Œã«ãªã£ã¦ã„ãªã‘ã‚Œã°æ”¹è¡Œã‚’è¿½åŠ ã™ã‚‹
+	// â€»ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæŠ˜ã‚Šè¿”ã—ã®è¡Œã‚³ãƒ”ãƒ¼ã ã£ãŸå ´åˆã¯æœ«å°¾ãŒæ”¹è¡Œã«ãªã£ã¦ã„ãªã„
 	if( bLineSelect ){
 		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
@@ -222,11 +222,11 @@ void CViewCommander::Command_PASTE( int option )
 		CLogicInt nConvertedTextLen = ConvertEol( pszText, nTextLen, NULL );
 		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
 		ConvertEol( pszText, nTextLen, pszConvertedText );
-		// ƒeƒLƒXƒg‚ğ“\‚è•t‚¯
+		// ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘
 		Command_INSTEXT( true, pszConvertedText, nConvertedTextLen, true, bLineSelect );	// 2010.09.17 ryoji
 		delete [] pszConvertedText;
 	}else{
-		// ƒeƒLƒXƒg‚ğ“\‚è•t‚¯
+		// ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘
 		Command_INSTEXT( true, pszText, nTextLen, true, bLineSelect );	// 2010.09.17 ryoji
 	}
 
@@ -236,33 +236,33 @@ void CViewCommander::Command_PASTE( int option )
 
 
 //<< 2002/03/28 Azumaiya
-// ƒƒ‚ƒŠƒf[ƒ^‚ğ‹éŒ`“\‚è•t‚¯—p‚Ìƒf[ƒ^‚Æ‰ğß‚µ‚Äˆ—‚·‚éB
-//  ‚È‚¨A‚±‚ÌŠÖ”‚Í Command_PASTEBOX(void) ‚ÆA
+// ãƒ¡ãƒ¢ãƒªãƒ‡ãƒ¼ã‚¿ã‚’çŸ©å½¢è²¼ã‚Šä»˜ã‘ç”¨ã®ãƒ‡ãƒ¼ã‚¿ã¨è§£é‡ˆã—ã¦å‡¦ç†ã™ã‚‹ã€‚
+//  ãªãŠã€ã“ã®é–¢æ•°ã¯ Command_PASTEBOX(void) ã¨ã€
 // 2769 : GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
-// ‚©‚çA
+// ã‹ã‚‰ã€
 // 3057 : m_pCommanderView->SetDrawSwitch(true);	// 2002.01.25 hor
-// ŠÔ‚Ü‚ÅAˆê‚Å‚·B
-//  ‚Å‚·‚ªAƒRƒƒ“ƒg‚ğí‚Á‚½‚èA#if 0 ‚Ì‚Æ‚±‚ë‚ğí‚Á‚½‚è‚µ‚Ä‚¢‚Ü‚·‚Ì‚ÅACommand_PASTEBOX(void) ‚Í
-// c‚·‚æ‚¤‚É‚µ‚Ü‚µ‚½(‰º‚É‚±‚ÌŠÖ”‚ğg‚Á‚½g‚Á‚½ƒo[ƒWƒ‡ƒ“‚ğƒRƒƒ“ƒg‚Å‘‚¢‚Ä‚¨‚«‚Ü‚µ‚½)B
-//  ‚È‚¨AˆÈ‰º‚É‚ ‚°‚é‚æ‚¤‚É Command_PASTEBOX(void) ‚Æˆá‚¤‚Æ‚±‚ë‚ª‚ ‚é‚Ì‚Å’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢B
-// > ŒÄ‚Ño‚µ‘¤‚ªÓ”C‚ğ‚Á‚ÄA
-// Eƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’†‚Å‚ ‚éB
-// EŒ»İ‚ÌƒtƒHƒ“ƒg‚ÍŒÅ’è•ƒtƒHƒ“ƒg‚Å‚ ‚éB
-// ‚Ì 2 “_‚ğƒ`ƒFƒbƒN‚·‚éB
-// > Ä•`‰æ‚ğs‚í‚È‚¢
-// ‚Å‚·B
-//  ‚È‚¨A‚±‚ê‚ç‚ğŒÄ‚Ño‚µ‘¤‚ÉŠú‘Ò‚·‚é‚í‚¯‚ÍAu‚·‚×‚Ä’uŠ·v‚Ì‚æ‚¤‚È‰½‰ñ‚à˜A‘±‚ÅŒÄ‚Ño‚·
-// ‚Æ‚«‚ÉAÅ‰‚Éˆê‰ñƒ`ƒFƒbƒN‚·‚ê‚Î‚æ‚¢‚à‚Ì‚ğ‰½‰ñ‚àƒ`ƒFƒbƒN‚·‚é‚Ì‚Í–³‘Ê‚Æ”»’f‚µ‚½‚½‚ß‚Å‚·B
-// @note 2004.06.30 Œ»İA‚·‚×‚Ä’uŠ·‚Å‚Íg—p‚µ‚Ä‚¢‚È‚¢
+// é–“ã¾ã§ã€ä¸€ç·’ã§ã™ã€‚
+//  ã§ã™ãŒã€ã‚³ãƒ¡ãƒ³ãƒˆã‚’å‰Šã£ãŸã‚Šã€#if 0 ã®ã¨ã“ã‚ã‚’å‰Šã£ãŸã‚Šã—ã¦ã„ã¾ã™ã®ã§ã€Command_PASTEBOX(void) ã¯
+// æ®‹ã™ã‚ˆã†ã«ã—ã¾ã—ãŸ(ä¸‹ã«ã“ã®é–¢æ•°ã‚’ä½¿ã£ãŸä½¿ã£ãŸãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã§æ›¸ã„ã¦ãŠãã¾ã—ãŸ)ã€‚
+//  ãªãŠã€ä»¥ä¸‹ã«ã‚ã’ã‚‹ã‚ˆã†ã« Command_PASTEBOX(void) ã¨é•ã†ã¨ã“ã‚ãŒã‚ã‚‹ã®ã§æ³¨æ„ã—ã¦ãã ã•ã„ã€‚
+// > å‘¼ã³å‡ºã—å´ãŒè²¬ä»»ã‚’æŒã£ã¦ã€
+// ãƒ»ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­ã§ã‚ã‚‹ã€‚
+// ãƒ»ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã¯å›ºå®šå¹…ãƒ•ã‚©ãƒ³ãƒˆã§ã‚ã‚‹ã€‚
+// ã® 2 ç‚¹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
+// > å†æç”»ã‚’è¡Œã‚ãªã„
+// ã§ã™ã€‚
+//  ãªãŠã€ã“ã‚Œã‚‰ã‚’å‘¼ã³å‡ºã—å´ã«æœŸå¾…ã™ã‚‹ã‚ã‘ã¯ã€ã€Œã™ã¹ã¦ç½®æ›ã€ã®ã‚ˆã†ãªä½•å›ã‚‚é€£ç¶šã§å‘¼ã³å‡ºã™
+// ã¨ãã«ã€æœ€åˆã«ä¸€å›ãƒã‚§ãƒƒã‚¯ã™ã‚Œã°ã‚ˆã„ã‚‚ã®ã‚’ä½•å›ã‚‚ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã®ã¯ç„¡é§„ã¨åˆ¤æ–­ã—ãŸãŸã‚ã§ã™ã€‚
+// @note 2004.06.30 ç¾åœ¨ã€ã™ã¹ã¦ç½®æ›ã§ã¯ä½¿ç”¨ã—ã¦ã„ãªã„
 void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 {
-	/* ‚±‚ê‚ç‚Ì“®ì‚Íc‚µ‚Ä‚¨‚«‚½‚¢‚Ì‚¾‚ªAŒÄ‚Ño‚µ‘¤‚ÅÓ”C‚ğ‚Á‚Ä‚â‚Á‚Ä‚à‚ç‚¤‚±‚Æ‚É•ÏXB
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’†
+	/* ã“ã‚Œã‚‰ã®å‹•ä½œã¯æ®‹ã—ã¦ãŠããŸã„ã®ã ãŒã€å‘¼ã³å‡ºã—å´ã§è²¬ä»»ã‚’æŒã£ã¦ã‚„ã£ã¦ã‚‚ã‚‰ã†ã“ã¨ã«å¤‰æ›´ã€‚
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­
 	{
 		ErrorBeep();
 		return;
 	}
-	if( !GetDllShareData().m_Common.m_bFontIs_FIXED_PITCH )	// Œ»İ‚ÌƒtƒHƒ“ƒg‚ÍŒÅ’è•ƒtƒHƒ“ƒg‚Å‚ ‚é
+	if( !GetDllShareData().m_Common.m_bFontIs_FIXED_PITCH )	// ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã¯å›ºå®šå¹…ãƒ•ã‚©ãƒ³ãƒˆã§ã‚ã‚‹
 	{
 		return;
 	}
@@ -270,7 +270,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	int				nBgn;
 	int				nPos;
-	CLayoutPoint	ptLayoutNew;	//‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u
+	CLayoutPoint	ptLayoutNew;	//æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®
 	BOOL			bAddLastCR;
 	CLayoutInt		nInsPosX;
 
@@ -278,8 +278,8 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
 
-	// ‚Æ‚è‚ ‚¦‚¸‘I‘ğ”ÍˆÍ‚ğíœ
-	// 2004.06.30 Moca m_pCommanderView->GetSelectionInfo().IsTextSelected()‚ª‚È‚¢‚Æ–¢‘I‘ğAˆê•¶šÁ‚¦‚Ä‚µ‚Ü‚¤
+	// ã¨ã‚Šã‚ãˆãšé¸æŠç¯„å›²ã‚’å‰Šé™¤
+	// 2004.06.30 Moca m_pCommanderView->GetSelectionInfo().IsTextSelected()ãŒãªã„ã¨æœªé¸æŠæ™‚ã€ä¸€æ–‡å­—æ¶ˆãˆã¦ã—ã¾ã†
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		m_pCommanderView->DeleteData( false/*true 2002.01.25 hor*/ );
 	}
@@ -293,20 +293,20 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	CLayoutPoint ptCurOld = GetCaret().GetCaretLayoutPos();
 
-	CLayoutYInt	nCount = CLayoutInt(0); // ƒJ[ƒ\ƒ‹ˆÊ’u‚©‚ç‚ÌƒIƒtƒZƒbƒgs”
+	CLayoutYInt	nCount = CLayoutInt(0); // ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆè¡Œæ•°
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	// Jul. 10, 2005 genta “\‚è•t‚¯ƒf[ƒ^‚ÌÅŒã‚ÉCR/LF‚ª–³‚¢ê‡‚Ì‘Îô
-	//	ƒf[ƒ^‚ÌÅŒã‚Ü‚Åˆ— i.e. nBgn‚ªnPasteSize‚ğ’´‚¦‚½‚çI—¹
+	// Jul. 10, 2005 genta è²¼ã‚Šä»˜ã‘ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã«CR/LFãŒç„¡ã„å ´åˆã®å¯¾ç­–
+	//	ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã¾ã§å‡¦ç† i.e. nBgnãŒnPasteSizeã‚’è¶…ãˆãŸã‚‰çµ‚äº†
 	//for( nPos = 0; nPos < nPasteSize; )
 	for( nBgn = nPos = 0; nBgn < nPasteSize; )
 	{
-		// Jul. 10, 2005 genta “\‚è•t‚¯ƒf[ƒ^‚ÌÅŒã‚ÉCR/LF‚ª–³‚¢‚Æ
-		//	ÅIs‚ÌPasteˆ—‚ª“®‚©‚È‚¢‚Ì‚ÅC
-		//	ƒf[ƒ^‚Ì––”ö‚É—ˆ‚½ê‡‚Í‹­§“I‚Éˆ—‚·‚é‚æ‚¤‚É‚·‚é
+		// Jul. 10, 2005 genta è²¼ã‚Šä»˜ã‘ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã«CR/LFãŒç„¡ã„ã¨
+		//	æœ€çµ‚è¡Œã®Pasteå‡¦ç†ãŒå‹•ã‹ãªã„ã®ã§ï¼Œ
+		//	ãƒ‡ãƒ¼ã‚¿ã®æœ«å°¾ã«æ¥ãŸå ´åˆã¯å¼·åˆ¶çš„ã«å‡¦ç†ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹
 		if( WCODE::IsLineDelimiter(szPaste[nPos], bExtEol) || nPos == nPasteSize )
 		{
-			/* Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü */
+			/* ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥ */
 			if( nPos - nBgn > 0 ){
 				m_pCommanderView->InsertData_CEditView(
 					ptCurOld + CLayoutPoint(CLayoutInt(0), nCount),
@@ -317,10 +317,10 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 				);
 			}
 
-			/* ‚±‚Ìs‚Ì‘}“üˆÊ’u‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+			/* ã“ã®è¡Œã®æŒ¿å…¥ä½ç½®ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 			GetCaret().MoveCursor( ptCurOld + CLayoutPoint(CLayoutInt(0), nCount), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-			/* ƒJ[ƒ\ƒ‹s‚ªÅŒã‚Ìs‚©‚Âs––‚É‰üs‚ª–³‚­A‘}“ü‚·‚×‚«ƒf[ƒ^‚ª‚Ü‚¾‚ ‚éê‡ */
+			/* ã‚«ãƒ¼ã‚½ãƒ«è¡ŒãŒæœ€å¾Œã®è¡Œã‹ã¤è¡Œæœ«ã«æ”¹è¡ŒãŒç„¡ãã€æŒ¿å…¥ã™ã¹ããƒ‡ãƒ¼ã‚¿ãŒã¾ã ã‚ã‚‹å ´åˆ */
 			bAddLastCR = FALSE;
 			const CLayout*	pcLayout;
 			CLogicInt		nLineLen = CLogicInt(0);
@@ -344,7 +344,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( bAddLastCR )
 			{
-//				MYTRACE( _T(" ƒJ[ƒ\ƒ‹s‚ªÅŒã‚Ìs‚©‚Âs––‚É‰üs‚ª–³‚­A\n‘}“ü‚·‚×‚«ƒf[ƒ^‚ª‚Ü‚¾‚ ‚éê‡‚Ís––‚É‰üs‚ğ‘}“üB\n") );
+//				MYTRACE( _T(" ã‚«ãƒ¼ã‚½ãƒ«è¡ŒãŒæœ€å¾Œã®è¡Œã‹ã¤è¡Œæœ«ã«æ”¹è¡ŒãŒç„¡ãã€\næŒ¿å…¥ã™ã¹ããƒ‡ãƒ¼ã‚¿ãŒã¾ã ã‚ã‚‹å ´åˆã¯è¡Œæœ«ã«æ”¹è¡Œã‚’æŒ¿å…¥ã€‚\n") );
 				nInsPosX = m_pCommanderView->LineIndexToColumn( pcLayout, nLineLen );
 
 				m_pCommanderView->InsertData_CEditView(
@@ -389,16 +389,16 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
 
-	/* ‘}“üƒf[ƒ^‚Ìæ“ªˆÊ’u‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
+	/* æŒ¿å…¥ãƒ‡ãƒ¼ã‚¿ã®å…ˆé ­ä½ç½®ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
 	GetCaret().MoveCursor( ptCurOld, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-	if( !m_pCommanderView->m_bDoing_UndoRedo )	/* ƒAƒ“ƒhƒDEƒŠƒhƒD‚ÌÀs’†‚© */
+	if( !m_pCommanderView->m_bDoing_UndoRedo )	/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ã®å®Ÿè¡Œä¸­ã‹ */
 	{
-		/* ‘€ì‚Ì’Ç‰Á */
+		/* æ“ä½œã®è¿½åŠ  */
 		GetOpeBlk()->AppendOpe( 
 			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos()	// ‘€ì‘OŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+				GetCaret().GetCaretLogicPos()	// æ“ä½œå‰å¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 			)
 		);
 	}
@@ -409,32 +409,32 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 
 
-/** ‹éŒ`“\‚è•t‚¯(ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç‹éŒ`“\‚è•t‚¯)
-	@param [in] option –¢g—p
+/** çŸ©å½¢è²¼ã‚Šä»˜ã‘(ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰çŸ©å½¢è²¼ã‚Šä»˜ã‘)
+	@param [in] option æœªä½¿ç”¨
 
-	@date 2004.06.29 Moca –¢g—p‚¾‚Á‚½‚à‚Ì‚ğ—LŒø‚É‚·‚é
-	ƒIƒŠƒWƒiƒ‹‚ÌCommand_PASTEBOX(void)‚Í‚Î‚Á‚³‚èíœ (genta)
+	@date 2004.06.29 Moca æœªä½¿ç”¨ã ã£ãŸã‚‚ã®ã‚’æœ‰åŠ¹ã«ã™ã‚‹
+	ã‚ªãƒªã‚¸ãƒŠãƒ«ã®Command_PASTEBOX(void)ã¯ã°ã£ã•ã‚Šå‰Šé™¤ (genta)
 */
 void CViewCommander::Command_PASTEBOX( int option )
 {
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’†
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­
 	{
 		ErrorBeep();
 		return;
 	}
 
-	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// Œ»İ‚ÌƒtƒHƒ“ƒg‚ÍŒÅ’è•ƒtƒHƒ“ƒg‚Å‚ ‚é
+	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã¯å›ºå®šå¹…ãƒ•ã‚©ãƒ³ãƒˆã§ã‚ã‚‹
 	{
 		return;
 	}
 
-	// ƒNƒŠƒbƒvƒ{[ƒh‚©‚çƒf[ƒ^‚ğæ“¾
+	// ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 	CNativeW	cmemClip;
 	if( !m_pCommanderView->MyGetClipboardData( cmemClip, NULL ) ){
 		ErrorBeep();
 		return;
 	}
-	// 2004.07.13 Moca \0ƒRƒs[‘Îô
+	// 2004.07.13 Moca \0ã‚³ãƒ”ãƒ¼å¯¾ç­–
 	int nstrlen;
 	const wchar_t *lptstr = cmemClip.GetStringPtr( &nstrlen );
 
@@ -445,17 +445,17 @@ void CViewCommander::Command_PASTEBOX( int option )
 
 
 
-/*! ‹éŒ`•¶š—ñ‘}“ü
+/*! çŸ©å½¢æ–‡å­—åˆ—æŒ¿å…¥
 */
 void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize )
 {
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’†
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­
 	{
 		ErrorBeep();
 		return;
 	}
 
-	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// Œ»İ‚ÌƒtƒHƒ“ƒg‚ÍŒÅ’è•ƒtƒHƒ“ƒg‚Å‚ ‚é
+	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆã¯å›ºå®šå¹…ãƒ•ã‚©ãƒ³ãƒˆã§ã‚ã‚‹
 	{
 		return;
 	}
@@ -467,22 +467,22 @@ void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize
 
 
 
-/*! ƒeƒLƒXƒg‚ğ“\‚è•t‚¯
-	@date 2004.05.14 Moca '\\0'‚ğó‚¯“ü‚ê‚é‚æ‚¤‚ÉAˆø”‚É’·‚³‚ğ’Ç‰Á
-	@date 2010.09.17 ryoji ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯ƒIƒvƒVƒ‡ƒ“‚ğ’Ç‰Á‚µ‚ÄˆÈ‘O‚Ì Command_PASTE() ‚Æ‚Ìd•¡•”‚ğ®—E“‡
-	@date 2013.05.10 Moca ‚‘¬ƒ‚[ƒh
+/*! ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘
+	@date 2004.05.14 Moca '\\0'ã‚’å—ã‘å…¥ã‚Œã‚‹ã‚ˆã†ã«ã€å¼•æ•°ã«é•·ã•ã‚’è¿½åŠ 
+	@date 2010.09.17 ryoji ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¿½åŠ ã—ã¦ä»¥å‰ã® Command_PASTE() ã¨ã®é‡è¤‡éƒ¨ã‚’æ•´ç†ãƒ»çµ±åˆ
+	@date 2013.05.10 Moca é«˜é€Ÿãƒ¢ãƒ¼ãƒ‰
 */
 void CViewCommander::Command_INSTEXT(
 	bool			bRedraw,		//!< 
-	const wchar_t*	pszText,		//!< [in] “\‚è•t‚¯‚é•¶š—ñB
-	CLogicInt		nTextLen,		//!< [in] pszText‚Ì’·‚³B-1‚ğw’è‚·‚é‚ÆApszText‚ğNULI’[•¶š—ñ‚Æ‚İ‚È‚µ‚Ä’·‚³‚ğ©“®ŒvZ‚·‚é
+	const wchar_t*	pszText,		//!< [in] è²¼ã‚Šä»˜ã‘ã‚‹æ–‡å­—åˆ—ã€‚
+	CLogicInt		nTextLen,		//!< [in] pszTextã®é•·ã•ã€‚-1ã‚’æŒ‡å®šã™ã‚‹ã¨ã€pszTextã‚’NULçµ‚ç«¯æ–‡å­—åˆ—ã¨ã¿ãªã—ã¦é•·ã•ã‚’è‡ªå‹•è¨ˆç®—ã™ã‚‹
 	bool			bNoWaitCursor,	//!< 
-	bool			bLinePaste,		//!< [in] ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯
-	bool			bFastMode,		//!< [in] ‚‘¬ƒ‚[ƒh(ƒŒƒCƒAƒEƒgÀ•W‚Í–³‹‚·‚é)
-	const CLogicRange*	pcSelectLogic	//!< [in] ƒIƒvƒVƒ‡ƒ“B‚‘¬ƒ‚[ƒh‚Ì‚Æ‚«‚Ìíœ”ÍˆÍƒƒWƒbƒN’PˆÊ
+	bool			bLinePaste,		//!< [in] ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘
+	bool			bFastMode,		//!< [in] é«˜é€Ÿãƒ¢ãƒ¼ãƒ‰(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåº§æ¨™ã¯ç„¡è¦–ã™ã‚‹)
+	const CLogicRange*	pcSelectLogic	//!< [in] ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã€‚é«˜é€Ÿãƒ¢ãƒ¼ãƒ‰ã®ã¨ãã®å‰Šé™¤ç¯„å›²ãƒ­ã‚¸ãƒƒã‚¯å˜ä½
 )
 {
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ƒ}ƒEƒX‚É‚æ‚é”ÍˆÍ‘I‘ğ’† */
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* ãƒã‚¦ã‚¹ã«ã‚ˆã‚‹ç¯„å›²é¸æŠä¸­ */
 		ErrorBeep();
 		return;
 	}
@@ -496,11 +496,11 @@ void CViewCommander::Command_INSTEXT(
 
 	GetDocument()->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 
-	// ƒeƒLƒXƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚é‚©
+	// ãƒ†ã‚­ã‚¹ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() || bFastMode ){
-		// ‹éŒ`”ÍˆÍ‘I‘ğ’†‚©
+		// çŸ©å½¢ç¯„å›²é¸æŠä¸­ã‹
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-			//‰üs‚Ü‚Å‚ğ”²‚«o‚·
+			//æ”¹è¡Œã¾ã§ã‚’æŠœãå‡ºã™
 			CLogicInt i;
 			bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 			for( i = CLogicInt(0); i < nTextLen; i++ ){
@@ -513,7 +513,7 @@ void CViewCommander::Command_INSTEXT(
 		}
 		else{
 			//	Jun. 23, 2000 genta
-			//	“¯ˆês‚Ìs––ˆÈ~‚Ì‚İ‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚éê‡‚É‚Í‘I‘ğ–³‚µ‚ÆŒ©‚È‚·
+			//	åŒä¸€è¡Œã®è¡Œæœ«ä»¥é™ã®ã¿ãŒé¸æŠã•ã‚Œã¦ã„ã‚‹å ´åˆã«ã¯é¸æŠç„¡ã—ã¨è¦‹ãªã™
 			bool bAfterEOLSelect = false;
 			if( !bFastMode ){
 				CLogicInt		len;
@@ -524,20 +524,20 @@ void CViewCommander::Command_INSTEXT(
 
 				pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
 
-				//	ŠJnˆÊ’u‚ªs––‚æ‚èŒã‚ë‚ÅAI—¹ˆÊ’u‚ª“¯ˆês
+				//	é–‹å§‹ä½ç½®ãŒè¡Œæœ«ã‚ˆã‚Šå¾Œã‚ã§ã€çµ‚äº†ä½ç½®ãŒåŒä¸€è¡Œ
 				if( pos >= len && GetSelect().IsLineOne()){
-					GetCaret().SetCaretLayoutPos(CLayoutPoint(GetSelect().GetFrom().x, GetCaret().GetCaretLayoutPos().y)); //ƒLƒƒƒŒƒbƒgX•ÏX
+					GetCaret().SetCaretLayoutPos(CLayoutPoint(GetSelect().GetFrom().x, GetCaret().GetCaretLayoutPos().y)); //ã‚­ãƒ£ãƒ¬ãƒƒãƒˆXå¤‰æ›´
 					m_pCommanderView->GetSelectionInfo().DisableSelectArea(false);
 					bAfterEOLSelect = true;
 				}
 			}
 			if( !bAfterEOLSelect ){
-				// ƒf[ƒ^’uŠ· íœ&‘}“ü‚É‚àg‚¦‚é
-				// sƒRƒs[‚Ì“\‚è•t‚¯‚Å‚Í‘I‘ğ”ÍˆÍ‚ÍíœiŒã‚Ås“ª‚É“\‚è•t‚¯‚éj	// 2007.10.04 ryoji
+				// ãƒ‡ãƒ¼ã‚¿ç½®æ› å‰Šé™¤&æŒ¿å…¥ã«ã‚‚ä½¿ãˆã‚‹
+				// è¡Œã‚³ãƒ”ãƒ¼ã®è²¼ã‚Šä»˜ã‘ã§ã¯é¸æŠç¯„å›²ã¯å‰Šé™¤ï¼ˆå¾Œã§è¡Œé ­ã«è²¼ã‚Šä»˜ã‘ã‚‹ï¼‰	// 2007.10.04 ryoji
 				m_pCommanderView->ReplaceData_CEditView(
-					GetSelect(),				// ‘I‘ğ”ÍˆÍ
-					bLinePaste? L"": pszText,	// ‘}“ü‚·‚éƒf[ƒ^
-					bLinePaste? CLogicInt(0): nTextLen,	// ‘}“ü‚·‚éƒf[ƒ^‚Ì’·‚³
+					GetSelect(),				// é¸æŠç¯„å›²
+					bLinePaste? L"": pszText,	// æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+					bLinePaste? CLogicInt(0): nTextLen,	// æŒ¿å…¥ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã®é•·ã•
 					bRedraw,
 					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
 					bFastMode,
@@ -549,30 +549,30 @@ void CViewCommander::Command_INSTEXT(
 		}
 	}
 
-	{	// ”ñ‘I‘ğ‚Ìˆ— or ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚Ìc‚è‚Ìˆ—
+	{	// éé¸æŠæ™‚ã®å‡¦ç† or ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘æ™‚ã®æ®‹ã‚Šã®å‡¦ç†
 		CLogicInt	nPosX_PHY_Delta(0);
 		if( bLinePaste ){	// 2007.10.04 ryoji
-			/* ‘}“üƒ|ƒCƒ“ƒgiÜ‚è•Ô‚µ’PˆÊs“ªj‚ÉƒJ[ƒ\ƒ‹‚ğˆÚ“® */
-			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	// ‘€ì‘O‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
-			Command_GOLINETOP( false, 1 );								// s“ª‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)
-			CLogicPoint ptCaretAfter = GetCaret().GetCaretLogicPos();	// ‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+			/* æŒ¿å…¥ãƒã‚¤ãƒ³ãƒˆï¼ˆæŠ˜ã‚Šè¿”ã—å˜ä½è¡Œé ­ï¼‰ã«ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
+			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	// æ“ä½œå‰ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
+			Command_GOLINETOP( false, 1 );								// è¡Œé ­ã«ç§»å‹•(æŠ˜ã‚Šè¿”ã—å˜ä½)
+			CLogicPoint ptCaretAfter = GetCaret().GetCaretLogicPos();	// æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 
-			// ‘}“üƒ|ƒCƒ“ƒg‚ÆŒ³‚ÌˆÊ’u‚Æ‚Ì·•ª•¶š”
+			// æŒ¿å…¥ãƒã‚¤ãƒ³ãƒˆã¨å…ƒã®ä½ç½®ã¨ã®å·®åˆ†æ–‡å­—æ•°
 			nPosX_PHY_Delta = ptCaretBefore.x - ptCaretAfter.x;
 
-			//UNDO—p‹L˜^
+			//UNDOç”¨è¨˜éŒ²
 			if( !m_pCommanderView->m_bDoing_UndoRedo ){
 				GetOpeBlk()->AppendOpe(
 					new CMoveCaretOpe(
-						ptCaretBefore,	/* ‘€ì‘O‚ÌƒLƒƒƒŒƒbƒgˆÊ’u */
-						ptCaretAfter	/* ‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u */
+						ptCaretBefore,	/* æ“ä½œå‰ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½® */
+						ptCaretAfter	/* æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½® */
 					)
 				);
 			}
 		}
 
-		// Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü
-		CLayoutPoint ptLayoutNew; //‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u
+		// ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥
+		CLayoutPoint ptLayoutNew; //æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®
 		m_pCommanderView->InsertData_CEditView(
 			GetCaret().GetCaretLayoutPos(),
 			pszText,
@@ -581,28 +581,28 @@ void CViewCommander::Command_INSTEXT(
 			bRedraw
 		);
 
-		// ‘}“üƒf[ƒ^‚ÌÅŒã‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“®
+		// æŒ¿å…¥ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•
 		GetCaret().MoveCursor( ptLayoutNew, bRedraw );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( bLinePaste ){	// 2007.10.04 ryoji
-			/* Œ³‚ÌˆÊ’u‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
-			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	//‘€ì‘O‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+			/* å…ƒã®ä½ç½®ã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
+			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	//æ“ä½œå‰ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 			CLayoutPoint ptLayout;
 			GetDocument()->m_cLayoutMgr.LogicToLayout(
 				ptCaretBefore + CLogicPoint(nPosX_PHY_Delta, CLogicInt(0)),
 				&ptLayout
 			);
-			GetCaret().MoveCursor( ptLayout, bRedraw );					//ƒJ[ƒ\ƒ‹ˆÚ“®
-			CLogicPoint ptCaretAfter = GetCaret().GetCaretLogicPos();	//‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u
+			GetCaret().MoveCursor( ptLayout, bRedraw );					//ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•
+			CLogicPoint ptCaretAfter = GetCaret().GetCaretLogicPos();	//æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;
 
-			//UNDO—p‹L˜^
+			//UNDOç”¨è¨˜éŒ²
 			if( !m_pCommanderView->m_bDoing_UndoRedo ){
 				GetOpeBlk()->AppendOpe(
 					new CMoveCaretOpe(
-						ptCaretBefore,	/* ‘€ì‘O‚ÌƒLƒƒƒŒƒbƒgˆÊ’u‚w */
-						ptCaretAfter	/* ‘€ìŒã‚ÌƒLƒƒƒŒƒbƒgˆÊ’u‚w */
+						ptCaretBefore,	/* æ“ä½œå‰ã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ï¼¸ */
+						ptCaretAfter	/* æ“ä½œå¾Œã®ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®ï¼¸ */
 					)
 				);
 			}
@@ -616,22 +616,22 @@ end_of_func:
 
 
 
-/* ÅŒã‚ÉƒeƒLƒXƒg‚ğ’Ç‰Á */
+/* æœ€å¾Œã«ãƒ†ã‚­ã‚¹ãƒˆã‚’è¿½åŠ  */
 void CViewCommander::Command_ADDTAIL(
-	const wchar_t*	pszData,	//!< ’Ç‰Á‚·‚éƒeƒLƒXƒg
-	int				nDataLen	//!< ’Ç‰Á‚·‚éƒeƒLƒXƒg‚Ì’·‚³B•¶š’PˆÊB-1‚ğw’è‚·‚é‚ÆAƒeƒLƒXƒgI’[‚Ü‚ÅB
+	const wchar_t*	pszData,	//!< è¿½åŠ ã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆ
+	int				nDataLen	//!< è¿½åŠ ã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆã®é•·ã•ã€‚æ–‡å­—å˜ä½ã€‚-1ã‚’æŒ‡å®šã™ã‚‹ã¨ã€ãƒ†ã‚­ã‚¹ãƒˆçµ‚ç«¯ã¾ã§ã€‚
 )
 {
-	//ƒeƒLƒXƒg’·©“®ŒvZ
+	//ãƒ†ã‚­ã‚¹ãƒˆé•·è‡ªå‹•è¨ˆç®—
 	if(nDataLen==-1 && pszData!=NULL)nDataLen=wcslen(pszData);
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
-	/*ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“® */
+	/*ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã«ç§»å‹• */
 	Command_GOFILEEND( false );
 
-	/* Œ»İˆÊ’u‚Éƒf[ƒ^‚ğ‘}“ü */
-	CLayoutPoint ptLayoutNew;	// ‘}“ü‚³‚ê‚½•”•ª‚ÌŸ‚ÌˆÊ’u
+	/* ç¾åœ¨ä½ç½®ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥ */
+	CLayoutPoint ptLayoutNew;	// æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã®æ¬¡ã®ä½ç½®
 	m_pCommanderView->InsertData_CEditView(
 		GetCaret().GetCaretLayoutPos(),
 		pszData,
@@ -640,47 +640,47 @@ void CViewCommander::Command_ADDTAIL(
 		true
 	);
 
-	/* ‘}“üƒf[ƒ^‚ÌÅŒã‚ÖƒJ[ƒ\ƒ‹‚ğˆÚ“® */
-	// Sep. 2, 2002 ‚·‚È‚Ó‚« ƒAƒ“ƒ_[ƒ‰ƒCƒ“‚Ì•\¦‚ªc‚Á‚Ä‚µ‚Ü‚¤–â‘è‚ğC³
+	/* æŒ¿å…¥ãƒ‡ãƒ¼ã‚¿ã®æœ€å¾Œã¸ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹• */
+	// Sep. 2, 2002 ã™ãªãµã ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ã®è¡¨ç¤ºãŒæ®‹ã£ã¦ã—ã¾ã†å•é¡Œã‚’ä¿®æ­£
 	GetCaret().MoveCursor( ptLayoutNew, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
 
 
-//‘I‘ğ”ÍˆÍ“à‘SsƒRƒs[
+//é¸æŠç¯„å›²å†…å…¨è¡Œã‚³ãƒ”ãƒ¼
 void CViewCommander::Command_COPYLINES( void )
 {
-	/* ‘I‘ğ”ÍˆÍ“à‚Ì‘Ss‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚·‚é */
+	/* é¸æŠç¯„å›²å†…ã®å…¨è¡Œã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ */
 	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* ˆø—p•„ */
-		FALSE	/* s”Ô†‚ğ•t—^‚·‚é */
+		NULL,	/* å¼•ç”¨ç¬¦ */
+		FALSE	/* è¡Œç•ªå·ã‚’ä»˜ä¸ã™ã‚‹ */
 	);
 	return;
 }
 
 
 
-//‘I‘ğ”ÍˆÍ“à‘Ssˆø—p•„•t‚«ƒRƒs[
+//é¸æŠç¯„å›²å†…å…¨è¡Œå¼•ç”¨ç¬¦ä»˜ãã‚³ãƒ”ãƒ¼
 void CViewCommander::Command_COPYLINESASPASSAGE( void )
 {
-	/* ‘I‘ğ”ÍˆÍ“à‚Ì‘Ss‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚·‚é */
+	/* é¸æŠç¯„å›²å†…ã®å…¨è¡Œã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ */
 	m_pCommanderView->CopySelectedAllLines(
-		GetDllShareData().m_Common.m_sFormat.m_szInyouKigou,	/* ˆø—p•„ */
-		FALSE 									/* s”Ô†‚ğ•t—^‚·‚é */
+		GetDllShareData().m_Common.m_sFormat.m_szInyouKigou,	/* å¼•ç”¨ç¬¦ */
+		FALSE 									/* è¡Œç•ªå·ã‚’ä»˜ä¸ã™ã‚‹ */
 	);
 	return;
 }
 
 
 
-//‘I‘ğ”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[
+//é¸æŠç¯„å›²å†…å…¨è¡Œè¡Œç•ªå·ä»˜ãã‚³ãƒ”ãƒ¼
 void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
-	/* ‘I‘ğ”ÍˆÍ“à‚Ì‘Ss‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚·‚é */
+	/* é¸æŠç¯„å›²å†…ã®å…¨è¡Œã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ */
 	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* ˆø—p•„ */
-		TRUE	/* s”Ô†‚ğ•t—^‚·‚é */
+		NULL,	/* å¼•ç”¨ç¬¦ */
+		TRUE	/* è¡Œç•ªå·ã‚’ä»˜ä¸ã™ã‚‹ */
 	);
 	return;
 }
@@ -741,7 +741,7 @@ static bool AppendHTMLColor(
 
 
 
-//!‘I‘ğ”ÍˆÍ“àF•t‚«HTMLƒRƒs[
+//!é¸æŠç¯„å›²å†…è‰²ä»˜ãHTMLã‚³ãƒ”ãƒ¼
 void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 {
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected()
@@ -754,10 +754,10 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	CLayoutRect rcSel;
 	TwoPointToRect(
 		&rcSel,
-		GetSelect().GetFrom(),	// ”ÍˆÍ‘I‘ğŠJn
-		GetSelect().GetTo()		// ”ÍˆÍ‘I‘ğI—¹
+		GetSelect().GetFrom(),	// ç¯„å›²é¸æŠé–‹å§‹
+		GetSelect().GetTo()		// ç¯„å›²é¸æŠçµ‚äº†
 	);
-	// Cü•ª‚ğœ‚¢‚½ƒoƒbƒtƒ@‚Ì’·‚³‚ğ‚¾‚¢‚½‚¢‚ÅŒvZ
+	// ä¿®é£¾åˆ†ã‚’é™¤ã„ãŸãƒãƒƒãƒ•ã‚¡ã®é•·ã•ã‚’ã ã„ãŸã„ã§è¨ˆç®—
 	CLogicRange sSelectLogic;
 	sSelectLogic.Clear(-1);
 	int nBuffSize = 0;
@@ -772,13 +772,13 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		CLayoutInt i = rcSel.top;
 		for(; pcLayout != NULL && i <= rcSel.bottom; i++, pcLayout = pcLayout->GetNextLayout())
 		{
-			/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é */
+			/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ */
 			CLogicInt nIdxFrom;
 			CLogicInt nIdxTo;
 			if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 				nIdxFrom = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.left );
 				nIdxTo   = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
-				// ‰üs‚Íœ‚­
+				// æ”¹è¡Œã¯é™¤ã
 				if( nIdxTo - nIdxFrom > 0 ){
 					const WCHAR* pLine = pcLayout->GetPtr();
 					if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
@@ -821,7 +821,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			sSelectLogic.SetToX(CLogicInt(0));
 		}
 	}
-	// s”Ô†‚Ì•‚ğŒvZ
+	// è¡Œç•ªå·ã®å¹…ã‚’è¨ˆç®—
 	int nLineNumberMaxLen = 0;
 	WCHAR szLineFormat[10];
 	szLineFormat[0] = L'\0';
@@ -912,7 +912,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 				if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 					nIdxFrom = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.left );
 					nIdxTo   = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
-					// ‰üs‚Íœ‚­
+					// æ”¹è¡Œã¯é™¤ã
 					if( nIdxTo - nIdxFrom > 0 ){
 						const WCHAR* pLine = pcLayout->GetPtr();
 						if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
@@ -932,7 +932,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 					}
 				}
 			}
-			// ÅŒã‚Ì‰üs‚ÌŸ‚Ìs”Ô†‚ğ•\¦‚µ‚È‚¢‚æ‚¤‚É
+			// æœ€å¾Œã®æ”¹è¡Œã®æ¬¡ã®è¡Œç•ªå·ã‚’è¡¨ç¤ºã—ãªã„ã‚ˆã†ã«
 			if( nIdxTo == 0 && nLayoutLineNum == rcSel.bottom ){
 				break;
 			}
@@ -1029,7 +1029,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			if( bLineNumLayout && !bAddCRLF ){
 				cmemClip.AppendString(WCODE::CRLF, 2);
 			}
-			// 2014.06.25 ƒoƒbƒtƒ@Šg’£
+			// 2014.06.25 ãƒãƒƒãƒ•ã‚¡æ‹¡å¼µ
 			if( cmemClip.capacity() < cmemClip.GetStringLength() + 100 ){
 				cmemClip.AllocStringBuffer( cmemClip.capacity() + cmemClip.capacity() / 2 );
 			}
@@ -1058,7 +1058,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 
 
 /*!
-	@date 2014.12.30 Moca “¯‚¶CColorStrategy‚Åˆá‚¤F‚ÉØ‚è‘Ö‚í‚Á‚½‚Æ‚«‚É‘Î‰
+	@date 2014.12.30 Moca åŒã˜CColorStrategyã§é•ã†è‰²ã«åˆ‡ã‚Šæ›¿ã‚ã£ãŸã¨ãã«å¯¾å¿œ
 */
 CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	const CStringRef&	cStringLine,
@@ -1069,7 +1069,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	bool& bChange
 )
 {
-	//ŒŸõFI—¹
+	//æ¤œç´¢è‰²çµ‚äº†
 	if(*ppStrategyFound){
 		if((*ppStrategyFound)->EndColor(cStringLine, iLogic)){
 			*ppStrategyFound = NULL;
@@ -1077,7 +1077,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 		}
 	}
 
-	//ŒŸõFŠJn
+	//æ¤œç´¢è‰²é–‹å§‹
 	if(!*ppStrategyFound){
 		CColor_Found*  pcFound  = pool->GetFoundStrategy();
 		if(pcFound->BeginColor(cStringLine, iLogic)){
@@ -1086,7 +1086,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 		}
 	}
 
-	//FI—¹
+	//è‰²çµ‚äº†
 	if(*ppStrategy){
 		if((*ppStrategy)->EndColor(cStringLine, iLogic)){
 			*ppStrategy = NULL;
@@ -1094,7 +1094,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 		}
 	}
 
-	//FŠJn
+	//è‰²é–‹å§‹
 	if(!*ppStrategy){
 		int size = pool->GetStrategyCount();
 		for(int i = 0; i < size; i++ ){
@@ -1111,7 +1111,7 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	return *ppStrategy;
 }
 
-//!‘I‘ğ”ÍˆÍ“às”Ô†F•t‚«HTMLƒRƒs[
+//!é¸æŠç¯„å›²å†…è¡Œç•ªå·è‰²ä»˜ãHTMLã‚³ãƒ”ãƒ¼
 void CViewCommander::Command_COPY_COLOR_HTML_LINENUMBER()
 {
 	Command_COPY_COLOR_HTML(true);
@@ -1119,13 +1119,13 @@ void CViewCommander::Command_COPY_COLOR_HTML_LINENUMBER()
 
 
 
-/*!	Œ»İ•ÒW’†‚Ìƒtƒ@ƒCƒ‹–¼‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[
+/*!	ç¾åœ¨ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼
 	2002/2/3 aroka
 */
 void CViewCommander::Command_COPYFILENAME( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^‚ğİ’è */
+		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š */
 		const WCHAR* pszFile = to_wchar(GetDocument()->m_cDocFile.GetFileName());
 		m_pCommanderView->MySetClipboardData( pszFile , wcslen( pszFile ), false );
 	}
@@ -1136,11 +1136,11 @@ void CViewCommander::Command_COPYFILENAME( void )
 
 
 
-/* Œ»İ•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[ */
+/* ç¾åœ¨ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ */
 void CViewCommander::Command_COPYPATH( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^‚ğİ’è */
+		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š */
 		const TCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen(szPath), false );
 	}
@@ -1152,7 +1152,7 @@ void CViewCommander::Command_COPYPATH( void )
 
 
 //	May 9, 2000 genta
-/* Œ»İ•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ÆƒJ[ƒ\ƒ‹ˆÊ’u‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[ */
+/* ç¾åœ¨ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã¨ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ */
 void CViewCommander::Command_COPYTAG( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -1160,10 +1160,10 @@ void CViewCommander::Command_COPYTAG( void )
 
 		CLogicPoint ptColLine;
 
-		//	˜_—s”Ô†‚ğ“¾‚é
+		//	è«–ç†è¡Œç•ªå·ã‚’å¾—ã‚‹
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
-		/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^‚ğİ’è */
+		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š */
 		auto_sprintf( buf, L"%ts (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
 		m_pCommanderView->MySetClipboardData( buf, wcslen( buf ), false );
 	}
@@ -1174,7 +1174,7 @@ void CViewCommander::Command_COPYTAG( void )
 
 
 
-////ƒL[Š„‚è“–‚Äˆê——‚ğƒRƒs[
+////ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ä¸€è¦§ã‚’ã‚³ãƒ”ãƒ¼
 	//Dec. 26, 2000 JEPRO //Jan. 24, 2001 JEPRO debug version (directed by genta)
 void CViewCommander::Command_CREATEKEYBINDLIST( void )
 {
@@ -1185,11 +1185,11 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 		GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum,
 		GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
-		&GetDocument()->m_cFuncLookup,	//	Oct. 31, 2001 genta ’Ç‰Á
-		FALSE	// 2007.02.22 ryoji ’Ç‰Á
+		&GetDocument()->m_cFuncLookup,	//	Oct. 31, 2001 genta è¿½åŠ 
+		FALSE	// 2007.02.22 ryoji è¿½åŠ 
 	);
 
-	// WindowsƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[
-	//2004.02.17 Moca ŠÖ”‰»
+	// Windowsã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼
+	//2004.02.17 Moca é–¢æ•°åŒ–
 	SetClipboardText( CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }

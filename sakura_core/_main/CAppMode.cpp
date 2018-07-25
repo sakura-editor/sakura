@@ -1,19 +1,19 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CAppMode.h"
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"
 
 void CAppMode::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
-	m_bViewMode = false;	/* ƒrƒ…[ƒ‚[ƒh */
+	m_bViewMode = false;	/* ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ */
 
-	// –¼‘O‚ğ•t‚¯‚Ä•Û‘¶‚©‚çÄƒ[ƒh‚ªœ‹‚³‚ê‚½•ª‚Ì•s‘«ˆ—‚ğ’Ç‰ÁiANSI”Å‚Æ‚Ì·ˆÙj	// 2009.08.12 ryoji
+	// åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã‹ã‚‰å†ãƒ­ãƒ¼ãƒ‰ãŒé™¤å»ã•ã‚ŒãŸåˆ†ã®ä¸è¶³å‡¦ç†ã‚’è¿½åŠ ï¼ˆANSIç‰ˆã¨ã®å·®ç•°ï¼‰	// 2009.08.12 ryoji
 	if( IsDebugMode() ){
-		SetDebugModeOFF();	// ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE‚Í’ÊíƒEƒBƒ“ƒhƒE‰»
+		SetDebugModeOFF();	// ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯é€šå¸¸ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åŒ–
 	}
 }
 
-//! ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒh‚Éİ’è
+//! ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰ã«è¨­å®š
 void CAppMode::SetDebugModeON()
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
@@ -24,12 +24,12 @@ void CAppMode::SetDebugModeON()
 	}
 	pShare->m_sHandles.m_hwndDebug = CEditWnd::getInstance()->GetHwnd();
 	this->_SetDebugMode(true);
-	this->SetViewMode(false);	// ƒrƒ…[ƒ‚[ƒh	// 2001/06/23 N.Nakatani ƒAƒEƒgƒvƒbƒg‘‹‚Ö‚Ìo—ÍƒeƒLƒXƒg‚Ì’Ç‰ÁF_ADDTAIL_W‚ª—}~‚³‚ê‚é‚Ì‚Å‚Æ‚è‚ ‚¦‚¸ƒrƒ…[ƒ‚[ƒh‚Í«‚ß‚Ü‚µ‚½
+	this->SetViewMode(false);	// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰	// 2001/06/23 N.Nakatani ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆçª“ã¸ã®å‡ºåŠ›ãƒ†ã‚­ã‚¹ãƒˆã®è¿½åŠ F_ADDTAIL_WãŒæŠ‘æ­¢ã•ã‚Œã‚‹ã®ã§ã¨ã‚Šã‚ãˆãšãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¯è¾ã‚ã¾ã—ãŸ
 	CEditWnd::getInstance()->UpdateCaption();
 }
 
 // 2005.06.24 Moca
-//! ƒfƒoƒbƒNƒ‚ƒjƒ^ƒ‚[ƒh‚Ì‰ğœ
+//! ãƒ‡ãƒãƒƒã‚¯ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰ã®è§£é™¤
 void CAppMode::SetDebugModeOFF()
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();

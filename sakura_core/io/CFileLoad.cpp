@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒtƒ@ƒCƒ‹“Ç‚İ‚İƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã‚¯ãƒ©ã‚¹
 
 	@author Moca
-	@date 2002/08/30 V‹Kì¬
+	@date 2002/08/30 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -48,18 +48,18 @@
 #include "window/CEditWnd.h"
 
 /*
-	@note Win32API‚ÅÀ‘•
-		2GBˆÈã‚Ìƒtƒ@ƒCƒ‹‚ÍŠJ‚¯‚È‚¢
+	@note Win32APIã§å®Ÿè£…
+		2GBä»¥ä¸Šã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯é–‹ã‘ãªã„
 */
 
-/*! ƒ[ƒh—pƒoƒbƒtƒ@ƒTƒCƒY‚Ì‰Šú’l */
+/*! ãƒ­ãƒ¼ãƒ‰ç”¨ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®åˆæœŸå€¤ */
 const int CFileLoad::gm_nBufSizeDef = 32768;
-//(Å“K’l‚ªƒ}ƒVƒ“‚É‚æ‚Á‚Äˆá‚¤‚Ì‚Å‚Æ‚è‚ ‚¦‚¸32KBŠm•Û‚·‚é)
+//(æœ€é©å€¤ãŒãƒã‚·ãƒ³ã«ã‚ˆã£ã¦é•ã†ã®ã§ã¨ã‚Šã‚ãˆãš32KBç¢ºä¿ã™ã‚‹)
 
-// /*! ƒ[ƒh—pƒoƒbƒtƒ@ƒTƒCƒY‚Ìİ’è‰Â”\‚ÈÅ’á’l */
+// /*! ãƒ­ãƒ¼ãƒ‰ç”¨ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã®è¨­å®šå¯èƒ½ãªæœ€ä½å€¤ */
 // const int gm_nBufSizeMin = 1024;
 
-/*! ƒRƒ“ƒXƒgƒ‰ƒNƒ^ */
+/*! ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ */
 CFileLoad::CFileLoad( const SEncodingConfig& encode )
 {
 	m_pEencoding = &encode;
@@ -83,7 +83,7 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 	m_nReadBufOffSet  = 0;
 }
 
-/*! ƒfƒXƒgƒ‰ƒNƒ^ */
+/*! ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ */
 CFileLoad::~CFileLoad( void )
 {
 	if( NULL != m_hFile ){
@@ -98,14 +98,14 @@ CFileLoad::~CFileLoad( void )
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹‚ğŠJ‚­
-	@param pFileName [in] ƒtƒ@ƒCƒ‹–¼
-	@param bBigFile  [in] 2GBˆÈã‚Ìƒtƒ@ƒCƒ‹‚ğŠJ‚­‚©BGrep=true, 32bit”Å‚Í‚»‚Ì‘¼=false‚Å‰^—p
-	@param CharCode  [in] ƒtƒ@ƒCƒ‹‚Ì•¶šƒR[ƒhD
-	@param nFlag [in] •¶šƒR[ƒh‚ÌƒIƒvƒVƒ‡ƒ“
-	@param pbBomExist [out] BOM‚Ì—L–³
-	@date 2003.06.08 Moca CODE_AUTODETECT‚ğw’è‚Å‚«‚é‚æ‚¤‚É•ÏX
-	@date 2003.07.26 ryoji BOMˆø”’Ç‰Á
+	ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
+	@param pFileName [in] ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param bBigFile  [in] 2GBä»¥ä¸Šã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãã‹ã€‚Grep=true, 32bitç‰ˆã¯ãã®ä»–=falseã§é‹ç”¨
+	@param CharCode  [in] ãƒ•ã‚¡ã‚¤ãƒ«ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ï¼
+	@param nFlag [in] æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	@param pbBomExist [out] BOMã®æœ‰ç„¡
+	@date 2003.06.08 Moca CODE_AUTODETECTã‚’æŒ‡å®šã§ãã‚‹ã‚ˆã†ã«å¤‰æ›´
+	@date 2003.07.26 ryoji BOMå¼•æ•°è¿½åŠ 
 */
 ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharCode, int nFlag, bool* pbBomExist )
 {
@@ -113,30 +113,30 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 	ULARGE_INTEGER	fileSize;
 	ECodeType	nBomCode;
 
-	// FileClose‚ğŒÄ‚ñ‚Å‚©‚ç‚É‚µ‚Ä‚­‚¾‚³‚¢
+	// FileCloseã‚’å‘¼ã‚“ã§ã‹ã‚‰ã«ã—ã¦ãã ã•ã„
 	if( NULL != m_hFile ){
 #ifdef _DEBUG
-		::MessageBox( NULL, _T("CFileLoad::FileOpen\nFileClose‚ğŒÄ‚ñ‚Å‚©‚ç‚É‚µ‚Ä‚­‚¾‚³‚¢") , NULL, MB_OK );
+		::MessageBox( NULL, _T("CFileLoad::FileOpen\nFileCloseã‚’å‘¼ã‚“ã§ã‹ã‚‰ã«ã—ã¦ãã ã•ã„") , NULL, MB_OK );
 #endif
 		throw CError_FileOpen();
 	}
 	hFile = ::CreateFile(
 		pFileName,
 		GENERIC_READ,
-		//	Oct. 18, 2002 genta FILE_SHARE_WRITE ’Ç‰Á
-		//	‘¼ƒvƒƒZƒX‚ª‘‚«‚İ’†‚Ìƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚é‚æ‚¤‚É
-		FILE_SHARE_READ | FILE_SHARE_WRITE,	// ‹¤—L
-		NULL,						// ƒZƒLƒ…ƒŠƒeƒB‹Lqq
-		OPEN_EXISTING,				// ì¬•û–@
-		FILE_FLAG_SEQUENTIAL_SCAN,	// ƒtƒ@ƒCƒ‹‘®«
-		NULL						// ƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹‚Ìƒnƒ“ƒhƒ‹
+		//	Oct. 18, 2002 genta FILE_SHARE_WRITE è¿½åŠ 
+		//	ä»–ãƒ—ãƒ­ã‚»ã‚¹ãŒæ›¸ãè¾¼ã¿ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ã‚‹ã‚ˆã†ã«
+		FILE_SHARE_READ | FILE_SHARE_WRITE,	// å…±æœ‰
+		NULL,						// ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		OPEN_EXISTING,				// ä½œæˆæ–¹æ³•
+		FILE_FLAG_SEQUENTIAL_SCAN,	// ãƒ•ã‚¡ã‚¤ãƒ«å±æ€§
+		NULL						// ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ«
 	);
 	if( hFile == INVALID_HANDLE_VALUE ){
 		throw CError_FileOpen();
 	}
 	m_hFile = hFile;
 
-	// GetFileSizeEx ‚Í Win2KˆÈã
+	// GetFileSizeEx ã¯ Win2Kä»¥ä¸Š
 	fileSize.LowPart = ::GetFileSize( hFile, &fileSize.HighPart );
 	if( 0xFFFFFFFF == fileSize.LowPart ){
 		DWORD lastError = ::GetLastError();
@@ -146,15 +146,15 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 		}
 	}
 	if( !bBigFile && 0x80000000 <= fileSize.QuadPart ){
-		// ƒtƒ@ƒCƒ‹‚ª‘å‚«‚·‚¬‚é(2GBˆÊ)
+		// ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤§ãã™ãã‚‹(2GBä½)
 		FileClose();
 		throw CError_FileOpen();
 	}
 	m_nFileSize = fileSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;
 
-	// From Here Jun. 08, 2003 Moca •¶šƒR[ƒh”»’è
-	// ƒf[ƒ^“Ç‚İ‚İ
+	// From Here Jun. 08, 2003 Moca æ–‡å­—ã‚³ãƒ¼ãƒ‰åˆ¤å®š
+	// ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
 	Buffering();
 
 	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
@@ -167,7 +167,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 		}
 	}
 	// To Here Jun. 08, 2003
-	// •s³‚È•¶šƒR[ƒh‚Ì‚Æ‚«‚ÍƒfƒtƒHƒ‹ƒg(SJIS:–³•ÏŠ·)‚ğİ’è
+	// ä¸æ­£ãªæ–‡å­—ã‚³ãƒ¼ãƒ‰ã®ã¨ãã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ(SJIS:ç„¡å¤‰æ›)ã‚’è¨­å®š
 	if( !IsValidCodeOrCPType(CharCode) ){
 		CharCode = CODE_DEFAULT;
 	}
@@ -187,19 +187,19 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 		}
 	}
 	if( bBom ){
-		//	Jul. 26, 2003 ryoji BOM‚Ì—L–³‚ğƒpƒ‰ƒ[ƒ^‚Å•Ô‚·
+		//	Jul. 26, 2003 ryoji BOMã®æœ‰ç„¡ã‚’ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã§è¿”ã™
 		m_bBomExist = true;
 		if( pbBomExist != NULL ){
 			*pbBomExist = true;
 		}
 	}else{
-		//	Jul. 26, 2003 ryoji BOM‚Ì—L–³‚ğƒpƒ‰ƒ[ƒ^‚Å•Ô‚·
+		//	Jul. 26, 2003 ryoji BOMã®æœ‰ç„¡ã‚’ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã§è¿”ã™
 		if( pbBomExist != NULL ){
 			*pbBomExist = false;
 		}
 	}
 	
-	// To Here Jun. 13, 2003 Moca BOM‚Ìœ‹
+	// To Here Jun. 13, 2003 Moca BOMã®é™¤å»
 	m_eMode = FLMODE_READY;
 //	m_cmemLine.AllocBuffer( 256 );
 	m_pCodeBase->GetEol( &m_memEols[0], EOL_NEL );
@@ -226,8 +226,8 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 }
 
 /*!
-	ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é
-	“Ç‚İ‚İ—pƒoƒbƒtƒ@‚Æm_memLine‚àƒNƒŠƒA‚³‚ê‚é
+	ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹
+	èª­ã¿è¾¼ã¿ç”¨ãƒãƒƒãƒ•ã‚¡ã¨m_memLineã‚‚ã‚¯ãƒªã‚¢ã•ã‚Œã‚‹
 */
 void CFileLoad::FileClose( void )
 {
@@ -250,8 +250,8 @@ void CFileLoad::FileClose( void )
 	m_nLineIndex	= -1;
 }
 
-/*! 1s“Ç‚İ‚İ
-	UTF-7ê‡Aƒf[ƒ^“à‚ÌNEL,PS,LS“™‚Ì‰üs‚Ü‚Å‚ğ1s‚Æ‚µ‚Äæ‚èo‚·
+/*! 1è¡Œèª­ã¿è¾¼ã¿
+	UTF-7å ´åˆã€ãƒ‡ãƒ¼ã‚¿å†…ã®NEL,PS,LSç­‰ã®æ”¹è¡Œã¾ã§ã‚’1è¡Œã¨ã—ã¦å–ã‚Šå‡ºã™
 */
 EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 {
@@ -275,14 +275,14 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 	const wchar_t* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
 				&nRetLineLen, &m_nReadOffset2, &cEolTemp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
 	if( m_cLineTemp.GetStringLength() == m_nReadOffset2 && nOffsetTemp == 0 ){
-		// “r’†‚É‰üs‚ª‚È‚¢ŒÀ‚è‚ÍAswap‚ğg‚Á‚Ä’†g‚ÌƒRƒs[‚ğÈ—ª‚·‚é
+		// é€”ä¸­ã«æ”¹è¡ŒãŒãªã„é™ã‚Šã¯ã€swapã‚’ä½¿ã£ã¦ä¸­èº«ã®ã‚³ãƒ”ãƒ¼ã‚’çœç•¥ã™ã‚‹
 		pUnicodeBuffer->swap(m_cLineTemp);
 		if( 0 < m_cLineTemp.GetStringLength() ){
 			m_cLineTemp._GetMemory()->SetRawDataHoldBuffer( L"", 0 );
 		}
 		m_nReadOffset2 = 0;
 	}else{
-		// ‰üs‚ª“r’†‚É‚ ‚Á‚½B•K—v•ª‚ğƒRƒs[
+		// æ”¹è¡ŒãŒé€”ä¸­ã«ã‚ã£ãŸã€‚å¿…è¦åˆ†ã‚’ã‚³ãƒ”ãƒ¼
 		pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
 		pUnicodeBuffer->AppendString( pRet, nRetLineLen + cEolTemp.GetLen() );
 	}
@@ -292,14 +292,14 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 
 
 /*!
-	Ÿ‚Ì˜_—s‚ğ•¶šƒR[ƒh•ÏŠ·‚µ‚Äƒ[ƒh‚·‚é
-	‡ŸƒAƒNƒZƒXê—p
-	GetNextLine‚Ì‚æ‚¤‚È“®ì‚ğ‚·‚é
-	@return	NULLˆÈŠO	1s‚ğ•Û‚µ‚Ä‚¢‚éƒf[ƒ^‚Ìæ“ªƒAƒhƒŒƒX‚ğ•Ô‚·B‰i‘±“I‚Å‚Í‚È‚¢ˆê“I‚È—ÌˆæB
-			NULL		ƒf[ƒ^‚ª‚È‚©‚Á‚½
+	æ¬¡ã®è«–ç†è¡Œã‚’æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›ã—ã¦ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
+	é †æ¬¡ã‚¢ã‚¯ã‚»ã‚¹å°‚ç”¨
+	GetNextLineã®ã‚ˆã†ãªå‹•ä½œã‚’ã™ã‚‹
+	@return	NULLä»¥å¤–	1è¡Œã‚’ä¿æŒã—ã¦ã„ã‚‹ãƒ‡ãƒ¼ã‚¿ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ã€‚æ°¸ç¶šçš„ã§ã¯ãªã„ä¸€æ™‚çš„ãªé ˜åŸŸã€‚
+			NULL		ãƒ‡ãƒ¼ã‚¿ãŒãªã‹ã£ãŸ
 */
 EConvertResult CFileLoad::ReadLine_core(
-	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEƒf[ƒ^ó‚¯æ‚èƒoƒbƒtƒ@B‰üs‚àŠÜ‚ß‚Ä“Ç‚İæ‚éB
+	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEãƒ‡ãƒ¼ã‚¿å—ã‘å–ã‚Šãƒãƒƒãƒ•ã‚¡ã€‚æ”¹è¡Œã‚‚å«ã‚ã¦èª­ã¿å–ã‚‹ã€‚
 	CEol*		pcEol			//!< [i/o]
 )
 {
@@ -311,27 +311,27 @@ EConvertResult CFileLoad::ReadLine_core(
 		return RESULT_FAILURE;
 	}
 #endif
-	//sƒf[ƒ^ƒoƒbƒtƒ@ (•¶šƒR[ƒh•ÏŠ·–³‚µ‚Ì¶‚Ìƒf[ƒ^)
+	//è¡Œãƒ‡ãƒ¼ã‚¿ãƒãƒƒãƒ•ã‚¡ (æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›ç„¡ã—ã®ç”Ÿã®ãƒ‡ãƒ¼ã‚¿)
 	m_cLineBuffer.SetRawDataHoldBuffer("",0);
 
-	// 1sæ‚èo‚µ ReadBuf -> m_memLine
-	//	Oct. 19, 2002 genta whileğŒ‚ğ®—
+	// 1è¡Œå–ã‚Šå‡ºã— ReadBuf -> m_memLine
+	//	Oct. 19, 2002 genta whileæ¡ä»¶ã‚’æ•´ç†
 	int			nBufLineLen;
 	int			nEolLen;
 	int			nBufferNext;
 	for (;;) {
 		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
-			m_nReadDataLen,    //[in] ƒoƒbƒtƒ@‚Ì—LŒøƒf[ƒ^ƒTƒCƒY
-			&nBufLineLen,      //[out]‰üs‚ğŠÜ‚Ü‚È‚¢’·‚³
-			&m_nReadBufOffSet, //[i/o]ƒIƒtƒZƒbƒg
+			m_nReadDataLen,    //[in] ãƒãƒƒãƒ•ã‚¡ã®æœ‰åŠ¹ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚º
+			&nBufLineLen,      //[out]æ”¹è¡Œã‚’å«ã¾ãªã„é•·ã•
+			&m_nReadBufOffSet, //[i/o]ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 			pcEol,
 			&nEolLen,
 			&nBufferNext
 		);
 		if(pLine==NULL)break;
 
-		// ReadBuf‚©‚ç1s‚ğæ“¾‚·‚é‚Æ‚«A‰üsƒR[ƒh‚ªŒ‡‚¯‚é‰Â”\«‚ª‚ ‚é‚½‚ß
+		// ReadBufã‹ã‚‰1è¡Œã‚’å–å¾—ã™ã‚‹ã¨ãã€æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒæ¬ ã‘ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ãŸã‚
 		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
 			int n = 128;
 			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nEolLen - nBufferNext + 100;
@@ -341,10 +341,10 @@ EConvertResult CFileLoad::ReadLine_core(
 			m_cLineBuffer.AllocBuffer( n );
 			m_cLineBuffer.AppendRawData( pLine, nBufLineLen + nEolLen - nBufferNext );
 			m_nReadBufOffSet -= nBufferNext;
-			// ƒoƒbƒtƒ@ƒ[ƒh   File -> ReadBuf
+			// ãƒãƒƒãƒ•ã‚¡ãƒ­ãƒ¼ãƒ‰   File -> ReadBuf
 			Buffering();
 			if( 0 == nBufferNext && 0 < nEolLen ){
-				// ‚Ò‚Á‚½‚èso—Í
+				// ã´ã£ãŸã‚Šè¡Œå‡ºåŠ›
 				break;
 			}
 		}else{
@@ -354,7 +354,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	}
 	m_nReadLength += m_cLineBuffer.GetRawLength();
 
-	// •¶šƒR[ƒh•ÏŠ· cLineBuffer -> pUnicodeBuffer
+	// æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ› cLineBuffer -> pUnicodeBuffer
 	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
 	if(eConvertResult==RESULT_LOSESOME){
 		eRet = RESULT_LOSESOME;
@@ -362,7 +362,7 @@ EConvertResult CFileLoad::ReadLine_core(
 
 	m_nLineIndex++;
 
-	// 2012.10.21 Moca BOM‚Ìœ‹(UTF-7‘Î‰)
+	// 2012.10.21 Moca BOMã®é™¤å»(UTF-7å¯¾å¿œ)
 	if( m_nLineIndex == 0 ){
 		if( m_bBomExist && 1 <= pUnicodeBuffer->GetStringLength() ){
 			if( pUnicodeBuffer->GetStringPtr()[0] == 0xfeff ){
@@ -381,32 +381,32 @@ EConvertResult CFileLoad::ReadLine_core(
 
 
 /*!
-	ƒoƒbƒtƒ@‚Éƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	@note ƒGƒ‰[‚Í throw ‚·‚é
+	ãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	@note ã‚¨ãƒ©ãƒ¼æ™‚ã¯ throw ã™ã‚‹
 */
 void CFileLoad::Buffering( void )
 {
 	DWORD	ReadSize;
 
-	// ƒƒ‚ƒŠ[Šm•Û
+	// ãƒ¡ãƒ¢ãƒªãƒ¼ç¢ºä¿
 	if( NULL == m_pReadBuf ){
 		int nBufSize;
 		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( static_cast<int>(m_nFileSize) ):( gm_nBufSizeDef );
-		//	Borland C++‚Å‚Í0ƒoƒCƒg‚Ìmalloc‚ğŠl“¾¸”s‚ÆŒ©‚È‚·‚½‚ß
-		//	Å’á1ƒoƒCƒg‚Íæ“¾‚·‚é‚±‚Æ‚Å0ƒoƒCƒg‚Ìƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚é‚æ‚¤‚É‚·‚é
+		//	Borland C++ã§ã¯0ãƒã‚¤ãƒˆã®mallocã‚’ç²å¾—å¤±æ•—ã¨è¦‹ãªã™ãŸã‚
+		//	æœ€ä½1ãƒã‚¤ãƒˆã¯å–å¾—ã™ã‚‹ã“ã¨ã§0ãƒã‚¤ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ã‚‹ã‚ˆã†ã«ã™ã‚‹
 		if( 0 >= nBufSize ){
-			nBufSize = 1; // Jun. 08, 2003  BCC‚Ìmalloc(0)‚ªNULL‚ğ•Ô‚·d—l‚É‘Îˆ
+			nBufSize = 1; // Jun. 08, 2003  BCCã®malloc(0)ãŒNULLã‚’è¿”ã™ä»•æ§˜ã«å¯¾å‡¦
 		}
 
 		m_pReadBuf = (char *)malloc( nBufSize );
 		if( NULL == m_pReadBuf ){
-			throw CError_FileRead(); // ƒƒ‚ƒŠ[Šm•Û‚É¸”s
+			throw CError_FileRead(); // ãƒ¡ãƒ¢ãƒªãƒ¼ç¢ºä¿ã«å¤±æ•—
 		}
 		m_nReadDataLen = 0;
 		m_nReadBufSize = nBufSize;
 		m_nReadBufOffSet = 0;
 	}
-	// ReadBuf“à‚Éƒf[ƒ^‚ªc‚Á‚Ä‚¢‚é
+	// ReadBufå†…ã«ãƒ‡ãƒ¼ã‚¿ãŒæ®‹ã£ã¦ã„ã‚‹
 	else if( m_nReadBufOffSet < m_nReadDataLen ){
 		m_nReadDataLen -= m_nReadBufOffSet;
 		memmove( m_pReadBuf, &m_pReadBuf[m_nReadBufOffSet], m_nReadDataLen );
@@ -416,16 +416,16 @@ void CFileLoad::Buffering( void )
 		m_nReadBufOffSet = 0;
 		m_nReadDataLen = 0;
 	}
-	// ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿
 	ReadSize = Read( &m_pReadBuf[m_nReadDataLen], m_nReadBufSize - m_nReadDataLen );
 	if( 0 == ReadSize ){
-		m_eMode = FLMODE_READBUFEND;	// ƒtƒ@ƒCƒ‹‚È‚Ç‚ÌI‚í‚è‚É’B‚µ‚½‚ç‚µ‚¢
+		m_eMode = FLMODE_READBUFEND;	// ãƒ•ã‚¡ã‚¤ãƒ«ãªã©ã®çµ‚ã‚ã‚Šã«é”ã—ãŸã‚‰ã—ã„
 	}
 	m_nReadDataLen += ReadSize;
 }
 
 /*!
-	ƒoƒbƒtƒ@ƒNƒŠƒA
+	ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢
 */
 void CFileLoad::ReadBufEmpty( void )
 {
@@ -440,8 +440,8 @@ void CFileLoad::ReadBufEmpty( void )
 
 
 /*!
-	 Œ»İ‚Ìis—¦‚ğæ“¾‚·‚é
-	 @return 0% - 100%  áŠ±Œë·‚ªo‚é
+	 ç¾åœ¨ã®é€²è¡Œç‡ã‚’å–å¾—ã™ã‚‹
+	 @return 0% - 100%  è‹¥å¹²èª¤å·®ãŒå‡ºã‚‹
 */
 int CFileLoad::GetPercent( void ){
 	int nRet;
@@ -454,16 +454,16 @@ int CFileLoad::GetPercent( void ){
 }
 
 /*!
-	GetNextLine‚Ì”Ä—p•¶šƒR[ƒh”Å
+	GetNextLineã®æ±ç”¨æ–‡å­—ã‚³ãƒ¼ãƒ‰ç‰ˆ
 */
 const char* CFileLoad::GetNextLineCharCode(
-	const char*	pData,		//!< [in]	ŒŸõ•¶š—ñ
-	int			nDataLen,	//!< [in]	ŒŸõ•¶š—ñ‚ÌƒoƒCƒg”
-	int*		pnLineLen,	//!< [out]	1s‚ÌƒoƒCƒg”‚ğ•Ô‚·‚½‚¾‚µEOL‚ÍŠÜ‚Ü‚È‚¢
-	int*		pnBgn,		//!< [i/o]	ŒŸõ•¶š—ñ‚ÌƒoƒCƒg’PˆÊ‚ÌƒIƒtƒZƒbƒgˆÊ’u
+	const char*	pData,		//!< [in]	æ¤œç´¢æ–‡å­—åˆ—
+	int			nDataLen,	//!< [in]	æ¤œç´¢æ–‡å­—åˆ—ã®ãƒã‚¤ãƒˆæ•°
+	int*		pnLineLen,	//!< [out]	1è¡Œã®ãƒã‚¤ãƒˆæ•°ã‚’è¿”ã™ãŸã ã—EOLã¯å«ã¾ãªã„
+	int*		pnBgn,		//!< [i/o]	æ¤œç´¢æ–‡å­—åˆ—ã®ãƒã‚¤ãƒˆå˜ä½ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆä½ç½®
 	CEol*		pcEol,		//!< [i/o]	EOL
-	int*		pnEolLen,	//!< [out]	EOL‚ÌƒoƒCƒg” (Unicode‚Å¢‚ç‚È‚¢‚æ‚¤‚É)
-	int*		pnBufferNext	//!< [out]	Ÿ‰ñ‰z‚µƒoƒbƒtƒ@’·(EOL‚Ì’f•Ğ)
+	int*		pnEolLen,	//!< [out]	EOLã®ãƒã‚¤ãƒˆæ•° (Unicodeã§å›°ã‚‰ãªã„ã‚ˆã†ã«)
+	int*		pnBufferNext	//!< [out]	æ¬¡å›æŒè¶Šã—ãƒãƒƒãƒ•ã‚¡é•·(EOLã®æ–­ç‰‡)
 ){
 	int nbgn = *pnBgn;
 	int i;
@@ -476,7 +476,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		*pnEolLen = 0;
 		return NULL;
 	}
-	const unsigned char* pUData = (const unsigned char*)pData; // signed‚¾‚Æ•„†Šg’£‚ÅNEL‚ª‚¨‚©‚µ‚­‚È‚é‚Ì‚Å
+	const unsigned char* pUData = (const unsigned char*)pData; // signedã ã¨ç¬¦å·æ‹¡å¼µã§NELãŒãŠã‹ã—ããªã‚‹ã®ã§
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	int nLen = nDataLen;
 	int neollen = 0;
@@ -511,7 +511,7 @@ const char* CFileLoad::GetNextLineCharCode(
 					}
 				}
 			}
-			// UTF-8‚ÌNEL,PS,LS’f•Ğ‚ÌŒŸo
+			// UTF-8ã®NEL,PS,LSæ–­ç‰‡ã®æ¤œå‡º
 			if( i == nDataLen && m_bEolEx ){
 				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
 					int k;
@@ -597,7 +597,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		break;
 	case ENCODING_TRAIT_EBCDIC_CRLF:
 	case ENCODING_TRAIT_EBCDIC:
-		// EOLƒR[ƒh•ÏŠ·‚µ‚Â‚Âİ’è
+		// EOLã‚³ãƒ¼ãƒ‰å¤‰æ›ã—ã¤ã¤è¨­å®š
 		for( i = nbgn; i < nDataLen; ++i ){
 			if( m_encodingTrait == ENCODING_TRAIT_EBCDIC && bExtEol ){
 				if( pData[i] == '\x15' ){
@@ -610,7 +610,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				char szEof[3] = {
 					(pData[i]  == '\x25' ? '\x0a' : '\x0d'),
 					(pData[i+1]== '\x25' ? '\x0a' : 
-						(pData[i+1] == '\x0a' ? 0 : // EBCDIC ‚Ì"\x0a‚ªLF‚É‚È‚ç‚È‚¢‚æ‚¤‚É×H‚·‚é
+						(pData[i+1] == '\x0a' ? 0 : // EBCDIC ã®"\x0aãŒLFã«ãªã‚‰ãªã„ã‚ˆã†ã«ç´°å·¥ã™ã‚‹
 							(i + 1 < nDataLen ? pData[i+1] : 0))),
 					0
 				};
@@ -623,12 +623,12 @@ const char* CFileLoad::GetNextLineCharCode(
 	}
 
 	if( neollen < 1 ){
-		// EOL‚ª‚È‚©‚Á‚½ê‡
+		// EOLãŒãªã‹ã£ãŸå ´åˆ
 		if( i != nDataLen ){
-			i = nDataLen;		// ÅŒã‚Ì”¼’[‚ÈƒoƒCƒg‚ğ—‚Æ‚³‚È‚¢‚æ‚¤‚É
+			i = nDataLen;		// æœ€å¾Œã®åŠç«¯ãªãƒã‚¤ãƒˆã‚’è½ã¨ã•ãªã„ã‚ˆã†ã«
 		}
 	}else{
-		// CR‚Ìê‡‚ÍACRLF‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅŸ‚Ìƒoƒbƒtƒ@‚Ö‘—‚é
+		// CRã®å ´åˆã¯ã€CRLFã‹ã‚‚ã—ã‚Œãªã„ã®ã§æ¬¡ã®ãƒãƒƒãƒ•ã‚¡ã¸é€ã‚‹
 		if( *pcEol == EOL_CR ){
 			*pnBufferNext = neollen;
 		}

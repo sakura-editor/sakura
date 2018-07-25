@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,37 +26,37 @@
 
 class CEol;
 
-//!ƒTƒNƒ‰ƒGƒfƒBƒ^—pƒNƒŠƒbƒvƒ{[ƒhƒNƒ‰ƒXBŒãX‚Í‚±‚Ì’†‚Å‘S‚Ä‚ÌƒNƒŠƒbƒvƒ{[ƒhAPI‚ğŒÄ‚Î‚¹‚½‚¢B
+//!ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ç”¨ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‚¯ãƒ©ã‚¹ã€‚å¾Œã€…ã¯ã“ã®ä¸­ã§å…¨ã¦ã®ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰APIã‚’å‘¼ã°ã›ãŸã„ã€‚
 class CClipboard{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
-	CClipboard(HWND hwnd); //!< ƒRƒ“ƒXƒgƒ‰ƒNƒ^“à‚ÅƒNƒŠƒbƒvƒ{[ƒh‚ªŠJ‚©‚ê‚é
-	virtual ~CClipboard(); //!< ƒfƒXƒgƒ‰ƒNƒ^“à‚ÅClose‚ªŒÄ‚Î‚ê‚é
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	CClipboard(HWND hwnd); //!< ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å†…ã§ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãŒé–‹ã‹ã‚Œã‚‹
+	virtual ~CClipboard(); //!< ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å†…ã§CloseãŒå‘¼ã°ã‚Œã‚‹
 
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
-	void Empty(); //!< ƒNƒŠƒbƒvƒ{[ƒh‚ğ‹ó‚É‚·‚é
-	void Close(); //!< ƒNƒŠƒbƒvƒ{[ƒh‚ğ•Â‚¶‚é
-	bool SetText(const wchar_t* pData, int nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< ƒeƒLƒXƒg‚ğİ’è‚·‚é
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	void Empty(); //!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‚’ç©ºã«ã™ã‚‹
+	void Close(); //!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‚’é–‰ã˜ã‚‹
+	bool SetText(const wchar_t* pData, int nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< ãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®šã™ã‚‹
 	bool SetHtmlText(const CNativeW& cmemBUf);
-	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< ƒeƒLƒXƒg‚ğæ“¾‚·‚é
+	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< ãƒ†ã‚­ã‚¹ãƒˆã‚’å–å¾—ã™ã‚‹
 	bool IsIncludeClipboradFormat(const wchar_t* pFormatName);
 	bool SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
 
-	//‰‰Zq
-	operator bool() const{ return m_bOpenResult!=FALSE; } //!< ƒNƒŠƒbƒvƒ{[ƒh‚ğŠJ‚¯‚½‚È‚çtrue
+	//æ¼”ç®—å­
+	operator bool() const{ return m_bOpenResult!=FALSE; } //!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‚’é–‹ã‘ãŸãªã‚‰true
 
 private:
 	HWND m_hwnd;
 	BOOL m_bOpenResult;
 
 
-	// -- -- staticƒCƒ“ƒ^[ƒtƒF[ƒX -- -- //
+	// -- -- staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ -- -- //
 public:
-	static bool HasValidData();    //!< ƒNƒŠƒbƒvƒ{[ƒh“à‚ÉAƒTƒNƒ‰ƒGƒfƒBƒ^‚Åˆµ‚¦‚éƒf[ƒ^‚ª‚ ‚ê‚Îtrue
-	static CLIPFORMAT GetSakuraFormat(); //!< ƒTƒNƒ‰ƒGƒfƒBƒ^“Æ©‚ÌƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^Œ`®
-	static int GetDataType();      //!< ƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^Œ`®(CF_UNICODETEXT“™)‚Ìæ“¾
+	static bool HasValidData();    //!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰å†…ã«ã€ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã§æ‰±ãˆã‚‹ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°true
+	static CLIPFORMAT GetSakuraFormat(); //!< ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ç‹¬è‡ªã®ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿å½¢å¼
+	static int GetDataType();      //!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿å½¢å¼(CF_UNICODETEXTç­‰)ã®å–å¾—
 };
 
 #endif /* SAKURA_CCLIPBOARD_25819BE6_8087_45F7_840E_161DE12E736AR_H_ */
