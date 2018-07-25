@@ -1,16 +1,16 @@
-#include "StdAfx.h"
+Ôªø#include "StdAfx.h"
 #include "CStream.h"
 #include <string>
 
 //	::fflush(m_hFile);
-//  ÉlÉbÉgÉèÅ[ÉNè„ÇÃÉtÉ@ÉCÉãÇàµÇ¡ÇƒÇ¢ÇÈèÍçáÅA
-//	èëÇ´çûÇ›å„Ç…FlushÇçsÇ§Ç∆ÉfÉbÉgÉçÉbÉNÇ™î≠ê∂Ç∑ÇÈÇ±Ç∆Ç™Ç†ÇÈÇÃÇ≈ÅA
-//	CloseéûÇ…::fflushÇåƒÇ—èoÇµÇƒÇÕÇ¢ÇØÇ‹ÇπÇÒÅB
-//  è⁄ç◊ÅFhttp://www.microsoft.com/japan/support/faq/KBArticles2.asp?URL=/japan/support/kb/articles/jp288/7/94.asp
+//  „Éç„ÉÉ„Éà„ÉØ„Éº„ÇØ‰∏ä„ÅÆ„Éï„Ç°„Ç§„É´„ÇíÊâ±„Å£„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÄÅ
+//	Êõ∏„ÅçËæº„ÅøÂæå„Å´Flush„ÇíË°å„ÅÜ„Å®„Éá„ÉÉ„Éà„É≠„ÉÉ„ÇØ„ÅåÁô∫Áîü„Åô„Çã„Åì„Å®„Åå„ÅÇ„Çã„ÅÆ„Åß„ÄÅ
+//	CloseÊôÇ„Å´::fflush„ÇíÂëº„Å≥Âá∫„Åó„Å¶„ÅØ„ÅÑ„Åë„Åæ„Åõ„Çì„ÄÇ
+//  Ë©≥Á¥∞Ôºöhttp://www.microsoft.com/japan/support/faq/KBArticles2.asp?URL=/japan/support/kb/articles/jp288/7/94.asp
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  ÉtÉ@ÉCÉãëÆê´ëÄçÏÉNÉâÉX                     //
+//                  „Éï„Ç°„Ç§„É´Â±ûÊÄßÊìç‰Ωú„ÇØ„É©„Çπ                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 class CFileAttribute{
@@ -22,10 +22,10 @@ public:
 	{
 	}
 
-	//! éwíËëÆê´ÇéÊÇËèúÇ≠
+	//! ÊåáÂÆöÂ±ûÊÄß„ÇíÂèñ„ÇäÈô§„Åè
 	void PopAttribute(DWORD dwPopAttribute)
 	{
-		if(m_bAttributeChanged)return; //ä˘Ç…éÊÇËèúÇ´çœÇ›
+		if(m_bAttributeChanged)return; //Êó¢„Å´Âèñ„ÇäÈô§„ÅçÊ∏à„Åø
 
 		m_dwAttribute = ::GetFileAttributes(m_strPath.c_str());
 		if( m_dwAttribute != (DWORD)-1 ){
@@ -37,7 +37,7 @@ public:
 		}
 	}
 	
-	//! ëÆê´Çå≥Ç…ñﬂÇ∑
+	//! Â±ûÊÄß„ÇíÂÖÉ„Å´Êàª„Åô
 	void RestoreAttribute()
 	{
 		if(m_bAttributeChanged)
@@ -52,7 +52,7 @@ private:
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ÉRÉìÉXÉgÉâÉNÉ^ÅEÉfÉXÉgÉâÉNÉ^                  //
+//               „Ç≥„É≥„Çπ„Éà„É©„ÇØ„Çø„Éª„Éá„Çπ„Éà„É©„ÇØ„Çø                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CStream::CStream(const TCHAR* tszPath, const TCHAR* tszMode, bool bExceptionMode)
@@ -78,24 +78,24 @@ CStream::~CStream()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                    ÉIÅ[ÉvÉìÅEÉNÉçÅ[ÉY                       //
+//                    „Ç™„Éº„Éó„É≥„Éª„ÇØ„É≠„Éº„Ç∫                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
 void CStream::Open(const TCHAR* tszPath, const TCHAR* tszMode)
 {
-	Close(); //ä˘Ç…äJÇ¢ÇƒÇ¢ÇΩÇÁÅAàÍìxï¬Ç∂ÇÈ
+	Close(); //Êó¢„Å´Èñã„ÅÑ„Å¶„ÅÑ„Åü„Çâ„ÄÅ‰∏ÄÂ∫¶Èñâ„Åò„Çã
 
-	//ëÆê´ïœçXÅFâBÇµorÉVÉXÉeÉÄÉtÉ@ÉCÉãÇÕCÇÃä÷êîÇ≈ì«Ç›èëÇ´Ç≈Ç´Ç»Ç¢ÇÃÇ≈ëÆê´ÇïœçXÇ∑ÇÈ
+	//Â±ûÊÄßÂ§âÊõ¥ÔºöÈö†„Åóor„Ç∑„Çπ„ÉÜ„É†„Éï„Ç°„Ç§„É´„ÅØC„ÅÆÈñ¢Êï∞„ÅßË™≠„ÅøÊõ∏„Åç„Åß„Åç„Å™„ÅÑ„ÅÆ„ÅßÂ±ûÊÄß„ÇíÂ§âÊõ¥„Åô„Çã
 	m_pcFileAttribute = new CFileAttribute(tszPath);
 	m_pcFileAttribute->PopAttribute(FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM);
 
-	//ÉIÅ[ÉvÉì
+	//„Ç™„Éº„Éó„É≥
 	m_fp = _tfopen(tszPath,tszMode);
 	if(!m_fp){
-		Close(); //ëÆê´ïúå≥
+		Close(); //Â±ûÊÄßÂæ©ÂÖÉ
 	}
 
-	//ÉGÉâÅ[èàóù
+	//„Ç®„É©„ÉºÂá¶ÁêÜ
 	if(!m_fp && IsExceptionMode()){
 		throw CError_FileOpen();
 	}
@@ -103,13 +103,13 @@ void CStream::Open(const TCHAR* tszPath, const TCHAR* tszMode)
 
 void CStream::Close()
 {
-	//ÉNÉçÅ[ÉY
+	//„ÇØ„É≠„Éº„Ç∫
 	if(m_fp){
 		fclose(m_fp);
 		m_fp=NULL;
 	}
 
-	//ëÆê´ïúå≥
+	//Â±ûÊÄßÂæ©ÂÖÉ
 	if(m_pcFileAttribute){
 		m_pcFileAttribute->RestoreAttribute();
 		SAFE_DELETE(m_pcFileAttribute);
@@ -118,18 +118,18 @@ void CStream::Close()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ëÄçÏ                              //
+//                           Êìç‰Ωú                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CStream::SeekSet(	//!< ÉVÅ[ÉN
-	long offset	//!< ÉXÉgÉäÅ[ÉÄêÊì™Ç©ÇÁÇÃÉIÉtÉZÉbÉg 
+void CStream::SeekSet(	//!< „Ç∑„Éº„ÇØ
+	long offset	//!< „Çπ„Éà„É™„Éº„É†ÂÖàÈ†≠„Åã„Çâ„ÅÆ„Ç™„Éï„Çª„ÉÉ„Éà 
 )
 {
 	fseek(m_fp,offset,SEEK_SET);
 }
 
-void CStream::SeekEnd(   //!< ÉVÅ[ÉN
-	long offset //!< ÉXÉgÉäÅ[ÉÄèIí[Ç©ÇÁÇÃÉIÉtÉZÉbÉg
+void CStream::SeekEnd(   //!< „Ç∑„Éº„ÇØ
+	long offset //!< „Çπ„Éà„É™„Éº„É†ÁµÇÁ´Ø„Åã„Çâ„ÅÆ„Ç™„Éï„Çª„ÉÉ„Éà
 )
 {
 	fseek(m_fp,offset,SEEK_END);

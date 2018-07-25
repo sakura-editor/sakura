@@ -1,11 +1,11 @@
-/*!	@file
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXƒNƒ‰ƒXƒwƒbƒ_ƒtƒ@ƒCƒ‹
+ï»¿/*!	@file
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 
 	@author aroka
-	@date	2002/01/08 ì¬
+	@date	2002/01/08 ä½œæˆ
 */
 /*
-	Copyright (C) 2002, aroka V‹Kì¬, YAZAKI
+	Copyright (C) 2002, aroka æ–°è¦ä½œæˆ, YAZAKI
 	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
@@ -21,20 +21,20 @@
 class CControlTray;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXƒNƒ‰ƒX
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 	
-	ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÍCControlTrayƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğì‚éB
+	ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã¯CControlTrayã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä½œã‚‹ã€‚
 	
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 class CControlProcess : public CProcess {
 public:
 	CControlProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
-		// 2006.04.10 ryoji “¯ŠúƒIƒuƒWƒFƒNƒg‚Ìƒnƒ“ƒhƒ‹‚ğ‰Šú‰»
+		// 2006.04.10 ryoji åŒæœŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«ã‚’åˆæœŸåŒ–
 		m_hMutex( NULL ),
 		m_hMutexCP( NULL ),
 		m_hEventCPInitialized( NULL ),
@@ -49,9 +49,9 @@ protected:
 	virtual void OnExitProcess();
 
 private:
-	HANDLE			m_hMutex;				//!< ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ÀsŒŸo—pƒ~ƒ…[ƒeƒbƒNƒX
-	HANDLE			m_hMutexCP;				//!< ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXƒ~ƒ…[ƒeƒbƒNƒX
-	HANDLE			m_hEventCPInitialized;	//!< ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‰Šú‰»Š®—¹ƒCƒxƒ“ƒg 2006.04.10 ryoji
+	HANDLE			m_hMutex;				//!< ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿè¡Œæ¤œå‡ºç”¨ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹
+	HANDLE			m_hMutexCP;				//!< ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹
+	HANDLE			m_hEventCPInitialized;	//!< ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆ 2006.04.10 ryoji
 	CControlTray*	m_pcTray;
 };
 

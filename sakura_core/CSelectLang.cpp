@@ -1,8 +1,8 @@
-/*!	@file
-	@brief �e���ꃁ�b�Z�[�W���\�[�X�Ή�
+﻿/*!	@file
+	@brief 各国語メッセージリソース対応
 
 	@author nasukoji
-	@date 2011.04.10	�V�K�쐬
+	@date 2011.04.10	新規作成
 */
 /*
 	Copyright (C) 2011, nasukoji
@@ -19,15 +19,15 @@
 
 #include <new>
 
-CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = NULL;	// ���b�Z�[�W���\�[�X�p�\����
+CSelectLang::SSelLangInfo* CSelectLang::m_psLangInfo = NULL;	// メッセージリソース用構造体
 CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 
 /*!
-	@brief �f�X�g���N�^
+	@brief デストラクタ
 
-	@note �ǂݍ��񂾃��b�Z�[�W���\�[�XDLL���������
+	@note 読み込んだメッセージリソースDLLを解放する
 
-	@date 2011.04.10 nasukoji	�V�K�쐬
+	@date 2011.04.10 nasukoji	新規作成
 */
 CSelectLang::~CSelectLang( void )
 {
@@ -42,13 +42,13 @@ CSelectLang::~CSelectLang( void )
 }
 
 /*!
-	@brief ���b�Z�[�W���\�[�XDLL�̃C���X�^���X�n���h����Ԃ�
+	@brief メッセージリソースDLLのインスタンスハンドルを返す
 
-	@retval ���b�Z�[�W���\�[�XDLL�̃C���X�^���X�n���h��
+	@retval メッセージリソースDLLのインスタンスハンドル
 
-	@note ���b�Z�[�W���\�[�XDLL�����[�h���Ă��Ȃ��ꍇexe�̃C���X�^���X�n���h�����Ԃ�
+	@note メッセージリソースDLLをロードしていない場合exeのインスタンスハンドルが返る
 
-	@date 2011.04.10 nasukoji	�V�K�쐬
+	@date 2011.04.10 nasukoji	新規作成
 */
 HINSTANCE CSelectLang::getLangRsrcInstance( void )
 {
@@ -56,20 +56,20 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 }
 
 /*!
-	@brief ���b�Z�[�W���\�[�XDLL���ǂݍ��ݎ��̃f�t�H���g����̕������Ԃ�
+	@brief メッセージリソースDLL未読み込み時のデフォルト言語の文字列を返す
 
-	@retval �f�t�H���g����̕�����i"(Japanese)" �܂��� "(English(United States))"�j
+	@retval デフォルト言語の文字列（"(Japanese)" または "(English(United States))"）
 
-	@note �A�v���P�[�V�������\�[�X���ǂݍ��� "(Japanese)" �܂��� "(English(United States))"
+	@note アプリケーションリソースより読み込んだ "(Japanese)" または "(English(United States))"
 
-	@date 2011.04.10 nasukoji	�V�K�쐬
+	@date 2011.04.10 nasukoji	新規作成
 */
 LPCTSTR CSelectLang::getDefaultLangString( void )
 {
 	return m_psLangInfo->szLangName;
 }
 
-// ����ID��Ԃ�
+// 言語IDを返す
 WORD CSelectLang::getDefaultLangId(void)
 {
 	if (m_psLangInfo == NULL){
@@ -79,65 +79,65 @@ WORD CSelectLang::getDefaultLangId(void)
 }
 
 /*!
-	@brief �����������������
+	@brief 言語環境を初期化する
 	
-	@retval ���b�Z�[�W���\�[�XDLL�̃C���X�^���X�n���h��
+	@retval メッセージリソースDLLのインスタンスハンドル
 
-	@note ���b�Z�[�W���\�[�XDLL�����w��A�܂��͓ǂݍ��݃G���[�����̎���exe�̃C���X�^���X�n���h�����Ԃ�
-	@note �iLoadString()�̈����Ƃ��Ă��̂܂܎g�p���邽�߁j
-	@note �f�t�H���g����̕�����̓ǂݍ��݂��s��
-	@note �v���Z�X����ProcessFactory�̍ŏ���1�񂾂��Ă΂��
+	@note メッセージリソースDLLが未指定、または読み込みエラー発生の時はexeのインスタンスハンドルが返る
+	@note （LoadString()の引数としてそのまま使用するため）
+	@note デフォルト言語の文字列の読み込みも行う
+	@note プロセス毎にProcessFactoryの最初に1回だけ呼ばれる
 
-	@date 2011.04.10 nasukoji	�V�K�쐬
+	@date 2011.04.10 nasukoji	新規作成
 */
 HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 {
 	SSelLangInfo *psLangInfo;
 
 	if ( m_psLangInfoList.size() == 0 ) {
-		// �f�t�H���g�����쐬����
+		// デフォルト情報を作成する
 		psLangInfo = new SSelLangInfo();
 		psLangInfo->hInstance = GetModuleHandle(NULL);
 
-		// ������_�C�A���O�� "System default" �ɕ\�����镶������쐬����
+		// 言語情報ダイアログで "System default" に表示する文字列を作成する
 		::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
 
 		m_psLangInfoList.push_back( psLangInfo );
 	}
 
 	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
-		// �ǂݍ��ݍς݂�DLL���������
+		// 読み込み済みのDLLを解放する
 		::FreeLibrary( m_psLangInfo->hInstance );
 		m_psLangInfo->hInstance = NULL;
 		m_psLangInfo = NULL;
 	}
 
-	//�J�����g�f�B���N�g����ۑ��B�֐����甲����Ƃ��Ɏ����ŃJ�����g�f�B���N�g���͕��������B
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
 	ChangeCurrentDirectoryToExeDir();
-// ��ini�܂���exe�t�H���_�ƂȂ�悤�ɉ������K�v
+// ★iniまたはexeフォルダとなるように改造が必要
 
 	WIN32_FIND_DATA w32fd;
-	TCHAR szPath[] = _T("sakura_lang_*.dll");			// �T�[�`���郁�b�Z�[�W���\�[�XDLL
+	TCHAR szPath[] = _T("sakura_lang_*.dll");			// サーチするメッセージリソースDLL
 	HANDLE handle = FindFirstFile( szPath, &w32fd );
 	BOOL result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 
 	while( result ){
-		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//�t�H���_�łȂ�
-			// �o�b�t�@�ɓo�^����B
+		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダでない
+			// バッファに登録する。
 			psLangInfo = new SSelLangInfo();
 			_tcscpy( psLangInfo->szDllName, w32fd.cFileName );
 			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
 
 			if( psLangInfo->hInstance ){
 				if ( !psLangInfo->bValid ){
-					// ���b�Z�[�W���\�[�XDLL�Ƃ��Ă͖���
+					// メッセージリソースDLLとしては無効
 					::FreeLibrary( psLangInfo->hInstance );
 					psLangInfo->hInstance = NULL;
 					delete psLangInfo;
 				} else {
-					// �L���ȃ��b�Z�[�W���\�[�XDLL
-					// ��UDLL��������A���ChangeLang�ōēǂݍ��݂���
+					// 有効なメッセージリソースDLL
+					// 一旦DLLを解放し、後でChangeLangで再読み込みする
 					m_psLangInfoList.push_back( psLangInfo );
 					::FreeLibrary( psLangInfo->hInstance );
 					psLangInfo->hInstance = NULL;
@@ -153,25 +153,25 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		handle = INVALID_HANDLE_VALUE;
 	}
 
-	// ���̎��_�ł�exe�̃C���X�^���X�n���h���ŋN�����A���L���������������ChangeLang����
+	// この時点ではexeのインスタンスハンドルで起動し、共有メモリ初期化後にChangeLangする
 	m_psLangInfo = *m_psLangInfoList.begin();
 
 	return m_psLangInfo->hInstance;
 }
 
 /*!
-	@brief ���b�Z�[�W���\�[�XDLL�����[�h����
+	@brief メッセージリソースDLLをロードする
 	
-	@retval ���b�Z�[�W���\�[�XDLL�̃C���X�^���X�n���h��
+	@retval メッセージリソースDLLのインスタンスハンドル
 
-	@note ���b�Z�[�W���\�[�XDLL�����w��A�܂��͓ǂݍ��݃G���[�����̎���NULL���Ԃ�
+	@note メッセージリソースDLLが未指定、または読み込みエラー発生の時はNULLが返る
 
-	@date 2011.04.10 nasukoji	�V�K�쐬
+	@date 2011.04.10 nasukoji	新規作成
 */
 HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 {
 	if( lang.szDllName[0] == _T('\0') )
-		return NULL;		// DLL���w�肳��Ă��Ȃ����NULL��Ԃ�
+		return NULL;		// DLLが指定されていなければNULLを返す
 
 	int nCount;
 
@@ -182,20 +182,20 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 	HINSTANCE hInstance = LoadLibraryExedir( lang.szDllName );
 
 	if( hInstance ){
-		// ���ꖼ���擾
+		// 言語名を取得
 		nCount = ::LoadString( hInstance, STR_SELLANG_NAME, lang.szLangName, _countof(lang.szLangName) );
 
 		if( nCount > 0 ){
-			// ����ID���擾
-			TCHAR szBuf[7];		// "0x" + 4�� + �ԕ�
+			// 言語IDを取得
+			TCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf) );
 			szBuf[_countof(szBuf) - 1] = _T('\0');
 
 			if( nCount > 0 ){
-				lang.wLangId = (WORD)_tcstoul( szBuf, NULL, 16 );		// ����ID�𐔒l��
+				lang.wLangId = (WORD)_tcstoul( szBuf, NULL, 16 );		// 言語IDを数値化
 
 				if( lang.wLangId > 0 )
-					lang.bValid = TRUE;		// ���b�Z�[�W���\�[�XDLL�Ƃ��ėL��
+					lang.bValid = TRUE;		// メッセージリソースDLLとして有効
 			}
 		}
 	}
@@ -205,33 +205,33 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 
 
 
-// �����񃊃\�[�X�ǂݍ��ݗp�O���[�o��
-CLoadString::CLoadStrBuffer CLoadString::m_acLoadStrBufferTemp[];	// ������ǂݍ��݃o�b�t�@�̔z��iCLoadString::LoadStringSt() ���g�p����j
-int CLoadString::m_nDataTempArrayIndex = 0;							// �Ō�Ɏg�p�����o�b�t�@�̃C���f�b�N�X�iCLoadString::LoadStringSt() ���g�p����j
+// 文字列リソース読み込み用グローバル
+CLoadString::CLoadStrBuffer CLoadString::m_acLoadStrBufferTemp[];	// 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
+int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
 
 
 /*!
-	@brief �ÓI�o�b�t�@�ɕ����񃊃\�[�X��ǂݍ��ށi�e���ꃁ�b�Z�[�W���\�[�X�Ή��j
+	@brief 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
 
-	@param[in] uid ���\�[�XID
+	@param[in] uid リソースID
 
-	@retval �ǂݍ��񂾕�����i�����񖳂��̎� "" ���Ԃ�j
+	@retval 読み込んだ文字列（文字列無しの時 "" が返る）
 
-	@note �ÓI�o�b�t�@�im_acLoadStrBufferTemp[?]�j�ɕ����񃊃\�[�X��ǂݍ��ށB
-	@note �o�b�t�@�͕����������Ă��邪�A�Ăяo�����ɍX�V����̂Ńo�b�t�@����
-	@note �����ČĂяo���Ə������e�������Ă����B
-	@note �Ăяo������ł̎g�p��֐��̈����Ȃǂł̎g�p��z�肵�Ă���A�O��l��
-	@note ���o�����Ƃ͂ł��Ȃ��B
-	@note �g�p��j::SetWindowText( m_hWnd, CLoadString::LoadStringSt(STR_ERR_DLGSMCLR1) );
-	@note �A�v���P�[�V�������̊֐��ւ̈����Ƃ���ꍇ�A���̊֐����{�֐����g�p
-	@note ���Ă��邩�ӎ�����K�v������i����𒴂���Γ��e���X�V����邽�߁j
-	@note ���e��ێ��������ꍇ�� CLoadString::LoadString() ���g�p����B
+	@note 静的バッファ（m_acLoadStrBufferTemp[?]）に文字列リソースを読み込む。
+	@note バッファは複数準備しているが、呼び出す毎に更新するのでバッファ個数を
+	@note 超えて呼び出すと順次内容が失われていく。
+	@note 呼び出し直後での使用や関数の引数などでの使用を想定しており、前回値を
+	@note 取り出すことはできない。
+	@note 使用例）::SetWindowText( m_hWnd, CLoadString::LoadStringSt(STR_ERR_DLGSMCLR1) );
+	@note アプリケーション内の関数への引数とする場合、その関数が本関数を使用
+	@note しているか意識する必要がある（上限を超えれば内容が更新されるため）
+	@note 内容を保持したい場合は CLoadString::LoadString() を使用する。
 
-	@date 2011.06.01 nasukoji	�V�K�쐬
+	@date 2011.06.01 nasukoji	新規作成
 */
 LPCTSTR CLoadString::LoadStringSt( UINT uid )
 {
-	// �g�p����o�b�t�@�̌��݈ʒu��i�߂�
+	// 使用するバッファの現在位置を進める
 	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % _countof(m_acLoadStrBufferTemp);
 
 	m_acLoadStrBufferTemp[m_nDataTempArrayIndex].LoadString( uid );
@@ -240,23 +240,23 @@ LPCTSTR CLoadString::LoadStringSt( UINT uid )
 }
 
 /*!
-	@brief �����񃊃\�[�X��ǂݍ��ށi�e���ꃁ�b�Z�[�W���\�[�X�Ή��j
+	@brief 文字列リソースを読み込む（各国語メッセージリソース対応）
 
-	@param[in] uid ���\�[�XID
+	@param[in] uid リソースID
 
-	@retval �ǂݍ��񂾕�����i�����񖳂��̎� "" ���Ԃ�j
+	@retval 読み込んだ文字列（文字列無しの時 "" が返る）
 
-	@note �����o�ϐ����ɋL������邽��  CLoadString::LoadStringSt() �̗l��
-	@note �s�p�ӂɔj�󂳂�邱�Ƃ͂Ȃ��B
-	@note �������A�ϐ�����������K�v������̂��s�ցB
-	@note �g�p��j
+	@note メンバ変数内に記憶されるため  CLoadString::LoadStringSt() の様に
+	@note 不用意に破壊されることはない。
+	@note ただし、変数を準備する必要があるのが不便。
+	@note 使用例）
 	@note   CLoadString cStr[2];
 	@note   cDlgInput1.DoModal( m_hInstance, m_hWnd,
 	@note       cStr[0].LoadString(STR_ERR_DLGPRNST1),
 	@note       cStr[1].LoadString(STR_ERR_DLGPRNST2),
 	@note       sizeof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1, szWork ) )
 
-	@date 2011.06.01 nasukoji	�V�K�쐬
+	@date 2011.06.01 nasukoji	新規作成
 */
 LPCTSTR CLoadString::LoadString( UINT uid )
 {
@@ -266,37 +266,37 @@ LPCTSTR CLoadString::LoadString( UINT uid )
 }
 
 /*!
-	@brief �����񃊃\�[�X��ǂݍ��ށi�ǂݍ��ݎ��s���j
+	@brief 文字列リソースを読み込む（読み込み実行部）
 
-	@param[in] uid  ���\�[�XID
+	@param[in] uid  リソースID
 
-	@retval �ǂݍ��񂾕������iTCHAR�P�ʁj
+	@retval 読み込んだ文字数（TCHAR単位）
 
-	@note ���b�Z�[�W���\�[�X��蕶�����ǂݍ��ށB���b�Z�[�W���\�[�XDLL�Ɏw���
-	@note ���\�[�X�����݂��Ȃ��A�܂��̓��b�Z�[�W���\�[�XDLL���̂��ǂݍ��܂��
-	@note ���Ȃ��ꍇ�A�������\�[�X��蕶�����ǂݍ��ށB
-	@note �ŏ��͐ÓI�o�b�t�@�ɓǂݍ��ނ��o�b�t�@�s���ƂȂ�����o�b�t�@���g��
-	@note ���ēǂݒ����B
-	@note �擾�����o�b�t�@�̓f�X�g���N�^�ŉ������B
-	@note ANSI�ł�2�o�C�g�����̓s���ɂ��i�o�b�t�@ - 2�j�o�C�g�܂ł����ǂ܂Ȃ�
-	@note �ꍇ������̂�1�o�C�g���Ȃ��l�Ńo�b�t�@�g���𔻒肷��B
+	@note メッセージリソースより文字列を読み込む。メッセージリソースDLLに指定の
+	@note リソースが存在しない、またはメッセージリソースDLL自体が読み込まれて
+	@note いない場合、内部リソースより文字列を読み込む。
+	@note 最初は静的バッファに読み込むがバッファ不足となったらバッファを拡張
+	@note して読み直す。
+	@note 取得したバッファはデストラクタで解放する。
+	@note ANSI版は2バイト文字の都合により（バッファ - 2）バイトまでしか読まない
+	@note 場合があるので1バイト少ない値でバッファ拡張を判定する。
 
-	@date 2011.06.01 nasukoji	�V�K�쐬
+	@date 2011.06.01 nasukoji	新規作成
 */
 int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 {
 	if( !m_pszString ){
-		// �o�b�t�@�|�C���^���ݒ肳��Ă��Ȃ��ꍇ����������i���ʂ͂��蓾�Ȃ��j
-		m_pszString = m_szString;					// �ϐ����ɏ��������o�b�t�@��ڑ�
-		m_nBufferSize = _countof(m_szString);		// �z���
+		// バッファポインタが設定されていない場合初期化する（普通はあり得ない）
+		m_pszString = m_szString;					// 変数内に準備したバッファを接続
+		m_nBufferSize = _countof(m_szString);		// 配列個数
 		m_szString[m_nBufferSize - 1] = 0;
-		m_nLength = _tcslen(m_szString);			// ������
+		m_nLength = _tcslen(m_szString);			// 文字数
 	}
 
-	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance();		// ���b�Z�[�W���\�[�XDLL�̃C���X�^���X�n���h��
+	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
 
 	if( !hRsrc ){
-		// ���b�Z�[�W���\�[�XDLL�Ǎ������O�͓������\�[�X���g��
+		// メッセージリソースDLL読込処理前は内部リソースを使う
 		hRsrc = ::GetModuleHandle(NULL);
 	}
 
@@ -305,29 +305,29 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	while(1){
 		nRet = ::LoadString( hRsrc, uid, m_pszString, m_nBufferSize );
 
-		// ���\�[�X������
+		// リソースが無い
 		if( nRet == 0 ){
 			if( hRsrc != ::GetModuleHandle(NULL) ){
-				hRsrc = ::GetModuleHandle(NULL);	// �������\�[�X���g��
+				hRsrc = ::GetModuleHandle(NULL);	// 内部リソースを使う
 			}else{
-				// �������\�[�X������ǂ߂Ȃ���������߂�i���ʂ͂��蓾�Ȃ��j
+				// 内部リソースからも読めなかったら諦める（普通はあり得ない）
 				m_pszString[0] = _T('\0');
 				break;
 			}
 #ifdef UNICODE
 		}else if( nRet >= m_nBufferSize - 1 ){
 #else
-		}else if( nRet >= m_nBufferSize - 2 ){		// ANSI�ł�1�����������ōēǂݍ��݂𔻒肷��
+		}else if( nRet >= m_nBufferSize - 2 ){		// ANSI版は1小さい長さで再読み込みを判定する
 #endif
-			// �ǂ݂���Ȃ������ꍇ�A�o�b�t�@���g�����ēǂݒ���
-			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// �g�������T�C�Y
+			// 読みきれなかった場合、バッファを拡張して読み直す
+			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// 拡張したサイズ
 			LPTSTR pTemp;
 
 			try{
 				pTemp = new TCHAR[nTemp];
 			}
 			catch(std::bad_alloc){
-				// ���������蓖�ė�O�i��O�̔���������̏ꍇ�ł������̏����ɂ���j
+				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
 				pTemp = NULL;
 			}
 
@@ -339,23 +339,23 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				m_pszString = pTemp;
 				m_nBufferSize = nTemp;
 			}else{
-				// �������擾�Ɏ��s�����ꍇ�͒��O�̓��e�Œ��߂�
+				// メモリ取得に失敗した場合は直前の内容で諦める
 				nRet = _tcslen( m_pszString );
 				break;
 			}
 		}else{
-			break;		// �����񃊃\�[�X������Ɏ擾�ł���
+			break;		// 文字列リソースが正常に取得できた
 		}
 	}
 
-	m_nLength = nRet;	// �ǂݍ��񂾕�����
+	m_nLength = nRet;	// 読み込んだ文字数
 
 	return nRet;
 }
 
 void CSelectLang::ChangeLang( TCHAR* pszDllName )
 {
-	/* �����I������ */
+	/* 言語を選択する */
 	UINT unIndex;
 	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
 		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
@@ -390,8 +390,8 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	}
 	m_psLangInfo = psLangInfo;
 
-	// ���P�[����ݒ�
-	// SetThreadUILanguage�̌Ăяo�������݂�
+	// ロケールを設定
+	// SetThreadUILanguageの呼び出しを試みる
 	bool isSuccess = false;
 	if( COsVersionInfo()._IsWinVista_or_later() ) {
 		HMODULE hDll = LoadLibrary( _T("kernel32") );

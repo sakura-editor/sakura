@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒ“ƒhƒDEƒŠƒhƒDƒoƒbƒtƒ@
+ï»¿/*!	@file
+	@brief ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ãƒãƒƒãƒ•ã‚¡
 
 	@author Norio Nakatani
-	@date 1998/06/09 V‹Kì¬
+	@date 1998/06/09 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -16,20 +16,20 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* COpeBufƒNƒ‰ƒX\’z */
+/* COpeBufã‚¯ãƒ©ã‚¹æ§‹ç¯‰ */
 COpeBuf::COpeBuf()
 {
-	m_nCurrentPointer = 0;	/* Œ»İˆÊ’u */
-	m_nNoModifiedIndex = 0;	/* –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u */
+	m_nCurrentPointer = 0;	/* ç¾åœ¨ä½ç½® */
+	m_nNoModifiedIndex = 0;	/* ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½® */
 }
 
-/* COpeBufƒNƒ‰ƒXÁ–Å */
+/* COpeBufã‚¯ãƒ©ã‚¹æ¶ˆæ»… */
 COpeBuf::~COpeBuf()
 {
-	/* ‘€ìƒuƒƒbƒN‚Ì”z—ñ‚ğíœ‚·‚é */
+	/* æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã®é…åˆ—ã‚’å‰Šé™¤ã™ã‚‹ */
 	int size = (int)m_vCOpeBlkArr.size();
 	for( int i = 0; i < size; ++i ){
 		SAFE_DELETE(m_vCOpeBlkArr[i]);
@@ -38,16 +38,16 @@ COpeBuf::~COpeBuf()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ó‘Ô                              //
+//                           çŠ¶æ…‹                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* Undo‰Â”\‚Èó‘Ô‚© */
+/* Undoå¯èƒ½ãªçŠ¶æ…‹ã‹ */
 bool COpeBuf::IsEnableUndo() const
 {
 	return 0 < m_vCOpeBlkArr.size() && 0 < m_nCurrentPointer;
 }
 
-/* Redo‰Â”\‚Èó‘Ô‚© */
+/* Redoå¯èƒ½ãªçŠ¶æ…‹ã‹ */
 bool COpeBuf::IsEnableRedo() const
 {
 	return 0 < m_vCOpeBlkArr.size() && m_nCurrentPointer < (int)m_vCOpeBlkArr.size();
@@ -56,13 +56,13 @@ bool COpeBuf::IsEnableRedo() const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ‘€ì                              //
+//                           æ“ä½œ                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* ‘€ì‚Ì’Ç‰Á */
+/* æ“ä½œã®è¿½åŠ  */
 bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 {
-	/* Œ»İˆÊ’u‚æ‚èŒã‚ëiƒAƒ“ƒhƒD‘ÎÛj‚ª‚ ‚éê‡‚ÍAÁ‹ */
+	/* ç¾åœ¨ä½ç½®ã‚ˆã‚Šå¾Œã‚ï¼ˆã‚¢ãƒ³ãƒ‰ã‚¥å¯¾è±¡ï¼‰ãŒã‚ã‚‹å ´åˆã¯ã€æ¶ˆå» */
 	int size = (int)m_vCOpeBlkArr.size();
 	if( m_nCurrentPointer < size ){
 		for( int i = m_nCurrentPointer; i < size; ++i ){
@@ -70,45 +70,45 @@ bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 		}
 		m_vCOpeBlkArr.resize(m_nCurrentPointer);
 	}
-	/* ”z—ñ‚Ìƒƒ‚ƒŠƒTƒCƒY‚ğ’²® */
+	/* é…åˆ—ã®ãƒ¡ãƒ¢ãƒªã‚µã‚¤ã‚ºã‚’èª¿æ•´ */
 	m_vCOpeBlkArr.push_back(pcOpeBlk);
 	m_nCurrentPointer++;
 	return true;
 }
 
-/* ‘S—v‘f‚ÌƒNƒŠƒA */
+/* å…¨è¦ç´ ã®ã‚¯ãƒªã‚¢ */
 void COpeBuf::ClearAll()
 {
-	/* ‘€ìƒuƒƒbƒN‚Ì”z—ñ‚ğíœ‚·‚é */
+	/* æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã®é…åˆ—ã‚’å‰Šé™¤ã™ã‚‹ */
 	int size = (int)m_vCOpeBlkArr.size();
 	for( int i = 0; i < size; ++i ){
 		SAFE_DELETE(m_vCOpeBlkArr[i]);
 	}
 	m_vCOpeBlkArr.clear();
-	m_nCurrentPointer = 0;	/* Œ»İˆÊ’u */
-	m_nNoModifiedIndex = 0;	/* –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u */
+	m_nCurrentPointer = 0;	/* ç¾åœ¨ä½ç½® */
+	m_nNoModifiedIndex = 0;	/* ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½® */
 }
 
-/* Œ»İˆÊ’u‚Å–³•ÏX‚Èó‘Ô‚É‚È‚Á‚½‚±‚Æ‚ğ’Ê’m */
+/* ç¾åœ¨ä½ç½®ã§ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸã“ã¨ã‚’é€šçŸ¥ */
 void COpeBuf::SetNoModified()
 {
-	m_nNoModifiedIndex = m_nCurrentPointer;	/* –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u */
+	m_nNoModifiedIndex = m_nCurrentPointer;	/* ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½® */
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           g—p                              //
+//                           ä½¿ç”¨                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* Œ»İ‚ÌUndo‘ÎÛ‚Ì‘€ìƒuƒƒbƒN‚ğ•Ô‚· */
+/* ç¾åœ¨ã®Undoå¯¾è±¡ã®æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã‚’è¿”ã™ */
 COpeBlk* COpeBuf::DoUndo( bool* pbModified )
 {
-	/* Undo‰Â”\‚Èó‘Ô‚© */
+	/* Undoå¯èƒ½ãªçŠ¶æ…‹ã‹ */
 	if( !IsEnableUndo() ){
 		return NULL;
 	}
 	m_nCurrentPointer--;
-	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u */
+	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½® */
 		*pbModified = false;
 	}else{
 		*pbModified = true;
@@ -116,17 +116,17 @@ COpeBlk* COpeBuf::DoUndo( bool* pbModified )
 	return m_vCOpeBlkArr[m_nCurrentPointer];
 }
 
-/* Œ»İ‚ÌRedo‘ÎÛ‚Ì‘€ìƒuƒƒbƒN‚ğ•Ô‚· */
+/* ç¾åœ¨ã®Redoå¯¾è±¡ã®æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã‚’è¿”ã™ */
 COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 {
 	COpeBlk*	pcOpeBlk;
-	/* Redo‰Â”\‚Èó‘Ô‚© */
+	/* Redoå¯èƒ½ãªçŠ¶æ…‹ã‹ */
 	if( !IsEnableRedo() ){
 		return NULL;
 	}
 	pcOpeBlk = m_vCOpeBlkArr[m_nCurrentPointer];
 	m_nCurrentPointer++;
-	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u */
+	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½® */
 		*pbModified = false;
 	}else{
 		*pbModified = true;
@@ -137,10 +137,10 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒfƒoƒbƒO                            //
+//                         ãƒ‡ãƒãƒƒã‚°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* ƒAƒ“ƒhƒDEƒŠƒhƒDƒoƒbƒtƒ@‚Ìƒ_ƒ“ƒv */
+/* ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ãƒãƒƒãƒ•ã‚¡ã®ãƒ€ãƒ³ãƒ— */
 void COpeBuf::DUMP()
 {
 #ifdef _DEBUG

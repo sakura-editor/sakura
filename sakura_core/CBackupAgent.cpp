@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,33 +29,33 @@
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
 
-/*! ƒZ[ƒu‘O‚¨‚Ü‚¯ˆ—
-	@param pSaveInfo [in] •Û‘¶ƒtƒ@ƒCƒ‹î•ñ
+/*! ã‚»ãƒ¼ãƒ–å‰ãŠã¾ã‘å‡¦ç†
+	@param pSaveInfo [in] ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±
 
-	@retval CALLBACK_CONTINUE ‘±‚¯‚é
-	@retval CALLBACK_INTERRUPT ’†’f
+	@retval CALLBACK_CONTINUE ç¶šã‘ã‚‹
+	@retval CALLBACK_INTERRUPT ä¸­æ–­
 */
 ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//V‚µ‚­ƒtƒ@ƒCƒ‹‚ğì‚éê‡‚Í‰½‚à‚µ‚È‚¢
+	//æ–°ã—ããƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œã‚‹å ´åˆã¯ä½•ã‚‚ã—ãªã„
 	if(!fexist(pSaveInfo->cFilePath))return CALLBACK_CONTINUE;
 
-	//‹¤’Êİ’èF•Û‘¶‚ÉƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚é
+	//å…±é€šè¨­å®šï¼šä¿å­˜æ™‚ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹
 	if( GetDllShareData().m_Common.m_sBackup.m_bBackUp ){
-		//	Jun.  5, 2004 genta ƒtƒ@ƒCƒ‹–¼‚ğ—^‚¦‚é‚æ‚¤‚ÉD–ß‚è’l‚É‰‚¶‚½ˆ—‚ğ’Ç‰ÁD
-		// ƒtƒ@ƒCƒ‹•Û‘¶‘O‚ÉƒoƒbƒNƒAƒbƒvˆ—
+		//	Jun.  5, 2004 genta ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä¸ãˆã‚‹ã‚ˆã†ã«ï¼æˆ»ã‚Šå€¤ã«å¿œã˜ãŸå‡¦ç†ã‚’è¿½åŠ ï¼
+		// ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜å‰ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å‡¦ç†
 		int nBackupResult = 0;
 		{
-			pcDoc->m_cDocFileOperation.DoFileUnlock();	//ƒoƒbƒNƒAƒbƒvì¬‘O‚ÉƒƒbƒN‚ğ‰ğœ‚·‚é #####ƒXƒ}[ƒg‚¶‚á‚È‚¢‚æI
+			pcDoc->m_cDocFileOperation.DoFileUnlock();	//ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆå‰ã«ãƒ­ãƒƒã‚¯ã‚’è§£é™¤ã™ã‚‹ #####ã‚¹ãƒãƒ¼ãƒˆã˜ã‚ƒãªã„ã‚ˆï¼
 			nBackupResult = MakeBackUp( pSaveInfo->cFilePath );
-			pcDoc->m_cDocFileOperation.DoFileLock();	//ƒoƒbƒNƒAƒbƒvì¬Œã‚ÉƒƒbƒN‚ğ–ß‚· #####ƒXƒ}[ƒg‚¶‚á‚È‚¢‚æI
+			pcDoc->m_cDocFileOperation.DoFileLock();	//ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆå¾Œã«ãƒ­ãƒƒã‚¯ã‚’æˆ»ã™ #####ã‚¹ãƒãƒ¼ãƒˆã˜ã‚ƒãªã„ã‚ˆï¼
 		}
 		switch( nBackupResult ){
-		case 2:	//	’†’fw¦
+		case 2:	//	ä¸­æ–­æŒ‡ç¤º
 			return CALLBACK_INTERRUPT;
-		case 3: //	ƒtƒ@ƒCƒ‹ƒGƒ‰[
+		case 3: //	ãƒ•ã‚¡ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼
 			if( IDYES != ::MYMESSAGEBOX(
 				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
@@ -74,24 +74,24 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 
 
 
-/*! ƒoƒbƒNƒAƒbƒv‚Ìì¬
+/*! ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®ä½œæˆ
 	@author genta
 	@date 2001.06.12 asa-o
-		ƒtƒ@ƒCƒ‹‚Ì‚ğŒ³‚ÉƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼‚ğì¬‚·‚é‹@”\
-	@date 2001.12.11 MIK ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ğƒSƒ~” ‚É“ü‚ê‚é‹@”\
-	@date 2004.06.05 genta ƒoƒbƒNƒAƒbƒv‘ÎÛƒtƒ@ƒCƒ‹‚ğˆø”‚Å—^‚¦‚é‚æ‚¤‚ÉD
-		–¼‘O‚ğ•t‚¯‚Ä•Û‘¶‚Ì‚Í©•ª‚ÌƒoƒbƒNƒAƒbƒv‚ğì‚Á‚Ä‚à–³ˆÓ–¡‚È‚Ì‚ÅD
-		‚Ü‚½CƒoƒbƒNƒAƒbƒv‚à•Û‘¶‚às‚í‚È‚¢‘I‘ğˆ‚ğ’Ç‰ÁD
-	@date 2005.11.26 aroka ƒtƒ@ƒCƒ‹–¼¶¬‚ğFormatBackUpPath‚É•ª—£
+		ãƒ•ã‚¡ã‚¤ãƒ«ã®æ™‚åˆ»ã‚’å…ƒã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œæˆã™ã‚‹æ©Ÿèƒ½
+	@date 2001.12.11 MIK ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚´ãƒŸç®±ã«å…¥ã‚Œã‚‹æ©Ÿèƒ½
+	@date 2004.06.05 genta ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å¼•æ•°ã§ä¸ãˆã‚‹ã‚ˆã†ã«ï¼
+		åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã®æ™‚ã¯è‡ªåˆ†ã®ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œã£ã¦ã‚‚ç„¡æ„å‘³ãªã®ã§ï¼
+		ã¾ãŸï¼Œãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚‚ä¿å­˜ã‚‚è¡Œã‚ãªã„é¸æŠè‚¢ã‚’è¿½åŠ ï¼
+	@date 2005.11.26 aroka ãƒ•ã‚¡ã‚¤ãƒ«åç”Ÿæˆã‚’FormatBackUpPathã«åˆ†é›¢
 
-	@param target_file [in] ƒoƒbƒNƒAƒbƒvŒ³ƒpƒX–¼
+	@param target_file [in] ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å…ƒãƒ‘ã‚¹å
 
-	@retval 0 ƒoƒbƒNƒAƒbƒvì¬¸”sD
-	@retval 1 ƒoƒbƒNƒAƒbƒvì¬¬Œ÷D
-	@retval 2 ƒoƒbƒNƒAƒbƒvì¬¸”sD•Û‘¶’†’fw¦D
-	@retval 3 ƒtƒ@ƒCƒ‹‘€ìƒGƒ‰[‚É‚æ‚éƒoƒbƒNƒAƒbƒvì¬¸”sD
+	@retval 0 ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆå¤±æ•—ï¼
+	@retval 1 ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆæˆåŠŸï¼
+	@retval 2 ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆå¤±æ•—ï¼ä¿å­˜ä¸­æ–­æŒ‡ç¤ºï¼
+	@retval 3 ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œã‚¨ãƒ©ãƒ¼ã«ã‚ˆã‚‹ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ä½œæˆå¤±æ•—ï¼
 
-	@todo Advanced mode‚Å‚Ì¢‘ãŠÇ—
+	@todo Advanced modeã§ã®ä¸–ä»£ç®¡ç†
 */
 int CBackupAgent::MakeBackUp(
 	const TCHAR* target_file
@@ -99,37 +99,37 @@ int CBackupAgent::MakeBackUp(
 {
 	int		nRet;
 
-	/* ƒoƒbƒNƒAƒbƒvƒ\[ƒX‚Ì‘¶İƒ`ƒFƒbƒN */
-	//	Aug. 21, 2005 genta ‘‚«‚İƒAƒNƒZƒXŒ ‚ª‚È‚¢ê‡‚à
-	//	ƒtƒ@ƒCƒ‹‚ª‚È‚¢ê‡‚Æ“¯—l‚É‰½‚à‚µ‚È‚¢
+	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚½ãƒ¼ã‚¹ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯ */
+	//	Aug. 21, 2005 genta æ›¸ãè¾¼ã¿ã‚¢ã‚¯ã‚»ã‚¹æ¨©ãŒãªã„å ´åˆã‚‚
+	//	ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã„å ´åˆã¨åŒæ§˜ã«ä½•ã‚‚ã—ãªã„
 	if( (_taccess( target_file, 2 )) == -1 ){
 		return 0;
 	}
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
-	TCHAR	szPath[_MAX_PATH]; // ƒoƒbƒNƒAƒbƒvæƒpƒX–¼
+	TCHAR	szPath[_MAX_PATH]; // ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å…ˆãƒ‘ã‚¹å
 	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
 			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_BACKUP_ERR_PATH_CRETE)
 		);
 		if( nMsgResult == IDYES ){
-			return 0;//	•Û‘¶Œp‘±
+			return 0;//	ä¿å­˜ç¶™ç¶š
 		}
-		return 2;// •Û‘¶’†’f
+		return 2;// ä¿å­˜ä¸­æ–­
 	}
 
-	//@@@ 2002.03.23 start ƒlƒbƒgƒ[ƒNEƒŠƒ€[ƒoƒuƒ‹ƒhƒ‰ƒCƒu‚Ìê‡‚Í‚²‚İ” ‚É•ú‚è‚Ü‚È‚¢
+	//@@@ 2002.03.23 start ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ»ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ‰ãƒ©ã‚¤ãƒ–ã®å ´åˆã¯ã”ã¿ç®±ã«æ”¾ã‚Šè¾¼ã¾ãªã„
 	bool dustflag = false;
 	if( bup_setting.m_bBackUpDustBox ){
 		dustflag = !IsLocalDrive( szPath );
 	}
 	//@@@ 2002.03.23 end
 
-	if( bup_setting.m_bBackUpDialog ){	/* ƒoƒbƒNƒAƒbƒv‚Ìì¬‘O‚ÉŠm”F */
+	if( bup_setting.m_bBackUpDialog ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®ä½œæˆå‰ã«ç¢ºèª */
 		ConfirmBeep();
-		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//‹¤’Êİ’èFƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ğ‚²‚İ” ‚É•ú‚è‚Ş	//@@@ 2001.12.11 add start MIK	//2002.03.23
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//å…±é€šè¨­å®šï¼šãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã”ã¿ç®±ã«æ”¾ã‚Šè¾¼ã‚€	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
@@ -147,68 +147,68 @@ int CBackupAgent::MakeBackUp(
 				LS(STR_BACKUP_CONFORM_MSG2),
 				target_file,
 				szPath
-			);	//Jul. 06, 2001 jepro [–¼‘O‚ğ•t‚¯‚Ä•Û‘¶] ‚Ìê‡‚à‚ ‚é‚Ì‚ÅƒƒbƒZ[ƒW‚ğC³
+			);	//Jul. 06, 2001 jepro [åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜] ã®å ´åˆã‚‚ã‚ã‚‹ã®ã§ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä¿®æ­£
 		}	//@@@ 2001.12.11 add MIK
-		//	Jun.  5, 2005 genta –ß‚è’l•ÏX
+		//	Jun.  5, 2005 genta æˆ»ã‚Šå€¤å¤‰æ›´
 		if( IDNO == nRet ){
-			return 0;//	•Û‘¶Œp‘±
+			return 0;//	ä¿å­˜ç¶™ç¶š
 		}else if( IDCANCEL == nRet ){
-			return 2;// •Û‘¶’†’f
+			return 2;// ä¿å­˜ä¸­æ–­
 		}
 	}
 
 	//	From Here Aug. 16, 2000 genta
-	//	Jun.  5, 2005 genta 1‚ÌŠg’£q‚ğc‚·”Å‚ğ’Ç‰Á
+	//	Jun.  5, 2005 genta 1ã®æ‹¡å¼µå­ã‚’æ®‹ã™ç‰ˆã‚’è¿½åŠ 
 	if( bup_setting.GetBackupType() == 3 ||
 		bup_setting.GetBackupType() == 6 ){
-		//	Šù‚É‘¶İ‚·‚éBackup‚ğ‚¸‚ç‚·ˆ—
+		//	æ—¢ã«å­˜åœ¨ã™ã‚‹Backupã‚’ãšã‚‰ã™å‡¦ç†
 		int				i;
 
-		//	ƒtƒ@ƒCƒ‹ŒŸõ—p
+		//	ãƒ•ã‚¡ã‚¤ãƒ«æ¤œç´¢ç”¨
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
-		TCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: Šg’£q‚ÌÅŒã‚Ì2Œ…‚ÌˆÓ–¡
+		TCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: æ‹¡å¼µå­ã®æœ€å¾Œã®2æ¡ã®æ„å‘³
 
 		//------------------------------------------------------------------
-		//	1. ŠY“–ƒfƒBƒŒƒNƒgƒŠ’†‚Ìbackupƒtƒ@ƒCƒ‹‚ğ1‚Â‚¸‚Â’T‚·
-		for( i = 0; i <= 99; i++ ){	//	Å‘å’l‚ÉŠÖ‚í‚ç‚¸C99i2Œ…‚ÌÅ‘å’lj‚Ü‚Å’T‚·
-			//	ƒtƒ@ƒCƒ‹–¼‚ğƒZƒbƒg
+		//	1. è©²å½“ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä¸­ã®backupãƒ•ã‚¡ã‚¤ãƒ«ã‚’1ã¤ãšã¤æ¢ã™
+		for( i = 0; i <= 99; i++ ){	//	æœ€å¤§å€¤ã«é–¢ã‚ã‚‰ãšï¼Œ99ï¼ˆ2æ¡ã®æœ€å¤§å€¤ï¼‰ã¾ã§æ¢ã™
+			//	ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚»ãƒƒãƒˆ
 			auto_sprintf( pBase, _T("%02d"), i );
 
 			hFind = ::FindFirstFile( szPath, &fData );
 			if( hFind == INVALID_HANDLE_VALUE ){
-				//	ŒŸõ‚É¸”s‚µ‚½ == ƒtƒ@ƒCƒ‹‚Í‘¶İ‚µ‚È‚¢
+				//	æ¤œç´¢ã«å¤±æ•—ã—ãŸ == ãƒ•ã‚¡ã‚¤ãƒ«ã¯å­˜åœ¨ã—ãªã„
 				break;
 			}
 			::FindClose( hFind );
-			//	Œ©‚Â‚©‚Á‚½ƒtƒ@ƒCƒ‹‚Ì‘®«‚ğƒ`ƒFƒbƒN
-			//	‚Í–Ê“|‚­‚³‚¢‚©‚ç‚µ‚È‚¢D
-			//	“¯‚¶–¼‘O‚ÌƒfƒBƒŒƒNƒgƒŠ‚ª‚ ‚Á‚½‚ç‚Ç‚¤‚È‚é‚Ì‚¾‚ë‚¤...
+			//	è¦‹ã¤ã‹ã£ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®å±æ€§ã‚’ãƒã‚§ãƒƒã‚¯
+			//	ã¯é¢å€’ãã•ã„ã‹ã‚‰ã—ãªã„ï¼
+			//	åŒã˜åå‰ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒã‚ã£ãŸã‚‰ã©ã†ãªã‚‹ã®ã ã‚ã†...
 		}
 		--i;
 
 		//------------------------------------------------------------------
-		//	2. Å‘å’l‚©‚ç§ŒÀ”-1”Ô‚Ü‚Å‚ğíœ
+		//	2. æœ€å¤§å€¤ã‹ã‚‰åˆ¶é™æ•°-1ç•ªã¾ã§ã‚’å‰Šé™¤
 		int boundary = bup_setting.GetBackupCount();
-		boundary = boundary > 0 ? boundary - 1 : 0;	//	Å¬’l‚Í0
+		boundary = boundary > 0 ? boundary - 1 : 0;	//	æœ€å°å€¤ã¯0
 
 		for( ; i >= boundary; --i ){
-			//	ƒtƒ@ƒCƒ‹–¼‚ğƒZƒbƒg
+			//	ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚»ãƒƒãƒˆ
 			auto_sprintf( pBase, _T("%02d"), i );
 			if( ::DeleteFile( szPath ) == 0 ){
 				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_DELETE), MB_OK );
-				//	Jun.  5, 2005 genta –ß‚è’l•ÏX
-				//	¸”s‚µ‚Ä‚à•Û‘¶‚ÍŒp‘±
+				//	Jun.  5, 2005 genta æˆ»ã‚Šå€¤å¤‰æ›´
+				//	å¤±æ•—ã—ã¦ã‚‚ä¿å­˜ã¯ç¶™ç¶š
 				return 0;
-				//	¸”s‚µ‚½ê‡
-				//	Œã‚Ål‚¦‚é
+				//	å¤±æ•—ã—ãŸå ´åˆ
+				//	å¾Œã§è€ƒãˆã‚‹
 			}
 		}
 
-		//	‚±‚ÌˆÊ’u‚Åi‚Í‘¶İ‚·‚éƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ÌÅ‘å”Ô†‚ğ•\‚µ‚Ä‚¢‚éD
+		//	ã“ã®ä½ç½®ã§iã¯å­˜åœ¨ã™ã‚‹ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¤§ç•ªå·ã‚’è¡¨ã—ã¦ã„ã‚‹ï¼
 
-		//	3. ‚»‚±‚©‚ç0”Ô‚Ü‚Å‚ÍƒRƒs[‚µ‚È‚ª‚çˆÚ“®
+		//	3. ãã“ã‹ã‚‰0ç•ªã¾ã§ã¯ã‚³ãƒ”ãƒ¼ã—ãªãŒã‚‰ç§»å‹•
 		TCHAR szNewPath[MAX_PATH];
 		TCHAR *pNewNrBase;
 
@@ -216,25 +216,25 @@ int CBackupAgent::MakeBackUp(
 		pNewNrBase = szNewPath + _tcslen( szNewPath ) - 2;
 
 		for( ; i >= 0; --i ){
-			//	ƒtƒ@ƒCƒ‹–¼‚ğƒZƒbƒg
+			//	ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚»ãƒƒãƒˆ
 			auto_sprintf( pBase, _T("%02d"), i );
 			auto_sprintf( pNewNrBase, _T("%02d"), i + 1 );
 
-			//	ƒtƒ@ƒCƒ‹‚ÌˆÚ“®
+			//	ãƒ•ã‚¡ã‚¤ãƒ«ã®ç§»å‹•
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
-				//	¸”s‚µ‚½ê‡
-				//	Œã‚Ål‚¦‚é
+				//	å¤±æ•—ã—ãŸå ´åˆ
+				//	å¾Œã§è€ƒãˆã‚‹
 				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_MOVE), MB_OK );
-				//	Jun.  5, 2005 genta –ß‚è’l•ÏX
-				//	¸”s‚µ‚Ä‚à•Û‘¶‚ÍŒp‘±
+				//	Jun.  5, 2005 genta æˆ»ã‚Šå€¤å¤‰æ›´
+				//	å¤±æ•—ã—ã¦ã‚‚ä¿å­˜ã¯ç¶™ç¶š
 				return 0;
 			}
 		}
 	}
 	//	To Here Aug. 16, 2000 genta
 
-	/* ƒoƒbƒNƒAƒbƒv‚Ìì¬ */
-	//	Aug. 21, 2005 genta Œ»İ‚Ìƒtƒ@ƒCƒ‹‚Å‚Í‚È‚­ƒ^[ƒQƒbƒgƒtƒ@ƒCƒ‹‚ğƒoƒbƒNƒAƒbƒv‚·‚é‚æ‚¤‚É
+	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®ä½œæˆ */
+	//	Aug. 21, 2005 genta ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ã§ã¯ãªãã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã™ã‚‹ã‚ˆã†ã«
 	TCHAR	szDrive[_MAX_DIR];
 	TCHAR	szDir[_MAX_DIR];
 	TCHAR	szFname[_MAX_FNAME];
@@ -248,15 +248,15 @@ int CBackupAgent::MakeBackUp(
 
 	hFind = ::FindFirstFile( szPath2, &fData );
 	if( hFind == INVALID_HANDLE_VALUE ){
-		//	ŒŸõ‚É¸”s‚µ‚½ == ƒtƒ@ƒCƒ‹‚Í‘¶İ‚µ‚È‚¢
+		//	æ¤œç´¢ã«å¤±æ•—ã—ãŸ == ãƒ•ã‚¡ã‚¤ãƒ«ã¯å­˜åœ¨ã—ãªã„
 		::CreateDirectory( szPath2, NULL );
 	}
 	::FindClose( hFind );
 
 	if( ::CopyFile( target_file, szPath, FALSE ) ){
-		/* ³íI—¹ */
+		/* æ­£å¸¸çµ‚äº† */
 		//@@@ 2001.12.11 start MIK
-		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ƒlƒbƒgƒ[ƒNEƒŠƒ€[ƒoƒuƒ‹ƒhƒ‰ƒCƒu‚Å‚È‚¢
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ»ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ‰ãƒ©ã‚¤ãƒ–ã§ãªã„
 			TCHAR	szDustPath[_MAX_PATH+1];
 			_tcscpy(szDustPath, szPath);
 			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');
@@ -265,45 +265,45 @@ int CBackupAgent::MakeBackUp(
 			fos.wFunc  = FO_DELETE;
 			fos.pFrom  = szDustPath;
 			fos.pTo    = NULL;
-			fos.fFlags = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION;	//ƒ_ƒCƒAƒƒO‚È‚µ
+			fos.fFlags = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION;	//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãªã—
 			fos.fAnyOperationsAborted = true; //false;
 			fos.hNameMappings = NULL;
-			fos.lpszProgressTitle = NULL; //"ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹‚ğ‚²‚İ” ‚ÉˆÚ“®‚µ‚Ä‚¢‚Ü‚·...";
+			fos.lpszProgressTitle = NULL; //"ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã”ã¿ç®±ã«ç§»å‹•ã—ã¦ã„ã¾ã™...";
 			if( ::SHFileOperation(&fos) == 0 ){
-				/* ³íI—¹ */
+				/* æ­£å¸¸çµ‚äº† */
 			}else{
-				/* ƒGƒ‰[I—¹ */
+				/* ã‚¨ãƒ©ãƒ¼çµ‚äº† */
 			}
 		}
 		//@@@ 2001.12.11 end MIK
 	}else{
-		/* ƒGƒ‰[I—¹ */
-		//	Jun.  5, 2005 genta –ß‚è’l•ÏX
+		/* ã‚¨ãƒ©ãƒ¼çµ‚äº† */
+		//	Jun.  5, 2005 genta æˆ»ã‚Šå€¤å¤‰æ›´
 		return 3;
 	}
-	//	Jun.  5, 2005 genta –ß‚è’l•ÏX
+	//	Jun.  5, 2005 genta æˆ»ã‚Šå€¤å¤‰æ›´
 	return 1;
 }
 
 
 
 
-/*! ƒoƒbƒNƒAƒbƒvƒpƒX‚Ìì¬
+/*! ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ‘ã‚¹ã®ä½œæˆ
 
 	@author aroka
 
-	@param szNewPath [out] ƒoƒbƒNƒAƒbƒvæƒpƒX–¼
-	@param newPathCount [in] szNewPath‚ÌƒTƒCƒY
-	@param target_file [in] ƒoƒbƒNƒAƒbƒvŒ³ƒpƒX–¼
+	@param szNewPath [out] ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å…ˆãƒ‘ã‚¹å
+	@param newPathCount [in] szNewPathã®ã‚µã‚¤ã‚º
+	@param target_file [in] ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—å…ƒãƒ‘ã‚¹å
 
-	@retval true  ¬Œ÷
-	@retval false ƒoƒbƒtƒ@•s‘«
+	@retval true  æˆåŠŸ
+	@retval false ãƒãƒƒãƒ•ã‚¡ä¸è¶³
 
 	@date 2005.11.29 aroka
-		MakeBackUp‚©‚ç•ª—£D‘®‚ğŒ³‚ÉƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼‚ğì¬‚·‚é‹@”\’Ç‰Á
-	@date 2013.04.15 novice w’èƒtƒHƒ‹ƒ_‚Ìƒƒ^•¶š—ñ“WŠJƒTƒ|[ƒg
+		MakeBackUpã‹ã‚‰åˆ†é›¢ï¼æ›¸å¼ã‚’å…ƒã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ä½œæˆã™ã‚‹æ©Ÿèƒ½è¿½åŠ 
+	@date 2013.04.15 novice æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ¡ã‚¿æ–‡å­—åˆ—å±•é–‹ã‚µãƒãƒ¼ãƒˆ
 
-	@todo Advanced mode‚Å‚Ì¢‘ãŠÇ—
+	@todo Advanced modeã§ã®ä¸–ä»£ç®¡ç†
 */
 bool CBackupAgent::FormatBackUpPath(
 	TCHAR*			szNewPath,
@@ -319,25 +319,25 @@ bool CBackupAgent::FormatBackUpPath(
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
-	/* ƒpƒX‚Ì•ª‰ğ */
+	/* ãƒ‘ã‚¹ã®åˆ†è§£ */
 	_tsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( bup_setting.m_bBackUpFolder
-	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* w’èƒtƒHƒ‹ƒ_‚ÉƒoƒbƒNƒAƒbƒv‚ğì¬‚·‚é */	// m_bBackUpFolderRM ’Ç‰Á	2010/5/27 Uchi
+	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* æŒ‡å®šãƒ•ã‚©ãƒ«ãƒ€ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä½œæˆã™ã‚‹ */	// m_bBackUpFolderRM è¿½åŠ 	2010/5/27 Uchi
 		TCHAR selDir[_MAX_PATH];
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
-			// ‚¤‚Ü‚­æ‚ê‚È‚©‚Á‚½
+			// ã†ã¾ãå–ã‚Œãªã‹ã£ãŸ
 			_tcscpy( szNewPath, selDir );
 		}
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
 		auto_sprintf( szNewPath, _T("%ts%ts"), szDrive, szDir );
 	}
 
-	/* ‘Š‘ÎƒtƒHƒ‹ƒ_‚ğ‘}“ü */
+	/* ç›¸å¯¾ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ¿å…¥ */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
 		time_t	ltime;
 		struct	tm *today;
@@ -349,72 +349,72 @@ bool CBackupAgent::FormatBackUpPath(
 		pBase = szNewPath + _tcslen( szNewPath );
 		nBaseCount = newPathCount - _tcslen( szNewPath );
 
-		/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼‚Ìƒ^ƒCƒv 1=(.bak) 2=*_“ú•t.* */
+		/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åã®ã‚¿ã‚¤ãƒ— 1=(.bak) 2=*_æ—¥ä»˜.* */
 		switch( bup_setting.GetBackupType() ){
 		case 1:
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts.bak"), szFname ) ){
 				return false;
 			}
 			break;
-		case 5: //	Jun.  5, 2005 genta 1‚ÌŠg’£q‚ğc‚·”Å
+		case 5: //	Jun.  5, 2005 genta 1ã®æ‹¡å¼µå­ã‚’æ®‹ã™ç‰ˆ
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts%ts.bak"), szFname, szExt ) ){
 				return false;
 			}
 			break;
-		case 2:	//	“ú•tC
+		case 2:	//	æ—¥ä»˜ï¼Œæ™‚åˆ»
 			_tzset();
 			_wstrdate( szTime );
-			time( &ltime );				/* ƒVƒXƒeƒ€‚ğ“¾‚Ü‚· */
-			today = localtime( &ltime );/* Œ»’nŠÔ‚É•ÏŠ·‚·‚é */
+			time( &ltime );				/* ã‚·ã‚¹ãƒ†ãƒ æ™‚åˆ»ã‚’å¾—ã¾ã™ */
+			today = localtime( &ltime );/* ç¾åœ°æ™‚é–“ã«å¤‰æ›ã™ã‚‹ */
 
 			szForm[0] = L'\0';
-			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì”N */
+			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®å¹´ */
 				wcscat( szForm, L"%Y" );
 			}
-			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚ÌŒ */
+			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æœˆ */
 				wcscat( szForm, L"%m" );
 			}
-			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì“ú */
+			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æ—¥ */
 				wcscat( szForm, L"%d" );
 			}
-			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì */
+			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æ™‚ */
 				wcscat( szForm, L"%H" );
 			}
-			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì•ª */
+			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®åˆ† */
 				wcscat( szForm, L"%M" );
 			}
-			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì•b */
+			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®ç§’ */
 				wcscat( szForm, L"%S" );
 			}
-			/* YYYYMMDD•ª•b Œ`®‚É•ÏŠ· */
+			/* YYYYMMDDæ™‚åˆ†ç§’ å½¢å¼ã«å¤‰æ› */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, today );
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
 				return false;
 			}
 			break;
-	//	2001/06/12 Start by asa-o: ƒtƒ@ƒCƒ‹‚É•t‚¯‚é“ú•t‚ğ‘O‰ñ‚Ì•Û‘¶(XV“ú)‚É‚·‚é
-		case 4:	//	“ú•tC
+	//	2001/06/12 Start by asa-o: ãƒ•ã‚¡ã‚¤ãƒ«ã«ä»˜ã‘ã‚‹æ—¥ä»˜ã‚’å‰å›ã®ä¿å­˜æ™‚(æ›´æ–°æ—¥æ™‚)ã«ã™ã‚‹
+		case 4:	//	æ—¥ä»˜ï¼Œæ™‚åˆ»
 			{
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
 
 				szTime[0] = L'\0';
-				if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì”N */
+				if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®å¹´ */
 					auto_sprintf(szTime,L"%d",ctimeLastWrite->wYear);
 				}
-				if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚ÌŒ */
+				if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æœˆ */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wMonth);
 				}
-				if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì“ú */
+				if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æ—¥ */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wDay);
 				}
-				if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì */
+				if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®æ™‚ */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wHour);
 				}
-				if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì•ª */
+				if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®åˆ† */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wMinute);
 				}
-				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* ƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼F“ú•t‚Ì•b */
+				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åï¼šæ—¥ä»˜ã®ç§’ */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
 				if( -1 == auto_sprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
@@ -424,13 +424,13 @@ bool CBackupAgent::FormatBackUpPath(
 			break;
 	// 2001/06/12 End
 
-		case 3: //	?xx : xx = 00~99, ?‚Í”CˆÓ‚Ì•¶š
-		case 6: //	Jun.  5, 2005 genta 3‚ÌŠg’£q‚ğc‚·”Å
+		case 3: //	?xx : xx = 00~99, ?ã¯ä»»æ„ã®æ–‡å­—
+		case 6: //	Jun.  5, 2005 genta 3ã®æ‹¡å¼µå­ã‚’æ®‹ã™ç‰ˆ
 			//	Aug. 15, 2000 genta
-			//	‚±‚±‚Å‚Íì¬‚·‚éƒoƒbƒNƒAƒbƒvƒtƒ@ƒCƒ‹–¼‚Ì‚İ¶¬‚·‚éD
-			//	ƒtƒ@ƒCƒ‹–¼‚ÌRotation‚ÍŠm”Fƒ_ƒCƒAƒƒO‚ÌŒã‚Ås‚¤D
+			//	ã“ã“ã§ã¯ä½œæˆã™ã‚‹ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ•ã‚¡ã‚¤ãƒ«åã®ã¿ç”Ÿæˆã™ã‚‹ï¼
+			//	ãƒ•ã‚¡ã‚¤ãƒ«åã®Rotationã¯ç¢ºèªãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®å¾Œã§è¡Œã†ï¼
 			{
-				//	Jun.  5, 2005 genta Šg’£q‚ğc‚¹‚é‚æ‚¤‚Éˆ—‹N“_‚ğ‘€ì‚·‚é
+				//	Jun.  5, 2005 genta æ‹¡å¼µå­ã‚’æ®‹ã›ã‚‹ã‚ˆã†ã«å‡¦ç†èµ·ç‚¹ã‚’æ“ä½œã™ã‚‹
 				TCHAR* ptr;
 				if( bup_setting.GetBackupType() == 3 ){
 					ptr = szExt;
@@ -450,13 +450,13 @@ bool CBackupAgent::FormatBackUpPath(
 			break;
 		}
 
-	}else{ // Ú×İ’èg—p‚·‚é
+	}else{ // è©³ç´°è¨­å®šä½¿ç”¨ã™ã‚‹
 		TCHAR szFormat[1024];
 
 		switch( bup_setting.GetBackupTypeAdv() ){
-		case 4:	//	ƒtƒ@ƒCƒ‹‚Ì“ú•tC
+		case 4:	//	ãƒ•ã‚¡ã‚¤ãƒ«ã®æ—¥ä»˜ï¼Œæ™‚åˆ»
 			{
-				// 2005.10.20 ryoji FindFirstFile‚ğg‚¤‚æ‚¤‚É•ÏX
+				// 2005.10.20 ryoji FindFirstFileã‚’ä½¿ã†ã‚ˆã†ã«å¤‰æ›´
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
 				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
@@ -464,13 +464,13 @@ bool CBackupAgent::FormatBackUpPath(
 				}
 			}
 			break;
-		case 2:	//	Œ»İ‚Ì“ú•tC
+		case 2:	//	ç¾åœ¨ã®æ—¥ä»˜ï¼Œæ™‚åˆ»
 		default:
 			{
-				// 2012.12.26 aroka	Ú×İ’è‚Ìƒtƒ@ƒCƒ‹•Û‘¶“ú‚ÆŒ»İ‚Å‘®‚ğ‡‚í‚¹‚é
+				// 2012.12.26 aroka	è©³ç´°è¨­å®šã®ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜æ—¥æ™‚ã¨ç¾åœ¨æ™‚åˆ»ã§æ›¸å¼ã‚’åˆã‚ã›ã‚‹
 				SYSTEMTIME	SystemTime;
-				// 2016.07.28 UTC¨ƒ[ƒJƒ‹‚É•ÏX
-				::GetLocalTime(&SystemTime);			// Œ»İ‚ğæ“¾
+				// 2016.07.28 UTCâ†’ãƒ­ãƒ¼ã‚«ãƒ«æ™‚åˆ»ã«å¤‰æ›´
+				::GetLocalTime(&SystemTime);			// ç¾åœ¨æ™‚åˆ»ã‚’å–å¾—
 
 				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
 					return false;
@@ -481,14 +481,14 @@ bool CBackupAgent::FormatBackUpPath(
 
 		{
 			// make keys
-			// $0-$9‚É‘Î‰‚·‚éƒtƒHƒ‹ƒ_–¼‚ğØ‚èo‚µ
+			// $0-$9ã«å¯¾å¿œã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€åã‚’åˆ‡ã‚Šå‡ºã—
 			TCHAR keybuff[1024];
 			_tcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
 
 			TCHAR *folders[10];
 			{
-				//	Jan. 9, 2006 genta VC6‘Îô
+				//	Jan. 9, 2006 genta VC6å¯¾ç­–
 				int idx;
 				for( idx=0; idx<10; ++idx ){
 					folders[idx] = 0;
@@ -508,7 +508,7 @@ bool CBackupAgent::FormatBackUpPath(
 				}
 			}
 			{
-				// $0-$9‚ğ’uŠ·
+				// $0-$9ã‚’ç½®æ›
 				//wcscpy( szNewPath, L"" );
 				TCHAR *q= szFormat;
 				TCHAR *q2 = szFormat;
@@ -541,11 +541,11 @@ bool CBackupAgent::FormatBackUpPath(
 		{
 			TCHAR temp[1024];
 			TCHAR *cp;
-			//	2006.03.25 Aroka szExt[0] == '\0'‚Ì‚Æ‚«‚ÌƒI[ƒoƒ‰ƒ“–â‘è‚ğC³
+			//	2006.03.25 Aroka szExt[0] == '\0'ã®ã¨ãã®ã‚ªãƒ¼ãƒãƒ©ãƒ³å•é¡Œã‚’ä¿®æ­£
 			TCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
 			assert( newPathCount <= _countof(temp) );
 
-			// * ‚ğŠg’£q‚É‚·‚é
+			// * ã‚’æ‹¡å¼µå­ã«ã™ã‚‹
 			while( _tcschr( szNewPath, _T('*') ) ){
 				_tcscpy( temp, szNewPath );
 				cp = _tcschr( temp, _T('*') );
@@ -554,9 +554,9 @@ bool CBackupAgent::FormatBackUpPath(
 					return false;
 				}
 			}
-			//	??‚ÍƒoƒbƒNƒAƒbƒv˜A”Ô‚É‚µ‚½‚¢‚Æ‚±‚ë‚Å‚Í‚ ‚é‚ªC
-			//	˜A”Ôˆ—‚Í––”ö‚Ì2Œ…‚É‚µ‚©‘Î‰‚µ‚Ä‚¢‚È‚¢‚Ì‚Å
-			//	g—p‚Å‚«‚È‚¢•¶š?‚ğ_‚É•ÏŠ·‚µ‚Ä‚¨’ƒ‚ğ‘÷‚·
+			//	??ã¯ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—é€£ç•ªã«ã—ãŸã„ã¨ã“ã‚ã§ã¯ã‚ã‚‹ãŒï¼Œ
+			//	é€£ç•ªå‡¦ç†ã¯æœ«å°¾ã®2æ¡ã«ã—ã‹å¯¾å¿œã—ã¦ã„ãªã„ã®ã§
+			//	ä½¿ç”¨ã§ããªã„æ–‡å­—?ã‚’_ã«å¤‰æ›ã—ã¦ãŠèŒ¶ã‚’æ¿ã™
 			while(( cp = _tcschr( szNewPath, _T('?') ) ) != NULL){
 				*cp = _T('_');
 			}

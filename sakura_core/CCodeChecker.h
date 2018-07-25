@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,11 +32,11 @@ class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker>{
 	CCodeChecker(){}
 
 public:
-	//ƒZ[ƒuƒ`ƒFƒbƒN
+	//ã‚»ãƒ¼ãƒ–æ™‚ãƒã‚§ãƒƒã‚¯
 	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo);
 	void OnFinalSave(ESaveResult eSaveResult);
 
-	//ƒ[ƒhƒ`ƒFƒbƒN
+	//ãƒ­ãƒ¼ãƒ‰æ™‚ãƒã‚§ãƒƒã‚¯
 	void OnFinalLoad(ELoadResult eLoadResult);
 };
 

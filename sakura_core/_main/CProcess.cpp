@@ -1,12 +1,12 @@
-/*!	@file
-	@brief �v���Z�X���N���X
+﻿/*!	@file
+	@brief プロセス基底クラス
 
 	@author aroka
-	@date 2002/01/07 �쐬
-	@date 2002/01/17 �C��
+	@date 2002/01/07 作成
+	@date 2002/01/17 修正
 */
 /*
-	Copyright (C) 2002, aroka �V�K�쐬
+	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2004, Moca
 	Copyright (C) 2009, ryoji
 
@@ -20,7 +20,7 @@
 #include "util/module.h"
 
 /*!
-	@brief �v���Z�X���N���X
+	@brief プロセス基底クラス
 	
 	@author aroka
 	@date 2002/01/07
@@ -39,29 +39,29 @@ CProcess::CProcess(
 }
 
 /*!
-	@brief �v���Z�X������������
+	@brief プロセスを初期化する
 
-	���L������������������
+	共有メモリを初期化する
 */
 bool CProcess::InitializeProcess()
 {
-	/* ���L�f�[�^�\���̂̃A�h���X��Ԃ� */
+	/* 共有データ構造体のアドレスを返す */
 	if( !GetShareData().InitShareData() ){
-		//	�K�؂ȃf�[�^�𓾂��Ȃ�����
+		//	適切なデータを得られなかった
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
-			GSTR_APPNAME, _T("�قȂ�o�[�W�����̃G�f�B�^�𓯎��ɋN�����邱�Ƃ͂ł��܂���B") );
+			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
 		return false;
 	}
 
-	/* ���\�[�X���琻�i�o�[�W�����̎擾 */
-	//	2004.05.13 Moca ���L�f�[�^�̃o�[�W�������̓R���g���[���v���Z�X������
-	//	ShareData�Őݒ肷��悤�ɕύX�����̂ł�������͍폜
+	/* リソースから製品バージョンの取得 */
+	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
+	//	ShareDataで設定するように変更したのでここからは削除
 
 	return true;
 }
 
 /*!
-	@brief �v���Z�X���s
+	@brief プロセス実行
 	
 	@author aroka
 	@date 2002/01/16
@@ -98,7 +98,7 @@ bool CProcess::Run()
 
 #ifdef USE_CRASHDUMP
 /*!
-	@brief �N���b�V���_���v
+	@brief クラッシュダンプ
 	
 	@author ryoji
 	@date 2009.01.21
@@ -109,8 +109,8 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 		return EXCEPTION_CONTINUE_SEARCH;
 
 	static TCHAR szFile[MAX_PATH];
-	// �o�͐��ini�Ɠ����iInitializeProcess()��Ɋm��j
-	// Vista�ȍ~�ł� C:\Users\(���[�U��)\AppData\Local\CrashDumps �ɏo��
+	// 出力先はiniと同じ（InitializeProcess()後に確定）
+	// Vista以降では C:\Users\(ユーザ名)\AppData\Local\CrashDumps に出力
 	GetInidirOrExedir( szFile, _APP_NAME_(_T) _T(".dmp") );
 
 	HANDLE hFile = ::CreateFile(
@@ -145,7 +145,7 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 #endif
 
 /*!
-	����I����ɋ��L���������̕�������X�V����
+	言語選択後に共有メモリ内の文字列を更新する
 */
 void CProcess::RefreshString()
 {

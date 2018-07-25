@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,19 +29,19 @@
 
 class CIoBridge{
 public:
-	//! “à•”À‘•‚ÌƒGƒ“ƒR[ƒh‚Ö•ÏŠ·
+	//! å†…éƒ¨å®Ÿè£…ã®ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã¸å¤‰æ›
 	static EConvertResult FileToImpl(
-		const CMemory&	cSrc,			//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ
-		CNativeW*		pDst,			//!< [out] •ÏŠ·æƒƒ‚ƒŠ(UNICODE)
-		CCodeBase*		pCodeBase,		//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ‚Ì•¶šƒR[ƒhƒNƒ‰ƒX
-		int				nFlag			//!< [in]  bit 0: MIME Encode‚³‚ê‚½ƒwƒbƒ_‚ğdecode‚·‚é‚©‚Ç‚¤‚©
+		const CMemory&	cSrc,			//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒª
+		CNativeW*		pDst,			//!< [out] å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒª(UNICODE)
+		CCodeBase*		pCodeBase,		//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒªã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚¯ãƒ©ã‚¹
+		int				nFlag			//!< [in]  bit 0: MIME Encodeã•ã‚ŒãŸãƒ˜ãƒƒãƒ€ã‚’decodeã™ã‚‹ã‹ã©ã†ã‹
 	);
 
-	//! ƒtƒ@ƒCƒ‹‚ÌƒGƒ“ƒR[ƒh‚Ö•ÏX
+	//! ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã¸å¤‰æ›´
 	static EConvertResult ImplToFile(
-		const CNativeW&		cSrc,		//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ(UNICODE)
-		CMemory*			pDst,		//!< [out] •ÏŠ·æƒƒ‚ƒŠ
-		CCodeBase*			pCodeBase	//!< [in]  •ÏŠ·æƒƒ‚ƒŠ‚Ì•¶šƒR[ƒhƒNƒ‰ƒX
+		const CNativeW&		cSrc,		//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒª(UNICODE)
+		CMemory*			pDst,		//!< [out] å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒª
+		CCodeBase*			pCodeBase	//!< [in]  å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒªã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚¯ãƒ©ã‚¹
 	);
 };
 

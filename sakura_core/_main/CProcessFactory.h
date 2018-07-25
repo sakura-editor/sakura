@@ -1,11 +1,11 @@
-/*!	@file
-	@brief �v���Z�X�����N���X�w�b�_�t�@�C��
+﻿/*!	@file
+	@brief プロセス生成クラスヘッダファイル
 
 	@author aroka
-	@date	2002/01/08 �쐬
+	@date	2002/01/08 作成
 */
 /*
-	Copyright (C) 2002, aroka �V�K�쐬
+	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2006, ryoji
 
 	This source code is designed for sakura editor.
@@ -20,16 +20,16 @@
 class CProcess;
 
 /*-----------------------------------------------------------------------
-�N���X�̐錾
+クラスの宣言
 -----------------------------------------------------------------------*/
 /*!
-	@brief �v���Z�X�����N���X
+	@brief プロセス生成クラス
 
-	�^����ꂽ�R�}���h���C���������琶�����ׂ��v���Z�X�̎�ʂ𔻒肵�C
-	�Ή�����I�u�W�F�N�g��Ԃ�Factory�N���X�D
+	与えられたコマンドライン引数から生成すべきプロセスの種別を判定し，
+	対応するオブジェクトを返すFactoryクラス．
 
-	�ʏ�̃G�f�B�^�v���Z�X�̋N�����w�肳�ꂽ�ꍇ�ɂ́C�K�v�ɉ����ăR���g���[���v���Z�X
-	�N���̋N�����G�f�B�^�̋N���ɐ旧���čs���D
+	通常のエディタプロセスの起動が指定された場合には，必要に応じてコントロールプロセス
+	起動の起動をエディタの起動に先立って行う．
 */
 class CProcessFactory {
 public:
@@ -41,8 +41,8 @@ private:
 	bool IsStartingControlProcess();
 	bool IsExistControlProcess();
 	bool StartControlProcess();
-	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji �R���g���[���v���Z�X�̏����������C�x���g��҂�
-	bool TestWriteQuit();	// 2007.09.04 ryoji �u�ݒ��ۑ����ďI������v�I�v�V���������isakuext�A�g�p�j
+	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
+	bool TestWriteQuit();	// 2007.09.04 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）
 };
 
 ///////////////////////////////////////////////////////////////////////

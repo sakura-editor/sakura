@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CEolƒNƒ‰ƒX‚ÌÀ‘•
+ï»¿/*!	@file
+	@brief CEolã‚¯ãƒ©ã‚¹ã®å®Ÿè£…
 
 	@author genta
-	@date 2000/05/15 V‹Kì¬ genta
+	@date 2000/05/15 æ–°è¦ä½œæˆ genta
 */
 /*
 	Copyright (C) 2000-2001, genta
@@ -31,7 +31,7 @@
 #include "StdAfx.h"
 #include "CEol.h"
 
-/*! sI’[q‚Ì”z—ñ */
+/*! è¡Œçµ‚ç«¯å­ã®é…åˆ— */
 const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE			,	// == 0
 	EOL_CRLF			,	// == 2
@@ -44,7 +44,7 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 
 
 //-----------------------------------------------
-//	ŒÅ’èƒf[ƒ^
+//	å›ºå®šãƒ‡ãƒ¼ã‚¿
 //-----------------------------------------------
 
 struct SEolDefinition{
@@ -57,7 +57,7 @@ struct SEolDefinition{
 	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
 };
 static const SEolDefinition g_aEolTable[] = {
-	{ _T("‰üs–³"),	L"",			"",			0 },
+	{ _T("æ”¹è¡Œç„¡"),	L"",			"",			0 },
 	{ _T("CRLF"),	L"\x0d\x0a",	"\x0d\x0a",	2 },
 	{ _T("LF"),		L"\x0a",		"\x0a",		1 },
 	{ _T("CR"),		L"\x0d",		"\x0d",		1 },
@@ -91,14 +91,14 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 
 
 //-----------------------------------------------
-//	À‘••â•
+//	å®Ÿè£…è£œåŠ©
 //-----------------------------------------------
 
 /*!
-	sI’[q‚Ìí—Ş‚ğ’²‚×‚éB
-	@param pszData ’²¸‘ÎÛ•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param nDataLen ’²¸‘ÎÛ•¶š—ñ‚Ì’·‚³
-	@return ‰üsƒR[ƒh‚Ìí—ŞBI’[q‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚Æ‚«‚ÍEOL_NONE‚ğ•Ô‚·B
+	è¡Œçµ‚ç«¯å­ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹ã€‚
+	@param pszData èª¿æŸ»å¯¾è±¡æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param nDataLen èª¿æŸ»å¯¾è±¡æ–‡å­—åˆ—ã®é•·ã•
+	@return æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡ã€‚çµ‚ç«¯å­ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã¨ãã¯EOL_NONEã‚’è¿”ã™ã€‚
 */
 template <class T>
 EEolType GetEOLType( const T* pszData, int nDataLen )
@@ -112,7 +112,7 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 
 
 /*
-	ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş‚Æ‚«‚Ég—p‚·‚é‚à‚Ì
+	ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã¨ãã«ä½¿ç”¨ã™ã‚‹ã‚‚ã®
 */
 
 EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
@@ -134,42 +134,42 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 }
 
 //-----------------------------------------------
-//	À‘••”
+//	å®Ÿè£…éƒ¨
 //-----------------------------------------------
 
 
-//! Œ»İ‚ÌEOL’·‚ğæ“¾B•¶š’PˆÊB
+//! ç¾åœ¨ã®EOLé•·ã‚’å–å¾—ã€‚æ–‡å­—å˜ä½ã€‚
 CLogicInt CEol::GetLen() const
 {
 	return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen);
 }
 
-//! Œ»İ‚ÌEOL‚Ì–¼Ìæ“¾
+//! ç¾åœ¨ã®EOLã®åç§°å–å¾—
 const TCHAR* CEol::GetName() const
 {
 	return g_aEolTable[ m_eEolType ].m_szName;
 }
 
-//!< Œ»İ‚ÌEOL•¶š—ñæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
+//!< ç¾åœ¨ã®EOLæ–‡å­—åˆ—å…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 const wchar_t* CEol::GetValue2() const
 {
 	return g_aEolTable[ m_eEolType ].m_szDataW;
 }
 
 /*!
-	s––í•Ê‚Ìİ’èB
-	@param t s––í•Ê
-	@retval true ³íI—¹Bİ’è‚ª”½‰f‚³‚ê‚½B
-	@retval false ˆÙíI—¹B‹­§“I‚ÉCRLF‚Éİ’èB
+	è¡Œæœ«ç¨®åˆ¥ã®è¨­å®šã€‚
+	@param t è¡Œæœ«ç¨®åˆ¥
+	@retval true æ­£å¸¸çµ‚äº†ã€‚è¨­å®šãŒåæ˜ ã•ã‚ŒãŸã€‚
+	@retval false ç•°å¸¸çµ‚äº†ã€‚å¼·åˆ¶çš„ã«CRLFã«è¨­å®šã€‚
 */
 bool CEol::SetType( EEolType t )
 {
 	if( t < EOL_NONE || EOL_CODEMAX <= t ){
-		//	ˆÙí’l
+		//	ç•°å¸¸å€¤
 		m_eEolType = EOL_CRLF;
 		return false;
 	}
-	//	³‚µ‚¢’l
+	//	æ­£ã—ã„å€¤
 	m_eEolType = t;
 	return true;
 }

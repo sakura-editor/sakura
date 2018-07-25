@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CDicMgrƒNƒ‰ƒX’è‹`
+ï»¿/*!	@file
+	@brief CDicMgrã‚¯ãƒ©ã‚¹å®šç¾©
 
 	@author Norio Nakatani
-	@date	1998/11/05 ì¬
+	@date	1998/11/05 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -19,7 +19,7 @@
 #include "_main/global.h"
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 class CDicMgr
 {
@@ -34,14 +34,14 @@ public:
 	||  Attributes & Operations
 	*/
 //	BOOL Open( char* );
-	static BOOL Search( const wchar_t*, const int, CNativeW**, CNativeW**, const TCHAR*, int * );	// 2006.04.10 fon (const int,CMemory**,int*)ˆø”‚ğ’Ç‰Á
+	static BOOL Search( const wchar_t*, const int, CNativeW**, CNativeW**, const TCHAR*, int * );	// 2006.04.10 fon (const int,CMemory**,int*)å¼•æ•°ã‚’è¿½åŠ 
 	static int HokanSearch( const wchar_t* , bool, vector_ex<std::wstring>&, int, const TCHAR* );
 //	BOOL Close( char* );
 
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 };
 

@@ -1,6 +1,6 @@
-// stdafx.h : •W€‚ÌƒVƒXƒeƒ€ ƒCƒ“ƒNƒ‹[ƒh ƒtƒ@ƒCƒ‹A
-//				‚Ü‚½‚ÍQÆ‰ñ”‚ª‘½‚­A‚©‚Â‚ ‚Ü‚è•ÏX‚³‚ê‚È‚¢
-//				ƒvƒƒWƒFƒNƒgê—p‚ÌƒCƒ“ƒNƒ‹[ƒh ƒtƒ@ƒCƒ‹‚ğ‹Lq‚µ‚Ü‚·B
+ï»¿// stdafx.h : æ¨™æº–ã®ã‚·ã‚¹ãƒ†ãƒ  ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ ãƒ•ã‚¡ã‚¤ãƒ«ã€
+//				ã¾ãŸã¯å‚ç…§å›æ•°ãŒå¤šãã€ã‹ã¤ã‚ã¾ã‚Šå¤‰æ›´ã•ã‚Œãªã„
+//				ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå°‚ç”¨ã®ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¨˜è¿°ã—ã¾ã™ã€‚
 //
 
 #if !defined(AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_)
@@ -10,8 +10,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-// ‚±‚ÌˆÊ’u‚Éƒwƒbƒ_[‚ğ‘}“ü‚µ‚Ä‚­‚¾‚³‚¢
-// #define WIN32_LEAN_AND_MEAN		// Windows ƒwƒbƒ_[‚©‚ç–w‚Çg—p‚³‚ê‚È‚¢ƒXƒ^ƒbƒt‚ğœŠO‚µ‚Ü‚·
+// ã“ã®ä½ç½®ã«ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’æŒ¿å…¥ã—ã¦ãã ã•ã„
+// #define WIN32_LEAN_AND_MEAN		// Windows ãƒ˜ãƒƒãƒ€ãƒ¼ã‹ã‚‰æ®†ã©ä½¿ç”¨ã•ã‚Œãªã„ã‚¹ã‚¿ãƒƒãƒ•ã‚’é™¤å¤–ã—ã¾ã™
 #ifndef STRICT
 #define STRICT 1
 #endif
@@ -19,9 +19,9 @@
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 
 //#pragma warning(disable: 4786)
-#pragma warning(disable: 4345)	//warning C4345: “®ì•ÏX : Œ`® () ‚Ì‰Šú‰»q‚Å\’z‚³‚ê‚é POD Œ^‚ÌƒIƒuƒWƒFƒNƒg‚ÍŠù’è‰Šú‰»‚³‚ê‚Ü‚·B
+#pragma warning(disable: 4345)	//warning C4345: å‹•ä½œå¤‰æ›´ : å½¢å¼ () ã®åˆæœŸåŒ–å­ã§æ§‹ç¯‰ã•ã‚Œã‚‹ POD å‹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯æ—¢å®šåˆæœŸåŒ–ã•ã‚Œã¾ã™ã€‚
 #pragma warning(disable: 4996)	//warning C4996: 'xxxx': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-#pragma warning(disable: 4355)	//warning C4355: 'this' : ƒx[ƒX ƒƒ“ƒo‰Šú‰»ƒŠƒXƒg‚Åg—p‚³‚ê‚Ü‚µ‚½B
+#pragma warning(disable: 4355)	//warning C4355: 'this' : ãƒ™ãƒ¼ã‚¹ ãƒ¡ãƒ³ãƒåˆæœŸåŒ–ãƒªã‚¹ãƒˆã§ä½¿ç”¨ã•ã‚Œã¾ã—ãŸã€‚
 
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -40,25 +40,25 @@
 #undef MINGW_HAS_SECURE_API
 #endif  // MINGW_HAS_SECURE_API
 #endif  // __MINGW32__
-//ƒOƒ[ƒoƒ‹
+//ã‚°ãƒ­ãƒ¼ãƒãƒ«
 #include "_main/global.h"
 
-//ƒrƒ‹ƒhƒIƒvƒVƒ‡ƒ““I‚Èƒwƒbƒ_
+//ãƒ“ãƒ«ãƒ‰ã‚ªãƒ—ã‚·ãƒ§ãƒ³çš„ãªãƒ˜ãƒƒãƒ€
 #include "config/build_config.h"
 #include "config/maxdata.h"
 
-//’è”(ƒvƒŠƒRƒ“ƒpƒCƒ‹“ú•t‚ÉˆË‘¶)
-#include "config/system_constants.h"	//ƒVƒXƒeƒ€’è”
-#include "config/app_constants.h"		//ƒAƒvƒŠƒP[ƒVƒ‡ƒ“’è”
+//å®šæ•°(ãƒ—ãƒªã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ—¥ä»˜ã«ä¾å­˜)
+#include "config/system_constants.h"	//ã‚·ã‚¹ãƒ†ãƒ å®šæ•°
+#include "config/app_constants.h"		//ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®šæ•°
 
-//‚•p“xAPI“™
-// #include <CommDlg.h> // WIN32_LEAN_AND_MEAN‚Å‚Í•K—vBOpenFileDialgŒn
-#include <CommCtrl.h> // ƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹
+//é«˜é »åº¦APIç­‰
+// #include <CommDlg.h> // WIN32_LEAN_AND_MEANã§ã¯å¿…è¦ã€‚OpenFileDialgç³»
+#include <CommCtrl.h> // ã‚³ãƒ¢ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 #include <stdlib.h>  // _MAX_PATH
 #include <wchar.h>
 
 #ifndef SAKURA_PCH_MODE_MIN
-// 2010.04.19 d‚»‚¤‚È‚Ì‚Å’Ç‰Á
+// 2010.04.19 é‡ãã†ãªã®ã§è¿½åŠ 
 #include <HtmlHelp.h>
 #include <ObjIdl.h>
 #include <ShlObj.h>
@@ -78,25 +78,25 @@
 #define BUILD_OPT_NEW_HEADERS
 #endif
 
-//ƒfƒoƒbƒO
+//ãƒ‡ãƒãƒƒã‚°
 #include "debug/Debug1.h"
 #include "debug/Debug2.h"
 #include "debug/Debug3.h"
 
-//ƒVƒ“ƒvƒ‹‚Å‚æ‚­g‚¤‚à‚Ì
+//ã‚·ãƒ³ãƒ—ãƒ«ã§ã‚ˆãä½¿ã†ã‚‚ã®
 #include "basis/primitive.h"
 #include "util/std_macro.h"
 
-//MFCŒİŠ·
+//MFCäº’æ›
 #include "basis/CMyString.h"
 #include "basis/CMyRect.h"
 #include "basis/CMyPoint.h"
 #include "basis/CMySize.h"
 
-//ƒTƒNƒ‰ƒGƒfƒBƒ^ŒÅ—LŒ^
+//ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿å›ºæœ‰å‹
 #include "basis/SakuraBasis.h"
 
-//‚æ‚­g‚¤ƒwƒbƒ_
+//ã‚ˆãä½¿ã†ãƒ˜ãƒƒãƒ€
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 #include "mem/CNativeT.h"
@@ -106,24 +106,24 @@
 #include "CSelectLang.h"
 #include "String_define.h"
 
-//‚»‚Ì‘¼
+//ãã®ä»–
 #define malloc_char (char*)malloc
 #define GlobalLockChar  (char*)::GlobalLock
 #define GlobalLockUChar (unsigned char*)::GlobalLock
 #define GlobalLockWChar (wchar_t*)::GlobalLock
 #define GlobalLockBYTE  (BYTE*)::GlobalLock
 
-//APIƒ‰ƒbƒv
+//APIãƒ©ãƒƒãƒ—
 #include "apiwrap/StdControl.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdApi.h"
 
-//TCHARƒ†[ƒeƒBƒŠƒeƒB
+//TCHARãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
 #include "util/tchar_convert.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 
-// 2010.04.19 Moca include‚Ì‘å‹K–Í®—
+// 2010.04.19 Moca includeã®å¤§è¦æ¨¡æ•´ç†
 #ifndef SAKURA_PCH_MODE_MIN
 #define SAKURA_PCH_MODE_DLLSHARE 1
 #endif
@@ -145,12 +145,12 @@
 #include "CReadManager.h"
 #include "CWriteManager.h"
 #include "CSearchAgent.h"
-//###########’´‰¼
+//###########è¶…ä»®
 #include "uiparts/CGraphics.h"
 #endif // SAKURA_PCH_MODE_MAX
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ ‚Í‘Os‚Ì’¼‘O‚É’Ç‰Á‚ÌéŒ¾‚ğ‘}“ü‚µ‚Ü‚·B
+// Microsoft Visual C++ ã¯å‰è¡Œã®ç›´å‰ã«è¿½åŠ ã®å®£è¨€ã‚’æŒ¿å…¥ã—ã¾ã™ã€‚
 
 #endif // !defined(AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_)
 

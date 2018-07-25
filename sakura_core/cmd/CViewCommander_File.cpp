@@ -1,13 +1,13 @@
-/*!	@file
-@brief CViewCommanderƒNƒ‰ƒX‚ÌƒRƒ}ƒ“ƒh(ƒtƒ@ƒCƒ‹‘€ìŒn)ŠÖ”ŒQ
+ï»¿/*!	@file
+@brief CViewCommanderã‚¯ãƒ©ã‚¹ã®ã‚³ãƒãƒ³ãƒ‰(ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œç³»)é–¢æ•°ç¾¤
 
-	2012/12/20	CViewCommander.cpp‚©‚ç•ª—£
+	2012/12/20	CViewCommander.cppã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2002, YAZAKI, genta
-	Copyright (C) 2003, MIK, genta, ‚©‚ë‚Æ, Moca
+	Copyright (C) 2003, MIK, genta, ã‹ã‚ã¨, Moca
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji, maru
@@ -59,10 +59,10 @@
 #include "sakura_rc.h"
 
 
-/* V‹Kì¬ */
+/* æ–°è¦ä½œæˆ */
 void CViewCommander::Command_FILENEW( void )
 {
-	/* V‚½‚È•ÒWƒEƒBƒ“ƒhƒE‚ğ‹N“® */
+	/* æ–°ãŸãªç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èµ·å‹• */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
@@ -74,10 +74,10 @@ void CViewCommander::Command_FILENEW( void )
 
 
 
-/* V‹Kì¬iV‚µ‚¢ƒEƒCƒ“ƒhƒE‚ÅŠJ‚­j */
+/* æ–°è¦ä½œæˆï¼ˆæ–°ã—ã„ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã§é–‹ãï¼‰ */
 void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 {
-	/* V‚½‚È•ÒWƒEƒBƒ“ƒhƒE‚ğ‹N“® */
+	/* æ–°ãŸãªç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’èµ·å‹• */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
@@ -94,22 +94,22 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 
 
 
-/*! @brief ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+/*! @brief ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 
-	@date 2003.03.30 genta u•Â‚¶‚ÄŠJ‚­v‚©‚ç—˜—p‚·‚é‚½‚ß‚Éˆø”’Ç‰Á
-	@date 2004.10.09 genta À‘•‚ğCEditDoc‚ÖˆÚ“®
+	@date 2003.03.30 genta ã€Œé–‰ã˜ã¦é–‹ãã€ã‹ã‚‰åˆ©ç”¨ã™ã‚‹ãŸã‚ã«å¼•æ•°è¿½åŠ 
+	@date 2004.10.09 genta å®Ÿè£…ã‚’CEditDocã¸ç§»å‹•
 */
 void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCode, bool bViewMode, const WCHAR* defaultName )
 {
 	if( !IsValidCodeType(nCharCode) && nCharCode != CODE_AUTODETECT ){
 		nCharCode = CODE_AUTODETECT;
 	}
-	//ƒ[ƒhî•ñ
+	//ãƒ­ãƒ¼ãƒ‰æƒ…å ±
 	SLoadInfo sLoadInfo(filename?to_tchar(filename):_T(""), nCharCode, bViewMode);
 	std::vector<std::tstring> files;
 	std::tstring defName = (defaultName?to_tchar(defaultName):_T(""));
 
-	//•K—v‚Å‚ ‚ê‚Îuƒtƒ@ƒCƒ‹‚ğŠJ‚­vƒ_ƒCƒAƒƒO
+	//å¿…è¦ã§ã‚ã‚Œã°ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 	if(!sLoadInfo.cFilePath.IsValidPath()){
 		if( !defName.empty() ){
 			TCHAR szPath[_MAX_PATH];
@@ -119,25 +119,25 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			auto_strcat(szPath, szDir);
 			if( 0 == auto_stricmp(defName.c_str(), szPath) ){
-				// defName‚ÍƒtƒHƒ‹ƒ_–¼‚¾‚Á‚½
+				// defNameã¯ãƒ•ã‚©ãƒ«ãƒ€åã ã£ãŸ
 			}else{
 				CFilePath path = defName.c_str();
 				if( 0 == auto_stricmp(path.GetDirPath().c_str(), szPath) ){
-					// ƒtƒHƒ‹ƒ_–¼‚Ü‚Å‚ÍÀİ‚µ‚Ä‚¢‚é
+					// ãƒ•ã‚©ãƒ«ãƒ€åã¾ã§ã¯å®Ÿåœ¨ã—ã¦ã„ã‚‹
 					sLoadInfo.cFilePath = defName.c_str();
 				}
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
-			CEditWnd::getInstance()->GetHwnd(),	//[in]  ƒI[ƒi[ƒEƒBƒ“ƒhƒE
-			defName.length()==0 ? NULL : defName.c_str(),	//[in]  ƒtƒHƒ‹ƒ_
-			&sLoadInfo,							//[out] ƒ[ƒhî•ñó‚¯æ‚è
-			files								//[out] ƒtƒ@ƒCƒ‹–¼
+			CEditWnd::getInstance()->GetHwnd(),	//[in]  ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+			defName.length()==0 ? NULL : defName.c_str(),	//[in]  ãƒ•ã‚©ãƒ«ãƒ€
+			&sLoadInfo,							//[out] ãƒ­ãƒ¼ãƒ‰æƒ…å ±å—ã‘å–ã‚Š
+			files								//[out] ãƒ•ã‚¡ã‚¤ãƒ«å
 		);
 		if(!bDlgResult)return;
 
 		sLoadInfo.cFilePath = files[0].c_str();
-		// ‘¼‚Ìƒtƒ@ƒCƒ‹‚ÍV‹KƒEƒBƒ“ƒhƒE
+		// ä»–ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ–°è¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 		int nSize = (int)files.size();
 		for( int i = 1; i < nSize; i++ ){
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
@@ -152,40 +152,40 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		}
 	}
 
-	//ŠJ‚­
+	//é–‹ã
 	GetDocument()->m_cDocFileOperation.FileLoad( &sLoadInfo );
 }
 
 
 
-/*! ã‘‚«•Û‘¶
+/*! ä¸Šæ›¸ãä¿å­˜
 
-	F_FILESAVEALL‚Æ‚Ì‘g‚İ‡‚í‚¹‚Ì‚İ‚Åg‚í‚ê‚éƒRƒ}ƒ“ƒhD
-	@param warnbeep [in] true: •Û‘¶•s—v or •Û‘¶‹Ö~‚Ì‚Æ‚«‚ÉŒx‚ğo‚·
-	@param askname	[in] true: ƒtƒ@ƒCƒ‹–¼–¢İ’è‚Ì‚É“ü—Í‚ğ‘£‚·
+	F_FILESAVEALLã¨ã®çµ„ã¿åˆã‚ã›ã®ã¿ã§ä½¿ã‚ã‚Œã‚‹ã‚³ãƒãƒ³ãƒ‰ï¼
+	@param warnbeep [in] true: ä¿å­˜ä¸è¦ or ä¿å­˜ç¦æ­¢ã®ã¨ãã«è­¦å‘Šã‚’å‡ºã™
+	@param askname	[in] true: ãƒ•ã‚¡ã‚¤ãƒ«åæœªè¨­å®šã®æ™‚ã«å…¥åŠ›ã‚’ä¿ƒã™
 
-	@date 2004.02.28 genta ˆø”warnbeep’Ç‰Á
-	@date 2005.01.24 genta ˆø”askname’Ç‰Á
+	@date 2004.02.28 genta å¼•æ•°warnbeepè¿½åŠ 
+	@date 2005.01.24 genta å¼•æ•°asknameè¿½åŠ 
 
 */
 bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 {
 	CEditDoc* pcDoc = GetDocument();
 
-	//ƒtƒ@ƒCƒ‹–¼‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Íu–¼‘O‚ğ•t‚¯‚Ä•Û‘¶v‚Ìƒtƒ[‚Ö‘JˆÚ
+	//ãƒ•ã‚¡ã‚¤ãƒ«åãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯ã€Œåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã€ã®ãƒ•ãƒ­ãƒ¼ã¸é·ç§»
 	if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		if( !askname )
-			return false;	// •Û‘¶‚µ‚È‚¢
+			return false;	// ä¿å­˜ã—ãªã„
 		return pcDoc->m_cDocFileOperation.FileSaveAs();
 	}
 
-	//ƒZ[ƒuî•ñ
+	//ã‚»ãƒ¼ãƒ–æƒ…å ±
 	SSaveInfo sSaveInfo;
 	pcDoc->GetSaveInfo(&sSaveInfo);
-	sSaveInfo.cEol = EOL_NONE; //‰üsƒR[ƒh–³•ÏŠ·
-	sSaveInfo.bOverwriteMode = true; //ã‘‚«—v‹
+	sSaveInfo.cEol = EOL_NONE; //æ”¹è¡Œã‚³ãƒ¼ãƒ‰ç„¡å¤‰æ›
+	sSaveInfo.bOverwriteMode = true; //ä¸Šæ›¸ãè¦æ±‚
 
-	//ã‘‚«ˆ—
+	//ä¸Šæ›¸ãå‡¦ç†
 	if(!warnbeep)CEditApp::getInstance()->m_cSoundSet.MuteOn();
 	bool bRet = pcDoc->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
 	if(!warnbeep)CEditApp::getInstance()->m_cSoundSet.MuteOff();
@@ -195,7 +195,7 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 
 
 
-/* –¼‘O‚ğ•t‚¯‚Ä•Û‘¶ƒ_ƒCƒAƒƒO */
+/* åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ãƒ€ã‚¤ã‚¢ãƒ­ã‚° */
 bool CViewCommander::Command_FILESAVEAS_DIALOG(const WCHAR* fileNameDef,ECodeType eCodeType, EEolType eEolType)
 {
 	return 	GetDocument()->m_cDocFileOperation.FileSaveAs(fileNameDef, eCodeType, eEolType, true);
@@ -203,8 +203,8 @@ bool CViewCommander::Command_FILESAVEAS_DIALOG(const WCHAR* fileNameDef,ECodeTyp
 
 
 
-/* –¼‘O‚ğ•t‚¯‚Ä•Û‘¶
-	filename‚Å•Û‘¶BNULL‚ÍŒµ‹ÖB
+/* åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜
+	filenameã§ä¿å­˜ã€‚NULLã¯å³ç¦ã€‚
 */
 BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType )
 {
@@ -213,14 +213,14 @@ BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolTyp
 
 
 
-/*!	‘S‚Äã‘‚«•Û‘¶
+/*!	å…¨ã¦ä¸Šæ›¸ãä¿å­˜
 
-	•ÒW’†‚Ì‘S‚Ä‚ÌƒEƒBƒ“ƒhƒE‚Åã‘‚«•Û‘¶‚ğs‚¤D
-	‚½‚¾‚µCã‘‚«•Û‘¶‚Ìw¦‚ğo‚·‚Ì‚İ‚ÅÀsŒ‹‰Ê‚ÌŠm”F‚Ís‚í‚È‚¢D
+	ç·¨é›†ä¸­ã®å…¨ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ä¸Šæ›¸ãä¿å­˜ã‚’è¡Œã†ï¼
+	ãŸã ã—ï¼Œä¸Šæ›¸ãä¿å­˜ã®æŒ‡ç¤ºã‚’å‡ºã™ã®ã¿ã§å®Ÿè¡Œçµæœã®ç¢ºèªã¯è¡Œã‚ãªã„ï¼
 
-	ã‘‚«‹Ö~‹y‚Ñƒtƒ@ƒCƒ‹–¼–¢İ’è‚ÌƒEƒBƒ“ƒhƒE‚Å‚Í‰½‚às‚í‚È‚¢D
+	ä¸Šæ›¸ãç¦æ­¢åŠã³ãƒ•ã‚¡ã‚¤ãƒ«åæœªè¨­å®šã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ã¯ä½•ã‚‚è¡Œã‚ãªã„ï¼
 
-	@date 2005.01.24 genta V‹Kì¬
+	@date 2005.01.24 genta æ–°è¦ä½œæˆ
 */
 BOOL CViewCommander::Command_FILESAVEALL( void )
 {
@@ -235,7 +235,7 @@ BOOL CViewCommander::Command_FILESAVEALL( void )
 
 
 
-/* •Â‚¶‚Ä(–³‘è) */	//Oct. 17, 2000 jepro uƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚év‚Æ‚¢‚¤ƒLƒƒƒvƒVƒ‡ƒ“‚ğ•ÏX
+/* é–‰ã˜ã¦(ç„¡é¡Œ) */	//Oct. 17, 2000 jepro ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹ã€ã¨ã„ã†ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã‚’å¤‰æ›´
 void CViewCommander::Command_FILECLOSE( void )
 {
 	GetDocument()->m_cDocFileOperation.FileClose();
@@ -243,16 +243,16 @@ void CViewCommander::Command_FILECLOSE( void )
 
 
 
-/*! @brief •Â‚¶‚ÄŠJ‚­
+/*! @brief é–‰ã˜ã¦é–‹ã
 
-	@date 2003.03.30 genta ŠJ‚­ƒ_ƒCƒAƒƒO‚ÅƒLƒƒƒ“ƒZƒ‹‚µ‚½‚Æ‚«Œ³‚Ìƒtƒ@ƒCƒ‹‚ªc‚é‚æ‚¤‚ÉB
-				‚Â‚¢‚Å‚ÉFILEOPEN‚Æ“¯‚¶‚æ‚¤‚Éˆø”‚ğ’Ç‰Á‚µ‚Ä‚¨‚­
+	@date 2003.03.30 genta é–‹ããƒ€ã‚¤ã‚¢ãƒ­ã‚°ã§ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ãŸã¨ãå…ƒã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ®‹ã‚‹ã‚ˆã†ã«ã€‚
+				ã¤ã„ã§ã«FILEOPENã¨åŒã˜ã‚ˆã†ã«å¼•æ•°ã‚’è¿½åŠ ã—ã¦ãŠã
 */
 void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCode, bool bViewMode )
 {
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(to_tchar(filename), nCharCode, bViewMode) );
 
-	//ƒvƒ‰ƒOƒCƒ“FDocumentOpenƒCƒxƒ“ƒgÀs
+	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ï¼šDocumentOpenã‚¤ãƒ™ãƒ³ãƒˆå®Ÿè¡Œ
 	CPlug::Array plugs;
 	CWSHIfObj::List params;
 	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
@@ -263,10 +263,10 @@ void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCo
 
 
 
-//! ƒtƒ@ƒCƒ‹‚ÌÄƒI[ƒvƒ“
+//! ãƒ•ã‚¡ã‚¤ãƒ«ã®å†ã‚ªãƒ¼ãƒ—ãƒ³
 void CViewCommander::Command_FILE_REOPEN(
-	ECodeType	nCharCode,	//!< [in] ŠJ‚«’¼‚·Û‚Ì•¶šƒR[ƒh
-	bool		bNoConfirm	//!< [in] ƒtƒ@ƒCƒ‹‚ªXV‚³‚ê‚½ê‡‚ÉŠm”F‚ğs‚íu‚È‚¢v‚©‚Ç‚¤‚©Btrue:Šm”F‚µ‚È‚¢ false:Šm”F‚·‚é
+	ECodeType	nCharCode,	//!< [in] é–‹ãç›´ã™éš›ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	bool		bNoConfirm	//!< [in] ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ›´æ–°ã•ã‚ŒãŸå ´åˆã«ç¢ºèªã‚’è¡Œã‚ã€Œãªã„ã€ã‹ã©ã†ã‹ã€‚true:ç¢ºèªã—ãªã„ false:ç¢ºèªã™ã‚‹
 )
 {
 	CEditDoc* pcDoc = GetDocument();
@@ -279,69 +279,69 @@ void CViewCommander::Command_FILE_REOPEN(
 			pcDoc->m_cDocFile.GetFilePath()
 		);
 		if( IDOK == nDlgResult ){
-			//Œp‘±B‰º‚Öi‚Ş
+			//ç¶™ç¶šã€‚ä¸‹ã¸é€²ã‚€
 		}else{
-			return; //’†’f
+			return; //ä¸­æ–­
 		}
 	}
 
-	// “¯ˆêƒtƒ@ƒCƒ‹‚ÌÄƒI[ƒvƒ“
+	// åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã®å†ã‚ªãƒ¼ãƒ—ãƒ³
 	pcDoc->m_cDocFileOperation.ReloadCurrentFile( nCharCode );
 }
 
 
 
-/* ˆóü */
+/* å°åˆ· */
 void CViewCommander::Command_PRINT( void )
 {
-	// g‚Á‚Ä‚¢‚È‚¢ˆ—‚ğíœ 2003.05.04 ‚©‚ë‚Æ
+	// ä½¿ã£ã¦ã„ãªã„å‡¦ç†ã‚’å‰Šé™¤ 2003.05.04 ã‹ã‚ã¨
 	Command_PRINT_PREVIEW();
 
-	/* ˆóüÀs */
+	/* å°åˆ·å®Ÿè¡Œ */
 	GetEditWindow()->m_pPrintPreview->OnPrint();
 }
 
 
 
-/* ˆóüƒvƒŒƒrƒ…[ */
+/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ */
 void CViewCommander::Command_PRINT_PREVIEW( void )
 {
-	/* ˆóüƒvƒŒƒrƒ…[ƒ‚[ƒh‚ÌƒIƒ“/ƒIƒt */
+	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã®ã‚ªãƒ³/ã‚ªãƒ• */
 	GetEditWindow()->PrintPreviewModeONOFF();
 	return;
 }
 
 
 
-/* ˆóü‚Ìƒy[ƒWƒŒƒCƒAƒEƒg‚Ìİ’è */
+/* å°åˆ·ã®ãƒšãƒ¼ã‚¸ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®è¨­å®š */
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
-	/* ˆóüƒy[ƒWİ’è */
+	/* å°åˆ·ãƒšãƒ¼ã‚¸è¨­å®š */
 	GetEditWindow()->OnPrintPageSetting();
 	return;
 }
 
 
 
-//From Here Feb. 10, 2001 JEPRO ’Ç‰Á
-/* C/C++ƒwƒbƒ_ƒtƒ@ƒCƒ‹‚Ü‚½‚Íƒ\[ƒXƒtƒ@ƒCƒ‹ ƒI[ƒvƒ“‹@”\ */
+//From Here Feb. 10, 2001 JEPRO è¿½åŠ 
+/* C/C++ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«ã¾ãŸã¯ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ« ã‚ªãƒ¼ãƒ—ãƒ³æ©Ÿèƒ½ */
 BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
 	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
 	if ( Command_OPEN_CCPP( bCheckOnly, FALSE ) )	return TRUE;
 	ErrorBeep();
 	return FALSE;
-// 2002/03/24 YAZAKI ƒR[ƒh‚Ìd•¡‚ğíŒ¸
-// 2003.06.28 Moca ƒRƒƒ“ƒg‚Æ‚µ‚Äc‚Á‚Ä‚¢‚½ƒR[ƒh‚ğíœ
+// 2002/03/24 YAZAKI ã‚³ãƒ¼ãƒ‰ã®é‡è¤‡ã‚’å‰Šæ¸›
+// 2003.06.28 Moca ã‚³ãƒ¡ãƒ³ãƒˆã¨ã—ã¦æ®‹ã£ã¦ã„ãŸã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤
 }
 
 
 
-/* C/C++ƒwƒbƒ_ƒtƒ@ƒCƒ‹ ƒI[ƒvƒ“‹@”\ */		//Feb. 10, 2001 jepro	à–¾‚ğuƒCƒ“ƒNƒ‹[ƒhƒtƒ@ƒCƒ‹v‚©‚ç•ÏX
+/* C/C++ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ« ã‚ªãƒ¼ãƒ—ãƒ³æ©Ÿèƒ½ */		//Feb. 10, 2001 jepro	èª¬æ˜ã‚’ã€Œã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«ã€ã‹ã‚‰å¤‰æ›´
 //BOOL CViewCommander::Command_OPENINCLUDEFILE( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ƒwƒbƒ_Eƒ\[ƒX‚ÌƒR[ƒh‚ğ“‡•íœ
+	// 2003.06.28 Moca ãƒ˜ãƒƒãƒ€ãƒ»ã‚½ãƒ¼ã‚¹ã®ã‚³ãƒ¼ãƒ‰ã‚’çµ±åˆï¼†å‰Šé™¤
 	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
 	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
@@ -352,11 +352,11 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 
 
-/* C/C++ƒ\[ƒXƒtƒ@ƒCƒ‹ ƒI[ƒvƒ“‹@”\ */
-//BOOL CViewCommander::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	ƒRƒ}ƒ“ƒh–¼‚ğáŠ±•ÏX
+/* C/C++ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ« ã‚ªãƒ¼ãƒ—ãƒ³æ©Ÿèƒ½ */
+//BOOL CViewCommander::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	ã‚³ãƒãƒ³ãƒ‰åã‚’è‹¥å¹²å¤‰æ›´
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ƒwƒbƒ_Eƒ\[ƒX‚ÌƒR[ƒh‚ğ“‡•íœ
+	// 2003.06.28 Moca ãƒ˜ãƒƒãƒ€ãƒ»ã‚½ãƒ¼ã‚¹ã®ã‚³ãƒ¼ãƒ‰ã‚’çµ±åˆï¼†å‰Šé™¤
 	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
 	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
@@ -367,24 +367,24 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 
 
 
-/* Oracle SQL*Plus‚ğƒAƒNƒeƒBƒu•\¦ */
+/* Oracle SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤º */
 void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 {
 	HWND		hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plus‚ğƒAƒNƒeƒBƒu•\¦‚µ‚Ü‚·B\n\n\nOracle SQL*Plus‚ª‹N“®‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB\n"
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤ºã—ã¾ã™ã€‚\n\n\nOracle SQL*PlusãŒèµ·å‹•ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚\n"
 		return;
 	}
-	/* Oracle SQL*Plus‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
-	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+	/* Oracle SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
+	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 	ActivateFrameWindow( hwndSQLPLUS );
 	return;
 }
 
 
 
-/* Oracle SQL*Plus‚ÅÀs */
+/* Oracle SQL*Plusã§å®Ÿè¡Œ */
 void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 {
 //	HGLOBAL		hgClip;
@@ -397,10 +397,10 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plus‚ÅÀs‚µ‚Ü‚·B\n\n\nOracle SQL*Plus‚ª‹N“®‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB\n"
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusã§å®Ÿè¡Œã—ã¾ã™ã€‚\n\n\nOracle SQL*PlusãŒèµ·å‹•ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚\n"
 		return;
 	}
-	/* ƒeƒLƒXƒg‚ª•ÏX‚³‚ê‚Ä‚¢‚éê‡ */
+	/* ãƒ†ã‚­ã‚¹ãƒˆãŒå¤‰æ›´ã•ã‚Œã¦ã„ã‚‹å ´åˆ */
 	if( GetDocument()->m_cDocEditor.IsModified() ){
 		nRet = ::MYMESSAGEBOX(
 			m_pCommanderView->GetHwnd(),
@@ -430,21 +430,21 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		}
 	}
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		/* ƒtƒ@ƒCƒ‹ƒpƒX‚É‹ó”’‚ªŠÜ‚Ü‚ê‚Ä‚¢‚éê‡‚Íƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“‚ÅˆÍ‚Ş */
-		//	2003.10.20 MIK ƒR[ƒhŠÈ—ª‰»
+		/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã«ç©ºç™½ãŒå«ã¾ã‚Œã¦ã„ã‚‹å ´åˆã¯ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ã§å›²ã‚€ */
+		//	2003.10.20 MIK ã‚³ãƒ¼ãƒ‰ç°¡ç•¥åŒ–
 		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
 			auto_sprintf( szPath, _T("@\"%ts\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
 			auto_sprintf( szPath, _T("@%ts\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}
-		/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^‚ğİ’è */
+		/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š */
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
 
-		/* Oracle SQL*Plus‚ğƒAƒNƒeƒBƒu‚É‚·‚é */
-		/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+		/* Oracle SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
+		/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 		ActivateFrameWindow( hwndSQLPLUS );
 
-		/* Oracle SQL*Plus‚Éƒy[ƒXƒg‚ÌƒRƒ}ƒ“ƒh‚ğ‘—‚é */
+		/* Oracle SQL*Plusã«ãƒšãƒ¼ã‚¹ãƒˆã®ã‚³ãƒãƒ³ãƒ‰ã‚’é€ã‚‹ */
 		DWORD_PTR	dwResult;
 		bResult = ::SendMessageTimeout(
 			hwndSQLPLUS,
@@ -468,7 +468,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 
 
 
-/* ƒuƒ‰ƒEƒY */
+/* ãƒ–ãƒ©ã‚¦ã‚º */
 void CViewCommander::Command_BROWSE( void )
 {
 	if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -477,7 +477,7 @@ void CViewCommander::Command_BROWSE( void )
 	}
 //	char	szURL[MAX_PATH + 64];
 //	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
-	/* URL‚ğŠJ‚­ */
+	/* URLã‚’é–‹ã */
 //	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
     SHELLEXECUTEINFO info; 
@@ -503,41 +503,41 @@ void CViewCommander::Command_BROWSE( void )
 
 
 
-/* ƒrƒ…[ƒ‚[ƒh */
+/* ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ */
 void CViewCommander::Command_VIEWMODE( void )
 {
-	//ƒrƒ…[ƒ‚[ƒh‚ğ”½“]
+	//ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‚’åè»¢
 	CAppMode::getInstance()->SetViewMode(!CAppMode::getInstance()->IsViewMode());
 
-	// ”r‘¼§Œä‚ÌØ‚è‘Ö‚¦
-	// ¦ƒrƒ…[ƒ‚[ƒh ON ‚Í”r‘¼§Œä OFFAƒrƒ…[ƒ‚[ƒh OFF ‚Í”r‘¼§Œä ON ‚Ìd—li>>data:5262j‚ğ‘¦”½‰f‚·‚é
-	GetDocument()->m_cDocFileOperation.DoFileUnlock();	// ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN‰ğœ
-	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::getInstance()->IsViewMode());	// ƒtƒ@ƒCƒ‹‘‰Â”\‚Ìƒ`ƒFƒbƒN
+	// æ’ä»–åˆ¶å¾¡ã®åˆ‡ã‚Šæ›¿ãˆ
+	// â€»ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ ON æ™‚ã¯æ’ä»–åˆ¶å¾¡ OFFã€ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ OFF æ™‚ã¯æ’ä»–åˆ¶å¾¡ ON ã®ä»•æ§˜ï¼ˆ>>data:5262ï¼‰ã‚’å³æ™‚åæ˜ ã™ã‚‹
+	GetDocument()->m_cDocFileOperation.DoFileUnlock();	// ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–ãƒ­ãƒƒã‚¯è§£é™¤
+	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::getInstance()->IsViewMode());	// ãƒ•ã‚¡ã‚¤ãƒ«æ›¸è¾¼å¯èƒ½ã®ãƒã‚§ãƒƒã‚¯
 	if( GetDocument()->m_cDocLocker.IsDocWritable() ){
-		GetDocument()->m_cDocFileOperation.DoFileLock();	// ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN
+		GetDocument()->m_cDocFileOperation.DoFileLock();	// ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–ãƒ­ãƒƒã‚¯
 	}
 
-	// eƒEƒBƒ“ƒhƒE‚Ìƒ^ƒCƒgƒ‹‚ğXV
+	// è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¿ã‚¤ãƒˆãƒ«ã‚’æ›´æ–°
 	GetEditWindow()->UpdateCaption();
 }
 
 
 
-/* ƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒB */
+/* ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ */
 void CViewCommander::Command_PROPERTY_FILE( void )
 {
 #ifdef _DEBUG
 	{
-		/* ‘Ssƒf[ƒ^‚ğ•Ô‚·ƒeƒXƒg */
+		/* å…¨è¡Œãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™ãƒ†ã‚¹ãƒˆ */
 		wchar_t*	pDataAll;
 		int		nDataAllLen;
-		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE ‘Ssƒf[ƒ^‚ğ•Ô‚·ƒeƒXƒg" );
+		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE å…¨è¡Œãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™ãƒ†ã‚¹ãƒˆ" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
-//		MYTRACE( _T("‘Sƒf[ƒ^æ“¾             (%dƒoƒCƒg) Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( _T("å…¨ãƒ‡ãƒ¼ã‚¿å–å¾—             (%dãƒã‚¤ãƒˆ) æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
 		pDataAll = NULL;
-//		MYTRACE( _T("‘Sƒf[ƒ^æ“¾‚Ìƒƒ‚ƒŠŠJ•ú (%dƒoƒCƒg) Š—vŠÔ(ƒ~ƒŠ•b) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( _T("å…¨ãƒ‡ãƒ¼ã‚¿å–å¾—ã®ãƒ¡ãƒ¢ãƒªé–‹æ”¾ (%dãƒã‚¤ãƒˆ) æ‰€è¦æ™‚é–“(ãƒŸãƒªç§’) = %d\n"), nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
 
@@ -564,7 +564,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 	}
 }
 
-/* •ÒW‚Ì‘SI—¹ */	// 2007.02.13 ryoji ’Ç‰Á
+/* ç·¨é›†ã®å…¨çµ‚äº† */	// 2007.02.13 ryoji è¿½åŠ 
 void CViewCommander::Command_EXITALLEDITORS( void )
 {
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), TRUE, 0 );
@@ -573,33 +573,33 @@ void CViewCommander::Command_EXITALLEDITORS( void )
 
 
 
-/* ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹ */	//Dec. 27, 2000 JEPRO ’Ç‰Á
+/* ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº† */	//Dec. 27, 2000 JEPRO è¿½åŠ 
 void CViewCommander::Command_EXITALL( void )
 {
-	CControlTray::TerminateApplication( GetMainWindow() );	// 2006.12.25 ryoji ˆø”’Ç‰Á
+	CControlTray::TerminateApplication( GetMainWindow() );	// 2006.12.25 ryoji å¼•æ•°è¿½åŠ 
 	return;
 }
 
 
 
-/*!	@brief •ÒW’†‚Ì“à—e‚ğ•Ê–¼•Û‘¶
+/*!	@brief ç·¨é›†ä¸­ã®å†…å®¹ã‚’åˆ¥åä¿å­˜
 
-	å‚É•ÒW’†‚Ìˆêƒtƒ@ƒCƒ‹o—Í‚È‚Ç‚Ì–Ú“I‚Ég—p‚·‚éD
-	Œ»İŠJ‚¢‚Ä‚¢‚éƒtƒ@ƒCƒ‹(m_szFilePath)‚É‚Í‰e‹¿‚µ‚È‚¢D
+	ä¸»ã«ç·¨é›†ä¸­ã®ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›ãªã©ã®ç›®çš„ã«ä½¿ç”¨ã™ã‚‹ï¼
+	ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«(m_szFilePath)ã«ã¯å½±éŸ¿ã—ãªã„ï¼
 
-	@retval	TRUE ³íI—¹
-	@retval	FALSE ƒtƒ@ƒCƒ‹ì¬‚É¸”s
+	@retval	TRUE æ­£å¸¸çµ‚äº†
+	@retval	FALSE ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆã«å¤±æ•—
 
 	@author	maru
-	@date	2006.12.10 maru V‹Kì¬
+	@date	2006.12.10 maru æ–°è¦ä½œæˆ
 */
 BOOL CViewCommander::Command_PUTFILE(
-	LPCWSTR		filename,	//!< [in] filename o—Íƒtƒ@ƒCƒ‹–¼
-	ECodeType	nCharCode,	//!< [in] nCharCode •¶šƒR[ƒhw’è
-							//!<  @li CODE_xxxxxxxxxx:Šeí•¶šƒR[ƒh
-							//!<  @li CODE_AUTODETECT:Œ»İ‚Ì•¶šƒR[ƒh‚ğˆÛ
-	int			nFlgOpt		//!< [in] nFlgOpt “®ìƒIƒvƒVƒ‡ƒ“
-							//!<  @li 0x01:‘I‘ğ”ÍˆÍ‚ğo—Í (”ñ‘I‘ğó‘Ô‚Å‚à‹óƒtƒ@ƒCƒ‹‚ğo—Í‚·‚é)
+	LPCWSTR		filename,	//!< [in] filename å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
+	ECodeType	nCharCode,	//!< [in] nCharCode æ–‡å­—ã‚³ãƒ¼ãƒ‰æŒ‡å®š
+							//!<  @li CODE_xxxxxxxxxx:å„ç¨®æ–‡å­—ã‚³ãƒ¼ãƒ‰
+							//!<  @li CODE_AUTODETECT:ç¾åœ¨ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’ç¶­æŒ
+	int			nFlgOpt		//!< [in] nFlgOpt å‹•ä½œã‚ªãƒ—ã‚·ãƒ§ãƒ³
+							//!<  @li 0x01:é¸æŠç¯„å›²ã‚’å‡ºåŠ› (éé¸æŠçŠ¶æ…‹ã§ã‚‚ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‡ºåŠ›ã™ã‚‹)
 )
 {
 	BOOL		bResult = TRUE;
@@ -610,7 +610,7 @@ BOOL CViewCommander::Command_PUTFILE(
 
 	if(nSaveCharCode == CODE_AUTODETECT) nSaveCharCode = GetDocument()->GetDocumentEncoding();
 
-	//	2007.09.08 genta CEditDoc::FileWrite()‚É‚È‚ç‚Á‚Ä»ŒvƒJ[ƒ\ƒ‹
+	//	2007.09.08 genta CEditDoc::FileWrite()ã«ãªã‚‰ã£ã¦ç ‚æ™‚è¨ˆã‚«ãƒ¼ã‚½ãƒ«
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
 	std::auto_ptr<CCodeBase> pcSaveCode( CCodeFactory::CreateCodeBase(nSaveCharCode,0) );
@@ -621,16 +621,16 @@ BOOL CViewCommander::Command_PUTFILE(
 	}
 
 	if(nFlgOpt & 0x01)
-	{	/* ‘I‘ğ”ÍˆÍ‚ğo—Í */
+	{	/* é¸æŠç¯„å›²ã‚’å‡ºåŠ› */
 		try
 		{
 			CBinaryOutputStream out(to_tchar(filename),true);
 
-			// ‘I‘ğ”ÍˆÍ‚Ìæ“¾ -> cMem
+			// é¸æŠç¯„å›²ã®å–å¾— -> cMem
 			CNativeW cMem;
 			m_pCommanderView->GetSelectedDataSimple(cMem);
 
-			// BOM’Ç‰Á
+			// BOMè¿½åŠ 
 			CNativeW cMem2;
 			const CNativeW* pConvBuffer;
 			if( bBom ){
@@ -645,11 +645,11 @@ BOOL CViewCommander::Command_PUTFILE(
 				pConvBuffer = &cMem;
 			}
 
-			// ‘‚«‚İ‚ÌƒR[ƒh•ÏŠ· -> cDst
+			// æ›¸ãè¾¼ã¿æ™‚ã®ã‚³ãƒ¼ãƒ‰å¤‰æ› -> cDst
 			CMemory cDst;
 			pcSaveCode->UnicodeToCode(*pConvBuffer, &cDst);
 
-			//‘
+			//æ›¸è¾¼
 			if( 0 < cDst.GetRawLength() )
 				out.Write(cDst.GetRawPtr(),cDst.GetRawLength());
 		}
@@ -671,7 +671,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			bResult = FALSE;
 		}
 	}
-	else {	/* ƒtƒ@ƒCƒ‹‘S‘Ì‚ğo—Í */
+	else {	/* ãƒ•ã‚¡ã‚¤ãƒ«å…¨ä½“ã‚’å‡ºåŠ› */
 		HWND		hwndProgress;
 		CEditWnd*	pCEditWnd = GetEditWindow();
 
@@ -684,7 +684,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
 
-		// ˆêƒtƒ@ƒCƒ‹o—Í
+		// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›
 		EConvertResult eRet = CWriteManager().WriteFile_From_CDocLineMgr(
 			GetDocument()->m_cDocLineMgr,
 			SSaveInfo(
@@ -703,21 +703,21 @@ BOOL CViewCommander::Command_PUTFILE(
 
 
 
-/*!	@brief ƒJ[ƒ\ƒ‹ˆÊ’u‚Éƒtƒ@ƒCƒ‹‚ğ‘}“ü
+/*!	@brief ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒ¿å…¥
 
-	Œ»İ‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚Éw’è‚Ìƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ŞD
+	ç¾åœ¨ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã«æŒ‡å®šã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ï¼
 
-	@param[in] filename “ü—Íƒtƒ@ƒCƒ‹–¼
-	@param[in] nCharCode •¶šƒR[ƒhw’è
-		@li	CODE_xxxxxxxxxx:Šeí•¶šƒR[ƒh
-		@li	CODE_AUTODETECT:‘O‰ñ•¶šƒR[ƒh‚à‚µ‚­‚Í©“®”»•Ê‚ÌŒ‹‰Ê‚É‚æ‚é
-	@param[in] nFlgOpt “®ìƒIƒvƒVƒ‡ƒ“iŒ»İ‚Í–¢’è‹`D0‚ğw’è‚Ì‚±‚Æj
+	@param[in] filename å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param[in] nCharCode æ–‡å­—ã‚³ãƒ¼ãƒ‰æŒ‡å®š
+		@li	CODE_xxxxxxxxxx:å„ç¨®æ–‡å­—ã‚³ãƒ¼ãƒ‰
+		@li	CODE_AUTODETECT:å‰å›æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚‚ã—ãã¯è‡ªå‹•åˆ¤åˆ¥ã®çµæœã«ã‚ˆã‚‹
+	@param[in] nFlgOpt å‹•ä½œã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼ˆç¾åœ¨ã¯æœªå®šç¾©ï¼0ã‚’æŒ‡å®šã®ã“ã¨ï¼‰
 
-	@retval	TRUE ³íI—¹
-	@retval	FALSE ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“‚É¸”s
+	@retval	TRUE æ­£å¸¸çµ‚äº†
+	@retval	FALSE ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ã«å¤±æ•—
 
 	@author	maru
-	@date	2006.12.10 maru V‹Kì¬
+	@date	2006.12.10 maru æ–°è¦ä½œæˆ
 */
 BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int nFlgOpt )
 {
@@ -735,10 +735,10 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		return FALSE;
 	}
 
-	//	2007.09.08 genta CEditDoc::FileLoad()‚É‚È‚ç‚Á‚Ä»ŒvƒJ[ƒ\ƒ‹
+	//	2007.09.08 genta CEditDoc::FileLoad()ã«ãªã‚‰ã£ã¦ç ‚æ™‚è¨ˆã‚«ãƒ¼ã‚½ãƒ«
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
-	// ”ÍˆÍ‘I‘ğ’†‚È‚ç‘}“üŒã‚à‘I‘ğó‘Ô‚É‚·‚é‚½‚ß	/* 2007.04.29 maru */
+	// ç¯„å›²é¸æŠä¸­ãªã‚‰æŒ¿å…¥å¾Œã‚‚é¸æŠçŠ¶æ…‹ã«ã™ã‚‹ãŸã‚	/* 2007.04.29 maru */
 	BOOL	bBeforeTextSelected = m_pCommanderView->GetSelectionInfo().IsTextSelected();
 	CLayoutPoint ptFrom;
 	if (bBeforeTextSelected){
@@ -757,7 +757,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		}
 	}
 
-	/* ‚±‚±‚Ü‚Å‚«‚Ä•¶šƒR[ƒh‚ªŒˆ’è‚µ‚È‚¢‚È‚ç‚Ç‚±‚©‚¨‚©‚µ‚¢ */
+	/* ã“ã“ã¾ã§ãã¦æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒæ±ºå®šã—ãªã„ãªã‚‰ã©ã“ã‹ãŠã‹ã—ã„ */
 	if( !IsValidCodeOrCPType(nSaveCharCode) ) nSaveCharCode = CODE_SJIS;
 
 	try{
@@ -767,10 +767,10 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 #else
 		bBigFile = false;
 #endif
-		// ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+		// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 		cfl.FileOpen( to_tchar(filename), bBigFile, nSaveCharCode, 0 );
 
-		/* ƒtƒ@ƒCƒ‹ƒTƒCƒY‚ª65KB‚ğ‰z‚¦‚½‚çi’»ƒ_ƒCƒAƒƒO•\¦ */
+		/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãŒ65KBã‚’è¶ŠãˆãŸã‚‰é€²æ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤º */
 		if ( 0x10000 < cfl.GetFileSize() ) {
 			pcDlgCancel = new CDlgCancel;
 			if( NULL != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
@@ -780,8 +780,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			}
 		}
 
-		// ReadLine‚Íƒtƒ@ƒCƒ‹‚©‚ç •¶šƒR[ƒh•ÏŠ·‚³‚ê‚½1s‚ğ“Ç‚İo‚µ‚Ü‚·
-		// ƒGƒ‰[‚Íthrow CError_FileRead ‚ğ“Š‚°‚Ü‚·
+		// ReadLineã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ æ–‡å­—ã‚³ãƒ¼ãƒ‰å¤‰æ›ã•ã‚ŒãŸ1è¡Œã‚’èª­ã¿å‡ºã—ã¾ã™
+		// ã‚¨ãƒ©ãƒ¼æ™‚ã¯throw CError_FileRead ã‚’æŠ•ã’ã¾ã™
 		CNativeW cBuf;
 		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
 
@@ -791,15 +791,15 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			++nLineNum;
 			Command_INSTEXT( false, pLine, CLogicInt(nLineLen), true);
 
-			/* i’»ƒ_ƒCƒAƒƒO—L–³ */
+			/* é€²æ—ãƒ€ã‚¤ã‚¢ãƒ­ã‚°æœ‰ç„¡ */
 			if( NULL == pcDlgCancel ){
 				continue;
 			}
-			/* ˆ—’†‚Ìƒ†[ƒU[‘€ì‚ğ‰Â”\‚É‚·‚é */
+			/* å‡¦ç†ä¸­ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æ“ä½œã‚’å¯èƒ½ã«ã™ã‚‹ */
 			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 				break;
 			}
-			/* ’†’fƒ{ƒ^ƒ“‰Ÿ‰ºƒ`ƒFƒbƒN */
+			/* ä¸­æ–­ãƒœã‚¿ãƒ³æŠ¼ä¸‹ãƒã‚§ãƒƒã‚¯ */
 			if( pcDlgCancel->IsCanceled() ){
 				break;
 			}
@@ -812,7 +812,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 				m_pCommanderView->Redraw();
 			}
 		}
-		// ƒtƒ@ƒCƒ‹‚ğ–¾¦“I‚É•Â‚¶‚é‚ªA‚±‚±‚Å•Â‚¶‚È‚¢‚Æ‚«‚ÍƒfƒXƒgƒ‰ƒNƒ^‚Å•Â‚¶‚Ä‚¢‚é
+		// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ˜ç¤ºçš„ã«é–‰ã˜ã‚‹ãŒã€ã“ã“ã§é–‰ã˜ãªã„ã¨ãã¯ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§é–‰ã˜ã¦ã„ã‚‹
 		cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
@@ -822,11 +822,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	catch( CError_FileRead ){
 		WarningMessage( NULL, LS(STR_ERR_DLGEDITVWCMDNW12) );
 		bResult = FALSE;
-	} // —áŠOˆ—I‚í‚è
+	} // ä¾‹å¤–å‡¦ç†çµ‚ã‚ã‚Š
 
 	delete pcDlgCancel;
 
-	if (bBeforeTextSelected){	// ‘}“ü‚³‚ê‚½•”•ª‚ğ‘I‘ğó‘Ô‚É
+	if (bBeforeTextSelected){	// æŒ¿å…¥ã•ã‚ŒãŸéƒ¨åˆ†ã‚’é¸æŠçŠ¶æ…‹ã«
 		m_pCommanderView->GetSelectionInfo().SetSelectArea(
 			CLayoutRange(
 				ptFrom,

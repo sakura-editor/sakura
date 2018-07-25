@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,10 +31,10 @@ public:
 	CBinaryInputStream(LPCTSTR tszFilePath);
 
 public:
-	//! ƒXƒgƒŠ[ƒ€‚Ìuc‚èvƒTƒCƒY‚ğæ“¾
+	//! ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®ã€Œæ®‹ã‚Šã€ã‚µã‚¤ã‚ºã‚’å–å¾—
 	int GetLength();
 
-	//! ƒf[ƒ^‚ğ–³•ÏŠ·‚Å“Ç‚İ‚ŞB–ß‚è’l‚Í“Ç‚İ‚ñ‚¾ƒoƒCƒg”B
+	//! ãƒ‡ãƒ¼ã‚¿ã‚’ç„¡å¤‰æ›ã§èª­ã¿è¾¼ã‚€ã€‚æˆ»ã‚Šå€¤ã¯èª­ã¿è¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°ã€‚
 	int Read(void* pBuffer, int nSizeInBytes);
 };
 

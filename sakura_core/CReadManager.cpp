@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,13 +31,13 @@
 #include "util/window.h"
 
 /*!
-	�t�@�C����ǂݍ���Ŋi�[����i�����ǂݍ��݃e�X�g�Łj
+	ファイルを読み込んで格納する（分割読み込みテスト版）
 	@version	2.0
-	@note	Windows�p�ɃR�[�f�B���O���Ă���
-	@retval	TRUE	����ǂݍ���
-	@retval	FALSE	�G���[(�܂��̓��[�U�ɂ��L�����Z��?)
-	@date	2002/08/30 Moca ��ReadFile�����ɍ쐬 �t�@�C���A�N�Z�X�Ɋւ��镔����CFileLoad�ōs��
-	@date	2003/07/26 ryoji BOM�̏�Ԃ̎擾��ǉ�
+	@note	Windows用にコーディングしてある
+	@retval	TRUE	正常読み込み
+	@retval	FALSE	エラー(またはユーザによるキャンセル?)
+	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
+	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
 EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	CDocLineMgr*		pcDocLineMgr,	//!< [out]
@@ -47,7 +47,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 {
 	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
 
-	// �����R�[�h���
+	// 文字コード種別
 	const STypeConfigMini* type;
 	CDocTypeManager().GetTypeConfigMini( sLoadInfo.nType, &type );
 	ECodeType	eCharCode = sLoadInfo.eCharCode;
@@ -56,21 +56,21 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
 	if (!IsValidCodeOrCPType( eCharCode )) {
-		eCharCode = type->m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji �f�t�H���g�����R�[�h
+		eCharCode = type->m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
 	bool	bBom;
 	if (eCharCode == type->m_encoding.m_eDefaultCodetype) {
-		bBom = type->m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji �f�t�H���gBOM
+		bBom = type->m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 	}
 	else{
 		bBom = CCodeTypeName( eCharCode ).IsBomDefOn();
 	}
 	pFileInfo->SetCodeSet( eCharCode, bBom );
 
-	/* �����f�[�^�̃N���A */
+	/* 既存データのクリア */
 	pcDocLineMgr->DeleteAllLine();
 
-	/* �������̃��[�U�[������\�ɂ��� */
+	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
 		return RESULT_FAILURE; //######INTERRUPT
 	}
@@ -86,20 +86,20 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 #else
 		bBigFile = false;
 #endif
-		// �t�@�C�����J��
-		// �t�@�C�������ɂ�FileClose�����o���̓f�X�g���N�^�̂ǂ��炩�ŏ����ł��܂�
-		//	Jul. 28, 2003 ryoji BOM�p�����[�^�ǉ�
+		// ファイルを開く
+		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
+		//	Jul. 28, 2003 ryoji BOMパラメータ追加
 		cfl.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
 		pFileInfo->SetBomExist( bBom );
 
-		/* �t�@�C�������̎擾 */
+		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
 		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
 			pFileInfo->SetFileTime( FileTime );
 		}
 
-		// ReadLine�̓t�@�C������ �����R�[�h�ϊ����ꂽ1�s��ǂݏo���܂�
-		// �G���[����throw CError_FileRead �𓊂��܂�
+		// ReadLineはファイルから 文字コード変換された1行を読み出します
+		// エラー時はthrow CError_FileRead を投げます
 		int				nLineNum = 0;
 		CEol			cEol;
 		CNativeW		cUnicodeBuffer;
@@ -112,35 +112,35 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			int		nLineLen = cUnicodeBuffer.GetStringLength();
 			++nLineNum;
 			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
-			//�o�ߒʒm
+			//経過通知
 			if(nLineNum%512==0){
 				NotifyProgress(cfl.GetPercent());
-				// �������̃��[�U�[������\�ɂ���
+				// 処理中のユーザー操作を可能にする
 				if( !::BlockingHook( NULL ) ){
-					throw CAppExitException(); //���f���o
+					throw CAppExitException(); //中断検出
 				}
 			}
 		}
 
-		// �t�@�C�����N���[�Y����
+		// ファイルをクローズする
 		cfl.FileClose();
 	}
 	catch(CAppExitException){
-		//WM_QUIT����������
+		//WM_QUITが発生した
 		return RESULT_FAILURE;
 	}
 	catch( CError_FileOpen ){
 		eRet = RESULT_FAILURE;
 		if( !fexist( pszPath )){
-			// �t�@�C�����Ȃ�
+			// ファイルがない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_ERR_DLGDOCLM1),	//Mar. 24, 2001 jepro �኱�C��
+				LS(STR_ERR_DLGDOCLM1),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
 		}
 		else if( -1 == _taccess( pszPath, 4 )){
-			// �ǂݍ��݃A�N�Z�X�����Ȃ�
+			// 読み込みアクセス権がない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_ERR_DLGDOCLM2),
@@ -162,17 +162,17 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			LS(STR_ERR_DLGDOCLM4),
 			pszPath
 		 );
-		/* �����f�[�^�̃N���A */
+		/* 既存データのクリア */
 		pcDocLineMgr->DeleteAllLine();
-	} // ��O�����I���
+	} // 例外処理終わり
 
 	NotifyProgress(0);
-	/* �������̃��[�U�[������\�ɂ��� */
+	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
 		return RESULT_FAILURE; //####INTERRUPT
 	}
 
-	/* �s�ύX��Ԃ����ׂă��Z�b�g */
+	/* 行変更状態をすべてリセット */
 //	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
 	return eRet;
 }

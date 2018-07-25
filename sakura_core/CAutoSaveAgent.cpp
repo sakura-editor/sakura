@@ -1,5 +1,5 @@
-/*! @file
-	@brief ƒtƒ@ƒCƒ‹‚Ì©“®•Û‘¶
+ï»¿/*! @file
+	@brief ãƒ•ã‚¡ã‚¤ãƒ«ã®è‡ªå‹•ä¿å­˜
 
 	@author genta
 	@date 2000
@@ -39,31 +39,31 @@
 
 //	From Here Aug. 21, 2000 genta
 //
-//	©“®•Û‘¶‚ğs‚¤‚©‚Ç‚¤‚©‚Ìƒ`ƒFƒbƒN
+//	è‡ªå‹•ä¿å­˜ã‚’è¡Œã†ã‹ã©ã†ã‹ã®ãƒã‚§ãƒƒã‚¯
 //
 void CAutoSaveAgent::CheckAutoSave()
 {
 	if( m_cPassiveTimer.CheckAction() ){
 		CEditDoc* pcDoc = GetListeningDoc();
 
-		//	ã‘‚«•Û‘¶
+		//	ä¸Šæ›¸ãä¿å­˜
 
-		if( !pcDoc->m_cDocEditor.IsModified() )	//	•ÏX–³‚µ‚È‚ç‰½‚à‚µ‚È‚¢
-			return;				//	‚±‚±‚Å‚ÍCu–³•ÏX‚Å‚à•Û‘¶v‚Í–³‹‚·‚é
+		if( !pcDoc->m_cDocEditor.IsModified() )	//	å¤‰æ›´ç„¡ã—ãªã‚‰ä½•ã‚‚ã—ãªã„
+			return;				//	ã“ã“ã§ã¯ï¼Œã€Œç„¡å¤‰æ›´ã§ã‚‚ä¿å­˜ã€ã¯ç„¡è¦–ã™ã‚‹
 
-		//	2003.10.09 zenryaku •Û‘¶¸”sƒGƒ‰[‚Ì—}§
-		if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() )	//	‚Ü‚¾ƒtƒ@ƒCƒ‹–¼‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î•Û‘¶‚µ‚È‚¢
+		//	2003.10.09 zenryaku ä¿å­˜å¤±æ•—ã‚¨ãƒ©ãƒ¼ã®æŠ‘åˆ¶
+		if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() )	//	ã¾ã ãƒ•ã‚¡ã‚¤ãƒ«åãŒè¨­å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ä¿å­˜ã—ãªã„
 			return;
 
 		bool en = m_cPassiveTimer.IsEnabled();
-		m_cPassiveTimer.Enable(false);	//	2dŒÄ‚Ño‚µ‚ğ–h‚®‚½‚ß
-		pcDoc->m_cDocFileOperation.FileSave();	//	•Û‘¶
+		m_cPassiveTimer.Enable(false);	//	2é‡å‘¼ã³å‡ºã—ã‚’é˜²ããŸã‚
+		pcDoc->m_cDocFileOperation.FileSave();	//	ä¿å­˜
 		m_cPassiveTimer.Enable(en);
 	}
 }
 
 //
-//	İ’è•ÏX‚ğ©“®•Û‘¶“®ì‚É”½‰f‚·‚é
+//	è¨­å®šå¤‰æ›´ã‚’è‡ªå‹•ä¿å­˜å‹•ä½œã«åæ˜ ã™ã‚‹
 //
 void CAutoSaveAgent::ReloadAutoSaveParam()
 {
@@ -77,27 +77,27 @@ void CAutoSaveAgent::ReloadAutoSaveParam()
 //
 //----------------------------------------------------------
 /*!
-	ŠÔŠÔŠu‚Ìİ’è
-	@param m ŠÔŠu(min)
-	ŠÔŠu‚ğ0ˆÈ‰º‚Éİ’è‚µ‚½‚Æ‚«‚Í1•b‚Æ‚İ‚È‚·Bİ’è‰Â”\‚ÈÅ‘åŠÔŠu‚Í35792•ªB
+	æ™‚é–“é–“éš”ã®è¨­å®š
+	@param m é–“éš”(min)
+	é–“éš”ã‚’0ä»¥ä¸‹ã«è¨­å®šã—ãŸã¨ãã¯1ç§’ã¨ã¿ãªã™ã€‚è¨­å®šå¯èƒ½ãªæœ€å¤§é–“éš”ã¯35792åˆ†ã€‚
 */
 void CPassiveTimer::SetInterval(int m)
 {
 	if( m <= 0 )
 		m = 1;
-	else if( m >= 35792 )	//	35792•ªˆÈã‚¾‚Æ int ‚Å•\Œ»‚Å‚«‚È‚­‚È‚é
+	else if( m >= 35792 )	//	35792åˆ†ä»¥ä¸Šã ã¨ int ã§è¡¨ç¾ã§ããªããªã‚‹
 		m = 35792;
 
 	nInterval = m * MSec2Min;
 }
 /*!
-	ƒ^ƒCƒ}[‚Ì—LŒøE–³Œø‚ÌØ‚è‘Ö‚¦
-	@param flag true:—LŒø / false: –³Œø
-	–³Œø¨—LŒø‚ÉØ‚è‘Ö‚¦‚½‚Æ‚«‚ÍƒŠƒZƒbƒg‚³‚ê‚éB
+	ã‚¿ã‚¤ãƒãƒ¼ã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã®åˆ‡ã‚Šæ›¿ãˆ
+	@param flag true:æœ‰åŠ¹ / false: ç„¡åŠ¹
+	ç„¡åŠ¹â†’æœ‰åŠ¹ã«åˆ‡ã‚Šæ›¿ãˆãŸã¨ãã¯ãƒªã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã€‚
 */
 void CPassiveTimer::Enable(bool flag)
 {
-	if( bEnabled != flag ){	//	•ÏX‚ª‚ ‚é‚Æ‚«
+	if( bEnabled != flag ){	//	å¤‰æ›´ãŒã‚ã‚‹ã¨ã
 		bEnabled = flag;
 		if( flag ){	//	enabled
 			Reset();
@@ -105,24 +105,24 @@ void CPassiveTimer::Enable(bool flag)
 	}
 }
 /*!
-	ŠO•”‚Å’èŠú‚ÉÀs‚³‚ê‚é‚Æ‚±‚ë‚©‚çŒÄ‚Ño‚³‚ê‚éŠÖ”B
-	ŒÄ‚Ño‚³‚ê‚é‚ÆŒo‰ßŠÔ‚ğƒ`ƒFƒbƒN‚·‚éB
+	å¤–éƒ¨ã§å®šæœŸã«å®Ÿè¡Œã•ã‚Œã‚‹ã¨ã“ã‚ã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹é–¢æ•°ã€‚
+	å‘¼ã³å‡ºã•ã‚Œã‚‹ã¨çµŒéæ™‚é–“ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
 
-	@retval true Š’èŠÔ‚ªŒo‰ß‚µ‚½B‚±‚Ì‚Æ‚«‚Í‘ª’èŠî€‚ª©“®“I‚ÉƒŠƒZƒbƒg‚³‚ê‚éB
-	@retval false Š’è‚ÌŠÔ‚É’B‚µ‚Ä‚¢‚È‚¢B
+	@retval true æ‰€å®šæ™‚é–“ãŒçµŒéã—ãŸã€‚ã“ã®ã¨ãã¯æ¸¬å®šåŸºæº–ãŒè‡ªå‹•çš„ã«ãƒªã‚»ãƒƒãƒˆã•ã‚Œã‚‹ã€‚
+	@retval false æ‰€å®šã®æ™‚é–“ã«é”ã—ã¦ã„ãªã„ã€‚
 */
 bool CPassiveTimer::CheckAction(void)
 {
-	if( !IsEnabled() )	//	—LŒø‚Å‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
+	if( !IsEnabled() )	//	æœ‰åŠ¹ã§ãªã‘ã‚Œã°ä½•ã‚‚ã—ãªã„
 		return false;
 
-	//	”äŠr
+	//	æ™‚åˆ»æ¯”è¼ƒ
 	DWORD now = ::GetTickCount();
 	int diff;
 
-	diff = now - nLastTick;	//	TickCount‚ªˆê‰ñ‚è‚µ‚Ä‚à‚±‚ê‚Å‚¤‚Ü‚­‚¢‚­‚Í‚¸...
+	diff = now - nLastTick;	//	TickCountãŒä¸€å›ã‚Šã—ã¦ã‚‚ã“ã‚Œã§ã†ã¾ãã„ãã¯ãš...
 
-	if( diff < nInterval )	//	‹K’èŠÔ‚É’B‚µ‚Ä‚¢‚È‚¢
+	if( diff < nInterval )	//	è¦å®šæ™‚é–“ã«é”ã—ã¦ã„ãªã„
 		return false;
 
 	Reset();

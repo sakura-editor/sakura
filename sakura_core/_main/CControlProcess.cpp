@@ -1,12 +1,12 @@
-/*!	@file
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒXƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 
 	@author aroka
 	@date 2002/01/07 Create
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2002, aroka CProcess‚æ‚è•ª—£, YAZAKI
+	Copyright (C) 2002, aroka CProcessã‚ˆã‚Šåˆ†é›¢, YAZAKI
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 
@@ -22,92 +22,92 @@
 #include "CCommandLine.h"
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ƒwƒbƒ_®—
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ãƒ˜ãƒƒãƒ€æ•´ç†
 
 
 //-------------------------------------------------
 
 
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ğ‰Šú‰»‚·‚é
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚’åˆæœŸåŒ–ã™ã‚‹
 	
-	MutexCP‚ğì¬EƒƒbƒN‚·‚éB
-	CControlTray‚ğì¬‚·‚éB
+	MutexCPã‚’ä½œæˆãƒ»ãƒ­ãƒƒã‚¯ã™ã‚‹ã€‚
+	CControlTrayã‚’ä½œæˆã™ã‚‹ã€‚
 	
 	@author aroka
 	@date 2002/01/07
-	@date 2002/02/17 YAZAKI ‹¤—Lƒƒ‚ƒŠ‚ğ‰Šú‰»‚·‚é‚Ì‚ÍCProcess‚ÉˆÚ“®B
-	@date 2006/04/10 ryoji ‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚Ìˆ—‚ğ’Ç‰ÁAˆÙí‚ÌŒãn––‚ÍƒfƒXƒgƒ‰ƒNƒ^‚É”C‚¹‚é
-	@date 2013.03.20 novice ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÌƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğƒVƒXƒeƒ€ƒfƒBƒŒƒNƒgƒŠ‚É•ÏX
+	@date 2002/02/17 YAZAKI å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚’åˆæœŸåŒ–ã™ã‚‹ã®ã¯CProcessã«ç§»å‹•ã€‚
+	@date 2006/04/10 ryoji åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã®å‡¦ç†ã‚’è¿½åŠ ã€ç•°å¸¸æ™‚ã®å¾Œå§‹æœ«ã¯ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«ä»»ã›ã‚‹
+	@date 2013.03.20 novice ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«å¤‰æ›´
 */
 bool CControlProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
-	// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ÀsŒŸo—p(ƒCƒ“ƒXƒg[ƒ‰‚Åg—p)
+	// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿè¡Œæ¤œå‡ºç”¨(ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ©ã§ä½¿ç”¨)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()¸”sB\nI—¹‚µ‚Ü‚·B") );
+		TopErrorMessage( NULL, _T("CreateMutex()å¤±æ•—ã€‚\nçµ‚äº†ã—ã¾ã™ã€‚") );
 		return false;
 	}
 
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 
-	// ‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ğì¬‚·‚é
+	// åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’ä½œæˆã™ã‚‹
 	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
 	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
 	if( NULL == m_hEventCPInitialized )
 	{
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateEvent()¸”sB\nI—¹‚µ‚Ü‚·B") );
+		TopErrorMessage( NULL, _T("CreateEvent()å¤±æ•—ã€‚\nçµ‚äº†ã—ã¾ã™ã€‚") );
 		return false;
 	}
 
-	/* ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Ì–Úˆó */
+	/* ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®ç›®å° */
 	std::tstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += strProfileName;
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
 	if( NULL == m_hMutexCP ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()¸”sB\nI—¹‚µ‚Ü‚·B") );
+		TopErrorMessage( NULL, _T("CreateMutex()å¤±æ•—ã€‚\nçµ‚äº†ã—ã¾ã™ã€‚") );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
 		return false;
 	}
 	
-	/* ‹¤—Lƒƒ‚ƒŠ‚ğ‰Šú‰» */
+	/* å…±æœ‰ãƒ¡ãƒ¢ãƒªã‚’åˆæœŸåŒ– */
 	if( !CProcess::InitializeProcess() ){
 		return false;
 	}
 
-	// ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÌƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğƒVƒXƒeƒ€ƒfƒBƒŒƒNƒgƒŠ‚É•ÏX
+	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«å¤‰æ›´
 	TCHAR szDir[_MAX_PATH];
 	::GetSystemDirectory( szDir, _countof(szDir) );
 	::SetCurrentDirectory( szDir );
 
-	/* ‹¤—Lƒf[ƒ^‚Ìƒ[ƒh */
-	// 2007.05.19 ryoji uİ’è‚ğ•Û‘¶‚µ‚ÄI—¹‚·‚évƒIƒvƒVƒ‡ƒ“ˆ—isakuext˜AŒg—pj‚ğ’Ç‰Á
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿ã®ãƒ­ãƒ¼ãƒ‰ */
+	// 2007.05.19 ryoji ã€Œè¨­å®šã‚’ä¿å­˜ã—ã¦çµ‚äº†ã™ã‚‹ã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³å‡¦ç†ï¼ˆsakuexté€£æºç”¨ï¼‰ã‚’è¿½åŠ 
 	TCHAR szIniFile[_MAX_PATH];
 	CShareData_IO::LoadShareData();
-	CFileNameManager::getInstance()->GetIniFileName( szIniFile, strProfileName.c_str() );	// o—Íiniƒtƒ@ƒCƒ‹–¼
+	CFileNameManager::getInstance()->GetIniFileName( szIniFile, strProfileName.c_str() );	// å‡ºåŠ›iniãƒ•ã‚¡ã‚¤ãƒ«å
 	if( !fexist(szIniFile) || CCommandLine::getInstance()->IsWriteQuit() ){
-		/* ƒŒƒWƒXƒgƒŠ€–Ú ì¬ */
+		/* ãƒ¬ã‚¸ã‚¹ãƒˆãƒªé …ç›® ä½œæˆ */
 		CShareData_IO::SaveShareData();
 		if( CCommandLine::getInstance()->IsWriteQuit() ){
 			return false;
 		}
 	}
 
-	/* Œ¾Œê‚ğ‘I‘ğ‚·‚é */
+	/* è¨€èªã‚’é¸æŠã™ã‚‹ */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 	RefreshString();
 
 	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
 
-	/* ƒ^ƒXƒNƒgƒŒƒC‚ÉƒAƒCƒRƒ“ì¬ */
+	/* ã‚¿ã‚¹ã‚¯ãƒˆãƒ¬ã‚¤ã«ã‚¢ã‚¤ã‚³ãƒ³ä½œæˆ */
 	m_pcTray = new CControlTray;
 
 	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
@@ -121,7 +121,7 @@ bool CControlProcess::InitializeProcess()
 	SetMainWindow(hwnd);
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
-	// ‰Šú‰»Š®—¹ƒCƒxƒ“ƒg‚ğƒVƒOƒiƒ‹ó‘Ô‚É‚·‚é
+	// åˆæœŸåŒ–å®Œäº†ã‚¤ãƒ™ãƒ³ãƒˆã‚’ã‚·ã‚°ãƒŠãƒ«çŠ¶æ…‹ã«ã™ã‚‹
 	if( !::SetEvent( m_hEventCPInitialized ) ){
 		ErrorBeep();
 		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
@@ -132,7 +132,7 @@ bool CControlProcess::InitializeProcess()
 }
 
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÌƒƒbƒZ[ƒWƒ‹[ƒv
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—
 	
 	@author aroka
 	@date 2002/01/07
@@ -140,18 +140,18 @@ bool CControlProcess::InitializeProcess()
 bool CControlProcess::MainLoop()
 {
 	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* ƒƒbƒZ[ƒWƒ‹[ƒv */
+		m_pcTray->MessageLoop();	/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ— */
 		return true;
 	}
 	return false;
 }
 
 /*!
-	@brief ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ğI—¹‚·‚é
+	@brief ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã‚’çµ‚äº†ã™ã‚‹
 	
 	@author aroka
 	@date 2002/01/07
-	@date 2006/07/02 ryoji ‹¤—Lƒf[ƒ^•Û‘¶‚ğ CControlTray ‚ÖˆÚ“®
+	@date 2006/07/02 ryoji å…±æœ‰ãƒ‡ãƒ¼ã‚¿ä¿å­˜ã‚’ CControlTray ã¸ç§»å‹•
 */
 void CControlProcess::OnExitProcess()
 {
@@ -170,7 +170,7 @@ CControlProcess::~CControlProcess()
 		::ReleaseMutex( m_hMutexCP );
 	}
 	::CloseHandle( m_hMutexCP );
-	// ‹Œƒo[ƒWƒ‡ƒ“i1.2.104.1ˆÈ‘Oj‚Æ‚ÌŒİŠ·«FuˆÙ‚È‚éƒo[ƒWƒ‡ƒ“...v‚ª“ñ‰ño‚È‚¢‚æ‚¤‚É
+	// æ—§ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼ˆ1.2.104.1ä»¥å‰ï¼‰ã¨ã®äº’æ›æ€§ï¼šã€Œç•°ãªã‚‹ãƒãƒ¼ã‚¸ãƒ§ãƒ³...ã€ãŒäºŒå›å‡ºãªã„ã‚ˆã†ã«
 	if( m_hMutex ){
 		::ReleaseMutex( m_hMutex );
 	}

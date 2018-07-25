@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CWriteManager.h"
 #include <list>
 #include "doc/logic/CDocLineMgr.h"
@@ -13,10 +13,10 @@
 #include "util/window.h"
 
 
-/*! ƒoƒbƒtƒ@“à—e‚ğƒtƒ@ƒCƒ‹‚É‘‚«o‚· (ƒeƒXƒg—p)
+/*! ãƒãƒƒãƒ•ã‚¡å†…å®¹ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãå‡ºã™ (ãƒ†ã‚¹ãƒˆç”¨)
 
-	@note Windows—p‚ÉƒR[ƒfƒBƒ“ƒO‚µ‚Ä‚ ‚é
-	@date 2003.07.26 ryoji BOMˆø”’Ç‰Á
+	@note Windowsç”¨ã«ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã—ã¦ã‚ã‚‹
+	@date 2003.07.26 ryoji BOMå¼•æ•°è¿½åŠ 
 */
 EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 	const CDocLineMgr&	pcDocLineMgr,	//!< [in]
@@ -27,7 +27,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 	std::auto_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode,0) );
 
 	{
-		// •ÏŠ·ƒeƒXƒg
+		// å¤‰æ›ãƒ†ã‚¹ãƒˆ
 		CNativeW buffer = L"abcde";
 		CMemory tmp;
 		EConvertResult e = pcCodeBase->UnicodeToCode( buffer, &tmp );
@@ -45,13 +45,13 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 
 	try
 	{
-		//ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
+		//ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³
 		CBinaryOutputStream out(sSaveInfo.cFilePath,true);
 
-		//Šeso—Í
+		//å„è¡Œå‡ºåŠ›
 		int			nLineNumber = 0;
 		const CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
-		// 1s–Ú
+		// 1è¡Œç›®
 		{
 			++nLineNumber;
 			CMemory cmemOutputBuffer;
@@ -60,7 +60,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				CMemory cstrBomCheck;
 				pcCodeBase->GetBom( &cstrBomCheck );
 				if( sSaveInfo.bBomExist && 0 < cstrBomCheck.GetRawLength() ){
-					// 1s–Ú‚É‚ÍBOM‚ğ•t‰Á‚·‚éBƒGƒ“ƒR[ƒ_‚Åbom‚ª‚ ‚éê‡‚Ì‚İ•t‰Á‚·‚éB
+					// 1è¡Œç›®ã«ã¯BOMã‚’ä»˜åŠ ã™ã‚‹ã€‚ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ã§bomãŒã‚ã‚‹å ´åˆã®ã¿ä»˜åŠ ã™ã‚‹ã€‚
 					CUnicode().GetBom( cstrSrc._GetMemory() );
 				}
 				if( pcDocLine ){
@@ -89,18 +89,18 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		while( pcDocLine ){
 			++nLineNumber;
 
-			//Œo‰ß’Ê’m
+			//çµŒéé€šçŸ¥
 			if(pcDocLineMgr.GetLineCount()>0 && nLineNumber%1024==0){
 				NotifyProgress(nLineNumber * 100 / pcDocLineMgr.GetLineCount());
-				// ˆ—’†‚Ìƒ†[ƒU[‘€ì‚ğ‰Â”\‚É‚·‚é
+				// å‡¦ç†ä¸­ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æ“ä½œã‚’å¯èƒ½ã«ã™ã‚‹
 				if( !::BlockingHook( NULL ) ){
-					throw CAppExitException(); //’†’fŒŸo
+					throw CAppExitException(); //ä¸­æ–­æ¤œå‡º
 				}
 			}
 
-			//1so—Í -> cmemOutputBuffer
+			//1è¡Œå‡ºåŠ› -> cmemOutputBuffer
 			{
-				// ‘‚«‚İ‚ÌƒR[ƒh•ÏŠ· cstrSrc -> cmemOutputBuffer
+				// æ›¸ãè¾¼ã¿æ™‚ã®ã‚³ãƒ¼ãƒ‰å¤‰æ› cstrSrc -> cmemOutputBuffer
 				EConvertResult e = pcCodeBase->UnicodeToCode(
 					pcDocLine->_GetDocLineDataWithEOL(),
 					&cmemOutputBuffer
@@ -119,17 +119,17 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 				}
 			}
 
-			//ƒtƒ@ƒCƒ‹‚Éo—Í cmemOutputBuffer -> fp
+			//ãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ› cmemOutputBuffer -> fp
 			out.Write(cmemOutputBuffer.GetRawPtr(), cmemOutputBuffer.GetRawLength());
 
-			//Ÿ‚Ìs‚Ö
+			//æ¬¡ã®è¡Œã¸
 			pcDocLine = pcDocLine->GetNextLine();
 		}
 
-		//ƒtƒ@ƒCƒ‹ƒNƒ[ƒY
+		//ãƒ•ã‚¡ã‚¤ãƒ«ã‚¯ãƒ­ãƒ¼ã‚º
 		out.Close();
 	}
-	catch(CError_FileOpen){ //########### Œ»“_‚Å‚ÍA‚±‚Ì—áŠO‚ª”­¶‚µ‚½ê‡‚Í³í‚É“®ì‚Å‚«‚È‚¢
+	catch(CError_FileOpen){ //########### ç¾æ™‚ç‚¹ã§ã¯ã€ã“ã®ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸå ´åˆã¯æ­£å¸¸ã«å‹•ä½œã§ããªã„
 		ErrorMessage(
 			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_SAVEAGENT_OTHER_APP),
@@ -141,7 +141,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		nRetVal = RESULT_FAILURE;
 	}
 	catch(CAppExitException){
-		//’†’fŒŸo
+		//ä¸­æ–­æ¤œå‡º
 		return RESULT_FAILURE;
 	}
 

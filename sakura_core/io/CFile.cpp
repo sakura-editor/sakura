@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "io/CFile.h"
-#include "window/CEditWnd.h" // •ÏX—\’è
+#include "window/CEditWnd.h" // å¤‰æ›´äºˆå®š
 #include <io.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CFile::CFile(LPCTSTR pszPath)
@@ -22,7 +22,7 @@ CFile::~CFile()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ŠeŽí”»’è                            //
+//                         å„ç¨®åˆ¤å®š                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 bool CFile::IsFileExist() const
@@ -37,18 +37,18 @@ bool CFile::HasWritablePermission() const
 
 bool CFile::IsFileWritable() const
 {
-	//‘‚«ž‚ß‚é‚©ŒŸ¸
-	// Note. ‘¼‚ÌƒvƒƒZƒX‚ª–¾Ž¦“I‚É‘‚«ž‚Ý‹ÖŽ~‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
-	//       Ë GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE ‚Åƒ`ƒFƒbƒN‚·‚é
-	//          ŽÀÛ‚Ìƒtƒ@ƒCƒ‹•Û‘¶‚à‚±‚ê‚Æ“™‰¿‚È _tfopen ‚Ì _T("wb") ‚ðŽg—p‚µ‚Ä‚¢‚é
+	//æ›¸ãè¾¼ã‚ã‚‹ã‹æ¤œæŸ»
+	// Note. ä»–ã®ãƒ—ãƒ­ã‚»ã‚¹ãŒæ˜Žç¤ºçš„ã«æ›¸ãè¾¼ã¿ç¦æ­¢ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹
+	//       â‡’ GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE ã§ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+	//          å®Ÿéš›ã®ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜ã‚‚ã“ã‚Œã¨ç­‰ä¾¡ãª _tfopen ã® _T("wb") ã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹
 	HANDLE hFile = CreateFile(
-		this->GetFilePath(),			//ƒtƒ@ƒCƒ‹–¼
-		GENERIC_WRITE,					//‘‚«ƒ‚[ƒh
-		FILE_SHARE_READ | FILE_SHARE_WRITE,	//“Ç‚Ý‘‚«‹¤—L
-		NULL,							//Šù’è‚ÌƒZƒLƒ…ƒŠƒeƒB‹LqŽq
-		OPEN_EXISTING,					//ƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚È‚¯‚ê‚ÎŽ¸”s
-		FILE_ATTRIBUTE_NORMAL,			//“Á‚É‘®«‚ÍŽw’è‚µ‚È‚¢
-		NULL							//ƒeƒ“ƒvƒŒ[ƒg–³‚µ
+		this->GetFilePath(),			//ãƒ•ã‚¡ã‚¤ãƒ«å
+		GENERIC_WRITE,					//æ›¸ããƒ¢ãƒ¼ãƒ‰
+		FILE_SHARE_READ | FILE_SHARE_WRITE,	//èª­ã¿æ›¸ãå…±æœ‰
+		NULL,							//æ—¢å®šã®ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		OPEN_EXISTING,					//ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã‘ã‚Œã°å¤±æ•—
+		FILE_ATTRIBUTE_NORMAL,			//ç‰¹ã«å±žæ€§ã¯æŒ‡å®šã—ãªã„
+		NULL							//ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆç„¡ã—
 	);
 	if(hFile==INVALID_HANDLE_VALUE){
 		return false;
@@ -69,7 +69,7 @@ bool CFile::IsFileReadable() const
 		NULL
 	);
 	if(hTest==INVALID_HANDLE_VALUE){
-		// “Ç‚Ýž‚ÝƒAƒNƒZƒXŒ ‚ª‚È‚¢
+		// èª­ã¿è¾¼ã¿ã‚¢ã‚¯ã‚»ã‚¹æ¨©ãŒãªã„
 		return false;
 	}
 	CloseHandle( hTest );
@@ -77,13 +77,13 @@ bool CFile::IsFileReadable() const
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒƒbƒN                             //
+//                          ãƒ­ãƒƒã‚¯                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN‰ðœ
+//! ãƒ•ã‚¡ã‚¤ãƒ«ã®æŽ’ä»–ãƒ­ãƒƒã‚¯è§£é™¤
 void CFile::FileUnlock()
 {
-	//ƒNƒ[ƒY
+	//ã‚¯ãƒ­ãƒ¼ã‚º
 	if( m_hLockedFile != INVALID_HANDLE_VALUE ){
 		::CloseHandle( m_hLockedFile );
 		m_hLockedFile = INVALID_HANDLE_VALUE;
@@ -91,41 +91,41 @@ void CFile::FileUnlock()
 }
 
 
-//! ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN
+//! ãƒ•ã‚¡ã‚¤ãƒ«ã®æŽ’ä»–ãƒ­ãƒƒã‚¯
 bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 {
-	// ƒƒbƒN‰ðœ
+	// ãƒ­ãƒƒã‚¯è§£é™¤
 	FileUnlock();
 
-	// ƒtƒ@ƒCƒ‹‚Ì‘¶Ýƒ`ƒFƒbƒN
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
 	if( !this->IsFileExist() ){
 		return false;
 	}
 
-	// ƒ‚[ƒhÝ’è
+	// ãƒ¢ãƒ¼ãƒ‰è¨­å®š
 	if(eShareMode==SHAREMODE_NOT_EXCLUSIVE)return true;
 	
-	//ƒtƒ‰ƒO
+	//ãƒ•ãƒ©ã‚°
 	DWORD dwShareMode=0;
 	switch(eShareMode){
-	case SHAREMODE_NOT_EXCLUSIVE:	return true;										break; //”r‘¼§Œä–³‚µ
-	case SHAREMODE_DENY_READWRITE:	dwShareMode = 0;									break; //“Ç‚Ý‘‚«‹ÖŽ~¨‹¤—L–³‚µ
-	case SHAREMODE_DENY_WRITE:		dwShareMode = FILE_SHARE_READ;						break; //‘‚«ž‚Ý‹ÖŽ~¨“Ç‚Ýž‚Ý‚Ì‚Ý”F‚ß‚é
-	default:						dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;	break; //‹ÖŽ~Ž–€‚È‚µ¨“Ç‚Ý‘‚«‹¤‚É”F‚ß‚é
+	case SHAREMODE_NOT_EXCLUSIVE:	return true;										break; //æŽ’ä»–åˆ¶å¾¡ç„¡ã—
+	case SHAREMODE_DENY_READWRITE:	dwShareMode = 0;									break; //èª­ã¿æ›¸ãç¦æ­¢â†’å…±æœ‰ç„¡ã—
+	case SHAREMODE_DENY_WRITE:		dwShareMode = FILE_SHARE_READ;						break; //æ›¸ãè¾¼ã¿ç¦æ­¢â†’èª­ã¿è¾¼ã¿ã®ã¿èªã‚ã‚‹
+	default:						dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;	break; //ç¦æ­¢äº‹é …ãªã—â†’èª­ã¿æ›¸ãå…±ã«èªã‚ã‚‹
 	}
 
-	//ƒI[ƒvƒ“
+	//ã‚ªãƒ¼ãƒ—ãƒ³
 	m_hLockedFile = CreateFile(
-		this->GetFilePath(),			//ƒtƒ@ƒCƒ‹–¼
-		GENERIC_READ,					//“Ç‚Ý‘‚«ƒ^ƒCƒv
-		dwShareMode,					//‹¤—Lƒ‚[ƒh
-		NULL,							//Šù’è‚ÌƒZƒLƒ…ƒŠƒeƒB‹LqŽq
-		OPEN_EXISTING,					//ƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚È‚¯‚ê‚ÎŽ¸”s
-		FILE_ATTRIBUTE_NORMAL,			//“Á‚É‘®«‚ÍŽw’è‚µ‚È‚¢
-		NULL							//ƒeƒ“ƒvƒŒ[ƒg–³‚µ
+		this->GetFilePath(),			//ãƒ•ã‚¡ã‚¤ãƒ«å
+		GENERIC_READ,					//èª­ã¿æ›¸ãã‚¿ã‚¤ãƒ—
+		dwShareMode,					//å…±æœ‰ãƒ¢ãƒ¼ãƒ‰
+		NULL,							//æ—¢å®šã®ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£è¨˜è¿°å­
+		OPEN_EXISTING,					//ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã‘ã‚Œã°å¤±æ•—
+		FILE_ATTRIBUTE_NORMAL,			//ç‰¹ã«å±žæ€§ã¯æŒ‡å®šã—ãªã„
+		NULL							//ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆç„¡ã—
 	);
 
-	//Œ‹‰Ê
+	//çµæžœ
 	if( INVALID_HANDLE_VALUE == m_hLockedFile && bMsg ){
 		const TCHAR*	pszMode;
 		switch( eShareMode ){

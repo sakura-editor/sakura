@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,23 +24,23 @@
 #ifndef SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_
 #define SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_
 
-//2007.09.13 kobake ì¬
+//2007.09.13 kobake ä½œæˆ
 #include "parse/CWordParse.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ”»’èŠÖ”                            //
+//                         åˆ¤å®šé–¢æ•°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // #include "charset/codechecker.h"
-// SJISŠÖ˜AƒR[ƒh‚Í codecheker.h‚ÉˆÚ“®
+// SJISé–¢é€£ã‚³ãƒ¼ãƒ‰ã¯ codecheker.hã«ç§»å‹•
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ’è”                              //
+//                           å®šæ•°                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-// SJIS‚ÌƒR[ƒhƒy[ƒW(CP_ACP ‚Å‚Í–³‚­‚±‚ê‚ğg‚¦‚Î‚¨‚»‚ç‚­‰pŒê”ÅWin‚Å‚à“®‚­‚Í‚¸B)	2008/5/12 Uchi
+// SJISã®ã‚³ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸(CP_ACP ã§ã¯ç„¡ãã“ã‚Œã‚’ä½¿ãˆã°ãŠãã‚‰ãè‹±èªç‰ˆWinã§ã‚‚å‹•ãã¯ãšã€‚)	2008/5/12 Uchi
 #define CP_SJIS		932
 
 
-//’è”‚Ì‘f (’¼Úg—p‚ÍT‚¦‚Ä‚­‚¾‚³‚¢)
+//å®šæ•°ã®ç´  (ç›´æ¥ä½¿ç”¨ã¯æ§ãˆã¦ãã ã•ã„)
 #define TAB_ 				'\t'
 #define SPACE_				' '
 #define CR_					'\015'
@@ -48,53 +48,53 @@
 #define ESC_				'\x1b'
 #define CRLF_				"\015\012"
 
-//ANSI’è”
+//ANSIå®šæ•°
 namespace ACODE{
-	//•¶š
+	//æ–‡å­—
 	static const char TAB   = TAB_;
 	static const char SPACE = SPACE_;
 	static const char CR	= CR_;
 	static const char LF	= LF_;
 	static const char ESC	= ESC_;
 
-	//•¶š—ñ
+	//æ–‡å­—åˆ—
 	static const char CRLF[] = CRLF_;
 
-	//“Áê (BREGEXP)
+	//ç‰¹æ®Š (BREGEXP)
 	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFF;
 }
 
-//UNICODE’è”
+//UNICODEå®šæ•°
 namespace WCODE{
-	//•¶š
+	//æ–‡å­—
 	static const wchar_t TAB   = LCHAR(TAB_);
 	static const wchar_t SPACE = LCHAR(SPACE_);
 	static const wchar_t CR    = LCHAR(CR_);
 	static const wchar_t LF    = LCHAR(LF_);
 	static const wchar_t ESC   = LCHAR(ESC_);
 
-	//•¶š—ñ
+	//æ–‡å­—åˆ—
 	static const wchar_t CRLF[] = LTEXT(CRLF_);
 
-	//“Áê (BREGEXP)
-	//$$ UNICODE”Å‚Ì‰¼ƒfƒŠƒ~ƒ^Bbregonig‚Ìd—l‚ª‚æ‚­‚í‚©‚ñ‚È‚¢‚Ì‚ÅA‚Æ‚è‚ ‚¦‚¸‚±‚ñ‚È’l‚É‚µ‚Ä‚Ü‚·B
+	//ç‰¹æ®Š (BREGEXP)
+	//$$ UNICODEç‰ˆã®ä»®ãƒ‡ãƒªãƒŸã‚¿ã€‚bregonigã®ä»•æ§˜ãŒã‚ˆãã‚ã‹ã‚“ãªã„ã®ã§ã€ã¨ã‚Šã‚ãˆãšã“ã‚“ãªå€¤ã«ã—ã¦ã¾ã™ã€‚
 	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
 
 }
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ”»’èŠÖ”                            //
+//                         åˆ¤å®šé–¢æ•°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-/*! ƒL[ƒ[ƒhƒLƒƒƒ‰ƒNƒ^ */
+/*! ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ */
 extern const unsigned char gm_keyword_char[128];
 
-//Oct. 31, 2000 JEPRO  TeX Keyword ‚Ì‚½‚ß‚É'\'‚ğ’Ç‰Á
-//Nov.  9, 2000 JEPRO  HSP Keyword ‚Ì‚½‚ß‚É'@'‚ğ’Ç‰Á
-//Oct. 18, 2007 kobake UNICODE—p‚É‘‚«’¼‚µ
-//Nov. 27, 2010 syat   ‘¬“x‰ü‘P‚Ì‚½‚ßƒe[ƒuƒ‹‚É•ÏX
+//Oct. 31, 2000 JEPRO  TeX Keyword ã®ãŸã‚ã«'\'ã‚’è¿½åŠ 
+//Nov.  9, 2000 JEPRO  HSP Keyword ã®ãŸã‚ã«'@'ã‚’è¿½åŠ 
+//Oct. 18, 2007 kobake UNICODEç”¨ã«æ›¸ãç›´ã—
+//Nov. 27, 2010 syat   é€Ÿåº¦æ”¹å–„ã®ãŸã‚ãƒ†ãƒ¼ãƒ–ãƒ«ã«å¤‰æ›´
 inline bool IS_KEYWORD_CHAR(wchar_t wc)
 {
 	if(0 <= wc && wc < _countof(gm_keyword_char) && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
@@ -104,7 +104,7 @@ inline bool IS_KEYWORD_CHAR(wchar_t wc)
 }
 
 
-//UNICODE”»’èŠÖ”ŒQ
+//UNICODEåˆ¤å®šé–¢æ•°ç¾¤
 namespace WCODE
 {
 	inline bool IsAZ(wchar_t wc)
@@ -120,30 +120,30 @@ namespace WCODE
 		return c>=front && c<=back;
 	}
 
-	//!”¼Šp•¶š(c’·’·•ûŒ`)‚©‚Ç‚¤‚©”»’è
+	//!åŠè§’æ–‡å­—(ç¸¦é•·é•·æ–¹å½¢)ã‹ã©ã†ã‹åˆ¤å®š
 	bool IsHankaku(wchar_t wc);
 
-	//!‘SŠp•¶š(³•ûŒ`)‚©‚Ç‚¤‚©”»’è
+	//!å…¨è§’æ–‡å­—(æ­£æ–¹å½¢)ã‹ã©ã†ã‹åˆ¤å®š
 	inline bool IsZenkaku(wchar_t wc)
 	{
 		return !IsHankaku(wc);
 	}
 
-	//!g—pƒtƒHƒ“ƒg”Ô†‚ğ•Ô‚·
-	// (0:”¼Šp/1:‘SŠp)
+	//!ä½¿ç”¨ãƒ•ã‚©ãƒ³ãƒˆç•ªå·ã‚’è¿”ã™
+	// (0:åŠè§’/1:å…¨è§’)
 	int GetFontNo(wchar_t);
 	int GetFontNo2(wchar_t, wchar_t);
 
-	//!‘SŠpƒXƒy[ƒX‚©‚Ç‚¤‚©”»’è
+	//!å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‹ã©ã†ã‹åˆ¤å®š
 	inline bool IsZenkakuSpace(wchar_t wc)
 	{
-		return wc == 0x3000; //L'@'
+		return wc == 0x3000; //L'ã€€'
 	}
 
-	//!§Œä•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!åˆ¶å¾¡æ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	bool IsControlCode(wchar_t wc);
 
-	//!‰üs•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!æ”¹è¡Œæ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsLineDelimiter(wchar_t wc, bool ext)
 	{
 		return wc==CR || wc==LF || (ext && (wc==0x85 || wc==0x2028 || wc==0x2029));
@@ -157,13 +157,13 @@ namespace WCODE
 		return wc==CR || wc==LF || wc==0x85 || wc==0x2028 || wc==0x2029;
 	}
 
-	//!’PŒê‚Ì‹æØ‚è•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!å˜èªã®åŒºåˆ‡ã‚Šæ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsWordDelimiter(wchar_t wc)
 	{
 		return wc==SPACE || wc==TAB || IsZenkakuSpace(wc);
 	}
 
-	//!ƒCƒ“ƒfƒ“ƒg\¬—v‘f‚Å‚ ‚é‚©‚Ç‚¤‚©BbAcceptZenSpace: ‘SŠpƒXƒy[ƒX‚ğŠÜ‚ß‚é‚©‚Ç‚¤‚©
+	//!ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆæ§‹æˆè¦ç´ ã§ã‚ã‚‹ã‹ã©ã†ã‹ã€‚bAcceptZenSpace: å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’å«ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsIndentChar(wchar_t wc,bool bAcceptZenSpace)
 	{
 		if(wc==TAB || wc==SPACE)return true;
@@ -171,25 +171,25 @@ namespace WCODE
 		return false;
 	}
 
-	//!‹ó”’‚©‚Ç‚¤‚©
+	//!ç©ºç™½ã‹ã©ã†ã‹
 	inline bool IsBlank(wchar_t wc)
 	{
 		return wc==TAB || wc==SPACE || IsZenkakuSpace(wc);
 	}
 
-	//!ƒtƒ@ƒCƒ‹–¼‚Ég‚¦‚é•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!ãƒ•ã‚¡ã‚¤ãƒ«åã«ä½¿ãˆã‚‹æ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsValidFilenameChar(const wchar_t wc)
 	{
 		static const wchar_t* table = L"<>?\"|*";
 
-		if(wcschr(table,wc)!=NULL)return false; //table“à‚Ì•¶š‚ªŠÜ‚Ü‚ê‚Ä‚¢‚½‚çAƒ_ƒB
+		if(wcschr(table,wc)!=NULL)return false; //tableå†…ã®æ–‡å­—ãŒå«ã¾ã‚Œã¦ã„ãŸã‚‰ã€ãƒ€ãƒ¡ã€‚
 		else return true;
 	}
 
-	//!ƒ^ƒu•\¦‚Ég‚¦‚é•¶š‚©‚Ç‚¤‚©
+	//!ã‚¿ãƒ–è¡¨ç¤ºã«ä½¿ãˆã‚‹æ–‡å­—ã‹ã©ã†ã‹
 	inline bool IsTabAvailableCode(wchar_t wc)
 	{
-		//$$—vŒŸØ
+		//$$è¦æ¤œè¨¼
 		if(wc==L'\0')return false;
 		if(wc==L'\r')return false;
 		if(wc==L'\n')return false;
@@ -197,44 +197,44 @@ namespace WCODE
 		return true;
 	}
 
-	//! ”¼ŠpƒJƒi‚©‚Ç‚¤‚©
+	//! åŠè§’ã‚«ãƒŠã‹ã©ã†ã‹
 	inline bool IsHankakuKatakana(wchar_t c)
 	{
-		//Ql: http://ash.jp/code/unitbl1.htm
+		//å‚è€ƒ: http://ash.jp/code/unitbl1.htm
 		return c>=0xFF61 && c<=0xFF9F;
 	}
 
-	//! ‘SŠp‹L†‚©‚Ç‚¤‚©
+	//! å…¨è§’è¨˜å·ã‹ã©ã†ã‹
 	inline bool IsZenkakuKigou(wchar_t c)
 	{
-		//$ ‘¼‚É‚à‘SŠp‹L†‚Í‚ ‚é‚Æv‚¤‚¯‚ÇA‚Æ‚è‚ ‚¦‚¸ANSI”Å‘ã‚Ì”»’è‚ğ“¥PBƒpƒtƒH[ƒ}ƒ“ƒXˆ«‚µB
-		// 2009.06.26 syat uTUi‚Ğ‚ç‚ª‚ÈjvuRSiƒJƒ^ƒJƒijvuJKi‘SŠp‘÷“_jvuWXZiŠ¿šjvu[i’·‰¹jv‚ğœŠO
-		// 2009.10.10 syat ANSI”Å‚ÌC³‚É‚ ‚í‚¹‚ÄuYv‚ğ‹L†¨Š¿š‚É‚·‚é
-		static const wchar_t* table=L"@ABCDEFGHILMNOPQV\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬¸¹º»¼½¾¿ÈÉÊËÌÍÎÚÛÜİŞßàáâãäåæçèğñòóôõö÷ü";
+		//$ ä»–ã«ã‚‚å…¨è§’è¨˜å·ã¯ã‚ã‚‹ã¨æ€ã†ã‘ã©ã€ã¨ã‚Šã‚ãˆãšANSIç‰ˆæ™‚ä»£ã®åˆ¤å®šã‚’è¸è¥²ã€‚ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹æ‚ªã—ã€‚
+		// 2009.06.26 syat ã€Œã‚ã‚ï¼ˆã²ã‚‰ãŒãªï¼‰ã€ã€Œãƒ½ãƒ¾ï¼ˆã‚«ã‚¿ã‚«ãƒŠï¼‰ã€ã€Œã‚›ã‚œï¼ˆå…¨è§’æ¿ç‚¹ï¼‰ã€ã€Œä»ã€…ã€‡ï¼ˆæ¼¢å­—ï¼‰ã€ã€Œãƒ¼ï¼ˆé•·éŸ³ï¼‰ã€ã‚’é™¤å¤–
+		// 2009.10.10 syat ANSIç‰ˆã®ä¿®æ­£ã«ã‚ã‚ã›ã¦ã€Œã€†ã€ã‚’è¨˜å·â†’æ¼¢å­—ã«ã™ã‚‹
+		static const wchar_t* table=L"ã€€ã€ã€‚ï¼Œï¼ãƒ»ï¼šï¼›ï¼Ÿï¼Â´ï½€Â¨ï¼¾ï¿£ï¼¿ã€ƒâ€•â€ï¼ï¼¼ï½âˆ¥ï½œâ€¦â€¥â€˜â€™â€œâ€ï¼ˆï¼‰ã€”ã€•ï¼»ï¼½ï½›ï½ã€ˆã€‰ã€Šã€‹ã€Œã€ã€ã€ã€ã€‘ï¼‹ï¼Â±Ã—Ã·ï¼â‰ ï¼œï¼â‰¦â‰§âˆâˆ´â™‚â™€Â°â€²â€³â„ƒï¿¥ï¼„ï¿ ï¿¡ï¼…ï¼ƒï¼†ï¼Šï¼ Â§â˜†â˜…â—‹â—â—â—‡â—†â–¡â– â–³â–²â–½â–¼â€»ã€’â†’â†â†‘â†“ã€“âˆˆâˆ‹âŠ†âŠ‡âŠ‚âŠƒâˆªâˆ©âˆ§âˆ¨ï¿¢â‡’â‡”âˆ€âˆƒâˆ âŠ¥âŒ’âˆ‚âˆ‡â‰¡â‰’â‰ªâ‰«âˆšâˆ½âˆâˆµâˆ«âˆ¬â„«â€°â™¯â™­â™ªâ€ â€¡Â¶â—¯";
 		return wcschr(table,c)!=NULL;
 	}
 
-	//! ‚Ğ‚ç‚ª‚È‚©‚Ç‚¤‚©
+	//! ã²ã‚‰ãŒãªã‹ã©ã†ã‹
 	inline bool IsHiragana(wchar_t c)
 	{
-		// 2009.06.26 syat uTUv‚ğ’Ç‰Á
+		// 2009.06.26 syat ã€Œã‚ã‚ã€ã‚’è¿½åŠ 
 		return (c>=0x3041 && c<=0x3096) || (c>=0x309D && c<=0x309E);
 	}
 
-	//! ƒJƒ^ƒJƒi‚©‚Ç‚¤‚©
+	//! ã‚«ã‚¿ã‚«ãƒŠã‹ã©ã†ã‹
 	inline bool IsZenkakuKatakana(wchar_t c)
 	{
-		// 2009.06.26 syat uRSv‚ğ’Ç‰Á
+		// 2009.06.26 syat ã€Œãƒ½ãƒ¾ã€ã‚’è¿½åŠ 
 		return (c>=0x30A1 && c<=0x30FA) || (c>=0x30FD && c<=0x30FE);
 	}
 
-	//! ƒMƒŠƒVƒƒ•¶š‚©‚Ç‚¤‚©
+	//! ã‚®ãƒªã‚·ãƒ£æ–‡å­—ã‹ã©ã†ã‹
 	inline bool IsGreek(wchar_t c)
 	{
 		return c>=0x0391 && c<=0x03C9;
 	}
 
-	//! ƒLƒŠƒ‹•¶š‚©‚Ç‚¤‚©
+	//! ã‚­ãƒªãƒ«æ–‡å­—ã‹ã©ã†ã‹
 	inline bool IsCyrillic(wchar_t c)
 	{
 		return (c>=0x0400 && c<=0x052F)  // Cyrillic, Cyrillic Supplement
@@ -242,28 +242,28 @@ namespace WCODE
 			|| (c>=0xA640 && c<=0xA69F); // Cyrillic Extended-B
 	}
 
-	//! BOX DRAWING •¶š ‚©‚Ç‚¤‚©
+	//! BOX DRAWING æ–‡å­— ã‹ã©ã†ã‹
 	inline bool IsBoxDrawing(wchar_t c)
 	{
 		return c>=0x2500 && c<=0x257F;
 	}
 
-	//!•¶š‚ª”¼Šp‚©‚Ç‚¤‚©‚ğæ“¾(DLLSHARE/ƒtƒHƒ“ƒgˆË‘¶)
+	//!æ–‡å­—ãŒåŠè§’ã‹ã©ã†ã‹ã‚’å–å¾—(DLLSHARE/ãƒ•ã‚©ãƒ³ãƒˆä¾å­˜)
 	bool CalcHankakuByFont(wchar_t c);
-	//!•¶š‚Ìpx•‚ğæ“¾(DLLSHARE/ƒtƒHƒ“ƒgˆË‘¶)
+	//!æ–‡å­—ã®pxå¹…ã‚’å–å¾—(DLLSHARE/ãƒ•ã‚©ãƒ³ãƒˆä¾å­˜)
 	int  CalcPxWidthByFont(wchar_t c);
-	//!•¶š‚Ìpx•‚ğæ“¾(DLLSHARE/ƒtƒHƒ“ƒgˆË‘¶)
+	//!æ–‡å­—ã®pxå¹…ã‚’å–å¾—(DLLSHARE/ãƒ•ã‚©ãƒ³ãƒˆä¾å­˜)
 	int  CalcPxWidthByFont2(const wchar_t* c);
-	//! ‹å“Ç“_‚©
+	//! å¥èª­ç‚¹ã‹
 	//bool IsKutoten( wchar_t wc );
 
-/* codechecker.h ‚ÖˆÚ“®
-	//! ‚ˆÊƒTƒƒQ[ƒgƒGƒŠƒA‚©H	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+/* codechecker.h ã¸ç§»å‹•
+	//! é«˜ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‚¨ãƒªã‚¢ã‹ï¼Ÿ	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
 	inline bool IsUTF16High( wchar_t c )
 	{
 		return ( 0xd800 == (0xfc00 & c ));
 	}
-	//! ‰ºˆÊƒTƒƒQ[ƒgƒGƒŠƒA‚©H	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+	//! ä¸‹ä½ã‚µãƒ­ã‚²ãƒ¼ãƒˆã‚¨ãƒªã‚¢ã‹ï¼Ÿ	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
 	inline bool IsUTF16Low( wchar_t c )
 	{
 		return ( 0xdc00 == (0xfc00 & c ));
@@ -272,7 +272,7 @@ namespace WCODE
 }
 
 
-//ANSI”»’èŠÖ”ŒQ
+//ANSIåˆ¤å®šé–¢æ•°ç¾¤
 namespace ACODE
 {
 	inline bool IsAZ(char c)
@@ -280,7 +280,7 @@ namespace ACODE
 		return (c>='A' && c<='Z') || (c>='a' && c<='z');
 	}
 
-	//!§Œä•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!åˆ¶å¾¡æ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsControlCode(char c)
 	{
 		unsigned char n=(unsigned char)c;
@@ -293,7 +293,7 @@ namespace ACODE
 		return false;
 	}
 
-	//!ƒ^ƒu•\¦‚Ég‚¦‚é•¶š‚©‚Ç‚¤‚©
+	//!ã‚¿ãƒ–è¡¨ç¤ºã«ä½¿ãˆã‚‹æ–‡å­—ã‹ã©ã†ã‹
 	inline bool IsTabAvailableCode(char c)
 	{
 		if(c=='\0')return false;
@@ -302,14 +302,14 @@ namespace ACODE
 		return true;
 	}
 
-	//!ƒtƒ@ƒCƒ‹–¼‚Ég‚¦‚é•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!ãƒ•ã‚¡ã‚¤ãƒ«åã«ä½¿ãˆã‚‹æ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	inline bool IsValidFilenameChar(const char c)
 	{
 		static const char* table = "<>?\"|*";
 
-		//table“à‚Ì•¶š‚ªŠÜ‚Ü‚ê‚Ä‚¢‚Ä
+		//tableå†…ã®æ–‡å­—ãŒå«ã¾ã‚Œã¦ã„ã¦
 		if(strchr(table,c)!=NULL){
-			// 2013.06.01 ”»’èŠÔˆá‚¢‚ğíœ
+			// 2013.06.01 åˆ¤å®šé–“é•ã„ã‚’å‰Šé™¤
 			return false;
 		}
 
@@ -317,7 +317,7 @@ namespace ACODE
 	}
 }
 
-//TCHAR”»’èŠÖ”ŒQ
+//TCHARåˆ¤å®šé–¢æ•°ç¾¤
 namespace TCODE
 {
 	#ifdef _UNICODE
@@ -327,13 +327,13 @@ namespace TCODE
 	#endif
 }
 
-// •¶š•‚Ì“®“IŒvZ—pƒLƒƒƒbƒVƒ…ŠÖ˜A
+// æ–‡å­—å¹…ã®å‹•çš„è¨ˆç®—ç”¨ã‚­ãƒ£ãƒƒã‚·ãƒ¥é–¢é€£
 struct SCharWidthCache {
-	// •¶š”¼Šp‘SŠpƒLƒƒƒbƒVƒ…
+	// æ–‡å­—åŠè§’å…¨è§’ã‚­ãƒ£ãƒƒã‚·ãƒ¥
 	TCHAR		m_lfFaceName[LF_FACESIZE];
 	TCHAR		m_lfFaceName2[LF_FACESIZE];
 	short		m_nCharPxWidthCache[0x10000];
-	int			m_nCharWidthCacheTest;				//cacheˆì‚êŒŸo
+	int			m_nCharWidthCacheTest;				//cacheæº¢ã‚Œæ¤œå‡º
 };
 
 enum ECharWidthFontMode {
@@ -348,9 +348,9 @@ enum ECharWidthCacheMode {
 	CWM_CACHE_LOCAL,
 };
 
-// ƒLƒƒƒbƒVƒ…‚Ì‰Šú‰»ŠÖ”ŒQ
-void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< ƒ‚[ƒh‚ğ•ÏX‚µ‚½‚¢‚Æ‚«
-void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< ƒtƒHƒ“ƒg‚ğ•ÏX‚µ‚½‚Æ‚«
+// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®åˆæœŸåŒ–é–¢æ•°ç¾¤
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< ãƒ¢ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ãŸã„ã¨ã
+void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< ãƒ•ã‚©ãƒ³ãƒˆã‚’å¤‰æ›´ã—ãŸã¨ã
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
 
 #endif /* SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_ */

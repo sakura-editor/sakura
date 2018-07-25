@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,7 +30,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CAutoReloadAgent::CAutoReloadAgent()
@@ -41,67 +41,67 @@ CAutoReloadAgent::CAutoReloadAgent()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒZ[ƒu‘OŒã                           //
+//                        ã‚»ãƒ¼ãƒ–å‰å¾Œ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CAutoReloadAgent::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
 	//	Sep. 7, 2003 genta
-	//	•Û‘¶‚ªŠ®—¹‚·‚é‚Ü‚Å‚Íƒtƒ@ƒCƒ‹XV‚Ì’Ê’m‚ğ—}§‚·‚é
+	//	ä¿å­˜ãŒå®Œäº†ã™ã‚‹ã¾ã§ã¯ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ã®é€šçŸ¥ã‚’æŠ‘åˆ¶ã™ã‚‹
 	PauseWatching();
 }
 
 void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	//	Sep. 7, 2003 genta
-	//	ƒtƒ@ƒCƒ‹XV‚Ì’Ê’m‚ğŒ³‚É–ß‚·
+	//	ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ã®é€šçŸ¥ã‚’å…ƒã«æˆ»ã™
 	ResumeWatching();
 
-	// –¼‘O‚ğ•t‚¯‚Ä•Û‘¶‚©‚çÄƒ[ƒh‚ªœ‹‚³‚ê‚½•ª‚Ì•s‘«ˆ—‚ğ’Ç‰ÁiANSI”Å‚Æ‚Ì·ˆÙj	// 2009.08.12 ryoji
+	// åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã‹ã‚‰å†ãƒ­ãƒ¼ãƒ‰ãŒé™¤å»ã•ã‚ŒãŸåˆ†ã®ä¸è¶³å‡¦ç†ã‚’è¿½åŠ ï¼ˆANSIç‰ˆã¨ã®å·®ç•°ï¼‰	// 2009.08.12 ryoji
 	if(!sSaveInfo.bOverwriteMode){
-		m_eWatchUpdate = WU_QUERY;	// u–¼‘O‚ğ•t‚¯‚Ä•Û‘¶v‚Å‘ÎÛƒtƒ@ƒCƒ‹‚ª•ÏX‚³‚ê‚½‚Ì‚ÅXVŠÄ‹•û–@‚ğƒfƒtƒHƒ‹ƒg‚É–ß‚·
+		m_eWatchUpdate = WU_QUERY;	// ã€Œåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ã€ã§å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤‰æ›´ã•ã‚ŒãŸã®ã§æ›´æ–°ç›£è¦–æ–¹æ³•ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã«æˆ»ã™
 	}
 }
 
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ƒ[ƒh‘OŒã                           //
+//                        ãƒ­ãƒ¼ãƒ‰å‰å¾Œ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CAutoReloadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
-	//pcDoc->m_cDocFile.m_sFileInfo.cFileTime.SetFILETIME(ftime); //#####Šù‚Éİ’èÏ‚İ‚Ì‚Í‚¸
+	//pcDoc->m_cDocFile.m_sFileInfo.cFileTime.SetFILETIME(ftime); //#####æ—¢ã«è¨­å®šæ¸ˆã¿ã®ã¯ãš
 }
 
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         Šeí”»’è                            //
+//                         å„ç¨®åˆ¤å®š                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 bool CAutoReloadAgent::_ToDoChecking() const
 {
 	const CommonSetting_File& setting = GetDllShareData().m_Common.m_sFile;
 	if(IsPausing())return false;
-	if(!setting.m_bCheckFileTimeStamp)return false;	//XV‚ÌŠÄ‹İ’è
+	if(!setting.m_bCheckFileTimeStamp)return false;	//æ›´æ–°ã®ç›£è¦–è¨­å®š
 	if(m_eWatchUpdate==WU_NONE)return false;
-	if(setting.m_nFileShareMode!=SHAREMODE_NOT_EXCLUSIVE)return false; // ƒtƒ@ƒCƒ‹‚Ì”r‘¼§Œäƒ‚[ƒh
+	if(setting.m_nFileShareMode!=SHAREMODE_NOT_EXCLUSIVE)return false; // ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–åˆ¶å¾¡ãƒ¢ãƒ¼ãƒ‰
 	HWND hwndActive = ::GetActiveWindow();
-	if(hwndActive==NULL)return false;	/* ƒAƒNƒeƒBƒuH */
+	if(hwndActive==NULL)return false;	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ï¼Ÿ */
 	if(hwndActive!=CEditWnd::getInstance()->GetHwnd())return false;
 	if(!GetListeningDoc()->m_cDocFile.GetFilePathClass().IsValidPath())return false;
-	if(GetListeningDoc()->m_cDocFile.IsFileTimeZero()) return false;	/* Œ»İ•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒv */
-	if(GetListeningDoc()->m_pcEditWnd->m_pPrintPreview ) return false;	// ˆóüƒvƒŒƒrƒ…[’†	2013/5/8 Uchi
+	if(GetListeningDoc()->m_cDocFile.IsFileTimeZero()) return false;	/* ç¾åœ¨ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ— */
+	if(GetListeningDoc()->m_pcEditWnd->m_pPrintPreview ) return false;	// å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ä¸­	2013/5/8 Uchi
 	return true;
 }
 
 bool CAutoReloadAgent::_IsFileUpdatedByOther(FILETIME* pNewFileTime) const
 {
-	/* ƒtƒ@ƒCƒ‹ƒXƒ^ƒ“ƒv‚ğƒ`ƒFƒbƒN‚·‚é */
-	// 2005.10.20 ryoji FindFirstFile‚ğg‚¤‚æ‚¤‚É•ÏXiƒtƒ@ƒCƒ‹‚ªƒƒbƒN‚³‚ê‚Ä‚¢‚Ä‚àƒ^ƒCƒ€ƒXƒ^ƒ“ƒvæ“¾‰Â”\j
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚¹ã‚¿ãƒ³ãƒ—ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ */
+	// 2005.10.20 ryoji FindFirstFileã‚’ä½¿ã†ã‚ˆã†ã«å¤‰æ›´ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ­ãƒƒã‚¯ã•ã‚Œã¦ã„ã¦ã‚‚ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—å–å¾—å¯èƒ½ï¼‰
 	CFileTime ftime;
 	if( GetLastWriteTimestamp( GetListeningDoc()->m_cDocFile.GetFilePath(), &ftime )){
-		if( 0 != ::CompareFileTime( &GetListeningDoc()->m_cDocFile.GetFileTime().GetFILETIME(), &ftime.GetFILETIME() ) )	//	Aug. 13, 2003 wmlhq ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ªŒÃ‚­•ÏX‚³‚ê‚Ä‚¢‚éê‡‚àŒŸo‘ÎÛ‚Æ‚·‚é
+		if( 0 != ::CompareFileTime( &GetListeningDoc()->m_cDocFile.GetFileTime().GetFILETIME(), &ftime.GetFILETIME() ) )	//	Aug. 13, 2003 wmlhq ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ãŒå¤ãå¤‰æ›´ã•ã‚Œã¦ã„ã‚‹å ´åˆã‚‚æ¤œå‡ºå¯¾è±¡ã¨ã™ã‚‹
 		{
 			*pNewFileTime = ftime.GetFILETIME();
 			return true;
@@ -110,10 +110,10 @@ bool CAutoReloadAgent::_IsFileUpdatedByOther(FILETIME* pNewFileTime) const
 	return false;
 }
 
-/* ƒtƒ@ƒCƒ‹‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚Ìƒ`ƒFƒbƒNˆ— */
+/* ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ã®ãƒã‚§ãƒƒã‚¯å‡¦ç† */
 void CAutoReloadAgent::CheckFileTimeStamp()
 {
-	// –¢•ÒW‚ÅÄƒ[ƒh‚Ì’x‰„
+	// æœªç·¨é›†ã§å†ãƒ­ãƒ¼ãƒ‰æ™‚ã®é…å»¶
 	if (m_eWatchUpdate == WU_AUTOLOAD) {
 		if (++m_nDelayCount < GetDllShareData().m_Common.m_sFile.m_nAutoloadDelay)	return;
 		m_nDelayCount = 0;
@@ -123,37 +123,37 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//ƒ^ƒCƒ€ƒXƒ^ƒ“ƒvŠÄ‹
+	//ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ç›£è¦–
 	FILETIME ftime;
 	if(!_IsFileUpdatedByOther(&ftime))return;
-	pcDoc->m_cDocFile.SetFileTime( ftime ); //ƒ^ƒCƒ€ƒXƒ^ƒ“ƒvXV
+	pcDoc->m_cDocFile.SetFileTime( ftime ); //ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—æ›´æ–°
 
 	//	From Here Dec. 4, 2002 genta
 	switch( m_eWatchUpdate ){
 	case WU_NOTIFY:
 		{
-			//ƒtƒ@ƒCƒ‹XV‚Ì‚¨’m‚ç‚¹ -> ƒXƒe[ƒ^ƒXƒo[
+			//ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°ã®ãŠçŸ¥ã‚‰ã› -> ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼
 			TCHAR szText[40];
 			const CFileTime& ctime = pcDoc->m_cDocFile.GetFileTime();
 			auto_sprintf( szText, LS(STR_AUTORELOAD_NOFITY), ctime->wHour, ctime->wMinute, ctime->wSecond );
 			pcDoc->m_pcEditWnd->SendStatusMessage( szText );
 		}
 		break;
-	case WU_AUTOLOAD:		//ˆÈŒã–¢•ÒW‚ÅÄƒ[ƒh
+	case WU_AUTOLOAD:		//ä»¥å¾Œæœªç·¨é›†ã§å†ãƒ­ãƒ¼ãƒ‰
 		if (!pcDoc->m_cDocEditor.IsModified()) {
-			PauseWatching(); // XVŠÄ‹‚Ì—}§
+			PauseWatching(); // æ›´æ–°ç›£è¦–ã®æŠ‘åˆ¶
 
-			/* “¯ˆêƒtƒ@ƒCƒ‹‚ÌÄƒI[ƒvƒ“ */
+			/* åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã®å†ã‚ªãƒ¼ãƒ—ãƒ³ */
 			pcDoc->m_cDocFileOperation.ReloadCurrentFile( pcDoc->m_cDocFile.GetCodeSet() );
 			m_eWatchUpdate = WU_AUTOLOAD;
 
-			ResumeWatching(); //ŠÄ‹ÄŠJ
+			ResumeWatching(); //ç›£è¦–å†é–‹
 			break;
 		}
 		// through
 	default:
 		{
-			PauseWatching(); // XVŠÄ‹‚Ì—}§
+			PauseWatching(); // æ›´æ–°ç›£è¦–ã®æŠ‘åˆ¶
 
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
 			EFileUpdateQuery result = (EFileUpdateQuery)dlg.DoModal(
@@ -164,19 +164,19 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			);
 
 			switch( result ){
-			case EFUQ_RELOAD:	// Ä“Ç
-				/* “¯ˆêƒtƒ@ƒCƒ‹‚ÌÄƒI[ƒvƒ“ */
+			case EFUQ_RELOAD:	// å†èª­è¾¼
+				/* åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã®å†ã‚ªãƒ¼ãƒ—ãƒ³ */
 				pcDoc->m_cDocFileOperation.ReloadCurrentFile( pcDoc->m_cDocFile.GetCodeSet() );
 				m_eWatchUpdate = WU_QUERY;
 				break;
-			case EFUQ_NOTIFYONLY:	// ˆÈŒã’Ê’mƒƒbƒZ[ƒW‚Ì‚İ
+			case EFUQ_NOTIFYONLY:	// ä»¥å¾Œé€šçŸ¥ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ã¿
 				m_eWatchUpdate = WU_NOTIFY;
 				break;
-			case EFUQ_NOSUPERVISION:	// ˆÈŒãXV‚ğŠÄ‹‚µ‚È‚¢
+			case EFUQ_NOSUPERVISION:	// ä»¥å¾Œæ›´æ–°ã‚’ç›£è¦–ã—ãªã„
 				m_eWatchUpdate = WU_NONE;
 				break;
-			case EFUQ_AUTOLOAD:	// ˆÈŒã–¢•ÒW‚ÅÄƒ[ƒh
-				/* “¯ˆêƒtƒ@ƒCƒ‹‚ÌÄƒI[ƒvƒ“ */
+			case EFUQ_AUTOLOAD:	// ä»¥å¾Œæœªç·¨é›†ã§å†ãƒ­ãƒ¼ãƒ‰
+				/* åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã®å†ã‚ªãƒ¼ãƒ—ãƒ³ */
 				pcDoc->m_cDocFileOperation.ReloadCurrentFile( pcDoc->m_cDocFile.GetCodeSet() );
 				m_eWatchUpdate = WU_AUTOLOAD;
 				m_nDelayCount = 0;
@@ -187,7 +187,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 				break;
 			}
 
-			ResumeWatching(); //ŠÄ‹ÄŠJ
+			ResumeWatching(); //ç›£è¦–å†é–‹
 		}
 		break;
 	}

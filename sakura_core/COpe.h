@@ -1,8 +1,8 @@
-/*!	@file
-	@brief �ҏW����v�f
+﻿/*!	@file
+	@brief 編集操作要素
 
 	@author Norio Nakatani
-	@date 1998/06/09 �V�K�쐬
+	@date 1998/06/09 新規作成
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -16,13 +16,13 @@
 
 
 
-//! �A���h�D�o�b�t�@�p ����R�[�h
+//! アンドゥバッファ用 操作コード
 enum EOpeCode {
-	OPE_UNKNOWN		= 0, //!< �s��(���g�p)
-	OPE_INSERT		= 1, //!< �}��
-	OPE_DELETE		= 2, //!< �폜
-	OPE_REPLACE		= 3, //!< �u��
-	OPE_MOVECARET	= 4, //!< �L�����b�g�ړ�
+	OPE_UNKNOWN		= 0, //!< 不明(未使用)
+	OPE_INSERT		= 1, //!< 挿入
+	OPE_DELETE		= 2, //!< 削除
+	OPE_REPLACE		= 3, //!< 置換
+	OPE_MOVECARET	= 4, //!< キャレット移動
 };
 
 class CLineData {
@@ -46,54 +46,54 @@ template <>
 typedef std::vector<CLineData> COpeLineData;
 
 /*!
-	�ҏW����v�f
+	編集操作要素
 	
-	Undo�̂��߂ɂɑ���菇���L�^���邽�߂ɗp����B
-	1�I�u�W�F�N�g���P�̑����\���B
+	Undoのためにに操作手順を記録するために用いる。
+	1オブジェクトが１つの操作を表す。
 */
-//2007.10.17 kobake ����R���h�����߁A�f�[�^���|�C���^�ł͂Ȃ��C���X�^���X���̂Ŏ��悤�ɕύX
+//2007.10.17 kobake 解放漏れを防ぐため、データをポインタではなくインスタンス実体で持つように変更
 class COpe {
 public:
-	COpe(EOpeCode eCode);		/* COpe�N���X�\�z */
-	virtual ~COpe();	/* COpe�N���X���� */
+	COpe(EOpeCode eCode);		/* COpeクラス構築 */
+	virtual ~COpe();	/* COpeクラス消滅 */
 
-	virtual void DUMP( void );	/* �ҏW����v�f�̃_���v */
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 
 	EOpeCode	GetCode() const{ return m_nOpe; }
 
 private:
-	EOpeCode	m_nOpe;						//!< ������
+	EOpeCode	m_nOpe;						//!< 操作種別
 
 public:
-	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< �L�����b�g�ʒu�B�����P�ʁB			[����]
-	CLogicPoint	m_ptCaretPos_PHY_After;		//!< �L�����b�g�ʒu�B�����P�ʁB			[����]
+	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< キャレット位置。文字単位。			[共通]
+	CLogicPoint	m_ptCaretPos_PHY_After;		//!< キャレット位置。文字単位。			[共通]
 };
 
-//!�폜
+//!削除
 class CDeleteOpe : public COpe{
 public:
 	CDeleteOpe() : COpe(OPE_DELETE)
 	{
 		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
 	}
-	virtual void DUMP( void );	/* �ҏW����v�f�̃_���v */
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
-	CLogicPoint	m_ptCaretPos_PHY_To;		//!< ����O�̃L�����b�g�ʒu�B�����P�ʁB	[DELETE]
-	COpeLineData	m_cOpeLineData;			//!< ����Ɋ֘A����f�[�^				[DELETE/INSERT]
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
+	COpeLineData	m_cOpeLineData;			//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;
 };
 
-//!�}��
+//!挿入
 class CInsertOpe : public COpe{
 public:
 	CInsertOpe() : COpe(OPE_INSERT) { }
-	virtual void DUMP( void );	/* �ҏW����v�f�̃_���v */
+	virtual void DUMP( void );	/* 編集操作要素のダンプ */
 public:
-	COpeLineData	m_cOpeLineData;			//!< ����Ɋ֘A����f�[�^				[DELETE/INSERT]
+	COpeLineData	m_cOpeLineData;			//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;
 };
 
-//!�u��
+//!置換
 class CReplaceOpe : public COpe{
 public:
 	CReplaceOpe() : COpe(OPE_REPLACE)
@@ -101,14 +101,14 @@ public:
 		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
 	}
 public:
-	CLogicPoint	m_ptCaretPos_PHY_To;		//!< ����O�̃L�����b�g�ʒu�B�����P�ʁB	[DELETE]
-	COpeLineData	m_pcmemDataIns;			//!< ����Ɋ֘A����f�[�^				[INSERT]
-	COpeLineData	m_pcmemDataDel;			//!< ����Ɋ֘A����f�[�^				[DELETE]
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
+	COpeLineData	m_pcmemDataIns;			//!< 操作に関連するデータ				[INSERT]
+	COpeLineData	m_pcmemDataDel;			//!< 操作に関連するデータ				[DELETE]
 	int				m_nOrgInsSeq;
 	int				m_nOrgDelSeq;
 };
 
-//!�L�����b�g�ړ�
+//!キャレット移動
 class CMoveCaretOpe : public COpe{
 public:
 	CMoveCaretOpe() : COpe(OPE_MOVECARET) { }

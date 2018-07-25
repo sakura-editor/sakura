@@ -1,10 +1,10 @@
-/*!	@file
-	@brief ‹­’²ƒL[ƒ[ƒhŠÇ—
+ï»¿/*!	@file
+	@brief å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ç®¡ç†
 
 	@author Norio Nakatani
 	
 	@date 2000.12.01 MIK binary search
-	@date 2004.07.29-2005.01.27 Moca ƒL[ƒ[ƒh‚Ì‰Â•Ï’·‹L‰¯
+	@date 2004.07.29-2005.01.27 Moca ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å¯å¤‰é•·è¨˜æ†¶
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -37,18 +37,18 @@
 #include "CKeyWordSetMgr.h"
 #include <limits>
 
-//! 1ƒuƒƒbƒN“–‚½‚è‚ÌƒL[ƒ[ƒh”
+//! 1ãƒ–ãƒ­ãƒƒã‚¯å½“ãŸã‚Šã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
 static const int nKeyWordSetBlockSize = 50;
 
-//! ƒuƒƒbƒNƒTƒCƒY‚Å®—ñ
+//! ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã§æ•´åˆ—
 inline int GetAlignmentSize( int nSize )
 {
 	return (nKeyWordSetBlockSize - 1 + nSize) / nKeyWordSetBlockSize * nKeyWordSetBlockSize;
 }
 
 /*!
-	@note CKeyWordSetMgr‚Í‹¤—Lƒƒ‚ƒŠ\‘¢‘Ì‚É–„‚ß‚Ü‚ê‚Ä‚¢‚é‚½‚ßC
-	‚»‚Ì‚Ü‚Ü‚Å‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª“®‚©‚È‚¢‚±‚Æ‚É’ˆÓD
+	@note CKeyWordSetMgrã¯å…±æœ‰ãƒ¡ãƒ¢ãƒªæ§‹é€ ä½“ã«åŸ‹ã‚è¾¼ã¾ã‚Œã¦ã„ã‚‹ãŸã‚ï¼Œ
+	ãã®ã¾ã¾ã§ã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒå‹•ã‹ãªã„ã“ã¨ã«æ³¨æ„ï¼
 */
 CKeyWordSetMgr::CKeyWordSetMgr( void )
 {
@@ -67,11 +67,11 @@ CKeyWordSetMgr::~CKeyWordSetMgr( void)
 }
 
 /*!
-	@brief ‘SƒL[ƒ[ƒhƒZƒbƒg‚Ìíœ‚Æ‰Šú‰»
+	@brief å…¨ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®å‰Šé™¤ã¨åˆæœŸåŒ–
 
-	ƒL[ƒ[ƒhƒZƒbƒg‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ‘S‚Ä0‚Æ‚·‚éD
+	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å…¨ã¦0ã¨ã™ã‚‹ï¼
 	
-	@date 2004.07.29 Moca ‰Â•Ï’·‹L‰¯
+	@date 2004.07.29 Moca å¯å¤‰é•·è¨˜æ†¶
 */
 void CKeyWordSetMgr::ResetAllKeyWordSet( void )
 {
@@ -95,7 +95,7 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 	}
 	m_nCurrentKeyWordSetIdx = cKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
 	m_nKeyWordSetNum = cKeyWordSetMgr.m_nKeyWordSetNum;
-	//”z—ñ‚Ü‚é‚²‚ÆƒRƒs[
+	//é…åˆ—ã¾ã‚‹ã”ã¨ã‚³ãƒ”ãƒ¼
 	memcpy_raw( m_szSetNameArr   , cKeyWordSetMgr.m_szSetNameArr   , sizeof( m_szSetNameArr )    );
 	memcpy_raw( m_bKEYWORDCASEArr, cKeyWordSetMgr.m_bKEYWORDCASEArr, sizeof( m_bKEYWORDCASEArr ) );
 	memcpy_raw( m_nStartIdx      , cKeyWordSetMgr.m_nStartIdx      , sizeof( m_nStartIdx )       );// 2004.07.29 Moca
@@ -109,26 +109,26 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 
 
 
-/*! @brief ƒL[ƒ[ƒhƒZƒbƒg‚Ì’Ç‰Á
+/*! @brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®è¿½åŠ 
 
-	@date 2005.01.26 Moca V‹Kì¬
-	@date 2005.01.29 genta ƒTƒCƒY0‚Åì¬¨realloc‚·‚é‚æ‚¤‚É
+	@date 2005.01.26 Moca æ–°è¦ä½œæˆ
+	@date 2005.01.29 genta ã‚µã‚¤ã‚º0ã§ä½œæˆâ†’reallocã™ã‚‹ã‚ˆã†ã«
 */
 bool CKeyWordSetMgr::AddKeyWordSet(
-	const wchar_t*	pszSetName,		//!< [in] ƒZƒbƒg–¼
-	bool			bKEYWORDCASE,	//!< [in] ‘å•¶š¬•¶š‚Ì‹æ•ÊDtrue:‚ ‚è, false:–³‚µ
-	int				nSize			//!< [in] Å‰‚É—Ìˆæ‚ğŠm•Û‚·‚éƒTƒCƒYD
+	const wchar_t*	pszSetName,		//!< [in] ã‚»ãƒƒãƒˆå
+	bool			bKEYWORDCASE,	//!< [in] å¤§æ–‡å­—å°æ–‡å­—ã®åŒºåˆ¥ï¼true:ã‚ã‚Š, false:ç„¡ã—
+	int				nSize			//!< [in] æœ€åˆã«é ˜åŸŸã‚’ç¢ºä¿ã™ã‚‹ã‚µã‚¤ã‚ºï¼
 )
 {
 	if( nSize < 0 ) nSize = nKeyWordSetBlockSize;
 	if( MAX_SETNUM <= m_nKeyWordSetNum ){
 		return false;
 	}
-	int nIdx = m_nKeyWordSetNum;	//’Ç‰ÁˆÊ’u
-	m_nStartIdx[ ++m_nKeyWordSetNum ] = m_nStartIdx[ nIdx ];// ƒTƒCƒY0‚ÅƒZƒbƒg’Ç‰Á
+	int nIdx = m_nKeyWordSetNum;	//è¿½åŠ ä½ç½®
+	m_nStartIdx[ ++m_nKeyWordSetNum ] = m_nStartIdx[ nIdx ];// ã‚µã‚¤ã‚º0ã§ã‚»ãƒƒãƒˆè¿½åŠ 
 
 	if( !KeyWordReAlloc( nIdx, nSize ) ){
-		--m_nKeyWordSetNum;	//	ƒL[ƒ[ƒhƒZƒbƒg‚Ì’Ç‰Á‚ğƒLƒƒƒ“ƒZƒ‹‚·‚é
+		--m_nKeyWordSetNum;	//	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®è¿½åŠ ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã™ã‚‹
 		return false;
 	}
 	wcsncpy( m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1 );
@@ -139,7 +139,7 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 	return true;
 }
 
-/* ‚”Ô–Ú‚ÌƒZƒbƒg‚ğíœ */
+/* ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã‚’å‰Šé™¤ */
 bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 {
 	int		i;
@@ -148,23 +148,23 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 	){
 		return false;
 	}
-	// ƒL[ƒ[ƒh—Ìˆæ‚ğŠJ•ú
+	// ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é ˜åŸŸã‚’é–‹æ”¾
 	KeyWordReAlloc( nIdx, 0 );
 	
 	for( i = nIdx; i < m_nKeyWordSetNum - 1; ++i ){
-		//”z—ñ‚Ü‚é‚²‚ÆƒRƒs[
+		//é…åˆ—ã¾ã‚‹ã”ã¨ã‚³ãƒ”ãƒ¼
 		memcpy_raw( m_szSetNameArr[i], m_szSetNameArr[i + 1], sizeof( m_szSetNameArr[0] ) );
 		m_bKEYWORDCASEArr[i] = m_bKEYWORDCASEArr[i + 1];
 		m_nKeyWordNumArr[i] = m_nKeyWordNumArr[i + 1];
-		m_nStartIdx[i] = m_nStartIdx[i + 1];	//	2004.07.29 Moca ‰Â•Ï’·‹L‰¯
+		m_nStartIdx[i] = m_nStartIdx[i + 1];	//	2004.07.29 Moca å¯å¤‰é•·è¨˜æ†¶
 		m_IsSorted[i] = m_IsSorted[i+1];	//MIK 2000.12.01 binary search
 		m_nKeyWordMaxLenArr[i] = m_nKeyWordMaxLenArr[i+1];	// 2014.05.04 Moca
 	}
-	m_nStartIdx[m_nKeyWordSetNum - 1] = m_nStartIdx[m_nKeyWordSetNum];	// 2007.07.14 ryoji ‚±‚ê‚ª–³‚¢‚Æ––”öÅIƒZƒbƒg‚Ìæ“ª‚É‚È‚Á‚Ä‚µ‚Ü‚¤
+	m_nStartIdx[m_nKeyWordSetNum - 1] = m_nStartIdx[m_nKeyWordSetNum];	// 2007.07.14 ryoji ã“ã‚ŒãŒç„¡ã„ã¨æœ«å°¾ï¼æœ€çµ‚ã‚»ãƒƒãƒˆã®å…ˆé ­ã«ãªã£ã¦ã—ã¾ã†
 	m_nKeyWordSetNum--;
 	if( m_nKeyWordSetNum <= m_nCurrentKeyWordSetIdx ){
 		m_nCurrentKeyWordSetIdx = m_nKeyWordSetNum - 1;
-//ƒZƒbƒg‚ª–³‚­‚È‚Á‚½‚Æ‚«Am_nCurrentKeyWordSetIdx‚ğ‚í‚´‚Æ-1‚É‚·‚é‚½‚ßAƒRƒƒ“ƒg‰»
+//ã‚»ãƒƒãƒˆãŒç„¡ããªã£ãŸã¨ãã€m_nCurrentKeyWordSetIdxã‚’ã‚ã–ã¨-1ã«ã™ã‚‹ãŸã‚ã€ã‚³ãƒ¡ãƒ³ãƒˆåŒ–
 //		if( 0 > m_nCurrentKeyWordSetIdx ){
 //			m_nCurrentKeyWordSetIdx = 0;
 //		}
@@ -174,9 +174,9 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 
 
 
-/*! ‚”Ô–Ú‚ÌƒZƒbƒg‚ÌƒZƒbƒg–¼‚ğ•Ô‚·
+/*! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ã‚»ãƒƒãƒˆåã‚’è¿”ã™
 
-	@param nIdx [in] ƒZƒbƒg”Ô† 0`ƒL[ƒ[ƒhƒZƒbƒg”-1
+	@param nIdx [in] ã‚»ãƒƒãƒˆç•ªå· 0ï½ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆæ•°-1
 */
 const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
 {
@@ -186,9 +186,9 @@ const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
 	return m_szSetNameArr[nIdx];
 }
 
-/*! ‚”Ô–Ú‚ÌƒZƒbƒg‚ÌƒZƒbƒg–¼‚ğÄİ’è
+/*! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ã‚»ãƒƒãƒˆåã‚’å†è¨­å®š
 
-	@date 2005.01.26 Moca V‹Kì¬
+	@date 2005.01.26 Moca æ–°è¦ä½œæˆ
 */
 const wchar_t* CKeyWordSetMgr::SetTypeName( int nIdx, const wchar_t* name )
 {
@@ -200,7 +200,7 @@ const wchar_t* CKeyWordSetMgr::SetTypeName( int nIdx, const wchar_t* name )
 	return m_szSetNameArr[nIdx];
 }
 
-/* ‚”Ô–Ú‚ÌƒZƒbƒg‚ÌƒL[ƒ[ƒh‚Ì”‚ğ•Ô‚· */
+/* ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ•°ã‚’è¿”ã™ */
 int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
 {
 	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
@@ -209,10 +209,10 @@ int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
 	return m_nKeyWordNumArr[nIdx];
 }
 
-/*! ‚”Ô–Ú‚ÌƒZƒbƒg‚Ì‚”Ô–Ú‚ÌƒL[ƒ[ƒh‚ğ•Ô‚·
+/*! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ï½ç•ªç›®ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’è¿”ã™
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	@param nIdx2 [in] ƒL[ƒ[ƒh”Ô†
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	@param nIdx2 [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ç•ªå·
 */
 const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
 {
@@ -225,11 +225,11 @@ const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
 	return m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
 }
 
-//! ‚”Ô–Ú‚ÌƒZƒbƒg‚Ì‚”Ô–Ú‚ÌƒL[ƒ[ƒh‚ğ•ÒW
+//! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ï½ç•ªç›®ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ç·¨é›†
 const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
-	int				nIdx,		//!< [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	int				nIdx2,		//!< [in] ƒL[ƒ[ƒh”Ô†
-	const WCHAR*	pszKeyWord	//!< [in] İ’è‚·‚éƒL[ƒ[ƒh
+	int				nIdx,		//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	int				nIdx2,		//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ç•ªå·
+	const WCHAR*	pszKeyWord	//!< [in] è¨­å®šã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 )
 {
 	int i;
@@ -239,11 +239,11 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
 		return NULL;
 	}
-	/* 0ƒoƒCƒg‚Ì’·‚³‚ÌƒL[ƒ[ƒh‚Í•ÒW‚µ‚È‚¢ */
+	/* 0ãƒã‚¤ãƒˆã®é•·ã•ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯ç·¨é›†ã—ãªã„ */
 	if( pszKeyWord[0] == L'\0' ){
 		return NULL;
 	}
-	/* d•¡‚µ‚½ƒL[ƒ[ƒh‚Í•ÒW‚µ‚È‚¢ */
+	/* é‡è¤‡ã—ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯ç·¨é›†ã—ãªã„ */
 	for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i ){
 		if( 0 == wcscmp( m_szKeyWordArr[i], pszKeyWord ) ){
 			return NULL;
@@ -257,13 +257,13 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 }
 
 
-/*! ‚”Ô–Ú‚ÌƒZƒbƒg‚ÉƒL[ƒ[ƒh‚ğ’Ç‰Á
+/*! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’è¿½åŠ 
 
-	@param nIdx [in] ƒZƒbƒg”Ô†
-	@param pszKeyWord [in] ƒL[ƒ[ƒh•¶š—ñ
+	@param nIdx [in] ã‚»ãƒƒãƒˆç•ªå·
+	@param pszKeyWord [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ–‡å­—åˆ—
 	
-	@return 0: ¬Œ÷, 1: ƒZƒbƒg”Ô†ƒGƒ‰[C2: ƒƒ‚ƒŠŠm•ÛƒGƒ‰[
-		3: ƒL[ƒ[ƒh•s³C4: ƒL[ƒ[ƒhd•¡
+	@return 0: æˆåŠŸ, 1: ã‚»ãƒƒãƒˆç•ªå·ã‚¨ãƒ©ãƒ¼ï¼Œ2: ãƒ¡ãƒ¢ãƒªç¢ºä¿ã‚¨ãƒ©ãƒ¼
+		3: ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ä¸æ­£ï¼Œ4: ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é‡è¤‡
 
 */
 int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
@@ -280,17 +280,17 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 //		return FALSE;
 //	}
 
-	/* 0ƒoƒCƒg‚Ì’·‚³‚ÌƒL[ƒ[ƒh‚Í“o˜^‚µ‚È‚¢ */
+	/* 0ãƒã‚¤ãƒˆã®é•·ã•ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯ç™»éŒ²ã—ãªã„ */
 	if( pszKeyWord[0] == L'\0' ){
 		return 3;
 	}
-	/* d•¡‚µ‚½ƒL[ƒ[ƒh‚Í“o˜^‚µ‚È‚¢ */
+	/* é‡è¤‡ã—ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯ç™»éŒ²ã—ãªã„ */
 	for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i ){
 		if( 0 == wcscmp( m_szKeyWordArr[i], pszKeyWord ) ){
 			return 4;
 		}
 	}
-	/* MAX_KEYWORDLEN‚æ‚è’·‚¢ƒL[ƒ[ƒh‚ÍØ‚èÌ‚Ä‚é */
+	/* MAX_KEYWORDLENã‚ˆã‚Šé•·ã„ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã¯åˆ‡ã‚Šæ¨ã¦ã‚‹ */
 	if( MAX_KEYWORDLEN < wcslen( pszKeyWord ) ){
 		wmemcpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, MAX_KEYWORDLEN );
 		m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]][MAX_KEYWORDLEN] = L'\0';
@@ -303,10 +303,10 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 }
 
 
-/*! ‚”Ô–Ú‚ÌƒZƒbƒg‚Ì‚”Ô–Ú‚ÌƒL[ƒ[ƒh‚ğíœ
+/*! ï½ç•ªç›®ã®ã‚»ãƒƒãƒˆã®ï½ç•ªç›®ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å‰Šé™¤
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	@param nIdx2 [in] ƒL[ƒ[ƒh”Ô†
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	@param nIdx2 [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ç•ªå·
 */
 int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 {
@@ -317,7 +317,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 		return 2;
 	}
 	if( 0 >= m_nKeyWordNumArr[nIdx]	){
-		return 3;	//	“o˜^”‚ª0‚È‚çã‚ÌğŒ‚Åˆø‚Á‚©‚©‚é‚Ì‚Å‚±‚±‚É‚Í—ˆ‚È‚¢H
+		return 3;	//	ç™»éŒ²æ•°ãŒ0ãªã‚‰ä¸Šã®æ¡ä»¶ã§å¼•ã£ã‹ã‹ã‚‹ã®ã§ã“ã“ã«ã¯æ¥ãªã„ï¼Ÿ
 	}
 	int nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
 	int  i;
@@ -327,11 +327,11 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	}
 	m_nKeyWordNumArr[nIdx]--;
 
-	// 2005.01.26 Moca 1‚Â‚¸‚ç‚·‚¾‚¯‚È‚Ì‚ÅAƒ\[ƒg‚Ìó‘Ô‚Í•Û‚³‚ê‚é
+	// 2005.01.26 Moca 1ã¤ãšã‚‰ã™ã ã‘ãªã®ã§ã€ã‚½ãƒ¼ãƒˆã®çŠ¶æ…‹ã¯ä¿æŒã•ã‚Œã‚‹
 	// m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
 	KeyWordReAlloc( nIdx, m_nKeyWordNumArr[nIdx] );	// 2004.07.29 Moca
 
-	// 2014.05.04 Moca ƒL[ƒ[ƒh’·‚ÌÄŒvZ
+	// 2014.05.04 Moca ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é•·ã®å†è¨ˆç®—
 	if( nDelKeywordLen == m_nKeyWordMaxLenArr[nIdx] ){
 		KeywordMaxLen(nIdx);
 	}
@@ -340,15 +340,15 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 
 
 //MIK START 2000.12.01 binary search
-/*!	ƒL[ƒ[ƒh‚Ìƒ\[ƒg‚ÆƒL[ƒ[ƒh’·‚ÌÅ‘å’lŒvZ
+/*!	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ã‚½ãƒ¼ãƒˆã¨ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é•·ã®æœ€å¤§å€¤è¨ˆç®—
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
 
 */
 typedef int (__cdecl *qsort_callback)(const void *, const void *);
 void CKeyWordSetMgr::SortKeyWord( int nIdx )
 {
-	//nIdx‚ÌƒZƒbƒg‚ğƒ\[ƒg‚·‚éB
+	//nIdxã®ã‚»ãƒƒãƒˆã‚’ã‚½ãƒ¼ãƒˆã™ã‚‹ã€‚
 	if( m_bKEYWORDCASEArr[nIdx] ) {
 		qsort(
 			m_szKeyWordArr[m_nStartIdx[nIdx]],
@@ -386,12 +386,12 @@ void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
 }
 
 
-/** nIdx”Ô–Ú‚ÌƒL[ƒ[ƒhƒZƒbƒg‚©‚ç pszKeyWord‚ğ’T‚·B
-	Œ©‚Â‚©‚ê‚Î 0ˆÈã‚ğAŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î•‰‚Ì”‚ğ•Ô‚·B
-	@retval 0ˆÈã Œ©‚Â‚©‚Á‚½B
-	@retval -1     Œ©‚Â‚©‚ç‚È‚©‚Á‚½B
-	@retval -2     Œ©‚Â‚©‚ç‚È‚©‚Á‚½‚ªApszKeyword‚©‚çn‚Ü‚éƒL[ƒ[ƒh‚ª‘¶İ‚µ‚Ä‚¢‚éB
-	@retval intmax Œ©‚Â‚©‚Á‚½‚ªApszKeyword‚©‚çn‚Ü‚éA‚æ‚è’·‚¢ƒL[ƒ[ƒh‚ª‘¶İ‚µ‚Ä‚¢‚éB
+/** nIdxç•ªç›®ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã‹ã‚‰ pszKeyWordã‚’æ¢ã™ã€‚
+	è¦‹ã¤ã‹ã‚Œã° 0ä»¥ä¸Šã‚’ã€è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°è² ã®æ•°ã‚’è¿”ã™ã€‚
+	@retval 0ä»¥ä¸Š è¦‹ã¤ã‹ã£ãŸã€‚
+	@retval -1     è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã€‚
+	@retval -2     è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸãŒã€pszKeywordã‹ã‚‰å§‹ã¾ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã€‚
+	@retval intmax è¦‹ã¤ã‹ã£ãŸãŒã€pszKeywordã‹ã‚‰å§‹ã¾ã‚‹ã€ã‚ˆã‚Šé•·ã„ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã€‚
 */
 int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKeyWordLen )
 {
@@ -401,7 +401,7 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 	}
 
 	if( m_nKeyWordMaxLenArr[nIdx] < nKeyWordLen ) {
-		return -1; // š”ƒI[ƒo[B
+		return -1; // å­—æ•°ã‚ªãƒ¼ãƒãƒ¼ã€‚
 	}
 
 	int result = -1;
@@ -417,22 +417,22 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 			pr = pc - 1;
 		} else {
 			if( wcslen( m_szKeyWordArr[pc] ) > static_cast<size_t>(nKeyWordLen) ) {
-				// n‚Ü‚è‚Íˆê’v‚µ‚½‚ª’·‚³‚ª‘«‚è‚È‚¢B
+				// å§‹ã¾ã‚Šã¯ä¸€è‡´ã—ãŸãŒé•·ã•ãŒè¶³ã‚Šãªã„ã€‚
 				if( 0 <= result ) {
 					result = std::numeric_limits<int>::max();
 					break;
 				}
 				result = -2;
-				// ‚Ò‚Á‚½‚èˆê’v‚·‚éƒL[ƒ[ƒh‚ğ’T‚·‚½‚ß‚É‘±‚¯‚éB
+				// ã´ã£ãŸã‚Šä¸€è‡´ã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ¢ã™ãŸã‚ã«ç¶šã‘ã‚‹ã€‚
 				pr = pc - 1;
 			} else {
-				// ˆê’v‚·‚éƒL[ƒ[ƒh‚ªŒ©‚Â‚©‚Á‚½B
+				// ä¸€è‡´ã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãŒè¦‹ã¤ã‹ã£ãŸã€‚
 				if( result == -2 ) {
 					result = std::numeric_limits<int>::max();
 					break;
 				}
 				result = pc - m_nStartIdx[nIdx];
-				// ‚æ‚è’·‚¢ƒL[ƒ[ƒh‚ğ’T‚·‚½‚ß‚É‘±‚¯‚éB
+				// ã‚ˆã‚Šé•·ã„ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ¢ã™ãŸã‚ã«ç¶šã‘ã‚‹ã€‚
 				pl = pc + 1;
 			}
 		}
@@ -444,10 +444,10 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 //MIK START 2000.12.01 START
 void CKeyWordSetMgr::SetKeyWordCase( int nIdx, int nCase )
 {
-	//‘å•¶š¬•¶š”»’f‚Í‚Pƒrƒbƒg‚ ‚ê‚ÎÀŒ»‚Å‚«‚éB
-	//¡‚ÍintŒ^(sizeof(int) * ƒZƒbƒg” = 4 * 100 = 400)‚¾‚ª,
-	//charŒ^(sizeof(char) * ƒZƒbƒg” = 1 * 100 = 100)‚Å\•ª‚¾‚µ
-	//ƒrƒbƒg‘€ì‚µ‚Ä‚à‚¢‚¢B
+	//å¤§æ–‡å­—å°æ–‡å­—åˆ¤æ–­ã¯ï¼‘ãƒ“ãƒƒãƒˆã‚ã‚Œã°å®Ÿç¾ã§ãã‚‹ã€‚
+	//ä»Šã¯intå‹(sizeof(int) * ã‚»ãƒƒãƒˆæ•° = 4 * 100 = 400)ã ãŒ,
+	//charå‹(sizeof(char) * ã‚»ãƒƒãƒˆæ•° = 1 * 100 = 100)ã§ååˆ†ã ã—
+	//ãƒ“ãƒƒãƒˆæ“ä½œã—ã¦ã‚‚ã„ã„ã€‚
 	if(nCase) {
 		m_bKEYWORDCASEArr[nIdx] = true;
 	} else {
@@ -465,18 +465,18 @@ bool CKeyWordSetMgr::GetKeyWordCase( int nIdx )
 //MIK END
 
 
-// From Here 2004.07.29 Moca ‰Â•Ï’·‹L‰¯
-/*!	@brief \\0‚Ü‚½‚ÍTAB‚Å‹æØ‚ç‚ê‚½•¶š—ñ‚©‚çƒL[ƒ[ƒh‚ğİ’è
+// From Here 2004.07.29 Moca å¯å¤‰é•·è¨˜æ†¶
+/*!	@brief \\0ã¾ãŸã¯TABã§åŒºåˆ‡ã‚‰ã‚ŒãŸæ–‡å­—åˆ—ã‹ã‚‰ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’è¨­å®š
 
-	@return “o˜^‚É¬Œ÷‚µ‚½ƒL[ƒ[ƒh”
+	@return ç™»éŒ²ã«æˆåŠŸã—ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
 	
 	@author Moca
-	@date 2004.07.29 Moca CShareData::ShareData_IO_2“à‚ÌƒR[ƒh‚ğŒ³‚ÉˆÚ’zEì¬
+	@date 2004.07.29 Moca CShareData::ShareData_IO_2å†…ã®ã‚³ãƒ¼ãƒ‰ã‚’å…ƒã«ç§»ç¯‰ãƒ»ä½œæˆ
 */
 int CKeyWordSetMgr::SetKeyWordArr(
-	int				nIdx,			//!< [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	int				nSize,			//!< [in] ƒL[ƒ[ƒh”
-	const wchar_t*	pszKeyWordArr	//!< [in]ukey\\tword\\t\\0v–”‚Íukey\\0word\\0\\0v‚ÌŒ`®
+	int				nIdx,			//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	int				nSize,			//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
+	const wchar_t*	pszKeyWordArr	//!< [in]ã€Œkey\\tword\\t\\0ã€åˆã¯ã€Œkey\\0word\\0\\0ã€ã®å½¢å¼
 )
 {
 	if( !KeyWordReAlloc( nIdx, nSize ) ){
@@ -486,8 +486,8 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	const wchar_t* ptr = pszKeyWordArr;
 	for( cnt = 0, i = m_nStartIdx[nIdx];
 		i < m_nStartIdx[nIdx] + nSize && *ptr != L'\0'; cnt++, i++ ){
-		//	May 25, 2003 ƒL[ƒ[ƒh‚Ì‹æØ‚è‚Æ‚µ‚Ä\0ˆÈŠO‚ÉTAB‚ğó‚¯•t‚¯‚é‚æ‚¤‚É‚·‚é
-		const wchar_t* pTop = ptr;	// ƒL[ƒ[ƒh‚Ìæ“ªˆÊ’u‚ğ•Û‘¶
+		//	May 25, 2003 ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®åŒºåˆ‡ã‚Šã¨ã—ã¦\0ä»¥å¤–ã«TABã‚’å—ã‘ä»˜ã‘ã‚‹ã‚ˆã†ã«ã™ã‚‹
+		const wchar_t* pTop = ptr;	// ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®å…ˆé ­ä½ç½®ã‚’ä¿å­˜
 		while( *ptr != L'\t' && *ptr != L'\0' )
 			++ptr;
 		int kwlen = ptr - pTop;
@@ -500,14 +500,14 @@ int CKeyWordSetMgr::SetKeyWordArr(
 }
 
 /*!
-	ƒL[ƒ[ƒhƒŠƒXƒg‚ğİ’è
+	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒªã‚¹ãƒˆã‚’è¨­å®š
 
-	@return “o˜^‚µ‚½ƒL[ƒ[ƒh”D0‚Í¸”sD
+	@return ç™»éŒ²ã—ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°ï¼0ã¯å¤±æ•—ï¼
 */
 int CKeyWordSetMgr::SetKeyWordArr(
-	int				nIdx,				//!< [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	int				nSize,				//!< [in] ppszKeyWordArr‚Ì—v‘f”
-	const wchar_t*	ppszKeyWordArr[]	//!< [in] ƒL[ƒ[ƒh‚Ì”z—ñ(d•¡E’·‚³§ŒÀ“™Al—¶Ï‚İ‚Å‚ ‚é‚±‚Æ)
+	int				nIdx,				//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	int				nSize,				//!< [in] ppszKeyWordArrã®è¦ç´ æ•°
+	const wchar_t*	ppszKeyWordArr[]	//!< [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®é…åˆ—(é‡è¤‡ãƒ»é•·ã•åˆ¶é™ç­‰ã€è€ƒæ…®æ¸ˆã¿ã§ã‚ã‚‹ã“ã¨)
 )
 {
 	if( !KeyWordReAlloc( nIdx, nSize ) ){
@@ -521,25 +521,25 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	return nSize;
 }
 
-/*!	@brief ƒL[ƒ[ƒh‚Ì®—
+/*!	@brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ•´ç†
 
-	d•¡‚âg—p•s‰Â‚ÌƒL[ƒ[ƒh‚ğæ‚èœ‚­
+	é‡è¤‡ã‚„ä½¿ç”¨ä¸å¯ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å–ã‚Šé™¤ã
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
 	
-	@return íœ‚µ‚½ƒL[ƒ[ƒh”
+	@return å‰Šé™¤ã—ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
 */
 int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 {
-	// æ‚Éƒ\[ƒg‚µ‚Ä‚¨‚©‚È‚¢‚ÆAŒã‚Å‡”Ô‚ª•Ï‚í‚é‚Æ“s‡‚ªˆ«‚¢
+	// å…ˆã«ã‚½ãƒ¼ãƒˆã—ã¦ãŠã‹ãªã„ã¨ã€å¾Œã§é †ç•ªãŒå¤‰ã‚ã‚‹ã¨éƒ½åˆãŒæ‚ªã„
 	if( m_IsSorted[nIdx] == 0 )	SortKeyWord( nIdx );
 
-	int nDelCount = 0;	//!< íœƒL[ƒ[ƒh”
+	int nDelCount = 0;	//!< å‰Šé™¤ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
 	int i = 0;
 	while( i < GetKeyWordNum( nIdx ) - 1 ){
 		const wchar_t* p = GetKeyWord( nIdx, i );
-		bool bDelKey = false;	//!< true‚È‚çíœ‘ÎÛ
-		// d•¡‚·‚éƒL[ƒ[ƒh‚©
+		bool bDelKey = false;	//!< trueãªã‚‰å‰Šé™¤å¯¾è±¡
+		// é‡è¤‡ã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‹
 		const wchar_t* r = GetKeyWord( nIdx, i + 1 );
 		unsigned int nKeyWordLen = wcslen( p );
 		if( nKeyWordLen == wcslen( r ) ){
@@ -556,7 +556,7 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 		if( bDelKey ){
 			DelKeyWord( nIdx, i );
 			nDelCount++;
-			//Œã‚ë‚ª‚¸‚ê‚é‚Ì‚ÅAi‚ğ‘‚â‚³‚È‚¢
+			//å¾Œã‚ãŒãšã‚Œã‚‹ã®ã§ã€iã‚’å¢—ã‚„ã•ãªã„
 		}else{
 			i++;
 		}
@@ -564,46 +564,46 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 	return nDelCount;
 }
 
-/*!	@brief ƒL[ƒ[ƒh’Ç‰Á—]’n‚Ì–â‚¢‡‚í‚¹
+/*!	@brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è¿½åŠ ä½™åœ°ã®å•ã„åˆã‚ã›
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	@return true: ‚à‚¤1‚Â’Ç‰Á‰Â”\, false: ’Ç‰Á•s‰Â”\
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	@return true: ã‚‚ã†1ã¤è¿½åŠ å¯èƒ½, false: è¿½åŠ ä¸å¯èƒ½
 
-	@date 2005.01.26 Moca V‹Kì¬
-	@date 2005.01.29 genta Š„‚è“–‚ÄÏ‚İ‚Ì—Ìˆæ‚É‹ó‚«‚ª‚ ‚ê‚ÎŠg’£•s”\‚Å‚à’Ç‰Á‰Â”\
+	@date 2005.01.26 Moca æ–°è¦ä½œæˆ
+	@date 2005.01.29 genta å‰²ã‚Šå½“ã¦æ¸ˆã¿ã®é ˜åŸŸã«ç©ºããŒã‚ã‚Œã°æ‹¡å¼µä¸èƒ½ã§ã‚‚è¿½åŠ å¯èƒ½
 */
 bool CKeyWordSetMgr::CanAddKeyWord( int nIdx )
 {
-	//	Š„‚è“–‚ÄÏ‚İ‚Ì—Ìˆæ‚Ì‹ó‚«‚ğ‚Ü‚¸’²‚×‚é
+	//	å‰²ã‚Šå½“ã¦æ¸ˆã¿ã®é ˜åŸŸã®ç©ºãã‚’ã¾ãšèª¿ã¹ã‚‹
 	int nSizeOld = GetAllocSize( nIdx );
 	if( m_nKeyWordNumArr[nIdx] < nSizeOld ){
 		return true;
 	}
 
-	//	Š„‚è“–‚ÄÏ‚İ—Ìˆæ‚ª‚¢‚Á‚Ï‚¢‚È‚ç‚ÎCŠ„‚è“–‚Ä‰Â”\—Ìˆæ‚Ì—L–³‚ğŠm”F
-	//	ˆê‰Š„‚è“–‚ÄÅ¬’PˆÊ•ªc‚Á‚Ä‚¢‚é‚±‚Æ‚ğŠm”FD
+	//	å‰²ã‚Šå½“ã¦æ¸ˆã¿é ˜åŸŸãŒã„ã£ã±ã„ãªã‚‰ã°ï¼Œå‰²ã‚Šå½“ã¦å¯èƒ½é ˜åŸŸã®æœ‰ç„¡ã‚’ç¢ºèª
+	//	ä¸€å¿œå‰²ã‚Šå½“ã¦æœ€å°å˜ä½åˆ†æ®‹ã£ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèªï¼
 	if( GetFreeSize() >= nKeyWordSetBlockSize ){
 		return true;
 	}
 
-	//	‚»‚ê‚Å‚à‚¾‚ß‚©
+	//	ãã‚Œã§ã‚‚ã ã‚ã‹
 	return false;
 }
 
 #if 0
-/*!	V‚µ‚¢ƒL[ƒ[ƒhƒZƒbƒg‚ÌƒL[ƒ[ƒh—Ìˆæ‚ğŠm•Û‚·‚é
-	m_nKeyWordSetNum‚ÍAŒÄ‚Ño‚µ‘¤‚ªAŒÄ‚Ño‚µ‚½Œã‚É+1‚·‚é
+/*!	æ–°ã—ã„ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é ˜åŸŸã‚’ç¢ºä¿ã™ã‚‹
+	m_nKeyWordSetNumã¯ã€å‘¼ã³å‡ºã—å´ãŒã€å‘¼ã³å‡ºã—ãŸå¾Œã«+1ã™ã‚‹
 */
 bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
 {
 	// assert( m_nKeyWordSetNum < MAX_SETNUM );
 	// assert( 0 <= nSize );
 
-	// ƒuƒƒbƒN‚ÌƒTƒCƒY‚Å®—ñ
+	// ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚µã‚¤ã‚ºã§æ•´åˆ—
 	int nAllocSize = GetAlignmentSize( nSize );
 
 	if( GetFreeSize() < nAllocSize ){
-		// ƒƒ‚ƒŠ•s‘«
+		// ãƒ¡ãƒ¢ãƒªä¸è¶³
 		return false;
 	}
 	m_nStartIdx[m_nKeyWordSetNum + 1] = m_nStartIdx[m_nKeyWordSetNum] + nAllocSize;
@@ -615,16 +615,16 @@ bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
 }
 #endif
 
-/*!	‰Šú‰»Ï‚İ‚ÌƒL[ƒ[ƒhƒZƒbƒg‚ÌƒL[ƒ[ƒh—Ìˆæ‚ÌÄŠ„‚è“–‚ÄA‰ğ•ú‚ğs‚¤
+/*!	åˆæœŸåŒ–æ¸ˆã¿ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰é ˜åŸŸã®å†å‰²ã‚Šå½“ã¦ã€è§£æ”¾ã‚’è¡Œã†
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	@param nSize [in] •K—v‚ÈƒL[ƒ[ƒh” (0`)
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	@param nSize [in] å¿…è¦ãªã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•° (0ï½)
 */
 bool CKeyWordSetMgr::KeyWordReAlloc( int nIdx, int nSize )
 {
 	// assert( 0 <= nIdx && nIdx < m_nKeyWordSetNum );
 
-	// ƒuƒƒbƒN‚ÌƒTƒCƒY‚Å®—ñ
+	// ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚µã‚¤ã‚ºã§æ•´åˆ—
 	int nAllocSize = GetAlignmentSize( nSize );
 	int nSizeOld = GetAllocSize( nIdx );
 
@@ -632,16 +632,16 @@ bool CKeyWordSetMgr::KeyWordReAlloc( int nIdx, int nSize )
 		return false;
 	}
 	if( nAllocSize == nSizeOld ){
-		// ƒTƒCƒY•ÏX‚È‚µ
+		// ã‚µã‚¤ã‚ºå¤‰æ›´ãªã—
 		return true;
 	}
 
 	int nDiffSize = nAllocSize - nSizeOld;
 	if( GetFreeSize() < nDiffSize ){
-		// ƒƒ‚ƒŠ•s‘«
+		// ãƒ¡ãƒ¢ãƒªä¸è¶³
 		return false;
 	}
-	// Œã‚ë‚ÌƒL[ƒ[ƒhƒZƒbƒg‚ÌƒL[ƒ[ƒh‚ğ‚·‚×‚ÄˆÚ“®‚·‚é
+	// å¾Œã‚ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ã™ã¹ã¦ç§»å‹•ã™ã‚‹
 	int i;
 	if( nIdx + 1 < m_nKeyWordSetNum ){
 		int nKeyWordIdx = m_nStartIdx[nIdx + 1];
@@ -656,21 +656,21 @@ bool CKeyWordSetMgr::KeyWordReAlloc( int nIdx, int nSize )
 	return true;
 }
 
-/*!	@brief Š„‚è“–‚ÄÏ‚İƒL[ƒ[ƒh” 
+/*!	@brief å‰²ã‚Šå½“ã¦æ¸ˆã¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•° 
 
-	@param nIdx [in] ƒL[ƒ[ƒhƒZƒbƒg”Ô†
-	@return ƒL[ƒ[ƒhƒZƒbƒg‚ÉŠ„‚è“–‚ÄÏ‚İ‚ÌƒL[ƒ[ƒh”
+	@param nIdx [in] ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆç•ªå·
+	@return ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆã«å‰²ã‚Šå½“ã¦æ¸ˆã¿ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
 */
 int CKeyWordSetMgr::GetAllocSize( int nIdx ) const
 {
 	return m_nStartIdx[nIdx + 1] - m_nStartIdx[nIdx];
 }
 
-/*! ‹¤—L‹ó‚«ƒXƒy[ƒX
+/*! å…±æœ‰ç©ºãã‚¹ãƒšãƒ¼ã‚¹
 
-	@date 2004.07.29 Moca V‹Kì¬
+	@date 2004.07.29 Moca æ–°è¦ä½œæˆ
 	
-	@return ‹¤—L‹ó‚«—Ìˆæ(ƒL[ƒ[ƒh”)
+	@return å…±æœ‰ç©ºãé ˜åŸŸ(ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°)
  */
 int CKeyWordSetMgr::GetFreeSize( void ) const 
 {
@@ -678,7 +678,7 @@ int CKeyWordSetMgr::GetFreeSize( void ) const
 }
 // To Here 2004.07.29 Moca
 
-// ƒL[ƒ[ƒhƒZƒbƒg–¼‚©‚çƒZƒbƒg”Ô†‚ğæ“¾BŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î -1
+// ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆåã‹ã‚‰ã‚»ãƒƒãƒˆç•ªå·ã‚’å–å¾—ã€‚è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã° -1
 //	Uchi 2010/4/14
 int  CKeyWordSetMgr::SearchKeyWordSet( const wchar_t* pszKeyWord )
 {

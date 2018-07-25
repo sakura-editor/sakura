@@ -1,8 +1,8 @@
-/*! @file
-	@brief End of Lineí•Ê‚ÌŠÇ—
+ï»¿/*! @file
+	@brief End of Lineç¨®åˆ¥ã®ç®¡ç†
 
 	@author genta
-	@date 2000/5/15 V‹Kì¬
+	@date 2000/5/15 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2000-2001, genta
@@ -34,8 +34,8 @@
 
 #include "_main/global.h"
 
-// 2002/09/22 Moca EOL_CRLF_UNICODE‚ğ”p~
-/* sI’[q‚Ìí—Ş */
+// 2002/09/22 Moca EOL_CRLF_UNICODEã‚’å»ƒæ­¢
+/* è¡Œçµ‚ç«¯å­ã®ç¨®é¡ */
 enum EEolType {
 	EOL_NONE,			//!< 
 	EOL_CRLF,			//!< 0d0a
@@ -50,49 +50,49 @@ enum EEolType {
 
 #define EOL_TYPE_NUM	EOL_CODEMAX // 8
 
-/* sI’[q‚Ì”z—ñ */
+/* è¡Œçµ‚ç«¯å­ã®é…åˆ— */
 extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 #include "basis/SakuraBasis.h"
 
 /*!
-	@brief s––‚Ì‰üsƒR[ƒh‚ğŠÇ—
+	@brief è¡Œæœ«ã®æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’ç®¡ç†
 
-	ŠÇ—‚Æ‚ÍŒ¾‚Á‚Ä‚àƒIƒuƒWƒFƒNƒg‰»‚·‚é‚±‚Æ‚ÅˆÀ‘S‚Éİ’è‚ğs‚¦‚½‚èŠÖ˜Aî•ñ‚Ìæ“¾‚ğ
-	ƒIƒuƒWƒFƒNƒg‚É‘Î‚·‚éƒƒ\ƒbƒh‚Ås‚¦‚é‚¾‚¯‚¾‚ªAƒOƒ[ƒoƒ‹•Ï”‚Ö‚ÌQÆ‚ğ
-	ƒNƒ‰ƒX“à•”‚É•Â‚¶‚±‚ß‚é‚±‚Æ‚ª‚Å‚«‚é‚Ì‚Å‚»‚ê‚È‚è‚ÉˆÓ–¡‚Í‚ ‚é‚Æv‚¤B
+	ç®¡ç†ã¨ã¯è¨€ã£ã¦ã‚‚ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŒ–ã™ã‚‹ã“ã¨ã§å®‰å…¨ã«è¨­å®šã‚’è¡ŒãˆãŸã‚Šé–¢é€£æƒ…å ±ã®å–å¾—ã‚’
+	ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å¯¾ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã§è¡Œãˆã‚‹ã ã‘ã ãŒã€ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã¸ã®å‚ç…§ã‚’
+	ã‚¯ãƒ©ã‚¹å†…éƒ¨ã«é–‰ã˜ã“ã‚ã‚‹ã“ã¨ãŒã§ãã‚‹ã®ã§ãã‚Œãªã‚Šã«æ„å‘³ã¯ã‚ã‚‹ã¨æ€ã†ã€‚
 */
 class CEol{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CEol(){ m_eEolType = EOL_NONE; }
 	CEol( EEolType t ){ SetType(t); }
 
-	//”äŠr
+	//æ¯”è¼ƒ
 	bool operator==( EEolType t ) const { return GetType() == t; }
 	bool operator!=( EEolType t ) const { return GetType() != t; }
 
-	//‘ã“ü
+	//ä»£å…¥
 	const CEol& operator=( const CEol& t ){ m_eEolType = t.m_eEolType; return *this; }
 
-	//Œ^•ÏŠ·
+	//å‹å¤‰æ›
 	operator EEolType() const { return GetType(); }
 
-	//İ’è
-	bool SetType( EEolType t);	//	Type‚Ìİ’è
+	//è¨­å®š
+	bool SetType( EEolType t);	//	Typeã®è¨­å®š
 	void SetTypeByString( const wchar_t* pszData, int nDataLen );
 	void SetTypeByString( const char* pszData, int nDataLen );
 
-	//İ’èiƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚Ég—pj
+	//è¨­å®šï¼ˆãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿æ™‚ã«ä½¿ç”¨ï¼‰
 	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
 	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
 	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
 
-	//æ“¾
-	EEolType		GetType()	const{ return m_eEolType; }		//!< Œ»İ‚ÌType‚ğæ“¾
-	CLogicInt		GetLen()	const;	//!< Œ»İ‚ÌEOL’·‚ğæ“¾B•¶š’PˆÊB
-	const TCHAR*	GetName()	const;	//!< Œ»İ‚ÌEOL‚Ì–¼Ìæ“¾
-	const wchar_t*	GetValue2()	const;	//!< Œ»İ‚ÌEOL•¶š—ñæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
+	//å–å¾—
+	EEolType		GetType()	const{ return m_eEolType; }		//!< ç¾åœ¨ã®Typeã‚’å–å¾—
+	CLogicInt		GetLen()	const;	//!< ç¾åœ¨ã®EOLé•·ã‚’å–å¾—ã€‚æ–‡å­—å˜ä½ã€‚
+	const TCHAR*	GetName()	const;	//!< ç¾åœ¨ã®EOLã®åç§°å–å¾—
+	const wchar_t*	GetValue2()	const;	//!< ç¾åœ¨ã®EOLæ–‡å­—åˆ—å…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 	//#####
 
 	bool IsValid() const
@@ -102,7 +102,7 @@ public:
 
 
 private:
-	EEolType	m_eEolType;	//!< ‰üsƒR[ƒh‚Ìí—Ş
+	EEolType	m_eEolType;	//!< æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡
 };
 
 

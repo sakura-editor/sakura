@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -42,36 +42,36 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 {
 	m_hInst = hInst;
 
-	//ƒwƒ‹ƒpì¬
+	//ãƒ˜ãƒ«ãƒ‘ä½œæˆ
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
-	//ƒhƒLƒ…ƒƒ“ƒg‚Ìì¬
+	//ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®ä½œæˆ
 	m_pcEditDoc = new CEditDoc(this);
 
-	//IOŠÇ—
+	//IOç®¡ç†
 	m_pcLoadAgent = new CLoadAgent();
 	m_pcSaveAgent = new CSaveAgent();
 	m_pcVisualProgress = new CVisualProgress();
 
-	//GREPƒ‚[ƒhŠÇ—
+	//GREPãƒ¢ãƒ¼ãƒ‰ç®¡ç†
 	m_pcGrepAgent = new CGrepAgent();
 
-	//•ÒWƒ‚[ƒh
-	CAppMode::getInstance();	//ƒEƒBƒ“ƒhƒE‚æ‚è‚à‘O‚ÉƒCƒxƒ“ƒg‚ðŽó‚¯Žæ‚é‚½‚ß‚É‚±‚±‚ÅƒCƒ“ƒXƒ^ƒ“ƒXì¬
+	//ç·¨é›†ãƒ¢ãƒ¼ãƒ‰
+	CAppMode::getInstance();	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚ˆã‚Šã‚‚å‰ã«ã‚¤ãƒ™ãƒ³ãƒˆã‚’å—ã‘å–ã‚‹ãŸã‚ã«ã“ã“ã§ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ä½œæˆ
 
-	//ƒ}ƒNƒ
+	//ãƒžã‚¯ãƒ­
 	m_pcSMacroMgr = new CSMacroMgr();
 
-	//ƒEƒBƒ“ƒhƒE‚Ìì¬
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ
 	m_pcEditWnd = CEditWnd::getInstance();
 
 	m_pcEditDoc->Create( m_pcEditWnd );
 	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
-	//MRUŠÇ—
+	//MRUç®¡ç†
 	m_pcMruListener = new CMruListener();
 
-	//ƒvƒƒpƒeƒBŠÇ—
+	//ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ç®¡ç†
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
@@ -92,20 +92,20 @@ CEditApp::~CEditApp()
 	delete m_pcEditDoc;
 }
 
-/*! ‹¤’ÊÝ’è ƒvƒƒpƒeƒBƒV[ƒg */
+/*! å…±é€šè¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 bool CEditApp::OpenPropertySheet( int nPageNum )
 {
-	/* ƒvƒƒpƒeƒBƒV[ƒg‚Ìì¬ */
+	/* ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã®ä½œæˆ */
 	bool bRet = m_pcPropertyManager->OpenPropertySheet( m_pcEditWnd->GetHwnd(), nPageNum, false );
 	if( bRet ){
-		// 2007.10.19 genta ƒ}ƒNƒ“o˜^•ÏX‚ð”½‰f‚·‚é‚½‚ßC“Ç‚Ýž‚ÝÏ‚Ý‚Ìƒ}ƒNƒ‚ð”jŠü‚·‚é
+		// 2007.10.19 genta ãƒžã‚¯ãƒ­ç™»éŒ²å¤‰æ›´ã‚’åæ˜ ã™ã‚‹ãŸã‚ï¼Œèª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒžã‚¯ãƒ­ã‚’ç ´æ£„ã™ã‚‹
 		m_pcSMacroMgr->UnloadAll();
 	}
 
 	return bRet;
 }
 
-/*! ƒ^ƒCƒv•ÊÝ’è ƒvƒƒpƒeƒBƒV[ƒg */
+/*! ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 bool CEditApp::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
 {
 	bool bRet = m_pcPropertyManager->OpenPropertySheetTypes( m_pcEditWnd->GetHwnd(), nPageNum, nSettingType );

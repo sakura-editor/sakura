@@ -1,4 +1,4 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief Drag & Drop
 
 	@author Norio Nakatani
@@ -54,13 +54,13 @@ HRESULT CYbInterfaceBase::QueryInterfaceImpl(
 
 
 
-COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCountíœ
+COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCountå‰Šé™¤
 {
 	return;
 }
 COleLibrary::~COleLibrary()
 {
-// 2009.01.08 ryoji OleUninitializeíœiWinMain‚ÉOleInitialize/OleUninitialize’Ç‰Áj
+// 2009.01.08 ryoji OleUninitializeå‰Šé™¤ï¼ˆWinMainã«OleInitialize/OleUninitializeè¿½åŠ ï¼‰
 //	if( m_dwCount > 0 )
 //		::OleUninitialize();
 	return;
@@ -69,7 +69,7 @@ COleLibrary::~COleLibrary()
 
 void COleLibrary::Initialize()
 {
-// 2009.01.08 ryoji OleInitializeíœiWinMain‚ÉOleInitialize/OleUninitialize’Ç‰Áj
+// 2009.01.08 ryoji OleInitializeå‰Šé™¤ï¼ˆWinMainã«OleInitialize/OleUninitializeè¿½åŠ ï¼‰
 //	if( m_dwCount++ == 0 )
 //		::OleInitialize( NULL );
 	return;
@@ -78,7 +78,7 @@ void COleLibrary::Initialize()
 
 void COleLibrary::UnInitialize()
 {
-// 2009.01.08 ryoji OleUninitializeíœiWinMain‚ÉOleInitialize/OleUninitialize’Ç‰Áj
+// 2009.01.08 ryoji OleUninitializeå‰Šé™¤ï¼ˆWinMainã«OleInitialize/OleUninitializeè¿½åŠ ï¼‰
 //	if( m_dwCount > 0 && --m_dwCount == 0 )
 //		::OleUninitialize();
 	return;
@@ -190,12 +190,12 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 
 
 
-/** “]‘—‘ÎÛ‚Ì•¶š—ñ‚ğİ’è‚·‚é
-	@param lpszText [in] •¶š—ñ
-	@param nTextLen [in] pszText‚Ì’·‚³
-	@param bColumnSelect [in] ‹éŒ`‘I‘ğ‚©
+/** è»¢é€å¯¾è±¡ã®æ–‡å­—åˆ—ã‚’è¨­å®šã™ã‚‹
+	@param lpszText [in] æ–‡å­—åˆ—
+	@param nTextLen [in] pszTextã®é•·ã•
+	@param bColumnSelect [in] çŸ©å½¢é¸æŠã‹
 
-	@date 2008.03.26 ryoji •¡”ƒtƒH[ƒ}ƒbƒg‘Î‰
+	@date 2008.03.26 ryoji è¤‡æ•°ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå¯¾å¿œ
 */
 void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
 {
@@ -210,7 +210,7 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
 		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		m_nFormat = bColumnSelect? 4: 3;	// ‹éŒ`‚ğŠÜ‚ß‚é‚©
+		m_nFormat = bColumnSelect? 4: 3;	// çŸ©å½¢ã‚’å«ã‚ã‚‹ã‹
 		m_pData = new DATA[m_nFormat];
 
 		i = 0;
@@ -253,7 +253,7 @@ DWORD CDataObject::DragDrop( BOOL bLeft, DWORD dwEffects )
 }
 
 /** IDataObject::GetData
-	@date 2008.03.26 ryoji •¡”ƒtƒH[ƒ}ƒbƒg‘Î‰
+	@date 2008.03.26 ryoji è¤‡æ•°ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå¯¾å¿œ
 */
 STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
@@ -291,7 +291,7 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 }
 
 /** IDataObject::GetDataHere
-	@date 2008.03.26 ryoji •¡”ƒtƒH[ƒ}ƒbƒg‘Î‰
+	@date 2008.03.26 ryoji è¤‡æ•°ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå¯¾å¿œ
 */
 STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 {
@@ -326,7 +326,7 @@ STDMETHODIMP CDataObject::GetDataHere( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 }
 
 /** IDataObject::QueryGetData
-	@date 2008.03.26 ryoji •¡”ƒtƒH[ƒ}ƒbƒg‘Î‰
+	@date 2008.03.26 ryoji è¤‡æ•°ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå¯¾å¿œ
 */
 STDMETHODIMP CDataObject::QueryGetData( LPFORMATETC lpfe )
 {
@@ -363,7 +363,7 @@ STDMETHODIMP CDataObject::SetData( LPFORMATETC, LPSTGMEDIUM, BOOL )
 }
 
 /** IDataObject::EnumFormatEtc
-	@date 2008.03.26 ryoji IEnumFORMATETC‚ğƒTƒ|[ƒg
+	@date 2008.03.26 ryoji IEnumFORMATETCã‚’ã‚µãƒãƒ¼ãƒˆ
 */
 STDMETHODIMP CDataObject::EnumFormatEtc( DWORD dwDirection, IEnumFORMATETC** ppenumFormatetc )
 {
@@ -390,7 +390,7 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 
 
 /** IEnumFORMATETC::Next
-	@date 2008.03.26 ryoji V‹Kì¬
+	@date 2008.03.26 ryoji æ–°è¦ä½œæˆ
 */
 STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
 {
@@ -417,7 +417,7 @@ STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetc
 }
 
 /** IEnumFORMATETC::Skip
-	@date 2008.03.26 ryoji V‹Kì¬
+	@date 2008.03.26 ryoji æ–°è¦ä½œæˆ
 */
 STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
 {
@@ -430,7 +430,7 @@ STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
 }
 
 /** IEnumFORMATETC::Reset
-	@date 2008.03.26 ryoji V‹Kì¬
+	@date 2008.03.26 ryoji æ–°è¦ä½œæˆ
 */
 STDMETHODIMP CEnumFORMATETC::Reset(void)
 {
@@ -439,7 +439,7 @@ STDMETHODIMP CEnumFORMATETC::Reset(void)
 }
 
 /** IEnumFORMATETC::Clone
-	@date 2008.03.26 ryoji V‹Kì¬
+	@date 2008.03.26 ryoji æ–°è¦ä½œæˆ
 */
 STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
 {

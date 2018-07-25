@@ -1,11 +1,11 @@
-/*!	@file
-	@brief INIƒtƒ@ƒCƒ‹“üo—Í
+ï»¿/*!	@file
+	@brief INIãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›
 
 	@author D.S.Koba
-	@date 2003-10-21 D.S.Koba ƒƒ“ƒoŠÖ”‚Ì–¼‘O‚Æˆø”‚ğ‚»‚Ì‚Ü‚Ü‚É‚µ‚Äƒƒ“ƒo•Ï”CŠÖ”‚Ì’†g‚ğ‘‚«’¼‚µ
-	@date 2004-01-10 D.S.Koba •Ô’l‚ğBOOL‚©‚çbool‚Ö•ÏXBIOProfileData‚ğŒ^•Ê‚ÌŠÖ”‚É•ª‚¯Cˆø”‚ğŒ¸‚ç‚·
-	@date 2006-02-11 D.S.Koba “Ç‚İ‚İ/‘‚«o‚µ‚ğˆø”‚Å‚È‚­Cƒƒ“ƒo‚Å”»•Ê
-	@date 2006-02-12 D.S.Koba IOProfileData‚Ì’†g‚Ì“Ç‚İ‚İ‚Æ‘‚«o‚µ‚ğŠÖ”‚É•ª‚¯‚é
+	@date 2003-10-21 D.S.Koba ãƒ¡ãƒ³ãƒé–¢æ•°ã®åå‰ã¨å¼•æ•°ã‚’ãã®ã¾ã¾ã«ã—ã¦ãƒ¡ãƒ³ãƒå¤‰æ•°ï¼Œé–¢æ•°ã®ä¸­èº«ã‚’æ›¸ãç›´ã—
+	@date 2004-01-10 D.S.Koba è¿”å€¤ã‚’BOOLã‹ã‚‰boolã¸å¤‰æ›´ã€‚IOProfileDataã‚’å‹åˆ¥ã®é–¢æ•°ã«åˆ†ã‘ï¼Œå¼•æ•°ã‚’æ¸›ã‚‰ã™
+	@date 2006-02-11 D.S.Koba èª­ã¿è¾¼ã¿/æ›¸ãå‡ºã—ã‚’å¼•æ•°ã§ãªãï¼Œãƒ¡ãƒ³ãƒã§åˆ¤åˆ¥
+	@date 2006-02-12 D.S.Koba IOProfileDataã®ä¸­èº«ã®èª­ã¿è¾¼ã¿ã¨æ›¸ãå‡ºã—ã‚’é–¢æ•°ã«åˆ†ã‘ã‚‹
 */
 /*
 	Copyright (C) 2003, D.S.Koba
@@ -36,15 +36,15 @@
 #include "StdAfx.h"
 #include "CProfile.h"
 #include "io/CTextStream.h"
-#include "charset/CUtf8.h"		// Resource“Ç‚İ‚İ‚Ég—p
+#include "charset/CUtf8.h"		// Resourceèª­ã¿è¾¼ã¿ã«ä½¿ç”¨
 #include "CEol.h"
 #include "util/file.h"
 
 using namespace std;
 
-/*! Profile‚ğ‰Šú‰»
+/*! Profileã‚’åˆæœŸåŒ–
 	
-	@date 2003-10-21 D.S.Koba STL‚Å‘‚«’¼‚·
+	@date 2003-10-21 D.S.Koba STLã§æ›¸ãç›´ã™
 */
 void CProfile::Init( void )
 {
@@ -55,26 +55,26 @@ void CProfile::Init( void )
 }
 
 /*!
-	sakura.ini‚Ì1s‚ğˆ—‚·‚éD
+	sakura.iniã®1è¡Œã‚’å‡¦ç†ã™ã‚‹ï¼
 
-	1s‚Ì“Ç‚İ‚İ‚ªŠ®—¹‚·‚é‚²‚Æ‚ÉŒÄ‚Î‚ê‚éD
+	1è¡Œã®èª­ã¿è¾¼ã¿ãŒå®Œäº†ã™ã‚‹ã”ã¨ã«å‘¼ã°ã‚Œã‚‹ï¼
 	
-	@param line [in] “Ç‚İ‚ñ‚¾s
+	@param line [in] èª­ã¿è¾¼ã‚“ã è¡Œ
 */
 void CProfile::ReadOneline(
 	const wstring& line
 )
 {
-	//	‹ós‚ğ“Ç‚İ”ò‚Î‚·
+	//	ç©ºè¡Œã‚’èª­ã¿é£›ã°ã™
 	if( line.empty() )
 		return;
 
-	//ƒRƒƒ“ƒgs‚ğ“Ç‚İ‚Æ‚Î‚·
+	//ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã‚’èª­ã¿ã¨ã°ã™
 	if( 0 == line.compare( 0, 2, LTEXT("//") ))
 		return;
 
-	// ƒZƒNƒVƒ‡ƒ“æ“¾
-	//	Jan. 29, 2004 genta compareg—p
+	// ã‚»ã‚¯ã‚·ãƒ§ãƒ³å–å¾—
+	//	Jan. 29, 2004 genta compareä½¿ç”¨
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
 			&& line.find( LTEXT("=") ) == line.npos
 			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
@@ -82,8 +82,8 @@ void CProfile::ReadOneline(
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
 		m_ProfileData.push_back( Buffer );
 	}
-	// ƒGƒ“ƒgƒŠæ“¾
-	else if( !m_ProfileData.empty() ) {	//Å‰‚ÌƒZƒNƒVƒ‡ƒ“ˆÈ‘O‚Ìs‚ÌƒGƒ“ƒgƒŠ‚Í–³‹
+	// ã‚¨ãƒ³ãƒˆãƒªå–å¾—
+	else if( !m_ProfileData.empty() ) {	//æœ€åˆã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ä»¥å‰ã®è¡Œã®ã‚¨ãƒ³ãƒˆãƒªã¯ç„¡è¦–
 		wstring::size_type idx = line.find( LTEXT("=") );
 		if( line.npos != idx ) {
 			m_ProfileData.back().mapEntries.insert( PAIR_STR_STR( line.substr(0,idx), line.substr(idx+1) ) );
@@ -91,17 +91,17 @@ void CProfile::ReadOneline(
 	}
 }
 
-/*! Profile‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İo‚·
+/*! Profileã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿å‡ºã™
 	
-	@param pszProfileName [in] ƒtƒ@ƒCƒ‹–¼
+	@param pszProfileName [in] ãƒ•ã‚¡ã‚¤ãƒ«å
 
-	@retval true  ¬Œ÷
-	@retval false ¸”s
+	@retval true  æˆåŠŸ
+	@retval false å¤±æ•—
 
-	@date 2003-10-21 D.S.Koba STL‚Å‘‚«’¼‚·
-	@date 2003-10-26 D.S.Koba ReadProfile()‚©‚ç•ª—£
-	@date 2004-01-29 genta streamg—p‚ğ‚â‚ß‚ÄCƒ‰ƒCƒuƒ‰ƒŠg—p‚ÉD
-	@date 2004-01-31 genta s‚Ì‰ğÍ‚Ì•û‚ğ•ÊŠÖ”‚É‚µ‚ÄReadFile‚ğReadProfile‚É
+	@date 2003-10-21 D.S.Koba STLã§æ›¸ãç›´ã™
+	@date 2003-10-26 D.S.Koba ReadProfile()ã‹ã‚‰åˆ†é›¢
+	@date 2004-01-29 genta streamä½¿ç”¨ã‚’ã‚„ã‚ã¦Cãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã«ï¼
+	@date 2004-01-31 genta è¡Œã®è§£æã®æ–¹ã‚’åˆ¥é–¢æ•°ã«ã—ã¦ReadFileã‚’ReadProfileã«
 		
 */
 bool CProfile::ReadProfile( const TCHAR* pszProfileName )
@@ -115,10 +115,10 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 
 	try{
 		while( in ){
-			//1s“Ç
+			//1è¡Œèª­è¾¼
 			wstring line=in.ReadLineW();
 
-			//‰ğÍ
+			//è§£æ
 			ReadOneline(line);
 		}
 	}
@@ -130,17 +130,17 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 }
 
 
-/*! Profile‚ğƒŠƒ\[ƒX‚©‚ç“Ç‚İo‚·
+/*! Profileã‚’ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰èª­ã¿å‡ºã™
 	
-	@param pName [in] ƒŠƒ\[ƒX–¼
-	@param pType [in] ƒŠƒ\[ƒXƒ^ƒCƒv
+	@param pName [in] ãƒªã‚½ãƒ¼ã‚¹å
+	@param pType [in] ãƒªã‚½ãƒ¼ã‚¹ã‚¿ã‚¤ãƒ—
 
-	@retval true  ¬Œ÷
-	@retval false ¸”s
+	@retval true  æˆåŠŸ
+	@retval false å¤±æ•—
 
-	@date 2010/5/19 MainMenu—p‚Éì¬
+	@date 2010/5/19 MainMenuç”¨ã«ä½œæˆ
 
-	1s300•¶š‚Ü‚Å‚É§ŒÀ
+	1è¡Œ300æ–‡å­—ã¾ã§ã«åˆ¶é™
 */
 bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vector<std::wstring>* pData )
 {
@@ -168,10 +168,10 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vect
 			p += sizeof(UTF8_BOM);
 		}
 		for (; p < psMMres + nSize ; p = pn) {
-			// 1sØ‚èæ‚èi’·‚·‚¬‚½ê‡ØÌ‚Äj
+			// 1è¡Œåˆ‡ã‚Šå–ã‚Šï¼ˆé•·ã™ããŸå ´åˆåˆ‡æ¨ã¦ï¼‰
 			pn = strpbrk(p, "\n");
 			if (pn == NULL) {
-				// ÅIs
+				// æœ€çµ‚è¡Œ
 				pn = psMMres + nSize;
 			}
 			else {
@@ -191,7 +191,7 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vect
 			if( pData ){
 				pData->push_back(line);
 			}else{
-				//‰ğÍ
+				//è§£æ
 				ReadOneline(line);
 			}
 		}
@@ -199,17 +199,17 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vect
 	return true;
 }
 
-/*! Profile‚ğƒtƒ@ƒCƒ‹‚Ö‘‚«o‚·
+/*! Profileã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã¸æ›¸ãå‡ºã™
 	
-	@param pszProfileName [in] ƒtƒ@ƒCƒ‹–¼(NULL=ÅŒã‚É“Ç‚İ‘‚«‚µ‚½ƒtƒ@ƒCƒ‹)
-	@param pszComment [in] ƒRƒƒ“ƒg•¶(NULL=ƒRƒƒ“ƒgÈ—ª)
+	@param pszProfileName [in] ãƒ•ã‚¡ã‚¤ãƒ«å(NULL=æœ€å¾Œã«èª­ã¿æ›¸ãã—ãŸãƒ•ã‚¡ã‚¤ãƒ«)
+	@param pszComment [in] ã‚³ãƒ¡ãƒ³ãƒˆæ–‡(NULL=ã‚³ãƒ¡ãƒ³ãƒˆçœç•¥)
 
-	@retval true  ¬Œ÷
-	@retval false ¸”s
+	@retval true  æˆåŠŸ
+	@retval false å¤±æ•—
 
-	@date 2003-10-21 D.S.Koba STL‚Å‘‚«’¼‚·
-	@date 2004-01-28 D.S.Koba ƒtƒ@ƒCƒ‹‘‚«‚İ•”‚ğ•ª—£
-	@date 2009.06.24 ryoji •Êƒtƒ@ƒCƒ‹‚É‘‚«‚ñ‚Å‚©‚ç’u‚«Š·‚¦‚éˆ—‚ğ’Ç‰Á
+	@date 2003-10-21 D.S.Koba STLã§æ›¸ãç›´ã™
+	@date 2004-01-28 D.S.Koba ãƒ•ã‚¡ã‚¤ãƒ«æ›¸ãè¾¼ã¿éƒ¨ã‚’åˆ†é›¢
+	@date 2009.06.24 ryoji åˆ¥ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã‚“ã§ã‹ã‚‰ç½®ãæ›ãˆã‚‹å‡¦ç†ã‚’è¿½åŠ 
 */
 bool CProfile::WriteProfile(
 	const TCHAR* pszProfileName,
@@ -226,16 +226,16 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( LTEXT("") );
 	}
 	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
-		//ƒZƒNƒVƒ‡ƒ“–¼‚ğ‘‚«‚Ş
+		//ã‚»ã‚¯ã‚·ãƒ§ãƒ³åã‚’æ›¸ãè¾¼ã‚€
 		vecLine.push_back( LTEXT("[") + iter->strSectionName + LTEXT("]") );
 		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
-			//ƒGƒ“ƒgƒŠ‚ğ‘‚«‚Ş
+			//ã‚¨ãƒ³ãƒˆãƒªã‚’æ›¸ãè¾¼ã‚€
 			vecLine.push_back( mapiter->first + LTEXT("=") + mapiter->second );
 		}
 		vecLine.push_back( LTEXT("") );
 	}
 
-	// •Êƒtƒ@ƒCƒ‹‚É‘‚«‚ñ‚Å‚©‚ç’u‚«Š·‚¦‚éiƒvƒƒZƒX‹­§I—¹‚È‚Ç‚Ö‚ÌˆÀ‘S‘Îôj
+	// åˆ¥ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã‚“ã§ã‹ã‚‰ç½®ãæ›ãˆã‚‹ï¼ˆãƒ—ãƒ­ã‚»ã‚¹å¼·åˆ¶çµ‚äº†ãªã©ã¸ã®å®‰å…¨å¯¾ç­–ï¼‰
 	TCHAR szMirrorFile[_MAX_PATH];
 	szMirrorFile[0] = _T('\0');
 	TCHAR szPath[_MAX_PATH];
@@ -275,17 +275,17 @@ bool CProfile::WriteProfile(
 	return true;
 }
 
-/*! ƒtƒ@ƒCƒ‹‚Ö‘‚«‚Ş
+/*! ãƒ•ã‚¡ã‚¤ãƒ«ã¸æ›¸ãè¾¼ã‚€
 	
-	@retval true  ¬Œ÷
-	@retval false ¸”s
+	@retval true  æˆåŠŸ
+	@retval false å¤±æ•—
 
-	@date 2004-01-28 D.S.Koba WriteProfile()‚©‚ç•ª—£
-	@date 2004-01-29 genta streamg—p‚ğ‚â‚ß‚ÄCƒ‰ƒCƒuƒ‰ƒŠg—p‚ÉD
+	@date 2004-01-28 D.S.Koba WriteProfile()ã‹ã‚‰åˆ†é›¢
+	@date 2004-01-29 genta streamä½¿ç”¨ã‚’ã‚„ã‚ã¦Cãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã«ï¼
 */
 bool CProfile::_WriteFile(
-	const tstring&			strFilename,	//!< [in]  ƒtƒ@ƒCƒ‹–¼
-	const vector<wstring>&	vecLine			//!< [out] •¶š—ñŠi”[æ
+	const tstring&			strFilename,	//!< [in]  ãƒ•ã‚¡ã‚¤ãƒ«å
+	const vector<wstring>&	vecLine			//!< [out] æ–‡å­—åˆ—æ ¼ç´å…ˆ
 )
 {
 	CTextOutputStream out(strFilename.c_str());
@@ -295,7 +295,7 @@ bool CProfile::_WriteFile(
 
 	int nSize = (int)vecLine.size();
 	for(int i=0;i<nSize;i++){
-		// o—Í
+		// å‡ºåŠ›
 		out.WriteString(vecLine[i].c_str());
 		out.WriteString(L"\n");
 	}
@@ -311,17 +311,17 @@ bool CProfile::_WriteFile(
 //                            Imp                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*! ƒGƒ“ƒgƒŠ’l‚ğProfile‚©‚ç“Ç‚İ‚Ş
+/*! ã‚¨ãƒ³ãƒˆãƒªå€¤ã‚’Profileã‹ã‚‰èª­ã¿è¾¼ã‚€
 	
-	@retval true ¬Œ÷
-	@retval false ¸”s
+	@retval true æˆåŠŸ
+	@retval false å¤±æ•—
 
-	@date 2003-10-22 D.S.Koba ì¬
+	@date 2003-10-22 D.S.Koba ä½œæˆ
 */
 bool CProfile::GetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] ƒZƒNƒVƒ‡ƒ“–¼
-	const wstring&	strEntryKey,	//!< [in] ƒGƒ“ƒgƒŠ–¼
-	wstring&		strEntryValue	//!< [out] ƒGƒ“ƒgƒŠ’l
+	const wstring&	strSectionName,	//!< [in] ã‚»ã‚¯ã‚·ãƒ§ãƒ³å
+	const wstring&	strEntryKey,	//!< [in] ã‚¨ãƒ³ãƒˆãƒªå
+	wstring&		strEntryValue	//!< [out] ã‚¨ãƒ³ãƒˆãƒªå€¤
 )
 {
 	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
@@ -336,37 +336,37 @@ bool CProfile::GetProfileDataImp(
 	return false;
 }
 
-/*! ƒGƒ“ƒgƒŠ‚ğProfile‚Ö‘‚«‚Ş
+/*! ã‚¨ãƒ³ãƒˆãƒªã‚’Profileã¸æ›¸ãè¾¼ã‚€
 	
-	@retval true  ¬Œ÷
-	@retval false ¸”s(ˆ—‚ğ“ü‚ê‚Ä‚¢‚È‚¢‚Ì‚Åfalse‚Í•Ô‚ç‚È‚¢)
+	@retval true  æˆåŠŸ
+	@retval false å¤±æ•—(å‡¦ç†ã‚’å…¥ã‚Œã¦ã„ãªã„ã®ã§falseã¯è¿”ã‚‰ãªã„)
 
-	@date 2003-10-21 D.S.Koba ì¬
+	@date 2003-10-21 D.S.Koba ä½œæˆ
 */
 bool CProfile::SetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] ƒZƒNƒVƒ‡ƒ“–¼
-	const wstring&	strEntryKey,	//!< [in] ƒGƒ“ƒgƒŠ–¼
-	const wstring&	strEntryValue	//!< [in] ƒGƒ“ƒgƒŠ’l
+	const wstring&	strSectionName,	//!< [in] ã‚»ã‚¯ã‚·ãƒ§ãƒ³å
+	const wstring&	strEntryKey,	//!< [in] ã‚¨ãƒ³ãƒˆãƒªå
+	const wstring&	strEntryValue	//!< [in] ã‚¨ãƒ³ãƒˆãƒªå€¤
 )
 {
 	auto iter = m_ProfileData.begin();
 	for(; iter != m_ProfileData.end(); iter++ ) {
 		if( iter->strSectionName == strSectionName ) {
-			//Šù‘¶‚ÌƒZƒNƒVƒ‡ƒ“‚Ìê‡
+			//æ—¢å­˜ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®å ´åˆ
 			auto mapiter = iter->mapEntries.find( strEntryKey );
 			if( iter->mapEntries.end() != mapiter ) {
-				//Šù‘¶‚ÌƒGƒ“ƒgƒŠ‚Ìê‡‚Í’l‚ğã‘‚«
+				//æ—¢å­˜ã®ã‚¨ãƒ³ãƒˆãƒªã®å ´åˆã¯å€¤ã‚’ä¸Šæ›¸ã
 				mapiter->second = strEntryValue;
 				break;
 			}
 			else {
-				//Šù‘¶‚ÌƒGƒ“ƒgƒŠ‚ªŒ©‚Â‚©‚ç‚È‚¢ê‡‚Í’Ç‰Á
+				//æ—¢å­˜ã®ã‚¨ãƒ³ãƒˆãƒªãŒè¦‹ã¤ã‹ã‚‰ãªã„å ´åˆã¯è¿½åŠ 
 				iter->mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
 				break;
 			}
 		}
 	}
-	//Šù‘¶‚ÌƒZƒNƒVƒ‡ƒ“‚Å‚Í‚È‚¢ê‡CƒZƒNƒVƒ‡ƒ“‹y‚ÑƒGƒ“ƒgƒŠ‚ğ’Ç‰Á
+	//æ—¢å­˜ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã§ã¯ãªã„å ´åˆï¼Œã‚»ã‚¯ã‚·ãƒ§ãƒ³åŠã³ã‚¨ãƒ³ãƒˆãƒªã‚’è¿½åŠ 
 	if( iter == m_ProfileData.end() ) {
 		Section Buffer;
 		Buffer.strSectionName = strSectionName;
@@ -381,10 +381,10 @@ bool CProfile::SetProfileDataImp(
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
-	//	2006.02.20 ryoji: MAP_STR_STR_ITERíœ‚ÌC³˜R‚ê‚É‚æ‚éƒRƒ“ƒpƒCƒ‹ƒGƒ‰[C³
+	//	2006.02.20 ryoji: MAP_STR_STR_ITERå‰Šé™¤æ™‚ã®ä¿®æ­£æ¼ã‚Œã«ã‚ˆã‚‹ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼ä¿®æ­£
 	MYTRACE( _T("\n\nCProfile::DUMP()======================") );
 	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
-		MYTRACE( _T("\n¡strSectionName=%ls"), iter->strSectionName.c_str() );
+		MYTRACE( _T("\nâ– strSectionName=%ls"), iter->strSectionName.c_str() );
 		for(auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
 			MYTRACE( _T("\"%ls\" = \"%ls\"\n"), mapiter->first.c_str(), mapiter->second.c_str() );
 		}

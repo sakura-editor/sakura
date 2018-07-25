@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒAƒ“ƒhƒDEƒŠƒhƒDƒoƒbƒtƒ@
+ï»¿/*!	@file
+	@brief ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ãƒãƒƒãƒ•ã‚¡
 
 	@author Norio Nakatani
-	@date 1998/06/09 V‹Kì¬
+	@date 1998/06/09 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -25,40 +25,40 @@ class COpeBlk;/// 2002/2/10 aroka
 
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒAƒ“ƒhƒDEƒŠƒhƒDƒoƒbƒtƒ@
+	@brief ã‚¢ãƒ³ãƒ‰ã‚¥ãƒ»ãƒªãƒ‰ã‚¥ãƒãƒƒãƒ•ã‚¡
 */
 class COpeBuf {
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	COpeBuf();
 	~COpeBuf();
 
-	//ó‘Ô
-	bool IsEnableUndo() const;					//!< Undo‰Â”\‚Èó‘Ô‚©
-	bool IsEnableRedo() const;					//!< Redo‰Â”\‚Èó‘Ô‚©
-	int GetCurrentPointer( void ) const { return m_nCurrentPointer; }	/* Œ»İˆÊ’u‚ğ•Ô‚· */	// 2007.12.09 ryoji
+	//çŠ¶æ…‹
+	bool IsEnableUndo() const;					//!< Undoå¯èƒ½ãªçŠ¶æ…‹ã‹
+	bool IsEnableRedo() const;					//!< Redoå¯èƒ½ãªçŠ¶æ…‹ã‹
+	int GetCurrentPointer( void ) const { return m_nCurrentPointer; }	/* ç¾åœ¨ä½ç½®ã‚’è¿”ã™ */	// 2007.12.09 ryoji
 	int GetNextSeq() const { return m_nCurrentPointer + 1; }
 	int GetNoModifiedSeq() const { return m_nNoModifiedIndex; }
 
-	//‘€ì
-	void ClearAll();							//!< ‘S—v‘f‚ÌƒNƒŠƒA
-	bool AppendOpeBlk( COpeBlk* pcOpeBlk );		//!< ‘€ìƒuƒƒbƒN‚Ì’Ç‰Á
-	void SetNoModified();						//!< Œ»İˆÊ’u‚Å–³•ÏX‚Èó‘Ô‚É‚È‚Á‚½‚±‚Æ‚ğ’Ê’m
+	//æ“ä½œ
+	void ClearAll();							//!< å…¨è¦ç´ ã®ã‚¯ãƒªã‚¢
+	bool AppendOpeBlk( COpeBlk* pcOpeBlk );		//!< æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã®è¿½åŠ 
+	void SetNoModified();						//!< ç¾åœ¨ä½ç½®ã§ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸã“ã¨ã‚’é€šçŸ¥
 
-	//g—p
-	COpeBlk* DoUndo( bool* pbModified );		//!< Œ»İ‚ÌUndo‘ÎÛ‚Ì‘€ìƒuƒƒbƒN‚ğ•Ô‚·
-	COpeBlk* DoRedo( bool* pbModified );		//!< Œ»İ‚ÌRedo‘ÎÛ‚Ì‘€ìƒuƒƒbƒN‚ğ•Ô‚·
+	//ä½¿ç”¨
+	COpeBlk* DoUndo( bool* pbModified );		//!< ç¾åœ¨ã®Undoå¯¾è±¡ã®æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã‚’è¿”ã™
+	COpeBlk* DoRedo( bool* pbModified );		//!< ç¾åœ¨ã®Redoå¯¾è±¡ã®æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã‚’è¿”ã™
 
-	//ƒfƒoƒbƒO
-	void DUMP();								//!< •ÒW‘€ì—v‘fƒuƒƒbƒN‚Ìƒ_ƒ“ƒv
+	//ãƒ‡ãƒãƒƒã‚°
+	void DUMP();								//!< ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒ€ãƒ³ãƒ—
 
 private:
-	std::vector<COpeBlk*>	m_vCOpeBlkArr;		//!< ‘€ìƒuƒƒbƒN‚Ì”z—ñ
-	int						m_nCurrentPointer;	//!< Œ»İˆÊ’u
-	int						m_nNoModifiedIndex;	//!< –³•ÏX‚Èó‘Ô‚É‚È‚Á‚½ˆÊ’u
+	std::vector<COpeBlk*>	m_vCOpeBlkArr;		//!< æ“ä½œãƒ–ãƒ­ãƒƒã‚¯ã®é…åˆ—
+	int						m_nCurrentPointer;	//!< ç¾åœ¨ä½ç½®
+	int						m_nNoModifiedIndex;	//!< ç„¡å¤‰æ›´ãªçŠ¶æ…‹ã«ãªã£ãŸä½ç½®
 };
 
 

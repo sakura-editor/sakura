@@ -1,12 +1,12 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief Entry Point
 
 	@author Norio Nakatani
-	@date	1998/03/13 ì¬
-	@date	2001/06/26 genta ƒ[ƒh’PˆÊ‚ÌGrep‚Ì‚½‚ß‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆ—’Ç‰Á
-	@date	2002/01/08 aroka ˆ—‚Ì—¬‚ê‚ğ®—A–¢g—pƒR[ƒh‚ğíœ
-	@date	2002/01/18 aroka ’æ‚è•ƒŠƒŠ[ƒX
-	@date	2009/01/07 ryoji WinMain‚ÉOleInitialize/OleUninitialize‚ğ’Ç‰Á
+	@date	1998/03/13 ä½œæˆ
+	@date	2001/06/26 genta ãƒ¯ãƒ¼ãƒ‰å˜ä½ã®Grepã®ãŸã‚ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å‡¦ç†è¿½åŠ 
+	@date	2002/01/08 aroka å‡¦ç†ã®æµã‚Œã‚’æ•´ç†ã€æœªä½¿ç”¨ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤
+	@date	2002/01/18 aroka è™«å–ã‚Šï¼†ãƒªãƒªãƒ¼ã‚¹
+	@date	2009/01/07 ryoji WinMainã«OleInitialize/OleUninitializeã‚’è¿½åŠ 
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -30,12 +30,12 @@
 /*!
 	Windows Entry point
 
-	1‚Â–Ú‚ÌƒGƒfƒBƒ^ƒvƒƒZƒX‚Ìê‡‚ÍA‚±‚ÌƒvƒƒZƒX‚ÍƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚Æ
-	‚È‚èAV‚µ‚¢ƒGƒfƒBƒ^ƒvƒƒZƒX‚ğ‹N“®‚·‚éB‚»‚¤‚Å‚È‚¢‚Æ‚«‚ÍƒGƒfƒBƒ^ƒvƒƒZƒX
-	‚Æ‚È‚éB
+	1ã¤ç›®ã®ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã®å ´åˆã¯ã€ã“ã®ãƒ—ãƒ­ã‚»ã‚¹ã¯ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã¨
+	ãªã‚Šã€æ–°ã—ã„ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã‚’èµ·å‹•ã™ã‚‹ã€‚ãã†ã§ãªã„ã¨ãã¯ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹
+	ã¨ãªã‚‹ã€‚
 
-	ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‚ÍCControlProcessƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğì‚èA
-	ƒGƒfƒBƒ^ƒvƒƒZƒX‚ÍCNormalProcessƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğì‚éB
+	ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãƒ—ãƒ­ã‚»ã‚¹ã¯CControlProcessã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä½œã‚Šã€
+	ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã¯CNormalProcessã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä½œã‚‹ã€‚
 */
 #ifdef __MINGW32__
 int WINAPI WinMain(
@@ -54,13 +54,13 @@ int WINAPI _tWinMain(
 #endif
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	// 2009.9.10 syat ƒƒ‚ƒŠƒŠ[ƒNƒ`ƒFƒbƒN‚ğ’Ç‰Á
+	// 2009.9.10 syat ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
 	{
-		// 2014.04.24 DLL‚ÌŒŸõƒpƒX‚©‚çƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğíœ‚·‚é
+		// 2014.04.24 DLLã®æ¤œç´¢ãƒ‘ã‚¹ã‹ã‚‰ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å‰Šé™¤ã™ã‚‹
 		HMODULE kernel32 = GetModuleHandleA( "KERNEL32" );
 		if( kernel32 ){
 			typedef BOOL (WINAPI* Proc_pfnSetDllDirectoryW)(LPCWSTR);
@@ -76,26 +76,26 @@ int WINAPI _tWinMain(
 				pfnSetSearchPathMode( dwBASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | dwBASE_SEARCH_PATH_PERMANENT );
 			}
 		}
-		// 2010.08.28 Moca DLLƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‘Îô
+		// 2010.08.28 Moca DLLã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³å¯¾ç­–
 		CCurrentDirectoryBackupPoint dirBack;
 		ChangeCurrentDirectoryToExeDir();
 
-		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake ’Ç‰Á
-		::OleInitialize( NULL );	// 2009.01.07 ryoji ’Ç‰Á
+		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake è¿½åŠ 
+		::OleInitialize( NULL );	// 2009.01.07 ryoji è¿½åŠ 
 	}
 	
-	//ŠJ”­î•ñ
+	//é–‹ç™ºæƒ…å ±
 	DEBUG_TRACE(_T("-- -- WinMain -- --\n"));
 	DEBUG_TRACE(_T("sizeof(DLLSHAREDATA) = %d\n"),sizeof(DLLSHAREDATA));
 
-	//ƒvƒƒZƒX‚Ì¶¬‚ÆƒƒbƒZ[ƒWƒ‹[ƒv
+	//ãƒ—ãƒ­ã‚»ã‚¹ã®ç”Ÿæˆã¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
 #ifdef __MINGW32__
 		LPTSTR pszCommandLine;
 		pszCommandLine = ::GetCommandLine();
-		// Àsƒtƒ@ƒCƒ‹–¼‚ğƒXƒLƒbƒv‚·‚é
+		// å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹
 		if( _T('\"') == *pszCommandLine ){
 			pszCommandLine++;
 			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
@@ -110,7 +110,7 @@ int WINAPI _tWinMain(
 				pszCommandLine++;
 			}
 		}
-		// Ÿ‚Ìƒg[ƒNƒ“‚Ü‚Åi‚ß‚é
+		// æ¬¡ã®ãƒˆãƒ¼ã‚¯ãƒ³ã¾ã§é€²ã‚ã‚‹
 		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
 			pszCommandLine++;
 		}
@@ -127,7 +127,7 @@ int WINAPI _tWinMain(
 		delete process;
 	}
 
-	::OleUninitialize();	// 2009.01.07 ryoji ’Ç‰Á
+	::OleUninitialize();	// 2009.01.07 ryoji è¿½åŠ 
 	return 0;
 }
 
