@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ImageList‚Ìæ‚èˆµ‚¢
+ï»¿/*!	@file
+	@brief ImageListã®å–ã‚Šæ‰±ã„
 
 	@author genta
 	@date Oct. 11, 2000 genta
@@ -34,20 +34,20 @@
 
 #include "_main/global.h"
 
-/*! @brief ImageList‚ÌŠÇ—
+/*! @brief ImageListã®ç®¡ç†
 
-	ƒAƒCƒRƒ“ƒCƒ[ƒW‚ğŠÇ—‚·‚é
+	ã‚¢ã‚¤ã‚³ãƒ³ã‚¤ãƒ¡ãƒ¼ã‚¸ã‚’ç®¡ç†ã™ã‚‹
 
 	@author genta
 
-	@date 2003.07.21 genta ƒCƒ[ƒWƒŠƒXƒg‚Ìg—p‚ğ‚â‚ß‚½D‘ã‚í‚è‚ÉTool Bar‚ÌOwner Draw‚ğg‚¤D
-		ƒAƒNƒZƒXƒƒ\ƒbƒh‚Ì‘å•”•ª‚É‰—‚¢‚ÄÀ‘•‚ª•ÏX‚³‚ê‚Ä‚¢‚éD
+	@date 2003.07.21 genta ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã®ä½¿ç”¨ã‚’ã‚„ã‚ãŸï¼ä»£ã‚ã‚Šã«Tool Barã®Owner Drawã‚’ä½¿ã†ï¼
+		ã‚¢ã‚¯ã‚»ã‚¹ãƒ¡ã‚½ãƒƒãƒ‰ã®å¤§éƒ¨åˆ†ã«æ–¼ã„ã¦å®Ÿè£…ãŒå¤‰æ›´ã•ã‚Œã¦ã„ã‚‹ï¼
 
-	@note ƒCƒ[ƒWƒŠƒXƒg‚Ö‚Ìƒrƒbƒgƒ}ƒbƒv‚Ì“o˜^‚ÅBitblt‚ğs‚¤•”•ª‚ª
-		VAIO‚Æ‘Š«‚ªˆ«‚­ƒuƒ‹[ƒXƒNƒŠ[ƒ“‚ª”­¶‚µ‚Ä‚¢‚½D
-		‚Ü‚½ƒCƒ[ƒWƒŠƒXƒg‚ªIE3ˆÈ‘O‚Ìcommon component‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢‚½‚ß‚É
-		‰ŠúWin95‚ÅƒCƒ[ƒW‚Ì•\¦‚ª‚Å‚«‚È‚©‚Á‚½D‚»‚ê‚ç‚ğ‰ñ”ğ‚·‚é‚½‚ß‚ÉImageList‚Ìg—p‚ğ‚â‚ß‚Ä
-		“–‰‚Ì“Æ©•`‰æ‚É–ß‚µ‚½D
+	@note ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã¸ã®ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã®ç™»éŒ²ã§Bitbltã‚’è¡Œã†éƒ¨åˆ†ãŒ
+		VAIOã¨ç›¸æ€§ãŒæ‚ªããƒ–ãƒ«ãƒ¼ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãŒç™ºç”Ÿã—ã¦ã„ãŸï¼
+		ã¾ãŸã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆãŒIE3ä»¥å‰ã®common componentã«å«ã¾ã‚Œã¦ã„ãªã„ãŸã‚ã«
+		åˆæœŸWin95ã§ã‚¤ãƒ¡ãƒ¼ã‚¸ã®è¡¨ç¤ºãŒã§ããªã‹ã£ãŸï¼ãã‚Œã‚‰ã‚’å›é¿ã™ã‚‹ãŸã‚ã«ImageListã®ä½¿ç”¨ã‚’ã‚„ã‚ã¦
+		å½“åˆã®ç‹¬è‡ªæç”»ã«æˆ»ã—ãŸï¼
 */
 class CImageListMgr {
 public:
@@ -56,74 +56,74 @@ public:
 	CImageListMgr();
 	~CImageListMgr();
 
-	bool Create(HINSTANCE hInstance);	//	¶¬
+	bool Create(HINSTANCE hInstance);	//	ç”Ÿæˆ
 	
-	/*! @brief ƒAƒCƒRƒ“‚Ì•`‰æ
+	/*! @brief ã‚¢ã‚¤ã‚³ãƒ³ã®æç”»
 	
-		w’è‚³‚ê‚½DC‚Ìw’è‚³‚ê‚½À•W‚ÉƒAƒCƒRƒ“‚ğ•`‰æ‚·‚éD
+		æŒ‡å®šã•ã‚ŒãŸDCã®æŒ‡å®šã•ã‚ŒãŸåº§æ¨™ã«ã‚¢ã‚¤ã‚³ãƒ³ã‚’æç”»ã™ã‚‹ï¼
 	
-		@param index [in] •`‰æ‚·‚éƒAƒCƒRƒ“”Ô†
-		@param dc [in] •`‰æ‚·‚éDevice Context
-		@param x [in] •`‰æ‚·‚éXÀ•W
-		@param y [in] •`‰æ‚·‚éYÀ•W
-		@param fstyle [in] •`‰æƒXƒ^ƒCƒ‹
+		@param index [in] æç”»ã™ã‚‹ã‚¢ã‚¤ã‚³ãƒ³ç•ªå·
+		@param dc [in] æç”»ã™ã‚‹Device Context
+		@param x [in] æç”»ã™ã‚‹Xåº§æ¨™
+		@param y [in] æç”»ã™ã‚‹Yåº§æ¨™
+		@param fstyle [in] æç”»ã‚¹ã‚¿ã‚¤ãƒ«
 		
-		@date 2003.09.06 genta ”wŒi‚Ì“§‰ßˆ—‚É”º‚¢”wŒiFw’èíœ
+		@date 2003.09.06 genta èƒŒæ™¯ã®é€éå‡¦ç†ã«ä¼´ã„èƒŒæ™¯è‰²æŒ‡å®šå‰Šé™¤
 	*/
-	bool Draw(int index, HDC dc, int x, int y, int fstyle ) const	//	•`‰æ
+	bool Draw(int index, HDC dc, int x, int y, int fstyle ) const	//	æç”»
 	;
 	
-	//! ƒAƒCƒRƒ“”‚ğ•Ô‚·
-	int  Count(void) const;	//	ƒAƒCƒRƒ“”
+	//! ã‚¢ã‚¤ã‚³ãƒ³æ•°ã‚’è¿”ã™
+	int  Count(void) const;	//	ã‚¢ã‚¤ã‚³ãƒ³æ•°
 	
-	//! ƒAƒCƒRƒ“‚Ì•
+	//! ã‚¢ã‚¤ã‚³ãƒ³ã®å¹…
 	int  cx(void) const { return m_cx; }
-	//! ƒAƒCƒRƒ“‚Ì‚‚³
+	//! ã‚¢ã‚¤ã‚³ãƒ³ã®é«˜ã•
 	int  cy(void) const { return m_cy; }
 	
-	//! ƒAƒCƒRƒ“‚ğ’Ç‰Á‚·‚é
+	//! ã‚¢ã‚¤ã‚³ãƒ³ã‚’è¿½åŠ ã™ã‚‹
 	int Add(const TCHAR* szPath);
 
-	//! ƒAƒCƒRƒ“‚Ì’Ç‰Á‚ğŒ³‚É–ß‚·
+	//! ã‚¢ã‚¤ã‚³ãƒ³ã®è¿½åŠ ã‚’å…ƒã«æˆ»ã™
 	void ResetExtend();
 
 	/*!
-		ƒCƒ[ƒW‚ÌToolBar‚Ö‚Ì“o˜^
+		ã‚¤ãƒ¡ãƒ¼ã‚¸ã®ToolBarã¸ã®ç™»éŒ²
 	
-		@param hToolBar [in] “o˜^‚·‚éToolBar
-		@param id [in] “o˜^‚·‚éæ“ªƒAƒCƒRƒ“”Ô†
+		@param hToolBar [in] ç™»éŒ²ã™ã‚‹ToolBar
+		@param id [in] ç™»éŒ²ã™ã‚‹å…ˆé ­ã‚¢ã‚¤ã‚³ãƒ³ç•ªå·
 
-		@date 2003.07.21 genta ‚±‚±‚Å‚Í‰½‚às‚í‚È‚¢‚ªCó‚¯M‚¾‚¯c‚µ‚Ä‚¨‚­
-		@date 2003.07.21 genta –ß‚èŒ^‚ğvoid‚É•ÏX
+		@date 2003.07.21 genta ã“ã“ã§ã¯ä½•ã‚‚è¡Œã‚ãªã„ãŒï¼Œå—ã‘çš¿ã ã‘æ®‹ã—ã¦ãŠã
+		@date 2003.07.21 genta æˆ»ã‚Šå‹ã‚’voidã«å¤‰æ›´
 	*/
 	void  SetToolBarImages(HWND hToolBar, int id = 0) const {}
 
 protected:
 	int m_cx;			//!<	width of icon
 	int m_cy;			//!<	height of icon
-	/*!	@brief “§‰ßF
+	/*!	@brief é€éè‰²
 	
-		•`‰æ‚ğ©‘O‚Ås‚¤‚½‚ßC“§‰ßF‚ğŠo‚¦‚Ä‚¨‚­•K—v‚ª‚ ‚éD
+		æç”»ã‚’è‡ªå‰ã§è¡Œã†ãŸã‚ï¼Œé€éè‰²ã‚’è¦šãˆã¦ãŠãå¿…è¦ãŒã‚ã‚‹ï¼
 		@date 2003.07.21 genta
 	*/
 	COLORREF m_cTrans;
 	
-	/*! ƒAƒCƒRƒ“—pƒrƒbƒgƒ}ƒbƒv‚ğ•Û‚·‚é
+	/*! ã‚¢ã‚¤ã‚³ãƒ³ç”¨ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä¿æŒã™ã‚‹
 		@date 2003.07.21 genta
 	*/
 	HBITMAP m_hIconBitmap;
 
-	int m_nIconCount;	//!<	ƒAƒCƒRƒ“‚ÌŒÂ”
+	int m_nIconCount;	//!<	ã‚¢ã‚¤ã‚³ãƒ³ã®å€‹æ•°
 
-	//	ƒIƒŠƒWƒiƒ‹ƒeƒLƒXƒgƒGƒfƒBƒ^‚©‚ç‚Ì•`‰æŠÖ”
-	//	2003.08.27 Moca ”wŒi‚ğ“§‰ßˆ—‚·‚é‚Ì‚Å”wŒiF‚Ìw’è‚Í•s—v‚É
+	//	ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒ‡ã‚£ã‚¿ã‹ã‚‰ã®æç”»é–¢æ•°
+	//	2003.08.27 Moca èƒŒæ™¯ã‚’é€éå‡¦ç†ã™ã‚‹ã®ã§èƒŒæ™¯è‰²ã®æŒ‡å®šã¯ä¸è¦ã«
 	void MyBitBlt( HDC drawdc, int nXDest, int nYDest, 
 					int nWidth, int nHeight, HBITMAP bmp,
 					int nXSrc, int nYSrc, COLORREF colToTransParent ) const;
 	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
                         int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
 
-	//! ƒrƒbƒgƒ}ƒbƒv‚ğˆêsŠg’£‚·‚é
+	//! ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’ä¸€è¡Œæ‹¡å¼µã™ã‚‹
 	void Extend(bool = true);
 
 };

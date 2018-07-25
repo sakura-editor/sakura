@@ -1,5 +1,5 @@
-/*
-2008.05.20 kobake ì¬
+ï»¿/*
+2008.05.20 kobake ä½œæˆ
 */
 
 #include "StdAfx.h"
@@ -29,14 +29,14 @@ protected:
 	std::vector<HGDIOBJ> m_vObjects;
 };
 
-static CGDIStock s_cGDIStock;	// —Bˆê‚Ì CGDIStock ƒIƒuƒWƒFƒNƒg
+static CGDIStock s_cGDIStock;	// å”¯ä¸€ã® CGDIStock ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 
 void CGraphics::Init(HDC hdc)
 {
 	m_hdc = hdc;
-	//ƒyƒ“
+	//ãƒšãƒ³
 	m_hpnOrg = NULL;
-	//ƒuƒ‰ƒV
+	//ãƒ–ãƒ©ã‚·
 	m_hbrOrg = NULL;
 	m_hbrCurrent = NULL;
 	m_bDynamicBrush = false;
@@ -52,14 +52,14 @@ CGraphics::~CGraphics()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       ƒNƒŠƒbƒsƒ“ƒO                          //
+//                       ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
 void CGraphics::_InitClipping()
 {
 	if(m_vClippingRgns.empty()){
-		//Œ³‚ÌƒNƒŠƒbƒsƒ“ƒO—Ìˆæ‚ğæ“¾
+		//å…ƒã®ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°é ˜åŸŸã‚’å–å¾—
 		RECT rcDummy = {0,0,1,1};
 		HRGN hrgnOrg = ::CreateRectRgnIndirect(&rcDummy);
 		int nRet = ::GetClipRgn(m_hdc,hrgnOrg);
@@ -67,7 +67,7 @@ void CGraphics::_InitClipping()
 			::DeleteObject(hrgnOrg);
 			hrgnOrg = NULL;
 		}
-		//•Û‘¶
+		//ä¿å­˜
 		m_vClippingRgns.push_back(hrgnOrg);
 	}
 }
@@ -75,7 +75,7 @@ void CGraphics::_InitClipping()
 void CGraphics::PushClipping(const RECT& rc)
 {
 	_InitClipping();
-	//V‚µ‚­ì¬¨HDC‚Éİ’è¨ƒXƒ^ƒbƒN‚É•Û‘¶
+	//æ–°ã—ãä½œæˆâ†’HDCã«è¨­å®šâ†’ã‚¹ã‚¿ãƒƒã‚¯ã«ä¿å­˜
 	HRGN hrgnNew = CreateRectRgnIndirect(&rc);
 	::SelectClipRgn(m_hdc,hrgnNew);
 	m_vClippingRgns.push_back(hrgnNew);
@@ -84,21 +84,21 @@ void CGraphics::PushClipping(const RECT& rc)
 void CGraphics::PopClipping()
 {
 	if(m_vClippingRgns.size()>=2){
-		//ÅŒã‚Ì—v‘f‚ğíœ
+		//æœ€å¾Œã®è¦ç´ ã‚’å‰Šé™¤
 		::DeleteObject(m_vClippingRgns.back());
 		m_vClippingRgns.pop_back();
-		//‚±‚Ì“_‚ÌÅŒã‚Ì—v‘f‚ğHDC‚Éİ’è
+		//ã“ã®æ™‚ç‚¹ã®æœ€å¾Œã®è¦ç´ ã‚’HDCã«è¨­å®š
 		::SelectClipRgn(m_hdc,m_vClippingRgns.back());
 	}
 }
 
 void CGraphics::ClearClipping()
 {
-	//Œ³‚ÌƒNƒŠƒbƒsƒ“ƒO‚É–ß‚·
+	//å…ƒã®ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°ã«æˆ»ã™
 	if(!m_vClippingRgns.empty()){
 		::SelectClipRgn(m_hdc,m_vClippingRgns[0]);
 	}
-	//—Ìˆæ‚ğ‚·‚×‚Äíœ
+	//é ˜åŸŸã‚’ã™ã¹ã¦å‰Šé™¤
 	int nSize = (int)m_vClippingRgns.size();
 	for(int i=0;i<nSize;i++){
 		::DeleteObject(m_vClippingRgns[i]);
@@ -108,14 +108,14 @@ void CGraphics::ClearClipping()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒeƒLƒXƒg•¶šF                         //
+//                      ãƒ†ã‚­ã‚¹ãƒˆæ–‡å­—è‰²                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::PushTextForeColor(COLORREF color)
 {
-	//İ’è
+	//è¨­å®š
 	COLORREF cOld = ::SetTextColor(m_hdc,color);
-	//‹L˜^
+	//è¨˜éŒ²
 	if(m_vTextForeColors.empty()){
 		m_vTextForeColors.push_back(cOld);
 	}
@@ -124,7 +124,7 @@ void CGraphics::PushTextForeColor(COLORREF color)
 
 void CGraphics::PopTextForeColor()
 {
-	//–ß‚·
+	//æˆ»ã™
 	if(m_vTextForeColors.size()>=2){
 		m_vTextForeColors.pop_back();
 		::SetTextColor(m_hdc,m_vTextForeColors.back());
@@ -141,14 +141,14 @@ void CGraphics::ClearTextForeColor()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒeƒLƒXƒg”wŒiF                         //
+//                      ãƒ†ã‚­ã‚¹ãƒˆèƒŒæ™¯è‰²                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::PushTextBackColor(COLORREF color)
 {
-	//İ’è
+	//è¨­å®š
 	COLORREF cOld = ::SetBkColor(m_hdc,color);
-	//‹L˜^
+	//è¨˜éŒ²
 	if(m_vTextBackColors.empty()){
 		m_vTextBackColors.push_back(cOld);
 	}
@@ -157,7 +157,7 @@ void CGraphics::PushTextBackColor(COLORREF color)
 
 void CGraphics::PopTextBackColor()
 {
-	//–ß‚·
+	//æˆ»ã™
 	if(m_vTextBackColors.size()>=2){
 		m_vTextBackColors.pop_back();
 		::SetBkColor(m_hdc,m_vTextBackColors.back());
@@ -175,7 +175,7 @@ void CGraphics::ClearTextBackColor()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒeƒLƒXƒg                            //
+//                         ãƒ†ã‚­ã‚¹ãƒˆ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::RestoreTextColors()
@@ -188,15 +188,15 @@ void CGraphics::RestoreTextColors()
 	}
 }
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒtƒHƒ“ƒg                            //
+//                         ãƒ•ã‚©ãƒ³ãƒˆ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::PushMyFont(const SFONT& sFont)
 {
-	//İ’è
+	//è¨­å®š
 	HFONT hFontOld = (HFONT)SelectObject(m_hdc, sFont.m_hFont);
 
-	//‹L˜^
+	//è¨˜éŒ²
 	if(m_vFonts.empty()){
 		SFONT sFontOld = { { false, false }, hFontOld };
 		m_vFonts.push_back(sFontOld);
@@ -206,7 +206,7 @@ void CGraphics::PushMyFont(const SFONT& sFont)
 
 void CGraphics::PopMyFont()
 {
-	//–ß‚·
+	//æˆ»ã™
 	if(m_vFonts.size()>=2){
 		m_vFonts.pop_back();
 		SelectObject(m_hdc, m_vFonts.back().m_hFont);
@@ -222,7 +222,7 @@ void CGraphics::ClearMyFont()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ƒyƒ“                              //
+//                           ãƒšãƒ³                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::PushPen(COLORREF color, int nPenWidth, int nStyle)
@@ -237,7 +237,7 @@ void CGraphics::PushPen(COLORREF color, int nPenWidth, int nStyle)
 
 void CGraphics::PopPen()
 {
-	//‘I‘ğ‚·‚éŒó•â
+	//é¸æŠã™ã‚‹å€™è£œ
 	HPEN hpnNew = NULL;
 	if(m_vPens.size()>=2){
 		hpnNew = m_vPens[m_vPens.size()-2];
@@ -246,18 +246,18 @@ void CGraphics::PopPen()
 		hpnNew = m_hpnOrg;
 	}
 
-	//‘I‘ğ
+	//é¸æŠ
 	if(hpnNew){
 		SelectObject(m_hdc,hpnNew);
 	}
 
-	//íœ
+	//å‰Šé™¤
 	if(!m_vPens.empty()){
 		DeleteObject(m_vPens.back());
 		m_vPens.pop_back();
 	}
 
-	//ƒIƒŠƒWƒiƒ‹
+	//ã‚ªãƒªã‚¸ãƒŠãƒ«
 	if(m_vPens.empty()){
 		m_hpnOrg = NULL;
 	}
@@ -277,7 +277,7 @@ void CGraphics::ClearPen()
 	m_vPens.clear();
 }
 
-//$$note: ‚‘¬‰»
+//$$note: é«˜é€ŸåŒ–
 COLORREF CGraphics::GetPenColor() const
 {
 	if(m_vPens.size()){
@@ -294,26 +294,26 @@ COLORREF CGraphics::GetPenColor() const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ƒuƒ‰ƒV                             //
+//                          ãƒ–ãƒ©ã‚·                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CGraphics::_InitBrushColor()
 {
 	if(m_vBrushes.empty()){
-		//Œ³‚Ìƒuƒ‰ƒV‚ğæ“¾
+		//å…ƒã®ãƒ–ãƒ©ã‚·ã‚’å–å¾—
 		HBRUSH hbrOrg = (HBRUSH)::SelectObject(m_hdc,::GetStockObject(NULL_BRUSH));
-		::SelectObject(m_hdc,hbrOrg); //Œ³‚É–ß‚·
-		//•Û‘¶
+		::SelectObject(m_hdc,hbrOrg); //å…ƒã«æˆ»ã™
+		//ä¿å­˜
 		m_vBrushes.push_back(hbrOrg);
 	}
 }
 
 void CGraphics::PushBrushColor(COLORREF color)
 {
-	//####‚±‚±‚ÅŒø—¦‰»‚Å‚«‚é
+	//####ã“ã“ã§åŠ¹ç‡åŒ–ã§ãã‚‹
 
 	_InitBrushColor();
-	//V‚µ‚­ì¬¨HDC‚Éİ’è¨ƒXƒ^ƒbƒN‚É•Û‘¶
+	//æ–°ã—ãä½œæˆâ†’HDCã«è¨­å®šâ†’ã‚¹ã‚¿ãƒƒã‚¯ã«ä¿å­˜
 	HBRUSH hbrNew = (color!=(COLORREF)-1)?CreateSolidBrush(color):(HBRUSH)GetStockObject(NULL_BRUSH);
 	::SelectObject(m_hdc,hbrNew);
 	m_vBrushes.push_back(hbrNew);
@@ -322,9 +322,9 @@ void CGraphics::PushBrushColor(COLORREF color)
 void CGraphics::PopBrushColor()
 {
 	if(m_vBrushes.size()>=2){
-		//ÅŒã‚©‚ç2”Ô–Ú‚Ì—v‘f‚ğHDC‚Éİ’è
+		//æœ€å¾Œã‹ã‚‰2ç•ªç›®ã®è¦ç´ ã‚’HDCã«è¨­å®š
 		::SelectObject(m_hdc,m_vBrushes[m_vBrushes.size()-2]);
-		//ÅŒã‚Ì—v‘f‚ğíœ
+		//æœ€å¾Œã®è¦ç´ ã‚’å‰Šé™¤
 		::DeleteObject(m_vBrushes.back());
 		m_vBrushes.pop_back();
 	}
@@ -332,11 +332,11 @@ void CGraphics::PopBrushColor()
 
 void CGraphics::ClearBrush()
 {
-	//Œ³‚Ìƒuƒ‰ƒV‚É–ß‚·
+	//å…ƒã®ãƒ–ãƒ©ã‚·ã«æˆ»ã™
 	if(!m_vBrushes.empty()){
 		::SelectObject(m_hdc,m_vBrushes[0]);
 	}
-	//ƒuƒ‰ƒV‚ğ‚·‚×‚Äíœ (0”Ô—v‘fˆÈŠO)
+	//ãƒ–ãƒ©ã‚·ã‚’ã™ã¹ã¦å‰Šé™¤ (0ç•ªè¦ç´ ä»¥å¤–)
 	int nSize = (int)m_vBrushes.size();
 	for(int i=1;i<nSize;i++){
 		::DeleteObject(m_vBrushes[i]);
@@ -346,11 +346,11 @@ void CGraphics::ClearBrush()
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           ’¼ü                              //
+//                           ç›´ç·š                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-//$$note:‚‘¬‰»
+//$$note:é«˜é€ŸåŒ–
 void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 {
 	COLORREF c = GetPenColor();
@@ -361,14 +361,14 @@ void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 	int y = y1;
 	if(!mx && !my)return;
 	for (;;) {
-		//“_•`‰æ
+		//ç‚¹æç”»
 		ApiWrap::SetPixelSurely(m_hdc,x,y,c);
 
-		//i‚ß‚é
+		//é€²ã‚ã‚‹
 		x+=mx;
 		y+=my;
 
-		//ğŒ”»’è
+		//æ¡ä»¶åˆ¤å®š
 		if(mx>0 && x>=x2)break;
 		if(mx<0 && x<=x2)break;
 		if(my>0 && y>=y2)break;
@@ -377,7 +377,7 @@ void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 }
 
 
-// ƒhƒƒbƒvæ‹éŒ`•`‰æ—p‚ÌƒŠ[ƒWƒ‡ƒ“‚ğì¬‚·‚é
+// ãƒ‰ãƒ­ãƒƒãƒ—å…ˆçŸ©å½¢æç”»ç”¨ã®ãƒªãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ä½œæˆã™ã‚‹
 static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
 {
 	HRGN hRgnOutside = ::CreateRectRgnIndirect(lpRect);
@@ -392,7 +392,7 @@ static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
 	return hRgn;
 }
 
-// ƒhƒƒbƒvæ‹éŒ`•`‰æ—p‚Ìƒuƒ‰ƒV‚ğæ“¾‚·‚é
+// ãƒ‰ãƒ­ãƒƒãƒ—å…ˆçŸ©å½¢æç”»ç”¨ã®ãƒ–ãƒ©ã‚·ã‚’å–å¾—ã™ã‚‹
 static HBRUSH GetDropRectBrush()
 {
 	static HBRUSH s_hBrush = NULL;
@@ -402,13 +402,13 @@ static HBRUSH GetDropRectBrush()
 		if(hBitmap){
 			s_hBrush = ::CreatePatternBrush(hBitmap);
 			::DeleteObject(hBitmap);
-			s_cGDIStock.Register(s_hBrush);	// I—¹”jŠü—p‚ÉƒXƒgƒbƒN‚µ‚Ä‚¨‚­
+			s_cGDIStock.Register(s_hBrush);	// çµ‚äº†æ™‚ç ´æ£„ç”¨ã«ã‚¹ãƒˆãƒƒã‚¯ã—ã¦ãŠã
 		}
 	}
 	return s_hBrush;
 }
 
-// ƒhƒƒbƒvæ‚Ì‹éŒ`‚ğ•`‰æ‚·‚é
+// ãƒ‰ãƒ­ãƒƒãƒ—å…ˆã®çŸ©å½¢ã‚’æç”»ã™ã‚‹
 void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast)
 {
 	if(!lpRectNew && !lpRectLast)

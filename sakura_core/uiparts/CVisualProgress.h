@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,23 +30,23 @@ class CWaitCursor;
 
 class CVisualProgress : public CDocListenerEx, public CProgressListener{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CVisualProgress();
 	virtual ~CVisualProgress();
 
-	//ƒ[ƒh‘OŒã
+	//ãƒ­ãƒ¼ãƒ‰å‰å¾Œ
 	void OnBeforeLoad(SLoadInfo* sLoadInfo);
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
-	//ƒZ[ƒu‘OŒã
+	//ã‚»ãƒ¼ãƒ–å‰å¾Œ
 	void OnBeforeSave(const SSaveInfo& sSaveInfo);
 	void OnFinalSave(ESaveResult eSaveResult);
 
-	//ƒvƒƒOƒŒƒXóM
+	//ãƒ—ãƒ­ã‚°ãƒ¬ã‚¹å—ä¿¡
 	void OnProgress(int nPer);
 
 protected:
-	//À‘••â•
+	//å®Ÿè£…è£œåŠ©
 	void _Begin();
 	void _Doing(int nPer);
 	void _End();

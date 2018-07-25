@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ���j���[�Ǘ����\��
+﻿/*!	@file
+	@brief メニュー管理＆表示
 
 	@author Norio Nakatani
 */
@@ -28,21 +28,21 @@
 #include "_os/COSVersionInfo.h"
 #include "util/window.h"
 
-// ���j���[�A�C�R���̔w�i���{�^���̐F�ɂ���
+// メニューアイコンの背景をボタンの色にする
 #define DRAW_MENU_ICON_BACKGROUND_3DFACE
 
-// ���j���[�̑I��F��W������
+// メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-// //! ���j���[�A�C�R����3D�{�^���ɂ���(���d�l)
-// //! ����`�Ȃ�A�I��F�Ƃ̍����F�ƃt���b�g�Șg�őI����\��
+// //! メニューアイコンを3Dボタンにする(旧仕様)
+// //! 未定義なら、選択色との混合色とフラットな枠で選択を表現
 // #define DRAW_MENU_ICON_3DBUTTON
 
-// //! ���j���[��DISABLE/�Z�p���[�^�ɉe�𗎂Ƃ�(���d�l)
+// //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
 // #define DRAW_MENU_3DSTYLE
 
 
-#if 0 // ���g�p
+#if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
 //	ASSERT_VALID(this);
@@ -56,10 +56,10 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 #endif
 
 
-//	@date 2002.2.17 YAZAKI CShareData�̃C���X�^���X�́ACProcess�ɂЂƂ���̂݁B
+//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
 {
-	/* ���L�f�[�^�\���̂̃A�h���X��Ԃ� */
+	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
 	m_hInstance = NULL;
@@ -71,615 +71,615 @@ CMenuDrawer::CMenuDrawer()
 	m_hCompBitmap = NULL;
 	m_hCompDC = NULL;
 
-//@@@ 2002.01.03 YAZAKI m_tbMyButton�Ȃǂ�CShareData����CMenuDrawer�ֈړ��������Ƃɂ��C���B	/* �c�[���o�[�̃{�^�� TBBUTTON�\���� */
-	/* �c�[���o�[�̃{�^�� TBBUTTON�\���� */
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。	/* ツールバーのボタン TBBUTTON構造体 */
+	/* ツールバーのボタン TBBUTTON構造体 */
 	/*
 	typedef struct _TBBUTTON {
-		int iBitmap;	// �{�^�� �C���[�W�� 0 ����n�܂�C���f�b�N�X
-		int idCommand;	// �{�^���������ꂽ�Ƃ��ɑ�����R�}���h
-		BYTE fsState;	// �{�^���̏��--�ȉ����Q��
-		BYTE fsStyle;	// �{�^�� �X�^�C��--�ȉ����Q��
-		DWORD dwData;	// �A�v���P�[�V����-��`���ꂽ�l
-		int iString;	// �{�^���̃��x��������� 0 ����n�܂�C���f�b�N�X
+		int iBitmap;	// ボタン イメージの 0 から始まるインデックス
+		int idCommand;	// ボタンが押されたときに送られるコマンド
+		BYTE fsState;	// ボタンの状態--以下を参照
+		BYTE fsStyle;	// ボタン スタイル--以下を参照
+		DWORD dwData;	// アプリケーション-定義された値
+		int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 	} TBBUTTON;
 	*/
-//	�L�[���[�h�F�A�C�R������(�A�C�R���C���f�b�N�X)
-//	Sept. 16, 2000 Jepro note: �A�C�R���o�^���j���[
-//	�ȉ��̓o�^�̓c�[���o�[�����łȂ��A�C�R���������ׂẴ��j���[�ŗ��p����Ă���
-//	�����̓r�b�g�}�b�v���\�[�X��IDB_MYTOOL�ɓo�^����Ă���A�C�R���̐擪����̏��Ԃ̂悤�ł���
-//	�A�C�R���������Ɠo�^�ł���悤�ɉ�����16dotsx218=2048dots�Ɋg��
-//	�c��15dots����16dots�ɂ��āu�v�����^�v�A�C�R����u�w���v1�v�́A���������Ă��镔����������15dots�܂ł����\������Ȃ��炵�����ʂȂ�
-//	��
-//	Sept. 17, 2000 �c16dot�ڂ�\���ł���悤�ɂ���
-//	�C�������t�@�C���ɂ�JEPRO_16thdot�ƃR�����g���Ă���̂ł����Ԉ���Ă����炻����L�[���[�h�ɂ��Č������Ă�������(Sept. 28, 2000���� 6�ӏ��ύX)
-//	IDB_MYTOOL��16dot�ڂɌ��₷���悤�ɉ�16dots�Â̋�؂�ɂȂ�ڈ��t����
+//	キーワード：アイコン順序(アイコンインデックス)
+//	Sept. 16, 2000 Jepro note: アイコン登録メニュー
+//	以下の登録はツールバーだけでなくアイコンをもつすべてのメニューで利用されている
+//	数字はビットマップリソースのIDB_MYTOOLに登録されているアイコンの先頭からの順番のようである
+//	アイコンをもっと登録できるように横幅を16dotsx218=2048dotsに拡大
+//	縦も15dotsから16dotsにして「プリンタ」アイコンや「ヘルプ1」の、下が欠けている部分を補ったが15dotsまでしか表示されないらしく効果なし
+//	→
+//	Sept. 17, 2000 縦16dot目を表示できるようにした
+//	修正したファイルにはJEPRO_16thdotとコメントしてあるのでもし間違っていたらそれをキーワードにして検索してください(Sept. 28, 2000現在 6箇所変更)
+//	IDB_MYTOOLの16dot目に見やすいように横16dotsづつの区切りになる目印を付けた
 //
-//	Sept. 16, 2000 ���₷���悤�ɉ���20��(���邢��32��)�Âɔz�񂵂悤�Ƃ������z��\����ς��Ȃ���΂��܂��i�[�ł��Ȃ��̂�
-//	�������������̂��挈(�����񂽎����C��ur3��13�ŉ���)
+//	Sept. 16, 2000 見やすいように横に20個(あるいは32個)づつに配列しようとしたが配列構造を変えなければうまく格納できないので
+//	それを解決するのが先決(→げんた氏改修版ur3β13で解決)
 //
-//	Sept. 16, 2000 JEPRO �ł��邾���n���ƂɏW�܂�悤�ɏ��Ԃ�啝�ɓ���ւ���  ����ɔ���CShareData.cpp�Őݒ肵�Ă��鏉���ݒ�l���ύX
-//	Oct. 22, 2000 JEPRO �A�C�R���̃r�b�g�}�b�v���\�[�X��2�����z�u���\�ɂȂ������ߍ��{�I�ɔz�u�]������
-//	�E�z�u�̊�{�́u�R�}���h�ꗗ�v�ɓ����Ă���@�\(�R�}���h)��	�Ȃ��u�R�}���h�ꗗ�v���̂́u���j���[�o�[�v�̏��ɂ����悻�������Ă���
-//	�E�A�C�R���r�b�g�}�b�v�t�@�C���ɂ͉�32��X15�i����(2010.06.26 13�i����g��)
-//	�E�݊����ƐV�R�}���h�ǉ��̗����̓s���Ŕ�ђn����
-//	�E���j���[�ɑ�����n����ъe�n�̒i�Ƃ̊֌W�͎��̒ʂ�(2012.03.10 ����)�F
-//		�t�@�C��----- �t�@�C������n	(1�i��32��: 1-32)
-//		�ҏW--------- �ҏW�n			(2�i��32��: 33-64)
-//		�ړ�--------- �J�[�\���ړ��n	(3�i��32��: 65-96)
-//		�I��--------- �I���n			(4�i��32��: 97-128)
-//					+ ��`�I���n		(5�i��32��: 129-160) //(��. ��`�I���n�̂قƂ�ǂ͖�����)
-//					+ �N���b�v�{�[�h�n	(6�i��24��: 161-184)
-//			���}���n					(6�i�ڎc���8��: 185-192)
-//		�ϊ�--------- �ϊ��n			(7�i��32��: 193-224)
-//		����--------- �����n			(8�i��32��: 225-256)
-//		�c�[��------- ���[�h�؂�ւ��n	(9�i��4��: 257-260)
-//					+ �ݒ�n			(9�i�ڎ���16��: 261-276)
-//					+ �}�N���n			(9�i�ڍŌ��11��: 277-287)
-//					+ �O���}�N��		(12�i��32��: 353-384/13�i��19��: 385-403)
-//					+ �J�X�^�����j���[	(10�i��25��: 289-313)
-//		�E�B���h�E--- �E�B���h�E�n		(11�i��22��: 321-342)
-//					+ �^�u�n			(10�i�ڎc���7��: 314-320/9�i�ڍŊ���1��: 288)
-//		�w���v------- �x��				(11�i�ڎc���10��: 343-352)
-//	��1.�u�}���n�v�̓��j���[�ł́u�ҏW�v�ɓ����Ă���
-//	��2.�u�R�}���h�ꗗ�v�ɓ����ĂȂ��R�}���h���킩���Ă���͈͂ňʒu�\��ɂ��Ă�����
-//  ��3. F_DISABLE �͖���`�p(�_�~�[�Ƃ��Ă��g��)
-//	��4. ���[�U�[�p�Ɋm�ۂ��ꂽ�ꏊ�͓��ɂȂ��̂Ŋe�i�̋󂢂Ă�����̕����g���Ă��������B
-//	��5. �A�C�R���r�b�g�}�b�v�̗L���i���́ACImageListMgr �� MAX_Y �ł��B
+//	Sept. 16, 2000 JEPRO できるだけ系ごとに集まるように順番を大幅に入れ替えた  それに伴いCShareData.cppで設定している初期設定値も変更
+//	Oct. 22, 2000 JEPRO アイコンのビットマップリソースの2次元配置が可能になったため根本的に配置転換した
+//	・配置の基本は「コマンド一覧」に入っている機能(コマンド)順	なお「コマンド一覧」自体は「メニューバー」の順におおよそ準拠している
+//	・アイコンビットマップファイルには横32個X15段ある(2010.06.26 13段から拡張)
+//	・互換性と新コマンド追加の両立の都合で飛び地あり
+//	・メニューに属する系および各系の段との関係は次の通り(2012.03.10 現在)：
+//		ファイル----- ファイル操作系	(1段目32個: 1-32)
+//		編集--------- 編集系			(2段目32個: 33-64)
+//		移動--------- カーソル移動系	(3段目32個: 65-96)
+//		選択--------- 選択系			(4段目32個: 97-128)
+//					+ 矩形選択系		(5段目32個: 129-160) //(注. 矩形選択系のほとんどは未実装)
+//					+ クリップボード系	(6段目24個: 161-184)
+//			★挿入系					(6段目残りの8個: 185-192)
+//		変換--------- 変換系			(7段目32個: 193-224)
+//		検索--------- 検索系			(8段目32個: 225-256)
+//		ツール------- モード切り替え系	(9段目4個: 257-260)
+//					+ 設定系			(9段目次の16個: 261-276)
+//					+ マクロ系			(9段目最後の11個: 277-287)
+//					+ 外部マクロ		(12段目32個: 353-384/13段目19個: 385-403)
+//					+ カスタムメニュー	(10段目25個: 289-313)
+//		ウィンドウ--- ウィンドウ系		(11段目22個: 321-342)
+//					+ タブ系			(10段目残りの7個: 314-320/9段目最期の1個: 288)
+//		ヘルプ------- 支援				(11段目残りの10個: 343-352)
+//	注1.「挿入系」はメニューでは「編集」に入っている
+//	注2.「コマンド一覧」に入ってないコマンドもわかっている範囲で位置予約にしておいた
+//  注3. F_DISABLE は未定義用(ダミーとしても使う)
+//	注4. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
+//	注5. アイコンビットマップの有効段数は、CImageListMgr の MAX_Y です。
 
 	static const int tbd[] = {
-/* �t�@�C������n(1�i��32��: 1-32) */
-/*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�V�K�쐬
-/*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J��
-/*  3 */		F_FILESAVE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�㏑���ۑ�
-/*  4 */		F_FILESAVEAS_DIALOG			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���O��t���ĕۑ�	//Sept. 18, 2000 JEPRO �ǉ�
-/*  5 */		F_FILECLOSE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����(����)	//Oct. 17, 2000 jepro �u�t�@�C�������v�Ƃ����L���v�V������ύX
-/*  6 */		F_FILECLOSE_OPEN			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ĊJ��
-/*  7 */		F_FILE_REOPEN_SJIS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS�ŊJ������
-/*  8 */		F_FILE_REOPEN_JIS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//JIS�ŊJ������
-/*  9 */		F_FILE_REOPEN_EUC			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//EUC�ŊJ������
-/* 10 */		F_FILE_REOPEN_UNICODE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Unicode�ŊJ������
-/* 11 */		F_FILE_REOPEN_UTF8			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-8�ŊJ������
-/* 12 */		F_FILE_REOPEN_UTF7			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-7�ŊJ������
-/* 13 */		F_PRINT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���
-/* 14 */		F_PRINT_PREVIEW				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����v���r���[
-/* 15 */		F_PRINT_PAGESETUP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����y�[�W�ݒ�	//Sept. 21, 2000 JEPRO �ǉ�
-/* 16 */		F_OPEN_HfromtoC				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//������C/C++�w�b�_(�\�[�X)���J��	//Feb. 7, 2001 JEPRO �ǉ�
-/* 17 */		F_DISABLE	/*F_OPEN_HHPP*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//������C/C++�w�b�_�t�@�C�����J��	//Feb. 9, 2001 jepro�u.c�܂���.cpp�Ɠ�����.h���J���v����ύX		del 2008/6/23 Uchi
-/* 18 */		F_DISABLE	/*F_OPEN_CCPP*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//������C/C++�\�[�X�t�@�C�����J��	//Feb. 9, 2001 jepro�u.h�Ɠ�����.c(�Ȃ����.cpp)���J���v����ύX	del 2008/6/23 Uchi
-/* 19 */		F_ACTIVATE_SQLPLUS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Oracle SQL*Plus���A�N�e�B�u�\�� */	//Sept. 20, 2000 JEPRO �ǉ�
-/* 20 */		F_PLSQL_COMPILE_ON_SQLPLUS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Oracle SQL*Plus�Ŏ��s */	//Sept. 17, 2000 jepro �����́u�R���p�C���v���u���s�v�ɓ���
-/* 21 */		F_BROWSE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�u���E�Y
-/* 22 */		F_PROPERTY_FILE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@�C���̃v���p�e�B//Sept. 16, 2000 JEPRO mytool1.bmp�ɂ������u�t�@�C���̃v���p�e�B�v�A�C�R����IDB_MYTOOL�ɃR�s�[
-/* 23 */		F_VIEWMODE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�r���[���[�h
-/* 24 */		F_FILE_REOPEN_UNICODEBE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBE�ŊJ������ // Moca, 2002/05/26 �ǉ�
-/* 25 */		F_FILEOPEN_DROPDOWN			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J��(�h���b�v�_�E��)
-/* 26 */		F_FILE_REOPEN				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J���Ȃ���
-/* 27 */		F_EXITALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�T�N���G�f�B�^�̑S�I��	//Dec. 27, 2000 JEPRO �ǉ�
-/* 28 */		F_FILESAVECLOSE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ۑ����ĕ��� Feb. 28, 2004 genta
-/* 29 */		F_FILENEW_NEWWINDOW			/* , TBSTATE_ENABLED, TBSTATE_BUTTON, 0, 0 */,	//�V�K�E�C���h�E���J�� 2009.06.17
-/* 30 */		F_FILESAVEALL				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�S�ď㏑���ۑ� Jan. 24, 2005 genta
-/* 31 */		F_EXITALLEDITORS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ҏW�̑S�I��	// 2007.02.13 ryoji �ǉ�
-/* 32 */		F_FILE_REOPEN_CESU8			/* . TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,  //CESU-8�ŊJ���Ȃ���
+/* ファイル操作系(1段目32個: 1-32) */
+/*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
+/*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く
+/*  3 */		F_FILESAVE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//上書き保存
+/*  4 */		F_FILESAVEAS_DIALOG			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//名前を付けて保存	//Sept. 18, 2000 JEPRO 追加
+/*  5 */		F_FILECLOSE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+/*  6 */		F_FILECLOSE_OPEN			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//閉じて開く
+/*  7 */		F_FILE_REOPEN_SJIS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJISで開き直す
+/*  8 */		F_FILE_REOPEN_JIS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//JISで開き直す
+/*  9 */		F_FILE_REOPEN_EUC			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//EUCで開き直す
+/* 10 */		F_FILE_REOPEN_UNICODE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Unicodeで開き直す
+/* 11 */		F_FILE_REOPEN_UTF8			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-8で開き直す
+/* 12 */		F_FILE_REOPEN_UTF7			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-7で開き直す
+/* 13 */		F_PRINT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//印刷
+/* 14 */		F_PRINT_PREVIEW				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//印刷プレビュー
+/* 15 */		F_PRINT_PAGESETUP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//印刷ページ設定	//Sept. 21, 2000 JEPRO 追加
+/* 16 */		F_OPEN_HfromtoC				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+/* 17 */		F_DISABLE	/*F_OPEN_HHPP*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+/* 18 */		F_DISABLE	/*F_OPEN_CCPP*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
+/* 19 */		F_ACTIVATE_SQLPLUS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Oracle SQL*Plusをアクティブ表示 */	//Sept. 20, 2000 JEPRO 追加
+/* 20 */		F_PLSQL_COMPILE_ON_SQLPLUS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
+/* 21 */		F_BROWSE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブラウズ
+/* 22 */		F_PROPERTY_FILE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルのプロパティ//Sept. 16, 2000 JEPRO mytool1.bmpにあった「ファイルのプロパティ」アイコンをIDB_MYTOOLにコピー
+/* 23 */		F_VIEWMODE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ビューモード
+/* 24 */		F_FILE_REOPEN_UNICODEBE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBEで開き直す // Moca, 2002/05/26 追加
+/* 25 */		F_FILEOPEN_DROPDOWN			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く(ドロップダウン)
+/* 26 */		F_FILE_REOPEN				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開きなおす
+/* 27 */		F_EXITALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+/* 28 */		F_FILESAVECLOSE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//保存して閉じる Feb. 28, 2004 genta
+/* 29 */		F_FILENEW_NEWWINDOW			/* , TBSTATE_ENABLED, TBSTATE_BUTTON, 0, 0 */,	//新規ウインドウを開く 2009.06.17
+/* 30 */		F_FILESAVEALL				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全て上書き保存 Jan. 24, 2005 genta
+/* 31 */		F_EXITALLEDITORS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//編集の全終了	// 2007.02.13 ryoji 追加
+/* 32 */		F_FILE_REOPEN_CESU8			/* . TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,  //CESU-8で開きなおす
 
-/* �ҏW�n(2�i��32��: 32-64) */
-/* 33 */		F_UNDO							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ɖ߂�(Undo)
-/* 34 */		F_REDO							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��蒼��(Redo)
-/* 35 */		F_DELETE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�폜
-/* 36 */		F_DELETE_BACK					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\���O���폜
-/* 37 */		F_WordDeleteToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��̍��[�܂ō폜
-/* 38 */		F_WordDeleteToEnd				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��̉E�[�܂ō폜
-/* 39 */		F_WordDelete					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��폜
-/* 40 */		F_WordCut						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��؂���
-/* 41 */		F_LineDeleteToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���܂ō폜(���s�P��)
-/* 42 */		F_LineDeleteToEnd				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���܂ō폜(���s�P��)
-/* 43 */		F_LineCutToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���܂Ő؂���(���s�P��)
-/* 44 */		F_LineCutToEnd					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���܂Ő؂���(���s�P��)
-/* 45 */		F_DELETE_LINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s�폜(�܂�Ԃ��P��)
-/* 46 */		F_CUT_LINE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s�؂���(���s�P��)
-/* 47 */		F_DUPLICATELINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s�̓�d��(�܂�Ԃ��P��)
-/* 48 */		F_INDENT_TAB					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//TAB�C���f���g
-/* 49 */		F_UNINDENT_TAB					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�tTAB�C���f���g
-/* 50 */		F_INDENT_SPACE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SPACE�C���f���g
-/* 51 */		F_UNINDENT_SPACE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�tSPACE�C���f���g
-/* 52 */		F_DISABLE/*F_WORDSREFERENCE*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P�ꃊ�t�@�����X	//�A�C�R������
+/* 編集系(2段目32個: 32-64) */
+/* 33 */		F_UNDO							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//元に戻す(Undo)
+/* 34 */		F_REDO							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//やり直し(Redo)
+/* 35 */		F_DELETE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//削除
+/* 36 */		F_DELETE_BACK					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル前を削除
+/* 37 */		F_WordDeleteToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語の左端まで削除
+/* 38 */		F_WordDeleteToEnd				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語の右端まで削除
+/* 39 */		F_WordDelete					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語削除
+/* 40 */		F_WordCut						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語切り取り
+/* 41 */		F_LineDeleteToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行頭まで削除(改行単位)
+/* 42 */		F_LineDeleteToEnd				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行末まで削除(改行単位)
+/* 43 */		F_LineCutToStart				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行頭まで切り取り(改行単位)
+/* 44 */		F_LineCutToEnd					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行末まで切り取り(改行単位)
+/* 45 */		F_DELETE_LINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行削除(折り返し単位)
+/* 46 */		F_CUT_LINE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行切り取り(改行単位)
+/* 47 */		F_DUPLICATELINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行の二重化(折り返し単位)
+/* 48 */		F_INDENT_TAB					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//TABインデント
+/* 49 */		F_UNINDENT_TAB					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//逆TABインデント
+/* 50 */		F_INDENT_SPACE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SPACEインデント
+/* 51 */		F_UNINDENT_SPACE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//逆SPACEインデント
+/* 52 */		F_DISABLE/*F_WORDSREFERENCE*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語リファレンス	//アイコン未作
 /* 53 */		F_LTRIM							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//LTRIM		// 2001.12.03 hor
 /* 54 */		F_RTRIM							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//RTRIM		// 2001.12.03 hor
 /* 55 */		F_SORT_ASC						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SORT_ASC	// 2001.12.06 hor
 /* 56 */		F_SORT_DESC						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SORT_DES	// 2001.12.06 hor
 /* 57 */		F_MERGE							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MERGE		// 2001.12.06 hor
-/* 58 */		F_RECONVERT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ĕϊ�	// 2002.4.12 YAZAKI
-/* 59 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 60 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 61 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 62 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 63 */		F_PROFILEMGR					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�v���t�@�C���}�l�[�W��
-/* 64 */		F_FILE_REOPEN_LATIN1			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Latin1�ŊJ���Ȃ���	// 2010/3/20 Uchi
+/* 58 */		F_RECONVERT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//再変換	// 2002.4.12 YAZAKI
+/* 59 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 60 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 61 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 62 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 63 */		F_PROFILEMGR					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//プロファイルマネージャ
+/* 64 */		F_FILE_REOPEN_LATIN1			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Latin1で開きなおす	// 2010/3/20 Uchi
 
-/* �J�[�\���ړ��n(3�i��32��: 65-96) */
-/* 65 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 66 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 67 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 68 */		F_UP							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\����ړ�
-/* 69 */		F_DOWN							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\�����ړ�
-/* 70 */		F_LEFT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\�����ړ�
-/* 71 */		F_RIGHT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\���E�ړ�
-/* 72 */		F_UP2							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\����ړ�(�Q�s����)
-/* 73 */		F_DOWN2							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\�����ړ�(�Q�s����)
-/* 74 */		F_WORDLEFT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��̍��[�Ɉړ�
-/* 75 */		F_WORDRIGHT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P��̉E�[�Ɉړ�
-/* 76 */		F_GOLINETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���Ɉړ�(�܂�Ԃ��P��)
-/* 77 */		F_GOLINEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�s���Ɉړ�(�܂�Ԃ��P��)
-/* 78 */		F_HalfPageUp					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-/* 79 */		F_HalfPageDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-/* 80 */		F_1PageUp						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-/* 81 */		F_1PageDown						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-/* 82 */		F_DISABLE/*F_DISPLAYTOP*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��ʂ̐擪�Ɉړ�(������)
-/* 83 */		F_DISABLE/*F_DISPLAYEND*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��ʂ̍Ō�Ɉړ�(������)
-/* 84 */		F_GOFILETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@�C���̐擪�Ɉړ�
-/* 85 */		F_GOFILEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@�C���̍Ō�Ɉړ�
-/* 86 */		F_CURLINECENTER					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�[�\���s���E�B���h�E������
-/* 87 */		F_JUMPHIST_PREV					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ړ�����: �O��	//Sept. 28, 2000 JEPRO �ǉ�
-/* 88 */		F_JUMPHIST_NEXT					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ړ�����: ����	//Sept. 28, 2000 JEPRO �ǉ�
-/* 89 */		F_WndScrollDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�e�L�X�g���P�s���փX�N���[��	//Jun. 28, 2001 JEPRO �ǉ�
-/* 90 */		F_WndScrollUp					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�e�L�X�g���P�s��փX�N���[��	//Jun. 28, 2001 JEPRO �ǉ�
-/* 91 */		F_GONEXTPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̒i����
-/* 92 */		F_GOPREVPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̒i����
-/* 93 */		F_JUMPHIST_SET					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���݈ʒu���ړ������ɓo�^
-/* 94 */		F_MODIFYLINE_PREV				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̕ύX�s��
-/* 95 */		F_MODIFYLINE_NEXT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̕ύX�s��
-/* 96 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* カーソル移動系(3段目32個: 65-96) */
+/* 65 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 66 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 67 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 68 */		F_UP							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル上移動
+/* 69 */		F_DOWN							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル下移動
+/* 70 */		F_LEFT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル左移動
+/* 71 */		F_RIGHT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル右移動
+/* 72 */		F_UP2							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル上移動(２行ごと)
+/* 73 */		F_DOWN2							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル下移動(２行ごと)
+/* 74 */		F_WORDLEFT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語の左端に移動
+/* 75 */		F_WORDRIGHT						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//単語の右端に移動
+/* 76 */		F_GOLINETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行頭に移動(折り返し単位)
+/* 77 */		F_GOLINEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//行末に移動(折り返し単位)
+/* 78 */		F_HalfPageUp					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+/* 79 */		F_HalfPageDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+/* 80 */		F_1PageUp						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+/* 81 */		F_1PageDown						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+/* 82 */		F_DISABLE/*F_DISPLAYTOP*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の先頭に移動(未実装)
+/* 83 */		F_DISABLE/*F_DISPLAYEND*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の最後に移動(未実装)
+/* 84 */		F_GOFILETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの先頭に移動
+/* 85 */		F_GOFILEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの最後に移動
+/* 86 */		F_CURLINECENTER					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル行をウィンドウ中央へ
+/* 87 */		F_JUMPHIST_PREV					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//移動履歴: 前へ	//Sept. 28, 2000 JEPRO 追加
+/* 88 */		F_JUMPHIST_NEXT					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//移動履歴: 次へ	//Sept. 28, 2000 JEPRO 追加
+/* 89 */		F_WndScrollDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//テキストを１行下へスクロール	//Jun. 28, 2001 JEPRO 追加
+/* 90 */		F_WndScrollUp					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//テキストを１行上へスクロール	//Jun. 28, 2001 JEPRO 追加
+/* 91 */		F_GONEXTPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の段落へ
+/* 92 */		F_GOPREVPARAGRAPH				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の段落へ
+/* 93 */		F_JUMPHIST_SET					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//現在位置を移動履歴に登録
+/* 94 */		F_MODIFYLINE_PREV				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の変更行へ
+/* 95 */		F_MODIFYLINE_NEXT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の変更行へ
+/* 96 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* �I���n(4�i��32��: 97-128) */
-/* 97 */		F_SELECTWORD					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���݈ʒu�̒P��I��
-/* 98 */		F_SELECTALL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ׂđI��	//Sept. 21, 2000 JEPRO �ǉ�
-/* 99 */		F_BEGIN_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�͈͑I���J�n
-/* 100 */		F_UP_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\����ړ�
-/* 101 */		F_DOWN_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\�����ړ�
-/* 102 */		F_LEFT_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\�����ړ�
-/* 103 */		F_RIGHT_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\���E�ړ�
-/* 104 */		F_UP2_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\����ړ�(�Q�s����)
-/* 105 */		F_DOWN2_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�J�[�\�����ړ�(�Q�s����)
-/* 106 */		F_WORDLEFT_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�P��̍��[�Ɉړ�
-/* 107 */		F_WORDRIGHT_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�P��̉E�[�Ɉړ�
-/* 108 */		F_GOLINETOP_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��)
-/* 109 */		F_GOLINEEND_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�s���Ɉړ�(�܂�Ԃ��P��)
-/* 110 */		F_HalfPageUp_Sel				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)���y�[�W�A�b�v	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-/* 111 */		F_HalfPageDown_Sel				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)���y�[�W�_�E��	//Oct. 6, 2000 JEPRO ���̂�PC-AT�݊��@�n�ɕύX(ROLL��PAGE) //Oct. 10, 2000 JEPRO ���̕ύX
-/* 112 */		F_1PageUp_Sel					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�P�y�[�W�A�b�v	//Oct. 10, 2000 JEPRO �]���̃y�[�W�A�b�v�𔼃y�[�W�A�b�v�Ɩ��̕ύX���P�y�[�W�A�b�v��ǉ�
-/* 113 */		F_1PageDown_Sel					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�P�y�[�W�_�E��	//Oct. 10, 2000 JEPRO �]���̃y�[�W�_�E���𔼃y�[�W�_�E���Ɩ��̕ύX���P�y�[�W�_�E����ǉ�
-/* 114 */		F_DISABLE/*F_DISPLAYTOP_SEL*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)��ʂ̐擪�Ɉړ�(������)
-/* 115 */		F_DISABLE/*F_DISPLAYEND_SEL*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)��ʂ̍Ō�Ɉړ�(������)
-/* 116 */		F_GOFILETOP_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�t�@�C���̐擪�Ɉړ�
-/* 117 */		F_GOFILEEND_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�t�@�C���̍Ō�Ɉړ�
-/* 118 */		F_GONEXTPARAGRAPH_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)���̒i����
-/* 119 */		F_GOPREVPARAGRAPH_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�O�̒i����
-/* 120 */		F_SELECTLINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//1�s�I��
-/* 121 */		F_FUNCLIST_PREV					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̊֐����X�g�}�[�N
-/* 122 */		F_FUNCLIST_NEXT					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̊֐����X�g�}�[�N
-/* 123 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 124 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 125 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 126 */		F_MODIFYLINE_PREV_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)�O�̕ύX�s��
-/* 127 */		F_MODIFYLINE_NEXT_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(�͈͑I��)���̕ύX�s��
-/* 128 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 選択系(4段目32個: 97-128) */
+/* 97 */		F_SELECTWORD					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//現在位置の単語選択
+/* 98 */		F_SELECTALL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//すべて選択	//Sept. 21, 2000 JEPRO 追加
+/* 99 */		F_BEGIN_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//範囲選択開始
+/* 100 */		F_UP_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル上移動
+/* 101 */		F_DOWN_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル下移動
+/* 102 */		F_LEFT_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル左移動
+/* 103 */		F_RIGHT_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル右移動
+/* 104 */		F_UP2_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル上移動(２行ごと)
+/* 105 */		F_DOWN2_SEL						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)カーソル下移動(２行ごと)
+/* 106 */		F_WORDLEFT_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)単語の左端に移動
+/* 107 */		F_WORDRIGHT_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)単語の右端に移動
+/* 108 */		F_GOLINETOP_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)行頭に移動(折り返し単位)
+/* 109 */		F_GOLINEEND_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)行末に移動(折り返し単位)
+/* 110 */		F_HalfPageUp_Sel				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+/* 111 */		F_HalfPageDown_Sel				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+/* 112 */		F_1PageUp_Sel					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+/* 113 */		F_1PageDown_Sel					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+/* 114 */		F_DISABLE/*F_DISPLAYTOP_SEL*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)画面の先頭に移動(未実装)
+/* 115 */		F_DISABLE/*F_DISPLAYEND_SEL*/	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)画面の最後に移動(未実装)
+/* 116 */		F_GOFILETOP_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)ファイルの先頭に移動
+/* 117 */		F_GOFILEEND_SEL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)ファイルの最後に移動
+/* 118 */		F_GONEXTPARAGRAPH_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)次の段落へ
+/* 119 */		F_GOPREVPARAGRAPH_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)前の段落へ
+/* 120 */		F_SELECTLINE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//1行選択
+/* 121 */		F_FUNCLIST_PREV					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の関数リストマーク
+/* 122 */		F_FUNCLIST_NEXT					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の関数リストマーク
+/* 123 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 124 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 125 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 126 */		F_MODIFYLINE_PREV_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)前の変更行へ
+/* 127 */		F_MODIFYLINE_NEXT_SEL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(範囲選択)次の変更行へ
+/* 128 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* ��`�I���n(5�i��32��: 129-160) */ //(��. ��`�I���n�̂قƂ�ǂ͖�����)
-/* 129 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 130 */		F_DISABLE/*F_BOXSELALL*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��`�ł��ׂđI��
-/* 131 */		F_BEGIN_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��`�͈͑I���J�n	//Sept. 29, 2000 JEPRO �ǉ�
-/* 132 */		F_UP_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\����ړ�
-/* 133 */		F_DOWN_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\�����ړ�
-/* 134 */		F_LEFT_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\�����ړ�
-/* 135 */		F_RIGHT_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\���E�ړ�
-/* 136 */		F_UP2_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\����ړ�(�Q�s����)
-/* 137 */		F_DOWN2_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�J�[�\�����ړ�(�Q�s����)
-/* 138 */		F_WORDLEFT_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�P��̍��[�Ɉړ�
-/* 139 */		F_WORDRIGHT_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�P��̉E�[�Ɉړ�
-/* 140 */		F_GOLINETOP_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��)
-/* 141 */		F_GOLINEEND_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�s���Ɉړ�(�܂�Ԃ��P��)
-/* 142 */		F_HalfPageUp_BOX				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)���y�[�W�A�b�v
-/* 143 */		F_HalfPageDown_BOX				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)���y�[�W�_�E��
-/* 144 */		F_1PageUp_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�P�y�[�W�A�b�v
-/* 145 */		F_1PageDown_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�P�y�[�W�_�E��
-/* 146 */		F_DISABLE/*F_DISPLAYTOP_BOX*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)��ʂ̐擪�Ɉړ�(������)
-/* 147 */		F_DISABLE/*F_DISPLAYEND_BOX*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)��ʂ̍Ō�Ɉړ�(������)
-/* 148 */		F_GOFILETOP_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�t�@�C���̐擪�Ɉړ�
-/* 149 */		F_GOFILEEND_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�t�@�C���̍Ō�Ɉړ�
-/* 150 */		F_GOLOGICALLINETOP_BOX			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(��`�I��)�s���Ɉړ�(���s�P��)
-/* 151 */		F_DISABLE/*F_GOLOGICALLINEEND_BOX*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 152 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 153 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 154 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 155 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 156 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 157 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 158 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 159 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 160 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 矩形選択系(5段目32個: 129-160) */ //(注. 矩形選択系のほとんどは未実装)
+/* 129 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 130 */		F_DISABLE/*F_BOXSELALL*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//矩形ですべて選択
+/* 131 */		F_BEGIN_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//矩形範囲選択開始	//Sept. 29, 2000 JEPRO 追加
+/* 132 */		F_UP_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル上移動
+/* 133 */		F_DOWN_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル下移動
+/* 134 */		F_LEFT_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル左移動
+/* 135 */		F_RIGHT_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル右移動
+/* 136 */		F_UP2_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル上移動(２行ごと)
+/* 137 */		F_DOWN2_BOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)カーソル下移動(２行ごと)
+/* 138 */		F_WORDLEFT_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)単語の左端に移動
+/* 139 */		F_WORDRIGHT_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)単語の右端に移動
+/* 140 */		F_GOLINETOP_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)行頭に移動(折り返し単位)
+/* 141 */		F_GOLINEEND_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)行末に移動(折り返し単位)
+/* 142 */		F_HalfPageUp_BOX				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページアップ
+/* 143 */		F_HalfPageDown_BOX				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページダウン
+/* 144 */		F_1PageUp_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページアップ
+/* 145 */		F_1PageDown_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページダウン
+/* 146 */		F_DISABLE/*F_DISPLAYTOP_BOX*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)画面の先頭に移動(未実装)
+/* 147 */		F_DISABLE/*F_DISPLAYEND_BOX*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)画面の最後に移動(未実装)
+/* 148 */		F_GOFILETOP_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)ファイルの先頭に移動
+/* 149 */		F_GOFILEEND_BOX					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)ファイルの最後に移動
+/* 150 */		F_GOLOGICALLINETOP_BOX			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)行頭に移動(改行単位)
+/* 151 */		F_DISABLE/*F_GOLOGICALLINEEND_BOX*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 152 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 153 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 154 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 155 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 156 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 157 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 158 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 159 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 160 */		F_DISABLE								/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* �N���b�v�{�[�h�n(6�i��24��: 161-184) */
-/* 161 */		F_CUT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�؂���(�I��͈͂��N���b�v�{�[�h�ɃR�s�[���č폜)
-/* 162 */		F_COPY							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�R�s�[(�I��͈͂��N���b�v�{�[�h�ɃR�s�[)
-/* 163 */		F_COPY_CRLF						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//CRLF���s�ŃR�s�[
-/* 164 */		F_PASTE							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�\��t��(�N���b�v�{�[�h����\��t��)
-/* 165 */		F_PASTEBOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��`�\��t��(�N���b�v�{�[�h����\��t��)
-/* 166 */		F_DISABLE/*F_INSTEXT_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�e�L�X�g��\��t��	(�����J�R�}���h�H�������H)
-/* 167 */		F_DISABLE/*F_ADDTAIL_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�Ō�Ƀe�L�X�g��ǉ�	(�����J�R�}���h�H�������H)
-/* 168 */		F_COPYLINES						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�I��͈͓��S�s�R�s�[	//Sept. 30, 2000 JEPRO �ǉ�
-/* 169 */		F_COPYLINESASPASSAGE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�I��͈͓��S�s���p���t���R�s�[	//Sept. 30, 2000 JEPRO �ǉ�
-/* 170 */		F_COPYLINESWITHLINENUMBER		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�I��͈͓��S�s�s�ԍ��t���R�s�[	//Sept. 30, 2000 JEPRO �ǉ�
-/* 171 */		F_COPYPATH						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃t�@�C���̃p�X�����R�s�[ //added Oct. 22, 2000 JEPRO				//Nov. 5, 2000 JEPRO �ǉ�
-/* 172 */		F_COPYTAG						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃t�@�C���̃p�X���ƃJ�[�\���ʒu���R�s�[ //added Oct. 22, 2000 JEPRO	//Nov. 5, 2000 JEPRO �ǉ�
-/* 173 */		F_CREATEKEYBINDLIST				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[���蓖�Ĉꗗ���R�s�[ //added Oct. 22, 2000 JEPRO	//Dec. 25, 2000 JEPRO �A�C�R���ǉ�
-/* 174 */		F_COPYFNAME						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃t�@�C�������N���b�v�{�[�h�ɃR�s�[ //2002/2/3 aroka
-/* 175 */		F_COPY_ADDCRLF					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�܂�Ԃ��ʒu�ɉ��s�����ăR�s�[
-/* 176 */		F_COPY_COLOR_HTML				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�I��͈͓��F�t��HTML�R�s�[
-/* 177 */		F_COPY_COLOR_HTML_LINENUMBER	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�I��͈͓��s�ԍ��F�t��HTML�R�s�[
-/* 178 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 179 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 180 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 181 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* クリップボード系(6段目24個: 161-184) */
+/* 161 */		F_CUT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//切り取り(選択範囲をクリップボードにコピーして削除)
+/* 162 */		F_COPY							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コピー(選択範囲をクリップボードにコピー)
+/* 163 */		F_COPY_CRLF						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//CRLF改行でコピー
+/* 164 */		F_PASTE							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//貼り付け(クリップボードから貼り付け)
+/* 165 */		F_PASTEBOX						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//矩形貼り付け(クリップボードから貼り付け)
+/* 166 */		F_DISABLE/*F_INSTEXT_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//テキストを貼り付け	(未公開コマンド？未完成？)
+/* 167 */		F_DISABLE/*F_ADDTAIL_W*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最後にテキストを追加	(未公開コマンド？未完成？)
+/* 168 */		F_COPYLINES						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行コピー	//Sept. 30, 2000 JEPRO 追加
+/* 169 */		F_COPYLINESASPASSAGE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行引用符付きコピー	//Sept. 30, 2000 JEPRO 追加
+/* 170 */		F_COPYLINESWITHLINENUMBER		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内全行行番号付きコピー	//Sept. 30, 2000 JEPRO 追加
+/* 171 */		F_COPYPATH						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイルのパス名をコピー //added Oct. 22, 2000 JEPRO				//Nov. 5, 2000 JEPRO 追加
+/* 172 */		F_COPYTAG						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイルのパス名とカーソル位置をコピー //added Oct. 22, 2000 JEPRO	//Nov. 5, 2000 JEPRO 追加
+/* 173 */		F_CREATEKEYBINDLIST				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キー割り当て一覧をコピー //added Oct. 22, 2000 JEPRO	//Dec. 25, 2000 JEPRO アイコン追加
+/* 174 */		F_COPYFNAME						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
+/* 175 */		F_COPY_ADDCRLF					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折り返し位置に改行をつけてコピー
+/* 176 */		F_COPY_COLOR_HTML				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内色付きHTMLコピー
+/* 177 */		F_COPY_COLOR_HTML_LINENUMBER	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内行番号色付きHTMLコピー
+/* 178 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 179 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 180 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 181 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 182 */		F_CHGMOD_EOL_CRLF,	// 2003.06.23 Moca
 /* 183 */		F_CHGMOD_EOL_LF,	// 2003.06.23 Moca
 /* 184 */		F_CHGMOD_EOL_CR,	// 2003.06.23 Moca
 
-/* �}���n(6�i�ڎc��8��: 185-192) */
-/* 185 */		F_INS_DATE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���t�}��	//Nov. 5, 2000 JEPRO �ǉ�
-/* 186 */		F_INS_TIME	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����}��	//Nov. 5, 2000 JEPRO �ǉ�
-/* 187 */		F_CTRL_CODE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�R���g���[���R�[�h�̓���(�_�C�A���O)	//@@@ 2002.06.02 MIK
-/* 188 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 189 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 190 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 191 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 192 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 挿入系(6段目残り8個: 185-192) */
+/* 185 */		F_INS_DATE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//日付挿入	//Nov. 5, 2000 JEPRO 追加
+/* 186 */		F_INS_TIME	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//時刻挿入	//Nov. 5, 2000 JEPRO 追加
+/* 187 */		F_CTRL_CODE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+/* 188 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 189 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 190 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 191 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 192 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* �ϊ��n(7�i��32��: 193-224) */
-/* 193 */		F_TOLOWER				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//������
-/* 194 */		F_TOUPPER				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�啶��
-/* 195 */		F_TOHANKAKU				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�S�p�����p
-/* 196 */		F_TOZENKAKUKATA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���p�{�S�Ђ灨�S�p�E�J�^�J�i	//Sept. 17, 2000 jepro �������u���p���S�p�J�^�J�i�v����ύX
-/* 197 */		F_TOZENKAKUHIRA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���p�{�S�J�^���S�p�E�Ђ炪��	//Sept. 17, 2000 jepro �������u���p���S�p�Ђ炪�ȁv����ύX
-/* 198 */		F_HANKATATOZENKATA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���p�J�^�J�i���S�p�J�^�J�i	//Sept. 18, 2000 JEPRO �ǉ�
-/* 199 */		F_HANKATATOZENHIRA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���p�J�^�J�i���S�p�Ђ炪��	//Sept. 18, 2000 JEPRO �ǉ�
-/* 200 */		F_TABTOSPACE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//TAB����	//Sept. 20, 2000 JEPRO �ǉ�
-/* 201 */		F_CODECNV_AUTO2SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�������ʁ�SJIS�R�[�h�ϊ�
-/* 202 */		F_CODECNV_EMAIL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//E-Mail(JIS��SIJIS)�R�[�h�ϊ�
-/* 203 */		F_CODECNV_EUC2SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//EUC��SJIS�R�[�h�ϊ�
-/* 204 */		F_CODECNV_UNICODE2SJIS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Unicode��SJIS�R�[�h�ϊ�
-/* 205 */		F_CODECNV_UTF82SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-8��SJIS�R�[�h�ϊ�
-/* 206 */		F_CODECNV_UTF72SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-7��SJIS�R�[�h�ϊ�
-/* 207 */		F_CODECNV_SJIS2JIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS��JIS�R�[�h�ϊ�
-/* 208 */		F_CODECNV_SJIS2EUC		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS��EUC�R�[�h�ϊ�
-/* 209 */		F_CODECNV_SJIS2UTF8		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS��UTF-8�R�[�h�ϊ�
-/* 210 */		F_CODECNV_SJIS2UTF7		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS��UTF-7�R�[�h�ϊ�
-/* 211 */		F_BASE64DECODE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Base64�f�R�[�h���ĕۑ�	//Sept. 28, 2000 JEPRO �ǉ�
-/* 212 */		F_UUDECODE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//uudecode���ăt�@�C���ɕۑ�//Sept. 28, 2000 JEPRO �ǉ�	//Oct. 17, 2000 jepro �������u�I�𕔕���UUENCODE�f�R�[�h�v����ύX
-/* 213 */		F_SPACETOTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�󔒁�TAB	//Jun. 01, 2001 JEPRO �ǉ�
-/* 214 */		F_TOZENEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���p�p�����S�p�p�� //July. 30, 2001 Misaka �ǉ�
-/* 215 */		F_TOHANEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�S�p�p�������p�p��
-/* 216 */		F_CODECNV_UNICODEBE2SJIS/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBE��SJIS�R�[�h�ϊ�	//Moca, 2002/05/26
-/* 217 */		F_TOHANKATA				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�S�p�J�^�J�i�����p�J�^�J�i	//Aug. 29, 2002 ai
-/* 218 */		F_FILETREE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@�C���c���[�\��
-/* 219 */		F_SHOWMINIMAP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�~�j�}�b�v��\��
-/* 220 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 221 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 222 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 223 */		F_TAGJUMP_CLOSE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ă^�O�W�����v(���E�B���h�Eclose)
-/* 224 */		F_OUTLINE_TOGGLE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�A�E�g���C�����(toggle) // 20060201 aroka
+/* 変換系(7段目32個: 193-224) */
+/* 193 */		F_TOLOWER				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//小文字
+/* 194 */		F_TOUPPER				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//大文字
+/* 195 */		F_TOHANKAKU				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全角→半角
+/* 196 */		F_TOZENKAKUKATA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角＋全ひら→全角・カタカナ	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
+/* 197 */		F_TOZENKAKUHIRA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角＋全カタ→全角・ひらがな	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
+/* 198 */		F_HANKATATOZENKATA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角カタカナ	//Sept. 18, 2000 JEPRO 追加
+/* 199 */		F_HANKATATOZENHIRA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角ひらがな	//Sept. 18, 2000 JEPRO 追加
+/* 200 */		F_TABTOSPACE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//TAB→空白	//Sept. 20, 2000 JEPRO 追加
+/* 201 */		F_CODECNV_AUTO2SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//自動判別→SJISコード変換
+/* 202 */		F_CODECNV_EMAIL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//E-Mail(JIS→SIJIS)コード変換
+/* 203 */		F_CODECNV_EUC2SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//EUC→SJISコード変換
+/* 204 */		F_CODECNV_UNICODE2SJIS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Unicode→SJISコード変換
+/* 205 */		F_CODECNV_UTF82SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-8→SJISコード変換
+/* 206 */		F_CODECNV_UTF72SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UTF-7→SJISコード変換
+/* 207 */		F_CODECNV_SJIS2JIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS→JISコード変換
+/* 208 */		F_CODECNV_SJIS2EUC		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS→EUCコード変換
+/* 209 */		F_CODECNV_SJIS2UTF8		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS→UTF-8コード変換
+/* 210 */		F_CODECNV_SJIS2UTF7		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//SJIS→UTF-7コード変換
+/* 211 */		F_BASE64DECODE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Base64デコードして保存	//Sept. 28, 2000 JEPRO 追加
+/* 212 */		F_UUDECODE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//uudecodeしてファイルに保存//Sept. 28, 2000 JEPRO 追加	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
+/* 213 */		F_SPACETOTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//空白→TAB	//Jun. 01, 2001 JEPRO 追加
+/* 214 */		F_TOZENEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角英数→全角英数 //July. 30, 2001 Misaka 追加
+/* 215 */		F_TOHANEI				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全角英数→半角英数
+/* 216 */		F_CODECNV_UNICODEBE2SJIS/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//UnicodeBE→SJISコード変換	//Moca, 2002/05/26
+/* 217 */		F_TOHANKATA				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全角カタカナ→半角カタカナ	//Aug. 29, 2002 ai
+/* 218 */		F_FILETREE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルツリー表示
+/* 219 */		F_SHOWMINIMAP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ミニマップを表示
+/* 220 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 221 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 222 */		F_DISABLE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 223 */		F_TAGJUMP_CLOSE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//閉じてタグジャンプ(元ウィンドウclose)
+/* 224 */		F_OUTLINE_TOGGLE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//アウトライン解析(toggle) // 20060201 aroka
 
-/* �����n(8�i��32��: 225-256) */
-/* 225 */		F_SEARCH_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����(�P�ꌟ���_�C�A���O)
-/* 226 */		F_SEARCH_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��������
-/* 227 */		F_SEARCH_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O������
-/* 228 */		F_REPLACE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�u��	//Sept. 21, 2000 JEPRO �ǉ�
-/* 229 */		F_SEARCH_CLEARMARK	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����}�[�N�̃N���A
+/* 検索系(8段目32個: 225-256) */
+/* 225 */		F_SEARCH_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索(単語検索ダイアログ)
+/* 226 */		F_SEARCH_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次を検索
+/* 227 */		F_SEARCH_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前を検索
+/* 228 */		F_REPLACE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//置換	//Sept. 21, 2000 JEPRO 追加
+/* 229 */		F_SEARCH_CLEARMARK	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索マークのクリア
 /* 230 */		F_GREP_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Grep
-/* 231 */		F_JUMP_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�w��s�փW�����v		//Sept. 21, 2000 JEPRO �ǉ�
-/* 232 */		F_OUTLINE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�A�E�g���C�����
-/* 233 */		F_TAGJUMP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�O�W�����v�@�\			//Sept. 21, 2000 JEPRO �ǉ�
-/* 234 */		F_TAGJUMPBACK		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�O�W�����v�o�b�N�@�\	//Sept. 21, 2000 JEPRO �ǉ�
-/* 235 */		F_COMPARE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@�C�����e��r	//Sept. 21, 2000 JEPRO �ǉ�
-/* 236 */		F_BRACKETPAIR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�Ί��ʂ̌���	//Sept. 20, 2000 JEPRO �ǉ�
-/* 237 */		F_BOOKMARK_SET		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�u�b�N�}�[�N�ݒ�E����	// 2001.12.03 hor
-/* 238 */		F_BOOKMARK_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃u�b�N�}�[�N��		// 2001.12.03 hor
-/* 239 */		F_BOOKMARK_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̃u�b�N�}�[�N��		// 2001.12.03 hor
-/* 240 */		F_BOOKMARK_RESET	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�u�b�N�}�[�N�̑S����		// 2001.12.03 hor
-/* 241 */		F_BOOKMARK_VIEW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�u�b�N�}�[�N�̈ꗗ		// 2001.12.03 hor
-/* 242 */		F_DIFF_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//DIFF�����\��	//@@@ 2002.05.25 MIK
-/* 243 */		F_DIFF_NEXT			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̍�����	//@@@ 2002.05.25 MIK
-/* 244 */		F_DIFF_PREV			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̍�����	//@@@ 2002.05.25 MIK
-/* 245 */		F_DIFF_RESET		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����̑S����	//@@@ 2002.05.25 MIK
-/* 246 */		F_SEARCH_BOX		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����(�{�b�N�X)
-/* 247 */		F_JUMP_SRCHSTARTPOS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����J�n�ʒu�֖߂�	// 02/06/26 ai
-/* 248 */		F_TAGS_MAKE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�O�t�@�C���̍쐬	//@@@ 2003.04.13 MIK
-/* 249 */		F_DIRECT_TAGJUMP	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�C���N�g�^�O�W�����v	//@@@ 2003.04.15 MIK
-/* 250 */		F_ISEARCH_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���C���N�������^���T�[�` //2004.10.13 isearch
-/* 251 */		F_ISEARCH_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//����C���N�������^���T�[�` //2004.10.13 isearch
-/* 252 */		F_ISEARCH_REGEXP_NEXT	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���K�\���O���C���N�������^���T�[�` //2004.10.13 isearch
-/* 253 */		F_ISEARCH_REGEXP_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���K�\���O���C���N�������^���T�[�` //2004.10.13 isearch
-/* 254 */		F_ISEARCH_MIGEMO_NEXT	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO�O���C���N�������^���T�[�` //2004.10.13 isearch
-/* 255 */		F_ISEARCH_MIGEMO_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO�O���C���N�������^���T�[�` //2004.10.13 isearch
-/* 256 */		F_TAGJUMP_KEYWORD	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[���[�h���w�肵�ă_�C���N�g�^�O�W�����v //2005.03.31 MIK
+/* 231 */		F_JUMP_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//指定行へジャンプ		//Sept. 21, 2000 JEPRO 追加
+/* 232 */		F_OUTLINE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//アウトライン解析
+/* 233 */		F_TAGJUMP			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タグジャンプ機能			//Sept. 21, 2000 JEPRO 追加
+/* 234 */		F_TAGJUMPBACK		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タグジャンプバック機能	//Sept. 21, 2000 JEPRO 追加
+/* 235 */		F_COMPARE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイル内容比較	//Sept. 21, 2000 JEPRO 追加
+/* 236 */		F_BRACKETPAIR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//対括弧の検索	//Sept. 20, 2000 JEPRO 追加
+/* 237 */		F_BOOKMARK_SET		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブックマーク設定・解除	// 2001.12.03 hor
+/* 238 */		F_BOOKMARK_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のブックマークへ		// 2001.12.03 hor
+/* 239 */		F_BOOKMARK_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のブックマークへ		// 2001.12.03 hor
+/* 240 */		F_BOOKMARK_RESET	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブックマークの全解除		// 2001.12.03 hor
+/* 241 */		F_BOOKMARK_VIEW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ブックマークの一覧		// 2001.12.03 hor
+/* 242 */		F_DIFF_DIALOG		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//DIFF差分表示	//@@@ 2002.05.25 MIK
+/* 243 */		F_DIFF_NEXT			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次の差分へ	//@@@ 2002.05.25 MIK
+/* 244 */		F_DIFF_PREV			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前の差分へ	//@@@ 2002.05.25 MIK
+/* 245 */		F_DIFF_RESET		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//差分の全解除	//@@@ 2002.05.25 MIK
+/* 246 */		F_SEARCH_BOX		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索(ボックス)
+/* 247 */		F_JUMP_SRCHSTARTPOS	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//検索開始位置へ戻る	// 02/06/26 ai
+/* 248 */		F_TAGS_MAKE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タグファイルの作成	//@@@ 2003.04.13 MIK
+/* 249 */		F_DIRECT_TAGJUMP	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
+/* 250 */		F_ISEARCH_NEXT		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前方インクリメンタルサーチ //2004.10.13 isearch
+/* 251 */		F_ISEARCH_PREV		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//後方インクリメンタルサーチ //2004.10.13 isearch
+/* 252 */		F_ISEARCH_REGEXP_NEXT	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//正規表現前方インクリメンタルサーチ //2004.10.13 isearch
+/* 253 */		F_ISEARCH_REGEXP_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//正規表現前方インクリメンタルサーチ //2004.10.13 isearch
+/* 254 */		F_ISEARCH_MIGEMO_NEXT	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO前方インクリメンタルサーチ //2004.10.13 isearch
+/* 255 */		F_ISEARCH_MIGEMO_PREV	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//MIGEMO前方インクリメンタルサーチ //2004.10.13 isearch
+/* 256 */		F_TAGJUMP_KEYWORD	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーワードを指定してダイレクトタグジャンプ //2005.03.31 MIK
 
-/* ���[�h�؂�ւ��n(9�i��4��: 257-260) */
-/* 257 */		F_CHGMOD_INS	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�}���^�㏑�����[�h�؂�ւ�	//Nov. 5, 2000 JEPRO �ǉ�
-/* 258 */		F_CANCEL_MODE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�e�탂�[�h�̎�����			//Nov. 7, 2000 JEPRO �ǉ�
-/* 259 */		F_CHG_CHARSET	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����R�[�h�Z�b�g�w��			//2010/6/14 Uchi
-/* 260 */		F_GREP_REPLACE_DLG	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Grep�u��
+/* モード切り替え系(9段目4個: 257-260) */
+/* 257 */		F_CHGMOD_INS	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//挿入／上書きモード切り替え	//Nov. 5, 2000 JEPRO 追加
+/* 258 */		F_CANCEL_MODE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//各種モードの取り消し			//Nov. 7, 2000 JEPRO 追加
+/* 259 */		F_CHG_CHARSET	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//文字コードセット指定			//2010/6/14 Uchi
+/* 260 */		F_GREP_REPLACE_DLG	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Grep置換
 
-/* �ݒ�n(9�i�ڎ���16��: 261-276) */
-/* 261 */		F_SHOWTOOLBAR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�c�[���o�[�̕\��
-/* 262 */		F_SHOWFUNCKEY		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�@���N�V�����L�[�̕\��
-/* 263 */		F_SHOWSTATUSBAR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�X�e�[�^�X�o�[�̕\��
-/* 264 */		F_TYPE_LIST			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�C�v�ʐݒ�ꗗ	//Sept. 18, 2000 JEPRO �ǉ�
-/* 265 */		F_OPTION_TYPE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�C�v�ʐݒ�
-/* 266 */		F_OPTION			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ʐݒ�			//Sept. 16, 2000 jepro �������u�ݒ�v���p�e�B�V�[�g�v����ύX
-/* 267 */		F_FONT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�t�H���g�ݒ�
-/* 268 */		F_WRAPWINDOWWIDTH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���݂̃E�B���h�E���Ő܂�Ԃ�	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH �� WRAPWINDOWWIDTH �ɕύX
-/* 269 */		F_FAVORITE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����̊Ǘ�	//@@@ 2003.04.08 MIK
-/* 270 */		F_SHOWTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�u�̕\��	//@@@ 2003.06.10 MIK
-/* 271 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 272 */		F_TOGGLE_KEY_SEARCH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[���[�h�w���v�����\�� 2007.03.92 genta
-/* 273 */		F_TMPWRAPNOWRAP		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�܂�Ԃ��Ȃ��i�ꎞ�ݒ�j			// 2008.05.30 nasukoji
-/* 274 */		F_TMPWRAPSETTING	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�w�茅�Ő܂�Ԃ��i�ꎞ�ݒ�j		// 2008.05.30 nasukoji
-/* 275 */		F_TMPWRAPWINDOW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�[�Ő܂�Ԃ��i�ꎞ�ݒ�j		// 2008.05.30 nasukoji
-/* 276 */		F_SELECT_COUNT_MODE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�����J�E���g���@	//2009.07.06 syat
+/* 設定系(9段目次の16個: 261-276) */
+/* 261 */		F_SHOWTOOLBAR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ツールバーの表示
+/* 262 */		F_SHOWFUNCKEY		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファンクションキーの表示
+/* 263 */		F_SHOWSTATUSBAR		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ステータスバーの表示
+/* 264 */		F_TYPE_LIST			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タイプ別設定一覧	//Sept. 18, 2000 JEPRO 追加
+/* 265 */		F_OPTION_TYPE		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タイプ別設定
+/* 266 */		F_OPTION			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//共通設定			//Sept. 16, 2000 jepro 説明を「設定プロパティシート」から変更
+/* 267 */		F_FONT				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//フォント設定
+/* 268 */		F_WRAPWINDOWWIDTH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//現在のウィンドウ幅で折り返し	//	Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
+/* 269 */		F_FAVORITE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//履歴の管理	//@@@ 2003.04.08 MIK
+/* 270 */		F_SHOWTAB			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブの表示	//@@@ 2003.06.10 MIK
+/* 271 */		F_DISABLE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 272 */		F_TOGGLE_KEY_SEARCH	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーワードヘルプ自動表示 2007.03.92 genta
+/* 273 */		F_TMPWRAPNOWRAP		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折り返さない（一時設定）			// 2008.05.30 nasukoji
+/* 274 */		F_TMPWRAPSETTING	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
+/* 275 */		F_TMPWRAPWINDOW		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+/* 276 */		F_SELECT_COUNT_MODE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//文字カウント方法	//2009.07.06 syat
 
-/* �}�N���n(9�i�ڍŌ��12��: 277-288) */
-/* 277 */		F_RECKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[�}�N���̋L�^�J�n�^�I��
-/* 278 */		F_SAVEKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[�}�N���̕ۑ�		//Sept. 21, 2000 JEPRO �ǉ�
-/* 279 */		F_LOADKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[�}�N���̓ǂݍ���	//Sept. 21, 2000 JEPRO �ǉ�
-/* 280 */		F_EXECKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�L�[�}�N���̎��s		//Sept. 16, 2000 JEPRO �������Ɉړ�����
-/* 281 */		F_EXECMD_DIALOG			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���R�}���h���s//Sept. 20, 2000 JEPRO ���̂�CMMAND����COMMAND�ɕύX(EXECCMMAND��EXECCMMAND)
-/* 282 */		F_EXECEXTMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���O���w�肵�ă}�N�����s	//2008.10.22 syat �ǉ�
-/* 283 */		F_PLUGCOMMAND			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�v���O�C���R�}���h�p�ɗ\��
-/* 284 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 285 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 286 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 287 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 288 */		F_TAB_CLOSEOTHER		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃^�u�ȊO�����		// 2009.07.07 syat,�E�B���h�E�n�ɋ󂫂��Ȃ��̂ŏ�̍s��N�H
+/* マクロ系(9段目最後の12個: 277-288) */
+/* 277 */		F_RECKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーマクロの記録開始／終了
+/* 278 */		F_SAVEKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーマクロの保存		//Sept. 21, 2000 JEPRO 追加
+/* 279 */		F_LOADKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーマクロの読み込み	//Sept. 21, 2000 JEPRO 追加
+/* 280 */		F_EXECKEYMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//キーマクロの実行		//Sept. 16, 2000 JEPRO 下から上に移動した
+/* 281 */		F_EXECMD_DIALOG			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部コマンド実行//Sept. 20, 2000 JEPRO 名称をCMMANDからCOMMANDに変更(EXECCMMAND→EXECCMMAND)
+/* 282 */		F_EXECEXTMACRO			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//名前を指定してマクロ実行	//2008.10.22 syat 追加
+/* 283 */		F_PLUGCOMMAND			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//プラグインコマンド用に予約
+/* 284 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 285 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 286 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 287 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 288 */		F_TAB_CLOSEOTHER		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このタブ以外を閉じる		// 2009.07.07 syat,ウィンドウ系に空きがないので上の行を侵食
 
-/* �J�X�^�����j���[(10�i��25��: 289-313) */
-/* 289 */		F_MENU_RBUTTON				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�N���b�N���j���[ 	//Sept. 30, 2000 JEPRO �ǉ�
-/* 290 */		F_CUSTMENU_1				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[1
-/* 291 */		F_CUSTMENU_2				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[2
-/* 292 */		F_CUSTMENU_3				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[3
-/* 293 */		F_CUSTMENU_4				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[4
-/* 294 */		F_CUSTMENU_5				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[5
-/* 295 */		F_CUSTMENU_6				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[6
-/* 296 */		F_CUSTMENU_7				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[7
-/* 297 */		F_CUSTMENU_8				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[8
-/* 298 */		F_CUSTMENU_9				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[9
-/* 299 */		F_CUSTMENU_10				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[10
-/* 300 */		F_CUSTMENU_11				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[11
-/* 301 */		F_CUSTMENU_12				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[12
-/* 302 */		F_CUSTMENU_13				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[13
-/* 303 */		F_CUSTMENU_14				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[14
-/* 304 */		F_CUSTMENU_15				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[15
-/* 305 */		F_CUSTMENU_16				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[16
-/* 306 */		F_CUSTMENU_17				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[17
-/* 307 */		F_CUSTMENU_18				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[18
-/* 308 */		F_CUSTMENU_19				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[19
-/* 309 */		F_CUSTMENU_20				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[20
-/* 310 */		F_CUSTMENU_21				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[21
-/* 311 */		F_CUSTMENU_22				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[22
-/* 312 */		F_CUSTMENU_23				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[23
-/* 313 */		F_CUSTMENU_24				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�J�X�^�����j���[24
+/* カスタムメニュー(10段目25個: 289-313) */
+/* 289 */		F_MENU_RBUTTON				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右クリックメニュー 	//Sept. 30, 2000 JEPRO 追加
+/* 290 */		F_CUSTMENU_1				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー1
+/* 291 */		F_CUSTMENU_2				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー2
+/* 292 */		F_CUSTMENU_3				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー3
+/* 293 */		F_CUSTMENU_4				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー4
+/* 294 */		F_CUSTMENU_5				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー5
+/* 295 */		F_CUSTMENU_6				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー6
+/* 296 */		F_CUSTMENU_7				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー7
+/* 297 */		F_CUSTMENU_8				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー8
+/* 298 */		F_CUSTMENU_9				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー9
+/* 299 */		F_CUSTMENU_10				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー10
+/* 300 */		F_CUSTMENU_11				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー11
+/* 301 */		F_CUSTMENU_12				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー12
+/* 302 */		F_CUSTMENU_13				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー13
+/* 303 */		F_CUSTMENU_14				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー14
+/* 304 */		F_CUSTMENU_15				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー15
+/* 305 */		F_CUSTMENU_16				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー16
+/* 306 */		F_CUSTMENU_17				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー17
+/* 307 */		F_CUSTMENU_18				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー18
+/* 308 */		F_CUSTMENU_19				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー19
+/* 309 */		F_CUSTMENU_20				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー20
+/* 310 */		F_CUSTMENU_21				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー21
+/* 311 */		F_CUSTMENU_22				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー22
+/* 312 */		F_CUSTMENU_23				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー23
+/* 313 */		F_CUSTMENU_24				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カスタムメニュー24
 
-/* �E�B���h�E�n(10�i��7��: 314-320) */
-/* 314 */		F_TAB_MOVERIGHT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�u���E�Ɉړ�	// 2007.06.20 ryoji
-/* 315 */		F_TAB_MOVELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�^�u�����Ɉړ�	// 2007.06.20 ryoji
-/* 316 */		F_TAB_SEPARATE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�V�K�O���[�v	// 2007.06.20 ryoji
-/* 317 */		F_TAB_JOINTNEXT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
-/* 318 */		F_TAB_JOINTPREV				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̃O���[�v�Ɉړ�	// 2007.06.20 ryoji
-/* 319 */		F_TAB_CLOSERIGHT			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�����ׂĕ���		// 2009.07.07 syat
-/* 320 */		F_TAB_CLOSELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�������ׂĕ���		// 2009.07.07 syat
+/* ウィンドウ系(10段目7個: 314-320) */
+/* 314 */		F_TAB_MOVERIGHT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブを右に移動	// 2007.06.20 ryoji
+/* 315 */		F_TAB_MOVELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//タブを左に移動	// 2007.06.20 ryoji
+/* 316 */		F_TAB_SEPARATE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規グループ	// 2007.06.20 ryoji
+/* 317 */		F_TAB_JOINTNEXT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のグループに移動	// 2007.06.20 ryoji
+/* 318 */		F_TAB_JOINTPREV				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のグループに移動	// 2007.06.20 ryoji
+/* 319 */		F_TAB_CLOSERIGHT			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右をすべて閉じる		// 2009.07.07 syat
+/* 320 */		F_TAB_CLOSELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//左をすべて閉じる		// 2009.07.07 syat
 
-/* �E�B���h�E�n(11�i��22��: 321-342) */
-/* 321 */		F_SPLIT_V		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�㉺�ɕ���	//Sept. 16, 2000 jepro �������u�c�v����u�㉺�Ɂv�ɕύX
-/* 322 */		F_SPLIT_H		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���E�ɕ���	//Sept. 16, 2000 jepro �������u���v����u���E�Ɂv�ɕύX
-/* 323 */		F_SPLIT_VH		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�c���ɕ���	//Sept. 17, 2000 jepro �����Ɂu�Ɂv��ǉ�
-/* 324 */		F_WINCLOSE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�B���h�E�����
-/* 325 */		F_WIN_CLOSEALL	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ׂẴE�B���h�E�����	//Sept. 18, 2000 JEPRO �ǉ�	//Oct. 17, 2000 JEPRO ���O��ύX(F_FILECLOSEALL��F_WIN_CLOSEALL)
-/* 329 */		F_NEXTWINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃E�B���h�E
-/* 330 */		F_PREVWINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̃E�B���h�E
-/* 326 */		F_CASCADE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�d�˂ĕ\��
-/* 237 */		F_TILE_V		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�㉺�ɕ��ׂĕ\��
-/* 328 */		F_TILE_H		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���E�ɕ��ׂĕ\��
-/* 331 */		F_MAXIMIZE_V	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�c�����ɍő剻
-/* 332 */		F_MAXIMIZE_H	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�������ɍő剻 //2001.02.10 by MIK
-/* 333 */		F_MINIMIZE_ALL	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���ׂčŏ���					//Sept. 17, 2000 jepro �����́u�S�āv���u���ׂāv�ɓ���
-/* 334 */		F_REDRAW		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ĕ`��						//Sept. 30, 2000 JEPRO �ǉ�
-/* 335 */		F_WIN_OUTPUT	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�A�E�g�v�b�g�E�B���h�E�\��	//Sept. 18, 2000 JEPRO �ǉ�
-/* 336 */		F_BIND_WINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�������ĕ\��	2004.07.14 kazika / Design Oct. 1, 2004 genta
-/* 337 */		F_TOPMOST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//��Ɏ�O�ɕ\�� 2004.09.21 Moca
-/* 338 */		F_DLGWINLIST	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�B���h�E�ꗗ�\��
-/* 339 */		F_WINLIST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�E�B���h�E�ꗗ�|�b�v�A�b�v�\��	// 2006.03.23 fon
-/* 340 */		F_GROUPCLOSE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���[�v�����	// 2007.06.20 ryoji
-/* 341 */		F_NEXTGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���̃O���[�v	// 2007.06.20 ryoji
-/* 342 */		F_PREVGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O�̃O���[�v	// 2007.06.20 ryoji
+/* ウィンドウ系(11段目22個: 321-342) */
+/* 321 */		F_SPLIT_V		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//上下に分割	//Sept. 16, 2000 jepro 説明を「縦」から「上下に」に変更
+/* 322 */		F_SPLIT_H		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//左右に分割	//Sept. 16, 2000 jepro 説明を「横」から「左右に」に変更
+/* 323 */		F_SPLIT_VH		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+/* 324 */		F_WINCLOSE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ウィンドウを閉じる
+/* 325 */		F_WIN_CLOSEALL	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//すべてのウィンドウを閉じる	//Sept. 18, 2000 JEPRO 追加	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+/* 329 */		F_NEXTWINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のウィンドウ
+/* 330 */		F_PREVWINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のウィンドウ
+/* 326 */		F_CASCADE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//重ねて表示
+/* 237 */		F_TILE_V		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//上下に並べて表示
+/* 328 */		F_TILE_H		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//左右に並べて表示
+/* 331 */		F_MAXIMIZE_V	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//縦方向に最大化
+/* 332 */		F_MAXIMIZE_H	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//横方向に最大化 //2001.02.10 by MIK
+/* 333 */		F_MINIMIZE_ALL	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//すべて最小化					//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+/* 334 */		F_REDRAW		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//再描画						//Sept. 30, 2000 JEPRO 追加
+/* 335 */		F_WIN_OUTPUT	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//アウトプットウィンドウ表示	//Sept. 18, 2000 JEPRO 追加
+/* 336 */		F_BIND_WINDOW	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//結合して表示	2004.07.14 kazika / Design Oct. 1, 2004 genta
+/* 337 */		F_TOPMOST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//常に手前に表示 2004.09.21 Moca
+/* 338 */		F_DLGWINLIST	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ウィンドウ一覧表示
+/* 339 */		F_WINLIST		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
+/* 340 */		F_GROUPCLOSE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//グループを閉じる	// 2007.06.20 ryoji
+/* 341 */		F_NEXTGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のグループ	// 2007.06.20 ryoji
+/* 342 */		F_PREVGROUP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のグループ	// 2007.06.20 ryoji
 
-/* �x��(11�i�ڎc���10��: 343-352) */
-/* 343 */		F_HOKAN			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//���͕⊮
-/* 344 */		F_HELP_CONTENTS /*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�w���v�ڎ�			//Nov. 25, 2000 JEPRO �ǉ�
-/* 345 */		F_HELP_SEARCH	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�w���v�L�[���[�h����	//Nov. 25, 2000 JEPRO �ǉ�
-/* 346 */		F_MENU_ALLFUNC	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�R�}���h�ꗗ			//Sept. 30, 2000 JEPRO �ǉ�
-/* 347 */		F_EXTHELP1		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���w���v�P
-/* 348 */		F_EXTHTMLHELP	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O��HTML�w���v
-/* 349 */		F_ABOUT			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�o�[�W�������	//Dec. 24, 2000 JEPRO �ǉ�
-/* 350 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 351 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 352 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 支援(11段目残りの10個: 343-352) */
+/* 343 */		F_HOKAN			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//入力補完
+/* 344 */		F_HELP_CONTENTS /*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ヘルプ目次			//Nov. 25, 2000 JEPRO 追加
+/* 345 */		F_HELP_SEARCH	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ヘルプキーワード検索	//Nov. 25, 2000 JEPRO 追加
+/* 346 */		F_MENU_ALLFUNC	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コマンド一覧			//Sept. 30, 2000 JEPRO 追加
+/* 347 */		F_EXTHELP1		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部ヘルプ１
+/* 348 */		F_EXTHTMLHELP	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部HTMLヘルプ
+/* 349 */		F_ABOUT			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//バージョン情報	//Dec. 24, 2000 JEPRO 追加
+/* 350 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 351 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 352 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-//2002.01.17 hor ����̑���̃G���A���O���}�N���p�Ɋ�����
-/* �O���}�N��(12�i��31��: 353-383) */
-/* 353 */		F_USERMACRO_0+0		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���@
-/* 354 */		F_USERMACRO_0+1		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���A
-/* 355 */		F_USERMACRO_0+2		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���B
-/* 356 */		F_USERMACRO_0+3		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���C
-/* 357 */		F_USERMACRO_0+4		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���D
-/* 358 */		F_USERMACRO_0+5		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���E
-/* 359 */		F_USERMACRO_0+6		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���F
-/* 360 */		F_USERMACRO_0+7		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���G
-/* 361 */		F_USERMACRO_0+8		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���H
-/* 362 */		F_USERMACRO_0+9		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���I
-/* 363 */		F_USERMACRO_0+10	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���J
-/* 364 */		F_USERMACRO_0+11	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���K
-/* 365 */		F_USERMACRO_0+12	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���L
-/* 366 */		F_USERMACRO_0+13	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���M
-/* 367 */		F_USERMACRO_0+14	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���N
-/* 368 */		F_USERMACRO_0+15	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���O
-/* 369 */		F_USERMACRO_0+16	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���P
-/* 370 */		F_USERMACRO_0+17	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���Q
-/* 371 */		F_USERMACRO_0+18	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���R
-/* 372 */		F_USERMACRO_0+19	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N���S
-/* 373 */		F_USERMACRO_0+20	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��21
-/* 374 */		F_USERMACRO_0+21	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��22
-/* 375 */		F_USERMACRO_0+22	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��23
-/* 376 */		F_USERMACRO_0+23	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��24
-/* 377 */		F_USERMACRO_0+24	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��25
-/* 378 */		F_USERMACRO_0+25	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��26
-/* 379 */		F_USERMACRO_0+26	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��27
-/* 380 */		F_USERMACRO_0+27	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��28
-/* 381 */		F_USERMACRO_0+28	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��29
-/* 382 */		F_USERMACRO_0+29	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��30
-/* 383 */		F_USERMACRO_0+30	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��31
-//	2007.10.17 genta 384�͐܂�Ԃ��}�[�N�Ƃ��Ďg�p���Ă���̂ŃA�C�R���Ƃ��Ă͎g�p�ł��Ȃ�
-//	2010.06.23 �A�C�R���ʒu�̂ݒǉ��}�N���p�Ƃ��ė��p����
-/* 384 */		F_TOOLBARWRAP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�ǉ��}�N���picon�ʒu���A�ܕԃc�[���o�[�{�^��ID
+//2002.01.17 hor ｢その他｣のエリアを外部マクロ用に割当て
+/* 外部マクロ(12段目31個: 353-383) */
+/* 353 */		F_USERMACRO_0+0		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ①
+/* 354 */		F_USERMACRO_0+1		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ②
+/* 355 */		F_USERMACRO_0+2		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ③
+/* 356 */		F_USERMACRO_0+3		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ④
+/* 357 */		F_USERMACRO_0+4		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑤
+/* 358 */		F_USERMACRO_0+5		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑥
+/* 359 */		F_USERMACRO_0+6		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑦
+/* 360 */		F_USERMACRO_0+7		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑧
+/* 361 */		F_USERMACRO_0+8		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑨
+/* 362 */		F_USERMACRO_0+9		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑩
+/* 363 */		F_USERMACRO_0+10	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑪
+/* 364 */		F_USERMACRO_0+11	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑫
+/* 365 */		F_USERMACRO_0+12	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑬
+/* 366 */		F_USERMACRO_0+13	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑭
+/* 367 */		F_USERMACRO_0+14	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑮
+/* 368 */		F_USERMACRO_0+15	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑯
+/* 369 */		F_USERMACRO_0+16	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑰
+/* 370 */		F_USERMACRO_0+17	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑱
+/* 371 */		F_USERMACRO_0+18	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑲
+/* 372 */		F_USERMACRO_0+19	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ⑳
+/* 373 */		F_USERMACRO_0+20	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ21
+/* 374 */		F_USERMACRO_0+21	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ22
+/* 375 */		F_USERMACRO_0+22	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ23
+/* 376 */		F_USERMACRO_0+23	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ24
+/* 377 */		F_USERMACRO_0+24	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ25
+/* 378 */		F_USERMACRO_0+25	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ26
+/* 379 */		F_USERMACRO_0+26	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ27
+/* 380 */		F_USERMACRO_0+27	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ28
+/* 381 */		F_USERMACRO_0+28	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ29
+/* 382 */		F_USERMACRO_0+29	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ30
+/* 383 */		F_USERMACRO_0+30	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ31
+//	2007.10.17 genta 384は折り返しマークとして使用しているのでアイコンとしては使用できない
+//	2010.06.23 アイコン位置のみ追加マクロ用として利用する
+/* 384 */		F_TOOLBARWRAP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//追加マクロ用icon位置兼、折返ツールバーボタンID
 
-/* �O���}�N��(13�i��19��: 385-403) */
-/* 385 */		F_USERMACRO_0+31	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��32
-/* 386 */		F_USERMACRO_0+32	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��33
-/* 387 */		F_USERMACRO_0+33	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��34
-/* 388 */		F_USERMACRO_0+34	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��35
-/* 389 */		F_USERMACRO_0+35	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��36
-/* 390 */		F_USERMACRO_0+36	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��37
-/* 391 */		F_USERMACRO_0+37	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��38
-/* 392 */		F_USERMACRO_0+38	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��39
-/* 393 */		F_USERMACRO_0+39	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��40
-/* 394 */		F_USERMACRO_0+40	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��41
-/* 395 */		F_USERMACRO_0+41	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��42
-/* 396 */		F_USERMACRO_0+42	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��43
-/* 397 */		F_USERMACRO_0+43	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��44
-/* 398 */		F_USERMACRO_0+44	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��45
-/* 399 */		F_USERMACRO_0+45	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��46
-/* 400 */		F_USERMACRO_0+46	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��47
-/* 401 */		F_USERMACRO_0+47	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��48
-/* 402 */		F_USERMACRO_0+48	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��49
-/* 403 */		F_USERMACRO_0+49	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�O���}�N��50
-/* 404 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 405 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 406 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 407 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 408 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 409 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 410 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 411 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 412 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 413 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 414 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 415 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 416 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 外部マクロ(13段目19個: 385-403) */
+/* 385 */		F_USERMACRO_0+31	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ32
+/* 386 */		F_USERMACRO_0+32	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ33
+/* 387 */		F_USERMACRO_0+33	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ34
+/* 388 */		F_USERMACRO_0+34	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ35
+/* 389 */		F_USERMACRO_0+35	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ36
+/* 390 */		F_USERMACRO_0+36	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ37
+/* 391 */		F_USERMACRO_0+37	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ38
+/* 392 */		F_USERMACRO_0+38	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ39
+/* 393 */		F_USERMACRO_0+39	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ40
+/* 394 */		F_USERMACRO_0+40	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ41
+/* 395 */		F_USERMACRO_0+41	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ42
+/* 396 */		F_USERMACRO_0+42	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ43
+/* 397 */		F_USERMACRO_0+43	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ44
+/* 398 */		F_USERMACRO_0+44	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ45
+/* 399 */		F_USERMACRO_0+45	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ46
+/* 400 */		F_USERMACRO_0+46	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ47
+/* 401 */		F_USERMACRO_0+47	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ48
+/* 402 */		F_USERMACRO_0+48	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ49
+/* 403 */		F_USERMACRO_0+49	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ50
+/* 404 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 405 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 406 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 407 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 408 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 409 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 410 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 411 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 412 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 413 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 414 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 415 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 416 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* 417 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 418 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 419 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 420 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 421 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 422 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 423 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 424 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 425 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 426 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 427 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 428 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 429 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 430 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 431 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 432 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 433 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 434 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 435 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 436 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 437 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 438 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 439 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 440 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 441 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 442 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 443 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 444 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 445 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 446 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 447 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 448 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 417 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 418 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 419 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 420 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 421 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 422 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 423 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 424 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 425 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 426 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 427 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 428 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 429 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 430 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 431 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 432 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 433 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 434 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 435 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 436 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 437 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 438 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 439 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 440 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 441 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 442 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 443 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 444 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 445 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 446 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 447 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 448 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* 449 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 450 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 451 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 452 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 453 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 454 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 455 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 456 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 457 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 458 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 459 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 460 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 461 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 462 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 463 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 464 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 465 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 466 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 467 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 468 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 469 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 470 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 471 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 472 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 473 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 474 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 475 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 476 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 477 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 478 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 479 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
-/* 480 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//�_�~�[
+/* 449 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 450 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 451 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 452 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 453 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 454 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 455 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 456 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 457 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 458 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 459 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 460 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 461 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 462 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 463 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 464 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 465 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 466 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 467 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 468 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 469 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 470 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 471 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 472 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 473 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 474 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 475 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 476 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 477 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 478 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 479 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 480 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-/* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//�ŏI�s�p�_�~�[(Jepro note: �ŏI�s���ɂ̓J���}��t���Ȃ�����)
+/* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
 	};
 	int tbd_num = _countof( tbd );
 
-	// m_tbMyButton[0]�ɂ̓Z�p���[�^�������Ă��邽�߁A�A�C�R���ԍ��ƃ{�^���ԍ��͂P�����
+	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
 	const int INDEX_GAP = 1;
 	const int myButtonEnd = tbd_num + INDEX_GAP;
-	// �萔�̐������m�F
-	// �A�C�R���ԍ�
+	// 定数の整合性確認
+	// アイコン番号
 	assert_warning( tbd[TOOLBAR_ICON_MACRO_INTERNAL      - INDEX_GAP] == F_MACRO_EXTRA );
 	assert_warning( tbd[TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - INDEX_GAP] == F_PLUGCOMMAND );
-	// �R�}���h�ԍ�
+	// コマンド番号
 	assert_warning( tbd[TOOLBAR_BUTTON_F_TOOLBARWRAP     - INDEX_GAP] == F_TOOLBARWRAP );
 	m_tbMyButton.resize( tbd_num + INDEX_GAP );
-	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//�Z�p���[�^	// 2007.11.02 ryoji �A�C�R���̖���`��(-1)
+	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 
-	// 2010.06.23 Moca ���[�v�C���f�b�N�X�̊��m_tbMyButton�ɕύX
+	// 2010.06.23 Moca ループインデックスの基準をm_tbMyButtonに変更
 	for( int i = INDEX_GAP; i < myButtonEnd; i++ ){
 		const int funcCode = tbd[i-INDEX_GAP];
 		const int imageIndex = i - INDEX_GAP;
 
 		if( funcCode == F_TOOLBARWRAP ){
-			// �c�[���o�[���s�p�̉��z�{�^���i���ۂ͕\������Ȃ��j // 20050809 aroka
-			//	2007.10.12 genta �܂�Ԃ��{�^�����Ō�̃f�[�^�Əd�Ȃ��Ă��邪�C
-			//	�C���f�b�N�X��ύX�����sakura.ini�������p���Ȃ��Ȃ�̂�
-			//	�d�������m�ł��̂܂܂ɂ���
-			//	2010.06.23 �A�C�R���ʒu�͊O���}�N���̃f�t�H���g�A�C�R���Ƃ��ė��p��
-			//	m_tbMyButton[384]���̂́A�c�[���o�[�̐܂�Ԃ��p
+			// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
+			//	2007.10.12 genta 折り返しボタンが最後のデータと重なっているが，
+			//	インデックスを変更するとsakura.iniが引き継げなくなるので
+			//	重複を承知でそのままにする
+			//	2010.06.23 アイコン位置は外部マクロのデフォルトアイコンとして利用中
+			//	m_tbMyButton[384]自体は、ツールバーの折り返し用
 			SetTBBUTTONVal(
 				&m_tbMyButton[i],
-				-1,						// 2007.11.02 ryoji �A�C�R���̖���`��(-1)
+				-1,						// 2007.11.02 ryoji アイコンの未定義化(-1)
 				F_MENU_NOT_USED_FIRST,
 				TBSTATE_ENABLED|TBSTATE_WRAP,
 				TBSTYLE_SEP, 0, 0
@@ -691,30 +691,30 @@ CMenuDrawer::CMenuDrawer()
 		switch( funcCode )	//@@@ 2002.06.15 MIK
 		{
 		case F_FILEOPEN_DROPDOWN:
-			style = TBSTYLE_DROPDOWN;	//�h���b�v�_�E��
+			style = TBSTYLE_DROPDOWN;	//ドロップダウン
 			break;
 
 		case F_SEARCH_BOX:
-			style = TBSTYLE_COMBOBOX;	//�R���{�{�b�N�X
+			style = TBSTYLE_COMBOBOX;	//コンボボックス
 			break;
 
 		default:
-			style = TBSTYLE_BUTTON;	//�{�^��
+			style = TBSTYLE_BUTTON;	//ボタン
 			break;
 		}
 
 		SetTBBUTTONVal(
 			&m_tbMyButton[i],
-			(F_DUMMY_MAX_CODE < funcCode)? imageIndex : -1,	// 2007.11.02 ryoji �A�C�R���̖���`��(-1)
+			(F_DUMMY_MAX_CODE < funcCode)? imageIndex : -1,	// 2007.11.02 ryoji アイコンの未定義化(-1)
 			funcCode,
-			(tbd[i] == F_DISABLE)? 0 : TBSTATE_ENABLED,	// F_DISABLE �Ȃ� DISABLE��	2010/7/11 Uchi
+			(tbd[i] == F_DISABLE)? 0 : TBSTATE_ENABLED,	// F_DISABLE なら DISABLEに	2010/7/11 Uchi
 			style, 0, 0
 		);
 	}
 
 	m_nMyButtonFixSize = m_tbMyButton.size();
 	
-	// 2010.06.25 Moca ��p�A�C�R���̂Ȃ��O���}�N��������΁A�����A�C�R�������L���ēo�^
+	// 2010.06.25 Moca 専用アイコンのない外部マクロがあれば、同じアイコンを共有して登録
 	if( MAX_CUSTMACRO_ICO < MAX_CUSTMACRO ){
 		const int nAddFuncs = MAX_CUSTMACRO - MAX_CUSTMACRO_ICO;
 		const int nBaseIndex = m_tbMyButton.size();
@@ -762,7 +762,7 @@ void CMenuDrawer::ResetContents( void )
 	NONCLIENTMETRICS	ncm;
 	memset_raw(&ncm, 0, sizeof(ncm));
 
-	// �ȑO�̃v���b�g�t�H�[���� WINVER >= 0x0600 �Œ�`�����\���̂̃t���T�C�Y��n���Ǝ��s����	// 2007.12.21 ryoji
+	// 以前のプラットフォームに WINVER >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
 	ncm.cbSize = CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont );
 	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, ncm.cbSize, (PVOID)&ncm, 0 );
 
@@ -776,7 +776,7 @@ void CMenuDrawer::ResetContents( void )
 	if( m_nMenuFontHeight < 0 ){
 		m_nMenuFontHeight = -m_nMenuFontHeight;
 	}else{
-		// �|�C���g(1/72�C���`)���s�N�Z����
+		// ポイント(1/72インチ)をピクセルへ
 		m_nMenuFontHeight = DpiScaleY(m_nMenuFontHeight);
 		if( -1 == m_nMenuFontHeight ){
 			m_nMenuFontHeight = lf.lfHeight;
@@ -784,13 +784,13 @@ void CMenuDrawer::ResetContents( void )
 	}
 	m_nMenuHeight = m_nMenuFontHeight + 4; // margin
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		// �Œ�A�C�R�����̍������m��
+		// 最低アイコン分の高さを確保
 		if( 20 > m_nMenuHeight ){
 			m_nMenuHeight = 20;
 		}
 	}
 
-//@@@ 2002.01.03 YAZAKI �s�g�p�̂���
+//@@@ 2002.01.03 YAZAKI 不使用のため
 //	m_nMaxTab = 0;
 //	m_nMaxTabLen = 0;
 	return;
@@ -799,7 +799,7 @@ void CMenuDrawer::ResetContents( void )
 
 
 
-/* ���j���[���ڂ�ǉ� */
+/* メニュー項目を追加 */
 void CMenuDrawer::MyAppendMenu(
 	HMENU			hMenu,
 	int				nFlag,
@@ -807,14 +807,14 @@ void CMenuDrawer::MyAppendMenu(
 	const TCHAR*	pszLabel,
 	const TCHAR*	pszKey,			// 2010/5/18 Uchi
 	BOOL			bAddKeyStr,
-	int				nForceIconId	//���C�ɓ���	//@@@ 2003.04.08 MIK
+	int				nForceIconId	//お気に入り	//@@@ 2003.04.08 MIK
 )
 {
 	TCHAR		szLabel[_MAX_PATH * 2+ 30];
 	TCHAR		szKey[10];
 	int			nFlagAdd = 0;
 
-	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//���C�ɓ���	//@@@ 2003.04.08 MIK
+	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
 
 	szLabel[0] = _T('\0');
 	if( NULL != pszLabel ){
@@ -823,7 +823,7 @@ void CMenuDrawer::MyAppendMenu(
 	}
 	auto_strcpy( szKey, pszKey); 
 	if( nFuncId != 0 ){
-		/* ���j���[���x���̍쐬 */
+		/* メニューラベルの作成 */
 		CKeyBind::GetMenuLabel(
 			m_hInstance,
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
@@ -835,25 +835,25 @@ void CMenuDrawer::MyAppendMenu(
 			_countof(szLabel)
 		 );
 
-		/* �A�C�R���p�r�b�g�}�b�v�������̂́A�I�[�i�[�h���E�ɂ��� */
+		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 		{
 			MyMenuItemInfo item;
 			item.m_nBitmapIdx = -1;
 			item.m_nFuncId = nFuncId;
 			item.m_cmemLabel.SetString( szLabel );
-			// ���j���[���ڂ��I�[�i�[�`��ɂ��āA�A�C�R����\������
-			// 2010.03.29 �A�N�Z�X�L�[�̕����l�߂邽�߂����I�[�i�[�h���[�ɂ���B������Vista��������
-			// Vista�ȏ�ł̓��j���[���e�[�}���K�p�����̂ŁA�I�[�i�[�h���[�ɂ���ƌ����ڂ�XP���ɂȂ��Ă��܂��B
+			// メニュー項目をオーナー描画にして、アイコンを表示する
+			// 2010.03.29 アクセスキーの分を詰めるためいつもオーナードローにする。ただしVista未満限定
+			// Vista以上ではメニューもテーマが適用されるので、オーナードローにすると見た目がXP風になってしまう。
 			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !IsWinVista_or_later() ){
 				nFlagAdd = MF_OWNERDRAW;
 			}
-			/* �@�\�̃r�b�g�}�b�v�̏����o���Ă��� */
+			/* 機能のビットマップの情報を覚えておく */
 			item.m_nBitmapIdx = GetIconIdByFuncId( nForceIconId );
 			m_menuItems.push_back( item );
 		}
 	}else{
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
-		// �Z�p���[�^���T�u���j���[
+		// セパレータかサブメニュー
 		if( nFlag & (MF_SEPARATOR | MF_POPUP) ){
 			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !IsWinVista_or_later() ){
 					nFlagAdd = MF_OWNERDRAW;
@@ -865,7 +865,7 @@ void CMenuDrawer::MyAppendMenu(
 	MENUITEMINFO mii;
 	memset_raw( &mii, 0, sizeof( mii ) );
 	//	Aug. 31, 2001 genta
-	mii.cbSize = SIZEOF_MENUITEMINFO; //Win95�΍�ς݂�sizeof(MENUITEMINFO)�l
+	mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
 
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
@@ -887,21 +887,21 @@ void CMenuDrawer::MyAppendMenu(
 	mii.dwTypeData = szLabel;
 	mii.cch = 0;
 
-	// ���j���[���̎w�肳�ꂽ�ʒu�ɁA�V�������j���[���ڂ�}�����܂��B
+	// メニュー内の指定された位置に、新しいメニュー項目を挿入します。
 	::InsertMenuItem( hMenu, 0xFFFFFFFF, TRUE, &mii );
 	return;
 }
 
 
 /*
-	�c�[���o�[�ԍ����{�^���z���index�ɕϊ�����
+	ツールバー番号をボタン配列のindexに変換する
 */
 inline int CMenuDrawer::ToolbarNoToIndex( int nToolbarNo ) const
 {
 	if( nToolbarNo < 0 ){
 		return -1;
 	}
-	// �Œ�A�N�Z�X���̂ݒ��ڔԍ��ŃA�N�Z�X������Bm_nMyButtonNum �͎g��Ȃ�
+	// 固定アクセス分のみ直接番号でアクセスさせる。m_nMyButtonNum は使わない
 	if( 0 <= nToolbarNo && nToolbarNo < m_nMyButtonFixSize ){
 		return nToolbarNo;
 	}
@@ -910,7 +910,7 @@ inline int CMenuDrawer::ToolbarNoToIndex( int nToolbarNo ) const
 }
  
 /*
-	�c�[���o�[�ԍ�����A�C�R���ԍ����擾
+	ツールバー番号からアイコン番号を取得
 */
 inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 {
@@ -922,10 +922,10 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 }
 
 
-/*! ���j���[�A�C�e���̕`��T�C�Y���v�Z
-	@param pnItemHeight [out] �����B����������Ԃ�
-	@retval 0  �@�\���Ȃ��ꍇ
-	@retval 1 <= val �@�\�̃��j���[��/�Z�p���[�^�̏ꍇ�̓_�~�[�̒l
+/*! メニューアイテムの描画サイズを計算
+	@param pnItemHeight [out] 高さ。いつも高さを返す
+	@retval 0  機能がない場合
+	@retval 1 <= val 機能のメニュー幅/セパレータの場合はダミーの値
 */
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
@@ -935,10 +935,10 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	HDC hdc;
 	HFONT hFontOld;
 
-	if( F_0 == nFuncID ){ // F_0, �Ȃ��� F_SEPARATOR �ł͂Ȃ�
-		// �Z�p���[�^�B�t�H���g�̕��̒ʏ퍀�ڂ̔����̍���
+	if( F_0 == nFuncID ){ // F_0, なぜか F_SEPARATOR ではない
+		// セパレータ。フォントの方の通常項目の半分の高さ
 		*pnItemHeight = m_nMenuFontHeight / 2;
-		return 30; // �_�~�[�̕�
+		return 30; // ダミーの幅
 	}else if( NULL == ( pszLabel = GetLabel( nFuncID ) ) ){
 		*pnItemHeight = m_nMenuHeight;
 		return 0;
@@ -947,7 +947,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 
 	hdc = ::GetDC( m_hWndOwner );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
-	// DT_EXPANDTABS����߂�
+	// DT_EXPANDTABSをやめる
 	::DrawText( hdc, pszLabel, -1, &rc, DT_SINGLELINE | DT_VCENTER | DT_CALCRECT );
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWndOwner, hdc );
@@ -955,24 +955,24 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 
 //	*pnItemHeight = 20;
 //	*pnItemHeight = 2 + 15 + 1;
-	//@@@ 2002.2.2 YAZAKI Windows�̐ݒ�Ń��j���[�̃t�H���g��傫������ƕ\�����������ɑΏ�
+	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 
 	int nMenuWidth = rc.Width() + 3;
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		nMenuWidth += 28+ DpiScaleX(8); // �A�C�R���Ƙg + �A�N�Z�X�L�[����
+		nMenuWidth += 28+ DpiScaleX(8); // アイコンと枠 + アクセスキー隙間
 	}else{
-		// WM_MEASUREITEM�ŕ񍐂��郁�j���[�������ۂ̕���1�����������ʍL���̂ŁA���̕��͉����Ȃ�
+		// WM_MEASUREITEMで報告するメニュー幅より実際の幅は1文字分相当位広いので、その分は加えない
 		nMenuWidth += ::GetSystemMetrics(SM_CXMENUCHECK) + 2 + 2;
 	}
 	return nMenuWidth;
 }
 
 
-/*! ���j���[�A�C�e���`��
-	@date 2001.12.21 YAZAKI �f�o�b�O���[�h�ł����j���[��I��������n�C���C�g�B
-	@date 2003.08.27 Moca �V�X�e���J���[�̃u���V��CreateSolidBrush�����GetSysColorBrush��
-	@date 2010.07.24 Moca �A�C�R���������{�^���F�ɂ��ăt���b�g�\���ɂ���Ȃǂ̕ύX
-		�傫���t�H���g�A���w�i�Ή�
+/*! メニューアイテム描画
+	@date 2001.12.21 YAZAKI デバッグモードでもメニューを選択したらハイライト。
+	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
+	@date 2010.07.24 Moca アイコン部分をボタン色にしてフラット表示にするなどの変更
+		大きいフォント、黒背景対応
 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
@@ -994,10 +994,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}else{
 		nIndentLeft = 2 + 2 + nCxCheck;
 	}
-	// �T�u���j���[��|���̕��͕K�v �Œ�8���炢
+	// サブメニューの|＞の分は必要 最低8ぐらい
 	nIndentRight = t_max(m_nMenuFontHeight, 8);
 
-	// 2010.07.24 Moca �A�C�R����`���Ƃ��Ƀ`�����̂ŁA�o�b�N�T�[�t�F�X���g��
+	// 2010.07.24 Moca アイコンを描くときにチラつくので、バックサーフェスを使う
 	const bool bBackSurface = bMenuIconDraw;
 	const int nTargetWidth  = lpdis->rcItem.right - lpdis->rcItem.left;
 	const int nTargetHeight = lpdis->rcItem.bottom - lpdis->rcItem.top;
@@ -1022,9 +1022,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		hdc = lpdis->hDC;
 	}
 
-	// ���͈͂�w�i�F�ŋ�`�h��Ԃ�
+	// 作画範囲を背景色で矩形塗りつぶし
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
-	// �A�C�R�������̔w�i���D�F�ɂ���
+	// アイコン部分の背景を灰色にする
 	if( bMenuIconDraw ){
 		const int nXIconMenu = lpdis->rcItem.left + nIndentLeft - 3 - 3;
 		hBrush = ::GetSysColorBrush( COLOR_MENU );
@@ -1036,12 +1036,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
 		COLORREF colFace = ::GetSysColor( COLOR_3DFACE );
 		COLORREF colIconBack;
-		// ���x�炵������
+		// 明度らしきもの
 		if( 64 < t_abs(t_max(t_max(GetRValue(colFace),GetGValue(colFace)),GetBValue(colFace))
 			         - t_max(t_max(GetRValue(colMenu),GetGValue(colMenu)),GetBValue(colMenu))) ){
 			colIconBack = colFace;
 		}else{
-			// ���邳���߂��Ȃ獬�F�ɂ���(XP�e�[�}����)��a�������炷
+			// 明るさが近いなら混色にして(XPテーマ等で)違和感を減らす
 			BYTE valR = ((GetRValue(colFace) * 7 + GetRValue(colMenu) * 3) / 10);
 			BYTE valG = ((GetGValue(colFace) * 7 + GetGValue(colMenu) * 3) / 10);
 			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
@@ -1054,7 +1054,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		::FillRect( hdc, &rcIconBk, hbr );
 		::DeleteObject( hbr );
 
-		// �A�C�R���ƃe�L�X�g�̊Ԃɏc����`�悷��
+		// アイコンとテキストの間に縦線を描画する
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
@@ -1064,13 +1064,13 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		::DeleteObject( hPen );
 
 	}else{
-		// �A�C�e����`�h��Ԃ�
+		// アイテム矩形塗りつぶし
 		hBrush = ::GetSysColorBrush( COLOR_MENU );
 		::FillRect( hdc, &lpdis->rcItem, hBrush );
 	}
 	
 	if( lpdis->itemID == F_0 ){
-		// �Z�p���[�^�̍��(�Z�p���[�^��FuncCode��F_SEPARETOR�ł͂Ȃ�F_0)
+		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
 		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
 #ifdef DRAW_MENU_3DSTYLE
 		int nSepColor = COLOR_3DSHADOW;
@@ -1094,7 +1094,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
 				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
 		}
-		return; // �Z�p���[�^�B���I��
+		return; // セパレータ。作画終了
 	}
 
 #else // DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1108,7 +1108,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
-		// �A�C�e�����I������Ă���
+		// アイテムが選択されている
 		RECT rc1 = lpdis->rcItem;
 		if( bMenuIconDraw
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1135,12 +1135,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		::DeleteObject( hBrush );
 #else
 		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-		/* �I���n�C���C�g��` */
+		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
 #endif
 
 		if( lpdis->itemState & ODS_DISABLED ){
-			// �A�C�e�����g�p�s��
+			// アイテムが使用不可
 			nTxSysColor = COLOR_MENU;
 		}else{
 #ifdef DRAW_MENU_SELECTION_LIGHT
@@ -1151,9 +1151,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 	}else{
 		if( lpdis->itemState & ODS_DISABLED ){
-			// �A�C�e�����g�p�s��
-			// �w�i�����ɂ���Ɠ����F�ɂȂ邱�Ƃ�����
-			// 2013.06.21 GRAYTEXT�ɕύX
+			// アイテムが使用不可
+			// 背景を黒にすると同じ色になることがある
+			// 2013.06.21 GRAYTEXTに変更
 			// nTxSysColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 			nTxSysColor = COLOR_GRAYTEXT;
 		}else{
@@ -1163,13 +1163,13 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
 
 #ifdef _DEBUG
-	// �f�o�b�O�p�F���j���[���ڂɑ΂��āA�w���v���Ȃ��ꍇ�ɔw�i�F�������
+	// デバッグ用：メニュー項目に対して、ヘルプがない場合に背景色を青くする
 	TCHAR	szText[1024];
 	MENUITEMINFO mii;
-	// ���j���[���ڂɊւ�������擾���܂��B
+	// メニュー項目に関する情報を取得します。
 	memset_raw( &mii, 0, sizeof( mii ) );
 
-	mii.cbSize = SIZEOF_MENUITEMINFO; // Win95�΍�ς݂�sizeof(MENUITEMINFO)�l
+	mii.cbSize = SIZEOF_MENUITEMINFO; // Win95対策済みのsizeof(MENUITEMINFO)値
 
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = MFT_STRING;
@@ -1178,14 +1178,14 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	mii.cch = _countof( szText ) - 1;
 	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, &mii )
 	 && NULL == mii.hSubMenu
-	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* �@�\ID�ɑΉ����郁�j���[�R���e�L�X�g�ԍ���Ԃ� */
+	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
 		if( lpdis->itemState & ODS_SELECTED ){
-			::SetTextColor( hdc, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );	//	�n�C���C�g�J���[
+			::SetTextColor( hdc, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );	//	ハイライトカラー
 		}
 		else {
-			::SetTextColor( hdc, RGB( 0, 0, 255 ) );	//	�����Ă�B
+			::SetTextColor( hdc, RGB( 0, 0, 255 ) );	//	青くしてる。
 		}
 //		::SetTextColor( hdc, RGB( 0, 0, 255 ) );
 	}
@@ -1195,16 +1195,16 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	rcText.left += nIndentLeft + 1;
 	rcText.right -= nIndentRight;
 
-	/* TAB�����̑O�ƌ��ɕ������ăe�L�X�g��`�悷�� */
+	/* TAB文字の前と後ろに分割してテキストを描画する */
 	for( j = 0; j < nItemStrLen; ++j ){
 		if( pszItemStr[j] == _T('\t') ){
 			break;
 		}
 	}
-	/* TAB�����̌�둤�̃e�L�X�g��`�悷�� */
+	/* TAB文字の後ろ側のテキストを描画する */
 	if( j < nItemStrLen ){
 #ifdef DRAW_MENU_3DSTYLE
-		/* �A�C�e�����g�p�s�� */
+		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
 			COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
 				rcText.left++;
@@ -1233,9 +1233,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
 		);
 	}
-	/* TAB�����̑O���̃e�L�X�g��`�悷�� */
+	/* TAB文字の前側のテキストを描画する */
 #ifdef DRAW_MENU_3DSTYLE
-	/* �A�C�e�����g�p�s�� */
+	/* アイテムが使用不可 */
 	if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
 		COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
 
@@ -1263,16 +1263,16 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SetBkMode( hdc, nBkModeOld );
 
 
-	// 16*16�̃A�C�R�����㉺�����֒u�����Ƃ��̏�̍��W
+	// 16*16のアイコンを上下中央へ置いたときの上の座標
 	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2 - (16/2);
 
-	// �g�� �A�C�R������x���j���[�c���ŕ\�����^�񒆂ɃA�C�R����u��
+	// 枠は アイコン横幅xメニュー縦幅で表示し真ん中にアイコンを置く
 
 	if( bMenuIconDraw && (lpdis->itemState & ODS_CHECKED) ){
-		/* �A�C�R�����͂ޘg */
-// 2010.07.12 Moca �O���[��3D�\������߂�
+		/* アイコンを囲む枠 */
+// 2010.07.12 Moca グレーの3D表示をやめる
 #ifdef DRAW_MENU_ICON_3DBUTTON
-		// �`�F�b�N��ԂȂ牚��3D�g��`�悷��
+		// チェック状態なら凹んだ3D枠を描画する
 		CSplitBoxWnd::Draw3dRect(
 			hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
 			2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
@@ -1281,7 +1281,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		);
 #else
 		{
-			// �t���b�g�Șg + �������̔w�i�F
+			// フラットな枠 + 半透明の背景色
 			HBRUSH hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 			const int MENUICO_PADDING = 0;
 			const int MENUICO_BORDER  = 1;
@@ -1295,15 +1295,15 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 			COLORREF colHilight = ::GetSysColor( COLOR_HIGHLIGHT );
 			COLORREF colMenu = ::GetSysColor( COLOR_MENU );
-			// 16bit�J���[�̍��F�ł��������邭����悤�� or 0x18 ����
+			// 16bitカラーの黒色でも少し明るくするように or 0x18 する
 			BYTE valR;
 			BYTE valG;
 			BYTE valB;
-			if( lpdis->itemState & ODS_SELECTED ){	// �I�����
+			if( lpdis->itemState & ODS_SELECTED ){	// 選択状態
 				valR = ((GetRValue(colHilight) * 6 + GetRValue(colMenu) * 4) / 10) | 0x18;
 				valG = ((GetGValue(colHilight) * 6 + GetGValue(colMenu) * 4) / 10) | 0x18;
 				valB = ((GetBValue(colHilight) * 6 + GetBValue(colMenu) * 4) / 10) | 0x18;
-			} else {								// ��I�����
+			} else {								// 非選択状態
 				valR = ((GetRValue(colHilight) * 2 + GetRValue(colMenu) * 8) / 10) | 0x18;
 				valG = ((GetGValue(colHilight) * 2 + GetGValue(colMenu) * 8) / 10) | 0x18;
 				valB = ((GetBValue(colHilight) * 2 + GetBValue(colMenu) * 8) / 10) | 0x18;
@@ -1316,9 +1316,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 #endif
 
-// 2010.07.12 Moca �O���[��3D�\������߂�
+// 2010.07.12 Moca グレーの3D表示をやめる
 #ifdef DRAW_MENU_ICON_3DBUTTON
-		/* �A�C�e�����I������Ă��Ȃ��ꍇ��3D�g�̒��𖾂邭�h��Ԃ� */
+		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
 		if( lpdis->itemState & ODS_SELECTED ){
 		}else{
 			HBRUSH hbr = ::GetSysColorBrush( COLOR_3DLIGHT );
@@ -1331,19 +1331,19 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 
 
-	/* �@�\�̉摜�����݂���Ȃ烁�j���[�A�C�R��?��`�悷�� */
+	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( bMenuIconDraw && -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
-		/* 3D�g��`�悷�� */
-		/* �A�C�e�����I������Ă��� */
+		/* 3D枠を描画する */
+		/* アイテムが選択されている */
 		if( lpdis->itemState & ODS_SELECTED ){
-			/* �A�C�e�����g�p�s�� */
+			/* アイテムが使用不可 */
 			if( lpdis->itemState & ODS_DISABLED /*&& !(lpdis->itemState & ODS_SELECTED)*/  ){
 			}else{
 				if( lpdis->itemState & ODS_CHECKED ){
 				}else{
-// 2010.07.12 Moca �O���[��3D�\������߂�
+// 2010.07.12 Moca グレーの3D表示をやめる
 #ifdef DRAW_MENU_ICON_3DBUTTON
-					// �A�C�R�����͂ޘg(���j���[�̍��������ς�)
+					// アイコンを囲む枠(メニューの高さいっぱい)
 					CSplitBoxWnd::Draw3dRect(
 						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
 						2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
@@ -1355,49 +1355,49 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}
 		}
 
-		/* �A�C�e�����g�p�s�� */
+		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
-			/* �W�F�A�C�R�� */
+			/* 淡色アイコン */
 			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 2,	//	X
-				//@@@ 2002.1.29 YAZAKI Windows�̐ݒ�Ń��j���[�̃t�H���g��傫������ƕ\�����������ɑΏ�
+				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				nIconTop,	//	Y
 				ILD_MASK
 			);
 
 		}else{
-			/* �ʏ�̃A�C�R�� */
+			/* 通常のアイコン */
 			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 2,	//	X
-				//@@@ 2002.1.29 YAZAKI Windows�̐ݒ�Ń��j���[�̃t�H���g��傫������ƕ\�����������ɑΏ�
+				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				nIconTop,	//	Y
 				ILD_NORMAL
 			);
 		}
 
 	}else{
-		// �`�F�b�N�{�b�N�X��\��
+		// チェックボックスを表示
 		if( lpdis->itemState & ODS_CHECKED ){
-			/* �`�F�b�N�}�[�N�̕\�� */
+			/* チェックマークの表示 */
 			if( bMenuIconDraw ){
-				// �����������S���W
+				// だいたい中心座標
 				int nX = lpdis->rcItem.left + 16/2;
 				int nY = nIconTop + 16/2;
 				HPEN hPen   = NULL;
 				HPEN hPenOld = NULL;
-				// 2010.05.31 �`�F�b�N�̐F����(���w��)����e�L�X�g�F�ɕύX
+				// 2010.05.31 チェックの色を黒(未指定)からテキスト色に変更
 				hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_MENUTEXT) );
 				hPenOld = (HPEN)::SelectObject( hdc, hPen );
 #if 0
-// �`�F�b�N�}�[�N�������ŏ����ꍇ
+// チェックマークも自分で書く場合
 				if( !bMenuIconDraw ){
-					nX -= 4; // icon���Ȃ��ꍇ�A���}�[�W��=2�A�C�R���g=2�����Ȃ�
+					nX -= 4; // iconがない場合、左マージン=2アイコン枠=2分がない
 				}
 #endif
-				const int nBASE = 100*100; // ���W,nScale����0.01�P��
-				// 16dot�������Ȃ��̂� 1.0�{����2.1�{�܂ŃX�P�[������(10-23)
+				const int nBASE = 100*100; // 座標,nScale共に0.01単位
+				// 16dot幅しかないので 1.0倍から2.1倍までスケールする(10-23)
 				const int nScale = t_max(100, t_min(210, int((lpdis->rcItem.bottom - lpdis->rcItem.top - 2) * 100) / (16-2) ));
 				for( int nBold = 1; nBold <= (281*nScale)/nBASE; nBold++ ){
 					::MoveToEx( hdc, nX - (187*nScale)/nBASE, nY - (187*nScale)/nBASE, NULL );
@@ -1410,7 +1410,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 					::DeleteObject( hPen );
 				}
 			}else{
-				// OS�ɃA�C�R���������Ă��炤(���w�i���Ή�)
+				// OSにアイコン作画をしてもらう(黒背景等対応)
 				HDC hdcMem = ::CreateCompatibleDC( hdc );
 				HBITMAP hBmpMono = ::CreateBitmap( nCxCheck, nCyCheck, 1, 1, NULL );
 				HBITMAP hOld = (HBITMAP)::SelectObject( hdcMem, hBmpMono );
@@ -1438,10 +1438,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 }
 
 /*!
-	���I��
-	���j���[���[�v�I�����ɌĂяo���ƃ��\�[�X�ߖ�ɂȂ�
+	作画終了
+	メニューループ終了時に呼び出すとリソース節約になる
 	
-	@date 20100724 Moca �o�b�N�T�[�t�F�X�p�ɐV��
+	@date 20100724 Moca バックサーフェス用に新設
 */
 void CMenuDrawer::EndDrawMenu()
 {
@@ -1463,19 +1463,19 @@ void CMenuDrawer::DeleteCompDC()
 }
 
 /*
-	�c�[���o�[�o�^�̂��߂̔ԍ���Ԃ��B
-	�v���O�C���̂݃{�^����index�̂�����idCommand�����̂܂ܕԂ�
-	@date 2010.06.24 Moca �V�K�쐬
-	@note ���̒l��ini�̃c�[���o�[�A�C�e���̋L�^�Ɏg����
+	ツールバー登録のための番号を返す。
+	プラグインのみボタンのindexのかわりにidCommandをそのまま返す
+	@date 2010.06.24 Moca 新規作成
+	@note この値がiniのツールバーアイテムの記録に使われる
 */
 int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
-	// ��ɑ��݊m�F������
+	// 先に存在確認をする
 	int index = FindIndexFromCommandId( idCommand, bOnlyFunc );
 	if( -1 < index ){
-		// �Œ蕔���ȊO(�v���O�C���Ȃ�)��index�ł͂Ȃ�idCommand�̂܂܂ɂ���
+		// 固定部分以外(プラグインなど)はindexではなくidCommandのままにする
 		if( m_nMyButtonFixSize <= index ){
-			// ���� �R�}���h�ԍ������炩�ɏ������Ƌ�ʂ����Ȃ�
+			// もし コマンド番号が明らかに小さいと区別がつかない
 			assert_warning( idCommand < m_nMyButtonFixSize );
 			return idCommand;
 		}
@@ -1483,20 +1483,20 @@ int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) con
 	return index;
 }
 
-/** �R�}���h�R�[�h����c�[���o�[�{�^������INDEX�𓾂�
+/** コマンドコードからツールバーボタン情報のINDEXを得る
 
-	@param idCommand [in] �R�}���h�R�[�h
-	@param bOnlyFunc [in] �L���ȋ@�\�͈̔͂Ō�������
+	@param idCommand [in] コマンドコード
+	@param bOnlyFunc [in] 有効な機能の範囲で検索する
 
-	@retval �݂���Ȃ����-1��Ԃ��B
+	@retval みつからなければ-1を返す。
 
-	@date 2005.08.09 aroka m_nMyButtonNum�B���̂��ߒǉ�
-	@date 2005.11.02 ryoji bOnlyFunc�p�����[�^��ǉ�
+	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
+	@date 2005.11.02 ryoji bOnlyFuncパラメータを追加
  */
 int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
 	if( bOnlyFunc ){
-		// �@�\�͈̔͊O�i�Z�p���[�^��܂�Ԃ��ȂǓ��ʂȂ��́j�͏��O����
+		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
 		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST )
 			&& !( F_PLUGCOMMAND_FIRST <= idCommand && idCommand < F_PLUGCOMMAND_LAST )){
 			return -1;
@@ -1514,13 +1514,13 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
 	return nIndex;
 }
 
-/** �C���f�b�N�X����{�^�����𓾂�
+/** インデックスからボタン情報を得る
 
-	@param nToolbarNo [in] �{�^�����̃c�[���o�[�ԍ�
-	@retval �{�^�����
+	@param nToolbarNo [in] ボタン情報のツールバー番号
+	@retval ボタン情報
 
-	@date 2007.11.02 ryoji �͈͊O�̏ꍇ�͖���`�̃{�^������Ԃ��悤��
-	@date 2010.06.24 Moca �������c�[���o�[�ԍ��ɕύX
+	@date 2007.11.02 ryoji 範囲外の場合は未定義のボタン情報を返すように
+	@date 2010.06.24 Moca 引数をツールバー番号に変更
  */
 TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 {
@@ -1529,8 +1529,8 @@ TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 		return m_tbMyButton[index];
 	}
 
-	// �͈͊O�Ȃ疢��`�̃{�^�������쐬���ĕԂ�
-	// �isakura.ini�ɔ͈͊O�C���f�b�N�X���w�肪�������ꍇ�ȂǁA���S���̂��߁j
+	// 範囲外なら未定義のボタン情報を作成して返す
+	// （sakura.iniに範囲外インデックスが指定があった場合など、堅牢性のため）
 	static TBBUTTON tbb;
 	SetTBBUTTONVal( &tbb, -1, F_DISABLE, 0, TBSTYLE_BUTTON, 0, 0 );
 	return tbb;
@@ -1586,7 +1586,7 @@ struct WorkData{
 	MENUITEMINFO	mii;
 };
 
-/*! ���j���[�A�N�Z�X�L�[�������̏���(WM_MENUCHAR����) */
+/*! メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	TCHAR				chUser;
@@ -1604,16 +1604,16 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		chUser = (TCHAR)_totupper( chUser );
 	}
 
-	// 2011.11.18 vector��
+	// 2011.11.18 vector化
 	std::vector<WorkData> vecAccel;
 	size_t nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
 		TCHAR	szText[1024];
-		// ���j���[���ڂɊւ�������擾���܂��B
+		// メニュー項目に関する情報を取得します。
 		MENUITEMINFO		mii;
 		memset_raw( &mii, 0, sizeof( mii ) );
 
-		mii.cbSize = SIZEOF_MENUITEMINFO; //Win95�΍�ς݂�sizeof(MENUITEMINFO)�l
+		mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
 
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
@@ -1655,10 +1655,10 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 //	Jul. 21, 2003 genta
-//	�R�����g�A�E�g����Ă����������폜 (CImageList�ōė��p)
+//	コメントアウトされていた部分を削除 (CImageListで再利用)
 
 
-/* TBBUTTON�\���̂Ƀf�[�^���Z�b�g */
+/* TBBUTTON構造体にデータをセット */
 void CMenuDrawer::SetTBBUTTONVal(
 	TBBUTTON*	ptb,
 	int			iBitmap,
@@ -1671,12 +1671,12 @@ void CMenuDrawer::SetTBBUTTONVal(
 {
 	/*
 typedef struct _TBBUTTON {
-	int iBitmap;	// �{�^�� �C���[�W�� 0 ����n�܂�C���f�b�N�X
-	int idCommand;	// �{�^���������ꂽ�Ƃ��ɑ�����R�}���h
-	BYTE fsState;	// �{�^���̏��--�ȉ����Q��
-	BYTE fsStyle;	// �{�^�� �X�^�C��--�ȉ����Q��
-	DWORD dwData;	// �A�v���P�[�V����-��`���ꂽ�l
-	int iString;	// �{�^���̃��x��������� 0 ����n�܂�C���f�b�N�X
+	int iBitmap;	// ボタン イメージの 0 から始まるインデックス
+	int idCommand;	// ボタンが押されたときに送られるコマンド
+	BYTE fsState;	// ボタンの状態--以下を参照
+	BYTE fsStyle;	// ボタン スタイル--以下を参照
+	DWORD dwData;	// アプリケーション-定義された値
+	int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 } TBBUTTON;
 */
 
@@ -1689,9 +1689,9 @@ typedef struct _TBBUTTON {
 	return;
 }
 
-//�c�[���o�[�{�^����ǉ�����
-//	�}�l�[�W�����g�@�\�ǉ�	2010/7/3 Uchi 
-//		�S�E�B���h�E�œ����@�\�ԍ��̏ꍇ�A����ICON�ԍ������悤�ɒ���
+//ツールバーボタンを追加する
+//	マネージメント機能追加	2010/7/3 Uchi 
+//		全ウィンドウで同じ機能番号の場合、同じICON番号を持つように調整
 void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 {
 	TBBUTTON tbb;
@@ -1706,42 +1706,42 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 		iCmdNo = iCommand - F_PLUGCOMMAND_FIRST;
 		if (m_pShareData->m_PlugCmdIcon[iCmdNo] != 0) {
 			if (m_tbMyButton.size() <= (size_t)(int)m_pShareData->m_PlugCmdIcon[iCmdNo]) {
-				// ���̃E�B���h�E�Ŗ��o�^
-				// �󂫂��l�ߍ���
+				// このウィンドウで未登録
+				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb,TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}
 
-				// ���o�^
+				// 未登録
 				SetTBBUTTONVal( &tbb, iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
-				//�Ō�ɒǉ��ɕύX
+				//最後に追加に変更
 				m_tbMyButton.push_back( tbb );
 				m_nMyButtonNum++;
 			}
 			else {
-				// �Đݒ�
+				// 再設定
 				SetTBBUTTONVal( &m_tbMyButton[m_pShareData->m_PlugCmdIcon[iCmdNo]],
 					iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
 			}
 		}
 		else {
-			// �S�̂Ŗ��o�^
+			// 全体で未登録
 			if (m_tbMyButton.size() < (size_t)m_pShareData->m_maxTBNum) {
-				// �󂫂��l�ߍ���
+				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb, TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}
 			}
-			// �V�K�o�^
+			// 新規登録
 			SetTBBUTTONVal( &tbb, iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
 
 			m_pShareData->m_PlugCmdIcon[iCmdNo] = (short)m_tbMyButton.size();
-			//�Ōォ��Q�Ԗڂɑ}������B��ԍŌ�͔ԕ��ŌŒ�B
-			//2010.06.23 Moca �Ō�ɒǉ��ɕύX
+			//最後から２番目に挿入する。一番最後は番兵で固定。
+			//2010.06.23 Moca 最後に追加に変更
 			m_tbMyButton.push_back( tbb );
 			m_nMyButtonNum++;
 		}

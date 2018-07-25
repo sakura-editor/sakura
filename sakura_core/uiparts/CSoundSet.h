@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 class CSoundSet{
 public:
 	CSoundSet() : m_nMuteCount(0) { }
-	void NeedlessToSaveBeep(); //ã‘‚«•s—vƒr[ƒv‰¹
+	void NeedlessToSaveBeep(); //ä¸Šæ›¸ãä¸è¦ãƒ“ãƒ¼ãƒ—éŸ³
 	void MuteOn(){ m_nMuteCount++; }
 	void MuteOff(){ m_nMuteCount--; }
 private:
