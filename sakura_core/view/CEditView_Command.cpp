@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -38,37 +38,37 @@
 #include "recent/CRecent.h"
 
 /*
-	w’èƒtƒ@ƒCƒ‹‚Ìw’èˆÊ’u‚Éƒ^ƒOƒWƒƒƒ“ƒv‚·‚éB
+	æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ã®æŒ‡å®šä½ç½®ã«ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã™ã‚‹ã€‚
 
 	@author	MIK
-	@date	2003.04.13	V‹Kì¬
-	@date	2003.04.21 genta bClose’Ç‰Á
-	@date	2004.05.29 Moca 0ˆÈ‰º‚ªw’è‚³‚ê‚½‚Æ‚«‚ÍA‘Pˆ‚·‚é
-	@date	2007.02.17 genta ‘Š‘ÎƒpƒX‚ÌŠî€ƒfƒBƒŒƒNƒgƒŠw¦‚ğ’Ç‰Á
+	@date	2003.04.13	æ–°è¦ä½œæˆ
+	@date	2003.04.21 genta bCloseè¿½åŠ 
+	@date	2004.05.29 Moca 0ä»¥ä¸‹ãŒæŒ‡å®šã•ã‚ŒãŸã¨ãã¯ã€å–„å‡¦ã™ã‚‹
+	@date	2007.02.17 genta ç›¸å¯¾ãƒ‘ã‚¹ã®åŸºæº–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæŒ‡ç¤ºã‚’è¿½åŠ 
 */
 bool CEditView::TagJumpSub(
 	const TCHAR*	pszFileName,
-	CMyPoint		ptJumpTo,		//!< ƒWƒƒƒ“ƒvˆÊ’u(1ŠJn)
-	bool			bClose,			//!< [in] true: Œ³ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é / false: Œ³ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚È‚¢
+	CMyPoint		ptJumpTo,		//!< ã‚¸ãƒ£ãƒ³ãƒ—ä½ç½®(1é–‹å§‹)
+	bool			bClose,			//!< [in] true: å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ / false: å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ãªã„
 	bool			bRelFromIni,
-	bool*			pbJumpToSelf	//!< [out] ƒIƒvƒVƒ‡ƒ“NULL‰ÂB©•ª‚ÉƒWƒƒƒ“ƒv‚µ‚½‚©
+	bool*			pbJumpToSelf	//!< [out] ã‚ªãƒ—ã‚·ãƒ§ãƒ³NULLå¯ã€‚è‡ªåˆ†ã«ã‚¸ãƒ£ãƒ³ãƒ—ã—ãŸã‹
 )
 {
 	HWND	hwndOwner;
 	POINT	poCaret;
-	// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
+	// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
 	TagJump	tagJump;
 
 	if( pbJumpToSelf ){
 		*pbJumpToSelf = false;
 	}
 
-	// QÆŒ³ƒEƒBƒ“ƒhƒE•Û‘¶
+	// å‚ç…§å…ƒã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¿å­˜
 	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
 
-	//	Feb. 17, 2007 genta Àsƒtƒ@ƒCƒ‹‚©‚ç‚Ì‘Š‘Îw’è‚Ìê‡‚Í
-	//	—\‚ßâ‘ÎƒpƒX‚É•ÏŠ·‚·‚éD(ƒL[ƒ[ƒhƒwƒ‹ƒvƒWƒƒƒ“ƒv‚Å—p‚¢‚é)
-	// 2007.05.19 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+	//	Feb. 17, 2007 genta å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ç›¸å¯¾æŒ‡å®šã®å ´åˆã¯
+	//	äºˆã‚çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›ã™ã‚‹ï¼(ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã‚¸ãƒ£ãƒ³ãƒ—ã§ç”¨ã„ã‚‹)
+	// 2007.05.19 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 	TCHAR	szJumpToFile[1024];
 	if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
 		GetInidirOrExedir( szJumpToFile, pszFileName );
@@ -77,37 +77,37 @@ bool CEditView::TagJumpSub(
 		_tcscpy( szJumpToFile, pszFileName );
 	}
 
-	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
+	/* ãƒ­ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹ */
 	TCHAR	szWork[1024];
 	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 	{
 		_tcscpy( szJumpToFile, szWork );
 	}
 
-// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-// 2004/07/05 ‚İ‚¿‚Î‚È
-// “¯ˆêƒtƒ@ƒCƒ‹‚¾‚ÆSendMesssage‚Å GetCaret().GetCaretLayoutPos().GetX2(),GetCaret().GetCaretLayoutPos().GetY2()‚ªXV‚³‚ê‚Ä‚µ‚Ü‚¢A
-// ƒWƒƒƒ“ƒvæ‚ÌêŠ‚ªƒWƒƒƒ“ƒvŒ³‚Æ‚µ‚Ä•Û‘¶‚³‚ê‚Ä‚µ‚Ü‚Á‚Ä‚¢‚é‚Ì‚ÅA
-// ‚»‚Ì‘O‚Å•Û‘¶‚·‚é‚æ‚¤‚É•ÏXB
+// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+// 2004/07/05 ã¿ã¡ã°ãª
+// åŒä¸€ãƒ•ã‚¡ã‚¤ãƒ«ã ã¨SendMesssageã§ GetCaret().GetCaretLayoutPos().GetX2(),GetCaret().GetCaretLayoutPos().GetY2()ãŒæ›´æ–°ã•ã‚Œã¦ã—ã¾ã„ã€
+// ã‚¸ãƒ£ãƒ³ãƒ—å…ˆã®å ´æ‰€ãŒã‚¸ãƒ£ãƒ³ãƒ—å…ƒã¨ã—ã¦ä¿å­˜ã•ã‚Œã¦ã—ã¾ã£ã¦ã„ã‚‹ã®ã§ã€
+// ãã®å‰ã§ä¿å­˜ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´ã€‚
 
-	/* ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ· */
+	/* ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ› */
 	GetDocument()->m_cLayoutMgr.LayoutToLogic(
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
 
-	// ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚Ì•Û‘¶
+	// ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®ä¿å­˜
 	CTagJumpManager().PushTagJump(&tagJump);
 
 
-	/* w’èƒtƒ@ƒCƒ‹‚ªŠJ‚©‚ê‚Ä‚¢‚é‚©’²‚×‚é */
-	/* ŠJ‚©‚ê‚Ä‚¢‚éê‡‚ÍŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹‚à•Ô‚· */
-	/* ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚¢‚é‚© */
+	/* æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‹ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã‚‹ */
+	/* é–‹ã‹ã‚Œã¦ã„ã‚‹å ´åˆã¯é–‹ã„ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«ã‚‚è¿”ã™ */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã„ã‚‹ã‹ */
 	if( CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
 	{
-		// 2004.05.13 Moca ƒ}ƒCƒiƒX’l‚Í–³Œø
+		// 2004.05.13 Moca ãƒã‚¤ãƒŠã‚¹å€¤ã¯ç„¡åŠ¹
 		if( 0 < ptJumpTo.y ){
-			/* ƒJ[ƒ\ƒ‹‚ğˆÚ“®‚³‚¹‚é */
+			/* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•ã•ã›ã‚‹ */
 			poCaret.y = ptJumpTo.y - 1;
 			if( 0 < ptJumpTo.x ){
 				poCaret.x = ptJumpTo.x - 1;
@@ -117,7 +117,7 @@ bool CEditView::TagJumpSub(
 			GetDllShareData().m_sWorkBuffer.m_LogicPoint.Set(CLogicInt(poCaret.x), CLogicInt(poCaret.y));
 			::SendMessageAny( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 		}
-		/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+		/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 		ActivateFrameWindow( hwndOwner );
 		if( tagJump.hwndReferer == hwndOwner ){
 			if( pbJumpToSelf ){
@@ -126,7 +126,7 @@ bool CEditView::TagJumpSub(
 		}
 	}
 	else{
-		/* V‚µ‚­ŠJ‚­ */
+		/* æ–°ã—ãé–‹ã */
 		EditInfo	inf;
 		bool		bSuccess;
 
@@ -140,26 +140,26 @@ bool CEditView::TagJumpSub(
 			G_AppInstance(),
 			this->GetHwnd(),
 			&inf,
-			false,	/* ƒrƒ…[ƒ‚[ƒh‚© */
-			true	//	“¯Šúƒ‚[ƒh‚ÅŠJ‚­
+			false,	/* ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‹ */
+			true	//	åŒæœŸãƒ¢ãƒ¼ãƒ‰ã§é–‹ã
 		);
 
-		if( ! bSuccess )	//	ƒtƒ@ƒCƒ‹‚ªŠJ‚¯‚È‚©‚Á‚½
+		if( ! bSuccess )	//	ãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‘ãªã‹ã£ãŸ
 			return false;
 
 		//	Apr. 23, 2001 genta
-		//	hwndOwner‚É’l‚ª“ü‚ç‚È‚­‚È‚Á‚Ä‚µ‚Ü‚Á‚½‚½‚ß‚É
-		//	Tag Jump Back‚ª“®ì‚µ‚È‚­‚È‚Á‚Ä‚¢‚½‚Ì‚ğC³
+		//	hwndOwnerã«å€¤ãŒå…¥ã‚‰ãªããªã£ã¦ã—ã¾ã£ãŸãŸã‚ã«
+		//	Tag Jump BackãŒå‹•ä½œã—ãªããªã£ã¦ã„ãŸã®ã‚’ä¿®æ­£
 		if( !CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
 			return false;
 	}
 
-	// 2006.12.30 ryoji •Â‚¶‚éˆ—‚ÍÅŒã‚Éiˆ—ˆÊ’uˆÚ“®j
-	//	Apr. 2003 genta •Â‚¶‚é‚©‚Ç‚¤‚©‚Íˆø”‚É‚æ‚é
-	//	grepŒ‹‰Ê‚©‚çEnter‚ÅƒWƒƒƒ“ƒv‚·‚é‚Æ‚±‚ë‚ÉCtrl”»’èˆÚ“®
+	// 2006.12.30 ryoji é–‰ã˜ã‚‹å‡¦ç†ã¯æœ€å¾Œã«ï¼ˆå‡¦ç†ä½ç½®ç§»å‹•ï¼‰
+	//	Apr. 2003 genta é–‰ã˜ã‚‹ã‹ã©ã†ã‹ã¯å¼•æ•°ã«ã‚ˆã‚‹
+	//	grepçµæœã‹ã‚‰Enterã§ã‚¸ãƒ£ãƒ³ãƒ—ã™ã‚‹ã¨ã“ã‚ã«Ctrlåˆ¤å®šç§»å‹•
 	if( bClose )
 	{
-		GetCommander().Command_WINCLOSE();	//	’§í‚·‚é‚¾‚¯B
+		GetCommander().Command_WINCLOSE();	//	æŒ‘æˆ¦ã™ã‚‹ã ã‘ã€‚
 	}
 
 	return true;
@@ -167,26 +167,26 @@ bool CEditView::TagJumpSub(
 
 
 
-/*! w’èŠg’£q‚Ìƒtƒ@ƒCƒ‹‚É‘Î‰‚·‚éƒtƒ@ƒCƒ‹‚ğŠJ‚­•â•ŠÖ”
+/*! æŒ‡å®šæ‹¡å¼µå­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«å¯¾å¿œã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãè£œåŠ©é–¢æ•°
 
-	@date 2003.06.28 Moca ƒwƒbƒ_Eƒ\[ƒXƒtƒ@ƒCƒ‹ƒI[ƒvƒ“‹@”\‚ÌƒR[ƒh‚ğ“‡
-	@date 2008.04.09 ryoji ˆ—‘ÎÛ(file_ext)‚ÆŠJ‚­‘ÎÛ(open_ext)‚Ìˆµ‚¢‚ª‹t‚É‚È‚Á‚Ä‚¢‚½‚Ì‚ğC³
+	@date 2003.06.28 Moca ãƒ˜ãƒƒãƒ€ãƒ»ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³æ©Ÿèƒ½ã®ã‚³ãƒ¼ãƒ‰ã‚’çµ±åˆ
+	@date 2008.04.09 ryoji å‡¦ç†å¯¾è±¡(file_ext)ã¨é–‹ãå¯¾è±¡(open_ext)ã®æ‰±ã„ãŒé€†ã«ãªã£ã¦ã„ãŸã®ã‚’ä¿®æ­£
 */
 BOOL CEditView::OPEN_ExtFromtoExt(
-	BOOL			bCheckOnly,		//!< [in] true: ƒ`ƒFƒbƒN‚Ì‚İs‚Á‚Äƒtƒ@ƒCƒ‹‚ÍŠJ‚©‚È‚¢
-	BOOL			bBeepWhenMiss,	//!< [in] true: ƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚È‚©‚Á‚½ê‡‚ÉŒx‰¹‚ğo‚·
-	const TCHAR*	file_ext[],		//!< [in] ˆ—‘ÎÛ‚Æ‚·‚éŠg’£q
-	const TCHAR*	open_ext[],		//!< [in] ŠJ‚­‘ÎÛ‚Æ‚·‚éŠg’£q
-	int				file_extno,		//!< [in] ˆ—‘ÎÛŠg’£qƒŠƒXƒg‚Ì—v‘f”
-	int				open_extno,		//!< [in] ŠJ‚­‘ÎÛŠg’£qƒŠƒXƒg‚Ì—v‘f”
-	const TCHAR*	errmes			//!< [in] ƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚È‚©‚Á‚½ê‡‚É•\¦‚·‚éƒGƒ‰[ƒƒbƒZ[ƒW
+	BOOL			bCheckOnly,		//!< [in] true: ãƒã‚§ãƒƒã‚¯ã®ã¿è¡Œã£ã¦ãƒ•ã‚¡ã‚¤ãƒ«ã¯é–‹ã‹ãªã„
+	BOOL			bBeepWhenMiss,	//!< [in] true: ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ãªã‹ã£ãŸå ´åˆã«è­¦å‘ŠéŸ³ã‚’å‡ºã™
+	const TCHAR*	file_ext[],		//!< [in] å‡¦ç†å¯¾è±¡ã¨ã™ã‚‹æ‹¡å¼µå­
+	const TCHAR*	open_ext[],		//!< [in] é–‹ãå¯¾è±¡ã¨ã™ã‚‹æ‹¡å¼µå­
+	int				file_extno,		//!< [in] å‡¦ç†å¯¾è±¡æ‹¡å¼µå­ãƒªã‚¹ãƒˆã®è¦ç´ æ•°
+	int				open_extno,		//!< [in] é–‹ãå¯¾è±¡æ‹¡å¼µå­ãƒªã‚¹ãƒˆã®è¦ç´ æ•°
+	const TCHAR*	errmes			//!< [in] ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ãªã‹ã£ãŸå ´åˆã«è¡¨ç¤ºã™ã‚‹ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 )
 {
-//From Here Feb. 7, 2001 JEPRO ’Ç‰Á
+//From Here Feb. 7, 2001 JEPRO è¿½åŠ 
 	int		i;
 //To Here Feb. 7, 2001
 
-	/* •ÒW’†ƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ğ’²‚×‚é */
+	/* ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‚’èª¿ã¹ã‚‹ */
 	for( i = 0; i < file_extno; i++ ){
 		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), file_ext[i] ) ){
 			goto open_c;
@@ -224,12 +224,12 @@ open_c:;
 		return TRUE;
 	}
 
-	/* w’èƒtƒ@ƒCƒ‹‚ªŠJ‚©‚ê‚Ä‚¢‚é‚©’²‚×‚é */
-	/* ŠJ‚©‚ê‚Ä‚¢‚éê‡‚ÍŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹‚à•Ô‚· */
-	/* ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚¢‚é‚© */
+	/* æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒé–‹ã‹ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã‚‹ */
+	/* é–‹ã‹ã‚Œã¦ã„ã‚‹å ´åˆã¯é–‹ã„ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ«ã‚‚è¿”ã™ */
+	/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã„ã‚‹ã‹ */
 	if( CShareData::getInstance()->IsPathOpened( szPath, &hwndOwner ) ){
 	}else{
-		/* •¶šƒR[ƒh‚Í‚±‚Ìƒtƒ@ƒCƒ‹‚É‡‚í‚¹‚é */
+		/* æ–‡å­—ã‚³ãƒ¼ãƒ‰ã¯ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«åˆã‚ã›ã‚‹ */
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = szPath;
 		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
@@ -241,85 +241,85 @@ open_c:;
 			NULL,
 			true
 		);
-		/* ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚¢‚é‚© */
+		/* ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã„ã‚‹ã‹ */
 		if( CShareData::getInstance()->IsPathOpened( szPath, &hwndOwner ) ){
 		}else{
-			// 2011.01.12 ryoji ƒGƒ‰[‚Í•\¦‚µ‚È‚¢‚Å‚¨‚­
-			// ƒtƒ@ƒCƒ‹ƒTƒCƒY‚ª‘å‚«‚·‚¬‚Ä“Ç‚Ş‚©‚Ç‚¤‚©–â‚¢‡‚í‚¹‚Ä‚¢‚é‚æ‚¤‚Èê‡‚Å‚àƒGƒ‰[•\¦‚É‚È‚é‚Ì‚Í•Ï
-			// OpenNewEditor()‚Ü‚½‚Í‹N“®‚³‚ê‚½‘¤‚ÌƒƒbƒZ[ƒW•\¦‚Å\•ª‚Æv‚í‚ê‚é
+			// 2011.01.12 ryoji ã‚¨ãƒ©ãƒ¼ã¯è¡¨ç¤ºã—ãªã„ã§ãŠã
+			// ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãŒå¤§ãã™ãã¦èª­ã‚€ã‹ã©ã†ã‹å•ã„åˆã‚ã›ã¦ã„ã‚‹ã‚ˆã†ãªå ´åˆã§ã‚‚ã‚¨ãƒ©ãƒ¼è¡¨ç¤ºã«ãªã‚‹ã®ã¯å¤‰
+			// OpenNewEditor()ã¾ãŸã¯èµ·å‹•ã•ã‚ŒãŸå´ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºã§ååˆ†ã¨æ€ã‚ã‚Œã‚‹
 
 			//ErrorMessage( this->GetHwnd(), _T("%ts\n\n%ts\n\n"), errmes, szPath );
 			return FALSE;
 		}
 	}
-	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
+	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹ */
 	ActivateFrameWindow( hwndOwner );
 
-// 2004/06/21 novice ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á
-// 2004/07/09 genta/Moca ƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒN‚Ì“o˜^‚ªæ‚èœ‚©‚ê‚Ä‚¢‚½‚ªA
-//            ‚±‚¿‚ç‚Å‚à]—ˆ‚Ç‚¨‚è“o˜^‚·‚é
+// 2004/06/21 novice ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æ©Ÿèƒ½è¿½åŠ 
+// 2004/07/09 genta/Moca ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒã‚¯ã®ç™»éŒ²ãŒå–ã‚Šé™¤ã‹ã‚Œã¦ã„ãŸãŒã€
+//            ã“ã¡ã‚‰ã§ã‚‚å¾“æ¥ã©ãŠã‚Šç™»éŒ²ã™ã‚‹
 	TagJump	tagJump;
 	/*
-	  ƒJ[ƒ\ƒ‹ˆÊ’u•ÏŠ·
-	  ƒŒƒCƒAƒEƒgˆÊ’u(s“ª‚©‚ç‚Ì•\¦Œ…ˆÊ’uAÜ‚è•Ô‚µ‚ ‚èsˆÊ’u)
-	  ¨
-	  •¨—ˆÊ’u(s“ª‚©‚ç‚ÌƒoƒCƒg”AÜ‚è•Ô‚µ–³‚µsˆÊ’u)
+	  ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å¤‰æ›
+	  ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®(è¡Œé ­ã‹ã‚‰ã®è¡¨ç¤ºæ¡ä½ç½®ã€æŠ˜ã‚Šè¿”ã—ã‚ã‚Šè¡Œä½ç½®)
+	  â†’
+	  ç‰©ç†ä½ç½®(è¡Œé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°ã€æŠ˜ã‚Šè¿”ã—ç„¡ã—è¡Œä½ç½®)
 	*/
 	GetDocument()->m_cLayoutMgr.LayoutToLogic(
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
 	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
-	// ƒ^ƒOƒWƒƒƒ“ƒvî•ñ‚Ì•Û‘¶
+	// ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±ã®ä¿å­˜
 	CTagJumpManager().PushTagJump(&tagJump);
 	return TRUE;
 }
 
 
-/*!	@brief Ü‚è•Ô‚µ‚Ì“®ì‚ğŒˆ’è
+/*!	@brief æŠ˜ã‚Šè¿”ã—ã®å‹•ä½œã‚’æ±ºå®š
 
-	ƒgƒOƒ‹ƒRƒ}ƒ“ƒhuŒ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚µv‚ğs‚Á‚½ê‡‚Ì“®ì‚ğŒˆ’è‚·‚é
+	ãƒˆã‚°ãƒ«ã‚³ãƒãƒ³ãƒ‰ã€Œç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã§æŠ˜ã‚Šè¿”ã—ã€ã‚’è¡Œã£ãŸå ´åˆã®å‹•ä½œã‚’æ±ºå®šã™ã‚‹
 	
 	@retval TGWRAP_NONE No action
-	@retval TGWRAP_FULL Å‘å’l
-	@retval TGWRAP_WINDOW ƒEƒBƒ“ƒhƒE•
-	@retval TGWRAP_PROP İ’è’l
+	@retval TGWRAP_FULL æœ€å¤§å€¤
+	@retval TGWRAP_WINDOW ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
+	@retval TGWRAP_PROP è¨­å®šå€¤
 
-	@date 2006.01.08 genta ƒƒjƒ…[•\¦‚Å“¯ˆê‚Ì”»’è‚ğg‚¤‚½‚ßCCommand_WRAPWINDOWWIDTH()‚æ‚è•ª—£D
-	@date 2006.01.08 genta ”»’èğŒ‚ğŒ©’¼‚µ
-	@date 2008.06.08 ryoji ƒEƒBƒ“ƒhƒE•İ’è‚É‚Ô‚ç‰º‚°—]”’‚ğ’Ç‰Á
+	@date 2006.01.08 genta ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¡¨ç¤ºã§åŒä¸€ã®åˆ¤å®šã‚’ä½¿ã†ãŸã‚ï¼ŒCommand_WRAPWINDOWWIDTH()ã‚ˆã‚Šåˆ†é›¢ï¼
+	@date 2006.01.08 genta åˆ¤å®šæ¡ä»¶ã‚’è¦‹ç›´ã—
+	@date 2008.06.08 ryoji ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…è¨­å®šã«ã¶ã‚‰ä¸‹ã’ä½™ç™½ã‚’è¿½åŠ 
 */
 CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 {
 	CKetaXInt& newKetas=*_newKetas;
-	//@@@ 2002.01.14 YAZAKI Œ»İ‚ÌƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚³‚ê‚Ä‚¢‚é‚Æ‚«‚ÍAÅ‘å’l‚É‚·‚éƒRƒ}ƒ“ƒhB
-	//2002/04/08 YAZAKI ‚Æ‚«‚Ç‚«ƒEƒBƒ“ƒhƒE•‚ÅÜ‚è•Ô‚³‚ê‚È‚¢‚±‚Æ‚ª‚ ‚éƒoƒOC³B
-	// 20051022 aroka Œ»İ‚ÌƒEƒBƒ“ƒhƒE•¨Å‘å’l¨•¶‘ƒ^ƒCƒv‚Ì‰Šú’l ‚ğƒgƒOƒ‹‚É‚·‚éƒRƒ}ƒ“ƒh
-	// ƒEƒBƒ“ƒhƒE•==•¶‘ƒ^ƒCƒv||Å‘å’l==•¶‘ƒ^ƒCƒv ‚Ìê‡‚ª‚ ‚é‚½‚ß”»’è‡˜‚É’ˆÓ‚·‚éB
+	//@@@ 2002.01.14 YAZAKI ç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã§æŠ˜ã‚Šè¿”ã•ã‚Œã¦ã„ã‚‹ã¨ãã¯ã€æœ€å¤§å€¤ã«ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ã€‚
+	//2002/04/08 YAZAKI ã¨ãã©ãã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã§æŠ˜ã‚Šè¿”ã•ã‚Œãªã„ã“ã¨ãŒã‚ã‚‹ãƒã‚°ä¿®æ­£ã€‚
+	// 20051022 aroka ç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…â†’æœ€å¤§å€¤â†’æ–‡æ›¸ã‚¿ã‚¤ãƒ—ã®åˆæœŸå€¤ ã‚’ãƒˆã‚°ãƒ«ã«ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…==æ–‡æ›¸ã‚¿ã‚¤ãƒ—||æœ€å¤§å€¤==æ–‡æ›¸ã‚¿ã‚¤ãƒ— ã®å ´åˆãŒã‚ã‚‹ãŸã‚åˆ¤å®šé †åºã«æ³¨æ„ã™ã‚‹ã€‚
 	/*	Jan.  8, 2006 genta
-		‚¶‚ã‚¤‚¶‚³‚ñ‚Ì—v–]‚É‚æ‚è”»’è•û–@‚ğÄlDŒ»İ‚Ì•‚É‡‚í‚¹‚é‚Ì‚ğÅ—Dæ‚ÉD
+		ã˜ã‚…ã†ã˜ã•ã‚“ã®è¦æœ›ã«ã‚ˆã‚Šåˆ¤å®šæ–¹æ³•ã‚’å†è€ƒï¼ç¾åœ¨ã®å¹…ã«åˆã‚ã›ã‚‹ã®ã‚’æœ€å„ªå…ˆã«ï¼
 	
-		Šî–{“®ìF İ’è’l¨ƒEƒBƒ“ƒhƒE•
-			¨(ƒEƒBƒ“ƒhƒE•‚Æ‡‚Á‚Ä‚¢‚È‚¯‚ê‚Î)¨ƒEƒBƒ“ƒhƒE•¨ã‚Ö–ß‚é
-			¨(ƒEƒBƒ“ƒhƒE•‚Æ‡‚Á‚Ä‚¢‚½‚ç)¨Å‘å’l¨İ’è’l
-			‚½‚¾‚µCÅ‘å’l==İ’è’l‚Ìê‡‚É‚ÍÅ‘å’l¨İ’è’l‚Ì‘JˆÚ‚ªÈ—ª‚³‚ê‚Äã‚É–ß‚é
+		åŸºæœ¬å‹•ä½œï¼š è¨­å®šå€¤â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
+			â†’(ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã¨åˆã£ã¦ã„ãªã‘ã‚Œã°)â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…â†’ä¸Šã¸æˆ»ã‚‹
+			â†’(ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã¨åˆã£ã¦ã„ãŸã‚‰)â†’æœ€å¤§å€¤â†’è¨­å®šå€¤
+			ãŸã ã—ï¼Œæœ€å¤§å€¤==è¨­å®šå€¤ã®å ´åˆã«ã¯æœ€å¤§å€¤â†’è¨­å®šå€¤ã®é·ç§»ãŒçœç•¥ã•ã‚Œã¦ä¸Šã«æˆ»ã‚‹
 			
-			ƒEƒBƒ“ƒhƒE•‚ª‹É’[‚É‹·‚¢ê‡‚É‚ÍƒEƒBƒ“ƒhƒE•‚É‡‚í‚¹‚é‚±‚Æ‚Ío—ˆ‚È‚¢‚ªC
-			İ’è’l‚ÆÅ‘å’l‚ÌƒgƒOƒ‹‚Í‰Â”\D
+			ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ãŒæ¥µç«¯ã«ç‹­ã„å ´åˆã«ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ã«åˆã‚ã›ã‚‹ã“ã¨ã¯å‡ºæ¥ãªã„ãŒï¼Œ
+			è¨­å®šå€¤ã¨æœ€å¤§å€¤ã®ãƒˆã‚°ãƒ«ã¯å¯èƒ½ï¼
 
-		0)Œ»İ‚ÌƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@!=w’èŒ…‚ÅÜ‚è•Ô‚·F•ÏX•s”\
-		1)Œ»İ‚ÌÜ‚è•Ô‚µ•==ƒEƒBƒ“ƒhƒE• : Å‘å’l
-		2)Œ»İ‚ÌÜ‚è•Ô‚µ•!=ƒEƒBƒ“ƒhƒE•
-		3)¨ƒEƒBƒ“ƒhƒE•‚ª‹É’[‚É‹·‚¢ê‡
-		4)@„¤¨Ü‚è•Ô‚µ•!=Å‘å’l : Å‘å’l
-		5)@„¤¨Ü‚è•Ô‚µ•==Å‘å’l
-		6)@@@„¤¨Å‘å’l==İ’è’l : •ÏX•s”\
-		7)@@@„¤¨Å‘å’l!=İ’è’l : İ’è’l
-		8)¨ƒEƒBƒ“ƒhƒE•‚ª\•ª‚É‚ ‚é
-		9)@„¤¨Ü‚è•Ô‚µ•==Å‘å’l
-		a)@@@„¤¨Å‘å’l!=İ’è’l : İ’è’l
-	 	b)@@@„¤¨Å‘å’l==İ’è’l : ƒEƒBƒ“ƒhƒE•
-		c)@„¤¨ƒEƒBƒ“ƒhƒE•
+		0)ç¾åœ¨ã®ãƒ†ã‚­ã‚¹ãƒˆã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•!=æŒ‡å®šæ¡ã§æŠ˜ã‚Šè¿”ã™ï¼šå¤‰æ›´ä¸èƒ½
+		1)ç¾åœ¨ã®æŠ˜ã‚Šè¿”ã—å¹…==ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹… : æœ€å¤§å€¤
+		2)ç¾åœ¨ã®æŠ˜ã‚Šè¿”ã—å¹…!=ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
+		3)â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ãŒæ¥µç«¯ã«ç‹­ã„å ´åˆ
+		4)ã€€â””â†’æŠ˜ã‚Šè¿”ã—å¹…!=æœ€å¤§å€¤ : æœ€å¤§å€¤
+		5)ã€€â””â†’æŠ˜ã‚Šè¿”ã—å¹…==æœ€å¤§å€¤
+		6)ã€€ã€€ã€€â””â†’æœ€å¤§å€¤==è¨­å®šå€¤ : å¤‰æ›´ä¸èƒ½
+		7)ã€€ã€€ã€€â””â†’æœ€å¤§å€¤!=è¨­å®šå€¤ : è¨­å®šå€¤
+		8)â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…ãŒååˆ†ã«ã‚ã‚‹
+		9)ã€€â””â†’æŠ˜ã‚Šè¿”ã—å¹…==æœ€å¤§å€¤
+		a)ã€€ã€€ã€€â””â†’æœ€å¤§å€¤!=è¨­å®šå€¤ : è¨­å®šå€¤
+	 	b)ã€€ã€€ã€€â””â†’æœ€å¤§å€¤==è¨­å®šå€¤ : ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
+		c)ã€€â””â†’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
 	*/
 	
 	if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == ViewColNumToWrapColNum( GetTextArea().m_nViewColNum ) ){
@@ -352,7 +352,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 			
 		}
 		else {	// b) c)
-			//	Œ»İ‚ÌƒEƒBƒ“ƒhƒE•
+			//	ç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å¹…
 			newKetas = ViewColNumToWrapColNum( GetTextArea().m_nViewColNum );
 			return TGWRAP_WINDOW;
 		}
@@ -368,9 +368,9 @@ void CEditView::AddToCmdArr( const TCHAR* szCmd )
 }
 
 
-/*! ³‹K•\Œ»‚ÌŒŸõƒpƒ^[ƒ“‚ğ•K—v‚É‰‚¶‚ÄXV‚·‚é(ƒ‰ƒCƒuƒ‰ƒŠ‚ªg—p‚Å‚«‚È‚¢‚Æ‚«‚ÍFALSE‚ğ•Ô‚·)
-	@date 2002.01.16 hor ‹¤’ÊƒƒWƒbƒN‚ğŠÖ”‚É‚µ‚½‚¾‚¯EEE
-	@date 2011.12.18 Moca ƒV[ƒPƒ“ƒX“±“üBview‚ÌŒŸõ•¶š—ñ’·‚Ì“P”pB‘¼‚Ìƒrƒ…[‚ÌŒŸõğŒ‚ğˆø‚«Œp‚®ƒtƒ‰ƒO‚ğ’Ç‰Á
+/*! æ­£è¦è¡¨ç¾ã®æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’å¿…è¦ã«å¿œã˜ã¦æ›´æ–°ã™ã‚‹(ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒä½¿ç”¨ã§ããªã„ã¨ãã¯FALSEã‚’è¿”ã™)
+	@date 2002.01.16 hor å…±é€šãƒ­ã‚¸ãƒƒã‚¯ã‚’é–¢æ•°ã«ã—ãŸã ã‘ãƒ»ãƒ»ãƒ»
+	@date 2011.12.18 Moca ã‚·ãƒ¼ã‚±ãƒ³ã‚¹å°å…¥ã€‚viewã®æ¤œç´¢æ–‡å­—åˆ—é•·ã®æ’¤å»ƒã€‚ä»–ã®ãƒ“ãƒ¥ãƒ¼ã®æ¤œç´¢æ¡ä»¶ã‚’å¼•ãç¶™ããƒ•ãƒ©ã‚°ã‚’è¿½åŠ 
 */
 BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
@@ -379,9 +379,9 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
 			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
 		|| 0 == m_strCurSearchKey.size() ){
-		// —š—ğ‚ÌŒŸõƒL[‚ÉXV
-		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// ŒŸõ•¶š—ñ
-		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// ŒŸõ^’uŠ·  ƒIƒvƒVƒ‡ƒ“
+		// å±¥æ­´ã®æ¤œç´¢ã‚­ãƒ¼ã«æ›´æ–°
+		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// æ¤œç´¢æ–‡å­—åˆ—
+		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// æ¤œç´¢ï¼ç½®æ›  ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		bChangeState = true;
 	}else if( m_bCurSearchUpdate ){
@@ -403,9 +403,9 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	}
 	if( ! m_bCurSrchKeyMark ){
 		m_bCurSrchKeyMark = true;
-		// ŒŸõ•¶š—ñ‚Ìƒ}[ƒN‚¾‚¯İ’è
+		// æ¤œç´¢æ–‡å­—åˆ—ã®ãƒãƒ¼ã‚¯ã ã‘è¨­å®š
 		if( bRedrawIfChanged ){
-			Redraw(); // ©ViewÄ•`‰æ
+			Redraw(); // è‡ªViewå†æç”»
 		}
 	}
 
@@ -416,14 +416,14 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 
 
 /*!
-	ƒJ[ƒ\ƒ‹s‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚·‚é
+	ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹
 
-	@date 2007.10.08 ryoji V‹KiCommand_COPY()‚©‚çˆ—”²‚«o‚µj
+	@date 2007.10.08 ryoji æ–°è¦ï¼ˆCommand_COPY()ã‹ã‚‰å‡¦ç†æŠœãå‡ºã—ï¼‰
 */
 void CEditView::CopyCurLine(
-	bool			bAddCRLFWhenCopy,		//!< [in] Ü‚è•Ô‚µˆÊ’u‚É‰üsƒR[ƒh‚ğ‘}“ü‚·‚é‚©H
-	EEolType		neweol,					//!< [in] ƒRƒs[‚·‚é‚Æ‚«‚ÌEOLB
-	bool			bEnableLineModePaste	//!< [in] ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ğ‰Â”\‚É‚·‚é
+	bool			bAddCRLFWhenCopy,		//!< [in] æŠ˜ã‚Šè¿”ã—ä½ç½®ã«æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æŒ¿å…¥ã™ã‚‹ã‹ï¼Ÿ
+	EEolType		neweol,					//!< [in] ã‚³ãƒ”ãƒ¼ã™ã‚‹ã¨ãã®EOLã€‚
+	bool			bEnableLineModePaste	//!< [in] ãƒ©ã‚¤ãƒ³ãƒ¢ãƒ¼ãƒ‰è²¼ã‚Šä»˜ã‘ã‚’å¯èƒ½ã«ã™ã‚‹
 )
 {
 	if( GetSelectionInfo().IsTextSelected() ){
@@ -435,7 +435,7 @@ void CEditView::CopyCurLine(
 		return;
 	}
 
-	/* ƒNƒŠƒbƒvƒ{[ƒh‚É“ü‚ê‚é‚×‚«ƒeƒLƒXƒgƒf[ƒ^‚ğAcmemBuf‚ÉŠi”[‚·‚é */
+	/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«å…¥ã‚Œã‚‹ã¹ããƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’ã€cmemBufã«æ ¼ç´ã™ã‚‹ */
 	CNativeW cmemBuf;
 	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
 	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
@@ -443,14 +443,14 @@ void CEditView::CopyCurLine(
 			( neweol == EOL_UNKNOWN ) ?
 				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
 		);
-	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy‘Î‰ˆ—’Ç‰Á
+	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopyå¯¾å¿œå‡¦ç†è¿½åŠ 
 		cmemBuf.AppendString(
 			( neweol == EOL_UNKNOWN ) ?
 				WCODE::CRLF : CEol(neweol).GetValue2()
 		);
 	}
 
-	/* ƒNƒŠƒbƒvƒ{[ƒh‚Éƒf[ƒ^cmemBuf‚Ì“à—e‚ğİ’è */
+	/* ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ãƒ‡ãƒ¼ã‚¿cmemBufã®å†…å®¹ã‚’è¨­å®š */
 	BOOL bSetResult = MySetClipboardData(
 		cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),

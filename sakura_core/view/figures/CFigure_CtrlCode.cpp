@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_CtrlCode.h"
 #include "types/CTypeSupport.h"
@@ -9,8 +9,8 @@
 
 bool CFigure_CtrlCode::Match(const wchar_t* pText, int nTextLen) const
 {
-	//“––Ê‚ÍASCII§Œä•¶šiC0 Controls, IsHankaku()‚Å”¼Špˆµ‚¢j‚¾‚¯‚ğ§Œä•¶š•\¦‚É‚·‚é
-	//‚»‚¤‚µ‚È‚¢‚Æ IsHankaku(0x0600)==false ‚È‚Ì‚É iswcntrl(0x0600)!=0 ‚Ì‚æ‚¤‚ÈƒP[ƒX‚Å•\¦Œ…‚ª‚¸‚ê‚é
+	//å½“é¢ã¯ASCIIåˆ¶å¾¡æ–‡å­—ï¼ˆC0 Controls, IsHankaku()ã§åŠè§’æ‰±ã„ï¼‰ã ã‘ã‚’åˆ¶å¾¡æ–‡å­—è¡¨ç¤ºã«ã™ã‚‹
+	//ãã†ã—ãªã„ã¨ IsHankaku(0x0600)==false ãªã®ã« iswcntrl(0x0600)!=0 ã®ã‚ˆã†ãªã‚±ãƒ¼ã‚¹ã§è¡¨ç¤ºæ¡ãŒãšã‚Œã‚‹
 	//U+0600: ARABIC NUMBER SIGN
 	if(WCODE::IsControlCode(pText[0])){
 		return true;
@@ -21,13 +21,13 @@ bool CFigure_CtrlCode::Match(const wchar_t* pText, int nTextLen) const
 bool CFigure_CtrlCode::DrawImp(SColorStrategyInfo* pInfo)
 {
 	bool bTrans = DrawImp_StyleSelect(pInfo);
-	DispPos sPos(*pInfo->m_pDispPos);	// Œ»İˆÊ’u‚ğŠo‚¦‚Ä‚¨‚­
+	DispPos sPos(*pInfo->m_pDispPos);	// ç¾åœ¨ä½ç½®ã‚’è¦šãˆã¦ãŠã
 	int width = pInfo->m_pcView->GetTextMetrics().CalcTextWidth3(&pInfo->m_pLineOfLogic[pInfo->GetPosInLogic()], 1);
-	DispSpaceEx(pInfo->m_gr, pInfo->m_pDispPos,pInfo->m_pcView, bTrans, width);	// ‹ó”’•`‰æ
+	DispSpaceEx(pInfo->m_gr, pInfo->m_pDispPos,pInfo->m_pcView, bTrans, width);	// ç©ºç™½æç”»
 	DrawImp_StylePop(pInfo);
 	DrawImp_DrawUnderline(pInfo, sPos);
-	// 1•¶š‘O’ñ
-	pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(	// s––ˆÈŠO‚Í‚±‚±‚ÅƒXƒLƒƒƒ“ˆÊ’u‚ğ‚Pši‚ß‚é
+	// 1æ–‡å­—å‰æ
+	pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(	// è¡Œæœ«ä»¥å¤–ã¯ã“ã“ã§ã‚¹ã‚­ãƒ£ãƒ³ä½ç½®ã‚’ï¼‘å­—é€²ã‚ã‚‹
 		pInfo->m_pLineOfLogic,
 		pInfo->GetDocLine()->GetLengthWithoutEOL(),
 		pInfo->GetPosInLogic()
@@ -41,10 +41,10 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* 
 	dx[0] = width;
 
 	RECT rc;
-	//ƒNƒŠƒbƒsƒ“ƒO‹éŒ`‚ğŒvZB‰æ–ÊŠO‚È‚ç•`‰æ‚µ‚È‚¢
+	//ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°çŸ©å½¢ã‚’è¨ˆç®—ã€‚ç”»é¢å¤–ãªã‚‰æç”»ã—ãªã„
 	if(pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0])))
 	{
-		//•`‰æ
+		//æç”»
 		int fontNo = WCODE::GetFontNo(GetAlternateChar());
 		if( fontNo ){
 			SFONT sFont;

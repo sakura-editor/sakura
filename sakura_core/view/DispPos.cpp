@@ -1,12 +1,12 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "DispPos.h"
 #include "doc/layout/CLayout.h"
 
-//$$$‚‘¬‰»
+//$$$é«˜é€ŸåŒ–
 void DispPos::ForwardLayoutLineRef(int nOffsetLine)
 {
 	m_nLineRef += CLayoutInt(nOffsetLine);
-	//ƒLƒƒƒbƒVƒ…XV
+	//ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ›´æ–°
 	int n = nOffsetLine;
 	if(m_pcLayoutRef){
 		while(n>0 && m_pcLayoutRef){

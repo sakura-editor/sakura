@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Url.h"
 #include "parse/CWordParse.h"
@@ -17,8 +17,8 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 
 	int	nUrlLen;
 
-	if( _IsPosKeywordHead(cStr,nPos) /* URL‚ð•\Ž¦‚·‚é */
-	 && IsURL( cStr.GetPtr() + nPos, cStr.GetLength() - nPos, &nUrlLen )	/* Žw’èƒAƒhƒŒƒX‚ªURL‚Ìæ“ª‚È‚ç‚ÎTRUE‚Æ‚»‚Ì’·‚³‚ð•Ô‚· */
+	if( _IsPosKeywordHead(cStr,nPos) /* URLã‚’è¡¨ç¤ºã™ã‚‹ */
+	 && IsURL( cStr.GetPtr() + nPos, cStr.GetLength() - nPos, &nUrlLen )	/* æŒ‡å®šã‚¢ãƒ‰ãƒ¬ã‚¹ãŒURLã®å…ˆé ­ãªã‚‰ã°TRUEã¨ãã®é•·ã•ã‚’è¿”ã™ */
 	){
 		this->m_nCOMMENTEND = nPos + nUrlLen;
 		return true;

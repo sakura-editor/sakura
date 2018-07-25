@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -57,7 +57,7 @@ CFigureManager::~CFigureManager()
 	m_vFigures.clear();
 }
 
-//$$ ‚‘¬‰»‰Â”\
+//$$ é«˜é€ŸåŒ–å¯èƒ½
 CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
 {
 	int size = (int)m_vFiguresDisp.size();
@@ -72,7 +72,7 @@ CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
 	return *m_vFiguresDisp.back();
 }
 
-/*! İ’èXV
+/*! è¨­å®šæ›´æ–°
 */
 void CFigureManager::OnChangeSetting(void)
 {
@@ -82,7 +82,7 @@ void CFigureManager::OnChangeSetting(void)
 	int i;
 	for(i = 0; i < size; i++){
 		m_vFigures[i]->Update();
-		// F•ª‚¯•\¦‘ÎÛ‚Ì‚İ‚ğ“o˜^
+		// è‰²åˆ†ã‘è¡¨ç¤ºå¯¾è±¡ã®ã¿ã‚’ç™»éŒ²
 		if( m_vFigures[i]->Disp() ){
 			m_vFiguresDisp.push_back(m_vFigures[i]);
 		}

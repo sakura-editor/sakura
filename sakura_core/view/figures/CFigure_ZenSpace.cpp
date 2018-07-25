@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+Ôªø#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_ZenSpace.h"
 #include "types/CTypeSupport.h"
@@ -11,7 +11,7 @@ void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc );
 
 bool CFigure_ZenSpace::Match(const wchar_t* pText, int nTextLen) const
 {
-	if( pText[0] == L'Å@' ){
+	if( pText[0] == L'„ÄÄ' ){
 		return true;
 	}
 	return false;
@@ -19,26 +19,26 @@ bool CFigure_ZenSpace::Match(const wchar_t* pText, int nTextLen) const
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ï`âÊé¿ëï                            //
+//                         ÊèèÁîªÂÆüË£Ö                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! ëSäpÉXÉyÅ[ÉXï`âÊ
+//! ÂÖ®Ëßí„Çπ„Éö„Éº„ÇπÊèèÁîª
 void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 {
-	// 2010.09.21 PPópé¿ëïí«â¡
-	// ÉvÉçÉ|Å[ÉVÉáÉiÉãÇ≈ÇÕÅAëSäpSPÇ∆Å†ÇÃïùÇ™à·Ç§Ç±Ç∆Ç™Ç†ÇÈÅBà·Ç§èÍçáÇÕì∆é©Ç…ï`âÊ
+	// 2010.09.21 PPÁî®ÂÆüË£ÖËøΩÂä†
+	// „Éó„É≠„Éù„Éº„Ç∑„Éß„Éä„É´„Åß„ÅØ„ÄÅÂÖ®ËßíSP„Å®‚ñ°„ÅÆÂπÖ„ÅåÈÅï„ÅÜ„Åì„Å®„Åå„ÅÇ„Çã„ÄÇÈÅï„ÅÜÂ†¥Âêà„ÅØÁã¨Ëá™„Å´ÊèèÁîª
 	CTypeSupport cZenSpace(pcView, COLORIDX_ZENSPACE);
 
 	int dx[1];
-	dx[0] = pcView->GetTextMetrics().CalcTextWidth3(L"Å@", 1);
+	dx[0] = pcView->GetTextMetrics().CalcTextWidth3(L"„ÄÄ", 1);
 
 	RECT rc;
-	//ÉNÉäÉbÉsÉìÉOãÈå`ÇåvéZÅBâÊñ äOÇ»ÇÁï`âÊÇµÇ»Ç¢
+	//„ÇØ„É™„ÉÉ„Éî„É≥„Ç∞Áü©ÂΩ¢„ÇíË®àÁÆó„ÄÇÁîªÈù¢Â§ñ„Å™„ÇâÊèèÁîª„Åó„Å™„ÅÑ
 	if(pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0])))
 	{
-		int u25a1Dx = pcView->GetTextMetrics().CalcTextWidth3(L"Å†", 1);
+		int u25a1Dx = pcView->GetTextMetrics().CalcTextWidth3(L"‚ñ°", 1);
 		bool bDrawMySelf = dx[0] != u25a1Dx;
-		const wchar_t* pZenSp = (bDrawMySelf ? L"Å@" : L"Å†");
+		const wchar_t* pZenSp = (bDrawMySelf ? L"„ÄÄ" : L"‚ñ°");
 		int fontNo = WCODE::GetFontNo(*pZenSp);
 		if( fontNo ){
 			SFONT sFont;
@@ -47,7 +47,7 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			gr.PushMyFont(sFont);
 		}
 		int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
-		//ï`âÊ
+		//ÊèèÁîª
 		ExtTextOutW_AnyBuild(
 			gr,
 			pDispPos->GetDrawPos().x,
@@ -62,29 +62,29 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			gr.PopMyFont();
 		}
 		if( bDrawMySelf ){
-			gr.PushClipping(rc); // FIXME: ê≥ämÇ…ÇÕCombineRgn RGN_AND Ç™ïKóv
+			gr.PushClipping(rc); // FIXME: Ê≠£Á¢∫„Å´„ÅØCombineRgn RGN_AND „ÅåÂøÖË¶Å
 			
-			// ëSäpSPÇÃëÂÇ´Ç≥éwíË
+			// ÂÖ®ËßíSP„ÅÆÂ§ß„Åç„ÅïÊåáÂÆö
 			CMyRect rcZenSp;
-			// íçÅFÉxÅ[ÉXÉâÉCÉìñ≥éã
+			// Ê≥®Ôºö„Éô„Éº„Çπ„É©„Ç§„É≥ÁÑ°Ë¶ñ
 			rcZenSp.SetPos(pDispPos->GetDrawPos().x, pDispPos->GetDrawPos().y);
 			rcZenSp.SetSize(dx[0]- pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace,
 				pcView->GetTextMetrics().GetHankakuHeight());
 
-			// ï`âÊ
-			// ï∂éöêFÇ‚ëæéöÇ©Ç«Ç§Ç©Çåªç›ÇÃ DC Ç©ÇÁí≤Ç◊ÇÈ	// 2009.05.29 ryoji 
-			// ÅiåüçıÉ}ÉbÉ`ìôÇÃèÛãµÇ…è_ìÓÇ…ëŒâûÇ∑ÇÈÇΩÇﬂÅAÇ±Ç±ÇÕãLçÜÇÃêFéwíËÇ…ÇÕåàÇﬂë≈ÇøÇµÇ»Ç¢Åj
+			// ÊèèÁîª
+			// ÊñáÂ≠óËâ≤„ÇÑÂ§™Â≠ó„Åã„Å©„ÅÜ„Åã„ÇíÁèæÂú®„ÅÆ DC „Åã„ÇâË™ø„Åπ„Çã	// 2009.05.29 ryoji 
+			// ÔºàÊ§úÁ¥¢„Éû„ÉÉ„ÉÅÁ≠â„ÅÆÁä∂Ê≥Å„Å´ÊüîËªü„Å´ÂØæÂøú„Åô„Çã„Åü„ÇÅ„ÄÅ„Åì„Åì„ÅØË®òÂè∑„ÅÆËâ≤ÊåáÂÆö„Å´„ÅØÊ±∫„ÇÅÊâì„Å°„Åó„Å™„ÅÑÔºâ
 			Draw_ZenSpace(gr, rcZenSp);
 
-			// ÉäÅ[ÉWÉáÉìîjä¸
+			// „É™„Éº„Ç∏„Éß„É≥Á†¥Ê£Ñ
 			gr.PopClipping();
 			
-			// To Here 2003.08.17 ryoji â¸çsï∂éöÇ™åáÇØÇ»Ç¢ÇÊÇ§Ç…
+			// To Here 2003.08.17 ryoji ÊîπË°åÊñáÂ≠ó„ÅåÊ¨†„Åë„Å™„ÅÑ„Çà„ÅÜ„Å´
 		}
 		
 	}
 
-	//à íuêiÇﬂÇÈ
+	//‰ΩçÁΩÆÈÄ≤„ÇÅ„Çã
 	pDispPos->ForwardDrawCol(CLayoutXInt(dx[0]));
 }
 
@@ -93,7 +93,7 @@ void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc )
 	TEXTMETRIC tm;
 	tm.tmAscent = 0;
 	::GetTextMetrics(gr, &tm);
-	// ê≥ï˚å`Ç…Ç∑ÇÈ
+	// Ê≠£ÊñπÂΩ¢„Å´„Åô„Çã
 	CMyRect rc2;
 	int minWidth = std::max<int>(1, std::min<int>(tm.tmAscent, std::min<int>(rc.Height(), rc.Width())) - 2);
 	minWidth -= (minWidth + 5) / 10;

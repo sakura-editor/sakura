@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -36,10 +36,10 @@ bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 
 	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
 
-	//³‹K•\Œ»ƒL[ƒ[ƒh
+	//æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 	if( pcView->m_cRegexKeyword->RegexIsKeyword( cStr, nPos, &nMatchLen, &nMatchColor )
 	){
-		this->m_nCOMMENTEND = nPos + nMatchLen;  /* ƒL[ƒ[ƒh•¶Žš—ñ‚ÌI’[‚ðƒZƒbƒg‚·‚é */
+		this->m_nCOMMENTEND = nPos + nMatchLen;  /* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ–‡å­—åˆ—ã®çµ‚ç«¯ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ */
 		this->m_nCOMMENTMODE = ToColorIndexType_RegularExpression(nMatchColor);
 		return true;
 	}

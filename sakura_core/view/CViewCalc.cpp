@@ -1,11 +1,11 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CViewCalc.h"
 #include "mem/CMemoryIterator.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"
 
-//ŠO•”ˆË‘¶
+//å¤–éƒ¨ä¾å­˜
 CLayoutInt CViewCalc::GetTabSpace() const
 {
 	return m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
@@ -21,9 +21,9 @@ CPixelXInt CViewCalc::GetCharSpacing() const
 	return m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetCharSpacing();
 }
 
-/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver1
+/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver1
 	
-	@@@ 2002.09.28 YAZAKI CDocLine”Å
+	@@@ 2002.09.28 YAZAKI CDocLineç‰ˆ
 */
 CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nColumn ) const
 {
@@ -41,9 +41,9 @@ CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nC
 }
 
 
-/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver1
+/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver1
 	
-	@@@ 2002.09.28 YAZAKI CLayout‚ª•K—v‚É‚È‚è‚Ü‚µ‚½B
+	@@@ 2002.09.28 YAZAKI CLayoutãŒå¿…è¦ã«ãªã‚Šã¾ã—ãŸã€‚
 */
 CLogicInt CViewCalc::LineColumnToIndex( const CLayout* pcLayout, CLayoutInt nColumn ) const
 {
@@ -62,11 +62,11 @@ CLogicInt CViewCalc::LineColumnToIndex( const CLayout* pcLayout, CLayoutInt nCol
 
 
 
-/* w’è‚³‚ê‚½Œ…‚É‘Î‰‚·‚és‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚ğ’²‚×‚é Ver0 */
-/* w’è‚³‚ê‚½Œ…‚æ‚èAs‚ª’Z‚¢ê‡‚ÍpnLineAllColLen‚És‘S‘Ì‚Ì•\¦Œ…”‚ğ•Ô‚· */
-/* ‚»‚êˆÈŠO‚Ìê‡‚ÍpnLineAllColLen‚É‚O‚ğƒZƒbƒg‚·‚é
+/* æŒ‡å®šã•ã‚ŒãŸæ¡ã«å¯¾å¿œã™ã‚‹è¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã‚’èª¿ã¹ã‚‹ Ver0 */
+/* æŒ‡å®šã•ã‚ŒãŸæ¡ã‚ˆã‚Šã€è¡ŒãŒçŸ­ã„å ´åˆã¯pnLineAllColLenã«è¡Œå…¨ä½“ã®è¡¨ç¤ºæ¡æ•°ã‚’è¿”ã™ */
+/* ãã‚Œä»¥å¤–ã®å ´åˆã¯pnLineAllColLenã«ï¼ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 	
-	@@@ 2002.09.28 YAZAKI CLayout‚ª•K—v‚É‚È‚è‚Ü‚µ‚½B
+	@@@ 2002.09.28 YAZAKI CLayoutãŒå¿…è¦ã«ãªã‚Šã¾ã—ãŸã€‚
 */
 CLogicInt CViewCalc::LineColumnToIndex2( const CLayout* pcLayout, CLayoutInt nColumn, CLayoutInt* pnLineAllColLen ) const
 {
@@ -95,13 +95,13 @@ CLogicInt CViewCalc::LineColumnToIndex2( const CLayout* pcLayout, CLayoutInt nCo
 
 
 /*
-||	w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é
+||	æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹
 ||
-||	@@@ 2002.09.28 YAZAKI CLayout‚ª•K—v‚É‚È‚è‚Ü‚µ‚½B
+||	@@@ 2002.09.28 YAZAKI CLayoutãŒå¿…è¦ã«ãªã‚Šã¾ã—ãŸã€‚
 */
 CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nIndex ) const
 {
-	//	ˆÈ‰ºAiterator”Å
+	//	ä»¥ä¸‹ã€iteratorç‰ˆ
 	CLayoutInt nPosX2 = CLayoutInt(0);
 	CMemoryIterator it = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while( !it.end() ){
@@ -117,9 +117,9 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nInd
 
 
 /*
-||	w’è‚³‚ê‚½s‚Ìƒf[ƒ^“à‚ÌˆÊ’u‚É‘Î‰‚·‚éŒ…‚ÌˆÊ’u‚ğ’²‚×‚é
+||	æŒ‡å®šã•ã‚ŒãŸè¡Œã®ãƒ‡ãƒ¼ã‚¿å†…ã®ä½ç½®ã«å¯¾å¿œã™ã‚‹æ¡ã®ä½ç½®ã‚’èª¿ã¹ã‚‹
 ||
-||	@@@ 2002.09.28 YAZAKI CDocLine”Å
+||	@@@ 2002.09.28 YAZAKI CDocLineç‰ˆ
 */
 CLayoutInt CViewCalc::LineIndexToColumn( const CDocLine* pcDocLine, CLogicInt nIndex ) const
 {

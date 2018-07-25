@@ -1,9 +1,9 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Quote.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒNƒH[ƒe[ƒVƒ‡ƒ“                        //
+//                     ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CLayoutColorQuoteInfo : public CLayoutColorInfo{
 public:
@@ -69,7 +69,7 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 	return NULL;
 }
 
-// nPos "‚ÌˆÊ’u
+// nPos "ã®ä½ç½®
 //staic
 bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 {
@@ -113,7 +113,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 		m_nCOMMENTEND = -1;
 		int nStringType = m_pTypeData->m_nStringType;
 		bool bPreString = true;
-		/* ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ÌI’[‚ª‚ ‚é‚© */
+		/* ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã®çµ‚ç«¯ãŒã‚ã‚‹ã‹ */
 		switch( nStringType ){
 		case STRING_LITERAL_CPP:
 			if( IsCppRawString(cStr, nPos) ){
@@ -168,12 +168,12 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 			m_nColorTypeIndex = 0;
 		}
 
-		// u•¶š—ñ‚Ís“à‚Ì‚İv(C++ Raw StringAPython‚Ìlong stringA@""‚Í“Á•Ê)
+		// ã€Œæ–‡å­—åˆ—ã¯è¡Œå†…ã®ã¿ã€(C++ Raw Stringã€Pythonã®long stringã€@""ã¯ç‰¹åˆ¥)
 		if( m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd
 				&& m_nCOMMENTEND == cStr.GetLength() + 1 ){
-			// I—¹•¶š—ñ‚ª‚È‚¢ê‡‚Ís––‚Ü‚Å‚ğF•ª‚¯
+			// çµ‚äº†æ–‡å­—åˆ—ãŒãªã„å ´åˆã¯è¡Œæœ«ã¾ã§ã‚’è‰²åˆ†ã‘
 			if( m_pTypeData->m_bStringEndLine ){
-				// ‰üsƒR[ƒh‚ğœ‚­
+				// æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’é™¤ã
 				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr.At(cStr.GetLength()-1), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					if( 1 < cStr.GetLength() && cStr.At(cStr.GetLength()-2) == WCODE::CR
 							&& cStr.At(cStr.GetLength()-1) == WCODE::LF ){
@@ -184,7 +184,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 				}
 				return true;
 			}
-			// I—¹•¶š—ñ‚ª‚È‚¢ê‡‚ÍF•ª‚¯‚µ‚È‚¢
+			// çµ‚äº†æ–‡å­—åˆ—ãŒãªã„å ´åˆã¯è‰²åˆ†ã‘ã—ãªã„
 			m_nCOMMENTEND = -1;
 			return false;
 		}
@@ -198,9 +198,9 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 {
 	if( -1 == m_nCOMMENTEND ){
-		// ‚±‚±‚É‚­‚é‚Ì‚Ís“ª‚Ì‚Í‚¸
+		// ã“ã“ã«ãã‚‹ã®ã¯è¡Œé ­ã®ã¯ãš
 		assert_warning( 0 == nPos );
-		// ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ‚ÌI’[‚ª‚ ‚é‚©
+		// ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—ã®çµ‚ç«¯ãŒã‚ã‚‹ã‹
 		switch( m_nColorTypeIndex ){
 		case 0:
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, m_nEscapeType );
@@ -215,7 +215,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 			m_nCOMMENTEND = Match_QuoteStr( m_szQuote, 3, nPos, cStr, true );
 			break;
 		}
-		// -1‚ÅEndColor‚ªŒÄ‚Ño‚³‚ê‚é‚Ì‚Ís‚ğ’´‚¦‚Ä‚«‚½‚©‚ç‚È‚Ì‚Ås“àƒ`ƒFƒbƒN‚Í•s—v
+		// -1ã§EndColorãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã®ã¯è¡Œã‚’è¶…ãˆã¦ããŸã‹ã‚‰ãªã®ã§è¡Œå†…ãƒã‚§ãƒƒã‚¯ã¯ä¸è¦
 	}
 	else if( nPos == m_nCOMMENTEND ){
 		return true;
@@ -231,7 +231,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i ));
 		if( escapeType == STRING_LITERAL_CPP ){
-			// ƒGƒXƒP[ƒv \"
+			// ã‚¨ã‚¹ã‚±ãƒ¼ãƒ— \"
 			if( 1 == nCharChars && cLineStr.At(i) == L'\\' ){
 				++i;
 				if( i < cLineStr.GetLength() && WCODE::IsLineDelimiter(cLineStr.At(i), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
@@ -244,7 +244,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 				return i + 1;
 			}
 		}else if( escapeType == STRING_LITERAL_PLSQL ){
-			// ƒGƒXƒP[ƒv ""
+			// ã‚¨ã‚¹ã‚±ãƒ¼ãƒ— ""
 			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
 				if( i + 1 < cLineStr.GetLength() && cLineStr.At(i + 1) == wcQuote ){
 					++i;
@@ -253,7 +253,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 				}
 			}
 		}else{
-			// ƒGƒXƒP[ƒv‚È‚µ
+			// ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ãªã—
 			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
 				return i + 1;
 			}
@@ -262,7 +262,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 			++i;
 		}
 	}
-	return cLineStr.GetLength() + 1; // I’[‚È‚µ‚ÍLength + 1
+	return cLineStr.GetLength() + 1; // çµ‚ç«¯ãªã—ã¯Length + 1
 }
 
 int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape )

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2011, Moca
 
 	This software is provided 'as-is', without any express or implied
@@ -64,7 +64,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	// ƒqƒAƒhƒLƒ…ƒƒ“ƒg
+	// ãƒ’ã‚¢ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆ
 	// <<<HEREDOC_ID
 	// ...
 	// HEREDOC_ID

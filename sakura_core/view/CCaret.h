@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -41,12 +41,12 @@ public:
 		m_nLockCounter = 0;
 		m_nUnderLineLockCounter = 0;
 	}
-	// •\¦”ñ•\¦‚ğØ‚è‘Ö‚¦‚ç‚ê‚È‚¢‚æ‚¤‚É‚·‚é
+	// è¡¨ç¤ºéè¡¨ç¤ºã‚’åˆ‡ã‚Šæ›¿ãˆã‚‰ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹
 	void Lock()
 	{
 		m_nLockCounter++;
 	}
-	// •\¦”ñ•\¦‚ğØ‚è‘Ö‚¦‚ç‚ê‚é‚æ‚¤‚É‚·‚é
+	// è¡¨ç¤ºéè¡¨ç¤ºã‚’åˆ‡ã‚Šæ›¿ãˆã‚‰ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹
 	void UnLock()
 	{
 		m_nLockCounter--;
@@ -58,7 +58,7 @@ public:
 	{
 		m_nUnderLineLockCounter++;
 	}
-	// •\¦”ñ•\¦‚ğØ‚è‘Ö‚¦‚ç‚ê‚é‚æ‚¤‚É‚·‚é
+	// è¡¨ç¤ºéè¡¨ç¤ºã‚’åˆ‡ã‚Šæ›¿ãˆã‚‰ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹
 	void UnderLineUnLock()
 	{
 		m_nUnderLineLockCounter--;
@@ -66,14 +66,14 @@ public:
 			m_nUnderLineLockCounter = 0;
 		}
 	}
-	void CaretUnderLineON( bool, bool );	// ƒJ[ƒ\ƒ‹sƒAƒ“ƒ_[ƒ‰ƒCƒ“‚ÌON
-	void CaretUnderLineOFF( bool, bool = true, bool = false );	// ƒJ[ƒ\ƒ‹sƒAƒ“ƒ_[ƒ‰ƒCƒ“‚ÌOFF
+	void CaretUnderLineON( bool, bool );	// ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ã®ON
+	void CaretUnderLineOFF( bool, bool = true, bool = false );	// ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ã®OFF
 	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
 	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; }
 	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; }
 	inline bool GetVertLineDoNotOFF( )const { return m_bVertLineDoNotOFF; }
 private:
-	/* ƒƒbƒNƒJƒEƒ“ƒ^B0‚Ì‚Æ‚«‚ÍAƒƒbƒN‚³‚ê‚Ä‚¢‚È‚¢BUnLock‚ªŒÄ‚Î‚ê‚·‚¬‚Ä‚à•‰‚É‚Í‚È‚ç‚È‚¢ */
+	/* ãƒ­ãƒƒã‚¯ã‚«ã‚¦ãƒ³ã‚¿ã€‚0ã®ã¨ãã¯ã€ãƒ­ãƒƒã‚¯ã•ã‚Œã¦ã„ãªã„ã€‚UnLockãŒå‘¼ã°ã‚Œã™ãã¦ã‚‚è² ã«ã¯ãªã‚‰ãªã„ */
 	int m_nLockCounter;
 	int m_nUnderLineLockCounter;
 	CEditView* m_pcEditView;
@@ -89,27 +89,27 @@ public:
 	virtual ~CCaret();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ŠO•”ˆË‘¶                            //
+	//                         å¤–éƒ¨ä¾å­˜                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	int GetHankakuDx() const;
 	int GetHankakuDy() const;
 	int GetHankakuHeight() const;
 
-	//ƒhƒLƒ…ƒƒ“ƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‹‚ß‚é
+	//ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’æ±‚ã‚ã‚‹
 	const CEditDoc* GetDocument() const{ return m_pEditDoc; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         À‘••â•                            //
+	//                         å®Ÿè£…è£œåŠ©                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	POINT CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const;
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                   ‰Šú‰»EI—¹ˆ—‚È‚Ç                      //
+	//                   åˆæœŸåŒ–ãƒ»çµ‚äº†å‡¦ç†ãªã©                      //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! ƒLƒƒƒŒƒbƒg‚Ìì¬B2006.12.07 ryoji
+	//! ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ä½œæˆã€‚2006.12.07 ryoji
 	void CreateEditCaret(
 		COLORREF crCaret,
 		COLORREF crBack,
@@ -117,107 +117,107 @@ public:
 		int nHeight
 	);
 	
-	//! ƒLƒƒƒŒƒbƒg‚ğ”jŠü‚·‚éi“à•”“I‚É‚à”jŠüj
+	//! ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚’ç ´æ£„ã™ã‚‹ï¼ˆå†…éƒ¨çš„ã«ã‚‚ç ´æ£„ï¼‰
 	void DestroyCaret()
 	{
 		::DestroyCaret();
 		m_sizeCaret.cx = 0;
 	}
 
-	//! ƒRƒs[
+	//! ã‚³ãƒ”ãƒ¼
 	void CopyCaretStatus(CCaret* pDestCaret) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ˆÚ“®                              //
+	//                           ç§»å‹•                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//İ’è
-	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos, bool = false, CLayoutPoint* = NULL );		//!< ƒ}ƒEƒX“™‚É‚æ‚éÀ•Ww’è‚É‚æ‚éƒJ[ƒ\ƒ‹ˆÚ“®
-	CLayoutInt Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect );	//!< ƒJ[ƒ\ƒ‹ã‰ºˆÚ“®ˆ—
-	CLayoutInt MoveCursor(												//!< sŒ…w’è‚É‚æ‚éƒJ[ƒ\ƒ‹ˆÚ“®
-		CLayoutPoint	ptWk_CaretPos,									//!< [in] ˆÚ“®æƒŒƒCƒAƒEƒgˆÊ’u
-		bool			bScroll,										//!< [in] true: ‰æ–ÊˆÊ’u’²®—L‚è  false: ‰æ–ÊˆÊ’u’²®–³‚µ
-		int				nCaretMarginRate	= _CARETMARGINRATE,			//!< [in] cƒXƒNƒ[ƒ‹ŠJnˆÊ’u‚ğŒˆ‚ß‚é’l
-		bool			bUnderlineDoNotOFF	= false,					//!< [in] ƒAƒ“ƒ_[ƒ‰ƒCƒ“‚ğÁ‹‚µ‚È‚¢
-		bool			bVertLineDoNotOFF	= false						//!< [in] ƒJ[ƒ\ƒ‹ˆÊ’ucü‚ğÁ‹‚µ‚È‚¢
+	//è¨­å®š
+	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos, bool = false, CLayoutPoint* = NULL );		//!< ãƒã‚¦ã‚¹ç­‰ã«ã‚ˆã‚‹åº§æ¨™æŒ‡å®šã«ã‚ˆã‚‹ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•
+	CLayoutInt Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect );	//!< ã‚«ãƒ¼ã‚½ãƒ«ä¸Šä¸‹ç§»å‹•å‡¦ç†
+	CLayoutInt MoveCursor(												//!< è¡Œæ¡æŒ‡å®šã«ã‚ˆã‚‹ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•
+		CLayoutPoint	ptWk_CaretPos,									//!< [in] ç§»å‹•å…ˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½ç½®
+		bool			bScroll,										//!< [in] true: ç”»é¢ä½ç½®èª¿æ•´æœ‰ã‚Š  false: ç”»é¢ä½ç½®èª¿æ•´ç„¡ã—
+		int				nCaretMarginRate	= _CARETMARGINRATE,			//!< [in] ç¸¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«é–‹å§‹ä½ç½®ã‚’æ±ºã‚ã‚‹å€¤
+		bool			bUnderlineDoNotOFF	= false,					//!< [in] ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³ã‚’æ¶ˆå»ã—ãªã„
+		bool			bVertLineDoNotOFF	= false						//!< [in] ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ç¸¦ç·šã‚’æ¶ˆå»ã—ãªã„
 	);
 	CLayoutInt MoveCursorFastMode(
-		const CLogicPoint&	pptWk_CaretPosLogic							//!< [in] ˆÚ“®æƒƒWƒbƒNˆÊ’u
+		const CLogicPoint&	pptWk_CaretPosLogic							//!< [in] ç§»å‹•å…ˆãƒ­ã‚¸ãƒƒã‚¯ä½ç½®
 	);
-	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, bool = false, CLayoutPoint* = NULL, int = _CARETMARGINRATE, int = 0 );	/* sŒ…w’è‚É‚æ‚éƒJ[ƒ\ƒ‹ˆÚ“®iÀ•W’²®•t‚«j */
+	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, bool = false, CLayoutPoint* = NULL, int = _CARETMARGINRATE, int = 0 );	/* è¡Œæ¡æŒ‡å®šã«ã‚ˆã‚‹ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ï¼ˆåº§æ¨™èª¿æ•´ä»˜ãï¼‰ */
 
-	//$ İŒvv‘z“I‚É”÷–­
-	void SetCaretLayoutPos(const CLayoutPoint& pt){ m_ptCaretPos_Layout = pt; }	//!< ƒLƒƒƒŒƒbƒgˆÊ’u(ƒŒƒCƒAƒEƒg)‚ğİ’è
-	void SetCaretLogicPos(const CLogicPoint& pt){ m_ptCaretPos_Logic=pt; }		//!< ƒLƒƒƒŒƒbƒgˆÊ’u(ƒƒWƒbƒN)‚ğİ’è
-
-	
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ƒTƒCƒY•ÏX                           //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void SetCaretSize(int nW, int nH){ m_sizeCaret.Set(nW,nH); }						//!< ƒLƒƒƒŒƒbƒgƒTƒCƒY‚ğİ’è
+	//$ è¨­è¨ˆæ€æƒ³çš„ã«å¾®å¦™
+	void SetCaretLayoutPos(const CLayoutPoint& pt){ m_ptCaretPos_Layout = pt; }	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ)ã‚’è¨­å®š
+	void SetCaretLogicPos(const CLogicPoint& pt){ m_ptCaretPos_Logic=pt; }		//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®(ãƒ­ã‚¸ãƒƒã‚¯)ã‚’è¨­å®š
 
 	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ŒvZ                              //
+	//                        ã‚µã‚¤ã‚ºå¤‰æ›´                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//ŒvZ
-	BOOL GetAdjustCursorPos( CLayoutPoint* pptPosXY ); //!< ³‚µ‚¢ƒJ[ƒ\ƒ‹ˆÊ’u‚ğZo‚·‚é
+	void SetCaretSize(int nW, int nH){ m_sizeCaret.Set(nW,nH); }						//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚µã‚¤ã‚ºã‚’è¨­å®š
+
+	
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           è¨ˆç®—                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//è¨ˆç®—
+	BOOL GetAdjustCursorPos( CLayoutPoint* pptPosXY ); //!< æ­£ã—ã„ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ç®—å‡ºã™ã‚‹
 
 	void ClearCaretPosInfoCache();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           •\¦                              //
+	//                           è¡¨ç¤º                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//•`‰æH
-	void ShowEditCaret();    //!< ƒLƒƒƒŒƒbƒg‚Ì•\¦EXV
-	void ShowCaretPosInfo(); //!< ƒLƒƒƒŒƒbƒg‚ÌsŒ…ˆÊ’u‚ğ•\¦‚·‚é
+	//æç”»ï¼Ÿ
+	void ShowEditCaret();    //!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡¨ç¤ºãƒ»æ›´æ–°
+	void ShowCaretPosInfo(); //!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡Œæ¡ä½ç½®ã‚’è¡¨ç¤ºã™ã‚‹
 
-	//APIŒÄ‚Ño‚µ
+	//APIå‘¼ã³å‡ºã—
 	void ShowCaret_( HWND hwnd );
 	void HideCaret_( HWND hwnd );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           æ“¾                              //
+	//                           å–å¾—                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	CLayoutPoint GetCaretLayoutPos() const	{ return m_ptCaretPos_Layout; }	//!< ƒLƒƒƒŒƒbƒgˆÊ’u(ƒŒƒCƒAƒEƒg)‚ğæ“¾
-	CMySize GetCaretSize() const			{ return m_sizeCaret; }			//!< ƒLƒƒƒŒƒbƒgƒTƒCƒY‚ğæ“¾B¦³Šm‚É‚Í‚‚³‚Íˆá‚¤‚ç‚µ‚¢ (‚±‚Ì”¼•ª‚Ì‚±‚Æ‚à‚ ‚éH)
-	bool ExistCaretFocus() const			{ return m_sizeCaret.cx>0; }	//!< ƒLƒƒƒŒƒbƒg‚ÌƒtƒH[ƒJƒX‚ª‚ ‚é‚©B¦‰¡•’l‚Å”»’è‚µ‚Ä‚é‚ç‚µ‚¢B
-	CLogicPoint GetCaretLogicPos() const	{ return m_ptCaretPos_Logic; }	//!< ƒLƒƒƒŒƒbƒgˆÊ’u(ƒƒWƒbƒN)‚ğæ“¾
+	CLayoutPoint GetCaretLayoutPos() const	{ return m_ptCaretPos_Layout; }	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®(ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ)ã‚’å–å¾—
+	CMySize GetCaretSize() const			{ return m_sizeCaret; }			//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã‚µã‚¤ã‚ºã‚’å–å¾—ã€‚â€»æ­£ç¢ºã«ã¯é«˜ã•ã¯é•ã†ã‚‰ã—ã„ (ã“ã®åŠåˆ†ã®ã“ã¨ã‚‚ã‚ã‚‹ï¼Ÿ)
+	bool ExistCaretFocus() const			{ return m_sizeCaret.cx>0; }	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒã‚ã‚‹ã‹ã€‚â€»æ¨ªå¹…å€¤ã§åˆ¤å®šã—ã¦ã‚‹ã‚‰ã—ã„ã€‚
+	CLogicPoint GetCaretLogicPos() const	{ return m_ptCaretPos_Logic; }	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®(ãƒ­ã‚¸ãƒƒã‚¯)ã‚’å–å¾—
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  ’á•p“xƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+	//                  ä½é »åº¦ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	bool GetCaretShowFlag() const{ return m_bCaretShowFlag; }
 
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ƒƒ“ƒo•Ï”                           //
+	//                        ãƒ¡ãƒ³ãƒå¤‰æ•°                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//QÆ
+	//å‚ç…§
 	CEditView*				m_pEditView;
 	const CEditDoc*			m_pEditDoc;
 
-	//ƒLƒƒƒŒƒbƒgˆÊ’u
-	CLayoutPoint	m_ptCaretPos_Layout;	// ƒrƒ…[¶ã’[‚©‚ç‚ÌƒJ[ƒ\ƒ‹ˆÊ’uBƒŒƒCƒAƒEƒg’PˆÊB
-	CLogicPoint		m_ptCaretPos_Logic;		// ƒJ[ƒ\ƒ‹ˆÊ’uBƒƒWƒbƒN’PˆÊBƒf[ƒ^“à•¶š’PˆÊB
+	//ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
+	CLayoutPoint	m_ptCaretPos_Layout;	// ãƒ“ãƒ¥ãƒ¼å·¦ä¸Šç«¯ã‹ã‚‰ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã€‚ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ã€‚
+	CLogicPoint		m_ptCaretPos_Logic;		// ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã€‚ãƒ­ã‚¸ãƒƒã‚¯å˜ä½ã€‚ãƒ‡ãƒ¼ã‚¿å†…æ–‡å­—å˜ä½ã€‚
 
 public:
-	CLayoutInt		m_nCaretPosX_Prev;	// ’¼‘O‚ÌXÀ•W‹L‰¯—pBƒŒƒCƒAƒEƒg’PˆÊB‚±‚Ìƒ\[ƒX‚Ì‰º•”‚ÉÚ×à–¾‚ª‚ ‚è‚Ü‚·B
+	CLayoutInt		m_nCaretPosX_Prev;	// ç›´å‰ã®Xåº§æ¨™è¨˜æ†¶ç”¨ã€‚ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå˜ä½ã€‚ã“ã®ã‚½ãƒ¼ã‚¹ã®ä¸‹éƒ¨ã«è©³ç´°èª¬æ˜ãŒã‚ã‚Šã¾ã™ã€‚
 
-	//ƒLƒƒƒŒƒbƒgŒ©‚½–Ú
+	//ã‚­ãƒ£ãƒ¬ãƒƒãƒˆè¦‹ãŸç›®
 private:
-	CMySize			m_sizeCaret;		// ƒLƒƒƒŒƒbƒg‚ÌƒTƒCƒYBƒsƒNƒZƒ‹’PˆÊB
-	COLORREF		m_crCaret;			// ƒLƒƒƒŒƒbƒg‚ÌF				// 2006.12.07 ryoji
-	HBITMAP			m_hbmpCaret;		// ƒLƒƒƒŒƒbƒg‚Ìƒrƒbƒgƒ}ƒbƒv		// 2006.11.28 ryoji
+	CMySize			m_sizeCaret;		// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ã‚µã‚¤ã‚ºã€‚ãƒ”ã‚¯ã‚»ãƒ«å˜ä½ã€‚
+	COLORREF		m_crCaret;			// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è‰²				// 2006.12.07 ryoji
+	HBITMAP			m_hbmpCaret;		// ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—		// 2006.11.28 ryoji
 	bool			m_bCaretShowFlag;
 
-	//ƒAƒ“ƒ_[ƒ‰ƒCƒ“
+	//ã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³
 public:
 	mutable CCaretUnderLine m_cUnderLine;
 	
@@ -226,22 +226,22 @@ public:
 
 
 /*!	@brief CCaret::m_nCaretPosX_Prev
-	’¼‘O‚ÌXÀ•W‹L‰¯—p
+	ç›´å‰ã®Xåº§æ¨™è¨˜æ†¶ç”¨
 
-	ƒtƒŠ[ƒJ[ƒ\ƒ‹ƒ‚[ƒh‚Å‚È‚¢ê‡‚ÉƒJ[ƒ\ƒ‹‚ğã‰º‚ÉˆÚ“®‚³‚¹‚½ê‡
-	ƒJ[ƒ\ƒ‹ˆÊ’u‚æ‚è’Z‚¢s‚Å‚Ís––‚ÉƒJ[ƒ\ƒ‹‚ğˆÚ“®‚·‚é‚ªC
-	‚³‚ç‚ÉˆÚ“®‚ğ‘±‚¯‚½ê‡‚É’·‚¢s‚ÅˆÚ“®‹N“_‚ÌXˆÊ’u‚ğ•œŒ³‚Å‚«‚é‚æ‚¤‚É
-	‚·‚é‚½‚ß‚Ì•Ï”D
+	ãƒ•ãƒªãƒ¼ã‚«ãƒ¼ã‚½ãƒ«ãƒ¢ãƒ¼ãƒ‰ã§ãªã„å ´åˆã«ã‚«ãƒ¼ã‚½ãƒ«ã‚’ä¸Šä¸‹ã«ç§»å‹•ã•ã›ãŸå ´åˆ
+	ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚ˆã‚ŠçŸ­ã„è¡Œã§ã¯è¡Œæœ«ã«ã‚«ãƒ¼ã‚½ãƒ«ã‚’ç§»å‹•ã™ã‚‹ãŒï¼Œ
+	ã•ã‚‰ã«ç§»å‹•ã‚’ç¶šã‘ãŸå ´åˆã«é•·ã„è¡Œã§ç§»å‹•èµ·ç‚¹ã®Xä½ç½®ã‚’å¾©å…ƒã§ãã‚‹ã‚ˆã†ã«
+	ã™ã‚‹ãŸã‚ã®å¤‰æ•°ï¼
 	
-	@par g‚¢•û
-	“Ç‚İo‚µ‚ÍCEditView::Cursor_UPDOWN()‚Ì‚İ‚Ås‚¤D
-	ƒJ[ƒ\ƒ‹ã‰ºˆÚ“®ˆÈŠO‚ÅƒJ[ƒ\ƒ‹ˆÚ“®‚ğs‚Á‚½ê‡‚É‚Í
-	’¼‚¿‚Ém_nCaretPosX‚Ì’l‚ğİ’è‚·‚éD‚»‚¤‚µ‚È‚¢‚Æ
-	‚»‚Ì’¼Œã‚ÌƒJ[ƒ\ƒ‹ã‰ºˆÚ“®‚ÅˆÚ“®‘O‚ÌXÀ•W‚É–ß‚Á‚Ä‚µ‚Ü‚¤D
+	@par ä½¿ã„æ–¹
+	èª­ã¿å‡ºã—ã¯CEditView::Cursor_UPDOWN()ã®ã¿ã§è¡Œã†ï¼
+	ã‚«ãƒ¼ã‚½ãƒ«ä¸Šä¸‹ç§»å‹•ä»¥å¤–ã§ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ã‚’è¡Œã£ãŸå ´åˆã«ã¯
+	ç›´ã¡ã«m_nCaretPosXã®å€¤ã‚’è¨­å®šã™ã‚‹ï¼ãã†ã—ãªã„ã¨
+	ãã®ç›´å¾Œã®ã‚«ãƒ¼ã‚½ãƒ«ä¸Šä¸‹ç§»å‹•ã§ç§»å‹•å‰ã®Xåº§æ¨™ã«æˆ»ã£ã¦ã—ã¾ã†ï¼
 
-	ƒrƒ…[¶’[‚©‚ç‚ÌƒJ[ƒ\ƒ‹Œ…ˆÊ’u(‚OŠJn)
+	ãƒ“ãƒ¥ãƒ¼å·¦ç«¯ã‹ã‚‰ã®ã‚«ãƒ¼ã‚½ãƒ«æ¡ä½ç½®(ï¼é–‹å§‹)
 	
-	@date 2004.04.09 genta à–¾•¶’Ç‰Á
+	@date 2004.04.09 genta èª¬æ˜æ–‡è¿½åŠ 
 */
 
 #endif /* SAKURA_CCARET_EF835ACD_9DB2_4F5A_8513_35034F1894219_H_ */

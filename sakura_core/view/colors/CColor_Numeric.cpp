@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Numeric.h"
 #include "parse/CWordParse.h"
@@ -6,10 +6,10 @@
 #include "doc/layout/CLayout.h"
 #include "types/CTypeSupport.h"
 
-static int IsNumber( const CStringRef& cStr, int offset );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK
+static int IsNumber( const CStringRef& cStr, int offset );/* æ•°å€¤ãªã‚‰ãã®é•·ã•ã‚’è¿”ã™ */	//@@@ 2001.02.17 by MIK
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ”¼Šp”’l                            //
+//                         åŠè§’æ•°å€¤                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
@@ -19,11 +19,11 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 	int	nnn;
 
 	if( _IsPosKeywordHead(cStr,nPos)
-		&& (nnn = IsNumber(cStr, nPos)) > 0 )		/* ”¼Šp”š‚ğ•\¦‚·‚é */
+		&& (nnn = IsNumber(cStr, nPos)) > 0 )		/* åŠè§’æ•°å­—ã‚’è¡¨ç¤ºã™ã‚‹ */
 	{
-		/* ƒL[ƒ[ƒh•¶š—ñ‚ÌI’[‚ğƒZƒbƒg‚·‚é */
+		/* ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ–‡å­—åˆ—ã®çµ‚ç«¯ã‚’ã‚»ãƒƒãƒˆã™ã‚‹ */
 		this->m_nCOMMENTEND = nPos + nnn;
-		return true;	/* ”¼Šp”’l‚Å‚ ‚é */ // 2002/03/13 novice
+		return true;	/* åŠè§’æ•°å€¤ã§ã‚ã‚‹ */ // 2002/03/13 novice
 	}
 	return false;
 }
@@ -39,33 +39,33 @@ bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         À‘••â•                            //
+//                         å®Ÿè£…è£œåŠ©                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //@@@ 2001.11.07 Start by MIK
 /*
- * ”’l‚È‚ç’·‚³‚ğ•Ô‚·B
- * 10i”‚Ì®”‚Ü‚½‚Í¬”B16i”(³”)B
- * •¶š—ñ   ”’l(F•ª‚¯)
+ * æ•°å€¤ãªã‚‰é•·ã•ã‚’è¿”ã™ã€‚
+ * 10é€²æ•°ã®æ•´æ•°ã¾ãŸã¯å°æ•°ã€‚16é€²æ•°(æ­£æ•°)ã€‚
+ * æ–‡å­—åˆ—   æ•°å€¤(è‰²åˆ†ã‘)
  * ---------------------
  * 123      123
  * 0123     0123
  * 0xfedc   0xfedc
  * -123     -123
- * &H9a     &H9a     (‚½‚¾‚µƒ\[ƒX’†‚Ì#if‚ğ—LŒø‚É‚µ‚½‚Æ‚«)
+ * &H9a     &H9a     (ãŸã ã—ã‚½ãƒ¼ã‚¹ä¸­ã®#ifã‚’æœ‰åŠ¹ã«ã—ãŸã¨ã)
  * -0x89a   0x89a
  * 0.5      0.5
- * 0.56.1   0.56 , 1 (‚½‚¾‚µƒ\[ƒX’†‚Ì#if‚ğ—LŒø‚É‚µ‚½‚ç"0.56.1"‚É‚È‚é)
- * .5       5        (‚½‚¾‚µƒ\[ƒX’†‚Ì#if‚ğ—LŒø‚É‚µ‚½‚ç".5"‚É‚È‚é)
- * -.5      5        (‚½‚¾‚µƒ\[ƒX’†‚Ì#if‚ğ—LŒø‚É‚µ‚½‚ç"-.5"‚É‚È‚é)
+ * 0.56.1   0.56 , 1 (ãŸã ã—ã‚½ãƒ¼ã‚¹ä¸­ã®#ifã‚’æœ‰åŠ¹ã«ã—ãŸã‚‰"0.56.1"ã«ãªã‚‹)
+ * .5       5        (ãŸã ã—ã‚½ãƒ¼ã‚¹ä¸­ã®#ifã‚’æœ‰åŠ¹ã«ã—ãŸã‚‰".5"ã«ãªã‚‹)
+ * -.5      5        (ãŸã ã—ã‚½ãƒ¼ã‚¹ä¸­ã®#ifã‚’æœ‰åŠ¹ã«ã—ãŸã‚‰"-.5"ã«ãªã‚‹)
  * 123.     123
  * 0x567.8  0x567 , 8
  */
 /*
- * ”¼Šp”’l
+ * åŠè§’æ•°å€¤
  *   1, 1.2, 1.2.3, .1, 0xabc, 1L, 1F, 1.2f, 0x1L, 0x2F, -.1, -1, 1e2, 1.2e+3, 1.2e-3, -1e0
- *   10i”, 16i”, LFÚ”öŒê, •‚“®¬”“_”, •‰•„†
- *   IPƒAƒhƒŒƒX‚Ìƒhƒbƒg˜AŒ‹(–{“–‚Í”’l‚¶‚á‚È‚¢‚ñ‚¾‚æ‚Ë)
+ *   10é€²æ•°, 16é€²æ•°, LFæ¥å°¾èª, æµ®å‹•å°æ•°ç‚¹æ•°, è² ç¬¦å·
+ *   IPã‚¢ãƒ‰ãƒ¬ã‚¹ã®ãƒ‰ãƒƒãƒˆé€£çµ(æœ¬å½“ã¯æ•°å€¤ã˜ã‚ƒãªã„ã‚“ã ã‚ˆã­)
  */
 static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*, int length*/)
 {
@@ -78,10 +78,10 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	p = cStr.GetPtr() + offset;
 	q = cStr.GetPtr() + cStr.GetLength();
 
-	if( *p == L'0' )  /* 10i”,C‚Ì16i” */
+	if( *p == L'0' )  /* 10é€²æ•°,Cã®16é€²æ•° */
 	{
 		p++; i++;
-		if( ( p < q ) && ( *p == L'x' ) )  /* C‚Ì16i” */
+		if( ( p < q ) && ( *p == L'x' ) )  /* Cã®16é€²æ•° */
 		{
 			p++; i++;
 			while( p < q )
@@ -97,10 +97,10 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 					break;
 				}
 			}
-			/* "0x" ‚È‚ç "0" ‚¾‚¯‚ª”’l */
+			/* "0x" ãªã‚‰ "0" ã ã‘ãŒæ•°å€¤ */
 			if( i == 2 ) return 1;
 			
-			/* Ú”öŒê */
+			/* æ¥å°¾èª */
 			if( p < q )
 			{
 				if( *p == L'L' || *p == L'l' || *p == L'F' || *p == L'f' )
@@ -119,16 +119,16 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				{
 					if( *p == L'.' )
 					{
-						if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+						if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 						d++;
 						if( d > 1 )
 						{
-							if( *(p - 1) == L'.' ) break;  /* "." ‚ª˜A‘±‚È‚ç’†’f */
+							if( *(p - 1) == L'.' ) break;  /* "." ãŒé€£ç¶šãªã‚‰ä¸­æ–­ */
 						}
 					}
 					else if( *p == L'E' || *p == L'e' )
 					{
-						if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+						if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 						if( p + 2 < q )
 						{
 							if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
@@ -172,8 +172,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				}
 				p++; i++;
 			}
-			if( *(p - 1)  == L'.' ) return i - 1;  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
-			/* Ú”öŒê */
+			if( *(p - 1)  == L'.' ) return i - 1;  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
+			/* æ¥å°¾èª */
 			if( p < q )
 			{
 				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
@@ -192,16 +192,16 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				{
 					if( *p == L'.' )
 					{
-						if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+						if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 						d++;
 						if( d > 1 )
 						{
-							if( *(p - 1) == L'.' ) break;  /* "." ‚ª˜A‘±‚È‚ç’†’f */
+							if( *(p - 1) == L'.' ) break;  /* "." ãŒé€£ç¶šãªã‚‰ä¸­æ–­ */
 						}
 					}
 					else if( *p == L'E' || *p == L'e' )
 					{
-						if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+						if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 						if( p + 2 < q )
 						{
 							if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
@@ -245,8 +245,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				}
 				p++; i++;
 			}
-			if( *(p - 1)  == L'.' ) return i - 1;  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
-			/* Ú”öŒê */
+			if( *(p - 1)  == L'.' ) return i - 1;  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
+			/* æ¥å°¾èª */
 			if( p < q )
 			{
 				if( *p == L'F' || *p == L'f' )
@@ -286,8 +286,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				}
 				p++; i++;
 			}
-			if( i == 2 ) return 1;  /* "0E", 0e" ‚È‚ç "0" ‚ª”’l */
-			/* Ú”öŒê */
+			if( i == 2 ) return 1;  /* "0E", 0e" ãªã‚‰ "0" ãŒæ•°å€¤ */
+			/* æ¥å°¾èª */
 			if( p < q )
 			{
 				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
@@ -300,8 +300,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		}
 		else
 		{
-			/* "0" ‚¾‚¯‚ª”’l */
-			/*if( *p == L'.' ) return i - 1;*/  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
+			/* "0" ã ã‘ãŒæ•°å€¤ */
+			/*if( *p == L'.' ) return i - 1;*/  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
 			if( p < q )
 			{
 				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
@@ -314,7 +314,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		}
 	}
 
-	else if( *p >= L'1' && *p <= L'9' )  /* 10i” */
+	else if( *p >= L'1' && *p <= L'9' )  /* 10é€²æ•° */
 	{
 		p++; i++;
 		while( p < q )
@@ -323,16 +323,16 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			{
 				if( *p == L'.' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." ‚ª˜A‘±‚È‚ç’†’f */
+						if( *(p - 1) == L'.' ) break;  /* "." ãŒé€£ç¶šãªã‚‰ä¸­æ–­ */
 					}
 				}
 				else if( *p == L'E' || *p == L'e' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					if( p + 2 < q )
 					{
 						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
@@ -376,8 +376,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			}
 			p++; i++;
 		}
-		if( *(p - 1) == L'.' ) return i - 1;  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
-		/* Ú”öŒê */
+		if( *(p - 1) == L'.' ) return i - 1;  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
+		/* æ¥å°¾èª */
 		if( p < q )
 		{
 			if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
@@ -389,7 +389,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		return i;
 	}
 
-	else if( *p == L'-' )  /* ƒ}ƒCƒiƒX */
+	else if( *p == L'-' )  /* ãƒã‚¤ãƒŠã‚¹ */
 	{
 		p++; i++;
 		while( p < q )
@@ -398,16 +398,16 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			{
 				if( *p == L'.' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." ‚ª˜A‘±‚È‚ç’†’f */
+						if( *(p - 1) == L'.' ) break;  /* "." ãŒé€£ç¶šãªã‚‰ä¸­æ–­ */
 					}
 				}
 				else if( *p == L'E' || *p == L'e' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					if( p + 2 < q )
 					{
 						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
@@ -451,10 +451,10 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			}
 			p++; i++;
 		}
-		/* "-", "-." ‚¾‚¯‚È‚ç”’l‚Å‚È‚¢ */
+		/* "-", "-." ã ã‘ãªã‚‰æ•°å€¤ã§ãªã„ */
 		//@@@ 2001.11.09 start MIK
 		//if( i <= 2 ) return 0;
-		//if( *(p - 1)  == L'.' ) return i - 1;  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
+		//if( *(p - 1)  == L'.' ) return i - 1;  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
 		if( i == 1 ) return 0;
 		if( *(p - 1) == L'.' )
 		{
@@ -462,7 +462,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			if( i == 1 ) return 0;
 			return i;
 		}  //@@@ 2001.11.09 end MIK
-		/* Ú”öŒê */
+		/* æ¥å°¾èª */
 		if( p < q )
 		{
 			if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
@@ -474,7 +474,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		return i;
 	}
 
-	else if( *p == L'.' )  /* ¬”“_ */
+	else if( *p == L'.' )  /* å°æ•°ç‚¹ */
 	{
 		d++;
 		p++; i++;
@@ -484,16 +484,16 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			{
 				if( *p == L'.' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." ‚ª˜A‘±‚È‚ç’†’f */
+						if( *(p - 1) == L'.' ) break;  /* "." ãŒé€£ç¶šãªã‚‰ä¸­æ–­ */
 					}
 				}
 				else if( *p == L'E' || *p == L'e' )
 				{
-					if( f == 1 ) break;  /* w”•”‚É“ü‚Á‚Ä‚¢‚é */
+					if( f == 1 ) break;  /* æŒ‡æ•°éƒ¨ã«å…¥ã£ã¦ã„ã‚‹ */
 					if( p + 2 < q )
 					{
 						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
@@ -537,10 +537,10 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			}
 			p++; i++;
 		}
-		/* "." ‚¾‚¯‚È‚ç”’l‚Å‚È‚¢ */
+		/* "." ã ã‘ãªã‚‰æ•°å€¤ã§ãªã„ */
 		if( i == 1 ) return 0;
-		if( *(p - 1)  == L'.' ) return i - 1;  /* ÅŒã‚ª "." ‚È‚çŠÜ‚ß‚È‚¢ */
-		/* Ú”öŒê */
+		if( *(p - 1)  == L'.' ) return i - 1;  /* æœ€å¾ŒãŒ "." ãªã‚‰å«ã‚ãªã„ */
+		/* æ¥å°¾èª */
 		if( p < q )
 		{
 			if( *p == L'F' || *p == L'f' )
@@ -552,7 +552,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	}
 
 #if 0
-	else if( *p == L'&' )  /* VB‚Ì16i” */
+	else if( *p == L'&' )  /* VBã®16é€²æ•° */
 	{
 		p++; i++;
 		if( ( p < q ) && ( *p == L'H' ) )
@@ -571,17 +571,17 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 					break;
 				}
 			}
-			/* "&H" ‚¾‚¯‚È‚ç”’l‚Å‚È‚¢ */
+			/* "&H" ã ã‘ãªã‚‰æ•°å€¤ã§ãªã„ */
 			if( i == 2 ) i = 0;
 			return i;
 		}
 
-		/* "&" ‚¾‚¯‚È‚ç”’l‚Å‚È‚¢ */
+		/* "&" ã ã‘ãªã‚‰æ•°å€¤ã§ãªã„ */
 		return 0;
 	}
 #endif
 
-	/* ”’l‚Å‚Í‚È‚¢ */
+	/* æ•°å€¤ã§ã¯ãªã„ */
 	return 0;
 }
 //@@@ 2001.11.07 End by MIK

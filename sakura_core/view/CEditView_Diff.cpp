@@ -1,9 +1,9 @@
-/*!	@file
-	@brief DIFF·•ª•\¦
+ï»¿/*!	@file
+	@brief DIFFå·®åˆ†è¡¨ç¤º
 
 	@author MIK
-	@date	2002/05/25 ExecCmd ‚ğQl‚ÉDIFFÀsŒ‹‰Ê‚ğæ‚è‚Şˆ—ì¬
- 	@date	2005/10/29	maru Diff·•ª•\¦ˆ—‚ğ•ª—£‚µAƒ_ƒCƒAƒƒO‚ ‚è”ÅEƒ_ƒCƒAƒƒO‚È‚µ”Å‚Ì—¼•û‚©‚çƒR[ƒ‹
+	@date	2002/05/25 ExecCmd ã‚’å‚è€ƒã«DIFFå®Ÿè¡Œçµæœã‚’å–ã‚Šè¾¼ã‚€å‡¦ç†ä½œæˆ
+ 	@date	2005/10/29	maru Diffå·®åˆ†è¡¨ç¤ºå‡¦ç†ã‚’åˆ†é›¢ã—ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚ã‚Šç‰ˆãƒ»ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãªã—ç‰ˆã®ä¸¡æ–¹ã‹ã‚‰ã‚³ãƒ¼ãƒ«
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -80,35 +80,35 @@ public:
 	bool IsActiveDebugWindow(){ return false; }
 
 public:
-	bool	bDiffInfo;	//DIFFî•ñ‚©
-	int		nDiffLen;		//DIFFî•ñ’·
-	char	szDiffData[100];	//DIFFî•ñ
+	bool	bDiffInfo;	//DIFFæƒ…å ±ã‹
+	int		nDiffLen;		//DIFFæƒ…å ±é•·
+	char	szDiffData[100];	//DIFFæƒ…å ±
 protected:
 	CEditView* m_view;
-	bool	bLineHead;	//s“ª‚©
-	bool	bFirst;	//æ“ª‚©H	//@@@ 2003.05.31 MIK
+	bool	bLineHead;	//è¡Œé ­ã‹
+	bool	bFirst;	//å…ˆé ­ã‹ï¼Ÿ	//@@@ 2003.05.31 MIK
 	int		nFlgFile12;
 };
 
 
-/*!	·•ª•\¦
-	@param	pszFile1	[in]	©ƒtƒ@ƒCƒ‹–¼
-	@param	pszFile2	[in]	‘Šèƒtƒ@ƒCƒ‹–¼
+/*!	å·®åˆ†è¡¨ç¤º
+	@param	pszFile1	[in]	è‡ªãƒ•ã‚¡ã‚¤ãƒ«å
+	@param	pszFile2	[in]	ç›¸æ‰‹ãƒ•ã‚¡ã‚¤ãƒ«å
     @param  nFlgOpt     [in]    0b000000000
-                                    ||||||+--- -i ignore-case         ‘å•¶š¬•¶š“¯ˆê‹
-                                    |||||+---- -w ignore-all-space    ‹ó”’–³‹
-                                    ||||+----- -b ignore-space-change ‹ó”’•ÏX–³‹
-                                    |||+------ -B ignore-blank-lines  ‹ós–³‹
-                                    ||+------- -t expand-tabs         TAB-SPACE•ÏŠ·
-                                    |+--------    (•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ª‹Œƒtƒ@ƒCƒ‹)
-                                    +---------    (DIFF·•ª‚ª‚È‚¢‚Æ‚«‚ÉƒƒbƒZ[ƒW•\¦)
-	@note	HandleCommand‚©‚ç‚ÌŒÄ‚Ño‚µ‘Î‰(ƒ_ƒCƒAƒƒO‚È‚µ”Å)
+                                    ||||||+--- -i ignore-case         å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–
+                                    |||||+---- -w ignore-all-space    ç©ºç™½ç„¡è¦–
+                                    ||||+----- -b ignore-space-change ç©ºç™½å¤‰æ›´ç„¡è¦–
+                                    |||+------ -B ignore-blank-lines  ç©ºè¡Œç„¡è¦–
+                                    ||+------- -t expand-tabs         TAB-SPACEå¤‰æ›
+                                    |+--------    (ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ—§ãƒ•ã‚¡ã‚¤ãƒ«)
+                                    +---------    (DIFFå·®åˆ†ãŒãªã„ã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º)
+	@note	HandleCommandã‹ã‚‰ã®å‘¼ã³å‡ºã—å¯¾å¿œ(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãªã—ç‰ˆ)
 	@author	MIK
 	@date	2002/05/25
-	@date	2005/10/28	‹ŒCommand_Diff‚©‚çŠÖ”–¼‚Ì•ÏXB
-						GetCommander().Command_Diff_Dialog‚¾‚¯‚Å‚È‚­VCommand_Diff
-						‚©‚ç‚àŒÄ‚Î‚ê‚éŠÖ”Bmaru
-	@date	2013/06/21	ExecCmd‚ğ—˜—p‚·‚é‚æ‚¤‚É
+	@date	2005/10/28	æ—§Command_Diffã‹ã‚‰é–¢æ•°åã®å¤‰æ›´ã€‚
+						GetCommander().Command_Diff_Dialogã ã‘ã§ãªãæ–°Command_Diff
+						ã‹ã‚‰ã‚‚å‘¼ã°ã‚Œã‚‹é–¢æ•°ã€‚maru
+	@date	2013/06/21	ExecCmdã‚’åˆ©ç”¨ã™ã‚‹ã‚ˆã†ã«
 */
 void CEditView::ViewDiffInfo( 
 	const TCHAR*	pszFile1,
@@ -117,18 +117,18 @@ void CEditView::ViewDiffInfo(
 	bool 			bUTF8
 )
 /*
-	bool	bFlgCase,		//‘å•¶š¬•¶š“¯ˆê‹
-	bool	bFlgBlank,		//‹ó”’–³‹
-	bool	bFlgWhite,		//‹ó”’•ÏX–³‹
-	bool	bFlgBLine,		//‹ós–³‹
-	bool	bFlgTabSpc,		//TAB-SPACE•ÏŠ·
-	bool	bFlgFile12,		//•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ª‹Œƒtƒ@ƒCƒ‹
+	bool	bFlgCase,		//å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–
+	bool	bFlgBlank,		//ç©ºç™½ç„¡è¦–
+	bool	bFlgWhite,		//ç©ºç™½å¤‰æ›´ç„¡è¦–
+	bool	bFlgBLine,		//ç©ºè¡Œç„¡è¦–
+	bool	bFlgTabSpc,		//TAB-SPACEå¤‰æ›
+	bool	bFlgFile12,		//ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ—§ãƒ•ã‚¡ã‚¤ãƒ«
 */
 {
 	CWaitCursor	cWaitCursor( this->GetHwnd() );
 	int		nFlgFile12 = 1;
 
-	/* exe‚Ì‚ ‚éƒtƒHƒ‹ƒ_ */
+	/* exeã®ã‚ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ */
 	TCHAR	szExeFolder[_MAX_PATH + 1];
 
 	TCHAR	cmdline[1024];
@@ -136,7 +136,7 @@ void CEditView::ViewDiffInfo(
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
 	//	From Here Dec. 28, 2002 MIK
-	//	diff.exe‚Ì‘¶İƒ`ƒFƒbƒN
+	//	diff.exeã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
 	if( !IsFileExists( cmdline, true ) )
 	{
 		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2) );
@@ -144,33 +144,33 @@ void CEditView::ViewDiffInfo(
 	}
 	cmdline[0] = _T('\0');
 
-	//¡‚ ‚éDIFF·•ª‚ğÁ‹‚·‚éB
+	//ä»Šã‚ã‚‹DIFFå·®åˆ†ã‚’æ¶ˆå»ã™ã‚‹ã€‚
 	if( CDiffManager::getInstance()->IsDiffUse() )
 		GetCommander().Command_Diff_Reset();
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
-	//ƒIƒvƒVƒ‡ƒ“‚ğì¬‚·‚é
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä½œæˆã™ã‚‹
 	TCHAR	szOption[16];	// "-cwbBt"
 	_tcscpy( szOption, _T("-") );
-	if( nFlgOpt & 0x0001 ) _tcscat( szOption, _T("i") );	//-i ignore-case         ‘å•¶š¬•¶š“¯ˆê‹
-	if( nFlgOpt & 0x0002 ) _tcscat( szOption, _T("w") );	//-w ignore-all-space    ‹ó”’–³‹
-	if( nFlgOpt & 0x0004 ) _tcscat( szOption, _T("b") );	//-b ignore-space-change ‹ó”’•ÏX–³‹
-	if( nFlgOpt & 0x0008 ) _tcscat( szOption, _T("B") );	//-B ignore-blank-lines  ‹ós–³‹
-	if( nFlgOpt & 0x0010 ) _tcscat( szOption, _T("t") );	//-t expand-tabs         TAB-SPACE•ÏŠ·
-	if( _tcscmp( szOption, _T("-") ) == 0 ) _tcscpy( szOption, _T("") );	//ƒIƒvƒVƒ‡ƒ“‚È‚µ
+	if( nFlgOpt & 0x0001 ) _tcscat( szOption, _T("i") );	//-i ignore-case         å¤§æ–‡å­—å°æ–‡å­—åŒä¸€è¦–
+	if( nFlgOpt & 0x0002 ) _tcscat( szOption, _T("w") );	//-w ignore-all-space    ç©ºç™½ç„¡è¦–
+	if( nFlgOpt & 0x0004 ) _tcscat( szOption, _T("b") );	//-b ignore-space-change ç©ºç™½å¤‰æ›´ç„¡è¦–
+	if( nFlgOpt & 0x0008 ) _tcscat( szOption, _T("B") );	//-B ignore-blank-lines  ç©ºè¡Œç„¡è¦–
+	if( nFlgOpt & 0x0010 ) _tcscat( szOption, _T("t") );	//-t expand-tabs         TAB-SPACEå¤‰æ›
+	if( _tcscmp( szOption, _T("-") ) == 0 ) _tcscpy( szOption, _T("") );	//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãªã—
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
 	//	To Here Dec. 28, 2002 MIK
 
 	{
-		//ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñì¬(MAX:1024)
+		//ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ä½œæˆ(MAX:1024)
 		auto_sprintf(
 			cmdline,
 			_T("\"%ts\\%ts\" %ts \"%ts\" \"%ts\""),
-			szExeFolder,	//sakura.exeƒpƒX
+			szExeFolder,	//sakura.exeãƒ‘ã‚¹
 			_T("diff.exe"),		//diff.exe
-			szOption,		//diffƒIƒvƒVƒ‡ƒ“
+			szOption,		//diffã‚ªãƒ—ã‚·ãƒ§ãƒ³
 			( nFlgFile12 ? pszFile2 : pszFile1 ),
 			( nFlgFile12 ? pszFile1 : pszFile2 )
 		);
@@ -180,10 +180,10 @@ void CEditView::ViewDiffInfo(
 		int nFlgOpt = 0;
 		nFlgOpt |= 0x01;  // GetStdOut
 		if( bUTF8 ){
-			nFlgOpt |= 0x80;  // UTF-8 out (SJIS‚Æˆá‚Á‚ÄASCIIƒZ[ƒt‚È‚Ì‚Å)
+			nFlgOpt |= 0x80;  // UTF-8 out (SJISã¨é•ã£ã¦ASCIIã‚»ãƒ¼ãƒ•ãªã®ã§)
 			nFlgOpt |= 0x100; // UTF-8 in
 		}
-		nFlgOpt |= 0x40;  // Šg’£î•ño—Í–³Œø
+		nFlgOpt |= 0x40;  // æ‹¡å¼µæƒ…å ±å‡ºåŠ›ç„¡åŠ¹
 		COutputAdapterDiff oa(this, nFlgFile12);
 		bool ret = ExecCmd( cmdline, nFlgOpt, NULL, &oa );
 
@@ -196,7 +196,7 @@ void CEditView::ViewDiffInfo(
 		}
 	}
 
-	//DIFF·•ª‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚Æ‚«‚ÉƒƒbƒZ[ƒW•\¦
+	//DIFFå·®åˆ†ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º
 	if( nFlgOpt & 0x0040 )
 	{
 		if( !CDiffManager::getInstance()->IsDiffUse() )
@@ -206,7 +206,7 @@ void CEditView::ViewDiffInfo(
 	}
 
 
-	//•ªŠ„‚µ‚½ƒrƒ…[‚àXV
+	//åˆ†å‰²ã—ãŸãƒ“ãƒ¥ãƒ¼ã‚‚æ›´æ–°
 	m_pcEditWnd->Views_Redraw();
 
 	return;
@@ -218,7 +218,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 		size = auto_strlen(pBuf);
 	}
 	//@@@ 2003.05.31 MIK
-	//	æ“ª‚ªBinary files‚È‚çƒoƒCƒiƒŠƒtƒ@ƒCƒ‹‚Ì‚½‚ßˆÓ–¡‚Ì‚ ‚é·•ª‚ªæ‚ç‚ê‚È‚©‚Á‚½
+	//	å…ˆé ­ãŒBinary filesãªã‚‰ãƒã‚¤ãƒŠãƒªãƒ•ã‚¡ã‚¤ãƒ«ã®ãŸã‚æ„å‘³ã®ã‚ã‚‹å·®åˆ†ãŒå–ã‚‰ã‚Œãªã‹ã£ãŸ
 	if( bFirst )
 	{
 		bFirst = false;
@@ -229,7 +229,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 		}
 	}
 
-	//“Ç‚İo‚µ‚½•¶š—ñ‚ğƒ`ƒFƒbƒN‚·‚é
+	//èª­ã¿å‡ºã—ãŸæ–‡å­—åˆ—ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 	int j;
 	for( j = 0; j < (int)size/*-1*/; j++ )
 	{
@@ -239,7 +239,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 			{
 				bLineHead = false;
 			
-				//DIFFî•ñ‚Ìn‚Ü‚è‚©H
+				//DIFFæƒ…å ±ã®å§‹ã¾ã‚Šã‹ï¼Ÿ
 				if( pBuf[j] >= '0' && pBuf[j] <= '9' )
 				{
 					bDiffInfo = true;
@@ -257,10 +257,10 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 		}
 		else
 		{
-			//s––‚É’B‚µ‚½‚©H
+			//è¡Œæœ«ã«é”ã—ãŸã‹ï¼Ÿ
 			if( pBuf[j] == '\n' || pBuf[j] == '\r' )
 			{
-				//DIFFî•ñ‚ª‚ ‚ê‚Î‰ğÍ‚·‚é
+				//DIFFæƒ…å ±ãŒã‚ã‚Œã°è§£æã™ã‚‹
 				if( bDiffInfo == true && nDiffLen > 0 )
 				{
 					szDiffData[nDiffLen] = '\0';
@@ -273,7 +273,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 			}
 			else if( bDiffInfo == true )
 			{
-				//DIFFî•ñ‚É’Ç‰Á‚·‚é
+				//DIFFæƒ…å ±ã«è¿½åŠ ã™ã‚‹
 				szDiffData[nDiffLen++] = pBuf[j];
 				if( nDiffLen >= 99 )
 				{
@@ -286,11 +286,11 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 	return true;
 }
 
-/*!	DIFF·•ªî•ñ‚ğ‰ğÍ‚µƒ}[ƒN“o˜^
-	@param	pszDiffInfo	[in]	Vƒtƒ@ƒCƒ‹–¼
-	@param	nFlgFile12	[in]	•ÒW’†ƒtƒ@ƒCƒ‹‚Í...
-									0	ƒtƒ@ƒCƒ‹1(‹Œƒtƒ@ƒCƒ‹)
-									1	ƒtƒ@ƒCƒ‹2(Vƒtƒ@ƒCƒ‹)
+/*!	DIFFå·®åˆ†æƒ…å ±ã‚’è§£æã—ãƒãƒ¼ã‚¯ç™»éŒ²
+	@param	pszDiffInfo	[in]	æ–°ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param	nFlgFile12	[in]	ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã¯...
+									0	ãƒ•ã‚¡ã‚¤ãƒ«1(æ—§ãƒ•ã‚¡ã‚¤ãƒ«)
+									1	ãƒ•ã‚¡ã‚¤ãƒ«2(æ–°ãƒ•ã‚¡ã‚¤ãƒ«)
 	@author	MIK
 	@date	2002/05/25
 */
@@ -300,35 +300,35 @@ void CEditView::AnalyzeDiffInfo(
 )
 {
 	/*
-	 * 99a99		‹Œƒtƒ@ƒCƒ‹99s‚ÌŸs‚ÉVƒtƒ@ƒCƒ‹99s‚ª’Ç‰Á‚³‚ê‚½B
-	 * 99a99,99		‹Œƒtƒ@ƒCƒ‹99s‚ÌŸs‚ÉVƒtƒ@ƒCƒ‹99`99s‚ª’Ç‰Á‚³‚ê‚½B
-	 * 99c99		‹Œƒtƒ@ƒCƒ‹99s‚ªVƒtƒ@ƒCƒ‹99s‚É•ÏX‚³‚ê‚½B
-	 * 99,99c99,99	‹Œƒtƒ@ƒCƒ‹99`99s‚ªVƒtƒ@ƒCƒ‹99`99s‚É•ÏX‚³‚ê‚½B
-	 * 99d99		‹Œƒtƒ@ƒCƒ‹99s‚ªVƒtƒ@ƒCƒ‹99s‚ÌŸs‚©‚çíœ‚³‚ê‚½B
-	 * 99,99d99		‹Œƒtƒ@ƒCƒ‹99`99s‚ªVƒtƒ@ƒCƒ‹99s‚ÌŸs‚©‚çíœ‚³‚ê‚½B
+	 * 99a99		æ—§ãƒ•ã‚¡ã‚¤ãƒ«99è¡Œã®æ¬¡è¡Œã«æ–°ãƒ•ã‚¡ã‚¤ãƒ«99è¡ŒãŒè¿½åŠ ã•ã‚ŒãŸã€‚
+	 * 99a99,99		æ—§ãƒ•ã‚¡ã‚¤ãƒ«99è¡Œã®æ¬¡è¡Œã«æ–°ãƒ•ã‚¡ã‚¤ãƒ«99ï½99è¡ŒãŒè¿½åŠ ã•ã‚ŒãŸã€‚
+	 * 99c99		æ—§ãƒ•ã‚¡ã‚¤ãƒ«99è¡ŒãŒæ–°ãƒ•ã‚¡ã‚¤ãƒ«99è¡Œã«å¤‰æ›´ã•ã‚ŒãŸã€‚
+	 * 99,99c99,99	æ—§ãƒ•ã‚¡ã‚¤ãƒ«99ï½99è¡ŒãŒæ–°ãƒ•ã‚¡ã‚¤ãƒ«99ï½99è¡Œã«å¤‰æ›´ã•ã‚ŒãŸã€‚
+	 * 99d99		æ—§ãƒ•ã‚¡ã‚¤ãƒ«99è¡ŒãŒæ–°ãƒ•ã‚¡ã‚¤ãƒ«99è¡Œã®æ¬¡è¡Œã‹ã‚‰å‰Šé™¤ã•ã‚ŒãŸã€‚
+	 * 99,99d99		æ—§ãƒ•ã‚¡ã‚¤ãƒ«99ï½99è¡ŒãŒæ–°ãƒ•ã‚¡ã‚¤ãƒ«99è¡Œã®æ¬¡è¡Œã‹ã‚‰å‰Šé™¤ã•ã‚ŒãŸã€‚
 	 * s1,e1 mode s2,e2
-	 * æ“ª‚Ìê‡0‚ÌŸs‚Æ‚È‚é‚±‚Æ‚à‚ ‚é
+	 * å…ˆé ­ã®å ´åˆ0ã®æ¬¡è¡Œã¨ãªã‚‹ã“ã¨ã‚‚ã‚ã‚‹
 	 */
 	const char	*q;
 	int		s1, e1, s2, e2;
 	char	mode;
 
-	//‘O”¼ƒtƒ@ƒCƒ‹‚ÌŠJns
+	//å‰åŠãƒ•ã‚¡ã‚¤ãƒ«ã®é–‹å§‹è¡Œ
 	s1 = 0;
 	for( q = pszDiffInfo; *q; q++ )
 	{
 		if( *q == ',' ) break;
 		if( *q == 'a' || *q == 'c' || *q == 'd' ) break;
-		//s”Ô†‚ğ’Šo
+		//è¡Œç•ªå·ã‚’æŠ½å‡º
 		if( *q >= '0' && *q <= '9' ) s1 = s1 * 10 + (*q - '0');
 		else return;
 	}
 	if( ! *q ) return;
 
-	//‘O”¼ƒtƒ@ƒCƒ‹‚ÌI—¹s
+	//å‰åŠãƒ•ã‚¡ã‚¤ãƒ«ã®çµ‚äº†è¡Œ
 	if( *q != ',' )
 	{
-		//ŠJnEI—¹s”Ô†‚Í“¯‚¶
+		//é–‹å§‹ãƒ»çµ‚äº†è¡Œç•ªå·ã¯åŒã˜
 		e1 = s1;
 	}
 	else
@@ -337,30 +337,30 @@ void CEditView::AnalyzeDiffInfo(
 		for( q++; *q; q++ )
 		{
 			if( *q == 'a' || *q == 'c' || *q == 'd' ) break;
-			//s”Ô†‚ğ’Šo
+			//è¡Œç•ªå·ã‚’æŠ½å‡º
 			if( *q >= '0' && *q <= '9' ) e1 = e1 * 10 + (*q - '0');
 			else return;
 		}
 	}
 	if( ! *q ) return;
 
-	//DIFFƒ‚[ƒh‚ğæ“¾
+	//DIFFãƒ¢ãƒ¼ãƒ‰ã‚’å–å¾—
 	mode = *q;
 
-	//Œã”¼ƒtƒ@ƒCƒ‹‚ÌŠJns
+	//å¾ŒåŠãƒ•ã‚¡ã‚¤ãƒ«ã®é–‹å§‹è¡Œ
 	s2 = 0;
 	for( q++; *q; q++ )
 	{
 		if( *q == ',' ) break;
-		//s”Ô†‚ğ’Šo
+		//è¡Œç•ªå·ã‚’æŠ½å‡º
 		if( *q >= '0' && *q <= '9' ) s2 = s2 * 10 + (*q - '0');
 		else return;
 	}
 
-	//Œã”¼ƒtƒ@ƒCƒ‹‚ÌI—¹s
+	//å¾ŒåŠãƒ•ã‚¡ã‚¤ãƒ«ã®çµ‚äº†è¡Œ
 	if( *q != ',' )
 	{
-		//ŠJnEI—¹s”Ô†‚Í“¯‚¶
+		//é–‹å§‹ãƒ»çµ‚äº†è¡Œç•ªå·ã¯åŒã˜
 		e2 = s2;
 	}
 	else
@@ -368,23 +368,23 @@ void CEditView::AnalyzeDiffInfo(
 		e2 = 0;
 		for( q++; *q; q++ )
 		{
-			//s”Ô†‚ğ’Šo
+			//è¡Œç•ªå·ã‚’æŠ½å‡º
 			if( *q >= '0' && *q <= '9' ) e2 = e2 * 10 + (*q - '0');
 			else return;
 		}
 	}
 
-	//s––‚É’B‚µ‚Ä‚È‚¯‚ê‚ÎƒGƒ‰[
+	//è¡Œæœ«ã«é”ã—ã¦ãªã‘ã‚Œã°ã‚¨ãƒ©ãƒ¼
 	if( *q ) return;
 
-	//’Šo‚µ‚½DIFFî•ñ‚©‚çs”Ô†‚É·•ªƒ}[ƒN‚ğ•t‚¯‚é
-	if( 0 == nFlgFile12 )	//•ÒW’†ƒtƒ@ƒCƒ‹‚Í‹Œƒtƒ@ƒCƒ‹
+	//æŠ½å‡ºã—ãŸDIFFæƒ…å ±ã‹ã‚‰è¡Œç•ªå·ã«å·®åˆ†ãƒãƒ¼ã‚¯ã‚’ä»˜ã‘ã‚‹
+	if( 0 == nFlgFile12 )	//ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—§ãƒ•ã‚¡ã‚¤ãƒ«
 	{
 		if     ( mode == 'a' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s1    ), CLogicInt(e1    ) );
 		else if( mode == 'c' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
 		else if( mode == 'd' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
 	}
-	else	//•ÒW’†ƒtƒ@ƒCƒ‹‚ÍVƒtƒ@ƒCƒ‹
+	else	//ç·¨é›†ä¸­ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ–°ãƒ•ã‚¡ã‚¤ãƒ«
 	{
 		if     ( mode == 'a' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
 		else if( mode == 'c' ) CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr).SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
@@ -403,7 +403,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 		for(;;){
 			CLogicInt		nLineLen;
 			pLineData = docMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
-			// ³íI—¹
+			// æ­£å¸¸çµ‚äº†
 			if( 0 == nLineLen || NULL == pLineData ) break;
 			if( bBom ){
 				CNativeW cLine2(L"\ufeff");
@@ -420,14 +420,14 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 		pLineData = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
 		for(;;){
 			int nLineOffset = 0;
-			int nLineLen = 0; //‰‰ñ—p‰¼’l
+			int nLineLen = 0; //åˆå›ç”¨ä»®å€¤
 			do{
-				// m_sWorkBuffer#m_Work‚Ì”r‘¼§ŒäBŠO•”ƒRƒ}ƒ“ƒho—Í/TraceOut/Diff‚ª‘ÎÛ
+				// m_sWorkBuffer#m_Workã®æ’ä»–åˆ¶å¾¡ã€‚å¤–éƒ¨ã‚³ãƒãƒ³ãƒ‰å‡ºåŠ›/TraceOut/DiffãŒå¯¾è±¡
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				{
 					nLineLen = ::SendMessageAny( hwnd, MYWM_GETLINEDATA, y, nLineOffset );
-					if( nLineLen == 0 ){ return true; } // EOF => ³íI—¹
-					if( nLineLen < 0 ){ return false; } // ‰½‚©ƒGƒ‰[
+					if( nLineLen == 0 ){ return true; } // EOF => æ­£å¸¸çµ‚äº†
+					if( nLineLen < 0 ){ return false; } // ä½•ã‹ã‚¨ãƒ©ãƒ¼
 					if( bBom ){
 						CNativeW cLine2(L"\ufeff");
 						cLine2.AppendString(pLineData, t_min(nLineLen, max_size));
@@ -450,18 +450,18 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 	return true;
 }
 
-/*!	ˆêƒtƒ@ƒCƒ‹‚ğì¬‚·‚é
+/*!	ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã™ã‚‹
 	@author	MIK
 	@date	2002/05/26
-	@date	2005/10/29	ˆø”•ÏXconst char* ¨ char*
-						ˆêƒtƒ@ƒCƒ‹–¼‚Ìæ“¾ˆ—‚à‚±‚±‚Å‚¨‚±‚È‚¤Bmaru
-	@date	2007/08/??	kobake ‹@ŠB“I‚ÉUNICODE‰»
-	@date	2008/01/26	kobake o—ÍŒ`®C³
-	@date	2013/06/21 ƒGƒ“ƒR[ƒh‚ğASCIIŒn‚É‚·‚é(SJISŒÅ’è‚ğ‚â‚ß‚é)
+	@date	2005/10/29	å¼•æ•°å¤‰æ›´const char* â†’ char*
+						ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾—å‡¦ç†ã‚‚ã“ã“ã§ãŠã“ãªã†ã€‚maru
+	@date	2007/08/??	kobake æ©Ÿæ¢°çš„ã«UNICODEåŒ–
+	@date	2008/01/26	kobake å‡ºåŠ›å½¢å¼ä¿®æ­£
+	@date	2013/06/21 ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã‚’ASCIIç³»ã«ã™ã‚‹(SJISå›ºå®šã‚’ã‚„ã‚ã‚‹)
 */
 BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
-	//ˆê
+	//ä¸€æ™‚
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
@@ -471,7 +471,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 	_tcscpy( filename, pszTmpName );
 	free( pszTmpName );
 
-	//©•ª‚©H
+	//è‡ªåˆ†ã‹ï¼Ÿ
 	if( NULL == hWnd )
 	{
 		EConvertResult eWriteResult = CWriteManager().WriteFile_From_CDocLineMgr(
@@ -503,7 +503,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 	}
 	if( bError ){
 		out.Close();
-		_tunlink( filename );	//ŠÖ”‚ÌÀs‚É¸”s‚µ‚½‚Æ‚«Aˆêƒtƒ@ƒCƒ‹‚Ìíœ‚ÍŠÖ”“à‚Ås‚¤B2005.10.29
+		_tunlink( filename );	//é–¢æ•°ã®å®Ÿè¡Œã«å¤±æ•—ã—ãŸã¨ãã€ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤ã¯é–¢æ•°å†…ã§è¡Œã†ã€‚2005.10.29
 		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 	}
 
@@ -512,11 +512,11 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 
 
 
-/*!	ŠO•”ƒtƒ@ƒCƒ‹‚ğw’è‚Å‚Ìƒtƒ@ƒCƒ‹‚ğ•\¦
+/*!	å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒ‡å®šã§ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¡¨ç¤º
 */
 BOOL CEditView::MakeDiffTmpFile2( TCHAR* tmpName, const TCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
-	//ˆê
+	//ä¸€æ™‚
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
@@ -565,7 +565,7 @@ BOOL CEditView::MakeDiffTmpFile2( TCHAR* tmpName, const TCHAR* orgName, ECodeTyp
 	}
 	catch(...){
 		out.Close();
-		_tunlink( tmpName );	//ŠÖ”‚ÌÀs‚É¸”s‚µ‚½‚Æ‚«Aˆêƒtƒ@ƒCƒ‹‚Ìíœ‚ÍŠÖ”“à‚Ås‚¤B
+		_tunlink( tmpName );	//é–¢æ•°ã®å®Ÿè¡Œã«å¤±æ•—ã—ãŸã¨ãã€ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤ã¯é–¢æ•°å†…ã§è¡Œã†ã€‚
 		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}

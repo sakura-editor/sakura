@@ -1,17 +1,17 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Comment.h"
 #include "doc/layout/CLayout.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        sƒRƒƒ“ƒg                           //
+//                        è¡Œã‚³ãƒ¡ãƒ³ãƒˆ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 bool CColor_LineComment::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	// sƒRƒƒ“ƒg
+	// è¡Œã‚³ãƒ¡ãƒ³ãƒˆ
 	if( m_pTypeData->m_cLineComment.Match( nPos, cStr )	//@@@ 2002.09.22 YAZAKI
 	){
 		return true;
@@ -21,12 +21,12 @@ bool CColor_LineComment::BeginColor(const CStringRef& cStr, int nPos)
 
 bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 {
-	//•¶Žš—ñI’[
+	//æ–‡å­—åˆ—çµ‚ç«¯
 	if( nPos >= cStr.GetLength() ){
 		return true;
 	}
 
-	//‰üs
+	//æ”¹è¡Œ
 	if( WCODE::IsLineDelimiter(cStr.At(nPos), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 		return true;
 	}
@@ -38,17 +38,17 @@ bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                    ƒuƒƒbƒNƒRƒƒ“ƒg‚P                       //
+//                    ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆï¼‘                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 bool CColor_BlockComment::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	// ƒuƒƒbƒNƒRƒƒ“ƒg
+	// ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ
 	if( m_pcBlockComment->Match_CommentFrom( nPos, cStr )	//@@@ 2002.09.22 YAZAKI
 	){
-		/* ‚±‚Ì•¨—s‚ÉƒuƒƒbƒNƒRƒƒ“ƒg‚ÌI’[‚ª‚ ‚é‚© */	//@@@ 2002.09.22 YAZAKI
+		/* ã“ã®ç‰©ç†è¡Œã«ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆã®çµ‚ç«¯ãŒã‚ã‚‹ã‹ */	//@@@ 2002.09.22 YAZAKI
 		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(
 			nPos + m_pcBlockComment->getBlockFromLen(),
 			cStr
@@ -62,7 +62,7 @@ bool CColor_BlockComment::BeginColor(const CStringRef& cStr, int nPos)
 bool CColor_BlockComment::EndColor(const CStringRef& cStr, int nPos)
 {
 	if( 0 == this->m_nCOMMENTEND ){
-		/* ‚±‚Ì•¨—s‚ÉƒuƒƒbƒNƒRƒƒ“ƒg‚ÌI’[‚ª‚ ‚é‚© */
+		/* ã“ã®ç‰©ç†è¡Œã«ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆã®çµ‚ç«¯ãŒã‚ã‚‹ã‹ */
 		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(
 			nPos,
 			cStr

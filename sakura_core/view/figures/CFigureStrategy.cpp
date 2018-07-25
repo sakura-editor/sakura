@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -33,7 +33,7 @@
 bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 {
 	int nIdx = pInfo->GetPosInLogic();
-	int nLength =	CNativeW::GetSizeOfChar(	// ƒTƒƒQ[ƒgƒyƒA‘Îô	2008.10.12 ryoji
+	int nLength =	CNativeW::GetSizeOfChar(	// ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢å¯¾ç­–	2008.10.12 ryoji
 						pInfo->m_pLineOfLogic,
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
@@ -42,8 +42,8 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 	int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
 			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
 	if( fontNo ){
-		CTypeSupport cCurrentType(pInfo->m_pcView, pInfo->GetCurrentColor());	// ü•Ó‚ÌFiŒ»İ‚Ìw’èF/‘I‘ğFj
-		CTypeSupport cCurrentType2(pInfo->m_pcView, pInfo->GetCurrentColor2());	// ü•Ó‚ÌFiŒ»İ‚Ìw’èFj
+		CTypeSupport cCurrentType(pInfo->m_pcView, pInfo->GetCurrentColor());	// å‘¨è¾ºã®è‰²ï¼ˆç¾åœ¨ã®æŒ‡å®šè‰²/é¸æŠè‰²ï¼‰
+		CTypeSupport cCurrentType2(pInfo->m_pcView, pInfo->GetCurrentColor2());	// å‘¨è¾ºã®è‰²ï¼ˆç¾åœ¨ã®æŒ‡å®šè‰²ï¼‰
 		bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor();
 		SFONT sFont;
 		sFont.m_sFontAttr.m_bBoldFont  = (blendColor ? cCurrentType2.IsBoldFont() : cCurrentType.IsBoldFont());
@@ -68,7 +68,7 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         •`‰æ“‡                            //
+//                         æç”»çµ±åˆ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
@@ -78,12 +78,12 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 {
 	bool bTrans = DrawImp_StyleSelect(pInfo);
-	DispPos sPos(*pInfo->m_pDispPos);	// Œ»İˆÊ’u‚ğŠo‚¦‚Ä‚¨‚­
-	DispSpace(pInfo->m_gr, pInfo->m_pDispPos,pInfo->m_pcView, bTrans);	// ‹ó”’•`‰æ
+	DispPos sPos(*pInfo->m_pDispPos);	// ç¾åœ¨ä½ç½®ã‚’è¦šãˆã¦ãŠã
+	DispSpace(pInfo->m_gr, pInfo->m_pDispPos,pInfo->m_pcView, bTrans);	// ç©ºç™½æç”»
 	DrawImp_StylePop(pInfo);
 	DrawImp_DrawUnderline(pInfo, sPos);
-	// 1•¶š‘O’ñ
-	pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(	// s––ˆÈŠO‚Í‚±‚±‚ÅƒXƒLƒƒƒ“ˆÊ’u‚ğ‚Pši‚ß‚é
+	// 1æ–‡å­—å‰æ
+	pInfo->m_nPosInLogic += CNativeW::GetSizeOfChar(	// è¡Œæœ«ä»¥å¤–ã¯ã“ã“ã§ã‚¹ã‚­ãƒ£ãƒ³ä½ç½®ã‚’ï¼‘å­—é€²ã‚ã‚‹
 		pInfo->m_pLineOfLogic,
 		pInfo->GetDocLine()->GetLengthWithoutEOL(),
 		pInfo->GetPosInLogic()
@@ -93,35 +93,35 @@ bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 
 bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 {
-	// ‚±‚Ì DrawImp ‚Í‚±‚±iŠî–{ƒNƒ‰ƒXj‚ÅƒfƒtƒHƒ‹ƒg“®ì‚ğÀ‘•‚µ‚Ä‚¢‚é‚ª
-	// ‰¼‘zŠÖ”‚È‚Ì‚Å”h¶ƒNƒ‰ƒX‘¤‚ÌƒI[ƒo[ƒ‰ƒCƒh‚ÅŒÂ•Ê‚Éd—l•ÏX‰Â”\
+	// ã“ã® DrawImp ã¯ã“ã“ï¼ˆåŸºæœ¬ã‚¯ãƒ©ã‚¹ï¼‰ã§ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå‹•ä½œã‚’å®Ÿè£…ã—ã¦ã„ã‚‹ãŒ
+	// ä»®æƒ³é–¢æ•°ãªã®ã§æ´¾ç”Ÿã‚¯ãƒ©ã‚¹å´ã®ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã§å€‹åˆ¥ã«ä»•æ§˜å¤‰æ›´å¯èƒ½
 	CEditView* pcView = pInfo->m_pcView;
 
-	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// ü•Ó‚ÌFiŒ»İ‚Ìw’èF/‘I‘ğFj
-	CTypeSupport cCurrentType2(pcView, pInfo->GetCurrentColor2());	// ü•Ó‚ÌFiŒ»İ‚Ìw’èFj
-	CTypeSupport cTextType(pcView, COLORIDX_TEXT);				// ƒeƒLƒXƒg‚Ìw’èF
-	CTypeSupport cSpaceType(pcView, GetDispColorIdx());	// ‹ó”’‚Ìw’èF
+	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// å‘¨è¾ºã®è‰²ï¼ˆç¾åœ¨ã®æŒ‡å®šè‰²/é¸æŠè‰²ï¼‰
+	CTypeSupport cCurrentType2(pcView, pInfo->GetCurrentColor2());	// å‘¨è¾ºã®è‰²ï¼ˆç¾åœ¨ã®æŒ‡å®šè‰²ï¼‰
+	CTypeSupport cTextType(pcView, COLORIDX_TEXT);				// ãƒ†ã‚­ã‚¹ãƒˆã®æŒ‡å®šè‰²
+	CTypeSupport cSpaceType(pcView, GetDispColorIdx());	// ç©ºç™½ã®æŒ‡å®šè‰²
 	CTypeSupport cCurrentTypeBg(pcView, pInfo->GetCurrentColorBg());
 	CTypeSupport& cCurrentType1 = (cCurrentType.GetBackColor() == cTextType.GetBackColor() ? cCurrentTypeBg: cCurrentType);
 	CTypeSupport& cCurrentType3 = (cCurrentType2.GetBackColor() == cTextType.GetBackColor() ? cCurrentTypeBg: cCurrentType2);
 
-	// ‹ó”’‹L†—Ş‚Í“Á‚É–¾¦w’è‚µ‚½•”•ªˆÈŠO‚Í‚È‚é‚×‚­ü•Ó‚Ìw’è‚É‡‚í‚¹‚é‚æ‚¤‚É‚µ‚Ä‚İ‚½	// 2009.05.30 ryoji
-	// —á‚¦‚ÎA‰ºü‚ğw’è‚µ‚Ä‚¢‚È‚¢ê‡A³‹K•\Œ»ƒL[ƒ[ƒh“à‚È‚ç³‹K•\Œ»ƒL[ƒ[ƒh‘¤‚Ì‰ºüw’è‚É]‚¤‚Ù‚¤‚ª©‘R‚È‹C‚ª‚·‚éB
-	// i‚»‚Ì‚Ù‚¤‚ª‹ó”’‹L†‚Ìu•\¦v‚ğƒ`ƒFƒbƒN‚µ‚Ä‚¢‚È‚¢ê‡‚Ì•\¦‚É‹ß‚¢j
+	// ç©ºç™½è¨˜å·é¡ã¯ç‰¹ã«æ˜ç¤ºæŒ‡å®šã—ãŸéƒ¨åˆ†ä»¥å¤–ã¯ãªã‚‹ã¹ãå‘¨è¾ºã®æŒ‡å®šã«åˆã‚ã›ã‚‹ã‚ˆã†ã«ã—ã¦ã¿ãŸ	// 2009.05.30 ryoji
+	// ä¾‹ãˆã°ã€ä¸‹ç·šã‚’æŒ‡å®šã—ã¦ã„ãªã„å ´åˆã€æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å†…ãªã‚‰æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å´ã®ä¸‹ç·šæŒ‡å®šã«å¾“ã†ã»ã†ãŒè‡ªç„¶ãªæ°—ãŒã™ã‚‹ã€‚
+	// ï¼ˆãã®ã»ã†ãŒç©ºç™½è¨˜å·ã®ã€Œè¡¨ç¤ºã€ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¦ã„ãªã„å ´åˆã®è¡¨ç¤ºã«è¿‘ã„ï¼‰
 	//
-	// ‘OŒiFE”wŒiF‚Ìˆµ‚¢
-	// E’ÊíƒeƒLƒXƒg‚Æ‚ÍˆÙ‚È‚éF‚ªw’è‚³‚ê‚Ä‚¢‚éê‡‚Í‹ó”’‹L†‚Ì‘¤‚Ìw’èF‚ğg‚¤
-	// E’ÊíƒeƒLƒXƒg‚Æ“¯‚¶F‚ªw’è‚³‚ê‚Ä‚¢‚éê‡‚Íü•Ó‚ÌFw’è‚É‡‚í‚¹‚é
-	// ‘¾š‚Ìˆµ‚¢
-	// E‹ó”’‹L†‚©ü•Ó‚Ì‚Ç‚¿‚ç‚©ˆê•û‚Å‚à‘¾šw’è‚³‚ê‚Ä‚¢‚ê‚Îu‘OŒiFE”wŒiF‚Ìˆµ‚¢v‚ÅŒˆ’è‚µ‚½‘OŒiF‚Å‘¾š‚É‚·‚é
-	// ‰ºü‚Ìˆµ‚¢
-	// E‹ó”’‹L†‚Å‰ºüw’è‚³‚ê‚Ä‚¢‚ê‚Îu‘OŒiFE”wŒiF‚Ìˆµ‚¢v‚ÅŒˆ’è‚µ‚½‘OŒiF‚Å‰ºü‚ğˆø‚­
-	// E‹ó”’‹L†‚Å‰ºüw’è‚³‚ê‚Ä‚¨‚ç‚¸ü•Ó‚Å‰ºüw’è‚³‚ê‚Ä‚¢‚ê‚Îü•Ó‚Ì‘OŒiF‚Å‰ºü‚ğˆø‚­
-	// [‘I‘ğ]ƒŒƒ“ƒ_ƒŠƒ“ƒO’†
-	// E¬‡F‚Ìê‡‚Í]—ˆ’Ê‚èB
+	// å‰æ™¯è‰²ãƒ»èƒŒæ™¯è‰²ã®æ‰±ã„
+	// ãƒ»é€šå¸¸ãƒ†ã‚­ã‚¹ãƒˆã¨ã¯ç•°ãªã‚‹è‰²ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆã¯ç©ºç™½è¨˜å·ã®å´ã®æŒ‡å®šè‰²ã‚’ä½¿ã†
+	// ãƒ»é€šå¸¸ãƒ†ã‚­ã‚¹ãƒˆã¨åŒã˜è‰²ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆã¯å‘¨è¾ºã®è‰²æŒ‡å®šã«åˆã‚ã›ã‚‹
+	// å¤ªå­—ã®æ‰±ã„
+	// ãƒ»ç©ºç™½è¨˜å·ã‹å‘¨è¾ºã®ã©ã¡ã‚‰ã‹ä¸€æ–¹ã§ã‚‚å¤ªå­—æŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°ã€Œå‰æ™¯è‰²ãƒ»èƒŒæ™¯è‰²ã®æ‰±ã„ã€ã§æ±ºå®šã—ãŸå‰æ™¯è‰²ã§å¤ªå­—ã«ã™ã‚‹
+	// ä¸‹ç·šã®æ‰±ã„
+	// ãƒ»ç©ºç™½è¨˜å·ã§ä¸‹ç·šæŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°ã€Œå‰æ™¯è‰²ãƒ»èƒŒæ™¯è‰²ã®æ‰±ã„ã€ã§æ±ºå®šã—ãŸå‰æ™¯è‰²ã§ä¸‹ç·šã‚’å¼•ã
+	// ãƒ»ç©ºç™½è¨˜å·ã§ä¸‹ç·šæŒ‡å®šã•ã‚Œã¦ãŠã‚‰ãšå‘¨è¾ºã§ä¸‹ç·šæŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°å‘¨è¾ºã®å‰æ™¯è‰²ã§ä¸‹ç·šã‚’å¼•ã
+	// [é¸æŠ]ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ä¸­
+	// ãƒ»æ··åˆè‰²ã®å ´åˆã¯å¾“æ¥é€šã‚Šã€‚
 	COLORREF crText;
 	COLORREF crBack;
-	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // ‘I‘ğ¬‡F
+	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // é¸æŠæ··åˆè‰²
 	bool bBold;
 	if( blendColor ){
 		CTypeSupport& cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType2 : cSpaceType;
@@ -140,7 +140,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 
 	pInfo->m_gr.PushTextForeColor(crText);
 	pInfo->m_gr.PushTextBackColor(crBack);
-	// Figure‚ª‰ºüw’è‚È‚ç‚±‚¿‚ç‚Å‰ºü‚ğw’èBŒ³‚ÌF‚Ì‚Ù‚¤‚ª‰ºüw’è‚È‚çADrawImp_DrawUnderline‚Å‰ºü‚¾‚¯w’è
+	// FigureãŒä¸‹ç·šæŒ‡å®šãªã‚‰ã“ã¡ã‚‰ã§ä¸‹ç·šã‚’æŒ‡å®šã€‚å…ƒã®è‰²ã®ã»ã†ãŒä¸‹ç·šæŒ‡å®šãªã‚‰ã€DrawImp_DrawUnderlineã§ä¸‹ç·šã ã‘æŒ‡å®š
 	SFONT sFont;
 	sFont.m_sFontAttr.m_bBoldFont = cSpaceType.IsBoldFont() || bBold;
 	sFont.m_sFontAttr.m_bUnderLine = cSpaceType.HasUnderLine();
@@ -161,16 +161,16 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 {
 	CEditView* pcView = pInfo->m_pcView;
 
-	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// ü•Ó‚ÌF
-	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // ‘I‘ğ¬‡F
+	CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// å‘¨è¾ºã®è‰²
+	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // é¸æŠæ··åˆè‰²
 
-	CTypeSupport colorStyle(pcView, blendColor ? pInfo->GetCurrentColor2() : pInfo->GetCurrentColor());	// ü•Ó‚ÌF
-	CTypeSupport cSpaceType(pcView, GetDispColorIdx());	// ‹ó”’‚Ìw’èF
+	CTypeSupport colorStyle(pcView, blendColor ? pInfo->GetCurrentColor2() : pInfo->GetCurrentColor());	// å‘¨è¾ºã®è‰²
+	CTypeSupport cSpaceType(pcView, GetDispColorIdx());	// ç©ºç™½ã®æŒ‡å®šè‰²
 
 	if( !cSpaceType.HasUnderLine() && colorStyle.HasUnderLine() )
 	{
 		int fontNo = WCODE::GetFontNo(' ');
-		// ‰ºü‚ğü•Ó‚Ì‘OŒiF‚Å•`‰æ‚·‚é
+		// ä¸‹ç·šã‚’å‘¨è¾ºã®å‰æ™¯è‰²ã§æç”»ã™ã‚‹
 		SFONT sFont;
 		sFont.m_sFontAttr.m_bBoldFont = false;
 		sFont.m_sFontAttr.m_bUnderLine = true;
@@ -189,7 +189,7 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 		}
 		RECT rcClip2;
 		rcClip2.left = sPos.GetDrawPos().x;
-		rcClip2.right = rcClip2.left + (Int)(nColLength); // ‘O’ñğŒFCLayoutInt == px
+		rcClip2.right = rcClip2.left + (Int)(nColLength); // å‰ææ¡ä»¶ï¼šCLayoutInt == px
 		if( rcClip2.left < pcView->GetTextArea().GetAreaLeft() ){
 			rcClip2.left = pcView->GetTextArea().GetAreaLeft();
 		}

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -44,7 +44,7 @@ public:
 		CreateFont(plf);
 	}
 
-	HFONT ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const;		/* ƒtƒHƒ“ƒg‚ğ‘I‚Ô */
+	HFONT ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const;		/* ãƒ•ã‚©ãƒ³ãƒˆã‚’é¸ã¶ */
 
 	HFONT GetFontHan() const
 	{
@@ -60,10 +60,10 @@ private:
 	void CreateFont(const LOGFONT *plf);
 	void DeleteFont();
 
-	HFONT	m_hFont_HAN;			/* Œ»İ‚ÌƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹ */
-	HFONT	m_hFont_HAN_BOLD;		/* Œ»İ‚ÌƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹(‘¾š) */
-	HFONT	m_hFont_HAN_UL;			/* Œ»İ‚ÌƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹(‰ºü) */
-	HFONT	m_hFont_HAN_BOLD_UL;	/* Œ»İ‚ÌƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹(‘¾šA‰ºü) */
+	HFONT	m_hFont_HAN;			/* ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ« */
+	HFONT	m_hFont_HAN_BOLD;		/* ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«(å¤ªå­—) */
+	HFONT	m_hFont_HAN_UL;			/* ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«(ä¸‹ç·š) */
+	HFONT	m_hFont_HAN_BOLD_UL;	/* ç¾åœ¨ã®ãƒ•ã‚©ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ«(å¤ªå­—ã€ä¸‹ç·š) */
 
 	LOGFONT	m_LogFont;
 	bool	m_bMiniMap;

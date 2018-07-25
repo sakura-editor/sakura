@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -25,91 +25,91 @@
 #define SAKURA_ECOLORINDEXTYPE_H_
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          F’è”                             //
+//                          è‰²å®šæ•°                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// F’è”‚ğF”Ô†‚É•ÏŠ·‚·‚é‚½‚ß‚Ì¯•Êbit
-#define COLORIDX_BLOCK_BIT (2 << 9)		//!< ƒuƒƒbƒNƒRƒƒ“ƒg¯•Êbit
-#define COLORIDX_REGEX_BIT (2 << 10)	//!< ³‹K•\Œ»ƒL[ƒ[ƒh¯•Êbit
+// è‰²å®šæ•°ã‚’è‰²ç•ªå·ã«å¤‰æ›ã™ã‚‹ãŸã‚ã®è­˜åˆ¥bit
+#define COLORIDX_BLOCK_BIT (2 << 9)		//!< ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆè­˜åˆ¥bit
+#define COLORIDX_REGEX_BIT (2 << 10)	//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è­˜åˆ¥bit
 
-/*! F’è”
-	@date 2000.01.12 Stonee ‚±‚±‚ğ•ÏX‚µ‚½‚Æ‚«‚ÍACColorStrategy.cpp ‚Ìg_ColorAttributeArr‚Ì’è‹`‚à•ÏX‚µ‚Ä‰º‚³‚¢B
-	@date 2000.09.18 JEPRO ‡”Ô‚ğ‘å•‚É“ü‚ê‘Ö‚¦‚½
-	@date 2007.09.09 Moca  ’†ŠÔ‚Ì’è‹`‚Í‚¨”C‚¹‚É•ÏX
-	@date 2013.04.26 novice F’è”‚ğF”Ô†‚ğ•ÏŠ·‚·‚é‚½‚ß‚Ì¯•Êbit“±“ü
+/*! è‰²å®šæ•°
+	@date 2000.01.12 Stonee ã“ã“ã‚’å¤‰æ›´ã—ãŸã¨ãã¯ã€CColorStrategy.cpp ã®g_ColorAttributeArrã®å®šç¾©ã‚‚å¤‰æ›´ã—ã¦ä¸‹ã•ã„ã€‚
+	@date 2000.09.18 JEPRO é †ç•ªã‚’å¤§å¹…ã«å…¥ã‚Œæ›¿ãˆãŸ
+	@date 2007.09.09 Moca  ä¸­é–“ã®å®šç¾©ã¯ãŠä»»ã›ã«å¤‰æ›´
+	@date 2013.04.26 novice è‰²å®šæ•°ã‚’è‰²ç•ªå·ã‚’å¤‰æ›ã™ã‚‹ãŸã‚ã®è­˜åˆ¥bitå°å…¥
 */
 enum EColorIndexType {
-	COLORIDX_TEXT = 0,		//!< ƒeƒLƒXƒg
-	COLORIDX_RULER,			//!< ƒ‹[ƒ‰[
-	COLORIDX_CARET,			//!< ƒLƒƒƒŒƒbƒg	// 2006.12.07 ryoji
-	COLORIDX_CARET_IME,		//!< IMEƒLƒƒƒŒƒbƒg // 2006.12.07 ryoji
-	COLORIDX_CARETLINEBG,	//!< ƒJ[ƒ\ƒ‹s”wŒiF
-	COLORIDX_UNDERLINE,		//!< ƒJ[ƒ\ƒ‹sƒAƒ“ƒ_[ƒ‰ƒCƒ“
-	COLORIDX_CURSORVLINE,	//!< ƒJ[ƒ\ƒ‹ˆÊ’ucü // 2006.05.13 Moca
-	COLORIDX_NOTELINE,		//!< ƒm[ƒgü	// 2013.12.21 Moca
-	COLORIDX_GYOU,			//!< s”Ô†
-	COLORIDX_GYOU_MOD,		//!< s”Ô†(•ÏXs)
-	COLORIDX_EVENLINEBG,	//!< Šï”s‚Ì”wŒiF
-	COLORIDX_TAB,			//!< TAB‹L†
-	COLORIDX_SPACE,			//!< ”¼Šp‹ó”’ //2002.04.28 Add by KK ˆÈ~‘S‚Ä+1
-	COLORIDX_ZENSPACE,		//!< “ú–{Œê‹ó”’
-	COLORIDX_CTRLCODE,		//!< ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh
-	COLORIDX_EOL,			//!< ‰üs‹L†
-	COLORIDX_WRAP,			//!< Ü‚è•Ô‚µ‹L†
-	COLORIDX_VERTLINE,		//!< w’èŒ…cü	// 2005.11.08 Moca
-	COLORIDX_EOF,			//!< EOF‹L†
-	COLORIDX_DIGIT,			//!< ”¼Šp”’l	 //@@@ 2001.02.17 by MIK //Fİ’èVer.3‚©‚çƒ†[ƒUƒtƒ@ƒCƒ‹‚É‘Î‚µ‚Ä‚Í•¶š—ñ‚Åˆ—‚µ‚Ä‚¢‚é‚Ì‚ÅƒŠƒiƒ“ƒoƒŠƒ“ƒO‚µ‚Ä‚à‚æ‚¢. Mar. 7, 2001 JEPRO noted
-	COLORIDX_BRACKET_PAIR,	//!< ‘ÎŠ‡ŒÊ	  // 02/09/18 ai Add
-	COLORIDX_SELECT,		//!< ‘I‘ğ”ÍˆÍ
-	COLORIDX_SEARCH,		//!< ŒŸõ•¶š—ñ
-	COLORIDX_SEARCH2,		//!< ŒŸõ•¶š—ñ2
-	COLORIDX_SEARCH3,		//!< ŒŸõ•¶š—ñ3
-	COLORIDX_SEARCH4,		//!< ŒŸõ•¶š—ñ4
-	COLORIDX_SEARCH5,		//!< ŒŸõ•¶š—ñ5
-	COLORIDX_COMMENT,		//!< sƒRƒƒ“ƒg						//Dec. 4, 2000 shifted by MIK
-	COLORIDX_SSTRING,		//!< ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ	//Dec. 4, 2000 shifted by MIK
-	COLORIDX_WSTRING,		//!< ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶š—ñ		//Dec. 4, 2000 shifted by MIK
-	COLORIDX_HEREDOC,		//!< ƒqƒAƒhƒLƒ…ƒƒ“ƒg
+	COLORIDX_TEXT = 0,		//!< ãƒ†ã‚­ã‚¹ãƒˆ
+	COLORIDX_RULER,			//!< ãƒ«ãƒ¼ãƒ©ãƒ¼
+	COLORIDX_CARET,			//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆ	// 2006.12.07 ryoji
+	COLORIDX_CARET_IME,		//!< IMEã‚­ãƒ£ãƒ¬ãƒƒãƒˆ // 2006.12.07 ryoji
+	COLORIDX_CARETLINEBG,	//!< ã‚«ãƒ¼ã‚½ãƒ«è¡ŒèƒŒæ™¯è‰²
+	COLORIDX_UNDERLINE,		//!< ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚¢ãƒ³ãƒ€ãƒ¼ãƒ©ã‚¤ãƒ³
+	COLORIDX_CURSORVLINE,	//!< ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ç¸¦ç·š // 2006.05.13 Moca
+	COLORIDX_NOTELINE,		//!< ãƒãƒ¼ãƒˆç·š	// 2013.12.21 Moca
+	COLORIDX_GYOU,			//!< è¡Œç•ªå·
+	COLORIDX_GYOU_MOD,		//!< è¡Œç•ªå·(å¤‰æ›´è¡Œ)
+	COLORIDX_EVENLINEBG,	//!< å¥‡æ•°è¡Œã®èƒŒæ™¯è‰²
+	COLORIDX_TAB,			//!< TABè¨˜å·
+	COLORIDX_SPACE,			//!< åŠè§’ç©ºç™½ //2002.04.28 Add by KK ä»¥é™å…¨ã¦+1
+	COLORIDX_ZENSPACE,		//!< æ—¥æœ¬èªç©ºç™½
+	COLORIDX_CTRLCODE,		//!< ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰
+	COLORIDX_EOL,			//!< æ”¹è¡Œè¨˜å·
+	COLORIDX_WRAP,			//!< æŠ˜ã‚Šè¿”ã—è¨˜å·
+	COLORIDX_VERTLINE,		//!< æŒ‡å®šæ¡ç¸¦ç·š	// 2005.11.08 Moca
+	COLORIDX_EOF,			//!< EOFè¨˜å·
+	COLORIDX_DIGIT,			//!< åŠè§’æ•°å€¤	 //@@@ 2001.02.17 by MIK //è‰²è¨­å®šVer.3ã‹ã‚‰ãƒ¦ãƒ¼ã‚¶ãƒ•ã‚¡ã‚¤ãƒ«ã«å¯¾ã—ã¦ã¯æ–‡å­—åˆ—ã§å‡¦ç†ã—ã¦ã„ã‚‹ã®ã§ãƒªãƒŠãƒ³ãƒãƒªãƒ³ã‚°ã—ã¦ã‚‚ã‚ˆã„. Mar. 7, 2001 JEPRO noted
+	COLORIDX_BRACKET_PAIR,	//!< å¯¾æ‹¬å¼§	  // 02/09/18 ai Add
+	COLORIDX_SELECT,		//!< é¸æŠç¯„å›²
+	COLORIDX_SEARCH,		//!< æ¤œç´¢æ–‡å­—åˆ—
+	COLORIDX_SEARCH2,		//!< æ¤œç´¢æ–‡å­—åˆ—2
+	COLORIDX_SEARCH3,		//!< æ¤œç´¢æ–‡å­—åˆ—3
+	COLORIDX_SEARCH4,		//!< æ¤œç´¢æ–‡å­—åˆ—4
+	COLORIDX_SEARCH5,		//!< æ¤œç´¢æ–‡å­—åˆ—5
+	COLORIDX_COMMENT,		//!< è¡Œã‚³ãƒ¡ãƒ³ãƒˆ						//Dec. 4, 2000 shifted by MIK
+	COLORIDX_SSTRING,		//!< ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—	//Dec. 4, 2000 shifted by MIK
+	COLORIDX_WSTRING,		//!< ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_HEREDOC,		//!< ãƒ’ã‚¢ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆ
 	COLORIDX_URL,			//!< URL								//Dec. 4, 2000 shifted by MIK
-	COLORIDX_KEYWORD1,		//!< ‹­’²ƒL[ƒ[ƒh1 // 2002/03/13 novice
-	COLORIDX_KEYWORD2,		//!< ‹­’²ƒL[ƒ[ƒh2 // 2002/03/13 novice  //MIK ADDED
-	COLORIDX_KEYWORD3,		//!< ‹­’²ƒL[ƒ[ƒh3 // 2005.01.13 MIK 3-10 added
-	COLORIDX_KEYWORD4,		//!< ‹­’²ƒL[ƒ[ƒh4
-	COLORIDX_KEYWORD5,		//!< ‹­’²ƒL[ƒ[ƒh5
-	COLORIDX_KEYWORD6,		//!< ‹­’²ƒL[ƒ[ƒh6
-	COLORIDX_KEYWORD7,		//!< ‹­’²ƒL[ƒ[ƒh7
-	COLORIDX_KEYWORD8,		//!< ‹­’²ƒL[ƒ[ƒh8
-	COLORIDX_KEYWORD9,		//!< ‹­’²ƒL[ƒ[ƒh9
-	COLORIDX_KEYWORD10,		//!< ‹­’²ƒL[ƒ[ƒh10
-	COLORIDX_REGEX1,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh1  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX2,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh2  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX3,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh3  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX4,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh4  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX5,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh5  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX6,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh6  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX7,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh7  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX8,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh8  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX9,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh9  //@@@ 2001.11.17 add MIK
-	COLORIDX_REGEX10,		//!< ³‹K•\Œ»ƒL[ƒ[ƒh10	//@@@ 2001.11.17 add MIK
-	COLORIDX_DIFF_APPEND,	//!< DIFF’Ç‰Á  //@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_CHANGE,	//!< DIFF’Ç‰Á  //@@@ 2002.06.01 MIK
-	COLORIDX_DIFF_DELETE,	//!< DIFF’Ç‰Á  //@@@ 2002.06.01 MIK
-	COLORIDX_MARK,			//!< ƒuƒbƒNƒ}[ƒN  // 02/10/16 ai Add
-	COLORIDX_PAGEVIEW,		//!< •\¦”ÍˆÍ(ƒ~ƒjƒ}ƒbƒv)  // 2014.07.14 Add
+	COLORIDX_KEYWORD1,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰1 // 2002/03/13 novice
+	COLORIDX_KEYWORD2,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰2 // 2002/03/13 novice  //MIK ADDED
+	COLORIDX_KEYWORD3,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰3 // 2005.01.13 MIK 3-10 added
+	COLORIDX_KEYWORD4,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰4
+	COLORIDX_KEYWORD5,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰5
+	COLORIDX_KEYWORD6,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰6
+	COLORIDX_KEYWORD7,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰7
+	COLORIDX_KEYWORD8,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰8
+	COLORIDX_KEYWORD9,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰9
+	COLORIDX_KEYWORD10,		//!< å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰10
+	COLORIDX_REGEX1,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰1  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX2,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰2  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX3,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰3  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX4,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰4  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX5,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰5  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX6,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰6  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX7,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰7  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX8,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰8  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX9,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰9  //@@@ 2001.11.17 add MIK
+	COLORIDX_REGEX10,		//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰10	//@@@ 2001.11.17 add MIK
+	COLORIDX_DIFF_APPEND,	//!< DIFFè¿½åŠ   //@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_CHANGE,	//!< DIFFè¿½åŠ   //@@@ 2002.06.01 MIK
+	COLORIDX_DIFF_DELETE,	//!< DIFFè¿½åŠ   //@@@ 2002.06.01 MIK
+	COLORIDX_MARK,			//!< ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯  // 02/10/16 ai Add
+	COLORIDX_PAGEVIEW,		//!< è¡¨ç¤ºç¯„å›²(ãƒŸãƒ‹ãƒãƒƒãƒ—)  // 2014.07.14 Add
 
-	//ƒJƒ‰[‚ÌÅŒã
-	COLORIDX_LAST,			//!< ƒJƒ‰[‚ÌÅŒã
+	//ã‚«ãƒ©ãƒ¼ã®æœ€å¾Œ
+	COLORIDX_LAST,			//!< ã‚«ãƒ©ãƒ¼ã®æœ€å¾Œ
 
-	//ƒJƒ‰[•\¦§Œä—p(ƒuƒƒbƒNƒRƒƒ“ƒg)
-	COLORIDX_BLOCK1			= COLORIDX_BLOCK_BIT,			//!< ƒuƒƒbƒNƒRƒƒ“ƒg1(•¶šF‚Æ”wŒiF‚ÍsƒRƒƒ“ƒg‚Æ“¯‚¶)
-	COLORIDX_BLOCK2,										//!< ƒuƒƒbƒNƒRƒƒ“ƒg2(•¶šF‚Æ”wŒiF‚ÍsƒRƒƒ“ƒg‚Æ“¯‚¶)
+	//ã‚«ãƒ©ãƒ¼è¡¨ç¤ºåˆ¶å¾¡ç”¨(ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ)
+	COLORIDX_BLOCK1			= COLORIDX_BLOCK_BIT,			//!< ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ1(æ–‡å­—è‰²ã¨èƒŒæ™¯è‰²ã¯è¡Œã‚³ãƒ¡ãƒ³ãƒˆã¨åŒã˜)
+	COLORIDX_BLOCK2,										//!< ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ2(æ–‡å­—è‰²ã¨èƒŒæ™¯è‰²ã¯è¡Œã‚³ãƒ¡ãƒ³ãƒˆã¨åŒã˜)
 
-	//ƒJƒ‰[•\¦§Œä—p(³‹K•\Œ»ƒL[ƒ[ƒh)
-	COLORIDX_REGEX_FIRST	= COLORIDX_REGEX_BIT,						//!< ³‹K•\Œ»ƒL[ƒ[ƒh(Å‰)
-	COLORIDX_REGEX_LAST		= COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,	//!< ³‹K•\Œ»ƒL[ƒ[ƒh(ÅŒã)
+	//ã‚«ãƒ©ãƒ¼è¡¨ç¤ºåˆ¶å¾¡ç”¨(æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰)
+	COLORIDX_REGEX_FIRST	= COLORIDX_REGEX_BIT,						//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰(æœ€åˆ)
+	COLORIDX_REGEX_LAST		= COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,	//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰(æœ€å¾Œ)
 
-	// -- -- •Ê–¼ -- -- //
-	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< ƒfƒtƒHƒ‹ƒg
+	// -- -- åˆ¥å -- -- //
+	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
 	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
 

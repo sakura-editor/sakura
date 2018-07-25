@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2015, syat
 
 	This software is provided 'as-is', without any express or implied
@@ -26,7 +26,7 @@
 
 #include "view/figures/CFigureStrategy.h"
 
-//! ƒJƒ“ƒ}•`‰æiCSVƒ‚[ƒhj
+//! ã‚«ãƒ³ãƒæç”»ï¼ˆCSVãƒ¢ãƒ¼ãƒ‰ï¼‰
 class CFigure_Comma : public CFigureSpace{
 public:
 	//traits

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Found.h"
 #include "types/CTypeSupport.h"
@@ -29,7 +29,7 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 		return false;
 	}
 
-	// 2011.12.27 ƒŒƒCƒAƒEƒgs“ª‚Å1‰ñ‚¾‚¯Šm”F‚µ‚Ä‚ ‚Æ‚Íƒƒ“ƒo[•Ï”‚ğ‚İ‚é
+	// 2011.12.27 ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé ­ã§1å›ã ã‘ç¢ºèªã—ã¦ã‚ã¨ã¯ãƒ¡ãƒ³ãƒãƒ¼å¤‰æ•°ã‚’ã¿ã‚‹
 	if( m_nSelectLine == nLineNum ){
 		if( m_nSelectStart <= nPos && nPos < m_nSelectEnd ){
 			return true;
@@ -57,9 +57,9 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 
 bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
 {
-	//ƒ}ƒbƒ`•¶š—ñI—¹ŒŸo
+	//ãƒãƒƒãƒæ–‡å­—åˆ—çµ‚äº†æ¤œå‡º
 	if( m_nSelectEnd <= nPos ){
-		// -- -- ƒ}ƒbƒ`•¶š—ñ‚ğ•`‰æ -- -- //
+		// -- -- ãƒãƒƒãƒæ–‡å­—åˆ—ã‚’æç”» -- -- //
 
 		return true;
 	}
@@ -95,9 +95,9 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//        ŒŸõƒqƒbƒgƒtƒ‰ƒOİ’è -> bSearchStringMode            //
+	//        æ¤œç´¢ãƒ’ãƒƒãƒˆãƒ•ãƒ©ã‚°è¨­å®š -> bSearchStringMode            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// 2002.02.08 hor ³‹K•\Œ»‚ÌŒŸõ•¶š—ñƒ}[ƒN‚ğ­‚µ‚‘¬‰»
+	// 2002.02.08 hor æ­£è¦è¡¨ç¾ã®æ¤œç´¢æ–‡å­—åˆ—ãƒãƒ¼ã‚¯ã‚’å°‘ã—é«˜é€ŸåŒ–
 	if( pcView->m_sCurSearchOption.bWordOnly || (m_nSearchResult && m_nSearchStart < nPos) ){
 		m_nSearchResult = pcView->IsSearchString(
 			cStr,
@@ -106,7 +106,7 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 			&m_nSearchEnd
 		);
 	}
-	//ƒ}ƒbƒ`•¶š—ñŒŸo
+	//ãƒãƒƒãƒæ–‡å­—åˆ—æ¤œå‡º
 	if( m_nSearchResult && m_nSearchStart==nPos){
 		return true;
 	}
@@ -115,9 +115,9 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 
 bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
 {
-	//ƒ}ƒbƒ`•¶š—ñI—¹ŒŸo
-	if( m_nSearchEnd <= nPos ){ //+ == ‚Å‚Ís“ª•¶š‚Ìê‡Am_nSearchEnd‚à‚O‚Å‚ ‚é‚½‚ß‚É•¶šF‚Ì‰ğœ‚ª‚Å‚«‚È‚¢ƒoƒO‚ğC³ 2003.05.03 ‚©‚ë‚Æ
-		// -- -- ƒ}ƒbƒ`•¶š—ñ‚ğ•`‰æ -- -- //
+	//ãƒãƒƒãƒæ–‡å­—åˆ—çµ‚äº†æ¤œå‡º
+	if( m_nSearchEnd <= nPos ){ //+ == ã§ã¯è¡Œé ­æ–‡å­—ã®å ´åˆã€m_nSearchEndã‚‚ï¼ã§ã‚ã‚‹ãŸã‚ã«æ–‡å­—è‰²ã®è§£é™¤ãŒã§ããªã„ãƒã‚°ã‚’ä¿®æ­£ 2003.05.03 ã‹ã‚ã¨
+		// -- -- ãƒãƒƒãƒæ–‡å­—åˆ—ã‚’æç”» -- -- //
 
 		return true;
 	}
