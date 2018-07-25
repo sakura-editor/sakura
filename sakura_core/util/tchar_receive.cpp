@@ -1,29 +1,29 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "tchar_receive.h"
 using namespace std;
 
-//TcharReceiverÀ‘•
+//TcharReceiverå®Ÿè£…
 #ifdef _UNICODE
-	//UNICODEƒrƒ‹ƒh‚ÅAWCHAR‚ğó‚¯æ‚é
+	//UNICODEãƒ“ãƒ«ãƒ‰ã§ã€WCHARã‚’å—ã‘å–ã‚‹
 	template <> TCHAR* TcharReceiver<WCHAR>::GetBufferPointer(){ return m_pReceiver; }
-	template <> void   TcharReceiver<WCHAR>::Apply(){} //‰½‚à‚µ‚È‚¢
+	template <> void   TcharReceiver<WCHAR>::Apply(){} //ä½•ã‚‚ã—ãªã„
 
-	//UNICODEƒrƒ‹ƒh‚ÅAACHAR‚ğó‚¯æ‚é
+	//UNICODEãƒ“ãƒ«ãƒ‰ã§ã€ACHARã‚’å—ã‘å–ã‚‹
 	template <> TCHAR* TcharReceiver<ACHAR>::GetBufferPointer(){ return (m_pBuff = new TCHAR[m_nReceiverCount]); }
 	template <> void   TcharReceiver<ACHAR>::Apply(){ _tcstombs(m_pReceiver, m_pBuff, m_nReceiverCount); delete []m_pBuff; }
 
 #else
-	//ANSIƒrƒ‹ƒh‚ÅAWCHAR‚ğó‚¯æ‚é
+	//ANSIãƒ“ãƒ«ãƒ‰ã§ã€WCHARã‚’å—ã‘å–ã‚‹
 	template <> TCHAR* TcharReceiver<WCHAR>::GetBufferPointer(){ return (m_pBuff = new TCHAR[m_nReceiverCount]); }
 	template <> void   TcharReceiver<WCHAR>::Apply(){ _tcstowcs(m_pReceiver, m_pBuff, m_nReceiverCount); delete []m_pBuff; }
 
-	//ANSIƒrƒ‹ƒh‚ÅAACHAR‚ğó‚¯æ‚é
+	//ANSIãƒ“ãƒ«ãƒ‰ã§ã€ACHARã‚’å—ã‘å–ã‚‹
 	template <> TCHAR* TcharReceiver<ACHAR>::GetBufferPointer(){ return m_pReceiver; }
-	template <> void   TcharReceiver<ACHAR>::Apply(){} //‰½‚à‚µ‚È‚¢
+	template <> void   TcharReceiver<ACHAR>::Apply(){} //ä½•ã‚‚ã—ãªã„
 
 #endif
 
-//ƒCƒ“ƒXƒ^ƒ“ƒX‰»
+//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–
 template class TcharReceiver<WCHAR>;
 template class TcharReceiver<ACHAR>;
 

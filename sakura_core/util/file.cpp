@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2002, SUI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2008, kobake
@@ -40,28 +40,28 @@ bool fexist(LPCTSTR pszPath)
 	return _taccess(pszPath,0)!=-1;
 }
 
-/*!	ƒtƒ@ƒCƒ‹–¼‚ÌØ‚èo‚µ
+/*!	ãƒ•ã‚¡ã‚¤ãƒ«åã®åˆ‡ã‚Šå‡ºã—
 
-	w’è•¶š—ñ‚©‚çƒtƒ@ƒCƒ‹–¼‚Æ”F¯‚³‚ê‚é•¶š—ñ‚ğæ‚èo‚µA
-	æ“ªOffset‹y‚Ñ’·‚³‚ğ•Ô‚·B
+	æŒ‡å®šæ–‡å­—åˆ—ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åã¨èªè­˜ã•ã‚Œã‚‹æ–‡å­—åˆ—ã‚’å–ã‚Šå‡ºã—ã€
+	å…ˆé ­OffsetåŠã³é•·ã•ã‚’è¿”ã™ã€‚
 	
-	@retval true ƒtƒ@ƒCƒ‹–¼”­Œ©
-	@retval false ƒtƒ@ƒCƒ‹–¼‚ÍŒ©‚Â‚©‚ç‚È‚©‚Á‚½
+	@retval true ãƒ•ã‚¡ã‚¤ãƒ«åç™ºè¦‹
+	@retval false ãƒ•ã‚¡ã‚¤ãƒ«åã¯è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ
 	
-	@date 2002.01.04 genta ƒtƒ@ƒCƒ‹‘¶İŠm”F•û–@•ÏX
-	@date 2002.01.04 genta ƒfƒBƒŒƒNƒgƒŠ‚ğŒŸ¸‘ÎÛŠO‚É‚·‚é‹@”\‚ğ’Ç‰Á
-	@date 2003.01.15 matsumo gcc‚ÌƒGƒ‰[ƒƒbƒZ[ƒW(:‹æØ‚è)‚Å‚àƒtƒ@ƒCƒ‹‚ğŒŸo‰Â”\‚É
-	@date 2004.05.29 genta C:\‚©‚çƒtƒ@ƒCƒ‹C‚ªØ‚èo‚³‚ê‚é‚Ì‚ğ–h~
-	@date 2004.11.13 genta/Moca ƒtƒ@ƒCƒ‹–¼æ“ª‚Ì*?‚ğl—¶
-	@date 2005.01.10 genta •Ï”–¼•ÏX j -> cur_pos
-	@date 2005.01.23 genta Œx—}§‚Ì‚½‚ßCgoto‚ğreturn‚É•ÏX
-	@date 2013.05.27 Moca Å’·ˆê’v‚É•ÏX
+	@date 2002.01.04 genta ãƒ•ã‚¡ã‚¤ãƒ«å­˜åœ¨ç¢ºèªæ–¹æ³•å¤‰æ›´
+	@date 2002.01.04 genta ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æ¤œæŸ»å¯¾è±¡å¤–ã«ã™ã‚‹æ©Ÿèƒ½ã‚’è¿½åŠ 
+	@date 2003.01.15 matsumo gccã®ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(:åŒºåˆ‡ã‚Š)ã§ã‚‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œå‡ºå¯èƒ½ã«
+	@date 2004.05.29 genta C:\ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«CãŒåˆ‡ã‚Šå‡ºã•ã‚Œã‚‹ã®ã‚’é˜²æ­¢
+	@date 2004.11.13 genta/Moca ãƒ•ã‚¡ã‚¤ãƒ«åå…ˆé ­ã®*?ã‚’è€ƒæ…®
+	@date 2005.01.10 genta å¤‰æ•°åå¤‰æ›´ j -> cur_pos
+	@date 2005.01.23 genta è­¦å‘ŠæŠ‘åˆ¶ã®ãŸã‚ï¼Œgotoã‚’returnã«å¤‰æ›´
+	@date 2013.05.27 Moca æœ€é•·ä¸€è‡´ã«å¤‰æ›´
 */
 bool IsFilePath(
-	const wchar_t*	pLine,		//!< [in]  ’T¸‘ÎÛ•¶š—ñ
-	size_t*			pnBgn,		//!< [out] æ“ªoffsetBpLine + *pnBgn‚ªƒtƒ@ƒCƒ‹–¼æ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^B
-	size_t*			pnPathLen,	//!< [out] ƒtƒ@ƒCƒ‹–¼‚Ì’·‚³
-	bool			bFileOnly	//!< [in]  true: ƒtƒ@ƒCƒ‹‚Ì‚İ‘ÎÛ / false: ƒfƒBƒŒƒNƒgƒŠ‚à‘ÎÛ
+	const wchar_t*	pLine,		//!< [in]  æ¢æŸ»å¯¾è±¡æ–‡å­—åˆ—
+	size_t*			pnBgn,		//!< [out] å…ˆé ­offsetã€‚pLine + *pnBgnãŒãƒ•ã‚¡ã‚¤ãƒ«åå…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã€‚
+	size_t*			pnPathLen,	//!< [out] ãƒ•ã‚¡ã‚¤ãƒ«åã®é•·ã•
+	bool			bFileOnly	//!< [in]  true: ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿å¯¾è±¡ / false: ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚‚å¯¾è±¡
 )
 {
 	wchar_t	szJumpToFile[_MAX_PATH];
@@ -69,7 +69,7 @@ bool IsFilePath(
 
 	size_t	nLineLen = wcslen( pLine );
 
-	//æ“ª‚Ì‹ó”’‚ğ“Ç‚İ”ò‚Î‚·
+	//å…ˆé ­ã®ç©ºç™½ã‚’èª­ã¿é£›ã°ã™
 	size_t	i;
 	for( i = 0; i < nLineLen; ++i ){
 		wchar_t c = pLine[i];
@@ -78,8 +78,8 @@ bool IsFilePath(
 		}
 	}
 
-	//	#include <ƒtƒ@ƒCƒ‹–¼>‚Ìl—¶
-	//	#‚Ån‚Ü‚é‚Æ‚«‚Í"‚Ü‚½‚Í<‚Ü‚Å“Ç‚İ”ò‚Î‚·
+	//	#include <ãƒ•ã‚¡ã‚¤ãƒ«å>ã®è€ƒæ…®
+	//	#ã§å§‹ã¾ã‚‹ã¨ãã¯"ã¾ãŸã¯<ã¾ã§èª­ã¿é£›ã°ã™
 	if( i < nLineLen && L'#' == pLine[i] ){
 		for( ; i < nLineLen; ++i ){
 			if( L'<'  == pLine[i] || L'\"' == pLine[i]){
@@ -89,7 +89,7 @@ bool IsFilePath(
 		}
 	}
 
-	//	‚±‚Ì“_‚ÅŠù‚És––‚É’B‚µ‚Ä‚¢‚½‚çƒtƒ@ƒCƒ‹–¼‚ÍŒ©‚Â‚©‚ç‚È‚¢
+	//	ã“ã®æ™‚ç‚¹ã§æ—¢ã«è¡Œæœ«ã«é”ã—ã¦ã„ãŸã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åã¯è¦‹ã¤ã‹ã‚‰ãªã„
 	if( i >= nLineLen ){
 		return false;
 	}
@@ -98,30 +98,30 @@ bool IsFilePath(
 	size_t cur_pos = 0;
 	size_t tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
-		//ƒtƒ@ƒCƒ‹–¼I’[‚ğŒŸ’m‚·‚é
+		//ãƒ•ã‚¡ã‚¤ãƒ«åçµ‚ç«¯ã‚’æ¤œçŸ¥ã™ã‚‹
 		if( WCODE::IsLineDelimiterExt(pLine[i]) || pLine[i] == L'\0' ){
 			break;
 		}
 
-		//ƒtƒ@ƒCƒ‹–¼I’[‚ğŒŸ’m‚·‚é
+		//ãƒ•ã‚¡ã‚¤ãƒ«åçµ‚ç«¯ã‚’æ¤œçŸ¥ã™ã‚‹
 		if( ( i == nLineLen    ||
-			  // 2002.01.08 YAZAKI ƒ^ƒu•¶š‚àB
-			  // 2013.05.27 Moca •¶ší’Ç‰Á
+			  // 2002.01.08 YAZAKI ã‚¿ãƒ–æ–‡å­—ã‚‚ã€‚
+			  // 2013.05.27 Moca æ–‡å­—ç¨®è¿½åŠ 
 			  wcschr(L" \t(\")'`[]{};#!@&%$", pLine[i]) != NULL
 			) &&
 			szJumpToFile[0] != L'\0'
 		){
-			//	ƒtƒ@ƒCƒ‹‘¶İŠm”F
+			//	ãƒ•ã‚¡ã‚¤ãƒ«å­˜åœ¨ç¢ºèª
 			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
 				tmp_end = cur_pos;
 			}
 		}
 
-		// May 29, 2004 genta C:\‚Ì:‚Íƒtƒ@ƒCƒ‹‹æØ‚è‚ÆŒ©‚È‚µ‚Ä—~‚µ‚­‚È‚¢
+		// May 29, 2004 genta C:\ã®:ã¯ãƒ•ã‚¡ã‚¤ãƒ«åŒºåˆ‡ã‚Šã¨è¦‹ãªã—ã¦æ¬²ã—ããªã„
 		if( cur_pos > 1 && pLine[i] == L':' ){   //@@@ 2003/1/15/ matsumo (for gcc)
 			break;
 		}
-		//ƒtƒ@ƒCƒ‹–¼‚Ég‚¦‚È‚¢•¶š‚ªŠÜ‚Ü‚ê‚Ä‚¢‚½‚çA‘¦ƒ‹[ƒvI—¹
+		//ãƒ•ã‚¡ã‚¤ãƒ«åã«ä½¿ãˆãªã„æ–‡å­—ãŒå«ã¾ã‚Œã¦ã„ãŸã‚‰ã€å³ãƒ«ãƒ¼ãƒ—çµ‚äº†
 		if( !WCODE::IsValidFilenameChar(pLine[i]) ){
 			break;
 		}
@@ -131,7 +131,7 @@ bool IsFilePath(
 	}
 
 	//	Jan. 04, 2002 genta
-	//	ƒtƒ@ƒCƒ‹‘¶İŠm”F•û–@•ÏX
+	//	ãƒ•ã‚¡ã‚¤ãƒ«å­˜åœ¨ç¢ºèªæ–¹æ³•å¤‰æ›´
 	if( szJumpToFile[0] != L'\0' && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
 		tmp_end = cur_pos;
 	}
@@ -145,24 +145,24 @@ bool IsFilePath(
 }
 
 /*!
-	ƒ[ƒJƒ‹ƒhƒ‰ƒCƒu‚Ì”»’è
+	ãƒ­ãƒ¼ã‚«ãƒ«ãƒ‰ãƒ©ã‚¤ãƒ–ã®åˆ¤å®š
 
-	@param[in] pszDrive ƒhƒ‰ƒCƒu–¼‚ğŠÜ‚ŞƒpƒX–¼
+	@param[in] pszDrive ãƒ‰ãƒ©ã‚¤ãƒ–åã‚’å«ã‚€ãƒ‘ã‚¹å
 	
-	@retval true ƒ[ƒJƒ‹ƒhƒ‰ƒCƒu
-	@retval false ƒŠƒ€[ƒoƒuƒ‹ƒhƒ‰ƒCƒuDƒlƒbƒgƒ[ƒNƒhƒ‰ƒCƒuD
+	@retval true ãƒ­ãƒ¼ã‚«ãƒ«ãƒ‰ãƒ©ã‚¤ãƒ–
+	@retval false ãƒªãƒ ãƒ¼ãƒãƒ–ãƒ«ãƒ‰ãƒ©ã‚¤ãƒ–ï¼ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ‰ãƒ©ã‚¤ãƒ–ï¼
 	
 	@author MIK
-	@date 2001.03.29 MIK V‹Kì¬
-	@date 2001.12.23 YAZAKI MRU‚Ì•ÊƒNƒ‰ƒX‰»‚É”º‚¤ŠÖ”‰»
-	@date 2002.01.28 genta –ß‚è’l‚ÌŒ^‚ğBOOL‚©‚çbool‚É•ÏXD
-	@date 2005.11.12 aroka •¶š”»’è•”•ÏX
-	@date 2006.01.08 genta CMRU::IsRemovableDrive‚ÆCEditDoc::IsLocalDrive‚ª
-		À¿“I‚É“¯‚¶‚à‚Ì‚¾‚Á‚½
+	@date 2001.03.29 MIK æ–°è¦ä½œæˆ
+	@date 2001.12.23 YAZAKI MRUã®åˆ¥ã‚¯ãƒ©ã‚¹åŒ–ã«ä¼´ã†é–¢æ•°åŒ–
+	@date 2002.01.28 genta æˆ»ã‚Šå€¤ã®å‹ã‚’BOOLã‹ã‚‰boolã«å¤‰æ›´ï¼
+	@date 2005.11.12 aroka æ–‡å­—åˆ¤å®šéƒ¨å¤‰æ›´
+	@date 2006.01.08 genta CMRU::IsRemovableDriveã¨CEditDoc::IsLocalDriveãŒ
+		å®Ÿè³ªçš„ã«åŒã˜ã‚‚ã®ã ã£ãŸ
 */
 bool IsLocalDrive( const TCHAR* pszDrive )
 {
-	TCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "“o˜^—p
+	TCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "ç™»éŒ²ç”¨
 	long	lngRet;
 
 	if( iswalpha(pszDrive[0]) ){
@@ -174,7 +174,7 @@ bool IsLocalDrive( const TCHAR* pszDrive )
 		}
 	}
 	else if (pszDrive[0] == _T('\\') && pszDrive[1] == _T('\\')) {
-		// ƒlƒbƒgƒ[ƒNƒpƒX	2010/5/27 Uchi
+		// ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ‘ã‚¹	2010/5/27 Uchi
 		return false;
 	}
 	return true;
@@ -201,10 +201,10 @@ const TCHAR* GetFileTitlePointer(const TCHAR* tszPath)
 }
 
 
-/*! fname‚ª‘Š‘ÎƒpƒX‚Ìê‡‚ÍAÀsƒtƒ@ƒCƒ‹‚ÌƒpƒX‚©‚ç‚Ì‘Š‘ÎƒpƒX‚Æ‚µ‚ÄŠJ‚­
+/*! fnameãŒç›¸å¯¾ãƒ‘ã‚¹ã®å ´åˆã¯ã€å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‹ã‚‰ã®ç›¸å¯¾ãƒ‘ã‚¹ã¨ã—ã¦é–‹ã
 	@author Moca
 	@date 2003.06.23
-	@date 2007.05.20 ryoji ŠÖ”–¼•ÏXi‹ŒFfopen_absexejA”Ä—pƒeƒLƒXƒgƒ}ƒbƒsƒ“ƒO‰»
+	@date 2007.05.20 ryoji é–¢æ•°åå¤‰æ›´ï¼ˆæ—§ï¼šfopen_absexeï¼‰ã€æ±ç”¨ãƒ†ã‚­ã‚¹ãƒˆãƒãƒƒãƒ”ãƒ³ã‚°åŒ–
 */
 FILE* _tfopen_absexe(LPCTSTR fname, LPCTSTR mode)
 {
@@ -216,9 +216,9 @@ FILE* _tfopen_absexe(LPCTSTR fname, LPCTSTR mode)
 	return _tfopen( fname, mode );
 }
 
-/*! fname‚ª‘Š‘ÎƒpƒX‚Ìê‡‚ÍAINIƒtƒ@ƒCƒ‹‚ÌƒpƒX‚©‚ç‚Ì‘Š‘ÎƒpƒX‚Æ‚µ‚ÄŠJ‚­
+/*! fnameãŒç›¸å¯¾ãƒ‘ã‚¹ã®å ´åˆã¯ã€INIãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹ã‹ã‚‰ã®ç›¸å¯¾ãƒ‘ã‚¹ã¨ã—ã¦é–‹ã
 	@author ryoji
-	@date 2007.05.19 V‹Kì¬i_tfopen_absexeƒx[ƒXj
+	@date 2007.05.19 æ–°è¦ä½œæˆï¼ˆ_tfopen_absexeãƒ™ãƒ¼ã‚¹ï¼‰
 */
 FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
@@ -235,16 +235,16 @@ FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
 
 
 
-/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Ìê‡‚ÍAæ‚èœ‚­ "c:\\"“™‚Ìƒ‹[ƒg‚Íæ‚èœ‚©‚È‚¢ */
+/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã®å ´åˆã¯ã€å–ã‚Šé™¤ã "c:\\"ç­‰ã®ãƒ«ãƒ¼ãƒˆã¯å–ã‚Šé™¤ã‹ãªã„ */
 void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 {
 	if( 3 == _tcslen( pszFolder )
 	 && pszFolder[1] == _T(':')
 	 && pszFolder[2] == _T('\\')
 	){
-		/* ƒhƒ‰ƒCƒu–¼:\ */
+		/* ãƒ‰ãƒ©ã‚¤ãƒ–å:\ */
 	}else{
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Ìê‡‚ÍAæ‚èœ‚­ */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã®å ´åˆã¯ã€å–ã‚Šé™¤ã */
 		int	nFolderLen;
 		int	nCharChars;
 		nFolderLen = _tcslen( pszFolder );
@@ -261,16 +261,16 @@ void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 
 
 
-/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 void AddLastYenFromDirectoryPath( CHAR* pszFolder )
 {
 	if( 3 == auto_strlen( pszFolder )
 	 && pszFolder[1] == ':'
 	 && pszFolder[2] == '\\'
 	){
-		/* ƒhƒ‰ƒCƒu–¼:\ */
+		/* ãƒ‰ãƒ©ã‚¤ãƒ–å:\ */
 	}else{
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 		int	nFolderLen;
 		int	nCharChars;
 		nFolderLen = auto_strlen( pszFolder );
@@ -292,9 +292,9 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	 && pszFolder[1] == L':'
 	 && pszFolder[2] == L'\\'
 	){
-		/* ƒhƒ‰ƒCƒu–¼:\ */
+		/* ãƒ‰ãƒ©ã‚¤ãƒ–å:\ */
 	}else{
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Å‚È‚¢ê‡‚ÍA•t‰Á‚·‚é */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã§ãªã„å ´åˆã¯ã€ä»˜åŠ ã™ã‚‹ */
 		int	nFolderLen;
 		nFolderLen = auto_strlen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -309,8 +309,8 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 }
 
 
-/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
-/* [c:\work\test\aaa.txt] ¨ [c:\work\test] + [aaa.txt] */
+/* ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’ã€ãƒ•ã‚©ãƒ«ãƒ€ã¨ãƒ•ã‚¡ã‚¤ãƒ«åã«åˆ†å‰² */
+/* [c:\work\test\aaa.txt] â†’ [c:\work\test] + [aaa.txt] */
 void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile )
 {
 	TCHAR	szDrive[_MAX_DRIVE];
@@ -323,7 +323,7 @@ void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR*
 	if( NULL != pszFolder ){
 		_tcscpy( pszFolder, szDrive );
 		_tcscat( pszFolder, szDir );
-		/* ƒtƒHƒ‹ƒ_‚ÌÅŒã‚ª”¼Šp‚©‚Â'\\'‚Ìê‡‚ÍAæ‚èœ‚­ */
+		/* ãƒ•ã‚©ãƒ«ãƒ€ã®æœ€å¾ŒãŒåŠè§’ã‹ã¤'\\'ã®å ´åˆã¯ã€å–ã‚Šé™¤ã */
 		nFolderLen = _tcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CNativeT::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
@@ -339,20 +339,20 @@ void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR*
 	return;
 }
 
-/* ƒtƒHƒ‹ƒ_Aƒtƒ@ƒCƒ‹–¼‚©‚çAŒ‹‡‚µ‚½ƒpƒX‚ğì¬
- * [c:\work\test] + [aaa.txt] ¨ [c:\work\test\aaa.txt]
- * ƒtƒHƒ‹ƒ_––”ö‚É‰~‹L†‚ª‚ ‚Á‚Ä‚à‚È‚­‚Ä‚à—Ç‚¢B
+/* ãƒ•ã‚©ãƒ«ãƒ€ã€ãƒ•ã‚¡ã‚¤ãƒ«åã‹ã‚‰ã€çµåˆã—ãŸãƒ‘ã‚¹ã‚’ä½œæˆ
+ * [c:\work\test] + [aaa.txt] â†’ [c:\work\test\aaa.txt]
+ * ãƒ•ã‚©ãƒ«ãƒ€æœ«å°¾ã«å††è¨˜å·ãŒã‚ã£ã¦ã‚‚ãªãã¦ã‚‚è‰¯ã„ã€‚
  */
 void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* pszPath )
 {
 	TCHAR* out=pszPath;
 	const TCHAR* in;
 
-	//ƒtƒHƒ‹ƒ_‚ğƒRƒs[
+	//ãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚³ãƒ”ãƒ¼
 	for( in=pszDir ; *in != '\0'; ){
 		*out++ = *in++;
 	}
-	//‰~‹L†‚ğ•t‰Á
+	//å††è¨˜å·ã‚’ä»˜åŠ 
 #if UNICODE
 	if( *(out-1) != '\\' ){ *out++ = '\\'; }
 #else
@@ -361,7 +361,7 @@ void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* ps
 			*out++ = '\\';
 	}
 #endif
-	//ƒtƒ@ƒCƒ‹–¼‚ğƒRƒs[
+	//ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼
 	for( in=pszTitle; *in != '\0'; ){
 		*out++ = *in++;
 	}
@@ -370,14 +370,14 @@ void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* ps
 }
 
 
-/*! ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é 
+/*! ãƒ­ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹ 
 
-	@param[in] pszFilePathSrc •ÏŠ·Œ³ƒpƒX–¼
-	@param[out] pszFilePathDes Œ‹‰Ê‘‚«‚İæ (’·‚³MAX_PATH‚Ì—Ìˆæ‚ª•K—v)
+	@param[in] pszFilePathSrc å¤‰æ›å…ƒãƒ‘ã‚¹å
+	@param[out] pszFilePathDes çµæœæ›¸ãè¾¼ã¿å…ˆ (é•·ã•MAX_PATHã®é ˜åŸŸãŒå¿…è¦)
 
-	@date Oct. 2, 2005 genta GetFilePath API‚ğg‚Á‚Ä‘‚«Š·‚¦
-	@date Oct. 4, 2005 genta ‘Š‘ÎƒpƒX‚ªâ‘ÎƒpƒX‚É’¼‚³‚ê‚È‚©‚Á‚½
-	@date Oct. 5, 2005 Moca  ‘Š‘ÎƒpƒX‚ğâ‘ÎƒpƒX‚É•ÏŠ·‚·‚é‚æ‚¤‚É
+	@date Oct. 2, 2005 genta GetFilePath APIã‚’ä½¿ã£ã¦æ›¸ãæ›ãˆ
+	@date Oct. 4, 2005 genta ç›¸å¯¾ãƒ‘ã‚¹ãŒçµ¶å¯¾ãƒ‘ã‚¹ã«ç›´ã•ã‚Œãªã‹ã£ãŸ
+	@date Oct. 5, 2005 Moca  ç›¸å¯¾ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›ã™ã‚‹ã‚ˆã†ã«
 */
 BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
 {
@@ -399,7 +399,7 @@ BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
 }
 
 
-/* Šg’£q‚ğ’²‚×‚é */
+/* æ‹¡å¼µå­ã‚’èª¿ã¹ã‚‹ */
 BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
 {
 	TCHAR	szExt[_MAX_EXT];
@@ -416,7 +416,7 @@ BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
 	}
 }
 
-/*! ‘Š‘ÎƒpƒX‚©”»’è‚·‚é
+/*! ç›¸å¯¾ãƒ‘ã‚¹ã‹åˆ¤å®šã™ã‚‹
 	@author Moca
 	@date 2003.06.23
 */
@@ -437,49 +437,49 @@ bool _IS_REL_PATH(const TCHAR* path)
 
 
 
-/*! @brief ƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ğŒvZ‚·‚é
+/*! @brief ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®æ·±ã•ã‚’è¨ˆç®—ã™ã‚‹
 
-	—^‚¦‚ç‚ê‚½ƒpƒX–¼‚©‚çƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ğŒvZ‚·‚éD
-	ƒpƒX‚Ì‹æØ‚è‚Í\Dƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ‚ª[‚³0‚ÅCƒTƒuƒfƒBƒŒƒNƒgƒŠ–ˆ‚É
-	[‚³‚ª1‚¸‚Âã‚ª‚Á‚Ä‚¢‚­D
+	ä¸ãˆã‚‰ã‚ŒãŸãƒ‘ã‚¹åã‹ã‚‰ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®æ·±ã•ã‚’è¨ˆç®—ã™ã‚‹ï¼
+	ãƒ‘ã‚¹ã®åŒºåˆ‡ã‚Šã¯\ï¼ãƒ«ãƒ¼ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒæ·±ã•0ã§ï¼Œã‚µãƒ–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæ¯ã«
+	æ·±ã•ãŒ1ãšã¤ä¸ŠãŒã£ã¦ã„ãï¼
  
-	@date 2003.04.30 genta V‹Kì¬
+	@date 2003.04.30 genta æ–°è¦ä½œæˆ
 */
 int CalcDirectoryDepth(
-	const TCHAR* path	//!< [in] [‚³‚ğ’²‚×‚½‚¢ƒtƒ@ƒCƒ‹/ƒfƒBƒŒƒNƒgƒŠ‚Ìƒtƒ‹ƒpƒX
+	const TCHAR* path	//!< [in] æ·±ã•ã‚’èª¿ã¹ãŸã„ãƒ•ã‚¡ã‚¤ãƒ«/ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ãƒ•ãƒ«ãƒ‘ã‚¹
 )
 {
 	int depth = 0;
  
-	//	‚Æ‚è‚ ‚¦‚¸\‚Ì”‚ğ”‚¦‚é
+	//	ã¨ã‚Šã‚ãˆãš\ã®æ•°ã‚’æ•°ãˆã‚‹
 	for( CharPointerT p = path; *p != _T('\0'); ++p ){
 		if( *p == _T('\\') ){
 			++depth;
-			//	ƒtƒ‹ƒpƒX‚É‚Í“ü‚Á‚Ä‚¢‚È‚¢‚Í‚¸‚¾‚ª”O‚Ì‚½‚ß
-			//	.\‚ÍƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚È‚Ì‚ÅC[‚³‚ÉŠÖŒW‚È‚¢D
+			//	ãƒ•ãƒ«ãƒ‘ã‚¹ã«ã¯å…¥ã£ã¦ã„ãªã„ã¯ãšã ãŒå¿µã®ãŸã‚
+			//	.\ã¯ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãªã®ã§ï¼Œæ·±ã•ã«é–¢ä¿‚ãªã„ï¼
 			while( p[1] == _T('.') && p[2] == _T('\\') ){
 				p += 2;
 			}
 		}
 	}
  
-	//	•â³
-	//	ƒhƒ‰ƒCƒu–¼‚ÍƒpƒX‚Ì[‚³‚É”‚¦‚È‚¢
+	//	è£œæ­£
+	//	ãƒ‰ãƒ©ã‚¤ãƒ–åã¯ãƒ‘ã‚¹ã®æ·±ã•ã«æ•°ãˆãªã„
 	if( ((_T('A') <= path[0] && path[0] <= _T('Z')) || (_T('a') <= path[0] && path[0] <= _T('z')))
 		&& path[1] == _T(':') && path[2] == _T('\\') ){
-		//ƒtƒ‹ƒpƒX
-		--depth; // C:\ ‚Ì \ ‚Íƒ‹[ƒg‚Ì‹L†‚È‚Ì‚ÅŠK‘w[‚³‚Å‚Í‚È‚¢
+		//ãƒ•ãƒ«ãƒ‘ã‚¹
+		--depth; // C:\ ã® \ ã¯ãƒ«ãƒ¼ãƒˆã®è¨˜å·ãªã®ã§éšå±¤æ·±ã•ã§ã¯ãªã„
 	}
 	else if( path[0] == _T('\\') ){
 		if( path[1] == _T('\\') ){
-			//	ƒlƒbƒgƒ[ƒNƒpƒX
-			//	æ“ª‚Ì2‚Â‚Íƒlƒbƒgƒ[ƒN‚ğ•\‚µC‚»‚ÌŸ‚ÍƒzƒXƒg–¼‚È‚Ì‚Å
-			//	ƒfƒBƒŒƒNƒgƒŠŠK‘w‚Æ‚Í–³ŠÖŒW
+			//	ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ‘ã‚¹
+			//	å…ˆé ­ã®2ã¤ã¯ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚’è¡¨ã—ï¼Œãã®æ¬¡ã¯ãƒ›ã‚¹ãƒˆåãªã®ã§
+			//	ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªéšå±¤ã¨ã¯ç„¡é–¢ä¿‚
 			depth -= 3;
 		}
 		else {
-			//	ƒhƒ‰ƒCƒu–¼–³‚µ‚Ìƒtƒ‹ƒpƒX
-			//	æ“ª‚Ì\‚Í‘ÎÛŠO
+			//	ãƒ‰ãƒ©ã‚¤ãƒ–åç„¡ã—ã®ãƒ•ãƒ«ãƒ‘ã‚¹
+			//	å…ˆé ­ã®\ã¯å¯¾è±¡å¤–
 			--depth;
 		}
 	}
@@ -488,23 +488,23 @@ int CalcDirectoryDepth(
 
 
 /*!
-	@brief exeƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠC‚Ü‚½‚Íw’è‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·D
+	@brief exeãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Œã¾ãŸã¯æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™ï¼
 	
 	@author genta
 	@date 2002.12.02 genta
-	@date 2007.05.20 ryoji ŠÖ”–¼•ÏXi‹ŒFGetExecutableDirjA”Ä—pƒeƒLƒXƒgƒ}ƒbƒsƒ“ƒO‰»
-	@date 2008.05.05 novice GetModuleHandle(NULL)¨NULL‚É•ÏX
+	@date 2007.05.20 ryoji é–¢æ•°åå¤‰æ›´ï¼ˆæ—§ï¼šGetExecutableDirï¼‰ã€æ±ç”¨ãƒ†ã‚­ã‚¹ãƒˆãƒãƒƒãƒ”ãƒ³ã‚°åŒ–
+	@date 2008.05.05 novice GetModuleHandle(NULL)â†’NULLã«å¤‰æ›´
 */
 void GetExedir(
-	LPTSTR	pDir,	//!< [out] EXEƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚ğ•Ô‚·êŠD—\‚ß_MAX_PATH‚Ìƒoƒbƒtƒ@‚ğ—pˆÓ‚µ‚Ä‚¨‚­‚±‚ÆD
-	LPCTSTR	szFile	//!< [in]  ƒfƒBƒŒƒNƒgƒŠ–¼‚ÉŒ‹‡‚·‚éƒtƒ@ƒCƒ‹–¼D
+	LPTSTR	pDir,	//!< [out] EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’è¿”ã™å ´æ‰€ï¼äºˆã‚_MAX_PATHã®ãƒãƒƒãƒ•ã‚¡ã‚’ç”¨æ„ã—ã¦ãŠãã“ã¨ï¼
+	LPCTSTR	szFile	//!< [in]  ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã«çµåˆã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åï¼
 )
 {
 	if( pDir == NULL )
 		return;
 	
 	TCHAR	szPath[_MAX_PATH];
-	// sakura.exe ‚ÌƒpƒX‚ğæ“¾
+	// sakura.exe ã®ãƒ‘ã‚¹ã‚’å–å¾—
 	::GetModuleFileName( NULL, szPath, _countof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
@@ -517,14 +517,14 @@ void GetExedir(
 }
 
 /*!
-	@brief INIƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠC‚Ü‚½‚Íw’è‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·D
+	@brief INIãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Œã¾ãŸã¯æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™ï¼
 	
 	@author ryoji
-	@date 2007.05.19 V‹Kì¬iGetExedirƒx[ƒXj
+	@date 2007.05.19 æ–°è¦ä½œæˆï¼ˆGetExedirãƒ™ãƒ¼ã‚¹ï¼‰
 */
 void GetInidir(
-	LPTSTR	pDir,				//!< [out] INIƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚ğ•Ô‚·êŠD—\‚ß_MAX_PATH‚Ìƒoƒbƒtƒ@‚ğ—pˆÓ‚µ‚Ä‚¨‚­‚±‚ÆD
-	LPCTSTR szFile	/*=NULL*/	//!< [in] ƒfƒBƒŒƒNƒgƒŠ–¼‚ÉŒ‹‡‚·‚éƒtƒ@ƒCƒ‹–¼D
+	LPTSTR	pDir,				//!< [out] INIãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’è¿”ã™å ´æ‰€ï¼äºˆã‚_MAX_PATHã®ãƒãƒƒãƒ•ã‚¡ã‚’ç”¨æ„ã—ã¦ãŠãã“ã¨ï¼
+	LPCTSTR szFile	/*=NULL*/	//!< [in] ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã«çµåˆã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åï¼
 )
 {
 	if( pDir == NULL )
@@ -533,7 +533,7 @@ void GetInidir(
 	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szPath[_MAX_PATH];
 
-	// sakura.ini ‚ÌƒpƒX‚ğæ“¾
+	// sakura.ini ã®ãƒ‘ã‚¹ã‚’å–å¾—
 	CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
@@ -547,37 +547,37 @@ void GetInidir(
 
 
 /*!
-	@brief INIƒtƒ@ƒCƒ‹‚Ü‚½‚ÍEXEƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠC‚Ü‚½‚Íw’è‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·iINI‚ğ—DæjD
+	@brief INIãƒ•ã‚¡ã‚¤ãƒ«ã¾ãŸã¯EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Œã¾ãŸã¯æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™ï¼ˆINIã‚’å„ªå…ˆï¼‰ï¼
 	
 	@author ryoji
-	@date 2007.05.22 V‹Kì¬
+	@date 2007.05.22 æ–°è¦ä½œæˆ
 */
 void GetInidirOrExedir(
-	LPTSTR	pDir,								//!< [out] INIƒtƒ@ƒCƒ‹‚Ü‚½‚ÍEXEƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚ğ•Ô‚·êŠD
-												//         —\‚ß_MAX_PATH‚Ìƒoƒbƒtƒ@‚ğ—pˆÓ‚µ‚Ä‚¨‚­‚±‚ÆD
-	LPCTSTR	szFile					/*=NULL*/,	//!< [in] ƒfƒBƒŒƒNƒgƒŠ–¼‚ÉŒ‹‡‚·‚éƒtƒ@ƒCƒ‹–¼D
-	BOOL	bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ƒtƒ@ƒCƒ‹–¼‚Ìw’è‚ª‹ó‚Ìê‡‚ÍEXEƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·D
+	LPTSTR	pDir,								//!< [out] INIãƒ•ã‚¡ã‚¤ãƒ«ã¾ãŸã¯EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’è¿”ã™å ´æ‰€ï¼
+												//         äºˆã‚_MAX_PATHã®ãƒãƒƒãƒ•ã‚¡ã‚’ç”¨æ„ã—ã¦ãŠãã“ã¨ï¼
+	LPCTSTR	szFile					/*=NULL*/,	//!< [in] ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã«çµåˆã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åï¼
+	BOOL	bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šãŒç©ºã®å ´åˆã¯EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™ï¼
 )
 {
 	TCHAR	szInidir[_MAX_PATH];
 	TCHAR	szExedir[_MAX_PATH];
 
-	// ƒtƒ@ƒCƒ‹–¼‚Ìw’è‚ª‹ó‚Ìê‡‚ÍEXEƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·iƒIƒvƒVƒ‡ƒ“j
+	// ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šãŒç©ºã®å ´åˆã¯EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰
 	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == _T('\0')) ){
 		GetExedir( szExedir, szFile );
 		::lstrcpy( pDir, szExedir );
 		return;
 	}
 
-	// INIŠî€‚Ìƒtƒ‹ƒpƒX‚ªÀİ‚·‚ê‚Î‚»‚ÌƒpƒX‚ğ•Ô‚·
+	// INIåŸºæº–ã®ãƒ•ãƒ«ãƒ‘ã‚¹ãŒå®Ÿåœ¨ã™ã‚Œã°ãã®ãƒ‘ã‚¹ã‚’è¿”ã™
 	GetInidir( szInidir, szFile );
 	if( fexist(szInidir) ){
 		::lstrcpy( pDir, szInidir );
 		return;
 	}
 
-	// EXEŠî€‚Ìƒtƒ‹ƒpƒX‚ªÀİ‚·‚ê‚Î‚»‚ÌƒpƒX‚ğ•Ô‚·
-	if( CShareData::getInstance()->IsPrivateSettings() ){	// INI‚ÆEXE‚ÅƒpƒX‚ªˆÙ‚È‚éê‡
+	// EXEåŸºæº–ã®ãƒ•ãƒ«ãƒ‘ã‚¹ãŒå®Ÿåœ¨ã™ã‚Œã°ãã®ãƒ‘ã‚¹ã‚’è¿”ã™
+	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIã¨EXEã§ãƒ‘ã‚¹ãŒç•°ãªã‚‹å ´åˆ
 		GetExedir( szExedir, szFile );
 		if( fexist(szExedir) ){
 			::lstrcpy( pDir, szExedir );
@@ -585,14 +585,14 @@ void GetInidirOrExedir(
 		}
 	}
 
-	// ‚Ç‚¿‚ç‚É‚àÀİ‚µ‚È‚¯‚ê‚ÎINIŠî€‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚·
+	// ã©ã¡ã‚‰ã«ã‚‚å®Ÿåœ¨ã—ãªã‘ã‚Œã°INIåŸºæº–ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’è¿”ã™
 	::lstrcpy( pDir, szInidir );
 }
 
 /*!
-	@brief INIƒtƒ@ƒCƒ‹‚Ü‚½‚ÍEXEƒtƒ@ƒCƒ‹‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚Ì‘Š‘ÎƒpƒX‚ğ•Ô‚·iINI‚ğ—DæjD
-	@param pszPath [in] ‘ÎÛƒpƒX
-	@date 2013.06.26 novice V‹Kì¬
+	@brief INIãƒ•ã‚¡ã‚¤ãƒ«ã¾ãŸã¯EXEãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ç›¸å¯¾ãƒ‘ã‚¹ã‚’è¿”ã™ï¼ˆINIã‚’å„ªå…ˆï¼‰ï¼
+	@param pszPath [in] å¯¾è±¡ãƒ‘ã‚¹
+	@date 2013.06.26 novice æ–°è¦ä½œæˆ
 */
 LPCTSTR GetRelPath( LPCTSTR pszPath )
 {
@@ -616,18 +616,18 @@ LPCTSTR GetRelPath( LPCTSTR pszPath )
 
 
 
-/**	ƒtƒ@ƒCƒ‹‚Ì‘¶İƒ`ƒFƒbƒN
+/**	ãƒ•ã‚¡ã‚¤ãƒ«ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯
 
-	w’è‚³‚ê‚½ƒpƒX‚Ìƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚é‚©‚Ç‚¤‚©‚ğŠm”F‚·‚éB
+	æŒ‡å®šã•ã‚ŒãŸãƒ‘ã‚¹ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹ã‹ã©ã†ã‹ã‚’ç¢ºèªã™ã‚‹ã€‚
 	
-	@param path [in] ’²‚×‚éƒpƒX–¼
-	@param bFileOnly [in] true: ƒtƒ@ƒCƒ‹‚Ì‚İ‘ÎÛ / false: ƒfƒBƒŒƒNƒgƒŠ‚à‘ÎÛ
+	@param path [in] èª¿ã¹ã‚‹ãƒ‘ã‚¹å
+	@param bFileOnly [in] true: ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿å¯¾è±¡ / false: ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚‚å¯¾è±¡
 	
-	@retval true  ƒtƒ@ƒCƒ‹‚Í‘¶İ‚·‚é
-	@retval false ƒtƒ@ƒCƒ‹‚Í‘¶İ‚µ‚È‚¢
+	@retval true  ãƒ•ã‚¡ã‚¤ãƒ«ã¯å­˜åœ¨ã™ã‚‹
+	@retval false ãƒ•ã‚¡ã‚¤ãƒ«ã¯å­˜åœ¨ã—ãªã„
 	
 	@author genta
-	@date 2002.01.04 V‹Kì¬
+	@date 2002.01.04 æ–°è¦ä½œæˆ
 */
 bool IsFileExists(const TCHAR* path, bool bFileOnly)
 {
@@ -641,17 +641,17 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 	return false;
 }
 
-/**	ƒfƒBƒŒƒNƒgƒŠƒ`ƒFƒbƒN
+/**	ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒã‚§ãƒƒã‚¯
 
-	w’è‚³‚ê‚½ƒpƒX‚ªƒfƒBƒŒƒNƒgƒŠ‚©‚Ç‚¤‚©‚ğŠm”F‚·‚éB
+	æŒ‡å®šã•ã‚ŒãŸãƒ‘ã‚¹ãŒãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‹ã©ã†ã‹ã‚’ç¢ºèªã™ã‚‹ã€‚
 
-	@param pszPath [in] ’²‚×‚éƒpƒX–¼
+	@param pszPath [in] èª¿ã¹ã‚‹ãƒ‘ã‚¹å
 
-	@retval true  ƒfƒBƒŒƒNƒgƒŠ
-	@retval false ƒfƒBƒŒƒNƒgƒŠ‚Å‚Í‚È‚¢
+	@retval true  ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	@retval false ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã§ã¯ãªã„
 	
 	@author ryoji
-	@date 2009.08.20 V‹Kì¬
+	@date 2009.08.20 æ–°è¦ä½œæˆ
 */
 bool IsDirectory(LPCTSTR pszPath)
 {
@@ -666,21 +666,21 @@ bool IsDirectory(LPCTSTR pszPath)
 
 
 
-/*!	ƒtƒ@ƒCƒ‹‚ÌXV“ú‚ğæ“¾
+/*!	ãƒ•ã‚¡ã‚¤ãƒ«ã®æ›´æ–°æ—¥æ™‚ã‚’å–å¾—
 
-	@return true: ¬Œ÷, false: FindFirstFile¸”s
+	@return true: æˆåŠŸ, false: FindFirstFileå¤±æ•—
 
 	@author genta by assitance with ryoji
 	@date 2005.10.22 new
 
-	@note ‘‚«‚İŒã‚Éƒtƒ@ƒCƒ‹‚ğÄƒI[ƒvƒ“‚µ‚Äƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ğ“¾‚æ‚¤‚Æ‚·‚é‚Æ
-	ƒtƒ@ƒCƒ‹‚ª‚Ü‚¾ƒƒbƒN‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ª‚ ‚èCã‘‚«‹Ö~‚ÆŒë”F‚³‚ê‚é‚±‚Æ‚ª‚ ‚éD
-	FindFirstFile‚ğg‚¤‚±‚Æ‚Åƒtƒ@ƒCƒ‹‚ÌƒƒbƒNó‘Ô‚É‰e‹¿‚³‚ê‚¸‚Éƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ğ
-	æ“¾‚Å‚«‚éD(ryoji)
+	@note æ›¸ãè¾¼ã¿å¾Œã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å†ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ã‚’å¾—ã‚ˆã†ã¨ã™ã‚‹ã¨
+	ãƒ•ã‚¡ã‚¤ãƒ«ãŒã¾ã ãƒ­ãƒƒã‚¯ã•ã‚Œã¦ã„ã‚‹ã“ã¨ãŒã‚ã‚Šï¼Œä¸Šæ›¸ãç¦æ­¢ã¨èª¤èªã•ã‚Œã‚‹ã“ã¨ãŒã‚ã‚‹ï¼
+	FindFirstFileã‚’ä½¿ã†ã“ã¨ã§ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ­ãƒƒã‚¯çŠ¶æ…‹ã«å½±éŸ¿ã•ã‚Œãšã«ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ã‚’
+	å–å¾—ã§ãã‚‹ï¼(ryoji)
 */
 bool GetLastWriteTimestamp(
-	const TCHAR*	pszFileName,	//!< [in]  ƒtƒ@ƒCƒ‹‚ÌƒpƒX
-	CFileTime*		pcFileTime		//!< [out] XV“ú‚ğ•Ô‚·êŠ
+	const TCHAR*	pszFileName,	//!< [in]  ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	CFileTime*		pcFileTime		//!< [out] æ›´æ–°æ—¥æ™‚ã‚’è¿”ã™å ´æ‰€
 )
 {
 	HANDLE hFindFile;
@@ -694,7 +694,7 @@ bool GetLastWriteTimestamp(
 		return true;
 	}
 	else{
-		//	ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½
+		//	ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ
 		pcFileTime->ClearFILETIME();
 		return false;
 	}
@@ -719,151 +719,151 @@ bool GetLastWriteTimestamp(
 /* ============================================================================
 my_splitpath( const char *CommandLine, char *drive, char *dir, char *fname, char *ext );
 
-š ŠT—v
-CommandLine ‚É—^‚¦‚ç‚ê‚½ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñ‚Ìæ“ª‚©‚çAÀİ‚·‚éƒtƒ@ƒCƒ‹EƒfƒB
-ƒŒƒNƒgƒŠ‚Ì•”•ª‚Ì‚İ‚ğ’Šo‚µA‚»‚Ì’Šo•”•ª‚É‘Î‚µ‚Ä _splitpath() ‚Æ“¯“™‚Ìˆ—‚ğ‚¨
-‚±‚È‚¢‚Ü‚·B
-æ“ª•”•ª‚ÉÀİ‚·‚éƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ–¼‚ª–³‚¢ê‡‚Í‹ó•¶š—ñ‚ª•Ô‚è‚Ü‚·B
-•¶š—ñ’†‚Ì“ú–{Œê(Shift_JISƒR[ƒh‚Ì‚İ)‚É‘Î‰‚µ‚Ä‚¢‚Ü‚·B
+â˜… æ¦‚è¦
+CommandLine ã«ä¸ãˆã‚‰ã‚ŒãŸã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ã®å…ˆé ­ã‹ã‚‰ã€å®Ÿåœ¨ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£
+ãƒ¬ã‚¯ãƒˆãƒªã®éƒ¨åˆ†ã®ã¿ã‚’æŠ½å‡ºã—ã€ãã®æŠ½å‡ºéƒ¨åˆ†ã«å¯¾ã—ã¦ _splitpath() ã¨åŒç­‰ã®å‡¦ç†ã‚’ãŠ
+ã“ãªã„ã¾ã™ã€‚
+å…ˆé ­éƒ¨åˆ†ã«å®Ÿåœ¨ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåãŒç„¡ã„å ´åˆã¯ç©ºæ–‡å­—åˆ—ãŒè¿”ã‚Šã¾ã™ã€‚
+æ–‡å­—åˆ—ä¸­ã®æ—¥æœ¬èª(Shift_JISã‚³ãƒ¼ãƒ‰ã®ã¿)ã«å¯¾å¿œã—ã¦ã„ã¾ã™ã€‚
 
-š ƒvƒƒOƒ‰ƒ€‹Lq“à—e‚É‚Â‚¢‚Ä(Œ¾‚¢–ó‚ ‚ê‚±‚ê)
-•¶š—ñ‚Ì split ˆ—•”‚¾‚¯‚É‚Å‚à _splitpath() ‚ğg‚¦‚Î‚à‚Á‚Æ’Z‚­‚È‚Á‚½‚Ì‚Å‚·‚ªA
-‚»‚¤‚â‚ç‚¸‚É‘S‚Ä©‘O‚Åˆ—‚µ‚Ä‚¢‚é——R‚ÍA
-EƒRƒ“ƒpƒCƒ‰‚É‚æ‚Á‚Ä‚Í _splitpath() ‚ª“ú–{Œê‚É‘Î‰‚µ‚Ä‚¢‚È‚¢‰Â”\«‚à‚ ‚éB
-E_splitpath() ‚Á‚ÄAƒRƒ“ƒpƒCƒ‰‚É‚æ‚Á‚ÄAÚ×“®ì‚ª”÷–­‚ÉˆÙ‚È‚é‚©‚à‚µ‚ê‚È‚¢‚©‚ç
-@d—l‚ğƒnƒbƒLƒŠ‚³‚¹‚é‚½‚ß‚É‚àƒRƒ“ƒpƒCƒ‰‚É“Y•t‚³‚ê‚Ä‚¢‚é _splitpath() ‚É‚ ‚Ü‚è
-@—Š‚è‚½‚­‚È‚©‚Á‚½B
-E‚Æ‚¢‚¤‚©Aå‚É“®ìŠm”F‚Ég—p‚µ‚Ä‚¢‚½ LSI-CH”Å‚É‚Í‚»‚à‚»‚à _splitpath() ‚ª
-@‘¶İ‚µ‚È‚¢‚©‚çA‚â‚ç‚´‚é‚ğ‚¦‚È‚©‚Á‚½B :-(
-‚Æ‚¢‚¤–‚É‚æ‚è‚Ü‚·B
+â˜… ãƒ—ãƒ­ã‚°ãƒ©ãƒ è¨˜è¿°å†…å®¹ã«ã¤ã„ã¦(è¨€ã„è¨³ã‚ã‚Œã“ã‚Œ)
+æ–‡å­—åˆ—ã® split å‡¦ç†éƒ¨ã ã‘ã«ã§ã‚‚ _splitpath() ã‚’ä½¿ãˆã°ã‚‚ã£ã¨çŸ­ããªã£ãŸã®ã§ã™ãŒã€
+ãã†ã‚„ã‚‰ãšã«å…¨ã¦è‡ªå‰ã§å‡¦ç†ã—ã¦ã„ã‚‹ç†ç”±ã¯ã€
+ãƒ»ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã«ã‚ˆã£ã¦ã¯ _splitpath() ãŒæ—¥æœ¬èªã«å¯¾å¿œã—ã¦ã„ãªã„å¯èƒ½æ€§ã‚‚ã‚ã‚‹ã€‚
+ãƒ»_splitpath() ã£ã¦ã€ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã«ã‚ˆã£ã¦ã€è©³ç´°å‹•ä½œãŒå¾®å¦™ã«ç•°ãªã‚‹ã‹ã‚‚ã—ã‚Œãªã„ã‹ã‚‰
+ã€€ä»•æ§˜ã‚’ãƒãƒƒã‚­ãƒªã•ã›ã‚‹ãŸã‚ã«ã‚‚ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã«æ·»ä»˜ã•ã‚Œã¦ã„ã‚‹ _splitpath() ã«ã‚ã¾ã‚Š
+ã€€é ¼ã‚ŠãŸããªã‹ã£ãŸã€‚
+ãƒ»ã¨ã„ã†ã‹ã€ä¸»ã«å‹•ä½œç¢ºèªã«ä½¿ç”¨ã—ã¦ã„ãŸ LSI-Cè©¦é£Ÿç‰ˆã«ã¯ãã‚‚ãã‚‚ _splitpath() ãŒ
+ã€€å­˜åœ¨ã—ãªã„ã‹ã‚‰ã€ã‚„ã‚‰ã–ã‚‹ã‚’ãˆãªã‹ã£ãŸã€‚ :-(
+ã¨ã„ã†äº‹ã«ã‚ˆã‚Šã¾ã™ã€‚
 
-¦ "LFN library" -> http://webs.to/ken/
+â€» "LFN library" -> http://webs.to/ken/
 
-š Ú×“®ì
+â˜… è©³ç´°å‹•ä½œ
 my_splitpath( CommandLine, drive, dir, fname, ext );
-CommandLine ‚É•¶š—ñ‚Æ‚µ‚Ä D:\Test.ext ‚ª—^‚¦‚ç‚ê‚½ê‡A
-„¥ED:\Test.ext ‚Æ‚¢‚¤ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡
-„ @drive = "D:"
-„ @dir   = "\"
-„ @fname = "Test"
-„ @ext   = ".ext"
-„¥ED:\Test.ext ‚Æ‚¢‚¤ƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚éê‡
-„ @drive = "D:"
-„ @dir   = "\Test.ext\"
-„ @fname = ""
-„ @ext   = ""
-„¤ED:\Test.ext ‚Æ‚¢‚¤ƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚µ‚È‚¢ê‡A
-@@„¥ED:ƒhƒ‰ƒCƒu‚Í—LŒø
-@@„ @drive = "D:"
-@@„ @dir   = "\"
-@@„ @fname = ""
-@@„ @ext   = ""
-@@„¤ED:ƒhƒ‰ƒCƒu‚Í–³Œø
-@@@@drive = ""
-@@@@dir   = ""
-@@@@fname = ""
-@@@@ext   = ""
+CommandLine ã«æ–‡å­—åˆ—ã¨ã—ã¦ D:\Test.ext ãŒä¸ãˆã‚‰ã‚ŒãŸå ´åˆã€
+â”œãƒ»D:\Test.ext ã¨ã„ã†ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+â”‚ã€€drive = "D:"
+â”‚ã€€dir   = "\"
+â”‚ã€€fname = "Test"
+â”‚ã€€ext   = ".ext"
+â”œãƒ»D:\Test.ext ã¨ã„ã†ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+â”‚ã€€drive = "D:"
+â”‚ã€€dir   = "\Test.ext\"
+â”‚ã€€fname = ""
+â”‚ã€€ext   = ""
+â””ãƒ»D:\Test.ext ã¨ã„ã†ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã—ãªã„å ´åˆã€
+ã€€ã€€â”œãƒ»D:ãƒ‰ãƒ©ã‚¤ãƒ–ã¯æœ‰åŠ¹
+ã€€ã€€â”‚ã€€drive = "D:"
+ã€€ã€€â”‚ã€€dir   = "\"
+ã€€ã€€â”‚ã€€fname = ""
+ã€€ã€€â”‚ã€€ext   = ""
+ã€€ã€€â””ãƒ»D:ãƒ‰ãƒ©ã‚¤ãƒ–ã¯ç„¡åŠ¹
+ã€€ã€€ã€€ã€€drive = ""
+ã€€ã€€ã€€ã€€dir   = ""
+ã€€ã€€ã€€ã€€fname = ""
+ã€€ã€€ã€€ã€€ext   = ""
 )=========================================================================== */
 
-/* Shift_JIS ‘Î‰‚ÅŒŸõ‘ÎÛ•¶š‚ğ‚QŒÂw’è‚Å‚«‚é strrchr() ‚İ‚½‚¢‚È‚à‚ÌB
-/ w’è‚³‚ê‚½‚Q‚Â‚Ì•¶š‚Ì‚¤‚¿AŒ©‚Â‚©‚Á‚½•û(‚æ‚èŒã•û‚Ì•û)‚ÌˆÊ’u‚ğ•Ô‚·B
-/ # strrchr( char *s , char c ) ‚Æ‚ÍA•¶š—ñ s ’†‚ÌÅŒã”ö‚Ì c ‚ğ’T‚µo‚·ŠÖ”B
-/ # •¶š c ‚ªŒ©‚Â‚©‚Á‚½‚çA‚»‚ÌˆÊ’u‚ğ•Ô‚·B
-/ # •¶š c ‚ªŒ©‚Â‚©‚ç‚È‚¢ê‡‚Í NULL ‚ğ•Ô‚·B */
+/* Shift_JIS å¯¾å¿œã§æ¤œç´¢å¯¾è±¡æ–‡å­—ã‚’ï¼’å€‹æŒ‡å®šã§ãã‚‹ strrchr() ã¿ãŸã„ãªã‚‚ã®ã€‚
+/ æŒ‡å®šã•ã‚ŒãŸï¼’ã¤ã®æ–‡å­—ã®ã†ã¡ã€è¦‹ã¤ã‹ã£ãŸæ–¹(ã‚ˆã‚Šå¾Œæ–¹ã®æ–¹)ã®ä½ç½®ã‚’è¿”ã™ã€‚
+/ # strrchr( char *s , char c ) ã¨ã¯ã€æ–‡å­—åˆ— s ä¸­ã®æœ€å¾Œå°¾ã® c ã‚’æ¢ã—å‡ºã™é–¢æ•°ã€‚
+/ # æ–‡å­— c ãŒè¦‹ã¤ã‹ã£ãŸã‚‰ã€ãã®ä½ç½®ã‚’è¿”ã™ã€‚
+/ # æ–‡å­— c ãŒè¦‹ã¤ã‹ã‚‰ãªã„å ´åˆã¯ NULL ã‚’è¿”ã™ã€‚ */
 char *sjis_strrchr2( const char *pt , const char ch1 , const char ch2 ){
 	const char *pf = NULL;
-	while( *pt != '\0' ){	/* •¶š—ñ‚ÌI’[‚Ü‚Å’²‚×‚éB */
-		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = ŒŸõ•¶š‚ÌˆÊ’u */
-		if( _IS_SJIS_1(*pt) )	pt++;	/* Shift_JIS ‚Ì1•¶š–Ú‚È‚çAŸ‚Ì1•¶š‚ğƒXƒLƒbƒv */
-		if( *pt != '\0' )		pt++;	/* Ÿ‚Ì•¶š‚Ö */
+	while( *pt != '\0' ){	/* æ–‡å­—åˆ—ã®çµ‚ç«¯ã¾ã§èª¿ã¹ã‚‹ã€‚ */
+		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = æ¤œç´¢æ–‡å­—ã®ä½ç½® */
+		if( _IS_SJIS_1(*pt) )	pt++;	/* Shift_JIS ã®1æ–‡å­—ç›®ãªã‚‰ã€æ¬¡ã®1æ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ— */
+		if( *pt != '\0' )		pt++;	/* æ¬¡ã®æ–‡å­—ã¸ */
 	}
 	return	(char *)pf;
 }
 wchar_t* wcsrchr2( const wchar_t *pt , const wchar_t ch1 , const wchar_t ch2 ){
 	const wchar_t *pf = NULL;
-	while( *pt != L'\0' ){	/* •¶š—ñ‚ÌI’[‚Ü‚Å’²‚×‚éB */
-		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = ŒŸõ•¶š‚ÌˆÊ’u */
-		if( *pt != '\0' )		pt++;	/* Ÿ‚Ì•¶š‚Ö */
+	while( *pt != L'\0' ){	/* æ–‡å­—åˆ—ã®çµ‚ç«¯ã¾ã§èª¿ã¹ã‚‹ã€‚ */
+		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = æ¤œç´¢æ–‡å­—ã®ä½ç½® */
+		if( *pt != '\0' )		pt++;	/* æ¬¡ã®æ–‡å­—ã¸ */
 	}
 	return	(wchar_t *)pf;
 }
 
-#define		GetExistPath_NO_DriveLetter	0	/* ƒhƒ‰ƒCƒuƒŒƒ^[‚ª–³‚¢ */
-#define		GetExistPath_IV_Drive		1	/* ƒhƒ‰ƒCƒu‚ª–³Œø */
-#define		GetExistPath_AV_Drive		2	/* ƒhƒ‰ƒCƒu‚ª—LŒø */
+#define		GetExistPath_NO_DriveLetter	0	/* ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒç„¡ã„ */
+#define		GetExistPath_IV_Drive		1	/* ãƒ‰ãƒ©ã‚¤ãƒ–ãŒç„¡åŠ¹ */
+#define		GetExistPath_AV_Drive		2	/* ãƒ‰ãƒ©ã‚¤ãƒ–ãŒæœ‰åŠ¹ */
 
 void	GetExistPath( char *po , const char *pi )
 {
 	char	*pw,*ps;
 	int		cnt;
 	char	drv[4] = "_:\\";
-	int		dl;		/* ƒhƒ‰ƒCƒu‚Ìó‘Ô */
+	int		dl;		/* ãƒ‰ãƒ©ã‚¤ãƒ–ã®çŠ¶æ…‹ */
 
-	/* pi ‚Ì“à—e‚ğ
-	/ E " ‚ğíœ‚µ‚Â‚Â
-	/ E / ‚ğ \ ‚É•ÏŠ·‚µ‚Â‚Â(Win32API ‚Å‚Í / ‚à \ ‚Æ“¯“™‚Éˆµ‚í‚ê‚é‚©‚ç)
-	/ EÅ‘å ( _MAX_PATH -1 ) •¶š‚Ü‚Å
-	/ po ‚ÉƒRƒs[‚·‚éB */
+	/* pi ã®å†…å®¹ã‚’
+	/ ãƒ» " ã‚’å‰Šé™¤ã—ã¤ã¤
+	/ ãƒ» / ã‚’ \ ã«å¤‰æ›ã—ã¤ã¤(Win32API ã§ã¯ / ã‚‚ \ ã¨åŒç­‰ã«æ‰±ã‚ã‚Œã‚‹ã‹ã‚‰)
+	/ ãƒ»æœ€å¤§ ( _MAX_PATH -1 ) æ–‡å­—ã¾ã§
+	/ po ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚ */
 	for( pw=po,cnt=0 ; ( *pi != '\0' ) && ( cnt < _MAX_PATH -1 ) ; pi++ ){
-		/* /," ‹¤‚É Shift_JIS ‚ÌŠ¿šƒR[ƒh’†‚É‚ÍŠÜ‚Ü‚ê‚È‚¢‚Ì‚Å Shift_JIS ”»’è‚Í•s—vB */
-		if( *pi == '\"' )	continue;		/*  " ‚È‚ç‰½‚à‚µ‚È‚¢BŸ‚Ì•¶š‚Ö */
-		if( *pi == '/' )	*pw++ = '\\';	/*  / ‚È‚ç \ ‚É•ÏŠ·‚µ‚ÄƒRƒs[    */
-		else				*pw++ = *pi;	/* ‚»‚Ì‘¼‚Ì•¶š‚Í‚»‚Ì‚Ü‚ÜƒRƒs[  */
-		cnt++;	/* ƒRƒs[‚µ‚½•¶š” ++ */
+		/* /," å…±ã« Shift_JIS ã®æ¼¢å­—ã‚³ãƒ¼ãƒ‰ä¸­ã«ã¯å«ã¾ã‚Œãªã„ã®ã§ Shift_JIS åˆ¤å®šã¯ä¸è¦ã€‚ */
+		if( *pi == '\"' )	continue;		/*  " ãªã‚‰ä½•ã‚‚ã—ãªã„ã€‚æ¬¡ã®æ–‡å­—ã¸ */
+		if( *pi == '/' )	*pw++ = '\\';	/*  / ãªã‚‰ \ ã«å¤‰æ›ã—ã¦ã‚³ãƒ”ãƒ¼    */
+		else				*pw++ = *pi;	/* ãã®ä»–ã®æ–‡å­—ã¯ãã®ã¾ã¾ã‚³ãƒ”ãƒ¼  */
+		cnt++;	/* ã‚³ãƒ”ãƒ¼ã—ãŸæ–‡å­—æ•° ++ */
 	}
-	*pw = '\0';		/* •¶š—ñI’[ */
+	*pw = '\0';		/* æ–‡å­—åˆ—çµ‚ç«¯ */
 
-	dl = GetExistPath_NO_DriveLetter;	/*uƒhƒ‰ƒCƒuƒŒƒ^[‚ª–³‚¢v‚É‚µ‚Ä‚¨‚­*/
+	dl = GetExistPath_NO_DriveLetter;	/*ã€Œãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒç„¡ã„ã€ã«ã—ã¦ãŠã*/
 	if(
 		( *(po+1) == ':' )&&
 		( ACODE::IsAZ(*po) )
-	){	/* æ“ª‚Éƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB‚»‚Ìƒhƒ‰ƒCƒu‚ª—LŒø‚©‚Ç‚¤‚©”»’è‚·‚é */
+	){	/* å…ˆé ­ã«ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ãã®ãƒ‰ãƒ©ã‚¤ãƒ–ãŒæœ‰åŠ¹ã‹ã©ã†ã‹åˆ¤å®šã™ã‚‹ */
 		drv[0] = *po;
-		if( access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* —LŒø */
-		else						dl = GetExistPath_IV_Drive;		/* –³Œø */
+		if( access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* æœ‰åŠ¹ */
+		else						dl = GetExistPath_IV_Drive;		/* ç„¡åŠ¹ */
 	}
 
-	if( dl == GetExistPath_IV_Drive ){	/* ƒhƒ‰ƒCƒu©‘Ì‚ª–³Œø */
-		/* ƒtƒƒbƒs[ƒfƒBƒXƒN’†‚Ìƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚Ä‚¢‚ÄA
-		@ ‚»‚Ìƒhƒ‰ƒCƒu‚Éƒtƒƒbƒs[ƒfƒBƒXƒN‚ª“ü‚Á‚Ä‚¢‚È‚¢A‚Æ‚© */
-		*po = '\0';	/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
-		return;		/* ‚±‚êˆÈã‰½‚à‚µ‚È‚¢ */
+	if( dl == GetExistPath_IV_Drive ){	/* ãƒ‰ãƒ©ã‚¤ãƒ–è‡ªä½“ãŒç„¡åŠ¹ */
+		/* ãƒ•ãƒ­ãƒƒãƒ”ãƒ¼ãƒ‡ã‚£ã‚¹ã‚¯ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¦ã€
+		ã€€ ãã®ãƒ‰ãƒ©ã‚¤ãƒ–ã«ãƒ•ãƒ­ãƒƒãƒ”ãƒ¼ãƒ‡ã‚£ã‚¹ã‚¯ãŒå…¥ã£ã¦ã„ãªã„ã€ã¨ã‹ */
+		*po = '\0';	/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
+		return;		/* ã“ã‚Œä»¥ä¸Šä½•ã‚‚ã—ãªã„ */
 	}
 
-	/* ps = ŒŸõŠJnˆÊ’u */
-	ps = po;	/* «•¶š—ñ‚Ìæ“ª‚ª \\ ‚È‚çA\ ŒŸõˆ—‚Ì‘ÎÛ‚©‚çŠO‚· */
+	/* ps = æ¤œç´¢é–‹å§‹ä½ç½® */
+	ps = po;	/* â†“æ–‡å­—åˆ—ã®å…ˆé ­ãŒ \\ ãªã‚‰ã€\ æ¤œç´¢å‡¦ç†ã®å¯¾è±¡ã‹ã‚‰å¤–ã™ */
 	if( ( *po == '\\' )&&( *(po+1) == '\\' ) )	ps +=2;
 
-	if( *ps == '\0' ){	/* ŒŸõ‘ÎÛ‚ª‹ó•¶š—ñ‚È‚ç */
-		*po = '\0';		/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
-		return;			/*‚±‚êˆÈã‰½‚à‚µ‚È‚¢ */
+	if( *ps == '\0' ){	/* æ¤œç´¢å¯¾è±¡ãŒç©ºæ–‡å­—åˆ—ãªã‚‰ */
+		*po = '\0';		/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
+		return;			/*ã“ã‚Œä»¥ä¸Šä½•ã‚‚ã—ãªã„ */
 	}
 
 	for(;;){
-		if( access(po,0) == 0 )	break;	/* —LŒø‚ÈƒpƒX•¶š—ñ‚ªŒ©‚Â‚©‚Á‚½ */
-		/* «•¶š—ñÅŒã”ö‚Ì \ ‚Ü‚½‚Í ' ' ‚ğ’T‚µo‚µA‚»‚±‚ğ•¶š—ñI’[‚É‚·‚éB*/
+		if( access(po,0) == 0 )	break;	/* æœ‰åŠ¹ãªãƒ‘ã‚¹æ–‡å­—åˆ—ãŒè¦‹ã¤ã‹ã£ãŸ */
+		/* â†“æ–‡å­—åˆ—æœ€å¾Œå°¾ã® \ ã¾ãŸã¯ ' ' ã‚’æ¢ã—å‡ºã—ã€ãã“ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚*/
 
-		pw = sjis_strrchr2(ps,'\\',' ');	/* Å––”ö‚Ì \ ‚© ' ' ‚ğ’T‚·B */
-		if ( pw == NULL ){	/* •¶š—ñ’†‚É '\\' ‚à ' ' ‚à–³‚©‚Á‚½ */
-			/* —á‚¦‚Î "C:testdir" ‚Æ‚¢‚¤•¶š—ñ‚ª—ˆ‚½‚ÉA"C:testdir" ‚ªÀİ
-			@ ‚µ‚È‚­‚Æ‚à C:ƒhƒ‰ƒCƒu‚ª—LŒø‚È‚ç "C:" ‚Æ‚¢‚¤•¶š—ñ‚¾‚¯‚Å‚à•Ô‚µ
-			@ ‚½‚¢BˆÈ‰º«‚ÍA‚»‚Ì‚½‚ß‚Ìˆ—B */
+		pw = sjis_strrchr2(ps,'\\',' ');	/* æœ€æœ«å°¾ã® \ ã‹ ' ' ã‚’æ¢ã™ã€‚ */
+		if ( pw == NULL ){	/* æ–‡å­—åˆ—ä¸­ã« '\\' ã‚‚ ' ' ã‚‚ç„¡ã‹ã£ãŸ */
+			/* ä¾‹ãˆã° "C:testdir" ã¨ã„ã†æ–‡å­—åˆ—ãŒæ¥ãŸæ™‚ã«ã€"C:testdir" ãŒå®Ÿåœ¨
+			ã€€ ã—ãªãã¨ã‚‚ C:ãƒ‰ãƒ©ã‚¤ãƒ–ãŒæœ‰åŠ¹ãªã‚‰ "C:" ã¨ã„ã†æ–‡å­—åˆ—ã ã‘ã§ã‚‚è¿”ã—
+			ã€€ ãŸã„ã€‚ä»¥ä¸‹â†“ã¯ã€ãã®ãŸã‚ã®å‡¦ç†ã€‚ */
 			if( dl == GetExistPath_AV_Drive ){
-				/* æ“ª‚É—LŒø‚Èƒhƒ‰ƒCƒu‚Ìƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB */
-				*(po+2) = '\0';		/* ƒhƒ‰ƒCƒuƒŒƒ^[•”‚Ì•¶š—ñ‚Ì‚İ•Ô‚· */
+				/* å…ˆé ­ã«æœ‰åŠ¹ãªãƒ‰ãƒ©ã‚¤ãƒ–ã®ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ */
+				*(po+2) = '\0';		/* ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼éƒ¨ã®æ–‡å­—åˆ—ã®ã¿è¿”ã™ */
 			}
-			else{	/* —LŒø‚ÈƒpƒX•”•ª‚ª‘S‚­Œ©‚Â‚©‚ç‚È‚©‚Á‚½ */
-				*po = '\0';	/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
+			else{	/* æœ‰åŠ¹ãªãƒ‘ã‚¹éƒ¨åˆ†ãŒå…¨ãè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ */
+				*po = '\0';	/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
 			}
-			break;		/* ƒ‹[ƒv‚ğ”²‚¯‚é */
+			break;		/* ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹ */
 		}
-		/* «ƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ‚ğˆø‚Á‚©‚¯‚é‚½‚ß‚Ìˆ— */
-		if( ( *pw == '\\' )&&( *(pw-1) == ':' ) ){	/* C:\ ‚Æ‚©‚Ì \ ‚Á‚Û‚¢ */
-			* (pw+1) = '\0';		/* \ ‚ÌŒã‚ë‚ÌˆÊ’u‚ğ•¶š—ñ‚ÌI’[‚É‚·‚éB */
-			if( access(po,0) == 0 )	break;	/* —LŒø‚ÈƒpƒX•¶š—ñ‚ªŒ©‚Â‚©‚Á‚½ */
+		/* â†“ãƒ«ãƒ¼ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å¼•ã£ã‹ã‘ã‚‹ãŸã‚ã®å‡¦ç† */
+		if( ( *pw == '\\' )&&( *(pw-1) == ':' ) ){	/* C:\ ã¨ã‹ã® \ ã£ã½ã„ */
+			* (pw+1) = '\0';		/* \ ã®å¾Œã‚ã®ä½ç½®ã‚’æ–‡å­—åˆ—ã®çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+			if( access(po,0) == 0 )	break;	/* æœ‰åŠ¹ãªãƒ‘ã‚¹æ–‡å­—åˆ—ãŒè¦‹ã¤ã‹ã£ãŸ */
 		}
-		*pw = '\0';		/* \ ‚© ' ' ‚ÌˆÊ’u‚ğ•¶š—ñ‚ÌI’[‚É‚·‚éB */
-		/* «––”ö‚ªƒXƒy[ƒX‚È‚çAƒXƒy[ƒX‚ğ‘S‚Äíœ‚·‚é */
+		*pw = '\0';		/* \ ã‹ ' ' ã®ä½ç½®ã‚’æ–‡å­—åˆ—ã®çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+		/* â†“æœ«å°¾ãŒã‚¹ãƒšãƒ¼ã‚¹ãªã‚‰ã€ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¨ã¦å‰Šé™¤ã™ã‚‹ */
 		while( ( pw != ps ) && ( *(pw-1) == ' ' ) )	* --pw = '\0';
 	}
 
@@ -875,70 +875,70 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	wchar_t	*pw,*ps;
 	int		cnt;
 	wchar_t	drv[4] = L"_:\\";
-	int		dl;		/* ƒhƒ‰ƒCƒu‚Ìó‘Ô */
+	int		dl;		/* ãƒ‰ãƒ©ã‚¤ãƒ–ã®çŠ¶æ…‹ */
 
-	/* pi ‚Ì“à—e‚ğ
-	/ E " ‚ğíœ‚µ‚Â‚Â
-	/ E / ‚ğ \ ‚É•ÏŠ·‚µ‚Â‚Â(Win32API ‚Å‚Í / ‚à \ ‚Æ“¯“™‚Éˆµ‚í‚ê‚é‚©‚ç)
-	/ EÅ‘å ( _MAX_PATH-1 ) •¶š‚Ü‚Å
-	/ po ‚ÉƒRƒs[‚·‚éB */
+	/* pi ã®å†…å®¹ã‚’
+	/ ãƒ» " ã‚’å‰Šé™¤ã—ã¤ã¤
+	/ ãƒ» / ã‚’ \ ã«å¤‰æ›ã—ã¤ã¤(Win32API ã§ã¯ / ã‚‚ \ ã¨åŒç­‰ã«æ‰±ã‚ã‚Œã‚‹ã‹ã‚‰)
+	/ ãƒ»æœ€å¤§ ( _MAX_PATH-1 ) æ–‡å­—ã¾ã§
+	/ po ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚ */
 	for( pw=po,cnt=0 ; ( *pi != L'\0' ) && ( cnt < _MAX_PATH-1 ) ; pi++ ){
-		/* /," ‹¤‚É Shift_JIS ‚ÌŠ¿šƒR[ƒh’†‚É‚ÍŠÜ‚Ü‚ê‚È‚¢‚Ì‚Å Shift_JIS ”»’è‚Í•s—vB */
-		if( *pi == L'\"' )	continue;		/*  " ‚È‚ç‰½‚à‚µ‚È‚¢BŸ‚Ì•¶š‚Ö */
-		if( *pi == L'/' )	*pw++ = L'\\';	/*  / ‚È‚ç \ ‚É•ÏŠ·‚µ‚ÄƒRƒs[    */
-		else				*pw++ = *pi;	/* ‚»‚Ì‘¼‚Ì•¶š‚Í‚»‚Ì‚Ü‚ÜƒRƒs[  */
-		cnt++;	/* ƒRƒs[‚µ‚½•¶š” ++ */
+		/* /," å…±ã« Shift_JIS ã®æ¼¢å­—ã‚³ãƒ¼ãƒ‰ä¸­ã«ã¯å«ã¾ã‚Œãªã„ã®ã§ Shift_JIS åˆ¤å®šã¯ä¸è¦ã€‚ */
+		if( *pi == L'\"' )	continue;		/*  " ãªã‚‰ä½•ã‚‚ã—ãªã„ã€‚æ¬¡ã®æ–‡å­—ã¸ */
+		if( *pi == L'/' )	*pw++ = L'\\';	/*  / ãªã‚‰ \ ã«å¤‰æ›ã—ã¦ã‚³ãƒ”ãƒ¼    */
+		else				*pw++ = *pi;	/* ãã®ä»–ã®æ–‡å­—ã¯ãã®ã¾ã¾ã‚³ãƒ”ãƒ¼  */
+		cnt++;	/* ã‚³ãƒ”ãƒ¼ã—ãŸæ–‡å­—æ•° ++ */
 	}
-	*pw = L'\0';		/* •¶š—ñI’[ */
+	*pw = L'\0';		/* æ–‡å­—åˆ—çµ‚ç«¯ */
 
-	dl = GetExistPath_NO_DriveLetter;	/*uƒhƒ‰ƒCƒuƒŒƒ^[‚ª–³‚¢v‚É‚µ‚Ä‚¨‚­*/
-	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* æ“ª‚Éƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB‚»‚Ìƒhƒ‰ƒCƒu‚ª—LŒø‚©‚Ç‚¤‚©”»’è‚·‚é */
+	dl = GetExistPath_NO_DriveLetter;	/*ã€Œãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒç„¡ã„ã€ã«ã—ã¦ãŠã*/
+	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* å…ˆé ­ã«ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ãã®ãƒ‰ãƒ©ã‚¤ãƒ–ãŒæœ‰åŠ¹ã‹ã©ã†ã‹åˆ¤å®šã™ã‚‹ */
 		drv[0] = *po;
-		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* —LŒø */
-		else						dl = GetExistPath_IV_Drive;		/* –³Œø */
+		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* æœ‰åŠ¹ */
+		else						dl = GetExistPath_IV_Drive;		/* ç„¡åŠ¹ */
 	}
 
-	if( dl == GetExistPath_IV_Drive ){	/* ƒhƒ‰ƒCƒu©‘Ì‚ª–³Œø */
-		/* ƒtƒƒbƒs[ƒfƒBƒXƒN’†‚Ìƒtƒ@ƒCƒ‹‚ªw’è‚³‚ê‚Ä‚¢‚ÄA
-		@ ‚»‚Ìƒhƒ‰ƒCƒu‚Éƒtƒƒbƒs[ƒfƒBƒXƒN‚ª“ü‚Á‚Ä‚¢‚È‚¢A‚Æ‚© */
-		*po = L'\0';	/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
-		return;		/* ‚±‚êˆÈã‰½‚à‚µ‚È‚¢ */
+	if( dl == GetExistPath_IV_Drive ){	/* ãƒ‰ãƒ©ã‚¤ãƒ–è‡ªä½“ãŒç„¡åŠ¹ */
+		/* ãƒ•ãƒ­ãƒƒãƒ”ãƒ¼ãƒ‡ã‚£ã‚¹ã‚¯ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¦ã€
+		ã€€ ãã®ãƒ‰ãƒ©ã‚¤ãƒ–ã«ãƒ•ãƒ­ãƒƒãƒ”ãƒ¼ãƒ‡ã‚£ã‚¹ã‚¯ãŒå…¥ã£ã¦ã„ãªã„ã€ã¨ã‹ */
+		*po = L'\0';	/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
+		return;		/* ã“ã‚Œä»¥ä¸Šä½•ã‚‚ã—ãªã„ */
 	}
 
-	/* ps = ŒŸõŠJnˆÊ’u */
-	ps = po;	/* «•¶š—ñ‚Ìæ“ª‚ª \\ ‚È‚çA\ ŒŸõˆ—‚Ì‘ÎÛ‚©‚çŠO‚· */
+	/* ps = æ¤œç´¢é–‹å§‹ä½ç½® */
+	ps = po;	/* â†“æ–‡å­—åˆ—ã®å…ˆé ­ãŒ \\ ãªã‚‰ã€\ æ¤œç´¢å‡¦ç†ã®å¯¾è±¡ã‹ã‚‰å¤–ã™ */
 	if( ( *po == L'\\' )&&( *(po+1) == L'\\' ) )	ps +=2;
 
-	if( *ps == L'\0' ){	/* ŒŸõ‘ÎÛ‚ª‹ó•¶š—ñ‚È‚ç */
-		*po = L'\0';		/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
-		return;			/*‚±‚êˆÈã‰½‚à‚µ‚È‚¢ */
+	if( *ps == L'\0' ){	/* æ¤œç´¢å¯¾è±¡ãŒç©ºæ–‡å­—åˆ—ãªã‚‰ */
+		*po = L'\0';		/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
+		return;			/*ã“ã‚Œä»¥ä¸Šä½•ã‚‚ã—ãªã„ */
 	}
 
 	for(;;){
-		if( _waccess(po,0) == 0 )	break;	/* —LŒø‚ÈƒpƒX•¶š—ñ‚ªŒ©‚Â‚©‚Á‚½ */
-		/* «•¶š—ñÅŒã”ö‚Ì \ ‚Ü‚½‚Í ' ' ‚ğ’T‚µo‚µA‚»‚±‚ğ•¶š—ñI’[‚É‚·‚éB*/
+		if( _waccess(po,0) == 0 )	break;	/* æœ‰åŠ¹ãªãƒ‘ã‚¹æ–‡å­—åˆ—ãŒè¦‹ã¤ã‹ã£ãŸ */
+		/* â†“æ–‡å­—åˆ—æœ€å¾Œå°¾ã® \ ã¾ãŸã¯ ' ' ã‚’æ¢ã—å‡ºã—ã€ãã“ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚*/
 
-		pw = wcsrchr2(ps,'\\',' ');	/* Å––”ö‚Ì \ ‚© ' ' ‚ğ’T‚·B */
-		if ( pw == NULL ){	/* •¶š—ñ’†‚É '\\' ‚à ' ' ‚à–³‚©‚Á‚½ */
-			/* —á‚¦‚Î "C:testdir" ‚Æ‚¢‚¤•¶š—ñ‚ª—ˆ‚½‚ÉA"C:testdir" ‚ªÀİ
-			@ ‚µ‚È‚­‚Æ‚à C:ƒhƒ‰ƒCƒu‚ª—LŒø‚È‚ç "C:" ‚Æ‚¢‚¤•¶š—ñ‚¾‚¯‚Å‚à•Ô‚µ
-			@ ‚½‚¢BˆÈ‰º«‚ÍA‚»‚Ì‚½‚ß‚Ìˆ—B */
+		pw = wcsrchr2(ps,'\\',' ');	/* æœ€æœ«å°¾ã® \ ã‹ ' ' ã‚’æ¢ã™ã€‚ */
+		if ( pw == NULL ){	/* æ–‡å­—åˆ—ä¸­ã« '\\' ã‚‚ ' ' ã‚‚ç„¡ã‹ã£ãŸ */
+			/* ä¾‹ãˆã° "C:testdir" ã¨ã„ã†æ–‡å­—åˆ—ãŒæ¥ãŸæ™‚ã«ã€"C:testdir" ãŒå®Ÿåœ¨
+			ã€€ ã—ãªãã¨ã‚‚ C:ãƒ‰ãƒ©ã‚¤ãƒ–ãŒæœ‰åŠ¹ãªã‚‰ "C:" ã¨ã„ã†æ–‡å­—åˆ—ã ã‘ã§ã‚‚è¿”ã—
+			ã€€ ãŸã„ã€‚ä»¥ä¸‹â†“ã¯ã€ãã®ãŸã‚ã®å‡¦ç†ã€‚ */
 			if( dl == GetExistPath_AV_Drive ){
-				/* æ“ª‚É—LŒø‚Èƒhƒ‰ƒCƒu‚Ìƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB */
-				*(po+2) = L'\0';		/* ƒhƒ‰ƒCƒuƒŒƒ^[•”‚Ì•¶š—ñ‚Ì‚İ•Ô‚· */
+				/* å…ˆé ­ã«æœ‰åŠ¹ãªãƒ‰ãƒ©ã‚¤ãƒ–ã®ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ */
+				*(po+2) = L'\0';		/* ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼éƒ¨ã®æ–‡å­—åˆ—ã®ã¿è¿”ã™ */
 			}
-			else{	/* —LŒø‚ÈƒpƒX•”•ª‚ª‘S‚­Œ©‚Â‚©‚ç‚È‚©‚Á‚½ */
-				*po = L'\0';	/* •Ô’l•¶š—ñ = "";(‹ó•¶š—ñ) */
+			else{	/* æœ‰åŠ¹ãªãƒ‘ã‚¹éƒ¨åˆ†ãŒå…¨ãè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ */
+				*po = L'\0';	/* è¿”å€¤æ–‡å­—åˆ— = "";(ç©ºæ–‡å­—åˆ—) */
 			}
-			break;		/* ƒ‹[ƒv‚ğ”²‚¯‚é */
+			break;		/* ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹ */
 		}
-		/* «ƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ‚ğˆø‚Á‚©‚¯‚é‚½‚ß‚Ìˆ— */
-		if( ( *pw == L'\\' )&&( *(pw-1) == L':' ) ){	/* C:\ ‚Æ‚©‚Ì \ ‚Á‚Û‚¢ */
-			* (pw+1) = L'\0';		/* \ ‚ÌŒã‚ë‚ÌˆÊ’u‚ğ•¶š—ñ‚ÌI’[‚É‚·‚éB */
-			if( _waccess(po,0) == 0 )	break;	/* —LŒø‚ÈƒpƒX•¶š—ñ‚ªŒ©‚Â‚©‚Á‚½ */
+		/* â†“ãƒ«ãƒ¼ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å¼•ã£ã‹ã‘ã‚‹ãŸã‚ã®å‡¦ç† */
+		if( ( *pw == L'\\' )&&( *(pw-1) == L':' ) ){	/* C:\ ã¨ã‹ã® \ ã£ã½ã„ */
+			* (pw+1) = L'\0';		/* \ ã®å¾Œã‚ã®ä½ç½®ã‚’æ–‡å­—åˆ—ã®çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+			if( _waccess(po,0) == 0 )	break;	/* æœ‰åŠ¹ãªãƒ‘ã‚¹æ–‡å­—åˆ—ãŒè¦‹ã¤ã‹ã£ãŸ */
 		}
-		*pw = L'\0';		/* \ ‚© ' ' ‚ÌˆÊ’u‚ğ•¶š—ñ‚ÌI’[‚É‚·‚éB */
-		/* «––”ö‚ªƒXƒy[ƒX‚È‚çAƒXƒy[ƒX‚ğ‘S‚Äíœ‚·‚é */
+		*pw = L'\0';		/* \ ã‹ ' ' ã®ä½ç½®ã‚’æ–‡å­—åˆ—ã®çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+		/* â†“æœ«å°¾ãŒã‚¹ãƒšãƒ¼ã‚¹ãªã‚‰ã€ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¨ã¦å‰Šé™¤ã™ã‚‹ */
 		while( ( pw != ps ) && ( *(pw-1) == L' ' ) )	* --pw = L'\0';
 	}
 
@@ -946,12 +946,12 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 }
 
 #ifndef _UNICODE
-/* —^‚¦‚ç‚ê‚½ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñ‚Ìæ“ª•”•ª‚©‚çÀİ‚·‚éƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ
-@ ‚ÌƒpƒX•¶š—ñ‚ğ’Šo‚µA‚»‚ÌƒpƒX‚ğ•ª‰ğ‚µ‚Ä drv dir fnm ext ‚É‘‚«‚ŞB
-@ æ“ª•”•ª‚É—LŒø‚ÈƒpƒX–¼‚ª‘¶İ‚µ‚È‚¢ê‡A‘S‚Ä‚É‹ó•¶š—ñ‚ª•Ô‚éB */
+/* ä¸ãˆã‚‰ã‚ŒãŸã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ã®å…ˆé ­éƒ¨åˆ†ã‹ã‚‰å®Ÿåœ¨ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+ã€€ ã®ãƒ‘ã‚¹æ–‡å­—åˆ—ã‚’æŠ½å‡ºã—ã€ãã®ãƒ‘ã‚¹ã‚’åˆ†è§£ã—ã¦ drv dir fnm ext ã«æ›¸ãè¾¼ã‚€ã€‚
+ã€€ å…ˆé ­éƒ¨åˆ†ã«æœ‰åŠ¹ãªãƒ‘ã‚¹åãŒå­˜åœ¨ã—ãªã„å ´åˆã€å…¨ã¦ã«ç©ºæ–‡å­—åˆ—ãŒè¿”ã‚‹ã€‚ */
 void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext )
 {
-	char	ppp[_MAX_PATH];		/* ƒpƒXŠi”[iì‹Æ—pj */
+	char	ppp[_MAX_PATH];		/* ãƒ‘ã‚¹æ ¼ç´ï¼ˆä½œæ¥­ç”¨ï¼‰ */
 	char	*pd;
 	char	*pf;
 	char	*pe;
@@ -965,62 +965,62 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 	if( ext != NULL )	*ext = '\0';
 	if( *comln == '\0' )	return;
 
-	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“æ“ª•”•ª‚ÌÀİ‚·‚éƒpƒX–¼‚ğ ppp ‚É‘‚«o‚·B */
+	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å…ˆé ­éƒ¨åˆ†ã®å®Ÿåœ¨ã™ã‚‹ãƒ‘ã‚¹åã‚’ ppp ã«æ›¸ãå‡ºã™ã€‚ */
 	GetExistPath( ppp , comln );
 
-	if( *ppp != '\0' ) {	/* ƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚éê‡ */
-		/* æ“ª•¶š‚ªƒhƒ‰ƒCƒuƒŒƒ^[‚©‚Ç‚¤‚©”»’è‚µA
-		@ pd = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u‚Éİ’è‚·‚éB */
+	if( *ppp != '\0' ) {	/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã™ã‚‹å ´åˆ */
+		/* å…ˆé ­æ–‡å­—ãŒãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ã‹ã©ã†ã‹åˆ¤å®šã—ã€
+		ã€€ pd = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½®ã«è¨­å®šã™ã‚‹ã€‚ */
 		pd = ppp;
 		if(
 			( *(pd+1)==':' )&&
 			( ACODE::IsAZ(*pd) )
-		){	/* æ“ª‚Éƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB */
-			pd += 2;	/* pd = ƒhƒ‰ƒCƒuƒŒƒ^[•”‚ÌŒã‚ë         */
-		}				/*      ( = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u ) */
-		/* ‚±‚±‚Ü‚Å‚ÅApd = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u */
+		){	/* å…ˆé ­ã«ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ */
+			pd += 2;	/* pd = ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼éƒ¨ã®å¾Œã‚         */
+		}				/*      ( = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½® ) */
+		/* ã“ã“ã¾ã§ã§ã€pd = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½® */
 
 		attr =  GetFileAttributesA(ppp);
 		a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
-		if( ! a_dir ){	/* Œ©‚Â‚¯‚½•¨‚ªƒtƒ@ƒCƒ‹‚¾‚Á‚½ê‡B */
-			pf = sjis_strrchr2(ppp,'\\','\\');	/* Å––”ö‚Ì \ ‚ğ’T‚·B */
-			if(pf != NULL)	pf++;		/* Œ©‚Â‚©‚Á‚½¨  pf=\‚ÌŸ‚Ì•¶š‚ÌˆÊ’u*/
-			else			pf = pd;	/* Œ©‚Â‚©‚ç‚È‚¢¨pf=ƒpƒX–¼‚Ìæ“ªˆÊ’u */
-			/* ‚±‚±‚Ü‚Å‚Å pf = ƒtƒ@ƒCƒ‹–¼‚Ìæ“ªˆÊ’u */
-			pe = sjis_strrchr2(pf,'.','.');		/* Å––”ö‚Ì '.' ‚ğ’T‚·B */
-			if( pe != NULL ){					/* Œ©‚Â‚©‚Á‚½(pe = '.'‚ÌˆÊ’u)*/
-				if( ext != NULL ){	/* Šg’£q‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+		if( ! a_dir ){	/* è¦‹ã¤ã‘ãŸç‰©ãŒãƒ•ã‚¡ã‚¤ãƒ«ã ã£ãŸå ´åˆã€‚ */
+			pf = sjis_strrchr2(ppp,'\\','\\');	/* æœ€æœ«å°¾ã® \ ã‚’æ¢ã™ã€‚ */
+			if(pf != NULL)	pf++;		/* è¦‹ã¤ã‹ã£ãŸâ†’  pf=\ã®æ¬¡ã®æ–‡å­—ã®ä½ç½®*/
+			else			pf = pd;	/* è¦‹ã¤ã‹ã‚‰ãªã„â†’pf=ãƒ‘ã‚¹åã®å…ˆé ­ä½ç½® */
+			/* ã“ã“ã¾ã§ã§ pf = ãƒ•ã‚¡ã‚¤ãƒ«åã®å…ˆé ­ä½ç½® */
+			pe = sjis_strrchr2(pf,'.','.');		/* æœ€æœ«å°¾ã® '.' ã‚’æ¢ã™ã€‚ */
+			if( pe != NULL ){					/* è¦‹ã¤ã‹ã£ãŸ(pe = '.'ã®ä½ç½®)*/
+				if( ext != NULL ){	/* æ‹¡å¼µå­ã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 					strncpy(ext,pe,_MAX_EXT -1);
 					ext[_MAX_EXT -1] = '\0';
 				}
-				*pe = '\0';	/* ‹æØ‚èˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éBpe = Šg’£q–¼‚Ìæ“ªˆÊ’uB */
+				*pe = '\0';	/* åŒºåˆ‡ã‚Šä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚pe = æ‹¡å¼µå­åã®å…ˆé ­ä½ç½®ã€‚ */
 			}
-			if( fnm != NULL ){	/* ƒtƒ@ƒCƒ‹–¼‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+			if( fnm != NULL ){	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 				strncpy(fnm,pf,_MAX_FNAME -1);
 				fnm[_MAX_FNAME -1] = '\0';
 			}
-			*pf = '\0';	/* ƒtƒ@ƒCƒ‹–¼‚Ìæ“ªˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éB */
+			*pf = '\0';	/* ãƒ•ã‚¡ã‚¤ãƒ«åã®å…ˆé ­ä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
 		}
-		/* ‚±‚±‚Ü‚Å‚Å•¶š—ñ ppp ‚Íƒhƒ‰ƒCƒuƒŒƒ^[{ƒfƒBƒŒƒNƒgƒŠ–¼‚Ì‚İ‚É‚È‚Á‚Ä‚¢‚é */
+		/* ã“ã“ã¾ã§ã§æ–‡å­—åˆ— ppp ã¯ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ï¼‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®ã¿ã«ãªã£ã¦ã„ã‚‹ */
 		if( dir != NULL ){
-			/* ƒfƒBƒŒƒNƒgƒŠ–¼‚ÌÅŒã‚Ì•¶š‚ª \ ‚Å‚Í‚È‚¢ê‡A\ ‚É‚·‚éB */
+			/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®æœ€å¾Œã®æ–‡å­—ãŒ \ ã§ã¯ãªã„å ´åˆã€\ ã«ã™ã‚‹ã€‚ */
 
-			/* «ÅŒã‚Ì•¶š‚ğ ch ‚É“¾‚éB(ƒfƒBƒŒƒNƒgƒŠ•¶š—ñ‚ª‹ó‚Ìê‡ ch='\\' ‚Æ‚È‚é) */
+			/* â†“æœ€å¾Œã®æ–‡å­—ã‚’ ch ã«å¾—ã‚‹ã€‚(ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæ–‡å­—åˆ—ãŒç©ºã®å ´åˆ ch='\\' ã¨ãªã‚‹) */
 			for( ch = '\\' , pf = pd ; *pf != '\0' ; pf++ ){
 				ch = *pf;
-				if( _IS_SJIS_1(*pf) )	pf++;	/* Shift_JIS ‚Ì1•¶š–Ú‚È‚çŸ‚Ì1•¶š‚ğƒXƒLƒbƒv */
+				if( _IS_SJIS_1(*pf) )	pf++;	/* Shift_JIS ã®1æ–‡å­—ç›®ãªã‚‰æ¬¡ã®1æ–‡å­—ã‚’ã‚¹ã‚­ãƒƒãƒ— */
 			}
-			/* •¶š—ñ‚ª‹ó‚Å‚È‚­A‚©‚ÂAÅŒã‚Ì•¶š‚ª \ ‚Å‚È‚©‚Á‚½‚È‚ç‚Î \ ‚ğ’Ç‰ÁB */
+			/* æ–‡å­—åˆ—ãŒç©ºã§ãªãã€ã‹ã¤ã€æœ€å¾Œã®æ–‡å­—ãŒ \ ã§ãªã‹ã£ãŸãªã‚‰ã° \ ã‚’è¿½åŠ ã€‚ */
 			if( ( ch != '\\' ) && ( strlen(ppp) < _MAX_PATH -1 ) ){
 				*pf++ = '\\';	*pf = '\0';
 			}
 
-			/* ƒfƒBƒŒƒNƒgƒŠ–¼‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+			/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 			strncpy(dir,pd,_MAX_DIR -1);
 			dir[_MAX_DIR -1] = '\0';
 		}
-		*pd = '\0';		/* ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éB */
-		if( drv != NULL ){	/* ƒhƒ‰ƒCƒuƒŒƒ^[‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+		*pd = '\0';		/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+		if( drv != NULL ){	/* ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 			strncpy(drv,ppp,_MAX_DRIVE -1);
 			drv[_MAX_DRIVE -1] = '\0';
 		}
@@ -1030,9 +1030,9 @@ void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext 
 
 #else
 
-/* —^‚¦‚ç‚ê‚½ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñ‚Ìæ“ª•”•ª‚©‚çÀİ‚·‚éƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ
-@ ‚ÌƒpƒX•¶š—ñ‚ğ’Šo‚µA‚»‚ÌƒpƒX‚ğ•ª‰ğ‚µ‚Ä drv dir fnm ext ‚É‘‚«‚ŞB
-@ æ“ª•”•ª‚É—LŒø‚ÈƒpƒX–¼‚ª‘¶İ‚µ‚È‚¢ê‡A‘S‚Ä‚É‹ó•¶š—ñ‚ª•Ô‚éB */
+/* ä¸ãˆã‚‰ã‚ŒãŸã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—ã®å…ˆé ­éƒ¨åˆ†ã‹ã‚‰å®Ÿåœ¨ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+ã€€ ã®ãƒ‘ã‚¹æ–‡å­—åˆ—ã‚’æŠ½å‡ºã—ã€ãã®ãƒ‘ã‚¹ã‚’åˆ†è§£ã—ã¦ drv dir fnm ext ã«æ›¸ãè¾¼ã‚€ã€‚
+ã€€ å…ˆé ­éƒ¨åˆ†ã«æœ‰åŠ¹ãªãƒ‘ã‚¹åãŒå­˜åœ¨ã—ãªã„å ´åˆã€å…¨ã¦ã«ç©ºæ–‡å­—åˆ—ãŒè¿”ã‚‹ã€‚ */
 void my_splitpath_w (
 	const wchar_t *comln,
 	wchar_t *drv,
@@ -1041,7 +1041,7 @@ void my_splitpath_w (
 	wchar_t *ext
 )
 {
-	wchar_t	ppp[_MAX_PATH];		/* ƒpƒXŠi”[iì‹Æ—pj */
+	wchar_t	ppp[_MAX_PATH];		/* ãƒ‘ã‚¹æ ¼ç´ï¼ˆä½œæ¥­ç”¨ï¼‰ */
 	wchar_t	*pd;
 	wchar_t	*pf;
 	wchar_t	*pe;
@@ -1055,59 +1055,59 @@ void my_splitpath_w (
 	if( ext != NULL )	*ext = L'\0';
 	if( *comln == L'\0' )	return;
 
-	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“æ“ª•”•ª‚ÌÀİ‚·‚éƒpƒX–¼‚ğ ppp ‚É‘‚«o‚·B */
+	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å…ˆé ­éƒ¨åˆ†ã®å®Ÿåœ¨ã™ã‚‹ãƒ‘ã‚¹åã‚’ ppp ã«æ›¸ãå‡ºã™ã€‚ */
 	GetExistPathW( ppp , comln );
 
-	if( *ppp != L'\0' ) {	/* ƒtƒ@ƒCƒ‹EƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚éê‡ */
-		/* æ“ª•¶š‚ªƒhƒ‰ƒCƒuƒŒƒ^[‚©‚Ç‚¤‚©”»’è‚µA
-		@ pd = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u‚Éİ’è‚·‚éB */
+	if( *ppp != L'\0' ) {	/* ãƒ•ã‚¡ã‚¤ãƒ«ãƒ»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã™ã‚‹å ´åˆ */
+		/* å…ˆé ­æ–‡å­—ãŒãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ã‹ã©ã†ã‹åˆ¤å®šã—ã€
+		ã€€ pd = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½®ã«è¨­å®šã™ã‚‹ã€‚ */
 		pd = ppp;
-		if(*(pd+1)==L':' && WCODE::IsAZ(*pd)){	/* æ“ª‚Éƒhƒ‰ƒCƒuƒŒƒ^[‚ª‚ ‚éB */
-			pd += 2;	/* pd = ƒhƒ‰ƒCƒuƒŒƒ^[•”‚ÌŒã‚ë         */
-		}				/*      ( = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u ) */
-		/* ‚±‚±‚Ü‚Å‚ÅApd = ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u */
+		if(*(pd+1)==L':' && WCODE::IsAZ(*pd)){	/* å…ˆé ­ã«ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ãŒã‚ã‚‹ã€‚ */
+			pd += 2;	/* pd = ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼éƒ¨ã®å¾Œã‚         */
+		}				/*      ( = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½® ) */
+		/* ã“ã“ã¾ã§ã§ã€pd = ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½® */
 
 		attr =  GetFileAttributesW(ppp);
 		a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
 
-		if( ! a_dir ){	/* Œ©‚Â‚¯‚½•¨‚ªƒtƒ@ƒCƒ‹‚¾‚Á‚½ê‡B */
-			pf = wcsrchr(ppp,L'\\');	/* Å––”ö‚Ì \ ‚ğ’T‚·B */
-			if(pf != NULL)	pf++;		/* Œ©‚Â‚©‚Á‚½¨  pf=\‚ÌŸ‚Ì•¶š‚ÌˆÊ’u*/
-			else			pf = pd;	/* Œ©‚Â‚©‚ç‚È‚¢¨pf=ƒpƒX–¼‚Ìæ“ªˆÊ’u */
-			/* ‚±‚±‚Ü‚Å‚Å pf = ƒtƒ@ƒCƒ‹–¼‚Ìæ“ªˆÊ’u */
-			pe = wcsrchr(pf,L'.');		/* Å––”ö‚Ì '.' ‚ğ’T‚·B */
-			if( pe != NULL ){					/* Œ©‚Â‚©‚Á‚½(pe = L'.'‚ÌˆÊ’u)*/
-				if( ext != NULL ){	/* Šg’£q‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+		if( ! a_dir ){	/* è¦‹ã¤ã‘ãŸç‰©ãŒãƒ•ã‚¡ã‚¤ãƒ«ã ã£ãŸå ´åˆã€‚ */
+			pf = wcsrchr(ppp,L'\\');	/* æœ€æœ«å°¾ã® \ ã‚’æ¢ã™ã€‚ */
+			if(pf != NULL)	pf++;		/* è¦‹ã¤ã‹ã£ãŸâ†’  pf=\ã®æ¬¡ã®æ–‡å­—ã®ä½ç½®*/
+			else			pf = pd;	/* è¦‹ã¤ã‹ã‚‰ãªã„â†’pf=ãƒ‘ã‚¹åã®å…ˆé ­ä½ç½® */
+			/* ã“ã“ã¾ã§ã§ pf = ãƒ•ã‚¡ã‚¤ãƒ«åã®å…ˆé ­ä½ç½® */
+			pe = wcsrchr(pf,L'.');		/* æœ€æœ«å°¾ã® '.' ã‚’æ¢ã™ã€‚ */
+			if( pe != NULL ){					/* è¦‹ã¤ã‹ã£ãŸ(pe = L'.'ã®ä½ç½®)*/
+				if( ext != NULL ){	/* æ‹¡å¼µå­ã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 					wcsncpy(ext,pe,_MAX_EXT-1);
 					ext[_MAX_EXT -1] = L'\0';
 				}
-				*pe = L'\0';	/* ‹æØ‚èˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éBpe = Šg’£q–¼‚Ìæ“ªˆÊ’uB */
+				*pe = L'\0';	/* åŒºåˆ‡ã‚Šä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚pe = æ‹¡å¼µå­åã®å…ˆé ­ä½ç½®ã€‚ */
 			}
-			if( fnm != NULL ){	/* ƒtƒ@ƒCƒ‹–¼‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+			if( fnm != NULL ){	/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 				wcsncpy(fnm,pf,_MAX_FNAME-1);
 				fnm[_MAX_FNAME -1] = L'\0';
 			}
-			*pf = L'\0';	/* ƒtƒ@ƒCƒ‹–¼‚Ìæ“ªˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éB */
+			*pf = L'\0';	/* ãƒ•ã‚¡ã‚¤ãƒ«åã®å…ˆé ­ä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
 		}
-		/* ‚±‚±‚Ü‚Å‚Å•¶š—ñ ppp ‚Íƒhƒ‰ƒCƒuƒŒƒ^[{ƒfƒBƒŒƒNƒgƒŠ–¼‚Ì‚İ‚É‚È‚Á‚Ä‚¢‚é */
+		/* ã“ã“ã¾ã§ã§æ–‡å­—åˆ— ppp ã¯ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ï¼‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®ã¿ã«ãªã£ã¦ã„ã‚‹ */
 		if( dir != NULL ){
-			/* ƒfƒBƒŒƒNƒgƒŠ–¼‚ÌÅŒã‚Ì•¶š‚ª \ ‚Å‚Í‚È‚¢ê‡A\ ‚É‚·‚éB */
+			/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®æœ€å¾Œã®æ–‡å­—ãŒ \ ã§ã¯ãªã„å ´åˆã€\ ã«ã™ã‚‹ã€‚ */
 
-			/* «ÅŒã‚Ì•¶š‚ğ ch ‚É“¾‚éB(ƒfƒBƒŒƒNƒgƒŠ•¶š—ñ‚ª‹ó‚Ìê‡ ch=L'\\' ‚Æ‚È‚é) */
+			/* â†“æœ€å¾Œã®æ–‡å­—ã‚’ ch ã«å¾—ã‚‹ã€‚(ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæ–‡å­—åˆ—ãŒç©ºã®å ´åˆ ch=L'\\' ã¨ãªã‚‹) */
 			for( ch = L'\\' , pf = pd ; *pf != L'\0' ; pf++ ){
 				ch = *pf;
 			}
-			/* •¶š—ñ‚ª‹ó‚Å‚È‚­A‚©‚ÂAÅŒã‚Ì•¶š‚ª \ ‚Å‚È‚©‚Á‚½‚È‚ç‚Î \ ‚ğ’Ç‰ÁB */
+			/* æ–‡å­—åˆ—ãŒç©ºã§ãªãã€ã‹ã¤ã€æœ€å¾Œã®æ–‡å­—ãŒ \ ã§ãªã‹ã£ãŸãªã‚‰ã° \ ã‚’è¿½åŠ ã€‚ */
 			if( ( ch != L'\\' ) && ( wcslen(ppp) < _MAX_PATH -1 ) ){
 				*pf++ = L'\\';	*pf = L'\0';
 			}
 
-			/* ƒfƒBƒŒƒNƒgƒŠ–¼‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+			/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 			wcsncpy(dir,pd,_MAX_DIR -1);
 			dir[_MAX_DIR -1] = L'\0';
 		}
-		*pd = L'\0';		/* ƒfƒBƒŒƒNƒgƒŠ–¼‚Ìæ“ªˆÊ’u‚ğ•¶š—ñI’[‚É‚·‚éB */
-		if( drv != NULL ){	/* ƒhƒ‰ƒCƒuƒŒƒ^[‚ğ•Ô’l‚Æ‚µ‚Ä‘‚«‚ŞB */
+		*pd = L'\0';		/* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã®å…ˆé ­ä½ç½®ã‚’æ–‡å­—åˆ—çµ‚ç«¯ã«ã™ã‚‹ã€‚ */
+		if( drv != NULL ){	/* ãƒ‰ãƒ©ã‚¤ãƒ–ãƒ¬ã‚¿ãƒ¼ã‚’è¿”å€¤ã¨ã—ã¦æ›¸ãè¾¼ã‚€ã€‚ */
 			wcsncpy(drv,ppp,_MAX_DRIVE -1);
 			drv[_MAX_DRIVE -1] = L'\0';
 		}
@@ -1124,8 +1124,8 @@ void my_splitpath_w (
 // -----------------------------------------------------------------------------
 int FileMatchScore( const TCHAR *file1, const TCHAR *file2 );
 
-// ƒtƒ‹ƒpƒX‚©‚çƒtƒ@ƒCƒ‹–¼‚Ì.ˆÈ~‚ğ•ª—£‚·‚é
-// 2014.06.15 ƒtƒHƒ‹ƒ_–¼‚É.‚ªŠÜ‚Ü‚ê‚½ê‡AƒtƒHƒ‹ƒ_‚ª•ª—£‚³‚ê‚½‚Ì‚ğC³
+// ãƒ•ãƒ«ãƒ‘ã‚¹ã‹ã‚‰ãƒ•ã‚¡ã‚¤ãƒ«åã®.ä»¥é™ã‚’åˆ†é›¢ã™ã‚‹
+// 2014.06.15 ãƒ•ã‚©ãƒ«ãƒ€åã«.ãŒå«ã¾ã‚ŒãŸå ´åˆã€ãƒ•ã‚©ãƒ«ãƒ€ãŒåˆ†é›¢ã•ã‚ŒãŸã®ã‚’ä¿®æ­£
 static void FileNameSepExt( const TCHAR *file, TCHAR* pszFile, TCHAR* pszExt )
 {
 	const TCHAR* folderPos = file;
@@ -1161,7 +1161,7 @@ int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 )
 	return score;
 }
 
-/*!	2‚Â‚Ìƒtƒ@ƒCƒ‹–¼‚ÌÅ’·ˆê’v•”•ª‚Ì’·‚³‚ğ•Ô‚·
+/*!	2ã¤ã®ãƒ•ã‚¡ã‚¤ãƒ«åã®æœ€é•·ä¸€è‡´éƒ¨åˆ†ã®é•·ã•ã‚’è¿”ã™
 */
 int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 {
@@ -1212,12 +1212,12 @@ int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 	return score;
 }
 
-/*! w’è•‚Ü‚Å‚É•¶š—ñ‚ğÈ—ª
-	@date 2014.06.12 V‹Kì¬ Moca
+/*! æŒ‡å®šå¹…ã¾ã§ã«æ–‡å­—åˆ—ã‚’çœç•¥
+	@date 2014.06.12 æ–°è¦ä½œæˆ Moca
 */
 void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth )
 {
-	// ‚Å‚«‚é‚¾‚¯¶‘¤‚©‚ç•\¦
+	// ã§ãã‚‹ã ã‘å·¦å´ã‹ã‚‰è¡¨ç¤º
 	// \\server\dir...
 	const int nPathLen = auto_strlen(path);
 	CTextWidthCalc calc(hDC);
@@ -1233,7 +1233,7 @@ void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, in
 		std::tstring strTemp2 = strTemp;
 		strTemp2 += _T("...");
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
-			// “ü‚è‚«‚ç‚È‚©‚Á‚½‚Ì‚Å1•¶š‘O‚Ü‚Å‚ğƒRƒs[
+			// å…¥ã‚Šãã‚‰ãªã‹ã£ãŸã®ã§1æ–‡å­—å‰ã¾ã§ã‚’ã‚³ãƒ”ãƒ¼
 			_tcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
 			_tcscat_s(dest, nSize, _T("..."));
 			return;
@@ -1241,23 +1241,23 @@ void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, in
 		strTempOld = strTemp;
 		nPos += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nPos));
 	}
-	// ‘S•”•\¦(‚±‚±‚É‚Í—ˆ‚È‚¢‚Í‚¸)
+	// å…¨éƒ¨è¡¨ç¤º(ã“ã“ã«ã¯æ¥ãªã„ã¯ãš)
 	_tcsncpy_s(dest, nSize, path, _TRUNCATE);
 }
 
-/*! ƒpƒX‚ÌÈ—ª•\¦
+/*! ãƒ‘ã‚¹ã®çœç•¥è¡¨ç¤º
 	in  C:\sub1\sub2\sub3\file.ext
 	out C:\...\sub3\file.ext
-	@date 2014.06.12 V‹Kì¬ Moca
+	@date 2014.06.12 æ–°è¦ä½œæˆ Moca
 */
 void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth, bool bFitMode )
 {
-	int nLeft = 0; // ¶‘¤ŒÅ’è•\¦•”•ª
+	int nLeft = 0; // å·¦å´å›ºå®šè¡¨ç¤ºéƒ¨åˆ†
 	int nSkipLevel = 1;
 	const int nPathLen = auto_strlen(path);
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
-		// ‘S•”•\¦‰Â”\
+		// å…¨éƒ¨è¡¨ç¤ºå¯èƒ½
 		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
@@ -1266,17 +1266,17 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			// [\\?\A:\]
 			nLeft = 4;
 		}else{
-			nSkipLevel = 2; // [\\server\dir\] ‚Ì2ŠK‘w”ò‚Î‚·
+			nSkipLevel = 2; // [\\server\dir\] ã®2éšå±¤é£›ã°ã™
 			nLeft = 2;
 		}
 	}else{
-		// http://server/ ‚Æ‚© ftp://server/ ‚Æ‚©‚ğ•Û
+		// http://server/ ã¨ã‹ ftp://server/ ã¨ã‹ã‚’ä¿æŒ
 		int nTop = 0;
 		while( path[nTop] != _T('\0') && path[nTop] != _T('/') ){
 			nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
 		}
 		if( 0 < nTop && path[nTop - 1] == ':' ){
-			// u‚Ù‚É‚á‚ç‚ç:/v‚¾‚Á‚½ /‚ª‘±‚¢‚Ä‚éŠÔ”ò‚Î‚·
+			// ã€Œã»ã«ã‚ƒã‚‰ã‚‰:/ã€ã ã£ãŸ /ãŒç¶šã„ã¦ã‚‹é–“é£›ã°ã™
 			while( path[nTop] == _T('/') ){
 				nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
 			}
@@ -1296,12 +1296,12 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 				GetStrTrancateWidth(dest, nSize, path, hDC, nPxWidth);
 				return;
 			}
-			// ‚±‚±‚ÅI’[‚È‚ç‘S•”•\¦
+			// ã“ã“ã§çµ‚ç«¯ãªã‚‰å…¨éƒ¨è¡¨ç¤º
 			_tcsncpy_s(dest, nSize, path, _TRUNCATE);
 			return;
 		}
 	}
-	int nRight = nLeft; // ‰E‘¤‚Ì•\¦ŠJnˆÊ’u(nRight‚Í\‚ğw‚µ‚Ä‚¢‚é)
+	int nRight = nLeft; // å³å´ã®è¡¨ç¤ºé–‹å§‹ä½ç½®(nRightã¯\ã‚’æŒ‡ã—ã¦ã„ã‚‹)
 	while( path[nRight] != _T('\0') ){
 		int nNext = nRight;
 		nNext++;
@@ -1309,7 +1309,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			nNext += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nNext));
 		}
 		if( path[nNext] != _T('\0') ){
-			// ƒTƒuƒtƒHƒ‹ƒ_È—ª
+			// ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€çœç•¥
 			// C:\...\dir\file.ext
 			std::tstring strTemp(path, nLeft + 1);
 			if( nLeft + 1 < nRight ){
@@ -1320,7 +1320,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
-			// C:\...\dir\   ƒtƒHƒ‹ƒ_ƒpƒX‚¾‚Á‚½BÅŒã‚ÌƒtƒHƒ‹ƒ_‚ğ•\¦
+			// C:\...\dir\   ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹ã ã£ãŸã€‚æœ€å¾Œã®ãƒ•ã‚©ãƒ«ãƒ€ã‚’è¡¨ç¤º
 			if( path[nNext+1] == _T('\0') ){
 				if( bFitMode ){
 					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
@@ -1334,7 +1334,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			break;
 		}
 	}
-	// nRight‚æ‚è‰E‚É\‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½=ƒtƒ@ƒCƒ‹–¼‚¾‚Á‚½‚Ì‚Åƒtƒ@ƒCƒ‹–¼•\¦
+	// nRightã‚ˆã‚Šå³ã«\ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ=ãƒ•ã‚¡ã‚¤ãƒ«åã ã£ãŸã®ã§ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤º
 	// C:\...\file.ext
 	int nLeftLen = nLeft;
 	if( nLeftLen && nLeftLen != nRight ){
@@ -1350,10 +1350,10 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 			return;
 		}
-		// ƒtƒ@ƒCƒ‹–¼(‚©¶‘¤ŒÅ’è•”)‚ª’·‚·‚¬‚Ä‚Í‚¢‚ç‚È‚¢
+		// ãƒ•ã‚¡ã‚¤ãƒ«å(ã‹å·¦å´å›ºå®šéƒ¨)ãŒé•·ã™ãã¦ã¯ã„ã‚‰ãªã„
 		int nExtPos = -1;
 		{
-			// Šg’£q‚Ì.‚ğ’T‚·
+			// æ‹¡å¼µå­ã®.ã‚’æ¢ã™
 			int nExt = nRight;
 			while( path[nExt] != _T('\0') ){
 				if( path[nExt] == _T('.') ){
@@ -1371,18 +1371,18 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			int nLeftWidth = calc.GetTextWidth(strLeftFile.c_str());
 			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
 			if( 0 < nFileNameWidth ){
-				// Šg’£q‚ÍÈ—ª‚µ‚È‚¢(ƒtƒ@ƒCƒ‹ƒ^ƒCƒgƒ‹‚ğÈ—ª)
+				// æ‹¡å¼µå­ã¯çœç•¥ã—ãªã„(ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒˆãƒ«ã‚’çœç•¥)
 				std::tstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
-				_tcscat_s(dest, nSize, &path[nExtPos+1]); // Šg’£q˜AŒ‹ C:\...\longf...ext
+				_tcscat_s(dest, nSize, &path[nExtPos+1]); // æ‹¡å¼µå­é€£çµ C:\...\longf...ext
 			}else{
-				// ƒtƒ@ƒCƒ‹–¼‚ª’u‚¯‚È‚¢‚­‚ç‚¢Šg’£q‚©¶‘¤‚ª’·‚¢BƒpƒX‚Ì¶‘¤‚ğ—Dæ‚µ‚Äc‚·
+				// ãƒ•ã‚¡ã‚¤ãƒ«åãŒç½®ã‘ãªã„ãã‚‰ã„æ‹¡å¼µå­ã‹å·¦å´ãŒé•·ã„ã€‚ãƒ‘ã‚¹ã®å·¦å´ã‚’å„ªå…ˆã—ã¦æ®‹ã™
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 			}
 		}else{
-			// Šg’£q‚Í‚È‚©‚Á‚½B¶‘¤‚©‚çc‚·
+			// æ‹¡å¼µå­ã¯ãªã‹ã£ãŸã€‚å·¦å´ã‹ã‚‰æ®‹ã™
 			GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 		}
 		return;

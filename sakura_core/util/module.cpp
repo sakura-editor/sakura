@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,8 +29,8 @@
 #include <Shlwapi.h>	// 2006.06.17 ryoji
 
 /*! 
-	ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğÀsƒtƒ@ƒCƒ‹‚ÌêŠ‚ÉˆÚ“®
-	@date 2010.08.28 Moca V‹Kì¬
+	ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®å ´æ‰€ã«ç§»å‹•
+	@date 2010.08.28 Moca æ–°è¦ä½œæˆ
 */
 void ChangeCurrentDirectoryToExeDir()
 {
@@ -40,7 +40,7 @@ void ChangeCurrentDirectoryToExeDir()
 	if( szExeDir[0] ){
 		::SetCurrentDirectory( szExeDir );
 	}else{
-		// ˆÚ“®‚Å‚«‚È‚¢‚Æ‚«‚ÍSYSTEM32(9x‚Å‚ÍSYSTEM)‚ÉˆÚ“®
+		// ç§»å‹•ã§ããªã„ã¨ãã¯SYSTEM32(9xã§ã¯SYSTEM)ã«ç§»å‹•
 		szExeDir[0] = _T('\0');
 		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
 		if( n && n < _MAX_PATH ){
@@ -50,23 +50,23 @@ void ChangeCurrentDirectoryToExeDir()
 }
 
 /*! 
-	@date 2010.08.28 Moca V‹Kì¬
+	@date 2010.08.28 Moca æ–°è¦ä½œæˆ
 */
 HMODULE LoadLibraryExedir(LPCTSTR pszDll)
 {
 	CCurrentDirectoryBackupPoint dirBack;
-	// DLL ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‘Îô‚Æ‚µ‚ÄEXE‚ÌƒtƒHƒ‹ƒ_‚ÉˆÚ“®‚·‚é
+	// DLL ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³å¯¾ç­–ã¨ã—ã¦EXEã®ãƒ•ã‚©ãƒ«ãƒ€ã«ç§»å‹•ã™ã‚‹
 	ChangeCurrentDirectoryToExeDir();
 	return ::LoadLibrary( pszDll );
 }
 
-/*!	ƒVƒFƒ‹‚âƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹ DLL ‚Ìƒo[ƒWƒ‡ƒ“”Ô†‚ğæ“¾
+/*!	ã‚·ã‚§ãƒ«ã‚„ã‚³ãƒ¢ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« DLL ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã‚’å–å¾—
 
-	@param[in] lpszDllName DLL ƒtƒ@ƒCƒ‹‚ÌƒpƒX
-	@return DLL ‚Ìƒo[ƒWƒ‡ƒ“”Ô†i¸”s‚Í 0j
+	@param[in] lpszDllName DLL ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
+	@return DLL ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ï¼ˆå¤±æ•—æ™‚ã¯ 0ï¼‰
 
 	@author ? (from MSDN Library document)
-	@date 2006.06.17 ryoji MSDNƒ‰ƒCƒuƒ‰ƒŠ‚©‚çˆø—p
+	@date 2006.06.17 ryoji MSDNãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‹ã‚‰å¼•ç”¨
 */
 DWORD GetDllVersion(LPCTSTR lpszDllName)
 {
@@ -113,31 +113,31 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 
 
 /*!
-	@brief ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒAƒCƒRƒ“‚Ìæ“¾
+	@brief ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¢ã‚¤ã‚³ãƒ³ã®å–å¾—
 	
-	ƒAƒCƒRƒ“ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡‚Í‚»‚±‚©‚çC–³‚¢ê‡‚Í
-	ƒŠƒ\[ƒXƒtƒ@ƒCƒ‹‚©‚çæ“¾‚·‚é
+	ã‚¢ã‚¤ã‚³ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆã¯ãã“ã‹ã‚‰ï¼Œç„¡ã„å ´åˆã¯
+	ãƒªã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å–å¾—ã™ã‚‹
 	
 	@param hInst [in] Instance Handle
-	@param nResource [in] ƒfƒtƒHƒ‹ƒgƒAƒCƒRƒ“—pResource ID
-	@param szFile [in] ƒAƒCƒRƒ“ƒtƒ@ƒCƒ‹–¼
+	@param nResource [in] ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚¢ã‚¤ã‚³ãƒ³ç”¨Resource ID
+	@param szFile [in] ã‚¢ã‚¤ã‚³ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«å
 	@param bSmall [in] true: small icon (16x16) / false: large icon (32x32)
 	
-	@return ƒAƒCƒRƒ“ƒnƒ“ƒhƒ‹D¸”s‚µ‚½ê‡‚ÍNULLD
+	@return ã‚¢ã‚¤ã‚³ãƒ³ãƒãƒ³ãƒ‰ãƒ«ï¼å¤±æ•—ã—ãŸå ´åˆã¯NULLï¼
 	
-	@date 2002.12.02 genta V‹Kì¬
-	@date 2007.05.20 ryoji iniƒtƒ@ƒCƒ‹ƒpƒX‚ğ—Dæ
+	@date 2002.12.02 genta æ–°è¦ä½œæˆ
+	@date 2007.05.20 ryoji iniãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 	@author genta
 */
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall )
 {
-	// ƒTƒCƒY‚Ìİ’è
+	// ã‚µã‚¤ã‚ºã®è¨­å®š
 	int size = ( bSmall ? 16 : 32 );
 
 	TCHAR szPath[_MAX_PATH];
 	HICON hIcon;
 
-	// ƒtƒ@ƒCƒ‹‚©‚ç‚Ì“Ç‚İ‚İ‚ğ‚Ü‚¸‚İ‚é
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®èª­ã¿è¾¼ã¿ã‚’ã¾ãšè©¦ã¿ã‚‹
 	GetInidirOrExedir( szPath, szFile );
 
 	hIcon = (HICON)::LoadImage(
@@ -152,7 +152,7 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSma
 		return hIcon;
 	}
 
-	//	ƒtƒ@ƒCƒ‹‚©‚ç‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚½‚çƒŠƒ\[ƒX‚©‚çæ“¾
+	//	ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ãŸã‚‰ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰å–å¾—
 	hIcon = (HICON)::LoadImage(
 		hInst,
 		MAKEINTRESOURCE(nResource),
@@ -178,8 +178,8 @@ struct VS_VERSION_INFO_HEAD {
 	VS_FIXEDFILEINFO Value;
 };
 
-/*! ƒŠƒ\[ƒX‚©‚ç»•iƒo[ƒWƒ‡ƒ“‚Ìæ“¾
-	@date 2004.05.13 Moca ˆê“xæ“¾‚µ‚½‚çƒLƒƒƒbƒVƒ…‚·‚é
+/*! ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰è£½å“ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®å–å¾—
+	@date 2004.05.13 Moca ä¸€åº¦å–å¾—ã—ãŸã‚‰ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã™ã‚‹
 */
 void GetAppVersionInfo(
 	HINSTANCE	hInstance,
@@ -191,7 +191,7 @@ void GetAppVersionInfo(
 	HRSRC					hRSRC;
 	HGLOBAL					hgRSRC;
 	VS_VERSION_INFO_HEAD*	pVVIH;
-	/* ƒŠƒ\[ƒX‚©‚ç»•iƒo[ƒWƒ‡ƒ“‚Ìæ“¾ */
+	/* ãƒªã‚½ãƒ¼ã‚¹ã‹ã‚‰è£½å“ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®å–å¾— */
 	*pdwProductVersionMS = 0;
 	*pdwProductVersionLS = 0;
 	static bool bLoad = false;

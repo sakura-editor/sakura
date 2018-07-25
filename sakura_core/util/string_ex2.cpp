@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "string_ex2.h"
 #include "charset/charcode.h"
 #include "CEol.h"
@@ -27,27 +27,27 @@ wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src)
 
 
 
-/*! •¶š‚ÌƒGƒXƒP[ƒv
+/*! æ–‡å­—ã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—
 
-	@param org [in] •ÏŠ·‚µ‚½‚¢•¶š—ñ
-	@param buf [out] •ÔŠÒŒã‚Ì•¶š—ñ‚ğ“ü‚ê‚éƒoƒbƒtƒ@
-	@param cesc  [in] ƒGƒXƒP[ƒv‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢•¶š
-	@param cwith [in] ƒGƒXƒP[ƒv‚Ég‚¤•¶š
+	@param org [in] å¤‰æ›ã—ãŸã„æ–‡å­—åˆ—
+	@param buf [out] è¿”é‚„å¾Œã®æ–‡å­—åˆ—ã‚’å…¥ã‚Œã‚‹ãƒãƒƒãƒ•ã‚¡
+	@param cesc  [in] ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã—ãªã„ã¨ã„ã‘ãªã„æ–‡å­—
+	@param cwith [in] ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã«ä½¿ã†æ–‡å­—
 	
-	@retval o—Í‚µ‚½ƒoƒCƒg” (Unicode‚Ìê‡‚Í•¶š”)
+	@retval å‡ºåŠ›ã—ãŸãƒã‚¤ãƒˆæ•° (Unicodeã®å ´åˆã¯æ–‡å­—æ•°)
 
-	•¶š—ñ’†‚É‚»‚Ì‚Ü‚Üg‚¤‚Æ‚Ü‚¸‚¢•¶š‚ª‚ ‚éê‡‚É‚»‚Ì•¶š‚Ì‘O‚É
-	ƒGƒXƒP[ƒvƒLƒƒƒ‰ƒNƒ^‚ğ‘}“ü‚·‚é‚½‚ß‚Ég‚¤D
+	æ–‡å­—åˆ—ä¸­ã«ãã®ã¾ã¾ä½¿ã†ã¨ã¾ãšã„æ–‡å­—ãŒã‚ã‚‹å ´åˆã«ãã®æ–‡å­—ã®å‰ã«
+	ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ã‚’æŒ¿å…¥ã™ã‚‹ãŸã‚ã«ä½¿ã†ï¼
 
-	@note •ÏŠ·Œã‚Ìƒf[ƒ^‚ÍÅ‘å‚ÅŒ³‚Ì•¶š—ñ‚Ì2”{‚É‚È‚é
-	@note ‚±‚ÌŠÖ”‚Í2ƒoƒCƒg•¶š‚Ìl—¶‚ğs‚Á‚Ä‚¢‚È‚¢
+	@note å¤‰æ›å¾Œã®ãƒ‡ãƒ¼ã‚¿ã¯æœ€å¤§ã§å…ƒã®æ–‡å­—åˆ—ã®2å€ã«ãªã‚‹
+	@note ã“ã®é–¢æ•°ã¯2ãƒã‚¤ãƒˆæ–‡å­—ã®è€ƒæ…®ã‚’è¡Œã£ã¦ã„ãªã„
 
 	@author genta
-	@date 2002/01/04 V‹Kì¬
-	@date 2002/01/30 genta &ê—p(dupamp)‚©‚çˆê”Ê‚Ì•¶š‚ğˆµ‚¦‚é‚æ‚¤‚ÉŠg’£D
-		dupamp‚ÍinlineŠÖ”‚É‚µ‚½D
-	@date 2002/02/01 genta bugfix ƒGƒXƒP[ƒv‚·‚é•¶š‚Æ‚³‚ê‚é•¶š‚Ìo—Í‡˜‚ª‹t‚¾‚Á‚½
-	@date 2004/06/19 genta Generic mapping‘Î‰
+	@date 2002/01/04 æ–°è¦ä½œæˆ
+	@date 2002/01/30 genta &å°‚ç”¨(dupamp)ã‹ã‚‰ä¸€èˆ¬ã®æ–‡å­—ã‚’æ‰±ãˆã‚‹ã‚ˆã†ã«æ‹¡å¼µï¼
+		dupampã¯inlineé–¢æ•°ã«ã—ãŸï¼
+	@date 2002/02/01 genta bugfix ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã™ã‚‹æ–‡å­—ã¨ã•ã‚Œã‚‹æ–‡å­—ã®å‡ºåŠ›é †åºãŒé€†ã ã£ãŸ
+	@date 2004/06/19 genta Generic mappingå¯¾å¿œ
 */
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith)
 {
@@ -66,20 +66,20 @@ int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith)
 
 
 
-/*!	•¶š—ñ‚ªw’è‚³‚ê‚½•¶š‚ÅI‚í‚Á‚Ä‚¢‚È‚©‚Á‚½ê‡‚É‚Í
-	––”ö‚É‚»‚Ì•¶š‚ğ•t‰Á‚·‚éD
+/*!	æ–‡å­—åˆ—ãŒæŒ‡å®šã•ã‚ŒãŸæ–‡å­—ã§çµ‚ã‚ã£ã¦ã„ãªã‹ã£ãŸå ´åˆã«ã¯
+	æœ«å°¾ã«ãã®æ–‡å­—ã‚’ä»˜åŠ ã™ã‚‹ï¼
 
-	@param pszPath [i/o]‘€ì‚·‚é•¶š—ñ
-	@param nMaxLen [in]ƒoƒbƒtƒ@’·
-	@param c [in]’Ç‰Á‚µ‚½‚¢•¶š
-	@retval  0 \‚ªŒ³‚©‚ç•t‚¢‚Ä‚¢‚½
-	@retval  1 \‚ğ•t‰Á‚µ‚½
-	@retval -1 ƒoƒbƒtƒ@‚ª‘«‚è‚¸A\‚ğ•t‰Á‚Å‚«‚È‚©‚Á‚½
-	@date 2003.06.24 Moca V‹Kì¬
+	@param pszPath [i/o]æ“ä½œã™ã‚‹æ–‡å­—åˆ—
+	@param nMaxLen [in]ãƒãƒƒãƒ•ã‚¡é•·
+	@param c [in]è¿½åŠ ã—ãŸã„æ–‡å­—
+	@retval  0 \ãŒå…ƒã‹ã‚‰ä»˜ã„ã¦ã„ãŸ
+	@retval  1 \ã‚’ä»˜åŠ ã—ãŸ
+	@retval -1 ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãšã€\ã‚’ä»˜åŠ ã§ããªã‹ã£ãŸ
+	@date 2003.06.24 Moca æ–°è¦ä½œæˆ
 */
 int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
 	int pos = _tcslen( pszPath );
-	// ‰½‚à‚È‚¢‚Æ‚«‚Í\‚ğ•t‰Á
+	// ä½•ã‚‚ãªã„ã¨ãã¯\ã‚’ä»˜åŠ 
 	if( 0 == pos ){
 		if( nMaxLen <= pos + 1 ){
 			return -1;
@@ -88,7 +88,7 @@ int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
 		pszPath[1] = _T('\0');
 		return 1;
 	}
-	// ÅŒã‚ª\‚Å‚È‚¢‚Æ‚«‚à\‚ğ•t‰Á(“ú–{Œê‚ğl—¶)
+	// æœ€å¾ŒãŒ\ã§ãªã„ã¨ãã‚‚\ã‚’ä»˜åŠ (æ—¥æœ¬èªã‚’è€ƒæ…®)
 	else if( *::CharPrev( pszPath, &pszPath[pos] ) != c ){
 		if( nMaxLen <= pos + 1 ){
 			return -1;
@@ -102,7 +102,7 @@ int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
 
 
 
-/* CR0LF0,CRLF,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
+/* CR0LF0,CRLF,LF,CRã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã€Œè¡Œã€ã‚’è¿”ã™ã€‚æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã¯è¡Œé•·ã«åŠ ãˆãªã„ */
 const char* GetNextLine(
 	const char*		pData,
 	int				nDataLen,
@@ -121,9 +121,9 @@ const char* GetNextLine(
 		return NULL;
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
-		/* ‰üsƒR[ƒh‚ª‚ ‚Á‚½ */
+		/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒã‚ã£ãŸ */
 		if( pData[i] == '\n' || pData[i] == '\r' ){
-			/* sI’[q‚Ìí—Ş‚ğ’²‚×‚é */
+			/* è¡Œçµ‚ç«¯å­ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹ */
 			pcEol->SetTypeByString( &pData[i], nDataLen - i );
 			break;
 		}
@@ -134,15 +134,15 @@ const char* GetNextLine(
 }
 
 /*!
-	GetNextLine‚Ìwchar_t”Å
-	GetNextLine‚æ‚èì¬
-	static ƒƒ“ƒoŠÖ”
+	GetNextLineã®wchar_tç‰ˆ
+	GetNextLineã‚ˆã‚Šä½œæˆ
+	static ãƒ¡ãƒ³ãƒé–¢æ•°
 */
 const wchar_t* GetNextLineW(
-	const wchar_t*	pData,		//!< [in]	ŒŸõ•¶š—ñ
-	int				nDataLen,	//!< [in]	ŒŸõ•¶š—ñ‚Ì•¶š”
-	int*			pnLineLen,	//!< [out]	1s‚Ì•¶š”‚ğ•Ô‚·‚½‚¾‚µEOL‚ÍŠÜ‚Ü‚È‚¢
-	int*			pnBgn,		//!< [i/o]	ŒŸõ•¶š—ñ‚ÌƒIƒtƒZƒbƒgˆÊ’u
+	const wchar_t*	pData,		//!< [in]	æ¤œç´¢æ–‡å­—åˆ—
+	int				nDataLen,	//!< [in]	æ¤œç´¢æ–‡å­—åˆ—ã®æ–‡å­—æ•°
+	int*			pnLineLen,	//!< [out]	1è¡Œã®æ–‡å­—æ•°ã‚’è¿”ã™ãŸã ã—EOLã¯å«ã¾ãªã„
+	int*			pnBgn,		//!< [i/o]	æ¤œç´¢æ–‡å­—åˆ—ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆä½ç½®
 	CEol*			pcEol,		//!< [out]	EOL
 	bool			bExtEol
 )
@@ -156,9 +156,9 @@ const wchar_t* GetNextLineW(
 		return NULL;
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
-		// ‰üsƒR[ƒh‚ª‚ ‚Á‚½
+		// æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒã‚ã£ãŸ
 		if( WCODE::IsLineDelimiter(pData[i], bExtEol) ){
-			// sI’[q‚Ìí—Ş‚ğ’²‚×‚é
+			// è¡Œçµ‚ç«¯å­ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹
 			pcEol->SetTypeByString(&pData[i], nDataLen - i);
 			break;
 		}
@@ -167,16 +167,16 @@ const wchar_t* GetNextLineW(
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
-#if 0 // –¢g—p
+#if 0 // æœªä½¿ç”¨
 /*
-	s’[q‚Ìí—Ş‚ğ’²‚×‚éUnicodeBE”Å
-	@param pszData ’²¸‘ÎÛ•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param nDataLen ’²¸‘ÎÛ•¶š—ñ‚Ì’·‚³(wchar_t‚Ì’·‚³)
-	@return ‰üsƒR[ƒh‚Ìí—ŞBI’[q‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚Æ‚«‚ÍEOL_NONE‚ğ•Ô‚·B
+	è¡Œç«¯å­ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹UnicodeBEç‰ˆ
+	@param pszData èª¿æŸ»å¯¾è±¡æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param nDataLen èª¿æŸ»å¯¾è±¡æ–‡å­—åˆ—ã®é•·ã•(wchar_tã®é•·ã•)
+	@return æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®ç¨®é¡ã€‚çµ‚ç«¯å­ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã¨ãã¯EOL_NONEã‚’è¿”ã™ã€‚
 */
 static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 {
-	/*! sI’[q‚Ìƒf[ƒ^‚Ì”z—ñ(UnicodeBE”Å) 2000.05.30 Moca */
+	/*! è¡Œçµ‚ç«¯å­ã®ãƒ‡ãƒ¼ã‚¿ã®é…åˆ—(UnicodeBEç‰ˆ) 2000.05.30 Moca */
 	static const wchar_t* aEolTable[EOL_TYPE_NUM] = {
 		L"",									// EOL_NONE
 		(const wchar_t*)"\x00\x0d\x00\x0a\x00",	// EOL_CRLF
@@ -184,7 +184,7 @@ static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 		(const wchar_t*)"\x00\x0d\x00"			// EOL_CR
 	};
 
-	/* ‰üsƒR[ƒh‚Ì’·‚³‚ğ’²‚×‚é */
+	/* æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®é•·ã•ã‚’èª¿ã¹ã‚‹ */
 
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		CEol cEol((EEolType)i);
@@ -196,15 +196,15 @@ static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 }
 
 /*!
-	GetNextLine‚Ìwchar_t”Å(ƒrƒbƒNƒGƒ“ƒfƒBƒAƒ“—p)
-	GetNextLine‚æ‚èì¬
-	static ƒƒ“ƒoŠÖ”
+	GetNextLineã®wchar_tç‰ˆ(ãƒ“ãƒƒã‚¯ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³ç”¨)
+	GetNextLineã‚ˆã‚Šä½œæˆ
+	static ãƒ¡ãƒ³ãƒé–¢æ•°
 */
 const wchar_t* GetNextLineWB(
-	const wchar_t*	pData,	//!< [in]	ŒŸõ•¶š—ñ
-	int			nDataLen,	//!< [in]	ŒŸõ•¶š—ñ‚Ì•¶š”
-	int*		pnLineLen,	//!< [out]	1s‚Ì•¶š”‚ğ•Ô‚·‚½‚¾‚µEOL‚ÍŠÜ‚Ü‚È‚¢
-	int*		pnBgn,		//!< [i/o]	ŒŸõ•¶š—ñ‚ÌƒIƒtƒZƒbƒgˆÊ’u
+	const wchar_t*	pData,	//!< [in]	æ¤œç´¢æ–‡å­—åˆ—
+	int			nDataLen,	//!< [in]	æ¤œç´¢æ–‡å­—åˆ—ã®æ–‡å­—æ•°
+	int*		pnLineLen,	//!< [out]	1è¡Œã®æ–‡å­—æ•°ã‚’è¿”ã™ãŸã ã—EOLã¯å«ã¾ãªã„
+	int*		pnBgn,		//!< [i/o]	æ¤œç´¢æ–‡å­—åˆ—ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆä½ç½®
 	CEol*		pcEol		//!< [i/o]	EOL
 )
 {
@@ -217,9 +217,9 @@ const wchar_t* GetNextLineWB(
 		return NULL;
 	}
 	for( i = *pnBgn; i < nDataLen; ++i ){
-		// ‰üsƒR[ƒh‚ª‚ ‚Á‚½
+		// æ”¹è¡Œã‚³ãƒ¼ãƒ‰ãŒã‚ã£ãŸ
 		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
-			// sI’[q‚Ìí—Ş‚ğ’²‚×‚é
+			// è¡Œçµ‚ç«¯å­ã®ç¨®é¡ã‚’èª¿ã¹ã‚‹
 			pcEol->SetType( GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
 			break;
 		}
@@ -230,15 +230,15 @@ const wchar_t* GetNextLineWB(
 }
 #endif
 
-/*! w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é
+/*! æŒ‡å®šé•·ä»¥ä¸‹ã®ãƒ†ã‚­ã‚¹ãƒˆã«åˆ‡ã‚Šåˆ†ã‘ã‚‹
 
-	@param pText     [in] Ø‚è•ª‚¯‘ÎÛ‚Æ‚È‚é•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	@param nTextLen  [in] Ø‚è•ª‚¯‘ÎÛ‚Æ‚È‚é•¶š—ñ‘S‘Ì‚Ì’·‚³
-	@param nLimitLen [in] Ø‚è•ª‚¯‚é’·‚³
-	@param pnLineLen [out] ÀÛ‚Éæ‚èo‚³‚ê‚½•¶š—ñ‚Ì’·‚³
-	@param pnBgn     [i/o] “ü—Í: Ø‚è•ª‚¯ŠJnˆÊ’u, o—Í: æ‚èo‚³‚ê‚½•¶š—ñ‚ÌŸ‚ÌˆÊ’u
+	@param pText     [in] åˆ‡ã‚Šåˆ†ã‘å¯¾è±¡ã¨ãªã‚‹æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	@param nTextLen  [in] åˆ‡ã‚Šåˆ†ã‘å¯¾è±¡ã¨ãªã‚‹æ–‡å­—åˆ—å…¨ä½“ã®é•·ã•
+	@param nLimitLen [in] åˆ‡ã‚Šåˆ†ã‘ã‚‹é•·ã•
+	@param pnLineLen [out] å®Ÿéš›ã«å–ã‚Šå‡ºã•ã‚ŒãŸæ–‡å­—åˆ—ã®é•·ã•
+	@param pnBgn     [i/o] å…¥åŠ›: åˆ‡ã‚Šåˆ†ã‘é–‹å§‹ä½ç½®, å‡ºåŠ›: å–ã‚Šå‡ºã•ã‚ŒãŸæ–‡å­—åˆ—ã®æ¬¡ã®ä½ç½®
 
-	@note 2003.05.25 –¢g—p‚Ì‚æ‚¤‚¾
+	@note 2003.05.25 æœªä½¿ç”¨ã®ã‚ˆã†ã 
 */
 const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimitLen, int* pnLineLen, int* pnBgn )
 {
@@ -269,7 +269,7 @@ const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimi
 
 
 
-//! ƒf[ƒ^‚ğw’èu•¶š”vˆÈ“à‚ÉØ‚è‹l‚ß‚éB–ß‚è’l‚ÍŒ‹‰Ê‚Ì•¶š”B
+//! ãƒ‡ãƒ¼ã‚¿ã‚’æŒ‡å®šã€Œæ–‡å­—æ•°ã€ä»¥å†…ã«åˆ‡ã‚Šè©°ã‚ã‚‹ã€‚æˆ»ã‚Šå€¤ã¯çµæœã®æ–‡å­—æ•°ã€‚
 int LimitStringLengthW(
 	const wchar_t*	pszData,		//!< [in]
 	int				nDataLength,	//!< [in]
@@ -291,7 +291,7 @@ int LimitStringLengthW(
 	return n;
 }
 
-//! ƒf[ƒ^‚ğw’èu•¶š”vˆÈ“à‚ÉØ‚è‹l‚ß‚éB–ß‚è’l‚ÍŒ‹‰Ê‚Ì•¶š”B
+//! ãƒ‡ãƒ¼ã‚¿ã‚’æŒ‡å®šã€Œæ–‡å­—æ•°ã€ä»¥å†…ã«åˆ‡ã‚Šè©°ã‚ã‚‹ã€‚æˆ»ã‚Šå€¤ã¯çµæœã®æ–‡å­—æ•°ã€‚
 int LimitStringLengthA(
 	const char*		pszData,		//!< [in]
 	int				nDataLength,	//!< [in]
@@ -332,7 +332,7 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 	wmemset( szNumber, 0, _countof( szNumber ) );
 	if( i >= nLineLen ){
 	}else{
-		/* sˆÊ’u ‰üs’PˆÊs”Ô†(1‹N“_)‚Ì’Šo */
+		/* è¡Œä½ç½® æ”¹è¡Œå˜ä½è¡Œç•ªå·(1èµ·ç‚¹)ã®æŠ½å‡º */
 		j = 0;
 		for( ; i < nLineLen && j + 1 < _countof( szNumber ); ){
 			szNumber[j] = pLine[i];
@@ -346,7 +346,7 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 		}
 		*pnJumpToLine = _wtoi( szNumber );
 
-		/* Œ…ˆÊ’u ‰üs’PˆÊsæ“ª‚©‚ç‚ÌƒoƒCƒg”(1‹N“_)‚Ì’Šo */
+		/* æ¡ä½ç½® æ”¹è¡Œå˜ä½è¡Œå…ˆé ­ã‹ã‚‰ã®ãƒã‚¤ãƒˆæ•°(1èµ·ç‚¹)ã®æŠ½å‡º */
 		if( i < nLineLen && pLine[i] == ',' ){
 			wmemset( szNumber, 0, _countof( szNumber ) );
 			j = 0;
@@ -376,12 +376,12 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 
 
 /*
-	scanf“IˆÀ‘SƒXƒLƒƒƒ“
+	scanfçš„å®‰å…¨ã‚¹ã‚­ãƒ£ãƒ³
 
-	g—p—á:
+	ä½¿ç”¨ä¾‹:
 		int a[3];
 		scan_ints("1,23,4,5", "%d,%d,%d", a);
-		//Œ‹‰Ê: a[0]=1, a[1]=23, a[2]=4 ‚Æ‚È‚éB
+		//çµæœ: a[0]=1, a[1]=23, a[2]=4 ã¨ãªã‚‹ã€‚
 */
 int scan_ints(
 	const wchar_t*	pszData,	//!< [in]
@@ -389,7 +389,7 @@ int scan_ints(
 	int*			anBuf		//!< [out]
 )
 {
-	//—v‘f”
+	//è¦ç´ æ•°
 	int num = 0;
 	const wchar_t* p = pszFormat;
 	while(*p){
@@ -397,7 +397,7 @@ int scan_ints(
 		p++;
 	}
 
-	//ƒXƒLƒƒƒ“
+	//ã‚¹ã‚­ãƒ£ãƒ³
 	int dummy[32];
 	memset(dummy,0,sizeof(dummy));
 	int nRet = swscanf(
@@ -407,7 +407,7 @@ int scan_ints(
 		&dummy[20],&dummy[21],&dummy[22],&dummy[23],&dummy[24],&dummy[25],&dummy[26],&dummy[27],&dummy[28],&dummy[29]
 	);
 
-	//Œ‹‰ÊƒRƒs[
+	//çµæœã‚³ãƒ”ãƒ¼
 	for(int i=0;i<num;i++){
 		anBuf[i]=dummy[i];
 	}

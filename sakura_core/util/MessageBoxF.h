@@ -1,9 +1,9 @@
-/*!	@file
-	@brief MessageBox—pŠÖ”
+ï»¿/*!	@file
+	@brief MessageBoxç”¨é–¢æ•°
 
 	@author Norio Nakatani
 
-	@date 2013/03/03 Uchi Debug1.h‚©‚ç•ª—£
+	@date 2013/03/03 Uchi Debug1.hã‹ã‚‰åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -33,61 +33,61 @@
 #define SAKURA_MESSAGEBOX_2D6EF6BC_3D8C_427B_8AFB_E8903838A1ED_H_
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                 ƒƒbƒZ[ƒWƒ{ƒbƒNƒXFÀ‘•                    //
+//                 ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ï¼šå®Ÿè£…                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//2007.10.02 kobake ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚Ìg—p‚ÍƒfƒoƒbƒO‚ÉŒÀ‚ç‚È‚¢‚Ì‚ÅAuDebug`v‚Æ‚¢‚¤–¼‘O‚ğ”p~
+//2007.10.02 kobake ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®ä½¿ç”¨ã¯ãƒ‡ãƒãƒƒã‚°æ™‚ã«é™ã‚‰ãªã„ã®ã§ã€ã€ŒDebugï½ã€ã¨ã„ã†åå‰ã‚’å»ƒæ­¢
 #undef MessageBox
 #define MessageBox Wrap_MessageBox
 int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
 
-//ƒeƒLƒXƒg®Œ`‹@”\•t‚«MessageBox
+//ãƒ†ã‚­ã‚¹ãƒˆæ•´å½¢æ©Ÿèƒ½ä»˜ãMessageBox
 int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
 int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
 
 
-//                ƒ†[ƒU—pƒƒbƒZ[ƒWƒ{ƒbƒNƒX                   //
+//                ãƒ¦ãƒ¼ã‚¶ç”¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹                   //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//ƒfƒoƒbƒO—pƒƒbƒZ[ƒWƒ{ƒbƒNƒX
+//ãƒ‡ãƒãƒƒã‚°ç”¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹
 #define MYMESSAGEBOX MessageBoxF
 
-//ˆê”Ê‚ÌŒx‰¹
+//ä¸€èˆ¬ã®è­¦å‘ŠéŸ³
 #define DefaultBeep()   ::MessageBeep(MB_OK)
 
-//ƒGƒ‰[FÔŠÛ‚Éu~v[OK]
+//ã‚¨ãƒ©ãƒ¼ï¼šèµ¤ä¸¸ã«ã€ŒÃ—ã€[OK]
 int ErrorMessage   (HWND hwnd, LPCTSTR format, ...);
 int TopErrorMessage(HWND hwnd, LPCTSTR format, ...);	//(TOPMOST)
 #define ErrorBeep()     ::MessageBeep(MB_ICONSTOP)
 
-//ŒxFOŠp‚ÉuIv[OK]
+//è­¦å‘Šï¼šä¸‰è§’ã«ã€Œï¼ã€[OK]
 int WarningMessage   (HWND hwnd, LPCTSTR format, ...);
 int TopWarningMessage(HWND hwnd, LPCTSTR format, ...);
 #define WarningBeep()   ::MessageBeep(MB_ICONEXCLAMATION)
 
-//î•ñFÂŠÛ‚Éuiv[OK]
+//æƒ…å ±ï¼šé’ä¸¸ã«ã€Œiã€[OK]
 int InfoMessage   (HWND hwnd, LPCTSTR format, ...);
 int TopInfoMessage(HWND hwnd, LPCTSTR format, ...);
 #define InfoBeep()      ::MessageBeep(MB_ICONINFORMATION)
 
-//Šm”FF‚«o‚µ‚ÌuHv [‚Í‚¢][‚¢‚¢‚¦] –ß‚è’l:IDYES,IDNO
+//ç¢ºèªï¼šå¹ãå‡ºã—ã®ã€Œï¼Ÿã€ [ã¯ã„][ã„ã„ãˆ] æˆ»ã‚Šå€¤:IDYES,IDNO
 int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...);
 int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...);
 #define ConfirmBeep()   ::MessageBeep(MB_ICONQUESTION)
 
-//O‘ğF‚«o‚µ‚ÌuHv [‚Í‚¢][‚¢‚¢‚¦][ƒLƒƒƒ“ƒZƒ‹]  –ß‚è’l:ID_YES,ID_NO,ID_CANCEL
+//ä¸‰æŠï¼šå¹ãå‡ºã—ã®ã€Œï¼Ÿã€ [ã¯ã„][ã„ã„ãˆ][ã‚­ãƒ£ãƒ³ã‚»ãƒ«]  æˆ»ã‚Šå€¤:ID_YES,ID_NO,ID_CANCEL
 int Select3Message   (HWND hwnd, LPCTSTR format, ...);
 int TopSelect3Message(HWND hwnd, LPCTSTR format, ...);
 
-//‚»‚Ì‘¼ƒƒbƒZ[ƒW•\¦—pƒ{ƒbƒNƒX[OK]
+//ãã®ä»–ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºç”¨ãƒœãƒƒã‚¯ã‚¹[OK]
 int OkMessage   (HWND hwnd, LPCTSTR format, ...);
 int TopOkMessage(HWND hwnd, LPCTSTR format, ...);
 
-//ƒ^ƒCƒvw’èƒƒbƒZ[ƒW•\¦—pƒ{ƒbƒNƒX
+//ã‚¿ã‚¤ãƒ—æŒ‡å®šãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºç”¨ãƒœãƒƒã‚¯ã‚¹
 int CustomMessage   (HWND hwnd, UINT uType, LPCTSTR format, ...);
 int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);	//(TOPMOST)
 
-//ìÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰[
+//ä½œè€…ã«æ•™ãˆã¦æ¬²ã—ã„ã‚¨ãƒ©ãƒ¼
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
 
 

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "util/tchar_convert.h"
 #include "mem/CRecycledBuffer.h"
 
@@ -18,7 +18,7 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 {
 	if(pSrc==NULL)return NULL;
 
-	//•K—v‚ÈƒTƒCƒY‚ğŒvZ
+	//å¿…è¦ãªã‚µã‚¤ã‚ºã‚’è¨ˆç®—
 	int nDstLen = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -29,7 +29,7 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 	);
 	size_t nDstCnt = (size_t)nDstLen + 1;
 
-	//ƒoƒbƒtƒ@æ“¾
+	//ãƒãƒƒãƒ•ã‚¡å–å¾—
 	WCHAR* pDst;
 	if(nDstCnt < g_bufSmall.GetMaxCount<WCHAR>()){
 		pDst=g_bufSmall.GetBuffer<WCHAR>(&nDstCnt);
@@ -38,7 +38,7 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 		pDst=g_bufBig.GetBuffer<WCHAR>(nDstCnt);
 	}
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nDstLen = MultiByteToWideChar(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -64,7 +64,7 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 {
 	if(pSrc==NULL)return NULL;
 
-	//•K—v‚ÈƒTƒCƒY‚ğŒvZ
+	//å¿…è¦ãªã‚µã‚¤ã‚ºã‚’è¨ˆç®—
 	int nDstLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,
@@ -77,7 +77,7 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 	);
 	size_t nDstCnt = (size_t)nDstLen + 1;
 
-	//ƒoƒbƒtƒ@æ“¾
+	//ãƒãƒƒãƒ•ã‚¡å–å¾—
 	ACHAR* pDst;
 	if(nDstCnt < g_bufSmall.GetMaxCount<ACHAR>()){
 		pDst=g_bufSmall.GetBuffer<ACHAR>(&nDstCnt);
@@ -86,7 +86,7 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 		pDst=g_bufBig.GetBuffer<ACHAR>(nDstCnt);
 	}
 
-	//•ÏŠ·
+	//å¤‰æ›
 	nDstLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,

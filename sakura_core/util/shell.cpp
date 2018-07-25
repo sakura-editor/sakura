@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,7 +26,7 @@
 #include <HtmlHelp.h>
 #include <ShlObj.h>
 #include <ShellAPI.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE��
+#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -56,21 +56,21 @@ int CALLBACK MYBrowseCallbackProc(
 }
 
 
-/* �t�H���_�I���_�C�A���O */
+/* フォルダ選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TCHAR* strFolderName )
 {
 	BOOL	bRes;
 	TCHAR	szInitFolder[MAX_PATH];
 
 	_tcscpy( szInitFolder, pszInitFolder );
-	/* �t�H���_�̍Ōオ���p����'\\'�̏ꍇ�́A��菜�� "c:\\"���̃��[�g�͎�菜���Ȃ�*/
+	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 	CutLastYenFromDirectoryPath( szInitFolder );
 
-	// 2010.08.28 �t�H���_���J���ƃt�b�N���܂߂ĐF�XDLL���ǂݍ��܂��̂ňړ�
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
-	// SHBrowseForFolder()�֐��ɓn���\����
+	// SHBrowseForFolder()関数に渡す構造体
 	BROWSEINFO bi;
 	bi.hwndOwner = hWnd;
 	bi.pidlRoot = NULL;
@@ -80,13 +80,13 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 	bi.lpfn = MYBrowseCallbackProc;
 	bi.lParam = (LPARAM)szInitFolder;
 	bi.iImage = 0;
-	// �A�C�e���h�c���X�g��Ԃ�
-	// ITEMIDLIST�̓A�C�e���̈�ӂ�\���\����
+	// アイテムＩＤリストを返す
+	// ITEMIDLISTはアイテムの一意を表す構造体
 	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
 	if( NULL != pList ){
-		// SHGetPathFromIDList()�֐��̓A�C�e���h�c���X�g�̕����p�X��T���Ă����
+		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
 		bRes = ::SHGetPathFromIDList( pList, strFolderName );
-		// :SHBrowseForFolder()�Ŏ擾�����A�C�e���h�c���X�g���폜
+		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
 		::CoTaskMemFree( pList );
 		if( bRes ){
 			return TRUE;
@@ -99,17 +99,17 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 
 
 
-/*!	����t�H���_�̃p�X���擾����
-	SHGetSpecialFolderPath API�ishell32.dll version 4.71�ȏオ�K�v�j�Ɠ����̏���������
+/*!	特殊フォルダのパスを取得する
+	SHGetSpecialFolderPath API（shell32.dll version 4.71以上が必要）と同等の処理をする
 
 	@param [in] nFolder CSIDL (constant special item ID list)
-	@param [out] pszPath ����t�H���_�̃p�X
+	@param [out] pszPath 特殊フォルダのパス
 
 	@author ryoji
-	@date 2007.05.19 �V�K
-	@date 2017.06.24 novice SHGetFolderLocation()�ɕύX
+	@date 2007.05.19 新規
+	@date 2017.06.24 novice SHGetFolderLocation()に変更
 
-	@note SHGetFolderLocation()�́Ashell32.dll version 5.00�ȏオ�K�v
+	@note SHGetFolderLocation()は、shell32.dll version 5.00以上が必要
 */
 BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 {
@@ -145,19 +145,19 @@ BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 
 
 ///////////////////////////////////////////////////////////////////////
-// From Here 2007.05.25 ryoji �Ǝ��g���̃v���p�e�B�V�[�g�֐��Q
+// From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
 
-static WNDPROC s_pOldPropSheetWndProc;	// �v���p�e�B�V�[�g�̌��̃E�B���h�E�v���V�[�W��
+static WNDPROC s_pOldPropSheetWndProc;	// プロパティシートの元のウィンドウプロシージャ
 
-/*!	�Ǝ��g���v���p�e�B�V�[�g�̃E�B���h�E�v���V�[�W��
+/*!	独自拡張プロパティシートのウィンドウプロシージャ
 	@author ryoji
-	@date 2007.05.25 �V�K
+	@date 2007.05.25 新規
 */
 static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	switch( uMsg ){
 	case WM_SHOWWINDOW:
-		// �ǉ��{�^���̈ʒu�𒲐�����
+		// 追加ボタンの位置を調整する
 		if( wParam ){
 			HWND hwndBtn;
 			RECT rcOk;
@@ -175,17 +175,17 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 		break;
 
 	case WM_COMMAND:
-		// �ǉ��{�^���������ꂽ���͂��̏������s��
+		// 追加ボタンが押された時はその処理を行う
 		if( HIWORD( wParam ) == BN_CLICKED && LOWORD( wParam ) == 0x02000 ){
 			HWND hwndBtn = ::GetDlgItem( hwnd, 0x2000 );
 			RECT rc;
 			POINT pt;
 
-			// ���j���[��\������
+			// メニューを表示する
 			::GetWindowRect( hwndBtn, &rc );
 			pt.x = rc.left;
 			pt.y = rc.bottom;
-			GetMonitorWorkRect( pt, &rc );	// ���j�^�̃��[�N�G���A
+			GetMonitorWorkRect( pt, &rc );	// モニタのワークエリア
 
 			HMENU hMenu = ::CreatePopupMenu();
 			::InsertMenu( hMenu, 0, MF_BYPOSITION | MF_STRING, 100, LS(STR_SHELL_MENU_OPEN) );
@@ -197,17 +197,17 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 										0, hwnd, NULL );
 			::DestroyMenu( hMenu );
 
-			// �I�����ꂽ���j���[�̏���
+			// 選択されたメニューの処理
 			switch( nId ){
-			case 100:	// �ݒ�t�H���_���J��
+			case 100:	// 設定フォルダを開く
 				TCHAR szPath[_MAX_PATH];
 				GetInidir( szPath );
 
-				// �t�H���_�� ITEMIDLIST ���擾���� ShellExecuteEx() �ŊJ��
-				// Note. MSDN �� ShellExecute() �̉���ɂ�����@�Ńt�H���_���J�����Ƃ����ꍇ�A
-				//       �t�H���_�Ɠ����ꏊ�� <�t�H���_��>.exe ������Ƃ��܂������Ȃ��B
-				//       verb��"open"��NULL�ł�exe�̂ق������s����"explore"�ł͎��s����
-				//       �i�t�H���_���̖�����'\\'��t�����Ă�Windows 2000�ł͕t�����Ȃ��̂Ɠ�������ɂȂ��Ă��܂��j
+				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
+				// Note. MSDN の ShellExecute() の解説にある方法でフォルダを開こうとした場合、
+				//       フォルダと同じ場所に <フォルダ名>.exe があるとうまく動かない。
+				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
+				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
 				LPSHELLFOLDER pDesktopFolder;
 				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
 					LPMALLOC pMalloc;
@@ -230,7 +230,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 							si.lpVerb   = _T("open");
 							si.lpIDList = pIDL;
 							si.nShow    = SW_SHOWNORMAL;
-							::ShellExecuteEx( &si );	// �t�H���_���J��
+							::ShellExecuteEx( &si );	// フォルダを開く
 							pMalloc->Free( (void*)pIDL );
 						}
 						pMalloc->Release();
@@ -238,7 +238,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					pDesktopFolder->Release();
 				}
 				break;
-			case 101:	// �C���|�[�g�^�G�N�X�|�[�g�̋N�_���Z�b�g�i�N�_��ݒ�t�H���_�ɂ���j
+			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
 				int nMsgResult = MYMESSAGEBOX(
 					hwnd,
 					MB_OKCANCEL | MB_ICONINFORMATION,
@@ -264,13 +264,13 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 	return ::CallWindowProc( s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
 }
 
-/*!	�Ǝ��g���v���p�e�B�V�[�g�̃R�[���o�b�N�֐�
+/*!	独自拡張プロパティシートのコールバック関数
 	@author ryoji
-	@date 2007.05.25 �V�K
+	@date 2007.05.25 新規
 */
 static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 {
-	// �v���p�e�B�V�[�g�̏��������Ƀ{�^���ǉ��A�v���p�e�B�V�[�g�̃T�u�N���X�����s��
+	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
@@ -282,13 +282,13 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 }
 
 
-/*!	�Ǝ��g���v���p�e�B�V�[�g�i���ʐݒ�^�^�C�v�ʐݒ��ʗp�j
+/*!	独自拡張プロパティシート（共通設定／タイプ別設定画面用）
 	@author ryoji
-	@date 2007.05.25 �V�K
+	@date 2007.05.25 新規
 */
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
-	// �l�ݒ�t�H���_���g�p����Ƃ��́u�ݒ�t�H���_�v�{�^����ǉ�����
+	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
 	if( CShareData::getInstance()->IsPrivateSettings() ){
 		lppsph->dwFlags |= PSH_USECALLBACK;
 		lppsph->pfnCallback = PropSheetProc;
@@ -297,24 +297,24 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 }
 
 
-// To Here 2007.05.25 ryoji �Ǝ��g���̃v���p�e�B�V�[�g�֐��Q
+// To Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
 ///////////////////////////////////////////////////////////////////////
 
 
 
 
-/*	�w���v�̖ڎ���\��
-	�ڎ��^�u��\���B��肪����o�[�W�����ł́A�ڎ��y�[�W��\���B
+/*	ヘルプの目次を表示
+	目次タブを表示。問題があるバージョンでは、目次ページを表示。
 */
 void ShowWinHelpContents( HWND hwnd )
 {
 	if ( HasWinHelpContentsProblem() ){
-		/* �ڎ��y�[�W��\������ */
-		MyWinHelp( hwnd, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelp�ɕύX
+		/* 目次ページを表示する */
+		MyWinHelp( hwnd, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
 		return;
 	}
-	/* �ڎ��^�u��\������ */
-	MyWinHelp( hwnd, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelp�ɕύX
+	/* 目次タブを表示する */
+	MyWinHelp( hwnd, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
 	return;
 }
 
@@ -323,31 +323,31 @@ void ShowWinHelpContents( HWND hwnd )
 
 
 // Stonee, 2001/12/21
-// NetWork��̃��\�[�X�ɐڑ����邽�߂̃_�C�A���O���o��������
-// NO_ERROR:���� ERROR_CANCELLED:�L�����Z�� ����ȊO:���s
-// �v���W�F�N�g�̐ݒ�Ń����N���W���[����Mpr.lib��ǉ��̂���
+// NetWork上のリソースに接続するためのダイアログを出現させる
+// NO_ERROR:成功 ERROR_CANCELLED:キャンセル それ以外:失敗
+// プロジェクトの設定でリンクモジュールにMpr.libを追加のこと
 DWORD NetConnect ( const TCHAR strNetWorkPass[] )
 {
-	//char sPassWord[] = "\0";	//�p�X���[�h
-	//char sUser[] = "\0";		//���[�U�[��
-	DWORD dwRet;				//�߂�l�@�G���[�R�[�h��WINERROR.H���Q��
+	//char sPassWord[] = "\0";	//パスワード
+	//char sUser[] = "\0";		//ユーザー名
+	DWORD dwRet;				//戻り値　エラーコードはWINERROR.Hを参照
 	TCHAR sTemp[256];
 	TCHAR sDrive[] = _T("");
     int i;
 
-	if (_tcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNC�ł͂Ȃ��B
-	if (strNetWorkPass[0] != _T('\\') && strNetWorkPass[1] != _T('\\'))	return ERROR_BAD_NET_NAME;  //UNC�ł͂Ȃ��B
+	if (_tcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (strNetWorkPass[0] != _T('\\') && strNetWorkPass[1] != _T('\\'))	return ERROR_BAD_NET_NAME;  //UNCではない。
 
-	//3�����ڂ��琔���čŏ���\�̒��O�܂ł�؂�o��
+	//3文字目から数えて最初の\の直前までを切り出す
 	sTemp[0] = _T('\\');
 	sTemp[1] = _T('\\');
 	for (i = 2; strNetWorkPass[i] != _T('\0'); i++) {
 		if (strNetWorkPass[i] == _T('\\')) break;
 		sTemp[i] = strNetWorkPass[i];
 	}
-	sTemp[i] = _T('\0');	//�I�[
+	sTemp[i] = _T('\0');	//終端
 
-	//NETRESOURCE�쐬
+	//NETRESOURCE作成
 	NETRESOURCE nr;
 	ZeroMemory( &nr, sizeof( nr ) );
 	nr.dwScope       = RESOURCE_GLOBALNET;
@@ -357,7 +357,7 @@ DWORD NetConnect ( const TCHAR strNetWorkPass[] )
 	nr.lpLocalName   = sDrive;
 	nr.lpRemoteName  = sTemp;
 
-	//���[�U�[�F�؃_�C�A���O��\��
+	//ユーザー認証ダイアログを表示
 	dwRet = WNetAddConnection3(0, &nr, NULL, NULL, CONNECT_UPDATE_PROFILE | CONNECT_INTERACTIVE);
 
 	return dwRet;
@@ -368,26 +368,26 @@ DWORD NetConnect ( const TCHAR strNetWorkPass[] )
 
 //	From Here Jun. 26, 2001 genta
 /*!
-	HTML Help�R���|�[�l���g�̃A�N�Z�X��񋟂���B
-	�����ŕێ����ׂ��f�[�^�͓��ɂȂ��A���鏊����g����̂�Global�ϐ��ɂ��邪�A
-	���ڂ̃A�N�Z�X��OpenHtmlHelp()�֐��݂̂���s���B
-	���̃t�@�C�������CHtmlHelp�N���X�͉B����Ă���B
+	HTML Helpコンポーネントのアクセスを提供する。
+	内部で保持すべきデータは特になく、至る所から使われるのでGlobal変数にするが、
+	直接のアクセスはOpenHtmlHelp()関数のみから行う。
+	他のファイルからはCHtmlHelpクラスは隠されている。
 */
 CHtmlHelp g_cHtmlHelp;
 
 /*!
-	HTML Help���J��
-	HTML Help�����p�\�ł���Έ��������̂܂ܓn���A�����łȂ���΃��b�Z�[�W��\������B
+	HTML Helpを開く
+	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
 
-	@return �J�����w���v�E�B���h�E�̃E�B���h�E�n���h���B�J���Ȃ������Ƃ���NULL�B
+	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
 */
 
 HWND OpenHtmlHelp(
-	HWND		hWnd,	//!< [in] �Ăяo�����E�B���h�E�̃E�B���h�E�n���h��
-	LPCTSTR		szFile,	//!< [in] HTML Help�̃t�@�C�����B�s�����ɑ����ăE�B���h�E�^�C�v�����w��\�B
-	UINT		uCmd,	//!< [in] HTML Help �ɓn���R�}���h
-	DWORD_PTR	data,	//!< [in] �R�}���h�ɉ������f�[�^
-	bool		msgflag	//!< [in] �G���[���b�Z�[�W��\�����邩�B�ȗ�����true�B
+	HWND		hWnd,	//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
+	LPCTSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
+	UINT		uCmd,	//!< [in] HTML Help に渡すコマンド
+	DWORD_PTR	data,	//!< [in] コマンドに応じたデータ
+	bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
 )
 {
 	if( DLL_SUCCESS == g_cHtmlHelp.InitDll() ){
@@ -409,8 +409,8 @@ HWND OpenHtmlHelp(
 
 
 
-/*! �V���[�g�J�b�g(.lnk)�̉���
-	@date 2009.01.08 ryoji CoInitialize/CoUninitialize���폜�iWinMain��OleInitialize/OleUninitialize��ǉ��j
+/*! ショートカット(.lnk)の解決
+	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
 */
 BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 {
@@ -419,13 +419,13 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 	IShellLink*		pIShellLink;
 	IPersistFile*	pIPersistFile;
 	WIN32_FIND_DATA	wfd;
-	/* ������ */
+	/* 初期化 */
 	pIShellLink = NULL;
 	pIPersistFile = NULL;
 	*lpszPath = 0; // assume failure
 	bRes = FALSE;
 
-// 2009.01.08 ryoji CoInitialize���폜�iWinMain��OleInitialize�ǉ��j
+// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
@@ -434,7 +434,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 		return FALSE;
 	}
 
-	// 2010.08.28 DLL �C���W�F�N�V�����΍�Ƃ���EXE�̃t�H���_�Ɉړ�����
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
@@ -457,7 +457,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 						TCHAR szDescription[MAX_PATH];
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
 							if( _T('\0') != szGotPath[0] ){
-								/* ����I�� */
+								/* 正常終了 */
 								_tcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
 							}
@@ -477,7 +477,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 		pIShellLink->Release();
 		pIShellLink = NULL;
 	}
-// 2009.01.08 ryoji CoUninitialize���폜�iWinMain��OleUninitialize�ǉ��j
+// 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
 	return bRes;
 }
 
@@ -485,17 +485,17 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 
 
 
-/*! �w���v�t�@�C���̃t���p�X��Ԃ�
+/*! ヘルプファイルのフルパスを返す
  
-    @return �p�X���i�[�����o�b�t�@�̃|�C���^
+    @return パスを格納したバッファのポインタ
  
-    @note ���s�t�@�C���Ɠ����ʒu�� sakura.chm �t�@�C����Ԃ��B
-        �p�X�� UNC �̂Ƃ��� _MAX_PATH �Ɏ��܂�Ȃ��\��������B
+    @note 実行ファイルと同じ位置の sakura.chm ファイルを返す。
+        パスが UNC のときは _MAX_PATH に収まらない可能性がある。
  
-    @date 2002/01/19 aroka �GnMaxLen �����ǉ�
-	@date 2007/10/23 kobake ���������̌����C��(in��out)
-	@date 2007/10/23 kobake CEditApp�̃����o�֐��ɕύX
-	@date 2007/10/23 kobake �V�O�j�`���ύX�Bconst�|�C���^��Ԃ������̃C���^�[�t�F�[�X�ɂ��܂����B
+    @date 2002/01/19 aroka ；nMaxLen 引数追加
+	@date 2007/10/23 kobake 引数説明の誤りを修正(in→out)
+	@date 2007/10/23 kobake CEditAppのメンバ関数に変更
+	@date 2007/10/23 kobake シグニチャ変更。constポインタを返すだけのインターフェースにしました。
 */
 static LPCTSTR GetHelpFilePath()
 {
@@ -506,63 +506,63 @@ static LPCTSTR GetHelpFilePath()
 	return szHelpFile;
 }
 
-/*!	WinHelp �̂����� HtmlHelp ���Ăяo��
+/*!	WinHelp のかわりに HtmlHelp を呼び出す
 
 	@author ryoji
-	@date 2006.07.22 ryoji �V�K
+	@date 2006.07.22 ryoji 新規
 */
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 {
-	UINT uCommandOrg = uCommand;	// WinHelp �̃R�}���h
-	bool bDesktop = false;	// �f�X�N�g�b�v��e�ɂ��ăw���v��ʂ��o�����ǂ���
-	HH_POPUP hp;	// �|�b�v�A�b�v�w���v�p�̍\����
+	UINT uCommandOrg = uCommand;	// WinHelp のコマンド
+	bool bDesktop = false;	// デスクトップを親にしてヘルプ画面を出すかどうか
+	HH_POPUP hp;	// ポップアップヘルプ用の構造体
 
-	// Note: HH_TP_HELP_CONTEXTMENU �� HELP_WM_HELP �ł̓w���v�R���p�C������
-	// �g�s�b�N�t�@�C���� Cshelp.txt �ȊO�ɂ��Ă���ꍇ�A
-	// ���̃t�@�C������ .chm �p�X���ɒǉ��w�肷��K�v������B
-	//     ��jsakura.chm::/xxx.txt
+	// Note: HH_TP_HELP_CONTEXTMENU や HELP_WM_HELP ではヘルプコンパイル時の
+	// トピックファイルを Cshelp.txt 以外にしている場合、
+	// そのファイル名を .chm パス名に追加指定する必要がある。
+	//     例）sakura.chm::/xxx.txt
 
 	switch( uCommandOrg )
 	{
-	case HELP_COMMAND:	// [�w���v]-[�ڎ�]
+	case HELP_COMMAND:	// [ヘルプ]-[目次]
 	case HELP_CONTENTS:
 		uCommand = HH_DISPLAY_TOC;
 		hwndCaller = ::GetDesktopWindow();
 		bDesktop = true;
 		break;
-	case HELP_KEY:	// [�w���v]-[�L�[���[�h����]
+	case HELP_KEY:	// [ヘルプ]-[キーワード検索]
 		uCommand = HH_DISPLAY_INDEX;
 		hwndCaller = ::GetDesktopWindow();
 		bDesktop = true;
 		break;
-	case HELP_CONTEXT:	// ���j���[��ł�[F1]�L�[�^�_�C�A���O��[�w���v]�{�^��
+	case HELP_CONTEXT:	// メニュー上での[F1]キー／ダイアログの[ヘルプ]ボタン
 		uCommand = HH_HELP_CONTEXT;
 		hwndCaller = ::GetDesktopWindow();
 		bDesktop = true;
 		break;
-	case HELP_CONTEXTMENU:	// �R���g���[����ł̉E�N���b�N
-	case HELP_WM_HELP:		// [�H]�{�^���������ăR���g���[�����N���b�N�^�R���g���[���Ƀt�H�[�J�X��u����[F1]�L�[
+	case HELP_CONTEXTMENU:	// コントロール上での右クリック
+	case HELP_WM_HELP:		// [？]ボタンを押してコントロールをクリック／コントロールにフォーカスを置いて[F1]キー
 		uCommand = HH_DISPLAY_TEXT_POPUP;
 		{
-			// �|�b�v�A�b�v�w���v�p�̍\���̂ɒl���Z�b�g����
-			HWND hwndCtrl;	// �w���v�\���Ώۂ̃R���g���[��
-			int nCtrlID;	// �ΏۃR���g���[���� ID
-			DWORD* pHelpIDs;	// �R���g���[�� ID �ƃw���v ID �̑Ή��\�ւ̃|�C���^
+			// ポップアップヘルプ用の構造体に値をセットする
+			HWND hwndCtrl;	// ヘルプ表示対象のコントロール
+			int nCtrlID;	// 対象コントロールの ID
+			DWORD* pHelpIDs;	// コントロール ID とヘルプ ID の対応表へのポインタ
 
-			memset(&hp, 0, sizeof(hp));	// �\���̂��[���N���A
+			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
 			hp.cbStruct = sizeof(hp);
-			hp.pszFont = _T("�l�r �o�S�V�b�N, 9");
+			hp.pszFont = _T("ＭＳ Ｐゴシック, 9");
 			hp.clrForeground = hp.clrBackground = -1;
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
-				// �}�E�X�J�[�\���ʒu����ΏۃR���g���[���ƕ\���ʒu�����߂�
+				// マウスカーソル位置から対象コントロールと表示位置を求める
 				if( !::GetCursorPos(&hp.pt) )
 					return FALSE;
 				hwndCtrl = ::WindowFromPoint(hp.pt);
 			}
 			else{
-				// �ΏۃR���g���[���� hwndCaller
-				// [F1]�L�[�̏ꍇ������̂őΏۃR���g���[���̈ʒu����\���ʒu�����߂�
+				// 対象コントロールは hwndCaller
+				// [F1]キーの場合もあるので対象コントロールの位置から表示位置を決める
 				RECT rc;
 				hwndCtrl = hwndCaller;
 				if( !::GetWindowRect( hwndCtrl, &rc ) )
@@ -570,20 +570,20 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 				hp.pt.x = (rc.left + rc.right) / 2;
 				hp.pt.y = rc.top;
 			}
-			// �ΏۃR���g���[���ɑΉ�����w���v ID ��T��
+			// 対象コントロールに対応するヘルプ ID を探す
 			nCtrlID = ::GetDlgCtrlID( hwndCtrl );
 			if( nCtrlID <= 0 )
 				return FALSE;
 			pHelpIDs = (DWORD*)dwData;
 			for (;;) {
 				if( *pHelpIDs == 0 )
-					return FALSE;	// ������Ȃ�����
+					return FALSE;	// 見つからなかった
 				if( *pHelpIDs == (DWORD)nCtrlID )
-					break;			// ��������
+					break;			// 見つかった
 				pHelpIDs += 2;
 			}
-			hp.idString = *(pHelpIDs + 1);	// �������w���v ID ��ݒ肷��
-			dwData = (DWORD_PTR)&hp;	// �������|�b�v�A�b�v�w���v�p�̍\���̂ɍ����ւ���
+			hp.idString = *(pHelpIDs + 1);	// 見つけたヘルプ ID を設定する
+			dwData = (DWORD_PTR)&hp;	// 引数をポップアップヘルプ用の構造体に差し替える
 		}
 		break;
 	default:
@@ -592,19 +592,19 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 	LPCTSTR lpszHelp = GetHelpFilePath();
 	if( IsFileExists( lpszHelp, true ) ){
-		// HTML �w���v���Ăяo��
+		// HTML ヘルプを呼び出す
 		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
 		if (bDesktop && hWnd != NULL){
-			::SetForegroundWindow( hWnd );	// �w���v��ʂ���O�ɏo��
+			::SetForegroundWindow( hWnd );	// ヘルプ画面を手前に出す
 		}
 	}
 	else {
 		if( uCommandOrg == HELP_CONTEXTMENU)
-			return FALSE;	// �E�N���b�N�ł͉������Ȃ��ł���
+			return FALSE;	// 右クリックでは何もしないでおく
 
-		// �I�����C���w���v���Ăяo��
+		// オンラインヘルプを呼び出す
 		if( uCommandOrg != HELP_CONTEXT )
-			dwData = 1;	// �ڎ��y�[�W
+			dwData = 1;	// 目次ページ
 
 		TCHAR buf[256];
 		_stprintf( buf, _T("http://sakura-editor.sourceforge.net/cgi-bin/hid2.cgi?%Id"), dwData );
@@ -614,25 +614,25 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 	return TRUE;
 }
 
-/*�t�H���g�I���_�C�A���O
+/*フォント選択ダイアログ
 	@param plf [in,out]
-	@param piPointSize [in,out] 1/10�|�C���g�P��
+	@param piPointSize [in,out] 1/10ポイント単位
 	
-	2008.04.27 kobake CEditDoc::SelectFont ���番��
-	2009.10.01 ryoji �|�C���g�T�C�Y�i1/10�|�C���g�P�ʁj�����ǉ�
+	2008.04.27 kobake CEditDoc::SelectFont から分離
+	2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 */
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool FixedFontOnly )
 {
-	// 2004.02.16 Moca CHOOSEFONT�������o����O��
+	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
 	CHOOSEFONT cf;
-	/* CHOOSEFONT�̏����� */
+	/* CHOOSEFONTの初期化 */
 	::ZeroMemory( &cf, sizeof( cf ) );
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
 	cf.hDC = NULL;
 	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
 	if( FixedFontOnly ){
-		//FIXED�t�H���g
+		//FIXEDフォント
 		cf.Flags |= CF_FIXEDPITCHONLY;
 	}
 	cf.lpLogFont = plf;

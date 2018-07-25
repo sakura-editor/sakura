@@ -1,4 +1,4 @@
-//2007.10.18 kobake �쐬
+﻿//2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
 
@@ -30,12 +30,12 @@
 
 /*
 	2007.10.18 kobake
-	�e���v���[�g�� min �Ƃ� max �Ƃ��B
+	テンプレート式 min とか max とか。
 
-	�ǂ����̕W���w�b�_�ɁA�����悤�Ȃ��̂��������C�����邯�ǁA
-	NOMINMAX ���`����ɂ��Ă��A�Ȃ񂾂� min �Ƃ� max �Ƃ��������O���ƁA
-	�e���v���[�g���Ă�ł�񂾂��}�N�����Ă�ł�񂾂��󕪂���Ȃ��̂ŁA
-	�����I�Ɂut_�`�v�Ƃ������O�����֐���p�ӁB
+	どっかの標準ヘッダに、同じようなものがあった気がするけど、
+	NOMINMAX を定義するにしても、なんだか min とか max とかいう名前だと、
+	テンプレートを呼んでるんだかマクロを呼んでるんだか訳分かんないので、
+	明示的に「t_～」という名前を持つ関数を用意。
 */
 
 template <class T>
@@ -68,10 +68,10 @@ T t_unit(T t)
 
 /*
 	2007.10.19 kobake
-	_countof�}�N���B_countof���g���Ȃ��Â��R���p�C���p�B
+	_countofマクロ。_countofが使えない古いコンパイラ用。
 
-	�������A���̏ꏊ�Ńe���v���[�g���育��g���Ă���̂ŁA
-	�ǂ����ɂ���Â����Ńr���h�͒ʂ�Ȃ��\���B
+	ただし、他の場所でテンプレートごりごり使っているので、
+	どっちにしろ古い環境でビルドは通らない予感。
 */
 
 #ifndef _countof
@@ -86,15 +86,15 @@ T t_unit(T t)
 /*
 	2007.10.19 kobake
 
-	���e�����������A�����w��}�N��
+	リテラル文字列種、明示指定マクロ
 */
 
-//�r���h��Ɋ֌W�Ȃ��AUNICODE�B
+//ビルド種に関係なく、UNICODE。
 #define __LTEXT(A) L##A
 #define LTEXT(A) __LTEXT(A)
 #define LCHAR(A) __LTEXT(A)
 
-//�r���h��Ɋ֌W�Ȃ��AANSI�B
+//ビルド種に関係なく、ANSI。
 #define ATEXT(A) A
 
 #endif /* SAKURA_STD_MACRO_A4AD5AD7_E307_4F40_A051_F4301FC8DA58_H_ */

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
@@ -9,18 +9,18 @@ int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;
 bool CDPI::bInitialized = false;
 
-/**	w’è‚µ‚½ƒEƒBƒ“ƒhƒE‚Ì‘cæ‚Ìƒnƒ“ƒhƒ‹‚ğæ“¾‚·‚é
+/**	æŒ‡å®šã—ãŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç¥–å…ˆã®ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—ã™ã‚‹
 
-	GetAncestor() API‚ªWin95‚Åg‚¦‚È‚¢‚Ì‚Å‚»‚Ì‚©‚í‚è
+	GetAncestor() APIãŒWin95ã§ä½¿ãˆãªã„ã®ã§ãã®ã‹ã‚ã‚Š
 
-	WS_POPUPƒXƒ^ƒCƒ‹‚ğ‚½‚È‚¢ƒEƒBƒ“ƒhƒEiex.CDlgFuncListƒ_ƒCƒAƒƒOj‚¾‚ÆA
-	GA_ROOTOWNER‚Å‚Í•ÒWƒEƒBƒ“ƒhƒE‚Ü‚Å‘k‚ê‚È‚¢‚İ‚½‚¢BGetAncestor() API‚Å‚à“¯—lB
-	–{ŠÖ”ŒÅ—L‚É—pˆÓ‚µ‚½GA_ROOTOWNER2‚Å‚Í‘k‚é‚±‚Æ‚ª‚Å‚«‚éB
+	WS_POPUPã‚¹ã‚¿ã‚¤ãƒ«ã‚’æŒãŸãªã„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆex.CDlgFuncListãƒ€ã‚¤ã‚¢ãƒ­ã‚°ï¼‰ã ã¨ã€
+	GA_ROOTOWNERã§ã¯ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¾ã§é¡ã‚Œãªã„ã¿ãŸã„ã€‚GetAncestor() APIã§ã‚‚åŒæ§˜ã€‚
+	æœ¬é–¢æ•°å›ºæœ‰ã«ç”¨æ„ã—ãŸGA_ROOTOWNER2ã§ã¯é¡ã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
 
 	@author ryoji
-	@date 2007.07.01 ryoji V‹K
-	@date 2007.10.22 ryoji ƒtƒ‰ƒO’l‚Æ‚µ‚ÄGA_ROOTOWNER2i–{ŠÖ”ŒÅ—Lj‚ğ’Ç‰Á
-	@date 2008.04.09 ryoji GA_ROOTOWNER2 ‚Í‰Â”\‚ÈŒÀ‚è‘cæ‚ğ‘k‚é‚æ‚¤‚É“®ìC³
+	@date 2007.07.01 ryoji æ–°è¦
+	@date 2007.10.22 ryoji ãƒ•ãƒ©ã‚°å€¤ã¨ã—ã¦GA_ROOTOWNER2ï¼ˆæœ¬é–¢æ•°å›ºæœ‰ï¼‰ã‚’è¿½åŠ 
+	@date 2008.04.09 ryoji GA_ROOTOWNER2 ã¯å¯èƒ½ãªé™ã‚Šç¥–å…ˆã‚’é¡ã‚‹ã‚ˆã†ã«å‹•ä½œä¿®æ­£
 */
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 {
@@ -33,17 +33,17 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 
 	switch( gaFlags )
 	{
-	case GA_PARENT:	// eƒEƒBƒ“ƒhƒE‚ğ•Ô‚·iƒI[ƒi[‚Í•Ô‚³‚È‚¢j
+	case GA_PARENT:	// è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¿”ã™ï¼ˆã‚ªãƒ¼ãƒŠãƒ¼ã¯è¿”ã•ãªã„ï¼‰
 		hwndAncestor = ( (DWORD)::GetWindowLongPtr( hWnd, GWL_STYLE ) & WS_CHILD )? ::GetParent( hWnd ): hwndDesktop;
 		break;
 
-	case GA_ROOT:	// eqŠÖŒW‚ğ‘k‚Á‚Ä’¼‹ßãˆÊ‚ÌƒgƒbƒvƒŒƒxƒ‹ƒEƒBƒ“ƒhƒE‚ğ•Ô‚·
+	case GA_ROOT:	// è¦ªå­é–¢ä¿‚ã‚’é¡ã£ã¦ç›´è¿‘ä¸Šä½ã®ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¿”ã™
 		hwndAncestor = hWnd;
 		while( (DWORD)::GetWindowLongPtr( hwndAncestor, GWL_STYLE ) & WS_CHILD )
 			hwndAncestor = ::GetParent( hwndAncestor );
 		break;
 
-	case GA_ROOTOWNER:	// eqŠÖŒW‚ÆŠ—LŠÖŒW‚ğGetParent()‚Å‘k‚Á‚ÄŠ—L‚³‚ê‚Ä‚¢‚È‚¢ƒgƒbƒvƒŒƒxƒ‹ƒEƒBƒ“ƒhƒE‚ğ•Ô‚·
+	case GA_ROOTOWNER:	// è¦ªå­é–¢ä¿‚ã¨æ‰€æœ‰é–¢ä¿‚ã‚’GetParent()ã§é¡ã£ã¦æ‰€æœ‰ã•ã‚Œã¦ã„ãªã„ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¿”ã™
 		hwndWk = hWnd;
 		do{
 			hwndAncestor = hwndWk;
@@ -51,7 +51,7 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 		}while( hwndWk != NULL );
 		break;
 
-	case GA_ROOTOWNER2:	// Š—LŠÖŒW‚ğGetWindow()‚Å‘k‚Á‚ÄŠ—L‚³‚ê‚Ä‚¢‚È‚¢ƒgƒbƒvƒŒƒxƒ‹ƒEƒBƒ“ƒhƒE‚ğ•Ô‚·
+	case GA_ROOTOWNER2:	// æ‰€æœ‰é–¢ä¿‚ã‚’GetWindow()ã§é¡ã£ã¦æ‰€æœ‰ã•ã‚Œã¦ã„ãªã„ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¿”ã™
 		hwndWk = hWnd;
 		do{
 			hwndAncestor = hwndWk;
@@ -71,16 +71,16 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 
 
 /*!
-	ˆ—’†‚Ìƒ†[ƒU[‘€ì‚ğ‰Â”\‚É‚·‚é
-	ƒuƒƒbƒLƒ“ƒOƒtƒbƒN(?)iƒƒbƒZ[ƒW”z‘—
+	å‡¦ç†ä¸­ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼æ“ä½œã‚’å¯èƒ½ã«ã™ã‚‹
+	ãƒ–ãƒ­ãƒƒã‚­ãƒ³ã‚°ãƒ•ãƒƒã‚¯(?)ï¼ˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é…é€
 
-	@date 2003.07.04 genta ˆê‰ñ‚ÌŒÄ‚Ño‚µ‚Å•¡”ƒƒbƒZ[ƒW‚ğˆ—‚·‚é‚æ‚¤‚É
+	@date 2003.07.04 genta ä¸€å›ã®å‘¼ã³å‡ºã—ã§è¤‡æ•°ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ã™ã‚‹ã‚ˆã†ã«
 */
 BOOL BlockingHook( HWND hwndDlgCancel )
 {
 	MSG		msg;
 	BOOL	ret;
-	//	Jun. 04, 2003 genta ƒƒbƒZ[ƒW‚ğ‚ ‚é‚¾‚¯ˆ—‚·‚é‚æ‚¤‚É
+	//	Jun. 04, 2003 genta ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ã‚ã‚‹ã ã‘å‡¦ç†ã™ã‚‹ã‚ˆã†ã«
 	while(( ret = (BOOL)::PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )) != 0 ){
 		if ( msg.message == WM_QUIT ){
 			return FALSE;
@@ -97,21 +97,21 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 
 
 
-/** ƒtƒŒ[ƒ€ƒEƒBƒ“ƒhƒE‚ğƒAƒNƒeƒBƒu‚É‚·‚é
-	@date 2007.11.07 ryoji ‘ÎÛ‚ªdisable‚Ì‚Æ‚«‚ÍÅ‹ß‚Ìƒ|ƒbƒvƒAƒbƒv‚ğƒtƒHƒAƒOƒ‰ƒEƒ“ƒh‰»‚·‚éD
-		iƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚âƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ğ•\¦‚µ‚Ä‚¢‚é‚æ‚¤‚È‚Æ‚«j
+/** ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
+	@date 2007.11.07 ryoji å¯¾è±¡ãŒdisableã®ã¨ãã¯æœ€è¿‘ã®ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ã‚’ãƒ•ã‚©ã‚¢ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰åŒ–ã™ã‚‹ï¼
+		ï¼ˆãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚„ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã‚’è¡¨ç¤ºã—ã¦ã„ã‚‹ã‚ˆã†ãªã¨ãï¼‰
 */
 void ActivateFrameWindow( HWND hwnd )
 {
-	// •ÒWƒEƒBƒ“ƒhƒE‚Åƒ^ƒu‚Ü‚Æ‚ß•\¦‚Ìê‡‚Í•\¦ˆÊ’u‚ğ•œŒ³‚·‚é
+	// ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ã‚¿ãƒ–ã¾ã¨ã‚è¡¨ç¤ºã®å ´åˆã¯è¡¨ç¤ºä½ç½®ã‚’å¾©å…ƒã™ã‚‹
 	DLLSHAREDATA* pShareData = &GetDllShareData();
 	if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 		if( IsSakuraMainWindow( hwnd ) ){
 			if( pShareData->m_sFlags.m_bEditWndChanging )
-				return;	// Ø‘Ö‚ÌÅ’†(busy)‚Í—v‹‚ğ–³‹‚·‚é
-			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// •ÒWƒEƒBƒ“ƒhƒEØ‘Ö’†ON	2007.04.03 ryoji
+				return;	// åˆ‡æ›¿ã®æœ€ä¸­(busy)ã¯è¦æ±‚ã‚’ç„¡è¦–ã™ã‚‹
+			pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ‡æ›¿ä¸­ON	2007.04.03 ryoji
 
-			// ‘ÎÛƒEƒBƒ“ƒhƒE‚ÌƒXƒŒƒbƒh‚ÉˆÊ’u‡‚í‚¹‚ğˆË—Š‚·‚é	// 2007.04.03 ryoji
+			// å¯¾è±¡ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã«ä½ç½®åˆã‚ã›ã‚’ä¾é ¼ã™ã‚‹	// 2007.04.03 ryoji
 			DWORD_PTR dwResult;
 			::SendMessageTimeout(
 				hwnd,
@@ -125,7 +125,7 @@ void ActivateFrameWindow( HWND hwnd )
 		}
 	}
 
-	// ‘ÎÛ‚ªdisable‚Ì‚Æ‚«‚ÍÅ‹ß‚Ìƒ|ƒbƒvƒAƒbƒv‚ğƒtƒHƒAƒOƒ‰ƒEƒ“ƒh‰»‚·‚é
+	// å¯¾è±¡ãŒdisableã®ã¨ãã¯æœ€è¿‘ã®ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—ã‚’ãƒ•ã‚©ã‚¢ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰åŒ–ã™ã‚‹
 	HWND hwndActivate;
 	hwndActivate = ::IsWindowEnabled( hwnd )? hwnd: ::GetLastActivePopup( hwnd );
 	if( ::IsIconic( hwnd ) ){
@@ -141,7 +141,7 @@ void ActivateFrameWindow( HWND hwnd )
 	::BringWindowToTop( hwndActivate );
 
 	if( pShareData )
-		pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// •ÒWƒEƒBƒ“ƒhƒEØ‘Ö’†OFF	2007.04.03 ryoji
+		pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ‡æ›¿ä¸­OFF	2007.04.03 ryoji
 
 	return;
 }
@@ -291,7 +291,7 @@ void CFontAutoDeleter::SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd )
 	m_hwnd = hwnd;
 }
 
-/*! ƒEƒBƒ“ƒhƒE‚ÌƒŠƒŠ[ƒX(WM_DESTROY—p)
+/*! ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒªãƒªãƒ¼ã‚¹(WM_DESTROYç”¨)
 */
 void CFontAutoDeleter::ReleaseOnDestroy()
 {
@@ -302,7 +302,7 @@ void CFontAutoDeleter::ReleaseOnDestroy()
 	m_hFontOld = NULL;
 }
 
-/*! ƒEƒBƒ“ƒhƒE¶‘¶’†‚ÌƒŠƒŠ[ƒX
+/*! ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿå­˜ä¸­ã®ãƒªãƒªãƒ¼ã‚¹
 */
 #if 0
 void CFontAutoDeleter::Release()

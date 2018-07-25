@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "relation_tool.h"
 
 
@@ -12,7 +12,7 @@ CSubject::CSubject()
 
 CSubject::~CSubject()
 {
-	//ƒŠƒXƒi‚ğ‰ğœ
+	//ãƒªã‚¹ãƒŠã‚’è§£é™¤
 	for(int i=0;i<(int)m_vListenersRef.size();i++){
 		m_vListenersRef[i]->Listen(NULL);
 	}
@@ -21,19 +21,19 @@ CSubject::~CSubject()
 
 void CSubject::_AddListener(CListener* pcListener)
 {
-	//Šù‚É’Ç‰ÁÏ‚İ‚È‚ç‰½‚à‚µ‚È‚¢
+	//æ—¢ã«è¿½åŠ æ¸ˆã¿ãªã‚‰ä½•ã‚‚ã—ãªã„
 	for(int i=0;i<(int)m_vListenersRef.size();i++){
 		if(m_vListenersRef[i]==pcListener){
 			return;
 		}
 	}
-	//’Ç‰Á
+	//è¿½åŠ 
 	m_vListenersRef.push_back(pcListener);
 }
 
 void CSubject::_RemoveListener(CListener* pcListener)
 {
-	//”z—ñ‚©‚çíœ
+	//é…åˆ—ã‹ã‚‰å‰Šé™¤
 	for(int i=0;i<(int)m_vListenersRef.size();i++){
 		if(m_vListenersRef[i]==pcListener){
 			m_vListenersRef.erase(m_vListenersRef.begin()+i);
@@ -60,13 +60,13 @@ CSubject* CListener::Listen(CSubject* pcSubject)
 {
 	CSubject* pOld = GetListeningSubject();
 
-	//ŒÃ‚¢ƒTƒuƒWƒFƒNƒg‚ğ‰ğœ
+	//å¤ã„ã‚µãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è§£é™¤
 	if(m_pcSubjectRef){
 		m_pcSubjectRef->_RemoveListener(this);
 		m_pcSubjectRef = NULL;
 	}
 
-	//V‚µ‚­İ’è
+	//æ–°ã—ãè¨­å®š
 	m_pcSubjectRef = pcSubject;
 	if(m_pcSubjectRef){
 		m_pcSubjectRef->_AddListener(this);

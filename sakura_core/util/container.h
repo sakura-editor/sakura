@@ -1,7 +1,7 @@
-/*
-	ƒRƒ“ƒeƒi—Ş
+ï»¿/*
+	ã‚³ãƒ³ãƒ†ãƒŠé¡
 
-	2007.11.27 kobake ì¬
+	2007.11.27 kobake ä½œæˆ
 */
 /*
 	Copyright (C) 2008, kobake
@@ -32,7 +32,7 @@
 #include <vector>
 #include <algorithm> //find
 
-//! vector‚É‚¿‚å‚Á‚Æ‹@”\‚ğ’Ç‰Á‚µ‚½”Å
+//! vectorã«ã¡ã‚‡ã£ã¨æ©Ÿèƒ½ã‚’è¿½åŠ ã—ãŸç‰ˆ
 template <class T>
 class vector_ex : public std::vector<T>{
 public:
@@ -41,14 +41,14 @@ public:
 	using std::vector<T>::push_back;
 
 public:
-	// -- -- ƒCƒ“ƒ^[ƒtƒF[ƒX -- -- //
-	//!—v‘f‚ğ’T‚·BŒ©‚Â‚©‚ê‚ÎtrueB
+	// -- -- ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ -- -- //
+	//!è¦ç´ ã‚’æ¢ã™ã€‚è¦‹ã¤ã‹ã‚Œã°trueã€‚
 	bool exist(const T& t) const
 	{
 		return std::find(begin(), end(), t) != end();
 	}
 
-	//!—v‘f‚ğ’Ç‰ÁB‚½‚¾‚µd•¡‚µ‚½—v‘f‚Í’e‚­B
+	//!è¦ç´ ã‚’è¿½åŠ ã€‚ãŸã ã—é‡è¤‡ã—ãŸè¦ç´ ã¯å¼¾ãã€‚
 	bool push_back_unique(const T& t)
 	{
 		if(!exist(t)){

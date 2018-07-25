@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,19 +24,19 @@
 #ifndef SAKURA_TCHAR_CONVERT_12EEF467_2644_4401_92A6_A0EA26FC78F39_H_
 #define SAKURA_TCHAR_CONVERT_12EEF467_2644_4401_92A6_A0EA26FC78F39_H_
 
-//WCHAR�ɕϊ�
+//WCHARに変換
 const WCHAR* to_wchar(const ACHAR* src);
 const WCHAR* to_wchar(const ACHAR* pSrcData, int nSrcLength);
 inline
 const WCHAR* to_wchar(const WCHAR* src){ return src; }
 
-//ACHAR�ɕϊ�
+//ACHARに変換
 inline
 const ACHAR* to_achar(const ACHAR* src){ return src; }
 const ACHAR* to_achar(const WCHAR* src);
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 
-//TCHAR�ɕϊ�
+//TCHARに変換
 #ifdef _UNICODE
 	#define to_tchar     to_wchar
 	#define to_not_tchar to_achar
@@ -45,7 +45,7 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 	#define to_not_tchar to_wchar
 #endif
 
-//���̑�
+//その他
 const WCHAR* easy_format(const WCHAR* format, ...);
 
 #endif /* SAKURA_TCHAR_CONVERT_12EEF467_2644_4401_92A6_A0EA26FC78F39_H_ */

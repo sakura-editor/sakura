@@ -1,14 +1,14 @@
-#include "StdAfx.h"
+﻿#include "StdAfx.h"
 #include "os.h"
 #include "util/module.h"
 #include "extmodule/CUxTheme.h"
 
-/*!	Comctl32.dll �̃o�[�W�����ԍ����擾
+/*!	Comctl32.dll のバージョン番号を取得
 
-	@return Comctl32.dll �̃o�[�W�����ԍ��i���s���� 0�j
+	@return Comctl32.dll のバージョン番号（失敗時は 0）
 
 	@author ryoji
-	@date 2006.06.17 ryoji �V�K
+	@date 2006.06.17 ryoji 新規
 */
 static DWORD s_dwComctl32Version = PACKVERSION(0, 0);
 DWORD GetComctl32Version()
@@ -19,29 +19,29 @@ DWORD GetComctl32Version()
 }
 
 
-/*!	���������݃r�W���A���X�^�C���\����Ԃ��ǂ���������
-	Win32 API �� IsAppThemed() �͂���Ƃ͈�v���Ȃ��iIsAppThemed() �� IsThemeActive() �Ƃ̍��ق͕s���j
+/*!	自分が現在ビジュアルスタイル表示状態かどうかを示す
+	Win32 API の IsAppThemed() はこれとは一致しない（IsAppThemed() と IsThemeActive() との差異は不明）
 
-	@return �r�W���A���X�^�C���\�����(TRUE)�^�N���b�V�b�N�\�����(FALSE)
+	@return ビジュアルスタイル表示状態(TRUE)／クラッシック表示状態(FALSE)
 
 	@author ryoji
-	@date 2006.06.17 ryoji �V�K
+	@date 2006.06.17 ryoji 新規
 */
 BOOL IsVisualStyle()
 {
-	// ���[�h���� Comctl32.dll �� Ver 6 �ȏ�ŉ�ʐݒ肪�r�W���A���X�^�C���w��ɂȂ��Ă���ꍇ����
-	// �r�W���A���X�^�C���\���ɂȂ�i�}�j�t�F�X�g�Ŏw�肵�Ȃ��� Comctl32.dll �� 6 �����ɂȂ�j
+	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
+	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
 	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive() );
 }
 
 
 
-/*!	�w��E�B���h�E�Ńr�W���A���X�^�C�����g��Ȃ��悤�ɂ���
+/*!	指定ウィンドウでビジュアルスタイルを使わないようにする
 
-	@param[in] hWnd �E�B���h�E
+	@param[in] hWnd ウィンドウ
 
 	@author ryoji
-	@date 2006.06.23 ryoji �V�K
+	@date 2006.06.23 ryoji 新規
 */
 void PreventVisualStyle( HWND hWnd )
 {
@@ -52,10 +52,10 @@ void PreventVisualStyle( HWND hWnd )
 
 
 
-/*!	�R�����R���g���[��������������
+/*!	コモンコントロールを初期化する
 
 	@author ryoji
-	@date 2006.06.21 ryoji �V�K
+	@date 2006.06.21 ryoji 新規
 */
 void MyInitCommonControls()
 {
@@ -83,24 +83,24 @@ void MyInitCommonControls()
 
 
 /*!
-	�w�肵���E�B���h�E�^�����`�̈�^�_�^���j�^�ɑΉ����郂�j�^��Ɨ̈���擾����
+	指定したウィンドウ／長方形領域／点／モニタに対応するモニタ作業領域を取得する
 
-	���j�^��Ɨ̈�F��ʑS�̂���V�X�e���̃^�X�N�o�[��A�v���P�[�V�����̃c�[���o�[����L����̈���������̈�
+	モニタ作業領域：画面全体からシステムのタスクバーやアプリケーションのツールバーが占有する領域を除いた領域
 
-	@param hWnd/prc/pt/hMon [in] �ړI�̃E�B���h�E�^�����`�̈�^�_�^���j�^
-	@param prcWork [out] ���j�^��Ɨ̈�
-	@param prcMonitor [out] ���j�^��ʑS��
+	@param hWnd/prc/pt/hMon [in] 目的のウィンドウ／長方形領域／点／モニタ
+	@param prcWork [out] モニタ作業領域
+	@param prcMonitor [out] モニタ画面全体
 
-	@retval true �Ή����郂�j�^�̓v���C�}�����j�^
-	@retval false �Ή����郂�j�^�͔�v���C�}�����j�^
+	@retval true 対応するモニタはプライマリモニタ
+	@retval false 対応するモニタは非プライマリモニタ
 
-	@note �o�̓p�����[�^�� prcWork �� prcMonior �� NULL ���w�肵���ꍇ�A
-	�Y������̈���͏o�͂��Ȃ��B�Ăяo�����͗~�������̂������w�肷��΂悢�B
+	@note 出力パラメータの prcWork や prcMonior に NULL を指定した場合、
+	該当する領域情報は出力しない。呼び出し元は欲しいものだけを指定すればよい。
 */
 //	From Here May 01, 2004 genta MutiMonitor
 bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
 {
-	// 2006.04.21 ryoji Windows API �`���̊֐��Ăяo���ɕύX�i�X�^�u�� PSDK �� MultiMon.h �𗘗p�j
+	// 2006.04.21 ryoji Windows API 形式の関数呼び出しに変更（スタブに PSDK の MultiMon.h を利用）
 	HMONITOR hMon = ::MonitorFromWindow( hWnd, MONITOR_DEFAULTTONEAREST );
 	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
 }
@@ -137,19 +137,19 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 
 
 /*!
-	@brief ���W�X�g�����當�����ǂݏo���D
+	@brief レジストリから文字列を読み出す．
 	
 	@param Hive        [in]  HIVE
-	@param Path        [in]  ���W�X�g���L�[�ւ̃p�X
-	@param Item        [in]  ���W�X�g���A�C�e�����DNULL�ŕW���̃A�C�e���D
-	@param Buffer      [out] �擾��������i�[����ꏊ
-	@param BufferCount [in]  Buffer�̎w���̈�̃T�C�Y�B�����P�ʁB
+	@param Path        [in]  レジストリキーへのパス
+	@param Item        [in]  レジストリアイテム名．NULLで標準のアイテム．
+	@param Buffer      [out] 取得文字列を格納する場所
+	@param BufferCount [in]  Bufferの指す領域のサイズ。文字単位。
 	
-	@retval true �l�̎擾�ɐ���
-	@retval false �l�̎擾�Ɏ��s
+	@retval true 値の取得に成功
+	@retval false 値の取得に失敗
 	
-	@author �S
-	@date 2002.09.10 genta CWSH.cpp����ړ�
+	@author 鬼
+	@date 2002.09.10 genta CWSH.cppから移動
 */
 bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer, unsigned BufferCount)
 {
@@ -161,7 +161,7 @@ bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer
 		auto_memset(Buffer, 0, BufferCount);
 
 		DWORD dwType = REG_SZ;
-		DWORD dwDataLen = (BufferCount - 1) * sizeof(TCHAR); //���o�C�g�P�ʁI
+		DWORD dwDataLen = (BufferCount - 1) * sizeof(TCHAR); //※バイト単位！
 		
 		Result = (RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<LPBYTE>(Buffer), &dwDataLen) == ERROR_SUCCESS);
 		
@@ -172,20 +172,20 @@ bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      �N���b�v�{�[�h                         //
+//                      クリップボード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SetClipboardTextA,SetClipboardTextT �����p�e���v���[�g
-//2007.08.14 kobake UNICODE�p�ɉ���
+//SetClipboardTextA,SetClipboardTextT 実装用テンプレート
+//2007.08.14 kobake UNICODE用に改造
 //
-/*! �N���[�v�{�[�h��Text�`���ŃR�s�[����
-	@param hwnd    [in] �N���b�v�{�[�h�̃I�[�i�[
-	@param pszText [in] �ݒ肷��e�L�X�g
-	@param nLength [in] �L���ȃe�L�X�g�̒����B�����P�ʁB
+/*! クリープボードにText形式でコピーする
+	@param hwnd    [in] クリップボードのオーナー
+	@param pszText [in] 設定するテキスト
+	@param nLength [in] 有効なテキストの長さ。文字単位。
 	
-	@retval true �R�s�[����
-	@retval false �R�s�[���s�B�ꍇ�ɂ���Ă̓N���b�v�{�[�h�Ɍ��̓��e���c��
-	@date 2004.02.17 Moca �e���̃\�[�X�𓝍�
+	@retval true コピー成功
+	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
+	@date 2004.02.17 Moca 各所のソースを統合
 */
 template <class T>
 bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
@@ -217,7 +217,7 @@ bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 		::SetClipboardData( CF_UNICODETEXT, hgClip );
 	}
 	else{
-		assert(0); //�������ɂ͗��Ȃ�
+		assert(0); //※ここには来ない
 	}
 	::CloseClipboard();
 
@@ -235,21 +235,21 @@ bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 }
 
 /*
-	@date 2006.01.16 Moca ����TYMED�����p�\�ł��A�擾�ł���悤�ɕύX�B
-	@note IDataObject::GetData() �� tymed = TYMED_HGLOBAL ���w�肷�邱�ƁB
+	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
+	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
 */
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 {
 	FORMATETC	fe;
 
-	// 2006.01.16 Moca ����TYMED�����p�\�ł��AIDataObject::GetData()��
-	//  tymed = TYMED_HGLOBAL���w�肷��Ζ��Ȃ�
+	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
+	//  tymed = TYMED_HGLOBALを指定すれば問題ない
 	fe.cfFormat = cfFormat;
 	fe.ptd = NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
 	fe.tymed = TYMED_HGLOBAL;
-	// 2006.03.16 Moca S_FALSE�ł��󂯓���Ă��܂��o�O���C��(�t�@�C���̃h���b�v��)
+	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
 	return S_OK == pDataObject->QueryGetData( &fe );
 }
 
@@ -260,12 +260,12 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	fe.ptd = NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
 	fe.lindex = -1;
-	// 2006.01.16 Moca fe.tymed = -1����TYMED_HGLOBAL�ɕύX�B
+	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
 	fe.tymed = TYMED_HGLOBAL;
 
 	HGLOBAL hDest = NULL;
 	STGMEDIUM stgMedium;
-	// 2006.03.16 Moca SUCCEEDED�}�N���ł�S_FALSE�̂Ƃ�����̂ŁAS_OK�ɕύX
+	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
 	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
 		if( stgMedium.pUnkForRelease == NULL ){
 			if( stgMedium.tymed == TYMED_HGLOBAL )
@@ -291,15 +291,15 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                       �V�X�e������                          //
+//                       システム資源                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* �V�X�e�����\�[�X�𒲂ׂ�
-	Win16 �̎��́AGetFreeSystemResources �Ƃ����֐�������܂����B�������AWin32 �ł͂���܂���B
-	�T���N����邾�� DLL ����邾�͓̂�����܂��B�ȒP�ȕ��@��������܂��B
-	���g���� Windows95 �� [�A�N�Z�T��]-[�V�X�e���c�[��] �Ƀ��\�[�X���[�^������̂Ȃ�A
-	c:\windows\system\rsrc32.dll ������͂��ł��B����́A���\�[�X���[�^�Ƃ��� Win32 �A�v�����A
-	Win16 �� GetFreeSystemResources �֐����ĂԈׂ� DLL �ł��B������g���܂��傤�B
+/* システムリソースを調べる
+	Win16 の時は、GetFreeSystemResources という関数がありました。しかし、Win32 ではありません。
+	サンクを作るだの DLL を作るだのは難しすぎます。簡単な方法を説明します。
+	お使いの Windows95 の [アクセサリ]-[システムツール] にリソースメータがあるのなら、
+	c:\windows\system\rsrc32.dll があるはずです。これは、リソースメータという Win32 アプリが、
+	Win16 の GetFreeSystemResources 関数を呼ぶ為の DLL です。これを使いましょう。
 */
 BOOL GetSystemResources(
 	int*	pnSystemResources,
@@ -336,25 +336,25 @@ BOOL GetSystemResources(
 
 
 #if (WINVER < _WIN32_WINNT_WIN2K)
-// NT�ł̓��\�[�X�`�F�b�N���s��Ȃ�
-/* �V�X�e�����\�[�X�̃`�F�b�N */
+// NTではリソースチェックを行わない
+/* システムリソースのチェック */
 BOOL CheckSystemResources( const TCHAR* pszAppName )
 {
 	int		nSystemResources;
 	int		nUserResources;
 	int		nGDIResources;
 	const TCHAR*	pszResourceName;
-	/* �V�X�e�����\�[�X�̎擾 */
+	/* システムリソースの取得 */
 	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
 //		MYTRACE( _T("nSystemResources=%d\n"), nSystemResources );
 //		MYTRACE( _T("nUserResources=%d\n"), nUserResources );
 //		MYTRACE( _T("nGDIResources=%d\n"), nGDIResources );
 		pszResourceName = NULL;
 		if( nSystemResources <= 5 ){
-			pszResourceName = _T("�V�X�e�� ");
+			pszResourceName = _T("システム ");
 		}else
 		if( nUserResources <= 5 ){
-			pszResourceName = _T("���[�U�[ ");
+			pszResourceName = _T("ユーザー ");
 		}else
 		if( nGDIResources <= 5 ){
 			pszResourceName = _T("GDI ");
@@ -363,13 +363,13 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 			ErrorBeep();
 			ErrorBeep();
 			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
-				_T("%ts���\�[�X���ɒ[�ɕs�����Ă��܂��B\n")
-				_T("���̂܂�%ts���N������ƁA����ɓ��삵�Ȃ��\��������܂��B\n")
-				_T("�V����%ts�̋N���𒆒f���܂��B\n")
+				_T("%tsリソースが極端に不足しています。\n")
+				_T("このまま%tsを起動すると、正常に動作しない可能性があります。\n")
+				_T("新しい%tsの起動を中断します。\n")
 				_T("\n")
-				_T("�V�X�e�� ���\�[�X\t�c��  %d%%\n")
-				_T("User ���\�[�X\t�c��  %d%%\n")
-				_T("GDI ���\�[�X\t�c��  %d%%\n\n"),
+				_T("システム リソース\t残り  %d%%\n")
+				_T("User リソース\t残り  %d%%\n")
+				_T("GDI リソース\t残り  %d%%\n\n"),
 				pszResourceName,
 				pszAppName,
 				pszAppName,
@@ -388,10 +388,10 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        �֗��N���X                           //
+//                        便利クラス                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//�R���X�g���N�^�ŃJ�����g�f�B���N�g����ۑ����A�f�X�g���N�^�ŃJ�����g�f�B���N�g���𕜌����郂�m�B
+//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
 
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {

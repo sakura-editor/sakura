@@ -1,7 +1,7 @@
-/*
+ï»¿/*
 	2007.11.29 kobake
 
-	–¢•ª—Ş¬•¨—Ş
+	æœªåˆ†é¡å°ç‰©é¡
 */
 /*
 	Copyright (C) 2008, kobake
@@ -30,24 +30,24 @@
 #define SAKURA_OTHER_UTIL_F0E0EBE0_94B6_4E28_8241_6D842C0E8B73_H_
 
 /*!
-	auto_ptr ‚Ì ”z—ñ”Å
+	auto_ptr ã® é…åˆ—ç‰ˆ
 
-	2007.11.29 kobake ì¬
+	2007.11.29 kobake ä½œæˆ
 */
 template <class T> class auto_array_ptr{
 private:
 	typedef auto_array_ptr<T> Me;
 public:
-	//‘ã“ü
+	//ä»£å…¥
 	auto_array_ptr (T*  rhs){ m_array = rhs;          }
 	auto_array_ptr (Me& rhs){ m_array = rhs.detach(); }
 	Me& operator = (T*  rhs){ reset(rhs         ); return *this; }
 	Me& operator = (Me& rhs){ reset(rhs.detach()); return *this; }
 
-	//”jŠü
+	//ç ´æ£„
 	~auto_array_ptr(){ delete[] m_array; }
 
-	//è•ú‚· (‰ğ•ú‚Í‚µ‚È‚¢)
+	//æ‰‹æ”¾ã™ (è§£æ”¾ã¯ã—ãªã„)
 	T* detach()
 	{
 		T* p = m_array;
@@ -55,7 +55,7 @@ public:
 		return p;
 	}
 
-	//•Û’l‚ğ•ÏX‚·‚é
+	//ä¿æŒå€¤ã‚’å¤‰æ›´ã™ã‚‹
 	void reset(T* p)
 	{
 		if(m_array==p)return;
@@ -63,10 +63,10 @@ public:
 		m_array = p;
 	}
 
-	//•Û’l‚ÉƒAƒNƒZƒX
+	//ä¿æŒå€¤ã«ã‚¢ã‚¯ã‚»ã‚¹
 	T* get(){ return m_array; }
 
-	//”z—ñ—v‘f‚ÉƒAƒNƒZƒX
+	//é…åˆ—è¦ç´ ã«ã‚¢ã‚¯ã‚»ã‚¹
 	T& operator[](int i){ return m_array[i]; }
 
 private:
