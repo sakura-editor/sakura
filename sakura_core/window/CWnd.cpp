@@ -1,8 +1,8 @@
-/*!	@file
-	@brief ƒEƒBƒ“ƒhƒE‚ÌŠî–{ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŸºæœ¬ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 2000/01/11 V‹Kì¬
+	@date 2000/01/11 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2000-2001, Norio Nakatani
@@ -20,28 +20,28 @@
 
 
 
-/* CWndƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ” */
+/* CWndã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•° */
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	CWnd* pCWnd = (CWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 
 	if( pCWnd ){
-		/* ƒNƒ‰ƒXƒIƒuƒWƒFƒNƒg‚Ìƒ|ƒCƒ“ƒ^‚ğg‚Á‚ÄƒƒbƒZ[ƒW‚ğ”z‘—‚·‚é */
+		/* ã‚¯ãƒ©ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒã‚¤ãƒ³ã‚¿ã‚’ä½¿ã£ã¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é…é€ã™ã‚‹ */
 		return pCWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	}
 	else{
-		/* ‚Ó‚Â‚¤‚Í‚±‚±‚É‚Í—ˆ‚È‚¢ */
+		/* ãµã¤ã†ã¯ã“ã“ã«ã¯æ¥ãªã„ */
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }
 
-//!WindowsƒtƒbƒN(CBT)
+//!Windowsãƒ•ãƒƒã‚¯(CBT)
 namespace CWindowCreationHook
 {
-	int		g_nCnt  = 0; //QÆƒJƒEƒ“ƒ^
+	int		g_nCnt  = 0; //å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿
 	HHOOK	g_hHook = NULL;
 
-	//!ƒtƒbƒN—pƒR[ƒ‹ƒoƒbƒN
+	//!ãƒ•ãƒƒã‚¯ç”¨ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 	static LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		if(nCode==HCBT_CREATEWND){
@@ -49,21 +49,21 @@ namespace CWindowCreationHook
 			CBT_CREATEWND* pCreateWnd = (CBT_CREATEWND*)lParam;
 			CWnd* pcWnd = static_cast<CWnd*>(pCreateWnd->lpcs->lpCreateParams);
 
-			//CWndˆÈŠO‚ÌƒEƒBƒ“ƒhƒE¶¬ƒCƒxƒ“ƒg‚Í–³‹‚·‚é
+			//CWndä»¥å¤–ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆã‚¤ãƒ™ãƒ³ãƒˆã¯ç„¡è¦–ã™ã‚‹
 			WNDPROC wndproc = (WNDPROC)::GetWindowLongPtr(hwnd, GWLP_WNDPROC);
 			if(wndproc!=CWndProc)goto next;
 
-			//ƒEƒBƒ“ƒhƒE‚ÉCWnd‚ğŠÖ˜A•t‚¯‚é
+			//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«CWndã‚’é–¢é€£ä»˜ã‘ã‚‹
 			::SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pcWnd);
 
-			//CWnd‚ÉƒEƒBƒ“ƒhƒE‚ğŠÖ˜A•t‚¯‚é
+			//CWndã«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–¢é€£ä»˜ã‘ã‚‹
 			pcWnd->_SetHwnd(hwnd);
 		}
 next:
 		return ::CallNextHookEx(g_hHook, nCode, wParam, lParam);
 	}
 
-	//!ƒtƒbƒNŠJn
+	//!ãƒ•ãƒƒã‚¯é–‹å§‹
 	void Use()
 	{
 		if(++g_nCnt>=1 && g_hHook==NULL){
@@ -71,7 +71,7 @@ next:
 		}
 	}
 
-	//!ƒtƒbƒNI—¹
+	//!ãƒ•ãƒƒã‚¯çµ‚äº†
 	void Unuse()
 	{
 		if(--g_nCnt<=0 && g_hHook!=NULL){
@@ -84,9 +84,9 @@ next:
 
 CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 {
-	m_hInstance = NULL;	/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹ */
-	m_hwndParent = NULL;	/* ƒI[ƒi[ƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹ */
-	m_hWnd = NULL;			/* ‚±‚ÌƒEƒBƒ“ƒhƒE‚Ìƒnƒ“ƒhƒ‹ */
+	m_hInstance = NULL;	/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ« */
+	m_hwndParent = NULL;	/* ã‚ªãƒ¼ãƒŠãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ« */
+	m_hWnd = NULL;			/* ã“ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒãƒ³ãƒ‰ãƒ« */
 #ifdef _DEBUG
 	_tcscpy( m_szClassInheritances, _T("CWnd") );
 	_tcscat( m_szClassInheritances, pszInheritanceAppend );
@@ -96,7 +96,7 @@ CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 CWnd::~CWnd()
 {
 	if( ::IsWindow( m_hWnd ) ){
-		/* ƒNƒ‰ƒXƒIƒuƒWƒFƒNƒg‚Ìƒ|ƒCƒ“ƒ^‚ğNULL‚É‚µ‚ÄŠg’£ƒEƒBƒ“ƒhƒEƒƒ‚ƒŠ‚ÉŠi”[‚µ‚Ä‚¨‚­ */
+		/* ã‚¯ãƒ©ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒã‚¤ãƒ³ã‚¿ã‚’NULLã«ã—ã¦æ‹¡å¼µã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒ¢ãƒªã«æ ¼ç´ã—ã¦ãŠã */
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)NULL );
 		::DestroyWindow( m_hWnd );
@@ -106,9 +106,9 @@ CWnd::~CWnd()
 }
 
 
-/* ƒEƒBƒ“ƒhƒEƒNƒ‰ƒXì¬ */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ä½œæˆ */
 ATOM CWnd::RegisterWC(
-	/* WNDCLASS—p */
+	/* WNDCLASSç”¨ */
 	HINSTANCE	hInstance,
 	HICON		hIcon,			// Handle to the class icon.
 	HICON		hIconSm,		// Handle to a small icon
@@ -120,11 +120,11 @@ ATOM CWnd::RegisterWC(
 {
 	m_hInstance = hInstance;
 
-	/* ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ì“o˜^ */
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ç™»éŒ² */
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(wc);
 	//	Apr. 27, 2000 genta
-	//	ƒTƒCƒY•ÏX‚Ì‚¿‚ç‚Â‚«‚ğ—}‚¦‚é‚½‚ßCS_HREDRAW | CS_VREDRAW ‚ğŠO‚µ‚½
+	//	ã‚µã‚¤ã‚ºå¤‰æ›´æ™‚ã®ã¡ã‚‰ã¤ãã‚’æŠ‘ãˆã‚‹ãŸã‚CS_HREDRAW | CS_VREDRAW ã‚’å¤–ã—ãŸ
 	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc   = CWndProc;
 	wc.cbClsExtra    = 0;
@@ -139,9 +139,9 @@ ATOM CWnd::RegisterWC(
 	return ::RegisterClassEx( &wc );
 }
 
-/* ì¬ */
+/* ä½œæˆ */
 HWND CWnd::Create(
-	/* CreateWindowEx()—p */
+	/* CreateWindowEx()ç”¨ */
 	HWND		hwndParent,
 	DWORD		dwExStyle,		// extended window style
 	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -156,13 +156,13 @@ HWND CWnd::Create(
 {
 	m_hwndParent = hwndParent;
 
-	/* ƒEƒBƒ“ƒhƒEì¬‘O‚Ìˆ—(ƒNƒ‰ƒX“o˜^‘O) ( virtual )*/
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå‰ã®å‡¦ç†(ã‚¯ãƒ©ã‚¹ç™»éŒ²å‰) ( virtual )*/
 	PreviCreateWindow();
 
-	/* ‰ŠúƒEƒBƒ“ƒhƒEƒTƒCƒY */
-	/* ƒEƒBƒ“ƒhƒE‚Ìì¬ */
+	/* åˆæœŸã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º */
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ */
 
-	//WindowsƒtƒbƒN‚É‚æ‚èAƒEƒBƒ“ƒhƒE‚ªì¬‚³‚ê‚éƒ^ƒCƒ~ƒ“ƒO‚ğ‰¡æ‚è‚·‚é 2007.10.01 kobake
+	//Windowsãƒ•ãƒƒã‚¯ã«ã‚ˆã‚Šã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒä½œæˆã•ã‚Œã‚‹ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’æ¨ªå–ã‚Šã™ã‚‹ 2007.10.01 kobake
 	CWindowCreationHook::Use();
 
 	m_hWnd = ::CreateWindowEx(
@@ -180,7 +180,7 @@ HWND CWnd::Create(
 		(LPVOID)this	// pointer to window-creation data
 	);
 
-	//WindowsƒtƒbƒN‰ğœ
+	//Windowsãƒ•ãƒƒã‚¯è§£é™¤
 	CWindowCreationHook::Unuse();
 
 	if( NULL == m_hWnd ){
@@ -188,13 +188,13 @@ HWND CWnd::Create(
 		return NULL;
 	}
 
-	/* ƒEƒBƒ“ƒhƒEì¬Œã‚Ìˆ— */
+	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå¾Œã®å‡¦ç† */
 	AfterCreateWindow();
 	return m_hWnd;
 }
 
 
-/* ƒƒbƒZ[ƒW”z‘— */
+/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸é…é€ */
 LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	#define CALLH(message, method) case message: return method( hwnd, msg, wp, lp )
@@ -229,7 +229,7 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 
 	default:
 		if( WM_APP <= msg && msg <= 0xBFFF ){
-			/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“’è‹`‚ÌƒƒbƒZ[ƒW(WM_APP <= msg <= 0xBFFF) */
+			/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®šç¾©ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(WM_APP <= msg <= 0xBFFF) */
 			return DispatchEvent_WM_APP( hwnd, msg, wp, lp );
 		}
 		break;	/* default */
@@ -237,20 +237,20 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	return CallDefWndProc( hwnd, msg, wp, lp );
 }
 
-/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“’è‹`‚ÌƒƒbƒZ[ƒW(WM_APP <= msg <= 0xBFFF) */
+/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®šç¾©ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(WM_APP <= msg <= 0xBFFF) */
 LRESULT CWnd::DispatchEvent_WM_APP( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	return CallDefWndProc( hwnd, msg, wp, lp );
 }
 
-/* ƒfƒtƒHƒ‹ƒgƒƒbƒZ[ƒWˆ— */
+/* ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 LRESULT CWnd::CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	return ::DefWindowProc( hwnd, msg, wp, lp );
 }
 
 
-/* ƒEƒBƒ“ƒhƒE‚ğ”jŠü */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ç ´æ£„ */
 void CWnd::DestroyWindow()
 {
 	if(m_hWnd){

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2012, Moca
 
 	This software is provided 'as-is', without any express or implied
@@ -39,9 +39,9 @@ private:
 	HBITMAP	m_hCenterImg;
 	CEditView*	m_cView;
 protected:
-	/* ‰¼‘zŠÖ” */
+	/* ä»®æƒ³é–¢æ•° */
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ— Ú‚µ‚­‚ÍŽÀ‘•‚ðŽQÆ */
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† è©³ã—ãã¯å®Ÿè£…ã‚’å‚ç…§ */
 	LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );
 	LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );
 	LRESULT OnMButtonDown( HWND, UINT, WPARAM, LPARAM );

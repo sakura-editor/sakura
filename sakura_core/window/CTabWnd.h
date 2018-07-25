@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ^ƒuƒEƒBƒ“ƒhƒE
+ï»¿/*!	@file
+	@brief ã‚¿ãƒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 
 	@author MIK
 	@date 2003.5.30
@@ -45,7 +45,7 @@ class CGraphics;
 struct EditNode;
 struct DLLSHAREDATA;
 
-//! ƒ^ƒuƒo[ƒEƒBƒ“ƒhƒE
+//! ã‚¿ãƒ–ãƒãƒ¼ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 class CTabWnd : public CWnd
 {
 public:
@@ -56,22 +56,22 @@ public:
 	virtual ~CTabWnd();
 
 	/*
-	|| ƒƒ“ƒoŠÖ”
+	|| ãƒ¡ãƒ³ãƒé–¢æ•°
 	*/
-	HWND Open( HINSTANCE, HWND );		/*!< ƒEƒBƒ“ƒhƒE ƒI[ƒvƒ“ */
-	void Close( void );					/*!< ƒEƒBƒ“ƒhƒE ƒNƒ[ƒY */
+	HWND Open( HINSTANCE, HWND );		/*!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚ªãƒ¼ãƒ—ãƒ³ */
+	void Close( void );					/*!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚¯ãƒ­ãƒ¼ã‚º */
 	void TabWindowNotify( WPARAM wParam, LPARAM lParam );
-	void Refresh( BOOL bEnsureVisible = TRUE, BOOL bRebuild = FALSE );			// 2006.02.06 ryoji ˆø”íœ
-	void NextGroup( void );			/* Ÿ‚ÌƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void PrevGroup( void );			/* ‘O‚ÌƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void MoveRight( void );			/* ƒ^ƒu‚ğ‰E‚ÉˆÚ“® */		// 2007.06.20 ryoji
-	void MoveLeft( void );			/* ƒ^ƒu‚ğ¶‚ÉˆÚ“® */		// 2007.06.20 ryoji
-	void Separate( void );			/* V‹KƒOƒ‹[ƒv */			// 2007.06.20 ryoji
-	void JoinNext( void );			/* Ÿ‚ÌƒOƒ‹[ƒv‚ÉˆÚ“® */	// 2007.06.20 ryoji
-	void JoinPrev( void );			/* ‘O‚ÌƒOƒ‹[ƒv‚ÉˆÚ“® */	// 2007.06.20 ryoji
+	void Refresh( BOOL bEnsureVisible = TRUE, BOOL bRebuild = FALSE );			// 2006.02.06 ryoji å¼•æ•°å‰Šé™¤
+	void NextGroup( void );			/* æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void PrevGroup( void );			/* å‰ã®ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void MoveRight( void );			/* ã‚¿ãƒ–ã‚’å³ã«ç§»å‹• */		// 2007.06.20 ryoji
+	void MoveLeft( void );			/* ã‚¿ãƒ–ã‚’å·¦ã«ç§»å‹• */		// 2007.06.20 ryoji
+	void Separate( void );			/* æ–°è¦ã‚°ãƒ«ãƒ¼ãƒ— */			// 2007.06.20 ryoji
+	void JoinNext( void );			/* æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«ç§»å‹• */	// 2007.06.20 ryoji
+	void JoinPrev( void );			/* å‰ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«ç§»å‹• */	// 2007.06.20 ryoji
 
 	LRESULT TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE, BOOL bOtherGroup = TRUE );	/*!< ƒ^ƒuˆê——ƒƒjƒ…[ì¬ˆ— */	// 2006.03.23 fon
+	LRESULT TabListMenu( POINT pt, BOOL bSel = TRUE, BOOL bFull = FALSE, BOOL bOtherGroup = TRUE );	/*!< ã‚¿ãƒ–ä¸€è¦§ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆå‡¦ç† */	// 2006.03.23 fon
 
 	void SizeBox_ONOFF( bool bSizeBox );
 	HWND GetHwndSizeBox(){
@@ -83,77 +83,77 @@ public:
 	void UpdateStyle();
 protected:
 	/*
-	|| À‘•ƒwƒ‹ƒpŒn
+	|| å®Ÿè£…ãƒ˜ãƒ«ãƒ‘ç³»
 	*/
 	int FindTabIndexByHWND( HWND hWnd );
-	void AdjustWindowPlacement( void );							/*!< •ÒWƒEƒBƒ“ƒhƒE‚ÌˆÊ’u‡‚í‚¹ */	// 2007.04.03 ryoji
-	int SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl );	/* ƒAƒNƒeƒBƒu‰»‚Ì­‚È‚¢ SetWindowPlacement() ‚ğÀs‚·‚é */	// 2007.11.30 ryoji
+	void AdjustWindowPlacement( void );							/*!< ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½ç½®åˆã‚ã› */	// 2007.04.03 ryoji
+	int SetCarmWindowPlacement( HWND hwnd, const WINDOWPLACEMENT* pWndpl );	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ã®å°‘ãªã„ SetWindowPlacement() ã‚’å®Ÿè¡Œã™ã‚‹ */	// 2007.11.30 ryoji
 	void ShowHideWindow( HWND hwnd, BOOL bDisp );
-	void HideOtherWindows( HWND hwndExclude );					/*!< ‘¼‚Ì•ÒWƒEƒBƒ“ƒhƒE‚ğ‰B‚· */	// 2007.05.17 ryoji
+	void HideOtherWindows( HWND hwndExclude );					/*!< ä»–ã®ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’éš ã™ */	// 2007.05.17 ryoji
 	void ForceActiveWindow( HWND hwnd );
-	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika ˆø”’Ç‰Á
-	HWND GetNextGroupWnd( void );	/* Ÿ‚ÌƒOƒ‹[ƒv‚Ìæ“ªƒEƒBƒ“ƒhƒE‚ğ’T‚· */	// 2007.06.20 ryoji
-	HWND GetPrevGroupWnd( void );	/* ‘O‚ÌƒOƒ‹[ƒv‚Ìæ“ªƒEƒBƒ“ƒhƒE‚ğ’T‚· */	// 2007.06.20 ryoji
-	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR pszName, int nLen );	/* ƒ^ƒu–¼æ“¾ˆ— */	// 2007.06.28 ryoji V‹Kì¬
+	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika å¼•æ•°è¿½åŠ 
+	HWND GetNextGroupWnd( void );	/* æ¬¡ã®ã‚°ãƒ«ãƒ¼ãƒ—ã®å…ˆé ­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ¢ã™ */	// 2007.06.20 ryoji
+	HWND GetPrevGroupWnd( void );	/* å‰ã®ã‚°ãƒ«ãƒ¼ãƒ—ã®å…ˆé ­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ¢ã™ */	// 2007.06.20 ryoji
+	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR pszName, int nLen );	/* ã‚¿ãƒ–åå–å¾—å‡¦ç† */	// 2007.06.28 ryoji æ–°è¦ä½œæˆ
 
-	/* ‰¼‘zŠÖ” */
-	virtual void AfterCreateWindow( void ){}	/*!< ƒEƒBƒ“ƒhƒEì¬Œã‚Ìˆ— */	// 2007.03.13 ryoji ‰Â‹‰»‚µ‚È‚¢
+	/* ä»®æƒ³é–¢æ•° */
+	virtual void AfterCreateWindow( void ){}	/*!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆå¾Œã®å‡¦ç† */	// 2007.03.13 ryoji å¯è¦–åŒ–ã—ãªã„
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ— */
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );		/*!< WM_SIZEˆ— */
-	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROYˆ— */
-	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFYˆ— */
-	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINTˆ— */
-	virtual LRESULT OnCaptureChanged( HWND, UINT, WPARAM, LPARAM );	/*!< WM_CAPTURECHANGED ˆ— */
-	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWNˆ— */
-	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONUPˆ— */
-	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWNˆ— */
-	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDBLCLKˆ— */
-	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVEˆ— */
-	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMERˆ— */
-	virtual LRESULT OnMeasureItem( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MEASUREITEMˆ— */
-	virtual LRESULT OnDrawItem( HWND, UINT, WPARAM, LPARAM );		/*!< WM_DRAWITEMˆ— */
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
+	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );		/*!< WM_SIZEå‡¦ç† */
+	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROYå‡¦ç† */
+	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFYå‡¦ç† */
+	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINTå‡¦ç† */
+	virtual LRESULT OnCaptureChanged( HWND, UINT, WPARAM, LPARAM );	/*!< WM_CAPTURECHANGED å‡¦ç† */
+	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWNå‡¦ç† */
+	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONUPå‡¦ç† */
+	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWNå‡¦ç† */
+	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDBLCLKå‡¦ç† */
+	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVEå‡¦ç† */
+	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMERå‡¦ç† */
+	virtual LRESULT OnMeasureItem( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MEASUREITEMå‡¦ç† */
+	virtual LRESULT OnDrawItem( HWND, UINT, WPARAM, LPARAM );		/*!< WM_DRAWITEMå‡¦ç† */
 
-	// 2005.09.01 ryoji ƒhƒ‰ƒbƒOƒAƒ“ƒhƒhƒƒbƒv‚Åƒ^ƒu‚Ì‡˜•ÏX‚ğ‰Â”\‚É
-	/* ƒTƒuƒNƒ‰ƒX‰»‚µ‚½ Tab ‚Å‚ÌƒƒbƒZ[ƒWˆ— */
-	LRESULT OnTabLButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ƒ^ƒu•” WM_LBUTTONDOWN ˆ— */
-	LRESULT OnTabLButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ƒ^ƒu•” WM_LBUTTONUP ˆ— */
-	LRESULT OnTabMouseMove( WPARAM wParam, LPARAM lParam );		/*!< ƒ^ƒu•” WM_MOUSEMOVE ˆ— */
-	LRESULT OnTabTimer( WPARAM wParam, LPARAM lParam );			/*!< ƒ^ƒu•” WM_TIMERˆ— */
-	LRESULT OnTabCaptureChanged( WPARAM wParam, LPARAM lParam );	/*!< ƒ^ƒu•” WM_CAPTURECHANGED ˆ— */
-	LRESULT OnTabRButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ƒ^ƒu•” WM_RBUTTONDOWN ˆ— */
-	LRESULT OnTabRButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ƒ^ƒu•” WM_RBUTTONUP ˆ— */
-	LRESULT OnTabMButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ƒ^ƒu•” WM_MBUTTONDOWN ˆ— */
-	LRESULT OnTabMButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ƒ^ƒu•” WM_MBUTTONUP ˆ— */
-	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< ƒ^ƒu•” WM_NOTIFY ˆ— */
+	// 2005.09.01 ryoji ãƒ‰ãƒ©ãƒƒã‚°ã‚¢ãƒ³ãƒ‰ãƒ‰ãƒ­ãƒƒãƒ—ã§ã‚¿ãƒ–ã®é †åºå¤‰æ›´ã‚’å¯èƒ½ã«
+	/* ã‚µãƒ–ã‚¯ãƒ©ã‚¹åŒ–ã—ãŸ Tab ã§ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
+	LRESULT OnTabLButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ã‚¿ãƒ–éƒ¨ WM_LBUTTONDOWN å‡¦ç† */
+	LRESULT OnTabLButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ã‚¿ãƒ–éƒ¨ WM_LBUTTONUP å‡¦ç† */
+	LRESULT OnTabMouseMove( WPARAM wParam, LPARAM lParam );		/*!< ã‚¿ãƒ–éƒ¨ WM_MOUSEMOVE å‡¦ç† */
+	LRESULT OnTabTimer( WPARAM wParam, LPARAM lParam );			/*!< ã‚¿ãƒ–éƒ¨ WM_TIMERå‡¦ç† */
+	LRESULT OnTabCaptureChanged( WPARAM wParam, LPARAM lParam );	/*!< ã‚¿ãƒ–éƒ¨ WM_CAPTURECHANGED å‡¦ç† */
+	LRESULT OnTabRButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ã‚¿ãƒ–éƒ¨ WM_RBUTTONDOWN å‡¦ç† */
+	LRESULT OnTabRButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ã‚¿ãƒ–éƒ¨ WM_RBUTTONUP å‡¦ç† */
+	LRESULT OnTabMButtonDown( WPARAM wParam, LPARAM lParam );	/*!< ã‚¿ãƒ–éƒ¨ WM_MBUTTONDOWN å‡¦ç† */
+	LRESULT OnTabMButtonUp( WPARAM wParam, LPARAM lParam );		/*!< ã‚¿ãƒ–éƒ¨ WM_MBUTTONUP å‡¦ç† */
+	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< ã‚¿ãƒ–éƒ¨ WM_NOTIFY å‡¦ç† */
 
-	//À‘••â•ƒCƒ“ƒ^[ƒtƒF[ƒX
-	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; m_nTabCloseCapture = -1; }	/*!< ƒhƒ‰ƒbƒOó‘Ô‰ğœˆ— */
-	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< ƒ^ƒu‡˜•ÏXˆ— */
+	//å®Ÿè£…è£œåŠ©ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; m_nTabCloseCapture = -1; }	/*!< ãƒ‰ãƒ©ãƒƒã‚°çŠ¶æ…‹è§£é™¤å‡¦ç† */
+	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< ã‚¿ãƒ–é †åºå¤‰æ›´å‡¦ç† */
 	void BroadcastRefreshToGroup( void );
-	BOOL SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop );	/*!< ƒ^ƒu•ª—£ˆ— */	// 2007.06.20 ryoji
-	LRESULT ExecTabCommand( int nId, POINTS pts );	/*!< ƒ^ƒu•” ƒRƒ}ƒ“ƒhÀsˆ— */
-	void LayoutTab( void );							/*!< ƒ^ƒu‚ÌƒŒƒCƒAƒEƒg’²®ˆ— */
+	BOOL SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop );	/*!< ã‚¿ãƒ–åˆ†é›¢å‡¦ç† */	// 2007.06.20 ryoji
+	LRESULT ExecTabCommand( int nId, POINTS pts );	/*!< ã‚¿ãƒ–éƒ¨ ã‚³ãƒãƒ³ãƒ‰å®Ÿè¡Œå‡¦ç† */
+	void LayoutTab( void );							/*!< ã‚¿ãƒ–ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆèª¿æ•´å‡¦ç† */
 
-	HIMAGELIST InitImageList( void );				/*!< ƒCƒ[ƒWƒŠƒXƒg‚Ì‰Šú‰»ˆ— */
-	int GetImageIndex( EditNode* pNode );			/*!< ƒCƒ[ƒWƒŠƒXƒg‚ÌƒCƒ“ƒfƒbƒNƒXæ“¾ˆ— */
-	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< ƒCƒ[ƒWƒŠƒXƒg‚Ì•¡»ˆ— */
+	HIMAGELIST InitImageList( void );				/*!< ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã®åˆæœŸåŒ–å‡¦ç† */
+	int GetImageIndex( EditNode* pNode );			/*!< ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹å–å¾—å‡¦ç† */
+	HIMAGELIST ImageList_Duplicate( HIMAGELIST himl );	/*!< ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆã®è¤‡è£½å‡¦ç† */
 
-	// 2006.02.01 ryoji ƒ^ƒuˆê——‚ğ’Ç‰Á
-	void DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted );	/*!< ƒ{ƒ^ƒ“”wŒi•`‰æˆ— */	// 2006.10.21 ryoji
-	void DrawListBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< ˆê——ƒ{ƒ^ƒ“•`‰æˆ— */
-	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< •Â‚¶‚éƒ}[ƒN•`‰æˆ— */
-	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< •Â‚¶‚éƒ{ƒ^ƒ“•`‰æˆ— */		// 2006.10.21 ryoji
-	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover );	/*!< ƒ^ƒu‚ğ•Â‚¶‚éƒ{ƒ^ƒ“•`‰æˆ— */		// 2012.04.14 syat
-	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< ˆê——ƒ{ƒ^ƒ“‚Ì‹éŒ`æ“¾ˆ— */
-	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< •Â‚¶‚éƒ{ƒ^ƒ“‚Ì‹éŒ`æ“¾ˆ— */	// 2006.10.21 ryoji
-	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< ƒ^ƒu‚ğ•Â‚¶‚éƒ{ƒ^ƒ“‚Ì‹éŒ`æ“¾ˆ— */	// 2012.04.14 syat
+	// 2006.02.01 ryoji ã‚¿ãƒ–ä¸€è¦§ã‚’è¿½åŠ 
+	void DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted );	/*!< ãƒœã‚¿ãƒ³èƒŒæ™¯æç”»å‡¦ç† */	// 2006.10.21 ryoji
+	void DrawListBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< ä¸€è¦§ãƒœã‚¿ãƒ³æç”»å‡¦ç† */
+	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< é–‰ã˜ã‚‹ãƒãƒ¼ã‚¯æç”»å‡¦ç† */
+	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³æç”»å‡¦ç† */		// 2006.10.21 ryoji
+	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover );	/*!< ã‚¿ãƒ–ã‚’é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³æç”»å‡¦ç† */		// 2012.04.14 syat
+	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< ä¸€è¦§ãƒœã‚¿ãƒ³ã®çŸ©å½¢å–å¾—å‡¦ç† */
+	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã®çŸ©å½¢å–å¾—å‡¦ç† */	// 2006.10.21 ryoji
+	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< ã‚¿ãƒ–ã‚’é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ã®çŸ©å½¢å–å¾—å‡¦ç† */	// 2012.04.14 syat
 
 	HFONT CreateMenuFont( void )
 	{
-		// ƒƒjƒ…[—pƒtƒHƒ“ƒgì¬
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç”¨ãƒ•ã‚©ãƒ³ãƒˆä½œæˆ
 		NONCLIENTMETRICS	ncm;
-		// ˆÈ‘O‚Ìƒvƒ‰ƒbƒgƒtƒH[ƒ€‚É WINVER >= 0x0600 ‚Å’è‹`‚³‚ê‚é\‘¢‘Ì‚Ìƒtƒ‹ƒTƒCƒY‚ğ“n‚·‚Æ¸”s‚·‚é	// 2007.12.21 ryoji
+		// ä»¥å‰ã®ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã« WINVER >= 0x0600 ã§å®šç¾©ã•ã‚Œã‚‹æ§‹é€ ä½“ã®ãƒ•ãƒ«ã‚µã‚¤ã‚ºã‚’æ¸¡ã™ã¨å¤±æ•—ã™ã‚‹	// 2007.12.21 ryoji
 		ncm.cbSize = CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont );
 		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, ncm.cbSize, (PVOID)&ncm, 0 );
 		return ::CreateFontIndirect( &ncm.lfMenuFont );
@@ -166,45 +166,45 @@ protected:
 	typedef HIMAGELIST (WINAPI *FN_ImageList_Duplicate)(HIMAGELIST himl);
 
 	/*
-	|| ƒƒ“ƒo•Ï”
+	|| ãƒ¡ãƒ³ãƒå¤‰æ•°
 	*/
 public:
-	DLLSHAREDATA*	m_pShareData;	/*!< ‹¤—Lƒf[ƒ^ */
-	HFONT			m_hFont;		/*!< •\¦—pƒtƒHƒ“ƒg */
-	HWND			m_hwndTab;		/*!< ƒ^ƒuƒRƒ“ƒgƒ[ƒ‹ */
-	HWND			m_hwndToolTip;	/*!< ƒc[ƒ‹ƒ`ƒbƒviƒ{ƒ^ƒ“—pj */
-	TCHAR			m_szTextTip[1024];	/*!< ƒc[ƒ‹ƒ`ƒbƒv‚ÌƒeƒLƒXƒgiƒ^ƒu—pj */
-	ETabPosition	m_eTabPosition;	//!< ƒ^ƒu•\¦ˆÊ’u
+	DLLSHAREDATA*	m_pShareData;	/*!< å…±æœ‰ãƒ‡ãƒ¼ã‚¿ */
+	HFONT			m_hFont;		/*!< è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆ */
+	HWND			m_hwndTab;		/*!< ã‚¿ãƒ–ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« */
+	HWND			m_hwndToolTip;	/*!< ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—ï¼ˆãƒœã‚¿ãƒ³ç”¨ï¼‰ */
+	TCHAR			m_szTextTip[1024];	/*!< ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—ã®ãƒ†ã‚­ã‚¹ãƒˆï¼ˆã‚¿ãƒ–ç”¨ï¼‰ */
+	ETabPosition	m_eTabPosition;	//!< ã‚¿ãƒ–è¡¨ç¤ºä½ç½®
 
 private:
-	DragState	m_eDragState;			//!< ƒhƒ‰ƒbƒOó‘Ô
-	int			m_nSrcTab;				//!< ˆÚ“®Œ³ƒ^ƒu
-	POINT		m_ptSrcCursor;			//!< ƒhƒ‰ƒbƒOŠJnƒJ[ƒ\ƒ‹ˆÊ’u
-	HCURSOR		m_hDefaultCursor;		//!< ƒhƒ‰ƒbƒOŠJn‚ÌƒJ[ƒ\ƒ‹
+	DragState	m_eDragState;			//!< ãƒ‰ãƒ©ãƒƒã‚°çŠ¶æ…‹
+	int			m_nSrcTab;				//!< ç§»å‹•å…ƒã‚¿ãƒ–
+	POINT		m_ptSrcCursor;			//!< ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
+	HCURSOR		m_hDefaultCursor;		//!< ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹æ™‚ã®ã‚«ãƒ¼ã‚½ãƒ«
 
-	// 2006.01.28 ryoji ƒ^ƒu‚Ö‚ÌƒAƒCƒRƒ“•\¦‚ğ‰Â”\‚É
+	// 2006.01.28 ryoji ã‚¿ãƒ–ã¸ã®ã‚¢ã‚¤ã‚³ãƒ³è¡¨ç¤ºã‚’å¯èƒ½ã«
 	FN_ImageList_Duplicate	m_RealImageList_Duplicate;
 
-	HIMAGELIST	m_hIml;					//!< ƒCƒ[ƒWƒŠƒXƒg
-	HICON		m_hIconApp;				//!< ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒAƒCƒRƒ“
-	HICON		m_hIconGrep;			//!< GrepƒAƒCƒRƒ“
-	int			m_iIconApp;				//!< ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒAƒCƒRƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
-	int			m_iIconGrep;			//!< GrepƒAƒCƒRƒ“‚ÌƒCƒ“ƒfƒbƒNƒX
+	HIMAGELIST	m_hIml;					//!< ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒªã‚¹ãƒˆ
+	HICON		m_hIconApp;				//!< ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¢ã‚¤ã‚³ãƒ³
+	HICON		m_hIconGrep;			//!< Grepã‚¢ã‚¤ã‚³ãƒ³
+	int			m_iIconApp;				//!< ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¢ã‚¤ã‚³ãƒ³ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	int			m_iIconGrep;			//!< Grepã‚¢ã‚¤ã‚³ãƒ³ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 
-	BOOL		m_bVisualStyle;			//!< ƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹‚©‚Ç‚¤‚©	// 2007.04.01 ryoji
+	BOOL		m_bVisualStyle;			//!< ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¹ã‚¿ã‚¤ãƒ«ã‹ã©ã†ã‹	// 2007.04.01 ryoji
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
-	BOOL		m_bCloseBtnHilighted;	//!< •Â‚¶‚éƒ{ƒ^ƒ“ƒnƒCƒ‰ƒCƒgó‘Ô	// 2006.10.21 ryoji
-	CaptureSrc	m_eCaptureSrc;			//!< ƒLƒƒƒvƒ`ƒƒ[Œ³
-	BOOL		m_bTabSwapped;			//!< ƒhƒ‰ƒbƒO’†‚Éƒ^ƒu‚Ì“ü‚ê‘Ö‚¦‚ª‚ ‚Á‚½‚©‚Ç‚¤‚©
-	LONG*		m_nTabBorderArray;		//!< ƒhƒ‰ƒbƒO‘O‚Ìƒ^ƒu‹«ŠEˆÊ’u”z—ñ
-	LOGFONT		m_lf;					//!< •\¦ƒtƒHƒ“ƒg‚Ì“Á«î•ñ
-	bool		m_bMultiLine;			//!< •¡”s
+	BOOL		m_bCloseBtnHilighted;	//!< é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ãƒã‚¤ãƒ©ã‚¤ãƒˆçŠ¶æ…‹	// 2006.10.21 ryoji
+	CaptureSrc	m_eCaptureSrc;			//!< ã‚­ãƒ£ãƒ—ãƒãƒ£ãƒ¼å…ƒ
+	BOOL		m_bTabSwapped;			//!< ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã«ã‚¿ãƒ–ã®å…¥ã‚Œæ›¿ãˆãŒã‚ã£ãŸã‹ã©ã†ã‹
+	LONG*		m_nTabBorderArray;		//!< ãƒ‰ãƒ©ãƒƒã‚°å‰ã®ã‚¿ãƒ–å¢ƒç•Œä½ç½®é…åˆ—
+	LOGFONT		m_lf;					//!< è¡¨ç¤ºãƒ•ã‚©ãƒ³ãƒˆã®ç‰¹æ€§æƒ…å ±
+	bool		m_bMultiLine;			//!< è¤‡æ•°è¡Œ
 
-	// ƒ^ƒu“à‚Ì•Â‚¶‚éƒ{ƒ^ƒ“—p•Ï”
-	int			m_nTabHover;			//!< ƒ}ƒEƒXƒJ[ƒ\ƒ‹‰º‚Ìƒ^ƒui–³‚¢‚Æ‚«‚Í-1j
-	bool		m_bTabCloseHover;		//!< ƒ}ƒEƒXƒJ[ƒ\ƒ‹‰º‚Éƒ^ƒu“à‚Ì•Â‚¶‚éƒ{ƒ^ƒ“‚ª‚ ‚é‚©
-	int			m_nTabCloseCapture;		//!< •Â‚¶‚éƒ{ƒ^ƒ“‚ªƒ}ƒEƒX‰Ÿ‰º‚³‚ê‚Ä‚¢‚éƒ^ƒui–³‚¢‚Æ‚«‚Í-1j
+	// ã‚¿ãƒ–å†…ã®é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ç”¨å¤‰æ•°
+	int			m_nTabHover;			//!< ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ã®ã‚¿ãƒ–ï¼ˆç„¡ã„ã¨ãã¯-1ï¼‰
+	bool		m_bTabCloseHover;		//!< ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ã«ã‚¿ãƒ–å†…ã®é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ãŒã‚ã‚‹ã‹
+	int			m_nTabCloseCapture;		//!< é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ãŒãƒã‚¦ã‚¹æŠ¼ä¸‹ã•ã‚Œã¦ã„ã‚‹ã‚¿ãƒ–ï¼ˆç„¡ã„ã¨ãã¯-1ï¼‰
 
 	HWND		m_hwndSizeBox;
 	bool		m_bSizeBox;

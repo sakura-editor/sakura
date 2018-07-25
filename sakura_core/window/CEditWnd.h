@@ -1,9 +1,9 @@
-/*!	@file
-	@brief •ÒWƒEƒBƒ“ƒhƒEiŠO˜gjŠÇ—ƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆå¤–æ ï¼‰ç®¡ç†ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/05/13 V‹Kì¬
-	@date 2002/01/14 YAZAKI PrintPreview‚Ì•ª—£
+	@date 1998/05/13 æ–°è¦ä½œæˆ
+	@date 2002/01/14 YAZAKI PrintPreviewã®åˆ†é›¢
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -65,7 +65,7 @@
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
-//@@@ 2002.01.14 YAZAKI ˆóüƒvƒŒƒrƒ…[‚ğCPrintPreview‚É“Æ—§‚³‚¹‚½‚±‚Æ‚É‚æ‚é•ÏX
+//@@@ 2002.01.14 YAZAKI å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ã‚’CPrintPreviewã«ç‹¬ç«‹ã•ã›ãŸã“ã¨ã«ã‚ˆã‚‹å¤‰æ›´
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 class CPlug;
@@ -73,7 +73,7 @@ class CEditDoc;
 struct DLLSHAREDATA;
 
 
-//ƒƒCƒ“ƒEƒBƒ“ƒhƒE“àƒRƒ“ƒgƒ[ƒ‹ID
+//ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å†…ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ID
 #define IDT_EDIT		455  // 20060128 aroka
 #define IDT_TOOLBAR		456
 #define IDT_CAPTION		457
@@ -89,10 +89,10 @@ struct STabGroupInfo{
 	bool IsValid() const{ return hwndTop!=NULL; }
 };
 
-//! •ÒWƒEƒBƒ“ƒhƒEiŠO˜gjŠÇ—ƒNƒ‰ƒX
-// 2002.02.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
-// 2007.10.30 kobake IsFuncEnable,IsFuncChecked‚ğFunccode.h‚ÉˆÚ“®
-// 2007.10.30 kobake OnHelp_MenuItem‚ğCEditApp‚ÉˆÚ“®
+//! ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆå¤–æ ï¼‰ç®¡ç†ã‚¯ãƒ©ã‚¹
+// 2002.02.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
+// 2007.10.30 kobake IsFuncEnable,IsFuncCheckedã‚’Funccode.hã«ç§»å‹•
+// 2007.10.30 kobake OnHelp_MenuItemã‚’CEditAppã«ç§»å‹•
 class CEditWnd
 : public TSingleton<CEditWnd>
 , public CDocListenerEx
@@ -103,18 +103,18 @@ class CEditWnd
 
 public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ì¬                              //
+	//                           ä½œæˆ                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//	Mar. 7, 2002 genta •¶‘ƒ^ƒCƒv—pˆø”’Ç‰Á
-	// 2007.06.26 ryoji ƒOƒ‹[ƒvw’èˆø”’Ç‰Á
-	//! ì¬
+	//	Mar. 7, 2002 genta æ–‡æ›¸ã‚¿ã‚¤ãƒ—ç”¨å¼•æ•°è¿½åŠ 
+	// 2007.06.26 ryoji ã‚°ãƒ«ãƒ¼ãƒ—æŒ‡å®šå¼•æ•°è¿½åŠ 
+	//! ä½œæˆ
 	HWND Create(
 		CEditDoc*		pcEditDoc,
 		CImageListMgr*	pcIcons,
 		int				nGroup
 	);
 	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
-	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ƒEƒBƒ“ƒhƒE¶¬—p‚Ì‹éŒ`‚ğæ“¾
+	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆç”¨ã®çŸ©å½¢ã‚’å–å¾—
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
@@ -123,37 +123,37 @@ public:
 	);
 
 	void SetDocumentTypeWhenCreate(
-		ECodeType		nCharCode,							//!< [in] Š¿šƒR[ƒh
-		bool			bViewMode,							//!< [in] ƒrƒ…[ƒ‚[ƒh‚ÅŠJ‚­‚©‚Ç‚¤‚©
-		CTypeConfig	nDocumentType = CTypeConfig(-1)	//!< [in] •¶‘ƒ^ƒCƒvD-1‚Ì‚Æ‚«‹­§w’è–³‚µD
+		ECodeType		nCharCode,							//!< [in] æ¼¢å­—ã‚³ãƒ¼ãƒ‰
+		bool			bViewMode,							//!< [in] ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§é–‹ãã‹ã©ã†ã‹
+		CTypeConfig	nDocumentType = CTypeConfig(-1)	//!< [in] æ–‡æ›¸ã‚¿ã‚¤ãƒ—ï¼-1ã®ã¨ãå¼·åˆ¶æŒ‡å®šç„¡ã—ï¼
 	);
 	void UpdateCaption();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ƒCƒxƒ“ƒg                            //
+	//                         ã‚¤ãƒ™ãƒ³ãƒˆ                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//ƒhƒLƒ…ƒƒ“ƒgƒCƒxƒ“ƒg
+	//ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã‚¤ãƒ™ãƒ³ãƒˆ
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-	//ŠÇ—
-	void MessageLoop( void );								/* ƒƒbƒZ[ƒWƒ‹[ƒv */
-	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ƒƒbƒZ[ƒWˆ— */
+	//ç®¡ç†
+	void MessageLoop( void );								/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ— */
+	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 
-	//ŠeíƒCƒxƒ“ƒg
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* •`‰æˆ— */
-	LRESULT OnSize( WPARAM, LPARAM );	/* WM_SIZE ˆ— */
+	//å„ç¨®ã‚¤ãƒ™ãƒ³ãƒˆ
+	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* æç”»å‡¦ç† */
+	LRESULT OnSize( WPARAM, LPARAM );	/* WM_SIZE å‡¦ç† */
 	LRESULT OnSize2( WPARAM, LPARAM, bool );
 	LRESULT OnLButtonUp( WPARAM, LPARAM );
 	LRESULT OnLButtonDown( WPARAM, LPARAM );
 	LRESULT OnMouseMove( WPARAM, LPARAM );
 	LRESULT OnMouseWheel( WPARAM, LPARAM );
-	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// ƒ}ƒEƒXƒzƒC[ƒ‹ˆ—	// 2007.10.16 ryoji
+	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// ãƒã‚¦ã‚¹ãƒ›ã‚¤ãƒ¼ãƒ«å‡¦ç†	// 2007.10.16 ryoji
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
-	int	OnClose( HWND hWndActive, bool );	/* I—¹‚Ìˆ— */
-	void OnDropFiles( HDROP );	/* ƒtƒ@ƒCƒ‹‚ªƒhƒƒbƒv‚³‚ê‚½ */
-	BOOL OnPrintPageSetting( void );/* ˆóüƒy[ƒWİ’è */
-	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER ˆ—	// 2007.04.03 ryoji
-	void OnEditTimer( void );	/* ƒ^ƒCƒ}[‚Ìˆ— */
+	int	OnClose( HWND hWndActive, bool );	/* çµ‚äº†æ™‚ã®å‡¦ç† */
+	void OnDropFiles( HDROP );	/* ãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ‰ãƒ­ãƒƒãƒ—ã•ã‚ŒãŸ */
+	BOOL OnPrintPageSetting( void );/* å°åˆ·ãƒšãƒ¼ã‚¸è¨­å®š */
+	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER å‡¦ç†	// 2007.04.03 ryoji
+	void OnEditTimer( void );	/* ã‚¿ã‚¤ãƒãƒ¼ã®å‡¦ç† */
 	void OnCaptionTimer( void );
 	void OnSysMenuTimer( void );
 	void OnCommand( WORD, WORD , HWND );
@@ -163,119 +163,119 @@ public:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ’Ê’m                              //
+	//                           é€šçŸ¥                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//ƒtƒ@ƒCƒ‹–¼•ÏX’Ê’m
-	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ƒtƒ@ƒCƒ‹–¼AGrepƒ‚[ƒhƒpƒ‰ƒ[ƒ^‚ğ’Ç‰Á
+	//ãƒ•ã‚¡ã‚¤ãƒ«åå¤‰æ›´é€šçŸ¥
+	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ãƒ•ã‚¡ã‚¤ãƒ«åã€Grepãƒ¢ãƒ¼ãƒ‰ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¿½åŠ 
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         ƒƒjƒ…[                            //
+	//                         ãƒ¡ãƒ‹ãƒ¥ãƒ¼                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void InitMenu( HMENU, UINT, BOOL );
 	void InitMenu_Function(HMENU , EFunctionCode, const wchar_t*, const wchar_t*);
 	bool InitMenu_Special(HMENU , EFunctionCode);
-	void InitMenubarMessageFont(void);	//	ƒƒjƒ…[ƒo[‚Ö‚ÌƒƒbƒZ[ƒW•\¦‹@”\‚ğCEditWnd‚æ‚èˆÚŠÇ	//	Dec. 4, 2002 genta
-	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ƒEƒBƒ“ƒhƒEˆê——ƒƒjƒ…[ì¬ˆ— */	// 2006.03.23 fon
-	LRESULT PopupWinList( bool bMousePos );	/*!< ƒEƒBƒ“ƒhƒEˆê——ƒ|ƒbƒvƒAƒbƒv•\¦ˆ— */	// 2006.03.23 fon	// 2007.02.28 ryoji ƒtƒ‹ƒpƒXw’è‚Ìƒpƒ‰ƒ[ƒ^‚ğíœ
-	void RegisterPluginCommand();			//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚ğƒGƒfƒBƒ^‚É“o˜^‚·‚é
-	void RegisterPluginCommand( int id );	//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚ğƒGƒfƒBƒ^‚É“o˜^‚·‚é
-	void RegisterPluginCommand( CPlug* id );	//ƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh‚ğƒGƒfƒBƒ^‚É“o˜^‚·‚é
+	void InitMenubarMessageFont(void);	//	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã¸ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºæ©Ÿèƒ½ã‚’CEditWndã‚ˆã‚Šç§»ç®¡	//	Dec. 4, 2002 genta
+	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä½œæˆå‡¦ç† */	// 2006.03.23 fon
+	LRESULT PopupWinList( bool bMousePos );	/*!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§ãƒãƒƒãƒ—ã‚¢ãƒƒãƒ—è¡¨ç¤ºå‡¦ç† */	// 2006.03.23 fon	// 2007.02.28 ryoji ãƒ•ãƒ«ãƒ‘ã‚¹æŒ‡å®šã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å‰Šé™¤
+	void RegisterPluginCommand();			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã‚’ã‚¨ãƒ‡ã‚£ã‚¿ã«ç™»éŒ²ã™ã‚‹
+	void RegisterPluginCommand( int id );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã‚’ã‚¨ãƒ‡ã‚£ã‚¿ã«ç™»éŒ²ã™ã‚‹
+	void RegisterPluginCommand( CPlug* id );	//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰ã‚’ã‚¨ãƒ‡ã‚£ã‚¿ã«ç™»éŒ²ã™ã‚‹
 
-	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag );				// •\¦‚Ì“®“I‘I‘ğ	2010/5/19 Uchi
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           ®Œ`                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void LayoutMainMenu( void );		// ƒƒCƒ“ƒƒjƒ…[					// 2010/5/16 Uchi
-	void LayoutToolBar( void );			/* ƒc[ƒ‹ƒo[‚Ì”z’uˆ— */			// 2006.12.19 ryoji
-	void LayoutFuncKey( void );			/* ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚Ì”z’uˆ— */	// 2006.12.19 ryoji
-	void LayoutTabBar( void );			/* ƒ^ƒuƒo[‚Ì”z’uˆ— */			// 2006.12.19 ryoji
-	void LayoutStatusBar( void );		/* ƒXƒe[ƒ^ƒXƒo[‚Ì”z’uˆ— */		// 2006.12.19 ryoji
-	void LayoutMiniMap();				// ƒ~ƒjƒ}ƒbƒv‚Ì”z’uˆ—
-	void EndLayoutBars( BOOL bAdjust = TRUE );	/* ƒo[‚Ì”z’uI—¹ˆ— */	// 2006.12.19 ryoji
-
+	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag );				// è¡¨ç¤ºã®å‹•çš„é¸æŠ	2010/5/19 Uchi
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           İ’è                              //
+	//                           æ•´å½¢                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void PrintPreviewModeONOFF( void );	/* ˆóüƒvƒŒƒrƒ…[ƒ‚[ƒh‚ÌƒIƒ“/ƒIƒt */
+	void LayoutMainMenu( void );		// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼					// 2010/5/16 Uchi
+	void LayoutToolBar( void );			/* ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã®é…ç½®å‡¦ç† */			// 2006.12.19 ryoji
+	void LayoutFuncKey( void );			/* ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã®é…ç½®å‡¦ç† */	// 2006.12.19 ryoji
+	void LayoutTabBar( void );			/* ã‚¿ãƒ–ãƒãƒ¼ã®é…ç½®å‡¦ç† */			// 2006.12.19 ryoji
+	void LayoutStatusBar( void );		/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®é…ç½®å‡¦ç† */		// 2006.12.19 ryoji
+	void LayoutMiniMap();				// ãƒŸãƒ‹ãƒãƒƒãƒ—ã®é…ç½®å‡¦ç†
+	void EndLayoutBars( BOOL bAdjust = TRUE );	/* ãƒãƒ¼ã®é…ç½®çµ‚äº†å‡¦ç† */	// 2006.12.19 ryoji
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           è¨­å®š                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	void PrintPreviewModeONOFF( void );	/* å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã®ã‚ªãƒ³/ã‚ªãƒ• */
 	
-	//ƒAƒCƒRƒ“
+	//ã‚¢ã‚¤ã‚³ãƒ³
 	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
-	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ƒzƒC[ƒ‹‘€ì‚É‚æ‚éƒy[ƒWƒXƒNƒ[ƒ‹—L–³‚ğİ’è‚·‚éiTRUE=‚ ‚è, FALSE=‚È‚µj	// 2009.01.17 nasukoji
-	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ƒzƒC[ƒ‹‘€ì‚É‚æ‚é‰¡ƒXƒNƒ[ƒ‹—L–³‚ğİ’è‚·‚éiTRUE=‚ ‚è, FALSE=‚È‚µj	// 2009.01.17 nasukoji
-	void ClearMouseState( void );		// 2009.01.17 nasukoji	ƒ}ƒEƒX‚Ìó‘Ô‚ğƒNƒŠƒA‚·‚éiƒzƒC[ƒ‹ƒXƒNƒ[ƒ‹—L–³ó‘Ô‚ğƒNƒŠƒAj
+	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ç„¡ã‚’è¨­å®šã™ã‚‹ï¼ˆTRUE=ã‚ã‚Š, FALSE=ãªã—ï¼‰	// 2009.01.17 nasukoji
+	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ç„¡ã‚’è¨­å®šã™ã‚‹ï¼ˆTRUE=ã‚ã‚Š, FALSE=ãªã—ï¼‰	// 2009.01.17 nasukoji
+	void ClearMouseState( void );		// 2009.01.17 nasukoji	ãƒã‚¦ã‚¹ã®çŠ¶æ…‹ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹ï¼ˆãƒ›ã‚¤ãƒ¼ãƒ«ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ç„¡çŠ¶æ…‹ã‚’ã‚¯ãƒªã‚¢ï¼‰
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           î•ñ                              //
+	//                           æƒ…å ±                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! ©ƒAƒvƒŠ‚ªƒAƒNƒeƒBƒu‚©‚Ç‚¤‚©	// 2007.03.08 ryoji
+	//! è‡ªã‚¢ãƒ—ãƒªãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‹ã©ã†ã‹	// 2007.03.08 ryoji
 	bool IsActiveApp() const { return m_bIsActiveApp; }
 
-	//!ƒc[ƒ‹ƒ`ƒbƒv‚ÌƒeƒLƒXƒg‚ğæ“¾B2007.09.08 kobake ’Ç‰Á
+	//!ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’å–å¾—ã€‚2007.09.08 kobake è¿½åŠ 
 	void GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const;
 
-	//!ˆóüƒvƒŒƒrƒ…[’†‚©‚Ç‚¤‚©
+	//!å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ä¸­ã‹ã©ã†ã‹
 	bool IsInPreviewMode()
 	{
 		return m_pPrintPreview!=NULL;
 	}
 
-	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; }		// ƒzƒC[ƒ‹‘€ì‚É‚æ‚éƒy[ƒWƒXƒNƒ[ƒ‹—L–³	// 2009.01.17 nasukoji
-	BOOL IsHScrollByWheel() const { return m_bHorizontalScrollByWheel; }	// ƒzƒC[ƒ‹‘€ì‚É‚æ‚é‰¡ƒXƒNƒ[ƒ‹—L–³		// 2009.01.17 nasukoji
+	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; }		// ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ç„¡	// 2009.01.17 nasukoji
+	BOOL IsHScrollByWheel() const { return m_bHorizontalScrollByWheel; }	// ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ç„¡		// 2009.01.17 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           •\¦                              //
+	//                           è¡¨ç¤º                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void PrintMenubarMessage( const TCHAR* msg );
-	void SendStatusMessage( const TCHAR* msg );		//	Dec. 4, 2002 genta À‘Ì‚ğCEditView‚©‚çˆÚ“®
+	void SendStatusMessage( const TCHAR* msg );		//	Dec. 4, 2002 genta å®Ÿä½“ã‚’CEditViewã‹ã‚‰ç§»å‹•
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                      ƒEƒBƒ“ƒhƒE‘€ì                         //
+	//                      ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ“ä½œ                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void WindowTopMost( int ); // 2004.09.21 Moca
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ƒrƒ…[ŠÇ—                           //
+	//                        ãƒ“ãƒ¥ãƒ¼ç®¡ç†                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	LRESULT Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	bool CreateEditViewBySplit(int);
 	void InitAllViews();
 	void Views_RedrawAll();
 	void Views_Redraw();
-	void SetActivePane( int );	/* ƒAƒNƒeƒBƒu‚ÈƒyƒCƒ“‚ğİ’è */
-	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* ƒAƒNƒeƒBƒu‚ÈƒyƒCƒ“‚ğæ“¾ */ //2007.08.26 kobake const’Ç‰Á
-	bool SetDrawSwitchOfAllViews( bool bDraw );					/* ‚·‚×‚Ä‚ÌƒyƒCƒ“‚Ì•`‰æƒXƒCƒbƒ`‚ğİ’è‚·‚é */	// 2008.06.08 ryoji
-	void RedrawAllViews( CEditView* pcViewExclude );				/* ‚·‚×‚Ä‚ÌƒyƒCƒ“‚ğRedraw‚·‚é */
+	void SetActivePane( int );	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒšã‚¤ãƒ³ã‚’è¨­å®š */
+	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒšã‚¤ãƒ³ã‚’å–å¾— */ //2007.08.26 kobake constè¿½åŠ 
+	bool SetDrawSwitchOfAllViews( bool bDraw );					/* ã™ã¹ã¦ã®ãƒšã‚¤ãƒ³ã®æç”»ã‚¹ã‚¤ãƒƒãƒã‚’è¨­å®šã™ã‚‹ */	// 2008.06.08 ryoji
+	void RedrawAllViews( CEditView* pcViewExclude );				/* ã™ã¹ã¦ã®ãƒšã‚¤ãƒ³ã‚’Redrawã™ã‚‹ */
 	void Views_DisableSelectArea(bool bRedraw);
-	BOOL DetectWidthOfLineNumberAreaAllPane( bool bRedraw );	/* ‚·‚×‚Ä‚ÌƒyƒCƒ“‚ÅAs”Ô†•\¦‚É•K—v‚È•‚ğÄİ’è‚·‚éi•K—v‚È‚çÄ•`‰æ‚·‚éj */
-	BOOL WrapWindowWidth( int nPane );	/* ‰E’[‚ÅÜ‚è•Ô‚· */	// 2008.06.08 ryoji
-	BOOL UpdateTextWrap( void );		/* Ü‚è•Ô‚µ•û–@ŠÖ˜A‚ÌXV */	// 2008.06.10 ryoji
-	//	Aug. 14, 2005 genta TAB•‚ÆÜ‚è•Ô‚µˆÊ’u‚ÌXV
+	BOOL DetectWidthOfLineNumberAreaAllPane( bool bRedraw );	/* ã™ã¹ã¦ã®ãƒšã‚¤ãƒ³ã§ã€è¡Œç•ªå·è¡¨ç¤ºã«å¿…è¦ãªå¹…ã‚’å†è¨­å®šã™ã‚‹ï¼ˆå¿…è¦ãªã‚‰å†æç”»ã™ã‚‹ï¼‰ */
+	BOOL WrapWindowWidth( int nPane );	/* å³ç«¯ã§æŠ˜ã‚Šè¿”ã™ */	// 2008.06.08 ryoji
+	BOOL UpdateTextWrap( void );		/* æŠ˜ã‚Šè¿”ã—æ–¹æ³•é–¢é€£ã®æ›´æ–° */	// 2008.06.10 ryoji
+	//	Aug. 14, 2005 genta TABå¹…ã¨æŠ˜ã‚Šè¿”ã—ä½ç½®ã®æ›´æ–°
 	void ChangeLayoutParam( bool bShowProgress, CKetaXInt nTabSize, int nTsvMode, CKetaXInt nMaxLineKetas );
 	//	Aug. 14, 2005 genta
 	CLogicPointEx* SavePhysPosOfAllView();
 	void RestorePhysPosOfAllView( CLogicPointEx* pptPosArray );
-	// ŒİŠ·BMP‚É‚æ‚é‰æ–Êƒoƒbƒtƒ@ 2007.09.09 Moca
-	void Views_DeleteCompatibleBitmap(); //!< CEditView‚Ì‰æ–Êƒoƒbƒtƒ@‚ğíœ
+	// äº’æ›BMPã«ã‚ˆã‚‹ç”»é¢ãƒãƒƒãƒ•ã‚¡ 2007.09.09 Moca
+	void Views_DeleteCompatibleBitmap(); //!< CEditViewã®ç”»é¢ãƒãƒƒãƒ•ã‚¡ã‚’å‰Šé™¤
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ŠeíƒAƒNƒZƒT                          //
+	//                       å„ç¨®ã‚¢ã‚¯ã‚»ã‚µ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
-	//ƒrƒ…[
+	//ãƒ“ãƒ¥ãƒ¼
 	const CEditView&	GetActiveView() const { return *m_pcEditView; }
 	CEditView&			GetActiveView()       { return *m_pcEditView; }
 	const CEditView&    GetView(int n) const { return *m_pcEditViewArr[n]; }
@@ -288,9 +288,9 @@ public:
 	void				SetDragSourceView( CEditView* pcDragSourceView )	{ m_pcDragSourceView = pcDragSourceView; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         À‘••â•                            //
+	//                         å®Ÿè£…è£œåŠ©                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//by ‹S
+//by é¬¼
 protected:
 	enum EIconClickStatus{
 		icNone,
@@ -300,43 +300,43 @@ protected:
 	};
 
 protected:
-	//ƒhƒƒbƒvƒ_ƒEƒ“ƒƒjƒ…[
-	int	CreateFileDropDownMenu( HWND );	//ŠJ‚­(ƒhƒƒbƒvƒ_ƒEƒ“)	//@@@ 2002.06.15 MIK
+	//ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	int	CreateFileDropDownMenu( HWND );	//é–‹ã(ãƒ‰ãƒ­ãƒƒãƒ—ãƒ€ã‚¦ãƒ³)	//@@@ 2002.06.15 MIK
 
-	//ƒ^ƒCƒ}[
-	void Timer_ONOFF( bool ); /* XV‚ÌŠJn^’â~ 20060128 aroka */
+	//ã‚¿ã‚¤ãƒãƒ¼
+	void Timer_ONOFF( bool ); /* æ›´æ–°ã®é–‹å§‹ï¼åœæ­¢ 20060128 aroka */
 
-	// ƒƒjƒ…[
-	void CheckFreeSubMenu( HWND, HMENU, UINT );		// ƒƒjƒ…[ƒo[‚Ì–³Œø‰»‚ğŒŸ¸	2010/6/18 Uchi
-	void CheckFreeSubMenuSub( HMENU, int );			// ƒƒjƒ…[ƒo[‚Ì–³Œø‰»‚ğŒŸ¸	2010/6/18 Uchi
+	// ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+	void CheckFreeSubMenu( HWND, HMENU, UINT );		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®ç„¡åŠ¹åŒ–ã‚’æ¤œæŸ»	2010/6/18 Uchi
+	void CheckFreeSubMenuSub( HMENU, int );			// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®ç„¡åŠ¹åŒ–ã‚’æ¤œæŸ»	2010/6/18 Uchi
 
 //public:
-	//! üŠú“à‚Åm_nTimerCount‚ğƒCƒ“ƒNƒŠƒƒ“ƒg
+	//! å‘¨æœŸå†…ã§m_nTimerCountã‚’ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆ
 	void IncrementTimerCount(int nInterval)
 	{
 		m_nTimerCount++;
-		if( nInterval <= m_nTimerCount ){ // 2012.11.29 aroka ŒÄ‚Ño‚µŠÔŠu‚ÌƒoƒOC³
+		if( nInterval <= m_nTimerCount ){ // 2012.11.29 aroka å‘¼ã³å‡ºã—é–“éš”ã®ãƒã‚°ä¿®æ­£
 			m_nTimerCount = 0;
 		}
 	}
 
-	void CreateAccelTbl( void ); // ƒEƒBƒ“ƒhƒE–ˆ‚ÌƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹ì¬(Wine—p)
-	void DeleteAccelTbl( void ); // ƒEƒBƒ“ƒhƒE–ˆ‚ÌƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹”jŠü(Wine—p)
+	void CreateAccelTbl( void ); // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¯ã®ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ(Wineç”¨)
+	void DeleteAccelTbl( void ); // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¯ã®ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ç ´æ£„(Wineç”¨)
 
 public:
-	//D&Dƒtƒ‰ƒOŠÇ—
+	//D&Dãƒ•ãƒ©ã‚°ç®¡ç†
 	void SetDragPosOrg(CMyPoint ptDragPosOrg){ m_ptDragPosOrg=ptDragPosOrg; }
 	void SetDragMode(bool bDragMode){ m_bDragMode = bDragMode; }
 	bool GetDragMode() const{ return m_bDragMode; }
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
-	/* IDropTargetÀ‘• */	// 2008.06.20 ryoji
+	/* IDropTargetå®Ÿè£… */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 
-	//ƒtƒH[ƒJƒXŠÇ—
+	//ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ç®¡ç†
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
@@ -346,89 +346,89 @@ public:
 
 	void ClearViewCaretPosInfo();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        ƒƒ“ƒo•Ï”                           //
+	//                        ãƒ¡ãƒ³ãƒå¤‰æ•°                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//©ƒEƒBƒ“ƒhƒE
+	//è‡ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	HWND			m_hWnd;
 
-	//eƒEƒBƒ“ƒhƒE
+	//è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	HWND			m_hwndParent;
 
 public:
-	//qƒEƒBƒ“ƒhƒE
-	CMainToolBar	m_cToolbar;			//!< ƒc[ƒ‹ƒo[
-	CTabWnd			m_cTabWnd;			//!< ƒ^ƒuƒEƒCƒ“ƒhƒE	//@@@ 2003.05.31 MIK
-	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒo[
-	CMainStatusBar	m_cStatusBar;		//!< ƒXƒe[ƒ^ƒXƒo[
-	CPrintPreview*	m_pPrintPreview;	//!< ˆóüƒvƒŒƒrƒ…[•\¦î•ñB•K—v‚É‚È‚Á‚½‚Æ‚«‚Ì‚İƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
+	//å­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	CMainToolBar	m_cToolbar;			//!< ãƒ„ãƒ¼ãƒ«ãƒãƒ¼
+	CTabWnd			m_cTabWnd;			//!< ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦	//@@@ 2003.05.31 MIK
+	CFuncKeyWnd		m_cFuncKeyWnd;		//!< ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ãƒãƒ¼
+	CMainStatusBar	m_cStatusBar;		//!< ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼
+	CPrintPreview*	m_pPrintPreview;	//!< å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼è¡¨ç¤ºæƒ…å ±ã€‚å¿…è¦ã«ãªã£ãŸã¨ãã®ã¿ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 
-	CSplitterWnd	m_cSplitterWnd;		//!< •ªŠ„ƒtƒŒ[ƒ€
-	CEditView*		m_pcDragSourceView;	//!< ƒhƒ‰ƒbƒOŒ³‚Ìƒrƒ…[
-	CViewFont*		m_pcViewFont;		//!< ƒtƒHƒ“ƒg
-	CViewFont*		m_pcViewFontMiniMap;		//!< ƒtƒHƒ“ƒg
+	CSplitterWnd	m_cSplitterWnd;		//!< åˆ†å‰²ãƒ•ãƒ¬ãƒ¼ãƒ 
+	CEditView*		m_pcDragSourceView;	//!< ãƒ‰ãƒ©ãƒƒã‚°å…ƒã®ãƒ“ãƒ¥ãƒ¼
+	CViewFont*		m_pcViewFont;		//!< ãƒ•ã‚©ãƒ³ãƒˆ
+	CViewFont*		m_pcViewFontMiniMap;		//!< ãƒ•ã‚©ãƒ³ãƒˆ
 
-	//ƒ_ƒCƒAƒƒO’B
-	CDlgFind		m_cDlgFind;			// uŒŸõvƒ_ƒCƒAƒƒO
-	CDlgReplace		m_cDlgReplace;		// u’uŠ·vƒ_ƒCƒAƒƒO
-	CDlgJump		m_cDlgJump;			// uw’ès‚ÖƒWƒƒƒ“ƒvvƒ_ƒCƒAƒƒO
-	CDlgGrep		m_cDlgGrep;			// Grepƒ_ƒCƒAƒƒO
-	CDlgGrepReplace	m_cDlgGrepReplace;	// Grep’uŠ·ƒ_ƒCƒAƒƒO
-	CDlgFuncList	m_cDlgFuncList;		// ƒAƒEƒgƒ‰ƒCƒ“‰ğÍŒ‹‰Êƒ_ƒCƒAƒƒO
-	CHokanMgr		m_cHokanMgr;		// “ü—Í•âŠ®
-	CDlgSetCharSet	m_cDlgSetCharSet;	// u•¶šƒR[ƒhƒZƒbƒgİ’èvƒ_ƒCƒAƒƒO
+	//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°é”
+	CDlgFind		m_cDlgFind;			// ã€Œæ¤œç´¢ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CDlgReplace		m_cDlgReplace;		// ã€Œç½®æ›ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CDlgJump		m_cDlgJump;			// ã€ŒæŒ‡å®šè¡Œã¸ã‚¸ãƒ£ãƒ³ãƒ—ã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CDlgGrep		m_cDlgGrep;			// Grepãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CDlgGrepReplace	m_cDlgGrepReplace;	// Grepç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CDlgFuncList	m_cDlgFuncList;		// ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æçµæœãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+	CHokanMgr		m_cHokanMgr;		// å…¥åŠ›è£œå®Œ
+	CDlgSetCharSet	m_cDlgSetCharSet;	// ã€Œæ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè¨­å®šã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 
 private:
-	// 2010.04.10 Moca  public -> private. ‹N“®’¼Œã‚Í[0]‚Ì‚İ—LŒø 4‚Â‚Æ‚ÍŒÀ‚ç‚È‚¢‚Ì‚Å’ˆÓ
+	// 2010.04.10 Moca  public -> private. èµ·å‹•ç›´å¾Œã¯[0]ã®ã¿æœ‰åŠ¹ 4ã¤ã¨ã¯é™ã‚‰ãªã„ã®ã§æ³¨æ„
 	CEditDoc* 		m_pcEditDoc;
-	CEditView*		m_pcEditViewArr[4];	//!< ƒrƒ…[
-	CEditView*		m_pcEditView;		//!< —LŒø‚Èƒrƒ…[
-	CEditView*		m_pcEditViewMiniMap;	//!< ƒ~ƒjƒ}ƒbƒv
-	int				m_nActivePaneIndex;	//!< —LŒø‚Èƒrƒ…[‚Ìindex
-	int				m_nEditViewCount;	//!< —LŒø‚Èƒrƒ…[‚Ì”
-	const int		m_nEditViewMaxCount;//!< ƒrƒ…[‚ÌÅ‘å”=4
+	CEditView*		m_pcEditViewArr[4];	//!< ãƒ“ãƒ¥ãƒ¼
+	CEditView*		m_pcEditView;		//!< æœ‰åŠ¹ãªãƒ“ãƒ¥ãƒ¼
+	CEditView*		m_pcEditViewMiniMap;	//!< ãƒŸãƒ‹ãƒãƒƒãƒ—
+	int				m_nActivePaneIndex;	//!< æœ‰åŠ¹ãªãƒ“ãƒ¥ãƒ¼ã®index
+	int				m_nEditViewCount;	//!< æœ‰åŠ¹ãªãƒ“ãƒ¥ãƒ¼ã®æ•°
+	const int		m_nEditViewMaxCount;//!< ãƒ“ãƒ¥ãƒ¼ã®æœ€å¤§æ•°=4
 
-	//‹¤—Lƒf[ƒ^
+	//å…±æœ‰ãƒ‡ãƒ¼ã‚¿
 	DLLSHAREDATA*	m_pShareData;
 
-	//ƒwƒ‹ƒp
+	//ãƒ˜ãƒ«ãƒ‘
 	CMenuDrawer		m_cMenuDrawer;
 
-	//ƒƒbƒZ[ƒWID
+	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ID
 	UINT			m_uMSIMEReconvertMsg;
 	UINT			m_uATOKReconvertMsg;
 
-	//ó‘Ô
-	bool			m_bIsActiveApp;		//!< ©ƒAƒvƒŠ‚ªƒAƒNƒeƒBƒu‚©‚Ç‚¤‚©	// 2007.03.08 ryoji
+	//çŠ¶æ…‹
+	bool			m_bIsActiveApp;		//!< è‡ªã‚¢ãƒ—ãƒªãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‹ã©ã†ã‹	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;
-	LPTSTR			m_pszMenubarMessage; //!< ƒƒjƒ…[ƒo[‰E’[‚É•\¦‚·‚éƒƒbƒZ[ƒW
+	LPTSTR			m_pszMenubarMessage; //!< ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼å³ç«¯ã«è¡¨ç¤ºã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 public:
-	int				m_nTimerCount;		//!< OnTimer—p 2003.08.29 wmlhq
-	CLogicPointEx*	m_posSaveAry;		//!< ƒtƒHƒ“ƒg•ÏX‘O‚ÌÀ•W
+	int				m_nTimerCount;		//!< OnTimerç”¨ 2003.08.29 wmlhq
+	CLogicPointEx*	m_posSaveAry;		//!< ãƒ•ã‚©ãƒ³ãƒˆå¤‰æ›´å‰ã®åº§æ¨™
 private:
-	int				m_nCurrentFocus;	//!< Œ»İ‚ÌƒtƒH[ƒJƒXî•ñ
-	int				m_nWinSizeType;		//!< ƒTƒCƒY•ÏX‚Ìƒ^ƒCƒvBSIZE_MAXIMIZED, SIZE_MINIMIZED “™B
-	BOOL			m_bPageScrollByWheel;		//!< ƒzƒC[ƒ‹‘€ì‚É‚æ‚éƒy[ƒWƒXƒNƒ[ƒ‹‚ ‚è	// 2009.01.17 nasukoji
-	BOOL			m_bHorizontalScrollByWheel;	//!< ƒzƒC[ƒ‹‘€ì‚É‚æ‚é‰¡ƒXƒNƒ[ƒ‹‚ ‚è		// 2009.01.17 nasukoji
-	HACCEL			m_hAccelWine;		//!< ƒEƒBƒ“ƒhƒE–ˆ‚ÌƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹‚Ìƒnƒ“ƒhƒ‹(Wine—p)	// 2009.08.15 nasukoji
-	HACCEL			m_hAccel;			//!< ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹(‹¤—L or ƒEƒBƒ“ƒhƒE–ˆ)
+	int				m_nCurrentFocus;	//!< ç¾åœ¨ã®ãƒ•ã‚©ãƒ¼ã‚«ã‚¹æƒ…å ±
+	int				m_nWinSizeType;		//!< ã‚µã‚¤ã‚ºå¤‰æ›´ã®ã‚¿ã‚¤ãƒ—ã€‚SIZE_MAXIMIZED, SIZE_MINIMIZED ç­‰ã€‚
+	BOOL			m_bPageScrollByWheel;		//!< ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹ãƒšãƒ¼ã‚¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚ã‚Š	// 2009.01.17 nasukoji
+	BOOL			m_bHorizontalScrollByWheel;	//!< ãƒ›ã‚¤ãƒ¼ãƒ«æ“ä½œã«ã‚ˆã‚‹æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚ã‚Š		// 2009.01.17 nasukoji
+	HACCEL			m_hAccelWine;		//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¯ã®ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ«(Wineç”¨)	// 2009.08.15 nasukoji
+	HACCEL			m_hAccel;			//!< ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«(å…±æœ‰ or ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¯)
 
-	//ƒtƒHƒ“ƒgEƒCƒ[ƒW
-	HFONT			m_hFontCaretPosInfo;		//!< ƒLƒƒƒŒƒbƒg‚ÌsŒ…ˆÊ’u•\¦—pƒtƒHƒ“ƒg
-	int				m_nCaretPosInfoCharWidth;	//!< ƒLƒƒƒŒƒbƒg‚ÌsŒ…ˆÊ’u•\¦—pƒtƒHƒ“ƒg‚Ì•
-	int				m_nCaretPosInfoCharHeight;	//!< ƒLƒƒƒŒƒbƒg‚ÌsŒ…ˆÊ’u•\¦—pƒtƒHƒ“ƒg‚Ì‚‚³
+	//ãƒ•ã‚©ãƒ³ãƒˆãƒ»ã‚¤ãƒ¡ãƒ¼ã‚¸
+	HFONT			m_hFontCaretPosInfo;		//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡Œæ¡ä½ç½®è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆ
+	int				m_nCaretPosInfoCharWidth;	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡Œæ¡ä½ç½®è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆã®å¹…
+	int				m_nCaretPosInfoCharHeight;	//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆã®è¡Œæ¡ä½ç½®è¡¨ç¤ºç”¨ãƒ•ã‚©ãƒ³ãƒˆã®é«˜ã•
 
-	//D&Dƒtƒ‰ƒO
+	//D&Dãƒ•ãƒ©ã‚°
 	bool			m_bDragMode;
 	CMyPoint		m_ptDragPosOrg;
 	CDropTarget*	m_pcDropTarget;
 
-	//‚»‚Ì‘¼ƒtƒ‰ƒO
-	BOOL				m_bUIPI;		// ƒGƒfƒBƒ^|ƒgƒŒƒCŠÔ‚Å‚ÌUI“ÁŒ •ª—£Šm”F—pƒtƒ‰ƒO	// 2007.06.07 ryoji
+	//ãã®ä»–ãƒ•ãƒ©ã‚°
+	BOOL				m_bUIPI;		// ã‚¨ãƒ‡ã‚£ã‚¿ï¼ãƒˆãƒ¬ã‚¤é–“ã§ã®UIç‰¹æ¨©åˆ†é›¢ç¢ºèªç”¨ãƒ•ãƒ©ã‚°	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
 
 public:
-	ESelectCountMode	m_nSelectCountMode; // ‘I‘ğ•¶šƒJƒEƒ“ƒg•û–@
+	ESelectCountMode	m_nSelectCountMode; // é¸æŠæ–‡å­—ã‚«ã‚¦ãƒ³ãƒˆæ–¹æ³•
 
 };
 

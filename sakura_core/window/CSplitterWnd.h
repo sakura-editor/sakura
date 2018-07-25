@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •ªŠ„üƒEƒBƒ“ƒhƒEƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief åˆ†å‰²ç·šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date 1998/07/07 V‹Kì¬
+	@date 1998/07/07 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -19,17 +19,17 @@
 struct DLLSHAREDATA;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 
 #define MAXCOUNTOFVIEW	4
 
 /*!
-	@brief •ªŠ„üƒEƒBƒ“ƒhƒEƒNƒ‰ƒX
+	@brief åˆ†å‰²ç·šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹
 	
-	‚S•ªŠ„ƒEƒBƒ“ƒhƒE‚ÌŠÇ—‚Æ•ªŠ„ü‚Ì•`‰æ‚ğs‚¤B
+	ï¼”åˆ†å‰²ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç®¡ç†ã¨åˆ†å‰²ç·šã®æç”»ã‚’è¡Œã†ã€‚
 	
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 class CSplitterWnd : public CWnd
 {
@@ -45,50 +45,50 @@ private: // 2002/2/3 aroka
 	*/
 	DLLSHAREDATA*	m_pShareData;
 	void*			m_pcEditWnd;
-	int				m_nAllSplitRows;		/* •ªŠ„s” */
-	int				m_nAllSplitCols;		/* •ªŠ„Œ…” */
-	int				m_nVSplitPos;			/* ‚’¼•ªŠ„ˆÊ’u */
-	int				m_nHSplitPos;			/* …•½•ªŠ„ˆÊ’u */
-	HWND			m_ChildWndArr[MAXCOUNTOFVIEW];		/* qƒEƒBƒ“ƒhƒE”z—ñ */
-	int				m_nChildWndCount;		/*!< —LŒø‚ÈqƒEƒBƒ“ƒhƒE”z—ñ‚Ì” */
-	HCURSOR			m_hcurOld;				/* ‚à‚Æ‚Ìƒ}ƒEƒXƒJ[ƒ\ƒ‹ */
-	int				m_bDragging;			/* •ªŠ„ƒo[‚ğƒhƒ‰ƒbƒO’†‚© */
-	int				m_nDragPosX;			/* ƒhƒ‰ƒbƒOˆÊ’u‚w */
-	int				m_nDragPosY;			/* ƒhƒ‰ƒbƒOˆÊ’u‚x */
-	int				m_nActivePane;			/* ƒAƒNƒeƒBƒu‚ÈƒyƒCƒ“ */
+	int				m_nAllSplitRows;		/* åˆ†å‰²è¡Œæ•° */
+	int				m_nAllSplitCols;		/* åˆ†å‰²æ¡æ•° */
+	int				m_nVSplitPos;			/* å‚ç›´åˆ†å‰²ä½ç½® */
+	int				m_nHSplitPos;			/* æ°´å¹³åˆ†å‰²ä½ç½® */
+	HWND			m_ChildWndArr[MAXCOUNTOFVIEW];		/* å­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é…åˆ— */
+	int				m_nChildWndCount;		/*!< æœ‰åŠ¹ãªå­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é…åˆ—ã®æ•° */
+	HCURSOR			m_hcurOld;				/* ã‚‚ã¨ã®ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ« */
+	int				m_bDragging;			/* åˆ†å‰²ãƒãƒ¼ã‚’ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã‹ */
+	int				m_nDragPosX;			/* ãƒ‰ãƒ©ãƒƒã‚°ä½ç½®ï¼¸ */
+	int				m_nDragPosY;			/* ãƒ‰ãƒ©ãƒƒã‚°ä½ç½®ï¼¹ */
+	int				m_nActivePane;			/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒšã‚¤ãƒ³ */
 public: // 2002/2/3 aroka
-	HWND Create( HINSTANCE, HWND, void* pCEditWnd );	/* ‰Šú‰» */
-	void SetChildWndArr( HWND* );	/* qƒEƒBƒ“ƒhƒE‚Ìİ’è */
-	void DoSplit( int, int );	/* ƒEƒBƒ“ƒhƒE‚Ì•ªŠ„ */
-	void SetActivePane( int );	/* ƒAƒNƒeƒBƒuƒyƒCƒ“‚Ìİ’è */
-	int GetPrevPane( void );	/* ‘O‚ÌƒyƒCƒ“‚ğ•Ô‚· */
-	int GetNextPane( void );	/* Ÿ‚ÌƒyƒCƒ“‚ğ•Ô‚· */
-	int GetFirstPane( void );	/* Å‰‚ÌƒyƒCƒ“‚ğ•Ô‚· */
-	int GetLastPane( void );	/* ÅŒã‚ÌƒyƒCƒ“‚ğ•Ô‚· */
+	HWND Create( HINSTANCE, HWND, void* pCEditWnd );	/* åˆæœŸåŒ– */
+	void SetChildWndArr( HWND* );	/* å­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¨­å®š */
+	void DoSplit( int, int );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åˆ†å‰² */
+	void SetActivePane( int );	/* ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãƒšã‚¤ãƒ³ã®è¨­å®š */
+	int GetPrevPane( void );	/* å‰ã®ãƒšã‚¤ãƒ³ã‚’è¿”ã™ */
+	int GetNextPane( void );	/* æ¬¡ã®ãƒšã‚¤ãƒ³ã‚’è¿”ã™ */
+	int GetFirstPane( void );	/* æœ€åˆã®ãƒšã‚¤ãƒ³ã‚’è¿”ã™ */
+	int GetLastPane( void );	/* æœ€å¾Œã®ãƒšã‚¤ãƒ³ã‚’è¿”ã™ */
 
-	void VSplitOnOff( void );	/* c•ªŠ„‚n‚m^‚n‚e‚e */
-	void HSplitOnOff( void );	/* ‰¡•ªŠ„‚n‚m^‚n‚e‚e */
-	void VHSplitOnOff( void );	/* c‰¡•ªŠ„‚n‚m^‚n‚e‚e */
-//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ƒ_ƒCƒAƒƒO‚ÌƒƒbƒZ[ƒWˆ— */
+	void VSplitOnOff( void );	/* ç¸¦åˆ†å‰²ï¼¯ï¼®ï¼ï¼¯ï¼¦ï¼¦ */
+	void HSplitOnOff( void );	/* æ¨ªåˆ†å‰²ï¼¯ï¼®ï¼ï¼¯ï¼¦ï¼¦ */
+	void VHSplitOnOff( void );	/* ç¸¦æ¨ªåˆ†å‰²ï¼¯ï¼®ï¼ï¼¯ï¼¦ï¼¦ */
+//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† */
 	int GetAllSplitRows(){ return m_nAllSplitRows;} // 2002/2/3 aroka
 	int GetAllSplitCols(){ return m_nAllSplitCols;} // 2002/2/3 aroka
 protected:
-	/* ‰¼‘zŠÖ” */
-	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“’è‹`‚ÌƒƒbƒZ[ƒW(WM_APP <= msg <= 0xBFFF) */
+	/* ä»®æƒ³é–¢æ•° */
+	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å®šç¾©ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(WM_APP <= msg <= 0xBFFF) */
 
-	/* ‰¼‘zŠÖ” ƒƒbƒZ[ƒWˆ— Ú‚µ‚­‚ÍÀ‘•‚ğQÆ */
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );	/* ƒEƒBƒ“ƒhƒEƒTƒCƒY‚Ì•ÏXˆ— */
-	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* •`‰æˆ— */
-	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM ); /* ƒ}ƒEƒXˆÚ“®‚Ìˆ— */
-	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/* ƒ}ƒEƒX¶ƒ{ƒ^ƒ“‰Ÿ‰º‚Ìˆ— */
-	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/* ƒ}ƒEƒX¶ƒ{ƒ^ƒ“‰ğ•ú‚Ìˆ— */
-	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/* ƒ}ƒEƒX¶ƒ{ƒ^ƒ“ƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Ìˆ— */
+	/* ä»®æƒ³é–¢æ•° ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç† è©³ã—ãã¯å®Ÿè£…ã‚’å‚ç…§ */
+	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );	/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã®å¤‰æ›´å‡¦ç† */
+	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* æç”»å‡¦ç† */
+	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM ); /* ãƒã‚¦ã‚¹ç§»å‹•æ™‚ã®å‡¦ç† */
+	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/* ãƒã‚¦ã‚¹å·¦ãƒœã‚¿ãƒ³æŠ¼ä¸‹æ™‚ã®å‡¦ç† */
+	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/* ãƒã‚¦ã‚¹å·¦ãƒœã‚¿ãƒ³è§£æ”¾æ™‚ã®å‡¦ç† */
+	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/* ãƒã‚¦ã‚¹å·¦ãƒœã‚¿ãƒ³ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯æ™‚ã®å‡¦ç† */
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	void DrawFrame( HDC , RECT* );	/* •ªŠ„ƒtƒŒ[ƒ€•`‰æ */
-	int HitTestSplitter( int , int );	/* •ªŠ„ƒo[‚Ö‚ÌƒqƒbƒgƒeƒXƒg */
-	void DrawSplitter( int , int , int );	/* •ªŠ„ƒgƒ‰ƒbƒJ[‚Ì•\¦ */
+	void DrawFrame( HDC , RECT* );	/* åˆ†å‰²ãƒ•ãƒ¬ãƒ¼ãƒ æç”» */
+	int HitTestSplitter( int , int );	/* åˆ†å‰²ãƒãƒ¼ã¸ã®ãƒ’ãƒƒãƒˆãƒ†ã‚¹ãƒˆ */
+	void DrawSplitter( int , int , int );	/* åˆ†å‰²ãƒˆãƒ©ãƒƒã‚«ãƒ¼ã®è¡¨ç¤º */
 
 };
 

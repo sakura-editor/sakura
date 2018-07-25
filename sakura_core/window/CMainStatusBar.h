@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -30,15 +30,15 @@ class CEditWnd;
 
 class CMainStatusBar : public CDocListenerEx{
 public:
-	//ì¬E”jŠü
+	//ä½œæˆãƒ»ç ´æ£„
 	CMainStatusBar(CEditWnd* pOwner);
-	void CreateStatusBar();		// ƒXƒe[ƒ^ƒXƒo[ì¬
-	void DestroyStatusBar();		/* ƒXƒe[ƒ^ƒXƒo[”jŠü */
-	void SendStatusMessage2( const TCHAR* msg );	//	Jul. 9, 2005 genta ƒƒjƒ…[ƒo[‰E’[‚É‚Ío‚µ‚½‚­‚È‚¢’·‚ß‚ÌƒƒbƒZ[ƒW‚ğo‚·
-	/*!	SendStatusMessage2()‚ªŒø‚«–Ú‚ª‚ ‚é‚©‚ğ—\‚ßƒ`ƒFƒbƒN
+	void CreateStatusBar();		// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ä½œæˆ
+	void DestroyStatusBar();		/* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ç ´æ£„ */
+	void SendStatusMessage2( const TCHAR* msg );	//	Jul. 9, 2005 genta ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼å³ç«¯ã«ã¯å‡ºã—ãŸããªã„é•·ã‚ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºã™
+	/*!	SendStatusMessage2()ãŒåŠ¹ãç›®ãŒã‚ã‚‹ã‹ã‚’äºˆã‚ãƒã‚§ãƒƒã‚¯
 		@date 2005.07.09 genta
-		@note ‚à‚µSendStatusMessage2()‚ÅƒXƒe[ƒ^ƒXƒo[•\¦ˆÈŠO‚Ìˆ—‚ğ’Ç‰Á
-		‚·‚éê‡‚É‚Í‚±‚±‚ğ•ÏX‚µ‚È‚¢‚ÆV‚µ‚¢êŠ‚Ö‚Ìo—Í‚ªs‚í‚ê‚È‚¢D
+		@note ã‚‚ã—SendStatusMessage2()ã§ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼è¡¨ç¤ºä»¥å¤–ã®å‡¦ç†ã‚’è¿½åŠ 
+		ã™ã‚‹å ´åˆã«ã¯ã“ã“ã‚’å¤‰æ›´ã—ãªã„ã¨æ–°ã—ã„å ´æ‰€ã¸ã®å‡ºåŠ›ãŒè¡Œã‚ã‚Œãªã„ï¼
 		
 		@sa SendStatusMessage2
 	*/
@@ -47,11 +47,11 @@ public:
 		return NULL != m_hwndStatusBar;
 	}
 
-	//æ“¾
+	//å–å¾—
 	HWND GetStatusHwnd() const{ return m_hwndStatusBar; }
 	HWND GetProgressHwnd() const{ return m_hwndProgressBar; }
 
-	//İ’è
+	//è¨­å®š
 	void SetStatusText(int nIndex, int nOption, const TCHAR* pszText);
 private:
 	CEditWnd*	m_pOwner;
