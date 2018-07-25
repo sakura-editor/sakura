@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO—pƒtƒ@ƒCƒ‹Šg’£qŠÇ—
+ï»¿/*!	@file
+	@brief ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ç”¨ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­ç®¡ç†
 
 	@author MIK
 	@date 2003.5.12
@@ -41,9 +41,9 @@ CFileExt::CFileExt()
 	m_vstrFilter.resize( 1 );
 	m_vstrFilter[0] = _T('\0');
 
-//	//ƒeƒLƒXƒgƒGƒfƒBƒ^‚Æ‚µ‚ÄAŠù’è‚ÅƒŠƒXƒg‚ÉÚ‚Á‚Ä‚Ù‚µ‚¢Šg’£q
-//	AppendExt( "‚·‚×‚Ä‚Ìƒtƒ@ƒCƒ‹", "*" );
-//	AppendExt( "ƒeƒLƒXƒgƒtƒ@ƒCƒ‹", "txt" );
+//	//ãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒ‡ã‚£ã‚¿ã¨ã—ã¦ã€æ—¢å®šã§ãƒªã‚¹ãƒˆã«è¼‰ã£ã¦ã»ã—ã„æ‹¡å¼µå­
+//	AppendExt( "ã™ã¹ã¦ã®ãƒ•ã‚¡ã‚¤ãƒ«", "*" );
+//	AppendExt( "ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«", "txt" );
 }
 
 CFileExt::~CFileExt()
@@ -106,7 +106,7 @@ const TCHAR *CFileExt::GetExtFilter( void )
 	int		i;
 	std::tstring work;
 
-	/* Šg’£qƒtƒBƒ‹ƒ^‚Ìì¬ */
+	/* æ‹¡å¼µå­ãƒ•ã‚£ãƒ«ã‚¿ã®ä½œæˆ */
 	m_vstrFilter.resize(0);
 
 	for( i = 0; i < m_nCount; i++ )

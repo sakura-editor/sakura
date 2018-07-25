@@ -1,8 +1,8 @@
-/*!	@file
-	@brief CDicMgrƒNƒ‰ƒX
+ï»¿/*!	@file
+	@brief CDicMgrã‚¯ãƒ©ã‚¹
 
 	@author Norio Nakatani
-	@date	1998/11/05 ì¬
+	@date	1998/11/05 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -18,7 +18,7 @@
 #include "StdAfx.h"
 #include <stdio.h>
 #include "CDicMgr.h"
-#include "mem/CMemory.h" // 2002/2/10 aroka ƒwƒbƒ_®—
+#include "mem/CMemory.h" // 2002/2/10 aroka ãƒ˜ãƒƒãƒ€æ•´ç†
 #include "debug/CRunningTimer.h"
 #include "io/CTextStream.h"
 using namespace std;
@@ -40,18 +40,18 @@ CDicMgr::~CDicMgr()
 
 
 /*!
-	ƒL[ƒ[ƒh‚ÌŒŸõ
-	Å‰‚ÉŒ©‚Â‚©‚Á‚½ƒL[ƒ[ƒh‚ÌˆÓ–¡‚ğ•Ô‚·
+	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ¤œç´¢
+	æœ€åˆã«è¦‹ã¤ã‹ã£ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ„å‘³ã‚’è¿”ã™
 
-	@date 2006.04.10 fon ŒŸõƒqƒbƒgs‚ğ•Ô‚·ˆø”pLine‚ğ’Ç‰Á
+	@date 2006.04.10 fon æ¤œç´¢ãƒ’ãƒƒãƒˆè¡Œã‚’è¿”ã™å¼•æ•°pLineã‚’è¿½åŠ 
 */
 BOOL CDicMgr::Search(
-	const wchar_t*		pszKey,				//!< ŒŸõƒL[ƒ[ƒh
-	const int			nCmpLen,			//!< ŒŸõƒL[ƒ[ƒh‚Ì’·‚³
-	CNativeW**			ppcmemKey,			//!< Œ©‚Â‚©‚Á‚½ƒL[ƒ[ƒhDŒÄ‚Ño‚µŒ³‚ÌÓ”C‚Å‰ğ•ú‚·‚éD
-	CNativeW**			ppcmemMean,			//!< Œ©‚Â‚©‚Á‚½ƒL[ƒ[ƒh‚É‘Î‰‚·‚é«‘“à—eDŒÄ‚Ño‚µŒ³‚ÌÓ”C‚Å‰ğ•ú‚·‚éD
-	const TCHAR*		pszKeyWordHelpFile,	//!< ƒL[ƒ[ƒhƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼
-	int*				pLine				//!< Œ©‚Â‚©‚Á‚½ƒL[ƒ[ƒh‚ÌƒL[ƒ[ƒhƒwƒ‹ƒvƒtƒ@ƒCƒ‹“à‚Å‚Ìs”Ô†
+	const wchar_t*		pszKey,				//!< æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	const int			nCmpLen,			//!< æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®é•·ã•
+	CNativeW**			ppcmemKey,			//!< è¦‹ã¤ã‹ã£ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼å‘¼ã³å‡ºã—å…ƒã®è²¬ä»»ã§è§£æ”¾ã™ã‚‹ï¼
+	CNativeW**			ppcmemMean,			//!< è¦‹ã¤ã‹ã£ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«å¯¾å¿œã™ã‚‹è¾æ›¸å†…å®¹ï¼å‘¼ã³å‡ºã—å…ƒã®è²¬ä»»ã§è§£æ”¾ã™ã‚‹ï¼
+	const TCHAR*		pszKeyWordHelpFile,	//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹å
+	int*				pLine				//!< è¦‹ã¤ã‹ã£ãŸã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«å†…ã§ã®è¡Œç•ªå·
 )
 {
 #ifdef _DEBUG
@@ -65,12 +65,12 @@ BOOL CDicMgr::Search(
 	const wchar_t*	pszKeySeps = L",\0";
 
 
-	/* «‘ƒtƒ@ƒCƒ‹ */
+	/* è¾æ›¸ãƒ•ã‚¡ã‚¤ãƒ« */
 	if( pszKeyWordHelpFile[0] == _T('\0') ){
 		return FALSE;
 	}
-	// 2003.06.23 Moca ‘Š‘ÎƒpƒX‚ÍÀsƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚Æ‚µ‚ÄŠJ‚­
-	// 2007.05.19 ryoji ‘Š‘ÎƒpƒX‚Íİ’èƒtƒ@ƒCƒ‹‚©‚ç‚ÌƒpƒX‚ğ—Dæ
+	// 2003.06.23 Moca ç›¸å¯¾ãƒ‘ã‚¹ã¯å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã¨ã—ã¦é–‹ã
+	// 2007.05.19 ryoji ç›¸å¯¾ãƒ‘ã‚¹ã¯è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã®ãƒ‘ã‚¹ã‚’å„ªå…ˆ
 	CTextInputStream_AbsIni in(pszKeyWordHelpFile);
 	if(!in){
 		return FALSE;
@@ -78,7 +78,7 @@ BOOL CDicMgr::Search(
 
 	wchar_t	szLine[LINEREADBUFSIZE];
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
-		//1s“Ç‚İ‚İ
+		//1è¡Œèª­ã¿è¾¼ã¿
 		{
 			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, _countof(szLine), pFile );
 			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
@@ -90,7 +90,7 @@ BOOL CDicMgr::Search(
 			*pszWork = L'\0';
 			pszWork += wcslen( pszDelimit );
 
-			/* Å‰‚Ìƒg[ƒNƒ“‚ğæ“¾‚µ‚Ü‚·B */
+			/* æœ€åˆã®ãƒˆãƒ¼ã‚¯ãƒ³ã‚’å–å¾—ã—ã¾ã™ã€‚ */
 			pszToken = wcstok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
 				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
@@ -102,10 +102,10 @@ BOOL CDicMgr::Search(
 							break;
 						}
 					}
-					//ƒL[ƒ[ƒh‚ÌƒZƒbƒg
+					//ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ã‚»ãƒƒãƒˆ
 					*ppcmemKey = new CNativeW;	// 2006.04.10 fon
 					(*ppcmemKey)->SetString( pszToken );
-					//ˆÓ–¡‚ÌƒZƒbƒg
+					//æ„å‘³ã®ã‚»ãƒƒãƒˆ
 					*ppcmemMean = new CNativeW;
 					(*ppcmemMean)->SetString( pszWork );
 
@@ -124,17 +124,17 @@ BOOL CDicMgr::Search(
 
 
 /*
-||  “ü—Í•âŠ®ƒL[ƒ[ƒh‚ÌŒŸõ
+||  å…¥åŠ›è£œå®Œã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ¤œç´¢
 ||
-||  Ew’è‚³‚ê‚½Œó•â‚ÌÅ‘å”‚ğ’´‚¦‚é‚Æˆ—‚ğ’†’f‚·‚é
-||  EŒ©‚Â‚©‚Á‚½”‚ğ•Ô‚·
+||  ãƒ»æŒ‡å®šã•ã‚ŒãŸå€™è£œã®æœ€å¤§æ•°ã‚’è¶…ãˆã‚‹ã¨å‡¦ç†ã‚’ä¸­æ–­ã™ã‚‹
+||  ãƒ»è¦‹ã¤ã‹ã£ãŸæ•°ã‚’è¿”ã™
 ||
 */
 int CDicMgr::HokanSearch(
 	const wchar_t*	pszKey,
-	bool			bHokanLoHiCase,	//!< ‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é
-	vector_ex<std::wstring>&		vKouho,	//!< [out] Œó•âƒŠƒXƒg
-	int				nMaxKouho,		//!< MaxŒó•â”(0==–³§ŒÀ)
+	bool			bHokanLoHiCase,	//!< è‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹
+	vector_ex<std::wstring>&		vKouho,	//!< [out] å€™è£œãƒªã‚¹ãƒˆ
+	int				nMaxKouho,		//!< Maxå€™è£œæ•°(0==ç„¡åˆ¶é™)
 	const TCHAR*	pszKeyWordFile
 )
 {
@@ -156,13 +156,13 @@ int CDicMgr::HokanSearch(
 			continue;
 		}
 
-		//ƒRƒƒ“ƒg–³‹
+		//ã‚³ãƒ¡ãƒ³ãƒˆç„¡è¦–
 		if( szLine[0] == L';' )continue;
 
-		//‹ós–³‹
+		//ç©ºè¡Œç„¡è¦–
 		if( szLine.length() == 0 )continue;
 
-		if( bHokanLoHiCase ){	/* ‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é */
+		if( bHokanLoHiCase ){	/* è‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹ */
 			nRet = auto_memicmp( pszKey, szLine.c_str(), nKeyLen );
 		}else{
 			nRet = auto_memcmp( pszKey, szLine.c_str(), nKeyLen );

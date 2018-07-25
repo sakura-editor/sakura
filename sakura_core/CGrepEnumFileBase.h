@@ -1,4 +1,4 @@
-/*!	@file
+ï»¿/*!	@file
 	
 	@brief GREP support library
 	
@@ -115,7 +115,7 @@ public:
 			auto_strcpy( lpPath, lpBaseFolder );
 			auto_strcpy( lpPath + baseLen, _T("\\") );
 			auto_strcpy( lpPath + baseLen + 1, vecKeys[ i ] );
-			// vecKeys[ i ] ==> "subdir\*.h" “™‚Ìê‡‚ÉŒã‚Å(ƒtƒ@ƒCƒ‹|ƒtƒHƒ‹ƒ_)–¼‚É "subdir\" ‚ð˜AŒ‹‚·‚é
+			// vecKeys[ i ] ==> "subdir\*.h" ç­‰ã®å ´åˆã«å¾Œã§(ãƒ•ã‚¡ã‚¤ãƒ«|ãƒ•ã‚©ãƒ«ãƒ€)åã« "subdir\" ã‚’é€£çµã™ã‚‹
 			const TCHAR* keyDirYen = _tcsrchr( vecKeys[ i ], _T('\\') );
 			const TCHAR* keyDirSlash = _tcsrchr( vecKeys[ i ], _T('/') );
 			const TCHAR* keyDir;
@@ -159,7 +159,7 @@ public:
 							m_vpItems.push_back( PairGrepEnumItem( lpName, w32fd.nFileSizeLow ) );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
-								// ƒtƒHƒ‹ƒ_‚ðŠÜ‚ñ‚¾ƒpƒX‚È‚çŒŸõÏ‚Ý‚Æ‚µ‚ÄœŠOŽw’è‚É’Ç‰Á‚·‚é
+								// ãƒ•ã‚©ãƒ«ãƒ€ã‚’å«ã‚“ã ãƒ‘ã‚¹ãªã‚‰æ¤œç´¢æ¸ˆã¿ã¨ã—ã¦é™¤å¤–æŒ‡å®šã«è¿½åŠ ã™ã‚‹
 								pExceptItems->m_vpItems.push_back( PairGrepEnumItem( lpFullPath, w32fd.nFileSizeLow ) );
 							}else{
 								delete [] lpFullPath;

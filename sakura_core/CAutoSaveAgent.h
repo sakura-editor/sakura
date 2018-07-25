@@ -1,5 +1,5 @@
-/*!	@file
-	@brief �t�@�C���̎����ۑ�
+﻿/*!	@file
+	@brief ファイルの自動保存
 
 	@author genta
 	@date 2000
@@ -33,39 +33,39 @@
 #include "_main/global.h"
 #include "doc/CDocListener.h"
 
-//! �����~���b�ɕϊ����邽�߂̌W��
+//! 分→ミリ秒に変換するための係数
 const int MSec2Min = 1000 * 60;
 
 /*! @class CPassiveTimer CAutoSave.h
-	���������̌o�ߎ��Ԃ��ݒ�Ԋu���߂������ǂ����𔻒肷��B
-	�p�ɂɌĂяo�����^�C�}�[�����ɕʂ̏ꏊ�ɂ���Ƃ��A��������Ԋu���L����
-	�Ԋu�̌��������v������Ȃ��p�r�ɗ��p�\�B
-	�t�@�C���̎����ۑ��Ŏg���Ă���B
+	基準時刻からの経過時間が設定間隔を過ぎたかどうかを判定する。
+	頻繁に呼び出されるタイマーが既に別の場所にあるとき、それよりも間隔が広くて
+	間隔の厳密さが要求されない用途に利用可能。
+	ファイルの自動保存で使っている。
 	@author genta
 */
 class CPassiveTimer {
 public:
 	/*!
-		�����l�͊Ԋu1msec�Ń^�C�}�[�͖����B
+		初期値は間隔1msecでタイマーは無効。
 	*/
 	CPassiveTimer() : nInterval(1), bEnabled(false){ Reset(); }
 
-	//���ԊԊu
-	void SetInterval(int m);	//!	���ԊԊu�̐ݒ�
-	int GetInterval(void) const {return nInterval / MSec2Min; }	//!< ���ԊԊu�̎擾
-	void Reset(void){ nLastTick = ::GetTickCount(); }			//!< ������̃��Z�b�g
+	//時間間隔
+	void SetInterval(int m);	//!	時間間隔の設定
+	int GetInterval(void) const {return nInterval / MSec2Min; }	//!< 時間間隔の取得
+	void Reset(void){ nLastTick = ::GetTickCount(); }			//!< 基準時刻のリセット
 
-	//�L���^����
-	void Enable(bool flag);							//!< �L���^�����̐ݒ�
-	bool IsEnabled(void) const { return bEnabled; }	//!< �L���^�����̓ǂݏo��
+	//有効／無効
+	void Enable(bool flag);							//!< 有効／無効の設定
+	bool IsEnabled(void) const { return bEnabled; }	//!< 有効／無効の読み出し
 
-	//!	�K�莞�ԂɒB�������ǂ����̔���
+	//!	規定時間に達したかどうかの判定
 	bool CheckAction(void);
 
 private:
-	DWORD	nLastTick;	//!< �Ō�Ƀ`�F�b�N�����Ƃ��̎��� (GetTickCount()�Ŏ擾��������)
-	int		nInterval;	//!< Action�Ԋu (��)
-	bool	bEnabled;	//!< �L�����ǂ���
+	DWORD	nLastTick;	//!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
+	int		nInterval;	//!< Action間隔 (分)
+	bool	bEnabled;	//!< 有効かどうか
 };
 
 
@@ -73,7 +73,7 @@ private:
 class CAutoSaveAgent : public CDocListenerEx{
 public:
 	void CheckAutoSave();
-	void ReloadAutoSaveParam();	//!< �ݒ��SharedArea����ǂݏo��
+	void ReloadAutoSaveParam();	//!< 設定をSharedAreaから読み出す
 
 private:
 	CPassiveTimer m_cPassiveTimer;

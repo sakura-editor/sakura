@@ -1,6 +1,6 @@
-//
+ï»¿//
 /*!	@file
-	@brief Œ»İs‚Ìƒ}[ƒN‚ğŠÇ—‚·‚é
+	@brief ç¾åœ¨è¡Œã®ãƒãƒ¼ã‚¯ã‚’ç®¡ç†ã™ã‚‹
 
 	@author genta
 */
@@ -37,23 +37,23 @@
 // CMarkMgr
 //-----------------------------------
 /*!
-	@brief •ÛŠÇ‚·‚éÅ‘åŒ”‚ğw’è‚·‚éB
+	@brief ä¿ç®¡ã™ã‚‹æœ€å¤§ä»¶æ•°ã‚’æŒ‡å®šã™ã‚‹ã€‚
 
-	Œ»İ‚æ‚è¬‚³‚¢’l‚ğİ’è‚µ‚½‚Æ‚«‚Í—]•ª‚È—v‘f‚Ííœ‚³‚ê‚éB
+	ç¾åœ¨ã‚ˆã‚Šå°ã•ã„å€¤ã‚’è¨­å®šã—ãŸã¨ãã¯ä½™åˆ†ãªè¦ç´ ã¯å‰Šé™¤ã•ã‚Œã‚‹ã€‚
 
-	@param max İ’è‚·‚éÅ‘åŒ”
+	@param max è¨­å®šã™ã‚‹æœ€å¤§ä»¶æ•°
 */
 void CMarkMgr::SetMax(int max)
 {
 	m_nMaxitem = max;
-	Expire();	//	w’è‚µ‚½”‚É—v‘f‚ğŒ¸‚ç‚·
+	Expire();	//	æŒ‡å®šã—ãŸæ•°ã«è¦ç´ ã‚’æ¸›ã‚‰ã™
 }
 
 /*!
-	@brief Œ»İˆÊ’u‚Ì—v‘f‚ª—LŒø‚©‚Ç‚¤‚©‚Ì”»’è
+	@brief ç¾åœ¨ä½ç½®ã®è¦ç´ ãŒæœ‰åŠ¹ã‹ã©ã†ã‹ã®åˆ¤å®š
 
-	@retval true	—LŒø
-	@retval false	–³Œø
+	@retval true	æœ‰åŠ¹
+	@retval false	ç„¡åŠ¹
 */
 bool CMarkMgr::CheckCurrent(void) const
 {
@@ -64,10 +64,10 @@ bool CMarkMgr::CheckCurrent(void) const
 }
 
 /*!
-	@brief Œ»İˆÊ’u‚Ì‘O‚É—LŒø‚È—v‘f‚ª‚ ‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+	@brief ç¾åœ¨ä½ç½®ã®å‰ã«æœ‰åŠ¹ãªè¦ç´ ãŒã‚ã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 
-	@retval true	—L‚é
-	@retval false	–³‚¢
+	@retval true	æœ‰ã‚‹
+	@retval false	ç„¡ã„
 */
 bool CMarkMgr::CheckPrev(void) const
 {
@@ -79,10 +79,10 @@ bool CMarkMgr::CheckPrev(void) const
 }
 
 /*!
-	@brief Œ»İˆÊ’u‚ÌŒã‚É—LŒø‚È—v‘f‚ª‚ ‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚é
+	@brief ç¾åœ¨ä½ç½®ã®å¾Œã«æœ‰åŠ¹ãªè¦ç´ ãŒã‚ã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
 
-	@retval true	—L‚é
-	@retval false	–³‚¢
+	@retval true	æœ‰ã‚‹
+	@retval false	ç„¡ã„
 */
 bool CMarkMgr::CheckNext(void) const
 {
@@ -94,10 +94,10 @@ bool CMarkMgr::CheckNext(void) const
 }
 
 /*!
-	@brief Œ»İˆÊ’u‚ğ‘O‚Ì—LŒø‚ÈˆÊ’u‚Ü‚Åi‚ß‚é
+	@brief ç¾åœ¨ä½ç½®ã‚’å‰ã®æœ‰åŠ¹ãªä½ç½®ã¾ã§é€²ã‚ã‚‹
 
-	@retval true	³íI—¹BŒ»İˆÊ’u‚Í1‚Â‘O‚Ì—LŒø‚È—v‘f‚ÉˆÚ“®‚µ‚½B
-	@retval false	—LŒø‚È—v‘f‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½BŒ»İˆÊ’u‚ÍˆÚ“®‚µ‚Ä‚¢‚È‚¢B
+	@retval true	æ­£å¸¸çµ‚äº†ã€‚ç¾åœ¨ä½ç½®ã¯1ã¤å‰ã®æœ‰åŠ¹ãªè¦ç´ ã«ç§»å‹•ã—ãŸã€‚
+	@retval false	æœ‰åŠ¹ãªè¦ç´ ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã€‚ç¾åœ¨ä½ç½®ã¯ç§»å‹•ã—ã¦ã„ãªã„ã€‚
 */
 bool CMarkMgr::PrevValid(void)
 {
@@ -110,10 +110,10 @@ bool CMarkMgr::PrevValid(void)
 	return false;
 }
 /*!
-	@brief Œ»İˆÊ’u‚ğŒã‚Ì—LŒø‚ÈˆÊ’u‚Ü‚Åi‚ß‚é
+	@brief ç¾åœ¨ä½ç½®ã‚’å¾Œã®æœ‰åŠ¹ãªä½ç½®ã¾ã§é€²ã‚ã‚‹
 
-	@retval true	³íI—¹BŒ»İˆÊ’u‚Í1‚ÂŒã‚Ì—LŒø‚È—v‘f‚ÉˆÚ“®‚µ‚½B
-	@retval false	—LŒø‚È—v‘f‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½BŒ»İˆÊ’u‚ÍˆÚ“®‚µ‚Ä‚¢‚È‚¢B
+	@retval true	æ­£å¸¸çµ‚äº†ã€‚ç¾åœ¨ä½ç½®ã¯1ã¤å¾Œã®æœ‰åŠ¹ãªè¦ç´ ã«ç§»å‹•ã—ãŸã€‚
+	@retval false	æœ‰åŠ¹ãªè¦ç´ ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã€‚ç¾åœ¨ä½ç½®ã¯ç§»å‹•ã—ã¦ã„ãªã„ã€‚
 */
 bool CMarkMgr::NextValid(void)
 {
@@ -128,10 +128,10 @@ bool CMarkMgr::NextValid(void)
 
 //	From Here Apr. 1, 2001 genta
 /*!
-	Œ»İ‚Ìƒf[ƒ^‚ğ‘S‚ÄÁ‹‚µAŒ»İˆÊ’u‚Ìƒ|ƒCƒ“ƒ^‚ğƒŠƒZƒbƒg‚·‚éB
+	ç¾åœ¨ã®ãƒ‡ãƒ¼ã‚¿ã‚’å…¨ã¦æ¶ˆå»ã—ã€ç¾åœ¨ä½ç½®ã®ãƒã‚¤ãƒ³ã‚¿ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹ã€‚
 
 	@par history
-	Apr. 1, 2001 genta V‹K’Ç‰Á
+	Apr. 1, 2001 genta æ–°è¦è¿½åŠ 
 */
 void CMarkMgr::Flush(void)
 {
@@ -145,30 +145,30 @@ void CMarkMgr::Flush(void)
 //-----------------------------------
 
 /*!
-	Œ»İˆÊ’u‚É—v‘f‚ğ’Ç‰Á‚·‚éDŒ»İˆÊ’u‚æ‚èŒã‚ë‚Í‘S‚Äíœ‚·‚éB
-	—v‘f”Ô†‚ª‘å‚«‚¢•û‚ªV‚µ‚¢ƒf[ƒ^B
+	ç¾åœ¨ä½ç½®ã«è¦ç´ ã‚’è¿½åŠ ã™ã‚‹ï¼ç¾åœ¨ä½ç½®ã‚ˆã‚Šå¾Œã‚ã¯å…¨ã¦å‰Šé™¤ã™ã‚‹ã€‚
+	è¦ç´ ç•ªå·ãŒå¤§ãã„æ–¹ãŒæ–°ã—ã„ãƒ‡ãƒ¼ã‚¿ã€‚
 
-	@param m ’Ç‰Á‚·‚é—v‘f
+	@param m è¿½åŠ ã™ã‚‹è¦ç´ 
 */
 void CAutoMarkMgr::Add(const CMark& m)
 {
-	//	Œ»İˆÊ’u‚ª“r’†‚Ì
+	//	ç¾åœ¨ä½ç½®ãŒé€”ä¸­ã®æ™‚
 	if( m_nCurpos < (int)m_cMarkChain.size() ){
-		//	Œ»İˆÊ’u‚Ü‚Å—v‘f‚ğíœ
+		//	ç¾åœ¨ä½ç½®ã¾ã§è¦ç´ ã‚’å‰Šé™¤
 		m_cMarkChain.erase( m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end() );
 	}
 
-	//	—v‘f‚Ì’Ç‰Á
+	//	è¦ç´ ã®è¿½åŠ 
 	m_cMarkChain.push_back(m);
 	++m_nCurpos;
 
-	//	‹K’è”‚ğ’´‚¦‚Ä‚µ‚Ü‚¤‚Æ‚«‚Ì‘Î‰
+	//	è¦å®šæ•°ã‚’è¶…ãˆã¦ã—ã¾ã†ã¨ãã®å¯¾å¿œ
 	Expire();
 }
 
 /*!
-	—v‘f”‚ªÅ‘å’l‚ğ’´‚¦‚Ä‚¢‚éê‡‚É—v‘f”‚ª”ÍˆÍ“à‚Éû‚Ü‚é‚æ‚¤A
-	ŒÃ‚¢•û(”Ô†‚Ìá‚¢•û)‚©‚çíœ‚·‚éB
+	è¦ç´ æ•°ãŒæœ€å¤§å€¤ã‚’è¶…ãˆã¦ã„ã‚‹å ´åˆã«è¦ç´ æ•°ãŒç¯„å›²å†…ã«åã¾ã‚‹ã‚ˆã†ã€
+	å¤ã„æ–¹(ç•ªå·ã®è‹¥ã„æ–¹)ã‹ã‚‰å‰Šé™¤ã™ã‚‹ã€‚
 */
 void CAutoMarkMgr::Expire(void)
 {
@@ -176,7 +176,7 @@ void CAutoMarkMgr::Expire(void)
 
 	if( range <= 0 )	return;
 
-	//	Å‘å’l‚ğ’´‚¦‚Ä‚¢‚éê‡
+	//	æœ€å¤§å€¤ã‚’è¶…ãˆã¦ã„ã‚‹å ´åˆ
 	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + range );
 	m_nCurpos -= range;
 	if( m_nCurpos < 0 )

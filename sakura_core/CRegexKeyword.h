@@ -1,8 +1,8 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief CRegexKeyword Library
 
-	³‹K•\Œ»ƒL[ƒ[ƒh‚ğˆµ‚¤B
-	BREGEXP.DLL‚ğ—˜—p‚·‚éB
+	æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ‰±ã†ã€‚
+	BREGEXP.DLLã‚’åˆ©ç”¨ã™ã‚‹ã€‚
 
 	@author MIK
 	@date Nov. 17, 2001
@@ -25,79 +25,79 @@
 
 struct STypeConfig;
 
-#define USE_PARENT	//e‚ğg‚Á‚ÄƒL[ƒ[ƒhŠi”[—Ìˆæ‚ğíŒ¸‚·‚éB
+#define USE_PARENT	//è¦ªã‚’ä½¿ã£ã¦ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ ¼ç´é ˜åŸŸã‚’å‰Šæ¸›ã™ã‚‹ã€‚
 
 
 
 
 //@@@ 2001.11.17 add start MIK
 struct RegexKeywordInfo {
-	int	m_nColorIndex;		//Fw’è”Ô†
+	int	m_nColorIndex;		//è‰²æŒ‡å®šç•ªå·
 };
 //@@@ 2001.11.17 add end MIK
 
 
-//!	³‹K•\Œ»ƒL[ƒ[ƒhŒŸõî•ñ\‘¢‘Ì
+//!	æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢æƒ…å ±æ§‹é€ ä½“
 typedef struct RegexInfo_t {
-	BREGEXP_W	*pBregexp;	//BREGEXP_W\‘¢‘Ì
+	BREGEXP_W	*pBregexp;	//BREGEXP_Wæ§‹é€ ä½“
 #ifdef USE_PARENT
 #else
-	struct RegexKeywordInfo	sRegexKey;	//ƒRƒ“ƒpƒCƒ‹ƒpƒ^[ƒ“‚ğ•Û
+	struct RegexKeywordInfo	sRegexKey;	//ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ä¿æŒ
 #endif
-	int    nStatus;		//ó‘Ô(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
-	int    nMatch;		//‚±‚ÌƒL[ƒ[ƒh‚Ìƒ}ƒbƒ`ó‘Ô(EMPTY,MATCH,NOMATCH)
-	int    nOffset;		//ƒ}ƒbƒ`‚µ‚½ˆÊ’u
-	int    nLength;		//ƒ}ƒbƒ`‚µ‚½’·‚³
-	int    nHead;		//æ“ª‚Ì‚İƒ`ƒFƒbƒN‚·‚é‚©H
-	int    nFlag;           //Fw’è‚Ìƒ`ƒFƒbƒN‚ª“ü‚Á‚Ä‚¢‚é‚©H YES=RK_EMPTY, NO=RK_NOMATCH
+	int    nStatus;		//çŠ¶æ…‹(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
+	int    nMatch;		//ã“ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ãƒãƒƒãƒçŠ¶æ…‹(EMPTY,MATCH,NOMATCH)
+	int    nOffset;		//ãƒãƒƒãƒã—ãŸä½ç½®
+	int    nLength;		//ãƒãƒƒãƒã—ãŸé•·ã•
+	int    nHead;		//å…ˆé ­ã®ã¿ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã‹ï¼Ÿ
+	int    nFlag;           //è‰²æŒ‡å®šã®ãƒã‚§ãƒƒã‚¯ãŒå…¥ã£ã¦ã„ã‚‹ã‹ï¼Ÿ YES=RK_EMPTY, NO=RK_NOMATCH
 } REGEX_INFO;
 
 
 
-//!	³‹K•\Œ»ƒL[ƒ[ƒhƒNƒ‰ƒX
+//!	æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚¯ãƒ©ã‚¹
 /*!
-	³‹K•\Œ»ƒL[ƒ[ƒh‚ğˆµ‚¤B
+	æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æ‰±ã†ã€‚
 */
 class CRegexKeyword : public CBregexp {
 public:
 	CRegexKeyword(LPCTSTR);
 	~CRegexKeyword();
 
-	//! sŒŸõŠJn
+	//! è¡Œæ¤œç´¢é–‹å§‹
 	BOOL RegexKeyLineStart( void );
-	//! sŒŸõ
+	//! è¡Œæ¤œç´¢
 	BOOL RegexIsKeyword( const CStringRef& cStr, int nPos, int *nMatchLen, int *nMatchColor );
-	//! ƒ^ƒCƒvİ’è
+	//! ã‚¿ã‚¤ãƒ—è¨­å®š
 	BOOL RegexKeySetTypes( const STypeConfig *pTypesPtr );
 
-	//! ‘®(ˆÍ‚İ)ƒ`ƒFƒbƒN
+	//! æ›¸å¼(å›²ã¿)ãƒã‚§ãƒƒã‚¯
 	static BOOL RegexKeyCheckSyntax( const wchar_t *s );
 
 	static DWORD GetNewMagicNumber();
 
 
 protected:
-	//! ƒRƒ“ƒpƒCƒ‹
+	//! ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
 	BOOL RegexKeyCompile(void);
-	//! •Ï”‰Šú‰»
+	//! å¤‰æ•°åˆæœŸåŒ–
 	BOOL RegexKeyInit( void );
 
 
 public:
-	int				m_nTypeIndex;				//!< Œ»İ‚Ìƒ^ƒCƒvİ’è”Ô†
-	bool			m_bUseRegexKeyword;			//!< ³‹K•\Œ»ƒL[ƒ[ƒh‚ğg—p‚·‚éE‚µ‚È‚¢
+	int				m_nTypeIndex;				//!< ç¾åœ¨ã®ã‚¿ã‚¤ãƒ—è¨­å®šç•ªå·
+	bool			m_bUseRegexKeyword;			//!< æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä½¿ç”¨ã™ã‚‹ãƒ»ã—ãªã„
 
 private:
-	const STypeConfig*	m_pTypes;				//!< ƒ^ƒCƒvİ’è‚Ö‚Ìƒ|ƒCƒ“ƒ^(ŒÄ‚Ño‚µ‘¤‚ª‚Á‚Ä‚¢‚é‚à‚Ì)
-	int				m_nTypeId;					//!< ƒ^ƒCƒvİ’èID
-	DWORD			m_nCompiledMagicNumber;		//!< ƒRƒ“ƒpƒCƒ‹Ï‚İ‚©H
-	int				m_nRegexKeyCount;			//!< Œ»İ‚ÌƒL[ƒ[ƒh”
-	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< ƒL[ƒ[ƒhˆê——(BREGEXPƒRƒ“ƒpƒCƒ‹‘ÎÛ)
+	const STypeConfig*	m_pTypes;				//!< ã‚¿ã‚¤ãƒ—è¨­å®šã¸ã®ãƒã‚¤ãƒ³ã‚¿(å‘¼ã³å‡ºã—å´ãŒæŒã£ã¦ã„ã‚‹ã‚‚ã®)
+	int				m_nTypeId;					//!< ã‚¿ã‚¤ãƒ—è¨­å®šID
+	DWORD			m_nCompiledMagicNumber;		//!< ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã‹ï¼Ÿ
+	int				m_nRegexKeyCount;			//!< ç¾åœ¨ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ•°
+	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ä¸€è¦§(BREGEXPã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å¯¾è±¡)
 #ifdef USE_PARENT
 #else
 	wchar_t			m_keywordList[MAX_REGEX_KEYWORDLISTLEN];
 #endif
-	wchar_t			m_szMsg[256];				//!< BREGEXP_W‚©‚ç‚ÌƒƒbƒZ[ƒW‚ğ•Û‚·‚é
+	wchar_t			m_szMsg[256];				//!< BREGEXP_Wã‹ã‚‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä¿æŒã™ã‚‹
 };
 
 #endif	//_REGEX_KEYWORD_H_

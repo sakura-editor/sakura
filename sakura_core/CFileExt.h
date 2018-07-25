@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒI[ƒvƒ“ƒ_ƒCƒAƒƒO—pƒtƒ@ƒCƒ‹Šg’£qŠÇ—
+ï»¿/*!	@file
+	@brief ã‚ªãƒ¼ãƒ—ãƒ³ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ç”¨ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­ç®¡ç†
 
 	@author MIK
 	@date 2003.5.12
@@ -46,21 +46,21 @@ public:
 	const TCHAR *GetName( int nIndex );
 	const TCHAR *GetExt( int nIndex );
 
-	//ƒ_ƒCƒAƒƒO‚É“n‚·Šg’£qƒtƒBƒ‹ƒ^‚ğæ“¾‚·‚éB(lpstrFilter‚É’¼Úw’è‰Â”\)
-	//2‰ñŒÄ‚Ño‚·‚ÆŒÃ‚¢ƒoƒbƒtƒ@‚ª–³Œø‚É‚È‚é‚±‚Æ‚ª‚ ‚é‚Ì‚É’ˆÓ
+	//ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã«æ¸¡ã™æ‹¡å¼µå­ãƒ•ã‚£ãƒ«ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚(lpstrFilterã«ç›´æ¥æŒ‡å®šå¯èƒ½)
+	//2å›å‘¼ã³å‡ºã™ã¨å¤ã„ãƒãƒƒãƒ•ã‚¡ãŒç„¡åŠ¹ã«ãªã‚‹ã“ã¨ãŒã‚ã‚‹ã®ã«æ³¨æ„
 	const TCHAR *GetExtFilter( void );
 
 	int GetCount( void ) { return m_nCount; }
 
 protected:
-	// 2014.10.30 syat ConvertTypesExtToDlgExt‚ğCDocTypeManager‚ÉˆÚ“®
+	// 2014.10.30 syat ConvertTypesExtToDlgExtã‚’CDocTypeManagerã«ç§»å‹•
 	//bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt );
 
 private:
 
 	typedef struct {
-		TCHAR	m_szName[64];		//–¼‘O(64•¶šˆÈ‰º‚Ì‚Í‚¸¨m_szTypeName)
-		TCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//Šg’£q(64•¶šˆÈ‰º‚Ì‚Í‚¸¨m_szTypeExts) ‚È‚¨ "*." ‚ğ’Ç‰Á‚·‚é‚Ì‚Å‚»‚ê‚È‚è‚É•K—v
+		TCHAR	m_szName[64];		//åå‰(64æ–‡å­—ä»¥ä¸‹ã®ã¯ãšâ†’m_szTypeName)
+		TCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//æ‹¡å¼µå­(64æ–‡å­—ä»¥ä¸‹ã®ã¯ãšâ†’m_szTypeExts) ãªãŠ "*." ã‚’è¿½åŠ ã™ã‚‹ã®ã§ãã‚Œãªã‚Šã«å¿…è¦
 	} FileExtInfoTag;
 
 	int				m_nCount;

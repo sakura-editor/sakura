@@ -1,4 +1,4 @@
-/*!	@file
+ï»¿/*!	@file
 	
 	@brief GREP support library
 	
@@ -60,8 +60,8 @@ public:
 	}
 
 	int SetFileKeys( LPCTSTR lpKeys ){
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//ƒŠƒXƒg‚Ì‹æØ‚è
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//ƒTƒuƒtƒHƒ‹ƒ_’Tõ—p
+		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//ãƒªã‚¹ãƒˆã®åŒºåˆ‡ã‚Š
+		const TCHAR* WILDCARD_ANY = _T("*.*");	//ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€æ¢ç´¢ç”¨
 		int nWildCardLen = _tcslen( lpKeys );
 		TCHAR* pWildCard = new TCHAR[ nWildCardLen + 1 ];
 		if( ! pWildCard ){
@@ -72,8 +72,8 @@ public:
 		
 		int nPos = 0;
 		TCHAR*	token;
-		while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) ){	//ƒg[ƒNƒ“–ˆ‚ÉŒJ‚è•Ô‚·B
-			//ƒtƒBƒ‹ƒ^‚ğí—Ş‚²‚Æ‚ÉU‚è•ª‚¯‚é
+		while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) ){	//ãƒˆãƒ¼ã‚¯ãƒ³æ¯ã«ç¹°ã‚Šè¿”ã™ã€‚
+			//ãƒ•ã‚£ãƒ«ã‚¿ã‚’ç¨®é¡ã”ã¨ã«æŒ¯ã‚Šåˆ†ã‘ã‚‹
 			enum KeyFilterType{
 				FILTER_SEARCH,
 				FILTER_EXCEPT_FILE,
@@ -87,7 +87,7 @@ public:
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
-			// "‚ğæ‚èœ‚¢‚Ä¶‚É‹l‚ß‚é
+			// "ã‚’å–ã‚Šé™¤ã„ã¦å·¦ã«è©°ã‚ã‚‹
 			TCHAR* p;
 			TCHAR* q;
 			p = q = token;
@@ -115,7 +115,7 @@ public:
 //					push_back_unique( m_vecSearchAbsFileKeys, token );
 //					push_back_unique( m_vecSearchFileKeys, token );
 					delete [] pWildCard;
-					return 2; // â‘ÎƒpƒXw’è‚Í•s‰Â
+					return 2; // çµ¶å¯¾ãƒ‘ã‚¹æŒ‡å®šã¯ä¸å¯
 				}
 			}else if( keyType == FILTER_EXCEPT_FILE ){
 				if( bRelPath ){
@@ -175,8 +175,8 @@ private:
 	}
 
 	/*
-		@retval 0 ³íI—¹
-		@retval 1 *\file.exe ‚È‚Ç‚ÌƒtƒHƒ‹ƒ_•”•ª‚Å‚ÌƒƒCƒ‹ƒhƒJ[ƒh‚ÍƒGƒ‰[
+		@retval 0 æ­£å¸¸çµ‚äº†
+		@retval 1 *\file.exe ãªã©ã®ãƒ•ã‚©ãƒ«ãƒ€éƒ¨åˆ†ã§ã®ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰ã¯ã‚¨ãƒ©ãƒ¼
 	*/
 	int ValidateKey( LPCTSTR key ){
 		// 

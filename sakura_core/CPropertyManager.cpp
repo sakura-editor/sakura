@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -38,47 +38,47 @@ void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuD
 	m_nPropTypePageNum = -1;
 }
 
-/*! ‹¤’Êİ’è ƒvƒƒpƒeƒBƒV[ƒg */
+/*! å…±é€šè¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc )
 {
 	bool bRet;
 	CPropCommon* pcPropCommon = new CPropCommon();
 	pcPropCommon->Create( m_hwndOwner, m_pImageList, m_pMenuDrawer );
 
-	// 2002.12.11 Moca ‚±‚Ì•”•ª‚Ås‚í‚ê‚Ä‚¢‚½ƒf[ƒ^‚ÌƒRƒs[‚ğCPropCommon‚ÉˆÚ“®EŠÖ”‰»
-	// ‹¤’Êİ’è‚Ìˆêİ’è—Ìˆæ‚ÉSharaData‚ğƒRƒs[‚·‚é
+	// 2002.12.11 Moca ã“ã®éƒ¨åˆ†ã§è¡Œã‚ã‚Œã¦ã„ãŸãƒ‡ãƒ¼ã‚¿ã®ã‚³ãƒ”ãƒ¼ã‚’CPropCommonã«ç§»å‹•ãƒ»é–¢æ•°åŒ–
+	// å…±é€šè¨­å®šã®ä¸€æ™‚è¨­å®šé ˜åŸŸã«SharaDataã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	pcPropCommon->InitData();
 
 	if( nPageNum != -1 ){
 		m_nPropComPageNum = nPageNum;
 	}
 
-	/* ƒvƒƒpƒeƒBƒV[ƒg‚Ìì¬ */
+	/* ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã®ä½œæˆ */
 	if( pcPropCommon->DoPropertySheet( m_nPropComPageNum, bTrayProc ) ){
 
-		// 2002.12.11 Moca ‚±‚Ì•”•ª‚Ås‚í‚ê‚Ä‚¢‚½ƒf[ƒ^‚ÌƒRƒs[‚ğCPropCommon‚ÉˆÚ“®EŠÖ”‰»
-		// ShareData ‚É İ’è‚ğ“K—pEƒRƒs[‚·‚é
-		// 2007.06.20 ryoji ƒOƒ‹[ƒv‰»‚É•ÏX‚ª‚ ‚Á‚½‚Æ‚«‚ÍƒOƒ‹[ƒvID‚ğƒŠƒZƒbƒg‚·‚é
+		// 2002.12.11 Moca ã“ã®éƒ¨åˆ†ã§è¡Œã‚ã‚Œã¦ã„ãŸãƒ‡ãƒ¼ã‚¿ã®ã‚³ãƒ”ãƒ¼ã‚’CPropCommonã«ç§»å‹•ãƒ»é–¢æ•°åŒ–
+		// ShareData ã« è¨­å®šã‚’é©ç”¨ãƒ»ã‚³ãƒ”ãƒ¼ã™ã‚‹
+		// 2007.06.20 ryoji ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã«å¤‰æ›´ãŒã‚ã£ãŸã¨ãã¯ã‚°ãƒ«ãƒ¼ãƒ—IDã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 		BOOL bGroup = (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 
-		// ˆóü’†‚ÉƒL[ƒ[ƒh‚ğã‘‚«‚µ‚È‚¢‚æ‚¤‚É
+		// å°åˆ·ä¸­ã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä¸Šæ›¸ãã—ãªã„ã‚ˆã†ã«
 		CShareDataLockCounter* pLock = NULL;
 		CShareDataLockCounter::WaitLock( pcPropCommon->m_hwndParent, &pLock );
 
 		pcPropCommon->ApplyData();
-		// note: Šî–{“I‚É‚±‚±‚Å“K—p‚µ‚È‚¢‚ÅAMYWM_CHANGESETTING‚©‚ç‚½‚Ç‚Á‚Ä“K—p‚µ‚Ä‚­‚¾‚³‚¢B
-		// ©ƒEƒBƒ“ƒhƒE‚É‚ÍÅŒã‚É’Ê’m‚³‚ê‚Ü‚·B‘å’ï‚ÍAOnChangeSetting ‚É‚ ‚è‚Ü‚·B
-		// ‚±‚±‚Å‚µ‚©“K—p‚µ‚È‚¢‚ÆA‚Ù‚©‚ÌƒEƒBƒ“ƒhƒE‚ª•ÏX‚³‚ê‚Ü‚¹‚ñB
+		// note: åŸºæœ¬çš„ã«ã“ã“ã§é©ç”¨ã—ãªã„ã§ã€MYWM_CHANGESETTINGã‹ã‚‰ãŸã©ã£ã¦é©ç”¨ã—ã¦ãã ã•ã„ã€‚
+		// è‡ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã¯æœ€å¾Œã«é€šçŸ¥ã•ã‚Œã¾ã™ã€‚å¤§æŠµã¯ã€OnChangeSetting ã«ã‚ã‚Šã¾ã™ã€‚
+		// ã“ã“ã§ã—ã‹é©ç”¨ã—ãªã„ã¨ã€ã»ã‹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒå¤‰æ›´ã•ã‚Œã¾ã›ã‚“ã€‚
 
 		if( bGroup != (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
 			CAppNodeManager::getInstance()->ResetGroupId();
 		}
 
-		/* ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹‚ÌÄì¬ */
+		/* ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã®å†ä½œæˆ */
 		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
-		/* İ’è•ÏX‚ğ”½‰f‚³‚¹‚é */
-		/* ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¨­å®šå¤‰æ›´ã‚’åæ˜ ã•ã›ã‚‹ */
+		/* å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
@@ -92,7 +92,7 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayPro
 		bRet = false;
 	}
 
-	// ÅŒã‚ÉƒAƒNƒZƒX‚µ‚½ƒV[ƒg‚ğŠo‚¦‚Ä‚¨‚­
+	// æœ€å¾Œã«ã‚¢ã‚¯ã‚»ã‚¹ã—ãŸã‚·ãƒ¼ãƒˆã‚’è¦šãˆã¦ãŠã
 	m_nPropComPageNum = pcPropCommon->GetPageNum();
 
 	delete pcPropCommon;
@@ -102,7 +102,7 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayPro
 
 
 
-/*! ƒ^ƒCƒv•Êİ’è ƒvƒƒpƒeƒBƒV[ƒg */
+/*! ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆ */
 bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType )
 {
 	bool bRet;
@@ -112,15 +112,15 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 	std::auto_ptr<STypeConfig> pType(new STypeConfig());
 	CDocTypeManager().GetTypeConfig(nSettingType, *pType);
 	pcPropTypes->SetTypeData(*pType);
-	// Mar. 31, 2003 genta ƒƒ‚ƒŠíŒ¸‚Ì‚½‚ßƒ|ƒCƒ“ƒ^‚É•ÏX‚µProperySheet“à‚Åæ“¾‚·‚é‚æ‚¤‚É
+	// Mar. 31, 2003 genta ãƒ¡ãƒ¢ãƒªå‰Šæ¸›ã®ãŸã‚ãƒã‚¤ãƒ³ã‚¿ã«å¤‰æ›´ã—ProperySheetå†…ã§å–å¾—ã™ã‚‹ã‚ˆã†ã«
 
 	if( nPageNum != -1 ){
 		m_nPropTypePageNum = nPageNum;
 	}
 
-	/* ƒvƒƒpƒeƒBƒV[ƒg‚Ìì¬ */
+	/* ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚·ãƒ¼ãƒˆã®ä½œæˆ */
 	if( pcPropTypes->DoPropertySheet( m_nPropTypePageNum ) ){
-		// 2013.06.10 Moca ˆóüI—¹‚Ü‚Å‘Ò‹@‚·‚é
+		// 2013.06.10 Moca å°åˆ·çµ‚äº†ã¾ã§å¾…æ©Ÿã™ã‚‹
 		CShareDataLockCounter* pLock = NULL;
 		CShareDataLockCounter::WaitLock( pcPropTypes->GetHwndParent(), &pLock );
 
@@ -128,11 +128,11 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 
 		CDocTypeManager().SetTypeConfig(nSettingType, *pType);
 
-		/* ƒAƒNƒZƒ‰ƒŒ[ƒ^ƒe[ƒuƒ‹‚ÌÄì¬ */
+		/* ã‚¢ã‚¯ã‚»ãƒ©ãƒ¬ãƒ¼ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã®å†ä½œæˆ */
 		// ::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
-		/* İ’è•ÏX‚ğ”½‰f‚³‚¹‚é */
-		/* ‘S•ÒWƒEƒBƒ“ƒhƒE‚ÖƒƒbƒZ[ƒW‚ğƒ|ƒXƒg‚·‚é */
+		/* è¨­å®šå¤‰æ›´ã‚’åæ˜ ã•ã›ã‚‹ */
+		/* å…¨ç·¨é›†ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¸ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒã‚¹ãƒˆã™ã‚‹ */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)nSettingType.GetIndex(),
@@ -154,7 +154,7 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 		bRet = false;
 	}
 
-	// ÅŒã‚ÉƒAƒNƒZƒX‚µ‚½ƒV[ƒg‚ğŠo‚¦‚Ä‚¨‚­
+	// æœ€å¾Œã«ã‚¢ã‚¯ã‚»ã‚¹ã—ãŸã‚·ãƒ¼ãƒˆã‚’è¦šãˆã¦ãŠã
 	m_nPropTypePageNum = pcPropTypes->GetPageNum();
 
 	delete pcPropTypes;

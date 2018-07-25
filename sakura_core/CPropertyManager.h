@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -35,10 +35,10 @@ public:
 	void Create( HWND, CImageListMgr*, CMenuDrawer* );
 
 	/*
-	|| ‚»‚Ì‘¼
+	|| ãã®ä»–
 	*/
-	bool OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc );	/* ‹¤’Êİ’è */
-	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* ƒ^ƒCƒv•Êİ’è */
+	bool OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc );	/* å…±é€šè¨­å®š */
+	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š */
 
 private:
 	HWND			m_hwndOwner;

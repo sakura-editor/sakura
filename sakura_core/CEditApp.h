@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -24,7 +24,7 @@
 #ifndef SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_
 #define SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_
 
-//2007.10.23 kobake ì¬
+//2007.10.23 kobake ä½œæˆ
 
 #include "util/design_template.h"
 #include "uiparts/CSoundSet.h"
@@ -40,7 +40,7 @@ class CPropertyManager;
 class CGrepAgent;
 enum EFunctionCode;
 
-//!ƒGƒfƒBƒ^•”•ªƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒNƒ‰ƒXBCNormalProcess1ŒÂ‚É‚Â‚«A1ŒÂ‘¶İB
+//!ã‚¨ãƒ‡ã‚£ã‚¿éƒ¨åˆ†ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã€‚CNormalProcess1å€‹ã«ã¤ãã€1å€‹å­˜åœ¨ã€‚
 class CEditApp : public TSingleton<CEditApp>{
 	friend class TSingleton<CEditApp>;
 	CEditApp(){}
@@ -49,11 +49,11 @@ class CEditApp : public TSingleton<CEditApp>{
 public:
 	void Create(HINSTANCE hInst, int);
 
-	//ƒ‚ƒWƒ…[ƒ‹î•ñ
-	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< ƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹æ“¾
+	//ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«æƒ…å ±
+	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«å–å¾—
 
-	//ƒEƒBƒ“ƒhƒEî•ñ
-	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ƒEƒBƒ“ƒhƒEæ“¾
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±
+	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å–å¾—
 
 	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
 	CImageListMgr&	GetIcons(){ return m_cIcons; }
@@ -64,32 +64,32 @@ public:
 public:
 	HINSTANCE			m_hInst;
 
-	//ƒhƒLƒ…ƒƒ“ƒg
+	//ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆ
 	CEditDoc*			m_pcEditDoc;
 
-	//ƒEƒBƒ“ƒhƒE
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	CEditWnd*			m_pcEditWnd;
 
-	//IOŠÇ—
+	//IOç®¡ç†
 	CLoadAgent*			m_pcLoadAgent;
 	CSaveAgent*			m_pcSaveAgent;
 	CVisualProgress*	m_pcVisualProgress;
 
-	//‚»‚Ì‘¼ƒwƒ‹ƒp
-	CMruListener*		m_pcMruListener;		//MRUŠÇ—
-	CSMacroMgr*			m_pcSMacroMgr;			//ƒ}ƒNƒŠÇ—
+	//ãã®ä»–ãƒ˜ãƒ«ãƒ‘
+	CMruListener*		m_pcMruListener;		//MRUç®¡ç†
+	CSMacroMgr*			m_pcSMacroMgr;			//ãƒã‚¯ãƒ­ç®¡ç†
 private:
-	CPropertyManager*	m_pcPropertyManager;	//ƒvƒƒpƒeƒBŠÇ—
+	CPropertyManager*	m_pcPropertyManager;	//ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ç®¡ç†
 public:
-	CGrepAgent*			m_pcGrepAgent;			//GREPƒ‚[ƒh
-	CSoundSet			m_cSoundSet;			//ƒTƒEƒ“ƒhŠÇ—
+	CGrepAgent*			m_pcGrepAgent;			//GREPãƒ¢ãƒ¼ãƒ‰
+	CSoundSet			m_cSoundSet;			//ã‚µã‚¦ãƒ³ãƒ‰ç®¡ç†
 
-	//GUIƒIƒuƒWƒFƒNƒg
+	//GUIã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	CImageListMgr		m_cIcons;					//!< Image List
 };
 
 
-//WM_QUITŒŸo—áŠO
+//WM_QUITæ¤œå‡ºä¾‹å¤–
 class CAppExitException : public std::exception{
 public:
 	const char* what() const throw(){ return "CAppExitException"; }

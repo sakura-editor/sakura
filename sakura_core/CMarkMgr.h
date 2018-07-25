@@ -1,6 +1,6 @@
-//
+ï»¿//
 /*!	@file
-	@brief Œ»İs‚Ìƒ}[ƒN‚ğŠÇ—‚·‚é
+	@brief ç¾åœ¨è¡Œã®ãƒãƒ¼ã‚¯ã‚’ç®¡ç†ã™ã‚‹
 
 	@author genta
 */
@@ -36,27 +36,27 @@
 
 
 /*!
-	sƒ}[ƒN‚ğŠÇ—‚·‚éƒNƒ‰ƒXB
-	ƒˆ‰¼‘zŠÖ”‚ğŠÜ‚Ş‚Ì‚ÅAÀÛ‚É‚ÍƒTƒuƒNƒ‰ƒX‚ğì‚Á‚Äg‚¤B
+	è¡Œãƒãƒ¼ã‚¯ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
+	ç´”ç²‹ä»®æƒ³é–¢æ•°ã‚’å«ã‚€ã®ã§ã€å®Ÿéš›ã«ã¯ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã‚’ä½œã£ã¦ä½¿ã†ã€‚
 
-	@par ’Êí‘€ìi‹¤’Êj
-	Add()‚Å’Ç‰ÁDêŠ‚Æ–¼‘O‚ğ“o˜^‚Å‚«‚éD‘€ì‚»‚Ì‚à‚Ì‚ÍƒJƒXƒ^ƒ}ƒCƒY‰Â”\D
-	[”Ô†]‚ÅŠY“–”Ô†‚Ì—v‘f‚ğæ“¾‚Å‚«‚éD
+	@par é€šå¸¸æ“ä½œï¼ˆå…±é€šï¼‰
+	Add()ã§è¿½åŠ ï¼å ´æ‰€ã¨åå‰ã‚’ç™»éŒ²ã§ãã‚‹ï¼æ“ä½œãã®ã‚‚ã®ã¯ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºå¯èƒ½ï¼
+	[ç•ªå·]ã§è©²å½“ç•ªå·ã®è¦ç´ ã‚’å–å¾—ã§ãã‚‹ï¼
 
-	@par “à•”“®ì
-	Å‘å’l‚ğ’´‚¦‚½ê‡‚Íprotected‚ÈŠÖ”‚Åˆ—‚·‚éDiƒJƒXƒ^ƒ}ƒCƒY‰Â”\j
-	Add()‚Ìˆ—‚ÍƒTƒuƒNƒ‰ƒX‚É”C‚¹‚éD
+	@par å†…éƒ¨å‹•ä½œ
+	æœ€å¤§å€¤ã‚’è¶…ãˆãŸå ´åˆã¯protectedãªé–¢æ•°ã§å‡¦ç†ã™ã‚‹ï¼ï¼ˆã‚«ã‚¹ã‚¿ãƒã‚¤ã‚ºå¯èƒ½ï¼‰
+	Add()ã®å‡¦ç†ã¯ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã«ä»»ã›ã‚‹ï¼
 
-	@par Œ»İˆÊ’u‚ÌŠÇ—
-	Œ»İˆÊ’u‚ÍManager“à‚ÅŠÇ—‚·‚éD
+	@par ç¾åœ¨ä½ç½®ã®ç®¡ç†
+	ç¾åœ¨ä½ç½®ã¯Managerå†…ã§ç®¡ç†ã™ã‚‹ï¼
 
-	íœ‘€ì‚ÍƒTƒuƒNƒ‰ƒX‚É‚Ü‚©‚¹‚é
+	å‰Šé™¤æ“ä½œã¯ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã«ã¾ã‹ã›ã‚‹
 
 */
 class CMarkMgr {
 public:
 
-	//	€–Ú‚ÌƒNƒ‰ƒX
+	//	é …ç›®ã®ã‚¯ãƒ©ã‚¹
 	class CMark {
 	public:
 		//	constructor
@@ -74,9 +74,9 @@ public:
 		CLogicPoint m_ptLogic;
 	};
 
-	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark—pFactory class
+	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMarkç”¨Factory class
 
-	//	Œ^éŒ¾
+	//	å‹å®£è¨€
 	typedef std::vector<CMark> CMarkChain;
 	typedef std::vector<CMark>::const_iterator	CMarkIterator;
 
@@ -85,30 +85,30 @@ public:
 	CMarkMgr() : m_nCurpos(0), m_nMaxitem(10){}
 	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 
-	int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	€–Ú”‚ğ•Ô‚·
-	int GetMax(void) const { return m_nMaxitem; }	//!<	Å‘å€–Ú”‚ğ•Ô‚·
-	void SetMax(int max);	//!<	Å‘å€–Ú”‚ğİ’è
+	int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	é …ç›®æ•°ã‚’è¿”ã™
+	int GetMax(void) const { return m_nMaxitem; }	//!<	æœ€å¤§é …ç›®æ•°ã‚’è¿”ã™
+	void SetMax(int max);	//!<	æœ€å¤§é …ç›®æ•°ã‚’è¨­å®š
 
-	virtual void Add(const CMark& m) = 0;	//!<	—v‘f‚Ì’Ç‰Á
+	virtual void Add(const CMark& m) = 0;	//!<	è¦ç´ ã®è¿½åŠ 
 
 	//	Apr. 1, 2001 genta
-	virtual void Flush(void);	//!<	—v‘f‚Ì‘SÁ‹
+	virtual void Flush(void);	//!<	è¦ç´ ã®å…¨æ¶ˆå»
 
-	//!	—v‘f‚Ìæ“¾
+	//!	è¦ç´ ã®å–å¾—
 	const CMark& GetCurrent(void) const { return m_cMarkChain[m_nCurpos]; }
 
-	//	—LŒø«‚ÌŠm”F
+	//	æœ‰åŠ¹æ€§ã®ç¢ºèª
 	bool  CheckCurrent(void) const;
 	bool  CheckPrev(void) const;
 	bool  CheckNext(void) const;
 
-	//	Œ»İˆÊ’u‚ÌˆÚ“®
+	//	ç¾åœ¨ä½ç½®ã®ç§»å‹•
 	bool NextValid(void);
 	bool PrevValid(void);
 
 	const CMark& operator[](int index) const { return m_cMarkChain[index]; }
 
-	//	˜A‘±æ“¾ƒCƒ“ƒ^[ƒtƒF[ƒX
+	//	é€£ç¶šå–å¾—ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
 //	CMarkIterator CurrentPos(void) const { return (CMarkIterator)m_cMarkChain.begin() + m_nCurpos; }
 //	CMarkIterator Begin(void) const { return (CMarkIterator)m_cMarkChain.begin(); }
 //	CMarkIterator End(void) const { return (CMarkIterator)m_cMarkChain.end(); }
@@ -116,26 +116,26 @@ public:
 protected:
 	virtual void Expire(void) = 0;
 
-	// CMarkFactory m_factory;	//	Factory Class (ƒ}ƒNƒ‚Å¶¬‚³‚ê‚éj
-	CMarkChain m_cMarkChain;	//	ƒ}[ƒNƒf[ƒ^–{‘Ì
-	int m_nCurpos;	//	Œ»İˆÊ’ui”Ô†j
+	// CMarkFactory m_factory;	//	Factory Class (ãƒã‚¯ãƒ­ã§ç”Ÿæˆã•ã‚Œã‚‹ï¼‰
+	CMarkChain m_cMarkChain;	//	ãƒãƒ¼ã‚¯ãƒ‡ãƒ¼ã‚¿æœ¬ä½“
+	int m_nCurpos;	//	ç¾åœ¨ä½ç½®ï¼ˆç•ªå·ï¼‰
 
-	int m_nMaxitem;	//	•ÛŠÇ‰Â”\ƒAƒCƒeƒ€‚ÌÅ‘å”
+	int m_nMaxitem;	//	ä¿ç®¡å¯èƒ½ã‚¢ã‚¤ãƒ†ãƒ ã®æœ€å¤§æ•°
 private:
-	//CMarkMgr( const CMarkMgr& );	//	Copy‹Ö~
+	//CMarkMgr( const CMarkMgr& );	//	Copyç¦æ­¢
 
 };
 
 // ----------------------------------------------------
 /*!
-	@brief ˆÚ“®—š—ğ‚ÌŠÇ—ƒNƒ‰ƒX
+	@brief ç§»å‹•å±¥æ­´ã®ç®¡ç†ã‚¯ãƒ©ã‚¹
 
-	CMarkMgr ‚ğŒp³‚µA“®ì‚ª‹K’è‚³‚ê‚Ä‚¢‚È‚¢•”•ª‚ğÀ‘•‚·‚éB
+	CMarkMgr ã‚’ç¶™æ‰¿ã—ã€å‹•ä½œãŒè¦å®šã•ã‚Œã¦ã„ãªã„éƒ¨åˆ†ã‚’å®Ÿè£…ã™ã‚‹ã€‚
 */
 class CAutoMarkMgr : public CMarkMgr{
 public:
-	virtual void Add(const CMark& m);	//!<	—v‘f‚Ì’Ç‰Á
-	virtual void Expire(void);	//!<	—v‘f”‚Ì’²®
+	virtual void Add(const CMark& m);	//!<	è¦ç´ ã®è¿½åŠ 
+	virtual void Expire(void);	//!<	è¦ç´ æ•°ã®èª¿æ•´
 };
 
 #endif

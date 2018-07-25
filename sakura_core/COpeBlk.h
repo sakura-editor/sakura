@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •ÒW‘€ì—v‘fƒuƒƒbƒN
+ï»¿/*!	@file
+	@brief ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯
 
 	@author Norio Nakatani
-	@date 1998/06/09 V‹Kì¬
+	@date 1998/06/09 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -22,40 +22,40 @@ class COpeBlk;
 
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief •ÒW‘€ì—v‘fƒuƒƒbƒN
+	@brief ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯
 	
-	COpe ‚ğ•¡”‘©‚Ë‚é‚½‚ß‚Ì‚à‚ÌBUndo, Redo‚Í‚±‚ÌƒuƒƒbƒN’PˆÊ‚Ås‚í‚ê‚éB
+	COpe ã‚’è¤‡æ•°æŸã­ã‚‹ãŸã‚ã®ã‚‚ã®ã€‚Undo, Redoã¯ã“ã®ãƒ–ãƒ­ãƒƒã‚¯å˜ä½ã§è¡Œã‚ã‚Œã‚‹ã€‚
 */
 class COpeBlk {
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	COpeBlk();
 	~COpeBlk();
 
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
-	int GetNum() const{ return (int)m_ppCOpeArr.size(); }	//!< ‘€ì‚Ì”‚ğ•Ô‚·
-	bool AppendOpe( COpe* pcOpe );							//!< ‘€ì‚Ì’Ç‰Á
-	COpe* GetOpe( int nIndex );								//!< ‘€ì‚ğ•Ô‚·
-	void AddRef() { m_refCount++; }	//!< QÆƒJƒEƒ“ƒ^‘‰Á
-	int Release() { return m_refCount > 0 ? --m_refCount : 0; }	//!< QÆƒJƒEƒ“ƒ^Œ¸­
-	int GetRefCount() const { return m_refCount; }	//!< QÆƒJƒEƒ“ƒ^æ“¾
-	int SetRefCount(int val) {  return m_refCount = val > 0? val : 0; }	//!< QÆƒJƒEƒ“ƒ^İ’è
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	int GetNum() const{ return (int)m_ppCOpeArr.size(); }	//!< æ“ä½œã®æ•°ã‚’è¿”ã™
+	bool AppendOpe( COpe* pcOpe );							//!< æ“ä½œã®è¿½åŠ 
+	COpe* GetOpe( int nIndex );								//!< æ“ä½œã‚’è¿”ã™
+	void AddRef() { m_refCount++; }	//!< å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿å¢—åŠ 
+	int Release() { return m_refCount > 0 ? --m_refCount : 0; }	//!< å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿æ¸›å°‘
+	int GetRefCount() const { return m_refCount; }	//!< å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿å–å¾—
+	int SetRefCount(int val) {  return m_refCount = val > 0? val : 0; }	//!< å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿è¨­å®š
 
-	//ƒfƒoƒbƒO
-	void DUMP();									//!< •ÒW‘€ì—v‘fƒuƒƒbƒN‚Ìƒ_ƒ“ƒv
+	//ãƒ‡ãƒãƒƒã‚°
+	void DUMP();									//!< ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒ€ãƒ³ãƒ—
 
 private:
-	//ƒƒ“ƒo•Ï”
-	std::vector<COpe*>	m_ppCOpeArr;	//!< ‘€ì‚Ì”z—ñ
+	//ãƒ¡ãƒ³ãƒå¤‰æ•°
+	std::vector<COpe*>	m_ppCOpeArr;	//!< æ“ä½œã®é…åˆ—
 
-	//QÆƒJƒEƒ“ƒ^
-	//@HandleCommand“à‚©‚çÄ‹A“I‚ÉHandleCommand‚ªŒÄ‚Î‚ê‚éê‡A
-	//  “à‘¤‚ÌHandleCommandI—¹‚ÉCOpeBlk‚ª”jŠü‚³‚ê‚ÄŒã‘±‚Ìˆ—‚É‰e‹¿‚ªo‚é‚Ì‚ğ–h‚®‚½‚ßA
-	//@QÆƒJƒEƒ“ƒ^‚ğ—p‚¢‚Äˆê”ÔŠO‘¤‚ÌHandleCommandI—¹‚Ì‚İCOpeBlk‚ğ”jŠü‚·‚éB
-	//@COpeBlk‚ğnew‚µ‚½‚Æ‚«‚ÉAddRef()‚·‚é‚Ì‚ªì–@‚¾‚ªA‚µ‚È‚­‚Ä‚àg‚¦‚éB
+	//å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿
+	//ã€€HandleCommandå†…ã‹ã‚‰å†å¸°çš„ã«HandleCommandãŒå‘¼ã°ã‚Œã‚‹å ´åˆã€
+	//  å†…å´ã®HandleCommandçµ‚äº†æ™‚ã«COpeBlkãŒç ´æ£„ã•ã‚Œã¦å¾Œç¶šã®å‡¦ç†ã«å½±éŸ¿ãŒå‡ºã‚‹ã®ã‚’é˜²ããŸã‚ã€
+	//ã€€å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã‚’ç”¨ã„ã¦ä¸€ç•ªå¤–å´ã®HandleCommandçµ‚äº†æ™‚ã®ã¿COpeBlkã‚’ç ´æ£„ã™ã‚‹ã€‚
+	//ã€€COpeBlkã‚’newã—ãŸã¨ãã«AddRef()ã™ã‚‹ã®ãŒä½œæ³•ã ãŒã€ã—ãªãã¦ã‚‚ä½¿ãˆã‚‹ã€‚
 	int m_refCount;
 };
 

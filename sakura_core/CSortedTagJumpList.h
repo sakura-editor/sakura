@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ^ƒOƒWƒƒƒ“ƒvƒŠƒXƒg
+ï»¿/*!	@file
+	@brief ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒªã‚¹ãƒˆ
 
 	@author MIK
 	@date 2005.3.31
@@ -33,9 +33,9 @@
 
 #include "util/design_template.h"
 
-#define MAX_TAG_STRING_LENGTH _MAX_PATH	//ŠÇ—‚·‚é•¶š—ñ‚ÌÅ‘å’·
+#define MAX_TAG_STRING_LENGTH _MAX_PATH	//ç®¡ç†ã™ã‚‹æ–‡å­—åˆ—ã®æœ€å¤§é•·
 
-/*!	@brief ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv—pŒŸõŒ‹‰Ê‚ğƒ\[ƒg‚µ‚Ä•Û‚·‚éD
+/*!	@brief ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ç”¨æ¤œç´¢çµæœã‚’ã‚½ãƒ¼ãƒˆã—ã¦ä¿æŒã™ã‚‹ï¼
 	@author MIK
 */
 class CSortedTagJumpList {
@@ -51,32 +51,32 @@ public:
 	bool IsOverflow( void ){ return m_bOverflow; }
 
 	typedef struct tagjump_info_t {
-		struct tagjump_info_t*	next;	//!< Ÿ‚ÌƒŠƒXƒg
-		TCHAR*	keyword;	//!< ƒL[ƒ[ƒh
-		TCHAR*	filename;	//!< ƒtƒ@ƒCƒ‹–¼
-		int		no;			//!< s”Ô†
-		TCHAR	type;		//!< í—Ş
-		TCHAR*	note;		//!< ”õl
-		int		depth;		//!< (‚³‚©‚Ì‚Ú‚é)ŠK‘w
-		int		baseDirId;	//!< ƒtƒ@ƒCƒ‹–¼‚Ìƒx[ƒXƒfƒBƒŒƒNƒgƒŠ
+		struct tagjump_info_t*	next;	//!< æ¬¡ã®ãƒªã‚¹ãƒˆ
+		TCHAR*	keyword;	//!< ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+		TCHAR*	filename;	//!< ãƒ•ã‚¡ã‚¤ãƒ«å
+		int		no;			//!< è¡Œç•ªå·
+		TCHAR	type;		//!< ç¨®é¡
+		TCHAR*	note;		//!< å‚™è€ƒ
+		int		depth;		//!< (ã•ã‹ã®ã¼ã‚‹)éšå±¤
+		int		baseDirId;	//!< ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒ™ãƒ¼ã‚¹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 	} TagJumpInfo;
 
 	TagJumpInfo* GetPtr( int index );
 
-	/*!	@brief ŠÇ—”‚ÌÅ‘å’l‚ğæ“¾‚·‚é
+	/*!	@brief ç®¡ç†æ•°ã®æœ€å¤§å€¤ã‚’å–å¾—ã™ã‚‹
 
-		@date 2005.04.22 genta Å‘å’l‚ğ‰Â•Ï‚É
+		@date 2005.04.22 genta æœ€å¤§å€¤ã‚’å¯å¤‰ã«
 	*/
 	int GetCapacity(void) const { return m_MAX_TAGJUMPLIST; }
 
 private:
-	TagJumpInfo*	m_pTagjump;	//!< ƒ^ƒOƒWƒƒƒ“ƒvî•ñ
-	std::vector<std::tstring> m_baseDirArr;	//!< ƒx[ƒXƒfƒBƒŒƒNƒgƒŠî•ñ
-	int				m_nCount;	//!< ŒÂ”
-	bool			m_bOverflow;	//!< ƒI[ƒo[ƒtƒ[
+	TagJumpInfo*	m_pTagjump;	//!< ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
+	std::vector<std::tstring> m_baseDirArr;	//!< ãƒ™ãƒ¼ã‚¹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæƒ…å ±
+	int				m_nCount;	//!< å€‹æ•°
+	bool			m_bOverflow;	//!< ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼
 	
-	//	2005.04.22 genta Å‘å’l‚ğ‰Â•Ï‚É
-	const int		m_MAX_TAGJUMPLIST;	//!< ŠÇ—‚·‚éî•ñ‚ÌÅ‘å”
+	//	2005.04.22 genta æœ€å¤§å€¤ã‚’å¯å¤‰ã«
+	const int		m_MAX_TAGJUMPLIST;	//!< ç®¡ç†ã™ã‚‹æƒ…å ±ã®æœ€å¤§æ•°
 
 	void Free( TagJumpInfo* item );
 

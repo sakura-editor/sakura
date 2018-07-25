@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •ÒW‘€ì—v‘f
+ï»¿/*!	@file
+	@brief ç·¨é›†æ“ä½œè¦ç´ 
 
 	@author Norio Nakatani
-	@date 1998/06/09 V‹Kì¬
+	@date 1998/06/09 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -16,26 +16,26 @@
 #include "mem/CMemory.h"// 2002/2/10 aroka
 
 
-// COpeƒNƒ‰ƒX\’z
+// COpeã‚¯ãƒ©ã‚¹æ§‹ç¯‰
 COpe::COpe(EOpeCode eCode)
 {
 	assert( eCode != OPE_UNKNOWN );
-	m_nOpe = eCode;					// ‘€ìí•Ê
+	m_nOpe = eCode;					// æ“ä½œç¨®åˆ¥
 
-	m_ptCaretPos_PHY_Before.Set(CLogicInt(-1),CLogicInt(-1));	//ƒJ[ƒ\ƒ‹ˆÊ’u
-	m_ptCaretPos_PHY_After.Set(CLogicInt(-1),CLogicInt(-1));	//ƒJ[ƒ\ƒ‹ˆÊ’u
+	m_ptCaretPos_PHY_Before.Set(CLogicInt(-1),CLogicInt(-1));	//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
+	m_ptCaretPos_PHY_After.Set(CLogicInt(-1),CLogicInt(-1));	//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
 
 }
 
 
 
 
-/* COpeƒNƒ‰ƒXÁ–Å */
+/* COpeã‚¯ãƒ©ã‚¹æ¶ˆæ»… */
 COpe::~COpe()
 {
 }
 
-/* •ÒW‘€ì—v‘f‚Ìƒ_ƒ“ƒv */
+/* ç·¨é›†æ“ä½œè¦ç´ ã®ãƒ€ãƒ³ãƒ— */
 void COpe::DUMP( void )
 {
 	DEBUG_TRACE( _T("\t\tm_nOpe                  = [%d]\n"), m_nOpe               );
@@ -44,7 +44,7 @@ void COpe::DUMP( void )
 	return;
 }
 
-/* •ÒW‘€ì—v‘f‚Ìƒ_ƒ“ƒv */
+/* ç·¨é›†æ“ä½œè¦ç´ ã®ãƒ€ãƒ³ãƒ— */
 void CDeleteOpe::DUMP( void )
 {
 	COpe::DUMP();
@@ -57,7 +57,7 @@ void CDeleteOpe::DUMP( void )
 	return;
 }
 
-/* •ÒW‘€ì—v‘f‚Ìƒ_ƒ“ƒv */
+/* ç·¨é›†æ“ä½œè¦ç´ ã®ãƒ€ãƒ³ãƒ— */
 void CInsertOpe::DUMP( void )
 {
 	COpe::DUMP();

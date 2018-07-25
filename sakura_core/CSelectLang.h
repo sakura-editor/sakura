@@ -1,8 +1,8 @@
-/*!	@file
-	@brief Še‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰
+ï»¿/*!	@file
+	@brief å„å›½èªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹å¯¾å¿œ
 
 	@author nasukoji
-	@date 2011.04.10	V‹Kì¬
+	@date 2011.04.10	æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 2011, nasukoji
@@ -17,23 +17,23 @@
 #include <windows.h>
 #include <vector>
 
-#define MAX_SELLANG_NAME_STR	128		// ƒƒbƒZ[ƒWƒŠƒ\[ƒX‚ÌŒ¾Œê–¼‚ÌÅ‘å•¶š—ñ’·iƒTƒCƒY‚Í“K“–j
+#define MAX_SELLANG_NAME_STR	128		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹ã®è¨€èªåã®æœ€å¤§æ–‡å­—åˆ—é•·ï¼ˆã‚µã‚¤ã‚ºã¯é©å½“ï¼‰
 
 class CSelectLang
 {
 public:
-	// ƒƒbƒZ[ƒWƒŠƒ\[ƒX—p\‘¢‘Ì
+	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹ç”¨æ§‹é€ ä½“
 	struct SSelLangInfo {
-		TCHAR szDllName[MAX_PATH];		// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL‚Ìƒtƒ@ƒCƒ‹–¼
-		TCHAR szLangName[MAX_SELLANG_NAME_STR];		// Œ¾Œê–¼
-		HINSTANCE hInstance;			// “Ç‚İ‚ñ‚¾ƒŠƒ\[ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
-		WORD wLangId;					// Œ¾ŒêID
-		BOOL bValid;					// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL‚Æ‚µ‚Ä—LŒø
+		TCHAR szDllName[MAX_PATH];		// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLã®ãƒ•ã‚¡ã‚¤ãƒ«å
+		TCHAR szLangName[MAX_SELLANG_NAME_STR];		// è¨€èªå
+		HINSTANCE hInstance;			// èª­ã¿è¾¼ã‚“ã ãƒªã‚½ãƒ¼ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
+		WORD wLangId;					// è¨€èªID
+		BOOL bValid;					// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLã¨ã—ã¦æœ‰åŠ¹
 	};
 
 protected:
-	//static LPTSTR m_szDefaultLang;					// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL–¢“Ç‚İ‚İ‚ÌƒfƒtƒHƒ‹ƒgŒ¾Œê
-	static SSelLangInfo* m_psLangInfo;				// ƒƒbƒZ[ƒWƒŠƒ\[ƒX‚Ìî•ñ
+	//static LPTSTR m_szDefaultLang;					// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLæœªèª­ã¿è¾¼ã¿æ™‚ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨€èª
+	static SSelLangInfo* m_psLangInfo;				// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹ã®æƒ…å ±
 public:
 	typedef std::vector<SSelLangInfo*> PSSelLangInfoList;
 	static PSSelLangInfoList m_psLangInfoList;
@@ -48,19 +48,19 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static HINSTANCE getLangRsrcInstance( void );			// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹‚ğ•Ô‚·
-	static LPCTSTR getDefaultLangString( void );			// ƒƒbƒZ[ƒWƒŠƒ\[ƒXDLL–¢“Ç‚İ‚İ‚ÌƒfƒtƒHƒ‹ƒgŒ¾Œêi"(Japanese)" or "(English(United States))"j
+	static HINSTANCE getLangRsrcInstance( void );			// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«ã‚’è¿”ã™
+	static LPCTSTR getDefaultLangString( void );			// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹DLLæœªèª­ã¿è¾¼ã¿æ™‚ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨€èªï¼ˆ"(Japanese)" or "(English(United States))"ï¼‰
 	static WORD getDefaultLangId(void);
 
-	static HINSTANCE InitializeLanguageEnvironment(void);		// Œ¾ŒêŠÂ‹«‚ğ‰Šú‰»‚·‚é
-	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// ƒƒbƒZ[ƒW—pƒŠƒ\[ƒXDLL‚ğƒ[ƒh‚·‚é
-	static void ChangeLang( TCHAR* pszDllName );	// Œ¾Œê‚ğ•ÏX‚·‚é
+	static HINSTANCE InitializeLanguageEnvironment(void);		// è¨€èªç’°å¢ƒã‚’åˆæœŸåŒ–ã™ã‚‹
+	static HINSTANCE LoadLangRsrcLibrary( SSelLangInfo& lang );	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç”¨ãƒªã‚½ãƒ¼ã‚¹DLLã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
+	static void ChangeLang( TCHAR* pszDllName );	// è¨€èªã‚’å¤‰æ›´ã™ã‚‹
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
-	static HINSTANCE ChangeLang( UINT nSelIndex );	// Œ¾Œê‚ğ•ÏX‚·‚é
+	static HINSTANCE ChangeLang( UINT nSelIndex );	// è¨€èªã‚’å¤‰æ›´ã™ã‚‹
 
 private:
 };
@@ -69,84 +69,84 @@ private:
 
 
 /*!
-	@brief •¶š—ñƒŠƒ\[ƒX“Ç‚İ‚İƒNƒ‰ƒX
+	@brief æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹èª­ã¿è¾¼ã¿ã‚¯ãƒ©ã‚¹
 
-	@date 2011.06.01 nasukoji	V‹Kì¬
+	@date 2011.06.01 nasukoji	æ–°è¦ä½œæˆ
 */
 
-#define LOADSTR_ADD_SIZE		256			// •¶š—ñƒŠƒ\[ƒX—pƒoƒbƒtƒ@‚Ì‰Šú‚Ü‚½‚Í’Ç‰ÁƒTƒCƒYiTCHAR’PˆÊj
+#define LOADSTR_ADD_SIZE		256			// æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹ç”¨ãƒãƒƒãƒ•ã‚¡ã®åˆæœŸã¾ãŸã¯è¿½åŠ ã‚µã‚¤ã‚ºï¼ˆTCHARå˜ä½ï¼‰
 
 class CLoadString
 {
 protected:
-	// •¶š—ñƒŠƒ\[ƒX“Ç‚İ‚İ—pƒoƒbƒtƒ@ƒNƒ‰ƒX
+	// æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹èª­ã¿è¾¼ã¿ç”¨ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒ©ã‚¹
 	class CLoadStrBuffer
 	{
 	public:
 		CLoadStrBuffer()
 		{
-			m_pszString   = m_szString;				// •Ï”“à‚É€”õ‚µ‚½ƒoƒbƒtƒ@‚ğÚ‘±
-			m_nBufferSize = _countof(m_szString);	// ”z—ñŒÂ”
+			m_pszString   = m_szString;				// å¤‰æ•°å†…ã«æº–å‚™ã—ãŸãƒãƒƒãƒ•ã‚¡ã‚’æ¥ç¶š
+			m_nBufferSize = _countof(m_szString);	// é…åˆ—å€‹æ•°
 			m_nLength     = 0;
 			m_szString[0] = _T('\0');
 		}
 
 		/*virtual*/ ~CLoadStrBuffer()
 		{
-			// ƒoƒbƒtƒ@‚ğæ“¾‚µ‚Ä‚¢‚½ê‡‚Í‰ğ•ú‚·‚éB
+			// ãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—ã—ã¦ã„ãŸå ´åˆã¯è§£æ”¾ã™ã‚‹ã€‚
 			if( m_pszString && m_pszString != m_szString ){
 				delete[] m_pszString;
 			}
 		}
 
-		/*virtual*/ LPCTSTR GetStringPtr() const { return m_pszString; }	// “Ç‚İ‚ñ‚¾•¶š—ñ‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
-		/*virtual*/ int GetBufferSize() const { return m_nBufferSize; }		// “Ç‚İ‚İƒoƒbƒtƒ@‚ÌƒTƒCƒYiTCHAR’PˆÊj‚ğ•Ô‚·
-		/*virtual*/ int GetStringLength() const { return m_nLength; }		// “Ç‚İ‚ñ‚¾•¶š”iTCHAR’PˆÊj‚ğ•Ô‚·
+		/*virtual*/ LPCTSTR GetStringPtr() const { return m_pszString; }	// èª­ã¿è¾¼ã‚“ã æ–‡å­—åˆ—ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
+		/*virtual*/ int GetBufferSize() const { return m_nBufferSize; }		// èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚ºï¼ˆTCHARå˜ä½ï¼‰ã‚’è¿”ã™
+		/*virtual*/ int GetStringLength() const { return m_nLength; }		// èª­ã¿è¾¼ã‚“ã æ–‡å­—æ•°ï¼ˆTCHARå˜ä½ï¼‰ã‚’è¿”ã™
 
-		/*virtual*/ int LoadString( UINT uid );								// •¶š—ñƒŠƒ\[ƒX‚ğ“Ç‚İ‚Şi“Ç‚İ‚İÀs•”j
+		/*virtual*/ int LoadString( UINT uid );								// æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹ã‚’èª­ã¿è¾¼ã‚€ï¼ˆèª­ã¿è¾¼ã¿å®Ÿè¡Œéƒ¨ï¼‰
 
 	protected:
-		LPTSTR m_pszString;						// •¶š—ñ“Ç‚İ‚İƒoƒbƒtƒ@‚Ìƒ|ƒCƒ“ƒ^
-		int m_nBufferSize;						// æ“¾”z—ñŒÂ”iTCHAR’PˆÊj
-		int m_nLength;							// æ“¾•¶š”iTCHAR’PˆÊj
-		TCHAR m_szString[LOADSTR_ADD_SIZE];		// •¶š—ñ“Ç‚İ‚İƒoƒbƒtƒ@iƒoƒbƒtƒ@Šg’£Œã‚Íg—p‚³‚ê‚È‚¢j
+		LPTSTR m_pszString;						// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ã®ãƒã‚¤ãƒ³ã‚¿
+		int m_nBufferSize;						// å–å¾—é…åˆ—å€‹æ•°ï¼ˆTCHARå˜ä½ï¼‰
+		int m_nLength;							// å–å¾—æ–‡å­—æ•°ï¼ˆTCHARå˜ä½ï¼‰
+		TCHAR m_szString[LOADSTR_ADD_SIZE];		// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ï¼ˆãƒãƒƒãƒ•ã‚¡æ‹¡å¼µå¾Œã¯ä½¿ç”¨ã•ã‚Œãªã„ï¼‰
 
 	private:
-		CLoadStrBuffer( const CLoadStrBuffer& );					// ƒRƒs[‹Ö~‚Æ‚·‚é
-		CLoadStrBuffer operator = ( const CLoadStrBuffer& );		// ‘ã“ü‹Ö~‚Æ‚·‚é
+		CLoadStrBuffer( const CLoadStrBuffer& );					// ã‚³ãƒ”ãƒ¼ç¦æ­¢ã¨ã™ã‚‹
+		CLoadStrBuffer operator = ( const CLoadStrBuffer& );		// ä»£å…¥ç¦æ­¢ã¨ã™ã‚‹
 	};
 
-	static CLoadStrBuffer m_acLoadStrBufferTemp[4];		// •¶š—ñ“Ç‚İ‚İƒoƒbƒtƒ@‚Ì”z—ñiCLoadString::LoadStringSt() ‚ªg—p‚·‚éj
-	static int m_nDataTempArrayIndex;					// ÅŒã‚Ég—p‚µ‚½ƒoƒbƒtƒ@‚ÌƒCƒ“ƒfƒbƒNƒXiCLoadString::LoadStringSt() ‚ªg—p‚·‚éj
-	CLoadStrBuffer m_cLoadStrBuffer;					// •¶š—ñ“Ç‚İ‚İƒoƒbƒtƒ@iCLoadString::LoadString() ‚ªg—p‚·‚éj
+	static CLoadStrBuffer m_acLoadStrBufferTemp[4];		// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ã®é…åˆ—ï¼ˆCLoadString::LoadStringSt() ãŒä½¿ç”¨ã™ã‚‹ï¼‰
+	static int m_nDataTempArrayIndex;					// æœ€å¾Œã«ä½¿ç”¨ã—ãŸãƒãƒƒãƒ•ã‚¡ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ï¼ˆCLoadString::LoadStringSt() ãŒä½¿ç”¨ã™ã‚‹ï¼‰
+	CLoadStrBuffer m_cLoadStrBuffer;					// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ï¼ˆCLoadString::LoadString() ãŒä½¿ç”¨ã™ã‚‹ï¼‰
 
 public:
 	/*
 	||  Constructors
 	*/
 	CLoadString(){}
-	CLoadString( UINT uid ){ LoadString( uid ); }		// •¶š—ñ“Ç‚İ‚İ•t‚«ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	CLoadString( UINT uid ){ LoadString( uid ); }		// æ–‡å­—åˆ—èª­ã¿è¾¼ã¿ä»˜ãã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	/*virtual*/ ~CLoadString(){}
 
 
 	/*
 	||  Attributes & Operations
 	*/
-	/*virtual*/ LPCTSTR GetStringPtr() const { return m_cLoadStrBuffer.GetStringPtr(); }	// “Ç‚İ‚ñ‚¾•¶š—ñ‚Ìƒ|ƒCƒ“ƒ^‚ğ•Ô‚·
-//	/*virtual*/ int GetBufferSize() const { return m_cLoadStrBuffer.GetBufferSize(); }		// “Ç‚İ‚İƒoƒbƒtƒ@‚ÌƒTƒCƒYiTCHAR’PˆÊj‚ğ•Ô‚·
-	/*virtual*/ int GetStringLength() const { return m_cLoadStrBuffer.GetStringLength(); }	// “Ç‚İ‚ñ‚¾•¶š”iTCHAR’PˆÊj‚ğ•Ô‚·
+	/*virtual*/ LPCTSTR GetStringPtr() const { return m_cLoadStrBuffer.GetStringPtr(); }	// èª­ã¿è¾¼ã‚“ã æ–‡å­—åˆ—ã®ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™
+//	/*virtual*/ int GetBufferSize() const { return m_cLoadStrBuffer.GetBufferSize(); }		// èª­ã¿è¾¼ã¿ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚ºï¼ˆTCHARå˜ä½ï¼‰ã‚’è¿”ã™
+	/*virtual*/ int GetStringLength() const { return m_cLoadStrBuffer.GetStringLength(); }	// èª­ã¿è¾¼ã‚“ã æ–‡å­—æ•°ï¼ˆTCHARå˜ä½ï¼‰ã‚’è¿”ã™
 
-	static LPCTSTR LoadStringSt( UINT uid );			// Ã“Iƒoƒbƒtƒ@‚É•¶š—ñƒŠƒ\[ƒX‚ğ“Ç‚İ‚ŞiŠe‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰j
-	/*virtual*/ LPCTSTR LoadString( UINT uid );			// •¶š—ñƒŠƒ\[ƒX‚ğ“Ç‚İ‚ŞiŠe‘ŒêƒƒbƒZ[ƒWƒŠƒ\[ƒX‘Î‰j
+	static LPCTSTR LoadStringSt( UINT uid );			// é™çš„ãƒãƒƒãƒ•ã‚¡ã«æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹ã‚’èª­ã¿è¾¼ã‚€ï¼ˆå„å›½èªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹å¯¾å¿œï¼‰
+	/*virtual*/ LPCTSTR LoadString( UINT uid );			// æ–‡å­—åˆ—ãƒªã‚½ãƒ¼ã‚¹ã‚’èª­ã¿è¾¼ã‚€ï¼ˆå„å›½èªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚½ãƒ¼ã‚¹å¯¾å¿œï¼‰
 
 protected:
 
 private:
-	CLoadString( const CLoadString& );					// ƒRƒs[‹Ö~‚Æ‚·‚é
-	CLoadString operator = ( const CLoadString& );		// ‘ã“ü‹Ö~‚Æ‚·‚é
+	CLoadString( const CLoadString& );					// ã‚³ãƒ”ãƒ¼ç¦æ­¢ã¨ã™ã‚‹
+	CLoadString operator = ( const CLoadString& );		// ä»£å…¥ç¦æ­¢ã¨ã™ã‚‹
 };
 
-// •¶š—ñƒ[ƒhŠÈˆÕ‰»ƒ}ƒNƒ
+// æ–‡å­—åˆ—ãƒ­ãƒ¼ãƒ‰ç°¡æ˜“åŒ–ãƒã‚¯ãƒ­
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
 #define LSW( id ) to_wchar( CLoadString::LoadStringSt( id ) )
 
