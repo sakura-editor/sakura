@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright (C) 2013, syat
 
 	This software is provided 'as-is', without any express or implied
