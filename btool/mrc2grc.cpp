@@ -1,4 +1,4 @@
-#include <stdio.h>
+ï»¿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,13 +37,13 @@ void convert(const char* infile, const char* outfile)
 		while( '\0' != *p ){
 			if( sjis_1(p) && sjis_2(p+1) ){
 				*o++ = *p++;
-				// SJIS‚Ì2ƒoƒCƒg–Ú‚ª\‚¾‚Á‚½‚Æ‚«‚¾‚¯\‚ğ•t‰Á‚·‚é
+				// SJISã®2ãƒã‚¤ãƒˆç›®ãŒ\ã ã£ãŸã¨ãã ã‘\ã‚’ä»˜åŠ ã™ã‚‹
 				if( *p == '\\' ){
 					*o++ = '\\';
 				}
 				*o++ = *p++;
 			}else if( sjis_1(p) && *(p+1) == '\0' ){
-				// 1byteŸ‰ñ‰z‚µ
+				// 1byteæ¬¡å›æŒè¶Šã—
 				buffer[0] = *p++;
 				buffer[1] = '\0';
 				carrierlen = 1;
