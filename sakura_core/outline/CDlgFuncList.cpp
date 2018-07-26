@@ -413,8 +413,8 @@ void CDlgFuncList::SetData()
 {
 	HWND			hwndList;
 	HWND			hwndTree;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	hwndList = GetItemHwnd( IDC_LIST_FL );
+	hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	m_bDummyLParamMode = false;
 	m_vecDummylParams.clear();
@@ -569,7 +569,7 @@ void CDlgFuncList::SetData()
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 		}
 
-		::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 		bSelected = false;
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
@@ -723,9 +723,9 @@ void CDlgFuncList::SetData()
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
 	if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
 	}else{
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
 	}
 
 	//2002.02.08 hor
@@ -738,11 +738,11 @@ void CDlgFuncList::SetData()
 	//2002.02.08 hor
 	//空行をどう扱うかのチェックボックスはブックマーク一覧のときだけ表示する
 	if(OUTLINE_BOOKMARK == m_nListType){
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bMarkUpBlankLineEnable ), TRUE );
-		if( !IsDocking() ) ::ShowWindow( GetDlgItem( GetHwnd(), IDC_CHECK_bMarkUpBlankLineEnable ), SW_SHOW );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_bMarkUpBlankLineEnable ), TRUE );
+		if( !IsDocking() ) ::ShowWindow( GetItemHwnd( IDC_CHECK_bMarkUpBlankLineEnable ), SW_SHOW );
 	}else{
-		::ShowWindow( GetDlgItem( GetHwnd(), IDC_CHECK_bMarkUpBlankLineEnable ), SW_HIDE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bMarkUpBlankLineEnable ), FALSE );
+		::ShowWindow( GetItemHwnd( IDC_CHECK_bMarkUpBlankLineEnable ), SW_HIDE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_bMarkUpBlankLineEnable ), FALSE );
 	}
 	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
 	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
@@ -757,7 +757,7 @@ void CDlgFuncList::SetData()
 		m_nSortType = m_type.m_nOutlineSortType;
 	}
 	if( m_nViewType == VIEWTYPE_TREE && m_nListType != OUTLINE_FILETREE ){
-		HWND hWnd_Combo_Sort = ::GetDlgItem( GetHwnd(), IDC_COMBO_nSortType );
+		HWND hWnd_Combo_Sort = GetItemHwnd( IDC_COMBO_nSortType );
 		if( m_nListType == OUTLINE_FILETREE ){
 			::EnableWindow( hWnd_Combo_Sort , FALSE );
 		}else{
@@ -770,17 +770,17 @@ void CDlgFuncList::SetData()
 		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2));    // SORTTYPE_ATOZ
 		Combo_AddString( hWnd_Combo_Sort , LS(STR_DLGFNCLST_SORTTYPE2_2));  // SORTTYPE_ZTOA
 		Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
-		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_SHOW );
+		::ShowWindow( GetItemHwnd( IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
-		SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
+		SortTree(GetItemHwnd( IDC_TREE_FL),TVI_ROOT);
 	}else if( m_nListType == OUTLINE_FILETREE ){
 		::ShowWindow( GetItemHwnd(IDC_COMBO_nSortType), SW_HIDE );
 		::ShowWindow( GetItemHwnd(IDC_STATIC_nSortType), SW_HIDE );
 		::ShowWindow( GetItemHwnd(IDC_BUTTON_SETTING), SW_SHOW );
 	}else {
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_nSortType ), FALSE );
-		::ShowWindow( GetDlgItem( GetHwnd(), IDC_COMBO_nSortType ), SW_HIDE );
-		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_HIDE );
+		::EnableWindow( GetItemHwnd( IDC_COMBO_nSortType ), FALSE );
+		::ShowWindow( GetItemHwnd( IDC_COMBO_nSortType ), SW_HIDE );
+		::ShowWindow( GetItemHwnd( IDC_STATIC_nSortType ), SW_HIDE );
 		//ListView_SortItems( hwndList, CompareFunc_Asc, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
 		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダ書き換えのため)
 	}
@@ -857,7 +857,7 @@ int CDlgFuncList::GetData( void )
 
 	m_cFuncInfo = NULL;
 	m_sJumpFile = _T("");
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+	hwndList = GetItemHwnd( IDC_LIST_FL );
 	if( m_nViewType == VIEWTYPE_LIST ){
 		//	List
 		nItem = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
@@ -870,7 +870,7 @@ int CDlgFuncList::GetData( void )
 		ListView_GetItem( hwndList, &item );
 		m_cFuncInfo = m_pcFuncInfoArr->GetAt( item.lParam );
 	}else{
-		hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+		hwndTree = GetItemHwnd( IDC_TREE_FL );
 		if( NULL != hwndTree ){
 			htiItem = TreeView_GetSelection( hwndTree );
 
@@ -938,12 +938,12 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	int				nClassNest;
 	std::vector<std::tstring> vStrClasses;
 
-	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 	m_bDummyLParamMode = true;
 	m_vecDummylParams.clear();
 	int nlParamCount = 0;
 
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	m_cmemClipText.SetString( L"" );
 	{
@@ -1238,9 +1238,9 @@ void CDlgFuncList::SetListVB (void)
 	int				nSelectedLine = 0;
 	RECT			rc;
 
-	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+	hwndList = GetItemHwnd( IDC_LIST_FL );
 
 	
 	m_cmemClipText.SetString( L"" );
@@ -1480,7 +1480,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 {
 	HTREEITEM hItemSelected = NULL;
 	HTREEITEM hItemSelectedTop = NULL;
-	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	int i;
 	int nFuncInfoArrNum = m_pcFuncInfoArr->GetNum();
@@ -1625,7 +1625,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 
 end_of_func:;
 
-	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 
 	if( NULL != hItemSelected ){
 		/* 現在カーソル位置のメソッドを選択状態にする */
@@ -1671,7 +1671,7 @@ void CDlgFuncList::SetDocLineFuncList()
 */
 void CDlgFuncList::SetTreeFile()
 {
-	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	m_cmemClipText.SetString(L"");
 	SFilePath IniDirPath;
@@ -1752,7 +1752,7 @@ void CDlgFuncList::SetTreeFile()
 
 void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const TCHAR* pszFile )
 {
-	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	if( NULL != TreeView_GetChild( hwndTree, hParent ) ){
 		return;
@@ -2036,7 +2036,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_MENU:
 		RECT rcMenu;
-		GetWindowRect( ::GetDlgItem( GetHwnd(), IDC_BUTTON_MENU ), &rcMenu );
+		GetWindowRect( GetItemHwnd( IDC_BUTTON_MENU ), &rcMenu );
 		POINT ptMenu;
 		ptMenu.x = rcMenu.left;
 		ptMenu.y = rcMenu.bottom;
@@ -2081,9 +2081,9 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bMarkUpBlankLineEnable );
 		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bFunclistSetFocusOnJump );
 		if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
 		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
 		}
 		if(wID==IDC_CHECK_bMarkUpBlankLineEnable&&m_nListType==OUTLINE_BOOKMARK){
 			CEditView* pcEditView=(CEditView*)m_lParam;
@@ -2093,9 +2093,9 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			SetData();
 		}else
 		if(m_nViewType == VIEWTYPE_TREE){
-			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_TREE_FL ) );
+			::SetFocus( GetItemHwnd( IDC_TREE_FL ) );
 		}else{
-			::SetFocus( ::GetDlgItem( GetHwnd(), IDC_LIST_FL ) );
+			::SetFocus( GetItemHwnd( IDC_LIST_FL ) );
 		}
 		return TRUE;
 	case IDC_BUTTON_SETTING:
@@ -2128,8 +2128,8 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	pnlv = (NM_LISTVIEW*)lParam;
 
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
-	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	hwndList = GetItemHwnd( IDC_LIST_FL );
+	hwndTree = GetItemHwnd( IDC_TREE_FL );
 
 	if( hwndTree == pnmh->hwndFrom ){
 		pnmtv = (NM_TREEVIEW *) lParam;
@@ -2367,7 +2367,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 		// ダイアログ部分を再描画（ツリー／リストの範囲はちらつかないように除外）
 		::InvalidateRect( GetHwnd(), NULL, FALSE );
 		POINT pt;
-		::GetWindowRect( ::GetDlgItem( GetHwnd(), IDC_TREE_FL ), &rc );
+		::GetWindowRect( GetItemHwnd( IDC_TREE_FL ), &rc );
 		pt.x = rc.left;
 		pt.y = rc.top;
 		::ScreenToClient( GetHwnd(), &pt );
@@ -2496,7 +2496,7 @@ BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 			type->m_nOutlineSortType = m_nSortType;
 			SetTypeConfig( CTypeConfig(m_nDocType), *type );
 			delete type;
-			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
+			SortTree(GetItemHwnd(IDC_TREE_FL),TVI_ROOT);
 		}
 		return TRUE;
 	}
@@ -2757,7 +2757,7 @@ void CDlgFuncList::SyncColor( void )
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
+	HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
 	TreeView_SetTextColor( hwndTree, clrText );
 	TreeView_SetBkColor( hwndTree, clrBack );
 	{
@@ -2770,7 +2770,7 @@ void CDlgFuncList::SyncColor( void )
 	::SetWindowPos( hwndTree, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED );	// なぜかこうしないと四辺１ドット幅分だけ色変更が即時適用されない（←スタイル再設定とは無関係）
 	::InvalidateRect( hwndTree, NULL, TRUE );
 
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+	HWND hwndList = GetItemHwnd( IDC_LIST_FL );
 	ListView_SetTextColor( hwndList, clrText );
 	ListView_SetTextBkColor( hwndList, clrBack );
 	ListView_SetBkColor( hwndList, clrBack );
@@ -3372,7 +3372,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}else if( m_nListType == OUTLINE_BOOKMARK ){
 			::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 			flag = 0;
-			HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+			HWND hwndList = GetItemHwnd(IDC_LIST_FL);
 			if( ListView_GetSelectedCount(hwndList) == 0 ){
 				flag |= MF_GRAYED;
 			}
@@ -3439,7 +3439,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	}else if( nId == 501 ){	// すべて縮小
 		::SetTimer(GetHwnd(), 4, 100, NULL);
 	}else if( nId == 510 ){	// ブックマーク削除
-		HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+		HWND hwndList = GetItemHwnd(IDC_LIST_FL);
 		int nItem = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_SELECTED);
 		if( nItem != -1 ){
 			LVITEM item;
@@ -3458,7 +3458,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}else if( nId == 511 ){	// ブックマークすべて削除
-		HWND hwndList = ::GetDlgItem(GetHwnd(), IDC_LIST_FL);
+		HWND hwndList = GetItemHwnd(IDC_LIST_FL);
 		pcEditView->GetCommander().HandleCommand(F_BOOKMARK_RESET, TRUE, 0, 0, 0, 0);
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
 	}
@@ -3735,8 +3735,8 @@ BOOL CDlgFuncList::OnContextMenu( WPARAM wParam, LPARAM lParam )
 	// キャプションかリスト／ツリー上ならメニューを表示する
 	HWND hwndFrom = (HWND)wParam;
 	if( ::SendMessage( GetHwnd(), WM_NCHITTEST, 0, lParam ) == HTCAPTION
-			|| hwndFrom == ::GetDlgItem( GetHwnd(), IDC_LIST_FL )
-			|| hwndFrom == ::GetDlgItem( GetHwnd(), IDC_TREE_FL )
+			|| hwndFrom == GetItemHwnd( IDC_LIST_FL )
+			|| hwndFrom == GetItemHwnd( IDC_TREE_FL )
 	){
 		POINT pt;
 		pt.x = MAKEPOINTS(lParam).x;

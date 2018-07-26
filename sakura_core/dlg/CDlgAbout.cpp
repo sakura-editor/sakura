@@ -261,7 +261,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	From Here Dec. 2, 2002 genta
 	//	アイコンをカスタマイズアイコンに合わせる
 	HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
-	HWND hIconWnd = GetDlgItem( GetHwnd(), IDC_STATIC_MYICON );
+	HWND hIconWnd = GetItemHwnd( IDC_STATIC_MYICON );
 	
 	if( hIconWnd != NULL && hIcon != NULL ){
 		StCtl_SetIcon( hIconWnd, hIcon );
@@ -269,50 +269,50 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	To Here Dec. 2, 2002 genta
 
 	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
-	m_UrlGitWnd.SetSubclassWindow(GetDlgItem( GetHwnd(), IDC_STATIC_URL_GIT));
-	m_UrlBuildLinkWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD));
+	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
+	m_UrlGitWnd.SetSubclassWindow(GetItemHwnd( IDC_STATIC_URL_GIT));
+	m_UrlBuildLinkWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD));
 #if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	m_UrlGitHubCommitWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT));
+	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
 #endif
 #if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
-	m_UrlGitHubPRWnd.SetSubclassWindow(GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR));
+	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
 #endif
 
 #ifdef GIT_URL
-	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), _T(GIT_URL));
+	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GIT), _T(GIT_URL));
 #else
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_GIT_CAPTION), SW_HIDE);
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GIT), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_GIT_CAPTION), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GIT), SW_HIDE);
 #endif
 #if defined(APPVEYOR_BUILD_TEXT)
-	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
+	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
 #else
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
 #endif
 
 	// GitHub の Commit のリンク
 #if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT), _T(APPVEYOR_SHORTHASH));
+	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), _T(APPVEYOR_SHORTHASH));
 #else
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
 #endif
 
 	// GitHub の PR のリンク
 #if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
-	::SetWindowText(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR), _T("PR ") _T(APPVEYOR_PULL_REQUEST_NUMBER));
+	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR), _T("PR ") _T(APPVEYOR_PULL_REQUEST_NUMBER));
 #else
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_PR), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR), SW_HIDE);
 #endif
 
 	// GitHub のリンクのテキスト
 #if !defined(GITHUB_COMMIT_URL) && !defined(GITHUB_COMMIT_URL_PR_HEAD)
-	ShowWindow(::GetDlgItem(GetHwnd(), IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
-	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_ORG ) );
+	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
@@ -324,7 +324,7 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_COPY:
 		{
-			HWND hwndEditVer = GetDlgItem( GetHwnd(), IDC_EDIT_VER );
+			HWND hwndEditVer = GetItemHwnd( IDC_EDIT_VER );
 	 		EditCtl_SetSel( hwndEditVer, 0, -1); 
 	 		SendMessage( hwndEditVer, WM_COPY, 0, 0 );
 	 		EditCtl_SetSel( hwndEditVer, -1, 0); 
@@ -344,7 +344,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		//	Web Browserの起動
 		{
 			TCHAR buf[512];
-			::GetWindowText( ::GetDlgItem( GetHwnd(), wID ), buf, _countof(buf) );
+			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}

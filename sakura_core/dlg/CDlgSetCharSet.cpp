@@ -56,8 +56,8 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 	
-	m_hwndCharSet = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );	// 文字コードセットコンボボックス
-	m_hwndCheckBOM = ::GetDlgItem( GetHwnd(), IDC_CHECK_BOM );		// BOMチェックボックス
+	m_hwndCharSet = GetItemHwnd( IDC_COMBO_CHARSET );	// 文字コードセットコンボボックス
+	m_hwndCheckBOM = GetItemHwnd( IDC_CHECK_BOM );		// BOMチェックボックス
 
 	// コンボボックスのユーザー インターフェイスを拡張インターフェースにする
 	Combo_SetExtendedUI( m_hwndCharSet, TRUE );
@@ -83,7 +83,7 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 	case IDC_CHECK_CP:
 		if( !m_bCP ){
 			m_bCP = true;
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
 			CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, -1 );
 		}
 		return TRUE;
@@ -197,7 +197,7 @@ void CDlgSetCharSet::SetData( void )
 	if( -1 == nCurIdx ){
 		m_bCP = true;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
 		nCurIdx = CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, *m_pnCharSet );
 		if( nCurIdx == -1 ){
 			nCurIdx = nIdxOld;

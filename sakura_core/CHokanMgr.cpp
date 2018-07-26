@@ -79,7 +79,7 @@ HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam
 	OnSize( 0, 0 );
 	/* リストをフック */
 	// Modified by KEITA for WIN64 2003.9.6
-	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
+	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( GetItemHwnd( IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
 
 	return hwndWork;
 }
@@ -231,7 +231,7 @@ int CHokanMgr::Search(
 
 
 	HWND hwndList;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndList = GetItemHwnd( IDC_LIST_WORDS );
 	List_ResetContent( hwndList );
 	{
 		size_t kouhoNum = m_vKouho.size();
@@ -516,7 +516,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 //	2001/06/18 End
 
 	for ( i = 0; i < nControls; ++i ){
-		hwndCtrl = ::GetDlgItem( GetHwnd(), Controls[i] );
+		hwndCtrl = GetItemHwnd( Controls[i] );
 		::GetWindowRect( hwndCtrl, &rc );
 		po.x = rc.left;
 		po.y = rc.top;
@@ -571,7 +571,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	HWND hwndList;
 	int nItem;
 	CEditView* pcEditView;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndList = GetItemHwnd( IDC_LIST_WORDS );
 	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
@@ -650,7 +650,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_PRIOR:
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
-		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
+		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, GetItemHwnd( IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
 		return -1;
 	case VK_RETURN:
 	case VK_TAB:
@@ -682,7 +682,7 @@ void CHokanMgr::ShowTip()
 	HWND		hwndCtrl;
 	RECT		rcHokanWin;
 
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndCtrl = GetItemHwnd( IDC_LIST_WORDS );
 
 	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;

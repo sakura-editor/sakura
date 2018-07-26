@@ -254,7 +254,7 @@ void CDlgTagJumpList::SetData( void )
 	//	From Here 2005.04.03 MIK 設定値の読み込み
 	else{
 		HWND hwndKey;
-		hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );
+		hwndKey = GetItemHwnd( IDC_KEYWORD );
 
 		m_bTagJumpICase = m_pShareData->m_sTagJump.m_bTagJumpICase;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
@@ -299,7 +299,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 	int		nIndex;
 	int		count;
 
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
+	hwndList = GetItemHwnd( IDC_LIST_TAGJUMP );
 	ListView_DeleteAllItems( hwndList );
 
 	count = m_pcList->GetCount();
@@ -392,7 +392,7 @@ int CDlgTagJumpList::GetData( void )
 {
 	HWND	hwndList;
 
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
+	hwndList = GetItemHwnd( IDC_LIST_TAGJUMP );
 	m_nIndex = ListView_GetNextItem( hwndList, -1, LVIS_SELECTED );
 
 	//	From Here 2005.04.03 MIK 設定値の保存
@@ -655,7 +655,7 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 
 	pNMHDR = (NMHDR*)lParam;
 
-	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TAGJUMP );
+	hwndList = GetItemHwnd( IDC_LIST_TAGJUMP );
 
 	//	候補一覧リストボックス
 	if( hwndList == pNMHDR->hwndFrom )
