@@ -16,7 +16,7 @@ platform:
 
 build_script:
 - cmd: >-
-    call build-all.bat %PLATFORM% %CONFIGURATION%
+    echo %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml
 
