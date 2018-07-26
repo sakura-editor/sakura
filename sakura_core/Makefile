@@ -32,7 +32,7 @@ DEFINES= \
  -DUNICODE \
  -DNDEBUG
 CFLAGS= -O2 \
- -finput-charset=utf-8 -fexec-charset=utf-8 \
+ -finput-charset=utf-8 -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
