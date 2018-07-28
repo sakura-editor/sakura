@@ -13,6 +13,7 @@
         - [ビルドの仕組み](#ビルドの仕組み)
         - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
         - [ビルド成果物](#ビルド成果物)
+        - [単体テスト](#単体テスト)
 
 <!-- /TOC -->
 
@@ -63,3 +64,8 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts
 
 最新以外のビルド結果は以下から参照できます。  
 https://ci.appveyor.com/project/sakuraeditor/sakura/history
+
+### 単体テスト
+
+[単体テスト](unittest.md) を参照
+
