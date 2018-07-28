@@ -68,12 +68,13 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	// 整形
 	va_list v;
 	va_start(v, pszData);
-	int len = _vsnprintf(buf, _countof(buf), pszData, v);
+	int len = _vsnprintf_s(buf, _countof(buf), _TRUNCATE, pszData, v);
+	int e = errno;
 	va_end(v);
 
 	if (len == -1) {
 		char cbuf[128];
-		sprintf_s(cbuf, _countof(cbuf), "AppendStringF error. errno = %d", errno);
+		sprintf_s(cbuf, _countof(cbuf), "AppendStringF error. errno = %d", e);
 		throw std::exception(cbuf);
 	}
 
