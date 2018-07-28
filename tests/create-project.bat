@@ -4,7 +4,7 @@ set ERROR_RESULT=0
 
 pushd %~dp0
 
-if not exist googletest (
+if not exist "googletest\CMakeLists.txt" (
     git submodule init
     git submodule update
 )
