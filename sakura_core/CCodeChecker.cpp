@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+Ôªø#include "StdAfx.h"
 #include "CCodeChecker.h"
 #include "charset/CCodePage.h"
 #include "io/CIoBridge.h"
@@ -11,15 +11,15 @@
 #include "util/string_ex.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ÉZÅ[ÉuéûÉ`ÉFÉbÉN                        //
+//                     „Çª„Éº„ÉñÊôÇ„ÉÅ„Çß„ÉÉ„ÇØ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! CDocLineMgrÇ™ï€éùÇ∑ÇÈÉfÅ[É^Ç…àŸÇ»ÇÈâ¸çsÉRÅ[ÉhÇ™ç¨ç›ÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©îªíËÇ∑ÇÈ
+//! CDocLineMgr„Åå‰øùÊåÅ„Åô„Çã„Éá„Éº„Çø„Å´Áï∞„Å™„ÇãÊîπË°å„Ç≥„Éº„Éâ„ÅåÊ∑∑Âú®„Åó„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„ÅãÂà§ÂÆö„Åô„Çã
 static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 {
 	bool bMix = false;
-	if( cEolType == EOL_NONE ){	//â¸çsÉRÅ[Éhïœä∑Ç»Çµ
-		CEol cEolCheck;	//î‰ärëŒè€EOL
+	if( cEolType == EOL_NONE ){	//ÊîπË°å„Ç≥„Éº„ÉâÂ§âÊèõ„Å™„Åó
+		CEol cEolCheck;	//ÊØîËºÉÂØæË±°EOL
 		const CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
 		if( pcDocLine ){
 			cEolCheck = pcDocLine->GetEol();
@@ -36,24 +36,24 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 	return bMix;
 }
 
-//! CDocLineMgrÇ™ï€éùÇ∑ÇÈÉfÅ[É^ÇéwíËï∂éöÉRÅ[ÉhÇ≈à¿ëSÇ…ï€ë∂Ç≈Ç´ÇÈÇ©Ç«Ç§Ç©îªíËÇ∑ÇÈ
+//! CDocLineMgr„Åå‰øùÊåÅ„Åô„Çã„Éá„Éº„Çø„ÇíÊåáÂÆöÊñáÂ≠ó„Ç≥„Éº„Éâ„ÅßÂÆâÂÖ®„Å´‰øùÂ≠ò„Åß„Åç„Çã„Åã„Å©„ÅÜ„ÅãÂà§ÂÆö„Åô„Çã
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECodeType eCodeType, CLogicPoint& point, CNativeW& wc)
 {
 	const CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
 	const bool bCodePageMode = IsValidCodeOrCPType(eCodeType) && !IsValidCodeType(eCodeType);
 	CCodeBase* pCodeBase=CCodeFactory::CreateCodeBase(eCodeType,0);
-	CMemory cmemTmp;	// ÉoÉbÉtÉ@Ççƒóòóp
+	CMemory cmemTmp;	// „Éê„ÉÉ„Éï„Ç°„ÇíÂÜçÂà©Áî®
 	CNativeW cmemTmp2;
 	CLogicInt nLine = CLogicInt(0);
 	while( pcDocLine ){
-		// ÉRÅ[Éhïœä∑ pcDocLine -> cmemTmp
+		// „Ç≥„Éº„ÉâÂ§âÊèõ pcDocLine -> cmemTmp
 		EConvertResult e = CIoBridge::ImplToFile(
 			pcDocLine->_GetDocLineDataWithEOL(),
 			&cmemTmp,
 			pCodeBase
 		);
 		if( bCodePageMode ){
-			// ÉRÅ[ÉhÉyÅ[ÉWÇÕRESULT_LOSESOMEÇï‘Ç≥Ç»Ç¢ÇÃÇ≈ÅAé©ï™Ç≈ï∂éöóÒî‰ärÇ∑ÇÈ
+			// „Ç≥„Éº„Éâ„Éö„Éº„Ç∏„ÅØRESULT_LOSESOME„ÇíËøî„Åï„Å™„ÅÑ„ÅÆ„Åß„ÄÅËá™ÂàÜ„ÅßÊñáÂ≠óÂàóÊØîËºÉ„Åô„Çã
 			EConvertResult e2 = CIoBridge::FileToImpl(
 				cmemTmp,
 				&cmemTmp2,
@@ -78,7 +78,7 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 			if( nPos != -1 ){
 				point.y = nLine;
 				point.x = CLogicInt(nPos);
-				// ïœä∑Ç≈Ç´Ç»Ç©Ç¡ÇΩà íuÇÃ1ï∂éöéÊìæ
+				// Â§âÊèõ„Åß„Åç„Å™„Åã„Å£„Åü‰ΩçÁΩÆ„ÅÆ1ÊñáÂ≠óÂèñÂæó
 				wc.SetString( p + nPos, (Int)CNativeW::GetSizeOfChar( p, nDocLineLen, nPos ) );
 				delete pCodeBase;
 				return RESULT_LOSESOME;
@@ -86,7 +86,7 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 		}
 		if(e!=RESULT_COMPLETE){
 			if( e == RESULT_LOSESOME ){
-				// çsì‡ÇÃà íuÇì¡íË
+				// Ë°åÂÜÖ„ÅÆ‰ΩçÁΩÆ„ÇíÁâπÂÆö
 				point.y = nLine;
 				point.x = CLogicInt(-1);
 				const WCHAR* pLine = pcDocLine->GetPtr();
@@ -114,7 +114,7 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 			return e;
 		}
 
-		//éüÇÃçsÇ÷
+		//Ê¨°„ÅÆË°å„Å∏
 		pcDocLine = pcDocLine->GetNextLine();
 		nLine++;
 	}
@@ -127,7 +127,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//â¸çsÉRÅ[ÉhÇ™ç¨ç›ÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©îªíË
+	//ÊîπË°å„Ç≥„Éº„Éâ„ÅåÊ∑∑Âú®„Åó„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„ÅãÂà§ÂÆö
 	bool bTmpResult = false;
 	if( pcDoc->m_cDocType.GetDocumentAttribute().m_bChkEnterAtEnd ){
 		bTmpResult = _CheckSavingEolcode(
@@ -135,7 +135,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		);
 	}
 
-	//ÉÜÅ[ÉUñ‚Ç¢çáÇÌÇπ
+	//„É¶„Éº„Ç∂Âïè„ÅÑÂêà„Çè„Åõ
 	if (bTmpResult) {
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
@@ -145,13 +145,13 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 			pcDoc->m_cDocEditor.GetNewLineCode().GetName()
 		);
 		switch(nDlgResult){
-		case IDYES:		pSaveInfo->cEol = pcDoc->m_cDocEditor.GetNewLineCode(); break; //ìùàÍ
-		case IDNO:		break; //ë±çs
-		case IDCANCEL:	return CALLBACK_INTERRUPT; //íÜíf
+		case IDYES:		pSaveInfo->cEol = pcDoc->m_cDocEditor.GetNewLineCode(); break; //Áµ±‰∏Ä
+		case IDNO:		break; //Á∂öË°å
+		case IDCANCEL:	return CALLBACK_INTERRUPT; //‰∏≠Êñ≠
 		}
 	}
 
-	//éwíËï∂éöÉRÅ[ÉhÇ≈à¿ëSÇ…ï€ë∂Ç≈Ç´ÇÈÇ©Ç«Ç§Ç©îªíË
+	//ÊåáÂÆöÊñáÂ≠ó„Ç≥„Éº„Éâ„ÅßÂÆâÂÖ®„Å´‰øùÂ≠ò„Åß„Åç„Çã„Åã„Å©„ÅÜ„ÅãÂà§ÂÆö
 	CLogicPoint point;
 	CNativeW cmemChar(L"", 0);
 	EConvertResult nTmpResult = _CheckSavingCharcode(
@@ -159,10 +159,10 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		point, cmemChar
 	);
 
-	//ÉÜÅ[ÉUñ‚Ç¢çáÇÌÇπ
+	//„É¶„Éº„Ç∂Âïè„ÅÑÂêà„Çè„Åõ
 	if(nTmpResult==RESULT_LOSESOME){
 		TCHAR szCpName[100];
-		TCHAR  szLineNum[60];  // 123åÖ
+		TCHAR  szLineNum[60];  // 123Ê°Å
 		TCHAR  szCharCode[12]; // U+12ab or 1234abcd
 		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
 		_tcscpy( szCharCode, _T("") );
@@ -187,14 +187,14 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 			szCharCode
 		);
 		switch(nDlgResult){
-		case IDYES:		break; //ë±çs
-		case IDNO:		return CALLBACK_INTERRUPT; //íÜíf
+		case IDYES:		break; //Á∂öË°å
+		case IDNO:		return CALLBACK_INTERRUPT; //‰∏≠Êñ≠
 		case IDCANCEL:
 			{
 				CLogicPoint pt(point.x < 0 ? CLogicInt(0) : point.x, point.y);
 				pcDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
 			}
-			return CALLBACK_INTERRUPT; //íÜíf
+			return CALLBACK_INTERRUPT; //‰∏≠Êñ≠
 		}
 	}
 	return CALLBACK_CONTINUE;
@@ -202,14 +202,14 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 void CCodeChecker::OnFinalSave(ESaveResult eSaveResult)
 {
-	//ÉJÉLÉRåãâ 
+	//„Ç´„Ç≠„Ç≥ÁµêÊûú
 	if(eSaveResult==SAVED_LOSESOME){
 		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_CODECHECKER_LOSESOME_SAVE));
 	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ÉçÅ[ÉhéûÉ`ÉFÉbÉN                        //
+//                     „É≠„Éº„ÉâÊôÇ„ÉÅ„Çß„ÉÉ„ÇØ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CCodeChecker::OnFinalLoad(ELoadResult eLoadResult)

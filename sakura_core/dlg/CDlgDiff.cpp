@@ -139,7 +139,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 				//外部ファイルを選択状態に
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-				List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
+				List_SetCurSel( GetItemHwnd(IDC_LIST_DIFF_FILES), -1 );
 			}
 		}
 		return TRUE;
@@ -155,28 +155,28 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 
 	case IDC_RADIO_DIFF_DST1:
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_DIFF_DST ), TRUE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_DIFF_DST ), TRUE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), FALSE );
+		//::EnableWindow( GetItemHwnd( IDC_EDIT_DIFF_DST ), TRUE );
+		//::EnableWindow( GetItemHwnd( IDC_BUTTON_DIFF_DST ), TRUE );
+		//::EnableWindow( GetItemHwnd( IDC_LIST_DIFF_FILES ), FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶
 		{
-			int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
+			int n = List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
 			if( n != LB_ERR ){
 				m_nIndexSave = n;
 			}
 		}
-		List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
+		List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 
 	case IDC_RADIO_DIFF_DST2:
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, FALSE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_DIFF_DST ), FALSE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_DIFF_DST ), FALSE );
-		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), TRUE );
+		//::EnableWindow( GetItemHwnd( IDC_EDIT_DIFF_DST ), FALSE );
+		//::EnableWindow( GetItemHwnd( IDC_BUTTON_DIFF_DST ), FALSE );
+		//::EnableWindow( GetItemHwnd( IDC_LIST_DIFF_FILES ), TRUE );
 		{
 			//	Aug. 9, 2003 genta
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
-			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+			HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
 				List_SetCurSel( hwndList, m_nIndexSave );
@@ -219,9 +219,9 @@ void CDlgDiff::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_FILE1, TRUE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_FILE2, FALSE );
 	}
-	//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_FRAME_DIFF_FILE12 ), FALSE );
-	//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_FILE1 ), FALSE );
-	//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_FILE2 ), FALSE );
+	//::EnableWindow( GetItemHwnd( IDC_FRAME_DIFF_FILE12 ), FALSE );
+	//::EnableWindow( GetItemHwnd( IDC_RADIO_DIFF_FILE1 ), FALSE );
+	//::EnableWindow( GetItemHwnd( IDC_RADIO_DIFF_FILE2 ), FALSE );
 
 	//DIFF差分が見つからないときにメッセージを表示 2003.05.12 MIK
 	if( m_nDiffFlgOpt & 0x0040 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_EXEC_STATE, TRUE );
@@ -252,7 +252,7 @@ void CDlgDiff::SetData( void )
 		code = pFileInfo->m_nCharCode;
 
 		/* リストのハンドル取得 */
-		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+		hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 
 		/* 現在開いている編集窓のリストをメニューにする */
 		nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
@@ -319,8 +319,8 @@ void CDlgDiff::SetData( void )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
 			/* その他の編集中リストはなし */
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_DIFF_DST2 ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_DIFF_DST2 ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_LIST_DIFF_FILES ), FALSE );
 		}
 		else
 		{
@@ -328,7 +328,7 @@ void CDlgDiff::SetData( void )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, FALSE );
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE );
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
-			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+			HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
 			    List_SetCurSel( hwndList, selIndex );
@@ -380,7 +380,7 @@ int CDlgDiff::GetData( void )
 		EditInfo	*pFileInfo;
 
 		/* リストから相手のウインドウハンドルを取得 */
-		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+		hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 		nItem = List_GetCurSel( hwndList );
 		if( nItem != LB_ERR )
 		{
@@ -428,7 +428,7 @@ BOOL CDlgDiff::OnLbnSelChange( HWND hwndCtl, int wID )
 {
 	HWND	hwndList;
 
-	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+	hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 
 	if( hwndList == hwndCtl )
 	{
@@ -445,18 +445,18 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 {
 	HWND	hwndEdit;
 
-	hwndEdit = GetDlgItem( GetHwnd(), IDC_EDIT_DIFF_DST );
+	hwndEdit = GetItemHwnd( IDC_EDIT_DIFF_DST );
 
 	if( hwndEdit == hwndCtl )
 	{
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶して選択解除
-		int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
+		int n = List_GetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES ) );
 		if( n != LB_ERR ){
 			m_nIndexSave = n;
 		}
-		List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
+		List_SetCurSel( GetItemHwnd( IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 	}
 
@@ -489,12 +489,12 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CDialog::OnSize();
 	
 	LONG_PTR lStyle;
-	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE );
-	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
-	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE );
-	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
-	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE );
-	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
+	lStyle = ::GetWindowLongPtr( GetItemHwnd(IDC_FRAME_DIFF_DST ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetItemHwnd(IDC_FRAME_DIFF_DST ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
+	lStyle = ::GetWindowLongPtr( GetItemHwnd(IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetItemHwnd(IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
+	lStyle = ::GetWindowLongPtr( GetItemHwnd(IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetItemHwnd(IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
 
 	RECT rc;
 	::GetWindowRect( hwndDlg, &rc );
@@ -559,7 +559,7 @@ BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
 
 BOOL CDlgDiff::OnLbnDblclk( int wID )
 {
-	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
+	HWND hwndList = GetItemHwnd( IDC_LIST_DIFF_FILES );
 	if( List_GetCurSel( hwndList ) == LB_ERR ) return FALSE;
 	return OnBnClicked(IDOK);
 }

@@ -7,7 +7,7 @@
 //!デバッグメッセージ出力
 void debug_output(const char* str, ...)
 {
-	static char buf[_MAX_PATH+150];
+	char buf[_MAX_PATH+150];
 	va_list mark;
 	va_start(mark,str);
 	// FILE名, LINE 式 分必要

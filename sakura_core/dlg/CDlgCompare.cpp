@@ -135,7 +135,7 @@ void CDlgCompare::SetData( void )
 	int				nItem;
 	int				selIndex = 0;
 
-	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
+	hwndList = GetItemHwnd( IDC_LIST_FILES );
 
 //	2002/2/10 aroka ファイル名で比較しないため不用 (2001.12.26 YAZAKIさん)
 //	//	Oct. 15, 2001 genta ファイル名判定の stricmpをbccでも期待通り動かすため
@@ -193,7 +193,7 @@ void CDlgCompare::SetData( void )
 	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		m_bCompareAndTileHorz = FALSE;
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_TILE_H ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_TILE_H ), FALSE );
 	}
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_TILE_H, m_bCompareAndTileHorz );
 	return;
@@ -209,7 +209,7 @@ int CDlgCompare::GetData( void )
 	HWND			hwndList;
 	int				nItem;
 	EditInfo*		pfi;
-	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
+	hwndList = GetItemHwnd( IDC_LIST_FILES );
 	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;

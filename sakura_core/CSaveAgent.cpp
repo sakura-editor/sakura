@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -22,7 +22,7 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "doc/CDocListener.h" // eƒNƒ‰ƒX
+#include "doc/CDocListener.h" // è¦ªã‚¯ãƒ©ã‚¹
 #include "CSaveAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocVisitor.h"
@@ -45,15 +45,15 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	//	Jun.  5, 2004 genta
-	//	ƒrƒ…[ƒ‚[ƒh‚Ìƒ`ƒFƒbƒN‚ðCEditDoc‚©‚çã‘‚«•Û‘¶ˆ—‚ÉˆÚ“®
-	//	“¯–¼‚Åã‘‚«‚³‚ê‚é‚Ì‚ð–h‚®
+	//	ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã®ãƒã‚§ãƒƒã‚¯ã‚’CEditDocã‹ã‚‰ä¸Šæ›¸ãä¿å­˜å‡¦ç†ã«ç§»å‹•
+	//	åŒåã§ä¸Šæ›¸ãã•ã‚Œã‚‹ã®ã‚’é˜²ã
 	if( CAppMode::getInstance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
 		TopErrorMessage( CEditWnd::getInstance()->GetHwnd(), LS(STR_SAVEAGENT_VIEW_FILE) );
 		return CALLBACK_INTERRUPT;
 	}
 
-	// ‘¼ƒEƒBƒ“ƒhƒE‚ÅŠJ‚¢‚Ä‚¢‚é‚©Šm”F‚·‚é	// 2009.04.07 ryoji
+	// ä»–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é–‹ã„ã¦ã„ã‚‹ã‹ç¢ºèªã™ã‚‹	// 2009.04.07 ryoji
 	if( !pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		HWND hwndOwner;
 		if( CShareData::getInstance()->IsPathOpened( pSaveInfo->cFilePath, &hwndOwner ) ){
@@ -66,22 +66,22 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		}
 	}
 
-	// ‘ž‰Â”\ƒ`ƒFƒbƒN ######### ƒXƒ}[ƒg‚¶‚á‚È‚¢Bƒzƒ“ƒg‚Í‘‚«ž‚ÝŽžƒGƒ‰[ƒ`ƒFƒbƒNŒŸo‹@\‚ð—pˆÓ‚µ‚½‚¢
+	// æ›¸è¾¼å¯èƒ½ãƒã‚§ãƒƒã‚¯ ######### ã‚¹ãƒžãƒ¼ãƒˆã˜ã‚ƒãªã„ã€‚ãƒ›ãƒ³ãƒˆã¯æ›¸ãè¾¼ã¿æ™‚ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯æ¤œå‡ºæ©Ÿæ§‹ã‚’ç”¨æ„ã—ãŸã„
 	{
-		// ƒƒbƒN‚ÍˆêŽž“I‚É‰ðœ‚µ‚Äƒ`ƒFƒbƒN‚·‚éiƒ`ƒFƒbƒN‚¹‚¸‚ÉŒã–ß‚è‚Å‚«‚È‚¢‚Æ‚±‚ë‚Ü‚Åi‚ß‚é‚æ‚èˆÀ‘Sj
-		// ¦ ƒƒbƒN‚µ‚Ä‚¢‚Ä‚àƒtƒ@ƒCƒ‹‘®«‚âƒAƒNƒZƒX‹–‰Â‚Ì•ÏX‚É‚æ‚Á‚Ä‘‚«ž‚ß‚È‚­‚È‚Á‚Ä‚¢‚é‚±‚Æ‚à‚ ‚é
+		// ãƒ­ãƒƒã‚¯ã¯ä¸€æ™‚çš„ã«è§£é™¤ã—ã¦ãƒã‚§ãƒƒã‚¯ã™ã‚‹ï¼ˆãƒã‚§ãƒƒã‚¯ã›ãšã«å¾Œæˆ»ã‚Šã§ããªã„ã¨ã“ã‚ã¾ã§é€²ã‚ã‚‹ã‚ˆã‚Šå®‰å…¨ï¼‰
+		// â€» ãƒ­ãƒƒã‚¯ã—ã¦ã„ã¦ã‚‚ãƒ•ã‚¡ã‚¤ãƒ«å±žæ€§ã‚„ã‚¢ã‚¯ã‚»ã‚¹è¨±å¯ã®å¤‰æ›´ã«ã‚ˆã£ã¦æ›¸ãè¾¼ã‚ãªããªã£ã¦ã„ã‚‹ã“ã¨ã‚‚ã‚ã‚‹
 		bool bLock = (pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking());
 		if( bLock ) pcDoc->m_cDocFileOperation.DoFileUnlock();
 		try{
 			bool bExist = fexist(pSaveInfo->cFilePath);
-			CStream out(pSaveInfo->cFilePath, _T("ab"), true);	// ŽÀÛ‚Ì•Û‘¶‚Í "wb" ‚¾‚ª‚±‚±‚Í "ab"iƒtƒ@ƒCƒ‹“à—e‚Í”jŠü‚µ‚È‚¢j‚Åƒ`ƒFƒbƒN‚·‚é	// 2009.08.21 ryoji
+			CStream out(pSaveInfo->cFilePath, _T("ab"), true);	// å®Ÿéš›ã®ä¿å­˜ã¯ "wb" ã ãŒã“ã“ã¯ "ab"ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ã¯ç ´æ£„ã—ãªã„ï¼‰ã§ãƒã‚§ãƒƒã‚¯ã™ã‚‹	// 2009.08.21 ryoji
 			out.Close();
 			if(!bExist){
 				::DeleteFile(pSaveInfo->cFilePath);
 			}
 		}
 		catch(CError_FileOpen){
-			// ¦ ‚½‚Æ‚¦ã‘‚«•Û‘¶‚Ìê‡‚Å‚à‚±‚±‚Å‚ÌŽ¸”s‚Å‚Í‘ž‚Ý‹ÖŽ~‚Ö‚Í‘JˆÚ‚µ‚È‚¢
+			// â€» ãŸã¨ãˆä¸Šæ›¸ãä¿å­˜ã®å ´åˆã§ã‚‚ã“ã“ã§ã®å¤±æ•—ã§ã¯æ›¸è¾¼ã¿ç¦æ­¢ã¸ã¯é·ç§»ã—ãªã„
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
@@ -102,7 +102,7 @@ void CSaveAgent::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//‰üsƒR[ƒh“ˆê
+	//æ”¹è¡Œã‚³ãƒ¼ãƒ‰çµ±ä¸€
 	CDocVisitor(pcDoc).SetAllEol(sSaveInfo.cEol);
 }
 
@@ -110,7 +110,7 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	//ƒJƒLƒR
+	//ã‚«ã‚­ã‚³
 	CWriteManager cWriter;
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cWriter);
 	cWriter.WriteFile_From_CDocLineMgr(
@@ -118,7 +118,7 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 		sSaveInfo
 	);
 
-	//ƒZ[ƒuî•ñ‚ÌŠm’è
+	//ã‚»ãƒ¼ãƒ–æƒ…å ±ã®ç¢ºå®š
 	pcDoc->SetFilePathAndIcon( sSaveInfo.cFilePath );
 	pcDoc->m_cDocFile.SetCodeSet( sSaveInfo.eCharCode, sSaveInfo.bBomExist );
 	if(sSaveInfo.cEol.IsValid()){
@@ -130,15 +130,15 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	/* XVŒã‚Ìƒtƒ@ƒCƒ‹Žž‚ÌŽæ“¾
-	 * CloseHandle‘O‚Å‚ÍFlushFileBuffers‚ðŒÄ‚ñ‚Å‚àƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ªXV
-	 * ‚³‚ê‚È‚¢‚±‚Æ‚ª‚ ‚éB
+	/* æ›´æ–°å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«æ™‚åˆ»ã®å–å¾—
+	 * CloseHandleå‰ã§ã¯FlushFileBuffersã‚’å‘¼ã‚“ã§ã‚‚ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ãŒæ›´æ–°
+	 * ã•ã‚Œãªã„ã“ã¨ãŒã‚ã‚‹ã€‚
 	 */
 	GetLastWriteTimestamp( pcDoc->m_cDocFile.GetFilePath(), &pcDoc->m_cDocFile.GetFileTime() );
 
-	// ƒ^ƒCƒv•ÊÝ’è‚Ì•ÏX‚ðŽwŽ¦B
-	// ã‘‚«i–¾Ž¦“I‚Èã‘‚«‚âŽ©“®•Û‘¶j‚Å‚Í•ÏX‚µ‚È‚¢
-	// ---> ã‘‚«‚Ìê‡‚ÍˆêŽž“I‚ÈÜ‚è•Ô‚µŒ…•ÏX‚âƒ^ƒu••ÏX‚ðˆÛŽ‚µ‚½‚Ü‚Ü‚É‚·‚é
+	// ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã®å¤‰æ›´ã‚’æŒ‡ç¤ºã€‚
+	// ä¸Šæ›¸ãï¼ˆæ˜Žç¤ºçš„ãªä¸Šæ›¸ãã‚„è‡ªå‹•ä¿å­˜ï¼‰ã§ã¯å¤‰æ›´ã—ãªã„
+	// ---> ä¸Šæ›¸ãã®å ´åˆã¯ä¸€æ™‚çš„ãªæŠ˜ã‚Šè¿”ã—æ¡å¤‰æ›´ã‚„ã‚¿ãƒ–å¹…å¤‰æ›´ã‚’ç¶­æŒã—ãŸã¾ã¾ã«ã™ã‚‹
 	if(!sSaveInfo.bOverwriteMode){
 		pcDoc->OnChangeSetting();
 	}

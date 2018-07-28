@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -39,26 +39,26 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	// ƒŠƒ[ƒh—v‹‚Ìê‡‚ÍAŒp‘±B
+	// ãƒªãƒ­ãƒ¼ãƒ‰è¦æ±‚ã®å ´åˆã¯ã€ç¶™ç¶šã€‚
 	if(pLoadInfo->bRequestReload)goto next;
 
-	//ƒtƒHƒ‹ƒ_‚ªw’è‚³‚ê‚½ê‡‚Íuƒtƒ@ƒCƒ‹‚ğŠJ‚­vƒ_ƒCƒAƒƒO‚ğ•\¦‚µAÀÛ‚Ìƒtƒ@ƒCƒ‹“ü—Í‚ğ‘£‚·
+	//ãƒ•ã‚©ãƒ«ãƒ€ãŒæŒ‡å®šã•ã‚ŒãŸå ´åˆã¯ã€Œãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ãã€ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¡¨ç¤ºã—ã€å®Ÿéš›ã®ãƒ•ã‚¡ã‚¤ãƒ«å…¥åŠ›ã‚’ä¿ƒã™
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		std::vector<std::tstring> files;
 		SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
-			pLoadInfo->cFilePath,	//w’è‚³‚ê‚½ƒtƒHƒ‹ƒ_
+			pLoadInfo->cFilePath,	//æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚©ãƒ«ãƒ€
 			&sLoadInfo,
 			files
 		);
 		if( !bDlgResult ){
-			return CALLBACK_INTERRUPT; //ƒLƒƒƒ“ƒZƒ‹‚³‚ê‚½ê‡‚Í’†’f
+			return CALLBACK_INTERRUPT; //ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚ŒãŸå ´åˆã¯ä¸­æ–­
 		}
 		size_t nSize = files.size();
 		if( 0 < nSize ){
 			sLoadInfo.cFilePath = files[0].c_str();
-			// ‘¼‚Ìƒtƒ@ƒCƒ‹‚ÍV‹KƒEƒBƒ“ƒhƒE
+			// ä»–ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ–°è¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 			for( size_t i = 1; i < nSize; i++ ){
 				SLoadInfo sFilesLoadInfo = sLoadInfo;
 				sFilesLoadInfo.cFilePath = files[i].c_str();
@@ -74,14 +74,14 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 		*pLoadInfo = sLoadInfo;
 	}
 
-	// ‘¼‚ÌƒEƒBƒ“ƒhƒE‚ÅŠù‚ÉŠJ‚©‚ê‚Ä‚¢‚éê‡‚ÍA‚»‚ê‚ğƒAƒNƒeƒBƒu‚É‚·‚é
+	// ä»–ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§æ—¢ã«é–‹ã‹ã‚Œã¦ã„ã‚‹å ´åˆã¯ã€ãã‚Œã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
 	HWND	hWndOwner;
 	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pLoadInfo->cFilePath, &hWndOwner, pLoadInfo->eCharCode) ){
 		pLoadInfo->bOpened = true;
 		return CALLBACK_INTERRUPT;
 	}
 
-	// Œ»İ‚ÌƒEƒBƒ“ƒhƒE‚É‘Î‚µ‚Äƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ß‚È‚¢ê‡‚ÍAV‚½‚ÈƒEƒBƒ“ƒhƒE‚ğŠJ‚«A‚»‚±‚Éƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ü‚¹‚é
+	// ç¾åœ¨ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«å¯¾ã—ã¦ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚ãªã„å ´åˆã¯ã€æ–°ãŸãªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ãã€ãã“ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã¾ã›ã‚‹
 	if(!pcDoc->IsAcceptLoad()){
 		CControlTray::OpenNewEditor(
 			G_AppInstance(),
@@ -92,33 +92,33 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	}
 
 next:
-	// ƒIƒvƒVƒ‡ƒ“FŠJ‚±‚¤‚Æ‚µ‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢‚Æ‚«Œx‚·‚é
+	// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼šé–‹ã“ã†ã¨ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„ã¨ãè­¦å‘Šã™ã‚‹
 	if( GetDllShareData().m_Common.m_sFile.GetAlertIfFileNotExist() ){
 		if(!fexist(pLoadInfo->cFilePath)){
 			InfoBeep();
-			//	Feb. 15, 2003 genta PopupƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚È‚¢‚æ‚¤‚ÉD
-			//	‚±‚±‚ÅƒXƒe[ƒ^ƒXƒƒbƒZ[ƒW‚ğg‚Á‚Ä‚à‰æ–Ê‚É•\¦‚³‚ê‚È‚¢D
+			//	Feb. 15, 2003 genta Popupã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ãªã„ã‚ˆã†ã«ï¼
+			//	ã“ã“ã§ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä½¿ã£ã¦ã‚‚ç”»é¢ã«è¡¨ç¤ºã•ã‚Œãªã„ï¼
 			TopInfoMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_NOT_EXSIST_SAVE),	//Mar. 24, 2001 jepro áŠ±C³
+				LS(STR_NOT_EXSIST_SAVE),	//Mar. 24, 2001 jepro è‹¥å¹²ä¿®æ­£
 				pLoadInfo->cFilePath.GetBufferPointer()
 			);
 		}
 	}
 
-	// “Ç‚İæ‚è‰Â”\ƒ`ƒFƒbƒN
+	// èª­ã¿å–ã‚Šå¯èƒ½ãƒã‚§ãƒƒã‚¯
 	do{
 		CFile cFile(pLoadInfo->cFilePath.c_str());
 
-		//ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚È‚¢ê‡‚Íƒ`ƒFƒbƒNÈ—ª
+		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ãªã„å ´åˆã¯ãƒã‚§ãƒƒã‚¯çœç•¥
 		if(!cFile.IsFileExist())break;
 
-		// ƒƒbƒN‚Íˆê“I‚É‰ğœ‚µ‚Äƒ`ƒFƒbƒN‚·‚éiƒ`ƒFƒbƒN‚¹‚¸‚ÉŒã–ß‚è‚Å‚«‚È‚¢‚Æ‚±‚ë‚Ü‚Åi‚ß‚é‚æ‚èˆÀ‘Sj
-		// ¦ ƒƒbƒN‚µ‚Ä‚¢‚Ä‚àƒAƒNƒZƒX‹–‰Â‚Ì•ÏX‚É‚æ‚Á‚Ä“Ç‚İæ‚ê‚È‚­‚È‚Á‚Ä‚¢‚é‚±‚Æ‚à‚ ‚é
+		// ãƒ­ãƒƒã‚¯ã¯ä¸€æ™‚çš„ã«è§£é™¤ã—ã¦ãƒã‚§ãƒƒã‚¯ã™ã‚‹ï¼ˆãƒã‚§ãƒƒã‚¯ã›ãšã«å¾Œæˆ»ã‚Šã§ããªã„ã¨ã“ã‚ã¾ã§é€²ã‚ã‚‹ã‚ˆã‚Šå®‰å…¨ï¼‰
+		// â€» ãƒ­ãƒƒã‚¯ã—ã¦ã„ã¦ã‚‚ã‚¢ã‚¯ã‚»ã‚¹è¨±å¯ã®å¤‰æ›´ã«ã‚ˆã£ã¦èª­ã¿å–ã‚Œãªããªã£ã¦ã„ã‚‹ã“ã¨ã‚‚ã‚ã‚‹
 		bool bLock = (pLoadInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking());
 		if( bLock ) pcDoc->m_cDocFileOperation.DoFileUnlock();
 
-		//ƒ`ƒFƒbƒN
+		//ãƒã‚§ãƒƒã‚¯
 		if(!cFile.IsFileReadable()){
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
@@ -126,13 +126,13 @@ next:
 				LS(STR_LOADAGENT_ERR_OPEN),
 				pLoadInfo->cFilePath.c_str()
 			);
-			return CALLBACK_INTERRUPT; //ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ä‚¢‚é‚Ì‚É“Ç‚İæ‚ê‚È‚¢ê‡‚Í’†’f
+			return CALLBACK_INTERRUPT; //ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã®ã«èª­ã¿å–ã‚Œãªã„å ´åˆã¯ä¸­æ–­
 		}
 		if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 	}
-	while(false);	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
+	while(false);	//	1å›ã—ã‹é€šã‚‰ãªã„. breakã§ã“ã“ã¾ã§é£›ã¶
 
-	// ƒtƒ@ƒCƒ‹ƒTƒCƒYƒ`ƒFƒbƒN
+	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯
 	if( GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile ){
 		WIN32_FIND_DATA wfd;
 		HANDLE nFind = ::FindFirstFile( pLoadInfo->cFilePath.c_str(), &wfd );
@@ -141,7 +141,7 @@ next:
 			LARGE_INTEGER nFileSize;
 			nFileSize.HighPart = wfd.nFileSizeHigh;
 			nFileSize.LowPart = wfd.nFileSizeLow;
-			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize ‚ÍMB’PˆÊ
+			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize ã¯MBå˜ä½
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
 				int nRet = MYMESSAGEBOX( CEditWnd::getInstance()->GetHwnd(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
@@ -167,13 +167,13 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	ELoadResult eRet = LOADED_OK;
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	/* Šù‘¶ƒf[ƒ^‚ÌƒNƒŠƒA */
+	/* æ—¢å­˜ãƒ‡ãƒ¼ã‚¿ã®ã‚¯ãƒªã‚¢ */
 	pcDoc->InitDoc(); //$$
 
-	// ƒpƒX‚ğŠm’è
+	// ãƒ‘ã‚¹ã‚’ç¢ºå®š
 	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
 
-	// •¶‘í•ÊŠm’è
+	// æ–‡æ›¸ç¨®åˆ¥ç¢ºå®š
 	pcDoc->m_cDocType.SetDocumentType( sLoadInfo.nType, true );
 	pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());
 	InitCharWidthCache( pcDoc->m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
@@ -181,8 +181,8 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	InitCharWidthCache( pcDoc->m_pcEditWnd->GetLogfont() );
 	pcDoc->m_pcEditWnd->m_pcViewFont->UpdateFont(&pcDoc->m_pcEditWnd->GetLogfont());
 
-	// ‹N“®‚Æ“¯‚É“Ç‚Şê‡‚Í—\‚ßƒAƒEƒgƒ‰ƒCƒ“‰ğÍ‰æ–Ê‚ğ”z’u‚µ‚Ä‚¨‚­
-	// iƒtƒ@ƒCƒ‹“Ç‚İ‚İŠJn‚Æ‚Æ‚à‚Éƒrƒ…[‚ª•\¦‚³‚ê‚é‚Ì‚ÅA‚ ‚Æ‚Å”z’u‚·‚é‚Æ‰æ–Ê‚Ì‚¿‚ç‚Â‚«‚ª‘å‚«‚¢‚Ìj
+	// èµ·å‹•ã¨åŒæ™‚ã«èª­ã‚€å ´åˆã¯äºˆã‚ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æç”»é¢ã‚’é…ç½®ã—ã¦ãŠã
+	// ï¼ˆãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿é–‹å§‹ã¨ã¨ã‚‚ã«ãƒ“ãƒ¥ãƒ¼ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã®ã§ã€ã‚ã¨ã§é…ç½®ã™ã‚‹ã¨ç”»é¢ã®ã¡ã‚‰ã¤ããŒå¤§ãã„ã®ï¼‰
 	if( !pcDoc->m_pcEditWnd->m_cDlgFuncList.m_bEditWndReady ){
 		pcDoc->m_pcEditWnd->m_cDlgFuncList.Refresh();
 		HWND hEditWnd = pcDoc->m_pcEditWnd->GetHwnd();
@@ -193,9 +193,9 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		}
 	}
 
-	//ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡‚Íƒtƒ@ƒCƒ‹‚ğ“Ç‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã‚€
 	if(fexist(sLoadInfo.cFilePath)){
-		//CDocLineMgr‚Ì\¬
+		//CDocLineMgrã®æ§‹æˆ
 		CReadManager cReader;
 		CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cReader);
 		EConvertResult eReadResult = cReader.ReadFile_To_CDocLineMgr(
@@ -209,17 +209,17 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
 	else{
-		// ‘¶İ‚µ‚È‚¢‚Æ‚«‚àƒhƒLƒ…ƒƒ“ƒg‚É•¶šƒR[ƒh‚ğ”½‰f‚·‚é
+		// å­˜åœ¨ã—ãªã„ã¨ãã‚‚ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã«æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’åæ˜ ã™ã‚‹
 		const STypeConfig& types = pcDoc->m_cDocType.GetDocumentAttribute();
 		pcDoc->m_cDocFile.SetCodeSet( sLoadInfo.eCharCode, 
 			( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ) ?
 				types.m_encoding.m_bDefaultBom : CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn() );
 	}
 
-	/* ƒŒƒCƒAƒEƒgî•ñ‚Ì•ÏX */
-	// 2008.06.07 nasukoji	Ü‚è•Ô‚µ•û–@‚Ì’Ç‰Á‚É‘Î‰
-	// uw’èŒ…‚ÅÜ‚è•Ô‚·vˆÈŠO‚Ì‚ÍÜ‚è•Ô‚µ•‚ğMAXLINEKETAS‚Å‰Šú‰»‚·‚é
-	// u‰E’[‚ÅÜ‚è•Ô‚·v‚ÍA‚±‚ÌŒã‚ÌOnSize()‚ÅÄİ’è‚³‚ê‚é
+	/* ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆæƒ…å ±ã®å¤‰æ›´ */
+	// 2008.06.07 nasukoji	æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã®è¿½åŠ ã«å¯¾å¿œ
+	// ã€ŒæŒ‡å®šæ¡ã§æŠ˜ã‚Šè¿”ã™ã€ä»¥å¤–ã®æ™‚ã¯æŠ˜ã‚Šè¿”ã—å¹…ã‚’MAXLINEKETASã§åˆæœŸåŒ–ã™ã‚‹
+	// ã€Œå³ç«¯ã§æŠ˜ã‚Šè¿”ã™ã€ã¯ã€ã“ã®å¾Œã®OnSize()ã§å†è¨­å®šã•ã‚Œã‚‹
 	const STypeConfig& ref = pcDoc->m_cDocType.GetDocumentAttribute();
 	CKetaXInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
@@ -241,23 +241,23 @@ void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	/* eƒEƒBƒ“ƒhƒE‚Ìƒ^ƒCƒgƒ‹‚ğXV */
+	/* è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¿ã‚¤ãƒˆãƒ«ã‚’æ›´æ–° */
 	pcDoc->m_pcEditWnd->UpdateCaption();
 
-	// -- -- ¦ InitAllView‚Å‚â‚Á‚Ä‚½‚±‚Æ -- -- //	// 2009.08.28 nasukoji	CEditView::OnAfterLoad()‚©‚ç‚±‚±‚ÉˆÚ“®
+	// -- -- â€» InitAllViewã§ã‚„ã£ã¦ãŸã“ã¨ -- -- //	// 2009.08.28 nasukoji	CEditView::OnAfterLoad()ã‹ã‚‰ã“ã“ã«ç§»å‹•
 	pcDoc->m_nCommandExecNum=0;
 
-	// ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@‚ğ‰Šú‰»
-	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// Ü‚è•Ô‚µ•û–@
-	pcDoc->m_bTextWrapMethodCurTemp = false;													// ˆêİ’è“K—p’†‚ğ‰ğœ
+	// ãƒ†ã‚­ã‚¹ãƒˆã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•ã‚’åˆæœŸåŒ–
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// æŠ˜ã‚Šè¿”ã—æ–¹æ³•
+	pcDoc->m_bTextWrapMethodCurTemp = false;													// ä¸€æ™‚è¨­å®šé©ç”¨ä¸­ã‚’è§£é™¤
 	pcDoc->m_blfCurTemp = false;
 	pcDoc->m_bTabSpaceCurTemp = false;
 
-	// 2009.08.28 nasukoji	uÜ‚è•Ô‚³‚È‚¢v‚È‚çƒeƒLƒXƒgÅ‘å•‚ğZoA‚»‚êˆÈŠO‚Í•Ï”‚ğƒNƒŠƒA
+	// 2009.08.28 nasukoji	ã€ŒæŠ˜ã‚Šè¿”ã•ãªã„ã€ãªã‚‰ãƒ†ã‚­ã‚¹ãƒˆæœ€å¤§å¹…ã‚’ç®—å‡ºã€ãã‚Œä»¥å¤–ã¯å¤‰æ•°ã‚’ã‚¯ãƒªã‚¢
 	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// ƒeƒLƒXƒgÅ‘å•‚ğZo‚·‚é
+		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// ãƒ†ã‚­ã‚¹ãƒˆæœ€å¤§å¹…ã‚’ç®—å‡ºã™ã‚‹
 	else
-		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// Šes‚ÌƒŒƒCƒAƒEƒgs’·‚Ì‹L‰¯‚ğƒNƒŠƒA‚·‚é
+		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// å„è¡Œã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¡Œé•·ã®è¨˜æ†¶ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 }
 
 
@@ -273,11 +273,11 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 		CAppMode::getInstance()->SetViewMode(true);
 	}
 
-	//Ä•`‰æ $$•s‘«
+	//å†æç”» $$ä¸è¶³
 	// CEditWnd::getInstance()->GetActiveView().SetDrawSwitch(true);
 	bool bDraw = CEditWnd::getInstance()->GetActiveView().GetDrawSwitch();
 	if( bDraw ){
-		CEditWnd::getInstance()->Views_RedrawAll(); //ƒrƒ…[Ä•`‰æ
+		CEditWnd::getInstance()->Views_RedrawAll(); //ãƒ“ãƒ¥ãƒ¼å†æç”»
 		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
 	}
 	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();

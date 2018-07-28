@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ZIP file‘€ì
+ï»¿/*!	@file
+	@brief ZIP fileæ“ä½œ
 
 */
 /*
@@ -42,7 +42,7 @@ const GUID CLSID_Shell =
 #endif
 
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CZipFile::CZipFile() {
 	HRESULT		hr;
 
@@ -54,7 +54,7 @@ CZipFile::CZipFile() {
 }
 
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 CZipFile::~CZipFile() {
 	if (pZipFile != NULL) {
 		pZipFile->Release();
@@ -65,7 +65,7 @@ CZipFile::~CZipFile() {
 
 
 
-// Zip File–¼ Ý’è
+// Zip Fileå è¨­å®š
 bool CZipFile::SetZip(const std::tstring& sZipPath)
 {
 	HRESULT			hr;
@@ -76,7 +76,7 @@ bool CZipFile::SetZip(const std::tstring& sZipPath)
 		pZipFile = NULL;
 	}
 
-	// ZIP FolderÝ’è
+	// ZIP Folderè¨­å®š
 	VariantInit(&var);
 	var.vt = VT_BSTR;
 	var.bstrVal = SysAllocString(to_wchar(sZipPath.c_str()));
@@ -93,7 +93,7 @@ bool CZipFile::SetZip(const std::tstring& sZipPath)
 
 
 
-// ZIP File “à ƒtƒHƒ‹ƒ_–¼Žæ“¾‚Æ’è‹`ƒtƒ@ƒCƒ‹ŒŸ¸(Plugin—p)
+// ZIP File å†… ãƒ•ã‚©ãƒ«ãƒ€åå–å¾—ã¨å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«æ¤œæŸ»(Pluginç”¨)
 bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName)
 {
 	HRESULT			hr;
@@ -111,7 +111,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 		return false;
 	}
 
-	// ŒŸ¸
+	// æ¤œæŸ»
 	hr = pZipFileItems->get_Count(&lCount);
 	VariantInit(&vari);
 	vari.vt = VT_I4;
@@ -148,7 +148,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 				hr = pFileItem->get_Path(&bps);
 				if (hr != S_OK) { continue; }
 
-				// ’è‹`ƒtƒ@ƒCƒ‹‚©
+				// å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã‹
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
 					&& (auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
 					|| auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
@@ -172,7 +172,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 
 
 
-// ZIP File ‰ð“€
+// ZIP File è§£å‡
 bool CZipFile::Unzip(const std::tstring sOutPath)
 {
 	HRESULT			hr;
@@ -188,7 +188,7 @@ bool CZipFile::Unzip(const std::tstring sOutPath)
 		return false;
 	}
 
-	// o—ÍFolderÝ’è
+	// å‡ºåŠ›Folderè¨­å®š
 	VariantInit(&var);
 	var.vt = VT_BSTR;
 	var.bstrVal = SysAllocString(to_wchar(sOutPath.c_str()));
@@ -200,7 +200,7 @@ bool CZipFile::Unzip(const std::tstring sOutPath)
 		return false;
 	}
 
-	// “WŠJ‚ÌÝ’è
+	// å±•é–‹ã®è¨­å®š
 	VariantInit(&var);
 	var.vt = VT_DISPATCH;
 	var.pdispVal = pZipFileItems;
@@ -208,7 +208,7 @@ bool CZipFile::Unzip(const std::tstring sOutPath)
 	varOpt.vt = VT_I4;
 	varOpt.lVal = FOF_SILENT | FOF_NOCONFIRMATION;
 
-	// “WŠJ
+	// å±•é–‹
 	hr = pOutFolder->CopyHere(var, varOpt);
 
 	pOutFolder->Release();

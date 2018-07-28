@@ -1,8 +1,8 @@
-/*!	@file
-	@brief •ÒW‘€ì—v‘fƒuƒƒbƒN
+ï»¿/*!	@file
+	@brief ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯
 
 	@author Norio Nakatani
-	@date 1998/06/09 V‹Kì¬
+	@date 1998/06/09 æ–°è¦ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -16,7 +16,7 @@
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 COpeBlk::COpeBlk()
@@ -26,7 +26,7 @@ COpeBlk::COpeBlk()
 
 COpeBlk::~COpeBlk()
 {
-	/* ‘€ì‚Ì”z—ñ‚ğíœ‚·‚é */
+	/* æ“ä½œã®é…åˆ—ã‚’å‰Šé™¤ã™ã‚‹ */
 	int size = (int)m_ppCOpeArr.size();
 	for( int i = 0; i < size; ++i ){
 		SAFE_DELETE(m_ppCOpeArr[i]);
@@ -35,10 +35,10 @@ COpeBlk::~COpeBlk()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* ‘€ì‚Ì’Ç‰Á */
+/* æ“ä½œã®è¿½åŠ  */
 bool COpeBlk::AppendOpe( COpe* pcOpe )
 {
 	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
@@ -54,13 +54,13 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 		);
 	}
 
-	/* ”z—ñ‚Ìƒƒ‚ƒŠƒTƒCƒY‚ğ’²® */
+	/* é…åˆ—ã®ãƒ¡ãƒ¢ãƒªã‚µã‚¤ã‚ºã‚’èª¿æ•´ */
 	m_ppCOpeArr.push_back(pcOpe);
 	return true;
 }
 
 
-/* ‘€ì‚ğ•Ô‚· */
+/* æ“ä½œã‚’è¿”ã™ */
 COpe* COpeBlk::GetOpe( int nIndex )
 {
 	if( GetNum() <= nIndex ){
@@ -70,10 +70,10 @@ COpe* COpeBlk::GetOpe( int nIndex )
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         ƒfƒoƒbƒO                            //
+//                         ãƒ‡ãƒãƒƒã‚°                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* •ÒW‘€ì—v‘fƒuƒƒbƒN‚Ìƒ_ƒ“ƒv */
+/* ç·¨é›†æ“ä½œè¦ç´ ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒ€ãƒ³ãƒ— */
 void COpeBlk::DUMP( void )
 {
 #ifdef _DEBUG

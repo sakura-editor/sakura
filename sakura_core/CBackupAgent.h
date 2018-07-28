@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -31,8 +31,8 @@ public:
 	ECallbackResult OnPreBeforeSave(SSaveInfo* pSaveInfo);
 
 protected:
-	int MakeBackUp( const TCHAR* target_file );								//!< ƒoƒbƒNƒAƒbƒv‚Ìì¬
-	bool FormatBackUpPath( TCHAR*, size_t, const TCHAR* );	//!< ƒoƒbƒNƒAƒbƒvƒpƒX‚Ìì¬ 2005.11.21 aroka
+	int MakeBackUp( const TCHAR* target_file );								//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã®ä½œæˆ
+	bool FormatBackUpPath( TCHAR*, size_t, const TCHAR* );	//!< ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ãƒ‘ã‚¹ã®ä½œæˆ 2005.11.21 aroka
 };
 
 #endif /* SAKURA_CBACKUPAGENT_54267C70_F49D_418B_B1EA_0F98DD5DE4B19_H_ */

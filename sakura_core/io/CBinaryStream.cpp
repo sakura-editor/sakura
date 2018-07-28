@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "CBinaryStream.h"
 
 
@@ -7,7 +7,7 @@ CBinaryInputStream::CBinaryInputStream(LPCTSTR tszFilePath)
 {
 }
 
-//! ƒXƒgƒŠ[ƒ€‚Ìuc‚èvƒTƒCƒY‚ğæ“¾
+//! ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®ã€Œæ®‹ã‚Šã€ã‚µã‚¤ã‚ºã‚’å–å¾—
 int CBinaryInputStream::GetLength()
 {
 	long nCur = ftell(GetFp());
@@ -17,7 +17,7 @@ int CBinaryInputStream::GetLength()
 	return nDataLen;
 }
 
-//! ƒf[ƒ^‚ğ–³•ÏŠ·‚Å“Ç‚İ‚ŞB–ß‚è’l‚Í“Ç‚İ‚ñ‚¾ƒoƒCƒg”B
+//! ãƒ‡ãƒ¼ã‚¿ã‚’ç„¡å¤‰æ›ã§èª­ã¿è¾¼ã‚€ã€‚æˆ»ã‚Šå€¤ã¯èª­ã¿è¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°ã€‚
 int CBinaryInputStream::Read(void* pBuffer, int nSizeInBytes)
 {
 	return fread(pBuffer,1,nSizeInBytes,GetFp());

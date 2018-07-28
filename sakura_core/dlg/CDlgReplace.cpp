@@ -144,13 +144,13 @@ void CDlgReplace::SetData( void )
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 	}
 	else {
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
 
 		/*「すべて置換」は置換の繰返し */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
+		::EnableWindow( GetItemHwnd( IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
 	}
 	// To Here Jun. 29, 2001 genta
 
@@ -196,7 +196,7 @@ void CDlgReplace::SetCombosList( void )
 	HWND	hwndCombo;
 
 	/* 検索文字列 */
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
+	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT );
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
@@ -209,7 +209,7 @@ void CDlgReplace::SetCombosList( void )
 	}
 
 	/* 置換後文字列 */
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
+	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT2 );
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
@@ -305,7 +305,7 @@ int CDlgReplace::GetData( void )
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？
 		m_nPaste=IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), !m_nPaste );
+		::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), !m_nPaste );
 		// 置換対象
 		m_nReplaceTarget=0;
 		if(::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_INSERT )){
@@ -343,12 +343,12 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	他との一貫性を保つため削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
+	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
 
 	/* テキスト選択中か */
@@ -410,7 +410,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			OkMessage( GetHwnd(), LS(STR_DLGREPLC_CLIPBOARD) );
 			::CheckDlgButton( GetHwnd(), IDC_CHK_PASTE, FALSE );
 		}
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE)) );
+		::EnableWindow( GetItemHwnd( IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( GetHwnd(), IDC_CHK_PASTE)) );
 		return TRUE;
 		// 置換対象
 	case IDC_RADIO_REPLACE:
@@ -428,25 +428,25 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_RADIO_SELECTEDAREA:
 		/* 範囲範囲 */
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_ALLAREA ) ){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHPREV ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHNEXT ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REPALCE ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHPREV ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHNEXT ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_REPALCE ), TRUE );
 		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHPREV ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHNEXT ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REPALCE ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHPREV ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHNEXT ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_REPALCE ), FALSE );
 		}
 		return TRUE;
 	case IDC_RADIO_ALLAREA:
 		/* ファイル全体 */
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_ALLAREA ) ){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHPREV ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHNEXT ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REPALCE ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHPREV ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHNEXT ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_REPALCE ), TRUE );
 		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHPREV ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_SEARCHNEXT ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REPALCE ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHPREV ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_SEARCHNEXT ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_BUTTON_REPALCE ), FALSE );
 		}
 		return TRUE;
 // To Here 2001.12.03 hor
@@ -475,28 +475,28 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 				//	Jan. 31, 2002 genta
 				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 				//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-				//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
+				//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
 
 				// 2001/06/23 N.Nakatani
 				/* 単語単位で探す */
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+				::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 
 				/*「すべて置換」は置換の繰返し */
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CONSECUTIVEALL ), TRUE );	// 2007.01.16 ryoji
+				::EnableWindow( GetItemHwnd( IDC_CHECK_CONSECUTIVEALL ), TRUE );	// 2007.01.16 ryoji
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
-			//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), TRUE );
+			//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
 			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
 			//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
 			// 2001/06/23 N.Nakatani
 			/* 単語単位で探す */
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), TRUE );
 
 			/*「すべて置換」は置換の繰返し */
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
+			::EnableWindow( GetItemHwnd( IDC_CHECK_CONSECUTIVEALL ), FALSE );	// 2007.01.16 ryoji
 		}
 		return TRUE;
 //	case IDOK:			/* 下検索 */
@@ -554,7 +554,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		nRet = GetData();
 		if( 0 < nRet ){
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
-			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)GetItemHwnd( IDC_COMBO_TEXT ),TRUE);
 		}
 		return TRUE;
 

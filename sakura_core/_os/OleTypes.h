@@ -1,11 +1,11 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief OLE Type wrapper
 
-	@author ‹S
+	@author é¬¼
 	@date 2003.0221
 */
 /*
-	Copyright (C) 2003, ‹S, Moca
+	Copyright (C) 2003, é¬¼, Moca
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 
@@ -16,9 +16,9 @@
 #include <Windows.h>
 #include <OleAuto.h>
 
-/*! BSTR‚ÌWrapper class
+/*! BSTRã®Wrapper class
 
-	ƒf[ƒ^\‘¢‚ÍBSTR‚ÆŒİŠ·«‚ ‚è
+	ãƒ‡ãƒ¼ã‚¿æ§‹é€ ã¯BSTRã¨äº’æ›æ€§ã‚ã‚Š
 */
 struct SysString
 {
@@ -75,9 +75,9 @@ struct SysString
 #endif
 };
 
-/*! VARIANT‚ÌWrapper class
+/*! VARIANTã®Wrapper class
 
-	ƒf[ƒ^\‘¢‚ÍVARIANT‚ÆŒİŠ·«‚ ‚è
+	ãƒ‡ãƒ¼ã‚¿æ§‹é€ ã¯VARIANTã¨äº’æ›æ€§ã‚ã‚Š
 */
 struct Variant
 {
@@ -87,9 +87,9 @@ struct Variant
 	Variant(VARIANT &Source)        { ::VariantCopyInd(&Data, &Source); }
 	~Variant()                      { ::VariantClear(&Data); }
 	Variant& operator = (Variant& Source) { ::VariantCopyInd(&Data, &Source.Data); return *this; }
-	/*! SysString‚ğVariant‚ÉƒZƒbƒg‚·‚é
+	/*! SysStringã‚’Variantã«ã‚»ãƒƒãƒˆã™ã‚‹
 	
-		ƒZƒbƒgŒãASysString‚Ì•û‚Í’†g‚ªNULL‚É‚È‚éB
+		ã‚»ãƒƒãƒˆå¾Œã€SysStringã®æ–¹ã¯ä¸­èº«ãŒNULLã«ãªã‚‹ã€‚
 	*/
 	void Receive(SysString &Source)
 	{
@@ -100,7 +100,7 @@ struct Variant
 	}
 
 	// 2003.06.25 Moca
-	// int‚ğ–ß‚è’l‚Æ‚µ‚Ä•Ô‚·ê‡‚É‘Î‰
+	// intã‚’æˆ»ã‚Šå€¤ã¨ã—ã¦è¿”ã™å ´åˆã«å¯¾å¿œ
 	int Receive(int i)
 	{
 		::VariantClear(&Data); 

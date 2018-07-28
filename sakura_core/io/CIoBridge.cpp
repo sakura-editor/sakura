@@ -1,34 +1,34 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "CEol.h"
 
-//! “à•”À‘•‚ÌƒGƒ“ƒR[ƒh‚Ö•ÏŠ·
+//! å†…éƒ¨å®Ÿè£…ã®ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã¸å¤‰æ›
 EConvertResult CIoBridge::FileToImpl(
-	const CMemory&		cSrc,		//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ
-	CNativeW*			pDst,		//!< [out] •ÏŠ·æƒƒ‚ƒŠ(UNICODE)
-	CCodeBase*			pCode,		//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ‚Ì•¶šƒR[ƒh
-	int					nFlag		//!< [in]  bit 0: MIME Encode‚³‚ê‚½ƒwƒbƒ_‚ğdecode‚·‚é‚©‚Ç‚¤‚©
+	const CMemory&		cSrc,		//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒª
+	CNativeW*			pDst,		//!< [out] å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒª(UNICODE)
+	CCodeBase*			pCode,		//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒªã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	int					nFlag		//!< [in]  bit 0: MIME Encodeã•ã‚ŒãŸãƒ˜ãƒƒãƒ€ã‚’decodeã™ã‚‹ã‹ã©ã†ã‹
 )
 {
-	//”CˆÓ‚Ì•¶šƒR[ƒh‚©‚çUnicode‚Ö•ÏŠ·‚·‚é
+	//ä»»æ„ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‹ã‚‰Unicodeã¸å¤‰æ›ã™ã‚‹
 	EConvertResult ret = pCode->CodeToUnicode(cSrc,pDst);
 
-	//Œ‹‰Ê
+	//çµæœ
 	return ret;
 }
 
 EConvertResult CIoBridge::ImplToFile(
-	const CNativeW&		cSrc,		//!< [in]  •ÏŠ·Œ³ƒƒ‚ƒŠ(UNICODE)
-	CMemory*			pDst,		//!< [out] •ÏŠ·æƒƒ‚ƒŠ
-	CCodeBase*			pCode		//!< [in]  •ÏŠ·æƒƒ‚ƒŠ‚Ì•¶šƒR[ƒh
+	const CNativeW&		cSrc,		//!< [in]  å¤‰æ›å…ƒãƒ¡ãƒ¢ãƒª(UNICODE)
+	CMemory*			pDst,		//!< [out] å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒª
+	CCodeBase*			pCode		//!< [in]  å¤‰æ›å…ˆãƒ¡ãƒ¢ãƒªã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
 )
 {
-	// Unicode‚©‚ç”CˆÓ‚Ì•¶šƒR[ƒh‚Ö•ÏŠ·‚·‚é
+	// Unicodeã‹ã‚‰ä»»æ„ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ã¸å¤‰æ›ã™ã‚‹
 	EConvertResult ret = pCode->UnicodeToCode(cSrc,pDst);
 
-	//Œ‹‰Ê
+	//çµæœ
 	return ret;
 }
 

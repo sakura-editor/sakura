@@ -1,13 +1,13 @@
-/*!	@file
-	@brief ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒp[ƒT ƒwƒbƒ_ƒtƒ@ƒCƒ‹
+ï»¿/*!	@file
+	@brief ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ãƒ‘ãƒ¼ã‚µ ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 
 	@author aroka
-	@date	2002/01/08 ì¬
+	@date	2002/01/08 ä½œæˆ
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000-2001, genta
-	Copyright (C) 2002, aroka CControlTray‚æ‚è•ª—£
+	Copyright (C) 2002, aroka CControlTrayã‚ˆã‚Šåˆ†é›¢
 	Copyright (C) 2002, genta
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2007, ryoji
@@ -25,50 +25,50 @@
 
 class CMemory;
 
-/*!	ŒŸõƒIƒvƒVƒ‡ƒ“
+/*!	æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	20020118 aroka
 */
 struct GrepInfo {
-	CNativeW		cmGrepKey;			//!< ŒŸõƒL[
-	CNativeW		cmGrepRep;			//!< ’uŠ·ƒL[
-	CNativeT		cmGrepFile;			//!< ŒŸõ‘ÎÛƒtƒ@ƒCƒ‹
-	CNativeT		cmGrepFolder;		//!< ŒŸõ‘ÎÛƒtƒHƒ‹ƒ_
-	SSearchOption	sGrepSearchOption;	//!< ŒŸõƒIƒvƒVƒ‡ƒ“
-	bool			bGrepCurFolder;		//!< ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğˆÛ
-	bool			bGrepStdout;		//!< •W€o—Íƒ‚[ƒh
-	bool			bGrepHeader;		//!< ƒwƒbƒ_î•ñ•\¦
-	bool			bGrepSubFolder;		//!< ƒTƒuƒtƒHƒ‹ƒ_‚ğŒŸõ‚·‚é
-	ECodeType		nGrepCharSet;		//!< •¶šƒR[ƒhƒZƒbƒg
-	int				nGrepOutputStyle;	//!< Œ‹‰Êo—ÍŒ`®
-	int				nGrepOutputLineType;	//!< Œ‹‰Êo—ÍFs‚ğo—Í/ŠY“–•”•ª/”Ûƒ}ƒbƒ`s
-	bool			bGrepOutputFileOnly;	//!< ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚İŒŸõ
-	bool			bGrepOutputBaseFolder;	//!< ƒx[ƒXƒtƒHƒ‹ƒ_•\¦
-	bool			bGrepSeparateFolder;	//!< ƒtƒHƒ‹ƒ_–ˆ‚É•\¦
-	bool			bGrepReplace;		//!< Grep’uŠ·
-	bool			bGrepPaste;			//!< ƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯
-	bool			bGrepBackup;		//!< ’uŠ·‚ÅƒoƒbƒNƒAƒbƒv‚ğ•Û‘¶
+	CNativeW		cmGrepKey;			//!< æ¤œç´¢ã‚­ãƒ¼
+	CNativeW		cmGrepRep;			//!< ç½®æ›ã‚­ãƒ¼
+	CNativeT		cmGrepFile;			//!< æ¤œç´¢å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«
+	CNativeT		cmGrepFolder;		//!< æ¤œç´¢å¯¾è±¡ãƒ•ã‚©ãƒ«ãƒ€
+	SSearchOption	sGrepSearchOption;	//!< æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	bool			bGrepCurFolder;		//!< ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ç¶­æŒ
+	bool			bGrepStdout;		//!< æ¨™æº–å‡ºåŠ›ãƒ¢ãƒ¼ãƒ‰
+	bool			bGrepHeader;		//!< ãƒ˜ãƒƒãƒ€æƒ…å ±è¡¨ç¤º
+	bool			bGrepSubFolder;		//!< ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚’æ¤œç´¢ã™ã‚‹
+	ECodeType		nGrepCharSet;		//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆ
+	int				nGrepOutputStyle;	//!< çµæœå‡ºåŠ›å½¢å¼
+	int				nGrepOutputLineType;	//!< çµæœå‡ºåŠ›ï¼šè¡Œã‚’å‡ºåŠ›/è©²å½“éƒ¨åˆ†/å¦ãƒãƒƒãƒè¡Œ
+	bool			bGrepOutputFileOnly;	//!< ãƒ•ã‚¡ã‚¤ãƒ«æ¯æœ€åˆã®ã¿æ¤œç´¢
+	bool			bGrepOutputBaseFolder;	//!< ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+	bool			bGrepSeparateFolder;	//!< ãƒ•ã‚©ãƒ«ãƒ€æ¯ã«è¡¨ç¤º
+	bool			bGrepReplace;		//!< Grepç½®æ›
+	bool			bGrepPaste;			//!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘
+	bool			bGrepBackup;		//!< ç½®æ›ã§ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’ä¿å­˜
 };
 
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 
 /*!
-	@brief ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒp[ƒT ƒNƒ‰ƒX
+	@brief ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ãƒ‘ãƒ¼ã‚µ ã‚¯ãƒ©ã‚¹
 */
 class CCommandLine  : public TSingleton<CCommandLine> {
 	friend class TSingleton<CCommandLine>;
 	CCommandLine();
 
 	static int CheckCommandLine(
-		LPTSTR	str,		//!< [in] ŒŸØ‚·‚é•¶š—ñiæ“ª‚Ì-‚ÍŠÜ‚Ü‚È‚¢j
-		TCHAR**	arg,		//!< [out] ˆø”‚ª‚ ‚éê‡‚Í‚»‚Ìæ“ª‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		int*	arglen		//!< [out] ˆø”‚Ì’·‚³
+		LPTSTR	str,		//!< [in] æ¤œè¨¼ã™ã‚‹æ–‡å­—åˆ—ï¼ˆå…ˆé ­ã®-ã¯å«ã¾ãªã„ï¼‰
+		TCHAR**	arg,		//!< [out] å¼•æ•°ãŒã‚ã‚‹å ´åˆã¯ãã®å…ˆé ­ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		int*	arglen		//!< [out] å¼•æ•°ã®é•·ã•
 	);
 
 	/*!
-		ˆø—p•„‚ÅˆÍ‚Ü‚ê‚Ä‚¢‚é”’l‚ğ”F¯‚·‚é‚æ‚¤‚É‚·‚é
+		å¼•ç”¨ç¬¦ã§å›²ã¾ã‚Œã¦ã„ã‚‹æ•°å€¤ã‚’èªè­˜ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹
 		@date 2002.12.05 genta
 	*/
 	static int AtoiOptionInt(const TCHAR* arg){
@@ -79,7 +79,7 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 // member accessor method
 public:
 	bool IsNoWindow() const {return m_bNoWindow;}
-	bool IsWriteQuit() const {return m_bWriteQuit;}	// 2007.05.19 ryoji sakuext—p‚É’Ç‰Á
+	bool IsWriteQuit() const {return m_bWriteQuit;}	// 2007.05.19 ryoji sakuextç”¨ã«è¿½åŠ 
 	bool IsGrepMode() const {return m_bGrepMode;}
 	bool IsGrepDlg() const {return m_bGrepDlg;}
 	bool IsDebugMode() const {return m_bDebugMode;}
@@ -104,20 +104,20 @@ public:
 // member valiables
 private:
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
-	bool		m_bGrepDlg;			//  Grepƒ_ƒCƒAƒƒO
+	bool		m_bGrepDlg;			//  Grepãƒ€ã‚¤ã‚¢ãƒ­ã‚°
 	bool		m_bDebugMode;		
-	bool		m_bNoWindow;		//! [out] TRUE: •ÒWWindow‚ğŠJ‚©‚È‚¢
-	bool		m_bWriteQuit;		//! [out] TRUE: İ’è‚ğ•Û‘¶‚µ‚ÄI—¹	// 2007.05.19 ryoji sakuext—p‚É’Ç‰Á
+	bool		m_bNoWindow;		//! [out] TRUE: ç·¨é›†Windowã‚’é–‹ã‹ãªã„
+	bool		m_bWriteQuit;		//! [out] TRUE: è¨­å®šã‚’ä¿å­˜ã—ã¦çµ‚äº†	// 2007.05.19 ryoji sakuextç”¨ã«è¿½åŠ 
 	bool		m_bProfileMgr;
 	bool		m_bSetProfile;
 	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
 	bool		m_bViewMode;		//! [out] TRUE: Read Only
-	int			m_nGroup;			//! ƒOƒ‹[ƒvID	// 2007.06.26 ryoji
-	CNativeW	m_cmMacro;			//! [out] ƒ}ƒNƒƒtƒ@ƒCƒ‹–¼^ƒ}ƒNƒ•¶
-	CNativeW	m_cmMacroType;		//! [out] ƒ}ƒNƒí•Ê
-	CNativeW	m_cmProfile;		//! ƒvƒƒtƒ@ƒCƒ‹–¼
-	std::vector<std::tstring> m_vFiles;	//!< ƒtƒ@ƒCƒ‹–¼(•¡”)
+	int			m_nGroup;			//! ã‚°ãƒ«ãƒ¼ãƒ—ID	// 2007.06.26 ryoji
+	CNativeW	m_cmMacro;			//! [out] ãƒã‚¯ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«åï¼ãƒã‚¯ãƒ­æ–‡
+	CNativeW	m_cmMacroType;		//! [out] ãƒã‚¯ãƒ­ç¨®åˆ¥
+	CNativeW	m_cmProfile;		//! ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«å
+	std::vector<std::tstring> m_vFiles;	//!< ãƒ•ã‚¡ã‚¤ãƒ«å(è¤‡æ•°)
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ‹¤’Ê’è‹`
+ï»¿/*!	@file
+	@brief å…±é€šå®šç¾©
 
 	@author Norio Nakatani
 */
@@ -33,7 +33,7 @@
 
 
 
-/* ƒEƒBƒ“ƒhƒE‚ÌID */
+/* ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ID */
 #define IDW_STATUSBAR 123
 
 
@@ -43,7 +43,7 @@
 
 #include "charset/charset.h"
 
-/* ƒ_ƒCƒAƒƒO•\Ž¦•û–@ */ // ƒAƒEƒgƒ‰ƒCƒ“ƒEƒBƒ“ƒhƒE—p‚Éì¬ 20060201 aroka
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°è¡¨ç¤ºæ–¹æ³• */ // ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”¨ã«ä½œæˆ 20060201 aroka
 enum enumShowDlg {
 	SHOW_NORMAL			= 0,
 	SHOW_RELOAD			= 1,
@@ -51,7 +51,7 @@ enum enumShowDlg {
 };
 
 
-/* ‘I‘ð—Ìˆæ•`‰æ—pƒpƒ‰ƒ[ƒ^ */
+/* é¸æŠžé ˜åŸŸæç”»ç”¨ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
 extern const COLORREF	SELECTEDAREA_RGB;
 extern const int		SELECTEDAREA_ROP2;
 
@@ -60,42 +60,42 @@ extern const int		SELECTEDAREA_ROP2;
 
 
 //@@@ From Here 2003.05.31 MIK
-/*! ƒ^ƒuƒEƒCƒ“ƒhƒE—pƒƒbƒZ[ƒWƒTƒuƒRƒ}ƒ“ƒh */
+/*! ã‚¿ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ç”¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚µãƒ–ã‚³ãƒžãƒ³ãƒ‰ */
 enum ETabWndNotifyType {
-	TWNT_REFRESH	= 0,		//Ä•\Ž¦
-	TWNT_ADD		= 1,		//ƒEƒCƒ“ƒhƒE“o˜^
-	TWNT_DEL		= 2,		//ƒEƒCƒ“ƒhƒEíœ
-	TWNT_ORDER		= 3,		//ƒEƒCƒ“ƒhƒE‡˜•ÏX
-	TWNT_FILE		= 4,		//ƒtƒ@ƒCƒ‹–¼•ÏX
-	TWNT_MODE_ENABLE= 5,		//ƒ^ƒuƒ‚[ƒh—LŒø‰»	//2004.07.14 Kazika ’Ç‰Á
-	TWNT_MODE_DISABLE= 6,		//ƒ^ƒuƒ‚[ƒh–³Œø‰»	//2004.08.27 Kazika ’Ç‰Á
-	TWNT_WNDPL_ADJUST= 7,		//ƒEƒBƒ“ƒhƒEˆÊ’u‡‚í‚¹	// 2007.04.03 ryoji ’Ç‰Á
+	TWNT_REFRESH	= 0,		//å†è¡¨ç¤º
+	TWNT_ADD		= 1,		//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ç™»éŒ²
+	TWNT_DEL		= 2,		//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦å‰Šé™¤
+	TWNT_ORDER		= 3,		//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦é †åºå¤‰æ›´
+	TWNT_FILE		= 4,		//ãƒ•ã‚¡ã‚¤ãƒ«åå¤‰æ›´
+	TWNT_MODE_ENABLE= 5,		//ã‚¿ãƒ–ãƒ¢ãƒ¼ãƒ‰æœ‰åŠ¹åŒ–	//2004.07.14 Kazika è¿½åŠ 
+	TWNT_MODE_DISABLE= 6,		//ã‚¿ãƒ–ãƒ¢ãƒ¼ãƒ‰ç„¡åŠ¹åŒ–	//2004.08.27 Kazika è¿½åŠ 
+	TWNT_WNDPL_ADJUST= 7,		//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½ç½®åˆã‚ã›	// 2007.04.03 ryoji è¿½åŠ 
 };
 
-/*! ƒo[‚Ì•\Ž¦E”ñ•\Ž¦ */
+/*! ãƒãƒ¼ã®è¡¨ç¤ºãƒ»éžè¡¨ç¤º */
 enum EBarChangeNotifyType {
-	MYBCN_TOOLBAR	= 0,		//ƒc[ƒ‹ƒo[
-	MYBCN_FUNCKEY	= 1,		//ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[
-	MYBCN_TAB		= 2,		//ƒ^ƒu
-	MYBCN_STATUSBAR	= 3,		//ƒXƒe[ƒ^ƒXƒo[
-	MYBCN_MINIMAP	= 4,		//ƒ~ƒjƒ}ƒbƒv
+	MYBCN_TOOLBAR	= 0,		//ãƒ„ãƒ¼ãƒ«ãƒãƒ¼
+	MYBCN_FUNCKEY	= 1,		//ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼
+	MYBCN_TAB		= 2,		//ã‚¿ãƒ–
+	MYBCN_STATUSBAR	= 3,		//ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼
+	MYBCN_MINIMAP	= 4,		//ãƒŸãƒ‹ãƒžãƒƒãƒ—
 };
 //@@@ To Here 2003.05.31 MIK
 
-//ƒ^ƒu‚ÅŽg‚¤ƒJƒXƒ^ƒ€ƒƒjƒ…[‚ÌƒCƒ“ƒfƒbƒNƒX	//@@@ 2003.06.13 MIK
+//ã‚¿ãƒ–ã§ä½¿ã†ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹	//@@@ 2003.06.13 MIK
 #define	CUSTMENU_INDEX_FOR_TABWND		24
-//‰EƒNƒŠƒbƒNƒƒjƒ…[‚ÅŽg‚¤ƒJƒXƒ^ƒ€ƒƒjƒ…[‚ÌƒCƒ“ƒfƒbƒNƒX	//@@@ 2003.06.13 MIK
+//å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã§ä½¿ã†ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹	//@@@ 2003.06.13 MIK
 #define	CUSTMENU_INDEX_FOR_RBUTTONUP	0
 
 
-/*!< Fƒ^ƒCƒv */
+/*!< è‰²ã‚¿ã‚¤ãƒ— */
 //@@@ From Here 2006.12.18 ryoji
 #define COLOR_ATTRIB_FORCE_DISP		0x00000001
 #define COLOR_ATTRIB_NO_TEXT		0x00000010
 #define COLOR_ATTRIB_NO_BACK		0x00000020
 #define COLOR_ATTRIB_NO_BOLD		0x00000100
 #define COLOR_ATTRIB_NO_UNDERLINE	0x00000200
-//#define COLOR_ATTRIB_NO_ITALIC		0x00000400	—\–ñ’l
+//#define COLOR_ATTRIB_NO_ITALIC		0x00000400	äºˆç´„å€¤
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 struct SColorAttributeData{
@@ -106,66 +106,66 @@ extern const SColorAttributeData g_ColorAttributeArr[];
 
 //@@@ To Here 2006.12.18 ryoji
 
-/*!< Ý’è’l‚ÌãŒÀE‰ºŒÀ */
-//	ƒ‹[ƒ‰‚Ì‚‚³
+/*!< è¨­å®šå€¤ã®ä¸Šé™ãƒ»ä¸‹é™ */
+//	ãƒ«ãƒ¼ãƒ©ã®é«˜ã•
 const int IDC_SPIN_nRulerHeight_MIN = 2;
 const int IDC_SPIN_nRulerHeight_MAX = 32;
 
-/**	ƒ}ƒEƒXƒNƒŠƒbƒN‚ÆƒL[’è‹`‚Ì‘Î‰ž
+/**	ãƒžã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ã¨ã‚­ãƒ¼å®šç¾©ã®å¯¾å¿œ
 
-	@date 2007.11.04 genta V‹Kì¬D‘¦’l‰ñ”ð‚Æ”ÍˆÍƒTƒCƒY’è‹`‚Ì‚½‚ß
+	@date 2007.11.04 genta æ–°è¦ä½œæˆï¼Žå³å€¤å›žé¿ã¨ç¯„å›²ã‚µã‚¤ã‚ºå®šç¾©ã®ãŸã‚
 */
 enum MOUSEFUNCTION_ASSIGN {
-	MOUSEFUNCTION_DOUBLECLICK	= 0,	//!< ƒ_ƒuƒ‹ƒNƒŠƒbƒN
-	MOUSEFUNCTION_RIGHT			= 1,	//!< ‰EƒNƒŠƒbƒN
-	MOUSEFUNCTION_CENTER		= 2,	//!< ’†ƒNƒŠƒbƒN
-	MOUSEFUNCTION_LEFTSIDE		= 3,	//!< ¶ƒTƒCƒhƒNƒŠƒbƒN
-	MOUSEFUNCTION_RIGHTSIDE		= 4,	//!< ‰EƒTƒCƒhƒNƒŠƒbƒN
-	MOUSEFUNCTION_TRIPLECLICK	= 5,	//!< ƒgƒŠƒvƒ‹ƒNƒŠƒbƒN
-	MOUSEFUNCTION_QUADCLICK		= 6,	//!< ƒNƒAƒhƒ‰ƒvƒ‹ƒNƒŠƒbƒN
-	MOUSEFUNCTION_WHEELUP		= 7,	//!< ƒzƒC[ƒ‹ƒAƒbƒv
-	MOUSEFUNCTION_WHEELDOWN		= 8,	//!< ƒzƒC[ƒ‹ƒ_ƒEƒ“
-	MOUSEFUNCTION_WHEELLEFT		= 9,	//!< ƒzƒC[ƒ‹¶
-	MOUSEFUNCTION_WHEELRIGHT	= 10,	//!< ƒzƒC[ƒ‹‰E
-	MOUSEFUNCTION_KEYBEGIN		= 11,	//!< ƒ}ƒEƒX‚Ö‚ÌŠ„‚è“–‚ÄŒÂ”–{“–‚ÌƒL[Š„‚è“–‚Äæ“ªINDEX
+	MOUSEFUNCTION_DOUBLECLICK	= 0,	//!< ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_RIGHT			= 1,	//!< å³ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_CENTER		= 2,	//!< ä¸­ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_LEFTSIDE		= 3,	//!< å·¦ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_RIGHTSIDE		= 4,	//!< å³ã‚µã‚¤ãƒ‰ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_TRIPLECLICK	= 5,	//!< ãƒˆãƒªãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_QUADCLICK		= 6,	//!< ã‚¯ã‚¢ãƒ‰ãƒ©ãƒ—ãƒ«ã‚¯ãƒªãƒƒã‚¯
+	MOUSEFUNCTION_WHEELUP		= 7,	//!< ãƒ›ã‚¤ãƒ¼ãƒ«ã‚¢ãƒƒãƒ—
+	MOUSEFUNCTION_WHEELDOWN		= 8,	//!< ãƒ›ã‚¤ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³
+	MOUSEFUNCTION_WHEELLEFT		= 9,	//!< ãƒ›ã‚¤ãƒ¼ãƒ«å·¦
+	MOUSEFUNCTION_WHEELRIGHT	= 10,	//!< ãƒ›ã‚¤ãƒ¼ãƒ«å³
+	MOUSEFUNCTION_KEYBEGIN		= 11,	//!< ãƒžã‚¦ã‚¹ã¸ã®å‰²ã‚Šå½“ã¦å€‹æ•°ï¼æœ¬å½“ã®ã‚­ãƒ¼å‰²ã‚Šå½“ã¦å…ˆé ­INDEX
 };
 
-// 2008.05.30 nasukoji	ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@
+// 2008.05.30 nasukoji	ãƒ†ã‚­ã‚¹ãƒˆã®æŠ˜ã‚Šè¿”ã—æ–¹æ³•
 enum WRAP_TEXT_WRAP_METHOD {
-	WRAP_NO_TEXT_WRAP		= 0,		//!< Ü‚è•Ô‚³‚È‚¢iƒXƒNƒ[ƒ‹ƒo[‚ðƒeƒLƒXƒg•‚É‡‚í‚¹‚éj
-	WRAP_SETTING_WIDTH,					//!< Žw’èŒ…‚ÅÜ‚è•Ô‚·
-	WRAP_WINDOW_WIDTH,					//!< ‰E’[‚ÅÜ‚è•Ô‚·
+	WRAP_NO_TEXT_WRAP		= 0,		//!< æŠ˜ã‚Šè¿”ã•ãªã„ï¼ˆã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’ãƒ†ã‚­ã‚¹ãƒˆå¹…ã«åˆã‚ã›ã‚‹ï¼‰
+	WRAP_SETTING_WIDTH,					//!< æŒ‡å®šæ¡ã§æŠ˜ã‚Šè¿”ã™
+	WRAP_WINDOW_WIDTH,					//!< å³ç«¯ã§æŠ˜ã‚Šè¿”ã™
 };
 
-// 2009.07.06 syat	•¶ŽšƒJƒEƒ“ƒg•û–@
+// 2009.07.06 syat	æ–‡å­—ã‚«ã‚¦ãƒ³ãƒˆæ–¹æ³•
 enum ESelectCountMode {
-	SELECT_COUNT_TOGGLE		= 0,	//!< •¶ŽšƒJƒEƒ“ƒg•û–@‚ðƒgƒOƒ‹
-	SELECT_COUNT_BY_CHAR	= 1,	//!< •¶Žš”‚ÅƒJƒEƒ“ƒg
-	SELECT_COUNT_BY_BYTE	= 2		//!< ƒoƒCƒg”‚ÅƒJƒEƒ“ƒg
+	SELECT_COUNT_TOGGLE		= 0,	//!< æ–‡å­—ã‚«ã‚¦ãƒ³ãƒˆæ–¹æ³•ã‚’ãƒˆã‚°ãƒ«
+	SELECT_COUNT_BY_CHAR	= 1,	//!< æ–‡å­—æ•°ã§ã‚«ã‚¦ãƒ³ãƒˆ
+	SELECT_COUNT_BY_BYTE	= 2		//!< ãƒã‚¤ãƒˆæ•°ã§ã‚«ã‚¦ãƒ³ãƒˆ
 };
 
-//!ŒŸõƒ‚[ƒh
+//!æ¤œç´¢ãƒ¢ãƒ¼ãƒ‰
 enum ESearchMode {
-	SEARCH_NONE   = 0, //!< ƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`–³Œø
-	SEARCH_NORMAL = 1, //!< ’ÊíƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`
-	SEARCH_REGEXP = 2, //!< ³‹K•\Œ»ƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`
-	SEARCH_MIGEMO = 3, //!< MIGEMOƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`
+	SEARCH_NONE   = 0, //!< ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ã‚¿ãƒ«ã‚µãƒ¼ãƒç„¡åŠ¹
+	SEARCH_NORMAL = 1, //!< é€šå¸¸ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ã‚¿ãƒ«ã‚µãƒ¼ãƒ
+	SEARCH_REGEXP = 2, //!< æ­£è¦è¡¨ç¾ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ã‚¿ãƒ«ã‚µãƒ¼ãƒ
+	SEARCH_MIGEMO = 3, //!< MIGEMOã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ã‚¿ãƒ«ã‚µãƒ¼ãƒ
 };
 
-//2007.09.06 kobake ’Ç‰Á
-//!ŒŸõ•ûŒü
+//2007.09.06 kobake è¿½åŠ 
+//!æ¤œç´¢æ–¹å‘
 enum ESearchDirection{
-	SEARCH_BACKWARD = 0, //!< Œã•ûŒŸõ (‘O‚ðŒŸõ)
-	SEARCH_FORWARD  = 1, //!< ‘O•ûŒŸõ (ŽŸ‚ðŒŸõ) (•’Ê)
+	SEARCH_BACKWARD = 0, //!< å¾Œæ–¹æ¤œç´¢ (å‰ã‚’æ¤œç´¢)
+	SEARCH_FORWARD  = 1, //!< å‰æ–¹æ¤œç´¢ (æ¬¡ã‚’æ¤œç´¢) (æ™®é€š)
 };
 
-//2007.09.06 kobake ’Ç‰Á
+//2007.09.06 kobake è¿½åŠ 
 struct SSearchOption{
 //	ESearchDirection	eDirection;
-//	bool	bPrevOrNext;	//!< false==‘O•ûŒŸõ true==Œã•ûŒŸõ
-	bool	bRegularExp;	//!< true==³‹K•\Œ»
-	bool	bLoHiCase;		//!< true==‰p‘å•¶Žš¬•¶Žš‚Ì‹æ•Ê
-	bool	bWordOnly;		//!< true==’PŒê‚Ì‚ÝŒŸõ
+//	bool	bPrevOrNext;	//!< false==å‰æ–¹æ¤œç´¢ true==å¾Œæ–¹æ¤œç´¢
+	bool	bRegularExp;	//!< true==æ­£è¦è¡¨ç¾
+	bool	bLoHiCase;		//!< true==è‹±å¤§æ–‡å­—å°æ–‡å­—ã®åŒºåˆ¥
+	bool	bWordOnly;		//!< true==å˜èªžã®ã¿æ¤œç´¢
 
 	SSearchOption() : bRegularExp(false), bLoHiCase(false), bWordOnly(false) { }
 	SSearchOption(
@@ -185,10 +185,10 @@ struct SSearchOption{
 		bWordOnly   = false;
 	}
 
-	//‰‰ŽZŽq
+	//æ¼”ç®—å­
 	bool operator == (const SSearchOption& rhs) const
 	{
-		//‚Æ‚è‚ ‚¦‚¸memcmp‚Å‚¢‚¢‚â
+		//ã¨ã‚Šã‚ãˆãšmemcmpã§ã„ã„ã‚„
 		return memcmp(this,&rhs,sizeof(*this))==0;
 	}
 	bool operator != (const SSearchOption& rhs) const
@@ -200,7 +200,7 @@ struct SSearchOption{
 
 
 
-//2007.10.02 kobake CEditWnd‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^‚ð‚±‚±‚É•Û‘¶‚µ‚Ä‚¨‚­
+//2007.10.02 kobake CEditWndã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿ã‚’ã“ã“ã«ä¿å­˜ã—ã¦ãŠã
 class CEditWnd;
 extern CEditWnd* g_pcEditWnd;
 

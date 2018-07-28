@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -29,47 +29,47 @@
 #include "types/CType.h"
 
 
-/*! ƒtƒ@ƒCƒ‹î•ñ
+/*! ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±
 
-	@date 2002.03.07 genta m_szDocType’Ç‰Á
-	@date 2003.01.26 aroka m_nWindowSizeX/Y m_nWindowOriginX/Y’Ç‰Á
+	@date 2002.03.07 genta m_szDocTypeè¿½åŠ 
+	@date 2003.01.26 aroka m_nWindowSizeX/Y m_nWindowOriginX/Yè¿½åŠ 
 */
 struct EditInfo {
-	//ƒtƒ@ƒCƒ‹
-	TCHAR		m_szPath[_MAX_PATH];					//!< ƒtƒ@ƒCƒ‹–¼
-	ECodeType	m_nCharCode;							//!< •¶šƒR[ƒhí•Ê
+	//ãƒ•ã‚¡ã‚¤ãƒ«
+	TCHAR		m_szPath[_MAX_PATH];					//!< ãƒ•ã‚¡ã‚¤ãƒ«å
+	ECodeType	m_nCharCode;							//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ç¨®åˆ¥
 	bool		m_bBom;									//!< BOM(GetFileInfo)
-	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< •¶‘ƒ^ƒCƒv
-	int 		m_nTypeId;								//!< •¶‘ƒ^ƒCƒv(MRU)
+	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< æ–‡æ›¸ã‚¿ã‚¤ãƒ—
+	int 		m_nTypeId;								//!< æ–‡æ›¸ã‚¿ã‚¤ãƒ—(MRU)
 
-	//•\¦ˆæ
-	CLayoutInt	m_nViewTopLine;							//!< •\¦ˆæ‚Ìˆê”Ôã‚Ìs(0ŠJn)
-	CLayoutInt	m_nViewLeftCol;							//!< •\¦ˆæ‚Ìˆê”Ô¶‚ÌŒ…(0ŠJn)
+	//è¡¨ç¤ºåŸŸ
+	CLayoutInt	m_nViewTopLine;							//!< è¡¨ç¤ºåŸŸã®ä¸€ç•ªä¸Šã®è¡Œ(0é–‹å§‹)
+	CLayoutInt	m_nViewLeftCol;							//!< è¡¨ç¤ºåŸŸã®ä¸€ç•ªå·¦ã®æ¡(0é–‹å§‹)
 
-	//ƒLƒƒƒŒƒbƒg
-	CLogicPoint m_ptCursor;								//!< ƒLƒƒƒŒƒbƒgˆÊ’u
+	//ã‚­ãƒ£ãƒ¬ãƒƒãƒˆ
+	CLogicPoint m_ptCursor;								//!< ã‚­ãƒ£ãƒ¬ãƒƒãƒˆä½ç½®
 
-	//Šeíó‘Ô
-	bool		m_bIsModified;							//!< •ÏXƒtƒ‰ƒO
+	//å„ç¨®çŠ¶æ…‹
+	bool		m_bIsModified;							//!< å¤‰æ›´ãƒ•ãƒ©ã‚°
 
-	//GREPƒ‚[ƒh
-	bool		m_bIsGrep;								//!< Grep‚ÌƒEƒBƒ“ƒhƒE‚©
+	//GREPãƒ¢ãƒ¼ãƒ‰
+	bool		m_bIsGrep;								//!< Grepã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‹
 	wchar_t		m_szGrepKey[1024];
 
-	//ƒfƒoƒbƒOƒ‚ƒjƒ^ (ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE) ƒ‚[ƒh
-	bool		m_bIsDebug;								//!< ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒh (ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE) ‚©
+	//ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ (ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦) ãƒ¢ãƒ¼ãƒ‰
+	bool		m_bIsDebug;								//!< ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰ (ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦) ã‹
 
-	//ƒuƒbƒNƒ}[ƒNî•ñ
-	wchar_t		m_szMarkLines[MAX_MARKLINES_LEN + 1];	//!< ƒuƒbƒNƒ}[ƒN‚Ì•¨—sƒŠƒXƒg
+	//ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯æƒ…å ±
+	wchar_t		m_szMarkLines[MAX_MARKLINES_LEN + 1];	//!< ãƒ–ãƒƒã‚¯ãƒãƒ¼ã‚¯ã®ç‰©ç†è¡Œãƒªã‚¹ãƒˆ
 
-	//ƒEƒBƒ“ƒhƒE
-	int			m_nWindowSizeX;							//!< ƒEƒBƒ“ƒhƒE  •(ƒsƒNƒZƒ‹”)
-	int			m_nWindowSizeY;							//!< ƒEƒBƒ“ƒhƒE  ‚‚³(ƒsƒNƒZƒ‹”)
-	int			m_nWindowOriginX;						//!< ƒEƒBƒ“ƒhƒE  •¨—ˆÊ’u(ƒsƒNƒZƒ‹”Eƒ}ƒCƒiƒX’l‚à—LŒø)
-	int			m_nWindowOriginY;						//!< ƒEƒBƒ“ƒhƒE  •¨—ˆÊ’u(ƒsƒNƒZƒ‹”Eƒ}ƒCƒiƒX’l‚à—LŒø)
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	int			m_nWindowSizeX;							//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦  å¹…(ãƒ”ã‚¯ã‚»ãƒ«æ•°)
+	int			m_nWindowSizeY;							//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦  é«˜ã•(ãƒ”ã‚¯ã‚»ãƒ«æ•°)
+	int			m_nWindowOriginX;						//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦  ç‰©ç†ä½ç½®(ãƒ”ã‚¯ã‚»ãƒ«æ•°ãƒ»ãƒã‚¤ãƒŠã‚¹å€¤ã‚‚æœ‰åŠ¹)
+	int			m_nWindowOriginY;						//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦  ç‰©ç†ä½ç½®(ãƒ”ã‚¯ã‚»ãƒ«æ•°ãƒ»ãƒã‚¤ãƒŠã‚¹å€¤ã‚‚æœ‰åŠ¹)
 	
 	// Mar. 7, 2002 genta
-	// Constructor ŠmÀ‚É‰Šú‰»‚·‚é‚½‚ß
+	// Constructor ç¢ºå®Ÿã«åˆæœŸåŒ–ã™ã‚‹ãŸã‚
 	EditInfo()
 	: m_nCharCode( CODE_AUTODETECT )
 	, m_bBom( false )
@@ -82,7 +82,7 @@ struct EditInfo {
 	, m_bIsDebug( false )
 	, m_nWindowSizeX( -1 )
 	, m_nWindowSizeY( -1 )
-	, m_nWindowOriginX( CW_USEDEFAULT )	//	2004.05.13 Moca gw’è–³‚µh‚ğ-1‚©‚çCW_USEDEFAULT‚É•ÏX
+	, m_nWindowOriginX( CW_USEDEFAULT )	//	2004.05.13 Moca â€œæŒ‡å®šç„¡ã—â€ã‚’-1ã‹ã‚‰CW_USEDEFAULTã«å¤‰æ›´
 	, m_nWindowOriginY( CW_USEDEFAULT )
 	{
 		m_szPath[0] = '\0';

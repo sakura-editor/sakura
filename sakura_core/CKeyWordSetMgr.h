@@ -1,10 +1,10 @@
-/*!	@file
-	@brief �����L�[���[�h�Ǘ�
+﻿/*!	@file
+	@brief 強調キーワード管理
 
 	@author Norio Nakatani
 
 	@date 2000.12.01 MIK binary search
-	@date 2005.01.26 Moca �L�[���[�h���ω�
+	@date 2005.01.26 Moca キーワード数可変化
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -40,31 +40,31 @@
 #include <Windows.h>
 #include "_main/global.h"// 2002/2/10 aroka
 
-#define		MAX_SETNUM		100	//2007.12.01 genta �ő�l����
+#define		MAX_SETNUM		100	//2007.12.01 genta 最大値増加
 #define		MAX_SETNAMELEN	32
 
 
-//! �L�[���[�h���� (2005.01.27 1�Z�b�g������̐����Z�b�g�S�̂̑����ֈӖ��ύX)
+//! キーワード総数 (2005.01.27 1セットあたりの数→セット全体の総数へ意味変更)
 #define		MAX_KEYWORDNUM	15000
 #define		MAX_KEYWORDLEN	63
 
-/*! @brief �����L�[���[�h�Ǘ�
+/*! @brief 強調キーワード管理
 
-	@date 2005.01.27 Moca �L�[���[�h�����ςɁD
+	@date 2005.01.27 Moca キーワード数を可変に．
 	
-	@par �L�[���[�h���ςɂ���
+	@par キーワード数可変について
 	
-	�]���͊e�L�[���[�h�Z�b�g���ɌŒ�T�C�Y�����蓖�ĂĂ�����
-	PHP�L�[���[�h�ȂǑ����̃L�[���[�h��o�^�ł��Ȃ������
-	�����̃L�[���[�h���蓖�Ăł͖��ʂ����������D
+	従来は各キーワードセット毎に固定サイズを割り当てていたが
+	PHPキーワードなど多数のキーワードを登録できない一方で
+	少数のキーワード割り当てでは無駄が多かった．
 	
-	�L�[���[�h��S�̂�1�̔z��ɓ���C�J�n�ʒu��ʓr�Ǘ����邱�Ƃ�
-	�L�[���[�h������S�̂ŊǗ�����悤�ɕύX�����D
+	キーワードを全体で1つの配列に入れ，開始位置を別途管理することで
+	キーワード総数を全体で管理するように変更した．
 	
-	�Z�b�g����������ꍇ�ɑO�̃Z�b�g�ɃL�[���[�h��o�^���Ă����ꍇ��
-	�ۊǏꏊ���s������Ƃ���ȍ~�����ɂ��炷�K�v������D
-	�p�ɂɂ��炷���삪�������Ȃ��悤�CnKeyWordSetBlockSize(50��)����
-	�u���b�N�P�ʂŏꏊ���m�ۂ���悤�ɂ��Ă���D
+	セットが複数ある場合に前のセットにキーワードを登録していく場合に
+	保管場所が不足するとそれ以降を後ろにずらす必要がある．
+	頻繁にずらす操作が発生しないよう，nKeyWordSetBlockSize(50個)ずつの
+	ブロック単位で場所を確保するようにしている．
 */
 class CKeyWordSetMgr
 {
@@ -75,89 +75,89 @@ public:
 	CKeyWordSetMgr();
 	~CKeyWordSetMgr();
 	
-	///	@name �L�[���[�h�Z�b�g����
-	bool AddKeyWordSet(							//!< �Z�b�g�̒ǉ�
-		const wchar_t*	pszSetName,				//!< [in] �Z�b�g��
-		bool			bKEYWORDCASE,			//!< [in] �啶���������̋�ʁDtrue:����, false:����
-		int				nSize			= -1	//!< [in] �ŏ��ɗ̈���m�ۂ���T�C�Y�D
+	///	@name キーワードセット操作
+	bool AddKeyWordSet(							//!< セットの追加
+		const wchar_t*	pszSetName,				//!< [in] セット名
+		bool			bKEYWORDCASE,			//!< [in] 大文字小文字の区別．true:あり, false:無し
+		int				nSize			= -1	//!< [in] 最初に領域を確保するサイズ．
 	);
-	bool DelKeyWordSet( int  );	/* ���Ԗڂ̃Z�b�g���폜 */
-	const wchar_t* GetTypeName( int );	/* ���Ԗڂ̃Z�b�g����Ԃ� */
-	const wchar_t* SetTypeName( int, const wchar_t* );	//!< ���Ԗڂ̃Z�b�g����ݒ肷�� // 2005.01.26 Moca
-	void SetKeyWordCase( int, int );				/* ���Ԗڂ̃Z�b�g�̑啶�����������f���Z�b�g���� */	//MIK
-	bool GetKeyWordCase( int );						/* ���Ԗڂ̃Z�b�g�̑啶�����������f���擾���� */			//MIK
-	void SortKeyWord( int ); /* ���Ԗڂ̃Z�b�g�̃L�[���[�h���\�[�g���� */  //MIK
+	bool DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
+	const wchar_t* GetTypeName( int );	/* ｎ番目のセット名を返す */
+	const wchar_t* SetTypeName( int, const wchar_t* );	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
+	void SetKeyWordCase( int, int );				/* ｎ番目のセットの大文字小文字判断をセットする */	//MIK
+	bool GetKeyWordCase( int );						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
+	void SortKeyWord( int ); /* ｎ番目のセットのキーワードをソートする */  //MIK
 
-	// From Here 2004.07.29 Moca �ǉ� �ϒ��L��
-	int SetKeyWordArr( int, int, const wchar_t* );			//!< ini����L�[���[�h��ݒ肷��
-	int SetKeyWordArr(						//!< �L�[���[�h�̔z�񂩂�ݒ肷��
-		int				nIdx,				//!< [in] �L�[���[�h�Z�b�g�ԍ�
-		int				nSize,				//!< [in] ppszKeyWordArr�̗v�f��
-		const wchar_t*	ppszKeyWordArr[]	//!< [in] �L�[���[�h�̔z��(�d���E�����������A�l���ς݂ł��邱��)
+	// From Here 2004.07.29 Moca 追加 可変長記憶
+	int SetKeyWordArr( int, int, const wchar_t* );			//!< iniからキーワードを設定する
+	int SetKeyWordArr(						//!< キーワードの配列から設定する
+		int				nIdx,				//!< [in] キーワードセット番号
+		int				nSize,				//!< [in] ppszKeyWordArrの要素数
+		const wchar_t*	ppszKeyWordArr[]	//!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
 	);
 	// To Here 2004.07.29 Moca
 	//@}
 
 	//@{
-	///	@name �L�[���[�h����
-	int GetKeyWordNum( int );	/* ���Ԗڂ̃Z�b�g�̃L�[���[�h�̐���Ԃ� */
-	const wchar_t* GetKeyWord( int , int );	/* ���Ԗڂ̃Z�b�g�̂��Ԗڂ̃L�[���[�h��Ԃ� */
-	const wchar_t* UpdateKeyWord( int , int , const WCHAR* );	/* ���Ԗڂ̃Z�b�g�̂��Ԗڂ̃L�[���[�h��ҏW */
-	int AddKeyWord( int, const wchar_t* );	/* ���Ԗڂ̃Z�b�g�ɃL�[���[�h��ǉ� */
-	int DelKeyWord( int , int );			/* ���Ԗڂ̃Z�b�g�̂��Ԗڂ̃L�[���[�h���폜 */
-	bool CanAddKeyWord( int );	//!< �L�[���[�h���ǉ��\��
+	///	@name キーワード操作
+	int GetKeyWordNum( int );	/* ｎ番目のセットのキーワードの数を返す */
+	const wchar_t* GetKeyWord( int , int );	/* ｎ番目のセットのｍ番目のキーワードを返す */
+	const wchar_t* UpdateKeyWord( int , int , const WCHAR* );	/* ｎ番目のセットのｍ番目のキーワードを編集 */
+	int AddKeyWord( int, const wchar_t* );	/* ｎ番目のセットにキーワードを追加 */
+	int DelKeyWord( int , int );			/* ｎ番目のセットのｍ番目のキーワードを削除 */
+	bool CanAddKeyWord( int );	//!< キーワードが追加可能か
 	//@}
 	
 	//@{
-	///	@name ����
-	//int SearchKeyWord( int , const char*, int );	/* ���Ԗڂ̃Z�b�g����w��L�[���[�h���T�[�` �����Ƃ���-1��Ԃ� */
-//	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* �ύX�󋵂𒲍� */	// Uchi 2010/4/14 ���̂������̂ō폜
-	int SearchKeyWord2( int nIdx , const wchar_t* pszKeyWord, int nKeyWordLen );	/* ���Ԗڂ̃Z�b�g����w��L�[���[�h���o�C�i���T�[�`�B������� 0�ȏ��Ԃ� */	//MIK
-	int SearchKeyWordSet( const wchar_t* pszKeyWord );		// �L�[���[�h�Z�b�g������Z�b�g�ԍ����擾�B������Ȃ���� -1��Ԃ�	// Uchi 2010/4/14
+	///	@name 検索
+	//int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
+//	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */	// Uchi 2010/4/14 実体が無いので削除
+	int SearchKeyWord2( int nIdx , const wchar_t* pszKeyWord, int nKeyWordLen );	/* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */	//MIK
+	int SearchKeyWordSet( const wchar_t* pszKeyWord );		// キーワードセット名からセット番号を取得。見つからなければ -1を返す	// Uchi 2010/4/14
 	//@}
 
-	// From Here 2004.07.29 Moca �ǉ� �ϒ��L��
-	int CleanKeyWords( int );	//!< �L�[���[�h�̐��ځE���p�ł��Ȃ��L�[���[�h�̍폜
-	int GetAllocSize( int ) const;	//!< �m�ۂ��Ă��鐔��Ԃ�
-	int GetFreeSize() const;	//!< �����蓖�ău���b�N�̃L�[���[�h����Ԃ�
-	void ResetAllKeyWordSet( void ); // �S�L�[���[�h�Z�b�g�̍폜�Ə�����
+	// From Here 2004.07.29 Moca 追加 可変長記憶
+	int CleanKeyWords( int );	//!< キーワードの整頓・利用できないキーワードの削除
+	int GetAllocSize( int ) const;	//!< 確保している数を返す
+	int GetFreeSize() const;	//!< 未割り当てブロックのキーワード数を返す
+	void ResetAllKeyWordSet( void ); // 全キーワードセットの削除と初期化
 	// To Here 2004.07.29 Moca
 
 	/*
-	|| ���Z�q
+	|| 演算子
 	*/
 	const CKeyWordSetMgr& operator=( CKeyWordSetMgr& );
 	/*
 	||  Attributes & Operations
 	*/
 	/*!
-		@brief ���݂̃L�[���[�h�Z�b�g�ԍ�(GUI�p)
+		@brief 現在のキーワードセット番号(GUI用)
 
-		�{���̏����Ƃ͖��֌W�����C����E�B���h�E�őI�������Z�b�g��
-		�ʂ̃E�B���h�E�̐ݒ��ʂɂ������p�����悤�ɂ��邽�߁D
+		本来の処理とは無関係だが，あるウィンドウで選択したセットが
+		別のウィンドウの設定画面にも引き継がれるようにするため．
 	*/
 	int		m_nCurrentKeyWordSetIdx;
-	int		m_nKeyWordSetNum;	/*!< �L�[���[�h�Z�b�g�� */
-	wchar_t	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];/*!< �L�[���[�h�Z�b�g�� */
-	bool	m_bKEYWORDCASEArr[MAX_SETNUM];	/*!< �L�[���[�h�̉p�啶����������� */
-	int		m_nKeyWordNumArr[MAX_SETNUM];	/*!< �L�[���[�h�Z�b�g�ɓo�^����Ă���L�[���[�h�� */
+	int		m_nKeyWordSetNum;	/*!< キーワードセット数 */
+	wchar_t	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];/*!< キーワードセット名 */
+	bool	m_bKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
+	int		m_nKeyWordNumArr[MAX_SETNUM];	/*!< キーワードセットに登録されているキーワード数 */
 private:
-	/*! �L�[���[�h�i�[�̈� */
+	/*! キーワード格納領域 */
 	wchar_t	m_szKeyWordArr[MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];	
-	char	m_IsSorted[MAX_SETNUM];	/*!< �\�[�g�������ǂ����̃t���O(INI���ۑ�) */  //MIK
+	char	m_IsSorted[MAX_SETNUM];	/*!< ソートしたかどうかのフラグ(INI未保存) */  //MIK
 
 protected:
-	// 2004.07.29 Moca �ϒ��L��
-	/*! �L�[���[�h�Z�b�g�̊J�n�ʒu(INI���ۑ�)
-		���̊J�n�ʒu�܂ł��m�ۍς݂̗̈�D
-		+1���Ă���͍̂Ōオ0�ŏI���悤�ɂ��邽�߁D
+	// 2004.07.29 Moca 可変長記憶
+	/*! キーワードセットの開始位置(INI未保存)
+		次の開始位置までが確保済みの領域．
+		+1しているのは最後が0で終わるようにするため．
 	*/
 	int		m_nStartIdx[MAX_SETNUM + 1];
-	int		m_nKeyWordMaxLenArr[MAX_SETNUM]; //!< ��Ԓ����L�[���[�h�̒���(�\�[�g��̂ݗL��)(INI���ۑ�)
+	int		m_nKeyWordMaxLenArr[MAX_SETNUM]; //!< 一番長いキーワードの長さ(ソート後のみ有効)(INI未保存)
 
 protected:
 	/*
-	||  �����w���p�֐�
+	||  実装ヘルパ関数
 	*/
 	//bool KeyWordAlloc( int );
 	bool KeyWordReAlloc( int, int );

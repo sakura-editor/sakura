@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,42 +27,42 @@
 #include "basis/CMyString.h" //CFilePath
 #include "util/file.h"
 
-//!ƒtƒ@ƒCƒ‹‚Ì”r‘¼§Œäƒ‚[ƒh  2007.10.11 kobake ì¬
+//!ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–åˆ¶å¾¡ãƒ¢ãƒ¼ãƒ‰  2007.10.11 kobake ä½œæˆ
 enum EShareMode{
-	SHAREMODE_NOT_EXCLUSIVE,	//!< ”r‘¼§Œä‚µ‚È‚¢
-	SHAREMODE_DENY_WRITE,		//!< ‘¼ƒvƒƒZƒX‚©‚ç‚Ìã‘‚«‚ğ‹Ö~
-	SHAREMODE_DENY_READWRITE,	//!< ‘¼ƒvƒƒZƒX‚©‚ç‚Ì“Ç‚İ‘‚«‚ğ‹Ö~
+	SHAREMODE_NOT_EXCLUSIVE,	//!< æ’ä»–åˆ¶å¾¡ã—ãªã„
+	SHAREMODE_DENY_WRITE,		//!< ä»–ãƒ—ãƒ­ã‚»ã‚¹ã‹ã‚‰ã®ä¸Šæ›¸ãã‚’ç¦æ­¢
+	SHAREMODE_DENY_READWRITE,	//!< ä»–ãƒ—ãƒ­ã‚»ã‚¹ã‹ã‚‰ã®èª­ã¿æ›¸ãã‚’ç¦æ­¢
 };
 
 class CFile{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CFile(LPCTSTR pszPath = NULL);
 	virtual ~CFile();
-	//ƒpƒX
+	//ãƒ‘ã‚¹
 	const CFilePath& GetFilePathClass() const { return m_szFilePath; }
 	LPCTSTR GetFilePath() const { return m_szFilePath; }
-	//İ’è
+	//è¨­å®š
 	void SetFilePath(LPCTSTR pszPath){ m_szFilePath.Assign(pszPath); }
-	//Šeí”»’è
+	//å„ç¨®åˆ¤å®š
 	bool IsFileExist() const;
 	bool HasWritablePermission() const;
 	bool IsFileWritable() const;
 	bool IsFileReadable() const;
-	//ƒƒbƒN
-	bool FileLock(EShareMode eShareMode, bool bMsg);	//!< ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN
-	void FileUnlock();						//!< ƒtƒ@ƒCƒ‹‚Ì”r‘¼ƒƒbƒN‰ğœ
+	//ãƒ­ãƒƒã‚¯
+	bool FileLock(EShareMode eShareMode, bool bMsg);	//!< ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–ãƒ­ãƒƒã‚¯
+	void FileUnlock();						//!< ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–ãƒ­ãƒƒã‚¯è§£é™¤
 	bool IsFileLocking() const{ return m_hLockedFile!=INVALID_HANDLE_VALUE; }
 	EShareMode GetShareMode() const{ return m_nFileShareModeOld; }
 	void SetShareMode(EShareMode eShareMode) { m_nFileShareModeOld = eShareMode; }
 private:
-	CFilePath	m_szFilePath;				//!< ƒtƒ@ƒCƒ‹ƒpƒX
-	HANDLE		m_hLockedFile;				//!< ƒƒbƒN‚µ‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚Ìƒnƒ“ƒhƒ‹
-	EShareMode	m_nFileShareModeOld;		//!< ƒtƒ@ƒCƒ‹‚Ì”r‘¼§Œäƒ‚[ƒh
+	CFilePath	m_szFilePath;				//!< ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
+	HANDLE		m_hLockedFile;				//!< ãƒ­ãƒƒã‚¯ã—ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ«
+	EShareMode	m_nFileShareModeOld;		//!< ãƒ•ã‚¡ã‚¤ãƒ«ã®æ’ä»–åˆ¶å¾¡ãƒ¢ãƒ¼ãƒ‰
 };
 
 
-//!ˆêƒtƒ@ƒCƒ‹
+//!ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«
 class CTmpFile{
 public:
 	CTmpFile(){ m_fp = tmpfile(); }

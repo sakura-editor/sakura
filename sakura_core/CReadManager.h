@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,8 +32,8 @@ struct SFileInfo; // doc/CDocFile.h
 
 class CReadManager : public CProgressSubject{
 public:
-	//	Nov. 12, 2000 genta ˆø”’Ç‰Á
-	//	Jul. 26, 2003 ryoji BOMˆø”’Ç‰Á
+	//	Nov. 12, 2000 genta å¼•æ•°è¿½åŠ 
+	//	Jul. 26, 2003 ryoji BOMå¼•æ•°è¿½åŠ 
 	EConvertResult ReadFile_To_CDocLineMgr(
 		CDocLineMgr*		pcDocLineMgr,
 		const SLoadInfo&	sLoadInfo,

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,42 +26,42 @@
 
 class CFileAttribute;
 
-//—áŠO
-class CError_FileOpen{};	//!< —áŠOFƒtƒ@ƒCƒ‹ƒI[ƒvƒ“‚ÉŽ¸”s
-class CError_FileWrite{};	//!< —áŠOFƒtƒ@ƒCƒ‹‘‚«ž‚ÝŽ¸”s
-class CError_FileRead{};	//!< —áŠOFƒtƒ@ƒCƒ‹“Ç‚Ýž‚ÝŽ¸”s
+//ä¾‹å¤–
+class CError_FileOpen{};	//!< ä¾‹å¤–ï¼šãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ã«å¤±æ•—
+class CError_FileWrite{};	//!< ä¾‹å¤–ï¼šãƒ•ã‚¡ã‚¤ãƒ«æ›¸ãè¾¼ã¿å¤±æ•—
+class CError_FileRead{};	//!< ä¾‹å¤–ï¼šãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿å¤±æ•—
 
-//ƒXƒgƒŠ[ƒ€Šî’êƒNƒ‰ƒX
+//ã‚¹ãƒˆãƒªãƒ¼ãƒ åŸºåº•ã‚¯ãƒ©ã‚¹
 class CStream{
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CStream(const TCHAR* tszPath, const TCHAR* tszMode, bool bExceptionMode = false);
 //	CStream();
 	virtual ~CStream();
 
-	//‰‰ŽZŽq
+	//æ¼”ç®—å­
 	operator bool() const{ return Good(); }
 
-	//ƒI[ƒvƒ“EƒNƒ[ƒY
+	//ã‚ªãƒ¼ãƒ—ãƒ³ãƒ»ã‚¯ãƒ­ãƒ¼ã‚º
 	void Open(const TCHAR* tszPath, const TCHAR* tszMode);
 	void Close();
 
-	//‘€ì
-	void SeekSet(	//!< ƒV[ƒN
-		long offset	//!< ƒXƒgƒŠ[ƒ€æ“ª‚©‚ç‚ÌƒIƒtƒZƒbƒg 
+	//æ“ä½œ
+	void SeekSet(	//!< ã‚·ãƒ¼ã‚¯
+		long offset	//!< ã‚¹ãƒˆãƒªãƒ¼ãƒ å…ˆé ­ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ 
 	);
-	void SeekEnd(   //!< ƒV[ƒN
-		long offset //!< ƒXƒgƒŠ[ƒ€I’[‚©‚ç‚ÌƒIƒtƒZƒbƒg
+	void SeekEnd(   //!< ã‚·ãƒ¼ã‚¯
+		long offset //!< ã‚¹ãƒˆãƒªãƒ¼ãƒ çµ‚ç«¯ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 	);
 
-	//ó‘Ô
+	//çŠ¶æ…‹
 	virtual bool Good() const{ return m_fp!=NULL && !Eof(); }
 	bool Eof() const{ return m_fp==NULL || feof(m_fp); }
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«
 	FILE* GetFp() const{ return m_fp; }
 
-	//ƒ‚[ƒh
+	//ãƒ¢ãƒ¼ãƒ‰
 	bool IsExceptionMode() const{ return m_bExceptionMode; }
 private:
 	FILE*			m_fp;
@@ -77,7 +77,7 @@ public:
 	{
 	}
 
-	//! ƒf[ƒ^‚ð–³•ÏŠ·‚Å‘‚«ž‚ÞB–ß‚è’l‚Í‘‚«ž‚ñ‚¾ƒoƒCƒg”B
+	//! ãƒ‡ãƒ¼ã‚¿ã‚’ç„¡å¤‰æ›ã§æ›¸ãè¾¼ã‚€ã€‚æˆ»ã‚Šå€¤ã¯æ›¸ãè¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°ã€‚
 	int Write(const void* pBuffer, int nSizeInBytes)
 	{
 		int nRet = fwrite(pBuffer,1,nSizeInBytes,GetFp());

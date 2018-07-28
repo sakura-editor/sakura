@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -26,12 +26,12 @@
 
 #include "doc/CDocListener.h"
 
-// ƒtƒ@ƒCƒ‹‚ªXV‚³‚ê‚½ê‡‚ÉÄ“Ç‚ğs‚¤‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+// ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ›´æ–°ã•ã‚ŒãŸå ´åˆã«å†èª­è¾¼ã‚’è¡Œã†ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
 enum WatchUpdate {
-	WU_QUERY,	//!< Ä“Ç‚ğs‚¤‚©‚Ç‚¤‚©ƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX‚Å–â‚¢‡‚í‚¹‚é
-	WU_NOTIFY,	//!< XV‚³‚ê‚½‚±‚Æ‚ğƒXƒe[ƒ^ƒXƒo[‚Å’Ê’m
-	WU_NONE,	//!< XVŠÄ‹‚ğs‚í‚È‚¢
-	WU_AUTOLOAD,//!< XV‚³‚ê–¢•ÒW‚Ìê‡‚ÉÄƒ[ƒh
+	WU_QUERY,	//!< å†èª­è¾¼ã‚’è¡Œã†ã‹ã©ã†ã‹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹ã§å•ã„åˆã‚ã›ã‚‹
+	WU_NOTIFY,	//!< æ›´æ–°ã•ã‚ŒãŸã“ã¨ã‚’ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã§é€šçŸ¥
+	WU_NONE,	//!< æ›´æ–°ç›£è¦–ã‚’è¡Œã‚ãªã„
+	WU_AUTOLOAD,//!< æ›´æ–°ã•ã‚Œæœªç·¨é›†ã®å ´åˆã«å†ãƒ­ãƒ¼ãƒ‰
 };
 
 class CAutoReloadAgent : public CDocListenerEx{
@@ -41,22 +41,22 @@ public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
-	//ŠÄ‹‚Ìˆê’â~
+	//ç›£è¦–ã®ä¸€æ™‚åœæ­¢
 	void PauseWatching(){ m_nPauseCount++; }
 	void ResumeWatching(){ m_nPauseCount--; assert(m_nPauseCount>=0); }
 	bool IsPausing() const{ return m_nPauseCount>=1; }
 
-public://#####‰¼
+public://#####ä»®
 	bool _ToDoChecking() const;
 	bool _IsFileUpdatedByOther(FILETIME* pNewFileTime) const;
-	void CheckFileTimeStamp();	// ƒtƒ@ƒCƒ‹‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚Ìƒ`ƒFƒbƒNˆ—
+	void CheckFileTimeStamp();	// ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ã®ãƒã‚§ãƒƒã‚¯å‡¦ç†
 
 public:
-	WatchUpdate		m_eWatchUpdate;	//!< XVŠÄ‹•û–@
+	WatchUpdate		m_eWatchUpdate;	//!< æ›´æ–°ç›£è¦–æ–¹æ³•
 
 private:
-	int m_nPauseCount;	//‚±‚ê‚ª1ˆÈã‚Ìê‡‚ÍŠÄ‹‚ğ‚µ‚È‚¢
-	int m_nDelayCount;	//–¢•ÒW‚ÅÄƒ[ƒh‚Ì’x‰„ƒJƒEƒ“ƒ^
+	int m_nPauseCount;	//ã“ã‚ŒãŒ1ä»¥ä¸Šã®å ´åˆã¯ç›£è¦–ã‚’ã—ãªã„
+	int m_nDelayCount;	//æœªç·¨é›†ã§å†ãƒ­ãƒ¼ãƒ‰æ™‚ã®é…å»¶ã‚«ã‚¦ãƒ³ã‚¿
 };
 
 #endif /* SAKURA_CAUTORELOADAGENT_5B64C473_C8AB_4660_AAA9_3A999953008B_H_ */

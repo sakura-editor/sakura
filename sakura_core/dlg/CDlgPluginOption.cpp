@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒvƒ‰ƒOƒCƒ“İ’èƒ_ƒCƒAƒƒOƒ{ƒbƒNƒX
+ï»¿/*!	@file
+	@brief ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒœãƒƒã‚¯ã‚¹
 
 	@author Uchi
 	@date 2010/3/22
@@ -39,7 +39,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-// BOOL•Ï”‚Ì•\¦
+// BOOLå¤‰æ•°ã®è¡¨ç¤º
 #ifdef _UNICODE
 #define	BOOL_DISP_TRUE	_T("\u2611")
 #define	BOOL_DISP_FALSE	_T("\u2610")
@@ -48,7 +48,7 @@
 #define	BOOL_DISP_FALSE	_T("<False>")
 #endif
 
-// •ÒW—Ìˆæ‚ğ•\¦A”ñ•\¦‚É‚·‚é
+// ç·¨é›†é ˜åŸŸã‚’è¡¨ç¤ºã€éè¡¨ç¤ºã«ã™ã‚‹
 static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
 {
 	HWND hWnd = ::GetDlgItem( hwndDlg, id );
@@ -57,18 +57,18 @@ static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
 }
 
 const DWORD p_helpids[] = {
-	IDC_LIST_PLUGIN_OPTIONS,		HIDC_LIST_PLUGIN_OPTIONS,		// ƒIƒvƒVƒ‡ƒ“ƒŠƒXƒg
-	IDC_EDIT_PLUGIN_OPTION,			HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_EDIT_PLUGIN_OPTION_DIR,		HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_BUTTON_PLUGIN_OPTION_DIR,	HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_EDIT_PLUGIN_OPTION_NUM,		HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_SPIN_PLUGIN_OPTION,			HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_CHECK_PLUGIN_OPTION,		HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
-	IDC_COMBO_PLUGIN_OPTION,		HIDC_EDIT_PLUGIN_OPTION,		// ƒIƒvƒVƒ‡ƒ“•ÒW
+	IDC_LIST_PLUGIN_OPTIONS,		HIDC_LIST_PLUGIN_OPTIONS,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒªã‚¹ãƒˆ
+	IDC_EDIT_PLUGIN_OPTION,			HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_EDIT_PLUGIN_OPTION_DIR,		HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_BUTTON_PLUGIN_OPTION_DIR,	HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_EDIT_PLUGIN_OPTION_NUM,		HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_SPIN_PLUGIN_OPTION,			HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_CHECK_PLUGIN_OPTION,		HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
+	IDC_COMBO_PLUGIN_OPTION,		HIDC_EDIT_PLUGIN_OPTION,		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç·¨é›†
 	IDOK,							HIDC_FAVORITE_IDOK,				//OK
-	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//ƒLƒƒƒ“ƒZƒ‹
+	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 	IDC_PLUGIN_README,				HIDC_PLUGIN_README,				//ReadMe
-	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ƒwƒ‹ƒv
+	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ãƒ˜ãƒ«ãƒ—
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -83,7 +83,7 @@ CDlgPluginOption::~CDlgPluginOption()
 
 }
 
-/* ƒ‚[ƒ_ƒ‹ƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ€ãƒ«ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 int CDlgPluginOption::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
@@ -91,7 +91,7 @@ int CDlgPluginOption::DoModal(
 	int 		ID
 )
 {
-	// ƒvƒ‰ƒOƒCƒ“”Ô†iƒGƒfƒBƒ^‚ª‚Ó‚é”Ô†j
+	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç•ªå·ï¼ˆã‚¨ãƒ‡ã‚£ã‚¿ãŒãµã‚‹ç•ªå·ï¼‰
 	m_ID = ID;
 	m_cPlugin = CPluginManager::getInstance()->GetPlugin( m_ID );
 	m_cPropPlugin = cPropPlugin;
@@ -104,7 +104,7 @@ int CDlgPluginOption::DoModal(
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, (LPARAM)NULL );
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìİ’è */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 void CDlgPluginOption::SetData( void )
 {
 	HWND	hwndList;
@@ -113,14 +113,14 @@ void CDlgPluginOption::SetData( void )
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	bool bLoadDefault = false;
 
-	// ƒ^ƒCƒgƒ‹
+	// ã‚¿ã‚¤ãƒˆãƒ«
 	auto_sprintf( buf, LS(STR_DLGPLUGINOPT_TITLE), m_cPlugin->m_sName.c_str());
 	::SetWindowText( GetHwnd(), buf );
 
-	// ƒŠƒXƒg
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
-	ListView_DeleteAllItems( hwndList );	// ƒŠƒXƒg‚ğ‹ó‚É‚·‚é
-	m_Line = -1;							// s”ñ‘I‘ğ
+	// ãƒªã‚¹ãƒˆ
+	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
+	ListView_DeleteAllItems( hwndList );	// ãƒªã‚¹ãƒˆã‚’ç©ºã«ã™ã‚‹
+	m_Line = -1;							// è¡Œéé¸æŠ
 
 	std::auto_ptr<CDataProfile> cProfile( new CDataProfile );
 	cProfile->SetReadingMode();
@@ -150,7 +150,7 @@ void CDlgPluginOption::SetData( void )
 		}
 		else {
 			if( !cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue ) ){
-				// Option‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚çDefault’l‚ğİ’è
+				// OptionãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã‚‰Defaultå€¤ã‚’è¨­å®š
 				sValue = cOpt->GetDefaultVal();
 				if( sValue != wstring(L"") ){
 					bLoadDefault = true;
@@ -165,11 +165,11 @@ void CDlgPluginOption::SetData( void )
 			_tcscpy( buf, sValue == wstring( L"0") || sValue == wstring( L"") ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
-			// ”’l‚Ö³‹K‰»
+			// æ•°å€¤ã¸æ­£è¦åŒ–
 			auto_sprintf( buf, _T("%d"), _wtoi(sValue.c_str()));
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
-			// ’l‚©‚ç•\¦‚Ö
+			// å€¤ã‹ã‚‰è¡¨ç¤ºã¸
 			wstring	sView;
 			wstring	sTrg;
 			std::vector<wstring>	selects;
@@ -201,30 +201,30 @@ void CDlgPluginOption::SetData( void )
 	}
 
 	if (i ==0) {
-		// ƒIƒvƒVƒ‡ƒ“‚ª–³‚¢
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDOK                       ), FALSE );
+		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãŒç„¡ã„
+		::EnableWindow( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS    ), FALSE );
+		::EnableWindow( GetItemHwnd( IDOK                       ), FALSE );
 	
 		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, LS(STR_DLGPLUGINOPT_OPTION) );
 	}
 
 	// ReadMe Button
 	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_tchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_PLUGIN_README ), !m_sReadMeName.empty() );
+	::EnableWindow( GetItemHwnd( IDC_PLUGIN_README ), !m_sReadMeName.empty() );
 	return;
 }
 
-/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
-/* TRUE==³í  FALSE==“ü—ÍƒGƒ‰[ */
+/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+/* TRUE==æ­£å¸¸  FALSE==å…¥åŠ›ã‚¨ãƒ©ãƒ¼ */
 int CDlgPluginOption::GetData( void )
 {
-	// .ini ƒtƒ@ƒCƒ‹‚Ö‚Ì‘‚«‚İ
+	// .ini ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®æ›¸ãè¾¼ã¿
 	HWND	hwndList;
 	int		i;
 	LV_ITEM	lvi;
 
-	// ƒŠƒXƒg
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	// ãƒªã‚¹ãƒˆ
+	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	std::auto_ptr<CDataProfile> cProfile( new CDataProfile );
 	cProfile->SetReadingMode();
@@ -254,7 +254,7 @@ int CDlgPluginOption::GetData( void )
 			}
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
-			// •\¦‚©‚ç’l‚Ö
+			// è¡¨ç¤ºã‹ã‚‰å€¤ã¸
 			wstring	sView;
 			wstring	sTrg;
 			std::vector<wstring>	selects;
@@ -315,12 +315,12 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
-	/* s‘I‘ğ */
+	/* è¡Œé¸æŠ */
 	lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 	lngStyle |= LVS_EX_FULLROWSELECT;
 	ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
-	// •ÒW—Ìˆæ‚Ì”ñƒAƒNƒeƒBƒu‰»
+	// ç·¨é›†é ˜åŸŸã®éã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION ), FALSE );
 	CtrlShow( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR,  FALSE );
 	CtrlShow( hwndDlg, IDC_BUTTON_PLUGIN_OPTION_DIR,FALSE );
@@ -329,12 +329,12 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	CtrlShow( hwndDlg, IDC_CHECK_PLUGIN_OPTION,     FALSE );
 	CtrlShow( hwndDlg, IDC_COMBO_PLUGIN_OPTION,     FALSE );
 
-	// Œ…”§ŒÀ
+	// æ¡æ•°åˆ¶é™
 	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION     ), MAX_LENGTH_VALUE );
 	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_DIR ), _MAX_PATH );
 	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
@@ -352,7 +352,7 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 			ChangeListPosition( );
 			break;
 		case NM_DBLCLK:
-			// ƒŠƒXƒgƒrƒ…[‚Ö‚Ìƒ_ƒuƒ‹ƒNƒŠƒbƒN‚Å•ÒW—Ìˆæ‚ÖˆÚ“®	2013/5/23 Uchi
+			// ãƒªã‚¹ãƒˆãƒ“ãƒ¥ãƒ¼ã¸ã®ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã§ç·¨é›†é ˜åŸŸã¸ç§»å‹•	2013/5/23 Uchi
 			MoveFocusToEdit();
 			break;
 		}
@@ -369,17 +369,17 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 			if (nVal < INT_MAX)		++nVal;
 		}else
 		if( pMNUD->iDelta > 0 ){
-			// INT_MIN‚Í SetDlgItemInt ‚Åˆµ‚¦‚È‚¢
+			// INT_MINã¯ SetDlgItemInt ã§æ‰±ãˆãªã„
 			if (nVal > -INT_MAX)	--nVal;
 		}
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nVal, TRUE );
 
-		// •ÒW’†‚Ìƒf[ƒ^‚Ì–ß‚µ
+		// ç·¨é›†ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã®æˆ»ã—
 		SetFromEdit( m_Line );
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnNotify( wParam, lParam );
 }
 
@@ -390,12 +390,12 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 	switch( wID )
 	{
 	case IDC_CHECK_PLUGIN_OPTION:
-		// •ÒW’†‚Ìƒf[ƒ^‚Ì–ß‚µ
+		// ç·¨é›†ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã®æˆ»ã—
 		SetFromEdit( m_Line );
 		return TRUE;
 
 	case IDC_BUTTON_PLUGIN_OPTION_DIR:	// 2013/05/22 Uchi
-		// ƒfƒBƒŒƒNƒgƒŠ‘I‘ğ
+		// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªé¸æŠ
 		SelectDirectory( m_Line );
 		return TRUE;
 
@@ -413,14 +413,14 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 		return TRUE;
 
 	case IDC_BUTTON_HELP:
-		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000153 );	// wƒvƒ‰ƒOƒCƒ“İ’èxHelp‚Ìw’è 	2011/11/26 Uchi
+		/* ãƒ˜ãƒ«ãƒ— */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000153 );	// ã€ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¨­å®šã€Helpã®æŒ‡å®š 	2011/11/26 Uchi
 		return TRUE;
 
 	case IDOK:
-		// •ÒW’†‚Ìƒf[ƒ^‚Ì–ß‚µ
+		// ç·¨é›†ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã®æˆ»ã—
 		SetFromEdit( m_Line );
-		/* ƒ_ƒCƒAƒƒOƒf[ƒ^‚Ìæ“¾ */
+		/* ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 		::EndDialog( GetHwnd(), (BOOL)GetData() );
 		return TRUE;
 
@@ -429,7 +429,7 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnBnClicked( wID );
 }
 
@@ -437,13 +437,13 @@ BOOL CDlgPluginOption::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
 	case IDC_COMBO_PLUGIN_OPTION:
-		// •ÒW’†‚Ìƒf[ƒ^‚Ì–ß‚µ
+		// ç·¨é›†ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã®æˆ»ã—
 		SetFromEdit( m_Line );
 
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnCbnSelChange( hwndCtl, wID );
 }
 
@@ -454,13 +454,13 @@ BOOL CDlgPluginOption::OnEnChange( HWND hwndCtl, int wID )
 	case IDC_EDIT_PLUGIN_OPTION:
 	case IDC_EDIT_PLUGIN_OPTION_DIR:
 	case IDC_EDIT_PLUGIN_OPTION_NUM:
-		// •ÒW’†‚Ìƒf[ƒ^‚Ì–ß‚µ
+		// ç·¨é›†ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã®æˆ»ã—
 		SetFromEdit( m_Line );
 
 		return TRUE;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
@@ -479,7 +479,7 @@ BOOL CDlgPluginOption::OnActivate( WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	return CDialog::OnActivate( wParam, lParam );
 }
 
@@ -492,9 +492,9 @@ LPVOID CDlgPluginOption::GetHelpIdTable( void )
 
 void CDlgPluginOption::ChangeListPosition( void )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
-	//	Œ»İ‚ÌFocusæ“¾
+	//	ç¾åœ¨ã®Focuså–å¾—
 	int current = ListView_GetNextItem( hwndList, -1, LVNI_SELECTED);
 
 	if( current == -1 || current == m_Line ){
@@ -504,14 +504,14 @@ void CDlgPluginOption::ChangeListPosition( void )
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	LVITEM	lvi;
 
-// –ß‚µ
+// æˆ»ã—
 	if (m_Line >= 0) {
 		SetFromEdit( m_Line );
 	}
 
 	m_Line = current;
 
-// •ÒW—Ìˆæ‚É‘‚«‚İ
+// ç·¨é›†é ˜åŸŸã«æ›¸ãè¾¼ã¿
 	SetToEdit(current);
 
 	memset_raw( &lvi, 0, sizeof( lvi ));
@@ -527,43 +527,43 @@ void CDlgPluginOption::ChangeListPosition( void )
 
 void CDlgPluginOption::MoveFocusToEdit( void )
 {
-	//	Œ»İ‚ÌFocusæ“¾
-	int		iLine = ListView_GetNextItem( ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
+	//	ç¾åœ¨ã®Focuså–å¾—
+	int		iLine = ListView_GetNextItem( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
 	wstring	sType;
 	HWND	hwndCtrl;
 
 	if (iLine >= 0) {
-		// Focus‚ÌØ‚è‘Ö‚¦
+		// Focusã®åˆ‡ã‚Šæ›¿ãˆ
 		sType = m_cPlugin->m_options[iLine]->GetType();
 		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_CHECK_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_CHECK_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_INT) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION_NUM );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_SEL) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_COMBO_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 		else if (sType == OPTION_TYPE_DIR) {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION_DIR );
 			::SetFocus( hwndCtrl );
 		}
 		else {
-			hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_EDIT_PLUGIN_OPTION );
+			hwndCtrl = GetItemHwnd( IDC_EDIT_PLUGIN_OPTION );
 			::SetFocus( hwndCtrl );
 		}
 	}
 }
 
 
-// •ÒW—Ìˆæ‚É‘‚«‚İ
+// ç·¨é›†é ˜åŸŸã«æ›¸ãè¾¼ã¿
 void CDlgPluginOption::SetToEdit( int iLine )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	LVITEM	lvi;
@@ -585,22 +585,22 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			::CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, _tcscmp(buf,  BOOL_DISP_FALSE) != 0 );
 			::DlgItem_SetText( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, m_cPlugin->m_options[iLine]->GetLabel().c_str() );
 
-			// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+			// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 			SelectEdit(IDC_CHECK_PLUGIN_OPTION);
 		}
 		else if (sType == OPTION_TYPE_INT) {
 			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, buf );
 
-			// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+			// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION_NUM);
 		}
 		else if (sType == OPTION_TYPE_SEL) {
-			// CONBO İ’è
+			// CONBO è¨­å®š
 			std::vector<wstring>	selects;
 			selects = m_cPlugin->m_options[iLine]->GetSelects();
 
 			HWND	hwndCombo;
-			hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLUGIN_OPTION );
+			hwndCombo = GetItemHwnd( IDC_COMBO_PLUGIN_OPTION );
 			Combo_ResetContent( hwndCombo );
 
 			int		nSelIdx;
@@ -609,7 +609,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			wstring	sView;
 			wstring	sValue;
 			wstring	sWbuf = to_wchar(buf);
-			nSelIdx = -1;		// ‘I‘ğ
+			nSelIdx = -1;		// é¸æŠ
 			i = 0;
 			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sValue);
@@ -621,25 +621,25 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			}
 			Combo_SetCurSel( hwndCombo, nSelIdx );
 
-			// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+			// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 			SelectEdit(IDC_COMBO_PLUGIN_OPTION);
 		}
 		else if (sType == OPTION_TYPE_DIR) {
 			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, buf );
 
-			// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+			// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION_DIR);
 		}
 		else {
 			::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf );
 
-			// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+			// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 			SelectEdit(IDC_EDIT_PLUGIN_OPTION);
 		}
 	}
 }
 
-// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+// ç·¨é›†é ˜åŸŸã®åˆ‡ã‚Šæ›¿ãˆ
 void CDlgPluginOption::SelectEdit( int IDCenable )
 {
 	CtrlShow( GetHwnd(), IDC_EDIT_PLUGIN_OPTION,        (IDCenable == IDC_EDIT_PLUGIN_OPTION) );
@@ -651,10 +651,10 @@ void CDlgPluginOption::SelectEdit( int IDCenable )
 	CtrlShow( GetHwnd(), IDC_COMBO_PLUGIN_OPTION,       (IDCenable == IDC_COMBO_PLUGIN_OPTION)  );
 }
 
-// •ÒW—Ìˆæ‚©‚ç–ß‚µ
+// ç·¨é›†é ˜åŸŸã‹ã‚‰æˆ»ã—
 void CDlgPluginOption::SetFromEdit( int iLine )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	int		nVal;
@@ -699,7 +699,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 	}
 }
 
-// ‘I‘ğ—p•¶š—ñ•ª‰ğ
+// é¸æŠç”¨æ–‡å­—åˆ—åˆ†è§£
 void CDlgPluginOption::SepSelect( wstring sTrg, wstring* spView, wstring* spValue )
 {
 	int		ix;
@@ -717,12 +717,12 @@ void CDlgPluginOption::SepSelect( wstring sTrg, wstring* spView, wstring* spValu
 	}
 }
 
-// ƒfƒBƒŒƒNƒgƒŠ‚ğ‘I‘ğ‚·‚é
+// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’é¸æŠã™ã‚‹
 void CDlgPluginOption::SelectDirectory( int iLine )
 {
 	TCHAR	szDir[_MAX_PATH+1];
 
-	/* ŒŸõƒtƒHƒ‹ƒ_ */
+	/* æ¤œç´¢ãƒ•ã‚©ãƒ«ãƒ€ */
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {
@@ -731,8 +731,8 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 		GetInidirOrExedir( szDir, folder );
 	}
 
-	// €–Ú–¼‚Ìæ“¾
-	HWND	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_PLUGIN_OPTIONS );
+	// é …ç›®åã®å–å¾—
+	HWND	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 	LVITEM	lvi;
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 	memset_raw( &lvi, 0, sizeof( lvi ));
@@ -745,8 +745,8 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 
 	TCHAR	sTitle[MAX_LENGTH_VALUE+10];
 	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
-	if (SelectDir( GetHwnd(), (const TCHAR*)sTitle /*_T("ƒfƒBƒŒƒNƒgƒŠ‚Ì‘I‘ğ")*/, szDir, szDir )) {
-		//	––”ö‚É\ƒ}[ƒN‚ğ’Ç‰Á‚·‚éD
+	if (SelectDir( GetHwnd(), (const TCHAR*)sTitle /*_T("ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®é¸æŠ")*/, szDir, szDir )) {
+		//	æœ«å°¾ã«\ãƒãƒ¼ã‚¯ã‚’è¿½åŠ ã™ã‚‹ï¼
 		AddLastChar( szDir, _countof(szDir), _T('\\') );
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
 	}

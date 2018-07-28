@@ -100,7 +100,7 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT2 ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT2 ) );
@@ -151,7 +151,7 @@ void CDlgGrepReplace::SetData( void )
 {
 	/* 置換後 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
-	HWND	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
+	HWND	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT2 );
 	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 	}

@@ -105,10 +105,10 @@ void CDlgExec::SetData( void )
 	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
 
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
@@ -126,19 +126,19 @@ void CDlgExec::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_SENDSTDIN, nExecFlgOpt & 0x04 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_CUR_DIR, nExecFlgOpt & 0x200 ? BST_CHECKED : BST_UNCHECKED );
 
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable)? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REFERENCE2 ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable)? TRUE : FALSE );
+		::EnableWindow( GetItemHwnd( IDC_COMBO_CODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( GetItemHwnd( IDC_COMBO_CODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( GetItemHwnd( IDC_COMBO_CUR_DIR ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
+		::EnableWindow( GetItemHwnd( IDC_BUTTON_REFERENCE2 ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
 	*         データ設定         *
 	*****************************/
 	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand );
+	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
 	Combo_ResetContent( hwndCombo );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 	int nSize = m_pShareData->m_sHistory.m_aCommands.size();
@@ -214,8 +214,8 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{	//	From Here 2007.01.02 maru 引数を拡張のため
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE );	// ビューモードや上書き禁止の条件追加	// 2009.02.21 ryoji
+			::EnableWindow( GetItemHwnd( IDC_RADIO_OUTPUT ), bEnabled );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE );	// ビューモードや上書き禁止の条件追加	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi

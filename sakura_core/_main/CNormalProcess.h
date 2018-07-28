@@ -1,11 +1,11 @@
-/*!	@file
-	@brief ƒGƒfƒBƒ^ƒvƒƒZƒXƒNƒ‰ƒXƒwƒbƒ_ƒtƒ@ƒCƒ‹
+ï»¿/*!	@file
+	@brief ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹ãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
 
 	@author aroka
-	@date	2002/01/08 ì¬
+	@date	2002/01/08 ä½œæˆ
 */
 /*
-	Copyright (C) 2002, aroka V‹Kì¬
+	Copyright (C) 2002, aroka æ–°è¦ä½œæˆ
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,27 +22,27 @@
 class CEditWnd;
 
 /*-----------------------------------------------------------------------
-ƒNƒ‰ƒX‚ÌéŒ¾
+ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 -----------------------------------------------------------------------*/
 /*!
-	@brief ƒGƒfƒBƒ^ƒvƒƒZƒXƒNƒ‰ƒX
+	@brief ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã‚¯ãƒ©ã‚¹
 	
-	ƒGƒfƒBƒ^ƒvƒƒZƒX‚ÍCEditWndƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğì‚éB
+	ã‚¨ãƒ‡ã‚£ã‚¿ãƒ—ãƒ­ã‚»ã‚¹ã¯CEditWndã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä½œã‚‹ã€‚
 */
 class CNormalProcess : public CProcess {
 public:
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
 	virtual ~CNormalProcess();
 
 protected:
-	//ƒvƒƒZƒXƒnƒ“ƒhƒ‰
+	//ãƒ—ãƒ­ã‚»ã‚¹ãƒãƒ³ãƒ‰ãƒ©
 	virtual bool InitializeProcess();
 	virtual bool MainLoop();
 	virtual void OnExitProcess();
 
 protected:
-	//À‘••â•
+	//å®Ÿè£…è£œåŠ©
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 	void OpenFiles( HWND );
 

@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒL[ƒ[ƒh•âŠ®
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è£œå®Œ
 
 	@author Norio Nakatani
 */
@@ -20,9 +20,9 @@
 #include "util/container.h"
 
 
-/*! @brief ƒL[ƒ[ƒh•âŠ®
+/*! @brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è£œå®Œ
 
-	@date 2003.06.25 Moca ƒtƒ@ƒCƒ‹“à‚©‚ç‚Ì•âŠ®‹@”\‚ğ’Ç‰Á
+	@date 2003.06.25 Moca ãƒ•ã‚¡ã‚¤ãƒ«å†…ã‹ã‚‰ã®è£œå®Œæ©Ÿèƒ½ã‚’è¿½åŠ 
 */
 class CHokanMgr : public CDialog
 {
@@ -33,20 +33,20 @@ public:
 	CHokanMgr();
 	~CHokanMgr();
 
-	HWND DoModeless( HINSTANCE, HWND, LPARAM );/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM );/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 	void Hide( void );
-	/* ‰Šú‰» */
+	/* åˆæœŸåŒ– */
 	int Search(
 		POINT*			ppoWin,
 		int				nWinHeight,
 		int				nColumnWidth,
 		const wchar_t*	pszCurWord,
 		const TCHAR*	pszHokanFile,
-		bool			bHokanLoHiCase,			// “ü—Í•âŠ®‹@”\F‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é 2001/06/19 asa-o
-		bool			bHokanByFile,			// •ÒW’†ƒf[ƒ^‚©‚çŒó•â‚ğ’T‚·B 2003.06.23 Moca
+		bool			bHokanLoHiCase,			// å…¥åŠ›è£œå®Œæ©Ÿèƒ½ï¼šè‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹ 2001/06/19 asa-o
+		bool			bHokanByFile,			// ç·¨é›†ä¸­ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰å€™è£œã‚’æ¢ã™ã€‚ 2003.06.23 Moca
 		int				nHokanType,
 		bool			bHokanByKeyword,
-		CNativeW*		pcmemHokanWord = NULL	// •âŠ®Œó•â‚ª‚P‚Â‚Ì‚Æ‚«‚±‚ê‚ÉŠi”[ 2001/06/19 asa-o
+		CNativeW*		pcmemHokanWord = NULL	// è£œå®Œå€™è£œãŒï¼‘ã¤ã®ã¨ãã“ã‚Œã«æ ¼ç´ 2001/06/19 asa-o
 	);
 	void HokanSearchByKeyword(
 		const wchar_t*	pszCurWord,
@@ -55,7 +55,7 @@ public:
 	);
 //	void SetCurKouhoStr( void );
 	BOOL DoHokan( int );
-	void ChangeView( LPARAM );/* ƒ‚[ƒhƒŒƒXF‘ÎÛ‚Æ‚È‚éƒrƒ…[‚Ì•ÏX */
+	void ChangeView( LPARAM );/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹æ™‚ï¼šå¯¾è±¡ã¨ãªã‚‹ãƒ“ãƒ¥ãƒ¼ã®å¤‰æ›´ */
 
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
@@ -67,7 +67,7 @@ public:
 	int KeyProc( WPARAM, LPARAM );
 
 //	2001/06/18 asa-o
-	void ShowTip();	// •âŠ®ƒEƒBƒ“ƒhƒE‚Å‘I‘ğ’†‚Ì’PŒê‚ÉƒL[ƒ[ƒhƒwƒ‹ƒv‚Ì•\¦
+	void ShowTip();	// è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é¸æŠä¸­ã®å˜èªã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã®è¡¨ç¤º
 
 	static bool AddKouhoUnique(vector_ex<std::wstring>&, const std::wstring&);
 
@@ -84,7 +84,7 @@ public:
 
 protected:
 	/*
-	||  À‘•ƒwƒ‹ƒpŠÖ”
+	||  å®Ÿè£…ãƒ˜ãƒ«ãƒ‘é–¢æ•°
 	*/
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 

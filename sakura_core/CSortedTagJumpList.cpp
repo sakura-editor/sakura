@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒ^ƒOƒWƒƒƒ“ƒvƒŠƒXƒg
+ï»¿/*!	@file
+	@brief ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒªã‚¹ãƒˆ
 
 	@author MIK
 	@date 2005.3.31
@@ -32,7 +32,7 @@
 #include "CSortedTagJumpList.h"
 
 /*!
-	@date 2005.04.23 genta ŠÇ—”‚ÌÅ‘å’l‚ğw’è‚·‚éˆø”’Ç‰Á
+	@date 2005.04.23 genta ç®¡ç†æ•°ã®æœ€å¤§å€¤ã‚’æŒ‡å®šã™ã‚‹å¼•æ•°è¿½åŠ 
 */
 CSortedTagJumpList::CSortedTagJumpList(int max)
 	: m_pTagjump( NULL ),
@@ -40,7 +40,7 @@ CSortedTagJumpList::CSortedTagJumpList(int max)
 	  m_bOverflow( false ),
 	  m_MAX_TAGJUMPLIST( max )
 {
-	// id==0 ‚ğ ‹ó•¶š—ñ‚É‚·‚é
+	// id==0 ã‚’ ç©ºæ–‡å­—åˆ—ã«ã™ã‚‹
 	m_baseDirArr.push_back(_T(""));
 }
 
@@ -50,9 +50,9 @@ CSortedTagJumpList::~CSortedTagJumpList()
 }
 
 /*
-	w’è‚³‚ê‚½ƒAƒCƒeƒ€‚Ìƒƒ‚ƒŠ‚ğ‰ğ•ú‚·‚éB
+	æŒ‡å®šã•ã‚ŒãŸã‚¢ã‚¤ãƒ†ãƒ ã®ãƒ¡ãƒ¢ãƒªã‚’è§£æ”¾ã™ã‚‹ã€‚
 
-	@param[in] item íœ‚·‚éƒAƒCƒeƒ€
+	@param[in] item å‰Šé™¤ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ 
 */
 void CSortedTagJumpList::Free( TagJumpInfo* item )
 {
@@ -64,7 +64,7 @@ void CSortedTagJumpList::Free( TagJumpInfo* item )
 }
 
 /*
-	ƒŠƒXƒg‚ğ‚·‚×‚Ä‰ğ•ú‚·‚éB
+	ãƒªã‚¹ãƒˆã‚’ã™ã¹ã¦è§£æ”¾ã™ã‚‹ã€‚
 */
 void CSortedTagJumpList::Empty( void )
 {
@@ -83,8 +83,8 @@ void CSortedTagJumpList::Empty( void )
 }
 
 /*
-	Šî€ƒtƒHƒ‹ƒ_‚ğ“o˜^‚µAŠî€ƒtƒHƒ‹ƒ_ID‚ğæ“¾
-	@date 2010.07.23 Moca V‹K’Ç‰Á
+	åŸºæº–ãƒ•ã‚©ãƒ«ãƒ€ã‚’ç™»éŒ²ã—ã€åŸºæº–ãƒ•ã‚©ãƒ«ãƒ€IDã‚’å–å¾—
+	@date 2010.07.23 Moca æ–°è¦è¿½åŠ 
 */
 int CSortedTagJumpList::AddBaseDir( const TCHAR* baseDir )
 {
@@ -93,20 +93,20 @@ int CSortedTagJumpList::AddBaseDir( const TCHAR* baseDir )
 }
 
 /*
-	ƒAƒCƒeƒ€‚ğƒ\[ƒg‚³‚ê‚½ó‘Ô‚ÅƒŠƒXƒg‚É’Ç‰Á‚·‚éB
-	ƒAƒCƒeƒ€‚ªÅ‘å”‚ğ’´‚¦‚éê‡‚ÍA’´‚¦‚éƒAƒCƒeƒ€‚ğíœ‚·‚éB
-	•¶š—ñ‚ÍƒRƒs[‚ğì¬‚·‚é‚Ì‚ÅAŒÄ‚Ño‚µ‘¤‚Í•¶š—ñ‚ÌƒAƒhƒŒƒXæ‚ğ•Û‚·‚é•K—v‚Í‚È‚¢B
+	ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã‚½ãƒ¼ãƒˆã•ã‚ŒãŸçŠ¶æ…‹ã§ãƒªã‚¹ãƒˆã«è¿½åŠ ã™ã‚‹ã€‚
+	ã‚¢ã‚¤ãƒ†ãƒ ãŒæœ€å¤§æ•°ã‚’è¶…ãˆã‚‹å ´åˆã¯ã€è¶…ãˆã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+	æ–‡å­—åˆ—ã¯ã‚³ãƒ”ãƒ¼ã‚’ä½œæˆã™ã‚‹ã®ã§ã€å‘¼ã³å‡ºã—å´ã¯æ–‡å­—åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹å…ˆã‚’ä¿æŒã™ã‚‹å¿…è¦ã¯ãªã„ã€‚
 	
-	@param[in] keyword	ƒL[ƒ[ƒh
-	@param[in] filename	ƒtƒ@ƒCƒ‹–¼
-	@param[in] no		s”Ô†
-	@param[in] type		í—Ş
-	@param[in] note		”õl
-	@param[in] depth	(‚³‚©‚Ì‚Ú‚é)ŠK‘w
-	@param[in] baseDirId	Šî€ƒtƒHƒ‹ƒ_IDB0‚Å‹ó•¶š—ñw’è (AddBaseDir‚Ì–ß‚è’l)
-	@retval TRUE  ’Ç‰Á‚µ‚½
-	@retval FALSE ’Ç‰Á¸”s
-	@date 2010.07.23 Moca baseDirId ’Ç‰Á
+	@param[in] keyword	ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	@param[in] filename	ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param[in] no		è¡Œç•ªå·
+	@param[in] type		ç¨®é¡
+	@param[in] note		å‚™è€ƒ
+	@param[in] depth	(ã•ã‹ã®ã¼ã‚‹)éšå±¤
+	@param[in] baseDirId	åŸºæº–ãƒ•ã‚©ãƒ«ãƒ€IDã€‚0ã§ç©ºæ–‡å­—åˆ—æŒ‡å®š (AddBaseDirã®æˆ»ã‚Šå€¤)
+	@retval TRUE  è¿½åŠ ã—ãŸ
+	@retval FALSE è¿½åŠ å¤±æ•—
+	@date 2010.07.23 Moca baseDirId è¿½åŠ 
 */
 BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename, int no,
 	ACHAR type, const ACHAR* note, int depth, int baseDirId )
@@ -114,10 +114,10 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	TagJumpInfo*	p;
 	TagJumpInfo*	prev;
 	TagJumpInfo*	item;
-	// 3‚Â‚ß‚ÍSJIS—p•ÛŒ¯
+	// 3ã¤ã‚ã¯SJISç”¨ä¿é™º
 	ACHAR typeStr[] = {type, '\0', '\0'};
 
-	//ƒAƒCƒeƒ€‚ğì¬‚·‚éB
+	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ä½œæˆã™ã‚‹ã€‚
 	item = (TagJumpInfo*)malloc( sizeof( TagJumpInfo ) );
 	if( NULL == item ) return FALSE;
 	item->keyword  = _tcsdup( to_tchar(keyword) );
@@ -129,12 +129,12 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	item->next     = NULL;
 	item->baseDirId = baseDirId;
 
-	//•¶š—ñ’·ƒK[ƒh
+	//æ–‡å­—åˆ—é•·ã‚¬ãƒ¼ãƒ‰
 	if( _tcslen( item->keyword  ) >= MAX_TAG_STRING_LENGTH ) item->keyword[  MAX_TAG_STRING_LENGTH-1 ] = 0;
 	if( _tcslen( item->filename ) >= MAX_TAG_STRING_LENGTH ) item->filename[ MAX_TAG_STRING_LENGTH-1 ] = 0;
 	if( _tcslen( item->note     ) >= MAX_TAG_STRING_LENGTH ) item->note[     MAX_TAG_STRING_LENGTH-1 ] = 0;
 
-	//ƒAƒCƒeƒ€‚ğƒŠƒXƒg‚Ì“K“–‚ÈˆÊ’u‚É’Ç‰Á‚·‚éB
+	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’ãƒªã‚¹ãƒˆã®é©å½“ãªä½ç½®ã«è¿½åŠ ã™ã‚‹ã€‚
 	prev = NULL;
 	for( p = m_pTagjump; p; p = p->next )
 	{
@@ -146,7 +146,7 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	else       m_pTagjump = item;
 	m_nCount++;
 
-	//Å‘å”‚ğ’´‚¦‚½‚çÅŒã‚ÌƒAƒCƒeƒ€‚ğíœ‚·‚éB
+	//æœ€å¤§æ•°ã‚’è¶…ãˆãŸã‚‰æœ€å¾Œã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	if( m_nCount > m_MAX_TAGJUMPLIST )
 	{
 		prev = NULL;
@@ -161,18 +161,18 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 }
 
 /*
-	w’è‚Ìî•ñ‚ğæ“¾‚·‚éB
+	æŒ‡å®šã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚
 
-	@param[out] keyword		ƒL[ƒ[ƒh
-	@param[out] filename	ƒtƒ@ƒCƒ‹–¼
-	@param[out] no			s”Ô†
-	@param[out] type		í—Ş
-	@param[out] note		”õl
-	@param[out] depth		(‚³‚©‚Ì‚Ú‚é)ŠK‘w
-	@param[out] baseDir		ƒtƒ@ƒCƒ‹–¼‚ÌŠî€ƒtƒHƒ‹ƒ_
-	@return ˆ—Œ‹‰Ê
+	@param[out] keyword		ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+	@param[out] filename	ãƒ•ã‚¡ã‚¤ãƒ«å
+	@param[out] no			è¡Œç•ªå·
+	@param[out] type		ç¨®é¡
+	@param[out] note		å‚™è€ƒ
+	@param[out] depth		(ã•ã‹ã®ã¼ã‚‹)éšå±¤
+	@param[out] baseDir		ãƒ•ã‚¡ã‚¤ãƒ«åã®åŸºæº–ãƒ•ã‚©ãƒ«ãƒ€
+	@return å‡¦ç†çµæœ
 
-	@note •s—v‚Èî•ñ‚Ìê‡‚Íˆø”‚É NULL ‚ğw’è‚·‚éB
+	@note ä¸è¦ãªæƒ…å ±ã®å ´åˆã¯å¼•æ•°ã« NULL ã‚’æŒ‡å®šã™ã‚‹ã€‚
 */
 BOOL CSortedTagJumpList::GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth, TCHAR* baseDir )
 {
@@ -205,11 +205,11 @@ BOOL CSortedTagJumpList::GetParam( int index, TCHAR* keyword, TCHAR* filename, i
 }
 
 /*
-	w’è‚Ìî•ñ‚ğ\‘¢‘Ìƒ|ƒCƒ“ƒ^‚Åæ“¾‚·‚éB
-	æ“¾‚µ‚½î•ñ‚ÍQÆ‚È‚Ì‚Å‰ğ•ú‚µ‚Ä‚Í‚È‚ç‚È‚¢B
+	æŒ‡å®šã®æƒ…å ±ã‚’æ§‹é€ ä½“ãƒã‚¤ãƒ³ã‚¿ã§å–å¾—ã™ã‚‹ã€‚
+	å–å¾—ã—ãŸæƒ…å ±ã¯å‚ç…§ãªã®ã§è§£æ”¾ã—ã¦ã¯ãªã‚‰ãªã„ã€‚
 
-	@param[in] index —v‘f”Ô†
-	@return ƒ^ƒOƒWƒƒƒ“ƒvî•ñ
+	@param[in] index è¦ç´ ç•ªå·
+	@return ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—æƒ…å ±
 */
 CSortedTagJumpList::TagJumpInfo* CSortedTagJumpList::GetPtr( int index )
 {

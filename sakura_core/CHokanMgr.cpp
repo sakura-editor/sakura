@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ƒL[ƒ[ƒh•âŠ®
+ï»¿/*!	@file
+	@brief ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰è£œå®Œ
 
 	@author Norio Nakatani
 */
@@ -39,9 +39,9 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONDBLCLK:
 		{
-			// ƒAƒNƒeƒBƒu‰»‚ğ–h~‚·‚é‚½‚ß‚É©‘O‚ÅƒŠƒXƒg‘I‘ğˆ—‚ğÀ{‚·‚é
+			// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ã‚’é˜²æ­¢ã™ã‚‹ãŸã‚ã«è‡ªå‰ã§ãƒªã‚¹ãƒˆé¸æŠå‡¦ç†ã‚’å®Ÿæ–½ã™ã‚‹
 			LRESULT lResult = ::SendMessageAny( hwnd, LB_ITEMFROMPOINT, 0, lParam );
-			if( HIWORD(lResult) == 0 ){	// ƒNƒ‰ƒCƒAƒ“ƒgƒGƒŠƒA“à
+			if( HIWORD(lResult) == 0 ){	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚¨ãƒªã‚¢å†…
 				if( uMsg == WM_LBUTTONDOWN ){
 					List_SetCurSel( hwnd, LOWORD(lResult) );
 					pCHokanMgr->OnLbnSelChange( hwnd, IDC_LIST_WORDS );
@@ -51,7 +51,7 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				}
 			}
 		}
-		return 0;	// –{—ˆ‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚ÍŒÄ‚Î‚È‚¢iƒAƒNƒeƒBƒu‰»‚µ‚È‚¢j
+		return 0;	// æœ¬æ¥ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã¯å‘¼ã°ãªã„ï¼ˆã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ã—ãªã„ï¼‰
 	}
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
@@ -70,21 +70,21 @@ CHokanMgr::~CHokanMgr()
 {
 }
 
-/* ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚Ì•\¦ */
+/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®è¡¨ç¤º */
 HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam )
 {
 	HWND hwndWork;
 	hwndWork = CDialog::DoModeless( hInstance, hwndParent, IDD_HOKAN, lParam, SW_HIDE );
-	::SetFocus( ((CEditView*)m_lParam)->GetHwnd() );	//ƒGƒfƒBƒ^‚ÉƒtƒH[ƒJƒX‚ğ–ß‚·
+	::SetFocus( ((CEditView*)m_lParam)->GetHwnd() );	//ã‚¨ãƒ‡ã‚£ã‚¿ã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’æˆ»ã™
 	OnSize( 0, 0 );
-	/* ƒŠƒXƒg‚ğƒtƒbƒN */
+	/* ãƒªã‚¹ãƒˆã‚’ãƒ•ãƒƒã‚¯ */
 	// Modified by KEITA for WIN64 2003.9.6
-	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
+	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( GetItemHwnd( IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
 
 	return hwndWork;
 }
 
-/* ƒ‚[ƒhƒŒƒXF‘ÎÛ‚Æ‚È‚éƒrƒ…[‚Ì•ÏX */
+/* ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹æ™‚ï¼šå¯¾è±¡ã¨ãªã‚‹ãƒ“ãƒ¥ãƒ¼ã®å¤‰æ›´ */
 void CHokanMgr::ChangeView( LPARAM pcEditView )
 {
 	m_lParam = pcEditView;
@@ -96,18 +96,18 @@ void CHokanMgr::Hide( void )
 
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
-	/* “ü—ÍƒtƒH[ƒJƒX‚ğó‚¯æ‚Á‚½‚Æ‚«‚Ìˆ— */
+	/* å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’å—ã‘å–ã£ãŸã¨ãã®å‡¦ç† */
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	pcEditView->OnSetFocus();
 	return;
 
 }
 
-/*!	‰Šú‰»
-	pcmemHokanWord == NULL‚Ì‚Æ‚«A•âŠ®Œó•â‚ª‚Ğ‚Æ‚Â‚¾‚Á‚½‚çA•âŠ®ƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚È‚¢‚ÅI—¹‚µ‚Ü‚·B
-	Search()ŒÄ‚Ño‚µŒ³‚ÅŠm’èˆ—‚ği‚ß‚Ä‚­‚¾‚³‚¢B
+/*!	åˆæœŸåŒ–
+	pcmemHokanWord == NULLã®ã¨ãã€è£œå®Œå€™è£œãŒã²ã¨ã¤ã ã£ãŸã‚‰ã€è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ãªã„ã§çµ‚äº†ã—ã¾ã™ã€‚
+	Search()å‘¼ã³å‡ºã—å…ƒã§ç¢ºå®šå‡¦ç†ã‚’é€²ã‚ã¦ãã ã•ã„ã€‚
 
-	@date 2002.2.17 YAZAKI CShareData‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÍACProcess‚É‚Ğ‚Æ‚Â‚ ‚é‚Ì‚İB
+	@date 2002.2.17 YAZAKI CShareDataã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã€CProcessã«ã²ã¨ã¤ã‚ã‚‹ã®ã¿ã€‚
 */
 int CHokanMgr::Search(
 	POINT*			ppoWin,
@@ -115,8 +115,8 @@ int CHokanMgr::Search(
 	int				nColumnWidth,
 	const wchar_t*	pszCurWord,
 	const TCHAR*	pszHokanFile,
-	bool			bHokanLoHiCase,	// “ü—Í•âŠ®‹@”\F‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é 2001/06/19 asa-o
-	bool			bHokanByFile,	// •ÒW’†ƒf[ƒ^‚©‚çŒó•â‚ğ’T‚· 2003.06.23 Moca
+	bool			bHokanLoHiCase,	// å…¥åŠ›è£œå®Œæ©Ÿèƒ½ï¼šè‹±å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ã™ã‚‹ 2001/06/19 asa-o
+	bool			bHokanByFile,	// ç·¨é›†ä¸­ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰å€™è£œã‚’æ¢ã™ 2003.06.23 Moca
 	int				nHokanType,
 	bool			bHokanByKeyword,
 	CNativeW*		pcmemHokanWord	// 2001/06/19 asa-o
@@ -124,36 +124,36 @@ int CHokanMgr::Search(
 {
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
-	/* ‹¤—Lƒf[ƒ^\‘¢‘Ì‚ÌƒAƒhƒŒƒX‚ğ•Ô‚· */
+	/* å…±æœ‰ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¿”ã™ */
 	m_pShareData = &GetDllShareData();
 
 	/*
-	||  •âŠ®ƒL[ƒ[ƒh‚ÌŒŸõ
+	||  è£œå®Œã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®æ¤œç´¢
 	||
-	||  EŒ©‚Â‚©‚Á‚½Œó•â‚ğ‚·‚×‚Ä•Ô‚·(‰üs‚Å‹æØ‚Á‚Ä•Ô‚·)
-	||  Ew’è‚³‚ê‚½Œó•â‚ÌÅ‘å”‚ğ’´‚¦‚é‚Æˆ—‚ğ’†’f‚·‚é
-	||  EŒ©‚Â‚©‚Á‚½”‚ğ•Ô‚·
+	||  ãƒ»è¦‹ã¤ã‹ã£ãŸå€™è£œã‚’ã™ã¹ã¦è¿”ã™(æ”¹è¡Œã§åŒºåˆ‡ã£ã¦è¿”ã™)
+	||  ãƒ»æŒ‡å®šã•ã‚ŒãŸå€™è£œã®æœ€å¤§æ•°ã‚’è¶…ãˆã‚‹ã¨å‡¦ç†ã‚’ä¸­æ–­ã™ã‚‹
+	||  ãƒ»è¦‹ã¤ã‹ã£ãŸæ•°ã‚’è¿”ã™
 	||
 	*/
 	m_vKouho.clear();
 	CDicMgr::HokanSearch(
 		pszCurWord,
-		bHokanLoHiCase,								// ˆø”‚©‚ç‚É•ÏX	2001/06/19 asa-o
+		bHokanLoHiCase,								// å¼•æ•°ã‹ã‚‰ã«å¤‰æ›´	2001/06/19 asa-o
 		m_vKouho,
-		0, //MaxŒó•â”
+		0, //Maxå€™è£œæ•°
 		pszHokanFile
 	);
 
-	// 2003.05.16 Moca ’Ç‰Á •ÒW’†ƒf[ƒ^“à‚©‚çŒó•â‚ğ’T‚·
+	// 2003.05.16 Moca è¿½åŠ  ç·¨é›†ä¸­ãƒ‡ãƒ¼ã‚¿å†…ã‹ã‚‰å€™è£œã‚’æ¢ã™
 	if( bHokanByFile ){
 		pcEditView->HokanSearchByFile(
 			pszCurWord,
 			bHokanLoHiCase,
 			m_vKouho,
-			1024 // •ÒW’†ƒf[ƒ^‚©‚ç‚È‚Ì‚Å”‚ğ§ŒÀ‚µ‚Ä‚¨‚­
+			1024 // ç·¨é›†ä¸­ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰ãªã®ã§æ•°ã‚’åˆ¶é™ã—ã¦ãŠã
 		);
 	}
-	// 2012.10.13 Moca ‹­’²ƒL[ƒ[ƒh‚©‚çŒó•â‚ğ’T‚·
+	// 2012.10.13 Moca å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‹ã‚‰å€™è£œã‚’æ¢ã™
 	if( bHokanByKeyword ){
 		HokanSearchByKeyword(
 			pszCurWord,
@@ -179,13 +179,13 @@ int CHokanMgr::Search(
 		}
 
 		for( auto it = plugs.begin(); it != plugs.end(); ++it ){
-			//ƒCƒ“ƒ^ƒtƒF[ƒXƒIƒuƒWƒFƒNƒg€”õ
+			//ã‚¤ãƒ³ã‚¿ãƒ•ã‚§ãƒ¼ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæº–å‚™
 			CWSHIfObj::List params;
 			std::wstring curWord = pszCurWord;
 			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );
 			objComp->AddRef();
 			params.push_back( objComp );
-			//ƒvƒ‰ƒOƒCƒ“ŒÄ‚Ño‚µ
+			//ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å‘¼ã³å‡ºã—
 			(*it)->Invoke( pcEditView, params );
 
 			objComp->Release();
@@ -197,7 +197,7 @@ int CHokanMgr::Search(
 		return 0;
 	}
 
-//	2001/06/19 asa-o Œó•â‚ª‚P‚Â‚Ìê‡•âŠ®ƒEƒBƒ“ƒhƒE‚Í•\¦‚µ‚È‚¢(’€Ÿ•âŠ®‚Ìê‡‚Íœ‚­)
+//	2001/06/19 asa-o å€™è£œãŒï¼‘ã¤ã®å ´åˆè£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯è¡¨ç¤ºã—ãªã„(é€æ¬¡è£œå®Œã®å ´åˆã¯é™¤ã)
 	if( 1 == m_vKouho.size() ){
 		if(pcmemHokanWord != NULL){
 			m_nCurKouhoIdx = -1;
@@ -231,7 +231,7 @@ int CHokanMgr::Search(
 
 
 	HWND hwndList;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndList = GetItemHwnd( IDC_LIST_WORDS );
 	List_ResetContent( hwndList );
 	{
 		size_t kouhoNum = m_vKouho.size();
@@ -250,7 +250,7 @@ int CHokanMgr::Search(
 	int nCX;
 	int nCY;
 	RECT	rcDesktop;
-	//	May 01, 2004 genta ƒ}ƒ‹ƒ`ƒ‚ƒjƒ^‘Î‰
+	//	May 01, 2004 genta ãƒãƒ«ãƒãƒ¢ãƒ‹ã‚¿å¯¾å¿œ
 	::GetMonitorWorkRect( GetHwnd(), &rcDesktop );
 
 	nX = m_poWin.x - m_nColumnWidth;
@@ -258,56 +258,56 @@ int CHokanMgr::Search(
 	nCX = m_nWidth;
 	nCY = m_nHeight;
 
-	/* ‰º‚É“ü‚é‚È‚ç */
+	/* ä¸‹ã«å…¥ã‚‹ãªã‚‰ */
 	if( nY + nCY < rcDesktop.bottom ){
-		/* ‰½‚à‚µ‚È‚¢ */
+		/* ä½•ã‚‚ã—ãªã„ */
 	}else
-	/* ã‚É“ü‚é‚È‚ç */
+	/* ä¸Šã«å…¥ã‚‹ãªã‚‰ */
 	if( rcDesktop.top < m_poWin.y - m_nHeight - 4 ){
-		/* ã‚Éo‚· */
+		/* ä¸Šã«å‡ºã™ */
 		nY = m_poWin.y - m_nHeight - 4;
 	}else
-	/* ã‚Éo‚·‚©‰º‚Éo‚·‚©(L‚¢‚Ù‚¤‚Éo‚·) */
+	/* ä¸Šã«å‡ºã™ã‹ä¸‹ã«å‡ºã™ã‹(åºƒã„ã»ã†ã«å‡ºã™) */
 	if(	rcDesktop.bottom - nY > m_poWin.y ){
-		/* ‰º‚Éo‚· */
+		/* ä¸‹ã«å‡ºã™ */
 //		m_nHeight = rcDesktop.bottom - nY;
 		nCY = rcDesktop.bottom - nY;
 	}else{
-		/* ã‚Éo‚· */
+		/* ä¸Šã«å‡ºã™ */
 		nY = rcDesktop.top;
 		nCY = m_poWin.y - 4 - rcDesktop.top;
 	}
 
-//	2001/06/19 Start by asa-o: •\¦ˆÊ’u•â³
+//	2001/06/19 Start by asa-o: è¡¨ç¤ºä½ç½®è£œæ­£
 
-	// ‰E‚É“ü‚é
+	// å³ã«å…¥ã‚‹
 	if(nX + nCX < rcDesktop.right ){
-		// ‚»‚Ì‚Ü‚Ü
+		// ãã®ã¾ã¾
 	}else
-	// ¶‚É“ü‚é
+	// å·¦ã«å…¥ã‚‹
 	if(rcDesktop.left < nX - nCX + 8){
-		// ¶‚É•\¦
+		// å·¦ã«è¡¨ç¤º
 		nX -= nCX - 8;
 	}else{
-		// ƒTƒCƒY‚ğ’²®‚µ‚Ä‰E‚É•\¦
-		nCX = t_max((int)(rcDesktop.right - nX) , 100);	// Å’áƒTƒCƒY‚ğ100‚­‚ç‚¢‚É
+		// ã‚µã‚¤ã‚ºã‚’èª¿æ•´ã—ã¦å³ã«è¡¨ç¤º
+		nCX = t_max((int)(rcDesktop.right - nX) , 100);	// æœ€ä½ã‚µã‚¤ã‚ºã‚’100ãã‚‰ã„ã«
 	}
 
 //	2001/06/19 End
 
-//	2001/06/18 Start by asa-o: •â³Œã‚ÌˆÊ’uEƒTƒCƒY‚ğ•Û‘¶
+//	2001/06/18 Start by asa-o: è£œæ­£å¾Œã®ä½ç½®ãƒ»ã‚µã‚¤ã‚ºã‚’ä¿å­˜
 	m_poWin.x = nX;
 	m_poWin.y = nY;
 	m_nHeight = nCY;
 	m_nWidth = nCX;
 //	2001/06/18 End
 
-	/* ‚Í‚İo‚·‚È‚ç¬‚³‚­‚·‚é */
+	/* ã¯ã¿å‡ºã™ãªã‚‰å°ã•ãã™ã‚‹ */
 //	if( rcDesktop.bottom < nY + nCY ){
-//		/* ‰º‚É‚Í‚İo‚· */
+//		/* ä¸‹ã«ã¯ã¿å‡ºã™ */
 //		if( m_poWin.y - 4 - nCY < 0 ){
-//			/* ã‚É‚Í‚İo‚· */
-//			/* ¨‚‚³‚¾‚¯’²ß */
+//			/* ä¸Šã«ã¯ã¿å‡ºã™ */
+//			/* â†’é«˜ã•ã ã‘èª¿ç¯€ */
 //			nCY = rcDesktop.bottom - nY - 4;
 //		}else{
 //
@@ -319,9 +319,9 @@ int CHokanMgr::Search(
 
 
 //	2001/06/18 asa-o:
-	ShowTip();	// •âŠ®ƒEƒBƒ“ƒhƒE‚Å‘I‘ğ’†‚Ì’PŒê‚ÉƒL[ƒ[ƒhƒwƒ‹ƒv‚ğ•\¦
+	ShowTip();	// è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é¸æŠä¸­ã®å˜èªã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã‚’è¡¨ç¤º
 
-//	2003.06.25 Moca ‘¼‚Ìƒƒ\ƒbƒh‚Åg‚Á‚Ä‚¢‚È‚¢‚Ì‚ÅA‚Æ‚è‚ ‚¦‚¸íœ‚µ‚Ä‚¨‚­
+//	2003.06.25 Moca ä»–ã®ãƒ¡ã‚½ãƒƒãƒ‰ã§ä½¿ã£ã¦ã„ãªã„ã®ã§ã€ã¨ã‚Šã‚ãˆãšå‰Šé™¤ã—ã¦ãŠã
 	int kouhoNum = m_vKouho.size();
 	m_vKouho.clear();
 	return kouhoNum;
@@ -361,13 +361,13 @@ void CHokanMgr::HokanSearchByKeyword(
 
 
 /*!
-	•W€ˆÈŠO‚ÌƒƒbƒZ[ƒW‚ğ•ß‘¨‚·‚é
+	æ¨™æº–ä»¥å¤–ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ•æ‰ã™ã‚‹
 */
 INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
-	// ”O‚Ì‚½‚ß IME ŠÖ˜A‚ÌƒƒbƒZ[ƒW‚ª—ˆ‚é‚æ‚¤‚È‚çƒrƒ…[‚Éˆ—‚³‚¹‚é
-	// ‰½‚©‚ÌŠÂ‹«ˆË‘¶ií’“ƒ\ƒtƒgHj‚É‚æ‚é‚à‚Ì‚©‚à‚µ‚ê‚È‚¢‚ªA
-	// ƒtƒH[ƒJƒX‚ª–³‚­‚Ä‚à IME ŠÖ˜AƒƒbƒZ[ƒW‚ª‚±‚Á‚¿‚É—ˆ‚éƒP[ƒX‚ª‚ ‚Á‚½‚Ì‚ÅA‚»‚Ì‘Îô
+	// å¿µã®ãŸã‚ IME é–¢é€£ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ¥ã‚‹ã‚ˆã†ãªã‚‰ãƒ“ãƒ¥ãƒ¼ã«å‡¦ç†ã•ã›ã‚‹
+	// ä½•ã‹ã®ç’°å¢ƒä¾å­˜ï¼ˆå¸¸é§ã‚½ãƒ•ãƒˆï¼Ÿï¼‰ã«ã‚ˆã‚‹ã‚‚ã®ã‹ã‚‚ã—ã‚Œãªã„ãŒã€
+	// ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒç„¡ãã¦ã‚‚ IME é–¢é€£ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒã“ã£ã¡ã«æ¥ã‚‹ã‚±ãƒ¼ã‚¹ãŒã‚ã£ãŸã®ã§ã€ãã®å¯¾ç­–
 	if(wMsg >= WM_IME_STARTCOMPOSITION && wMsg <= WM_IME_KEYLAST || wMsg >= WM_IME_SETCONTEXT && wMsg <= WM_IME_KEYUP){
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->DispatchEvent( pcEditView->GetHwnd(), wMsg, wParam, lParam );
@@ -378,14 +378,14 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 	switch( wMsg ){
 	case WM_MOUSEACTIVATE:
-		// ƒAƒNƒeƒBƒu‚É‚µ‚È‚¢‚Å‚¨‚­
+		// ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã—ãªã„ã§ãŠã
 		::SetWindowLongPtr( GetHwnd(), DWLP_MSGRESULT, MA_NOACTIVATE );
 		return TRUE;
 	case WM_LBUTTONDOWN:
-		return TRUE;	// ƒNƒ‰ƒCƒAƒ“ƒg—Ìˆæ‚ÍƒŠƒXƒgƒ{ƒbƒNƒX‚Å–„‚Ü‚Á‚Ä‚¢‚é‚Ì‚Å‚±‚±‚Ö‚Í—ˆ‚È‚¢‚Í‚¸‚¾‚¯‚Ç”O‚Ì‚½‚ß
+		return TRUE;	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆé ˜åŸŸã¯ãƒªã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ã§åŸ‹ã¾ã£ã¦ã„ã‚‹ã®ã§ã“ã“ã¸ã¯æ¥ãªã„ã¯ãšã ã‘ã©å¿µã®ãŸã‚
 	case WM_NCLBUTTONDOWN:
-		// ‚±‚±‚Å‚àƒAƒNƒeƒBƒu‰»–h~‚Ì‘Îô‚ª•K—v
-		// ::SetCapture() ‚µ‚Ä©‘O‚ÅƒTƒCƒY•ÏX‚·‚é
+		// ã“ã“ã§ã‚‚ã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–é˜²æ­¢ã®å¯¾ç­–ãŒå¿…è¦
+		// ::SetCapture() ã—ã¦è‡ªå‰ã§ã‚µã‚¤ã‚ºå¤‰æ›´ã™ã‚‹
 		{
 			POINT ptStart;
 			POINT pt;
@@ -446,7 +446,7 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 					break;
 				case WM_KEYDOWN:
 					if( msg.wParam == VK_ESCAPE ){
-						// ƒLƒƒƒ“ƒZƒ‹
+						// ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 						::ReleaseCapture();
 					}
 					break;
@@ -458,7 +458,7 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 		}
 		return TRUE;
 	case WM_GETMINMAXINFO:
-		// Å¬ƒTƒCƒY‚ğ§ŒÀ‚·‚é
+		// æœ€å°ã‚µã‚¤ã‚ºã‚’åˆ¶é™ã™ã‚‹
 		MINMAXINFO *pmmi;
 		pmmi = (MINMAXINFO*)lParam;
 		pmmi->ptMinTrackSize.x = ::GetSystemMetrics(SM_CXVSCROLL) * 4;
@@ -471,7 +471,7 @@ INT_PTR CHokanMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 //-	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 
@@ -479,7 +479,7 @@ BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 BOOL CHokanMgr::OnDestroy( void )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CreateSizeBox();
 	return CDialog::OnDestroy();
 
@@ -489,7 +489,7 @@ BOOL CHokanMgr::OnDestroy( void )
 
 BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 {
-	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	/* åŸºåº•ã‚¯ãƒ©ã‚¹ãƒ¡ãƒ³ãƒ */
 	CDialog::OnSize( wParam, lParam );
 
 	int	Controls[] = {
@@ -509,14 +509,14 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	nWidth = rcDlg.right - rcDlg.left;  // width of client area
 	nHeight = rcDlg.bottom - rcDlg.top; // height of client area
 
-//	2001/06/18 Start by asa-o: ƒTƒCƒY•ÏXŒã‚ÌˆÊ’u‚ğ•Û‘¶
+//	2001/06/18 Start by asa-o: ã‚µã‚¤ã‚ºå¤‰æ›´å¾Œã®ä½ç½®ã‚’ä¿å­˜
 	m_poWin.x = rcDlg.left - 4;
 	m_poWin.y = rcDlg.top - 3;
 	::ClientToScreen(GetHwnd(),&m_poWin);
 //	2001/06/18 End
 
 	for ( i = 0; i < nControls; ++i ){
-		hwndCtrl = ::GetDlgItem( GetHwnd(), Controls[i] );
+		hwndCtrl = GetItemHwnd( Controls[i] );
 		::GetWindowRect( hwndCtrl, &rc );
 		po.x = rc.left;
 		po.y = rc.top;
@@ -542,7 +542,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 
 //	2001/06/18 asa-o:
-	ShowTip();	// •âŠ®ƒEƒBƒ“ƒhƒE‚Å‘I‘ğ’†‚Ì’PŒê‚ÉƒL[ƒ[ƒhƒwƒ‹ƒv‚ğ•\¦
+	ShowTip();	// è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é¸æŠä¸­ã®å˜èªã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã‚’è¡¨ç¤º
 
 	return TRUE;
 
@@ -552,26 +552,26 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 {
 //	2001/06/18 asa-o:
-	ShowTip();	// •âŠ®ƒEƒBƒ“ƒhƒE‚Å‘I‘ğ’†‚Ì’PŒê‚ÉƒL[ƒ[ƒhƒwƒ‹ƒv‚ğ•\¦
+	ShowTip();	// è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é¸æŠä¸­ã®å˜èªã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã‚’è¡¨ç¤º
 	return TRUE;
 }
 
 
 
-/* •âŠ®Às */
+/* è£œå®Œå®Ÿè¡Œ */
 BOOL CHokanMgr::DoHokan( int nVKey )
 {
 	DEBUG_TRACE( _T("CHokanMgr::DoHokan( nVKey==%xh )\n"), nVKey );
 
-	/* •âŠ®Œó•âŒˆ’èƒL[ */
-	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
-	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
-	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  •âŠ®Œˆ’èƒL[‚ª—LŒø/–³Œø */
+	/* è£œå®Œå€™è£œæ±ºå®šã‚­ãƒ¼ */
+	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
+	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
+	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  è£œå®Œæ±ºå®šã‚­ãƒ¼ãŒæœ‰åŠ¹/ç„¡åŠ¹ */
 
 	HWND hwndList;
 	int nItem;
 	CEditView* pcEditView;
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndList = GetItemHwnd( IDC_LIST_WORDS );
 	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
@@ -580,7 +580,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	auto_array_ptr<WCHAR> wszLabel( new WCHAR [nLabelLen + 1] );
 	List_GetText( hwndList, nItem, &wszLabel[0] );
 
- 	/* ƒeƒLƒXƒg‚ğ“\‚è•t‚¯ */
+ 	/* ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘ */
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
@@ -594,15 +594,15 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 }
 
 /*
-–ß‚è’l‚ª -2 ‚Ìê‡‚ÍAƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Í€–Ú‚Ì‘I‘ğ‚ğŠ®—¹‚µA
-ƒŠƒXƒg ƒ{ƒbƒNƒX‚Å‚»‚êˆÈã‚Ì“®ì‚ª•K—v‚Å‚È‚¢‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+æˆ»ã‚Šå€¤ãŒ -2 ã®å ´åˆã¯ã€ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã¯é …ç›®ã®é¸æŠã‚’å®Œäº†ã—ã€
+ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ã§ãã‚Œä»¥ä¸Šã®å‹•ä½œãŒå¿…è¦ã§ãªã„ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
-–ß‚è’l‚ª -1 ‚Ìê‡‚ÍAƒŠƒXƒg ƒ{ƒbƒNƒX‚ªƒL[ƒXƒgƒ[ƒN‚É‰‚¶‚Ä
-ƒfƒtƒHƒ‹ƒg‚Ì“®ì‚ğÀs‚·‚é‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+æˆ»ã‚Šå€¤ãŒ -1 ã®å ´åˆã¯ã€ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ãŒã‚­ãƒ¼ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã«å¿œã˜ã¦
+ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å‹•ä½œã‚’å®Ÿè¡Œã™ã‚‹ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
- –ß‚è’l‚ª 0 ˆÈã‚Ìê‡‚ÍA‚»‚Ì’l‚ÍƒŠƒXƒg ƒ{ƒbƒNƒX‚Ì€–Ú‚Ì 0 ‚ğ
-Šî€‚Æ‚µ‚½ƒCƒ“ƒfƒbƒNƒX‚ğˆÓ–¡‚µAƒŠƒXƒg ƒ{ƒbƒNƒX‚ª‚»‚Ì€–Ú‚Å‚Ì
-ƒL[ƒXƒgƒ[ƒN‚É‰‚¶‚ÄƒfƒtƒHƒ‹ƒg‚Ì“®ì‚ğÀs‚·‚é‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+ æˆ»ã‚Šå€¤ãŒ 0 ä»¥ä¸Šã®å ´åˆã¯ã€ãã®å€¤ã¯ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ã®é …ç›®ã® 0 ã‚’
+åŸºæº–ã¨ã—ãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ„å‘³ã—ã€ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ãŒãã®é …ç›®ã§ã®
+ã‚­ãƒ¼ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã«å¿œã˜ã¦ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å‹•ä½œã‚’å®Ÿè¡Œã™ã‚‹ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
 */
 //	int CHokanMgr::OnVKeyToItem( WPARAM wParam, LPARAM lParam )
@@ -611,15 +611,15 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //	}
 
 /*
-–ß‚è’l‚ª -2 ‚Ìê‡‚ÍAƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Í€–Ú‚Ì‘I‘ğ‚ğŠ®—¹‚µA
-ƒŠƒXƒg ƒ{ƒbƒNƒX‚Å‚»‚êˆÈã‚Ì“®ì‚ª•K—v‚Å‚È‚¢‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+æˆ»ã‚Šå€¤ãŒ -2 ã®å ´åˆã¯ã€ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã¯é …ç›®ã®é¸æŠã‚’å®Œäº†ã—ã€
+ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ã§ãã‚Œä»¥ä¸Šã®å‹•ä½œãŒå¿…è¦ã§ãªã„ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
-–ß‚è’l‚ª -1 ‚Ìê‡‚ÍAƒŠƒXƒg ƒ{ƒbƒNƒX‚ªƒL[ƒXƒgƒ[ƒN‚É‰‚¶‚Ä
-ƒfƒtƒHƒ‹ƒg‚Ì“®ì‚ğÀs‚·‚é‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+æˆ»ã‚Šå€¤ãŒ -1 ã®å ´åˆã¯ã€ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ãŒã‚­ãƒ¼ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã«å¿œã˜ã¦
+ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å‹•ä½œã‚’å®Ÿè¡Œã™ã‚‹ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
- –ß‚è’l‚ª 0 ˆÈã‚Ìê‡‚ÍA‚»‚Ì’l‚ÍƒŠƒXƒg ƒ{ƒbƒNƒX‚Ì€–Ú‚Ì 0 ‚ğ
-Šî€‚Æ‚µ‚½ƒCƒ“ƒfƒbƒNƒX‚ğˆÓ–¡‚µAƒŠƒXƒg ƒ{ƒbƒNƒX‚ª‚»‚Ì€–Ú‚Å‚Ì
-ƒL[ƒXƒgƒ[ƒN‚É‰‚¶‚ÄƒfƒtƒHƒ‹ƒg‚Ì“®ì‚ğÀs‚·‚é‚±‚Æ‚ğ¦‚µ‚Ü‚·B
+ æˆ»ã‚Šå€¤ãŒ 0 ä»¥ä¸Šã®å ´åˆã¯ã€ãã®å€¤ã¯ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ã®é …ç›®ã® 0 ã‚’
+åŸºæº–ã¨ã—ãŸã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ„å‘³ã—ã€ãƒªã‚¹ãƒˆ ãƒœãƒƒã‚¯ã‚¹ãŒãã®é …ç›®ã§ã®
+ã‚­ãƒ¼ã‚¹ãƒˆãƒ­ãƒ¼ã‚¯ã«å¿œã˜ã¦ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å‹•ä½œã‚’å®Ÿè¡Œã™ã‚‹ã“ã¨ã‚’ç¤ºã—ã¾ã™ã€‚
 
 */
 //	int CHokanMgr::OnCharToItem( WPARAM wParam, LPARAM lParam )
@@ -649,8 +649,8 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_DOWN:
 	case VK_PRIOR:
 	case VK_NEXT:
-		/* ƒŠƒXƒgƒ{ƒbƒNƒX‚ÌƒfƒtƒHƒ‹ƒg‚Ì“®ì‚ğ‚³‚¹‚é */
-		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
+		/* ãƒªã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å‹•ä½œã‚’ã•ã›ã‚‹ */
+		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, GetItemHwnd( IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
 		return -1;
 	case VK_RETURN:
 	case VK_TAB:
@@ -658,7 +658,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 #if 0
 	case VK_SPACE:
 #endif
-		/* •âŠ®Às */
+		/* è£œå®Œå®Ÿè¡Œ */
 		if( DoHokan( vkey ) ){
 			return -1;
 		}else{
@@ -671,7 +671,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	return -2;
 }
 
-//	2001/06/18 Start by asa-o: •âŠ®ƒEƒBƒ“ƒhƒE‚Å‘I‘ğ’†‚Ì’PŒê‚ÉƒL[ƒ[ƒhƒwƒ‹ƒv‚ğ•\¦
+//	2001/06/18 Start by asa-o: è£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é¸æŠä¸­ã®å˜èªã«ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ã‚’è¡¨ç¤º
 void CHokanMgr::ShowTip()
 {
 	INT			nItem,
@@ -682,36 +682,36 @@ void CHokanMgr::ShowTip()
 	HWND		hwndCtrl;
 	RECT		rcHokanWin;
 
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
+	hwndCtrl = GetItemHwnd( IDC_LIST_WORDS );
 
 	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
 	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
 	auto_array_ptr<WCHAR> szLabel( new WCHAR [nLabelLen + 1] );
-	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// ‘I‘ğ’†‚Ì’PŒê‚ğæ“¾
+	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// é¸æŠä¸­ã®å˜èªã‚’å–å¾—
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
-	// ‚·‚Å‚É«‘Tip‚ª•\¦‚³‚ê‚Ä‚¢‚½‚ç
+	// ã™ã§ã«è¾æ›¸TipãŒè¡¨ç¤ºã•ã‚Œã¦ã„ãŸã‚‰
 	if( pcEditView->m_dwTipTimer == 0 )
 	{
-		// «‘Tip‚ğÁ‚·
+		// è¾æ›¸Tipã‚’æ¶ˆã™
 		pcEditView -> m_cTipWnd.Hide();
 		pcEditView -> m_dwTipTimer = ::GetTickCount();
 	}
 
-	// •\¦‚·‚éˆÊ’u‚ğŒˆ’è
+	// è¡¨ç¤ºã™ã‚‹ä½ç½®ã‚’æ±ºå®š
 	nTopItem = List_GetTopIndex( hwndCtrl );
 	nItemHeight = List_GetItemHeight( hwndCtrl, 0 );
 	point.x = m_poWin.x + m_nWidth;
 	point.y = m_poWin.y + 4 + (nItem - nTopItem) * nItemHeight;
-	// 2001/06/19 asa-o ‘I‘ğ’†‚Ì’PŒê‚ª•âŠ®ƒEƒBƒ“ƒhƒE‚É•\¦‚³‚ê‚Ä‚¢‚é‚È‚ç«‘Tip‚ğ•\¦
+	// 2001/06/19 asa-o é¸æŠä¸­ã®å˜èªãŒè£œå®Œã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ãªã‚‰è¾æ›¸Tipã‚’è¡¨ç¤º
 	if( point.y > m_poWin.y && point.y < m_poWin.y + m_nHeight )
 	{
 		::SetRect( &rcHokanWin , m_poWin.x, m_poWin.y, m_poWin.x + m_nWidth, m_poWin.y + m_nHeight );
 		if( !pcEditView -> ShowKeywordHelp( point, &szLabel[0], &rcHokanWin ) )
-			pcEditView -> m_dwTipTimer = ::GetTickCount();	// •\¦‚·‚é‚×‚«ƒL[ƒ[ƒhƒwƒ‹ƒv‚ª–³‚¢
+			pcEditView -> m_dwTipTimer = ::GetTickCount();	// è¡¨ç¤ºã™ã‚‹ã¹ãã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—ãŒç„¡ã„
 	}
 }
 //	2001/06/18 End

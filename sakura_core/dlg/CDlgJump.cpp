@@ -117,8 +117,8 @@ BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
 	int	nWorkLine;
 	switch( wID ){
 	case IDC_COMBO_PLSQLBLOCKS:
-		nIndex = Combo_GetCurSel( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ) );
-		nWorkLine = (int)Combo_GetItemData( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), nIndex );
+		nIndex = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ) );
+		nWorkLine = (int)Combo_GetItemData( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), nIndex );
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nWorkLine, FALSE );
 		return TRUE;
 	}
@@ -135,24 +135,24 @@ BOOL CDlgJump::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_CHECK_PLSQL:		/* PL/SQLソースの有効行か */
 		if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL ) ){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL3 ), TRUE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_PLSQL_E1 ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL3 ), TRUE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_EDIT_PLSQL_E1 ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), TRUE );
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_LAYOUT ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_CRLF ), FALSE );
 		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), FALSE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), FALSE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL3 ), FALSE );	//Sept. 12, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_PLSQL_E1 ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_SPIN_PLSQL_E1 ), FALSE );	//Oct. 6, 2000 JEPRO
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL1 ), FALSE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL2 ), FALSE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL3 ), FALSE );	//Sept. 12, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_EDIT_PLSQL_E1 ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_SPIN_PLSQL_E1 ), FALSE );	//Oct. 6, 2000 JEPRO
+			::EnableWindow( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_LAYOUT ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_CRLF ), TRUE );
 		}
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		if( m_pShareData->m_bLineNumIsCRLF_ForJump ){
@@ -214,7 +214,7 @@ void CDlgJump::SetData( void )
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, m_nPLSQL_E1, FALSE );
 
 	/* PL/SQL関数リスト作成 */
-	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS );
+	hwndCtrl = GetItemHwnd( IDC_COMBO_PLSQLBLOCKS );
 
 /* タイプ別に設定されたアウトライン解析方法 */
 	if( OUTLINE_PLSQL == pCEditDoc->m_cDocType.GetDocumentAttribute().m_eDefaultOutline ){
@@ -284,24 +284,24 @@ void CDlgJump::SetData( void )
 	}
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_PLSQL, m_bPLSQL );	/* PL/SQLソースの有効行か */
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLSQL ) ){
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL3 ), TRUE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_PLSQL_E1 ), TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL1 ), TRUE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL2 ), TRUE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL3 ), TRUE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_EDIT_PLSQL_E1 ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_SPIN_PLSQL_E1 ), TRUE );	//Oct. 6, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), TRUE );
 		m_pShareData->m_bLineNumIsCRLF_ForJump = true;
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_LAYOUT ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_CRLF ), FALSE );
 	}else{
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL1 ), FALSE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL2 ), FALSE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LABEL_PLSQL3 ), FALSE );	//Sept. 12, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_EDIT_PLSQL_E1 ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_SPIN_PLSQL_E1 ), FALSE );	//Oct. 6, 2000 JEPRO
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_LAYOUT ), TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_LINENUM_CRLF ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL1 ), FALSE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL2 ), FALSE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_LABEL_PLSQL3 ), FALSE );	//Sept. 12, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_EDIT_PLSQL_E1 ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_SPIN_PLSQL_E1 ), FALSE );	//Oct. 6, 2000 JEPRO
+		::EnableWindow( GetItemHwnd( IDC_COMBO_PLSQLBLOCKS ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_LAYOUT ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_RADIO_LINENUM_CRLF ), TRUE );
 	}
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( m_pShareData->m_bLineNumIsCRLF_ForJump ){

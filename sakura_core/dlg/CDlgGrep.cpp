@@ -156,14 +156,14 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd( hwndDlg );
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
+	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), TRUE );
-	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FILE ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FOLDER ), TRUE );
 
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -179,11 +179,11 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* 文字コードセット選択コンボボックス初期化 */
 	CCodeTypesForCombobox cCodeTypes;
 	for( i = 0; i < cCodeTypes.GetCount(); ++i ){
-		int idx = Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), cCodeTypes.GetName(i) );
-		Combo_SetItemData( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), idx, cCodeTypes.GetCode(i) );
+		int idx = Combo_AddString( GetItemHwnd( IDC_COMBO_CHARSET ), cCodeTypes.GetName(i) );
+		Combo_SetItemData( GetItemHwnd( IDC_COMBO_CHARSET ), idx, cCodeTypes.GetCode(i) );
 	}
 	//	2007.02.09 bosagami
-	HWND hFolder = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
+	HWND hFolder = GetItemHwnd( IDC_COMBO_FOLDER );
 	DragAcceptFiles(hFolder, true);
 	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
 	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
@@ -331,16 +331,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 				/* 英大文字と英小文字を区別する */
 				//	正規表現のときも選択できるように。
 //				::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-//				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
+//				::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
 
 				//2001/06/23 N.Nakatani
 				/* 単語単位で検索 */
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+				::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 			}
 		}else{
 			/* 英大文字と英小文字を区別する */
 			//	正規表現のときも選択できるように。
-//			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), TRUE );
+//			::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
 //			::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
 
@@ -348,7 +348,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //単語単位のgrepが実装されたらコメントを外すと思います
 //2002/03/07実装してみた。
 			/* 単語単位で検索 */
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), TRUE );
 
 		}
 		return TRUE;
@@ -372,8 +372,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_CHECK_CP:
 		{
 			if( IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CP ) ){
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
-				HWND combo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
+				::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
+				HWND combo = GetItemHwnd( IDC_COMBO_CHARSET );
 				CCodePage::AddComboCodePages(GetHwnd(), combo, -1);
 			}
 		}
@@ -386,15 +386,15 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_RADIO_OUTPUTSTYLE3:
 		{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_BASE_PATH ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_SEP_FOLDER ),FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_BASE_PATH ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_SEP_FOLDER ),FALSE );
 		}
 		break;
 	case IDC_RADIO_OUTPUTSTYLE1:
 	case IDC_RADIO_OUTPUTSTYLE2:
 		{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_BASE_PATH ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_SEP_FOLDER ),TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_BASE_PATH ), TRUE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_SEP_FOLDER ),TRUE );
 		}
 		break;
 	case IDOK:
@@ -452,7 +452,7 @@ void CDlgGrep::SetData( void )
 	// 2002/03/07 テストサポート
 	/* 一致する単語のみ検索する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
-//	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
+//	::EnableWindow( GetItemHwnd( IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
 
 
 	/* 文字コード自動判別 */
@@ -463,7 +463,7 @@ void CDlgGrep::SetData( void )
 	{
 		int		nIdx, nCurIdx = -1;
 		ECodeType nCharSet;
-		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
+		HWND	hWndCombo = GetItemHwnd( IDC_COMBO_CHARSET );
 		nCurIdx = Combo_GetCurSel( hWndCombo );
 		CCodeTypesForCombobox cCodeTypes;
 		for( nIdx = 0; nIdx < cCodeTypes.GetCount(); nIdx++ ){
@@ -476,7 +476,7 @@ void CDlgGrep::SetData( void )
 			Combo_SetCurSel( hWndCombo, nCurIdx );
 		}else{
 			::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_CP ), FALSE );
+			::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
 			nCurIdx = CCodePage::AddComboCodePages(GetHwnd(), hWndCombo, m_nGrepCharSet);
 			if( nCurIdx == -1 ){
 				Combo_SetCurSel( hWndCombo, 0 );
@@ -493,8 +493,8 @@ void CDlgGrep::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTMARKED, TRUE );
 	}
 
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_BASE_PATH ), TRUE );
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_SEP_FOLDER ),TRUE );
+	::EnableWindow( GetItemHwnd( IDC_CHECK_BASE_PATH ), TRUE );
+	::EnableWindow( GetItemHwnd( IDC_CHECK_SEP_FOLDER ),TRUE );
 	/* Grep: 出力形式 */
 	if( 1 == m_nGrepOutputStyle ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE );
@@ -504,8 +504,8 @@ void CDlgGrep::SetData( void )
 	}else
 	if( 3 == m_nGrepOutputStyle ){
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTSTYLE3, TRUE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_BASE_PATH ), FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_SEP_FOLDER ),FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_BASE_PATH ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_SEP_FOLDER ),FALSE );
 	}else{
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE );
 	}
@@ -520,11 +520,11 @@ void CDlgGrep::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );
 		//	正規表現のときも選択できるように。
 //		::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-//		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_LOHICASE ), FALSE );
+//		::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
 	}
 	else {
 		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
@@ -532,9 +532,9 @@ void CDlgGrep::SetData( void )
 	// To Here Jun. 29, 2001 genta
 
 	if( m_szCurrentFilePath[0] != _T('\0') ){
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_FROMTHISTEXT ), TRUE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), TRUE );
 	}else{
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_FROMTHISTEXT ), FALSE );
+		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), FALSE );
 	}
 
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_FILE_ONLY, m_bGrepOutputFileOnly );
@@ -568,10 +568,10 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
 	}
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ),    bEnableControls );
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ),  bEnableControls );
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), bEnableControls );
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_FILE ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_FOLDER ),  bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER ), bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
 	return;
 }
 
@@ -603,7 +603,7 @@ int CDlgGrep::GetData( void )
 	/* 文字コードセット */
 	{
 		int		nIdx;
-		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
+		HWND	hWndCombo = GetItemHwnd( IDC_COMBO_CHARSET );
 		nIdx = Combo_GetCurSel( hWndCombo );
 		m_nGrepCharSet = (ECodeType)Combo_GetItemData( hWndCombo, nIdx );
 	}

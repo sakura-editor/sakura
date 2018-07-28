@@ -1,4 +1,4 @@
-/*!	@file
+ï»¿/*!	@file
 	@brief COsVersionInfo
 */
 /*
@@ -30,8 +30,8 @@
 #include "util/RegKey.h"
 #include "util/window.h"
 
-// COsVersionInfo‚Ì“à•”static•Ï”‚Ì’è‹`
-//	‰Šú‰»‚ÍIsValidVersion()‚Ås‚¤
+// COsVersionInfoã®å†…éƒ¨staticå¤‰æ•°ã®å®šç¾©
+//	åˆæœŸåŒ–ã¯IsValidVersion()ã§è¡Œã†
 BOOL	 		COsVersionInfo::m_bSuccess;
 OSVERSIONINFO	COsVersionInfo::m_cOsVersionInfo;
 #ifdef USE_SSE2
@@ -40,8 +40,8 @@ bool			COsVersionInfo::m_bSSE2;
 bool			COsVersionInfo::m_bWine;
 
 /*!
-	‰Šú‰»‚ğs‚¤(ˆø”‚Íƒ_ƒ~[)
-	ŒÄo‚ÍŠî–{1‰ñ‚Ì‚İ
+	åˆæœŸåŒ–ã‚’è¡Œã†(å¼•æ•°ã¯ãƒ€ãƒŸãƒ¼)
+	å‘¼å‡ºã¯åŸºæœ¬1å›ã®ã¿
 */
 COsVersionInfo::COsVersionInfo( bool pbStart )
 {

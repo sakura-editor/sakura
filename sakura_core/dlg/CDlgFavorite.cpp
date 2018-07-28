@@ -293,7 +293,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 	const CRecent*  pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
 
 	/* リスト */
-	hwndList = ::GetDlgItem( GetHwnd(), m_aFavoriteInfo[nIndex].m_nId );
+	hwndList = GetItemHwnd( m_aFavoriteInfo[nIndex].m_nId );
 	ListView_DeleteAllItems( hwndList );  /* リストを空にする */
 
 	const int   nViewCount = pRecent->GetViewCount();
@@ -605,7 +605,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 	HWND	hwndTab;
 	HWND	hwndList;
 
-	hwndTab = ::GetDlgItem( GetHwnd(), IDC_TAB_FAVORITE );
+	hwndTab = GetItemHwnd( IDC_TAB_FAVORITE );
 	lpnmhdr = (LPNMHDR) lParam;
 	if( lpnmhdr->hwndFrom == hwndTab )
 	{
@@ -792,7 +792,7 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 
 	CRecent*	pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
 	nItemCount    = pRecent->GetItemCount();
-	hwndList      = GetDlgItem( GetHwnd(), m_aFavoriteInfo[nIndex].m_nId );
+	hwndList      = GetItemHwnd( m_aFavoriteInfo[nIndex].m_nId );
 	nCount        = ListView_GetItemCount( hwndList );
 	nCurrentIndex = ListView_GetNextItem( hwndList, -1, LVNI_SELECTED );
 	if( -1 == nCurrentIndex ) nCurrentIndex = ListView_GetNextItem( hwndList, -1, LVNI_FOCUSED );

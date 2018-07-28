@@ -128,8 +128,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 
-	HWND hwndStatic = ::GetDlgItem( GetHwnd(), IDC_STATIC_COLOR );
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_COLORS );
+	HWND hwndStatic = GetItemHwnd( IDC_STATIC_COLOR );
+	HWND hwndList = GetItemHwnd( IDC_LIST_COLORS );
 
 	// 指定色スタティック、色選択リストをサブクラス化
 	::SetWindowLongPtr( hwndStatic, GWLP_USERDATA, (LONG_PTR)this );
@@ -194,7 +194,7 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 */
 BOOL CDlgSameColor::OnBnClicked( int wID )
 {
-	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_COLORS );
+	HWND hwndList = GetItemHwnd( IDC_LIST_COLORS );
 	int nItemNum = List_GetCount( hwndList );
 	BOOL bCheck;
 	int i;
@@ -337,7 +337,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 	int i;
 	int j;
 
-	hwndListInfo = ::GetDlgItem( GetHwnd(), IDC_LIST_ITEMINFO );
+	hwndListInfo = GetItemHwnd( IDC_LIST_ITEMINFO );
 	List_ResetContent( hwndListInfo );
 
 	i = List_GetCaretIndex( hwndCtl );

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,8 +32,8 @@ struct SSaveInfo;
 
 class CWriteManager : public CProgressSubject{
 public:
-	//	Feb. 6, 2001 genta ˆø”’Ç‰Á(‰üsƒR[ƒhİ’è)
-	//	Jul. 26, 2003 ryoji BOMˆø”’Ç‰Á
+	//	Feb. 6, 2001 genta å¼•æ•°è¿½åŠ (æ”¹è¡Œã‚³ãƒ¼ãƒ‰è¨­å®š)
+	//	Jul. 26, 2003 ryoji BOMå¼•æ•°è¿½åŠ 
 	EConvertResult WriteFile_From_CDocLineMgr(
 		const CDocLineMgr&	pcDocLineMgr,	//!< [in]
 		const SSaveInfo&	sSaveInfo		//!< [in]

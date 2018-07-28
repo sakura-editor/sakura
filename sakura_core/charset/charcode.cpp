@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2007, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 
 #include "env/DLLSHAREDATA.h"
 
-/*! ƒL[ƒ[ƒhƒLƒƒƒ‰ƒNƒ^ */
+/*! ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ */
 const unsigned char gm_keyword_char[128] = {
  /* 0         1         2         3         4         5         6         7         8         9         A         B         C         D         E         F             : 0123456789ABCDEF */
 	CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_CTRL,  CK_TAB,   CK_LF,    CK_CTRL,  CK_CTRL,  CK_CR,    CK_CTRL,  CK_CTRL,  /* 0: ................ */
@@ -47,53 +47,53 @@ namespace WCODE
 
 	bool CalcHankakuByFont(wchar_t);
 
-	//2007.08.30 kobake ’Ç‰Á
+	//2007.08.30 kobake è¿½åŠ 
 	bool IsHankaku(wchar_t wc)
 	{
-		//¦‚Ù‚Ú–¢ŒŸØBƒƒWƒbƒN‚ªŠm’è‚µ‚½‚çƒCƒ“ƒ‰ƒCƒ“‰»‚·‚é‚Æ—Ç‚¢B
+		//â€»ã»ã¼æœªæ¤œè¨¼ã€‚ãƒ­ã‚¸ãƒƒã‚¯ãŒç¢ºå®šã—ãŸã‚‰ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³åŒ–ã™ã‚‹ã¨è‰¯ã„ã€‚
 
-		//QlFhttp://www.swanq.co.jp/blog/archives/000783.html
+		//å‚è€ƒï¼šhttp://www.swanq.co.jp/blog/archives/000783.html
 		if(
-			   wc<=0x007E //ACODE‚Æ‚©
-//			|| wc==0x00A5 //‰~ƒ}[ƒN
-//			|| wc==0x203E //‚É‚å‚ë
-			|| (wc>=0xFF61 && wc<=0xFF9f)	// ”¼ŠpƒJƒ^ƒJƒi
+			   wc<=0x007E //ACODEã¨ã‹
+//			|| wc==0x00A5 //å††ãƒãƒ¼ã‚¯
+//			|| wc==0x203E //ã«ã‚‡ã‚
+			|| (wc>=0xFF61 && wc<=0xFF9f)	// åŠè§’ã‚«ã‚¿ã‚«ãƒŠ
 		)return true;
 
-		//0x7F ` 0xA0 ‚à”¼Šp‚Æ‚İ‚È‚·
-		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF ‚ğŒ©‚ÄA‚È‚ñ‚Æ‚È‚­
+		//0x7F ï½ 0xA0 ã‚‚åŠè§’ã¨ã¿ãªã™
+		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF ã‚’è¦‹ã¦ã€ãªã‚“ã¨ãªã
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
 
-		// Š¿š‚Í‚·‚×‚Ä“¯ˆê•‚Æ‚İ‚È‚·	// 2013.04.07 aroka
+		// æ¼¢å­—ã¯ã™ã¹ã¦åŒä¸€å¹…ã¨ã¿ãªã™	// 2013.04.07 aroka
 		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
 		  || wc>=0x3400 && wc<=0x4DB5		// Unified Ideographs Extension A, CJK
 		){
-			wc = 0x4E00; // 'ˆê'(0x4E00)‚Ì•‚Å‘ã—p
+			wc = 0x4E00; // 'ä¸€'(0x4E00)ã®å¹…ã§ä»£ç”¨
 		}
 		else
-		// ƒnƒ“ƒOƒ‹‚Í‚·‚×‚Ä“¯ˆê•‚Æ‚İ‚È‚·	// 2013.04.08 aroka
+		// ãƒãƒ³ã‚°ãƒ«ã¯ã™ã¹ã¦åŒä¸€å¹…ã¨ã¿ãªã™	// 2013.04.08 aroka
 		if ( wc>=0xAC00 && wc<=0xD7A3 )		// Hangul Syllables
 		{
-			wc = 0xAC00; // (0xAC00)‚Ì•‚Å‘ã—p
+			wc = 0xAC00; // (0xAC00)ã®å¹…ã§ä»£ç”¨
 		}
 		else
-		// ŠOš‚Í‚·‚×‚Ä“¯ˆê•‚Æ‚İ‚È‚·	// 2013.04.08 aroka
+		// å¤–å­—ã¯ã™ã¹ã¦åŒä¸€å¹…ã¨ã¿ãªã™	// 2013.04.08 aroka
 		if (wc>=0xE000 && wc<=0xE8FF) // Private Use Area
 		{
-			wc = 0xE000; // (0xE000)‚Ì•‚Å‘ã—p
+			wc = 0xE000; // (0xE000)ã®å¹…ã§ä»£ç”¨
 		}
 
-		//$$ ‰¼B‚à‚¤“®“I‚ÉŒvZ‚µ‚¿‚á‚¦B(‰‰ñ‚Ì‚İ)
+		//$$ ä»®ã€‚ã‚‚ã†å‹•çš„ã«è¨ˆç®—ã—ã¡ã‚ƒãˆã€‚(åˆå›ã®ã¿)
 		return CalcHankakuByFont(wc);
 	}
 
-	//!§Œä•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
+	//!åˆ¶å¾¡æ–‡å­—ã§ã‚ã‚‹ã‹ã©ã†ã‹
 	bool IsControlCode(wchar_t wc)
 	{
-		////‰üs‚Í§Œä•¶š‚Æ‚İ‚È‚³‚È‚¢
+		////æ”¹è¡Œã¯åˆ¶å¾¡æ–‡å­—ã¨ã¿ãªã•ãªã„
 		//if(IsLineDelimiter(wc))return false;
 
-		////ƒ^ƒu‚Í§Œä•¶š‚Æ‚İ‚È‚³‚È‚¢
+		////ã‚¿ãƒ–ã¯åˆ¶å¾¡æ–‡å­—ã¨ã¿ãªã•ãªã„
 		//if(wc==TAB)return false;
 
 		//return iswcntrl(wc)!=0;
@@ -102,20 +102,20 @@ namespace WCODE
 
 #if 0
 	/*!
-		‹å“Ç“_‚©
-		2008.04.27 kobake CLayoutMgr::IsKutoTen ‚©‚ç•ª—£
+		å¥èª­ç‚¹ã‹
+		2008.04.27 kobake CLayoutMgr::IsKutoTen ã‹ã‚‰åˆ†é›¢
 
-		@param[in] c1 ’²‚×‚é•¶š1ƒoƒCƒg–Ú
-		@param[in] c2 ’²‚×‚é•¶š2ƒoƒCƒg–Ú
-		@retval true ‹å“Ç“_‚Å‚ ‚é
-		@retval false ‹å“Ç“_‚Å‚È‚¢
+		@param[in] c1 èª¿ã¹ã‚‹æ–‡å­—1ãƒã‚¤ãƒˆç›®
+		@param[in] c2 èª¿ã¹ã‚‹æ–‡å­—2ãƒã‚¤ãƒˆç›®
+		@retval true å¥èª­ç‚¹ã§ã‚ã‚‹
+		@retval false å¥èª­ç‚¹ã§ãªã„
 	*/
 	bool IsKutoten( wchar_t wc )
 	{
-		//‹å“Ç“_’è‹`
+		//å¥èª­ç‚¹å®šç¾©
 		static const wchar_t *KUTOTEN=
-			L"¡¤,."
-			L"BACD"
+			L"ï½¡ï½¤,."
+			L"ã€‚ã€ï¼Œï¼"
 		;
 
 		const wchar_t* p;
@@ -128,22 +128,22 @@ namespace WCODE
 
 
 	/*!
-		UNICODE•¶šî•ñ‚ÌƒLƒƒƒbƒVƒ…ƒNƒ‰ƒXB
-		1•¶š“–‚½‚è2ƒrƒbƒg‚ÅA’l‚ğ•Û‘¶‚µ‚Ä‚¨‚­B
-		00:–¢‰Šú‰»
-		01:”¼Šp
-		10:‘SŠp
+		UNICODEæ–‡å­—æƒ…å ±ã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚¯ãƒ©ã‚¹ã€‚
+		1æ–‡å­—å½“ãŸã‚Š2ãƒ“ãƒƒãƒˆã§ã€å€¤ã‚’ä¿å­˜ã—ã¦ãŠãã€‚
+		00:æœªåˆæœŸåŒ–
+		01:åŠè§’
+		10:å…¨è§’
 		11:-
 	*/
 	class LocalCache{
 	public:
 		LocalCache()
 		{
-			/* LOGFONT‚Ì‰Šú‰» */
+			/* LOGFONTã®åˆæœŸåŒ– */
 			memset( &m_lf, 0, sizeof(m_lf) );
 			memset( &m_lf2, 0, sizeof(m_lf2) );
 
-			// HDC ‚Ì‰Šú‰»
+			// HDC ã®åˆæœŸåŒ–
 			m_hdc = NULL;
 			m_hdcFull = NULL;
 
@@ -153,7 +153,7 @@ namespace WCODE
 		}
 		~LocalCache()
 		{
-			// -- -- Œãn–– -- -- //
+			// -- -- å¾Œå§‹æœ« -- -- //
 			DeleteLocalData();
 		}
 		void DeleteLocalData(){
@@ -175,7 +175,7 @@ namespace WCODE
 				0 == memcmp(&lhs, &rhs, sizeof(lhs));
 		}
 
-		// Ä‰Šú‰»
+		// å†åˆæœŸåŒ–
 		void Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 		{
 			DeleteLocalData();
@@ -200,15 +200,15 @@ namespace WCODE
 			}
 			s_MultiFont = m_bMultiFont;
 
-			// -- -- ”¼ŠpŠî€ -- -- //
-			// CTextMetrics::Update ‚Æ“¯‚¶‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+			// -- -- åŠè§’åŸºæº– -- -- //
+			// CTextMetrics::Update ã¨åŒã˜ã§ãªã‘ã‚Œã°ãªã‚‰ãªã„
 			HDC hdcArr[2] = {m_hdc, m_hdcFull};
 			int size = (bFullFont ? 2 : 1);
 			m_han_size.cx = 1;
 			m_han_size.cy = 1;
 			for(int i = 0; i < size; i++){
 				// KB145994
-				// tmAveCharWidth ‚Í•s³Šm(”¼Šp‚©‘SŠp‚È‚Ì‚©‚à•s–¾‚È’l‚ğ•Ô‚·)
+				// tmAveCharWidth ã¯ä¸æ­£ç¢º(åŠè§’ã‹å…¨è§’ãªã®ã‹ã‚‚ä¸æ˜ãªå€¤ã‚’è¿”ã™)
 				SIZE sz;
 				GetTextExtentPoint32W_AnyBuild(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 				sz.cx = (sz.cx / 26 + 1) / 2;
@@ -227,7 +227,7 @@ namespace WCODE
 		void Clear()
 		{
 			assert(m_pCache!=0);
-			// ƒLƒƒƒbƒVƒ…‚ÌƒNƒŠƒA
+			// ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®ã‚¯ãƒªã‚¢
 			memcpy(m_pCache->m_lfFaceName, m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
 			memcpy(m_pCache->m_lfFaceName2, m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));
 			memset(m_pCache->m_nCharPxWidthCache, 0, sizeof(m_pCache->m_nCharPxWidthCache));
@@ -254,7 +254,7 @@ namespace WCODE
 		}
 		bool CalcHankakuByFont(wchar_t c)
 		{
-			SIZE size={m_han_size.cx*2,0}; //ŠÖ”‚ª¸”s‚µ‚½‚Æ‚«‚Ì‚±‚Æ‚ğl‚¦A‘SŠp•‚Å‰Šú‰»‚µ‚Ä‚¨‚­
+			SIZE size={m_han_size.cx*2,0}; //é–¢æ•°ãŒå¤±æ•—ã—ãŸã¨ãã®ã“ã¨ã‚’è€ƒãˆã€å…¨è§’å¹…ã§åˆæœŸåŒ–ã—ã¦ãŠã
 			GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
 			return (size.cx<=m_han_size.cx);
 		}
@@ -263,12 +263,12 @@ namespace WCODE
 		}
 		int CalcPxWidthByFont(wchar_t c)
 		{
-			SIZE size={m_han_size.cx*2,0}; //ŠÖ”‚ª¸”s‚µ‚½‚Æ‚«‚Ì‚±‚Æ‚ğl‚¦A‘SŠp•‚Å‰Šú‰»‚µ‚Ä‚¨‚­
-			// 2014.12.21 ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚Ì•\¦ENUL‚ª1px•‚É‚È‚é‚Ì‚ğƒXƒy[ƒX•‚É‚·‚é
+			SIZE size={m_han_size.cx*2,0}; //é–¢æ•°ãŒå¤±æ•—ã—ãŸã¨ãã®ã“ã¨ã‚’è€ƒãˆã€å…¨è§’å¹…ã§åˆæœŸåŒ–ã—ã¦ãŠã
+			// 2014.12.21 ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰ã®è¡¨ç¤ºãƒ»NULãŒ1pxå¹…ã«ãªã‚‹ã®ã‚’ã‚¹ãƒšãƒ¼ã‚¹å¹…ã«ã™ã‚‹
 			if (WCODE::IsControlCode(c)) {
 				GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
 				const int nCx = size.cx;
-				const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'¥');
+				const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'ï½¥');
 				GetTextExtentPoint32W_AnyBuild(SelectHDC(proxyChar),&proxyChar,1,&size);
 				return t_max<int>(nCx, size.cx);
 			}
@@ -278,7 +278,7 @@ namespace WCODE
 		int CalcPxWidthByFont2(const wchar_t* pc2)
 		{
 			SIZE size={m_han_size.cx*2,0};
-			// ƒTƒƒQ[ƒg‚Í‘SŠpƒtƒHƒ“ƒg
+			// ã‚µãƒ­ã‚²ãƒ¼ãƒˆã¯å…¨è§’ãƒ•ã‚©ãƒ³ãƒˆ
 			GetTextExtentPoint32W_AnyBuild(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
 			return t_max<int>(1,size.cx);
 		}
@@ -327,9 +327,9 @@ namespace WCODE
 		}
 		void Init( const LOGFONT &lf1, const LOGFONT &lf2, ECharWidthFontMode fMode, HDC hdc )
 	 	{
-			//	Fontface‚ª•ÏX‚³‚ê‚Ä‚¢‚½‚çƒLƒƒƒbƒVƒ…‚ğƒNƒŠƒA‚·‚é	2013.04.08 aroka
+			//	FontfaceãŒå¤‰æ›´ã•ã‚Œã¦ã„ãŸã‚‰ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹	2013.04.08 aroka
 			m_localcache[fMode].Init(lf1, lf2, hdc);
-			// ƒTƒCƒY‚âHDC‚ª•Ï‚í‚Á‚Ä‚àƒNƒŠƒA‚·‚é•K—v‚ª‚ ‚é
+			// ã‚µã‚¤ã‚ºã‚„HDCãŒå¤‰ã‚ã£ã¦ã‚‚ã‚¯ãƒªã‚¢ã™ã‚‹å¿…è¦ãŒã‚ã‚‹
 			m_localcache[fMode].Clear();
 		}
 		void Select( ECharWidthFontMode fMode, ECharWidthCacheMode cMode )
@@ -361,17 +361,17 @@ namespace WCODE
 	static LocalCacheSelector selector;
 
 
-	//•¶š•‚Ì“®“IŒvZBƒsƒNƒZƒ‹•
+	//æ–‡å­—å¹…ã®å‹•çš„è¨ˆç®—ã€‚ãƒ”ã‚¯ã‚»ãƒ«å¹…
 	int CalcPxWidthByFont(wchar_t c)
 	{
 		LocalCache* pcache = selector.GetCache();
-		// -- -- ƒLƒƒƒbƒVƒ…‚ª‘¶İ‚·‚ê‚ÎA‚»‚ê‚ğ‚»‚Ì‚Ü‚Ü•Ô‚· -- -- //
+		// -- -- ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãŒå­˜åœ¨ã™ã‚Œã°ã€ãã‚Œã‚’ãã®ã¾ã¾è¿”ã™ -- -- //
 		if(pcache->ExistCache(c))return pcache->GetCachePx(c);
 
 		int width;
 		width = pcache->CalcPxWidthByFont(c);
 
-		// -- -- ƒLƒƒƒbƒVƒ…XV -- -- //
+		// -- -- ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ›´æ–° -- -- //
 		pcache->SetCachePx(c,width);
 
 		return pcache->GetCachePx(c);
@@ -382,15 +382,15 @@ namespace WCODE
 		return pcache->CalcPxWidthByFont2(pc);
 	}
 
-	//•¶š•‚Ì“®“IŒvZB”¼Šp‚È‚çtrueB
+	//æ–‡å­—å¹…ã®å‹•çš„è¨ˆç®—ã€‚åŠè§’ãªã‚‰trueã€‚
 	bool CalcHankakuByFont(wchar_t c)
 	{
 		LocalCache* pcache = selector.GetCache();
 		return pcache->IsHankakuByWidth(CalcPxWidthByFont(c));
 	}
 
-	// •¶š‚Ìg—pƒtƒHƒ“ƒg‚ğ•Ô‚·
-	// @return 0:”¼Šp—p / 1:‘SŠp—p
+	// æ–‡å­—ã®ä½¿ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’è¿”ã™
+	// @return 0:åŠè§’ç”¨ / 1:å…¨è§’ç”¨
 	int GetFontNo( wchar_t c ){
 		if( s_MultiFont ){
 			if(0x0080 <= c && c <= 0xFFFF){
@@ -407,7 +407,7 @@ namespace WCODE
 	}
 }
 
-//	•¶š•‚Ì“®“IŒvZ—pƒLƒƒƒbƒVƒ…‚Ì‰Šú‰»B	2007/5/18 Uchi
+//	æ–‡å­—å¹…ã®å‹•çš„è¨ˆç®—ç”¨ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®åˆæœŸåŒ–ã€‚	2007/5/18 Uchi
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode )
 {
 	HDC hdc = GetDC(NULL);
@@ -420,7 +420,7 @@ void InitCharWidthCacheFromDC( const LOGFONT* lfs, ECharWidthFontMode fMode, HDC
 	WCODE::selector.Init(lfs[0], lfs[1], fMode, hdcOrg);
 }
 
- //	•¶š•‚Ì“®“IŒvZ—pƒLƒƒƒbƒVƒ…‚Ì‘I‘ğ	2013.04.08 aroka
+ //	æ–‡å­—å¹…ã®å‹•çš„è¨ˆç®—ç”¨ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®é¸æŠ	2013.04.08 aroka
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  )
 {
 	assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );

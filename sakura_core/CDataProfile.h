@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,7 +27,7 @@
 #include "util/StaticType.h"
 #include "CProfile.h"
 
-//•¶š—ñƒoƒbƒtƒ@‚ÌŒ^
+//æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡ã®å‹
 struct StringBufferW_{
 	WCHAR*    pData;
 	const int nDataCount;
@@ -62,7 +62,7 @@ typedef const StringBufferW_ StringBufferW;
 	typedef StringBufferA StringBufferT;
 #endif
 
-//•¶š—ñƒoƒbƒtƒ@Œ^ƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬ƒ}ƒNƒ
+//æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡å‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆãƒã‚¯ãƒ­
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
 #define MakeStringBufferA(S) StringBufferA(S,_countof(S))
 #define MakeStringBufferT(S) StringBufferT(S,_countof(S))
@@ -70,11 +70,11 @@ typedef const StringBufferW_ StringBufferW;
 #define MakeStringBufferT0(S) StringBufferT(S,0)
 
 
-//2007.09.24 kobake ƒf[ƒ^•ÏŠ·•”‚ğqƒNƒ‰ƒX‚É•ª—£
-//!Šeíƒf[ƒ^•ÏŠ·•t‚«CProfile
+//2007.09.24 kobake ãƒ‡ãƒ¼ã‚¿å¤‰æ›éƒ¨ã‚’å­ã‚¯ãƒ©ã‚¹ã«åˆ†é›¢
+//!å„ç¨®ãƒ‡ãƒ¼ã‚¿å¤‰æ›ä»˜ãCProfile
 class CDataProfile : public CProfile{
 private:
-	//ê—pŒ^
+	//å°‚ç”¨å‹
 	typedef std::wstring wstring;
 #ifndef _UNICODE
 	typedef std::tstring tstring;
@@ -88,7 +88,7 @@ protected:
 		return buf;
 	}
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                       ƒf[ƒ^•ÏŠ·•”                          //
+	//                       ãƒ‡ãƒ¼ã‚¿å¤‰æ›éƒ¨                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
 	//bool
@@ -111,13 +111,13 @@ protected:
 		*profile = _work_itow(value);
 	}
 
-	//int®“üo—ÍÀ‘•ƒ}ƒNƒ
+	//intå¼å…¥å‡ºåŠ›å®Ÿè£…ãƒã‚¯ãƒ­
 	#define AS_INT(TYPE) \
 		void profile_to_value(const wstring& profile, TYPE* value){ *value = (TYPE)_wtoi(profile.c_str()); } \
 		void value_to_profile(const TYPE& value, wstring* profile){ *profile = _work_itow(value);    }
 
-	//int®
-// CType.h‚ğinclude‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢‚©‚ç”p~
+	//intå¼
+// CType.hã‚’includeã—ãªã„ã¨ã„ã‘ãªã„ã‹ã‚‰å»ƒæ­¢
 //	AS_INT(EOutlineType) 
 	AS_INT(WORD)
 
@@ -211,36 +211,36 @@ protected:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         “üo—Í•”                            //
+	//                         å…¥å‡ºåŠ›éƒ¨                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	// ’ˆÓFStringBufferŒn‚Íƒoƒbƒtƒ@‚ª‘«‚è‚È‚¢‚Æabort‚µ‚Ü‚·
+	// æ³¨æ„ï¼šStringBufferç³»ã¯ãƒãƒƒãƒ•ã‚¡ãŒè¶³ã‚Šãªã„ã¨abortã—ã¾ã™
 	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring, StringBufferA, StringBufferW, StaticString}
 	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue )
 	{
-		//“Ç‚İ‚İ
+		//èª­ã¿è¾¼ã¿
 		if(m_bRead){
-			//•¶š—ñ“Ç‚İ‚İ
+			//æ–‡å­—åˆ—èª­ã¿è¾¼ã¿
 			wstring buf;
 			bool ret=GetProfileDataImp( pszSectionName, pszEntryKey, buf);
 			if(ret){
-				//T‚É•ÏŠ·
+				//Tã«å¤‰æ›
 				profile_to_value(buf, &tEntryValue);
 			}
 			return ret;
 		}
-		//‘‚«‚İ
+		//æ›¸ãè¾¼ã¿
 		else{
-			//•¶š—ñ‚É•ÏŠ·
+			//æ–‡å­—åˆ—ã«å¤‰æ›
 			wstring buf;
 			value_to_profile(tEntryValue, &buf);
-			//•¶š—ñ‘‚«‚İ
+			//æ–‡å­—åˆ—æ›¸ãè¾¼ã¿
 			return SetProfileDataImp( pszSectionName, pszEntryKey, buf);
 		}
 	}
 
-	//2007.08.14 kobake ’Ç‰Á
-	//! int‚ğ‰î‚µ‚Ä”CˆÓŒ^‚Ì“üo—Í‚ğs‚¤
+	//2007.08.14 kobake è¿½åŠ 
+	//! intã‚’ä»‹ã—ã¦ä»»æ„å‹ã®å…¥å‡ºåŠ›ã‚’è¡Œã†
 	template <class T>
 	bool IOProfileData_WrapInt( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& nEntryValue)
 	{

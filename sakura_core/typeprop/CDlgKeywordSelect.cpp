@@ -130,7 +130,7 @@ void CDlgKeywordSelect::SetData( void )
 
 	for( index = 0; index < KEYWORD_SELECT_NUM; index++ )
 	{
-		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
+		hwndCombo = GetItemHwnd( keyword_select_target_combo[ index ] );
 
 		/* コンボボックスを空にする */
 		Combo_ResetContent( hwndCombo );
@@ -170,7 +170,7 @@ int CDlgKeywordSelect::GetData( void )
 
 	for( index = 0; index < KEYWORD_SELECT_NUM; index++ )
 	{
-		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
+		hwndCombo = GetItemHwnd( keyword_select_target_combo[ index ] );
 
 		n = Combo_GetCurSel( hwndCombo );
 		if( CB_ERR == n || 0 == n )

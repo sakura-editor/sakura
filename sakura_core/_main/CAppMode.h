@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -27,34 +27,34 @@
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 
-class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###‰¼
+class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###ä»®
 	friend class TSingleton<CAppMode>;
 	CAppMode()
-	: m_bViewMode( false )	// ƒrƒ…[ƒ‚[ƒh
-	, m_bDebugMode( false )		// ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒh
+	: m_bViewMode( false )	// ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰
+	, m_bDebugMode( false )		// ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰
 	{
 		m_szGrepKey[0] = L'\0';
 	}
 
 public:
-	//ƒCƒ“ƒ^[ƒtƒF[ƒX
-	bool	IsViewMode() const				{ return m_bViewMode; }			//!< ƒrƒ…[ƒ‚[ƒh‚ğæ“¾
-	void	SetViewMode(bool bViewMode)		{ m_bViewMode = bViewMode; }	//!< ƒrƒ…[ƒ‚[ƒh‚ğİ’è
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+	bool	IsViewMode() const				{ return m_bViewMode; }			//!< ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‚’å–å¾—
+	void	SetViewMode(bool bViewMode)		{ m_bViewMode = bViewMode; }	//!< ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã‚’è¨­å®š
 	bool	IsDebugMode() const				{ return m_bDebugMode; }
-	void	SetDebugModeON();	//!< ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒhİ’è
-	void	SetDebugModeOFF();	//!< ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒh‰ğœ
+	void	SetDebugModeON();	//!< ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰è¨­å®š
+	void	SetDebugModeOFF();	//!< ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰è§£é™¤
 
-	//ƒCƒxƒ“ƒg
+	//ã‚¤ãƒ™ãƒ³ãƒˆ
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
 protected:
 	void _SetDebugMode(bool bDebugMode){ m_bDebugMode = bDebugMode; }
 
 private:
-	bool			m_bViewMode;			//!< ƒrƒ…[ƒ‚[ƒh
-	bool			m_bDebugMode;				//!< ƒfƒoƒbƒOƒ‚ƒjƒ^ƒ‚[ƒh
+	bool			m_bViewMode;			//!< ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰
+	bool			m_bDebugMode;				//!< ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ‹ã‚¿ãƒ¢ãƒ¼ãƒ‰
 public:
-	wchar_t			m_szGrepKey[1024];			//!< Grepƒ‚[ƒh‚Ìê‡A‚»‚ÌŒŸõƒL[
+	wchar_t			m_szGrepKey[1024];			//!< Grepãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã€ãã®æ¤œç´¢ã‚­ãƒ¼
 };
 
 #endif /* SAKURA_CAPPMODE_22018B3D_FC0F_485B_A72E_DA3DA3B9DDAAR_H_ */

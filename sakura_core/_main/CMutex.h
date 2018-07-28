@@ -1,5 +1,5 @@
-/*!	@file
-	@brief MutexŠÇ—
+ï»¿/*!	@file
+	@brief Mutexç®¡ç†
 
 	@author ryoji
 	@date 2007.07.05
@@ -33,8 +33,8 @@
 
 #include <Windows.h>
 
-/** ƒ~ƒ…[ƒeƒbƒNƒX‚ğˆµ‚¤ƒNƒ‰ƒX
-	@date 2007.07.05 ryoji V‹Kì¬
+/** ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚’æ‰±ã†ã‚¯ãƒ©ã‚¹
+	@date 2007.07.05 ryoji æ–°è¦ä½œæˆ
 */
 class CMutex
 {
@@ -68,9 +68,9 @@ protected:
 	HANDLE m_hObj;
 };
 
-/**	ƒXƒR[ƒv‚©‚ç”²‚¯‚é‚Æ“¯‚ÉƒƒbƒN‚ğ‰ğœ‚·‚éD
+/**	ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰æŠœã‘ã‚‹ã¨åŒæ™‚ã«ãƒ­ãƒƒã‚¯ã‚’è§£é™¤ã™ã‚‹ï¼
 
-	@date 2007.07.07 genta V‹Kì¬
+	@date 2007.07.07 genta æ–°è¦ä½œæˆ
 
 	@code
 	CMutex aMutex;

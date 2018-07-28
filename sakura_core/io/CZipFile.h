@@ -1,5 +1,5 @@
-/*!	@file
-	@brief ZIP file‘€ì
+ï»¿/*!	@file
+	@brief ZIP fileæ“ä½œ
 
 */
 /*
@@ -37,13 +37,13 @@ private:
 	std::tstring	sZipName;
 
 public:
-	CZipFile();		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	~CZipFile();	// ƒfƒXƒgƒ‰ƒNƒ^
+	CZipFile();		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	~CZipFile();	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 
 public:
-	bool	IsOk() { return (psd != NULL); }			// Zip Folder‚ªg—p‚Å‚«‚é‚©?
-	bool	SetZip(const std::tstring& sZipPath);		// Zip File–¼ İ’è
-	bool	ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName);	// ZIP File “à ƒtƒHƒ‹ƒ_–¼æ“¾‚Æ’è‹`ƒtƒ@ƒCƒ‹ŒŸ¸(Plugin—p)
-	bool	Unzip(const std::tstring sOutPath);			// Zip File ‰ğ“€
+	bool	IsOk() { return (psd != NULL); }			// Zip FolderãŒä½¿ç”¨ã§ãã‚‹ã‹?
+	bool	SetZip(const std::tstring& sZipPath);		// Zip Fileå è¨­å®š
+	bool	ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName);	// ZIP File å†… ãƒ•ã‚©ãƒ«ãƒ€åå–å¾—ã¨å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«æ¤œæŸ»(Pluginç”¨)
+	bool	Unzip(const std::tstring sOutPath);			// Zip File è§£å‡
 };
 #endif	// SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_

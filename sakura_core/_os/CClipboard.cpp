@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -32,13 +32,13 @@
 #include "charset/CUtf8.h"
 #include "CEol.h"
 
-// MinGW<=4.5.0‚ÌƒRƒ“ƒpƒCƒ‹ƒGƒ‰[‘Îô
+// MinGW<=4.5.0ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼å¯¾ç­–
 #ifndef CF_DIBV5
 #define CF_DIBV5 17
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               ƒRƒ“ƒXƒgƒ‰ƒNƒ^EƒfƒXƒgƒ‰ƒNƒ^                  //
+//               ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ»ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CClipboard::CClipboard(HWND hwnd)
@@ -53,7 +53,7 @@ CClipboard::~CClipboard()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     ƒCƒ“ƒ^[ƒtƒF[ƒX                        //
+//                     ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CClipboard::Empty()
@@ -70,8 +70,8 @@ void CClipboard::Close()
 }
 
 bool CClipboard::SetText(
-	const wchar_t*	pData,			//!< ƒRƒs[‚·‚éUNICODE•¶š—ñ
-	int				nDataLen,		//!< pData‚Ì’·‚³i•¶š’PˆÊj
+	const wchar_t*	pData,			//!< ã‚³ãƒ”ãƒ¼ã™ã‚‹UNICODEæ–‡å­—åˆ—
+	int				nDataLen,		//!< pDataã®é•·ã•ï¼ˆæ–‡å­—å˜ä½ï¼‰
 	bool			bColumnSelect,
 	bool			bLineSelect,
 	UINT			uFormat
@@ -82,7 +82,7 @@ bool CClipboard::SetText(
 	}
 
 	/*
-	// ƒeƒLƒXƒgŒ`®‚Ìƒf[ƒ^ (CF_OEMTEXT)
+	// ãƒ†ã‚­ã‚¹ãƒˆå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ (CF_OEMTEXT)
 	HGLOBAL hgClipText = ::GlobalAlloc(
 		GMEM_MOVEABLE | GMEM_DDESHARE,
 		nTextLen + 1
@@ -96,60 +96,60 @@ bool CClipboard::SetText(
 	}
 	*/
 
-	// UNICODEŒ`®‚Ìƒf[ƒ^ (CF_UNICODETEXT)
+	// UNICODEå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ (CF_UNICODETEXT)
 	HGLOBAL hgClipText = NULL;
 	bool bUnicodeText = (uFormat == (UINT)-1 || uFormat == CF_UNICODETEXT);
 	while(bUnicodeText){
-		//—ÌˆæŠm•Û
+		//é ˜åŸŸç¢ºä¿
 		hgClipText = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
 			(nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipText )break;
 
-		//Šm•Û‚µ‚½—Ìˆæ‚Éƒf[ƒ^‚ğƒRƒs[
+		//ç¢ºä¿ã—ãŸé ˜åŸŸã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 		wchar_t* pszClip = GlobalLockWChar( hgClipText );
-		wmemcpy( pszClip, pData, nDataLen );	//ƒf[ƒ^
-		pszClip[nDataLen] = L'\0';				//I’[ƒkƒ‹
+		wmemcpy( pszClip, pData, nDataLen );	//ãƒ‡ãƒ¼ã‚¿
+		pszClip[nDataLen] = L'\0';				//çµ‚ç«¯ãƒŒãƒ«
 		::GlobalUnlock( hgClipText );
 
-		//ƒNƒŠƒbƒvƒ{[ƒh‚Éİ’è
+		//ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«è¨­å®š
 		::SetClipboardData( CF_UNICODETEXT, hgClipText );
 		bUnicodeText = false;
 	}
-	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
+	//	1å›ã—ã‹é€šã‚‰ãªã„. breakã§ã“ã“ã¾ã§é£›ã¶
 
-	// ƒoƒCƒiƒŠŒ`®‚Ìƒf[ƒ^
-	//	(int) uƒf[ƒ^v‚Ì’·‚³
-	//	uƒf[ƒ^v
+	// ãƒã‚¤ãƒŠãƒªå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿
+	//	(int) ã€Œãƒ‡ãƒ¼ã‚¿ã€ã®é•·ã•
+	//	ã€Œãƒ‡ãƒ¼ã‚¿ã€
 	HGLOBAL hgClipSakura = NULL;
-	//ƒTƒNƒ‰ƒGƒfƒBƒ^ê—pƒtƒH[ƒ}ƒbƒg‚ğæ“¾
+	//ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿å°‚ç”¨ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—
 	CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	bool bSakuraText = (uFormat == (UINT)-1 || uFormat == uFormatSakuraClip);
 	while(bSakuraText){
 		if( 0 == uFormatSakuraClip )break;
 
-		//—ÌˆæŠm•Û
+		//é ˜åŸŸç¢ºä¿
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
 			sizeof(int) + (nDataLen + 1) * sizeof(wchar_t)
 		);
 		if( !hgClipSakura )break;
 
-		//Šm•Û‚µ‚½—Ìˆæ‚Éƒf[ƒ^‚ğƒRƒs[
+		//ç¢ºä¿ã—ãŸé ˜åŸŸã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 		BYTE* pClip = GlobalLockBYTE( hgClipSakura );
-		*((int*)pClip) = nDataLen; pClip += sizeof(int);								//ƒf[ƒ^‚Ì’·‚³
-		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//ƒf[ƒ^
-		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//I’[ƒkƒ‹
+		*((int*)pClip) = nDataLen; pClip += sizeof(int);								//ãƒ‡ãƒ¼ã‚¿ã®é•·ã•
+		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//ãƒ‡ãƒ¼ã‚¿
+		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//çµ‚ç«¯ãƒŒãƒ«
 		::GlobalUnlock( hgClipSakura );
 
-		//ƒNƒŠƒbƒvƒ{[ƒh‚Éİ’è
+		//ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«è¨­å®š
 		::SetClipboardData( uFormatSakuraClip, hgClipSakura );
 		bSakuraText = false;
 	}
-	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
+	//	1å›ã—ã‹é€šã‚‰ãªã„. breakã§ã“ã“ã¾ã§é£›ã¶
 
-	// ‹éŒ`‘I‘ğ‚ğ¦‚·ƒ_ƒ~[ƒf[ƒ^
+	// çŸ©å½¢é¸æŠã‚’ç¤ºã™ãƒ€ãƒŸãƒ¼ãƒ‡ãƒ¼ã‚¿
 	HGLOBAL hgClipMSDEVColumn = NULL;
 	if( bColumnSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
@@ -167,8 +167,8 @@ bool CClipboard::SetText(
 		}
 	}
 
-	/* s‘I‘ğ‚ğ¦‚·ƒ_ƒ~[ƒf[ƒ^ */
-	HGLOBAL hgClipMSDEVLine = NULL;		// VS2008 ˆÈ‘O‚ÌŒ`®
+	/* è¡Œé¸æŠã‚’ç¤ºã™ãƒ€ãƒŸãƒ¼ãƒ‡ãƒ¼ã‚¿ */
+	HGLOBAL hgClipMSDEVLine = NULL;		// VS2008 ä»¥å‰ã®å½¢å¼
 	if( bLineSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVLineSelect") );
 		if( 0 != uFormat ){
@@ -184,7 +184,7 @@ bool CClipboard::SetText(
 			}
 		}
 	}
-	HGLOBAL hgClipMSDEVLine2 = NULL;	// VS2010 Œ`®
+	HGLOBAL hgClipMSDEVLine2 = NULL;	// VS2010 å½¢å¼
 	if( bLineSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag") );
 		if( 0 != uFormat ){
@@ -194,7 +194,7 @@ bool CClipboard::SetText(
 			);
 			if( hgClipMSDEVLine2 ){
 				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine2 );
-				pClip[0] = 0x01;	// ¦ ClipSpy ‚Å’²‚×‚é‚Æƒf[ƒ^‚Í‚±‚ê‚Æ‚Íˆá‚¤‚ª“à—e‚É‚Í–³ŠÖŒW‚É“®‚­‚Á‚Û‚¢
+				pClip[0] = 0x01;	// â€» ClipSpy ã§èª¿ã¹ã‚‹ã¨ãƒ‡ãƒ¼ã‚¿ã¯ã“ã‚Œã¨ã¯é•ã†ãŒå†…å®¹ã«ã¯ç„¡é–¢ä¿‚ã«å‹•ãã£ã½ã„
 				::GlobalUnlock( hgClipMSDEVLine2 );
 				::SetClipboardData( uFormat, hgClipMSDEVLine2 );
 			}
@@ -238,33 +238,33 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 
 	HGLOBAL hgClipText = NULL;
 	size_t nLen = cmemHeader.GetStringLength() + cmemUtf8.GetStringLength() + cmemFooter.GetStringLength();
-	//—ÌˆæŠm•Û
+	//é ˜åŸŸç¢ºä¿
 	hgClipText = ::GlobalAlloc(
 		GMEM_MOVEABLE | GMEM_DDESHARE,
 		nLen + 1
 	);
 	if( !hgClipText ) return false;
 
-	//Šm•Û‚µ‚½—Ìˆæ‚Éƒf[ƒ^‚ğƒRƒs[
+	//ç¢ºä¿ã—ãŸé ˜åŸŸã«ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 	char* pszClip = GlobalLockChar( hgClipText );
-	memcpy_raw( pszClip, cmemHeader.GetStringPtr(), cmemHeader.GetStringLength() );	//ƒf[ƒ^
-	memcpy_raw( pszClip + cmemHeader.GetStringLength(), cmemUtf8.GetStringPtr(), cmemUtf8.GetStringLength() );	//ƒf[ƒ^
-	memcpy_raw( pszClip + cmemHeader.GetStringLength() + cmemUtf8.GetStringLength(), cmemFooter.GetStringPtr(), cmemFooter.GetStringLength() );	//ƒf[ƒ^
-	pszClip[nLen] = '\0';				//I’[ƒkƒ‹
+	memcpy_raw( pszClip, cmemHeader.GetStringPtr(), cmemHeader.GetStringLength() );	//ãƒ‡ãƒ¼ã‚¿
+	memcpy_raw( pszClip + cmemHeader.GetStringLength(), cmemUtf8.GetStringPtr(), cmemUtf8.GetStringLength() );	//ãƒ‡ãƒ¼ã‚¿
+	memcpy_raw( pszClip + cmemHeader.GetStringLength() + cmemUtf8.GetStringLength(), cmemFooter.GetStringPtr(), cmemFooter.GetStringLength() );	//ãƒ‡ãƒ¼ã‚¿
+	pszClip[nLen] = '\0';				//çµ‚ç«¯ãƒŒãƒ«
 	::GlobalUnlock( hgClipText );
 
-	//ƒNƒŠƒbƒvƒ{[ƒh‚Éİ’è
+	//ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«è¨­å®š
 	UINT uFormat = ::RegisterClipboardFormat( _T("HTML Format") );
 	::SetClipboardData( uFormat, hgClipText );
 	return true;
 }
 
-/*! ƒeƒLƒXƒg‚ğæ“¾‚·‚é
-	@param [out] cmemBuf æ“¾‚µ‚½ƒeƒLƒXƒg‚ÌŠi”[æ
-	@param [in,out] pbColumnSelect ‹éŒ`‘I‘ğŒ`®
-	@param [in,out] pbLineSelect s‘I‘ğŒ`®
-	@param [in] cEol HDROPŒ`®‚Ì‚Æ‚«‚Ì‰üsƒR[ƒh
-	@param [in] uGetFormat ƒNƒŠƒbƒvƒ{[ƒhŒ`®
+/*! ãƒ†ã‚­ã‚¹ãƒˆã‚’å–å¾—ã™ã‚‹
+	@param [out] cmemBuf å–å¾—ã—ãŸãƒ†ã‚­ã‚¹ãƒˆã®æ ¼ç´å…ˆ
+	@param [in,out] pbColumnSelect çŸ©å½¢é¸æŠå½¢å¼
+	@param [in,out] pbLineSelect è¡Œé¸æŠå½¢å¼
+	@param [in] cEol HDROPå½¢å¼ã®ã¨ãã®æ”¹è¡Œã‚³ãƒ¼ãƒ‰
+	@param [in] uGetFormat ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰å½¢å¼
 */
 bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat)
 {
@@ -278,7 +278,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		*pbLineSelect = false;
 	}
 
-	//‹éŒ`‘I‘ğ‚âs‘I‘ğ‚Ìƒf[ƒ^‚ª‚ ‚ê‚Îæ“¾
+	//çŸ©å½¢é¸æŠã‚„è¡Œé¸æŠã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°å–å¾—
 	if( NULL != pbColumnSelect || NULL != pbLineSelect ){
 		UINT uFormat = 0;
 		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
@@ -301,7 +301,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		}
 	}
 
-	//ƒTƒNƒ‰Œ`®‚Ìƒf[ƒ^‚ª‚ ‚ê‚Îæ“¾
+	//ã‚µã‚¯ãƒ©å½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°å–å¾—
 	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
 		&& ::IsClipboardFormatAvailable( uFormatSakuraClip ) ){
@@ -316,8 +316,8 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		}
 	}
 
-	//UNICODEŒ`®‚Ìƒf[ƒ^‚ª‚ ‚ê‚Îæ“¾
-	// From Here 2005/05/29 novice UNICODE TEXT ‘Î‰ˆ—‚ğ’Ç‰Á
+	//UNICODEå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°å–å¾—
+	// From Here 2005/05/29 novice UNICODE TEXT å¯¾å¿œå‡¦ç†ã‚’è¿½åŠ 
 	HGLOBAL hUnicode = NULL;
 	if( uGetFormat == -1 || uGetFormat == CF_UNICODETEXT ){
 		hUnicode = ::GetClipboardData( CF_UNICODETEXT );
@@ -331,27 +331,27 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 	//	To Here 2005/05/29 novice
 
-	//OEMTEXTŒ`®‚Ìƒf[ƒ^‚ª‚ ‚ê‚Îæ“¾
+	//OEMTEXTå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°å–å¾—
 	HGLOBAL hText = NULL;
 	if( uGetFormat == -1 || uGetFormat == CF_OEMTEXT ){
 		hText = ::GetClipboardData( CF_OEMTEXT );
 	}
 	if( hText != NULL ){
 		char* szData = GlobalLockChar(hText);
-		//SJIS¨UNICODE
+		//SJISâ†’UNICODE
 		CMemory cmemSjis( szData, GlobalSize(hText) );
 		CNativeW cmemUni;
 		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
 		cmemSjis.Clean();
-		// '\0'‚Ü‚Å‚ğæ“¾
+		// '\0'ã¾ã§ã‚’å–å¾—
 		cmemUni._SetStringLength(auto_strlen(cmemUni.GetStringPtr()));
 		cmemUni.swap(*cmemBuf);
 		::GlobalUnlock(hText);
 		return true;
 	}
 
-	/* 2008.09.10 bosagami ƒpƒX“\‚è•t‚¯‘Î‰ */
-	//HDROPŒ`®‚Ìƒf[ƒ^‚ª‚ ‚ê‚Îæ“¾
+	/* 2008.09.10 bosagami ãƒ‘ã‚¹è²¼ã‚Šä»˜ã‘å¯¾å¿œ */
+	//HDROPå½¢å¼ã®ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°å–å¾—
 	if( (uGetFormat == -1 || uGetFormat == CF_HDROP)
 		&& ::IsClipboardFormatAvailable(CF_HDROP) ){
 		HDROP hDrop = (HDROP)::GetClipboardData(CF_HDROP);
@@ -361,7 +361,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
 				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
-				// 2012.10.05 Moca ANSI”Å‚É‡‚í‚¹‚ÄÅIs‚É‚à‰üsƒR[ƒh‚ğ‚Â‚¯‚é
+				// 2012.10.05 Moca ANSIç‰ˆã«åˆã‚ã›ã¦æœ€çµ‚è¡Œã«ã‚‚æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’ã¤ã‘ã‚‹
 				cmemBuf->AppendStringT(sTmpPath);
 				if(nMaxCnt > 1){
 					cmemBuf->AppendString( cEol.GetValue2() );
@@ -478,7 +478,7 @@ bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFo
 	char* pBuf = NULL;
 	size_t nTextByteLen = 0;
 	if( nMode == -1 ){
-		// ƒoƒCƒiƒŠƒ‚[ƒh U+00 - U+ff‚ğ0x00 - 0xff‚Éƒ}ƒbƒsƒ“ƒO
+		// ãƒã‚¤ãƒŠãƒªãƒ¢ãƒ¼ãƒ‰ U+00 - U+ffã‚’0x00 - 0xffã«ãƒãƒƒãƒ”ãƒ³ã‚°
 		cmemBuf.AllocBuffer(cstr.GetLength());
 		cmemBuf._SetRawLength(cstr.GetLength());
 		pBuf = (char*)cmemBuf.GetRawPtr();
@@ -562,11 +562,11 @@ static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int 
 }
 
 /*!
-	w’è‚ÌƒNƒŠƒbƒvƒ{[ƒhŒ`®‚Åæ“¾
+	æŒ‡å®šã®ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰å½¢å¼ã§å–å¾—
 	
-	@param nMode -2:’Êí‚ÌƒTƒNƒ‰‚Ìˆ—, -1:ƒoƒCƒiƒŠƒ‚[ƒh, ‚»‚êˆÈŠO:•¶šƒR[ƒh
-	@param nEndMode -1:•¶šƒR[ƒh‚ÉˆË‘¶ 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_t‚Ì•¶š—ñ
-	@date 2013.06.12 Moca V‹Kì¬
+	@param nMode -2:é€šå¸¸ã®ã‚µã‚¯ãƒ©ã®å‡¦ç†, -1:ãƒã‚¤ãƒŠãƒªãƒ¢ãƒ¼ãƒ‰, ãã‚Œä»¥å¤–:æ–‡å­—ã‚³ãƒ¼ãƒ‰
+	@param nEndMode -1:æ–‡å­—ã‚³ãƒ¼ãƒ‰ã«ä¾å­˜ 0:GlobalSize 1:strlen 2:wcslen 4:wchar32_tã®æ–‡å­—åˆ—
+	@date 2013.06.12 Moca æ–°è¦ä½œæˆ
 */
 bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol)
 {
@@ -596,12 +596,12 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 			return false;
 		}
 
-		// ’·‚³ƒIƒvƒVƒ‡ƒ“‚Ì‰ğß
+		// é•·ã•ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®è§£é‡ˆ
 		size_t nLength = GetLengthByMode(hClipData, pData, nMode, nEndMode);
 
-		// ƒGƒ“ƒR[ƒhƒIƒvƒVƒ‡ƒ“
+		// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		if( nMode == -1 ){
-			// ƒoƒCƒiƒŠƒ‚[ƒhB1byte‚ğU+00-U+ff‚Éƒ}ƒbƒsƒ“ƒO
+			// ãƒã‚¤ãƒŠãƒªãƒ¢ãƒ¼ãƒ‰ã€‚1byteã‚’U+00-U+ffã«ãƒãƒƒãƒ”ãƒ³ã‚°
 			mem.AllocStringBuffer(nLength);
 			mem._SetStringLength(nLength);
 			wchar_t* pBuf = (wchar_t *)mem.GetStringPtr();
@@ -611,7 +611,7 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 		}else{
 			ECodeType eMode = (ECodeType)nMode;
 			if( !IsValidCodeType(eMode) ){
-				// ƒR[ƒh•s–¾‚Æ99‚Í©“®”»•Ê
+				// ã‚³ãƒ¼ãƒ‰ä¸æ˜ã¨99ã¯è‡ªå‹•åˆ¤åˆ¥
 				ECodeType nBomCode = CCodeMediator::DetectUnicodeBom((const char*)pData, nLength);
 				if( nBomCode != CODE_NONE ){
 					eMode = nBomCode;
@@ -624,7 +624,7 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 					eMode = CODE_DEFAULT;
 				}
 				if( -1 == nEndMode ){
-					// nLength Äİ’è
+					// nLength å†è¨­å®š
 					nLength = GetLengthByMode(hClipData, pData, eMode, nEndMode);
 				}
 			}
@@ -652,40 +652,40 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  staticƒCƒ“ƒ^[ƒtƒF[ƒX                     //
+//                  staticã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-//! ƒNƒŠƒbƒvƒ{[ƒh“à‚ÉAƒTƒNƒ‰ƒGƒfƒBƒ^‚Åˆµ‚¦‚éƒf[ƒ^‚ª‚ ‚ê‚Îtrue
+//! ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰å†…ã«ã€ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã§æ‰±ãˆã‚‹ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°true
 bool CClipboard::HasValidData()
 {
-	//ˆµ‚¦‚éŒ`®‚ª‚P‚Â‚Å‚à‚ ‚ê‚Îtrue
+	//æ‰±ãˆã‚‹å½¢å¼ãŒï¼‘ã¤ã§ã‚‚ã‚ã‚Œã°true
 	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return true;
 	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return true;
 	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return true;
-	/* 2008.09.10 bosagami ƒpƒX“\‚è•t‚¯‘Î‰ */
+	/* 2008.09.10 bosagami ãƒ‘ã‚¹è²¼ã‚Šä»˜ã‘å¯¾å¿œ */
 	if(::IsClipboardFormatAvailable(CF_HDROP))return true;
 	return false;
 }
 
-//!< ƒTƒNƒ‰ƒGƒfƒBƒ^“Æ©‚ÌƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^Œ`®
+//!< ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ç‹¬è‡ªã®ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿å½¢å¼
 CLIPFORMAT CClipboard::GetSakuraFormat()
 {
 	/*
 		2007.09.30 kobake
 
-		UNICODEŒ`®‚ÅƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^‚ğ•Û‚·‚é‚æ‚¤•ÏX‚µ‚½‚½‚ßA
-		ˆÈ‘O‚Ìƒo[ƒWƒ‡ƒ“‚ÌƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^‚Æ‹£‡‚µ‚È‚¢‚æ‚¤‚É
-		ƒtƒH[ƒ}ƒbƒg–¼‚ğ•ÏX
+		UNICODEå½¢å¼ã§ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿ã‚’ä¿æŒã™ã‚‹ã‚ˆã†å¤‰æ›´ã—ãŸãŸã‚ã€
+		ä»¥å‰ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿ã¨ç«¶åˆã—ãªã„ã‚ˆã†ã«
+		ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆåã‚’å¤‰æ›´
 	*/
 	return (CLIPFORMAT)::RegisterClipboardFormat( _T("SAKURAClipW") );
 }
 
-//!< ƒNƒŠƒbƒvƒ{[ƒhƒf[ƒ^Œ`®(CF_UNICODETEXT“™)‚Ìæ“¾
+//!< ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿å½¢å¼(CF_UNICODETEXTç­‰)ã®å–å¾—
 int CClipboard::GetDataType()
 {
-	//ˆµ‚¦‚éŒ`®‚ª‚P‚Â‚Å‚à‚ ‚ê‚Îtrue
-	// 2013.06.11 GetText‚Ìæ“¾‡‚É•ÏX
+	//æ‰±ãˆã‚‹å½¢å¼ãŒï¼‘ã¤ã§ã‚‚ã‚ã‚Œã°true
+	// 2013.06.11 GetTextã®å–å¾—é †ã«å¤‰æ›´
 	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return GetSakuraFormat();
 	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return CF_UNICODETEXT;
 	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;

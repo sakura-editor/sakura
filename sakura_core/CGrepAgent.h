@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied
@@ -33,18 +33,18 @@ class CGrepEnumFiles;
 class CGrepEnumFolders;
 
 struct SGrepOption{
-	bool		bGrepReplace;			//!< Grep’uŠ·
-	bool		bGrepSubFolder;			//!< ƒTƒuƒtƒHƒ‹ƒ_‚©‚ç‚àŒŸõ‚·‚é
-	bool		bGrepStdout;			//!< •W€o—Íƒ‚[ƒh
-	bool		bGrepHeader;			//!< ƒwƒbƒ_Eƒtƒbƒ_•\Ž¦
-	ECodeType	nGrepCharSet;			//!< •¶ŽšƒR[ƒhƒZƒbƒg‘I‘ð
-	int			nGrepOutputLineType;	//!< 0:ƒqƒbƒg•”•ª‚ðo—Í, 1: ƒqƒbƒgs‚ðo—Í, 2: ”Ûƒqƒbƒgs‚ðo—Í
-	int			nGrepOutputStyle;		//!< o—ÍŒ`Ž® 1: Normal, 2: WZ•—(ƒtƒ@ƒCƒ‹’PˆÊ) 3: Œ‹‰Ê‚Ì‚Ý
-	bool		bGrepOutputFileOnly;	//!< ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚ÝŒŸõ
-	bool		bGrepOutputBaseFolder;	//!< ƒx[ƒXƒtƒHƒ‹ƒ_•\Ž¦
-	bool		bGrepSeparateFolder;	//!< ƒtƒHƒ‹ƒ_–ˆ‚É•\Ž¦
-	bool		bGrepPaste;				//!< Grep’uŠ·FƒNƒŠƒbƒvƒ{[ƒh‚©‚ç“\‚è•t‚¯‚é
-	bool		bGrepBackup;			//!< Grep’uŠ·FƒoƒbƒNƒAƒbƒv
+	bool		bGrepReplace;			//!< Grepç½®æ›
+	bool		bGrepSubFolder;			//!< ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ã‚‚æ¤œç´¢ã™ã‚‹
+	bool		bGrepStdout;			//!< æ¨™æº–å‡ºåŠ›ãƒ¢ãƒ¼ãƒ‰
+	bool		bGrepHeader;			//!< ãƒ˜ãƒƒãƒ€ãƒ»ãƒ•ãƒƒãƒ€è¡¨ç¤º
+	ECodeType	nGrepCharSet;			//!< æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆé¸æŠž
+	int			nGrepOutputLineType;	//!< 0:ãƒ’ãƒƒãƒˆéƒ¨åˆ†ã‚’å‡ºåŠ›, 1: ãƒ’ãƒƒãƒˆè¡Œã‚’å‡ºåŠ›, 2: å¦ãƒ’ãƒƒãƒˆè¡Œã‚’å‡ºåŠ›
+	int			nGrepOutputStyle;		//!< å‡ºåŠ›å½¢å¼ 1: Normal, 2: WZé¢¨(ãƒ•ã‚¡ã‚¤ãƒ«å˜ä½) 3: çµæžœã®ã¿
+	bool		bGrepOutputFileOnly;	//!< ãƒ•ã‚¡ã‚¤ãƒ«æ¯Žæœ€åˆã®ã¿æ¤œç´¢
+	bool		bGrepOutputBaseFolder;	//!< ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+	bool		bGrepSeparateFolder;	//!< ãƒ•ã‚©ãƒ«ãƒ€æ¯Žã«è¡¨ç¤º
+	bool		bGrepPaste;				//!< Grepç½®æ›ï¼šã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã‹ã‚‰è²¼ã‚Šä»˜ã‘ã‚‹
+	bool		bGrepBackup;			//!< Grepç½®æ›ï¼šãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
 
 	SGrepOption() :
 		 bGrepReplace(false)
@@ -62,13 +62,13 @@ struct SGrepOption{
 	{}
 };
 
-//	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
-//	Mar. 28, 2004 genta DoGrepFile‚©‚ç•s—v‚Èˆø”‚ðíœ
+//	Jun. 26, 2001 genta	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆ
+//	Mar. 28, 2004 genta DoGrepFileã‹ã‚‰ä¸è¦ãªå¼•æ•°ã‚’å‰Šé™¤
 class CGrepAgent : public CDocListenerEx{
 public:
 	CGrepAgent();
 
-	// ƒCƒxƒ“ƒg
+	// ã‚¤ãƒ™ãƒ³ãƒˆ
 	ECallbackResult OnBeforeClose();
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
@@ -76,7 +76,7 @@ public:
 	static std::tstring ChopYen( const std::tstring& str );
 	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
 
-	// GrepŽÀs
+	// Grepå®Ÿè¡Œ
 	DWORD DoGrep(
 		CEditView*				pcViewDst,
 		bool					bGrepReplace,
@@ -89,40 +89,40 @@ public:
 		bool					bGrepStdout,
 		bool					bGrepHeader,
 		const SSearchOption&	sSearchOption,
-		ECodeType				nGrepCharSet,	// 2002/09/21 Moca •¶ŽšƒR[ƒhƒZƒbƒg‘I‘ð
+		ECodeType				nGrepCharSet,	// 2002/09/21 Moca æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆé¸æŠž
 		int						nGrepOutputLineType,
 		int						nGrepOutputStyle,
-		bool					bGrepOutputFileOnly,	//!< [in] ƒtƒ@ƒCƒ‹–ˆÅ‰‚Ì‚Ýo—Í
-		bool					bGrepOutputBaseFolder,	//!< [in] ƒx[ƒXƒtƒHƒ‹ƒ_•\Ž¦
-		bool					bGrepSeparateFolder,	//!< [in] ƒtƒHƒ‹ƒ_–ˆ‚É•\Ž¦
+		bool					bGrepOutputFileOnly,	//!< [in] ãƒ•ã‚¡ã‚¤ãƒ«æ¯Žæœ€åˆã®ã¿å‡ºåŠ›
+		bool					bGrepOutputBaseFolder,	//!< [in] ãƒ™ãƒ¼ã‚¹ãƒ•ã‚©ãƒ«ãƒ€è¡¨ç¤º
+		bool					bGrepSeparateFolder,	//!< [in] ãƒ•ã‚©ãƒ«ãƒ€æ¯Žã«è¡¨ç¤º
 		bool					bGrepPaste,
 		bool					bGrepBackup
 	);
 
 private:
-	// GrepŽÀs
+	// Grepå®Ÿè¡Œ
 	int DoGrepTree(
 		CEditView*				pcViewDst,
-		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelƒ_ƒCƒAƒƒO‚Ö‚Ìƒ|ƒCƒ“ƒ^
-		const wchar_t*			pszKey,				//!< [in] ŒŸõƒpƒ^[ƒ“
+		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+		const wchar_t*			pszKey,				//!< [in] æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
 		const CNativeW&			cmGrepReplace,
-		CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] ŒŸõ‘ÎÛƒtƒ@ƒCƒ‹ƒpƒ^[ƒ“(!‚ÅœŠOŽw’è)
+		CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] æ¤œç´¢å¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¿ãƒ¼ãƒ³(!ã§é™¤å¤–æŒ‡å®š)
 		CGrepEnumFiles&			cGrepExceptAbsFiles,
 		CGrepEnumFolders&		cGrepExceptAbsFolders,
-		const TCHAR*			pszPath,			//!< [in] ŒŸõ‘ÎÛƒpƒX
-		const TCHAR*			pszBasePath,		//!< [in] ŒŸõ‘ÎÛƒpƒX(ƒx[ƒX)
-		const SSearchOption&	sSearchOption,		//!< [in] ŒŸõƒIƒvƒVƒ‡ƒ“
-		const SGrepOption&		sGrepOption,		//!< [in] GrepƒIƒvƒVƒ‡ƒ“
-		const CSearchStringPattern& pattern,		//!< [in] ŒŸõƒpƒ^[ƒ“
-		CBregexp*				pRegexp,			//!< [in] ³‹K•\Œ»ƒRƒ“ƒpƒCƒ‹ƒf[ƒ^BŠù‚ÉƒRƒ“ƒpƒCƒ‹‚³‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚é
-		int						nNest,				//!< [in] ƒlƒXƒgƒŒƒxƒ‹
+		const TCHAR*			pszPath,			//!< [in] æ¤œç´¢å¯¾è±¡ãƒ‘ã‚¹
+		const TCHAR*			pszBasePath,		//!< [in] æ¤œç´¢å¯¾è±¡ãƒ‘ã‚¹(ãƒ™ãƒ¼ã‚¹)
+		const SSearchOption&	sSearchOption,		//!< [in] æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+		const SGrepOption&		sGrepOption,		//!< [in] Grepã‚ªãƒ—ã‚·ãƒ§ãƒ³
+		const CSearchStringPattern& pattern,		//!< [in] æ¤œç´¢ãƒ‘ã‚¿ãƒ¼ãƒ³
+		CBregexp*				pRegexp,			//!< [in] æ­£è¦è¡¨ç¾ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒ‡ãƒ¼ã‚¿ã€‚æ—¢ã«ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã•ã‚Œã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚‹
+		int						nNest,				//!< [in] ãƒã‚¹ãƒˆãƒ¬ãƒ™ãƒ«
 		bool&					bOutputBaseFolder,
-		int*					pnHitCount,			//!< [i/o] ƒqƒbƒg”‚Ì‡Œv
+		int*					pnHitCount,			//!< [i/o] ãƒ’ãƒƒãƒˆæ•°ã®åˆè¨ˆ
 		CNativeW&				cmemMessage,
 		CNativeW&				cUnicodeBuffer
 	);
 
-	// GrepŽÀs
+	// Grepå®Ÿè¡Œ
 	int DoGrepFile(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
@@ -131,7 +131,7 @@ private:
 		const SSearchOption&	sSearchOption,
 		const SGrepOption&		sGrepOption,
 		const CSearchStringPattern& pattern,
-		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
+		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	æ­£è¦è¡¨ç¾ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å·®ã—æ›¿ãˆ
 		int*					pnHitCount,
 		const TCHAR*			pszFullPath,
 		const TCHAR*			pszBaseFolder,
@@ -164,33 +164,33 @@ private:
 		CNativeW&				cUnicodeBuffer
 	);
 
-	// GrepŒ‹‰Ê‚ðpszWork‚ÉŠi”[
+	// Grepçµæžœã‚’pszWorkã«æ ¼ç´
 	void SetGrepResult(
-		// ƒf[ƒ^Ši”[æ
+		// ãƒ‡ãƒ¼ã‚¿æ ¼ç´å…ˆ
 		CNativeW&		cmemMessage,
-		// ƒ}ƒbƒ`‚µ‚½ƒtƒ@ƒCƒ‹‚Ìî•ñ
-		const TCHAR*	pszFilePath,	//	ƒtƒ‹ƒpƒX or ‘Š‘ÎƒpƒX
-		const TCHAR*	pszCodeName,	//	•¶ŽšƒR[ƒhî•ñ"[SJIS]"‚Æ‚©
-		// ƒ}ƒbƒ`‚µ‚½s‚Ìî•ñ
-		LONGLONG		nLine,			//	ƒ}ƒbƒ`‚µ‚½s”Ô†
-		int				nColumn,		//	ƒ}ƒbƒ`‚µ‚½Œ…”Ô†
-		const wchar_t*	pCompareData,	//	s‚Ì•¶Žš—ñ
-		int				nLineLen,		//	s‚Ì•¶Žš—ñ‚Ì’·‚³
-		int				nEolCodeLen,	//	EOL‚Ì’·‚³
-		// ƒ}ƒbƒ`‚µ‚½•¶Žš—ñ‚Ìî•ñ
-		const wchar_t*	pMatchData,		//	ƒ}ƒbƒ`‚µ‚½•¶Žš—ñ
-		int				nMatchLen,		//	ƒ}ƒbƒ`‚µ‚½•¶Žš—ñ‚Ì’·‚³
-		// ƒIƒvƒVƒ‡ƒ“
+		// ãƒžãƒƒãƒã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±
+		const TCHAR*	pszFilePath,	//	ãƒ•ãƒ«ãƒ‘ã‚¹ or ç›¸å¯¾ãƒ‘ã‚¹
+		const TCHAR*	pszCodeName,	//	æ–‡å­—ã‚³ãƒ¼ãƒ‰æƒ…å ±"[SJIS]"ã¨ã‹
+		// ãƒžãƒƒãƒã—ãŸè¡Œã®æƒ…å ±
+		LONGLONG		nLine,			//	ãƒžãƒƒãƒã—ãŸè¡Œç•ªå·
+		int				nColumn,		//	ãƒžãƒƒãƒã—ãŸæ¡ç•ªå·
+		const wchar_t*	pCompareData,	//	è¡Œã®æ–‡å­—åˆ—
+		int				nLineLen,		//	è¡Œã®æ–‡å­—åˆ—ã®é•·ã•
+		int				nEolCodeLen,	//	EOLã®é•·ã•
+		// ãƒžãƒƒãƒã—ãŸæ–‡å­—åˆ—ã®æƒ…å ±
+		const wchar_t*	pMatchData,		//	ãƒžãƒƒãƒã—ãŸæ–‡å­—åˆ—
+		int				nMatchLen,		//	ãƒžãƒƒãƒã—ãŸæ–‡å­—åˆ—ã®é•·ã•
+		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		const SGrepOption&	sGrepOption
 	);
 
-	DWORD m_dwTickAddTail;	// AddTail() ‚ðŒÄ‚Ño‚µ‚½ŽžŠÔ
-	DWORD m_dwTickUICheck;	// ˆ—’†‚Éƒ†[ƒU[‚É‚æ‚éUI‘€ì‚ªs‚í‚ê‚Ä‚¢‚È‚¢‚©Šm”F‚µ‚½ŽžŠÔ
-	DWORD m_dwTickUIFileName;	// Cancelƒ_ƒCƒAƒƒO‚Ìƒtƒ@ƒCƒ‹–¼•\Ž¦XV‚ðs‚Á‚½ŽžŠÔ
+	DWORD m_dwTickAddTail;	// AddTail() ã‚’å‘¼ã³å‡ºã—ãŸæ™‚é–“
+	DWORD m_dwTickUICheck;	// å‡¦ç†ä¸­ã«ãƒ¦ãƒ¼ã‚¶ãƒ¼ã«ã‚ˆã‚‹UIæ“ä½œãŒè¡Œã‚ã‚Œã¦ã„ãªã„ã‹ç¢ºèªã—ãŸæ™‚é–“
+	DWORD m_dwTickUIFileName;	// Cancelãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã®ãƒ•ã‚¡ã‚¤ãƒ«åè¡¨ç¤ºæ›´æ–°ã‚’è¡Œã£ãŸæ™‚é–“
 
-public: //$$ ‰¼
-	bool	m_bGrepMode;		//!< Grepƒ‚[ƒh‚©
-	bool	m_bGrepRunning;		//!< Grepˆ—’†
+public: //$$ ä»®
+	bool	m_bGrepMode;		//!< Grepãƒ¢ãƒ¼ãƒ‰ã‹
+	bool	m_bGrepRunning;		//!< Grepå‡¦ç†ä¸­
 };
 
 #endif /* SAKURA_CGREPAGENT_89E8C8B7_433B_47F3_A389_75C91E00A4BA9_H_ */
