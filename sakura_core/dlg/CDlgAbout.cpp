@@ -147,7 +147,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	TCHAR			szMsg[2048];
 	TCHAR			szFile[_MAX_PATH];
 
 	/* この実行ファイルの情報 */
@@ -180,13 +179,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	auto_sprintf(szMsg,
+	
+	// 1行目
+	cmemMsg.AppendStringF(
 		_T("v%d.%d.%d.%d"),
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	
-	// 1行目
-	cmemMsg.AppendString( szMsg );
 	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
 	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
 #ifdef ALPHA_VERSION
@@ -208,25 +206,20 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 共有メモリ情報
-	auto_sprintf( szMsg,  _T("      Share Ver: %3d\r\n"),
-		N_SHAREDATA_VERSION
-	);
-	cmemMsg.AppendString( szMsg );
+	cmemMsg.AppendStringF(_T("      Share Ver: %3d\r\n"), N_SHAREDATA_VERSION);
 
 	// コンパイル情報
 	cmemMsg.AppendString( _T("      Compile Info: ") );
-	int Compiler_ver = COMPILER_VER;
-	auto_sprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ")
-			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
-		Compiler_ver,
-		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+	cmemMsg.AppendStringF(
+		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ") TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
-	cmemMsg.AppendString( szMsg );
 
 	// 更新日情報
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
-	auto_sprintf( szMsg,  _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
+	cmemMsg.AppendStringF(
+		_T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		cFileTime->wYear,
 		cFileTime->wMonth,
 		cFileTime->wDay,
@@ -234,7 +227,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		cFileTime->wMinute,
 		cFileTime->wSecond
 	);
-	cmemMsg.AppendString( szMsg );
 
 	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
@@ -251,6 +243,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Edit Boxにメッセージを追加する．
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCTSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
+	TCHAR szMsg[2048];
 	if( _tcslen(pszDesc) > 0 ){
 		_tcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
 		szMsg[_countof(szMsg) - 1] = 0;

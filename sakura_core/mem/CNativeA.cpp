@@ -60,6 +60,28 @@ void CNativeA::AppendString( const char* pszData, int nLength )
 	CNative::AppendRawData(pszData, nLength * sizeof(char));
 }
 
+//! バッファの最後にデータを追加する (フォーマット機能付き)
+void CNativeA::AppendStringF(const char* pszData, ...)
+{
+	char buf[2048];
+
+	// 整形
+	va_list v;
+	va_start(v, pszData);
+	int len = _vsnprintf_s(buf, _countof(buf), _TRUNCATE, pszData, v);
+	int e = errno;
+	va_end(v);
+
+	if (len == -1) {
+		char cbuf[128];
+		sprintf_s(cbuf, _countof(cbuf), "AppendStringF error. errno = %d", e);
+		throw std::exception(cbuf);
+	}
+
+	// 追加
+	this->AppendString(buf, len);
+}
+
 const CNativeA& CNativeA::operator = ( char cChar )
 {
 	char pszChar[2];
