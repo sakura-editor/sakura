@@ -99,7 +99,7 @@ void CLayoutMgr::_Empty()
 	CLayout* pLayout = m_pLayoutTop;
 	while( pLayout ){
 		CLayout* pLayoutNext = pLayout->GetNextLayout();
-		delete pLayout;
+		m_memoryPool.deleteElement(pLayout);
 		pLayout = pLayoutNext;
 	}
 }
@@ -393,7 +393,7 @@ CLayout* CLayoutMgr::CreateLayout(
 	CLayoutColorInfo*	colorInfo
 )
 {
-	CLayout* pLayout = new CLayout(
+	CLayout* pLayout = m_memoryPool.newElement(
 		pCDocLine,
 		ptLogicPos,
 		nLength,
@@ -612,7 +612,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			DEBUG_TRACE( _T("バグバグ\n") );
 		}
 
-		delete pLayout;
+		m_memoryPool.deleteElement(pLayout);
 
 		m_nLines--;	/* 全物理行数 */
 		if( NULL == pLayoutNext ){
