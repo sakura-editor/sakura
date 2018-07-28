@@ -9,12 +9,12 @@ if not exist googletest (
     git submodule update
 )
 
-set BUILDDIR=build
-if exist %BUILDDIR% (
+set BUILDDIR=build\%platform%
+if exist "%BUILDDIR%" (
 	rmdir /s /q %BUILDDIR%
 )
 mkdir %BUILDDIR%
-cmake -B%BUILDDIR% -H. || set ERROR_RESULT=1
+cmake -DCMAKE_GENERATOR_PLATFORM=%platform% -B%BUILDDIR% -H. || set ERROR_RESULT=1
 
 popd
 

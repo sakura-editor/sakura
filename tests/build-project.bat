@@ -8,7 +8,7 @@ if not exist googletest (
     git submodule update
 )
 
-set BUILDDIR=build
+set BUILDDIR=build\%platform%
 cmake --build %BUILDDIR%  --config %configuration% || set ERROR_RESULT=1
 
 popd
