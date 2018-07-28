@@ -69,10 +69,13 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	va_list v;
 	va_start(v, pszData);
 	int len = _vsnprintf(buf, _countof(buf), pszData, v);
-	if (len == -1) {
-		throw std::exception("AppendStringF encoding error");
-	}
 	va_end(v);
+
+	if (len == -1) {
+		char cbuf[128];
+		sprintf_s(cbuf, _countof(cbuf), "AppendStringF error. errno = %d", errno);
+		throw std::exception(cbuf);
+	}
 
 	// 追加
 	this->AppendString(buf, len);
