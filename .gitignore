@@ -12,3 +12,4 @@ msbuild-*.log.csv
 msbuild-*.log.xlsx
 sha256.txt
 *.pyc
+/tests/build

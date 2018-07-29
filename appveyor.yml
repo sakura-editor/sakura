@@ -18,6 +18,8 @@ build_script:
 - cmd: >-
     call build-all.bat %PLATFORM% %CONFIGURATION%
 
+    call tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
+
     echo appveyor_yml
 
 artifacts:
