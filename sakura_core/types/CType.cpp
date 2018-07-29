@@ -81,6 +81,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 		new CType_Pascal(),	//Pascal
 		new CType_Tex(),	//TeX
 		new CType_Perl(),	//Perl
+		new CType_Python(),	//Python
 		new CType_Vb(),		//Visual Basic
 		new CType_Rich(),	//リッチテキスト
 		new CType_Ini(),	//設定ファイル
@@ -137,6 +138,7 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 	PopulateKeyword( L"Visual Basic",	false,	VB );			/* セット13の追加 */	//Jul. 10, 2001 JEPRO
 	PopulateKeyword( L"Visual Basic2",	false,	VB2 );			/* セット14の追加 */	//Jul. 10, 2001 JEPRO
 	PopulateKeyword( L"Rich Text",		true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( L"Python",			true,	Python);		/* セット16の追加 */
 
 #undef PopulateKeyword
 }

@@ -106,6 +106,22 @@ struct COutlinePython {
 	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
 };
 
+void CType_Python::InitTypeConfigImp(STypeConfig* pType)
+{
+	//名前と拡張子
+	_tcscpy( pType->m_szTypeName, _T("Python") );
+	_tcscpy( pType->m_szTypeExts, _T("py") );
+
+	//設定
+	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
+	pType->m_eDefaultOutline = OUTLINE_PYTHON;						/* アウトライン解析方法 */
+	pType->m_nKeyWordSetIdx[0] = 16;								/* キーワードセット */
+	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			/* 半角数値を色分け表示 */
+	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;	//対括弧の強調をデフォルトON
+	pType->m_nStringType = STRING_LITERAL_PYTHON;
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
+}
+
 /*!コンストラクタ: 初期化
 
 	初期状態をSTATE_NORMALに設定する．
@@ -543,3 +559,42 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 }
 
 
+const wchar_t* g_ppszKeywordsPython[] = {
+	L"False",
+	L"None",
+	L"True",
+	L"and",
+	L"as",
+	L"assert",
+	L"async",
+	L"await",
+	L"break",
+	L"class",
+	L"continue",
+	L"def",
+	L"del",
+	L"elif",
+	L"else",
+	L"except",
+	L"finally",
+	L"for",
+	L"from",
+	L"global",
+	L"if",
+	L"import",
+	L"in",
+	L"is",
+	L"lambda",
+	L"nonlocal",
+	L"not",
+	L"or",
+	L"pass",
+	L"raise",
+	L"return",
+	L"try",
+	L"while",
+	L"with",
+	L"yield",
+	L"self",
+};
+int g_nKeywordsPython = _countof(g_ppszKeywordsPython);
