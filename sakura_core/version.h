@@ -13,7 +13,11 @@
 #define VER_A   2 // a of ver a.b.c.d
 #define VER_B   3 // b of ver a.b.c.d
 #define VER_C   2 // c of ver a.b.c.d
+#ifdef APPVEYOR_BUILD_NUMBER_INT
+#define VER_D   APPVEYOR_BUILD_NUMBER_INT // d of ver a.b.c.d
+#else
 #define VER_D   0 // d of ver a.b.c.d
+#endif
 
 #define TO_STR(arg)                            #arg
 #define MAKE_VERSION_STR(a, b, c, d, sep)      TO_STR(a) sep TO_STR(b) sep TO_STR(c) sep TO_STR(d)
