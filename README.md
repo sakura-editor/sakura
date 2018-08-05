@@ -9,6 +9,7 @@
         - [Visual Studio Community 2017](#visual-studio-community-2017)
             - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [How to build](#how-to-build)
+        - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [CI Build (AppVeyor)](#ci-build-appveyor)
         - [ビルドの仕組み](#ビルドの仕組み)
         - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
@@ -41,6 +42,29 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 ## How to build
 Visual Studio Community 2017 で `sakura.sln` を開いてビルド。
+
+### githash.h の更新のスキップ
+
+sakura editor ではビルド時に git の commit hash 等の情報を githash.h というファイルに出力します。
+ビルド時に commit hash 等を生成することでビルド済みのバイナリがどの commit hash を元にビルドされたか
+簡単に判断できて便利なのですが、
+
+バイナリが変化しないリファクタリングをしたときでも、commit hash 等の変更が原因でバイナリ一致しなくなります。
+これだと検証が面倒になるので、ローカルビルドで githash.h が変化しない手段を提供します。
+
+コマンドラインで環境変数 ```SKIP_CREATE_GITHASH``` を 1 に設定することにより commit hash の
+更新処理をスキップすることができます。githash.h が存在しない場合には、この環境変数が設定されていても
+githash.h を生成します。
+
+コマンド実行例
+
+```
+set SKIP_CREATE_GITHASH=1
+build-sln.bat Win32 Release
+build-sln.bat Win32 Debug
+build-sln.bat x64   Release
+build-sln.bat x64   Debug
+```
 
 ## CI Build (AppVeyor)
 
