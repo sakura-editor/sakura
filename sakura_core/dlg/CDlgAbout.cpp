@@ -306,19 +306,17 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
-	
-	/* OK ボタンにフォーカスを合わせる */
-	HWND hOKButton = GetItemHwnd(IDOK);
-	::SetFocus(hOKButton);
 
 	/* 基底クラスメンバ */
-	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 
-	// SetFocus() の効果を有効にするために FALSE を返す
-	//
-	// https://msdn.microsoft.com/ja-jp/library/fwz35s59.aspx
-	// によると OnInitDialog() が FALSE を返したときは Windows は
-	// フォーカスを変更しない
+	/* デフォルトでは一番最初のタブオーダーの要素になるので明示的に OK ボタンにフォーカスを合わせる */
+	::SetFocus(GetItemHwnd(IDOK));
+
+	/*
+		SetFocus() の効果を有効にするために FALSE を返す
+		参考: https://msdn.microsoft.com/ja-jp/library/fwz35s59.aspx
+	*/
 	return FALSE;
 }
 
