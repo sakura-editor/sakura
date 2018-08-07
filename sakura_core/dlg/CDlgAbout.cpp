@@ -308,7 +308,16 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
 
 	/* 基底クラスメンバ */
-	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+
+	/* デフォルトでは一番最初のタブオーダーの要素になるので明示的に OK ボタンにフォーカスを合わせる */
+	::SetFocus(GetItemHwnd(IDOK));
+
+	/*
+		SetFocus() の効果を有効にするために FALSE を返す
+		参考: https://msdn.microsoft.com/ja-jp/library/fwz35s59.aspx
+	*/
+	return FALSE;
 }
 
 
