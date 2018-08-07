@@ -104,8 +104,8 @@ FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     ICON            IDI_ICON_STD, IDC_STATIC_MYICON, 5, 5, 20, 20, SS_NOTIFY
     EDITTEXT        IDC_EDIT_VER, 33, 6, 204, 51, ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 61, 205, 8, NOT WS_GROUP | SS_NOPREFIX
-    LTEXT           "原作者: たけ(竹パンダ) さん", IDC_STATIC, 33, 75, 125, 8, NOT WS_GROUP
+    LTEXT           "原作者: たけ(竹パンダ) さん", IDC_STATIC, 33, 61, 125, 8, NOT WS_GROUP
+    LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 75, 205, 8, NOT WS_GROUP | SS_NOPREFIX
     LTEXT           "Project Sakura-Editor:", IDC_STATIC_URL_CAPTION, 33, 88, 71, 8, NOT WS_GROUP
     LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_UR, 101, 88, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
     LTEXT           "Source URL:", IDC_STATIC_GIT_CAPTION, 33, 98, 71, 8, NOT WS_GROUP
