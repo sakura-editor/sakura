@@ -453,9 +453,7 @@ $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
 .rc.o:
-	$(RCTOOL) $< sakura_grc.rc
-	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
-	$(RM) sakura_grc.rc
+	$(RC) -c65001 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
 	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) StdAfx.h.gch
