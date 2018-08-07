@@ -39,7 +39,8 @@
 LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
 
-#define	S_COPYRIGHT	"Copyright (C) 2011-2018  by Lucien & Collaborators"
+#define	S_COPYRIGHT				"Copyright (C) 1998-2018  by Norio Nakatani & Collaborators"
+#define	S_COPYRIGHT_TRANSLATION	"Copyright (C) 2011-2018  by Lucien & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -108,6 +109,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_VER, 33, 6, 204, 51, ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     LTEXT           "Original Author: Take-san(竹パンダ) さん", IDC_STATIC, 33, 61, 125, 8, NOT WS_GROUP
     LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 75, 205, 8, NOT WS_GROUP | SS_NOPREFIX
+    LTEXT           S_COPYRIGHT_TRANSLATION,IDC_STATIC,33,90,205,8,SS_NOPREFIX | NOT WS_GROUP
     LTEXT           "Project Sakura-Editor:", IDC_STATIC_URL_CAPTION, 33, 103, 71, 8, NOT WS_GROUP
     LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_UR, 101, 103, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
     LTEXT           "Source URL:", IDC_STATIC_GIT_CAPTION, 33, 113, 71, 8, NOT WS_GROUP
@@ -2122,7 +2124,7 @@ BEGIN
             VALUE "FileDescription", "Sakura Editor Language DLL(en_US)\0"
             VALUE "FileVersion", FL_VER_STR
             VALUE "InternalName", "sakura\0"
-            VALUE "LegalCopyright", S_COPYRIGHT
+            VALUE "LegalCopyright", S_COPYRIGHT_TRANSLATION
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor Language DLL\0"
