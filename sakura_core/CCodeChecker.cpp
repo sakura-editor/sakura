@@ -165,8 +165,8 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		TCHAR  szLineNum[60];  // 123桁
 		TCHAR  szCharCode[12]; // U+12ab or 1234abcd
 		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
-		_tcscpy( szCharCode, _T("") );
-		_tcscpy( szLineNum, _T("") );
+		szCharCode[0] = _T('\0');
+		szLineNum[0] = _T('\0');
 		if( point.x == -1 ){
 			cmemChar.SetString(LSW(STR_ERR_CSHAREDATA22));
 		}else{

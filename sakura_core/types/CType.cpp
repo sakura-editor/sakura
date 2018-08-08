@@ -184,7 +184,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_nColorInfoArrNum = COLORIDX_LAST;
 
 	// 2001/06/14 Start by asa-o
-	_tcscpy( pType->m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
+	pType->m_szHokanFile[0] = _T('\0');		/* 入力補完 単語ファイル */
 	// 2001/06/14 End
 
 	pType->m_nHokanType = 0;

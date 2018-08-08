@@ -362,7 +362,7 @@ int CDlgDiff::GetData( void )
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
-	_tcscpy( m_szFile2, _T("") );
+	m_szFile2[0] = _T('\0');
 	m_hWnd_Dst = NULL;
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )

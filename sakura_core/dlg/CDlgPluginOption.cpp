@@ -175,7 +175,7 @@ void CDlgPluginOption::SetData( void )
 			std::vector<wstring>	selects;
 			selects = cOpt->GetSelects();
 
-			_tcscpy( buf, _T("") );
+			buf[0] = _T('\0');
 			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {

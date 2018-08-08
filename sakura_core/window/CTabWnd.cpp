@@ -1998,7 +1998,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 		// タブが無ければ１つ作成して選択状態にする（自ウィンドウのタブ用）
 		TCHAR		szName[2048];
-		_tcscpy( szName, _T("") );
+		szName[0] = _T('\0');
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 		tcitem.pszText = szName;
 		tcitem.lParam  = (LPARAM)GetParentHwnd();

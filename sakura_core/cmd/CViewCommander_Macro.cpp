@@ -93,7 +93,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1];
 	TCHAR			szInitDir[_MAX_PATH + 1];
-	_tcscpy( szPath, _T("") );
+	szPath[0] = _T('\0');
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
@@ -139,7 +139,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	TCHAR			szPath[_MAX_PATH + 1];
 	TCHAR			szInitDir[_MAX_PATH + 1];
 	const TCHAR*		pszFolder;
-	_tcscpy( szPath, _T("") );
+	szPath[0] = _T('\0');
 	pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -228,7 +228,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 
 	} else {
 		// ファイルが指定されていない場合、ダイアログを表示する
-		_tcscpy( szPath, _T("") );
+		szPath[0] = _T('\0');
 		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 
 		if( _IS_REL_PATH( pszFolder ) ){
