@@ -1,6 +1,6 @@
 ﻿root = true
 
-[*.{cpp,h,hh,hsrc}]
+[*.{cpp,h,hh,hsrc,rc}]
 # インデントスタイル：タブ文字で4スペース幅
 indent_style = tab
 indent_size = 4
