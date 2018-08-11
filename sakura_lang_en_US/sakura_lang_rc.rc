@@ -39,7 +39,8 @@
 LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
 
-#define	S_COPYRIGHT	"Copyright (C) 2011-2018  by Lucien & Collaborators"
+#define	S_COPYRIGHT				"Copyright (C) 1998-2018  by Norio Nakatani & Collaborators"
+#define	S_COPYRIGHT_TRANSLATION	"Copyright (C) 2011-2018  by Lucien & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
@@ -99,27 +100,29 @@ BEGIN
     PUSHBUTTON      "&Help", IDC_BUTTON_HELP, 221, 73, 58, 14
 END
 
-IDD_ABOUT DIALOG DISCARDABLE  0, 0, 245, 213
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 245, 228
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Version Information"
 FONT 9, "Tahoma"
 BEGIN
     ICON            IDI_ICON_STD, IDC_STATIC_MYICON, 5, 5, 20, 20, SS_NOTIFY
     EDITTEXT        IDC_EDIT_VER, 33, 6, 204, 51, ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 61, 205, 8, NOT WS_GROUP | SS_NOPREFIX
-    LTEXT           "Original Author: Take-san(竹パンダ) さん", IDC_STATIC, 33, 75, 125, 8, NOT WS_GROUP
-    LTEXT           "Project Sakura-Editor:", IDC_STATIC_URL_CAPTION, 33, 88, 71, 8, NOT WS_GROUP
-    LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_UR, 101, 88, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
-    LTEXT           "Source URL:", IDC_STATIC_GIT_CAPTION, 33, 98, 71, 8, NOT WS_GROUP
-    LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_GIT, 101, 98, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
-    LTEXT           "Build URL:", IDC_STATIC_URL_APPVEYOR_CAPTION, 33, 108, 71, 8, NOT WS_GROUP
-    LTEXT           "Build No.", IDC_STATIC_URL_APPVEYOR_BUILD, 101, 108, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
-    LTEXT           "GitHub URL:", IDC_STATIC_URL_GITHUB_CAPTION, 33, 118, 50, 8, NOT WS_GROUP
-    LTEXT           "Commit", IDC_STATIC_URL_GITHUB_COMMIT, 101, 118, 30, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
-    LTEXT           "PR.", IDC_STATIC_URL_GITHUB_PR, 150, 118, 30, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
-    EDITTEXT        IDC_EDIT_ABOUT, 5, 131, 233, 53, ES_MULTILINE | ES_READONLY | WS_VSCROLL | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "&OK", IDOK, 97, 188, 50, 14
-    PUSHBUTTON      "&Copy to Clipboard", IDC_BUTTON_COPY, 178, 188, 60, 14
+    LTEXT           "Original Author: Take-san(竹パンダ) さん", IDC_STATIC, 33, 61, 125, 8, NOT WS_GROUP
+    LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 75, 205, 8, NOT WS_GROUP | SS_NOPREFIX
+    LTEXT           "Translation:",IDC_STATIC,33,90,41,8
+    LTEXT           S_COPYRIGHT_TRANSLATION,IDC_STATIC,74,90,164,8,SS_NOPREFIX | NOT WS_GROUP
+    LTEXT           "Project Sakura-Editor:", IDC_STATIC_URL_CAPTION, 33, 103, 71, 8, NOT WS_GROUP
+    LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_UR, 101, 103, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
+    LTEXT           "Source URL:", IDC_STATIC_GIT_CAPTION, 33, 113, 71, 8, NOT WS_GROUP
+    LTEXT           "https://sakura-editor.github.io/", IDC_STATIC_URL_GIT, 101, 113, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
+    LTEXT           "Build URL:", IDC_STATIC_URL_APPVEYOR_CAPTION, 33, 123, 71, 8, NOT WS_GROUP
+    LTEXT           "Build No.", IDC_STATIC_URL_APPVEYOR_BUILD, 101, 123, 120, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
+    LTEXT           "GitHub URL:", IDC_STATIC_URL_GITHUB_CAPTION, 33, 133, 50, 8, NOT WS_GROUP
+    LTEXT           "Commit", IDC_STATIC_URL_GITHUB_COMMIT, 101, 133, 30, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
+    LTEXT           "PR.", IDC_STATIC_URL_GITHUB_PR, 150, 133, 30, 8, SS_NOTIFY | NOT WS_GROUP | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ABOUT, 5, 146, 233, 53, ES_MULTILINE | ES_READONLY | WS_VSCROLL | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "&OK", IDOK, 97, 203, 50, 14
+    PUSHBUTTON      "&Copy to Clipboard", IDC_BUTTON_COPY, 178, 203, 60, 14
 END
 
 IDD_JUMP DIALOGEX 0, 0, 252, 121
@@ -2122,7 +2125,7 @@ BEGIN
             VALUE "FileDescription", "Sakura Editor Language DLL(en_US)\0"
             VALUE "FileVersion", FL_VER_STR
             VALUE "InternalName", "sakura\0"
-            VALUE "LegalCopyright", S_COPYRIGHT
+            VALUE "LegalCopyright", S_COPYRIGHT_TRANSLATION
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor Language DLL\0"
