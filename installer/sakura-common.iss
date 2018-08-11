@@ -79,11 +79,13 @@ Source: "sakura\keyword\*"; DestDir: "{app}\keyword"; Components: keyword; Flags
 [Registry]
 ; registry for all user (Admin only)
 Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURAで開く(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 ; registry for each user (non-Admin only)
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "SAKURAで開く(&E)";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
