@@ -59,6 +59,53 @@ const int CFileLoad::gm_nBufSizeDef = 32768;
 // /*! ロード用バッファサイズの設定可能な最低値 */
 // const int gm_nBufSizeMin = 1024;
 
+bool CFileLoad::IsLoadableSize(ULONGLONG size, bool ignoreLimit)
+{
+	// 上限無視
+	if (ignoreLimit)return true;
+
+	// 判定
+	return size < CFileLoad::GetLimitSize();
+}
+
+ULONGLONG CFileLoad::GetLimitSize()
+{
+#ifdef _WIN64
+	// 64bit の場合
+	// 実質上限は設けないこととする (x64 対応しながらここは要検討)
+	return ULLONG_MAX;
+#else
+	// 32bit の場合
+	// だいたい 2GB くらいを上限とする (既存コードがそうなっていたのでそれを踏襲)
+	return 0x80000000;
+#endif
+}
+
+//! 人にとって見やすいサイズ文字列を作る (例: "2 GB", "10 GB", "400 MB", "32 KB")
+//  …と言いつつ、今のところは MB 単位での表示にします。適宜必要あれば改良してください。
+std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
+{
+	// bytes to megabytes
+	ULONGLONG megabytes = size / 1024 / 1024;
+
+	// to string
+	wchar_t buf[32];
+	swprintf_s(buf, _countof(buf), L"%I64u", megabytes);
+	std::wstring str = buf;
+
+	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas
+	// コンマ区切り文字列
+	int insertPosition = str.length() - 3;
+	while (insertPosition > 0) {
+		str.insert(insertPosition, L",");
+		insertPosition -= 3;
+	}
+
+	// 単位付けて返す
+	return str + L" MB";
+}
+
+
 /*! コンストラクタ */
 CFileLoad::CFileLoad( const SEncodingConfig& encode )
 {
@@ -145,7 +192,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 			throw CError_FileOpen();
 		}
 	}
-	if( !bBigFile && 0x80000000 <= fileSize.QuadPart ){
+	if (!CFileLoad::IsLoadableSize(fileSize.QuadPart, bBigFile)) {
 		// ファイルが大きすぎる(2GB位)
 		FileClose();
 		throw CError_FileOpen(CError_FileOpen::TOO_BIG);

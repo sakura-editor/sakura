@@ -34,6 +34,7 @@
 #include "window/CEditWnd.h"
 #include "uiparts/CVisualProgress.h"
 #include "util/file.h"
+#include "io/CFileLoad.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
@@ -148,7 +149,7 @@ next:
 #else
 		bool bBigFile = false;
 #endif
-		if (!bBigFile && 0x80000000 <= nFileSize.QuadPart) {
+		if (!CFileLoad::IsLoadableSize(nFileSize.QuadPart)) {
 			// ファイルサイズがシステム的に大きすぎるため、エラーとしてファイルロードを中断する。
 			// ※32bit 版の場合は 2GB あたりを上限とする。
 			//   ここでエラーを出さずに OnLoad に突入させてしまうと CFileLoad::FileOpen が例外を吐くので、
@@ -156,7 +157,9 @@ next:
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_LOADAGENT_BIG_ERROR),
-				pLoadInfo->cFilePath.c_str()
+				pLoadInfo->cFilePath.c_str(),
+				CFileLoad::GetSizeStringForHuman(nFileSize.QuadPart).c_str(),
+				CFileLoad::GetSizeStringForHuman(CFileLoad::GetLimitSize()).c_str()
 			);
 			return CALLBACK_INTERRUPT;
 		}

@@ -3179,7 +3179,7 @@ BEGIN
 	// CEditDoc.cpp
 	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
 	STR_LOADAGENT_BIG_WARNING	"'%ts'\nFile size is %dMB or over. Do you want to open?"
-	STR_LOADAGENT_BIG_ERROR		"'%ts'\nCannot open file.\nIts size is too big."
+	STR_LOADAGENT_BIG_ERROR		"'%ts'\nCannot open file.\nIts size is too big.\n\nSpecified file size: %ts\n    Limit file size: %ts"
 	STR_SAVEAGENT_VIEW_FILE		"Cannot overwrite file in view-mode."
 	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
