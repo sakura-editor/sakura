@@ -118,7 +118,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
+      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
@@ -156,7 +156,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <PostBuildEvent>
-      <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
+      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
@@ -193,7 +193,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
+      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
@@ -229,7 +229,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>call postBuild.bat "$(TargetPath).manifest"</Command>
+      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
