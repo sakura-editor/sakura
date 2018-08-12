@@ -2,7 +2,7 @@ set platform=%1
 set configuration=%2
 set INSTALLER_RESOURCES=installer\temp
 set INSTALLER_WORK=installer\sakura
-set INSTALLER_OUTPUT=installer\Output
+set INSTALLER_OUTPUT=installer\Output-%platform%
 
 set INSTALLER_RESOURCES_SINT=installer\sinst_src
 set INSTALLER_RESOURCES_BRON=installer\temp\bron

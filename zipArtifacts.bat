@@ -156,7 +156,7 @@ copy installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
 	copy installer\warning-alpha.txt   %WORKDIR%\
 )
-copy installer\Output\*.exe  %WORKDIR_INST%\
+copy installer\Output-%platform%\*.exe  %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
 copy msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
 if exist "msbuild-%platform%-%configuration%.log.xlsx" (
