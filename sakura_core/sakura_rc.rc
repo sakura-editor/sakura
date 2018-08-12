@@ -3152,6 +3152,7 @@ BEGIN
 	STR_ERR_DLGDOCLM4			"'%ls'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"
 	STR_ERR_DLGDOCLM5			"'%ls'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"
 	STR_ERR_DLGDOCLM6			"CDocLineMgr::GetAllData()\nメモリ確保に失敗しました。\n%dバイト"
+	STR_ERR_DLGDOCLM_TOOBIG		"'%ls'\nというファイルを開けません。\nファイルサイズが大きすぎます。"
 
 	// CDocLineMgr_New.cpp
 	STR_ERR_DLGDOCLMN1			"sakura: 作者に教えて欲しいエラー"
@@ -3172,7 +3173,8 @@ BEGIN
 
 	// CEditDoc.cpp
 	STR_LOADAGENT_ERR_OPEN		"'%ts'\nというファイルを開けません。\n読み込みアクセス権がありません。"
-	STR_LOADAGENT_BIG_FILE		"ファイルサイズが%dMB以上あります。開きますか？"
+	STR_LOADAGENT_BIG_WARNING	"'%ts'\nファイルサイズが%dMB以上あります。開きますか？"
+	STR_LOADAGENT_BIG_ERROR		"'%ts'\nというファイルを開けません。\nファイルサイズが大きすぎます。"
 	STR_SAVEAGENT_VIEW_FILE		"ビューモードでは同一ファイルへの保存はできません。"
 	STR_SAVEAGENT_OTHER			"'%ts'\nファイルを保存できません。\n他のウィンドウで使用中です。"
 	STR_ERR_DLGEDITDOC5			"文字コード情報"

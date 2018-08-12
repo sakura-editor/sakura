@@ -3157,6 +3157,7 @@ BEGIN
 	STR_ERR_DLGDOCLM4			"'%ls' error occured whilst trying to read the file.\nWill stop attempting to read file."
 	STR_ERR_DLGDOCLM5			"'%ls'\nCould not save file.\nIncorrect path or other application is using the file."
 	STR_ERR_DLGDOCLM6			"CDocLineMgr::GetAllData()\nFailure to reserve memory \n%d bytes"
+	STR_ERR_DLGDOCLM_TOOBIG		"'%ls'\n file could not be opened.\nIts size is too big."
 
 	// CDocLineMgr_New.cpp
 	STR_ERR_DLGDOCLMN1			"Please inform the developers about this bug."
@@ -3177,7 +3178,8 @@ BEGIN
 
 	// CEditDoc.cpp
 	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
-	STR_LOADAGENT_BIG_FILE		"File size is %dMB or over. Do you want to open?"
+	STR_LOADAGENT_BIG_WARNING	"'%ts'\nFile size is %dMB or over. Do you want to open?"
+	STR_LOADAGENT_BIG_ERROR		"'%ts'\nCannot open file.\nIts size is too big."
 	STR_SAVEAGENT_VIEW_FILE		"Cannot overwrite file in view-mode."
 	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below

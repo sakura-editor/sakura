@@ -148,7 +148,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, bool bBigFile, ECodeType CharC
 	if( !bBigFile && 0x80000000 <= fileSize.QuadPart ){
 		// ファイルが大きすぎる(2GB位)
 		FileClose();
-		throw CError_FileOpen();
+		throw CError_FileOpen(CError_FileOpen::TOO_BIG);
 	}
 	m_nFileSize = fileSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;

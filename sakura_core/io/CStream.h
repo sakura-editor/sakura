@@ -26,8 +26,21 @@
 
 class CFileAttribute;
 
-//例外
-class CError_FileOpen{};	//!< 例外：ファイルオープンに失敗
+//! 例外：ファイルオープンに失敗
+class CError_FileOpen {
+public:
+	enum EReason {
+		UNKNOWN,
+		TOO_BIG
+	};
+public:
+	CError_FileOpen() : m_reason(UNKNOWN) {}
+	CError_FileOpen(EReason reason) : m_reason(reason) {}
+	EReason Reason() const { return m_reason; }
+private:
+	EReason m_reason;
+};
+
 class CError_FileWrite{};	//!< 例外：ファイル書き込み失敗
 class CError_FileRead{};	//!< 例外：ファイル読み込み失敗
 
