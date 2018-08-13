@@ -9,6 +9,7 @@
         - [Visual Studio Community 2017](#visual-studio-community-2017)
             - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [How to build](#how-to-build)
+        - [インストーラの仕組み](#インストーラの仕組み)
         - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [CI Build (AppVeyor)](#ci-build-appveyor)
         - [ビルドの仕組み](#ビルドの仕組み)
@@ -42,6 +43,11 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 ## How to build
 Visual Studio Community 2017 で `sakura.sln` を開いてビルド。
+
+
+### インストーラの仕組み
+
+[こちら](installer/readme.md) でビルドの仕組みを説明しています。
 
 ### githash.h の更新のスキップ
 
