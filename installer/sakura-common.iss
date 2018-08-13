@@ -31,6 +31,9 @@ DisableStartupPrompt=no
 
 PrivilegesRequired=None
 
+; 出力先ディレクトリ
+OutputDir=Output-{#OutputSuffix}
+
 ; エディタのバージョンに応じて書き換える場所
 OutputBaseFilename=sakura_install{#MyAppVerH}-{#MyArchitecture}
 VersionInfoVersion={#MyAppVer}
