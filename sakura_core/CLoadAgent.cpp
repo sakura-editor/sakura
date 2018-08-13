@@ -34,6 +34,7 @@
 #include "window/CEditWnd.h"
 #include "uiparts/CVisualProgress.h"
 #include "util/file.h"
+#include "io/CFileLoad.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
@@ -133,20 +134,46 @@ next:
 	while(false);	//	1回しか通らない. breakでここまで飛ぶ
 
 	// ファイルサイズチェック
-	if( GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile ){
-		WIN32_FIND_DATA wfd;
-		HANDLE nFind = ::FindFirstFile( pLoadInfo->cFilePath.c_str(), &wfd );
-		if( nFind != INVALID_HANDLE_VALUE ){
-			::FindClose( nFind );
-			LARGE_INTEGER nFileSize;
-			nFileSize.HighPart = wfd.nFileSizeHigh;
-			nFileSize.LowPart = wfd.nFileSizeLow;
+	WIN32_FIND_DATA wfd;
+	HANDLE nFind = ::FindFirstFile(pLoadInfo->cFilePath.c_str(), &wfd);
+	if (nFind != INVALID_HANDLE_VALUE) {
+		::FindClose(nFind);
+
+		LARGE_INTEGER nFileSize;
+		nFileSize.HighPart = wfd.nFileSizeHigh;
+		nFileSize.LowPart = wfd.nFileSizeLow;
+
+		// システム的に開けない場合にはエラーダイアログを出してオープン処理中断
+#ifdef _WIN64
+		bool bBigFile = true;
+#else
+		bool bBigFile = false;
+#endif
+		if (!CFileLoad::IsLoadableSize(nFileSize.QuadPart)) {
+			// ファイルサイズがシステム的に大きすぎるため、エラーとしてファイルロードを中断する。
+			// ※32bit 版の場合は 2GB あたりを上限とする。
+			//   ここでエラーを出さずに OnLoad に突入させてしまうと CFileLoad::FileOpen が例外を吐くので、
+			//   この段階でエラーを出して処理を中断させる。
+			ErrorMessage(
+				CEditWnd::getInstance()->GetHwnd(),
+				LS(STR_LOADAGENT_BIG_ERROR),
+				pLoadInfo->cFilePath.c_str(),
+				CFileLoad::GetSizeStringForHuman(nFileSize.QuadPart).c_str(),
+				CFileLoad::GetSizeStringForHuman(CFileLoad::GetLimitSize()).c_str()
+			);
+			return CALLBACK_INTERRUPT;
+		}
+
+		// ファイルサイズがユーザ設定の閾値以上の場合は警告ダイアログを出す
+		if (GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile) {
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
+				// 本当に開いて良いかどうかの警告ダイアログ
 				int nRet = MYMESSAGEBOX( CEditWnd::getInstance()->GetHwnd(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 					GSTR_APPNAME,
-					LS(STR_LOADAGENT_BIG_FILE),
+					LS(STR_LOADAGENT_BIG_WARNING),
+					pLoadInfo->cFilePath.c_str(),
 					GetDllShareData().m_Common.m_sFile.m_nAlertFileSize );
 				if( nRet != IDYES ){
 					return CALLBACK_INTERRUPT;

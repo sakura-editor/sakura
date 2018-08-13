@@ -129,9 +129,17 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		//WM_QUITが発生した
 		return RESULT_FAILURE;
 	}
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ex ){
 		eRet = RESULT_FAILURE;
-		if( !fexist( pszPath )){
+		if (ex.Reason() == CError_FileOpen::TOO_BIG) {
+			// ファイルサイズが大きすぎる (32bit 版の場合は 2GB あたりが上限)
+			ErrorMessage(
+				CEditWnd::getInstance()->GetHwnd(),
+				LS(STR_ERR_DLGDOCLM_TOOBIG),
+				pszPath
+			);
+		}
+		else if( !fexist( pszPath )){
 			// ファイルがない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
