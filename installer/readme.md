@@ -70,7 +70,16 @@ Inno Setup の設定ファイルは拡張子が iss のファイルです。
 - installer\sakura\macro.chm
 - installer\sakura\plugin.chm
 - installer\sakura\sakura.exe.ini
+- installer\sakura\keyword\*.col
+- installer\sakura\keyword\*.dic
+- installer\sakura\keyword\*.hkn
+- installer\sakura\keyword\*.khp
 - installer\sakura\keyword\*.kwd
+- installer\sakura\keyword\*.otl
+- installer\sakura\keyword\*.rkw
+- installer\sakura\keyword\*.rl
+- installer\sakura\keyword\*.rule
+- installer\sakura\keyword\*.txt
 
 ## インストーラのビルド
 
