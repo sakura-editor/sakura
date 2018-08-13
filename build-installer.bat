@@ -23,11 +23,13 @@ copy %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
 
+set DLL_BREGONIG_NAME=bregonig.dll
 if "%platform%" == "x64" (
-	copy %INSTALLER_RESOURCES_BRON%\x64\*.dll         %INSTALLER_WORK%\
+	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%\x64
 ) else (
-	copy %INSTALLER_RESOURCES_BRON%\*.dll             %INSTALLER_WORK%\
+	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%
 )
+copy %INSTALLER_RESOURCES_BRON_DLL%\*.dll             %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
 
 copy help\sakura\sakura.chm                      %INSTALLER_WORK%\
@@ -36,6 +38,40 @@ copy help\macro\macro.chm                        %INSTALLER_WORK%\
 
 copy %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
 copy %platform%\%configuration%\sakura_lang_en_US.dll %INSTALLER_WORK%\
+
+set DLL_BREGONIG_0=%INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%
+set DLL_BREGONIG_1=%INSTALLER_WORK%\%DLL_BREGONIG_NAME%
+set DLL_BREGONIG_2=installer\externals\bregonig\%platform%\%DLL_BREGONIG_NAME%
+set DLL_BREGONIG_3=%platform%\%configuration%\%DLL_BREGONIG_NAME%
+
+set COMPARE_RESULT=0
+fc %DLL_BREGONIG_0% %DLL_BREGONIG_1% 1>nul 2>&1
+if "%ERRORLEVEL%" == "0" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: unmatched
+	set COMPARE_RESULT=1
+)
+
+fc %DLL_BREGONIG_0% %DLL_BREGONIG_2% 1>nul 2>&1
+if "%ERRORLEVEL%" == "0" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_2% for %platform%: matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_2% for %platform%: unmatched
+	set COMPARE_RESULT=1
+)
+
+fc %DLL_BREGONIG_0% %DLL_BREGONIG_3% 1>nul 2>&1
+if "%ERRORLEVEL%" == "0" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_3% for %platform%: matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_3% for %platform%: unmatched
+	set COMPARE_RESULT=1
+)
+if "%COMPARE_RESULT%" == "1" (
+	echo unmatch
+	exit /b 1
+)
 
 set SAKURA_ISS=installer\sakura-%platform%.iss
 "C:\Program Files (x86)\Inno Setup 5\ISCC.exe" %SAKURA_ISS% || (echo error && exit /b 1)
