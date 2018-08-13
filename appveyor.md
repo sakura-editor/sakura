@@ -13,9 +13,11 @@
         - [preBuild.bat の構造](#prebuildbat-の構造)
             - [生成する環境変数](#生成する環境変数)
             - [処理の流れ](#処理の流れ)
+        - [postBuild.bat の構造](#postbuildbat-の構造)
+            - [処理の流れ](#処理の流れ-1)
         - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
             - [生成する環境変数](#生成する環境変数-1)
-            - [処理の流れ](#処理の流れ-1)
+            - [処理の流れ](#処理の流れ-2)
 
 <!-- /TOC -->
 
@@ -73,7 +75,7 @@
                 - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
                 - MakefileMake.exe : Makefile を更新する (MinGW 用)
                 - git.exe : git や appveyor 関連の情報を githash.h に出力する
-            - [sakura\postBuild.bat](sakura/postBuild.bat) : 何もしない
+            - [sakura\postBuild.bat](sakura/postBuild.bat) : bregonig.dll のコピー
         - [parse-buildlog.bat](parse-buildlog.bat) : ビルドログを解析する
             - [appveyor_env.py](appveyor_env.py)
             - [parse-buildlog.py](parse-buildlog.py)
@@ -95,7 +97,7 @@
 |build-all.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
 |build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
 |sakura\preBuild.bat | HeaderMake.exe または MakefileMake.exe の実行ファイルのフォルダパス | なし |
-|sakura\postBuild.bat| なし | なし |
+|sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
@@ -147,6 +149,12 @@
 | APPVEYOR_SHORTHASH_PR_HEAD        |APPVEYOR_SHORTHASH_PR_HEAD   |文字列   |
 | APPVEYOR_BUILD_URL                |APPVEYOR_BUILD_URL           |文字列   |
 
+
+### postBuild.bat の構造
+
+#### 処理の流れ
+
+* 直接リポジトリに登録している bregonig.dll を sakura.exe のビルドの出力先にコピーする
 
 ### zipArtifacts.bat の構造
 
