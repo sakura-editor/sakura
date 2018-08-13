@@ -56,7 +56,7 @@ FOR %%d IN (%DLL_BREGONIG_3%) DO SET TIMESTAMP_3=%%~td
 
 @rem compare file contents
 set COMPARE_RESULT=0
-fc %DLL_BREGONIG_0% %DLL_BREGONIG_1% 1>nul 2>&1
+fc /B %DLL_BREGONIG_0% %DLL_BREGONIG_1% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
 	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: matched
 ) else (
@@ -64,7 +64,7 @@ if "%ERRORLEVEL%" == "0" (
 	set COMPARE_RESULT=1
 )
 
-fc %DLL_BREGONIG_0% %DLL_BREGONIG_2% 1>nul 2>&1
+fc /B %DLL_BREGONIG_0% %DLL_BREGONIG_2% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
 	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_2% for %platform%: matched
 ) else (
@@ -72,7 +72,7 @@ if "%ERRORLEVEL%" == "0" (
 	set COMPARE_RESULT=1
 )
 
-fc %DLL_BREGONIG_0% %DLL_BREGONIG_3% 1>nul 2>&1
+fc /B %DLL_BREGONIG_0% %DLL_BREGONIG_3% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
 	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_3% for %platform%: matched
 ) else (
