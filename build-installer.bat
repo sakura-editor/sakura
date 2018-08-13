@@ -44,6 +44,17 @@ set DLL_BREGONIG_1=%INSTALLER_WORK%\%DLL_BREGONIG_NAME%
 set DLL_BREGONIG_2=installer\externals\bregonig\%platform%\%DLL_BREGONIG_NAME%
 set DLL_BREGONIG_3=%platform%\%configuration%\%DLL_BREGONIG_NAME%
 
+FOR %%a IN (%DLL_BREGONIG_0%) DO SET TIMESTAMP_0=%%~ta
+FOR %%b IN (%DLL_BREGONIG_1%) DO SET TIMESTAMP_1=%%~tb
+FOR %%c IN (%DLL_BREGONIG_2%) DO SET TIMESTAMP_2=%%~tc
+FOR %%d IN (%DLL_BREGONIG_3%) DO SET TIMESTAMP_3=%%~td
+
+@echo %TIMESTAMP_0% %DLL_BREGONIG_0%
+@echo %TIMESTAMP_1% %DLL_BREGONIG_1%
+@echo %TIMESTAMP_2% %DLL_BREGONIG_2%
+@echo %TIMESTAMP_3% %DLL_BREGONIG_3%
+
+@rem compare file contents
 set COMPARE_RESULT=0
 fc %DLL_BREGONIG_0% %DLL_BREGONIG_1% 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
@@ -68,8 +79,21 @@ if "%ERRORLEVEL%" == "0" (
 	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_3% for %platform%: unmatched
 	set COMPARE_RESULT=1
 )
+
 if "%COMPARE_RESULT%" == "1" (
-	echo unmatch
+	echo unmatch file contents
+	exit /b 1
+)
+@rem compare timestamps
+if "%TIMESTAMP_0%" == "%TIMESTAMP_1%" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: timestamps matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: timestamps unmatched
+	set COMPARE_RESULT=1
+)
+
+if "%COMPARE_RESULT%" == "1" (
+	echo unmatch timestamps
 	exit /b 1
 )
 
