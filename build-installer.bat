@@ -29,15 +29,15 @@ if "%platform%" == "x64" (
 ) else (
 	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%
 )
-copy %INSTALLER_RESOURCES_BRON_DLL%\*.dll             %INSTALLER_WORK%\
+copy /B %INSTALLER_RESOURCES_BRON_DLL%\*.dll          %INSTALLER_WORK%\
 copy %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
 
-copy help\sakura\sakura.chm                      %INSTALLER_WORK%\
-copy help\plugin\plugin.chm                      %INSTALLER_WORK%\
-copy help\macro\macro.chm                        %INSTALLER_WORK%\
+copy /B help\sakura\sakura.chm                           %INSTALLER_WORK%\
+copy /B help\plugin\plugin.chm                           %INSTALLER_WORK%\
+copy /B help\macro\macro.chm                             %INSTALLER_WORK%\
 
-copy %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
-copy %platform%\%configuration%\sakura_lang_en_US.dll %INSTALLER_WORK%\
+copy /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
+copy /B %platform%\%configuration%\sakura_lang_en_US.dll %INSTALLER_WORK%\
 
 set DLL_BREGONIG_0=%INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%
 set DLL_BREGONIG_1=%INSTALLER_WORK%\%DLL_BREGONIG_NAME%

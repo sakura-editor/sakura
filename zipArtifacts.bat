@@ -144,23 +144,23 @@ mkdir %WORKDIR%
 mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_INST%
-copy %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
-copy %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
-copy %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
+copy /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
+copy /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
+copy /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
 
-copy help\macro\macro.chm    %WORKDIR_EXE%\
-copy help\plugin\plugin.chm  %WORKDIR_EXE%\
-copy help\sakura\sakura.chm  %WORKDIR_EXE%\
+copy /B help\macro\macro.chm    %WORKDIR_EXE%\
+copy /B help\plugin\plugin.chm  %WORKDIR_EXE%\
+copy /B help\sakura\sakura.chm  %WORKDIR_EXE%\
 
 copy installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
 	copy installer\warning-alpha.txt   %WORKDIR%\
 )
-copy installer\Output-%platform%\*.exe  %WORKDIR_INST%\
+copy /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
 copy msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
 copy msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
 if exist "msbuild-%platform%-%configuration%.log.xlsx" (
-	copy "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
+	copy /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
 )
 copy sakura_core\githash.h                      %WORKDIR_LOG%\
 
