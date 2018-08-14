@@ -144,25 +144,25 @@ mkdir %WORKDIR%
 mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_INST%
-copy /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
-copy /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
-copy /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
+copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
+copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
+copy /Y /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
 
-copy /B help\macro\macro.chm    %WORKDIR_EXE%\
-copy /B help\plugin\plugin.chm  %WORKDIR_EXE%\
-copy /B help\sakura\sakura.chm  %WORKDIR_EXE%\
+copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
+copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
+copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
 
-copy installer\warning.txt   %WORKDIR%\
+copy /Y installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
-	copy installer\warning-alpha.txt   %WORKDIR%\
+	copy /Y installer\warning-alpha.txt   %WORKDIR%\
 )
-copy /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
-copy msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
-copy msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
+copy /Y /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
+copy /Y msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
+copy /Y msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
 if exist "msbuild-%platform%-%configuration%.log.xlsx" (
-	copy /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
+	copy /Y /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
 )
-copy sakura_core\githash.h                      %WORKDIR_LOG%\
+copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
 
 set HASHFILE=sha256.txt
 if exist "%HASHFILE%" (
@@ -170,7 +170,7 @@ if exist "%HASHFILE%" (
 )
 call calc-hash.bat %HASHFILE% %WORKDIR%\
 if exist "%HASHFILE%" (
-	copy %HASHFILE%           %WORKDIR%\
+	copy /Y %HASHFILE%           %WORKDIR%\
 )
 7z a %OUTFILE%  -r %WORKDIR%
 7z l %OUTFILE%
@@ -180,7 +180,7 @@ if exist "%HASHFILE%" (
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
-copy sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\
+copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\
 7z a %OUTFILE_ASM%  -r %WORKDIR_ASM%
 7z l %OUTFILE_ASM%
 @echo end   zip asm

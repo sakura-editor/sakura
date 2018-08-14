@@ -17,7 +17,7 @@ set CONFIGURATION=%2
 
 : ---- copy bregonig.dll ---- :
 @echo Copy bregonig.dll to destination directory.
-copy /B ..\installer\externals\bregonig\%PLATFORM%\bregonig.dll ..\%PLATFORM%\%CONFIGURATION%\bregonig.dll
+copy /Y /B ..\installer\externals\bregonig\%PLATFORM%\bregonig.dll ..\%PLATFORM%\%CONFIGURATION%\bregonig.dll
 
 
 ENDLOCAL

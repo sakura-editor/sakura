@@ -18,10 +18,10 @@ if exist "%INSTALLER_RESOURCES_BRON%" rmdir /s /q "%INSTALLER_RESOURCES_BRON%"
 mkdir %INSTALLER_WORK%
 mkdir %INSTALLER_WORK%\keyword
 
-copy %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x %INSTALLER_WORK%\
-copy %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
-copy %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
-copy %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x %INSTALLER_WORK%\
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
+copy /Y %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
 
 set DLL_BREGONIG_NAME=bregonig.dll
 if "%platform%" == "x64" (
@@ -29,15 +29,15 @@ if "%platform%" == "x64" (
 ) else (
 	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%
 )
-copy /B %INSTALLER_RESOURCES_BRON_DLL%\*.dll          %INSTALLER_WORK%\
-copy %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
+copy /Y /B %INSTALLER_RESOURCES_BRON_DLL%\*.dll          %INSTALLER_WORK%\
+copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
 
-copy /B help\sakura\sakura.chm                           %INSTALLER_WORK%\
-copy /B help\plugin\plugin.chm                           %INSTALLER_WORK%\
-copy /B help\macro\macro.chm                             %INSTALLER_WORK%\
+copy /Y /B help\sakura\sakura.chm                           %INSTALLER_WORK%\
+copy /Y /B help\plugin\plugin.chm                           %INSTALLER_WORK%\
+copy /Y /B help\macro\macro.chm                             %INSTALLER_WORK%\
 
-copy /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
-copy /B %platform%\%configuration%\sakura_lang_en_US.dll %INSTALLER_WORK%\
+copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
+copy /Y /B %platform%\%configuration%\sakura_lang_en_US.dll %INSTALLER_WORK%\
 
 set DLL_BREGONIG_0=%INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%
 set DLL_BREGONIG_1=%INSTALLER_WORK%\%DLL_BREGONIG_NAME%
