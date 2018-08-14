@@ -2,8 +2,10 @@
 
 - [インストーラ作成に必要なもの](#インストーラ作成に必要なもの)
 - [インストーラ作成手順](#インストーラ作成手順)
-    - [すべてビルドする場合](#すべてビルドする場合)
+    - [すべて一括でビルドする場合](#すべて一括でビルドする場合)
+        - [具体例 (全構成をビルドする場合)](#具体例-全構成をビルドする場合)
     - [個別にビルドする場合](#個別にビルドする場合)
+        - [具体例 (x64 の Release)](#具体例-x64-の-release)
 - [インストーラの設定ファイル](#インストーラの設定ファイル)
 - [インストーラのビルドに必要なファイル](#インストーラのビルドに必要なファイル)
 - [インストーラのビルド](#インストーラのビルド)
@@ -22,7 +24,7 @@
 
 ## インストーラ作成手順
 
-### すべてビルドする場合
+### すべて一括でビルドする場合
 
 以下のコマンドを実行する
 
@@ -36,6 +38,16 @@ build-all.bat <Platform> <Configuration>
 |第一引数 | platform      | "Win32" または "x64" |
 |第二引数 | configuration | "Debug" または "Release" |
 
+#### 具体例 (全構成をビルドする場合)
+
+```
+build-all.bat Win32 Release
+build-all.bat Win32 Debug
+build-all.bat x64   Release
+build-all.bat x64   Debug
+```
+
+
 ### 個別にビルドする場合
 
 以下のコマンドを実行する
@@ -44,6 +56,15 @@ build-all.bat <Platform> <Configuration>
 build-sln.bat <Platform> <Configuration>
 build-chm.bat
 build-installer.bat <Platform> <Configuration>
+```
+
+
+#### 具体例 (x64 の Release)
+
+```
+build-sln.bat x64 Release
+build-chm.bat
+build-installer.bat x64 Release
 ```
 
 ## インストーラの設定ファイル
