@@ -94,14 +94,14 @@
 
 | バッチファイル | 第一引数 | 第二引数 |
 ----|----|----
-|build-all.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
-|build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
+|build-all.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |sakura\preBuild.bat | HeaderMake.exe または MakefileMake.exe の実行ファイルのフォルダパス | なし |
-|sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
+|sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
-|build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
-|zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Relelase)"  |
+|build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |calc-hash.bat       | sha256 のハッシュ値の出力先ファイル | ハッシュ値を計算するフォルダパス |
 
 ## バッチファイルの仕組み
