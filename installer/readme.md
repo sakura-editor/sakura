@@ -34,7 +34,7 @@ build-all.bat <Platform> <Configuration>
 | 引数 | 名前 | 値 |
 ----|----|----
 |第一引数 | platform      | "Win32" または "x64" |
-|第二引数 | configuration | "Debug" または "Relelase" |
+|第二引数 | configuration | "Debug" または "Release" |
 
 ### 個別にビルドする場合
 
