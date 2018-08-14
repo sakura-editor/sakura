@@ -145,8 +145,22 @@ mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_INST%
 copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
-copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
+copy /Y /B %platform%\%configuration%\sakura_lang_en_US.dll %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
+
+@rem --- start copy bregonig.dll -----
+set INSTALLER_RESOURCES_BRON=temp\bron
+if exist "%INSTALLER_RESOURCES_BRON%" rmdir /s /q "%INSTALLER_RESOURCES_BRON%"
+7z x installer\externals\bregonig\bron412.zip  -O"%INSTALLER_RESOURCES_BRON%" || (echo error && exit /b 1)
+
+set DLL_BREGONIG_NAME=bregonig.dll
+if "%platform%" == "x64" (
+	set RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%\x64
+) else (
+	set RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%
+)
+copy /Y /B %RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%  %WORKDIR_EXE%\
+@rem --- end copy bregonig.dll -----
 
 copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
