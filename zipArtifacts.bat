@@ -162,6 +162,44 @@ if "%platform%" == "x64" (
 copy /Y /B %RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%  %WORKDIR_EXE%\
 @rem --- end copy bregonig.dll -----
 
+@rem --- start check bregonig.dll -----
+set DLL_BREGONIG_0=%RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%
+set DLL_BREGONIG_1=%WORKDIR_EXE%\%DLL_BREGONIG_NAME%
+
+FOR %%a IN (%DLL_BREGONIG_0%) DO SET TIMESTAMP_0=%%~ta
+FOR %%b IN (%DLL_BREGONIG_1%) DO SET TIMESTAMP_1=%%~tb
+
+@echo %TIMESTAMP_0% %DLL_BREGONIG_0%
+@echo %TIMESTAMP_1% %DLL_BREGONIG_1%
+
+@rem compare file contents
+set COMPARE_RESULT=0
+fc /B %DLL_BREGONIG_0% %DLL_BREGONIG_1% 1>nul 2>&1
+if "%ERRORLEVEL%" == "0" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: unmatched
+	set COMPARE_RESULT=1
+)
+
+if "%COMPARE_RESULT%" == "1" (
+	echo unmatch file contents
+	exit /b 1
+)
+@rem compare timestamps
+if "%TIMESTAMP_0%" == "%TIMESTAMP_1%" (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: timestamps matched
+) else (
+	@echo %DLL_BREGONIG_0% and %DLL_BREGONIG_1% for %platform%: timestamps unmatched
+	set COMPARE_RESULT=1
+)
+
+if "%COMPARE_RESULT%" == "1" (
+	echo unmatch timestamps
+	exit /b 1
+)
+@rem --- end check bregonig.dll -----
+
 copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
