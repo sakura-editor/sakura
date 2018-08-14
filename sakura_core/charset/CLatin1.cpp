@@ -110,12 +110,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
 	// 変換先バッファサイズを設定してメモリ領域確保
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nSrcLen];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
@@ -217,12 +212,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 変換先バッファサイズを設定してバッファを確保
-	char* pDst;
-	try{
-		pDst = new char[ nSrcLen * 2 ];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}

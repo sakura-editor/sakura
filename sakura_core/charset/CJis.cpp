@@ -270,13 +270,8 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 
 
 	// 変換先バッファを取得
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nsrclen * 3 + 1];
-		if( pDst == NULL ){
-			return RESULT_FAILURE;
-		}
-	}catch( ... ){
+	wchar_t* pDst = new (std::nothrow) wchar_t[nsrclen * 3 + 1];
+	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
 
@@ -466,12 +461,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファ容量を確認してバッファを確保
-	char* pDst;
-	try{
-		pDst = new char[nSrcLen * 8];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	char* pDst = new (std::nothrow) char[nSrcLen * 8];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}

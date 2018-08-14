@@ -120,12 +120,7 @@ EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int c
 	UINT codepage = CodePageExToMSCP(codepageEx);
 	int nDstCch = MultiByteToWideChar2(codepage, nToWideCharFlags, pSrc, nSrcLen, NULL, 0);
 	// 変換先バッファサイズとその確保
-	wchar_t* pDstBuffer;
-	try{
-		pDstBuffer = new wchar_t[nDstCch];
-	}catch( ... ){
-		pDstBuffer = NULL;
-	}
+	wchar_t* pDstBuffer = new (std::nothrow) wchar_t[nDstCch];
 	if( pDstBuffer == NULL ){
 		return RESULT_FAILURE;
 	}
@@ -209,12 +204,7 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 #endif
 		return RESULT_FAILURE;
 	}
-	char* pDstBuffer;
-	try{
-		pDstBuffer = new char[nBuffSize];
-	}catch( ... ){
-		pDstBuffer = NULL;
-	}
+	char* pDstBuffer = new (std::nothrow) char[nBuffSize];
 	if( pDstBuffer == NULL ){
 		return RESULT_FAILURE;
 	}

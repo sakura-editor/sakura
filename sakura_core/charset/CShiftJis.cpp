@@ -7,6 +7,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
+#include <new>
 
 //! 指定した位置の文字が何バイト文字かを返す
 /*!
@@ -119,12 +120,7 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	if( &cSrc == pDstMem->_GetMemory() )
 	{
 		// 変換先バッファサイズを設定してメモリ領域確保
-		wchar_t* pDst;
-		try{
-			pDst = new wchar_t[nSrcLen];
-		}catch( ... ){
-			pDst = NULL;
-		}
+		wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
 		if( pDst == NULL ){
 			return RESULT_FAILURE;
 		}
@@ -239,12 +235,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
 	// 変換先バッファサイズを設定してバッファを確保
-	char* pDst;
-	try{
-		pDst = new char[ nSrcLen * 2 ];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}

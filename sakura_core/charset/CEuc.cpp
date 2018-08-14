@@ -83,12 +83,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
 
 	// 変換先バッファサイズとその確保
-	wchar_t* pDst;
-	try{
-		pDst = new wchar_t[nSrcLen];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
@@ -178,12 +173,7 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファサイズを調べてメモリを確保
-	char* pDst;
-	try{
-		pDst = new char[nSrcLen * 2];
-	}catch( ... ){
-		pDst = NULL;
-	}
+	char* pDst = new (std::nothrow) char[nSrcLen * 2];
 	if( pDst == NULL ){
 		return RESULT_FAILURE;
 	}
