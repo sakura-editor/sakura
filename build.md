@@ -36,7 +36,7 @@
 
 ### インストーラのビルドに必要なもの
 
-[こちら](installer/readme.md) を参照
+インストーラビルドの仕組みは [こちら](installer/readme.md) を参照
 
 - [Inno Setup](http://www.jrsoftware.org/isdl.php) の以下のいずれかのバージョンです。
     - [innosetup-5.5.9-unicode.exe](http://files.jrsoftware.org/is/5/) (appveyor でのビルドではこちらが使われます。)
