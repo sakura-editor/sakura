@@ -21,6 +21,7 @@
 - [Inno Setup](http://www.jrsoftware.org/isdl.php) の以下のいずれかのバージョンです。
     - [innosetup-5.5.9-unicode.exe](http://files.jrsoftware.org/is/5/) (appveyor でのビルドではこちらが使われます。)
     - [innosetup-5.6.1-unicode.exe](http://www.jrsoftware.org/isdl.php)
+- [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用します)
 
 ## インストーラ作成手順
 
