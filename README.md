@@ -42,7 +42,8 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 ## How to build
 
-Visual Studio Community 2017 で `sakura.sln` を開いてビルド。
+- [7Zip](https://sevenzip.osdn.jp/) のインストールして 7z.exe へのパスを通します。
+- Visual Studio Community 2017 で `sakura.sln` を開いてビルドします。
 
 ### 詳細情報
 
