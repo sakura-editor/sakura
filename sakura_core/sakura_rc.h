@@ -805,6 +805,8 @@
 #define IDC_STATIC_URL_GITHUB_CAPTION   1731
 #define IDC_STATIC_URL_GITHUB_COMMIT    1732
 #define IDC_STATIC_URL_GITHUB_PR        1733
+#define IDC_COMBO_EXCLUDE_FOLDER        1734
+#define IDC_COMBO_EXCLUDE_FILE          1735
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
