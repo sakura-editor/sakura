@@ -25,8 +25,8 @@
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "COpe.h"
-#include "mem/MemoryPool.h"
 #include "CDocLine.h"
+#include "../lib/MemoryPool/MemoryPool.h"
 
 class CBregexp; // 2002/2/10 aroka
 
