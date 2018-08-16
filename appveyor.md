@@ -154,7 +154,7 @@
 
 #### 処理の流れ
 
-* 直接リポジトリに登録している bregonig.dll を sakura.exe のビルドの出力先にコピーする
+* リポジトリに登録している bregonig の zipファイルを解凍して bregonig.dll を sakura.exe のビルドの出力先にコピーする
 
 ### zipArtifacts.bat の構造
 

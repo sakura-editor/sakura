@@ -16,12 +16,7 @@
 
 ## インストーラ作成に必要なもの
 
-- Visual Studio 2017 Comminity Edition (sakura editor の実行ファイルのビルドに必要です。)
-- HTML Help Workshop (chm ファイルのコンパイルに必要です。Visual Studio 2017 のインストールでインストールされます。)
-- [Inno Setup](http://www.jrsoftware.org/isdl.php) の以下のいずれかのバージョンです。
-    - [innosetup-5.5.9-unicode.exe](http://files.jrsoftware.org/is/5/) (appveyor でのビルドではこちらが使われます。)
-    - [innosetup-5.6.1-unicode.exe](http://www.jrsoftware.org/isdl.php)
-- [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用します)
+[こちら](../build.md#必要なもの) を参照
 
 ## インストーラ作成手順
 
