@@ -27,7 +27,7 @@
 
 ### 実行ファイルのビルドに必要なもの
 
-- [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用) (7z.exe へのパスを通しておく)
+- (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
 - Visual Studio 2017 Comminity Edition
 
 ### HTML ヘルプのビルドに必要なもの
@@ -113,3 +113,29 @@ build-sln.bat Win32 Debug
 build-sln.bat x64   Release
 build-sln.bat x64   Debug
 ```
+
+
+### powershell による ZIP ファイル処理の強制
+
+`7z.exe` へのパスが通っている場合または `C:\Program Files\7-Zip\7z.exe` が存在している場合は
+`7z.exe` を使って、ZIP ファイルの解凍、圧縮、内容確認に使用します。
+
+上記以外の場合は `powershell によるスクリプト` により処理を行います。
+
+`7z.exe` のほうがはるかに処理速度が速いので `7z.exe` が理由可能なら `powershell によるスクリプト` を
+使う理由は殆どないのですが、デバッグ目的で強制的に `powershell によるスクリプト` を使用する手段を
+提供します。
+
+コマンドラインでビルドするときに事前に FORCE_POWERSHELL_ZIP を 1 に設定することにより
+強制的に `powershell によるスクリプト` を使用します。
+
+コマンド実行例
+
+```
+set FORCE_POWERSHELL_ZIP=1
+build-sln.bat Win32 Release
+build-sln.bat Win32 Debug
+build-sln.bat x64   Release
+build-sln.bat x64   Debug
+```
+
