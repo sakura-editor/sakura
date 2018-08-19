@@ -7,6 +7,9 @@ if "%platform%" == "x64" (
 	set ALPHA=0
 )
 
+set ZIP_CMD=%~dp0tools\zip\zip.bat
+set LIST_ZIP_CMD=%~dp0tools\zip\listzip.bat
+
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
 @rem ----------------------------------------------------------------
@@ -172,17 +175,18 @@ call calc-hash.bat %HASHFILE% %WORKDIR%\
 if exist "%HASHFILE%" (
 	copy /Y %HASHFILE%           %WORKDIR%\
 )
-7z a %OUTFILE%  -r %WORKDIR%
-7z l %OUTFILE%
+call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
+call %LIST_ZIP_CMD%  %OUTFILE%
 
-7z a %OUTFILE_LOG%  -r %WORKDIR_LOG%
-7z l %OUTFILE_LOG%
+call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
+call %LIST_ZIP_CMD%  %OUTFILE_LOG%
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
 copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\
-7z a %OUTFILE_ASM%  -r %WORKDIR_ASM%
-7z l %OUTFILE_ASM%
+call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
+call %LIST_ZIP_CMD%  %OUTFILE_ASM%
+
 @echo end   zip asm
 
 if exist "%WORKDIR%" (

@@ -76,6 +76,9 @@
                 - MakefileMake.exe : Makefile を更新する (MinGW 用)
                 - git.exe : git や appveyor 関連の情報を githash.h に出力する
             - [sakura\postBuild.bat](sakura/postBuild.bat) : bregonig.dll のコピー
+                - [unzip.bat](tools/zip/unzip.bat) : 外部依存ファイルを展開する
+                    - [7z.exe](https://sevenzip.osdn.jp/) : zip ファイルの展開に使用
+                    - [unzip.ps1](tools/zip/unzip.ps1) : powershell 版の ZIP ファイルの展開スクリプト
         - [parse-buildlog.bat](parse-buildlog.bat) : ビルドログを解析する
             - [appveyor_env.py](appveyor_env.py)
             - [parse-buildlog.py](parse-buildlog.py)
@@ -83,13 +86,17 @@
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
         - hhc.exe (Visual Studio 2017 に同梱)
     - [build-installer.bat](build-installer.bat) : Installer をビルドする
-        - [7z.exe](https://sevenzip.osdn.jp/) : 外部依存ファイルを展開する
         - [ISCC.exe](http://www.jrsoftware.org/isinfo.php) : InnoSetup でインストーラをビルドする
     - [zipArtifacts.bat](zipArtifacts.bat) : 成果物を zip で固める
         - [calc-hash.bat](calc-hash.bat) : 各成果物の sha256 を計算する
             - [calc-hash.py](calc-hash.py)
-        - [7z.exe](https://sevenzip.osdn.jp/) : 成果物を zip に固める
-    
+        - [zip.bat](tools/zip/zip.bat) : 成果物を zip に固める
+            - [7z.exe](https://sevenzip.osdn.jp/)
+            - [zip.ps1](tools/zip/zip.ps1) : powershell 版の ZIP ファイルの圧縮スクリプト
+        - [listzip.bat](tools/zip/listzip.bat) : 成果物の zip の中身を確認する
+            - [7z.exe](https://sevenzip.osdn.jp/)
+            - [listzip.ps1](tools/zip/listzip.ps1) : powershell 版の ZIP ファイルの内容確認スクリプト
+
 ## ビルドに使用するバッチファイルの引数
 
 | バッチファイル | 第一引数 | 第二引数 |
