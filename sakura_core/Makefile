@@ -422,7 +422,7 @@ HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
 all: $(exe)
 
-$(exe): Funccode_define.h Funccode_enum.h githash stdafx $(OBJS)
+$(exe): githash $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
 
 Funccode_define.h: $(HEADERMAKE) Funccode_x.hsrc
@@ -437,7 +437,7 @@ githash:
 stdafx: Funccode_enum.h StdAfx.h
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
 
-.cpp.o:
+.cpp.o: stdafx
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
