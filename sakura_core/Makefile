@@ -20,7 +20,6 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-SUBWCREV= SubWCRev.exe
 
 DEFINES= \
  -DWIN32 \
@@ -421,9 +420,6 @@ RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 HEADERMAKETOOLDIR= ../HeaderMake
 HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
-COMMITID=`git show -s --format=%H`
-SHORT_COMMITID=`git show -s --format=%h`
-
 all: $(RCTOOL) $(HEADERMAKE) $(exe)
 
 $(exe): Funccode_define.h Funccode_enum.h githash stdafx $(OBJS)
@@ -436,9 +432,7 @@ Funccode_enum.h: Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 githash:
-	echo  >githash.h "#pragma once"
-	echo >>githash.h "#define GIT_COMMIT_HASH \"$(COMMITID)\""
-	echo >>githash.h "#define GIT_SHORT_COMMIT_HASH \"$(SHORT_COMMITID)\""
+	cmd /c $(CURDIR)/../sakura/githash.bat ../sakura_core
 
 stdafx:
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
