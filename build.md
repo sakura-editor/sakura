@@ -20,6 +20,7 @@
         - [インストーラの仕組み](#インストーラの仕組み)
     - [開発者向けの情報](#開発者向けの情報)
         - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
+        - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
 
 <!-- /TOC -->
 
@@ -115,19 +116,19 @@ build-sln.bat x64   Debug
 ```
 
 
-### powershell による ZIP ファイル処理の強制
+### Powershell によるZIPファイルの圧縮、解凍、内容確認の強制
 
 `7z.exe` へのパスが通っている場合または `C:\Program Files\7-Zip\7z.exe` が存在している場合は
-`7z.exe` を使って、ZIP ファイルの解凍、圧縮、内容確認に使用します。
+`7z.exe` を、ZIP ファイルの解凍、圧縮、内容確認に使用します。
 
-上記以外の場合は `powershell によるスクリプト` により処理を行います。
+上記以外の場合は [powershell によるスクリプト](tools/zip/readme.md) により処理を行います。
 
-`7z.exe` のほうがはるかに処理速度が速いので `7z.exe` が理由可能なら `powershell によるスクリプト` を
-使う理由は殆どないのですが、デバッグ目的で強制的に `powershell によるスクリプト` を使用する手段を
+`7z.exe` のほうがはるかに処理速度が速いので `7z.exe` が利用可能なら [powershell によるスクリプト](tools/zip/readme.md) を
+使う理由は殆どないのですが、デバッグ目的で強制的に [powershell によるスクリプト](tools/zip/readme.md) を使用する手段を
 提供します。
 
 コマンドラインでビルドするときに事前に FORCE_POWERSHELL_ZIP を 1 に設定することにより
-強制的に `powershell によるスクリプト` を使用します。
+強制的に [powershell によるスクリプト](tools/zip/readme.md) を使用します。
 
 コマンド実行例
 
