@@ -144,7 +144,8 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // VS2005以降の安全版文字列関数
-#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005より前なら
+#if (defined(_MSC_VER) && _MSC_VER<1400) //VS2005より前なら
+	|| (defined(__MINGW32__) && defined(MINGW_HAS_SECURE_API) && MINGW_HAS_SECURE_API)
 	typedef int errno_t;
 #define _TRUNCATE ((size_t)-1)
 	errno_t strcpy_s(char *dest, size_t num, const char *src);
