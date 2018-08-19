@@ -34,13 +34,6 @@
 #endif
 #endif
 
-#ifdef __MINGW32__
-#include <_mingw.h>
-#  include <sec_api/tchar_s.h>
-#  include <sec_api/wchar_s.h>
-#  include <sec_api/string_s.h>
-#  include <sec_api/stdio_s.h>
-#endif  // __MINGW32__
 //グローバル
 #include "_main/global.h"
 
