@@ -428,13 +428,13 @@ $(exe): Funccode_define.h Funccode_enum.h githash stdafx $(OBJS)
 Funccode_define.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_define.h -mode=define
 
-Funccode_enum.h: Funccode_x.hsrc
+Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 githash:
 	cmd /c $(CURDIR)/../sakura/githash.bat ../sakura_core
 
-stdafx:
+stdafx: Funccode_enum.h StdAfx.h
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
 
 .cpp.o:
