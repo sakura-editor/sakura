@@ -222,8 +222,8 @@ const char* stristr_j( const char* s1, const char* s2 )
 //                           互換                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#if (defined(_MSC_VER) && _MSC_VER<1400) //VS2005より前なら
-|| (defined(__MINGW32__) && defined(MINGW_HAS_SECURE_API) && MINGW_HAS_SECURE_API)
+#if (defined(_MSC_VER) && _MSC_VER<1400) \
+|| (defined(__MINGW32__) && defined(MINGW_HAS_SECURE_API) && MINGW_HAS_SECURE_API) //VS2005より前なら
 
 errno_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 {
