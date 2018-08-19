@@ -32,7 +32,7 @@ DEFINES= \
  -DUNICODE \
  -DNDEBUG
 CFLAGS= -O2 \
- -finput-charset=cp932 -fexec-charset=cp932 \
+ -finput-charset=utf-8 -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
@@ -421,9 +421,12 @@ RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 HEADERMAKETOOLDIR= ../HeaderMake
 HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
+COMMITID=`git show -s --format=%H`
+SHORT_COMMITID=`git show -s --format=%h`
+
 all: $(RCTOOL) $(HEADERMAKE) $(exe)
 
-$(exe): Funccode_define.h Funccode_enum.h svnrev stdafx $(OBJS)
+$(exe): Funccode_define.h Funccode_enum.h githash stdafx $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
 
 Funccode_define.h: Funccode_x.hsrc
@@ -432,9 +435,10 @@ Funccode_define.h: Funccode_x.hsrc
 Funccode_enum.h: Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
-svnrev:
-	cp svnrev_unknown.h svnrev.h
-	-$(SUBWCREV) ".\\" ".\svnrev_template.h" ".\svnrev.h"
+githash:
+	echo  >githash.h "#pragma once"
+	echo >>githash.h "#define GIT_COMMIT_HASH \"$(COMMITID)\""
+	echo >>githash.h "#define GIT_SHORT_COMMIT_HASH \"$(SHORT_COMMITID)\""
 
 stdafx:
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
@@ -449,14 +453,12 @@ $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
 .rc.o:
-	$(RCTOOL) $< sakura_grc.rc
-	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
-	$(RM) sakura_grc.rc
+	$(RC) -c65001 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
 	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) StdAfx.h.gch
 
-depend: svnrev
+depend: githash
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
