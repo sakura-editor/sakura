@@ -1,4 +1,4 @@
-////
+ï»¿////
 //	RcCvt		: convert MSVC type resource file to Brc32 type.
 //		20010820 aroka
 
@@ -37,10 +37,10 @@ bool RcCvt::setErr(char*errstr)
 	char *t;
 	int lcr = strlen(errstr)+2;
 	if( strerr ){
-		t = (char*)realloc( strerr , strlen(strerr)+lcr );	// 2003.10.31 moca •s—v‚È+1‚ðíœ
+		t = (char*)realloc( strerr , strlen(strerr)+lcr );	// 2003.10.31 moca ä¸è¦ãª+1ã‚’å‰Šé™¤
 	}else{
-		// 2003.10.31 moca •s—v‚È+1‚ðíœ
-		// 2003.11.01 genta calloc‚Å0ƒNƒŠƒA‚ð•ÛØ‚·‚é
+		// 2003.10.31 moca ä¸è¦ãª+1ã‚’å‰Šé™¤
+		// 2003.11.01 genta callocã§0ã‚¯ãƒªã‚¢ã‚’ä¿è¨¼ã™ã‚‹
 		t = (char*)calloc( lcr, 1 );
 	}
 	if( t==NULL){
@@ -85,7 +85,7 @@ bool RcCvt::convert(void)
 {
 	while( !feof(fpi) )
 	{
-		//	2007.04.03 genta ƒtƒ@ƒCƒ‹––”ö‚Å“Ç‚Ýž‚ÝƒGƒ‰[‚É‚È‚é‚ÆÅIs‚ªd•¡‚µ‚Äo—Í‚³‚ê‚é
+		//	2007.04.03 genta ãƒ•ã‚¡ã‚¤ãƒ«æœ«å°¾ã§èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹ã¨æœ€çµ‚è¡ŒãŒé‡è¤‡ã—ã¦å‡ºåŠ›ã•ã‚Œã‚‹
 		if( NULL == fgets(buffer, nLine, fpi )){
 			break;
 		}
@@ -135,8 +135,8 @@ bool RcCvt::include(char*linestr)
 	{
 		strcpy( linestr, "\n" );
 	}
-	//2002.01.10 ‚ ‚ë‚© ƒŠƒ\[ƒX‚ÌDlgs.h‚ðíœ
-	else if( strstr( linestr, "Dlgs.h" ) != NULL )	//2002.01.15 ‚ ‚ë‚© elsif -> else if
+	//2002.01.10 ã‚ã‚ã‹ ãƒªã‚½ãƒ¼ã‚¹ã®Dlgs.hã‚’å‰Šé™¤
+	else if( strstr( linestr, "Dlgs.h" ) != NULL )	//2002.01.15 ã‚ã‚ã‹ elsif -> else if
 	{
 		strcpy( linestr, "\n" );
 	}

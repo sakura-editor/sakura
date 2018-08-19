@@ -1,4 +1,4 @@
-////
+﻿////
 //	rmc2brc		: convert MSVC type resource file to Brc32 type.
 //		20010731 aroka
 
