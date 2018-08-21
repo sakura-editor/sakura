@@ -166,6 +166,12 @@ if exist "msbuild-%platform%-%configuration%.log.xlsx" (
 	copy /Y /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
 )
 copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
+if exist "cppcheck-install.log" (
+	copy /Y "cppcheck-install.log" %WORKDIR_LOG%\
+)
+if exist "cppcheck.xml" (
+	copy /Y "cppcheck.xml" %WORKDIR_LOG%\
+)
 
 set HASHFILE=sha256.txt
 if exist "%HASHFILE%" (
