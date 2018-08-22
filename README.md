@@ -13,7 +13,9 @@
     - [CI Build (AppVeyor)](#ci-build-appveyor)
         - [ビルドの仕組み](#ビルドの仕組み)
         - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
-        - [ビルド成果物](#ビルド成果物)
+        - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
+            - [master の 最新](#master-の-最新)
+            - [master の 最新以外](#master-の-最新以外)
         - [単体テスト](#単体テスト)
 
 <!-- /TOC -->
@@ -57,19 +59,24 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 ### ビルド成果物を利用する上での注意事項
 
-[`x64 版は alpha 版`](installer/warning-alpha.txt)です。  
-対応中のため予期せぬ不具合がある可能性があります。  
-
-### ビルド成果物
-
-本リポジトリの最新 master は以下の AppVeyor プロジェクト上で自動ビルドされます。  
-https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master
-
-最新のビルド結果（バイナリ）はここから取得できます。  
-https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master/artifacts  
 [`これ`](installer/warning.txt) を読んでからご利用ください。
 
-最新以外のビルド結果は以下から参照できます。  
+[`x64 版は alpha 版`](installer/warning-alpha.txt)です。  
+対応中のため予期せぬ不具合がある可能性があります。 
+
+### ビルド成果物のダウンロード(バイナリ、インストーラなど)
+
+#### master の 最新
+
+1. https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master にアクセスする
+2. 右端にある `Jobs` をクリックします。
+3. 自分がダウンロードしたいビルド構成 (例: `Configuration: Release; Platform: Win32`) をクリックします。
+4. 右端にある `ARTIFACTS` をクリックします。
+5. 自分がダウンロードしたいものをクリックしてダウンロードします。(末尾に asm や Log がついていないものがバイナリ、インストーラです)
+
+#### master の 最新以外
+
+以下から取得したいビルドを選択後、同様にしてダウンロードできます。  
 https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ### 単体テスト
