@@ -433,7 +433,7 @@ Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 githash:
-	cmd /c $(CURDIR)/../sakura/githash.bat ../sakura_core
+	cmd /c $(CURDIR)/../sakura/githash.bat ..\\sakura_core
 
 stdafx: Funccode_enum.h StdAfx.h
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
