@@ -180,9 +180,33 @@ def writeToXLSX(outfile, data):
 
 		# 各エントリーを設定するときのコンバーターを取得する (python 2/3 の違いを吸収するためのもの)
 		converter = getEntryConverter()
+		
+		# エラーごとにまとめて表示するための情報
+		errorSummary = {}
 
 		# ログの解析結果を設定する
 		for entry in data:
+			# ファイルパスを取り除いた関連エラーメッセージをまとめる
+			message = converter(entry['message'])
+			message = re.sub(r'((\S*)\)\s*)?\[(.+?)\]', r'', message)
+			
+			# エラータイプ
+			type = entry['type']
+			
+			# エラーコード
+			code = entry['code']
+			
+			# サマリーを管理するハッシュ用のキー
+			errorKey = ' '.join([type, code, message])
+
+			if errorKey not in errorSummary:
+				errorSummary[errorKey] = {}
+				errorSummary[errorKey]["description"] = message
+				errorSummary[errorKey]["entries"]     = []
+				errorSummary[errorKey]["type"]        = type
+				errorSummary[errorKey]["code"]        = code
+			errorSummary[errorKey]["entries"].append(entry)
+
 			for x, key in enumerate(excelKeys):
 				cell = ws.cell(row=y+1, column=x+1)
 				if key == "relpath":
@@ -218,6 +242,77 @@ def writeToXLSX(outfile, data):
 		
 		# ウィンドウ枠を固定
 		ws.freeze_panes = 'F2'
+
+		#############################################################################
+		#	エラーのサマリーシート用のコード
+		#############################################################################
+		worksheetIndex = 0
+		errorKeys = errorSummary.keys()
+		errorKeys.sort()
+		for errorKey in errorKeys:
+			worksheetIndex = worksheetIndex + 1
+
+			# 列幅に必要なサイズを保持する配列
+			maxWidths = []
+
+			message = errorSummary[errorKey]["description"]
+			entries = errorSummary[errorKey]["entries"]
+			type    = errorSummary[errorKey]["type"]
+			code    = errorSummary[errorKey]["code"]
+
+			wsError = wb.create_sheet()
+			wsError.title = str(worksheetIndex) + "(" + code + ")"
+			
+			x = 0
+			y = 0
+			
+			# エラーメッセージをセットする
+			if entries:
+				entry = entries[0]
+				cell = wsError.cell(row=y+1, column=x+1)
+				cell.value = message
+			y = y + 1
+			
+			# 空行を入れる
+			y = y + 1
+			
+			outputKeys = [
+				'path',
+				'lineNumber',
+				'blobURL',
+			]
+		
+			# ヘッダ部分を設定
+			for x, key in enumerate(outputKeys):
+				cell = wsError.cell(row=y+1, column=x+1)
+				cell.value = key
+				cell.fill  = PatternFill(patternType='solid', start_color=colors.YELLOW, end_color=colors.YELLOW)
+				maxWidths.append(len(cell.value) + 1)
+			y = y + 1
+
+			# 各エラー箇所を設定する
+			for entry in entries:
+				for x, key in enumerate(outputKeys):
+					cell = wsError.cell(row=y+1, column=x+1)
+					if key == "blobURL":
+						cell.hyperlink = entry[key]
+						cell.font      = Font(u='single', color=colors.BLUE)
+					val = converter(entry[key])
+					if val.isdigit():
+						cell.value = int(val)
+					else:
+						cell.value = val
+
+					# 列幅を設定するために必要なサイズを計算する
+					width = len(val) + 1
+					if maxWidths[x] < width:
+						maxWidths[x] = width
+
+				y = y + 1
+
+			# 列幅を設定する
+			for x, item in enumerate(maxWidths):
+				wsError.column_dimensions[openpyxl.utils.get_column_letter(x+1)].width = item
 
 		wb.save(outfile)
 		print ("wrote " + outfile)
