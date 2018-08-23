@@ -20,6 +20,7 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
+RM= cmd /c $(CURDIR)/../sakura/mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
