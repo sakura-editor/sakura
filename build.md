@@ -21,6 +21,7 @@
     - [開発者向けの情報](#開発者向けの情報)
         - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
         - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
+        - [MinGW-w64 ビルド](#MinGW-w64-ビルド)
 
 <!-- /TOC -->
 
@@ -140,3 +141,32 @@ build-sln.bat x64   Release
 build-sln.bat x64   Debug
 ```
 
+### MinGW w64 ビルド
+
+生成されるバイナリは正しく動作しないが、MinGWでのビルドも可能。
+
+
+MinGW64のビルド環境
+
+* [pleiades 4.6 Neon](http://mergedoc.osdn.jp/)
+* [MSYS2+MinGW-w64](https://gist.github.com/Hamayama/eb4b4824ada3ac71beee0c9bb5fa546d)
+* [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/)
+
+cpu | thread モデル | 例外モデル | コメント
+---- | ---- | ---- | ----
+x86_64 | win32 | seh | windows向け。外部DLL不要
+x86_64 | posix | seh | 標準。pthreadのDLLが必要
+x86_64 | win32 | sjlj | 外部DLL不要
+x86_64 | posix | sjlj | pthreadのDLLが必要
+
+標準的なMinGWセットアップでビルドしたバイナリは ```libwinpthread-1.dll``` に依存することに注意。
+
+
+コマンド実行例
+
+```
+path=D:\eclipse4.6\eclipse\mingw\bin;%path%
+cd sakura_core
+mingw32-make githash stdafx sakura_rc.o
+mingw32-make -j4
+```
