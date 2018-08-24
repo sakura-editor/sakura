@@ -417,6 +417,11 @@ _os/CDropTarget.o \
 _os/COsVersionInfo.o \
 sakura_rc.o \
 
+GENERATED_FILES= \
+Funccode_define.h \
+Funccode_enum.h \
+githash.h \
+
 RCTOOLDIR=../btool
 RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 HEADERMAKETOOLDIR= ../HeaderMake
@@ -449,7 +454,7 @@ sakura_rc.o: Funccode_define.h githash sakura_rc.rc
 	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch
+	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
 
 depend: githash
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
