@@ -179,7 +179,14 @@ class AppveyorEnv():
 		for key in self.var.keys():
 			print (key, self.var[key])
 
-def main():
+	# Appveyor 関連の環境変数をバッチファイルの形で保存する
+	def saveEnvAsBat(self, file):
+		with open(file, "w") as fout:
+			for key in self.keysEnv:
+				fout.write("set " + key + "=" + os.environ.get(key, "") + "\n")
+		print ("wrote: " + file)
+
+def main(fileBat):
 	appveyor = AppveyorEnv()
 	appveyor.printAll()
 	
@@ -195,5 +202,10 @@ def main():
 		print (appveyor.getBlobURLWithLine(file, 1))
 		print (appveyor.getBlobURLWithLines(file, 9, 15))
 
+	appveyor.saveEnvAsBat(fileBat)
+
 if __name__ == '__main__':
-	main()
+	fileBat = "set_appveyor_env.bat"
+	if len(sys.argv) > 1:
+		fileBat = sys.argv[1]
+	main(fileBat)

@@ -173,6 +173,10 @@ if exist "cppcheck.xml" (
 	copy /Y "cppcheck.xml" %WORKDIR_LOG%\
 )
 
+if exist "set_appveyor_env.bat" (
+	copy /Y "set_appveyor_env.bat" %WORKDIR_LOG%\
+)
+
 set HASHFILE=sha256.txt
 if exist "%HASHFILE%" (
 	del %HASHFILE%
