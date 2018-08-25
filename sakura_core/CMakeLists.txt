@@ -24,6 +24,7 @@ add_executable(${project_name} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_
 include_directories(./)
 
 # add definition
+add_definitions(-D_UNICODE -DUNICODE)
 add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
 
 target_link_libraries(${project_name} comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib)

@@ -21,6 +21,7 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 add_library(${project_name} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
 # add definition
+add_definitions(-D_UNICODE -DUNICODE)
 add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
 
 # avoid error LNK2001 for "__DllMainCRTStartup@12"
