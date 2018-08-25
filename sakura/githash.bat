@@ -3,6 +3,9 @@
 SETLOCAL
 
 set OUT_DIR=%1
+if "%OUT_DIR%" == "" (
+	set OUT_DIR=.
+)
 
 @rem replace '/' with '\'
 set OUT_DIR=%OUT_DIR:/=\%
