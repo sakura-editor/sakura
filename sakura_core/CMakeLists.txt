@@ -32,7 +32,7 @@ set(update_HeaderMake_BAT      ${CMAKE_CURRENT_SOURCE_DIR}/update-HeaderMake.bat
 set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
 set(update_HeaderMake_DIR_IN   ${CMAKE_CURRENT_SOURCE_DIR})
 set(update_HeaderMake_DIR_OUT  ${CMAKE_CURRENT_SOURCE_DIR})
-set(update_gitHash_BAT         ${CMAKE_CURRENT_SOURCE_DIR}/update-gitHash.bat)
+set(update_gitHash_BAT         ${CMAKE_CURRENT_SOURCE_DIR}/../sakura/githash.bat)
 
 # set pre-Build
 add_custom_command(
