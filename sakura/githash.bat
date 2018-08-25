@@ -3,9 +3,19 @@
 SETLOCAL
 
 set OUT_DIR=%1
+if "%OUT_DIR%" == "" (
+	set OUT_DIR=.
+)
+
+@rem replace '/' with '\'
+set OUT_DIR=%OUT_DIR:/=\%
 
 @echo.
 @echo ---- Make githash.h ----
+
+@rem ensure to be in the proper directory
+pushd "%~dp0"
+
 : Git enabled checking
 set GIT_ENABLED=1
 where git 1>nul 2>&1
@@ -34,6 +44,9 @@ if "%GIT_ENABLED%" == "1" (
 	set COMMITID=
 	set GIT_URL=
 )
+
+@rem get back to the original directory
+popd
 
 set PREFIX_GITHUB=https://github.com
 if "%APPVEYOR_REPO_PROVIDER%" == "gitHub" (
