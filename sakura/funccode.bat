@@ -31,8 +31,9 @@ exit /b 0
 
 @rem ------------------------------------------------------------------------------
 @rem show help
+@rem see http://orangeclover.hatenablog.com/entry/20101004/1286120668
 @rem ------------------------------------------------------------------------------
 :showhelp
 @echo off
-@echo usage %1 "HeaderMake.exe directory" "Funccode_x.hsrc directory"
+@echo usage %~nx1 "HeaderMake.exe directory" "Funccode_x.hsrc directory"
 exit /b
