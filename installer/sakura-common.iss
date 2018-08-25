@@ -21,9 +21,10 @@ AppPublisherURL=https://sakura-editor.github.io/
 AppSupportURL=https://github.com/sakura-editor/sakura/issues
 AppUpdatesURL=https://github.com/sakura-editor/sakura/releases
 DefaultDirName={code:getDefautDirName|sakura}
-DefaultGroupName=サクラエディタ
+DefaultGroupName={cm:SakuraEditor}
 UninstallDisplayIcon={app}\sakura.exe
 InfoBeforeFile="instmaterials\info.txt"
+LanguageDetectionMethod=uilanguage 
 
 WizardImageFile="instmaterials\SetupModern20.bmp"
 WizardSmallImageFile="instmaterials\SetupModernSmall20.bmp"
@@ -44,23 +45,38 @@ MinVersion=0,5.0
 
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"
+
+[CustomMessages]
+en.TypesAll="All"
+ja.TypesAll="すべて"
+en.TypesCustom="Custom"
+ja.TypesCustom="カスタム"
+en.ComponentsMain="sakura editor itself"
+ja.ComponentsMain="サクラエディタ本体"
+en.ComponentsHelp="help file"
+ja.ComponentsHelp="ヘルプファイル"
+en.ComponentsKeyword="KeyWord file"
+ja.ComponentsKeyword="KeyWordファイル"
+en.SakuraEditor="sakura editor"
+ja.SakuraEditor="サクラエディタ"
 
 [Types]
-Name: all;                Description: "All"
+Name: all;                Description: "{cm:TypesAll}"
 Name: editorwithhelp;     Description: "Editor with Help"
 Name: editoronly;         Description: "Editor Only"
-Name: custom;             Description: "カスタム"; Flags: iscustom
+Name: custom;             Description: "{cm:TypesCustom}"; Flags: iscustom
 
 [Components]
-Name: main;        Description: "サクラエディタ本体";             Types: all editorwithhelp editoronly custom; Flags: fixed
-Name: help;        Description: "ヘルプファイル";                 Types: all editorwithhelp
-Name: keyword;     Description: "KeyWordファイル";                Types: all
+Name: main;        Description: "{cm:ComponentsMain}";            Types: all editorwithhelp editoronly custom; Flags: fixed
+Name: help;        Description: "{cm:ComponentsHelp}";            Types: all editorwithhelp
+Name: keyword;     Description: "{cm:ComponentsKeyword}";         Types: all
 
 [Tasks]
 Name: startmenu;   Description: "スタートメニューを作成(&S)";         Components: main;
-Name: quicklaunch; Description: "Quick Launchにアイコン作成(&Q)";     Components: main;
-Name: proglist;    Description: "プログラム一覧に追加(&P)"; Components: main;
-Name: desktopicon; Description: "デスクトップにアイコン作成(&D)";     Components: main; Flags: unchecked;
+Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";         Components: main;
+Name: proglist;    Description: "プログラム一覧に追加(&P)";           Components: main;
+Name: desktopicon; Description: "{cm:CreateDesktopIcon}";             Components: main; Flags: unchecked;
 Name: fileassoc;   Description: "「SAKURAで開く」メニューの追加(&E)"; Components: main; Flags: unchecked;
 Name: startup;     Description: "起動時に常駐(&B)";                   Components: main; Flags: unchecked;
 Name: sendto;      Description: "送るに追加(&T)";                     Components: main; Flags: unchecked;
@@ -95,15 +111,15 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: 
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
-Name: "{userstartmenu}\サクラエディタ";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
-Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
-Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
-Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
-Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
-Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
-Name: "{#MySendTo}\サクラエディタ";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
+Name: "{group}\{cm:SakuraEditor}";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
+Name: "{userstartmenu}\{cm:SakuraEditor}";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
+Name: "{group}\{cm:ComponentsHelp}";                                              Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
+Name: "{group}\設定フォルダ";                                                     Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
+Name: "{userdesktop}\{cm:SakuraEditor}";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
+Name: "{group}\アンインストール";                                                 Filename: "{uninstallexe}";                           Tasks: startmenu;
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:SakuraEditor}"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
+Name: "{userstartup}\サクラエディタ常駐";                                         Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
+Name: "{#MySendTo}\{cm:SakuraEditor}";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
