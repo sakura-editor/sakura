@@ -4,7 +4,7 @@ set platform=%1
 set configuration=%2
 
 set CPPCHECK_EXE=C:\Program Files\Cppcheck\cppcheck.exe
-set CPPCHECK_OUT=cppcheck.xml
+set CPPCHECK_OUT=cppcheck-%platform%-%configuration%.xml
 
 set CPPCHECK_PLATFORM=
 if "%PLATFORM%" == "Win32" (

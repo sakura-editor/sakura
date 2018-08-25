@@ -14,4 +14,4 @@ sha256.txt
 *.pyc
 /tests/build
 /cppcheck-install.log
-/cppcheck.xml
+/cppcheck-*.xml

@@ -169,8 +169,8 @@ copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
 if exist "cppcheck-install.log" (
 	copy /Y "cppcheck-install.log" %WORKDIR_LOG%\
 )
-if exist "cppcheck.xml" (
-	copy /Y "cppcheck.xml" %WORKDIR_LOG%\
+if exist "cppcheck-%platform%-%configuration%.xml" (
+	copy /Y "cppcheck-%platform%-%configuration%.xml" %WORKDIR_LOG%\
 )
 
 if exist "set_appveyor_env.bat" (
