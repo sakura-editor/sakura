@@ -20,19 +20,20 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-SUBWCREV= SubWCRev.exe
+RM= cmd /c $(CURDIR)/../sakura/mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
  -DWINVER=0x500 \
  -D_WIN32_WINNT=0x500 \
  -D_WIN32_IE=0x501 \
+ -DMINGW_HAS_SECURE_API=1 \
  -DNOMINMAX \
  -D_UNICODE \
  -DUNICODE \
  -DNDEBUG
 CFLAGS= -O2 \
- -finput-charset=cp932 -fexec-charset=cp932 \
+ -finput-charset=utf-8 -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
@@ -416,47 +417,46 @@ _os/CDropTarget.o \
 _os/COsVersionInfo.o \
 sakura_rc.o \
 
+GENERATED_FILES= \
+Funccode_define.h \
+Funccode_enum.h \
+githash.h \
+
 RCTOOLDIR=../btool
 RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 HEADERMAKETOOLDIR= ../HeaderMake
 HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
-all: $(RCTOOL) $(HEADERMAKE) $(exe)
+all: $(exe)
 
-$(exe): Funccode_define.h Funccode_enum.h svnrev stdafx $(OBJS)
+$(exe): githash $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
 
-Funccode_define.h: Funccode_x.hsrc
+Funccode_define.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_define.h -mode=define
 
-Funccode_enum.h: Funccode_x.hsrc
+Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
-svnrev:
-	cp svnrev_unknown.h svnrev.h
-	-$(SUBWCREV) ".\\" ".\svnrev_template.h" ".\svnrev.h"
+githash:
+	cmd /c $(CURDIR)/../sakura/githash.bat ..\\sakura_core
 
-stdafx:
+stdafx: Funccode_enum.h StdAfx.h
 	$(CXX) $(CXXFLAGS) -c StdAfx.h
 
-.cpp.o:
+.cpp.o: stdafx
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
-
-$(RCTOOL): $(RCTOOLDIR)/mrc2grc.cpp
-	$(CXX) $(CXXFLAGS) $(RCTOOLDIR)/mrc2grc.cpp -o $@ -static-libgcc
 
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
-.rc.o:
-	$(RCTOOL) $< sakura_grc.rc
-	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
-	$(RM) sakura_grc.rc
+sakura_rc.o: Funccode_define.h githash sakura_rc.rc
+	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) StdAfx.h.gch
+	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
 
-depend: svnrev
+depend: githash
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc

@@ -28,18 +28,6 @@
 #include "StdAfx.h"
 #include <ShellAPI.h>
 #include "CZipFile.h"
-#ifdef __MINGW32__
-//uuid(D8F015C0-C278-11CE-A49E-444553540000);
-const GUID IID_IShellDispatch =
-{
-  0xD8F015C0, 0xc278, 0x11ce, { 0xa4, 0x9e, 0x44, 0x45, 0x53, 0x54 }
-};
-// 13709620-C279-11CE-A49E-444553540000
-const GUID CLSID_Shell =
-{
-  0x13709620, 0xc279, 0x11ce, { 0xa4, 0x9e, 0x44, 0x45, 0x53, 0x54 }
-};
-#endif
 
 
 // コンストラクタ

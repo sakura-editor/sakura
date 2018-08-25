@@ -89,7 +89,7 @@ bool CMacroFactory::RegisterCreator( Creator f )
 bool CMacroFactory::Unregister( Creator f )
 {
 	//	Creator Listからの削除
-	auto& c_it = m_mMacroCreators.begin();
+	auto c_it = m_mMacroCreators.begin();
 	while( c_it != m_mMacroCreators.end() ){
 		if( *c_it == f ){
 			//	いきなり削除するとiteratorが無効になるので，

@@ -97,9 +97,8 @@ void CNativeW::AppendStringF(const wchar_t* pszData, ...)
 	va_end(v);
 
 	if (len == -1) {
-		char cbuf[128];
-		sprintf_s(cbuf, _countof(cbuf), "AppendStringF error. errno = %d", e);
-		throw std::exception(cbuf);
+		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
+		throw std::exception();
 	}
 
 	// 追加
