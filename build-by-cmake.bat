@@ -1,6 +1,7 @@
 @echo off
 set platform=%1
 set configuration=%2
+set argument=%3
 set BUILDDIR=build\%platform%
 set PROJECT_TOP=%~dp0
 
@@ -15,15 +16,20 @@ if "%configuration%" == "" (
 )
 
 cd /d %~dp0
-for /l %%n in (1,1,10) do (
-	if exist "%BUILDDIR%" (
-		@echo ---- removing %BUILDDIR% -----
-		rmdir /s /q "%BUILDDIR%"
+
+if "%argument%" == "clean" (
+	for /l %%n in (1,1,10) do (
+		if exist "%BUILDDIR%" (
+			@echo ---- removing %BUILDDIR% -----
+			rmdir /s /q "%BUILDDIR%"
+		)
 	)
 )
-@echo ---- create %BUILDDIR% -----
-mkdir "%BUILDDIR%" || exit /b 1
 
+if not exist "%BUILDDIR%" (
+	@echo ---- create %BUILDDIR% -----
+	mkdir "%BUILDDIR%" || exit /b 1
+)
 set ERROR_RESULT=0
 
 @echo ---- creating project -----
