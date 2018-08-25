@@ -32,6 +32,7 @@ set(update_HeaderMake_BAT      ${CMAKE_CURRENT_SOURCE_DIR}/../sakura/funccode.ba
 set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
 set(update_HeaderMake_DIR_DAT  ${CMAKE_CURRENT_SOURCE_DIR})
 set(update_gitHash_BAT         ${CMAKE_CURRENT_SOURCE_DIR}/../sakura/githash.bat)
+set(update_gitHash_DIR_DAT     ${CMAKE_CURRENT_SOURCE_DIR})
 
 # set pre-Build
 add_custom_command(
@@ -44,7 +45,7 @@ add_custom_command(
 add_custom_command(
 	TARGET ${project_name}
 	PRE_BUILD
-	COMMAND ${update_gitHash_BAT} ${CMAKE_CURRENT_SOURCE_DIR}
+	COMMAND ${update_gitHash_BAT} ${update_gitHash_DIR_DAT}
 )
 
 include_directories(./)
