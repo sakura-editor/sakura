@@ -23,17 +23,16 @@ add_library(${project_name} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FI
 add_dependencies(${project_name} HeaderMake)
 
 get_target_property(HeaderMake_RUNTIME_OUTPUT_DIRECTORY HeaderMake RUNTIME_OUTPUT_DIRECTORY)
-set(update_HeaderMake_BAT      ${sakura_SOURCE_DIR}/update-HeaderMake.bat)
+set(update_HeaderMake_BAT      ${sakura_SOURCE_DIR}/../sakura/funccode.bat)
 set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
-set(update_HeaderMake_DIR_IN   ${sakura_SOURCE_DIR})
-set(update_HeaderMake_DIR_OUT  ${sakura_SOURCE_DIR})
+set(update_HeaderMake_DIR_DAT  ${sakura_SOURCE_DIR})
 set(update_gitHash_BAT         ${sakura_SOURCE_DIR}/../sakura/githash.bat)
 
 # set pre-Build
 add_custom_command(
 	TARGET ${project_name}
 	PRE_BUILD
-	COMMAND ${update_HeaderMake_BAT} ${update_HeaderMake_DIR_EXE} ${update_HeaderMake_DIR_IN} ${update_HeaderMake_DIR_OUT}
+	COMMAND ${update_HeaderMake_BAT} ${update_HeaderMake_DIR_EXE} ${update_HeaderMake_DIR_DAT}
 )
 
 # set pre-Build
