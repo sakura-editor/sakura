@@ -33,7 +33,7 @@
 
 ### HTML ヘルプのビルドに必要なもの
 
-- HTML Help Workshop (Visual Studio 2017 のインストールでインストールされます。)
+- HTML Help Workshop (Visual Studio 2017 のインストールにて「x86用とx64用のVisual C++ MFS」を指定することにより導入されます)
 
 ### インストーラのビルドに必要なもの
 
