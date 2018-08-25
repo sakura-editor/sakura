@@ -14,7 +14,7 @@ set OUT_DIR=%OUT_DIR:/=\%
 @echo ---- Make githash.h ----
 
 @rem ensure to be in the proper directory
-pushd %~dp0
+pushd "%~dp0"
 
 : Git enabled checking
 set GIT_ENABLED=1
