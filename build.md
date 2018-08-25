@@ -35,7 +35,7 @@
 
 - HTML Help Workshop (Visual Studio 2017 のインストールにて「C++ によるデスクトップ開発」を有効にし「x86用とx64用のVisual C++ MFC」をチェックすることにより導入されます)
 VSインストール後でVisual Studio Installerを起動して導入可能です。
-![VSInstaller](https://user-images.githubusercontent.com/39618965/44616721-dd37a000-a88f-11e8-8252-919d1386892c.PNG)
+![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
 
 ### インストーラのビルドに必要なもの
 
