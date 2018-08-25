@@ -51,4 +51,4 @@ exit /b 0
 :showhelp
 @echo off
 @echo usage %~nx1 "HeaderMake.exe directory" "Funccode_x.hsrc directory"
-exit /b
+exit /b 0
