@@ -33,7 +33,9 @@
 
 ### HTML ヘルプのビルドに必要なもの
 
-- HTML Help Workshop (Visual Studio 2017 のインストールにて「x86用とx64用のVisual C++ MFS」を指定することにより導入されます)
+- HTML Help Workshop (Visual Studio 2017 のインストールにて「C++ によるデスクトップ開発」を有効にし「x86用とx64用のVisual C++ MFC」をチェックすることにより導入されます)
+VSインストール後でVisual Studio Installerを起動して導入可能です。
+![VSInstaller](https://user-images.githubusercontent.com/39618965/44616721-dd37a000-a88f-11e8-8252-919d1386892c.PNG)
 
 ### インストーラのビルドに必要なもの
 
