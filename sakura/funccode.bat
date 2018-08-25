@@ -14,6 +14,21 @@ if "%SRCDIR%" == "" (
 	exit /b 1
 )
 
+if not exist "%EXEDIR%" (
+	@echo.
+	@echo "%EXEDIR%" does not exist.
+	@echo.
+	call :showhelp %0
+	exit /b 1
+)
+if not exist "%SRCDIR%" (
+	@echo.
+	@echo "%SRCDIR%" does not exist.
+	@echo.
+	call :showhelp %0
+	exit /b 1
+)
+
 @rem replace '/' with '\'
 set EXEDIR=%EXEDIR:/=\%
 set SRCDIR=%SRCDIR:/=\%
