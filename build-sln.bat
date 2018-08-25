@@ -64,4 +64,4 @@ exit /b 0
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
 @echo    %~nx1 x64   Release
-exit /b
+exit /b 0

@@ -42,4 +42,4 @@ exit /b 0
 @echo.
 @echo example
 @echo    %~nx1 sha256.txt sakura-buildLocal-Win32-Release
-exit /b
+exit /b 0

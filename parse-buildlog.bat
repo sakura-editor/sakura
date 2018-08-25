@@ -43,7 +43,7 @@ if not "%ERRORLEVEL%" == "0" (
 	@echo NOTE: found pip command
 	pip install openpyxl --user
 )
-exit /b
+exit /b 0
 
 @rem ------------------------------------------------------------------------------
 @rem show help
@@ -59,4 +59,4 @@ exit /b
 @echo.
 @echo example
 @echo    %~nx1 msbuild-Win32-Release.log
-exit /b
+exit /b 0
