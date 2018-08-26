@@ -40,7 +40,7 @@ if exist "%CPPCHECK_OUT%" (
 
 set ERROR_RESULT=0
 if exist "%CPPCHECK_EXE%" (
-	"%CPPCHECK_EXE%" --enable=all --xml --platform=%CPPCHECK_PLATFORM% %~dp0sakura_core 2> %CPPCHECK_OUT% || set ERROR_RESULT=1
+	"%CPPCHECK_EXE%" --force --enable=all --xml --platform=%CPPCHECK_PLATFORM% %~dp0sakura_core 2> %CPPCHECK_OUT% || set ERROR_RESULT=1
 )
 exit /b %ERROR_RESULT%
 
