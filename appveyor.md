@@ -82,7 +82,7 @@
                     - [7z.exe](https://sevenzip.osdn.jp/) : zip ファイルの展開に使用
                     - [unzip.ps1](tools/zip/unzip.ps1) : powershell 版の ZIP ファイルの展開スクリプト
         - [parse-buildlog.bat](parse-buildlog.bat) : ビルドログを解析する
-            - [appveyor_env.py](appveyor_env.py)
+            - [appveyor_env.py](appveyor_env.py) : 環境変数を再現できる `set_appveyor_env.bat` を生成する。(成果物に含まれる)
             - [parse-buildlog.py](parse-buildlog.py)
                 - [appveyor_env.py](appveyor_env.py)
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
