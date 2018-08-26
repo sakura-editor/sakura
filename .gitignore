@@ -15,3 +15,4 @@ sha256.txt
 /tests/build
 /cppcheck-install.log
 /cppcheck-*.xml
+set_appveyor_env.bat
