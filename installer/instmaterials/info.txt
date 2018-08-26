@@ -1,3 +1,7 @@
-‚±‚Ìƒ\ƒtƒgƒEƒFƒA‚ÍuƒeƒLƒXƒgƒGƒfƒBƒ^(‹¤“¯ŠJ”­”Å)v‚ğ‰üÌ‚µ‚½‚à‚Ì‚Å‚·D
-¤—pE”ñ¤—p‚ğ–â‚í‚¸–³‚Å—˜—p‚Å‚«‚Ü‚·‚ªCƒ\[ƒXƒR[ƒh‚Ì’˜ìŒ ‚ÍŠe‰ÓŠ‚ğ‹Lq‚µ‚½l‚ª—¯•Û‚µ‚Ä‚¢‚Ü‚·D
-‚±‚Ìƒ\ƒtƒgƒEƒFƒA‚Í–³•ÛØ‚Å‚·D
+ï»¿This software is a renamed "text editor (joint development version)".
+Regardless of whether it is commercial or non-commercial, you can use it for free, but the copyright of the source code is retained by person who described each part.
+This software is not guaranteed.
+
+ã“ã®ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ã€Œãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒ‡ã‚£ã‚¿(å…±åŒé–‹ç™ºç‰ˆ)ã€ã‚’æ”¹ç§°ã—ãŸã‚‚ã®ã§ã™ï¼
+å•†ç”¨ãƒ»éå•†ç”¨ã‚’å•ã‚ãšç„¡å„Ÿã§åˆ©ç”¨ã§ãã¾ã™ãŒï¼Œã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã®è‘—ä½œæ¨©ã¯å„ç®‡æ‰€ã‚’è¨˜è¿°ã—ãŸäººãŒç•™ä¿ã—ã¦ã„ã¾ã™ï¼
+ã“ã®ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ç„¡ä¿è¨¼ã§ã™ï¼
