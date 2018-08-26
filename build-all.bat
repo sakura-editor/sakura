@@ -17,6 +17,9 @@ if "%configuration%" == "Release" (
 	@rem OK
 ) else if "%configuration%" == "Debug" (
 	@rem OK
+) else if "%configuration%" == "RelWithDebInfo" (
+	@echo skip build
+	exit /b 0
 ) else (
 	call :showhelp %0
 	exit /b 1
