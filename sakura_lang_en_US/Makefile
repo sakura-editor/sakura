@@ -20,7 +20,7 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-SUBWCREV= SubWCRev.exe
+RM= cmd /c $(CURDIR)/../sakura/mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
@@ -32,7 +32,7 @@ DEFINES= \
  -DUNICODE \
  -DNDEBUG
 CFLAGS= -O2 \
- -finput-charset=cp932 -fexec-charset=cp932 \
+ -finput-charset=utf-8 -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
@@ -53,26 +53,21 @@ sakura_lang_rc.o \
 RCTOOLDIR=../btool
 RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 
-all: $(RCTOOL) $(exe)
+all: $(exe)
 
 $(exe): sakura_lang.h $(OBJS)
 	$(CXX) -shared -o $@ $(OBJS) $(LIBS)
 
-stdafx:
-	$(CXX) $(CXXFLAGS) -c StdAfx.h
+sakura_rc:
+	$(MAKE) -C ../sakura_core sakura_rc.o
 
-$(RCTOOL): $(RCTOOLDIR)/mrc2grc.cpp
-	$(CXX) $(CXXFLAGS) $(RCTOOLDIR)/mrc2grc.cpp -o $@ -static-libgcc
-
-.rc.o:
-	$(RCTOOL) $< sakura_grc.rc
-	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
-	$(RM) sakura_grc.rc
+sakura_lang_rc.o: sakura_rc sakura_lang_rc.rc
+	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_lang_rc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(RCTOOL)
+	$(RM) $(exe) $(OBJS)
 
-depend: svnrev
+depend:
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
