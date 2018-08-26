@@ -422,8 +422,6 @@ Funccode_define.h \
 Funccode_enum.h \
 githash.h \
 
-RCTOOLDIR=../btool
-RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
 HEADERMAKETOOLDIR= ../HeaderMake
 HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 

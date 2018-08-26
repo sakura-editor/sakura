@@ -50,9 +50,6 @@ exe= sakura_lang_en_US.dll
 OBJS= \
 sakura_lang_rc.o \
 
-RCTOOLDIR=../btool
-RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
-
 all: $(exe)
 
 $(exe): sakura_lang.h $(OBJS)
