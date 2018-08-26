@@ -23,6 +23,7 @@ if "%configuration%" == "Release" (
 
 set CPPCHECK_EXE=C:\Program Files\Cppcheck\cppcheck.exe
 set CPPCHECK_OUT=cppcheck-%platform%-%configuration%.xml
+set CPPCHECK_LOG=cppcheck-%platform%-%configuration%.log
 
 set CPPCHECK_PLATFORM=
 if "%PLATFORM%" == "Win32" (
@@ -38,6 +39,10 @@ if exist "%CPPCHECK_OUT%" (
 	del %CPPCHECK_OUT%
 )
 
+if exist "%CPPCHECK_LOG%" (
+	del %CPPCHECK_LOG%
+)
+
 set CPPCHECK_PARAMS=
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --force
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --enable=all
@@ -49,7 +54,10 @@ set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% %~dp0sakura_core
 set ERROR_RESULT=0
 if exist "%CPPCHECK_EXE%" (
 	@echo "%CPPCHECK_EXE%" %CPPCHECK_PARAMS%
-	"%CPPCHECK_EXE%" %CPPCHECK_PARAMS% || set ERROR_RESULT=1
+	"%CPPCHECK_EXE%" %CPPCHECK_PARAMS% > %CPPCHECK_LOG% || set ERROR_RESULT=1
+	@echo.
+	@echo The log files are %CPPCHECK_LOG% and %CPPCHECK_OUT%
+	@echo cppcheck success
 )
 exit /b %ERROR_RESULT%
 
