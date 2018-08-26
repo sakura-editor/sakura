@@ -129,7 +129,7 @@ if "%ERRORLEVEL%" == "0" (
 )
 
 ENDLOCAL
-exit /b
+exit /b 0
 
 :output_githash
 echo #pragma once
@@ -225,4 +225,4 @@ if "%APPVEYOR_BUILD_URL%" == "" (
 	echo #define APPVEYOR_BUILD_URL             "%APPVEYOR_BUILD_URL%"
 )
 
-exit /b
+exit /b 0
