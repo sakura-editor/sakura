@@ -49,3 +49,7 @@ add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0
 
 # avoid error LNK2001 for "__DllMainCRTStartup@12"
 set_target_properties(${project_name} PROPERTIES LINK_FLAGS "/NOENTRY")
+
+# fix the error 'Missing variable is: CMAKE_RC_CREATE_SHARED_LIBRARY'
+# https://cmake.org/pipermail/cmake/2012-January/048647.html
+set_target_properties(${project_name} PROPERTIES LINKER_LANGUAGE "CXX" )
