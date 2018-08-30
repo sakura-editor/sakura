@@ -67,8 +67,10 @@ static const bool UNICODE_BOOL=false;
 
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #ifdef _DEBUG
-#define FILL_STRANGE_IN_NEW_MEMORY
-#endif
+#  ifndef __MINGW32__
+#    define FILL_STRANGE_IN_NEW_MEMORY
+#  endif /* __MINGW32__ */
+#endif /* _DEBUG */
 
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
