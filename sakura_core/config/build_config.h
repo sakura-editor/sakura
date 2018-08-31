@@ -67,7 +67,7 @@ static const bool UNICODE_BOOL=false;
 
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #ifdef _DEBUG
-#define FILL_STRANGE_IN_NEW_MEMORY
+#    define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
 
@@ -95,8 +95,8 @@ static const bool UNICODE_BOOL=false;
 		#endif
 	#endif
 	void* operator new[](size_t nSize);
-	void operator delete(void* p);
-	void operator delete[](void* p);
+	void operator delete(void* p) noexcept;
+	void operator delete[](void* p) noexcept;
 #endif
 
 
