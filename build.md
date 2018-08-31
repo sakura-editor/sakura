@@ -43,7 +43,7 @@
       - 変更を確定する
    - VSインストール後でもVisual Studio Installerを起動して導入可能です。 
 ![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
-   - ヘルプファイルを編集する場合 HTML Help Workshop も別途必要になります。
+   - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
 
 ### インストーラのビルドに必要なもの
 
