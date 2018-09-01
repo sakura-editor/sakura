@@ -18,7 +18,9 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 #endforeach( srcTemp ${SOURCE_FILES})
 
 # define sources files of an executable
-add_library(${project_name} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
+# 'MODULE' libraries  are not linked directly.
+# see https://cmake.org/cmake/help/v3.0/command/add_library.html
+add_library(${project_name} MODULE ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
 add_dependencies(${project_name} HeaderMake)
 
