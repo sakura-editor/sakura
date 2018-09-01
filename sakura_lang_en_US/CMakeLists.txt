@@ -57,3 +57,6 @@ endif(MSVC)
 # fix the error 'Missing variable is: CMAKE_RC_CREATE_SHARED_LIBRARY'
 # https://cmake.org/pipermail/cmake/2012-January/048647.html
 set_target_properties(${project_name} PROPERTIES LINKER_LANGUAGE "CXX" )
+
+# https://cmake.org/cmake/help/v3.0/prop_tgt/PREFIX.html?highlight=prefix
+set_target_properties(${project_name} PROPERTIES PREFIX          "" )
