@@ -45,7 +45,7 @@ MinVersion=0,5.0
 
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
-Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"; InfoBeforeFile: "instmaterials\info_us.txt"
 
 [CustomMessages]
 en.InfoBeforeFile=instmaterials\info_en.txt
@@ -55,7 +55,7 @@ ja.AppName=サクラエディタ
 en.AppVerName=sakura editor
 ja.AppVerName=sakura editor(サクラエディタ)
 en.AppPublisher=Term Sakura Editor Developer
-ja.AppPublisher=サクラエディタ開発チームr
+ja.AppPublisher=サクラエディタ開発チーム
 en.TypesAll=All
 ja.TypesAll=すべて
 en.editorwithhelp=Editor with Help
@@ -66,43 +66,43 @@ en.TypesCustom=Custom
 ja.TypesCustom=カスタム
 en.ComponentsMain=sakura editor itself
 ja.ComponentsMain=サクラエディタ本体
-en.ComponentsHelp=help file
+en.ComponentsHelp=help files
 ja.ComponentsHelp=ヘルプファイル
-en.ComponentsKeyword=KeyWord file
+en.ComponentsKeyword=KeyWord files
 ja.ComponentsKeyword=KeyWordファイル
-en.startmenu=create Start Menu(&S)
+en.startmenu=Create Start Menu(&S)
 ja.startmenu=スタートメニューを作成(&S)
 en.proglist=Add Program List(&P)
 ja.proglist=プログラム一覧に追加(&P)
-en.fileassoc=Add "Open Sakura editor(&E)"
+en.fileassoc=Add "Open With Sakura &Editor"(&E)
 ja.fileassoc=「SAKURAで開く」メニューの追加(&E)
-en.sendto=add send to menu(&T)
+en.sendto=Add Send &To
 ja.sendto=送るに追加(&T)
-en.fileassocMenu=Open Sacura editor(&E)
+en.fileassocMenu=Open With Sakura &Editor
 ja.fileassocMenu=SAKURAで開く(&E)
 en.IconPreferencefolder=Preference folder
 ja.IconPreferencefolder=設定フォルダ
-en.run=Start Sakura editor now
+en.run=Start now
 ja.run=今すぐサクラエディタを起動
 en.MultiUser=Install in compatibility mode. When editing system files and programs with user authority, editing results may not be accessible from other applications. (VirtualStore function)
 ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザ権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
-en.InitWiz1=Selection of setting preservation method
+en.InitWiz1=Selection of Preference preservation method
 ja.InitWiz1=設定保存方法の選択
 en.InitWiz2=Please choose whether you want to save the settings for each user or to the location of the executable file
 ja.InitWiz2=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
 en.InitWiz3=Please do not change if you do not understand well
 ja.InitWiz3=よくわからない場合は変更しないでください
-en.InitWiz4=Manage settings individually for each user
+en.InitWiz4=Manage Preference individually for each user
 ja.InitWiz4=設定をユーザ毎に個別に管理する
-en.ReadyMemo1=Setting file etc. save location
+en.ReadyMemo1=Preference file etc. save location
 ja.ReadyMemo1=設定ファイル等格納場所
-en.ReadyMemo2=User directory
+en.ReadyMemo2=User-Profile directory
 ja.ReadyMemo2=ユーザ個別ディレクトリ
-en.ReadyMemo3=False
+en.ReadyMemo3=Disable
 ja.ReadyMemo3=無効
-en.ReadyMemo4=The same directory as the executable file
+en.ReadyMemo4=Same as the executable file
 ja.ReadyMemo4=実行ファイルと同一ディレクトリ
-en.ReadyMemo5=True
+en.ReadyMemo5=Enable
 ja.ReadyMemo5=有効
 en.languageDLL=sakura_lang_en_US.dll
 ja.languageDLL=
@@ -167,7 +167,7 @@ Name: "{userstartmenu}\{cm:AppName}";                                        Fil
 Name: "{group}\{cm:ComponentsHelp}";                                              Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
 Name: "{group}\{cm:IconPreferencefolder}";                                                     Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
 Name: "{userdesktop}\{cm:AppName}";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
-Name: "{group}\{cm:uninstallmenu}";                                                 Filename: "{uninstallexe}";                           Tasks: startmenu;
+Name: "{group}\{cm:UninstallProgram,{cm:AppName}}";                                                 Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:AppName}"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
 Name: "{userstartup}\{cm:AutoStartProgram}";                                         Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
 Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
@@ -178,6 +178,8 @@ FileName: "{app}\sakura.exe"; Description: "{cm:run}"; WorkingDir: "{app}"; Flag
 [UninstallDelete]
 ;Uninstall時に確認無く消されるのでコメントアウト
 ;Type: files; Name: "{app}\sakura.ini"
+;Type: files; Name: "{userappdata}\sakura\sakura.ini"; Check: isMultiUserEnabled
+;Type: files; Name: "{app}\sakura.ini"; Check: isMultiUserDisabled
 
 [Dirs]
 Name: "{userappdata}\sakura"; Components: main; Tasks: startmenu; Check: isMultiUserEnabled
@@ -185,10 +187,6 @@ Name: "{userappdata}\sakura"; Components: main; Tasks: startmenu; Check: isMulti
 [Ini]
 Filename: "{userappdata}\sakura\sakura.ini"; Section: "Common"; Key: "szLanguageDll"; String: "{cm:languageDLL}"; Check: isMultiUserEnabled
 Filename: "{app}\sakura.ini"; Section: "Common"; Key: "szLanguageDll"; String: "{cm:languageDLL}"; Check: isMultiUserDisabled
-
-[UninstallDelete]
-Type: files; Name: "{userappdata}\sakura\sakura.ini"; Check: isMultiUserEnabled
-Type: files; Name: "{app}\sakura.ini"; Check: isMultiUserDisabled
 
 [Code]
 var
