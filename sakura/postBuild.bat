@@ -19,9 +19,7 @@ set CONFIGURATION=%2
 
 set INSTALLER_RESOURCES_BRON=%~dp0..\installer\temp\bron
 set BRON_ZIP=%~dp0..\installer\externals\bregonig\bron412.zip
-
-call %UNZIP_CMD%     %BRON_ZIP% %INSTALLER_RESOURCES_BRON% || (echo error && exit /b 1)
-
+set DEST_DIR=..\%PLATFORM%\%CONFIGURATION%
 set DLL_BREGONIG_NAME=bregonig.dll
 if "%platform%" == "x64" (
 	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%\x64
@@ -29,8 +27,12 @@ if "%platform%" == "x64" (
 	set INSTALLER_RESOURCES_BRON_DLL=%INSTALLER_RESOURCES_BRON%
 )
 
-: ---- copy bregonig.dll ---- :
-@echo Copy bregonig.dll to destination directory.
-copy /Y /B %INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%  ..\%PLATFORM%\%CONFIGURATION%\
-
+if not exist "%INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%" (
+	@echo extract %BRON_ZIP%
+	call %UNZIP_CMD% %BRON_ZIP% %INSTALLER_RESOURCES_BRON% || (echo error && exit /b 1)
+)
+if not exist "%DEST_DIR%\%DLL_BREGONIG_NAME%" (
+	@echo %DLL_BREGONIG_NAME% to destination directory.
+	copy /Y /B %INSTALLER_RESOURCES_BRON_DLL%\%DLL_BREGONIG_NAME%  %DEST_DIR%\
+)
 ENDLOCAL
