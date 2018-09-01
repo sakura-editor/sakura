@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6.4)
 set(project_name sakura_lang_en_US)
 
 # define a project name
-project (${project_name})
+project (${project_name} LANGUAGES CXX)
 
 include_directories(./)
 

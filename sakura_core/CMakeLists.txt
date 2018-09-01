@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.0.2)
 set(project_name sakura)
 
 # define a project name
-project (${project_name})
+project (${project_name} LANGUAGES CXX)
 
 # set the project as the startup project
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${project_name})
