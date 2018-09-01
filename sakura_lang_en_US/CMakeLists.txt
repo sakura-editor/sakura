@@ -23,6 +23,8 @@ file(GLOB_RECURSE RESOURCE_FILES ./*.rc)
 add_library(${project_name} MODULE ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES})
 
 add_dependencies(${project_name} HeaderMake)
+add_dependencies(${project_name} OutHeaderMake)
+add_dependencies(${project_name} OutGitHash)
 
 get_target_property(HeaderMake_RUNTIME_OUTPUT_DIRECTORY HeaderMake RUNTIME_OUTPUT_DIRECTORY)
 set(update_HeaderMake_BAT      ${sakura_SOURCE_DIR}/../sakura/funccode.bat)
@@ -30,20 +32,6 @@ set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CF
 set(update_HeaderMake_DIR_DAT  ${sakura_SOURCE_DIR})
 set(update_gitHash_BAT         ${sakura_SOURCE_DIR}/../sakura/githash.bat)
 set(update_gitHash_DIR_DAT     ${sakura_SOURCE_DIR})
-
-# set pre-Build
-add_custom_command(
-	TARGET ${project_name}
-	PRE_BUILD
-	COMMAND ${update_HeaderMake_BAT} ${update_HeaderMake_DIR_EXE} ${update_HeaderMake_DIR_DAT}
-)
-
-# set pre-Build
-add_custom_command(
-	TARGET ${project_name}
-	PRE_BUILD
-	COMMAND ${update_gitHash_BAT} ${update_gitHash_DIR_DAT}
-)
 
 # add definition
 add_definitions(-D_UNICODE -DUNICODE)
