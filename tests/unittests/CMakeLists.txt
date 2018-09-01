@@ -3,6 +3,7 @@ include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 
 # define a variable of project name
 set(project_name tests1)
+project (${project_name} LANGUAGES CXX)
 
 # define a variable SRC with file GLOB
 file(GLOB SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
