@@ -31,10 +31,12 @@
 
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
 - Visual Studio 2017 Comminity Edition
+   以下オプションも必要です。
+   - C++ に関する Windows XP サポート
 
 ### HTML ヘルプのビルドに必要なもの
 
-- HTML Help Workshop
+- HTML ヘルプコンパイラ (hhc.exe)
    - Visual Studio 2017 のインストールにて以下のオプションを有効にすることにより導入されます。
       - 「C++ によるデスクトップ開発」を有効にする
       - 右のペインで 「C++ によるデスクトップ開発」を選ぶ
@@ -42,6 +44,7 @@
       - 変更を確定する
    - VSインストール後でもVisual Studio Installerを起動して導入可能です。 
 ![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
+   - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
 
 ### インストーラのビルドに必要なもの
 
