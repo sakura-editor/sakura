@@ -29,6 +29,7 @@ LanguageDetectionMethod=uilanguage
 WizardImageFile="instmaterials\SetupModern20.bmp"
 WizardSmallImageFile="instmaterials\SetupModernSmall20.bmp"
 DisableStartupPrompt=yes
+DisableWelcomePage=no
 
 PrivilegesRequired=None
 
