@@ -26,13 +26,6 @@ add_dependencies(${project_name} HeaderMake)
 add_dependencies(${project_name} OutHeaderMake)
 add_dependencies(${project_name} OutGitHash)
 
-get_target_property(HeaderMake_RUNTIME_OUTPUT_DIRECTORY HeaderMake RUNTIME_OUTPUT_DIRECTORY)
-set(update_HeaderMake_BAT      ${sakura_SOURCE_DIR}/../sakura/funccode.bat)
-set(update_HeaderMake_DIR_EXE  ${HeaderMake_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
-set(update_HeaderMake_DIR_DAT  ${sakura_SOURCE_DIR})
-set(update_gitHash_BAT         ${sakura_SOURCE_DIR}/../sakura/githash.bat)
-set(update_gitHash_DIR_DAT     ${sakura_SOURCE_DIR})
-
 # add definition
 add_definitions(-D_UNICODE -DUNICODE)
 add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
