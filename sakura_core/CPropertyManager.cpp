@@ -109,7 +109,7 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 	CPropTypes* pcPropTypes = new CPropTypes();
 	pcPropTypes->Create( G_AppInstance(), m_hwndOwner );
 
-	std::auto_ptr<STypeConfig> pType(new STypeConfig());
+	std::unique_ptr<STypeConfig> pType(new STypeConfig());
 	CDocTypeManager().GetTypeConfig(nSettingType, *pType);
 	pcPropTypes->SetTypeData(*pType);
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように

@@ -513,7 +513,7 @@ bool CDlgTypeList::InitializeType( void )
 		return false;
 	}
 //	_DefaultConfig(&types);		//規定値をコピー
-	std::auto_ptr<STypeConfig> type(new STypeConfig());
+	std::unique_ptr<STypeConfig> type(new STypeConfig());
 	if( 0 != iDocType ){
 		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); 	// 基本をコピー
 
@@ -624,8 +624,8 @@ bool CDlgTypeList::UpType()
 		// 基本の場合には何もしない
 		return true;
 	}
-	std::auto_ptr<STypeConfig> type1(new STypeConfig());
-	std::auto_ptr<STypeConfig> type2(new STypeConfig());
+	std::unique_ptr<STypeConfig> type1(new STypeConfig());
+	std::unique_ptr<STypeConfig> type2(new STypeConfig());
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType - 1), *type2);
 	--(type1->m_nIdx);
@@ -646,8 +646,8 @@ bool CDlgTypeList::DownType()
 		// 基本、最後の場合には何もしない
 		return true;
 	}
-	std::auto_ptr<STypeConfig> type1(new STypeConfig());
-	std::auto_ptr<STypeConfig> type2(new STypeConfig());
+	std::unique_ptr<STypeConfig> type1(new STypeConfig());
+	std::unique_ptr<STypeConfig> type2(new STypeConfig());
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType), *type1);
 	CDocTypeManager().GetTypeConfig(CTypeConfig(iDocType + 1), *type2);
 	++(type1->m_nIdx);

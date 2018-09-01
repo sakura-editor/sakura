@@ -901,7 +901,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 	if( m_pcList->GetCount() <= 0 ) return -1;	//選べません。
 	if( NULL == m_pszFileName ) return 0;
 
-	std::auto_ptr<TagPathInfo> mem_lpPathInfo( new TagPathInfo );
+	std::unique_ptr<TagPathInfo> mem_lpPathInfo( new TagPathInfo );
 	TagPathInfo* lpPathInfo= mem_lpPathInfo.get();
 	int nMatch1 = -1;
 	int nMatch2 = -1;

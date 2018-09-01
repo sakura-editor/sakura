@@ -71,7 +71,7 @@ public:
 	bool OutputA(const ACHAR* pBuf, int size = -1);
 
 protected:
-	std::auto_ptr<CCodeBase> pcCodeBase;
+	std::unique_ptr<CCodeBase> pcCodeBase;
 };
 
 /*!	@brief	外部コマンドの実行

@@ -136,7 +136,7 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 		HANDLE out = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		if( out && out != INVALID_HANDLE_VALUE ){
 			CMemory cmemOut;
-			std::auto_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(
+			std::unique_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(
 					pcEditView->GetDocument()->GetDocumentEncoding(), 0) );
 			pcCodeBase->UnicodeToCode( cmem, &cmemOut );
 			DWORD dwWrite = 0;
@@ -1593,7 +1593,7 @@ private:
 	size_t bufferSize;
 	std::deque<CNativeW> buffer;
 	CBinaryOutputStream* out;
-	std::auto_ptr<CCodeBase> pcCodeBase;
+	std::unique_ptr<CCodeBase> pcCodeBase;
 	CNativeW&	memMessage;
 };
 
