@@ -47,11 +47,10 @@ if exist "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" (
 if の構文の `(` が `C:\Program Files (x86)\HTML Help Workshop\hhc.exe` の `)` と対応すると
 解釈されるので `\HTML` が if の条件が成立したときのコマンドと認識されるのでエラーになる。
 
-このエラーを回避するために以下のように環境変数 `HHC_PATH2` の値を代入するときにダブルクオートで囲む。
-結果として 環境変数 `CMD_HHC` にはダブルクオートを含む値が設定されるが、仕方ない。
+このエラーを回避するために以下のように、代入文の変数名 ～ 値の部分全体をダブルクオートで囲む。
 
 ```
 if exist "%HHC_PATH2%" (
-	set CMD_HHC="%HHC_PATH2%"
+	set "CMD_HHC=%HHC_PATH2%"
 )
 ```

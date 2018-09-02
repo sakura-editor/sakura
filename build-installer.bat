@@ -48,7 +48,7 @@ copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
 copy /Y /B %platform%\%configuration%\*.dll                 %INSTALLER_WORK%\
 
 set SAKURA_ISS=installer\sakura-%platform%.iss
-%CMD_ISCC% %SAKURA_ISS% || (echo error && exit /b 1)
+"%CMD_ISCC%" %SAKURA_ISS% || (echo error && exit /b 1)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
