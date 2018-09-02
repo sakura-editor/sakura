@@ -1,13 +1,13 @@
-set HHC=C:\Program Files (x86)\HTML Help Workshop\hhc.exe
+call %~dp0tools\hhc\find-hhc.bat
 
 @rem hhc.exe returns 1 on success, and returns 0 on failure
-"%HHC%" help\macro\macro.HHP
+%CMD_HHC% help\macro\macro.HHP
 if %errorlevel% equ 0 (echo error && exit /b 1)
 
-"%HHC%" help\plugin\plugin.hhp
+%CMD_HHC% help\plugin\plugin.hhp
 if %errorlevel% equ 0 (echo error && exit /b 1)
 
-"%HHC%" help\sakura\sakura.hhp
+%CMD_HHC% help\sakura\sakura.hhp
 if %errorlevel% equ 0 (echo error && exit /b 1)
 
 exit /b 0
