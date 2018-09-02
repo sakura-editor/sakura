@@ -7,12 +7,13 @@ if exist "%OUTDIR%" rmdir /s /q "%OUTDIR%"
 call %~dp0find-7z.bat
 
 @echo extracting %SRCZIP%.
-if "%CMD_7Z%" == "" (
+@rem CMD_7Z contains double quotes.
+if %CMD_7Z% == "" (
 	@echo -------------------------------------------------------
 	@echo ---- you can make this faster by installing 7-zip. ----
 	@echo -------------------------------------------------------
 	powershell -ExecutionPolicy RemoteSigned -File %~dp0unzip.ps1 %SRCZIP% %OUTDIR%
 ) else (
-	"%CMD_7Z%" x "%SRCZIP%"  -O"%OUTDIR%"
+	%CMD_7Z% x "%SRCZIP%"  -O"%OUTDIR%"
 )
 @echo on
