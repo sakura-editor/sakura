@@ -13,7 +13,6 @@ cppcheck.exe のパスを見つけて 環境変数 `CMD_CPPCHECK` に設定す�
 ## ロジック
 
 以下の順番でパスを検索して、見つかったパスを環境変数 `CMD_CPPCHECK` にセットする。
-CMD_CPPCHECK にはダブルクオートを含む値が設定される。
 
 - %ProgramFiles%\Cppcheck\cppcheck.exe
 - %ProgramFiles(x86)%\Cppcheck\cppcheck.exe

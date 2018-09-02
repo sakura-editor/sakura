@@ -13,7 +13,6 @@ ISCC.exe のパスを見つけて 環境変数 `CMD_ISCC` に設定する
 ## ロジック
 
 以下の順番でパスを検索して、見つかったパスを環境変数 `CMD_ISCC` にセットする。
-CMD_ISCC にはダブルクオートを含む値が設定される。
 
 - %ProgramFiles%\Inno Setup 5\ISCC.exe
 - %ProgramFiles(x86)%\Inno Setup 5\ISCC.exe

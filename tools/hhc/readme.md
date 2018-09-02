@@ -13,7 +13,6 @@ hhc.exe のパスを見つけて 環境変数 `CMD_HHC` に設定する
 ## ロジック
 
 以下の順番でパスを検索して、見つかったパスを環境変数 `CMD_HHC` にセットする。
-CMD_HHC にはダブルクオートを含む値が設定される。
 
 - %ProgramFiles%\HTML Help Workshop\hhc.exe
 - %ProgramFiles(x86)%\HTML Help Workshop\hhc.exe

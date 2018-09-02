@@ -13,7 +13,6 @@ msbuild.exe のパスを見つけて 環境変数 `CMD_MSBUILD` に設定する
 ## ロジック
 
 以下の順番でパスを検索して、見つかったパスを環境変数 `CMD_MSBUILD` にセットする。
-CMD_MSBUILD にはダブルクオートを含む値が設定される。
 
 - %ProgramFiles%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
 - %ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
