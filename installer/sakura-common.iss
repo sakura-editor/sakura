@@ -170,7 +170,7 @@ Name: "{group}\{cm:IconPreferencefolder}";                                      
 Name: "{userdesktop}\{cm:AppName}";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
 Name: "{group}\{cm:UninstallProgram,{cm:AppName}}";                                                 Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:AppName}"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
-Name: "{userstartup}\{cm:AutoStartProgram}";                                         Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
+Name: "{userstartup}\{cm:AutoStartProgram,{cm:AppName}}";                                         Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
 Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
