@@ -55,7 +55,7 @@ en.AppName=Sakura Editor
 ja.AppName=サクラエディタ
 en.AppVerName=sakura editor
 ja.AppVerName=sakura editor(サクラエディタ)
-en.AppPublisher=Term Sakura Editor Developer
+en.AppPublisher=Sakura Editor developers
 ja.AppPublisher=サクラエディタ開発チーム
 en.TypesAll=All
 ja.TypesAll=すべて
@@ -71,15 +71,15 @@ en.ComponentsHelp=help files
 ja.ComponentsHelp=ヘルプファイル
 en.ComponentsKeyword=KeyWord files
 ja.ComponentsKeyword=KeyWordファイル
-en.startmenu=Create Start Menu(&S)
+en.startmenu=Create &Start Menu
 ja.startmenu=スタートメニューを作成(&S)
-en.proglist=Add Program List(&P)
+en.proglist=Add &Program List
 ja.proglist=プログラム一覧に追加(&P)
-en.fileassoc=Add "Open With Sakura &Editor"(&E)
+en.fileassoc=Add "Open with Sakura &Editor"
 ja.fileassoc=「SAKURAで開く」メニューの追加(&E)
 en.sendto=Add Send &To
 ja.sendto=送るに追加(&T)
-en.fileassocMenu=Open With Sakura &Editor
+en.fileassocMenu=Open with Sakura &Editor
 ja.fileassocMenu=SAKURAで開く(&E)
 en.IconPreferencefolder=Preference folder
 ja.IconPreferencefolder=設定フォルダ
@@ -91,7 +91,7 @@ en.InitWiz1=Selection of Preference preservation method
 ja.InitWiz1=設定保存方法の選択
 en.InitWiz2=Please choose whether you want to save the settings for each user or to the location of the executable file
 ja.InitWiz2=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
-en.InitWiz3=Please do not change if you do not understand well
+en.InitWiz3=Please do not change if you're unsure about this
 ja.InitWiz3=よくわからない場合は変更しないでください
 en.InitWiz4=Manage Preference individually for each user
 ja.InitWiz4=設定をユーザ毎に個別に管理する
@@ -130,7 +130,7 @@ Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";         Components
 Name: proglist;    Description: "{cm:proglist}";           Components: main;
 Name: desktopicon; Description: "{cm:CreateDesktopIcon}";             Components: main; Flags: unchecked;
 Name: fileassoc;   Description: "{cm:fileassoc}"; Components: main; Flags: unchecked;
-Name: startup;     Description: "{cm:AutoStartProgram,{cm:AppName}}(&R)";                   Components: main; Flags: unchecked;
+Name: startup;     Description: "{cm:AutoStartProgram,{cm:AppName}}";                   Components: main; Flags: unchecked;
 Name: sendto;      Description: "{cm:sendto}";                     Components: main; Flags: unchecked;
 
 [Files]
