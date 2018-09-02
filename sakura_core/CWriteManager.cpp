@@ -24,7 +24,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 )
 {
 	EConvertResult		nRetVal = RESULT_COMPLETE;
-	std::auto_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode,0) );
+	std::unique_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode,0) );
 
 	{
 		// 変換テスト

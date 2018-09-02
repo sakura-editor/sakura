@@ -613,7 +613,7 @@ BOOL CViewCommander::Command_PUTFILE(
 	//	2007.09.08 genta CEditDoc::FileWrite()にならって砂時計カーソル
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
-	std::auto_ptr<CCodeBase> pcSaveCode( CCodeFactory::CreateCodeBase(nSaveCharCode,0) );
+	std::unique_ptr<CCodeBase> pcSaveCode( CCodeFactory::CreateCodeBase(nSaveCharCode,0) );
 
 	bool bBom = false;
 	if (CCodeTypeName(nSaveCharCode).UseBom()) {
@@ -635,7 +635,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			const CNativeW* pConvBuffer;
 			if( bBom ){
 				CNativeW cmemBom;
-				std::auto_ptr<CCodeBase> pcUtf16( CCodeFactory::CreateCodeBase(CODE_UNICODE,0) );
+				std::unique_ptr<CCodeBase> pcUtf16( CCodeFactory::CreateCodeBase(CODE_UNICODE,0) );
 				pcUtf16->GetBom(cmemBom._GetMemory());
 				cMem2.AppendNativeData(cmemBom);
 				cMem2.AppendNativeData(cMem);

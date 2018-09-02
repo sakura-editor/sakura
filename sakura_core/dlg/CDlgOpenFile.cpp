@@ -786,7 +786,7 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFiler )
 	}
 
 	/* 構造体の初期化 */
-	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
 	pData->m_pcDlgOpenFile = this;
 	pData->m_ofn.lCustData = (LPARAM)(pData.get());
@@ -872,7 +872,7 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 	}
 
 	/* 構造体の初期化 */
-	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
 	pData->m_pcDlgOpenFile = this;
 	pData->m_ofn.lCustData = (LPARAM)(pData.get());
@@ -910,7 +910,7 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 */
 bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>* pFileNames, bool bOptions )
 {
-	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	pData->m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
 	bool bMultiSelect = pFileNames != NULL;
@@ -1011,7 +1011,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 */
 bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 {
-	std::auto_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
+	std::unique_ptr<CDlgOpenFileData> pData( new CDlgOpenFileData() );
 	pData->m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
 	//	2003.05.12 MIK
