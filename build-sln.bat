@@ -26,7 +26,7 @@ set SLN_FILE=sakura.sln
 @rem https://www.appveyor.com/docs/environment-variables/
 
 if "%APPVEYOR%"=="True" (
-    set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    set EXTRA_CMD=/verbosity:minimal /logger:"%ProgramFiles%\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 ) else (
     set EXTRA_CMD=
 )
