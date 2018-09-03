@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 
-project (sakura-unittest)
+project (sakura-unittest LANGUAGES CXX)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
 
