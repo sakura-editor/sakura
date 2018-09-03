@@ -1,4 +1,8 @@
 call %~dp0tools\hhc\find-hhc.bat
+if "%CMD_HHC%" == "" (
+	echo hhc.exe was not found.
+	exit /b 1
+)
 
 @rem hhc.exe returns 1 on success, and returns 0 on failure
 "%CMD_HHC%" help\macro\macro.HHP

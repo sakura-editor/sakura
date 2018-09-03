@@ -1,5 +1,4 @@
 @echo off
-call %~dp0tools\msbuild\find-msbuild.bat
 set platform=%1
 set configuration=%2
 
@@ -18,6 +17,11 @@ if "%configuration%" == "Release" (
 	@rem OK
 ) else (
 	call :showhelp %0
+	exit /b 1
+)
+call %~dp0tools\msbuild\find-msbuild.bat
+if "%CMD_MSBUILD%" == "" (
+	echo msbuild.exe was not found.
 	exit /b 1
 )
 

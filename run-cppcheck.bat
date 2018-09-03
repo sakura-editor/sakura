@@ -1,6 +1,4 @@
 @echo off
-call %~dp0tools\CppCheck\find-CppCheck.bat
-
 set platform=%1
 @rem doesn't use
 set configuration=%2
@@ -21,6 +19,12 @@ if "%configuration%" == "Release" (
 ) else (
 	call :showhelp %0
 	exit /b 1
+)
+
+call %~dp0tools\CppCheck\find-CppCheck.bat
+if "%CMD_CPPCHECK%" == "" (
+	echo cppcheck.exe was not found. so skip to run it.
+	exit /b 0
 )
 
 set CPPCHECK_OUT=cppcheck-%platform%-%configuration%.xml

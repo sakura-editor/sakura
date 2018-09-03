@@ -1,6 +1,4 @@
 @echo off
-call %~dp0tools\ISCC\find-ISCC.bat
-
 set platform=%1
 set configuration=%2
 
@@ -19,6 +17,12 @@ if "%configuration%" == "Release" (
 	@rem OK
 ) else (
 	call :showhelp %0
+	exit /b 1
+)
+
+call %~dp0tools\ISCC\find-ISCC.bat
+if "%CMD_ISCC%" == "" (
+	echo ISCC.exe was not found.
 	exit /b 1
 )
 
