@@ -58,6 +58,8 @@
 #define CMDLINEOPT_M			106  //!< 起動時に実行するマクロのファイル名を指定
 #define CMDLINEOPT_MTYPE		107  //!< マクロの種類を拡張子名で指定
 #define CMDLINEOPT_GREPR		108  //!< Grepの置換文字列
+#define CMDLINEOPT_GEXCLUDEFILE		109  //!< Grepの検索除外のファイル
+#define CMDLINEOPT_GEXCLUDEFOLDER	110  //!< Grepの検索除外のフォルダ
 #define CMDLINEOPT_GROUP		500  //!< タブモードのグループを指定して開く
 #define CMDLINEOPT_PROF			501  //!< プロファイルを選択
 #define CMDLINEOPT_PROFMGR		502  //!< プロファイルマネージャを起動時に表示
@@ -125,6 +127,8 @@ int CCommandLine::CheckCommandLine(
 		{_T("GREPR"),	5,			CMDLINEOPT_GREPR, true},
 		{_T("GFILE"),	5,			CMDLINEOPT_GFILE, false},
 		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
+		{_T("GEXCLUDEFILE"),	12,	CMDLINEOPT_GEXCLUDEFILE, false},
+		{_T("GEXCLUDEFOLDER"),	14,	CMDLINEOPT_GEXCLUDEFOLDER, false},
 		{_T("GOPT"),	4,			CMDLINEOPT_GOPT, false},
 		{_T("GCODE"),	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
 		{_T("GROUP"),	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
@@ -415,6 +419,14 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
 				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
 				m_gi.cmGrepFolder.Replace( _T("\"\""), _T("\"") );
+				break;
+			case CMDLINEOPT_GEXCLUDEFILE:	//	GEXCLUDEFILE
+				m_gi.cmExcludeFile.SetString(arg, lstrlen(arg));
+				m_gi.cmExcludeFile.Replace(_T("\"\""), _T("\""));
+				break;
+			case CMDLINEOPT_GEXCLUDEFOLDER:	//	GEXCLUDEFOLDER
+				m_gi.cmExcludeFolder.SetString(arg, lstrlen(arg));
+				m_gi.cmExcludeFolder.Replace(_T("\"\""), _T("\""));
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
 				for( ; *arg != '\0' ; ++arg ){
