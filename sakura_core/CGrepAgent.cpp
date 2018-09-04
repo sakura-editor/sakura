@@ -169,6 +169,8 @@ DWORD CGrepAgent::DoGrep(
 	const CNativeW*			pcmGrepReplace,
 	const CNativeT*			pcmGrepFile,
 	const CNativeT*			pcmGrepFolder,
+	const CNativeT*			pcmExcludeFile,
+	const CNativeT*			pcmExcludeFolder,
 	bool					bGrepCurFolder,
 	BOOL					bGrepSubFolder,
 	bool					bGrepStdout,
@@ -357,7 +359,9 @@ DWORD CGrepAgent::DoGrep(
 	CGrepEnumKeys cGrepEnumKeys;
 	{
 		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr() );
-		if( nErrorNo != 0 ){
+		int nErrorNo_ExcludeFile   = cGrepEnumKeys.AddExceptFile(pcmExcludeFile->GetStringPtr());
+		int nErrorNo_ExcludeFolder = cGrepEnumKeys.AddExceptFolder(pcmExcludeFolder->GetStringPtr());
+		if( nErrorNo != 0 || nErrorNo_ExcludeFile != 0 || nErrorNo_ExcludeFolder != 0){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
 			pcViewDst->SetUndoBuffer();
@@ -365,7 +369,20 @@ DWORD CGrepAgent::DoGrep(
 			const TCHAR* pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS0);
 			if( nErrorNo == 1 ){
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
-			}else if( nErrorNo == 2 ){
+			}
+			else if( nErrorNo == 2 ){
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
+			}
+			else if (nErrorNo_ExcludeFile == 1) {
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
+			}
+			else if (nErrorNo_ExcludeFile == 2) {
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
+			}
+			else if (nErrorNo_ExcludeFolder == 1) {
+				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
+			}
+			else if (nErrorNo_ExcludeFolder == 2) {
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
 			ErrorMessage( pcViewDst->m_hwndParent, _T("%ts"), pszErrorMessage );

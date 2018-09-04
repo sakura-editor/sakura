@@ -126,6 +126,8 @@ protected:
 #include "CRecentReplace.h"
 #include "CRecentGrepFile.h"
 #include "CRecentGrepFolder.h"
+#include "CRecentExcludeFile.h"
+#include "CRecentExcludeFolder.h"
 #include "CRecentCmd.h"
 #include "CRecentCurDir.h"
 #include "CRecentEditNode.h"

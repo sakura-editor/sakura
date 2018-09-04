@@ -115,6 +115,22 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	case IDC_COMBO_EXCLUDE_FILE:
+		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			int nSize = m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size();
+			for (int i = 0; i < nSize; ++i) {
+				Combo_AddString(hwndCtl, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[i]);
+			}
+		}
+		break;
+	case IDC_COMBO_EXCLUDE_FOLDER:
+		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			int nSize = m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size();
+			for (int i = 0; i < nSize; ++i) {
+				Combo_AddString(hwndCtl, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[i]);
+			}
+		}
+		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
@@ -139,6 +155,12 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 	if( m_szFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
+	if (m_szExcludeFile[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+		_tcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+	}
+	if (m_szExcludeFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+		_tcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+	}
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
@@ -159,11 +181,15 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), _countof2(m_szExcludeFile) - 1);
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), _countof2(m_szExcludeFolder) - 1);
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FILE ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FOLDER ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), TRUE );
 
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -197,6 +223,14 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelFolder = SComboBoxItemDeleter();
 	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
+
+	m_comboDelExcludeFile = SComboBoxItemDeleter();
+	m_comboDelExcludeFile.pRecent = &m_cRecentExcludeFile;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FILE), &m_comboDelExcludeFile);
+
+	m_comboDelExcludeFolder = SComboBoxItemDeleter();
+	m_comboDelExcludeFolder.pRecent = &m_cRecentExcludeFolder;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_comboDelExcludeFolder);
 
 	// フォント設定	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
@@ -428,6 +462,12 @@ void CDlgGrep::SetData( void )
 	/* 検索フォルダ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder );
 
+	/* 除外ファイル */
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
+
+	/* 除外フォルダ */
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
+
 	if((m_szFolder[0] == _T('\0') || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
 		m_szCurrentFilePath[0] != _T('\0')
 	){
@@ -644,6 +684,10 @@ int CDlgGrep::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
+	/* 除外ファイル */
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile));
+	/* 除外フォルダ */
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder));
 
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
@@ -742,6 +786,12 @@ int CDlgGrep::GetData( void )
 
 		/* 検索フォルダ */
 		CSearchKeywordManager().AddToGrepFolderArr( m_szFolder );
+
+		/* 除外ファイル */
+		CSearchKeywordManager().AddToExcludeFileArr(m_szExcludeFile);
+
+		/* 除外フォルダ */
+		CSearchKeywordManager().AddToExcludeFolderArr(m_szExcludeFolder);
 
 		// Grep：サブフォルダも検索
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;
