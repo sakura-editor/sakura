@@ -39,13 +39,7 @@ CFLAGS= -O2 \
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
 LIBS= \
  -static \
- -lkernel32 \
- -luser32 \
- -lgdi32 \
  -lwinspool \
- -lcomdlg32 \
- -ladvapi32 \
- -lshell32 \
  -lole32 \
  -loleaut32 \
  -luuid \
@@ -54,8 +48,6 @@ LIBS= \
  -lmpr \
  -limagehlp \
  -lshlwapi \
- -static-libgcc \
- -static-libstdc++ \
  -mwindows \
  -s
 
