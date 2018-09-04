@@ -104,7 +104,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 	if( m_bUseCache ){
 		wshPlug.m_Wsh = pWsh;
 	}else{
-		// 終わったら開放
+		// 終わったら解放
 		delete pWsh;
 	}
 

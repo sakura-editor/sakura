@@ -201,7 +201,7 @@ bool CNormalProcess::InitializeProcess()
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
-			// 2003.06.23 Moca GREP実行前にMutexを開放
+			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
@@ -255,7 +255,7 @@ bool CNormalProcess::InitializeProcess()
 			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet = gi.nGrepCharSet;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType = gi.nGrepOutputLineType;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
-			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
+			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );

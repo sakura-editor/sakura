@@ -279,7 +279,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
 	}
 
-	// 終わったら開放
+	// 終わったら解放
 	m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
 	if ( oldMacro != NULL ) {
 		m_pcSMacroMgr->SetTempMacro( oldMacro );
