@@ -82,6 +82,8 @@ CDlgGrep::CDlgGrep()
 	m_bSetText = false;
 	m_szFile[0] = 0;
 	m_szFolder[0] = 0;
+	m_szExcludeFile[0] = 0;
+	m_szExcludeFolder[0] = 0;
 	return;
 }
 
