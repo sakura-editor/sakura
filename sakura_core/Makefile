@@ -453,8 +453,8 @@ sakura_rc.o: Funccode_define.h githash sakura_rc.rc
 clean:
 	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
 
-depend: githash
-	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
+depend: Funccode_enum.h githash
+	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
 .PHONY: all clean depend
