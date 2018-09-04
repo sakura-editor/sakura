@@ -38,6 +38,7 @@ CFLAGS= -O2 \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
 LIBS= \
+ -static \
  -lkernel32 \
  -luser32 \
  -lgdi32 \
