@@ -166,6 +166,16 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 		_tcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
 	}
 
+	/* ユーザーの利便性向上のために除外ファイル、除外フォルダに対して初期値を設定する */
+	if (m_szExcludeFile[0] == _T('\0'))
+	{
+		_tcscpy(m_szExcludeFile, _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res"));	/* 除外ファイル */
+	}
+	if (m_szExcludeFolder[0] == _T('\0'))
+	{
+		_tcscpy(m_szExcludeFolder, _T(".git;.svn;.vs"));	/* 除外フォルダ */
+	}
+
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
