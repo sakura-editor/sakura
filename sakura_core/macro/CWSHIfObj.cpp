@@ -32,10 +32,10 @@
 */
 
 #include "StdAfx.h"
+#include <memory>
 #include "macro/CWSHIfObj.h"
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO
-#include "util/other_util.h" // auto_array_ptr
 
 
 //コマンド・関数を準備する
@@ -116,7 +116,7 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 		VariantInit(&ret);
 
 		// 2011.3.18 syat 引数の順序を正しい順にする
-		auto_array_ptr<VARIANTARG> rgvargParam( new VARIANTARG[ArgCount] );
+		auto rgvargParam = std::make_unique<VARIANTARG[]>(ArgCount);
 		for(I = 0; I < ArgCount; I++){
 			::VariantInit(&rgvargParam[ArgCount - I - 1]);
 			::VariantCopy(&rgvargParam[ArgCount - I - 1], &Arguments->rgvarg[I]);
@@ -136,8 +136,8 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 		// 最低4つは確保
 		int argCountMin = t_max(4, ArgCount);
 		//	Nov. 29, 2005 FILE 引数を文字列で取得する
-		auto_array_ptr<LPWSTR> StrArgs( new LPWSTR[argCountMin] );
-		auto_array_ptr<int> strLengths( new int[argCountMin] );
+		auto StrArgs = std::make_unique<LPWSTR[]>(argCountMin);
+		auto strLengths = std::make_unique<int[]>(argCountMin);
 		for(I = ArgCount; I < argCountMin; I++ ){
 			StrArgs[I] = NULL;
 			strLengths[I] = 0;

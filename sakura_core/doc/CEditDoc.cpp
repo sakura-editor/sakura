@@ -43,6 +43,7 @@
 #include "StdAfx.h"
 #include <stdlib.h>
 #include <string.h>	// Apr. 03, 2003 genta
+#include <memory>
 #include <OleCtl.h>
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
@@ -72,7 +73,6 @@
 #include "util/file.h"
 #include "util/format.h"
 #include "util/module.h"
-#include "util/other_util.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "sakura_rc.h"

@@ -29,6 +29,7 @@
 */
 
 #include "StdAfx.h"
+#include <memory>
 #include "CImpExpManager.h"
 #include "typeprop/CDlgTypeAscertain.h"
 
@@ -38,7 +39,6 @@
 #include "plugin/CPlugin.h"
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"
-#include "util/other_util.h"
 
 /*-----------------------------------------------------------------------
 定数
@@ -616,7 +616,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 	}
 
 	RegexKeywordInfo	regexKeyArr[MAX_REGEX_KEYWORD];
-	auto_array_ptr<wchar_t> szKeyWordList(new wchar_t [ MAX_REGEX_KEYWORDLISTLEN ]);
+	auto szKeyWordList = std::make_unique<wchar_t[]>(MAX_REGEX_KEYWORDLISTLEN);
 	wchar_t*	pKeyword = &szKeyWordList[0];
 	int	keywordPos = 0;
 	TCHAR				buff[MAX_REGEX_KEYWORDLEN + 20];
