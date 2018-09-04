@@ -30,8 +30,8 @@ DEFINES= \
  -DNOMINMAX \
  -D_UNICODE \
  -DUNICODE \
- -DNDEBUG
-CFLAGS= -O2 \
+ $(MYDEFINES)
+CFLAGS= \
  -finput-charset=utf-8 \
  -fexec-charset=cp932 \
  -I. \
@@ -48,8 +48,9 @@ LIBS= \
  -lmpr \
  -limagehlp \
  -lshlwapi \
+ -lwinmm \
  -mwindows \
- -s
+ $(MYLIBS)
 
 exe= sakura.exe
 
