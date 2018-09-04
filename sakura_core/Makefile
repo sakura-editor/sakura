@@ -32,17 +32,31 @@ DEFINES= \
  -DUNICODE \
  -DNDEBUG
 CFLAGS= -O2 \
- -finput-charset=utf-8 -fexec-charset=cp932 \
+ -finput-charset=utf-8 \
+ -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
 LIBS= \
- -lkernel32 -luser32 -lgdi32 \
- -lwinspool -lcomdlg32 -ladvapi32 \
- -lshell32 -lole32 -loleaut32 \
- -luuid -lcomctl32 -limm32 \
- -lmpr -limagehlp -lshlwapi \
- -static-libgcc -static-libstdc++ -mwindows -s
+ -lkernel32 \
+ -luser32 \
+ -lgdi32 \
+ -lwinspool \
+ -lcomdlg32 \
+ -ladvapi32 \
+ -lshell32 \
+ -lole32 \
+ -loleaut32 \
+ -luuid \
+ -lcomctl32 \
+ -limm32 \
+ -lmpr \
+ -limagehlp \
+ -lshlwapi \
+ -static-libgcc \
+ -static-libstdc++ \
+ -mwindows \
+ -s
 
 exe= sakura.exe
 
