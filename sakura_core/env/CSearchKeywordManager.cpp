@@ -66,7 +66,7 @@ void CSearchKeywordManager::AddToGrepFileArr( const TCHAR* pszGrepFile )
 	cRecentGrepFile.Terminate();
 }
 
-/*!	m_aGrepFolders.size()にpszGrepFolderを追加する
+/*!	m_aGrepFolders にpszGrepFolder を追加する
 	YAZAKI
 */
 void CSearchKeywordManager::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
