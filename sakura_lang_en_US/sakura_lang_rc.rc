@@ -4132,6 +4132,9 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_FILETREE_REPLACE_PATH_FROM	"Please Input Replace 'From' Path"
 	STR_FILETREE_REPLACE_PATH_TO	"Please Input Replace 'To' Path"
 
+	STR_ERR_FILEPATH_TOO_LONG		"'%ts'\nCannot open the file.\nThe filepath is too long."
+
+
 END
 
 STRINGTABLE DISCARDABLE 
