@@ -3268,6 +3268,8 @@ BEGIN
 	STR_GREP_REPLACE_TO			"Repalce To      "
 	STR_GREP_PASTE_CLIPBOAD		"(Paste From Clipborad)"
 	STR_GREP_SEARCH_FOLDER		"Folder          "
+	STR_GREP_EXCLUDE_FILE		"Exclude File    "
+	STR_GREP_EXCLUDE_FOLDER		"Exclude Folder  "
 	STR_GREP_SUBFOLDER_YES		"    (search sub-folders = Yes)\r\n"
 	STR_GREP_SUBFOLDER_NO		"    (search sub-folders = No)\r\n"
 	STR_GREP_COMPLETE_WORD		"    (Match Whole Word)\r\n"

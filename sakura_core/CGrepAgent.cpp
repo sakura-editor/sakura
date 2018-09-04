@@ -485,6 +485,25 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString( L"\r\n" );
 
+	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
+	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	}
+	else {
+	}
+	cmemWork.SetStringT(pcmExcludeFile->GetStringPtr());
+	cmemMessage += cmemWork;
+	cmemMessage.AppendString(L"\r\n");
+
+
+	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
+	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	}
+	else {
+	}
+	cmemWork.SetStringT(pcmExcludeFolder->GetStringPtr());
+	cmemMessage += cmemWork;
+	cmemMessage.AppendString(L"\r\n");
+
 	const wchar_t*	pszWork;
 	if( sGrepOption.bGrepSubFolder ){
 		pszWork = LSW( STR_GREP_SUBFOLDER_YES );	//L"    (サブフォルダも検索)\r\n"
