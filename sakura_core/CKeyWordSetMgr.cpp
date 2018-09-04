@@ -148,7 +148,7 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 	){
 		return false;
 	}
-	// キーワード領域を開放
+	// キーワード領域を再割り当て
 	KeyWordReAlloc( nIdx, 0 );
 	
 	for( i = nIdx; i < m_nKeyWordSetNum - 1; ++i ){

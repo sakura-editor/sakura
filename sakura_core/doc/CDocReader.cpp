@@ -4,8 +4,8 @@
 #include "logic/CDocLineMgr.h"
 
 /* 全行データを返す
-	改行コードは、CFLF統一される。
-	@retval 全行データ。freeで開放しなければならない。
+	改行コードは、CRLFに統一される。
+	@retval 全行データ。freeで解放しなければならない。
 	@note   Debug版のテストにのみ使用している。
 */
 wchar_t* CDocReader::GetAllData(int* pnDataLen)
