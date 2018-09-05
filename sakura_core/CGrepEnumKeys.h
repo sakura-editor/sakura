@@ -143,57 +143,6 @@ public:
 
 	/*!
 		@brief 除外ファイルパターンを追加する
-		@param[in]		lpKeys					除外ファイルパターン
-		@param[in,out]	exceptionKeys			除外ファイルパターンの解析結果を追加する
-		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
-	*/
-	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
-		int nWildCardLen = _tcslen(lpKeys);
-		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return -1;
-		}
-		_tcscpy(pWildCard, lpKeys);
-
-		int nPos = 0;
-		TCHAR*	token;
-		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
-			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
-			p = q = token;
-			while (*p) {
-				if (*p != _T('"')) {
-					if (p != q) {
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = _T('\0');
-
-			bool bRelPath = _IS_REL_PATH(token);
-			int nValidStatus = ValidateKey(token);
-			if (0 != nValidStatus) {
-				delete[] pWildCard;
-				return nValidStatus;
-			}
-			if (bRelPath) {
-				push_back_unique(exceptionKeys, token);
-			}
-			else {
-				push_back_unique(exceptionAbsoluteKeys, token);
-			}
-		}
-		delete[] pWildCard;
-		return 0;
-	}
-
-	/*!
-		@brief 除外ファイルパターンを追加する
 		@param[in]	lpKeys	除外ファイルパターン
 	*/
 	int AddExceptFile(LPCTSTR lpKeys) {
@@ -256,6 +205,57 @@ private:
 				return 1;
 			}
 		}
+		return 0;
+	}
+
+	/*!
+		@brief 除外ファイルパターンを追加する
+		@param[in]		lpKeys					除外ファイルパターン
+		@param[in,out]	exceptionKeys			除外ファイルパターンの解析結果を追加する
+		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
+	*/
+	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
+		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
+		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
+		int nWildCardLen = _tcslen(lpKeys);
+		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
+		if (!pWildCard) {
+			return -1;
+		}
+		_tcscpy(pWildCard, lpKeys);
+
+		int nPos = 0;
+		TCHAR*	token;
+		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+			// "を取り除いて左に詰める
+			TCHAR* p;
+			TCHAR* q;
+			p = q = token;
+			while (*p) {
+				if (*p != _T('"')) {
+					if (p != q) {
+						*q = *p;
+					}
+					q++;
+				}
+				p++;
+			}
+			*q = _T('\0');
+
+			bool bRelPath = _IS_REL_PATH(token);
+			int nValidStatus = ValidateKey(token);
+			if (0 != nValidStatus) {
+				delete[] pWildCard;
+				return nValidStatus;
+			}
+			if (bRelPath) {
+				push_back_unique(exceptionKeys, token);
+			}
+			else {
+				push_back_unique(exceptionAbsoluteKeys, token);
+			}
+		}
+		delete[] pWildCard;
 		return 0;
 	}
 };
