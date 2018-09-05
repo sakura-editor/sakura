@@ -51,7 +51,7 @@ public:
 	void		AddToSearchKeyArr( const wchar_t* pszSearchKey );	//	m_aSearchKeysにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const wchar_t* pszReplaceKey );	//	m_aReplaceKeysにpszReplaceKeyを追加する
 	void		AddToGrepFileArr( const TCHAR* pszGrepFile );		//	m_aGrepFilesにpszGrepFileを追加する
-	void		AddToGrepFolderArr( const TCHAR* pszGrepFolder );	//	m_aGrepFolders.size()にpszGrepFolderを追加する
+	void		AddToGrepFolderArr( const TCHAR* pszGrepFolder );	//	m_aGrepFolders にpszGrepFolder を追加する
 private:
 	DLLSHAREDATA* m_pShareData;
 };
