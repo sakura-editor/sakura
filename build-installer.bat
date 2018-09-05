@@ -20,6 +20,12 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
+call %~dp0tools\ISCC\find-ISCC.bat
+if "%CMD_ISCC%" == "" (
+	echo ISCC.exe was not found.
+	exit /b 1
+)
+
 set INSTALLER_WORK=installer\sakura
 set INSTALLER_OUTPUT=installer\Output-%platform%
 
@@ -46,7 +52,7 @@ copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
 copy /Y /B %platform%\%configuration%\*.dll                 %INSTALLER_WORK%\
 
 set SAKURA_ISS=installer\sakura-%platform%.iss
-"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" %SAKURA_ISS% || (echo error && exit /b 1)
+"%CMD_ISCC%" %SAKURA_ISS% || (echo error && exit /b 1)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
