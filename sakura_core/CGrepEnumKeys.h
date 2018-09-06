@@ -60,19 +60,14 @@ public:
 	}
 
 	int SetFileKeys( LPCTSTR lpKeys ){
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
 		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
-		int nWildCardLen = _tcslen( lpKeys );
-		TCHAR* pWildCard = new TCHAR[ nWildCardLen + 1 ];
-		if( ! pWildCard ){
-			return -1;
-		}
-		_tcscpy( pWildCard, lpKeys );
 		ClearItems();
 		
-		int nPos = 0;
-		TCHAR*	token;
-		while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) ){	//トークン毎に繰り返す。
+		std::vector< tstring > patterns = SplitPattern(lpKeys);
+		for (size_t i = 0; i < patterns.size(); i++) {
+			const tstring& element = patterns[i];
+			const TCHAR* token = element.c_str();
+
 			//フィルタを種類ごとに振り分ける
 			enum KeyFilterType{
 				FILTER_SEARCH,
@@ -87,25 +82,11 @@ public:
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
-			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
-			p = q = token;
-			while( *p ){
-				if( *p != _T('"') ){
-					if( p != q ){
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = _T('\0');
-			
+
 			bool bRelPath = _IS_REL_PATH( token );
 			int nValidStatus = ValidateKey( token );
 			if( 0 != nValidStatus ){
-				delete [] pWildCard;
+
 				return nValidStatus;
 			}
 			if( keyType == FILTER_SEARCH ){
@@ -114,7 +95,6 @@ public:
 				}else{
 //					push_back_unique( m_vecSearchAbsFileKeys, token );
 //					push_back_unique( m_vecSearchFileKeys, token );
-					delete [] pWildCard;
 					return 2; // 絶対パス指定は不可
 				}
 			}else if( keyType == FILTER_EXCEPT_FILE ){
@@ -137,7 +117,6 @@ public:
 		if( m_vecSearchFolderKeys.size() == 0 ){
 			push_back_unique( m_vecSearchFolderKeys, WILDCARD_ANY );
 		}
-		delete [] pWildCard;
 		return 0;
 	}
 
@@ -258,37 +237,15 @@ private:
 		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
 	*/
 	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
-		int nWildCardLen = _tcslen(lpKeys);
-		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return -1;
-		}
-		_tcscpy(pWildCard, lpKeys);
+		std::vector< tstring > patterns = SplitPattern(lpKeys);
 
-		int nPos = 0;
-		TCHAR*	token;
-		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
-			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
-			p = q = token;
-			while (*p) {
-				if (*p != _T('"')) {
-					if (p != q) {
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = _T('\0');
+		for (size_t i = 0; i < patterns.size(); i++) {
+			const tstring& element = patterns[i];
+			const TCHAR* token = element.c_str();
 
 			bool bRelPath = _IS_REL_PATH(token);
 			int nValidStatus = ValidateKey(token);
 			if (0 != nValidStatus) {
-				delete[] pWildCard;
 				return nValidStatus;
 			}
 			if (bRelPath) {
@@ -298,7 +255,6 @@ private:
 				push_back_unique(exceptionAbsoluteKeys, token);
 			}
 		}
-		delete[] pWildCard;
 		return 0;
 	}
 };
