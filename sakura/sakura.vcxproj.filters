@@ -481,9 +481,6 @@
     <ClInclude Include="..\sakura_core\util\os.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\other_util.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\util\RegKey.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
@@ -1449,9 +1446,6 @@
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\os.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\util\other_util.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\relation_tool.cpp">

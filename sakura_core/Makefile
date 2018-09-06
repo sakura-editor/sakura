@@ -343,7 +343,6 @@ util/MessageBoxF.o \
 util/module.o \
 util/ole_convert.o \
 util/os.o \
-util/other_util.o \
 util/relation_tool.o \
 util/shell.o \
 util/string_ex.o \

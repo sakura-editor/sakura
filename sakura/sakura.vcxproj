@@ -497,7 +497,6 @@
     <ClInclude Include="..\sakura_core\util\module.h" />
     <ClInclude Include="..\sakura_core\util\ole_convert.h" />
     <ClInclude Include="..\sakura_core\util\os.h" />
-    <ClInclude Include="..\sakura_core\util\other_util.h" />
     <ClInclude Include="..\sakura_core\util\RegKey.h" />
     <ClInclude Include="..\sakura_core\util\relation_tool.h" />
     <ClInclude Include="..\sakura_core\util\shell.h" />
@@ -895,7 +894,6 @@
     <ClCompile Include="..\sakura_core\util\module.cpp" />
     <ClCompile Include="..\sakura_core\util\ole_convert.cpp" />
     <ClCompile Include="..\sakura_core\util\os.cpp" />
-    <ClCompile Include="..\sakura_core\util\other_util.cpp" />
     <ClCompile Include="..\sakura_core\util\relation_tool.cpp" />
     <ClCompile Include="..\sakura_core\util\shell.cpp" />
     <ClCompile Include="..\sakura_core\util\string_ex.cpp" />
