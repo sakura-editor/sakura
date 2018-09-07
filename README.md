@@ -17,6 +17,7 @@
             - [master の 最新](#master-の-最新)
             - [master の 最新以外](#master-の-最新以外)
         - [単体テスト](#単体テスト)
+        - [デバッグ方法](#デバッグ方法)
 
 <!-- /TOC -->
 
@@ -82,4 +83,8 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 ### 単体テスト
 
 [単体テスト](unittest.md) を参照
+
+### デバッグ方法
+
+- [タスクトレイのメニュー項目のデバッグ方法](debug-tasktray-menu.md) を参照
 
