@@ -893,13 +893,13 @@ int int2dec(
 
 	T v = abs(value);
 
-	while (v) {
+	do {
 		// decimal only
 		*tp++ = (ChT)('0' + (v % 10));
 		v /= 10;
-	}
+	} while (v);
 
-	int len = tp - tmp;
+	int len = (int)(tp - tmp);
 	if (value < 0) {
 		*sp++ = '-';
 		len++;
@@ -914,6 +914,7 @@ int int2dec(
 
 /*!	@brief マッチした行番号と桁番号をGrep結果に出力する為に文字列化
 	auto_sprintf 関数を 書式文字列 "(%I64d,%d)" で実行するのと同等の処理結果を生成
+	高速化の為に自前実装に置き換え
 	@return 出力先文字列
 */
 static inline
