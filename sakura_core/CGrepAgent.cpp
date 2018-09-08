@@ -878,9 +878,10 @@ cancel_return:;
 	return -1;
 }
 
+// integer to string conversion
 // org : https://stackoverflow.com/a/12386915/4699324
 template <typename T, typename ChT>
-int s(T value, ChT *sp)
+int int2dec(T value, ChT *sp)
 {
 	ChT tmp[128];
 	ChT *tp = tmp;
@@ -888,12 +889,9 @@ int s(T value, ChT *sp)
 	T v = abs(value);
 
 	while (v) {
-		T i = v % 10;
+		// decimal only
+		*tp++ = (ChT)('0' + (v % 10));
 		v /= 10;
-		if (i < 10)
-			*tp++ = (ChT)(i + '0');
-		else
-			*tp++ = (ChT)(i + 'a' - 10);
 	}
 
 	int len = tp - tmp;
@@ -907,6 +905,28 @@ int s(T value, ChT *sp)
 	*sp = NULL;
 
 	return len;
+}
+
+static inline
+wchar_t* lineColumnToString(
+	wchar_t*	strWork,
+	LONGLONG	nLine,
+	int			nColumn
+)
+{
+	wchar_t* p = strWork;
+	*p++ = L'(';
+	p += int2dec(nLine, p);
+	*p++ = L',';
+	p += int2dec(nColumn, p);
+	*p++ = L')';
+	*p = NULL;
+#ifdef _DEBUG
+	wchar_t strWork2[128];
+	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
+	assert(wcscmp(strWork, strWork2) == 0);
+#endif
+	return strWork;
 }
 
 /*!	@brief Grep結果を構築する
@@ -949,14 +969,7 @@ void CGrepAgent::SetGrepResult(
 			cmemBuf.AppendString( L"・" );
 		}
 		cmemBuf.AppendStringT( pszFilePath );
-		wchar_t* p = strWork;
-		*p++ = L'(';
-		p += s(nLine, p);
-		*p++ = L',';
-		p += s(nColumn, p);
-		*p++ = L')';
-		*p = NULL;
-		cmemBuf.AppendString(strWork);
+		cmemBuf.AppendString( lineColumnToString(strWork, nLine, nColumn) );
 		cmemBuf.AppendStringT( pszCodeName );
 		cmemBuf.AppendString( L": " );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
