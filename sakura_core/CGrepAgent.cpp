@@ -920,7 +920,7 @@ wchar_t* lineColumnToString(
 	*p++ = L',';
 	p += int2dec(nColumn, p);
 	*p++ = L')';
-	*p = NULL;
+	*p = '\0';
 #ifdef _DEBUG
 	wchar_t strWork2[128];
 	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
