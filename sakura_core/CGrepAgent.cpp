@@ -878,8 +878,36 @@ cancel_return:;
 	return -1;
 }
 
+// org : https://stackoverflow.com/a/12386915/4699324
+template <typename T, typename ChT>
+int s(T value, ChT *sp)
+{
+	ChT tmp[128];
+	ChT *tp = tmp;
 
+	T v = abs(value);
 
+	while (v) {
+		T i = v % 10;
+		v /= 10;
+		if (i < 10)
+			*tp++ = (ChT)(i + '0');
+		else
+			*tp++ = (ChT)(i + 'a' - 10);
+	}
+
+	int len = tp - tmp;
+	if (value < 0) {
+		*sp++ = '-';
+		len++;
+	}
+
+	while (tp > tmp)
+		*sp++ = *--tp;
+	*sp = NULL;
+
+	return len;
+}
 
 /*!	@brief Grep結果を構築する
 
@@ -909,7 +937,7 @@ void CGrepAgent::SetGrepResult(
 {
 
 	CNativeW cmemBuf(L"");
-	wchar_t strWork[64];
+	wchar_t strWork[128];
 	const wchar_t * pDispData;
 	int k;
 	bool bEOL = true;
@@ -921,8 +949,14 @@ void CGrepAgent::SetGrepResult(
 			cmemBuf.AppendString( L"・" );
 		}
 		cmemBuf.AppendStringT( pszFilePath );
-		::auto_sprintf( strWork, L"(%I64d,%d)", nLine, nColumn );
-		cmemBuf.AppendString( strWork );
+		wchar_t* p = strWork;
+		*p++ = L'(';
+		p += s(nLine, p);
+		*p++ = L',';
+		p += s(nColumn, p);
+		*p++ = L')';
+		*p = NULL;
+		cmemBuf.AppendString(strWork);
 		cmemBuf.AppendStringT( pszCodeName );
 		cmemBuf.AppendString( L": " );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
