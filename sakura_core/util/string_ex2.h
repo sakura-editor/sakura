@@ -83,5 +83,46 @@ int scan_ints(
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
+/*!	@brief integer to string conversion
+	org : https://stackoverflow.com/a/12386915/4699324
+	@return the length of the result
+*/
+template <typename T, typename ChT>
+int int2dec(
+	T value,	//!< [in] the integer value to stringify
+	ChT* sp		//!< [out] the destination string to store the stringified result
+)
+{
+	static_assert(std::is_signed_v<T>, "T must be signed type.");
+
+	ChT tmp[64];
+	ChT *tp = tmp;
+
+	bool isMin = (value == std::numeric_limits<T>::min());
+	value += isMin;
+
+	T v = abs(value);
+
+	do {
+		// decimal only
+		*tp++ = (ChT)('0' + (v % 10));
+		v /= 10;
+	} while (v);
+	
+	tmp[0] += isMin;
+
+	int len = (int)(tp - tmp);
+	if (value < 0) {
+		*sp++ = '-';
+		len++;
+	}
+
+	while (tp > tmp)
+		*sp++ = *--tp;
+	*sp = '\0';
+
+	return len;
+}
+
 #endif /* SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_ */
 /*[EOF]*/

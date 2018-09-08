@@ -17,6 +17,7 @@
 #include "io/CBinaryStream.h"
 #include "util/window.h"
 #include "util/module.h"
+#include "util/string_ex2.h"
 #include "debug/CRunningTimer.h"
 #include <deque>
 #include <memory>
@@ -876,40 +877,6 @@ cancel_return:;
 	}
 
 	return -1;
-}
-
-/*!	@brief integer to string conversion
-	org : https://stackoverflow.com/a/12386915/4699324
-	@return the length of the result
-*/
-template <typename T, typename ChT>
-int int2dec(
-	T value,	// the integer value to stringify
-	ChT *sp		// the destination string to store the stringified result
-)
-{
-	ChT tmp[64];
-	ChT *tp = tmp;
-
-	T v = abs(value);
-
-	do {
-		// decimal only
-		*tp++ = (ChT)('0' + (v % 10));
-		v /= 10;
-	} while (v);
-
-	int len = (int)(tp - tmp);
-	if (value < 0) {
-		*sp++ = '-';
-		len++;
-	}
-
-	while (tp > tmp)
-		*sp++ = *--tp;
-	*sp = '\0';
-
-	return len;
 }
 
 /*!	@brief マッチした行番号と桁番号をGrep結果に出力する為に文字列化
