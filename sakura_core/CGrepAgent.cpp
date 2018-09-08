@@ -888,7 +888,7 @@ int int2dec(
 	ChT *sp		// the destination string to store the stringified result
 )
 {
-	ChT tmp[128];
+	ChT tmp[64];
 	ChT *tp = tmp;
 
 	T v = abs(value);
@@ -933,7 +933,7 @@ wchar_t* lineColumnToString(
 	*p = '\0';
 #ifdef _DEBUG
 	// Debug 版に限って両方実行して、両者が一致することを確認
-	wchar_t strWork2[128];
+	wchar_t strWork2[64];
 	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
 	assert(wcscmp(strWork, strWork2) == 0);
 #endif
@@ -968,7 +968,7 @@ void CGrepAgent::SetGrepResult(
 {
 
 	CNativeW cmemBuf(L"");
-	wchar_t strWork[128];
+	wchar_t strWork[64];
 	const wchar_t * pDispData;
 	int k;
 	bool bEOL = true;
