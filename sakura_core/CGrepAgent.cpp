@@ -878,10 +878,15 @@ cancel_return:;
 	return -1;
 }
 
-// integer to string conversion
-// org : https://stackoverflow.com/a/12386915/4699324
+/*!	@brief integer to string conversion
+	org : https://stackoverflow.com/a/12386915/4699324
+	@return the length of the result
+*/
 template <typename T, typename ChT>
-int int2dec(T value, ChT *sp)
+int int2dec(
+	T value,	// the integer value to stringify
+	ChT *sp		// the destination string to store the stringified result
+)
 {
 	ChT tmp[128];
 	ChT *tp = tmp;
@@ -907,11 +912,15 @@ int int2dec(T value, ChT *sp)
 	return len;
 }
 
+/*!	@brief マッチした行番号と桁番号をGrep結果に出力する為に文字列化
+	auto_sprintf 関数を 書式文字列 "(%I64d,%d)" で実行するのと同等の処理結果を生成
+	@return 出力先文字列
+*/
 static inline
 wchar_t* lineColumnToString(
-	wchar_t*	strWork,
-	LONGLONG	nLine,
-	int			nColumn
+	wchar_t*	strWork,			/*!< [out] 出力先 */
+	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
+	int			nColumn				/*!< [in] マッチした桁番号(1～) */
 )
 {
 	wchar_t* p = strWork;
@@ -922,6 +931,7 @@ wchar_t* lineColumnToString(
 	*p++ = L')';
 	*p = '\0';
 #ifdef _DEBUG
+	// Debug 版に限って両方実行して、両者が一致することを確認
 	wchar_t strWork2[128];
 	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
 	assert(wcscmp(strWork, strWork2) == 0);
