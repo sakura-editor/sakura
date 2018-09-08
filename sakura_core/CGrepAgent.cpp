@@ -902,7 +902,7 @@ int int2dec(T value, ChT *sp)
 
 	while (tp > tmp)
 		*sp++ = *--tp;
-	*sp = NULL;
+	*sp = '\0';
 
 	return len;
 }
