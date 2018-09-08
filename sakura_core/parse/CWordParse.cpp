@@ -435,81 +435,31 @@ BOOL IsURL(
 	return IsMailAddress(pszLine, nLineLen, pnMatchLen);
 }
 
+// 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
+inline static bool IsMailAddressLocalPart(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept;
+
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 {
-	int		j;
+	// メールアドレスには必ず＠が含まれる
+	const wchar_t* pszAtmark;
+
+	// メールアドレス前半部分(＠の手前)をチェックする
+	if (!IsMailAddressLocalPart(pszBuf, pszBuf + nBufLen, &pszAtmark)) {
+		return FALSE;
+	}
+	assert(L'@' == *pszAtmark);
+
+	int		j = pszAtmark - pszBuf;
 	int		nDotCount;
 	int		nBgn;
 
-
-	j = 0;
-	if( (pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-	 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-	 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-//	 || NULL != wcschr(L"!#$%&'*+-/=?^_`{|}~", pszBuf[j])
-	|| (pszBuf[j] == L'!')
-	|| (pszBuf[j] == L'#')
-	|| (pszBuf[j] == L'$')
-	|| (pszBuf[j] == L'%')
-	|| (pszBuf[j] == L'&')
-	|| (pszBuf[j] == L'\'')
-	|| (pszBuf[j] == L'*')
-	|| (pszBuf[j] == L'+')
-	|| (pszBuf[j] == L'-')
-	|| (pszBuf[j] == L'/')
-	|| (pszBuf[j] == L'=')
-	|| (pszBuf[j] == L'?')
-	|| (pszBuf[j] == L'^')
-	|| (pszBuf[j] == L'_')
-	|| (pszBuf[j] == L'`')
-	|| (pszBuf[j] == L'{')
-	|| (pszBuf[j] == L'|')
-	|| (pszBuf[j] == L'}')
-	|| (pszBuf[j] == L'~')
-	){
-		j++;
-	}else{
-		return FALSE;
-	}
-	while( j < nBufLen - 2 &&
-		(
-		(pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-	 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-	 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-	 || (pszBuf[j] == L'.')
-//	 || NULL != wcschr(L"!#$%&'*+-/=?^_`{|}~", pszBuf[j])
-	 || (pszBuf[j] == L'!')
-	 || (pszBuf[j] == L'#')
-	 || (pszBuf[j] == L'$')
-	 || (pszBuf[j] == L'%')
-	 || (pszBuf[j] == L'&')
-	 || (pszBuf[j] == L'\'')
-	 || (pszBuf[j] == L'*')
-	 || (pszBuf[j] == L'+')
-	 || (pszBuf[j] == L'-')
-	 || (pszBuf[j] == L'/')
-	 || (pszBuf[j] == L'=')
-	 || (pszBuf[j] == L'?')
-	 || (pszBuf[j] == L'^')
-	 || (pszBuf[j] == L'_')
-	 || (pszBuf[j] == L'`')
-	 || (pszBuf[j] == L'{')
-	 || (pszBuf[j] == L'|')
-	 || (pszBuf[j] == L'}')
-	 || (pszBuf[j] == L'~')
-		)
-	){
-		j++;
-	}
-	if( j == 0 || j >= nBufLen - 2  ){
-		return FALSE;
-	}
-	if( L'@' != pszBuf[j] ){
-		return FALSE;
-	}
 //	nAtPos = j;
 	j++;
 	nDotCount = 0;
@@ -547,4 +497,73 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 		*pnAddressLenfth = j;
 	}
 	return TRUE;
+}
+
+/*!
+ * 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
+ *
+ * 高速化のため単純化した条件でチェックしている
+ * 参照する標準は RFC5321
+ * @see http://srgia.com/docs/rfc5321j.html
+ */
+inline static bool IsMailAddressLocalPart(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept
+{
+	// RFC5321による local-part の最大文字数
+	const ptrdiff_t MAX_LOCAL_PART = 64; //64オクテット
+
+	// 関数仕様
+	assert(pszStart != pszEnd); // 長さ0の文字列をチェックしてはならない
+	assert(pszStart < pszEnd); // 開始位置と終了位置は逆転してはならない
+
+	// 出力値を初期化する
+	*ppszAtmark = nullptr;
+
+	// 文字列が二重引用符で始まっているかチェックして結果を保存
+	const bool quoted = (L'"' == *pszStart);
+
+	// ループ中にスキャンする文字位置を設定する
+	auto pszScan = pszStart + (quoted ? 1 : 0);
+
+	// スキャン位置が終端に達するまでループ
+	while (pszScan < pszEnd)
+	{
+		switch (*pszScan)
+		{
+		case L'@':
+			if (pszStart == pszScan)
+			{
+				return false; // local-partは1文字以上なのでNG
+			}
+			if (quoted)
+			{
+				return false; // 二重引用符で始まる場合、終端にも二重引用符が必要なのでNG
+			}
+			*ppszAtmark = pszScan;
+			return true; // ここが正常終了
+		case L'\\': // エスケープ記号
+			if (pszScan + 1 == pszEnd || pszScan[1] < L'\x20' || L'\x7E' < pszScan[1])
+			{
+				return false;
+			}
+			pszScan++; // エスケープ記号の分1文字進める
+			break;
+		case L'"': // 二重引用符
+			if (quoted && pszScan + 1 < pszEnd && L'@' == pszScan[1])
+			{
+				*ppszAtmark = &pszScan[1];
+				return true; // ここは準正常終了。正常終了とはあえて区別しない。
+			}
+			return false; // 末尾以外に現れるエスケープされてない二重引用符は不正
+		}
+		pszScan++;
+		if (MAX_LOCAL_PART < pszScan - pszStart)
+		{
+			return false; // 文字数オーバー
+		}
+	}
+	return false;
 }
