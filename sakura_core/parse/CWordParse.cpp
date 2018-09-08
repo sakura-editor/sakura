@@ -442,11 +442,25 @@ inline static bool IsMailAddressLocalPart(
 	_Out_ const wchar_t** ppszAtmark
 ) noexcept;
 
+// 指定された文字列がメールアドレス後半部分の要件を満たすか判定する
+inline static bool IsMailAddressDomain(
+	_In_z_ const wchar_t* pszAtmark,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszEndOfMailBox
+) noexcept;
+
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
+	@date 2018.09.09 RFC準拠
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 {
+	// RFC5321による mailbox の最大文字数
+	const ptrdiff_t MAX_MAILBOX = 255; //255オクテット
+
+	// バカ避け
+	if (nBufLen < 1) return FALSE;
+
 	// メールアドレスには必ず＠が含まれる
 	const wchar_t* pszAtmark;
 
@@ -456,45 +470,24 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 	}
 	assert(L'@' == *pszAtmark);
 
-	int		j = pszAtmark - pszBuf;
-	int		nDotCount;
-	int		nBgn;
+	// メールアドレスの終了位置を受け取るポインタを宣言する
+	const wchar_t* pszEndOfMailBox;
 
-//	nAtPos = j;
-	j++;
-	nDotCount = 0;
-//	nAlphaCount = 0;
-
-
-	for (;;) {
-		nBgn = j;
-		while( j < nBufLen &&
-			(
-			(pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-		 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-		 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-		 || (pszBuf[j] == L'-')
-		 || (pszBuf[j] == L'_')
-			)
-		){
-			j++;
-		}
-		if( 0 == j - nBgn ){
-			return FALSE;
-		}
-		if( L'.' != pszBuf[j] ){
-			if( 0 == nDotCount ){
-				return FALSE;
-			}else{
-				break;
-			}
-		}else{
-			nDotCount++;
-			j++;
-		}
+	// メールアドレス後半部分(＠の後ろ)をチェックする
+	if (!IsMailAddressDomain(pszAtmark, pszBuf + nBufLen, &pszEndOfMailBox))
+	{
+		return FALSE;
 	}
-	if( NULL != pnAddressLenfth ){
-		*pnAddressLenfth = j;
+
+	// 全体の長さが制限を超えていないかチェックする
+	if (MAX_MAILBOX < pszEndOfMailBox - pszBuf)
+	{
+		return FALSE; // 文字数オーバー
+	}
+
+	if (pnAddressLenfth != nullptr)
+	{
+		*pnAddressLenfth = pszEndOfMailBox - pszBuf;
 	}
 	return TRUE;
 }
@@ -561,6 +554,163 @@ inline static bool IsMailAddressLocalPart(
 		}
 		pszScan++;
 		if (MAX_LOCAL_PART < pszScan - pszStart)
+		{
+			return false; // 文字数オーバー
+		}
+	}
+	return false;
+}
+
+/*!
+ * 指定された文字列がメールアドレス後半部分の要件を満たすか判定する
+ */
+inline static bool IsMailAddressDomain(
+	_In_z_ const wchar_t* pszAtmark,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszEndOfMailBox
+) noexcept
+{
+	// ccTLDの最小文字数
+	const ptrdiff_t MIN_TLD = 2;
+
+	// ドメインの最小文字数
+	const ptrdiff_t MIN_DOMAIN = 3;
+
+	// ドメインの最大文字数
+	const ptrdiff_t MAX_DOMAIN = 63;
+
+	// 関数仕様
+	assert(pszAtmark + 1 < pszEnd); // @位置と終了位置は逆転してはならない
+	assert(L'@' == *pszAtmark); // @位置にある文字は@でなければならない
+
+	// 出力値を初期化する
+	*ppszEndOfMailBox = nullptr;
+
+	// ループ中にスキャンする文字位置を設定する
+	auto pszScan = pszAtmark + 1;
+
+	auto dotCount = 0;
+	auto domainLength = 0;
+	auto prevHyphen = false;
+
+	// スキャン位置が終端に達するまでループ
+	while (pszScan < pszEnd)
+	{
+		switch (*pszScan)
+		{
+		case L'.': // ドット記号
+			if (dotCount == 0 && domainLength < MIN_DOMAIN)
+			{
+				return false; // ドメイン名の最小文字数は3なのでNG
+			}
+			if (0 < dotCount && domainLength < MIN_TLD)
+			{
+				// これはco.jpなどを正しく認識させるために必要。
+				return false; // ドットで区切られる部分の最小文字数は2なのでNG
+			}
+			if (prevHyphen)
+			{
+				return false; // ハイフンに続くドットはNG
+			}
+			dotCount++;
+			domainLength = 0;
+			prevHyphen = false;
+			break;
+		case L'-': // ハイフン記号
+			if (domainLength == 0)
+			{
+				return false; // ドットに続くハイフンはNG
+			}
+			if (prevHyphen)
+			{
+				return false; // 連続するハイフンはNG
+			}
+			domainLength++;
+			prevHyphen = true;
+			break;
+		default:
+			if (dotCount == 0)
+			{
+				return false; // ドメイン部には一つ以上のドット記号が必要なのでNG
+			}
+			if (domainLength == 0)
+			{
+				return false; // ドットで終わるドメインはNG
+			}
+			if (prevHyphen)
+			{
+				return false; // ハイフンで終わるドメインはNG
+			}
+			*ppszEndOfMailBox = pszScan;
+			return true; // ここが正常終了
+		case L'0':
+		case L'1':
+		case L'2':
+		case L'3':
+		case L'4':
+		case L'5':
+		case L'6':
+		case L'7':
+		case L'8':
+		case L'9':
+		case L'A':
+		case L'B':
+		case L'C':
+		case L'D':
+		case L'E':
+		case L'F':
+		case L'G':
+		case L'H':
+		case L'I':
+		case L'J':
+		case L'K':
+		case L'L':
+		case L'M':
+		case L'N':
+		case L'O':
+		case L'P':
+		case L'Q':
+		case L'R':
+		case L'S':
+		case L'T':
+		case L'U':
+		case L'V':
+		case L'W':
+		case L'X':
+		case L'Y':
+		case L'Z':
+		case L'a':
+		case L'b':
+		case L'c':
+		case L'd':
+		case L'e':
+		case L'f':
+		case L'g':
+		case L'h':
+		case L'i':
+		case L'j':
+		case L'k':
+		case L'l':
+		case L'm':
+		case L'n':
+		case L'o':
+		case L'p':
+		case L'q':
+		case L'r':
+		case L's':
+		case L't':
+		case L'u':
+		case L'v':
+		case L'w':
+		case L'x':
+		case L'y':
+		case L'z':
+			domainLength++;
+			prevHyphen = false;
+			break;
+		}
+		pszScan++;
+		if (MAX_DOMAIN < domainLength)
 		{
 			return false; // 文字数オーバー
 		}
