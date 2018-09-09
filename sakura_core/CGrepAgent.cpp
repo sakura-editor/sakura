@@ -911,7 +911,8 @@ wchar_t* lineColumnToString(
 	*p = '\0';
 #ifdef _DEBUG
 	// Debug 版に限って両方実行して、両者が一致することを確認
-	wchar_t strWork2[64];
+	constexpr size_t tmpBufferLen = 64;
+	wchar_t strWork2[tmpBufferLen];
 	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
 	assert(wcscmp(strWork, strWork2) == 0);
 #endif

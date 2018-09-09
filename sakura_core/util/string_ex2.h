@@ -97,7 +97,8 @@ ptrdiff_t int2dec(
 	static_assert(std::is_signed_v<T>, "T must be signed type.");
 
 	// 一時領域
-	ChT tmp[64];
+	constexpr size_t tmpBufferLen = 64;
+	ChT tmp[tmpBufferLen];
 	ChT *tp = tmp;
 
 	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;
