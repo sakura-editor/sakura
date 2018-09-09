@@ -87,24 +87,24 @@ en.run=Start now
 ja.run=今すぐサクラエディタを起動
 en.MultiUser=Install in compatibility mode. When editing system files and programs with user authority, editing results may not be accessible from other applications. (VirtualStore function)
 ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザ権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
-en.InitWiz1=Selection of Preference preservation method
-ja.InitWiz1=設定保存方法の選択
-en.InitWiz2=Please choose whether you want to save the settings for each user or to the location of the executable file
-ja.InitWiz2=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
-en.InitWiz3=Please do not change if you're unsure about this
-ja.InitWiz3=よくわからない場合は変更しないでください
-en.InitWiz4=Manage Preference individually for each user
-ja.InitWiz4=設定をユーザ毎に個別に管理する
-en.ReadyMemo1=Preference file etc. save location
-ja.ReadyMemo1=設定ファイル等格納場所
-en.ReadyMemo2=User-Profile directory
-ja.ReadyMemo2=ユーザ個別ディレクトリ
-en.ReadyMemo3=Disable
-ja.ReadyMemo3=無効
-en.ReadyMemo4=Same as the executable file
-ja.ReadyMemo4=実行ファイルと同一ディレクトリ
-en.ReadyMemo5=Enable
-ja.ReadyMemo5=有効
+en.InitWiz_Title=Selection of Preference preservation method
+ja.InitWiz_Title=設定保存方法の選択
+en.InitWiz_SubTitle=Please choose whether you want to save the settings for each user or to the location of the executable file
+ja.InitWiz_SubTitle=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
+en.InitWiz_Comment=Please do not change if you're unsure about this
+ja.InitWiz_Comment=よくわからない場合は変更しないでください
+en.InitWiz_Check=Manage Preference individually for each user
+ja.InitWiz_Check=設定をユーザ毎に個別に管理する
+en.ReadyMemo_SaveLocation=Preference file etc. save location
+ja.ReadyMemo_SaveLocation=設定ファイル等格納場所
+en.ReadyMemo_UserProfileDir=User-Profile directory
+ja.ReadyMemo_UserProfileDir=ユーザ個別ディレクトリ
+en.ReadyMemo_VirtualStoreDisable=Disable
+ja.ReadyMemo_VirtualStoreDisable=無効
+en.ReadyMemo_ExecProfileDir=Same as the executable file
+ja.ReadyMemo_ExecProfileDir=実行ファイルと同一ディレクトリ
+en.ReadyMemo_VirtualStoreEnable=Enable
+ja.ReadyMemo_VirtualStoreEnable=有効
 en.languageDLL=sakura_lang_en_US.dll
 ja.languageDLL=
 en.uninstallmenu=uninstall sakura edhitor
@@ -114,24 +114,24 @@ ja.uninstallmenu=サクラエディタのアンインストール
 
 
 [Types]
-Name: all;                Description: "{cm:TypesAll}"
-Name: editorwithhelp;     Description: "{cm:editorwithhelp}"
-Name: editoronly;         Description: "{cm:editoronly}"
-Name: custom;             Description: "{cm:TypesCustom}"; Flags: iscustom
+Name: all;            Description: "{cm:TypesAll}"
+Name: editorwithhelp; Description: "{cm:editorwithhelp}"
+Name: editoronly;     Description: "{cm:editoronly}"
+Name: custom;         Description: "{cm:TypesCustom}";    Flags: iscustom
 
 [Components]
-Name: main;        Description: "{cm:ComponentsMain}";            Types: all editorwithhelp editoronly custom; Flags: fixed
-Name: help;        Description: "{cm:ComponentsHelp}";            Types: all editorwithhelp
-Name: keyword;     Description: "{cm:ComponentsKeyword}";         Types: all
+Name: main;        Description: "{cm:ComponentsMain}";    Types: all editorwithhelp editoronly custom; Flags: fixed
+Name: help;        Description: "{cm:ComponentsHelp}";    Types: all editorwithhelp
+Name: keyword;     Description: "{cm:ComponentsKeyword}"; Types: all
 
 [Tasks]
-Name: startmenu;   Description: "{cm:startmenu}";         Components: main;
-Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";         Components: main;
-Name: proglist;    Description: "{cm:proglist}";           Components: main;
-Name: desktopicon; Description: "{cm:CreateDesktopIcon}";             Components: main; Flags: unchecked;
-Name: fileassoc;   Description: "{cm:fileassoc}"; Components: main; Flags: unchecked;
-Name: startup;     Description: "{cm:AutoStartProgram,{cm:AppName}}";                   Components: main; Flags: unchecked;
-Name: sendto;      Description: "{cm:sendto}";                     Components: main; Flags: unchecked;
+Name: startmenu;   Description: "{cm:startmenu}";                      Components: main;
+Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";          Components: main;
+Name: proglist;    Description: "{cm:proglist}";                       Components: main;
+Name: desktopicon; Description: "{cm:CreateDesktopIcon}";              Components: main; Flags: unchecked;
+Name: fileassoc;   Description: "{cm:fileassoc}";                      Components: main; Flags: unchecked;
+Name: startup;     Description: "{cm:AutoStartProgram,{cm:AppName}}";  Components: main; Flags: unchecked;
+Name: sendto;      Description: "{cm:sendto}";                         Components: main; Flags: unchecked;
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
@@ -147,31 +147,31 @@ Source: "sakura\macro.chm";            DestDir: "{app}";         Components: hel
 Source: "sakura\plugin.chm";           DestDir: "{app}";         Components: help
 Source: "sakura\sakura.exe.ini";       DestDir: "{app}";         Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 
-Source: "sakura\keyword\*"; DestDir: "{app}\keyword"; Components: keyword; Flags: recursesubdirs
+Source: "sakura\keyword\*";             DestDir: "{app}\keyword"; Components: keyword; Flags: recursesubdirs
 
 [Registry]
 ; registry for all user (Admin only)
-Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "{cm:fileassocMenu}";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "";     ValueData: "{cm:fileassocMenu}";          Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";        Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command";               ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist;  Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 ; registry for each user (non-Admin only)
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: ""; ValueData: "{cm:fileassocMenu}";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "";     ValueData: "{cm:fileassocMenu}";          Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";        Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command";               ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\{cm:AppName}";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false); Tasks: startmenu;
-Name: "{userstartmenu}\{cm:AppName}";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true); Tasks: startmenu;
-Name: "{group}\{cm:ComponentsHelp}";                                              Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
-Name: "{group}\{cm:IconPreferencefolder}";                                                     Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
-Name: "{userdesktop}\{cm:AppName}";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
-Name: "{group}\{cm:UninstallProgram,{cm:AppName}}";                                                 Filename: "{uninstallexe}";                           Tasks: startmenu;
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:AppName}"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
-Name: "{userstartup}\{cm:AutoStartProgram,{cm:AppName}}";                                         Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
-Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
+Name: "{group}\{cm:AppName}";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false);   Tasks: startmenu;
+Name: "{userstartmenu}\{cm:AppName}";                                        Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(true);    Tasks: startmenu;
+Name: "{group}\{cm:ComponentsHelp}";                                         Filename: "{app}\sakura.chm";                         Components: help;                            Tasks: startmenu;
+Name: "{group}\{cm:IconPreferencefolder}";                                   Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
+Name: "{userdesktop}\{cm:AppName}";                                          Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: desktopicon;
+Name: "{group}\{cm:UninstallProgram,{cm:AppName}}";                          Filename: "{uninstallexe}";                                                                        Tasks: startmenu;
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:AppName}"; Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: quicklaunch;
+Name: "{userstartup}\{cm:AutoStartProgram,{cm:AppName}}";                    Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main;                            Tasks: startup;
+Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: sendto;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "{cm:run}"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
@@ -187,7 +187,7 @@ Name: "{userappdata}\sakura"; Components: main; Tasks: startmenu; Check: isMulti
 
 [Ini]
 Filename: "{userappdata}\sakura\sakura.ini"; Section: "Common"; Key: "szLanguageDll"; String: "{cm:languageDLL}"; Check: isMultiUserEnabled
-Filename: "{app}\sakura.ini"; Section: "Common"; Key: "szLanguageDll"; String: "{cm:languageDLL}"; Check: isMultiUserDisabled
+Filename: "{app}\sakura.ini";                Section: "Common"; Key: "szLanguageDll"; String: "{cm:languageDLL}"; Check: isMultiUserDisabled
 
 [Code]
 var
@@ -351,10 +351,10 @@ end;
 procedure InitializeWizard;
 begin
   { Create multi user page }
-  MultiUserPage := CreateInputOptionPage( wpSelectComponents, CustomMessage('InitWiz1'),
-    CustomMessage('InitWiz2'),
-    CustomMessage('InitWiz3'), False, False );
-  MultiUserPage.Add( CustomMessage('InitWiz4') );
+  MultiUserPage := CreateInputOptionPage( wpSelectComponents, CustomMessage('InitWiz_Title'),
+    CustomMessage('InitWiz_SubTitle'),
+    CustomMessage('InitWiz_Comment'), False, False );
+  MultiUserPage.Add( CustomMessage('InitWiz_Check') );
   MultiUserPage.Values[0] := False;
   MultiUserPage.OnShouldSkipPage := @ShoudSkipMultiUser;
   MultiUserPage.OnNextButtonClick := @NextButtonClickMultiUser;
@@ -386,18 +386,18 @@ function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoType
 var
   MemoMuitiUser, MemoVirtualStore : String;
 begin
-  MemoMuitiUser := CustomMessage('ReadyMemo1') + NewLine + Space;
+  MemoMuitiUser := CustomMessage('ReadyMemo_SaveLocation') + NewLine + Space;
   MemoVirtualStore := 'VirtualStore' + NewLine + Space;
 
   if isMultiUserEnabled then
     begin
-      MemoMuitiUser := MemoMuitiUser + CustomMessage('ReadyMemo2');
-      MemoVirtualStore := MemoVirtualStore + CustomMessage('ReadyMemo3');
+      MemoMuitiUser := MemoMuitiUser + CustomMessage('ReadyMemo_UserProfileDir');
+      MemoVirtualStore := MemoVirtualStore + CustomMessage('ReadyMemo_VirtualStoreDisable');
     end
   else
     begin
-      MemoMuitiUser := MemoMuitiUser + CustomMessage('ReadyMemo4');
-      MemoVirtualStore := MemoVirtualStore + CustomMessage('ReadyMemo5');
+      MemoMuitiUser := MemoMuitiUser + CustomMessage('ReadyMemo_ExecProfileDir');
+      MemoVirtualStore := MemoVirtualStore + CustomMessage('ReadyMemo_VirtualStoreEnable');
     end;
 
   if IsVistaOrLater then
