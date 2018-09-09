@@ -127,8 +127,9 @@ int int2dec(
 
 	// reverse digits
 	while (tp > tmp) {
-		ChT d = *--tp;
-		*sp++ = d;
+		--tp;
+		*sp = *tp;
+		++sp;
 	}
 
 	// a null-terminated string
