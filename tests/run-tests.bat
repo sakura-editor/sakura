@@ -9,8 +9,8 @@ set BINARY_DIR=%BUILDDIR%\bin\%configuration%
 
 pushd %BINARY_DIR%
 for /r %%i in (tests*.exe) do (
-	@echo %%i --gtest_list_tests
-	%%i --gtest_list_tests || set ERROR_RESULT=1
+	@echo %%i --list-tests
+	%%i --list-tests || set ERROR_RESULT=1
 
 	@echo %%i
 	%%i || set ERROR_RESULT=1
