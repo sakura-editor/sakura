@@ -36,9 +36,16 @@ TEST(int2dec_test, zero)
 	test_int2dec<int64_t>(0, 1, L"0");
 }
 
-TEST(int2dec_test, plus_minus_2)
+TEST(int2dec_test, digits)
 {
 	test_32_64_plus_minus(2, 1, L"2");
+	test_32_64_plus_minus(3, 1, L"3");
+	test_32_64_plus_minus(4, 1, L"4");
+	test_32_64_plus_minus(5, 1, L"5");
+	test_32_64_plus_minus(6, 1, L"6");
+	test_32_64_plus_minus(7, 1, L"7");
+	test_32_64_plus_minus(8, 1, L"8");
+	test_32_64_plus_minus(9, 1, L"9");
 }
 
 TEST(int2dec_test, max)
@@ -60,4 +67,9 @@ TEST(int2dec_test, group_sequence)
 	test_32_64_plus_minus(123, 3, L"123");
 	test_32_64_plus_minus(1234, 4, L"1234");
 	test_32_64_plus_minus(12345, 5, L"12345");
+	test_32_64_plus_minus(123456, 6, L"123456");
+	test_32_64_plus_minus(1234567, 7, L"1234567");
+	test_32_64_plus_minus(12345678, 8, L"12345678");
+	test_32_64_plus_minus(123456789, 9, L"123456789");
+	test_32_64_plus_minus(1234567890, 10, L"1234567890");
 }
