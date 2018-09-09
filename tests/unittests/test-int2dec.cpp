@@ -10,36 +10,50 @@ class CNativeW;
 #include "../../sakura_core/util/string_ex2.h"
 
 template <typename T>
-void test_int2dec(T value, int lenAnswer, const wchar_t* strAnswer)
+void test_int2dec(T value, int lenExpected, const wchar_t* strExpected)
 {
 	wchar_t buff[64];
 	int len = int2dec(value, buff);
-	EXPECT_EQ(len, lenAnswer);
-	EXPECT_STREQ(buff, strAnswer);
+	EXPECT_EQ(len, lenExpected);
+	EXPECT_STREQ(buff, strExpected);
 }
 
-TEST(test, zero)
+template <typename T>
+void test_plusminus(T plusValue, int lenExpected, const wchar_t* strExpected)
+{
+	test_int2dec(plusValue, lenExpected, strExpected);
+	test_int2dec(-plusValue, 1+lenExpected, (std::wstring(L"-")+strExpected).c_str());
+}
+
+TEST(int2dec_test, zero)
 {
 	test_int2dec<int32_t>(0, 1, L"0");
 	test_int2dec<int64_t>(0, 1, L"0");
 }
 
-TEST(test, plus_minus_1)
+TEST(int2dec_test, plus_minus_1)
 {
-	test_int2dec<int32_t>(1, 1, L"1");
-	test_int2dec<int32_t>(-1, 2, L"-1");
-	test_int2dec<int64_t>(1, 1, L"1");
-	test_int2dec<int64_t>(-1, 2, L"-1");
+	test_plusminus<int32_t>(1, 1, L"1");
+	test_plusminus<int64_t>(1, 1, L"1");
 }
 
-TEST(test, max)
+TEST(int2dec_test, max)
 {
 	test_int2dec<int32_t>(std::numeric_limits<int32_t>::max(), 10, L"2147483647");
 	test_int2dec<int64_t>(std::numeric_limits<int64_t>::max(), 19, L"9223372036854775807");
 }
 
-TEST(test, min)
+TEST(int2dec_test, min)
 {
 	test_int2dec<int32_t>(std::numeric_limits<int32_t>::min(), 11, L"-2147483648");
 	test_int2dec<int64_t>(std::numeric_limits<int64_t>::min(), 20, L"-9223372036854775808");
+}
+
+TEST(int2dec_test, group_sequence)
+{
+	test_plusminus<int32_t>(1, 1, L"1");
+	test_plusminus<int32_t>(12, 2, L"12");
+	test_plusminus<int32_t>(123, 3, L"123");
+	test_plusminus<int32_t>(1234, 4, L"1234");
+	test_plusminus<int32_t>(12345, 5, L"12345");
 }

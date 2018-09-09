@@ -93,32 +93,45 @@ int int2dec(
 	ChT* sp		//!< [out] the destination string to store the stringified result
 )
 {
+	// unsigned type not supported
 	static_assert(std::is_signed_v<T>, "T must be signed type.");
 
+	// temporary buffer
 	ChT tmp[64];
 	ChT *tp = tmp;
 
 	bool isMin = (value == std::numeric_limits<T>::min());
+	// preadjust before abs() function since absolute value of
+	// the smallest number cannot be represented in two's complement
 	value += isMin;
 
 	T v = abs(value);
 
+	// stringize from the lower digits
 	do {
 		// decimal only
 		*tp++ = (ChT)('0' + (v % 10));
 		v /= 10;
 	} while (v);
-	
+
+	// postadjuist the lowermost digit letter
 	tmp[0] += isMin;
 
 	int len = (int)(tp - tmp);
+
+	// sign letter
 	if (value < 0) {
 		*sp++ = '-';
 		len++;
 	}
 
-	while (tp > tmp)
-		*sp++ = *--tp;
+	// reverse digits
+	while (tp > tmp) {
+		ChT d = *--tp;
+		*sp++ = d;
+	}
+
+	// a null-terminated string
 	*sp = '\0';
 
 	return len;
