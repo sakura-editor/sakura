@@ -4,10 +4,10 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <tchar.h>
-#include "../../sakura_core/basis/primitive.h"
+#include "basis/primitive.h"
 class CNativeA;
 class CNativeW;
-#include "../../sakura_core/util/string_ex2.h"
+#include "util/string_ex2.h"
 
 template <typename T>
 void test_int2dec(T value, int lenExpected, const wchar_t* strExpected)
