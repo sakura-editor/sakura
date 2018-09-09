@@ -10,6 +10,9 @@ file(GLOB SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
 # add include directories
 include_directories(${googletest_SOURCE_DIR}/include)
 
+# add include directories for sakura_core
+include_directories(${CMAKE_SOURCE_DIR}/../sakura_core)
+
 # define sources files of an executable
 add_executable(${project_name} ${SRC})
 
