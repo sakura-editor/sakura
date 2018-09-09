@@ -25,6 +25,8 @@
 #define SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_
 
 class CEol;
+class CNativeA;
+class CNativeW;
 
 // Aug. 16, 2007 kobake
 wchar_t *wcsncpy_ex(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
