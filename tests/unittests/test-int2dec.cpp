@@ -23,10 +23,16 @@ void test_plusminus(T plusValue, int lenExpected, const wchar_t* strExpected)
 	test_int2dec(-plusValue, 1+lenExpected, (std::wstring(L"-")+strExpected).c_str());
 }
 
+static
+void test_32_64(int value, int lenExpected, const wchar_t* strExpected)
+{
+	test_int2dec<int32_t>(value, lenExpected, strExpected);
+	test_int2dec<int64_t>(value, lenExpected, strExpected);
+}
+
 TEST(int2dec_test, zero)
 {
-	test_int2dec<int32_t>(0, 1, L"0");
-	test_int2dec<int64_t>(0, 1, L"0");
+	test_32_64(0, 1, L"0");
 }
 
 TEST(int2dec_test, plus_minus_1)
@@ -49,9 +55,9 @@ TEST(int2dec_test, min)
 
 TEST(int2dec_test, group_sequence)
 {
-	test_plusminus<int32_t>(1, 1, L"1");
-	test_plusminus<int32_t>(12, 2, L"12");
-	test_plusminus<int32_t>(123, 3, L"123");
-	test_plusminus<int32_t>(1234, 4, L"1234");
-	test_plusminus<int32_t>(12345, 5, L"12345");
+	test_32_64(1, 1, L"1");
+	test_32_64(12, 2, L"12");
+	test_32_64(123, 3, L"123");
+	test_32_64(1234, 4, L"1234");
+	test_32_64(12345, 5, L"12345");
 }
