@@ -892,16 +892,15 @@ wchar_t* lineColumnToString(
 	int			nColumn				/*!< [in] マッチした桁番号(1～) */
 )
 {
-	static_assert(
-		nCapacity >=
-			1		// (
-			+ 20	// I64d
-			+ 1		// ,
-			+ 11	// %d
-			+ 1		// )
-			+ 1		// \0
-		, "nCapacity not enough."
-	);
+	constexpr size_t requiredMinimumCapacity =
+		1		// (
+		+ 20	// I64d
+		+ 1		// ,
+		+ 11	// %d
+		+ 1		// )
+		+ 1		// \0
+	;
+	static_assert(nCapacity >= requiredMinimumCapacity, "nCapacity not enough.");
 	wchar_t* p = strWork;
 	*p++ = L'(';
 	p += int2dec(nLine, p);
@@ -911,8 +910,7 @@ wchar_t* lineColumnToString(
 	*p = '\0';
 #ifdef _DEBUG
 	// Debug 版に限って両方実行して、両者が一致することを確認
-	constexpr size_t tmpBufferLen = 64;
-	wchar_t strWork2[tmpBufferLen];
+	wchar_t strWork2[requiredMinimumCapacity];
 	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
 	assert(wcscmp(strWork, strWork2) == 0);
 #endif

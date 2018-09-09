@@ -83,6 +83,24 @@ int scan_ints(
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
+/*! @brief 整数型用の整数二進対数算出 constexpr版
+
+*/
+template <typename T>
+constexpr size_t constilog2(T n)
+{
+	return (n < 2) ? 0 : (1 + constilog2(n / 2));
+}
+
+/*! @brief int2dec の第2引数の文字列出力先の最低限必要なサイズ取得用
+
+*/
+template <typename T>
+constexpr size_t int2dec_minimumRequiredDestBufferLength()
+{
+	return (size_t)(3 + constilog2(std::numeric_limits<T>::max()) / 3.32192809489);
+}
+
 /*! @brief 整数を10進数の文字列に変換
 	参考にしたコード : https://stackoverflow.com/a/12386915/4699324
 	@return 変換後の文字数（終端0の分は含まない）
@@ -97,8 +115,7 @@ ptrdiff_t int2dec(
 	static_assert(std::is_signed_v<T>, "T must be signed type.");
 
 	// 一時領域
-	constexpr size_t tmpBufferLen = 64;
-	ChT tmp[tmpBufferLen];
+	ChT tmp[int2dec_minimumRequiredDestBufferLength<T>()];
 	ChT *tp = tmp;
 
 	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;
