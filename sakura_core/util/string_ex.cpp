@@ -1043,7 +1043,7 @@ inline static bool IsMailAddressDomain(
 	@date 2016.04.27 記号類を許可
 	@date 2018.09.09 RFC準拠
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
+BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 {
 	// RFC5321による mailbox の最大文字数
 	const ptrdiff_t MAX_MAILBOX = 255; //255オクテット
@@ -1075,9 +1075,9 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 		return FALSE; // 文字数オーバー
 	}
 
-	if (pnAddressLenfth != nullptr)
+	if (pnAddressLength != nullptr)
 	{
-		*pnAddressLenfth = pszEndOfMailBox - pszBuf;
+		*pnAddressLength = pszEndOfMailBox - pszBuf;
 	}
 	return TRUE;
 }
@@ -1110,9 +1110,10 @@ inline static bool IsMailAddressLocalPart(
 
 	// ループ中にスキャンする文字位置を設定する
 	auto pszScan = pszStart + (quoted ? 1 : 0);
+	auto pszScanEnd = std::min(pszStart + MAX_LOCAL_PART + 1, pszEnd);
 
 	// スキャン位置が終端に達するまでループ
-	while (pszScan < pszEnd)
+	while (pszScan < pszScanEnd)
 	{
 		switch (*pszScan)
 		{
@@ -1128,14 +1129,14 @@ inline static bool IsMailAddressLocalPart(
 			*ppszAtmark = pszScan;
 			return true; // ここが正常終了
 		case L'\\': // エスケープ記号
-			if (pszScan + 1 == pszEnd || pszScan[1] < L'\x20' || L'\x7E' < pszScan[1])
+			if (pszScan + 1 == pszScanEnd || pszScan[1] < L'\x20' || L'\x7E' < pszScan[1])
 			{
 				return false;
 			}
 			pszScan++; // エスケープ記号の分1文字進める
 			break;
 		case L'"': // 二重引用符
-			if (quoted && pszScan + 1 < pszEnd && L'@' == pszScan[1])
+			if (quoted && pszScan + 1 < pszScanEnd && L'@' == pszScan[1])
 			{
 				*ppszAtmark = &pszScan[1];
 				return true; // ここは準正常終了。正常終了とはあえて区別しない。
@@ -1143,12 +1144,8 @@ inline static bool IsMailAddressLocalPart(
 			return false; // 末尾以外に現れるエスケープされてない二重引用符は不正
 		}
 		pszScan++;
-		if (MAX_LOCAL_PART < pszScan - pszStart)
-		{
-			return false; // 文字数オーバー
-		}
 	}
-	return false;
+	return false; // 文字数オーバー
 }
 
 /*!
@@ -1300,15 +1297,15 @@ inline static bool IsMailAddressDomain(
 			break;
 		}
 		pszScan++;
-		if (pszScan == pszEnd)
-		{
-			*ppszEndOfMailBox = pszScan;
-			return true; // ここが正常終了
-		}
 		if (MAX_DOMAIN < domainLength)
 		{
 			return false; // 文字数オーバー
 		}
+	}
+	if (pszScan == pszEnd)
+	{
+		*ppszEndOfMailBox = pszScan;
+		return true; // ここが正常終了
 	}
 	return false;
 }
