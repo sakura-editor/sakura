@@ -83,56 +83,58 @@ int scan_ints(
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
-/*!	@brief integer to string conversion
-	org : https://stackoverflow.com/a/12386915/4699324
-	@return the length of the result
+/*! @brief 整数を10進数の文字列に変換
+	参考にしたコード : https://stackoverflow.com/a/12386915/4699324
+	@return 変換後の文字数（終端0の分は含まない）
 */
 template <typename T, typename ChT>
 int int2dec(
-	T value,	//!< [in] the integer value to stringify
-	ChT* sp		//!< [out] the destination string to store the stringified result
+	T value,	//!< [in] 文字列化の素になる整数
+	ChT* sp		//!< [out] 文字列出力先
 )
 {
-	// unsigned type not supported
+	// 符号無し整数型は対応外
 	static_assert(std::is_signed_v<T>, "T must be signed type.");
 
-	// temporary buffer
+	// 一時領域
 	ChT tmp[64];
 	ChT *tp = tmp;
 
-	bool isMin = (value == std::numeric_limits<T>::min());
-	// preadjust before abs() function since absolute value of
-	// the smallest number cannot be represented in two's complement
-	value += isMin;
+	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;
+	// abs 関数に符号付き整数型の最小値を指定した場合の動作が未定義な事への対策
+	// 最小値だった場合は事前に 1 加算する事で abs 関数の出力地が最大値に
+	// なるように対策
+	value += minAdjuster;
 
 	T v = abs(value);
 
-	// stringize from the lower digits
+	// 下位桁から変換する
 	do {
 		// decimal only
 		*tp++ = (ChT)('0' + (v % 10));
 		v /= 10;
 	} while (v);
 
-	// postadjuist the lowermost digit letter
-	tmp[0] += isMin;
+	// 最小値を指定された場合に abs 関数実行前に補正しているので
+	// ここで最下位桁に 1 加算する事で辻褄合わせ
+	tmp[0] += minAdjuster;
 
 	int len = (int)(tp - tmp);
 
-	// sign letter
+	// 負の場合の符号文字
 	if (value < 0) {
 		*sp++ = '-';
 		len++;
 	}
 
-	// reverse digits
+	// 下位桁から出力しているので文字列を逆転する
 	while (tp > tmp) {
 		--tp;
 		*sp = *tp;
 		++sp;
 	}
 
-	// a null-terminated string
+	// ゼロ終端文字追加
 	*sp = '\0';
 
 	return len;
