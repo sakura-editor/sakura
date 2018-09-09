@@ -894,9 +894,9 @@ wchar_t* lineColumnToString(
 {
 	constexpr size_t requiredMinimumCapacity =
 		1		// (
-		+ 20	// I64d
+		+ int2dec_minimumRequiredDestBufferLength<LONGLONG>() - 1	// I64d
 		+ 1		// ,
-		+ 11	// %d
+		+ int2dec_minimumRequiredDestBufferLength<int32_t>() - 1	// %d
 		+ 1		// )
 		+ 1		// \0
 	;
