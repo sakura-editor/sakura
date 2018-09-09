@@ -10,6 +10,7 @@
         - [一覧](#一覧)
         - [呼び出し構造](#呼び出し構造)
         - [使用するバッチファイルの引数](#使用するバッチファイルの引数)
+    - [インクルードディレクトリ](#インクルードディレクトリ)
 
 <!-- /TOC -->
 
@@ -72,3 +73,8 @@ GUI でステップ実行することができます。
 |[tests\build-project.bat](tests/build-project.bat)  | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |[tests\run-tests.bat](tests/run-tests.bat)          | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |[tests\build-and-test.bat](tests/build-and-test.bat)| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+
+## インクルードディレクトリ
+
+[単体テスト用のCMakeLists.txt](tests/unittests/CMakeLists.txt) で [サクラエディタ用のディレクトリ](sakura_core) に
+インクルードディレクトリを指定するので、そこからの相対パスを指定すれば、サクラエディタのヘッダをインクルードできます。
