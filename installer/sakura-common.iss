@@ -164,12 +164,12 @@ Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command";            
 Root: HKLM; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist;  Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep";         ValueType: string; ValueName: "";     ValueData: "{cm:sakuragrepMenu}";                 Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";                Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%1"" -GOPT=""S"" -GCODE=99 "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%1"" -GOPT=""SP"" -GCODE=99 "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep";         ValueType: string; ValueName: "";     ValueData: "{cm:sakuragrepMenu}";      Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe"""; Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%V"" -GOPT=""S"" -GCODE=99  "; Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%V"" -GOPT=""SP"" -GCODE=99  "; Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(true)
 
 ; registry for each user (non-Admin only)
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "";     ValueData: "{cm:fileassocMenu}";          Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
@@ -179,11 +179,11 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command
 
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep";         ValueType: string; ValueName: "";     ValueData: "{cm:sakuragrepMenu}";                 Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe""";            Tasks: sakuragrep; Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%1"" -GOPT=""S"" -GCODE=99  "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\directory\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%1"" -GOPT=""SP"" -GCODE=99  "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep";         ValueType: string; ValueName: "";     ValueData: "{cm:sakuragrepMenu}";      Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
 Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep";         ValueType: string; ValueName: "Icon"; ValueData: """{app}\sakura.exe"""; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%V"" -GOPT=""S"" -GCODE=99  "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\directory\BackGround\shell\sakuraGrep\command"; ValueType: string; ValueName: "";     ValueData: """{app}\sakura.exe"" -GREPDLG -GREPMODE  -GFOLDER=""%V"" -GOPT=""SP"" -GCODE=99  "; Tasks: sakuragrep;  Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
 Name: "{group}\{cm:AppName}";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false);   Tasks: startmenu;
