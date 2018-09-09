@@ -88,7 +88,7 @@ int scan_ints(
 	@return 変換後の文字数（終端0の分は含まない）
 */
 template <typename T, typename ChT>
-int int2dec(
+ptrdiff_t int2dec(
 	T value,	//!< [in] 文字列化の素になる整数
 	ChT* sp		//!< [out] 文字列出力先
 )
@@ -119,12 +119,12 @@ int int2dec(
 	// ここで最下位桁に 1 加算する事で辻褄合わせ
 	tmp[0] += minAdjuster;
 
-	int len = (int)(tp - tmp);
+	ptrdiff_t len = tp - tmp;
 
 	// 負の場合の符号文字
 	if (value < 0) {
 		*sp++ = '-';
-		len++;
+		++len;
 	}
 
 	// 下位桁から出力しているので文字列を逆転する
