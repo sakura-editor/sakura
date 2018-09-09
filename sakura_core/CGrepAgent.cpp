@@ -884,13 +884,24 @@ cancel_return:;
 	高速化の為に自前実装に置き換え
 	@return 出力先文字列
 */
+template <size_t nCapacity>
 static inline
 wchar_t* lineColumnToString(
-	wchar_t*	strWork,			/*!< [out] 出力先 */
+	wchar_t (&strWork)[nCapacity],	/*!< [out] 出力先 */
 	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColumn				/*!< [in] マッチした桁番号(1～) */
 )
 {
+	static_assert(
+		nCapacity >=
+			1		// (
+			+ 20	// I64d
+			+ 1		// ,
+			+ 11	// %d
+			+ 1		// )
+			+ 1		// \0
+		, "nCapacity not enough."
+	);
 	wchar_t* p = strWork;
 	*p++ = L'(';
 	p += int2dec(nLine, p);
