@@ -27,23 +27,30 @@ DEFINES= \
  -DWINVER=0x500 \
  -D_WIN32_WINNT=0x500 \
  -D_WIN32_IE=0x501 \
- -DMINGW_HAS_SECURE_API=1 \
  -DNOMINMAX \
  -D_UNICODE \
  -DUNICODE \
- -DNDEBUG
-CFLAGS= -O2 \
- -finput-charset=utf-8 -fexec-charset=cp932 \
+ $(MYDEFINES)
+CFLAGS= \
+ -finput-charset=utf-8 \
+ -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
 LIBS= \
- -lkernel32 -luser32 -lgdi32 \
- -lwinspool -lcomdlg32 -ladvapi32 \
- -lshell32 -lole32 -loleaut32 \
- -luuid -lcomctl32 -limm32 \
- -lmpr -limagehlp -lshlwapi \
- -static-libgcc -static-libstdc++ -mwindows -s
+ -static \
+ -lwinspool \
+ -lole32 \
+ -loleaut32 \
+ -luuid \
+ -lcomctl32 \
+ -limm32 \
+ -lmpr \
+ -limagehlp \
+ -lshlwapi \
+ -lwinmm \
+ -mwindows \
+ $(MYLIBS)
 
 exe= sakura.exe
 
@@ -451,10 +458,10 @@ sakura_rc.o: Funccode_define.h githash sakura_rc.rc
 	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
+	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES) depend.mak
 
-depend: githash
-	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
+depend: Funccode_enum.h githash
+	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
 .PHONY: all clean depend
