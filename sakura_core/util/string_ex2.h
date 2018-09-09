@@ -89,6 +89,7 @@ int scan_ints(
 template <typename T>
 constexpr size_t constilog2(T n)
 {
+	assert(n >= 0);
 	return (n < 2) ? 0 : (1 + constilog2(n / 2));
 }
 
