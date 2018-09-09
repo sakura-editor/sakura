@@ -102,8 +102,8 @@ ptrdiff_t int2dec(
 
 	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;
 	// abs 関数に符号付き整数型の最小値を指定した場合の動作が未定義な事への対策
-	// 最小値だった場合は事前に 1 加算する事で abs 関数の出力地が最大値に
-	// なるように対策
+	// 最小値だった場合は 1 加算する事で abs 関数の出力値が
+	// 符号付き整数型の最大値になるように事前に補正
 	value += minAdjuster;
 
 	T v = abs(value);
@@ -115,8 +115,8 @@ ptrdiff_t int2dec(
 		v /= 10;
 	} while (v);
 
-	// 最小値を指定された場合に abs 関数実行前に補正しているので
-	// ここで最下位桁に 1 加算する事で辻褄合わせ
+	// 最小値を指定された場合に abs 関数実行前に事前に補正しているので
+	// 事後にここで最下位桁に 1 加算する事で辻褄を合わせる
 	tmp[0] += minAdjuster;
 
 	ptrdiff_t len = tp - tmp;
