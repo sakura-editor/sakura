@@ -442,6 +442,13 @@ inline static bool IsMailAddressLocalPart(
 	_Out_ const wchar_t** ppszAtmark
 ) noexcept;
 
+// 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
+inline static bool IsMailAddressLocalPart(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept;
+
 // 指定された文字列がメールアドレス後半部分の要件を満たすか判定する
 inline static bool IsMailAddressDomain(
 	_In_z_ const wchar_t* pszAtmark,
@@ -642,7 +649,7 @@ inline static bool IsMailAddressDomain(
 				return false; // ハイフンで終わるドメインはNG
 			}
 			*ppszEndOfMailBox = pszScan;
-			return true; // ここが正常終了
+			return true; // ここも正常終了
 		case L'0':
 		case L'1':
 		case L'2':
@@ -710,6 +717,11 @@ inline static bool IsMailAddressDomain(
 			break;
 		}
 		pszScan++;
+		if (pszScan == pszEnd)
+		{
+			*ppszEndOfMailBox = pszScan;
+			return true; // ここが正常終了
+		}
 		if (MAX_DOMAIN < domainLength)
 		{
 			return false; // 文字数オーバー
