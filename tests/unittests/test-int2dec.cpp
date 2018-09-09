@@ -36,9 +36,9 @@ TEST(int2dec_test, zero)
 	test_int2dec<int64_t>(0, 1, L"0");
 }
 
-TEST(int2dec_test, plus_minus_1)
+TEST(int2dec_test, plus_minus_2)
 {
-	test_32_64_plus_minus(1, 1, L"1");
+	test_32_64_plus_minus(2, 1, L"2");
 }
 
 TEST(int2dec_test, max)
