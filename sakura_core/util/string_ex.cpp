@@ -902,7 +902,7 @@ int skr_towlower( int c )
 
 
 //! wcがasciiなら0-127のまま返す。それ以外は0を返す。
-uchar_t wc_to_c(wchar_t wc)
+inline static uchar_t wc_to_c(wchar_t wc)
 {
 #if 0
 //! wcがSJIS1バイト文字ならcharに変換して0～255を返す。SJIS2バイト文字なら0を返す。
@@ -919,7 +919,6 @@ uchar_t wc_to_c(wchar_t wc)
 	return 0;
 }
 
-//@@@ 2002.01.24 Start by MIK
 /*!
 	文字列がURLかどうかを検査する。
 	
@@ -931,6 +930,7 @@ uchar_t wc_to_c(wchar_t wc)
 		新しい URL を追加する場合は #define 値を修正してください。
 		url_table は頭文字がアルファベット順になるように並べてください。
 
+	2002.01.24 MIK
 	2007.10.23 kobake UNICODE対応。//$ wchar_t専用のテーブル(または判定ルーチン)を用意したほうが効率は上がるはずです。
 */
 BOOL IsURL(
@@ -939,6 +939,7 @@ BOOL IsURL(
 	int*			pnMatchLen	//!< [out] URLの長さ
 )
 {
+	// TODO: この関数は、UNCアドレスも含めて見直した方がよさげ by berryzplus
 	struct _url_table_t {
 		wchar_t	name[12];
 		int		length;
@@ -963,14 +964,14 @@ BOOL IsURL(
 	};
 
 /* テーブルの保守性を高めるための定義 */
-	const char urF = 1;
-	const char urG = 3;
-	const char urH = 4;
-	const char urM = 6;
-	const char urN = 7;
-	const char urP = 9;
-	const char urT = 10;
-	const char urW = 13;	//2004.02.02
+	constexpr char urF = 1;
+	constexpr char urG = 3;
+	constexpr char urH = 4;
+	constexpr char urM = 6;
+	constexpr char urN = 7;
+	constexpr char urP = 9;
+	constexpr char urT = 10;
+	constexpr char urW = 13;	//2004.02.02
 
 	static const char	url_char[] = {
 	  /* +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F */
@@ -1014,7 +1015,7 @@ BOOL IsURL(
 			}
 		}
 	}
-	return IsMailAddress(pszLine, nLineLen, pnMatchLen);
+	return IsMailAddress(pszLine, nLineLen, pnMatchLen); // TODO: FALSE じゃなくて？
 }
 
 // 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
