@@ -1,8 +1,10 @@
 # Sakura Editor
+[![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
 
 <!-- TOC -->
 
 - [Sakura Editor](#sakura-editor)
+    - [Hot topic](#hot-topic)
     - [Web Site](#web-site)
     - [開発参加ポリシー](#開発参加ポリシー)
     - [Build Requirements](#build-requirements)
@@ -21,9 +23,13 @@
 
 <!-- /TOC -->
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
-
 A free Japanese text editor for Windows
+
+## Hot topic
+カンバン運用を始めます。
+
+- [カンバン](https://github.com/orgs/sakura-editor/projects/1)
+- [カンバン運用に関する議論](https://github.com/sakura-editor/management-forum/issues/9)
 
 ## Web Site
 - [Sakura Editor Portal](https://sakura-editor.github.io/)
