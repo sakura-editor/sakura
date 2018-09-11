@@ -10,7 +10,7 @@
 template <typename T>
 void test_int2dec(T value, ptrdiff_t lenExpected, const wchar_t* strExpected)
 {
-	wchar_t buff[int2dec_minimumRequiredDestBufferLength<T>()];
+	wchar_t buff[int2dec_destBufferSufficientLength<T>()];
 	ptrdiff_t len = int2dec(value, buff);
 	EXPECT_EQ(len, lenExpected);
 	EXPECT_STREQ(buff, strExpected);
