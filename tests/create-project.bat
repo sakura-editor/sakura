@@ -4,11 +4,6 @@ set ERROR_RESULT=0
 
 pushd %~dp0
 
-if not exist "googletest\CMakeLists.txt" (
-    git submodule init
-    git submodule update
-)
-
 set BUILDDIR=build\%platform%
 if exist "%BUILDDIR%" (
 	rmdir /s /q %BUILDDIR%

@@ -1,4 +1,7 @@
-﻿#include <gtest/gtest.h>
+﻿#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#define CATCH_CONFIG_FAST_COMPILE
+#include "catch.hpp"
+
 #include <cstdio>
 #include <exception>
 
@@ -29,18 +32,18 @@ int Divide(int a, int b)
 	return a / b;
 }
 
-TEST(test, Append)
+TEST_CASE("Append", "[test]")
 {
-	EXPECT_EQ(Add(1, 2), 3);
-	ASSERT_EQ(Add(2, 3), 5);
+	CHECK(Add(1, 2) == 3);
+	CHECK(Add(2, 3) == 5);
 }
 
-TEST(test, DivideByZero)
+TEST_CASE("DivideByZero", "[test]")
 {
-	ASSERT_THROW(Divide(2, 0), DivideByZeroException);
+	CHECK_THROWS_AS(Divide(2, 0), DivideByZeroException);
 }
 
-TEST(test, PointerSize)
+TEST_CASE("PointerSize", "[test]")
 {
 	int pointerSize = 0;
 #if defined(_WIN64)
@@ -50,5 +53,5 @@ TEST(test, PointerSize)
 #else
 #endif
 	printf("pointerSize = %d\n", pointerSize);
-	ASSERT_EQ(sizeof(void*), pointerSize);
+	CHECK(sizeof(void*) == pointerSize);
 }
