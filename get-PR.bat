@@ -16,9 +16,16 @@ if "%PR_NUMBER%" == "" (
 	echo example: get-PR.bat 1
 	exit /b 1
 )
+
+if not "%%2%" == "" (
+	set SAKURA_EDITOR_REMOTE_NAME=%2
+) else if "%SAKURA_EDITOR_REMOTE_NAME%" == "" (
+	set SAKURA_EDITOR_REMOTE_NAME=origin
+)
+
 @echo on
 @echo fetching pull request %PR_NUMBER%
-git fetch origin pull/%PR_NUMBER%/head:%BRANCH_NAME%
+git fetch %SAKURA_EDITOR_REMOTE_NAME% pull/%PR_NUMBER%/head:%BRANCH_NAME%
 
 @echo checkout PR %PR_NUMBER% to branch %BRANCH_NAME%
 git checkout %BRANCH_NAME%
