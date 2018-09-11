@@ -1167,7 +1167,7 @@ inline static bool IsMailAddressDomain(
 	const ptrdiff_t MAX_DOMAIN = 63;
 
 	// 関数仕様
-	assert(pszAtmark + 1 < pszEnd); // @位置と終了位置は逆転してはならない
+	assert(pszAtmark < pszEnd); // @位置と終了位置は逆転してはならない
 	assert(L'@' == *pszAtmark); // @位置にある文字は@でなければならない
 
 	// 出力値を初期化する
@@ -1175,6 +1175,10 @@ inline static bool IsMailAddressDomain(
 
 	// ループ中にスキャンする文字位置を設定する
 	auto pszScan = pszAtmark + 1;
+	if (pszScan == pszEnd)
+	{
+		return false; // @の後ろが0文字、長さが足りない
+	}
 
 	auto dotCount = 0;
 	auto domainLength = 0;
