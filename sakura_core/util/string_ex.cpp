@@ -1048,8 +1048,8 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	// RFC5321による mailbox の最大文字数
 	const ptrdiff_t MAX_MAILBOX = 255; //255オクテット
 
-	// バカ避け
-	if (nBufLen < 1) return FALSE;
+	// 想定しないパラメータは前半チェックの前に弾く
+	if (pszBuf == nullptr || nBufLen < 1) return FALSE;
 
 	// メールアドレスには必ず＠が含まれる
 	const wchar_t* pszAtmark;
@@ -1058,7 +1058,6 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	if (!IsMailAddressLocalPart(pszBuf, pszBuf + nBufLen, &pszAtmark)) {
 		return FALSE;
 	}
-	assert(L'@' == *pszAtmark);
 
 	// メールアドレスの終了位置を受け取るポインタを宣言する
 	const wchar_t* pszEndOfMailBox;
@@ -1070,14 +1069,15 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	}
 
 	// 全体の長さが制限を超えていないかチェックする
-	if (MAX_MAILBOX < pszEndOfMailBox - pszBuf)
+	auto cchAddressLength = pszEndOfMailBox - pszBuf;
+	if (MAX_MAILBOX < cchAddressLength)
 	{
 		return FALSE; // 文字数オーバー
 	}
 
 	if (pnAddressLength != nullptr)
 	{
-		*pnAddressLength = pszEndOfMailBox - pszBuf;
+		*pnAddressLength = cchAddressLength;
 	}
 	return TRUE;
 }
