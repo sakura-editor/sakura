@@ -83,5 +83,92 @@ int scan_ints(
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
+/*! @brief int2dec の第2引数の文字列出力先に必要十分なサイズ取得用
+	符号付き整数の最小値の場合に必要な長さを返す
+*/
+template <typename T>
+constexpr size_t int2dec_destBufferSufficientLength();
+
+/*!
+	符号付き32bit整数の最小値(-2147483648)の10進数文字列の文字数は
+	終端0文字を含めて12文字。
+*/
+template <>
+constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
+{
+	return _countof(L"-2147483648");
+}
+
+/*!
+	符号付き64bit整数の最小値(-9223372036854775808)の10進数文字列の
+	文字数は終端0文字を含めて21文字
+*/
+template <>
+constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
+{
+	return _countof(L"-9223372036854775808");
+}
+
+/*! @brief 整数を10進数の文字列に変換
+	参考にしたコード : https://stackoverflow.com/a/12386915/4699324
+
+	文字列出力先の領域サイズは変換される文字列の出力に必要なバッファ長の考慮が必要
+	int2dec_destBufferSufficientLength 関数で必要十分な要素数の取得が可能
+
+	@return 変換後の文字数（終端0文字の分は含まない）
+*/
+template <typename T, typename ChT>
+ptrdiff_t int2dec(
+	T value,	//!< [in] 文字列化の素になる整数
+	ChT* sp		//!< [out] 文字列出力先
+)
+{
+	// 符号無し整数型は対応外
+	static_assert(std::is_signed<T>::value, "T must be signed type.");
+
+	// 一時領域
+	ChT tmp[int2dec_destBufferSufficientLength<T>()];
+	ChT *tp = tmp;
+
+	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;
+	// abs 関数に符号付き整数型の最小値を指定した場合の動作が未定義な事への対策
+	// 最小値だった場合は 1 加算する事で abs 関数の出力値が
+	// 符号付き整数型の最大値になるように事前に補正
+	value += minAdjuster;
+
+	T v = abs(value);
+
+	// 下位桁から変換する
+	do {
+		// decimal only
+		*tp++ = (ChT)('0' + (v % 10));
+		v /= 10;
+	} while (v);
+
+	// 最小値を指定された場合に abs 関数実行前に事前に補正しているので
+	// 事後にここで最下位桁に 1 加算する事で辻褄を合わせる
+	tmp[0] += minAdjuster;
+
+	ptrdiff_t len = tp - tmp;
+
+	// 負の場合の符号文字
+	if (value < 0) {
+		*sp++ = '-';
+		++len;
+	}
+
+	// 下位桁から出力しているので文字列を逆転する
+	while (tp > tmp) {
+		--tp;
+		*sp = *tp;
+		++sp;
+	}
+
+	// ゼロ終端文字追加
+	*sp = '\0';
+
+	return len;
+}
+
 #endif /* SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_ */
 /*[EOF]*/
