@@ -19,8 +19,8 @@ if "%PR_NUMBER%" == "" (
 	echo example3: get-PR.bat 1 origin
 	echo.
 	echo [remote name]
-	echo 1. If "remote name" is valid, it is used as origin of PR.
-	echo 2. If "remote name" is not valid and env SAKURA_EDITOR_REMOTE_NAME is valid, 
+	echo 1. If "remote name" is valid, it is used as the origin of PR.
+	echo 2. If "remote name" is invalid and env SAKURA_EDITOR_REMOTE_NAME is valid, 
 	echo    env SAKURA_EDITOR_REMOTE_NAME is used as the origin of PR.
 	echo 3. Otherwise, "origin" is used as the origin of PR.
 	exit /b 1
