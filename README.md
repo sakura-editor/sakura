@@ -10,6 +10,7 @@
             - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [How to build](#how-to-build)
         - [詳細情報](#詳細情報)
+    - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
     - [CI Build (AppVeyor)](#ci-build-appveyor)
         - [ビルドの仕組み](#ビルドの仕組み)
         - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
@@ -51,6 +52,11 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 ### 詳細情報
 
 詳しくは [こちら](build.md) を参照
+
+## PR(Pull Request) を簡単にローカルに取得する方法
+
+- [PR(Pull Request) を簡単にローカルに取得する方法](get-PR.md)
+
 
 ## CI Build (AppVeyor)
 
