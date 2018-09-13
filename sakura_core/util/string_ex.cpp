@@ -1016,14 +1016,11 @@ BOOL IsURL(
 		}
 	}
 	return IsMailAddress(pszLine, nLineLen, pnMatchLen); // TODO: FALSE じゃなくて？
+	// この関数の作成目的は「指定した文字列がURLかどうかを判定すること」だったと推定される。
+	// 先行する「mailto:」のないメールアドレスはURLではないのでここはFALSEを返すべき。
+	// 「URLとメールアドレスにリンクを付けたい」を叶えるための措置と考えられるが、もっといい解決策がありそうに思う。
+	// とはいえ、すぐに着手できそうな状況ではないので、備忘目的でコメントだけ残しておく。 by berryzplus
 }
-
-// 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
-inline static bool IsMailAddressLocalPart(
-	_In_z_ const wchar_t* pszStart,
-	_In_ const wchar_t* pszEnd,
-	_Out_ const wchar_t** ppszAtmark
-) noexcept;
 
 // 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
 inline static bool IsMailAddressLocalPart(
@@ -1039,6 +1036,7 @@ inline static bool IsMailAddressDomain(
 	_Out_ const wchar_t** ppszEndOfMailBox
 ) noexcept;
 
+
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 	@date 2018.09.09 RFC準拠
@@ -1046,10 +1044,14 @@ inline static bool IsMailAddressDomain(
 BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 {
 	// RFC5321による mailbox の最大文字数
-	const ptrdiff_t MAX_MAILBOX = 255; //255オクテット
+	constexpr ptrdiff_t MAX_MAILBOX = 255; //255オクテット
 
-	// 想定しないパラメータは前半チェックの前に弾く
-	if (pszBuf == nullptr || nBufLen < 1) return FALSE;
+	// 論理的なメールアドレス長の下限文字数
+	// 1(@手前) + 1(@) + 3(ドメイン最小文字数) + 1(.) + 3(TLD) = 9 
+	constexpr ptrdiff_t MIN_MAILBOX = 9;
+
+    // 想定しないパラメータは前半チェックの前に弾く
+	if (pszBuf == nullptr || nBufLen < MIN_MAILBOX) return FALSE;
 
 	// メールアドレスには必ず＠が含まれる
 	const wchar_t* pszAtmark;
@@ -1069,7 +1071,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	}
 
 	// 全体の長さが制限を超えていないかチェックする
-	auto cchAddressLength = pszEndOfMailBox - pszBuf;
+	const auto cchAddressLength = pszEndOfMailBox - pszBuf;
 	if (MAX_MAILBOX < cchAddressLength)
 	{
 		return FALSE; // 文字数オーバー
@@ -1096,7 +1098,7 @@ inline static bool IsMailAddressLocalPart(
 ) noexcept
 {
 	// RFC5321による local-part の最大文字数
-	const ptrdiff_t MAX_LOCAL_PART = 64; //64オクテット
+	constexpr ptrdiff_t MAX_LOCAL_PART = 64; //64オクテット
 
 	// 関数仕様
 	assert(pszStart != pszEnd); // 長さ0の文字列をチェックしてはならない
@@ -1158,13 +1160,13 @@ inline static bool IsMailAddressDomain(
 ) noexcept
 {
 	// ccTLDの最小文字数
-	const ptrdiff_t MIN_TLD = 2;
+	constexpr ptrdiff_t MIN_TLD = 2;
 
 	// ドメインの最小文字数
-	const ptrdiff_t MIN_DOMAIN = 3;
+	constexpr ptrdiff_t MIN_DOMAIN = 3;
 
 	// ドメインの最大文字数
-	const ptrdiff_t MAX_DOMAIN = 63;
+	constexpr ptrdiff_t MAX_DOMAIN = 63;
 
 	// 関数仕様
 	assert(pszAtmark < pszEnd); // @位置と終了位置は逆転してはならない
