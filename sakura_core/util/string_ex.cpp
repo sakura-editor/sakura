@@ -1046,11 +1046,12 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	// RFC5321による mailbox の最大文字数
 	constexpr ptrdiff_t MAX_MAILBOX = 255; //255オクテット
 
-	// 論理的なメールアドレス長の下限文字数
-	// 1(@手前) + 1(@) + 3(ドメイン最小文字数) + 1(.) + 3(TLD) = 9 
-	constexpr ptrdiff_t MIN_MAILBOX = 9;
+	// mailboxの最小文字数（これより短いと構成要素を含めなくなる）
+	//   例) a@z.jp
+	//   1(@手前) + 1(@) + 1(ドメイン) + 1(.) + 2(TLD/ccTLD) = 6
+	constexpr ptrdiff_t MIN_MAILBOX = 6;
 
-    // 想定しないパラメータは前半チェックの前に弾く
+	// 想定しないパラメータは前半チェックの前に弾く
 	if (pszBuf == nullptr || nBufLen < MIN_MAILBOX) return FALSE;
 
 	// メールアドレスには必ず＠が含まれる
