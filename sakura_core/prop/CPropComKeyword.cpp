@@ -108,11 +108,17 @@ INT_PTR CPropKeyword::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		if( wParam == IDOK ){ // 独立ウィンドウ
 			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
-			GetWindowRect( hwndCtl, &rc );
-			int i = rc.bottom; // OK,CANCELボタンの下端
-
+			RECT btnRect;
+			GetWindowRect( hwndCtl, &btnRect );
 			GetWindowRect( hwndDlg, &rc );
-			SetWindowPos( hwndDlg, NULL, 0, 0, rc.right-rc.left, i-rc.top+10, SWP_NOZORDER|SWP_NOMOVE );
+			// HighDPI対応
+			// Per-Monitor DPI非対応
+			HDC screen = GetDC(0);
+			auto dpiY = GetDeviceCaps(screen,LOGPIXELSY);
+			::ReleaseDC(0, screen);
+			auto dlgWidth = rc.right - rc.left;
+			auto dlgHeight = btnRect.bottom - rc.top + MulDiv(15, dpiY, 96);
+			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
 			std::tstring title = LS(STR_PROPCOMMON);
 			title += _T(" - ");
 			title += LS(STR_PROPCOMMON_KEYWORD);
