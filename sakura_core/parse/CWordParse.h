@@ -125,10 +125,6 @@ protected:
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
-BOOL IsURL( const wchar_t*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-BOOL IsMailAddress( const wchar_t*, int, int* );	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-
-
 
 // ACHAR 版
 inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )

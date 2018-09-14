@@ -5,16 +5,17 @@ include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 set(project_name tests1)
 
 # define a variable SRC with file GLOB
-file(GLOB SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
-
-# add include directories
-include_directories(${googletest_SOURCE_DIR}/include)
-
-# add include directories for sakura_core
-include_directories(${CMAKE_SOURCE_DIR}/../sakura_core)
+file(GLOB TEST_SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
+file(GLOB TARGET_SRC ${CMAKE_CURRENT_LIST_DIR}/code*.cpp)
 
 # define sources files of an executable
-add_executable(${project_name} ${SRC})
+add_executable(${project_name} ${TEST_SRC} ${TARGET_SRC})
+
+# add definitions
+target_compile_definitions(${project_name} PUBLIC _CONSOLE UNICODE _UNICODE)
+
+# add include directories for sakura_core
+target_include_directories(${project_name} PRIVATE ${CMAKE_SOURCE_DIR}/../sakura_core)
 
 # use shared library version
 # this is required when using parameterized test
