@@ -138,5 +138,5 @@ https://www.kymoto.org/products/inno-script-studio/downloads
 ### 英語版インストーラーの動作確認について
 
 英語版のインストーラーの挙動を確認する場合には、実行環境を英語モードにする必要があります。
-お使いのPCの言語設定を英語に変更するか([こちら](https://www.google.co.jp/search?q=%E8%A8%80%E8%AA%9E+%E6%97%A5%E6%9C%AC%E8%AA%9E+%E8%8B%B1%E8%AA%9E+Windows&oq=%E8%A8%80%E8%AA%9E%E3%80%80%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%80%80%E8%8B%B1%E8%AA%9E%E3%80%80Windows&aqs=chrome..69i57j0l2.5435j0j4&sourceid=chrome&ie=UTF-8)参考)、お使いのPCのリソースに余裕があれば、[VirtualBOX](http://www.oracle.com/technetwork/server-storage/virtualbox/downloads/index.html?ssSourceSiteId=otnjp)等の仮想化ソフトウエアにて、[開発用Windowsマシン](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/)を利用する方法もあります。
+お使いのPCの言語設定を英語に変更するか([こちら](https://www.google.co.jp/search?q=%E8%A8%80%E8%AA%9E+%E6%97%A5%E6%9C%AC%E8%AA%9E+%E8%8B%B1%E8%AA%9E+Windows&oq=%E8%A8%80%E8%AA%9E%E3%80%80%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%80%80%E8%8B%B1%E8%AA%9E%E3%80%80Windows&aqs=chrome..69i57j0l2.5435j0j4&sourceid=chrome&ie=UTF-8)参考)、お使いのPCのリソースに余裕があれば、[VirtualBOX](https://www.virtualbox.org/)等の仮想化ソフトウエアにて、[開発用Windowsマシン](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/)を利用する方法もあります。
 （覚書：この仮想PCのユーザのパスワードは「Passw0rd!」です)
