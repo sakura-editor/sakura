@@ -25,6 +25,7 @@
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include <memory>
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -111,13 +112,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 			RECT btnRect;
 			GetWindowRect( hwndCtl, &btnRect );
 			GetWindowRect( hwndDlg, &rc );
-			// HighDPI対応
-			// Per-Monitor DPI非対応
-			HDC screen = GetDC(0);
-			auto dpiY = GetDeviceCaps(screen,LOGPIXELSY);
-			::ReleaseDC(0, screen);
 			auto dlgWidth = rc.right - rc.left;
-			auto dlgHeight = btnRect.bottom - rc.top + MulDiv(15, dpiY, 96);
+			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
 			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
 			std::tstring title = LS(STR_PROPCOMMON);
 			title += _T(" - ");
