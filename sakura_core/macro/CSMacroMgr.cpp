@@ -24,7 +24,7 @@
 */
 #include "StdAfx.h"
 #include "macro/CSMacroMgr.h"
-#include "macro/CPPAMacroMgr.h"
+#include "macro/CKeyMacroMgr.h" 
 #include "macro/CWSHManager.h"
 #include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
@@ -489,7 +489,6 @@ CSMacroMgr::CSMacroMgr()
 	
 	m_pShareData = &GetDllShareData();
 	
-	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();
 	CWSHMacroManager::declare();
 	
