@@ -335,23 +335,23 @@ void CPropCommon::InitData( const int* tempTypeKeywordSet, const TCHAR* name, co
 		m_nKeywordSet1 = tempTypeKeywordSet[0];
 		auto_strcpy(m_tempTypeName, name);
 		auto_strcpy(m_tempTypeExts, exts);
-		SKeywordSetIndex indexs;
+		m_Types_nKeyWordSetIdx.emplace_back();
+		SKeywordSetIndex& indexs = m_Types_nKeyWordSetIdx.back();
 		indexs.typeId = -1;
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			indexs.index[j] = tempTypeKeywordSet[j];
 		}
-		m_Types_nKeyWordSetIdx.emplace_back(indexs);
 	}
 	int i;
 	for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
-		SKeywordSetIndex indexs;
+		m_Types_nKeyWordSetIdx.emplace_back();
+		SKeywordSetIndex& indexs = m_Types_nKeyWordSetIdx.back();
 		STypeConfig type;
 		CDocTypeManager().GetTypeConfig(CTypeConfig(i), type);
 		indexs.typeId = type.m_id;
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			indexs.index[j] = type.m_nKeyWordSetIdx[j];
 		}
-		m_Types_nKeyWordSetIdx.emplace_back(indexs);
 	}
 }
 

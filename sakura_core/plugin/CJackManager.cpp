@@ -64,11 +64,11 @@ CJackManager::CJackManager()
 	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){
 		assert( i == jackNames[i].id );
 
-		JackDef jack;
+		m_Jacks.emplace_back();
+		JackDef& jack = m_Jacks.back();
 		jack.ppId = jackNames[i].id;
 		jack.szName = jackNames[i].name;
 
-		m_Jacks.emplace_back( jack );
 	}
 	
 }

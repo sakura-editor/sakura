@@ -901,7 +901,7 @@ void CViewCommander::Command_MERGE(void)
 		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ) continue;
 		if( NULL == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
-			lineArr.emplace_back( CStringRef(pLine, nLineLen) );
+			lineArr.emplace_back( pLine, nLineLen );
 		}else{
 			bMerge = true;
 		}

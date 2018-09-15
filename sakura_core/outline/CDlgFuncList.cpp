@@ -996,8 +996,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
 					if( k < nWorkLen - 1 && _T(':') == pWork[k+1] ){
-						std::tstring strClass(&pWork[m], k - m);
-						vStrClasses.emplace_back(strClass);
+						vStrClasses.emplace_back(&pWork[m], k - m);
 						++nClassNest;
 						m = k + 2;
 						++k;
@@ -1010,8 +1009,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						break;
 				}
 				else if( 1 == nCharChars && _T('\\') == pWork[k] ){
-					std::tstring strClass(&pWork[m], k - m);
-					vStrClasses.emplace_back(strClass);
+					vStrClasses.emplace_back(&pWork[m], k - m);
 					++nClassNest;
 					m = k + 1;
 				}

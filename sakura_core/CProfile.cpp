@@ -78,9 +78,9 @@ void CProfile::ReadOneline(
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
 			&& line.find( LTEXT("=") ) == line.npos
 			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
-		Section Buffer;
+		m_ProfileData.emplace_back();
+		Section& Buffer = m_ProfileData.back();
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
-		m_ProfileData.emplace_back( Buffer );
 	}
 	// エントリ取得
 	else if( !m_ProfileData.empty() ) {	//最初のセクション以前の行のエントリは無視
@@ -223,7 +223,7 @@ bool CProfile::WriteProfile(
 	std::vector< wstring > vecLine;
 	if( NULL != pszComment ) {
 		vecLine.emplace_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
-		vecLine.emplace_back( LTEXT("") );
+		vecLine.emplace_back();
 	}
 	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
 		//セクション名を書き込む
@@ -232,7 +232,7 @@ bool CProfile::WriteProfile(
 			//エントリを書き込む
 			vecLine.emplace_back( mapiter->first + LTEXT("=") + mapiter->second );
 		}
-		vecLine.emplace_back( LTEXT("") );
+		vecLine.emplace_back();
 	}
 
 	// 別ファイルに書き込んでから置き換える（プロセス強制終了などへの安全対策）
@@ -368,10 +368,10 @@ bool CProfile::SetProfileDataImp(
 	}
 	//既存のセクションではない場合，セクション及びエントリを追加
 	if( iter == m_ProfileData.end() ) {
-		Section Buffer;
+		m_ProfileData.emplace_back();
+		Section& Buffer = m_ProfileData.back();
 		Buffer.strSectionName = strSectionName;
 		Buffer.mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
-		m_ProfileData.emplace_back( Buffer );
 	}
 	return true;
 }

@@ -38,6 +38,7 @@ class vector_ex : public std::vector<T>{
 public:
 	using std::vector<T>::begin;
 	using std::vector<T>::end;
+	using std::vector<T>::push_back;
 	using std::vector<T>::emplace_back;
 
 public:

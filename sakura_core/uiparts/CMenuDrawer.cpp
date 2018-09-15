@@ -837,7 +837,8 @@ void CMenuDrawer::MyAppendMenu(
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 		{
-			MyMenuItemInfo item;
+			m_menuItems.emplace_back();
+			MyMenuItemInfo& item = m_menuItems.back();
 			item.m_nBitmapIdx = -1;
 			item.m_nFuncId = nFuncId;
 			item.m_cmemLabel.SetString( szLabel );
@@ -849,7 +850,6 @@ void CMenuDrawer::MyAppendMenu(
 			}
 			/* 機能のビットマップの情報を覚えておく */
 			item.m_nBitmapIdx = GetIconIdByFuncId( nForceIconId );
-			m_menuItems.emplace_back( item );
 		}
 	}else{
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1628,13 +1628,13 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			continue;
 		}
 		if( chUser == GetAccelCharFromLabel( pszLabel ) ){
-			WorkData work;
+			vecAccel.emplace_back();
+			WorkData& work = vecAccel.back();
 			work.idx = i;
 			work.mii = mii;
 			if( /*-1 == nAccelSel ||*/ MFS_HILITE & mii.fState ){
 				nAccelSel = vecAccel.size();
 			}
-			vecAccel.emplace_back( work );
 		}
 	}
 //	MYTRACE( _T("%d\n"), (int)mapAccel.size() );

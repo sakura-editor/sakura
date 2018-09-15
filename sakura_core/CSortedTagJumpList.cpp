@@ -41,7 +41,7 @@ CSortedTagJumpList::CSortedTagJumpList(int max)
 	  m_MAX_TAGJUMPLIST( max )
 {
 	// id==0 を 空文字列にする
-	m_baseDirArr.emplace_back(_T(""));
+	m_baseDirArr.emplace_back();
 }
 
 CSortedTagJumpList::~CSortedTagJumpList()
@@ -79,7 +79,7 @@ void CSortedTagJumpList::Empty( void )
 	m_nCount = 0;
 	m_bOverflow = false;
 	m_baseDirArr.clear();
-	m_baseDirArr.emplace_back(_T(""));
+	m_baseDirArr.emplace_back();
 }
 
 /*

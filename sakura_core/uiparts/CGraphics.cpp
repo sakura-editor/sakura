@@ -198,8 +198,7 @@ void CGraphics::PushMyFont(const SFONT& sFont)
 
 	//記録
 	if(m_vFonts.empty()){
-		SFONT sFontOld = { { false, false }, hFontOld };
-		m_vFonts.emplace_back(sFontOld);
+		m_vFonts.emplace_back(SFONT{ { false, false }, hFontOld });
 	}
 	m_vFonts.emplace_back(sFont);
 }

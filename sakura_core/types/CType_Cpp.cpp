@@ -1452,8 +1452,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 							nBegin = n;
 							n++;
 						}else if( m_pTypeData->m_bIndentCppCommentIgnore && n + 1 < nLineLen2 && '/' == pLine2[n] && '/' == pLine2[n+1] ){
-							SCommentBlock block = { n, nLineLen2 - 1 };
-							arrCommentBlock.emplace_back(block);
+							arrCommentBlock.emplace_back(SCommentBlock{ n, nLineLen2 - 1 });
 							n = nLineLen2 - 1;
 						}
 						break;
@@ -1461,8 +1460,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						if( L'\\' == pLine2[n] ){
 							n++;
 						}else if( L'"' == pLine2[n] ){
-							SCommentBlock block = { nBegin, n };
-							arrCommentBlock.emplace_back(block);
+							arrCommentBlock.emplace_back(SCommentBlock{ nBegin, n });
 							nBegin = -1;
 							nMode = 0;
 						}
@@ -1471,16 +1469,14 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						if( L'\\' == pLine2[n] ){
 							n++;
 						}else if( L'\'' == pLine2[n] ){
-							SCommentBlock block = { nBegin, n };
-							arrCommentBlock.emplace_back(block);
+							arrCommentBlock.emplace_back(SCommentBlock{ nBegin, n });
 							nBegin = -1;
 							nMode = 0;
 						}
 						break;
 					case 3:
 						if( n + 1 < nLineLen2 && '*' == pLine2[n] && '/' == pLine2[n+1] ){
-							SCommentBlock block = { nBegin, n + 1 };
-							arrCommentBlock.emplace_back(block);
+							arrCommentBlock.emplace_back(SCommentBlock{ nBegin, n + 1 });
 							nBegin = -1;
 							nMode = 0;
 							n++;
@@ -1490,8 +1486,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				}
 				if( 0 < nBegin ){
 					// 終わりのない文字列orコメント
-					SCommentBlock block = { nBegin, nLineLen2 };
-					arrCommentBlock.emplace_back(block);
+					arrCommentBlock.emplace_back(SCommentBlock{ nBegin, nLineLen2 });
 				}
 				if( j == GetCaret().GetCaretLogicPos().GetY2() ){
 					if( wcCharOrg != WCODE::CR ){

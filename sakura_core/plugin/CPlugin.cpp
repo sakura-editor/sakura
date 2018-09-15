@@ -276,16 +276,16 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.emplace_back( wstring(L"") ); // 0番目ダミー
+	m_aStrings.emplace_back( L"" ); // 0番目ダミー
 	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//添え字は１から始める
-		wstring sVal = L"";
+		m_aStrings.emplace_back();
+		wstring& sVal = m_aStrings.back();
 		swprintf( bufKey, L"S[%d]", nCount );
 		if( cProfile->IOProfileData( PII_STRING, bufKey, sVal ) ){
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_STRING, bufKey, sVal );
 			}
 		}
-		m_aStrings.emplace_back( sVal );
 	}
 	return true;
 }
