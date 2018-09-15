@@ -25,6 +25,7 @@
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include <memory>
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -108,11 +109,12 @@ INT_PTR CPropKeyword::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		if( wParam == IDOK ){ // 独立ウィンドウ
 			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
-			GetWindowRect( hwndCtl, &rc );
-			int i = rc.bottom; // OK,CANCELボタンの下端
-
+			RECT btnRect;
+			GetWindowRect( hwndCtl, &btnRect );
 			GetWindowRect( hwndDlg, &rc );
-			SetWindowPos( hwndDlg, NULL, 0, 0, rc.right-rc.left, i-rc.top+10, SWP_NOZORDER|SWP_NOMOVE );
+			auto dlgWidth = rc.right - rc.left;
+			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
+			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
 			std::tstring title = LS(STR_PROPCOMMON);
 			title += _T(" - ");
 			title += LS(STR_PROPCOMMON_KEYWORD);
