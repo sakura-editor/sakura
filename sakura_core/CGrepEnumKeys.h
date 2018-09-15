@@ -110,32 +110,32 @@ public:
 			}
 			if( keyType == FILTER_SEARCH ){
 				if( bRelPath ){
-					push_back_unique( m_vecSearchFileKeys, token );
+					emplace_back_unique( m_vecSearchFileKeys, token );
 				}else{
-//					push_back_unique( m_vecSearchAbsFileKeys, token );
-//					push_back_unique( m_vecSearchFileKeys, token );
+//					emplace_back_unique( m_vecSearchAbsFileKeys, token );
+//					emplace_back_unique( m_vecSearchFileKeys, token );
 					delete [] pWildCard;
 					return 2; // 絶対パス指定は不可
 				}
 			}else if( keyType == FILTER_EXCEPT_FILE ){
 				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
+					emplace_back_unique( m_vecExceptFileKeys, token );
 				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
+					emplace_back_unique( m_vecExceptAbsFileKeys, token );
 				}
 			}else if( keyType == FILTER_EXCEPT_FOLDER ){
 				if( bRelPath ){
-					push_back_unique( m_vecExceptFolderKeys, token );
+					emplace_back_unique( m_vecExceptFolderKeys, token );
 				}else{
-					push_back_unique( m_vecExceptAbsFolderKeys, token );
+					emplace_back_unique( m_vecExceptAbsFolderKeys, token );
 				}
 			}
 		}
 		if( m_vecSearchFileKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFileKeys, WILDCARD_ANY );
+			emplace_back_unique( m_vecSearchFileKeys, WILDCARD_ANY );
 		}
 		if( m_vecSearchFolderKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFolderKeys, WILDCARD_ANY );
+			emplace_back_unique( m_vecSearchFolderKeys, WILDCARD_ANY );
 		}
 		delete [] pWildCard;
 		return 0;
@@ -157,7 +157,7 @@ private:
 		keys.clear();
 	}
 
-	void push_back_unique( VGrepEnumKeys& keys, LPCTSTR addKey ){
+	void emplace_back_unique( VGrepEnumKeys& keys, LPCTSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
 			TCHAR* newKey = new TCHAR[ _tcslen( addKey ) + 1 ];
 			_tcscpy( newKey, addKey );

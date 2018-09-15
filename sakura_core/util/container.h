@@ -52,6 +52,15 @@ public:
 	bool push_back_unique(const T& t)
 	{
 		if(!exist(t)){
+			push_back(t);
+			return true;
+		}
+		return false;
+	}
+
+	bool emplace_back_unique(T&& t)
+	{
+		if(!exist(t)){
 			emplace_back(t);
 			return true;
 		}
