@@ -190,8 +190,8 @@ private:
 	typedef std::basic_string<TCHAR> tstring;
 
 	/*!
-		@brief 除外ファイルパターンを解析して、要素ごとに分離して返す
-		@param[in]		lpKeys					除外ファイルパターン
+		@brief ファイルパターンを解析して、要素ごとに分離して返す
+		@param[in]		lpKeys					ファイルパターン
 	*/
 	std::vector< tstring > SplitPattern(LPCTSTR lpKeys)
 	{
