@@ -125,9 +125,9 @@ const TCHAR *CFileExt::GetExtFilter( void )
 		auto_memcpy( &m_vstrFilter[i], &work[0], work.length() );
 	}
 	if( 0 == m_nCount ){
-		m_vstrFilter.push_back( _T('\0') );
+		m_vstrFilter.emplace_back( _T('\0') );
 	}
-	m_vstrFilter.push_back( _T('\0') );
+	m_vstrFilter.emplace_back( _T('\0') );
 
 	return &m_vstrFilter[0];
 }

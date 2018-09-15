@@ -139,7 +139,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 				CWSHIfObj::List params;
 				COutlineIfObj* objOutline = new COutlineIfObj( cFuncInfoArr );
 				objOutline->AddRef();
-				params.push_back( objOutline );
+				params.emplace_back( objOutline );
 				//プラグイン呼び出し
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );
 

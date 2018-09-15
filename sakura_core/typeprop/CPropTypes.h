@@ -251,7 +251,7 @@ void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr,
 {
 	for( size_t i = 0; i < size; i++ ){
 		TYPE_NAME_ID2<T> item = {arr[i].nMethod, arr[i].nNameId, NULL};
-		vec.push_back( item );
+		vec.emplace_back( item );
 	}
 }
 

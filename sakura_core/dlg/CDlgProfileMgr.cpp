@@ -285,7 +285,7 @@ void CDlgProfileMgr::UpdateIni()
 		}
 		if( 0 < i ){
 			std::tstring str = szProfileName;
-			settings.m_vProfList.push_back( str );
+			settings.m_vProfList.emplace_back( str );
 		}
 	}
 	settings.m_bDefaultSelect = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART );
@@ -488,7 +488,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 			std::wstring wstrProfName;
 			cProf.IOProfileData( pSection, szKey, wstrProfName );
 			strProfName = to_tchar(wstrProfName.c_str());
-			settings.m_vProfList.push_back( strProfName );
+			settings.m_vProfList.emplace_back( strProfName );
 		}
 	}
 	cProf.IOProfileData( pSection, L"nDefaultIndex", settings.m_nDefaultIndex );

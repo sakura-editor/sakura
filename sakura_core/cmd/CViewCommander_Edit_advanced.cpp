@@ -729,7 +729,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			}
 		}
 		pst->pCmemLine = &cmemLine;
-		sta.push_back(pst);
+		sta.emplace_back(pst);
 	}
 	const wchar_t* pStrLast = NULL; // 最後の行に改行がなければそのポインタ
 	if( 0 < sta.size() ){
@@ -901,7 +901,7 @@ void CViewCommander::Command_MERGE(void)
 		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ) continue;
 		if( NULL == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
-			lineArr.push_back( CStringRef(pLine, nLineLen) );
+			lineArr.emplace_back( CStringRef(pLine, nLineLen) );
 		}else{
 			bMerge = true;
 		}

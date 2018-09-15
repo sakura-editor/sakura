@@ -370,7 +370,7 @@ void CIfObj::AddMethod(
 	/*
 		this->m_TypeInfoが NULLでなければ AddMethod()は反映されない。
 	*/
-	m_Methods.push_back(CMethodInfo());
+	m_Methods.emplace_back(CMethodInfo());
 	CMethodInfo *Info = &m_Methods[m_Methods.size() - 1];
 	ZeroMemory(Info, sizeof(CMethodInfo));
 	Info->Desc.invkind = INVOKE_FUNC;

@@ -197,17 +197,17 @@ CColorStrategyPool::CColorStrategyPool()
 	m_pcView = &(CEditWnd::getInstance()->GetView(0));
 	m_pcSelectStrategy = new CColor_Select();
 	m_pcFoundStrategy = new CColor_Found();
-//	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
-	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
-	m_vStrategies.push_back(new CColor_Heredoc);			// ヒアドキュメント
-	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK1));	// ブロックコメント
-	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK2));	// ブロックコメント2
-	m_vStrategies.push_back(new CColor_LineComment);		// 行コメント
-	m_vStrategies.push_back(new CColor_SingleQuote);		// シングルクォーテーション文字列
-	m_vStrategies.push_back(new CColor_DoubleQuote);		// ダブルクォーテーション文字列
-	m_vStrategies.push_back(new CColor_Url);				// URL
-	m_vStrategies.push_back(new CColor_Numeric);			// 半角数字
-	m_vStrategies.push_back(new CColor_KeywordSet);			// キーワードセット
+//	m_vStrategies.emplace_back(new CColor_Found);				// マッチ文字列
+	m_vStrategies.emplace_back(new CColor_RegexKeyword);		// 正規表現キーワード
+	m_vStrategies.emplace_back(new CColor_Heredoc);			// ヒアドキュメント
+	m_vStrategies.emplace_back(new CColor_BlockComment(COLORIDX_BLOCK1));	// ブロックコメント
+	m_vStrategies.emplace_back(new CColor_BlockComment(COLORIDX_BLOCK2));	// ブロックコメント2
+	m_vStrategies.emplace_back(new CColor_LineComment);		// 行コメント
+	m_vStrategies.emplace_back(new CColor_SingleQuote);		// シングルクォーテーション文字列
+	m_vStrategies.emplace_back(new CColor_DoubleQuote);		// ダブルクォーテーション文字列
+	m_vStrategies.emplace_back(new CColor_Url);				// URL
+	m_vStrategies.emplace_back(new CColor_Numeric);			// 半角数字
+	m_vStrategies.emplace_back(new CColor_KeywordSet);			// キーワードセット
 
 	// 設定更新
 	OnChangeSetting();
@@ -292,7 +292,7 @@ void CColorStrategyPool::OnChangeSetting(void)
 
 		// 色分け表示対象であれば登録
 		if( m_vStrategies[i]->Disp() ){
-			m_vStrategiesDisp.push_back(m_vStrategies[i]);
+			m_vStrategiesDisp.emplace_back(m_vStrategies[i]);
 		}
 	}
 

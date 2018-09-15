@@ -161,7 +161,7 @@ private:
 		if( ! IsExist( keys, addKey) ){
 			TCHAR* newKey = new TCHAR[ _tcslen( addKey ) + 1 ];
 			_tcscpy( newKey, addKey );
-			keys.push_back( newKey );
+			keys.emplace_back( newKey );
 		}
 	}
 

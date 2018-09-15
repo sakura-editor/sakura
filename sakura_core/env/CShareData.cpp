@@ -686,7 +686,7 @@ bool CShareData::InitShareData()
 			m_pShareData->m_sSearchKeywords.m_aSearchKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aReplaceKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.clear();
-			m_pShareData->m_sSearchKeywords.m_aGrepFiles.push_back(_T("*.*"));
+			m_pShareData->m_sSearchKeywords.m_aGrepFiles.emplace_back(_T("*.*"));
 			m_pShareData->m_sSearchKeywords.m_aGrepFolders.clear();
 
 			// 2004/06/21 novice タグジャンプ機能追加
@@ -772,7 +772,7 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.emplace_back( std::wstring(LSW(nStrId)) );
 		}
 		return;
 	}
@@ -785,7 +785,7 @@ static void ConvertLangValueImpl( char* pBuf, size_t chBufSize, int nStrId, std:
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.emplace_back( std::wstring(LSW(nStrId)) );
 		}
 		return;
 	}

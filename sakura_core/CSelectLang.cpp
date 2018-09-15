@@ -102,7 +102,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
 		::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
 
-		m_psLangInfoList.push_back( psLangInfo );
+		m_psLangInfoList.emplace_back( psLangInfo );
 	}
 
 	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
@@ -138,7 +138,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 				} else {
 					// 有効なメッセージリソースDLL
 					// 一旦DLLを解放し、後でChangeLangで再読み込みする
-					m_psLangInfoList.push_back( psLangInfo );
+					m_psLangInfoList.emplace_back( psLangInfo );
 					::FreeLibrary( psLangInfo->hInstance );
 					psLangInfo->hInstance = NULL;
 				}

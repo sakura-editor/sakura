@@ -340,7 +340,7 @@ void CPropCommon::InitData( const int* tempTypeKeywordSet, const TCHAR* name, co
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			indexs.index[j] = tempTypeKeywordSet[j];
 		}
-		m_Types_nKeyWordSetIdx.push_back(indexs);
+		m_Types_nKeyWordSetIdx.emplace_back(indexs);
 	}
 	int i;
 	for( i = 0; i < GetDllShareData().m_nTypesCount; ++i ){
@@ -351,7 +351,7 @@ void CPropCommon::InitData( const int* tempTypeKeywordSet, const TCHAR* name, co
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			indexs.index[j] = type.m_nKeyWordSetIdx[j];
 		}
-		m_Types_nKeyWordSetIdx.push_back(indexs);
+		m_Types_nKeyWordSetIdx.emplace_back(indexs);
 	}
 }
 

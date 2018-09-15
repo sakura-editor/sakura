@@ -302,7 +302,7 @@ void CSearchAgent::CreateWordList(
 		) {
 			if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
 				// pszPattern[pos]...pszPattern[pos + end] が検索語に含まれる単語。
-				searchWords.push_back( std::make_pair( pszPattern + pos, end ) );
+				searchWords.emplace_back( std::make_pair( pszPattern + pos, end ) );
 			}
 			pos += end;
 		} else {
@@ -916,7 +916,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			/* 行オブジェクトの削除、リスト変更、行数-- */
 			if( pArg->pcmemDeleted ){
 				CLineData tmp;
-				pArg->pcmemDeleted->push_back(tmp);
+				pArg->pcmemDeleted->emplace_back(tmp);
 				CLineData& delLine = pArg->pcmemDeleted->back();
 				delLine.cmemLine.swap(pCDocLine->_GetDocLineData()); // CDocLine書き換え
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
@@ -932,14 +932,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					// 2014.01.07 最後が改行の範囲を最後が改行のデータで置換した場合を変更
 					if( !bLastEOLReplace ){
 						CLineData tmp;
-						pArg->pcmemDeleted->push_back(tmp);
+						pArg->pcmemDeleted->emplace_back(tmp);
 						CLineData& delLine =  pArg->pcmemDeleted->back();
 						delLine.cmemLine.SetString(L"");
 						delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLineNext);
 					}
 				}
 				CLineData tmp;
-				pArg->pcmemDeleted->push_back(tmp);
+				pArg->pcmemDeleted->emplace_back(tmp);
 				CLineData& delLine = pArg->pcmemDeleted->back();
 				delLine.cmemLine.SetString(&pLine[nWorkPos], nWorkLen);
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
@@ -1018,7 +1018,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			/* 行内だけの削除 */
 			if( pArg->pcmemDeleted ){
 				CLineData tmp;
-				pArg->pcmemDeleted->push_back(tmp);
+				pArg->pcmemDeleted->emplace_back(tmp);
 				CLineData& delLine =  pArg->pcmemDeleted->back();
 				delLine.cmemLine.SetString(&pLine[nWorkPos], nWorkLen);
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);

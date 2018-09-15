@@ -133,7 +133,7 @@ void CDlgFileTree::SetData()
 {
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 	std::vector<HTREEITEM> hParentTree;
-	hParentTree.push_back(TVI_ROOT);
+	hParentTree.emplace_back(TVI_ROOT);
 	HTREEITEM hSelect = NULL;
 	m_aItemRemoveList.clear();
 	TreeView_DeleteAllItems(hwndTree);
@@ -155,7 +155,7 @@ void CDlgFileTree::SetData()
 		tvis.item.cChildren = (item.m_eFileTreeItemType == EFileTreeItemType_Folder) ? 1 : 0;
 		HTREEITEM hParent = TreeView_InsertItem(hwndTree, &tvis);
 		if( item.m_eFileTreeItemType == EFileTreeItemType_Folder ){
-			hParentTree.push_back(hParent);
+			hParentTree.emplace_back(hParent);
 		}
 		if( hSelect == NULL ){
 			hSelect = hParent;
@@ -301,7 +301,7 @@ bool CDlgFileTree::GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem
 		if( 0 < nMaxCount && nMaxCount <= (int)data.size() ){
 			return false;
 		}
-		data.push_back(m_fileTreeSetting.m_aItems[tvi.lParam]);
+		data.emplace_back(m_fileTreeSetting.m_aItems[tvi.lParam]);
 		data.back().m_nDepth = nLevel;
 		if( 0 < tvi.cChildren ){
 			HTREEITEM ts = TreeView_GetChild(hwndTree, s);
@@ -404,7 +404,7 @@ HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent,
 	int nlParam;
 	if( m_aItemRemoveList.empty() ){
 		nlParam = m_fileTreeSetting.m_aItems.size();
-		m_fileTreeSetting.m_aItems.push_back(item);
+		m_fileTreeSetting.m_aItems.emplace_back(item);
 	}else{
 		// 削除リストから復活させる
 		nlParam = m_aItemRemoveList.back();
@@ -959,7 +959,7 @@ BOOL CDlgFileTree::OnNotify( WPARAM wParam, LPARAM lParam )
 			tvi.hItem = htiItem;
 			if( TreeView_GetItem( hwndTree, &tvi) ){
 				// リストから削除する代わりに番号を覚えて後で再利用
-				m_aItemRemoveList.push_back(tvi.lParam);
+				m_aItemRemoveList.emplace_back(tvi.lParam);
 			}
 		}
 		break;

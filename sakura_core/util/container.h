@@ -38,7 +38,7 @@ class vector_ex : public std::vector<T>{
 public:
 	using std::vector<T>::begin;
 	using std::vector<T>::end;
-	using std::vector<T>::push_back;
+	using std::vector<T>::emplace_back;
 
 public:
 	// -- -- インターフェース -- -- //
@@ -52,7 +52,7 @@ public:
 	bool push_back_unique(const T& t)
 	{
 		if(!exist(t)){
-			push_back(t);
+			emplace_back(t);
 			return true;
 		}
 		return false;

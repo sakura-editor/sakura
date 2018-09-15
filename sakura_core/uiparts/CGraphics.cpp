@@ -20,7 +20,7 @@ public:
 	bool Register(HGDIOBJ hObject)
 	{
 		if(hObject){
-			m_vObjects.push_back(hObject);
+			m_vObjects.emplace_back(hObject);
 			return true;
 		}
 		return false;
@@ -68,7 +68,7 @@ void CGraphics::_InitClipping()
 			hrgnOrg = NULL;
 		}
 		//保存
-		m_vClippingRgns.push_back(hrgnOrg);
+		m_vClippingRgns.emplace_back(hrgnOrg);
 	}
 }
 
@@ -78,7 +78,7 @@ void CGraphics::PushClipping(const RECT& rc)
 	//新しく作成→HDCに設定→スタックに保存
 	HRGN hrgnNew = CreateRectRgnIndirect(&rc);
 	::SelectClipRgn(m_hdc,hrgnNew);
-	m_vClippingRgns.push_back(hrgnNew);
+	m_vClippingRgns.emplace_back(hrgnNew);
 }
 
 void CGraphics::PopClipping()
@@ -117,9 +117,9 @@ void CGraphics::PushTextForeColor(COLORREF color)
 	COLORREF cOld = ::SetTextColor(m_hdc,color);
 	//記録
 	if(m_vTextForeColors.empty()){
-		m_vTextForeColors.push_back(cOld);
+		m_vTextForeColors.emplace_back(cOld);
 	}
-	m_vTextForeColors.push_back(color);
+	m_vTextForeColors.emplace_back(color);
 }
 
 void CGraphics::PopTextForeColor()
@@ -150,9 +150,9 @@ void CGraphics::PushTextBackColor(COLORREF color)
 	COLORREF cOld = ::SetBkColor(m_hdc,color);
 	//記録
 	if(m_vTextBackColors.empty()){
-		m_vTextBackColors.push_back(cOld);
+		m_vTextBackColors.emplace_back(cOld);
 	}
-	m_vTextBackColors.push_back(color);
+	m_vTextBackColors.emplace_back(color);
 }
 
 void CGraphics::PopTextBackColor()
@@ -199,9 +199,9 @@ void CGraphics::PushMyFont(const SFONT& sFont)
 	//記録
 	if(m_vFonts.empty()){
 		SFONT sFontOld = { { false, false }, hFontOld };
-		m_vFonts.push_back(sFontOld);
+		m_vFonts.emplace_back(sFontOld);
 	}
-	m_vFonts.push_back(sFont);
+	m_vFonts.emplace_back(sFont);
 }
 
 void CGraphics::PopMyFont()
@@ -229,7 +229,7 @@ void CGraphics::PushPen(COLORREF color, int nPenWidth, int nStyle)
 {
 	HPEN hpnNew = CreatePen(nStyle,nPenWidth,color);
 	HPEN hpnOld = (HPEN)SelectObject(m_hdc,hpnNew);
-	m_vPens.push_back(hpnNew);
+	m_vPens.emplace_back(hpnNew);
 	if(!m_hpnOrg){
 		m_hpnOrg = hpnOld;
 	}
@@ -304,7 +304,7 @@ void CGraphics::_InitBrushColor()
 		HBRUSH hbrOrg = (HBRUSH)::SelectObject(m_hdc,::GetStockObject(NULL_BRUSH));
 		::SelectObject(m_hdc,hbrOrg); //元に戻す
 		//保存
-		m_vBrushes.push_back(hbrOrg);
+		m_vBrushes.emplace_back(hbrOrg);
 	}
 }
 
@@ -316,7 +316,7 @@ void CGraphics::PushBrushColor(COLORREF color)
 	//新しく作成→HDCに設定→スタックに保存
 	HBRUSH hbrNew = (color!=(COLORREF)-1)?CreateSolidBrush(color):(HBRUSH)GetStockObject(NULL_BRUSH);
 	::SelectObject(m_hdc,hbrNew);
-	m_vBrushes.push_back(hbrNew);
+	m_vBrushes.emplace_back(hbrNew);
 }
 
 void CGraphics::PopBrushColor()

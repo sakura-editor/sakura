@@ -68,7 +68,7 @@ CJackManager::CJackManager()
 		jack.ppId = jackNames[i].id;
 		jack.szName = jackNames[i].name;
 
-		m_Jacks.push_back( jack );
+		m_Jacks.emplace_back( jack );
 	}
 	
 }
@@ -91,7 +91,7 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	CPlug::Array& plugs = m_Jacks[ ppId ].plugs;
 	int plugid = plug->GetFunctionCode();
 	if( plugs.empty()  ||  (*(plugs.end() - 1))->GetFunctionCode() < plugid ){
-		plugs.push_back( plug );
+		plugs.emplace_back( plug );
 	} else {
 		for( unsigned int index=0; index<plugs.size(); index++ ){
 			if( plugid < plugs[index]->GetFunctionCode() ){
@@ -185,7 +185,7 @@ bool CJackManager::GetUsablePlug(
 {
 	for( auto it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
 		if( plugId == 0 || plugId == (*it)->GetFunctionCode() ){
-			plugs->push_back( *it );
+			plugs->emplace_back( *it );
 		}
 	}
 	return true;

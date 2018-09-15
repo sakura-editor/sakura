@@ -156,11 +156,11 @@ public:
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{
-							m_vpItems.push_back( PairGrepEnumItem( lpName, w32fd.nFileSizeLow ) );
+							m_vpItems.emplace_back( PairGrepEnumItem( lpName, w32fd.nFileSizeLow ) );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
 								// フォルダを含んだパスなら検索済みとして除外指定に追加する
-								pExceptItems->m_vpItems.push_back( PairGrepEnumItem( lpFullPath, w32fd.nFileSizeLow ) );
+								pExceptItems->m_vpItems.emplace_back( PairGrepEnumItem( lpFullPath, w32fd.nFileSizeLow ) );
 							}else{
 								delete [] lpFullPath;
 							}

@@ -2350,7 +2350,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				auto_strcpy(&vStrMenu[0], varCopy2.Data.bstrVal);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
-				vHmenu.push_back( hMenu );
+				vHmenu.emplace_back( hMenu );
 				HMENU hMenuCurrent = hMenu;
 				int nPos = 0;
 				wchar_t* p;
@@ -2370,7 +2370,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 							case L'S':
 								if( !bSubMenu ){
 									HMENU hMenuSub = ::CreatePopupMenu();
-									vHmenu.push_back( hMenuSub );
+									vHmenu.emplace_back( hMenuSub );
 									bSubMenu = true;
 								}
 								break;

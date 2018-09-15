@@ -50,7 +50,7 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 				i++;
 			}
 			CLineData tmp;
-			lineData.push_back(tmp);
+			lineData.emplace_back(tmp);
 			CLineData& insertLine = lineData[lineData.size()-1];
 			insertLine.cmemLine.SetString(&pLineData[nBegin], i - nBegin + 1);
 			insertLine.nSeq = opeSeq;
@@ -59,7 +59,7 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 	}
 	if( nBegin < i ){
 		CLineData tmp;
-		lineData.push_back(tmp);
+		lineData.emplace_back(tmp);
 		CLineData& insertLine = lineData[lineData.size()-1];
 		insertLine.cmemLine.SetString(&pLineData[nBegin], nLineDataLen - nBegin);
 		insertLine.nSeq = opeSeq;

@@ -178,7 +178,7 @@ int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
 				}
 
 				//add to list
-				file_list.push_back( fl_nm );
+				file_list.emplace_back( fl_nm );
 			}
 		} while(::FindNextFileA(hFind, &ffData));
 		::FindClose(hFind);

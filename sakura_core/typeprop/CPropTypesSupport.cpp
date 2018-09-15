@@ -253,7 +253,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 {
 	SHokanMethod item = { nMethod, std::wstring(szName) };
-	GetHokanMethodList()->push_back(item);
+	GetHokanMethodList()->emplace_back(item);
 }
 
 void CPropTypesSupport::RemoveHokanMethod(int nMethod, const WCHAR* szName)

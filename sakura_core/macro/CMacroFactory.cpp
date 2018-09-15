@@ -77,7 +77,7 @@ bool CMacroFactory::RegisterCreator( Creator f )
 		return false;
 	}
 
-	m_mMacroCreators.push_back( f );
+	m_mMacroCreators.emplace_back( f );
 	return true;
 }
 

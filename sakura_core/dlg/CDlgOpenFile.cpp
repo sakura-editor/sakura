@@ -970,7 +970,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 		if( bMultiSelect ){
 			pLoadInfo->cFilePath = _T("");
 			if( pData->m_ofn.nFileOffset < _tcslen( pData->m_ofn.lpstrFile ) ){
-				pFileNames->push_back( std::tstring(pData->m_ofn.lpstrFile) );
+				pFileNames->emplace_back( std::tstring(pData->m_ofn.lpstrFile) );
 			}else{
 				std::tstring path;
 				TCHAR* pos = pData->m_ofn.lpstrFile;
@@ -979,7 +979,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 					path = pData->m_ofn.lpstrFile;
 					path.append( _T("\\") );
 					path.append( pos );
-					pFileNames->push_back( path );
+					pFileNames->emplace_back( path );
 					pos += _tcslen(pos) + 1;
 				}
 			}

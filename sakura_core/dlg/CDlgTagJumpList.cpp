@@ -1167,7 +1167,7 @@ int CDlgTagJumpList::find_key_core(
 				// 検索済み =>終了
 				break;
 			}
-			seachDirs.push_back( curPath );
+			seachDirs.emplace_back( curPath );
 		}
 
 		//タグファイル名を作成する。

@@ -114,7 +114,7 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 				}
 
 				CPlug *newPlug = CreatePlug( *this, nCount, jacks[i].szName, sHandler, sLabel );
-				m_plugs.push_back( newPlug );
+				m_plugs.emplace_back( newPlug );
 			}else{
 				break;		//定義がなければ読み込みを終了
 			}
@@ -213,7 +213,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 				sLabel = sKey;
 			}
 
-			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, sSelect, sDefaultVal, nCount ) );
+			m_options.emplace_back( new CPluginOption( this, sLabel, sSection, sKey, sType, sSelect, sDefaultVal, nCount ) );
 		}
 	}
 
@@ -244,7 +244,7 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 		newPlug->m_sIcon = icon;
 	}
 
-	m_plugs.push_back( newPlug );
+	m_plugs.emplace_back( newPlug );
 
 	if( doRegister ){
 		CJackManager::getInstance()->RegisterPlug( PP_COMMAND_STR, newPlug );
@@ -260,11 +260,11 @@ std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
     int 	idx;
 
     while ((idx = sTrg.find( cSep )) != std::wstring::npos) {
-        splitVec.push_back( sTrg.substr( 0, idx ) );
+        splitVec.emplace_back( sTrg.substr( 0, idx ) );
         sTrg = sTrg.substr( ++idx );
     }
 	if (sTrg != L"") {
-		splitVec.push_back( sTrg );
+		splitVec.emplace_back( sTrg );
 	}
 
     return splitVec;
@@ -276,7 +276,7 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.push_back( wstring(L"") ); // 0番目ダミー
+	m_aStrings.emplace_back( wstring(L"") ); // 0番目ダミー
 	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//添え字は１から始める
 		wstring sVal = L"";
 		swprintf( bufKey, L"S[%d]", nCount );
@@ -285,7 +285,7 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 				cProfileMlang->IOProfileData( PII_STRING, bufKey, sVal );
 			}
 		}
-		m_aStrings.push_back( sVal );
+		m_aStrings.emplace_back( sVal );
 	}
 	return true;
 }

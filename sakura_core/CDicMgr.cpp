@@ -168,7 +168,7 @@ int CDicMgr::HokanSearch(
 			nRet = auto_memcmp( pszKey, szLine.c_str(), nKeyLen );
 		}
 		if( 0 == nRet ){
-			vKouho.push_back( szLine );
+			vKouho.emplace_back( szLine );
 			if( 0 != nMaxKouho && nMaxKouho <= (int)vKouho.size() ){
 				break;
 			}

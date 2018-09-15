@@ -122,7 +122,7 @@ std::vector<LPCTSTR> CMRUFile::GetPathList() const
 	for( int i = 0; i < m_cRecentFile.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFile.GetViewCount() ) break;
-		ret.push_back(m_cRecentFile.GetItemText(i));
+		ret.emplace_back(m_cRecentFile.GetItemText(i));
 	}
 	return ret;
 }

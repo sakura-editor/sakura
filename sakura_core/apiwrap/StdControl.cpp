@@ -77,7 +77,7 @@ namespace ApiWrap{
 			while(item != NULL && (int)tree.size() < nMaxDepth ){
 				// 先に展開してからGetChildしないと、ファイルツリーのサブアイテムが展開されない
 				TreeView_Expand(hwndTree, item, bExpand ? TVE_EXPAND : TVE_COLLAPSE);
-				tree.push_back(item);
+				tree.emplace_back(item);
 				item = TreeView_GetChild(hwndTree, item);
 			}
 			item = tree.back();

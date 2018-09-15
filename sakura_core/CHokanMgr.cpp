@@ -174,7 +174,7 @@ int CHokanMgr::Search(
 		if( nHokanType != 0 ){
 			CJackManager::getInstance()->GetUsablePlug( PP_COMPLEMENT, nHokanType, &plugType );
 			if( 0 < plugType.size() ){
-				plugs.push_back( plugType[0] );
+				plugs.emplace_back( plugType[0] );
 			}
 		}
 
@@ -184,7 +184,7 @@ int CHokanMgr::Search(
 			std::wstring curWord = pszCurWord;
 			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );
 			objComp->AddRef();
-			params.push_back( objComp );
+			params.emplace_back( objComp );
 			//プラグイン呼び出し
 			(*it)->Invoke( pcEditView, params );
 
