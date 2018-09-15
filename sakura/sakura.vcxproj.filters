@@ -787,12 +787,6 @@
     <ClInclude Include="..\sakura_core\macro\CMacroManagerBase.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CPPA.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sakura_core\macro\CPPAMacroMgr.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\macro\CSMacroMgr.h">
       <Filter>Cpp Source Files\macro</Filter>
     </ClInclude>
@@ -1908,12 +1902,6 @@
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\macro\CMacroManagerBase.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CPPA.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\macro\CPPAMacroMgr.cpp">
       <Filter>Cpp Source Files\macro</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\macro\CSMacroMgr.cpp">
