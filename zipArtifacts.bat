@@ -167,6 +167,7 @@ mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_INST%
 copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
+copy /Y /B %platform%\%configuration%\ctags.exe  %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
 
