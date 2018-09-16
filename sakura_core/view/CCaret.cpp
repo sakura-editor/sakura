@@ -863,6 +863,7 @@ void CCaret::ShowCaretPosInfo()
 		TCHAR szText_2[64];
 		auto updateStatusBarText = [&](WPARAM opt, const TCHAR* str){
 			// 既に同じ値が設定されている場合は再設定しないようにする
+			assert(LOWORD(::StatusBar_GetTextLength( hwndStatusBar, opt)) <= _countof(szText_2)-1);
 			::StatusBar_GetText( hwndStatusBar, opt, szText_2 );
 			if (wcscmp(str, szText_2) != 0)
 				::StatusBar_SetText( hwndStatusBar, opt, str );

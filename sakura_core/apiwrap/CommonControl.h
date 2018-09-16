@@ -39,6 +39,10 @@ namespace ApiWrap
 	{
 		return ::SendMessage( hwndStatus, SB_GETTEXT, opt, (LPARAM)str );
 	}
+	inline LRESULT StatusBar_GetTextLength(HWND hwndStatus, WPARAM opt)
+	{
+		return ::SendMessage( hwndStatus, SB_GETTEXTLENGTH, opt, (LPARAM)0 );
+	}
 
 	inline int StatusBar_SetParts(HWND hwndCtl, int num, int* positions)		{ return (int)(DWORD)::SendMessage(hwndCtl, SB_SETPARTS, (WPARAM)num, (LPARAM)positions); }
 
