@@ -860,19 +860,26 @@ void CCaret::ShowCaretPosInfo()
 		}else{
 			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
+		TCHAR szText_2[64];
+		auto updateStatusBarText = [&](WPARAM opt, const TCHAR* str){
+			// 既に同じ値が設定されている場合は再設定しないようにする
+			::StatusBar_GetText( hwndStatusBar, opt, szText_2 );
+			if (wcscmp(str, szText_2) != 0)
+				::StatusBar_SetText( hwndStatusBar, opt, str );
+		};
 		if( m_bClearStatus ){
-			::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );
+			updateStatusBarText( 0 | SBT_NOBORDERS, _T("") );
 		}
-		::StatusBar_SetText( hwndStatusBar, 1 | 0,             szText_1 );
+		updateStatusBarText( 1 | 0,             szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		::StatusBar_SetText( hwndStatusBar, 2 | 0,             szEolMode );
+		updateStatusBarText( 2 | 0,             szEolMode );
 		//	To Here
-		::StatusBar_SetText( hwndStatusBar, 3 | 0,             szCaretChar );
-		::StatusBar_SetText( hwndStatusBar, 4 | 0,             pszCodeName );
-		::StatusBar_SetText( hwndStatusBar, 5 | SBT_OWNERDRAW, _T("") );
-		::StatusBar_SetText( hwndStatusBar, 6 | 0,             szText_6 );
+		updateStatusBarText( 3 | 0,             szCaretChar );
+		updateStatusBarText( 4 | 0,             pszCodeName );
+		updateStatusBarText( 5 | SBT_OWNERDRAW, _T("") );
+		updateStatusBarText( 6 | 0,             szText_6 );
 	}
 
 }
