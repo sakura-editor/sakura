@@ -312,7 +312,11 @@ void CEditView::AdjustScrollBars()
 		si.nPage = (Int)GetTextArea().m_nViewRowNum / nVScrollRate;	/* 表示域の行数 */
 		si.nPos  = (Int)GetTextArea().GetViewTopLine() / nVScrollRate;	/* 表示域の一番上の行(0開始) */
 		si.nTrackPos = 0;
-		::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
+		SCROLLINFO siPrev = si;
+		::GetScrollInfo( m_hwndVScrollBar, SB_CTL, &siPrev );
+		siPrev.nTrackPos = 0;
+		if (memcmp(&si, &siPrev, sizeof(si)) != 0)
+			::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
 		
 		//	Nov. 16, 2002 genta
@@ -335,8 +339,12 @@ void CEditView::AdjustScrollBars()
 		si.nMax  = (Int)GetRightEdgeForScrollBar() - 1;		// 2009.08.28 nasukoji	スクロールバー制御用の右端座標を取得
 		si.nPage = (Int)GetTextArea().m_nViewColNum;			/* 表示域の桁数 */
 		si.nPos  = (Int)GetTextArea().GetViewLeftCol();		/* 表示域の一番左の桁(0開始) */
-		si.nTrackPos = 1;
-		::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
+		si.nTrackPos = 0;
+		SCROLLINFO siPrev = si;
+		::GetScrollInfo( m_hwndHScrollBar, SB_CTL, &siPrev );
+		siPrev.nTrackPos = 0;
+		if (memcmp(&si, &siPrev, sizeof(si)) != 0)
+			::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
 		bEnable = ( GetTextArea().m_nViewColNum < GetRightEdgeForScrollBar() );
