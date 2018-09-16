@@ -205,9 +205,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// 段落区切り
 	cmemMsg.AppendString( _T("\r\n") );
 
-	// 共有メモリ情報
-	cmemMsg.AppendStringF(_T("      Share Ver: %3d\r\n"), N_SHAREDATA_VERSION);
-
 	// コンパイル情報
 	cmemMsg.AppendString( _T("      Compile Info: ") );
 	cmemMsg.AppendStringF(
