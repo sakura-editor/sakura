@@ -159,7 +159,7 @@ void CAutoMarkMgr::Add(const CMark& m)
 	}
 
 	//	要素の追加
-	m_cMarkChain.push_back(m);
+	m_cMarkChain.emplace_back(m);
 	++m_nCurpos;
 
 	//	規定数を超えてしまうときの対応

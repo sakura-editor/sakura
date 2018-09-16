@@ -151,8 +151,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 == wcscmp( L"class", szWordPrev ) ||
 						0 == wcscmp( L"interface", szWordPrev )
 					 ){
-						nClassNestArr.push_back( nNestLevel );
-						nNestLevel2Arr.push_back( 0 );
+						nClassNestArr.emplace_back( nNestLevel );
+						nNestLevel2Arr.emplace_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
 							wcscat( szClass, L"\\" );

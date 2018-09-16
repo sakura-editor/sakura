@@ -370,8 +370,8 @@ void CIfObj::AddMethod(
 	/*
 		this->m_TypeInfoが NULLでなければ AddMethod()は反映されない。
 	*/
-	m_Methods.push_back(CMethodInfo());
-	CMethodInfo *Info = &m_Methods[m_Methods.size() - 1];
+	m_Methods.emplace_back();
+	CMethodInfo *Info = &m_Methods.back();
 	ZeroMemory(Info, sizeof(CMethodInfo));
 	Info->Desc.invkind = INVOKE_FUNC;
 	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //戻り値の分

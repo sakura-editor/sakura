@@ -837,7 +837,8 @@ void CMenuDrawer::MyAppendMenu(
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
 		{
-			MyMenuItemInfo item;
+			m_menuItems.emplace_back();
+			MyMenuItemInfo& item = m_menuItems.back();
 			item.m_nBitmapIdx = -1;
 			item.m_nFuncId = nFuncId;
 			item.m_cmemLabel.SetString( szLabel );
@@ -849,7 +850,6 @@ void CMenuDrawer::MyAppendMenu(
 			}
 			/* 機能のビットマップの情報を覚えておく */
 			item.m_nBitmapIdx = GetIconIdByFuncId( nForceIconId );
-			m_menuItems.push_back( item );
 		}
 	}else{
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1628,13 +1628,13 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			continue;
 		}
 		if( chUser == GetAccelCharFromLabel( pszLabel ) ){
-			WorkData work;
+			vecAccel.emplace_back();
+			WorkData& work = vecAccel.back();
 			work.idx = i;
 			work.mii = mii;
 			if( /*-1 == nAccelSel ||*/ MFS_HILITE & mii.fState ){
 				nAccelSel = vecAccel.size();
 			}
-			vecAccel.push_back( work );
 		}
 	}
 //	MYTRACE( _T("%d\n"), (int)mapAccel.size() );
@@ -1710,14 +1710,14 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb,TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
-					m_tbMyButton.push_back( tbb );
+					m_tbMyButton.emplace_back( tbb );
 					m_nMyButtonNum++;
 				}
 
 				// 未登録
 				SetTBBUTTONVal( &tbb, iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
 				//最後に追加に変更
-				m_tbMyButton.push_back( tbb );
+				m_tbMyButton.emplace_back( tbb );
 				m_nMyButtonNum++;
 			}
 			else {
@@ -1732,7 +1732,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb, TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
-					m_tbMyButton.push_back( tbb );
+					m_tbMyButton.emplace_back( tbb );
 					m_nMyButtonNum++;
 				}
 			}
@@ -1742,7 +1742,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			m_pShareData->m_PlugCmdIcon[iCmdNo] = (short)m_tbMyButton.size();
 			//最後から２番目に挿入する。一番最後は番兵で固定。
 			//2010.06.23 Moca 最後に追加に変更
-			m_tbMyButton.push_back( tbb );
+			m_tbMyButton.emplace_back( tbb );
 			m_nMyButtonNum++;
 		}
 	}

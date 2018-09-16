@@ -320,7 +320,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					_tcscpy(m_fi.m_szPath, szPath );
 				}
 				else {
-					m_vFiles.push_back( szPath );
+					m_vFiles.emplace_back( szPath );
 				}
 			}
 		}

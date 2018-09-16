@@ -867,7 +867,7 @@ int CDlgFavorite::DeleteSelected()
 				{
 					int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
 					if( 0 <= nRecIndex ){
-						selRecIndexs.push_back( nRecIndex );
+						selRecIndexs.emplace_back( nRecIndex );
 						nLastSelectedItem = nLvItem;
 					}
 				}

@@ -996,8 +996,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
 					if( k < nWorkLen - 1 && _T(':') == pWork[k+1] ){
-						std::tstring strClass(&pWork[m], k - m);
-						vStrClasses.push_back(strClass);
+						vStrClasses.emplace_back(&pWork[m], k - m);
 						++nClassNest;
 						m = k + 2;
 						++k;
@@ -1010,8 +1009,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						break;
 				}
 				else if( 1 == nCharChars && _T('\\') == pWork[k] ){
-					std::tstring strClass(&pWork[m], k - m);
-					vStrClasses.push_back(strClass);
+					vStrClasses.emplace_back(&pWork[m], k - m);
 					++nClassNest;
 					m = k + 1;
 				}
@@ -1094,7 +1092,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					tvis.item.pszText = const_cast<TCHAR*>(strClassName.c_str());
 					// 2016.03.06 item.lParamは登録順の連番に変更
 					tvis.item.lParam = nlParamCount;
-					m_vecDummylParams.push_back(nlParamCount);
+					m_vecDummylParams.emplace_back(nlParamCount);
 					nlParamCount++;
 
 					htiClass = TreeView_InsertItem( hwndTree, &tvis );
@@ -1131,7 +1129,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					//tvg.item.pszText = const_cast<TCHAR*>(_T("グローバル"));
 					tvg.item.pszText = const_cast<TCHAR*>(sGlobal.c_str());
 					tvg.item.lParam = nlParamCount;
-					m_vecDummylParams.push_back(nlParamCount);
+					m_vecDummylParams.emplace_back(nlParamCount);
 					nlParamCount++;
 					htiGlobal = TreeView_InsertItem( hwndTree, &tvg );
 				}
@@ -1679,7 +1677,7 @@ void CDlgFuncList::SetTreeFile()
 	m_pcFuncInfoArr->Empty();
 	int nFuncInfo = 0;
 	std::vector<HTREEITEM> hParentTree;
-	hParentTree.push_back(TVI_ROOT);
+	hParentTree.emplace_back(TVI_ROOT);
 	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
 		TCHAR szPath[_MAX_PATH];
 		TCHAR szPath2[_MAX_PATH];
@@ -1744,7 +1742,7 @@ void CDlgFuncList::SetTreeFile()
 			tvis.item.pszText = const_cast<TCHAR*>(pszLabel);
 			tvis.item.lParam  = -4;
 			HTREEITEM hParent = TreeView_InsertItem(hwndTree, &tvis);
-			hParentTree.push_back(hParent);
+			hParentTree.emplace_back(hParent);
 		}
 	}
 }

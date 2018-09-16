@@ -488,7 +488,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 			// 要検討：plugin.defのidとsakuraw.iniのidの不一致処理
 			assert_warning( 0 == auto_strcmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
-			m_plugins.push_back( plugin );
+			m_plugins.emplace_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;
 			// コマンド数設定
 			plugin_table[iNo].m_nCmdNum = plugin->GetCommandCount();

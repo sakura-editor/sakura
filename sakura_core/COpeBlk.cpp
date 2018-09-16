@@ -55,7 +55,7 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 	}
 
 	/* 配列のメモリサイズを調整 */
-	m_ppCOpeArr.push_back(pcOpe);
+	m_ppCOpeArr.emplace_back(pcOpe);
 	return true;
 }
 

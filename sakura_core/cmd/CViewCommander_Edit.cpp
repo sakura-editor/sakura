@@ -180,7 +180,7 @@ end_of_for:;
 				CWSHIfObj::List params;
 				CSmartIndentIfObj* objIndent = new CSmartIndentIfObj( wcChar );	//スマートインデントオブジェクト
 				objIndent->AddRef();
-				params.push_back( objIndent );
+				params.emplace_back( objIndent );
 
 				//キー入力をアンドゥバッファに反映
 				m_pCommanderView->SetUndoBuffer();

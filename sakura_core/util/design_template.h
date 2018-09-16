@@ -88,7 +88,7 @@ template <class T> class TInstanceHolder{
 public:
 	TInstanceHolder()
 	{
-		gm_table.push_back(static_cast<T*>(this));
+		gm_table.emplace_back(static_cast<T*>(this));
 	}
 	virtual ~TInstanceHolder()
 	{

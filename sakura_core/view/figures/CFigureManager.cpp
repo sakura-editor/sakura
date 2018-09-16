@@ -33,15 +33,15 @@
 
 CFigureManager::CFigureManager()
 {
-	m_vFigures.push_back(new CFigure_Tab());
-	m_vFigures.push_back(new CFigure_Comma());
-	m_vFigures.push_back(new CFigure_HanSpace());
-	m_vFigures.push_back(new CFigure_ZenSpace());
-	m_vFigures.push_back(new CFigure_Eol());
-	m_vFigures.push_back(new CFigure_CtrlCode());
-	m_vFigures.push_back(new CFigure_HanBinary());
-	m_vFigures.push_back(new CFigure_ZenBinary());
-	m_vFigures.push_back(new CFigure_Text());
+	m_vFigures.emplace_back(new CFigure_Tab());
+	m_vFigures.emplace_back(new CFigure_Comma());
+	m_vFigures.emplace_back(new CFigure_HanSpace());
+	m_vFigures.emplace_back(new CFigure_ZenSpace());
+	m_vFigures.emplace_back(new CFigure_Eol());
+	m_vFigures.emplace_back(new CFigure_CtrlCode());
+	m_vFigures.emplace_back(new CFigure_HanBinary());
+	m_vFigures.emplace_back(new CFigure_ZenBinary());
+	m_vFigures.emplace_back(new CFigure_Text());
 
 	OnChangeSetting();
 }
@@ -84,7 +84,7 @@ void CFigureManager::OnChangeSetting(void)
 		m_vFigures[i]->Update();
 		// 色分け表示対象のみを登録
 		if( m_vFigures[i]->Disp() ){
-			m_vFiguresDisp.push_back(m_vFigures[i]);
+			m_vFiguresDisp.emplace_back(m_vFigures[i]);
 		}
 	}
 }

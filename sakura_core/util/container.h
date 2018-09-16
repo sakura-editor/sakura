@@ -39,6 +39,7 @@ public:
 	using std::vector<T>::begin;
 	using std::vector<T>::end;
 	using std::vector<T>::push_back;
+	using std::vector<T>::emplace_back;
 
 public:
 	// -- -- インターフェース -- -- //
@@ -53,6 +54,15 @@ public:
 	{
 		if(!exist(t)){
 			push_back(t);
+			return true;
+		}
+		return false;
+	}
+
+	bool emplace_back_unique(T&& t)
+	{
+		if(!exist(t)){
+			emplace_back(t);
 			return true;
 		}
 		return false;

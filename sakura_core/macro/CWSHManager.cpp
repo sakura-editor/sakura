@@ -145,7 +145,7 @@ void CWSHMacroManager::declare()
 //インタフェースオブジェクトを追加する
 void CWSHMacroManager::AddParam( CWSHIfObj* param )
 {
-	m_Params.push_back( param );
+	m_Params.emplace_back( param );
 }
 
 //インタフェースオブジェクト達を追加する

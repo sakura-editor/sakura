@@ -97,9 +97,9 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 		/* ロングファイル名を取得する */
 		TCHAR szTmp2[_MAX_PATH];
 		if( ::GetLongFileName( &szTmp[0], szTmp2 ) ){
-			vPaths.push_back( szTmp2 );
+			vPaths.emplace_back( szTmp2 );
 		}else{
-			vPaths.push_back( &szTmp[0] );
+			vPaths.emplace_back( &szTmp[0] );
 		}
 	}
 }
@@ -1522,7 +1522,7 @@ public:
 	{
 		if( !out ){
 			bufferSize += strLine.GetStringLength();
-			buffer.push_back(strLine);
+			buffer.emplace_back(strLine);
 			// 10MB 以上だったら出力してしまう
 			if( 0xa00000 <= bufferSize ){
 				OutputHead();

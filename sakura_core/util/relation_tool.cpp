@@ -28,7 +28,7 @@ void CSubject::_AddListener(CListener* pcListener)
 		}
 	}
 	//追加
-	m_vListenersRef.push_back(pcListener);
+	m_vListenersRef.emplace_back(pcListener);
 }
 
 void CSubject::_RemoveListener(CListener* pcListener)

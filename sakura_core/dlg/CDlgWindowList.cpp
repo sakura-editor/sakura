@@ -101,7 +101,7 @@ void CDlgWindowList::GetDataListView(std::vector<HWND>& aHwndList)
 			lvitem.iItem = i;
 			lvitem.iSubItem = 0;
 			if (ListView_GetItem(hwndList, &lvitem )) {
-				aHwndList.push_back((HWND)lvitem.lParam);
+				aHwndList.emplace_back((HWND)lvitem.lParam);
 			}
 		}
 	}

@@ -2372,7 +2372,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		}
 
 		// メニュー作成
-		hSubMenu.push_back( hMenu );
+		hSubMenu.emplace_back( hMenu );
 		nLv = 1;
 		if (pcMenu->m_cMainMenuTbl[nIdxStr].m_nType == T_SPECIAL) {
 			nLv = 0;
@@ -2407,7 +2407,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					hSubMenu[nLv] = hMenuPopUp;
 				}
 				else {
-					hSubMenu.push_back( hMenuPopUp );
+					hSubMenu.emplace_back( hMenuPopUp );
 				}
 				break;
 			case T_LEAF:
@@ -4429,9 +4429,9 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 		std::vector<HWND> hWndArr;
 		hWndArr.reserve(nViewCount + 1);
 		for( int i = 0; i < nViewCount; i++ ){
-			hWndArr.push_back( GetView(i).GetHwnd() );
+			hWndArr.emplace_back( GetView(i).GetHwnd() );
 		}
-		hWndArr.push_back( NULL );
+		hWndArr.emplace_back( (HWND)NULL );
 
 		m_cSplitterWnd.SetChildWndArr( &hWndArr[0] );
 	}

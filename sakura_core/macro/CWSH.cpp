@@ -445,7 +445,7 @@ void CWSHClient::Error(const wchar_t* Description)
 void CWSHClient::AddInterfaceObject( CIfObj* obj )
 {
 	if( !obj ) return;
-	m_IfObjArr.push_back( obj );
+	m_IfObjArr.emplace_back( obj );
 	obj->m_Owner = this;
 	obj->AddRef();
 }

@@ -772,7 +772,7 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.emplace_back( LSW(nStrId) );
 		}
 		return;
 	}
@@ -785,7 +785,7 @@ static void ConvertLangValueImpl( char* pBuf, size_t chBufSize, int nStrId, std:
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.emplace_back( LSW(nStrId) );
 		}
 		return;
 	}
