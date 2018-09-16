@@ -98,7 +98,12 @@ void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
 		// ステータスバーへ
-		StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
+		// 既に同じ値が設定されている場合は再設定しないようにする
+		TCHAR msg2[256];
+		assert(LOWORD(::StatusBar_GetTextLength( m_hwndStatusBar, 0)) <= _countof(msg2)-1);
+		::StatusBar_GetText( m_hwndStatusBar, 0, msg2 );
+		if (wcscmp(msg, msg2) != 0)
+			StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
 	}
 }
 
