@@ -506,19 +506,23 @@ void CMainToolBar::UpdateToolbar( void )
 			TBBUTTON tbb = m_pOwner->GetMenuDrawer().getButton(
 				GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i]
 			);
-			int state = Toolbar_GetState(m_hwndToolBar, tbb.idCommand);
+			int state = Toolbar_GetState( m_hwndToolBar, tbb.idCommand );
 			if( state != -1 )
 			{
 				WORD stateToSet = 0;
 				// 機能が利用可能か調べる
 				if( IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				{
 					stateToSet |= TBSTATE_ENABLED;
+				}
 				// 機能がチェック状態か調べる
 				if( IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				{
 					stateToSet |= TBSTATE_CHECKED;
+				}
 				if( state != stateToSet )
 				{
-					Toolbar_SetState(m_hwndToolBar, tbb.idCommand, stateToSet);
+					Toolbar_SetState( m_hwndToolBar, tbb.idCommand, stateToSet );
 				}
 			}
 		}
