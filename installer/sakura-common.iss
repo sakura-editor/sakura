@@ -69,9 +69,7 @@ Name: sendto;      Description: "送るに追加(&T)";                     Compo
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";         Components: main; Flags: ignoreversion;
 Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
-Source: "sakura\bsd_license.txt";      DestDir: "{app}";         Components: main
-Source: "sakura\perl_license.txt";     DestDir: "{app}";         Components: main
-Source: "sakura\perl_license_jp.txt";  DestDir: "{app}";         Components: main
+Source: "sakura\license\bregonig\*";   DestDir: "{app}\license\bregonig"; Components: main
 Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.chm";           DestDir: "{app}";         Components: help

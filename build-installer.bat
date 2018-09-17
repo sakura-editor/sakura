@@ -36,13 +36,14 @@ if exist "%INSTALLER_WORK%"      rmdir /s /q "%INSTALLER_WORK%"
 if exist "%INSTALLER_OUTPUT%"    rmdir /s /q "%INSTALLER_OUTPUT%"
 
 mkdir %INSTALLER_WORK%
+mkdir %INSTALLER_WORK%\license\bregonig
 mkdir %INSTALLER_WORK%\keyword
 
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x %INSTALLER_WORK%\
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
 copy /Y %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
-copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\
+copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\license\bregonig\
 
 copy /Y /B help\sakura\sakura.chm                           %INSTALLER_WORK%\
 copy /Y /B help\plugin\plugin.chm                           %INSTALLER_WORK%\
