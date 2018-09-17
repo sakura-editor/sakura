@@ -1,5 +1,7 @@
 # Sakura Editor
 [![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
+![Github Releases All](https://img.shields.io/github/downloads/sakura-editor/sakura/total.svg)
+![Github Releases Latest](https://img.shields.io/github/downloads/sakura-editor/sakura/latest/total.svg)
 
 <!-- TOC -->
 
