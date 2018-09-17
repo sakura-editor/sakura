@@ -78,6 +78,8 @@ namespace ApiWrap
 	inline int Toolbar_SetButtonInfo(HWND hwndCtl, int index, TBBUTTONINFO* info)	{ return (int)(DWORD)::SendMessage(hwndCtl, TB_SETBUTTONINFO, (WPARAM)index, (LPARAM)info); }
 	inline BOOL Toolbar_SetButtonSize(HWND hwndCtl, int width, int height)			{ return (BOOL)(DWORD)::SendMessage(hwndCtl, TB_SETBUTTONSIZE, 0L, MAKELONG(width, height)); }
 	inline DWORD Toolbar_SetExtendedStyle(HWND hwndCtl, DWORD styles)				{ return (DWORD)::SendMessage(hwndCtl, TB_SETEXTENDEDSTYLE, 0L, (LPARAM)styles); }
+	inline int Toolbar_GetState(HWND hwndCtl, int index)							{ return (int)(DWORD)::SendMessage(hwndCtl, TB_GETSTATE, (WPARAM)index, 0L); }
+	inline int Toolbar_SetState(HWND hwndCtl, int index, WORD state)				{ return (int)(DWORD)::SendMessage(hwndCtl, TB_SETSTATE, (WPARAM)index, state); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      Tooltip コントロール                   //
