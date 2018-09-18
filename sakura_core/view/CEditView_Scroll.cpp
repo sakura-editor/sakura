@@ -273,6 +273,33 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 	return nScrollVal;
 }
 
+static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int nPos)
+{
+	SCROLLINFO siPrev;
+	siPrev.cbSize = sizeof(siPrev);
+	siPrev.fMask = SIF_RANGE | SIF_PAGE | SIF_POS;
+	if (!::GetScrollInfo( hWndScrollBar, SB_CTL, &siPrev )) {
+		return;
+	}
+	if (siPrev.nMin != 0
+		|| siPrev.nMax != nMax
+		|| siPrev.nPage != nPage
+		|| siPrev.nPos != nPos)
+	{
+		if (nMax + 1 < (int)nPage) {
+			nPage = (UINT)(nMax + 1);
+		}
+		SCROLLINFO si;
+		si.cbSize = sizeof( si );
+		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
+		si.nMin  = 0;
+		si.nMax  = nMax;
+		si.nPage = nPage;
+		si.nPos  = nPos;
+		::SetScrollInfo( hWndScrollBar, SB_CTL, &si, TRUE );
+	}
+}
+
 /** スクロールバーの状態を更新する
 
 	タブバーのタブ切替時は SIF_DISABLENOSCROLL フラグでの有効化／無効化が正常に動作しない
@@ -289,9 +316,7 @@ void CEditView::AdjustScrollBars()
 		return;
 	}
 
-
-	SCROLLINFO	si;
-	bool		bEnable;
+	bool bEnable;
 
 	if( NULL != m_hwndVScrollBar ){
 		/* 垂直スクロールバー */
@@ -305,18 +330,12 @@ void CEditView::AdjustScrollBars()
 			++nVScrollRate;
 		}
 #endif
-		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
-		si.nMin  = 0;
-		si.nMax  = (Int)nAllLines / nVScrollRate - 1;	/* 全行数 */
-		si.nPage = (Int)GetTextArea().m_nViewRowNum / nVScrollRate;	/* 表示域の行数 */
-		si.nPos  = (Int)GetTextArea().GetViewTopLine() / nVScrollRate;	/* 表示域の一番上の行(0開始) */
-		si.nTrackPos = 0;
-		SCROLLINFO siPrev = si;
-		::GetScrollInfo( m_hwndVScrollBar, SB_CTL, &siPrev );
-		siPrev.nTrackPos = 0;
-		if (memcmp(&si, &siPrev, sizeof(si)) != 0)
-			::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
+
+		setScrollInfoIfNeeded(m_hwndVScrollBar,
+							  (Int)nAllLines / nVScrollRate - 1,					/* 全行数 */
+							  (Int)GetTextArea().m_nViewRowNum / nVScrollRate,		/* 表示域の行数 */
+							  (Int)GetTextArea().GetViewTopLine() / nVScrollRate	/* 表示域の一番上の行(0開始) */
+		);
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
 		
 		//	Nov. 16, 2002 genta
@@ -333,18 +352,11 @@ void CEditView::AdjustScrollBars()
 	}
 	if( NULL != m_hwndHScrollBar ){
 		/* 水平スクロールバー */
-		si.cbSize = sizeof( si );
-		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
-		si.nMin  = 0;
-		si.nMax  = (Int)GetRightEdgeForScrollBar() - 1;		// 2009.08.28 nasukoji	スクロールバー制御用の右端座標を取得
-		si.nPage = (Int)GetTextArea().m_nViewColNum;			/* 表示域の桁数 */
-		si.nPos  = (Int)GetTextArea().GetViewLeftCol();		/* 表示域の一番左の桁(0開始) */
-		si.nTrackPos = 0;
-		SCROLLINFO siPrev = si;
-		::GetScrollInfo( m_hwndHScrollBar, SB_CTL, &siPrev );
-		siPrev.nTrackPos = 0;
-		if (memcmp(&si, &siPrev, sizeof(si)) != 0)
-			::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
+		setScrollInfoIfNeeded(m_hwndHScrollBar,
+							  (Int)GetRightEdgeForScrollBar() - 1,		// 2009.08.28 nasukoji	スクロールバー制御用の右端座標を取得
+							  (Int)GetTextArea().m_nViewColNum,			/* 表示域の桁数 */
+							  (Int)GetTextArea().GetViewLeftCol()		/* 表示域の一番左の桁(0開始) */
+		);
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
 		bEnable = ( GetTextArea().m_nViewColNum < GetRightEdgeForScrollBar() );
