@@ -860,31 +860,36 @@ void CCaret::ShowCaretPosInfo()
 		}else{
 			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
-		TCHAR szText_2[64];
-		auto updateStatusBarText = [&](WPARAM opt, const TCHAR* str){
-			if (HIBYTE(opt)) {
-				::StatusBar_SetText( hwndStatusBar, opt, str );
-			}else {
+		// ステータスバーを更新するためのインライン関数
+		auto updateStatusBarText = [hwndStatusBar](_In_ BYTE index, _In_ WORD opt, _In_z_ const TCHAR* text) {
+			if (opt != 0) {
+				::StatusBar_SetText(hwndStatusBar, index | opt, text);
+			}
+			else {
 				// 既に同じ値が設定されている場合は再設定しないようにする
-				assert(LOWORD(::StatusBar_GetTextLength( hwndStatusBar, LOBYTE(opt))) <= _countof(szText_2)-1);
-				::StatusBar_GetText( hwndStatusBar, LOBYTE(opt), szText_2 );
-				if (wcscmp(str, szText_2) != 0)
-					::StatusBar_SetText( hwndStatusBar, opt, str );
+				TCHAR prev[64] = _T(""); //←サイズは szText_1 に合わせている
+				if (::StatusBar_GetTextLength(hwndStatusBar, index) <= _countof(prev) - 1) {
+					//表示テキストがバッファに収まるようなら取得、そうでなければ取得しない。
+					::StatusBar_GetText(hwndStatusBar, index, prev);
+				}
+				if (::wcscmp(prev, text) != 0) {
+					::StatusBar_SetText(hwndStatusBar, index | opt, text);
+				}
 			}
 		};
 		if( m_bClearStatus ){
-			updateStatusBarText( 0 | SBT_NOBORDERS, _T("") );
+			updateStatusBarText( 0, SBT_NOBORDERS, _T("") );
 		}
-		updateStatusBarText( 1 | 0,             szText_1 );
+		updateStatusBarText( 1, NULL,          szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		updateStatusBarText( 2 | 0,             szEolMode );
+		updateStatusBarText( 2, NULL,          szEolMode );
 		//	To Here
-		updateStatusBarText( 3 | 0,             szCaretChar );
-		updateStatusBarText( 4 | 0,             pszCodeName );
-		updateStatusBarText( 5 | SBT_OWNERDRAW, _T("") );
-		updateStatusBarText( 6 | 0,             szText_6 );
+		updateStatusBarText( 3, NULL,          szCaretChar );
+		updateStatusBarText( 4, NULL,          pszCodeName );
+		updateStatusBarText( 5, SBT_OWNERDRAW, _T("") );
+		updateStatusBarText( 6, NULL,          szText_6 );
 	}
 
 }
