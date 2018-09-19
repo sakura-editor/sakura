@@ -98,12 +98,17 @@ void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
 		// ステータスバーへ
-		// 既に同じ値が設定されている場合は再設定しないようにする
-		TCHAR msg2[256];
-		assert(LOWORD(::StatusBar_GetTextLength( m_hwndStatusBar, 0)) <= _countof(msg2)-1);
-		::StatusBar_GetText( m_hwndStatusBar, 0, msg2 );
-		if (wcscmp(msg, msg2) != 0)
+		TCHAR prev[256];
+		WORD prevLen = LOWORD(::StatusBar_GetTextLength( m_hwndStatusBar, 0));
+		if (prevLen >= _countof(prev)) {
 			StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
+		}else {
+			// 既に同じ値が設定されている場合は再設定しないようにする
+			::StatusBar_GetText( m_hwndStatusBar, 0, prev );
+			if (wcsncmp(msg, prev, _countof(prev)-1) != 0) {
+				StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
+			}
+		}
 	}
 }
 

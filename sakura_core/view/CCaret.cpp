@@ -862,18 +862,20 @@ void CCaret::ShowCaretPosInfo()
 		}
 		// ステータスバーを更新するためのインライン関数
 		auto updateStatusBarText = [hwndStatusBar](_In_ BYTE index, _In_ WORD opt, _In_z_ const TCHAR* text) {
-			if (opt != 0) {
+			if( opt != 0 ){
 				::StatusBar_SetText(hwndStatusBar, index | opt, text);
-			}
-			else {
-				// 既に同じ値が設定されている場合は再設定しないようにする
-				TCHAR prev[64] = _T(""); //←サイズは szText_1 に合わせている
-				if (::StatusBar_GetTextLength(hwndStatusBar, index) <= _countof(prev) - 1) {
-					//表示テキストがバッファに収まるようなら取得、そうでなければ取得しない。
-					::StatusBar_GetText(hwndStatusBar, index, prev);
-				}
-				if (::wcscmp(prev, text) != 0) {
+			}else{
+				TCHAR prev[64];
+				static_assert(sizeof(prev) >= sizeof(szText_1), "not sufficient size.");
+				WORD prevLen = LOWORD(::StatusBar_GetTextLength(hwndStatusBar, index));
+				if( prevLen >= _countof(prev) ){
 					::StatusBar_SetText(hwndStatusBar, index | opt, text);
+				}else{
+					// 既に同じ値が設定されている場合は再設定しないようにする
+					::StatusBar_GetText(hwndStatusBar, index, prev);
+					if( ::wcsncmp(prev, text, _countof(prev)-1) != 0 ){
+						::StatusBar_SetText(hwndStatusBar, index | opt, text);
+					}
 				}
 			}
 		};
