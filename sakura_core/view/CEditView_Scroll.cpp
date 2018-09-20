@@ -281,14 +281,24 @@ static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int 
 	if (!::GetScrollInfo( hWndScrollBar, SB_CTL, &siPrev )) {
 		return;
 	}
+	// nPage と nPos を範囲内に収める
+	// https://docs.microsoft.com/en-ca/windows/desktop/api/winuser/nf-winuser-setscrollinfo#remarks
+	constexpr int nMin = 0;
+	const UINT nPageMax = (UINT)(nMax - nMin + 1);
+	if (nPage > nPageMax) {
+		nPage = nPageMax;
+	}
+	if (nPos < nMin) {
+		nPos = nMin;
+	}
+	if (nPos > nMax) {
+		nPos = nMax;
+	}
 	if (siPrev.nMin != 0
 		|| siPrev.nMax != nMax
 		|| siPrev.nPage != nPage
 		|| siPrev.nPos != nPos)
 	{
-		if (nMax + 1 < (int)nPage) {
-			nPage = (UINT)(nMax + 1);
-		}
 		SCROLLINFO si;
 		si.cbSize = sizeof( si );
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
