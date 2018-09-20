@@ -38,8 +38,11 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 {
 	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
 
-	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
+	auto& cToolbar = pCEditWnd->m_cToolbar;
+	GetDllShareData().m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == cToolbar.GetToolbarHwnd())? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
+	if (cToolbar.GetToolbarHwnd())
+		cToolbar.UpdateToolbar();
 	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
