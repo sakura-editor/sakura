@@ -60,7 +60,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
 	//	@@ 2005.03.31 MIK 階層パラメータを追加
 //	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
@@ -74,8 +74,8 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
-	BOOL	OnBnClicked( int );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID);
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
@@ -90,11 +90,11 @@ protected:
 
 private:
 	void	StopTimer( void );
-	void	StartTimer( int );
+	void	StartTimer(int nDelay);
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
-	void	UpdateData( bool );	//	@@ 2005.03.31 MIK
+	void	UpdateData(bool bInit);	//	@@ 2005.03.31 MIK
 
 	TCHAR	*GetNameByType( const TCHAR type, const TCHAR *name );	//タイプを名前に変換する。
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
@@ -103,9 +103,9 @@ private:
 	const TCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : _T(""); }
 	void Empty( void );
 	void SetTextDir();
-	void FindNext( bool );
+	void FindNext(bool bNewFind);
 	void find_key( const wchar_t* keyword );
-	int find_key_core(int, const wchar_t*, bool, bool, bool, bool, int);
+	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpAnyWhere, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
 	
 	bool IsDirectTagJump();
 	
@@ -114,10 +114,10 @@ private:
 
 
 	//! depthから完全パス名(相対パス/絶対パス)を作成する
-	static TCHAR* GetFullPathFromDepth( TCHAR*, int, TCHAR*, const TCHAR*, int );
+	static TCHAR* GetFullPathFromDepth(TCHAR* pszOutput, int count, TCHAR* basePath, const TCHAR* fileName, int depth);
 	static TCHAR* CopyDirDir( TCHAR* dest, const TCHAR* target, const TCHAR* base );
 public:
-	static int CalcMaxUpDirectory( const TCHAR* );
+	static int CalcMaxUpDirectory(const TCHAR* p);
 	static TCHAR* DirUp( TCHAR* dir );
 
 private:

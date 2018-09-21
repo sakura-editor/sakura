@@ -42,23 +42,23 @@ class CDlgFileTree : public CDialog
 public:
 	CDlgFileTree();
 
-	int DoModal( HINSTANCE, HWND, LPARAM );
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 
 private:
-	BOOL	OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL	OnBnClicked( int );
-	BOOL	OnNotify( WPARAM, LPARAM );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID);
+	BOOL	OnNotify(WPARAM wParam, LPARAM lParam);
 	LPVOID	GetHelpIdTable();
 	void	SetData();
 	int		GetData();
 
 	void	SetDataInit();
-	void	SetDataItem(int);
+	void	SetDataItem(int nItemIndex);
 	void	ChangeEnableItemType();
 	void	ChangeEnableAddInsert();
-	int		GetDataItem( SFileTreeItem& );
-	bool	GetDataTree( std::vector<SFileTreeItem>&, HTREEITEM, int, int );
-	HTREEITEM InsertTreeItem( SFileTreeItem&, HTREEITEM, HTREEITEM );
+	int		GetDataItem(SFileTreeItem& item);
+	bool	GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem, int nLevel, int nMaxCount);
+	HTREEITEM InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent, HTREEITEM htiInsert);
 
 private:
 	CDlgFuncList*		m_pcDlgFuncList;

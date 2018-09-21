@@ -33,7 +33,7 @@ public:
 	CHokanMgr();
 	~CHokanMgr();
 
-	HWND DoModeless( HINSTANCE, HWND, LPARAM );/* モードレスダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
 	void Hide( void );
 	/* 初期化 */
 	int Search(
@@ -54,8 +54,8 @@ public:
 		vector_ex<std::wstring>& 	vKouho
 	);
 //	void SetCurKouhoStr( void );
-	BOOL DoHokan( int );
-	void ChangeView( LPARAM );/* モードレス時：対象となるビューの変更 */
+	BOOL DoHokan(int nVKey);
+	void ChangeView(LPARAM pcEditView);/* モードレス時：対象となるビューの変更 */
 
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
@@ -64,7 +64,7 @@ public:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnLbnSelChange( HWND hwndCtl, int wID );
 
-	int KeyProc( WPARAM, LPARAM );
+	int KeyProc(WPARAM wParam, LPARAM lParam);
 
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示

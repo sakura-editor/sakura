@@ -77,7 +77,7 @@ inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
 inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
 inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
 
-void ActivateFrameWindow( HWND );	/* アクティブにする */
+void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 
 /*
 ||	処理中のユーザー操作を可能にする

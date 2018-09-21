@@ -66,8 +66,8 @@ public:
 			m_nUnderLineLockCounter = 0;
 		}
 	}
-	void CaretUnderLineON( bool, bool );	// カーソル行アンダーラインのON
-	void CaretUnderLineOFF( bool, bool = true, bool = false );	// カーソル行アンダーラインのOFF
+	void CaretUnderLineON(bool bDraw, bool bPaintDraw);	// カーソル行アンダーラインのON
+	void CaretUnderLineOFF(bool bDraw, bool bDrawPaint = true, bool bResetFlag = false );	// カーソル行アンダーラインのOFF
 	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
 	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; }
 	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; }

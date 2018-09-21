@@ -98,11 +98,11 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DoPropertySheet( int, bool );	/* プロパティシートの作成 */
+	INT_PTR DoPropertySheet(int nPageNum, bool bTrayProc);	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
-	void InitData( const int* = NULL, const TCHAR* = NULL, const TCHAR* = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
-	void ApplyData( int* = NULL );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
+	void InitData(const int* tempTypeKeywordSet = NULL, const TCHAR* name = NULL, const TCHAR* exts = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
+	void ApplyData(int* tempTypeKeywordSet = NULL );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 	int GetPageNum(){ return m_nPageNum; }
 
 	//
@@ -147,8 +147,8 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	void OnHelp( HWND, int );	/* ヘルプ */
-	int	SearchIntArr( int , int* , int );
+	void OnHelp(HWND hwndParent, int nPageID);	/* ヘルプ */
+	int	SearchIntArr(int nKey, int* pnArr, int nArrNum);
 //	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 //	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */ // 2002.11.09 Moca 未使用
 //	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
@@ -172,11 +172,11 @@ protected:
 	int m_nLastPos_FILENAME; //!< 前回フォーカスのあった場所 ファイル名タブ用
 
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
-	void Import( HWND );	//!< インポートする
-	void Export( HWND );	//!< エクスポートする
+	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
+	void Import(HWND hwndDlg);	//!< インポートする
+	void Export(HWND hwndDlg);	//!< エクスポートする
 
 	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );			//!< コントロールにフォント設定する		// 2013/4/24 Uchi
 	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
@@ -200,9 +200,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -215,9 +215,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	//	Aug. 21, 2000 genta
@@ -234,15 +234,15 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
-	void Import( HWND );	//!< インポートする
-	void Export( HWND );	//!< エクスポートする
+	void Import(HWND hwndDlg);	//!< インポートする
+	void Export(HWND hwndDlg);	//!< エクスポートする
 
 private:
-	void ChangeKeyList( HWND ); /* キーリストをチェックボックスの状態に合わせて更新する*/
+	void ChangeKeyList(HWND hwndDlg); /* キーリストをチェックボックスの状態に合わせて更新する*/
 };
 
 //==============================================================
@@ -255,12 +255,12 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
-	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
+	void DrawToolBarItemList(DRAWITEMSTRUCT* pDis);	/* ツールバーボタンリストのアイテム描画 */
 };
 
 //==============================================================
@@ -275,20 +275,20 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
-	void SetKeyWordSet( HWND , int );	/* 指定キーワードセットの設定 */
-	void GetKeyWordSet( HWND , int );	/* 指定キーワードセットの取得 */
+	void SetKeyWordSet(HWND hwndDlg, int nIdx);	/* 指定キーワードセットの設定 */
+	void GetKeyWordSet(HWND hwndDlg, int nIdx);	/* 指定キーワードセットの取得 */
 	void DispKeywordCount( HWND hwndDlg );
 
-	void Edit_List_KeyWord( HWND, HWND );		//!< リスト中で選択されているキーワードを編集する
-	void Delete_List_KeyWord( HWND , HWND );	//!< リスト中で選択されているキーワードを削除する
-	void Import_List_KeyWord( HWND , HWND );	//!< リスト中のキーワードをインポートする
-	void Export_List_KeyWord( HWND , HWND );	//!< リスト中のキーワードをエクスポートする
-	void Clean_List_KeyWord( HWND , HWND );		//!< リスト中のキーワードを整理する 2005.01.26 Moca
+	void Edit_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD);		//!< リスト中で選択されているキーワードを編集する
+	void Delete_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD);	//!< リスト中で選択されているキーワードを削除する
+	void Import_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD);	//!< リスト中のキーワードをインポートする
+	void Export_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD);	//!< リスト中のキーワードをエクスポートする
+	void Clean_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD);		//!< リスト中のキーワードを整理する 2005.01.26 Moca
 };
 
 //==============================================================
@@ -301,12 +301,12 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	void SetDataMenuList( HWND, int );
-	int  GetData( HWND );	//!< ダイアログデータの取得
-	void Import( HWND );	//!< カスタムメニュー設定をインポートする
-	void Export( HWND );	//!< カスタムメニュー設定をエクスポートする
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	void SetDataMenuList(HWND hwndDlg, int nIdx);
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
+	void Import(HWND hwndDlg);	//!< カスタムメニュー設定をインポートする
+	void Export(HWND hwndDlg);	//!< カスタムメニュー設定をエクスポートする
 };
 
 //==============================================================
@@ -319,9 +319,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	void ChangeDateExample( HWND hwndDlg );
@@ -341,9 +341,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -356,9 +356,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	//	Aug. 16, 2000 genta
@@ -377,9 +377,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	//	Sept. 9, 2000 JEPRO		次行を追加
@@ -396,9 +396,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	void EnableTabPropInput(HWND hwndDlg);
@@ -414,9 +414,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	void EnableEditPropInput( HWND hwndDlg );
@@ -432,12 +432,12 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
-	void SetRegexpVersion( HWND ); // 2007.08.12 genta バージョン表示
+	void SetRegexpVersion(HWND hwndDlg); // 2007.08.12 genta バージョン表示
 };
 
 //==============================================================
@@ -450,9 +450,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	void InitDialog( HWND hwndDlg );//!< Macroページの初期化
@@ -474,9 +474,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
 	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewのアイテムを設定
@@ -494,9 +494,9 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -511,12 +511,12 @@ public:
 	bool BrowseReadMe(const std::tstring& sReadMeName);		//	Readme ファイルの表示
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
-	void SetData_LIST( HWND );
+	void SetData_LIST(HWND hwndDlg);
 	void InitDialog( HWND hwndDlg );	//!< Pluginページの初期化
 	void EnablePluginPropInput(HWND hwndDlg);
 };
@@ -531,17 +531,17 @@ public:
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	//!< ダイアログデータの設定
-	int  GetData( HWND );	//!< ダイアログデータの取得
-	void Import( HWND );	//!< メニュー設定をインポートする
-	void Export( HWND );	//!< メニュー設定をエクスポートする
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void SetData(HWND hwndDlg);	//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
+	void Import(HWND hwndDlg);	//!< メニュー設定をインポートする
+	void Export(HWND hwndDlg);	//!< メニュー設定をエクスポートする
 
 private:
-	bool GetDataTree( HWND, HTREEITEM, int );
+	bool GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel);
 
-	bool Check_MainMenu( HWND, std::wstring& );						// メニューの検査
-	bool Check_MainMenu_Sub( HWND, HTREEITEM, int, std::wstring& );	// メニューの検査
+	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
+	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
 };
 
 

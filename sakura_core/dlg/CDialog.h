@@ -83,12 +83,12 @@ public:
 	||  Attributes & Operations
 	*/
 	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
-	INT_PTR DoModal( HINSTANCE, HWND, int, LPARAM );	/* モーダルダイアログの表示 */
-	HWND DoModeless( HINSTANCE, HWND, int, LPARAM, int );	/* モードレスダイアログの表示 */
-	HWND DoModeless( HINSTANCE, HWND, LPCDLGTEMPLATE, LPARAM, int );	/* モードレスダイアログの表示 */
-	void CloseDialog( INT_PTR );
+	INT_PTR DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam);	/* モーダルダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
+	void CloseDialog(INT_PTR nModalRetVal);
 
-	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
+	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify( WPARAM wParam, LPARAM lParam ){return FALSE;}
@@ -101,7 +101,7 @@ public:
 	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
-	virtual BOOL OnBnClicked( int );
+	virtual BOOL OnBnClicked(int wID);
 	virtual BOOL OnStnClicked( int ){return FALSE;}
 	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID ){return FALSE;}
@@ -118,8 +118,8 @@ public:
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
-	virtual BOOL OnPopupHelp( WPARAM, LPARAM );	//@@@ 2002.01.18 add
-	virtual BOOL OnContextMenu( WPARAM, LPARAM );	//@@@ 2002.01.18 add
+	virtual BOOL OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
+	virtual BOOL OnContextMenu(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
@@ -127,7 +127,7 @@ public:
 	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
 public:
 
-	static bool DirectoryUp( TCHAR* );
+	static bool DirectoryUp(TCHAR* szDir);
 
 public:
 	HWND GetHwnd() const{ return m_hWnd; }
@@ -156,7 +156,7 @@ public:
 
 protected:
 	void CreateSizeBox( void );
-	BOOL OnCommand( WPARAM, LPARAM );
+	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
 

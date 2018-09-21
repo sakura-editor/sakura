@@ -38,8 +38,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
-	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, BOOL bSelected);	/* モーダルダイアログの表示 */
+	void ChangeView(LPARAM pcEditView);	/* モードレス時：置換・検索対象となるビューの変更 */
 
 	SSearchOption	m_sSearchOption;	// 検索オプション
 	int				m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
@@ -68,9 +68,9 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	BOOL OnDestroy();
-	BOOL OnBnClicked( int );
+	BOOL OnBnClicked(int wID);
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 

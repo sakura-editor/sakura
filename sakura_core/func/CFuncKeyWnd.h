@@ -36,8 +36,8 @@ public:
 	*/
 	HWND Open( HINSTANCE, HWND, CEditDoc*, bool );	/* ウィンドウ オープン */
 	void Close( void );	/* ウィンドウ クローズ */
-	void SizeBox_ONOFF( bool );	/* サイズボックスの表示／非表示切り替え */
-	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060126 aroka */
+	void SizeBox_ONOFF(bool bSizeBox);	/* サイズボックスの表示／非表示切り替え */
+	void Timer_ONOFF(bool bStart); /* 更新の開始／停止 20060126 aroka */
 	/*
 	|| メンバ変数
 	*/
@@ -65,10 +65,10 @@ protected:
 	virtual void AfterCreateWindow( void ){}	// ウィンドウ作成後の処理	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );	// WM_TIMERタイマーの処理
-	virtual LRESULT OnCommand( HWND, UINT, WPARAM, LPARAM );	// WM_COMMAND処理
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );// WM_SIZE処理
-	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );// WM_DESTROY処理
+	virtual LRESULT OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	// WM_TIMERタイマーの処理
+	virtual LRESULT OnCommand(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);	// WM_COMMAND処理
+	virtual LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);// WM_SIZE処理
+	virtual LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);// WM_DESTROY処理
 };
 
 

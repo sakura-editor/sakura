@@ -53,13 +53,13 @@ protected:
 
 	//インターフェース
 public:
-	void AllocBuffer( int );                               //!< バッファサイズの調整。必要に応じて拡大する。
+	void AllocBuffer(int nNewDataLen);                               //!< バッファサイズの調整。必要に応じて拡大する。
 	void SetRawData( const void* pData, int nDataLen );    //!< バッファの内容を置き換える
-	void SetRawData( const CMemory& );                     //!< バッファの内容を置き換える
+	void SetRawData(const CMemory& pcmemData);                     //!< バッファの内容を置き換える
 	void SetRawDataHoldBuffer( const void* pData, int nDataLen );    //!< バッファの内容を置き換える(バッファを保持)
-	void SetRawDataHoldBuffer( const CMemory& );                     //!< バッファの内容を置き換える(バッファを保持)
+	void SetRawDataHoldBuffer(const CMemory& pcmemData);                     //!< バッファの内容を置き換える(バッファを保持)
 	void AppendRawData( const void* pData, int nDataLen ); //!< バッファの最後にデータを追加する
-	void AppendRawData( const CMemory* );                  //!< バッファの最後にデータを追加する
+	void AppendRawData(const CMemory* pcmemData);                  //!< バッファの最後にデータを追加する
 	void Clean(){ _Empty(); }
 	void Clear(){ _Empty(); }
 

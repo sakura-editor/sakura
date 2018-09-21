@@ -60,11 +60,11 @@ class CMacroFactory : public TSingleton<CMacroFactory> {
 public:
 	typedef CMacroManagerBase* (*Creator)(const TCHAR*);
 
-	bool RegisterCreator( Creator );
+	bool RegisterCreator(Creator f);
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のためm_mMacroExtsを削除
 	//bool RegisterExt( const char*, Creator );
-	bool Unregister( Creator );
+	bool Unregister(Creator f);
 
 	CMacroManagerBase* Create(const TCHAR* ext);
 

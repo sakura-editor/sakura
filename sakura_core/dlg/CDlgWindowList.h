@@ -37,12 +37,12 @@ class CDlgWindowList : public CDialog
 public:
 	CDlgWindowList();
 
-	int DoModal(HINSTANCE, HWND, LPARAM);
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 protected:
-	BOOL	OnBnClicked(int);
+	BOOL	OnBnClicked(int wID);
 	LPVOID	GetHelpIdTable();
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
-	BOOL OnInitDialog(HWND, WPARAM, LPARAM);
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	BOOL OnSize(WPARAM wParam, LPARAM lParam);
 	BOOL OnMove(WPARAM wParam, LPARAM lParam);
 	BOOL OnMinMaxInfo(LPARAM lParam);
@@ -51,7 +51,7 @@ protected:
 	void SetData();
 	int  GetData();
 
-	void GetDataListView(std::vector<HWND>&);
+	void GetDataListView(std::vector<HWND>& aHwndList);
 	void CommandClose();
 	void CommandSave();
 private:

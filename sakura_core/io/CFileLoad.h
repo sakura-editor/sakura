@@ -99,11 +99,11 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int*, int* );
-	EConvertResult ReadLine_core( CNativeW*, CEol* );
+	const char* GetNextLineCharCode(const char*	pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
+	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
 
-	int Read( void*, size_t ); // inline
-	DWORD FilePointer( DWORD, DWORD ); // inline
+	int Read(void* pBuf, size_t nSize); // inline
+	DWORD FilePointer(DWORD offset, DWORD origin); // inline
 
 	/* メンバオブジェクト */
 	const SEncodingConfig* m_pEencoding;

@@ -70,7 +70,7 @@ public:
 	||  Attributes & Operations
 	*/
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* モードレスダイアログの表示 */
-	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
+	void ChangeView(LPARAM pcEditView);	/* モードレス時：検索対象となるビューの変更 */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }
 
@@ -87,7 +87,7 @@ protected:
 	int& ProfDockTop() { return (ProfDockSet() == 0)? CommonSet().m_cyOutlineDockTop: TypeSet().m_cyOutlineDockTop; }
 	int& ProfDockRight() { return (ProfDockSet() == 0)? CommonSet().m_cxOutlineDockRight: TypeSet().m_cxOutlineDockRight; }
 	int& ProfDockBottom() { return (ProfDockSet() == 0)? CommonSet().m_cyOutlineDockBottom: TypeSet().m_cyOutlineDockBottom; }
-	void SetTypeConfig( CTypeConfig, const STypeConfig& );
+	void SetTypeConfig(CTypeConfig docType, const STypeConfig& type);
 
 public:
 	/*! 現在の種別と同じなら
@@ -120,14 +120,14 @@ public:
 	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL OnBnClicked( int );
-	BOOL OnNotify( WPARAM, LPARAM );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL OnBnClicked(int wID);
+	BOOL OnNotify(WPARAM wParam, LPARAM lParam);
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void); // 20060201 aroka
 	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
-	BOOL OnContextMenu( WPARAM, LPARAM );
+	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam);
 	void SetData();	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
 
@@ -135,13 +135,13 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnJump( bool bCheckAutoClose = true, bool bFileJump = true );	//	bCheckAutoClose：「このダイアログを自動的に閉じる」をチェックするかどうか
-	void SetTreeJava( HWND, BOOL );	/* ツリーコントロールの初期化：Javaメソッドツリー */
+	void SetTreeJava(HWND hwndDlg, BOOL bAddClass);	/* ツリーコントロールの初期化：Javaメソッドツリー */
 	void SetTree(bool tagjump = false, bool nolabel = false);		/* ツリーコントロールの初期化：汎用品 */
 	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
 
-	void SetTreeFileSub( HTREEITEM, const TCHAR* );
+	void SetTreeFileSub(HTREEITEM hParent, const TCHAR* pszFile);
 	// 2002/11/1 frozen 
 	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）
 #if 0
@@ -159,7 +159,7 @@ protected:
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-	void Key2Command( WORD );		//	キー操作→コマンド変換
+	void Key2Command(WORD KeyCode);		//	キー操作→コマンド変換
 	bool HitTestSplitter( int xPos, int yPos );
 	int HitTestCaptionButton( int xPos, int yPos );
 	INT_PTR OnNcCalcSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );

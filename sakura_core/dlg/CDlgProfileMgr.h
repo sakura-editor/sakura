@@ -52,30 +52,30 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int		DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
+	int		DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
 protected:
 
-	BOOL	OnBnClicked( int );
+	BOOL	OnBnClicked(int wID);
 	INT_PTR	DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 
 	void	SetData();	/* ダイアログデータの設定 */
-	void	SetData( int );	/* ダイアログデータの設定 */
+	void	SetData(int nSelIndex);	/* ダイアログデータの設定 */
 	int		GetData();	/* ダイアログデータの取得 */
-	int		GetData( bool );	/* ダイアログデータの取得 */
+	int		GetData(bool bStart);	/* ダイアログデータの取得 */
 	LPVOID	GetHelpIdTable(void);
 
 	void	UpdateIni();
 	void	CreateProf();
 	void	DeleteProf();
 	void	RenameProf();
-	void	SetDefaultProf(int);
+	void	SetDefaultProf(int index);
 	void	ClearDefaultProf();
 public:
 	std::tstring m_strProfileName;
 
-	static bool ReadProfSettings( SProfileSettings& );
-	static bool WriteProfSettings( SProfileSettings& );
+	static bool ReadProfSettings(SProfileSettings& settings);
+	static bool WriteProfSettings(SProfileSettings& settings);
 };
 
 

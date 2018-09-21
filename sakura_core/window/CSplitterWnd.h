@@ -57,10 +57,10 @@ private: // 2002/2/3 aroka
 	int				m_nDragPosY;			/* ドラッグ位置Ｙ */
 	int				m_nActivePane;			/* アクティブなペイン */
 public: // 2002/2/3 aroka
-	HWND Create( HINSTANCE, HWND, void* pCEditWnd );	/* 初期化 */
-	void SetChildWndArr( HWND* );	/* 子ウィンドウの設定 */
-	void DoSplit( int, int );	/* ウィンドウの分割 */
-	void SetActivePane( int );	/* アクティブペインの設定 */
+	HWND Create(HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd);	/* 初期化 */
+	void SetChildWndArr(HWND* hwndEditViewArr);	/* 子ウィンドウの設定 */
+	void DoSplit(int nHorizontal, int nVertical);	/* ウィンドウの分割 */
+	void SetActivePane(int nIndex);	/* アクティブペインの設定 */
 	int GetPrevPane( void );	/* 前のペインを返す */
 	int GetNextPane( void );	/* 次のペインを返す */
 	int GetFirstPane( void );	/* 最初のペインを返す */
@@ -74,21 +74,21 @@ public: // 2002/2/3 aroka
 	int GetAllSplitCols(){ return m_nAllSplitCols;} // 2002/2/3 aroka
 protected:
 	/* 仮想関数 */
-	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
+	virtual LRESULT DispatchEvent_WM_APP(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );	/* ウィンドウサイズの変更処理 */
-	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
-	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM ); /* マウス移動時の処理 */
-	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/* マウス左ボタン押下時の処理 */
-	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/* マウス左ボタン解放時の処理 */
-	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/* マウス左ボタンダブルクリック時の処理 */
+	virtual LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ウィンドウサイズの変更処理 */
+	virtual LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
+	virtual LRESULT OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); /* マウス移動時の処理 */
+	virtual LRESULT OnLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタン押下時の処理 */
+	virtual LRESULT OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタン解放時の処理 */
+	virtual LRESULT OnLButtonDblClk(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタンダブルクリック時の処理 */
 	/*
 	||  実装ヘルパ関数
 	*/
-	void DrawFrame( HDC , RECT* );	/* 分割フレーム描画 */
-	int HitTestSplitter( int , int );	/* 分割バーへのヒットテスト */
-	void DrawSplitter( int , int , int );	/* 分割トラッカーの表示 */
+	void DrawFrame(HDC hdc, RECT* prc);	/* 分割フレーム描画 */
+	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
+	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 
 };
 

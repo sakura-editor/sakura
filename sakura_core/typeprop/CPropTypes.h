@@ -75,8 +75,8 @@ public:
 	//生成と破棄
 	CPropTypes();
 	~CPropTypes();
-	void Create( HINSTANCE, HWND );	//!< 初期化
-	INT_PTR DoPropertySheet( int );		//!< プロパティシートの作成
+	void Create(HINSTANCE hInstApp, HWND hwndParent);	//!< 初期化
+	INT_PTR DoPropertySheet(int nPageNum);		//!< プロパティシートの作成
 
 	//インターフェース	
 	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
@@ -87,7 +87,7 @@ public:
 
 protected:
 	//イベント
-	void OnHelp( HWND , int );	//!< ヘルプ
+	void OnHelp(HWND hwndParent, int nPageID);	//!< ヘルプ
 
 protected:
 	//各種参照
@@ -118,12 +118,12 @@ protected:
 	//                      各プロパティページ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	int  GetData( HWND );											//!< ダイアログデータの取得
-	bool Import( HWND );											//!< インポート
-	bool Export( HWND );											//!< エクスポート
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);											//!< インポート
+	bool Export(HWND hwndDlg);											//!< エクスポート
 
 	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );								//!< コントロールにフォント設定する		// 2013/4/24 Uchi
 	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps, bool bUse = true );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
@@ -142,10 +142,10 @@ protected:
 class CPropTypesScreen : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	int  GetData( HWND );											//!< ダイアログデータの取得
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
 
 public:
 	static void AddOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
@@ -161,10 +161,10 @@ public:
 class CPropTypesWindow : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	int  GetData( HWND );											//!< ダイアログデータの取得
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
 
 protected:
 	void SetCombobox(HWND hwndWork, const int* nIds, int nCount, int select);
@@ -179,21 +179,21 @@ private:
 class CPropTypesColor : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	void SetDataKeyword( HWND );									//!< セット名コンボボックスの値セット
-	int  GetData( HWND );											//!< ダイアログデータの取得
-	bool Import( HWND );											//!< インポート
-	bool Export( HWND );											//!< エクスポート
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	void SetDataKeyword(HWND hwndDlg);									//!< セット名コンボボックスの値セット
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);											//!< インポート
+	bool Export(HWND hwndDlg);											//!< エクスポート
 
 protected:
 	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
 	void EnableTypesPropInput( HWND hwndDlg );				//!< タイプ別設定のカラー設定のON/OFF
-	void RearrangeKeywordSet( HWND );						//!< キーワードセット再配置  Jan. 23, 2005 genta
-	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );		//!< 色ボタンの描画
+	void RearrangeKeywordSet(HWND hwndDlg);						//!< キーワードセット再配置  Jan. 23, 2005 genta
+	void DrawColorButton(DRAWITEMSTRUCT* pDis, COLORREF cColor);		//!< 色ボタンの描画
 public:
-	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	//!< 色選択ダイアログ
+	static BOOL SelectColor(HWND hwndParent, COLORREF* pColor, DWORD* pCustColors);	//!< 色選択ダイアログ
 private:
 };
 
@@ -203,10 +203,10 @@ private:
 class CPropTypesSupport : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	int  GetData( HWND );											//!< ダイアログデータの取得
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
 public:
 	static void AddHokanMethod(int nMethod, const WCHAR* szName);	//!<補完種別の追加
 	static void RemoveHokanMethod(int nMethod, const WCHAR* szName);	//!<補完種別の追加
@@ -218,17 +218,17 @@ public:
 class CPropTypesRegex : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	void SetDataKeywordList( HWND );								//!< ダイアログデータの設定リスト部分
-	int  GetData( HWND );											//!< ダイアログデータの取得
-	bool Import( HWND );											//!< インポート
-	bool Export( HWND );											//!< エクスポート
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	void SetDataKeywordList(HWND hwndDlg);								//!< ダイアログデータの設定リスト部分
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);											//!< インポート
+	bool Export(HWND hwndDlg);											//!< エクスポート
 private:
 	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
-	bool CheckKeywordList(HWND, const TCHAR*, int);
+	bool CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem);
 
 };
 
@@ -238,12 +238,12 @@ private:
 class CPropTypesKeyHelp : public CPropTypes
 {
 public:
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);			//!< メッセージ処理
 protected:
-	void SetData( HWND );											//!< ダイアログデータの設定
-	int  GetData( HWND );											//!< ダイアログデータの取得
-	bool Import( HWND );											//!< インポート
-	bool Export( HWND );											//!< エクスポート
+	void SetData(HWND hwndDlg);											//!< ダイアログデータの設定
+	int  GetData(HWND hwndDlg);											//!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);											//!< インポート
+	bool Export(HWND hwndDlg);											//!< エクスポート
 };
 
 template<typename T>
