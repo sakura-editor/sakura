@@ -74,19 +74,19 @@ void CEditView::SetIMECompFormPos( void )
 	// composition window position.
 	//
 	//
-	COMPOSITIONFORM	CompForm;
-	HIMC			hIMC = ::ImmGetContext( GetHwnd() );
-	POINT			point;
-
-	::GetCaretPos( &point );
-	CompForm.dwStyle = CFS_POINT;
-	CompForm.ptCurrentPos.x = (long) point.x;
-	CompForm.ptCurrentPos.y = (long) point.y + GetCaret().GetCaretSize().cy - GetTextMetrics().GetHankakuHeight();
-
+	HIMC hIMC = ::ImmGetContext( GetHwnd() );
 	if ( hIMC ){
-		::ImmSetCompositionWindow( hIMC, &CompForm );
+		if ( ::ImmGetOpenStatus( hIMC ) ){
+			POINT point;
+			::GetCaretPos( &point );
+			COMPOSITIONFORM CompForm;
+			CompForm.dwStyle = CFS_POINT;
+			CompForm.ptCurrentPos.x = (long) point.x;
+			CompForm.ptCurrentPos.y = (long) point.y + GetCaret().GetCaretSize().cy - GetTextMetrics().GetHankakuHeight();
+			::ImmSetCompositionWindow( hIMC, &CompForm );
+		}
+		::ImmReleaseContext( GetHwnd() , hIMC );
 	}
-	::ImmReleaseContext( GetHwnd() , hIMC );
 }
 
 
