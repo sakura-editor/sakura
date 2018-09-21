@@ -980,6 +980,7 @@ void CEditWnd::LayoutToolBar( void )
 {
 	if( m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR ){	/* ツールバーを表示する */
 		m_cToolbar.CreateToolBar();
+		m_cToolbar.UpdateToolbar();
 	}else{
 		m_cToolbar.DestroyToolBar();
 	}
