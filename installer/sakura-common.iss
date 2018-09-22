@@ -59,10 +59,10 @@ en.AppPublisher=Sakura Editor developers
 ja.AppPublisher=サクラエディタ開発チーム
 en.TypesAll=All
 ja.TypesAll=すべて
-en.editorwithhelp=Editor with Help
-ja.editorwithhelp=本体とヘルプ
-en.editoronly=Editor Only
-ja.editoronly=本体のみ
+en.TypesEditorwithhelp=Editor with Help
+ja.TypesEditorwithhelp=本体とヘルプ
+en.TypesEditoronly=Editor Only
+ja.TypesEditoronly=本体のみ
 en.TypesCustom=Custom
 ja.TypesCustom=カスタム
 en.ComponentsMain=sakura editor itself
@@ -81,6 +81,8 @@ en.sendto=Add Send &To
 ja.sendto=送るに追加(&T)
 en.fileassocMenu=Open with Sakura &Editor
 ja.fileassocMenu=SAKURAで開く(&E)
+en.residentStartup=&Resident at startup
+en.residentStartup=起動時に常駐(&R)
 en.IconPreferencefolder=Preference folder
 ja.IconPreferencefolder=設定フォルダ
 en.run=Start now
@@ -114,40 +116,40 @@ ja.uninstallmenu=サクラエディタのアンインストール
 
 
 [Types]
-Name: all;            Description: "{cm:TypesAll}"
-Name: editorwithhelp; Description: "{cm:editorwithhelp}"
-Name: editoronly;     Description: "{cm:editoronly}"
-Name: custom;         Description: "{cm:TypesCustom}";    Flags: iscustom
+Name: all;                 Description: "{cm:TypesAll}"
+Name: TypesEditorwithhelp; Description: "{cm:TypesEditorwithhelp}"
+Name: TypesEditoronly;     Description: "{cm:TypesEditoronly}"
+Name: custom;              Description: "{cm:TypesCustom}";    Flags: iscustom
 
 [Components]
-Name: main;        Description: "{cm:ComponentsMain}";    Types: all editorwithhelp editoronly custom; Flags: fixed
-Name: help;        Description: "{cm:ComponentsHelp}";    Types: all editorwithhelp
+Name: main;        Description: "{cm:ComponentsMain}";    Types: all TypesEditorwithhelp TypesEditoronly custom; Flags: fixed
+Name: help;        Description: "{cm:ComponentsHelp}";    Types: all TypesEditorwithhelp
 Name: keyword;     Description: "{cm:ComponentsKeyword}"; Types: all
 
 [Tasks]
-Name: startmenu;   Description: "{cm:startmenu}";                      Components: main;
-Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";          Components: main;
-Name: proglist;    Description: "{cm:proglist}";                       Components: main;
-Name: desktopicon; Description: "{cm:CreateDesktopIcon}";              Components: main; Flags: unchecked;
-Name: fileassoc;   Description: "{cm:fileassoc}";                      Components: main; Flags: unchecked;
-Name: startup;     Description: "{cm:AutoStartProgram,{cm:AppName}}";  Components: main; Flags: unchecked;
-Name: sendto;      Description: "{cm:sendto}";                         Components: main; Flags: unchecked;
+Name: startmenu;   Description: "{cm:startmenu}";                         Components: main;
+Name: quicklaunch; Description: "{cm:CreateQuickLaunchIcon}";             Components: main;
+Name: proglist;    Description: "{cm:proglist}";                          Components: main;
+Name: desktopicon; Description: "{cm:CreateDesktopIcon}";                 Components: main; Flags: unchecked;
+Name: fileassoc;   Description: "{cm:fileassoc}";                         Components: main; Flags: unchecked;
+Name: startup;     Description: "{cm:residentStartup}";                   Components: main; Flags: unchecked;
+Name: sendto;      Description: "{cm:sendto}";                            Components: main; Flags: unchecked;
 
 [Files]
-Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
-Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";         Components: main; Flags: ignoreversion;
-Source: "sakura\bregonig.dll";         DestDir: "{app}";         Components: main
+Source: "sakura\sakura.exe";           DestDir: "{app}";                  Components: main; Flags: ignoreversion;
+Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";                  Components: main; Flags: ignoreversion;
+Source: "sakura\bregonig.dll";         DestDir: "{app}";                  Components: main
 Source: "sakura\license\bregonig\*";   DestDir: "{app}\license\bregonig"; Components: main
-Source: "sakura\ctags.exe";            DestDir: "{app}";                Components: main
-Source: "sakura\license\ctags\*";      DestDir: "{app}\license\ctags";  Components: main
-Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
-Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
-Source: "sakura\sakura.chm";           DestDir: "{app}";         Components: help
-Source: "sakura\macro.chm";            DestDir: "{app}";         Components: help
-Source: "sakura\plugin.chm";           DestDir: "{app}";         Components: help
-Source: "sakura\sakura.exe.ini";       DestDir: "{app}";         Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
+Source: "sakura\ctags.exe";            DestDir: "{app}";                  Components: main
+Source: "sakura\license\ctags\*";      DestDir: "{app}\license\ctags";    Components: main
+Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
+Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
+Source: "sakura\sakura.chm";           DestDir: "{app}";                  Components: help
+Source: "sakura\macro.chm";            DestDir: "{app}";                  Components: help
+Source: "sakura\plugin.chm";           DestDir: "{app}";                  Components: help
+Source: "sakura\sakura.exe.ini";       DestDir: "{app}";                  Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 
-Source: "sakura\keyword\*";             DestDir: "{app}\keyword"; Components: keyword; Flags: recursesubdirs
+Source: "sakura\keyword\*";             DestDir: "{app}\keyword";         Components: keyword; Flags: recursesubdirs
 
 [Registry]
 ; registry for all user (Admin only)
@@ -170,7 +172,7 @@ Name: "{group}\{cm:IconPreferencefolder}";                                   Fil
 Name: "{userdesktop}\{cm:AppName}";                                          Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: desktopicon;
 Name: "{group}\{cm:UninstallProgram,{cm:AppName}}";                          Filename: "{uninstallexe}";                                                                        Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{cm:AppName}"; Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: quicklaunch;
-Name: "{userstartup}\{cm:AutoStartProgram,{cm:AppName}}";                    Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main;                            Tasks: startup;
+Name: "{userstartup}\{cm:residentStartup}";                                  Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main;                            Tasks: startup;
 Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: sendto;
 
 [Run]
