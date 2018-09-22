@@ -82,11 +82,11 @@ ja.sendto=送るに追加(&T)
 en.fileassocMenu=Open with Sakura &Editor
 ja.fileassocMenu=SAKURAで開く(&E)
 en.residentStartup=&Resident at startup
-en.residentStartup=起動時に常駐(&R)
+ja.residentStartup=起動時に常駐(&R)
 en.IconPreferencefolder=Preference folder
 ja.IconPreferencefolder=設定フォルダ
-en.run=Start now
-ja.run=今すぐサクラエディタを起動
+en.StartNow=Start now
+ja.StartNow=今すぐサクラエディタを起動
 en.MultiUser=Install in compatibility mode. When editing system files and programs with user authority, editing results may not be accessible from other applications. (VirtualStore function)
 ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザ権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
 en.InitWiz_Title=Selection of Preference preservation method
@@ -176,7 +176,7 @@ Name: "{userstartup}\{cm:residentStartup}";                                  Fil
 Name: "{#MySendTo}\{cm:AppName}";                                            Filename: "{app}\sakura.exe";                         Components: main;                            Tasks: sendto;
 
 [Run]
-FileName: "{app}\sakura.exe"; Description: "{cm:run}"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
+FileName: "{app}\sakura.exe"; Description: "{cm:StartNow}"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
 
 [UninstallDelete]
 ;Uninstall時に確認無く消されるのでコメントアウト
