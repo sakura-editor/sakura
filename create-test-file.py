@@ -9,6 +9,14 @@ def create_test_file(filename, size):
 			baseData = baseData + data
 		return baseData
 
+	# 最後の行用に指定したサイズの文字列データを作る
+	def getLastData(size):
+		baseData = ''
+		if size > 1:
+			baseData = baseData + '-' * (size-1)
+		baseData = baseData + '#'
+		return baseData
+
 	with open(filename, "wb") as fout:
 		total = 0
 		baseData = getStringData(500) + "\r\n"
@@ -21,7 +29,7 @@ def create_test_file(filename, size):
 			elif size - total >= len(baseData):
 				data = baseData
 			else:
-				data = getStringData(size - total)
+				data = getLastData(size - total)
 		
 			percent = int(total * 100 / size)
 			if percent > prev_percent:
