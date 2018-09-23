@@ -41,6 +41,7 @@ def create_test_file(filename, size):
 
 		while True:
 			if total >= size:
+				print_status(filename, 100, total, size)
 				break
 			elif size - total >= len(base_data):
 				data = base_data
