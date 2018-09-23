@@ -2,6 +2,11 @@ set platform=%1
 set configuration=%2
 set ERROR_RESULT=0
 
+if "%platform%" == "MinGW" (
+	@echo   test for MinGW will be skipped. (platform: %platform%, configuration: %configuration%)
+	exit /b 0
+)
+
 @echo ---- start create-project.bat ----
 call %~dp0create-project.bat %platform% %configuration%
 if %ERRORLEVEL% neq 0 (
