@@ -9,5 +9,5 @@
 
 ## スクリプト
 
-[create-test-file.py](create-test-file.py) を実行することで複数のサイズのテスト用のテキストファイルを作成します。
+[create-big-file.py](create-big-file.py) を実行することで複数のサイズのテスト用のテキストファイルを作成します。
 
