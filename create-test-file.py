@@ -1,6 +1,8 @@
 ﻿
 # 指定したファイルサイズのファイルを作る
 def create_test_file(filename, size):
+	data_size_one_line = 500
+
 	# 指定したサイズの文字列データを作る
 	def getStringData(size):
 		baseData = ''
@@ -19,7 +21,7 @@ def create_test_file(filename, size):
 
 	with open(filename, "wb") as fout:
 		total = 0
-		baseData = getStringData(500) + "\r\n"
+		baseData = getStringData(data_size_one_line) + "\r\n"
 		percent       = 0
 		prev_percent  = 0
 
