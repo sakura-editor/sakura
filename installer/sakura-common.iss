@@ -59,10 +59,10 @@ en.AppPublisher=Sakura Editor developers
 ja.AppPublisher=サクラエディタ開発チーム
 en.TypesAll=All
 ja.TypesAll=すべて
-en.TypesEditorwithhelp=Editor with Help
-ja.TypesEditorwithhelp=本体とヘルプ
-en.TypesEditoronly=Editor Only
-ja.TypesEditoronly=本体のみ
+en.TypesEditorWithHelp=Editor with Help
+ja.TypesEditorWithHelp=本体とヘルプ
+en.TypesEditorOnly=Editor Only
+ja.TypesEditorOnly=本体のみ
 en.TypesCustom=Custom
 ja.TypesCustom=カスタム
 en.ComponentsMain=sakura editor itself
@@ -117,13 +117,13 @@ ja.uninstallmenu=サクラエディタのアンインストール
 
 [Types]
 Name: all;                 Description: "{cm:TypesAll}"
-Name: TypesEditorwithhelp; Description: "{cm:TypesEditorwithhelp}"
-Name: TypesEditoronly;     Description: "{cm:TypesEditoronly}"
+Name: TypesEditorWithHelp; Description: "{cm:TypesEditorWithHelp}"
+Name: TypesEditorOnly;     Description: "{cm:TypesEditorOnly}"
 Name: custom;              Description: "{cm:TypesCustom}";    Flags: iscustom
 
 [Components]
-Name: main;        Description: "{cm:ComponentsMain}";    Types: all TypesEditorwithhelp TypesEditoronly custom; Flags: fixed
-Name: help;        Description: "{cm:ComponentsHelp}";    Types: all TypesEditorwithhelp
+Name: main;        Description: "{cm:ComponentsMain}";    Types: all TypesEditorWithHelp TypesEditorOnly custom; Flags: fixed
+Name: help;        Description: "{cm:ComponentsHelp}";    Types: all TypesEditorWithHelp
 Name: keyword;     Description: "{cm:ComponentsKeyword}"; Types: all
 
 [Tasks]
