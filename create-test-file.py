@@ -18,6 +18,20 @@ def create_test_file(filename, size):
 			base_data = base_data + '-' * (size-1)
 		base_data = base_data + '#'
 		return base_data
+		
+	def print_status(filename, percent, total, size):
+		elements = []
+		elements.append("wrote")
+		elements.append(filename)
+		elements.append(":")
+		elements.append(str(percent))
+		elements.append("%")
+		elements.append("[")
+		elements.append(str(total))
+		elements.append("/")
+		elements.append(str(size))
+		elements.append("]")
+		print (' '.join(elements))
 
 	with open(filename, "wb") as fout:
 		total = 0
@@ -35,31 +49,20 @@ def create_test_file(filename, size):
 		
 			percent = int(total * 100 / size)
 			if percent > prev_percent:
-				elements = []
-				elements.append("wrote")
-				elements.append(filename)
-				elements.append(":")
-				elements.append(str(percent))
-				elements.append("%")
-				elements.append("[")
-				elements.append(str(total))
-				elements.append("/")
-				elements.append(str(size))
-				elements.append("]")
+				print_status(filename, percent, total, size)
 
-				print (' '.join(elements))
 			writensize = fout.write(data.encode('ascii'))
 			total = total + writensize
-			
+
 			prev_percent = percent
 
 		print ("done " + filename)
 
 if __name__ == '__main__':
 	sizes = [
-		(    1024 * 1024 * 1024, "1G" ),
-		(4 * 1024 * 1024 * 1024, "4G" ),
-		(5 * 1024 * 1024 * 1024, "5G" ),
+		(    1024 * 1024 * 1024    , "1G" ),
+		(4 * 1024 * 1024 * 1024    , "4G" ),
+		(5 * 1024 * 1024 * 1024    , "5G" ),
 	]
 
 	for entry in sizes:
