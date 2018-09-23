@@ -56,6 +56,7 @@ def create_test_file(filename, size):
 			writensize = fout.write(data.encode('ascii'))
 			total = total + writensize
 
+			# 次回ループで比較用に保存する
 			prev_percent = percent
 
 		print ("done " + filename)
