@@ -67,7 +67,7 @@
 #include <errno.h>
 using namespace std;
 
-#define PREPROCESSOR "cl.exe /utf-8 /EP %s"
+#define PREPROCESSOR "cl.exe /nologo /utf-8 /EP %s"
 
 #ifdef __MINGW32__
 #include <windows.h>
