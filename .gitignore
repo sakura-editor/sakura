@@ -17,3 +17,4 @@ sha256.txt
 /cppcheck-*.xml
 set_appveyor_env.bat
 tags
+testData_*.txt
