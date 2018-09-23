@@ -1,0 +1,3 @@
+﻿This software was renamed from "Text Editor (joint development version)".
+Regardless of whether it is commercial or non-commercial, you can use it for free, but the copyright of the source code is retained by the person who described each part.
+This software is not guaranteed.
