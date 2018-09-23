@@ -24,7 +24,7 @@ def create_test_file(filename, size):
 		elements.append("wrote")
 		elements.append(filename)
 		elements.append(":")
-		elements.append(str(percent))
+		elements.append("{0:3d}".format(percent))
 		elements.append("%")
 		elements.append("[")
 		elements.append(str(total))
