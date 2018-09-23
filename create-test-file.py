@@ -19,6 +19,7 @@ def create_test_file(filename, size):
 		base_data = base_data + '#'
 		return base_data
 		
+	# 書き込み状況をコンソールに出力します。
 	def print_status(filename, percent, total, size):
 		elements = []
 		elements.append("wrote")
