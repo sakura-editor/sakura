@@ -4,34 +4,34 @@ def create_test_file(filename, size):
 	data_size_one_line = 500
 
 	# 指定したサイズの文字列データを作る
-	def getStringData(size):
-		baseData = ''
+	def get_string_data(size):
+		base_data = ''
 		for x in range(size):
 			data  = str(x % 10)
-			baseData = baseData + data
-		return baseData
+			base_data = base_data + data
+		return base_data
 
 	# 最後の行用に指定したサイズの文字列データを作る
-	def getLastData(size):
-		baseData = ''
+	def get_last_data(size):
+		base_data = ''
 		if size > 1:
-			baseData = baseData + '-' * (size-1)
-		baseData = baseData + '#'
-		return baseData
+			base_data = base_data + '-' * (size-1)
+		base_data = base_data + '#'
+		return base_data
 
 	with open(filename, "wb") as fout:
 		total = 0
-		baseData = getStringData(data_size_one_line) + "\r\n"
+		base_data = get_string_data(data_size_one_line) + "\r\n"
 		percent       = 0
 		prev_percent  = 0
 
 		while True:
 			if total >= size:
 				break
-			elif size - total >= len(baseData):
-				data = baseData
+			elif size - total >= len(base_data):
+				data = base_data
 			else:
-				data = getLastData(size - total)
+				data = get_last_data(size - total)
 		
 			percent = int(total * 100 / size)
 			if percent > prev_percent:
