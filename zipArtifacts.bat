@@ -131,8 +131,6 @@ if not "%RELEASE_PHASE%" == "" (
 @rem RELEASE_PHASE: (option) "alpha" (x64 build only)
 @rem ----------------------------------------------------------------
 
-@echo on
-
 @rem ----------------------------------------------------------------
 @rem build WORKDIR
 @rem ----------------------------------------------------------------
@@ -215,16 +213,13 @@ if exist "%HASHFILE%" (
 	copy /Y %HASHFILE%           %WORKDIR%\
 )
 call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
-call %LIST_ZIP_CMD%  %OUTFILE%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
-call %LIST_ZIP_CMD%  %OUTFILE_LOG%
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
-copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\
+copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\ > NUL
 call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
-call %LIST_ZIP_CMD%  %OUTFILE_ASM%
 
 @echo end   zip asm
 
