@@ -28,10 +28,10 @@
 A free Japanese text editor for Windows
 
 ## Hot topic
-カンバン運用を始めます。
+Project(カンバン)運用を始めます。
 
-- [カンバン](https://github.com/orgs/sakura-editor/projects/1)
-- [カンバン運用に関する議論](https://github.com/sakura-editor/management-forum/issues/9)
+- [Projects](https://github.com/orgs/sakura-editor/projects)
+- [カンバン運用](https://github.com/sakura-editor/sakura/wiki/ProjectOperation)
 
 ## Web Site
 - [Sakura Editor Portal](https://sakura-editor.github.io/)
@@ -100,4 +100,4 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 ### デバッグ方法
 
 - [タスクトレイのメニュー項目のデバッグ方法](debug-tasktray-menu.md) を参照
-- [大きなファイルの作成方法](create-big-file.md)
+
