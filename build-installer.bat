@@ -41,22 +41,22 @@ mkdir %INSTALLER_WORK%\license\bregonig
 mkdir %INSTALLER_WORK%\keyword
 mkdir %INSTALLER_WORK%\license\ctags\
 
-copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x %INSTALLER_WORK%\
-copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v %INSTALLER_WORK%\
-copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini        %INSTALLER_WORK%\
-copy /Y %INSTALLER_RESOURCES_SINT%\keyword\*.*           %INSTALLER_WORK%\keyword\
-copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                 %INSTALLER_WORK%\license\bregonig\
-copy /Y %INSTALLER_RESOURCES_CTAGS%\license\*.*          %INSTALLER_WORK%\license\ctags\
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x    %INSTALLER_WORK%\ > NUL
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v    %INSTALLER_WORK%\ > NUL
+copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini           %INSTALLER_WORK%\ > NUL
+copy /Y %INSTALLER_RESOURCES_SINT%\keyword\*.*              %INSTALLER_WORK%\keyword\ > NUL
+copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                    %INSTALLER_WORK%\license\bregonig\ > NUL
+copy /Y %INSTALLER_RESOURCES_CTAGS%\license\*.*             %INSTALLER_WORK%\license\ctags\ > NUL
 
-copy /Y /B help\sakura\sakura.chm                           %INSTALLER_WORK%\
-copy /Y /B help\plugin\plugin.chm                           %INSTALLER_WORK%\
-copy /Y /B help\macro\macro.chm                             %INSTALLER_WORK%\
+copy /Y /B help\sakura\sakura.chm                           %INSTALLER_WORK%\ > NUL
+copy /Y /B help\plugin\plugin.chm                           %INSTALLER_WORK%\ > NUL
+copy /Y /B help\macro\macro.chm                             %INSTALLER_WORK%\ > NUL
 
-copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\
-copy /Y /B %platform%\%configuration%\*.dll                 %INSTALLER_WORK%\
+copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\ > NUL
+copy /Y /B %platform%\%configuration%\*.dll                 %INSTALLER_WORK%\ > NUL
 
 set SAKURA_ISS=installer\sakura-%platform%.iss
-"%CMD_ISCC%" %SAKURA_ISS% || (echo error && exit /b 1)
+"%CMD_ISCC%" %SAKURA_ISS% > NUL || (echo error && exit /b 1)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
