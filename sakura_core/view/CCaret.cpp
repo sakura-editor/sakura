@@ -860,38 +860,22 @@ void CCaret::ShowCaretPosInfo()
 		}else{
 			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
-		// ステータスバーを更新するためのインライン関数
-		auto updateStatusBarText = [hwndStatusBar](_In_ BYTE index, _In_ WORD opt, _In_z_ const TCHAR* text) {
-			if( opt != 0 ){
-				::StatusBar_SetText(hwndStatusBar, index | opt, text);
-			}else{
-				TCHAR prev[64];
-				static_assert(sizeof(prev) >= sizeof(szText_1), "not sufficient size.");
-				WORD prevLen = LOWORD(::StatusBar_GetTextLength(hwndStatusBar, index));
-				if( prevLen >= _countof(prev) ){
-					::StatusBar_SetText(hwndStatusBar, index | opt, text);
-				}else{
-					// 既に同じ値が設定されている場合は再設定しないようにする
-					::StatusBar_GetText(hwndStatusBar, index, prev);
-					if( ::wcsncmp(prev, text, _countof(prev)-1) != 0 ){
-						::StatusBar_SetText(hwndStatusBar, index | opt, text);
-					}
-				}
-			}
-		};
+
+		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
+
 		if( m_bClearStatus ){
-			updateStatusBarText( 0, SBT_NOBORDERS, _T("") );
+			statusBar.SetStatusText( 0, SBT_NOBORDERS, _T("") );
 		}
-		updateStatusBarText( 1, NULL,          szText_1 );
+		statusBar.SetStatusText( 1, NULL,          szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		updateStatusBarText( 2, NULL,          szEolMode );
+		statusBar.SetStatusText( 2, NULL,          szEolMode );
 		//	To Here
-		updateStatusBarText( 3, NULL,          szCaretChar );
-		updateStatusBarText( 4, NULL,          pszCodeName );
-		updateStatusBarText( 5, SBT_OWNERDRAW, _T("") );
-		updateStatusBarText( 6, NULL,          szText_6 );
+		statusBar.SetStatusText( 3, NULL,          szCaretChar );
+		statusBar.SetStatusText( 4, NULL,          pszCodeName );
+		statusBar.SetStatusText( 5, SBT_OWNERDRAW, _T("") );
+		statusBar.SetStatusText( 6, NULL,          szText_6 );
 	}
 
 }

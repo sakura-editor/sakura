@@ -97,24 +97,38 @@ void CMainStatusBar::DestroyStatusBar()
 void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
-		// ステータスバーへ
-		TCHAR prev[256];
-		WORD prevLen = LOWORD(::StatusBar_GetTextLength( m_hwndStatusBar, 0));
-		if (prevLen >= _countof(prev)) {
-			StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
-		}else {
-			// 既に同じ値が設定されている場合は再設定しないようにする
-			::StatusBar_GetText( m_hwndStatusBar, 0, prev );
-			if (wcsncmp(msg, prev, _countof(prev)-1) != 0) {
-				StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
-			}
-		}
+		SetStatusText(0, SBT_NOBORDERS, msg);
 	}
 }
 
 
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText)
+void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
+	if( !m_hwndStatusBar ){
+		assert(false);
+		return;
+	}
+	do{
+		if( pszText == NULL ){
+			break;
+		}
+		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
+		size_t prevTextLen = LOWORD(res);
+		TCHAR prev[1024];
+		if( prevTextLen >= _countof(prev) || HIWORD(res) != nOption ){
+			break;
+		}
+		if( textLen == SIZE_MAX ){
+			textLen = wcslen(pszText);
+		}
+		if( prevTextLen != textLen ){
+			break;
+		}
+		::StatusBar_GetText( m_hwndStatusBar, nIndex | nOption, prev );
+		if( wcscmp(prev, pszText) == 0 ){
+			return;
+		}
+	}while( false );
 	StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText );
 }
 
