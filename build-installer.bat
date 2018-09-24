@@ -1,6 +1,7 @@
 @echo off
 set platform=%1
 set configuration=%2
+set ISS_LOG_FILE=iss-%platform%-%configuration%.log
 
 if "%platform%" == "Win32" (
 	@rem OK
@@ -56,7 +57,8 @@ copy /Y /B %platform%\%configuration%\*.exe                 %INSTALLER_WORK%\ > 
 copy /Y /B %platform%\%configuration%\*.dll                 %INSTALLER_WORK%\ > NUL
 
 set SAKURA_ISS=installer\sakura-%platform%.iss
-"%CMD_ISCC%" %SAKURA_ISS% > NUL || (echo error && exit /b 1)
+@echo running "%CMD_ISCC%" %SAKURA_ISS%
+"%CMD_ISCC%" %SAKURA_ISS% > %ISS_LOG_FILE% || (echo error && exit /b 1)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
