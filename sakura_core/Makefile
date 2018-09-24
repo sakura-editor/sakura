@@ -33,7 +33,7 @@ DEFINES= \
  $(MYDEFINES)
 CFLAGS= \
  -finput-charset=utf-8 \
- -fexec-charset=cp932 \
+ -fexec-charset=utf-8 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
