@@ -28,7 +28,7 @@ def checkExtension(file):
 		return False
 		
 def getMergeBase():
-	output = subprocess.check_output('git show-branch --merge-base master HEAD')
+	output = subprocess.check_output('git show-branch --merge-base origin/master HEAD')
 	outputDec = output.decode()
 	mergeBase = outputDec.splitlines()
 	return mergeBase[0]
