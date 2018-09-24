@@ -131,7 +131,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		if( prevTextLen != textLen ){
 			break;
 		}
-		::StatusBar_GetText( m_hwndStatusBar, nIndex | nOption, prev );
+		::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
 		if( wcscmp(prev, pszText) == 0 ){
 			return;
 		}
