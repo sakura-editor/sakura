@@ -6,5 +6,8 @@ if not "%APPVEYOR_BUILD_NUMBER%" == "" (
 	@echo skip installing chardet
 )
 
-python checkEncoding.py || exit /b 1
+@echo ---- start python checkEncoding.py ----
+python checkEncoding.py || (echo error checkEncoding.py  && exit /b 1)
+@echo ---- end   python checkEncoding.py ----
+@echo.
 exit /b 0
