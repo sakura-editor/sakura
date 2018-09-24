@@ -95,8 +95,8 @@ static const bool UNICODE_BOOL=false;
 		#endif
 	#endif
 	void* operator new[](size_t nSize);
-	void operator delete(void* p);
-	void operator delete[](void* p);
+	void operator delete(void* p) noexcept;
+	void operator delete[](void* p) noexcept;
 #endif
 
 
