@@ -16,6 +16,8 @@ platform:
 
 build_script:
 - cmd: >-
+    call checkEncoding.bat
+
     call build-all.bat %PLATFORM% %CONFIGURATION%
 
     call tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
