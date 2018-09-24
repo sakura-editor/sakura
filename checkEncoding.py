@@ -43,7 +43,6 @@ def getDiffFiles():
 
 def checkEncodingResult(encoding):
 	expectEncoding = [
-		"utf-8",
 		"utf-8-sig",
 		"ascii",
 	]
