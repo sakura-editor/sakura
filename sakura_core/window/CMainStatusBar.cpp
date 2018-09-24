@@ -101,11 +101,18 @@ void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 	}
 }
 
-
+/*!
+	@brief 文字列をステータスバーの指定されたパートに表示する
+	
+	@param nIndex [in] パートのインデクス
+	@param nOption [in] 描画オペレーションタイプ
+	@param pszText [in] 表示テキスト
+	@param textLen [in] 表示テキストの文字数
+*/
 void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
-		assert(false);
+		assert(m_hwndStatusBar != NULL);
 		return;
 	}
 	do{
