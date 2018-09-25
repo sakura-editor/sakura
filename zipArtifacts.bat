@@ -189,6 +189,11 @@ copy /Y msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
 if exist "msbuild-%platform%-%configuration%.log.xlsx" (
 	copy /Y /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
 )
+set ISS_LOG_FILE=iss-%platform%-%configuration%.log
+if exist "%ISS_LOG_FILE%" (
+	copy /Y /B "%ISS_LOG_FILE%" %WORKDIR_LOG%\
+)
+
 copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
 if exist "cppcheck-install.log" (
 	copy /Y "cppcheck-install.log" %WORKDIR_LOG%\
