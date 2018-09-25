@@ -187,10 +187,6 @@ copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
 
-copy /Y installer\warning.txt   %WORKDIR%\
-if "%ALPHA%" == "1" (
-	copy /Y installer\warning-alpha.txt   %WORKDIR%\
-)
 copy /Y /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
 copy /Y msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
 copy /Y msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
@@ -225,10 +221,16 @@ call calc-hash.bat %HASHFILE% %WORKDIR%\
 if exist "%HASHFILE%" (
 	copy /Y %HASHFILE%           %WORKDIR%\
 )
+
+copy /Y installer\warning.txt   %WORKDIR%\
+if "%ALPHA%" == "1" (
+	copy /Y installer\warning-alpha.txt   %WORKDIR%\
+)
 call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
 
+@rem copy text files for warning after zipping %OUTFILE% because %WORKDIR% is the parent directory of %WORKDIR_EXE% and %WORKDIR_INST%.
 if "%ALPHA%" == "1" (
 	copy /Y installer\warning-alpha.txt   %WORKDIR_EXE%\
 	copy /Y installer\warning-alpha.txt   %WORKDIR_INST%\
