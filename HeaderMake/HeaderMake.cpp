@@ -67,7 +67,7 @@
 #include <errno.h>
 using namespace std;
 
-#define PREPROCESSOR "cl.exe /EP %s"
+#define PREPROCESSOR "cl.exe /nologo /source-charset:utf-8 /execution-charset:shift_jis /EP %s"
 
 #ifdef __MINGW32__
 #include <windows.h>
@@ -78,7 +78,7 @@ using namespace std;
 #define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
 
 #undef PREPROCESSOR
-#define PREPROCESSOR "gcc -x c++ -finput-charset=cp932 -fexec-charset=cp932 -E %s"
+#define PREPROCESSOR "gcc -x c++ -finput-charset=utf-8 -fexec-charset=cp932 -E %s"
 
 void fopen_s( 
    FILE** pFile,

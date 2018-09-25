@@ -66,9 +66,6 @@
 #define sprintf_s(A, B, C, ...) sprintf((A), (C), (__VA_ARGS__))
 #define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
 
-#undef PREPROCESSOR
-#define PREPROCESSOR "gcc -x c++ -finput-charset=cp932 -fexec-charset=cp932 -E %s"
-
 int fopen_s( 
    FILE** pFile,
    const char *filename,
