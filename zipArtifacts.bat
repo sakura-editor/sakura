@@ -52,10 +52,16 @@ if not "%APPVEYOR_BUILD_NUMBER%" == "" (
 @echo checking APPVEYOR_REPO_TAG_NAME %APPVEYOR_REPO_TAG_NAME%
 if not "%APPVEYOR_REPO_TAG_NAME%" == "" (
 	@rem replace '/' with '_'
-	set TEMP_NAME=%APPVEYOR_REPO_TAG_NAME:/=_%
+	set TEMP_NAME1=%APPVEYOR_REPO_TAG_NAME:/=_%
+	@echo TEMP_NAME1 = %TEMP_NAME1%
+	
+	@rem replace ' ' with '_'
+	set TEMP_NAME2=%TEMP_NAME1: =_%
+	@echo TEMP_NAME2 = %TEMP_NAME2%
 
 	@rem replace ' ' with '_'
-	set TAG_NAME=tag_%TEMP_NAME: =_%
+	set TAG_NAME=tag-%TEMP_NAME2%
+	@echo TAG_NAME = %TAG_NAME%
 )
 
 @echo checking APPVEYOR_PULL_REQUEST_NUMBER %APPVEYOR_PULL_REQUEST_NUMBER%
