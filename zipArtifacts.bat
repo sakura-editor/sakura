@@ -142,6 +142,8 @@ set WORKDIR_ASM=%BASENAME%-Asm
 set OUTFILE=%BASENAME%.zip
 set OUTFILE_LOG=%BASENAME%-Log.zip
 set OUTFILE_ASM=%BASENAME%-Asm.zip
+set OUTFILE_INST=%BASENAME%-Installer.zip
+set OUTFILE_EXE=%BASENAME%-Exe.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -152,6 +154,12 @@ if exist "%OUTFILE_LOG%" (
 )
 if exist "%OUTFILE_ASM%" (
 	del %OUTFILE_ASM%
+)
+if exist "%OUTFILE_INST%" (
+	del %OUTFILE_INST%
+)
+if exist "%OUTFILE_EXE%" (
+	del %OUTFILE_EXE%
 )
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
@@ -220,6 +228,15 @@ if exist "%HASHFILE%" (
 call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
+
+if "%ALPHA%" == "1" (
+	copy /Y installer\warning-alpha.txt   %WORKDIR_EXE%\
+	copy /Y installer\warning-alpha.txt   %WORKDIR_INST%\
+)
+copy /Y installer\warning.txt        %WORKDIR_EXE%\
+copy /Y installer\warning.txt        %WORKDIR_INST%\
+call %ZIP_CMD%       %OUTFILE_INST%  %WORKDIR_INST%
+call %ZIP_CMD%       %OUTFILE_EXE%   %WORKDIR_EXE%
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
