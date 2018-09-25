@@ -11,9 +11,13 @@ patternUTF8_BOM   = (
 	"utf-8-sig",
 	"ascii"
 )
+patternUTF8_NoBOM = (
+	"utf-8"
+)
 expectEncoding = {
 	".cpp" : patternUTF8_BOM,
 	".h"   : patternUTF8_BOM,
+	".rc"  : patternUTF8_NoBOM,
 }
 
 # チェック対象の拡張子リスト
