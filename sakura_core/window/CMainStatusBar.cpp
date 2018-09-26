@@ -115,28 +115,25 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		assert(m_hwndStatusBar != NULL);
 		return;
 	}
-	do{
+	[&]() -> bool {
 		if( pszText == NULL || nOption == SBT_OWNERDRAW){
-			break;
+			return true;
 		}
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
 		size_t prevTextLen = LOWORD(res);
 		TCHAR prev[1024];
 		if( prevTextLen >= _countof(prev) || HIWORD(res) != nOption ){
-			break;
+			return true;
 		}
 		if( textLen == SIZE_MAX ){
 			textLen = wcslen(pszText);
 		}
 		if( prevTextLen != textLen ){
-			break;
+			return true;
 		}
 		::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
-		if( wcscmp(prev, pszText) == 0 ){
-			return;
-		}
-	}while( false );
-	StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText );
+		return (wcscmp(prev, pszText) != 0);
+	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
 
 
