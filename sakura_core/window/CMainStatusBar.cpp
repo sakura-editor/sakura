@@ -116,7 +116,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		return;
 	}
 	do{
-		if( pszText == NULL ){
+		if( pszText == NULL || nOption == SBT_OWNERDRAW){
 			break;
 		}
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
