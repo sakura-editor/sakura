@@ -146,9 +146,11 @@ set WORKDIR_LOG=%WORKDIR%\Log
 set WORKDIR_EXE=%WORKDIR%\EXE
 set WORKDIR_INST=%WORKDIR%\Installer
 set WORKDIR_ASM=%BASENAME%-Asm
-set OUTFILE=%BASENAME%.zip
+set OUTFILE=%BASENAME%-All.zip
 set OUTFILE_LOG=%BASENAME%-Log.zip
 set OUTFILE_ASM=%BASENAME%-Asm.zip
+set OUTFILE_INST=%BASENAME%-Installer.zip
+set OUTFILE_EXE=%BASENAME%-Exe.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -159,6 +161,12 @@ if exist "%OUTFILE_LOG%" (
 )
 if exist "%OUTFILE_ASM%" (
 	del %OUTFILE_ASM%
+)
+if exist "%OUTFILE_INST%" (
+	del %OUTFILE_INST%
+)
+if exist "%OUTFILE_EXE%" (
+	del %OUTFILE_EXE%
 )
 if exist "%WORKDIR%" (
 	rmdir /s /q %WORKDIR%
@@ -186,10 +194,6 @@ copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
 
-copy /Y installer\warning.txt   %WORKDIR%\
-if "%ALPHA%" == "1" (
-	copy /Y installer\warning-alpha.txt   %WORKDIR%\
-)
 copy /Y /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
 copy /Y msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
 copy /Y msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
@@ -224,9 +228,24 @@ call calc-hash.bat %HASHFILE% %WORKDIR%\
 if exist "%HASHFILE%" (
 	copy /Y %HASHFILE%           %WORKDIR%\
 )
+
+copy /Y installer\warning.txt   %WORKDIR%\
+if "%ALPHA%" == "1" (
+	copy /Y installer\warning-alpha.txt   %WORKDIR%\
+)
 call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
+
+@rem copy text files for warning after zipping %OUTFILE% because %WORKDIR% is the parent directory of %WORKDIR_EXE% and %WORKDIR_INST%.
+if "%ALPHA%" == "1" (
+	copy /Y installer\warning-alpha.txt   %WORKDIR_EXE%\
+	copy /Y installer\warning-alpha.txt   %WORKDIR_INST%\
+)
+copy /Y installer\warning.txt        %WORKDIR_EXE%\
+copy /Y installer\warning.txt        %WORKDIR_INST%\
+call %ZIP_CMD%       %OUTFILE_INST%  %WORKDIR_INST%
+call %ZIP_CMD%       %OUTFILE_EXE%   %WORKDIR_EXE%
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
