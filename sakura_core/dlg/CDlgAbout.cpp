@@ -190,6 +190,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef ALPHA_VERSION
 	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
 #endif
+#ifdef APPVEYOR_REPO_TAG_NAME
+	cmemMsg.AppendStringF(_T(" (tag %s)"), _T(APPVEYOR_REPO_TAG_NAME));
+#endif
 	cmemMsg.AppendString( _T("\r\n") );
 
 	// 2行目

@@ -42,6 +42,7 @@ class AppveyorEnv():
 		"APPVEYOR_REPO_PROVIDER", 				# "gitHub" or etc
 		"APPVEYOR_REPO_NAME",					# ex. "sakura-editor/sakura"
 		"APPVEYOR_REPO_COMMIT",
+		"APPVEYOR_REPO_TAG_NAME",
 		"APPVEYOR_PULL_REQUEST_NUMBER",
 		"APPVEYOR_PULL_REQUEST_HEAD_COMMIT",
 		"APPVEYOR_URL",							
