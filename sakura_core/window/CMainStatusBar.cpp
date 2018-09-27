@@ -115,23 +115,41 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		assert(m_hwndStatusBar != NULL);
 		return;
 	}
+	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
+	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
 	[&]() -> bool {
-		if( pszText == NULL || nOption == SBT_OWNERDRAW){
+		// NULLの場合は SB_SETTEXT メッセージを発行
+		// 特に問題は発生しない模様
+		if( pszText == NULL){
+			return true;
+		}
+		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
+		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
+		// 判定が難しいので諦める
+		if( nOption == SBT_OWNERDRAW ){
 			return true;
 		}
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
-		size_t prevTextLen = LOWORD(res);
-		TCHAR prev[1024];
-		if( prevTextLen >= _countof(prev) || HIWORD(res) != nOption ){
+		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
+		if( HIWORD(res) != nOption ){
 			return true;
 		}
+		size_t prevTextLen = LOWORD(res);
+		TCHAR prev[1024];
+		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
+		if( prevTextLen >= _countof(prev) ){
+			return true;
+		}
+		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得
 		if( textLen == SIZE_MAX ){
 			textLen = wcslen(pszText);
 		}
+		// 設定済みの文字列長と設定する文字列長が異なる場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen != textLen ){
 			return true;
 		}
 		::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
+		// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 		return (wcscmp(prev, pszText) != 0);
 	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
