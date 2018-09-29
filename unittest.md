@@ -72,7 +72,7 @@ GUI でステップ実行することができます。
 |[tests\create-project.bat](tests/create-project.bat)| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |[tests\build-project.bat](tests/build-project.bat)  | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |[tests\run-tests.bat](tests/run-tests.bat)          | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\build-and-test.bat](tests/build-and-test.bat)| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|[tests\build-and-test.bat](tests/build-and-test.bat)| platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
 
 ## インクルードディレクトリ
 

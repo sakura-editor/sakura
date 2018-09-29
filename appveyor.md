@@ -58,8 +58,10 @@
 ----|---- 
 |[build-all.bat](build-all.bat)| appveyor.yml から呼ばれるバッチファイル  |
 |[build-sln.bat](build-sln.bat)| solution をビルドするバッチファイル |
+|[build-gnu.bat](build-gnu.bat)| Makefile をビルドするバッチファイル |
 |[sakura\preBuild.bat](sakura/preBuild.bat) | solution のビルド前に Visual Studio から呼ばれるバッチファイル |
 |[sakura\postBuild.bat](sakura/postBuild.bat)| 特に何もしない |
+|[sakura\mingw32-del.bat](sakura/mingw32-del.bat)| MinGW の clean でファイルを削除するバッチファイル |
 |[parse-buildlog.bat](parse-buildlog.bat)    | ビルドログを解析するバッチファイル |
 |[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
 |[build-installer.bat](build-installer.bat) | インストーラをビルドするバッチファイル |
@@ -85,6 +87,7 @@
             - [appveyor_env.py](appveyor_env.py) : 環境変数を再現できる `set_appveyor_env.bat` を生成する。(成果物に含まれる)
             - [parse-buildlog.py](parse-buildlog.py)
                 - [appveyor_env.py](appveyor_env.py)
+    - [build-gnu.bat](build-gnu.bat) : (Platform="MinGW"のみ) Makefileをビルドしてbuild-all.batの処理を終了する
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
         - hhc.exe (Visual Studio 2017 に同梱)
     - [externals\cppcheck\install-cppcheck.bat](externals/cppcheck/install-cppcheck.bat) : cppcheck をインストールする
@@ -107,10 +110,12 @@
 
 | バッチファイル | 第一引数 | 第二引数 |
 ----|----|----
-|build-all.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|build-all.bat       | platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
 |build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|build-gnu.bat       | platform ("MinGW") | configuration ("Debug" または "Release")  |
 |sakura\preBuild.bat | HeaderMake.exe または MakefileMake.exe の実行ファイルのフォルダパス | なし |
 |sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|sakura\mingw32-del.bat| 削除するファイルパス1 | 削除するファイルパス2(2つ目以降は省略可能)  |
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
@@ -171,6 +176,12 @@
 #### 処理の流れ
 
 * リポジトリに登録している bregonig の zipファイルを解凍して bregonig.dll を sakura.exe のビルドの出力先にコピーする
+
+### mingw32-del.bat の構造
+
+#### 処理の流れ
+
+* 引数で渡されたパスに含まれるスラッシュ(`/`)をバックスラッシュ(`\`)に置換してdelコマンドに渡し、ファイルを削除する
 
 ### zipArtifacts.bat の構造
 
