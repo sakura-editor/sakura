@@ -81,7 +81,7 @@ exit /b 0
 @echo    %~nx1 Win32 Release
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
-@echo    %~nx1 x64   Release
+@echo    %~nx1 x64   Debug
 @echo    %~nx1 MinGW Release
 @echo    %~nx1 MinGW Debug
 exit /b 0
