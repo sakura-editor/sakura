@@ -118,26 +118,36 @@ TEST(testIsMailAddress, CheckTooLongDomain)
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
+// → 準拠度を高めた結果、動作変更しなくなった
 TEST(testIsMailAddress, CheckTooShortDomain)
 {
 	wchar_t szTest[] = L"yajim@my.me"; //ドメイン部は3文字以上
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
+// → 準拠度を高めた結果、動作変更しなくなった
 TEST(testIsMailAddress, CheckTooShortCCTLD)
 {
 	wchar_t szTest[] = L"test@test.c.bak"; //CCTLD部は2文字以上
-	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
+	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
+// → 準拠度を高めた結果、動作変更の内容が変わった
 TEST(testIsMailAddress, CheckDomainIncludesUnderScore)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf(szTest, _countof(szTest), L"%s@test_domain.com", szSeed); //_を含むドメイン
-	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
+	::swprintf_s(szTest, _countof(szTest), L"%s@test_domain.com", szSeed); //_を含むドメイン
+
+	int mailboxLengthOld = 0;
+	EXPECT_TRUE(_OLD_IMPL(szTest, ::wcslen(szTest), &mailboxLengthOld));
+	int mailboxLengthNew = 0;
+	ASSERT_TRUE(_NEW_IMPL(szTest, ::wcslen(szTest), &mailboxLengthNew));
+
+	// 部分マッチでマッチ範囲が変わる
+	ASSERT_LT(mailboxLengthNew, mailboxLengthOld);
 }
 
 TEST(testIsMailAddress, CheckDomainIncludesSingleHyphen)
@@ -149,12 +159,13 @@ TEST(testIsMailAddress, CheckDomainIncludesSingleHyphen)
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
+// → 準拠度を高めた結果、動作変更しなくなった
 TEST(testIsMailAddress, CheckDomainIncludesDoubleHyphen)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
 	::swprintf_s(szTest, _countof(szTest), L"%s@test--domain.com", szSeed); //途中に-を含むドメイン
-	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
+	ASSERT_SAME(TRUE, szTest, ::wcslen(szTest), NULL);
 }
 
 // 動作変更あり。新実装では条件を厳しくして高速化している
@@ -175,6 +186,28 @@ TEST(testIsMailAddress, CheckAwithAtmark)
 {
 	wchar_t szTest[] = L"a@";
 	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+}
+
+// コメントにより追試。短いlocal-partの後に最小ドメイン
+TEST(testIsMailAddress, CheckAwithShortestDomain)
+{
+	wchar_t szTest[] = L"a@z";
+	ASSERT_CHANGE(TRUE, szTest, _countof(szTest) - 1, NULL);
+}
+
+// コメントにより追試。
+// → 準拠度を高めた結果、動作変更しなくなった
+TEST(testIsMailAddress, CheckLocalPartInSpaceWithoutQuote)
+{
+	wchar_t szTest[] = L"a b@c"; //local-partに空白を含む（引用符なし）
+	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+}
+
+// コメントにより追試。
+TEST(testIsMailAddress, CheckLocalPartInSpaceWithQuote)
+{
+	wchar_t szTest[] = L"\"a b\"@c"; //local-partに空白を含む（引用符あり）
+	ASSERT_CHANGE(TRUE, szTest, _countof(szTest) - 1, NULL);
 }
 
 //////////////////////////////////////////////////////////////////////
