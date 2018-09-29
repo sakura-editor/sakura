@@ -1084,6 +1084,16 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 		return FALSE;
 	}
 
+	// スキャン範囲が余った場合の追加チェック
+	if (pszEndOfMailBox < pszBuf + nBufLen) {
+		const wchar_t trailingChar = *pszEndOfMailBox;
+		if (trailingChar == L'.'
+			|| trailingChar == L'-'
+			|| IsLetDig(trailingChar)) {
+			return false;
+		}
+	}
+
 	// アドレス長を受け取る変数が設定されている場合
 	if (pnAddressLength != nullptr) {
 		*pnAddressLength = pszEndOfMailBox - pszBuf;
@@ -1296,6 +1306,11 @@ inline static bool IsDomain(
 			return false;
 		}
 		assert(ppszDotOrNotAlnum != nullptr);
+
+		// 見付かった終端(=スキャン位置)が終端に達しているかチェックする
+		if (*ppszDotOrNotAlnum == pszScanEnd) {
+			break;
+		}
 
 		// サブドメインの後ろに '.' があるかチェックする
 		if (**ppszDotOrNotAlnum != L'.') {
