@@ -118,16 +118,19 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
 	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
 	[&]() -> bool {
-		// NULLの場合は SB_SETTEXT メッセージを発行
-		// 特に問題は発生しない模様
-		if( pszText == NULL){
-			return true;
-		}
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
 		// 判定が難しいので諦める
 		if( nOption == SBT_OWNERDRAW ){
 			return true;
+		}
+		// オーナードローではない場合で NULLの場合は空文字に置き換える
+		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
+		// NULL のままでも問題は発生しないようだが念の為に対策を追加
+		if( pszText == NULL ){
+			static const wchar_t emptyStr[] = L"";
+			pszText = emptyStr;
+			textLen = 0;
 		}
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
 		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
@@ -148,9 +151,14 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		if( prevTextLen != textLen ){
 			return true;
 		}
-		::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
-		// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
-		return (wcscmp(prev, pszText) != 0);
+		if( prevTextLen > 0 ){
+			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
+			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
+			return (wcscmp(prev, pszText) != 0);
+		}
+		else{
+			return true;
+		}
 	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
 
