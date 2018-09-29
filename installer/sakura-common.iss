@@ -113,8 +113,6 @@ en.ReadyMemo_VirtualStoreEnable=Enable
 ja.ReadyMemo_VirtualStoreEnable=有効
 en.languageDLL=sakura_lang_en_US.dll
 ja.languageDLL=
-en.uninstallmenu=uninstall sakura editor
-ja.uninstallmenu=サクラエディタのアンインストール
 
 
 
