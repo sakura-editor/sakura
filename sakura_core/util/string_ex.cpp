@@ -1007,206 +1007,360 @@ inline static bool IsMailAddressDomain(
 	_Out_ const wchar_t** ppszEndOfMailBox
 ) noexcept;
 
+inline static bool IsDotString(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept;
+
+inline static bool IsQuotedString(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept;
+
+
+inline static bool IsDomain(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszDotOrNotAlnum
+) noexcept;
+
+
+inline static bool IsSubDomain(
+	_In_z_ const wchar_t* pszStart,
+	_In_ const wchar_t* pszEnd,
+	_Out_ const wchar_t** ppszDotOrNotAlnum
+) noexcept;
+
+inline static bool IsLetDig(
+	_In_ const wchar_t ch
+) noexcept;
+
+inline static bool IsAtomChar(
+	_In_ const wchar_t ch
+) noexcept;
+
+
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 	@date 2018.09.09 RFC準拠
+	@date 2018.09.29 RFC解釈の誤りを訂正 by berryzplus
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 {
 	// RFC5321による mailbox の最大文字数
 	constexpr ptrdiff_t MAX_MAILBOX = 255; //255オクテット
 
+	// RFC5321による local-part の最大文字数
+	constexpr ptrdiff_t MAX_LOCAL_PART = 64; //64オクテット
+
 	// mailboxの最小文字数（これより短いと構成要素を含めなくなる）
-	//   例) a@z.jp
-	//   1(@手前) + 1(@) + 1(ドメイン) + 1(.) + 2(TLD/ccTLD) = 6
-	constexpr ptrdiff_t MIN_MAILBOX = 6;
+	//   例) a@z
+	//   1(@手前) + 1(@) + 1(ドメイン)
+	constexpr ptrdiff_t MIN_MAILBOX = 1 + 1 + 1;
 
 	// 想定しないパラメータは前半チェックの前に弾く
-	if (pszBuf == nullptr || nBufLen < MIN_MAILBOX) return FALSE;
+	if (pszBuf == nullptr || nBufLen < MIN_MAILBOX) {
+		return FALSE;
+	}
 
 	// メールアドレスには必ず＠が含まれる
 	const wchar_t* pszAtmark;
 
 	// メールアドレス前半部分(＠の手前)をチェックする
-	if (!IsMailAddressLocalPart(pszBuf, pszBuf + nBufLen, &pszAtmark)) {
+	if (!IsMailAddressLocalPart(pszBuf, std::min(pszBuf + nBufLen, pszBuf + MAX_LOCAL_PART + 1), &pszAtmark)) {
 		return FALSE;
 	}
+
+	// IsMailAddressLocalPartがtrueを返したら、以下は必ず成立する
+	assert(*pszAtmark == L'@');
 
 	// メールアドレスの終了位置を受け取るポインタを宣言する
 	const wchar_t* pszEndOfMailBox;
 
 	// メールアドレス後半部分(＠の後ろ)をチェックする
-	if (!IsMailAddressDomain(pszAtmark, pszBuf + nBufLen, &pszEndOfMailBox))
-	{
+	if (!IsMailAddressDomain(pszAtmark + 1, std::min(pszBuf + nBufLen, pszBuf + MAX_MAILBOX), &pszEndOfMailBox)) {
 		return FALSE;
 	}
 
-	// 全体の長さが制限を超えていないかチェックする
-	const auto cchAddressLength = pszEndOfMailBox - pszBuf;
-	if (MAX_MAILBOX < cchAddressLength)
-	{
-		return FALSE; // 文字数オーバー
+	// アドレス長を受け取る変数が設定されている場合
+	if (pnAddressLength != nullptr) {
+		*pnAddressLength = pszEndOfMailBox - pszBuf;
 	}
 
-	if (pnAddressLength != nullptr)
-	{
-		*pnAddressLength = cchAddressLength;
-	}
 	return TRUE;
 }
 
 /*!
  * 指定された文字列がメールアドレス前半部分の要件を満たすか判定する
  *
- * 高速化のため単純化した条件でチェックしている
- * 参照する標準は RFC5321
+ * RFC5321 に準拠した条件でチェックしている
  * @see http://srgia.com/docs/rfc5321j.html
  */
 inline static bool IsMailAddressLocalPart(
-	_In_z_ const wchar_t* pszStart,
-	_In_ const wchar_t* pszEnd,
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
 	_Out_ const wchar_t** ppszAtmark
 ) noexcept
 {
-	// RFC5321による local-part の最大文字数
-	constexpr ptrdiff_t MAX_LOCAL_PART = 64; //64オクテット
-
 	// 関数仕様
-	assert(pszStart != pszEnd); // 長さ0の文字列をチェックしてはならない
-	assert(pszStart < pszEnd); // 開始位置と終了位置は逆転してはならない
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
 
 	// 出力値を初期化する
 	*ppszAtmark = nullptr;
 
-	// 文字列が二重引用符で始まっているかチェックして結果を保存
-	const bool quoted = (L'"' == *pszStart);
-
-	// ループ中にスキャンする文字位置を設定する
-	auto pszScan = pszStart + (quoted ? 1 : 0);
-	auto pszScanEnd = std::min(pszStart + MAX_LOCAL_PART + 1, pszEnd);
-
-	// スキャン位置が終端に達するまでループ
-	while (pszScan < pszScanEnd)
-	{
-		switch (*pszScan)
-		{
-		case L'@':
-			if (pszStart == pszScan)
-			{
-				return false; // local-partは1文字以上なのでNG
-			}
-			if (quoted)
-			{
-				return false; // 二重引用符で始まる場合、終端にも二重引用符が必要なのでNG
-			}
-			*ppszAtmark = pszScan;
-			return true; // ここが正常終了
-		case L'\\': // エスケープ記号
-			if (pszScan + 1 == pszScanEnd || pszScan[1] < L'\x20' || L'\x7E' < pszScan[1])
-			{
-				return false;
-			}
-			pszScan++; // エスケープ記号の分1文字進める
-			break;
-		case L'"': // 二重引用符
-			if (quoted && pszScan + 1 < pszScanEnd && L'@' == pszScan[1])
-			{
-				*ppszAtmark = &pszScan[1];
-				return true; // ここは準正常終了。正常終了とはあえて区別しない。
-			}
-			return false; // 末尾以外に現れるエスケープされてない二重引用符は不正
-		}
-		pszScan++;
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
 	}
-	return false; // 文字数オーバー
+
+	// Local-part = Dot-string / Quoted-string
+	return IsDotString(pszScan, pszScanEnd, ppszAtmark)
+		|| IsQuotedString(pszScan, pszScanEnd, ppszAtmark);
 }
 
 /*!
  * 指定された文字列がメールアドレス後半部分の要件を満たすか判定する
+ *
+ * 高速化と単純化のため、RFC5321 に準拠しない条件でチェックしている
+ * @see http://srgia.com/docs/rfc5321j.html
  */
 inline static bool IsMailAddressDomain(
-	_In_z_ const wchar_t* pszAtmark,
-	_In_ const wchar_t* pszEnd,
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
 	_Out_ const wchar_t** ppszEndOfMailBox
 ) noexcept
 {
-	// ccTLDの最小文字数
-	constexpr ptrdiff_t MIN_TLD = 2;
-
-	// ドメインの最小文字数
-	constexpr ptrdiff_t MIN_DOMAIN = 3;
-
-	// ドメインの最大文字数
-	constexpr ptrdiff_t MAX_DOMAIN = 63;
-
 	// 関数仕様
-	assert(pszAtmark < pszEnd); // @位置と終了位置は逆転してはならない
-	assert(L'@' == *pszAtmark); // @位置にある文字は@でなければならない
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
 
 	// 出力値を初期化する
 	*ppszEndOfMailBox = nullptr;
 
-	// ループ中にスキャンする文字位置を設定する
-	auto pszScan = pszAtmark + 1;
-	if (pszScan == pszEnd)
-	{
-		return false; // @の後ろが0文字、長さが足りない
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
 	}
 
-	auto dotCount = 0;
-	auto domainLength = 0;
-	auto prevHyphen = false;
+	// ドメイン形式だけチェックする
+	// 生IPを書く形式にはいったん対応しない
+	// 将来的に生IPに対応する場合は 短絡OR で条件をつなげる
+	return IsDomain(pszScan, pszScanEnd, ppszEndOfMailBox);
+}
+
+/*!
+ * 指定された文字列がDot-stringの要件を満たすか判定する
+ *
+ * RFC5321 に準拠した条件でチェックしている
+ * @see http://srgia.com/docs/rfc5321j.html
+ */
+inline static bool IsDotString(
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept
+{
+	// 関数仕様
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+
+	// 出力値を初期化する
+	*ppszAtmark = nullptr;
+
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
+	}
 
 	// スキャン位置が終端に達するまでループ
-	while (pszScan < pszEnd)
+	while (pszScan < pszScanEnd)
 	{
-		switch (*pszScan)
-		{
-		case L'.': // ドット記号
-			if (dotCount == 0 && domainLength < MIN_DOMAIN)
+		auto atomLength = 0;
+		for (; IsAtomChar(*pszScan) && pszScan < pszScanEnd; pszScan++, atomLength++);
+
+		if (atomLength == 0 || pszScan == pszScanEnd) {
+			return false;
+		}
+
+		if (*pszScan == L'@') {
+			*ppszAtmark = pszScan;
+			return true; // ここが正常終了
+		}
+
+		pszScan++;
+
+		if (*pszScan != L'.') {
+			return false;
+		}
+	}
+
+	return false; // 文字数オーバー
+}
+
+/*!
+ * 指定された文字列がQuoted-stringの要件を満たすか判定する
+ *
+ * RFC5321 に準拠した条件でチェックしている
+ * @see http://srgia.com/docs/rfc5321j.html
+ */
+inline static bool IsQuotedString(
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
+	_Out_ const wchar_t** ppszAtmark
+) noexcept
+{
+	// 関数仕様
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+
+	// 出力値を初期化する
+	*ppszAtmark = nullptr;
+
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
+	}
+
+	// 文字列が二重引用符で始まっているかチェックする
+	if (*pszScan != L'"') {
+		return false;
+	}
+
+	pszScan++;
+
+	// スキャン位置が終端に達するまでループ
+	for (; pszScan < pszScanEnd; pszScan++)
+	{
+		// エスケープ記号に遭遇
+		if (*pszScan == L'\\') {
+			// 残り文字数が足りない、または、エスケープ対象外文字が続く場合NG
+			if (pszScan + 1 == pszScanEnd
+				|| *(pszScan + 1) < L'\x20'
+				|| *(pszScan + 1) > L'\x7E')
 			{
-				return false; // ドメイン名の最小文字数は3なのでNG
+				return false;
 			}
-			if (0 < dotCount && domainLength < MIN_TLD)
-			{
-				// これはco.jpなどを正しく認識させるために必要。
-				return false; // ドットで区切られる部分の最小文字数は2なのでNG
-			}
-			if (prevHyphen)
-			{
-				return false; // ハイフンに続くドットはNG
-			}
-			dotCount++;
-			domainLength = 0;
-			prevHyphen = false;
+			pszScan++; // エスケープ記号の分1文字進める
+		}
+		// 二重引用符に遭遇
+		else if (*pszScan == L'"') {
 			break;
-		case L'-': // ハイフン記号
-			if (domainLength == 0)
-			{
-				return false; // ドットに続くハイフンはNG
-			}
-			if (prevHyphen)
-			{
-				return false; // 連続するハイフンはNG
-			}
-			domainLength++;
-			prevHyphen = true;
+		}
+	}
+
+	// 二重引用符以外でループをぬけた、または、残り文字数が足りない場合
+	if (*pszScan != L'"' || pszScan + 1 == pszScanEnd) {
+		return false; // 文字数オーバー
+	}
+
+	pszScan++;
+
+	if (*pszScan == L'@') {
+		*ppszAtmark = pszScan;
+		return true; // ここが正常終了
+	}
+
+	return false; // 文字数オーバー
+}
+
+/*!
+ * 指定された文字列がDomainの要件を満たすか判定する
+ *
+ * RFC5321 に準拠した条件でチェックしている
+ * @see http://srgia.com/docs/rfc5321j.html
+ */
+inline static bool IsDomain(
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
+	_Out_ const wchar_t** ppszDotOrNotAlnum
+) noexcept
+{
+	// ドメインの最大文字数
+	constexpr ptrdiff_t MAX_DOMAIN = 63;
+
+	// 関数仕様
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+
+	// 出力値を初期化する
+	*ppszDotOrNotAlnum = nullptr;
+
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
+	}
+
+	// スキャン位置が終端に達するまでループ
+	for (; pszScan < pszScanEnd; pszScan++)
+	{
+		// サブドメインをスキャンする
+		if (!IsSubDomain(pszScan, std::min(pszScanEnd, pszScan + MAX_DOMAIN), ppszDotOrNotAlnum)) {
+			return false;
+		}
+		assert(ppszDotOrNotAlnum != nullptr);
+
+		// サブドメインの後ろに '.' があるかチェックする
+		if (**ppszDotOrNotAlnum != L'.') {
 			break;
-		default:
-			if (dotCount == 0)
-			{
-				return false; // ドメイン部には一つ以上のドット記号が必要なのでNG
-			}
-			if (domainLength == 0)
-			{
-				return false; // ドットで終わるドメインはNG
-			}
-			if (prevHyphen)
-			{
-				return false; // ハイフンで終わるドメインはNG
-			}
-			*ppszEndOfMailBox = pszScan;
-			return true; // ここも正常終了
+		}
+
+		// スキャン開始位置を更新する
+		pszScan = *ppszDotOrNotAlnum;
+	}
+
+	assert(ppszDotOrNotAlnum != nullptr);
+
+	if (pszScan == *ppszDotOrNotAlnum
+		|| IsLetDig(**ppszDotOrNotAlnum)) {
+		return false;
+	}
+
+	return true;
+}
+
+/*!
+ * 指定された文字列がSub-Domainの要件を満たすか判定する
+ *
+ * RFC5321 に準拠した条件でチェックしている
+ * @see http://srgia.com/docs/rfc5321j.html
+ */
+inline static bool IsSubDomain(
+	_In_z_ const wchar_t* pszScan,
+	_In_ const wchar_t* pszScanEnd,
+	_Out_ const wchar_t** ppszDotOrNotAlnum
+) noexcept
+{
+	// 関数仕様
+	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+
+	// 出力値を初期化する
+	*ppszDotOrNotAlnum = nullptr;
+
+	// 長さ0の文字列はマッチさせない
+	if (pszScan == pszScanEnd) {
+		return false;
+	}
+
+	// 判定結果保持用の enum 定数
+	enum ParseState {
+		ALNUM,
+		HYPHEN,
+		DOT,
+		OTHER,
+	};
+
+	// ループ中の判定結果
+	ParseState state = OTHER;
+
+	// 文字列がlet-digで始まっているかチェックする
+	if (!IsLetDig(*pszScan)) {
+		return false;
+	}
+
+	pszScan++;
+
+	// スキャン位置が終端に達するまでループ
+	for (; pszScan < pszScanEnd; pszScan++)
+	{
+		switch (*pszScan) {
 		case L'0':
 		case L'1':
 		case L'2':
@@ -1269,20 +1423,211 @@ inline static bool IsMailAddressDomain(
 		case L'x':
 		case L'y':
 		case L'z':
-			domainLength++;
-			prevHyphen = false;
+			state = ALNUM;
+			break;
+		case L'-':
+			state = HYPHEN;
+			break;
+		case L'.':
+			state = DOT;
+			break;
+		default:
+			state = OTHER;
 			break;
 		}
-		pszScan++;
-		if (MAX_DOMAIN < domainLength)
-		{
-			return false; // 文字数オーバー
+		if (state == DOT || state == OTHER) {
+			break;
 		}
 	}
-	if (pszScan == pszEnd)
-	{
-		*ppszEndOfMailBox = pszScan;
-		return true; // ここが正常終了
+
+	// 末尾に到達した
+	if (pszScan == pszScanEnd) {
+		if (state == HYPHEN || state == DOT) {
+			return false; // 末尾ハイフン、末尾DOTはNG
+		}
+		*ppszDotOrNotAlnum = pszScan;
+		return true;
+	}
+
+	*ppszDotOrNotAlnum = pszScan;
+	return true;
+}
+
+/*
+ * RFC5321 let-dig の要件を満たすかどうか判定する
+ * 
+ * 高速化目的で可読性を捨て、あえて冗長な switch 分岐にしている。
+ * 実質は CRT の iswalnum 関数と同等。
+ */
+inline static bool IsLetDig(
+	_In_ const wchar_t ch
+) noexcept
+{
+	switch (ch) {
+	case L'0':
+	case L'1':
+	case L'2':
+	case L'3':
+	case L'4':
+	case L'5':
+	case L'6':
+	case L'7':
+	case L'8':
+	case L'9':
+	case L'A':
+	case L'B':
+	case L'C':
+	case L'D':
+	case L'E':
+	case L'F':
+	case L'G':
+	case L'H':
+	case L'I':
+	case L'J':
+	case L'K':
+	case L'L':
+	case L'M':
+	case L'N':
+	case L'O':
+	case L'P':
+	case L'Q':
+	case L'R':
+	case L'S':
+	case L'T':
+	case L'U':
+	case L'V':
+	case L'W':
+	case L'X':
+	case L'Y':
+	case L'Z':
+	case L'a':
+	case L'b':
+	case L'c':
+	case L'd':
+	case L'e':
+	case L'f':
+	case L'g':
+	case L'h':
+	case L'i':
+	case L'j':
+	case L'k':
+	case L'l':
+	case L'm':
+	case L'n':
+	case L'o':
+	case L'p':
+	case L'q':
+	case L'r':
+	case L's':
+	case L't':
+	case L'u':
+	case L'v':
+	case L'w':
+	case L'x':
+	case L'y':
+	case L'z':
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
+/*
+ * RFC5322 atom の要件を満たすかどうか判定する
+ *
+ * 高速化目的で可読性を捨て、あえて冗長な switch 分岐にしている。
+ * atomChars[] = L"!#$%&'*+-/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~";
+ */
+inline static bool IsAtomChar(
+	_In_ const wchar_t ch
+) noexcept
+{
+	switch (ch) {
+	case L'!':
+	case L'#':
+	case L'$':
+	case L'%':
+	case L'&':
+	case L'\'':
+	case L'*':
+	case L'+':
+	case L'-':
+	case L'/':
+	case L'0':
+	case L'1':
+	case L'2':
+	case L'3':
+	case L'4':
+	case L'5':
+	case L'6':
+	case L'7':
+	case L'8':
+	case L'9':
+	case L'=':
+	case L'?':
+	case L'A':
+	case L'B':
+	case L'C':
+	case L'D':
+	case L'E':
+	case L'F':
+	case L'G':
+	case L'H':
+	case L'I':
+	case L'J':
+	case L'K':
+	case L'L':
+	case L'M':
+	case L'N':
+	case L'O':
+	case L'P':
+	case L'Q':
+	case L'R':
+	case L'S':
+	case L'T':
+	case L'U':
+	case L'V':
+	case L'W':
+	case L'X':
+	case L'Y':
+	case L'Z':
+	case L'^':
+	case L'_':
+	case L'`':
+	case L'a':
+	case L'b':
+	case L'c':
+	case L'd':
+	case L'e':
+	case L'f':
+	case L'g':
+	case L'h':
+	case L'i':
+	case L'j':
+	case L'k':
+	case L'l':
+	case L'm':
+	case L'n':
+	case L'o':
+	case L'p':
+	case L'q':
+	case L'r':
+	case L's':
+	case L't':
+	case L'u':
+	case L'v':
+	case L'w':
+	case L'x':
+	case L'y':
+	case L'z':
+	case L'{':
+	case L'|':
+	case L'}':
+	case L'~':
+		return true;
+	default:
+		break;
 	}
 	return false;
 }
