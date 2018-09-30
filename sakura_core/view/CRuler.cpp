@@ -92,7 +92,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	HFONT		hFontOld;
 	memset_raw( &lf, 0, sizeof(lf) );
 	lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
-	lf.lfWidth			= 5;
+	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
 	lf.lfOrientation	= 0;
 	lf.lfWeight			= 400;
