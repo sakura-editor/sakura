@@ -66,6 +66,7 @@ CEditApp.o \
 CEol.o \
 CFileExt.o \
 CGrepAgent.o \
+CGrepEnumKeys.o \
 CHokanMgr.o \
 CKeyWordSetMgr.o \
 CLoadAgent.o \
