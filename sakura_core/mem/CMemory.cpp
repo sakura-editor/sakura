@@ -132,7 +132,7 @@ void CMemory::_AddData( const void* pData, int nDataLen )
 
 
 /* 等しい内容か */
-int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
+int CMemory::IsEqual(const CMemory& cmem1, const CMemory& cmem2)
 {
 	const char*	psz1;
 	const char*	psz2;
