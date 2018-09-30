@@ -81,7 +81,7 @@ def checkEncodingResult(file, encoding):
 
 # 指定されたファイルリストに対して文字コードが適切かチェックする
 # (条件に満たないファイル数を返す。)
-def processFiles(files, verbose):
+def processFiles(files):
 	# 条件に満たないファイル数
 	count = 0
 
@@ -92,10 +92,7 @@ def processFiles(files, verbose):
 			print ("NG", encoding, file)
 			count = count + 1
 		else:
-			if verbose > 0:
-				print ("OK", encoding, file)
-			else:
-				pass
+			print ("OK", encoding, file)
 	return count
 
 if __name__ == '__main__':
@@ -103,12 +100,11 @@ if __name__ == '__main__':
 	sys.path.append(user_scripts)
 	print ("adding " + user_scripts + " to PATH")
 
-	verbose = int(os.environ.get("VERBOSE", "0"))
 	count = 0
 	if len(sys.argv) > 1 and sys.argv[1] == "all":
-		count = processFiles(checkAll(), verbose)
+		count = processFiles(checkAll())
 	else:
-		count = processFiles(getDiffFiles(), verbose)
+		count = processFiles(getDiffFiles())
 
 	if count > 0:
 		print ("return 1")
