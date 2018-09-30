@@ -25,7 +25,8 @@ if "%configuration%" == "Release" (
 )
 
 @rem https://www.appveyor.com/docs/environment-variables/
-path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
+@rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
+path=C:\msys64\mingw64\bin;%path%
 
 @echo mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%"
 mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash stdafx Funccode_enum.h Funccode_define.h
