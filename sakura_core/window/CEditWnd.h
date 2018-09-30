@@ -136,30 +136,30 @@ public:
 
 	//管理
 	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	//各種イベント
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
-	LRESULT OnSize( WPARAM, LPARAM );	/* WM_SIZE 処理 */
-	LRESULT OnSize2( WPARAM, LPARAM, bool );
-	LRESULT OnLButtonUp( WPARAM, LPARAM );
-	LRESULT OnLButtonDown( WPARAM, LPARAM );
-	LRESULT OnMouseMove( WPARAM, LPARAM );
-	LRESULT OnMouseWheel( WPARAM, LPARAM );
+	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
+	LRESULT OnSize(WPARAM wParam, LPARAM lParam);	/* WM_SIZE 処理 */
+	LRESULT OnSize2(WPARAM wParam, LPARAM lParam, bool bUpdateStatus);
+	LRESULT OnLButtonUp(WPARAM wParam, LPARAM lParam);
+	LRESULT OnLButtonDown(WPARAM wParam, LPARAM lParam);
+	LRESULT OnMouseMove(WPARAM wParam, LPARAM lParam);
+	LRESULT OnMouseWheel(WPARAM wParam, LPARAM lParam);
 	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
-	LRESULT OnHScroll( WPARAM, LPARAM );
-	LRESULT OnVScroll( WPARAM, LPARAM );
-	int	OnClose( HWND hWndActive, bool );	/* 終了時の処理 */
-	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
+	LRESULT OnHScroll(WPARAM wParam, LPARAM lParam);
+	LRESULT OnVScroll(WPARAM wParam, LPARAM lParam);
+	int	OnClose(HWND hWndActive, bool bGrepNoConfirm);	/* 終了時の処理 */
+	void OnDropFiles(HDROP hDrop);	/* ファイルがドロップされた */
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
-	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER 処理	// 2007.04.03 ryoji
+	LRESULT OnTimer(WPARAM wParam, LPARAM lParam);	// WM_TIMER 処理	// 2007.04.03 ryoji
 	void OnEditTimer( void );	/* タイマーの処理 */
 	void OnCaptionTimer( void );
 	void OnSysMenuTimer( void );
-	void OnCommand( WORD, WORD , HWND );
-	LRESULT OnNcLButtonDown(WPARAM, LPARAM);
-	LRESULT OnNcLButtonUp(WPARAM, LPARAM);
-	LRESULT OnLButtonDblClk(WPARAM, LPARAM);
+	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);
+	LRESULT OnNcLButtonDown(WPARAM wp, LPARAM lp);
+	LRESULT OnNcLButtonUp(WPARAM wp, LPARAM lp);
+	LRESULT OnLButtonDblClk(WPARAM wp, LPARAM lp);
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -173,11 +173,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void InitMenu( HMENU, UINT, BOOL );
-	void InitMenu_Function(HMENU , EFunctionCode, const wchar_t*, const wchar_t*);
-	bool InitMenu_Special(HMENU , EFunctionCode);
+	void InitMenu(HMENU hMenu, UINT uPos, BOOL fSystemMenu);
+	void InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t* pszName, const wchar_t* pszKey);
+	bool InitMenu_Special(HMENU hMenu, EFunctionCode eFunc);
 	void InitMenubarMessageFont(void);	//	メニューバーへのメッセージ表示機能をCEditWndより移管	//	Dec. 4, 2002 genta
-	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
+	LRESULT WinListMenu(HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull);	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 	LRESULT PopupWinList( bool bMousePos );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon	// 2007.02.28 ryoji フルパス指定のパラメータを削除
 	void RegisterPluginCommand();			//プラグインコマンドをエディタに登録する
 	void RegisterPluginCommand( int id );	//プラグインコマンドをエディタに登録する
@@ -203,7 +203,7 @@ public:
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
 	
 	//アイコン
-	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
+	void SetWindowIcon(HICON hIcon, int flag);	//	Sep. 10, 2002 genta
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
 	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
@@ -240,17 +240,17 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      ウィンドウ操作                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void WindowTopMost( int ); // 2004.09.21 Moca
+	void WindowTopMost(int top); // 2004.09.21 Moca
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ビュー管理                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	LRESULT Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	bool CreateEditViewBySplit(int);
+	bool CreateEditViewBySplit(int nViewCount);
 	void InitAllViews();
 	void Views_RedrawAll();
 	void Views_Redraw();
-	void SetActivePane( int );	/* アクティブなペインを設定 */
+	void SetActivePane(int nIndex);	/* アクティブなペインを設定 */
 	int GetActivePane( void ) const { return m_nActivePaneIndex; }	/* アクティブなペインを取得 */ //2007.08.26 kobake const追加
 	bool SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pcViewExclude );				/* すべてのペインをRedrawする */
@@ -301,14 +301,14 @@ protected:
 
 protected:
 	//ドロップダウンメニュー
-	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
+	int	CreateFileDropDownMenu(HWND hwnd);	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 
 	//タイマー
-	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060128 aroka */
+	void Timer_ONOFF(bool bStart); /* 更新の開始／停止 20060128 aroka */
 
 	// メニュー
-	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
-	void CheckFreeSubMenuSub( HMENU, int );			// メニューバーの無効化を検査	2010/6/18 Uchi
+	void CheckFreeSubMenu(HWND hWnd, HMENU hMenu, UINT uPos);		// メニューバーの無効化を検査	2010/6/18 Uchi
+	void CheckFreeSubMenuSub(HMENU hMenu, int nLv);			// メニューバーの無効化を検査	2010/6/18 Uchi
 
 //public:
 	//! 周期内でm_nTimerCountをインクリメント
@@ -331,10 +331,10 @@ public:
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
-	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
-	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
+	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
+	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP DragLeave( void );
-	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
+	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 
 	//フォーカス管理
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }

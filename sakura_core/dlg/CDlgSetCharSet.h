@@ -41,9 +41,9 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL	OnBnClicked( int );
-	BOOL	OnCbnSelChange( HWND, int );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID);
+	BOOL	OnCbnSelChange(HWND hwndCtl, int wID);
 	LPVOID	GetHelpIdTable( void );
 
 	void	SetData( void );	/* ダイアログデータの設定 */

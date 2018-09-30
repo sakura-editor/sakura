@@ -83,8 +83,8 @@ public:
 
 	EditNode* GetTopEditNode(){ return GetEditNodeAt(0); }	//
 	EditNode* GetEditNodeAt( int nIndex );					//!< 指定位置の編集ウィンドウ情報を取得する
-	BOOL AddEditWndList( HWND );							//!< 編集ウィンドウの登録	// 2007.06.26 ryoji nGroup引数追加
-	void DeleteEditWndList( HWND );							//!< 編集ウィンドウリストからの削除
+	BOOL AddEditWndList(HWND hWnd);							//!< 編集ウィンドウの登録	// 2007.06.26 ryoji nGroup引数追加
+	void DeleteEditWndList(HWND hWnd);							//!< 編集ウィンドウリストからの削除
 	BOOL RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, BOOL bCheckConfirm, HWND hWndFrom );
 															//!< いくつかのウィンドウへ終了要求を出す	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加	// 2007.06.20 ryoji nGroup引数追加
 
@@ -114,17 +114,17 @@ public:
 
 	//ウィンドウハンドル → ノード　変換
 	EditNode* GetEditNode( HWND hWnd );							/* 編集ウィンドウ情報を取得する */
-	int GetNoNameNumber( HWND );
+	int GetNoNameNumber(HWND hWnd);
 
 	//タブ
 	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* タブ移動に伴うウィンドウの並び替え 2007.07.07 genta */
 	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* タブ分離に伴うウィンドウ処理 2007.07.07 genta */
 
 	//総合情報
-	int GetOpenedWindowArr( EditNode** , BOOL, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
+	int GetOpenedWindowArr(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
 
 protected:
-	int _GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
+	int _GetOpenedWindowArrCore(EditNode** ppEditNode, BOOL bSort, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 
 public:
 	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */

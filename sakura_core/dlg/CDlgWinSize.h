@@ -48,8 +48,8 @@ public:
 
 protected:
 
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL OnBnClicked( int );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL OnBnClicked(int wID);
 	int  GetData( void );
 	void SetData( void );
 	LPVOID GetHelpIdTable( void );

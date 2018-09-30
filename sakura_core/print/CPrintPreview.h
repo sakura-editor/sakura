@@ -57,8 +57,8 @@ public:
 	||	イベント
 	*/
 	//	Window Messages
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );	/* 描画処理 */
-	LRESULT OnSize( WPARAM, LPARAM );				/* WM_SIZE 処理 */
+	LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
+	LRESULT OnSize(WPARAM wParam, LPARAM lParam);				/* WM_SIZE 処理 */
 	LRESULT OnVScroll( WPARAM wParam, LPARAM lParam );
 	LRESULT OnHScroll( WPARAM wParam, LPARAM lParam );
 	LRESULT OnMouseMove( WPARAM wParam, LPARAM lParam );

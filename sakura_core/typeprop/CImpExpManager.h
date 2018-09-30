@@ -39,13 +39,13 @@ using std::wstring;
 class CImpExpManager
 {
 public:
-	bool ImportUI( HINSTANCE, HWND );
-	bool ExportUI( HINSTANCE, HWND );
-	virtual bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& );
-	virtual bool Import( const wstring&, wstring& ) = 0;
-	virtual bool Export( const wstring&, wstring& ) = 0;
+	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
+	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
+	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg);
+	virtual bool Import(const wstring& sFileName, wstring& sErrMsg) = 0;
+	virtual bool Export(const wstring& sFileName, wstring& sErrMsg) = 0;
 	// ファイル名の初期値を設定
-	void SetBaseName( const wstring& );
+	void SetBaseName(const wstring& sBase);
 	// フルパス名を取得
 	inline wstring GetFullPath()
 	{

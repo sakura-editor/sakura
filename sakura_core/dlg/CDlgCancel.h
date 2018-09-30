@@ -36,13 +36,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int );	/* モードレスダイアログの表示 */
-	HWND DoModeless( HINSTANCE, HWND, int );	/* モードレスダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete);	/* モードレスダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete);	/* モードレスダイアログの表示 */
 
 //	HWND Open( LPCTSTR );
 //	void Close( void );	/* モードレスダイアログの削除 */
 	BOOL IsCanceled( void ){ return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 *//* BOOL->INT_PTR 2008/7/18 Uchi*/
+	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);	/* ダイアログのメッセージ処理 *//* BOOL->INT_PTR 2008/7/18 Uchi*/
 	void DeleteAsync( void );	/* 自動破棄を遅延実行する */	// 2008.05.28 ryoji
 
 //	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
@@ -55,8 +55,8 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL OnBnClicked( int );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL OnBnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
 

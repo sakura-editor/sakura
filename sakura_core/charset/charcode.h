@@ -131,8 +131,8 @@ namespace WCODE
 
 	//!使用フォント番号を返す
 	// (0:半角/1:全角)
-	int GetFontNo(wchar_t);
-	int GetFontNo2(wchar_t, wchar_t);
+	int GetFontNo(wchar_t c);
+	int GetFontNo2(wchar_t wc1, wchar_t wc2);
 
 	//!全角スペースかどうか判定
 	inline bool IsZenkakuSpace(wchar_t wc)

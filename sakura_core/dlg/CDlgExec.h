@@ -30,7 +30,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
 	TCHAR	m_szCommand[1024 + 1];	/* コマンドライン */
 	SFilePath	m_szCurDir;	/* カレントディレクトリ */
@@ -46,8 +46,8 @@ protected:
 	/* オーバーライド? */
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL OnBnClicked( int );
+	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
+	BOOL OnBnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 

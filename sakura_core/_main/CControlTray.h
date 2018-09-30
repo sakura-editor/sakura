@@ -54,9 +54,9 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Create( HINSTANCE );	/* 作成 */
-	bool CreateTrayIcon( HWND );	// 20010412 by aroka
-	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 */
+	HWND Create(HINSTANCE hInstance);	/* 作成 */
+	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
+	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 	void MessageLoop( void );	/* メッセージループ */
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
@@ -97,9 +97,9 @@ public:
 	static void DoGrepCreateWindow(HINSTANCE hinst, HWND, CDlgGrep& cDlgGrep);
 protected:
 	void	DoGrep();	//Stonee, 2001/03/21
-	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const TCHAR* );	/*!< タスクトレイのアイコンに関する処理 */
-	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
-	void OnNewEditor( bool ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
+	BOOL TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const TCHAR* pszTip);	/*!< タスクトレイのアイコンに関する処理 */
+	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);	/*!< WM_COMMANDメッセージ処理 */
+	void OnNewEditor(bool bNewWindow); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
 	static INT_PTR CALLBACK ExitingDlgProc(	/*!< 終了ダイアログ用プロシージャ */	// 2006.07.02 ryoji CControlProcess から移動
 		HWND	hwndDlg,	// handle to dialog box

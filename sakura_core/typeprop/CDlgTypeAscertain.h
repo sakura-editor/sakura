@@ -63,7 +63,7 @@ public:
 
 protected:
 	// 実装ヘルパ関数
-	BOOL OnBnClicked( int );
+	BOOL OnBnClicked(int wID);
 	void SetData();	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void);
 

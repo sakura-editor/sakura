@@ -49,7 +49,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
 	wchar_t GetCharCode() const{ return m_nCode; } //!< 選択された文字コードを取得
 
@@ -57,8 +57,8 @@ private:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
-	BOOL	OnBnClicked( int );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID);
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
 

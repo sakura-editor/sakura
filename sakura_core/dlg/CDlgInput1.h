@@ -35,7 +35,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ダイアログのメッセージ処理 */
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */

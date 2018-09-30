@@ -71,7 +71,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
-	BOOL	OnBnClicked( int );
+	BOOL	OnBnClicked(int wID);
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
 	BOOL	OnEnChange( HWND hwndCtl, int wID );
@@ -83,10 +83,10 @@ protected:
 
 	void	ChangeListPosition( void );					// 編集領域をリストビューに合せて切替える
 	void	MoveFocusToEdit( void );					// 編集領域にフォーカスを移す
-	void	SetToEdit( int );
-	void	SetFromEdit( int );
-	void	SelectEdit( int );							// 編集領域の切り替え
-	void	SepSelect( wstring, wstring*, wstring* );	// 選択用文字列分解
+	void	SetToEdit(int iLine);
+	void	SetFromEdit(int iLine);
+	void	SelectEdit(int IDCenable);							// 編集領域の切り替え
+	void	SepSelect(wstring sTrg, wstring* spView, wstring* spValue);	// 選択用文字列分解
 	void	SelectDirectory( int iLine );				// ディレクトリを選択する
 
 private:

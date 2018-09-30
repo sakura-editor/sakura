@@ -33,9 +33,9 @@ public:
 	||  Attributes & Operations
 	*/
 //	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
-	HWND DoModeless( HINSTANCE, HWND, LPARAM );	/* モードレスダイアログの表示 */
+	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モードレスダイアログの表示 */
 
-	void ChangeView( LPARAM );
+	void ChangeView(LPARAM pcEditView);
 
 	SSearchOption m_sSearchOption;	// 検索オプション
 	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
@@ -55,9 +55,9 @@ protected:
 	int GetData( void );		/* ダイアログデータの取得 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	void SetData( void );		/* ダイアログデータの設定 */
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	BOOL OnDestroy();
-	BOOL OnBnClicked( int );
+	BOOL OnBnClicked(int wID);
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 
 	// virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );

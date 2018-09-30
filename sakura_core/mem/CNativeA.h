@@ -75,10 +75,10 @@ public:
 	void ToLower(); // →小文字
 	void ToUpper(); // →大文字
 
-	void ToZenkaku( int, int );  // 半角→全角
+	void ToZenkaku(int bHiragana, int bHanKataOnly);  // 半角→全角
 
-	void TABToSPACE( int ); // TAB→空白
-	void SPACEToTAB( int ); // 空白→TAB  //---- Stonee, 2001/05/27
+	void TABToSPACE(int nTabSpace); // TAB→空白
+	void SPACEToTAB(int nTabSpace); // 空白→TAB  //---- Stonee, 2001/05/27
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

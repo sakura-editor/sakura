@@ -104,10 +104,10 @@ public:
 	bool IsAcceptLoad() const;				//!< このウィンドウで(新しいウィンドウを開かずに)新しいファイルを開けるか
 
 	//イベント
-	BOOL HandleCommand( EFunctionCode );
+	BOOL HandleCommand(EFunctionCode nCommand);
 	void OnChangeType();
 	void OnChangeSetting(bool bDoLayout = true, bool bBlockingHook = true);		// ビューに設定変更を反映させる
-	BOOL OnFileClose(bool);			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
+	BOOL OnFileClose(bool bGrepNoConfirm);			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 
 	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
 

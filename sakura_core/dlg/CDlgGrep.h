@@ -68,14 +68,14 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	BOOL OnDestroy();
-	BOOL OnBnClicked( int );
+	BOOL OnBnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
-	void SetDataFromThisText( bool );	/* 現在編集中ファイルから検索チェックでの設定 */
+	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
 };
 
 

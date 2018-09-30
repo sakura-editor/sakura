@@ -51,14 +51,14 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
-	BOOL	OnBnClicked( int );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID);
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
@@ -70,7 +70,7 @@ protected:
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
 
-	void	TabSelectChange( bool );
+	void	TabSelectChange(bool bSetFocus);
 	bool	RefreshList( void );
 	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
@@ -81,7 +81,7 @@ protected:
 	int     DeleteSelected();
 	void	AddItem();
 	void	EditItem();
-	void	RightMenu( POINT& );
+	void	RightMenu(POINT &menuPos);
 
 private:
 	CRecentFile			m_cRecentFile;
@@ -138,7 +138,7 @@ private:
 	int		m_nExceptTab;
 	TCHAR	m_szMsg[1024];
 
-	static void  ListViewSort(ListViewSortInfo&, const CRecent* , int, bool);
+	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };
 
 #endif	//SAKURA_CDLGFAVORITE_H_

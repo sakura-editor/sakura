@@ -64,19 +64,19 @@ protected:
 	*/
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	BOOL OnDestroy( void );
-	BOOL OnNotify( WPARAM,  LPARAM );
-	BOOL OnCbnSelChange( HWND, int );
-	BOOL OnBnClicked( int );
-	BOOL OnStnClicked( int );
+	BOOL OnNotify(WPARAM wParam, LPARAM lParam);
+	BOOL OnCbnSelChange(HWND hwndCtl, int wID);
+	BOOL OnBnClicked(int wID);
+	BOOL OnStnClicked(int wID);
 	BOOL OnEnChange( HWND hwndCtl, int wID );
 	BOOL OnEnKillFocus( HWND hwndCtl, int wID );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
-	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
-	int DataCheckAndCorrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
+	void OnChangeSettingType(BOOL bGetData);	/* 設定のタイプが変わった */
+	void OnSpin(int nCtrlId, BOOL bDown);	/* スピンコントロールの処理 */
+	int DataCheckAndCorrect(int nCtrlId, int nData);	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	BOOL CalcPrintableLineAndColumn();	/* 行数と桁数を計算 */
 	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定

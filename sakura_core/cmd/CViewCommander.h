@@ -107,7 +107,7 @@ public:
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
 	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	BOOL Command_OPEN_HfromtoC( BOOL );			/* 同名のC/C++ヘッダ(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
+	BOOL Command_OPEN_HfromtoC(BOOL bCheckOnly);			/* 同名のC/C++ヘッダ(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
 	BOOL Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* 同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
 	BOOL Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss );				/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
 	void Command_ACTIVATE_SQLPLUS( void );		/* Oracle SQL*Plusをアクティブ表示 */
@@ -118,12 +118,12 @@ public:
 	void Command_PROFILEMGR( void );			// プロファイルマネージャ
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
-	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
-	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
+	BOOL Command_PUTFILE(LPCWSTR filename, ECodeType nCharCode, int nFlgOpt);	/* 作業中ファイルの一時出力 maru 2006.12.10 */
+	BOOL Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int nFlgOpt);	/* キャレット位置にファイル挿入 maru 2006.12.10 */
 
 	/* 編集系 */
-	void Command_WCHAR( wchar_t, bool bConvertEOL = true );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
-	void Command_IME_CHAR( WORD );			/* 全角文字入力 */
+	void Command_WCHAR(wchar_t wcChar, bool bConvertEOL = true );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
+	void Command_IME_CHAR(WORD wChar);			/* 全角文字入力 */
 	void Command_UNDO( void );				/* 元に戻す(Undo) */
 	void Command_REDO( void );				/* やり直し(Redo) */
 	void Command_DELETE( void );			/* カーソル位置または選択エリアを削除 */
@@ -142,12 +142,12 @@ public:
 	void Command_INDENT( wchar_t cChar, EIndentType = INDENT_NONE ); /* インデント ver 1 */
 // From Here 2001.12.03 hor
 //	void Command_INDENT( const char*, int );/* インデント ver0 */
-	void Command_INDENT( const wchar_t*, CLogicInt , EIndentType = INDENT_NONE );/* インデント ver0 */
+	void Command_INDENT(const wchar_t* pData, CLogicInt nDataLen, EIndentType = INDENT_NONE );/* インデント ver0 */
 // To Here 2001.12.03 hor
 	void Command_UNINDENT( wchar_t wcChar );	/* 逆インデント */
 //	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
-	void Command_TRIM(BOOL);				// 2001.12.03 hor
-	void Command_SORT(BOOL);				// 2001.12.06 hor
+	void Command_TRIM(BOOL bLeft);				// 2001.12.03 hor
+	void Command_SORT(BOOL bAsc);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
 	void Command_Reconvert(void);			/* メニューからの再変換対応 minfu 2002.04.09 */
 	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
@@ -159,7 +159,7 @@ public:
 	void Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option);
 	int Command_UP( bool bSelect, bool bRepeat, int line = 0 );			/* カーソル上移動 */
 	int Command_DOWN( bool bSelect, bool bRepeat );			/* カーソル下移動 */
-	int  Command_LEFT( bool, bool );			/* カーソル左移動 */
+	int  Command_LEFT(bool bSelect, bool bRepeat);			/* カーソル左移動 */
 	void Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, bool bRepeat );	/* カーソル右移動 */
 	void Command_UP2( bool bSelect );				/* カーソル上移動（２行づつ） */
 	void Command_DOWN2( bool bSelect );				/* カーソル下移動（２行づつ） */
@@ -167,7 +167,7 @@ public:
 	void Command_WORDRIGHT( bool bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
 	void Command_GOLINETOP( bool bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND( bool bSelect, int , int);		/* 行末に移動（折り返し単位） */
+	void Command_GOLINEEND(bool bSelect, int bIgnoreCurrentSelection, int nOption);		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
 	void Command_HalfPageUp( bool bSelect, CLayoutYInt );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -185,14 +185,14 @@ public:
 	void Command_GONEXTPARAGRAPH( bool bSelect );	// 次の段落へ進む
 	void Command_GOPREVPARAGRAPH( bool bSelect );	// 前の段落へ戻る
 	void Command_AUTOSCROLL();		// オートスクロール
-	void Command_WHEELUP(int);
-	void Command_WHEELDOWN(int);
-	void Command_WHEELLEFT(int);
-	void Command_WHEELRIGHT(int);
-	void Command_WHEELPAGEUP(int);
-	void Command_WHEELPAGEDOWN(int);
-	void Command_WHEELPAGELEFT(int);
-	void Command_WHEELPAGERIGHT(int);
+	void Command_WHEELUP(int zDelta);
+	void Command_WHEELDOWN(int zDelta);
+	void Command_WHEELLEFT(int zDelta);
+	void Command_WHEELRIGHT(int zDelta);
+	void Command_WHEELPAGEUP(int zDelta);
+	void Command_WHEELPAGEDOWN(int zDelta);
+	void Command_WHEELPAGELEFT(int zDelta);
+	void Command_WHEELPAGERIGHT(int zDelta);
 	void Command_MODIFYLINE_NEXT( bool bSelect );	// 次の変更行へ
 	void Command_MODIFYLINE_PREV( bool bSelect );	// 前の変更行へ
 
@@ -209,15 +209,15 @@ public:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( bool, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
 	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
-	void Command_INSBOXTEXT( const wchar_t *, int ); // 矩形貼り付け
-	void Command_INSTEXT( bool bRedraw, const wchar_t*, CLogicInt, bool bNoWaitCursor,
+	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
+	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, CLogicInt nTextLen, bool bNoWaitCursor,
 		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = NULL ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
@@ -228,7 +228,7 @@ public:
 	void Command_COPYLINESWITHLINENUMBER( void );	/* 選択範囲内全行行番号付きコピー */
 	void Command_COPY_COLOR_HTML(bool bLineNumber = false);	//選択範囲内全行行番号付きコピー
 	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//選択範囲内色付きHTMLコピー
-	CColorStrategy* GetColorStrategyHTML(const CStringRef&, int, const CColorStrategyPool*, CColorStrategy**, CColorStrategy**, bool& bChange);
+	CColorStrategy* GetColorStrategyHTML(const CStringRef&	cStringLine, int iLogic, const CColorStrategyPool*	pool, CColorStrategy**	ppStrategy, CColorStrategy** pStrategyFound, bool& bChange);
 	void Command_CREATEKEYBINDLIST( void );			// キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO	Command_の作り方がわからないので殺してある
 
 
@@ -266,8 +266,8 @@ public:
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT( bool, bool, bool, HWND, const WCHAR*, CLogicRange* = NULL );/* 次を検索 */
-	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* 前を検索 */
+	void Command_SEARCH_NEXT(bool bChangeCurRegexp, bool bRedraw, bool bReplaceAll, HWND hwndParent, const WCHAR* pszNotFoundMessage, CLogicRange*	pcSelectLogic = NULL); /* 次を検索 */
+	void Command_SEARCH_PREV(bool bReDraw, HWND hwndParent);		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL();							/* すべて置換(実行) */
@@ -287,8 +287,8 @@ public:
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
-	bool Command_TagJumpByTagsFileMsg( bool );				//ダイレクトタグジャンプ(通知つき)
-	bool Command_TagJumpByTagsFile( bool );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
+	bool Command_TagJumpByTagsFileMsg(bool bMsg);				//ダイレクトタグジャンプ(通知つき)
+	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	bool Command_TagJumpByTagsFileKeyword( const wchar_t* keyword );	//	@@ 2005.03.31 MIK
@@ -313,8 +313,8 @@ public:
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
-	void Command_CHG_CHARSET( ECodeType, bool );	/* 文字コードセット指定 */	// 2010/6/15 Uchi
-	void Command_CHGMOD_EOL( EEolType );	/* 入力する改行コードを設定 2003.06.23 moca */
+	void Command_CHG_CHARSET(ECodeType	eCharSet, bool bBom); /* 文字コードセット指定 */	// 2010/6/15 Uchi
+	void Command_CHGMOD_EOL(EEolType e);	/* 入力する改行コードを設定 2003.06.23 moca */
 	void Command_CANCEL_MODE( int whereCursorIs = 0 );	/* 各種モードの取り消し */
 
 	/* 設定系 */
@@ -328,11 +328,11 @@ public:
 	void Command_OPTION_TYPE( void );		/* タイプ別設定 */
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */
-	void Command_SETFONTSIZE( int, int, int );	/* フォントサイズ設定 */
+	void Command_SETFONTSIZE(int fontSize, int shift, int mode);	/* フォントサイズ設定 */
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	void Command_Favorite( void );			//履歴の管理	//@@@ 2003.04.08 MIK
-	void Command_SET_QUOTESTRING( const wchar_t* );	//	Jan. 29, 2005 genta 引用符の設定
-	void Command_TEXTWRAPMETHOD( int );				/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
+	void Command_SET_QUOTESTRING(const wchar_t* quotestr);	//	Jan. 29, 2005 genta 引用符の設定
+	void Command_TEXTWRAPMETHOD(int nWrapMethod);				/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 	void Command_SELECT_COUNT_MODE( int nMode );	/* 文字カウント方法 */	//2009.07.06 syat
 
 	/* マクロ系 */
@@ -349,13 +349,13 @@ public:
 //	void Command_EXECCOMMAND( const WCHAR* cmd );	/* 外部コマンド実行 */
 	void Command_EXECCOMMAND_DIALOG( void );	/* 外部コマンド実行ダイアログ表示 */	//	引数使ってないみたいなので
 	//	マクロからの呼び出しではオプションを保存させないため、Command_EXECCOMMAND_DIALOG内で処理しておく．
-	void Command_EXECCOMMAND( LPCWSTR cmd, const int nFlgOpt, LPCWSTR );	/* 外部コマンド実行 */
+	void Command_EXECCOMMAND(LPCWSTR cmd_string, const int nFlgOpt, LPCWSTR pszCurDir);	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 //	To Here 2006.12.03 maru 引数の拡張
 
 	/* カスタムメニュー */
 	void Command_MENU_RBUTTON( void );	/* 右クリックメニュー */
-	int Command_CUSTMENU( int );		/* カスタムメニュー表示 */
+	int Command_CUSTMENU(int nMenuIdx);		/* カスタムメニュー表示 */
 
 	/* ウィンドウ系 */
 	void Command_SPLIT_V( void );		/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
@@ -372,8 +372,8 @@ public:
 	void Command_MINIMIZE_ALL( void );	/* すべて最小化 */
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
-	void Command_TRACEOUT( const wchar_t* outputstr , int, int );	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
-	void Command_WINTOPMOST( LPARAM );		// 常に手前に表示 2004.09.21 Moca
+	void Command_TRACEOUT(const wchar_t* outputstr, int nLen, int nFlgOpt);	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
+	void Command_WINTOPMOST(LPARAM lparam);		// 常に手前に表示 2004.09.21 Moca
 	void Command_WINLIST( int nCommandFrom );		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 	void Command_DLGWINLIST( void );	// ウィンドウ一覧ダイアログ // 2015.03.07 Moca
 	void Command_GROUPCLOSE( void );	/* グループを閉じる */		// 2007.06.20 ryoji
@@ -389,7 +389,7 @@ public:
 	void Command_TAB_CLOSERIGHT( void );/* 右をすべて閉じる */		// 2008.11.22 syat
 
 
-	void Command_ToggleKeySearch( int );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
+	void Command_ToggleKeySearch(int option);	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 
 	void Command_HOKAN( void );			/* 入力補完 */
 	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
@@ -403,7 +403,7 @@ public:
 	/* その他 */
 
 private:
-	void AlertNotFound(HWND hwnd, bool, LPCTSTR format, ...);
+	void AlertNotFound(HWND hwnd, bool bReplaceAll, LPCTSTR format, ...);
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:

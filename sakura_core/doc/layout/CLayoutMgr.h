@@ -369,8 +369,8 @@ private:
 	bool IsKinsokuPosKuto(CLayoutInt nRest, CLayoutInt nCharChars ) const {
 		return nRest < nCharChars;
 	}
-	bool IsKinsokuPosHead(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行頭禁則の処理位置か
-	bool IsKinsokuPosTail(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行末禁則の処理位置か
+	bool IsKinsokuPosHead(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行頭禁則の処理位置か
+	bool IsKinsokuPosTail(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行末禁則の処理位置か
 private:
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );

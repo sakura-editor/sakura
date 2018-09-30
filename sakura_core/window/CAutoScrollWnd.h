@@ -42,9 +42,9 @@ protected:
 	/* 仮想関数 */
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );
-	LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );
-	LRESULT OnMButtonDown( HWND, UINT, WPARAM, LPARAM );
-	LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );
+	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+	LRESULT OnRButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+	LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 };
 #endif

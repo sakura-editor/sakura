@@ -186,9 +186,9 @@ public:
 		HDC*		phdc,
 		TCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 	);
-	void PrintStartPage( HDC );	/* 印刷 ページ開始 */
-	void PrintEndPage( HDC );	/* 印刷 ページ終了 */
-	void PrintClose( HDC );		/* 印刷 ジョブ終了 */ // 2003.05.02 かろと 不要なhPrinter削除
+	void PrintStartPage(HDC hdc);	/* 印刷 ページ開始 */
+	void PrintEndPage(HDC hdc);	/* 印刷 ページ終了 */
+	void PrintClose(HDC hdc);		/* 印刷 ジョブ終了 */ // 2003.05.02 かろと 不要なhPrinter削除
 
 protected:
 	/*

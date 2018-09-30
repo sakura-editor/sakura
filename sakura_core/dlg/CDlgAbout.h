@@ -43,13 +43,13 @@ protected:
 class CDlgAbout : public CDialog
 {
 public:
-	int DoModal( HINSTANCE, HWND );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent);	/* モーダルダイアログの表示 */
 	//	Nov. 7, 2000 genta	標準以外のメッセージを捕捉する
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 protected:
-	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
-	BOOL OnBnClicked( int );
-	BOOL OnStnClicked( int );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL OnBnClicked(int wID);
+	BOOL OnStnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 private:
 	CUrlWnd m_UrlUrWnd;
