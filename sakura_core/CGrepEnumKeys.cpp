@@ -51,6 +51,9 @@ public:
 public:
 	virtual void addFilter(_In_z_ LPCTSTR token) = 0;
 
+	virtual void GetFilters(SFilePathLong& szDst, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept = 0;
+	virtual void GetFilterKeys(SFilePathLong& szDst, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept = 0;
+
 	void ClearFilters() noexcept {
 		ClearEnumKeys(_keys);
 		ClearEnumKeys(_absKeys);
@@ -104,7 +107,7 @@ protected:
 			}
 			p++;
 		}
-		*q = _T('\0');
+		//*q = _T('\0');
 
 #pragma endregion ReplaceQuoteInFilter
 
@@ -149,6 +152,35 @@ public:
 			push_back_unique(_absKeys, token);
 		}
 	};
+
+	void GetFilters(SFilePathLong& szDst, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept override {
+		static TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+		szDst[0] = _T('\0');
+		for (auto it = _keys.cbegin(); it != _keys.cend(); ++it) {
+			//_tcscat_s(szDst, szDst.BUFFER_COUNT, PREFIX_STR);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, *it);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, szDelimiter);
+		}
+		for (auto it = _absKeys.cbegin(); it != _absKeys.cend(); ++it) {
+			//_tcscat_s(szDst, szDst.BUFFER_COUNT, PREFIX_STR);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, *it);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, szDelimiter);
+		}
+	}
+	void GetFilterKeys(SFilePathLong& szDst, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept override {
+		static TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+		szDst[0] = _T('\0');
+		for (auto it = _keys.cbegin(); it != _keys.cend(); ++it) {
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, PREFIX_STR);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, *it);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, szDelimiter);
+		}
+		for (auto it = _absKeys.cbegin(); it != _absKeys.cend(); ++it) {
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, PREFIX_STR);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, *it);
+			_tcscat_s(szDst, szDst.BUFFER_COUNT, szDelimiter);
+		}
+	}
 };
 
 // テンプレートクラスの static 変数を実体化しておく
@@ -178,6 +210,22 @@ public:
 			throw Error_PathFilterIncludesAbsPath();
 		}
 	};
+	void GetFilters(SFilePathLong& szFile, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept override {
+		static TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+		szFile[0] = _T('\0');
+		for (auto it = _keys.cbegin(); it != _keys.cend(); ++it) {
+			_tcscat_s(szFile, szFile.BUFFER_COUNT, *it);
+			_tcscat_s(szFile, szFile.BUFFER_COUNT, szDelimiter);
+		}
+	}
+	void GetFilterKeys(SFilePathLong& szFile, _In_opt_ TCHAR chDelimiter = _T(';')) const noexcept override {
+		static TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+		szFile[0] = _T('\0');
+		for (auto it = _keys.cbegin(); it != _keys.cend(); ++it) {
+			_tcscat_s(szFile, szFile.BUFFER_COUNT, *it);
+			_tcscat_s(szFile, szFile.BUFFER_COUNT, szDelimiter);
+		}
+	}
 };
 
 // テンプレートのインスタンス化
@@ -272,4 +320,159 @@ int CGrepEnumKeys::SetFileKeys(_In_z_ LPCTSTR lpKeys) noexcept{
 	}
 
 	return 0;
+}
+
+// 除外ファイルを追加
+void CGrepEnumKeys::AddExcludeFiles(
+	_Inout_ SFilePathLong& szFile,
+	_In_z_ LPCTSTR pszExcludeFile,
+	_In_opt_ TCHAR chDelimiter
+)
+{
+	TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+
+	// おかしな引数は処理しない
+	if (pszExcludeFile == nullptr || *pszExcludeFile == _T('\0')) return;
+
+	// 解析するためのバッファを作る
+	std::tstring wildCard(pszExcludeFile);
+
+	// my_strtokに渡す文字列ポインタを判断する
+	TCHAR*	pWildCard = &*wildCard.begin();
+
+	// 区切り文字でトークン分割し、トークンがなくなるまで繰り返す
+	int nPos = 0;
+	TCHAR*	token;
+	while (token = my_strtok(pWildCard, wildCard.length(), &nPos, WILDCARD_DELIMITER)) {
+		if (*token == '\0') continue; //空文字はskip
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, FileExcludeKeyFilter::PREFIX_STR);
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, token);
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, szDelimiter);
+	}
+}
+
+// 除外フォルダを追加
+void CGrepEnumKeys::AddExcludeFolders(
+	_Inout_ SFilePathLong& szFile,
+	_In_z_ LPCTSTR pszExcludeFolder,
+	_In_opt_ TCHAR chDelimiter
+)
+{
+	TCHAR szDelimiter[] = { chDelimiter, _T('\0') };
+
+	// おかしな引数は処理しない
+	if (pszExcludeFolder == nullptr || *pszExcludeFolder == _T('\0')) return;
+
+	// 解析するためのバッファを作る
+	std::tstring wildCard(pszExcludeFolder);
+
+	// my_strtokに渡す文字列ポインタ
+	TCHAR*	pWildCard = &*wildCard.begin();
+
+	// 区切り文字でトークン分割し、トークンがなくなるまで繰り返す
+	int nPos = 0;
+	TCHAR*	token;
+	while (token = my_strtok(pWildCard, wildCard.length(), &nPos, WILDCARD_DELIMITER)) {
+		if (*token == '\0') continue; //空文字はskip
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, FolderExcludeKeyFilter::PREFIX_STR);
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, token);
+		_tcscat_s(szFile, szFile.BUFFER_COUNT, szDelimiter);
+	}
+}
+
+
+void CGrepEnumKeys::GetSearchFile(SFilePathLong& szFile)
+{
+	SearchKeyFilter filterSearchFile(m_vecSearchFileKeys, VGrepEnumKeys());
+	filterSearchFile.GetFilters(szFile);
+	if (szFile[0] != _T('\0')) szFile[::_tcslen(szFile) - 1] = _T('\0');
+}
+
+void CGrepEnumKeys::GetExcludeFile(SFilePathLong& szExcludeFile)
+{
+	FileExcludeKeyFilter filterExcludeFile(m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
+	filterExcludeFile.GetFilters(szExcludeFile);
+	if (szExcludeFile[0] != _T('\0')) szExcludeFile[::_tcslen(szExcludeFile) - 1] = _T('\0');
+}
+
+void CGrepEnumKeys::GetExcludeFolder(SFilePathLong& szExcludeFolder)
+{
+	FolderExcludeKeyFilter filterExcludeFolder(m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
+	filterExcludeFolder.GetFilters(szExcludeFolder);
+	if (szExcludeFolder[0] != _T('\0')) szExcludeFolder[::_tcslen(szExcludeFolder) - 1] = _T('\0');
+}
+
+
+/*!
+ * 共有メモリに保存するファイルパターン文字列を組み立てる
+ *
+ * @param chDelimiter 区切り文字
+ * @retval CShareDataのファイルパターン履歴に入れる文字列
+ */
+void CGrepEnumKeys::GetFileKeys(SFilePathLong& szFile, _In_opt_ TCHAR chDelimiter)
+{
+	// フィルタ操作クラスのインスタンスを生成
+	SearchKeyFilter filterSearchFile(m_vecSearchFileKeys, VGrepEnumKeys());
+	//SearchKeyFilter filterSearchFolder(m_vecSearchFolderKeys, VGrepEnumKeys());
+	FileExcludeKeyFilter filterExcludeFile(m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
+	FolderExcludeKeyFilter filterExcludeFolder(m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
+
+	// 出力バッファをクリアする
+	szFile[0] = _T('\0');
+
+	// 一時バッファを確保する
+	SFilePathLong szTemp;
+
+	filterSearchFile.GetFilters(szTemp, chDelimiter);
+	if (szFile.BUFFER_COUNT <= _tcslen(szFile) + _tcslen(szTemp) + 1) return;
+	_tcscat_s(szFile, szFile.BUFFER_COUNT, szTemp);
+
+	filterExcludeFile.GetFilters(szTemp, chDelimiter);
+	if (szFile.BUFFER_COUNT <= _tcslen(szFile) + _tcslen(szTemp) + 1) return;
+	_tcscat_s(szFile, szFile.BUFFER_COUNT, szTemp);
+
+	filterExcludeFolder.GetFilters(szTemp, chDelimiter);
+	if (szFile.BUFFER_COUNT <= _tcslen(szFile) + _tcslen(szTemp) + 1) return;
+	_tcscat_s(szFile, szFile.BUFFER_COUNT, szTemp);
+
+	if (szFile[0] != _T('\0')) szFile[::_tcslen(szFile) - 1] = _T('\0');
+}
+
+/*!
+ * 共有メモリに保存するファイルパターン文字列を組み立てる
+ *
+ * @param chDelimiter 区切り文字
+ * @retval CShareDataのファイルパターン履歴に入れる文字列
+ */
+std::tstring CGrepEnumKeys::getFileKeys(_In_ TCHAR chDelimiter)
+{
+	assert(chDelimiter);
+	assert(_tcschr(WILDCARD_DELIMITER, chDelimiter));
+
+	std::basic_ostringstream<TCHAR> out;
+
+	//VGrepEnumKeys m_vecSearchFileKeys;
+	std::for_each(m_vecSearchFileKeys.cbegin(), m_vecSearchFileKeys.cend(),
+		[&out, chDelimiter](const auto &key) { out << key << chDelimiter; });
+
+	//VGrepEnumKeys m_vecSearchFolderKeys;
+	// 対象外
+
+	//VGrepEnumKeys m_vecExceptFileKeys;
+	std::for_each(m_vecExceptFileKeys.cbegin(), m_vecExceptFileKeys.cend(),
+		[&out, chDelimiter](const auto &key) { out << _T('!') << key << chDelimiter; });
+
+	//VGrepEnumKeys m_vecExceptFolderKeys;
+	std::for_each(m_vecExceptFolderKeys.cbegin(), m_vecExceptFolderKeys.cend(),
+		[&out, chDelimiter](const auto &key) { out << _T('#') << key << chDelimiter; });
+
+	//VGrepEnumKeys m_vecExceptAbsFileKeys;
+	std::for_each(m_vecExceptAbsFileKeys.cbegin(), m_vecExceptAbsFileKeys.cend(),
+		[&out, chDelimiter](const auto &key) { out << _T('!') << key << chDelimiter; });
+
+	//VGrepEnumKeys m_vecExceptAbsFolderKeys;
+	std::for_each(m_vecExceptAbsFolderKeys.cbegin(), m_vecExceptAbsFolderKeys.cend(),
+		[&out, chDelimiter](const auto &key) { out << _T('#') << key << chDelimiter; });
+
+	return std::move(out.str());
 }

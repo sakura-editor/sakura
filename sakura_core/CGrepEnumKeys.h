@@ -68,6 +68,21 @@ public:
 	 */
 	int SetFileKeys(_In_z_ LPCTSTR lpKeys) noexcept;
 
+	static void AddExcludeFiles(_Inout_ SFilePathLong& szFile, _In_z_ LPCTSTR pszExcludeFile, _In_opt_ TCHAR chDelimiter = _T(';'));
+	static void AddExcludeFolders(_Inout_ SFilePathLong& szFile, _In_z_ LPCTSTR pszExcludeFolder, _In_opt_ TCHAR chDelimiter = _T(';'));
+
+	void GetSearchFile(SFilePathLong& szFile);
+	void GetExcludeFile(SFilePathLong& szExcludeFile);
+	void GetExcludeFolder(SFilePathLong& szExcludeFolder);
+
+	/*!
+	 * 共有メモリに保存するファイルパターン文字列を組み立てる
+	 *
+	 * @param chDelimiter 区切り文字
+	 * @retval CShareDataのファイルパターン履歴に入れる文字列
+	 */
+	void GetFileKeys(SFilePathLong& szFile, _In_opt_ TCHAR chDelimiter = _T(';'));
+
 private:
 	void ClearItems() noexcept;
 
