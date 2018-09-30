@@ -73,7 +73,7 @@ public:
 	const CMemory& operator=(const CMemory& rhs);
 
 	// 比較
-	static int IsEqual(CMemory& cmem1, CMemory& cmem2);	/* 等しい内容か */
+	static int IsEqual(const CMemory& cmem1, const CMemory& cmem2);	/* 等しい内容か */
 
 	// 変換関数
 	static void SwapHLByte(char* pData, const int nDataLen); // 下記関数のstatic関数版
