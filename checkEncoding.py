@@ -54,7 +54,8 @@ def getDiffFiles():
 	mergeBase = getMergeBase()
 
 	output = subprocess.check_output('git diff ' + mergeBase + ' --name-only --diff-filter=dr')
-	diffFiles = output.decode()
+	outputDec = output.decode()
+	diffFiles = outputDec.splitlines()
 	for file in diffFiles:
 		if checkExtension(file):
 			yield file
