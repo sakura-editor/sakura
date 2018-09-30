@@ -59,6 +59,8 @@ def getDiffFiles():
 	for file in diffFiles:
 		if checkExtension(file):
 			yield file
+		else:
+			print ("skip " + file)
 
 # デバッグ用
 # すべてのファイルを対象にチェック対象の拡張子のファイルの文字コードを調べてチェックする
@@ -84,6 +86,7 @@ def processFiles(files, verbose):
 	count = 0
 
 	for file in files:
+		print ("checking " + file)
 		encoding = check_encoding(file)
 		if not checkEncodingResult(file, encoding):
 			print ("NG", encoding, file)
