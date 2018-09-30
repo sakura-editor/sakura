@@ -19,5 +19,8 @@ build_script:
 
     echo appveyor_yml
 
+    echo call build-by-cmake.bat
+         call build-by-cmake.bat
+
 artifacts:
 - path: 'sakura-*$(platform)-$(configuration)*.zip'
