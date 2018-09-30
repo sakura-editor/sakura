@@ -36,10 +36,15 @@
 
 using namespace std;
 
+namespace {
 //! カスタムカラー用の識別文字列
-static const TCHAR* TSTR_PTRCUSTOMCOLORS = _T("ptrCustomColors");
-
-WNDPROC	m_wpColorListProc;
+const TCHAR* TSTR_PTRCUSTOMCOLORS = _T("ptrCustomColors");
+WNDPROC m_wpColorListProc;
+int m_bgColorSampleLeft;
+int m_bgColorSampleRight;
+int m_fgColorSampleLeft;
+int m_fgColorSampleRight;
+}
 
 static const DWORD p_helpids2[] = {	//11400
 	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
@@ -229,7 +234,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			::InvalidateRect( hwnd, &rcItem, TRUE );
 		}else
 		/* 前景色見本 矩形 */
-		if( rcItem.right - 27 <= xPos && xPos <= rcItem.right - 27 + 12
+		if( m_fgColorSampleLeft <= xPos && xPos <= m_fgColorSampleRight
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_TEXT) ) )
 		{
 			/* 色選択ダイアログ */
@@ -240,8 +245,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
 		}else
-		/* 前景色見本 矩形 */
-		if( rcItem.right - 13 <= xPos && xPos <= rcItem.right - 13 + 12
+		/* 背景色見本 矩形 */
+		if( m_bgColorSampleLeft <= xPos && xPos <= m_bgColorSampleRight
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			)
 		{
@@ -1158,6 +1163,10 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	}
 //	return;
 
+	const int colorSampleWidth = DpiScaleX(12);
+	const int scaled1 = DpiScaleX(1);
+	const int scaled2 = DpiScaleX(2);
+	const int scaled3 = DpiScaleX(3);
 
 	// 2002/11/02 Moca 比較方法変更
 //	if( 0 != strcmp( "カーソル行アンダーライン", pColorInfo->m_szName ) )
@@ -1165,14 +1174,17 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	{
 		/* 背景色 見本矩形 */
 		rc1 = pDis->rcItem;
-		rc1.left = rc1.right - 13;
-		rc1.top += 2;
-		rc1.right = rc1.left + 12;
-		rc1.bottom -= 2;
+		rc1.left = rc1.right - (colorSampleWidth + scaled1);
+		rc1.top += scaled2;
+		rc1.right = rc1.left + colorSampleWidth;
+		rc1.bottom -= scaled2;
+
+		m_bgColorSampleLeft = rc1.left;
+		m_bgColorSampleRight = rc1.right;
 
 		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cBACK );
 		gr.SetPen( cRim );
-		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
+		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
 	}
 
 
@@ -1180,13 +1192,17 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	{
 		/* 前景色 見本矩形 */
 		rc1 = pDis->rcItem;
-		rc1.left = rc1.right - 27;
-		rc1.top += 2;
-		rc1.right = rc1.left + 12;
-		rc1.bottom -= 2;
+		rc1.left = rc1.right - (2 * colorSampleWidth + scaled3);
+		rc1.top += scaled2;
+		rc1.right = rc1.left + colorSampleWidth;
+		rc1.bottom -= scaled2;
+
+		m_fgColorSampleLeft = rc1.left;
+		m_fgColorSampleRight = rc1.right;
+
 		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cTEXT );
 		gr.SetPen( cRim );
-		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
+		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
 	}
 }
 
