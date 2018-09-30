@@ -3,6 +3,7 @@ import chardet
 import os
 import sys
 import subprocess
+import site
 
 #########################################################
 # 定数
@@ -94,6 +95,10 @@ def processFiles(files, verbose):
 	return count
 
 if __name__ == '__main__':
+	user_scripts = os.path.join(site.USER_BASE, "Scripts")
+	sys.path.append(user_scripts)
+	print ("adding " + user_scripts + " to PATH")
+
 	verbose = int(os.environ.get("VERBOSE", "0"))
 	count = 0
 	if len(sys.argv) > 1 and sys.argv[1] == "all":
