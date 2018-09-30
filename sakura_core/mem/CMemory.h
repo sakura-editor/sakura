@@ -113,8 +113,8 @@ private: // 2002/2/10 aroka アクセス権変更
 	|| メンバ変数
 	*/
 	char*	m_pRawData;		//バッファ
-	int		m_nRawLen;		//データサイズ(m_nDataBufSize以内)。バイト単位。
-	int		m_nDataBufSize;	//バッファサイズ。バイト単位。
+	SSIZE_T	m_nRawLen;		//データサイズ(m_nDataBufSize以内)。バイト単位。
+	SSIZE_T	m_nDataBufSize;	//バッファサイズ。バイト単位。
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
