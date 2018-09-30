@@ -246,7 +246,7 @@ bool CMemory::SwabHLByte( const CMemory& mem )
 /*
 || バッファサイズの調整
 */
-void CMemory::AllocBuffer( int nNewDataLen )
+void CMemory::AllocBuffer( SSIZE_T nNewDataLen )
 {
 	int		nWorkLen;
 	char*	pWork = NULL;

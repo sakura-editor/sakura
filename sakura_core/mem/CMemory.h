@@ -53,7 +53,7 @@ public:
 
 	//インターフェース
 public:
-	void AllocBuffer(int nNewDataLen);                               //!< バッファサイズの調整。必要に応じて拡大する。
+	void AllocBuffer(SSIZE_T nNewDataLen);                               //!< バッファサイズの調整。必要に応じて拡大する。
 	void SetRawData( const void* pData, int nDataLen );    //!< バッファの内容を置き換える
 	void SetRawData(const CMemory& pcmemData);                     //!< バッファの内容を置き換える
 	void SetRawDataHoldBuffer( const void* pData, int nDataLen );    //!< バッファの内容を置き換える(バッファを保持)
