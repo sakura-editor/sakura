@@ -248,7 +248,7 @@ bool CMemory::SwabHLByte( const CMemory& mem )
 */
 void CMemory::AllocBuffer( SSIZE_T nNewDataLen )
 {
-	int		nWorkLen;
+	SSIZE_T	nWorkLen;
 	char*	pWork = NULL;
 
 	// 2バイト多くメモリ確保しておく('\0'またはL'\0'を入れるため) 2007.08.13 kobake 変更
