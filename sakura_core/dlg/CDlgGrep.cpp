@@ -31,6 +31,8 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
+#include <list>
+
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000
 	IDC_BUTTON_FOLDER,				HIDC_GREP_BUTTON_FOLDER,			//フォルダ
@@ -48,6 +50,8 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//条件
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダ
+	IDC_COMBO_EXCLUDE_FILE,			HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル
+	IDC_COMBO_EXCLUDE_FOLDER,		HIDC_GREP_COMBO_EXCLUDE_FOLDER,		//除外フォルダ
 	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
 	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//結果出力：該当部分
@@ -80,6 +84,8 @@ CDlgGrep::CDlgGrep()
 	m_bSetText = false;
 	m_szFile[0] = 0;
 	m_szFolder[0] = 0;
+	m_szExcludeFile[0] = 0;
+	m_szExcludeFolder[0] = 0;
 	return;
 }
 
@@ -115,6 +121,56 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 			}
 		}
 		break;
+	case IDC_COMBO_EXCLUDE_FILE:
+		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			std::list<std::tstring> files;
+			int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFiles.size();
+			for (int i = 0; i < nSize; ++i) {
+				files.push_back((LPCTSTR)m_pShareData->m_sSearchKeywords.m_aGrepFiles[i]);
+			}
+			CGrepEnumKeys enumKeys;
+			SFilePathLong szExcludeFile;
+			std::list<std::tstring> excludeFiles;
+			for (auto file : files) {
+				if (file.empty()) continue;
+				enumKeys.SetFileKeys(file.c_str());
+				enumKeys.GetExcludeFile(szExcludeFile);
+				if (szExcludeFile[0] == _T('\0')) continue;
+				std::tstring val(((LPCTSTR)szExcludeFile));
+				if (std::find(excludeFiles.cbegin(), excludeFiles.cend(), val) == excludeFiles.cend()) {
+					excludeFiles.push_back(val);
+				}
+			}
+			for (auto excludeFile : excludeFiles) {
+				Combo_AddString(hwndCtl, excludeFile.c_str());
+			}
+		}
+		break;
+	case IDC_COMBO_EXCLUDE_FOLDER:
+		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			std::list<std::tstring> files;
+			int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFiles.size();
+			for (int i = 0; i < nSize; ++i) {
+				files.push_back((LPCTSTR)m_pShareData->m_sSearchKeywords.m_aGrepFiles[i]);
+			}
+			CGrepEnumKeys enumKeys;
+			SFilePathLong szExcludeFolder;
+			std::list<std::tstring> excludeFolders;
+			for (auto file : files) {
+				if (file.empty()) continue;
+				enumKeys.SetFileKeys(file.c_str());
+				enumKeys.GetExcludeFolder(szExcludeFolder);
+				if (szExcludeFolder[0] == _T('\0')) continue;
+				std::tstring val((LPCTSTR)szExcludeFolder);
+				if (std::find(excludeFolders.cbegin(), excludeFolders.cend(), val) == excludeFolders.cend()) {
+					excludeFolders.push_back(val);
+				}
+			}
+			for (auto excludeFolder : excludeFolders) {
+				Combo_AddString(hwndCtl, excludeFolder.c_str());
+			}
+		}
+		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
@@ -140,6 +196,25 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
 
+	// ファイルパターンを分解して、ファイル、除外ファイル、除外フォルダを取り出す
+	if( m_szFile[0] != _T('\0') ){
+		CGrepEnumKeys enumKeys;
+		enumKeys.SetFileKeys( m_szFile );
+		enumKeys.GetSearchFile( m_szFile );
+		enumKeys.GetExcludeFile( m_szExcludeFile );
+		enumKeys.GetExcludeFolder( m_szExcludeFolder );
+	}
+
+	/* ユーザーの利便性向上のために除外ファイル、除外フォルダに対して初期値を設定する */
+	if (m_szExcludeFile[0] == _T('\0'))
+	{
+		_tcscpy(m_szExcludeFile, _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res"));	/* 除外ファイル */
+	}
+	if (m_szExcludeFolder[0] == _T('\0'))
+	{
+		_tcscpy(m_szExcludeFolder, _T(".git;.svn;.vs"));	/* 除外フォルダ */
+	}
+
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
@@ -159,11 +234,15 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_FILE ), _countof2(m_szFile) - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_FOLDER ), _countof2(m_szFolder) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), _countof2(m_szExcludeFile) - 1);
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), _countof2(m_szExcludeFolder) - 1);
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FILE ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FOLDER ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), TRUE );
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), TRUE );
 
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -428,6 +507,12 @@ void CDlgGrep::SetData( void )
 	/* 検索フォルダ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder );
 
+	/* 除外ファイル */
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile );
+
+	/* 除外フォルダ */
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder );
+
 	if((m_szFolder[0] == _T('\0') || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
 		m_szCurrentFilePath[0] != _T('\0')
 	){
@@ -644,6 +729,10 @@ int CDlgGrep::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
+	/* 除外ファイル */
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile) );
+	/* 除外フォルダ */
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder) );
 
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType = m_nGrepOutputLineType;	// 行を出力/該当部分/否マッチ行 を出力
@@ -652,8 +741,11 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 
-	if( 0 != auto_strlen( m_szFile ) ){
+	// ファイル、除外ファイル、除外フォルダを結合する
+	{
 		CGrepEnumKeys enumKeys;
+		enumKeys.AddExcludeFiles( m_szFile, m_szExcludeFile );
+		enumKeys.AddExcludeFolders( m_szFile, m_szExcludeFolder );
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
 		if( 1 == nErrorNo ){
 			WarningMessage(	GetHwnd(), LS(STR_DLGGREP2) );
@@ -662,6 +754,7 @@ int CDlgGrep::GetData( void )
 			WarningMessage(	GetHwnd(), LS(STR_DLGGREP3) );
 			return FALSE;
 		}
+		enumKeys.GetFileKeys( m_szFile );
 	}
 	/* この編集中のテキストから検索する */
 	if( m_szFile[0] == _T('\0') ){
