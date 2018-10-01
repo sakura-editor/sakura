@@ -1154,23 +1154,7 @@ inline static bool IsMailAddressDomain(
 	// ドメイン形式だけチェックする
 	// 生IPを書く形式にはいったん対応しない
 	// 将来的に生IPに対応する場合は 短絡OR で条件をつなげる
-	bool result = IsDomain(pszScan, pszScanEnd, ppszEndOfMailBox);
-
-	if (!result) {
-		return false;
-	}
-
-	// スキャン範囲が余った場合の追加チェック
-	if (*ppszEndOfMailBox < pszScanEnd) {
-		const wchar_t trailingChar = **ppszEndOfMailBox;
-		if (trailingChar == L'.'
-			|| trailingChar == L'-'
-			|| IsLetDig(trailingChar)) {
-			return false;
-		}
-	}
-
-	return true;
+	return IsDomain(pszScan, pszScanEnd, ppszEndOfMailBox);
 }
 
 /*!
