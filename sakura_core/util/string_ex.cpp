@@ -1085,7 +1085,9 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	}
 
 	// IsMailAddressDomainがtrueを返したら、以下は必ず成立する
-	assert(pszEndOfMailBox);
+	assert(pszEndOfMailBox != nullptr);
+	assert(pszEndOfMailBox > pszAtmark + 1);
+	assert(pszEndOfMailBox < pszBuf + MAX_MAILBOX + 1);
 
 	// メールアドレス全体の長さを再度チェックする
 	if (pszBuf + MAX_MAILBOX < pszEndOfMailBox) {
@@ -1114,6 +1116,7 @@ inline static bool IsMailAddressLocalPart(
 {
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszAtmark != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszAtmark = nullptr;
@@ -1142,6 +1145,7 @@ inline static bool IsMailAddressDomain(
 {
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszEndOfMailBox != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszEndOfMailBox = nullptr;
@@ -1171,6 +1175,7 @@ inline static bool IsDotString(
 {
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszAtmark != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszAtmark = nullptr;
@@ -1219,6 +1224,7 @@ inline static bool IsQuotedString(
 {
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszAtmark != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszAtmark = nullptr;
@@ -1287,6 +1293,7 @@ inline static bool IsDomain(
 
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszDotOrNotAlnum != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszDotOrNotAlnum = nullptr;
@@ -1343,6 +1350,7 @@ inline static bool IsSubDomain(
 {
 	// 関数仕様
 	assert(pszScan < pszScanEnd); // 開始位置と終了位置は逆転してはならない
+	assert(ppszDotOrNotAlnum != nullptr); // _Out_ 引数は NULL 指定不可
 
 	// 出力値を初期化する
 	*ppszDotOrNotAlnum = nullptr;
