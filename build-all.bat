@@ -6,6 +6,8 @@ if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
 	@rem OK
+) else if "%platform%" == "MinGW" (
+	@rem OK
 ) else (
 	call :showhelp %0
 	exit /b 1
@@ -23,6 +25,12 @@ if "%configuration%" == "Release" (
 @echo PLATFORM      %PLATFORM%
 @echo CONFIGURATION %CONFIGURATION%
 @echo.
+
+if "%platform%" == "MinGW" (
+	@echo call build-gnu.bat %PLATFORM% %CONFIGURATION%
+	call build-gnu.bat   %PLATFORM% %CONFIGURATION% || (echo error build-gnu.bat       && exit /b 1)
+	exit /b 0
+)
 
 @echo ---- start build-sln.bat ----
 call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat       && exit /b 1)
@@ -66,12 +74,14 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64
+@echo    platform      : Win32   or x64   or MinGW
 @echo    configuration : Release or Debug
 @echo.
 @echo example
 @echo    %~nx1 Win32 Release
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
-@echo    %~nx1 x64   Release
+@echo    %~nx1 x64   Debug
+@echo    %~nx1 MinGW Release
+@echo    %~nx1 MinGW Debug
 exit /b 0
