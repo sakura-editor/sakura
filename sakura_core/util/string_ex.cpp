@@ -1080,18 +1080,16 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 	const wchar_t* pszEndOfMailBox;
 
 	// メールアドレス後半部分(＠の後ろ)をチェックする
-	if (!IsMailAddressDomain(pszAtmark + 1, std::min(pszBuf + nBufLen, pszBuf + MAX_MAILBOX), &pszEndOfMailBox)) {
+	if (!IsMailAddressDomain(pszAtmark + 1, std::min(pszBuf + nBufLen, pszBuf + MAX_MAILBOX + 1), &pszEndOfMailBox)) {
 		return FALSE;
 	}
 
-	// スキャン範囲が余った場合の追加チェック
-	if (pszEndOfMailBox < pszBuf + nBufLen) {
-		const wchar_t trailingChar = *pszEndOfMailBox;
-		if (trailingChar == L'.'
-			|| trailingChar == L'-'
-			|| IsLetDig(trailingChar)) {
-			return false;
-		}
+	// IsMailAddressDomainがtrueを返したら、以下は必ず成立する
+	assert(pszEndOfMailBox);
+
+	// メールアドレス全体の長さを再度チェックする
+	if (pszBuf + MAX_MAILBOX < pszEndOfMailBox) {
+		return FALSE;
 	}
 
 	// アドレス長を受け取る変数が設定されている場合
@@ -1156,7 +1154,23 @@ inline static bool IsMailAddressDomain(
 	// ドメイン形式だけチェックする
 	// 生IPを書く形式にはいったん対応しない
 	// 将来的に生IPに対応する場合は 短絡OR で条件をつなげる
-	return IsDomain(pszScan, pszScanEnd, ppszEndOfMailBox);
+	bool result = IsDomain(pszScan, pszScanEnd, ppszEndOfMailBox);
+
+	if (!result) {
+		return false;
+	}
+
+	// スキャン範囲が余った場合の追加チェック
+	if (*ppszEndOfMailBox < pszScanEnd) {
+		const wchar_t trailingChar = **ppszEndOfMailBox;
+		if (trailingChar == L'.'
+			|| trailingChar == L'-'
+			|| IsLetDig(trailingChar)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /*!
