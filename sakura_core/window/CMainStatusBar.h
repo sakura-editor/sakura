@@ -52,7 +52,7 @@ public:
 	HWND GetProgressHwnd() const{ return m_hwndProgressBar; }
 
 	//設定
-	void SetStatusText(int nIndex, int nOption, const TCHAR* pszText);
+	void SetStatusText(int nIndex, int nOption, const TCHAR* pszText, size_t textLen = SIZE_MAX);
 private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;

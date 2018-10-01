@@ -860,19 +860,22 @@ void CCaret::ShowCaretPosInfo()
 		}else{
 			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
+
+		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
+
 		if( m_bClearStatus ){
-			::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );
+			statusBar.SetStatusText( 0, SBT_NOBORDERS, _T("") );
 		}
-		::StatusBar_SetText( hwndStatusBar, 1 | 0,             szText_1 );
+		statusBar.SetStatusText( 1, NULL,          szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		::StatusBar_SetText( hwndStatusBar, 2 | 0,             szEolMode );
+		statusBar.SetStatusText( 2, NULL,          szEolMode );
 		//	To Here
-		::StatusBar_SetText( hwndStatusBar, 3 | 0,             szCaretChar );
-		::StatusBar_SetText( hwndStatusBar, 4 | 0,             pszCodeName );
-		::StatusBar_SetText( hwndStatusBar, 5 | SBT_OWNERDRAW, _T("") );
-		::StatusBar_SetText( hwndStatusBar, 6 | 0,             szText_6 );
+		statusBar.SetStatusText( 3, NULL,          szCaretChar );
+		statusBar.SetStatusText( 4, NULL,          pszCodeName );
+		statusBar.SetStatusText( 5, SBT_OWNERDRAW, _T("") );
+		statusBar.SetStatusText( 6, NULL,          szText_6 );
 	}
 
 }

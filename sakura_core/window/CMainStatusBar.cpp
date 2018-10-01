@@ -97,15 +97,69 @@ void CMainStatusBar::DestroyStatusBar()
 void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
-		// ステータスバーへ
-		StatusBar_SetText( m_hwndStatusBar,0 | SBT_NOBORDERS,msg );
+		SetStatusText(0, SBT_NOBORDERS, msg);
 	}
 }
 
-
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText)
+/*!
+	@brief 文字列をステータスバーの指定されたパートに表示する
+	
+	@param nIndex [in] パートのインデクス
+	@param nOption [in] 描画オペレーションタイプ
+	@param pszText [in] 表示テキスト
+	@param textLen [in] 表示テキストの文字数
+*/
+void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
-	StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText );
+	if( !m_hwndStatusBar ){
+		assert(m_hwndStatusBar != NULL);
+		return;
+	}
+	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
+	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
+	[&]() -> bool {
+		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
+		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
+		// 判定が難しいので諦める
+		if( nOption == SBT_OWNERDRAW ){
+			return true;
+		}
+		// オーナードローではない場合で NULLの場合は空文字に置き換える
+		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
+		// NULL のままでも問題は発生しないようだが念の為に対策を追加
+		if( pszText == NULL ){
+			static const wchar_t emptyStr[] = L"";
+			pszText = emptyStr;
+			textLen = 0;
+		}
+		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
+		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
+		if( HIWORD(res) != nOption ){
+			return true;
+		}
+		size_t prevTextLen = LOWORD(res);
+		TCHAR prev[1024];
+		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
+		if( prevTextLen >= _countof(prev) ){
+			return true;
+		}
+		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得
+		if( textLen == SIZE_MAX ){
+			textLen = wcslen(pszText);
+		}
+		// 設定済みの文字列長と設定する文字列長が異なる場合は、SB_SETTEXT メッセージを発行
+		if( prevTextLen != textLen ){
+			return true;
+		}
+		if( prevTextLen > 0 ){
+			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
+			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
+			return (wcscmp(prev, pszText) != 0);
+		}
+		else{
+			return true;
+		}
+	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
 
 
