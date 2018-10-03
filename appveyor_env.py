@@ -150,7 +150,6 @@ class AppveyorEnv():
 			relpath = path
 			
 		relpath = self.convertRealPath(relpath)
-		print (relpath)
 		relpath = relpath.replace('\\', '/')
 
 		blobURL = ""
