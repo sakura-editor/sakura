@@ -782,7 +782,7 @@ void CMenuDrawer::ResetContents( void )
 			m_nMenuFontHeight = lf.lfHeight;
 		}
 	}
-	m_nMenuHeight = m_nMenuFontHeight + 4; // margin
+	m_nMenuHeight = m_nMenuFontHeight + DpiScaleY(4); // margin
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 		// 最低アイコン分の高さを確保
 		if( 20 > m_nMenuHeight ){
