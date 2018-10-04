@@ -132,7 +132,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall )
 {
 	// サイズの設定
-	int size = ( bSmall ? 16 : 32 );
+	int size = GetSystemMetrics( bSmall ? SM_CXSMICON : SM_CXICON );
 
 	TCHAR szPath[_MAX_PATH];
 	HICON hIcon;
