@@ -121,7 +121,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	@param hInst [in] Instance Handle
 	@param nResource [in] デフォルトアイコン用Resource ID
 	@param szFile [in] アイコンファイル名
-	@param bSmall [in] true: small icon (16x16) / false: large icon (32x32)
+	@param bSmall [in] true: small icon (SM_CXSMICON) / false: large icon (SM_CXICON)
 	
 	@return アイコンハンドル．失敗した場合はNULL．
 	
