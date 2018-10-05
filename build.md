@@ -32,6 +32,9 @@
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
 - Visual Studio 2017 Comminity Edition
    以下オプションも必要です。
+   - Windows 10 SDK (10.0.17134.0)
+   - Windows XP Support for C++
+   - Windows 8.1 SDK と UCRT SDK
    - C++ に関する Windows XP サポート
 
 ### HTML ヘルプのビルドに必要なもの
