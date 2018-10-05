@@ -46,11 +46,10 @@ https://github.com/sakura-editor/sakura/wiki
 - [Visual Studio Community 2017](https://www.visualstudio.com/downloads/)
 
 #### Visual Studio Install options required
-- Windows 10 SDK (10.0.17134.0)
+- Windows SDK
 - Windows XP Support for C++
 - Windows 8.1 SDK と UCRT SDK
 - C++ に関する Windows XP サポート
-- x86用とx64用のVisual C++ MFC
 
 More information: https://github.com/sakura-editor/sakura/issues/6
 
