@@ -48,7 +48,8 @@ https://github.com/sakura-editor/sakura/wiki
 #### Visual Studio Install options required
 - Windows SDK
 - Windows XP Support for C++
-- C++に関するWindows XP サポート
+- Windows 8.1 SDK と UCRT SDK
+- C++ に関する Windows XP サポート
 
 More information: https://github.com/sakura-editor/sakura/issues/6
 
