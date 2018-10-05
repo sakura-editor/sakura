@@ -55,14 +55,19 @@ public:
 	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePathLong	m_szFile;				//!< 検索ファイル
 	SFilePathLong	m_szFolder;				//!< 検索フォルダ
+	SFilePathLong	m_szExcludeFile;		//!< 除外ファイル
+	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダ
 	SFilePath	m_szCurrentFilePath;
 protected:
 	SComboBoxItemDeleter	m_comboDelText;
 	CRecentSearch			m_cRecentSearch;
+
 	SComboBoxItemDeleter	m_comboDelFile;
 	CRecentGrepFile			m_cRecentGrepFile;
+
 	SComboBoxItemDeleter	m_comboDelFolder;
 	CRecentGrepFolder		m_cRecentGrepFolder;
+
 	CFontAutoDeleter		m_cFontText;
 
 	/*

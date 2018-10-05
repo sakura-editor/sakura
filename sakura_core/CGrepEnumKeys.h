@@ -41,155 +41,51 @@
 typedef std::vector< LPCTSTR > VGrepEnumKeys;
 
 class CGrepEnumKeys {
+	static constexpr TCHAR WILDCARD_DELIMITER[] = _T(" ;,");	//リストの区切り
+	static constexpr TCHAR WILDCARD_ANY[] = _T("*.*");			//サブフォルダ探索用
+
 public:
 	VGrepEnumKeys m_vecSearchFileKeys;
 	VGrepEnumKeys m_vecSearchFolderKeys;
+
 	VGrepEnumKeys m_vecExceptFileKeys;
 	VGrepEnumKeys m_vecExceptFolderKeys;
 
-//	VGrepEnumKeys m_vecSearchAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
 public:
-	CGrepEnumKeys(){
-	}
+	CGrepEnumKeys() = default;
+	virtual ~CGrepEnumKeys() noexcept;
 
-	~CGrepEnumKeys(){
-		ClearItems();
-	}
+	/*!
+	 * Grepダイアログのファイルパターンを解析して分解する
+	 *
+	 * @param lpKeys ファイルパターン
+	 * @retval -1 不明なエラー(std::bad_alloc)
+	 * @retval 1 *\file.exe などのフォルダ部分でのワイルドカードはエラー
+	 * @retval 2 絶対パス指定は不可
+	 */
+	int SetFileKeys(_In_z_ LPCTSTR lpKeys) noexcept;
 
-	int SetFileKeys( LPCTSTR lpKeys ){
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
-		int nWildCardLen = _tcslen( lpKeys );
-		TCHAR* pWildCard = new TCHAR[ nWildCardLen + 1 ];
-		if( ! pWildCard ){
-			return -1;
-		}
-		_tcscpy( pWildCard, lpKeys );
-		ClearItems();
-		
-		int nPos = 0;
-		TCHAR*	token;
-		while( NULL != (token = my_strtok<TCHAR>( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) ){	//トークン毎に繰り返す。
-			//フィルタを種類ごとに振り分ける
-			enum KeyFilterType{
-				FILTER_SEARCH,
-				FILTER_EXCEPT_FILE,
-				FILTER_EXCEPT_FOLDER,
-			};
-			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == _T('!') ){
-				token++;
-				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == _T('#') ){
-				token++;
-				keyType = FILTER_EXCEPT_FOLDER;
-			}
-			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
-			p = q = token;
-			while( *p ){
-				if( *p != _T('"') ){
-					if( p != q ){
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = _T('\0');
-			
-			bool bRelPath = _IS_REL_PATH( token );
-			int nValidStatus = ValidateKey( token );
-			if( 0 != nValidStatus ){
-				delete [] pWildCard;
-				return nValidStatus;
-			}
-			if( keyType == FILTER_SEARCH ){
-				if( bRelPath ){
-					push_back_unique( m_vecSearchFileKeys, token );
-				}else{
-//					push_back_unique( m_vecSearchAbsFileKeys, token );
-//					push_back_unique( m_vecSearchFileKeys, token );
-					delete [] pWildCard;
-					return 2; // 絶対パス指定は不可
-				}
-			}else if( keyType == FILTER_EXCEPT_FILE ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFileKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFileKeys, token );
-				}
-			}else if( keyType == FILTER_EXCEPT_FOLDER ){
-				if( bRelPath ){
-					push_back_unique( m_vecExceptFolderKeys, token );
-				}else{
-					push_back_unique( m_vecExceptAbsFolderKeys, token );
-				}
-			}
-		}
-		if( m_vecSearchFileKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFileKeys, WILDCARD_ANY );
-		}
-		if( m_vecSearchFolderKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFolderKeys, WILDCARD_ANY );
-		}
-		delete [] pWildCard;
-		return 0;
-	}
+	static void AddExcludeFiles(_Inout_ SFilePathLong& szFile, _In_z_ LPCTSTR pszExcludeFile, _In_opt_ TCHAR chDelimiter = _T(';'));
+	static void AddExcludeFolders(_Inout_ SFilePathLong& szFile, _In_z_ LPCTSTR pszExcludeFolder, _In_opt_ TCHAR chDelimiter = _T(';'));
+
+	void GetSearchFile(SFilePathLong& szFile);
+	void GetExcludeFile(SFilePathLong& szExcludeFile);
+	void GetExcludeFolder(SFilePathLong& szExcludeFolder);
+
+	/*!
+	 * 共有メモリに保存するファイルパターン文字列を組み立てる
+	 *
+	 * @param chDelimiter 区切り文字
+	 * @retval CShareDataのファイルパターン履歴に入れる文字列
+	 */
+	void GetFileKeys(SFilePathLong& szFile, _In_opt_ TCHAR chDelimiter = _T(';'));
 
 private:
+	void ClearItems() noexcept;
 
-	void ClearItems( void ){
-		ClearEnumKeys(m_vecExceptFileKeys);
-		ClearEnumKeys(m_vecSearchFileKeys);
-		ClearEnumKeys(m_vecExceptFolderKeys);
-		ClearEnumKeys(m_vecSearchFolderKeys);
-		return;
-	}
-	void ClearEnumKeys( VGrepEnumKeys& keys ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			delete [] keys[ i ];
-		}
-		keys.clear();
-	}
-
-	void push_back_unique( VGrepEnumKeys& keys, LPCTSTR addKey ){
-		if( ! IsExist( keys, addKey) ){
-			TCHAR* newKey = new TCHAR[ _tcslen( addKey ) + 1 ];
-			_tcscpy( newKey, addKey );
-			keys.push_back( newKey );
-		}
-	}
-
-	BOOL IsExist( VGrepEnumKeys& keys, LPCTSTR addKey ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
-			if( _tcscmp( keys[ i ], addKey ) == 0 ){
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/*
-		@retval 0 正常終了
-		@retval 1 *\file.exe などのフォルダ部分でのワイルドカードはエラー
-	*/
-	int ValidateKey( LPCTSTR key ){
-		// 
-		bool wildcard = false;
-		for( int i = 0; key[i]; i++ ){
-			if( !wildcard && (key[i] == _T('*') || key[i] == _T('?')) ){
-				wildcard = true;
-			}else if( wildcard && (key[i] == _T('\\') || key[i] == _T('/')) ){
-				return 1;
-			}
-		}
-		return 0;
-	}
 };
 
 

@@ -629,6 +629,7 @@
     <ClCompile Include="..\sakura_core\CEol.cpp" />
     <ClCompile Include="..\sakura_core\CFileExt.cpp" />
     <ClCompile Include="..\sakura_core\CGrepAgent.cpp" />
+    <ClCompile Include="..\sakura_core\CGrepEnumKeys.cpp" />
     <ClCompile Include="..\sakura_core\charset\CCesu8.cpp" />
     <ClCompile Include="..\sakura_core\charset\CCodeBase.cpp" />
     <ClCompile Include="..\sakura_core\charset\CCodeFactory.cpp" />
