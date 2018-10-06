@@ -205,13 +205,8 @@ INT_PTR CPropToolbar::DispatchEvent(
 			// 2014.11.25 フォントの高さが正しくなかったバグを修正
 			CTextWidthCalc calc(hwndResList);
 			int nFontHeight = calc.GetTextHeight();
-			nListItemHeight = nFontHeight + DpiScaleY(2);
-			if( nListItemHeight < nFontHeight ){
-				nListItemHeight = nFontHeight;
-				nToolBarListBoxTopMargin = 0;
-			}else{
-				nToolBarListBoxTopMargin = (nListItemHeight - (nFontHeight + 1)) / 2;
-			}
+			nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
+			nToolBarListBoxTopMargin = (nListItemHeight - (nFontHeight + 1)) / 2;
 		}
 		/* ダイアログデータの設定 Toolbar */
 		SetData( hwndDlg );
@@ -496,7 +491,7 @@ void CPropToolbar::SetData( HWND hwndDlg )
 	// 2014.11.25 フォントの高さが正しくなかったバグを修正
 	int nFontHeight = CTextWidthCalc(hwndResList).GetTextHeight();
 
-	nListItemHeight = nFontHeight + DpiScaleY(2);
+	nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
 
 	/* ツールバーボタンの情報をセット(リストボックス)*/
 	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
@@ -570,7 +565,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 
 	rc  = pDis->rcItem;
 	rc0 = pDis->rcItem;
-	rc0.left += 18;//20 //Oct. 18, 2000 JEPRO 行先頭のアイコンとそれに続くキャプションとの間を少し詰めた(20→18)
+	rc0.left += GetSystemMetrics(SM_CXSMICON) + DpiScaleX(2);
 	rc1 = rc0;
 	rc2 = rc0;
 
