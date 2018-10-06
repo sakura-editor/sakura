@@ -59,10 +59,10 @@ const SEolDefinition g_aEolTable[] = {
 struct SEolDefinitionForUniFile{
 	const char*	m_szDataW;
 	const char* m_szDataWB;
-	int			m_nLen;
+	SSIZE_T		m_nLen;
 
-	bool StartsWithW(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWithWB(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
+	bool StartsWithW(const char* pData, SSIZE_T nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWithWB(const char* pData, SSIZE_T nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
 };
 static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	{ "",					"", 					0 },
