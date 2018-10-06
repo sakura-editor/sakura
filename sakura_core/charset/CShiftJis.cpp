@@ -219,7 +219,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 
 	// ソース取得
 	const wchar_t* pSrc = reinterpret_cast<const wchar_t*>( pMem->GetRawPtr() );
-	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
+	SSIZE_T nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
 	// 変換先バッファサイズを設定してバッファを確保
 	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];
