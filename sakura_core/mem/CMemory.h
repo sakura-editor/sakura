@@ -65,7 +65,7 @@ public:
 
 	inline const void* GetRawPtr() const{ return m_pRawData; } //!< データへのポインタを返す
 	inline void* GetRawPtr(){ return m_pRawData; }             //!< データへのポインタを返す
-	int GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
+	SSIZE_T GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
 
 	// 演算子
 	//! コピー代入演算子

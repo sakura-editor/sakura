@@ -250,7 +250,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 
 	// ソースバッファポインタとソースの長さ
 	const char* psrc = pSrc;
-	int nsrclen = nSrcLen;
+	SSIZE_T nsrclen = nSrcLen;
 	CMemory cmem;
 
 	if( base64decode == true ){
@@ -474,7 +474,7 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	SSIZE_T			i;
 	WCHAR*			pd; 
 	unsigned char*	ps; 
 

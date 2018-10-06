@@ -249,7 +249,7 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	SSIZE_T			i;
 	unsigned char*	ps;
 	WCHAR*			pd;
 	bool			bbinary=false;

@@ -216,7 +216,7 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR*
 {
 	CNativeW		cBuff;
 	EConvertResult	res;
-	int				i;
+	SSIZE_T			i;
 	WCHAR*			pd;
 	unsigned char*	ps;
 	bool			bbinary=false;

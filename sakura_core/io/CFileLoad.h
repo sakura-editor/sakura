@@ -93,7 +93,7 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode(const char*	pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
+	const char* GetNextLineCharCode(const char*	pData, SSIZE_T nDataLen, SSIZE_T* pnLineLen, SSIZE_T* pnBgn, CEol* pcEol, SSIZE_T* pnEolLen, SSIZE_T* pnBufferNext);
 	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
 
 	int Read(void* pBuf, size_t nSize); // inline
@@ -113,7 +113,7 @@ protected:
 	EEncodingTrait	m_encodingTrait;
 	CMemory			m_memEols[3];
 	bool	m_bEolEx;		//!< CR/LF以外のEOLが有効か
-	int		m_nMaxEolLen;	//!< EOLの長さ
+	SSIZE_T m_nMaxEolLen;	//!< EOLの長さ
 	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca
@@ -129,8 +129,8 @@ protected:
 	// 読み込みバッファ系
 	char*	m_pReadBuf;			// 読み込みバッファへのポインタ
 	int		m_nReadBufSize;		// 読み込みバッファの実際に確保しているサイズ
-	int		m_nReadDataLen;		// 読み込みバッファの有効データサイズ
-	int		m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
+	SSIZE_T	m_nReadDataLen;		// 読み込みバッファの有効データサイズ
+	SSIZE_T	m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
 //	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;

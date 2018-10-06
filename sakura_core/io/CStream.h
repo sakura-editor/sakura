@@ -90,7 +90,7 @@ public:
 	}
 
 	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
-	int Write(const void* pBuffer, int nSizeInBytes)
+	int Write(const void* pBuffer, SSIZE_T nSizeInBytes)
 	{
 		int nRet = fwrite(pBuffer,1,nSizeInBytes,GetFp());
 		if(nRet!=nSizeInBytes && IsExceptionMode())throw CError_FileWrite();

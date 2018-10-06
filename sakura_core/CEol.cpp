@@ -85,7 +85,7 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
 template <class T>
-EEolType GetEOLType( const T* pszData, int nDataLen )
+EEolType GetEOLType( const T* pszData, SSIZE_T nDataLen )
 {
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
@@ -98,7 +98,7 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 	ファイルを読み込むときに使用するもの
 */
 
-EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
+EEolType _GetEOLType_uni( const char* pszData, SSIZE_T nDataLen )
 {
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
@@ -107,7 +107,7 @@ EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 	return EOL_NONE;
 }
 
-EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
+EEolType _GetEOLType_unibe( const char* pszData, SSIZE_T nDataLen )
 {
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
@@ -150,22 +150,22 @@ bool CEol::SetType( EEolType t )
 	return true;
 }
 
-void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
+void CEol::SetTypeByString( const wchar_t* pszData, SSIZE_T nDataLen )
 {
 	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByString( const char* pszData, int nDataLen )
+void CEol::SetTypeByString( const char* pszData, SSIZE_T nDataLen )
 {
 	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_uni( const char* pszData, SSIZE_T nDataLen )
 {
 	SetType( _GetEOLType_uni( pszData, nDataLen ) );
 }
 
-void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_unibe( const char* pszData, SSIZE_T nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
 }

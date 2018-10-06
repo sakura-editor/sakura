@@ -223,7 +223,7 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	SSIZE_T			i;
 	unsigned char*	ps;
 	WCHAR*			pd;
 	bool			bbinary=false;

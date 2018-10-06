@@ -219,7 +219,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_nFileDataLen = m_nFileSize;
 	bool bBom = false;
 	if( 0 < m_nReadDataLen ){
-		CMemory headData(m_pReadBuf, t_min(m_nReadDataLen, 10));
+		CMemory headData(m_pReadBuf, t_min(m_nReadDataLen, (SSIZE_T)10));
 		CNativeW headUni;
 		CIoBridge::FileToImpl(headData, &headUni, m_pCodeBase, m_nFlag);
 		if( 1 <= headUni.GetStringLength() && headUni.GetStringPtr()[0] == 0xfeff ){
@@ -246,8 +246,8 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[1], EOL_LS );
 	m_pCodeBase->GetEol( &m_memEols[2], EOL_PS );
 	bool bEolEx = false;
-	int  nMaxEolLen = 0;
-	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
+	SSIZE_T  nMaxEolLen = 0;
+	for(SSIZE_T k = 0; k < (SSIZE_T)_countof(m_memEols); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
 			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
@@ -355,9 +355,9 @@ EConvertResult CFileLoad::ReadLine_core(
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
-	int			nBufLineLen;
-	int			nEolLen;
-	int			nBufferNext;
+	SSIZE_T		nBufLineLen;
+	SSIZE_T		nEolLen;
+	SSIZE_T		nBufferNext;
 	for (;;) {
 		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
@@ -372,8 +372,8 @@ EConvertResult CFileLoad::ReadLine_core(
 
 		// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 		if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
-			int n = 128;
-			int nMinAllocSize = m_cLineBuffer.GetRawLength() + nEolLen - nBufferNext + 100;
+			SSIZE_T n = 128;
+			SSIZE_T nMinAllocSize = m_cLineBuffer.GetRawLength() + nEolLen - nBufferNext + 100;
 			while( n < nMinAllocSize ){
 				n *= 2;
 			}
@@ -494,15 +494,15 @@ int CFileLoad::GetPercent( void ){
 */
 const char* CFileLoad::GetNextLineCharCode(
 	const char*	pData,		//!< [in]	検索文字列
-	int			nDataLen,	//!< [in]	検索文字列のバイト数
-	int*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
-	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
+	SSIZE_T		nDataLen,	//!< [in]	検索文字列のバイト数
+	SSIZE_T*	pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
+	SSIZE_T*	pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
 	CEol*		pcEol,		//!< [i/o]	EOL
-	int*		pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
-	int*		pnBufferNext	//!< [out]	次回持越しバッファ長(EOLの断片)
+	SSIZE_T*	pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
+	SSIZE_T*	pnBufferNext	//!< [out]	次回持越しバッファ長(EOLの断片)
 ){
-	int nbgn = *pnBgn;
-	int i;
+	SSIZE_T nbgn = *pnBgn;
+	SSIZE_T i;
 
 	pcEol->SetType( EOL_NONE );
 	*pnBufferNext = 0;
@@ -514,8 +514,8 @@ const char* CFileLoad::GetNextLineCharCode(
 	}
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-	int nLen = nDataLen;
-	int neollen = 0;
+	SSIZE_T nLen = nDataLen;
+	SSIZE_T neollen = 0;
 	switch( m_encodingTrait ){
 	case ENCODING_TRAIT_ERROR://
 	case ENCODING_TRAIT_ASCII:
@@ -549,11 +549,11 @@ const char* CFileLoad::GetNextLineCharCode(
 			}
 			// UTF-8のNEL,PS,LS断片の検出
 			if( i == nDataLen && m_bEolEx ){
-				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
-					int k;
+				for( i = t_max((SSIZE_T)0, nDataLen - m_nMaxEolLen - (SSIZE_T)1); i < nDataLen; i++ ){
+					SSIZE_T k;
 					bool bSet = false;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
-						int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
+					for( k = 0; k < _countof(eEolEx); k++ ){
+						SSIZE_T nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
 						if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
 							*pnBufferNext = t_max(*pnBufferNext, nCompLen);
 							bSet = true;
@@ -650,7 +650,7 @@ const char* CFileLoad::GetNextLineCharCode(
 							(i + 1 < nDataLen ? pData[i+1] : 0))),
 					0
 				};
-				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i,2) );
+				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i, (SSIZE_T)2) );
 				neollen = (Int)pcEol->GetLen();
 				break;
 			}

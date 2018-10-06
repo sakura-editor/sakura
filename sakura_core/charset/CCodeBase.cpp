@@ -50,8 +50,8 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 	}
 
 	CMemory cmembuf;
-	int i = 0;
-	int j = 0;
+	SSIZE_T i = 0;
+	SSIZE_T j = 0;
 	while( i < nSrcLen ){
 		if( pSrc[i] != '=' ){
 			pdst[j] = pSrc[i];
