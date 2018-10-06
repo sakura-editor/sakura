@@ -97,7 +97,7 @@ public:
 	}
 
 	//! 調査結果の情報を格納
-	void SetInformation( const char*, const int );
+	void SetInformation( const char *pS, const int nLen );
 
 protected:
 
@@ -107,11 +107,11 @@ protected:
 	//	**** 全般
 	// マルチバイト系とUNICODE系とでそれぞれ情報の格納先が違う。
 	// 以下の関数で吸収する
-	int GetIndexById( const ECodeType ) const; //!< 文字コードID から情報格納先インデックスを生成
+	int GetIndexById( const ECodeType eCodeType ) const; //!< 文字コードID から情報格納先インデックスを生成
 
 	// データセッタ/ゲッター
-	void SetEvaluation( const ECodeType, const int, const int );
-	void GetEvaluation( const ECodeType, int *, int * ) const;
+	void SetEvaluation( const ECodeType eCodeId, const int v1, const int v2 );
+	void GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const;
 
 	//! 調査対象となったデータの長さ（8bit 単位）
 	int m_nTargetDataLen;
@@ -135,17 +135,17 @@ protected:
 	/*
 		文字列の文字コード情報を収集する
 	*/
-	void ScanCode( const char *, const int );
+	void ScanCode( const char* pS, const int nLen );
 
-	void GetEncodingInfo_sjis( const char *, const int );
-	void GetEncodingInfo_jis( const char *, const int );
-	void GetEncodingInfo_eucjp( const char *, const int );
-	void GetEncodingInfo_utf8( const char *, const int );
-	void GetEncodingInfo_utf7( const char *, const int );
-	void GetEncodingInfo_cesu8( const char *, const int );
-	void GetEncodingInfo_uni( const char *, const int );
-	void GetEncodingInfo_latin1( const char *, const int );
-	void GetEncodingInfo_meta( const char *, const int );
+	void GetEncodingInfo_sjis( const char* pS, const int nLen );
+	void GetEncodingInfo_jis( const char* pS, const int nLen );
+	void GetEncodingInfo_eucjp( const char* pS, const int nLen );
+	void GetEncodingInfo_utf8( const char* pS, const int nLen );
+	void GetEncodingInfo_utf7( const char* pS, const int nLen );
+	void GetEncodingInfo_cesu8( const char* pS, const int nLen );
+	void GetEncodingInfo_uni( const char* pS, const int nLen );
+	void GetEncodingInfo_latin1( const char* pS, const int nLen );
+	void GetEncodingInfo_meta( const char* pS, const int nLen );
 
 
 	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );
@@ -209,9 +209,9 @@ public:
 protected:
 	//! BOMの種類を推測して m_eWcBomType を設定
 	void GuessUtf16Bom( void );
-	ECodeType AutoDetectByXML( const char*, int );
-	ECodeType AutoDetectByHTML( const char*, int );
-	ECodeType AutoDetectByCoding( const char*, int );
+	ECodeType AutoDetectByXML( const char* pBuf, int nSize );
+	ECodeType AutoDetectByHTML( const char* pBuf, int nSize );
+	ECodeType AutoDetectByCoding( const char* pBuf, int nSize );
 
 
 public:
@@ -219,7 +219,7 @@ public:
 
 #ifdef _DEBUG
 public:
-	static void GetDebugInfo( const char*, const int, CNativeT* );
+	static void GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut );
 #endif
 };
 
