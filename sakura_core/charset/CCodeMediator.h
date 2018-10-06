@@ -30,8 +30,8 @@ class CEditDoc;
 class CCodeMediator{
 protected:
 	// CESI.cpp の判定関数をここに移す
-	static ECodeType DetectMBCode( CESI* );
-	static ECodeType DetectUnicode( CESI* );
+	static ECodeType DetectMBCode( CESI* pcesi );
+	static ECodeType DetectUnicode( CESI* pcesi );
 
 public:
 
@@ -40,11 +40,11 @@ public:
 	static ECodeType DetectUnicodeBom( const char* pS, const int nLen );
 
 	/* 日本語コードセット判別 */
-	ECodeType CheckKanjiCode( const char*, int );
+	ECodeType CheckKanjiCode( const char* pBuf, int nBufLen );
 	/* ファイルの日本語コードセット判別 */
-	ECodeType CheckKanjiCodeOfFile( const TCHAR* );
+	ECodeType CheckKanjiCodeOfFile( const TCHAR* pszFile );
 
-	static ECodeType CheckKanjiCode( CESI* );  // CESI 構造体（？）を外部で構築した場合に使用
+	static ECodeType CheckKanjiCode( CESI* pcesi );  // CESI 構造体（？）を外部で構築した場合に使用
 
 private:
 	const SEncodingConfig* m_pEncodingConfig;
