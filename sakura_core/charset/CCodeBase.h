@@ -64,11 +64,11 @@ public:
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
-	static int BinToText( const unsigned char*, const int, unsigned short* );
-	static int TextToBin( const unsigned short );
+	static int BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);
+	static int TextToBin(const unsigned short cSrc);
 
 	// MIME Header デコーダ
-	static bool MIMEHeaderDecode( const char*, const int, CMemory*, const ECodeType );
+	static bool MIMEHeaderDecode(const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype);
 
 	// CShiftJisより移動 2010/6/13 Uchi
 	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
