@@ -384,11 +384,12 @@ BOOL CEditView::Create(
 	}
 
 	/* キーボードの現在のリピート間隔を取得 */
-	int nKeyBoardSpeed;
-	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
-
+	DWORD dwKeyBoardSpeed;
+	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0 );
+	/* リピート速度の設定をミリ秒に変換 */
+	UINT uElapse = 400 - dwKeyBoardSpeed * (400 - 33) / 31;
 	/* タイマー起動 */
-	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, nKeyBoardSpeed, EditViewTimerProc ) ){
+	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, uElapse, EditViewTimerProc ) ){
 		WarningMessage( GetHwnd(), LS(STR_VIEW_TIMER) );
 	}
 
