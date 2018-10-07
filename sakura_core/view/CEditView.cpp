@@ -385,12 +385,15 @@ BOOL CEditView::Create(
 
 	/* キーボードの現在のリピート間隔を取得 */
 	DWORD dwKeyBoardSpeed;
-	constexpr DWORD keyboardRepeatSpeedMax = 31;
+	constexpr DWORD keyboardRepeatSpeedMax = 31; // 0～31の範囲の最大値
 	if( SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0 ) ){
+		// 念の為に assert で確認
 		assert(dwKeyBoardSpeed <= keyboardRepeatSpeedMax);
 	}
 	else{
-		dwKeyBoardSpeed = keyboardRepeatSpeedMax;
+		// SystemParametersInfo の呼び出しが失敗した場合は最大値をデフォルト値として設定
+		constexpr DWORD keyboardRepeatSpeedDefault = keyboardRepeatSpeedMax;
+		dwKeyBoardSpeed = keyboardRepeatSpeedDefault;
 	}
 	/* リピート速度の設定をミリ秒に変換 */
 	UINT uElapse = 400 - dwKeyBoardSpeed * (400 - 33) / keyboardRepeatSpeedMax;
