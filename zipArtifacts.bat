@@ -178,12 +178,16 @@ if exist "%WORKDIR_ASM%" (
 mkdir %WORKDIR%
 mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%
+mkdir %WORKDIR_EXE%\license\
 mkdir %WORKDIR_EXE%\license\bregonig\
 mkdir %WORKDIR_EXE%\license\ctags\
 mkdir %WORKDIR_INST%
 copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
+
+: LICENSE
+copy /Y .\LICENSE                                   %WORKDIR_EXE%\license\ > NUL
 
 : bregonig
 set INSTALLER_RESOURCES_BRON=%~dp0installer\temp\bron
