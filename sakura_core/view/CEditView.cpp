@@ -385,7 +385,12 @@ BOOL CEditView::Create(
 
 	/* キーボードの現在のリピート間隔を取得 */
 	DWORD dwKeyBoardSpeed;
-	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0 );
+	if( SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0 ) ){
+		assert(dwKeyBoardSpeed <= 31);
+	}
+	else{
+		dwKeyBoardSpeed = 31;
+	}
 	/* リピート速度の設定をミリ秒に変換 */
 	UINT uElapse = 400 - dwKeyBoardSpeed * (400 - 33) / 31;
 	/* タイマー起動 */
