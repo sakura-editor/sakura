@@ -42,6 +42,7 @@ mkdir %INSTALLER_WORK%\license\bregonig
 mkdir %INSTALLER_WORK%\keyword
 mkdir %INSTALLER_WORK%\license\ctags\
 
+copy /Y .\LICENSE                                           %INSTALLER_WORK%\license\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x    %INSTALLER_WORK%\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.v    %INSTALLER_WORK%\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini           %INSTALLER_WORK%\ > NUL
