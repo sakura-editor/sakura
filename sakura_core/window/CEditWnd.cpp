@@ -1092,10 +1092,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		RECT		rc;
 		m_cSplitterWnd.DoSplit( -1, -1 );
 		::GetClientRect( GetHwnd(), &rc );
-		// タブバーを表示中にツールバーの表示ONを行うとちらつくので対策
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){
-			::SendMessage( GetHwnd(), WM_SIZE, 0, 0 );
-		}
+		::SendMessage( GetHwnd(), WM_SIZE, 0, 0 ); // ツールバーの表示ON/OFFを行うとちらつきが発生する事への対策
 		::SendMessage( GetHwnd(), WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		::RedrawWindow( GetHwnd(), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
