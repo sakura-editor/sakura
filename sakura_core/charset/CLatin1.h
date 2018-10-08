@@ -48,9 +48,9 @@ public:
 
 protected:
 	// 実装
-	static int Latin1ToUni( const char*, const int, wchar_t *, bool* pbError );
-	inline static int _UniToLatin1_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
-	static int UniToLatin1( const wchar_t*, const int, char*, bool *pbError );
+	static int Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError );
+	inline static int _UniToLatin1_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
+	static int UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
 };
 
 /*!

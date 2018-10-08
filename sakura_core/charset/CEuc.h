@@ -44,11 +44,11 @@ public:
 public:
 	// 実装
 	// 2008.11.10 変換ロジックを書き直す
-	inline static int _EucjpToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError, bool* pbHex );
+	inline static int _EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex );
 protected:
-	static int EucjpToUni( const char*, const int, wchar_t*, bool* pbError );
-	inline static int _UniToEucjp_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
-	static int UniToEucjp( const wchar_t*, const int, char*, bool* pbError );
+	static int EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
+	inline static int _UniToEucjp_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
+	static int UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError );
 };
 
 

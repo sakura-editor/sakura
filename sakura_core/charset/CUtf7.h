@@ -43,9 +43,9 @@ public:
 protected:
 
 	// 2008.11.10 変換ロジックを書き直す
-	static int _Utf7SetDToUni_block( const char*, const int, wchar_t* );
-	static int _Utf7SetBToUni_block( const char*, const int, wchar_t*, bool* );
-	static int Utf7ToUni( const char*, const int, wchar_t*, bool* pbError );
+	static int _Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst );
+	static int _Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
+	static int Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
 
 	static int _UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );

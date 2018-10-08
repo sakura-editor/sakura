@@ -59,10 +59,10 @@ protected:
 
 	//変換の実装
 	// 2008.11.10 変換ロジックを書き直す
-	inline static int _Utf8ToUni_char( const unsigned char*, const int, unsigned short*, bool bCESU8Mode );
-	static int Utf8ToUni( const char*, const int, wchar_t*, bool bCESU8Mode );
-	inline static int _UniToUtf8_char( const unsigned short*, const int, unsigned char*, const bool bCSU8Mode );
-	static int UniToUtf8( const wchar_t*, const int, char*, bool* pbError, bool bCSU8Mode );
+	inline static int _Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bCESUMode );
+	static int Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode );
+	inline static int _UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst, bool bCESU8Mode );
+	static int UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
 };
 
 
