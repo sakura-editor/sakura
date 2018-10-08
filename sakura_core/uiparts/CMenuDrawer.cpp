@@ -862,11 +862,9 @@ void CMenuDrawer::MyAppendMenu(
 #endif
 	}
 
-	MENUITEMINFO mii;
-	memset_raw( &mii, 0, sizeof( mii ) );
-	//	Aug. 31, 2001 genta
-	mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
-
+	// メニュー項目に関する情報を設定します。
+	MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
 	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
@@ -1165,12 +1163,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #ifdef _DEBUG
 	// デバッグ用：メニュー項目に対して、ヘルプがない場合に背景色を青くする
 	TCHAR	szText[1024];
-	MENUITEMINFO mii;
 	// メニュー項目に関する情報を取得します。
-	memset_raw( &mii, 0, sizeof( mii ) );
-
-	mii.cbSize = SIZEOF_MENUITEMINFO; // Win95対策済みのsizeof(MENUITEMINFO)値
-
+	MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = MFT_STRING;
 	_tcscpy( szText, _T("--unknown--") );
@@ -1610,11 +1605,8 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
 		TCHAR	szText[1024];
 		// メニュー項目に関する情報を取得します。
-		MENUITEMINFO		mii;
-		memset_raw( &mii, 0, sizeof( mii ) );
-
-		mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
-
+		MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
 		_tcscpy( szText, _T("--unknown--") );

@@ -207,20 +207,6 @@ namespace ApiWrap
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           定数                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	//	Jan. 29, 2002 genta
-	//	Win95/NTが納得するsizeof( MENUITEMINFO )
-	//	これ以外の値を与えると古いOSでちゃんと動いてくれない．
-	#if defined(_WIN64) || defined(_UNICODE)
-		static const int SIZEOF_MENUITEMINFO = sizeof(MENUITEMINFO);
-	#else
-		static const int SIZEOF_MENUITEMINFO = 44;
-	#endif
-
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             SendMessage,PostMessage意味付け                 //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 過去のUNICODE化の名残です。
