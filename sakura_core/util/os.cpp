@@ -59,23 +59,18 @@ void PreventVisualStyle( HWND hWnd )
 */
 void MyInitCommonControls()
 {
-	BOOL (WINAPI *pfnInitCommonControlsEx)(LPINITCOMMONCONTROLSEX);
+	// 利用するコモンコントロールの種類をビットフラグで指定する
+	INITCOMMONCONTROLSEX icex;
+	icex.dwSize = sizeof(icex);
+	icex.dwICC = ICC_WIN95_CLASSES
+		| ICC_COOL_CLASSES
+		;
 
-	BOOL bInit = FALSE;
-	HINSTANCE hDll = ::GetModuleHandle(_T("COMCTL32"));
-	if( NULL != hDll ){
-		*(FARPROC*)&pfnInitCommonControlsEx = ::GetProcAddress( hDll, "InitCommonControlsEx" );
-		if( NULL != pfnInitCommonControlsEx ){
-			INITCOMMONCONTROLSEX icex;
-			icex.dwSize = sizeof(icex);
-			icex.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
-			bInit = pfnInitCommonControlsEx( &icex );
-		}
-	}
+	// コモンコントロールライブラリを初期化する
+	auto bSuccess = ::InitCommonControlsEx(&icex);
 
-	if( !bInit ){
-		::InitCommonControls();
-	}
+	// 初期化に失敗した場合のことは考えない（既存踏襲）
+	(void)bSuccess;
 }
 
 
