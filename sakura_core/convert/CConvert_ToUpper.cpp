@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CConvert_ToUpper.h"
 
 // 大文字へ変換

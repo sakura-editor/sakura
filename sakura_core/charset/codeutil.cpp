@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include <mbstring.h>
 #include "charset/codeutil.h"
 #include "charset/charcode.h"

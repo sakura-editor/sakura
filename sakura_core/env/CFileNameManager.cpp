@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	2008.05.18 kobake CShareData から分離
 */
 /*

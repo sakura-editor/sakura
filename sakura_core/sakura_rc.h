@@ -1,4 +1,5 @@
-﻿//{{NO_DEPENDENCIES}}
+﻿/*! @file */
+//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by sakura_rc.rc
 //

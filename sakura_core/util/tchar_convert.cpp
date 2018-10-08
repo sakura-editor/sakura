@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "util/tchar_convert.h"
 #include "mem/CRecycledBuffer.h"
 

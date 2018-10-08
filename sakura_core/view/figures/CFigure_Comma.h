@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2015, syat
 
 	This software is provided 'as-is', without any express or implied

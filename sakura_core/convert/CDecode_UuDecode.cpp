@@ -1,4 +1,5 @@
-﻿// この行は文字化け対策のものです。
+﻿/*! @file */
+// この行は文字化け対策のものです。
 #include "StdAfx.h"
 #include "CDecode_UuDecode.h"
 #include "charset/charcode.h"

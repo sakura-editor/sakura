@@ -1,4 +1,5 @@
-﻿// 2007.10.19 kobake
+﻿/*! @file */
+// 2007.10.19 kobake
 // なんかシェルっぽい機能の関数群
 /*
 	Copyright (C) 2008, kobake

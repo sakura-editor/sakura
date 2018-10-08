@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CTextStream.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi

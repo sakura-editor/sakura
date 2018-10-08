@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	ObserverパターンのCEditDoc特化版。
 	CDocSubjectは観察され、CDocListnerは観察を行う。
 	観察の開始は CDocListener::Listen で行う。

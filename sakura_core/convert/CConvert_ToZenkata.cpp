@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CConvert_ToZenkata.h"
 #include "convert_util.h"
 

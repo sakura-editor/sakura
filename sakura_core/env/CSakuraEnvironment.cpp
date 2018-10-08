@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2008, kobake, ryoji
 	Copyright (C) 2012, Uchi
 

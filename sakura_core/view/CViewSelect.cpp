@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include <limits.h>
 #include "CViewSelect.h"
 #include "CEditView.h"

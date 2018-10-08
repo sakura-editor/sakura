@@ -1,4 +1,5 @@
-﻿// 2008.11.10  変換ロジックを書き直す
+﻿/*! @file */
+// 2008.11.10  変換ロジックを書き直す
 
 #include "StdAfx.h"
 #include <mbstring.h>

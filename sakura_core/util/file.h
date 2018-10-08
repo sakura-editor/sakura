@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2002, SUI
 	Copyright (C) 2008, kobake
 

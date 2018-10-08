@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2008, kobake
 
 	This software is provided 'as-is', without any express or implied

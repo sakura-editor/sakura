@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "DispPos.h"
 #include "doc/layout/CLayout.h"
 

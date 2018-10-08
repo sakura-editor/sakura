@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CCodeChecker.h"
 #include "charset/CCodePage.h"
 #include "io/CIoBridge.h"

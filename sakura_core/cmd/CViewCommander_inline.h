@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2013, novice
 
 	This software is provided 'as-is', without any express or implied

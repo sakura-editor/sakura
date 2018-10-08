@@ -1,4 +1,5 @@
-﻿//2007.09.30 kobake CDocLineMgr から分離
+﻿/*! @file */
+//2007.09.30 kobake CDocLineMgr から分離
 /*
 	Copyright (C) 2008, kobake
 

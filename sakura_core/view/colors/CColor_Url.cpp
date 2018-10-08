@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Url.h"
 #include "parse/CWordParse.h"

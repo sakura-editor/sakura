@@ -1,4 +1,5 @@
-﻿//2008.XX.XX kobake CShareDataから分離
+﻿/*! @file */
+//2008.XX.XX kobake CShareDataから分離
 /*
 	Copyright (C) 2008, kobake
 

@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CTextArea.h"
 #include "CViewFont.h"
 #include "CRuler.h"

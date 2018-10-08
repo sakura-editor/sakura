@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "os.h"
 #include "util/module.h"
 #include "extmodule/CUxTheme.h"
