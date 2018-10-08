@@ -594,7 +594,7 @@ enum EEncodingMethod {
 	@return  CMemory と置き換えられる入力文字列長 (nSkipLen)
 */
 template< class CHAR_TYPE >
-int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
+int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const SSIZE_T nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
 {
 	ECodeType ecode = CODE_NONE;
 	EEncodingMethod emethod = EM_NONE;

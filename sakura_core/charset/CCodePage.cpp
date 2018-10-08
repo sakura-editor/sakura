@@ -240,7 +240,7 @@ void CCodePage::GetBom(CMemory* pcmemBom)
 }
 
 // 文字コード表示用	UNICODE → Hex 変換
-EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const SSIZE_T iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	// コードの特性がわからないので何もしない
 	return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);

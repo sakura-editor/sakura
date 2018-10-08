@@ -13,7 +13,7 @@
 void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得
 
 // 表示用16表示	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const SSIZE_T iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
 		// サロゲートペア
@@ -36,7 +36,7 @@ EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 
 	@param[out] pcMem デコード済みの文字列を格納
 */
-bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
+bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const SSIZE_T nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
 {
 	ECodeType ecodetype;
 	int nskip_bytes;
