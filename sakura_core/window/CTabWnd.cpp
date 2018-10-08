@@ -830,11 +830,6 @@ CTabWnd::CTabWnd()
 	m_hwndToolTip = NULL;
 	m_hIml = NULL;
 
-	// 2006.02.17 ryoji ImageList_Duplicate() のアドレスを取得する
-	// （IE4.0 未満の環境でも動作可能なように動的ロード）
-    HINSTANCE hinst = ::GetModuleHandle(TEXT("comctl32"));
-    *(FARPROC*)&m_RealImageList_Duplicate = ::GetProcAddress(hinst, "ImageList_Duplicate");
-
 	return;
 }
 
@@ -2547,14 +2542,10 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 	if( NULL == himl ) return NULL;
 
 	// 本物の ImageList_Duplicate() があればそれを呼び出す
-	HIMAGELIST hImlNew;
-	if( m_RealImageList_Duplicate )
-	{
-		hImlNew = m_RealImageList_Duplicate( himl );
-		if( NULL != hImlNew )
-			return hImlNew;
-		m_RealImageList_Duplicate = NULL;	// 2006.06.20 ryoji 失敗時は代替処理に切り替え
-	}
+	HIMAGELIST hImlNew = ::ImageList_Duplicate(himl);
+	if (hImlNew) return hImlNew;
+
+	//いったんは古いコードを残しておく。
 
 	// 本物の ImageList_Duplicate() の代替処理
 	// 新しいイメージリストを作成してアイコン単位でコピーする
