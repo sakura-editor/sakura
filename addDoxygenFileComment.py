@@ -55,7 +55,7 @@ def addFileComment(file):
 				lineNo = lineNo + 1
 				text = clipEndOfLine(line)
 				if lineNo == 1:
-					match = re.search(r'この行は文字化け対策用です', line)
+					match = re.search(r'この行は文字化け対策用です', text)
 					if match:
 						fout.write(text + endOfLine)
 						fout.write(fileComment + endOfLine)
