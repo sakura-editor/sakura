@@ -82,19 +82,19 @@ public:
 	
 protected:
 	// 実装
-	static EConvertResult CPToUni( const char*, const int, wchar_t*, int, int&, UINT );
-	static EConvertResult UniToCP( const wchar_t*, const int, char*, int, int&, UINT );
+	static EConvertResult CPToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, int nDstCchLen, int& nRetLen, UINT codepage );
+	static EConvertResult UniToCP( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstByteLen, int& nRetLen, UINT codepage );
 	
 	int m_nCodePageEx;
 	
 	static BOOL CALLBACK CallBackEnumCodePages( LPCTSTR );
 
-	static int MultiByteToWideChar2(UINT, int, const char*, int, wchar_t*, int);
-	static int WideCharToMultiByte2(UINT, int, const wchar_t*, int, char*, int);
-	static int S_UTF32LEToUnicode( const char*, int, wchar_t*, int );
-	static int S_UTF32BEToUnicode( const char*, int, wchar_t*, int );
-	static int S_UnicodeToUTF32LE( const wchar_t*, int, char*, int );
-	static int S_UnicodeToUTF32BE( const wchar_t*, int, char*, int );
+	static int MultiByteToWideChar2(UINT codepage, int flags, const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
+	static int WideCharToMultiByte2(UINT codepage, int flags, const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
+	static int S_UTF32LEToUnicode(const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
+	static int S_UTF32BEToUnicode(const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
+	static int S_UnicodeToUTF32LE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
+	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 };
 
 #endif // SAKURA_CCODEPAGE_H_
