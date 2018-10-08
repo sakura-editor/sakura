@@ -49,22 +49,13 @@ def addFileComment(file):
 
 	tmp_file = file + ".tmp"
 	with codecs.open(tmp_file, "w", "utf_8_sig") as fout:
-		lineNo = 0
 		with codecs.open(file, "r", "utf_8_sig") as fin:
+			# ファイル先頭に @file コメントをつける
+			fout.write(fileComment + endOfLine)
+
 			for line in fin:
-				lineNo = lineNo + 1
 				text = clipEndOfLine(line)
-				if lineNo == 1:
-					match = re.search(r'この行は文字化け対策用です', text)
-					if match:
-						fout.write(text + endOfLine)
-						fout.write(fileComment + endOfLine)
-					else:
-						fout.write(fileComment + endOfLine)
-						fout.write(text + endOfLine)
-				else:
-					fout.write(text + endOfLine)
-						
+				fout.write(text + endOfLine)
 	os.remove(file)
 	os.rename(tmp_file, file)
 
@@ -72,8 +63,8 @@ def addFileComment(file):
 # (@file コメントをつける)
 def processFiles(files):
 	for file in files:
-		print ("checking " + file)
 		if hasFileComment(file) == False:
+			print ("processing " + file)
 			addFileComment(file)
 
 if __name__ == '__main__':
