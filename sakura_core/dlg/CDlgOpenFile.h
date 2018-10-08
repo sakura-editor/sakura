@@ -29,7 +29,6 @@
 
 struct SLoadInfo;	// doc/CDocListener.h
 struct SSaveInfo;	// doc/CDocListener.h
-struct OPENFILENAMEZ;
 class CDlgOpenFileMem;
 
 /*! フィルタ設定 */
@@ -76,16 +75,16 @@ protected:
 	void	DlgOpenFail(void);
 
 	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
-	void InitOfn( OPENFILENAMEZ* );
+	void InitOfn( OPENFILENAME* );
 
 	// 2005.11.02 ryoji 初期レイアウト設定処理
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
 
 	// 2006.09.03 Moca ファイルダイアログのエラー回避
 	//! リトライ機能付き GetOpenFileName
-	bool _GetOpenFileNameRecover( OPENFILENAMEZ* ofn );
+	bool _GetOpenFileNameRecover( OPENFILENAME* ofn );
 	//! リトライ機能付き GetOpenFileName
-	bool GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
+	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 
