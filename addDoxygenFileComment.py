@@ -1,0 +1,78 @@
+﻿# -*- coding: utf-8 -*-
+import os
+import sys
+import re
+import codecs
+
+# チェック対象の拡張子リスト
+extensions = (
+	".cpp",
+	".h",
+)
+
+# チェック対象の拡張子か判断する
+def checkExtension(file):
+	base, ext = os.path.splitext(file)
+	if ext in extensions:
+		return True
+	else:
+		return False
+
+def checkAll(topDir):
+	for rootdir, dirs, files in os.walk(topDir):
+		for file in files:
+			if checkExtension(file):
+				full = os.path.join(rootdir, file)
+				yield full
+
+def clipEndOfLine(line):
+	text = line.replace('\n','')
+	text = text.replace('\r','')
+	return text
+
+def hasFileComment(file):
+	with codecs.open(file, "r", "utf_8_sig") as fin:
+		for line in fin:
+			match = re.search(r'(\\|@)file\b', line)
+			if match:
+				return True
+				
+	return False
+
+def addFileComment(file):
+	fileComment = "/*! @file */"
+	endOfLine   = "\r\n"
+
+	tmp_file = file + ".tmp"
+	with codecs.open(tmp_file, "w", "utf_8_sig") as fout:
+		lineNo = 0
+		with codecs.open(file, "r", "utf_8_sig") as fin:
+			for line in fin:
+				lineNo = lineNo + 1
+				text = clipEndOfLine(line)
+				if lineNo == 1:
+					match = re.search(r'この行は文字化け対策用です', line)
+					if match:
+						fout.write(text + endOfLine)
+						fout.write(fileComment + endOfLine)
+					else:
+						fout.write(fileComment + endOfLine)
+						fout.write(text + endOfLine)
+				else:
+					fout.write(text + endOfLine)
+						
+	os.remove(file)
+	os.rename(tmp_file, file)
+
+def processFiles(files):
+	for file in files:
+		print ("checking " + file)
+		if hasFileComment(file) == False:
+			addFileComment(file)
+
+if __name__ == '__main__':
+	if len(sys.argv) < 2:
+		print ("usage: " + os.path.basename(sys.argv[0]) + " <top dir>")
+		sys.exit(1)
+
+	processFiles(checkAll(sys.argv[1]))
