@@ -210,14 +210,6 @@ namespace ApiWrap
 	//                           定数                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//	Jun. 29, 2002 こおり
-	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
-	#if defined(_WIN64) || defined(_UNICODE)
-		static const size_t sizeof_old_PROPSHEETHEADER = sizeof(PROPSHEETHEADER);
-	#else
-		static const size_t sizeof_old_PROPSHEETHEADER = 40;
-	#endif
-
 	//	Jan. 29, 2002 genta
 	//	Win95/NTが納得するsizeof( MENUITEMINFO )
 	//	これ以外の値を与えると古いOSでちゃんと動いてくれない．
