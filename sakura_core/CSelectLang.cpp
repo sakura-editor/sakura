@@ -98,9 +98,21 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		// デフォルト情報を作成する
 		psLangInfo = new SSelLangInfo();
 		psLangInfo->hInstance = GetModuleHandle(NULL);
-
+		
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
-		::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
+		auto nCount = ::LoadString( GetModuleHandle(NULL), STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
+		assert(0 < nCount);
+
+		// 言語IDを取得
+		TCHAR szBuf[7];		// "0x" + 4桁 + 番兵
+		nCount = ::LoadString( GetModuleHandle(NULL), STR_SELLANG_LANGID, szBuf, _countof(szBuf));
+		assert(nCount == _countof(szBuf) - 1);
+		szBuf[_countof(szBuf) - 1] = _T('\0');
+
+		psLangInfo->wLangId = (WORD)_tcstoul(szBuf, NULL, 16);		// 言語IDを数値化
+		assert(0 < psLangInfo->wLangId);
+
+		psLangInfo->bValid = TRUE;		// メッセージリソースDLLとして有効
 
 		m_psLangInfoList.push_back( psLangInfo );
 	}
