@@ -26,7 +26,7 @@ def checkAll(topDir):
 				full = os.path.join(rootdir, file)
 				yield full
 
-# 引数で指定した文字列のから改行コードを取り除く
+# 引数で指定した文字列から改行コードを取り除く
 def clipEndOfLine(line):
 	return line.rstrip('\r\n')
 
