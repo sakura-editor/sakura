@@ -297,17 +297,9 @@ int CCodePage::GetNameLong(LPTSTR outName, int charcodeEx)
 	}else if( codepage == CP_OEMCP ){
 		auto_strcpy(outName, _T("CP_OEMCP"));
 	}else{
-		HMODULE hDLLkernel = ::GetModuleHandleA( "kernel32" );
-		
-#ifdef UNICODE
-		const char* strFunc_GetCPInfoEx = "GetCPInfoExW";
-#else
-		const char* strFunc_GetCPInfoEx = "GetCPInfoExA";
-#endif
-		pfn_GetCPInfoExT_t pfn_GetCPInfoExT = (pfn_GetCPInfoExT_t)::GetProcAddress(hDLLkernel, strFunc_GetCPInfoEx);
 		CPINFOEX cpInfo;
 		cpInfo.CodePageName[0] = _T('\0');
-		if( pfn_GetCPInfoExT && pfn_GetCPInfoExT(codepage, 0, &cpInfo) ){
+		if( ::GetCPInfoEx(codepage, 0, &cpInfo) ){
 			auto_strcpy(outName, cpInfo.CodePageName);
 		}else{
 			auto_sprintf(outName, _T("CP%d"), codepage);
@@ -418,19 +410,10 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 	s_list = NULL;
 
 	// 名前を取得
-	// GetCPInfoEx 98, 2000以上
-	HMODULE hDLLkernel = ::GetModuleHandleA("kernel32");
-	
-#ifdef UNICODE
-	const char* strFunc_GetCPInfoEx = "GetCPInfoExW";
-#else
-	const char* strFunc_GetCPInfoEx = "GetCPInfoExA";
-#endif
-	pfn_GetCPInfoExT_t pfn_GetCPInfoExT = (pfn_GetCPInfoExT_t)::GetProcAddress(hDLLkernel, strFunc_GetCPInfoEx);
 	CPINFOEX cpInfo;
 	for( auto it = result.begin(); it != result.end(); ++it ){
 		cpInfo.CodePageName[0] = _T('\0');
-		if( pfn_GetCPInfoExT && pfn_GetCPInfoExT(it->first, 0, &cpInfo) ){
+		if( ::GetCPInfoEx(it->first, 0, &cpInfo) ){
 			it->second = to_wchar(cpInfo.CodePageName);
 		}else{
 			std::wstring code = it->second;
