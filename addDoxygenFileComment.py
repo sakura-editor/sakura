@@ -28,9 +28,7 @@ def checkAll(topDir):
 
 # 引数で指定した文字列のから改行コードを取り除く
 def clipEndOfLine(line):
-	text = line.replace('\n','')
-	text = text.replace('\r','')
-	return text
+	return line.rstrip('\r\n')
 
 # 引数で指定したファイルに対して @file コメントがあるかチェックする
 def hasFileComment(file):
