@@ -18,6 +18,7 @@ def checkExtension(file):
 	else:
 		return False
 
+# 引数で指定したフォルダ以下のすべての対象ファイルを yield で返す
 def checkAll(topDir):
 	for rootdir, dirs, files in os.walk(topDir):
 		for file in files:
@@ -25,11 +26,13 @@ def checkAll(topDir):
 				full = os.path.join(rootdir, file)
 				yield full
 
+# 引数で指定した文字列のから改行コードを取り除く
 def clipEndOfLine(line):
 	text = line.replace('\n','')
 	text = text.replace('\r','')
 	return text
 
+# 引数で指定したファイルに対して @file コメントがあるかチェックする
 def hasFileComment(file):
 	with codecs.open(file, "r", "utf_8_sig") as fin:
 		for line in fin:
@@ -39,6 +42,7 @@ def hasFileComment(file):
 				
 	return False
 
+# 引数で指定したファイルに対して @file コメントをつける
 def addFileComment(file):
 	fileComment = "/*! @file */"
 	endOfLine   = "\r\n"
@@ -64,6 +68,8 @@ def addFileComment(file):
 	os.remove(file)
 	os.rename(tmp_file, file)
 
+# 対象のファイルをすべて処理する
+# (@file コメントをつける)
 def processFiles(files):
 	for file in files:
 		print ("checking " + file)
