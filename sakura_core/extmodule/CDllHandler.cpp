@@ -193,7 +193,7 @@ bool CDllImp::RegisterEntries(const ImportTable table[])
 	for(int i = 0; table[i].proc!=NULL; i++)
 	{
 		FARPROC proc;
-		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) 
+		if (GetTypedProcAddress(proc, GetInstance(), table[i].name) == NULL) 
 		{
 			return false;
 		}

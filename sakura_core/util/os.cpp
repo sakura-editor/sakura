@@ -311,11 +311,8 @@ BOOL GetSystemResources(
 
 	hlib = ::LoadLibraryExedir( _T("RSRC32.dll") );
 	if( (INT_PTR)hlib > 32 ){
-		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
-			hlib,
-			"_MyGetFreeSystemResources32@4"
-		);
-		if( GetFreeSystemResources != NULL ){
+		
+		if( GetTypedProcAddress(GetFreeSystemResources, hlib, "_MyGetFreeSystemResources32@4") != NULL ){
 			*pnSystemResources = GetFreeSystemResources( GFSR_SYSTEMRESOURCES );
 			*pnUserResources = GetFreeSystemResources( GFSR_USERRESOURCES );
 			*pnGDIResources = GetFreeSystemResources( GFSR_GDIRESOURCES );

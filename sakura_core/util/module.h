@@ -36,5 +36,13 @@ void ChangeCurrentDirectoryToExeDir();
 //! カレントディレクトリ移動機能付LoadLibrary
 HMODULE LoadLibraryExedir( LPCTSTR pszDll);
 
+template <typename PtrT>
+PtrT GetTypedProcAddress( PtrT& ptr, HMODULE hModule, LPCSTR lpProcName ) {
+	static_assert( std::is_pointer<PtrT>::value, "you must supply pointer argument." );
+	auto ret = ::GetProcAddress( hModule, lpProcName );
+	ptr = reinterpret_cast<decltype(ptr)>(ret);
+	return ptr;
+}
+
 #endif /* SAKURA_MODULE_4F382EF5_EF52_47E1_A774_5CDFB545AB25_H_ */
 /*[EOF]*/

@@ -21,7 +21,7 @@ int DebugMonitor_Output(const wchar_t* szInstanceId, const wchar_t* szText)
 
 	static FN_DebugMonitor_Output f=NULL;
 	if(!f){
-		f=(FN_DebugMonitor_Output)GetProcAddress(hDll,"DebugMonitor_Output");
+		GetTypedProcAddress(f, hDll,"DebugMonitor_Output");
 	}
 	if(!f)return -1;
 
@@ -36,7 +36,7 @@ LPCWSTR GetWindowsMessageName(UINT msg)
 
 	static FN_GetWindowsMessageName f=NULL;
 	if(!f){
-		f=(FN_GetWindowsMessageName)GetProcAddress(hDll,"GetWindowsMessageName");
+		GetTypedProcAddress(f, hDll,"GetWindowsMessageName");
 	}
 	if(!f)return L"?";
 

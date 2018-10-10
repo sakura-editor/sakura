@@ -82,15 +82,13 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	if(hinstDll)
 	{
 		DLLGETVERSIONPROC pDllGetVersion;
-		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll,
-						  "DllGetVersion");
 
 		/* Because some DLLs might not implement this function, you
 		must test for it explicitly. Depending on the particular
 		DLL, the lack of a DllGetVersion function can be a useful
 		indicator of the version. */
 
-		if(pDllGetVersion)
+		if(GetTypedProcAddress(pDllGetVersion, hinstDll, "DllGetVersion"))
 		{
 			DLLVERSIONINFO dvi;
 			HRESULT hr;
