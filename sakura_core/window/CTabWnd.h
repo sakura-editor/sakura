@@ -163,8 +163,6 @@ protected:
 	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
 	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
 
-	typedef HIMAGELIST (WINAPI *FN_ImageList_Duplicate)(HIMAGELIST himl);
-
 	/*
 	|| メンバ変数
 	*/
@@ -181,9 +179,6 @@ private:
 	int			m_nSrcTab;				//!< 移動元タブ
 	POINT		m_ptSrcCursor;			//!< ドラッグ開始カーソル位置
 	HCURSOR		m_hDefaultCursor;		//!< ドラッグ開始時のカーソル
-
-	// 2006.01.28 ryoji タブへのアイコン表示を可能に
-	FN_ImageList_Duplicate	m_RealImageList_Duplicate;
 
 	HIMAGELIST	m_hIml;					//!< イメージリスト
 	HICON		m_hIconApp;				//!< アプリケーションアイコン

@@ -583,15 +583,7 @@ LRESULT CControlTray::DispatchEvent(
 		}
 
 		// 2006.07.09 ryoji 最後の方でシャットダウンするアプリケーションにする
-		BOOL (WINAPI *pfnSetProcessShutdownParameters)( DWORD dwLevel, DWORD dwFlags );
-		HINSTANCE hDll;
-		hDll = ::GetModuleHandle(_T("KERNEL32"));
-		if( NULL != hDll ){
-			*(FARPROC*)&pfnSetProcessShutdownParameters = ::GetProcAddress( hDll, "SetProcessShutdownParameters" );
-			if( NULL != pfnSetProcessShutdownParameters ){
-				pfnSetProcessShutdownParameters( 0x180, 0 );
-			}
-		}
+		::SetProcessShutdownParameters(0x180, 0);
 
 		// 2010.08.26 ウィンドウ存在確認
 		::SetTimer( hwnd, IDT_EDITCHECK, IDT_EDITCHECK_INTERVAL, NULL );
