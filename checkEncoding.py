@@ -43,6 +43,18 @@ def checkExtension(file):
 	else:
 		return False
 
+# origin/master が存在するか確認する
+# 戻り値
+# origin/master が有効な場合 → 0
+# origin/master が無効な場合 → 0以外
+def checkOriginMaster():
+	retCode = 0
+	try:
+		output = subprocess.check_output('git show -s origin/master --')
+	except subprocess.CalledProcessError as gitcode:
+		retCode = gitcode.returncode
+	return retCode
+
 def getMergeBase():
 	output = subprocess.check_output('git show-branch --merge-base origin/master HEAD')
 	outputDec = output.decode()
@@ -104,7 +116,11 @@ if __name__ == '__main__':
 	if len(sys.argv) > 1 and sys.argv[1] == "all":
 		count = processFiles(checkAll())
 	else:
-		count = processFiles(getDiffFiles())
+		retCode = checkOriginMaster()
+		if retCode == 0:
+			count = processFiles(getDiffFiles())
+		else:
+			print ("skip. origin/master doesn't exist." + " retCode = " + str(retCode))
 
 	if count > 0:
 		print ("return 1")
