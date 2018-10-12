@@ -285,8 +285,8 @@ bool CProfile::_WriteFile(
 		return false;
 	}
 
-	int nSize = (int)vecLine.size();
-	for(int i=0;i<nSize;i++){
+	size_t nSize = vecLine.size();
+	for(size_t i=0;i<nSize;i++){
 		// 出力
 		out.WriteString(vecLine[i].c_str());
 		out.WriteString(L"\n");
