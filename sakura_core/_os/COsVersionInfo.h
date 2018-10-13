@@ -39,10 +39,6 @@
 #define _COSVERSIONINFO_H_
 
 
-// 稼働中のOSはWineか？＝常に真。
-inline bool IsWine()					{ return true; }
-
-
 #endif
 
 

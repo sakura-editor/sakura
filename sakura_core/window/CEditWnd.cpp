@@ -4868,7 +4868,7 @@ void CEditWnd::ClearMouseState( void )
 */
 void CEditWnd::CreateAccelTbl( void )
 {
-	if( IsWine() ){
+	{
 		m_hAccelWine = CKeyBind::CreateAccerelator(
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
@@ -4882,7 +4882,7 @@ void CEditWnd::CreateAccelTbl( void )
 		}
 	}
 
-	m_hAccel = m_hAccelWine ? m_hAccelWine : m_pShareData->m_sHandles.m_hAccel;
+	m_hAccel = m_hAccelWine;
 }
 
 /*! ウィンドウ毎に作成したアクセラレータテーブルを破棄する
