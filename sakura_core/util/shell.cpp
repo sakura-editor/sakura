@@ -308,11 +308,6 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 */
 void ShowWinHelpContents( HWND hwnd )
 {
-	if ( HasWinHelpContentsProblem() ){
-		/* 目次ページを表示する */
-		MyWinHelp( hwnd, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
-		return;
-	}
 	/* 目次タブを表示する */
 	MyWinHelp( hwnd, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
 	return;
