@@ -394,10 +394,6 @@ private:
 	//ヘルパ
 	CMenuDrawer		m_cMenuDrawer;
 
-	//メッセージID
-	UINT			m_uMSIMEReconvertMsg;
-	UINT			m_uATOKReconvertMsg;
-
 	//状態
 	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;

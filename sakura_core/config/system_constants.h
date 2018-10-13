@@ -751,11 +751,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 //! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
 
-/* 再変換対応 */ // 20020331 aroka
-#define MYWM_IME_REQUEST WM_IME_REQUEST
-#define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
-#define RWM_RECONVERT TEXT("MSIMEReconvert")
-
 
 #endif /* SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_ */
 /*[EOF]*/

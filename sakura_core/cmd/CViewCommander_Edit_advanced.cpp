@@ -34,10 +34,6 @@
 
 using namespace std; // 2002/2/3 aroka to here
 
-#ifndef FID_RECONVERT_VERSION  // 2002.04.10 minfu 
-#define FID_RECONVERT_VERSION 0x10000000
-#endif
-
 
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
@@ -974,39 +970,13 @@ void CViewCommander::Command_Reconvert(void)
 		return ;
 
 	bool bUseUnicodeATOK = false;
-	//バージョンチェック
-	if( !OsSupportReconvert() ){
-		
-		// MSIMEかどうか
-		HWND hWnd = ImmGetDefaultIMEWnd(m_pCommanderView->GetHwnd());
-		if (SendMessage(hWnd, m_pCommanderView->m_uWM_MSIME_RECONVERTREQUEST, FID_RECONVERT_VERSION, 0)){
-			SendMessage(hWnd, m_pCommanderView->m_uWM_MSIME_RECONVERTREQUEST, 0, (LPARAM)m_pCommanderView->GetHwnd());
-			return ;
-		}
-
-		// ATOKが使えるかどうか
-		TCHAR sz[256];
-		ImmGetDescription(GetKeyboardLayout(0),sz,_countof(sz)); //説明の取得
-		if ( (_tcsncmp(sz,_T("ATOK"),4) == 0) && (NULL != m_pCommanderView->m_AT_ImmSetReconvertString) ){
-			bUseUnicodeATOK = true;
-		}else{
-			//対応IMEなし
-			return;
-		}
-	}else{
+	{
 		//現在のIMEが対応しているかどうか
 		//IMEのプロパティ
 		if ( !(ImmGetProperty(GetKeyboardLayout(0),IGP_SETCOMPSTR) & SCS_CAP_SETRECONVERTSTRING) ){
 			//対応IMEなし
 			return ;
 		}
-	}
-
-	//サイズ取得し直し
-	if (!UNICODE_BOOL && bUseUnicodeATOK) {
-		nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL || bUseUnicodeATOK);
-		if( 0 == nSize )  // サイズ０の時は何もしない
-			return ;
 	}
 
 	//IMEのコンテキスト取得
@@ -1026,21 +996,13 @@ void CViewCommander::Command_Reconvert(void)
 	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL || bUseUnicodeATOK);
 	
 	//変換範囲の調整
-	if(bUseUnicodeATOK){
-		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
-	}else{
-		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
-	}
+	::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 
 	//調整した変換範囲を選択する
 	m_pCommanderView->SetSelectionFromReonvert(pReconv, UNICODE_BOOL || bUseUnicodeATOK);
 	
 	//再変換実行
-	if(bUseUnicodeATOK){
-		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
-	}else{
-		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
-	}
+	::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
 
 	//領域解放
 	::HeapFree(GetProcessHeap(),0,(LPVOID)pReconv);

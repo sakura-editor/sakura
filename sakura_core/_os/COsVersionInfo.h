@@ -39,8 +39,6 @@
 #define _COSVERSIONINFO_H_
 
 
-// 稼働中のOSはIMEの再変換コマンドに対応しているか？＝常に真。
-inline bool OsSupportReconvert()		{ return true; }
 // 稼働中のOSはWindows2000の新ファイルダイアログを使えるか？＝常に真。
 inline bool IsWinV5forOfn()				{ return true; }
 // 稼働中のOSはvista以降か？＝常に真。

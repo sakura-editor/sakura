@@ -730,20 +730,10 @@ public:
 
 	// IME
 private:
-	UINT			m_uMSIMEReconvertMsg;
-	UINT			m_uATOKReconvertMsg;
-public:
-	UINT			m_uWM_MSIME_RECONVERTREQUEST;
-private:
 	int				m_nLastReconvLine;             //2002.04.09 minfu 再変換情報保存用;
 	int				m_nLastReconvIndex;            //2002.04.09 minfu 再変換情報保存用;
 
 public:
-	//ATOK専用再変換のAPI
-	typedef BOOL (WINAPI *FP_ATOK_RECONV)( HIMC , int ,PRECONVERTSTRING , DWORD  );
-	HMODULE			m_hAtokModule;
-	FP_ATOK_RECONV	m_AT_ImmSetReconvertString;
-
 	// その他
 	CAutoMarkMgr*	m_cHistory;	//	Jump履歴
 	CRegexKeyword*	m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
