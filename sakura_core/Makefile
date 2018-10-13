@@ -417,7 +417,6 @@ _main/global.o \
 _main/WinMain.o \
 _os/CClipboard.o \
 _os/CDropTarget.o \
-_os/COsVersionInfo.o \
 sakura_rc.o \
 
 GENERATED_FILES= \

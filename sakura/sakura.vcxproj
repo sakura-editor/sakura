@@ -572,7 +572,6 @@
     <ClInclude Include="..\sakura_core\_main\global.h" />
     <ClInclude Include="..\sakura_core\_os\CClipboard.h" />
     <ClInclude Include="..\sakura_core\_os\CDropTarget.h" />
-    <ClInclude Include="..\sakura_core\_os\COsVersionInfo.h" />
     <ClInclude Include="..\sakura_core\_os\OleTypes.h" />
   </ItemGroup>
   <ItemGroup>
@@ -588,7 +587,6 @@
     <None Include="..\resource\auto_scroll_up_right.cur" />
     <None Include="..\resource\auto_scroll_vertical.cur" />
     <None Include="..\resource\cursor_copy.cur" />
-    <None Include="..\resource\cursor_hand.cur" />
     <None Include="..\resource\cursor_isb.cur" />
     <None Include="..\resource\cursor_isf.cur" />
     <None Include="..\resource\cursor_move.cur" />
@@ -976,7 +974,6 @@
     <ClCompile Include="..\sakura_core\_main\WinMain.cpp" />
     <ClCompile Include="..\sakura_core\_os\CClipboard.cpp" />
     <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp" />
-    <ClCompile Include="..\sakura_core\_os\COsVersionInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resource\auto_scroll_center.bmp" />

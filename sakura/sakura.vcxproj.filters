@@ -970,9 +970,6 @@
     <ClInclude Include="..\sakura_core\_os\CDropTarget.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\_os\COsVersionInfo.h">
-      <Filter>Cpp Source Files\_os</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\_os\OleTypes.h">
       <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
@@ -1124,9 +1121,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\resource\cursor_copy.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\resource\cursor_hand.cur">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\resource\cursor_isb.cur">
@@ -2094,9 +2088,6 @@
       <Filter>Cpp Source Files\_os</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\_os\CDropTarget.cpp">
-      <Filter>Cpp Source Files\_os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\_os\COsVersionInfo.cpp">
       <Filter>Cpp Source Files\_os</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\outline\CDlgFileTree.cpp">
