@@ -403,21 +403,7 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	m_psLangInfo = psLangInfo;
 
 	// ロケールを設定
-	// SetThreadUILanguageの呼び出しを試みる
-	bool isSuccess = false;
-	if( IsWinVista_or_later() ) {
-		HMODULE hDll = LoadLibrary( _T("kernel32") );
-		if ( hDll ) {
-			typedef short (CALLBACK* SetThreadUILanguageType)(LANGID);
-			SetThreadUILanguageType _SetThreadUILanguage = (SetThreadUILanguageType)
-					GetProcAddress(hDll, "SetThreadUILanguage");
-			isSuccess = _SetThreadUILanguage && _SetThreadUILanguage( m_psLangInfo->wLangId );
-			FreeLibrary( hDll );
-		}
-	}
-	if ( !isSuccess ) {
-		SetThreadLocale(MAKELCID( m_psLangInfo->wLangId, SORT_DEFAULT ));
-	}
+	::SetThreadUILanguage( m_psLangInfo->wLangId );
 
 	return m_psLangInfo->hInstance;
 }

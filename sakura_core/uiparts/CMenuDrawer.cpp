@@ -844,7 +844,7 @@ void CMenuDrawer::MyAppendMenu(
 			// メニュー項目をオーナー描画にして、アイコンを表示する
 			// 2010.03.29 アクセスキーの分を詰めるためいつもオーナードローにする。ただしVista未満限定
 			// Vista以上ではメニューもテーマが適用されるので、オーナードローにすると見た目がXP風になってしまう。
-			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !IsWinVista_or_later() ){
+			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 				nFlagAdd = MF_OWNERDRAW;
 			}
 			/* 機能のビットマップの情報を覚えておく */
@@ -855,7 +855,7 @@ void CMenuDrawer::MyAppendMenu(
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
 		// セパレータかサブメニュー
 		if( nFlag & (MF_SEPARATOR | MF_POPUP) ){
-			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !IsWinVista_or_later() ){
+			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 					nFlagAdd = MF_OWNERDRAW;
 			}
 		}

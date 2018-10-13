@@ -39,8 +39,6 @@
 #define _COSVERSIONINFO_H_
 
 
-// 稼働中のOSはvista以降か？＝常に真。
-inline bool IsWinVista_or_later()		{ return true; }
 // 稼働中のOSはxp以降か？＝常に真。
 inline bool IsWinXP_or_later()			{ return true; }
 // 稼働中のOSはw2k以降か？＝常に真。

@@ -493,19 +493,6 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 		::SetWindowPos( GetHwnd(), (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 		//タブウインドウ時は現状を維持
-		/* ウィンドウサイズ継承 */
-		// Vista 以降の初回表示アニメーション効果を抑止する
-		if( !IsWinVista_or_later() ){
-			if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
-			{
-				::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
-			}
-			else
-			{
-				::ShowWindow( GetHwnd(), SW_SHOW );
-			}
-		}
-		else
 		{
 			// 初回表示のアニメーション効果を抑止する
 
@@ -743,7 +730,7 @@ HWND CEditWnd::Create(
 	m_bIsActiveApp = ( ::GetActiveWindow() == GetHwnd() );	// 2007.03.08 ryoji
 
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
-	if( IsWinVista_or_later() ){
+	{
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)GetHwnd() );
 		if( !m_bUIPI ){	// 返事が返らない
