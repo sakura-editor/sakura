@@ -405,7 +405,7 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 	// ロケールを設定
 	// SetThreadUILanguageの呼び出しを試みる
 	bool isSuccess = false;
-	if( COsVersionInfo()._IsWinVista_or_later() ) {
+	if( IsWinVista_or_later() ) {
 		HMODULE hDll = LoadLibrary( _T("kernel32") );
 		if ( hDll ) {
 			typedef short (CALLBACK* SetThreadUILanguageType)(LANGID);
