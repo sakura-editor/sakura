@@ -39,8 +39,6 @@
 #define _COSVERSIONINFO_H_
 
 
-// 稼働中のOSはWindows2000の新ファイルダイアログを使えるか？＝常に真。
-inline bool IsWinV5forOfn()				{ return true; }
 // 稼働中のOSはvista以降か？＝常に真。
 inline bool IsWinVista_or_later()		{ return true; }
 // 稼働中のOSはxp以降か？＝常に真。
