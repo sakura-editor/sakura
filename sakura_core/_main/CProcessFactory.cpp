@@ -22,7 +22,6 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "_os/COsVersionInfo.h"
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"

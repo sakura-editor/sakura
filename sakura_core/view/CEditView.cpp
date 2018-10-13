@@ -51,7 +51,6 @@
 #include "cmd/CViewCommander_inline.h"
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
-#include "_os/COsVersionInfo.h"
 #include "CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"

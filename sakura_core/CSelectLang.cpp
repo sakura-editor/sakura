@@ -15,7 +15,6 @@
 #include "CSelectLang.h"
 #include "util/os.h"
 #include "util/module.h"
-#include "_os/COsVersionInfo.h"
 
 #include <new>
 

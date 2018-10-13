@@ -29,7 +29,6 @@
 
 #include "uiparts/CWaitCursor.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-#include "_os/COsVersionInfo.h"
 
 
 using namespace std; // 2002/2/3 aroka to here
@@ -956,7 +955,6 @@ void CViewCommander::Command_MERGE(void)
 //	from CViewCommander_New.cpp
 /* メニューからの再変換対応 minfu 2002.04.09
 
-	@date 2002.04.11 YAZAKI COsVersionInfoのカプセル化を守りましょう。
 	@date 2010.03.17 ATOK用はSCS_SETRECONVERTSTRING => ATRECONVERTSTRING_SETに変更
 		2002.11.20 Stoneeさんの情報
 */

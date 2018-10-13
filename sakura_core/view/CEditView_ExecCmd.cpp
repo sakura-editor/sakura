@@ -23,7 +23,6 @@
 #include "StdAfx.h"
 #include "CEditView.h"
 #include "_main/CAppMode.h"
-#include "_os/COsVersionInfo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"

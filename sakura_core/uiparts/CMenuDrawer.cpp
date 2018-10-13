@@ -25,7 +25,6 @@
 #include "window/CSplitBoxWnd.h"
 #include "CImageListMgr.h"
 #include "func/CKeyBind.h"
-#include "_os/COSVersionInfo.h"
 #include "util/window.h"
 
 // メニューアイコンの背景をボタンの色にする

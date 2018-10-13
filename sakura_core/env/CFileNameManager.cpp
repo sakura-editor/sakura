@@ -38,7 +38,6 @@
 #include "util/file.h"
 #include "util/window.h"
 #include "_main/CCommandLine.h"
-#include "_os/COsVersionInfo.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //

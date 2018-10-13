@@ -29,7 +29,6 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "CEditApp.h"
-#include "_os/COsVersionInfo.h"
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"

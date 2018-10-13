@@ -32,7 +32,6 @@
 #include "util/file.h"
 #include "util/os.h"
 #include "util/module.h"
-#include "_os/COsVersionInfo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
