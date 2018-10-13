@@ -64,10 +64,6 @@ int WINAPI _tWinMain(
 		::SetDllDirectory( _T("") );
 		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
 
-		// 2010.08.28 Moca DLLインジェクション対策
-		CCurrentDirectoryBackupPoint dirBack;
-		ChangeCurrentDirectoryToExeDir();
-
 		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
 		::OleInitialize( NULL );	// 2009.01.07 ryoji 追加
 	}
