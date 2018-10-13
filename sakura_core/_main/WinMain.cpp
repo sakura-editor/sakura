@@ -71,9 +71,7 @@ int WINAPI _tWinMain(
 			typedef BOOL (WINAPI* Proc_pfnSetSearchPathMode)(DWORD);
 			Proc_pfnSetSearchPathMode pfnSetSearchPathMode = (Proc_pfnSetSearchPathMode)GetProcAddress( kernel32, "SetSearchPathMode" );
 			if( pfnSetSearchPathMode ){
-				const DWORD dwBASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE = 1;
-				const DWORD dwBASE_SEARCH_PATH_PERMANENT = 0x8000;
-				pfnSetSearchPathMode( dwBASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | dwBASE_SEARCH_PATH_PERMANENT );
+				pfnSetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
 			}
 		}
 		// 2010.08.28 Moca DLLインジェクション対策

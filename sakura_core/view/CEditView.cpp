@@ -62,9 +62,6 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 
-#ifndef IMR_DOCUMENTFEED
-#define IMR_DOCUMENTFEED 0x0007
-#endif
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );

@@ -24,29 +24,6 @@
 #ifndef SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
 #define SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
 
-// -- -- -- -- 論理型 -- -- -- -- //
-
-// novice 2002/09/14
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef BOOL
-#define BOOL	int
-#endif
-
-
-// -- -- -- -- 定数 -- -- -- -- //
-
-#ifndef NULL
-#define NULL 0
-#endif
-
-
 // -- -- -- -- 文字 -- -- -- -- //
 
 //char,wchar_t の変わりに、別名の ACHAR,WCHAR を使うと、ソース整形がしやすいケースがある。
