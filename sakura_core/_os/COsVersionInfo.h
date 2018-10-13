@@ -39,8 +39,6 @@
 #define _COSVERSIONINFO_H_
 
 
-// 稼働中のOSはNT系か？＝常に真。
-inline bool IsWin32NT()					{ return true; }
 // 稼働中のOSはWinHelpに不具合のあるバージョンか？＝常に偽。
 inline bool HasWinHelpContentsProblem()	{ return false; }
 // 稼働中のOSはIMEの再変換コマンドに対応しているか？＝常に真。
