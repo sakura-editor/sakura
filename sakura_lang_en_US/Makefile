@@ -24,7 +24,7 @@ RM= cmd /c $(CURDIR)/../sakura/mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
- -D_WIN32_WINNT=_WIN32_WINNT_WIN2K \
+ -D_WIN32_WINNT=_WIN32_WINNT_WIN7 \
  -D_UNICODE \
  -DUNICODE \
  -DNDEBUG
