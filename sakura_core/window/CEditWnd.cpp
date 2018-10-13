@@ -4043,17 +4043,26 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
 	rc.bottom = rc.top + m_nCaretPosInfoCharHeight;
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
-	//	Sep. 6, 2003 genta Windows XP(Luna)の場合にはCOLOR_MENUBARを使わなくてはならない
-	COLORREF bkColor =
-		::GetSysColor( IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
-	::SetBkColor( hdc, bkColor );
-	/*
-	int			m_pnCaretPosInfoDx[64];	// 文字列描画用文字幅配列
-	for( i = 0; i < _countof( m_pnCaretPosInfoDx ); ++i ){
-		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
+	::SetBkColor( hdc, ::GetSysColor( COLOR_MENUBAR ) );
+	{
+		const WCHAR* pchText = m_pszMenubarMessage;
+		const ULONG cchText = nStrLen;
+		const INT nMaxExtent = rc.right - rc.left;
+		const DWORD dwFlags = ::GetFontLanguageInfo(hdc);
+		std::vector<INT> vDx(cchText, 0);
+		std::wstring strGlyphs(::MulDiv(cchText, 3, 2) + 16, '\0');
+
+		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
+		results.lpDx = vDx.data();
+		results.lpGlyphs = &*strGlyphs.begin();
+		results.nGlyphs = strGlyphs.size();
+		results.nMaxFit = cchText;
+		auto placement = ::GetCharacterPlacement(hdc, pchText, cchText, nMaxExtent, &results, dwFlags);
+
+		if (placement != NULL) {
+			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, &*vDx.begin());
+		}
 	}
-	*/
-	::ExtTextOut( hdc,rc.left,rc.top,ETO_CLIPPED | ETO_OPAQUE,&rc,m_pszMenubarMessage,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( GetHwnd(), hdc );
 }
