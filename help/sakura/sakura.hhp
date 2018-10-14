@@ -789,7 +789,7 @@ HLP_UR001=_RESOURCE\HLP_UR001.html
 HLP_HISTORY=_RESOURCE\HLP_HISTORY.html
 
 [MAP]
-#include sakura.hh
+#include ../../sakura_core/sakura.hh
 
 [TEXT POPUPS]
 Cshelp.txt
