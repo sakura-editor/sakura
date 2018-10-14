@@ -4049,13 +4049,12 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 		const INT nMaxExtent = rc.right - rc.left;
 		const DWORD dwFlags = ::GetFontLanguageInfo(hdc);
 		INT vDx[MENUBAR_MESSAGE_MAX_LEN] = { 0 };
-		const ULONG cchGlyphs = ::MulDiv(cchText, 3, 2) + 16;
-		auto pchGlyphs = std::make_unique<WCHAR[]>( cchGlyphs ); // エラーグリフの増分を加味した領域を確保
+		WCHAR vGlyphs[(MENUBAR_MESSAGE_MAX_LEN * 3 / 2) + 16]; // エラーグリフの増分を加味した領域を確保
 
 		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
 		results.lpDx = vDx;
-		results.lpGlyphs = pchGlyphs.get();
-		results.nGlyphs = cchGlyphs;
+		results.lpGlyphs = vGlyphs;
+		results.nGlyphs = _countof(vGlyphs);
 		results.nMaxFit = cchText;
 		auto placement = ::GetCharacterPlacement(hdc, pchText, cchText, nMaxExtent, &results, dwFlags);
 
