@@ -38,6 +38,7 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
+#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
@@ -573,6 +574,31 @@ void CViewCommander::Command_PROFILEMGR( void )
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, NULL, false );
 	}
 }
+
+
+
+/* ファイルの場所をエクスプローラーで開く */
+void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
+	::PathRemoveFileSpec(&*strFolder.begin());
+
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"explore", strFolder.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	// If the function succeeds, it returns a value greater than 32. 
+	if (hInstance <= (decltype(hInstance))32) {
+		ErrorBeep();
+		return;
+	}
+
+	return;
+}
+
+
 
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CViewCommander::Command_EXITALLEDITORS( void )

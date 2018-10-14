@@ -116,6 +116,7 @@ public:
 	void Command_BROWSE( void );				/* ブラウズ */
 	void Command_VIEWMODE( void );				/* ビューモード */
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
+	void Command_OPEN_FOLDER_IN_EXPLORER( void );	/* ファイルの場所をエクスプローラーで開く */
 	void Command_PROFILEMGR( void );			// プロファイルマネージャ
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
