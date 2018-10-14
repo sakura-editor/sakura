@@ -3859,9 +3859,16 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 
 	m_cMenuDrawer.ResetContents();
 
+	/* 空メニューを作る */
+	hMenu = ::CreatePopupMenu();
+
+	/* 履歴の管理のメニューを作成 */
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE, _T(""), _T("M"), FALSE );
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+
 	/* MRUリストのファイルのリストをメニューにする */
 	const CMRUFile cMRU;
-	hMenu = cMRU.CreateMenu( &m_cMenuDrawer );
+	hMenu = cMRU.CreateMenu( hMenu, &m_cMenuDrawer );
 	if( cMRU.MenuLength() > 0 )
 	{
 		m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
