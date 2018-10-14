@@ -4048,18 +4048,18 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 		const ULONG cchText = nStrLen;
 		const INT nMaxExtent = rc.right - rc.left;
 		const DWORD dwFlags = ::GetFontLanguageInfo(hdc);
-		std::vector<INT> vDx(cchText, 0);
+		INT vDx[MENUBAR_MESSAGE_MAX_LEN] = { 0 };
 		std::wstring strGlyphs(::MulDiv(cchText, 3, 2) + 16, '\0');
 
 		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
-		results.lpDx = vDx.data();
+		results.lpDx = vDx;
 		results.lpGlyphs = &*strGlyphs.begin();
 		results.nGlyphs = strGlyphs.size();
 		results.nMaxFit = cchText;
 		auto placement = ::GetCharacterPlacement(hdc, pchText, cchText, nMaxExtent, &results, dwFlags);
 
 		if (placement != NULL) {
-			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, &*vDx.begin());
+			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, vDx);
 		}
 	}
 	::SelectObject( hdc, hFontOld );
