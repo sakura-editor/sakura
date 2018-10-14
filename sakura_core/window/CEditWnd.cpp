@@ -3862,10 +3862,6 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	/* 空メニューを作る */
 	hMenu = ::CreatePopupMenu();
 
-	/* 履歴の管理のメニューを作成 */
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE, _T(""), _T("M"), FALSE );
-	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-
 	/* MRUリストのファイルのリストをメニューにする */
 	const CMRUFile cMRU;
 	hMenu = cMRU.CreateMenu( hMenu, &m_cMenuDrawer );
@@ -3888,6 +3884,10 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 		m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp, LS(F_FOLDER_USED_RECENTLY), _T("") );
 	}
 
+	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+
+	/* 履歴の管理のメニューを作成 */
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE, _T(""), _T("M"), FALSE );
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
