@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CConvert_SpaceToTab.h"
 #include "charset/charcode.h"
 #include "CEol.h"

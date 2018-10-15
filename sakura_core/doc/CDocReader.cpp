@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CDocReader.h"
 #include "logic/CDocLine.h"
 #include "logic/CDocLineMgr.h"

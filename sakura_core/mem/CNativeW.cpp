@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "mem/CNativeW.h"
 #include "CEol.h"
 #include "charset/CShiftJis.h"

@@ -1,4 +1,5 @@
-﻿// 2007.10.20 kobake 書式関連
+﻿/*! @file */
+// 2007.10.20 kobake 書式関連
 /*
 	Copyright (C) 2007, kobake
 

@@ -1,2 +1,3 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CMyWnd.h"

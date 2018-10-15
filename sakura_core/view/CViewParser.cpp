@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CViewParser.h"
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"

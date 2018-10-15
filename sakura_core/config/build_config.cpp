@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "build_config.h"
 #include <stdlib.h> //malloc,free
 

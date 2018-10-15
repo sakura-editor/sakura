@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CWriteManager.h"
 #include <list>
 #include "doc/logic/CDocLineMgr.h"

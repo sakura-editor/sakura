@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
 

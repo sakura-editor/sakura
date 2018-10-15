@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿/*! @file */
+#pragma once
 
 #include "config/build_config.h"
 #include "githash.h"

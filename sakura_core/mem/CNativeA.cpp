@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include <string>
 #include <mbstring.h>
 #include "mem/CNativeA.h"

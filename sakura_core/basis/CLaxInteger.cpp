@@ -1,3 +1,4 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CLaxInteger.h"
 

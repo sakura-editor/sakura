@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "CConvert.h"
 #include "func/Funccode.h"
 #include "CEol.h"

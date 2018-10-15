@@ -1,4 +1,5 @@
-﻿//2007.09.28 kobake Common整理
+﻿/*! @file */
+//2007.09.28 kobake Common整理
 /*
 	Copyright (C) 2008, kobake
 

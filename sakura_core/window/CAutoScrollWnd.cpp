@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file */
+/*
 	Copyright (C) 2012, Moca
 
 	This software is provided 'as-is', without any express or implied

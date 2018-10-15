@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "charset/CCodeMediator.h"
 #include "charset/charcode.h"
 #include "charset/CESI.h"

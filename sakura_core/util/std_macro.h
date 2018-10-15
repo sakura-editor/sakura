@@ -1,4 +1,5 @@
-﻿//2007.10.18 kobake 作成
+﻿/*! @file */
+//2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
 

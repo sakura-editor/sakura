@@ -1,4 +1,5 @@
-﻿#include "StdAfx.h"
+﻿/*! @file */
+#include "StdAfx.h"
 #include "tchar_template.h"
 
 // -- -- 必要な文字群を手動で定義 -- -- //
