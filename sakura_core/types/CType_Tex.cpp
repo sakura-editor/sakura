@@ -92,7 +92,7 @@ public:
 		CLogicInt nLineNumber,    // 行番号
 		const wchar_t* pLine,     // 行文字列へのポインタ
 		const wchar_t* pTag,      // \section{dddd} または \section*{dddd} の、s を指すポインタ。 
-		const wchar_t* pTagEnd,   // \section{dddd} または \section*{dddd} の、{ または * を指すポインタ。
+		const wchar_t* pTagEnd,   // \section{dddd} または \section*{dddd} の、{ を指すポインタ。
 		const wchar_t* pTitle,    // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
 		const wchar_t* pTitleEnd, // \section{dddd} または \section*{dddd} の、} を指すポインタ。
 		const wchar_t* pLineEnd   // (改行を含む)行文字列末尾の文字の次を指すポインタ
@@ -235,7 +235,7 @@ public:
 			}
 
 			const wchar_t *pTag      = 0, // \section{dddd} または \section*{dddd} の、s を指すポインタ。
-			              *pTagEnd   = 0, // \section{dddd} または \section*{dddd} の、{ または * を指すポインタ。
+			              *pTagEnd   = 0, // \section{dddd} または \section*{dddd} の、{ を指すポインタ。
 			              *pTitle    = 0, // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
 			              *pTitleEnd = 0; // \section{dddd} または \section*{dddd} の、} を指すポインタ。
 
