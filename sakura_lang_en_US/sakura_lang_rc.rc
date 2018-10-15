@@ -4131,7 +4131,6 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	STR_ERR_FILEPATH_TOO_LONG		"'%ts'\nCannot open the file.\nThe filepath is too long."
 
-
 END
 
 STRINGTABLE DISCARDABLE 
