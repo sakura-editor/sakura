@@ -102,7 +102,9 @@ public:
 		// 現在のタグの深さ(depth)を求める。
 		int depth; // Tag Depth
 		for (depth = HierarchyMax; 0 <= depth; --depth) {
-			if (0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)) {
+			if (wcslen(TagHierarchy[depth]) == pTagEnd - pTag
+			    && 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)
+			) {
 				break;
 			}
 		}
