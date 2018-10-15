@@ -51,7 +51,6 @@
 #include "cmd/CViewCommander_inline.h"
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
-#include "_os/COsVersionInfo.h"
 #include "CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
@@ -62,9 +61,6 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 
-#ifndef IMR_DOCUMENTFEED
-#define IMR_DOCUMENTFEED 0x0007
-#endif
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -157,10 +153,8 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_eWheelScroll(F_0)
 , m_nMousePouse(0)
 , m_nAutoScrollMode(0)
-, m_AT_ImmSetReconvertString(NULL)
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
-, m_hAtokModule(NULL)
 {
 }
 
@@ -256,28 +250,6 @@ BOOL CEditView::Create(
 	//	Aug. 31, 2000 genta
 	m_cHistory->SetMax( 30 );
 
-	// from here  2002.04.09 minfu OSによって再変換の方式を変える
-	//	YAZAKI COsVersionInfoのカプセル化は守りましょ。
-	if( !OsSupportReconvert() ){
-		// 95 or NTならば
-		m_uMSIMEReconvertMsg = ::RegisterWindowMessage( RWM_RECONVERT );
-		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
-		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage(_T("MSIMEReconvertRequest"));
-		
-		m_hAtokModule = LoadLibraryExedir(_T("ATOK10WC.DLL"));
-		m_AT_ImmSetReconvertString = NULL;
-		if ( NULL != m_hAtokModule ) {
-			m_AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");
-		}
-	}
-	else{ 
-		// それ以外のOSのときはOS標準を使用する
-		m_uMSIMEReconvertMsg = 0;
-		m_uATOKReconvertMsg = 0 ;
-		m_hAtokModule = 0;	//@@@ 2002.04.14 MIK
-	}
-	// to here  2002.04.10 minfu
-	
 	//2004.10.23 isearch
 	m_nISearchMode = SEARCH_NONE;
 	m_pcmigemo = NULL;
@@ -443,10 +415,6 @@ void CEditView::Close()
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = NULL;
 	
-	//再変換 2002.04.10 minfu
-	if(m_hAtokModule)
-		FreeLibrary(m_hAtokModule);
-
 	delete m_pcTextArea;
 	m_pcTextArea = NULL;
 	delete m_pcCaret;
@@ -854,7 +822,7 @@ LRESULT CEditView::DispatchEvent(
 		::PostMessageAny( m_hwndParent, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
 		return 0L;
 
-	case MYWM_IME_REQUEST:  /* 再変換  by minfu 2002.03.27 */ // 20020331 aroka
+	case WM_IME_REQUEST:  /* 再変換  by minfu 2002.03.27 */ // 20020331 aroka
 		
 		// 2002.04.09 switch case に変更  minfu 
 		switch ( wParam ){
@@ -868,7 +836,8 @@ LRESULT CEditView::DispatchEvent(
 		case IMR_DOCUMENTFEED:
 			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL, true);
 			
-		//default:
+		default:
+			break;
 		}
 		// 2010.03.16 0LではなくTSFが何かするかもしれないのでDefにまかせる
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -942,22 +911,6 @@ LRESULT CEditView::DispatchEvent(
 	}
 
 	default:
-// << 20020331 aroka 再変換対応 for 95/NT
-		if( (m_uMSIMEReconvertMsg && (uMsg == m_uMSIMEReconvertMsg)) 
-			|| (m_uATOKReconvertMsg && (uMsg == m_uATOKReconvertMsg))){
-		// 2002.04.08 switch case に変更 minfu 
-			switch ( wParam ){
-			case IMR_RECONVERTSTRING:
-				return SetReconvertStruct((PRECONVERTSTRING)lParam, true);
-				
-			case IMR_CONFIRMRECONVERTSTRING:
-				return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, true);
-				
-			}
-			return 0L;
-		}
-// >> by aroka
-
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }

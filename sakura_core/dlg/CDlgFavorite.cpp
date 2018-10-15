@@ -82,13 +82,6 @@ static const SAnchorList anchorList[] = {
 	{IDC_STATIC_FAVORITE_MSG, 		ANCHOR_BOTTOM},
 };
 
-//SDKにしか定義されていない。
-#ifndef	ListView_SetCheckState
-//#if (_WIN32_IE >= 0x0300)
-#define ListView_SetCheckState(hwndLV, i, fCheck) \
-  ListView_SetItemState(hwndLV, i, INDEXTOSTATEIMAGEMASK((fCheck)?2:1), LVIS_STATEIMAGEMASK)
-//#endif
-#endif
 
 static int FormatFavoriteColumn( TCHAR*, int, int , bool );
 static int ListView_GetLParamInt( HWND, int );

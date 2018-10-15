@@ -751,35 +751,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 //! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
 
-/* 再変換対応 */ // 20020331 aroka
-#ifndef WM_IME_REQUEST
-#define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
-#else
-#define MYWM_IME_REQUEST WM_IME_REQUEST
-#endif
-#define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
-#define RWM_RECONVERT TEXT("MSIMEReconvert")
-
-#ifndef VK_XBUTTON1
-#define	VK_XBUTTON1		0x05	// マウスサイドボタン1（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
-#define	VK_XBUTTON2		0x06    // マウスサイドボタン2（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
-#endif
-
-#ifndef WM_MOUSEHWHEEL
-#define WM_MOUSEHWHEEL 0x020E
-#endif
-
-
-
-
-
-#ifndef PBM_SETMARQUEE
-#define PBM_SETMARQUEE	(WM_USER+10)
-#endif
-
-#ifndef PBS_MARQUEE
-#define PBS_MARQUEE 0x08
-#endif
 
 #endif /* SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_ */
 /*[EOF]*/

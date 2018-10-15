@@ -1285,11 +1285,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 //m_dwTipTimerm_dwTipTimerm_dwTipTimer
 
 
-#ifndef SPI_GETWHEELSCROLLCHARS
-#define SPI_GETWHEELSCROLLCHARS 0x006C
-#endif
-
-
 /* マウスホイールのメッセージ処理
 	2009.01.17 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
 	2011.11.16 Moca スクロール変化量への対応

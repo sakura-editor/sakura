@@ -29,7 +29,6 @@
 #include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
 #include "recent/CRecent.h"
-#include "_os/COsVersionInfo.h"
 #include "dlg/CDialog.h"
 #include "util/window.h"
 #include "util/shell.h"
@@ -479,14 +478,7 @@ UINT_PTR CALLBACK OFNHookProc(
 		case CDN_SELCHANGE :
 			{
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-				// OFNの再設定はNT系ではUnicode版APIのみ有効
-				if( pData->m_ofn.Flags & OFN_ALLOWMULTISELECT &&
-#ifdef _UNICODE
-						IsWin32NT()
-#else
-						!IsWin32NT()
-#endif
-				){
+				if( pData->m_ofn.Flags & OFN_ALLOWMULTISELECT ){
 					DWORD nLength = CommDlg_OpenSave_GetSpec( pData->m_hwndOpenDlg, NULL, 0 );
 					nLength += _MAX_PATH + 2;
 					if( pData->m_ofn.nMaxFile < nLength ){

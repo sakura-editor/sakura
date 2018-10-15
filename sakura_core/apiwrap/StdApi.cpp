@@ -2,7 +2,6 @@
 #include <vector>
 #include "StdApi.h"
 #include "charset/charcode.h"
-#include "_os/COsVersionInfo.h"
 
 using namespace std;
 
@@ -276,14 +275,14 @@ namespace ApiWrap{
 		参考：http://forums.microsoft.com/MSDN-JA/ShowPost.aspx?PostID=3228018&SiteID=7
 		> Vista で Aero を OFF にすると SetPixel がうまく動かないそうです。
 		> しかも、SP1 でも修正されていないとか。
+
+		一旦はvista以降向けの「不具合」対策をそのまま残します。
+		vista前後でGDIの考え方が変わってるので、デバッグのやり方を考え直すべきと思います。
+		by berryzplus 2018/10/13記す。
 	*/
 	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c)
 	{
-		if (!IsWinVista_or_later()) {
-		//Vistaより前：SetPixel直呼び出し
-			::SetPixel(hdc,x,y,c);
-		}
-		else {
+		{
 		//Vista以降：SetPixelエミュレート
 			static HPEN hPen = NULL;
 			static COLORREF clrPen = 0;

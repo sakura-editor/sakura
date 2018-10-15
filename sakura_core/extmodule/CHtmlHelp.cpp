@@ -33,8 +33,10 @@
 #include "StdAfx.h"
 #include "CHtmlHelp.h"
 
-CHtmlHelp::~CHtmlHelp(void)
-{}
+CHtmlHelp::CHtmlHelp(void) noexcept
+	: m_pfnHtmlHelp(nullptr)
+{
+}
 
 /*!
 	HTML Help のファイル名を渡す
@@ -46,14 +48,15 @@ LPCTSTR CHtmlHelp::GetDllNameImp(int nIndex)
 
 bool CHtmlHelp::InitDllImp()
 {
-	if((HtmlHelp = (Proc_HtmlHelp)::GetProcAddress(GetInstance(),
-#ifdef _UNICODE
-	"HtmlHelpW"
-#else
-	"HtmlHelpA"
-#endif
-	)) == NULL )
+	//DLL内関数名リスト
+	const ImportTable table[] = {
+		{ m_pfnHtmlHelp,		"HtmlHelpW" },
+		{ NULL, 0 }
+	};
+
+	if (!RegisterEntries(table)) {
 		return false;
+	}
 
 	return true;
 }

@@ -43,12 +43,25 @@
 */
 class CHtmlHelp : public CDllImp {
 public:
-	CHtmlHelp(){}
-	virtual ~CHtmlHelp();
+	CHtmlHelp() noexcept;
+	virtual ~CHtmlHelp() noexcept = default;
 
+protected:
 	//	HtmlHelp のEntry Point
-	typedef HWND (WINAPI* Proc_HtmlHelp)(HWND, LPCTSTR, UINT, DWORD_PTR);
-	Proc_HtmlHelp HtmlHelp;
+	typedef decltype(::HtmlHelp)*	FnPtr_HtmlHelp;
+
+	FnPtr_HtmlHelp		m_pfnHtmlHelp;
+
+public:
+	inline HWND WINAPI HtmlHelp(
+		_In_opt_ HWND hwndCaller,
+		_In_ LPCWSTR pszFile,
+		_In_ UINT uCommand,
+		_In_ DWORD_PTR dwData
+	) const noexcept
+	{
+		return m_pfnHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
+	}
 
 protected:
 	virtual bool InitDllImp();

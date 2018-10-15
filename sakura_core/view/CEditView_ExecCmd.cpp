@@ -23,7 +23,6 @@
 #include "StdAfx.h"
 #include "CEditView.h"
 #include "_main/CAppMode.h"
-#include "_os/COsVersionInfo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"
@@ -243,18 +242,14 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 
 		// 2010.08.27 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];
-		if( IsWin32NT() ){
-			::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
-		}else{
-			::GetWindowsDirectory(szCmdDir, _countof(szCmdDir));
-		}
+		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
 			_T("\"%ts\\%ts\" %ts%ts%ts"),
 			szCmdDir,
-			( IsWin32NT() ? _T("cmd.exe") : _T("command.com") ),
+			_T("cmd.exe"),
 			( outputEncoding == CODE_UNICODE ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
 			( bGetStdout ? _T("/C ") : _T("/K ") ),
 			pszCmd

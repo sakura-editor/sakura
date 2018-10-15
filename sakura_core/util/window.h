@@ -86,11 +86,6 @@ void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
 
-#ifndef GA_PARENT
-#define GA_PARENT		1
-#define GA_ROOT			2
-#define GA_ROOTOWNER	3
-#endif
 #define GA_ROOTOWNER2	100
 
 

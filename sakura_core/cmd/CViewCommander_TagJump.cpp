@@ -29,7 +29,6 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "CEditApp.h"
-#include "_os/COsVersionInfo.h"
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
@@ -473,25 +472,12 @@ bool CViewCommander::Command_TagsMake( void )
 	_tcscat( options, _T(" *") );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
-	if (IsWin32NT())
 	{
 		// 2010.08.28 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];
 		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 		//	2006.08.04 genta add /D to disable autorun
 		auto_sprintf( cmdline, _T("\"%ts\\cmd.exe\" /D /C \"\"%ts\\%ts\" %ts\""),
-				szCmdDir,
-				szExeFolder,	//sakura.exeパス
-				CTAGS_COMMAND,	//ctags.exe
-				options			//ctagsオプション
-			);
-	}
-	else
-	{
-		// 2010.08.28 Moca システムディレクトリ付加
-		TCHAR szCmdDir[_MAX_PATH];
-		::GetWindowsDirectory(szCmdDir, _countof(szCmdDir));
-		auto_sprintf( cmdline, _T("\"%ts\\command.com\" /C \"%ts\\%ts\" %ts"),
 				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe

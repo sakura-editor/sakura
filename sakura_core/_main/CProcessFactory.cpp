@@ -22,7 +22,6 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "_os/COsVersionInfo.h"
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
@@ -134,52 +133,8 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 */
 bool CProcessFactory::IsValidVersion()
 {
-	/* Windowsバージョンのチェック */
-	COsVersionInfo	cOsVer(true);	// 初期化を行う
-	if( cOsVer.GetVersion() ){
-		if( !cOsVer.OsIsEnableVersion() ){
-			InfoMessage( NULL,
-				_T("このアプリケーションを実行するには、\n")
-#if (WINVER >= _WIN32_WINNT_WIN7)
-				_T("Windows7以降のOSが必要です。\n")
-#elif (WINVER >= _WIN32_WINNT_VISTA)
-				_T("WindowsVista以降 または WindowsServer2008以降のOSが必要です。\n")
-#elif (WINVER >= _WIN32_WINNT_WIN2K)
-				_T("Windows2000以降のOSが必要です。\n")
-#else
-				_T("Windows95以上 または WindowsNT4.0以上のOSが必要です。\n")
-#endif
-				_T("アプリケーションを終了します。")
-			);
-			return false;
-		}
-	}else{
-		InfoMessage( NULL, _T("OSのバージョンが取得できません。\nアプリケーションを終了します。") );
-		return false;
-	}
-
-	/* 拡張命令セットのチェック */
-#ifdef USE_SSE2
-	if ( cOsVer._SupportSSE2() ) {
-	} else {
-		InfoMessage( NULL,
-			_T("このアプリケーションを実行するには、\n")
-			_T("SSE2命令セットをサポートしたCPUが必要です。\n")
-			_T("アプリケーションを終了します。")
-		);
-		return false;
-	}
-#endif
-
-#if (WINVER < _WIN32_WINNT_WIN2K)
-	/* システムリソースのチェック */
-	// Jul. 5, 2001 shoji masami NTではリソースチェックを行わない
-	if( !IsWin32NT() ){
-		if( !CheckSystemResources( GSTR_APPNAME ) ){
-			return false;
-		}
-	}
-#endif
+	// Windowsバージョンは廃止。
+	// 動作可能バージョン(=windows7以降)でなければ起動できない。
 	return true;
 }
 

@@ -47,7 +47,6 @@
 #include "doc/logic/CDocLine.h"
 #include "doc/logic/CDocLineMgr.h"
 #include "uiparts/CWaitCursor.h"
-#include "_os/COsVersionInfo.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "util/module.h"
