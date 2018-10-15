@@ -57,6 +57,8 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 	@date 2003.07.21 naoh 新規作成
 	@date 2005.01.03 naoh 「マ」などの"}"を含む文字に対する修正、prosperのslideに対応
 */
+
+/** アウトライン解析の補助クラス */
 template<int Size>
 class TagProcessor
 {
@@ -64,7 +66,7 @@ class TagProcessor
 	CFuncInfoArr &refFuncInfoArr;
 	CLayoutMgr   &refLayoutMgr;
 	// 定数
-	const wchar_t* (&TagHierarchy)[Size];
+	const wchar_t* (&TagHierarchy)[Size]; // 大きい構造から順に並べたタグの配列。\ マークは抜き。
 	const int HierarchyMax;
 	// 状態
 	int tagDepth;      // 直前のタグの深さ。TagHierarchy[tagDepth] == 直前のタグ;
@@ -85,14 +87,15 @@ public:
 	{
 	}
 
+	/** \tag{title} を受け取って、タグに対応したアウトライントピックを追加する。 */
 	const wchar_t* operator()(
-		CLogicInt nLineNumber,
-		const wchar_t* pLine,
-		const wchar_t* pTag,
-		const wchar_t* pTagEnd,
-		const wchar_t* pTitle,
-		const wchar_t* pTitleEnd,
-		const wchar_t* pLineEnd
+		CLogicInt nLineNumber,    // 行番号
+		const wchar_t* pLine,     // 行文字列へのポインタ
+		const wchar_t* pTag,      // \section{dddd} または \section*{dddd} の、s を指すポインタ。 
+		const wchar_t* pTagEnd,   // \section{dddd} または \section*{dddd} の、{ または * を指すポインタ。
+		const wchar_t* pTitle,    // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
+		const wchar_t* pTitleEnd, // \section{dddd} または \section*{dddd} の、} を指すポインタ。
+		const wchar_t* pLineEnd   // (改行を含む)行文字列末尾の文字の次を指すポインタ
 	) {
 		const bool bAddNumber = pTag < pTagEnd && pTagEnd[-1] != L'*'; // タグが * 付きかどうか = トピックに番号を付けるかどうか
 		if (! bAddNumber) {
@@ -209,6 +212,7 @@ MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierar
 	return TagProcessor<Size>(fia, lmgr, tagHierarchy);
 }
 
+/** アウトライン解析の補助クラス */
 class TagIterator
 {
 	const CDocLineMgr& refDocLineMgr;
@@ -218,6 +222,7 @@ public:
 	: refDocLineMgr(dlmgr)
 	{}
 
+	/** ドキュメント全体を先頭からスキャンして、見つけた \tag{title} を TagProcessor に渡す。 */
 	template<int Size>
 	void each(TagProcessor<Size>& process)
 	{
