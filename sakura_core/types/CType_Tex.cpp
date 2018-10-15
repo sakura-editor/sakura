@@ -57,126 +57,221 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 	@date 2003.07.21 naoh 新規作成
 	@date 2005.01.03 naoh 「マ」などの"}"を含む文字に対する修正、prosperのslideに対応
 */
-void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
+template<int Size>
+class TagProcessor
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	int				i;
-	int				j;
-	int				k;
+	// 環境
+	CFuncInfoArr &refFuncInfoArr;
+	CLayoutMgr   &refLayoutMgr;
+	// 定数
+	const wchar_t* (&TagHierarchy)[Size];
+	const int HierarchyMax;
+	// 状態
+	int tagDepth;      // 直前のタグの深さ。TagHierarchy[tagDepth] == 直前のタグ;
+	int treeDepth;     // 直前のタグの「ツリーにおける」深さ。
+	int serials[Size]; // タグの各深さで割り振ったトピック番号の最大値を記憶しておく。
+	// 作業場
+	wchar_t szTopic[256];   // トピック番号 + トピックタイトル; (タグが * で終わっている場合はトピック番号を省略する)
 
-	const int nMaxStack = 8;	//	ネストの最深
-	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	wchar_t szTag[32], szTitle[256];			//	一時領域
-	int thisSection=0, lastSection = 0;	// 現在のセクション種類と一つ前のセクション種類
-	int stackSection[nMaxStack];		// 各深さでのセクションの番号
-	int nStartTitlePos = 0;				// \section{dddd} の dddd の部分の始まる番号
-	int bNoNumber = 0;					// * 付の場合はセクション番号を付けない
-
-	// 一行ずつ
-	CLogicInt	nLineCount;
-	for(nLineCount=CLogicInt(0);nLineCount<m_pcDocRef->m_cDocLineMgr.GetLineCount();nLineCount++)
+public:
+	TagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[Size])
+	: refFuncInfoArr(fia)
+	, refLayoutMgr(lmgr)
+	, TagHierarchy(tagHierarchy)
+	, HierarchyMax(Size-1)
+	, tagDepth(0)
+	, treeDepth(-1)
+	, serials()
 	{
-		pLine	=	m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if(!pLine) break;
-		// 一文字ずつ
-		for(i=0;i<nLineLen-1;i++)
-		{
-			if(pLine[i] == L'%') break;	// コメントなら以降はいらない
-			if(nDepth>=nMaxStack)continue;
-			if(pLine[i] != L'\\')continue;	// 「\」がないなら次の文字へ
-			++i;
-			// 見つかった「\」以降の文字列チェック
-			for(j=0;i+j<nLineLen && j<_countof(szTag)-1;j++)
-			{
-				if(pLine[i+j] == L'{') { // }
-					bNoNumber = (pLine[i+j-1] == '*');
-					nStartTitlePos = j+i+1;
-					break;
-				}
-				szTag[j] = pLine[i+j];
+	}
+
+	const wchar_t* operator()(
+		CLogicInt nLineNumber,
+		const wchar_t* pLine,
+		const wchar_t* pTag,
+		const wchar_t* pTagEnd,
+		const wchar_t* pTitle,
+		const wchar_t* pTitleEnd,
+		const wchar_t* pLineEnd
+	) {
+		const bool bAddNumber = pTag < pTagEnd && pTagEnd[-1] != L'*'; // タグが * 付きかどうか = トピックに番号を付けるかどうか
+		if (! bAddNumber) {
+			pTagEnd -= 1;
+		}
+
+		// 現在のタグの深さ(depth)を求める。
+		int depth; // Tag Depth
+		for (depth = HierarchyMax; 0 <= depth; --depth) {
+			if (0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)) {
+				break;
 			}
-			if(j==0) continue;
-			if(bNoNumber){
-				szTag[j-1] = L'\0';
-			}else{
-				szTag[j]   = L'\0';
-			}
+		}
+		if (depth < 0) { // 例外対応
+			/*
+			タグが begin なら prosper の slide の可能性も考慮して
+			さらに {slide}{} まで読みとっておく。
 
-			thisSection = 0;
-			if(!wcscmp(szTag,L"subsubsection")) thisSection = 4;
-			else if(!wcscmp(szTag,L"subsection")) thisSection = 3;
-			else if(!wcscmp(szTag,L"section")) thisSection = 2;
-			else if(!wcscmp(szTag,L"chapter")) thisSection = 1;
-			else if(!wcscmp(szTag,L"begin")) {		// beginなら prosperのslideの可能性も考慮
-				// さらに{slide}{}まで読みとっておく
-				if(wcsstr(pLine, L"{slide}")){
-					k=0;
-					for(j=nStartTitlePos+1;i+j<nLineLen && j<_countof(szTag)-1;j++)
-					{
-						if(pLine[i+j] == L'{' ){ // }
-							nStartTitlePos = j+i+1;
-							break;
-						}
-						szTag[k++]	=	pLine[i+j];
-					}
-					szTag[k] = '\0';
-					thisSection = 1;
-				}
-			}
-
-			if( thisSection > 0)
-			{
-				// sectionの中身取得
-				for(k=0;nStartTitlePos+k<nLineLen && k<_countof(szTitle)-1;k++)
-				{
-					// {
-					if(pLine[k+nStartTitlePos] == L'}') {
-						break;
-					}
-					szTitle[k] = pLine[k+nStartTitlePos];
-				}
-				szTitle[k] = '\0';
-
-				CLayoutPoint ptPos;
-
-				WCHAR tmpstr[256];
-				WCHAR secstr[4];
-
-				m_pcDocRef->m_cLayoutMgr.LogicToLayout(
-					CLogicPoint(i, nLineCount),
-					&ptPos
-				);
-
-				int sabunSection = thisSection - lastSection;
-				if(lastSection == 0){
-					nDepth = 0;
-					stackSection[0] = 1;
-				}else{
-					nDepth += sabunSection;
-					if(sabunSection > 0){
-						if(nDepth >= nMaxStack) nDepth=nMaxStack-1;
-						stackSection[nDepth] = 1;
-					}else{
-						if(nDepth < 0) nDepth=0;
-						++stackSection[nDepth];
+			\begin{slide}{slide_title} なら、slide_title をタイトルにするということ。
+			*/
+			if (0 == wcsncmp(L"begin", pTag, pTagEnd - pTag)) {
+				if (const wchar_t* pSlide = wcsstr(pTagEnd, L"{slide}")) {
+					pTitle = wmemchr(pSlide + 7, L'{', pLineEnd - pSlide);
+					pTitle = pTitle ? pTitle + 1 : pLineEnd;
+					pTitleEnd = wmemchr(pTitle, L'}', pLineEnd - pTitle);
+					pTitleEnd = pTitleEnd ? pTitleEnd : pLineEnd;
+					if (pTitle < pTitleEnd) {
+						depth = 0;
 					}
 				}
-				tmpstr[0] = L'\0';
-				if(!bNoNumber){
-					for(k=0; k<=nDepth; k++){
-						auto_sprintf(secstr, L"%d.", stackSection[k]);
-						wcscat(tmpstr, secstr);
-					}
-					wcscat(tmpstr, L" ");
-				}
-				wcscat(tmpstr, szTitle);
-				pcFuncInfoArr->AppendData(nLineCount+CLogicInt(1),ptPos.GetY2()+CLayoutInt(1), tmpstr, 0, nDepth);
-				if(!bNoNumber) lastSection = thisSection;
 			}
-			i	+=	j;
+		}
+		if (depth < 0) {
+			return pTitleEnd; // トピックタグではなかった。
+		}
+		assert(depth <= HierarchyMax);
+
+		/* 状態変数の更新
+			現在のタグの深さ(depth)と直前のタグの深さ(tagDepth)の比較から
+			1. ツリーアイテムの深さ(treeDepth)を増減する。
+			2. トピック番号(serials[])を更新する。
+			3. tagDepth を現在のタグの深さ(depth)で更新する。
+		*/
+
+		// 1. treeDepth を増減する。
+		//    トピックツリーの仕様から treeDepth の増加幅は１に抑えたい。
+		treeDepth += depth <= tagDepth ? (depth - tagDepth) : 1;
+		for (int i = depth; i < tagDepth; ++i) {
+		/*
+			treeDepth の増加幅を１に抑えた結果としてトピックアイテムが
+			本来の位置(tagDepth)より浅い位置に置かれていることがある。その補正。
+		*/
+			if (0 == serials[i]) {
+				treeDepth += 1;
+			}
+		}
+		if (treeDepth < 0) {
+			treeDepth = 0; // 最初のトピックの場合や、最初のトピックが深い階層(section や subsection など)だったあとに、chapter が現れた場合など。
+		}
+		assert(treeDepth <= HierarchyMax);
+
+		// 2. トピック番号を更新する。
+		serials[depth] += 1; // インクリメント
+		for (int i = depth + 1; i <= tagDepth; ++i) {
+			serials[i] = 0; // リセット
+		}
+
+		// 3. tagDepth を現在のタグの深さ(depth)で更新する。
+		tagDepth = depth;
+
+		// トピック文字列
+		szTopic[0] = L'\0';
+		wchar_t* pTopicEnd = szTopic; // 書き込みポインタ。
+
+		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
+		if (bAddNumber) {
+			assert(4 * HierarchyMax + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+			int i = 0;
+			while (i <= tagDepth && serials[i] == 0) {
+				i += 1; // "0." プリフィックスを表示しないようにスキップする。
+			}
+			for (; i <= tagDepth; ++i) {
+				// "1.", "2.", "3.",..., "10.",..., "100.",...,"999.", "000.", "001.",...
+				pTopicEnd += auto_sprintf(pTopicEnd, serials[i]/1000 ? L"%03d." : L"%d.", serials[i]%1000);
+			}
+			*pTopicEnd++ = L' ';
+			*pTopicEnd   = L'\0';
+		}
+		assert(pTopicEnd < szTopic + _countof(szTopic));
+
+		// トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
+		const ptrdiff_t copyLen = t_min(szTopic + _countof(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
+		pTopicEnd = wmemcpy(pTopicEnd, pTitle, copyLen) + copyLen;
+		*pTopicEnd = L'\0';
+
+		// トピックツリーにトピックを追加する。
+		CLayoutPoint ptPos;
+		refLayoutMgr.LogicToLayout(
+			CLogicPoint(pTag - pLine, nLineNumber),
+			&ptPos
+		);
+		refFuncInfoArr.AppendData(nLineNumber + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1), szTopic, 0, treeDepth);
+
+		// ループ継続
+		return pTitleEnd;
+	}
+};
+template<int Size> inline
+TagProcessor<Size>
+MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[Size])
+{
+	return TagProcessor<Size>(fia, lmgr, tagHierarchy);
+}
+
+class TagIterator
+{
+	const CDocLineMgr& refDocLineMgr;
+
+public:
+	TagIterator(const CDocLineMgr& dlmgr)
+	: refDocLineMgr(dlmgr)
+	{}
+
+	template<int Size>
+	void each(TagProcessor<Size>& process)
+	{
+		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
+		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber) {
+			const wchar_t* const pLine = refDocLineMgr.GetLine(nLineNumber)->GetDocLineStrWithEOL(&nLineLen);
+			const wchar_t* const pLineEnd = pLine + nLineLen;
+			if (! pLine) { // [EOF] のみの行。
+				break;
+			}
+
+			const wchar_t *pTag      = 0, // \section{dddd} または \section*{dddd} の、s を指すポインタ。
+			              *pTagEnd   = 0, // \section{dddd} または \section*{dddd} の、{ または * を指すポインタ。
+			              *pTitle    = 0, // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
+			              *pTitleEnd = 0; // \section{dddd} または \section*{dddd} の、} を指すポインタ。
+
+			// 一文字ずつ
+			for (const wchar_t* p = pLine; p < pLineEnd; ++p) {
+				if (*p == L'%') {
+					break; // コメントなので以降はいらない。
+				}
+				if (*p != L'\\') {
+					continue; // 「\」がないなら次の文字へ。
+				}
+
+				// '\' の後ろから、'{' を目印にタグとタイトルを見つける。
+				pTag = ++p;
+				p = (p = wmemchr(p, L'{', pLineEnd - p)) ? p : pLineEnd;
+				pTagEnd = p < pLineEnd ? p++ : pLineEnd;
+				pTitle  = p;
+				p = (p = wmemchr(p, L'}', pLineEnd - p)) ? p : pLineEnd;
+				pTitleEnd = p;
+
+				// タグの処理は任せる。
+				if (pTag < pTagEnd && pTitle < pTitleEnd) {
+					p = process(nLineNumber, pLine, pTag, pTagEnd, pTitle, pTitleEnd, pLineEnd);
+				}
+				if (p < pTag || pLineEnd < p) {
+					return; // 無効な値であるか、無限ループのおそれがあるため中断。
+				}
+			}
 		}
 	}
+};
+
+void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
+{
+	const wchar_t* TagHierarchy[] = {
+		L"chapter",
+		L"section",
+		L"subsection",
+		L"subsubsection"
+	};
+	TagIterator(m_pcDocRef->m_cDocLineMgr).each(
+		MakeTagProcessor(*pcFuncInfoArr, m_pcDocRef->m_cLayoutMgr, TagHierarchy)
+	);
 }
 
 
