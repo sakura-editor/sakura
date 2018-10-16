@@ -1128,7 +1128,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	// 一度移動したら戻ってきたときも、移動とみなすように設定
 	m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 	
-	CLayoutPoint ptNewCursor(CLayoutInt(-1), CLayoutInt(-1));
+	CLayoutPoint const ptOldCursor = GetCaret().GetCaretLayoutPos();
+	CLayoutPoint       ptNewCursor(CLayoutInt(-1), CLayoutInt(-1));
 	if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 		/* 座標指定によるカーソル移動 */
 		GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCursor );
@@ -1198,85 +1199,48 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 
-		/* CTRLキーが押されていたか */
-//		if( GetKeyState_Control() ){
-		if( !GetSelectionInfo().m_bBeginWordSelect ){
-			/* 現在のカーソル位置によって選択範囲を変更 */
-			GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCursor );
-			GetCaret().MoveCursor( ptNewCursor, true, 1000 );
-		}else{
-			CLayoutRange sSelect;
-			
-			/* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
-			GetSelectionInfo().ChangeSelectAreaByCurrentCursorTEST(
-				GetCaret().GetCaretLayoutPos(),
-				&sSelect
-			);
-			/* 選択範囲に変更なし */
-			if( sSelect_Old == sSelect ){
-				GetSelectionInfo().ChangeSelectAreaByCurrentCursor(
-					GetCaret().GetCaretLayoutPos()
-				);
-				GetCaret().MoveCursor( ptNewCursor, true, 1000 );
-				return;
-			}
-			CLogicInt nLineLen;
-			const CLayout* pcLayout;
-			if( NULL != m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout ) ){
-				CLogicInt	nIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
-				CLayoutRange sRange;
+		if (ptOldCursor == ptNewCursor) {
+			// キャレットの(実際の)移動と、それに応じた選択範囲の更新を、サボる。
+		} else {
+			CLayoutPoint ptSelectCursor = ptNewCursor; // 単語単位の選択をしている時に、キャレットの位置と選択範囲の端点が一致しなくなる。それを表現するための変数。
 
-				/* 現在位置の単語の範囲を調べる */
-				bool bResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-					GetCaret().GetCaretLayoutPos().GetY2(),
-					nIdx,
-					&sRange,
-					NULL,
-					NULL
+			// 単語単位の選択をしている場合、選択範囲を単語境界に調整する。
+			if (GetSelectionInfo().m_bBeginWordSelect) {
+
+				// キャレット移動後に予定されている選択範囲
+				CLayoutRange sSelect;
+				GetSelectionInfo().ChangeSelectAreaByCurrentCursorTEST(
+					ptNewCursor,
+					&sSelect
 				);
-				if( bResult ){
-					// 指定された行のデータ内の位置に対応する桁の位置を調べる
-					// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
-					/*
-					pLine     = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetFrom().GetY2(), &nLineLen, &pcLayout );
-					sRange.SetFromX( LineIndexToColumn( pcLayout, sRange.GetFrom().x ) );
-					pLine     = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetTo().GetY2(), &nLineLen, &pcLayout );
-					sRange.SetToX( LineIndexToColumn( pcLayout, sRange.GetTo().x ) );
-					*/
-					int nWorkF = IsCurrentPositionSelectedTEST(
-						sRange.GetFrom(), //カーソル位置
-						sSelect
+
+				// キャレット位置にある単語の範囲
+				CLayoutRange sWord = CLayoutRange(CLayoutPoint(-1, -1), CLayoutPoint(-1, -1));
+				if (const CLayout* pLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(ptNewCursor.y)) {
+					m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+						ptNewCursor.y,
+						LineColumnToIndex( pLayout, ptNewCursor.x ),
+						&sWord,
+						NULL,
+						NULL
 					);
-					int nWorkT = IsCurrentPositionSelectedTEST(
-						sRange.GetTo(),	// カーソル位置
-						sSelect
-					);
-					if( -1 == nWorkF ){
-						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
-						GetSelectionInfo().ChangeSelectAreaByCurrentCursor( sRange.GetFrom() );
-					}
-					else if( 1 == nWorkT ){
-						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
-						GetSelectionInfo().ChangeSelectAreaByCurrentCursor( sRange.GetTo() );
-					}
-					else if( sSelect_Old.GetFrom() == sSelect.GetFrom() ){
-						/* 始点が無変更＝前方に縮小された */
-						/* 現在のカーソル位置によって選択範囲を変更 */
-						GetSelectionInfo().ChangeSelectAreaByCurrentCursor( sRange.GetTo() );
-					}
-					else if( sSelect_Old.GetTo()==sSelect.GetTo() ){
-						/* 終点が無変更＝後方に縮小された */
-						/* 現在のカーソル位置によって選択範囲を変更 */
-						GetSelectionInfo().ChangeSelectAreaByCurrentCursor( sRange.GetFrom() );
-					}
-				}else{
-					/* 現在のカーソル位置によって選択範囲を変更 */
-					GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
 				}
-			}else{
-				/* 現在のカーソル位置によって選択範囲を変更 */
-				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+
+				// 選択範囲の両端のうちキャレットがある側を単語境界に調整する。
+				assert(PointCompare(sSelect.GetFrom(), sSelect.GetTo()) <= 0); // (sSelect) from <= to 
+				if (PointCompare(sSelect.GetFrom(), sWord.GetTo()) < 0
+				 && PointCompare(sWord.GetFrom(), sSelect.GetTo()) < 0
+				) { // sWord と sSelect は交差している。
+					ptSelectCursor = (ptNewCursor == sSelect.GetTo())
+						? sWord.GetTo()    // キャレットは選択範囲終点にある⇒終点を単語末尾まで拡張する
+						: sWord.GetFrom(); // キャレットは選択範囲始点にある⇒始点を単語の頭まで拡張する
+				}
+			} else {
+				// (矩形選択でも単語選択でもない)通常選択時は特別なことをしない。
 			}
+
+			/* 現在のカーソル位置によって選択範囲を変更 */
+			GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptSelectCursor );
 			GetCaret().MoveCursor( ptNewCursor, true, 1000 );
 		}
 	}
