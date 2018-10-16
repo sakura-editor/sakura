@@ -59,28 +59,26 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 */
 
 /** アウトライン解析の補助クラス */
-template<int Size>
+template<int HierarchyCount>
 class TagProcessor
 {
 	// 環境
 	CFuncInfoArr &refFuncInfoArr;
 	CLayoutMgr   &refLayoutMgr;
 	// 定数
-	const wchar_t* (&TagHierarchy)[Size]; // 大きい構造から順に並べたタグの配列。\ マークは抜き。
-	const int HierarchyMax;
+	const wchar_t* (&TagHierarchy)[HierarchyCount]; // 大きい構造から順に並べたタグの配列。\ マークは抜き。
 	// 状態
 	int tagDepth;      // 直前のタグの深さ。TagHierarchy[tagDepth] == 直前のタグ;
 	int treeDepth;     // 直前のタグの「ツリーにおける」深さ。
-	int serials[Size]; // タグの各深さで割り振ったトピック番号の最大値を記憶しておく。
+	int serials[HierarchyCount]; // タグの各深さで割り振ったトピック番号の最大値を記憶しておく。
 	// 作業場
 	wchar_t szTopic[256];   // トピック番号 + トピックタイトル; (タグが * で終わっている場合はトピック番号を省略する)
 
 public:
-	TagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[Size])
+	TagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[HierarchyCount])
 	: refFuncInfoArr(fia)
 	, refLayoutMgr(lmgr)
 	, TagHierarchy(tagHierarchy)
-	, HierarchyMax(Size-1)
 	, tagDepth(0)
 	, treeDepth(-1)
 	, serials()
@@ -104,7 +102,7 @@ public:
 
 		// 現在のタグの深さ(depth)を求める。
 		int depth; // Tag Depth
-		for (depth = HierarchyMax; 0 <= depth; --depth) {
+		for (depth = HierarchyCount - 1; 0 <= depth; --depth) {
 			if (wcslen(TagHierarchy[depth]) == pTagEnd - pTag
 			    && 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)
 			) {
@@ -133,7 +131,7 @@ public:
 		if (depth < 0) {
 			return pTitleEnd; // トピックタグではなかった。
 		}
-		assert(depth <= HierarchyMax);
+		assert(depth < HierarchyCount);
 
 		/* 状態変数の更新
 			現在のタグの深さ(depth)と直前のタグの深さ(tagDepth)の比較から
@@ -157,7 +155,7 @@ public:
 		if (treeDepth < 0) {
 			treeDepth = 0; // 最初のトピックの場合や、最初のトピックが深い階層(section や subsection など)だったあとに、chapter が現れた場合など。
 		}
-		assert(treeDepth <= HierarchyMax);
+		assert(treeDepth < HierarchyCount);
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
@@ -174,7 +172,7 @@ public:
 
 		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
 		if (bAddNumber) {
-			assert(4 * HierarchyMax + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+			assert(4 * HierarchyCount + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
 			int i = 0;
 			while (i <= tagDepth && serials[i] == 0) {
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
@@ -205,11 +203,11 @@ public:
 		return pTitleEnd;
 	}
 };
-template<int Size> inline
-TagProcessor<Size>
-MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[Size])
+template<int HierarchyCount> inline
+TagProcessor<HierarchyCount>
+MakeTagProcessor(CFuncInfoArr& fia, CLayoutMgr& lmgr, const wchar_t* (&tagHierarchy)[HierarchyCount])
 {
-	return TagProcessor<Size>(fia, lmgr, tagHierarchy);
+	return TagProcessor<HierarchyCount>(fia, lmgr, tagHierarchy);
 }
 
 /** アウトライン解析の補助クラス */
@@ -223,8 +221,8 @@ public:
 	{}
 
 	/** ドキュメント全体を先頭からスキャンして、見つけた \tag{title} を TagProcessor に渡す。 */
-	template<int Size>
-	void each(TagProcessor<Size>& process)
+	template<int HierarchyCount>
+	void each(TagProcessor<HierarchyCount>& process)
 	{
 		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
 		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber) {
