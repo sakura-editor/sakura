@@ -3301,11 +3301,11 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	lf.lfHeight = ncm.lfCaptionFont.lfHeight;
 	::lstrcpy( lf.lfFaceName, _T("Marlett") );
 	HFONT hFont = ::CreateFontIndirect( &lf );
-	::lstrcpy( lf.lfFaceName, _T("Wingdings") );
+	::lstrcpy( lf.lfFaceName, _T("Webdings") );
 	HFONT hFont2 = ::CreateFontIndirect( &lf );
 	gr.SetTextBackTransparent( true );
 
-	static const TCHAR szBtn[DOCK_BUTTON_NUM] = { (TCHAR)0x72/* 閉じる */, (TCHAR)0x36/* メニュー */, (TCHAR)0xFF/* 更新 */ };
+	static const TCHAR szBtn[DOCK_BUTTON_NUM] = { (TCHAR)0x72/* 閉じる */, (TCHAR)0x36/* メニュー */, (TCHAR)0x71/* 更新 */ };
 	HFONT hFontBtn[DOCK_BUTTON_NUM] = { hFont/* 閉じる */, hFont/* メニュー */, hFont2/* 更新 */ };
 	POINT pt;
 	::GetCursorPos( &pt );
