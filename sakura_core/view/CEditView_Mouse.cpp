@@ -1231,7 +1231,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				if (PointCompare(sSelect.GetFrom(), sWord.GetTo()) < 0
 				 && PointCompare(sWord.GetFrom(), sSelect.GetTo()) < 0
 				) { // sWord と sSelect は交差している。
-					ptSelectCursor = 0 == PointCompare(ptNewCursor, sSelect.GetTo())
+					ptSelectCursor = (0 == PointCompare(ptNewCursor, sSelect.GetTo()))
 						? sWord.GetTo()    // キャレットは選択範囲終点にある⇒終点を単語末尾まで拡張する
 						: sWord.GetFrom(); // キャレットは選択範囲始点にある⇒始点を単語の頭まで拡張する
 				}
