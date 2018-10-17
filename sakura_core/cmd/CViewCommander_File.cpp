@@ -576,7 +576,6 @@ void CViewCommander::Command_PROFILEMGR( void )
 }
 
 
-
 /* ファイルの場所を開く */
 void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 {
@@ -585,10 +584,20 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
-	::PathRemoveFileSpec(&*strFolder.begin());
+	// ドキュメントパスを変数に入れる
+	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
 
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"explore", strFolder.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	// Windows Explorerの引数をいれるバッファは固定サイズで用意しておく(かなり多め1.5倍)
+	WCHAR parameters[MAX_PATH * 3 / 2];
+	if (_countof(parameters) <= ::_scwprintf(L"/select,\"%s\"", pszDocPath)) {
+		ErrorBeep();
+		return;
+	}
+
+	// Windows Explorerの引数を作る(書式指定はあえてベタ書きで残して将来の拡張に備える)
+	::_swprintf_p(parameters, _countof(parameters), L"/select,\"%s\"", pszDocPath);
+
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", parameters, NULL, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
