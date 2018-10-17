@@ -188,7 +188,8 @@ public:
 
 		// トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
 		const ptrdiff_t copyLen = t_min(szTopic + _countof(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
-		pTopicEnd = wmemcpy(pTopicEnd, pTitle, copyLen) + copyLen;
+		wmemcpy(pTopicEnd, pTitle, copyLen);
+		pTopicEnd += copyLen;
 		*pTopicEnd = L'\0';
 
 		// トピックツリーにトピックを追加する。
