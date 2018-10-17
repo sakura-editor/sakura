@@ -577,7 +577,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 
 
 
-/* ファイルの場所をエクスプローラーで開く */
+/* ファイルの場所を開く */
 void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
