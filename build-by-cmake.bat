@@ -32,14 +32,22 @@ if not exist "%BUILDDIR%" (
 )
 set ERROR_RESULT=0
 
+if "%platform%" == "MinGW" (
+	set GENERATER_PARAM=-G"MinGW Makefiles"
+) else (
+	set GENERATER_PARAM=-DCMAKE_GENERATOR_PLATFORM=%platform%
+)
+
 @echo ---- creating project -----
-cmake -DCMAKE_GENERATOR_PLATFORM=%platform% -B%BUILDDIR% -H%PROJECT_TOP% || set ERROR_RESULT=1
+@echo cmake %GENERATER_PARAM%  -B%BUILDDIR% -H%PROJECT_TOP%
+cmake %GENERATER_PARAM% -B%BUILDDIR% -H%PROJECT_TOP% || set ERROR_RESULT=1
 if "%ERROR_RESULT%" == "1" (
 	@echo ERROR
 	exit /b 1
 )
 
 @echo ---- building project -----
+@echo cmake --build %BUILDDIR%  --config %configuration%
 cmake --build %BUILDDIR%  --config %configuration% || set ERROR_RESULT=1
 if "%ERROR_RESULT%" == "1" (
 	@echo ERROR
