@@ -23,6 +23,8 @@
 */
 
 #include "StdAfx.h"
+#include <wchar.h>
+#include <algorithm>
 #include "types/CType.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocOutline.h"
@@ -238,29 +240,28 @@ public:
 			              *pTitle    = 0, // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
 			              *pTitleEnd = 0; // \section{dddd} または \section*{dddd} の、} を指すポインタ。
 
-			// 一文字ずつ
-			for (const wchar_t* p = pLine; p < pLineEnd; ++p) {
+			const wchar_t Meta[] = { L'\\', L'%' };
+			const wchar_t* p = pLine;
+			while (pLineEnd != (p = std::find_first_of(p, pLineEnd, Meta, Meta + _countof(Meta)))) {
 				if (*p == L'%') {
 					break; // コメントなので以降はいらない。
 				}
-				if (*p != L'\\') {
-					continue; // 「\」がないなら次の文字へ。
-				}
+				assert(*p == L'\\');
 
 				// '\' の後ろから、'{' を目印にタグとタイトルを見つける。
-				pTag = ++p;
-				p = (p = wmemchr(p, L'{', pLineEnd - p)) ? p : pLineEnd;
-				pTagEnd = p < pLineEnd ? p++ : pLineEnd;
-				pTitle  = p;
-				p = (p = wmemchr(p, L'}', pLineEnd - p)) ? p : pLineEnd;
-				pTitleEnd = p;
+				pTag      = p + 1;
+				pTagEnd   = std::find(pTag, pLineEnd, L'{');
+				pTitle    = pTagEnd < pLineEnd ? pTagEnd + 1 : pLineEnd;
+				pTitleEnd = std::find(pTitle, pLineEnd, L'}');
 
 				// タグの処理は任せる。
-				if (pTag < pTagEnd && pTitle < pTitleEnd) {
+				if (pTag < pTagEnd && pTitle < pTitleEnd && pTitleEnd < pLineEnd) {
 					p = process(nLineNumber, pLine, pTag, pTagEnd, pTitle, pTitleEnd, pLineEnd);
-				}
-				if (p < pTag || pLineEnd < p) {
-					return; // 無効な値であるか、無限ループのおそれがあるため中断。
+					if (p < pTag || pLineEnd < p) {
+						return; // 無効な値であるか、無限ループのおそれがあるため中断。
+					}
+				} else {
+					p += 1;
 				}
 			}
 		}
