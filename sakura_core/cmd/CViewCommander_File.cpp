@@ -584,20 +584,15 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	// ドキュメントパスをバッファに入れる
-	std::wstring strDocPath(GetDocument()->m_cDocFile.GetFilePath());
+	// ドキュメントパスを変数に入れる
+	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
 
-	// 必要があればバッファを拡張し、パスに空白が含まれてたら二重引用符で括る
-	strDocPath.reserve(strDocPath.length() + 2);
-	if (::PathQuoteSpaces(&*strDocPath.begin())) {
-		strDocPath.assign(strDocPath.c_str()); // 文字列長を再設定する
-	}
+	// Windows Explorerの引数を作る
+	CNativeW explorerCommand;
+	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
+	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
 
-	// Windows Explorerの引数を組み立てる
-	constexpr WCHAR explorerCommandPrefix[] = L"/select,";
-	std::wstring explorerCommand = explorerCommandPrefix + strDocPath;
-
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", explorerCommand.c_str(), NULL, SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
