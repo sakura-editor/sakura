@@ -33,6 +33,10 @@ if not exist "%BUILDDIR%" (
 set ERROR_RESULT=0
 
 if "%platform%" == "MinGW" (
+	@echo disable build for MinGW temporally.
+	exit /b 0
+)
+if "%platform%" == "MinGW" (
 	set GENERATER_PARAM=-G"MinGW Makefiles"
 ) else (
 	set GENERATER_PARAM=-DCMAKE_GENERATOR_PLATFORM=%platform%
