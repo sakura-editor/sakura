@@ -584,20 +584,20 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	// ドキュメントパスを変数に入れる
-	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
+	// ドキュメントパスをバッファに入れる
+	std::wstring strDocPath(GetDocument()->m_cDocFile.GetFilePath());
 
-	// Windows Explorerの引数をいれるバッファは固定サイズで用意しておく(かなり多め1.5倍)
-	WCHAR parameters[MAX_PATH * 3 / 2];
-	if (_countof(parameters) <= ::_scwprintf(L"/select,\"%s\"", pszDocPath)) {
-		ErrorBeep();
-		return;
+	// 必要があればバッファを拡張し、パスに空白が含まれてたら二重引用符で括る
+	strDocPath.reserve(strDocPath.length() + 2);
+	if (::PathQuoteSpaces(&*strDocPath.begin())) {
+		strDocPath.assign(strDocPath.c_str()); // 文字列長を再設定する
 	}
 
-	// Windows Explorerの引数を作る(書式指定はあえてベタ書きで残して将来の拡張に備える)
-	::_swprintf_p(parameters, _countof(parameters), L"/select,\"%s\"", pszDocPath);
+	// Windows Explorerの引数を組み立てる
+	constexpr WCHAR explorerCommandPrefix[] = L"/select,";
+	std::wstring explorerCommand = explorerCommandPrefix + strDocPath;
 
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", parameters, NULL, SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", explorerCommand.c_str(), NULL, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
