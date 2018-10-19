@@ -1,4 +1,5 @@
-﻿#define HLP000001	1 //サクラエディタ  ヘルプ目次
+﻿/*! @file */
+#define HLP000001	1 //サクラエディタ  ヘルプ目次
 #define HLP000002	2 //機能概要
 #define HLP000003	3 //動作環境
 #define HLP000004	4 //使用条件等
