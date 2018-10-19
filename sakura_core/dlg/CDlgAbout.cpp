@@ -24,6 +24,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
 #include "sakura.hh"
@@ -377,6 +378,41 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 	m_hFont = CreateFontIndirect( &lf );
 	if(m_hFont != NULL)
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
+
+	// サイズを調整する
+	DWORD placement = 0;
+
+	HDC hDC = ::GetDC( hWnd );
+	auto hObj = ::SelectObject( hDC, hFont );
+	{
+		const ULONG cchText = ::GetWindowTextLength( hWnd );
+		auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
+		WCHAR* pchText = textBuf.get();
+		::GetWindowText( hWnd, pchText, cchText + 1 );
+
+		const INT nMaxExtent = 0xFFFF;
+
+		auto vxBuf = std::make_unique<INT[]>( cchText );
+		auto vDx = vxBuf.get();
+
+		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味した領域を確保
+		auto glyphBuf = std::make_unique<WCHAR[]>( cchGlyph );
+		auto vGlyphs = glyphBuf.get();
+
+		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
+		results.lpDx = vDx;
+		results.lpGlyphs = vGlyphs;
+		results.nGlyphs = cchGlyph;
+		results.nMaxFit = cchText;
+		const DWORD dwFlags = ::GetFontLanguageInfo( hDC );
+
+		placement = ::GetCharacterPlacement( hDC, pchText, cchText, nMaxExtent, &results, dwFlags );
+	}
+	::SelectObject( hDC, hObj );
+	::ReleaseDC( hWnd, hDC );
+
+	POINTS &pts = MAKEPOINTS(placement);
+	::SetWindowPos( hWnd, NULL, 0, 0, pts.x + ::DpiScaleX( 2 ), pts.y, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
 
 	return TRUE;
 }
