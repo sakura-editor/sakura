@@ -3,7 +3,7 @@ set configuration=%2
 set ERROR_RESULT=0
 
 if "%platform%" == "MinGW" (
-	@echo   test for MinGW will be skipped. (platform: %platform%, configuration: %configuration%)
+	@echo   test for MinGW will be skipped. ^(platform: %platform%, configuration: %configuration%^)
 	exit /b 0
 )
 
