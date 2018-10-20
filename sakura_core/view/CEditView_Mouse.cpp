@@ -83,9 +83,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() == 0 ){
 		return;
 	}
-	if( !GetCaret().ExistCaretFocus() ){ //フォーカスがないとき
-		return;
-	}
 
 	/* 辞書Tipが起動されている */
 	if( 0 == m_dwTipTimer ){
