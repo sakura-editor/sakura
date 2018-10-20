@@ -98,15 +98,11 @@ const DWORD p_helpids[] = {	//12900
 	#define MY_WIN32_WINNT 0
 #endif
 
-#if defined(APPVEYOR_BUILD_NUMBER)
-#define APPVEYOR_BUILD_TEXT	"Build " APPVEYOR_BUILD_NUMBER
-#endif
-
 #if defined(APPVEYOR_BUILD_URL)
 #pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
 #endif
-#if defined(APPVEYOR_BUILD_TEXT)
-#pragma message("APPVEYOR_BUILD_TEXT: " APPVEYOR_BUILD_TEXT)
+#if defined(APPVEYOR_BUILD_NUMBER_LABEL)
+#pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
 #endif
 
 //	From Here Nov. 7, 2000 genta
@@ -266,7 +262,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-#ifdef APPVEYOR_BUILD_TEXT
+#ifdef APPVEYOR_BUILD_NUMBER_LABEL
 	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
 #endif
 #ifdef APPVEYOR_SHORTHASH
