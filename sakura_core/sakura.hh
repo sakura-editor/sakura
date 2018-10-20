@@ -56,6 +56,7 @@
 #define HLP000027	27 //Oracle SQL*Plusで実行
 #define HLP000121	121 //ブラウズ
 #define HLP000022	22 //ファイルのプロパティ
+#define HLP000373	373 //ファイルの場所を開く
 #define HLP000363	363 //プロファイルマネージャ
 #define HLP000029	29 //最近使ったファイル
 #define HLP000023	23 //最近使ったフォルダ

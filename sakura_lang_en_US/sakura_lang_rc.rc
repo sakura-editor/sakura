@@ -2257,6 +2257,7 @@ BEGIN
     F_VIEWMODE              "View Mode"
     F_PROPERTY_FILE         "File Property"
     F_PROFILEMGR            "Profile Maneger"
+    F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
 END
 
 STRINGTABLE DISCARDABLE 
