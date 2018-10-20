@@ -114,6 +114,34 @@ const DWORD p_helpids[] = {	//12900
 #pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
 #endif
 
+/*!
+	@brief 指定したウィンドウハンドルが 指定したウィンドウクラス なのかチェックする
+	@param hWnd			チェックするウィンドウハンドル
+	@param pClassName	比較するウィンドウクラス名
+*/
+static bool CheckWindowClass(HWND hWnd, LPCTSTR pClassName)
+{
+	TCHAR szClassName[256];
+	int count = ::GetClassName(hWnd, szClassName, _countof(szClassName));
+	if (0 < count && count < _countof(szClassName))
+	{
+		if (wcscmp(szClassName, pClassName) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/*!
+	@brief 指定したウィンドウハンドルが SysLink なのかチェックする
+	@param hWnd			チェックするウィンドウハンドル
+*/
+static bool IsSysLink(HWND hWnd)
+{
+	return CheckWindowClass(hWnd, _T("SysLink"));
+}
+
 //	From Here Nov. 7, 2000 genta
 /*!
 	標準以外のメッセージを捕捉する
@@ -140,7 +168,10 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 			{
 				PNMLINK pNMLink = (PNMLINK)lParam;
 				LITEM   item    = pNMLink->item;
-				ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
+				if (IsSysLink(pNMLink->hdr.hwndFrom))
+				{
+					ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
+				}
 			}
 			break;
 		}
