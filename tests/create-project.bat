@@ -11,7 +11,7 @@ if not exist "googletest\CMakeLists.txt" (
 
 set BUILDDIR=build\%platform%
 if exist "%BUILDDIR%" (
-	rmdir /s /q %BUILDDIR%
+	rmdir /s /q "%BUILDDIR%"
 )
 mkdir %BUILDDIR%
 cmake -DCMAKE_GENERATOR_PLATFORM=%platform% -B%BUILDDIR% -H. || set ERROR_RESULT=1
