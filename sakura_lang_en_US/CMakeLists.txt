@@ -28,7 +28,7 @@ add_dependencies(${project_name} OutGitHash)
 
 # add definition
 add_definitions(-D_UNICODE -DUNICODE)
-add_definitions(-DWIN32 -D_WINDOWS -DNOMINMAX -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
+add_definitions(-DWIN32 -D_WINDOWS -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501)
 
 if(MSVC)
 	# avoid error LNK2001 for "__DllMainCRTStartup@12"
