@@ -268,7 +268,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef APPVEYOR_SHORTHASH
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
-#ifdef APPVEYOR_PULL_REQUEST_NUMBER
+#ifdef APPVEYOR_PR_NUMBER_LABEL
 	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
 #endif
 
