@@ -276,11 +276,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
 #endif
 
-	// GitHub のリンクのテキスト
-#if !defined(GITHUB_COMMIT_URL) && !defined(GITHUB_COMMIT_URL_PR_HEAD)
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
-#endif
-
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
 
