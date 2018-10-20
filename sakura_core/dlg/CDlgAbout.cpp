@@ -266,19 +266,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-	m_UrlBuildLinkWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD));
+#ifdef APPVEYOR_BUILD_TEXT
+	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
+#endif
 #if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
 	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
 #endif
 #if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
 	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
-#endif
-
-#if defined(APPVEYOR_BUILD_TEXT)
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
 #endif
 
 	// GitHub の Commit のリンク
