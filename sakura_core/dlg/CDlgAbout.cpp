@@ -269,18 +269,11 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef APPVEYOR_BUILD_TEXT
 	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
 #endif
-#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
+#ifdef APPVEYOR_SHORTHASH
+	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
 #if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
 	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
-#endif
-
-	// GitHub の Commit のリンク
-#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), _T(APPVEYOR_SHORTHASH));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
 #endif
 
 	// GitHub の PR のリンク
