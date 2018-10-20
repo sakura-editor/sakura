@@ -263,7 +263,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-	m_UrlGitWnd.SetSubclassWindow(GetItemHwnd( IDC_STATIC_URL_GIT));
+#ifdef GIT_URL
+	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
+#endif
 	m_UrlBuildLinkWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD));
 #if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
 	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
@@ -272,12 +274,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
 #endif
 
-#ifdef GIT_URL
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GIT), _T(GIT_URL));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_GIT_CAPTION), SW_HIDE);
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GIT), SW_HIDE);
-#endif
 #if defined(APPVEYOR_BUILD_TEXT)
 	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
 #else
