@@ -54,6 +54,24 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+
+	/*!
+		@brief SysLink のタイトルを設定する (URL とタイトルが異なるバージョン)
+		@pram nID    SysLink の ダイアログ ID
+		@pram pTitle SysLink の タイトル
+		@pram pLink  SysLink の URLリンク
+	
+		@note 参考
+		- https://docs.microsoft.com/ja-jp/windows/desktop/Controls/syslink-overview
+		- https://docs.microsoft.com/ja-jp/windows/desktop/Controls/create-syslink-controls
+		- https://docs.microsoft.com/ja-jp/windows/desktop/Controls/using-syslink-controls
+	*/
+	void SetSysLinkText(int nID, LPCWSTR pTitle, LPCWSTR pLink);
+	
+	/*!
+		@brief SysLink のタイトルを設定する (URL とタイトルが同じバージョン)
+	*/
+	void SetSysLinkText(int nID, LPCWSTR pLink);
 private:
 	CUrlWnd m_UrlUrWnd;
 	CUrlWnd m_UrlGitWnd;
