@@ -38,6 +38,16 @@
 #endif
 #endif
 
+// Workaround for PROPSHEETHEADER_V2_SIZE
+#if defined(__MINGW32__) && !defined(DUMMYUNION5_MEMBER)
+#ifndef NONAMELESSUNION
+#define DUMMYUNION5_MEMBER(x) x
+#else /* NONAMELESSUNION */
+#define DUMMYUNION5_MEMBER(x) DUMMYUNIONNAME5.x
+#endif
+#endif
+
+
 //グローバル
 #include "_main/global.h"
 
