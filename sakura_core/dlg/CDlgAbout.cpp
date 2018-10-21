@@ -390,29 +390,29 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		WCHAR* pchText = textBuf.get();
 		::GetWindowText( hWnd, pchText, cchText + 1 );
 
-		const INT nMaxExtent = 0xFFFF;
+		const INT nMaxExtent = SHRT_MAX; // 幅計算できる最大幅を指定
 
 		auto vxBuf = std::make_unique<INT[]>( cchText );
 		auto vDx = vxBuf.get();
 
-		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味した領域を確保
-		auto glyphBuf = std::make_unique<WCHAR[]>( cchGlyph );
-		auto vGlyphs = glyphBuf.get();
+		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味したグリフ数を指定
 
 		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
 		results.lpDx = vDx;
-		results.lpGlyphs = vGlyphs;
+		results.lpGlyphs = nullptr; // グリフ配列は使わないので指定しない
 		results.nGlyphs = cchGlyph;
 		results.nMaxFit = cchText;
-		const DWORD dwFlags = ::GetFontLanguageInfo( hDC );
+		const DWORD dwFlags = ::GetFontLanguageInfo( hDC ); // デバイスコンテキストで選択されたフォントの情報を取得
 
 		placement = ::GetCharacterPlacement( hDC, pchText, cchText, nMaxExtent, &results, dwFlags );
 	}
 	::SelectObject( hDC, hObj );
 	::ReleaseDC( hWnd, hDC );
 
-	POINTS &pts = MAKEPOINTS(placement);
-	::SetWindowPos( hWnd, NULL, 0, 0, pts.x + ::DpiScaleX( 2 ), pts.y, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+	if ( placement != 0 ) {
+		POINTS &pts = MAKEPOINTS(placement);
+		::SetWindowPos( hWnd, NULL, 0, 0, pts.x + ::DpiScaleX( 4 ), pts.y, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+	}
 
 	return TRUE;
 }
@@ -488,7 +488,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
+		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, _tcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画
