@@ -379,42 +379,15 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 	if(m_hFont != NULL)
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
+	// 設定されているテキストを取得する
+	const ULONG cchText = ::GetWindowTextLength( hWnd );
+	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
+	WCHAR* pchText = textBuf.get();
+	::GetWindowText( hWnd, pchText, cchText + 1 );
+
 	// サイズを調整する
-	DWORD placement = 0;
-
-	HDC hDC = ::GetDC( hWnd );
-	auto hObj = ::SelectObject( hDC, hFont );
-	{
-		const ULONG cchText = ::GetWindowTextLength( hWnd );
-		auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
-		WCHAR* pchText = textBuf.get();
-		::GetWindowText( hWnd, pchText, cchText + 1 );
-
-		const INT nMaxExtent = SHRT_MAX; // 幅計算できる最大幅を指定
-
-		auto vxBuf = std::make_unique<INT[]>( cchText );
-		auto vDx = vxBuf.get();
-
-		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味したグリフ数を指定
-
-		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
-		results.lpDx = vDx;
-		results.lpGlyphs = nullptr; // グリフ配列は使わないので指定しない
-		results.nGlyphs = cchGlyph;
-		results.nMaxFit = cchText;
-		const DWORD dwFlags = ::GetFontLanguageInfo( hDC ); // デバイスコンテキストで選択されたフォントの情報を取得
-
-		placement = ::GetCharacterPlacement( hDC, pchText, cchText, nMaxExtent, &results, dwFlags );
-	}
-	::SelectObject( hDC, hObj );
-	::ReleaseDC( hWnd, hDC );
-
-	if ( placement != 0 ) {
-		POINTS &pts = MAKEPOINTS(placement);
-		::SetWindowPos( hWnd, NULL, 0, 0, pts.x + ::DpiScaleX( 4 ), pts.y, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
-	}
-
-	return TRUE;
+	auto retSetText = OnSetText( pchText, cchText );
+	return retSetText ? TRUE : FALSE;
 }
 
 LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -527,6 +500,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		pUrlWnd->m_bHilighted = FALSE;
 		pUrlWnd->m_pOldProc = NULL;
 		return (LRESULT)0;
+	case WM_SETTEXT:
+		return pUrlWnd->OnSetText( (LPCTSTR)lParam ) ? TRUE : FALSE;
 	}
 
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
@@ -534,3 +509,61 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 //@@@ 2002.01.18 add end
 
 
+//WM_SETTEXTハンドラ
+//https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-settext
+bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) const
+{
+	// 標準のメッセージハンドラに処理させる
+	auto bRet = ::CallWindowProc( m_pOldProc, GetHwnd(), WM_SETTEXT, 0, (LPARAM)pchText );
+	if ( bRet == FALSE ) {
+		return false;
+	}
+
+	// 設定文字列がnullや空白だと都合が悪いので置換する
+	constexpr TCHAR altNulStr[] = _T("|");
+	if ( pchText == nullptr || cchText == 0 || pchText[0] == _T('\0') || ::iswblank( pchText[0] ) ) {
+		pchText = altNulStr;
+	}
+
+	// 文字列長が省略された場合はここで取得する
+	if ( cchText == 0 ) {
+		cchText = ::_tcslen( pchText );
+	}
+
+	// サイズを調整する
+	DWORD placement = 0;
+
+	HDC hDC = ::GetDC( GetHwnd() );
+	auto hObj = ::SelectObject( hDC, GetFont() );
+	{
+		const INT nMaxExtent = SHRT_MAX; // 幅計算できる最大幅を指定
+
+		auto vxBuf = std::make_unique<INT[]>( cchText );
+		auto vDx = vxBuf.get();
+
+		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味したグリフ数を指定
+
+		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
+		results.lpDx = vDx;
+		results.lpGlyphs = nullptr; // グリフ配列は使わないので指定しない
+		results.nGlyphs = cchGlyph;
+		results.nMaxFit = cchText;
+		const DWORD dwFlags = ::GetFontLanguageInfo( hDC ); // デバイスコンテキストで選択されたフォントの情報を取得
+
+		placement = ::GetCharacterPlacement( hDC, pchText, cchText, nMaxExtent, &results, dwFlags );
+	}
+	::SelectObject( hDC, hObj );
+	::ReleaseDC( GetHwnd(), hDC );
+
+	// サイズを取得できなければ処理失敗とする
+	if ( placement == 0 ) {
+		return false;
+	}
+
+	// POINT S構造体をSIZE構造体に読み替える
+	SIZE size = { MAKEPOINTS( placement ).x, MAKEPOINTS( placement ).y };
+	size.cx += ::DpiScaleX( 4 ); // ←左右のパディング合計値
+	auto retSetPos = ::SetWindowPos( GetHwnd(), NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+
+	return retSetPos != FALSE;
+}

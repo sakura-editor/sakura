@@ -32,7 +32,11 @@ public:
 	BOOL SetSubclassWindow( HWND hWnd );
 	HWND GetHwnd() const{ return m_hWnd; }
 protected:
+	HFONT GetFont() const { return m_hFont; }
+protected:
 	static LRESULT CALLBACK UrlWndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp );
+protected:
+	bool OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText = 0 ) const;
 protected:
 	HWND m_hWnd;
 	HFONT m_hFont;
