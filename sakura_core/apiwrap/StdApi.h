@@ -39,14 +39,9 @@
 #endif
 
 
-//デバッグ用。
-//VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
-//デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。
-#ifdef _DEBUG
-#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixelをすると、結果が即反映される。
-#else
+//↓過去プロジェクトの残骸（そのうち削除予定）
 #define DEBUG_SETPIXEL(hdc)
-#endif
+
 
 namespace ApiWrap
 {
