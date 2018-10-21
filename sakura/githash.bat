@@ -133,6 +133,7 @@ ENDLOCAL
 exit /b 0
 
 :output_githash
+echo /*! @file */
 echo #pragma once
 if "%COMMITID%" == "" (
 	echo // GIT_COMMIT_HASH is not defined

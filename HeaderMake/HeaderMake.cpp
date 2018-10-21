@@ -258,7 +258,7 @@ next:
 
 
 	//処理
-
+	fprintf(out, "/*! @file */\n");
 	if(mode==MODE_DEFINE){
 		fprintf(out,
 			"#ifndef SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
