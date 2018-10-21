@@ -169,10 +169,10 @@ if exist "%OUTFILE_EXE%" (
 	del %OUTFILE_EXE%
 )
 if exist "%WORKDIR%" (
-	rmdir /s /q %WORKDIR%
+	rmdir /s /q "%WORKDIR%"
 )
 if exist "%WORKDIR_ASM%" (
-	rmdir /s /q %WORKDIR_ASM%
+	rmdir /s /q "%WORKDIR_ASM%"
 )
 
 mkdir %WORKDIR%
@@ -264,10 +264,10 @@ call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
 @echo end   zip asm
 
 if exist "%WORKDIR%" (
-	rmdir /s /q %WORKDIR%
+	rmdir /s /q "%WORKDIR%"
 )
 if exist "%WORKDIR_ASM%" (
-	rmdir /s /q %WORKDIR_ASM%
+	rmdir /s /q "%WORKDIR_ASM%"
 )
 
 exit /b 0
