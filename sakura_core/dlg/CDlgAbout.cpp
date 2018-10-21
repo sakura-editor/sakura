@@ -98,15 +98,11 @@ const DWORD p_helpids[] = {	//12900
 	#define MY_WIN32_WINNT 0
 #endif
 
-#if defined(APPVEYOR_BUILD_NUMBER)
-#define APPVEYOR_BUILD_TEXT	"Build " APPVEYOR_BUILD_NUMBER
-#endif
-
 #if defined(APPVEYOR_BUILD_URL)
 #pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
 #endif
-#if defined(APPVEYOR_BUILD_TEXT)
-#pragma message("APPVEYOR_BUILD_TEXT: " APPVEYOR_BUILD_TEXT)
+#if defined(APPVEYOR_BUILD_NUMBER_LABEL)
+#pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
 #endif
 
 //	From Here Nov. 7, 2000 genta
@@ -263,45 +259,17 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-	m_UrlGitWnd.SetSubclassWindow(GetItemHwnd( IDC_STATIC_URL_GIT));
-	m_UrlBuildLinkWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD));
-#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
-#endif
-#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
-	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
-#endif
-
 #ifdef GIT_URL
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GIT), _T(GIT_URL));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_GIT_CAPTION), SW_HIDE);
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GIT), SW_HIDE);
+	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-#if defined(APPVEYOR_BUILD_TEXT)
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), _T(APPVEYOR_BUILD_TEXT));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
+#ifdef APPVEYOR_BUILD_NUMBER_LABEL
+	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
 #endif
-
-	// GitHub の Commit のリンク
-#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), _T(APPVEYOR_SHORTHASH));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
+#ifdef APPVEYOR_SHORTHASH
+	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
-
-	// GitHub の PR のリンク
-#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
-	::SetWindowText(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR), _T("PR ") _T(APPVEYOR_PULL_REQUEST_NUMBER));
-#else
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR), SW_HIDE);
-#endif
-
-	// GitHub のリンクのテキスト
-#if !defined(GITHUB_COMMIT_URL) && !defined(GITHUB_COMMIT_URL_PR_HEAD)
-	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
+#ifdef APPVEYOR_PR_NUMBER_LABEL
+	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
