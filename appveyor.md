@@ -132,8 +132,8 @@
 
 | 生成する環境変数 | 説明 | 有効性 |
 ----|----|----
-| COMMITID                      | git の commit Hash                                  | git 環境が有効な場合              |
-| SHORT_COMMITID                | git の commit Hash の先頭8文字                      | git 環境が有効な場合              |
+| GIT_COMMIT_HASH               | git の commit Hash                                  | git 環境が有効な場合              |
+| GIT_SHORT_COMMIT_HASH         | git の commit Hash の先頭8文字                      | git 環境が有効な場合              |
 | GIT_URL                       | git remote URL (origin)                             | git 環境が有効な場合              |
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
@@ -151,8 +151,8 @@
 
 | 生成するマクロ名                | 元にする環境変数                | 型       |
 | ----                            | ----                            | ----     |
-| GIT_COMMIT_HASH                 | COMMITID                        | 文字列   |
-| SHORT_COMMITID                  | SHORT_COMMITID                  | 文字列   |
+| GIT_COMMIT_HASH                 | GIT_COMMIT_HASH                 | 文字列   |
+| GIT_SHORT_COMMIT_HASH           | GIT_SHORT_COMMIT_HASH           | 文字列   |
 | GIT_URL                         | GIT_URL                         | 文字列   |
 | APPVEYOR_URL                    | APPVEYOR_URL                    | 文字列   |
 | APPVEYOR_REPO_NAME              | APPVEYOR_REPO_NAME              | 文字列   |
