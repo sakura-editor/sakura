@@ -32,3 +32,11 @@ endif (BUILD_SHARED_LIBS)
 # link libraries
 target_link_libraries(${project_name} gtest)
 target_link_libraries(${project_name} gtest_main)
+
+# Hacks to reuse compiled editor objects.
+target_compile_definitions(${project_name} PUBLIC WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN7)
+target_compile_options    (${project_name} PUBLIC $<$<CONFIG:Release>:/GL> /MT$<$<CONFIG:Debug>:d> /GF /FD /EHsc /Zi /TP /source-charset:utf-8 /execution-charset:shift_jis)
+target_link_libraries     (${project_name} $<$<CONFIG:Release>:-LTCG> comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.obj")
+set_target_properties     (${project_name} PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
+)
