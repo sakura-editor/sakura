@@ -3,7 +3,7 @@ set configuration=%2
 set ERROR_RESULT=0
 
 pushd "%~dp0.."
-rem   produces header files neccessary in creating the project.
+rem   produces header files necessary in creating the project.
 @echo ---- start build-sln.bat ----
 call  build-sln.bat %platform% %configuration% || set ERROR_RESULT=1
 @echo ---- end   build-sln.bat ----
