@@ -30,11 +30,11 @@ if not exist ..\.git (
 
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
-	for /f "usebackq" %%s in (`git show -s --format^=%%H`) do (
-		set GIT_COMMIT_HASH=%%s
-	)
 	for /f "usebackq" %%s in (`git show -s --format^=%%h`) do (
 		set GIT_SHORT_COMMIT_HASH=%%s
+	)
+	for /f "usebackq" %%s in (`git show -s --format^=%%H`) do (
+		set GIT_COMMIT_HASH=%%s
 	)
 	for /f "usebackq" %%s in (`git config --get remote.origin.url`) do (
 		set GIT_URL=%%s
@@ -135,15 +135,15 @@ exit /b 0
 :output_githash
 echo /*! @file */
 echo #pragma once
-if "%GIT_COMMIT_HASH%" == "" (
-	echo // GIT_COMMIT_HASH is not defined
-) else (
-	echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
-)
 if "%GIT_SHORT_COMMIT_HASH%" == "" (
 	echo // GIT_SHORT_COMMIT_HASH is not defined
 ) else (
 	echo #define GIT_SHORT_COMMIT_HASH "%GIT_SHORT_COMMIT_HASH%"
+)
+if "%GIT_COMMIT_HASH%" == "" (
+	echo // GIT_COMMIT_HASH is not defined
+) else (
+	echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
 )
 if "%GIT_URL%" == "" (
 	echo // GIT_URL is not defined
