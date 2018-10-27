@@ -37,12 +37,12 @@ if "%GIT_ENABLED%" == "1" (
 		set GIT_COMMIT_HASH=%%s
 	)
 	for /f "usebackq" %%s in (`git config --get remote.origin.url`) do (
-		set GIT_URL=%%s
+		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
 ) else (
 	set GIT_SHORT_COMMIT_HASH=
 	set GIT_COMMIT_HASH=
-	set GIT_URL=
+	set GIT_REMOTE_ORIGIN_URL=
 )
 
 @rem get back to the original directory
@@ -73,7 +73,7 @@ if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 
 @echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 @echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
-@echo GIT_URL               : %GIT_URL%
+@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 @echo APPVEYOR_URL          : %APPVEYOR_URL%
 @echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
 @echo APPVEYOR_REPO_TAG_NAME: %APPVEYOR_REPO_TAG_NAME%
@@ -145,10 +145,10 @@ if "%GIT_COMMIT_HASH%" == "" (
 ) else (
 	echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
 )
-if "%GIT_URL%" == "" (
-	echo // GIT_URL is not defined
+if "%GIT_REMOTE_ORIGIN_URL%" == "" (
+	echo // GIT_REMOTE_ORIGIN_URL is not defined
 ) else (
-	echo #define GIT_URL "%GIT_URL%"
+	echo #define GIT_REMOTE_ORIGIN_URL "%GIT_REMOTE_ORIGIN_URL%"
 )
 
 if "%APPVEYOR_URL%" == "" (
