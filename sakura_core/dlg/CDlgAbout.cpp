@@ -197,8 +197,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #endif
 
 	// 3行目
-#ifdef GIT_URL
-	cmemMsg.AppendString( _T("(GitURL ") _T(GIT_URL) _T(")\r\n"));
+#ifdef GIT_REMOTE_ORIGIN_URL
+	cmemMsg.AppendString( _T("(GitURL ") _T(GIT_REMOTE_ORIGIN_URL) _T(")\r\n"));
 #endif
 
 	// 段落区切り
@@ -259,7 +259,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-#ifdef GIT_URL
+#ifdef GIT_REMOTE_ORIGIN_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
 #ifdef APPVEYOR_BUILD_NUMBER_LABEL
@@ -322,8 +322,8 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		{
 #if defined(APPVEYOR_BUILD_URL)
 			::ShellExecute(GetHwnd(), NULL, _T(APPVEYOR_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
-#elif defined(GIT_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(GIT_URL), NULL, NULL, SW_SHOWNORMAL);
+#elif defined(GIT_REMOTE_ORIGIN_URL)
+			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
