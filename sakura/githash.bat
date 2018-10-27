@@ -30,18 +30,18 @@ if not exist ..\.git (
 
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
-	for /f "usebackq" %%s in (`git show -s --format^=%%H`) do (
-		set COMMITID=%%s
-	)
 	for /f "usebackq" %%s in (`git show -s --format^=%%h`) do (
-		set SHORT_COMMITID=%%s
+		set GIT_SHORT_COMMIT_HASH=%%s
+	)
+	for /f "usebackq" %%s in (`git show -s --format^=%%H`) do (
+		set GIT_COMMIT_HASH=%%s
 	)
 	for /f "usebackq" %%s in (`git config --get remote.origin.url`) do (
 		set GIT_URL=%%s
 	)
 ) else (
-	set SHORT_COMMITID=
-	set COMMITID=
+	set GIT_SHORT_COMMIT_HASH=
+	set GIT_COMMIT_HASH=
 	set GIT_URL=
 )
 
@@ -71,9 +71,9 @@ if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 	set APPVEYOR_SHORTHASH_PR_HEAD=
 )
 
-@echo SHORT_COMMITID: %SHORT_COMMITID%
-@echo COMMITID: %COMMITID%
-@echo GIT_URL: %GIT_URL%
+@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
+@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
+@echo GIT_URL               : %GIT_URL%
 @echo APPVEYOR_URL          : %APPVEYOR_URL%
 @echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
 @echo APPVEYOR_REPO_TAG_NAME: %APPVEYOR_REPO_TAG_NAME%
@@ -135,15 +135,15 @@ exit /b 0
 :output_githash
 echo /*! @file */
 echo #pragma once
-if "%COMMITID%" == "" (
-	echo // GIT_COMMIT_HASH is not defined
-) else (
-	echo #define GIT_COMMIT_HASH "%COMMITID%"
-)
-if "%SHORT_COMMITID%" == "" (
+if "%GIT_SHORT_COMMIT_HASH%" == "" (
 	echo // GIT_SHORT_COMMIT_HASH is not defined
 ) else (
-	echo #define GIT_SHORT_COMMIT_HASH "%SHORT_COMMITID%"
+	echo #define GIT_SHORT_COMMIT_HASH "%GIT_SHORT_COMMIT_HASH%"
+)
+if "%GIT_COMMIT_HASH%" == "" (
+	echo // GIT_COMMIT_HASH is not defined
+) else (
+	echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
 )
 if "%GIT_URL%" == "" (
 	echo // GIT_URL is not defined
