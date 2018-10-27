@@ -106,7 +106,7 @@ public:
 		std::swap( m_pRawData, left.m_pRawData );
 		std::swap( m_nRawLen, left.m_nRawLen );
 	}
-	SSIZE_T capacity() const { return m_nDataBufSize ? m_nDataBufSize - 2: 0; }
+	int capacity() const { return m_nDataBufSize ? m_nDataBufSize - 2: 0; }
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*
