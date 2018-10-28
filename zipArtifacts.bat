@@ -242,7 +242,8 @@ copy /Y installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
 	copy /Y installer\warning-alpha.txt   %WORKDIR%\
 )
-call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
+@rem temporally disable to zip all files to a file to workaround #514.
+@rem call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
 
