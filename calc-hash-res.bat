@@ -19,7 +19,7 @@ if not exist "%SRCDIR%" (
 )
 
 where python --version 1>nul 2>&1
-if not "%ERRORLEVEL%" == "0" (
+if errorlevel 1 (
 	@echo NOTE: No python command
 ) else (
 	python calc-hash.py %OUTHASHFILE% %SRCDIR% .res
