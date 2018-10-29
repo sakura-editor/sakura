@@ -1,4 +1,4 @@
 call sakura\githash.bat
 
-set SHORT_COMMITID=%PROJECT_NUMBER%
+set PROJECT_NUMBER=%GIT_SHORT_COMMIT_HASH%
 doxygen doxygen.conf

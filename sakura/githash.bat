@@ -1,7 +1,5 @@
 @echo off
 
-SETLOCAL
-
 set OUT_DIR=%1
 if "%OUT_DIR%" == "" (
 	set OUT_DIR=.
@@ -129,7 +127,6 @@ if not errorlevel 1 (
 	@echo %GITHASH_H% was updated.
 )
 
-ENDLOCAL
 exit /b 0
 
 :output_githash
