@@ -226,7 +226,7 @@ public:
 
 	/** ドキュメント全体を先頭からスキャンして、見つけた \tag{title} を TagProcessor に渡す。 */
 	template<int HierarchyCount>
-	void each(TagProcessor<HierarchyCount>& process)
+	void each(TagProcessor<HierarchyCount>&& process)
 	{
 		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
 		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber) {

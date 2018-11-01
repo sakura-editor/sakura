@@ -118,7 +118,7 @@ BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 	LPITEMIDLIST pidl = NULL;
 
 #if (WINVER >= _WIN32_WINNT_WIN2K)
-	hres = ::SHGetFolderLocation( NULL, nFolder, NULL, NULL, &pidl );
+	hres = ::SHGetFolderLocation( NULL, nFolder, NULL, 0, &pidl );
 	if( SUCCEEDED( hres ) ){
 		bRet = ::SHGetPathFromIDList( pidl, pszPath );
 		::CoTaskMemFree( pidl );

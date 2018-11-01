@@ -4065,7 +4065,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 		results.nMaxFit = cchText;
 		auto placement = ::GetCharacterPlacement(hdc, pchText, cchText, nMaxExtent, &results, dwFlags);
 
-		if (placement != NULL) {
+		if (placement != 0) {
 			::ExtTextOut(hdc, rc.left, rc.top, ETO_CLIPPED | ETO_OPAQUE, &rc, m_pszMenubarMessage, nStrLen, vDx);
 		}
 	}
