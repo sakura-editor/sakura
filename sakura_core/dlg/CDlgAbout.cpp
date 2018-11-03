@@ -514,12 +514,13 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) const
 {
 	// 標準のメッセージハンドラに処理させる
-	auto bRet = ::CallWindowProc( m_pOldProc, GetHwnd(), WM_SETTEXT, 0, (LPARAM)pchText );
-	if ( bRet == FALSE ) {
+	auto retSetText = ::CallWindowProc( m_pOldProc, GetHwnd(), WM_SETTEXT, 0, (LPARAM)pchText );
+	if ( retSetText == FALSE ) {
 		return false;
 	}
 
 	// 設定文字列がnullや空白だと都合が悪いので置換する
+	// （GetCharacterPlacement関数で正確な幅が計算できないため）
 	constexpr TCHAR altNulStr[] = _T("|");
 	if ( pchText == nullptr || cchText == 0 || pchText[0] == _T('\0') || ::iswblank( pchText[0] ) ) {
 		pchText = altNulStr;
@@ -538,13 +539,13 @@ bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) c
 	{
 		const INT nMaxExtent = SHRT_MAX; // 幅計算できる最大幅を指定
 
-		auto vxBuf = std::make_unique<INT[]>( cchText );
-		auto vDx = vxBuf.get();
+		auto dxBuf = std::make_unique<INT[]>( cchText );
+		auto pDx = dxBuf.get();
 
 		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味したグリフ数を指定
 
 		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
-		results.lpDx = vDx;
+		results.lpDx = pDx;
 		results.lpGlyphs = nullptr; // グリフ配列は使わないので指定しない
 		results.nGlyphs = cchGlyph;
 		results.nMaxFit = cchText;
