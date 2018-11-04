@@ -180,12 +180,12 @@ Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open\command";
 
 ; add File Handlers to each extensions
 ; see https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017
-Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.cpp\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.cs\OpenWithProgids";                      ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.h\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.cpp\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.cs\OpenWithProgids";                      ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.h\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(true)
 
 ; registry for each user (non-Admin only)
 Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor";                       ValueType: string; ValueName: "";     ValueData: "{cm:fileassocMenu}";          Tasks: fileassoc; Flags: uninsdeletekey; Check: CheckPrivilege(false)
@@ -211,12 +211,12 @@ Root: HKLM; Subkey: "SOFTWARE\Classes\SakuraEditor.Document\shell\open\command";
 
 ; add File Handlers to each extensions
 ; see https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017
-Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.cpp\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.cs\OpenWithProgids";                      ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
-Root: HKLM; Subkey: "SOFTWARE\Classes\.h\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletekey; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.txt\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.log\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.c\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.cpp\OpenWithProgids";                     ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.cs\OpenWithProgids";                      ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
+Root: HKLM; Subkey: "SOFTWARE\Classes\.h\OpenWithProgids";                       ValueType: string; ValueName: "SakuraEditor.Document"; ValueData: "";           Flags: uninsdeletevalue; Check: CheckPrivilege(false)
 
 [Icons]
 Name: "{group}\{cm:AppName}";                                                Filename: "{app}\sakura.exe";                         Components: main; Check: InTopMenu(false);   Tasks: startmenu;
