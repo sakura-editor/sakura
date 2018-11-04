@@ -32,13 +32,13 @@ path=C:\msys64\mingw64\bin;%path%
 mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash stdafx Funccode_enum.h Funccode_define.h
 if errorlevel 1 (
 	echo error 1 errorlevel %errorlevel%
-	exit /b %errorlevel%
+	exit /b 1
 )
 
 mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" -j4
 if errorlevel 1 (
 	echo error 2 errorlevel %errorlevel%
-	exit /b %errorlevel%
+	exit /b 1
 )
 exit /b 0
 

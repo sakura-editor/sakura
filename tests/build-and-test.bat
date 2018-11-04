@@ -11,7 +11,7 @@ if "%platform%" == "MinGW" (
 call %~dp0create-project.bat %platform% %configuration%
 if errorlevel 1 (
 	@echo ERROR in create-project.bat %errorlevel%
-	exit /b %errorlevel%
+	exit /b 1
 )
 @echo ---- end   create-project.bat ----
 
@@ -19,7 +19,7 @@ if errorlevel 1 (
 call %~dp0build-project.bat %platform% %configuration%
 if errorlevel 1 (
 	@echo ERROR in build-project.bat %errorlevel%
-	exit /b %errorlevel%
+	exit /b 1
 )
 @echo ---- end   build-project.bat ----
 
@@ -27,6 +27,6 @@ if errorlevel 1 (
 call %~dp0run-tests.bat %platform% %configuration%
 if errorlevel 1 (
 	@echo ERROR in run-tests.bat %errorlevel%
-	exit /b %errorlevel%
+	exit /b 1
 )
 @echo ---- end   run-tests.bat ----
