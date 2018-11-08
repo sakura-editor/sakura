@@ -19,7 +19,7 @@ pushd "%~dp0"
 : Git enabled checking
 set GIT_ENABLED=1
 where git 1>nul 2>&1
-if not "%ERRORLEVEL%" == "0" (
+if errorlevel 1 (
 	set GIT_ENABLED=0
 	@echo NOTE: No git command
 )
@@ -120,7 +120,7 @@ if "%VALID_CREATE_GITHASH%" == "0" (
 call :output_githash > %GITHASH_H_TMP%
 
 fc %GITHASH_H% %GITHASH_H_TMP% 1>nul 2>&1
-if "%ERRORLEVEL%" == "0" (
+if not errorlevel 1 (
 	del %GITHASH_H_TMP%
 	@echo %GITHASH_H% was not updated.
 ) else (
