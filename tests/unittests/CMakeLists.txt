@@ -30,13 +30,24 @@ if (BUILD_SHARED_LIBS)
 endif (BUILD_SHARED_LIBS)
 
 # link libraries
-target_link_libraries(${project_name} gtest)
-target_link_libraries(${project_name} gtest_main)
+target_link_libraries(${project_name} PRIVATE gtest)
+target_link_libraries(${project_name} PRIVATE gtest_main)
 
 # Hacks to reuse compiled editor objects.
-target_compile_definitions(${project_name} PUBLIC WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN7)
-target_compile_options    (${project_name} PUBLIC $<$<CONFIG:Release>:/GL> /MT$<$<CONFIG:Debug>:d> /GF /FD /EHsc /Zi /TP /source-charset:utf-8 /execution-charset:shift_jis)
-target_link_libraries     (${project_name} $<$<CONFIG:Release>:-LTCG> comctl32.lib Imm32.lib mpr.lib imagehlp.lib Shlwapi.lib "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.obj")
-set_target_properties     (${project_name} PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
-)
+target_compile_definitions(${project_name} PRIVATE WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN7)
+if (MSVC)
+	target_compile_options (${project_name} PRIVATE $<$<CONFIG:Release>:/GL> /MT$<$<CONFIG:Debug>:d> /GF /FD /EHsc /Zi /TP /source-charset:utf-8 /execution-charset:shift_jis)
+	target_link_libraries  (${project_name} PRIVATE $<$<CONFIG:Release>:-LTCG> "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.obj")
+	set_target_properties  (${project_name} PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
+	)
+elseif (MINGW)
+	target_compile_options (${project_name} PRIVATE -finput-charset=utf-8 -fexec-charset=cp932)
+	file (GLOB_RECURSE ALL_O
+		"${CMAKE_CURRENT_LIST_DIR}/../../sakura_core/*.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/../../sakura_core/*.rc"
+	)
+	list (TRANSFORM ALL_O REPLACE "\\.(cpp|rc)$" ".o")
+	target_link_libraries (${project_name} PRIVATE ${ALL_O})
+endif ()
+target_link_libraries (${project_name} PRIVATE winspool ole32 oleaut32 uuid comctl32 imm32 mpr imagehlp shlwapi winmm)
