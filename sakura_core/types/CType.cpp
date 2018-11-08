@@ -199,9 +199,9 @@ void _DefaultConfig(STypeConfig* pType)
 
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8 = false;
-	pType->m_encoding.m_eDefaultCodetype = CODE_SJIS;
+	pType->m_encoding.m_eDefaultCodetype = CODE_UTF8;
 	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
-	pType->m_encoding.m_bDefaultBom = false;
+	pType->m_encoding.m_bDefaultBom = true;
 
 	//@@@2002.2.4 YAZAKI
 	pType->m_szExtHelp[0] = L'\0';
