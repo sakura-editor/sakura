@@ -44,6 +44,7 @@
 //	sakura_rc.rcファイルの下のほうにあるString Tableも参照のこと
 
 #include "StdAfx.h"
+#include <Shlwapi.h>
 #include "func/Funccode.h"
 #include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
@@ -1211,8 +1212,22 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	//case F_VIEWMODE:					//ビューモード	//	Sep. 10, 2002 genta 常に使えるように
 	//case F_PROPERTY_FILE:				//ファイルのプロパティ	// 2009.04.11 ryoji コメントアウト
 	case F_OPEN_FOLDER_IN_EXPLORER:		//ファイルの場所を開く
-	case F_OPEN_COMMAND_PROMPT:			//コマンドプロンプトを開く
 		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath();	// 現在編集中のファイルのパス名をクリップボードにコピーできるか
+
+	case F_OPEN_COMMAND_PROMPT:			//コマンドプロンプトを開く
+		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
+		{
+			return false;
+		}
+		if (PathIsUNCW(pcEditDoc->m_cDocFile.GetFilePath()))
+		{
+			/* UNC パスの場合は、メニューを無効にする */
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
