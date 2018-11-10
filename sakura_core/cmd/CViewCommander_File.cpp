@@ -615,6 +615,24 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
 	::PathRemoveFileSpecW(&*strFolder.begin());
 
+	/*
+		以下のコマンドを実行する
+		cmd.exe /k "cd /d <ディレクトリパス>"
+	
+		<ディレクトリパス> に関して
+		1. <ディレクトリパス> はダブルクオートで囲む必要がある。
+		2. /k の中なので ^ でエスケープして ^" にする必要がある。
+		3. C の文字列なので ^\" とする必要がある。
+	
+		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
+		その場合、管理者用のコマンドプロンプトに対しては動作しない。
+		
+		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
+	*/
+	CNativeW cmdExeParam;
+	cmdExeParam.AppendStringF(L"/k \"cd /d ^\"%s^\"", strFolder.c_str());
+	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
+
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH + 1];
 	if (GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, sizeof(szCmdExePathBuf) / sizeof(szCmdExePathBuf[0])) == 0)
@@ -623,7 +641,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 		return;
 	}
 
-	auto hInstance = ::ShellExecuteW(NULL, L"open", szCmdExePathBuf, L"", strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(NULL, L"open", szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
