@@ -611,6 +611,13 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 		ErrorBeep();
 		return;
 	}
+	
+	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
+	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath()))
+	{
+		ErrorBeep();
+		return;
+	}
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
 	::PathRemoveFileSpecW(&*strFolder.begin());
