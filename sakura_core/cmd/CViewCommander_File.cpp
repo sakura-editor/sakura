@@ -614,31 +614,16 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
 	::PathRemoveFileSpec(&*strFolder.begin());
-	
-	/*
-	以下のコマンドを実行する
-		cmd.exe /k "cd /d <ディレクトリパス>"
-	
-		<ディレクトリパス> に関して
-		1. <ディレクトリパス> はダブルクオートで囲む必要がある。
-		2. /k の中なので ^ でエスケープして ^" にする必要がある。
-		3. C の文字列なので ^\" とする必要がある。
-	*/
-	CNativeW cmdExeParam;
-    cmdExeParam.AppendStringF(L"/k \"cd /d ^\"%s^\"", strFolder.c_str());
-	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
-
-	const WCHAR *szDefaultPath = L"C:\\Windows\\System32\\cmd.exe"; /* cmd.exe のパスの取得に失敗した場合の保険 */
-	const WCHAR *pszCmdExePath  = szDefaultPath;
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH + 1];
-	if (GetEnvironmentVariable(L"COMSPEC", szCmdExePathBuf, sizeof(szCmdExePathBuf) / sizeof(szCmdExePathBuf[0])) > 0)
+	if (GetEnvironmentVariable(L"COMSPEC", szCmdExePathBuf, sizeof(szCmdExePathBuf) / sizeof(szCmdExePathBuf[0])) == 0)
 	{
-		pszCmdExePath = szCmdExePathBuf;
+		ErrorBeep();
+		return;
 	}
 
-	auto hInstance = ::ShellExecute(NULL, L"open", pszCmdExePath, pszcmdExeParam, NULL, SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecute(NULL, L"open", szCmdExePathBuf, L"", strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
