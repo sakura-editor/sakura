@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link rel="stylesheet" href="dsk_sakura.css" type="text/css">
+<link rel="shortcut icon" href="images/favicon.ico">
+<TITLE>Windows 10 でのファイル拡張子関連付けのための準備作業</TITLE>
+<META NAME="MS-HKWD" CONTENT="Windows 10 でのファイル拡張子関連付けのための準備作業">
+</HEAD>
+<BODY>
+<script type="text/javascript" src="item.js"></script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>Windows 10 でのファイル拡張子関連付けのための準備作業</h2>
+
+<h3 id="Condition">準備が必要な条件</h3>
+
+ver 2.4.0.0 以降(正確には <a href="https://github.com/sakura-editor/sakura/pull/596" target=_blank>PR #596</a>) のサクラエディタのインストーラを使ってインストールした場合は不要です。<br>
+それ以前のインストーラを使ってインストールした場合またはインストーラを使わなかった場合にこのページの手順が必要になります。<br>
+<br>
+ただし ver 2.4.0.0 以降のインストーラを使った場合でも、サクラエディタが標準で対応しない拡張子への関連付けを行う場合には<br>
+<a href="#OpenWithProgids">OpenWithProgids (拡張子ごとに設定する)</a>
+の設定のみ必要です。
+<br>
+<br>
+このページの手順を行った上で <a href="HLP000374.html">こちらの手順</a> で実際に拡張子の関連付けを変更できます。<br>
+
+<h3 id="Applications">Applications</h3>
+
+このレジストリキーは ver 2.4.0.0 以前のインストーラでインストールした場合でも書き込み済みですが、<br>
+インストーラを使わなかった場合には書き込みが必要です。<br>
+<br>
+以下の内容で reg ファイルを作成してダブルクリックして適用します。<br>
+
+<pre><div class="codesample">Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe\shell]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe\shell\open]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\sakura.exe\shell\open\command]
+@="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
+</div></pre>
+
+上記は 64bit PC に 32bit 版のサクラエディタをインストールする場合の例です。<br>
+sakura.exe のパスは実態に合わせて調整してください。<br>
+
+<h4>参考サイト</h4>
+
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (英語です)</a></li>
+</ul>
+
+<h3 id="Verb">Verb</h3>
+
+コマンドを <a href="https://msdn.microsoft.com/ja-jp/library/cc422072.aspx" target=_blank>ShellExecute</a> を起動するときの <strong>Verb</strong> を登録します。<br>
+<br>
+以下の内容で reg ファイルを作成してダブルクリックして適用します。<br>
+
+<pre><div class="codesample">Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SakuraEditor.Document]
+@=""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SakuraEditor.Document\shell]
+@=""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SakuraEditor.Document\shell\open]
+@=""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SakuraEditor.Document\shell\open\command]
+@="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
+</code></pre>
+
+<h4>参考サイト</h4>
+
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (英語です)</a></li>
+</ul>
+
+
+<h3 id="OpenWithProgids">OpenWithProgids (拡張子ごとに設定する)</h3>
+
+上記で設定した Verb を拡張子ごとに関連付けます。
+
+
+<br>
+以下の内容で reg ファイルを作成してダブルクリックして適用します。(以下は .txt に対する設定です)<br>
+関連付けたい拡張子が複数ある場合、拡張子ごとにレジストリ設定を追加します。<br>
+
+<pre><div class="codesample">Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\<strong>.txt</strong>\OpenWithProgids]
+"SakuraEditor.Document"=""
+</code></pre>
+
+<h4>参考サイト</h4>
+
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (英語です)</a></li>
+</ul>
+
+<h2>リンク</h2>
+
+<ul>
+<li><a href="https://www.glamenv-septzen.net/view/14#idf5215e" target=_blank>レジストリの直接編集によるファイルの拡張子と関連づけ</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (英語です)</a></li>
+</ul>
+
+</BODY></HTML>
