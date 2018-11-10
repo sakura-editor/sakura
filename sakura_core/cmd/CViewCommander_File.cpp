@@ -613,17 +613,17 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 	}
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
-	::PathRemoveFileSpec(&*strFolder.begin());
+	::PathRemoveFileSpecW(&*strFolder.begin());
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH + 1];
-	if (GetEnvironmentVariable(L"COMSPEC", szCmdExePathBuf, sizeof(szCmdExePathBuf) / sizeof(szCmdExePathBuf[0])) == 0)
+	if (GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, sizeof(szCmdExePathBuf) / sizeof(szCmdExePathBuf[0])) == 0)
 	{
 		ErrorBeep();
 		return;
 	}
 
-	auto hInstance = ::ShellExecute(NULL, L"open", szCmdExePathBuf, L"", strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(NULL, L"open", szCmdExePathBuf, L"", strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
