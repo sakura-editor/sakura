@@ -624,6 +624,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_VIEWMODE:			return HLP000249;			//ビューモード
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
 	case F_OPEN_FOLDER_IN_EXPLORER:		return HLP000373;	//ファイルの場所を開く
+	case F_OPEN_COMMAND_PROMPT:			return HLP000376;	//コマンドプロンプトを開く
 	case F_PROFILEMGR:			return HLP000363;			//プロファイルマネージャ
 
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
