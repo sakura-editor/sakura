@@ -624,20 +624,15 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 
 	/*
 		以下のコマンドを実行する
-		cmd.exe /k "cd /d <ディレクトリパス>"
-	
-		<ディレクトリパス> に関して
-		1. <ディレクトリパス> はダブルクオートで囲む必要がある。
-		2. /k の中なので ^ でエスケープして ^" にする必要がある。
-		3. C の文字列なので ^\" とする必要がある。
-	
+		cmd.exe /k cd /d "<ディレクトリパス>"
+		
 		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
 		その場合、管理者用のコマンドプロンプトに対しては動作しない。
 		
 		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
 	*/
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k \"cd /d ^\"%s^\"", strFolder.c_str());
+	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
