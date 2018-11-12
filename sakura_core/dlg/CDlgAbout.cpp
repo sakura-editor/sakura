@@ -519,51 +519,35 @@ bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) c
 		return false;
 	}
 
-	// 設定文字列がnullや空白だと都合が悪いので置換する
-	// （GetCharacterPlacement関数で正確な幅が計算できないため）
-	constexpr TCHAR altNulStr[] = _T("|");
-	if ( pchText == nullptr || cchText == 0 || pchText[0] == _T('\0') || ::iswblank( pchText[0] ) ) {
-		pchText = altNulStr;
-	}
-
-	// 文字列長が省略された場合はここで取得する
-	if ( cchText == 0 ) {
-		cchText = ::_tcslen( pchText );
-	}
-
-	// サイズを調整する
-	DWORD placement = 0;
-
+	// サイズを調整のためにDCを取得
 	HDC hDC = ::GetDC( GetHwnd() );
 	auto hObj = ::SelectObject( hDC, GetFont() );
-	{
-		const INT nMaxExtent = SHRT_MAX; // 幅計算できる最大幅を指定
 
-		auto dxBuf = std::make_unique<INT[]>( cchText );
-		auto pDx = dxBuf.get();
+	// DrawText関数を使ってサイズを計測する
+	// ※この処理は実際には描かない
+	CMyRect rcText;
+	int retDrawText = ::DrawText( hDC, pchText, cchText, &rcText, DT_CALCRECT );
 
-		auto cchGlyph = ( cchText * 3 / 2 ) + 16; // エラーグリフの増分を加味したグリフ数を指定
-
-		GCP_RESULTS results = { sizeof(GCP_RESULTS) };
-		results.lpDx = pDx;
-		results.lpGlyphs = nullptr; // グリフ配列は使わないので指定しない
-		results.nGlyphs = cchGlyph;
-		results.nMaxFit = cchText;
-		const DWORD dwFlags = ::GetFontLanguageInfo( hDC ); // デバイスコンテキストで選択されたフォントの情報を取得
-
-		placement = ::GetCharacterPlacement( hDC, pchText, cchText, nMaxExtent, &results, dwFlags );
-	}
+	// DCの後始末
 	::SelectObject( hDC, hObj );
 	::ReleaseDC( GetHwnd(), hDC );
 
 	// サイズを取得できなければ処理失敗とする
-	if ( placement == 0 ) {
+	if ( retDrawText == 0 ) {
 		return false;
 	}
 
-	// POINT S構造体をSIZE構造体に読み替える
-	SIZE size = { MAKEPOINTS( placement ).x, MAKEPOINTS( placement ).y };
-	size.cx += ::DpiScaleX( 4 ); // ←左右のパディング合計値
+	// マージン用にシステム設定値を取得する。
+	// ※ユーザーが変えられる値なので毎回取りに行く（EDGE = 2px on 96dpi）
+	const int cxEdge = ::GetSystemMetrics( SM_CXEDGE );
+	const int cyEdge = ::GetSystemMetrics( SM_CYEDGE );
+
+	// 計測結果のRECT構造体をSIZE構造体に読み替え、マージンを付加する
+	SIZE size;
+	size.cx = cxEdge + rcText.Width() + cxEdge;
+	size.cy = cyEdge + rcText.Height() + cyEdge;
+
+	// マージン込みのサイズをウインドウに反映する
 	auto retSetPos = ::SetWindowPos( GetHwnd(), NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
 
 	return retSetPos != FALSE;
