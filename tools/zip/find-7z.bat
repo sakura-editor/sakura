@@ -18,7 +18,7 @@ set RESULT_PATH_7Z_2=--
 set RESULT_PATH_7Z_3=--
 
 where 7z 1>nul 2>&1
-if "%ERRORLEVEL%" == "0" (
+if not errorlevel 1 (
 	set RESULT_PATH_7Z_0=OK
 	set CMD_7Z=7z
 ) else if exist "%PATH_7Z_1%" (

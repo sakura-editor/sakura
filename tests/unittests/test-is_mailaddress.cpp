@@ -73,7 +73,7 @@ TEST(testIsMailAddress, CheckMaxLocalPart)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s%1$s%1$s%1$s@example.com", szSeed); //4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s@example.com", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
 	ASSERT_SAME(TRUE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -82,7 +82,7 @@ TEST(testIsMailAddress, CheckExceedMaxLocalPart)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s%1$s%1$s%1$s0@example.com", szSeed); //4個繋げて64文字 + 1
+	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s0@example.com", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字 + 1
 	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
 }
 
@@ -91,8 +91,8 @@ TEST(testIsMailAddress, CheckMaxMailbox)
 	wchar_t szTest[256];
 	wchar_t szSeed64[64 + 1];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szSeed64, _countof(szSeed64), L"%1$s%1$s%1$s%1$s", szSeed); //4個繋げて64文字にする
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@%1$.63s.%1$.63s.%1$.58s.com", szSeed64); //最大255文字のチェック
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字のチェック
 	int mailboxLength;
 	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, &mailboxLength);
 	ASSERT_EQ(255, mailboxLength);
@@ -104,8 +104,8 @@ TEST(testIsMailAddress, CheckMaxExceedMailbox)
 	wchar_t szTest[256 + 1];
 	wchar_t szSeed64[64 + 1];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szSeed64, _countof(szSeed64), L"%1$s%1$s%1$s%1$s", szSeed); //4個繋げて64文字にする
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@%1$.63s.%1$.63s.%1$.58s0.com", szSeed64); //最大255文字オーバーのチェック
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s0.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字オーバーのチェック
 	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
 }
 
@@ -115,8 +115,8 @@ TEST(testIsMailAddress, CheckTooLongDomain)
 	wchar_t szTest[256];
 	wchar_t szSeed64[64 + 1];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szSeed64, _countof(szSeed64), L"%1$s%1$s%1$s%1$s", szSeed); //4個繋げて64文字にする
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@%1$s.com", szSeed64); //63文字を超えるドメイン
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%s.com", szSeed64, szSeed64); //63文字を超えるドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -139,7 +139,7 @@ TEST(testIsMailAddress, CheckDomainIncludesUnderScore)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@test_domain.com", szSeed); //_を含むドメイン
+	::swprintf(szTest, _countof(szTest), L"%s@test_domain.com", szSeed); //_を含むドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -147,7 +147,7 @@ TEST(testIsMailAddress, CheckDomainIncludesSingleHyphen)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@test-domain.com", szSeed); //途中に-を含むドメイン
+	::swprintf_s(szTest, _countof(szTest), L"%s@test-domain.com", szSeed); //途中に-を含むドメイン
 	ASSERT_SAME(TRUE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -156,7 +156,7 @@ TEST(testIsMailAddress, CheckDomainIncludesDoubleHyphen)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::_swprintf_p(szTest, _countof(szTest), L"%1$s@test--domain.com", szSeed); //途中に-を含むドメイン
+	::swprintf_s(szTest, _countof(szTest), L"%s@test--domain.com", szSeed); //途中に-を含むドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
 

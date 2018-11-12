@@ -860,16 +860,16 @@ void CCaret::ShowCaretPosInfo()
 		if( m_bClearStatus ){
 			statusBar.SetStatusText( 0, SBT_NOBORDERS, _T("") );
 		}
-		statusBar.SetStatusText( 1, NULL,          szText_1 );
+		statusBar.SetStatusText( 1, 0,             szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
 		//	From Here
-		statusBar.SetStatusText( 2, NULL,          szEolMode );
+		statusBar.SetStatusText( 2, 0,             szEolMode );
 		//	To Here
-		statusBar.SetStatusText( 3, NULL,          szCaretChar );
-		statusBar.SetStatusText( 4, NULL,          pszCodeName );
+		statusBar.SetStatusText( 3, 0,             szCaretChar );
+		statusBar.SetStatusText( 4, 0,             pszCodeName );
 		statusBar.SetStatusText( 5, SBT_OWNERDRAW, _T("") );
-		statusBar.SetStatusText( 6, NULL,          szText_6 );
+		statusBar.SetStatusText( 6, 0,             szText_6 );
 	}
 
 }

@@ -25,7 +25,7 @@ if "%APPVEYOR%" == "True" (
 
 set ERROR_RESULT=0
 where python --version 1>nul 2>&1
-if not "%ERRORLEVEL%" == "0" (
+if errorlevel 1 (
 	@echo NOTE: No python command
 ) else (
 	python appveyor_env.py
@@ -37,7 +37,7 @@ exit /b %ERROR_RESULT%
 :openpyxl_install
 
 where pip 1>nul 2>&1
-if not "%ERRORLEVEL%" == "0" (
+if errorlevel 1 (
 	@echo NOTE: No pip command
 ) else (
 	@echo NOTE: found pip command

@@ -169,10 +169,10 @@ if exist "%OUTFILE_EXE%" (
 	del %OUTFILE_EXE%
 )
 if exist "%WORKDIR%" (
-	rmdir /s /q %WORKDIR%
+	rmdir /s /q "%WORKDIR%"
 )
 if exist "%WORKDIR_ASM%" (
-	rmdir /s /q %WORKDIR_ASM%
+	rmdir /s /q "%WORKDIR_ASM%"
 )
 
 mkdir %WORKDIR%
@@ -242,7 +242,8 @@ copy /Y installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
 	copy /Y installer\warning-alpha.txt   %WORKDIR%\
 )
-call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
+@rem temporally disable to zip all files to a file to workaround #514.
+@rem call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
 
 call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
 
@@ -264,10 +265,10 @@ call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
 @echo end   zip asm
 
 if exist "%WORKDIR%" (
-	rmdir /s /q %WORKDIR%
+	rmdir /s /q "%WORKDIR%"
 )
 if exist "%WORKDIR_ASM%" (
-	rmdir /s /q %WORKDIR_ASM%
+	rmdir /s /q "%WORKDIR_ASM%"
 )
 
 exit /b 0
@@ -289,5 +290,5 @@ exit /b 0
 @echo    %~nx1 Win32 Release
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
-@echo    %~nx1 x64   Release
+@echo    %~nx1 x64   Debug
 exit /b 0

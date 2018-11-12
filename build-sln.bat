@@ -39,14 +39,19 @@ set LOG_FILE=msbuild-%platform%-%configuration%.log
 @rem https://msdn.microsoft.com/ja-jp/library/ms171470.aspx
 set LOG_OPTION=/flp:logfile=%LOG_FILE%
 
-@echo "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%      /t:"Clean","Rebuild"  %EXTRA_CMD% %LOG_OPTION%
-      "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%      /t:"Clean","Rebuild"  %EXTRA_CMD% %LOG_OPTION%
-if %errorlevel% neq 0 (echo error && exit /b 1)
+@echo "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
+      "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
+if errorlevel 1 (
+	echo ERROR in msbuild.exe errorlevel %errorlevel%
+	exit /b 1
+)
 
 @echo call parse-buildlog.bat %LOG_FILE%
       call parse-buildlog.bat %LOG_FILE%
-if %errorlevel% neq 0 (echo error && exit /b 1)
-
+if errorlevel 1 (
+	echo ERROR in parse-buildlog.bat errorlevel %errorlevel%
+	exit /b 1
+)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
@@ -66,5 +71,5 @@ exit /b 0
 @echo    %~nx1 Win32 Release
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
-@echo    %~nx1 x64   Release
+@echo    %~nx1 x64   Debug
 exit /b 0
