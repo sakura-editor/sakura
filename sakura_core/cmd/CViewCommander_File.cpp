@@ -618,8 +618,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 		return;
 	}
 
-	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePath());
-	::PathRemoveFileSpecW(&*strFolder.begin());
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	/*
 		以下のコマンドを実行する
