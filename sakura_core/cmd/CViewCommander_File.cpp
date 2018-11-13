@@ -613,8 +613,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 	}
 	
 	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
-	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath()))
-	{
+	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath())) {
 		ErrorBeep();
 		return;
 	}
@@ -637,8 +636,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH + 1];
-	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0)
-	{
+	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
 		ErrorBeep();
 		return;
 	}
