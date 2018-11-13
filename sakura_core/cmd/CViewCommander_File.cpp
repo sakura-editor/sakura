@@ -635,7 +635,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
-	WCHAR szCmdExePathBuf[MAX_PATH + 1];
+	WCHAR szCmdExePathBuf[MAX_PATH];
 	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
 		ErrorBeep();
 		return;
