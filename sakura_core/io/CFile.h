@@ -43,6 +43,7 @@ public:
 	//パス
 	const CFilePath& GetFilePathClass() const { return m_szFilePath; }
 	LPCTSTR GetFilePath() const { return m_szFilePath; }
+	std::tstring GetDirPath() const { return m_szFilePath.GetDirPath(); }
 	//設定
 	void SetFilePath(LPCTSTR pszPath){ m_szFilePath.Assign(pszPath); }
 	//各種判定
