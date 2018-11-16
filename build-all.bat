@@ -1,4 +1,5 @@
 @echo off
+setlocal
 set platform=%1
 set configuration=%2
 
@@ -26,42 +27,68 @@ if "%configuration%" == "Release" (
 @echo CONFIGURATION %CONFIGURATION%
 @echo.
 
-if "%platform%" == "MinGW" (
-	@echo call build-gnu.bat %PLATFORM% %CONFIGURATION%
-	call build-gnu.bat   %PLATFORM% %CONFIGURATION% || (echo error build-gnu.bat       && exit /b 1)
-	exit /b 0
+rem plarform & config specialization
+
+if "%CONFIGURATION%" == "Release" (
+	set BatchJobs=build-sln.bat^
+		build-chm.bat^
+		build-installer.bat^
+		zipArtifacts.bat
+) else (
+	set BatchJobs=build-sln.bat^
+		externals\cppcheck\install-cppcheck.bat^
+		run-cppcheck.bat^
+		zipArtifacts.bat
+)
+if "%PLATFORM%" == "MinGW" (
+	set BatchJobs=build-gnu.bat
+	rem Skip all other batch files because they reject MinGW platform.
 )
 
-@echo ---- start build-sln.bat ----
-call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat       && exit /b 1)
-@echo ---- end   build-sln.bat ----
-@echo.
+rem run
 
-@echo ---- start build-chm.bat ----
-call build-chm.bat                                  || (echo error build-chm.bat       && exit /b 1)
-@echo ---- end   build-chm.bat ----
-@echo.
+for %%B in (%BatchJobs%) do (
+	call :ExecBat "%~dp0%%~B" %PLATFORM% %CONFIGURATION% ^
+	|| (echo error %%~B & exit /b 1)
+)
+exit /b 0
 
-@echo ---- start build-installer.bat ----
-call build-installer.bat %PLATFORM% %CONFIGURATION% || (echo error build-installer.bat && exit /b 1)
-@echo ---- end   build-installer.bat ----
-@echo.
+rem ----------------------------------------------
+rem  sub-routines
+rem ----------------------------------------------
 
-@echo ---- start externals\cppcheck\install-cppcheck.bat ----
-call externals\cppcheck\install-cppcheck.bat        || (echo error externals\cppcheck\install-cppcheck.bat && exit /b 1)
-@echo ---- end   externals\cppcheck\install-cppcheck.bat ----
-@echo.
+:ExecBat
+	setlocal
+	set    Batch=%~1
+	set Platform=%~2
+	set   Config=%~3
 
-@echo ---- start run-cppcheck.bat ----
-call run-cppcheck.bat %PLATFORM% %CONFIGURATION%    || (echo error run-cppcheck.bat    && exit /b 1)
-@echo ---- end   run-cppcheck.bat ----
-@echo.
+	call :StartWatch
+	echo ---- start %Batch% [%StartDate% %StartTime%] ----
+	echo.
+	cmd /C "call "%Batch%" %Platform% %Config%" ^
+	|| exit /b 1
+	call :StopWatch
+	echo ---- end   %Batch% [%StopDate% %StopTime% / %Elapsed% seconds elapsed.] ----
+	echo.
+exit /b 0
 
-@echo ---- start zipArtifacts.bat ----
-call zipArtifacts.bat    %PLATFORM% %CONFIGURATION% || (echo error zipArtifacts.bat    && exit /b 1)
-@echo ---- end   zipArtifacts.bat ----
-@echo.
+:StartWatch
+	set StartDate=%DATE%
+	set StartTime=%TIME: =0%
+exit /b 0
 
+:StopWatch
+	rem Be aware of space-padding hours and octal number literal
+	rem when calculating the Elapsed.
+
+	set StopDate=%DATE%
+	set StopTime=%TIME: =0%
+	set /A Elapsed=(1%StopTime:~0,2%  * 3600 + 1%StopTime:~3,2%  * 60 + 1%StopTime:~6,2%) ^
+	              -(1%StartTime:~0,2% * 3600 + 1%StartTime:~3,2% * 60 + 1%StartTime:~6,2%)
+	if not "%StartDate%" == "%StopDate%" (
+		set /A Elapsed=%Elapsed% + 60 * 3600
+	)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
