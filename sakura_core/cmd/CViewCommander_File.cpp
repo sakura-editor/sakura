@@ -605,7 +605,7 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 
 /* コマンドプロンプトを開く */
-void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
+void CViewCommander::Command_OPEN_COMMAND_PROMPT(bool isAdmin)
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 		ErrorBeep();
@@ -640,7 +640,13 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
 		return;
 	}
 
-	auto hInstance = ::ShellExecuteW(NULL, L"open", szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	LPWSTR pVerb = L"open";
+	if (isAdmin)
+	{
+		pVerb = L"runas";
+	}
+
+	auto hInstance = ::ShellExecuteW(NULL, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
