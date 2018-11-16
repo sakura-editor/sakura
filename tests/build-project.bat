@@ -10,7 +10,7 @@ if not exist "googletest\CMakeLists.txt" (
 )
 popd
 
-set BUILDDIR=%~dp0build\%platform%
+set BUILDDIR=%~dp0build\%platform%\%configuration%
 
 call :SetEnv_%platform% %platform% %configuration%
 cmake --build "%BUILDDIR%" --config %configuration% --target tests1 ^

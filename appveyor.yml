@@ -20,5 +20,18 @@ build_script:
 
     echo appveyor_yml
 
+after_build:
+- cmd: set SAKURA_TEST=tests\build\%PLATFORM%\%CONFIGURATION%\tests1.exe
+
+test:
+  assemblies:
+    only:
+      - '%SAKURA_TEST%'
+
+test_script:
+- cmd: |
+    "%SAKURA_TEST%" --gtest_list_tests
+    "%SAKURA_TEST%" | tests\test_result_filter_tell_AppVeyor.bat
+
 artifacts:
 - path: 'sakura-*$(platform)-$(configuration)*.zip'
