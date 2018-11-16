@@ -18,7 +18,5 @@ build_script:
 
     call tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
-    echo appveyor_yml
-
 artifacts:
 - path: 'sakura-*$(platform)-$(configuration)*.zip'
