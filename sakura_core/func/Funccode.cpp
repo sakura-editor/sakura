@@ -44,6 +44,7 @@
 //	sakura_rc.rcファイルの下のほうにあるString Tableも参照のこと
 
 #include "StdAfx.h"
+#include <Shlwapi.h>
 #include "func/Funccode.h"
 #include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
@@ -119,6 +120,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_VIEWMODE			,	//ビューモード
 	F_PROPERTY_FILE		,	/* ファイルのプロパティ */
 	F_OPEN_FOLDER_IN_EXPLORER	,	//ファイルの場所を開く
+	F_OPEN_COMMAND_PROMPT	,		//コマンドプロンプトを開く
 	F_PROFILEMGR		,	//プロファイルマネージャ
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
@@ -622,6 +624,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_VIEWMODE:			return HLP000249;			//ビューモード
 	case F_PROPERTY_FILE:		return HLP000022;			/* ファイルのプロパティ */
 	case F_OPEN_FOLDER_IN_EXPLORER:		return HLP000373;	//ファイルの場所を開く
+	case F_OPEN_COMMAND_PROMPT:			return HLP000376;	//コマンドプロンプトを開く
 	case F_PROFILEMGR:			return HLP000363;			//プロファイルマネージャ
 
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
@@ -1211,6 +1214,21 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	//case F_PROPERTY_FILE:				//ファイルのプロパティ	// 2009.04.11 ryoji コメントアウト
 	case F_OPEN_FOLDER_IN_EXPLORER:		//ファイルの場所を開く
 		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath();	// 現在編集中のファイルのパス名をクリップボードにコピーできるか
+
+	case F_OPEN_COMMAND_PROMPT:			//コマンドプロンプトを開く
+		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
+		{
+			return false;
+		}
+		if (PathIsUNCW(pcEditDoc->m_cDocFile.GetFilePath()))
+		{
+			/* UNC パスの場合は、メニューを無効にする */
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )

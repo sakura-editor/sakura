@@ -604,6 +604,51 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 
 
+/* コマンドプロンプトを開く */
+void CViewCommander::Command_OPEN_COMMAND_PROMPT(void)
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+	
+	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
+	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath())) {
+		ErrorBeep();
+		return;
+	}
+
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+
+	/*
+		以下のコマンドを実行する
+		cmd.exe /k cd /d "<ディレクトリパス>"
+		
+		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
+		その場合、管理者用のコマンドプロンプトに対しては動作しない。
+		
+		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
+	*/
+	CNativeW cmdExeParam;
+	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
+	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
+
+	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
+	WCHAR szCmdExePathBuf[MAX_PATH];
+	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
+		ErrorBeep();
+		return;
+	}
+
+	auto hInstance = ::ShellExecuteW(NULL, L"open", szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	// If the function succeeds, it returns a value greater than 32. 
+	if (hInstance <= (decltype(hInstance))32) {
+		ErrorBeep();
+		return;
+	}
+}
+
+
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CViewCommander::Command_EXITALLEDITORS( void )
 {
