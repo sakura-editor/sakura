@@ -2263,6 +2263,7 @@ BEGIN
     F_PROPERTY_FILE         "ファイルのプロパティ"
     F_PROFILEMGR            "プロファイルマネージャ"
     F_OPEN_FOLDER_IN_EXPLORER "ファイルの場所を開く"
+    F_OPEN_COMMAND_PROMPT   "コマンドプロンプトを開く"
 END
 
 STRINGTABLE DISCARDABLE 

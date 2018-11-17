@@ -18,8 +18,6 @@ build_script:
 
     call tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
-    echo appveyor_yml
-
 after_build:
 - cmd: set SAKURA_TEST=tests\build\%PLATFORM%\%CONFIGURATION%\tests1.exe
 
