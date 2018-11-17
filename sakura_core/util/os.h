@@ -55,6 +55,38 @@ BOOL IsVisualStyle();						// 自分が現在ビジュアルスタイル表示�
 void PreventVisualStyle( HWND hWnd );		// 指定ウィンドウでビジュアルスタイルを使わないようにする	// 2006.06.23 ryoji
 void MyInitCommonControls();				// コモンコントロールを初期化する							// 2006.06.21 ryoji
 
+/* Wow64 のエミュレーション上で実行しているか判定する */
+BOOL IsWow64();
+
+/*!
+	@brief Wow64 の ファイルシステムリダイレクションを一時的に無効にして、クラス破棄時に元に戻すクラス
+	@note  このクラスを継承しないように final をつける
+*/
+class CDisableWow64FsRedirect final {
+public:
+	/*!
+		@brief 	コンストラクタで ファイルシステムリダイレクションを無効にする
+		@param isOn この引数が TRUE のときに無効化処理を行う
+	*/
+	CDisableWow64FsRedirect(BOOL isOn);
+
+	/*!
+		@brief 	ファイルシステムリダイレクションを元に戻す
+	*/
+	~CDisableWow64FsRedirect();
+	
+	// コピー不可 (C++11 で利用可能)
+	CDisableWow64FsRedirect(const CDisableWow64FsRedirect&) = delete;
+	CDisableWow64FsRedirect& operator = (const CDisableWow64FsRedirect&) = delete;
+	
+	// ムーブ不可 (C++11 で利用可能)
+	CDisableWow64FsRedirect(CDisableWow64FsRedirect&&) = delete;
+	CDisableWow64FsRedirect& operator = (CDisableWow64FsRedirect&&) = delete;
+
+private:
+	BOOL	m_isSuccess;
+	PVOID	m_OldValue;
+};
 
 //カレントディレクトリユーティリティ。
 //コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。

@@ -383,6 +383,20 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 #endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
 
+/*
+	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process
+*/
+BOOL IsWow64()
+{
+	BOOL bIsWow64 = FALSE;
+	if (!IsWow64Process(GetCurrentProcess(),&bIsWow64))
+	{
+		// 失敗したら WOW64 はオフとみなす
+		bIsWow64 = FALSE;
+	}
+	return bIsWow64;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        便利クラス                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -409,4 +423,21 @@ CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 }
 
 
+CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
+:	m_isSuccess(FALSE)
+,	m_OldValue(NULL)
+{
+	if (isOn && IsWow64()) {
+		m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue);
+	}
+	else {
+		m_isSuccess = FALSE;
+	}
+}
 
+CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
+{
+	if (m_isSuccess) {
+		Wow64RevertWow64FsRedirection(m_OldValue);
+	}
+}

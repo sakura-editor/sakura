@@ -2264,6 +2264,7 @@ BEGIN
     F_PROFILEMGR            "プロファイルマネージャ"
     F_OPEN_FOLDER_IN_EXPLORER "ファイルの場所を開く"
     F_OPEN_COMMAND_PROMPT   "コマンドプロンプトを開く"
+    F_OPEN_COMMAND_PROMPT_AS_ADMIN   "管理者としてコマンドプロンプトを開く"
 END
 
 STRINGTABLE DISCARDABLE 

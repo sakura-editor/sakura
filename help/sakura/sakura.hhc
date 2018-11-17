@@ -348,6 +348,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="管理者としてコマンドプロンプトを開く">
+					<param name="Local" value="_RESOURCE\HLP000377.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="最近使ったファイル">
 					<param name="Local" value="_RESOURCE\HLP000029.html">
 					<param name="ImageNumber" value="9">

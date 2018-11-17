@@ -234,7 +234,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_VIEWMODE:			Command_VIEWMODE();break;			/* ビューモード */
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
 	case F_OPEN_FOLDER_IN_EXPLORER:		Command_OPEN_FOLDER_IN_EXPLORER();break;	/* ファイルの場所を開く */
-	case F_OPEN_COMMAND_PROMPT:			Command_OPEN_COMMAND_PROMPT();break;		/* コマンドプロンプトを開く */
+	case F_OPEN_COMMAND_PROMPT:				Command_OPEN_COMMAND_PROMPT(FALSE);break;		/* コマンドプロンプトを開く */
+	case F_OPEN_COMMAND_PROMPT_AS_ADMIN:	Command_OPEN_COMMAND_PROMPT(TRUE);break;		/* 管理者としてコマンドプロンプトを開く */
 	case F_PROFILEMGR:			Command_PROFILEMGR();break;			// プロファイルマネージャ
 	case F_EXITALLEDITORS:		Command_EXITALLEDITORS();break;		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
