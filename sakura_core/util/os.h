@@ -72,6 +72,15 @@ public:
 		@brief 	ファイルシステムリダイレクションを元に戻す
 	*/
 	~CDisableWow64FsRedirect();
+	
+	// コピー不可 (C++11 で利用可能)
+	CDisableWow64FsRedirect(const CDisableWow64FsRedirect&) = delete;
+	CDisableWow64FsRedirect& operator = (const CDisableWow64FsRedirect&) = delete;
+	
+	// ムーブ不可 (C++11 で利用可能)
+	CDisableWow64FsRedirect(CDisableWow64FsRedirect&&) = delete;
+	CDisableWow64FsRedirect& operator = (CDisableWow64FsRedirect&&) = delete;
+
 private:
 	BOOL	m_isSuccess;
 	PVOID	m_OldValue;
