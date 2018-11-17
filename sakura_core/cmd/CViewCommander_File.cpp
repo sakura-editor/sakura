@@ -606,7 +606,7 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 
 /* コマンドプロンプトを開く */
-void CViewCommander::Command_OPEN_COMMAND_PROMPT(bool isAdmin)
+void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 		ErrorBeep();
