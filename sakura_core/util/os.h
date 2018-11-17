@@ -59,7 +59,8 @@ void MyInitCommonControls();				// コモンコントロールを初期化する
 BOOL IsWow64();
 
 /* Wow64 の ファイルシステムリダイレクションを一時的に無効にして、クラス破棄時に元に戻すクラス */
-class CDisableWow64FsRedirect {
+/* このクラスを継承しないように final をつける */
+class CDisableWow64FsRedirect final {
 public:
 	/*!
 		@brief 	コンストラクタで ファイルシステムリダイレクションを無効にする
