@@ -90,10 +90,8 @@ bool CControlProcess::InitializeProcess()
 
 	/* 共有データのロード */
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
-	TCHAR szIniFile[_MAX_PATH];
-	CShareData_IO::LoadShareData();
-	CFileNameManager::getInstance()->GetIniFileName( szIniFile, strProfileName.c_str() );	// 出力iniファイル名
-	if( !fexist(szIniFile) || CCommandLine::getInstance()->IsWriteQuit() ){
+	
+	if( !CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
 		if( CCommandLine::getInstance()->IsWriteQuit() ){
