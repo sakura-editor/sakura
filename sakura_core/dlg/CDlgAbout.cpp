@@ -24,6 +24,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
 #include "sakura.hh"
@@ -378,7 +379,15 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 	if(m_hFont != NULL)
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
-	return TRUE;
+	// 設定されているテキストを取得する
+	const ULONG cchText = ::GetWindowTextLength( hWnd );
+	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
+	WCHAR* pchText = textBuf.get();
+	::GetWindowText( hWnd, pchText, cchText + 1 );
+
+	// サイズを調整する
+	auto retSetText = OnSetText( pchText, cchText );
+	return retSetText ? TRUE : FALSE;
 }
 
 LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -452,7 +461,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
+		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, _tcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画
@@ -491,6 +500,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		pUrlWnd->m_bHilighted = FALSE;
 		pUrlWnd->m_pOldProc = NULL;
 		return (LRESULT)0;
+	case WM_SETTEXT:
+		return pUrlWnd->OnSetText( (LPCTSTR)lParam ) ? TRUE : FALSE;
 	}
 
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
@@ -498,3 +509,46 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 //@@@ 2002.01.18 add end
 
 
+//WM_SETTEXTハンドラ
+//https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-settext
+bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) const
+{
+	// 標準のメッセージハンドラに処理させる
+	auto retSetText = ::CallWindowProc( m_pOldProc, GetHwnd(), WM_SETTEXT, 0, (LPARAM)pchText );
+	if ( retSetText == FALSE ) {
+		return false;
+	}
+
+	// サイズを調整のためにDCを取得
+	HDC hDC = ::GetDC( GetHwnd() );
+	auto hObj = ::SelectObject( hDC, GetFont() );
+
+	// DrawText関数を使ってサイズを計測する
+	// ※この処理は実際には描かない
+	CMyRect rcText;
+	int retDrawText = ::DrawText( hDC, pchText, cchText, &rcText, DT_CALCRECT );
+
+	// DCの後始末
+	::SelectObject( hDC, hObj );
+	::ReleaseDC( GetHwnd(), hDC );
+
+	// サイズを取得できなければ処理失敗とする
+	if ( retDrawText == 0 ) {
+		return false;
+	}
+
+	// マージン用にシステム設定値を取得する。
+	// ※ユーザーが変えられる値なので毎回取りに行く（EDGE = 2px on 96dpi）
+	const int cxEdge = ::GetSystemMetrics( SM_CXEDGE );
+	const int cyEdge = ::GetSystemMetrics( SM_CYEDGE );
+
+	// 計測結果のRECT構造体をSIZE構造体に読み替え、マージンを付加する
+	SIZE size;
+	size.cx = cxEdge + rcText.Width() + cxEdge;
+	size.cy = cyEdge + rcText.Height() + cyEdge;
+
+	// マージン込みのサイズをウインドウに反映する
+	auto retSetPos = ::SetWindowPos( GetHwnd(), NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+
+	return retSetPos != FALSE;
+}
