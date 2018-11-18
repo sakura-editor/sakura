@@ -441,3 +441,35 @@ CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 		Wow64RevertWow64FsRedirection(m_OldValue);
 	}
 }
+
+
+BOOL IsPowershellAvailable(BOOL isDisableWow64Redirect)
+{
+#ifndef _WIN64
+	/*
+		64bit OS で 32bit アプリから起動する場合に意図したパスを見つけられるようにするために
+		Wow64 の FileSystem Redirection を一時的にオフにする。
+	*/
+	CDisableWow64FsRedirect wow64Redirect(isDisableWow64Redirect);
+#endif
+
+	TCHAR szFileBuff[MAX_PATH];
+	LPTSTR lpFilePart = NULL;
+
+	DWORD ret = ::SearchPath(
+		NULL,      // 検索パス
+		_T("powershell.exe"),	// ファイル名
+		NULL,					// ファイルの拡張子
+		MAX_PATH,				// バッファのサイズ
+		szFileBuff,				// 見つかったファイル名を格納するバッファ
+		&lpFilePart				// ファイルコンポーネント
+	);
+	if( ret != 0 )
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}

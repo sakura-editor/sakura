@@ -673,34 +673,18 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		ErrorBeep();
 		return;
 	}
-	
-	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
-	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath())) {
-		ErrorBeep();
-		return;
-	}
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	/*
-		以下のコマンドを実行する
-		cmd.exe /k cd /d "<ディレクトリパス>"
-		
-		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
-		その場合、管理者用のコマンドプロンプトに対しては動作しない。
-		
-		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
+		powershell でコマンドレットを実行するために　-Command　を使用する
+		Set-Location -Path　'ディレクトリ' で指定したディレクトリに移動する
+		-Command　を使用する際は　-NoExit　を指定して　powershell が終了しないようにする
+		(-NoExit　がない場合は　-Command　で指定したコマンドレットが終了すると powershellも終了する)
 	*/
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
+	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
-
-	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
-	WCHAR szCmdExePathBuf[MAX_PATH];
-	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
-		ErrorBeep();
-		return;
-	}
 
 	LPWSTR pVerb = L"open";
 	if (isAdmin)
@@ -718,7 +702,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(isAdmin);
 #endif
-	auto hInstance = ::ShellExecuteW(NULL, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(NULL, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();

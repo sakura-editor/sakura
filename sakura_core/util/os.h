@@ -99,6 +99,12 @@ private:
 	TCHAR m_szCurDir[_MAX_PATH];
 };
 
+/*!
+	@brief powershell が利用可能か判定する
+	@param isDisableWow64Redirect	パス検索の際に WOW64 Filesystem Redirection を無効にするかどうか
+*/
+BOOL IsPowershellAvailable(BOOL isDisableWow64Redirect);
+
 
 #endif /* SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_ */
 /*[EOF]*/

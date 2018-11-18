@@ -57,6 +57,7 @@
 #include "window/CEditWnd.h"
 #include "docplus/CDiffManager.h"
 #include "CMarkMgr.h"	// CAutoMarkMgr
+#include "util/os.h"
 #include "sakura.hh"
 
 //using namespace nsFuncCode;
@@ -1238,20 +1239,23 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 
 	case F_OPEN_POWERSHELL:				//powershellを開く
-	case F_OPEN_POWERSHELL_AS_ADMIN:	//管理者としてpowershellを開く
+		/* UNC パスでも動作するので、UNC パスかどうかはチェックしない */
 		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
 		{
 			return false;
 		}
-		if (PathIsUNCW(pcEditDoc->m_cDocFile.GetFilePath()))
+		/* powershell が利用できない場合は、メニューを無効にする */
+		return IsPowershellAvailable(FALSE);
+
+	case F_OPEN_POWERSHELL_AS_ADMIN:	//管理者としてpowershellを開く
+		/* UNC パスでも動作するので、UNC パスかどうかはチェックしない */
+		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
 		{
-			/* UNC パスの場合は、メニューを無効にする */
 			return false;
 		}
-		else
-		{
-			return true;
-		}
+		/* powershell.exe を探す際、必要なときは　WOW64 Filesystem Redirection を無効にする */
+		/* powershell が利用できない場合は、メニューを無効にする */
+		return IsPowershellAvailable(TRUE);
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
