@@ -457,14 +457,14 @@ BOOL IsPowershellAvailable(BOOL isDisableWow64Redirect)
 	LPTSTR lpFilePart = NULL;
 
 	DWORD ret = ::SearchPath(
-		NULL,      // 検索パス
+		NULL,					// 検索パス
 		_T("powershell.exe"),	// ファイル名
 		NULL,					// ファイルの拡張子
 		MAX_PATH,				// バッファのサイズ
 		szFileBuff,				// 見つかったファイル名を格納するバッファ
 		&lpFilePart				// ファイルコンポーネント
 	);
-	if( ret != 0 )
+	if( ret != 0 && lpFilePart != NULL)
 	{
 		return TRUE;
 	}
