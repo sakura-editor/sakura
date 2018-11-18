@@ -1239,23 +1239,24 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		}
 
 	case F_OPEN_POWERSHELL:				//powershellを開く
-		/* UNC パスでも動作するので、UNC パスかどうかはチェックしない */
-		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
-		{
-			return false;
-		}
-		/* powershell が利用できない場合は、メニューを無効にする */
-		return IsPowershellAvailable(FALSE);
-
 	case F_OPEN_POWERSHELL_AS_ADMIN:	//管理者としてpowershellを開く
-		/* UNC パスでも動作するので、UNC パスかどうかはチェックしない */
+		// UNC パスでも動作するので、UNC パスかどうかはチェックしない
 		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
 		{
 			return false;
 		}
-		/* powershell.exe を探す際、必要なときは　WOW64 Filesystem Redirection を無効にする */
-		/* powershell が利用できない場合は、メニューを無効にする */
-		return IsPowershellAvailable(TRUE);
+		
+		// powershell が利用できない場合は、メニューを無効にする
+		if (nId == F_OPEN_POWERSHELL_AS_ADMIN)
+		{
+			// 管理者権限で起動するときは、必要に応じて WOW64 Filesystem Redirection を無効にする
+			return IsPowershellAvailable(TRUE);
+		}
+		else
+		{
+			// 管理者権限で起動しないときは WOW64 Filesystem Redirection を無効にしなくてよい
+			return IsPowershellAvailable(FALSE);
+		}
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )
