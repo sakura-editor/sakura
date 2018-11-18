@@ -666,6 +666,67 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 }
 
 
+/* powershellを開く */
+void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+	
+	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
+	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath())) {
+		ErrorBeep();
+		return;
+	}
+
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+
+	/*
+		以下のコマンドを実行する
+		cmd.exe /k cd /d "<ディレクトリパス>"
+		
+		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
+		その場合、管理者用のコマンドプロンプトに対しては動作しない。
+		
+		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
+	*/
+	CNativeW cmdExeParam;
+	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
+	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
+
+	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
+	WCHAR szCmdExePathBuf[MAX_PATH];
+	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
+		ErrorBeep();
+		return;
+	}
+
+	LPWSTR pVerb = L"open";
+	if (isAdmin)
+	{
+		pVerb = L"runas";
+	}
+
+#ifndef _WIN64
+	/*
+		64bit OS で 32bit アプリから管理者権限でコマンドプロンプトを起動する場合
+		通常は 32bit 版のコマンドプロンプトが開かれる。
+
+		Wow64 の FileSystem Redirection を一時的にオフにすることにより 64bit 版の
+		コマンドプロンプトを起動する
+	*/
+	CDisableWow64FsRedirect wow64Redirect(isAdmin);
+#endif
+	auto hInstance = ::ShellExecuteW(NULL, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	// If the function succeeds, it returns a value greater than 32. 
+	if (hInstance <= (decltype(hInstance))32) {
+		ErrorBeep();
+		return;
+	}
+}
+
+
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CViewCommander::Command_EXITALLEDITORS( void )
 {

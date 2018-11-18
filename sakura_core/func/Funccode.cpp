@@ -122,6 +122,8 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_OPEN_FOLDER_IN_EXPLORER	,	//ファイルの場所を開く
 	F_OPEN_COMMAND_PROMPT	,		//コマンドプロンプトを開く
 	F_OPEN_COMMAND_PROMPT_AS_ADMIN	,	//管理者としてコマンドプロンプトを開く
+	F_OPEN_POWERSHELL	        ,	//powershellを開く
+	F_OPEN_POWERSHELL_AS_ADMIN	,	//管理者としてpowershellを開く
 	F_PROFILEMGR		,	//プロファイルマネージャ
 	F_EXITALLEDITORS	,	//編集の全終了	// 2007.02.13 ryoji F_WIN_CLOSEALL→F_EXITALLEDITORS
 	F_EXITALL				//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
@@ -627,6 +629,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_OPEN_FOLDER_IN_EXPLORER:		return HLP000373;	//ファイルの場所を開く
 	case F_OPEN_COMMAND_PROMPT:			return HLP000376;	//コマンドプロンプトを開く
 	case F_OPEN_COMMAND_PROMPT_AS_ADMIN:	return HLP000377;	//管理者としてコマンドプロンプトを開く
+	case F_OPEN_POWERSHELL:				return HLP000378;	//powershellを開く
+	case F_OPEN_POWERSHELL_AS_ADMIN:	return HLP000379;	//管理者としてpowershellを開く
 	case F_PROFILEMGR:			return HLP000363;			//プロファイルマネージャ
 
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
@@ -1219,6 +1223,22 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 
 	case F_OPEN_COMMAND_PROMPT:			//コマンドプロンプトを開く
 	case F_OPEN_COMMAND_PROMPT_AS_ADMIN:	//管理者としてコマンドプロンプトを開く
+		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
+		{
+			return false;
+		}
+		if (PathIsUNCW(pcEditDoc->m_cDocFile.GetFilePath()))
+		{
+			/* UNC パスの場合は、メニューを無効にする */
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+
+	case F_OPEN_POWERSHELL:				//powershellを開く
+	case F_OPEN_POWERSHELL_AS_ADMIN:	//管理者としてpowershellを開く
 		if (!pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath())
 		{
 			return false;

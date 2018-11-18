@@ -2269,7 +2269,8 @@ BEGIN
     F_PROFILEMGR            "Profile Maneger"
     F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
     F_OPEN_COMMAND_PROMPT   "Open Command Propmt"
-    F_OPEN_COMMAND_PROMPT_AS_ADMIN   "Open Command Propmt As Admin"
+    F_OPEN_POWERSHELL           "Open powershell"
+    F_OPEN_POWERSHELL_AS_ADMIN  "Open powershell As Admin"
 END
 
 STRINGTABLE DISCARDABLE 

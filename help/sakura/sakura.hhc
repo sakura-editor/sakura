@@ -353,6 +353,16 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="powershellを開く">
+					<param name="Local" value="_RESOURCE\HLP000378.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="管理者としてpowershellを開く">
+					<param name="Local" value="_RESOURCE\HLP000379.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="最近使ったファイル">
 					<param name="Local" value="_RESOURCE\HLP000029.html">
 					<param name="ImageNumber" value="9">
