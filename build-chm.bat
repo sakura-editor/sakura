@@ -18,7 +18,7 @@ if not errorlevel 1 (
 "%CMD_HHC%" help\plugin\plugin.hhp
 if not errorlevel 1 (
 	echo error plugin.hhp errorlevel %errorlevel%
-	"%CMD_HHC%" help\macro\plugin.hhp
+	"%CMD_HHC%" help\plugin\plugin.hhp
 )
 if not errorlevel 1 (
 	echo error plugin.hhp errorlevel %errorlevel%
@@ -28,7 +28,7 @@ if not errorlevel 1 (
 "%CMD_HHC%" help\sakura\sakura.hhp
 if not errorlevel 1 (
 	echo error sakura.hhp errorlevel %errorlevel%
-	"%CMD_HHC%" help\macro\sakura.hhp
+	"%CMD_HHC%" help\sakura\sakura.hhp
 )
 if not errorlevel 1 (
 	echo error sakura.hhp errorlevel %errorlevel%
