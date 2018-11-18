@@ -8,15 +8,28 @@ if "%CMD_HHC%" == "" (
 "%CMD_HHC%" help\macro\macro.HHP
 if not errorlevel 1 (
 	echo error macro.HHP errorlevel %errorlevel%
+	"%CMD_HHC%" help\macro\macro.HHP
+)
+if not errorlevel 1 (
+	echo error macro.HHP errorlevel %errorlevel%
 	exit /b 1
 )
 
 "%CMD_HHC%" help\plugin\plugin.hhp
 if not errorlevel 1 (
 	echo error plugin.hhp errorlevel %errorlevel%
+	"%CMD_HHC%" help\macro\plugin.hhp
+)
+if not errorlevel 1 (
+	echo error plugin.hhp errorlevel %errorlevel%
 	exit /b 1
 )
+
 "%CMD_HHC%" help\sakura\sakura.hhp
+if not errorlevel 1 (
+	echo error sakura.hhp errorlevel %errorlevel%
+	"%CMD_HHC%" help\macro\sakura.hhp
+)
 if not errorlevel 1 (
 	echo error sakura.hhp errorlevel %errorlevel%
 	exit /b 1
