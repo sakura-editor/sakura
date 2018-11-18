@@ -4,34 +4,38 @@ if "%CMD_HHC%" == "" (
 	exit /b 1
 )
 
+set HHP_MACRO=help\macro\macro.HHP
+set HHP_PLUGIN=help\plugin\plugin.hhp
+set HHP_SAKURA=help\sakura\sakura.hhp
+
 @rem hhc.exe returns 1 on success, and returns 0 on failure
-"%CMD_HHC%" help\macro\macro.HHP
+"%CMD_HHC%" %HHP_MACRO%
 if not errorlevel 1 (
-	echo error macro.HHP errorlevel %errorlevel%
-	"%CMD_HHC%" help\macro\macro.HHP
+	echo error %HHP_MACRO% errorlevel %errorlevel%
+	"%CMD_HHC%" %HHP_MACRO%
 )
 if not errorlevel 1 (
-	echo error macro.HHP errorlevel %errorlevel%
+	echo error %HHP_MACRO% errorlevel %errorlevel%
 	exit /b 1
 )
 
-"%CMD_HHC%" help\plugin\plugin.hhp
+"%CMD_HHC%" %HHP_PLUGIN%
 if not errorlevel 1 (
-	echo error plugin.hhp errorlevel %errorlevel%
-	"%CMD_HHC%" help\plugin\plugin.hhp
+	echo error %HHP_PLUGIN% errorlevel %errorlevel%
+	"%CMD_HHC%" %HHP_PLUGIN%
 )
 if not errorlevel 1 (
-	echo error plugin.hhp errorlevel %errorlevel%
+	echo error %HHP_PLUGIN% errorlevel %errorlevel%
 	exit /b 1
 )
 
-"%CMD_HHC%" help\sakura\sakura.hhp
+"%CMD_HHC%" %HHP_SAKURA%
 if not errorlevel 1 (
-	echo error sakura.hhp errorlevel %errorlevel%
-	"%CMD_HHC%" help\sakura\sakura.hhp
+	echo error %HHP_SAKURA% errorlevel %errorlevel%
+	"%CMD_HHC%" %HHP_SAKURA%
 )
 if not errorlevel 1 (
-	echo error sakura.hhp errorlevel %errorlevel%
+	echo error %HHP_SAKURA% errorlevel %errorlevel%
 	exit /b 1
 )
 exit /b 0
