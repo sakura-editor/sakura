@@ -694,8 +694,8 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 
 #ifndef _WIN64
 	/*
-		64bit OS で 32bit アプリから管理者権限でコマンドプロンプトを起動する場合
-		通常は 32bit 版のコマンドプロンプトが開かれる。
+		64bit OS で 32bit アプリから管理者権限で powershell を起動する場合
+		通常は 32bit 版の powershell が開かれる。
 
 		Wow64 の FileSystem Redirection を一時的にオフにすることにより 64bit 版の
 		powershell を起動する
