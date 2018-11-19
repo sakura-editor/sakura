@@ -271,6 +271,11 @@ INT_PTR CPropToolbar::DispatchEvent(
 
 				List_ResetContent( hwndFuncList );
 
+				// 2014.11.25 フォントの高さが正しくなかったバグを修正
+				int nFontHeight = CTextWidthCalc(hwndFuncList).GetTextHeight();
+
+				nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
+
 				/* 機能一覧に文字列をセット (リストボックス) */
 				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
 				nNum = m_cLookup.GetItemCount( nIndex2 );
