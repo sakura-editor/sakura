@@ -677,10 +677,10 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	/*
-		powershell でコマンドレットを実行するために　-Command　を使用する
-		Set-Location -Path　'ディレクトリ' で指定したディレクトリに移動する
-		-Command　を使用する際は　-NoExit　を指定して　powershell が終了しないようにする
-		(-NoExit　がない場合は　-Command　で指定したコマンドレットが終了すると powershellも終了する)
+		powershell でコマンドレットを実行するために -Command を使用する
+		Set-Location -Path 'ディレクトリ' で指定したディレクトリに移動する
+		-Command を使用する際は -NoExit を指定して powershell が終了しないようにする
+		(-NoExit がない場合は -Command で指定したコマンドレットが終了すると powershellも終了する)
 	*/
 	CNativeW cmdExeParam;
 	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
@@ -698,7 +698,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		通常は 32bit 版のコマンドプロンプトが開かれる。
 
 		Wow64 の FileSystem Redirection を一時的にオフにすることにより 64bit 版の
-		コマンドプロンプトを起動する
+		powershell を起動する
 	*/
 	CDisableWow64FsRedirect wow64Redirect(isAdmin);
 #endif
