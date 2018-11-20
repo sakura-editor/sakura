@@ -100,8 +100,8 @@ F_EXITALL					= 30195,	//サクラエディタの全終了			なし
 F_OPEN_FOLDER_IN_EXPLORER	= 30196,	//ファイルの場所を開く
 F_OPEN_COMMAND_PROMPT		= 30197,	//コマンドプロンプトを開く
 F_OPEN_COMMAND_PROMPT_AS_ADMIN		= 30198,	//管理者としてコマンドプロンプトを開く
-F_OPEN_POWERSHELL				= 31456,	//powershellを開く
-F_OPEN_POWERSHELL_AS_ADMIN		= 31457,	//管理者としてpowershellを開く
+F_OPEN_POWERSHELL				= 31456,	//PowerShellを開く
+F_OPEN_POWERSHELL_AS_ADMIN		= 31457,	//管理者としてPowerShellを開く
 
 // 編集系
 F_WCHAR				= 30200,	//文字入力									WCHAR c

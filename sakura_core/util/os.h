@@ -100,7 +100,7 @@ private:
 };
 
 /*!
-	@brief powershell が利用可能か判定する
+	@brief PowerShell が利用可能か判定する
 */
 BOOL IsPowershellAvailable(void);
 
