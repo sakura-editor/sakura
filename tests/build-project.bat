@@ -13,7 +13,7 @@ if not exist "googletest\CMakeLists.txt" (
 )
 popd
 
-cmake --build "%BUILDDIR%" %CMAKE_BLD_OPT% ^
+cmake --build "%BUILDDIR%" %CMAKE_BLD_OPT% --target tests1 ^
  || (echo ERROR & exit /b 1)
 
 exit /b 0
