@@ -1245,18 +1245,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 		{
 			return false;
 		}
-		
-		// powershell が利用できない場合は、メニューを無効にする
-		if (nId == F_OPEN_POWERSHELL_AS_ADMIN)
-		{
-			// 管理者権限で起動するときは、必要に応じて WOW64 Filesystem Redirection を無効にする
-			return IsPowershellAvailable(TRUE);
-		}
-		else
-		{
-			// 管理者権限で起動しないときは WOW64 Filesystem Redirection を無効にしなくてよい
-			return IsPowershellAvailable(FALSE);
-		}
+		return IsPowershellAvailable();
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->m_pcEditWnd->GetActiveView().m_cHistory->CheckPrev() )

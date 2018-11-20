@@ -443,14 +443,14 @@ CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 }
 
 
-BOOL IsPowershellAvailable(BOOL isDisableWow64Redirect)
+BOOL IsPowershellAvailable(void)
 {
 #ifndef _WIN64
 	/*
 		64bit OS で 32bit アプリから起動する場合に意図したパスを見つけられるようにするために
 		Wow64 の FileSystem Redirection を一時的にオフにする。
 	*/
-	CDisableWow64FsRedirect wow64Redirect(isDisableWow64Redirect);
+	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
 
 	TCHAR szFileBuff[MAX_PATH];

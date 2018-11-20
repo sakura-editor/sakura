@@ -694,13 +694,13 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 
 #ifndef _WIN64
 	/*
-		64bit OS で 32bit アプリから管理者権限で powershell を起動する場合
+		64bit OS で 32bit アプリから powershell を起動する場合
 		通常は 32bit 版の powershell が開かれる。
 
 		Wow64 の FileSystem Redirection を一時的にオフにすることにより 64bit 版の
 		powershell を起動する
 	*/
-	CDisableWow64FsRedirect wow64Redirect(isAdmin);
+	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
 	auto hInstance = ::ShellExecuteW(NULL, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
