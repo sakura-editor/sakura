@@ -6,7 +6,6 @@ set configuration=%2
 for %%B in (
 	create-project.bat
 	build-project.bat
-	run-tests.bat
 ) do (
 	call :ExecBat "%~dp0%%~B" %PLATFORM% %CONFIGURATION% ^
 	|| (echo ERROR %%~B %ERRORLEVEL% & exit /b 1)
