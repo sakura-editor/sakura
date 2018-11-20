@@ -4,7 +4,7 @@ set platform=%1
 set configuration=%2
 
 call :SetEnv_%platform% %platform% %configuration%
-set BUILDDIR=%~dp0build\%platform%
+set BUILDDIR=%~dp0build\%platform%\%configuration%
 
 pushd "%~dp0"
 if not exist "googletest\CMakeLists.txt" (

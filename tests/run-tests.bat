@@ -3,7 +3,7 @@ setlocal
 set platform=%1
 set configuration=%2
 
-set BUILDDIR=%~dp0build\%platform%
+set BUILDDIR=%~dp0build\%platform%\%configuration%
 set FILTER_BAT=%~dp0test_result_filter_tell_AppVeyor.bat
 
 set TEST_LAUNCHED=0

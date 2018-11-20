@@ -4,7 +4,7 @@ set platform=%1
 set configuration=%2
 
 call :SetEnv_%platform% %platform% %configuration%
-set BUILDDIR=%~dp0build\%platform%
+set BUILDDIR=%~dp0build\%platform%\%configuration%
 
 rem produces header files necessary in creating the project.
 
