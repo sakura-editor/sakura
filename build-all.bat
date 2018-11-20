@@ -29,16 +29,20 @@ if "%configuration%" == "Release" (
 
 rem plarform & config specialization
 
-if "%PLATFORM%" == "MinGW" (
-	set BatchJobs=build-gnu.bat
-	rem Skip all other batch files because they reject MinGW platform.
-) else (
+if "%CONFIGURATION%" == "Release" (
 	set BatchJobs=build-sln.bat^
 		build-chm.bat^
 		build-installer.bat^
+		zipArtifacts.bat
+) else (
+	set BatchJobs=build-sln.bat^
 		run-cppcheck.bat^
 		run-doxygen.bat^
 		zipArtifacts.bat
+)
+if "%PLATFORM%" == "MinGW" (
+	set BatchJobs=build-gnu.bat
+	rem Skip all other batch files because they reject MinGW platform.
 )
 
 rem run
