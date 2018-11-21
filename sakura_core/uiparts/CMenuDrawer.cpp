@@ -916,6 +916,16 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 */
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
+	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
+	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
+	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
 	const TCHAR* pszLabel;
 	CMyRect rc, rcSp;
 	HDC hdc;
@@ -929,7 +939,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 		*pnItemHeight = m_nMenuHeight;
 		return 0;
 	}
-	*pnItemHeight = m_nMenuHeight;
+	//正常な高さは幅と一緒に決める
 
 	hdc = ::GetDC( m_hWndOwner );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
@@ -942,13 +952,18 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 //	*pnItemHeight = 2 + 15 + 1;
 	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 
-	int nMenuWidth = rc.Width() + 3;
+	int nMenuWidth = rc.Width() + cxFrame + cxBorder;
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		nMenuWidth += 28+ DpiScaleX(8); // アイコンと枠 + アクセスキー隙間
+		// アイコンと枠 + アクセスキー隙間
+		// 2+[2+[2+16+2]+2]+2 + 16 ÷ 2
+		nMenuWidth += cxSmIcon + cxEdge * 6 + cxSmIcon / 2;
 	}else{
 		// WM_MEASUREITEMで報告するメニュー幅より実際の幅は1文字分相当位広いので、その分は加えない
 		nMenuWidth += ::GetSystemMetrics(SM_CXMENUCHECK) + 2 + 2;
 	}
+	// アイコンと枠 or フォント高さと太枠
+	// 2+[2+[2+16+2]+2]+2 or 4+9+4
+	*pnItemHeight = std::max(cySmIcon + cyEdge * 6, m_nMenuHeight + cyFrame * 2);
 	return nMenuWidth;
 }
 
@@ -960,6 +975,16 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
+	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
+	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
+	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
 	int			j;
 	int			nItemStrLen;
 	int			nIndentLeft;
@@ -974,12 +999,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const int nCyCheck = ::GetSystemMetrics(SM_CYMENUCHECK);
 
 	if( bMenuIconDraw ){
-		nIndentLeft  = 29; // 2+[2+16+2]+2 +5
+		nIndentLeft  = cxSmIcon + cxEdge * 6 + cxBorder; // 2+[2+16+2]+2 +5
 	}else{
 		nIndentLeft = 2 + 2 + nCxCheck;
 	}
 	// サブメニューの|＞の分は必要 最低8ぐらい
-	nIndentRight = t_max(m_nMenuFontHeight, 8);
+	nIndentRight = cxSmIcon / 2;
 
 	// 2010.07.24 Moca アイコンを描くときにチラつくので、バックサーフェスを使う
 	const bool bBackSurface = bMenuIconDraw;
@@ -1010,7 +1035,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
 	// アイコン部分の背景を灰色にする
 	if( bMenuIconDraw ){
-		const int nXIconMenu = lpdis->rcItem.left + nIndentLeft - 3 - 3;
+		const int nXIconMenu = lpdis->rcItem.left + nIndentLeft - cxEdge * 3;
 		hBrush = ::GetSysColorBrush( COLOR_MENU );
 		RECT rcFillMenuBack = lpdis->rcItem;
 		rcFillMenuBack.left = nXIconMenu;
@@ -1042,8 +1067,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft - 3 - 3, lpdis->rcItem.top, NULL );
-		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft - 3 - 3, lpdis->rcItem.bottom );
+		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft - cxEdge * 3, lpdis->rcItem.top, NULL );
+		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft - cxEdge * 3, lpdis->rcItem.bottom );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
 
@@ -1063,8 +1088,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #endif
 		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : 3), y, NULL );
-		::LineTo(   hdc, lpdis->rcItem.right - 2, y );
+		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder), y, NULL );
+		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
 #ifdef DRAW_MENU_3DSTYLE
 		HPEN hPen3d = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_3DHIGHLIGHT) );
 		(void)::SelectObject( hdc, hPen3d );
@@ -1173,7 +1198,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #endif
 
 	rcText = lpdis->rcItem;
-	rcText.left += nIndentLeft + 1;
+	rcText.left += nIndentLeft + cxBorder;
 	rcText.right -= nIndentRight;
 
 	/* TAB文字の前と後ろに分割してテキストを描画する */
@@ -1244,7 +1269,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SetBkMode( hdc, nBkModeOld );
 
 	// 16*16のアイコンを上下中央へ置いたときの上の座標
-	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2 - (16/2);
+	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top - cySmIcon) / 2;
 
 	// 枠は アイコン横幅xメニュー縦幅で表示し真ん中にアイコンを置く
 
@@ -1264,10 +1289,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			// フラットな枠 + 半透明の背景色
 			HBRUSH hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 			const int MENUICO_PADDING = 0;
-			const int MENUICO_BORDER  = 1;
+			const int MENUICO_BORDER  = cxBorder;
 			const int MENUICO_PB  = MENUICO_PADDING + MENUICO_BORDER;
-			const int MENUICO_SIZE = MENUICO_PB + 16 + MENUICO_PB;
-			const int left = lpdis->rcItem.left + 2 - MENUICO_PB;
+			const int MENUICO_SIZE = MENUICO_PB + cxSmIcon + MENUICO_PB;
+			const int left = lpdis->rcItem.left + cxEdge - MENUICO_PB;
 			const int top = nIconTop - MENUICO_PB;
 			RECT rc;
 			::SetRect( &rc, left-1, top-1, left + MENUICO_SIZE+2, top + MENUICO_SIZE+1 );
@@ -1339,7 +1364,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			/* 淡色アイコン */
 			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
-				lpdis->rcItem.left + 2,	//	X
+				lpdis->rcItem.left + cxEdge,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				nIconTop,	//	Y
 				ILD_MASK
@@ -1349,7 +1374,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			/* 通常のアイコン */
 			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
-				lpdis->rcItem.left + 2,	//	X
+				lpdis->rcItem.left + cxEdge,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 				nIconTop,	//	Y
 				ILD_NORMAL
