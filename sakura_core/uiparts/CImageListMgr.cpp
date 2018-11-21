@@ -149,6 +149,67 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	これによって250msecくらい速度が改善される．
 		//---------------------------------------------------------
 
+		// DIBセクションを取得する
+		DIBSECTION di;
+		if (!::GetObject(hRscbmp, sizeof(di), &di)) {
+			//throw std::runtime_error("GetObject() failed.");
+			break;
+		}
+		// DIBセクションからサイズを取得する
+		int cxImageIcon = di.dsBm.bmWidth / MAX_X;
+		int cyImageIcon = di.dsBm.bmHeight / MAX_Y;
+		if (cxImageIcon != cyImageIcon) {
+			//throw std::runtime_error("tool bitmap size is unexpected.");
+			break;
+		}
+
+		// アイコンサイズが異なる場合、拡大縮小する
+		const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+		const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+		if (cxImageIcon != cxSmIcon) {
+			// 作業用の仮想DCを作成する
+			HDC hAltDC = ::CreateCompatibleDC(dcFrom);
+			// 互換bmpを作る
+			HBITMAP hAltBmp = ::CreateCompatibleBitmap(dcFrom, cxSmIcon * MAX_X, cySmIcon * MAX_Y);
+
+			// 仮想DCで互換Bmpを選択
+			HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
+
+			// 拡大・縮小する
+			::StretchBlt(
+				hAltDC,
+				0,
+				0,
+				cxSmIcon * MAX_X,
+				cySmIcon * MAX_Y,
+				dcFrom,
+				0,
+				0,
+				cxImageIcon * MAX_X,
+				cyImageIcon * MAX_Y,
+				SRCCOPY
+			);
+
+			// 仮想DCで元Bmpを選択して互換Bmpを解放する
+			::SelectObject(hAltDC, hAltBmpOld);
+
+			// ターゲットDCで変換後Bmpを選択する
+			::SelectObject(dcFrom, hAltBmp);
+
+			// 変換前Bmpを破棄して入れ替える
+			::DeleteObject(hRscbmp);
+			hRscbmp = hAltBmp;
+
+			// 仮想DCを削除する
+			::DeleteDC(hAltDC);
+
+			// クラスメンバに変更を保存する
+			m_hIconBitmap = hRscbmp;
+			m_cx = cxSmIcon;
+			m_cy = cySmIcon;
+
+		}
+
 	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	//	後処理
