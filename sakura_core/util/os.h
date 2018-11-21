@@ -102,7 +102,7 @@ private:
 /*!
 	@brief PowerShell が利用可能か判定する
 */
-BOOL IsPowershellAvailable(void);
+BOOL IsPowerShellAvailable(void);
 
 
 #endif /* SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_ */

@@ -443,7 +443,7 @@ CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 }
 
 
-BOOL IsPowershellAvailable(void)
+BOOL IsPowerShellAvailable(void)
 {
 #ifndef _WIN64
 	/*
