@@ -666,6 +666,51 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 }
 
 
+/* PowerShellを開く */
+void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+
+	/*
+		PowerShell でコマンドレットを実行するために -Command を使用する
+		Set-Location -Path 'ディレクトリ' で指定したディレクトリに移動する
+		-Command を使用する際は -NoExit を指定して PowerShell が終了しないようにする
+		(-NoExit がない場合は -Command で指定したコマンドレットが終了すると PowerShellも終了する)
+	*/
+	CNativeW cmdExeParam;
+	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
+	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
+
+	LPWSTR pVerb = L"open";
+	if (isAdmin)
+	{
+		pVerb = L"runas";
+	}
+
+#ifndef _WIN64
+	/*
+		64bit OS で 32bit アプリから PowerShell を起動する場合
+		通常は 32bit 版の PowerShell が開かれる。
+
+		Wow64 の FileSystem Redirection を一時的にオフにすることにより 64bit 版の
+		PowerShell を起動する
+	*/
+	CDisableWow64FsRedirect wow64Redirect(TRUE);
+#endif
+	auto hInstance = ::ShellExecuteW(NULL, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	// If the function succeeds, it returns a value greater than 32. 
+	if (hInstance <= (decltype(hInstance))32) {
+		ErrorBeep();
+		return;
+	}
+}
+
+
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CViewCommander::Command_EXITALLEDITORS( void )
 {
