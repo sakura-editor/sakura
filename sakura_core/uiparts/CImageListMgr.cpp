@@ -175,20 +175,25 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			// 仮想DCで互換Bmpを選択
 			HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
 
-			// 拡大・縮小する
-			::StretchBlt(
-				hAltDC,
-				0,
-				0,
-				cxSmIcon * MAX_X,
-				cySmIcon * MAX_Y,
-				dcFrom,
-				0,
-				0,
-				cxImageIcon * MAX_X,
-				cyImageIcon * MAX_Y,
-				SRCCOPY
-			);
+			// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
+			for (int row = 0; row < MAX_Y; ++row) {
+				for (int col = 0; col < MAX_X; ++col) {
+					// 拡大・縮小する
+					::StretchBlt(
+						hAltDC,
+						col * cxSmIcon,
+						row * cySmIcon,
+						cxSmIcon,
+						cySmIcon,
+						dcFrom,
+						col * cxImageIcon,
+						row * cyImageIcon,
+						cxImageIcon,
+						cyImageIcon,
+						SRCCOPY
+					);
+				}
+			}
 
 			// 仮想DCで元Bmpを選択して互換Bmpを解放する
 			::SelectObject(hAltDC, hAltBmpOld);
