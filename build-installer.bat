@@ -33,6 +33,8 @@ set INSTALLER_OUTPUT=installer\Output-%platform%
 set INSTALLER_RESOURCES_SINT=installer\sinst_src
 set INSTALLER_RESOURCES_BRON=installer\temp\bron
 set INSTALLER_RESOURCES_CTAGS=installer\temp\ctags
+set INSTALLER_RESOURCES_DIFF=installer\temp\diff
+set INSTALLER_RESOURCES_MIGEMO=installer\temp\migemo
 
 if exist "%INSTALLER_WORK%"      rmdir /s /q "%INSTALLER_WORK%"
 if exist "%INSTALLER_OUTPUT%"    rmdir /s /q "%INSTALLER_OUTPUT%"
@@ -41,6 +43,8 @@ mkdir %INSTALLER_WORK%
 mkdir %INSTALLER_WORK%\license\bregonig
 mkdir %INSTALLER_WORK%\keyword
 mkdir %INSTALLER_WORK%\license\ctags\
+mkdir %INSTALLER_WORK%\license\diff\
+mkdir %INSTALLER_WORK%\license\migemo\
 
 copy /Y .\LICENSE                                           %INSTALLER_WORK%\license\ > NUL
 copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.manifest.x    %INSTALLER_WORK%\ > NUL
@@ -49,6 +53,14 @@ copy /Y %INSTALLER_RESOURCES_SINT%\sakura.exe.ini           %INSTALLER_WORK%\ > 
 copy /Y %INSTALLER_RESOURCES_SINT%\keyword\*.*              %INSTALLER_WORK%\keyword\ > NUL
 copy /Y %INSTALLER_RESOURCES_BRON%\*.txt                    %INSTALLER_WORK%\license\bregonig\ > NUL
 copy /Y %INSTALLER_RESOURCES_CTAGS%\license\*.*             %INSTALLER_WORK%\license\ctags\ > NUL
+
+: diff.exe
+copy /Y /B %INSTALLER_RESOURCES_DIFF%\COPYING   %INSTALLER_WORK%\license\diff\ > NUL
+
+: migemo
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\LICENSE_j.txt  %INSTALLER_WORK%\license\migemo\ > NUL
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\LICENSE_MIT.txt %INSTALLER_WORK%\license\migemo\ > NUL
+xcopy %INSTALLER_RESOURCES_MIGEMO%\dict %INSTALLER_WORK%\dict /S/E/I/Y
 
 copy /Y /B help\sakura\sakura.chm                           %INSTALLER_WORK%\ > NUL
 copy /Y /B help\plugin\plugin.chm                           %INSTALLER_WORK%\ > NUL

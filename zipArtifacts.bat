@@ -181,6 +181,8 @@ mkdir %WORKDIR_EXE%
 mkdir %WORKDIR_EXE%\license\
 mkdir %WORKDIR_EXE%\license\bregonig\
 mkdir %WORKDIR_EXE%\license\ctags\
+mkdir %WORKDIR_EXE%\license\diff\
+mkdir %WORKDIR_EXE%\license\migemo\
 mkdir %WORKDIR_INST%
 copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
 copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
@@ -198,6 +200,18 @@ set INSTALLER_RESOURCES_CTAGS=%~dp0installer\temp\ctags
 copy /Y /B %INSTALLER_RESOURCES_CTAGS%\ctags.exe    %WORKDIR_EXE%\
 copy /Y /B %INSTALLER_RESOURCES_CTAGS%\README.md    %WORKDIR_EXE%\license\ctags\
 copy /Y /B %INSTALLER_RESOURCES_CTAGS%\license\*.*  %WORKDIR_EXE%\license\ctags\
+
+: diff.exe
+set INSTALLER_RESOURCES_DIFF=%~dp0installer\temp\diff
+copy /Y /B %INSTALLER_RESOURCES_DIFF%\diff.exe  %WORKDIR_EXE%\
+copy /Y /B %INSTALLER_RESOURCES_DIFF%\COPYING   %WORKDIR_EXE%\license\diff\
+
+: migemo
+set INSTALLER_RESOURCES_MIGEMO=%~dp0installer\temp\migemo
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\migemo.dll  %WORKDIR_EXE%\
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\dict  %WORKDIR_EXE%\
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\LICENSE_j.txt  %WORKDIR_EXE%\license\migemo\
+copy /Y /B %INSTALLER_RESOURCES_MIGEMO%\LICENSE_MIT.txt %WORKDIR_EXE%\license\migemo\
 
 copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
