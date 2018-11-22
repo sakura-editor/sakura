@@ -7,7 +7,7 @@ set FILTER_BAT=%~dp0test_result_filter_tell_AppVeyor.bat
 
 pushd %~dp0
 set BUILDDIR=build\%platform%
-set BINARY_DIR=%BUILDDIR%\bin\%configuration%
+set BINARY_DIR=%BUILDDIR%\unittests\%platform%\%configuration%
 
 pushd %BINARY_DIR%
 for /r %%i in (tests*.exe) do (
