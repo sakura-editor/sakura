@@ -57,6 +57,16 @@ call run-cppcheck.bat %PLATFORM% %CONFIGURATION%    || (echo error run-cppcheck.
 @echo ---- end   run-cppcheck.bat ----
 @echo.
 
+@echo ---- start externals\doxygen\install-doxygen.bat ----
+call externals\doxygen\install-doxygen.bat          || (echo error externals\doxygen\install-doxygen.bat && exit /b 1)
+@echo ---- end   externals\doxygen\install-doxygen.bat ----
+@echo.
+
+@echo ---- start run-doxygen.bat ----
+call run-doxygen.bat %PLATFORM% %CONFIGURATION%     || (echo error run-doxygen.bat     && exit /b 1)
+@echo ---- end   run-doxygen.bat ----
+@echo.
+
 @echo ---- start zipArtifacts.bat ----
 call zipArtifacts.bat    %PLATFORM% %CONFIGURATION% || (echo error zipArtifacts.bat    && exit /b 1)
 @echo ---- end   zipArtifacts.bat ----
