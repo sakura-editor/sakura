@@ -18,13 +18,11 @@ build_script:
 
 before_test:
 - cmd: >-
-    call tests\create-project.bat %platform% %configuration%
-
-    call tests\build-project.bat %platform% %configuration%
+    call tests\before_test.bat %platform% %configuration%
 
 test_script:
 - cmd: >-
-    call tests\run-tests.bat %platform% %configuration%
+    call tests\test_script.bat %platform% %configuration%
 
 artifacts:
 - path: 'sakura-*$(platform)-$(configuration)*.zip'

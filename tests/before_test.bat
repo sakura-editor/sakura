@@ -17,11 +17,3 @@ if errorlevel 1 (
 	exit /b 1
 )
 @echo ---- end   build-project.bat ----
-
-@echo ---- start run-tests.bat ----
-call "%~dp0run-tests.bat" %platform% %configuration%
-if errorlevel 1 (
-	@echo ERROR in run-tests.bat %errorlevel%
-	exit /b 1
-)
-@echo ---- end   run-tests.bat ----
