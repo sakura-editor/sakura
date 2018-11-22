@@ -199,10 +199,13 @@ INT_PTR CPropToolbar::DispatchEvent(
 		hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
 		{
+			// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+			const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+
 			// 2014.11.25 フォントの高さが正しくなかったバグを修正
 			CTextWidthCalc calc(hwndResList);
 			int nFontHeight = calc.GetTextHeight();
-			nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
+			nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + cyEdge * 2;
 			nToolBarListBoxTopMargin = (nListItemHeight - (nFontHeight + 1)) / 2;
 		}
 		/* ダイアログデータの設定 Toolbar */
@@ -596,7 +599,13 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		//	From Here Oct. 15, 2001 genta
 		}else{
 			// アイコンとテキストを表示する
-			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + cxEdge, rc.top + cyEdge, ILD_NORMAL );
+			m_pcIcons->Draw(
+				tbb.iBitmap,
+				pDis->hDC,
+				rc.left + cxEdge,
+				rc.top + cyEdge + (rc.bottom - rc.top - cySmIcon) / 2,
+				ILD_NORMAL
+			);
 			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
 		}
 		//	To Here Oct. 15, 2001 genta
