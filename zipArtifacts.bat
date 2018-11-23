@@ -226,6 +226,9 @@ if exist "cppcheck-%platform%-%configuration%.xml" (
 if exist "cppcheck-%platform%-%configuration%.log" (
 	copy /Y "cppcheck-%platform%-%configuration%.log" %WORKDIR_LOG%\
 )
+if exist "doxygen-%platform%-%configuration%.log" (
+	copy /Y "doxygen-%platform%-%configuration%.log" %WORKDIR_LOG%\
+)
 
 if exist "set_appveyor_env.bat" (
 	copy /Y "set_appveyor_env.bat" %WORKDIR_LOG%\
