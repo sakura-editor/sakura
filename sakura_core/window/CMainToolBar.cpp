@@ -454,13 +454,21 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
 			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
 
-			const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - m_pcIcons->cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
-			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? cxBorder : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
+			// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
+			CMyRect rc( pnmh->rc );
+			int offset = ( rc.Height() - m_pcIcons->cy() ) / 2;
 
-			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			m_pcIcons->Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
-				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+			// ボタンを押されたらちょっと画像をずらす	// Aug. 30, 2003 genta
+			const int cxEdge = ::GetSystemMetrics( SM_CXBORDER );
+			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? cxEdge : 0;
+
+			// アイコン描画
+			m_pcIcons->Draw(
+				nIconId,
+				pnmh->hdc,
+				rc.left + offset + shift,
+				rc.top + offset + shift, // 押下時は右だけでなく下にもずらす // Sep. 6, 2003 genta
+				( pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}
 		break;
