@@ -82,7 +82,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	HBITMAP	hFOldbmp = NULL;	//	SetObjectで得られた1つ前のハンドルを保持する
 	HDC		dcFrom = 0;			//	描画用
 	int		nRetPos;			//	後処理用
-	m_cx = m_cy  = 16;
 
 	nRetPos = 0;
 	do {
@@ -109,7 +108,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			}
 		}
 		//	To Here 2001.7.1 GAE
-		m_hIconBitmap = hRscbmp;
 
 		//	透過色を得るためにDCにマップする
 		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
@@ -149,71 +147,17 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	これによって250msecくらい速度が改善される．
 		//---------------------------------------------------------
 
-		// DIBセクションを取得する
-		DIBSECTION di;
-		if (!::GetObject(hRscbmp, sizeof(di), &di)) {
-			//throw std::runtime_error("GetObject() failed.");
-			break;
-		}
-		// DIBセクションからサイズを取得する
-		int cxImageIcon = di.dsBm.bmWidth / MAX_X;
-		int cyImageIcon = di.dsBm.bmHeight / MAX_Y;
-		if (cxImageIcon != cyImageIcon) {
-			//throw std::runtime_error("tool bitmap size is unexpected.");
-			break;
-		}
-
 		// アイコンサイズが異なる場合、拡大縮小する
-		const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
-		const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
-		if (cxImageIcon != cxSmIcon) {
-			// 作業用の仮想DCを作成する
-			HDC hAltDC = ::CreateCompatibleDC(dcFrom);
-			// 互換bmpを作る
-			HBITMAP hAltBmp = ::CreateCompatibleBitmap(dcFrom, cxSmIcon * MAX_X, cySmIcon * MAX_Y);
-
-			// 仮想DCで互換Bmpを選択
-			HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
-
-			// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
-			for (int row = 0; row < MAX_Y; ++row) {
-				for (int col = 0; col < MAX_X; ++col) {
-					// 拡大・縮小する
-					::StretchBlt(
-						hAltDC,
-						col * cxSmIcon,
-						row * cySmIcon,
-						cxSmIcon,
-						cySmIcon,
-						dcFrom,
-						col * cxImageIcon,
-						row * cyImageIcon,
-						cxImageIcon,
-						cyImageIcon,
-						SRCCOPY
-					);
-				}
-			}
-
-			// 仮想DCで元Bmpを選択して互換Bmpを解放する
-			::SelectObject(hAltDC, hAltBmpOld);
-
-			// ターゲットDCで変換後Bmpを選択する
-			::SelectObject(dcFrom, hAltBmp);
-
-			// 変換前Bmpを破棄して入れ替える
-			::DeleteObject(hRscbmp);
-			hRscbmp = hAltBmp;
-
-			// 仮想DCを削除する
-			::DeleteDC(hAltDC);
-
-			// クラスメンバに変更を保存する
-			m_hIconBitmap = hRscbmp;
-			m_cx = cxSmIcon;
-			m_cy = cySmIcon;
-
+		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
+		if ( hRscbmp == NULL ) {
+			nRetPos = 4;
+			break;
 		}
+
+		// クラスメンバに変更を保存する
+		m_hIconBitmap = hRscbmp;
+		m_cx = ::GetSystemMetrics(SM_CXSMICON);
+		m_cy = ::GetSystemMetrics(SM_CYSMICON);
 
 	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
@@ -457,73 +401,7 @@ int CImageListMgr::Add(const TCHAR* szPath)
 	HDC hExtDC = ::CreateCompatibleDC( 0 );
 	HBITMAP hOldBmp = (HBITMAP)::SelectObject( hExtDC, hExtBmp );
 	COLORREF cTrans = GetPixel( hExtDC, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
-	{
-		// Createから持ってきたコード片と変数名が異なるので合わせる
-		HDC dcFrom = hExtDC;
-		HBITMAP hRscbmp = hExtBmp;
-
-		// DIBセクションを取得する
-		DIBSECTION di;
-		if (!::GetObject(hRscbmp, sizeof(di), &di)) {
-			//throw std::runtime_error("GetObject() failed.");
-			//break;
-		}
-		// DIBセクションからサイズを取得する
-		int cxImageIcon = di.dsBm.bmWidth/* / MAX_X*/;
-		int cyImageIcon = di.dsBm.bmHeight/* / MAX_Y*/;
-		if (cxImageIcon != cyImageIcon) {
-			//throw std::runtime_error("tool bitmap size is unexpected.");
-			//break;
-		}
-
-		// アイコンサイズが異なる場合、拡大縮小する
-		const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
-		const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
-		if (cxImageIcon != cxSmIcon) {
-			// 作業用の仮想DCを作成する
-			HDC hAltDC = ::CreateCompatibleDC(dcFrom);
-			// 互換bmpを作る
-			HBITMAP hAltBmp = ::CreateCompatibleBitmap(dcFrom, cxSmIcon * MAX_X, cySmIcon * MAX_Y);
-
-			// 仮想DCで互換Bmpを選択
-			HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
-
-			// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
-			for (int row = 0; row < /*MAX_Y*/1; ++row) {
-				for (int col = 0; col < /*MAX_X*/1; ++col) {
-					// 拡大・縮小する
-					::StretchBlt(
-						hAltDC,
-						col * cxSmIcon,
-						row * cySmIcon,
-						cxSmIcon,
-						cySmIcon,
-						dcFrom,
-						col * cxImageIcon,
-						row * cyImageIcon,
-						cxImageIcon,
-						cyImageIcon,
-						SRCCOPY
-					);
-				}
-			}
-
-			// 仮想DCで元Bmpを選択して互換Bmpを解放する
-			::SelectObject(hAltDC, hAltBmpOld);
-
-			// ターゲットDCで変換後Bmpを選択する
-			::SelectObject(dcFrom, hAltBmp);
-
-			// 変換前Bmpを破棄して入れ替える
-			::DeleteObject(hRscbmp);
-			hRscbmp = hAltBmp;
-
-			// 仮想DCを削除する
-			::DeleteDC(hAltDC);
-
-		}
-
-	}
+	hExtBmp = ResizeToolIcons( hExtDC, hExtBmp, 1, 1 );
 	::SelectObject( hExtDC, hOldBmp );
 	::DeleteDC( hExtDC );
 
@@ -534,6 +412,80 @@ int CImageListMgr::Add(const TCHAR* szPath)
 	::DeleteObject( hExtBmp );
 
 	return index;
+}
+
+// ツールイメージをリサイズする
+HBITMAP CImageListMgr::ResizeToolIcons(
+	HDC hDC,
+	HBITMAP &hSrcBmp,
+	int cols,
+	int rows
+) const noexcept
+{
+	// DIBセクションを取得する
+	DIBSECTION di = {};
+	if (!::GetObject(hSrcBmp, sizeof(di), &di)) {
+		DEBUG_TRACE( _T("GetObject() failed.") );
+		return NULL;
+	}
+
+	// DIBセクションからサイズを取得する
+	int cx = di.dsBm.bmWidth / cols;
+	int cy = di.dsBm.bmHeight / rows;
+	if (cx != cy) {
+		DEBUG_TRACE(_T("tool bitmap size is unexpected."));
+		return NULL;
+	}
+
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
+	// アイコンサイズが異なる場合、拡大縮小する
+	if (cx != cxSmIcon) {
+		// 作業用の仮想DCを作成する
+		HDC hAltDC = ::CreateCompatibleDC(hDC);
+		// 互換bmpを作る
+		HBITMAP hAltBmp = ::CreateCompatibleBitmap(hDC, cxSmIcon * cols, cySmIcon * rows);
+
+		// 仮想DCで互換Bmpを選択
+		HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
+
+		// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
+		for (int row = 0; row < rows; ++row) {
+			for (int col = 0; col < cols; ++col) {
+				// 拡大・縮小する
+				::StretchBlt(
+					hAltDC,
+					col * cxSmIcon,
+					row * cySmIcon,
+					cxSmIcon,
+					cySmIcon,
+					hDC,
+					col * cx,
+					row * cy,
+					cx,
+					cy,
+					SRCCOPY
+				);
+			}
+		}
+
+		// 仮想DCで元Bmpを選択して互換Bmpを解放する
+		::SelectObject(hAltDC, hAltBmpOld);
+
+		// ターゲットDCで変換後Bmpを選択する
+		::SelectObject(hDC, hAltBmp);
+
+		// 変換前Bmpを破棄して入れ替える
+		::DeleteObject(hSrcBmp);
+
+		// 仮想DCを削除する
+		::DeleteDC(hAltDC);
+
+		return hAltBmp;
+	}
+
+	return hSrcBmp;
 }
 
 // ビットマップを一行（MAX_X個）拡張する
