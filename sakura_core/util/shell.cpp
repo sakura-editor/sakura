@@ -33,6 +33,7 @@
 #include "util/file.h"
 #include "util/os.h"
 #include "util/module.h"
+#include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
@@ -170,7 +171,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			pt.x = rcTab.left;
 			pt.y = rcOk.top;
 			::ScreenToClient( hwnd, &pt );
-			::MoveWindow( hwndBtn, pt.x, pt.y, 140, rcOk.bottom - rcOk.top, FALSE );
+			::MoveWindow( hwndBtn, pt.x, pt.y, DpiScaleX(140), rcOk.bottom - rcOk.top, FALSE );
 		}
 		break;
 
