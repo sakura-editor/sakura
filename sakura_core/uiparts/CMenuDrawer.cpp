@@ -979,14 +979,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
-	int			j;
-	int			nItemStrLen;
-	int			nIndentLeft;
-	int			nIndentRight;
 	HBRUSH		hBrush;
-	RECT		rcText;
-	int			nBkModeOld;
-	int			nTxSysColor;
 
 	CMyRect rcItem( lpdis->rcItem );
 
@@ -994,13 +987,13 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const int nCxCheck = ::GetSystemMetrics(SM_CXMENUCHECK);
 	const int nCyCheck = ::GetSystemMetrics(SM_CYMENUCHECK);
 
-	if( bMenuIconDraw ){
-		nIndentLeft  = cxSmIcon + cxEdge * 6 + cxBorder;
-	}else{
-		nIndentLeft = 2 + 2 + nCxCheck;
-	}
+	// アイコンとテキストの間の縦線の位置
+	const int nIndentLeft = bMenuIconDraw
+		? cxSmIcon + cxEdge * 6 + cxBorder
+		: cxEdge * 2 + nCxCheck;
+
 	// サブメニューの|＞の分は必要 最低8ぐらい
-	nIndentRight = cxSmIcon / 2;
+	const int nIndentRight = cxSmIcon / 2;
 
 	// 2010.07.24 Moca アイコンを描くときにチラつくので、バックサーフェスを使う
 	const bool bBackSurface = bMenuIconDraw;
@@ -1131,80 +1124,59 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		return; // セパレータ。作画終了
 	}
 
-	const int    nItemIndex = Find( (int)lpdis->itemID );
-	const TCHAR* pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr( &nItemStrLen );
-	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
-
-	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
-	if( lpdis->itemState & ODS_SELECTED ){
-		if( lpdis->itemState & ODS_DISABLED ){
-			// アイテムが使用不可
-			nTxSysColor = COLOR_MENU;
-		}else{
+	// テキスト前景色を決定する
+	COLORREF textColor;
+	if( lpdis->itemState & ODS_DISABLED ){
+		// アイテムが使用不可(淡色表示にする)
+		textColor = ::GetSysColor( COLOR_GRAYTEXT );
+	}else if( lpdis->itemState & ODS_SELECTED ){
 #ifdef DRAW_MENU_SELECTION_LIGHT
-			nTxSysColor = COLOR_MENUTEXT;
+		textColor = ::GetSysColor( COLOR_MENUTEXT );
 #else
-			nTxSysColor = COLOR_HIGHLIGHTTEXT;
+		textColor = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
 #endif
-		}
 	}else{
-		if( lpdis->itemState & ODS_DISABLED ){
-			// アイテムが使用不可
-			// 背景を黒にすると同じ色になることがある
-			// 2013.06.21 GRAYTEXTに変更
-			// nTxSysColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-			nTxSysColor = COLOR_GRAYTEXT;
-		}else{
-			nTxSysColor = COLOR_MENUTEXT;
-		}
+		textColor = ::GetSysColor( COLOR_MENUTEXT );
 	}
-	::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
 
 #ifdef _DEBUG
-	// デバッグ用：メニュー項目に対して、ヘルプがない場合に背景色を青くする
-	TCHAR	szText[1024];
+	// デバッグ用：メニュー項目に対して、ヘルプがない場合に前景色を青くする
 	// メニュー項目に関する情報を取得します。
 	MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
-	mii.cbSize = sizeof(MENUITEMINFO);
-	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
-	mii.fType = MFT_STRING;
-	_tcscpy( szText, _T("--unknown--") );
-	mii.dwTypeData = szText;
-	mii.cch = _countof( szText ) - 1;
+	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_SUBMENU;
 	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, &mii )
 	 && NULL == mii.hSubMenu
-	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
+	 && 0 == ::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
 		if( lpdis->itemState & ODS_SELECTED ){
-			::SetTextColor( hdc, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );	//	ハイライトカラー
+			textColor = ::GetSysColor( COLOR_HIGHLIGHTTEXT );	//	ハイライトカラー
 		}
 		else {
-			::SetTextColor( hdc, RGB( 0, 0, 255 ) );	//	青くしてる。
+			textColor = RGB( 0, 0, 255 );	//	青くしてる。
 		}
-//		::SetTextColor( hdc, RGB( 0, 0, 255 ) );
 	}
 #endif
 
-	rcText = lpdis->rcItem;
+	// テキスト矩形(インデント込み)
+	CMyRect rcText( lpdis->rcItem );
 	rcText.left += nIndentLeft + cxSmIcon / 4;
 	rcText.right -= nIndentRight;
 
+	const int nItemIndex = Find( (int)lpdis->itemID );
+	LPCTSTR pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr();
+	size_t nItemStrLen = m_menuItems[nItemIndex].m_cmemLabel.GetStringLength();
+
+	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
+	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
+	COLORREF textColorOld = (COLORREF)::SetTextColor( hdc, textColor );
+
 	/* TAB文字の前と後ろに分割してテキストを描画する */
+	size_t j;
 	for( j = 0; j < nItemStrLen; ++j ){
 		if( pszItemStr[j] == _T('\t') ){
 			break;
 		}
-	}
-	/* TAB文字の後ろ側のテキストを描画する */
-	if( j < nItemStrLen ){
-		::DrawText(
-			hdc,
-			&pszItemStr[j + 1],
-			-1,
-			&rcText,
-			DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-		);
 	}
 	/* TAB文字の前側のテキストを描画する */
 	::DrawText(
@@ -1212,8 +1184,19 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		pszItemStr,
 		j,
 		&rcText,
-		DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT
+		DT_LEFT | DT_VCENTER | DT_SINGLELINE
 	);
+	/* TAB文字の後ろ側のテキストを描画する */
+	if( j < nItemStrLen ){
+		::DrawText(
+			hdc,
+			&pszItemStr[j + 1],
+			nItemStrLen - ( j + 1 ),
+			&rcText,
+			DT_RIGHT | DT_VCENTER | DT_SINGLELINE
+		);
+	}
+	::SetTextColor( hdc, textColorOld );
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
@@ -1311,7 +1294,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				COLORREF colTextOld = ::SetTextColor(hdc, RGB(0,0,0) );
 				COLORREF colBackOld = ::SetBkColor(hdc,   RGB(255,255,255) );
 				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCAND );
-				::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
+				::SetTextColor( hdc, textColor );
 				::SetBkColor( hdc, RGB(0,0,0) );
 				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCPAINT );
 				::SetTextColor( hdc, colTextOld );
