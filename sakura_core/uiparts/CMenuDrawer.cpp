@@ -952,18 +952,19 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 //	*pnItemHeight = 2 + 15 + 1;
 	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 
-	int nMenuWidth = rc.Width() + cxFrame + cxBorder;
+	// インデント + テキスト幅 + アクセスキー隙間
+	int nMenuWidth = cxSmIcon / 4 + rc.Width() + cxSmIcon / 2;
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		// アイコンと枠 + アクセスキー隙間
-		// 2+[2+[2+16+2]+2]+2 + 16 ÷ 2
-		nMenuWidth += cxSmIcon + cxEdge * 6 + cxSmIcon / 2;
+		// アイコンと枠 + 縦線隙間 + 縦線
+		// 2+[2+16+2]+2 + 2+2 + 1
+		nMenuWidth += cxSmIcon + cxEdge * 6 + cxBorder;
 	}else{
 		// WM_MEASUREITEMで報告するメニュー幅より実際の幅は1文字分相当位広いので、その分は加えない
 		nMenuWidth += ::GetSystemMetrics(SM_CXMENUCHECK) + 2 + 2;
 	}
 	// アイコンと枠 or フォント高さと太枠
-	// 2+[2+[2+16+2]+2]+2 or 4+9+4
-	*pnItemHeight = std::max(cySmIcon + cyEdge * 6, m_nMenuHeight + cyFrame * 2);
+	// 2+[2+16+2]+2 or 2+9+2
+	*pnItemHeight = std::max(cySmIcon + cyEdge * 4, m_nMenuHeight + cyEdge * 2);
 	return nMenuWidth;
 }
 
@@ -994,12 +995,14 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	int			nBkModeOld;
 	int			nTxSysColor;
 
+	CMyRect rcItem( lpdis->rcItem );
+
 	const bool bMenuIconDraw = !!m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 	const int nCxCheck = ::GetSystemMetrics(SM_CXMENUCHECK);
 	const int nCyCheck = ::GetSystemMetrics(SM_CYMENUCHECK);
 
 	if( bMenuIconDraw ){
-		nIndentLeft  = cxSmIcon + cxEdge * 6 + cxBorder; // 2+[2+16+2]+2 +5
+		nIndentLeft  = cxSmIcon + cxEdge * 6 + cxBorder;
 	}else{
 		nIndentLeft = 2 + 2 + nCxCheck;
 	}
@@ -1035,10 +1038,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
 	// アイコン部分の背景を灰色にする
 	if( bMenuIconDraw ){
-		const int nXIconMenu = lpdis->rcItem.left + nIndentLeft - cxEdge * 3;
 		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		RECT rcFillMenuBack = lpdis->rcItem;
-		rcFillMenuBack.left = nXIconMenu;
+		CMyRect rcFillMenuBack( rcItem );
+		rcFillMenuBack.left += nIndentLeft;
 		::FillRect( hdc, &rcFillMenuBack, hBrush );
 
 //		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
@@ -1058,17 +1060,17 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
 		
-		RECT rcIconBk = lpdis->rcItem;
-		rcIconBk.right = nXIconMenu;
+		CMyRect rcIconBk( rcItem );
+		rcIconBk.right = rcItem.left + nIndentLeft;
 		::FillRect( hdc, &rcIconBk, hbr );
 		::DeleteObject( hbr );
 
 		// アイコンとテキストの間に縦線を描画する
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
+		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft - cxEdge * 3, lpdis->rcItem.top, NULL );
-		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft - cxEdge * 3, lpdis->rcItem.bottom );
+		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, NULL );
+		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
 
@@ -1086,9 +1088,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #else
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 #endif
-		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
+		HPEN hPen = ::CreatePen( PS_SOLID, cyBorder, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder), y, NULL );
+		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
 		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
 #ifdef DRAW_MENU_3DSTYLE
 		HPEN hPen3d = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_3DHIGHLIGHT) );
@@ -1198,7 +1200,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #endif
 
 	rcText = lpdis->rcItem;
-	rcText.left += nIndentLeft + cxBorder;
+	rcText.left += nIndentLeft + cxSmIcon / 4;
 	rcText.right -= nIndentRight;
 
 	/* TAB文字の前と後ろに分割してテキストを描画する */
@@ -1268,11 +1270,13 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
-	// 16*16のアイコンを上下中央へ置いたときの上の座標
-	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top - cySmIcon) / 2;
+	// アイコン矩形
+	CMyRect rcIcon( rcItem );
+	rcIcon.left += ( rcItem.Height() - m_pcIcons->cy() ) / 2;
+	rcIcon.top += ( rcItem.Height() - m_pcIcons->cy() ) / 2;
+	rcIcon.SetSize( m_pcIcons->cx(), m_pcIcons->cy() );
 
 	// 枠は アイコン横幅xメニュー縦幅で表示し真ん中にアイコンを置く
-
 	if( bMenuIconDraw && (lpdis->itemState & ODS_CHECKED) ){
 		/* アイコンを囲む枠 */
 // 2010.07.12 Moca グレーの3D表示をやめる
@@ -1287,16 +1291,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #else
 		{
 			// フラットな枠 + 半透明の背景色
+			CMyRect rcFrame( rcIcon );
+			::InflateRect( &rcFrame, cxEdge * 2, cyEdge * 2 );
 			HBRUSH hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-			const int MENUICO_PADDING = 0;
-			const int MENUICO_BORDER  = cxBorder;
-			const int MENUICO_PB  = MENUICO_PADDING + MENUICO_BORDER;
-			const int MENUICO_SIZE = MENUICO_PB + cxSmIcon + MENUICO_PB;
-			const int left = lpdis->rcItem.left + cxEdge - MENUICO_PB;
-			const int top = nIconTop - MENUICO_PB;
-			RECT rc;
-			::SetRect( &rc, left-1, top-1, left + MENUICO_SIZE+2, top + MENUICO_SIZE+1 );
-			::FillRect( hdc, &rc, hBrush );
+			::FillRect( hdc, &rcFrame, hBrush );
 
 			COLORREF colHilight = ::GetSysColor( COLOR_HIGHLIGHT );
 			COLORREF colMenu = ::GetSysColor( COLOR_MENU );
@@ -1313,10 +1311,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				valG = ((GetGValue(colHilight) * 2 + GetGValue(colMenu) * 8) / 10) | 0x18;
 				valB = ((GetBValue(colHilight) * 2 + GetBValue(colMenu) * 8) / 10) | 0x18;
 			}
+			CMyRect rcBkFrame( rcIcon );
+			::InflateRect( &rcBkFrame, cxEdge , cyEdge );
 			HBRUSH hbr = ::CreateSolidBrush( RGB(valR, valG, valB) );
-			::SetRect( &rc, left + MENUICO_BORDER-1, top + MENUICO_BORDER-1,
-				left + MENUICO_SIZE - MENUICO_BORDER+2, top + MENUICO_SIZE - MENUICO_BORDER+1 );
-			::FillRect( hdc, &rc, hbr );
+			::FillRect( hdc, &rcBkFrame, hbr );
 			::DeleteObject( hbr );
 		}
 #endif
@@ -1359,27 +1357,17 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}
 		}
 
-		/* アイテムが使用不可 */
-		if( lpdis->itemState & ODS_DISABLED ){
-			/* 淡色アイコン */
-			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
-				hdc,	//	Target DC
-				lpdis->rcItem.left + cxEdge,	//	X
-				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
-				nIconTop,	//	Y
-				ILD_MASK
-			);
+		// アイコン番号
+		int nIconNo = m_menuItems[nItemIndex].m_nBitmapIdx;
 
-		}else{
-			/* 通常のアイコン */
-			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
-				hdc,	//	Target DC
-				lpdis->rcItem.left + cxEdge,	//	X
-				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
-				nIconTop,	//	Y
-				ILD_NORMAL
-			);
-		}
+		// メニューアイコン描画
+		m_pcIcons->Draw(
+			nIconNo,
+			hdc,
+			rcIcon.left,
+			rcIcon.top,
+			( lpdis->itemState & ODS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+		);
 
 	}else{
 		// チェックボックスを表示
@@ -1387,8 +1375,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			/* チェックマークの表示 */
 			if( bMenuIconDraw ){
 				// だいたい中心座標
-				int nX = lpdis->rcItem.left + 16/2;
-				int nY = nIconTop + 16/2;
+				int nX = rcItem.left + rcIcon.Height() / 2;
+				int nY = rcIcon.top + rcIcon.Height() /2;
 				HPEN hPen   = NULL;
 				HPEN hPenOld = NULL;
 				// 2010.05.31 チェックの色を黒(未指定)からテキスト色に変更
