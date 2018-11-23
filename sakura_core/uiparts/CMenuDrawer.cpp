@@ -1028,79 +1028,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 
 	// 作画範囲を背景色で矩形塗りつぶし
-#ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
-	// アイコン部分の背景を灰色にする
-	if( bMenuIconDraw ){
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		CMyRect rcFillMenuBack( rcItem );
-		rcFillMenuBack.left += nIndentLeft;
-		::FillRect( hdc, &rcFillMenuBack, hBrush );
-
-//		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
-		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
-		COLORREF colFace = ::GetSysColor( COLOR_3DFACE );
-		COLORREF colIconBack;
-		// 明度らしきもの
-		if( 64 < t_abs(t_max(t_max(GetRValue(colFace),GetGValue(colFace)),GetBValue(colFace))
-			         - t_max(t_max(GetRValue(colMenu),GetGValue(colMenu)),GetBValue(colMenu))) ){
-			colIconBack = colFace;
-		}else{
-			// 明るさが近いなら混色にして(XPテーマ等で)違和感を減らす
-			BYTE valR = ((GetRValue(colFace) * 7 + GetRValue(colMenu) * 3) / 10);
-			BYTE valG = ((GetGValue(colFace) * 7 + GetGValue(colMenu) * 3) / 10);
-			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
-			colIconBack = RGB(valR, valG, valB);
-		}
-		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
-		
-		CMyRect rcIconBk( rcItem );
-		rcIconBk.right = rcItem.left + nIndentLeft;
-		::FillRect( hdc, &rcIconBk, hbr );
-		::DeleteObject( hbr );
-
-		// アイコンとテキストの間に縦線を描画する
-		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
-		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, NULL );
-		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
-
-	}else{
-		// アイテム矩形塗りつぶし
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		::FillRect( hdc, &lpdis->rcItem, hBrush );
-	}
-	
-	if( lpdis->itemID == F_0 ){
-		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
-		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
-		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
-		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
-		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
-		
-		if( bBackSurface ){
-			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
-				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
-		}
-		return; // セパレータ。作画終了
-	}
-
-#else // DRAW_MENU_ICON_BACKGROUND_3DFACE
-	hBrush = ::GetSysColorBrush( COLOR_MENU );
-	::FillRect( hdc, &lpdis->rcItem, hBrush );
-#endif
-
-	const int    nItemIndex = Find( (int)lpdis->itemID );
-	const TCHAR* pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr( &nItemStrLen );
-	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
-
-	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
 		// アイテムが選択されている
 		RECT rc1 = lpdis->rcItem;
@@ -1132,7 +1059,84 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
 #endif
+#ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
+	}else if( bMenuIconDraw ){
+		// アイコン部分の背景を灰色にする
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		CMyRect rcFillMenuBack( rcItem );
+		rcFillMenuBack.left += nIndentLeft;
+		::FillRect( hdc, &rcFillMenuBack, hBrush );
 
+//		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
+		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
+		COLORREF colFace = ::GetSysColor( COLOR_3DFACE );
+		COLORREF colIconBack;
+		// 明度らしきもの
+		if( 64 < t_abs(t_max(t_max(GetRValue(colFace),GetGValue(colFace)),GetBValue(colFace))
+			         - t_max(t_max(GetRValue(colMenu),GetGValue(colMenu)),GetBValue(colMenu))) ){
+			colIconBack = colFace;
+		}else{
+			// 明るさが近いなら混色にして(XPテーマ等で)違和感を減らす
+			BYTE valR = ((GetRValue(colFace) * 7 + GetRValue(colMenu) * 3) / 10);
+			BYTE valG = ((GetGValue(colFace) * 7 + GetGValue(colMenu) * 3) / 10);
+			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
+			colIconBack = RGB(valR, valG, valB);
+		}
+		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
+		
+		CMyRect rcIconBk( rcItem );
+		rcIconBk.right = rcItem.left + nIndentLeft;
+		::FillRect( hdc, &rcIconBk, hbr );
+		::DeleteObject( hbr );
+
+	}else{
+		// アイテム矩形塗りつぶし
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		::FillRect( hdc, &lpdis->rcItem, hBrush );
+	}
+#else
+	}else{
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		::FillRect( hdc, &lpdis->rcItem, hBrush );
+	}
+#endif
+
+	if( bMenuIconDraw ){
+		// アイコンとテキストの間に縦線を描画する
+		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
+		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
+		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, NULL );
+		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+
+	}
+	
+	if( lpdis->itemID == F_0 ){
+		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
+		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
+		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
+		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
+		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
+		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+		
+		if( bBackSurface ){
+			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
+				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
+		}
+		return; // セパレータ。作画終了
+	}
+
+	const int    nItemIndex = Find( (int)lpdis->itemID );
+	const TCHAR* pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr( &nItemStrLen );
+	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
+
+	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
+	if( lpdis->itemState & ODS_SELECTED ){
 		if( lpdis->itemState & ODS_DISABLED ){
 			// アイテムが使用不可
 			nTxSysColor = COLOR_MENU;
