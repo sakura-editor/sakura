@@ -33,10 +33,6 @@
 // メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-// //! メニューアイコンを3Dボタンにする(旧仕様)
-// //! 未定義なら、選択色との混合色とフラットな枠で選択を表現
-// #define DRAW_MENU_ICON_3DBUTTON
-
 // //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
 // #define DRAW_MENU_3DSTYLE
 
@@ -1278,17 +1274,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 	// 枠は アイコン横幅xメニュー縦幅で表示し真ん中にアイコンを置く
 	if( bMenuIconDraw && (lpdis->itemState & ODS_CHECKED) ){
-		/* アイコンを囲む枠 */
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-		// チェック状態なら凹んだ3D枠を描画する
-		CSplitBoxWnd::Draw3dRect(
-			hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
-			2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
-			::GetSysColor( COLOR_3DSHADOW ),
-			::GetSysColor( COLOR_3DHIGHLIGHT )
-		);
-#else
 		{
 			// フラットな枠 + 半透明の背景色
 			CMyRect rcFrame( rcIcon );
@@ -1317,46 +1302,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			::FillRect( hdc, &rcBkFrame, hbr );
 			::DeleteObject( hbr );
 		}
-#endif
-
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
-		if( lpdis->itemState & ODS_SELECTED ){
-		}else{
-			HBRUSH hbr = ::GetSysColorBrush( COLOR_3DLIGHT );
-			RECT rc;
-			::SetRect( &rc, lpdis->rcItem.left + 2 + 1, lpdis->rcItem.top + 1,
-				lpdis->rcItem.left + 1 + 2 + 16 + 2 - 1, lpdis->rcItem.bottom - 1 );
-			::FillRect( hdc, &rc, hbr );
-		}
-#endif
 	}
 
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( bMenuIconDraw && -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
-		/* 3D枠を描画する */
-		/* アイテムが選択されている */
-		if( lpdis->itemState & ODS_SELECTED ){
-			/* アイテムが使用不可 */
-			if( lpdis->itemState & ODS_DISABLED /*&& !(lpdis->itemState & ODS_SELECTED)*/  ){
-			}else{
-				if( lpdis->itemState & ODS_CHECKED ){
-				}else{
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-					// アイコンを囲む枠(メニューの高さいっぱい)
-					CSplitBoxWnd::Draw3dRect(
-						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
-						2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
-						::GetSysColor( COLOR_3DHIGHLIGHT ),
-						::GetSysColor( COLOR_3DSHADOW )
-					 );
-#endif
-				}
-			}
-		}
-
 		// アイコン番号
 		int nIconNo = m_menuItems[nItemIndex].m_nBitmapIdx;
 
