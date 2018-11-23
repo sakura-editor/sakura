@@ -33,9 +33,6 @@
 // メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-// //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
-// #define DRAW_MENU_3DSTYLE
-
 #if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
@@ -1079,21 +1076,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	if( lpdis->itemID == F_0 ){
 		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
 		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
-#ifdef DRAW_MENU_3DSTYLE
-		int nSepColor = COLOR_3DSHADOW;
-#else
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-#endif
-		HPEN hPen = ::CreatePen( PS_SOLID, cyBorder, ::GetSysColor(nSepColor) );
+		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
 		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
-#ifdef DRAW_MENU_3DSTYLE
-		HPEN hPen3d = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_3DHIGHLIGHT) );
-		(void)::SelectObject( hdc, hPen3d );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft - 3: 3), y + 1, NULL );
-		::LineTo(   hdc, lpdis->rcItem.right - 2, y + 1 );
-#endif
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
 		
@@ -1207,28 +1194,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 	/* TAB文字の後ろ側のテキストを描画する */
 	if( j < nItemStrLen ){
-#ifdef DRAW_MENU_3DSTYLE
-		/* アイテムが使用不可 */
-		if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
-			COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
-				rcText.left++;
-				rcText.top++;
-				rcText.right++;
-				rcText.bottom++;
-				::DrawText(
-					hdc,
-					&pszItemStr[j + 1],
-					-1,
-					&rcText,
-					DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-				);
-				rcText.left--;
-				rcText.top--;
-				rcText.right--;
-				rcText.bottom--;
-				::SetTextColor( hdc, colOld );
-		}
-#endif
 		::DrawText(
 			hdc,
 			&pszItemStr[j + 1],
@@ -1238,24 +1203,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		);
 	}
 	/* TAB文字の前側のテキストを描画する */
-#ifdef DRAW_MENU_3DSTYLE
-	/* アイテムが使用不可 */
-	if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
-		COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
-
-		rcText.left++;
-		rcText.top++;
-		rcText.right++;
-		rcText.bottom++;
-		::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
-
-		rcText.left--;
-		rcText.top--;
-		rcText.right--;
-		rcText.bottom--;
-		::SetTextColor( hdc, colOld );
-	}
-#endif
 	::DrawText(
 		hdc,
 		pszItemStr,
