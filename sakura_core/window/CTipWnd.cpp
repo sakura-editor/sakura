@@ -233,6 +233,10 @@ void CTipWnd::DrawTipText(
 	assert( hdc != NULL );
 	assert( prcPaint != NULL );
 
+	// 行バッファとして使いまわす領域を確保。
+	size_t maxBufWork = MAX_PATH;
+	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
+
 	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
@@ -248,20 +252,24 @@ void CTipWnd::DrawTipText(
 		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
 		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
 			CMyRect rc;
-			if( 0 < i - nLineBgn ){
-				TCHAR*	pszWork;
-				pszWork = new TCHAR[i - nLineBgn + 1];
-				auto_memcpy( pszWork, &pszText[nLineBgn], i - nLineBgn );
-				pszWork[i - nLineBgn] = _T('\0');
+			// 描画対象の文字列長
+			size_t cchWork = i - nLineBgn;
+			if ( 0 < cchWork ) {
+				// 1行の長さがバッファ長を越えたらバッファを拡張する
+				if ( maxBufWork < cchWork + 1 ) {
+					maxBufWork = cchWork + 1;
+					bufWork = std::make_unique<TCHAR[]>( maxBufWork );
+				}
+				TCHAR* pszWork = bufWork.get();
+				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nLineBgn], _TRUNCATE );
 
 				rc.left = 4;
 				rc.top = 4 + nCurHeight;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
+				nCurHeight += ::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
-				delete [] pszWork;
 				if( nCurMaxWidth < rc.right ){
 					nCurMaxWidth = rc.right;
 				}
