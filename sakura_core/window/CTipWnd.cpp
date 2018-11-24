@@ -230,30 +230,19 @@ void CTipWnd::DrawTipText(
 	const TCHAR*	pszText
 )
 {
-	int			nTextLength;
-	int			nCurMaxWidth;
-	int			nCurHeight;
-	int			nBgn;
-	RECT		rc;
-	HFONT		hFontOld;
-	int			i;
-	int			nBkMode_Old;
-	COLORREF	colText_Old;
-	int			nCharChars;
+	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
+	HGDIOBJ hFontOld = ::SelectObject( hdc, hFont );
+	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
-	nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
-	hFontOld = (HFONT)::SelectObject( hdc, hFont );
-	colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
-
-	nCurMaxWidth = 0;
-	nCurHeight = 0;
-	nTextLength = _tcslen( pszText );
-	nBgn = 0;
-	for( i = 0; i <= nTextLength; ++i ){
+	int nCurMaxWidth = 0;
+	int nCurHeight = 0;
+	const size_t nTextLength = _tcslen( pszText );
+	for ( size_t i = 0, nBgn = 0; i <= nTextLength; ++i ) {
 //		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
+		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
 		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
+			CMyRect rc;
 			if( 0 < i - nBgn ){
 				TCHAR*	pszWork;
 				pszWork = new TCHAR[i - nBgn + 1];
