@@ -146,11 +146,15 @@ void CTipWnd::ComputeWindowSize(
 	assert( hdc != NULL );
 	assert( prcResult != NULL );
 
+	// 改行コードを表す定数
+	constexpr TCHAR szEscapedLF[] = { _T("\\n") };
+
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
 	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
+	// 計測結果を格納する変数
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
@@ -160,22 +164,10 @@ void CTipWnd::ComputeWindowSize(
 	size_t maxBufWork = MAX_PATH;
 	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
 
-	for( size_t i = 0, nBgn = 0; i <= cchText; ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
-		// ここの判定文がナゾ。
-		// nCharCharsが1で、iの位置に"\n"がある場合
-		// または、iの位置に"\0"がある場合
-		// ・・・なんじゃこりゃ？
-		//
-		// もしかしてSJIS時代のダメ文字対策の名残かな？
-		// 要するに、改行文字手前かNUL終端手前までを対象にしたいってことのようだ。
-		// 他にも突っ込みどころがあるので一旦保留。
-		if( ( 1 == nCharChars
-			&& _T('\\') == pszText[i]
-			&& _T('n') == pszText[i + 1]
-			)
-			|| _T('\0') == pszText[i] ){
+	for ( size_t i = 0, nBgn = 0; i <= cchText; ) {
+		// iの位置にNUL終端、または"\n"がある場合
+		if ( pszText[i] == _T('\0')
+			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列長
@@ -210,11 +202,20 @@ void CTipWnd::ComputeWindowSize(
 			// 計測した高さを加算する(行間は考慮しない)
 			nCurHeight += rc.Height();
 
-			nBgn = i + 2;
+			// NUL終端の後に文字はないのでここで確実に抜ける
+			if ( pszText[i] == _T('\0') ) {
+				break;
+			}
+
+			// 次の行の開始位置を設定する
+			nBgn = i + _countof(szEscapedLF) - 1;
+			i = nBgn;
+			continue;
 		}
-		if( 2 == nCharChars ){
-			++i;
-		}
+
+		// 次の文字位置を取得する
+		LPCTSTR pNext = ::CharNext( &pszText[i] );
+		i = pNext - pszText;
 	}
 
 	prcResult->left = 0;
