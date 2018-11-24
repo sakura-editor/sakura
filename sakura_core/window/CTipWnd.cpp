@@ -164,14 +164,14 @@ void CTipWnd::ComputeWindowSize(
 
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 
-	for ( size_t i = 0, nBgn = 0; i <= cchText; ) {
+	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( pszText[i] == _T('\0')
 			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列長
-			size_t cchWork = i - nBgn;
+			size_t cchWork = i - nLineBgn;
 			if ( 0 < cchWork ) {
 				// 1行の長さがバッファ長を越えたらバッファを拡張する
 				if ( maxBufWork < cchWork + 1 ) {
@@ -179,7 +179,7 @@ void CTipWnd::ComputeWindowSize(
 					bufWork = std::make_unique<TCHAR[]>( maxBufWork );
 				}
 				TCHAR* pszWork = bufWork.get();
-				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nBgn], _TRUNCATE );
+				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nLineBgn], _TRUNCATE );
 
 				// ワードラップを有効にするため幅だけ指定しておく
 				rc.SetXYWH( 0, 0, cxScreen, 0 );
@@ -208,8 +208,8 @@ void CTipWnd::ComputeWindowSize(
 			}
 
 			// 次の行の開始位置を設定する
-			nBgn = i + _countof(szEscapedLF) - 1;
-			i = nBgn;
+			nLineBgn = i + _countof(szEscapedLF) - 1;
+			i = nLineBgn;
 			continue;
 		}
 
