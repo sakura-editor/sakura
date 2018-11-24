@@ -152,8 +152,6 @@ void CTipWnd::ComputeWindowSize(
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
-	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
-
 	// 計測結果を格納する変数
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
@@ -163,6 +161,8 @@ void CTipWnd::ComputeWindowSize(
 	// 行バッファとして使いまわす領域を確保。
 	size_t maxBufWork = MAX_PATH;
 	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
+
+	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 
 	for ( size_t i = 0, nBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
@@ -218,12 +218,12 @@ void CTipWnd::ComputeWindowSize(
 		i = pNext - pszText;
 	}
 
+	::SelectObject( hdc, hFontOld );
+
 	prcResult->left = 0;
 	prcResult->top = 0;
 	prcResult->right = nCurMaxWidth + 4;
 	prcResult->bottom = nCurHeight + 2;
-
-	::SelectObject( hdc, hFontOld );
 
 	return;
 
