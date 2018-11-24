@@ -33,6 +33,7 @@
 #include "util/file.h"
 #include "util/os.h"
 #include "util/module.h"
+#include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
@@ -293,11 +294,7 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
 	// 言語を日本語以外にすると何故かタブ等のフォントサイズが小さく表示されるので対策
 	// ダイアログリソース部分は問題無いのだが…。
-	HDC hDC = GetDC(NULL);
-	const int nDpiY = GetDeviceCaps(hDC, LOGPIXELSY);
-	ReleaseDC(NULL, hDC);
-	const int nHeight = -MulDiv(9, nDpiY, 72);
-	g_hFont = CreateFont(nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+	g_hFont = CreateFont(-DpiPointsToPixels(9), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"MS Shell Dlg 2");
 	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
