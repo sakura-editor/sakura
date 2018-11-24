@@ -107,7 +107,6 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 	if( NULL != szText ){
 		m_cInfo.SetString( szText );
 	}
-	const TCHAR* pszInfo = m_cInfo.GetStringPtr();
 
 	hdc = ::GetDC( GetHwnd() );
 
@@ -306,11 +305,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 // 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
 void CTipWnd::GetWindowSize(LPRECT pRect)
 {
-	const TCHAR*	pszText;
-
 	HDC		hdc = ::GetDC( GetHwnd() );
-
-	pszText = m_cInfo.GetStringPtr();
 
 	// ウィンドウのサイズを得る
 	ComputeWindowSize( hdc, pRect );
