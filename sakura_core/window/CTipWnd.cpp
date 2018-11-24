@@ -242,9 +242,9 @@ void CTipWnd::DrawTipText(
 	rc.left = 4;
 	rc.top = 4;
 
-	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
+	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
-	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
+	COLORREF textColorOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
@@ -281,9 +281,9 @@ void CTipWnd::DrawTipText(
 		i = pNext - pszText;
 	}
 
-	::SetTextColor( hdc, colText_Old );
+	::SetTextColor( hdc, textColorOld );
 	::SelectObject( hdc, hFontOld );
-	::SetBkMode( hdc, nBkMode_Old );
+	::SetBkMode( hdc, nBkModeOld );
 
 	return;
 
