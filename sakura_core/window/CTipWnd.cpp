@@ -146,6 +146,9 @@ void CTipWnd::ComputeWindowSize(
 	assert( hdc != NULL );
 	assert( prcResult != NULL );
 
+	// システム設定値を取得
+	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
+
 	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
 	int nCurMaxWidth = 0;
@@ -176,7 +179,7 @@ void CTipWnd::ComputeWindowSize(
 
 				rc.left = 0;
 				rc.top = 0;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
+				rc.right = cxScreen;
 				rc.bottom = 0;
 				::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
