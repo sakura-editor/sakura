@@ -237,11 +237,15 @@ void CTipWnd::DrawTipText(
 	size_t maxBufWork = MAX_PATH;
 	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
 
+	// 描画矩形
+	CMyRect rc( *prcPaint );
+	rc.left = 4;
+	rc.top = 4;
+
 	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
-	int nCurHeight = 0;
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
 
@@ -249,8 +253,7 @@ void CTipWnd::DrawTipText(
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( pszText[i] == _T('\0')
 			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
-			// 描画矩形
-			CMyRect rc;
+			int nHeight;
 			// 描画対象の文字列長
 			size_t cchWork = i - nLineBgn;
 			if ( 0 < cchWork ) {
@@ -262,23 +265,18 @@ void CTipWnd::DrawTipText(
 				TCHAR* pszWork = bufWork.get();
 				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nLineBgn], _TRUNCATE );
 
-				rc.left = 4;
-				rc.top = 4 + nCurHeight;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
-				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, pszWork, cchWork, &rc,
+				nHeight = ::DrawText( hdc, pszWork, cchWork, &rc,
+					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}else{
-				rc.left = 4;
-				rc.top = 4 + nCurHeight;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
-				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, _T(" "), 1, &rc,
+				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
 
+			// 描画領域の上端を1行分ずらす
+			rc.top += nHeight + 4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
 			if ( pszText[i] == _T('\0') ) {
