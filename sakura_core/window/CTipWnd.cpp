@@ -225,11 +225,13 @@ void CTipWnd::ComputeWindowSize(
 
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
-	const HDC		hdc
+	const HDC		hdc,
+	const RECT*		prcPaint
 )
 {
 	assert( m_hFont != NULL );
 	assert( hdc != NULL );
+	assert( prcPaint != NULL );
 
 	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
@@ -310,7 +312,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
 
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc );
+	DrawTipText( hdc, &ps.rcPaint );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
