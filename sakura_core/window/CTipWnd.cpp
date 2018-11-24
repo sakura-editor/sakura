@@ -149,10 +149,10 @@ void CTipWnd::ComputeWindowSize(
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
-	const size_t nTextLength = m_cInfo.GetStringLength();
-	for( size_t i = 0, nBgn = 0; i <= nTextLength; ++i ){
+	const size_t cchText = m_cInfo.GetStringLength();
+	for( size_t i = 0, nBgn = 0; i <= cchText; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
+		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
 		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
 			RECT rc;
 			if( 0 < i - nBgn ){
