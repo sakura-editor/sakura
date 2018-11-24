@@ -264,6 +264,8 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 	return ::CallWindowProc( s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
 }
 
+static HFONT g_hFont;
+
 /*!	独自拡張プロパティシートのコールバック関数
 	@author ryoji
 	@date 2007.05.25 新規
@@ -272,10 +274,11 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 {
 	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
+		::SendMessage(PropSheet_GetTabControl(hwndDlg), WM_SETFONT, (WPARAM)g_hFont, MAKELPARAM(FALSE, 0));
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
 		HWND hwndBtn = ::CreateWindowEx( 0, _T("BUTTON"), LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
-		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
+		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)g_hFont, MAKELPARAM( FALSE, 0 ) );
 		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 	}
 	return 0;
@@ -288,12 +291,23 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 */
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
+	// 言語を日本語以外にすると何故かタブ等のフォントサイズが小さく表示されるので対策
+	// ダイアログリソース部分は問題無いのだが…。
+	HDC hDC = GetDC(NULL);
+	const int nDpiY = GetDeviceCaps(hDC, LOGPIXELSY);
+	ReleaseDC(NULL, hDC);
+	const int nHeight = -MulDiv(9, nDpiY, 72);
+	g_hFont = CreateFont(nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"MS Shell Dlg 2");
 	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
 	if( CShareData::getInstance()->IsPrivateSettings() ){
 		lppsph->dwFlags |= PSH_USECALLBACK;
 		lppsph->pfnCallback = PropSheetProc;
 	}
-	return ::PropertySheet( lppsph );
+	auto ret = ::PropertySheet( lppsph );
+	DeleteObject(g_hFont);
+	return ret;
 }
 
 
