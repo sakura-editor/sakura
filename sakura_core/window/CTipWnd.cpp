@@ -155,6 +155,11 @@ void CTipWnd::ComputeWindowSize(
 	int nCurHeight = 0;
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
+
+	// 行バッファとして使いまわす領域を確保。
+	size_t maxBufWork = MAX_PATH;
+	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
+
 	for( size_t i = 0, nBgn = 0; i <= cchText; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
@@ -175,9 +180,13 @@ void CTipWnd::ComputeWindowSize(
 			// 計測対象の文字列長
 			size_t cchWork = i - nBgn;
 			if ( 0 < cchWork ) {
-				TCHAR*	pszWork = new TCHAR[cchWork + 1];
-				auto_memcpy( pszWork, &pszText[nBgn], cchWork);
-				pszWork[cchWork] = _T('\0');
+				// 1行の長さがバッファ長を越えたらバッファを拡張する
+				if ( maxBufWork < cchWork + 1 ) {
+					maxBufWork = cchWork + 1;
+					bufWork = std::make_unique<TCHAR[]>( maxBufWork );
+				}
+				TCHAR* pszWork = bufWork.get();
+				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nBgn], _TRUNCATE );
 
 				rc.left = 0;
 				rc.top = 0;
@@ -186,7 +195,6 @@ void CTipWnd::ComputeWindowSize(
 				::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
-				delete [] pszWork;
 				if( nCurMaxWidth < rc.right ){
 					nCurMaxWidth = rc.right;
 				}
