@@ -176,7 +176,8 @@ void CTipWnd::ComputeWindowSize(
 			&& _T('n') == pszText[i + 1]
 			)
 			|| _T('\0') == pszText[i] ){
-			RECT rc;
+			// 計測結果を格納する矩形
+			CMyRect rc;
 			// 計測対象の文字列長
 			size_t cchWork = i - nBgn;
 			if ( 0 < cchWork ) {
@@ -188,22 +189,25 @@ void CTipWnd::ComputeWindowSize(
 				TCHAR* pszWork = bufWork.get();
 				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nBgn], _TRUNCATE );
 
-				rc.left = 0;
-				rc.top = 0;
-				rc.right = cxScreen;
-				rc.bottom = 0;
+				// ワードラップを有効にするため幅だけ指定しておく
+				rc.SetXYWH( 0, 0, cxScreen, 0 );
+
 				::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
-				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right;
+
+				// 計測した幅が最大幅を越えたら更新する
+				if ( nCurMaxWidth < rc.Width() ) {
+					nCurMaxWidth = rc.Width();
 				}
 			}else{
 				::DrawText( hdc, _T(" "), 1, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
-			nCurHeight += rc.bottom;
+
+			// 計測した高さを加算する(行間は考慮しない)
+			nCurHeight += rc.Height();
 
 			nBgn = i + 2;
 		}
