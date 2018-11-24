@@ -19,6 +19,7 @@
 #include "CTipWnd.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "util/window.h"
 
 
 // ダミー文字列
@@ -191,8 +192,8 @@ void CTipWnd::ComputeWindowSize(
 				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
 			}
 
-			// 計測した高さを加算する(行間は考慮しない)
-			nCurHeight += rc.Height();
+			// 計測した高さを加算する
+			nCurHeight += rc.Height() + DpiScaleY( 4 );
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
 			if ( pszText[i] == _T('\0') ) {
@@ -214,8 +215,8 @@ void CTipWnd::ComputeWindowSize(
 
 	prcResult->left = 0;
 	prcResult->top = 0;
-	prcResult->right = nCurMaxWidth + 4;
-	prcResult->bottom = nCurHeight + 2;
+	prcResult->right = nCurMaxWidth + DpiScaleX( 4 * 2 );
+	prcResult->bottom = nCurHeight + DpiScaleY( 4 );
 
 	return;
 
@@ -239,8 +240,8 @@ void CTipWnd::DrawTipText(
 
 	// 描画矩形
 	CMyRect rc( *prcPaint );
-	rc.left = 4;
-	rc.top = 4;
+	rc.left = DpiScaleX( 4 );
+	rc.top = DpiScaleY( 4 );
 
 	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
@@ -263,7 +264,7 @@ void CTipWnd::DrawTipText(
 			}
 
 			// 描画領域の上端を1行分ずらす
-			rc.top += nHeight + 4;
+			rc.top += nHeight + DpiScaleY( 4 );
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
 			if ( pszText[i] == _T('\0') ) {
