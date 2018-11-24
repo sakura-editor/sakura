@@ -246,11 +246,11 @@ void CTipWnd::DrawTipText(
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
 
-	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ++i ) {
-//		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, cchText, &pszText[i] );
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
-		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
+	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
+		// iの位置にNUL終端、または"\n"がある場合
+		if ( pszText[i] == _T('\0')
+			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
+			// 描画矩形
 			CMyRect rc;
 			// 描画対象の文字列長
 			size_t cchWork = i - nLineBgn;
@@ -283,13 +283,22 @@ void CTipWnd::DrawTipText(
 				);
 			}
 
-			nLineBgn = i + 2;
-		}
-		if( 2 == nCharChars ){
-			++i;
-		}
-	}
 
+			// NUL終端の後に文字はないのでここで確実に抜ける
+			if ( pszText[i] == _T('\0') ) {
+				break;
+			}
+
+			// 次の行の開始位置を設定する
+			nLineBgn = i + _countof(szEscapedLF) - 1;
+			i = nLineBgn;
+			continue;
+		}
+
+		// 次の文字位置を取得する
+		LPCTSTR pNext = ::CharNext( &pszText[i] );
+		i = pNext - pszText;
+	}
 
 	::SetTextColor( hdc, colText_Old );
 	::SelectObject( hdc, hFontOld );
