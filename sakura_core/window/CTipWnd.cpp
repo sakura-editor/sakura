@@ -138,11 +138,13 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 
 /* ウィンドウのサイズを決める */
 void CTipWnd::ComputeWindowSize(
-	HDC				hdc,
-	RECT*			pRect
+	const HDC		hdc,
+	RECT*			prcResult
 )
 {
 	assert( m_hFont != NULL );
+	assert( hdc != NULL );
+	assert( prcResult != NULL );
 
 	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
@@ -185,10 +187,10 @@ void CTipWnd::ComputeWindowSize(
 		}
 	}
 
-	pRect->left = 0;
-	pRect->top = 0;
-	pRect->right = nCurMaxWidth + 4;
-	pRect->bottom = nCurHeight + 2;
+	prcResult->left = 0;
+	prcResult->top = 0;
+	prcResult->right = nCurMaxWidth + 4;
+	prcResult->bottom = nCurHeight + 2;
 
 	::SelectObject( hdc, hFontOld );
 
