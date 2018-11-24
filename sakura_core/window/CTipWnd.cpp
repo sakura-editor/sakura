@@ -172,16 +172,18 @@ void CTipWnd::ComputeWindowSize(
 			)
 			|| _T('\0') == pszText[i] ){
 			RECT rc;
-			if( 0 < i - nBgn ){
-				TCHAR*	pszWork = new TCHAR[i - nBgn + 1];
-				auto_memcpy( pszWork, &pszText[nBgn], i - nBgn );
-				pszWork[i - nBgn] = _T('\0');
+			// 計測対象の文字列長
+			size_t cchWork = i - nBgn;
+			if ( 0 < cchWork ) {
+				TCHAR*	pszWork = new TCHAR[cchWork + 1];
+				auto_memcpy( pszWork, &pszText[nBgn], cchWork);
+				pszWork[cchWork] = _T('\0');
 
 				rc.left = 0;
 				rc.top = 0;
 				rc.right = cxScreen;
 				rc.bottom = 0;
-				::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
+				::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 				delete [] pszWork;
