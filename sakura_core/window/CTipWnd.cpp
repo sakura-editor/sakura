@@ -155,7 +155,19 @@ void CTipWnd::ComputeWindowSize(
 	for( size_t i = 0, nBgn = 0; i <= cchText; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, cchText, i );
-		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
+		// ここの判定文がナゾ。
+		// nCharCharsが1で、iの位置に"\n"がある場合
+		// または、iの位置に"\0"がある場合
+		// ・・・なんじゃこりゃ？
+		//
+		// もしかしてSJIS時代のダメ文字対策の名残かな？
+		// 要するに、改行文字手前かNUL終端手前までを対象にしたいってことのようだ。
+		// 他にも突っ込みどころがあるので一旦保留。
+		if( ( 1 == nCharChars
+			&& _T('\\') == pszText[i]
+			&& _T('n') == pszText[i + 1]
+			)
+			|| _T('\0') == pszText[i] ){
 			RECT rc;
 			if( 0 < i - nBgn ){
 				TCHAR*	pszWork = new TCHAR[i - nBgn + 1];
