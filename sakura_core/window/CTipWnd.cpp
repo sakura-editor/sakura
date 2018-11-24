@@ -119,7 +119,7 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 	else
 	{
 		/* ウィンドウのサイズを決める */
-		ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
+		ComputeWindowSize( hdc, &rc );
 	}
 
 	::ReleaseDC( GetHwnd(), hdc );
@@ -140,16 +140,17 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 /* ウィンドウのサイズを決める */
 void CTipWnd::ComputeWindowSize(
 	HDC				hdc,
-	HFONT			hFont,
-	const TCHAR*	pszText,
 	RECT*			pRect
 )
 {
-	HFONT hFontOld = (HFONT)::SelectObject( hdc, hFont );
+	assert( m_hFont != NULL );
+
+	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFont );
 
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
-	const size_t nTextLength = _tcslen( pszText );
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t nTextLength = m_cInfo.GetStringLength();
 	for( size_t i = 0, nBgn = 0; i <= nTextLength; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		size_t nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
@@ -312,7 +313,7 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 	pszText = m_cInfo.GetStringPtr();
 
 	// ウィンドウのサイズを得る
-	ComputeWindowSize( hdc, m_hFont, pszText , pRect );
+	ComputeWindowSize( hdc, pRect );
 
 	::ReleaseDC( GetHwnd(), hdc ); //2007.10.10 kobake ReleaseDCが抜けていたのを修正
 }

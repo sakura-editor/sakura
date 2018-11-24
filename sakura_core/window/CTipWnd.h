@@ -64,7 +64,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	void ComputeWindowSize( HDC hdc, HFONT hFont, const TCHAR* pszText, RECT* pRect );	/* ウィンドウのサイズを決める */
+	void ComputeWindowSize( HDC hdc, RECT* pRect );	/* ウィンドウのサイズを決める */
 	void DrawTipText( HDC hdc, HFONT hFont, const TCHAR* pszText );	/* ウィンドウのテキストを表示 */
 
 	/* 仮想関数 */
