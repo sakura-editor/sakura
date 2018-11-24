@@ -498,7 +498,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	lfTemp = lf;
 
 	// 大きすぎるフォントは小さく表示
-	int limitSize = DpiScaleY( 16 );
+	LONG limitSize = ::DpiPointsToPixels( 16 );
 	if ( lfTemp.lfHeight < -limitSize ) {
 		lfTemp.lfHeight = -limitSize;
 	}
