@@ -192,8 +192,9 @@ void CTipWnd::ComputeWindowSize(
 				// ワードラップを有効にするため幅だけ指定しておく
 				rc.SetXYWH( 0, 0, cxScreen, 0 );
 
+				// テキスト描画に必要な矩形を計測する
 				::DrawText( hdc, pszWork, cchWork, &rc,
-					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
+					DT_CALCRECT | DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 
 				// 計測した幅が最大幅を越えたら更新する
@@ -201,9 +202,9 @@ void CTipWnd::ComputeWindowSize(
 					nCurMaxWidth = rc.Width();
 				}
 			}else{
-				::DrawText( hdc, _T(" "), 1, &rc,
-					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
-				);
+				// ダミー文字列を計測して必要な高さを取得する
+				constexpr TCHAR szDummy[] = { _T(" ") };
+				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
 			}
 
 			// 計測した高さを加算する(行間は考慮しない)
