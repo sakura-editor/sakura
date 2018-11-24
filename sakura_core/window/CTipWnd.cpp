@@ -225,18 +225,21 @@ void CTipWnd::ComputeWindowSize(
 
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
-	HDC				hdc,
-	HFONT			hFont,
-	const TCHAR*	pszText
+	const HDC		hdc
 )
 {
+	assert( m_hFont != NULL );
+	assert( hdc != NULL );
+
 	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
-	HGDIOBJ hFontOld = ::SelectObject( hdc, hFont );
+	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
-	const size_t nTextLength = _tcslen( pszText );
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t nTextLength = m_cInfo.GetStringLength();
+
 	for ( size_t i = 0, nBgn = 0; i <= nTextLength; ++i ) {
 //		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
 		// 2005-09-02 D.S.Koba GetSizeOfChar
@@ -304,12 +307,10 @@ void CTipWnd::Hide( void )
 LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 {
 	PAINTSTRUCT	ps;
-	RECT		rc;
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
-	::GetClientRect( hwnd, &rc );
 
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc, m_hFont, m_cInfo.GetStringPtr() );
+	DrawTipText( hdc );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
