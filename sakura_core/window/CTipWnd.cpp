@@ -241,7 +241,6 @@ void CTipWnd::DrawTipText(
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
-	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
@@ -270,9 +269,6 @@ void CTipWnd::DrawTipText(
 				nCurHeight += ::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
-				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right;
-				}
 			}else{
 				rc.left = 4;
 				rc.top = 4 + nCurHeight;
