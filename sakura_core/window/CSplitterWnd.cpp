@@ -22,6 +22,9 @@
 #include "outline/CDlgFuncList.h"
 #include "env/DLLSHAREDATA.h"
 
+constexpr auto SPLITTER_FRAME_WIDTH = 3;
+constexpr auto SPLITTER_MARGIN = 2;
+
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
@@ -152,7 +155,7 @@ void CSplitterWnd::DrawSplitter( int xPos, int yPos, int bEraseOld )
 	HBRUSH		hBrushOld;
 	RECT		rc;
 	RECT		rc2;
-	int			nTrackerWidth = 6;
+	const int	nTrackerWidth = DpiScaleX(6);
 
 	hdc = ::GetDC( GetHwnd() );
 	hBrush = ::CreateSolidBrush( RGB(255,255,255) );
@@ -207,8 +210,8 @@ void CSplitterWnd::DrawSplitter( int xPos, int yPos, int bEraseOld )
 /* 分割バーへのヒットテスト */
 int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 {
-	int			nFrameWidth = 3;
-	int			nMargin = 2;
+	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
+	const int	nMargin = DpiScaleX(SPLITTER_MARGIN);
 
 	if( m_nAllSplitRows == 1 && m_nAllSplitCols == 1 ){
 		return 0;
@@ -249,7 +252,7 @@ int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 {
 	int					nActivePane;
-	int					nLimit = 32;
+	const int			nLimit = DpiScaleX(32);
 	RECT				rc;
 	int					nAllSplitRowsOld = m_nAllSplitRows;	/* 分割行数 */
 	int					nAllSplitColsOld = m_nAllSplitCols;	/* 分割桁数 */
@@ -813,7 +816,7 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	PAINTSTRUCT	ps;
 	RECT		rc;
 	RECT		rcFrame;
-	int			nFrameWidth = 3;
+	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	HBRUSH		hBrush;
 	hdc = ::BeginPaint( hwnd, &ps );
 	::GetClientRect( GetHwnd(), &rc );
@@ -841,7 +844,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
 	RECT		rcClient;
-	int			nFrameWidth = 3;
+	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	BOOL		bSizeBox;
 	for( i = 0; i < m_nChildWndCount; ++i ){
 		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], 0 );
@@ -964,17 +967,19 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	}
 	if( 0 != m_bDragging ){		/* 分割バーをドラッグ中か */
 		::GetClientRect( GetHwnd(), &rc );
-		if( xPos < 1 ){
-			xPos = 1;
+		const int n1 = DpiScaleX(1);
+		const int n6 = DpiScaleX(6);
+		if( xPos < n1 ){
+			xPos = n1;
 		}
-		if( xPos > rc.right - 6 ){
-			xPos = rc.right - 6;
+		if( xPos > rc.right - n6 ){
+			xPos = rc.right - n6;
 		}
-		if( yPos < 1 ){
-			yPos = 1;
+		if( yPos < n1 ){
+			yPos = n1;
 		}
-		if( yPos > rc.bottom - 6 ){
-			yPos = rc.bottom - 6;
+		if( yPos > rc.bottom - n6 ){
+			yPos = rc.bottom - n6;
 		}
 		/* 分割トラッカーの表示 */
 		DrawSplitter( xPos, yPos, TRUE );
