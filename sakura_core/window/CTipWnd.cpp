@@ -152,11 +152,13 @@ void CTipWnd::ComputeWindowSize(
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
+	// 計測対象をメンバ変数からローカル変数に取得
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t cchText = m_cInfo.GetStringLength();
+
 	// 計測結果を格納する変数
 	int nCurMaxWidth = 0;
 	int nCurHeight = 0;
-	const TCHAR* pszText = m_cInfo.GetStringPtr();
-	const size_t cchText = m_cInfo.GetStringLength();
 
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 
