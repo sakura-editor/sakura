@@ -233,6 +233,10 @@ void CTipWnd::DrawTipText(
 	assert( hdc != NULL );
 	assert( prcPaint != NULL );
 
+	// 描画対象をメンバ変数からローカル変数に取得
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t cchText = m_cInfo.GetStringLength();
+
 	// 描画矩形
 	CMyRect rc( *prcPaint );
 	rc.left = 4;
@@ -241,9 +245,6 @@ void CTipWnd::DrawTipText(
 	int nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 	COLORREF colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
-
-	const TCHAR* pszText = m_cInfo.GetStringPtr();
-	const size_t cchText = m_cInfo.GetStringLength();
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
