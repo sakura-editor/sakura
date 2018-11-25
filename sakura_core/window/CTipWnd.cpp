@@ -267,12 +267,9 @@ void CTipWnd::DrawTipText(
 
 				nHeight = ::DrawText( hdc, pszWork, cchWork, &rc,
 					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
-					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}else{
-				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc,
-					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
-				);
+				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT );
 			}
 
 			// 描画領域の上端を1行分ずらす
