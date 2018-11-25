@@ -233,10 +233,6 @@ void CTipWnd::DrawTipText(
 	assert( hdc != NULL );
 	assert( prcPaint != NULL );
 
-	// 行バッファとして使いまわす領域を確保。
-	size_t maxBufWork = MAX_PATH;
-	auto bufWork = std::make_unique<TCHAR[]>( maxBufWork );
-
 	// 描画矩形
 	CMyRect rc( *prcPaint );
 	rc.left = 4;
@@ -254,21 +250,14 @@ void CTipWnd::DrawTipText(
 		if ( pszText[i] == _T('\0')
 			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
 			int nHeight;
-			// 描画対象の文字列長
-			size_t cchWork = i - nLineBgn;
-			if ( 0 < cchWork ) {
-				// 1行の長さがバッファ長を越えたらバッファを拡張する
-				if ( maxBufWork < cchWork + 1 ) {
-					maxBufWork = cchWork + 1;
-					bufWork = std::make_unique<TCHAR[]>( maxBufWork );
-				}
-				TCHAR* pszWork = bufWork.get();
-				::_tcsncpy_s( pszWork, maxBufWork, &pszText[nLineBgn], _TRUNCATE );
-
-				nHeight = ::DrawText( hdc, pszWork, cchWork, &rc,
+			// 計測対象の文字列がブランクでない場合
+			if ( 0 < i - nLineBgn ) {
+				// 指定されたテキストを描画する
+				nHeight = ::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
 					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 			}else{
+				// ダミー文字列の高さを取得する
 				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT );
 			}
 
