@@ -21,6 +21,13 @@
 #include "env/DLLSHAREDATA.h"
 
 
+// ダミー文字列
+static constexpr TCHAR szDummy[] = { _T(" ") };
+
+// 改行コードを表す定数
+static constexpr TCHAR szEscapedLF[] = { _T("\\n") };
+
+
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
 : CWnd(_T("::CTipWnd"))
@@ -146,9 +153,6 @@ void CTipWnd::ComputeWindowSize(
 	assert( hdc != NULL );
 	assert( prcResult != NULL );
 
-	// 改行コードを表す定数
-	constexpr TCHAR szEscapedLF[] = { _T("\\n") };
-
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
@@ -184,7 +188,6 @@ void CTipWnd::ComputeWindowSize(
 				}
 			}else{
 				// ダミー文字列を計測して必要な高さを取得する
-				constexpr TCHAR szDummy[] = { _T(" ") };
 				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
 			}
 
