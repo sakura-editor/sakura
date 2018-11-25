@@ -321,6 +321,12 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 // 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
 void CTipWnd::GetWindowSize(LPRECT pRect)
 {
+	// CEditView::ShowKeywordHelpから呼ばれる
+	// 当面、pRectがNULLになることはないが、安全のため入れておく。
+	if ( pRect == NULL ) {
+		return;
+	}
+
 	HDC		hdc = ::GetDC( GetHwnd() );
 
 	// ウィンドウのサイズを得る
