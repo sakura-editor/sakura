@@ -44,6 +44,7 @@
 #include "env/CDocTypeManager.h"
 #include "CEditApp.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
@@ -495,9 +496,11 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	TCHAR	szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
+
 	// 大きすぎるフォントは小さく表示
-	if( lfTemp.lfHeight < -16 ){
-		lfTemp.lfHeight = -16;
+	LONG limitSize = ::DpiPointsToPixels( 16 );
+	if ( lfTemp.lfHeight < -limitSize ) {
+		lfTemp.lfHeight = -limitSize;
 	}
 
 	hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );

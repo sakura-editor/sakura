@@ -26,6 +26,7 @@
 #include "CEditApp.h"
 #include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 
 
@@ -282,9 +283,11 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 	TCHAR	szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
+
 	// 大きすぎるフォントは小さく表示
-	if( lfTemp.lfHeight < -16 ){
-		lfTemp.lfHeight = -16;
+	LONG limitSize = ::DpiPointsToPixels( 16 );
+	if ( lfTemp.lfHeight < -limitSize ) {
+		lfTemp.lfHeight = -limitSize;
 	}
 
 	if (bUse) {
