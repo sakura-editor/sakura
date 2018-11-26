@@ -170,10 +170,10 @@ void CTipWnd::ComputeWindowSize(
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置がNUL終端かどうか
-		const bool isEndOfText = ( pszText[i] == _T('\0') );
+		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
-		if ( isEndOfText == true
-			|| ( i + 1 < cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
+		if ( isEndOfText
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
@@ -186,7 +186,7 @@ void CTipWnd::ComputeWindowSize(
 					DT_CALCRECT | DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 
-				// 計測した幅が最大幅を越えたら更新する
+				// 計測した幅が最大幅を超えたら更新する
 				if ( nCurMaxWidth < rc.Width() ) {
 					nCurMaxWidth = rc.Width();
 				}
@@ -199,7 +199,7 @@ void CTipWnd::ComputeWindowSize(
 			nCurHeight += rc.Height() + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
-			if ( isEndOfText == true ) {
+			if ( isEndOfText ) {
 				break;
 			}
 
@@ -254,10 +254,10 @@ void CTipWnd::DrawTipText(
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置がNUL終端かどうか
-		const bool isEndOfText = ( pszText[i] == _T('\0') );
+		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
-		if ( isEndOfText == true
-			|| ( i + 1 < cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
+		if ( isEndOfText
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
@@ -274,7 +274,7 @@ void CTipWnd::DrawTipText(
 			rc.top += nHeight + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
-			if ( isEndOfText == true ) {
+			if ( isEndOfText ) {
 				break;
 			}
 
