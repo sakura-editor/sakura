@@ -169,9 +169,11 @@ void CTipWnd::ComputeWindowSize(
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
+		// iの位置がNUL終端かどうか
+		const bool isEndOfText = ( pszText[i] == _T('\0') );
 		// iの位置にNUL終端、または"\n"がある場合
-		if ( pszText[i] == _T('\0')
-			|| ( i + 1 <= cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
+		if ( isEndOfText == true
+			|| ( i + 1 < cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
@@ -197,7 +199,7 @@ void CTipWnd::ComputeWindowSize(
 			nCurHeight += rc.Height() + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
-			if ( pszText[i] == _T('\0') ) {
+			if ( isEndOfText == true ) {
 				break;
 			}
 
@@ -251,9 +253,11 @@ void CTipWnd::DrawTipText(
 	COLORREF textColorOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
 
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
+		// iの位置がNUL終端かどうか
+		const bool isEndOfText = ( pszText[i] == _T('\0') );
 		// iの位置にNUL終端、または"\n"がある場合
-		if ( pszText[i] == _T('\0')
-			|| ( i + 1 <= cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
+		if ( isEndOfText == true
+			|| ( i + 1 < cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
@@ -270,7 +274,7 @@ void CTipWnd::DrawTipText(
 			rc.top += nHeight + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
-			if ( pszText[i] == _T('\0') ) {
+			if ( isEndOfText == true ) {
 				break;
 			}
 
