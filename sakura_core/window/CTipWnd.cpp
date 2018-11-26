@@ -207,9 +207,9 @@ void CTipWnd::ComputeWindowSize(
 			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
 		}else{
-			// 次の文字位置を取得する
-			LPCTSTR pNext = ::CharNext( &pszText[i] );
-			i = pNext - pszText;
+			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			size_t nCharCount = CNativeT::GetSizeOfChar( pszText, cchText, i );
+			i += nCharCount;
 		}
 	}
 
@@ -282,9 +282,9 @@ void CTipWnd::DrawTipText(
 			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
 		}else{
-			// 次の文字位置を取得する
-			LPCTSTR pNext = ::CharNext( &pszText[i] );
-			i = pNext - pszText;
+			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			size_t nCharCount = CNativeT::GetSizeOfChar( pszText, cchText, i );
+			i += nCharCount;
 		}
 	}
 
