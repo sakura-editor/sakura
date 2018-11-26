@@ -25,9 +25,6 @@
 // ダミー文字列
 static constexpr TCHAR szDummy[] = { _T(" ") };
 
-// 改行コードを表す定数
-static constexpr TCHAR szEscapedLF[] = { _T("\\n") };
-
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
@@ -157,6 +154,10 @@ void CTipWnd::ComputeWindowSize(
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
+	// 余白の設計値をHighDPI対応の値にする
+	const int cx4 = DpiScaleX( 4 );
+	const int cy4 = DpiScaleY( 4 );
+
 	// 計測対象をメンバ変数からローカル変数に取得
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
@@ -170,7 +171,7 @@ void CTipWnd::ComputeWindowSize(
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( pszText[i] == _T('\0')
-			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
+			|| ( i + 1 <= cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
@@ -193,7 +194,7 @@ void CTipWnd::ComputeWindowSize(
 			}
 
 			// 計測した高さを加算する
-			nCurHeight += rc.Height() + DpiScaleY( 4 );
+			nCurHeight += rc.Height() + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
 			if ( pszText[i] == _T('\0') ) {
@@ -201,22 +202,21 @@ void CTipWnd::ComputeWindowSize(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + _countof(szEscapedLF) - 1;
+			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
-			continue;
+		}else{
+			// 次の文字位置を取得する
+			LPCTSTR pNext = ::CharNext( &pszText[i] );
+			i = pNext - pszText;
 		}
-
-		// 次の文字位置を取得する
-		LPCTSTR pNext = ::CharNext( &pszText[i] );
-		i = pNext - pszText;
 	}
 
 	::SelectObject( hdc, hFontOld );
 
 	prcResult->left = 0;
 	prcResult->top = 0;
-	prcResult->right = nCurMaxWidth + DpiScaleX( 4 * 2 );
-	prcResult->bottom = nCurHeight + DpiScaleY( 4 );
+	prcResult->right = nCurMaxWidth + cx4 * 2; //※左右マージンだから2倍
+	prcResult->bottom = nCurHeight + cy4;
 
 	return;
 
@@ -227,21 +227,24 @@ void CTipWnd::ComputeWindowSize(
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
 	const HDC		hdc,
-	const RECT*		prcPaint
+	const RECT&		rcPaint
 )
 {
 	assert( m_hFont != NULL );
 	assert( hdc != NULL );
-	assert( prcPaint != NULL );
+
+	// 余白の設計値をHighDPI対応の値にする
+	const int cx4 = DpiScaleX( 4 );
+	const int cy4 = DpiScaleY( 4 );
 
 	// 描画対象をメンバ変数からローカル変数に取得
 	const TCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
 
 	// 描画矩形
-	CMyRect rc( *prcPaint );
-	rc.left = DpiScaleX( 4 );
-	rc.top = DpiScaleY( 4 );
+	CMyRect rc( rcPaint );
+	rc.left = cx4;
+	rc.top = cy4;
 
 	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
@@ -250,7 +253,7 @@ void CTipWnd::DrawTipText(
 	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( pszText[i] == _T('\0')
-			|| ( i + 1 <= cchText && 0 == ::_tcsncmp( &pszText[i], szEscapedLF, _countof(szEscapedLF) - 1 ) ) ) {
+			|| ( i + 1 <= cchText && pszText[i] == _T('\\') && pszText[i + 1] == _T('n') ) ) {
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
@@ -264,7 +267,7 @@ void CTipWnd::DrawTipText(
 			}
 
 			// 描画領域の上端を1行分ずらす
-			rc.top += nHeight + DpiScaleY( 4 );
+			rc.top += nHeight + cy4;
 
 			// NUL終端の後に文字はないのでここで確実に抜ける
 			if ( pszText[i] == _T('\0') ) {
@@ -272,14 +275,13 @@ void CTipWnd::DrawTipText(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + _countof(szEscapedLF) - 1;
+			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
-			continue;
+		}else{
+			// 次の文字位置を取得する
+			LPCTSTR pNext = ::CharNext( &pszText[i] );
+			i = pNext - pszText;
 		}
-
-		// 次の文字位置を取得する
-		LPCTSTR pNext = ::CharNext( &pszText[i] );
-		i = pNext - pszText;
 	}
 
 	::SetTextColor( hdc, textColorOld );
@@ -311,7 +313,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
 
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc, &ps.rcPaint );
+	DrawTipText( hdc, ps.rcPaint );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
