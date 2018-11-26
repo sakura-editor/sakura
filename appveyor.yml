@@ -32,3 +32,26 @@ artifacts:
   - path: 'sakura-*$(platform)-$(configuration)*.zip'
   - path: 'sakura-*$(platform)-$(configuration)*.zip.md5'
   - path: 'sha256.txt'
+
+# About using cache, see https://github.com/sakura-editor/sakura/pull/650
+environment:
+  cache: disabled
+cache:
+  # It seems that deleting cache is not performed
+  # without any valid cache entries.
+  - appveyor.yml
+
+# override some variables, enabling the cache.
+for:
+-
+  matrix:
+    only:
+    - cache: enabled
+  cache:
+  - .\%PLATFORM%\%CONFIGURATION%\
+  - .\sakura_core\Funccode_enum.h
+  - .\sakura_core\Funccode_define.h
+  - .\sakura_core\githash.h
+  - .\tests\build\
+  before_build:
+  - if exist ".\%PLATFORM%\%CONFIGURATION%" powershell -ExecutionPolicy RemoteSigned -File .\tools\RestoreCommitterDateRoughly.ps1
