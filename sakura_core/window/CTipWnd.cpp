@@ -19,6 +19,11 @@
 #include "CTipWnd.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "util/window.h"
+
+
+// ダミー文字列
+static constexpr TCHAR szDummy[] = { _T(" ") };
 
 
 /* CTipWndクラス デストラクタ */
@@ -107,7 +112,6 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 	if( NULL != szText ){
 		m_cInfo.SetString( szText );
 	}
-	const TCHAR* pszInfo = m_cInfo.GetStringPtr();
 
 	hdc = ::GetDC( GetHwnd() );
 
@@ -119,7 +123,7 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 	else
 	{
 		/* ウィンドウのサイズを決める */
-		ComputeWindowSize( hdc, m_hFont, pszInfo, &rc );
+		ComputeWindowSize( hdc, &rc );
 	}
 
 	::ReleaseDC( GetHwnd(), hdc );
@@ -139,67 +143,82 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 
 /* ウィンドウのサイズを決める */
 void CTipWnd::ComputeWindowSize(
-	HDC				hdc,
-	HFONT			hFont,
-	const TCHAR*	pszText,
-	RECT*			pRect
+	const HDC		hdc,
+	RECT*			prcResult
 )
 {
-	int		nTextLength;
-	int		nCurMaxWidth;
-	int		nCurHeight;
-	int		nBgn;
-	RECT	rc;
-	HFONT	hFontOld;
-	int		i;
-	int		nCharChars;
+	assert( m_hFont != NULL );
+	assert( hdc != NULL );
+	assert( prcResult != NULL );
 
-	hFontOld = (HFONT)::SelectObject( hdc, hFont );
+	// システム設定値を取得
+	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
 
-	nCurMaxWidth = 0;
-	nCurHeight = 0;
-	nTextLength = _tcslen( pszText );
-	nBgn = 0;
-	for( i = 0; i <= nTextLength; ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
-		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
-			if( 0 < i - nBgn ){
-				TCHAR*	pszWork = new TCHAR[i - nBgn + 1];
-				auto_memcpy( pszWork, &pszText[nBgn], i - nBgn );
-				pszWork[i - nBgn] = _T('\0');
+	// 余白の設計値をHighDPI対応の値にする
+	const int cx4 = DpiScaleX( 4 );
+	const int cy4 = DpiScaleY( 4 );
 
-				rc.left = 0;
-				rc.top = 0;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
-				rc.bottom = 0;
-				::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
-					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
+	// 計測対象をメンバ変数からローカル変数に取得
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t cchText = m_cInfo.GetStringLength();
+
+	// 計測結果を格納する変数
+	int nCurMaxWidth = 0;
+	int nCurHeight = 0;
+
+	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
+
+	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
+		// iの位置がNUL終端かどうか
+		const bool isEndOfText = ( pszText[i] == '\0' );
+		// iの位置にNUL終端、または"\n"がある場合
+		if ( isEndOfText
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
+			// 計測結果を格納する矩形
+			CMyRect rc;
+			// 計測対象の文字列がブランクでない場合
+			if ( 0 < i - nLineBgn ) {
+				// ワードラップを有効にするため幅だけ指定しておく
+				rc.SetXYWH( 0, 0, cxScreen, 0 );
+
+				// テキスト描画に必要な矩形を計測する
+				::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+					DT_CALCRECT | DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
-				delete [] pszWork;
-				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right;
+
+				// 計測した幅が最大幅を超えたら更新する
+				if ( nCurMaxWidth < rc.Width() ) {
+					nCurMaxWidth = rc.Width();
 				}
 			}else{
-				::DrawText( hdc, _T(" "), 1, &rc,
-					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
-				);
+				// ダミー文字列を計測して必要な高さを取得する
+				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
 			}
-			nCurHeight += rc.bottom;
 
-			nBgn = i + 2;
-		}
-		if( 2 == nCharChars ){
-			++i;
+			// 計測した高さを加算する
+			nCurHeight += rc.Height() + cy4;
+
+			// NUL終端の後に文字はないのでここで確実に抜ける
+			if ( isEndOfText ) {
+				break;
+			}
+
+			// 次の行の開始位置を設定する
+			nLineBgn = i + 2; // "\\n" の文字数
+			i = nLineBgn;
+		}else{
+			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			size_t nCharCount = CNativeT::GetSizeOfChar( pszText, cchText, i );
+			i += nCharCount;
 		}
 	}
 
-	pRect->left = 0;
-	pRect->top = 0;
-	pRect->right = nCurMaxWidth + 4;
-	pRect->bottom = nCurHeight + 2;
-
 	::SelectObject( hdc, hFontOld );
+
+	prcResult->left = 0;
+	prcResult->top = 0;
+	prcResult->right = nCurMaxWidth + cx4 * 2; //※左右マージンだから2倍
+	prcResult->bottom = nCurHeight + cy4;
 
 	return;
 
@@ -209,73 +228,69 @@ void CTipWnd::ComputeWindowSize(
 
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
-	HDC				hdc,
-	HFONT			hFont,
-	const TCHAR*	pszText
+	const HDC		hdc,
+	const RECT&		rcPaint
 )
 {
-	int			nTextLength;
-	int			nCurMaxWidth;
-	int			nCurHeight;
-	int			nBgn;
-	RECT		rc;
-	HFONT		hFontOld;
-	int			i;
-	int			nBkMode_Old;
-	COLORREF	colText_Old;
-	int			nCharChars;
+	assert( m_hFont != NULL );
+	assert( hdc != NULL );
 
-	nBkMode_Old = ::SetBkMode( hdc, TRANSPARENT );
-	hFontOld = (HFONT)::SelectObject( hdc, hFont );
-	colText_Old = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
+	// 余白の設計値をHighDPI対応の値にする
+	const int cx4 = DpiScaleX( 4 );
+	const int cy4 = DpiScaleY( 4 );
 
-	nCurMaxWidth = 0;
-	nCurHeight = 0;
-	nTextLength = _tcslen( pszText );
-	nBgn = 0;
-	for( i = 0; i <= nTextLength; ++i ){
-//		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeT::GetSizeOfChar( pszText, nTextLength, i );
-		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
-			if( 0 < i - nBgn ){
-				TCHAR*	pszWork;
-				pszWork = new TCHAR[i - nBgn + 1];
-				auto_memcpy( pszWork, &pszText[nBgn], i - nBgn );
-				pszWork[i - nBgn] = _T('\0');
+	// 描画対象をメンバ変数からローカル変数に取得
+	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const size_t cchText = m_cInfo.GetStringLength();
 
-				rc.left = 4;
-				rc.top = 4 + nCurHeight;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
-				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
-					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
+	// 描画矩形
+	CMyRect rc( rcPaint );
+	rc.left = cx4;
+	rc.top = cy4;
+
+	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
+	HGDIOBJ hFontOld = ::SelectObject( hdc, m_hFont );
+	COLORREF textColorOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_INFOTEXT ) );
+
+	for ( size_t i = 0, nLineBgn = 0; i <= cchText; ) {
+		// iの位置がNUL終端かどうか
+		const bool isEndOfText = ( pszText[i] == '\0' );
+		// iの位置にNUL終端、または"\n"がある場合
+		if ( isEndOfText
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
+			int nHeight;
+			// 計測対象の文字列がブランクでない場合
+			if ( 0 < i - nLineBgn ) {
+				// 指定されたテキストを描画する
+				nHeight = ::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
-				delete [] pszWork;
-				if( nCurMaxWidth < rc.right ){
-					nCurMaxWidth = rc.right;
-				}
 			}else{
-				rc.left = 4;
-				rc.top = 4 + nCurHeight;
-				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
-				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, _T(" "), 1, &rc,
-					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
-				);
+				// ダミー文字列の高さを取得する
+				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT );
 			}
 
-			nBgn = i + 2;
-		}
-		if( 2 == nCharChars ){
-			++i;
+			// 描画領域の上端を1行分ずらす
+			rc.top += nHeight + cy4;
+
+			// NUL終端の後に文字はないのでここで確実に抜ける
+			if ( isEndOfText ) {
+				break;
+			}
+
+			// 次の行の開始位置を設定する
+			nLineBgn = i + 2; // "\\n" の文字数
+			i = nLineBgn;
+		}else{
+			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
+			size_t nCharCount = CNativeT::GetSizeOfChar( pszText, cchText, i );
+			i += nCharCount;
 		}
 	}
 
-
-	::SetTextColor( hdc, colText_Old );
+	::SetTextColor( hdc, textColorOld );
 	::SelectObject( hdc, hFontOld );
-	::SetBkMode( hdc, nBkMode_Old );
+	::SetBkMode( hdc, nBkModeOld );
 
 	return;
 
@@ -299,12 +314,10 @@ void CTipWnd::Hide( void )
 LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 {
 	PAINTSTRUCT	ps;
-	RECT		rc;
 	HDC			hdc = ::BeginPaint(	hwnd, &ps );
-	::GetClientRect( hwnd, &rc );
 
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc, m_hFont, m_cInfo.GetStringPtr() );
+	DrawTipText( hdc, ps.rcPaint );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
@@ -314,14 +327,16 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 // 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
 void CTipWnd::GetWindowSize(LPRECT pRect)
 {
-	const TCHAR*	pszText;
+	// CEditView::ShowKeywordHelpから呼ばれる
+	// 当面、pRectがNULLになることはないが、安全のため入れておく。
+	if ( pRect == NULL ) {
+		return;
+	}
 
 	HDC		hdc = ::GetDC( GetHwnd() );
 
-	pszText = m_cInfo.GetStringPtr();
-
 	// ウィンドウのサイズを得る
-	ComputeWindowSize( hdc, m_hFont, pszText , pRect );
+	ComputeWindowSize( hdc, pRect );
 
 	::ReleaseDC( GetHwnd(), hdc ); //2007.10.10 kobake ReleaseDCが抜けていたのを修正
 }
