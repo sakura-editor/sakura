@@ -4,8 +4,6 @@ set SRCDIR=%2
 
 if exist "%DSTZIP%" del "%DSTZIP%"
 
-call %~dp0find-7z.bat
-
 @echo archiving %SRCZIP%.
 @rem CMD_7Z contains double quotes.
 if "%CMD_7Z%" == "" (
