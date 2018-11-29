@@ -64,13 +64,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, CPropPlugin*, int );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, CPropPlugin* cPropPlugin, int ID );	/* モーダルダイアログの表示 */
 
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
+	BOOL	OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked(int wID);
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );

@@ -29,8 +29,8 @@
 
 
 //システム資源
-BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
-BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */
+BOOL GetSystemResources( int* pnSystemResources, int* pnUserResources, int* pnGDIResources );	/* システムリソースを調べる */
+BOOL CheckSystemResources( const TCHAR* pszAppName );	/* システムリソースのチェック */
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength );    //!< クリープボードにText形式でコピーする。ANSI版。nLengthは文字単位。

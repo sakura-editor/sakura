@@ -30,7 +30,10 @@ class CFuncInfo;
 //@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
 	public:
-		CFuncInfo( CLogicInt, CLogicInt, CLayoutInt, CLayoutInt, const TCHAR*, const TCHAR*, int );	/* CFuncInfoクラス構築 */
+		CFuncInfo( CLogicInt nFuncLineCRLF, CLogicInt nFuncColCRLF,
+				   CLayoutInt nFuncLineLAYOUT, CLayoutInt nFuncColLAYOUT,
+				   const TCHAR* pszFuncName, const TCHAR* pszFileName,
+				   int nInfo );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
 
 		//! クリップボードに追加する要素か？

@@ -30,8 +30,10 @@ public:
 	*/
 	CDlgInput1();
 	~CDlgInput1();
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , TCHAR*  );	/* モードレスダイアログの表示 */
-	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , NOT_TCHAR*  );	/* モードレスダイアログの表示 */
+	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const TCHAR* pszTitle,
+				  const TCHAR* pszMessage, int nMaxTextLen, TCHAR* pszText );	/* モードレスダイアログの表示 */
+	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const TCHAR* pszTitle,
+				  const TCHAR* pszMessage, int nMaxTextLen, NOT_TCHAR* pszText );	/* モードレスダイアログの表示 */
 	/*
 	||  Attributes & Operations
 	*/

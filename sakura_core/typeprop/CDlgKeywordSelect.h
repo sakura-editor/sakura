@@ -50,7 +50,7 @@ class CDlgKeywordSelect : public CDialog
 public:
 	CDlgKeywordSelect();
 	~CDlgKeywordSelect();
-	int DoModal( HINSTANCE, HWND, int* pnSet );
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSet );
 
 protected:
 

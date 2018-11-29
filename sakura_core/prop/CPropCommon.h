@@ -93,7 +93,7 @@ public:
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void Create( HWND, CImageListMgr*, CMenuDrawer* );	/* 初期化 */
+	void Create( HWND hwndParent, CImageListMgr* pcIcons, CMenuDrawer* pMenuDrawer );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations

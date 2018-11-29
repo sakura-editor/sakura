@@ -114,7 +114,8 @@ protected:
 	*/
 	void DrawHeaderFooter( HDC hdc, const CMyRect& rect , bool bHeader );
 	CColorStrategy* DrawPageTextFirst( int nPageNum );
-	CColorStrategy* DrawPageText( HDC, int, int, int nPageNum, CDlgCancel*, CColorStrategy* pStrategyStart );
+	CColorStrategy* DrawPageText( HDC hdc, int nOffX, int nOffY, int nPageNum,
+								  CDlgCancel* pCDlgCancel, CColorStrategy* pStrategyStart );
 
 	// 印刷／プレビュー 行描画
 	CColorStrategy* Print_DrawLine(

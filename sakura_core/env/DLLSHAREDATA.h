@@ -190,7 +190,7 @@ public:
 	~CShareDataLockCounter();
 
 	static int GetLockCounter();
-	static void WaitLock( HWND, CShareDataLockCounter** = NULL );
+	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = NULL );
 private:
 };
 #endif /* SAKURA_DLLSHAREDATA_3A6DD7E0_90DC_4219_8570_F5C1B8B6A306_H_ */

@@ -67,8 +67,8 @@ public:
 		m_pShareData = &GetDllShareData();
 	}
 	//タグジャンプ関連	// 2004/06/21 novice タグジャンプ機能追加
-	void PushTagJump(const TagJump *);		//!< タグジャンプ情報の保存
-	bool PopTagJump(TagJump *);				//!< タグジャンプ情報の参照
+	void PushTagJump(const TagJump * pTagJump);		//!< タグジャンプ情報の保存
+	bool PopTagJump(TagJump *pTagJump);				//!< タグジャンプ情報の参照
 private:
 	DLLSHAREDATA* m_pShareData;
 };

@@ -91,7 +91,7 @@ class CDiffLineMgr{
 public:
 	CDiffLineMgr(CDocLineMgr* pcDocLineMgr) : m_pcDocLineMgr(pcDocLineMgr) { }
 	void ResetAllDiffMark();															//!< 差分表示の全解除
-	bool SearchDiffMark( CLogicInt , ESearchDirection , CLogicInt* );					//!< 差分検索
+	bool SearchDiffMark( CLogicInt nLineNum, ESearchDirection bPrevOrNext, CLogicInt* pnLineNum );	//!< 差分検索
 	void SetDiffMarkRange( EDiffMark nMode, CLogicInt nStartLine, CLogicInt nEndLine );	//!< 差分範囲の登録
 private:
 	CDocLineMgr* m_pcDocLineMgr;

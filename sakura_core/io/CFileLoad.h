@@ -77,7 +77,7 @@ public:
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
 
 	//! ファイルの日時を取得する
-	BOOL GetFileTime( FILETIME*, FILETIME*, FILETIME* ); // inline
+	BOOL GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess, FILETIME* pftLastWrite ); // inline
 
 	//	Jun. 08, 2003 Moca
 	//! 開いたファイルにはBOMがあるか？
