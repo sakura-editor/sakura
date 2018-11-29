@@ -1,14 +1,19 @@
-:: „Éì„É´„Éâ„ÉÑ„Éº„É´„ÅÆ„Éë„Çπ„ÇíË¶ã„Å§„Åë„Çã
+:: ÉrÉãÉhÉcÅ[ÉãÇÃÉpÉXÇå©Ç¬ÇØÇÈ
 :: 
-:: ===7z.exe„ÅÆ„Éë„Çπ„ÇíÊé¢Á¥¢„Åô„ÇãÊâãÈ†Ü===
-:: 1. CMD_7Z„Åå„Çª„ÉÉ„Éà„Åï„Çå„Å¶„ÅÑ„Çå„Å∞Âà©Áî®„Åô„Çã
-:: 2. „Éë„Çπ„ÅåÈÄö„Å£„Å¶„ÅÑ„Çå„Å∞„Åù„Çå„Çí‰Ωø„ÅÜ
-:: 3. „Éá„Éï„Ç©„É´„Éà„ÅÆ„Ç§„É≥„Çπ„Éà„Éº„É´„Éë„Çπ„ÅßË¶ã„Å§„Åã„Çå„Å∞„Åù„Çå„Çí‰Ωø„ÅÜ
-:: 4. 1ÔΩû3„ÅßË¶ã„Å§„Åã„Çâ„Å™„Åë„Çå„Å∞CMD_7Z„ÇíÂâäÈô§„Åô„Çã
+:: ===7z.exeÇÃÉpÉXÇíTçıÇ∑ÇÈéËèá===
+:: 1. CMD_7ZÇ™ÉZÉbÉgÇ≥ÇÍÇƒÇ¢ÇÍÇŒóòópÇ∑ÇÈ
+:: 2. ÉpÉXÇ™í Ç¡ÇƒÇ¢ÇÍÇŒÇªÇÍÇégÇ§
+:: 3. ÉfÉtÉHÉãÉgÇÃÉCÉìÉXÉgÅ[ÉãÉpÉXÇ≈å©Ç¬Ç©ÇÍÇŒÇªÇÍÇégÇ§
+:: 4. 1Å`3Ç≈å©Ç¬Ç©ÇÁÇ»ÇØÇÍÇŒCMD_7ZÇçÌèúÇ∑ÇÈ
 
 @echo off
 
-:: CMD_*„ÅåÂÆöÁæ©„Åï„Çå„Å¶„ÅÑ„Å™„Åë„Çå„Å∞Êé¢Á¥¢„É´„Éº„ÉÅ„É≥„Å∏
+if defined FIND_TOOLS_CALLED (
+    echo find-tools.bat already called
+    exit /b
+)
+
+:: CMD_*Ç™íËã`Ç≥ÇÍÇƒÇ¢Ç»ÇØÇÍÇŒíTçıÉãÅ[É`ÉìÇ÷
 echo find-tools.bat
 if not defined CMD_7Z call :7z 2> nul
 if not defined CMD_HHC call :hhc 2> nul
@@ -16,18 +21,19 @@ if not defined CMD_ISCC call :iscc 2> nul
 if not defined CMD_CPPCHECK call :cppcheck 2> nul
 if not defined CMD_DOXYGEN call :doxygen 2> nul
 if not defined CMD_MSBUILD call :msbuild 2> nul
-echo ‚îú‚îÄ CMD_7Z=%CMD_7Z%
-echo ‚îú‚îÄ CMD_HHC=%CMD_HHC%
-echo ‚îú‚îÄ CMD_ISCC=%CMD_ISCC%
-echo ‚îú‚îÄ CMD_CPPCHECK=%CMD_CPPCHECK%
-echo ‚îú‚îÄ CMD_DOXYGEN=%CMD_DOXYGEN%
-echo ‚îî‚îÄ CMD_MSBUILD=%CMD_MSBUILD%
+echo Ñ•Ñü CMD_7Z=%CMD_7Z%
+echo Ñ•Ñü CMD_HHC=%CMD_HHC%
+echo Ñ•Ñü CMD_ISCC=%CMD_ISCC%
+echo Ñ•Ñü CMD_CPPCHECK=%CMD_CPPCHECK%
+echo Ñ•Ñü CMD_DOXYGEN=%CMD_DOXYGEN%
+echo Ñ§Ñü CMD_MSBUILD=%CMD_MSBUILD%
+set FIND_TOOLS_CALLED=1
 exit /b
 
 :7z
 setlocal
 PATH=%PATH%;%ProgramFiles%\7-Zip\;%ProgramFiles(x86)%\7-Zip\;%ProgramW6432%\7-Zip\;
-:: where„ÅÆÂá∫Âäõ„ÅÆ1Ë°åÁõÆ„ÇíCMD_7Z„Å´‰ª£ÂÖ•
+:: whereÇÃèoóÕÇÃ1çsñ⁄ÇCMD_7ZÇ…ë„ì¸
 for /f "usebackq delims=" %%a in (`where 7z`) do ( 
     endlocal && set "CMD_7Z=%%a"
     exit /b
@@ -78,12 +84,11 @@ exit /b
 :msbuild
 :: ref https://github.com/Microsoft/vswhere
 setlocal
-PATH=%PATH%;%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\;
-for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -latest -requires Microsoft.Component.MSBuild`) do (
-    if /i "%%i"=="installationPath" (
-        endlocal && set "CMD_MSBUILD=%%j\MSBuild\15.0\Bin\MSBuild.exe"
-        exit /b
-    )
+PATH=%PATH%;%ProgramFiles%\Microsoft Visual Studio\Installer\;%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\;%ProgramW6432%\Microsoft Visual Studio\Installer\;
+for /f "usebackq tokens=*" %%i in (`vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do (
+    set InstallDir=%%i
+    endlocal && set "CMD_MSBUILD=%%j\MSBuild\15.0\Bin\MSBuild.exe"
+    exit /b
 )
 endlocal
 exit /b

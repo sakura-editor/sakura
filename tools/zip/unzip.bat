@@ -4,6 +4,7 @@ set OUTDIR=%2
 
 if exist "%OUTDIR%" rmdir /s /q "%OUTDIR%"
 
+call %~dp0../../find-tools.bat
 @echo extracting %SRCZIP%.
 @rem CMD_7Z contains double quotes.
 if "%CMD_7Z%" == "" (
