@@ -86,8 +86,7 @@ exit /b
 setlocal
 PATH=%PATH%;%ProgramFiles%\Microsoft Visual Studio\Installer\;%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\;%ProgramW6432%\Microsoft Visual Studio\Installer\;
 for /f "usebackq tokens=*" %%i in (`vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do (
-    set InstallDir=%%i
-    endlocal && set "CMD_MSBUILD=%%j\MSBuild\15.0\Bin\MSBuild.exe"
+    endlocal && set "CMD_MSBUILD=%%i\MSBuild\15.0\Bin\MSBuild.exe"
     exit /b
 )
 endlocal
