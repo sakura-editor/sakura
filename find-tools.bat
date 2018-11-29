@@ -75,7 +75,7 @@ exit /b
 setlocal
 PATH=%PATH%;%ProgramFiles%\doxygen\bin\;%ProgramFiles(x86)%\doxygen\bin\;%ProgramW6432%\doxygen\bin\;
 for /f "usebackq delims=" %%a in (`where doxygen.exe`) do ( 
-    endlocal && set "CMD_CPPCHECK=%%a"
+    endlocal && set "CMD_DOXYGEN=%%a"
     exit /b
 )
 endlocal
