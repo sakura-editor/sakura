@@ -744,7 +744,6 @@ public:
 	CLayoutInt		m_nPageViewTop;
 	CLayoutInt		m_nPageViewBottom;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 

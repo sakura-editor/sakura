@@ -61,7 +61,6 @@ private:
 	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
 	int			m_nAppendTextLenMax;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
 

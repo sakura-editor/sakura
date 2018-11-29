@@ -266,7 +266,6 @@ protected:
 	bool			m_bLockSetting;				// 設定のロック
 	bool			m_bDemandUpdateSetting;		// 設定の更新要求
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };
 

@@ -160,7 +160,6 @@ private:
 	POINT	m_ptDefaultSize;
 	RECT	m_rcItems[11];
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
 

@@ -143,7 +143,6 @@ protected:
 	int		m_nReadOffset2;
 	EConvertResult m_nTempResult;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CFileLoad);
 }; // class CFileLoad
 

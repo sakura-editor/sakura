@@ -79,7 +79,6 @@ private:
 	int* m_pnUseCharSkipArr;
 #endif
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);
 };
 
