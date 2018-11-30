@@ -49,8 +49,8 @@ public:
 	, m_bModified( IsModified )
 	{
 	}
-	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnBnClicked( int );
+	virtual BOOL OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam );
+	virtual BOOL OnBnClicked( int id );
 
 private:
 	const TCHAR* m_pFilename;

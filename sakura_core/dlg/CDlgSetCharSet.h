@@ -27,7 +27,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, ECodeType*, bool* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom );	/* モーダルダイアログの表示 */
 
 
 	ECodeType*	m_pnCharSet;			// 文字コードセット

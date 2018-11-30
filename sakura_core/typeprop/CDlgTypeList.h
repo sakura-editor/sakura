@@ -37,7 +37,7 @@ public:
 
 public:
 	// インターフェース
-	int DoModal( HINSTANCE, HWND, SResult* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult );	/* モーダルダイアログの表示 */
 
 protected:
 	// 実装ヘルパ関数

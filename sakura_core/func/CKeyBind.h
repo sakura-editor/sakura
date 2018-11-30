@@ -74,7 +74,7 @@ public:
 	/*
 	||  参照系メンバ関数
 	*/
-	static HACCEL CreateAccerelator( int, KEYDATA* );
+	static HACCEL CreateAccerelator( int nKeyNameArrNum, KEYDATA* pKeyNameArr );
 	static EFunctionCode GetFuncCode( WORD nAccelCmd, int nKeyNameArrNum, KEYDATA* pKeyNameArr, BOOL bGetDefFuncCode = TRUE );
 	static EFunctionCode GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode = TRUE );	/* 特定のキー情報から機能コードを取得する */	// 2007.02.24 ryoji
 	static EFunctionCode GetDefFuncCode( int nKeyCode, int nState );	/* キーのデフォルト機能を取得する */	// 2007.02.22 ryoji

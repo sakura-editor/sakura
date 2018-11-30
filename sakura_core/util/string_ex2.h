@@ -41,20 +41,20 @@ wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src);
 #define wcs_pushT wcs_pushA
 #endif
 
-int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
-int LimitStringLengthA( const ACHAR*, int, int, CNativeA& );/* データを指定「文字数」以内に切り詰める */
-int LimitStringLengthW( const WCHAR*, int, int, CNativeW& );/* データを指定「文字数」以内に切り詰める */
+int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
+int LimitStringLengthA( const ACHAR* pszData, int nDataLength, int nLimitLength, CNativeA& cmemDes );/* データを指定「文字数」以内に切り詰める */
+int LimitStringLengthW( const WCHAR* pszData, int nDataLength, int nLimitLength, CNativeW& cmemDes );/* データを指定「文字数」以内に切り詰める */
 #ifdef _UNICODE
 #define LimitStringLengthT LimitStringLengthW
 #else
 #define LimitStringLengthT LimitStringLengthA
 #endif
 
-const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* 指定長以下のテキストに切り分ける */
-const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
-const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol*, bool ); // GetNextLineのwchar_t版
+const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimitLen, int* pnLineLen, int* pnBgn );/* 指定長以下のテキストに切り分ける */
+const char*    GetNextLine  ( const char* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
+const wchar_t* GetNextLineW ( const wchar_t* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, bool bExtEol); // GetNextLineのwchar_t版
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)  // 未使用
-void GetLineColumn( const wchar_t*, int*, int* );
+void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn );
 
 
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);

@@ -31,7 +31,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam,
+				 const TCHAR* pszPath, TCHAR* pszCompareLabel, HWND* phwndCompareWnd );	/* モーダルダイアログの表示 */
 
 	const TCHAR*	m_pszPath;
 	TCHAR*			m_pszCompareLabel;

@@ -180,15 +180,15 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//取得
-	bool MyGetClipboardData( CNativeW&, bool*, bool* = NULL );			/* クリップボードからデータを取得 */
+	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = NULL );			/* クリップボードからデータを取得 */
 
 	//設定
-	bool MySetClipboardData( const ACHAR*, int, bool bColumnSelect, bool = false );	/* クリップボードにデータを設定 */
-	bool MySetClipboardData( const WCHAR*, int, bool bColumnSelect, bool = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 
 	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
-	void CopySelectedAllLines( const wchar_t*, BOOL );			/* 選択範囲内の全行をクリップボードにコピーする */
+	void CopySelectedAllLines( const wchar_t* pszQuote, BOOL bWithLineNumber );			/* 選択範囲内の全行をクリップボードにコピーする */
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -337,9 +337,9 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	// 2002/01/19 novice public属性に変更
-	bool GetSelectedDataSimple( CNativeW& );// 選択範囲のデータを取得
+	bool GetSelectedDataSimple( CNativeW& cmemBuf );// 選択範囲のデータを取得
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
-	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
@@ -555,7 +555,9 @@ public:
 	//                          その他                             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const TCHAR* [], const TCHAR* [], int, int, const TCHAR* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
+	BOOL OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
+							const TCHAR* file_ext[], const TCHAR* open_ext[],
+							int file_extno, int open_extno, const TCHAR* errmes ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 	//	Jan.  8, 2006 genta 折り返しトグル動作判定
 	enum TOGGLE_WRAP_ACTION {
 		TGWRAP_NONE = 0,

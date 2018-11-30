@@ -28,7 +28,7 @@
 
 bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
-bool IsFilePath( const wchar_t*, size_t*, size_t*, bool = true );
+bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCTSTR pszPath);	// 2009.08.20 ryoji
 
@@ -44,13 +44,13 @@ FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
 FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //パス文字列処理
-void CutLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-void AddLastYenFromDirectoryPath(  CHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void AddLastYenFromDirectoryPath( WCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* フォルダ、ファイル名から、結合したパスを作成 */
-BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */
-BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
+void CutLastYenFromDirectoryPath( TCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+void AddLastYenFromDirectoryPath(  CHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void AddLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* pszPath );/* フォルダ、ファイル名から、結合したパスを作成 */
+BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
+BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt );					/* 拡張子を調べる */
 const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
 bool _IS_REL_PATH(const TCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 

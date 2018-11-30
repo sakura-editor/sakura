@@ -89,7 +89,7 @@ public:
 	void SortKeyWord( int nIdx ); /* ｎ番目のセットのキーワードをソートする */  //MIK
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
-	int SetKeyWordArr( int, int, const wchar_t* );			//!< iniからキーワードを設定する
+	int SetKeyWordArr( int nIdx, int nSize, const wchar_t* pszKeyWordArr );			//!< iniからキーワードを設定する
 	int SetKeyWordArr(						//!< キーワードの配列から設定する
 		int				nIdx,				//!< [in] キーワードセット番号
 		int				nSize,				//!< [in] ppszKeyWordArrの要素数

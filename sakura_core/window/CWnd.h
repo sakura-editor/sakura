@@ -70,10 +70,10 @@ public:
 		HMENU		hMenu			// handle to menu, or child-window identifier
 	);
 
-	virtual LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );/* メッセージ配送 */
+	virtual LRESULT DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* メッセージ配送 */
 protected:
 	/* 仮想関数 */
-	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
+	virtual LRESULT DispatchEvent_WM_APP( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 	virtual void PreviCreateWindow( void ){return;}/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
 	virtual void AfterCreateWindow( void ){::ShowWindow( m_hWnd, SW_SHOW );}/* ウィンドウ作成後の処理 ( virtual )*/
 
@@ -108,7 +108,7 @@ protected:
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
 	/* デフォルトメッセージ処理 */
-	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
+	virtual LRESULT CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );
 
 public:
 	//インターフェース

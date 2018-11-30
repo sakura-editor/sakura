@@ -48,7 +48,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING*, int );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnCurrentPrintSetting,
+				 PRINTSETTING* pPrintSettingArr, int nLineNumberColumns );	/* モーダルダイアログの表示 */
 
 private:
 	int				m_nCurrentPrintSetting;

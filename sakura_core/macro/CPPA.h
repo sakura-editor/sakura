@@ -75,7 +75,7 @@ public:
 	const char* GetLastMessage(void) const { return m_szMsg; }
 
 	//	Jun. 16, 2003 genta 引数追加
-	static char* GetDeclarations( const MacroFuncInfo&, char* buf );
+	static char* GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer );
 
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
@@ -253,7 +253,7 @@ public:
 
 private:
 	// コールバックプロシージャ群
-	static void __stdcall stdStrObj(const char*, int, BYTE, int*, char**);	//	2003.06.01 Moca
+	static void __stdcall stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value);	//	2003.06.01 Moca
 
 	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
 	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
@@ -261,7 +261,7 @@ private:
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
 	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
 
-	static void __stdcall stdError( int, const char* );	//	2003.06.01 Moca
+	static void __stdcall stdError( int Err_CD, const char* Err_Mes );	//	2003.06.01 Moca
 	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
 
 	//	メンバ変数

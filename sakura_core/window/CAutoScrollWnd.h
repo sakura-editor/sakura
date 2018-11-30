@@ -33,7 +33,8 @@ class CAutoScrollWnd: public CWnd
 public:
 	CAutoScrollWnd();
 	virtual ~CAutoScrollWnd();
-	HWND Create( HINSTANCE, HWND , bool, bool, const CMyPoint&, CEditView* );
+	HWND Create( HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal,
+				 const CMyPoint& point, CEditView* view );
 	void Close();
 
 private:

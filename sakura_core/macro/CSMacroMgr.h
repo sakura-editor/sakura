@@ -144,12 +144,12 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static WCHAR* GetFuncInfoByID( HINSTANCE , int , WCHAR* , WCHAR* );	/* 機能ID→関数名，機能名日本語 */
-	static EFunctionCode GetFuncInfoByName( HINSTANCE , const WCHAR* , WCHAR* );	/* 関数名→機能ID，機能名日本語 */
-	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
+	static WCHAR* GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 機能ID→関数名，機能名日本語 */
+	static EFunctionCode GetFuncInfoByName( HINSTANCE hInstance, const WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 関数名→機能ID，機能名日本語 */
+	static BOOL CanFuncIsKeyMacro( int nFuncID );	/* キーマクロに記録可能な機能かどうかを調べる */
 	
 	//	Jun. 16, 2002 genta
-	static const MacroFuncInfo* GetFuncInfoByID( int );
+	static const MacroFuncInfo* GetFuncInfoByID( int nFuncID );
 	
 	bool IsSaveOk(void);
 

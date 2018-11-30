@@ -45,14 +45,14 @@ class CDlgSameColor : public CDialog
 public:
 	CDlgSameColor();
 	~CDlgSameColor();
-	int DoModal( HINSTANCE, HWND, WORD, STypeConfig*, COLORREF );		//!< モーダルダイアログの表示
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STypeConfig* pTypes, COLORREF cr );		//!< モーダルダイアログの表示
 
 protected:
 
 	virtual LPVOID GetHelpIdTable( void );
-	virtual INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	//! ダイアログのメッセージ処理
-	virtual BOOL OnInitDialog( HWND, WPARAM, LPARAM );			//!< WM_INITDIALOG 処理
-	virtual BOOL OnBnClicked( int );							//!< BN_CLICKED 処理
+	virtual INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	//! ダイアログのメッセージ処理
+	virtual BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam );			//!< WM_INITDIALOG 処理
+	virtual BOOL OnBnClicked( int wID );							//!< BN_CLICKED 処理
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam );	//!< WM_DRAWITEM 処理
 	BOOL OnSelChangeListColors( HWND hwndCtl );					//!< 色選択リストの LBN_SELCHANGE 処理
 

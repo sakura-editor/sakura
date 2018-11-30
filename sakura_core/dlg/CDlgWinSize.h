@@ -44,7 +44,8 @@ class CDlgWinSize : public CDialog
 public:
 	CDlgWinSize();
 	~CDlgWinSize();
-	int DoModal( HINSTANCE, HWND, EWinSizeMode&, EWinSizeMode&, int&, RECT& );	//!< モーダルダイアログの表示
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, EWinSizeMode& eSaveWinSize,
+				 EWinSizeMode& eSaveWinPos, int& nWinSizeType, RECT& rc );	//!< モーダルダイアログの表示
 
 protected:
 
