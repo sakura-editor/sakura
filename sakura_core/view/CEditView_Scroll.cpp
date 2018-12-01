@@ -409,7 +409,9 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	/* スクロール */
 	if( t_abs( nScrollRowNum ) >= GetTextArea().m_nViewRowNum ){
 		GetTextArea().SetViewTopLine( CLayoutInt(nPos) );
-		::InvalidateRect( GetHwnd(), NULL, TRUE );
+		CMyRect rect = GetTextArea().GetAreaRect();
+		rect.left = 0;
+		::InvalidateRect( GetHwnd(), &rect, TRUE );
 	}else{
 		rcScrol.left = 0;
 		rcScrol.right = GetTextArea().GetAreaRight();
