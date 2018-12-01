@@ -288,7 +288,7 @@ public:
 	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void AdjustScrollBars();											/* スクロールバーの状態を更新する */
+	void AdjustScrollBars( BOOL bRedraw = TRUE );						/* スクロールバーの状態を更新する */
 	BOOL CreateScrollBar();												/* スクロールバー作成 */	// 2006.12.19 ryoji
 	void DestroyScrollBar();											/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	CLayoutInt GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
@@ -306,8 +306,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	CLayoutInt  ScrollAtV(CLayoutInt nPos);										/* 指定上端行位置へスクロール */
-	CLayoutInt  ScrollAtH(CLayoutInt nPos);										/* 指定左端桁位置へスクロール */
+	CLayoutInt  ScrollAtV(CLayoutInt nPos, BOOL bRedrawScrollBar = TRUE);		/* 指定上端行位置へスクロール */
+	CLayoutInt  ScrollAtH(CLayoutInt nPos, BOOL bRedrawScrollBar = TRUE);		/* 指定左端桁位置へスクロール */
 	//	From Here Sep. 11, 2004 genta ずれ維持の同期スクロール
 	CLayoutInt  ScrollByV( CLayoutInt vl ){	return ScrollAtV( GetTextArea().GetViewTopLine() + vl );}	/* 指定行スクロール*/
 	CLayoutInt  ScrollByH( CLayoutInt hl ){	return ScrollAtH( GetTextArea().GetViewLeftCol() + hl );}	/* 指定桁スクロール */
