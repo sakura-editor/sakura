@@ -19,9 +19,20 @@ skip_commits:
     - 'azure-pipelines*.yml'
     - 'ci/azure-pipelines/template*.yml'
 
+environment:
+  matrix:
+    - SONAR_QUBE: Yes
+    - SONAR_QUBE: No
+
+matrix:
+  exclude:
+    - configuration: Release
+      SONAR_QUBE: Yes
+
 install:
 - cmd: |
     pip install openpyxl --user
+    choco install "msbuild-sonarqube-runner" -y
 
 build_script:
 - cmd: |
