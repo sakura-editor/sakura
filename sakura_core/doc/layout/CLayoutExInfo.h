@@ -59,7 +59,6 @@ public:
 private:
 	CLayoutColorInfo* m_colorInfo;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CLayoutExInfo);
 };
 

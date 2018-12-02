@@ -124,7 +124,6 @@ private:
 	CLayoutInt			m_nLayoutWidth;		//!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ）	// 2009.08.28 nasukoji
 	CLayoutExInfo		m_cExInfo;			//!< 色分け詳細情報
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
 

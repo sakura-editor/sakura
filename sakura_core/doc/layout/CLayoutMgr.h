@@ -433,7 +433,6 @@ protected:
 	CLayoutInt				m_nTextWidth;				// テキスト最大幅の記憶
 	CLayoutInt				m_nTextWidthMaxLine;		// 最大幅のレイアウト行
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
 

@@ -204,7 +204,6 @@ private:
 	HWND		m_hwndSizeBox;
 	bool		m_bSizeBox;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
 

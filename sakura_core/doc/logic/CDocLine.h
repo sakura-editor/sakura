@@ -110,7 +110,6 @@ public:
 	};
 	MarkType m_sMark;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDocLine);
 };
 

@@ -147,7 +147,6 @@ public:
 	STDMETHOD( DUnadvise )( DWORD );
 	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDataObject);
 };
 
