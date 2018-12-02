@@ -10,6 +10,12 @@ platform:
   - x64
   - MinGW
 
+install:
+- cmd: >-
+    call externals\chocolatey\install-chocolatey.bat
+    
+    choco --version
+
 build_script:
 - cmd: >-
     call checkEncoding.bat
