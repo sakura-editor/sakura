@@ -35,7 +35,9 @@
 // A macro to disallow the copy constructor and operator= functions
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&) = delete;      \
-  TypeName& operator=(const TypeName&) = delete;
+  TypeName& operator=(const TypeName&) = delete; \
+  TypeName(TypeName&&) = delete;           \
+  TypeName& operator=(TypeName&&) = delete;
 
 /*!
 	Singletonパターン
