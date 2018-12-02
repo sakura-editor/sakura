@@ -29,6 +29,9 @@ matrix:
     - configuration: Release
       SONAR_QUBE: Yes
 
+    - platform: MinGW
+      SONAR_QUBE: Yes
+
 install:
 - cmd: |
     pip install openpyxl --user
