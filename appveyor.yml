@@ -12,8 +12,6 @@ platform:
 
 install:
 - cmd: >-
-    call externals\chocolatey\install-chocolatey.bat
-    
     choco --version
 
 build_script:
