@@ -99,18 +99,18 @@ exit /b 0
 @rem to ensure hide variable SONAR_QUBE_TOKEN
 @echo off
 if "%SONAR_QUBE_TOKEN%" == "" (
-	@echo SONAR_QUBE_TOKEN is not defined
-	exit /b 1
+	@echo SONAR_QUBE_TOKEN is not defined. Abort without building.
+	exit /b 0
 )
 
 if "%SONAR_QUBE_ORG%" == "" (
-	@echo SONAR_QUBE_ORG is not defined
-	exit /b 1
+	@echo SONAR_QUBE_ORG is not defined. Abort without building.
+	exit /b 0
 )
 
 if "%SONAR_QUBE_PROJECT%" == "" (
-	@echo SONAR_QUBE_PROJECT is not defined
-	exit /b 1
+	@echo SONAR_QUBE_PROJECT is not defined. Abort without building.
+	exit /b 0
 )
 
 set BUILDWRAPPER_ZIP=.\build-wrapper-win-x86.zip
