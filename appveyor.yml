@@ -21,7 +21,7 @@ skip_commits:
 
 environment:
   matrix:
-    - SONAR_QUBE: Yes
+#   - SONAR_QUBE: Yes
     - SONAR_QUBE: No
 
 matrix:
