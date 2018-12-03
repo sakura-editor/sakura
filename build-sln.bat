@@ -50,13 +50,6 @@ if errorlevel 1 (
 	echo ERROR build %errorlevel%
 	exit /b 1
 )
-
-@echo call parse-buildlog.bat %LOG_FILE%
-      call parse-buildlog.bat %LOG_FILE%
-if errorlevel 1 (
-	echo ERROR in parse-buildlog.bat errorlevel %errorlevel%
-	exit /b 1
-)
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
@@ -87,6 +80,13 @@ exit /b 0
       "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
 if errorlevel 1 (
 	echo ERROR in msbuild.exe errorlevel %errorlevel%
+	exit /b 1
+)
+
+@echo call parse-buildlog.bat %LOG_FILE%
+      call parse-buildlog.bat %LOG_FILE%
+if errorlevel 1 (
+	echo ERROR in parse-buildlog.bat errorlevel %errorlevel%
 	exit /b 1
 )
 exit /b 0
