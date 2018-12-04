@@ -1,0 +1,45 @@
+!BASENAME!-Exe.zip
+	.\
+		installer\warning.txt
+		installer\warning-!ALPHA!.txt
+	EXE\
+		!platform!\!configuration!\sakura.exe
+		!platform!\!configuration!\*.dll
+		!platform!\!configuration!\*.pdb
+		installer\temp\ctags\ctags.exe
+		help\macro\macro.chm
+		help\plugin\plugin.chm
+		help\sakura\sakura.chm
+		html\sakura-doxygen.chm
+		html\sakura-doxygen.chi
+	EXE\license\
+		LICENSE
+	EXE\license\bregonig\
+		installer\temp\bron\*.txt
+	EXE\license\ctags\
+		installer\temp\ctags\README.md
+		installer\temp\ctags\license\*.*
+!BASENAME!-Installer.zip
+	.\
+		installer\warning.txt
+		installer\warning-!ALPHA!.txt
+	Installer\
+		installer\Output-!platform!\*.exe
+!BASENAME!-Log.zip
+	.\
+		installer\warning.txt
+		installer\warning-!ALPHA!.txt
+	Log\
+		msbuild-!platform!-!configuration!.log
+		msbuild-!platform!-!configuration!.log.csv
+		msbuild-!platform!-!configuration!.log.xlsx
+		iss-!platform!-!configuration!.log
+		sakura_core\githash.h
+		cppcheck-install.log
+		cppcheck-!platform!-!configuration!.xml
+		cppcheck-!platform!-!configuration!.log
+		doxygen-!platform!-!configuration!.log
+		set_appveyor_env.bat
+!BASENAME!-Asm.zip
+	!BASENAME!-Asm\
+		sakura\!platform!\!configuration!\*.asm
