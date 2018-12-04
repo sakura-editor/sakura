@@ -6,7 +6,9 @@
 		!platform!\!configuration!\sakura.exe
 		!platform!\!configuration!\*.dll
 		!platform!\!configuration!\*.pdb
-		installer\temp\ctags\ctags.exe
+		installer\externals\bregonig\bron412.zip\bregonig.dll
+		installer\externals\bregonig\bron412.zip\!platform!\bregonig.dll
+		installer\externals\universal-ctags\ctags-2018-09-16_e522743d-!platform:Win32=x86!.zip\ctags.exe
 		help\macro\macro.chm
 		help\plugin\plugin.chm
 		help\sakura\sakura.chm
@@ -15,10 +17,11 @@
 	EXE\license\
 		LICENSE
 	EXE\license\bregonig\
-		installer\temp\bron\*.txt
+		installer\externals\bregonig\bron412.zip\*.txt
+		installer\externals\bregonig\bron412.zip\!platform!\*.txt
 	EXE\license\ctags\
-		installer\temp\ctags\README.md
-		installer\temp\ctags\license\*.*
+		installer\externals\universal-ctags\ctags-2018-09-16_e522743d-!platform:Win32=x86!.zip\README.md
+		installer\externals\universal-ctags\ctags-2018-09-16_e522743d-!platform:Win32=x86!.zip\license\*.*
 !BASENAME!-Installer.zip
 	.\
 		installer\warning.txt

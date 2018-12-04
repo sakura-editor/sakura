@@ -34,8 +34,10 @@ set SRC=%~dp0
 set SRC=%SRC:~0,-1%
 set DST=%~dp0%BASENAME%
 set TAB=	
-set HASH_BAT=!SRC!\calc-hash.bat
-set  ZIP_BAT=!SRC!\tools\zip\zip.bat
+set RECIPE_FILE=%~dpn0.txt
+set    HASH_BAT=!SRC!\calc-hash.bat
+set     ZIP_BAT=!SRC!\tools\zip\zip.bat
+set   UNZIP_BAT=!SRC!\tools\zip\unzip.bat
 
 rem Setup
 
@@ -47,7 +49,7 @@ rem Main
 set WORKING_ZIP=
 set WORKING_PATH=.\
 set WORKING_FILE=
-for /F "usebackq tokens=* eol=# delims=" %%L in ("%~dpn0.txt" 'FINISHED') do (
+for /F "usebackq tokens=* eol=# delims=" %%L in ("!RECIPE_FILE!" 'FINISHED') do (
 	rem TODO: Forbid ".."
 	rem Prevent the next 'for' command from merging empty columns.
 	set L=%%L%TAB%%TAB%%TAB%
@@ -113,17 +115,71 @@ for /F "usebackq tokens=1,2,3 delims=%TAB%" %%A in ('!L!') do (
 			@echo>&2 ERROR: Missing directory: !DST!\!WORKING_ZIP!\!WORKING_PATH!
 		)
 		rem Prepare working file.
-		copy /Y /B "!SRC!\%%~C" "!DST!\!WORKING_ZIP!\!WORKING_PATH!!WORKING_FILE!"
+		set SourcePath=!SRC!\%%~C
+		call :TryUnzipPath SourcePath
+		if not "!SourcePath!" == "!SRC!\%%~C" echo FILE !SourcePath!
+		copy /Y /B "!SourcePath!" "!DST!\!WORKING_ZIP!\!WORKING_PATH!!WORKING_FILE!"
 	)
 ))
 
 goto :CleanExit 0
 
 :CleanExit
-	if defined WORKING_ZIP rmdir /S /Q "%DST%\%WORKING_ZIP%" 2>nul
+	if exist "%LastZipDir%" rmdir /S /Q "%LastZipDir%"
+	if defined WORKING_ZIP  rmdir /S /Q "%DST%\%WORKING_ZIP%" 2>nul
 	rmdir /Q "%DST%"
 exit /b %1
 
+rem -------------------------------------------------------
+
+:TryUnzipPath
+	setlocal ENABLEDELAYEDEXPANSION
+
+	set VAR=%~1
+	if not defined VAR exit /b 1
+	set VAL=!%VAR%!
+	if not defined VAL exit /b 1
+	if exist "%VAL%"   exit /b 1
+
+	set L=
+	set R=%VAL%
+	:continue
+	for /F "tokens=1,* delims=\" %%P in ("%R%") do (
+		if not exist "!L!%%P" goto :break
+		set L=!L!%%P\
+		set R=%%Q
+		goto :continue
+	)
+	:break
+	if not defined L exit /b 1
+	if exist "%L%" (
+		rem %L% has a trailing \ char, so this is
+		rem testing a directory existense.
+		rem But the test is not always correct.
+		rem If %L% is a path to a file under NTFS Junction...
+		exit /b 1
+	)
+
+	set Zip=%L:~0,-1%
+	set ZipDir=%TEMP%\%Zip::=%
+	set VAL=%ZipDir%\%R%
+
+	if not exist "%ZipDir%" (
+		@echo Unzipping !Zip!.
+		call | "!UNZIP_BAT!" "!Zip!" "!ZipDir!"^
+		|| exit /b 1
+	) else (
+		@echo Destination folder has already existed. Skip unzipping.
+		@echo Destination: !ZipDir!
+	)
+	if not "%LastZipDir%" == "%ZipDir%" if exist "%LastZipDir%" (
+		@echo Clean the last unzipped temporary folder.
+		@echo Cleaning !LastZipDir!.
+		rmdir /S /Q "!LastZipDir!"
+	)
+
+	endlocal & set LastZipDir=%ZipDir%& set %VAR%=%VAL%
+exit /b 0
 
 rem ---------------------- BASENAME ---------------------------------
 rem "sakura"
