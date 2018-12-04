@@ -30,155 +30,42 @@ if "%platform%" == "x64" (
 rem Definitions and Dependencies
 
 call :Set_BASENAME
+set RECIPE_BAT=%~dp0tools\recipeProcessor.bat
+set RECIPE=%~dpn0.txt
 set SRC=%~dp0
-set SRC=%SRC:~0,-1%
 set DST=%~dp0%BASENAME%
-set TAB=	
-set RECIPE_FILE=%~dpn0.txt
-set    HASH_BAT=!SRC!\calc-hash.bat
-set     ZIP_BAT=!SRC!\tools\zip\zip.bat
-set   UNZIP_BAT=!SRC!\tools\zip\unzip.bat
+set HASH_BAT=%~dp0calc-hash.bat
+set  ZIP_BAT=%~dp0tools\zip\zip.bat
 
 rem Setup
 
-rmdir /s /q "%DST%" 2>nul
-mkdir       "%DST%"
+mkdir 2>nul "%DST%"
 
-rem Main
+rem Zip
 
-set WORKING_ZIP=
-set WORKING_PATH=.\
-set WORKING_FILE=
-for /F "usebackq tokens=* eol=# delims=" %%L in ("!RECIPE_FILE!" 'FINISHED') do (
-	rem TODO: Forbid ".."
-	rem Prevent the next 'for' command from merging empty columns.
-	set L=%%L%TAB%%TAB%%TAB%
-	set L=!L:%TAB%= %TAB%!
-for /F "usebackq tokens=1,2,3 delims=%TAB%" %%A in ('!L!') do (
-	rem First column: Zip name (relative to %DST% for working & relative to %SRC% for output)
-	set rpnxA=%%~dpnxA
-	set rpnxA=!rpnxA:%CD:)=^)%\=!
-	if not "!rpnxA: =!" == "" (
-		rem Make a zip before switching WORKING_ZIP.
-		if defined WORKING_ZIP for /F "delims=" %%P in ("!DST!\!WORKING_ZIP!") do (
-			cmd /V:ON /C "pushd "%%~P" &("!HASH_BAT!" sha256.txt . >nul)& popd"^
-			|| del "%%~P\sha256.txt" 2>nul
-			cmd /V:ON /C ""!ZIP_BAT!" "!SRC!\%%~nxP" "%%~P\*""^
-			|| del "!SRC!\%%~nxP" 2>nul
-			rmdir /S /Q "%%~P"
+call|"%RECIPE_BAT%" "%RECIPE%" "%SRC%" "%DST%"^
+ || (rmdir 2>nul /S /Q "%DST" & exit /b 1)
 
-			set WORKING_ZIP=
-			set WORKING_PATH=.\
-			set WORKING_FILE=
-		)
+for /D %%Z in ("%DST%\*.zip") do (
+	call :MakeZip "%%~Z"
+)
 
-		@echo ZIP  !rpnxA!
+exit /b 0
 
-		rem Prepare working directory for a zip.
-		mkdir 2>nul  "!DST!\!rpnxA!"
-		if not exist "!DST!\!rpnxA!" (
-			goto :CleanExit 1
-		)
+rem -----------------------------------------------------
 
-		set WORKING_ZIP=!rpnxA!
-	)
-	rem Second column: Path (destination, relative to Zip)
-	set rpB=%%~dpB
-	set rpB=!rpB:%CD:)=^)%\=!
-	if not "!rpB: =!" == "" (
-		@echo PATH !rpB!
+:MakeZip
+	setlocal
 
-		rem Unfinished preparation.
-		if not defined WORKING_ZIP (
-			@echo>&2 ERROR: Give zip name before path.
-			goto :CleanExit 1
-		)
-		if not exist "!DST!\!WORKING_ZIP!" (
-			@echo>&2 ERROR: Missing directory: !DST!\!WORKING_ZIP!
-			goto :CleanExit 1
-		)
-		rem Prepare working directory for a path.
-		mkdir 2>nul  "!DST!\!WORKING_ZIP!\!rpB!"
-		if not exist "!DST!\!WORKING_ZIP!\!rpB!" (
-			goto :CleanExit 1
-		)
+	set ZipSrc=%~1
+	set ZipName=%~nx1
+	if not defined ZipSrc exit /b 0
 
-		set WORKING_PATH=!rpB!
-		set WORKING_FILE=!%%~nxB!
-	)
-	rem Third column: File (source, relative to %SRC%)
-	if not "%%~C" == " " (
-		@echo FILE %%~C
-
-		rem Unfinished preparation.
-		if not exist "!DST!\!WORKING_ZIP!\!WORKING_PATH!" (
-			@echo>&2 ERROR: Missing directory: !DST!\!WORKING_ZIP!\!WORKING_PATH!
-		)
-		rem Prepare working file.
-		set SourcePath=!SRC!\%%~C
-		call :TryUnzipPath SourcePath
-		if not "!SourcePath!" == "!SRC!\%%~C" echo FILE !SourcePath!
-		copy /Y /B "!SourcePath!" "!DST!\!WORKING_ZIP!\!WORKING_PATH!!WORKING_FILE!"
-	)
-))
-
-goto :CleanExit 0
-
-:CleanExit
-	if exist "%LastZipDir%" rmdir /S /Q "%LastZipDir%"
-	if defined WORKING_ZIP  rmdir /S /Q "%DST%\%WORKING_ZIP%" 2>nul
-	rmdir /Q "%DST%"
-exit /b %1
-
-rem -------------------------------------------------------
-
-:TryUnzipPath
-	setlocal ENABLEDELAYEDEXPANSION
-
-	set VAR=%~1
-	if not defined VAR exit /b 1
-	set VAL=!%VAR%!
-	if not defined VAL exit /b 1
-	if exist "%VAL%"   exit /b 1
-
-	set L=
-	set R=%VAL%
-	:continue
-	for /F "tokens=1,* delims=\" %%P in ("%R%") do (
-		if not exist "!L!%%P" goto :break
-		set L=!L!%%P\
-		set R=%%Q
-		goto :continue
-	)
-	:break
-	if not defined L exit /b 1
-	if exist "%L%" (
-		rem %L% has a trailing \ char, so this is
-		rem testing a directory existense.
-		rem But the test is not always correct.
-		rem If %L% is a path to a file under NTFS Junction...
-		exit /b 1
-	)
-
-	set Zip=%L:~0,-1%
-	set ZipDir=%TEMP%\%Zip::=%
-	set VAL=%ZipDir%\%R%
-
-	if not exist "%ZipDir%" (
-		@echo Unzipping !Zip!.
-		call | "!UNZIP_BAT!" "!Zip!" "!ZipDir!"^
-		|| exit /b 1
-	) else (
-		@echo Destination folder has already existed. Skip unzipping.
-		@echo Destination: !ZipDir!
-	)
-	if not "%LastZipDir%" == "%ZipDir%" if exist "%LastZipDir%" (
-		@echo Clean the last unzipped temporary folder.
-		@echo Cleaning !LastZipDir!.
-		rmdir /S /Q "!LastZipDir!"
-	)
-
-	endlocal & set LastZipDir=%ZipDir%& set %VAR%=%VAL%
+	cmd /C "pushd "%ZipSrc%" &"%HASH_BAT%" sha256.txt . >nul"^
+	|| del 2>nul "%ZipSrc%\sha256.txt"
+	cmd /C ""%ZIP_BAT%" "%SRC%\%ZipName%" "%ZipSrc%\*""^
+	|| del 2>nul "%SRC%\%ZipName%"
+	rmdir /S /Q "%ZipSrc%"
 exit /b 0
 
 rem ---------------------- BASENAME ---------------------------------
