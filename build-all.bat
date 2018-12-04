@@ -1,4 +1,5 @@
 @echo off
+setlocal
 set platform=%1
 set configuration=%2
 
@@ -26,42 +27,44 @@ if "%configuration%" == "Release" (
 @echo CONFIGURATION %CONFIGURATION%
 @echo.
 
-if "%platform%" == "MinGW" (
-	@echo call build-gnu.bat %PLATFORM% %CONFIGURATION%
-	call build-gnu.bat   %PLATFORM% %CONFIGURATION% || (echo error build-gnu.bat       && exit /b 1)
-	exit /b 0
+rem plarform & config specialization
+
+if "%PLATFORM%" == "MinGW" (
+	set BatchJobs=build-gnu.bat
+	rem Skip all other batch files because they reject MinGW platform.
+) else (
+	set BatchJobs=build-sln.bat^
+		build-chm.bat^
+		build-installer.bat^
+		run-cppcheck.bat^
+		run-doxygen.bat^
+		zipArtifacts.bat
 )
 
-@echo ---- start build-sln.bat ----
-call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat       && exit /b 1)
-@echo ---- end   build-sln.bat ----
-@echo.
+rem run
 
-@echo ---- start build-chm.bat ----
-call build-chm.bat                                  || (echo error build-chm.bat       && exit /b 1)
-@echo ---- end   build-chm.bat ----
-@echo.
+for %%B in (%BatchJobs%) do (
+	call :ExecBat "%~dp0%%~B" %PLATFORM% %CONFIGURATION% ^
+	|| (echo error %%~B & exit /b 1)
+)
+exit /b 0
 
-@echo ---- start build-installer.bat ----
-call build-installer.bat %PLATFORM% %CONFIGURATION% || (echo error build-installer.bat && exit /b 1)
-@echo ---- end   build-installer.bat ----
-@echo.
+rem ----------------------------------------------
+rem  sub-routines
+rem ----------------------------------------------
 
-@echo ---- start run-cppcheck.bat ----
-call run-cppcheck.bat %PLATFORM% %CONFIGURATION%    || (echo error run-cppcheck.bat    && exit /b 1)
-@echo ---- end   run-cppcheck.bat ----
-@echo.
+:ExecBat
+	setlocal
+	set    Batch=%~1
+	set Platform=%~2
+	set   Config=%~3
 
-@echo ---- start run-doxygen.bat ----
-call run-doxygen.bat %PLATFORM% %CONFIGURATION%     || (echo error run-doxygen.bat     && exit /b 1)
-@echo ---- end   run-doxygen.bat ----
-@echo.
-
-@echo ---- start zipArtifacts.bat ----
-call zipArtifacts.bat    %PLATFORM% %CONFIGURATION% || (echo error zipArtifacts.bat    && exit /b 1)
-@echo ---- end   zipArtifacts.bat ----
-@echo.
-
+	echo ---- start %Batch% ----
+	echo.
+	cmd /C "call "%Batch%" %Platform% %Config%" ^
+	|| exit /b 1
+	echo ---- end   %Batch% ----
+	echo.
 exit /b 0
 
 @rem ------------------------------------------------------------------------------

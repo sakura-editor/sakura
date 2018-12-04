@@ -1,34 +1,32 @@
 @echo off
+setlocal
 set platform=%1
 set configuration=%2
-set TEST_LAUNCHED=0
-set ERROR_RESULT=0
 
+set BUILDDIR=%~dp0build\%platform%
 set FILTER_BAT=%~dp0test_result_filter_tell_AppVeyor.bat
 
-pushd %~dp0
-set BUILDDIR=build\%platform%
-set BINARY_DIR=%BUILDDIR%\unittests\%platform%\%configuration%
+set TEST_LAUNCHED=0
+set TEST_FAILED=0
+for /r "%BUILDDIR%" %%T in (tests*.exe) do (
+	@echo "%%T" --gtest_list_tests
+	"%%T" --gtest_list_tests
 
-pushd %BINARY_DIR%
-for /r %%i in (tests*.exe) do (
-	set TEST_LAUNCHED=1
+	@echo "%%T" ^| "%FILTER_BAT%"
+	"%%T" | "%FILTER_BAT%"
 
-	@echo %%i --gtest_list_tests
-	%%i --gtest_list_tests || set ERROR_RESULT=1
-
-	@echo %%i | "%FILTER_BAT%"
-	%%i | "%FILTER_BAT%" || set ERROR_RESULT=1
+	if errorlevel 1 (
+		set /A TEST_FAILED=%TEST_FAILED% + 1
+	) else (
+		set /A TEST_LAUNCHED=%TEST_LAUNCHED% + 1
+	)
 )
-popd
-popd
-
 if "%TEST_LAUNCHED%" == "0" (
 	@echo ERROR: no tests are available.
 	exit /b 1
 )
-
-if "%ERROR_RESULT%" == "1" (
+if not "%TEST_FAILED%" == "0" (
 	@echo ERROR
 	exit /b 1
 )
+exit /b 0

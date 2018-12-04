@@ -38,8 +38,9 @@ target_compile_definitions(${project_name} PRIVATE WIN32 _WIN32_WINNT=_WIN32_WIN
 if (MSVC)
 	target_compile_options (${project_name} PRIVATE $<$<CONFIG:Release>:/GL> /MT$<$<CONFIG:Debug>:d> /GF /FD /EHsc /Zi /TP /source-charset:utf-8 /execution-charset:shift_jis)
 	target_link_libraries  (${project_name} PRIVATE $<$<CONFIG:Release>:-LTCG> "${CMAKE_CURRENT_LIST_DIR}/../../sakura/${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>/*.obj")
-	set_target_properties  (${project_name} PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
+	add_custom_command(TARGET ${project_name}
+		PRE_LINK
+		COMMAND cmake -E make_directory "${CMAKE_GENERATOR_PLATFORM}/$<CONFIG>"
 	)
 elseif (MINGW)
 	target_compile_options (${project_name} PRIVATE -finput-charset=utf-8 -fexec-charset=cp932)
@@ -49,6 +50,6 @@ elseif (MINGW)
 		"${CMAKE_CURRENT_LIST_DIR}/../../sakura_core/*.rc"
 	)
 	list (TRANSFORM ALL_O REPLACE "\\.(cpp|rc)$" ".o")
-	target_link_libraries (${project_name} PRIVATE ${ALL_O})
+	target_link_libraries (${project_name} PRIVATE ${ALL_O} -static)
 endif ()
 target_link_libraries (${project_name} PRIVATE winspool ole32 oleaut32 uuid comctl32 imm32 mpr imagehlp shlwapi winmm windowscodecs msimg32)
