@@ -1,0 +1,23 @@
+.\	.\	installer\sakura-*.iss
+	sakura\
+		!BLD!\sakura.exe
+		!BLD!\sakura_lang*.dll
+		installer\sinst_src\sakura.exe.ini
+		installer\sinst_src\sakura.exe.manifest.x
+		installer\sinst_src\sakura.exe.manifest.v
+		installer\externals\bregonig\bron412.zip\bregonig.dll
+		installer\externals\bregonig\bron412.zip\!platform!\bregonig.dll
+		installer\externals\universal-ctags\ctags-2018-09-16_e522743d-!platform:Win32=x86!.zip\ctags.exe
+		help\sakura\sakura.chm
+		help\plugin\plugin.chm
+		help\macro\macro.chm
+	sakura\keyword\
+		installer\sinst_src\keyword\*.*
+	sakura\license\
+		LICENSE
+	sakura\license\bregonig\
+		installer\externals\bregonig\bron412.zip\*.txt
+	sakura\license\ctags\
+		installer\externals\universal-ctags\ctags-2018-09-16_e522743d-!platform:Win32=x86!.zip\license\*.*
+	instmaterials\
+		installer\instmaterials\*.*

@@ -27,7 +27,7 @@
 		installer\warning.txt
 		installer\warning-!ALPHA!.txt
 	Installer\
-		installer\Output-!platform!\*.exe
+		!platform!\!configuration!\installer\Output-!platform!\*.exe
 !BASENAME!-Log.zip
 	.\
 		installer\warning.txt
