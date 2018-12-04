@@ -1,6 +1,6 @@
 @echo off
-set OUTHASHFILE=%1
-set SRCDIR=%2
+set OUTHASHFILE=%~1
+set SRCDIR=%~2
 
 if "%OUTHASHFILE%" == "" (
 	call :showhelp %0
@@ -22,9 +22,9 @@ where python --version 1>nul 2>&1
 if errorlevel 1 (
 	@echo NOTE: No python command
 ) else (
-	python calc-hash.py %OUTHASHFILE% %SRCDIR%
+	python "%~dp0calc-hash.py" "%OUTHASHFILE%" "%SRCDIR%"
 )
-@echo on
+
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
