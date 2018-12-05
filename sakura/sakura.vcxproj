@@ -117,9 +117,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
@@ -158,9 +155,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
-    <PostBuildEvent>
-      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
@@ -198,9 +192,6 @@
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-    <PostBuildEvent>
-      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>
@@ -237,9 +228,6 @@
       <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
-    <PostBuildEvent>
-      <Command>call postBuild.bat $(Platform) $(Configuration)</Command>
-    </PostBuildEvent>
     <PreBuildEvent>
       <Command>call preBuild.bat $(SolutionDir)Win32\$(Configuration)</Command>
     </PreBuildEvent>

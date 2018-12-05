@@ -1,0 +1,197 @@
+
+
+
+
+
+			 The "Perl Artistic License"
+
+				Preamble
+
+The intent of this document is to state the conditions under which the Perl
+Package may be copied, such that the Copyright Holder maintains some
+semblance of artistic control over its development, while giving Perl users 
+the right to use and distribute Perl in a more-or-less customary fashion, 
+plus the right to make reasonable modifications.
+
+Definitions:
+
+	"Package" refers to the collection of Perl-kit files distributed by the
+	Copyright Holder, and derivatives of that collection of files
+	created through textual modification.
+
+	"Standard Version" refers to such a Package if it has not been
+	modified, or has been modified as specified below.
+
+	"Copyright Holder" is whoever is named in the copyright or
+	copyrights for the Perl package.
+
+	"You" is you, if you're thinking about copying or distributing
+	this Package.
+
+	"Reasonable copying fee" is whatever you can justify on the
+	basis of media cost, duplication charges, time of people involved,
+	and so on.  (You will not be required to justify it to the
+	Copyright Holder, but only to the computing community at large
+	as a market that must bear the fee.)
+
+	"Freely Available" means that no fee is charged for the item
+	itself, though there may be fees involved in handling the item.
+	It also means that recipients of the item may redistribute it
+	under the same conditions they received it.
+
+1. You may make and give away verbatim copies of the source form of the
+Standard Version of this Perl Package without restriction, provided that you
+duplicate all of the original copyright notices and associated disclaimers.
+
+2. You may apply bug fixes, portability fixes and other modifications
+derived from the Public Domain or from the Copyright Holder.  A Package
+modified in such a way shall still be considered the Standard Version.
+
+3. You may otherwise modify your copy of this Perl Package in any way, 
+provided that you insert a prominent notice in each changed file stating how 
+and when you changed that file, and provided that you do at least ONE of the
+following:
+
+    a) place your modifications in the Public Domain or otherwise make them
+    Freely Available, such as by posting said modifications to Usenet or
+    an equivalent medium, or placing the modifications on a major archive
+    site such as uunet.uu.net, or by allowing the Copyright Holder to include
+    your modifications in the Standard Version of the Perl Package.
+
+    b) use the modified Perl Package only within your corporation or 
+	organization.
+
+    c) rename any non-standard executables so the names do not conflict
+    with standard executables, which must also be provided, and provide
+    a separate manual page for each non-standard executable that clearly
+    documents how it differs from the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+4. You may distribute the programs of this Perl Package in object code or
+executable form, provided that you do at least ONE of the following:
+
+    a) distribute a Standard Version of the executables and library files,
+    together with instructions (in the manual page or equivalent) on where
+    to get the Standard Version.
+
+    b) accompany the distribution with the machine-readable source of
+    the Perl Package with your modifications.
+
+    c) accompany any non-standard executables with their corresponding
+    Standard Version executables, giving the non-standard executables
+    non-standard names, and clearly documenting the differences in manual
+    pages (or equivalent), together with instructions on where to get
+    the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+5. You may charge a reasonable copying fee for any distribution of this
+Perl Package.  You may charge any fee you choose for support of this Perl 
+Package. You may not charge a fee for this Perl Package itself.  However,
+you may distribute this Perl Package in aggregate with other (possibly
+commercial) programs as part of a larger (possibly commercial) software
+distribution provided that you do not advertise this Perl Package as a
+product of your own.
+
+6. The scripts and library files supplied as input to or produced as
+output from the programs of this Perl Package do not automatically fall
+under the copyright of this Perl Package, but belong to whomever generated
+them, and may be sold commercially, and may be aggregated with this Perl
+Package.
+
+7. C subroutines supplied by you and linked into this Perl Package in order
+to emulate subroutines and variables of the language defined by this Perl
+Package shall not be considered part of this Perl Package, but are the
+equivalent of input as in Paragraph 6, provided these subroutines do
+not change the language in any way that would cause it to fail the
+regression tests for the language.
+
+8. The name of the Copyright Holder may not be used to endorse or promote
+products derived from this software without specific prior written permission.
+
+9. This PERL PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+				The End
+
+
+翻訳 大原雄馬
+Copyright (C) 2001 大原雄馬
+oohara@libra.interq.or.jp
+
+--------------------------------------------------------------------------------
+
+The Artistic Licenseはもともとperlの利用条件でした。現在では他のソフトも The Artistic Licenseを利用条件としています。 
+
+この日本語訳は参考のためのものです。法的な効力をもつのは英語の原文です。原文はここにあります。 
+http://language.perl.com/misc/Artistic.html 
+
+この日本語訳を利用するときはあなたの自己責任でお願いします。私はあなたがこの翻訳を利用することによって生じたいっさいの責任および債務を負いません。 
+
+
+--------------------------------------------------------------------------------
+
+「アーティスティックライセンス」
+前文
+この文書の趣旨は「パッケージ」を複製することを許可する条件を述べることです。この条件は「著作権所有者」がパッケージの発展に対する芸術的な支配権に見えるものを守るような条件です。一方でこの条件はパッケージの利用者に「パッケージ」を利用し配布する権利、および適度な改変を加える権利をだいたいいつものやり方で与えます。 
+
+定義
+「パッケージ」とは「著作権所有者」によって配布されたファイルの集合、およびそのファイルの集合の原文を改変してできたもののことです。 
+
+「標準版」とは改変されていないか、または以下に述べる、「著作権所有者」の望みに従って改変された「パッケージ」のことです。 
+
+「著作権所有者」とはパッケージの著作権表示に名前をあげられている人すべてのことです。 
+
+「あなた」とはあなたのことです、もしあなたがこの「パッケージ」を複製または配布しようと思っているのならば。 
+
+「適度な複製料金」とはあなたが材料費、複製作業の費用、作業に関わる人の時間などに基づいて正当化できるものすべてのことです。 (あなたはそれを「著作権所有者」に対して正当化する必要はありません。その料金を負担しなければならない市場としてのコンピューター社会全体に対してだけ正当化すればよいのです。) 
+
+「自由に利用できる」とはその品物の取り扱いに関係する料金はあるとしても、その品物自体に対して料金を請求されないことです。また「自由に利用できる」とはその品物を受けとった人が受けとったときと同じ条件のもとにそれを再配布してよいということでもあります。 
+
+1. あなたはこの「パッケージ」の「標準版」のソースを原文どおり複製しそれをだれかに与えてよいです、もしあなたがもとの著作権表示およびそれに関連する、責任を負わない旨の声明のすべてを複製するならば。 
+
+2. あなたはバグ修正、移植のための修正、著作権を放棄された創作物をもとにした改変および「著作権所有者」の創作物をもとにした改変を加えてよいです。このようにして改変された「パッケージ」も「標準版」とみなします。 
+
+3. あなたはそれ以外の方法でこの「パッケージ」をどのように改変してもよいです、もし、あなたが改変したファイルのそれぞれにいつどのようにそのファイルを改変したかを述べる記述を明りょうに書き加え、かつあなたが次のうちすくなくともひとつを行うならば。 
+
+a) 
+改変したものに対する著作権を放棄するか、またはUsenetもしくはそれと同等のメディアに改変したものを投稿する、uunet.uu.net等の主要なアーカイブサイトに改変したものを置く、改変したものをその「パッケージ」の「標準版」に含めることを「著作権所有者」に許可するなどして、改変したものを「自由に利用できる」ようにする。 
+b) 
+改変した「パッケージ」をあなたの会社または団体内だけで使う。 
+c) 
+標準版でない実行ファイルに別の名前をつけて標準版の実行ファイルと名前が重複しないようにし、標準版の実行ファイルも用意し、標準版とどこが異なるのかを明りょうに記したマニュアルを標準版でない実行ファイルのそれぞれに元のマニュアルとは別に用意する。 
+d) 
+「著作権所有者」と配布に関する別の取り決めをする。 
+4. あなたはこの「パッケージ」のプログラムをオブジェクトコードまたは実行ファイルの形で配布してよいです、もしあなたが次のうちすくなくともひとつを行うならば。 
+
+a) 
+「標準版」の実行ファイルとライブラリファイルを、どこで「標準版」を入手できるかについての説明(マニュアルページか、それと同等のもの)とともに配布する。 
+b) 
+改変を加えた「パッケージ」の、機械で読みとり可能なソースを添付する。 
+c) 
+標準版でない実行ファイルに標準版とは異なる名前をつけ、マニュアルページ(またはそれと同等のもの)に標準版とのちがい、およびどこで「標準版」を入手できるかを明りょうに記す。 
+d) 
+「著作権所有者」と配布に関する別の取り決めをする。 
+5. あなたはこの「パッケージ」をどのように配布するときでも適度な複製料金を請求してよいです。あなたはこの「パッケージ」のサポートに対しあなたが選ぶどのような料金を請求してもよいです。あなたはこの「パッケージ」そのものに対して料金を請求してはいけません。しかし、あなたはこの「パッケージ」をより大きな(もしかすると商用の)ソフト配布の一部として他の (もしかすると商用の)プログラムと組みあわせて配布してよいです、もしあなたがこのパッケージをあなた自身の製品だと宣伝しないならば。あなたはこのパッケージのインタープリターを(リンクによって) あなた自身の実行ファイルに埋めこんでかまいません、これは単なる組みあわせだと解釈されます、もし完全な「標準版」がそのように埋めこまれているならば。 
+
+6. 入力として与えられるスクリプトやライブラリファイル、またはこの「パッケージ」のプログラムからの出力はこのパッケージの著作権の規定に自動的に従うのではなく、それを作りだした人の所有物です。それらは商業的に売られても、この「パッケージ」と組みあわせられてもよいです。もしそのようなスクリプトやライブラリファイルがこの「パッケージ」とバイナリ実行ファイルを作るいわゆる「ダンプしない(undump)」または「実行しない (unexec)」方法によって組みあわされているならば、そのようなイメージの配布はこの「パッケージ」の配布とは解釈されませんし、段落3および4の制限にも従いません、もしあなたがそのような実行イメージをこの「パッケージ」の「標準版」と主張しないならば。 
+
+7. この「パッケージ」によって定義された言語のサブルーチンおよび変数をエミュレートするためにあなたによって与えられこの「パッケージ」とリンクされたCのサブルーチン(または他の言語で書かれた類似のコンパイルされたサブルーチン)はこの「パッケージ」の一部とはみなされません、それらは段落6における入力と同等のものです、もしこれらのサブルーチンがもとの言語を改変して、もとの言語にもどせなくするのでなければ。 
+
+8. このパッケージを商用配布と組みあわせるのはつねに許されています、もしこの「パッケージ」の利用方法が埋めこみであれば、すなわち、この「パッケージ」のインターフェイスがその商用配布のエンドユーザーに見えるようにしようとするのでなければ。このような利用方法はこのパッケージの配布と解釈されません。 
+
+9. 「著作権所有者」の名前を事前の、書面による特別な許可なしにこのソフトウェアの派生物を支持しまたは売りこむために使ってはいけません。 
+
+10. この「パッケージ」は「現状のままで」与えられており、いかなる明示のまたは暗黙の保証もありません。商品として売れる、ある目的にかなうというどんな暗黙の保証もありません。 
+
+以上 
+
+
+--------------------------------------------------------------------------------
+
+変更履歴
+The Artistic License 日本語訳 1.0 
+2001年(平成13年)3月5日(月) 
+日本語に翻訳。 
