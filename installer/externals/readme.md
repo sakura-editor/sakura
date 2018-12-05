@@ -24,3 +24,18 @@
         - [Win32(ctags-2018-09-16_e522743d-x86.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/2018-09-16%2Fe522743d/ctags-2018-09-16_e522743d-x86.zip)
         - [x64(ctags-2018-09-16_e522743d-x64.zip)](https://github.com/universal-ctags/ctags-win32/releases/download/2018-09-16%2Fe522743d/ctags-2018-09-16_e522743d-x64.zip)
     - [ソースコード](https://github.com/universal-ctags/ctags-win32/archive/2018-09-16/e522743d.zip)
+
+## C/Migemo
+|説明|アドレス|
+|--|--|
+|バイナリ入手先|https://www.kaoriya.net/software/cmigemo/|
+|ソースコード|https://github.com/koron/cmigemo|
+|ライセンス|[Win32/license/migemo](Win32/license/migemo)|
+
+## diff 2.7
+|説明|アドレス|
+|--|--|
+|Website|http://w32tex.org/index-ja.html|
+|バイナリ入手先|http://www.ring.gr.jp/archives/text/TeX/ptex-win32/w32/patch-diff-w32.zip|
+|ソースコード|http://www.ring.gr.jp/archives/text/TeX/ptex-win32/w32/patch-diff-w32-src.zip|
+|ライセンス|[GPLv2](Win32/license/diff/COPYING)|

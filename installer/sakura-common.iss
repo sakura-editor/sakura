@@ -141,6 +141,7 @@ Name: sakuragrep;  Description: "{cm:sakuragrep}";                        Compon
 [Files]
 Source: "sakura\*.exe";                 DestDir: "{app}";         Components: main; Flags: ignoreversion; Excludes: "sakura\HeaderMake.exe,sakura\MakefileMake.exe";
 Source: "sakura\*.dll";                 DestDir: "{app}";         Components: main; Flags: ignoreversion;
+Source: "sakura\dict\*";                DestDir: "{app}\dict";    Components: main; Flags: ignoreversion recursesubdirs;
 Source: "sakura\sakura.exe.manifest.x"; DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.exe.manifest.v"; DestDir: "{app}";         Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 Source: "sakura\sakura.exe.ini";        DestDir: "{app}";         Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
