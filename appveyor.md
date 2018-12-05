@@ -13,8 +13,6 @@
         - [preBuild.bat の構造](#prebuildbat-の構造)
             - [生成する環境変数](#生成する環境変数)
             - [処理の流れ](#処理の流れ)
-        - [postBuild.bat の構造](#postbuildbat-の構造)
-            - [処理の流れ](#処理の流れ-1)
         - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
             - [生成する環境変数](#生成する環境変数-1)
             - [処理の流れ](#処理の流れ-2)
@@ -60,7 +58,6 @@
 |[build-sln.bat](build-sln.bat)| solution をビルドするバッチファイル |
 |[build-gnu.bat](build-gnu.bat)| Makefile をビルドするバッチファイル |
 |[sakura\preBuild.bat](sakura/preBuild.bat) | solution のビルド前に Visual Studio から呼ばれるバッチファイル |
-|[sakura\postBuild.bat](sakura/postBuild.bat)| 特に何もしない |
 |[sakura\mingw32-del.bat](sakura/mingw32-del.bat)| MinGW の clean でファイルを削除するバッチファイル |
 |[parse-buildlog.bat](parse-buildlog.bat)    | ビルドログを解析するバッチファイル |
 |[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
@@ -81,10 +78,6 @@
                 - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
                 - MakefileMake.exe : Makefile を更新する (MinGW 用)
                 - git.exe : git や appveyor 関連の情報を githash.h に出力する
-            - [sakura\postBuild.bat](sakura/postBuild.bat) : bregonig.dll のコピー
-                - [unzip.bat](tools/zip/unzip.bat) : 外部依存ファイルを展開する
-                    - [7z.exe](https://sevenzip.osdn.jp/) : zip ファイルの展開に使用
-                    - [unzip.ps1](tools/zip/unzip.ps1) : powershell 版の ZIP ファイルの展開スクリプト
         - [parse-buildlog.bat](parse-buildlog.bat) : ビルドログを解析する
             - [appveyor_env.py](appveyor_env.py) : 環境変数を再現できる `set_appveyor_env.bat` を生成する。(成果物に含まれる)
             - [parse-buildlog.py](parse-buildlog.py)
@@ -119,7 +112,6 @@
 |build-sln.bat       | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |build-gnu.bat       | platform ("MinGW") | configuration ("Debug" または "Release")  |
 |sakura\preBuild.bat | HeaderMake.exe または MakefileMake.exe の実行ファイルのフォルダパス | なし |
-|sakura\postBuild.bat| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |sakura\mingw32-del.bat| 削除するファイルパス1 | 削除するファイルパス2(2つ目以降は省略可能)  |
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
@@ -179,12 +171,6 @@
 | APPVEYOR_SHORTHASH_PR_HEAD      | APPVEYOR_SHORTHASH_PR_HEAD      | 文字列   |
 | APPVEYOR_BUILD_URL              | APPVEYOR_BUILD_URL              | 文字列   |
 
-
-### postBuild.bat の構造
-
-#### 処理の流れ
-
-* リポジトリに登録している bregonig の zipファイルを解凍して bregonig.dll を sakura.exe のビルドの出力先にコピーする
 
 ### mingw32-del.bat の構造
 

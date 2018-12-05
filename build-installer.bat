@@ -31,7 +31,6 @@ set INSTALLER_WORK=installer\sakura
 set INSTALLER_OUTPUT=installer\Output-%platform%
 
 set INSTALLER_RESOURCES_SINT=installer\sinst_src
-set INSTALLER_RESOURCES_EXTERNAL=installer\externals\%platform%
 
 if exist "%INSTALLER_WORK%"      rmdir /s /q "%INSTALLER_WORK%"
 if exist "%INSTALLER_OUTPUT%"    rmdir /s /q "%INSTALLER_OUTPUT%"
