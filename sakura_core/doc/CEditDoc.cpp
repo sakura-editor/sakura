@@ -357,6 +357,7 @@ void CEditDoc::SetBackgroundImage()
 	if( FAILED(hr) ) return;
 	UINT width, height;
 	hr = pConverter->GetSize(&width, &height);
+	if( FAILED(hr) ) return;
 	BITMAPINFO bminfo = {0};
 	BITMAPINFOHEADER& bmih = bminfo.bmiHeader;
 	bmih.biSize	= sizeof(BITMAPINFOHEADER);
