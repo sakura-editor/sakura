@@ -46,6 +46,8 @@ LIBS= \
  -limagehlp \
  -lshlwapi \
  -lwinmm \
+ -lwindowscodecs \
+ -lmsimg32 \
  -mwindows \
  $(MYLIBS)
 
