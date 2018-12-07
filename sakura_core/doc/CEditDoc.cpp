@@ -349,7 +349,7 @@ void CEditDoc::SetBackgroundImage()
 	if( FAILED(hr) ) return;
 	hr = pConverter->Initialize(
 		pFrame.Get(),
-		GUID_WICPixelFormat32bppBGRA,
+		GUID_WICPixelFormat32bppPBGRA,
 		WICBitmapDitherTypeNone,
 		NULL,
 		0.f,
