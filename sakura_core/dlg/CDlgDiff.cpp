@@ -517,12 +517,21 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
+BOOL CDlgDiff::OnDestroy()
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
+}
+
 BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
 {
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
-
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog );
 
 	RECT  rc;
 	POINT ptNew;
@@ -535,13 +544,6 @@ BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
-}
-
-BOOL CDlgDiff::OnMove( WPARAM wParam, LPARAM lParam )
-{
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog );
-	
-	return CDialog::OnMove( wParam, lParam );
 }
 
 BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )

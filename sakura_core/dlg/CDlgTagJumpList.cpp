@@ -539,6 +539,17 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return bRet;
 }
 
+BOOL CDlgTagJumpList::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
+}
+
 BOOL CDlgTagJumpList::OnBnClicked( int wID )
 {
 	switch( wID )
@@ -607,8 +618,6 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
-
 	RECT  rc;
 	POINT ptNew;
 	::GetWindowRect( GetHwnd(), &rc );
@@ -620,15 +629,6 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
-}
-
-
-
-BOOL CDlgTagJumpList::OnMove( WPARAM wParam, LPARAM lParam )
-{
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
-
-	return CDialog::OnMove( wParam, lParam );
 }
 
 

@@ -236,11 +236,21 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 }
 
 
+BOOL CDlgWindowList::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
+}
+
+
 BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 {
 	CDialog::OnSize(wParam, lParam);
-
-	::GetWindowRect(GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog);
 
 	RECT  rc;
 	POINT ptNew;
@@ -253,14 +263,6 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	}
 	::InvalidateRect(GetHwnd(), NULL, TRUE);
 	return TRUE;
-}
-
-
-BOOL CDlgWindowList::OnMove(WPARAM wParam, LPARAM lParam)
-{
-	::GetWindowRect(GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog);
-	
-	return CDialog::OnMove(wParam, lParam);
 }
 
 

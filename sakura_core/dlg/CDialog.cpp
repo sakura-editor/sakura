@@ -230,25 +230,25 @@ void CDialog::SetDialogPosSize()
 			rc.right = m_xPos + m_nWidth;
 			rc.bottom = m_yPos + m_nHeight;
 			GetMonitorWorkRect(&rc, &rcWork);
-			rcWork.top += 1;
-			rcWork.bottom -= 1;
-			rcWork.left += 1;
-			rcWork.right -= 1;
-			if( rc.bottom > rcWork.bottom ){
-				rc.top -= (rc.bottom - rcWork.bottom);
-				rc.bottom = rcWork.bottom;
+			LONG workHeight = rcWork.bottom - rcWork.top;
+			LONG workWidth = rcWork.right - rcWork.left;
+			if( rc.bottom > workHeight ){
+				LONG diff = rc.bottom - workHeight;
+				rc.top -= diff;
+				rc.bottom -= diff;
 			}
-			if( rc.right > rcWork.right ){
-				rc.left -= (rc.right - rcWork.right);
-				rc.right = rcWork.right;
+			if( rc.right > workWidth ){
+				LONG diff = rc.right - workWidth;
+				rc.left -= diff;
+				rc.right -= diff;
 			}
-			if( rc.top < rcWork.top ){
-				rc.bottom += (rcWork.top - rc.top);
-				rc.top = rcWork.top;
+			if( rc.top < 0 ){
+				rc.bottom += rc.top;
+				rc.top = 0;
 			}
-			if( rc.left < rcWork.left ){
-				rc.right += (rcWork.left - rc.left);
-				rc.left = rcWork.left;
+			if( rc.left < 0 ){
+				rc.right += rc.left;
+				rc.left = 0;
 			}
 			m_xPos = rc.left;
 			m_yPos = rc.top;
@@ -314,12 +314,6 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	RECT	rc;
 	::GetWindowRect( m_hWnd, &rc );
 
-	/* ダイアログのサイズの記憶 */
-	m_xPos = rc.left;
-	m_yPos = rc.top;
-	m_nWidth = rc.right - rc.left;
-	m_nHeight = rc.bottom - rc.top;
-
 	/* サイズボックスの移動 */
 	if( NULL != m_hwndSizeBox ){
 		::GetClientRect( m_hWnd, &rc );
@@ -357,25 +351,8 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 
 BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
-
-	/* ダイアログの位置の記憶 */
-	if( !m_bInited ){
-		return TRUE;
-	}
-	RECT	rc;
-	::GetWindowRect( m_hWnd, &rc );
-
-	/* ダイアログのサイズの記憶 */
-	m_xPos = rc.left;
-	m_yPos = rc.top;
-	m_nWidth = rc.right - rc.left;
-	m_nHeight = rc.bottom - rc.top;
-	DEBUG_TRACE( _T("CDialog::OnMove() m_xPos=%d m_yPos=%d\n"), m_xPos, m_yPos );
 	return TRUE;
-
 }
-
-
 
 void CDialog::CreateSizeBox( void )
 {

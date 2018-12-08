@@ -145,16 +145,16 @@ public:
 	BOOL			m_bModal;		/* モーダル ダイアログか */
 	bool			m_bSizable;		// 可変ダイアログかどうか
 	int				m_nShowCmd;		//	最大化/最小化
-	int				m_nWidth;
-	int				m_nHeight;
-	int				m_xPos;
-	int				m_yPos;
 //	void*			m_pcEditView;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 	HINSTANCE		m_hLangRsrcInstance;		// メッセージリソースDLLのインスタンスハンドル	// 2011.04.10 nasukoji
 
 protected:
+	int				m_nWidth;
+	int				m_nHeight;
+	int				m_xPos;
+	int				m_yPos;
 	void CreateSizeBox( void );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 

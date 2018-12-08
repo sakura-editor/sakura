@@ -43,8 +43,8 @@ protected:
 	LPVOID	GetHelpIdTable();
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL OnDestroy( void ) override;
 	BOOL OnSize(WPARAM wParam, LPARAM lParam);
-	BOOL OnMove(WPARAM wParam, LPARAM lParam);
 	BOOL OnMinMaxInfo(LPARAM lParam);
 	BOOL OnActivate(WPARAM wParam, LPARAM lParam);
 
