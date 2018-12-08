@@ -66,13 +66,13 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL	OnDestroy( void ) override;
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnNotify(NMHDR* pNMHDR) override;
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam ) override;
 	LPVOID	GetHelpIdTable( void ) override;
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
-	BOOL	OnMove( WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 
 	void	SetData( void ) override;	/* ダイアログデータの設定 */
