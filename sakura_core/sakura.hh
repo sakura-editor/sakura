@@ -666,6 +666,7 @@
 #define HIDC_CHECK_BACKIMG_REP_Y				11426 //背景画像RepeatY
 #define HIDC_EDIT_BACKIMG_OFFSET_X				11427 //背景画像OffsetX
 #define HIDC_EDIT_BACKIMG_OFFSET_Y				11428 //背景画像OffsetY
+#define HIDC_EDIT_BACKIMG_OPACITY				11429 //背景画像不透明度
 #define HIDC_COMBO_SET_COLOR					11430 //強調キーワード１セット名
 #define HIDC_COMBO_SET2_COLOR					11431 //強調キーワード２セット名
 #define HIDC_EDIT_BLOCKCOMMENT_FROM				11440 //ブロックコメント１開始

@@ -42,6 +42,7 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//背景画像RepeatY
 	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//背景画像OffsetX
 	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//背景画像OffsetY
+	IDC_EDIT_BACKIMG_OPACITY,		HIDC_EDIT_BACKIMG_OPACITY,		//背景画像不透明度
 	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//行番号の表示（折り返し単位）
 	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//行番号の表示（改行単位）
 	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//行番号区切り（なし）
@@ -205,6 +206,22 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE );
 			return TRUE;
 		}
+		switch( (int)wParam ) {
+		case IDC_SPIN_BACKIMG_OPACITY:
+			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_OPACITY, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				if( nVal < 0xFF ){
+					++nVal;
+				}
+			}else if( pMNUD->iDelta > 0 ){
+				if( nVal > 0 ){
+					--nVal;
+				}
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_OPACITY, nVal, FALSE );
+			return TRUE;
+		}
+
 
 		break;	/* WM_NOTIFY */
 
@@ -356,6 +373,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
+	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OPACITY), 3);
 
 	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
 	{
@@ -380,6 +398,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y, m_Types.m_backImgScrollY);
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, m_Types.m_backImgPosOffset.x, TRUE);
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
+	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OPACITY, m_Types.m_backImgOpacity, FALSE);
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( 0 == m_Types.m_nLineTermType ){
@@ -483,6 +502,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	m_Types.m_backImgScrollY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y);
 	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
 	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
+	m_Types.m_backImgOpacity = (BYTE)std::min(255U, GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OPACITY, NULL, FALSE));
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){

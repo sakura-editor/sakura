@@ -144,7 +144,10 @@ public:
 public:
 	//! 背景にビットマップを使用するかどうか
 	//! 2010.10.03 背景実装
-	bool IsBkBitmap() const{ return NULL != m_pcEditDoc->m_hBackImg; }
+	bool IsBkBitmap() const{
+		return NULL != m_pcEditDoc->m_hBackImg
+			&& 0 != GetDocument()->m_cDocType.GetDocumentAttribute().m_backImgOpacity;
+	}
 
 public:
 	CEditView* GetEditView()

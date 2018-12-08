@@ -679,6 +679,8 @@
 #define IDC_CHECK_BACKIMG_REP_Y         1608
 #define IDC_EDIT_BACKIMG_OFFSET_X       1609
 #define IDC_EDIT_BACKIMG_OFFSET_Y       1610
+#define IDC_EDIT_BACKIMG_OPACITY        1734
+#define IDC_SPIN_BACKIMG_OPACITY        1735
 #define IDC_CHECK_CONVERTEOLPASTE       1611
 #define IDC_CHECK_OpenNewWin            1612
 #define IDC_BUTTON_TABFONT              1613
@@ -844,7 +846,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1734
+#define _APS_NEXT_CONTROL_VALUE         1736
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
