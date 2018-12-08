@@ -45,6 +45,9 @@
 #include <string.h>	// Apr. 03, 2003 genta
 #include <memory>
 #include <OleCtl.h>
+#include <wincodec.h>
+#pragma comment(lib, "windowscodecs.lib")
+#include <wrl.h>
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/layout/CLayout.h"	// 2007.08.22 ryoji 追加
@@ -317,61 +320,70 @@ void CEditDoc::SetBackgroundImage()
 		GetInidirOrExedir( &fullPath[0], &path[0] );
 		path = fullPath;
 	}
-	const TCHAR* ext = path.GetExt();
-	if( 0 != auto_stricmp(ext, _T(".bmp")) ){
-		HANDLE hFile = ::CreateFile(path.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
-		if( hFile == INVALID_HANDLE_VALUE ){
-			return;
-		}
-		DWORD fileSize  = ::GetFileSize(hFile, NULL);
-		HGLOBAL hGlobal = ::GlobalAlloc(GMEM_MOVEABLE, fileSize);
-		if( hGlobal == NULL ){
-			::CloseHandle(hFile);
-			return;
-		}
-		DWORD nRead;
-		BOOL bRead = ::ReadFile(hFile, GlobalLock(hGlobal), fileSize, &nRead, NULL);
-		::CloseHandle(hFile);
-		hFile = NULL;
-		if( !bRead ){
-			::GlobalFree(hGlobal);
-			return;
-		}
-		::GlobalUnlock(hGlobal);
-		{
-			IPicture* iPicture = NULL;
-			IStream*  iStream = NULL;
-			//hGlobalの管理を移譲
-			if( S_OK != ::CreateStreamOnHGlobal(hGlobal, TRUE, &iStream) ){
-				GlobalFree(hGlobal);
-			}else{
-				if( S_OK != ::OleLoadPicture(iStream, fileSize, FALSE, IID_IPicture, (void**)&iPicture) ){
-				}else{
-					HBITMAP hBitmap = NULL;
-					short imgType = PICTYPE_NONE;
-					if( S_OK == iPicture->get_Type(&imgType) && imgType == PICTYPE_BITMAP &&
-					    S_OK == iPicture->get_Handle((OLE_HANDLE*)&hBitmap) ){
-						m_nBackImgWidth = m_nBackImgHeight = 1;
-						m_hBackImg = (HBITMAP)::CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, 0);
-					}
-				}
-			}
-			if( iStream )  iStream->Release();
-			if( iPicture ) iPicture->Release();
-		}
-	}else{
-		m_hBackImg = (HBITMAP)::LoadImage(NULL, path.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+	using namespace Microsoft::WRL;
+	ComPtr<IWICImagingFactory> pIWICFactory;
+	HRESULT hr;
+	hr = CoCreateInstance(
+		CLSID_WICImagingFactory,
+		NULL,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&pIWICFactory));
+	if( FAILED(hr) ) return;
+	ComPtr<IWICBitmapDecoder> pDecoder;
+	hr = pIWICFactory->CreateDecoderFromFilename(
+		path.c_str(),
+		NULL,
+		GENERIC_READ,
+		WICDecodeMetadataCacheOnLoad,
+		&pDecoder);
+	if( FAILED(hr) ) return;
+	ComPtr<IWICBitmapFrameDecode> pFrame;
+	hr = pDecoder->GetFrame(0, &pFrame);
+	if( FAILED(hr) ) return;
+	//WICPixelFormatGUID pixelFormat;
+	//hr = pFrame->GetPixelFormat(&pixelFormat);
+	//if( FAILED(hr) ) return;
+	ComPtr<IWICFormatConverter> pConverter;
+	pIWICFactory->CreateFormatConverter(&pConverter);
+	if( FAILED(hr) ) return;
+	hr = pConverter->Initialize(
+		pFrame.Get(),
+		GUID_WICPixelFormat32bppPBGRA,
+		WICBitmapDitherTypeNone,
+		NULL,
+		0.f,
+		WICBitmapPaletteTypeCustom);
+	if( FAILED(hr) ) return;
+	UINT width, height;
+	hr = pConverter->GetSize(&width, &height);
+	if( FAILED(hr) ) return;
+	BITMAPINFO bminfo = {0};
+	BITMAPINFOHEADER& bmih = bminfo.bmiHeader;
+	bmih.biSize	= sizeof(BITMAPINFOHEADER);
+	bmih.biWidth = (LONG)width;
+	bmih.biHeight = -(LONG)height;
+	bmih.biPlanes = 1;
+	bmih.biBitCount = 32;
+	bmih.biCompression = BI_RGB;
+	HDC hdcScreen = GetDC(NULL);
+	if( !hdcScreen ) return;
+	void *pvImageBits = NULL;
+	m_hBackImg = CreateDIBSection(hdcScreen, &bminfo, DIB_RGB_COLORS, &pvImageBits, NULL, 0);
+	ReleaseDC(NULL, hdcScreen);
+	if( !m_hBackImg ) return;
+	UINT lineStride = 4 * width;
+	hr = pConverter->CopyPixels(
+		NULL,
+		lineStride,
+		lineStride * height, 
+		(BYTE*)pvImageBits);
+	if( FAILED(hr) ){
+		::DeleteObject(m_hBackImg);
+		m_hBackImg = NULL;
 	}
-	if( m_hBackImg ){
-		BITMAP bmp;
-		GetObject(m_hBackImg, sizeof(BITMAP), &bmp);
-		m_nBackImgWidth  = bmp.bmWidth;
-		m_nBackImgHeight = bmp.bmHeight;
-		if( 0 == m_nBackImgWidth || 0 == m_nBackImgHeight ){
-			::DeleteObject(m_hBackImg);
-			m_hBackImg = NULL;
-		}
-	}
+	m_nBackImgWidth = (int)width;
+	m_nBackImgHeight = (int)height;
 }
 
 /* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */

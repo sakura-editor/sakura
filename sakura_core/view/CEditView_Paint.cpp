@@ -26,6 +26,7 @@
 #include "StdAfx.h"
 #include <vector>
 #include <limits.h>
+#pragma comment(lib, "Msimg32.lib")
 #include "view/CEditView_Paint.h"
 #include "view/CEditView.h"
 #include "view/CViewFont.h"
@@ -198,6 +199,8 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 #else
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
 	COLORREF colorOld = ::SetBkColor(hdc, cTextType.GetBackColor());
+	MyFillRect(hdc, rcPaint);
+
 	const CTextArea& area = GetTextArea();
 	const CEditDoc& doc  = *m_pcEditDoc;
 	const STypeConfig& typeConfig = doc.m_cDocType.GetDocumentAttribute();
@@ -279,20 +282,29 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	CMyRect rcBltAll;
 	rcBltAll.SetLTRB(INT_MAX, INT_MAX, -INT_MAX, -INT_MAX);
 	CMyRect rcImagePosOrg = rcImagePos;
+	BLENDFUNCTION bf;
+	bf.BlendOp = AC_SRC_OVER;
+	bf.BlendFlags = 0;
+	bf.SourceConstantAlpha = 0xFF;
+	bf.AlphaFormat = AC_SRC_ALPHA;
 	for(; rcImagePos.top <= nYEnd; ){
 		for(; rcImagePos.left <= nXEnd; ){
 			CMyRect rcBlt;
 			if( ::IntersectRect(&rcBlt, &rc, &rcImagePos) ){
-				::BitBlt(
+				int width = rcBlt.right  - rcBlt.left;
+				int height = rcBlt.bottom - rcBlt.top;
+				::AlphaBlend(
 					hdc,
 					rcBlt.left,
 					rcBlt.top,
-					rcBlt.right  - rcBlt.left,
-					rcBlt.bottom - rcBlt.top,
+					width,
+					height,
 					hdcBgImg,
 					rcBlt.left - rcImagePos.left,
 					rcBlt.top - rcImagePos.top,
-					SRCCOPY
+					width,
+					height,
+					bf
 				);
 				rcBltAll.left   = t_min(rcBltAll.left,   rcBlt.left);
 				rcBltAll.top    = t_min(rcBltAll.top,    rcBlt.top);
@@ -336,8 +348,6 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 		if( y3 < y4 ){
 			rcFill.SetLTRB(x1,y3, x4,y4); MyFillRect(hdc, rcFill);
 		}
-	}else{
-		MyFillRect(hdc, rc);
 	}
 	::SetBkColor(hdc, colorOld);
 #endif
