@@ -18,6 +18,7 @@
         - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
             - [生成する環境変数](#生成する環境変数-1)
             - [処理の流れ](#処理の流れ-2)
+    - [キャッシュを利用する方法](#キャッシュを利用する方法)
 
 <!-- /TOC -->
 
@@ -219,3 +220,33 @@
 * 作業用フォルダに必要なファイルをコピーする
 * [calc-hash.bat](calc-hash.bat) で sha256 のハッシュを計算して、作業用フォルダにコピーする
 * 7z コマンドで作業用フォルダの中身を zip に固める
+
+## キャッシュを利用する方法
+
+ビルドの中間生成物をキャッシュすることで不要な再コンパイルを省きビルド時間を短縮できます。
+
+### 設定方法
+
+環境変数 `cache` に `enabled` という値を設定することで有効になります。
+
+#### Web ページで設定する場合
+
+1. AppVeyor のアカウントページでサクラエディタのプロジェクト(※クローンを含む)を開き Settings を選びます。
+2. Environment を選び Environment Variables の項目で Add variable ボタンをクリックします。
+3. name に `cache` を、value に `enabled` を入力します。
+4. ページ最下部で忘れずに Save ボタンを押します。
+
+#### appveyor.yml で設定する場合
+
+1. appveyor.yml に `cache: disabled` という行があるので `cache: enabled` に書き換えます。
+
+### 確認方法
+
+Console ログに `Restoring build cache`, `Updating build cache` という行があれば有効になっています。
+
+### その他の詳細
+
+導入経緯を参照してください。
+
+* [Issue #637 「ビルドキャッシュを使用するとすごく早いです。」](https://github.com/sakura-editor/sakura/issues/637)
+* [Pull request #650 「AppVeyor のビルドキャッシュを利用してビルド時間を削減(※およそ５分)できるようなオプションを用意します。」](https://github.com/sakura-editor/sakura/pull/650)
