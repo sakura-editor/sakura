@@ -243,11 +243,11 @@ void CDialog::SetDialogPosSize()
 				rc.right -= diff;
 			}
 			if( rc.top < 0 ){
-				rc.bottom += rc.top;
+				rc.bottom -= rc.top;
 				rc.top = 0;
 			}
 			if( rc.left < 0 ){
-				rc.right += rc.left;
+				rc.right -= rc.left;
 				rc.left = 0;
 			}
 			m_xPos = rc.left;

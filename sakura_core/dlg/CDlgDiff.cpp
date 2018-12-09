@@ -517,7 +517,7 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-BOOL CDlgDiff::OnDestroy()
+BOOL CDlgDiff::OnDestroy( void )
 {
 	CDialog::OnDestroy();
 	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog;
