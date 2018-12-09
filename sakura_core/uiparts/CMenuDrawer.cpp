@@ -195,9 +195,9 @@ CMenuDrawer::CMenuDrawer()
 /* 64 */		F_FILE_REOPEN_LATIN1			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Latin1で開きなおす	// 2010/3/20 Uchi
 
 /* カーソル移動系(3段目32個: 65-96) */
-/* 65 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 66 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 67 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 65 */		F_OPEN_FOLDER_IN_EXPLORER		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの場所を開く
+/* 66 */		F_OPEN_COMMAND_PROMPT			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コマンドプロンプトを開く
+/* 67 */		F_OPEN_POWERSHELL				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//PowerShellを開く
 /* 68 */		F_UP							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル上移動
 /* 69 */		F_DOWN							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル下移動
 /* 70 */		F_LEFT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル左移動
@@ -212,8 +212,8 @@ CMenuDrawer::CMenuDrawer()
 /* 79 */		F_HalfPageDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
 /* 80 */		F_1PageUp						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
 /* 81 */		F_1PageDown						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-/* 82 */		F_DISABLE/*F_DISPLAYTOP*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の先頭に移動(未実装)
-/* 83 */		F_DISABLE/*F_DISPLAYEND*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の最後に移動(未実装)
+/* 82 */		F_OPEN_COMMAND_PROMPT_AS_ADMIN	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//管理者としてコマンドプロンプトを開く
+/* 83 */		F_OPEN_POWERSHELL_AS_ADMIN		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//管理者としてPowerShellを開く
 /* 84 */		F_GOFILETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの先頭に移動
 /* 85 */		F_GOFILEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの最後に移動
 /* 86 */		F_CURLINECENTER					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル行をウィンドウ中央へ
