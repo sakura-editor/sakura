@@ -21,6 +21,7 @@
 
 #include "StdAfx.h"
 #include <Ole2.h>
+#include <locale.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "util/os.h"

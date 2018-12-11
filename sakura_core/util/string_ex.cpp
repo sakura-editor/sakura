@@ -4,6 +4,7 @@
 #include "charset/charcode.h"
 #include "util/std_macro.h"
 #include <limits.h>
+#include <locale.h>
 
 int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
