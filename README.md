@@ -23,7 +23,7 @@
             - [master の 最新以外](#master-の-最新以外)
         - [単体テスト](#単体テスト)
         - [デバッグ方法](#デバッグ方法)
-
+        - [変更履歴](#変更履歴)
 <!-- /TOC -->
 
 A free Japanese text editor for Windows
@@ -108,3 +108,12 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 - [タスクトレイのメニュー項目のデバッグ方法](debug-tasktray-menu.md) を参照
 - [大きなファイルの作成方法](create-big-file.md)
+
+## 変更履歴
+
+変更履歴は [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) というソフトを使用して
+[changelog-sakura](https://github.com/sakura-editor/changelog-sakura) のリポジトリで [appveyor](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura) で自動的に生成します。 
+
+[生成した CHANGELOG.md は ここからダウンロードできます](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura/branch/master/artifacts) 
+
+ダウンロードした `CHANGELOG.md` は [changelog-sakura の README.md](https://github.com/sakura-editor/changelog-sakura) の記載の方法でローカルで確認できます。 
