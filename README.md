@@ -116,4 +116,4 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 [生成した CHANGELOG.md は ここからダウンロードできます](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura/branch/master/artifacts) 
 
-ダウンロードした `CHANGELOG.md` は [changelog-sakura の README.md](https://github.com/sakura-editor/changelog-sakura) の記載の方法でローカルで確認できます。 
+ダウンロードした `CHANGELOG.md` は [changelog-sakura の README.md](https://github.com/sakura-editor/changelog-sakura) の方法でローカルで確認できます。 
