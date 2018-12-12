@@ -329,7 +329,8 @@ void _DrawEOL(
 )
 {
 	int sx, sy;	//	矢印の先頭
-	gr.SetPen( pColor );
+	gr.ClearPen();
+	gr.PushPen( pColor, ::DpiScaleX(1) );
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
