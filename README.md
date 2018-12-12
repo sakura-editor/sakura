@@ -116,4 +116,6 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 [生成した CHANGELOG.md は ここからダウンロードできます](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura/branch/master/artifacts) 
 
-ダウンロードした `CHANGELOG.md` は [changelog-sakura の README.md](https://github.com/sakura-editor/changelog-sakura) の方法でローカルで確認できます。 
+ダウンロードした `CHANGELOG.md` は
+[Markdown をローカルで確認する方法](https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95)
+で説明している手順でローカルで確認できます。 
