@@ -21,7 +21,7 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-call %~dp0find-tools.bat
+if not defined CMD_ISCC call %~dp0tools\find-tools.bat
 if not defined CMD_ISCC (
 	echo ISCC.exe was not found.
 	exit /b 1
