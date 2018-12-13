@@ -10,6 +10,9 @@ platform:
   - x64
   - MinGW
 
+install:
+  - cppcheck --version 1.86
+
 build_script:
 - cmd: >-
     call checkEncoding.bat
