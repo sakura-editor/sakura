@@ -7,7 +7,6 @@ if exist "%DSTZIP%" del "%DSTZIP%"
 
 if not defined CMD_7Z call %~dp0../find-tools.bat
 if not defined CMD_7Z (
-if "%CMD_7Z%" == "" (
 	@echo -------------------------------------------------------
 	@echo ---- you can make this faster by installing 7-zip. ----
 	@echo -------------------------------------------------------
