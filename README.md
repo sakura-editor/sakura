@@ -23,7 +23,8 @@
             - [master の 最新以外](#master-の-最新以外)
         - [単体テスト](#単体テスト)
         - [デバッグ方法](#デバッグ方法)
-        - [変更履歴](#変更履歴)
+    - [変更履歴](#変更履歴)
+
 <!-- /TOC -->
 
 A free Japanese text editor for Windows
