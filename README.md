@@ -107,5 +107,5 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ### デバッグ方法
 
-- [タスクトレイのメニュー項目のデバッグ方法](debug-tasktray-menu.md) を参照
+- [タスクトレイのメニュー項目をデバッグする方法](debug-tasktray-menu.md) を参照
 - [大きなファイルの作成方法](create-big-file.md)
