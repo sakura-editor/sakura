@@ -49,6 +49,7 @@ LIBS= \
  -lwindowscodecs \
  -lmsimg32 \
  -mwindows \
+ -municode \
  $(MYLIBS)
 
 exe= sakura.exe
