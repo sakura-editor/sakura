@@ -162,6 +162,22 @@ namespace ApiWrap{
 	inline HICON StCtl_SetIcon(HWND hwndCtl, HICON hIcon)				{ return (HICON)(UINT_PTR)::SendMessage(hwndCtl, STM_SETICON, (WPARAM)hIcon, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                      スタティック コントロール              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	inline void TrackBarCtl_SetRange(HWND hwndCtl, BOOL bRedraw, WORD minimum, WORD maximum)
+	{
+		::SendMessage(hwndCtl, TBM_SETRANGE, (WPARAM)bRedraw, (LPARAM)MAKELONG(minimum, maximum));
+	}
+	inline void TrackBarCtl_SetPos(HWND hwndCtl, BOOL bRedraw, LPARAM pos)
+	{
+		::SendMessage(hwndCtl, TBM_SETPOS, (WPARAM)bRedraw, pos);
+	}
+	inline LRESULT TrackBarCtl_GetPos(HWND hwndCtl)
+	{
+		return ::SendMessage(hwndCtl, TBM_GETPOS, (WPARAM)0, (LPARAM)0);
+	}
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       ダイアログ内                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline BOOL DlgItem_SetText(HWND hwndDlg, int nIDDlgItem, const ACHAR* str)

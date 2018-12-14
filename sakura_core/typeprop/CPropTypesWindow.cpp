@@ -42,6 +42,7 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//背景画像RepeatY
 	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//背景画像OffsetX
 	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//背景画像OffsetY
+	IDC_EDIT_BACKIMG_TRANSPARENCY,	HIDC_EDIT_BACKIMG_TRANSPARENCY,	//背景画像透明度
 	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//行番号の表示（折り返し単位）
 	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//行番号の表示（改行単位）
 	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//行番号区切り（なし）
@@ -162,6 +163,14 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				return TRUE;
 			}
 			break;	/* BN_CLICKED */
+		case EN_KILLFOCUS:
+			if(wID == IDC_EDIT_BACKIMG_TRANSPARENCY){
+				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE );
+				if(nVal < 0) nVal = 0;
+				if(nVal > 255) nVal = 255;
+				TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
+			}
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
@@ -205,6 +214,22 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE );
 			return TRUE;
 		}
+		switch( (int)wParam ) {
+		case IDC_UPDOWN_BACKIMG_TRANSPARENCY:
+			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				if( nVal < 0xFF ){
+					++nVal;
+				}
+			}else if( pMNUD->iDelta > 0 ){
+				if( nVal > 0 ){
+					--nVal;
+				}
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nVal, FALSE );
+			TrackBarCtl_SetPos( ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ), TRUE, nVal );
+			return TRUE;
+		}
 
 		break;	/* WM_NOTIFY */
 
@@ -226,6 +251,18 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
 
+	case WM_HSCROLL:
+		if( (HWND)lParam == ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY ) ){
+			WORD code = LOWORD(wParam);
+			WORD pos;
+			if(code == TB_THUMBPOSITION || code == TB_THUMBTRACK){
+				pos = HIWORD(wParam);
+			}else{
+				pos = (WORD)TrackBarCtl_GetPos((HWND)lParam);
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, pos, FALSE );
+		}
+		return TRUE;
 	}
 	return FALSE;
 }
@@ -356,6 +393,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
 	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
+	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY), 3);
 
 	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
 	{
@@ -380,6 +418,11 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y, m_Types.m_backImgScrollY);
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, m_Types.m_backImgPosOffset.x, TRUE);
 	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
+	BYTE transparency = 255 - m_Types.m_backImgOpacity;
+	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, transparency, FALSE);
+	HWND hWndTrackBar = ::GetDlgItem( hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY );
+	TrackBarCtl_SetRange( hWndTrackBar, FALSE, 0, 255 );
+	TrackBarCtl_SetPos( hWndTrackBar, TRUE, transparency );
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( 0 == m_Types.m_nLineTermType ){
@@ -483,6 +526,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	m_Types.m_backImgScrollY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y);
 	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
 	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
+	m_Types.m_backImgOpacity = 255 - (BYTE)std::min(255U, GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE));
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){

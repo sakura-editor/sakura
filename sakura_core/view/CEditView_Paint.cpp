@@ -273,7 +273,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	}
 	rcImagePos.SetSize(doc.m_nBackImgWidth, doc.m_nBackImgHeight);
 	
-	
+
 	RECT rc = rcPaint;
 	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
 	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
@@ -285,7 +285,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	BLENDFUNCTION bf;
 	bf.BlendOp = AC_SRC_OVER;
 	bf.BlendFlags = 0;
-	bf.SourceConstantAlpha = 0xFF;
+	bf.SourceConstantAlpha = typeConfig.m_backImgOpacity;
 	bf.AlphaFormat = AC_SRC_ALPHA;
 	for(; rcImagePos.top <= nYEnd; ){
 		for(; rcImagePos.left <= nXEnd; ){

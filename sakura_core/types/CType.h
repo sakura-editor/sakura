@@ -165,6 +165,7 @@ struct STypeConfig{
 	bool				m_backImgScrollX;				//!< 背景画像表示横方向スクロール
 	bool				m_backImgScrollY;				//!< 背景画像表示縦方向スクロール
 	POINT				m_backImgPosOffset;				//!< 背景画像表示オフセット
+	BYTE				m_backImgOpacity;				//!< 背景画像表示不透明度
 
 	bool				m_bLineNumIsCRLF;				//!< 行番号の表示 false=折り返し単位／true=改行単位
 	int					m_nLineTermType;				//!< 行番号区切り  0=なし 1=縦線 2=任意

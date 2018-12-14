@@ -1633,6 +1633,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, L"bgImgRepeartY",  types.m_backImgRepeatY );
 	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetX",  types.m_backImgPosOffset.x );
 	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetY",  types.m_backImgPosOffset.y );
+	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgOpacity", types.m_backImgOpacity );
 
 	// 2005.11.08 Moca 指定桁縦線
 	for(j = 0; j < MAX_VERTLINES; j++ ){
