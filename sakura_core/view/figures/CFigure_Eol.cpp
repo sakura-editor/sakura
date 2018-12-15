@@ -497,7 +497,7 @@ void _DrawEOL(
 			pt[4].y = sy - height / 4;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 
-			if( bBold ){
+			if(penWidth == 1 && bBold ){
 				pt[0].x += 1;	//	上へ
 				pt[0].y += 0;
 				pt[1].x += 1;	//	上から下へ
@@ -534,7 +534,7 @@ void _DrawEOL(
 			pt[4].y = sy - nWidth;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 
-			if ( bBold ) {
+			if (penWidth == 1 && bBold ) {
 				pt[0].x += 0;	//	右上から
 				pt[0].y += 1;
 				pt[1].x += 0;	//	先頭へ
