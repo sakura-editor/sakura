@@ -199,7 +199,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8 = false;
-	pType->m_encoding.m_eDefaultCodetype = CODE_SJIS;
+	pType->m_encoding.m_eDefaultCodetype = CODE_UTF8;
 	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
 	pType->m_encoding.m_bDefaultBom = false;
 
