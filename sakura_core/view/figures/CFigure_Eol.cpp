@@ -328,20 +328,19 @@ void _DrawEOL(
 	COLORREF		pColor		//!< 色
 )
 {
-	int penWidth = rcEol.Height() / 13;
+	int penWidth = std::max(1, rcEol.Height() / 13);
 	int sx, sy;
 	int width, height;
 	int left, top;
 	HPEN hPen = NULL;
 	HGDIOBJ hPrev = NULL;
-	gr.ClearPen();
+	left = rcEol.left;
+	top = rcEol.top;
+	width = rcEol.Width();
+	height = rcEol.Height();
 	if (penWidth == 1)
 	{
-		gr.PushPen(pColor, penWidth, PS_SOLID);
-		left = rcEol.left;
-		top = rcEol.top;
-		width = rcEol.Width() - 1;
-		height = rcEol.Height();
+		hPen = CreatePen(PS_SOLID, penWidth, pColor);
 	}
 	else
 	{
@@ -355,16 +354,15 @@ void _DrawEOL(
 		brush.lbStyle = BS_SOLID;
 		DWORD penStyle = PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_FLAT | PS_JOIN_MITER;
 		hPen = ExtCreatePen(penStyle, penWidth, &brush, 0, NULL);
-		hPrev = SelectObject((HDC)gr, hPen);
-		int xoffset = penWidth * 2 / 3;
-		width = rcEol.Width() - xoffset - penWidth/2;
-		height = rcEol.Height();
-		left = rcEol.left + xoffset;
-		top = rcEol.top;
 	}
+	if (hPen == NULL)
+		return;
+	hPrev = SelectObject((HDC)gr, hPen);
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
+		left += penWidth / 2;
+		width -= penWidth;
 		sx = left;						//X左端
 		sy = top + ( height / 2);	//Y中心
 		if (penWidth == 1)
@@ -372,17 +370,17 @@ void _DrawEOL(
 			DWORD pp[] = { 3, 3 };
 			POINT pt[6];
 			pt[0].x = sx + width;	//	上へ
-			pt[0].y = sy - height / 4;
+			pt[0].y = sy - width / 2;
 			pt[1].x = sx + width;	//	下へ
 			pt[1].y = sy;
 			pt[2].x = sx;	//	先頭へ
 			pt[2].y = sy;
-			pt[3].x = sx + height / 4;	//	先頭から下へ
-			pt[3].y = sy + height / 4;
+			pt[3].x = sx + width / 2;	//	先頭から下へ
+			pt[3].y = sy + width / 2;
 			pt[4].x = sx;	//	先頭へ戻り
 			pt[4].y = sy;
-			pt[5].x = sx + height / 4;	//	先頭から上へ
-			pt[5].y = sy - height / 4;
+			pt[5].x = sx + width / 2;	//	先頭から上へ
+			pt[5].y = sy - width / 2;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 
 			if ( bBold ) {
@@ -407,24 +405,26 @@ void _DrawEOL(
 			POINT pt[6];
 			POINT* p = pt;
 			p[0].x = sx + width;		//	上へ
-			p[0].y = sy - height / 4;
+			p[0].y = sy - width / 2;
 			p[1].x = sx + width;		//	下へ
 			p[1].y = sy;
 			p[2].x = sx + penWidth/3;				//	先頭へ
 			p[2].y = sy;
 			p += 3;
 
-			p[0].x = sx + height / 4;	//	先頭から上へ
-			p[0].y = sy - height / 4;
+			p[0].x = sx + width / 2;	//	先頭から上へ
+			p[0].y = sy - width / 2;
 			p[1].x = sx;	//	先頭から上へ
 			p[1].y = sy;
-			p[2].x = sx + height / 4;				//	先頭へ戻り
-			p[2].y = sy + height / 4;
+			p[2].x = sx + width / 2;				//	先頭へ戻り
+			p[2].y = sy + width / 2;
 
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 		}
 		break;
 	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
+		left += penWidth / 2;
+		width -= penWidth;
 		sx = left;
 		sy = top + ( height / 2 );
 		if (penWidth == 1)
@@ -435,12 +435,12 @@ void _DrawEOL(
 			pt[0].y = sy;
 			pt[1].x = sx;	//	先頭へ
 			pt[1].y = sy;
-			pt[2].x = sx + height / 4;	//	先頭から下へ
-			pt[2].y = sy + height / 4;
+			pt[2].x = sx + width / 2;	//	先頭から下へ
+			pt[2].y = sy + width / 2;
 			pt[3].x = sx;	//	先頭へ戻り
 			pt[3].y = sy;
-			pt[4].x = sx + height / 4;	//	先頭から上へ
-			pt[4].y = sy - height / 4;
+			pt[4].x = sx + width / 2;	//	先頭から上へ
+			pt[4].y = sy - width / 2;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 
 			if ( bBold ) {
@@ -468,12 +468,12 @@ void _DrawEOL(
 			p[1].y = sy;
 			p += 2;
 
-			p[0].x = sx + height / 4;	//	先頭から上へ
-			p[0].y = sy - height / 4;
+			p[0].x = sx + width / 2;	//	先頭から上へ
+			p[0].y = sy - width / 2;
 			p[1].x = sx;	//	先頭から上へ
 			p[1].y = sy;
-			p[2].x = sx + height / 4;				//	先頭へ戻り
-			p[2].y = sy + height / 4;
+			p[2].x = sx + width / 2;				//	先頭へ戻り
+			p[2].y = sy + width / 2;
 
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 		}
@@ -481,20 +481,23 @@ void _DrawEOL(
 	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
 	// 2013.04.22 Moca NEL,LS,PS対応。暫定でLFと同じにする
 		{
+			left += penWidth / 4;
+			width -= penWidth / 2;
 			sx = left + ( width / 2 );
 			sy = top + ( height * 3 / 4 );
 			DWORD pp[] = { 2, 3 };
 			POINT pt[5];
-			pt[0].x = sx;	//	上へ
-			pt[0].y = rcEol.top + height / 4 + 1;
-			pt[1].x = sx;	//	上から下へ
+			pt[0].x = sx;	// 上
+			pt[0].y = top + height / 4 + 1;
+			pt[1].x = sx;	// 下
 			pt[1].y = sy;
-			pt[2].x = sx - height / 4;	//	そのまま左上へ
-			pt[2].y = sy - height / 4;
-			pt[3].x = sx;	//	矢印の先端に戻る
+
+			pt[2].x = sx - width / 2;	// 左上
+			pt[2].y = sy - width / 2;
+			pt[3].x = sx;	// 下
 			pt[3].y = sy;
-			pt[4].x = sx + height / 4;	//	そして右上へ
-			pt[4].y = sy - height / 4;
+			pt[4].x = sx + width / 2;	// 右上
+			pt[4].y = sy - width / 2;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
 
 			if(penWidth == 1 && bBold ){
@@ -517,8 +520,8 @@ void _DrawEOL(
 	case EOL_PS:
 		{
 			// 左下矢印(折れ曲がりなし)
-			sx = rcEol.left;			//X左端
-			sy = rcEol.top + ( height * 3 / 4 );	//Y上から3/4
+			sx = left;			//X左端
+			sy = top + ( height * 3 / 4 );	//Y上から3/4
 			DWORD pp[] = { 3, 2 };
 			POINT pt[5];
 			int nWidth = t_min(rcEol.Width(), height / 2);
@@ -550,9 +553,6 @@ void _DrawEOL(
 		}
 		break;
 	}
-	if (hPen)
-	{
-		::SelectObject((HDC)gr, hPrev);
-		DeleteObject(hPen);
-	}
+	SelectObject((HDC)gr, hPrev);
+	DeleteObject(hPen);
 }
