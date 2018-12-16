@@ -138,7 +138,6 @@ public:
 
 
 private:
-
 	void ClearItems( void ){
 		ClearEnumKeys(m_vecExceptFileKeys);
 		ClearEnumKeys(m_vecSearchFileKeys);
