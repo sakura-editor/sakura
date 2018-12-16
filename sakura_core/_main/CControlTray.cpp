@@ -129,13 +129,6 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cCmdLine.AppendString(cmWork2.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GFOLDER=\""));
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
-
-	cCmdLine.AppendString(_T("\" -GEXCLUDEFILE=\""));
-	cCmdLine.AppendString(cmWorkExcludeFile.GetStringPtr());
-
-	cCmdLine.AppendString(_T("\" -GEXCLUDEFOLDER=\""));
-	cCmdLine.AppendString(cmWorkExcludeFolder.GetStringPtr());
-
 	cCmdLine.AppendString(_T("\" -GCODE="));
 	auto_sprintf( szTemp, _T("%d"), cDlgGrep.m_nGrepCharSet );
 	cCmdLine.AppendString(szTemp);
