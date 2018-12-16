@@ -470,7 +470,7 @@ LRESULT CEditView::DispatchEvent(
 	case WM_CREATE:
 		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
 		m_hwndSizeBox = ::CreateWindowEx(
-			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
+			0L,									/* no extended styles */
 			_T("SCROLLBAR"),					/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
@@ -480,23 +480,29 @@ LRESULT CEditView::DispatchEvent(
 			CW_USEDEFAULT,						/* default height */
 			hwnd, 								/* handle of main window */
 			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
+			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
 			(LPVOID) NULL						/* pointer not needed */
 		);
+		if (m_hwndSizeBox == NULL) {
+			return -1;
+		}
 		m_hwndSizeBoxPlaceholder = ::CreateWindowEx(
 			0L, 								/* no extended styles */
 			_T("STATIC"),						/* scroll bar control class */
 			NULL,								/* text for window title bar */
-			WS_CHILD/* | SBS_SIZEBOX | SBS_SIZEGRIP*/, /* scroll bar styles */
+			WS_CHILD,							/* innocent child */
 			0,									/* horizontal position */
 			0,									/* vertical position */
 			200,								/* width of the scroll bar */
 			CW_USEDEFAULT,						/* default height */
 			hwnd, 								/* handle of main window */
 			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
+			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
 			(LPVOID) NULL						/* pointer not needed */
 		);
+		if (m_hwndSizeBoxPlaceholder == NULL) {
+			return -1;
+		}
 		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
