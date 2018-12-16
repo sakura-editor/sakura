@@ -173,6 +173,8 @@ dlg/CDlgGrepReplace.o \
 dlg/CDlgInput1.o \
 dlg/CDlgJump.o \
 dlg/CDlgOpenFile.o \
+dlg/CDlgOpenFile_CommonFileDialog.o \
+dlg/CDlgOpenFile_CommonItemDialog.o \
 dlg/CDlgPluginOption.o \
 dlg/CDlgPrintSetting.o \
 dlg/CDlgProfileMgr.o \

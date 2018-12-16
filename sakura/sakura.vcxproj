@@ -723,6 +723,8 @@
     <ClCompile Include="..\sakura_core\dlg\CDlgInput1.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgJump.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile.cpp" />
+    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonFileDialog.cpp" />
+    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgPluginOption.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgPrintSetting.cpp" />
     <ClCompile Include="..\sakura_core\dlg\CDlgProfileMgr.cpp" />

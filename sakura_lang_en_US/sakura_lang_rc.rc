@@ -1248,9 +1248,10 @@ BEGIN
     EDITTEXT        IDC_EDIT_FILEOPENDIR, 161, 100, 111, 12, ES_AUTOHSCROLL
     PUSHBUTTON      "...", IDC_BUTTON_FILEOPENDIR, 273, 100, 9, 12
     GROUPBOX        "Initial Folder for File Dialog", IDC_STATIC, 156, 41, 130, 79, WS_GROUP
-    CONTROL         "Enable CR Code NEL, PS, LS(&O)", IDC_CHECK_ENABLEEXTEOL, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 161, 138, 122, 10
-    CONTROL         "Lock Move Box Selecting(&B)", IDC_CHECK_BOXSELECTLOCK, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 161, 151, 122, 10
-    GROUPBOX        "Etc", IDC_STATIC, 156, 125, 131, 42, WS_GROUP
+    CONTROL         "Vista style File Dialog(&I)", IDC_CHECK_VISTA_STYLE_FILEDIALOG, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 161, 128, 125, 10
+    CONTROL         "Enable CR Code NEL, PS, LS(&O)", IDC_CHECK_ENABLEEXTEOL, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 161, 158, 122, 10
+    CONTROL         "Lock Move Box Selecting(&B)", IDC_CHECK_BOXSELECTLOCK, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 161, 171, 122, 10
+    GROUPBOX        "Etc", IDC_STATIC, 156, 145, 131, 42, WS_GROUP
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 293, 240
@@ -4167,6 +4168,11 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_FILETREE_REPLACE_PATH_TO	"Please Input Replace 'To' Path"
 
 	STR_ERR_FILEPATH_TOO_LONG		"'%ts'\nCannot open the file.\nThe filepath is too long."
+	STR_FILEDIALOG_READONLY			"Open as &read-only"
+	STR_FILEDIALOG_CODE				"En&coding:"
+	STR_FILEDIALOG_EOL				"CR Code(&E):"
+	STR_FILEDIALOG_MRU				"Recent &File:"
+	STR_FILEDIALOG_OPENFOLDER		"Recent Fol&der:"
 
 END
 
