@@ -204,6 +204,7 @@ BOOL CEditView::Create(
 	m_nVScrollRate = 1;			/* 垂直スクロールバーの縮尺 */
 	m_hwndHScrollBar = NULL;
 	m_hwndSizeBox = NULL;
+	m_hwndSizeBoxPlaceholder = NULL;
 
 	m_ptSrchStartPos_PHY.Set(CLogicInt(-1), CLogicInt(-1));	//検索/置換開始時のカーソル位置  (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	m_bSearch = FALSE;					// 検索/置換開始位置を登録するか */											// 02/06/26 ai
@@ -468,7 +469,40 @@ LRESULT CEditView::DispatchEvent(
 
 	case WM_CREATE:
 		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
-
+		m_hwndSizeBox = ::CreateWindowEx(
+			0L,									/* no extended styles */
+			_T("SCROLLBAR"),					/* scroll bar control class */
+			NULL,								/* text for window title bar */
+			WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
+			0,									/* horizontal position */
+			0,									/* vertical position */
+			200,								/* width of the scroll bar */
+			CW_USEDEFAULT,						/* default height */
+			hwnd, 								/* handle of main window */
+			(HMENU) NULL,						/* no menu for a scroll bar */
+			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
+			(LPVOID) NULL						/* pointer not needed */
+		);
+		if (m_hwndSizeBox == NULL) {
+			return -1;
+		}
+		m_hwndSizeBoxPlaceholder = ::CreateWindowEx(
+			0L, 								/* no extended styles */
+			_T("STATIC"),						/* scroll bar control class */
+			NULL,								/* text for window title bar */
+			WS_CHILD,							/* innocent child */
+			0,									/* horizontal position */
+			0,									/* vertical position */
+			200,								/* width of the scroll bar */
+			CW_USEDEFAULT,						/* default height */
+			hwnd, 								/* handle of main window */
+			(HMENU) NULL,						/* no menu for a scroll bar */
+			((CREATESTRUCT*)lParam)->hInstance,	/* instance owning this window */
+			(LPVOID) NULL						/* pointer not needed */
+		);
+		if (m_hwndSizeBoxPlaceholder == NULL) {
+			return -1;
+		}
 		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -800,10 +834,10 @@ LRESULT CEditView::DispatchEvent(
 			::DestroyWindow( m_hwndHScrollBar );
 			m_hwndHScrollBar = NULL;
 		}
-		if( NULL != m_hwndSizeBox ){
-			::DestroyWindow( m_hwndSizeBox );
-			m_hwndSizeBox = NULL;
-		}
+		::DestroyWindow( m_hwndSizeBox );
+		m_hwndSizeBox = NULL;
+		::DestroyWindow( m_hwndSizeBoxPlaceholder );
+		m_hwndSizeBoxPlaceholder = NULL;
 		SAFE_DELETE(m_pcsbwVSplitBox);	/* 垂直分割ボックス */
 		SAFE_DELETE(m_pcsbwHSplitBox);	/* 水平分割ボックス */
 
@@ -969,9 +1003,8 @@ void CEditView::OnSize( int cx, int cy )
 	}
 
 	/* サイズボックス */
-	if( NULL != m_hwndSizeBox ){
-		::MoveWindow( m_hwndSizeBox, cx - nCxVScroll, cy - nCyHScroll, nCxHScroll, nCyVScroll, TRUE );
-	}
+	::MoveWindow( m_hwndSizeBox, cx - nCxVScroll, cy - nCyHScroll, nCxHScroll, nCyVScroll, TRUE );
+	::MoveWindow( m_hwndSizeBoxPlaceholder, cx - nCxVScroll, cy - nCyHScroll, nCxHScroll, nCyVScroll, TRUE );
 	int nAreaWidthOld  = GetTextArea().GetAreaWidth();
 	int nAreaHeightOld = GetTextArea().GetAreaHeight();
 
@@ -1825,45 +1858,12 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 	}
 
 	if( bSizeBox ){
-		if( NULL != m_hwndSizeBox ){
-			::DestroyWindow( m_hwndSizeBox );
-			m_hwndSizeBox = NULL;
-		}
-		m_hwndSizeBox = ::CreateWindowEx(
-			0L,													/* no extended styles */
-			_T("SCROLLBAR"),										/* scroll bar control class */
-			NULL,												/* text for window title bar */
-			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
-			0,													/* horizontal position */
-			0,													/* vertical position */
-			200,												/* width of the scroll bar */
-			CW_USEDEFAULT,										/* default height */
-			GetHwnd(),												/* handle of main window */
-			(HMENU) NULL,										/* no menu for a scroll bar */
-			G_AppInstance(),										/* instance owning this window */
-			(LPVOID) NULL										/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
+		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 	}else{
-		if( NULL != m_hwndSizeBox ){
-			::DestroyWindow( m_hwndSizeBox );
-			m_hwndSizeBox = NULL;
-		}
-		m_hwndSizeBox = ::CreateWindowEx(
-			0L,														/* no extended styles */
-			_T("STATIC"),											/* scroll bar control class */
-			NULL,													/* text for window title bar */
-			WS_VISIBLE | WS_CHILD /*| SBS_SIZEBOX | SBS_SIZEGRIP*/, /* scroll bar styles */
-			0,														/* horizontal position */
-			0,														/* vertical position */
-			200,													/* width of the scroll bar */
-			CW_USEDEFAULT,											/* default height */
-			GetHwnd(),													/* handle of main window */
-			(HMENU) NULL,											/* no menu for a scroll bar */
-			G_AppInstance(),											/* instance owning this window */
-			(LPVOID) NULL											/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
-	::ShowWindow( m_hwndSizeBox, SW_SHOW );
 
 	::GetClientRect( GetHwnd(), &rc );
 	OnSize( rc.right, rc.bottom );

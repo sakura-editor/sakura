@@ -93,35 +93,11 @@ BOOL CEditView::CreateScrollBar()
 
 	/* サイズボックス */
 	if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-		m_hwndSizeBox = ::CreateWindowEx(
-			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
-			_T("SCROLLBAR"),					/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			GetHwnd(), 							/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
+		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 	}else{
-		m_hwndSizeBox = ::CreateWindowEx(
-			0L, 								/* no extended styles */
-			_T("STATIC"),						/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_VISIBLE | WS_CHILD/* | SBS_SIZEBOX | SBS_SIZEGRIP*/, /* scroll bar styles */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			GetHwnd(), 							/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
 	return TRUE;
 }
@@ -145,11 +121,8 @@ void CEditView::DestroyScrollBar()
 		m_hwndHScrollBar = NULL;
 	}
 
-	if( m_hwndSizeBox )
-	{
-		::DestroyWindow( m_hwndSizeBox );
-		m_hwndSizeBox = NULL;
-	}
+	::ShowWindow( m_hwndSizeBox, SW_HIDE );
+	::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
 }
 
 /*! 垂直スクロールバーメッセージ処理
