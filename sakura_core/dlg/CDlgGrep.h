@@ -22,7 +22,7 @@ class CDlgGrep;
 #include "recent/CRecent.h"
 #include "util/window.h"
 
-#define DEFAULT_EXCLUDE_FILE_PATTERN    _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res")
+#define DEFAULT_EXCLUDE_FILE_PATTERN    _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb")
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  _T(".git;.svn;.vs")
 
 //! GREPダイアログボックス
