@@ -161,8 +161,10 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 )
 if "%APPVEYOR_REPO_TAG_NAME%" == "" (
 	echo // APPVEYOR_REPO_TAG_NAME is not defined
+	echo #define APPVEYOR_DEV_VERSION
 ) else (
 	echo #define APPVEYOR_REPO_TAG_NAME "%APPVEYOR_REPO_TAG_NAME%"
+	echo // APPVEYOR_DEV_VERSION is not defined
 )
 
 if "%APPVEYOR_ACCOUNT_NAME%" == "" (

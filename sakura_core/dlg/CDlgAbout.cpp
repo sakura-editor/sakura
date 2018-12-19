@@ -184,6 +184,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
 	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
+#ifdef APPVEYOR_DEV_VERSION
+	cmemMsg.AppendString( _T(APPVEYOR_DEV_VERSION_STR_WITH_SPACE) );
+#endif
 #ifdef ALPHA_VERSION
 	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
 #endif
