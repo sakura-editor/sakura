@@ -44,6 +44,10 @@ const DWORD p_helpids[] = {	//11800
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
+
+/*!
+ * @brief コンストラクタ
+ */
 CDlgFind::CDlgFind()
 {
 	m_sSearchOption.Reset();
@@ -89,7 +93,11 @@ void CDlgFind::ChangeView( LPARAM pcEditView )
 }
 
 
-
+/*!
+ * @brief ダイアログ初期表示メッセージハンドラ
+ *
+ * @return TRUE or FALSE(WM_INITDIALOGと同じ)
+ */
 BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
 	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
@@ -105,7 +113,11 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 }
 
 
-
+/*!
+ * @brief ウインドウ破棄メッセージハンドラ
+ *
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
 BOOL CDlgFind::OnDestroy()
 {
 	m_cFontText.ReleaseOnDestroy();
@@ -114,7 +126,10 @@ BOOL CDlgFind::OnDestroy()
 
 
 
-/* ダイアログデータの設定 */
+/*!
+ * @brief ダイアログデータの設定
+ * （CDlgFindメンバ変数 ⇒ ダイアログの同期）
+ */
 void CDlgFind::SetData( void )
 {
 //	MYTRACE( _T("CDlgFind::SetData()") );
@@ -200,7 +215,14 @@ void CDlgFind::SetCombosList( void )
 }
 
 
-/* ダイアログデータの取得 */
+/*!
+ * @brief ダイアログデータの取得
+ * （ダイアログ ⇒ CDlgFindメンバ変数の同期）
+ *
+ * @retval 1 取込成功 (CDlgFindの実装では検索可能)
+ * @retval 0 変更なし (CDlgFindの実装では検索不可)
+ * @retval -1 取込失敗
+ */
 int CDlgFind::GetData( void )
 {
 //	MYTRACE( _T("CDlgFind::GetData()") );
@@ -271,6 +293,13 @@ int CDlgFind::GetData( void )
 
 
 
+/*!
+ * @brief ボタン押下メッセージハンドラ
+ * （WM_COMMANDのうち、ボタン押下分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 押下されたボタンのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
 BOOL CDlgFind::OnBnClicked( int wID )
 {
 	int			nRet;
@@ -411,11 +440,13 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnActivate(wParam, lParam);
 }
 
-//@@@ 2002.01.18 add start
-LPVOID CDlgFind::GetHelpIdTable(void)
+/*!
+ * @brief コントロールのヘルプIDを返却する
+ * @date 2002.01.18 MIK add
+ */
+LPVOID CDlgFind::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-//@@@ 2002.01.18 add end
 
 
