@@ -32,7 +32,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-//	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モードレスダイアログの表示 */
 
 	void ChangeView(LPARAM pcEditView);

@@ -280,7 +280,7 @@ int CDlgFind::GetData( void )
 			pcEditView->m_bCurSearchUpdate = true;
 		}
 		pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-		if( !m_bModal ){
+		{
 			/* ダイアログデータの設定 */
 			//SetData();
 			SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
@@ -347,9 +347,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		/* ダイアログデータの取得 */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if( m_bModal ){		/* モーダルダイアログか */
-				CloseDialog( 1 );
-			}else{
+			{
 				/* 前を検索 */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
@@ -379,10 +377,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		/* ダイアログデータの取得 */
 		nRet = GetData();
 		if( 0 < nRet ){
-			if( m_bModal ){		/* モーダルダイアログか */
-				CloseDialog( 2 );
-			}
-			else{
+			{
 				/* 次を検索 */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
@@ -408,9 +403,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
-			if( m_bModal ){		/* モーダルダイアログか */
-				CloseDialog( 2 );
-			}else{
+			{
 				pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
