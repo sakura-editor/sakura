@@ -228,9 +228,9 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Grep置換"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "置換前(&N)", IDC_STATIC, 5, 6, 26, 8
+    LTEXT           "置換前(&N)", IDC_STATIC, 5, 6, 52, 8
     COMBOBOX        IDC_COMBO_TEXT, 64, 6, 273, 120, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "置換後(&Z)", IDC_STATIC, 5, 21, 26, 8
+    LTEXT           "置換後(&Z)", IDC_STATIC, 5, 21, 52, 8
     COMBOBOX        IDC_COMBO_TEXT2, 64, 21, 273, 120, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
 
     LTEXT           "ファイル(&T)", IDC_STATIC, 5, 36, 52, 8, NOT WS_GROUP
