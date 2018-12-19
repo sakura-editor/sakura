@@ -259,7 +259,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 		m_cProfile.IOProfileData( szSecInfo, szKeyVersion, MakeStringBufferW( szKeyVersion ) );
 		int nRet = ConfirmMessage( hwndParent,
 			LS(STR_IMPEXP_VER), 
-			_APP_NAME_(LTEXT), szKeyVersion, nStructureVersion );
+			GSTR_APPNAME, szKeyVersion, nStructureVersion );
 		if ( IDYES != nRet ) {
 			return false;
 		}

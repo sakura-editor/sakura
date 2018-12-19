@@ -31,32 +31,13 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// アプリ名。2007.09.21 kobake 整理
-#ifdef _UNICODE
-	#define _APP_NAME_(TYPE) TYPE("sakura")
-#else
-	#define _APP_NAME_(TYPE) TYPE("sakura")
-#endif
+extern const TCHAR g_szGStrAppName[];
+extern const CHAR  g_szGStrAppNameA[];
+extern const WCHAR g_szGStrAppNameW[];
 
-#ifdef _DEBUG
-	#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")
-#else
-	#define _APP_NAME_2_(TYPE) TYPE("")
-#endif
-
-#ifdef ALPHA_VERSION
-	#define _APP_NAME_3_(TYPE) TYPE("(Alpha Version)")
-#else
-	#define _APP_NAME_3_(TYPE) TYPE("")
-#endif
-
-//例:UNICODEデバッグ→_T("sakura(デバッグ版)")
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_3_(TYPE)
-
-#define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
-#define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))
-#define GSTR_APPNAME_W  (_GSTR_APPNAME_(LTEXT))
-
+#define GSTR_APPNAME    g_szGStrAppName		//!< アプリ名の文字列 (TCHAR版)
+#define GSTR_APPNAME_A  g_szGStrAppNameA	//!< アプリ名の文字列 (CHAR版)
+#define GSTR_APPNAME_W  g_szGStrAppNameW	//!< アプリ名の文字列 (UNICODE版)
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキストエリア                         //
