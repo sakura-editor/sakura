@@ -80,6 +80,12 @@ void CControlTray::DoGrep()
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
+	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+		_tcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+	}
+	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+		_tcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+	}
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
@@ -99,12 +105,20 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	CNativeW		cmWork1;
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
+	CNativeT		cmWorkExcludeFile;
+	CNativeT		cmWorkExcludeFolder;
 	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( cDlgGrep.m_szFile );
 	cmWork3.SetString( cDlgGrep.m_szFolder );
+
+	cmWorkExcludeFile.SetString(cDlgGrep.m_szExcludeFile);
+	cmWorkExcludeFolder.SetString(cDlgGrep.m_szExcludeFolder);
+
 	cmWork1.Replace( L"\"", L"\"\"" );
 	cmWork2.Replace( _T("\""), _T("\"\"") );
 	cmWork3.Replace( _T("\""), _T("\"\"") );
+	cmWorkExcludeFile.Replace(  _T("\""), _T("\"\""));
+	cmWorkExcludeFolder.Replace(_T("\""), _T("\"\""));
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeT cCmdLine;

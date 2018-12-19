@@ -295,6 +295,8 @@ recent/CRecentCmd.o \
 recent/CRecentCurDir.o \
 recent/CRecentEditNode.o \
 recent/CRecentExceptMru.o \
+recent/CRecentExcludeFile.o \
+recent/CRecentExcludeFolder.o \
 recent/CRecentFile.o \
 recent/CRecentFolder.o \
 recent/CRecentGrepFile.o \

@@ -329,6 +329,24 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("GREPFOLDER[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFolders[i] );
 	}
+
+	/* 除外ファイルパターン */
+	cProfile.IOProfileData(pszSecName, LTEXT("_GREPEXCLUDEFILE_Counts"), pShare->m_sSearchKeywords.m_aExcludeFiles._GetSizeRef());
+	pShare->m_sSearchKeywords.m_aExcludeFiles.SetSizeLimit();
+	nSize = pShare->m_sSearchKeywords.m_aExcludeFiles.size();
+	for (i = 0; i < nSize; ++i) {
+		auto_sprintf(szKeyName, LTEXT("GREPEXCLUDEFILE[%02d]"), i);
+		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFiles[i]);
+	}
+
+	/* 除外フォルダパターン */
+	cProfile.IOProfileData(pszSecName, LTEXT("_GREPEXCLUDEFOLDER_Counts"), pShare->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef());
+	pShare->m_sSearchKeywords.m_aExcludeFolders.SetSizeLimit();
+	nSize = pShare->m_sSearchKeywords.m_aExcludeFolders.size();
+	for (i = 0; i < nSize; ++i) {
+		auto_sprintf(szKeyName, LTEXT("GREPEXCLUDEFOLDER[%02d]"), i);
+		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFolders[i]);
+	}
 }
 
 /*!

@@ -22,6 +22,9 @@ class CDlgGrep;
 #include "recent/CRecent.h"
 #include "util/window.h"
 
+#define DEFAULT_EXCLUDE_FILE_PATTERN    _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb")
+#define DEFAULT_EXCLUDE_FOLDER_PATTERN  _T(".git;.svn;.vs")
+
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog
 {
@@ -55,14 +58,25 @@ public:
 	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePathLong	m_szFile;				//!< 検索ファイル
 	SFilePathLong	m_szFolder;				//!< 検索フォルダ
+	SFilePathLong	m_szExcludeFile;		//!< 除外ファイル
+	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダ
 	SFilePath	m_szCurrentFilePath;
 protected:
 	SComboBoxItemDeleter	m_comboDelText;
 	CRecentSearch			m_cRecentSearch;
+
 	SComboBoxItemDeleter	m_comboDelFile;
 	CRecentGrepFile			m_cRecentGrepFile;
+
 	SComboBoxItemDeleter	m_comboDelFolder;
 	CRecentGrepFolder		m_cRecentGrepFolder;
+
+	SComboBoxItemDeleter	m_comboDelExcludeFile;
+	CRecentExcludeFile		m_cRecentExcludeFile;
+
+	SComboBoxItemDeleter	m_comboDelExcludeFolder;
+	CRecentExcludeFolder	m_cRecentExcludeFolder;
+
 	CFontAutoDeleter		m_cFontText;
 
 	/*

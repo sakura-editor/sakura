@@ -472,6 +472,8 @@
     <ClInclude Include="..\sakura_core\recent\CRecentCurDir.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentEditNode.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentExceptMru.h" />
+    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFile.h" />
+    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFolder.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentFile.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentFolder.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentGrepFile.h" />
@@ -843,6 +845,8 @@
     <ClCompile Include="..\sakura_core\recent\CRecentCurDir.cpp" />
     <ClCompile Include="..\sakura_core\recent\CRecentEditNode.cpp" />
     <ClCompile Include="..\sakura_core\recent\CRecentExceptMru.cpp" />
+    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFile.cpp" />
+    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFolder.cpp" />
     <ClCompile Include="..\sakura_core\recent\CRecentFile.cpp" />
     <ClCompile Include="..\sakura_core\recent\CRecentFolder.cpp" />
     <ClCompile Include="..\sakura_core\recent\CRecentGrepFile.cpp" />
