@@ -467,26 +467,29 @@ LPVOID CDlgFind::GetHelpIdTable( void )
 }
 
 
-BOOL CDlgFind::OnEnChange( HWND hwndCtl, int wID )
-{
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
-	return FALSE;
-}
-
-BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
-{
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
-	return FALSE;
-}
-
+/*!
+ * @brief コンボ編集メッセージハンドラ
+ * （WM_COMMANDのうち、コンボ編集分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 編集されたコンボのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
 BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
 {
 	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 	return FALSE;
 }
 
-BOOL CDlgFind::OnCbnSelEndOk( HWND hwndCtl, int wID )
+/*!
+ * @brief コンボ選択メッセージハンドラ
+ * （WM_COMMANDのうち、コンボ選択分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 編集されたコンボのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
+BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 	return FALSE;
 }
+

@@ -68,10 +68,8 @@ protected:
 	void DoSearch( ESearchDirection direction ) noexcept;
 	void DoSetMark( void ) noexcept;
 
-	BOOL OnEnChange( HWND hwndCtl, int wID ) override;
-	BOOL OnCbnSelChange( HWND hwndCtl, int wID ) override;
 	BOOL OnCbnEditChange( HWND hwndCtl, int wID ) override;
-	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID ) override;
+	BOOL OnCbnSelChange( HWND hwndCtl, int wID ) override;
 
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
