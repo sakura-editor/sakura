@@ -12,8 +12,8 @@
 //       c  => 2
 //       d  => 0
 #define VER_A   2 // a of ver a.b.c.d
-#define VER_B   3 // b of ver a.b.c.d
-#define VER_C   2 // c of ver a.b.c.d
+#define VER_B   4 // b of ver a.b.c.d
+#define VER_C   0 // c of ver a.b.c.d
 #ifdef APPVEYOR_BUILD_NUMBER_INT
 #define VER_D   APPVEYOR_BUILD_NUMBER_INT // d of ver a.b.c.d
 #else
