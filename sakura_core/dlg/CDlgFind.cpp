@@ -467,3 +467,26 @@ LPVOID CDlgFind::GetHelpIdTable( void )
 }
 
 
+BOOL CDlgFind::OnEnChange( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	return FALSE;
+}
+
+BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	return FALSE;
+}
+
+BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	return FALSE;
+}
+
+BOOL CDlgFind::OnCbnSelEndOk( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	return FALSE;
+}
