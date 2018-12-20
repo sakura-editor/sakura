@@ -25,25 +25,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-//検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
-const DWORD p_helpids[] = {	//11800
-	IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//次を検索
-	IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//前を検索
-	IDCANCEL,						HIDCANCEL_FIND,						//キャンセル
-	IDC_BUTTON_HELP,				HIDC_FIND_BUTTON_HELP,				//ヘルプ
-	IDC_CHK_WORD,					HIDC_FIND_CHK_WORD,					//単語単位
-	IDC_CHK_LOHICASE,				HIDC_FIND_CHK_LOHICASE,				//大文字小文字
-	IDC_CHK_REGULAREXP,				HIDC_FIND_CHK_REGULAREXP,			//正規表現
-	IDC_CHECK_NOTIFYNOTFOUND,		HIDC_FIND_CHECK_NOTIFYNOTFOUND,		//見つからないときに通知
-	IDC_CHECK_bAutoCloseDlgFind,	HIDC_FIND_CHECK_bAutoCloseDlgFind,	//自動的に閉じる
-	IDC_COMBO_TEXT,					HIDC_FIND_COMBO_TEXT,				//検索文字列
-	IDC_STATIC_JRE32VER,			HIDC_FIND_STATIC_JRE32VER,			//正規表現バージョン
-	IDC_BUTTON_SETMARK,				HIDC_FIND_BUTTON_SETMARK,			//2002.01.16 hor 検索該当行をマーク
-	IDC_CHECK_SEARCHALL,			HIDC_FIND_CHECK_SEARCHALL,			//2002.01.26 hor 先頭（末尾）から再検索
-//	IDC_STATIC,						-1,
-	0, 0
-};	//@@@ 2002.01.07 add end MIK
-
 
 /*!
  * @brief コンストラクタ
@@ -439,7 +420,24 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
  */
 LPVOID CDlgFind::GetHelpIdTable( void )
 {
-	return (LPVOID)p_helpids;
+	//検索 CDlgFind
+	static constexpr DWORD helpIdTable[] = {	//11800
+		IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//次を検索
+		IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//前を検索
+		IDCANCEL,						HIDCANCEL_FIND,						//キャンセル
+		IDC_BUTTON_HELP,				HIDC_FIND_BUTTON_HELP,				//ヘルプ
+		IDC_CHK_WORD,					HIDC_FIND_CHK_WORD,					//単語単位
+		IDC_CHK_LOHICASE,				HIDC_FIND_CHK_LOHICASE,				//大文字小文字
+		IDC_CHK_REGULAREXP,				HIDC_FIND_CHK_REGULAREXP,			//正規表現
+		IDC_CHECK_NOTIFYNOTFOUND,		HIDC_FIND_CHECK_NOTIFYNOTFOUND,		//見つからないときに通知
+		IDC_CHECK_bAutoCloseDlgFind,	HIDC_FIND_CHECK_bAutoCloseDlgFind,	//自動的に閉じる
+		IDC_COMBO_TEXT,					HIDC_FIND_COMBO_TEXT,				//検索文字列
+		IDC_STATIC_JRE32VER,			HIDC_FIND_STATIC_JRE32VER,			//正規表現バージョン
+		IDC_BUTTON_SETMARK,				HIDC_FIND_BUTTON_SETMARK,			//2002.01.16 hor 検索該当行をマーク
+		IDC_CHECK_SEARCHALL,			HIDC_FIND_CHECK_SEARCHALL,			//2002.01.26 hor 先頭（末尾）から再検索
+		0, 0
+	};
+	return (LPVOID)helpIdTable;
 }
 
 
