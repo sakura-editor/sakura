@@ -29,6 +29,7 @@ public:
 	||  Constructors
 	*/
 	CDlgFind() noexcept;
+	virtual ~CDlgFind() noexcept = default;
 
 	/*
 	||  Attributes & Operations
