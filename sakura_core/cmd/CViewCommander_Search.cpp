@@ -52,19 +52,8 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 	CNativeW		cmemCurText;
 	m_pCommanderView->GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
-	/* 検索文字列を初期化 */
-	if( 0 < cmemCurText.GetStringLength() ){
-		GetEditWindow()->m_cDlgFind.m_strText = cmemCurText.GetStringPtr();
-	}
 	/* 検索ダイアログの表示 */
-	if( NULL == GetEditWindow()->m_cDlgFind.GetHwnd() ){
-		GetEditWindow()->m_cDlgFind.DoModeless( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)&GetEditWindow()->GetActiveView() );
-	}
-	else{
-		/* アクティブにする */
-		ActivateFrameWindow( GetEditWindow()->m_cDlgFind.GetHwnd() );
-		::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringT() );
-	}
+	GetEditWindow()->m_cDlgFind.DoModeless( m_pCommanderView, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength() );
 	return;
 }
 

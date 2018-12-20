@@ -63,12 +63,38 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
 
-/* モードレスダイアログの表示 */
-HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
+/*!
+ * @brief モードレスダイアログの表示
+ *
+ * @param [in] pcEditView 検索対象となるビュー
+ * @param [in] pszFind 検索文字列
+ * @param [in] cchFind 検索文字列の長さ
+ * @returns 検索ダイアログのウインドウハンドル
+ */
+HWND CDlgFind::DoModeless( CEditView* pcEditView, const WCHAR* pszFind, size_t cchFind )
 {
+	// 前提条件
+	assert( pcEditView );
+	assert( pszFind );
+
+	/* 検索文字列を初期化 */
+	if( 0 < cchFind ) {
+		m_strText.assign( pszFind, cchFind );
+	}
+
+	/* ダイアログ表示済みならアクティブにする */
+	if ( GetHwnd() != NULL ) {
+		ActivateFrameWindow( GetHwnd() );
+		SetData();
+		return GetHwnd();
+	}
+
 	// 基底クラスのメソッドを呼び出してダイアログを表示する
-	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
+	auto hwndParent = pcEditView->GetHwnd();
+	auto hInstance = (HINSTANCE)::GetWindowLongPtr( hwndParent, GWLP_HINSTANCE );
+	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, (LPARAM)pcEditView, SW_SHOW );
 }
+
 
 /* モードレス時：検索対象となるビューの変更 */
 void CDlgFind::ChangeView( LPARAM pcEditView )

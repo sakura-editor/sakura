@@ -18,6 +18,9 @@
 #ifndef SAKURA_CDLGFIND_H_
 #define SAKURA_CDLGFIND_H_
 
+// 依存クラスの前方定義
+class CEditView;
+
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -34,7 +37,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モードレスダイアログの表示 */
+	HWND DoModeless( CEditView* pcEditView, const WCHAR* pszFind, size_t cchFind );	/* モードレスダイアログの表示 */
 
 	void ChangeView(LPARAM pcEditView);
 
