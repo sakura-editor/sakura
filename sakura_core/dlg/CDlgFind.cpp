@@ -34,6 +34,8 @@ CDlgFind::CDlgFind() noexcept
 	, m_strText( L"", 0 )		// 検索文字列
 	, m_sSearchOption()			// 検索オプション
 	, m_bNOTIFYNOTFOUND( 0 )	// 検索／置換  見つからないときメッセージを表示
+	, m_bAutoCloseDlgFind( 0 )	// 検索ダイアログを自動的に閉じる
+	, m_bSearchAll( 0 )			// 先頭（末尾）から再検索
 	, m_ptEscCaretPos_PHY()		// 検索開始時のカーソル位置退避エリア
 	, m_cRecentSearch()			// 検索語の履歴にアクセスするためのもの
 	, m_comboDel()				// コンボボックスに追加したアイテムを自動削除させるもの
@@ -117,8 +119,10 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	BOOL bRet = CDialog::OnInitDialog( hwnd, wParam, lParam );
 
 	// 共有メモリから設定をコピーする
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;			// 検索オプション
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;		// 検索／置換  見つからないときメッセージを表示
+	m_bAutoCloseDlgFind = m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind;	// 検索ダイアログを自動的に閉じる
+	m_bSearchAll = m_pShareData->m_Common.m_sSearch.m_bSearchAll;				// 先頭（末尾）から再検索
 
 	// 検索開始時のカーソル位置を退避する
 	m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
@@ -159,54 +163,47 @@ BOOL CDlgFind::OnDestroy()
 /*!
  * @brief ダイアログデータの設定
  * （CDlgFindメンバ変数 ⇒ ダイアログの同期）
+ *
+ * @date 2001/06/23 Norio Nakatani　単語単位で検索
+ * @date Jun. 29, 2001 genta 正規表現ライブラリの差し替えに伴う処理の見直し
+ * @date 2002.01.26 hor 先頭（末尾）から再検索
+ * @date 2010/05/28 Uchi 検索文字列リストの設定(関数化)
  */
 void CDlgFind::SetData( void )
 {
 //	MYTRACE( _T("CDlgFind::SetData()") );
 
-	/*****************************
-	*         データ設定         *
-	*****************************/
 	/* 検索文字列 */
-	// 検索文字列リストの設定(関数化)	2010/5/28 Uchi
-	SetCombosList();
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
-	// 2001/06/23 Norio Nakatani
 	/* 単語単位で検索 */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
 
-	// From Here Jun. 29, 2001 genta
-	// 正規表現ライブラリの差し替えに伴う処理の見直し
-	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
-	// 無関係にCheckRegexpVersionを通過するようにした。
-	if( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false )
-		&& m_sSearchOption.bRegularExp){
-		/* 英大文字と英小文字を区別する */
-		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 1 );
-//正規表現がONでも、大文字小文字を区別する／しないを選択できるように。
-//		::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-//		::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
-
-		// 2001/06/23 N.Nakatani
-		/* 単語単位で探す */
-		::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
-	}
-	else {
-		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
-	}
-	// To Here Jun. 29, 2001 genta
-
 	/* 検索ダイアログを自動的に閉じる */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoCloseDlgFind );
 
-	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
+	/* 先頭（末尾）から再検索 */
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_bSearchAll );
+
+	/* チェックボックス活性制御 */
+	if ( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
+		/* 英大文字と英小文字を区別する */
+		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, BST_CHECKED );
+
+		if ( m_sSearchOption.bRegularExp ) {
+			/* 単語単位で探す */
+			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
+		}
+	} else {
+		/* 正規表現 */
+		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, BST_UNCHECKED );
+	}
 
 	return;
 }
