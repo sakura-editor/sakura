@@ -28,7 +28,8 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDlgFind();
+	CDlgFind() noexcept;
+
 	/*
 	||  Attributes & Operations
 	*/
@@ -36,11 +37,12 @@ public:
 
 	void ChangeView(LPARAM pcEditView);
 
-	SSearchOption m_sSearchOption;	// 検索オプション
-	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	std::wstring	m_strText;	// 検索文字列
+protected:
+	std::wstring			m_strText;				// 検索文字列
+	SSearchOption			m_sSearchOption;		// 検索オプション
+	int						m_bNOTIFYNOTFOUND;		// 検索／置換  見つからないときメッセージを表示
 
-	CLogicPoint	m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
+	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 
 	CRecentSearch			m_cRecentSearch;
 	SComboBoxItemDeleter	m_comboDel;

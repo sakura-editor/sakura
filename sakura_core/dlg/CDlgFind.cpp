@@ -29,10 +29,17 @@
 /*!
  * @brief コンストラクタ
  */
-CDlgFind::CDlgFind()
+CDlgFind::CDlgFind() noexcept
+	: CDialog( false, true )	// 基底クラスは「リサイズ不可、ShareDataチェックあり」。
+	, m_strText( L"", 0 )		// 検索文字列
+	, m_sSearchOption()			// 検索オプション
+	, m_bNOTIFYNOTFOUND( 0 )	// 検索／置換  見つからないときメッセージを表示
+	, m_ptEscCaretPos_PHY()		// 検索開始時のカーソル位置退避エリア
+	, m_cRecentSearch()			// 検索語の履歴にアクセスするためのもの
+	, m_comboDel()				// コンボボックスに追加したアイテムを自動削除させるもの
+	, m_cFontText()				// フォントを自動削除させるもの
 {
-	m_sSearchOption.Reset();
-	return;
+	//ダイアログ表示時に初期化するので、ここでは何もしない。
 }
 
 
