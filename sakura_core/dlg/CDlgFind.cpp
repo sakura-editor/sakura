@@ -66,10 +66,6 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	// 共有メモリから設定をコピーする
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-
 	// 呼出元ビューを取得する
 	CEditView* pcEditView = (CEditView*)lParam;
 
@@ -98,7 +94,14 @@ void CDlgFind::ChangeView( LPARAM pcEditView )
  */
 BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
-	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
+	// 基底クラス呼び出し(WM_INITDIALOGの戻り値は「成功/失敗」ではない)
+	BOOL bRet = CDialog::OnInitDialog( hwnd, wParam, lParam );
+
+	// 共有メモリから設定をコピーする
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+
+	// ユーティリティ初期化
 	m_comboDel = SComboBoxItemDeleter();
 	m_comboDel.pRecent = &m_cRecentSearch;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDel);
