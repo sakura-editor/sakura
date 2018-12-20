@@ -66,10 +66,20 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
+	// 共有メモリから設定をコピーする
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	m_ptEscCaretPos_PHY = ((CEditView*)lParam)->GetCaret().GetCaretLogicPos();	// 検索開始時のカーソル位置退避
-	((CEditView*)lParam)->m_bSearch = TRUE;							// 検索開始位置の登録有無		02/07/28 ai
+
+	// 呼出元ビューを取得する
+	CEditView* pcEditView = (CEditView*)lParam;
+
+	// 検索開始時のカーソル位置を退避する
+	m_ptEscCaretPos_PHY = pcEditView->GetCaret().GetCaretLogicPos();
+
+	// 検索開始位置の登録有無を更新
+	pcEditView->m_bSearch = TRUE;
+
+	// 基底クラスのメソッドを呼び出してダイアログを表示する
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
 }
 
