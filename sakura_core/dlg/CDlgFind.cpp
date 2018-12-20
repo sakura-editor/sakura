@@ -135,6 +135,10 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
 	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+
+	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
+
 	return bRet;
 }
 
@@ -159,19 +163,6 @@ BOOL CDlgFind::OnDestroy()
 void CDlgFind::SetData( void )
 {
 //	MYTRACE( _T("CDlgFind::SetData()") );
-
-	/*****************************
-	*           初期化           *
-	*****************************/
-	// Here Jun. 26, 2001 genta
-	// 正規表現ライブラリの差し替えに伴う処理の見直しによりjre.dll判定を削除
-
-	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	// 2011.12.18 長さ制限撤廃
-	// Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
-
 
 	/*****************************
 	*         データ設定         *
