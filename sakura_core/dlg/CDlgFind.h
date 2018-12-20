@@ -51,6 +51,7 @@ protected:
 	CRecentSearch			m_cRecentSearch;
 	SComboBoxItemDeleter	m_comboDel;
 	CFontAutoDeleter		m_cFontText;
+	CEditView*&				m_pcEditView;
 
 protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動

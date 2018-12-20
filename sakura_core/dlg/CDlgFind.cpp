@@ -38,6 +38,7 @@ CDlgFind::CDlgFind() noexcept
 	, m_cRecentSearch()			// 検索語の履歴にアクセスするためのもの
 	, m_comboDel()				// コンボボックスに追加したアイテムを自動削除させるもの
 	, m_cFontText()				// フォントを自動削除させるもの
+	, m_pcEditView( (CEditView*&) CDialog::m_lParam )
 {
 	//ダイアログ表示時に初期化するので、ここでは何もしない。
 }
@@ -99,7 +100,8 @@ HWND CDlgFind::DoModeless( CEditView* pcEditView, const WCHAR* pszFind, size_t c
 /* モードレス時：検索対象となるビューの変更 */
 void CDlgFind::ChangeView( CEditView* pcEditView )
 {
-	m_lParam = (LPARAM)pcEditView;
+	assert( pcEditView );
+	m_pcEditView = pcEditView;
 	return;
 }
 
@@ -118,14 +120,11 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
-	// 呼出元ビューを取得する
-	CEditView* pcEditView = (CEditView*)m_lParam;
-
 	// 検索開始時のカーソル位置を退避する
-	m_ptEscCaretPos_PHY = pcEditView->GetCaret().GetCaretLogicPos();
+	m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
 
 	// 検索開始位置の登録有無を更新
-	pcEditView->m_bSearch = TRUE;
+	m_pcEditView->m_bSearch = TRUE;
 
 	// ユーティリティ初期化
 	m_comboDel = SComboBoxItemDeleter();
@@ -300,13 +299,13 @@ int CDlgFind::GetData( void )
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 		}
 		CEditView*	pcEditView = (CEditView*)m_lParam;
-		if( pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption ){
+		if( m_pcEditView->m_strCurSearchKey == m_strText && m_pcEditView->m_sCurSearchOption == m_sSearchOption ){
 		}else{
-			pcEditView->m_strCurSearchKey = m_strText;
-			pcEditView->m_sCurSearchOption = m_sSearchOption;
-			pcEditView->m_bCurSearchUpdate = true;
+			m_pcEditView->m_strCurSearchKey = m_strText;
+			m_pcEditView->m_sCurSearchOption = m_sSearchOption;
+			m_pcEditView->m_bCurSearchUpdate = true;
 		}
-		pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		{
 			/* ダイアログデータの設定 */
 			//SetData();
@@ -330,7 +329,6 @@ int CDlgFind::GetData( void )
 BOOL CDlgFind::OnBnClicked( int wID )
 {
 	int			nRet;
-	CEditView*	pcEditView = (CEditView*)m_lParam;
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
@@ -376,17 +374,17 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		if( 0 < nRet ){
 			{
 				/* 前を検索 */
-				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+				m_pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
+				m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
-				if( FALSE != pcEditView->m_bSearch ){
+				if( FALSE != m_pcEditView->m_bSearch ){
 					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-					pcEditView->m_bSearch = FALSE;
+					m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
+					m_pcEditView->m_bSearch = FALSE;
 					// 02/07/28 ai end
 				}//  02/06/26 ai End
 
@@ -406,16 +404,16 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		if( 0 < nRet ){
 			{
 				/* 次を検索 */
-				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+				m_pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
+				m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
 				// 検索開始位置を登録
-				if( FALSE != pcEditView->m_bSearch ){
+				if( FALSE != m_pcEditView->m_bSearch ){
 					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-					pcEditView->m_bSearch = FALSE;
+					m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
+					m_pcEditView->m_bSearch = FALSE;
 				}
 
 				/* 検索ダイアログを自動的に閉じる */
@@ -431,7 +429,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
 			{
-				pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
+				m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
@@ -452,10 +450,9 @@ BOOL CDlgFind::OnBnClicked( int wID )
 BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 {
 	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
-	CEditView*	pcEditView = (CEditView*)m_lParam;
-	CLayoutRange cRangeSel = pcEditView->GetSelectionInfo().m_sSelect;
+	CLayoutRange cRangeSel = m_pcEditView->GetSelectionInfo().m_sSelect;
 	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
-		pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
+		m_pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
 
 	return CDialog::OnActivate(wParam, lParam);
 }
