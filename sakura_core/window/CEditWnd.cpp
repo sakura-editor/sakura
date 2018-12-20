@@ -4516,7 +4516,7 @@ void  CEditWnd::SetActivePane( int nIndex )
 
 	if( NULL != m_cDlgFind.GetHwnd() ){		/* 「検索」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */
-		m_cDlgFind.ChangeView( (LPARAM)&GetActiveView() );
+		m_cDlgFind.ChangeView( &GetActiveView() );
 	}
 	if( NULL != m_cDlgReplace.GetHwnd() ){	/* 「置換」ダイアログ */
 		/* モードレス時：検索対象となるビューの変更 */

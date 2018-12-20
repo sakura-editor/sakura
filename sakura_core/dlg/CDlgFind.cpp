@@ -97,9 +97,9 @@ HWND CDlgFind::DoModeless( CEditView* pcEditView, const WCHAR* pszFind, size_t c
 
 
 /* モードレス時：検索対象となるビューの変更 */
-void CDlgFind::ChangeView( LPARAM pcEditView )
+void CDlgFind::ChangeView( CEditView* pcEditView )
 {
-	m_lParam = pcEditView;
+	m_lParam = (LPARAM)pcEditView;
 	return;
 }
 

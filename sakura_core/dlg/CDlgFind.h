@@ -39,7 +39,7 @@ public:
 	*/
 	HWND DoModeless( CEditView* pcEditView, const WCHAR* pszFind, size_t cchFind );	/* モードレスダイアログの表示 */
 
-	void ChangeView(LPARAM pcEditView);
+	void ChangeView( CEditView* pcEditView );
 
 protected:
 	std::wstring			m_strText;				// 検索文字列
