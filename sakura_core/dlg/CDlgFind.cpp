@@ -143,6 +143,8 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 
+	SetData();
+
 	return bRet;
 }
 
@@ -169,18 +171,21 @@ BOOL CDlgFind::OnDestroy()
  * @date 2002.01.26 hor 先頭（末尾）から再検索
  * @date 2010/05/28 Uchi 検索文字列リストの設定(関数化)
  */
-void CDlgFind::SetData( void )
+void CDlgFind::SetData( void ) const noexcept
 {
 //	MYTRACE( _T("CDlgFind::SetData()") );
 
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
+	/* 単語単位で検索 */
+	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
+
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
-	/* 単語単位で検索 */
-	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
+	/* 正規表現 */
+	::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, m_sSearchOption.bRegularExp );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
@@ -191,18 +196,16 @@ void CDlgFind::SetData( void )
 	/* 先頭（末尾）から再検索 */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_bSearchAll );
 
-	/* チェックボックス活性制御 */
-	if ( CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
-		/* 英大文字と英小文字を区別する */
-		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, BST_CHECKED );
-
-		if ( m_sSearchOption.bRegularExp ) {
-			/* 単語単位で探す */
-			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
-		}
-	} else {
+	// 正規表現DLLが使えない場合、正規表現のチェックボックスを淡色表示にする
+	if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
 		/* 正規表現 */
-		::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, BST_UNCHECKED );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_REGULAREXP ), FALSE );
+	}
+
+	// 正規表現を使う場合、単語単位で探すのチェックボックスを淡色表示にする
+	if ( m_sSearchOption.bRegularExp ) {
+		/* 単語単位で探す */
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
 	}
 
 	return;

@@ -63,7 +63,11 @@ protected:
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	int GetData( void );		/* ダイアログデータの取得 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
-	void SetData( void );		/* ダイアログデータの設定 */
+	void SetData( void ) const noexcept;
+	void SetData( void ) override		/* ダイアログデータの設定 */
+	{
+		const_cast<CDlgFind*>(this)->SetData();
+	}
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	BOOL OnDestroy();
 	BOOL OnBnClicked(int wID);
