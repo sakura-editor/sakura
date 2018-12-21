@@ -72,7 +72,6 @@ protected:
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 
-	// virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
 
