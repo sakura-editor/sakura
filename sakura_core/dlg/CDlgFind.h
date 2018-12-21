@@ -57,21 +57,20 @@ protected:
 	CEditView*&				m_pcEditView;
 
 protected:
-//@@@ 2002.2.2 YAZAKI CShareDataに移動
-//	void AddToSearchKeyArr( const char* );
-	/* オーバーライド? */
-	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	int GetData( void );		/* ダイアログデータの取得 */
-	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
+	/* オーバーライド */
+	BOOL OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam ) override;
+	BOOL OnDestroy() override;
 	void SetData( void ) const noexcept;
 	void SetData( void ) override		/* ダイアログデータの設定 */
 	{
 		const_cast<CDlgFind*>(this)->SetData();
 	}
-	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
-	BOOL OnDestroy();
-	BOOL OnBnClicked(int wID);
+	int GetData( void ) override;		/* ダイアログデータの取得 */
+
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
+	BOOL OnBnClicked( int wID );
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
+	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 
 	// virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
