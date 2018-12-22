@@ -637,51 +637,81 @@ void CDlgFind::CountMatches() const noexcept
 	auto &pattern = m_pcEditView->m_sSearchPattern;
 	const SSearchOption& sSearchOption = pattern.GetSearchOption();
 
-	size_t cMatched = 0;
+	// マッチャーの定義
+	struct Matcher
+	{
+		virtual bool Match( const wchar_t* pchLine, size_t cchLine ) const = 0;
+	};
+	struct RegexMatcher : Matcher
+	{
+		RegexMatcher( const CSearchStringPattern& pattern )
+			: pRegexp( pattern.GetRegexp() )
+		{
+		}
+		bool Match( const wchar_t* pchLine, size_t cchLine ) const override
+		{
+			return pRegexp->Match( pchLine, cchLine, 0 );
+		}
+		CBregexp* pRegexp;
+	};
+	struct WordsMatcher : Matcher
+	{
+		WordsMatcher( const CSearchStringPattern& pattern, const SSearchOption& sSearchOption)
+			: bLoHiCase( sSearchOption.bLoHiCase )
+			, searchWords()
+		{
+			const wchar_t* pszPattern = pattern.GetKey();
+			size_t nPatternLen = pattern.GetLen();
+			CSearchAgent::CreateWordList( searchWords, pszPattern, nPatternLen );
+		}
+		bool Match( const wchar_t* pchLine, size_t cchLine ) const override
+		{
+			int nMatchLen;
+			return CSearchAgent::SearchStringWord( pchLine, cchLine, 0,
+				searchWords, bLoHiCase, &nMatchLen);
+		}
+		bool bLoHiCase;
+		std::vector<std::pair<const wchar_t*, CLogicInt>> searchWords; // 単語の開始位置と長さの配列。
+	};
+	struct SimpleMatcher : Matcher
+	{
+		SimpleMatcher( const CSearchStringPattern& _pattern )
+			: pattern( _pattern )
+		{
+		}
+		bool Match( const wchar_t* pchLine, size_t cchLine ) const override
+		{
+			return CSearchAgent::SearchString( pchLine, cchLine, 0, pattern );
+		}
+		const CSearchStringPattern& pattern;
+	};
+
+	// マッチャーの生成
+	std::unique_ptr<Matcher> matcher;
 
 	/* 1==正規表現 */
 	if ( sSearchOption.bRegularExp ) {
-		CBregexp* pRegexp = pattern.GetRegexp();
-		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
-		while ( pDocLine != NULL ) {
-			int nLineLen;
-			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-			if ( pRegexp->Match( pLine, nLineLen, 0 ) ) {
-				cMatched++;
-			}
-			pDocLine = pDocLine->GetNextLine();
-		}
+		matcher = std::unique_ptr<Matcher>( new RegexMatcher( pattern ) );
 	}
 	/* 1==単語のみ検索 */
 	else if ( sSearchOption.bWordOnly ) {
-		// 検索語を単語に分割して searchWordsに格納する。
-		const wchar_t* pszPattern = pattern.GetKey();
-		const int nPatternLen = pattern.GetLen();
-		std::vector<std::pair<const wchar_t*, CLogicInt>> searchWords; // 単語の開始位置と長さの配列。
-		CSearchAgent::CreateWordList( searchWords, pszPattern, nPatternLen );
-		int nMatchLen;
-
-		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
-		while ( pDocLine != NULL ) {
-			int nLineLen;
-			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-			if ( CSearchAgent::SearchStringWord( pLine, nLineLen, 0, searchWords, sSearchOption.bLoHiCase, &nMatchLen ) ) {
-				cMatched++;
-			}
-			pDocLine = pDocLine->GetNextLine();
-		}
+		matcher = std::unique_ptr<Matcher>( new WordsMatcher( pattern, sSearchOption) );
 	}
 	/* その他 */
 	else {
-		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
-		while ( pDocLine != NULL ) {
-			int nLineLen;
-			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-			if ( CSearchAgent::SearchString( pLine, nLineLen, 0, pattern ) ) {
-				cMatched++;
-			}
-			pDocLine = pDocLine->GetNextLine();
+		matcher = std::unique_ptr<Matcher>( new SimpleMatcher( pattern ) );
+	}
+
+	// 一致件数のカウント
+	size_t cMatched = 0;
+	CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
+	while ( pDocLine != NULL ) {
+		int nLineLen;
+		const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+		if ( matcher->Match( pLine, nLineLen ) ) {
+			cMatched++;
 		}
+		pDocLine = pDocLine->GetNextLine();
 	}
 
 	// 結果を表示
