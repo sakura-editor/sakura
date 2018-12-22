@@ -91,15 +91,14 @@ void CDlgFind::ChangeView( CEditView* pcEditView )
 /*!
  * @brief ダイアログ初期表示メッセージハンドラ
  *
+ * @param [in] wParam 初期フォーカスを設定されるコントロールのハンドル
+ * @param [in] lParam 検索対象となるビュー
  * @return TRUE or FALSE(WM_INITDIALOGと同じ)
  *
  * @date 2012/11/27 Uchi フォント設定
  */
-BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
+BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 {
-	// 基底クラス呼び出し(WM_INITDIALOGの戻り値は「成功/失敗」ではない)
-	BOOL bRet = CDialog::OnInitDialog( hwnd, wParam, lParam );
-
 	// 共有メモリから設定をコピーする
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;				// 検索オプション
 	m_bNotifyNotFound = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
@@ -125,27 +124,22 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 		m_sSearchOption.bRegularExp = false;
 	}
 
-	// ダイアログデータの設定
-	SetData();
-
-	return bRet;
+	return TRUE;
 }
 
 
 /*!
- * @brief ウインドウ破棄メッセージハンドラ
- *
- * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ * @brief ウインドウ破棄後処理メッセージハンドラ
+ * （ウインドウ破棄シーケンスの最後に呼ばれる）
  */
-BOOL CDlgFind::OnDestroy()
+void CDlgFind::OnNcDestroy() noexcept
 {
 	if ( m_hFont != NULL ) {
 		::DeleteObject( m_hFont );
 		m_hFont = NULL;
 	}
-	return CDialog::OnDestroy();
+	CDialog::OnNcDestroy();
 }
-
 
 
 /*!

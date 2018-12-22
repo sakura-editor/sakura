@@ -56,8 +56,8 @@ protected:
 
 protected:
 	/* オーバーライド */
-	BOOL OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam ) override;
-	BOOL OnDestroy() override;
+	BOOL OnInitDialog( HWND wParam, LPARAM lParam ) override;
+	void OnNcDestroy( void ) noexcept override;
 	void SetData( void ) const noexcept override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;					/* ダイアログデータの取得 */
 
