@@ -37,8 +37,6 @@ CDlgFind::CDlgFind() noexcept
 	, m_bAutoCloseDlgFind( 0 )	// 検索ダイアログを自動的に閉じる
 	, m_bSearchAll( 0 )			// 先頭（末尾）から再検索
 	, m_ptEscCaretPos_PHY()		// 検索開始時のカーソル位置退避エリア
-	, m_cRecentSearch()			// 検索語の履歴にアクセスするためのもの
-	, m_comboDel()				// コンボボックスに追加したアイテムを自動削除させるもの
 	, m_cFontText()				// フォントを自動削除させるもの
 	, m_pcEditView( (CEditView*&) CDialog::m_lParam )
 {
@@ -55,10 +53,11 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 {
 	switch( wID ){
 	case IDC_COMBO_TEXT:
-		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
-			for (int i = 0; i < nSize; ++i) {
-				Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+		if ( Combo_GetCount( hwndCtl ) == 0 ) {
+			CRecentSearch cRecentSearch;
+			size_t cItems = cRecentSearch.GetItemCount();
+			for ( size_t n = 0; n < cItems; ++n ) {
+				Combo_AddString( hwndCtl, cRecentSearch.GetItemText( n ) );
 			}
 		}
 		break;
@@ -129,11 +128,6 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 
 	// 検索開始位置の登録有無を更新
 	m_pcEditView->m_bSearch = TRUE;
-
-	// ユーティリティ初期化
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentSearch;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDel);
 
 	// フォント設定	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );

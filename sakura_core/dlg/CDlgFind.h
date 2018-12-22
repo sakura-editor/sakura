@@ -51,8 +51,6 @@ protected:
 
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 
-	CRecentSearch			m_cRecentSearch;
-	SComboBoxItemDeleter	m_comboDel;
 	CFontAutoDeleter		m_cFontText;
 	CEditView*&				m_pcEditView;
 
