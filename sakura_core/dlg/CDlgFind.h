@@ -44,9 +44,9 @@ public:
 protected:
 	std::wstring			m_strText;				// 検索文字列
 	SSearchOption			m_sSearchOption;		// 検索オプション
-	int						m_bNOTIFYNOTFOUND;		// 検索／置換  見つからないときメッセージを表示
-	BOOL					m_bAutoCloseDlgFind;	// 検索ダイアログを自動的に閉じる
-	BOOL					m_bSearchAll;			// 先頭（末尾）から再検索
+	bool					m_bNotifyNotFound;		// 検索／置換  見つからないときメッセージを表示
+	bool					m_bAutoClose;			// 検索ダイアログを自動的に閉じる
+	bool					m_bSearchAll;			// 先頭（末尾）から再検索
 
 
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア

@@ -30,14 +30,14 @@
  * @brief コンストラクタ
  */
 CDlgFind::CDlgFind() noexcept
-	: CDialog( false, true )	// 基底クラスは「リサイズ不可、ShareDataチェックあり」。
-	, m_strText( L"", 0 )		// 検索文字列
-	, m_sSearchOption()			// 検索オプション
-	, m_bNOTIFYNOTFOUND( 0 )	// 検索／置換  見つからないときメッセージを表示
-	, m_bAutoCloseDlgFind( 0 )	// 検索ダイアログを自動的に閉じる
-	, m_bSearchAll( 0 )			// 先頭（末尾）から再検索
-	, m_ptEscCaretPos_PHY()		// 検索開始時のカーソル位置退避エリア
-	, m_cFontText()				// フォントを自動削除させるもの
+	: CDialog( false, true )		// 基底クラスは「リサイズ不可、ShareDataチェックあり」。
+	, m_strText( L"", 0 )			// 検索文字列
+	, m_sSearchOption()				// 検索オプション
+	, m_bNotifyNotFound( false )	// 検索／置換  見つからないときメッセージを表示
+	, m_bAutoClose( false )			// 検索ダイアログを自動的に閉じる
+	, m_bSearchAll( false )			// 先頭（末尾）から再検索
+	, m_ptEscCaretPos_PHY()			// 検索開始時のカーソル位置退避エリア
+	, m_cFontText()					// フォントを自動削除させるもの
 	, m_pcEditView( (CEditView*&) CDialog::m_lParam )
 {
 	//ダイアログ表示時に初期化するので、ここでは何もしない。
@@ -97,10 +97,10 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	BOOL bRet = CDialog::OnInitDialog( hwnd, wParam, lParam );
 
 	// 共有メモリから設定をコピーする
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;			// 検索オプション
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;		// 検索／置換  見つからないときメッセージを表示
-	m_bAutoCloseDlgFind = m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind;	// 検索ダイアログを自動的に閉じる
-	m_bSearchAll = m_pShareData->m_Common.m_sSearch.m_bSearchAll;				// 先頭（末尾）から再検索
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;				// 検索オプション
+	m_bNotifyNotFound = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
+	m_bAutoClose = m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind != 0;		// 検索ダイアログを自動的に閉じる
+	m_bSearchAll = m_pShareData->m_Common.m_sSearch.m_bSearchAll != 0;				// 先頭（末尾）から再検索
 
 	// 検索開始時のカーソル位置を退避する
 	m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
@@ -166,10 +166,10 @@ void CDlgFind::SetData( void ) const noexcept
 	::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, m_sSearchOption.bRegularExp ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND ? BST_CHECKED : BST_UNCHECKED );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNotifyNotFound ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索ダイアログを自動的に閉じる */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoCloseDlgFind ? BST_CHECKED : BST_UNCHECKED );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoClose ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 先頭（末尾）から再検索 */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_bSearchAll ? BST_CHECKED : BST_UNCHECKED );
@@ -227,13 +227,13 @@ int CDlgFind::GetData( void )
 	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
 
 	/* 検索／置換  見つからないときメッセージを表示 */
-	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND );
+	m_bNotifyNotFound = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED );
 
 	/* 検索ダイアログを自動的に閉じる */
-	m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );
+	m_bAutoClose = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind ) == BST_CHECKED );
 
 	/* 先頭（末尾）から再検索 */
-	m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
+	m_bSearchAll = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL ) == BST_CHECKED );
 
 	/* 正規表現？ */
 	if ( m_sSearchOption.bRegularExp ) {
@@ -355,9 +355,9 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 	}
 
 	// 以下の処理は検索実行の直前に行うべき処理
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 
 	/* 検索文字列 */
 	if ( m_strText.length() < _MAX_PATH ) {
@@ -386,7 +386,7 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 	}
 
 	/* 検索ダイアログを自動的に閉じる */
-	if ( m_bAutoCloseDlgFind ) {
+	if ( m_bAutoClose ) {
 		CloseDialog( 0 );
 	}
 }
@@ -399,9 +399,9 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 void CDlgFind::DoSetMark( void ) noexcept
 {
 	// 以下の処理は検索実行の直前に行うべき処理
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 
 	/* 検索文字列 */
 	if ( m_strText.length() < _MAX_PATH ) {
@@ -421,7 +421,7 @@ void CDlgFind::DoSetMark( void ) noexcept
 	m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 
 	/* 検索ダイアログを自動的に閉じる */
-	if( m_bAutoCloseDlgFind ) {
+	if( m_bAutoClose ) {
 		CloseDialog( 0 );
 	} else {
 		::SendMessage( GetHwnd(), WM_NEXTDLGCTL, (WPARAM)GetItemHwnd(IDC_COMBO_TEXT), TRUE );
