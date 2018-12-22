@@ -17,6 +17,8 @@
 #ifndef SAKURA_CDLGFIND_H_
 #define SAKURA_CDLGFIND_H_
 
+#include <thread>
+#include "_main/global.h"
 #include "dlg/CDialog.h"
 
 // 依存クラスの前方定義
@@ -28,6 +30,12 @@ class CEditView;
 -----------------------------------------------------------------------*/
 class CDlgFind : public CDialog
 {
+	enum InternalConstants
+	{
+		IDT_AUTO_COUNT = 100,			//タイマーID
+		TIMESPAN_AUTO_COUNT = 1000,		//起動間隔
+	};
+
 public:
 	/*
 	||  Constructors
@@ -53,10 +61,12 @@ protected:
 
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 	CEditView*&				m_pcEditView;
+	std::thread				m_threadAutoCount;		// 自動カウント用スレッド
 
 protected:
 	/* オーバーライド */
 	BOOL OnInitDialog( HWND wParam, LPARAM lParam ) override;
+	BOOL OnDestroy( void ) override;
 	void OnNcDestroy( void ) noexcept override;
 	void SetData( void ) const noexcept override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;					/* ダイアログデータの取得 */
@@ -64,12 +74,17 @@ protected:
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	BOOL OnBnClicked( int wID ) override;
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
+	BOOL OnCbnEditChange( HWND hwndCtl, int wID ) override;
+	BOOL OnCbnSelChange( HWND hwndCtl, int wID ) override;
+	BOOL OnTimer( WPARAM nTimerId ) override;
 
 	void DoSearch( ESearchDirection direction ) noexcept;
 	void DoSetMark( void ) noexcept;
 
-	BOOL OnCbnEditChange( HWND hwndCtl, int wID ) override;
-	BOOL OnCbnSelChange( HWND hwndCtl, int wID ) override;
+	void StartAutoCounter() noexcept;
+	void StopAutoCounter() noexcept;
+	void CountMatches() const noexcept;
+
 
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };

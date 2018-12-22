@@ -41,6 +41,7 @@ CDlgFind::CDlgFind() noexcept
 	, m_hFont( NULL )				// ドキュメント設定から作成したフォント
 	, m_ptEscCaretPos_PHY()			// 検索開始時のカーソル位置退避エリア
 	, m_pcEditView( (CEditView*&) CDialog::m_lParam )
+	, m_threadAutoCount()
 {
 	//ダイアログ表示時に初期化するので、ここでは何もしない。
 }
@@ -125,6 +126,20 @@ BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 	}
 
 	return TRUE;
+}
+
+
+/*!
+ * @brief ウインドウ破棄メッセージハンドラ
+ *
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
+BOOL CDlgFind::OnDestroy()
+{
+	// 自動カウントを止める
+	StopAutoCounter();
+
+	return CDialog::OnDestroy();
 }
 
 
@@ -340,6 +355,87 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 
 
 /*!
+ * @brief コンボ編集メッセージハンドラ
+ * （WM_COMMANDのうち、コンボ編集分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 編集されたコンボのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
+BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE(_T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+
+	// 自動カウントを止める
+	StopAutoCounter();
+
+	// 自動カウントのタイマーを起動する
+	::SetTimer( GetHwnd(), IDT_AUTO_COUNT, TIMESPAN_AUTO_COUNT, NULL );
+
+	return FALSE;
+}
+
+
+/*!
+ * @brief コンボ選択メッセージハンドラ
+ * （WM_COMMANDのうち、コンボ選択分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 編集されたコンボのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ */
+BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
+{
+	DEBUG_TRACE(_T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+
+	// 自動カウントを止める
+	StopAutoCounter();
+
+	// 自動カウントを開始する
+	StartAutoCounter();
+
+	return FALSE;
+}
+
+
+/*!
+ * @brief タイマーイベントハンドラ
+ */
+BOOL CDlgFind::OnTimer( WPARAM nTimerId )
+{
+	switch( nTimerId )
+	{
+	case IDT_AUTO_COUNT:
+		// 自動カウントを開始する
+		StartAutoCounter();
+		break;
+	}
+	return FALSE;
+}
+
+
+/*!
+ * @brief アクティブ化／非アクティブ化メッセージハンドラ
+ * （WM_ACTIVATEのを処理させるために呼ばれる）
+ *
+ * @date 2009.11.29 ryoji 0文字幅マッチ描画のON/OFF
+ */
+BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	WORD fActive = LOWORD( wParam );
+	if ( fActive == WA_INACTIVE ) {
+		// 自動カウントを止める
+		StopAutoCounter();
+	}
+
+	// 0文字幅マッチ描画のON/OFF
+	CLayoutRange cRangeSel = m_pcEditView->GetSelectionInfo().m_sSelect;
+	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
+		m_pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
+
+	return CDialog::OnActivate(wParam, lParam);
+}
+
+
+/*!
  * @brief 検索
  *
  * @param [in] direction 検索方向
@@ -372,6 +468,14 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
 		m_pcEditView->m_bCurSearchUpdate = true;
 		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	}
+
+	if (m_ptEscCaretPos_PHY.HasNegative()) {
+		// 検索開始時のカーソル位置を退避する
+		m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
+
+		// 検索開始位置の登録有無を更新
+		m_pcEditView->m_bSearch = TRUE;
 	}
 
 	m_pcEditView->GetCommander().HandleCommand( eFuncId, true, (LPARAM)GetHwnd(), 0, 0, 0 );
@@ -430,15 +534,143 @@ void CDlgFind::DoSetMark( void ) noexcept
 }
 
 
-BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
+/*!
+ * @brief 自動カウントを開始する
+ */
+void CDlgFind::StartAutoCounter() noexcept
 {
-	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
-	CLayoutRange cRangeSel = m_pcEditView->GetSelectionInfo().m_sSelect;
-	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
-		m_pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 
-	return CDialog::OnActivate(wParam, lParam);
+	// 自動カウントのタイマーを止める
+	::KillTimer( GetHwnd(), IDT_AUTO_COUNT );
+
+	// カウントスレッドが有効な場合、停止処理を走らせる
+	if ( m_threadAutoCount.joinable() ) {
+		StopAutoCounter();
+	}
+
+	// ダイアログデータの取得
+	auto nRet = GetData();
+
+	// 検索できない状態ならスレッドを生成せずに抜ける
+	if ( nRet <= 0 ) {
+		DEBUG_TRACE( _T("%ls(%d): %ls aborted.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		return;
+	}
+
+	// 以下の処理は検索実行の直前に行うべき処理
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
+
+	/* 検索文字列 */
+	if ( m_strText.length() < _MAX_PATH ) {
+		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	}
+
+	if ( m_pcEditView->m_strCurSearchKey != m_strText
+		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
+		m_pcEditView->m_strCurSearchKey = m_strText;
+		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
+		m_pcEditView->m_bCurSearchUpdate = true;
+		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	}
+
+	//検索or置換ダイアログから呼び出された
+	if ( !m_pcEditView->ChangeCurRegexp( false ) ) return;
+
+	// 新たなカウントスレッドを生成する
+	m_threadAutoCount = std::thread( [this] { CountMatches(); } );
 }
+
+
+/*!
+ * @brief 自動カウントを停止する
+ */
+void CDlgFind::StopAutoCounter() noexcept
+{
+	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+
+	// 自動カウントのタイマーを止める
+	::KillTimer( GetHwnd(), IDT_AUTO_COUNT );
+
+	// カウントスレッドが有効な場合、強制停止する
+	if ( m_threadAutoCount.joinable() ) {
+		DEBUG_TRACE( _T("%ls(%d): %ls thread is joinable.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		HANDLE hThread = (HANDLE) m_threadAutoCount.native_handle();
+		::TerminateThread( hThread, -1 );
+		m_threadAutoCount.detach();
+	} else {
+		DEBUG_TRACE( _T("%ls(%d): %ls thread is not joinable.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	}
+}
+
+
+/*!
+ * @brief 条件に一致する文字列を数える
+ *
+ * @note CBookmarkManager::MarkSearchWordを改造して作成
+ */
+void CDlgFind::CountMatches() const noexcept
+{
+	DEBUG_TRACE(_T("%ls(%d): %ls start\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+
+	auto pcDocLineMgr = &m_pcEditView->GetDocument()->m_cDocLineMgr;
+	auto &pattern = m_pcEditView->m_sSearchPattern;
+	const SSearchOption& sSearchOption = pattern.GetSearchOption();
+
+	size_t cMatched = 0;
+
+	/* 1==正規表現 */
+	if ( sSearchOption.bRegularExp ) {
+		CBregexp* pRegexp = pattern.GetRegexp();
+		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
+		while ( pDocLine != NULL ) {
+			int nLineLen;
+			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+			if ( pRegexp->Match( pLine, nLineLen, 0 ) ) {
+				cMatched++;
+			}
+			pDocLine = pDocLine->GetNextLine();
+		}
+	}
+	/* 1==単語のみ検索 */
+	else if ( sSearchOption.bWordOnly ) {
+		// 検索語を単語に分割して searchWordsに格納する。
+		const wchar_t* pszPattern = pattern.GetKey();
+		const int nPatternLen = pattern.GetLen();
+		std::vector<std::pair<const wchar_t*, CLogicInt>> searchWords; // 単語の開始位置と長さの配列。
+		CSearchAgent::CreateWordList( searchWords, pszPattern, nPatternLen );
+		int nMatchLen;
+
+		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
+		while ( pDocLine != NULL ) {
+			int nLineLen;
+			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+			if ( CSearchAgent::SearchStringWord( pLine, nLineLen, 0, searchWords, sSearchOption.bLoHiCase, &nMatchLen ) ) {
+				cMatched++;
+			}
+			pDocLine = pDocLine->GetNextLine();
+		}
+	}
+	/* その他 */
+	else {
+		CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
+		while ( pDocLine != NULL ) {
+			int nLineLen;
+			const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+			if ( CSearchAgent::SearchString( pLine, nLineLen, 0, pattern ) ) {
+				cMatched++;
+			}
+			pDocLine = pDocLine->GetNextLine();
+		}
+	}
+	DEBUG_TRACE( _T("%ls(%d): %ls %d matched\n"), __FILEW__, __LINE__, __FUNCTIONW__, cMatched );
+
+	DEBUG_TRACE( _T("%ls(%d): %ls end\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+}
+
 
 /*!
  * @brief コントロールのヘルプIDを返却する
@@ -465,31 +697,3 @@ LPVOID CDlgFind::GetHelpIdTable( void )
 	};
 	return (LPVOID)helpIdTable;
 }
-
-
-/*!
- * @brief コンボ編集メッセージハンドラ
- * （WM_COMMANDのうち、コンボ編集分を処理させるために呼ばれる）
- *
- * @param [in] wID 編集されたコンボのID
- * @return TRUE or FALSE(FALSE推奨、OSには無視される)
- */
-BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
-{
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
-	return FALSE;
-}
-
-/*!
- * @brief コンボ選択メッセージハンドラ
- * （WM_COMMANDのうち、コンボ選択分を処理させるために呼ばれる）
- *
- * @param [in] wID 編集されたコンボのID
- * @return TRUE or FALSE(FALSE推奨、OSには無視される)
- */
-BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
-{
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
-	return FALSE;
-}
-
