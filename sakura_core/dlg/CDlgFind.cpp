@@ -341,12 +341,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		SetData();
 	}
 
-	switch( wID ){
-	case IDC_BUTTON_HELP:
-		/* 「検索」のヘルプ */
-		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO 修正漏れを追加	// 2006.10.10 ryoji MyWinHelpに変更に変更
-		break;
-
+	switch ( wID ) {
 	case IDC_BUTTON_SEARCHPREV:
 		if ( nRet < 0 ) return FALSE;
 		if ( nRet == 0 ) {
@@ -420,11 +415,22 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		}
 		return TRUE;
 
+	case IDC_BUTTON_HELP:
+		/* 「検索」のヘルプ */
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );
+		break;
+
 	case IDCANCEL:
+		//既定動作をオーバーライドして0を返して閉じている
 		CloseDialog( 0 );
 		return TRUE;
+
+	default:
+		break;
 	}
-	return FALSE;
+
+	// 基底クラス呼び出し
+	return CDialog::OnBnClicked( wID );
 }
 
 BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
