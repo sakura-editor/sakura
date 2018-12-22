@@ -12,11 +12,12 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "dlg/CDialog.h"
-#include "recent/CRecentSearch.h"
-#include "util/window.h"
+#pragma once
+
 #ifndef SAKURA_CDLGFIND_H_
 #define SAKURA_CDLGFIND_H_
+
+#include "dlg/CDialog.h"
 
 // 依存クラスの前方定義
 class CEditView;
@@ -48,10 +49,9 @@ protected:
 	bool					m_bAutoClose;			// 検索ダイアログを自動的に閉じる
 	bool					m_bSearchAll;			// 先頭（末尾）から再検索
 
+	HFONT					m_hFont;				// ドキュメント設定から作成したフォント
 
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
-
-	CFontAutoDeleter		m_cFontText;
 	CEditView*&				m_pcEditView;
 
 protected:

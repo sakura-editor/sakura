@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 #include "dlg/CDlgFind.h"
 #include "view/CEditView.h"
+#include "recent/CRecentSearch.h"
+#include "util/window.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -36,8 +38,8 @@ CDlgFind::CDlgFind() noexcept
 	, m_bNotifyNotFound( false )	// 検索／置換  見つからないときメッセージを表示
 	, m_bAutoClose( false )			// 検索ダイアログを自動的に閉じる
 	, m_bSearchAll( false )			// 先頭（末尾）から再検索
+	, m_hFont( NULL )				// ドキュメント設定から作成したフォント
 	, m_ptEscCaretPos_PHY()			// 検索開始時のカーソル位置退避エリア
-	, m_cFontText()					// フォントを自動削除させるもの
 	, m_pcEditView( (CEditView*&) CDialog::m_lParam )
 {
 	//ダイアログ表示時に初期化するので、ここでは何もしない。
@@ -90,6 +92,8 @@ void CDlgFind::ChangeView( CEditView* pcEditView )
  * @brief ダイアログ初期表示メッセージハンドラ
  *
  * @return TRUE or FALSE(WM_INITDIALOGと同じ)
+ *
+ * @date 2012/11/27 Uchi フォント設定
  */
 BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
@@ -102,19 +106,19 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	m_bAutoClose = m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind != 0;		// 検索ダイアログを自動的に閉じる
 	m_bSearchAll = m_pShareData->m_Common.m_sSearch.m_bSearchAll != 0;				// 先頭（末尾）から再検索
 
+	if ( HWND hwndComboText = GetItemHwnd( IDC_COMBO_TEXT ) ) {
+		/* コンボボックスを拡張UIにする */
+		Combo_SetExtendedUI( hwndComboText, TRUE );
+
+		// フォント設定
+		m_hFont = SetMainFont( hwndComboText );
+	}
+
 	// 検索開始時のカーソル位置を退避する
 	m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
 
 	// 検索開始位置の登録有無を更新
 	m_pcEditView->m_bSearch = TRUE;
-
-	// フォント設定	2012/11/27 Uchi
-	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
-	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
-	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
-
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 
 	// 正規表現DLLが使えない場合、正規表現のフラグを落とす
 	if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
@@ -135,7 +139,10 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
  */
 BOOL CDlgFind::OnDestroy()
 {
-	m_cFontText.ReleaseOnDestroy();
+	if ( m_hFont != NULL ) {
+		::DeleteObject( m_hFont );
+		m_hFont = NULL;
+	}
 	return CDialog::OnDestroy();
 }
 
