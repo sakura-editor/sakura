@@ -114,16 +114,13 @@ BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 		m_hFont = SetMainFont( hwndComboText );
 	}
 
-	// 検索開始時のカーソル位置を退避する
-	m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
-
-	// 検索開始位置の登録有無を更新
-	m_pcEditView->m_bSearch = TRUE;
-
 	// 正規表現DLLが使えない場合、正規表現のフラグを落とす
 	if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
 		m_sSearchOption.bRegularExp = false;
 	}
+
+	// 検索開始時のカーソル位置をクリアする
+	m_ptEscCaretPos_PHY.Set( CLogicInt( -1 ), CLogicInt( -1 ) );
 
 	return TRUE;
 }
@@ -371,6 +368,9 @@ BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
 	// 自動カウントのタイマーを起動する
 	::SetTimer( GetHwnd(), IDT_AUTO_COUNT, TIMESPAN_AUTO_COUNT, NULL );
 
+	// 検索開始時のカーソル位置をクリアする
+	m_ptEscCaretPos_PHY.Set( CLogicInt( -1 ), CLogicInt( -1 ) );
+
 	return FALSE;
 }
 
@@ -388,6 +388,9 @@ BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
 
 	// 自動カウントを止める
 	StopAutoCounter();
+
+	// 検索開始時のカーソル位置をクリアする
+	m_ptEscCaretPos_PHY.Set( CLogicInt( -1 ), CLogicInt( -1 ) );
 
 	// 自動カウントを開始する
 	StartAutoCounter();
