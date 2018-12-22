@@ -60,12 +60,8 @@ protected:
 	/* オーバーライド */
 	BOOL OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnDestroy() override;
-	void SetData( void ) const noexcept;
-	void SetData( void ) override		/* ダイアログデータの設定 */
-	{
-		const_cast<CDlgFind*>(this)->SetData();
-	}
-	int GetData( void ) override;		/* ダイアログデータの取得 */
+	void SetData( void ) const noexcept override;	/* ダイアログデータの設定 */
+	int GetData( void ) override;					/* ダイアログデータの取得 */
 
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	BOOL OnBnClicked( int wID );

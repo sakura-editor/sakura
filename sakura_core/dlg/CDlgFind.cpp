@@ -143,6 +143,12 @@ BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 
+	// 正規表現DLLが使えない場合、正規表現のフラグを落とす
+	if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
+		m_sSearchOption.bRegularExp = false;
+	}
+
+	// ダイアログデータの設定
 	SetData();
 
 	return bRet;
@@ -179,34 +185,30 @@ void CDlgFind::SetData( void ) const noexcept
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
 	/* 単語単位で検索 */
-	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
+	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 英大文字と英小文字を区別する */
-	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
+	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 正規表現 */
-	::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, m_sSearchOption.bRegularExp );
+	::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, m_sSearchOption.bRegularExp ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索ダイアログを自動的に閉じる */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoCloseDlgFind );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoCloseDlgFind ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 先頭（末尾）から再検索 */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_bSearchAll );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_SEARCHALL, m_bSearchAll ? BST_CHECKED : BST_UNCHECKED );
 
 	// 正規表現DLLが使えない場合、正規表現のチェックボックスを淡色表示にする
-	if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, false ) ) {
-		/* 正規表現 */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_REGULAREXP ), FALSE );
-	}
+	bool checkResult = CheckRegexpVersion(GetHwnd(), IDC_STATIC_JRE32VER, false);
+	/* 正規表現 */
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_REGULAREXP ), checkResult ? TRUE : FALSE );
 
 	// 正規表現を使う場合、単語単位で探すのチェックボックスを淡色表示にする
-	if ( m_sSearchOption.bRegularExp ) {
-		/* 単語単位で探す */
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), FALSE );
-	}
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), !m_sSearchOption.bRegularExp ? TRUE : FALSE );
 
 	return;
 }
