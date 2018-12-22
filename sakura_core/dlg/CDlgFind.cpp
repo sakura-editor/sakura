@@ -175,7 +175,6 @@ BOOL CDlgFind::OnDestroy()
  * @date 2001/06/23 Norio Nakatani　単語単位で検索
  * @date Jun. 29, 2001 genta 正規表現ライブラリの差し替えに伴う処理の見直し
  * @date 2002.01.26 hor 先頭（末尾）から再検索
- * @date 2010/05/28 Uchi 検索文字列リストの設定(関数化)
  */
 void CDlgFind::SetData( void ) const noexcept
 {
@@ -211,26 +210,6 @@ void CDlgFind::SetData( void ) const noexcept
 	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), !m_sSearchOption.bRegularExp ? TRUE : FALSE );
 
 	return;
-}
-
-
-// 検索文字列リストの設定
-//	2010/5/28 Uchi
-void CDlgFind::SetCombosList( void )
-{
-	HWND	hwndCombo;
-
-	/* 検索文字列 */
-	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT );
-	while (Combo_GetCount(hwndCombo) > 0) {
-		Combo_DeleteString( hwndCombo, 0);
-	}
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
-	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
-	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
-	}
 }
 
 
@@ -314,9 +293,6 @@ int CDlgFind::GetData( void )
 		m_pcEditView->m_bCurSearchUpdate = true;
 		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	}
-
-	/* ダイアログデータの設定 */
-	SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
 
 	return 1;
 }
