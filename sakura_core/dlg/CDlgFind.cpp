@@ -275,25 +275,6 @@ int CDlgFind::GetData( void )
 		}
 	}
 
-	// 以下の処理は検索実行の直前に行うべき処理
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
-
-	/* 検索文字列 */
-	if ( cchText < _MAX_PATH) {
-		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
-	}
-
-	if ( m_pcEditView->m_strCurSearchKey != m_strText
-		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
-		m_pcEditView->m_strCurSearchKey = m_strText;
-		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
-		m_pcEditView->m_bCurSearchUpdate = true;
-		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-	}
-
 	return 1;
 }
 
@@ -320,6 +301,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	}
 
 	switch ( wID ) {
+	case IDC_BUTTON_SEARCHNEXT:
 	case IDC_BUTTON_SEARCHPREV:
 		if ( nRet < 0 ) return FALSE;
 		if ( nRet == 0 ) {
@@ -327,70 +309,12 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );
 			return FALSE;
 		}
-		{
-			/* 前を検索 */
-			m_pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
-
-			/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-			m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
-
-			// 02/06/26 ai Start
-			// 検索開始位置を登録
-			if( FALSE != m_pcEditView->m_bSearch ){
-				// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-				m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-				m_pcEditView->m_bSearch = FALSE;
-				// 02/07/28 ai end
-			}//  02/06/26 ai End
-
-			/* 検索ダイアログを自動的に閉じる */
-			if ( m_bAutoCloseDlgFind ) {
-				CloseDialog( 0 );
-			}
-		}
-		return TRUE;
-
-	case IDC_BUTTON_SEARCHNEXT:
-		if ( nRet < 0 ) return FALSE;
-		if ( nRet == 0 ) {
-			// 検索条件を指定してください。
-			OkMessage(GetHwnd(), LS(STR_DLGFIND1));
-			return FALSE;
-		}
-		{
-			/* 次を検索 */
-			m_pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
-
-			/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-			m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
-
-			// 検索開始位置を登録
-			if( FALSE != m_pcEditView->m_bSearch ){
-				// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-				m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-				m_pcEditView->m_bSearch = FALSE;
-			}
-
-			/* 検索ダイアログを自動的に閉じる */
-			if ( m_bAutoCloseDlgFind ) {
-				CloseDialog( 0 );
-			}
-		}
+		DoSearch( wID == IDC_BUTTON_SEARCHNEXT ? SEARCH_FORWARD : SEARCH_BACKWARD );
 		return TRUE;
 
 	case IDC_BUTTON_SETMARK:
 		if ( nRet <= 0 ) return FALSE;
-		{
-			/* 検索して該当行をマーク */
-			m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
-
-			/* 検索ダイアログを自動的に閉じる */
-			if( m_bAutoCloseDlgFind ) {
-				CloseDialog( 0 );
-			} else {
-				::SendMessage( GetHwnd(), WM_NEXTDLGCTL, (WPARAM)GetItemHwnd(IDC_COMBO_TEXT), TRUE );
-			}
-		}
+		DoSetMark();
 		return TRUE;
 
 	case IDC_BUTTON_HELP:
@@ -410,6 +334,98 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	// 基底クラス呼び出し
 	return CDialog::OnBnClicked( wID );
 }
+
+
+/*!
+ * @brief 検索
+ *
+ * @param [in] direction 検索方向
+ */
+void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
+{
+	EFunctionCode eFuncId;
+	if ( direction == ESearchDirection::SEARCH_FORWARD ) {
+		/* 次を検索 */
+		eFuncId = F_SEARCH_NEXT;
+	} else {
+		/* 前を検索 */
+		eFuncId = F_SEARCH_PREV;
+	}
+
+	// 以下の処理は検索実行の直前に行うべき処理
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
+
+	/* 検索文字列 */
+	if ( m_strText.length() < _MAX_PATH ) {
+		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	}
+
+	if ( m_pcEditView->m_strCurSearchKey != m_strText
+		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
+		m_pcEditView->m_strCurSearchKey = m_strText;
+		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
+		m_pcEditView->m_bCurSearchUpdate = true;
+		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	}
+
+	m_pcEditView->GetCommander().HandleCommand( eFuncId, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+
+	/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
+	m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
+
+	// 検索開始位置を登録
+	if ( m_pcEditView->m_bSearch != FALSE ) {
+		// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
+		m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
+		m_pcEditView->m_bSearch = FALSE;
+	}
+
+	/* 検索ダイアログを自動的に閉じる */
+	if ( m_bAutoCloseDlgFind ) {
+		CloseDialog( 0 );
+	}
+}
+
+/*!
+ * @brief 該当行をマーク
+ *
+ * @date 2002.01.16 hor 該当行マーク
+ */
+void CDlgFind::DoSetMark( void ) noexcept
+{
+	// 以下の処理は検索実行の直前に行うべき処理
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
+
+	/* 検索文字列 */
+	if ( m_strText.length() < _MAX_PATH ) {
+		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	}
+
+	if ( m_pcEditView->m_strCurSearchKey != m_strText
+		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
+		m_pcEditView->m_strCurSearchKey = m_strText;
+		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
+		m_pcEditView->m_bCurSearchUpdate = true;
+		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	}
+
+	/* 検索して該当行をマーク */
+	m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
+
+	/* 検索ダイアログを自動的に閉じる */
+	if( m_bAutoCloseDlgFind ) {
+		CloseDialog( 0 );
+	} else {
+		::SendMessage( GetHwnd(), WM_NEXTDLGCTL, (WPARAM)GetItemHwnd(IDC_COMBO_TEXT), TRUE );
+	}
+}
+
 
 BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 {

@@ -64,8 +64,11 @@ protected:
 	int GetData( void ) override;					/* ダイアログデータの取得 */
 
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
-	BOOL OnBnClicked( int wID );
+	BOOL OnBnClicked( int wID ) override;
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
+
+	void DoSearch( ESearchDirection direction ) noexcept;
+	void DoSetMark( void ) noexcept;
 
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
