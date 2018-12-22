@@ -327,88 +327,99 @@ int CDlgFind::GetData( void )
  *
  * @param [in] wID 押下されたボタンのID
  * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ *
+ * @date Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
+ * @date Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
+ * @date 2001/03/12 Stonee MyWinHelpの第四引数を、機能番号からヘルプトピック番号を調べるようにした
+ * @date 2002.01.16 hor 該当行マーク
  */
 BOOL CDlgFind::OnBnClicked( int wID )
 {
-	int			nRet;
+	/* ダイアログデータの取得 */
+	auto nRet = GetData();
+	if ( nRet < 0 ) {
+		SetData();
+	}
+
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
-		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO 修正漏れを追加	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		break;
-	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
-		/* ダイアログデータの取得 */
-		nRet = GetData();
-		if( 0 < nRet ){
-			{
-				/* 前を検索 */
-				m_pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
-				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
-
-				// 02/06/26 ai Start
-				// 検索開始位置を登録
-				if( FALSE != m_pcEditView->m_bSearch ){
-					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-					m_pcEditView->m_bSearch = FALSE;
-					// 02/07/28 ai end
-				}//  02/06/26 ai End
-
-				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
-					CloseDialog( 0 );
-				}
-			}
+	case IDC_BUTTON_SEARCHPREV:
+		if ( nRet < 0 ) return FALSE;
+		if ( nRet == 0 ) {
+			// 検索条件を指定してください。
+			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );
+			return FALSE;
 		}
-		else if (nRet == 0){
-			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// 検索条件を指定してください。
-		}
-		return TRUE;
-	case IDC_BUTTON_SEARCHNEXT:		/* 下検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
-		/* ダイアログデータの取得 */
-		nRet = GetData();
-		if( 0 < nRet ){
-			{
-				/* 次を検索 */
-				m_pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+		{
+			/* 前を検索 */
+			m_pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
-				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
+			/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
+			m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
-				// 検索開始位置を登録
-				if( FALSE != m_pcEditView->m_bSearch ){
-					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-					m_pcEditView->m_bSearch = FALSE;
-				}
+			// 02/06/26 ai Start
+			// 検索開始位置を登録
+			if( FALSE != m_pcEditView->m_bSearch ){
+				// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
+				m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
+				m_pcEditView->m_bSearch = FALSE;
+				// 02/07/28 ai end
+			}//  02/06/26 ai End
 
-				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
-					CloseDialog( 0 );
-				}
-			}
-		}
-		else if (nRet == 0){
-			OkMessage( GetHwnd(), LS(STR_DLGFIND1) );	// 検索条件を指定してください。
-		}
-		return TRUE;
-	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
-		if( 0 < GetData() ){
-			{
-				m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
-				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
-					CloseDialog( 0 );
-				}
-				else{
-					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)GetItemHwnd(IDC_COMBO_TEXT ),TRUE);
-				}
+			/* 検索ダイアログを自動的に閉じる */
+			if ( m_bAutoCloseDlgFind ) {
+				CloseDialog( 0 );
 			}
 		}
 		return TRUE;
+
+	case IDC_BUTTON_SEARCHNEXT:
+		if ( nRet < 0 ) return FALSE;
+		if ( nRet == 0 ) {
+			// 検索条件を指定してください。
+			OkMessage(GetHwnd(), LS(STR_DLGFIND1));
+			return FALSE;
+		}
+		{
+			/* 次を検索 */
+			m_pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+
+			/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
+			m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
+
+			// 検索開始位置を登録
+			if( FALSE != m_pcEditView->m_bSearch ){
+				// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
+				m_pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
+				m_pcEditView->m_bSearch = FALSE;
+			}
+
+			/* 検索ダイアログを自動的に閉じる */
+			if ( m_bAutoCloseDlgFind ) {
+				CloseDialog( 0 );
+			}
+		}
+		return TRUE;
+
+	case IDC_BUTTON_SETMARK:
+		if ( nRet <= 0 ) return FALSE;
+		{
+			/* 検索して該当行をマーク */
+			m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
+
+			/* 検索ダイアログを自動的に閉じる */
+			if( m_bAutoCloseDlgFind ) {
+				CloseDialog( 0 );
+			} else {
+				::SendMessage( GetHwnd(), WM_NEXTDLGCTL, (WPARAM)GetItemHwnd(IDC_COMBO_TEXT), TRUE );
+			}
+		}
+		return TRUE;
+
 	case IDCANCEL:
 		CloseDialog( 0 );
 		return TRUE;
