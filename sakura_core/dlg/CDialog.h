@@ -79,6 +79,7 @@ public:
 	*/
 	CDialog( bool bSizable = false, bool bCheckShareData = true );
 	virtual ~CDialog();
+
 	/*
 	||  Attributes & Operations
 	*/
@@ -88,7 +89,40 @@ public:
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow);	/* モードレスダイアログの表示 */
 	void CloseDialog(INT_PTR nModalRetVal);
 
-	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam );
+
+	virtual BOOL OnInitDialog( HWND wParam, LPARAM lParam ) { return TRUE; }
+	virtual void OnNcDestroy( void ) noexcept;
+
+	/*!
+	 * @brief ダイアログデータの取得
+	 * （ダイアログ ⇒ メンバ変数の同期）
+	 *
+	 * @retval 1 同期成功
+	 * @retval 0 同期データなし
+	 * @retval -1 同期失敗
+	 */
+	virtual int GetData( void ) { return 1; }
+
+	/*!
+	 * @brief ダイアログデータの設定
+	 * （メンバ変数 ⇒ ダイアログの同期）
+	 *
+	 * 誤ってメンバ変数を更新してしまう事故を防止するためconstメソッド化したもの
+	 */
+	virtual void SetData( void ) const noexcept { return; }
+
+	/*!
+	 * @brief ダイアログデータの設定
+	 * （メンバ変数 ⇒ ダイアログの同期）
+	 *
+	 * 既存クラスをそのまま使えるように、当面はこのまま残す
+	 */
+	virtual void SetData( void )
+	{
+		const_cast<const CDialog*>( this )->SetData();
+	}
+
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify( WPARAM wParam, LPARAM lParam ){return FALSE;}
@@ -99,8 +133,6 @@ public:
 	virtual BOOL OnTimer( WPARAM wParam ){return TRUE;}
 	virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ){return TRUE;}
 	virtual BOOL OnDeviceChange( WPARAM wParam, LPARAM lParam ){return TRUE;}
-	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
-	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
 	virtual BOOL OnStnClicked( int ){return FALSE;}
 	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
@@ -130,7 +162,13 @@ public:
 	static bool DirectoryUp(TCHAR* szDir);
 
 public:
-	HWND GetHwnd() const{ return m_hWnd; }
+	inline HWND GetHwnd() const noexcept
+	{
+		assert( this );
+		return m_hWnd;
+	}
+
+protected:
 	//特殊インターフェース (使用は好ましくない)
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
@@ -158,7 +196,13 @@ protected:
 	void CreateSizeBox( void );
 	BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
+	inline HWND GetItemHwnd( int nID ) const noexcept
+	{
+		HWND hDlg = GetHwnd();
+		assert( hDlg );
+		assert( ::IsWindow( hDlg ) );
+		return ::GetDlgItem( hDlg, nID );
+	}
 
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );

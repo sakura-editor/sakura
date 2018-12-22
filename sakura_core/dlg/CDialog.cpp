@@ -182,13 +182,17 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
 
+	/* ダイアログ位置の復元 */
+	SetDialogPosSize();
+
+	auto bRet = OnInitDialog( (HWND) wParam, (LPARAM)m_lParam );
+
 	/* ダイアログデータの設定 */
 	SetData();
 
-	SetDialogPosSize();
-
 	m_bInited = TRUE;
-	return TRUE;
+
+	return bRet;
 }
 
 void CDialog::SetDialogPosSize()
@@ -288,8 +292,13 @@ BOOL CDialog::OnDestroy( void )
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
 	}
-	m_hWnd = NULL;
 	return TRUE;
+}
+
+
+void CDialog::OnNcDestroy( void ) noexcept
+{
+	m_hWnd = NULL;
 }
 
 
@@ -410,6 +419,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	switch( uMsg ){
 	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );
 	case WM_DESTROY:	return OnDestroy();
+	case WM_NCDESTROY:	OnNcDestroy(); return 0;
 	case WM_COMMAND:	return OnCommand( wParam, lParam );
 	case WM_NOTIFY:		return OnNotify( wParam, lParam );
 	case WM_SIZE:
