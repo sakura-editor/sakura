@@ -239,73 +239,79 @@ void CDlgFind::SetCombosList( void )
  * @retval 1 取込成功 (CDlgFindの実装では検索可能)
  * @retval 0 変更なし (CDlgFindの実装では検索不可)
  * @retval -1 取込失敗
+ *
+ * @date 2001/06/23 Norio Nakatani 単語単位で検索を追加
+ * @date Jun. 26, 2001 genta 正規表現ライブラリの差し替えに伴う処理の見直し
+ * @date 2002.01.26 hor 先頭（末尾）から再検索
+ * @date 2002.2.2 YAZAKI CShareDataに移動
  */
 int CDlgFind::GetData( void )
 {
 //	MYTRACE( _T("CDlgFind::GetData()") );
 
+	/* 検索文字列 */
+	size_t cchText = ::GetWindowTextLengthW( GetItemHwnd( IDC_COMBO_TEXT ) );
+	if ( cchText == 0 ) {
+		return 0;
+	}
+
+	/* 検索文字列 */
+	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
+	if ( cchText != ::GetWindowTextW( GetItemHwnd( IDC_COMBO_TEXT ), textBuf.get(), cchText + 1 ) ) {
+		ErrorBeep();
+		return -1;
+	}
+	m_strText.assign( textBuf.get(), cchText );
+
 	/* 英大文字と英小文字を区別する */
 	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
 
-	// 2001/06/23 Norio Nakatani
 	/* 単語単位で検索 */
 	m_sSearchOption.bWordOnly = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_WORD ));
 
-	/* 一致する単語のみ検索する */
 	/* 正規表現 */
 	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-
-	/* 検索文字列 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = to_wchar(&vText[0]);
-
 	/* 検索ダイアログを自動的に閉じる */
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );
+	m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );
 
-	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
+	/* 先頭（末尾）から再検索 */
+	m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
 
-	if( 0 < m_strText.length() ){
-		/* 正規表現？ */
-		// From Here Jun. 26, 2001 genta
-		//	正規表現ライブラリの差し替えに伴う処理の見直し
-		int nFlag = 0x00;
-		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag ) ){
+	/* 正規表現？ */
+	if ( m_sSearchOption.bRegularExp ) {
+		int nFlag = m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+		if ( !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag) ) {
 			return -1;
 		}
-		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
-
-		/* 検索文字列 */
-		//@@@ 2002.2.2 YAZAKI CShareDataに移動
-		if( m_strText.size() < _MAX_PATH ){
-			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
-		}
-		CEditView*	pcEditView = (CEditView*)m_lParam;
-		if( m_pcEditView->m_strCurSearchKey == m_strText && m_pcEditView->m_sCurSearchOption == m_sSearchOption ){
-		}else{
-			m_pcEditView->m_strCurSearchKey = m_strText;
-			m_pcEditView->m_sCurSearchOption = m_sSearchOption;
-			m_pcEditView->m_bCurSearchUpdate = true;
-		}
-		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-		{
-			/* ダイアログデータの設定 */
-			//SetData();
-			SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
-		}
-		return 1;
-	}else{
-		return 0;
 	}
+
+	// 以下の処理は検索実行の直前に行うべき処理
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoCloseDlgFind;
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll;
+
+	/* 検索文字列 */
+	if ( cchText < _MAX_PATH) {
+		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	}
+
+	if ( m_pcEditView->m_strCurSearchKey != m_strText
+		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
+		m_pcEditView->m_strCurSearchKey = m_strText;
+		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
+		m_pcEditView->m_bCurSearchUpdate = true;
+		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	}
+
+	/* ダイアログデータの設定 */
+	SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
+
+	return 1;
 }
 
 
