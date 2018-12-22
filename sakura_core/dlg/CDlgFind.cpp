@@ -155,7 +155,7 @@ void CDlgFind::SetData( void ) const noexcept
 //	MYTRACE( _T("CDlgFind::SetData()") );
 
 	/* 検索文字列 */
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
+	::SetDlgItemText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
 	/* 単語単位で検索 */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly ? BST_CHECKED : BST_UNCHECKED );
@@ -178,10 +178,10 @@ void CDlgFind::SetData( void ) const noexcept
 	// 正規表現DLLが使えない場合、正規表現のチェックボックスを淡色表示にする
 	bool checkResult = CheckRegexpVersion(GetHwnd(), IDC_STATIC_JRE32VER, false);
 	/* 正規表現 */
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_REGULAREXP ), checkResult ? TRUE : FALSE );
+	::EnableWindow( GetItemHwnd( IDC_CHK_REGULAREXP ), checkResult ? TRUE : FALSE );
 
 	// 正規表現を使う場合、単語単位で探すのチェックボックスを淡色表示にする
-	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_WORD ), !m_sSearchOption.bRegularExp ? TRUE : FALSE );
+	::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), !m_sSearchOption.bRegularExp ? TRUE : FALSE );
 
 	return;
 }
@@ -212,20 +212,20 @@ int CDlgFind::GetData( void )
 
 	/* 検索文字列 */
 	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
-	if ( cchText != ::GetWindowTextW( GetItemHwnd( IDC_COMBO_TEXT ), textBuf.get(), cchText + 1 ) ) {
+	if ( cchText != ::GetDlgItemTextW( GetHwnd(), IDC_COMBO_TEXT, textBuf.get(), cchText + 1 ) ) {
 		ErrorBeep();
 		return -1;
 	}
 	m_strText.assign( textBuf.get(), cchText );
 
 	/* 英大文字と英小文字を区別する */
-	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
+	m_sSearchOption.bLoHiCase = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ) == BST_CHECKED );
 
 	/* 単語単位で検索 */
-	m_sSearchOption.bWordOnly = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_WORD ));
+	m_sSearchOption.bWordOnly = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_WORD ) == BST_CHECKED );
 
 	/* 正規表現 */
-	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
+	m_sSearchOption.bRegularExp = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) == BST_CHECKED );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNotifyNotFound = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED );
