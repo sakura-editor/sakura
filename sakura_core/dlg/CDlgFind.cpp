@@ -45,27 +45,6 @@ CDlgFind::CDlgFind() noexcept
 
 
 /*!
-	コンボボックスのドロップダウンメッセージを捕捉する
-
-	@date 2013.03.24 novice 新規作成
-*/
-BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
-{
-	switch( wID ){
-	case IDC_COMBO_TEXT:
-		if ( Combo_GetCount( hwndCtl ) == 0 ) {
-			CRecentSearch cRecentSearch;
-			size_t cItems = cRecentSearch.GetItemCount();
-			for ( size_t n = 0; n < cItems; ++n ) {
-				Combo_AddString( hwndCtl, cRecentSearch.GetItemText( n ) );
-			}
-		}
-		break;
-	}
-	return CDialog::OnCbnDropDown( hwndCtl, wID );
-}
-
-/*!
  * @brief モードレスダイアログの表示
  *
  * @param [in] pcEditView 検索対象となるビュー
@@ -327,6 +306,35 @@ BOOL CDlgFind::OnBnClicked( int wID )
 
 	// 基底クラス呼び出し
 	return CDialog::OnBnClicked( wID );
+}
+
+
+/*!
+ * @brief コンボドロップダウンメッセージハンドラ
+ * （WM_COMMANDのうち、コンボドロップダウン分を処理させるために呼ばれる）
+ *
+ * @param [in] wID 編集されたコンボのID
+ * @return TRUE or FALSE(FALSE推奨、OSには無視される)
+ *
+ * @date 2013.03.24 novice 新規作成
+ */
+BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
+{
+	switch ( wID ) {
+	case IDC_COMBO_TEXT:
+		if ( Combo_GetCount( hwndCtl ) == 0 ) {
+			CRecentSearch cRecentSearch;
+			size_t cItems = cRecentSearch.GetItemCount();
+			for ( size_t n = 0; n < cItems; ++n ) {
+				Combo_AddString( hwndCtl, cRecentSearch.GetItemText( n ) );
+			}
+		}
+		return FALSE;
+	default:
+		DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		break;
+	}
+	return CDialog::OnCbnDropDown( hwndCtl, wID );
 }
 
 
