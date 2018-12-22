@@ -4157,6 +4157,8 @@ GDI リソース\t残り  %d%%\n\n"
 	STR_FILETREE_REPLACE_PATH_TO	"置換先文字列を指定してください"
 
 	STR_ERR_FILEPATH_TOO_LONG		"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+	STR_AUTO_COUNT_PROCESSING		"%s(自動検索中...)"
+	STR_AUTO_COUNT_DONE				"%s(%d件ヒットします)"
 
 END
 

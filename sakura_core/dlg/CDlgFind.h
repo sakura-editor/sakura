@@ -62,6 +62,7 @@ protected:
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 	CEditView*&				m_pcEditView;
 	std::thread				m_threadAutoCount;		// 自動カウント用スレッド
+	std::wstring			m_strOriginalTitle;		// ダイアログタイトル退避用
 
 protected:
 	/* オーバーライド */

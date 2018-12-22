@@ -100,6 +100,13 @@ void CDlgFind::ChangeView( CEditView* pcEditView )
  */
 BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 {
+	// タイトルをバックアップ
+	if ( size_t cchTitle = ::GetWindowTextLengthW( GetHwnd() ) ) {
+		auto titleBuf = std::make_unique<WCHAR[]>( cchTitle + 1 );
+		::GetWindowTextW( GetHwnd(), titleBuf.get(), cchTitle + 1 );
+		m_strOriginalTitle.assign( titleBuf.get(), cchTitle );
+	}
+
 	// 共有メモリから設定をコピーする
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;				// 検索オプション
 	m_bNotifyNotFound = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
@@ -583,6 +590,11 @@ void CDlgFind::StartAutoCounter() noexcept
 	//検索or置換ダイアログから呼び出された
 	if ( !m_pcEditView->ChangeCurRegexp( false ) ) return;
 
+	// ダイアログのタイトルを変える
+	CNativeW strTitle;
+	strTitle.AppendStringF( LSW(STR_AUTO_COUNT_PROCESSING), m_strOriginalTitle.c_str());
+	::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
+
 	// 新たなカウントスレッドを生成する
 	m_threadAutoCount = std::thread( [this] { CountMatches(); } );
 }
@@ -607,6 +619,8 @@ void CDlgFind::StopAutoCounter() noexcept
 	} else {
 		DEBUG_TRACE( _T("%ls(%d): %ls thread is not joinable.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 	}
+
+	::SetWindowTextW( GetHwnd(), m_strOriginalTitle.c_str() );
 }
 
 
@@ -669,7 +683,12 @@ void CDlgFind::CountMatches() const noexcept
 			pDocLine = pDocLine->GetNextLine();
 		}
 	}
+
+	// 結果を表示
 	DEBUG_TRACE( _T("%ls(%d): %ls %d matched\n"), __FILEW__, __LINE__, __FUNCTIONW__, cMatched );
+	CNativeW strTitle;
+	strTitle.AppendStringF( LSW(STR_AUTO_COUNT_DONE), m_strOriginalTitle.c_str(), cMatched );
+	::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
 
 	DEBUG_TRACE( _T("%ls(%d): %ls end\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 }
