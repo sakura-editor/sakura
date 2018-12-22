@@ -283,6 +283,11 @@ int CDlgFind::GetData( void )
 
 	/* 正規表現？ */
 	if ( m_sSearchOption.bRegularExp ) {
+		if ( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, true ) ) {
+			ErrorBeep();
+			m_sSearchOption.bRegularExp = false;
+			return -1;
+		}
 		int nFlag = m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if ( !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag) ) {
 			return -1;
@@ -331,39 +336,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		/* 「検索」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO 修正漏れを追加	// 2006.10.10 ryoji MyWinHelpに変更に変更
-		break;
-	case IDC_CHK_REGULAREXP:	/* 正規表現 */
-//		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
-		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
-
-			// From Here Jun. 26, 2001 genta
-			//	正規表現ライブラリの差し替えに伴う処理の見直し
-			if( !CheckRegexpVersion( GetHwnd(), IDC_STATIC_JRE32VER, true ) ){
-				::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, 0 );
-			}else{
-			// To Here Jun. 26, 2001 genta
-
-				/* 英大文字と英小文字を区別する */
-				//	Jan. 31, 2002 genta
-				//	大文字・小文字の区別は正規表現の設定に関わらず保存する
-				//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 1 );
-				//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), FALSE );
-
-				// 2001/06/23 Norio Nakatani
-				/* 単語単位で検索 */
-				::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), FALSE );
-			}
-		}else{
-			/* 英大文字と英小文字を区別する */
-			//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
-			//	Jan. 31, 2002 genta
-			//	大文字・小文字の区別は正規表現の設定に関わらず保存する
-			//::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
-
-			// 2001/06/23 Norio Nakatani
-			/* 単語単位で検索 */
-			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), TRUE );
-		}
 		break;
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDC_BUTTON1]→[IDC_BUTTON_SERACHPREV]に変更
 		/* ダイアログデータの取得 */
