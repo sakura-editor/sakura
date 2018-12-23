@@ -73,6 +73,9 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
 )
 {
+	// 先頭（末尾）から再検索
+	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+
 	bool		bSelecting;
 	bool		bFlag1 = false;
 	bool		bSelectingLock_Old = false;
@@ -267,9 +270,9 @@ re_do:;
 		}
 	}
 
-end_of_func:;
+end_of_func:
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
+	if ( bSearchAll ) {
 		if(!bFound	&&		// 見つからなかった
 			bRedo	&&		// 最初の検索
 			!bReplaceAll	// 全て置換の実行中じゃない
@@ -319,6 +322,9 @@ end_of_func:;
 /* 前を検索 */
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
+	// 先頭（末尾）から再検索
+	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+
 	bool		bSelecting;
 	bool		bSelectingLock_Old = false;
 	bool		bFound = false;
@@ -437,7 +443,7 @@ re_do:;							//	hor
 	}
 end_of_func:;
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(GetDllShareData().m_Common.m_sSearch.m_bSearchAll){
+	if ( bSearchAll ) {
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
