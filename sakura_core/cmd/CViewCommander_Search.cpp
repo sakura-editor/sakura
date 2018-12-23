@@ -59,11 +59,15 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 
 
 
-/*! 次を検索
-	@param bChangeCurRegexp 共有データの検索文字列を使う
-	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
-	@date 2004.05.30 Moca bChangeCurRegexp=trueで従来通り。falseで、CEditViewの現在設定されている検索パターンを使う
-*/
+/*!
+ * @brief 次を検索
+ * 
+ * @param bChangeCurRegexp 共有データの検索文字列を使う
+ *
+ * @date 2002.01.16 hor 共通部分のくくりだし
+ * @date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
+ * @date 2004.05.30 Moca bChangeCurRegexp=trueで従来通り。falseで、CEditViewの現在設定されている検索パターンを使う
+ */
 void CViewCommander::Command_SEARCH_NEXT(
 	bool			bChangeCurRegexp,
 	bool			bRedraw,
@@ -104,10 +108,13 @@ void CViewCommander::Command_SEARCH_NEXT(
 	}
 
 	bSelecting = false;
-	// 2002.01.16 hor
-	// 共通部分のくくりだし
-	// 2004.05.30 Moca CEditViewの現在設定されている検索パターンを使えるように
-	if(bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp())return;
+
+	// bChangeCurRegexp==trueの場合のみ、
+	// CEditViewの検索パターンを更新し、失敗したら抜ける。
+	if ( bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp( false ) ) {
+		return;
+	}
+
 	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
 		goto end_of_func;
 	}
@@ -319,7 +326,14 @@ end_of_func:
 
 
 
-/* 前を検索 */
+/*!
+ * @brief 前を検索
+ *
+ * @param [in] bReDraw
+ * @param [in] hwndParent
+ *
+ * @date 2002.01.16 hor 共通部分のくくりだし
+ */
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
 	// 先頭（末尾）から再検索
@@ -343,11 +357,12 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	CLayoutRange sSelect_Old;
 
 	bSelecting = false;
-	// 2002.01.16 hor
-	// 共通部分のくくりだし
-	if(!m_pCommanderView->ChangeCurRegexp()){
+
+	// CEditViewの検索パターンを更新し、失敗したら抜ける。
+	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
 		return;
 	}
+
 	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
 		goto end_of_func;
 	}
