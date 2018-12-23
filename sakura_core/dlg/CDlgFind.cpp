@@ -450,19 +450,24 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
  */
 inline void CDlgFind::ApplySharedSearchKey() noexcept
 {
-	// 以下の処理は検索実行の直前に行うべき処理
+	// 検索オプション(検索ダイアログ用拡張定義分)を共有メモリに転送する
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
 	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 
-	/* 検索文字列 */
+	// 検索キーを共有メモリに転送する
 	if ( m_strText.length() < _MAX_PATH ) {
+		// 履歴登録は格納できる長さの場合にのみ行う
 		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+
+		// 検索オプションを共有メモリに転送する
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	}
 
+	// 検索キーか検索オプションがビューの設定と異なる場合
 	if ( m_pcEditView->m_strCurSearchKey != m_strText
-		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
+		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption ) {
+		// 検索キーと検索オプションをビューに転送する
 		m_pcEditView->m_strCurSearchKey = m_strText;
 		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
 		m_pcEditView->m_bCurSearchUpdate = true;
@@ -551,13 +556,13 @@ void CDlgFind::StartAutoCounter() noexcept
 
 	// カウントスレッドが有効な場合、停止処理を走らせる
 	if ( m_threadAutoCount.joinable() ) {
+		// 自動カウントを止める
 		StopAutoCounter();
 	}
 
 	// ダイアログデータの取得
+	// ※検索できない状態ならスレッドを生成せずに抜ける
 	auto nRet = GetData();
-
-	// 検索できない状態ならスレッドを生成せずに抜ける
 	if ( nRet <= 0 ) {
 		DEBUG_TRACE( _T("%ls(%d): %ls aborted.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
 		return;
