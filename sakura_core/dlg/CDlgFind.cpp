@@ -177,7 +177,7 @@ void CDlgFind::SetData( void ) const noexcept
 //	MYTRACE( _T("CDlgFind::SetData()") );
 
 	/* 検索文字列 */
-	::SetDlgItemText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
+	::SetDlgItemTextW( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 
 	/* 単語単位で検索 */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly ? BST_CHECKED : BST_UNCHECKED );
