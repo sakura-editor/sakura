@@ -465,7 +465,8 @@ inline void CDlgFind::ApplySharedSearchKey() noexcept
 	s_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 
 	// 検索キーを共有メモリに転送する
-	if ( m_strText.length() < _MAX_PATH ) {
+	const decltype(((const SShare_SearchKeywords*)NULL)->m_aSearchKeys)::ElementType keyType;
+	if ( m_strText.length() < keyType.BUFFER_COUNT ) {
 		// 履歴登録は格納できる長さの場合にのみ行う
 		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
 	}
