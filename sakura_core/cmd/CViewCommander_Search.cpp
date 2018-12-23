@@ -385,10 +385,8 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		CLayoutRange sSelect;
 		bool bSelectingLock = false;
 		bool bDisableSelect = false;
-		bool bReDraw;
-		SelectionBackup( CEditView* pCommanderView, bool redraw ) noexcept
+		SelectionBackup( CEditView* pCommanderView, bool bReDraw) noexcept
 			: m_pCommanderView( pCommanderView )
-			, bReDraw( redraw )
 		{
 			auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
 			if ( cSelectionInfo.IsTextSelected() ) {	/* テキストが選択されているか */
@@ -409,25 +407,10 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		}
 		bool IsSelecting() const noexcept { return bSelecting; }
 		bool GetSelectingLock() const noexcept { return bSelectingLock; }
-		void Restore( CViewSelect& cSelectionInfo ) const noexcept
-		{
-			if ( bSelecting ) {
-				/* 選択範囲の変更 */
-				cSelectionInfo.m_bSelectingLock = bSelectingLock;	/* 選択状態のロック */
-				cSelectionInfo.m_sSelectBgn = sSelectBgn;
-				cSelectionInfo.m_sSelect = sSelect;
-
-				/* 選択領域描画 */
-				if ( bReDraw ) {
-					cSelectionInfo.DrawSelectArea();
-				}
-
-			} else if ( bDisableSelect ) {
-				m_pCommanderView->DrawBracketCursorLine( bReDraw );
-			}
-		}
 	};
 	SelectionBackup backup( m_pCommanderView, bReDraw );
+
+	auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
 
 	// この関数は「前を検索」を単発で実行する
 	try
@@ -450,6 +433,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 				&cMatchedRange,							// マッチレイアウト範囲
 				m_pCommanderView->m_sSearchPattern
 			) ) {
+				// 見つかった場合、ループを抜ける
 				break;
 			}
 			// 見つからない場合、「末尾から検索」で未リトライなら続行する
@@ -461,14 +445,12 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 				nIdx		= CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
 				continue;
 			}
-			// 見つからない場合、選択状態を元に戻す
+			// 見つからない場合
 			else {
-				backup.Restore( m_pCommanderView->GetSelectionInfo() );
 				throw std::exception();
 			}
 		}
 
-		auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
 		if ( backup.IsSelecting() ) {
 			// 文字列選択中の場合、キャレット位置で選択範囲を伸縮する
 			cSelectionInfo.ChangeSelectAreaByCurrentCursor( cMatchedRange.GetFrom() );
@@ -493,6 +475,22 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	} catch (std::exception&) {
 		// △見つかりませんでした
 		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV2) );
+
+		// 選択状態を元に戻す
+		if ( backup.bSelecting ) {
+			/* 選択範囲の変更 */
+			cSelectionInfo.m_bSelectingLock = backup.bSelectingLock;	/* 選択状態のロック */
+			cSelectionInfo.m_sSelectBgn = backup.sSelectBgn;
+			cSelectionInfo.m_sSelect = backup.sSelect;
+
+			/* 選択領域描画 */
+			if ( bReDraw ) {
+				cSelectionInfo.DrawSelectArea();
+			}
+
+		} else if ( backup.bDisableSelect ) {
+			m_pCommanderView->DrawBracketCursorLine( bReDraw );
+		}
 
 		/* 検索／置換  見つからないときメッセージを表示 */
 		CNativeW KeyName;
