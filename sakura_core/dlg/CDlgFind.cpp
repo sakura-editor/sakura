@@ -446,21 +446,10 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 
 
 /*!
- * @brief 検索
- *
- * @param [in] direction 検索方向
+ * @brief 検索キーを共有メモリに書き込む
  */
-void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
+inline void CDlgFind::ApplySharedSearchKey() noexcept
 {
-	EFunctionCode eFuncId;
-	if ( direction == ESearchDirection::SEARCH_FORWARD ) {
-		/* 次を検索 */
-		eFuncId = F_SEARCH_NEXT;
-	} else {
-		/* 前を検索 */
-		eFuncId = F_SEARCH_PREV;
-	}
-
 	// 以下の処理は検索実行の直前に行うべき処理
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
@@ -480,7 +469,29 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	}
 
-	if (m_ptEscCaretPos_PHY.HasNegative()) {
+}
+
+
+ /*!
+ * @brief 検索
+ *
+ * @param [in] direction 検索方向
+ */
+void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
+{
+	EFunctionCode eFuncId;
+	if ( direction == ESearchDirection::SEARCH_FORWARD ) {
+		/* 次を検索 */
+		eFuncId = F_SEARCH_NEXT;
+	} else {
+		/* 前を検索 */
+		eFuncId = F_SEARCH_PREV;
+	}
+
+	// 検索キーを共有メモリに転送する
+	ApplySharedSearchKey();
+
+	if ( m_ptEscCaretPos_PHY.HasNegative() ) {
 		// 検索開始時のカーソル位置を退避する
 		m_ptEscCaretPos_PHY = m_pcEditView->GetCaret().GetCaretLogicPos();
 
@@ -513,24 +524,8 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
  */
 void CDlgFind::DoSetMark( void ) noexcept
 {
-	// 以下の処理は検索実行の直前に行うべき処理
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
-
-	/* 検索文字列 */
-	if ( m_strText.length() < _MAX_PATH ) {
-		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
-	}
-
-	if ( m_pcEditView->m_strCurSearchKey != m_strText
-		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
-		m_pcEditView->m_strCurSearchKey = m_strText;
-		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
-		m_pcEditView->m_bCurSearchUpdate = true;
-		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-	}
+	// 検索キーを共有メモリに転送する
+	ApplySharedSearchKey();
 
 	/* 検索して該当行をマーク */
 	m_pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
@@ -568,24 +563,8 @@ void CDlgFind::StartAutoCounter() noexcept
 		return;
 	}
 
-	// 以下の処理は検索実行の直前に行うべき処理
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
-
-	/* 検索文字列 */
-	if ( m_strText.length() < _MAX_PATH ) {
-		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
-	}
-
-	if ( m_pcEditView->m_strCurSearchKey != m_strText
-		|| m_pcEditView->m_sCurSearchOption != m_sSearchOption) {
-		m_pcEditView->m_strCurSearchKey = m_strText;
-		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
-		m_pcEditView->m_bCurSearchUpdate = true;
-		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-	}
+	// 検索キーを共有メモリに転送する
+	ApplySharedSearchKey();
 
 	//検索or置換ダイアログから呼び出された
 	if ( !m_pcEditView->ChangeCurRegexp( false ) ) return;

@@ -79,6 +79,8 @@ protected:
 	BOOL OnCbnSelChange( HWND hwndCtl, int wID ) override;
 	BOOL OnTimer( WPARAM nTimerId ) override;
 
+	void ApplySharedSearchKey() noexcept;
+
 	void DoSearch( ESearchDirection direction ) noexcept;
 	void DoSetMark( void ) noexcept;
 
