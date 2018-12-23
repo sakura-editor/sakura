@@ -80,6 +80,21 @@ void CViewCommander::Command_SEARCH_NEXT(
 	// 先頭（末尾）から再検索
 	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
 
+	// out変数に初期値を入れる
+	if ( pcSelectLogic ) {
+		pcSelectLogic->Clear(-1);
+	}
+
+	// bChangeCurRegexp==trueの場合のみ、
+	// CEditViewの検索パターンを更新し、失敗したら抜ける。
+	if ( bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp( false ) ) {
+		return;
+	}
+
+	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
+		goto end_of_func;
+	}
+
 	bool		bSelecting;
 	bool		bFlag1 = false;
 	bool		bSelectingLock_Old = false;
@@ -103,21 +118,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 	int			nIdxOld = 0;	//	hor
 	int			nSearchResult;
 
-	if( pcSelectLogic ){
-		pcSelectLogic->Clear(-1);
-	}
-
 	bSelecting = false;
-
-	// bChangeCurRegexp==trueの場合のみ、
-	// CEditViewの検索パターンを更新し、失敗したら抜ける。
-	if ( bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp( false ) ) {
-		return;
-	}
-
-	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
-		goto end_of_func;
-	}
 
 	// 検索開始位置を調整
 	bFlag1 = false;
@@ -339,6 +340,15 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	// 先頭（末尾）から再検索
 	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
 
+	// CEditViewの検索パターンを更新し、失敗したら抜ける。
+	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
+		return;
+	}
+
+	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
+		goto end_of_func;
+	}
+
 	bool		bSelecting;
 	bool		bSelectingLock_Old = false;
 	bool		bFound = false;
@@ -358,14 +368,6 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 
 	bSelecting = false;
 
-	// CEditViewの検索パターンを更新し、失敗したら抜ける。
-	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
-		return;
-	}
-
-	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
-		goto end_of_func;
-	}
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		sSelectBgn_Old = m_pCommanderView->GetSelectionInfo().m_sSelectBgn; //範囲選択(原点)
 		sSelect_Old = GetSelect();
