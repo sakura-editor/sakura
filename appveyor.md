@@ -66,7 +66,6 @@
 |[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
 |[build-installer.bat](build-installer.bat) | インストーラをビルドするバッチファイル |
 |[run-cppcheck.bat](run-cppcheck.bat)       | cppcheck を実行するバッチファイル |
-|[externals\doxygen\install-doxygen.bat](externals/doxygen/install-doxygen.bat) | doxygen をインストールするバッチファイル |
 |[run-doxygen.bat](run-doxygen.bat)         | doxygen を実行するバッチファイル |
 |[zipArtifacts.bat](zipArtifacts.bat)       | 成果物を zip に固めるバッチファイル |
 |[calc-hash.bat](calc-hash.bat)             | 成果物の sha256 を計算するバッチファイル |
@@ -93,7 +92,6 @@
         - hhc.exe (Visual Studio 2017 に同梱)
     - [run-cppcheck.bat](run-cppcheck.bat) : cppcheck を実行する
         - cppcheck.exe
-    - [externals\doxygen\install-doxygen.bat](externals/doxygen/install-doxygen.bat) : doxygen をインストールする
     - [run-doxygen.bat](run-doxygen.bat) : doxygen を実行する
         - doxygen.exe
     - [build-installer.bat](build-installer.bat) : Installer をビルドする
@@ -122,7 +120,6 @@
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |run-cppcheck.bat                        | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|externals\doxygen\install-doxygen.bat   | なし | なし |
 |run-doxygen.bat                         | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |calc-hash.bat       | sha256 のハッシュ値の出力先ファイル | ハッシュ値を計算するフォルダパス |

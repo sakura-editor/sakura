@@ -11,8 +11,8 @@ platform:
   - MinGW
 
 install:
-  - cinst cppcheck --version 1.86 --limitoutput
-  - cinst doxygen.install --version 1.8.14 --limitoutput
+  - cinst cppcheck --version 1.86 --limitoutput -y
+  - cinst doxygen.install --version 1.8.14.20181217 --limitoutput -y
 
 build_script:
 - cmd: >-
