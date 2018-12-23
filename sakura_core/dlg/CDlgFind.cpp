@@ -354,7 +354,7 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 		}
 		return FALSE;
 	default:
-		DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs\n"), __FILE__, __LINE__, __FUNCTION__ );
 		break;
 	}
 	return CDialog::OnCbnDropDown( hwndCtl, wID );
@@ -370,7 +370,7 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
  */
 BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
 {
-	DEBUG_TRACE(_T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+	DEBUG_TRACE( _T("%hs(%d): %hs\n"), __FILE__, __LINE__, __FUNCTION__ );
 
 	// 自動カウントを止める
 	StopAutoCounter();
@@ -394,7 +394,7 @@ BOOL CDlgFind::OnCbnEditChange( HWND hwndCtl, int wID )
  */
 BOOL CDlgFind::OnCbnSelChange( HWND hwndCtl, int wID )
 {
-	DEBUG_TRACE(_T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+	DEBUG_TRACE( _T("%hs(%d): %hs\n"), __FILE__, __LINE__, __FUNCTION__ );
 
 	// 自動カウントを止める
 	StopAutoCounter();
@@ -556,7 +556,7 @@ void CDlgFind::DoSetMark( void ) noexcept
  */
 void CDlgFind::StartAutoCounter() noexcept
 {
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	DEBUG_TRACE( _T("%hs(%d): %hs\n"), __FILE__, __LINE__, __FUNCTION__ );
 
 	// 自動カウントのタイマーを止める
 	::KillTimer( GetHwnd(), IDT_AUTO_COUNT );
@@ -571,7 +571,7 @@ void CDlgFind::StartAutoCounter() noexcept
 	// ※検索できない状態ならスレッドを生成せずに抜ける
 	auto nRet = GetData();
 	if ( nRet <= 0 ) {
-		DEBUG_TRACE( _T("%ls(%d): %ls aborted.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs aborted.\n"), __FILE__, __LINE__, __FUNCTION__ );
 		return;
 	}
 
@@ -581,7 +581,7 @@ void CDlgFind::StartAutoCounter() noexcept
 	// ビューの検索キーを更新（≒コンパイル）する
 	if ( !m_pcEditView->ChangeCurRegexp( false ) ) {
 		// GetDataでチェック済みなのでここは絶対通らないはず。
-		DEBUG_TRACE( _T("%ls(%d): %ls failed.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs failed.\n"), __FILE__, __LINE__, __FUNCTION__ );
 		return;
 	}
 
@@ -600,19 +600,19 @@ void CDlgFind::StartAutoCounter() noexcept
  */
 void CDlgFind::StopAutoCounter() noexcept
 {
-	DEBUG_TRACE( _T("%ls(%d): %ls\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	DEBUG_TRACE( _T("%hs(%d): %hs\n"), __FILE__, __LINE__, __FUNCTION__ );
 
 	// 自動カウントのタイマーを止める
 	::KillTimer( GetHwnd(), IDT_AUTO_COUNT );
 
 	// カウントスレッドが有効な場合、強制停止する
 	if ( m_threadAutoCount.joinable() ) {
-		DEBUG_TRACE( _T("%ls(%d): %ls thread is joinable.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs thread is joinable.\n"), __FILE__, __LINE__, __FUNCTION__ );
 		HANDLE hThread = (HANDLE) m_threadAutoCount.native_handle();
 		::TerminateThread( hThread, -1 );
 		m_threadAutoCount.detach();
 	} else {
-		DEBUG_TRACE( _T("%ls(%d): %ls thread is not joinable.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs thread is not joinable.\n"), __FILE__, __LINE__, __FUNCTION__ );
 	}
 
 	::SetWindowTextW( GetHwnd(), m_strOriginalTitle.c_str() );
@@ -626,7 +626,7 @@ void CDlgFind::StopAutoCounter() noexcept
  */
 void CDlgFind::CountMatches() const noexcept
 {
-	DEBUG_TRACE(_T("%ls(%d): %ls start\n"), __FILEW__, __LINE__, __FUNCTIONW__);
+	DEBUG_TRACE( _T("%hs(%d): %hs start\n"), __FILE__, __LINE__, __FUNCTION__ );
 
 	auto pcDocLineMgr = &m_pcEditView->GetDocument()->m_cDocLineMgr;
 	auto &pattern = m_pcEditView->m_sSearchPattern;
@@ -710,12 +710,12 @@ void CDlgFind::CountMatches() const noexcept
 	}
 
 	// 結果を表示
-	DEBUG_TRACE( _T("%ls(%d): %ls %d matched\n"), __FILEW__, __LINE__, __FUNCTIONW__, cMatched );
+	DEBUG_TRACE( _T("%hs(%d): %hs %d matched\n"), __FILE__, __LINE__, __FUNCTION__, cMatched );
 	CNativeW strTitle;
 	strTitle.AppendStringF( LSW(STR_AUTO_COUNT_DONE), m_strOriginalTitle.c_str(), cMatched );
 	::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
 
-	DEBUG_TRACE( _T("%ls(%d): %ls end\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+	DEBUG_TRACE( _T("%hs(%d): %hs end\n"), __FILE__, __LINE__, __FUNCTION__ );
 }
 
 
