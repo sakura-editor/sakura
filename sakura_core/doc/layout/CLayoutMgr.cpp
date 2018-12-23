@@ -209,10 +209,11 @@ void CLayoutMgr::SetLayoutInfo(
 
 
 /*!
-	@brief 指定された物理行のレイアウト情報を取得
-
-	@param nLineNum [in] 物理行番号 (0～)
-*/
+ * @brief 指定された行番号のレイアウト情報を取得
+ *
+ * @param nLineNum [in] レイアウト行番号 (0～) [0,m_nLines)
+ * @returns レイアウト情報
+ */
 const CLayout* CLayoutMgr::SearchLineByLayoutY(
 	CLayoutInt nLineLayout
 ) const

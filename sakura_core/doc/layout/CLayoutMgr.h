@@ -131,7 +131,7 @@ public:
 	const CLayout*	GetBottomLayout() const { return m_pLayoutBot; }
 
 	//レイアウトを探す
-	const CLayout*	SearchLineByLayoutY( CLayoutInt nLineLayout ) const;	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	const CLayout*	SearchLineByLayoutY( CLayoutInt nLineLayout ) const;	/* 指定されたレイアウト行のレイアウトデータ(CLayout)へのポインタを返す */
 	CLayout*		SearchLineByLayoutY( CLayoutInt nLineLayout ){ return const_cast<CLayout*>(static_cast<const CLayoutMgr*>(this)->SearchLineByLayoutY(nLineLayout)); }
 
 	//ワードを探す
