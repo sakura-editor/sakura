@@ -358,6 +358,24 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		return;
 	}
 
+	// キャレット位置の行番号に対応するレイアウト情報を取得する
+	CLogicInt nIdx( 0 );
+	CLayoutInt nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
+	if ( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum )  ) {
+		/* 指定された桁に対応する行のデータ内の位置を調べる */
+		nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	} else {
+		// pcLayoutが取れない場合、最終レイアウトを使う
+		nLineNum = GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
+		// 空ドキュメント対策で pcLayout を再取得してチェックする
+		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+		if ( pcLayout == NULL ) {
+			return;
+		}
+		// 行末のヌル文字(\0)にマッチさせるために +1 する
+		nIdx = CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
+	}
+
 	// 検索前の状態をバックアップするクラス（ＲＡＩＩではない）
 	struct SelectionBackup
 	{
@@ -399,13 +417,11 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 				cSelectionInfo.m_sSelectBgn = sSelectBgn;
 				cSelectionInfo.m_sSelect = sSelect;
 
-				// 必要な処理かどうか微妙なのでコメントアウト
-				// カーソル移動
-				//GetCaret().MoveCursor( sRangeA.GetFrom(), bReDraw );
-				//GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-
 				/* 選択領域描画 */
-				cSelectionInfo.DrawSelectArea();
+				if ( bReDraw ) {
+					cSelectionInfo.DrawSelectArea();
+				}
+
 			} else if ( bDisableSelect ) {
 				m_pCommanderView->DrawBracketCursorLine( bReDraw );
 			}
@@ -413,96 +429,68 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	};
 	SelectionBackup backup( m_pCommanderView, bReDraw );
 
-	// 検索開始行
-	CLayoutInt	nLineNumOld(0);
-	// 検索開始位置オフセット（WCHAR単位）
-	CLogicInt	nIdxOld(0);
+	// この関数は「前を検索」を単発で実行する
+	try
+	{
+		// 検索開始行
+		const CLayoutInt nLineNumOld( nLineNum );
+		// 検索開始位置オフセット（WCHAR単位）
+		const CLogicInt nIdxOld( nIdx );
+		// マッチレイアウト範囲
+		CLayoutRange cMatchedRange;
 
-	CLayoutRange sRangeA;
-	sRangeA.Set(GetCaret().GetCaretLayoutPos());
+		// リトライ用のループ
+		for (bool bRedo = true;;)
+		{
+			/* 現在位置より前の位置を検索する */
+			if ( GetDocument()->m_cLayoutMgr.SearchWord(
+				nLineNum,								// 検索開始レイアウト行
+				nIdx,									// 検索開始データ位置
+				SEARCH_BACKWARD,						// 後方検索
+				&cMatchedRange,							// マッチレイアウト範囲
+				m_pCommanderView->m_sSearchPattern
+			) ) {
+				break;
+			}
+			// 見つからない場合、「末尾から検索」で未リトライなら続行する
+			else if ( bRedo && bSearchAll ) {
+				bRedo = false;
+				nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
+				const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+				if ( pcLayout == NULL ) throw std::exception();
+				nIdx		= CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
+				continue;
+			}
+			// 見つからない場合、選択状態を元に戻す
+			else {
+				backup.Restore( m_pCommanderView->GetSelectionInfo() );
+				throw std::exception();
+			}
+		}
 
-	// キャレット位置の行番号に対応するレイアウト情報を取得する
-	CLogicInt nIdx(0);
-	CLayoutInt nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
-	if ( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum )  ) {
-		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
-	} else {
-		// pcLayoutが取れない場合、最終レイアウトを使う
-		nLineNum = GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
-		// 空ドキュメント対策で pcLayout を再取得してチェックする
-		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		if ( pcLayout == NULL ) goto end_of_func;
-		// 行末のヌル文字(\0)にマッチさせるために +1 する
-		nIdx = CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
-	}
-
-	// redoがあるので紛らわしいけど、
-	// この関数は「前を検索」を単発で実行するためのもの。
-
-	bool bFound = false;
-	bool bRedo = true;
-
-	auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
-
-	nLineNumOld = nLineNum;
-	nIdxOld = nIdx;
-
-re_do:
-	/* 現在位置より前の位置を検索する */
-	if ( GetDocument()->m_cLayoutMgr.SearchWord(
-		nLineNum,								// 検索開始レイアウト行
-		nIdx,									// 検索開始データ位置
-		SEARCH_BACKWARD,						// 後方検索
-		&sRangeA,								// マッチレイアウト範囲
-		m_pCommanderView->m_sSearchPattern
-	) ){
+		auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
 		if ( backup.IsSelecting() ) {
-			/* 現在のカーソル位置によって選択範囲を変更 */
-			cSelectionInfo.ChangeSelectAreaByCurrentCursor( sRangeA.GetFrom() );
+			// 文字列選択中の場合、キャレット位置で選択範囲を伸縮する
+			cSelectionInfo.ChangeSelectAreaByCurrentCursor( cMatchedRange.GetFrom() );
 			cSelectionInfo.m_bSelectingLock = backup.GetSelectingLock();	/* 選択状態のロック */
 		} else {
-			/* 選択範囲の変更 */
-			//	2005.06.24 Moca
-			cSelectionInfo.SetSelectArea( sRangeA );
-
+			// 文字列選択してない場合、マッチした文字列を選択する
+			cSelectionInfo.SetSelectArea( cMatchedRange );
 			if ( bReDraw ) {
-				/* 選択領域描画 */
 				cSelectionInfo.DrawSelectArea();
 			}
 		}
-		/* カーソル移動 */
-		//	Sep. 8, 2000 genta
+		// キャレットの移動
 		m_pCommanderView->AddCurrentLineToHistory();
-		GetCaret().MoveCursor( sRangeA.GetFrom(), bReDraw );
+		GetCaret().MoveCursor( cMatchedRange.GetFrom(), bReDraw );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-		bFound = true;
-	}
-	// 見つからない場合、選択状態を元に戻す
-	else {
-		// ★★★懸念★★★
-		// 末尾から再検索となる場合、ここでバックアップを復元するのは無駄。
-		backup.Restore( cSelectionInfo );
-	}
 
-end_of_func:
-	if ( !bFound && bRedo && bSearchAll ) {
-		bRedo = false;
-		nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
-		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		if ( pcLayout == NULL ) goto end_of_func;
-		nIdx		= CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
-		goto re_do;	// 末尾から再検索
-	}
-
-	if ( bFound ) {
-		if ( nLineNumOld < nLineNum
-			|| ( nLineNumOld == nLineNum && nIdxOld < nIdx ) ) {
+		if ( !(nIdx <= nIdxOld || nLineNum < nLineNumOld ) ) {
 			// ▲末尾から再検索しました
 			m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV1) );
 		}
 
-	} else {
+	} catch (std::exception&) {
 		// △見つかりませんでした
 		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV2) );
 
@@ -510,7 +498,7 @@ end_of_func:
 		CNativeW KeyName;
 		LimitStringLengthW(m_pCommanderView->m_strCurSearchKey.c_str(), m_pCommanderView->m_strCurSearchKey.size(),
 			_MAX_PATH, KeyName);
-		if( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ){
+		if ( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ) {
 			KeyName.AppendString( L"..." );
 		}
 		AlertNotFound( hwndParent, bAlertIfNotFound, LS(STR_ERR_SRPREV3), KeyName.GetStringPtr() );
@@ -1023,7 +1011,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	/*CLogicInt*/int		lineCnt = 0;		//置換前の行数
 	/*CLayoutInt*/int		linDif = (0);		//置換後の行調整
 	CLogicXInt  colDif(0);     // 置換後の桁調整
-	CLogicPoint boxRight;      // 矩形選択の現在の行の右端。sRangeA.GetTo().x ではなく boxRight.x + colDif を使う。
+	CLogicPoint boxRight;      // 矩形選択の現在の行の右端。cMatchedRange.GetTo().x ではなく boxRight.x + colDif を使う。
 	/*CLogicInt*/int		linOldLen = (0);	//検査後の行の長さ
 
 	int nLoopCnt = -1;
