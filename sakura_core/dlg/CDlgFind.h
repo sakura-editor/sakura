@@ -18,6 +18,9 @@
 #define SAKURA_CDLGFIND_H_
 
 #include <thread>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 #include "_main/global.h"
 #include "dlg/CDialog.h"
 
@@ -62,6 +65,8 @@ protected:
 	CLogicPoint				m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 	CEditView*&				m_pcEditView;
 	std::thread				m_threadAutoCount;		// 自動カウント用スレッド
+	std::mutex				m_mtxAutoCount;
+	std::atomic<bool>		m_bAutoCountCanceled;
 	std::wstring			m_strOriginalTitle;		// ダイアログタイトル退避用
 
 protected:

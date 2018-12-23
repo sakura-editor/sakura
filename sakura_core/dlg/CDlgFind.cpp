@@ -591,7 +591,21 @@ void CDlgFind::StartAutoCounter() noexcept
 	::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
 
 	// 新たなカウントスレッドを生成する
-	m_threadAutoCount = std::thread( [this] { CountMatches(); } );
+	std::condition_variable cv;
+	bool initialized = false;
+	m_threadAutoCount = std::thread( [this, &cv, &initialized] {
+		// 初期化
+		{
+			std::unique_lock<std::mutex> lock( m_mtxAutoCount );
+			initialized = true;
+			m_bAutoCountCanceled = false;
+			cv.notify_one();
+		}
+		// 本処理
+		CountMatches();
+	} );
+	std::unique_lock<std::mutex> lock( m_mtxAutoCount );
+	cv.wait(lock, [&initialized] { return initialized; });
 }
 
 
@@ -608,9 +622,9 @@ void CDlgFind::StopAutoCounter() noexcept
 	// カウントスレッドが有効な場合、強制停止する
 	if ( m_threadAutoCount.joinable() ) {
 		DEBUG_TRACE( _T("%hs(%d): %hs thread is joinable.\n"), __FILE__, __LINE__, __FUNCTION__ );
-		HANDLE hThread = (HANDLE) m_threadAutoCount.native_handle();
-		::TerminateThread( hThread, -1 );
-		m_threadAutoCount.detach();
+		std::unique_lock<std::mutex> lock( m_mtxAutoCount );
+		m_bAutoCountCanceled = true;
+		m_threadAutoCount.join();
 	} else {
 		DEBUG_TRACE( _T("%hs(%d): %hs thread is not joinable.\n"), __FILE__, __LINE__, __FUNCTION__ );
 	}
@@ -700,7 +714,7 @@ void CDlgFind::CountMatches() const noexcept
 	// 一致件数のカウント
 	size_t cMatched = 0;
 	CDocLine* pDocLine = pcDocLineMgr->GetLine( CLogicInt(0) );
-	while ( pDocLine != NULL ) {
+	while ( pDocLine != NULL && !m_bAutoCountCanceled ) {
 		int nLineLen;
 		const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 		if ( matcher->Match( pLine, nLineLen ) ) {
@@ -709,13 +723,17 @@ void CDlgFind::CountMatches() const noexcept
 		pDocLine = pDocLine->GetNextLine();
 	}
 
-	// 結果を表示
-	DEBUG_TRACE( _T("%hs(%d): %hs %d matched\n"), __FILE__, __LINE__, __FUNCTION__, cMatched );
-	CNativeW strTitle;
-	strTitle.AppendStringF( LSW(STR_AUTO_COUNT_DONE), m_strOriginalTitle.c_str(), cMatched );
-	::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
+	if ( m_bAutoCountCanceled ) {
+		DEBUG_TRACE( _T("%hs(%d): %hs canceled\n"), __FILE__, __LINE__, __FUNCTION__ );
+	} else {
+		// 結果を表示
+		DEBUG_TRACE( _T("%hs(%d): %hs %d matched\n"), __FILE__, __LINE__, __FUNCTION__, cMatched );
+		CNativeW strTitle;
+		strTitle.AppendStringF( LSW(STR_AUTO_COUNT_DONE), m_strOriginalTitle.c_str(), cMatched );
+		::SetWindowTextW( GetHwnd(), strTitle.GetStringPtr() );
 
-	DEBUG_TRACE( _T("%hs(%d): %hs end\n"), __FILE__, __LINE__, __FUNCTION__ );
+		DEBUG_TRACE( _T("%hs(%d): %hs end\n"), __FILE__, __LINE__, __FUNCTION__ );
+	}
 }
 
 
