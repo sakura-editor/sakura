@@ -336,6 +336,8 @@ end_of_func:
  * @param [in] hwndParent
  *
  * @date 2002.01.16 hor 共通部分のくくりだし
+ * @date 2003.05.04 かろと カーソル左移動はやめて nIdx は行の長さとする
+ * @date 2003.05.16 かろと 行末のヌル文字(\0)にマッチさせるために +1 する
  */
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
@@ -419,26 +421,20 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	CLayoutRange sRangeA;
 	sRangeA.Set(GetCaret().GetCaretLayoutPos());
 
+	// キャレット位置の行番号に対応するレイアウト情報を取得する
 	CLogicInt nIdx(0);
 	CLayoutInt nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
-	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(nLineNum);
-	if ( NULL == pcLayout ) {
-		// pcLayoutはNULLとなるのは、[EOF]から前検索した場合
-		// １行前に移動する処理
-		nLineNum--;
-		if( nLineNum < 0 ){
-			goto end_of_func;
-		}
-		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		if( NULL == pcLayout ){
-			goto end_of_func;
-		}
-		// カーソル左移動はやめて nIdxは行の長さとしないと[EOF]から改行を前検索した時に最後の改行を検索できない 2003.05.04 かろと
-		const CLayout* pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		nIdx = CLogicInt(pCLayout->GetDocLineRef()->GetLengthWithEOL() + 1);		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
-	} else {
+	if ( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum )  ) {
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	} else {
+		// pcLayoutが取れない場合、最終レイアウトを使う
+		nLineNum = GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
+		// 空ドキュメント対策で pcLayout を再取得してチェックする
+		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+		if ( pcLayout == NULL ) goto end_of_func;
+		// 行末のヌル文字(\0)にマッチさせるために +1 する
+		nIdx = CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
 	}
 
 	// redoがあるので紛らわしいけど、
@@ -491,9 +487,11 @@ re_do:
 
 end_of_func:
 	if ( !bFound && bRedo && bSearchAll ) {
-		nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount() - CLayoutInt(1);
-		nIdx		= CLogicInt(MAXLINEKETAS); // ロジック折り返し < レイアウト折り返しという前提
-		bRedo		= false;
+		bRedo = false;
+		nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount() - 1;
+		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+		if ( pcLayout == NULL ) goto end_of_func;
+		nIdx		= CLogicInt( pcLayout->GetDocLineRef()->GetLengthWithEOL() + 1 );
 		goto re_do;	// 末尾から再検索
 	}
 
