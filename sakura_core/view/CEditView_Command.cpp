@@ -369,45 +369,71 @@ void CEditView::AddToCmdArr( const TCHAR* szCmd )
 }
 
 
-/*! 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
-	@date 2002.01.16 hor 共通ロジックを関数にしただけ・・・
-	@date 2011.12.18 Moca シーケンス導入。viewの検索文字列長の撤廃。他のビューの検索条件を引き継ぐフラグを追加
-*/
-BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
+/*!
+ * @breif 検索パターンを更新する
+ * （検索オプションで正規表現を指定してない場合にも呼び出される）
+ *
+ * @param [in,opt] bRedrawIfChanged 更新時に再描画するかどうか
+ * @retval TRUE 正常に更新された、または、更新しなかったとき
+ * @retval FALSE 正規表現検索でパターンコンパイルに失敗したとき
+ *
+ * @date 2002.01.16 hor 共通ロジックを関数にしただけ・・・
+ * @date 2011.12.18 Moca シーケンス導入。viewの検索文字列長の撤廃。他のビューの検索条件を引き継ぐフラグを追加
+ */
+BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged /* = true */ )
 {
-	bool	bChangeState = false;
+	// 参照する共有メモリ領域に名前を付ける
+	const auto& s_sSearch = GetDllShareData().m_Common.m_sSearch;
 
-	if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
-			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
-		|| 0 == m_strCurSearchKey.size() ){
+	// 検索キーが更新されたかどうか
+	bool bChangeState = false;
+
+	// 他ビューの設定を継承で自ビューのシーケンスが古い場合、
+	// または自ビューの検索キーが未設定の場合
+	if ( ( s_sSearch.m_bInheritKeyOtherView
+			&& m_nCurSearchKeySequence < s_sSearch.m_nSearchKeySequence )
+		|| m_strCurSearchKey.length() == 0 ) {
 		// 履歴の検索キーに更新
-		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// 検索文字列
-		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
-		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-		bChangeState = true;
-	}else if( m_bCurSearchUpdate ){
+		CRecentSearch recentSearch;
+		m_strCurSearchKey = recentSearch.GetItemText( 0 );			// 検索文字列
+		m_sCurSearchOption = s_sSearch.m_sSearchOption;				// 検索／置換  オプション
+		m_nCurSearchKeySequence = s_sSearch.m_nSearchKeySequence;
 		bChangeState = true;
 	}
-	m_bCurSearchUpdate = false;
-	if( bChangeState ){
-		if( !m_sSearchPattern.SetPattern(this->GetHwnd(), m_strCurSearchKey.c_str(), m_strCurSearchKey.size(),
-			m_sCurSearchOption, &m_CurRegexp) ){
-				m_bCurSrchKeyMark = false;
-				return FALSE;
+	// 検索or置換ダイアログから検索キーが更新されている場合
+	else if ( m_bCurSearchUpdate ) {
+		bChangeState = true;
+	}
+
+	// 検索キーが更新された場合
+	if ( bChangeState ) {
+		// 検索文字列はマークされていない
+		m_bCurSrchKeyMark = false;
+
+		// 検索キーをコンパイルする
+		if ( !m_sSearchPattern.SetPattern( GetHwnd(),
+			m_strCurSearchKey.c_str(),
+			m_strCurSearchKey.length(),
+			m_sCurSearchOption, &m_CurRegexp ) ) {
+			// コンパイル失敗（≒正規表現ライブラリを利用できない場合）
+			return FALSE;
 		}
+
+		// 更新フラグを落とす
+		m_bCurSearchUpdate = false;
+	}
+
+	// 検索文字列がマークされていない場合
+	if ( !m_bCurSrchKeyMark ) {
 		m_bCurSrchKeyMark = true;
-		if( bRedrawIfChanged ){
+		if ( bRedrawIfChanged ) {
 			Redraw();
 		}
-		m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
-		return TRUE;
 	}
-	if( ! m_bCurSrchKeyMark ){
-		m_bCurSrchKeyMark = true;
-		// 検索文字列のマークだけ設定
-		if( bRedrawIfChanged ){
-			Redraw(); // 自View再描画
-		}
+
+	// 検索キーが更新されている場合
+	if ( bChangeState ) {
+		m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
 	}
 
 	return TRUE;
