@@ -450,6 +450,9 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
  */
 inline void CDlgFind::ApplySharedSearchKey() noexcept
 {
+	// 検索オプションを共有メモリに転送する
+	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;
+
 	// 検索オプション(検索ダイアログ用拡張定義分)を共有メモリに転送する
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
@@ -459,9 +462,6 @@ inline void CDlgFind::ApplySharedSearchKey() noexcept
 	if ( m_strText.length() < _MAX_PATH ) {
 		// 履歴登録は格納できる長さの場合にのみ行う
 		CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
-
-		// 検索オプションを共有メモリに転送する
-		m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	}
 
 	// 検索キーか検索オプションがビューの設定と異なる場合
