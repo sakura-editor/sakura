@@ -257,32 +257,7 @@ re_do:;
 		bFound = TRUE;
 	}
 	else{
-		if( bSelecting ){
-			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-
-			/* 選択範囲の変更 */
-			cSelectionInfo.m_sSelectBgn = sSelectBgn_Old; //範囲選択(原点)
-			cSelectionInfo.m_sSelectOld = sSelect_Old;	// 2011.12.24
-			GetSelect().SetFrom(sSelect_Old.GetFrom());
-			GetSelect().SetTo(sRangeA.GetFrom());
-
-			/* カーソル移動 */
-			GetCaret().MoveCursor( sRangeA.GetFrom(), bRedraw );
-			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-
-			if( bRedraw ){
-				/* 選択領域描画 */
-				cSelectionInfo.DrawSelectArea();
-			}
-		}else{
-			if( bDisableSelect ){
-				// 2011.12.21 ロジックカーソル位置の修正/カーソル線・対括弧の表示
-				CLogicPoint ptLogic;
-				GetDocument()->m_cLayoutMgr.LayoutToLogic(GetCaret().GetCaretLayoutPos(), &ptLogic);
-				GetCaret().SetCaretLogicPos(ptLogic);
-				m_pCommanderView->DrawBracketCursorLine(bRedraw);
-			}
-		}
+		// 見つからなかった
 	}
 
 end_of_func:
@@ -310,6 +285,32 @@ end_of_func:
 			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
 		}
 // To Here 2002.01.26 hor
+		if( bSelecting ){
+			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
+
+			/* 選択範囲の変更 */
+			cSelectionInfo.m_sSelectBgn = sSelectBgn_Old; //範囲選択(原点)
+			cSelectionInfo.m_sSelectOld = sSelect_Old;	// 2011.12.24
+			GetSelect().SetFrom(sSelect_Old.GetFrom());
+			GetSelect().SetTo(sRangeA.GetFrom());
+
+			/* カーソル移動 */
+			GetCaret().MoveCursor( sRangeA.GetFrom(), bRedraw );
+			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+			if( bRedraw ){
+				/* 選択領域描画 */
+				cSelectionInfo.DrawSelectArea();
+			}
+		}else{
+			if( bDisableSelect ){
+				// 2011.12.21 ロジックカーソル位置の修正/カーソル線・対括弧の表示
+				CLogicPoint ptLogic;
+				GetDocument()->m_cLayoutMgr.LayoutToLogic(GetCaret().GetCaretLayoutPos(), &ptLogic);
+				GetCaret().SetCaretLogicPos(ptLogic);
+				m_pCommanderView->DrawBracketCursorLine(bRedraw);
+			}
+		}
 
 		/* 検索／置換  見つからないときメッセージを表示 */
 		if( NULL == pszNotFoundMessage ){
