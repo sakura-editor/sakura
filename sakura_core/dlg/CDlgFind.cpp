@@ -107,11 +107,14 @@ BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 		m_strOriginalTitle.assign( titleBuf.get(), cchTitle );
 	}
 
+	// コピー元の共有メモリを別名定義する
+	const auto &s_sSearch = m_pShareData->m_Common.m_sSearch;
+
 	// 共有メモリから設定をコピーする
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;				// 検索オプション
-	m_bNotifyNotFound = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
-	m_bAutoClose = m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind != 0;		// 検索ダイアログを自動的に閉じる
-	m_bSearchAll = m_pShareData->m_Common.m_sSearch.m_bSearchAll != 0;				// 先頭（末尾）から再検索
+	m_sSearchOption = s_sSearch.m_sSearchOption;			// 検索オプション
+	m_bNotifyNotFound = s_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
+	m_bAutoClose = s_sSearch.m_bAutoCloseDlgFind != 0;		// 検索ダイアログを自動的に閉じる
+	m_bSearchAll = s_sSearch.m_bSearchAll != 0;				// 先頭（末尾）から再検索
 
 	if ( HWND hwndComboText = GetItemHwnd( IDC_COMBO_TEXT ) ) {
 		/* コンボボックスを拡張UIにする */
@@ -450,13 +453,16 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
  */
 inline void CDlgFind::ApplySharedSearchKey() noexcept
 {
+	// 適用先の共有メモリを別名定義する
+	auto &s_sSearch = m_pShareData->m_Common.m_sSearch;
+
 	// 検索オプションを共有メモリに転送する
-	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;
+	s_sSearch.m_sSearchOption = m_sSearchOption;
 
 	// 検索オプション(検索ダイアログ用拡張定義分)を共有メモリに転送する
-	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
-	m_pShareData->m_Common.m_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
+	s_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
+	s_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
+	s_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 
 	// 検索キーを共有メモリに転送する
 	if ( m_strText.length() < _MAX_PATH ) {
@@ -471,7 +477,7 @@ inline void CDlgFind::ApplySharedSearchKey() noexcept
 		m_pcEditView->m_strCurSearchKey = m_strText;
 		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
 		m_pcEditView->m_bCurSearchUpdate = true;
-		m_pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+		m_pcEditView->m_nCurSearchKeySequence = s_sSearch.m_nSearchKeySequence;
 	}
 
 }
