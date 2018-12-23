@@ -577,8 +577,12 @@ void CDlgFind::StartAutoCounter() noexcept
 	// 検索キーを共有メモリに転送する
 	ApplySharedSearchKey();
 
-	//検索or置換ダイアログから呼び出された
-	if ( !m_pcEditView->ChangeCurRegexp( false ) ) return;
+	// ビューの検索キーを更新（≒コンパイル）する
+	if ( !m_pcEditView->ChangeCurRegexp( false ) ) {
+		// GetDataでチェック済みなのでここは絶対通らないはず。
+		DEBUG_TRACE( _T("%ls(%d): %ls failed.\n"), __FILEW__, __LINE__, __FUNCTIONW__ );
+		return;
+	}
 
 	// ダイアログのタイトルを変える
 	CNativeW strTitle;
