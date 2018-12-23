@@ -356,29 +356,60 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		return;
 	}
 
-	auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
+	// 検索前の状態をバックアップするクラス（ＲＡＩＩではない）
+	struct SelectionBackup
+	{
+		CEditView* m_pCommanderView;
+		bool bSelecting = false;
+		CLayoutRange sSelectBgn;
+		CLayoutRange sSelect;
+		bool bSelectingLock = false;
+		bool bDisableSelect = false;
+		bool bReDraw;
+		SelectionBackup( CEditView* pCommanderView, bool redraw ) noexcept
+			: m_pCommanderView( pCommanderView )
+			, bReDraw( redraw )
+		{
+			auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
+			if ( cSelectionInfo.IsTextSelected() ) {	/* テキストが選択されているか */
+				sSelectBgn = cSelectionInfo.m_sSelectBgn; //範囲選択(原点)
+				sSelect = cSelectionInfo.m_sSelect;
+				bSelectingLock = cSelectionInfo.m_bSelectingLock;
 
-	bool bSelecting = false;
-	CLayoutRange sSelectBgn_Old;
-	CLayoutRange sSelect_Old;
-	bool bSelectingLock_Old = false;
-	bool bDisableSelect = false;
-
-	if ( cSelectionInfo.IsTextSelected() ) {	/* テキストが選択されているか */
-		sSelectBgn_Old = cSelectionInfo.m_sSelectBgn; //範囲選択(原点)
-		sSelect_Old = GetSelect();
-		bSelectingLock_Old = cSelectionInfo.m_bSelectingLock;
-
-		/* 矩形範囲選択中か */
-		if( !cSelectionInfo.IsBoxSelecting() && cSelectionInfo.m_bSelectingLock ){	/* 選択状態のロック */
-			bSelecting = true;
+				/* 矩形範囲選択中か */
+				if( !cSelectionInfo.IsBoxSelecting() && cSelectionInfo.m_bSelectingLock ){	/* 選択状態のロック */
+					bSelecting = true;
+				}
+				else{
+					/* 現在の選択範囲を非選択状態に戻す */
+					cSelectionInfo.DisableSelectArea( bReDraw, false );
+					bDisableSelect = true;
+				}
+			}
 		}
-		else{
-			/* 現在の選択範囲を非選択状態に戻す */
-			cSelectionInfo.DisableSelectArea( bReDraw, false );
-			bDisableSelect = true;
+		bool IsSelecting() const noexcept { return bSelecting; }
+		bool GetSelectingLock() const noexcept { return bSelectingLock; }
+		void Restore( CViewSelect& cSelectionInfo ) const noexcept
+		{
+			if ( bSelecting ) {
+				/* 選択範囲の変更 */
+				cSelectionInfo.m_bSelectingLock = bSelectingLock;	/* 選択状態のロック */
+				cSelectionInfo.m_sSelectBgn = sSelectBgn;
+				cSelectionInfo.m_sSelect = sSelect;
+
+				// 必要な処理かどうか微妙なのでコメントアウト
+				// カーソル移動
+				//GetCaret().MoveCursor( sRangeA.GetFrom(), bReDraw );
+				//GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+				/* 選択領域描画 */
+				cSelectionInfo.DrawSelectArea();
+			} else if ( bDisableSelect ) {
+				m_pCommanderView->DrawBracketCursorLine( bReDraw );
+			}
 		}
-	}
+	};
+	SelectionBackup backup( m_pCommanderView, bReDraw );
 
 	// 検索開始行
 	CLayoutInt	nLineNumOld(0);
@@ -416,6 +447,8 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	bool bFound = false;
 	bool bRedo = true;
 
+	auto &cSelectionInfo = m_pCommanderView->GetSelectionInfo();
+
 	nLineNumOld = nLineNum;
 	nIdxOld = nIdx;
 
@@ -428,16 +461,16 @@ re_do:
 		&sRangeA,								// マッチレイアウト範囲
 		m_pCommanderView->m_sSearchPattern
 	) ){
-		if( bSelecting ){
+		if ( backup.IsSelecting() ) {
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			cSelectionInfo.ChangeSelectAreaByCurrentCursor( sRangeA.GetFrom() );
-			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-		}else{
+			cSelectionInfo.m_bSelectingLock = backup.GetSelectingLock();	/* 選択状態のロック */
+		} else {
 			/* 選択範囲の変更 */
 			//	2005.06.24 Moca
 			cSelectionInfo.SetSelectArea( sRangeA );
 
-			if( bReDraw ){
+			if ( bReDraw ) {
 				/* 選択領域描画 */
 				cSelectionInfo.DrawSelectArea();
 			}
@@ -447,28 +480,13 @@ re_do:
 		m_pCommanderView->AddCurrentLineToHistory();
 		GetCaret().MoveCursor( sRangeA.GetFrom(), bReDraw );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-		bFound = TRUE;
+		bFound = true;
 	}
-	// 見つからない場合
+	// 見つからない場合、選択状態を元に戻す
 	else {
-		// たぶん選択状態を元に戻している・・・
-
-		if( bSelecting ){
-			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
-			/* 選択範囲の変更 */
-			cSelectionInfo.m_sSelectBgn = sSelectBgn_Old;
-			GetSelect() = sSelect_Old;
-
-			/* カーソル移動 */
-			GetCaret().MoveCursor( sRangeA.GetFrom(), bReDraw );
-			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-			/* 選択領域描画 */
-			cSelectionInfo.DrawSelectArea();
-		}else{
-			if( bDisableSelect ){
-				m_pCommanderView->DrawBracketCursorLine(bReDraw);
-			}
-		}
+		// ★★★懸念★★★
+		// 末尾から再検索となる場合、ここでバックアップを復元するのは無駄。
+		backup.Restore( cSelectionInfo );
 	}
 
 end_of_func:
