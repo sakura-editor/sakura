@@ -69,10 +69,10 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
  * @date 2004.05.30 Moca bChangeCurRegexp=trueで従来通り。falseで、CEditViewの現在設定されている検索パターンを使う
  */
 void CViewCommander::Command_SEARCH_NEXT(
-	bool			bChangeCurRegexp,
 	bool			bRedraw,
-	bool			bReplaceAll,
 	HWND			hwndParent,
+	bool			bChangeCurRegexp,
+	bool			bReplaceAll,
 	const WCHAR*	pszNotFoundMessage,
 	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
 )
@@ -611,7 +611,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, true, false, hwndParent, NULL );
+	Command_SEARCH_NEXT( true, hwndParent, true, false, NULL );
 
 	BOOL	bRegularExp = m_pCommanderView->m_sCurSearchOption.bRegularExp;
 	int 	nFlag       = m_pCommanderView->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
@@ -735,7 +735,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, true, false, hwndParent, LSW(STR_ERR_CEDITVIEW_CMD11) );
+		Command_SEARCH_NEXT( true, hwndParent, true, false, LSW(STR_ERR_CEDITVIEW_CMD11) );
 	}
 }
 
@@ -880,7 +880,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	CLogicRange cSelectLogic;	// 置換文字列GetSelect()のLogic単位版
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, bDisplayUpdate, true, 0, NULL, bFastMode ? &cSelectLogic : NULL );
+	Command_SEARCH_NEXT( bDisplayUpdate, 0, true, true, NULL, bFastMode ? &cSelectLogic : NULL );
 	// To Here 2001.12.03 hor
 
 	//<< 2002/03/26 Azumaiya
@@ -1147,7 +1147,7 @@ void CViewCommander::Command_REPLACE_ALL()
 						ptNewFrom.y + CLayoutInt(firstLeft < sRangeA.GetFrom().x ? 0 : 1)
 					));
 					// 2004.05.30 Moca 現在の検索文字列を使って検索する
-					Command_SEARCH_NEXT( false, bDisplayUpdate, true, 0, NULL );
+					Command_SEARCH_NEXT( bDisplayUpdate, 0, false, true, NULL );
 					continue;
 				}
 			}
@@ -1460,7 +1460,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
-		Command_SEARCH_NEXT( false, bDisplayUpdate, true, 0, NULL, bFastMode ? &cSelectLogic : NULL );
+		Command_SEARCH_NEXT( bDisplayUpdate, 0, false, true, NULL, bFastMode ? &cSelectLogic : NULL );
 	}
 
 	if( bFastMode ){
