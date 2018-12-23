@@ -324,7 +324,7 @@ re_do:;								// hor
 		if(nYOld >= ptXY.y)m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 	}else{
 		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_NEXT_NOT_FOUND));
+		AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_BOOKMARK_NEXT_NOT_FOUND));
 	}
 	return;
 }
@@ -368,7 +368,7 @@ re_do:;								// hor
 		if(nYOld <= ptXY.y)m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
 	}else{
 		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_PREV_NOT_FOUND) );
+		AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_BOOKMARK_PREV_NOT_FOUND) );
 	}
 	return;
 }
@@ -427,7 +427,7 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 		ptXY.y=-1;
 	}
 	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
-	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_FUCLIST_NEXT_NOT_FOUND));
+	AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_FUCLIST_NEXT_NOT_FOUND));
 	return;
 }
 
@@ -458,6 +458,6 @@ void CViewCommander::Command_FUNCLIST_PREV(void)
 		ptXY.y= GetDocument()->m_cDocLineMgr.GetLineCount();
 	}
 	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
-	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_FUCLIST_PREV_NOT_FOUND) );
+	AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_FUCLIST_PREV_NOT_FOUND) );
 	return;
 }

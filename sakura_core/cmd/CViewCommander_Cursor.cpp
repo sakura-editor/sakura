@@ -1359,7 +1359,7 @@ void CViewCommander::Command_MODIFYLINE_NEXT( bool bSelect )
 		}
 	}
 	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
-	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_MODLINE_NEXT_NOT_FOUND));
+	AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_MODLINE_NEXT_NOT_FOUND));
 }
 
 /*! 前の変更行へ
@@ -1475,6 +1475,6 @@ void CViewCommander::Command_MODIFYLINE_PREV( bool bSelect )
 		}
 	}
 	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
-	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_MODLINE_PREV_NOT_FOUND) );
+	AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_MODLINE_PREV_NOT_FOUND) );
 }
 

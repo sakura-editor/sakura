@@ -458,7 +458,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRNEXT2) );
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_DIFF_NEXT_NOT_FOUND) );
+		AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_DIFF_NEXT_NOT_FOUND) );
 	}
 
 	return;
@@ -511,7 +511,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRPREV2) );
-		AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_DIFF_PREV_NOT_FOUND) );
+		AlertNotFound( NULL, GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND, LS(STR_DIFF_PREV_NOT_FOUND) );
 	}
 
 	return;

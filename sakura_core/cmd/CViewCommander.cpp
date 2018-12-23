@@ -720,24 +720,25 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 
 
 /*!
-	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）
-
-	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
-*/
-void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCTSTR format, ...)
+ * @brief 検索で見つからないときの警告（メッセージボックス／サウンド）
+ *
+ * @date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
+ * @date 2018/12/24 berryzplus パラメータ変更。共有メモリへのアクセスを関数外に追い出す
+ */
+void CViewCommander::AlertNotFound( HWND hwnd, bool bAlertIfNotFound, LPCTSTR format, ... )
 {
-	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
-		&& !bReplaceAll
-	){
-		if( NULL == hwnd ){
-			hwnd = m_pCommanderView->GetHwnd();
-		}
-		//InfoMessage(hwnd, format, __VA_ARGS__);
-		va_list p;
-		va_start(p, format);
-		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
-		va_end(p);
-	}else{
+	if ( !bAlertIfNotFound ) {
 		DefaultBeep();
+		return;
 	}
+
+	if ( hwnd == NULL ) {
+		hwnd = m_pCommanderView->GetHwnd();
+	}
+
+	//InfoMessage(hwnd, format, __VA_ARGS__);
+	va_list p;
+	va_start( p, format );
+	VMessageBoxF( hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p );
+	va_end( p );
 }

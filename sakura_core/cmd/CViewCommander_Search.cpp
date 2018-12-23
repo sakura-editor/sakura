@@ -80,6 +80,9 @@ void CViewCommander::Command_SEARCH_NEXT(
 	// 先頭（末尾）から再検索
 	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
 
+	// 検索／置換  見つからないときメッセージを表示
+	bool bAlertIfNotFound = bReplaceAll ? false : GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+
 	// out変数に初期値を入れる
 	if ( pcSelectLogic ) {
 		pcSelectLogic->Clear(-1);
@@ -316,15 +319,10 @@ end_of_func:
 			if( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ){
 				KeyName.AppendString( L"..." );
 			}
-			AlertNotFound(
-				hwndParent,
-				bReplaceAll,
-				LS(STR_ERR_SRNEXT3),
-				KeyName.GetStringPtr()
-			);
+			AlertNotFound( hwndParent, bAlertIfNotFound, LS(STR_ERR_SRNEXT3), KeyName.GetStringPtr() );
 		}
 		else{
-			AlertNotFound(hwndParent, bReplaceAll, _T("%ls"), pszNotFoundMessage);
+			AlertNotFound( hwndParent, bAlertIfNotFound, _T("%ls"), pszNotFoundMessage );
 		}
 	}
 }
@@ -343,6 +341,9 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
 	// 先頭（末尾）から再検索
 	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+
+	// 検索／置換  見つからないときメッセージを表示
+	bool bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
 
 	// CEditViewの検索パターンを更新し、失敗したら抜ける。
 	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
@@ -492,12 +493,7 @@ end_of_func:;
 		if( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ){
 			KeyName.AppendString( L"..." );
 		}
-		AlertNotFound(
-			hwndParent,
-			false,
-			LS(STR_ERR_SRPREV3),	//Jan. 25, 2001 jepro メッセージを若干変更
-			KeyName.GetStringPtr()
-		);
+		AlertNotFound( hwndParent, bAlertIfNotFound, LS(STR_ERR_SRPREV3), KeyName.GetStringPtr() );
 	}
 	return;
 }
