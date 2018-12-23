@@ -91,8 +91,10 @@ void CViewCommander::Command_SEARCH_NEXT(
 		return;
 	}
 
-	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
-		goto end_of_func;
+	// 検索キーがない場合、再描画して抜ける
+	if ( m_pCommanderView->m_strCurSearchKey.length() == 0 ) {
+		m_pCommanderView->ChangeCurRegexp( true );
+		return;
 	}
 
 	bool		bSelecting;
@@ -345,8 +347,10 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		return;
 	}
 
-	if( 0 == m_pCommanderView->m_strCurSearchKey.size() ){
-		goto end_of_func;
+	// 検索キーがない場合、再描画して抜ける
+	if ( m_pCommanderView->m_strCurSearchKey.length() == 0 ) {
+		m_pCommanderView->ChangeCurRegexp( true );
+		return;
 	}
 
 	bool		bSelecting;
