@@ -477,8 +477,8 @@ inline void CDlgFind::ApplySharedSearchKey() noexcept
 		// 検索キーと検索オプションをビューに転送する
 		m_pcEditView->m_strCurSearchKey = m_strText;
 		m_pcEditView->m_sCurSearchOption = m_sSearchOption;
-		m_pcEditView->m_bCurSearchUpdate = true;
 		m_pcEditView->m_nCurSearchKeySequence = s_sSearch.m_nSearchKeySequence;
+		m_pcEditView->m_bCurSearchUpdate = true;
 	}
 
 }
