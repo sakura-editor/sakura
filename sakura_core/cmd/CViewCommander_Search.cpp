@@ -109,19 +109,12 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLogicInt	nIdx(0);
 	CLayoutInt	nLineNum(0);
 
-	CLayoutRange	sRangeA;
-	sRangeA.Set(GetCaret().GetCaretLayoutPos());
 
 	CLayoutRange	sSelectBgn_Old;
 	CLayoutRange	sSelect_Old;
-	CLayoutInt	nLineNumOld(0);
 
 	// bFastMode
 	CLogicInt nLineNumLogic(0);
-
-	bool		bRedo = false;	//	hor
-	int			nIdxOld = 0;	//	hor
-	int			nSearchResult;
 
 	bSelecting = false;
 
@@ -193,41 +186,66 @@ void CViewCommander::Command_SEARCH_NEXT(
 		nIdx = GetCaret().GetCaretLogicPos().GetX2();
 	}
 
-	nLineNumOld = nLineNum;	//	hor
-	bRedo		= true;		//	hor
-	nIdxOld		= nIdx;		//	hor
+	// マッチレイアウト範囲
+	CLayoutRange sRangeA;
+	sRangeA.Set(GetCaret().GetCaretLayoutPos());
 
-re_do:;
-	 /* 現在位置より後ろの位置を検索する */
-	// 2004.05.30 Moca 引数をGetShareData()からメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
-	if( NULL == pcSelectLogic ){
-		nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
-			nLineNum,						// 検索開始レイアウト行
-			nIdx,							// 検索開始データ位置
-			SEARCH_FORWARD,					// 前方検索
-			&sRangeA,						// マッチレイアウト範囲
-			m_pCommanderView->m_sSearchPattern
-		);
-	}else{
-		nSearchResult = CSearchAgent(&GetDocument()->m_cDocLineMgr).SearchWord(
-			CLogicPoint(nIdx, nLineNumLogic),
-			SEARCH_FORWARD,					// 前方検索
-			pcSelectLogic,
-			m_pCommanderView->m_sSearchPattern
-		);
-	}
-	if( nSearchResult ){
-		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		if( bFlag1 && sRangeA.GetFrom()==GetCaret().GetCaretLayoutPos() ){
-			CLogicRange sRange_Logic;
-			GetDocument()->m_cLayoutMgr.LayoutToLogic(sRangeA,&sRange_Logic);
+	// この関数は「次を検索」を単発で実行する
+	try
+	{
+		// 検索開始行
+		const CLayoutInt nLineNumOld( nLineNum );
+		// 検索開始位置オフセット（WCHAR単位）
+		const CLogicInt nIdxOld( nIdx );
 
-			nLineNum = sRangeA.GetTo().GetY2();
-			nIdx     = sRange_Logic.GetTo().GetX2();
-			if( sRange_Logic.GetFrom() == sRange_Logic.GetTo() ) { // 幅0マッチでの無限ループ対策。
-				nIdx += 1; // wchar_t一個分進めるだけでは足りないかもしれないが。
+		// リトライ用のループ
+		for (bool bRedo = true;;)
+		{
+			/* 現在位置より後ろの位置を検索する */
+			int nSearchResult;
+			if( NULL == pcSelectLogic ){
+				nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
+					nLineNum,						// 検索開始レイアウト行
+					nIdx,							// 検索開始データ位置
+					SEARCH_FORWARD,					// 前方検索
+					&sRangeA,						// マッチレイアウト範囲
+					m_pCommanderView->m_sSearchPattern
+				);
+			}else{
+				nSearchResult = CSearchAgent(&GetDocument()->m_cDocLineMgr).SearchWord(
+					CLogicPoint(nIdx, nLineNumLogic),
+					SEARCH_FORWARD,					// 前方検索
+					pcSelectLogic,
+					m_pCommanderView->m_sSearchPattern
+				);
 			}
-			goto re_do;
+			if ( nSearchResult ) {
+				// 指定された行のデータ内の位置に対応する桁の位置を調べる
+				if( bFlag1 && sRangeA.GetFrom()==GetCaret().GetCaretLayoutPos() ){
+					CLogicRange sRange_Logic;
+					GetDocument()->m_cLayoutMgr.LayoutToLogic(sRangeA,&sRange_Logic);
+
+					nLineNum = sRangeA.GetTo().GetY2();
+					nIdx     = sRange_Logic.GetTo().GetX2();
+					if( sRange_Logic.GetFrom() == sRange_Logic.GetTo() ) { // 幅0マッチでの無限ループ対策。
+						nIdx += 1; // wchar_t一個分進めるだけでは足りないかもしれないが。
+					}
+					continue;
+				}
+				// 見つかった場合、ループを抜ける
+				break;
+			}
+			// 見つからない場合、「先頭から検索」で未リトライなら続行する
+			else if ( bRedo && bSearchAll && !bReplaceAll ) {
+				bRedo = false;
+				nLineNum	= CLayoutInt(0);
+				nIdx		= CLogicInt(0);
+				continue;
+			}
+			// 見つからない場合
+			else {
+				throw std::exception();
+			}
 		}
 
 		if( bSelecting ){
@@ -255,36 +273,18 @@ re_do:;
 			GetCaret().MoveCursorFastMode( pcSelectLogic->GetFrom() );
 		}
 		bFound = TRUE;
-	}
-	else{
-		// 見つからなかった
-	}
 
-end_of_func:
-// From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if ( bSearchAll ) {
-		if(!bFound	&&		// 見つからなかった
-			bRedo	&&		// 最初の検索
-			!bReplaceAll	// 全て置換の実行中じゃない
-		){
-			nLineNum	= CLayoutInt(0);
-			nIdx		= CLogicInt(0);
-			bRedo		= false;
-			goto re_do;		// 先頭から再検索
+		if ( NULL == pcSelectLogic && ((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx))) {
+				m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 		}
-	}
 
-	if(bFound){
-		if(NULL == pcSelectLogic && ((nLineNumOld > nLineNum)||(nLineNumOld == nLineNum && nIdxOld > nIdx)))
-			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
-	}
-	else{
+	} catch (std::exception&) {
 		GetCaret().ShowEditCaret();	// 2002/04/18 YAZAKI
 		GetCaret().ShowCaretPosInfo();	// 2002/04/18 YAZAKI
 		if( !bReplaceAll ){
 			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
 		}
-// To Here 2002.01.26 hor
+
 		if( bSelecting ){
 			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 
