@@ -593,12 +593,12 @@ void CDlgFind::StartAutoCounter() noexcept
 	// 新たなカウントスレッドを生成する
 	std::condition_variable cv;
 	bool initialized = false;
+	m_bAutoCountCanceled = false;
 	m_threadAutoCount = std::thread( [this, &cv, &initialized] {
 		// 初期化
 		{
 			std::unique_lock<std::mutex> lock( m_mtxAutoCount );
 			initialized = true;
-			m_bAutoCountCanceled = false;
 			cv.notify_one();
 		}
 		// 本処理
@@ -622,7 +622,6 @@ void CDlgFind::StopAutoCounter() noexcept
 	// カウントスレッドが有効な場合、強制停止する
 	if ( m_threadAutoCount.joinable() ) {
 		DEBUG_TRACE( _T("%hs(%d): %hs thread is joinable.\n"), __FILE__, __LINE__, __FUNCTION__ );
-		std::unique_lock<std::mutex> lock( m_mtxAutoCount );
 		m_bAutoCountCanceled = true;
 		m_threadAutoCount.join();
 	} else {
