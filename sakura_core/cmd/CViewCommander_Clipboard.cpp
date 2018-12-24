@@ -1126,6 +1126,16 @@ void CViewCommander::Command_COPYFOLDER( void )
 		return;
 	}
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	
+	/* 末尾にバックスラッシュがあれば取り除く */
+	auto itr = strFolder.rbegin();
+	if (*itr == L'\\')
+	{
+		auto itrClear = strFolder.end();
+		itrClear--;
+		strFolder.erase(itrClear);
+	}
+	
 	m_pCommanderView->MySetClipboardData( strFolder.c_str(), wcslen(strFolder.c_str()), false );
 }
 
