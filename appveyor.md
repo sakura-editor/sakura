@@ -3,6 +3,7 @@
 <!-- TOC -->
 
 - [appveyor でのビルド](#appveyor-でのビルド)
+    - [ビルドツールのインストール](#ビルドツールのインストール)
     - [CI でのビルドをスキップする方法](#ci-でのビルドをスキップする方法)
         - [参考サイト](#参考サイト)
     - [入力として使用する環境変数](#入力として使用する環境変数)
@@ -20,6 +21,12 @@
             - [処理の流れ](#処理の流れ-2)
 
 <!-- /TOC -->
+
+## ビルドツールのインストール
+appveyor.ymlのinstallセクションでChocolateyからcppcheckとdoxygen.installをインストールしている。
+
+- https://chocolatey.org/packages/doxygen.install
+- https://chocolatey.org/packages/cppcheck
 
 ## CI でのビルドをスキップする方法
 
