@@ -270,7 +270,7 @@ public:
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT(bool bRedraw, HWND hwndParent, bool bChangeCurRegexp, bool bReplaceAll, const WCHAR* pszNotFoundMessage, CLogicRange*	pcSelectLogic = NULL); /* 次を検索 */
+	void Command_SEARCH_NEXT(bool bRedraw, HWND hwndParent, bool bChangeCurRegexp, bool bReplaceAll, CLogicRange* pcSelectLogic = NULL, const WCHAR* pszNotFoundMessage = NULL ); /* 次を検索 */
 	void Command_SEARCH_PREV(bool bReDraw, HWND hwndParent);		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */

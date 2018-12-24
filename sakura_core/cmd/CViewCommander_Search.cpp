@@ -61,8 +61,10 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 
 /*!
  * @brief 次を検索
- * 
+ *
  * @param bChangeCurRegexp 共有データの検索文字列を使う
+ * @param [out,opt] pcSelectLogic 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
+ * @param [in,opt] pszNotFoundMessage 単発置換で置換し切ったときに使用
  *
  * @date 2002.01.16 hor 共通部分のくくりだし
  * @date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
@@ -73,8 +75,8 @@ void CViewCommander::Command_SEARCH_NEXT(
 	HWND			hwndParent,
 	bool			bChangeCurRegexp,
 	bool			bReplaceAll,
-	const WCHAR*	pszNotFoundMessage,
-	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
+	CLogicRange*	pcSelectLogic,
+	const WCHAR*	pszNotFoundMessage
 )
 {
 	// 先頭（末尾）から再検索
@@ -323,6 +325,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 			AlertNotFound( hwndParent, bAlertIfNotFound, LS(STR_ERR_SRNEXT3), KeyName.GetStringPtr() );
 		}
 		else{
+			//最後まで置換しました。
 			AlertNotFound( hwndParent, bAlertIfNotFound, _T("%ls"), pszNotFoundMessage );
 		}
 	}
@@ -611,7 +614,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, hwndParent, true, false, NULL );
+	Command_SEARCH_NEXT( true, hwndParent, true, false );
 
 	BOOL	bRegularExp = m_pCommanderView->m_sCurSearchOption.bRegularExp;
 	int 	nFlag       = m_pCommanderView->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
@@ -735,7 +738,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, hwndParent, true, false, LSW(STR_ERR_CEDITVIEW_CMD11) );
+		Command_SEARCH_NEXT( true, hwndParent, true, false, NULL, LSW(STR_ERR_CEDITVIEW_CMD11) ); //←最後まで置換しました。を出す場所
 	}
 }
 
@@ -880,7 +883,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	CLogicRange cSelectLogic;	// 置換文字列GetSelect()のLogic単位版
 	/* 次を検索 */
-	Command_SEARCH_NEXT( bDisplayUpdate, 0, true, true, NULL, bFastMode ? &cSelectLogic : NULL );
+	Command_SEARCH_NEXT( bDisplayUpdate, NULL, true, true, bFastMode ? &cSelectLogic : NULL );
 	// To Here 2001.12.03 hor
 
 	//<< 2002/03/26 Azumaiya
@@ -1147,7 +1150,7 @@ void CViewCommander::Command_REPLACE_ALL()
 						ptNewFrom.y + CLayoutInt(firstLeft < sRangeA.GetFrom().x ? 0 : 1)
 					));
 					// 2004.05.30 Moca 現在の検索文字列を使って検索する
-					Command_SEARCH_NEXT( bDisplayUpdate, 0, false, true, NULL );
+					Command_SEARCH_NEXT( bDisplayUpdate, NULL, false, true, bFastMode ? &cSelectLogic : NULL );
 					continue;
 				}
 			}
@@ -1460,7 +1463,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
-		Command_SEARCH_NEXT( bDisplayUpdate, 0, false, true, NULL, bFastMode ? &cSelectLogic : NULL );
+		Command_SEARCH_NEXT( bDisplayUpdate, NULL, false, true, bFastMode ? &cSelectLogic : NULL );
 	}
 
 	if( bFastMode ){
