@@ -35,7 +35,7 @@ CDlgFind::CDlgFind() noexcept
 	: CDialog( false, true )		// 基底クラスは「リサイズ不可、ShareDataチェックあり」。
 	, m_strText( L"", 0 )			// 検索文字列
 	, m_sSearchOption()				// 検索オプション
-	, m_bNotifyNotFound( false )	// 検索／置換  見つからないときメッセージを表示
+	, m_bAlertIfNotFound( false )	// 検索／置換  見つからないときメッセージを表示
 	, m_bAutoClose( false )			// 検索ダイアログを自動的に閉じる
 	, m_bSearchAll( false )			// 先頭（末尾）から再検索
 	, m_hFont( NULL )				// ドキュメント設定から作成したフォント
@@ -112,7 +112,7 @@ BOOL CDlgFind::OnInitDialog( HWND wParam, LPARAM lParam )
 
 	// 共有メモリから設定をコピーする
 	m_sSearchOption = s_sSearch.m_sSearchOption;			// 検索オプション
-	m_bNotifyNotFound = s_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
+	m_bAlertIfNotFound = s_sSearch.m_bNOTIFYNOTFOUND != 0;	// 検索／置換  見つからないときメッセージを表示
 	m_bAutoClose = s_sSearch.m_bAutoCloseDlgFind != 0;		// 検索ダイアログを自動的に閉じる
 	m_bSearchAll = s_sSearch.m_bSearchAll != 0;				// 先頭（末尾）から再検索
 
@@ -189,7 +189,7 @@ void CDlgFind::SetData( void ) const noexcept
 	::CheckDlgButton( GetHwnd(), IDC_CHK_REGULAREXP, m_sSearchOption.bRegularExp ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
-	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNotifyNotFound ? BST_CHECKED : BST_UNCHECKED );
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bAlertIfNotFound ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 検索ダイアログを自動的に閉じる */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind, m_bAutoClose ? BST_CHECKED : BST_UNCHECKED );
@@ -250,7 +250,7 @@ int CDlgFind::GetData( void )
 	m_sSearchOption.bRegularExp = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) == BST_CHECKED );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
-	m_bNotifyNotFound = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED );
+	m_bAlertIfNotFound = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED );
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_bAutoClose = ( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind ) == BST_CHECKED );
@@ -460,7 +460,7 @@ inline void CDlgFind::ApplySharedSearchKey() noexcept
 	s_sSearch.m_sSearchOption = m_sSearchOption;
 
 	// 検索オプション(検索ダイアログ用拡張定義分)を共有メモリに転送する
-	s_sSearch.m_bNOTIFYNOTFOUND = m_bNotifyNotFound ? TRUE : FALSE;
+	s_sSearch.m_bNOTIFYNOTFOUND = m_bAlertIfNotFound ? TRUE : FALSE;
 	s_sSearch.m_bAutoCloseDlgFind = m_bAutoClose ? TRUE : FALSE;
 	s_sSearch.m_bSearchAll = m_bSearchAll ? TRUE : FALSE;
 

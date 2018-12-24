@@ -56,7 +56,7 @@ public:
 protected:
 	std::wstring			m_strText;				// 検索文字列
 	SSearchOption			m_sSearchOption;		// 検索オプション
-	bool					m_bNotifyNotFound;		// 検索／置換  見つからないときメッセージを表示
+	bool					m_bAlertIfNotFound;		// 検索／置換  見つからないときメッセージを表示
 	bool					m_bAutoClose;			// 検索ダイアログを自動的に閉じる
 	bool					m_bSearchAll;			// 先頭（末尾）から再検索
 
