@@ -511,7 +511,7 @@ void CDlgFind::DoSearch( ESearchDirection direction ) noexcept
 		m_pcEditView->m_bSearch = TRUE;
 	}
 
-	m_pcEditView->GetCommander().HandleCommand( eFuncId, true, (LPARAM)GetHwnd(), 0, 0, 0 );
+	m_pcEditView->GetCommander().HandleCommand( eFuncId, true, (LPARAM)GetHwnd(), /*bHasExtParams*/ true, m_bSearchAll, m_bAlertIfNotFound );
 
 	/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
 	m_pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要

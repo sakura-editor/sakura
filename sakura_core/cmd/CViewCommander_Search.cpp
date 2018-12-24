@@ -62,9 +62,14 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 /*!
  * @brief 次を検索
  *
- * @param bChangeCurRegexp 共有データの検索文字列を使う
+ * @param [in] bReDraw
+ * @param [in] hwndParent
+ * @param [in] bChangeCurRegexp 共有データの検索文字列を使う
  * @param [out,opt] pcSelectLogic 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
  * @param [in,opt] pszNotFoundMessage 単発置換で置換し切ったときに使用
+ * @param [in,opt] bHasExtParams 拡張パラメータの指定有無
+ * @param [in,opt] bSearchAll 先頭（末尾）から再検索
+ * @param [in,opt] bAlertIfNotFound 見つからないときメッセージを表示
  *
  * @date 2002.01.16 hor 共通部分のくくりだし
  * @date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理見直し．
@@ -74,16 +79,21 @@ void CViewCommander::Command_SEARCH_NEXT(
 	bool			bRedraw,
 	HWND			hwndParent,
 	bool			bChangeCurRegexp,
-	bool			bReplaceAll,
-	CLogicRange*	pcSelectLogic,
-	const WCHAR*	pszNotFoundMessage
+	CLogicRange*	pcSelectLogic /*=NULL */,
+	const WCHAR*	pszNotFoundMessage /*=NULL */,
+	bool			bHasExtParams /*=false */,		// 拡張パラメータの有無
+	bool			bSearchAll,						// bHasExtParams==trueの場合のみ有効
+	bool			bAlertIfNotFound				// bHasExtParams==trueの場合のみ有効
 )
 {
-	// 先頭（末尾）から再検索
-	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+	// 拡張パラメータが指定されていない場合、共有メモリからオプション値を取得する
+	if ( !bHasExtParams ) {
+		// 先頭（末尾）から再検索
+		bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
 
-	// 検索／置換  見つからないときメッセージを表示
-	bool bAlertIfNotFound = bReplaceAll ? false : GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+		// 検索／置換  見つからないときメッセージを表示
+		bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+	}
 
 	// out変数に初期値を入れる
 	if ( pcSelectLogic ) {
@@ -238,7 +248,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 				break;
 			}
 			// 見つからない場合、「先頭から検索」で未リトライなら続行する
-			else if ( bRedo && bSearchAll && !bReplaceAll ) {
+			else if ( bRedo && bSearchAll ) {
 				bRedo = false;
 				nLineNum	= CLayoutInt(0);
 				nIdx		= CLogicInt(0);
@@ -267,7 +277,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 
 		/* カーソル移動 */
 		//	Sep. 8, 2000 genta
-		if ( !bReplaceAll ) m_pCommanderView->AddCurrentLineToHistory();	// 2002.02.16 hor すべて置換のときは不要
+		m_pCommanderView->AddCurrentLineToHistory();
 		if( NULL == pcSelectLogic ){
 			GetCaret().MoveCursor( sRangeA.GetFrom(), bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
@@ -283,11 +293,9 @@ void CViewCommander::Command_SEARCH_NEXT(
 	} catch (std::exception&) {
 		GetCaret().ShowEditCaret();	// 2002/04/18 YAZAKI
 		GetCaret().ShowCaretPosInfo();	// 2002/04/18 YAZAKI
-		if( !bReplaceAll ){
-			m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
-		}
+		m_pCommanderView->SendStatusMessage( LS(STR_ERR_SRNEXT2) );
 
-		if( bSelecting ){
+		if ( bSelecting ) {
 			cSelectionInfo.m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 
 			/* 選択範囲の変更 */
@@ -300,12 +308,12 @@ void CViewCommander::Command_SEARCH_NEXT(
 			GetCaret().MoveCursor( sRangeA.GetFrom(), bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-			if( bRedraw ){
+			if ( bRedraw ) {
 				/* 選択領域描画 */
 				cSelectionInfo.DrawSelectArea();
 			}
-		}else{
-			if( bDisableSelect ){
+		} else {
+			if ( bDisableSelect ) {
 				// 2011.12.21 ロジックカーソル位置の修正/カーソル線・対括弧の表示
 				CLogicPoint ptLogic;
 				GetDocument()->m_cLayoutMgr.LayoutToLogic(GetCaret().GetCaretLayoutPos(), &ptLogic);
@@ -315,7 +323,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 		}
 
 		/* 検索／置換  見つからないときメッセージを表示 */
-		if( NULL == pszNotFoundMessage ){
+		if ( pszNotFoundMessage == NULL ) {
 			CNativeW KeyName;
 			LimitStringLengthW(m_pCommanderView->m_strCurSearchKey.c_str(), m_pCommanderView->m_strCurSearchKey.size(),
 				_MAX_PATH, KeyName);
@@ -338,21 +346,36 @@ void CViewCommander::Command_SEARCH_NEXT(
  *
  * @param [in] bReDraw
  * @param [in] hwndParent
+ * @param [in] bChangeCurRegexp 共有データの検索文字列を使う
+ * @param [in,opt] bHasExtParams 拡張パラメータの指定有無
+ * @param [in,opt] bSearchAll 先頭（末尾）から再検索
+ * @param [in,opt] bAlertIfNotFound 見つからないときメッセージを表示
  *
  * @date 2002.01.16 hor 共通部分のくくりだし
  * @date 2003.05.04 かろと カーソル左移動はやめて nIdx は行の長さとする
  * @date 2003.05.16 かろと 行末のヌル文字(\0)にマッチさせるために +1 する
  */
-void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
+void CViewCommander::Command_SEARCH_PREV(
+	bool			bReDraw,
+	HWND			hwndParent,
+	bool			bChangeCurRegexp,
+	bool			bHasExtParams /*=false */,		// 拡張パラメータの有無
+	bool			bSearchAll,						// bHasExtParams==trueの場合のみ有効
+	bool			bAlertIfNotFound				// bHasExtParams==trueの場合のみ有効
+)
 {
-	// 先頭（末尾）から再検索
-	auto &bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+	// 拡張パラメータが指定されていない場合、共有メモリからオプション値を取得する
+	if ( !bHasExtParams ) {
+		// 先頭（末尾）から再検索
+		bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
 
-	// 検索／置換  見つからないときメッセージを表示
-	bool bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+		// 検索／置換  見つからないときメッセージを表示
+		bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+	}
 
+	// bChangeCurRegexp==trueの場合のみ、
 	// CEditViewの検索パターンを更新し、失敗したら抜ける。
-	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
+	if ( bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp( false ) ) {
 		return;
 	}
 
@@ -555,23 +578,38 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 
 
 
-/*! 置換実行
-	
-	@date 2002/04/08 親ウィンドウを指定するように変更。
-	@date 2003.05.17 かろと 長さ０マッチの無限置換回避など
-	@date 2011.12.18 Moca オプション・検索キーをDllShareDataからm_cDlgReplace/EditViewベースに変更。文字列長制限の撤廃
-*/
+/*!
+ * @brief 置換実行
+ *
+ * @param [in,opt] hwndParent 親ウインドウ
+ *
+ * @date 2002/04/08 親ウィンドウを指定するように変更。
+ * @date 2003.05.17 かろと 長さ０マッチの無限置換回避など
+ * @date 2011.12.18 Moca オプション・検索キーをDllShareDataからm_cDlgReplace/EditViewベースに変更。文字列長制限の撤廃
+ */
 void CViewCommander::Command_REPLACE( HWND hwndParent )
 {
+	// 画面更新するか否か(たぶん引数として必要。)
+	bool bRedraw = true;
+
 	// m_sSearchOption選択のための先に適用
-	if( !m_pCommanderView->ChangeCurRegexp(false) ){
+	if ( !m_pCommanderView->ChangeCurRegexp( false ) ) {
 		return;
 	}
 
-	if ( hwndParent == NULL ){	//	親ウィンドウが指定されていなければ、CEditViewが親。
+	if ( hwndParent == NULL ) {	//	親ウィンドウが指定されていなければ、CEditViewが親。
 		hwndParent = m_pCommanderView->GetHwnd();
 	}
-	//2002.02.10 hor
+
+	// 検索／置換  見つからないときメッセージを表示
+	bool bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+
+	// 拡張パラメータを指定しない
+	constexpr bool NoExtParams = false;
+
+	// CEditViewの検索パターンを更新しない
+	constexpr bool UseCurRegexp = false;
+
 	int nPaste			=	GetEditWindow()->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	=	GetEditWindow()->m_cDlgReplace.m_nReplaceTarget;
 
@@ -614,7 +652,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
 
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, hwndParent, true, false );
+	Command_SEARCH_NEXT( bRedraw, hwndParent, UseCurRegexp );
 
 	BOOL	bRegularExp = m_pCommanderView->m_sCurSearchOption.bRegularExp;
 	int 	nFlag       = m_pCommanderView->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
@@ -738,7 +776,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, hwndParent, true, false, NULL, LSW(STR_ERR_CEDITVIEW_CMD11) ); //←最後まで置換しました。を出す場所
+		Command_SEARCH_NEXT( bRedraw, hwndParent, UseCurRegexp, NULL, bAlertIfNotFound ? LSW(STR_ERR_CEDITVIEW_CMD11) : NULL ); //←最後まで置換しました。を出す場所
 	}
 }
 
@@ -756,11 +794,31 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 */
 void CViewCommander::Command_REPLACE_ALL()
 {
-
 	// m_sSearchOption選択のための先に適用
-	if( !m_pCommanderView->ChangeCurRegexp() ){
+	if ( !m_pCommanderView->ChangeCurRegexp( true ) ) {
 		return;
 	}
+
+	// 先頭（末尾）から再検索
+	bool bSearchAll = GetDllShareData().m_Common.m_sSearch.m_bSearchAll;
+
+	// 検索／置換  見つからないときメッセージを表示
+	bool bAlertIfNotFound = GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND;
+
+	// 表示処理はOFF
+	constexpr bool NoReDraw = false;
+
+	// 拡張パラメータを指定する
+	constexpr bool HasExtParams = true;
+
+	// 先頭から再検索しない
+	constexpr bool SearchOnce = false;
+
+	// 見つからなくてもメッセージを表示しない
+	constexpr bool NoAlertIfNotFound = false;
+
+	// CEditViewの検索パターンを更新しない
+	constexpr bool UseCurRegexp = false;
 
 	//2002.02.10 hor
 	BOOL nPaste			= GetEditWindow()->m_cDlgReplace.m_nPaste;
@@ -794,10 +852,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		bBeginBoxSelect=false;
 	}
 
-	/* 表示処理ON/OFF */
-	bool bDisplayUpdate = false;
-
-	const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(bDisplayUpdate);
+	const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(NoReDraw);
 
 	bool bFastMode = false;
 	if( ((Int)GetDocument()->m_cDocLineMgr.GetLineCount() * 10 < (Int)GetDocument()->m_cLayoutMgr.GetLineCount())
@@ -865,13 +920,13 @@ void CViewCommander::Command_REPLACE_ALL()
 			&ptColLineP
 		);
 		//選択範囲開始位置へ移動
-		GetCaret().MoveCursor( sRangeA.GetFrom(), bDisplayUpdate );
+		GetCaret().MoveCursor( sRangeA.GetFrom(), NoReDraw );
 	}
 	else{
 		/* ファイル全体置換 */
 		/* ファイルの先頭に移動 */
-	//	HandleCommand( F_GOFILETOP, bDisplayUpdate, 0, 0, 0, 0 );
-		Command_GOFILETOP(bDisplayUpdate);
+	//	HandleCommand( F_GOFILETOP, NoReDraw, 0, 0, 0, 0 );
+		Command_GOFILETOP(NoReDraw);
 	}
 
 	CLayoutPoint ptLast = GetCaret().GetCaretLayoutPos();
@@ -879,11 +934,12 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* テキスト選択解除 */
 	/* 現在の選択範囲を非選択状態に戻す */
-	m_pCommanderView->GetSelectionInfo().DisableSelectArea( bDisplayUpdate );
+	m_pCommanderView->GetSelectionInfo().DisableSelectArea( NoReDraw );
 
 	CLogicRange cSelectLogic;	// 置換文字列GetSelect()のLogic単位版
+	auto pcSelectLogic = bFastMode ? &cSelectLogic : NULL;
 	/* 次を検索 */
-	Command_SEARCH_NEXT( bDisplayUpdate, NULL, true, true, bFastMode ? &cSelectLogic : NULL );
+	Command_SEARCH_NEXT( NoReDraw, (HWND)NULL, UseCurRegexp, pcSelectLogic, NULL, HasExtParams, SearchOnce, NoAlertIfNotFound );
 	// To Here 2001.12.03 hor
 
 	//<< 2002/03/26 Azumaiya
@@ -1144,13 +1200,13 @@ void CViewCommander::Command_REPLACE_ALL()
 
 				if (out) {
 					//次の検索開始位置へシフト
-					m_pCommanderView->GetSelectionInfo().DisableSelectArea(bDisplayUpdate); // 2016.01.13 範囲選択をクリアしないと位置移動できていなかった
+					m_pCommanderView->GetSelectionInfo().DisableSelectArea(NoReDraw); // 2016.01.13 範囲選択をクリアしないと位置移動できていなかった
 					GetCaret().SetCaretLayoutPos(CLayoutPoint(
 						sRangeA.GetFrom().x,
 						ptNewFrom.y + CLayoutInt(firstLeft < sRangeA.GetFrom().x ? 0 : 1)
 					));
 					// 2004.05.30 Moca 現在の検索文字列を使って検索する
-					Command_SEARCH_NEXT( bDisplayUpdate, NULL, false, true, bFastMode ? &cSelectLogic : NULL );
+					Command_SEARCH_NEXT( NoReDraw, (HWND)NULL, UseCurRegexp, pcSelectLogic, NULL, HasExtParams, SearchOnce, NoAlertIfNotFound );
 					continue;
 				}
 			}
@@ -1463,7 +1519,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 		/* 次を検索 */
 		// 2004.05.30 Moca 現在の検索文字列を使って検索する
-		Command_SEARCH_NEXT( bDisplayUpdate, NULL, false, true, bFastMode ? &cSelectLogic : NULL );
+		Command_SEARCH_NEXT( NoReDraw, (HWND)NULL, UseCurRegexp, pcSelectLogic, NULL, HasExtParams, SearchOnce, NoAlertIfNotFound );
 	}
 
 	if( bFastMode ){

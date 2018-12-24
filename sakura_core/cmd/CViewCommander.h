@@ -37,6 +37,7 @@ class CColorStrategyPool;
 class CSMacroMgr;
 #include "CEol.h"
 
+
 class CViewCommander{
 public:
 	CViewCommander(CEditView* pEditView);
@@ -270,8 +271,8 @@ public:
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT(bool bRedraw, HWND hwndParent, bool bChangeCurRegexp, bool bReplaceAll, CLogicRange* pcSelectLogic = NULL, const WCHAR* pszNotFoundMessage = NULL ); /* 次を検索 */
-	void Command_SEARCH_PREV(bool bReDraw, HWND hwndParent);		/* 前を検索 */
+	void Command_SEARCH_NEXT( bool bRedraw, HWND hwndParent, bool bChangeCurRegexp, CLogicRange* pcSelectLogic = NULL, const WCHAR* pszNotFoundMessage = NULL, bool bHasExtParams = false, bool bSearchAll = false, bool bAlertIfNotFound = false );	/* 次を検索 */
+	void Command_SEARCH_PREV( bool bReDraw, HWND hwndParent, bool bChangeCurRegexp, bool bHasExtParams = false, bool bSearchAll = false, bool bAlertIfNotFound = false );	/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL();							/* すべて置換(実行) */
@@ -415,6 +416,44 @@ public:
 	void Sub_BoxSelectLock( int flags );
 
 };
+
+
+/*!
+ * @brief 検索パラメータ変換クラス
+ *
+ * マクロパラメータに使われるビットフラグを手軽に扱えるように試作
+ * たぶん使わない・・・
+ */
+struct SSearchParam
+{
+	bool bSearchWords;
+	bool bIgnoreCase;
+	bool bUseRegexp;
+	bool bAlertIfNotFound;
+	bool bAutoClose;
+	bool bSearchAll;
+	SSearchParam( const LPARAM& lFlag ) noexcept
+		: bSearchWords( lFlag & 0x01 )
+		, bIgnoreCase( !(lFlag & 0x02) )
+		, bUseRegexp( lFlag & 0x04 )
+		, bAlertIfNotFound( lFlag & 0x08 )
+		, bAutoClose( lFlag & 0x10 )
+		, bSearchAll( lFlag & 0x20 )
+	{
+	}
+	operator LPARAM() const noexcept
+	{
+		LPARAM lFlag = 0x00;
+		if ( bSearchWords ) lFlag |= 0x01;
+		if ( !bIgnoreCase ) lFlag |= 0x02;
+		if ( bUseRegexp ) lFlag |= 0x04;
+		if ( bAlertIfNotFound ) lFlag |= 0x08;
+		if ( bAutoClose ) lFlag |= 0x10;
+		if ( bSearchAll ) lFlag |= 0x20;
+		return lFlag;
+	}
+};
+
 
 #endif /* SAKURA_CVIEWCOMMANDER_5F4F7A80_2BEC_4B1D_A637_B922375FF14C9_H_ */
 /*[EOF]*/
