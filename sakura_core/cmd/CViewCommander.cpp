@@ -375,6 +375,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
+	case F_COPYFOLDER:				Command_COPYFOLDER();break;				//このファイルのフォルダ名をクリップボードにコピー
 	case F_COPYTAG:					Command_COPYTAG();break;				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		Command_COPYLINESASPASSAGE();break;		//選択範囲内全行引用符付きコピー

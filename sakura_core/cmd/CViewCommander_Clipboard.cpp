@@ -1118,6 +1118,17 @@ void CViewCommander::Command_COPYPATH( void )
 	}
 }
 
+/* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
+void CViewCommander::Command_COPYFOLDER( void )
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	m_pCommanderView->MySetClipboardData( strFolder.c_str(), wcslen(strFolder.c_str()), false );
+}
+
 //	May 9, 2000 genta
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
 void CViewCommander::Command_COPYTAG( void )

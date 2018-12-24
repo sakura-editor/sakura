@@ -1351,6 +1351,9 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
 	n++;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYFOLDER;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'O';
+	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_FOLDER_IN_EXPLORER;
 	rMenu.m_nCustMenuItemKeyArr[0][n] = 'E';
 	n++;
