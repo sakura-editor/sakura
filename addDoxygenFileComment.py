@@ -58,7 +58,7 @@ def addFileComment(fileName):
 # (@file コメントをつける)
 def processFiles(files):
 	for fileName in files:
-		if hasFileComment(fileName) == False:
+		if not hasFileComment(fileName):
 			print ("processing " + fileName)
 			addFileComment(fileName)
 
