@@ -159,6 +159,10 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 ) else (
 	echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"
 )
+
+@rem enable 'dev version' macro which will be disabled on release branches
+echo #define APPVEYOR_DEV_VERSION
+
 if "%APPVEYOR_REPO_TAG_NAME%" == "" (
 	echo // APPVEYOR_REPO_TAG_NAME is not defined
 ) else (

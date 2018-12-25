@@ -27,6 +27,7 @@
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
+#include "version.h"
 
 // アプリ名。2007.09.21 kobake 整理
 #ifdef _UNICODE
@@ -47,7 +48,13 @@
 #define _APP_NAME_3_(TYPE) TYPE("")
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_3_(TYPE)
+#ifdef APPVEYOR_DEV_VERSION
+#define _APP_NAME_DEV_(TYPE) TYPE("(dev Version)")
+#else
+#define _APP_NAME_DEV_(TYPE) TYPE("")
+#endif
+
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_DEV_(TYPE) _APP_NAME_3_(TYPE)
 
 const TCHAR g_szGStrAppName[]  = (_GSTR_APPNAME_(_T)   ); // この変数を直接参照せずに GSTR_APPNAME を使うこと
 const CHAR  g_szGStrAppNameA[] = (_GSTR_APPNAME_(ATEXT)); // この変数を直接参照せずに GSTR_APPNAME_A を使うこと
