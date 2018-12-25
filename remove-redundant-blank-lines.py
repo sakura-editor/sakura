@@ -33,8 +33,8 @@ extensions = (
 )
 
 # チェック対象の拡張子か判断する
-def checkExtension(file):
-	base, ext = os.path.splitext(file)
+def checkExtension(fileName):
+	base, ext = os.path.splitext(fileName)
 	if ext in extensions:
 		return True
 	else:
@@ -43,9 +43,9 @@ def checkExtension(file):
 # 引数で指定したフォルダ以下のすべての対象ファイルを yield で返す
 def checkAll(topDir):
 	for rootdir, dirs, files in os.walk(topDir):
-		for file in files:
-			if checkExtension(file):
-				full = os.path.join(rootdir, file)
+		for fileName in files:
+			if checkExtension(fileName):
+				full = os.path.join(rootdir, fileName)
 				yield full
 
 # 引数で指定した文字列から改行コードを取り除く
@@ -53,18 +53,18 @@ def clipEndOfLine(line):
 	return line.rstrip('\r\n')
 
 # 引数で指定したファイルに対して @file コメントをつける
-def removeRedundantBlack(file):
+def removeRedundantBlack(fileName):
 	endOfLine   = "\r\n"
 	prevLines   = []
 
-	tmp_file = file + ".tmp"
-	with codecs.open(file, "r", "utf_8_sig") as fin:
+	tmp_file = fileName + ".tmp"
+	with codecs.open(fileName, "r", "utf_8_sig") as fin:
 		for line in fin:
-			text = clipEndOfLine(line)
-			type = parseLine(text)
-			lineType = {}
-			lineType['text'] = text
-			lineType['type'] = type
+			text     = clipEndOfLine(line)
+			lineType = parseLine(text)
+			elem = {}
+			elem['text'] = text
+			elem['type'] = lineType
 			
 			if prevLines:
 				# 最初の行ではないとき
@@ -73,33 +73,33 @@ def removeRedundantBlack(file):
 						continue
 
 				if prevLines[-1]['type'] == blankLine:
-					if type == blankLine:
+					if lineType == blankLine:
 						continue
 
-				if type == rightBracket:
+				if lineType == rightBracket:
 					# 直前の空行をバッファから消す
 					while prevLines and prevLines[-1]['type'] == blankLine:
 						prevLines.pop(-1)
 			else:
 				# 最初の行が空白のとき
-				if type == blankLine:
+				if lineType == blankLine:
 					continue
 
 			# 出力すべきバッファにキャッシュする
-			prevLines.append(lineType)
+			prevLines.append(elem)
 
 	with codecs.open(tmp_file, "w", "utf_8_sig") as fout:
-		for lineType in prevLines:
-			fout.write(lineType['text'] + endOfLine)
+		for elem in prevLines:
+			fout.write(elem['text'] + endOfLine)
 
-	os.remove(file)
-	os.rename(tmp_file, file)
+	os.remove(fileName)
+	os.rename(tmp_file, fileName)
 
 # 対象のファイルをすべて処理する
 def processFiles(files):
-	for file in files:
-		print ("processing " + file)
-		removeRedundantBlack(file)
+	for fileName in files:
+		print ("processing " + fileName)
+		removeRedundantBlack(fileName)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
