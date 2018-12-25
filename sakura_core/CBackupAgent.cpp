@@ -333,7 +333,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
-		time_t	ltime;
+		__time64_t 	ltime;
 		struct	tm result = {0};
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
@@ -358,8 +358,8 @@ bool CBackupAgent::FormatBackUpPath(
 		case 2:	//	日付，時刻
 			_tzset();
 			_wstrdate( szTime );
-			time( &ltime );				/* システム時刻を得ます */
-			localtime_s( &result, &ltime );/* 現地時間に変換する */
+			_time64( &ltime );				/* システム時刻を得ます */
+			_localtime64_s( &result, &ltime );/* 現地時間に変換する */
 
 			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
