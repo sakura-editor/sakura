@@ -66,7 +66,6 @@ private:
 	bool	m_hold;
 };
 
-
 //! フォント情報管理
 struct SFONT {
 	SFontAttr	m_sFontAttr;

@@ -38,7 +38,6 @@
 #include "CPrint.h"
 #include "_main/global.h"
 
-
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	// 	用紙ID, 幅
@@ -87,8 +86,6 @@ const PAPER_INFO CPrint::m_paperInfoArr[] = {
 
 const int CPrint::m_nPaperInfoArrNum = _countof( m_paperInfoArr );
 
-
-
 CPrint::CPrint( void )
 {
 	m_hDevMode	= NULL;
@@ -110,8 +107,6 @@ CPrint::~CPrint( void )
 	m_hDevNames	= NULL;
 	return;
 }
-
-
 
 /*! @brief プリンタダイアログを表示して、プリンタを選択する
 ** 
@@ -198,7 +193,6 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	::GlobalUnlock( m_hDevNames );
 	return TRUE;
 }
-
 
 /*! @brief デフォルトのプリンタを取得し、MYDEVMODE に設定 
 ** 
@@ -358,7 +352,6 @@ end_of_func:;
 	return hdc;
 }
 
-
 /* 印刷/プレビューに必要な情報を取得 */
 BOOL CPrint::GetPrintMetrics(
 	MYDEVMODE*	pMYDEVMODE,
@@ -418,8 +411,6 @@ BOOL CPrint::GetPrintMetrics(
 	return bRet;
 }
 
-
-
 /* 用紙の幅、高さ */
 BOOL CPrint::GetPaperSize(
 	short*		pnPaperAllWidth,
@@ -428,7 +419,6 @@ BOOL CPrint::GetPaperSize(
 )
 {
 	short	nWork;
-
 
 	if( pDEVMODE->dmFields &  DM_PAPERSIZE ){
 		// 2006.08.14 Moca swich/caseテーブルを廃止して 用紙情報を統合
@@ -464,12 +454,6 @@ BOOL CPrint::GetPaperSize(
 	}
 	return TRUE;
 }
-
-
-
-
-
-
 
 /* 印刷 ジョブ開始 */
 BOOL CPrint::PrintOpen(
@@ -520,24 +504,17 @@ end_of_func:;
 	return bRet;
 }
 
-
-
 /* 印刷 ページ開始 */
 void CPrint::PrintStartPage( HDC hdc )
 {
 	::StartPage( hdc );
-
 }
-
-
 
 /* 印刷 ページ終了 */
 void CPrint::PrintEndPage( HDC hdc )
 {
 	::EndPage( hdc );
-
 }
-
 
 /* 印刷 ジョブ終了 */
 void CPrint::PrintClose( HDC hdc )
@@ -545,10 +522,6 @@ void CPrint::PrintClose( HDC hdc )
 	::EndDoc( hdc );
 	::DeleteDC( hdc );
 }
-
-
-
-
 
 /* 用紙の名前を取得 */
 TCHAR* CPrint::GetPaperName( int nPaperSize, TCHAR* pszPaperName )
@@ -576,7 +549,6 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 	}
 	return NULL;
 }
-
 
 /*!	@brief PRINTSETTINGの初期化
 
@@ -625,7 +597,6 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	pPrintSetting.m_szFooterForm[2][0] = L'\0';
 }
 
-
 /*!
 	印字可能桁数の計算
 	@date 2013.05.10 aroka 新規作成
@@ -645,7 +616,6 @@ int CPrint::CalculatePrintableColumns( PRINTSETTING *pPS, int nPaperAllWidth, in
 	return nEnableColumns;
 }
 
-
 /*!
 	印字可能行数の計算
 	@date 2013.05.10 aroka 新規作成
@@ -663,7 +633,6 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 	if( nEnableLines < 0 ){ return 0; }
 	return nEnableLines;
 }
-
 
 /*!
 	ヘッダ高さの計算(行送り分こみ)

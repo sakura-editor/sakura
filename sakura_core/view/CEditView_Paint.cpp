@@ -87,8 +87,6 @@ void CEditView_Paint::Call_OnPaint(
 	pView->ReleaseDC( hdc );
 }
 
-
-
 /* フォーカス移動時の再描画
 
 	@date 2001/06/21 asa-o 「スクロールバーの状態を更新する」「カーソル移動」削除
@@ -273,7 +271,6 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	}
 	rcImagePos.SetSize(doc.m_nBackImgWidth, doc.m_nBackImgHeight);
 	
-
 	RECT rc = rcPaint;
 	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
 	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
@@ -353,7 +350,6 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 #endif
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          色設定                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -409,7 +405,6 @@ CColor3Setting CEditView::GetColorIndex(
 		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 		pool->SetCurrentView(this);
 		pool->NotifyOnStartScanLogic();
-
 
 		// 2009.02.07 ryoji この関数では pInfo->CheckChangeColor() で色を調べるだけなので以下の処理は不要
 		//
@@ -562,7 +557,6 @@ COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorI
 	return MakeColor2(info.m_sColorAttr.m_cBACK, info2.m_sColorAttr.m_cBACK, alpha);
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           描画                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -644,7 +638,6 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	// キャレットを隠す
 	bool bCaretShowFlag_Old = GetCaret().GetCaretShowFlag();	// 2008.06.09 ryoji
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
-
 
 	RECT			rc;
 	int				nLineHeight = GetTextMetrics().GetHankakuDy();
@@ -734,7 +727,6 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 	cTextType.SetGraphicsState_WhileThisObj(gr);
 
-
 	int nTop = pPs->rcPaint.top;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -755,7 +747,6 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	CLayoutInt nLayoutLineTo = GetTextArea().GetViewTopLine()
 		+ CLayoutInt( ( pPs->rcPaint.bottom - GetTextArea().GetAreaTop() + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2007.02.17 ryoji 計算を精密化
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         描画座標                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -765,7 +756,6 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		GetTextArea().GetAreaTop() + (Int)( nLayoutLine - GetTextArea().GetViewTopLine() ) * nLineHeight
 	));
 	sPos.SetLayoutLineRef(nLayoutLine);
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      全部の行を描画                         //
@@ -823,7 +813,6 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	}
 
 	cTextType.RewindGraphicsState(gr);
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       ルーラー描画                          //
@@ -1047,12 +1036,10 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		pInfo->m_pDispPos->GetDrawPos().y
 	);
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       本文描画開始                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	pInfo->m_pDispPos->ResetDrawCol();
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                 行頭(インデント)背景描画                    //
@@ -1066,7 +1053,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		//描画位置進める
 		pInfo->m_pDispPos->ForwardDrawCol(pcLayout->GetIndent());
 	}
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         本文描画                            //
@@ -1207,13 +1193,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	return bDispEOF;
 }
 
-
-
-
-
-
-
-
 /* テキスト反転
 
 	@param hdc      
@@ -1317,16 +1296,9 @@ void CEditView::DispTextSelected(
 	return;
 }
 
-
-
-
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       画面バッファ                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 /*!
 	画面の互換ビットマップを作成または更新する。
@@ -1396,7 +1368,6 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	return NULL != m_hbmpCompatBMP;
 }
 
-
 /*!
 	互換メモリBMPを削除
 
@@ -1415,8 +1386,6 @@ void CEditView::DeleteCompatibleBitmap()
 		m_nCompatBMPHeight = -1;
 	}
 }
-
-
 
 /** 画面キャッシュ用CompatibleDCを用意する
 

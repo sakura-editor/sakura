@@ -50,7 +50,6 @@
 #endif
 #endif
 
-
 //グローバル
 #include "_main/global.h"
 
@@ -164,6 +163,4 @@
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
 
 #endif // !defined(AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_)
-
-
 

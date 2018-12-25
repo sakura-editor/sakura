@@ -39,14 +39,8 @@ CFuncInfo::CFuncInfo(
 	return;
 }
 
-
-
-
 /* CFuncInfoクラス消滅 */
 CFuncInfo::~CFuncInfo()
 {
-
 }
-
-
 

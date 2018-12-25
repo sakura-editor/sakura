@@ -25,7 +25,6 @@ class CFuncInfo;
 //	2003.06.27 Moca
 #define FUNCINFO_NOCLIPTEXT 0x10000
 
-
 //! アウトライン解析  データ要素
 //@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
@@ -53,10 +52,6 @@ class CFuncInfo {
 		int			m_nDepth;		/*!< 深さ */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCINFO_H_ */
-
-
 

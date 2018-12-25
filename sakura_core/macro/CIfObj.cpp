@@ -252,7 +252,6 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
 	return S_OK;
 }
 
-
 /////////////////////////////////////////////
 //インタフェースオブジェクト
 

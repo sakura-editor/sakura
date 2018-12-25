@@ -46,7 +46,6 @@ bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
 	return false;
 }
 
-
 /*! DIFFマーク描画
 
 	引数は仮。（無駄な引数ありそう）
@@ -108,7 +107,6 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORR
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CDiffLineSetter::SetLineDiffMark(EDiffMark mark){ m_pcDocLine->m_sMark.m_cDiffmarked = mark; }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       CDiffLineMgr                          //

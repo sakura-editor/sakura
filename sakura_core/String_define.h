@@ -64,10 +64,8 @@
 
 #define F_CHGMOD_EOL_SUBMENU			34044
 
-
 #define F_SPLIT_VH_ON					34045
 #define F_SPLIT_VH_OFF					34046
-
 
 #define F_BOOKMARK_SUBMENU				34047
 #define F_ISEARCH_SUBMENU				34048
@@ -117,11 +115,9 @@
 #define STR_SQLERR_ACTV_BUT_NOT_RUN		34086
 #define STR_ERR_CMPERR					34087
 
-
 // CCommandLine.cpp - cant map properly	
 #define STR_ERR_MACROERR1				34088
 #define STR_CMDLINE_PARSECMD1			34089
-
 
 // CControlProcess.cpp
 #define STR_ERR_CTRLMTX1				34090
@@ -130,7 +126,6 @@
 #define STR_ERR_CTRLMTX4				34093
 #define STR_NO_TITLE1					34094
 #define STR_NO_TITLE2					34095
-
 
 // CDlgCtrlCode.cpp
 #define STR_DLGCTRLCODE_CODE			34096
@@ -270,7 +265,6 @@
 #define STR_DLGFNCLST_LIST_COL_M		34219
 #define STR_DLGFNCLST_LIST_M			34220
 
-
 #define STR_DLGGREP1					34221
 #define STR_DLGGREP2					34222
 #define STR_DLGGREP3					34223
@@ -290,17 +284,14 @@
 #define STR_DLGOPNFL_EXTNAME3			34234
 #define STR_DLGOPNFL_ERR1				34235
 
-
 // CDlgPrintPage.cpp
 #define STR_ERR_DLGPRNPG1				34236
 #define STR_ERR_DLGPRNPG2				34237
 #define STR_ERR_DLGPRNPG3				34238
 
-
 // CDlgPrintSetting.cpp
 #define STR_DLGPRNST1					34239
 #define STR_DLGPRNST2					34240
-
 
 // CDlgProperty.cpp
 #define STR_DLGFLPROP_FILENAME			34241
@@ -335,18 +326,15 @@
 #define STR_DLGFLPROP_DOS_NAME			34270
 #define STR_DLGFLPROP_FILE_SIZE			34271
 
-
 // CDlgReplace.cpp
 #define STR_DLGREPLC_CLIPBOARD			34272
 #define STR_DLGREPLC_STR				34273
 #define STR_DLGREPLC_REPLACE			34274
 #define STR_DLGREPLC_REPSTR				34275
 
-
 // CDlgSameColor.cpp
 #define STR_DLGSMCLR_BTN1				34276
 #define STR_DLGSMCLR_BTN2				34277
-
 
 // CDlgTagJumpList.cpp
 #define STR_DLGTAGJMP1					34278
@@ -359,16 +347,13 @@
 #define STR_DLGTAGJMP_LIST6				34285
 #define STR_DLGTAGJMP3					34286
 
-
 // CDlgTagJumpList.cpp
 #define STR_DLGTAGMAK_SELECTDIR			34287
-
 
 // CDlgWinSize.cpp
 #define STR_DLGWINSZ_NORMAL				34288
 #define STR_DLGWINSZ_MAXIMIZE			34289
 #define STR_DLGWINSZ_MINIMIZE			34290
-
 
 // CDocLineMgr.cpp
 #define STR_ERR_DLGDOCLM1				34291
@@ -379,14 +364,11 @@
 #define STR_ERR_DLGDOCLM6				34296
 #define STR_ERR_DLGDOCLM_TOOBIG			35032
 
-
 // CDocLineMgr_New.cpp
 #define STR_ERR_DLGDOCLMN1				34297
 
-
 // CDropTarget.cpp
 #define STR_ERR_DLGDRPTGT1				34298
-
 
 // CEditApp.cpp
 #define STR_TRAY_CREATE					34299
@@ -397,7 +379,6 @@
 #define STR_TRAY_CREATEPROC2			34304
 #define STR_TRAY_EXITALL				34305
 #define STR_TRAY_ACCELTABLE				34306
-
 
 // CEditDoc.cpp
 #define STR_LOADAGENT_ERR_OPEN			34307
@@ -428,20 +409,16 @@
 #define STR_ERR_DLGEDITDOC31			34329
 #define STR_AUTORELOAD_NOFITY			34330
 
-
 // CType_Cpp.cpp
 #define STR_OUTLINE_CPP_NONAME			34331
 #define STR_OUTLINE_CPP_DEFPOS			34332
-
 
 // CType_Python.cpp
 #define STR_OUTLINE_PYTHON_UNDEFINED	34333
 #define STR_OUTLINE_PYTHON_CLASS		34334
 
-
 // CType_Java.cpp
 #define STR_OUTLINE_JAVA_DEFPOS			34335
-
 
 // CEditView.cpp
 #define STR_VIEW_TIMER					34336
@@ -481,10 +458,8 @@
 #define STR_EDITVIEW_EXECCMD_STOP		34370
 #define STR_EDITVIEW_EXECCMD_RET		34371
 
-
 // CEditView_CmdHokan.cpp
 #define STR_ERR_DLGEDITVWHOKAN1			34372
-
 
 // CEditView_Cmdisrch.cpp
 #define STR_EDITVWISRCH_REGEX			34373
@@ -528,7 +503,6 @@
 #define STR_ERR_CEDITVIEW_CMD28			34409
 #define STR_ERR_CEDITVIEW_CMD29			34410
 
-
 // CEditView_Command_New.cpp
 #define STR_BOOKMARK_NEXT_NOT_FOUND		34411
 #define STR_BOOKMARK_PREV_NOT_FOUND		34412
@@ -537,7 +511,6 @@
 #define STR_SAVEAGENT_OTHER_APP			34415
 #define STR_ERR_DLGEDITVWCMDNW11		34416
 #define STR_ERR_DLGEDITVWCMDNW12		34417
-
 
 // CEditView_Diff.cpp
 #define STR_ERR_DLGEDITVWDIFF1			34418
@@ -551,12 +524,9 @@
 #define STR_DIFF_FAILED_TEMP			34426
 #define STR_DIFF_FAILED_LONG			34427
 
-
 // CEditView_New.cpp -- no w 33272
 
-
 // CEditView_New2.cpp -- no 33274
-
 
 // CEditView_Mouse.cpp
 #define STR_VIEW_MOUSE_BUG				34428
@@ -564,7 +534,6 @@
 #define STR_VIEW_MOUSE_MENU_FILE		34430
 #define STR_VIEW_MOUSE_MENU_OPEN		34431
 #define STR_VIEW_MOUSE_MENU_CANCEL		34432
-
 
 // CEditWnd.cpp 33278
 #define STR_ERR_DLGEDITWND01			34433
@@ -587,10 +556,8 @@
 #define STR_ERR_DLGEDITWND24			34449
 #define STR_ERR_DLGEDITWND25			34450
 
-
 // CFuncInfoArr.cpp
 #define STR_ERR_DLGFUNCKEYWN1			34451
-
 
 // CFuncLookup.cpp
 #define STR_ERR_DLGFUNCLKUP01			34452
@@ -614,24 +581,17 @@
 #define STR_ERR_DLGFUNCLKUP18			34469
 #define STR_ERR_DLGFUNCLKUP19			34470
 
-
-
 // charchode.cpp
-
 
 // CHokanMgr.cpp
 
-
 // CHtmlHelp.cpp
 
-
 // CImageListMgr.cpp
-
 
 // CKeyBind.cpp
 #define STR_ERR_DLGKEYBIND1				34471
 #define STR_ERR_DLGKEYBIND2				34472
-
 
 // CKeyMacroMgr.cpp
 #define STR_ERR_DLGKEYMACMGR1			34473
@@ -643,27 +603,19 @@
 #define STR_ERR_DLGKEYMACMGR7			34479
 #define STR_ERR_DLGKEYMACMGR8			34480
 
-
 // CKeyWordSetMgr.cpp
-
 
 // CLayout.cpp
 
-
 // CLayoutMgr.cpp
 
-
 // CLayoutMgr.cpp
-
 
 // CLayoutMgr_New.cpp
 
-
 // CLayoutMgr_New2.cpp
 
-
 // CLineComment.cpp
-
 
 // CMacro.cpp
 #define STR_ERR_DLGMACRO01				34481
@@ -684,39 +636,28 @@
 
 // CMacroFactory.cpp
 
-
 // CMacroManagerBase.cpp
 
-
 // CMarkMgr.cpp
-
 
 // CMemory.cpp
 #define STR_ERR_DLGMEM1					34496
 
-
 // CMenuDrawer.cpp
-
 
 // CMigemo.cpp
 
-
 // CMRU.cpp
 
-
 // CMRUFolder.cpp
-
 
 // CNormalProcess.cpp
 #define STR_ERR_DLGNRMPROC1				34497
 #define STR_ERR_DLGNRMPROC2				34498
 
-
 // COpe.cpp
 
-
 // COpeBlk.cpp
-
 
 // CPPA.cpp
 #define STR_ERR_DLGPPA1					34499
@@ -727,15 +668,12 @@
 #define STR_ERR_DLGPPA6					34504
 #define STR_ERR_DLGPPA7					34505
 
-
 // CPPAMacroMgr.cpp
-
 
 // CPrint.cpp
 #define STR_ERR_CPRINT01				34506
 #define STR_ERR_CPRINT02				34507
 #define STR_ERR_CPRINT03				34508
-
 
 // CPrintPreview.cpp
 #define STR_ERR_DLGPRNPRVW1				34509
@@ -747,10 +685,8 @@
 #define STR_ERR_DLGPRNPRVW7				34515
 #define STR_ERR_DLGPRNPRVW3_1			34516
 
-
 // CProcess.cpp
 #define STR_ERR_DLGPROCESS1				34517
-
 
 // CProcessFactory.cpp
 #define STR_ERR_DLGPROCFACT1			34518
@@ -759,14 +695,11 @@
 #define STR_ERR_DLGPROCFACT4			34521
 #define STR_ERR_DLGPROCFACT5			34522
 
-
 // CProfile.cpp
-
 
 // CPropComBackup.cpp
 #define STR_PROPCOMBK_SEL_FOLDER		34523
 #define STR_PROPCOMBK_DUSTBOX			34524
-
 
 // CPropComCustmenu.cpp
 #define STR_PROPCOMCUSTMENU_SEP			34525
@@ -774,32 +707,25 @@
 #define STR_PROPCOMCUSTMENU_AC2			34527
 // Has a HEADER #define, sho
 
-
 // CPropComEdit.cpp
-
 
 // CPropComFile.cpp
 #define STR_PROPCOMFNM_LIST1			34528
 #define STR_PROPCOMFNM_LIST2			34529
 #define STR_PROPCOMFNM_ERR_REG			34530
 
-
 // CPropComFormat.cpp
 // Has static date-time stri
-
 
 // CPropComGrep.cpp 
 #define STR_PROPCOMGREP_DLL				34531
 
-
 // CPropComHelper.cpp
 #define STR_PROPCOMHELP_MIGEMODIR		34532
-
 
 // CPropComKeybind.cpp
 // STR_KEYDATA_HEAD... 
 #define STR_PROPCOMKEYBIND_UNASSIGN		34533
-
 
 // CPropComKeyword.cpp
 #define STR_PROPCOMKEYWORD_ERR_LEN		34534
@@ -817,7 +743,6 @@
 #define STR_PROPCOMKEYWORD_DEL			34546
 #define STR_PROPCOMKEYWORD_INFO			34547
 
-
 // CPropComMacro.cpp
 #define STR_PROPCOMMACR_LIST1			34548
 #define STR_PROPCOMMACR_LIST2			34549
@@ -825,7 +750,6 @@
 #define STR_PROPCOMMACR_LIST4			34551
 #define STR_PROPCOMMACR_LIST5			34552
 #define STR_PROPCOMMACR_SEL_DIR			34553
-
 
 // CPropCommon.cpp ( Must use consecutive ordering here ... )
 #define STR_PROPCOMMON_GENERAL			34554
@@ -860,7 +784,6 @@
 #define STR_PROPCOMGEN_DIR1				34579
 #define STR_PROPCOMGEN_DIR2				34580
 
-
 // CPropComToolbar.cpp
 #define STR_PROPCOMTOOL_ERR01			34581
 #define STR_PROPCOMTOOL_ERR02			34582
@@ -871,9 +794,7 @@
 #define STR_PROPCOMTOOL_ITEM2			34587
 #define STR_PROPCOMTOOL_ITEM3			34588
 
-
 // CPropComWin.cpp
-
 
 // CPropTypes.cpp
 #define STR_OUTLINE_CPP					34589
@@ -914,7 +835,6 @@
 #define STR_PROPTYPE					34624
 #define STR_PROPTYPE_ERR				34625
 
-
 // CPropTypesKeyHelp.cpp
 #define STR_PROPTYPKEYHELP_DIC			34626
 #define STR_PROPTYPKEYHELP_INFO			34627
@@ -925,7 +845,6 @@
 #define STR_PROPTYPKEYHELP_SELECT		34632
 #define STR_PROPTYPKEYHELP_ERR_REG2		34633
 #define STR_PROPTYPKEYHELP_ERR_OPEN		34634
-
 
 // CPropTypesRegex.cpp
 #define STR_PROPTYPEREGEX_LIST1			34635
@@ -941,12 +860,9 @@
 
 // CRecent.cpp
 
-
 // CRegexKeyword.cpp
 
-
 // CRunningTimer.cpp
-
 
 // CShareData.cpp
 #define STR_ERR_CSHAREDATA01			34645
@@ -1044,22 +960,16 @@
 // #define STR_COLOR_RESERVED				34733
 // #define STR_COLOR_RESERVED				34734
 
-
 // CShareData_new.cpp
-
 
 // CSMacroMgr.cpp
 
-
 // CSortedTagJumpList.cpp
-
 
 // CSplitBoxWnd.cpp
 
-
 // CSplitterWnd.cpp
 #define STR_ERR_CSPLITTER01				34735
-
 
 // CTabWnd.cpp
 #define STR_TABWND_LR_INFO				34736
@@ -1068,18 +978,13 @@
 #define STR_TABWND_SHOWTABNAME			34739
 #define STR_TABWND_SHOWPATHNAME			34740
 
-
 // CTipWnd.cpp
-
 
 // CUxTheme.cpp
 
-
 // CWaitCursor.cpp
 
-
 // CWnd.cpp
-
 
 // CWSH.cpp
 #define STR_ERR_CWSH01					34741
@@ -1090,7 +995,6 @@
 #define STR_ERR_CWSH06					34746
 #define STR_ERR_CWSH07					34747
 #define STR_ERR_CWSH08					34748
-
 
 // etc_uty.cpp
 #define STR_ERR_ETCUTY01				34749
@@ -1105,7 +1009,6 @@
 
 // global.cpp
 #define STR_ERR_GLOBAL01				34758
-
 
 // LMP: End -----------------------------------------------------
 // LMP: End -----------------------------------------------------

@@ -43,7 +43,6 @@ CNativeW::CNativeW( const wchar_t* pData)
 //              ネイティブ設定インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
 // バッファの内容を置き換える
 void CNativeW::SetString( const wchar_t* pData, int nDataLen )
 {
@@ -143,7 +142,6 @@ void CNativeW::AppendStringOld( const char* pszData )
 	AppendStringOld(pszData,strlen(pszData));
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ取得インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -157,7 +155,6 @@ wchar_t CNativeW::operator[](int nIndex) const
 		return 0;
 	}
 }
-
 
 /* 等しい内容か */
 bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
@@ -178,7 +175,6 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 	}
 	return false;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ変換インターフェース                 //
@@ -223,13 +219,6 @@ void CNativeW::Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* psz
 		}
 	}
 }
-
-
-
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  staticインターフェース                     //
@@ -284,7 +273,6 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 	else
 		return CKetaXInt(2);
 }
-
 
 //! 指定した位置の文字の文字幅を返す
 CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
@@ -347,7 +335,6 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 	return pPrev;
 //	return ::CharPrevW_AnyBuild( pData, pDataCurrent );
 }
-
 
 //ShiftJISに変換して返す
 const char* CNativeW::GetStringPtrOld() const

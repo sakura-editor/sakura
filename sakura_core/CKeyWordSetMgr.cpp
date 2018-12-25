@@ -106,9 +106,6 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 	return *this;
 }
 
-
-
-
 /*! @brief キーワードセットの追加
 
 	@date 2005.01.26 Moca 新規作成
@@ -171,8 +168,6 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 	}
 	return true;
 }
-
-
 
 /*! ｎ番目のセットのセット名を返す
 
@@ -256,7 +251,6 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 	return p;
 }
 
-
 /*! ｎ番目のセットにキーワードを追加
 
 	@param nIdx [in] セット番号
@@ -302,7 +296,6 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 	return 0;
 }
 
-
 /*! ｎ番目のセットのｍ番目のキーワードを削除
 
 	@param nIdx [in] キーワードセット番号
@@ -337,7 +330,6 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	}
 	return 0;
 }
-
 
 //MIK START 2000.12.01 binary search
 /*!	キーワードのソートとキーワード長の最大値計算
@@ -384,7 +376,6 @@ void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
 	}
 	m_nKeyWordMaxLenArr[nIdx] = nMaxLen;
 }
-
 
 /** nIdx番目のキーワードセットから pszKeyWordを探す。
 	見つかれば 0以上を、見つからなければ負の数を返す。
@@ -463,7 +454,6 @@ bool CKeyWordSetMgr::GetKeyWordCase( int nIdx )
 	return 	m_bKEYWORDCASEArr[nIdx];
 }
 //MIK END
-
 
 // From Here 2004.07.29 Moca 可変長記憶
 /*!	@brief \\0またはTABで区切られた文字列からキーワードを設定
@@ -692,6 +682,4 @@ int  CKeyWordSetMgr::SearchKeyWordSet( const wchar_t* pszKeyWord )
 	}
 	return nIdx;
 }
-
-
 

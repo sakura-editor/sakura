@@ -167,7 +167,6 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 				0, FALSE,
 				DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS );	// 元の継承可能ハンドルは DUPLICATE_CLOSE_SOURCE で閉じる	// 2007.01.31 ryoji
 
-
 	// From Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	// CDocLineMgr::WriteFileなど既存のファイル出力系の関数のなかには
 	// ファイルハンドルを返すタイプのものがないので、一旦書き出してから
@@ -218,7 +217,6 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	}
 	// To Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	
-
 	//CreateProcessに渡すSTARTUPINFOを作成
 	STARTUPINFO	sui;
 	ZeroMemory( &sui, sizeof(sui) );
@@ -604,7 +602,6 @@ user_cancel:
 	}else{
 		bRet = true;
 	}
-
 
 finish:
 	//終了処理

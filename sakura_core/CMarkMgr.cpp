@@ -183,5 +183,3 @@ void CAutoMarkMgr::Expire(void)
 		m_nCurpos = 0;
 }
 
-
-

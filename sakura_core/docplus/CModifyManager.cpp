@@ -5,7 +5,6 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 
-
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
@@ -13,8 +12,6 @@ void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 	// 行変更状態をすべてリセット
 	CModifyVisitor().ResetAllModifyFlag(&pcDoc->m_cDocLineMgr, pcDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer());
 }
-
-
 
 bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine, int saveSeq) const
 {
@@ -52,5 +49,4 @@ void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int seq)
 		pDocLine = pDocLineNext;
 	}
 }
-
 

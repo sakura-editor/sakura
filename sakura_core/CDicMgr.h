@@ -42,17 +42,12 @@ public:
 							const TCHAR* pszKeyWordFile );
 //	BOOL Close( char* );
 
-
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDICMGR_H_ */
-
-
 

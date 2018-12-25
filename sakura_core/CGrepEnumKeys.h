@@ -136,7 +136,6 @@ public:
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
 
-
 private:
 	void ClearItems( void ){
 		ClearEnumKeys(m_vecExceptFileKeys);
@@ -257,5 +256,4 @@ private:
 		return 0;
 	}
 };
-
 

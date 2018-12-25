@@ -37,8 +37,6 @@
 #include "_main/global.h"
 #include "convert/convert_util2.h"
 
-
-
 /*!
 	認識する文字コード種別
 */
@@ -74,9 +72,6 @@ enum ECodeType {
 };
 #endif
 
-
-
-
 /*!
 	内部的に認識する文字集合
 */
@@ -95,8 +90,6 @@ enum ECharSet {
 		＊　CHARSET_BINARY は文字集合ではない集合。
 	*/
 };
-
-
 
 /*!
 	JIS コードのエスケープシーケンスたち
@@ -136,7 +129,6 @@ enum EJisEscseq {
 	*/
 };
 
-
 /*!
 	内部的に認識する JIS エスケープシーケンスの種類
 */
@@ -147,12 +139,6 @@ enum EMyJisEscseq {
 	MYJISESC_ZENKAKU,
 	MYJISESC_UNKNOWN,
 };
-
-
-
-
-
-
 
 /* ------------------------------------------------------------------------
       データ表と変換補助
@@ -167,7 +153,6 @@ extern const char TABLE_IsUtf7Direct[];
 extern const int TABLE_JISESCLEN[];
 extern const char* TABLE_JISESCDATA[];
 #endif
-
 
 // Unicode 判別関係
 
@@ -188,9 +173,6 @@ inline bool IsUnicodeNoncharacter( const wchar32_t wc )
 	}
 	return false;
 }
-
-
-
 
 /* ------------------------------------------------------------------------
       文字コード判別支援
@@ -301,14 +283,12 @@ inline bool IsJisZen( const char* pC ){
 		&& CHARCODE__IS_JIS(static_cast<unsigned char>(pC[1])) );
 }
 
-
 #undef CHARCODE__IS_SJIS_ZEN1
 #undef CHARCODE__IS_SJIS_ZEN2
 #undef CHARCODE__IS_EUCJP_ZEN1
 #undef CHARCODE__IS_EUCJP_ZEN2
 #undef CHARCODE__IS_EUCJP_HANKATA2
 #undef CHARCODE__IS_JIS
-
 
 //! UTF16 上位サロゲートか
 inline bool IsUtf16SurrogHi( const wchar_t wc ){
@@ -375,7 +355,6 @@ inline bool IsUTF16High( wchar_t c ){
 inline bool IsUTF16Low( wchar_t c ){
 	return IsUtf16SurrogLow(c);
 }
-
 
 //! 上位バイトと下位バイトを交換 (主に UTF-16 LE/BE 向け)
 inline unsigned short _SwapHLByte( const unsigned short wc ){
@@ -451,12 +430,10 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_UNKNOWN ); }
 
-
 // _CheckUtf16Char のオプション定義
 #define UC_NONCHARACTER 1  //!< 非文字を不正文字とする
 // CheckUtf7BPart のオプション定義
 #define UC_LOOSE 0x02
-
 
 /* --- Unicode 系コードチェック */
 int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );

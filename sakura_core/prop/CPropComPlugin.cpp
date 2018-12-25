@@ -27,7 +27,6 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 #include <ShellAPI.h>
 #include "prop/CPropCommon.h"
@@ -303,11 +302,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
 
 /*!
 	ダイアログ上のコントロールにデータを設定する
@@ -494,7 +491,6 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 			return;	//	よくわからんけど失敗した
 		}
 	}
-
 }
 
 /*! 「プラグイン」シート上のアイテムの有効・無効を適切に設定する

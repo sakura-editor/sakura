@@ -45,8 +45,6 @@ void CType_Rich::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_ColorInfoArr[COLORIDX_URL].m_bDisp = false;		//URLにアンダーラインを引かない
 }
 
-
-
 //Jul. 10, 2001 JEPRO 追加
 const wchar_t* g_ppszKeywordsRTF[] = {
 	L"\\ansi",

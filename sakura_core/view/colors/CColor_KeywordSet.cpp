@@ -21,7 +21,6 @@ CColor_KeywordSet::CColor_KeywordSet()
 {
 }
 
-
 // 2005.01.13 MIK 強調キーワード数追加に伴う配列化
 bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 {
@@ -94,7 +93,6 @@ bool CColor_KeywordSet::EndColor(const CStringRef& cStr, int nPos)
 {
 	return nPos == this->m_nCOMMENTEND;
 }
-
 
 static inline int NextWordBreak( const CStringRef& str, const int start )
 {

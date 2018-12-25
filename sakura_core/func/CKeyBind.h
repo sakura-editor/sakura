@@ -95,10 +95,6 @@ protected:
 			int nShiftState, CNativeT& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYBIND_H_ */
-
-
 

@@ -29,7 +29,6 @@
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "sakura_rc.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -39,7 +38,6 @@ CAutoReloadAgent::CAutoReloadAgent()
 , m_nPauseCount(0)
 {
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -64,8 +62,6 @@ void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	}
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ロード前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -74,8 +70,6 @@ void CAutoReloadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	//pcDoc->m_cDocFile.m_sFileInfo.cFileTime.SetFILETIME(ftime); //#####既に設定済みのはず
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         各種判定                            //

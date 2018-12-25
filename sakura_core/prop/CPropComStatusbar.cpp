@@ -23,7 +23,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DISP_UNICODE_IN_SJIS,		HIDC_CHECK_DISP_UNICODE_IN_SJIS,		// SJISで文字コード値をUnicodeで表示する
 	IDC_CHECK_DISP_UNICODE_IN_JIS,		HIDC_CHECK_DISP_UNICODE_IN_JIS,			// JISで文字コード値をUnicodeで表示する
@@ -105,11 +104,9 @@ INT_PTR CPropStatusbar::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
 
 /* ダイアログデータの設定 */
 void CPropStatusbar::SetData( HWND hwndDlg )
@@ -131,7 +128,6 @@ void CPropStatusbar::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_COL_BY_CHAR,     m_Common.m_sStatusbar.m_bDispColByChar );
 	return;
 }
-
 
 /* ダイアログデータの取得 */
 int CPropStatusbar::GetData( HWND hwndDlg )

@@ -63,7 +63,6 @@ int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
 }
 
-
 static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 {
 	static TCHAR szPath[_MAX_PATH];
@@ -82,7 +81,6 @@ static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 	TCHAR	szDir[_MAX_PATH];
 	SplitPath_FolderAndFile( pszPath, szDir, NULL );
 
-
 	TCHAR szIniFile[_MAX_PATH];
 	if( profName == NULL ){
 		TCHAR szExePath[_MAX_PATH];
@@ -97,13 +95,11 @@ static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 	return std::tstring(szIniFile);
 }
 
-
 /*! ダイアログデータの設定 */
 void CDlgProfileMgr::SetData()
 {
 	SetData( -1 );
 }
-
 
 void CDlgProfileMgr::SetData( int nSelIndex )
 {
@@ -144,8 +140,6 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART, settings.m_bDefaultSelect );
 }
 
-
-
 static bool MyList_GetText(HWND hwndList, int index, TCHAR* szText)
 {
 	List_GetText( hwndList, index, szText );
@@ -156,7 +150,6 @@ static bool MyList_GetText(HWND hwndList, int index, TCHAR* szText)
 	}
 	return false;
 }
-
 
 /*! ダイアログデータの取得 */
 int CDlgProfileMgr::GetData()
@@ -190,7 +183,6 @@ int CDlgProfileMgr::GetData(bool bStart)
 	}
 	return 1;
 }
-
 
 BOOL CDlgProfileMgr::OnBnClicked( int wID )
 {
@@ -246,7 +238,6 @@ BOOL CDlgProfileMgr::OnBnClicked( int wID )
 	return FALSE;
 }
 
-
 INT_PTR CDlgProfileMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
 	INT_PTR result;
@@ -268,7 +259,6 @@ INT_PTR CDlgProfileMgr::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPAR
 	}
 	return result;
 }
-
 
 void CDlgProfileMgr::UpdateIni()
 {
@@ -294,7 +284,6 @@ void CDlgProfileMgr::UpdateIni()
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_WRITE) );
 	}
 }
-
 
 static bool IsProfileDuplicate(HWND hwndList, LPCTSTR szProfName, int skipIndex)
 {
@@ -355,7 +344,6 @@ void CDlgProfileMgr::CreateProf()
 	SetData(sel);
 }
 
-
 void CDlgProfileMgr::DeleteProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
@@ -367,7 +355,6 @@ void CDlgProfileMgr::DeleteProf()
 	}
 	SetData(nCurIndex);
 }
-
 
 void CDlgProfileMgr::RenameProf()
 {
@@ -432,7 +419,6 @@ void CDlgProfileMgr::RenameProf()
 	SetData(nCurIndex);
 }
 
-
 void CDlgProfileMgr::SetDefaultProf(int index)
 {
 	ClearDefaultProf();
@@ -443,7 +429,6 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	auto_strcat( szProfileName, _T("*") );
 	List_InsertString( hwndList, index, szProfileName );
 }
-
 
 void CDlgProfileMgr::ClearDefaultProf()
 {
@@ -457,7 +442,6 @@ void CDlgProfileMgr::ClearDefaultProf()
 		}
 	}
 }
-
 
 static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 {
@@ -509,7 +493,6 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	return true;
 }
 
-
 bool CDlgProfileMgr::ReadProfSettings( SProfileSettings& settings )
 {
 	settings.m_szDllLanguage[0] = _T('\0');
@@ -520,12 +503,10 @@ bool CDlgProfileMgr::ReadProfSettings( SProfileSettings& settings )
 	return IOProfSettings( settings, false );
 }
 
-
 bool CDlgProfileMgr::WriteProfSettings( SProfileSettings& settings )
 {
 	return IOProfSettings( settings, true );
 }
-
 
 LPVOID CDlgProfileMgr::GetHelpIdTable(void)
 {

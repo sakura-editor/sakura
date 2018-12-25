@@ -84,7 +84,6 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 	}
 }
 
-
 /*!
 	キャレット位置の単語を取得
 	単語区切り

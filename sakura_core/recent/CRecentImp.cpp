@@ -92,7 +92,6 @@ void CRecentImp<T, S>::Terminate()
 	m_nArrayCount  = 0;
 }
 
-
 /*
 	初期化済みか調べる。
 */
@@ -120,9 +119,6 @@ void CRecentImp<T, S>::_Recovery()
 		if( *m_pnUserViewCount > m_nArrayCount ) *m_pnUserViewCount = m_nArrayCount;
 	}
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        お気に入り                           //
@@ -175,8 +171,6 @@ bool CRecentImp<T, S>::IsFavorite( int nIndex ) const
 
 	return m_pbUserItemFavorite[nIndex];
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アイテム制御                          //
@@ -234,7 +228,6 @@ bool CRecentImp<T, S>::AppendItem( ReceiveType pItemData )
 
 	*m_pnUserItemCount += 1;
 
-
 reconfigure:
 	//お気に入りを表示内に移動する。
 	if( m_pnUserViewCount )
@@ -243,7 +236,6 @@ reconfigure:
 	}
 	return true;
 }
-
 
 template <class T, class S>
 bool CRecentImp<T, S>::AppendItemText( LPCTSTR pText )
@@ -283,7 +275,6 @@ bool CRecentImp<T, S>::EditItemText( int nIndex, LPCTSTR pText )
 	CopyItem( GetItemPointer(nIndex), receiveData );
 	return true;
 }
-
 
 /*
 	アイテムをゼロクリアする。
@@ -411,7 +402,6 @@ bool CRecentImp<T, S>::MoveItem( int nSrcIndex, int nDstIndex )
 	memcpy_raw( GetItemPointer( nDstIndex ), &pri, sizeof(pri) );
 	SetFavorite( nDstIndex, bFavorite );
 
-
 	return true;
 }
 
@@ -432,8 +422,6 @@ bool CRecentImp<T, S>::CopyItem( int nSrcIndex, int nDstIndex )
 
 	return true;
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アイテム取得                          //
@@ -489,9 +477,6 @@ int CRecentImp<T, S>::GetOldestItem( int nIndex, bool bFavorite )
 
 	return -1;
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          その他                             //
@@ -558,9 +543,6 @@ bool CRecentImp<T, S>::UpdateView()
 
 	return ChangeViewCount( nViewCount );
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      インスタンス化                         //

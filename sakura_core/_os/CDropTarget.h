@@ -13,7 +13,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #ifndef _CEDITDROPTARGET_H_
 #define _CEDITDROPTARGET_H_
 
@@ -41,8 +40,6 @@ private:
 	void UnInitialize();
 };
 
-
-
 class CYbInterfaceBase
 {
 private:
@@ -52,7 +49,6 @@ protected:
 	~CYbInterfaceBase();
 	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
 };
-
 
 template<class BASEINTERFACE>
 class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
@@ -68,7 +64,6 @@ public:
 	STDMETHOD_( ULONG, Release )( void )
 	{return 0;}
 };
-
 
 class CDropTarget : public CYbInterfaceImpl<IDropTarget>
 {
@@ -100,7 +95,6 @@ protected:
 	*/
 };
 
-
 class CDropSource : public CYbInterfaceImpl<IDropSource> {
 private:
 	BOOL m_bLeft;
@@ -110,7 +104,6 @@ public:
 	STDMETHOD( QueryContinueDrag )( BOOL bEscapePressed, DWORD dwKeyState );
 	STDMETHOD( GiveFeedback )( DWORD dropEffect );
 };
-
 
 class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
@@ -150,7 +143,6 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CDataObject);
 };
 
-
 //! CEnumFORMATETC クラス
 //	2008.03.26 ryoji 新規作成
 class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
@@ -178,6 +170,4 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITDROPTARGET_H_ */
-
-
 

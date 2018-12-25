@@ -71,16 +71,13 @@
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
-
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
-
 
 #define		YOHAKU_X		4		/* ウィンドウ内の枠と紙の隙間最小値 */
 #define		YOHAKU_Y		4		/* ウィンドウ内の枠と紙の隙間最小値 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除
-
 
 //	状況によりメニューの表示を変えるコマンドリスト(SetMenuFuncSelで使用)
 //		2010/5/19	Uchi
@@ -252,7 +249,6 @@ CEditWnd::~CEditWnd()
 	m_hWnd = NULL;
 }
 
-
 //! ドキュメントリスナ：セーブ後
 // 2008.02.02 kobake
 void CEditWnd::OnAfterSave(const SSaveInfo& sSaveInfo)
@@ -292,8 +288,6 @@ void CEditWnd::UpdateCaption()
 	this->ChangeFileNameNotify( to_tchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
 }
-
-
 
 //!< ウィンドウ生成用の矩形を取得
 void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo)
@@ -633,7 +627,6 @@ HWND CEditWnd::Create(
 	STabGroupInfo sTabGroupInfo;
 	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
 
-
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
@@ -670,7 +663,6 @@ HWND CEditWnd::Create(
 	SelectCharWidthCache( CWM_FONT_EDIT, GetLogfontCacheMode() );
 	InitCharWidthCache( GetLogfont() );
 
-
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
 	/* 分割フレーム作成 */
@@ -687,7 +679,6 @@ HWND CEditWnd::Create(
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 
 	MY_TRACETIME( cRunningTimer, "View created" );
-
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
 
@@ -711,7 +702,6 @@ HWND CEditWnd::Create(
 
 	/* バーの配置終了 */
 	EndLayoutBars( FALSE );
-
 
 	// -- -- -- -- その他調整など -- -- -- -- //
 
@@ -758,8 +748,6 @@ HWND CEditWnd::Create(
 
 	return GetHwnd();
 }
-
-
 
 //! 起動時のファイルオープン処理
 void CEditWnd::OpenDocumentWhenStart(
@@ -822,7 +810,6 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		GetDocument()->OnChangeSetting();	// <--- 内部に BlockingHook() 呼び出しがあるので溜まった描画がここで実行される
 	}
 }
-
 
 /*! メインメニューの配置処理
 	@date 2010/05/16 Uchi
@@ -1122,7 +1109,6 @@ void CEditWnd::MessageLoop( void )
 	}
 }
 
-
 LRESULT CEditWnd::DispatchEvent(
 	HWND	hwnd,	// handle of window
 	UINT	uMsg,	// message identifier
@@ -1162,7 +1148,6 @@ LRESULT CEditWnd::DispatchEvent(
 		return OnHScroll( wParam, lParam );
 	case WM_VSCROLL:
 		return OnVScroll( wParam, lParam );
-
 
 	case WM_MENUCHAR:
 		/* メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
@@ -1209,11 +1194,8 @@ LRESULT CEditWnd::DispatchEvent(
 			const TCHAR* pszItemStr = cmemWork.GetStringPtr();
 
 			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, pszItemStr);
-
-
 		}
 		return 0;
-
 
 	case WM_DRAWITEM:
 		idCtl = (UINT) wParam;				/* コントロールのID */
@@ -1258,7 +1240,6 @@ LRESULT CEditWnd::DispatchEvent(
 //			CMenuDrawer* pCMenuDrawer;
 //			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
-
 //			MYTRACE( _T("WM_MEASUREITEM  lpmis->itemID=%d\n"), lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_cMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
@@ -1269,9 +1250,6 @@ LRESULT CEditWnd::DispatchEvent(
 			return TRUE;
 		}
 		return FALSE;
-
-
-
 
 	case WM_PAINT:
 		return OnPaint( hwnd, uMsg, wParam, lParam );
@@ -1601,7 +1579,6 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		m_hWnd = NULL;
 
-
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 		::PostMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DELETE_ME, 0, 0 );
 
@@ -1680,7 +1657,6 @@ LRESULT CEditWnd::DispatchEvent(
 	case MYWM_ALLOWACTIVATE:
 		::AllowSetForegroundWindow(wParam);
 		return 0L;
-
 
 	case MYWM_GETFILEINFO:
 		/* トレイからエディタへの編集ファイル名要求通知 */
@@ -1887,7 +1863,6 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return 0L;
 
-
 	case MYWM_SETCARETPOS:	/* カーソル位置変更通知 */
 		{
 			//	2006.07.09 genta LPARAMに新たな意味を追加
@@ -1931,7 +1906,6 @@ LRESULT CEditWnd::DispatchEvent(
 			GetActiveView().MoveCursorSelecting( ptCaretPos, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
-
 
 	case MYWM_GETCARETPOS:	/* カーソル位置取得要求 */
 		/*
@@ -2190,11 +2164,6 @@ int	CEditWnd::OnClose(HWND hWndActive, bool bGrepNoConfirm )
 	return nRet;
 }
 
-
-
-
-
-
 /*! WM_COMMAND処理
 	@date 2000.11.15 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行(F_HELP_CONTENTS,F_HELP_SEARCH)を修正・復活
 	@date 2013.05.09 novice 重複するメッセージ処理削除
@@ -2304,10 +2273,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	return;
 }
 
-
-
-
-
 //	キーワード：メニューバー順序
 //	Sept.14, 2000 Jepro note: メニューバーの項目のキャプションや順番設定などは以下で行っているらしい
 //	Sept.16, 2000 Jepro note: アイコンとの関連付けはCShareData_new2.cppファイルで行っている
@@ -2319,7 +2284,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	UINT		fuFlags;
 	int			i;
 	HMENU		hMenuPopUp;
-
 
 	if( hMenu == ::GetSubMenu( ::GetMenu( GetHwnd() ), uPos )
 		&& !fSystemMenu ){
@@ -2444,8 +2408,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 	return;
 }
-
-
 
 /*!	通常コマンド(Special以外)のメニューへの追加
 */
@@ -2604,7 +2566,6 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	}
 }
 
-
 /*!	Specialコマンドのメニューへの追加
 */
 bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
@@ -2699,7 +2660,6 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 	return bInList;
 }
 
-
 // メニューバーの無効化を検査	2010/6/18 Uchi
 void CEditWnd::CheckFreeSubMenu( HWND hWnd, HMENU hMenu, UINT uPos )
 {
@@ -2739,8 +2699,6 @@ void CEditWnd::CheckFreeSubMenuSub( HMENU hMenu, int nLv )
 	}
 }
 
-
-
 //	フラグにより表示文字列の選択をする。
 //		2010/5/19	Uchi
 void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag )
@@ -2758,9 +2716,6 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
-
-
-
 
 STDMETHODIMP CEditWnd::DragEnter(  LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
@@ -2921,7 +2876,6 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
-
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
 */
@@ -2965,13 +2919,6 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 	}
 	m_IconClicked = icNone;
 }
-
-
-
-
-
-
-
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 
@@ -3065,14 +3012,9 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		m_pPrintPreview->OnChangePrintSetting();
 		::InvalidateRect( GetHwnd(), NULL, TRUE );
 		::UpdateWindow( GetHwnd() /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
-
 	}
 	return;
-
 }
-
-
-
 
 /* WM_SIZE 処理 */
 LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
@@ -3094,8 +3036,6 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 //	変数削除
 
 	RECT		rcWin;
-
-
 
 	cx = LOWORD( lParam );
 	cy = HIWORD( lParam );
@@ -3390,9 +3330,6 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 	return m_pPrintPreview->OnSize(wParam, lParam);
 }
 
-
-
-
 /* WM_PAINT 描画処理 */
 LRESULT CEditWnd::OnPaint(
 	HWND			hwnd,	// handle of window
@@ -3423,9 +3360,6 @@ LRESULT CEditWnd::OnVScroll( WPARAM wParam, LPARAM lParam )
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	return m_pPrintPreview->OnVScroll(wParam, lParam);
 }
-
-
-
 
 /* 印刷プレビュー 水平スクロールバーメッセージ処理 */
 LRESULT CEditWnd::OnHScroll( WPARAM wParam, LPARAM lParam )
@@ -3472,7 +3406,6 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return 0;
 }
-
 
 /*!	WM_MOUSEMOVE処理
 	@date 2008.05.05 novice メモリリーク修正
@@ -3565,9 +3498,6 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 		return m_pPrintPreview->OnMouseMove( wParam, lParam );
 	}
 }
-
-
-
 
 LRESULT CEditWnd::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 {
@@ -3829,7 +3759,6 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	if( po.y < rc.top )
 		po.y = rc.top;
 
-
 	m_cMenuDrawer.ResetContents();
 
 	/* 空メニューを作る */
@@ -3885,7 +3814,6 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 
 	return nId;
 }
-
 
 /*!
 	@brief ウィンドウのアイコン設定
@@ -4189,7 +4117,6 @@ void CEditWnd::WindowTopMost( int top )
 	}
 }
 
-
 // タイマーの更新を開始／停止する。 20060128 aroka
 // ツールバー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときにウィンドウからON/OFFを
@@ -4330,8 +4257,6 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 	}
 }
 
-
-
 /*! タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
@@ -4365,7 +4290,6 @@ void CEditWnd::OnEditTimer( void )
 
 	GetDocument()->m_cAutoSaveAgent.CheckAutoSave();
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ビュー管理                           //
@@ -4451,7 +4375,6 @@ void CEditWnd::InitAllViews()
 	GetMiniMap().OnChangeSetting();
 }
 
-
 void CEditWnd::Views_RedrawAll()
 {
 	//アクティブ以外を再描画してから…
@@ -4476,7 +4399,6 @@ void CEditWnd::Views_Redraw()
 	//アクティブを再描画
 	GetActiveView().Redraw();
 }
-
 
 /* アクティブなペインを設定 */
 void  CEditWnd::SetActivePane( int nIndex )
@@ -4552,7 +4474,6 @@ bool CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
 	return bDrawSwitchOld;
 }
 
-
 /** すべてのペインをRedrawする
 
 	スクロールバーの状態更新はパラメータでフラグ制御 or 別関数にしたほうがいい？
@@ -4581,7 +4502,6 @@ void CEditWnd::RedrawAllViews( CEditView* pcViewExclude )
 	GetMiniMap().AdjustScrollBars();
 }
 
-
 void CEditWnd::Views_DisableSelectArea(bool bRedraw)
 {
 	for( int i = 0; i < GetAllViewCount(); ++i ){
@@ -4591,7 +4511,6 @@ void CEditWnd::Views_DisableSelectArea(bool bRedraw)
 		}
 	}
 }
-
 
 /* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
@@ -4624,8 +4543,6 @@ BOOL CEditWnd::DetectWidthOfLineNumberAreaAllPane( bool bRedraw )
 	}
 	return FALSE;
 }
-
-
 
 /** 右端で折り返す
 	@param nViewColNum	[in] 右端で折り返すペインの番号
@@ -4718,7 +4635,6 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CKetaXInt nTabSize, int nT
 	}
 }
 
-
 /*!
 	レイアウトの変更に先立って，全てのViewの座標を物理座標に変換して保存する．
 
@@ -4781,7 +4697,6 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 	}
 	return pptPosArray;
 }
-
 
 /*!	座標の復元
 
@@ -4931,7 +4846,6 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 	m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 }
 
-
 const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 {
 	if( bTempSetting && GetDocument()->m_blfCurTemp ){
@@ -4966,7 +4880,6 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 	}
 	return CWM_CACHE_SHARE;
 }
-
 
 void CEditWnd::ClearViewCaretPosInfo()
 {

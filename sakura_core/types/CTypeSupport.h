@@ -57,7 +57,6 @@ public:
 		}
 	}
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           取得                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -90,7 +89,6 @@ public:
 	{
 		return m_pColorInfoArr->m_sFontAttr.m_bUnderLine;
 	}
-
 
 	const ColorInfo& GetColorInfo() const
 	{

@@ -31,7 +31,6 @@
 #include "_os/OleTypes.h"
 #include "macro/CWSHIfObj.h"
 
-
 class CEditorIfObj : public CWSHIfObj
 {
 	// コンストラクタ
@@ -44,7 +43,6 @@ public:
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//関数を処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//コマンドを処理する
 };
-
 
 #endif /* SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_ */
 /*[EOF]*/

@@ -101,8 +101,6 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayPro
 	return bRet;
 }
 
-
-
 /*! タイプ別設定 プロパティシート */
 bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType )
 {

@@ -11,7 +11,6 @@ CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 {
 }
 
-
 //	キーワード：ステータスバー順序
 /* ステータスバー作成 */
 void CMainStatusBar::CreateStatusBar()
@@ -50,7 +49,6 @@ void CMainStatusBar::CreateStatusBar()
 	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1);
 }
 
-
 /* ステータスバー破棄 */
 void CMainStatusBar::DestroyStatusBar()
 {
@@ -79,7 +77,6 @@ void CMainStatusBar::DestroyStatusBar()
 	//スプリッターの、サイズボックスの位置を変更
 	m_pOwner->m_cSplitterWnd.DoSplit( -1, -1 );
 }
-
 
 /*!
 	@brief メッセージの表示
@@ -162,5 +159,4 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 		}
 	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
-
 

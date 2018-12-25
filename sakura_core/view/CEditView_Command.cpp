@@ -100,7 +100,6 @@ bool CEditView::TagJumpSub(
 	// タグジャンプ情報の保存
 	CTagJumpManager().PushTagJump(&tagJump);
 
-
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
@@ -165,8 +164,6 @@ bool CEditView::TagJumpSub(
 
 	return true;
 }
-
-
 
 /*! 指定拡張子のファイルに対応するファイルを開く補助関数
 
@@ -276,7 +273,6 @@ open_c:;
 	return TRUE;
 }
 
-
 /*!	@brief 折り返しの動作を決定
 
 	トグルコマンド「現在のウィンドウ幅で折り返し」を行った場合の動作を決定する
@@ -350,7 +346,6 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 			// a)
 			newKetas = m_pTypeData->m_nMaxLineKetas;
 			return TGWRAP_PROP;
-			
 		}
 		else {	// b) c)
 			//	現在のウィンドウ幅
@@ -360,14 +355,12 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 	}
 }
 
-
 void CEditView::AddToCmdArr( const TCHAR* szCmd )
 {
 	CRecentCmd	cRecentCmd;
 	cRecentCmd.AppendItem( szCmd );
 	cRecentCmd.Terminate();
 }
-
 
 /*! 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	@date 2002.01.16 hor 共通ロジックを関数にしただけ・・・
@@ -412,9 +405,6 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 
 	return TRUE;
 }
-
-
-
 
 /*!
 	カーソル行をクリップボードにコピーする

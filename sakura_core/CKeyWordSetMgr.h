@@ -43,7 +43,6 @@
 #define		MAX_SETNUM		100	//2007.12.01 genta 最大値増加
 #define		MAX_SETNAMELEN	32
 
-
 //! キーワード総数 (2005.01.27 1セットあたりの数→セット全体の総数へ意味変更)
 #define		MAX_KEYWORDNUM	15000
 #define		MAX_KEYWORDLEN	63
@@ -164,11 +163,6 @@ protected:
 	void KeywordMaxLen(int nIdx);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYWORDSETMGR_H_ */
-
-
-
 

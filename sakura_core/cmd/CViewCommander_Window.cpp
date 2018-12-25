@@ -29,15 +29,12 @@
 #include "env/CSakuraEnvironment.h"
 #include "env/CShareData.h"
 
-
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CViewCommander::Command_SPLIT_V( void )
 {
 	GetEditWindow()->m_cSplitterWnd.VSplitOnOff();
 	return;
 }
-
-
 
 /* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 void CViewCommander::Command_SPLIT_H( void )
@@ -46,16 +43,12 @@ void CViewCommander::Command_SPLIT_H( void )
 	return;
 }
 
-
-
 /* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
 void CViewCommander::Command_SPLIT_VH( void )
 {
 	GetEditWindow()->m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
-
-
 
 /* ウィンドウを閉じる */
 void CViewCommander::Command_WINCLOSE( void )
@@ -66,8 +59,6 @@ void CViewCommander::Command_WINCLOSE( void )
 	return;
 }
 
-
-
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CViewCommander::Command_FILECLOSEALL( void )
 {
@@ -75,8 +66,6 @@ void CViewCommander::Command_FILECLOSEALL( void )
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
-
-
 
 /* このタブ以外を閉じる */	// 2008.11.22 syat
 // 2009.12.26 syat このウィンドウ以外を閉じるとの兼用化
@@ -102,8 +91,6 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 	return;
 }
 
-
-
 /*!	@brief ウィンドウ一覧ポップアップ表示処理（ファイル名のみ）
 	@date  2006.03.23 fon 新規作成
 	@date  2006.05.19 genta コマンド実行要因を表す引数追加
@@ -116,7 +103,6 @@ void CViewCommander::Command_WINLIST( int nCommandFrom )
 	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 }
 
-
 /*! ウィンドウ一覧表示
 */
 void CViewCommander::Command_DLGWINLIST( void )
@@ -127,7 +113,6 @@ void CViewCommander::Command_DLGWINLIST( void )
 	::AllowSetForegroundWindow(dwPid);
 	::PostMessage(hwnd, MYWM_DLGWINLIST, 0, 0);
 }
-
 
 /*!	@brief 重ねて表示
 
@@ -276,8 +261,6 @@ void CViewCommander::Command_CASCADE( void )
 	return;
 }
 
-
-
 //上下に並べて表示
 void CViewCommander::Command_TILE_V( void )
 {
@@ -332,8 +315,6 @@ void CViewCommander::Command_TILE_V( void )
 	return;
 }
 
-
-
 //左右に並べて表示
 void CViewCommander::Command_TILE_H( void )
 {
@@ -387,8 +368,6 @@ void CViewCommander::Command_TILE_H( void )
 	return;
 }
 
-
-
 //	from CViewCommander_New.cpp
 /*! 常に手前に表示
 	@date 2004.09.21 Moca
@@ -397,8 +376,6 @@ void CViewCommander::Command_WINTOPMOST( LPARAM lparam )
 {
 	GetEditWindow()->WindowTopMost( int(lparam) );
 }
-
-
 
 //Start 2004.07.14 Kazika 追加
 /*!	@brief 結合して表示
@@ -438,8 +415,6 @@ void CViewCommander::Command_BIND_WINDOW( void )
 }
 //End 2004.07.14 Kazika
 
-
-
 /* グループを閉じる */	// 2007.06.20 ryoji 追加
 void CViewCommander::Command_GROUPCLOSE( void )
 {
@@ -450,8 +425,6 @@ void CViewCommander::Command_GROUPCLOSE( void )
 	return;
 }
 
-
-
 /* 次のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_NEXTGROUP( void )
 {
@@ -460,8 +433,6 @@ void CViewCommander::Command_NEXTGROUP( void )
 		return;
 	pcTabWnd->NextGroup();
 }
-
-
 
 /* 前のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_PREVGROUP( void )
@@ -472,8 +443,6 @@ void CViewCommander::Command_PREVGROUP( void )
 	pcTabWnd->PrevGroup();
 }
 
-
-
 /* タブを右に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVERIGHT( void )
 {
@@ -482,8 +451,6 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 		return;
 	pcTabWnd->MoveRight();
 }
-
-
 
 /* タブを左に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVELEFT( void )
@@ -494,8 +461,6 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 	pcTabWnd->MoveLeft();
 }
 
-
-
 /* 新規グループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_SEPARATE( void )
 {
@@ -504,8 +469,6 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 		return;
 	pcTabWnd->Separate();
 }
-
-
 
 /* 次のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTNEXT( void )
@@ -516,8 +479,6 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 	pcTabWnd->JoinNext();
 }
 
-
-
 /* 前のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTPREV( void )
 {
@@ -526,8 +487,6 @@ void CViewCommander::Command_TAB_JOINTPREV( void )
 		return;
 	pcTabWnd->JoinPrev();
 }
-
-
 
 /* 左をすべて閉じる */		// 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSELEFT( void )
@@ -558,8 +517,6 @@ void CViewCommander::Command_TAB_CLOSELEFT( void )
 	return;
 }
 
-
-
 /* 右をすべて閉じる */		// 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSERIGHT( void )
 {
@@ -589,8 +546,6 @@ void CViewCommander::Command_TAB_CLOSERIGHT( void )
 	return;
 }
 
-
-
 //縦方向に最大化
 void CViewCommander::Command_MAXIMIZE_V( void )
 {
@@ -609,8 +564,6 @@ void CViewCommander::Command_MAXIMIZE_V( void )
 	);
 	return;
 }
-
-
 
 //2001.02.10 Start by MIK: 横方向に最大化
 //横方向に最大化
@@ -633,8 +586,6 @@ void CViewCommander::Command_MAXIMIZE_H( void )
 	return;
 }
 //2001.02.10 End: 横方向に最大化
-
-
 
 /* すべて最小化 */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 void CViewCommander::Command_MINIMIZE_ALL( void )
@@ -661,8 +612,6 @@ void CViewCommander::Command_MINIMIZE_ALL( void )
 	return;
 }
 
-
-
 /* 再描画 */
 void CViewCommander::Command_REDRAW( void )
 {
@@ -670,8 +619,6 @@ void CViewCommander::Command_REDRAW( void )
 	m_pCommanderView->RedrawAll();
 	return;
 }
-
-
 
 //アウトプットウィンドウ表示
 void CViewCommander::Command_WIN_OUTPUT( void )
@@ -682,8 +629,6 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 	CShareData::getInstance()->OpenDebugWindow( GetMainWindow(), true );
 	return;
 }
-
-
 
 //	from CViewCommander_New.cpp
 /*!	@brief マクロ用アウトプットウインドウに表示
@@ -705,5 +650,4 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nLen, int n
 
 	// 0x02 改行コードの有無
 	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOutString( L"\r\n" );
-
 }

@@ -26,7 +26,6 @@
 #include "StdAfx.h"
 #include "format.h"
 
-
 /*!	日時をフォーマット
 
 	@param[out] 書式変換後の文字列
@@ -90,7 +89,6 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 			}
 			q+=len;//q += strlen(szTime);
 			++p;
-			
 		}
 		else{
 			*q = *p;

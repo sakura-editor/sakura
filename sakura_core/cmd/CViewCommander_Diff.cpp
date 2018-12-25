@@ -31,7 +31,6 @@
 #include "util/os.h"
 #include "_main/CMutex.h"
 
-
 /*!
 	@return true:正常終了 / false:エラー終了
 */
@@ -141,7 +140,6 @@ void CViewCommander::Command_COMPARE( void )
 		hwndMsgBox = hwndCompareWnd;
 	}
 
-
 	/*
 	  カーソル位置変換
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -223,16 +221,12 @@ void CViewCommander::Command_COMPARE( void )
 	return;
 }
 
-
-
 static ECodeType GetFileCharCode( LPCTSTR pszFile )
 {
 	const STypeConfigMini* typeMini;
 	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &typeMini );
 	return CCodeMediator(typeMini->m_encoding).CheckKanjiCodeOfFile( pszFile );
 }
-
-
 
 static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 {
@@ -242,8 +236,6 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 	}
 	return code;
 }
-
-
 
 /*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
@@ -313,10 +305,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
 	return;
-
 }
-
-
 
 /*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログあり版)
@@ -403,15 +392,12 @@ void CViewCommander::Command_Diff_Dialog( void )
 	//差分表示
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt, bUTF8io);
 	
-	
 	//一時ファイルを削除する
 	if( bTmpFile1 ) _tunlink( szTmpFile1 );
 	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
 	return;
 }
-
-
 
 /*!	次の差分を探し，見つかったら移動する
 */
@@ -443,7 +429,6 @@ re_do:;
 		GetCaret().MoveCursor( ptXY_Layout, true );
 	}
 
-
 	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった。かつ、最初の検索
 		if( !bFound	&& bRedo ){
@@ -463,8 +448,6 @@ re_do:;
 
 	return;
 }
-
-
 
 /*!	前の差分を探し，見つかったら移動する
 */
@@ -516,8 +499,6 @@ re_do:;
 
 	return;
 }
-
-
 
 /*!	差分表示の全解除
 	@author	MIK

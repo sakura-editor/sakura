@@ -37,7 +37,6 @@ const TCHAR* CDocTypeManager::m_typeExtWildcards = _T("*?");	// タイプ別拡�
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
-
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する
 	
@@ -66,7 +65,6 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 	}
 	return CTypeConfig(0);
 }
-
 
 /*!
 	拡張子から、ドキュメントタイプ（数値）を取得する

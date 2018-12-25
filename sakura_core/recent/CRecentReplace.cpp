@@ -28,7 +28,6 @@
 #include <string.h>
 #include "env/DLLSHAREDATA.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -73,7 +72,6 @@ bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCTSTR pszText ) cons
 	CopyItem(dst, to_wchar(pszText));
 	return true;
 }
-
 
 int CRecentReplace::CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const
 {

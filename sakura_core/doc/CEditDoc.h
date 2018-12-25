@@ -40,7 +40,6 @@
 #ifndef SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_
 #define SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_
 
-
 #include "_main/global.h"
 #include "_main/CAppMode.h"
 #include "CDocEditor.h"
@@ -164,8 +163,6 @@ public:
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_ */

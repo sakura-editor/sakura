@@ -375,7 +375,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 		return TRUE;
 
-
 //	case IDC_CHK_LOHICASE:	/* 英大文字と英小文字を区別する */
 //		MYTRACE( _T("IDC_CHK_LOHICASE\n") );
 //		return TRUE;
@@ -403,13 +402,11 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 //			::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
 //			::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, 0 );
 
-
 //2001/06/23 N.Nakatani
 //単語単位のgrepが実装されたらコメントを外すと思います
 //2002/03/07実装してみた。
 			/* 単語単位で検索 */
 			::EnableWindow( GetItemHwnd( IDC_CHK_WORD ), TRUE );
-
 		}
 		return TRUE;
 
@@ -474,8 +471,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
-
 /* ダイアログデータの設定 */
 void CDlgGrep::SetData( void )
 {
@@ -519,7 +514,6 @@ void CDlgGrep::SetData( void )
 	/* 一致する単語のみ検索する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 //	::EnableWindow( GetItemHwnd( IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
-
 
 	/* 文字コード自動判別 */
 //	::CheckDlgButton( GetHwnd(), IDC_CHK_KANJICODEAUTODETECT, m_bKanjiCode_AutoDetect );
@@ -613,7 +607,6 @@ void CDlgGrep::SetData( void )
 	return;
 }
 
-
 /*!
 	現在編集中ファイルから検索チェックでの設定
 */
@@ -674,7 +667,6 @@ int CDlgGrep::GetData( void )
 		m_nGrepCharSet = (ECodeType)Combo_GetItemData( hWndCombo, nIdx );
 	}
 
-
 	/* 行を出力/該当部分/否マッチ行 を出力 */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_OUTPUTLINE ) ){
 		m_nGrepOutputLineType = 1;
@@ -698,7 +690,6 @@ int CDlgGrep::GetData( void )
 	m_bGrepOutputFileOnly = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_FILE_ONLY );
 	m_bGrepOutputBaseFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_BASE_PATH );
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
-
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
@@ -832,7 +823,6 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 
 static void SetGrepFolder( HWND hwndCtrl, LPCTSTR folder )
 {

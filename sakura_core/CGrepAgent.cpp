@@ -214,7 +214,6 @@ DWORD CGrepAgent::DoGrep(
 
 	pcViewDst->m_bDoing_UndoRedo		= true;
 
-
 	/* アンドゥバッファの処理 */
 	if( NULL != pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
 //@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
@@ -390,7 +389,6 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-
 	std::vector<std::tstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
 
@@ -449,16 +447,12 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-
 	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
 	cmemWork.SetStringT( pcmGrepFile->GetStringPtr() );
 	cmemMessage += cmemWork;
-
-
-
 
 	cmemMessage.AppendString( L"\r\n" );
 	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
@@ -493,7 +487,6 @@ DWORD CGrepAgent::DoGrep(
 	cmemWork.SetStringT(pcmExcludeFile->GetStringPtr());
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
-
 
 	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
 	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
@@ -565,7 +558,6 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-
 	cmemMessage.AppendString( L"\r\n\r\n" );
 	pszWork = cmemMessage.GetStringPtr( &nWork );
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
@@ -578,7 +570,6 @@ DWORD CGrepAgent::DoGrep(
 	
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
-
 
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように
@@ -658,7 +649,6 @@ DWORD CGrepAgent::DoGrep(
 	/* アクティブにする */
 	ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );
 
-
 	/* アンドゥバッファの処理 */
 	pcViewDst->SetUndoBuffer();
 
@@ -685,9 +675,6 @@ DWORD CGrepAgent::DoGrep(
 
 	return nHitCount;
 }
-
-
-
 
 /*! @brief Grep実行
 
@@ -905,7 +892,6 @@ int CGrepAgent::DoGrepTree(
 
 	return 0;
 
-
 cancel_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
@@ -958,7 +944,6 @@ wchar_t* lineColumnToString(
 
 /*!	@brief Grep結果を構築する
 
-
 	pWorkは充分なメモリ領域を持っているコト
 	@date 2002/08/29 Moca バイナリーデータに対応 pnWorkLen 追加
 	@date 2013.11.05 Moca cmemMessageに直接追加するように
@@ -982,7 +967,6 @@ void CGrepAgent::SetGrepResult(
 	const SGrepOption&	sGrepOption
 )
 {
-
 	CNativeW cmemBuf(L"");
 	wchar_t strWork[64];
 	const wchar_t * pDispData;
@@ -1249,7 +1233,6 @@ int CGrepAgent::DoGrepFile(
 		::SetDlgItemInt( pcDlgCancel->GetHwnd(), IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 		return 1;
 	}
-
 
 	try{
 	// ファイルを開く
@@ -1712,7 +1695,6 @@ int CGrepAgent::DoGrepReplaceFile(
 	bool bBom;
 	// ファイル名表示
 	const TCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
-
 
 	try{
 	// ファイルを開く

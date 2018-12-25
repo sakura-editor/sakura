@@ -27,7 +27,6 @@
 
 #include <ObjIdl.h> // LPDATAOBJECT
 
-
 //システム資源
 BOOL GetSystemResources( int* pnSystemResources, int* pnUserResources, int* pnGDIResources );	/* システムリソースを調べる */
 BOOL CheckSystemResources( const TCHAR* pszAppName );	/* システムリソースのチェック */
@@ -46,7 +45,6 @@ bool GetMonitorWorkRect(HWND     hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL)
 bool GetMonitorWorkRect(LPCRECT  prc,  LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
 bool GetMonitorWorkRect(POINT    pt,   LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
 bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
-
 
 // 2006.06.17 ryoji
 #define PACKVERSION( major, minor ) MAKELONG( minor, major )
@@ -103,7 +101,6 @@ private:
 	@brief PowerShell が利用可能か判定する
 */
 BOOL IsPowerShellAvailable(void);
-
 
 #endif /* SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_ */
 /*[EOF]*/

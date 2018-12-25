@@ -77,6 +77,5 @@ protected:
 	CEditView* m_pView;
 };
 
-
 #endif /* SAKURA_CWSHIFOBJ_EAA6C3E3_1442_4940_B8A3_2AAB324D8788D_H_ */
 /*[EOF]*/

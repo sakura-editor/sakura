@@ -239,7 +239,6 @@ normal_action:;
 		::SetCapture( GetHwnd() );
 		GetCaret().HideCaret_( GetHwnd() ); // 2002/07/22 novice
 
-
 		CLayoutPoint ptNewCaret = GetCaret().GetCaretLayoutPos();
 		bool bSetPtNewCaret = false;
 		if(tripleClickMode){		// 2007.11.15 nasukoji	トリプルクリックを処理する
@@ -326,7 +325,6 @@ normal_action:;
 			GetSelectionInfo().BeginSelectArea( &ptNewCaret );
 		}
 
-
 		/******* この時点で必ず true == GetSelectionInfo().IsTextSelected() の状態になる ****:*/
 		if( !GetSelectionInfo().IsTextSelected() ){
 			WarningMessage( GetHwnd(), LS(STR_VIEW_MOUSE_BUG) );
@@ -337,7 +335,6 @@ normal_action:;
 		nWorkRel = IsCurrentPositionSelected(
 			ptNewCaret	// カーソル位置
 		);
-
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCaret );
@@ -356,7 +353,6 @@ normal_action:;
 
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
-
 
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				const CLayout* pcLayout;
@@ -426,7 +422,6 @@ normal_action:;
 				}
 
 				if( 0 < nWorkRel ){
-
 				}
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
@@ -521,7 +516,6 @@ normal_action:;
 	}
 }
 
-
 /*!	トリプルクリックのチェック
 	@brief トリプルクリックを判定する
 	
@@ -543,7 +537,6 @@ normal_action:;
 */
 BOOL CEditView::CheckTripleClick( CMyPoint ptMouse )
 {
-
 	// トリプルクリックチェック有効でない（時刻がセットされていない）
 	if(! m_dwTripleClickCheck)
 		return FALSE;
@@ -612,7 +605,6 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		OnLBUTTONUP( fwKeys, xPos, yPos );
 	}
 
-
 	int		nIdx;
 	int		nFuncID;
 // novice 2004/10/10
@@ -629,7 +621,6 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 //	GetCommander().Command_MENU_RBUTTON();
 	return;
 }
-
 
 // novice 2004/10/11 マウス中ボタン対応
 /*!
@@ -656,7 +647,6 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		}
 	}
 }
-
 
 /*!
 	@brief マウス中ボタンを開放したときの処理
@@ -831,7 +821,6 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	}
 }
 
-
 /*!
 	@brief マウスサイドボタン1を開放したときの処理
 
@@ -875,7 +864,6 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	return;
 }
 
-
 /*!
 	@brief マウスサイドボタン2を押したときの処理
 
@@ -892,7 +880,6 @@ void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		AutoScrollExit();
 	}
 }
-
 
 /*!
 	@brief マウスサイドボタン2を開放したときの処理
@@ -1245,7 +1232,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 }
 //m_dwTipTimerm_dwTipTimerm_dwTipTimer
 
-
 /* マウスホイールのメッセージ処理
 	2009.01.17 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
 	2011.11.16 Moca スクロール変化量への対応
@@ -1439,7 +1425,6 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 	return bHorizontalMsg ? TRUE: 0;
 }
 
-
 /*! 垂直マウススクロール
 */
 LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
@@ -1510,12 +1495,6 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 	return bSpecialScrollMode;
 }
 
-
-
-
-
-
-
 /* マウス左ボタン開放のメッセージ処理 */
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
@@ -1545,8 +1524,6 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	return;
 }
 
-
-
 /* ShellExecuteを呼び出すプロシージャ */
 /*   呼び出し前に lpParameter を new しておくこと */
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
@@ -1556,7 +1533,6 @@ static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 	delete []pszFile;
 	return 0;
 }
-
 
 // マウス左ボタンダブルクリック
 // 2007.01.18 kobake IsCurrentPositionURL仕様変更に伴い、処理の書き換え
@@ -1705,9 +1681,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	return;
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1720,7 +1693,6 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 	//編集禁止の場合はドロップを受け付けない
 	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
-
 
 	if( pDataObject == NULL || pdwEffect == NULL )
 		return E_INVALIDARG;
@@ -1808,8 +1780,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	CLayoutRange sSelectBgn_Old;
 	CLayoutRange sSelect_Old;
-
-
 
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( FALSE );
@@ -2073,7 +2043,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	return S_OK;
 }
-
 
 /** 独自ドロップファイルメッセージをポストする
 	@date 2008.06.20 ryoji 新規作成

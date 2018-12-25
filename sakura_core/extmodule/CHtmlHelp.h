@@ -35,7 +35,6 @@
 
 #include "CDllHandler.h"
 
-
 /*!
 	@brief HtmpHelp動的ロード
 
@@ -69,6 +68,4 @@ protected:
 };
 
 #endif
-
-
 

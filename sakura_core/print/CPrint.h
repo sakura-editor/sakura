@@ -74,9 +74,6 @@ struct PAPER_INFO {
 
 struct PRINTSETTING;
 
-
-
-
 //! 印刷設定
 #define POS_LEFT	0
 #define POS_CENTER	1
@@ -119,7 +116,6 @@ struct PRINTSETTING {
 	int 			m_nFooterPointSize;					// フッタフォントポイントサイズ
 };
 
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -133,7 +129,6 @@ class CPrint
 public:
 	static const PAPER_INFO m_paperInfoArr[];	//!< 用紙情報一覧
 	static const int m_nPaperInfoArrNum; //!< 用紙情報一覧の要素数
-
 
 	/*
 	||	static関数群
@@ -178,7 +173,6 @@ public:
 		TCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 	);
 
-
 	/* 印刷 ジョブ開始 */
 	BOOL PrintOpen(
 		TCHAR*		pszJobName,
@@ -205,8 +199,6 @@ private:
 	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
 	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_ */

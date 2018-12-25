@@ -55,7 +55,6 @@ static const DWORD p_helpids[] = {	//13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
-
 // 2014.05.22 Moca FileDialogの再入サポート
 class CDlgOpenFileMem{
 public:
@@ -112,8 +111,6 @@ public:
 
 static const TCHAR* s_pszOpenFileDataName = _T("FileOpenData");
 
-
-
 /*
 || 	開くダイアログのサブクラスプロシージャ
 
@@ -164,9 +161,6 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 	return ::CallWindowProc( pData->m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 }
-
-
-
 
 /*!
 	開くダイアログのフックプロシージャ
@@ -344,7 +338,6 @@ UINT_PTR CALLBACK OFNHookProc(
 				::ShowWindow( pData->m_hwndComboCODES, SW_HIDE );
 			}
 
-
 			/* ビューモードの初期値セット */
 			::CheckDlgButton( pData->m_hwndOpenDlg, chx1, pData->m_bViewMode );
 
@@ -357,7 +350,6 @@ UINT_PTR CALLBACK OFNHookProc(
 		}
 		break;
 
-
 	case WM_DESTROY:
 		/* フック解除 */
 		{
@@ -365,7 +357,6 @@ UINT_PTR CALLBACK OFNHookProc(
 			// Modified by KEITA for WIN64 2003.9.6
 			::SetWindowLongPtr( pData->m_hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR)pData->m_wpOpenDialogProc );
 			::RemoveProp( pData->m_hwndOpenDlg, s_pszOpenFileDataName );
-
 		}
 		return FALSE;
 
@@ -495,7 +486,6 @@ UINT_PTR CALLBACK OFNHookProc(
 //		case CDN_SHAREVIOLATION	:	MYTRACE( _T("pofn->hdr.code=CDN_SHAREVIOLATION\n") );break;
 //		case CDN_TYPECHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_TYPECHANGE    \n") );break;
 //		default:					MYTRACE( _T("pofn->hdr.code=???\n") );break;
-
 		}
 
 //		MYTRACE( _T("=======================\n") );
@@ -631,9 +621,6 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 	return nSel;
 }
 
-
-
-
 /*! コンストラクタ
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
@@ -659,16 +646,10 @@ CDlgOpenFile::CDlgOpenFile()
 	_tcscpy( m_mem->m_szInitialDir, szDrive );
 	_tcscat( m_mem->m_szInitialDir, szDir );
 
-
-
 	_tcscpy( m_mem->m_szDefaultWildCard, _T("*.*") );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
-
-
-
-
 
 CDlgOpenFile::~CDlgOpenFile()
 {
@@ -676,7 +657,6 @@ CDlgOpenFile::~CDlgOpenFile()
 	m_mem = NULL;
 	return;
 }
-
 
 /* 初期化 */
 void CDlgOpenFile::Create(
@@ -714,9 +694,6 @@ void CDlgOpenFile::Create(
 	m_mem->m_vOPENFOLDER = vOPENFOLDER;
 	return;
 }
-
-
-
 
 /*! 「開く」ダイアログ モーダルダイアログの表示
 
@@ -813,7 +790,6 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFiler )
 	}
 }
 
-
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 
@@ -870,10 +846,6 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 		return false;
 	}
 }
-
-
-
-
 
 /*! 「開く」ダイアログ モーダルダイアログの表示
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
@@ -1011,7 +983,6 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 		pData->m_ofn.Flags = pData->m_ofn.Flags | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
 		pData->m_ofn.Flags &= ~OFN_OVERWRITEPROMPT;	// 2006.11.10 ryoji 上書き確認もフックの中で自前で処理する
 	}
-
 
 // 2005/02/20 novice 拡張子を省略したら補完する
 //	pData->m_ofn.lpstrDefExt = _T("");
@@ -1184,7 +1155,6 @@ void CDlgOpenFile::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl
 		hwndCtrl = ::GetWindow( hwndCtrl, GW_HWNDNEXT );
 	}
 
-
 	// 標準コントロールのプレースフォルダ（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
 	//     WM_INITDIALOG を抜けるとさらにオープンダイアログ側で現在の位置関係からレイアウト調整が行われる
 	//     ここで以下の処理をやっておかないとコントロールが意図しない場所に動いてしまうことがある
@@ -1204,7 +1174,6 @@ void CDlgOpenFile::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl
 	::GetWindowRect( hwndDlg, &rc );
 	::SetWindowPos( hwndDlg, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 }
-
 
 /*! リトライ機能付き GetOpenFileName
 	@author Moca
@@ -1239,8 +1208,6 @@ bool CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAME* ofn )
 	}
 	return bRet!=FALSE;
 }
-
-
 
 /*! ファイル選択
 	@note 実行ファイルのパスor設定ファイルのパスが含まれる場合は相対パスに変換

@@ -147,7 +147,6 @@ bool CEditView::ProcessCommand_isearch(
 */
 void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 {
-
 	if (m_nISearchMode == mode ) {
 		//再実行
 		m_nISearchDirection =  direction;
@@ -268,7 +267,6 @@ void CEditView::ISearchExit()
 
 	//ステータス表示エリアをクリア
 	SendStatusMessage(_T(""));
-
 }
 
 /*!
@@ -495,7 +493,6 @@ void CEditView::ISearchBack(void) {
 	CNativeT msg;
 	ISearchSetStatusMsg(&msg);
 	SendStatusMessage(msg.GetStringPtr());
-	
 }
 
 //!	入力文字から、検索文字を生成する。
@@ -514,7 +511,6 @@ void CEditView::ISearchWordMake(void)
 			/* 検索パターンのコンパイル */
 			const wchar_t* p = strMigemoWord.c_str();
 			m_sSearchPattern.SetPattern(this->GetHwnd(), p, (int)strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
-
 		}
 		break;
 	}
@@ -533,7 +529,6 @@ void CEditView::ISearchWordMake(void)
 */
 void CEditView::ISearchSetStatusMsg(CNativeT* msg) const
 {
-
 	switch ( m_nISearchMode){
 	case SEARCH_NORMAL:
 		msg->SetString(_T("I-Search") );

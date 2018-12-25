@@ -110,7 +110,6 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nCmpLen = STRNCMP_MAX; // 2006.04.10 fon
 	int			nLine; // 2006.04.10 fon
 
-
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
@@ -292,7 +291,6 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPath /* = true */, bool bTrimSpaceTab /* = false */ )
 {
-
 	int				i;
 	CNativeW		cmemTopic = L"";
 	const wchar_t*	pLine;
@@ -376,7 +374,6 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 	cmemCurText.SetString( pTopic2, i );
 }
 
-
 /*!	現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
 	@return 値を設定したか
 	@date 2006.08.23 ryoji 新規作成
@@ -413,8 +410,6 @@ bool CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText, bool bGetHist
 	}
 	return 0 < cmemCurText.GetStringLength();
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        描画用判定                           //

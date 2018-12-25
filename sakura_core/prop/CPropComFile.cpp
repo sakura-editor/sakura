@@ -22,7 +22,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 static const DWORD p_helpids[] = {	//01310
 	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//排他制御
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
@@ -249,14 +248,9 @@ INT_PTR CPropFile::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
-
-
-
 
 /*! ファイルページ: ダイアログデータの設定
 	共有メモリからデータを読み出して各コントロールに値を設定する。
@@ -433,7 +427,6 @@ int CPropFile::GetData( HWND hwndDlg )
 */
 void CPropFile::EnableFilePropInput(HWND hwndDlg)
 {
-
 	//	Drop時の動作
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOSAVE3 ), FALSE );	// added Sept. 6, JEPRO 自動保存にしたときだけEnableになるように変更
@@ -491,6 +484,4 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 	}
 }
 //	To Here Aug. 21, 2000 genta
-
-
 

@@ -101,7 +101,6 @@ public:
 	void Init();
 	void _Empty();
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        コンフィグ                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -189,7 +188,6 @@ public:
 
 	CLayoutInt GetMaxTextWidth(void) const { return m_nTextWidth; }		// 2009.08.28 nasukoji	テキスト最大幅を返す
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           検索                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -237,7 +235,6 @@ public:
 public:
 	void DUMP();	/* テスト用にレイアウト情報をダンプ */
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         編集とか                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -281,14 +278,12 @@ public:
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
 	CPixelXInt GetCharSpacing() const { return m_nSpacing; }
 
-
 protected:
 	/*
 	||  参照系
 	*/
 	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
 	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
-
 
 	/*
 	|| 更新系
@@ -353,7 +348,6 @@ protected:
 	void _OnLine1(SLayoutWork* pWork);
 	//DoLayout_Range用コア
 	void _OnLine2(SLayoutWork* pWork);
-
 
 private:
 	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
@@ -436,9 +430,6 @@ protected:
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLAYOUTMGR_H_ */
-
-
 

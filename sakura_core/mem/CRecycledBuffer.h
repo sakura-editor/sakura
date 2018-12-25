@@ -62,14 +62,11 @@ public:
 		return BLOCK_SIZE/sizeof(T);
 	}
 
-
 //メンバ変数
 private:
 	BYTE m_buf[CHAIN_COUNT][BLOCK_SIZE];
 	int  m_current;
 };
-
-
 
 class CRecycledBufferDynamic{
 //コンフィグ

@@ -127,9 +127,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLAYOUT_H_ */
-
-
 

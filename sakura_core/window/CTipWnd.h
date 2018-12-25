@@ -75,10 +75,6 @@ protected:
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);/* 描画処理 */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CTIPWND_H_ */
-
-
 

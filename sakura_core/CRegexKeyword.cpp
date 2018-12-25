@@ -69,7 +69,6 @@
 //#define RK_KAKOMI_4_START "#"
 //#define RK_KAKOMI_4_END   "#k"
 
-
 //!	コンストラクタ
 /*!	@brief コンストラクタ
 
@@ -515,5 +514,4 @@ DWORD CRegexKeyword::GetNewMagicNumber()
 {
 	return ::GetTickCount();
 }
-
 

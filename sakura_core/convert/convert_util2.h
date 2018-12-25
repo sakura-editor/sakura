@@ -33,14 +33,12 @@
 #include "parse/CWordParse.h"
 #include "mem/CMemory.h"
 
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 //    Quoted-Printable デコード
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-
 
 inline ACHAR _GetHexChar( ACHAR c )
 {
@@ -63,7 +61,6 @@ inline WCHAR _GetHexChar( WCHAR c )
 	}
 }
 
-
 /*
 	c の入力値： 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
 */
@@ -83,7 +80,6 @@ inline int _HexToInt( WCHAR c )
 		return c - L'A' + 10;
 	}
 }
-
 
 template< class CHAR_TYPE >
 int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
@@ -138,12 +134,6 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 	return pw - pDst;
 }
 
-
-
-
-
-
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // BAASE64 のエンコード/デコード
@@ -153,7 +143,6 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 
 extern const uchar_t TABLE_BASE64CharToValue[];
 extern const char TABLE_ValueToBASE64Char[];
-
 
 // BASE64文字 <-> 数値
 template< class CHAR_TYPE >
@@ -166,7 +155,6 @@ inline CHAR_TYPE ValToBase64( const char v ){
 	int v_ = v;
 	return static_cast<CHAR_TYPE>((v_ < 64)? TABLE_ValueToBASE64Char[v_] : -1);
 }
-
 
 #if 0
 /*
@@ -262,7 +250,6 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	return nDesLen;
 }
 
-
 /*!
 	BASE64 エンコード実行関数
 
@@ -307,20 +294,12 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 	return nDesLen;
 }
 
-
-
-
-
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 // UU デコード
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-
-
-
 
 /*
 	Unix-to-Unix のこと
@@ -351,9 +330,6 @@ end
 	・行末の空白を削除するゲートウェイに対処するため、空白は、"~"(0x7E)または"`"(0x60)を換わりに使う。
 */
 
-
-
-
 inline BYTE _UUDECODE_CHAR( WCHAR c )
 {
 	BYTE c_ = (c & 0xff);
@@ -369,8 +345,6 @@ inline BYTE _UUDECODE_CHAR( ACHAR c )
 	}
 	return static_cast<BYTE>((static_cast<BYTE>(c) - 0x20) & 0x3f);
 }
-
-
 
 /*
 	UU デコーダー（一行だけ実行するバージョン）
@@ -434,7 +408,6 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 		pszSplitChars[2] = '\0';
 	}
 	
-
 	if( nLen < 1 ){
 		if( pszFilename ){
 			pszFilename[0] = _WINT('\0');
@@ -533,7 +506,6 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	return true;
 }
 
-
 /*!
 	UU フッターを確認
 */
@@ -604,17 +576,12 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 	return true;
 }
 
-
-
-
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 //    MIME ヘッダーデコード
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
-
 
 enum EEncodingMethod {
 	EM_NONE,
@@ -639,10 +606,8 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	char* pdst;
 	int ndecoded_len;
 
-
 	// MIME の該当部分を検出。----------------------------------------
 	//
-
 
 	//   part1 部分
 	//

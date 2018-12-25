@@ -17,7 +17,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-
 //単語の左端まで削除
 void CViewCommander::Command_WordDeleteToStart( void )
 {
@@ -53,12 +52,9 @@ void CViewCommander::Command_WordDeleteToStart( void )
 	m_pCommanderView->DeleteData( true );
 }
 
-
-
 //単語の右端まで削除
 void CViewCommander::Command_WordDeleteToEnd( void )
 {
-
 	/* 矩形選択状態では実行不能((★★もろ手抜き★★)) */
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 矩形範囲選択中か */
@@ -87,8 +83,6 @@ void CViewCommander::Command_WordDeleteToEnd( void )
 	m_pCommanderView->DeleteData( true );
 }
 
-
-
 //単語切り取り
 void CViewCommander::Command_WordCut( void )
 {
@@ -108,8 +102,6 @@ void CViewCommander::Command_WordCut( void )
 	return;
 }
 
-
-
 //単語削除
 void CViewCommander::Command_WordDelete( void )
 {
@@ -124,8 +116,6 @@ void CViewCommander::Command_WordDelete( void )
 	m_pCommanderView->DeleteData( true );
 	return;
 }
-
-
 
 //行頭まで切り取り(改行単位)
 void CViewCommander::Command_LineCutToStart( void )
@@ -157,8 +147,6 @@ void CViewCommander::Command_LineCutToStart( void )
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
 	Command_CUT();
 }
-
-
 
 //行末まで切り取り(改行単位)
 void CViewCommander::Command_LineCutToEnd( void )
@@ -210,8 +198,6 @@ void CViewCommander::Command_LineCutToEnd( void )
 	Command_CUT();
 }
 
-
-
 //行頭まで削除(改行単位)
 void CViewCommander::Command_LineDeleteToStart( void )
 {
@@ -242,8 +228,6 @@ void CViewCommander::Command_LineDeleteToStart( void )
 	/* 選択領域削除 */
 	m_pCommanderView->DeleteData( true );
 }
-
-
 
 //行末まで削除(改行単位)
 void CViewCommander::Command_LineDeleteToEnd( void )
@@ -293,8 +277,6 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 	m_pCommanderView->DeleteData( true );
 }
 
-
-
 //行切り取り(折り返し単位)
 void CViewCommander::Command_CUT_LINE( void )
 {
@@ -323,8 +305,6 @@ void CViewCommander::Command_CUT_LINE( void )
 	Command_DELETE_LINE();
 	return;
 }
-
-
 
 /* 行削除(折り返し単位) */
 void CViewCommander::Command_DELETE_LINE( void )
@@ -383,8 +363,6 @@ void CViewCommander::Command_DELETE_LINE( void )
 	return;
 }
 
-
-
 /* 行の二重化(折り返し単位) */
 void CViewCommander::Command_DUPLICATELINE( void )
 {
@@ -427,8 +405,6 @@ void CViewCommander::Command_DUPLICATELINE( void )
 		);
 	}
 
-
-
 	/* 二重化したい行を調べる
 	||	・改行で終わっている
 	||	・改行で終わっていない
@@ -466,7 +442,6 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	/* カーソルを移動 */
 	GetCaret().MoveCursor( ptCaretPosOld, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-
 
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		/* 操作の追加 */

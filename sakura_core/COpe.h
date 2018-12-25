@@ -14,8 +14,6 @@
 #ifndef SAKURA_COPE_H_
 #define SAKURA_COPE_H_
 
-
-
 //! アンドゥバッファ用 操作コード
 enum EOpeCode {
 	OPE_UNKNOWN		= 0, //!< 不明(未使用)
@@ -126,16 +124,6 @@ public:
 	}
 };
 
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_COPE_H_ */
-
-
 

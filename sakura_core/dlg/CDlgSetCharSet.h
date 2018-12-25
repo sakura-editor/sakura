@@ -29,7 +29,6 @@ public:
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom );	/* モーダルダイアログの表示 */
 
-
 	ECodeType*	m_pnCharSet;			// 文字コードセット
 	bool*		m_pbBom;				// BOM
 	bool		m_bCP;
@@ -51,8 +50,6 @@ protected:
 
 	void	SetBOM( void );		// BOM の設定
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGSETCHARSET_H_ */

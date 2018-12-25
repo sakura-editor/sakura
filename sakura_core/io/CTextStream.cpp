@@ -49,7 +49,6 @@ CTextInputStream::~CTextInputStream()
 {
 }
 
-
 wstring CTextInputStream::ReadLineW()
 {
 	//$$ 非効率だけど今のところは許して。。
@@ -77,10 +76,6 @@ wstring CTextInputStream::ReadLineW()
 
 	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL まで NULL 文字も含める
 }
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextOutputStream                       //
@@ -168,8 +163,6 @@ void CTextOutputStream::WriteF(const wchar_t* format, ...)
 	//出力
 	WriteString(buf);
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  CTextInputStream_AbsIni                    //

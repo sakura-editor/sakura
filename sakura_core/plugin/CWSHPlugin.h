@@ -34,7 +34,6 @@
 #define PII_WSH						L"Wsh"			//WSHセクション
 #define PII_WSH_USECACHE			L"UseCache"		//読み込んだスクリプトを再利用する
 
-
 class CWSHPlug :
 	public CPlug
 {

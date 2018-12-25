@@ -220,7 +220,6 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 #endif
 }
 
-
 CEditDoc::~CEditDoc()
 {
 	if( m_hBackImg ){
@@ -389,7 +388,6 @@ void CEditDoc::SetBackgroundImage()
 /* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 void CEditDoc::InitAllView( void )
 {
-
 	m_nCommandExecNum = 0;	/* コマンド実行回数 */
 
 	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
@@ -409,8 +407,6 @@ void CEditDoc::InitAllView( void )
 
 	return;
 }
-
-
 
 /*! ウィンドウの作成等
 
@@ -432,8 +428,6 @@ BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 
 	return TRUE;
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           設定                              //
@@ -459,9 +453,6 @@ void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
 	m_cDocType.SetDocumentIcon();
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           属性                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -486,9 +477,6 @@ void CEditDoc::SetDocumentEncoding(ECodeType eCharCode, bool bBom)
 	m_cDocFile.SetCodeSet( eCharCode, bBom );
 }
 
-
-
-
 void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 {
 	pSaveInfo->cFilePath   = m_cDocFile.GetFilePath();
@@ -497,7 +485,6 @@ void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 	pSaveInfo->bChgCodeSet = m_cDocFile.IsChgCodeSet();
 	pSaveInfo->cEol        = m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
 }
-
 
 /* 編集ファイル情報を格納 */
 void CEditDoc::GetEditInfo(
@@ -527,7 +514,6 @@ void CEditDoc::GetEditInfo(
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
 }
-
 
 /*! @brief 指定コマンドによる書き換えが禁止されているかどうか
 
@@ -564,7 +550,6 @@ bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           状態                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -586,10 +571,6 @@ bool CEditDoc::IsAcceptLoad() const
 	if(CAppMode::getInstance()->IsDebugMode())return false;
 	return true;
 }
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
@@ -824,7 +805,6 @@ void CEditDoc::OnChangeSetting(
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	m_pcEditWnd->ClearViewCaretPosInfo();
 
-
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
 		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
@@ -868,7 +848,6 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	//クローズ事前処理
 	ECallbackResult eBeforeCloseResult = NotifyBeforeClose();
 	if(eBeforeCloseResult==CALLBACK_INTERRUPT)return FALSE;
-
 
 	// デバッグモニタモードのときは保存確認しない
 	if(CAppMode::getInstance()->IsDebugMode())return TRUE;

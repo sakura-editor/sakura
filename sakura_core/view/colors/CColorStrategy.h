@@ -34,7 +34,6 @@ class	CEditView;
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
 
-
 //! 正規表現キーワードのEColorIndexType値を作る関数
 inline EColorIndexType ToColorIndexType_RegularExpression(const int nRegexColorIndex)
 {
@@ -67,7 +66,6 @@ inline int ToColorInfoArrIndex(const EColorIndexType eColorIndex)
 // カラー名＜＞インデックス番号の変換	//@@@ 2002.04.30
 int GetColorIndexByName( const TCHAR *name );
 const TCHAR* GetColorNameByIndex( int index );
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           基底                              //

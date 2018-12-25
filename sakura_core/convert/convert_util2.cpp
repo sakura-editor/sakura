@@ -1,5 +1,4 @@
-﻿
-/*!	@file
+﻿/*!	@file
 	@brief 変換ユーティリティ2 - BASE64 Ecode/Decode, UUDecode, Q-printable decode
 
 	@author 
@@ -29,18 +28,12 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 #include "convert/convert_util2.h"
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     デコーダーの実装                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-
-
-
 
 /*
 	変換テーブル   BASE64 文字 → 数値
@@ -67,8 +60,6 @@ const uchar_t TABLE_BASE64CharToValue[] = {
 	 49,  50,  51, cNA, cNA, cNA, cNA, cNA, //78-7f: xyz
 };
 
-
-
 /*!
 	変換テーブル 数値 → Modified BASE64 文字
 	添え字の定義域：0 ～ 63
@@ -84,6 +75,4 @@ const char TABLE_ValueToBASE64Char[] = {
 	'w', 'x', 'y', 'z', '0', '1', '2', '3',
 	'4', '5', '6', '7', '8', '9', '+', '/'
 };
-
-
 

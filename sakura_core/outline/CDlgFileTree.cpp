@@ -104,7 +104,6 @@ int CDlgFileTree::DoModal(
 	return (int)CDialog::DoModal(hInstance, hwndParent, IDD_FILETREE, lParam);
 }
 
-
 // LS()を使用しているのですぐ使うこと
 static TCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 {
@@ -421,7 +420,6 @@ HTREEITEM CDlgFileTree::InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent,
 	return TreeView_InsertItem(GetItemHwnd(IDC_TREE_FL), &tvis);
 }
 
-
 // ツリーのコピー
 //		fChildがtrueの時はdstの子としてコピー, そうでなければdstの兄弟としてdstの後ろにコピー
 //		fOnryOneがtrueの時は1つだけコピー（子があったらコピー）
@@ -475,7 +473,6 @@ static HTREEITEM FileTreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool
 
 	return td;
 }
-
 
 BOOL CDlgFileTree::OnBnClicked( int wID )
 {
@@ -934,7 +931,6 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
-
 	}
 
 	/* 基底クラスメンバ */
@@ -987,5 +983,4 @@ LPVOID CDlgFileTree::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 

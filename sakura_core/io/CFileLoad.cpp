@@ -105,7 +105,6 @@ std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 	return str + L" MB";
 }
 
-
 /*! コンストラクタ */
 CFileLoad::CFileLoad( const SEncodingConfig& encode )
 {
@@ -337,7 +336,6 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 	return m_nTempResult;
 }
 
-
 /*!
 	次の論理行を文字コード変換してロードする
 	順次アクセス専用
@@ -425,8 +423,6 @@ EConvertResult CFileLoad::ReadLine_core(
 	return eRet;
 }
 
-
-
 /*!
 	バッファにデータを読み込む
 	@note エラー時は throw する
@@ -484,7 +480,6 @@ void CFileLoad::ReadBufEmpty( void )
 	m_nReadBufSize    = 0;
 	m_nReadBufOffSet  = 0;
 }
-
 
 /*!
 	 現在の進行率を取得する

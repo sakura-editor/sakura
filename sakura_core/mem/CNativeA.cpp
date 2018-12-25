@@ -25,7 +25,6 @@ CNativeA::CNativeA(const CNativeA& rhs)
 	SetString(rhs.GetStringPtr(),rhs.GetStringLength());
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ設定インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -127,7 +126,6 @@ void CNativeA::SetStringNew(const wchar_t* wszData)
 	SetStringNew(wszData,wcslen(wszData));
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ取得インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -184,8 +182,6 @@ void CNativeA::Replace( const char* pszFrom, const char* pszTo )
 	return;
 }
 
-
-
 /* 文字列置換（日本語考慮版） */
 void CNativeA::Replace_j( const char* pszFrom, const char* pszTo )
 {
@@ -213,9 +209,6 @@ void CNativeA::Replace_j( const char* pszFrom, const char* pszTo )
 	SetNativeData( cmemWork );
 	return;
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   一般インターフェース                      //
@@ -268,10 +261,6 @@ void CNativeA::ToLower()
 	return;
 }
 
-
-
-
-
 /* 大文字 */
 void CNativeA::ToUpper()
 {
@@ -318,7 +307,6 @@ void CNativeA::ToUpper()
 	}
 	return;
 }
-
 
 /* 半角→全角 */
 void CNativeA::ToZenkaku(
@@ -402,7 +390,6 @@ void CNativeA::ToZenkaku(
 			}else{
 				memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );
 				nBufDesLen += nCharChars;
-
 			}
 		}else
 		if( nCharChars == 2 ){
@@ -432,7 +419,6 @@ void CNativeA::ToZenkaku(
 		}else{
 			memcpy( &pBufDes[nBufDesLen], &pBuf[i], nCharChars );
 			nBufDesLen += nCharChars;
-
 		}
 		if( nCharChars > 0 ){
 			i += nCharChars - 1;
@@ -442,10 +428,8 @@ void CNativeA::ToZenkaku(
 	SetRawData( pBufDes, nBufDesLen );
 	delete [] pBufDes;
 
-
 	return;
 }
-
 
 /* TAB→空白 */
 void CNativeA::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
@@ -515,7 +499,6 @@ void CNativeA::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	pDes = NULL;
 	return;
 }
-
 
 //!空白→TAB変換
 /*!
@@ -639,8 +622,6 @@ void CNativeA::SPACEToTAB( int nTabSpace )
 	return;
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  staticインターフェース                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -692,7 +673,6 @@ const char* CNativeA::GetCharPrev( const char* pData, int nDataLen, const char* 
 //	CRunningTimer cRunningTimer( "CMemory::MemCharPrev" );
 //#endif
 
-
 	const char*	pPrev;
 	pPrev = ::CharPrevA( pData, pDataCurrent );
 
@@ -724,7 +704,6 @@ const char* CNativeA::GetCharPrev( const char* pData, int nDataLen, const char* 
 	return pPrev;
 }
 
-
 void CNativeA::AppendStringNew( const wchar_t* pszData )
 {
 	AppendStringNew(pszData,wcslen(pszData));
@@ -735,7 +714,6 @@ void CNativeA::AppendStringNew( const wchar_t* pData, int nDataLen )
 	AppendString(buf);
 	delete[] buf;
 }
-
 
 const wchar_t* CNativeA::GetStringW() const
 {

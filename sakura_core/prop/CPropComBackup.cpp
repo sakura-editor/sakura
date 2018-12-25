@@ -71,7 +71,6 @@ INT_PTR CALLBACK CPropBackup::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-
 /* メッセージ処理 */
 INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -215,11 +214,9 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
 
 /*! ダイアログデータの設定
 	@date 2004.06.05 genta 元の拡張子を残す設定を追加．
@@ -232,7 +229,6 @@ void CPropBackup::SetData( HWND hwndDlg )
 //	BOOL	bRet;
 
 //	BOOL				m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
-
 
 	/* バックアップの作成 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUP, m_Common.m_sBackup.m_bBackUp );
@@ -322,13 +318,6 @@ void CPropBackup::SetData( HWND hwndDlg )
 	return;
 }
 
-
-
-
-
-
-
-
 /* ダイアログデータの取得 */
 int CPropBackup::GetData( HWND hwndDlg )
 {
@@ -338,7 +327,6 @@ int CPropBackup::GetData( HWND hwndDlg )
 	m_Common.m_sBackup.m_bBackUpDialog = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUPDIALOG );
 //	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 「バックアップの作成」に連動させる
 //	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER );
-
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ) ){
@@ -500,7 +488,6 @@ void CPropBackup::EnableBackupInput(HWND hwndDlg)
 	#undef SHOWENABLE
 }
 //	To Here Aug. 16, 2000 genta
-
 
 /*!	バックアップファイルの詳細設定エディットボックスを適切に更新する
 

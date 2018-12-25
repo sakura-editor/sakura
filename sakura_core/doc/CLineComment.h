@@ -51,9 +51,6 @@ private:
 	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLINECOMMENT_H_ */
-
-
 

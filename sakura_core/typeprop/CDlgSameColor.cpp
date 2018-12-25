@@ -137,7 +137,6 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SetWindowLongPtr( hwndList, GWLP_USERDATA, (LONG_PTR)this );
 	m_wpColorListProc = (WNDPROC)::SetWindowLongPtr( hwndList, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
 
-
 	WCHAR szText[30];
 	int nItem;
 	int i;
@@ -497,5 +496,4 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 
 	return ::CallWindowProc( pCDlgSameColor->m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
-
 

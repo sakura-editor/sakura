@@ -126,7 +126,6 @@ struct SSaveInfo{
 	bool IsSamePath(LPCTSTR pszPath) const;
 };
 
-
 class CProgressListener;
 
 //! 複数のCProgressSubjectからウォッチされる
@@ -207,7 +206,6 @@ public:
 	CDocListenerEx(CDocSubject* pcDoc = NULL) : CDocListener(pcDoc) { }
 	CEditDoc* GetListeningDoc() const;
 };
-
 
 #include <exception>
 class CFlowInterruption : public std::exception{

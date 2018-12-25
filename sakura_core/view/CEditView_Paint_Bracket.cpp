@@ -252,7 +252,6 @@ void CEditView::DrawBracketPair( bool bDraw )
 	::ReleaseDC( GetHwnd(), gr );
 }
 
-
 //======================================================================
 //!対括弧の対応表
 //2007.10.16 kobake
@@ -284,8 +283,6 @@ static const KAKKO_T g_aKakkos[] = {
 	//終端
 	{ NULL, NULL, },
 };
-
-
 
 //	Jun. 16, 2000 genta
 /*!

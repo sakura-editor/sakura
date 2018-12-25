@@ -108,7 +108,6 @@ protected:
 		LPARAM	lParam		// second message parameter
 	);
 
-
 	/*
 	|| メンバ変数
 	*/
@@ -131,9 +130,6 @@ private:
 	TCHAR			m_szLanguageDll[MAX_PATH];
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CCONTROLTRAY_H_ */
-
-
 

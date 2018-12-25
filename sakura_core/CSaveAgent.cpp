@@ -40,7 +40,6 @@ CSaveAgent::CSaveAgent()
 {
 }
 
-
 ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
@@ -97,8 +96,6 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	return CALLBACK_CONTINUE;
 }
 
-
-
 void CSaveAgent::OnBeforeSave(const SSaveInfo& sSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
@@ -144,8 +141,6 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 		pcDoc->OnChangeSetting();
 	}
 }
-
-
 
 void CSaveAgent::OnFinalSave(ESaveResult eSaveResult)
 {

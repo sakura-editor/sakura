@@ -569,8 +569,6 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 	*q = '\0';
 }
 
-
-
 /*! @brief 処理の読み飛ばし
 
 	条件分岐の構文 ${cond:A0$:A1$:A2$:..$} において，
@@ -797,11 +795,9 @@ void CSakuraEnvironment::ResolvePath(TCHAR* pszPath)
 	}
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ウィンドウ管理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd )
@@ -822,5 +818,4 @@ BOOL IsSakuraMainWindow( HWND hWnd )
 		return FALSE;
 	}
 }
-
 

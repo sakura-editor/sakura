@@ -80,9 +80,6 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	pKeyword[keywordPos] = L'\0';
 }
 
-
-
-
 /*!	テキスト・トピックリスト作成
 	
 	@date 2002.04.01 YAZAKI CDlgFuncList::SetText()を使用するように改訂。
@@ -239,10 +236,6 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	}
 	return;
 }
-
-
-
-
 
 /*! 階層付きテキスト アウトライン解析
 

@@ -68,7 +68,6 @@ INT_PTR CALLBACK CPropWin::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
-
 /* メッセージ処理 */
 INT_PTR CPropWin::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -255,7 +254,6 @@ INT_PTR CPropWin::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
@@ -345,10 +343,6 @@ void CPropWin::SetData( HWND hwndDlg )
 
 	return;
 }
-
-
-
-
 
 /* ダイアログデータの取得 */
 int CPropWin::GetData( HWND hwndDlg )
@@ -445,10 +439,6 @@ int CPropWin::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
-
-
-
-
 //	From Here Sept. 9, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
@@ -466,6 +456,4 @@ void CPropWin::EnableWinPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 9, 2000
-
-
 

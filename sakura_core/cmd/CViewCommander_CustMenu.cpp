@@ -20,7 +20,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-
 /* 右クリックメニュー */
 void CViewCommander::Command_MENU_RBUTTON( void )
 {
@@ -78,8 +77,6 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 	}
 	return;
 }
-
-
 
 /* カスタムメニュー表示 */
 int CViewCommander::Command_CUSTMENU( int nMenuIdx )

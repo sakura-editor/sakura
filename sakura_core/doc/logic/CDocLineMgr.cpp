@@ -61,12 +61,9 @@ CDocLineMgr::~CDocLineMgr()
 	DeleteAllLine();
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      行データの管理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 //! pPosの直前に新しい行を挿入
 CDocLine* CDocLineMgr::InsertNewLine(CDocLine* pPos)
@@ -95,7 +92,6 @@ void CDocLineMgr::DeleteAllLine()
 	}
 	_Init();
 }
-
 
 //! 行の削除
 void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
@@ -131,7 +127,6 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 		_Init();
 	}
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   行データへのアクセス                      //
@@ -192,7 +187,6 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 				nCounter--;
 			}
 		}
-
 	}
 	else{
 		if( nLine == m_nPrevReferLine ){
@@ -231,13 +225,6 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	}
 	return NULL;
 }
-
-
-
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
@@ -328,7 +315,6 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 	m_nLines++;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         デバッグ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -412,11 +398,9 @@ void CDocLineMgr::DUMP()
 		MYTRACE( _T("\tm_enumEOLType =%ls\n"), pDocLine->GetEol().GetName() );
 		MYTRACE( _T("\tm_nEOLLen =%d\n"), pDocLine->GetEol().GetLen() );
 
-
 //		MYTRACE( _T("\t[%ls]\n"), *(pDocLine->m_pLine) );
 		MYTRACE( _T("\tpDocLine->m_cLine.GetLength()=[%d]\n"), pDocLine->GetLengthWithEOL() );
 		MYTRACE( _T("\t[%ls]\n"), pDocLine->GetPtr() );
-
 
 		pDocLine = pDocLineNext;
 	}

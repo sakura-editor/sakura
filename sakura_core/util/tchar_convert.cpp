@@ -6,8 +6,6 @@
 static CRecycledBuffer        g_bufSmall;
 static CRecycledBufferDynamic g_bufBig;
 
-
-
 const WCHAR* to_wchar(const ACHAR* src)
 {
 	if(src==NULL)return NULL;
@@ -52,7 +50,6 @@ const WCHAR* to_wchar(const ACHAR* pSrc, int nSrcLength)
 
 	return pDst;
 }
-
 
 const ACHAR* to_achar(const WCHAR* src)
 {
@@ -102,7 +99,6 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength)
 
 	return pDst;
 }
-
 
 const WCHAR* easy_format(const WCHAR* format, ...)
 {

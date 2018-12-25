@@ -29,8 +29,6 @@
 		   distribution.
 */
 
-
-
 #ifndef SAKURA_CDLGFAVORITE_H_
 #define SAKURA_CDLGFAVORITE_H_
 

@@ -65,7 +65,6 @@ HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTempl
 	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL, SW_SHOW );
 }
 
-
 BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
@@ -76,7 +75,6 @@ BOOL CDlgCancel::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)hIcon );
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)NULL );
 	::SendMessageAny( GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)hIcon );
-
 
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
@@ -104,5 +102,4 @@ LPVOID CDlgCancel::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 

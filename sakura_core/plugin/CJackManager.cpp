@@ -70,7 +70,6 @@ CJackManager::CJackManager()
 
 		m_Jacks.push_back( jack );
 	}
-	
 }
 
 //ジャック定義一覧を返す

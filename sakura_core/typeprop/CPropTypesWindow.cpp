@@ -54,8 +54,6 @@ static const DWORD p_helpids2[] = {	//11400
 	0, 0
 };
 
-
-
 TYPE_NAME_ID<int> ImeSwitchArr[] = {
 	{ 0, STR_IME_SWITCH_DONTSET },
 	{ 1, STR_IME_SWITCH_ON },
@@ -267,7 +265,6 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	return FALSE;
 }
 
-
 void CPropTypesWindow::SetCombobox(HWND hwndWork, const int* nIds, int nCount, int select)
 {
 	Combo_ResetContent(hwndWork);
@@ -276,8 +273,6 @@ void CPropTypesWindow::SetCombobox(HWND hwndWork, const int* nIds, int nCount, i
 	}
 	Combo_SetCurSel(hwndWork, select);
 }
-
-
 
 /* ダイアログデータの設定 window */
 void CPropTypesWindow::SetData( HWND hwndDlg )
@@ -451,18 +446,12 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	EnableTypesPropInput( hwndDlg );
 	//	To Here Sept. 10, 2000
 
-
 	return;
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-
 
 /* ダイアログデータの取得 color */
 int CPropTypesWindow::GetData( HWND hwndDlg )
@@ -555,9 +544,6 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 
 	return TRUE;
 }
-
-
-
 
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを

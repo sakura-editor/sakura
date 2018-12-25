@@ -28,7 +28,6 @@
 // 2007.10.19 kobake
 // string.h で定義されている関数を拡張したようなモノ達
 
-
 /*
 	++ ++ 命名参考(規則では無い) ++ ++
 
@@ -65,7 +64,6 @@ inline int amemicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::me
 //文字列以外のメモリ処理でmem～系関数を使う場面では、この関数を使っておくと、意味合いがはっきりして良い。
 inline void* memset_raw(void* dest, int c, size_t size){ return ::memset(dest,c,size); }
 inline void* memcpy_raw(void* dest, const void* src, size_t size){ return ::memcpy(dest,src,size); }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           文字                              //
@@ -132,13 +130,11 @@ CHAR_TYPE* my_strtok(
 	const CHAR_TYPE*	pDelimiter	//[in] 区切り文字
 );
 
-
 // ▽ シグニチャおよび動作仕様は変わらないけど、
 // コンパイラと言語指定によって不正動作をしてしまうことを回避するために
 // 独自に実装し直したもの。
 int my_stricmp( const char *s1, const char *s2 );
 int my_strnicmp( const char *s1, const char *s2, size_t n );
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           互換                              //
@@ -193,7 +189,6 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 //強制キャストによる使用は推奨しません。
 //そもそも、この関数呼び出しに限らず、強制キャストは最低限に留めてください。
 //せっかくの、C++の厳格な型チェックの恩恵を受けることができなくなります。
-
 
 //転送系
 inline ACHAR* auto_memcpy(ACHAR* dest, const ACHAR* src, size_t count){        ::memcpy (dest,src,count); return dest; }
@@ -272,7 +267,6 @@ inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v){ return tc
 inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
 inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -305,10 +299,6 @@ size_t _wcstotcs(TCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount);
 size_t _mbstotcs(TCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount);
 int _tctomb(const TCHAR* p,ACHAR* mb);
 int _tctowc(const TCHAR* p,WCHAR* wc);
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
@@ -343,7 +333,6 @@ BOOL IsURL(const wchar_t* pszLine, int nLineLen, int* pnMatchLen);
 
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
 BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
-
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

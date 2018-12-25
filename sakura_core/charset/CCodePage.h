@@ -47,7 +47,6 @@ enum EEncodingTrait
 	ENCODING_TRAIT_EBCDIC,// EBCDIC/CR,LF,NEL
 };
 
-
 /*
 	システムコードページによる文字コード変換
 */

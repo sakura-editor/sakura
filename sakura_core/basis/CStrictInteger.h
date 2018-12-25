@@ -44,7 +44,6 @@
 	bool operator == (TYPE rhs) const	{ return operator == ((int)rhs); } \
 	bool operator != (TYPE rhs) const	{ return operator != ((int)rhs); }
 
-
 //! 暗黙の変換を許さない、整数クラス
 template <
 	int STRICT_ID,			//!< 型を分けるための数値。0 or 1。
@@ -148,7 +147,6 @@ private:
 	template <bool B0,bool B1,bool B2,bool B3> bool operator == (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
 	template <bool B0,bool B1,bool B2,bool B3> bool operator != (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
 
-
 	// -- -- -- -- ALLOW_ADDSUB_INTがtrueの場合は、intとの加減算を許す -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_ADDSUB_INT>::Type AddsubIntegerType;
@@ -164,7 +162,6 @@ private:
 	Me& operator -= (NotAddsubIntegerType rhs);
 	Me  operator +  (NotAddsubIntegerType rhs) const;
 	Me  operator -  (NotAddsubIntegerType rhs) const;
-
 
 	// -- -- -- -- ALLOW_CMP_INTがtrueの場合は、intとの比較を許す -- -- -- -- //
 private:
@@ -186,7 +183,6 @@ private:
 	bool operator == (NotCmpIntegerType rhs) const;
 	bool operator != (NotCmpIntegerType rhs) const;
 
-
 	// -- -- -- -- ALLOW_CAST_INTがtrueの場合は、intへの暗黙の変換を許す -- -- -- -- //
 private:
 	typedef typename ChooseIntOrDummy< ALLOW_CAST_INT>::Type CastIntegerType;
@@ -196,7 +192,6 @@ public:
 private:
 	//※ALLOW_CAST_INTがfalseの場合は、privateメンバを置くことにより、「明示的に」暗黙変換を禁止する。
 	operator NotCastIntegerType() const;
-
 
 	// -- -- -- -- ALLOW_ASSIGNOP_INTがtrueの場合は、intの代入を許す -- -- -- -- //
 private:
@@ -208,13 +203,10 @@ private:
 	//※ALLOW_ASSIGNOP_INTがfalseの場合は、privateメンバを置くことにより、「明示的に」代入を禁止する。
 	Me& operator = (const NotAssignIntegerType&);
 
-
 	// -- -- -- -- メンバ変数 -- -- -- -- //
 private:
 	int m_value;
 };
-
-
 
 //左辺がint等の場合の演算子
 #define STRICTINT_LEFT_INT_CMP(TYPE) \

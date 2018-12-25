@@ -90,7 +90,6 @@ BOOL CEditView::CreateScrollBar()
 		::ShowScrollBar( m_hwndHScrollBar, SB_CTL, TRUE );
 	}
 
-
 	/* サイズボックス */
 	if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
@@ -101,8 +100,6 @@ BOOL CEditView::CreateScrollBar()
 	}
 	return TRUE;
 }
-
-
 
 /*! スクロールバー破棄
 	@date 2006.12.19 ryoji 新規作成
@@ -433,9 +430,6 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos, BOOL bRedrawScrollBar )
 	return -nScrollRowNum;	//方向が逆なので符号反転が必要
 }
 
-
-
-
 /*! 指定左端桁位置へスクロール
 
 	@param nPos [in] スクロール位置
@@ -520,7 +514,6 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos, BOOL bRedrawScrollBar )
 
 	return -nScrollColNum;	//方向が逆なので符号反転が必要
 }
-
 
 void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, const RECT& rcScroll, const RECT& rcClip, const RECT& rcClip2)
 {
@@ -609,7 +602,6 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 	}
 }
 
-
 void CEditView::MiniMapRedraw(bool bUpdateAll)
 {
 	if( this == &m_pcEditWnd->GetActiveView() && m_pcEditWnd->GetMiniMap().GetHwnd() ){
@@ -677,7 +669,6 @@ void CEditView::MiniMapRedraw(bool bUpdateAll)
 		::UpdateWindow( miniMap.GetHwnd() );
 	}
 }
-
 
 /*!	垂直同期スクロール
 

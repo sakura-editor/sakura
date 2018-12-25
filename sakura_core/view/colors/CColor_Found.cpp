@@ -6,7 +6,6 @@
 #include "view/CViewSelect.h"
 #include <limits.h>
 
-
 void CColor_Select::OnStartScanLogic()
 {
 	m_nSelectLine	= CLayoutInt(-1);
@@ -22,7 +21,6 @@ bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
 
 bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
 {
-
 	if(!cStr.IsValid())return false;
 
 	const CEditView& view = *(CColorStrategyPool::getInstance()->GetCurrentView());
@@ -67,7 +65,6 @@ bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
 
 	return false;
 }
-
 
 CColor_Found::CColor_Found()
 : validColorNum( 0 )

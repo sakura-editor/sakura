@@ -83,7 +83,5 @@ protected:
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGPRINTSETTING_9DF803C0_8BBB_41EC_B6A7_AFEBBDBC517D_H_ */

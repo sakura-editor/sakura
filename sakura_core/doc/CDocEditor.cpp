@@ -45,7 +45,6 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 }
 
-
 /*! 変更フラグの設定
 
 	@param flag [in] 設定する値．true: 変更有り / false: 変更無し
@@ -116,8 +115,6 @@ void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
 	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
 }
 
-
-
 //	From Here Nov. 20, 2000 genta
 /*!	IME状態の設定
 	
@@ -166,15 +163,6 @@ void CDocEditor::SetImeMode( int mode )
 }
 //	To Here Nov. 20, 2000 genta
 
-
-
-
-
-
-
-
-
-
 /*!
 	末尾に行を追加
 
@@ -193,5 +181,4 @@ void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 	//インスタンス設定
 	pDocLine->SetDocLineString(pData, nDataLen);
 }
-
 

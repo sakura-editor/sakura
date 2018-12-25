@@ -39,19 +39,13 @@
 #include "charset/charcode.h"
 #include <algorithm>
 
-
-
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-
 
                          データ表と変換補助
 
-
 *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
-
 */
-
 
 /*
 	判別テーブル  UTF-7 のどのセットの文字か
@@ -78,7 +72,6 @@ const char TABLE_IsUtf7Direct[] = {
 	1, 1, 1, 1, 1, 1, 1, 1,  //70-77:p - w
 	1, 1, 1, 2, 2, 2, 0, 0,  //78-7f:x, y, z
 };
-
 
 #if 0 // 未使用だけど、参考のために書き残し
 
@@ -118,32 +111,13 @@ const char* TABLE_JISESCDATA[] = {
 
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-
 
                          文字コード判別支援
 
-
 *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 
-
 */
-
 
 /*
 	SJIS のこと.
@@ -200,9 +174,6 @@ int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
 	}
 	return 0;
 }
-
-
-
 
 /*
 	EUC-JP のこと.
@@ -272,11 +243,6 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 	}
 	return 0;
 }
-
-
-
-
-
 
 /*!
 	JIS の エスケープ文字列を検出する
@@ -368,8 +334,6 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 	return expected_esc_len;
 }
 
-
-
 /*!
 	JIS 文字列をチェック
 
@@ -449,19 +413,6 @@ int _CheckJisAnyPart(
 	return pr - pS;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 	UTF-16 サロゲート処理のこと.
 
@@ -479,7 +430,6 @@ int _CheckJisAnyPart(
 	3. w1, w2 の上位 6ビット分の空き領域を, それぞれ 110110 と 110111 で埋める.
 	     w1 ← w1 | 0xD800
 	     w2 ← w2 | 0xDC00
-
 
 	U+FFFE, U+FFFF は, 未定義値.
 
@@ -556,7 +506,6 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 		}
 	}
 
-
 EndFunc:;
 	if( peCharset ){
 		*peCharset = echarset;
@@ -564,12 +513,6 @@ EndFunc:;
 
 	return ncwidth;
 }
-
-
-
-
-
-
 
 /* -------------------------------------------------------------------------------------------------------------- *
 UTF-8のコード
@@ -885,7 +828,6 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 
 EndFunc:;
 
-
 	// 非文字と予約コードポイントを確認
 	if( nOption != 0 && eret_charset != CHARSET_BINARY ){
 		wchar32_t wc32;
@@ -915,9 +857,6 @@ EndFunc:;
 	}
 	return nret_clen;
 }
-
-
-
 
 /*
 	UTF-7 のこと.
@@ -988,9 +927,6 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	return pr - pS;
 }
 
-
-
-
 /*!
 	UTF-7 セットＢの文字列か
 
@@ -1046,7 +982,6 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	if( nchecklen < 1 ){
 		nchecklen = 0;
 	}
-
 
 	/*
 	◆ デコード後のデータ長の確認

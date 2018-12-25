@@ -20,9 +20,6 @@ bool CFigure_Comma::Match(const wchar_t* pText, int nTextLen) const
 	return false;
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         描画実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

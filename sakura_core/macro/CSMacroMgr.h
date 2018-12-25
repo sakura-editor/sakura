@@ -44,7 +44,6 @@
 
 class CEditView;
 
-
 const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
@@ -184,10 +183,6 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSMacroMGR_H_ */
-
-
 

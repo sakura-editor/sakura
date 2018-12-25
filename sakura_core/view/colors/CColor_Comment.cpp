@@ -35,9 +35,6 @@ bool CColor_LineComment::EndColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    ブロックコメント１                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

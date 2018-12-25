@@ -31,8 +31,6 @@ void CViewCommander::Command_INS_DATE( void )
 	Command_INSTEXT( true, to_wchar(szText), CLogicInt(-1), TRUE );
 }
 
-
-
 //時刻挿入
 void CViewCommander::Command_INS_TIME( void )
 {
@@ -45,8 +43,6 @@ void CViewCommander::Command_INS_TIME( void )
 	// テキストを貼り付け ver1
 	Command_INSTEXT( true, to_wchar(szText), CLogicInt(-1), TRUE );
 }
-
-
 
 //	from CViewCommander_New.cpp
 /*!	コントロールコードの入力(ダイアログ)

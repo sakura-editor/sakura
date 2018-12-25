@@ -123,7 +123,6 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 	return RESULT_COMPLETE;
 }
 
-
 ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();

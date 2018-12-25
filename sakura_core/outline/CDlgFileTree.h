@@ -70,8 +70,5 @@ private:
 	int					m_bInMove;
 };
 
-
-
 #endif /* SAKURA_CDLGFILETREE_H_ */
-
 

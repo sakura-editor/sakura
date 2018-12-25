@@ -289,7 +289,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
-
 BOOL CDlgAbout::OnBnClicked( int wID )
 {
 	switch( wID ){
@@ -507,7 +506,6 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
 }
 //@@@ 2002.01.18 add end
-
 
 //WM_SETTEXTハンドラ
 //https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-settext

@@ -36,14 +36,12 @@
 #include "charset/charcode.h"
 #include "doc/layout/CLayout.h"
 
-
 const CTextArea* CTextDrawer::GetTextArea() const
 {
 	return &m_pEditView->GetTextArea();
 }
 
 using namespace std;
-
 
 /*
 テキスト表示
@@ -348,8 +346,6 @@ void CTextDrawer::DispWrapLine(
 	}
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          行番号                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -381,7 +377,6 @@ void CTextDrawer::DispLineNumber(
 			: cEvenLineBg.IsDisp() && nLineNum % 2 == 1
 				? cEvenLineBg
 				: cTextType);
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                     nColorIndexを決定                       //

@@ -34,7 +34,6 @@
 		   distribution.
 */
 
-
 #ifndef SAKURA_WINDOW_CTABWND_H_
 #define SAKURA_WINDOW_CTABWND_H_
 
@@ -208,6 +207,4 @@ private:
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */
-
-
 

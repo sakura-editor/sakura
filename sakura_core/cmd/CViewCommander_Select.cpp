@@ -18,7 +18,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-
 /* 現在位置の単語選択 */
 bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 {
@@ -65,8 +64,6 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 	}
 }
 
-
-
 /* すべて選択 */
 void CViewCommander::Command_SELECTALL( void )
 {
@@ -91,8 +88,6 @@ void CViewCommander::Command_SELECTALL( void )
 	/* 選択領域描画 */
 	m_pCommanderView->GetSelectionInfo().DrawSelectArea(false);
 }
-
-
 
 /*!	1行選択
 	@brief カーソル位置を1行選択する
@@ -144,8 +139,6 @@ void CViewCommander::Command_SELECTLINE( int lparam )
 	return;
 }
 
-
-
 /* 範囲選択開始 */
 void CViewCommander::Command_BEGIN_SELECT( void )
 {
@@ -167,8 +160,6 @@ void CViewCommander::Command_BEGIN_SELECT( void )
 	m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 	return;
 }
-
-
 
 /* 矩形範囲選択開始 */
 void CViewCommander::Command_BEGIN_BOXSELECT( bool bSelectingLock )

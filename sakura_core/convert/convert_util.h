@@ -50,7 +50,6 @@ void Convert_ZenkataToHankata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 */
 void Convert_ToHankaku(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
 
-
 //! 半角英数→全角英数 (文字数は不変)
 void Convert_HaneisuToZeneisu(wchar_t* pData, int nLength);
 

@@ -54,13 +54,10 @@ struct ColorInfo : public ColorInfoBase{
 	TCHAR		m_szName[64];		//!< 名前
 };
 
-
 //デフォルト色設定
 void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex );
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex );
 int GetDefaultColorInfoCount();
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           辞書                              //

@@ -1,16 +1,12 @@
 ﻿/*! @file */
 // 2008.11.10 変換ロジックを書き直す
 
-
 #include "StdAfx.h"
 #include "CUtf7.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"
 #include "CEol.h"
-
-
-
 
 /*!
 	UTF-7 Set D 部分の読み込み。
@@ -112,7 +108,6 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 	return pw - pDst;
 }
 
-
 //! UTF-7→Unicodeコード変換
 // 2007.08.13 kobake 作成
 EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
@@ -145,8 +140,6 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	}
 }
 
-
-
 int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 {
 	int i;
@@ -161,8 +154,6 @@ int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* p
 
 	return i;
 }
-
-
 
 int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 {
@@ -193,9 +184,6 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 
 	return pw - pDst;
 }
-
-
-
 
 int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 {
@@ -237,14 +225,11 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 	return pw - pDst;
 }
 
-
-
 /*! コード変換 Unicode→UTF-7
 	@date 2002.10.25 Moca UTF-7で直接エンコードできる文字をRFCに合わせて制限した
 */
 EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 {
-
 	// データ取得
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();

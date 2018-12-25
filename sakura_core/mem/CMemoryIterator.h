@@ -130,7 +130,6 @@ public:
 	//	memcpyをするのにポインタがとれないと面倒
 	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	}
 
-
 private:
 	//コンストラクタで受け取ったパラメータ (固定)
 	const wchar_t*		m_pLine;
@@ -151,9 +150,6 @@ private:
 
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CBLOCKCOMMENT_H_ */
-
-
 

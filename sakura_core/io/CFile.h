@@ -62,7 +62,6 @@ private:
 	EShareMode	m_nFileShareModeOld;		//!< ファイルの排他制御モード
 };
 
-
 //!一時ファイル
 class CTmpFile{
 public:

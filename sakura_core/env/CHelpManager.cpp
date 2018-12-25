@@ -32,7 +32,6 @@
 #include "CHelpManager.h"
 #include "env/CDocTypeManager.h"
 
-
 /*!	外部Winヘルプが設定されているか確認。
 */
 bool CHelpManager::ExtWinHelpIsSet( const STypeConfig* type )

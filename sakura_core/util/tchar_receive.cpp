@@ -28,4 +28,3 @@ using namespace std;
 template class TcharReceiver<WCHAR>;
 template class TcharReceiver<ACHAR>;
 
-

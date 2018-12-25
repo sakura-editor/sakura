@@ -41,7 +41,6 @@
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ロック                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -71,7 +70,6 @@ void CDocFileOperation::DoFileUnlock()
 {
 	m_pcDocRef->m_cDocFile.FileUnlock();
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ロードUI                            //
@@ -223,9 +221,6 @@ void CDocFileOperation::ReloadCurrentFile(
 	}
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         セーブUI                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -318,7 +313,6 @@ bool CDocFileOperation::SaveFileDialog(LPTSTR szPath)
 	return bRet;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       セーブフロー                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -402,7 +396,6 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 	return eSaveResult==SAVED_OK;
 }
 
-
 /*! 上書き保存
 
 	@return 保存が行われたor保存不要のため何も行わなかったときにtrueを返す
@@ -427,8 +420,6 @@ bool CDocFileOperation::FileSave()
 	//上書き処理
 	return m_pcDocRef->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
 }
-
-
 
 /*! 名前を付けて保存フロー
 
@@ -481,11 +472,9 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         クローズ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 /*
 	閉じて(無題)。
@@ -527,7 +516,6 @@ bool CDocFileOperation::FileClose()
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          その他                             //

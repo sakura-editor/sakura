@@ -347,7 +347,6 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	return 0;
 }
 
-
 bool CWSHClient::Execute(const wchar_t *AScript)
 {
 	bool bRet = false;
@@ -449,7 +448,6 @@ void CWSHClient::AddInterfaceObject( CIfObj* obj )
 	obj->m_Owner = this;
 	obj->AddRef();
 }
-
 
 /////////////////////////////////////////////
 /*!

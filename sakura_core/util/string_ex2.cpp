@@ -25,9 +25,6 @@ wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src)
 	return wcs_pushA(dst,dst_count,src,strlen(src));
 }
 
-
-
-
 /*! 文字のエスケープ
 
 	@param org [in] 変換したい文字列
@@ -64,9 +61,6 @@ int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith)
 	return out - buf;
 }
 
-
-
-
 /*!	文字列が指定された文字で終わっていなかった場合には
 	末尾にその文字を付加する．
 
@@ -100,8 +94,6 @@ int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
 	}
 	return 0;
 }
-
-
 
 /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
 const char* GetNextLine(
@@ -266,10 +258,6 @@ const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimi
 	return &pText[nBgn];
 }
 
-
-
-
-
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
 int LimitStringLengthW(
 	const wchar_t*	pszData,		//!< [in]
@@ -313,8 +301,6 @@ int LimitStringLengthA(
 	cmemDes.SetString(pszData,n);
 	return n;
 }
-
-
 
 void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn )
 {
@@ -367,14 +353,6 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 	}
 	return;
 }
-
-
-
-
-
-
-
-
 
 /*
 	scanf的安全スキャン

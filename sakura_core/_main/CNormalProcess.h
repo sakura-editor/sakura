@@ -50,8 +50,6 @@ private:
 	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CNORMALPROCESS_H_ */
-
 

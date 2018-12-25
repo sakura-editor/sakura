@@ -91,7 +91,6 @@ void CFile::FileUnlock()
 	}
 }
 
-
 //! ファイルの排他ロック
 bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 {
@@ -145,5 +144,4 @@ bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 
 	return true;
 }
-
 

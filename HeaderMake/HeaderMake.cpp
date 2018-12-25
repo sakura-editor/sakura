@@ -8,7 +8,6 @@
 	Copyright (C) 2007-2008, kobake
 	Copyright (C) 2009, rastiv
 
-
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
@@ -38,12 +37,10 @@
 	enum定数はソースコードから参照し、(デバッグがしやすくなる)
 	define定数はリソースから参照する  (リソース内ではenum定数を利用できない)
 
-
 	++ 依存 ++
 
 	Visual Studio の cl.exe に依存。
 	cl.exe のプリプロセッサ機能を利用しています。
-
 
 	++ 使用方法 ++
 
@@ -234,7 +231,6 @@ int main_impl(
 		return 2;
 	}
 
-
 	//ファイル更新時刻比較 (なんか、VSのカスタムビルドがうまくいかないので、ここで判定(汗) )
 	struct _stat in_stat;
 	struct _stat out_stat;
@@ -243,7 +239,6 @@ int main_impl(
 	//入力ファイルが新しければ処理を続行する
 	if(in_stat.st_mtime>out_stat.st_mtime)goto next;
 	else{ printf("OutputFile[%s] needs no change.\n", out_file); return 0; }
-
 
 next:
 	// プリプロセス済みストリームオープン
@@ -255,7 +250,6 @@ next:
 	// 出力ファイルオープン
 	FILE* out = NULL; fopen_s(&out, out_file, "wt");
 	if (!out) { printf("Error: Failed to open OutputFile[%s] as write mode\n", out_file); return 1; }
-
 
 	//処理
 	fprintf(out, "/*! @file */\n");
@@ -346,7 +340,6 @@ next:
 	}else{
 		; // 何も出力しない
 	}
-
 
 	//後始末
 	fclose(out);

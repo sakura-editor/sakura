@@ -93,7 +93,6 @@ private:
 	T m_value;
 };
 
-
 typedef char mystring[10];
 
 void sample()

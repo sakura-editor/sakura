@@ -54,7 +54,6 @@ CDocSubject::~CDocSubject()
 {
 }
 
-
 #define DEF_NOTIFY(NAME) ECallbackResult CDocSubject::Notify##NAME() \
 { \
 	int n = GetListenerCount(); \
@@ -122,7 +121,6 @@ VOID_NOTIFY2(FinalSave,ESaveResult)
 
 DEF_NOTIFY(BeforeClose)
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       CDocListener                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -139,7 +137,6 @@ CDocListener::~CDocListener()
 {
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      CDocListenerEx                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -149,8 +146,6 @@ CEditDoc* CDocListenerEx::GetListeningDoc() const
 {
 	return static_cast<CEditDoc*>(CDocListener::GetListeningDoc());
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CProgressSubject                        //

@@ -71,10 +71,6 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 	return CALLBACK_CONTINUE;
 }
 
-
-
-
-
 /*! バックアップの作成
 	@author genta
 	@date 2001.06.12 asa-o
@@ -285,9 +281,6 @@ int CBackupAgent::MakeBackUp(
 	//	Jun.  5, 2005 genta 戻り値変更
 	return 1;
 }
-
-
-
 
 /*! バックアップパスの作成
 
@@ -565,6 +558,4 @@ bool CBackupAgent::FormatBackUpPath(
 	}
 	return true;
 }
-
-
 

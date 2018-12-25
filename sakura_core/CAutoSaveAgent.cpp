@@ -33,10 +33,6 @@
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
 
-
-
-
-
 //	From Here Aug. 21, 2000 genta
 //
 //	自動保存を行うかどうかのチェック
@@ -70,7 +66,6 @@ void CAutoSaveAgent::ReloadAutoSaveParam()
 	m_cPassiveTimer.SetInterval( GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval() );
 	m_cPassiveTimer.Enable( GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled() );
 }
-
 
 //----------------------------------------------------------
 //	class CPassiveTimer
@@ -128,6 +123,4 @@ bool CPassiveTimer::CheckAction(void)
 	Reset();
 	return true;
 }
-
-
 

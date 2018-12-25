@@ -53,9 +53,6 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nVertLineIdx[3] = CKetaXInt(73);
 }
 
-
-
-
 /*! COBOL アウトライン解析 */
 void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -72,7 +69,6 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 
 	szDivision[0] = L'\0';
 	szLabel[0] =  L'\0';
-
 
 	CLogicInt	nLineCount;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
@@ -106,8 +102,6 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			}
 			szLabel[k] = L'\0';
 //			MYTRACE( _T("szLabel=[%ls]\n"), szLabel );
-
-
 
 			pszKeyWord = L"division";
 			nKeyWordLen = wcslen( pszKeyWord );
@@ -143,9 +137,6 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 	}
 	return;
 }
-
-
-
 
 //Jul. 10, 2001 JEPRO 追加
 const wchar_t* g_ppszKeywordsCOBOL[] = {

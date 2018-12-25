@@ -60,7 +60,6 @@ CDlgCompare::CDlgCompare()
 	return;
 }
 
-
 /* モーダルダイアログの表示 */
 int CDlgCompare::DoModal(
 	HINSTANCE		hInstance,
@@ -121,7 +120,6 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
-
 
 /* ダイアログデータの設定 */
 void CDlgCompare::SetData( void )
@@ -198,9 +196,6 @@ void CDlgCompare::SetData( void )
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_TILE_H, m_bCompareAndTileHorz );
 	return;
 }
-
-
-
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー */

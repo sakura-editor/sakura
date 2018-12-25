@@ -16,7 +16,6 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "env/CShareData.h"
@@ -82,12 +81,6 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 	return 0;
 }
 /* To Here Oct. 13, 2000 */
-
-
-
-
-
-
 
 /* Keybind メッセージ処理 */
 INT_PTR CPropKeybind::DispatchEvent(
@@ -376,7 +369,6 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}
 			}
 //@@@ 2001.11.08 add end MIK
-
 		}
 		break;
 
@@ -410,16 +402,9 @@ INT_PTR CPropKeybind::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.07 End
-
 	}
 	return FALSE;
 }
-
-
-
-
-
-
 
 /* ダイアログデータの設定 Keybind */
 void CPropKeybind::SetData( HWND hwndDlg )
@@ -443,8 +428,6 @@ void CPropKeybind::SetData( HWND hwndDlg )
 
 	return;
 }
-
-
 
 /* ダイアログデータの取得 Keybind */
 int CPropKeybind::GetData( HWND hwndDlg )
@@ -509,7 +492,6 @@ void CPropKeybind::Import( HWND hwndDlg )
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	//@@@ 2001.11.07 modify end MIK
 }
-
 
 /* Keybind:キー割り当て設定をエクスポートする */
 void CPropKeybind::Export( HWND hwndDlg )

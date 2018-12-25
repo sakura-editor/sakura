@@ -105,7 +105,6 @@ EConvertResult CCodePage::CPToUni(const char* pSrc, const int nSrcLen, wchar_t* 
 	return RESULT_COMPLETE;
 }
 
-
 /*!	CODEPAGE→Unicodeコード変換
 */
 EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int codepageEx)
@@ -134,8 +133,6 @@ EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int c
 
 	return ret;
 }
-
-
 
 EConvertResult CCodePage::UniToCP(const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstByteLen, int& nRetLen, UINT codepage)
 {
@@ -170,7 +167,6 @@ EConvertResult CCodePage::UniToCP(const wchar_t* pSrc, const int nSrcLen, char* 
 	}
 	return RESULT_COMPLETE;
 }
-
 
 EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int codepageEx)
 {
@@ -242,7 +238,6 @@ void CCodePage::GetBom(CMemory* pcmemBom)
 		pcmemBom->Clear();
 	}
 }
-
 
 // 文字コード表示用	UNICODE → Hex 変換
 EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)

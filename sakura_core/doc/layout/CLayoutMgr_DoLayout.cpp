@@ -191,7 +191,6 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          準処理                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -340,7 +339,6 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		pWork->nPosX		= CLayoutInt(0);	// 表示上のX位置
 		pWork->nIndent		= CLayoutInt(0);	// インデント幅
 
-
 		_MakeOneLine(pWork, &CLayoutMgr::_OnLine1);
 
 		if( pWork->nPos - pWork->nBgn > 0 ){
@@ -380,8 +378,6 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		}
 	}
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     本処理(範囲指定)                        //
@@ -513,7 +509,6 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
 // 2002/03/13 novice
 	}
-
 
 	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
 	if( pWork->nCurLine == m_pcDocLineMgr->GetLineCount() ){

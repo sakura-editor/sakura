@@ -34,7 +34,6 @@ public:
 	virtual bool IsEqual(const CLayoutColorInfo*)const = 0;
 };
 
-
 class CLayoutExInfo
 {
 public:

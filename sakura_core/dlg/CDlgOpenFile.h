@@ -95,10 +95,6 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGOPENFILE_H_ */
-
-
 

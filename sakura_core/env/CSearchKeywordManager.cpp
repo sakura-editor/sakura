@@ -32,7 +32,6 @@
 #include "CSearchKeywordManager.h"
 #include "recent/CRecent.h"
 
-
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI
 */

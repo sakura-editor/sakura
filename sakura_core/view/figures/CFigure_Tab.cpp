@@ -23,9 +23,6 @@ bool CFigure_Tab::Match(const wchar_t* pText, int nTextLen) const
 	return false;
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         描画実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -148,8 +145,6 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	//Xを進める
 	sPos.ForwardDrawCol(tabDispWidthLayout);
 }
-
-
 
 /*
 	タブ矢印描画関数

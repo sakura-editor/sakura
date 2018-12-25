@@ -7,7 +7,6 @@
 #include "window/CEditWnd.h"
 #include "COpeBlk.h"
 
-
 //! 改行コードを統一する
 void CDocVisitor::SetAllEol(CEol cEol)
 {
@@ -79,7 +78,6 @@ void CDocVisitor::SetAllEol(CEol cEol)
 					pcView->GetCaret().GetCaretLogicPos()
 				)
 			);
-
 		}
 		pcView->SetUndoBuffer();
 	}

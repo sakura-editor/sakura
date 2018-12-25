@@ -28,7 +28,6 @@
 #include <vector>
 #include "view/colors/CColorStrategy.h" //SColorStrategyInfo
 
-
 //$$レイアウト構築フロー(DoLayout)も CFigure で行うと整理しやすい
 class CFigure{
 public:

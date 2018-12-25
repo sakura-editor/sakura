@@ -44,14 +44,12 @@ public:
 	bool SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
-
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
 
 private:
 	HWND m_hwnd;
 	BOOL m_bOpenResult;
-
 
 	// -- -- staticインターフェース -- -- //
 public:

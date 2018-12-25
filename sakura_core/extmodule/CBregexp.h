@@ -189,7 +189,6 @@ public:
 
 protected:
 
-
 	//!	コンパイルバッファを解放する
 	/*!
 		m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
@@ -222,15 +221,11 @@ private:
 	static const wchar_t	m_tmpBuf[2];	//!< ダミー文字列
 };
 
-
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
 bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
 bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1, bool bKakomi = false );// 2002/2/1 hor追加
 bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
-
 #endif
-
-
 

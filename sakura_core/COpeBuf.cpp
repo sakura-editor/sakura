@@ -14,7 +14,6 @@
 #include "COpeBuf.h"
 #include "COpeBlk.h"// 2002/2/10 aroka
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -52,8 +51,6 @@ bool COpeBuf::IsEnableRedo() const
 {
 	return 0 < m_vCOpeBlkArr.size() && m_nCurrentPointer < (int)m_vCOpeBlkArr.size();
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           操作                              //
@@ -95,7 +92,6 @@ void COpeBuf::SetNoModified()
 	m_nNoModifiedIndex = m_nCurrentPointer;	/* 無変更な状態になった位置 */
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           使用                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -134,8 +130,6 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 	return pcOpeBlk;
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         デバッグ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -154,6 +148,4 @@ void COpeBuf::DUMP()
 	MYTRACE( _T("COpeBuf.m_nCurrentPointer=[%d]----\n"), m_nCurrentPointer );
 #endif
 }
-
-
 

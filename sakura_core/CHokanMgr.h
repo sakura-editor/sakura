@@ -19,7 +19,6 @@
 #include "dlg/CDialog.h"
 #include "util/container.h"
 
-
 /*! @brief キーワード補完
 
 	@date 2003.06.25 Moca ファイル内からの補完機能を追加
@@ -57,7 +56,6 @@ public:
 	BOOL DoHokan(int nVKey);
 	void ChangeView(LPARAM pcEditView);/* モードレス時：対象となるビューの変更 */
 
-
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL OnDestroy( void );
@@ -90,10 +88,6 @@ protected:
 
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CHOKANMGR_H_ */
-
-
 

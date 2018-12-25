@@ -76,8 +76,6 @@ retry:;
 	return;
 }
 
-
-
 /*! キャレット位置の単語を辞書検索ON-OFF
 
 	@date 2006.03.24 fon 新規作成
@@ -97,16 +95,12 @@ void CViewCommander::Command_ToggleKeySearch( int option )
 	}
 }
 
-
-
 /* ヘルプ目次 */
 void CViewCommander::Command_HELP_CONTENTS( void )
 {
 	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	目次を表示する
 	return;
 }
-
-
 
 /* ヘルプキーワード検索 */
 void CViewCommander::Command_HELP_SEARCH( void )
@@ -115,12 +109,9 @@ void CViewCommander::Command_HELP_SEARCH( void )
 	return;
 }
 
-
-
 /* コマンド一覧 */
 void CViewCommander::Command_MENU_ALLFUNC( void )
 {
-
 	UINT	uFlags;
 	POINT	po;
 	RECT	rc;
@@ -194,8 +185,6 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	return;
 }
 
-
-
 /* 外部ヘルプ１
 	@date 2012.09.26 Moca HTMLHELP対応
 */
@@ -247,8 +236,6 @@ retry:;
 	}
 	return;
 }
-
-
 
 /*!
 	外部HTMLヘルプ
@@ -367,8 +354,6 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 
 	return;
 }
-
-
 
 /* バージョン情報 */
 void CViewCommander::Command_ABOUT( void )

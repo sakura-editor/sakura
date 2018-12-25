@@ -81,7 +81,6 @@ public:
 	void TABToSPACE(int nTabSpace); // TAB→空白
 	void SPACEToTAB(int nTabSpace); // 空白→TAB  //---- Stonee, 2001/05/27
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                  型限定インターフェース                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

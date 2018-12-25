@@ -32,7 +32,6 @@
 
 void _DefaultConfig(STypeConfig* pType);
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          CType                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,7 +53,6 @@ void CType::InitTypeConfig(int nIdx, STypeConfig& type)
 	//個別設定
 	InitTypeConfigImp(&type);
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        CShareData                           //
@@ -144,7 +142,6 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 #undef PopulateKeyword
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        デフォルト                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -213,7 +210,6 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bRTrimPrevLine = false;		// 2005.10.11 ryoji 改行時に末尾の空白を削除
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
-
 
 	assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr) );
 	for( int i = 0; i < COLORIDX_LAST; ++i ){

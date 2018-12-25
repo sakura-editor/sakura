@@ -33,7 +33,6 @@
 //                           IME                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
 /*!	IME ONか
 
 	@date  2006.12.04 ryoji 新規作成（関数化）
@@ -89,7 +88,6 @@ void CEditView::SetIMECompFormPos( void )
 	}
 }
 
-
 /* IME編集エリアの表示フォントを変更 */
 void CEditView::SetIMECompFormFont( void )
 {
@@ -106,7 +104,6 @@ void CEditView::SetIMECompFormFont( void )
 	}
 	::ImmReleaseContext( GetHwnd() , hIMC );
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          再変換・変換補助
@@ -219,7 +216,6 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	if( nLineLen <  ptSelect.x + nSelectedLen ){
 		nSelectedLen = nLineLen - ptSelect.x;
 	}
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//              再変換範囲・考慮文字を修正                     //
@@ -507,5 +503,4 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 	m_nLastReconvLine  = -1;
 
 	return 1;
-
 }

@@ -56,7 +56,6 @@ CGraphics::~CGraphics()
 //                       クリッピング                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
 void CGraphics::_InitClipping()
 {
 	if(m_vClippingRgns.empty()){
@@ -107,7 +106,6 @@ void CGraphics::ClearClipping()
 	m_vClippingRgns.clear();
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキスト文字色                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -140,7 +138,6 @@ void CGraphics::ClearTextForeColor()
 	}
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキスト背景色                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -172,8 +169,6 @@ void CGraphics::ClearTextBackColor()
 		m_vTextBackColors.clear();
 	}
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         テキスト                            //
@@ -264,7 +259,6 @@ void CGraphics::PopPen()
 	}
 }
 
-
 void CGraphics::ClearPen()
 {
 	if(m_hpnOrg){
@@ -292,7 +286,6 @@ COLORREF CGraphics::GetPenColor() const
 	}
 	return 0;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ブラシ                             //
@@ -345,11 +338,9 @@ void CGraphics::ClearBrush()
 	m_vBrushes.resize(t_min(1,(int)m_vBrushes.size()));
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           直線                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 //$$note:高速化
 void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
@@ -376,7 +367,6 @@ void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 		if(my<0 && y<=y2)break;
 	}
 }
-
 
 // ドロップ先矩形描画用のリージョンを作成する
 static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)

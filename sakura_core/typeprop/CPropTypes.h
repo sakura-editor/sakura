@@ -129,7 +129,6 @@ protected:
 	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps, bool bUse = true );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
 };
 
-
 /*!
 	@brief タイプ別設定プロパティページクラス
 
@@ -254,7 +253,6 @@ void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr,
 		vec.push_back( item );
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CPROPTYPES_E8B842DB_7434_4B94_8B6F_52C4FA9D1F3AP_H_ */

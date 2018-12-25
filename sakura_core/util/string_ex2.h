@@ -56,9 +56,7 @@ const wchar_t* GetNextLineW ( const wchar_t* pData, int nDataLen, int* pnLineLen
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)  // 未使用
 void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn );
 
-
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
-
 
 /*!	&の二重化
 	メニューに含まれる&を&&に置き換える
@@ -68,7 +66,6 @@ int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 */
 inline void dupamp(const TCHAR* org, TCHAR* out)
 {	cescape( org, out, _T('&'), _T('&') ); }
-
 
 /*
 	scanf的安全スキャン

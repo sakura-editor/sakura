@@ -198,7 +198,6 @@ LRESULT CPrintPreview::OnPaint(
 	nCy = (nCy * COMPAT_BMP_BASE) / m_nbmpCompatScale;
 	::SetWindowExtEx( hdc, nCx, nCy, &sz );
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         フォント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -206,7 +205,6 @@ LRESULT CPrintPreview::OnPaint(
 	CreateFonts( hdc );
 	// 印刷用半角フォントに設定し、以前のフォントを保持
 	HFONT	hFontOld = (HFONT)::SelectObject( hdc, m_hFontHan );
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           原点                              //
@@ -219,7 +217,6 @@ LRESULT CPrintPreview::OnPaint(
 		((nToolBarHeight + m_nPreviewVScrollPos) * m_nbmpCompatScale) / COMPAT_BMP_BASE,
 		&poViewPortOld
 	);
-
 
 	// 以下 0.1mm座標でレンダリング
 
@@ -254,7 +251,6 @@ LRESULT CPrintPreview::OnPaint(
 	cRect.top    = nDirectY * ( m_nPreview_ViewMarginTop +                              m_pPrintSetting->m_nPrintMarginTY + 5);
 	cRect.bottom = nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + 5));
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         テキスト                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -265,7 +261,6 @@ LRESULT CPrintPreview::OnPaint(
 	if( nHeaderHeight ){
 		DrawHeaderFooter( hdc, cRect, true );
 	}
-
 
 	CColorStrategy* pStrategyStart = DrawPageTextFirst( m_nCurPageNum );
 
@@ -284,7 +279,6 @@ LRESULT CPrintPreview::OnPaint(
 		DrawHeaderFooter( hdc, cRect, false );
 	}
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          後始末                             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -299,7 +293,6 @@ LRESULT CPrintPreview::OnPaint(
 
 	// 物理座標原点をもとに戻す
 	::SetViewportOrgEx( hdc, poViewPortOld.x, poViewPortOld.y, NULL );
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       実画面へ転送                          //
@@ -719,7 +712,6 @@ void CPrintPreview::OnChangePrintSetting( void )
 	LOGFONT aLogFontArray[] = {m_lfPreviewHan, m_lfPreviewZen};
 	InitCharWidthCacheFromDC( aLogFontArray, CWM_FONT_PRINT, hdc );
 
-
 	bool bLockOld = m_bLockSetting;
 	m_bLockSetting = true;
 
@@ -1018,7 +1010,6 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 	return;
 }
 
-
 /*!
 	滑らか
 	チェック時、2倍(COMPAT_BMP_SCALE/COMPAT_BMP_BASE)サイズでレンダリングする
@@ -1030,8 +1021,6 @@ void CPrintPreview::OnCheckAntialias( void )
 	::GetClientRect( m_pParentWnd->GetHwnd(), &rc );
 	OnSize( SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 }
-
-
 
 /*!
 	印刷
@@ -1231,7 +1220,6 @@ void CPrintPreview::OnPrint( void )
 	return;
 }
 
-
 // Tab文字をSpace文字に置換え
 static void Tab2Space(wchar_t* pTrg)
 {
@@ -1239,7 +1227,6 @@ static void Tab2Space(wchar_t* pTrg)
 		if (*pTrg == L'\t')	*pTrg = L' ';
 	}
 }
-
 
 /*! 印刷/印刷プレビュー ヘッダ･フッタの描画
 */
@@ -1437,7 +1424,6 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 	return pStrategy;
 }
 
-
 /* 印刷/印刷プレビュー ページテキストの描画
 	DrawPageTextでは、行番号を（半角フォントで）印刷。
 	本文はPrint_DrawLineにお任せ
@@ -1589,9 +1575,6 @@ CColorStrategy* CPrintPreview::DrawPageText(
 	}
 	return pStrategy;
 }
-
-
-
 
 /* 印刷プレビュー スクロールバー初期化 */
 void CPrintPreview::InitPreviewScrollBar( void )
@@ -1894,7 +1877,6 @@ CColorStrategy* CPrintPreview::GetColorStrategy(
 	return pStrategy;
 }
 
-
 /*	印刷プレビューフォント（半角）を設定する
 	typedef struct tagLOGFONT {
 	   LONG lfHeight; 
@@ -1921,7 +1903,6 @@ void CPrintPreview::SetPreviewFontHan( const LOGFONT* lf )
 	m_lfPreviewHan.lfHeight			= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth	= 0;
 	_tcscpy(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan);
-
 }
 
 void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
@@ -2033,14 +2014,12 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	);
 	::ShowWindow( m_hwndPrintPreviewBar, SW_SHOW );
 
-
 	/* WM_SIZE 処理 */
 	RECT		rc1;
 	::GetClientRect( m_pParentWnd->GetHwnd(), &rc1 );
 	OnSize( SIZE_RESTORED, MAKELONG( rc1.right - rc1.left, rc1.bottom - rc1.top ) );
 	return;
 }
-
 
 /*!
 	印刷プレビューに必要だったコントロールを破棄する
@@ -2119,8 +2098,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 {
 	WORD				wNotifyCode;
 	WORD				wID;
-
-
 
 	switch( uMsg ){
 
@@ -2204,8 +2181,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	}
 	return FALSE;
 }
-
-
 
 // 印刷用フォントを作成する
 void CPrintPreview::CreateFonts( HDC hdc )

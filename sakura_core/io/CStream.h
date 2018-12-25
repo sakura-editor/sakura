@@ -83,7 +83,6 @@ private:
 	bool			m_bExceptionMode;
 };
 
-
 class COutputStream : public CStream{
 public:
 	COutputStream(const TCHAR* tszPath, const TCHAR* tszMode, bool bExceptionMode = false)

@@ -55,7 +55,6 @@ void CViewSelect::BeginSelectArea( const CLayoutPoint* po )
 	m_sSelect.   Set(*po); //範囲選択
 }
 
-
 // 現在の選択範囲を非選択状態に戻す
 void CViewSelect::DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine )
 {
@@ -79,10 +78,7 @@ void CViewSelect::DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine )
 
 	// 2002.02.16 hor 直前のカーソル位置をリセット
 	pView2->GetCaret().m_nCaretPosX_Prev=pView->GetCaret().GetCaretLayoutPos().GetX();
-
 }
-
-
 
 // 現在のカーソル位置によって選択範囲を変更
 void CViewSelect::ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos )
@@ -100,7 +96,6 @@ void CViewSelect::ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPo
 	DrawSelectArea(true);
 	m_bSelectAreaChanging = false;
 }
-
 
 // 現在のカーソル位置によって選択範囲を変更(テストのみ)
 void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
@@ -148,8 +143,6 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 		}
 	}
 }
-
-
 
 /*! 選択領域の描画
 
@@ -310,7 +303,6 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		const int nCharWidth = pView->GetTextMetrics().GetCharPxWidth();
 		const int nCharHeight = pView->GetTextMetrics().GetHankakuDy();
 
-
 		// 2点を対角とする矩形を求める
 		CLayoutRect  rcOld;
 		TwoPointToRect(
@@ -405,7 +397,6 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		// デバッグ用 リージョン矩形のダンプ
 //@@		TraceRgn( hrgnDraw );
 
-
 		if( NULL != hrgnDraw ){
 			::DeleteObject( hrgnDraw );
 		}
@@ -480,9 +471,6 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 	::SelectObject( hdc, hBrushOld );
 	::DeleteObject( hBrush );
 }
-
-
-
 
 /*! 選択領域の中の指定行の描画
 
@@ -771,7 +759,6 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					select_sum = m_nLastSelectedByteLen - cmemCode.GetRawLength();
 				}
 				thiz->m_nLastSelectedByteLen = select_sum;
-
 			}
 			else{
 				//  文字数でカウント

@@ -52,8 +52,6 @@ protected:
 	static int UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError );
 };
 
-
-
 /*!
 	EUCJP(CP51932) の全角一文字または半角片仮名一文字の変換
 
@@ -121,7 +119,6 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 	return nret;
 }
 
-
 /*
 	Unicode -> EUCJP 一文字変換
 
@@ -183,7 +180,6 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 		pDst[0] = '?';
 		nret = 1;
 	}
-
 
 	if( pbError ){
 		*pbError = berror;

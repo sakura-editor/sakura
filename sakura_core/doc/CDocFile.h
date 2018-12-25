@@ -52,7 +52,6 @@ public:
 	void	SetFileTime( FILETIME& Time )			{ cFileTime.SetFILETIME( Time ); }
 };
 
-
 class CDocFile : public CFile{
 public:
 	CDocFile(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) {}

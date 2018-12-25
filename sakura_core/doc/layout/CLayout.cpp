@@ -17,8 +17,6 @@
 #include "charset/charcode.h"
 #include "extmodule/CBregexp.h" // CLayoutMgrの定義で必要
 
-
-
 CLayout::~CLayout()
 {
 	return;
@@ -79,6 +77,4 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nSt
 	}
 	return nRet;
 }
-
-
 

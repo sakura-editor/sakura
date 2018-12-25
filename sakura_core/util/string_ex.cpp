@@ -8,12 +8,9 @@
 
 int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           文字                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       拡張・独自実装                        //
@@ -44,7 +41,6 @@ int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }
 
-
 LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 {
 	size_t len2=wcslen(lpString2);
@@ -53,7 +49,6 @@ LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 	lpString1[len2]=L'\0';
 	return lpString1;
 }
-
 
 /*
 	TCHAR と WCHAR または ACHAR の変換関数
@@ -99,7 +94,6 @@ TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count )
 	return pw;
 }
 
-
 /*! 文字数制限機能付きstrncpy
 
 	コピー先のバッファサイズから溢れないようにstrncpyする。
@@ -124,7 +118,6 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	auto_memcpy( dst, src, src_count );
 	return dst + src_count;
 }
-
 
 const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
 {
@@ -217,8 +210,6 @@ const char* stristr_j( const char* s1, const char* s2 )
 	}
 	return NULL;
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           互換                              //
@@ -348,11 +339,9 @@ int _vsnwprintf_s(wchar_t *buf, size_t num, size_t count, const wchar_t *fmt, va
 }
 #endif
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 //SJIS→UNICODE。終端にL'\0'を付けてくれる版。
 size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
@@ -496,7 +485,6 @@ void mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret)
 	(*ret)[nNewLen]=L'\0';
 }
 
-
 //UNICODE→SJIS。戻り値はvectorとして返す。
 void wcstombs_vector(const wchar_t* src, std::vector<char>* ret)
 {
@@ -592,8 +580,6 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	}
 #endif
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -620,11 +606,6 @@ int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
 	}
 	return 0;
 }
-
-
-
-
-
 
 /*!
 	空白を含むファイル名を考慮したトークンの分割
@@ -677,9 +658,6 @@ CHAR_TYPE* my_strtok(
 template ACHAR* my_strtok(ACHAR*,int,int*,const ACHAR*);
 template WCHAR* my_strtok(WCHAR*,int,int*,const WCHAR*);
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -707,8 +685,6 @@ int my_mbtoupper2( int c )
 }
 #endif  /* MY_ICMP_MBS */
 
-
-
 #ifdef MY_ICMP_MBS
 /*!	全角アルファベットの２文字目を小文字に変換する。
 	@param c [in] 変換する文字コード
@@ -721,8 +697,6 @@ int my_mbtolower2( int c )
 	return c;
 }
 #endif  /* MY_ICMP_MBS */
-
-
 
 #ifdef MY_ICMP_MBS
 /*!	全角アルファベットの２文字目か調べる。
@@ -737,9 +711,6 @@ int my_mbisalpha2( int c )
 	return 0;
 }
 #endif  /* MY_ICMP_MBS */
-
-
-
 
 /*!	大文字小文字を同一視する文字列長さ制限比較をする。
 	@param s1   [in] 文字列１
@@ -850,7 +821,6 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 	return 0;
 }
 
-
 // skr_towupper() / skr_tolower()
 //
 // 2010.09.28 ryoji
@@ -901,7 +871,6 @@ int skr_towlower( int c )
 #endif
 	return towlower( (wchar_t)c );
 }
-
 
 //! wcがasciiなら0-127のまま返す。それ以外は0を返す。
 inline static uchar_t wc_to_c(wchar_t wc)
@@ -1037,7 +1006,6 @@ inline static bool IsMailAddressDomain(
 	_In_ const wchar_t* pszEnd,
 	_Out_ const wchar_t** ppszEndOfMailBox
 ) noexcept;
-
 
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可

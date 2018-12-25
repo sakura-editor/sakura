@@ -97,7 +97,6 @@ int MessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, 
 	return nRet;
 }
 
-
 //エラー：赤丸に「×」[OK]
 int ErrorMessage   (HWND hwnd, LPCTSTR format, ...){      va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP                     , GSTR_APPNAME,   format, p);va_end(p);return n;}
 int TopErrorMessage(HWND hwnd, LPCTSTR format, ...){      va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST        , GSTR_APPNAME,   format, p);va_end(p);return n;}	//(TOPMOST)
@@ -128,6 +127,4 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){   va_list p;va
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, LS(STR_ERR_DLGDOCLMN1), format, p);va_end(p);return n;}
-
-
 

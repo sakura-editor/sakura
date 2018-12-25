@@ -32,7 +32,6 @@
 #include <limits.h>
 #include "sakura_rc.h"
 
-
 /*!
 検索(ボックス)コマンド実行.
 ツールバーの検索ボックスにフォーカスを移動する.
@@ -42,8 +41,6 @@ void CViewCommander::Command_SEARCH_BOX( void )
 {
 	GetEditWindow()->m_cToolbar.SetFocusSearchBox();
 }
-
-
 
 /* 検索(単語検索ダイアログ) */
 void CViewCommander::Command_SEARCH_DIALOG( void )
@@ -67,8 +64,6 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 	}
 	return;
 }
-
-
 
 /*! 次を検索
 	@param bChangeCurRegexp 共有データの検索文字列を使う
@@ -325,8 +320,6 @@ end_of_func:;
 	}
 }
 
-
-
 /* 前を検索 */
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
@@ -375,7 +368,6 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 
 	nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-
 
 	if( NULL == pcLayout ){
 		// pcLayoutはNULLとなるのは、[EOF]から前検索した場合
@@ -482,8 +474,6 @@ end_of_func:;
 	return;
 }
 
-
-
 //置換(置換ダイアログ)
 void CViewCommander::Command_REPLACE_DIALOG( void )
 {
@@ -526,8 +516,6 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
 }
-
-
 
 /*! 置換実行
 	
@@ -716,8 +704,6 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	}
 }
 
-
-
 /*! すべて置換実行
 
 	@date 2003.05.22 かろと 無限マッチ対策．行頭・行末処理など見直し
@@ -730,7 +716,6 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 */
 void CViewCommander::Command_REPLACE_ALL()
 {
-
 	// m_sSearchOption選択のための先に適用
 	if( !m_pCommanderView->ChangeCurRegexp() ){
 		return;
@@ -876,7 +861,6 @@ void CViewCommander::Command_REPLACE_ALL()
 		{
 			ErrorBeep();
 			m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
-
 
 			::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
 			::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
@@ -1164,7 +1148,6 @@ void CViewCommander::Command_REPLACE_ALL()
 				}
 			}
 		}
-
 
 		CLayoutPoint ptTmp(0,0);
 		CLogicPoint  ptTmpLogic(0,0);
@@ -1513,8 +1496,6 @@ void CViewCommander::Command_REPLACE_ALL()
 	ActivateFrameWindow( GetMainWindow() );
 }
 
-
-
 //検索マークの切替え	// 2001.12.03 hor クリア を 切替え に変更
 void CViewCommander::Command_SEARCH_CLEARMARK( void )
 {
@@ -1558,8 +1539,6 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 	m_pCommanderView->RedrawAll();
 	return;
 }
-
-
 
 //	Jun. 16, 2000 genta
 //	対括弧の検索

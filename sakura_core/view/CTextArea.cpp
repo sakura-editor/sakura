@@ -144,7 +144,6 @@ bool CTextArea::GenerateClipRectLine(RECT* rc,const DispPos& sPos) const
 	return true;
 }
 
-
 /*
 行番号表示に必要な幅を設定。幅が変更された場合はTRUEを返す
 */
@@ -208,7 +207,6 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		return false;
 	}
 }
-
 
 /*!
 	行番号表示に必要な桁数を計算
@@ -279,8 +277,6 @@ void CTextArea::TextArea_OnSize(
 	UpdateViewColRowNums();
 }
 
-
-
 int CTextArea::GetDocumentLeftClientPointX() const
 {
 	return GetAreaLeft() - m_pEditView->GetTextMetrics().GetCharPxWidth(GetViewLeftCol());
@@ -295,7 +291,6 @@ void CTextArea::ClientToLayout(CMyPoint ptClient, CLayoutPoint* pptLayout) const
 		GetViewTopLine() + CLayoutInt( (ptClient.y - GetAreaTop()) / pView->GetTextMetrics().GetHankakuDy() )
 	);
 }
-
 
 //! 行番号エリアも含む範囲
 void CTextArea::GenerateTopRect   (RECT* rc, CLayoutInt nLineCount) const
@@ -346,7 +341,6 @@ void CTextArea::GenerateTextAreaRect(RECT* rc) const
 	rc->top    = m_nViewAlignTop;
 	rc->bottom = m_nViewAlignTop + m_nViewCy;
 }
-
 
 int CTextArea::GenerateYPx(CLayoutYInt nLineNum) const
 {

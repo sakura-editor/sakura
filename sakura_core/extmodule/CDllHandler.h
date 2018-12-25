@@ -65,7 +65,6 @@ private:
 	DLLIMP*	m_pcDllImp;
 };
 
-
 //!結果定数
 enum EDllResult{
 	DLL_SUCCESS,		//成功
@@ -198,7 +197,6 @@ protected:
 protected:
 	bool RegisterEntries(const ImportTable table[]);
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -208,6 +206,4 @@ private:
 };
 
 #endif
-
-
 

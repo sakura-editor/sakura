@@ -51,9 +51,6 @@ void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-
-
-
 //	From Here June 23, 2001 N.Nakatani
 //!	Visual Basic関数リスト作成（簡易版）
 /*!
@@ -86,7 +83,6 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	bool		bProcedure;		// プロシージャフラグ（プロシージャ内ではTrue）
 	bool		bDQuote;		// ダブルクォーテーションフラグ（ダブルクォーテーションがきたらTrue）
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-
 
 	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
 	bClass	= false;
@@ -400,8 +396,6 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 //	To Here June 23, 2001 N.Nakatani
-
-
 
 //Jul. 10, 2001 JEPRO 追加
 const wchar_t* g_ppszKeywordsVB[] = {
