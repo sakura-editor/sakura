@@ -179,7 +179,6 @@ public:
 	int  GetCurPageNum(){ return m_nCurPageNum; }	/* 現在のページ */
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
-	
 	/*
 	||	ヘッダ・フッタ
 	*/

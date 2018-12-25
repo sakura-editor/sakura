@@ -35,7 +35,6 @@
 #ifndef SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
 #define SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       定数命名補助                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -553,7 +552,6 @@
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -586,7 +584,6 @@
 //! 初期化完了イベント
 #define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -599,7 +596,6 @@
 
 //! ビュー
 #define	GSTR_VIEWNAME		(_T("SakuraView")												_T(STR_SHAREDATA_VERSION))
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         リソース                            //
@@ -614,13 +610,11 @@
 #define ICON_DEFAULT_APP IDI_ICON_STD
 #define ICON_DEFAULT_GREP IDI_ICON_GREP
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      パフォーマンス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //バッファサイズ
 const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          フラグ                             //
@@ -629,8 +623,6 @@ const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読
 #define _SHIFT	0x00000001
 #define _CTRL	0x00000002
 #define _ALT	0x00000004
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        メッセージ                           //
@@ -661,8 +653,6 @@ enum e_PM_CHANGESETTING_SELECT {
 
 //! タスクトレイからの通知メッセージ
 #define MYWM_NOTIFYICON		(WM_APP+100)
-
-
 
 /*! トレイからエディタへの終了要求 */
 #define	MYWM_CLOSE			(WM_APP+200)
@@ -705,7 +695,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 	@date 2014.05.07 仕様変更。戻り値のマイナス lParamに意味を追加
 */
 #define	MYWM_GETLINEDATA	(WM_APP+208)
-
 
 /*! 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 #define	MYWM_DELETE_ME		(WM_APP+209)
@@ -756,7 +745,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 //! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
-
 
 #endif /* SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_ */
 /*[EOF]*/

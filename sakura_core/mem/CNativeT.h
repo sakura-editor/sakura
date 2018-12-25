@@ -34,7 +34,6 @@ typedef CNativeW CNativeT;
 typedef CNativeA CNativeT;
 #endif
 
-
 #include "mem/CNativeA.h"
 #include "mem/CNativeW.h"
 

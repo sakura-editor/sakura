@@ -29,7 +29,6 @@
 #include "config/maxdata.h"
 #include "types/CType.h"
 
-
 /*! ファイル情報
 
 	@date 2002.03.07 genta m_szDocType追加

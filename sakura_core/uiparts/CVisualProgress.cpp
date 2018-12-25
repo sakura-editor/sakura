@@ -5,7 +5,6 @@
 
 #include "window/CEditWnd.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -21,7 +20,6 @@ CVisualProgress::~CVisualProgress()
 	SAFE_DELETE(m_pcWaitCursor);
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ロード前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -35,7 +33,6 @@ void CVisualProgress::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	_End();
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -51,7 +48,6 @@ void CVisualProgress::OnFinalSave(ESaveResult eSaveResult)
 	_End();
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      プログレス受信                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -60,7 +56,6 @@ void CVisualProgress::OnProgress(int nPer)
 {
 	_Doing(nPer);
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //

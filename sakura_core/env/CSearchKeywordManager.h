@@ -31,7 +31,6 @@
 // 要先行定義
 // #include "DLLSHAREDATA.h"
 
-
 //共有メモリ内構造体
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //

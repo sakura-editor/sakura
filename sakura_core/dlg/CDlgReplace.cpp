@@ -114,9 +114,6 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 	return;
 }
 
-
-
-
 /* ダイアログデータの設定 */
 void CDlgReplace::SetData( void )
 {
@@ -157,7 +154,6 @@ void CDlgReplace::SetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
 
-
 	/* 置換 ダイアログを自動的に閉じる */
 	::CheckDlgButton( GetHwnd(), IDC_CHECK_bAutoCloseDlgReplace, m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace );
 
@@ -186,8 +182,6 @@ void CDlgReplace::SetData( void )
 
 	return;
 }
-
-
 
 // 検索文字列/置換後文字列リストの設定
 //	2010/5/26 Uchi
@@ -220,7 +214,6 @@ void CDlgReplace::SetCombosList( void )
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	}
 }
-
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力  0より大きい==正常   0より小さい==入力エラー */
@@ -332,9 +325,6 @@ int CDlgReplace::GetData( void )
 	}
 }
 
-
-
-
 BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
@@ -349,7 +339,6 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
-
 
 	/* テキスト選択中か */
 	if( m_bSelected ){
@@ -382,11 +371,7 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
-
 }
-
-
-
 
 BOOL CDlgReplace::OnDestroy()
 {
@@ -394,8 +379,6 @@ BOOL CDlgReplace::OnDestroy()
 	m_cFontText2.ReleaseOnDestroy();
 	return CDialog::OnDestroy();
 }
-
-
 
 BOOL CDlgReplace::OnBnClicked( int wID )
 {
@@ -509,7 +492,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 //			::EndDialog( hwndDlg, 0 );
 //		}
 //		return TRUE;
-
 
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */
 		nRet = GetData();
@@ -638,5 +620,4 @@ LPVOID CDlgReplace::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 

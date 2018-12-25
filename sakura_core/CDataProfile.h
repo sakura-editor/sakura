@@ -70,7 +70,6 @@ typedef const StringBufferW_ StringBufferW;
 #define MakeStringBufferW0(S) StringBufferW(S,0)
 #define MakeStringBufferT0(S) StringBufferT(S,0)
 
-
 //2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile
 class CDataProfile : public CProfile{
@@ -208,8 +207,6 @@ protected:
 	{
 		*profile = value;
 	}
-
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         入出力部                            //

@@ -76,7 +76,6 @@ public:
 	// 固定文字1桁あたりのレイアウト幅を取得する
 	CLayoutXInt GetLayoutXDefault() const{ return GetLayoutXDefault(CKetaXInt(1));}
 	
-
 	//文字間隔配列を取得
 	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
 	const int* GetDxArray_AllZenkaku() const{ return m_anZenkakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。

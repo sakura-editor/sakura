@@ -28,7 +28,6 @@
 #include <string.h>
 #include "env/DLLSHAREDATA.h"
 
-
 /*
 	アイテムの比較要素を取得する。
 
@@ -38,9 +37,6 @@ const TCHAR* CRecentFile::GetItemText( int nIndex ) const
 {
 	return GetItem(nIndex)->m_szPath;
 }
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

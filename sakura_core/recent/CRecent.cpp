@@ -33,6 +33,5 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 

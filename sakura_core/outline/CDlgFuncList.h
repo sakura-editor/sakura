@@ -57,7 +57,6 @@ public:
 	EFileTreeSettingFrom	m_eFileTreeSettingLoadType;
 };
 
-
 //!	アウトライン解析ダイアログボックス
 class CDlgFuncList : public CDialog
 {
@@ -224,10 +223,6 @@ private:
 	RECT				m_rcItems[12];
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGFUNCLIST_H_ */
-
-
 

@@ -45,7 +45,6 @@ inline bool IsHeadCppKeyword(const wchar_t* pData)
 	return false;
 }
 
-
 /* C/C++ */
 // Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読めるようにする
 // Jan. 24, 2004 genta 関連づけ上好ましくないのでdsw,dsp,dep,makははずす
@@ -69,10 +68,8 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-
 //	Mar. 15, 2000 genta
 //	From Here
-
 
 /*!
 	関数に用いることができる文字かどうかの判定
@@ -157,7 +154,6 @@ static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
 		wcscmp( s, L"noexcept" ) == 0
 		;
 }
-
 
 /*!
 	Cプリプロセッサの #if/ifdef/ifndef - #else - #endif状態管理クラス
@@ -323,7 +319,6 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 	- 1	単語読み込み中
 	- 2	記号列読み込み中
 	- 999	長過ぎる単語無視中
-
 
 	@par FuncIdの値の意味
 	10の位で目的別に使い分けている．C/C++用は10位が0
@@ -1253,7 +1248,6 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	}
 }
 
-
 struct SCommentBlock{
 	int nFirst;
 	int nLast;
@@ -1268,8 +1262,6 @@ static bool IsCommentBlock( std::vector<SCommentBlock>& arr, int pos )
 	}
 	return false;
 }
-
-
 
 /* C/C++スマートインデント処理 */
 void CEditView::SmartIndent_CPP( wchar_t wcChar )
@@ -1322,7 +1314,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			/* 調整によって置換される箇所 */
 			sRangeA.Set(CLogicPoint(0,GetCaret().GetCaretLogicPos().y));
 		}else{
-
 
 			//	nWorkに処理の基準桁位置を設定する
 			if( WCODE::CR != wcChar ){
@@ -1378,10 +1369,8 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			sRangeA.SetTo(CLogicPoint(i, GetCaret().GetCaretLogicPos().GetY2()));
 		}
 
-
 		/* 対応する括弧をさがす */
 		nLevel = 0;	/* {}の入れ子レベル */
-
 
 		nDataLen = CLogicInt(0);
 		for( j = GetCaret().GetCaretLogicPos().GetY2(); j >= CLogicInt(0); --j ){
@@ -1551,7 +1540,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						}else{
 							nLevel--;	/* {}の入れ子レベル */
 						}
-
 					}
 				}
 				nCharChars = CLogicInt(&pLine2[k] - CNativeW::GetCharPrev( pLine2, nLineLen2, &pLine2[k] ));
@@ -1606,7 +1594,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				}
 			}else{
 				pszData[nDataLen] = L'\0';
-
 			}
 			break;
 		}
@@ -1638,7 +1625,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			pszSrc[nSrcLen] = L'\0';
 		}
 
-
 		/* 調整によって置換される箇所 */
 		CLayoutRange sRangeLayout;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( sRangeA, &sRangeLayout );
@@ -1668,7 +1654,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			);
 		}
 
-
 		/* カーソル位置調整 */
 		CLayoutPoint ptCP_Layout;
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCP, &ptCP_Layout );
@@ -1676,7 +1661,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		/* 選択エリアの先頭へカーソルを移動 */
 		GetCaret().MoveCursor( ptCP_Layout, true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
-
 
 		if( bChange && !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
@@ -1693,8 +1677,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		pszData = NULL;
 	}
 }
-
-
 
 const wchar_t* g_ppszKeywordsCPP[] = {
 	L"#define",

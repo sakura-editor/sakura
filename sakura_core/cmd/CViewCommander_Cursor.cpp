@@ -25,7 +25,6 @@
 #include "CMarkMgr.h"/// 2002/2/3 aroka 追加
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 
-
 void CViewCommander::Command_MOVECURSOR(CLogicPoint pos, int option)
 {
 	if( pos.GetX2() < 0 || pos.GetY2() < 0 ){
@@ -36,8 +35,6 @@ void CViewCommander::Command_MOVECURSOR(CLogicPoint pos, int option)
 	GetDocument()->m_cLayoutMgr.LogicToLayout(pos, &layoutPos);
 	Command_MOVECURSORLAYOUT(layoutPos, option);
 }
-
-
 
 void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 {
@@ -71,7 +68,6 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 		}
 	}
 
-
 	GetCaret().GetAdjustCursorPos( &pos );
 	// 選択
 	if( bSelect || bBoxSelect ){
@@ -80,7 +76,6 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 	GetCaret().MoveCursor( pos, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
-
 
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
 
@@ -93,7 +88,6 @@ int CViewCommander::Command_UP( bool bSelect, bool bRepeat, int lines )
 		return 1;
 	}
 	//	To Here Oct. 24, 2001 genta
-
 
 	int		nRepeat = 0;
 
@@ -120,8 +114,6 @@ int CViewCommander::Command_UP( bool bSelect, bool bRepeat, int lines )
 	}
 	return nRepeat;
 }
-
-
 
 /* カーソル下移動 */
 int CViewCommander::Command_DOWN( bool bSelect, bool bRepeat )
@@ -151,8 +143,6 @@ int CViewCommander::Command_DOWN( bool bSelect, bool bRepeat )
 	}
 	return nRepeat;
 }
-
-
 
 /*! @brief カーソル左移動
 
@@ -258,8 +248,6 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 	}
 	return nRes;
 }
-
-
 
 /*! @brief カーソル右移動
 	@date 2014.01.10 Moca キーリピート時、MoveCursorを一度にまとめる
@@ -391,8 +379,6 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 	return;
 }
 
-
-
 /* カーソル上移動(２行づつ) */
 void CViewCommander::Command_UP2( bool bSelect )
 {
@@ -400,16 +386,12 @@ void CViewCommander::Command_UP2( bool bSelect )
 	return;
 }
 
-
-
 /* カーソル下移動(２行づつ) */
 void CViewCommander::Command_DOWN2( bool bSelect )
 {
 	GetCaret().Cursor_UPDOWN( CLayoutInt(2), bSelect );
 	return;
 }
-
-
 
 /* 単語の左端に移動 */
 void CViewCommander::Command_WORDLEFT( bool bSelect )
@@ -505,8 +487,6 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	}
 	return;
 }
-
-
 
 /* 単語の右端に移動 */
 void CViewCommander::Command_WORDRIGHT( bool bSelect )
@@ -605,8 +585,6 @@ try_again:;
 	return;
 }
 
-
-
 /*! @brief 行頭に移動
 
 	@date Oct. 29, 2001 genta マクロ用機能拡張(パラメータ追加) + goto排除
@@ -631,7 +609,6 @@ void CViewCommander::Command_GOLINETOP(
 	if( lparam & 4 ){
 		bSelect = true;
 	}
-
 
 	CLayoutPoint ptCaretPos;
 	if ( lparam & 8 ){
@@ -695,8 +672,6 @@ void CViewCommander::Command_GOLINETOP(
 	m_pCommanderView->MoveCursorSelecting( ptCaretPos, bSelect );
 }
 
-
-
 /*! 行末に移動(折り返し単位)
 	@praram nOption	0x08 改行単位(合成可)
 */
@@ -748,8 +723,6 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 	GetCaret().m_nCaretPosX_Prev = nPosXY.x;
 }
 
-
-
 /* 半ページアップ */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールダウンそのもの)
 void CViewCommander::Command_HalfPageUp( bool bSelect, CLayoutYInt nScrollNum )
 {
@@ -760,8 +733,6 @@ void CViewCommander::Command_HalfPageUp( bool bSelect, CLayoutYInt nScrollNum )
 	return;
 }
 
-
-
 /* 半ページダウン */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールアップそのもの)
 void CViewCommander::Command_HalfPageDown( bool bSelect, CLayoutYInt nScrollNum )
 {
@@ -771,8 +742,6 @@ void CViewCommander::Command_HalfPageDown( bool bSelect, CLayoutYInt nScrollNum 
 	GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
 	return;
 }
-
-
 
 /*! １ページアップ
 
@@ -802,8 +771,6 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 	}
 	return;
 }
-
-
 
 /*!	１ページダウン
 
@@ -835,8 +802,6 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 	return;
 }
 
-
-
 /* ファイルの先頭に移動 */
 void CViewCommander::Command_GOFILETOP( bool bSelect )
 {
@@ -851,8 +816,6 @@ void CViewCommander::Command_GOFILETOP( bool bSelect )
 	);
 	m_pCommanderView->MoveCursorSelecting( pt, bSelect );	//	通常は、(0, 0)へ移動。ボックス選択中は、(GetCaret().GetCaretLayoutPos().GetX2(), 0)へ移動
 }
-
-
 
 /* ファイルの最後に移動 */
 void CViewCommander::Command_GOFILEEND( bool bSelect )
@@ -885,8 +848,6 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 	}
 }
 
-
-
 /* カーソル行をウィンドウ中央へ */
 void CViewCommander::Command_CURLINECENTER( void )
 {
@@ -905,8 +866,6 @@ void CViewCommander::Command_CURLINECENTER( void )
 	//	Sep. 11, 2004 genta 同期スクロールの関数化
 	m_pCommanderView->SyncScrollV( nScrollLines );
 }
-
-
 
 //	移動履歴を前へたどる
 //
@@ -934,8 +893,6 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 	}
 }
 
-
-
 //	移動履歴を次へたどる
 void CViewCommander::Command_JUMPHIST_NEXT( void )
 {
@@ -953,15 +910,11 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 	}
 }
 
-
-
 //	現在位置を移動履歴に登録する
 void CViewCommander::Command_JUMPHIST_SET( void )
 {
 	m_pCommanderView->AddCurrentLineToHistory();
 }
-
-
 
 // 2001/06/20 Start by asa-o
 
@@ -1005,8 +958,6 @@ void CViewCommander::Command_WndScrollDown( void )
 	GetCaret().m_cUnderLine.CaretUnderLineON( true, true );
 }
 
-
-
 //	from CViewCommander_New.cpp
 // テキストを１行上へスクロール
 void CViewCommander::Command_WndScrollUp(void)
@@ -1046,8 +997,6 @@ void CViewCommander::Command_WndScrollUp(void)
 }
 
 // 2001/06/20 End
-
-
 
 //	from CViewCommander_New.cpp
 /* 次の段落へ進む
@@ -1124,8 +1073,6 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 
 	GetCaret().Cursor_UPDOWN( ptCaretPos_Layo_CaretPointer.y - ptCaretPos_Layo.y, bSelect );
 }
-
-
 
 //	from CViewCommander_New.cpp
 /* 前の段落へ進む

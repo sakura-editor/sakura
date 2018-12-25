@@ -30,9 +30,7 @@
 #include "uiparts/CWaitCursor.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 
-
 using namespace std; // 2002/2/3 aroka to here
-
 
 /* インデント ver1 */
 void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
@@ -53,8 +51,6 @@ void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 	Command_INDENT( &wcChar, CLogicInt(1), eIndent );
 	return;
 }
-
-
 
 /* インデント ver0 */
 /*
@@ -407,8 +403,6 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	return;
 }
 
-
-
 /* 逆インデント */
 void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 {
@@ -545,8 +539,6 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 	m_pCommanderView->RedrawAll();	// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 }
 
-
-
 //	from CViewCommander_New.cpp
 /*! TRIM Step1
 	非選択時はカレント行を選択して m_pCommanderView->ConvSelectedArea → ConvMemory へ
@@ -586,8 +578,6 @@ void CViewCommander::Command_TRIM(
 	if(bBeDisableSelectArea)
 		cViewSelect.DisableSelectArea( true );
 }
-
-
 
 //	from CViewCommander_New.cpp
 /*!	物理行のソートに使う構造体*/
@@ -810,8 +800,6 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	m_pCommanderView->RedrawAll();
 }
 
-
-
 //	from CViewCommander_New.cpp
 /*! @brief 物理行のマージ
 
@@ -949,8 +937,6 @@ void CViewCommander::Command_MERGE(void)
 		InfoMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_DLGEDITVWCMDNW8) );
 	}
 }
-
-
 
 //	from CViewCommander_New.cpp
 /* メニューからの再変換対応 minfu 2002.04.09

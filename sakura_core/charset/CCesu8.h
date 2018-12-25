@@ -28,7 +28,6 @@
 #include "CCodeBase.h"
 #include "CUtf8.h"
 
-
 class CCesu8 : public CCodeBase {
 public:
 

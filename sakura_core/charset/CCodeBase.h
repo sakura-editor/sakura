@@ -89,7 +89,6 @@ inline int CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsi
 	return i;
 }
 
-
 /*!
 	U+DC00 から U+DCFF からバイナリ1バイトを復元
 */

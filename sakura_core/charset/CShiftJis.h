@@ -57,8 +57,6 @@ protected:
 	static int UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
 };
 
-
-
 /*!
 	SJIS の全角一文字または半角一文字のUnicodeへの変換
 
@@ -101,9 +99,6 @@ inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short
 
 	return nret;
 }
-
-
-
 
 /*!
 	UNICODE -> SJIS 一文字変換

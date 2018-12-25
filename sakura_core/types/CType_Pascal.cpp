@@ -45,8 +45,6 @@ void CType_Pascal::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-
-
 const wchar_t* g_ppszKeywordsPASCAL[] = {
 	L"and",
 	L"exports",

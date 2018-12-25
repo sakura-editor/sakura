@@ -29,7 +29,6 @@
 #include <ShellAPI.h>
 #include "CZipFile.h"
 
-
 // コンストラクタ
 CZipFile::CZipFile() {
 	HRESULT		hr;
@@ -41,7 +40,6 @@ CZipFile::CZipFile() {
 	pZipFile = NULL;
 }
 
-
 // デストラクタ
 CZipFile::~CZipFile() {
 	if (pZipFile != NULL) {
@@ -50,8 +48,6 @@ CZipFile::~CZipFile() {
 	}
 	psd = NULL;
 }
-
-
 
 // Zip File名 設定
 bool CZipFile::SetZip(const std::tstring& sZipPath)
@@ -78,8 +74,6 @@ bool CZipFile::SetZip(const std::tstring& sZipPath)
 
 	return true;
 }
-
-
 
 // ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
 bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName)
@@ -157,8 +151,6 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 
 	return bFoundDef;
 }
-
-
 
 // ZIP File 解凍
 bool CZipFile::Unzip(const std::tstring sOutPath)

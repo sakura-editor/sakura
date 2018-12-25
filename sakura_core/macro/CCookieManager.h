@@ -37,7 +37,6 @@ class CCookieManager
 {
 	typedef std::wstring wstring;
 
-
 public:
 	SysString GetCookie(LPCWSTR scope, LPCWSTR cookieName) const;
 	SysString GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR defVal, int len) const;

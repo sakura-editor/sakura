@@ -44,7 +44,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10600
 	IDC_BUTTON_OPENHELP1,			HIDC_BUTTON_OPENHELP1,			//外部ヘルプファイル参照
@@ -261,7 +260,6 @@ void CPropHelper::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll);
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict);
 }
-
 
 /* ダイアログデータの取得 Helper */
 int CPropHelper::GetData( HWND hwndDlg )

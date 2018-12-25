@@ -27,8 +27,6 @@
 
 #include "view/colors/CColorStrategy.h"
 
-
-
 class CColor_Quote : public CColorStrategy{
 public:
 	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(-1),m_nColorTypeIndex(0) {
@@ -62,7 +60,6 @@ private:
 protected:
 	int m_nColorTypeIndex;
 };
-
 
 class CColor_SingleQuote : public CColor_Quote{
 public:

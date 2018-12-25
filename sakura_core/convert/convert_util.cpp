@@ -90,8 +90,6 @@ bool wcschr_idx(const wchar_t* str, wchar_t c, int* idx)
 //                         変換実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
-
 //! 全角ひらがな→全角カタカナ (文字数は不変)
 inline wchar_t ZenhiraToZenkata_(wchar_t c){ return ((c>=L'ぁ' && c<=L'\u3096') || (c>=L'ゝ' && c<=L'ゞ'))? L'ァ'+(c-L'ぁ'): c; }
 void Convert_ZenhiraToZenkata(wchar_t* pData, int nLength)
@@ -117,7 +115,6 @@ void Convert_ZenkataToZenhira(wchar_t* pData, int nLength)
 	}
 }
 
-
 //! 全角英数→半角英数 (文字数は不変)
 inline wchar_t ZeneisuToHaneisu_(wchar_t c)
 {
@@ -141,7 +138,6 @@ void Convert_ZeneisuToHaneisu(wchar_t* pData, int nLength)
 	}
 }
 
-
 //! 半角英数→全角英数 (文字数は不変)
 inline wchar_t HaneisuToZeneisu_(wchar_t c)
 {
@@ -164,7 +160,6 @@ void Convert_HaneisuToZeneisu(wchar_t* pData, int nLength)
 		p++;
 	}
 }
-
 
 /*!
 	全角カタカナ→半角カタカナ

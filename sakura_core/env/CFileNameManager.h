@@ -45,12 +45,10 @@ struct IniFolder {
 	TCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
 };	/* iniフォルダ設定 */
 
-
 //共有メモリ内構造体
 struct SShare_FileNameManagement{
 	IniFolder			m_IniFolder;	/**** iniフォルダ設定 ****/
 };
-
 
 //!ファイル名管理
 class CFileNameManager : public TSingleton<CFileNameManager>{

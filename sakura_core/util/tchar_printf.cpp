@@ -90,7 +90,6 @@ inline bool is_field_type(wchar_t c)
 	return wcschr(L"cCdiouxXeEfgGaAnpsS",c)!=NULL;
 }
 
-
 //vsprintf_s API
 static inline int local_vsprintf_s(char* buf, size_t nBufCount, const char* format, va_list& v)
 {
@@ -239,7 +238,6 @@ static void field_convert(wchar_t* src)
 	}
 }
 
-
 //"%ts","%tc"をサポート
 //※日本語考慮しない。(UNICODE版ではこれで問題が発生しない)
 template <class T>
@@ -319,7 +317,6 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 	return dst-buf;
 }
 
-
 int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v)
 {
 	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v,false);
@@ -329,9 +326,6 @@ int tchar_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list&
 {
 	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,false);
 }
-
-
-
 
 // vsprintfラップ
 // ※bufに十分な容量があることに自信があるときだけ、使ってください。
@@ -345,7 +339,6 @@ int tchar_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v)
 	return tchar_vsprintf_s(buf,MAX_BUF,format,v);
 }
 
-
 // vsnprintf_sラップ
 // バッファが出力文字列より小さい場合は可能な限り出力して末尾に\0を付け、戻り値-1で返ります。
 //
@@ -357,7 +350,6 @@ int tchar_vsnprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list
 {
 	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,true);
 }
-
 
 // sprintf_sラップ
 //
@@ -383,7 +375,6 @@ int tchar_sprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-
 
 // sprintfラップ
 // ※bufに十分な容量があることに自信があるときだけ、使ってください。
@@ -431,5 +422,4 @@ int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-
 

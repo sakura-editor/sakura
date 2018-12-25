@@ -70,7 +70,6 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 	return hwndAncestor;
 }
 
-
 /*!
 	処理中のユーザー操作を可能にする
 	ブロッキングフック(?)（メッセージ配送
@@ -94,9 +93,6 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	}
 	return TRUE/*ret*/;
 }
-
-
-
 
 /** フレームウィンドウをアクティブにする
 	@date 2007.11.07 ryoji 対象がdisableのときは最近のポップアップをフォアグラウンド化する．
@@ -146,7 +142,6 @@ void ActivateFrameWindow( HWND hwnd )
 
 	return;
 }
-
 
 CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
 {
@@ -217,7 +212,6 @@ CTextWidthCalc::~CTextWidthCalc()
 		hDC = 0;
 	}
 }
-
 
 bool CTextWidthCalc::SetWidthIfMax(int width)
 {

@@ -28,7 +28,6 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 
-
 // アプリ名。2007.09.21 kobake 整理
 #ifdef _UNICODE
 #define _APP_NAME_(TYPE) TYPE("sakura")
@@ -107,5 +106,4 @@ int WINAPI _tWinMain(
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }
-
 

@@ -28,7 +28,6 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 
-
 bool CFuncListManager::IsLineFuncList(const CDocLine* pcDocLine, bool bFlag) const
 {
 	return pcDocLine->m_sMark.m_cFuncList.GetFuncListMark() != bFlag;
@@ -93,5 +92,4 @@ void CFuncListManager::ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag
 		pDocLine = pDocLineNext;
 	}
 }
-
 

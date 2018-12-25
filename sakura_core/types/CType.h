@@ -33,7 +33,6 @@
 #include "charset/charset.h"  // ECodeType
 #include "CRegexKeyword.h"	// RegexKeywordInfo
 
-
 //! タブ表示方法
 enum ETabArrow {
 	TABARROW_STRING = 0,	//!< 文字指定
@@ -223,7 +222,6 @@ struct STypeConfig{
 
 	SEncodingConfig		m_encoding;						//!< エンコードオプション
 
-
 //@@@ 2001.11.17 add start MIK
 	bool				m_bUseRegexKeyword;								//!< 正規表現キーワードを使うか
 	DWORD				m_nRegexKeyMagicNumber;							//!< 正規表現キーワード更新マジックナンバー
@@ -271,7 +269,6 @@ struct STypeConfigMini
 	SEncodingConfig		m_encoding;						//!< エンコードオプション
 };
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   タイプ別設定アクセサ                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -302,8 +299,6 @@ public:
 private:
 	int m_nType;
 };
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        タイプ設定                           //
@@ -341,8 +336,6 @@ GEN_CTYPE(CType_Tex)
 GEN_CTYPE(CType_Text)
 GEN_CTYPE(CType_Vb)
 GEN_CTYPE(CType_Other)
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //

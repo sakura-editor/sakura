@@ -64,7 +64,6 @@ enum ECodeType {
 	*/
 };
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           判定                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -111,7 +110,6 @@ inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 	return IsValidCodeTypeExceptSJIS(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -130,7 +128,6 @@ public:
 private:
 	ECodeType m_eCodeType;
 };
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      コンボボックス                         //

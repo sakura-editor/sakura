@@ -60,7 +60,6 @@ void CDocLine::SetEol()
 	}
 }
 
-
 void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
 {
 	m_cLine.SetString(pData, nLength);

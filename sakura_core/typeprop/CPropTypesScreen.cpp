@@ -77,7 +77,6 @@ static const DWORD p_helpids1[] = {	//11300
 	0, 0
 };
 
-
 enum eOutlineNativeNamesId{
 	STR2_OUTLINE_XML = 0,
 	STR2_OUTLINE_C,
@@ -90,7 +89,6 @@ const TCHAR* pszOutlineNames[] = {
 	_T("C"),
 	_T("C++"),
 };
-
 
 //アウトライン解析方法・標準ルール
 TYPE_NAME_ID<EOutlineType> OlmArr[] = {
@@ -440,8 +438,6 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 	return FALSE;
 }
 
-
-
 /* ダイアログデータの設定 Screen */
 void CPropTypesScreen::SetData( HWND hwndDlg )
 {
@@ -618,8 +614,6 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 	}
 }
 
-
-
 /* ダイアログデータの取得 Screen */
 int CPropTypesScreen::GetData( HWND hwndDlg )
 {
@@ -757,7 +751,6 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUTAIL, m_Types.m_szKinsokuTail, _countof( m_Types.m_szKinsokuTail ) );
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto, _countof( m_Types.m_szKinsokuKuto ) );	// 2009.08.07 ryoji
 		}	//@@@ 2002.04.08 MIK end
-
 	}
 
 	return TRUE;

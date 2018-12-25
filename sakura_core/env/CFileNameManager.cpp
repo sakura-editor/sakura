@@ -44,7 +44,6 @@
 //                      ファイル名管理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
 	@param pszDest  [out] 変換後のファイル名の格納先
@@ -117,7 +116,6 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	return nCount;
 }
 
-
 /*!	ファイル・フォルダ名を置換して、簡易表示名を取得する
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
@@ -168,7 +166,6 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 	pszDest[j] = '\0';
 	return pszDest;
 }
-
 
 /*!	%MYDOC%などのパラメータ指定を実際のパス名に変換する
 
@@ -356,9 +353,6 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 	return true;
 }
 
-
-
-
 /* static */ TCHAR CFileNameManager::GetAccessKeyByIndex(int index, bool bZeroOrigin)
 {
 	if( index < 0 ) return 0;
@@ -487,7 +481,6 @@ bool CFileNameManager::GetMenuFullLabel(
 	);
 	return 0 < ret;
 }
-
 
 /**
 	構成設定ファイルからiniファイル名を取得する

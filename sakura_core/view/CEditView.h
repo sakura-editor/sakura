@@ -109,7 +109,6 @@ typedef struct tagRECONVERTSTRING {
 ///	@date 2006.05.19 genta
 const int CMD_FROM_MOUSE = 2;
 
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -159,7 +158,6 @@ public:
 		return this;
 	}
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        生成と破棄                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -192,7 +190,6 @@ public:
 	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void CopySelectedAllLines( const wchar_t* pszQuote, BOOL bWithLineNumber );			/* 選択範囲内の全行をクリップボードにコピーする */
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
@@ -285,8 +282,6 @@ public:
 	bool IsDrawCursorVLinePos(int posX);
 	void DrawBracketCursorLine(bool bDraw);
 
-
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -305,7 +300,6 @@ public:
 	//	Aug. 25, 2002 genta protected->publicに移動
 	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -334,7 +328,6 @@ public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       テキスト選択                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -357,8 +350,6 @@ public:
 public:
 	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, std::wstring* pwstrURL );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( CMyPoint ptMouse );							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
-
-
 
 	bool ExecCmd(const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDir, COutputAdapter* customOa = NULL ) ;							// 子プロセスの標準出力をリダイレクトする
 	void AddToCmdArr(const TCHAR* szCmd);
@@ -386,7 +377,6 @@ public: /* テスト用にアクセス属性を変更 */
 	{
 		m_bDragMode = b;
 	}
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           編集                              //
@@ -516,7 +506,6 @@ public:
 
 	int HokanSearchByFile(const wchar_t* pszKey, bool bHokanLoHiCase, vector_ex<std::wstring>& vKouho, int nMaxKouho ); // 2003.06.25 Moca
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         ジャンプ                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -526,7 +515,6 @@ public:
 	bool TagJumpSub( const TCHAR* pszJumpToFile, CMyPoint ptJumpTo,bool bClose = false,
 		bool bRelFromIni = false, bool* pbJumpToSelf = NULL );
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -534,8 +522,6 @@ public:
 	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
 	int	CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus, EKeyHelpRMenuType eRmenuType );		/* ポップアップメニュー */
 	void AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType);
-
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           DIFF                              //
@@ -552,7 +538,6 @@ public:
 public:
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          その他                             //
@@ -578,7 +563,6 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 	void SetUndoBuffer( bool bPaintLineNumber = false );			// アンドゥバッファの処理
 	HWND StartProgress();
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         アクセサ                            //
@@ -606,7 +590,6 @@ public:
 	const CViewParser& GetParser() const{ return m_cParser; }
 	const CTextDrawer& GetTextDrawer() const{ return m_cTextDrawer; }
 	CViewCommander& GetCommander(){ return m_cCommander; }
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //
@@ -753,8 +736,6 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 
-
-
 class COutputAdapter
 {
 public:
@@ -768,7 +749,4 @@ public:
 };
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITVIEW_H_ */
-
-
-
 

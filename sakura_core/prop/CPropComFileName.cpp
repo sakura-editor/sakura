@@ -38,7 +38,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 static const DWORD p_helpids[] = {	//13400
 	IDC_CHECK_SHORTPATH,	HIDC_CHECK_FNAME_SHORTPATH,
 	IDC_EDIT_SHORTMAXWIDTH,	HIDC_EDIT_FNAME_SHORTMAXWIDTH,
@@ -57,8 +56,6 @@ static const DWORD p_helpids[] = {	//13400
 	0, 0 // 
 };
 
-
-
 INT_PTR CALLBACK CPropFileName::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -67,7 +64,6 @@ INT_PTR CALLBACK CPropFileName::DlgProc_page(
 
 INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-
 	HWND	hListView;
 	int		nIndex;
 	TCHAR	szFrom[_MAX_PATH];
@@ -263,12 +259,9 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
-
 
 /*!
 	ダイアログ上のコントロールにデータを設定する
@@ -330,7 +323,6 @@ void CPropFileName::SetData( HWND hwndDlg )
 
 int CPropFileName::GetData( HWND hwndDlg )
 {
-
 	int nIndex;
 	int nCount;
 
@@ -360,7 +352,6 @@ int CPropFileName::GetData( HWND hwndDlg )
 
 	return TRUE;
 }
-
 
 int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo, bool bInsMode )
 {
@@ -399,13 +390,11 @@ int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR 
 	return nIndex;
 }
 
-
 void CPropFileName::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo )
 {
 	ListView_GetItemText( hListView, nIndex, 0, szFrom, _MAX_PATH );
 	ListView_GetItemText( hListView, nIndex, 1, szTo, _MAX_PATH );
 }
-
 
 int CPropFileName::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nIndex2 )
 {

@@ -9,7 +9,6 @@
 //	Close時に::fflushを呼び出してはいけません。
 //  詳細：http://www.microsoft.com/japan/support/faq/KBArticles2.asp?URL=/japan/support/kb/articles/jp288/7/94.asp
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  ファイル属性操作クラス                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -116,7 +115,6 @@ void CStream::Close()
 		SAFE_DELETE(m_pcFileAttribute);
 	}
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           操作                              //

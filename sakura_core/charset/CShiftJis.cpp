@@ -39,9 +39,6 @@ int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 	return 1;
 }
 
-
-
-
 /*!
 	SJIS → Unicode 変換
 */
@@ -106,8 +103,6 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 	return pw - reinterpret_cast<unsigned short*>(pDst);
 }
 
-
-
 /* コード変換 SJIS→Unicode */
 EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
@@ -153,12 +148,6 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 		return RESULT_LOSESOME;
 	}
 }
-
-
-
-
-
-
 
 /*
 	Unicode -> SJIS
@@ -221,9 +210,6 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
-
-
-
 /* コード変換 Unicode→SJIS */
 EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem )
 {
@@ -257,7 +243,6 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 		return RESULT_COMPLETE;
 	}
 }
-
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)

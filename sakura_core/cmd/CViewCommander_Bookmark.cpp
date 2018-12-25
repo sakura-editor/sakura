@@ -18,7 +18,6 @@
 #include "CViewCommander_inline.h"
 #include "docplus/CFuncListManager.h"
 
-
 //	from CViewCommander_New.cpp
 /*!	検索開始位置へ戻る
 	@author	ai
@@ -44,8 +43,6 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 	return;
 }
 
-
-
 /*! 指定行へジャンプダイアログの表示
 	2002.2.2 YAZAKI
 */
@@ -57,8 +54,6 @@ void CViewCommander::Command_JUMP_DIALOG( void )
 		return;
 	}
 }
-
-
 
 /* 指定行ヘジャンプ */
 void CViewCommander::Command_JUMP( void )
@@ -252,8 +247,6 @@ void CViewCommander::Command_JUMP( void )
 	m_pCommanderView->MoveCursorSelecting( ptPos, m_pCommanderView->GetSelectionInfo().m_bSelectingLock, _CARETMARGINRATE / 3 );
 }
 
-
-
 //	from CViewCommander_New.cpp
 //! ブックマークの設定・解除を行う(トグル動作)
 void CViewCommander::Command_BOOKMARK_SET(void)
@@ -285,8 +278,6 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 	// 2002.01.16 hor 分割したビューも更新
 	GetEditWindow()->Views_Redraw();
 }
-
-
 
 //	from CViewCommander_New.cpp
 //! 次のブックマークを探し，見つかったら移動する
@@ -328,8 +319,6 @@ re_do:;								// hor
 	}
 	return;
 }
-
-
 
 //	from CViewCommander_New.cpp
 //! 前のブックマークを探し，見つかったら移動する．
@@ -373,8 +362,6 @@ re_do:;								// hor
 	return;
 }
 
-
-
 //	from CViewCommander_New.cpp
 //! ブックマークをクリアする
 void CViewCommander::Command_BOOKMARK_RESET(void)
@@ -383,8 +370,6 @@ void CViewCommander::Command_BOOKMARK_RESET(void)
 	// 2002.01.16 hor 分割したビューも更新
 	GetEditWindow()->Views_Redraw();
 }
-
-
 
 //	from CViewCommander_New.cpp
 //指定パターンに一致する行をマーク 2002.01.16 hor
@@ -400,8 +385,6 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 	// 2002.01.16 hor 分割したビューも更新
 	GetEditWindow()->Views_Redraw();
 }
-
-
 
 //! 次の関数リストマークを探し，見つかったら移動する
 void CViewCommander::Command_FUNCLIST_NEXT(void)
@@ -431,12 +414,9 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 	return;
 }
 
-
-
 //! 前のブックマークを探し，見つかったら移動する．
 void CViewCommander::Command_FUNCLIST_PREV(void)
 {
-
 	CLogicPoint	ptXY(0,GetCaret().GetCaretLogicPos().y);
 	int			nYOld = ptXY.y;
 

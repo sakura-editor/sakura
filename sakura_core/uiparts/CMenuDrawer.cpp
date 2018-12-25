@@ -40,7 +40,6 @@
 // //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
 // #define DRAW_MENU_3DSTYLE
 
-
 #if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
@@ -53,7 +52,6 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 #endif
-
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
@@ -732,7 +730,6 @@ CMenuDrawer::CMenuDrawer()
 	return;
 }
 
-
 CMenuDrawer::~CMenuDrawer()
 {
 	if( NULL != m_hFontMenu ){
@@ -751,7 +748,6 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 
 	return;
 }
-
 
 void CMenuDrawer::ResetContents( void )
 {
@@ -794,9 +790,6 @@ void CMenuDrawer::ResetContents( void )
 //	m_nMaxTabLen = 0;
 	return;
 }
-
-
-
 
 /* メニュー項目を追加 */
 void CMenuDrawer::MyAppendMenu(
@@ -889,7 +882,6 @@ void CMenuDrawer::MyAppendMenu(
 	return;
 }
 
-
 /*
 	ツールバー番号をボタン配列のindexに変換する
 */
@@ -918,7 +910,6 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 	return m_tbMyButton[index].iBitmap;
 }
 
-
 /*! メニューアイテムの描画サイズを計算
 	@param pnItemHeight [out] 高さ。いつも高さを返す
 	@retval 0  機能がない場合
@@ -926,7 +917,6 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 */
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
-
 	const TCHAR* pszLabel;
 	CMyRect rc, rcSp;
 	HDC hdc;
@@ -949,7 +939,6 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWndOwner, hdc );
 
-
 //	*pnItemHeight = 20;
 //	*pnItemHeight = 2 + 15 + 1;
 	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
@@ -963,7 +952,6 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	}
 	return nMenuWidth;
 }
-
 
 /*! メニューアイテム描画
 	@date 2001.12.21 YAZAKI デバッグモードでもメニューを選択したらハイライト。
@@ -1256,7 +1244,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
-
 	// 16*16のアイコンを上下中央へ置いたときの上の座標
 	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2 - (16/2);
 
@@ -1323,7 +1310,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 #endif
 	}
-
 
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( bMenuIconDraw && -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
@@ -1442,7 +1428,6 @@ void CMenuDrawer::EndDrawMenu()
 	DeleteCompDC();
 }
 
-
 void CMenuDrawer::DeleteCompDC()
 {
 	if( m_hCompDC ){
@@ -1530,7 +1515,6 @@ TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 	return tbb;
 }
 
-
 int CMenuDrawer::Find( int nFuncID )
 {
 	int i;
@@ -1546,7 +1530,6 @@ int CMenuDrawer::Find( int nFuncID )
 		return i;
 	}
 }
-
 
 const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
 {
@@ -1572,8 +1555,6 @@ TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 	}
 	return _T('\0');
 }
-
-
 
 struct WorkData{
 	int				idx;
@@ -1647,7 +1628,6 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 //	Jul. 21, 2003 genta
 //	コメントアウトされていた部分を削除 (CImageListで再利用)
-
 
 /* TBBUTTON構造体にデータをセット */
 void CMenuDrawer::SetTBBUTTONVal(

@@ -44,7 +44,6 @@
 
 #define NEVER_USED_PARAM(p) ((void)p)
 
-
 // 2003.06.01 Moca
 #define omGet (0)
 #define omSet (1)
@@ -292,8 +291,6 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 	return szBuffer;
 }
 
-
-
 /*! ユーザー定義文字列型オブジェクト
 	現在は、デバッグ用文字列を設定する為のみ
 */
@@ -316,7 +313,6 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 		*Err_CD = -1;
 	}
 }
-
 
 /*! ユーザー定義関数のエラーメッセージの作成
 
@@ -391,8 +387,6 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%ts\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
-
-
 
 //----------------------------------------------------------------------
 /** プロシージャ実行callback
@@ -590,7 +584,6 @@ bool CPPA::CallHandleFunction(
 	}
 }
 
-
 #if PPADLL_VER >= 123
 
 /*!
@@ -604,5 +597,4 @@ void __stdcall CPPA::stdFinishProc()
 }
 
 #endif
-
 

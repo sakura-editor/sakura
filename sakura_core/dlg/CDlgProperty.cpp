@@ -83,7 +83,6 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
 /*! ダイアログデータの設定
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -189,7 +188,6 @@ void CDlgProperty::SetData( void )
 		}
 		cmemProp.AppendString( _T("\r\n") );
 
-
 		cmemProp.AppendString( LS(STR_DLGFLPROP_CREATE_DT) );
 		CFileTime ctimeCreation = wfd.ftCreationTime;
 		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
@@ -216,7 +214,6 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
-
 		cmemProp.AppendString( LS(STR_DLGFLPROP_ACCESS_DT) );
 		CFileTime ctimeLastAccess = wfd.ftLastAccessTime;
 		auto_sprintf( szWork, LS(STR_DLGFLPROP_YMDHMS),
@@ -238,9 +235,6 @@ void CDlgProperty::SetData( void )
 
 		::FindClose( nFind );
 	}
-
-
-
 
 #ifdef _DEBUG/////////////////////////////////////////////////////
 	HGLOBAL					hgData;

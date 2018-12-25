@@ -150,7 +150,6 @@ bool CDllImp::DeinitDll(bool force)
 	}
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           属性                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -159,7 +158,6 @@ LPCTSTR CDllImp::GetLoadedDllName() const
 {
 	return m_strLoadedDllName.c_str();
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  オーバーロード可能実装                     //
@@ -172,7 +170,6 @@ bool CDllImp::DeinitDllImp()
 {
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
@@ -201,5 +198,4 @@ bool CDllImp::RegisterEntries(const ImportTable table[])
 	}
 	return true;
 }
-
 

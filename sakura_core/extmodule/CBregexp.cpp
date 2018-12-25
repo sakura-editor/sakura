@@ -48,13 +48,8 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
-
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
-
-
-
-
 
 CBregexp::CBregexp()
 : m_pRegExp( NULL )
@@ -68,7 +63,6 @@ CBregexp::~CBregexp()
 	//コンパイルバッファを解放
 	ReleaseCompileBuffer();
 }
-
 
 /*! @brief 検索パターンが特定の検索パターンかチェックする
 **
@@ -211,7 +205,6 @@ wchar_t* CBregexp::MakePatternSub(
 	return szNPattern;
 }
 
-
 /*! 
 ** 行末文字の意味がライブラリでは \n固定なので、
 ** これをごまかすために、ライブラリに渡すための検索・置換パターンを工夫する
@@ -295,7 +288,6 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 	}
 	return szNPattern;
 }
-
 
 /*!
 	CBregexp::MakePattern()の代替。
@@ -414,7 +406,6 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	return this->MakePatternSub( strModifiedSearch.data(), szReplace, L"", nOption );
 }
 
-
 /*!
 	JRE32のエミュレーション関数．空の文字列に対して検索・置換を行うことにより
 	BREGEXP_W構造体の生成のみを行う．
@@ -428,7 +419,6 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 */
 bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption, bool bKakomi )
 {
-
 	//	DLLが利用可能でないときはエラー終了
 	if( !IsAvailable() )
 		return false;
@@ -520,7 +510,6 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 	return true;
 }
 
-
 //<< 2002/03/27 Azumaiya
 /*!
 	正規表現による文字列置換
@@ -579,22 +568,10 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 }
 //>> 2002/03/27 Azumaiya
 
-
 const TCHAR* CBregexp::GetLastMessage() const
 {
 	return to_tchar(m_szMsg);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 //	From Here Jun. 26, 2001 genta
 /*!

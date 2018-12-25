@@ -71,7 +71,6 @@ int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 	return pw - reinterpret_cast<unsigned short*>(pDst);
 }
 
-
 /* EUC→Unicodeコード変換 */
 //2007.08.13 kobake 追加
 EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
@@ -106,10 +105,6 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 		return RESULT_LOSESOME;
 	}
 }
-
-
-
-
 
 int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
 {
@@ -164,7 +159,6 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
-
 EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 {
 	// エラー状態
@@ -194,9 +188,6 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 		return RESULT_LOSESOME;
 	}
 }
-
-
-
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)

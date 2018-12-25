@@ -29,7 +29,6 @@
 
 using namespace std;
 
-
 static const DWORD p_helpids[] = {	//11600
 	IDC_BUTTON_REGEX_IMPORT,	HIDC_BUTTON_REGEX_IMPORT,	//インポート
 	IDC_BUTTON_REGEX_EXPORT,	HIDC_BUTTON_REGEX_EXPORT,	//エクスポート
@@ -52,8 +51,6 @@ static const DWORD p_helpids[] = {	//11600
 //	IDC_STATIC,						-1,
 	0, 0
 };
-
-
 
 // Import
 // 2010/4/23 Uchi Importの外出し
@@ -97,7 +94,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 	LV_COLUMN	col;
 	RECT		rc;
 	static int nPrevIndex = -1;	//更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
-
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 
@@ -537,7 +533,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 	case WM_CONTEXTMENU:
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
-
 	}
 	return FALSE;
 }

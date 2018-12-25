@@ -127,7 +127,6 @@ namespace WCODE
 	}
 #endif
 
-
 	/*!
 		UNICODE文字情報のキャッシュクラス。
 		1文字当たり2ビットで、値を保存しておく。
@@ -359,7 +358,6 @@ namespace WCODE
 	};
 
 	static LocalCacheSelector selector;
-
 
 	//文字幅の動的計算。ピクセル幅
 	int CalcPxWidthByFont(wchar_t c)

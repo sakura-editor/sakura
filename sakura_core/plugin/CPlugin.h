@@ -62,7 +62,6 @@ typedef int PlugId;
 #define PII_COMMAND					L"Command"		//コマンド情報
 #define PII_OPTION					L"Option"		//オプション定義情報	// 2010/3/24 Uchi
 
-
 class CPlugin;
 
 //プラグ（プラグイン内の処理単位）クラス
@@ -226,7 +225,6 @@ protected:
 	wstring		m_sDefaultVal;
 	int 		m_index; 
 };
-
 
 //プラグインクラス
 

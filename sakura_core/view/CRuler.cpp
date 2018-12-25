@@ -122,11 +122,9 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	gr.PushPen(cRulerType.GetTextColor(),0);
 	gr.PushTextForeColor(cRulerType.GetTextColor());
 
-
 	//描画開始位置
 	int nX = m_pEditView->GetTextArea().GetAreaLeft();
 	int nY = m_pEditView->GetTextArea().GetRulerHeight() - 2;
-
 
 	// 下線 (ルーラーと本文の境界)
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -139,7 +137,6 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	}
 	::MoveToEx( gr, m_pEditView->GetTextArea().GetAreaLeft(), nY + 1, NULL );
 	::LineTo( gr, nToX, nY + 1 );
-
 
 	//目盛を描画
 	const int oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();

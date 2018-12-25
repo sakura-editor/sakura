@@ -25,7 +25,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11000
 	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE_TOOLBAR,				//ツールバーから機能削除
@@ -126,7 +125,6 @@ int Listbox_ADDDATA(
 	return nIndex1;
 }
 
-
 static int nToolBarListBoxTopMargin = 0;
 
 static void SetDlgItemsEnableState(
@@ -165,7 +163,6 @@ static void SetDlgItemsEnableState(
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
 	}
-
 }
 
 /* Toolbar メッセージ処理 */
@@ -286,7 +283,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 						}
 						lResult = List_SetItemHeight( hwndFuncList, lResult, nListItemHeight );
 					}
-
 				}
 				return TRUE;
 			}
@@ -366,7 +362,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	To Here Apr. 13, 2002 genta
 					List_SetCurSel( hwndResList, nIndex1 + 1 );
 					break;
-
 
 				case IDC_BUTTON_ADD:
 					nIndex1 = List_GetCount( hwndResList );
@@ -460,13 +455,9 @@ INT_PTR CPropToolbar::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
-
-
 
 /* ダイアログデータの設定 Toolbar */
 void CPropToolbar::SetData( HWND hwndDlg )
@@ -511,8 +502,6 @@ void CPropToolbar::SetData( HWND hwndDlg )
 	return;
 }
 
-
-
 /* ダイアログデータの取得 Toolbar */
 int CPropToolbar::GetData( HWND hwndDlg )
 {
@@ -556,7 +545,6 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	RECT		rc0;
 	RECT		rc1;
 	RECT		rc2;
-
 
 //	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
 	hBrush = ::GetSysColorBrush( COLOR_WINDOW );
@@ -620,7 +608,6 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		::SetBkMode( pDis->hDC, TRANSPARENT );
 		// 2014.11.25 topマージンが2固定だとフォントが大きい時に見切れるので変数に変更
 		TextOutW_AnyBuild( pDis->hDC, rc1.left + 4, rc1.top + nToolBarListBoxTopMargin, szLabel, wcslen( szLabel ) );
-
 	}
 
 	/* アイテムにフォーカスがある */
@@ -629,6 +616,4 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	}
 	return;
 }
-
-
 

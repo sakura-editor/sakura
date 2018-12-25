@@ -73,7 +73,6 @@ INT_PTR CALLBACK CPropGeneral::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropGeneral::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
-
 /* General メッセージ処理 */
 INT_PTR CPropGeneral::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -154,7 +153,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 				}
 				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_DIR2) );
 				return TRUE;
-
 			}
 			break;	/* BN_CLICKED */
 		// 2009.01.12 nasukoji	コンボボックスのリストの項目が選択された
@@ -286,19 +284,13 @@ INT_PTR CPropGeneral::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
 
-
-
-
-
 /* ダイアログデータの設定 General */
 void CPropGeneral::SetData( HWND hwndDlg )
 {
-
 	/* カーソルのタイプ 0=win 1=dos  */
 	if( 0 == m_Common.m_sGeneral.GetCaretType() ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE0, TRUE );
@@ -307,7 +299,6 @@ void CPropGeneral::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE0, FALSE );
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CARETTYPE1, TRUE );
 	}
-
 
 	/* フリーカーソルモード */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_FREECARET, m_Common.m_sGeneral.m_bIsFreeCursorMode ? 1 : 0 );
@@ -389,10 +380,6 @@ void CPropGeneral::SetData( HWND hwndDlg )
 
 	return;
 }
-
-
-
-
 
 /* ダイアログデータの取得 General */
 int CPropGeneral::GetData( HWND hwndDlg )

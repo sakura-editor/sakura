@@ -46,9 +46,6 @@ void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* アウトライン解析方法 */
 }
 
-
-
-
 /*! PL/SQL関数リスト作成 */
 void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -162,7 +159,6 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							wcscpy( szFuncName, szWord );
 //						}else
 //						if( 3 == nFuncOrProc ){
-
 						}
 					}else
 					if( 2 == nParseCnt ){
@@ -376,9 +372,6 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	}
 	return;
 }
-
-
-
 
 const wchar_t* g_ppszKeywordsPLSQL[] = {
 	L"AND",

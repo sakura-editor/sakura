@@ -97,7 +97,6 @@ public:
 		return &m_ptTo;
 	}
 
-
 	//設定
 	void Clear(int n)
 	{

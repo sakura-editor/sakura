@@ -27,7 +27,6 @@
 #include "plugin/CSmartIndentIfObj.h"
 #include "debug/CRunningTimer.h"
 
-
 /* wchar_t1個分の文字を入力 */
 void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 {
@@ -208,8 +207,6 @@ end_of_for:;
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 }
 
-
-
 /*!
 	@brief 2バイト文字入力
 	
@@ -278,8 +275,6 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 }
-
-
 
 //	from CViewCommander_New.cpp
 /* Undo 元に戻す */
@@ -538,8 +533,6 @@ void CViewCommander::Command_UNDO( void )
 	return;
 }
 
-
-
 //	from CViewCommander_New.cpp
 /* Redo やり直し */
 void CViewCommander::Command_REDO( void )
@@ -579,7 +572,6 @@ void CViewCommander::Command_REDO( void )
 	CLayoutPoint ptCaretPos_Before;
 	CLayoutPoint ptCaretPos_To;
 	CLayoutPoint ptCaretPos_After;
-
 
 	/* 各種モードの取り消し */
 	Command_CANCEL_MODE();
@@ -647,7 +639,6 @@ void CViewCommander::Command_REDO( void )
 							bFastMode,
 							&cSelectLogic
 						);
-
 					}
 					pcInsertOpe->m_cOpeLineData.clear();
 				}
@@ -789,8 +780,6 @@ void CViewCommander::Command_REDO( void )
 	return;
 }
 
-
-
 //カーソル位置または選択エリアを削除
 void CViewCommander::Command_DELETE( void )
 {
@@ -839,8 +828,6 @@ void CViewCommander::Command_DELETE( void )
 	return;
 }
 
-
-
 //カーソル前を削除
 void CViewCommander::Command_DELETE_BACK( void )
 {
@@ -884,8 +871,6 @@ void CViewCommander::Command_DELETE_BACK( void )
 	}
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
 }
-
-
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */
 void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )

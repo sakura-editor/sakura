@@ -171,7 +171,5 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 	return fp;
 }
 
-
 #endif /* SAKURA_CFILELOAD_H_ */
-
 

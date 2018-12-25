@@ -60,7 +60,6 @@ public:
 	int wlength() const{ return wcslen(c_wstr()); }
 	int alength() const{ return strlen(c_astr()); }
 
-
 	//TCHAR
 #ifdef _UNICODE
 	const TCHAR* c_tstr() const{ return c_wstr(); }
@@ -80,8 +79,6 @@ private:
 #define tstring string
 #endif
 #define astring string
-
-
 
 //共通マクロ
 #define _FT _T
@@ -126,7 +123,6 @@ public:
 		}
 	}
 };
-
 
 //$$ 仮
 class CCommandLineString{

@@ -15,7 +15,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #ifndef _CMENUDRAWER_H_
 #define _CMENUDRAWER_H_
 
@@ -52,7 +51,6 @@ public:
 	CMenuDrawer();
 	~CMenuDrawer();
 	void Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pcIcons );
-
 
 	/*
 	||  Attributes & Operations
@@ -134,10 +132,6 @@ protected:
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMENUDRAWER_H_ */
-
-
 

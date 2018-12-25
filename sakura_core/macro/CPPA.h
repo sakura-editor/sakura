@@ -287,7 +287,6 @@ private:
 	//PPAの多重起動禁止 2008.10.22 syat
 	static bool				m_bIsRunning;	//!< PPAが同時実行されるのを防ぐ
 
-
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数

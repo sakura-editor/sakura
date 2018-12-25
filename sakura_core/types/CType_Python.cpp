@@ -34,7 +34,6 @@
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 
-
 /*!
 	関数に用いることができる文字かどうかの判定
 	
@@ -51,8 +50,6 @@ inline bool Python_IsWordChar( wchar_t c ){
 			(L'0' <= c && c <= L'9' )
 		);
 }
-
-
 
 /*! pythonのパース状態を管理する構造体
 
@@ -248,7 +245,6 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 	return linelen;
 }
 
-
 /*! @brief python文字列(1行)を調査する
 
 	与えられた状態からPython文字列の状態変化を追い，
@@ -372,7 +368,6 @@ void COutlinePython::DoScanLine( const wchar_t* data, int linelen, int start_off
 		}
 	}
 }
-
 
 /*!	@brief python関数リスト作成
 
@@ -557,7 +552,6 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 		python_analyze_state.DoScanLine( pLine, nLineLen, col );
 	}
 }
-
 
 const wchar_t* g_ppszKeywordsPython[] = {
 	L"False",

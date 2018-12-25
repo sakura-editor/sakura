@@ -37,7 +37,6 @@ CRunningTimer::CRunningTimer( const char* pszText )
 	return;
 }
 
-
 CRunningTimer::~CRunningTimer()
 {
 	WriteTrace("Exit Scope");
@@ -45,12 +44,10 @@ CRunningTimer::~CRunningTimer()
 	return;
 }
 
-
 void CRunningTimer::Reset()
 {
 	m_nStartTime = timeGetTime();
 }
-
 
 DWORD CRunningTimer::Read()
 {
@@ -65,5 +62,4 @@ void CRunningTimer::WriteTrace(const char* msg) const
 	MYTRACE( _T("%3d:\"%hs\", %d㍉秒 : %hs\n"), m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
 }
 #endif
-
 

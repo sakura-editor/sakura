@@ -8,11 +8,9 @@
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
 BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
 
-
 // 変更前実装の定義
 // ※関数定義は IsMailAddress_20160427.cpp を参照。
 BOOL IsMailAddress_20160427(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
-
 
 //////////////////////////////////////////////////////////////////////
 // テストマクロ
@@ -32,7 +30,6 @@ BOOL IsMailAddress_20160427(const wchar_t* pszBuf, int nBufLen, int* pnAddressLe
 // テスト対象の新旧関数をマクロに当てる
 #define _OLD_IMPL IsMailAddress_20160427
 #define _NEW_IMPL IsMailAddress
-
 
 //////////////////////////////////////////////////////////////////////
 // テストコード

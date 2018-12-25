@@ -95,11 +95,9 @@ public:
 	}
 	void ForwardLayoutLineRef(int nOffsetLine);
 
-
 	//取得
 	CLayoutInt		GetLayoutLineRef() const{ return m_nLineRef; }
 	const CLayout*	GetLayoutRef() const{ return m_pcLayoutRef; }
-
 
 private:
 	//固定要素

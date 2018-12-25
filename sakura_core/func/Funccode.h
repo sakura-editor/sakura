@@ -162,7 +162,6 @@
 //2007.09.30 kobake 機能番号定数を列挙型に変更。(デバッグをしやすくするため)
 #include "Funccode_enum.h"
 
-
 // 機能一覧に関するデータ宣言
 namespace nsFuncCode{
 	extern const uint16_t		ppszFuncKind[];
@@ -175,7 +174,6 @@ namespace nsFuncCode{
 	extern const int			nFuncList_Special_Num;
 };
 ///////////////////////////////////////////////////////////////////////
-
 
 /*機能番号に対応したヘルプトピックIDを返す*/
 int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23

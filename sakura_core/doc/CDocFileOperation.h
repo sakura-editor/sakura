@@ -59,7 +59,6 @@ public:
 		ECodeType	nCharCode			//!< [in] 文字コード種別
 	);
 
-	
 	//セーブUI
 	bool SaveFileDialog(SSaveInfo* pSaveInfo);	//!<「ファイル名を付けて保存」ダイアログ
 	bool SaveFileDialog(LPTSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ

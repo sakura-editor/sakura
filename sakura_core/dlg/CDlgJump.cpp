@@ -50,7 +50,6 @@ CDlgJump::CDlgJump()
 	m_nPLSQL_E1 = 1;
 	m_nPLSQL_E2 = 1;
 
-
 	return;
 }
 
@@ -63,7 +62,6 @@ int CDlgJump::DoModal(
 {
 	return CDialog::DoModal( hInstance, hwndParent, IDD_JUMP, lParam );
 }
-
 
 // From Here Oct. 6, 2000 JEPRO added 行番号入力ボックスにスピンコントロールを付けるため
 // CDlgPrintSetting.cppのOnNotifyとOnSpin及びCpropComFile.cppのDispatchEvent_p2内のcase WM_NOTIFYを参考にした
@@ -109,7 +107,6 @@ BOOL CDlgJump::OnNotify( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 // To Here Oct. 6, 2000
-
 
 BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
 {
@@ -186,8 +183,6 @@ BOOL CDlgJump::OnBnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
-
-
 
 /* ダイアログデータの設定 */
 void CDlgJump::SetData( void )
@@ -314,9 +309,6 @@ void CDlgJump::SetData( void )
 	return;
 }
 
-
-
-
 /* ダイアログデータの取得 */
 /*   TRUE==正常   FALSE==入力エラー  */
 int CDlgJump::GetData( void )
@@ -356,5 +348,4 @@ LPVOID CDlgJump::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 

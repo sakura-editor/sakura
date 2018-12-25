@@ -66,8 +66,6 @@ protected:
 	static int UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
 };
 
-
-
 /*!
 	UTF-8 の一文字変換
 
@@ -118,8 +116,6 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 
 	return nret;
 }
-
-
 
 /*!
 	Unicode -> UTF-8 の一文字変換

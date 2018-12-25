@@ -80,7 +80,6 @@ static const SAnchorList anchorList[] = {
 	{IDC_FRAME_SEARCH_MSG,      ANCHOR_BOTTOM},
 };
 
-
 CDlgDiff::CDlgDiff()
 	: CDialog(true)
 	, m_nIndexSave( 0 )
@@ -281,7 +280,6 @@ void CDlgDiff::SetData( void )
 				// 番号はウィンドウ一覧と同じ番号を使う
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i, calc.GetDC() );
 
-
 				/* リストに登録する */
 				nItem = ::List_AddString( hwndList, szName );
 				List_SetItemData( hwndList, nItem, pEditNode[i].GetHwnd() );
@@ -371,7 +369,6 @@ int CDlgDiff::GetData( void )
 		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
 		//相手ファイルが指定されてなければキャンセル
 		if( m_szFile2[0] == '\0' ) ret = FALSE;
-
 	}
 	else if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST2 ) == BST_CHECKED )
 	{
@@ -468,7 +465,6 @@ LPVOID CDlgDiff::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 
 INT_PTR CDlgDiff::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {

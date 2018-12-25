@@ -6,7 +6,6 @@
 #include "CSearchAgent.h"
 #include "extmodule/CBregexp.h"
 
-
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }
 void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_cBookmarked = bFlag; }
 
@@ -22,7 +21,6 @@ void CBookmarkManager::ResetAllBookMark( void )
 		pDocLine = pDocLine->GetNextLine();
 	}
 }
-
 
 //! ブックマーク検索
 /*
@@ -132,7 +130,6 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 	}
 }
 
-
 //! 行マークされてる物理行番号のリストを作る
 /*
 	@date 2002.01.16 hor
@@ -198,9 +195,6 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 	}
 	return szText; // Feb. 17, 2003 genta
 }
-
-
-
 
 //! 検索条件に該当する行にブックマークをセットする
 /*

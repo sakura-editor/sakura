@@ -30,8 +30,6 @@
 		   distribution.
 */
 
-
-
 #include "StdAfx.h"
 #include <algorithm>
 #include "CDlgFavorite.h"
@@ -82,7 +80,6 @@ static const SAnchorList anchorList[] = {
 	{IDC_STATIC_FAVORITE_MSG, 		ANCHOR_BOTTOM},
 };
 
-
 static int FormatFavoriteColumn( TCHAR*, int, int , bool );
 static int ListView_GetLParamInt( HWND, int );
 static int CALLBACK CompareListViewFunc( LPARAM, LPARAM, LPARAM );
@@ -102,7 +99,6 @@ struct CompareListViewLParam
 	編集中は変更を確認していないので、裏でDLLSHAREDATAを変更されるとListViewと
 	DLLSHAREDATAが一致しない可能性もある。
 */
-
 
 CDlgFavorite::CDlgFavorite()
 	 : CDialog(true)
@@ -317,7 +313,6 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 		{
 			ListView_SetCheckState( hwndList, i, (BOOL)pRecent->IsFavorite( i ) );
 		}
-
 	}
 
 	if( -1 != m_aListViewInfo[nIndex].nSortColumn ){
@@ -817,7 +812,6 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 changed:
 	SetDataOne( nIndex, nCurrentIndex );
 	
-
 	return true;
 }
 
@@ -835,7 +829,6 @@ void CDlgFavorite::GetFavorite( int nIndex )
 		}
 	}
 }
-
 
 /*
 	選択中の項目を削除
@@ -1089,7 +1082,6 @@ int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 	return auto_snprintf_s( buf, size, _T("%tc %ts"), c, (view ? _T("  ") : LS( STR_DLGFAV_HIDDEN )) );
 }
 
-
 /*!
 	ListViewのItem(index)からLParamをint型として取得
 */
@@ -1165,7 +1157,6 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 
 	ListView_SortItems( info.hListView, CompareListViewFunc, (LPARAM)&lparamInfo );
 }
-
 
 static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2, LPARAM lParamSort )
 {

@@ -70,14 +70,11 @@ public:
 	bool ReadProfileRes( const TCHAR*, const TCHAR*, std::vector<std::wstring>* = NULL );				// 200/5/19 Uchi
 	bool WriteProfile( const TCHAR*, const WCHAR* pszComment);
 
-
-
 	void DUMP( void );
 
 protected:
 	void ReadOneline( const wstring& line );
 	bool _WriteFile( const tstring& strFilename, const std::vector< wstring >& vecLine);
-
 
 	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);
 
@@ -92,10 +89,6 @@ protected:
 
 #define _INI_T LTEXT
 
-
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CPROFILE_H_ */
-
 

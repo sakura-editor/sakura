@@ -49,7 +49,6 @@ void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-
 /* Java解析モード */
 enum EFuncListJavaMode {
 	FL_JAVA_MODE_NORMAL = 0,
@@ -452,8 +451,6 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 #endif
 	return;
 }
-
-
 
 const wchar_t* g_ppszKeywordsJAVA[] = {
 	L"abstract",

@@ -16,13 +16,9 @@ class COpeBuf;
 #ifndef _COPEBUF_H_
 #define _COPEBUF_H_
 
-
 #include <vector>
 #include "_main/global.h"
 class COpeBlk;/// 2002/2/10 aroka
-
-
-
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -61,10 +57,6 @@ private:
 	int						m_nNoModifiedIndex;	//!< 無変更な状態になった位置
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _COPEBUF_H_ */
-
-
 

@@ -32,7 +32,6 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "CSortedTagJumpList.h"
@@ -44,7 +43,6 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-
 
 const DWORD p_helpids[] = {
 	IDC_LIST_TAGJUMP,		HIDC_LIST_TAGJUMPLIST,			//ファイル
@@ -74,7 +72,6 @@ static const SAnchorList anchorList[] = {
 	{IDC_CHECK_ANYWHERE,	ANCHOR_BOTTOM},
 };
 
-
 //タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
 //	@@ 2005.04.03 MIK キーワードに空白が含まれる場合の考慮
 #define TAG_FORMAT_2_A       "%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%s\t%s"
@@ -87,7 +84,6 @@ static const SAnchorList anchorList[] = {
 //キーワードを入力して該当する情報を表示するまでの時間(ミリ秒)
 #define TAGJUMP_TIMER_DELAY 700
 #define TAGJUMP_TIMER_DELAY_SHORT 50
-
 
 /*
 	ctags.exe が出力する、拡張子と対応する種類
@@ -134,7 +130,6 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 	m_psFind0Match->m_nDepth  = -1;
 	m_psFind0Match->m_nMatchAll = 0;
 }
-
 
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
@@ -276,7 +271,6 @@ void CDlgTagJumpList::SetData( void )
 	}
 	//	To Here 2005.04.03 MIK 設定値の読み込み
 	
-
 	SetTextDir();
 
 	UpdateData(true);
@@ -587,8 +581,6 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
-
 INT_PTR CDlgTagJumpList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
 	INT_PTR result;
@@ -599,8 +591,6 @@ INT_PTR CDlgTagJumpList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPA
 	}
 	return result;
 }
-
-
 
 BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 {
@@ -622,16 +612,12 @@ BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 
-
-
 BOOL CDlgTagJumpList::OnMove( WPARAM wParam, LPARAM lParam )
 {
 	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcTagJumpDialog );
 
 	return CDialog::OnMove( wParam, lParam );
 }
-
-
 
 BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
 {
@@ -645,8 +631,6 @@ BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
 	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*3;
 	return 0;
 }
-
-
 
 BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 {
@@ -1386,7 +1370,6 @@ const TCHAR* CDlgTagJumpList::GetFileName( void )
 {
 	return GetFileTitlePointer(GetFilePath());
 }
-
 
 void CDlgTagJumpList::SetTextDir()
 {

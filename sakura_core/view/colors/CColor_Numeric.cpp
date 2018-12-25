@@ -29,7 +29,6 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-
 bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
@@ -37,7 +36,6 @@ bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
 	}
 	return false;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //

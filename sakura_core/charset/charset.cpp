@@ -69,7 +69,6 @@ static MSCodeSet				msCodeSet;
 // 表示順
 static std::vector<ECodeType>	vDispIdx;
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           初期化                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -87,7 +86,6 @@ void InitCodeSet()
 	}
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           判定                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -97,7 +95,6 @@ extern bool IsValidCodeType(int code)
 	InitCodeSet();
 	return (msCodeSet.find( code ) != msCodeSet.end());
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
@@ -131,7 +128,6 @@ LPCTSTR CCodeTypeName::Bracket() const
 
 	return to_tchar( sWork.c_str() );
 }
-
 
 bool CCodeTypeName::UseBom()
 {
@@ -168,7 +164,6 @@ bool CCodeTypeName::CanDefault()
 
 	return msCodeSet[m_eCodeType].m_bCanDefault;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      コンボボックス                         //

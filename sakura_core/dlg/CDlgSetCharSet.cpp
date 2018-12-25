@@ -30,16 +30,12 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
-
-
 CDlgSetCharSet::CDlgSetCharSet()
 {
 	m_pnCharSet = NULL;			// 文字コードセット
 	m_pbBom = NULL;				// 文字コードセット
 	m_bCP = false;
 }
-
-
 
 /* モーダルダイアログの表示 */
 int CDlgSetCharSet::DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom)
@@ -49,8 +45,6 @@ int CDlgSetCharSet::DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pn
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, (LPARAM)NULL );
 }
-
-
 
 BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -74,8 +68,6 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
-
-
 
 BOOL CDlgSetCharSet::OnBnClicked( int wID )
 {
@@ -106,8 +98,6 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
-
 // BOM の設定
 void CDlgSetCharSet::SetBOM( void )
 {
@@ -133,8 +123,6 @@ void CDlgSetCharSet::SetBOM( void )
 	}
 	BtnCtl_SetCheck( m_hwndCheckBOM, fCheck );
 }
-
-
 
 // 文字コード選択時の処理
 BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
@@ -169,14 +157,10 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 	return TRUE;
 }
 
-
-
 LPVOID CDlgSetCharSet::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
 }
-
-
 
 /* ダイアログデータの設定 */
 void CDlgSetCharSet::SetData( void )
@@ -208,8 +192,6 @@ void CDlgSetCharSet::SetData( void )
 	// BOMを設定
 	SetBOM();
 }
-
-
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー  */

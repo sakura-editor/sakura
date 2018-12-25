@@ -79,7 +79,6 @@ public:
 	}
 };
 
-
 /*!
 	pt1 - pt2の結果を返す
 	Yを優先して比較。Yが同一なら、Xで比較。
@@ -94,7 +93,6 @@ inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
 	if(pt1.y!=pt2.y)return (Int)(pt1.y-pt2.y);
 	return (Int)(pt1.x-pt2.x);
 }
-
 
 //! 2点を対角とする矩形を求める
 template <class POINT_T>

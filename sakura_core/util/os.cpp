@@ -19,7 +19,6 @@ DWORD GetComctl32Version()
 	return s_dwComctl32Version;
 }
 
-
 /*!	自分が現在ビジュアルスタイル表示状態かどうかを示す
 	Win32 API の IsAppThemed() はこれとは一致しない（IsAppThemed() と IsThemeActive() との差異は不明）
 
@@ -35,8 +34,6 @@ BOOL IsVisualStyle()
 	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive() );
 }
 
-
-
 /*!	指定ウィンドウでビジュアルスタイルを使わないようにする
 
 	@param[in] hWnd ウィンドウ
@@ -49,9 +46,6 @@ void PreventVisualStyle( HWND hWnd )
 	CUxTheme::getInstance()->SetWindowTheme( hWnd, L"", L"" );
 	return;
 }
-
-
-
 
 /*!	コモンコントロールを初期化する
 
@@ -73,10 +67,6 @@ void MyInitCommonControls()
 	// 初期化に失敗した場合のことは考えない（既存踏襲）
 	(void)bSuccess;
 }
-
-
-
-
 
 /*!
 	指定したウィンドウ／長方形領域／点／モニタに対応するモニタ作業領域を取得する
@@ -129,9 +119,6 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NUL
 }
 //	To Here 2006.04.21 ryoji MutiMonitor
 
-
-
-
 /*!
 	@brief レジストリから文字列を読み出す．
 	
@@ -165,7 +152,6 @@ bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer
 	}
 	return Result;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      クリップボード                         //
@@ -285,7 +271,6 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	return hDest;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       システム資源                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -329,7 +314,6 @@ BOOL GetSystemResources(
 		return FALSE;
 	}
 }
-
 
 #if (WINVER < _WIN32_WINNT_WIN2K)
 // NTではリソースチェックを行わない
@@ -382,7 +366,6 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 }
 #endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
-
 /*
 	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process
 */
@@ -422,7 +405,6 @@ CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 	}
 }
 
-
 CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
 :	m_isSuccess(FALSE)
 ,	m_OldValue(NULL)
@@ -441,7 +423,6 @@ CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 		Wow64RevertWow64FsRedirection(m_OldValue);
 	}
 }
-
 
 BOOL IsPowerShellAvailable(void)
 {

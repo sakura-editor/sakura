@@ -89,13 +89,11 @@ public:
 	CImageListMgr		m_cIcons;					//!< Image List
 };
 
-
 //WM_QUIT検出例外
 class CAppExitException : public std::exception{
 public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
-
 
 #endif /* SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_ */
 /*[EOF]*/

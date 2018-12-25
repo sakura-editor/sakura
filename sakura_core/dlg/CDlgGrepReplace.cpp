@@ -69,8 +69,6 @@ CDlgGrepReplace::CDlgGrepReplace()
 	return;
 }
 
-
-
 /* モーダルダイアログの表示 */
 int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath, LPARAM lParam )
 {
@@ -138,13 +136,11 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-
 BOOL CDlgGrepReplace::OnDestroy()
 {
 	m_cFontText2.ReleaseOnDestroy();
 	return CDlgGrep::OnDestroy();
 }
-
 
 BOOL CDlgGrepReplace::OnBnClicked( int wID )
 {
@@ -173,8 +169,6 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 	return CDlgGrep::OnBnClicked( wID );
 }
 
-
-
 /* ダイアログデータの設定 */
 void CDlgGrepReplace::SetData( void )
 {
@@ -189,9 +183,6 @@ void CDlgGrepReplace::SetData( void )
 
 	CDlgGrep::SetData();
 }
-
-
-
 
 /*! ダイアログデータの取得
 	TRUE==正常  FALSE==入力エラー
@@ -230,5 +221,4 @@ LPVOID CDlgGrepReplace::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
 }
-
 

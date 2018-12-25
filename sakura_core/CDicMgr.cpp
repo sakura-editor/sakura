@@ -28,16 +28,10 @@ CDicMgr::CDicMgr()
 	return;
 }
 
-
-
-
 CDicMgr::~CDicMgr()
 {
 	return;
 }
-
-
-
 
 /*!
 	キーワードの検索
@@ -63,7 +57,6 @@ BOOL CDicMgr::Search(
 	int		nRes;
 	wchar_t*	pszToken;
 	const wchar_t*	pszKeySeps = L",\0";
-
 
 	/* 辞書ファイル */
 	if( pszKeyWordHelpFile[0] == _T('\0') ){
@@ -119,10 +112,6 @@ BOOL CDicMgr::Search(
 	return FALSE;
 }
 
-
-
-
-
 /*
 ||  入力補完キーワードの検索
 ||
@@ -177,6 +166,4 @@ int CDicMgr::HokanSearch(
 	in.Close();
 	return (int)vKouho.size();
 }
-
-
 

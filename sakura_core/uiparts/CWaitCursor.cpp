@@ -26,8 +26,6 @@ CWaitCursor::CWaitCursor( HWND hWnd, bool bEnable )
 	return;
 }
 
-
-
 /*!
 	カーソル形状を元に戻す
 */
@@ -38,6 +36,4 @@ CWaitCursor::~CWaitCursor()
 		::SetCursor( m_hCursorOld );
 	}
 }
-
-
 

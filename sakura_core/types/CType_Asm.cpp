@@ -46,8 +46,6 @@ void CType_Asm::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 }
 
-
-
 /*! アセンブラ アウトライン解析
 
 	@author MIK
@@ -153,5 +151,4 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 
 	return;
 }
-
 

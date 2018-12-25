@@ -56,7 +56,6 @@ struct EditNodeEx{
 	int			nGroupMru;	//!< グループ単位のMRU番号
 };
 
-
 //! 共有メモリ内構造体
 struct SShare_Nodes{
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
@@ -65,7 +64,6 @@ struct SShare_Nodes{
 	LONG				m_nNonameSequences;	/* 無題連番 */
 	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
 };
-
 
 //! ノードアクセサ
 class CAppNodeHandle{
@@ -104,7 +102,6 @@ private:
 	int m_nGroup;
 };
 
-
 class CAppNodeManager : public TSingleton<CAppNodeManager>{
 	friend class TSingleton<CAppNodeManager>;
 	CAppNodeManager(){}
@@ -132,7 +129,6 @@ public:
 	int GetFreeGroupId( void );											/* 空いているグループ番号を取得する */
 	HWND GetNextTab(HWND hWndCur);										// Close した時の次のWindowを取得する(タブまとめ表示の場合)	2013/4/10 Uchi
 };
-
 
 inline CAppNodeGroupHandle EditNode::GetGroup() const{ if(this)return m_nGroup; else return 0; }
 

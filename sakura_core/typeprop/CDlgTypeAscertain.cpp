@@ -94,7 +94,6 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
 /* ダイアログデータの設定 */
 void CDlgTypeAscertain::SetData( void )
 {

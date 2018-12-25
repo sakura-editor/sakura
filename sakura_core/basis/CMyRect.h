@@ -76,7 +76,6 @@ public:
 		bottom = top  + h;
 	}
 
-
 	//計算
 	int Width() const
 	{

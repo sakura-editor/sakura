@@ -17,7 +17,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #include "StdAfx.h"
 #include "CCommandLine.h"
 #include "mem/CMemory.h"
@@ -221,7 +220,6 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			}
 		}
 	}
-
 
 	TCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ

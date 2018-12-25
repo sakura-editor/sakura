@@ -165,11 +165,9 @@ INT_PTR CPropEdit::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
 
 /* ダイアログデータの設定 */
 void CPropEdit::SetData( HWND hwndDlg )
@@ -232,8 +230,6 @@ void CPropEdit::SetData( HWND hwndDlg )
 
 	EnableEditPropInput( hwndDlg );
 }
-
-
 
 /* ダイアログデータの取得 */
 int CPropEdit::GetData( HWND hwndDlg )
@@ -307,5 +303,4 @@ void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), FALSE );
 	}
 }
-
 

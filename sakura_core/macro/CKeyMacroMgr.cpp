@@ -44,7 +44,6 @@ CKeyMacroMgr::~CKeyMacroMgr()
 	return;
 }
 
-
 /*! キーマクロのバッファをクリアする */
 void CKeyMacroMgr::ClearAll( void )
 {
@@ -59,7 +58,6 @@ void CKeyMacroMgr::ClearAll( void )
 	m_pTop = NULL;
 	m_pBot = NULL;
 	return;
-
 }
 
 /*! キーマクロのバッファにデータ追加
@@ -94,8 +92,6 @@ void CKeyMacroMgr::Append( CMacro* macro )
 	return;
 }
 
-
-
 /*! キーボードマクロの保存
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
@@ -119,8 +115,6 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 	out.Close();
 	return TRUE;
 }
-
-
 
 /** キーボードマクロの実行
 	CMacroに委譲。
@@ -485,5 +479,4 @@ void CKeyMacroMgr::declare (void)
 	CMacroFactory::getInstance()->RegisterCreator( Creator );
 }
 //	To Here Apr. 29, 2002 genta
-
 

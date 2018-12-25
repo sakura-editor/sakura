@@ -38,7 +38,6 @@ unsigned int __fastcall SjisFilter_basis( const unsigned int );
 unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int );
 unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int );
 
-
 /*!
 	UTF-16 -> UTF-32
 */
@@ -93,7 +92,6 @@ inline int EncodeUtf8( const wchar32_t wc32, unsigned char* pDst )
 	return nret;
 }
 
-
 /*!
 	UTF-8 -> UTF-32
 */
@@ -123,7 +121,6 @@ inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
 
 	return wc32;
 }
-
 
 /*!
 	判別テーブル   WinAPI 関数 WideCharToMultiByte の特殊な変換（相互変換できない変換）か
@@ -179,7 +176,6 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 	}
 	return nret;
 }
-
 
 /*!
 	MultiByteToWideChar のラッパー関数

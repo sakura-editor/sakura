@@ -129,7 +129,6 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 	return true;
 }
 
-
 /*! Profileをリソースから読み出す
 	
 	@param pName [in] リソース名
@@ -297,8 +296,6 @@ bool CProfile::_WriteFile(
 	return true;
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                            Imp                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -368,8 +365,6 @@ bool CProfile::SetProfileDataImp(
 	return true;
 }
 
-
-
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
@@ -385,5 +380,4 @@ void CProfile::DUMP( void )
 #endif
 	return;
 }
-
 

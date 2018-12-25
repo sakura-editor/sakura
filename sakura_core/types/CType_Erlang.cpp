@@ -409,7 +409,6 @@ void COutlineErlang::build_arity( int arity )
 	@par 主な仮定と方針
 	関数宣言は1カラム目から記載されている．
 	
-	
 	@par 解析アルゴリズム
 	1カラム目がアルファベットの場合: 関数らしいとして解析開始 / 関数名を保存
 	スペースは読み飛ばす
@@ -419,7 +418,6 @@ void COutlineErlang::build_arity( int arity )
 */
 void CDocOutline::MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr )
 {
-
 	COutlineErlang erl_state_machine;
 	CLogicInt	nLineCount;
 

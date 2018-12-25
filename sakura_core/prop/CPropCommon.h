@@ -182,7 +182,6 @@ protected:
 	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
 };
 
-
 /*!
 	@brief 共通設定プロパティページクラス
 
@@ -543,8 +542,6 @@ private:
 	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
 	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_ */

@@ -65,9 +65,6 @@ protected:
 private:
 };
 
-
-
-
 /*!
 	@brief 文字列リソース読み込みクラス
 
@@ -127,7 +124,6 @@ public:
 	CLoadString(){}
 	CLoadString( UINT uid ){ LoadString( uid ); }		// 文字列読み込み付きコンストラクタ
 	/*virtual*/ ~CLoadString(){}
-
 
 	/*
 	||  Attributes & Operations

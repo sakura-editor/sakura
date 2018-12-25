@@ -51,9 +51,6 @@ void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//ダブルクォーテーション文字列を色分け表示しない
 }
 
-
-
-
 /*! TeX アウトライン解析
 
 	@author naoh
@@ -281,8 +278,6 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 		MakeTagProcessor(*pcFuncInfoArr, m_pcDocRef->m_cLayoutMgr, TagHierarchy)
 	);
 }
-
-
 
 const wchar_t* g_ppszKeywordsTEX[] = {
 //Nov. 20, 2000 JEPRO	大幅追加 & 若干修正・削除 --ほとんどコマンドのみ

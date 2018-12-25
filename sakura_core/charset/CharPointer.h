@@ -69,7 +69,6 @@ private:
 	const char* m_p;
 };
 
-
 class CharPointerW{
 public:
 	CharPointerW(){ }
@@ -108,8 +107,6 @@ protected:
 private:
 	const wchar_t* m_p;
 };
-
-
 
 #ifdef _UNICODE
 typedef CharPointerW CharPointerT;

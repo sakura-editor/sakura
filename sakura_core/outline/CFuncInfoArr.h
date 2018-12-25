@@ -53,8 +53,6 @@ public:
 	std::wstring GetAppendText( int info );
 	int AppendTextLenMax(){ return m_nAppendTextLenMax; }
 
-
-
 public:
 	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 private:
@@ -66,10 +64,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCINFOARR_H_ */
-
-
 

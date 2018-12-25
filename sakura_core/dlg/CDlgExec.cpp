@@ -56,8 +56,6 @@ CDlgExec::CDlgExec()
 static const int codeTable1[] = { 0x00, 0x08, 0x80 };
 static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 
-
-
 /* モーダルダイアログの表示 */
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
@@ -65,7 +63,6 @@ int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
-
 
 BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
@@ -176,9 +173,6 @@ void CDlgExec::SetData( void )
 	return;
 }
 
-
-
-
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
@@ -204,8 +198,6 @@ int CDlgExec::GetData( void )
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 	return 1;
 }
-
-
 
 BOOL CDlgExec::OnBnClicked( int wID )
 {
@@ -268,7 +260,6 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			if( SelectDir( GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0] ) ){
 				::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
-				
 			}
 		}
 		return TRUE;
@@ -291,5 +282,4 @@ LPVOID CDlgExec::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 

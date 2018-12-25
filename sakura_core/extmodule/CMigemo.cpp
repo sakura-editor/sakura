@@ -14,7 +14,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #include "StdAfx.h"
 #include <io.h>
 #include "CMigemo.h"
@@ -130,7 +129,6 @@ LPCTSTR CMigemo::GetDllNameImp(int nIndex)
 
 long CMigemo::migemo_open(char* dict)
 {	
-
 	if (!IsAvailable())
 		return 0;
 	if( m_bStdcall ){
@@ -200,7 +198,6 @@ void CMigemo::migemo_release( unsigned char* str)
 	}else{
 		(*m_migemo_release)(m_migemo, str);
 	}
-
 }
 int CMigemo::migemo_set_operator(int index, unsigned char* op)
 {
@@ -336,7 +333,6 @@ int CMigemo::migemo_load_all()
 	return 1;
 }
 
-
 CMigemo::~CMigemo()
 {
 	DeinitDll();
@@ -355,8 +351,6 @@ int __cdecl pcre_char2int_sjis(const unsigned char* in, unsigned int* out)
 	}
     return 1;
 }
-
-
 
 // C/Migemo ソース中の rxgen.c:default_int2char を元に作成。	// 2009.04.30 miau
 static int __cdecl pcre_int2char(unsigned int in, unsigned char* out)
@@ -394,7 +388,6 @@ static int __cdecl pcre_int2char(unsigned int in, unsigned char* out)
 	return len;
     }
 }
-
 
 int __cdecl pcre_char2int_utf8(const unsigned char* in, unsigned int* out)
 {

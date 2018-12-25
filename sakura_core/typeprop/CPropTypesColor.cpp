@@ -88,7 +88,6 @@ TYPE_NAME_ID<EStringLiteralType> StringLitteralArr[] = {
 	{ STRING_LITERAL_PYTHON, STR_STRINGESC_PYTHON },
 };
 
-
 //	行コメントに関する情報
 struct {
 	int nEditID;
@@ -131,7 +130,6 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	return true;
 }
 
-
 /* 色の設定をエクスポート */
 // 2010/4/23 Uchi Exportの外出し
 bool CPropTypesColor::Export( HWND hwndDlg )
@@ -141,8 +139,6 @@ bool CPropTypesColor::Export( HWND hwndDlg )
 	// エクスポート
 	return cImpExpColors.ExportUI(m_hInstance, hwndDlg);
 }
-
-
 
 LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -228,7 +224,6 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			}
 			if( COLORIDX_GYOU == nIndex ){
 				pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
-
 			}
 
 			::InvalidateRect( hwnd, &rcItem, TRUE );
@@ -268,10 +263,6 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	}
 	return CallWindowProc( m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
-
-
-
-
 
 /* color メッセージ処理 */
 INT_PTR CPropTypesColor::DispatchEvent(
@@ -595,16 +586,13 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids2 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
-
 	}
 	return FALSE;
 }
 
-
 /* ダイアログデータの設定 color */
 void CPropTypesColor::SetData( HWND hwndDlg )
 {
-
 	HWND	hwndWork;
 	int		i;
 	int		nItem;
@@ -719,7 +707,6 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	return;
 }
 
-
 /*! セット名コンボボックスの値セット
 */
 void CPropTypesColor::SetDataKeyword( HWND hwndDlg )
@@ -746,14 +733,9 @@ void CPropTypesColor::SetDataKeyword( HWND hwndDlg )
 	}
 }
 
-
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-
 
 /* ダイアログデータの取得 color */
 int CPropTypesColor::GetData( HWND hwndDlg )
@@ -805,7 +787,6 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	m_Types.m_bStringLineOnly = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGLINEONLY );
 	m_Types.m_bStringEndLine = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGENDLINE );
 	
-
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 	nIdx = Combo_GetCurSel( hwndWork );
@@ -814,7 +795,6 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 		m_Types.m_nKeyWordSetIdx[0] = -1;
 	}else{
 		m_Types.m_nKeyWordSetIdx[0] = nIdx - 1;
-
 	}
 	m_nSet[0] = m_Types.m_nKeyWordSetIdx[0];
 
@@ -886,8 +866,6 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
-
-
 /* 色ボタンの描画 */
 void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
@@ -942,7 +920,6 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 		rcFocus.left += 1;
 		rcFocus.right += 1;
 		rcFocus.bottom += 1;
-
 	}
 	else{
 		gr.SetPen(cBtnHiLight);
@@ -977,8 +954,6 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 		::DrawFocusRect( gr, &rcFocus );
 	}
 }
-
-
 
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
@@ -1020,8 +995,6 @@ void CPropTypesColor::EnableTypesPropInput( HWND hwndDlg )
 	//	To Here Jun. 6, 2001 genta
 }
 //	To Here Sept. 10, 2000
-
-
 
 /*!	@brief キーワードセットの再配列
 
@@ -1075,8 +1048,6 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 	::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_LIST_COLORS ), NULL, TRUE );
 }
-
-
 
 /* 色種別リスト オーナー描画 */
 void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
@@ -1187,7 +1158,6 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
 	}
 
-
 	if( 0 == (g_ColorAttributeArr[pColorInfo->m_nColorIdx].fAttribute & COLOR_ATTRIB_NO_TEXT) )
 	{
 		/* 前景色 見本矩形 */
@@ -1205,8 +1175,6 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
 	}
 }
-
-
 
 /* 色選択ダイアログ */
 BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )

@@ -115,7 +115,6 @@ public:
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
 
-
 	template< class CHAR_TYPE >
 	static int GetWord( const CHAR_TYPE* pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
 		CHAR_TYPE **ppWordStart, int *pnWordLen );
@@ -125,7 +124,6 @@ protected:
 	static bool _match_charlist( const ACHAR c, const ACHAR *pszList );
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
-
 
 // ACHAR 版
 inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )

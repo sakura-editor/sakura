@@ -10,7 +10,6 @@ BOOL IsMailAddress_20160427( const wchar_t* pszBuf, int nBufLen, int* pnAddressL
 	int		nDotCount;
 	int		nBgn;
 
-
 	j = 0;
 	if( (pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
 	 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
@@ -42,7 +41,6 @@ BOOL IsMailAddress_20160427( const wchar_t* pszBuf, int nBufLen, int* pnAddressL
 	j++;
 	nDotCount = 0;
 //	nAlphaCount = 0;
-
 
 	for (;;) {
 		nBgn = j;

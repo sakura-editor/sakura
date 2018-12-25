@@ -36,7 +36,6 @@
 #include "CGrepAgent.h"
 #include "sakura_rc.h"
 
-
 // "までを切り取る
 static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size ){
 	const wchar_t* pFileEnd = wcschr( pLine, L'\"' );
@@ -50,7 +49,6 @@ static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size 
 	}
 	return false;
 }
-
 
 static bool IsFileExists2( const wchar_t* pszFile )
 {
@@ -354,8 +352,6 @@ can_not_tagjump:;
 	return false;
 }
 
-
-
 /* タグジャンプバック */
 void CViewCommander::Command_TAGJUMPBACK( void )
 {
@@ -379,8 +375,6 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 
 	return;
 }
-
-
 
 /*
 	タグファイルを作成する。
@@ -573,9 +567,7 @@ bool CViewCommander::Command_TagsMake( void )
 			}
 			Sleep(0);
 		} while( bLoopFlag || new_cnt > 0 );
-
 	}
-
 
 finish:
 	//終了処理
@@ -591,8 +583,6 @@ finish:
 	return true;
 }
 
-
-
 /*
 	ダイレクトタグジャンプ(メッセージ付)
 
@@ -606,8 +596,6 @@ bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
 	}
 	return ret;
 }
-
-
 
 /*
 	ダイレクトタグジャンプ
@@ -659,8 +647,6 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 	return false;
 }
 
-
-
 /*!
 	キーワードを指定してタグジャンプ(ダイアログ)
 	@param keyword NULL許容
@@ -695,8 +681,6 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 
 	return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine) );
 }
-
-
 
 /*!
 	タグジャンプの前処理

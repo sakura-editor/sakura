@@ -3,7 +3,6 @@
 #include "CWordParse.h"
 #include "charset/charcode.h"
 
-
 //@@@ 2001.06.23 N.Nakatani
 /*!
 	@brief 現在位置の単語の範囲を調べる staticメンバ
@@ -85,8 +84,6 @@ bool CWordParse::WhereCurrentWord_2(
 	return true;
 }
 
-
-
 //! 識別子に使用可能な文字かどうか
 inline bool isCSymbol(wchar_t c)
 {
@@ -107,8 +104,6 @@ inline bool isCSymbolZen(wchar_t c)
 		(c>=L'Ａ' && c<=L'Ｚ') ||
 		(c>=L'ａ' && c<=L'ｚ');
 }
-
-
 
 //! 現在位置の文字の種類を調べる
 ECharKind CWordParse::WhatKindOfChar(
@@ -170,8 +165,6 @@ ECharKind CWordParse::WhatKindOfChar(
 	}
 }
 
-
-
 //! 二つの文字を結合したものの種類を調べる
 ECharKind CWordParse::WhatKindOfTwoChars( ECharKind kindPre, ECharKind kindCur )
 {
@@ -198,7 +191,6 @@ ECharKind CWordParse::WhatKindOfTwoChars( ECharKind kindPre, ECharKind kindCur )
 	return CK_NULL;									// それ以外なら二つの文字は別種
 }
 
-
 //! 二つの文字を結合したものの種類を調べる
 ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCur )
 {
@@ -224,7 +216,6 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCu
 
 	return CK_NULL;									// それ以外なら二つの文字は別種
 }
-
 
 /*!	次の単語の先頭を探す
 	pLine（長さ：nLineLen）の文字列から単語を探す。
@@ -271,7 +262,6 @@ bool CWordParse::SearchNextWordPosition(
 	}
 	return false;
 }
-
 
 /*!	次の単語の先頭を探す
 	pLine（長さ：nLineLen）の文字列から単語を探す。

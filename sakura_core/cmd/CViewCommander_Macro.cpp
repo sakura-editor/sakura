@@ -32,7 +32,6 @@
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 
-
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )
 {
@@ -75,8 +74,6 @@ void CViewCommander::Command_RECKEYMACRO( void )
 	/* キャレットの行桁位置を表示する */
 	GetCaret().ShowCaretPosInfo();
 }
-
-
 
 /* キーマクロの保存 */
 void CViewCommander::Command_SAVEKEYMACRO( void )
@@ -125,8 +122,6 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	return;
 }
 
-
-
 /*! キーマクロの読み込み
 	@date 2005.02.20 novice デフォルトの拡張子変更
  */
@@ -168,8 +163,6 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	return;
 }
 
-
-
 /* キーマクロの実行 */
 void CViewCommander::Command_EXECKEYMACRO( void )
 {
@@ -201,8 +194,6 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	}
 	return;
 }
-
-
 
 /*! 名前を指定してマクロ実行
 	@param pszPath	マクロのファイルパス、またはマクロのコード。
@@ -293,8 +284,6 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	return;
 }
 
-
-
 /*! 外部コマンド実行ダイアログ表示
 	@date 2002.02.02 YAZAKI.
 */
@@ -322,8 +311,6 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	//HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
 	HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), (LPARAM)pszDir, 0);	//	外部コマンド実行コマンドの発行
 }
-
-
 
 //外部コマンド実行
 //	Sept. 20, 2000 JEPRO  名称CMMANDをCOMMANDに変更

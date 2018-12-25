@@ -81,8 +81,6 @@ private:
 template <class T>
 T* TSingleInstance<T>::gm_instance = NULL;
 
-
-
 //記録もする
 #include <vector>
 template <class T> class TInstanceHolder{

@@ -8,7 +8,6 @@
 #include "types/CTypeSupport.h"
 #include "util/string_ex.h" // IsURL
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           URL                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

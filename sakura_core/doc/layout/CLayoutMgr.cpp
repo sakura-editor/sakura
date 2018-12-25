@@ -31,7 +31,6 @@
 #include "CSearchAgent.h"
 #include "debug/CRunningTimer.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -63,7 +62,6 @@ CLayoutMgr::~CLayoutMgr()
 	m_pszKinsokuKuto_1.clear();	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 }
 
-
 /*
 ||
 || 行データ管理クラスのポインタを初期化します
@@ -92,8 +90,6 @@ void CLayoutMgr::Init()
 	m_nEOFColumn = CLayoutInt(-1);
 }
 
-
-
 void CLayoutMgr::_Empty()
 {
 	CLayout* pLayout = m_pLayoutTop;
@@ -103,9 +99,6 @@ void CLayoutMgr::_Empty()
 		pLayout = pLayoutNext;
 	}
 }
-
-
-
 
 /*! レイアウト情報の変更
 	@param bDoLayout [in] レイアウト情報の再作成
@@ -205,9 +198,6 @@ void CLayoutMgr::SetLayoutInfo(
 	}
 }
 
-
-
-
 /*!
 	@brief 指定された物理行のレイアウト情報を取得
 
@@ -258,7 +248,6 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 //			nCount--;
 //		}
 //	}
-
 
 	/*+++++++わずかに高速版+++++++*/
 	// 2004.03.28 Moca m_pLayoutPrevReferより、Top,Botのほうが近い場合は、そちらを利用する
@@ -325,7 +314,6 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 	}
 	return NULL;
 }
-
 
 //@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、InsertLineNext()と共通化
 void CLayoutMgr::AddLineBottom( CLayout* pLayout )
@@ -423,7 +411,6 @@ CLayout* CLayoutMgr::CreateLayout(
 
 	return pLayout;
 }
-
 
 /*
 || 指定された物理行のデータへのポインタとその長さを返す Ver0
@@ -530,13 +517,6 @@ void CLayoutMgr::GetEndLayoutPos(
 	m_nEOFLine = ptLayoutEnd->y;
 }
 
-
-
-
-
-
-
-
 /* 論理行の指定範囲に該当するレイアウト情報を削除して */
 /* 削除した範囲の直前のレイアウト情報のポインタを返す */
 CLayout* CLayoutMgr::DeleteLayoutAsLogical(
@@ -564,14 +544,11 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	m_pLayoutPrevRefer = pLayoutInThisArea->GetPrevLayout();
 	m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
 
-
 	/* 範囲内先頭に該当するレイアウト情報をサーチ */
 	pLayoutWork = pLayoutInThisArea->GetPrevLayout();
 	while( NULL != pLayoutWork && nLineFrom <= pLayoutWork->GetLogicLineNo()){
 		pLayoutWork = pLayoutWork->GetPrevLayout();
 	}
-
-
 
 	if( NULL == pLayoutWork ){
 		pLayout	= m_pLayoutTop;
@@ -625,9 +602,6 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	return pLayoutWork;
 }
 
-
-
-
 /* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 /* 論理行が削除された場合は０より小さい行数 */
 /* 論理行が挿入された場合は０より大きい行数 */
@@ -652,7 +626,6 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, CLogicInt nShiftLine
 	return;
 }
 
-
 bool CLayoutMgr::ChangeLayoutParam(
 	CKetaXInt	nTabSize,
 	int			nTsvMode,
@@ -674,10 +647,6 @@ bool CLayoutMgr::ChangeLayoutParam(
 
 	return true;
 }
-
-
-
-
 
 /* 現在位置の単語の範囲を調べる */
 bool CLayoutMgr::WhereCurrentWord(
@@ -716,12 +685,7 @@ bool CLayoutMgr::WhereCurrentWord(
 		pSelect->SetTo(ptTo);
 	}
 	return nRetCode;
-
 }
-
-
-
-
 
 /* 現在位置の左右の単語の先頭位置を調べる */
 int CLayoutMgr::PrevOrNextWord(
@@ -757,10 +721,6 @@ int CLayoutMgr::PrevOrNextWord(
 	}
 	return nRetCode;
 }
-
-
-
-
 
 //! 単語検索
 /*
@@ -800,10 +760,6 @@ int CLayoutMgr::SearchWord(
 	}
 	return nRetCode;
 }
-
-
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        単位の変換                           //
@@ -870,7 +826,6 @@ void CLayoutMgr::LogicToLayout(
 			}
 		}
 	}
-
 
 	//	Layoutを１つずつ先に進めながらptLogic.yが物理行に一致するLayoutを探す
 	while( pLayout ){
@@ -1008,7 +963,6 @@ void CLayoutMgr::LayoutToLogicEx(
 					// nX = CLayoutInt(MAXLINEKETAS);
 					nX = pcLayout->GetIndent();
 					goto checkloop;
-
 				}
 			}
 		}
@@ -1020,7 +974,6 @@ void CLayoutMgr::LayoutToLogicEx(
 	else{
 		pptLogic->y = pcLayout->GetLogicLineNo();
 	}
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        Ｘ値の決定                           //
@@ -1067,15 +1020,12 @@ checkloop:;
 	return;
 }
 
-
 void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLogic ) const
 {
 	CLogicPointEx ptEx;
 	LayoutToLogicEx( ptLayout, &ptEx );
 	*pptLogic = ptEx;
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         デバッグ                            //
@@ -1117,6 +1067,4 @@ void CLayoutMgr::DUMP()
 #endif
 	return;
 }
-
-
 

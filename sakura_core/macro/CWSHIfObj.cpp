@@ -37,7 +37,6 @@
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO
 
-
 //コマンド・関数を準備する
 void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
 {

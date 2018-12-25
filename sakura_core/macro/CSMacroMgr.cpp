@@ -254,7 +254,6 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_BASE64DECODE,	 		LTEXT("Base64Decode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Base64デコードして保存
 	{F_UUDECODE,		 		LTEXT("Uudecode"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 
-
 	/* 検索系 */
 	{F_SEARCH_DIALOG,			LTEXT("SearchDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索(単語検索ダイアログ)
 	{F_SEARCH_NEXT,				LTEXT("SearchNext"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次を検索
@@ -559,7 +558,6 @@ int CSMacroMgr::Append(
 	return TRUE;
 }
 
-
 /*!	@brief キーボードマクロの実行
 
 	CShareDataからファイル名を取得し、実行する。
@@ -711,7 +709,6 @@ void CSMacroMgr::UnloadAll(void)
 		delete m_cSavedKeyMacro[idx];
 		m_cSavedKeyMacro[idx] = NULL;
 	}
-
 }
 
 /*! キーボードマクロの保存
@@ -735,7 +732,6 @@ BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
 		if( m_pKeyMacro == NULL ){
 			return TRUE;
 		}
-
 	}
 //	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
 //		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
@@ -923,7 +919,6 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_EXITALL					://サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 //	case F_PUTFILE					://作業中ファイルの一時出力	2006.12.10 maru
 //	case F_INSFILE					://キャレット位置にファイル挿入	2006.12.10 maru
-
 
 	/* 編集系 */
 	case F_WCHAR					://文字入力
@@ -1214,7 +1209,6 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 		return TRUE;
 	}
 	return FALSE;
-
 }
 
 /*!

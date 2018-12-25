@@ -164,8 +164,6 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	}
 }
 
-
-
 /*!
 	編集中データから入力補完キーワードの検索
 	CHokanMgrから呼ばれる
@@ -263,7 +261,6 @@ int CEditView::HokanSearchByFile(
 			if( 0 < nWordLenStop ){
 				nWordLen  = nWordLenStop;
 			}
-
 
 			// CDicMgr等の制限により長すぎる単語は無視する
 			if( nWordLen > 1020 ){

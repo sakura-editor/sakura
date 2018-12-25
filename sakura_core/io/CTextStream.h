@@ -71,8 +71,6 @@ private:
 	CCodeBase* m_pcCodeBase;
 };
 
-
-
 //テキスト入力ストリーム。相対パスの場合はINIファイルのパスからの相対パスとして開く。
 class CTextInputStream_AbsIni : public CTextInputStream{
 public:

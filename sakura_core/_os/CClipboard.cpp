@@ -375,8 +375,6 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	return false;
 }
 
-
-
 struct SSystemClipFormatNames
 {
 	CLIPFORMAT	m_nClipFormat;
@@ -439,7 +437,6 @@ bool CClipboard::IsIncludeClipboradFormat(const wchar_t* pFormatName)
 	return false;
 }
 
-
 static int GetEndModeByMode(int nMode, int nEndMode)
 {
 	if( nEndMode == -1 ){
@@ -459,8 +456,6 @@ static int GetEndModeByMode(int nMode, int nEndMode)
 	}
 	return nEndMode;
 }
-
-
 
 bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode)
 {
@@ -536,8 +531,6 @@ bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFo
 
 	return true;
 }
-
-
 
 static int GetLengthByMode(HGLOBAL hClipData, const BYTE* pData, int nMode, int nEndMode)
 {
@@ -650,12 +643,9 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 	return false;
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  staticインターフェース                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 //! クリップボード内に、サクラエディタで扱えるデータがあればtrue
 bool CClipboard::HasValidData()

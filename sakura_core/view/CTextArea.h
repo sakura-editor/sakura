@@ -30,7 +30,6 @@ class CEditView;
 class CLayoutMgr;
 #include "DispPos.h"
 
-
 class CTextArea{
 public:
 	CTextArea(CEditView* pEditView);
@@ -192,7 +191,6 @@ protected:
 	void UpdateViewColRowNums();
 
 public:
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         サポート                            //

@@ -77,7 +77,6 @@ struct SMainMenuWork {
 static	std::map<int, SMainMenuWork>	msMenu;	// 一時データ
 static	int		nMenuCnt = 0;					// 一時データ番号
 
-
 // ローカル関数定義
 static HTREEITEM TreeCopy( HWND, HTREEITEM, HTREEITEM, bool, bool );
 static const TCHAR * MakeDispLabel( SMainMenuWork* );
@@ -91,7 +90,6 @@ static HWND		m_hwndDlg;
 // TreeViewラベル編集時のメッセージ処理用
 static WNDPROC	m_wpEdit = NULL;
 
-
 /*!
 	@param hwndDlg ダイアログボックスのWindow Handle
 	@param uMsg メッセージ
@@ -103,8 +101,6 @@ INT_PTR CALLBACK CPropMainMenu::DlgProc_page(
 {
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropMainMenu::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
-
-
 
 // TreeViewキー入力時のメッセージ処理
 static LRESULT CALLBACK TreeViewProc(
@@ -152,7 +148,6 @@ static LRESULT CALLBACK TreeViewProc(
 			TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 			return 0;
 		}
-
 
 		switch (wParam) {
 		case VK_BACK:
@@ -225,7 +220,6 @@ static void SetDlgItemsEnableState(
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), NULL != nIdxMenu );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
 	}
-
 }
 
 /* Menu メッセージ処理 */
@@ -502,7 +496,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					}
 					break;
 
-
 				case IDC_BUTTON_INSERT_NODE:			// ノード挿入
 				case IDC_BUTTON_INSERTSEPARATOR:		// 区切線挿入
 				case IDC_BUTTON_INSERT:					// 挿入(上)
@@ -665,7 +658,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					}
 					break;
 
-
 				case IDC_BUTTON_UP:
 					htiItem = TreeView_GetSelection( hwndTreeRes );
 					if (htiItem == NULL) {
@@ -772,7 +764,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					TreeView_SelectItem( hwndTreeRes, htiTemp2 );
 					break;
 
-
 				case IDC_BUTTON_CHECK:		// メニューの検査
 					{
 						wstring sErrMsg;
@@ -784,7 +775,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 					}
 					break;
-
 
 				case IDC_BUTTON_EXPAND:		// ツリー全開
 					TreeView_ExpandAll( hwndTreeRes, true );
@@ -830,9 +820,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	}
 	return FALSE;
 }
-
-
-
 
 // & の補完
 static wstring	SupplementAmpersand( wstring sLavel)
@@ -1102,8 +1089,6 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 	return true;
 }
 
-
-
 /* メインメニュー設定をインポートする */
 void CPropMainMenu::Import( HWND hwndDlg )
 {
@@ -1130,8 +1115,6 @@ void CPropMainMenu::Export( HWND hwndDlg )
 		return;
 	}
 }
-
-
 
 // ツリーのコピー
 //		fChildがtrueの時はdstの子としてコピー, そうでなければdstの兄弟としてdstの後ろにコピー
@@ -1210,8 +1193,6 @@ static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 
 	return to_tchar( szLabel );
 }
-
-
 
 // メニューの検査
 bool CPropMainMenu::Check_MainMenu( 

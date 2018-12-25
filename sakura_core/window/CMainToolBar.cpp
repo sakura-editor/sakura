@@ -115,7 +115,6 @@ static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	return ::CallWindowProc( g_pOldToolBarWndProc, hWnd, msg, wParam, lParam );
 }
 
-
 /* ツールバー作成
 	@date @@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2005.08.29 aroka ツールバーの折り返し
@@ -420,7 +419,6 @@ bool CMainToolBar::EatMessage(MSG* msg)
 	return false;
 }
 
-
 /*!	@brief ToolBarのOwnerDraw
 
 	@param pnmh [in] Owner Draw情報
@@ -470,7 +468,6 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	}
 	return CDRF_DODEFAULT;
 }
-
 
 /*! ツールバー更新用タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
@@ -578,7 +575,6 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 	}
 	return strText.length();
 }
-
 
 /*!
 ツールバーの検索ボックスにフォーカスを移動する.

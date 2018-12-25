@@ -86,7 +86,6 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 	}
 }
 
-
 BOOL CDlgTypeList::OnLbnDblclk( int wID )
 {
 	switch( wID ){
@@ -154,10 +153,7 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
-
 }
-
-
 
 BOOL CDlgTypeList::OnActivate( WPARAM wParam, LPARAM lParam )
 {
@@ -177,11 +173,8 @@ BOOL CDlgTypeList::OnActivate( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnActivate( wParam, lParam );
 }
 
-
 INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
-
-
 	HWND hwndRMenu = GetItemHwnd( IDC_CHECK_EXT_RMENU );
 	HWND hwndDblClick = GetItemHwnd( IDC_CHECK_EXT_DBLCLICK );
 
@@ -302,7 +295,6 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 	}
 	return result;
 }
-
 
 /* ダイアログデータの設定 */
 void CDlgTypeList::SetData( void )
@@ -704,7 +696,6 @@ bool CDlgTypeList::DelType()
 	SendChangeSetting();
 	return true;
 }
-
 
 /*! 再帰的レジストリコピー */
 int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath)

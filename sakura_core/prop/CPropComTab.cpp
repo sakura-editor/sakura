@@ -44,7 +44,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 	IDC_CHECK_DispTabWndMultiWin,	HIDC_CHECK_DispTabWndMultiWin,	//ウィンドウをまとめてグループ化する
@@ -188,7 +187,6 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	}
 	return FALSE;
 }
-
 
 /* ダイアログデータの設定 */
 void CPropTab::SetData( HWND hwndDlg )

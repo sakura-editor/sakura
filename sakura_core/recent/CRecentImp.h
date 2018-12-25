@@ -30,7 +30,6 @@
 
 #include "recent/CRecent.h"
 
-
 template < class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE* >
 class CRecentImp : public CRecent{
 private:
@@ -89,7 +88,6 @@ public:
 	DataType* GetItem( int nIndex ){ return const_cast<DataType*>(static_cast<const Me*>(this)->GetItem(nIndex)); }
 	int FindItem( ReceiveType pItemData ) const;
 	bool MoveItem( int nSrcIndex, int nDstIndex );	//アイテムを移動
-
 
 	//オーバーライド用インターフェース
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;

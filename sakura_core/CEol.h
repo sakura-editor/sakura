@@ -100,13 +100,9 @@ public:
 		return m_eEolType>=EOL_CRLF && m_eEolType<EOL_CODEMAX;
 	}
 
-
 private:
 	EEolType	m_eEolType;	//!< 改行コードの種類
 };
 
-
 #endif
-
-
 

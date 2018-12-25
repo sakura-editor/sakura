@@ -68,8 +68,6 @@ private:
 	bool	bEnabled;	//!< 有効かどうか
 };
 
-
-
 class CAutoSaveAgent : public CDocListenerEx{
 public:
 	void CheckAutoSave();
@@ -78,10 +76,6 @@ public:
 private:
 	CPassiveTimer m_cPassiveTimer;
 };
-
-
-
-
 
 #endif
 

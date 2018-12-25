@@ -141,7 +141,6 @@ bool IsFilePath(
 	}
 
 	return false;
-
 }
 
 /*!
@@ -180,8 +179,6 @@ bool IsLocalDrive( const TCHAR* pszDrive )
 	return true;
 }
 
-
-
 const TCHAR* GetFileTitlePointer(const TCHAR* tszPath)
 {
 	CharPointerT p;
@@ -199,7 +196,6 @@ const TCHAR* GetFileTitlePointer(const TCHAR* tszPath)
 	}
 	return pszName;
 }
-
 
 /*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
 	@author Moca
@@ -233,8 +229,6 @@ FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
 	return _tfopen( fname, mode );
 }
 
-
-
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
 void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 {
@@ -257,9 +251,6 @@ void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 	}
 	return;
 }
-
-
-
 
 /* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 void AddLastYenFromDirectoryPath( CHAR* pszFolder )
@@ -307,7 +298,6 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	}
 	return;
 }
-
 
 /* ファイルのフルパスを、フォルダとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
@@ -369,7 +359,6 @@ void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* ps
 	return;
 }
 
-
 /*! ロングファイル名を取得する 
 
 	@param[in] pszFilePathSrc 変換元パス名
@@ -397,7 +386,6 @@ BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
 	}
 	return TRUE;
 }
-
 
 /* 拡張子を調べる */
 BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
@@ -431,11 +419,6 @@ bool _IS_REL_PATH(const TCHAR* path)
 	}
 	return ret;
 }
-
-
-
-
-
 
 /*! @brief ディレクトリの深さを計算する
 
@@ -485,7 +468,6 @@ int CalcDirectoryDepth(
 	}
 	return depth;
 }
-
 
 /*!
 	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
@@ -544,7 +526,6 @@ void GetInidir(
 		auto_snprintf_s( pDir, _MAX_PATH, _T("%ts\\%ts"), szDir, szFile );
 	}
 }
-
 
 /*!
 	@brief INIファイルまたはEXEファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す（INIを優先）．
@@ -614,8 +595,6 @@ LPCTSTR GetRelPath( LPCTSTR pszPath )
 	return pszFileName;
 }
 
-
-
 /**	ファイルの存在チェック
 
 	指定されたパスのファイルが存在するかどうかを確認する。
@@ -664,8 +643,6 @@ bool IsDirectory(LPCTSTR pszPath)
 	return false;
 }
 
-
-
 /*!	ファイルの更新日時を取得
 
 	@return true: 成功, false: FindFirstFile失敗
@@ -700,21 +677,12 @@ bool GetLastWriteTimestamp(
 	}
 }
 
-
-
-
-
-
-
-
 // -----------------------------------------------------------------------------
 //
 //
 //                   MY_SP.c by SUI
 //
 //
-
-
 
 /* ============================================================================
 my_splitpath( const char *CommandLine, char *drive, char *dir, char *fname, char *ext );

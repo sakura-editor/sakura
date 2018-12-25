@@ -61,10 +61,6 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 }
 #endif
 
-
-
-
-
 /*
 	判別テーブル   WinAPI 関数 WideCharToMultiByte の特殊な変換（相互変換できない変換）か
 	添え字の定義域：0x00 ～ 0x5f(=0x00ff - 0x00a0)
@@ -84,8 +80,6 @@ const bool TABLE_WctombSpec[] = {
 	true, true, true, true, true, true, true, bNA,   // 00f0 - 00f7
 	true, true, true, true, true, true, true, true,  // 00f8 - 00ff
 };
-
-
 
 //
 //	判別・変換テーブル   SJIS の重複符号化されている文字を解決する補助的な表
@@ -226,9 +220,6 @@ static const int TABLESIZE_SjisPoorcodeIndex = 23;
 //	0xeefa から 0xeefc の SJIS コードポイントである。
 //
 
-
-
-
 /*!
 	SJIS フィルタ  2区と13区にある文字の正常化
 
@@ -259,7 +250,6 @@ unsigned int __fastcall SjisFilter_basis( const unsigned int uCode )
 	}
 	return uCode;
 }
-
 
 /*!
 	SJIS フィルタ  IBM拡張文字 → NEC 選定IBM拡張文字
@@ -298,7 +288,6 @@ unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int uCode )
 
 	return code;
 }
-
 
 /*!
 	SJIS フィルタ  NEC 選定IBM拡張文字 → IBM拡張文字
