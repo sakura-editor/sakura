@@ -75,10 +75,10 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
+	BOOL	OnDestroy( void ) override;
 	BOOL	OnBnClicked(int wID);
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
-	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理

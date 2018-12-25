@@ -487,6 +487,17 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
+BOOL CDlgFavorite::OnDestroy( void )
+{
+	CDialog::OnDestroy();
+	RECT& rect = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
+	rect.left = m_xPos;
+	rect.top = m_yPos;
+	rect.right = rect.left + m_nWidth;
+	rect.bottom = rect.top + m_nHeight;
+	return TRUE;
+}
+
 BOOL CDlgFavorite::OnBnClicked( int wID )
 {
 	switch( wID )
@@ -1196,8 +1207,6 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog );
-
 	RECT rc;
 	POINT ptNew;
 	::GetWindowRect( GetHwnd(), &rc );
@@ -1214,13 +1223,6 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
-}
-
-BOOL CDlgFavorite::OnMove( WPARAM wParam, LPARAM lParam )
-{
-	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog );
-	
-	return CDialog::OnMove( wParam, lParam );
 }
 
 BOOL CDlgFavorite::OnMinMaxInfo( LPARAM lParam )
