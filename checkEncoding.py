@@ -36,12 +36,9 @@ def check_encoding(file_path):
 	return detector.result['encoding']
 
 # チェック対象の拡張子か判断する
-def checkExtension(file):
-	base, ext = os.path.splitext(file)
-	if ext in extensions:
-		return True
-	else:
-		return False
+def checkExtension(fileName):
+	base, ext = os.path.splitext(fileName)
+	return (ext in extensions)
 
 # origin/master が存在するか確認する
 # 戻り値
@@ -68,24 +65,24 @@ def getDiffFiles():
 	output = subprocess.check_output('git diff ' + mergeBase + ' --name-only --diff-filter=dr')
 	outputDec = output.decode()
 	diffFiles = outputDec.splitlines()
-	for file in diffFiles:
-		if checkExtension(file):
-			yield file
+	for fileName in diffFiles:
+		if checkExtension(fileName):
+			yield fileName
 		else:
-			print ("skip " + file)
+			print ("skip " + fileName)
 
 # デバッグ用
 # すべてのファイルを対象にチェック対象の拡張子のファイルの文字コードを調べてチェックする
 def checkAll():
 	for rootdir, dirs, files in os.walk('.'):
-		for file in files:
-			if checkExtension(file):
-				full = os.path.join(rootdir, file)
+		for fileName in files:
+			if checkExtension(fileName):
+				full = os.path.join(rootdir, fileName)
 				yield full
 
 # 指定したファイルの文字コードが期待通りか確認する
-def checkEncodingResult(file, encoding):
-	base, ext = os.path.splitext(file)
+def checkEncodingResult(fileName, encoding):
+	base, ext = os.path.splitext(fileName)
 	encoding = encoding.lower()
 	if encoding in expectEncoding.get(ext, ()):
 		return True
@@ -97,14 +94,14 @@ def processFiles(files):
 	# 条件に満たないファイル数
 	count = 0
 
-	for file in files:
-		print ("checking " + file)
-		encoding = check_encoding(file)
-		if not checkEncodingResult(file, encoding):
-			print ("NG", encoding, file)
+	for fileName in files:
+		print ("checking " + fileName)
+		encoding = check_encoding(fileName)
+		if not checkEncodingResult(fileName, encoding):
+			print ("NG", encoding, fileName)
 			count = count + 1
 		else:
-			print ("OK", encoding, file)
+			print ("OK", encoding, fileName)
 	return count
 
 if __name__ == '__main__':

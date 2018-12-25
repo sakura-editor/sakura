@@ -2,9 +2,9 @@ import hashlib
 import os
 import sys
 
-def getSha256(file):
+def getSha256(fileName):
 	hash = hashlib.sha256()
-	with open(file, 'rb') as f:
+	with open(fileName, 'rb') as f:
 		while True:
 			chunk = f.read(hash.block_size)
 			if chunk:
@@ -16,8 +16,8 @@ def getSha256(file):
 	return checksum
 
 def writeHash(hashFile, topdir, extensions):
-	def isMatch(file, extensions):
-		base, ext = os.path.splitext(file)
+	def isMatch(fileName, extensions):
+		base, ext = os.path.splitext(fileName)
 		if extensions:
 			for extension in extensions:
 				if ext == extension or ext == "." + extension:
@@ -29,9 +29,9 @@ def writeHash(hashFile, topdir, extensions):
 	with open(hashFile, "w") as fout:
 		checksums = {}
 		for root, dirs, files in os.walk(topdir):
-			for file in files:
-				full_path = os.path.join(root, file)
-				if isMatch(file, extensions):
+			for fileName in files:
+				full_path = os.path.join(root, fileName)
+				if isMatch(fileName, extensions):
 					checksum = getSha256(full_path)
 					if checksum not in checksums:
 						checksums[checksum] = []
