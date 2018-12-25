@@ -137,8 +137,8 @@ class AppveyorEnv():
 		pathLower = path.lower()
 		dirname = os.path.dirname(path)
 		for rootdir, dirs, files in os.walk(dirname):
-			for file in files:
-				work_path = os.path.join(rootdir, file)
+			for fileName in files:
+				work_path = os.path.join(rootdir, fileName)
 				if work_path.lower() == pathLower:
 					return work_path
 		return path
@@ -180,27 +180,27 @@ class AppveyorEnv():
 			print (key, self.var[key])
 
 	# Appveyor 関連の環境変数をバッチファイルの形で保存する
-	def saveEnvAsBat(self, file):
-		with open(file, "w") as fout:
+	def saveEnvAsBat(self, fileName):
+		with open(fileName, "w") as fout:
 			for key in self.keysEnv:
 				fout.write("set " + key + "=" + os.environ.get(key, "") + "\n")
-		print ("wrote: " + file)
+		print ("wrote: " + fileName)
 
 def main(fileBat):
 	appveyor = AppveyorEnv()
 	appveyor.printAll()
 	
-	file = r"appveyor_env.py"
-	if os.path.exists(file):
-		print (appveyor.getBlobURL(file))
-		print (appveyor.getBlobURLWithLine(file, 1))
-		print (appveyor.getBlobURLWithLines(file, 9, 15))
+	fileName = r"appveyor_env.py"
+	if os.path.exists(fileName):
+		print (appveyor.getBlobURL(fileName))
+		print (appveyor.getBlobURLWithLine(fileName, 1))
+		print (appveyor.getBlobURLWithLines(fileName, 9, 15))
 	
-	file = r"sakura\preBuild.bat"
-	if os.path.exists(file):
-		print (appveyor.getBlobURL(file))
-		print (appveyor.getBlobURLWithLine(file, 1))
-		print (appveyor.getBlobURLWithLines(file, 9, 15))
+	fileName = r"sakura\preBuild.bat"
+	if os.path.exists(fileName):
+		print (appveyor.getBlobURL(fileName))
+		print (appveyor.getBlobURLWithLine(fileName, 1))
+		print (appveyor.getBlobURLWithLines(fileName, 9, 15))
 
 	appveyor.saveEnvAsBat(fileBat)
 
