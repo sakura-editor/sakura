@@ -46,10 +46,10 @@ DL {
 	padding: 0; border: 1px solid #666; margin-right: 1em; margin-left: 1em;
 }
 DT {
-	PADDING: 0.1em 0.3em 0.1em 0.3em; MARGIN: 0.5em 0px 0px; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+	PADDING: 0.1em 0.3em 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
 }
 DD {
-	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0px; PADDING-TOP: 0.2em
+	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0; PADDING-TOP: 0.2em
 }
 TABLE {
 	BORDER-RIGHT: #666 2px solid; BORDER-TOP: 2px solid #666; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse
@@ -97,11 +97,11 @@ STRONG {
 	FONT-WEIGHT: bold; TEXT-ALIGN: center
 }
 .example {
-	margin: 0px; padding: 0 1em 0 1em; font-weight: bold; border-top-style: none; 
+	margin: 0; padding: 0 1em 0 1em; font-weight: bold; border-top-style: none; 
 	; border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
 }
 .note {
-	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-TOP-STYLE: none; PADDING-TOP: 0px; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
+	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0; MARGIN: 0; BORDER-TOP-STYLE: none; PADDING-TOP: 0; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
 }
 .codesample {
 	color: #000; background-color: #f9f9f9;
