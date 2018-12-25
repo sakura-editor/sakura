@@ -11,11 +11,11 @@ platform:
   - MinGW
 
 cache:
-  - '%TEMP%\chocolatey\ -> appveyor.yml'
+  - 'c:\choco\ -> appveyor.yml'
 
 install:
-  - cinst cppcheck --version 1.86 --limitoutput -y
-  - cinst doxygen.install --version 1.8.14.20181217 --limitoutput -y
+  - cinst cppcheck --cache-location=c:\choco\ --version 1.86 --limitoutput -y
+  - cinst doxygen.install --cache-location=c:\choco\ --version 1.8.14.20181217 --limitoutput -y
 
 build_script:
 - cmd: >-
