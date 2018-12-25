@@ -49,9 +49,12 @@ def checkAll(topDir):
 def clipEndOfLine(line):
 	return line.rstrip('\r\n')
 
-# 引数で指定したファイルに対して @file コメントをつける
+# 冗長な空行を削除する
 def removeRedundantBlack(fileName):
 	endOfLine   = "\r\n"
+	
+	# 各行のデータを覚えておくバッファ
+	# 行のデータと各行の種類の判定結果を記憶する
 	prevLines   = []
 
 	tmp_file = fileName + ".tmp"
@@ -64,21 +67,33 @@ def removeRedundantBlack(fileName):
 			elem['type'] = lineType
 			
 			if prevLines:
-				# 最初の行ではないとき
+				#	以下のような場合に現在の行が空行の場合、現在の行を捨てる
+				#		prevLines[-1]	leftBracket		{
+				#		現在の行		blankLine		<空行>
 				if prevLines[-1]['type'] == leftBracket:
 					if type == blankLine:
 						continue
 
+				# 現在の行も前の行も空行の場合、現在の行を捨てる
+				#		prevLines[-1]	blankLine		<空行>
+				#		現在の行		blankLine		<空行>
 				if prevLines[-1]['type'] == blankLine:
 					if lineType == blankLine:
 						continue
 
+				#	以下のような場合に prevLines[-1] から <空行> 以外を見つけるまで
+				#	prevLines の要素を後ろから消していく
+				#		prevLines[-3]	otherLine		<その他の行>
+				#		prevLines[-2]	blankLine		<空行>
+				#		prevLines[-1]	blankLine		<空行>
+				#		現在の行		rightBracket	}
+				#
 				if lineType == rightBracket:
 					# 直前の空行をバッファから消す
 					while prevLines and prevLines[-1]['type'] == blankLine:
 						prevLines.pop(-1)
 			else:
-				# 最初の行が空白のとき
+				# ファイルの先頭行が空行のとき、現在の行を捨てる
 				if lineType == blankLine:
 					continue
 
