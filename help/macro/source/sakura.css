@@ -14,17 +14,17 @@ P
 
 H1
 {
-    BORDER-RIGHT: #000 0px inset;
-    BORDER-TOP: #000 0px inset;
-    MARGIN-TOP: 0px;
-    BORDER-LEFT: #000 0px inset;
+    BORDER-RIGHT: #000 0 inset;
+    BORDER-TOP: #000 0 inset;
+    MARGIN-TOP: 0;
+    BORDER-LEFT: #000 0 inset;
     BORDER-BOTTOM: #000 3px inset;
 }
 H2
 {
     BORDER-RIGHT: #000 2px inset;
-    BORDER-TOP: #000 0px inset;
-    BORDER-LEFT: #000 0px inset;
+    BORDER-TOP: #000 0 inset;
+    BORDER-LEFT: #000 0 inset;
     COLOR: #210;
     BORDER-BOTTOM: #000 2px inset;
     BACKGROUND-COLOR: #fdd;
@@ -32,8 +32,8 @@ H2
 H3
 {
     BORDER-RIGHT: #aa9 1px inset;
-    BORDER-TOP: #aa9 0px inset;
-    BORDER-LEFT: #aa9 0px inset;
+    BORDER-TOP: #aa9 0 inset;
+    BORDER-LEFT: #aa9 0 inset;
     BORDER-BOTTOM: #aa9 1px inset;
     BACKGROUND-COLOR: #eee;
 }
