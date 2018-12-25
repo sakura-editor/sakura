@@ -35,10 +35,7 @@ extensions = (
 # チェック対象の拡張子か判断する
 def checkExtension(fileName):
 	base, ext = os.path.splitext(fileName)
-	if ext in extensions:
-		return True
-	else:
-		return False
+	return (ext in extensions)
 
 # 引数で指定したフォルダ以下のすべての対象ファイルを yield で返す
 def checkAll(topDir):
