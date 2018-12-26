@@ -8,7 +8,7 @@ import appveyor_env
 
 # 解析結果を格納するハッシュのキー
 logHashKeys = [
-	'type',
+	'errtype',
 	'code',
 	'source',
 	'dest',
@@ -20,7 +20,7 @@ logHashKeys = [
 ]
 
 csvKeys = [
-	'type',
+	'errtype',
 	'code',
 	'source',
 	'dest',
@@ -31,7 +31,7 @@ csvKeys = [
 ]
 
 excelKeys = [
-	'type',
+	'errtype',
 	'code',
 	'source',
 	'dest',
@@ -51,7 +51,7 @@ def parse_buildlog(infile):
 	regLineNumer = r'\((?P<lineNumber>\d+)\)'
 
 	# エラーコードに対する正規表現: 例 warning C4267
-	regError     = r'\s*(?P<type>\w+)\s+(?P<code>\w+)\s*'
+	regError     = r'\s*(?P<errtype>\w+)\s+(?P<code>\w+)\s*'
 
 	# エラーメッセージ: 例 'argument': conversion from 'size_t' to 'int', possible loss of data [C:\projects\sakura\sakura\sakura.vcxproj]
 	regMessage   = r'(?P<message>.+)$'
@@ -80,12 +80,12 @@ def parse_buildlog(infile):
 			if match:
 				path       = match.group('filePath')
 				lineNumber = match.group('lineNumber')
-				type       = match.group('type')
+				errtype    = match.group('errtype')
 				code       = match.group('code')
 				message    = match.group('message')
 
 				entry = {}
-				entry['type'] = type
+				entry['errtype'] = errtype
 				entry['code'] = code
 
 				match2 = re.search(regFromTo, text)
@@ -191,19 +191,19 @@ def writeToXLSX(outfile, data):
 			message = re.sub(r'((\S*)\)\s*)?\[(.+?)\]', r'', message)
 			
 			# エラータイプ
-			type = entry['type']
+			errtype = entry['errtype']
 			
 			# エラーコード
 			code = entry['code']
 			
 			# サマリーを管理するハッシュ用のキー
-			errorKey = ' '.join([type, code, message])
+			errorKey = ' '.join([errtype, code, message])
 
 			if errorKey not in errorSummary:
 				errorSummary[errorKey] = {}
 				errorSummary[errorKey]["description"] = message
 				errorSummary[errorKey]["entries"]     = []
-				errorSummary[errorKey]["type"]        = type
+				errorSummary[errorKey]["errtype"]     = errtype
 				errorSummary[errorKey]["code"]        = code
 			errorSummary[errorKey]["entries"].append(entry)
 
@@ -257,7 +257,7 @@ def writeToXLSX(outfile, data):
 
 			message = errorSummary[errorKey]["description"]
 			entries = errorSummary[errorKey]["entries"]
-			type    = errorSummary[errorKey]["type"]
+			errtype = errorSummary[errorKey]["errtype"]
 			code    = errorSummary[errorKey]["code"]
 
 			wsError = wb.create_sheet()
