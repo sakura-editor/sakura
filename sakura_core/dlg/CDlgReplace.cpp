@@ -496,7 +496,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_BUTTON_SEARCHPREV:	/* 上検索 */
 		nRet = GetData();
 		if( 0 < nRet ){
-
 			// 検索開始位置を登録 02/07/28 ai start
 			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
@@ -515,7 +514,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
 		nRet = GetData();
 		if( 0 < nRet ){
-
 			// 検索開始位置を登録 02/07/28 ai start
 			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
@@ -543,7 +541,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_BUTTON_REPALCE:	/* 置換 */
 		nRet = GetData();
 		if( 0 < nRet ){
-
 			// 置換開始位置を登録 02/07/28 ai start
 			if( FALSE != pcEditView->m_bSearch ){
 				pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;

@@ -98,7 +98,6 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 //	int			idCtrl;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Tab */
 		SetData( hwndDlg );

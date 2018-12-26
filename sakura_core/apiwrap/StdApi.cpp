@@ -63,7 +63,6 @@ static void DestroyMbString(ACHAR* pMbString)
 #endif	// ndef _UNICODE
 
 namespace ApiWrap{
-
 	/*!
 		MakeSureDirectoryPathExists の UNICODE 版。
 		szDirPath で指定されたすべてのディレクトリを作成します。

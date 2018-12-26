@@ -54,7 +54,6 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 	pw = reinterpret_cast<unsigned short*>(pDst);
 
 	for( ; ; ){
-
 		// 文字をチェック
 		if( bCESU8Mode != true ){
 			nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), pr_end-pr, &echarset, true, 0 );

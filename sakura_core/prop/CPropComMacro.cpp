@@ -89,7 +89,6 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	WORD		wID;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Macro */
 		InitDialog( hwndDlg );
@@ -387,7 +386,6 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	int width = rc.right - rc.left - ::GetSystemMetrics(SM_CXHSCROLL);
 	
 	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
-		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
 		sColumn.pszText = const_cast<TCHAR*>(LS(ColumnList[pos].titleId));

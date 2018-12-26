@@ -231,7 +231,6 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 	WORD	wID;
 	HWND	hwndCtl;
 	switch ( uMsg ){
-
 	case WM_TIMER:		return OnTimer( hwnd, uMsg, wParam, lParam );
 	case WM_COMMAND:	return OnCommand( hwnd, uMsg, wParam, lParam );
 	case WM_SIZE:		return OnSize( hwnd, uMsg, wParam, lParam );

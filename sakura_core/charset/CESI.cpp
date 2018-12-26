@@ -576,7 +576,6 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 	pr_end = pS + nLen;
 
 	for( ; ; ){
-
 		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, 0 );
 		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, 0 );
 		if( nret1 == 0 && nret2 == 0 ){

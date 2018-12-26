@@ -277,7 +277,6 @@ int CMigemo::migemo_is_enable()
 int CMigemo::migemo_load_all()
 {
 	if( !migemo_is_enable()){
-		
 		TCHAR* szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
 		TCHAR path[MAX_PATH];
 		//char path2[MAX_PATH];

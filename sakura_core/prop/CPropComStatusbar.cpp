@@ -57,7 +57,6 @@ INT_PTR CPropStatusbar::DispatchEvent(
 	NMHDR*		pNMHDR;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
 		SetData( hwndDlg );

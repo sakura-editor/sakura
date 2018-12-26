@@ -398,7 +398,6 @@ bool CFileNameManager::GetMenuFullLabel(
 		ret = auto_snprintf_s( pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey );
 		return 0 < ret;
 	}else if( pfi->m_bIsGrep ){
-		
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
 		//pfi->m_szGrepKeyShort → cmemDes
 		CNativeW	cmemDes;

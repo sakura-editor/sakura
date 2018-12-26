@@ -1825,7 +1825,6 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TabCtrl_GetItem( m_hwndTab, nIndex, &tcitem );
 			if( 0 != auto_strcmp( szNameOld, szName )
 				|| tcitem.iImage != GetImageIndex( p ) ){
-
 				tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 				tcitem.pszText = szName;
 				tcitem.lParam  = lParam;

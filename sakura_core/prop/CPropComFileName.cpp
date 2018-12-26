@@ -70,7 +70,6 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 	TCHAR	szTo[_MAX_PATH];
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		{
 			RECT		rc;

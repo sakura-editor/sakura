@@ -352,7 +352,6 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 		{
 			// 旧選択矩形と新選択矩形のリージョンを結合し､ 重なりあう部分だけを除去します
 			if( NULLREGION != ::CombineRgn( hrgnDraw, hrgnOld, hrgnNew, RGN_XOR ) ){
-
 				// 2002.02.16 hor
 				// 結合後のエリアにEOFが含まれる場合はEOF以降の部分を除去します
 				// 2006.10.01 Moca リーソースリークを修正したら、チラつくようになったため、

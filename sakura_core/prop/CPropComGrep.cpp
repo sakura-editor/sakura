@@ -65,7 +65,6 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 //    LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Grep */
 		SetData( hwndDlg );

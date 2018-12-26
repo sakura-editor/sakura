@@ -870,7 +870,6 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		// エラー時はthrow CError_FileRead を投げます
 		CNativeW cBuf;
 		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
-
 			const wchar_t*	pLine = cBuf.GetStringPtr();
 			int			nLineLen = cBuf.GetStringLength();
 

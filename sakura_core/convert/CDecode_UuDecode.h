@@ -33,7 +33,6 @@
 #include "convert/CDecode.h"
 
 class CDecode_UuDecode : public CDecode{
-
 	TCHAR m_aFilename[_MAX_PATH];
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pDst);

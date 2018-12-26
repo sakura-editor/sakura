@@ -85,7 +85,6 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 //	int			nCharChars;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Backup */
 		SetData( hwndDlg );

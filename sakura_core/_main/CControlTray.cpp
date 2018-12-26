@@ -988,7 +988,6 @@ LRESULT CControlTray::DispatchEvent(
 						ActivateFrameWindow( hwndWork );
 					}
 					else if( nId-IDM_SELMRU >= 0 && nId-IDM_SELMRU < 999 ){
-
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
 						const CMRUFile cMRU;

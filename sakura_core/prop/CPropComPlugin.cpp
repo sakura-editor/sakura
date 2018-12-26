@@ -85,7 +85,6 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	WORD		wID;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Plugin */
 		InitDialog( hwndDlg );
@@ -205,7 +204,6 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
-						
 						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, LS(STR_PROPCOMPLG_DELETE), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) == IDYES ){
 							CPluginManager::getInstance()->UninstallPlugin( m_Common, sel );
 							SetData_LIST( hwndDlg );
@@ -478,7 +476,6 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 	int width = rc.right - rc.left;
 	
 	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
-		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
 		sColumn.pszText = const_cast<TCHAR*>(LS(ColumnList[pos].titleId));

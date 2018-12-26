@@ -1391,7 +1391,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 	/* 矩形範囲選択中か */
 	if( GetSelectionInfo().IsBoxSelecting() ){
-
 		/* 2点を対角とする矩形を求める */
 		CLayoutRect	rcSelLayout;
 		TwoPointToRect(

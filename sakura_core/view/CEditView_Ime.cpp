@@ -427,7 +427,6 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 
 /*再変換用 エディタ上の選択範囲を変更する 2002.04.09 minfu */
 LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool bUnicode){
-	
 	// 再変換情報が保存されているか
 	if ( (m_nLastReconvIndex < 0) || (m_nLastReconvLine < 0))
 		return 0;

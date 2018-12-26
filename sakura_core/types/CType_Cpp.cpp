@@ -1314,7 +1314,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			/* 調整によって置換される箇所 */
 			sRangeA.Set(CLogicPoint(0,GetCaret().GetCaretLogicPos().y));
 		}else{
-
 			//	nWorkに処理の基準桁位置を設定する
 			if( WCODE::CR != wcChar ){
 				nWork = nCaretPosX_PHY - 1;
@@ -1355,7 +1354,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					|| ( L'{' == wcChar && L'#' != pLine[i] )
 					|| ( L'(' == wcChar && L'#' != pLine[i] )
 				){
-
 				}else{
 					return;
 				}

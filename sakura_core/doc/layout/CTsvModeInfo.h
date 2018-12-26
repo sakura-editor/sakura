@@ -39,7 +39,6 @@ class CDocLineMgr;
 
 // TSVモード情報
 class CTsvModeInfo {
-	
 public:
 	void CalcTabLength(CDocLineMgr* cDocLineMgr);	// タブ位置を再計算する
 	void CalcTabLength(LPCWSTR pLine);	// タブ位置を再計算する（一行）

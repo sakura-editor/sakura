@@ -1504,7 +1504,6 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 	//検索マークのセット
 
 	if(m_pCommanderView->GetSelectionInfo().IsTextSelected()){
-
 		// 検索文字列取得
 		CNativeW	cmemCurText;
 		m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );

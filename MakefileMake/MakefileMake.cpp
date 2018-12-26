@@ -146,7 +146,6 @@ int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
 				// search subdirectory
 				if ((ffData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
 						(strcmp(ffData.cFileName, ".") != 0 && strcmp(ffData.cFileName, "..") != 0)) {
-
 					fl_nm = ffData.cFileName;
 					if (dir != "") {
 						fl_nm = dir + "/" + fl_nm;

@@ -4,7 +4,6 @@
 #include "util/tchar_receive.h"
 
 namespace ApiWrap{
-
 	LRESULT List_GetText(HWND hwndList, int nIndex, ACHAR* str)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);

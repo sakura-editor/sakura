@@ -37,7 +37,6 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 
 	/* 現在位置の単語の範囲を調べる */
 	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL ) ){
-
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 		/*

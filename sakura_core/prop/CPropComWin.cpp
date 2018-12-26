@@ -87,7 +87,6 @@ INT_PTR CPropWin::DispatchEvent(
 	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Window */
 		SetData( hwndDlg );

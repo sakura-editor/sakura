@@ -1337,7 +1337,6 @@ int CGrepAgent::DoGrepFile(
 			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 			// 2010.08.25 行頭以外で^にマッチする不具合の修正
 			while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
-
 					//	パターン発見
 					nIndex = pRegexp->GetIndex();
 					int matchlen = pRegexp->GetMatchLen();

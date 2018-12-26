@@ -939,7 +939,6 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode )
 {
 	if( IsPathOpened( pszPath, phwndOwner ) ){
-		
 		//文字コードの一致確認
 		EditInfo*		pfi;
 		::SendMessageAny( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );

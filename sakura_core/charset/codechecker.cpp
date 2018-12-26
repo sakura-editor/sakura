@@ -465,7 +465,6 @@ int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, con
 	}
 
 	if( 2 <= nLen ){
-
 		// サロゲートペアの確認
 
 		if( IsUtf16SurrogHi(wc1) && IsUtf16SurrogLow(wc2) ){

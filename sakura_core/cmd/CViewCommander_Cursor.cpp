@@ -163,7 +163,6 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 	int		nRes = 0;
 	CLayoutPoint ptCaretMove = GetCaret().GetCaretLayoutPos();
 	for( int nRepCount = 0; nRepCount < nRepeat; ++nRepCount ) {
-
 		if( bSelect && ! m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
 			/* 現在のカーソル位置から選択を開始する */
 			m_pCommanderView->GetSelectionInfo().BeginSelectArea();

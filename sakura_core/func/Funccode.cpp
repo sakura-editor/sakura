@@ -573,7 +573,6 @@ const int nsFuncCode::nFincListNumArrNum = _countof( nsFuncCode::pnFuncListNumAr
 int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 {
 	switch( nFuncID ){
-
 	/* ファイル操作系 */
 	case F_FILENEW:				return HLP000025;			//新規作成
 	case F_FILENEW_NEWWINDOW:	return HLP000339;			//新規ウインドウで開く

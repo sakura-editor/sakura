@@ -58,7 +58,6 @@ struct MacroRec {
 	機能，機能分類と位置，機能番号，文字列などの対応を集約する．
 */
 class CFuncLookup {
-
 public:
 	//	Oct. 15, 2001 genta 引数追加
 	// 2007.11.02 ryoji 引数変更（CSMacroMgr->MacroRec）

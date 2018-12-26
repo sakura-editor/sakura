@@ -556,7 +556,6 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		idCtrl = (UINT) wParam;				/* コントロールのID */
 		pDis = (LPDRAWITEMSTRUCT) lParam;	/* 項目描画情報 */
 		switch( idCtrl ){
-
 		case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
 			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT );
 			return TRUE;
@@ -895,7 +894,6 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 //	rc.right -= 11;
 
 	if( pDis->itemState & ODS_SELECTED ){
-
 		gr.SetPen(cBtnDkShadow);
 		::MoveToEx( gr, 0, pDis->rcItem.bottom - 2, NULL );
 		::LineTo( gr, 0, 0 );

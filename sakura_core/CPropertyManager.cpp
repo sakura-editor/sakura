@@ -56,7 +56,6 @@ bool CPropertyManager::OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayPro
 
 	/* プロパティシートの作成 */
 	if( pcPropCommon->DoPropertySheet( m_nPropComPageNum, bTrayProc ) ){
-
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする

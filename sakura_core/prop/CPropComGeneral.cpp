@@ -91,7 +91,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 //	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 General */
 		SetData( hwndDlg );
@@ -109,7 +108,6 @@ INT_PTR CPropGeneral::DispatchEvent(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-
 			case IDC_CHECK_USETRAYICON:	/* タスクトレイを使う */
 			// From Here 2001.12.03 hor
 			//		操作しにくいって評判だったのでタスクトレイ関係のEnable制御をやめました

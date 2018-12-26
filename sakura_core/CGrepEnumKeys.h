@@ -86,7 +86,6 @@ public:
 			bool bRelPath = _IS_REL_PATH( token );
 			int nValidStatus = ValidateKey( token );
 			if( 0 != nValidStatus ){
-
 				return nValidStatus;
 			}
 			if( keyType == FILTER_SEARCH ){

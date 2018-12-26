@@ -33,7 +33,6 @@
 #include "CCodeBase.h"
 
 class CLatin1 : public CCodeBase{
-
 public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return Latin1ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換

@@ -178,7 +178,6 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 	int			nVal;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		m_hwndThis = hwndDlg;
 		/* ダイアログデータの設定 Screen */

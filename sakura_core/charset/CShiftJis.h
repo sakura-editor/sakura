@@ -31,7 +31,6 @@
 struct CommonSetting_Statusbar;
 
 class CShiftJis : public CCodeBase{
-
 public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return SJISToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換

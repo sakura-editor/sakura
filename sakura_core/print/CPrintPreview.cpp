@@ -2101,7 +2101,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	WORD				wID;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		::EnableWindow( ::GetDlgItem(hwndDlg, IDC_CHECK_ANTIALIAS), TRUE );
 		return TRUE;

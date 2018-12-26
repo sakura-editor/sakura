@@ -80,7 +80,6 @@ INT_PTR CPropEdit::DispatchEvent(
 //	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
-
 	case WM_INITDIALOG:
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), _MAX_PATH - 1 );
 		/* ダイアログデータの設定 Edit */

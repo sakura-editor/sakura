@@ -349,7 +349,6 @@ normal_action:;
 					GetSelectionInfo().m_sSelectBgn = GetSelectionInfo().m_sSelect;
 				}
 			}else{
-
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
 
@@ -474,7 +473,6 @@ normal_action:;
 		else{
 			/* URLがクリックされたら選択するか */
 			if( FALSE != GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
-
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
 				bool bIsUrl = IsCurrentPositionURL(
@@ -1189,7 +1187,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 
 			// 単語単位の選択をしている場合、選択範囲を単語境界に調整する。
 			if (GetSelectionInfo().m_bBeginWordSelect) {
-
 				// キャレット移動後に予定されている選択範囲
 				CLayoutRange sSelect;
 				GetSelectionInfo().ChangeSelectAreaByCurrentCursorTEST(
