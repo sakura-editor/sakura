@@ -1119,7 +1119,7 @@ void CViewCommander::Command_COPYPATH( void )
 }
 
 /* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
-void CViewCommander::Command_COPYFOLDER( void )
+void CViewCommander::Command_COPYDIRPATH( void )
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 		ErrorBeep();

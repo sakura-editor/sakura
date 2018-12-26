@@ -5,6 +5,6 @@
 
 |主な関数名|テストする機能|対応バージョン|マクロパス|タイプ|
 |--|--|--|--|--|
-|CopyFolder|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[copyfolder/copyfolder.mac](copyfolder/copyfolder.mac)|キーマクロ|
-|CopyFolder|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[copyfolder/copyfolder.js](copyfolder/copyfolder.js)|WSH(Jscript)|
-|CopyFolder|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[copyfolder/copyfolder.vbs](copyfolder/copyfolder.vbs)|WSH(VBScript)|
+|CopyDirPath|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[CopyDirPath/CopyDirPath.mac](CopyDirPath/CopyDirPath.mac)|キーマクロ|
+|CopyDirPath|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[CopyDirPath/CopyDirPath.js](CopyDirPath/CopyDirPath.js)|WSH(Jscript)|
+|CopyDirPath|現在開いているファイルのフォルダ名のコピー|ver 2.4.0.0 以降|[CopyDirPath/CopyDirPath.vbs](CopyDirPath/CopyDirPath.vbs)|WSH(VBScript)|

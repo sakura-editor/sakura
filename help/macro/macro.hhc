@@ -614,7 +614,7 @@
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="このフォルダ名をコピー">
-					<param name="Local" value="source\reference\clipboard\S_CopyFolder.html">
+					<param name="Local" value="source\reference\clipboard\S_CopyDirPath.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">

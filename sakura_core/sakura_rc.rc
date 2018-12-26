@@ -2492,7 +2492,7 @@ BEGIN
     F_COPYPATH              "このファイルのパス名をコピー"
     F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
     F_COPYFNAME             "このファイル名をコピー"
-    F_COPYFOLDER            "このファイルのフォルダ名をコピー"
+    F_COPYDIRPATH           "このファイルのフォルダ名をコピー"
 END
 
 STRINGTABLE DISCARDABLE 
