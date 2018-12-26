@@ -1136,7 +1136,7 @@ void CViewCommander::Command_COPYDIRPATH( void )
 	}
 	
 	/* クリップボードにフォルダ名をコピー */
-	m_pCommanderView->MySetClipboardData( strFolder.c_str(), wcslen(strFolder.c_str()), false );
+	m_pCommanderView->MySetClipboardData( strFolder.c_str(), strFolder.size(), false );
 }
 
 //	May 9, 2000 genta
