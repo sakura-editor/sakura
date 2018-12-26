@@ -5,14 +5,14 @@ import re
 import codecs
 
 
-leftBracket  = 1	# {
+leftBracket  = 1	# { (左括弧は空白を除いて行末にあればよい)
 rightBracket = 2	# }
 blankLine    = 3	# 空行
 otherLine    = 4	# それ以外
 
 # 行のタイプを解析する
 def parseLine(line):
-	match = re.search('^\s*{\s*$', line)
+	match = re.search('{\s*$', line)
 	if match:
 		return leftBracket
 
@@ -70,6 +70,8 @@ def removeRedundantBlack(fileName):
 				#	以下のような場合に現在の行が空行の場合、現在の行を捨てる
 				#		prevLines[-1]	leftBracket		{
 				#		現在の行		blankLine		<空行>
+				#	Note:
+				#		左括弧は行末にあればよく、左括弧に何があってもよい
 				if prevLines[-1]['type'] == leftBracket:
 					if lineType == blankLine:
 						continue
