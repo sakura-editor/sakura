@@ -333,7 +333,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
-		__time64_t 	ltime;
+		__time64_t 	ltime = 0;
 		struct	tm result = {0};
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
