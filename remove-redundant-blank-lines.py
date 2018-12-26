@@ -16,7 +16,7 @@ def parseLine(line):
 	if match:
 		return leftBracket
 
-	match = re.search('^\s*}\s*$', line)
+	match = re.search('^\s*}\s*(;\s*)?$', line)
 	if match:
 		return rightBracket
 
