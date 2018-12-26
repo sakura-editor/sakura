@@ -186,7 +186,6 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	_SetHwnd(hwndDlg);
 
 	CreateSizeBox();
-	CDialog::OnSize();
 
 	RECT rc;
 	::GetWindowRect(hwndDlg, &rc);
@@ -205,6 +204,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
 	SetDialogPosSize();
+	OnSize(0, 0);
 
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
 	RECT rcListView;
