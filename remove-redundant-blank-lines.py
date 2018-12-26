@@ -71,7 +71,7 @@ def removeRedundantBlack(fileName):
 				#		prevLines[-1]	leftBracket		{
 				#		現在の行		blankLine		<空行>
 				if prevLines[-1]['type'] == leftBracket:
-					if type == blankLine:
+					if lineType == blankLine:
 						continue
 
 				# 現在の行も前の行も空行の場合、現在の行を捨てる
