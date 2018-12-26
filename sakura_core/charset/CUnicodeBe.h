@@ -43,7 +43,6 @@ public:
 		{ return CUnicode::_UnicodeToUnicode_in(cSrc, pDst, true); }	// UnicodeBE → Unicodeコード変換 //2007.08.13 kobake 追加
 	inline static EConvertResult UnicodeToUnicodeBE(const CNativeW& cSrc, CMemory* pDst)
 		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
-
 };
 
 #endif /* SAKURA_CUNICODEBE_484B0FE6_3896_4E2E_83BA_CC8718999735_H_ */

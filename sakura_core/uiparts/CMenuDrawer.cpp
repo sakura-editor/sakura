@@ -646,7 +646,6 @@ CMenuDrawer::CMenuDrawer()
 /* 480 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
-
 	};
 	int tbd_num = _countof( tbd );
 

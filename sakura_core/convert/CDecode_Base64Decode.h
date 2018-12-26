@@ -36,7 +36,6 @@
 class CDecode_Base64Decode : public CDecode{
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pcDst);
-
 };
 
 #endif /* SAKURA_CDECODE_BASE64DECODE_FD175ABC_35B6_470E_850C_3F50E35320FF9_H_ */

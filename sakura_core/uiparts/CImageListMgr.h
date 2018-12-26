@@ -125,7 +125,6 @@ protected:
 
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);
-
 };
 
 #endif

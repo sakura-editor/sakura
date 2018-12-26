@@ -147,7 +147,6 @@ private:
 	CLayoutInt	m_nColumn;       //レイアウト位置。桁(半角幅)単位。
 	CLogicInt	m_nIndex_Delta;  //index増分
 	CLayoutInt	m_nColumn_Delta; //column増分
-
 };
 
 ///////////////////////////////////////////////////////////////////////

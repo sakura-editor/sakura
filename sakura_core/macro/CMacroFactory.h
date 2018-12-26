@@ -84,6 +84,5 @@ private:
 		@date 2002.08.25 genta 追加
 	*/
 	MacroEngineRep m_mMacroCreators;
-
 };
 #endif

@@ -184,7 +184,6 @@ struct SSearchOption{
 	{
 		return !operator==(rhs);
 	}
-
 };
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
