@@ -2496,7 +2496,7 @@ BEGIN
     F_COPYPATH              "Copy this file's path"
     F_COPYTAG               "Copy file path and cursor location"
     F_COPYFNAME             "Copy this file's name"
-    F_COPYDIRPATH           "Copy this file's folder"
+    F_COPYDIRPATH           "Copy this file's directory path"
 END
 
 STRINGTABLE DISCARDABLE 
