@@ -42,6 +42,11 @@ call build-chm.bat                                  || (echo error build-chm.bat
 @echo ---- end   build-chm.bat ----
 @echo.
 
+@echo ---- start sphinx\build-sphinx.bat ----
+call sphinx\build-sphinx.bat                        || (echo error sphinx\build-sphinx.bat && exit /b 1)
+@echo ---- end   sphinx\build-sphinx.bat ----
+@echo.
+
 @echo ---- start build-installer.bat ----
 call build-installer.bat %PLATFORM% %CONFIGURATION% || (echo error build-installer.bat && exit /b 1)
 @echo ---- end   build-installer.bat ----
