@@ -14,7 +14,7 @@
 
 ## 概要
 
-[sphinx](http://www.sphinx-doc.org/en/master/) は reStructuredText のマークダウン形式で
+[sphinx](http://www.sphinx-doc.org/en/master/) は [reStructuredText](https://quick-restructuredtext.readthedocs.io/en/latest/) のマークダウン形式で
 記述したドキュメントから各種形式(PDF, Html Help など)のドキュメントを生成できるドキュメントシステムです。
 
 もともと Python のドキュメントの作成のために作成されましたが、Python 以外のプロジェクトでも使用されています。
