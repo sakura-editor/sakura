@@ -1175,6 +1175,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
 	case F_COPYPATH:
+	case F_COPYDIRPATH:
 	case F_COPYTAG:
 	case F_COPYFNAME:					// 2002/2/3 aroka
 	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
