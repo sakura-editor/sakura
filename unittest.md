@@ -11,6 +11,11 @@
         - [呼び出し構造](#呼び出し構造)
         - [使用するバッチファイルの引数](#使用するバッチファイルの引数)
     - [インクルードディレクトリ](#インクルードディレクトリ)
+    - [appveyor への結果の反映](#appveyor-への結果の反映)
+        - [googletest 側の対応](#googletest-側の対応)
+        - [appveyor 側の仕様](#appveyor-側の仕様)
+        - [実際の処理](#実際の処理)
+        - [参考サイト](#参考サイト)
 
 <!-- /TOC -->
 
@@ -78,3 +83,40 @@ GUI でステップ実行することができます。
 
 [単体テスト用のCMakeLists.txt](tests/unittests/CMakeLists.txt) で [サクラエディタ用のディレクトリ](sakura_core) に
 インクルードディレクトリを指定するので、そこからの相対パスを指定すれば、サクラエディタのヘッダをインクルードできます。
+
+## appveyor への結果の反映
+
+### googletest 側の対応
+
+googletest の実行ファイルの引数に `-gtest_output=xml:tests.xml` というような引数を渡すと通常のコンソールへの
+出力に加えて、`tests.xml` というファイルに XML 形式で出力を行います。
+
+### appveyor 側の仕様
+
+- https://www.appveyor.com/docs/running-tests/#pushing-real-time-test-results-to-build-console
+- https://www.appveyor.com/docs/running-tests/#uploading-xml-test-results
+
+以下の URL に googletest の出力の XML ファイルをアップロードすることにより、appveyor 側にテスト結果を
+認識させることができます。
+
+
+```
+https://ci.appveyor.com/api/testresults/{resultsType}/{jobId}
+```
+
+|項目|値|参考|
+|--|--|--|
+|resultsType|`junit` (googletest が出力する XML の場合)|https://help.appveyor.com/discussions/questions/1843-uploading-test-results-from-google-test-lib-output|
+|jobId|環境変数 `APPVEYOR_JOB_ID` の値|https://www.appveyor.com/docs/environment-variables/|
+
+### 実際の処理
+
+[upload.ps1](upload.ps1) の powershell スクリプトで System.Net.WebClient を使うことにより
+XML ファイルのアップロードを行います。
+
+### 参考サイト
+
+- http://opencv.jp/googletestdocs/advancedguide.html#adv-generating-an-xml-report
+- https://help.appveyor.com/discussions/questions/1843-uploading-test-results-from-google-test-lib-output
+- https://www.appveyor.com/docs/running-tests/#pushing-real-time-test-results-to-build-console
+   - https://www.appveyor.com/docs/running-tests/#uploading-xml-test-results

@@ -4,7 +4,7 @@ set configuration=%2
 set TEST_LAUNCHED=0
 set ERROR_RESULT=0
 
-set FILTER_BAT=%~dp0test_result_filter_tell_AppVeyor.bat
+set UPLOAD_BAT=%~dp0upload.bat
 
 pushd %~dp0
 set BUILDDIR=build\%platform%
@@ -17,8 +17,9 @@ for /r %%i in (tests*.exe) do (
 	@echo %%i --gtest_list_tests
 	%%i --gtest_list_tests || set ERROR_RESULT=1
 
-	@echo %%i | "%FILTER_BAT%"
-	%%i | "%FILTER_BAT%" || set ERROR_RESULT=1
+	@echo %%i --gtest_output=xml:%%i.xml 
+	%%i --gtest_output=xml:%%i.xml || set ERROR_RESULT=1
+	call "%UPLOAD_BAT%" %%i.xml    || set ERROR_RESULT=1
 )
 popd
 popd
