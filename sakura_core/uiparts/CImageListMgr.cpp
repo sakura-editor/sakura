@@ -314,38 +314,39 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 }
 
 
-/*! @brief アイコンの描画
-
-	指定されたDCの指定された座標にアイコンを描画する．
-
-	@param index [in] 描画するアイコン番号
-	@param dc [in] 描画するDevice Context
-	@param x [in] 描画するX座標
-	@param y [in] 描画するY座標
-	@param fstyle [in] 描画スタイル
-	@param bgColor [in] 背景色(透明部分の描画用)
-
-	@note 描画スタイルとして有効なのは，ILD_NORMAL, ILD_MASK
-	
-	@date 2003.07.21 genta 独自描画ルーチンを使う
-	@date 2003.08.30 genta 背景色を指定する引数を追加
-	@date 2003.09.06 genta Mocaさんの背景色透過処理に伴い，背景色引数削除
-	@date 2007.11.02 ryoji アイコン番号が負の場合は描画しない
-*/
-bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
+/*!
+ * @brief アイコンの描画
+ *
+ * 指定されたDCの指定された座標にアイコンを描画する．
+ *
+ * @param [in] drawdc 描画するDevice Context
+ * @param [in] x 描画するX座標
+ * @param [in] y 描画するY座標
+ * @param [in] imageNo 描画するアイコン番号
+ * @param [in] fStyle 描画スタイル
+ * @param [in] cx アイコン幅
+ * @param [in] cy アイコン高さ
+ * @note 描画スタイルとして有効なのは，ILD_NORMAL, ILD_MASK
+ * 
+ * @date 2003.07.21 genta 独自描画ルーチンを使う
+ * @date 2003.08.30 genta 背景色を指定する引数を追加
+ * @date 2003.09.06 genta Mocaさんの背景色透過処理に伴い，背景色引数削除
+ * @date 2007.11.02 ryoji アイコン番号が負の場合は描画しない
+ */
+bool CImageListMgr::DrawToolIcon( HDC drawdc, LONG x, LONG y,
+	int imageNo, DWORD fStyle, LONG cx, LONG cy ) const
 {
-	if( m_hIconBitmap == NULL )
+	if ( m_hIconBitmap == NULL )
 		return false;
-	if( index < 0 )
+	if ( imageNo < 0 || m_nIconCount < imageNo )
 		return false;
 
-	if( fstyle == ILD_MASK ){
-		DitherBlt2( dc, x, y, cx(), cy(),
-			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
-	}
-	else {
-		MyBitBlt( dc, x, y, cx(), cy(),
-			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy() );
+	if ( (fStyle&ILD_MASK) == ILD_MASK ) {
+		MyDitherBlt( drawdc, x, y, cx, cy,
+			(imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy );
+	} else {
+		MyBitBlt( drawdc, x, y, cx, cy,
+			(imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy );
 	}
 	return true;
 }

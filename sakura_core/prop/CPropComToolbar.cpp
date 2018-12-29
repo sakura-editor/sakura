@@ -597,12 +597,14 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		//	From Here Oct. 15, 2001 genta
 		}else{
 			// アイコンとテキストを表示する
-			m_pcIcons->Draw(
-				tbb.iBitmap,
+			m_pcIcons->DrawToolIcon(
 				pDis->hDC,
 				rc.left + cxEdge,
 				rc.top + cyEdge + (rc.bottom - rc.top - cySmIcon) / 2,
-				ILD_NORMAL
+				tbb.iBitmap,
+				ILD_NORMAL,
+				cxSmIcon,
+				cySmIcon
 			);
 			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
 		}

@@ -476,12 +476,13 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? cxEdge : 0;
 
 			// アイコン描画
-			m_pcIcons->Draw(
-				nIconId,
+			m_pcIcons->DrawToolIcon(
 				pnmh->hdc,
 				rc.left + offset + shift,
 				rc.top + offset + shift, // 押下時は右だけでなく下にもずらす // Sep. 6, 2003 genta
-				( pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+				nIconId,
+				( pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL,
+				cxSmIcon, cySmIcon
 			);
 		}
 		break;

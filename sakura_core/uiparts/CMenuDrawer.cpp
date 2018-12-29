@@ -1244,12 +1244,14 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nIconNo = m_menuItems[nItemIndex].m_nBitmapIdx;
 
 		// メニューアイコン描画
-		m_pcIcons->Draw(
-			nIconNo,
+		m_pcIcons->DrawToolIcon(
 			hdc,
 			rcIcon.left,
 			rcIcon.top,
-			( lpdis->itemState & ODS_DISABLED ) ? ILD_MASK : ILD_NORMAL
+			nIconNo,
+			( lpdis->itemState & ODS_DISABLED ) ? ILD_MASK : ILD_NORMAL,
+			cxSmIcon,
+			cySmIcon
 		);
 
 	}else{
