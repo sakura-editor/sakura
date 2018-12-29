@@ -228,7 +228,6 @@ private:
 	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
 	bool CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem);
-
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

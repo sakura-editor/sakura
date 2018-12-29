@@ -97,7 +97,6 @@ public:
 
 	// Constructor
 	CMacroManagerBase();
-
 };
 
 #endif

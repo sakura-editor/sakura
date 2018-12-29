@@ -82,7 +82,6 @@ public:
 	//メンバ変数
 private:
 	wstring m_sDllName;
-
 };
 
 #endif /* SAKURA_CDLLPLUGIN_A62D7B59_C283_4C5A_887F_DA0138E09D2C_H_ */

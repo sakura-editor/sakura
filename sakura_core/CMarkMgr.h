@@ -122,7 +122,6 @@ protected:
 	int m_nMaxitem;	//	保管可能アイテムの最大数
 private:
 	//CMarkMgr( const CMarkMgr& );	//	Copy禁止
-
 };
 
 // ----------------------------------------------------

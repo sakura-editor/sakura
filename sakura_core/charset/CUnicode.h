@@ -46,7 +46,6 @@ public:
 	static EConvertResult _UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDstMem, const bool bBigEndian);	// Unicode   → Unicode (出力側)
 	inline static EConvertResult UnicodeToUnicode_in(const CMemory& cSrc, CNativeW* pDst){ return _UnicodeToUnicode_in(cSrc, pDst, false); }
 	inline static EConvertResult UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDst){ return _UnicodeToUnicode_out(cSrc, pDst, false); }
-
 };
 
 #endif /* SAKURA_CUNICODE_95AC7095_F71E_458B_80B3_1AA4036E25109_H_ */

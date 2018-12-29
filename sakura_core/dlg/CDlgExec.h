@@ -48,7 +48,6 @@ protected:
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	BOOL OnBnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-
 };
 
 ///////////////////////////////////////////////////////////////////////

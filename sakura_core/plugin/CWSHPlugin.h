@@ -84,7 +84,6 @@ public:
 	//メンバ変数
 private:
 	bool m_bUseCache;
-
 };
 
 #endif /* SAKURA_CWSHPLUGIN_EBA87CBD_779A_4AD3_AB4D_4BFE8E7E339AD_H_ */

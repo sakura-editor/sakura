@@ -412,7 +412,6 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
 	F_EXECMD_DIALOG		/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
-
 };
 const int nFincList_Macro_Num = _countof( pnFuncList_Macro);	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 
