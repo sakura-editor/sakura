@@ -383,7 +383,6 @@ struct CDlgOpenFile_CommonItemDialog final
 		/* [in] */ DWORD dwIDCtl) override {
 		return E_NOTIMPL;
 	}
-
 };
 
 enum CtrlId {
@@ -701,7 +700,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	specs[0].pszSpec = _T("*.*");
 	specs[1].pszName = strs[1].c_str();
 	specs[1].pszSpec = _T("*.txt");
-	auto& docTypeMgr = CDocTypeManager();
+	CDocTypeManager docTypeMgr;
 	TCHAR szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
 	for( int i = 0; i < nTypesCount; i++ ){
 		const STypeConfigMini* type;

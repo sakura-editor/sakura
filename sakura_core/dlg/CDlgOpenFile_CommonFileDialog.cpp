@@ -387,7 +387,6 @@ UINT_PTR CALLBACK OFNHookProc(
 			// Modified by KEITA for WIN64 2003.9.6
 			::SetWindowLongPtr( pData->m_hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR)pData->m_wpOpenDialogProc );
 			::RemoveProp( pData->m_hwndOpenDlg, s_pszOpenFileDataName );
-
 		}
 		return FALSE;
 
@@ -517,7 +516,6 @@ UINT_PTR CALLBACK OFNHookProc(
 //		case CDN_SHAREVIOLATION	:	MYTRACE( _T("pofn->hdr.code=CDN_SHAREVIOLATION\n") );break;
 //		case CDN_TYPECHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_TYPECHANGE    \n") );break;
 //		default:					MYTRACE( _T("pofn->hdr.code=???\n") );break;
-
 		}
 
 //		MYTRACE( _T("=======================\n") );

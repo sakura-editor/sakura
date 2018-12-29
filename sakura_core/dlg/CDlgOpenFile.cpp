@@ -44,19 +44,19 @@ void CDlgOpenFile::Create(
 	m_pImpl->Create(hInstance, hwndParent, pszUserWildCard, pszDefaultPath, vMRU, vOPENFOLDER);
 }
 
-bool CDlgOpenFile::DoModal_GetOpenFileName(
+inline bool CDlgOpenFile::DoModal_GetOpenFileName(
 	TCHAR* pszPath,
 	EFilter eAddFileter)
 {
 	return m_pImpl->DoModal_GetOpenFileName(pszPath, eAddFileter);
 }
 
-bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
+inline bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 {
 	return m_pImpl->DoModal_GetSaveFileName(pszPath);
 }
 
-bool CDlgOpenFile::DoModalOpenDlg(
+inline bool CDlgOpenFile::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
 	std::vector<std::tstring>* pFilenames,
 	bool bOptions)
@@ -64,7 +64,7 @@ bool CDlgOpenFile::DoModalOpenDlg(
 	return m_pImpl->DoModalOpenDlg(pLoadInfo, pFilenames, bOptions);
 }
 
-bool CDlgOpenFile::DoModalSaveDlg(
+inline bool CDlgOpenFile::DoModalSaveDlg(
 	SSaveInfo* pSaveInfo,
 	bool bSimpleMode)
 {
@@ -82,7 +82,6 @@ BOOL CDlgOpenFile::SelectFile(
 	bool resolvePath,
 	EFilter eAddFilter)
 {
-
 	CDlgOpenFile cDlgOpenFile;
 	TCHAR			szFilePath[_MAX_PATH + 1];
 	TCHAR			szPath[_MAX_PATH + 1];
