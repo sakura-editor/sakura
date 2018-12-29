@@ -1040,6 +1040,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_COPY_COLOR_HTML			://選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER://選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH					://このファイルのパス名をクリップボードにコピー
+	case F_COPYDIRPATH				://このファイルのフォルダ名をクリップボードにコピー
 	case F_COPYTAG					://このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYFNAME				://このファイル名をクリップボードにコピー // 2002/2/3 aroka
 	case F_CREATEKEYBINDLIST		://キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加	//Dec. 25, 2000 復活
