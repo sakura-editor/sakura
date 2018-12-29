@@ -639,7 +639,6 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			&rc1,
 			DT_LEFT | DT_VCENTER | DT_SINGLELINE
 		);
-
 	}
 
 	/* アイテムにフォーカスがある */
