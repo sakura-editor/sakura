@@ -199,7 +199,16 @@ void CMainToolBar::CreateToolBar( void )
 			(LONG_PTR)ToolBarWndProc
 		);
 
-		Toolbar_SetButtonSize( m_hwndToolBar, DpiScaleX(22), DpiScaleY(22) );	// 2009.10.01 ryoji 高DPI対応スケーリング
+		// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+		const int cxBorder = DpiScaleX( 1 );
+		const int cyBorder = DpiScaleY( 1 );
+		const int cxEdge = DpiScaleX( 1 );
+		const int cyEdge = DpiScaleY( 1 );
+		const int cxSmIcon = DpiScaleX( 16 );
+		const int cySmIcon = DpiScaleY( 16 );
+		const int cxToolButton = cxBorder + cxEdge + cxSmIcon + cxEdge + cxBorder;	//22
+		const int cyToolButton = cyBorder + cyEdge + cySmIcon + cyEdge + cyBorder;	//22
+		Toolbar_SetButtonSize( m_hwndToolBar, cxToolButton, cyToolButton );	// 2009.10.01 ryoji 高DPI対応スケーリング
 		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
@@ -458,8 +467,12 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			CMyRect rc( pnmh->rc );
 			int offset = ( rc.Height() - m_pcIcons->cy() ) / 2;
 
+			const int cxEdge = DpiScaleX( 1 );
+			const int cyEdge = DpiScaleY( 1 );
+			const int cxSmIcon = DpiScaleX( 16 );
+			const int cySmIcon = DpiScaleY( 16 );
+
 			// ボタンを押されたらちょっと画像をずらす	// Aug. 30, 2003 genta
-			const int cxEdge = ::GetSystemMetrics( SM_CXBORDER );
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? cxEdge : 0;
 
 			// アイコン描画
