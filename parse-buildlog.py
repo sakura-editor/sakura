@@ -151,11 +151,10 @@ def writeToXLSX(outfile, data):
 		def converterPython2(value):
 			return value.decode('shiftjis').encode('utf_8')
 
-		(major, minor, patchlevel) = platform.python_version_tuple()
-		if int(major) >= 3:
+		if sys.version_info.major >= 3:
 			return converterPython3
-		else:
-			return converterPython2
+
+		return converterPython2
 
 	try:
 		import openpyxl
