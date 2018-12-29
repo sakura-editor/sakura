@@ -146,7 +146,7 @@ def writeToXLSX(outfile, data):
 	# CELL に設定する値を変換する関数を返す
 	def getEntryConverter():
 		def converterPython3(value):
-			return value.encode('utf_8')
+			return value
 	
 		def converterPython2(value):
 			return value.decode('shiftjis').encode('utf_8')
@@ -247,8 +247,7 @@ def writeToXLSX(outfile, data):
 		#	エラーのサマリーシート用のコード
 		#############################################################################
 		worksheetIndex = 0
-		errorKeys = errorSummary.keys()
-		errorKeys.sort()
+		errorKeys = sorted(errorSummary.keys())
 		for errorKey in errorKeys:
 			worksheetIndex = worksheetIndex + 1
 
