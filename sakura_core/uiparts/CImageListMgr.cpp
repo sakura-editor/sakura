@@ -340,41 +340,103 @@ int CImageListMgr::Count() const
 //	return MAX_X * MAX_Y;
 }
 
-/*!	アイコンを追加してそのIDを返す */
-int CImageListMgr::Add(const TCHAR* szPath)
+/*!
+ * @brief アイコンを追加してそのIDを返す
+ */
+int CImageListMgr::Add( const TCHAR* szPath )
 {
-	if( (m_nIconCount % MAX_X) == 0 ){
+	if ( (m_nIconCount % MAX_X) == 0 ) {
 		Extend();
 	}
-	int index = m_nIconCount;
-	m_nIconCount++;
 
 	//アイコンを読み込む
-	HBITMAP hExtBmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+	HBITMAP bmpSrc = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION );
 
-	if( hExtBmp == NULL ) {
+	if( bmpSrc == NULL ) {
 		return -1;
 	}
 
-	//m_hIconBitmapにコピーする
-	HDC hDestDC = ::CreateCompatibleDC( 0 );
-	HBITMAP hOldDestBmp = (HBITMAP)::SelectObject( hDestDC, m_hIconBitmap );
+	int imageNo = m_nIconCount++;
 
-	HDC hExtDC = ::CreateCompatibleDC( 0 );
-	HBITMAP hOldBmp = (HBITMAP)::SelectObject( hExtDC, hExtBmp );
-	COLORREF cTrans = GetPixel( hExtDC, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
-	hExtBmp = ResizeToolIcons( hExtDC, hExtBmp, 1, 1 );
-	::SelectObject( hExtDC, hOldBmp );
-	::DeleteDC( hExtDC );
+	// 仮想DCを生成して読込んだビットマップを展開する
+	HDC hdcSrc = ::CreateCompatibleDC( NULL );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
 
-	MyBitBlt( hDestDC, (index % MAX_X) * cx(), (index / MAX_X) * cy(), cx(), cy(), hExtBmp, 0, 0, cTrans );
+	//取得した画像の(0,0)の色を背景色として使う
+	::SetBkColor( hdcSrc, ::GetPixel( hdcSrc, 0, 0 ) );
 
-	::SelectObject( hDestDC, hOldDestBmp );
-	::DeleteDC( hDestDC );
-	::DeleteObject( hExtBmp );
+	// DIBセクションからサイズを取得する
+	LONG nWidth, nHeight;
+	{
+		// DIBセクションを取得する
+		DIBSECTION di = {};
+		if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
+			DEBUG_TRACE( _T( "GetObject() failed." ) );
+			::SelectObject( hdcSrc, bmpSrcOld );
+			::DeleteDC( hdcSrc );
+			::DeleteObject( bmpSrc );
+			return -1;
+		}
 
-	return index;
+		nWidth = di.dsBm.bmWidth;
+		nHeight = di.dsBm.bmHeight;
+		if ( nWidth != nHeight ) {
+			DEBUG_TRACE( _T( "tool bitmap size is unexpected." ) );
+			::SelectObject( hdcSrc, bmpSrcOld );
+			::DeleteDC( hdcSrc );
+			::DeleteObject( bmpSrc );
+			return -1;
+		}
+	}
+
+	// リサイズ不要かどうか
+	bool NoResize = nWidth == cx() && nHeight == cy();
+
+	// create a monochrome memory DC
+	HDC hdcMask = ::CreateCompatibleDC( NULL );
+	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
+	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
+
+	// build a mask
+	if ( NoResize ) {
+		::BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, 0, 0, SRCAND );
+	} else {
+		::StretchBlt( hdcMask, 0, 0, cx(), cy(), hdcSrc, 0, 0, nWidth, nHeight, SRCAND );
+	}
+
+	// 作業DCを作成
+	HDC hdcWork = ::CreateCompatibleDC( NULL );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, nWidth, nHeight );
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
+
+	// ビットマップ描画(マスクとor描画)
+	if ( NoResize ) {
+		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, 0, 0, SRCINVERT );
+	} else {
+		::StretchBlt( hdcWork, 0, 0, cx(), cy(), hdcSrc, 0, 0, nWidth, nHeight, SRCINVERT );
+	}
+
+	// 作業DCの内容を出力DCに転送
+	HDC hdcDst = ::CreateCompatibleDC( NULL );
+	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
+	::BitBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcWork, 0, 0, SRCPAINT );
+
+	// 後始末
+	::SelectObject( hdcDst, hbmDstOld );
+	::DeleteDC( hdcDst );
+	::SelectObject( hdcWork, bmpWorkOld );
+	::DeleteObject( bmpWork );
+	::DeleteDC( hdcWork );
+	::SelectObject( hdcMask, bmpMaskOld );
+	::DeleteObject( bmpMask );
+	::DeleteDC( hdcMask );
+	::SelectObject( hdcSrc, bmpSrcOld );
+	::DeleteDC( hdcSrc );
+
+	::DeleteObject( bmpSrc );
+
+	return imageNo;
 }
 
 // ツールイメージをリサイズする
