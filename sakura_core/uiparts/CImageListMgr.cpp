@@ -198,56 +198,43 @@ void CImageListMgr::MyBitBlt(
 	COLORREF colToTransParent	/* BMPの中の透明にする色 */
 ) const
 {
-//	HBRUSH	brShadow, brHilight;
-	HDC		hdcMask;
-	HBITMAP bmpMask;
-	HBITMAP bmpMaskOld;
-	HDC		hdcMem;
-	HBITMAP	bmpMemOld;
-	HDC		hdcMem2;
-	HBITMAP bmpMem2;
-	HBITMAP bmpMem2Old;
+	// 仮想DCを生成して指定されたビットマップを展開する
+	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmp );
+	::SetBkColor( hdcSrc, m_cTrans );
+
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(drawdc);
-	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
-	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
-	/* 元ビットマップ用DC */
-	hdcMem = ::CreateCompatibleDC( drawdc );
-	bmpMemOld = (HBITMAP)::SelectObject( hdcMem, bmp );
-	/* 作業用DC */
-	hdcMem2 = ::CreateCompatibleDC( drawdc );
-	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight);
-	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
+	HDC hdcMask = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
+	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
 
 	// build a mask
-//	2003.09.04 Moca bmpMaskとbmpの転送する大きさが同じなので不要
-//	PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
-	SetBkColor( hdcMem, colToTransParent );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
+	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCAND );
 
-	/* マスク描画(透明にしない部分だけ黒く描画) */
-	::SetBkColor( drawdc, RGB( 255, 255, 255 ) /* colBkColor */ ); // 2003.08.27 Moca 作画方法変更
-	::SetTextColor( drawdc, RGB( 0, 0, 0 ) );
-	// 2003.08.27 Moca 作画方法変更
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND /* SRCCOPY */ ); 
+	// 作業DCを作成
+	HDC hdcWork = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
-	/* ビットマップ描画(透明にする色を黒くしてマスクとOR描画) */
-	::SetBkColor( hdcMem2, colToTransParent/*RGB( 0, 0, 0 )*/ );
-	::SetTextColor( hdcMem2, RGB( 0, 0, 0 ) );
-	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCINVERT/*SRCPAINT*/ );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMem2,  0, 0, /*SRCCOPY*/SRCPAINT );
+	// ビットマップ描画(マスクとor描画)
+	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
+	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCINVERT );
 
+	// 作業DCの内容を出力DCに転送
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork,  0, 0, SRCPAINT );
+
+	// 後始末
+	::SelectObject( hdcWork, bmpWorkOld );
+	::DeleteObject( bmpWork );
+	::DeleteDC( hdcWork );
 	::SelectObject( hdcMask, bmpMaskOld );
 	::DeleteObject( bmpMask );
 	::DeleteDC( hdcMask );
-	::SelectObject( hdcMem, bmpMemOld );
-	::DeleteDC( hdcMem );
-	::SelectObject( hdcMem2, bmpMem2Old );
-	::DeleteObject( bmpMem2 );
-	::DeleteDC( hdcMem2 );
+	::SelectObject( hdcSrc, bmpSrcOld );
+	::DeleteDC( hdcSrc );
 	return;
 }
+
 
 /*! メニューアイコンの淡色表示
 
@@ -259,77 +246,53 @@ void CImageListMgr::MyBitBlt(
 void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
                         int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const
 {
-	HDC		hdcMask;
-	HBITMAP	bmpMask;
-	HBITMAP	bmpMaskOld;
-	HDC		hdcMem;
-	HBITMAP	bmpMemOld;
-	HDC		hdcMem2;
-	HBITMAP bmpMem2;
-	HBITMAP bmpMem2Old;
-
-	//COLORREF colToTransParent = RGB( 192, 192, 192 );	/* BMPの中の透明にする色 */
-	COLORREF colToTransParent = m_cTrans;
+	// 仮想DCを生成して指定されたビットマップを展開する
+	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmp );
+	::SetBkColor( hdcSrc, m_cTrans );
 
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(drawdc);
-	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
-	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
+	HDC hdcMono = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpMono = ::CreateCompatibleBitmap( hdcMono, nWidth, nHeight );
+	HGDIOBJ bmpMonoOld = ::SelectObject( hdcMono, bmpMono );
 
-	hdcMem = CreateCompatibleDC(drawdc);
-	bmpMemOld = (HBITMAP)SelectObject( hdcMem, bmp);
+	// モノクロイメージ作成
+	::BitBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCPAINT );
 
-	//	Jul. 21, 2003 genta
-	//	hdcMemに書き込むと元のbitmapを破壊してしまう
-	hdcMem2 = ::CreateCompatibleDC( drawdc );
-	bmpMem2 = CreateCompatibleBitmap( drawdc, nWidth, nHeight);
-	bmpMem2Old = (HBITMAP)SelectObject( hdcMem2, bmpMem2);
-
-	// build a mask
-	//	2003.09.04 Moca bmpMaskとbmpの転送する大きさが同じなので不要
-	//PatBlt( hdcMask, 0, 0, nWidth, nHeight, WHITENESS);
-	SetBkColor( hdcMem, colToTransParent );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCCOPY);
-	SetBkColor( hdcMem, RGB( 255, 255, 255 ) );
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcMem, nXSrc,nYSrc, SRCPAINT);
+	// 作業DCを作成
+	HDC hdcWork = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight);
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork);
 
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
     //SK: Looks better on the old shell
-	// 2003.08.29 Moca 作画方法を変更
-	COLORREF coltxOld = ::SetTextColor( drawdc, RGB(0, 0, 0) );
-	COLORREF colbkOld = ::SetBkColor( drawdc, RGB(255, 255, 255) );
-	::SetBkColor( hdcMem2, RGB(0, 0, 0));
-#if 0
-	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNHILIGHT ) );
-	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
-	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);
-	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNSHADOW ) );
-#else
-	::SetTextColor( hdcMem2, (::GetSysColor(COLOR_BTNSHADOW) != ::GetSysColor(COLOR_BTNFACE) ? ::GetSysColor(COLOR_3DSHADOW) : ::GetSysColor(COLOR_BTNHILIGHT)) );
-#endif
-	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);
-	::SetTextColor( drawdc, coltxOld );
-	::SetBkColor( drawdc, colbkOld );
+	COLORREF bkColor = ::GetSysColor( COLOR_BTNFACE );
+	COLORREF fgColor = ::GetSysColor( COLOR_GRAYTEXT );
+	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_3DSHADOW );
+	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNSHADOW );
+	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNHILIGHT );
 
-	// reset DCs
-	SelectObject( hdcMask, bmpMaskOld);
-	DeleteDC( hdcMask );
+	// ビットマップ描画(背景色・前景色を指定してマスクを描画)
+	::SetBkColor( hdcWork, bkColor );
+	::SetTextColor( hdcWork, fgColor );
+	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMono, 0, 0, SRCPAINT );
 
-	SelectObject( hdcMem, bmpMemOld);
-	DeleteDC( hdcMem );
-
-	//	Jul. 21, 2003 genta
-	::SelectObject( hdcMem2, bmpMem2Old );
-	::DeleteObject( bmpMem2 );
-	::DeleteDC( hdcMem2 );
-
-	DeleteObject( bmpMask );
+	// 作業DCの内容を出力DCに転送
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork, 0, 0, SRCPAINT );
+	
+	// 後始末
+	::SelectObject( hdcWork, bmpWorkOld );
+	::DeleteObject( bmpWork );
+	::DeleteDC( hdcWork );
+	::SelectObject( hdcMono, bmpMonoOld );
+	::DeleteObject( bmpMono );
+	::DeleteDC( hdcMono );
+	::SelectObject( hdcSrc, bmpSrcOld );
+	::DeleteDC( hdcSrc );
 	return;
 }
+
 
 /*! @brief アイコンの描画
 
