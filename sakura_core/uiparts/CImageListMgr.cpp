@@ -223,7 +223,7 @@ void CImageListMgr::MyBitBlt(
 	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
 	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
-	// ビットマップ描画(マスクとor描画)
+	// 作業ビットマップ作成
 	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
 	if ( NoResize ) {
 		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCINVERT );
@@ -231,8 +231,9 @@ void CImageListMgr::MyBitBlt(
 		::StretchBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCINVERT );
 	}
 
-	// 作業DCの内容を出力DCに転送
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork,  0, 0, SRCPAINT );
+	// マスクと作業ビットマップを出力DC上でマージ
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork, 0, 0, SRCPAINT );
 
 	// 後始末
 	::SelectObject( hdcWork, bmpWorkOld );
@@ -272,17 +273,12 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	HBITMAP bmpMono = ::CreateCompatibleBitmap( hdcMono, nWidth, nHeight );
 	HGDIOBJ bmpMonoOld = ::SelectObject( hdcMono, bmpMono );
 
-	// モノクロイメージ作成
+	// build a monochrome image
 	if ( NoResize ) {
 		::BitBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCPAINT );
 	} else {
 		::StretchBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCPAINT );
 	}
-
-	// 作業DCを作成
-	HDC hdcWork = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight);
-	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork);
 
 	// Copy the image from the toolbar into the memory DC
 	// and draw it (grayed) back into the toolbar.
@@ -293,18 +289,14 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNSHADOW );
 	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNHILIGHT );
 
-	// ビットマップ描画(背景色・前景色を指定してマスクを描画)
-	::SetBkColor( hdcWork, bkColor );
-	::SetTextColor( hdcWork, fgColor );
-	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMono, 0, 0, SRCPAINT );
+	// ビットマップ描画(背景色・前景色を指定してモノクロビットマップを描画)
+	auto bkColorOld = ::SetBkColor( drawdc, bkColor );
+	auto fgColorOld = ::SetTextColor( drawdc, fgColor );
+	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMono, 0, 0, SRCCOPY );
+	::SetBkColor( drawdc, bkColorOld );
+	::SetTextColor( drawdc, fgColorOld );
 
-	// 作業DCの内容を出力DCに転送
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork, 0, 0, SRCPAINT );
-	
 	// 後始末
-	::SelectObject( hdcWork, bmpWorkOld );
-	::DeleteObject( bmpWork );
-	::DeleteDC( hdcWork );
 	::SelectObject( hdcMono, bmpMonoOld );
 	::DeleteObject( bmpMono );
 	::DeleteDC( hdcMono );
@@ -432,6 +424,7 @@ int CImageListMgr::Add( const TCHAR* szPath )
 	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
 	// ビットマップ描画(マスクとor描画)
+	::BitBlt( hdcWork, 0, 0, cx(), cy(), hdcMask, 0, 0, SRCCOPY );
 	if ( NoResize ) {
 		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, 0, 0, SRCINVERT );
 	} else {
@@ -441,6 +434,7 @@ int CImageListMgr::Add( const TCHAR* szPath )
 	// 作業DCの内容を出力DCに転送
 	HDC hdcDst = ::CreateCompatibleDC( NULL );
 	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
+	::BitBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcMask, 0, 0, SRCCOPY );
 	::BitBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcWork, 0, 0, SRCPAINT );
 
 	// 後始末
