@@ -115,13 +115,11 @@ protected:
 
 	int m_nIconCount;	//!<	アイコンの個数
 
-	//	オリジナルテキストエディタからの描画関数
-	//	2003.08.27 Moca 背景を透過処理するので背景色の指定は不要に
-	void MyBitBlt( HDC drawdc, int nXDest, int nYDest, 
-					int nWidth, int nHeight, HBITMAP bmp,
-					int nXSrc, int nYSrc, COLORREF colToTransParent ) const;
-	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
+	// アイコン描画関数
+	void MyBitBlt( HDC drawdc, int nXDest, int nYDest,
+		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
+	void MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
+		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
 
 	//! ビットマップを一行拡張する
 	HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp, int cols, int rows) const noexcept;

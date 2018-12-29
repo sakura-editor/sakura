@@ -192,16 +192,19 @@ void CImageListMgr::MyBitBlt(
 	int nYDest, 
 	int nWidth, 
 	int nHeight, 
-	HBITMAP bmp, 
 	int nXSrc, 
-	int nYSrc,
-	COLORREF colToTransParent	/* BMPの中の透明にする色 */
+	int nYSrc
 ) const
 {
+	COLORREF colToTransParent = m_cTrans;
+
+	// リサイズ不要かどうか
+	bool NoResize = nWidth == cx() && nHeight == cy();
+
 	// 仮想DCを生成して指定されたビットマップを展開する
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
-	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmp );
-	::SetBkColor( hdcSrc, m_cTrans );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
+	::SetBkColor( hdcSrc, colToTransParent );
 
 	// create a monochrome memory DC
 	HDC hdcMask = ::CreateCompatibleDC( drawdc );
@@ -209,7 +212,11 @@ void CImageListMgr::MyBitBlt(
 	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
 
 	// build a mask
-	BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCAND );
+	if ( NoResize ) {
+		::BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCAND );
+	} else {
+		::StretchBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCAND );
+	}
 
 	// 作業DCを作成
 	HDC hdcWork = ::CreateCompatibleDC( drawdc );
@@ -218,7 +225,11 @@ void CImageListMgr::MyBitBlt(
 
 	// ビットマップ描画(マスクとor描画)
 	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCINVERT );
+	if ( NoResize ) {
+		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCINVERT );
+	} else {
+		::StretchBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCINVERT );
+	}
 
 	// 作業DCの内容を出力DCに転送
 	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork,  0, 0, SRCPAINT );
@@ -243,13 +254,18 @@ void CImageListMgr::MyBitBlt(
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
 	@date 2003.08.27 Moca 背景色は透過処理する
 */
-void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc) const
+void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
+	int nWidth, int nHeight, int nXSrc, int nYSrc ) const
 {
+	COLORREF colToTransParent = m_cTrans;
+
+	// リサイズ不要かどうか
+	bool NoResize = nWidth == cx() && nHeight == cy();
+
 	// 仮想DCを生成して指定されたビットマップを展開する
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
-	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmp );
-	::SetBkColor( hdcSrc, m_cTrans );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
+	::SetBkColor( hdcSrc, colToTransParent );
 
 	// create a monochrome memory DC
 	HDC hdcMono = ::CreateCompatibleDC( drawdc );
@@ -257,7 +273,11 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	HGDIOBJ bmpMonoOld = ::SelectObject( hdcMono, bmpMono );
 
 	// モノクロイメージ作成
-	::BitBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCPAINT );
+	if ( NoResize ) {
+		::BitBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCPAINT );
+	} else {
+		::StretchBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCPAINT );
+	}
 
 	// 作業DCを作成
 	HDC hdcWork = ::CreateCompatibleDC( drawdc );
@@ -320,12 +340,12 @@ bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 		return false;
 
 	if( fstyle == ILD_MASK ){
-		DitherBlt2( dc, x, y, cx(), cy(), m_hIconBitmap,
+		DitherBlt2( dc, x, y, cx(), cy(),
 			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
 	}
 	else {
-		MyBitBlt( dc, x, y, cx(), cy(), m_hIconBitmap,
-			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), m_cTrans );
+		MyBitBlt( dc, x, y, cx(), cy(),
+			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy() );
 	}
 	return true;
 }
