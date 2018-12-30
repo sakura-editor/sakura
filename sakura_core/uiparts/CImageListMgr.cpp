@@ -196,52 +196,15 @@ void CImageListMgr::MyBitBlt(
 	int nYSrc
 ) const
 {
-	COLORREF colToTransParent = m_cTrans;
-
-	// リサイズ不要かどうか
-	bool NoResize = nWidth == cx() && nHeight == cy();
-
-	// 仮想DCを生成して指定されたビットマップを展開する
+	// 仮想DCを生成してビットマップを展開する
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
 	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
-	::SetBkColor( hdcSrc, colToTransParent );
 
-	// create a monochrome memory DC
-	HDC hdcMask = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
-	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
-
-	// build a mask
-	if ( NoResize ) {
-		::BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCAND );
-	} else {
-		::StretchBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCAND );
-	}
-
-	// 作業DCを作成
-	HDC hdcWork = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
-	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
-
-	// 作業ビットマップ作成
-	::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	if ( NoResize ) {
-		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCINVERT );
-	} else {
-		::StretchBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCINVERT );
-	}
-
-	// マスクと作業ビットマップを出力DC上でマージ
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcWork, 0, 0, SRCPAINT );
+	// 透過色を考慮して転送
+	::TransparentBlt( drawdc, nXDest, nYDest, nWidth, nHeight,
+		hdcSrc, nXSrc, nYSrc, cx(), cy(), m_cTrans );
 
 	// 後始末
-	::SelectObject( hdcWork, bmpWorkOld );
-	::DeleteObject( bmpWork );
-	::DeleteDC( hdcWork );
-	::SelectObject( hdcMask, bmpMaskOld );
-	::DeleteObject( bmpMask );
-	::DeleteDC( hdcMask );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 	return;
@@ -258,48 +221,30 @@ void CImageListMgr::MyBitBlt(
 void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	int nWidth, int nHeight, int nXSrc, int nYSrc ) const
 {
-	COLORREF colToTransParent = m_cTrans;
-
-	// リサイズ不要かどうか
-	bool NoResize = nWidth == cx() && nHeight == cy();
-
 	// 仮想DCを生成して指定されたビットマップを展開する
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
 	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
-	::SetBkColor( hdcSrc, colToTransParent );
+	::SetBkColor( hdcSrc, m_cTrans );
 
-	// create a monochrome memory DC
-	HDC hdcMono = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpMono = ::CreateCompatibleBitmap( hdcMono, nWidth, nHeight );
-	HGDIOBJ bmpMonoOld = ::SelectObject( hdcMono, bmpMono );
+	// マスクDCを作成
+	HDC hdcMask = ::CreateCompatibleDC( NULL );
+	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
+	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
 
-	// build a monochrome image
-	if ( NoResize ) {
-		::BitBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, SRCPAINT );
-	} else {
-		::StretchBlt( hdcMono, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCPAINT );
-	}
+	// モノクロDCに転送(白背景に黒で輪郭が浮かび上がる)
+	::StretchBlt( hdcMask, 0, 0, nWidth, nHeight,
+		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
 
-	// Copy the image from the toolbar into the memory DC
-	// and draw it (grayed) back into the toolbar.
-    //SK: Looks better on the old shell
-	COLORREF bkColor = ::GetSysColor( COLOR_BTNFACE );
-	COLORREF fgColor = ::GetSysColor( COLOR_GRAYTEXT );
-	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_3DSHADOW );
-	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNSHADOW );
-	if ( fgColor == bkColor ) fgColor = ::GetSysColor( COLOR_BTNHILIGHT );
-
-	// ビットマップ描画(背景色・前景色を指定してモノクロビットマップを描画)
-	auto bkColorOld = ::SetBkColor( drawdc, bkColor );
-	auto fgColorOld = ::SetTextColor( drawdc, fgColor );
-	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMono, 0, 0, SRCCOPY );
-	::SetBkColor( drawdc, bkColorOld );
-	::SetTextColor( drawdc, fgColorOld );
+	// 前景色をグレーテキストに設定、白背景を透過させつつ転送
+	auto textColorOld = ::SetTextColor( drawdc, ::GetSysColor( COLOR_GRAYTEXT ) );
+	::TransparentBlt( drawdc, nXDest, nYDest, nWidth, nHeight,
+		hdcMask, 0, 0, nWidth, nHeight, RGB( 255, 255, 255 ) );
+	::SetTextColor( drawdc, textColorOld );
 
 	// 後始末
-	::SelectObject( hdcMono, bmpMonoOld );
-	::DeleteObject( bmpMono );
-	::DeleteDC( hdcMono );
+	::SelectObject( hdcMask, bmpMaskOld );
+	::DeleteObject( bmpMask );
+	::DeleteDC( hdcMask );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 	return;
@@ -377,7 +322,7 @@ int CImageListMgr::Add( const TCHAR* szPath )
 	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
 
 	//取得した画像の(0,0)の色を背景色として使う
-	::SetBkColor( hdcSrc, ::GetPixel( hdcSrc, 0, 0 ) );
+	COLORREF cTransParent = ::GetPixel( hdcSrc, 0, 0 );
 
 	// DIBセクションからサイズを取得する
 	LONG nWidth, nHeight;
@@ -403,49 +348,15 @@ int CImageListMgr::Add( const TCHAR* szPath )
 		}
 	}
 
-	// リサイズ不要かどうか
-	bool NoResize = nWidth == cx() && nHeight == cy();
-
-	// create a monochrome memory DC
-	HDC hdcMask = ::CreateCompatibleDC( NULL );
-	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
-	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
-
-	// build a mask
-	if ( NoResize ) {
-		::BitBlt( hdcMask, 0, 0, nWidth, nHeight, hdcSrc, 0, 0, SRCAND );
-	} else {
-		::StretchBlt( hdcMask, 0, 0, cx(), cy(), hdcSrc, 0, 0, nWidth, nHeight, SRCAND );
-	}
-
-	// 作業DCを作成
-	HDC hdcWork = ::CreateCompatibleDC( NULL );
-	HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, nWidth, nHeight );
-	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
-
-	// ビットマップ描画(マスクとor描画)
-	::BitBlt( hdcWork, 0, 0, cx(), cy(), hdcMask, 0, 0, SRCCOPY );
-	if ( NoResize ) {
-		::BitBlt( hdcWork, 0, 0, nWidth, nHeight, hdcSrc, 0, 0, SRCINVERT );
-	} else {
-		::StretchBlt( hdcWork, 0, 0, cx(), cy(), hdcSrc, 0, 0, nWidth, nHeight, SRCINVERT );
-	}
-
 	// 作業DCの内容を出力DCに転送
 	HDC hdcDst = ::CreateCompatibleDC( NULL );
 	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
-	::BitBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcMask, 0, 0, SRCCOPY );
-	::BitBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcWork, 0, 0, SRCPAINT );
+	::TransparentBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(),
+		hdcSrc, 0, 0, nWidth, nHeight, cTransParent );
 
 	// 後始末
 	::SelectObject( hdcDst, hbmDstOld );
 	::DeleteDC( hdcDst );
-	::SelectObject( hdcWork, bmpWorkOld );
-	::DeleteObject( bmpWork );
-	::DeleteDC( hdcWork );
-	::SelectObject( hdcMask, bmpMaskOld );
-	::DeleteObject( bmpMask );
-	::DeleteDC( hdcMask );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 
@@ -456,76 +367,82 @@ int CImageListMgr::Add( const TCHAR* szPath )
 
 // ツールイメージをリサイズする
 HBITMAP CImageListMgr::ResizeToolIcons(
-	HDC hDC,
-	HBITMAP &hSrcBmp,
+	HDC hdcSrc,
+	HBITMAP &bmpSrc,
 	int cols,
 	int rows
 ) const noexcept
 {
 	// DIBセクションを取得する
 	DIBSECTION di = {};
-	if (!::GetObject(hSrcBmp, sizeof(di), &di)) {
-		DEBUG_TRACE( _T("GetObject() failed.") );
+	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
+		DEBUG_TRACE( _T( "GetObject() failed." ) );
 		return NULL;
 	}
 
 	// DIBセクションからサイズを取得する
 	int cx = di.dsBm.bmWidth / cols;
 	int cy = di.dsBm.bmHeight / rows;
-	if (cx != cy) {
-		DEBUG_TRACE(_T("tool bitmap size is unexpected."));
+	if ( cx != cy ) {
+		DEBUG_TRACE( _T( "tool bitmap size is unexpected." ) );
 		return NULL;
 	}
 
-	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
-	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+	const int cxSmIcon = ::GetSystemMetrics( SM_CXSMICON );
+	const int cySmIcon = ::GetSystemMetrics( SM_CYSMICON );
 
 	// アイコンサイズが異なる場合、拡大縮小する
-	if (cx != cxSmIcon) {
-		// 作業用の仮想DCを作成する
-		HDC hAltDC = ::CreateCompatibleDC(hDC);
-		// 互換bmpを作る
-		HBITMAP hAltBmp = ::CreateCompatibleBitmap(hDC, cxSmIcon * cols, cySmIcon * rows);
+	if ( cx != cxSmIcon ) {
+		// 作業DCを作成する
+		HDC hdcWork = ::CreateCompatibleDC( hdcSrc );
+		HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, cxSmIcon * cols, cySmIcon * rows );
+		HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
-		// 仮想DCで互換Bmpを選択
-		HGDIOBJ hAltBmpOld = ::SelectObject(hAltDC, hAltBmp);
+		// 作業DCを透過色で塗りつぶす
+		{
+			HBRUSH hBrush = ::CreateSolidBrush( m_cTrans );
+			HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
+			::PatBlt( hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY );
+			::SelectObject( hdcWork, hBrushOld );
+			::DeleteObject( hBrush );
+		}
 
 		// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
-		for (int row = 0; row < rows; ++row) {
-			for (int col = 0; col < cols; ++col) {
+		for ( int row = 0; row < rows; ++row ) {
+			for ( int col = 0; col < cols; ++col ) {
 				// 拡大・縮小する
-				::StretchBlt(
-					hAltDC,
+				::TransparentBlt(
+					hdcWork,
 					col * cxSmIcon,
 					row * cySmIcon,
 					cxSmIcon,
 					cySmIcon,
-					hDC,
+					hdcSrc,
 					col * cx,
 					row * cy,
 					cx,
 					cy,
-					SRCCOPY
+					m_cTrans
 				);
 			}
 		}
 
 		// 仮想DCで元Bmpを選択して互換Bmpを解放する
-		::SelectObject(hAltDC, hAltBmpOld);
+		::SelectObject( hdcWork, bmpWorkOld );
 
 		// ターゲットDCで変換後Bmpを選択する
-		::SelectObject(hDC, hAltBmp);
+		::SelectObject( hdcSrc, bmpWork );
 
 		// 変換前Bmpを破棄して入れ替える
-		::DeleteObject(hSrcBmp);
+		::DeleteObject( bmpSrc );
 
 		// 仮想DCを削除する
-		::DeleteDC(hAltDC);
+		::DeleteDC( hdcWork );
 
-		return hAltBmp;
+		return bmpWork;
 	}
 
-	return hSrcBmp;
+	return bmpSrc;
 }
 
 // ビットマップを一行（MAX_X個）拡張する
