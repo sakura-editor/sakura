@@ -1118,6 +1118,27 @@ void CViewCommander::Command_COPYPATH( void )
 	}
 }
 
+/* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
+void CViewCommander::Command_COPYDIRPATH( void )
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	
+	/* 末尾にバックスラッシュがあれば取り除く */
+	auto itrClear = strFolder.end();
+	itrClear--;
+	if (*itrClear == L'\\')
+	{
+		strFolder.erase(itrClear);
+	}
+	
+	/* クリップボードにフォルダ名をコピー */
+	m_pCommanderView->MySetClipboardData( strFolder.c_str(), strFolder.size(), false );
+}
+
 //	May 9, 2000 genta
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
 void CViewCommander::Command_COPYTAG( void )

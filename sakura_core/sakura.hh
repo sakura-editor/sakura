@@ -62,6 +62,7 @@
 #define HLP000377	377 //管理者としてコマンドプロンプトを開く
 #define HLP000378	378 //PowerShellを開く
 #define HLP000379	379 //管理者としてPowerShellを開く
+#define HLP000380	380 //このファイルのフォルダ名をコピー
 #define HLP000363	363 //プロファイルマネージャ
 #define HLP000029	29 //最近使ったファイル
 #define HLP000023	23 //最近使ったフォルダ

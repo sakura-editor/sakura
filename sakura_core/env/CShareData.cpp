@@ -1351,6 +1351,12 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
 	n++;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYDIRPATH;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'O';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_FOLDER_IN_EXPLORER;
 	rMenu.m_nCustMenuItemKeyArr[0][n] = 'E';
 	n++;
@@ -1412,6 +1418,12 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_COPYPATH;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_COPYDIRPATH;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_FOLDER_IN_EXPLORER; 

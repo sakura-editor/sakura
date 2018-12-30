@@ -130,6 +130,7 @@ source\reference\clipboard\S_CopyLinesAsPassage.html
 source\reference\clipboard\S_CopyLinesWithLineNumber.html
 source\reference\clipboard\S_CopyPath.html
 source\reference\clipboard\S_CopyFilename.html
+source\reference\clipboard\S_CopyDirPath.html
 source\reference\clipboard\S_CopyTag.html
 source\reference\clipboard\S_CopyKeyBindList.html
 source\reference\insert\S_InsertDate.html

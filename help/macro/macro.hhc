@@ -613,6 +613,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="このファイルのフォルダ名をコピー">
+					<param name="Local" value="source\reference\clipboard\S_CopyDirPath.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="このファイルのパス名とカーソル位置をコピー">
 					<param name="Local" value="source\reference\clipboard\S_CopyTag.html">
 					<param name="ImageNumber" value="9">

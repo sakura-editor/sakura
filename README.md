@@ -25,6 +25,7 @@
         - [単体テスト](#単体テスト)
         - [デバッグ方法](#デバッグ方法)
     - [変更履歴](#変更履歴)
+    - [マクロのサンプル](#マクロのサンプル)
 
 <!-- /TOC -->
 
@@ -123,3 +124,8 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 で説明している手順でローカルで確認できます。 
 
 [CHANGELOG.mdについて](https://github.com/sakura-editor/sakura/wiki/CHANGELOG.md%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) のページに`CHANGELOG.md` に関する説明を記載しています。
+
+## マクロのサンプル
+
+[tools/macro](こちら)でマクロのサンプルを提供してます。  
+もしサンプルを作ってもいいよ～という方がおられましたら PR の作成お願いします。

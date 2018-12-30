@@ -223,6 +223,7 @@ public:
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
+	void Command_COPYDIRPATH( void );				/* このファイルのフォルダ名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
 	void Command_COPYLINESASPASSAGE( void );		/* 選択範囲内全行引用符付きコピー */

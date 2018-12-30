@@ -186,6 +186,11 @@
 		<param name="Local" value="source\reference\clipboard\S_CopyFilename.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="CopyDirPath">
+		<param name="Name" value="S_CopyDirPath">
+		<param name="Local" value="source\reference\clipboard\S_CopyDirPath.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="CopyKeyBindList">
 		<param name="Name" value="S_CopyKeyBindList">
 		<param name="Local" value="source\reference\clipboard\S_CopyKeyBindList.html">
@@ -1099,6 +1104,9 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_CopyFilename">
 		<param name="Local" value="source\reference\clipboard\S_CopyFilename.html">
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="S_CopyDirPath">
+		<param name="Local" value="source\reference\clipboard\S_CopyDirPath.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="S_CopyKeyBindList">
