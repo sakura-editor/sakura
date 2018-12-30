@@ -13,7 +13,7 @@ Wikiの方をごらんください。
 https://github.com/sakura-editor/sakura/wiki/11.SakuraEditor_PRGuide
 
 # ライセンス
-サクラエディタは誰もが自由にプログラムを使用できるように [zlib License](License) で提供されています。
+サクラエディタは誰もが自由にプログラムを使用できるように [zlib License](LICENSE) で提供されています。
 
 みなさんからいただいたPull Requestやデータの著作権はそれぞれの作者の方が保有しますが、サクラエディタプロジェクトがzlib Licenseでそれを公開することに同意したものとして扱います。
 
