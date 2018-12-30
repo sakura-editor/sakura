@@ -54,11 +54,13 @@ GUI でステップ実行することができます。
 ### 一覧
 
 | バッチファイル | 説明 |
-----|---- 
-|[tests\create-project.bat](tests/create-project.bat)| 単体テスト用のプロジェクトファイル作成するバッチファイル |
-|[tests\build-project.bat](tests/build-project.bat)  | 単体テスト用のプロジェクトをビルドするバッチファイル |
-|[tests\run-tests.bat](tests/run-tests.bat)          | 単体テストを実行するバッチファイル |
-|[tests\build-and-test.bat](tests/build-and-test.bat)| appveyor.yml から呼ばれて上記を呼び出すバッチファイル  |
+|--|--|
+|[tests\create-project.bat](tests/create-project.bat)|単体テスト用のプロジェクトファイル作成するバッチファイル |
+|[tests\build-project.bat](tests/build-project.bat)  |単体テスト用のプロジェクトをビルドするバッチファイル |
+|[tests\run-tests.bat](tests/run-tests.bat)          |単体テストを実行するバッチファイル |
+|[tests\upload.ps1](tests/upload.ps1)          |単体テストの結果の XML ファイルを appveyor にアップロードするバッチファイル|
+|[tests\upload.bat](tests/upload.bat)          |[tests\upload.ps1](tests/upload.ps1) を呼び出すラッパー|
+|[tests\build-and-test.bat](tests/build-and-test.bat)|appveyor.yml から呼ばれて上記を呼び出すバッチファイル  |
 
 ### 呼び出し構造
 
@@ -69,15 +71,30 @@ GUI でステップ実行することができます。
         - cmake --build
     - [tests\run-tests.bat](tests/run-tests.bat)
         - tests*.exe を実行
+        - [tests\upload.bat](tests/upload.bat)
+            - [tests\upload.ps1](tests/upload.ps1)
 
 ### 使用するバッチファイルの引数
 
-| バッチファイル | 第一引数 | 第二引数 |
-----|----|----
-|[tests\create-project.bat](tests/create-project.bat)| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\build-project.bat](tests/build-project.bat)  | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\run-tests.bat](tests/run-tests.bat)          | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\build-and-test.bat](tests/build-and-test.bat)| platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
+| バッチファイル/powershell スクリプト| 第一引数 | 第二引数 |
+|--|--|--|
+|[tests\create-project.bat](tests/create-project.bat)|platform|configuration|
+|[tests\build-project.bat](tests/build-project.bat)  |platform|configuration|
+|[tests\run-tests.bat](tests/run-tests.bat)          |platform|configuration|
+|[tests\build-and-test.bat](tests/build-and-test.bat)|platform|configuration|
+|[tests\upload.bat](tests/upload.bat)          |xml ファイル名|なし|
+|[tests\upload.ps1](tests/upload.ps1)          |xml ファイル名|なし|
+
+|引数の値 (platform)|
+|--|
+|Win32|
+|x64|
+|MinGW|
+
+|引数の値 (configuration)|
+|--|
+|Debug|
+|Release|
 
 ## インクルードディレクトリ
 
