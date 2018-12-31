@@ -9,6 +9,12 @@
             - [プロジェクト作成時にしていたパラメータ](#プロジェクト作成時にしていたパラメータ)
         - [HTML Help 用のファイルの作成](#html-help-用のファイルの作成)
         - [HTML Help 用のファイルのコンパイル](#html-help-用のファイルのコンパイル)
+    - [目次の作り方](#目次の作り方)
+        - [やり方](#やり方)
+            - [ドキュメント構造](#ドキュメント構造)
+            - [実際のマークアップ](#実際のマークアップ)
+        - [参考サイト](#参考サイト)
+        - [既知の課題](#既知の課題)
 
 <!-- /TOC -->
 
@@ -128,4 +134,55 @@ HTML Help 用のコンパイラをインストールしている状態で以下�
 "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" build\htmlhelp\SAKURAEditordoc.chm
 ```
 
+## 目次の作り方
 
+### やり方
+
+1. `index.rst` から `toctree` で目次の項目にしたい rst ファイルを指定する。
+2. その項目から更に小項目にしたい rst ファイルを指定する。
+
+#### ドキュメント構造
+
+- [sakura\source\index.rst](sakura/source/index.rst)
+    - [sakura\source\sample-chaptor\index.rst](sakura/source/sample-chaptor/index.rst)
+        - [sakura\source\sample-chaptor\index.rst](sakura/source/sample-chaptor/index.rst)
+
+#### 実際のマークアップ
+
+[sakura\source\index.rst](sakura/source/index.rst)
+
+```
+.. toctree::
+
+    sample-chaptor/index
+```
+
+[sakura\source\sample-chaptor\index.rst](sakura/source/sample-chaptor/index.rst)
+
+```
+sample
+=========================================
+
+.. toctree::
+
+    sample1
+```
+
+[sakura\source\sample-chaptor\index.rst](sakura/source/sample-chaptor/index.rst)
+
+```
+sample1
+=========================================
+
+サンプル1
+
+テスト・テスト
+```
+
+### 参考サイト
+
+https://water2litter.net/pisco/doc/rst_syntax_toctree.html
+
+### 既知の課題
+
+HTML Help 出力するときに目次が文字化けする
