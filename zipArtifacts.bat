@@ -217,6 +217,7 @@ copy /Y /B %INSTALLER_RESOURCES_CTAGS%\license\*.*  %WORKDIR_EXE%\license\ctags\
 copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
 copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
 copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
+copy /Y /B sphinx\sakura\build\htmlhelp\SAKURAEditordoc.chm %WORKDIR_EXE%\
 copy /Y /B html\sakura-doxygen.chm %WORKDIR_DEV%\
 copy /Y /B html\sakura-doxygen.chi %WORKDIR_DEV%\
 
