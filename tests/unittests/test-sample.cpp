@@ -50,5 +50,6 @@ TEST(test, PointerSize)
 #else
 #endif
 	printf("pointerSize = %d\n", pointerSize);
+	RecordProperty("pointerSize", pointerSize);
 	ASSERT_EQ(sizeof(void*), pointerSize);
 }
