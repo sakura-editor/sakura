@@ -13,7 +13,7 @@ platform:
 install:
 - cmd: >-
     pip install openpyxl --user
-    
+
     pip install chardet --user
 
     msiexec /i externals\cppcheck\cppcheck-1.84-x64-Setup.msi /quiet /qn /norestart /log cppcheck-install.log
