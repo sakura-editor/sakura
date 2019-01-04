@@ -17,6 +17,10 @@
 */
 #include "StdAfx.h"
 #include "CImageListMgr.h"
+
+#include <list>
+#include <functional>
+
 #include "env/CommonSetting.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
@@ -99,7 +103,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
 			//hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 			hRscbmp = (HBITMAP)::LoadImage( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ), IMAGE_BITMAP, 0, 0,
-				LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS  );
+				LR_CREATEDIBSECTION /* | LR_LOADMAP3DCOLORS */  );
 			if( hRscbmp == NULL ){
 				//	Oct. 4, 2003 genta エラーコード追加
 				//	正常終了と同じコードだとdcFromを不正に解放してしまう
@@ -179,6 +183,158 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	return nRetPos == 0;
 }
 
+/*! RGBQUADラッパー
+ *  STLコンテナに入れられるよう == 演算子を実装したもの。
+ */
+struct MyRGBQUAD : tagRGBQUAD
+{
+	using tagRGBQUAD::rgbRed;
+	using tagRGBQUAD::rgbGreen;
+	using tagRGBQUAD::rgbBlue;
+	using tagRGBQUAD::rgbReserved;
+
+	MyRGBQUAD() noexcept
+		: tagRGBQUAD()
+	{
+		rgbBlue = 0;
+		rgbGreen = 0;
+		rgbRed = 0;
+		rgbReserved = 0;
+	}
+	MyRGBQUAD( std::initializer_list<BYTE> a ) noexcept
+		: tagRGBQUAD()
+	{
+		assert( a.size() <= 4 );
+		decltype(rgbBlue) *p = &rgbBlue;
+		for ( auto it = a.begin(); it != a.end(); ++it, ++p ) {
+			*p = *it;
+		}
+	}
+	bool operator == ( const RGBQUAD &rhs ) const noexcept
+	{
+		return rgbBlue == rhs.rgbBlue
+			&& rgbGreen == rhs.rgbGreen
+			&& rgbRed == rhs.rgbRed
+			&& rgbReserved == rhs.rgbReserved;
+	}
+	bool operator != ( const RGBQUAD &rhs ) const noexcept
+	{
+		return !(*this == rhs);
+	}
+	operator COLORREF ( void ) const noexcept
+	{
+		return RGB( rgbRed, rgbGreen, rgbBlue );
+	}
+};
+
+// HLS色情報タプル
+typedef std::tuple<double, double, double> _HlsTuple;
+enum { HLS_H, HLS_S, HLS_L, };
+
+/*!
+ * @brief RGB⇒HLS(円柱モデル)変換する
+ */
+_HlsTuple ToHLS( const COLORREF &color )
+{
+	auto R = (double) GetRValue( color ) / 255.;
+	auto G = (double) GetGValue( color ) / 255.;
+	auto B = (double) GetBValue( color ) / 255.;
+	auto MIN = std::min( { R, G, B } );
+	auto MAX = std::max( { R, G, B } );
+	double H;
+	if ( MIN == MAX ) {
+		H = std::numeric_limits<double>::infinity();
+	}
+	else if ( MIN == B ) {
+		H = 60. * (G - R) / (MAX - MIN) + 60.;
+	}
+	else if ( MIN == R ) {
+		H = 60. * (B - G) / (MAX - MIN) + 180.;
+	}
+	else if ( MIN == G ) {
+		H = 60. * (R - B) / (MAX - MIN) + 300.;
+	}
+	auto L = (MAX + MIN) / 2.;
+	auto S = (MAX - MIN) / (1 - std::abs( MAX + MIN - 1 ));
+	return std::make_tuple( H, S, L );
+}
+
+/*!
+ * @brief HLS(円柱モデル)⇒RGB変換する
+ */
+COLORREF FromHLS( const _HlsTuple &hls )
+{
+	auto H = std::get<HLS_H>( hls );
+	auto S = std::get<HLS_S>( hls );
+	auto L = std::get<HLS_L>( hls );
+
+	// 色相が無効値（＝白黒）の場合
+	if ( std::isinf( H ) ) {
+		return RGB( L * 255, L * 255, L * 255 );
+	}
+
+	// 色相の範囲を補正する
+	while ( H < 0 ) H = 360 - H;
+	while ( 360 <= H ) H = H - 360;
+
+	double R, G, B;
+	double MIN = L + S * (1 - std::abs( 2 * L - 1 )) / 2;
+	double MAX = L - S * (1 - std::abs( 2 * L - 1 )) / 2;
+	if ( H < 60 ) {
+		R = MAX;
+		G = MAX + (MAX - MIN) * H / 60;
+		B = MIN;
+	}
+	else if ( H < 120 ) {
+		R = MIN + (MAX - MIN) * (120 - H) / 60;
+		G = MAX;
+		B = MIN;
+	}
+	else if ( H < 180 ) {
+		R = MIN;
+		G = MAX;
+		B = MIN + (MAX - MIN) * (H - 120) / 60;
+	}
+	else if ( H < 240 ) {
+		R = MIN;
+		G = MIN + (MAX - MIN) * (240 - H) / 60;
+		B = MAX;
+	}
+	else if ( H < 300 ) {
+		R = MIN + (MAX - MIN) * (H - 240) / 60;
+		G = MIN;
+		B = MAX;
+	}
+	else { //if ( H < 360 ) {
+		R = MAX;
+		G = MIN;
+		B = MIN + (MAX - MIN) * (360 - H) / 60;
+	}
+	return RGB( R * 255, G * 255, B * 255 );
+}
+
+//! コントラスト算出のための相対輝度を取得する
+double GetRelativeLuminance( const COLORREF &color )
+{
+	auto RsRGB = (double) GetRValue( color ) / 255.;
+	auto GsRGB = (double) GetGValue( color ) / 255.;
+	auto BsRGB = (double) GetBValue( color ) / 255.;
+	auto R = RsRGB <= 0.03928 ? RsRGB / 12.92 : std::pow( (RsRGB + 0.055) / 1.055, 2.4 );
+	auto G = BsRGB <= 0.03928 ? GsRGB / 12.92 : std::pow( (GsRGB + 0.055) / 1.055, 2.4 );
+	auto B = BsRGB <= 0.03928 ? BsRGB / 12.92 : std::pow( (BsRGB + 0.055) / 1.055, 2.4 );
+	auto L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+	return L;
+}
+
+//! コントラスト比を取得する
+double GetContrastRatio( const double &l1, const double &l2 )
+{
+	auto L1 = std::max( l1, l2 );
+	auto L2 = std::min( l1, l2 );
+	auto C = (L1 + 0.05) / (L2 + 0.05);
+	return C;
+}
+
 /*! ビットマップの表示 灰色を透明描画
 
 	@author Nakatani
@@ -197,14 +353,190 @@ void CImageListMgr::MyBitBlt(
 ) const
 {
 	// 仮想DCを生成してビットマップを展開する
+	const HBITMAP &bmpSrc = m_hIconBitmap;
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
-	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
+
+	// 作業DCを作成
+	HDC hdcWork = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
+
+	// 作業DCに転送
+	::StretchBlt( hdcWork, 0, 0, nWidth, nHeight,
+		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
+
+	// ビットマップデータを取得するためのバッファを用意する
+	auto imageBuf = std::make_unique<MyRGBQUAD[]>( nWidth * nHeight );
+
+	// 色データ取得のためのヘッダ
+	BITMAPINFOHEADER bi = {
+		sizeof( BITMAPINFOHEADER ),
+		nWidth,
+		nHeight,
+		1,
+		32,								//bits per pixel
+		BI_RGB,							//無圧縮RGB
+		0,								//biSizeImage: 無視される
+										// 省略可能なので以下略
+	};
+
+	// ビットマップ全体のデータを取得する
+	for ( auto n = nHeight - 1; 0 <= n; --n ) {
+		MyRGBQUAD* lpbitmap = &(imageBuf.get()[n * nWidth]);
+
+		auto retGetDIBits = ::GetDIBits( hdcWork, bmpWork,
+			n,						//start
+			1,						//cLines
+			lpbitmap,
+			(BITMAPINFO *) &bi,
+			DIB_RGB_COLORS
+		);
+
+		if ( retGetDIBits == ERROR_INVALID_PARAMETER ) {
+			return; //TODO: ここに来たらマズい！
+		}
+	}
+
+	// 背景色を取得する
+	//TODO: 呼出元で背景色をセットするように変える
+	//COLORREF bkColor = ::GetBkColor( drawdc );
+	COLORREF bkColor = ::GetSysColor( COLOR_3DFACE );
+	auto bkColorL = GetRelativeLuminance( bkColor );
+	auto bkColorH = ToHLS( bkColor );
+
+	// コントラスト情報タプル
+	typedef std::tuple<double, COLORREF> _ContrustTuple;
+	enum { CONTRUST_C, CONTRUST_RGB, };
+
+	// RGB⇒コントラスト情報マップ
+	std::map<COLORREF, _ContrustTuple> fixtureMap;
+
+	// 透過色の変数名が分かりづらいので別名定義する
+	const COLORREF &cTransparent = m_cTrans;
+
+	// スキャンライン書込みのためのバッファを用意する
+	auto lineBuf = std::make_unique<MyRGBQUAD[]>( nWidth );
+
+	// 画像の上から順番に処理する
+	for ( auto n = nHeight - 1; 0 <= n; --n ) {
+		// スキャンラインをコピー
+		::memcpy_s( lineBuf.get(), nWidth * sizeof( MyRGBQUAD ),
+			&imageBuf[n*nWidth], nWidth * sizeof( MyRGBQUAD ) );
+
+		// スキャンラインを1ピクセルずつ処理する
+		for ( auto m = 0; m < nWidth; ++m ) {
+			const MyRGBQUAD& px = imageBuf[n*nWidth + m];
+
+			// 透過色以外はスキップする
+			if ( px != cTransparent ) continue;
+
+			// 隣接ピクセル色をコレクションに集めて一括処理する
+			std::list<COLORREF> tonariColors( {
+				(0 < m) ? imageBuf[n*nWidth + (m - 1)] : cTransparent,
+				(m < nWidth - 1) ? imageBuf[n*nWidth + (m + 1)] : cTransparent,
+				(0 < n) ? imageBuf[(n - 1)*nWidth + m] : cTransparent,
+				(n < nHeight - 1) ? imageBuf[(n + 1)*nWidth + m] : cTransparent,
+				} );
+			tonariColors.unique();
+			tonariColors.remove( cTransparent );
+
+			// 隣接するピクセルの情報を整理
+			for ( const auto &tonariColor : tonariColors ) {
+				// 未登録のカラーのみ処理する
+				if ( fixtureMap.find( tonariColor ) == fixtureMap.end() ) {
+					// 相対輝度を求める
+					auto tonariL = GetRelativeLuminance( tonariColor );
+					// 背景色に対するコントラスト比を求める
+					auto tonariC = GetContrastRatio( tonariL, bkColorL );
+					// 推奨コントラスト比 7.0:1
+					auto C = 7.;
+					// 推奨コントラスト比を満たすピクセルはスキップする
+					if ( C < tonariC ) {
+						fixtureMap[tonariColor] = std::make_tuple( tonariC, tonariColor );
+						continue;
+					}
+					// HLS変換する
+					auto tonariH = ToHLS( tonariColor );
+					auto H = std::get<HLS_H>( tonariH );
+					auto S = std::get<HLS_S>( tonariH );
+					auto L = std::get<HLS_L>( tonariH );
+					// 色相に応じて補正をかける
+					if ( std::isinf( H ) ) {
+						// モノクロのコントラスト目標値は高くし、白か黒に貼り付かせる
+						C *= 2.;
+						// 背景色の輝度をやや明るくした色を初期値とする
+						L = std::get<HLS_L>( bkColorH ) + .1;
+					} else {
+						// 色相を180度反転させる
+						H += 180.;
+						if ( 360 <= H ) H -= 360;
+						S = 1 - S;			// 彩度反転
+						L = 1 - L;			// 輝度反転
+					}
+
+					// 反対色を探すための漸進処理を定義する
+					std::function<double( double )> advance;
+					if ( .5 <= bkColorL ) {
+						// 白背景はだんだん暗くしていく
+						advance = []( const double &v ) { return v * 0.9; };	//90%にする
+					}
+					else {
+						// 黒背景はだんだん明るくしていく
+						advance = []( const double &v ) { return v * 1.1; };	//110%にする
+					}
+					
+					// 反対色を探す
+					for ( double tempL = 0.1; tempL < 1 && 0.001 < tempL; ) {
+						auto tempClr = FromHLS( std::make_tuple( H, S, L ) );
+						tempL = GetRelativeLuminance( tempClr );
+						if ( C < GetContrastRatio( tempL, bkColorL ) ) break;
+						L = advance( L );
+					}
+					auto fixedClr = FromHLS( std::make_tuple( H, S, L ) );
+					fixtureMap[tonariColor] = std::make_tuple( tonariC, fixedClr );
+				}
+			}
+
+			// 隣接するピクセルがなければスキップ
+			if ( tonariColors.empty() ) continue;
+
+			// もっともコントラストの低い色を取得する
+			auto lowest = std::min_element( tonariColors.cbegin(), tonariColors.cend(),
+				[fixtureMap]( const COLORREF& clr1, const COLORREF& clr2 ) {
+				const auto &c1 = std::get<CONTRUST_C>( fixtureMap.at( clr1 ) );
+				const auto &c2 = std::get<CONTRUST_C>( fixtureMap.at( clr2 ) );
+				return (c1 < c2);
+			} );
+
+			const auto &clr = std::get<CONTRUST_RGB>( fixtureMap[*lowest] );
+			lineBuf[m].rgbRed = GetRValue( clr );
+			lineBuf[m].rgbGreen = GetGValue( clr );
+			lineBuf[m].rgbBlue = GetBValue( clr );
+		}
+
+		// 変更したスキャンラインを書き込む
+		auto retSetDIBits = ::SetDIBits( hdcWork, bmpWork,
+			n,						//start
+			1,						//cLines
+			lineBuf.get(),
+			(BITMAPINFO *) &bi,
+			DIB_RGB_COLORS
+		);
+
+		if ( retSetDIBits == ERROR_INVALID_PARAMETER ) {
+			return; //TODO: ここに来たらマズい！
+		}
+	}
 
 	// 透過色を考慮して転送
 	::TransparentBlt( drawdc, nXDest, nYDest, nWidth, nHeight,
-		hdcSrc, nXSrc, nYSrc, cx(), cy(), m_cTrans );
+		hdcWork, 0, 0, nWidth, nHeight, cTransparent );
 
 	// 後始末
+	::SelectObject( hdcWork, bmpWorkOld );
+	::DeleteObject( bmpWork );
+	::DeleteDC( hdcWork );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 	return;
@@ -221,35 +553,119 @@ void CImageListMgr::MyBitBlt(
 void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	int nWidth, int nHeight, int nXSrc, int nYSrc ) const
 {
-	// 仮想DCを生成して指定されたビットマップを展開する
+	// 仮想DCを生成してビットマップを展開する
+	const HBITMAP &bmpSrc = m_hIconBitmap;
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
-	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, m_hIconBitmap );
-	::SetBkColor( hdcSrc, m_cTrans );
+	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
 
-	// マスクDCを作成
-	HDC hdcMask = ::CreateCompatibleDC( NULL );
-	HBITMAP bmpMask = ::CreateCompatibleBitmap( hdcMask, nWidth, nHeight );
-	HGDIOBJ bmpMaskOld = ::SelectObject( hdcMask, bmpMask );
+	// 作業DCを作成
+	HDC hdcWork = ::CreateCompatibleDC( drawdc );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
-	// モノクロDCに転送(白背景に黒で輪郭が浮かび上がる)
-	::StretchBlt( hdcMask, 0, 0, nWidth, nHeight,
+	// 作業DCに転送
+	::StretchBlt( hdcWork, 0, 0, nWidth, nHeight,
 		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
 
-	// 前景色をグレーテキストに設定、白背景を透過させつつ転送
-	auto textColorOld = ::SetTextColor( drawdc, ::GetSysColor( COLOR_GRAYTEXT ) );
+	// ディザカラーを決める
+	COLORREF btnShadow = ::GetSysColor( COLOR_BTNSHADOW );
+	COLORREF btnFace = ::GetSysColor( COLOR_BTNFACE );
+	COLORREF textColor = btnShadow != btnFace
+		? ::GetSysColor( COLOR_3DSHADOW )
+		: ::GetSysColor( COLOR_BTNHILIGHT );
+
+	// 相対輝度とHLS値を求める
+	auto textColorL = GetRelativeLuminance( textColor );
+	auto textColorH = ToHLS( textColor );
+
+	// RGB⇒ディザカラーRGB置換マップ
+	std::map<COLORREF, COLORREF> ditherMap;
+	ditherMap[textColor] = textColor;
+
+	// 透過色の変数名が分かりづらいので別名定義する
+	const COLORREF &cTransparent = m_cTrans;
+
+	// ビットマップデータを取得するためのバッファを用意する
+	auto lineBuf = std::make_unique<MyRGBQUAD[]>( nWidth );
+
+	// 色データ取得のためのヘッダ
+	BITMAPINFOHEADER bi = {
+		sizeof( BITMAPINFOHEADER ),
+		nWidth,
+		nHeight,
+		1,
+		32,								//bits per pixel
+		BI_RGB,							//無圧縮RGB
+		0,								//biSizeImage: 無視される
+										// 省略可能なので以下略
+	};
+
+	// スキャンラインは下から上なので逆順にデータを取得する
+	for ( auto n = nHeight - 1; 0 <= n; --n ) {
+		auto retGetDIBits = ::GetDIBits( hdcWork, bmpWork,
+			n,						//start
+			1,						//cLines
+			lineBuf.get(),
+			(BITMAPINFO *) &bi,
+			DIB_RGB_COLORS
+		);
+
+		if ( retGetDIBits == ERROR_INVALID_PARAMETER ) {
+			return; //TODO: ここに来たらマズい！
+		}
+
+		// スキャンラインを1ピクセルずつ処理する
+		for ( auto m = 0; m < nWidth; ++m ) {
+			MyRGBQUAD& px = lineBuf[m];
+
+			// 透過色はスキップする
+			if ( px == cTransparent ) continue;
+
+			// マップに未登録の色ならマップに登録する
+			if ( ditherMap.find( px ) == ditherMap.end() ) {
+				// ディザカラーをベースにする
+				auto pxh = textColorH;
+				// 相対輝度を求める
+				auto l = GetRelativeLuminance( px );
+				// 相対輝度に係数をかけ、下駄をはかせる
+				std::get<HLS_L>( pxh ) = l * .5 / textColorL + .5;
+				// マップに登録する
+				ditherMap[px] = FromHLS( pxh );
+			}
+
+			// ディザカラーを書き込む
+			auto clr = ditherMap[px];
+			px.rgbRed = GetRValue( clr );
+			px.rgbGreen = GetGValue( clr );
+			px.rgbBlue = GetBValue( clr );
+		}
+
+		// Getで取得したのビットデータを書き換える
+		auto retSetDIBits = ::SetDIBits( hdcWork, bmpWork,
+			n,						//start
+			1,						//cLines
+			lineBuf.get(),
+			(BITMAPINFO *) &bi,
+			DIB_RGB_COLORS
+		);
+
+		if ( retSetDIBits == ERROR_INVALID_PARAMETER ) {
+			return; //TODO: ここに来たらマズい！
+		}
+	}
+
+	// 背景を透過させつつ転送
 	::TransparentBlt( drawdc, nXDest, nYDest, nWidth, nHeight,
-		hdcMask, 0, 0, nWidth, nHeight, RGB( 255, 255, 255 ) );
-	::SetTextColor( drawdc, textColorOld );
+		hdcWork, 0, 0, nWidth, nHeight, cTransparent );
 
 	// 後始末
-	::SelectObject( hdcMask, bmpMaskOld );
-	::DeleteObject( bmpMask );
-	::DeleteDC( hdcMask );
+	::SelectObject( hdcWork, bmpWorkOld );
+	::DeleteObject( bmpWork );
+	::DeleteDC( hdcWork );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 	return;
 }
-
 
 /*!
  * @brief アイコンの描画
