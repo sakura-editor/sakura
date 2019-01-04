@@ -234,7 +234,7 @@ enum { HLS_H, HLS_S, HLS_L, };
 /*!
  * @brief RGB⇒HLS(円柱モデル)変換する
  */
-_HlsTuple ToHLS( const COLORREF &color )
+_HlsTuple ToHLS( const COLORREF color )
 {
 	auto R = (double) GetRValue( color ) / 255.;
 	auto G = (double) GetGValue( color ) / 255.;
@@ -314,7 +314,7 @@ COLORREF FromHLS( const _HlsTuple &hls )
 }
 
 //! コントラスト算出のための相対輝度を取得する
-double GetRelativeLuminance( const COLORREF &color )
+double GetRelativeLuminance( const COLORREF color )
 {
 	auto RsRGB = (double) GetRValue( color ) / 255.;
 	auto GsRGB = (double) GetGValue( color ) / 255.;
@@ -327,7 +327,7 @@ double GetRelativeLuminance( const COLORREF &color )
 }
 
 //! コントラスト比を取得する
-double GetContrastRatio( const double &l1, const double &l2 )
+double GetContrastRatio( const double l1, const double l2 )
 {
 	auto L1 = std::max( l1, l2 );
 	auto L2 = std::min( l1, l2 );
