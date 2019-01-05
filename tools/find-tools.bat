@@ -24,6 +24,9 @@ set FIND_TOOLS_CALLED=1
 exit /b
 
 :7z
+if "%FORCE_POWERSHELL_ZIP%" == "1" (
+	exit /b
+)
 set APPDIR=7-Zip
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
 for /f "usebackq delims=" %%a in (`where $PATH2:7z`) do ( 
