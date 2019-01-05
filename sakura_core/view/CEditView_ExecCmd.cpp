@@ -252,6 +252,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 			( bGetStdout ? _T("/C ") : _T("/K ") ),
 			pszCmd
 		);
+		OutputDebugString(cmdline);
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 					CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
 			MessageBox( NULL, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION );

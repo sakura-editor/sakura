@@ -480,6 +480,7 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 
 	//コマンドライン実行
+	OutputDebugString(cmdline);
 	BOOL bProcessResult = CreateProcess(
 		NULL, cmdline, NULL, NULL, TRUE,
 		CREATE_NEW_CONSOLE, NULL, cDlgTagsMake.m_szPath, &sui, &pi

@@ -213,6 +213,7 @@ bool CProcessFactory::StartControlProcess()
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
+	OutputDebugString(szCmdLineBuf);
 	BOOL bCreateResult = ::CreateProcess(
 		szEXE,				// 実行可能モジュールの名前
 		szCmdLineBuf,		// コマンドラインの文字列
