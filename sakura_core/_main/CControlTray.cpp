@@ -50,6 +50,7 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
+#include "CGrepEnumKeys.h"
 #include "sakura_rc.h"
 
 #define IDT_EDITCHECK 2
@@ -96,6 +97,38 @@ void CControlTray::DoGrep()
 	DoGrepCreateWindow(m_hInstance, GetDllShareData().m_sHandles.m_hwndTray, m_cDlgGrep);
 }
 
+/*
+	@brief フォルダの除外パターンを詰める
+*/
+static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFolder)
+{
+	CGrepEnumKeys cGrepEnumKeysFolder;
+	int nErrorFolder = cGrepEnumKeysFolder.SetFileKeys(cmWorkExcludeFolder.GetStringPtr());
+	if (nErrorFolder == 0)
+	{
+		for (auto iter = cGrepEnumKeysFolder.m_vecSearchFileKeys.begin(); iter != cGrepEnumKeysFolder.m_vecSearchFileKeys.end(); ++iter)
+		{
+			cFilePattern.AppendStringF(_T("#%s;"), *iter);
+		}
+	}
+}
+
+/*
+	@brief ファイルの除外パターンを詰める
+*/
+static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFile)
+{
+	CGrepEnumKeys cGrepEnumKeysFile;
+	int nErrorFile = cGrepEnumKeysFile.SetFileKeys(cmWorkExcludeFile.GetStringPtr());
+	if (nErrorFile == 0)
+	{
+		for (auto iter = cGrepEnumKeysFile.m_vecSearchFileKeys.begin(); iter != cGrepEnumKeysFile.m_vecSearchFileKeys.end(); ++iter)
+		{
+			cFilePattern.AppendStringF(_T("!%s;"), *iter);
+		}
+	}
+}
+
 void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep& cDlgGrep)
 {
 	/*======= Grepの実行 =============*/
@@ -122,10 +155,17 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeT cCmdLine;
 	TCHAR szTemp[20];
+
+	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
+	CNativeT cFilePattern;
+	AppendExcludeFolderPatterns(cFilePattern, cmWorkExcludeFolder);
+	AppendExcludeFilePatterns(cFilePattern, cmWorkExcludeFile);
+	cFilePattern.AppendString(cmWork2.GetStringPtr());
+
 	cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
 	cCmdLine.AppendStringW(cmWork1.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GFILE=\""));
-	cCmdLine.AppendString(cmWork2.GetStringPtr());
+	cCmdLine.AppendString(cFilePattern.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GFOLDER=\""));
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GCODE="));
