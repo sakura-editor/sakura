@@ -18,6 +18,7 @@
 #include "StdAfx.h"
 #include "CImageListMgr.h"
 
+#include <cmath>
 #include <list>
 #include <functional>
 
